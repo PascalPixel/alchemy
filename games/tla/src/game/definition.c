@@ -2,7 +2,6 @@
 /// Items: access definitions and check equipment eligibility.
 
 #include "battle.h"
-#include "call.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -18,10 +17,7 @@
 /// Returns the item's definition.
 /// item: item ID; the inventory's equipment and quantity bits are ignored.
 struct ItemDefinition *Item_GetDirect(s32 item) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 0 of 10 instructions
-   * differ in tla-en. */
-  return gItem_DefinitionTable + (item & SPLIT_CONSTANT(ITEM_ID_MASK));
+  return gItem_DefinitionTable + (item & ITEM_ID_MASK);
 }
 #include "owner_state.h"
 #include "battle_unit.h"

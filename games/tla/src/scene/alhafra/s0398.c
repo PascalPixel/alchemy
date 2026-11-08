@@ -1,0 +1,53 @@
+#include "types.h"
+#include "ram_buffer.h"
+#include "call.h"
+
+struct AlhafraEventWork {
+  u8 unk000[0x15a];
+  s16 value15a;
+  u8 unk15c[0x68];
+  u16 value1c4;
+};
+
+s32 GameFlag_Test();
+void GameFlag_SetBit(s32 flag);
+void FieldEvent_Wait(s32 frames);
+void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
+void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
+void FieldMessage_ShowAtActor(s32 id, s32 flags);
+s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
+void Func_02001c74(const u8 *message);
+void Func_02001c84(s32 id, s32 a, s32 b);
+void Func_02001c8c(s32 id, s32 a);
+extern const u8 MsgAlhafra65[];
+extern const u8 MsgAlhafra70[];
+extern const u8 MsgAlhafra71[];
+
+void Func_02000398(s32 id) {
+  if (!GameFlag_Test(0x8b5)) {
+    ((struct AlhafraEventWork *)Ram_HeapSlots->eventWork)->value15a = 1;
+    Func_02001c74(MsgAlhafra65);
+    Func_02001c8c(id, 0);
+  } else if (Value1(GameFlag_Test, 0x8b6)) {
+    Func_02001c74(MsgAlhafra71);
+    Func_02001c8c(id, 0);
+  } else {
+    Func_02001c74(MsgAlhafra70);
+    FieldEvent_Wait(10);
+    Motion_SetModeAndWaitAnimation(id, 3);
+    Func_02001c84(id, 0, 10);
+    Motion_SetVarCbAndRefresh(id, 2);
+    FieldMessage_ShowAtActor(id, 0);
+    FieldEvent_Wait(10);
+    if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
+      GameFlag_SetBit(0x8b6);
+      FieldEvent_Wait(20);
+      Func_02001c84(id, 0, 10);
+      ((struct AlhafraEventWork *)Ram_HeapSlots->eventWork)->value1c4++;
+    } else {
+      FieldEvent_Wait(30);
+      ((struct AlhafraEventWork *)Ram_HeapSlots->eventWork)->value1c4++;
+      Func_02001c84(id, 0, 10);
+    }
+  }
+}

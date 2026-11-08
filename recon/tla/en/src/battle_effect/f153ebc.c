@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "battle_display.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -166,7 +165,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   BG_PLTT[1] = 0;
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  ValueLr2((s32 (*)())Func_08163c2c, (s32)(0), (s32)(0));
+  Func_08163c2c(0, 0);
   BattleEffect_SelectLivingTargets(work->effect);
 
   // The giant: eleven sprite objects with their tiles.
@@ -231,7 +230,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
       Func_080150e4(Random16() & 0xffff);
       SceneTransform_ApplyPitch(Random16() & 0xffff);
       SceneTransform_ApplyYaw(Random16() & 0xffff);
-      ValueLr1((s32 (*)())Transform_Store, (s32)(MATRICES + (i * 24 + j) * 48));
+      Transform_Store(MATRICES + (i * 24 + j) * 48);
     }
   }
   work->transferMode = 2;
@@ -353,8 +352,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   gBgScroll[1].x = scrollX;
   Func_0814cca8();
   Palette_LoadBasicObjColors();
-  Dma_Set(OBJ_PLTT, (void *)(BG_PLTT + 80), SPLIT_CONSTANT(0x80000010),
-          (volatile u32 *)SPLIT_CONSTANT(0x40000d4));
+  Dma_Set(OBJ_PLTT, (void *)(BG_PLTT + 80), 0x80000010,
+          (volatile u32 *)0x040000d4);
   BG_PLTT[94] = BG_PLTT[244];
   for (i = 0; i != GIANT_PIECES; i++)
     ResourceObject_ReleaseFar(work->objects[i]);

@@ -17,14 +17,11 @@ extern u8 MsgYallamInteriors36[];
 extern u8 MsgYallamInteriors32[];
 
 s32 Func_0200014c(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 8 of 21 instructions
-   * differ in tla-en. */
   s32 t2;
 
   Func_020009b0();
   Func_02000a50(0);
-  t2 = GameFlag_Test(SPLIT_CONSTANT(0x301));
+  t2 = GameFlag_Test(0x301);
   if (t2 != 0) {
     Func_02000a18((s32)MsgYallamInteriors36);
   } else {

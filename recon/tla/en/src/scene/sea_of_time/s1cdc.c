@@ -17,8 +17,8 @@ s32 Func_02001cdc(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room1) {
     gData_020022c8 = gFrameCount;
     gData_020022cc = 1;
-    Dma_Set((const void *)SPLIT_CONSTANT(0x5000062), gData_020026c0, SPLIT_CONSTANT(0x8000000e),
-            (volatile u32 *)SPLIT_CONSTANT(0x40000d4));
+    Dma_Set((const void *)0x05000062, gData_020026c0, 0x8000000e,
+            (volatile u32 *)0x040000d4);
     if (GameFlag_Test(0x200)) {
       u32 *state = gSceneState;
       u32 offset, i;
@@ -40,30 +40,30 @@ s32 Func_02001cdc(void) {
     gData_020022cc = 0;
     if (gMainRoutineWork.entrance <= 4) {
       if (!GameFlag_Test(0x940)) {
-        Dma_Set((const void *)SPLIT_CONSTANT(0x5000062), gData_020026c0, SPLIT_CONSTANT(0x8000000e),
-                (volatile u32 *)SPLIT_CONSTANT(0x40000d4));
+        Dma_Set((const void *)0x05000062, gData_020026c0, 0x8000000e,
+                (volatile u32 *)0x040000d4);
       } else {
         if (!GameFlag_Test(0xa90))
           Func_020018a8(21, 23, 9);
-        if (!GameFlag_Test(SPLIT_CONSTANT(0xa91)))
+        if (!GameFlag_Test(0xa91))
           Func_020018a8(37, 17, 10);
-        if (!GameFlag_Test(SPLIT_CONSTANT(0xa93)))
+        if (!GameFlag_Test(0xa93))
           Func_020018a8(47, 27, 12);
-        if (!GameFlag_Test(SPLIT_CONSTANT(0xa94)))
+        if (!GameFlag_Test(0xa94))
           Func_020018a8(59, 19, 13);
         {
           void *block = Ram_HeapSlots->block32;
 
-          *(volatile u16 *)0x0500001e &= SPLIT_CONSTANT(0xffe0);
-          Dma_Set((const void *)0x05000000, block, SPLIT_CONSTANT(0x84000070),
-                  (volatile u32 *)SPLIT_CONSTANT(0x40000d4));
+          *(volatile u16 *)0x0500001e &= 0xffe0;
+          Dma_Set((const void *)0x05000000, block, 0x84000070,
+                  (volatile u32 *)0x040000d4);
         }
         Func_0200201c(0x10000, 0);
       }
       if (gMainRoutineWork.entrance == 4 && !GameFlag_Test(265))
         Func_02001a14();
     } else {
-      if (!GameFlag_Test(SPLIT_CONSTANT(0xa95)))
+      if (!GameFlag_Test(0xa95))
         Func_020018a8(89, 85, 9);
     }
   }

@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "dma.h"
 
 extern const void *gDisplayScroll_LineTable[];
@@ -10,9 +9,6 @@ void Func_081a0cac(void);
 void Func_081a0d78(void);
 
 void Func_081a0fb8(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 0 of 37 instructions
-   * differ in tla-en. */
   s32 i;
   u32 *objects;
 
@@ -23,6 +19,5 @@ void Func_081a0fb8(void) {
   objects = gDisplayScroll_Objects;
   for (i = 0; i != 0x100; i++)
     *objects++ = 0;
-  Dma_Set(gDisplayScroll_Objects, OAM, DMA_COPY_WORDS(256),
-          SPLIT_CONSTANT(REG_DMA3));
+  Dma_Set(gDisplayScroll_Objects, OAM, DMA_COPY_WORDS(256), REG_DMA3);
 }

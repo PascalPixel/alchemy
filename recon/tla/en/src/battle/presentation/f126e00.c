@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "iwram_call.h"
 #include "ram_buffer.h"
 
@@ -83,7 +82,7 @@ void Func_08126e00(void) {
       dist = FixedSqrt((spark->pos[0] >> 8) * (spark->pos[0] >> 8) +
                        (spark->pos[1] >> 8) * (spark->pos[1] >> 8) +
                        (spark->pos[2] >> 8) * (spark->pos[2] >> 8));
-      if (dist <= SPLIT_CONSTANT(0xfff)) {
+      if (dist <= 0xfff) {
         spark->life = 0;
       } else {
         scale = Iwram_RatioMulQ14(dist, 0x10000);
@@ -91,8 +90,8 @@ void Func_08126e00(void) {
         /* FAKEMATCH(temporary): the multiply called through a local pointer
          * to its fixed entry, set before the spiral, so its address is
          * loaded before the cursor and the axis count; as plain
-         * Iwram_MulQ16Entry calls, 12 of 267 instructions differ in tla-en. */
-        mul = Iwram_MulQ16Entry;
+         * Iwram_MulQ16 calls, 12 of 267 instructions differ in tla-en. */
+        mul = Iwram_MulQ16;
         pos = spark->pos;
         for (k = 2; k >= 0; k--) {
           step = mul(mul(-*pos >> 8, scale), 0x13000);

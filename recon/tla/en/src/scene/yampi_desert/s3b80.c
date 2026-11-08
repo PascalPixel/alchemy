@@ -109,11 +109,11 @@ void Func_02003b80(void) {
     x = (x >> 16) - 8;
     /* FAKEMATCH(wrapper): forwarded, so -0x20000 is built for the call and again
      * for the sum; as a direct call, 276 of 252 instructions differ in tla-en. */
-    sy = ((sy + Value2((s32 (*)())Iwram_MulQ16Entry, -0x20000, Math_Sine(entry->phase)) + -0x20000) >> 16) - 4;
+    sy = ((sy + Value2((s32 (*)())Iwram_MulQ16, -0x20000, Math_Sine(entry->phase)) + -0x20000) >> 16) - 4;
     depth = ((y + z) >> 16) + 58;
     if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
       continue;
-    x &= SPLIT_CONSTANT(0x1ff);
+    x &= 511;
     sy &= 255;
     p = oam;
     *p++ = 0;

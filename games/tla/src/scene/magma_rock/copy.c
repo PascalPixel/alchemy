@@ -10,17 +10,11 @@ void Func_02001fb0(void) {
 }
 
 void Func_02001fd4(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 17 instructions
-   * differ in tla-en. */
   Call6((void (*)())Func_02003aa4, 121, 48, 1, 3, 125, 48);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x251));
+  GameFlag_SetBit(0x251);
 }
 
 void Func_02001ffc(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 17 instructions
-   * differ in tla-en. */
   Call6((void (*)())Func_02003aa4, 108, 56, 1, 3, 109, 56);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x252));
+  GameFlag_SetBit(0x252);
 }

@@ -2,7 +2,6 @@
 /// Tiles: build a map of consecutive byte values.
 
 #include "types.h"
-#include "call.h"
 #include "iwram_call.h"
 #include "scene.h"
 
@@ -33,5 +32,5 @@ void Graphics_BuildSequentialTileTable(s32 *dst) {
   /* FAKEMATCH: called through a local pointer to its fixed entry; as a plain
    * call through the header, all six ⚓️ editions differ. */
   fill = Iwram_FillWordsEntry;
-  ValueLr3((s32 (*)())fill, (s32)(dst), (s32)(544), (s32)(-1));
+  fill(dst, 544, -1);
 }

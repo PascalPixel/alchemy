@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
 #include "heap_release.h"
@@ -19,7 +18,7 @@
 
 // The whole effect work block: struct BattleEffectWork names only its first
 // 0x78f4 bytes.
-#define BATTLE_EFFECT_WORK_SIZE SPLIT_CONSTANT(0x7b7c)
+#define BATTLE_EFFECT_WORK_SIZE 0x7b7c
 
 // ⚓️'s blitter modes run the other way from The Broken Seal's.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
@@ -143,7 +142,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x3000, 0,
                              0);
-  ValueLr4((s32 (*)())Resource_LoadAndDecompress, (s32)((s32)&ResourceId_Data0DA), (s32)(Data_02012000), (s32)(0), (s32)(0));
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, Data_02012000, 0, 0);
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);

@@ -86,7 +86,7 @@ body:
         wait(16);
         Func_02000c4c(-2, pillar->terrainId);
         wait(4);
-        Call3((void (*)())Func_02001470, -1, -1, SPLIT_CONSTANT(0xe666));
+        Call3((void (*)())Func_02001470, -1, -1, 0xe666);
         wait(8);
         *flags = 3;
         wait(5);

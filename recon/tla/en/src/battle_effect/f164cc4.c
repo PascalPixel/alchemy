@@ -212,7 +212,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     struct MotionObject *user = GetBattleObjectSlotFar(effect->actor)->object;
 
     user->velocityY = 0xa0000;
-    user->verticalMotionStrength = SPLIT_CONSTANT(0x91eb);
+    user->verticalMotionStrength = 0x91eb;
     Func_0814cd48(effect->actor, -1, 2, -1, 0);
     Sound_PlayFar(SE_RISE);
     direction = effect->side == 1 ? mode : -1;
@@ -242,7 +242,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       }
     }
   } else {
-    BattleEffect_SpawnObjects(1, SPLIT_CONSTANT(0x28a), 3);
+    BattleEffect_SpawnObjects(1, 650, 3);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_FlameSheetB, work->sheet, 1, 1);
   if (mode == 1)

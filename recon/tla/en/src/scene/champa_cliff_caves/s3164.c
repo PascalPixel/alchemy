@@ -1,5 +1,4 @@
 #include "../../../../../../games/tla/src/scene/champa_cliff_caves/scene.h"
-#include "call.h"
 
 struct ChampaCliffCavesWork {
   u8 tiles[0x1000];
@@ -55,7 +54,7 @@ void Func_02003164(const struct Vec3 *origin) {
     if (state == 0) {
       work->field1064 += 0x1000;
       if (work->field1064 > 0x14ccb) {
-        work->field1064 = SPLIT_CONSTANT(0x14ccc);
+        work->field1064 = 0x14ccc;
         state = 999;
       }
     }

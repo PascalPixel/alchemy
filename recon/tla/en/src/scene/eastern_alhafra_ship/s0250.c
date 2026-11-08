@@ -27,21 +27,21 @@ s32 Func_02000250(void) {
 
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   if (gMainRoutineWork.entrance == 99) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0x8aa));
-    GameFlag_SetBit(SPLIT_CONSTANT(0x8ab));
+    GameFlag_SetBit(0x8aa);
+    GameFlag_SetBit(0x8ab);
     gMainRoutineWork.secondary = 3;
     gMainRoutineWork.entrance = 3;
     Func_02000c5c();
   }
-  if (GameFlag_Test(SPLIT_CONSTANT(0x8a7))) {
+  if (GameFlag_Test(0x8a7)) {
     Func_02003198(10, 0, 0);
     Func_02003198(11, 0, 0);
     Func_02003198(8, 0, 0);
     Func_02003198(9, 0, 0);
-  } else if (GameFlag_Test(SPLIT_CONSTANT(0x8ab))) {
+  } else if (GameFlag_Test(0x8ab)) {
     Func_02003198(8, 0, 0);
     Func_02003198(9, 0, 0);
-    if (!GameFlag_Test(SPLIT_CONSTANT(0x8bd))) {
+    if (!GameFlag_Test(0x8bd)) {
       Func_02003198(10, 0, 0);
       Func_02003198(11, 0, 0);
     }

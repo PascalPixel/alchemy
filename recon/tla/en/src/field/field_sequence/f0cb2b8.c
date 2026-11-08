@@ -163,7 +163,7 @@ void Func_080cb2b8(u32 layer, s32 x, s32 y, s32 z) {
       if (gPartyStep.avoidDistance <= 0) {
         gPartyStep.avoidDistance = 1;
         if (work->psynergy == 0)
-          work->psynergy = SPLIT_CONSTANT(0x2096);
+          work->psynergy = 0x2096;
       }
     }
   }

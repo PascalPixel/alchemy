@@ -96,7 +96,7 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
   void *sheet;
   s32 i, frame, column, zero, entry, sparkEntry, tiles, flying, sparkTiles;
 
-  work = HeapSlot_AllocFar(220, SPLIT_CONSTANT(0x1e58));
+  work = HeapSlot_AllocFar(220, 0x1e58);
   flying = 0;
   Func_020009f0(Resource_GetTableEntry((s32)&ResourceId_FieldEffectIceShard),
                 work);
@@ -139,14 +139,14 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
     *timer = -(Random16Far() << 5 >> 16);
     timer += 4;
   }
-  Dma_Set(Field_Palette685, (void *)0x50003e0, SPLIT_CONSTANT(0x80000010),
-          (volatile u32 *)SPLIT_CONSTANT(0x40000d4));
+  Dma_Set(Field_Palette685, (void *)0x50003e0, 0x80000010,
+          (volatile u32 *)0x40000d4);
   for (frame = 0; frame <= 149; frame++) {
     if ((frame & 31) == 0) {
       Func_02000b58(145);
     }
     if (frame == 60) {
-      Func_02000b10(SPLIT_CONSTANT(0x7fff), 0);
+      Func_02000b10(0x7fff, 0);
       Func_02000b18(90);
       Func_02000b58(141);
     }

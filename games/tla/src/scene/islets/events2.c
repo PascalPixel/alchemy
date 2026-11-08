@@ -1,0 +1,289 @@
+#include "types.h"
+#include "actor.h"
+#include "main_routine_work.h"
+#include "ram_buffer.h"
+#include "event_work.h"
+#include "call.h"
+#include "text/msg_ids.h"
+#include "scene_tables.h"
+
+void Func_02003e64();
+void Func_02003e6c();
+void Func_02003f24();
+void Func_02003f2c();
+void Func_02003fa4();
+void GameFlag_Test();
+void Actor_Stop();
+void Actor_SetAngleToward();
+void Actor_WatchAndSetScript();
+void wait();
+struct Actor *Actor_GetById();
+void Func_02003ff4();
+void FieldEvent_Wait();
+void Func_02003f3c();
+void Func_02003f5c();
+void GameFlag_SetBit();
+void Actor_ArmCallback();
+void Actor_Jump();
+void Func_02003df4();
+void Func_02003dfc();
+void Func_02003e3c();
+void Func_02003fbc();
+void Func_02003fc4();
+void Actor_SetSingleChildFlags();
+void PartyInventory_FindOwner();
+void PartyInventory_GiveItem();
+void PartyInventory_Remove();
+void FieldMessage_Show();
+
+void Func_02000210(void) {
+  s32 result0;
+  s32 result1;
+
+  Func_02003e64();
+  Func_02003fa4(0);
+  result0 = Value1((s32 (*)())GameFlag_Test, 0xaa2);
+  if (result0 == 0)
+    goto L_02008260;
+  result1 = Value1((s32 (*)())GameFlag_Test, 0x200);
+  if (result1 == 0)
+    goto L_02008250;
+  Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
+  Func_02003f24((s32)MsgPenPenPen);
+  goto L_02008256;
+L_02008250:
+  Func_02003f24((s32)MsgPenPen2);
+L_02008256:
+  Func_02003f2c(9, 0);
+  goto L_02008294;
+L_02008260:
+  Actor_Stop(9);
+  wait(1);
+  Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
+  Func_02003f24((s32)MsgPenPen3);
+  Func_02003f2c(9, 0);
+  Actor_WatchAndSetScript(9, 19);
+L_02008294:
+  Func_02003e6c();
+  return;
+}
+
+void Func_020002ac(void) {
+  s32 result0;
+  s32 result1;
+
+  Func_02003e64();
+  Func_02003fa4(0);
+  result0 = Value1((s32 (*)())GameFlag_Test, 0xaa2);
+  if (result0 == 0)
+    goto L_020082ea;
+  result1 = Value1((s32 (*)())GameFlag_Test, 0x200);
+  if (result1 == 0)
+    goto L_020082da;
+  Func_02003f24((s32)MsgThereIsNothing);
+  goto L_020082e0;
+L_020082da:
+  Func_02003f24((s32)MsgIMSoHappy);
+L_020082e0:
+  Func_02003f2c(9, 0);
+  goto L_020082f8;
+L_020082ea:
+  Func_02003f24((s32)MsgMyDarlingPengulina);
+  Func_02003f2c(9, 0);
+L_020082f8:
+  Func_02003e6c();
+  return;
+}
+
+void Func_0200030c(void) {
+  s32 result0;
+  s32 result1;
+
+  Func_02003e64();
+  Func_02003fa4(0);
+  result0 = Value1((s32 (*)())GameFlag_Test, 0xaa2);
+  if (result0 == 0)
+    goto L_0200835c;
+  result1 = Value1((s32 (*)())GameFlag_Test, 0x200);
+  if (result1 == 0)
+    goto L_0200834c;
+  Actor_SetAngleToward(19, gMainRoutineWork.currentOwner, 0);
+  Func_02003f24((s32)MsgPenPenPehnnnn);
+  goto L_02008352;
+L_0200834c:
+  Func_02003f24((s32)MsgPenPen2);
+L_02008352:
+  Func_02003f2c(19, 0);
+  goto L_0200836a;
+L_0200835c:
+  Func_02003f24((s32)MsgPenPenPehnnn);
+  Func_02003f2c(19, 0);
+L_0200836a:
+  Func_02003e6c();
+  return;
+}
+
+void Func_02000380(void) {
+  s32 result0;
+  s32 result1;
+
+  Func_02003e64();
+  Func_02003fa4(0);
+  result0 = Value1((s32 (*)())GameFlag_Test, 0xaa2);
+  if (result0 == 0)
+    goto L_020083be;
+  result1 = Value1((s32 (*)())GameFlag_Test, 0x200);
+  if (result1 == 0)
+    goto L_020083ae;
+  Func_02003f24((s32)MsgPengusIsPretty);
+  goto L_020083b4;
+L_020083ae:
+  Func_02003f24((s32)MsgIMSoGlad);
+L_020083b4:
+  Func_02003f2c(19, 0);
+  goto L_020083cc;
+L_020083be:
+  Func_02003f24((s32)MsgOhhMyLeg);
+  Func_02003f2c(19, 0);
+L_020083cc:
+  return;
+}
+
+s32 Func_020003dc(void) {
+  u16 turn;
+  s32 facing;
+
+  turn = Actor_GetById(gMainRoutineWork.currentOwner)->angle + 0x5fff;
+  facing = 1;
+  if (turn >= 0x3fff)
+    facing = 0;
+  return facing;
+}
+
+void Func_0200040c(void) {
+  s32 result0;
+
+  result0 = Func_020003dc();
+  if (result0 == 0)
+    goto L_0200841e;
+  Func_02003ff4(21);
+  goto L_0200843a;
+L_0200841e:
+  Func_02003e64();
+  Func_02003fa4(0);
+  Func_02003f24((s32)MsgIAmHere);
+  Func_02003f2c(21, 0);
+  Func_02003e6c();
+L_0200843a:
+  return;
+}
+
+void Func_02000440(void) {
+  s32 result0;
+
+  Func_02003e64();
+  Func_02003fa4(0);
+  result0 = Value1((s32 (*)())GameFlag_Test, 0x214);
+  if (result0 != 0)
+    goto L_020084b6;
+  Func_02003f24((s32)MsgWeLikeThis);
+  Func_02003f2c(8, 0);
+  Call2((void (*)())Func_02003f5c, 9, 0x102);
+  Call3((void (*)())Actor_ArmCallback, 9, FACING_WEST, 0);
+  Func_02003f2c(9, 0);
+  Func_02003f3c(8, FACING_EAST);
+  Actor_Jump(9, 4, 10);
+  Func_02003f2c(9, 0);
+  Call2((void (*)())Func_02003f5c, 9, 0x102);
+  FieldEvent_Wait(20);
+  GameFlag_SetBit(0x214);
+L_020084b6:
+  Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
+  Func_02003f24((s32)MsgLookWeRe);
+  Func_02003f2c(8, 0);
+  Call3((void (*)())Actor_ArmCallback, 9, FACING_SOUTH + FACING_STEP, 0);
+  Func_02003e6c();
+  return;
+}
+
+void Func_020004f4(void) {
+  Func_02003e64();
+  Func_02003fa4(0);
+  Func_02003f24((s32)MsgTheEasternSea);
+  Func_02003f2c(9, 0);
+  Func_02003f2c(9, 0);
+  Func_02003e6c();
+  return;
+}
+
+void Func_02000520(void) {
+  s32 result0;
+
+  Func_02003e64();
+  Func_02003fa4(0);
+  result0 = Value1((s32 (*)())GameFlag_Test, 0xaa4);
+  if (result0 == 0)
+    goto L_0200854a;
+  Actor_WatchAndSetScript(10, gMainRoutineWork.currentOwner);
+L_0200854a:
+  Func_02003f24((s32)MsgChirpChirp2);
+  Func_02003f2c(10, 0);
+  Func_02003e6c();
+  return;
+}
+
+/// Object 10's talk, and its exchange of the party's item 0x1c4 for item 0x1c5.
+void Func_02000568(void) {
+  struct Actor *leader;
+  struct Actor *object;
+  struct Actor *spawned;
+
+  Func_02003e64();
+  Func_02003fa4(0);
+  if (Value1((s32 (*)())PartyInventory_FindOwner, 0x1c4) == -1) {
+    if (Value1((s32 (*)())GameFlag_Test, 0xaa4)) {
+      Actor_WatchAndSetScript(10, gMainRoutineWork.currentOwner);
+      Func_02003f24((s32)MsgWhatDoYou);
+    } else {
+      Func_02003f24((s32)MsgILoveFeeling);
+    }
+    Func_02003f2c(10, 0);
+  } else {
+    leader = Actor_GetById(gMainRoutineWork.currentOwner);
+    object = Actor_GetById(10);
+    Actor_SetAngleToward(10, gMainRoutineWork.currentOwner, 0);
+    Actor_Jump(10, 4, 10);
+    Func_02003f24((s32)MsgOhMyThat);
+    Func_02003f2c(10, 0);
+    Actor_SetModeById(10, 4);
+    Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)object,
+          (leader->x + object->x) / 2, leader->y, (leader->z + object->z) / 2);
+    wait(20);
+    Actor_SetPositionAndResetMotion(object, PIXELS(120), PIXELS(128),
+                                    PIXELS(312));
+    Actor_SetModeById(10, 5);
+    wait(10);
+    Func_02003f3c(gMainRoutineWork.currentOwner, FACING_SOUTH);
+    spawned = (struct Actor *)Value4((s32 (*)())Func_02003df4, 0x1e9, leader->x,
+                                     0x980000, leader->z);
+    if (spawned != 0) {
+      Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
+      Call2((void (*)())Func_02003e3c, (s32)spawned, 0x1c5);
+      Actor_SetSingleChildFlags(spawned, 0);
+      spawned->motionFlags = 0;
+    }
+    FieldEvent_Wait(10);
+    Func_02003fc4();
+    FieldMessage_Show((s32)MsgOhMyThat + 1, 1);
+    PartyInventory_Remove(0x1c4);
+    Value2((s32 (*)())PartyInventory_GiveItem, 0x1c5, 0);
+    Func_02003fbc();
+    if (spawned != 0) {
+      Func_02003dfc(spawned);
+      Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
+    }
+    Func_02003f3c(10, FACING_EAST);
+    GameFlag_SetBit(0xaa4);
+  }
+  Func_02003e6c();
+}

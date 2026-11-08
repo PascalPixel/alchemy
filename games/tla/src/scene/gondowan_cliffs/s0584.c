@@ -11,21 +11,15 @@ void Func_0200124c();
 s32 Map_GetTerrainHeight(s32, s32, s32);
 
 void Func_02000584(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 25 instructions
-   * differ in tla-en. */
   struct Actor *object = Actor_GetById(12);
 
   object->priorityFlags = 0;
   object->motionFlags = 0;
   Call6(Func_020011d4, 79, 28, 1, 1, 81, 28);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x201));
+  GameFlag_SetBit(0x201);
 }
 
 void Func_020005bc(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 30 instructions
-   * differ in tla-en. */
   struct Actor *object = Actor_GetById(13);
 
   object->priorityFlags = 0;
@@ -33,15 +27,12 @@ void Func_020005bc(void) {
   object->terrainHeight = PIXELS(32);
   object->y = PIXELS(32);
   Call6(Func_020011d4, 115, 35, 1, 1, 117, 35);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x202));
+  GameFlag_SetBit(0x202);
 }
 
-void Func_02000600(void) { GameFlag_SetBit(SPLIT_CONSTANT(0x885)); }
+void Func_02000600(void) { GameFlag_SetBit(0x885); }
 
 void Func_02000610(s32 unused, s32 cell) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 34 instructions
-   * differ in tla-en. */
   struct Actor *object;
 
   if (cell == 30) {
@@ -50,6 +41,6 @@ void Func_02000610(s32 unused, s32 cell) {
     Call3(Func_0200124c, 17, PIXELS(1912), PIXELS(728));
     object->terrainHeight = object->y =
         Map_GetTerrainHeight(0, object->x, object->z);
-    GameFlag_SetBit(SPLIT_CONSTANT(0x886));
+    GameFlag_SetBit(0x886);
   }
 }

@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "scene_tables.h"
 
@@ -20,7 +19,7 @@ void Func_0200102c(void) {
   right->motionFlags = 0;
   left->y = 0;
   right->y = 0;
-  if (GameFlag_Test(SPLIT_CONSTANT(0x8c9)) != 0) {
+  if (GameFlag_Test(0x8c9) != 0) {
     if (GameFlag_Test(0x109) == 0) {
       left->x += PIXELS(-12);
       right->x += 0xc0000;

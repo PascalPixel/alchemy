@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "battle_display.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -21,7 +20,7 @@
 static __inline__ s32 CopyWords_(void *destination, const void *source,
                                  s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWordsEntry, 18 of 1243 instructions differ in tla-en. */
+   * Iwram_CopyWords, 18 of 1243 instructions differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 
@@ -353,7 +352,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
       point[2] = object->z;
       SceneTransform_ApplyPosition(point);
       if (frame == start + 20)
-        ValueLr1((s32 (*)())Sound_PlayFar, (s32)(126));
+        Sound_PlayFar(126);
       if (mode == 8) {
         if (frame == start + 41)
           Func_0814cd48(effect->actors[member], 7, -1, member, 32);

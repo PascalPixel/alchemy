@@ -1,5 +1,4 @@
 #include "battle.h"
-#include "call.h"
 #include "graphics.h"
 #include "lib.h"
 #include "resource.h"
@@ -64,7 +63,7 @@ extern u16 Data_08197984[];  // ... cell offsets
 extern u16 gData_08197410[]; // dot sizes 1 to 10: cell offsets in the sheet
 
 #define STREAK_SHEET 0x3000 // the ember streaks, after the flashes
-#define FORMATION_RESOURCE SPLIT_CONSTANT(0x287)
+#define FORMATION_RESOURCE 647
 
 // Summon 7 (mode 0; mode 1 is the same scene cast from the caster's side,
 // without the formation): streaks rain down and splash, sparks and grains
@@ -103,13 +102,13 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
     const void *lightning =
         Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet);
     s32 (*copy)(void *destination, const void *source, s32 size) =
-        Iwram_CopyWordsEntry;
+        Iwram_CopyWords;
 
     /* FAKEMATCH(temporary): the routine's address named once the palette's
      * source is fetched, so its pool load leads the destination's shift; as
      * Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(...), 128), 2
      * of 1072 instructions differ in tla-en. */
-    ValueLr3((s32 (*)())copy, (s32)((void *)BG_PLTT), (s32)(lightning), (s32)(128));
+    copy((void *)BG_PLTT, lightning, 128);
   }
   work->transferMode = 2;
   work->transferValue = 75;
@@ -163,7 +162,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
       else
         streak->x = (Random16() & 127) - 128;
       streak->y = (Random16() & 7) - 72;
-      streak->variant = -(ValueLr0((s32 (*)())Random16) & 31); // frames before it falls
+      streak->variant = -(Random16() & 31); // frames before it falls
     }
     for (i = 0; i != 512; i++)
       PARTICLES[i].variant = -1;
@@ -271,7 +270,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 48)
         Sound_PlayFar(141);
       if (frame == 128)
-        ValueLr1((s32 (*)())Sound_PlayFar, (s32)(145));
+        Sound_PlayFar(145);
 
       // Flashes fly out sideways, one a frame from 129.
       if (frame >= 129 && frame <= 175) {

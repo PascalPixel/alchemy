@@ -1,5 +1,4 @@
 #include "battle_effect.h"
-#include "call.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
 #include "io_reg.h"
@@ -121,7 +120,7 @@ extern const s8 Data_08196e9c[];   // the hexagon's corners (z, y)
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWordsEntry, 2 of 743 instructions differ in tla-en. */
+   * Iwram_CopyWords, 2 of 743 instructions differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 
@@ -291,7 +290,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
 
         point[1] = caster->y - Trig_Cos(angle) * 40 + 0x200000;
         point[2] = caster->z + Trig_Sin(angle) * 40;
-        ValueLr2((s32 (*)())EffectPosition_ProjectPoint, (s32)(point), (s32)(&ring));
+        EffectPosition_ProjectPoint(point, &ring);
         ring.x >>= 1;
         if (ring.depth <= 159) {
           ring.depth = 160;

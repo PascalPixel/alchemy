@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "battle.h"
 #include "battle_unit.h"
 #include "battle_type.h"
@@ -79,11 +78,11 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
     s32 ratio;
     // Called through a local, as camera/bounds.c calls it: the routine's
     // address is then loaded ahead of the shift that finishes param.
-    s32 (*ratioMul)(s32, s32) = Iwram_RatioMulQ14Entry;
+    s32 (*ratioMul)(s32, s32) = Iwram_RatioMulQ14;
 
     param = 255;
     param <<= 17;
-    ratio = ValueLr2((s32 (*)())ratioMul, (s32)(param), (s32)(192 << 8));
+    ratio = ratioMul(param, 192 << 8);
     param = 255;
     param <<= 17;
     Projection_Set(param, ratio, 0x7fff0000);

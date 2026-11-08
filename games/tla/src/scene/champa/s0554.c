@@ -15,14 +15,11 @@ extern u8 MsgChampa35[];
 extern u8 MsgChampa36[];
 
 void Func_02000554(s32 a0) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 12 of 21 instructions
-   * differ in tla-en. */
   s32 t0;
 
-  t0 = Value1(GameFlag_Test, SPLIT_CONSTANT(0x972));
+  t0 = Value1(GameFlag_Test, 0x972);
   if (t0 == 0) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0x972));
+    GameFlag_SetBit(0x972);
     Func_02002adc((s32)MsgChampa35);
   } else {
     Func_02002adc((s32)MsgChampa36);

@@ -1,0 +1,41 @@
+#include "types.h"
+#define FIELD_AT(base, type, off)                                              \
+  (((struct {                                                                  \
+     u8 pad[off];                                                              \
+     type v;                                                                   \
+   } *)(base))                                                                 \
+       ->v)
+
+#include "call.h"
+s32 GameFlag_Test(s32 a);
+void Func_0200279c(s32 a, s32 b, s32 c, s32 d);
+void wait(s32 a);
+void Actor_SetMovementTypeById(s32 a, s32 b);
+void Actor_SetSpritePriority(s32 a, s32 b);
+s32 Actor_GetById(s32 a);
+void Actor_SetPartAttribute(s32 a, s32 b);
+extern u8 gData_020047ac[];
+extern u8 gData_02004848[];
+extern u8 gData_020048e4[];
+
+void Func_020027e4(void) {
+  s32 t0;
+  s32 t1;
+
+  t0 = GameFlag_Test(0xa3d);
+  if (t0 != 0) {
+    t1 = GameFlag_Test(0x109);
+    if (t1 == 0) {
+      Func_0200279c(0x10, 0x218, 0x168, 0);
+      Func_0200279c(0x11, 0x218, 0x1a8, 1);
+      Func_0200279c(0x12, 0x244, 0x1a4, 2);
+      wait(1);
+      Actor_SetMovementTypeById(16, (s32)gData_020047ac);
+      Actor_SetMovementTypeById(17, (s32)gData_02004848);
+      Actor_SetMovementTypeById(18, (s32)gData_020048e4);
+      wait(1);
+    }
+  }
+  Actor_SetSpritePriority(20, 1);
+  Actor_SetPartAttribute(Actor_GetById(20), 0xf);
+}

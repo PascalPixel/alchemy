@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "field_effect.h"
 
 /// One entry of the cell lists Func_020005ac walks.
@@ -54,8 +53,8 @@ void Func_0200043c(struct TreasureIsleCell *cells, s16 index) {
   CameraBounds((cell->x << 20) + 0x80000, -1, (cell->z << 20) + 0x80000, 1);
   Func_02001014();
   SetFade(0, 0x100000, 0x10000);
-  SetFade(-1, -1, SPLIT_CONSTANT(0xe666));
-  Func_0200106c(SPLIT_CONSTANT(567));
+  SetFade(-1, -1, 0xe666);
+  Func_0200106c(567);
   options.startScaleX = 0x13333;
   options.startScaleY = 0x18000;
   options.priority = 1;
@@ -63,7 +62,7 @@ void Func_0200043c(struct TreasureIsleCell *cells, s16 index) {
   options.script = gData_02001128;
   Func_0200015c((cell->x << 20) + 0x80000, 0, (cell->z << 20) + 0x140000, 0, 0,
                 0, 0x3a0000, &options);
-  options.startScaleX = SPLIT_CONSTANT(0x9999);
+  options.startScaleX = 0x9999;
   Func_0200015c((cell->x << 20) - 0x20000, 0, (cell->z << 20) + 0x80000, 0, 0,
                 0, 0x3a0000, &options);
   Func_0200015c((cell->x << 20) + 0x120000, 0, (cell->z << 20) + 0x80000, 0, 0,

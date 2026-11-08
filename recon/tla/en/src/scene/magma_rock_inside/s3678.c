@@ -98,7 +98,7 @@ s32 Func_02003678(void) {
       CLOSED_BLEND();
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room3) {
     Func_02004e60(0);
-    if (GameFlag_Test(SPLIT_CONSTANT(0x9f1)))
+    if (GameFlag_Test(2545))
       Actor_GetById(11)->z = 166 << 18;
     Func_02004ed8(gData_02005508);
     Func_02004ec0();
@@ -132,11 +132,11 @@ s32 Func_02003678(void) {
       Actor_SetSpritePriority(23, 3);
       Actor_SetSpritePriority(24, 3);
       Actor_SetSpritePriority(25, 3);
-      if (GameFlag_Test(SPLIT_CONSTANT(0x9f2)))
+      if (GameFlag_Test(2546))
         Actor_GetById(23)->x = 172 << 17;
-      if (GameFlag_Test(SPLIT_CONSTANT(0x9f3)))
+      if (GameFlag_Test(2547))
         Actor_GetById(24)->x = 172 << 17;
-      if (GameFlag_Test(SPLIT_CONSTANT(0x9f4)))
+      if (GameFlag_Test(2548))
         Actor_GetById(25)->x = 172 << 17;
       Func_02004ed8(gData_02005520);
       Lower(26, 0);
@@ -168,7 +168,7 @@ s32 Func_02003678(void) {
     Func_02004f08(11, 1);
     Raise(8);
     Raise(9);
-    if (GameFlag_Test(SPLIT_CONSTANT(0x302))) {
+    if (GameFlag_Test(770)) {
       Func_02000694(0, 22, 26, 0);
       Func_02000694(0, 25, 26, 0);
       Actor_SetSpritePriority(64, 3);
@@ -178,11 +178,11 @@ s32 Func_02003678(void) {
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room6) {
     Func_02004e60(0);
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
-    if (Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x9f5))) {
+    if (Value1((s32 (*)())GameFlag_Test, 2549)) {
       Call6((void (*)())Func_02004ce8, 46, 74, 1, 1, 46, 73);
       Actor_GetById(9)->x = 190 << 18;
     }
-    if (Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x9f6)))
+    if (Value1((s32 (*)())GameFlag_Test, 2550))
       Call3((void (*)())Func_02004da0, 12, 230 << 18, 154 << 18);
     Func_02004ed8(gData_02005528);
     Func_02000800(8, gData_020053dc, 770);
@@ -190,9 +190,9 @@ s32 Func_02003678(void) {
     Func_02000800(11, gData_0200549c, 770);
     if (GameFlag_Test(770)) {
       Actor_SetModeById(9, 4);
-      if (Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x9f6)))
+      if (Value1((s32 (*)())GameFlag_Test, 2550))
         Actor_SetModeById(12, 4);
-      if (Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x9f5)))
+      if (Value1((s32 (*)())GameFlag_Test, 2549))
         Func_02000694(2, 46, 8, 0xff00);
       Func_02000694(0, 10, 45, 0);
       Func_02000694(0, 53, 40, 0);
@@ -212,30 +212,30 @@ s32 Func_02003678(void) {
     }
     if (++i != 3)
       goto room7;
-    if (GameFlag_Test(SPLIT_CONSTANT(0x9f7))) {
+    if (GameFlag_Test(2551)) {
       Actor_SetModeById(23, 4);
       Call3((void (*)())Func_02004da0, 23, 174 << 18, 162 << 18);
     }
     Func_02004ed8(gData_0200552e);
     Func_02004e60(0);
-    if (!Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x303)))
+    if (!Value1((s32 (*)())GameFlag_Test, 771))
       Call3((void (*)())Func_02004da0, 21, 0, 0);
     if (!Value1((s32 (*)())GameFlag_Test, 772))
       Call3((void (*)())Func_02004da0, 22, 0, 0);
-    if (Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x303)) &&
+    if (Value1((s32 (*)())GameFlag_Test, 771) &&
         Value1((s32 (*)())GameFlag_Test, 772)) {
       Lower(11, -0x200000);
       Actor_SetModeById(11, 4);
     } else {
       Func_02000694(0, 38, 18, 0xff00);
     }
-    if (GameFlag_Test(SPLIT_CONSTANT(0x9f9)))
+    if (GameFlag_Test(2553))
       Actor_SetModeById(12, 0);
     for (i = 0; i != 4; i++)
       Actor_SetModeById(i + 13, 2);
     for (i = 0; i != 11; i++)
       Actor_SetSingleChildFlags(Actor_GetById(i + 12), 0);
-    if (!GameFlag_Test(SPLIT_CONSTANT(0x9f8))) {
+    if (!GameFlag_Test(2552)) {
       for (i = 0; i != 9; i++)
         Call3((void (*)())Func_02004da0, i + 12, 0, 0);
     }
@@ -244,7 +244,7 @@ s32 Func_02003678(void) {
     GameFlag_SetBit(324);
     i = 0;
   room8:
-    if (GameFlag_Test(i + SPLIT_CONSTANT(0x202))) {
+    if (GameFlag_Test(i + 514)) {
       s32 y = 24 - i * 2;
 
       Call6((void (*)())Func_02004cd8, 65, 1, 80, y, 1, 2);
@@ -254,7 +254,7 @@ s32 Func_02003678(void) {
       goto room8;
     Actor_SetSingleChildFlags(Actor_GetById(10), 0);
     Actor_SetSingleChildFlags(Actor_GetById(11), 0);
-    if (GameFlag_Test(SPLIT_CONSTANT(0x305))) {
+    if (GameFlag_Test(773)) {
       Lower(9, -0x200000);
       Actor_SetModeById(9, 4);
     } else {

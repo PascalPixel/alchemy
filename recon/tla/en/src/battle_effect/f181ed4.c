@@ -1,5 +1,4 @@
 #include "battle_effect.h"
-#include "call.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
 #include "io_reg.h"
@@ -132,7 +131,7 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
     s32 spawned;
     work->transferMode = 2;
     work->transferValue = 75;
-    ValueLr2((s32 (*)())Task_Add, (s32)((s32)BattleEffect_ProcessPendingGraphicsTransfer), (s32)(0xc80));
+    Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
     spawned = 0;
     Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
     if (mode == 0) {

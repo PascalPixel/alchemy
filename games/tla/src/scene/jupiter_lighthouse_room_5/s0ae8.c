@@ -26,17 +26,14 @@ void Func_020001a4(void);
 /// is set (cleared once 0xa23 is), actors 23 and 24 placed, and with flag
 /// 0xa00 two more and the particle callback.
 s32 Func_02000ae8(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 16 of 111 instructions
-   * differ in tla-en. */
   struct Actor *object;
   s32 angle;
 
   ((struct JupiterLighthouseRoom5EventWork1ac *)Ram_HeapSlots->eventWork)
       ->value = 0x204;
-  if (Flag_IsSet(SPLIT_CONSTANT(0xa23)))
-    Flag_Clear(SPLIT_CONSTANT(0xa22));
-  if (Flag_IsSet(SPLIT_CONSTANT(0xa22))) {
+  if (Flag_IsSet(0xa23))
+    Flag_Clear(0xa22);
+  if (Flag_IsSet(0xa22)) {
     angle = 0x4000;
     Call4((void (*)())Func_02002900, 22, PIXELS(64), PIXELS(225), angle);
   }

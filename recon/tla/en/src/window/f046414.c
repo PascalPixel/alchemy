@@ -284,9 +284,9 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
     Text_DrawCharacterAtOffset((s32)MsgClassName + unit->classId, window, 80,
                                0);
     if (savedUnit->classId != unit->classId)
-      Window_SetTilemapEntry(window, SPLIT_CONSTANT(0xf728), 9, 0, page);
+      Window_SetTilemapEntry(window, 0xf728, 9, 0, page);
     else
-      Window_SetTilemapEntry(window, SPLIT_CONSTANT(0xf729), 9, 0, page);
+      Window_SetTilemapEntry(window, 0xf729, 9, 0, page);
 
     String_FormatNumberToHalfwords(numberText, unit->hp);
     Text_RenderWideStringInWindow(numberText + 7, window, 11, 1);

@@ -3,9 +3,9 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/gabomba_catacombs/entry.o"(.text)
-        "*/recon/tla/raw/src/scene/gabomba_catacombs/events.o"(.text)
-        "*/recon/tla/raw/src/scene/gabomba_catacombs/s08a0.o"(.text)
-        "*/recon/tla/raw/src/scene/gabomba_catacombs/events_b.o"(.text)
+        "*/games/tla/src/scene/gabomba_catacombs/events.o"(.text)
+        "*/games/tla/src/scene/gabomba_catacombs/s08a0.o"(.text)
+        "*/games/tla/src/scene/gabomba_catacombs/events_b.o"(.text)
         "*/recon/tla/raw/src/scene/gabomba_catacombs/s09d4.o"(.text)
         "*/games/tla/src/scene/gabomba_catacombs/s0d90.o"(.text)
         "*/games/tla/src/scene/gabomba_catacombs/scene_tables.o"(.text)

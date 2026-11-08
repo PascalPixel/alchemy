@@ -25,9 +25,6 @@ void Func_02004ff4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 /// moves a leader standing on that cell aside, and sets flag 0x30a, or 0x9bf
 /// once flag 0x927 is set.
 void Func_02000b6c(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 12 of 83 instructions
-   * differ in tla-en. */
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Call7(Func_02004ff4, 37, 26, 0, 3, 3, 61, 0);
@@ -41,13 +38,13 @@ void Func_02000b6c(void) {
       leader->velocityY = PIXELS(6);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     }
-    if (!GameFlag_Test(SPLIT_CONSTANT(0x927))) {
-      GameFlag_SetBit(SPLIT_CONSTANT(0x30a));
+    if (!GameFlag_Test(0x927)) {
+      GameFlag_SetBit(0x30a);
       FieldEvent_Wait(30);
       Func_02004fdc();
       Func_02004f6c(20);
     } else {
-      GameFlag_SetBit(SPLIT_CONSTANT(0x9bf));
+      GameFlag_SetBit(0x9bf);
       Func_02004e64();
     }
   }

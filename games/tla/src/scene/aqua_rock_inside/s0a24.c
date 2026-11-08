@@ -1,15 +1,12 @@
 #include "local.h"
 
 void Func_02000a24(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 6 of 45 instructions
-   * differ in tla-en. */
   s32 seen;
   const u8 *message;
 
   Func_02003d7c();
   Func_02003eac(0);
-  seen = GameFlag_Test(SPLIT_CONSTANT(0x95d));
+  seen = GameFlag_Test(0x95d);
   message = MsgCheckedTheColumn;
   if (!seen) {
     FieldMessage_Show(message, 1);

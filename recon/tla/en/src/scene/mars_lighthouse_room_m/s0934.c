@@ -46,7 +46,7 @@ void Func_02000934(s32 entrance) {
     if (gData_02003a80 == 3)
       Call6((void (*)())Func_02003178, 0, 125, 3, 3, 8, 67);
   }
-  IO_WRITE_QUEUE_PUSH(SPLIT_CONSTANT(0x4000052), Data_02003a7c | (16 - Data_02003a7c) << 8,
+  IO_WRITE_QUEUE_PUSH(0x04000052, Data_02003a7c | (16 - Data_02003a7c) << 8,
                       0x20000);
   IO_WRITE_QUEUE_PUSH(0x04000050, 0x3f42, 0x20000);
   Task_Add(Func_0200055c, 0x480);

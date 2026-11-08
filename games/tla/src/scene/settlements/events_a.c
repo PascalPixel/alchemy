@@ -1,15 +1,12 @@
 #include "local.h"
 
 void Func_02000404(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 20 instructions
-   * differ in tla-en. */
   s32 mode;
 
   Func_02002068();
   Func_02002150(0);
   Func_020020c0(11, 0, 0);
-  GameFlag_SetBit(SPLIT_CONSTANT(0xf5d));
+  GameFlag_SetBit(0xf5d);
   Func_02002130(193, 3);
   mode = 0;
   /* FAKEMATCH: the native loads the mode before the item; direct calls and

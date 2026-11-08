@@ -40,9 +40,6 @@ void Func_02002b54(s32 x, s32 z, s32 a, s32 b);
 void Func_02002c4c(s32 x, s32 z, s32 a, s32 b);
 
 void Func_020007a4(s32 unused, s32 id) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 26 of 230 instructions
-   * differ in tla-en. */
   struct Actor *object = Actor_GetById(id);
   s32 spot;
   s32 i;
@@ -76,14 +73,14 @@ void Func_020007a4(s32 unused, s32 id) {
       Call1(Func_02002c5c, 167);
     if (spot == 3 && Value1(GameFlag_Test, 2576))
       Call1(Func_02002c5c, 167);
-    if (spot == 4 && Value1(GameFlag_Test, SPLIT_CONSTANT(0xa11)))
+    if (spot == 4 && Value1(GameFlag_Test, 2577))
       Call1(Func_02002c5c, 167);
     Actor_Stop(gMainRoutineWork.currentOwner);
     Func_02002ba4(id, 0, 0);
-    if (Func_02000290() != 2 || !Value1(GameFlag_Test, SPLIT_CONSTANT(0xa16)))
+    if (Func_02000290() != 2 || !Value1(GameFlag_Test, 2582))
       return;
     object = Actor_GetById(17);
-    GameFlag_ClearBit(SPLIT_CONSTANT(0xa16));
+    GameFlag_ClearBit(2582);
     FieldEvent_Wait(10);
     Func_02002b6c();
     Func_02002c0c(0);
@@ -106,15 +103,15 @@ void Func_020007a4(s32 unused, s32 id) {
    * reloads it with the other; as object->z, 6 of 230 instructions differ in
    * tla-en. */
   if (object->x >> 20 == 8 && *(volatile s32 *)&object->z >> 20 == 12) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0xa1a));
+    GameFlag_SetBit(2586);
     Actor_SetSingleChildFlags(Actor_GetById(20), 0);
     FieldEvent_Wait(30);
     Func_02002c5c(167);
     Func_020005e8(1);
-    if (!Value1(GameFlag_Test, SPLIT_CONSTANT(0xa17)))
+    if (!Value1(GameFlag_Test, 2583))
       return;
     object = Actor_GetById(9);
-    GameFlag_ClearBit(SPLIT_CONSTANT(0xa17));
+    GameFlag_ClearBit(2583);
     FieldEvent_Wait(20);
     Func_02002c5c(151);
     Func_02002ad4(object, 3);

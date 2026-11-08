@@ -84,7 +84,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)heap->battleFxWork[0];
   canvas = heap->battleFxWork[1];
   parts = Ram_MapCellBuffer;
-  BattleEffect_StartTiledCanvas(SPLIT_CONSTANT(0x2001));
+  BattleEffect_StartTiledCanvas(0x2001);
   REG_BG2PA = 0x100;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DC, parts, 1, 1);
   BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER,

@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 
@@ -57,7 +56,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   margin = 4;
   flags = localId & 0xf000;
   message = (s16)work->messageId;
-  localId &= SPLIT_CONSTANT(0xfff);
+  localId &= 0xfff;
   x = 0;
   object = ObjectTable_Get(localId);
   work->currentOwner = localId;

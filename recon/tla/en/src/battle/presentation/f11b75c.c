@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "motobj.h"
 #include "sprite.h"
 #include "ram_buffer.h"
@@ -86,7 +85,7 @@ void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
       continue;
     if (object->recordStorageKind != 0)
       continue;
-    if ((battleObject->resource & 0xfff) == SPLIT_CONSTANT(0x231) ||
+    if ((battleObject->resource & 0xfff) == 561 ||
         (battleObject->resource & 0xfff) == 631 ||
         (battleObject->resource & 0xfff) == 638 ||
         (battleObject->resource & 0xfff) == 585 ||
@@ -108,7 +107,7 @@ void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
         records++;
       }
       record->flags = 0;
-      record = ResourceObject_CreateFar(spriteId + SPLIT_CONSTANT(0x2001));
+      record = ResourceObject_CreateFar(spriteId + 0x2001);
       if (record != 0) {
         record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
         *records = record;
@@ -135,7 +134,7 @@ void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
         }
         if ((spriteId = battleObject->effect) != 0) {
           if (record->width == 32)
-            spriteId = SPLIT_CONSTANT(687);
+            spriteId = 687;
           entry = ResourceMetadata_RegisterFar(record, spriteId);
           battleObject->effectEntry = entry;
           entry->priority = 0;

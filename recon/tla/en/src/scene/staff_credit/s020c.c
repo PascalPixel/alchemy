@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
 #include "iwram_call.h"
@@ -135,11 +134,11 @@ void Func_0200020c(s32 stage) {
     IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)(Data_020020bc + palette * 32),
                         0x80000010);
     {
-      void (*clear)(void *, s32) = (void (*)(void *, s32))Iwram_ClearWordsEntry;
+      void (*clear)(void *, s32) = (void (*)(void *, s32))Iwram_ClearWords;
       s32 size = 0x2000;
       void *tilesAt = (void *)0x06001000;
 
-      ValueLr2((s32 (*)())clear, (s32)(tilesAt), (s32)(size));
+      clear(tilesAt, size);
     }
     wait(1);
     for (y = 0; y != 8; y++) {
@@ -339,7 +338,7 @@ void Func_0200020c(s32 stage) {
     Func_0200207c();
     Camera_MoveWithinMapBounds_(gData_02003d48[stage][0] << 16,
                                 gData_02003d48[stage][1] << 16, 1);
-    Func_0200208c(SPLIT_CONSTANT(0xb333), 60);
+    Func_0200208c(0xb333, 60);
     for (frame = 0; frame != 124;) {
       map->yaw += 0xffe0;
       if (frame == 60) {
@@ -356,7 +355,7 @@ void Func_0200020c(s32 stage) {
   }
   Heap_Release(buffer);
   Func_02001f74();
-  QueueIoWriteDelay2(SPLIT_CONSTANT(0x4000052), gData_02003dbc);
-  QueueIoWriteDelay2(SPLIT_CONSTANT(0x4000050), 0);
+  QueueIoWriteDelay2(0x04000052, gData_02003dbc);
+  QueueIoWriteDelay2(0x04000050, 0);
   GameFlag_SetBit(0x101);
 }

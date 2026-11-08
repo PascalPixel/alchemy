@@ -47,12 +47,12 @@ s32 Func_02000a5c(s32 a0, s32 a1, s32 a2) {
   s32 result, i, phase, sine, answer;
 
   actor = (struct Actor *)Actor_GetById(11);
-  result = GameFlag_Test(SPLIT_CONSTANT(0x965));
+  result = GameFlag_Test(0x965);
   if (result != 0)
     goto L_02008a86;
   goto L_0200927c;
 L_02008a86:
-  Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x966));
+  Call1((void (*)())GameFlag_SetBit, 0x966);
   {
     struct Actor *other = (struct Actor *)Actor_GetById(10);
     other->priorityFlags |= 1;
@@ -60,16 +60,16 @@ L_02008a86:
   Func_0200282c();
   Call1((void (*)())Func_020028fc, 0);
   Func_020028ac((s32)MsgLemuriaInteriors10);
-  Call3((void (*)())Actor_SetSpeedParameters, 10, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
+  Call3((void (*)())Actor_SetSpeedParameters, 10, 0xcccc, 0x6666);
   Value3((s32 (*)())Func_020028dc, 10, 0x100, 30);
-  Call3((void (*)())Func_020028bc, SPLIT_CONSTANT(0x400a), 0, 10);
+  Call3((void (*)())Func_020028bc, 0x400a, 0, 10);
   Call3((void (*)())Actor_SetPositionAndReset, 4, 136, 152);
   Call3((void (*)())Actor_ArmCallback, 4, 0xa000, 0);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 10, 4);
-  Call3((void (*)())Func_020028bc, SPLIT_CONSTANT(0x400a), 0, 10);
+  Call3((void (*)())Func_020028bc, 0x400a, 0, 10);
   Value3((s32 (*)())Func_020028dc, 10, 0x109, 30);
-  Call3((void (*)())Func_020028bc, SPLIT_CONSTANT(0x400a), 0, 10);
+  Call3((void (*)())Func_020028bc, 0x400a, 0, 10);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 4, 3);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call3((void (*)())Actor_ArmCallback, 4, 0x2000, 0);
@@ -77,7 +77,7 @@ L_02008a86:
   Call3((void (*)())Actor_CommitPositionAndActivate, 4, 8, 16);
   Call3((void (*)())Actor_ArmCallback, 4, 0x4000, 0);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 10, 2);
-  Call3((void (*)())Func_020028bc, SPLIT_CONSTANT(0x400a), 0, 10);
+  Call3((void (*)())Func_020028bc, 0x400a, 0, 10);
   Value3((s32 (*)())Func_020028dc, 4, 0x100, 30);
   Call3((void (*)())Actor_ArmCallback, 4, 0xa000, 0);
   Call1((void (*)())FieldEvent_Wait, 30);
@@ -85,12 +85,12 @@ L_02008a86:
   Call1((void (*)())FieldEvent_Wait, 20);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 10, 3);
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call3((void (*)())Func_020028bc, SPLIT_CONSTANT(0x400a), 0, 10);
+  Call3((void (*)())Func_020028bc, 0x400a, 0, 10);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 10, 4);
-  Call3((void (*)())Func_020028bc, SPLIT_CONSTANT(0x400a), 0, 10);
+  Call3((void (*)())Func_020028bc, 0x400a, 0, 10);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 10, 3);
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call3((void (*)())Func_020028bc, SPLIT_CONSTANT(0x400a), 0, 10);
+  Call3((void (*)())Func_020028bc, 0x400a, 0, 10);
   Call2((void (*)())Actor_StartRepeatedMotion, 4, 3);
   Call2((void (*)())Func_020028e4, 4, 0x102);
   Call1((void (*)())FieldEvent_Wait, 50);
@@ -101,26 +101,26 @@ L_02008a86:
   answer = Event_AskYesNoWithActorAnimation(4, 0);
   if (answer == 0) {
     Call1((void (*)())FieldEvent_Wait, 30);
-    Call3((void (*)())Func_020028bc, SPLIT_CONSTANT(0x400a), 0, 10);
+    Call3((void (*)())Func_020028bc, 0x400a, 0, 10);
     FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452) =
         (FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452)) + 1;
   } else {
     Call1((void (*)())FieldEvent_Wait, 40);
     FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452) =
         (FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452)) + 1;
-    Call3((void (*)())Func_020028bc, SPLIT_CONSTANT(0x400a), 0, 10);
+    Call3((void (*)())Func_020028bc, 0x400a, 0, 10);
   }
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 10, 3);
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call3((void (*)())Func_020028bc, SPLIT_CONSTANT(0x400a), 0, 10);
+  Call3((void (*)())Func_020028bc, 0x400a, 0, 10);
   Call3((void (*)())Actor_ArmCallback, 10, 0x5000, 0);
   Call1((void (*)())FieldEvent_Wait, 30);
-  Call3((void (*)())Func_020028bc, SPLIT_CONSTANT(0x400a), 0, 10);
+  Call3((void (*)())Func_020028bc, 0x400a, 0, 10);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 10, 2);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call3((void (*)())Actor_ArmCallback, 10, 0x3000, 0);
   Call1((void (*)())FieldEvent_Wait, 20);
-  Call3((void (*)())Func_020028bc, SPLIT_CONSTANT(0x400a), 0, 10);
+  Call3((void (*)())Func_020028bc, 0x400a, 0, 10);
   Call2((void (*)())Actor_StartRepeatedMotion, 4, 3);
   Call2((void (*)())Func_020028e4, 4, 0x102);
   Call1((void (*)())FieldEvent_Wait, 50);
@@ -129,37 +129,37 @@ L_02008a86:
   answer = Event_AskYesNoWithActorAnimation(4, 0);
   if (answer == 0) {
     Call1((void (*)())FieldEvent_Wait, 30);
-    Call3((void (*)())Func_020028bc, SPLIT_CONSTANT(0x400a), 0, 10);
+    Call3((void (*)())Func_020028bc, 0x400a, 0, 10);
     FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452) =
         (FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452)) + 1;
   } else {
     Call1((void (*)())FieldEvent_Wait, 40);
     FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452) =
         (FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452)) + 1;
-    Call3((void (*)())Func_020028bc, SPLIT_CONSTANT(0x400a), 0, 10);
+    Call3((void (*)())Func_020028bc, 0x400a, 0, 10);
   }
   Value3((s32 (*)())Func_020028dc, 10, 0x102, 40);
-  Call3((void (*)())Func_020028bc, SPLIT_CONSTANT(0x400a), 0, 20);
+  Call3((void (*)())Func_020028bc, 0x400a, 0, 20);
   Value3((s32 (*)())Func_020028dc, 10, 0x106, 40);
-  Call3((void (*)())Func_020028bc, SPLIT_CONSTANT(0x400a), 0, 10);
+  Call3((void (*)())Func_020028bc, 0x400a, 0, 10);
   Call3((void (*)())Actor_SetPositionAndReset, 10, 89, 92);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call3((void (*)())Actor_ArmCallback, 10, 0x8000, 0);
   Call1((void (*)())FieldEvent_Wait, 20);
-  Call3((void (*)())Func_020028bc, SPLIT_CONSTANT(0x400a), 0, 10);
+  Call3((void (*)())Func_020028bc, 0x400a, 0, 10);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 10, 2);
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call3((void (*)())Func_020028bc, SPLIT_CONSTANT(0x400a), 0, 10);
+  Call3((void (*)())Func_020028bc, 0x400a, 0, 10);
   Call3((void (*)())Actor_ArmCallback, 10, 0x2000, 0);
   Call1((void (*)())FieldEvent_Wait, 30);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 10, 4);
-  Call3((void (*)())Func_020028bc, SPLIT_CONSTANT(0x400a), 0, 10);
+  Call3((void (*)())Func_020028bc, 0x400a, 0, 10);
   Call3((void (*)())Actor_ArmCallback, 10, 0x8000, 0);
   Call1((void (*)())FieldEvent_Wait, 30);
   Value3((s32 (*)())Func_020028dc, 10, 0x108, 50);
   Call2((void (*)())Actor_SetModeById, 10, 3);
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call1((void (*)())Func_02002924, SPLIT_CONSTANT(0x26b));
+  Call1((void (*)())Func_02002924, 0x26b);
   Call1((void (*)())FieldEvent_Wait, 60);
   Call2((void (*)())Actor_StartRepeatedMotion, 11, 3);
   Call2((void (*)())Func_020028e4, 11, 0x102);
@@ -201,11 +201,11 @@ L_02008a86:
   Call1((void (*)())FieldEvent_Wait, 30);
   Call2((void (*)())Actor_SetModeById, 11, 1);
   Call1((void (*)())FieldEvent_Wait, 20);
-  Call3((void (*)())Actor_SetSpeedParameters, 10, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
+  Call3((void (*)())Actor_SetSpeedParameters, 10, 0xcccc, 0x6666);
   Call3((void (*)())Actor_SetPositionAndReset, 10, 100, 112);
   Call3((void (*)())Actor_ArmCallback, 10, 0, 0);
   Call1((void (*)())FieldEvent_Wait, 20);
-  Call3((void (*)())Actor_SetSpeedParameters, 10, SPLIT_CONSTANT(0x6666), SPLIT_CONSTANT(0x3333));
+  Call3((void (*)())Actor_SetSpeedParameters, 10, 0x6666, 0x3333);
   Call3((void (*)())Actor_CommitPositionAndActivate, 10, 8, 0);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call2((void (*)())Actor_SetModeById, 11, 3);
@@ -225,7 +225,7 @@ L_02008a86:
   Call1((void (*)())FieldEvent_Wait, 10);
   Call3((void (*)())Actor_ArmCallback, 10, 0x3000, 0);
   Call1((void (*)())FieldEvent_Wait, 20);
-  Call3((void (*)())Func_020028bc, SPLIT_CONSTANT(0x400a), 0, 10);
+  Call3((void (*)())Func_020028bc, 0x400a, 0, 10);
   Call3((void (*)())Actor_ArmCallback, 10, 0, 0);
   Call1((void (*)())FieldEvent_Wait, 20);
   Value3((s32 (*)())Func_020028dc, 10, 0x108, 40);
@@ -276,7 +276,7 @@ L_02008a86:
   Call1((void (*)())FieldEvent_Wait, 30);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 10, 3);
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call3((void (*)())Func_020028bc, SPLIT_CONSTANT(0x400a), 0, 10);
+  Call3((void (*)())Func_020028bc, 0x400a, 0, 10);
   Call2((void (*)())Actor_SetSpritePriority, 10, 2);
   result = Func_02002834();
 L_0200927c:

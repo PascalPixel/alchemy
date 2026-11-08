@@ -19,19 +19,16 @@ s32 Func_020033a0();
 extern u8 MsgSummonInheritedEarthDarkness[];
 
 void Func_02001b88(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 10 of 35 instructions
-   * differ in tla-en. */
   Func_02003398();
   Func_02003488(0);
   Call2(Func_02003460, 0x10000, 0);
-  Func_02003458(SPLIT_CONSTANT(0x10003), 1);
+  Func_02003458(0x10003, 1);
   Func_02003468(0x3c);
   FieldEvent_Wait(60);
   Call3(Func_02003388, (s32)MsgSummonInheritedEarthDarkness, 0, 6);
   Func_02003458(0x10000, 0);
   Func_02003468(0x3c);
   FieldEvent_Wait(60);
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa8c));
+  GameFlag_SetBit(0xa8c);
   Func_020033a0();
 }

@@ -4,13 +4,10 @@
 void Func_02004da0(s32 id, s32 x, s32 z);
 
 void Func_02002318(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 34 instructions
-   * differ in tla-en. */
   if (*(s8 *)((u8 *)Ram_HeapSlots->eventWork + 0xd30) == -1) {
     if (!GameFlag_Test(0x304))
       Func_02004da0(22, 0, 0);
-    if (!GameFlag_Test(SPLIT_CONSTANT(0x303)))
+    if (!GameFlag_Test(0x303))
       Func_02004da0(21, 0, 0);
   }
 }
@@ -29,9 +26,6 @@ void Func_02004dd0(const u8 *message);
 void Func_02004e58(s32 item, s32 mode);
 
 void Func_02002364(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 49 instructions
-   * differ in tla-en. */
   const u8 *message;
 
   Func_02004d40();
@@ -48,7 +42,7 @@ void Func_02002364(void) {
     }
     Func_02004e58(460, 3);
     Actor_SetModeById(12, 2);
-    GameFlag_SetBit(SPLIT_CONSTANT(0x9f9));
+    GameFlag_SetBit(0x9f9);
   }
   Func_02004d48();
 }

@@ -36,8 +36,12 @@ are in [The Lost Age: Game Pak](../gamepak/README.md).
   [The Lost Age: scene](../scene/README.md).
 - The task table holds 24 tasks (`TASK_COUNT`), not 20.
 - Every Thumb file is compiled with The Broken Seal's options without
-  `-mthumb-interwork` (`CFLAGS_tla` in the `Makefile`): this game's functions
-  return with `pop {pc}`, which interworking code never does.
+  `-mthumb-interwork`, plus `-mtune=gba` (`CFLAGS_tla` in the `Makefile`).
+  This game's functions return with `pop {pc}`, which interworking code never
+  does. The tune times instructions as the GBA's own processor runs them,
+  calls through a register with `mov lr` and half a `bl` instead of a helper
+  routine, and builds large constants in a register instead of reading them
+  from the cartridge, as `alchemy-gcc`'s README describes.
 - This game's fixed addresses are its own, listed in
   `games/tla/include/system/ram_buffer.h`, `iwram_call.h` and
   `gamepak/rom_header.h`.

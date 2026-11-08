@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "main_routine_work.h"
 #include "actor.h"
 #include "scene_tables.h"
@@ -32,15 +31,12 @@ static __inline__ void Func_020020b4_(s32 id, s32 a, s32 b, s32 c) {
 }
 
 void Func_02001da0(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 0 of 93 instructions
-   * differ in tla-en. */
   if (GameFlag_Test(7)) {
     struct Actor *object;
 
     Func_02001f5c();
     Func_020020ac(0);
-    Actor_SetSpeedParameters(4, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
+    Actor_SetSpeedParameters(4, 0xcccc, 0x6666);
     Actor_GetById(7)->update = (void (*)(void))Func_02001d60;
     Func_020020b4_(7, 16, 0, FACING_WEST);
     Actor_SetSingleChildFlags(Actor_GetById(7), 0);

@@ -1,9 +1,6 @@
 #include "tundaria_tower.h"
 
 void Func_02000fb8(s32 mode, s32 cue) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 8 of 60 instructions
-   * differ in tla-en. */
   if (cue == 0) {
     Func_02002e00();
     Task_RemoveFar(Func_0200137c);
@@ -11,13 +8,13 @@ void Func_02000fb8(s32 mode, s32 cue) {
   if (mode == 1) {
     Func_02002fc0(13, 26, 13, 16, 3, 3);
     Call6((void (*)())Func_02002fe8, 13, 26, 3, 3, 13, 16);
-    GameFlag_SetBit(SPLIT_CONSTANT(0x948));
+    GameFlag_SetBit(0x948);
   }
   if (mode == 2)
     Func_02002d44(0xe80000, 0x100000, 0x1180000, 2);
   if (mode == 3)
     Func_02002d44(0xe80000, 0x100000, 0x1180000, 30);
-  if (cue == SPLIT_CONSTANT(0x3e7))
+  if (cue == 0x3e7)
     Func_02002ebc();
 }
 

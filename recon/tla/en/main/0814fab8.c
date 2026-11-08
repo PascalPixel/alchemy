@@ -194,7 +194,7 @@ extern u16 Data_08197424[]; // gBattleEffect_FlareCells
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWordsEntry, 54 of 1146 instructions differ in tla-en. */
+   * Iwram_CopyWords, 54 of 1146 instructions differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 

@@ -62,13 +62,13 @@ dust:
       dust->acceleration = 0;
       dust->scaleX = scale;
       dust->scaleY = scale;
-      dust->gravity = SPLIT_CONSTANT(0x547a);
+      dust->gravity = 0x547a;
       dust->bounce = 0x8000;
     }
   }
   if (--i >= 0)
     goto dust;
-  Func_02000f24(SPLIT_CONSTANT(0x24e));
+  Func_02000f24(0x24e);
   Func_02000f24(217);
   Call3((void (*)())Func_02000e54, 0x20000, 0x20000, 0xe666);
   Func_02000ebc(gMainRoutineWork.currentOwner, 0x101);
@@ -77,7 +77,7 @@ dust:
   Func_02000f24(204);
   leader->motionFlags = 3;
   id = 0;
-  leader->gravity = SPLIT_CONSTANT(0x547a);
+  leader->gravity = 0x547a;
   goto fall;
 next:
   id++;
@@ -91,7 +91,7 @@ fall:
   leader->gravity = gravity;
   Func_02000ebc(gMainRoutineWork.currentOwner, 0);
   Func_02000e24(leader, 38);
-  CallLr3((void (*)())Func_02000e54, 0x10000, 0x40000, 0x10000);
+  Call3((void (*)())Func_02000e54, 0x10000, 0x40000, 0x10000);
   wait(10);
   Call3((void (*)())Func_02000e54, -1, -1, 0xe666);
   wait(20);

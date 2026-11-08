@@ -93,7 +93,7 @@ void Func_020018e0(s32 mode, u8 *in) {
     // The native clears the same 40 bytes, djinnAvailable through
     // djinnActiveCounts, four times.
     for (n = 0; n != 4; n++)
-      ValueLr2((s32 (*)())Iwram_ClearWordsEntry, (s32)(unit->djinnAvailable), (s32)(40));
+      Iwram_ClearWordsEntry(unit->djinnAvailable, 40);
   }
 
   for (i = 0; i != 28; i++) {

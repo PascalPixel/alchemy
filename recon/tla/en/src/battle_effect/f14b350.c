@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "system.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -280,7 +279,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
       }
     }
     work->transferPending = 1;
-    ValueLr1((s32 (*)())wait, (s32)(1));
+    wait(1);
   }
 
   // Tear down.

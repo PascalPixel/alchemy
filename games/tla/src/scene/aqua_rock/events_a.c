@@ -1,12 +1,9 @@
 #include "local.h"
 
 s32 Func_02000478(struct Actor *object) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 6 of 19 instructions
-   * differ in tla-en. */
   Actor_SetSingleChildFlags(object, 0);
   object->speedLimit = 0x10000;
-  object->acceleration = SPLIT_CONSTANT(0xccc);
+  object->acceleration = 0xccc;
   object->collisionFlags = 0;
   object->update = (void (*)(void))Func_02000468;
   return 0;

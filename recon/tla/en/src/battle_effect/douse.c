@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
 #include "battle_effect.h"
@@ -95,7 +94,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
                              work->sheet + 0x604, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet, 0,
                              0);
-  ValueLr0((s32 (*)())Func_0813ba50);
+  Func_0813ba50();
   REG_BLDCNT = 0x3f44;
   REG_WININ = 0x3337;
 

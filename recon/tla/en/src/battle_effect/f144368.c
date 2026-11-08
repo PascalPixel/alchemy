@@ -1,5 +1,4 @@
 #include "battle.h"
-#include "call.h"
 #include "graphics.h"
 #include "lib.h"
 #include "resource.h"
@@ -61,7 +60,8 @@ void BattleEffect_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_SpiralSheet, work->sheet, 1, 1);
   BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_MAX, CLIP));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  ValueLr2((s32 (*)())BattleEffect_LoadBlitter, (s32)(HEAP_BLITTER_ALTERNATE), (s32)(BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP)));
+  BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
+                           BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, 0xc80);
   work->transferMode = 2;

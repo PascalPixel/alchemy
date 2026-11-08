@@ -26,8 +26,8 @@ void BattlePalette_UpdateBlend(void) {
   } else {
     /* FAKEMATCH(temporary): called through a local pointer to its fixed
      * entry, which loads the entry ahead of the size's shift; as a plain
-     * Iwram_CopyWordsEntry call, 2 of 175 instructions differ in tla-en. */
-    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
+     * Iwram_CopyWords call, 2 of 175 instructions differ in tla-en. */
+    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
 
     copy(work->current, work->target, sizeof(work->current));
     work->duration = 0;

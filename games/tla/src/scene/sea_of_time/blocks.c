@@ -30,72 +30,57 @@ void Func_02001480(void) {
 }
 
 void Func_020014b4(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 20 instructions
-   * differ in tla-en. */
   struct SeaOfTimeObject *object;
 
   Func_02001fac();
   Func_02002044(0);
   object = Actor_GetById(10);
   Func_0200141c(object->x, Actor_GetById(10)->z, 10);
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa91));
+  GameFlag_SetBit(0xa91);
   Func_02001fb4();
 }
 
 void Func_020014ec(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 20 instructions
-   * differ in tla-en. */
   struct SeaOfTimeObject *object;
 
   Func_02001fac();
   Func_02002044(0);
   object = Actor_GetById(11);
   Func_0200141c(object->x, Actor_GetById(11)->z, 11);
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa92));
+  GameFlag_SetBit(0xa92);
   Func_02001fb4();
 }
 
 void Func_02001524(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 20 instructions
-   * differ in tla-en. */
   struct SeaOfTimeObject *object;
 
   Func_02001fac();
   Func_02002044(0);
   object = Actor_GetById(12);
   Func_0200141c(object->x, Actor_GetById(12)->z, 12);
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa93));
+  GameFlag_SetBit(0xa93);
   Func_02001fb4();
 }
 
 void Func_0200155c(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 20 instructions
-   * differ in tla-en. */
   struct SeaOfTimeObject *object;
 
   Func_02001fac();
   Func_02002044(0);
   object = Actor_GetById(13);
   Func_0200141c(object->x, Actor_GetById(13)->z, 13);
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa94));
+  GameFlag_SetBit(0xa94);
   Func_02001fb4();
 }
 
 void Func_02001594(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 20 instructions
-   * differ in tla-en. */
   struct SeaOfTimeObject *object;
 
   Func_02001fac();
   Func_02002044(0);
   object = Actor_GetById(9);
   Func_0200141c(object->x, Actor_GetById(9)->z, 9);
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa95));
+  GameFlag_SetBit(0xa95);
   Func_02001fb4();
 }
 

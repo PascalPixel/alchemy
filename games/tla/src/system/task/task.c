@@ -1,5 +1,4 @@
 #include "irq_lock.h"
-#include "call.h"
 #include "types.h"
 #include "io_reg.h"
 #include "task.h"
@@ -143,9 +142,6 @@ void Task_Idle(void) {}
 void Task_Empty(void) {}
 
 s32 Task_Remove(TaskFunc func) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 0 of 36 instructions
-   * differ in tla-en. */
   struct Task *task;
   u32 saved_interrupt_master;
   s32 result;
@@ -157,7 +153,7 @@ s32 Task_Remove(TaskFunc func) {
   for (i = 0; i <= 23; i++, task++) {
     if (task->func == (u32)func) {
       task->func = 0;
-      task->priority = SPLIT_CONSTANT(0x7fff);
+      task->priority = 0x7fff;
       result = i;
       break;
     }

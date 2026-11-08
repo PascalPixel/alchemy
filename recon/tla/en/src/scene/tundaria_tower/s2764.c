@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 
@@ -87,7 +86,7 @@ void Func_02002764(const u16 *table) {
         wait(16);
         Func_02002ca8(-2, trap->terrainId);
         wait(4);
-        Shake(-1, -1, SPLIT_CONSTANT(0xe666));
+        Shake(-1, -1, 0xe666);
         wait(8);
         *motion = 3;
         wait(5);

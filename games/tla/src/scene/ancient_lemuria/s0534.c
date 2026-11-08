@@ -28,13 +28,9 @@ void Func_02001a0c();
 void Func_02001a2c(s32 value);
 
 void Func_02000534(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 20 of 90 instructions
-   * differ in tla-en. */
   struct Actor *object;
 
-  if (!GameFlag_Test(SPLIT_CONSTANT(0x961)) ||
-      GameFlag_Test(SPLIT_CONSTANT(0x96a))) {
+  if (!GameFlag_Test(0x961) || GameFlag_Test(0x96a)) {
     Func_02001a2c(123);
     Func_020019ec(2);
   } else {
@@ -51,12 +47,12 @@ void Func_02000534(void) {
       Func_02001994(MsgLemuriaStayExploringAlternate);
       Func_020019a4(11, 0, 10);
     }
-    Call3(Actor_SetSpeedParameters, 11, 0x13333, SPLIT_CONSTANT(0x9999));
+    Call3(Actor_SetSpeedParameters, 11, 0x13333, 0x9999);
     Actor_SetModeById(11, 2);
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (object != NULL)
       Actor_ResetAndSetPosition(11, *(s16 *)((u8 *)object + 10),
-                                *(s16 *)((u8 *)object + 18));
+                                       *(s16 *)((u8 *)object + 18));
     Actor_WaitForMoveById(11);
     Func_0200195c(11, 0, 0);
     Call3(Actor_SetPositionAndReset, 4, 168, 832);

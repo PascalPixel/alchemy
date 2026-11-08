@@ -1,5 +1,4 @@
 #include "fixed_math.h"
-#include "call.h"
 #include "actor.h"
 #include "ram_buffer.h"
 #include "types.h"
@@ -44,7 +43,7 @@ void Func_080e2ec0(void) {
     owner->y -= 0x6666;
     if (*(s8 *)(effect + 52) == 1) {
       if (timer == 40)
-        work->state = SPLIT_CONSTANT(999);
+        work->state = 999;
     } else if (timer == 40) {
       work->state++;
       work->timer = -1;
@@ -53,7 +52,7 @@ void Func_080e2ec0(void) {
   case 2:
     owner->y += 0x3cccc;
     if (timer == 40)
-      work->state = SPLIT_CONSTANT(999);
+      work->state = 999;
     break;
   }
   work->timer++;

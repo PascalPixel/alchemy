@@ -77,8 +77,8 @@ void Func_020029f8(s32 id, s32 mode) {
   wait(2);
   object->scaleX = 0;
   Actor_SetSingleChildFlags(object, 0);
-  Dma_Set(Field_Palette685, (void *)0x050003e0, SPLIT_CONSTANT(0x80000010),
-          (volatile u32 *)SPLIT_CONSTANT(0x40000d4));
+  Dma_Set(Field_Palette685, (void *)0x050003e0, 0x80000010,
+          (volatile u32 *)0x040000d4);
   Func_020033dc(Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion),
                 work);
   slot = Resource_FindFreeEntry();

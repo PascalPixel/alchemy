@@ -90,7 +90,7 @@ land:
   wait(3);
   Func_02000d64(188);
   wait(10);
-  if (!GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x9a0, 255))) && shift > 0)
+  if (!GameFlag_Test(0xa9f) && shift > 0)
     Func_02000388();
 }
 

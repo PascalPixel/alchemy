@@ -164,7 +164,7 @@ extern const u8 Data_081991c0[];           // and (Earth Force)
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWordsEntry, 2 of 747 instructions differ in tla-en. */
+   * Iwram_CopyWords, 2 of 747 instructions differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 

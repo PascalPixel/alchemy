@@ -19,15 +19,12 @@ void Actor_SetModeById();
 void Func_02003f84();
 
 void Func_02003620(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 6 of 34 instructions
-   * differ in tla-en. */
   s32 v5;
   struct Actor *object0;
 
   Func_02003e64();
   Func_02003fa4(0);
-  Func_02003ffc(SPLIT_CONSTANT(0x226));
+  Func_02003ffc(0x226);
   v5 = &gMainRoutineWork;
   v5 = (v5 + 0x214);
   object0 = Actor_GetById(*(s32 *)((u8 *)v5 + 0));

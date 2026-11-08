@@ -1,7 +1,7 @@
 #include "izumo_ruins.h"
 
-/// Outside the first room, sets the high byte of map cell (50, 13) on layer 2
-/// to 0xff; then starts the room's effect.
+/// Outside the first room, sets the high byte of map cell (50, 13) on layer 2 to
+/// 0xff; then starts the room's effect.
 void Func_020011d4(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov67FRoom1) {
     Func_02001518(gData_02001654);
@@ -26,13 +26,10 @@ void Func_02001228(void) {
 }
 
 void Func_02001270(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 27 instructions
-   * differ in tla-en. */
   Func_02001488();
   Call6((void (*)())Func_02001460, 7, 2, 8, 7, 7, 12);
   Call6((void (*)())Func_02001450, 7, 66, 7, 76, 8, 9);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x941));
+  GameFlag_SetBit(0x941);
   Func_02001490();
 }
 

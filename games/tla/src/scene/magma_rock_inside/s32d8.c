@@ -10,10 +10,7 @@ void Func_02004d40(void);
 void Func_02004d48(void);
 
 void Func_020032d8(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 8 of 41 instructions
-   * differ in tla-en. */
-  if (GameFlag_Test(SPLIT_CONSTANT(0x9fa))) {
+  if (GameFlag_Test(0x9fa)) {
     Func_02004d40();
     Func_02004e90(0);
     FieldMessage_Show(MsgBlazeTabletInscription, 1);
@@ -29,10 +26,7 @@ void Func_020032d8(void) {
 }
 
 void Func_02003348(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 8 of 38 instructions
-   * differ in tla-en. */
-  if (GameFlag_Test(SPLIT_CONSTANT(0x9fa))) {
+  if (GameFlag_Test(0x9fa)) {
     Func_02004d40();
     Func_02004e90(0);
     FieldMessage_Show(MsgBlazeTabletInscription, 1);
@@ -47,10 +41,7 @@ void Func_02003348(void) {
 }
 
 void Func_020033b0(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 8 of 37 instructions
-   * differ in tla-en. */
-  if (GameFlag_Test(SPLIT_CONSTANT(0x9fa))) {
+  if (GameFlag_Test(0x9fa)) {
     Func_02004d40();
     Func_02004e90(0);
     FieldMessage_Show(MsgBlazeTabletInscription, 1);

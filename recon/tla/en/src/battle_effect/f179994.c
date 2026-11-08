@@ -1,5 +1,4 @@
 #include "battle_effect.h"
-#include "call.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
 #include "io_reg.h"
@@ -29,7 +28,7 @@ enum {
 };
 
 // The transform entry as The Broken Seal types it.
-#define TransformVector ((s32 (*)(const void *, s32 *))Iwram_TransformVectorEntry)
+#define TransformVector ((s32 (*)(const void *, s32 *))Iwram_TransformVector)
 
 // The pixel half of a 16.16 value.
 #define HI(v) (((s16 *)&(v))[1])
@@ -106,9 +105,9 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
   if (effect->variant == 2) {
     void *source = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
-    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
+    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
 
-    ValueLr3((s32 (*)())copy, (s32)((void *)BG_PLTT), (s32)(source), (s32)(128));
+    copy((void *)BG_PLTT, source, 128);
   }
   blitters = draw;
   BattleEffect_FetchRectangleBlitters(0, blitters);

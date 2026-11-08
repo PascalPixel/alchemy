@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "battle_type.h"
 #include "battle_display.h"
 
@@ -17,7 +16,7 @@ void Func_0811ddd8(struct BattlePlan *plan,
   livingTargets = 0;
   effect->flags = 0;
   flags = plan->presentationFlags;
-  effect->kind = flags & SPLIT_CONSTANT(0xfff);
+  effect->kind = flags & 0xfff;
   effect->variant = (flags & 0x3000) >> 12;
   /* FAKEMATCH(volatile): the actor read through a volatile pointer, a plain
    * byte load that waits after the variant's store; as plan->actorId, 4 of

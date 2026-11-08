@@ -177,7 +177,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
         strip = BURST_STRIP_BYTES;
       draw[0](canvas, Ram_MapCellBuffer + strip + step * BURST_PICTURE_BYTES,
               origin.x / 2 - 20, origin.y - 48, 40, 80);
-      BattleEffect_CallDoNothing(SPLIT_CONSTANT(0x2710));
+      BattleEffect_CallDoNothing(10000);
       HeapSlot_Release(HEAP_BLITTER);
     }
     if (frame == HIT_FRAME)

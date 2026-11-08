@@ -4,11 +4,8 @@
 void Func_02002fc8(void);
 
 void Func_02000de4(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 6 of 64 instructions
-   * differ in tla-en. */
   Func_02002fc8();
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x212));
+  GameFlag_ClearBit(0x212);
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
     Func_02002fc0(39, 100, 53, 100, 3, 3);
     Call6((void (*)())Func_02002fe8, 43, 41, 3, 3, 53, 37);

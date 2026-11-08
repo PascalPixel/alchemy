@@ -78,16 +78,13 @@ L_02008100:
 }
 
 void Func_02000108(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 10 of 80 instructions
-   * differ in tla-en. */
   s32 result0;
   struct Actor *object1;
 
-  result0 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x90c));
+  result0 = Value1((s32 (*)())GameFlag_Test, 0x90c);
   if (result0 != 0)
     goto L_020081d2;
-  GameFlag_SetBit(SPLIT_CONSTANT(0x90c));
+  GameFlag_SetBit(0x90c);
   Func_02000a68();
   Func_02000b30(0);
   Func_02000ac0((s32)MsgShipIceWallCrewReposition);

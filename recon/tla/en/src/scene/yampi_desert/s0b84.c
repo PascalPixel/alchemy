@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "field_effect.h"
 
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -15,7 +14,7 @@ void Func_02000b84(s32 x, s32 y, s32 z) {
   u32 i;
 
   options.update = Effect_AdvanceMotionAtLeaderPriority;
-  options.startScaleX = SPLIT_CONSTANT(0xcccc);
+  options.startScaleX = 0xcccc;
   options.startScaleY = 0xcccc;
   for (i = 0; i <= 16; i++) {
     s32 velocity[3];
@@ -26,7 +25,7 @@ void Func_02000b84(s32 x, s32 y, s32 z) {
     velocity[0] += velocity[0] >> 1;
     velocity[0] += ((u32)(Random16Far() << 17) >> 16) + -0x10000;
     velocity[2] += (u16)Random16Far() + -0x8000;
-    Func_020000b8(x, y, z, velocity[0], velocity[1], velocity[2], SPLIT_CONSTANT(0x01000001),
+    Func_020000b8(x, y, z, velocity[0], velocity[1], velocity[2], 0x01000001,
                   &options);
   }
 }

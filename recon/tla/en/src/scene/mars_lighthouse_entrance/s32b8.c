@@ -98,7 +98,7 @@ top:
   position->x = startX;
   position->z = startZ;
   actor->speedLimit = PIXELS(2);
-  actor->acceleration = SPLIT_CONSTANT(0x1999);
+  actor->acceleration = 0x1999;
   actor->action = 0;
   Func_02004bf8(actor, startX, actor->y, startZ);
   Func_02004bc0(actor, 2);
@@ -130,7 +130,7 @@ body:
   x = next->x;
   z = next->z;
   actor->speedLimit = PIXELS(2);
-  actor->acceleration = SPLIT_CONSTANT(0x1999);
+  actor->acceleration = 0x1999;
   Func_02004bf8(actor, next->x, next->y, next->z);
   Func_02004c00(actor);
   if (nextBehavior != startBehavior) {

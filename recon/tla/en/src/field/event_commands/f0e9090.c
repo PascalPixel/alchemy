@@ -9,7 +9,7 @@
 
 // Field Psynergy kind 19 (BattleEffect_Run's case 19).
 
-#define VIEW_MOVE_WORK_SIZE SPLIT_CONSTANT(0x2154)
+#define VIEW_MOVE_WORK_SIZE 0x2154
 
 // The sway's amplitude (16.16 pixels) and how it ramps.
 #define SWAY_START 0x20000

@@ -146,7 +146,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
   // An enemy caster's sparks take the Mars Djinn's colours.
   if (effect->actor > 7)
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet),
-            (void *)BG_PLTT, SPLIT_CONSTANT(0x84000020), REG_DMA3);
+            (void *)BG_PLTT, 0x84000020, REG_DMA3);
   BattleCamera_SetViewAtPairMidpointFar(effect->actor, effect->firstTarget,
                                         130);
   wait(1);

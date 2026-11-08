@@ -1,5 +1,4 @@
 #include "battle.h"
-#include "call.h"
 #include "graphics.h"
 #include "lib.h"
 #include "resource.h"
@@ -86,8 +85,8 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
    * tla-en. */
   {
     const void *source_ = Resource_GetTableEntry(palette);
-    __typeof__(Iwram_CopyWordsEntry) routine = Iwram_CopyWordsEntry;
-    ValueLr3((s32 (*)())routine, (s32)((void *)BG_PLTT), (s32)(source_), (s32)(128));
+    __typeof__(Iwram_CopyWords) routine = Iwram_CopyWords;
+    routine((void *)BG_PLTT, source_, 128);
   }
   if (mode == 3)
     Func_0815b634();

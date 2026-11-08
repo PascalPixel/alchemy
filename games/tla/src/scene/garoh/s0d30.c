@@ -24,9 +24,6 @@ void Func_020002a4();
 void Func_02000a68();
 
 void Func_02000d30(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 6 of 77 instructions
-   * differ in tla-en. */
   s32 t4;
 
   Value2((s32 (*)())Task_Add, (s32)Func_02000a68, 0x480);
@@ -40,7 +37,7 @@ void Func_02000d30(void) {
   Func_020052cc(0x2048c9, 1);
   goto L_02008d7e;
 L_02008d72:
-  Func_020052cc(SPLIT_CONSTANT(0x10007), 1);
+  Func_020052cc(0x10007, 1);
 L_02008d7e:
   Func_020052d4(1);
   Event_WaitTransitionFrames();

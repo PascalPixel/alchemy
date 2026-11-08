@@ -62,7 +62,7 @@ void Func_02004138(s32 idA, s32 idB) {
   Func_02005f04(0x10003, 1);
   Func_02005f14(60);
   a->motionFlags = 0;
-  a->acceleration = SPLIT_CONSTANT(0x3333);
+  a->acceleration = 0x3333;
   a->speedLimit = 0x3333;
   Actor_SetMovementTypeById(idA, gData_020060e0);
   Func_02005f94(194);
@@ -78,7 +78,7 @@ first:
     spark->x += ((Random16Far() & 31) - 16) << 16;
     spark->y += ((Random16Far() & 15) - 8) << 16;
     spark->speedLimit = 0x80000;
-    spark->acceleration = SPLIT_CONSTANT(0x3333);
+    spark->acceleration = 0x3333;
     spark->motionFlags = 0;
     Actor_SetPartAttribute(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
@@ -114,7 +114,7 @@ second:
                                                  0x2a0, b->x, b->y, b->z);
     Func_02005f94(195);
     angle = &spark->action;
-    *angle = (Random16Far() & SPLIT_CONSTANT(0x7fff)) + 0x8000;
+    *angle = (Random16Far() & 0x7fff) + 0x8000;
     spark->unk66 = ((i & 1) * 2 - 1) << ((Random16Far() & 3) + 9);
     spark->motionFlags = 0;
     spark->unk4c = 0x7a0000;
@@ -130,8 +130,8 @@ second:
     if (i == 3) {
       Call2(Func_02005e94, idB, 0x100);
       b->motionFlags = 0;
-      b->acceleration = SPLIT_CONSTANT(0x3333);
-      b->speedLimit = SPLIT_CONSTANT(0x3333);
+      b->acceleration = 0x3333;
+      b->speedLimit = 0x3333;
       /* FAKEMATCH(barrier): the empty asm before the call; as no asm, 2 of 402
        * instructions differ in tla-en. */
       asm("");
@@ -178,7 +178,7 @@ third:
   Func_02005dcc(0, 0, 0);
   Func_02005e94(idA, 0);
   Func_02005e94(idB, 0);
-  Func_02005f94(SPLIT_CONSTANT(0x23e));
+  Func_02005f94(574);
   Func_02005f04(0x10000, 0);
   Func_02005f14(80);
   Actor_SetMovementTypeById(idA, gData_02006128);

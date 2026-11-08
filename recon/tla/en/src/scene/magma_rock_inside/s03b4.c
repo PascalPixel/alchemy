@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "main_routine_work.h"
 
 union FieldCoordinate {
@@ -101,7 +100,7 @@ void Func_020003b4(void) {
     return;
 
   Func_02004c98(lead, 8);
-  rate = SPLIT_CONSTANT(0x3333);
+  rate = 0x3333;
   wait(15);
   Func_02004f30(185);
   next->moveRateX = rate;

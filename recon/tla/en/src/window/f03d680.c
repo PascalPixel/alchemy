@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "glyph.h"
 #include "ram_buffer.h"
 #include "item.h"
@@ -26,7 +25,7 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
 
   overlay = 0;
   count = 0;
-  item = Item_Get(code & SPLIT_CONSTANT(0x1ff));
+  item = Item_Get(code & 0x1ff);
   work = Ram_HeapSlots->glyphWork;
   if (work == NULL)
     return -1;

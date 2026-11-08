@@ -20,13 +20,10 @@ void Func_02001250(s32 a, s32 b, s32 c, s32 d, s32 e);
 void Func_0200196c(s32 a, s32 b, s32 c);
 
 s32 Func_020001e8(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 6 of 70 instructions
-   * differ in tla-en. */
   struct JupiterLighthouseRoom6EventWork *work = Ram_HeapSlots->eventWork;
 
   work->screenEffect = 0x204;
-  if (GameFlag_Test(SPLIT_CONSTANT(0xa19))) {
+  if (GameFlag_Test(0xa19)) {
     Func_02001b6c(12, PIXELS(72), PIXELS(600));
     Func_020000b4(0);
   }

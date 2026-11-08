@@ -34,7 +34,7 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
     *destination++ = (mode & 0x03e0) << 5;
     *destination++ = (mode & 0x001f) << 10;
     Dma_Set(destination - 3, destination,
-            DMA_ENABLE << 16 | (((colorCount - 1) * 6) >> 1), SPLIT_CONSTANT(REG_DMA3));
+            DMA_ENABLE << 16 | (((colorCount - 1) * 6) >> 1), REG_DMA3);
   } else if (mode < 0x100000) {
     switch (mode) {
     case 0x10001:
@@ -257,6 +257,6 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
     if (selectedPalettes == 2)
       mode += 0x600;
     Dma_Set((const void *)mode, destination,
-            DMA_COPY_WORDS((colorCount * 6) >> 2), SPLIT_CONSTANT(REG_DMA3));
+            DMA_COPY_WORDS((colorCount * 6) >> 2), REG_DMA3);
   }
 }

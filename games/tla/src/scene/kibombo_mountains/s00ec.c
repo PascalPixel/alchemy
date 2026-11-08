@@ -7,22 +7,16 @@ void GameFlag_SetBit(s32 flag);
 void Func_0200106c(s32 a, s32 b, s32 c, s32 d, s32 x, s32 z);
 
 void Func_020000ec(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 25 instructions
-   * differ in tla-en. */
   struct Actor *object = Actor_GetById(11);
 
   object->priorityFlags = 0;
   object->motionFlags = 0;
   Call6((void (*)())Func_0200106c, 24, 32, 1, 1, 22, 32);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x221));
+  GameFlag_SetBit(0x221);
 }
 
 void Func_02000124(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 25 instructions
-   * differ in tla-en. */
   Func_0200106c(30, 35, 1, 1, 28, 34);
   Func_0200106c(30, 34, 1, 1, 28, 33);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x222));
+  GameFlag_SetBit(0x222);
 }

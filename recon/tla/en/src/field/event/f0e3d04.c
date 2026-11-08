@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "effect_sprite.h"
@@ -290,7 +289,7 @@ void Func_080e3d04(void) {
                               (s16)(work->hitObject | 0x100));
       if (pending != NULL)
         Field_RunPsynergyEvent(pending, scene->firstObjectId, work->hitObject);
-      if (Func_080ce458(SPLIT_CONSTANT(0x20000005), scene->fieldKind,
+      if (Func_080ce458(0x20000005, scene->fieldKind,
                         (s16)(work->hitObject | 0x100)) != NULL) {
         event->unkd30 = work->hitObject;
         break;

@@ -210,7 +210,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
           target->acceleration = 0x20000;
           target->speedLimit = 0x80000;
           target->velocityY = 0x50000;
-          target->gravity = SPLIT_CONSTANT(0xab85);
+          target->gravity = 0xab85;
           target->actionFlags = 0;
           Actor_ResetMotion(target);
           if (target->x < 0)

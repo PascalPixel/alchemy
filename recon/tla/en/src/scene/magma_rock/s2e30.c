@@ -75,7 +75,7 @@ body:
         wait(16);
         Func_02003784(-2, target->terrainId);
         wait(4);
-        Call3((void (*)())Func_02003ac4, -1, -1, SPLIT_CONSTANT(0xe666));
+        Call3((void (*)())Func_02003ac4, -1, -1, 0xe666);
         wait(8);
         leader->motionFlags = 3;
         wait(5);

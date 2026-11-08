@@ -75,11 +75,11 @@ void Func_02000818(void) {
       phase &= gFrameCount;
       if (phase == 0) {
         if ((gFrameCount & 10) == 0) {
-          Func_02002054(SPLIT_CONSTANT(0x255));
+          Func_02002054(0x255);
         }
         spark.mode = 2;
         spark.kind = 7;
-        spark.scaleX = SPLIT_CONSTANT(0x16666);
+        spark.scaleX = 0x16666;
         spark.scaleY = 0x13333;
         cosine = Math_Cosine(actor->angle);
         sine = Math_Sine(actor->angle);

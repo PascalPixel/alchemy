@@ -252,7 +252,7 @@ s32 Func_081039fc(u32 mode) {
     if ((entry0 & 0x8000) != 0)
       Text_SetColorFar(2);
     Func_08101a54(help, 40, 16, entry0);
-    Window_SetTilemapEntryFar(help, SPLIT_CONSTANT(0xf296), 7, 1, 0);
+    Window_SetTilemapEntryFar(help, 0xf296, 7, 1, 0);
   }
 
   for (;;) {
@@ -418,9 +418,9 @@ s32 Func_081039fc(u32 mode) {
                                     list->width - pageCounts[page] + index - 2,
                                     -1, 0);
         }
-        Window_SetTilemapEntryFar((s32)list, SPLIT_CONSTANT(0xf128),
+        Window_SetTilemapEntryFar((s32)list, 0xf128,
                                   list->width - pageCounts[page] - 3, -1, 0);
-        Window_SetTilemapEntryFar((s32)list, SPLIT_CONSTANT(0xf129), list->width - 2, -1, 0);
+        Window_SetTilemapEntryFar((s32)list, 0xf129, list->width - 2, -1, 0);
         UiRender_MarkRow(work, list->y);
       }
     }
@@ -456,10 +456,10 @@ s32 Func_081039fc(u32 mode) {
     Func_080f8a44(confirmationChoice * 56 + 80, 16);
     if ((frame & 3) == 0) {
       if ((frame & 4) != 0)
-        CopyWords(gMenu_BackdropBorderTile, Iwram_CopyWordsEntry, (void *)0x060052c0,
+        CopyWords(gMenu_BackdropBorderTile, Iwram_CopyWords, (void *)0x060052c0,
                   32);
       else
-        FillWords(Iwram_FillWordsEntry, (void *)0x060052c0, 32, 0x44444444);
+        FillWords(Iwram_FillWords, (void *)0x060052c0, 32, 0x44444444);
     }
 
     if ((pressed & 1) != 0) {

@@ -1,5 +1,4 @@
 #include "../../../../games/tla/src/scene/mars_lighthouse_entrance/room.h"
-#include "call.h"
 #include "field/event_work.h"
 
 struct RideSlot {
@@ -56,7 +55,7 @@ void Func_02001ffc(struct Actor *object) {
       if (object->unk4c > 0)
         direction->unk00 = 1;
       else
-        direction->unk00 = SPLIT_CONSTANT(0xffff);
+        direction->unk00 = 0xffff;
     }
     object->priorityFlags = 2;
     object->z -= object->bounce;

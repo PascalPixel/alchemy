@@ -52,5 +52,5 @@ void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase, s32 bluePhase) {
   /* FAKEMATCH(wrapper): the copy through an inline forwarder, so the palette's
    * address is built anew for it; as a direct call, 47 of 96 instructions
    * differ in tla-en. */
-  CopyWords_((void *)SPLIT_CONSTANT(0x5000002), palette, sizeof(palette));
+  CopyWords_((void *)0x05000002, palette, sizeof(palette));
 }

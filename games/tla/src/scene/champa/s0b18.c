@@ -21,9 +21,6 @@ s32 Func_0200060c();
 extern u8 Func_02000a80[];
 
 s32 Func_02000b18(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 12 of 90 instructions
-   * differ in tla-en. */
   s32 t7;
   s32 t8;
   s32 t12;
@@ -43,21 +40,21 @@ s32 Func_02000b18(void) {
   Func_02002ba4();
   Func_02002bac(0, 8, 9);
   Func_020029fc(3);
-  t12 = GameFlag_Test(SPLIT_CONSTANT(0x97f));
+  t12 = GameFlag_Test(0x97f);
   if (t12 != 0) {
     Call2(Actor_SetSpritePriority, 20, 2);
     Call2(Actor_SetSpritePriority, 21, 3);
     Call2(Actor_SetSpritePriority, 22, 3);
     Actor_SetSpritePriority(19, 3);
     Actor_SetActionCallback(Actor_GetById(18), 9);
-    t19 = GameFlag_Test(SPLIT_CONSTANT(0x973));
+    t19 = GameFlag_Test(0x973);
     if (t19 != 0) {
       Call3(Func_02002a9c, 32, 0, 0);
       Call3(Func_02002a9c, 33, 0, 0);
       Func_02002a9c(34, 0, 0);
     }
   }
-  t23 = GameFlag_Test(SPLIT_CONSTANT(0xa74));
+  t23 = GameFlag_Test(0xa74);
   if (t23 != 0) {
     Func_0200060c();
   }

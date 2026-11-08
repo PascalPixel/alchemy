@@ -11,9 +11,6 @@ void Func_02000a94(s32 id);
   ((s32 (*)(s32, s32))Func_0200271c)(index, active)
 
 void Func_02001304(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 117 instructions
-   * differ in tla-en. */
   s32 timer = Func_02002730();
 
   switch (timer) {
@@ -50,16 +47,13 @@ void Func_02001304(void) {
     Func_02002978(-1);
     break;
   }
-  if ((u32)(timer - 251) <= 178 && GameFlag_Test(SPLIT_CONSTANT(0xa6e)) &&
-      !GameFlag_Test(59) && !GameFlag_Test(0x310))
+  if ((u32)(timer - 251) <= 178 && GameFlag_Test(0xa6e) && !GameFlag_Test(59) &&
+      !GameFlag_Test(0x310))
     ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 100;
   Func_0200273c(480);
 }
 
 void Func_02001424(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 50 instructions
-   * differ in tla-en. */
   s32 timer = Func_02002730();
 
   switch (timer) {
@@ -75,7 +69,7 @@ void Func_02001424(void) {
     break;
   }
   if ((u32)(timer - 11) <= 118) {
-    if (GameFlag_Test(SPLIT_CONSTANT(0x221)))
+    if (GameFlag_Test(0x221))
       Func_02000810(8);
     else if (GameFlag_Test(0x220))
       Func_020008d8(8);
@@ -84,9 +78,6 @@ void Func_02001424(void) {
 }
 
 void Func_020014a0(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 50 instructions
-   * differ in tla-en. */
   s32 timer = Func_02002730();
 
   switch (timer) {
@@ -102,7 +93,7 @@ void Func_020014a0(void) {
     break;
   }
   if ((u32)(timer - 11) <= 118) {
-    if (GameFlag_Test(SPLIT_CONSTANT(0x221)))
+    if (GameFlag_Test(0x221))
       Func_020009c0(10);
     else if (GameFlag_Test(0x220))
       Func_02000a94(10);

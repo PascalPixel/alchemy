@@ -1,9 +1,6 @@
 #include "local.h"
 
 void Func_02000e18(s32 value) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 72 instructions
-   * differ in tla-en. */
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 speed;
   s32 i;
@@ -24,7 +21,7 @@ void Func_02000e18(s32 value) {
   wait(13);
   Animation_ApplyChildValues(object, 9);
   Func_02003cc4(object, 28);
-  Func_02003ef4(SPLIT_CONSTANT(0x236));
+  Func_02003ef4(0x236);
   for (i = 0; i <= 59; i++) {
     if (i == 30)
       Event_FinishScreenTransition();

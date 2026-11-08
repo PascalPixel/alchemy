@@ -1,0 +1,16 @@
+#include "shaman_village.h"
+
+void Func_020042c8(struct ShamanVillageObject *object) {
+  s32 step;
+
+  object->x += object->field64 << 8;
+
+  object->y += 0x8000;
+
+  step = 0x51e;
+  object->scaleX += step;
+  object->scaleY += step;
+  object->field64 += 2;
+  if (--object->field68 == 0)
+    Func_0200481c(object);
+}

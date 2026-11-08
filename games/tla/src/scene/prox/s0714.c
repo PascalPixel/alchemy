@@ -19,9 +19,6 @@ extern u8 MsgProx139[];
 extern u8 MsgProx60[];
 
 void Func_02000714(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 8 of 26 instructions
-   * differ in tla-en. */
   s32 t0;
   s32 t4;
 
@@ -31,7 +28,7 @@ void Func_02000714(void) {
   } else {
     Func_02004464();
     Func_020045ec(0);
-    t4 = GameFlag_Test(SPLIT_CONSTANT(0xa3d));
+    t4 = GameFlag_Test(0xa3d);
     if (t4 != 0) {
       Func_0200451c((s32)MsgProx139);
     } else {

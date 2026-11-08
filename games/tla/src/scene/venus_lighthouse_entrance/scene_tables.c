@@ -1,5 +1,4 @@
 #include "battle.h"
-#include "call.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -27,10 +26,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void VenusLighthouseEntrance_RunActorSparkBurst(void *object) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 0 of 25 instructions
-   * differ in tla-en. */
-  Func_02002a34(8, SPLIT_CONSTANT(0x4084));
+  Func_02002a34(8, 0x4084);
   Func_02002a44();
   Func_02002a5c(Actor_GetById(5), 2);
   FieldEvent_Wait(20);

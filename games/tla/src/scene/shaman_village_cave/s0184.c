@@ -28,9 +28,6 @@ void Actor_ArmCallback();
 /// once; otherwise it slides two cells along z, one and then three along x
 /// away from the leader with a hop, and back along z.
 void Func_02000184(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 157 instructions
-   * differ in tla-en. */
   struct Actor *object = Actor_GetById(17);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 leaderX = leader->x >> 19;
@@ -49,7 +46,7 @@ void Func_02000184(void) {
   dz = -1;
   if (leaderZ <= 95)
     dz = 1;
-  if (dz == 1 && Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x202)) != 0) {
+  if (dz == 1 && Value1((s32 (*)())GameFlag_Test, 514) != 0) {
     if (Value1((s32 (*)())GameFlag_Test, 516) != 0)
       return;
     Func_02001080();

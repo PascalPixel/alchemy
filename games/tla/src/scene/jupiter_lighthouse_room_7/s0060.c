@@ -19,14 +19,11 @@ void Func_020000b4(void) {
 }
 
 void Func_02000100(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 8 of 25 instructions
-   * differ in tla-en. */
   struct Actor *object = Actor_GetById(16);
 
-  if (!Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa1b)) &&
-      object->x >> 20 == 8 && object->z >> 20 == 37) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0xa1b));
+  if (!Value1((s32 (*)())GameFlag_Test, 0xa1b) && object->x >> 20 == 8 &&
+      object->z >> 20 == 37) {
+    GameFlag_SetBit(0xa1b);
     Func_02000060(1);
   }
 }

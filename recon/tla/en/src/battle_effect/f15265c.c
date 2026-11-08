@@ -31,7 +31,6 @@
 // x += dx << 12 sends the whole allocation away.
 
 #include "types.h"
-#include "call.h"
 #include "battle_display.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -391,7 +390,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
          load leads the arguments; as a direct call, 2 of 2239 instructions
          differ in tla-en. */
       {
-        __typeof__(Iwram_CopyWordsEntry) routine = Iwram_CopyWordsEntry;
+        __typeof__(Iwram_CopyWords) routine = Iwram_CopyWords;
         routine((void *)BG_PLTT, palette, 128);
       }
     }
@@ -520,9 +519,9 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       if (frame >= shots - 8)
         REG_BLDALPHA = -((frame - shots) * 2) | 0x1000;
       if (mode == 8 && frame > 15)
-        ValueLr1((s32 (*)())Func_0815f0a0, (s32)((s32)&ResourceId_CyanPalette));
+        Func_0815f0a0((s32)&ResourceId_CyanPalette);
       if (mode == 10 && frame > 31)
-        ValueLr1((s32 (*)())Func_0815f0a0, (s32)((s32)&ResourceId_BlastSheet));
+        Func_0815f0a0((s32)&ResourceId_BlastSheet);
       if (frame == 4) {
         if (mode == 9 || mode == 17)
           Sound_PlayFar(92);
@@ -543,7 +542,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       // The Djinni sways, and after frame 56 rises two pixels a frame.
       if (effect->prelude == 1) {
         s32 x = ((-Trig_Sin(frame << 11) * 4) >> 16) + origin[0] / 2 - 10;
-        s32 y = ((ValueLr1((s32 (*)())Trig_Cos, (s32)(frame << 11)) * 2) >> 16) + origin[1] - 24;
+        s32 y = ((Trig_Cos(frame << 11) * 2) >> 16) + origin[1] - 24;
 
         if (frame > 56)
           y = y - frame * 2 + 112;

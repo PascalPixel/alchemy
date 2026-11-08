@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "io_reg.h"
 #include "dma.h"
 #include "frame.h"
@@ -124,10 +123,10 @@ void LuckyWheels_Run(void) {
   s32 j;
   s32 k;
 
-  sheet = HeapSlot_Alloc(100, SPLIT_CONSTANT(0x60e));
+  sheet = HeapSlot_Alloc(100, 0x60e);
   canvas = HeapSlot_Alloc(96, 0x8000);
-  work = HeapSlot_AllocEwram(92, SPLIT_CONSTANT(0x7b7c));
-  state = HeapSlot_AllocEwram(180, SPLIT_CONSTANT(0x61c));
+  work = HeapSlot_AllocEwram(92, 0x7b7c);
+  state = HeapSlot_AllocEwram(180, 0x61c);
   tiles = Ram_MapCellBuffer;
   save = (struct ReelSave *)Data_0200024c;
   Resource_ReservedNoOp((s32)&ResourceId_FarCall00C);
@@ -154,7 +153,7 @@ void LuckyWheels_Run(void) {
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD), sheet);
   entry = Resource_GetTableEntry((s32)&ResourceId_SlotsMachinePicture);
-  Dma_Set(entry, (void *)0x05000140, SPLIT_CONSTANT(0x84000008), REG_DMA3);
+  Dma_Set(entry, (void *)0x05000140, 0x84000008, REG_DMA3);
   entry += 32;
   Resource_DecodeType01(entry, tiles);
   j = 0;
@@ -211,8 +210,8 @@ void LuckyWheels_Run(void) {
     work->frame = 0;
     state->timer = 0;
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet),
-            (void *)0x05000000, SPLIT_CONSTANT(0x84000020), REG_DMA3);
-    *(u16 *)SPLIT_CONSTANT(0x5000080) = 0x2f8b;
+            (void *)0x05000000, 0x84000020, REG_DMA3);
+    *(u16 *)0x05000080 = 0x2f8b;
     *(u16 *)0x05000082 = 0x5bf6;
     entry = Resource_GetTableEntry((s32)&ResourceId_SlotsIcons);
     Dma_Set(entry, (void *)0x05000200, 0x84000078, REG_DMA3);
@@ -220,7 +219,7 @@ void LuckyWheels_Run(void) {
     Resource_DecodeType01(entry, tiles);
     Dma_Set(tiles, (void *)0x06010000, 0x84001b30, REG_DMA3);
     entry = Resource_GetTableEntry((s32)&ResourceId_SlotsJackpotBanner);
-    Dma_Set(entry, (void *)0x050003e0, SPLIT_CONSTANT(0x84000008), REG_DMA3);
+    Dma_Set(entry, (void *)0x050003e0, 0x84000008, REG_DMA3);
     entry += 32;
     Resource_DecodeType01(entry, tiles);
     Dma_Set(tiles, (void *)0x06016e00, 0x84000480, REG_DMA3);
@@ -261,10 +260,10 @@ void LuckyWheels_Run(void) {
     draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
     Resource_FarCall00C(188, 8, 7, 3, 0);
     draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-    ValueLr3((s32 (*)())Iwram_FillWordsEntry, (s32)(canvas), (s32)(size), (s32)(0));
+    Iwram_FillWordsEntry(canvas, size, 0);
     Dma_Set(canvas, (void *)0x06003500, 0x84002000, REG_DMA3);
-    Dma_Set((void *)0x05000000, bgShade, SPLIT_CONSTANT(0x84000080), REG_DMA3);
-    Dma_Set((void *)0x05000200, shade, SPLIT_CONSTANT(0x84000080), REG_DMA3);
+    Dma_Set((void *)0x05000000, bgShade, 0x84000080, REG_DMA3);
+    Dma_Set((void *)0x05000200, shade, 0x84000080, REG_DMA3);
     Graphics_ScaleRgb555(shade, (u16 *)0x05000200, 0, 0x100);
     Graphics_ScaleRgb555(bgShade, (u16 *)0x05000000, 0, 0x100);
     REG_DISPCNT = 0x3740;

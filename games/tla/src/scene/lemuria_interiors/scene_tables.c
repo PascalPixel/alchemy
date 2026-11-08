@@ -40,15 +40,12 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void Func_02000058(s32 arg0) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 14 of 61 instructions
-   * differ in tla-en. */
   s32 result0;
   s32 result1;
   s32 result2;
   s32 result3;
 
-  result0 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x966));
+  result0 = Value1((s32 (*)())GameFlag_Test, 0x966);
   if (result0 == 0)
     goto L_02008082;
   Func_020028ac((s32)MsgLemuriaInteriors11);
@@ -56,7 +53,7 @@ void Func_02000058(s32 arg0) {
   Actor_WatchAndSetScript(10, 4);
   goto L_020080f6;
 L_02008082:
-  result1 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x965));
+  result1 = Value1((s32 (*)())GameFlag_Test, 0x965);
   if (result1 == 0)
     goto L_020080ba;
   Func_0200282c();

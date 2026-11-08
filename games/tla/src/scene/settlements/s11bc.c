@@ -28,10 +28,7 @@ void Func_0200122c(void) {
 }
 
 void Func_0200125c(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 44 instructions
-   * differ in tla-en. */
-  if (!GameFlag_Test(SPLIT_CONSTANT(0x221)) && !Flag_Test(0x220)) {
+  if (!GameFlag_Test(0x221) && !Flag_Test(0x220)) {
     Func_02002030(11, 73, 10, 10, 64, 50);
     Func_02002030(42, 73, 10, 10, 64, 60);
     CopyCells2(42, 11, 10, 4, 11, 75);

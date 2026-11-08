@@ -59,7 +59,7 @@ void Func_02002cd0(s32 a, s32 b) {
   Func_02004e40(0x10003, 1);
   Func_02004e50(60);
   first->motionFlags = 0;
-  first->acceleration = SPLIT_CONSTANT(0x3333);
+  first->acceleration = 0x3333;
   first->speedLimit = 0x3333;
   Actor_SetMovementTypeById(a, gData_02005590);
   Func_02004f30(194);
@@ -75,7 +75,7 @@ burst:
   object->x += ((Random16Far() & 31) - 16) << 16;
   object->y += ((Random16Far() & 15) - 8) << 16;
   object->speedLimit = 0x80000;
-  object->acceleration = SPLIT_CONSTANT(0x3333);
+  object->acceleration = 0x3333;
   object->motionFlags = 0;
   Actor_SetPartAttribute(object, 10);
   Scene_SetActorSpritePriority(object, 1);
@@ -108,7 +108,7 @@ spiral:
   spark = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 672, second->x,
                                  second->y, second->z);
   Func_02004f30(195);
-  spark->action = (Random16Far() & SPLIT_CONSTANT(0x7fff)) + 0x8000;
+  spark->action = (Random16Far() & 0x7fff) + 0x8000;
   spark->unk66 = (((i & 1) << 1) - 1) << ((Random16Far() & 3) + 9);
   noMotion = 0;
   spark->motionFlags = noMotion;
@@ -126,7 +126,7 @@ spiral:
   if (i == 3) {
     Call2((void (*)())Func_02004dc0, b, 256);
     second->motionFlags = noMotion;
-    second->acceleration = SPLIT_CONSTANT(0x3333);
+    second->acceleration = 0x3333;
     second->speedLimit = 0x3333;
     Actor_SetMovementTypeById(b, script);
   }
@@ -167,7 +167,7 @@ column:
   Func_02004d10(0, 0, 0);
   Func_02004dc0(a, 0);
   Func_02004dc0(b, 0);
-  Func_02004f30(SPLIT_CONSTANT(0x23e));
+  Func_02004f30(574);
   Func_02004e40(0x10000, 0);
   Func_02004e50(80);
   Actor_SetMovementTypeById(a, gData_020055d8);

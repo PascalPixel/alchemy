@@ -79,7 +79,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
   graphics = Ram_HeapSlots->unk64[0];
 
   // Set up the canvas, the shard pictures in the sheet and the puffs.
-  BattleEffect_StartCanvasLayer(SPLIT_CONSTANT(SPLIT_CONSTANT(0x2000, 1)));
+  BattleEffect_StartCanvasLayer(0x2001);
   REG_BG2PA = 0x100;
   Resource_LoadAndDecompress((s32)&ResourceId_IceShardSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, graphics, 0, 0);

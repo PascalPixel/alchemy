@@ -1,0 +1,25 @@
+#include "types.h"
+#include "actor.h"
+
+struct RiseTimer {
+  u8 unk00[0x68];
+  s32 frames;
+};
+
+void Func_020041ec(struct Actor *object);
+
+void Func_020013e4(struct Actor *object) {
+  struct RiseTimer *timer = (struct RiseTimer *)object;
+
+  s32 growth;
+
+  object->y += 0x8000;
+  growth = 0x51e;
+  object->scaleX += growth;
+  object->scaleY += growth;
+  timer->frames--;
+  if (timer->frames == 1)
+    Actor_SetPositionAndResetMotion(object, 0, 0, 0);
+  else if (timer->frames == 0)
+    Func_020041ec(object);
+}

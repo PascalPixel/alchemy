@@ -1,0 +1,146 @@
+#include "types.h"
+#include "scene_tables.h"
+#define FIELD_AT(base, type, off)                                              \
+  (((struct {                                                                  \
+     u8 pad[off];                                                              \
+     type v;                                                                   \
+   } *)(base))                                                                 \
+       ->v)
+
+#include "call.h"
+s32 Func_020028b4();
+s32 Func_020029cc();
+s32 Func_0200290c();
+s32 Actor_ArmCallback();
+s32 Actor_SetSpritePriority();
+s32 Func_020029fc();
+s32 Actor_GetById();
+s32 Actor_SetSingleChildFlags();
+s32 Func_02002994();
+s32 Event_StartScreenTransition();
+s32 Event_WaitTransitionFrames();
+s32 FieldEvent_Wait();
+s32 Func_0200293c();
+s32 Func_02002964();
+s32 Func_0200294c();
+s32 Motion_SetVarCbAndRefresh();
+s32 Motion_SetModeAndWaitAnimation();
+s32 Actor_Jump();
+s32 Actor_CommitPositionAndActivate();
+s32 Actor_SetSpeedParameters();
+s32 Actor_SetModeById();
+s32 Actor_WatchAndSetScript();
+s32 Actor_OffsetPositionAndReset();
+s32 Actor_WaitForMoveById();
+s32 Actor_ResetAndSetPosition();
+void Func_020028bc(void);
+extern u8 MsgAreAreYou[];
+
+void Func_02001c30(void) {
+  s32 t96;
+
+  Func_020028b4();
+  Func_020029cc(0);
+  Call3(Func_0200290c, 5, PIXELS(364), PIXELS(156));
+  Call3(Func_0200290c, 8, PIXELS(362), PIXELS(142));
+  Call3(Func_0200290c, 9, PIXELS(390), PIXELS(144));
+  Call3(Actor_ArmCallback, 5, FACING_SOUTH, 0);
+  Call3(Actor_ArmCallback, 8, 0x3000, 0);
+  Call3(Actor_ArmCallback, 9, FACING_SOUTH, 0);
+  Call2(Actor_SetSpritePriority, 8, 2);
+  Func_020029fc(5, 0x4000);
+  Actor_SetSingleChildFlags(Actor_GetById(5), 0);
+  Func_02002994(5, 0);
+  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1b4), s32, 0) = 0x3c;
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  FieldEvent_Wait(20);
+  Func_0200293c((s32)MsgAreAreYou);
+  Func_02002964(8, 0x102, 40);
+  Call3(Func_0200294c, 8, 0, 0xa);
+  Motion_SetVarCbAndRefresh(5, 2);
+  FieldEvent_Wait(30);
+  Motion_SetModeAndWaitAnimation(9, 3);
+  FieldEvent_Wait(10);
+  Call3(Func_0200294c, 9, 0, 0xa);
+  Motion_SetVarCbAndRefresh(8, 2);
+  FieldEvent_Wait(10);
+  Call3(Func_0200294c, 8, 0, 0xa);
+  Motion_SetVarCbAndRefresh(5, 2);
+  FieldEvent_Wait(30);
+  Call3(Func_0200290c, 5, PIXELS(376), PIXELS(164));
+  Func_020029fc(5, 0);
+  Actor_SetSingleChildFlags(Actor_GetById(5), 1);
+  Call3(Actor_Jump, 5, 6, 50);
+  Motion_SetModeAndWaitAnimation(5, 4);
+  FieldEvent_Wait(20);
+  Call3(Actor_CommitPositionAndActivate, 5, -14, -2);
+  Actor_ArmCallback(5, FACING_NORTH, 0);
+  FieldEvent_Wait(20);
+  Motion_SetModeAndWaitAnimation(5, 3);
+  FieldEvent_Wait(20);
+  FieldEvent_Wait(10);
+  Actor_ArmCallback(9, FACING_SOUTHWEST, 0);
+  FieldEvent_Wait(20);
+  Func_0200294c(9, 0, 0xa);
+  FieldEvent_Wait(10);
+  Call3(Actor_ArmCallback, 8, 0, 0);
+  Actor_ArmCallback(5, 0xf000, 0);
+  FieldEvent_Wait(20);
+  Motion_SetModeAndWaitAnimation(8, 3);
+  FieldEvent_Wait(10);
+  Call3(Func_0200294c, 8, 0, 0xa);
+  Call2(Motion_SetModeAndWaitAnimation, 9, 4);
+  Call3(Func_0200294c, 9, 0, 0xa);
+  Call3(Actor_SetSpeedParameters, 9, 0xcccc, 0x6666);
+  Call3(Actor_CommitPositionAndActivate, 9, 0, 0x10);
+  Call3(Actor_ArmCallback, 9, FACING_WEST, 0);
+  FieldEvent_Wait(20);
+  Call3(Func_0200294c, 9, 0, 0xa);
+  Motion_SetVarCbAndRefresh(9, 2);
+  FieldEvent_Wait(10);
+  Call3(Func_0200294c, 9, 0, 0xa);
+  Motion_SetModeAndWaitAnimation(9, 3);
+  FieldEvent_Wait(20);
+  Call2(Actor_SetModeById, 5, 3);
+  Motion_SetModeAndWaitAnimation(8, 3);
+  FieldEvent_Wait(20);
+  Call2(Actor_WatchAndSetScript, 5, 9);
+  Call3(Actor_SetSpeedParameters, 9, 0xcccc, 0x6666);
+  Actor_OffsetPositionAndReset(9, 0, 0x78);
+  FieldEvent_Wait(40);
+  Call3(Actor_SetSpeedParameters, 8, 0xcccc, 0x6666);
+  Call3(Actor_CommitPositionAndActivate, 8, 0x18, 0);
+  Call3(Actor_CommitPositionAndActivate, 8, 0, 0x14);
+  Actor_ArmCallback(5, 0x3000, 0);
+  Actor_WaitForMoveById(9);
+  Func_0200290c(9, 0, 0);
+  FieldEvent_Wait(10);
+  Func_02002964(8, 0x105, 30);
+  Call3(Func_0200294c, 8, 0, 0xa);
+  Motion_SetModeAndWaitAnimation(5, 3);
+  FieldEvent_Wait(30);
+  Motion_SetVarCbAndRefresh(8, 2);
+  FieldEvent_Wait(20);
+  Call3(Actor_Jump, 8, 4, 0);
+  Actor_ArmCallback(8, FACING_WEST, 0);
+  FieldEvent_Wait(20);
+  Call3(Func_0200294c, 8, 0, 0xa);
+  Actor_ArmCallback(5, 0, 0);
+  FieldEvent_Wait(20);
+  Motion_SetModeAndWaitAnimation(5, 3);
+  FieldEvent_Wait(20);
+  Motion_SetModeAndWaitAnimation(8, 3);
+  FieldEvent_Wait(20);
+  Call3(Actor_SetSpeedParameters, 8, 0x13333, 0x9999);
+  Actor_SetModeById(8, 2);
+  t96 = Actor_GetById(5);
+  if (t96 != 0) {
+    Actor_ResetAndSetPosition(8, FIELD_AT(t96, s16, 10),
+                              FIELD_AT(t96, s16, 18));
+  }
+  Actor_WaitForMoveById(8);
+  Call3(Func_0200290c, 8, 0, 0);
+  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1b4), s32, 0) = 8;
+  Func_020028bc();
+}

@@ -92,7 +92,7 @@
 // Draft, differ 780 of 1932, skeleton gap 102 (tla-en, 2026-11-01)
 // BattleEffect_RunUlysses: same calls and control flow as the listing.
 // The largest step left is a counting question for Pascal, so it is not in this
-// draft: forward every Iwram_FillWordsEntry and Iwram_ClearWordsEntry through
+// draft: forward every Iwram_FillWords and Iwram_ClearWords through
 // static __inline__ s32 FillWords_(...) and ClearWords_(...), as f143d80.c does
 // untagged and The Broken Seal's iwram_call.h does for every call; CopyWords
 // needs none. Measured on a scratch copy of this file, that alone gives differ

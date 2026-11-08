@@ -1,5 +1,4 @@
 #include "../../../../../../games/tla/src/scene/yampi_desert_cave/yampi_desert_cave.h"
-#include "call.h"
 #include "map.h"
 #include "actor.h"
 
@@ -67,7 +66,7 @@ void Func_02000458(struct YampiDesertCaveRect rect) {
   w = (ABS(gData_02001974[kind][0]) + ABS(gData_02001974[kind][2])) >> 4;
   h = (ABS(gData_02001974[kind][1]) + ABS(gData_02001974[kind][3])) >> 4;
   Map_FillCellRectByte2(0, cell[0], cell[2], w, h, 0);
-  Actor_SetSpeedParameters_(gMainRoutineWork.currentOwner, 0x8000, SPLIT_CONSTANT(0x1999));
+  Actor_SetSpeedParameters_(gMainRoutineWork.currentOwner, 0x8000, 0x1999);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 8);
   wait(15);
   Actor_OffsetPositionAndResetMotion_(gMainRoutineWork.currentOwner,
@@ -77,7 +76,7 @@ void Func_02000458(struct YampiDesertCaveRect rect) {
   wait(4);
   Func_02001828(object, 2);
   Func_02001960(239);
-  Actor_SetSpeedParameters(rect.word[4], 0x8000, SPLIT_CONSTANT(0x1999));
+  Actor_SetSpeedParameters(rect.word[4], 0x8000, 0x1999);
   Func_02001838(object, rect.word[0], rect.word[1], rect.word[2]);
   /* FAKEMATCH(one-pass): a loop of one pass with an untaken two-test branch, so
    * the second half starts afresh in cse; as plain statements, 277 of 342

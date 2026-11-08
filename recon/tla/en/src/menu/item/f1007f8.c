@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "battle_unit.h"
@@ -112,7 +111,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         randomAdjust = 1 - randomAdjust;
       }
 
-      switch (effectId & SPLIT_CONSTANT(OWNER_ACTION_ID_MASK)) {
+      switch (effectId & OWNER_ACTION_ID_MASK) {
       case 0x104:
         target->baseHp += amount + randomAdjust;
         messageOffset = 0x10;

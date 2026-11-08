@@ -196,7 +196,7 @@ struct SystemWork {
 
 #define SYSTEM ((struct SystemWork *)0x03000000)
 static inline void Iwram_Copy(void *d, const void *s, s32 n) { Iwram_CopyWords(d, s, n); }
-#define Iwram_Clear Iwram_ClearWordsEntry
+#define Iwram_Clear Iwram_ClearWords
 extern VramSlot gResourceTableEntries[];
 #define VRAM_SLOTS gResourceTableEntries
 #define DECODE_BUFFER ((u8 *)0x02010000)

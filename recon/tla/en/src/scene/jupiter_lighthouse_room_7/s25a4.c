@@ -44,7 +44,7 @@ void Func_020025a4(struct CellTarget *table, struct CellTargetEntry *entry) {
   leader->motionFlags = 0;
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
-  Io_Write16(SPLIT_CONSTANT(SPLIT_CONSTANT(0xe20, 255)), &REG_WINOUT);
+  Io_Write16(0xf1f, &REG_WINOUT);
   REG_DISPCNT |= 0x8000;
   table->shown = 1;
   Actor_SetModeById(gMainRoutineWork.currentOwner, 28);

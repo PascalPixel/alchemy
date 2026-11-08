@@ -23,9 +23,6 @@ void Func_020028bc(void);
 extern u8 MsgNotThatWayThe[];
 
 void Func_02001bb0(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 48 instructions
-   * differ in tla-en. */
   s32 t7;
 
   Func_020028b4();
@@ -33,7 +30,7 @@ void Func_02001bb0(void) {
   Func_0200293c((s32)MsgNotThatWayThe);
   Func_020029d4(8, 0x10, 0, 0x8000);
   Actor_WaitForMoveById(8);
-  Func_0200294c(SPLIT_CONSTANT(0x2008), 0, 0xa);
+  Func_0200294c(0x2008, 0, 0xa);
   Actor_SetModeById(8, 2);
   t7 = Actor_GetById(5);
   if (t7 != 0) {

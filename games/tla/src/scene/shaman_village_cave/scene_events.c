@@ -27,9 +27,6 @@ void GameFlag_SetBit();
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 void Func_0200039c(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 18 instructions
-   * differ in tla-en. */
   s32 result0;
 
   Func_02001080();
@@ -37,7 +34,7 @@ void Func_0200039c(void) {
   result0 = Value3((s32 (*)())Func_02001098, 22, 0x190, -1);
   if (result0 != 0)
     goto L_020083c4;
-  GameFlag_ClearBit(SPLIT_CONSTANT(0xa73));
+  GameFlag_ClearBit(0xa73);
 L_020083c4:
   Func_02001088();
   return;
@@ -54,14 +51,11 @@ void Func_020003cc(void) {
 }
 
 void Func_02000404(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 18 instructions
-   * differ in tla-en. */
   s32 angle;
 
   Call2((void (*)())Func_02001200, 22, 0x190);
   angle = 0xc000;
   Call4((void (*)())Func_020010f0, 22, PIXELS(212), PIXELS(199), angle);
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa73));
+  GameFlag_SetBit(0xa73);
   return;
 }

@@ -1,5 +1,4 @@
 #include "../../../../../../games/tla/src/scene/mars_lighthouse_entrance/room.h"
-#include "call.h"
 #include "field/event_work.h"
 
 struct RideSlot {
@@ -56,7 +55,7 @@ void Func_02001988(struct Actor *object) {
           direction = 1;
           *cell = direction;
         } else {
-          direction = SPLIT_CONSTANT(0xffff);
+          direction = 0xffff;
           *cell = direction;
         }
       }

@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "window.h"
 #include "dma.h"
@@ -25,7 +24,7 @@ s32 Func_08042808(struct RenderInput *window, s32 x, s32 y, s32 value) {
 
   if (canvas->menuState == 0) {
     Dma_Set((const void *)Palette_GetBasicObjColors(),
-            (void *)&BG_PLTT_COLOR(14, 0), 0x80000010, SPLIT_CONSTANT(REG_DMA3));
+            (void *)&BG_PLTT_COLOR(14, 0), 0x80000010, REG_DMA3);
     BG_PLTT_COLOR(14, 14) = BG_PLTT_COLOR(15, 4);
   }
   x += (s16)window->x;

@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "main_routine_work.h"
@@ -33,7 +32,7 @@ void Func_02000d18(void) {
   depth = ((y + z) >> 16) + 58;
   if ((u32)(sx + 15) > 334 || sy < -15 || sy > 239)
     return;
-  sx &= SPLIT_CONSTANT(0x1ff);
+  sx &= 0x1ff;
   sy &= 0xff;
   word = Data_020068a4;
   *word++ = 0;

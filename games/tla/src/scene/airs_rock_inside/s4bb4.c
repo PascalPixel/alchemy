@@ -13,9 +13,6 @@ extern s32 gData_02007318[];
 extern s32 gData_020073a8[];
 
 void Func_02004bb4(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 26 instructions
-   * differ in tla-en. */
   const u8 *message;
 
   Func_02005e14();
@@ -23,7 +20,7 @@ void Func_02004bb4(void) {
   message = MsgCheckedThePsynergy;
   FieldMessage_Show(message, 1);
   Func_02005f94(126);
-  Func_02005f34(SPLIT_CONSTANT(0x3e7), 0);
+  Func_02005f34(999, 0);
   FieldEvent_Wait(10);
   GameFlag_ClearBit(322);
   FieldMessage_Show(message + 1, 1);

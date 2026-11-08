@@ -30,7 +30,7 @@ void Func_02001650(void) {
 
   if (event->unk166 != 0)
     return;
-  if (*(s8 *)(block + SPLIT_CONSTANT(0x2a01)) != 0)
+  if (*(s8 *)(block + 0x2a01) != 0)
     return;
   if (event->unk1b2 == 0)
     return;

@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "field_sprite.h"
 #include "field_effect.h"
@@ -23,8 +22,8 @@ void Func_02000478(s32 radius, u32 count) {
 
   object = Actor_GetById(8);
   options.update = Effect_AdvanceMotion;
-  options.startScaleX = SPLIT_CONSTANT(0xcccc);
-  options.startScaleY = SPLIT_CONSTANT(0xcccc);
+  options.startScaleX = 0xcccc;
+  options.startScaleY = 0xcccc;
   options.priority = ((struct FieldSprite *)object->animation)->priority;
   i = 0;
 next:

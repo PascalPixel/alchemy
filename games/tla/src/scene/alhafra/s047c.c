@@ -29,10 +29,7 @@ extern u8 MsgAlhafra74[];
 extern u8 gMainRoutineWork[];
 
 void Func_0200047c(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 8 of 189 instructions
-   * differ in tla-en. */
-  GameFlag_SetBit(SPLIT_CONSTANT(0x8b7));
+  GameFlag_SetBit(0x8b7);
   Func_02001be4();
   Func_02001cfc(0);
   Func_02001c74((s32)MsgAlhafra74);

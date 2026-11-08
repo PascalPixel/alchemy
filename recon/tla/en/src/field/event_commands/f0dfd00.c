@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "system.h"
 #include "ram_buffer.h"
 #include "field_psynergy_work.h"
@@ -121,7 +120,7 @@ void FieldEffect_RunWhirlwind(void) {
     step++;
   } while (step < frames);
   orb->scaleX = 0x1b333; // 1.7 wide
-  orb->scaleY = SPLIT_CONSTANT(0x14ccc); // 1.3 high
+  orb->scaleY = 0x14ccc; // 1.3 high
   Sound_PlayFar(SE_ORB_ARRIVES);
 
   if (kind == ORB_PLAIN) {

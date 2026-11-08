@@ -1,11 +1,7 @@
 #include "gabomba_statue_chamber.h"
-#include "call.h"
 #include "scene_tables.h"
 
 void Func_02000e60(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 0 of 53 instructions
-   * differ in tla-en. */
   Func_02001da0();
   Func_02001ee8(0);
   Camera_MoveWithinMapBounds(PIXELS(392), -1, PIXELS(120), 1);
@@ -21,6 +17,6 @@ void Func_02000e60(void) {
   GabombaStatueChamber_ObjTurn(10, FACING_NORTH + FACING_STEP);
   Motion_SetModeAndWaitAnimation(10, 4);
   Func_02001e60(10, 0);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x8fe));
+  GameFlag_SetBit(0x8fe);
   Func_02001da8();
 }

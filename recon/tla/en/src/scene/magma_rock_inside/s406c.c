@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 
@@ -78,7 +77,7 @@ next:
         wait(16);
         Func_020049c0(-2, trap->terrainId);
         wait(4);
-        Shake(-1, -1, SPLIT_CONSTANT(0xe666));
+        Shake(-1, -1, 0xe666);
         wait(8);
         leader->motionFlags = 3;
         wait(5);

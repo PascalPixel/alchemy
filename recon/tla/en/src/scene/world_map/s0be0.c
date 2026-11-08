@@ -64,12 +64,12 @@ void Func_02000be0(void) {
     /* FAKEMATCH(one-pass): the store and the call in a once-only block; as
      * plain statements, 6 of 129 instructions differ in tla-en. */
     do {
-      *(u16 *)((u8 *)work + SPLIT_CONSTANT(0xd34)) = amount;
+      *(u16 *)((u8 *)work + 0xd34) = amount;
       Func_02004d70(0x1000 | slot);
     } while (0);
   } else if (roll == 1) {
     Func_02004b78(0x30000, 0x50000, 0x10000);
-    Call3((void (*)())Func_02004b78, (s32)(-1), (s32)(-1), (s32)(SPLIT_CONSTANT(0xe666)));
+    Call3((void (*)())Func_02004b78, (s32)(-1), (s32)(-1), (s32)(0xe666));
     FieldEvent_Wait(30);
     FieldMessage_Show((s32)MsgTheBoatS, 1);
   } else {

@@ -45,5 +45,5 @@ void Func_02001edc(void) {
   position[0] = object->x >> 20;
   position[2] = object->z >> 20;
   if (position[0] == 35 && position[2] == 38)
-    GameFlag_SetBit(SPLIT_CONSTANT(0x8db));
+    GameFlag_SetBit(0x8db);
 }

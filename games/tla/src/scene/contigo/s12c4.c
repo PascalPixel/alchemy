@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "scene_tables.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -15,8 +14,8 @@ void Func_0200417c(s32 id, s32 a);
 void Func_02004204(s32 a);
 void Func_0200423c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
-static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
-                                                           s32 dz) {
+static __inline__ void
+Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx, s32 dz) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_OffsetPositionAndResetMotion(id, dx, dz);
 }
@@ -33,20 +32,17 @@ static __inline__ void Func_0200423c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
 }
 
 void Func_020012c4(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 0 of 60 instructions
-   * differ in tla-en. */
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_0200423c_(16, 37, 1, 1, 17, 37, 0);
-  if (GameFlag_Test(SPLIT_CONSTANT(0xfc7)) == 0) {
+  if (GameFlag_Test(0xfc7) == 0) {
     Func_020040d4_(66, PIXELS(280), PIXELS(664));
     if (leader->x >> 20 == 17 && leader->z >> 20 == 41) {
       Func_0200406c();
       Func_02004204(0);
       Func_0200417c(gMainRoutineWork.currentOwner, 0x102);
       Actor_OffsetPositionAndResetMotion_(gMainRoutineWork.currentOwner, 0,
-                                          -16);
+                                                 -16);
       leader->velocityY = 0x60000;
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Func_02004074();

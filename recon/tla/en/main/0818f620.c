@@ -21,8 +21,8 @@
 // - 14: the two 0x3c00 clears. The native rebuilds the constant for each and
 //   keeps the entry in r5; here the constant is shared in r5 and the entry
 //   sits in r6.
-// The last two close through call.h: Call3((void (*)())Iwram_CopyWordsEntry, ...)
-// for the copies and Value2((s32 (*)())Iwram_ClearWordsEntry, ...) for the clears
+// The last two close through call.h: Call3((void (*)())Iwram_CopyWords, ...)
+// for the copies and Value2((s32 (*)())Iwram_ClearWords, ...) for the clears
 // give differ 32, skeleton gap 15, leaving only the stores. Those are wrapper
 // devices, so they stay out until the stores close; add them, tagged, then.
 // What closed the rest: draw is DrawRectangle draw[2] (the untouched sp+40 is
@@ -40,11 +40,11 @@
 #include "battle_work.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
-#undef Iwram_CopyWordsEntry
+#undef Iwram_CopyWords
 static inline s32 Iwram_CopyWords(void *d, const void *s, s32 n) { return Iwram_CopyWordsEntry(d, s, n); }
-#undef Iwram_FillWordsEntry
+#undef Iwram_FillWords
 static inline s32 Iwram_FillWords(void *d, s32 n, s32 v) { return Iwram_FillWordsEntry(d, n, v); }
-#undef Iwram_ClearWordsEntry
+#undef Iwram_ClearWords
 static inline s32 Iwram_ClearWords(void *d, s32 n) { return Iwram_ClearWordsEntry(d, n); }
 
 // The ball is the last particle, never a local: the native rereads its address.

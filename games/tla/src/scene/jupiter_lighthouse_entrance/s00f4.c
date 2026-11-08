@@ -20,15 +20,12 @@ s32 Func_02001a84();
 extern u8 gMainRoutineWork[];
 
 void Func_020000f4(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 60 instructions
-   * differ in tla-en. */
   s32 t0;
   s32 t2;
 
   t0 = Actor_GetById(FIELD_AT(gMainRoutineWork, s32, 532));
   Call7(Func_02001b1c, 0x38, 0, 3, 3, 0x4f, 0x19, 1);
-  t2 = GameFlag_Test(SPLIT_CONSTANT(0xfe2));
+  t2 = GameFlag_Test(0xfe2);
   if (t2 == 0) {
     Call3(Func_02001ab4, 0x40, 0x1180000, 0x1b80000);
     if ((FIELD_AT(t0, s32, 8) >> 20) == 0x11) {

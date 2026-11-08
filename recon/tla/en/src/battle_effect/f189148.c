@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
@@ -82,7 +81,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // its arguments.
 static inline s32 (*Iwram_GetCopyWords(void))(void *destination,
                                               const void *source, s32 size) {
-  return Iwram_CopyWordsEntry;
+  return Iwram_CopyWords;
 }
 
 // Dragon Cloud (effect kind 49): a puff arc rises over the user, then a
@@ -123,7 +122,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
 
   // The pillar sheet, and nine copies of its cell, each darker than the last,
   // for the trail.
-  ValueLr4((s32 (*)())Resource_LoadAndDecompress, (s32)((s32)&ResourceId_FirePillarSheetB), (s32)(work->sheet), (s32)(1), (s32)(1));
+  Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetB, work->sheet, 1,
+                             1);
   for (i = 1; i != 20; i++) {
     for (j = 0; j != PILLAR_CELL_SIZE; j++) {
       s32 shade = work->sheet[0x1680 + j];
@@ -142,7 +142,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                              Ram_MapCellBuffer, 1, 0);
   /* FAKEMATCH(wrapper): the entry fetched through Iwram_GetCopyWords; as
-     Iwram_CopyWordsEntry called directly, 2 of 1123 instructions differ in tla-en.
+     Iwram_CopyWords called directly, 2 of 1123 instructions differ in tla-en.
    */
   if (effect->variant == 1)
     Iwram_GetCopyWords()(

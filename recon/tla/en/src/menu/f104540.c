@@ -141,7 +141,7 @@ s32 Func_08104540(void) {
       }
       Window_SetTilemapEntryFar((s32)window, 0xf128,
                                 window->width - counts[side] - 3, -1, 0);
-      Window_SetTilemapEntryFar((s32)window, SPLIT_CONSTANT(0xf129), window->width - 2, -1, 0);
+      Window_SetTilemapEntryFar((s32)window, 0xf129, window->width - 2, -1, 0);
       UiRender_MarkRow(render, window->y);
     }
     frame++;

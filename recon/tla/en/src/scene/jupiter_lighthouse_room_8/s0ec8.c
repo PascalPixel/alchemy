@@ -70,7 +70,7 @@ void Func_02000ec8(struct PushTarget target) {
             ABS(gData_020022dc[footprint * 4 + 3])) >>
            4;
   Map_FillCellRectByte2(0, cell[0], cell[2], width, height, 0);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, SPLIT_CONSTANT(0x1999));
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x1999);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 8);
   wait(15);
   {
@@ -87,16 +87,16 @@ void Func_02000ec8(struct PushTarget target) {
   else
     Func_02002160(object, 2);
   Func_020022c8(239);
-  Call3((void (*)())Actor_SetSpeedParameters, target.id, 0x8000, SPLIT_CONSTANT(0x1999));
+  Call3((void (*)())Actor_SetSpeedParameters, target.id, 0x8000, 0x1999);
   Func_02002190(object, target.x, target.y, target.z);
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x4ccc, SPLIT_CONSTANT(0x1999));
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x4ccc, 0x1999);
   Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner,
                                      (gData_020022f4[direction] << 16) >> 31,
                                      (gData_020022f4[direction] << 16) >> 17);
   if (target.callback != 0)
-    ValueLr0((s32 (*)())target.callback);
+    target.callback();
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   leader->update = 0;

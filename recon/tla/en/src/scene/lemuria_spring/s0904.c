@@ -374,7 +374,7 @@ void Func_02000904(void) {
                     (obstacle->speedMode << 4) + 16);
       break;
     case 3:
-      Func_02000884(21, &obstacle->position.x, SPLIT_CONSTANT(0xffff) - obstacle->heading,
+      Func_02000884(21, &obstacle->position.x, 0xffff - obstacle->heading,
                     gData_02001749[obstacle->speedMode],
                     (obstacle->speedMode << 4) + 16);
       break;

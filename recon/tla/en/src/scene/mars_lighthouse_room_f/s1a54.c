@@ -35,7 +35,7 @@ void Func_020035b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 static __inline__ s32 MulQ16(s32 a, s32 b) {
   /* FAKEMATCH(wrapper): MulQ16 forwarded inline; as direct calls to
-   * Iwram_MulQ16Entry, 69 of 92 instructions differ in tla-en. */
+   * Iwram_MulQ16, 69 of 92 instructions differ in tla-en. */
   return Iwram_MulQ16(a, b);
 }
 

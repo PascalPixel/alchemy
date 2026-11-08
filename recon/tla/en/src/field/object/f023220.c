@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "sprite_metadata.h"
 #include "actor_view.h"
@@ -19,7 +18,7 @@ struct Actor *Func_08023220(s32 id, s32 x, s32 y, s32 z) {
   volatile u32 zero;
 
   kind = id / 4096;
-  id &= SPLIT_CONSTANT(0xfff);
+  id &= 0xfff;
   object = Actor_FindFreeObject();
   if (object != NULL) {
     object->radius = 16;
@@ -40,7 +39,7 @@ struct Actor *Func_08023220(s32 id, s32 x, s32 y, s32 z) {
       object->animationKind = kind;
       object->animation = entry;
       zero = 0;
-      Dma_Set(&zero, entry, 0x85000004, SPLIT_CONSTANT(REG_DMA3));
+      Dma_Set(&zero, entry, 0x85000004, REG_DMA3);
       sprite = ResourceObject_Create(id);
       if (sprite != NULL) {
         object->radius = Resource_GetMetadataRecordFar(id)->boxY >> 1;

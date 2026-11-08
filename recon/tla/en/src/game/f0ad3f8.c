@@ -396,7 +396,7 @@ asm("");
     hpCap = 16383;
     ppCap = 9999;
   } else {
-    hpCap = ppCap = SPLIT_CONSTANT(SPLIT_CONSTANT(0x6d0, 255));
+    hpCap = ppCap = 1999;
   }
 
   old = st->maxHp;

@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "system.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -122,7 +121,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
     const void *palette =
         Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
     s32 (*copy)(void *destination, const void *source, s32 size) =
-        Iwram_CopyWordsEntry;
+        Iwram_CopyWords;
 
     /* FAKEMATCH(temporary): the routine's address named once the palette's
      * source is fetched, so its pool load leads the destination's shift; as
@@ -133,13 +132,13 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
     const void *palette =
         Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet);
     s32 (*copy)(void *destination, const void *source, s32 size) =
-        Iwram_CopyWordsEntry;
+        Iwram_CopyWords;
 
     /* FAKEMATCH(temporary): the routine's address named once the palette's
      * source is fetched, so its pool load leads the destination's shift; as
      * Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(...), 128), 2
      * of 783 instructions differ in tla-en. */
-    ValueLr3((s32 (*)())copy, (s32)((void *)BG_PLTT), (s32)(palette), (s32)(128));
+    copy((void *)BG_PLTT, palette, 128);
   }
 
   sparks = gMapCellBuffer;

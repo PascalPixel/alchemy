@@ -1,5 +1,4 @@
 #include "../../../../../../games/tla/src/scene/champa_cliff_caves/scene.h"
-#include "call.h"
 
 struct ChampaCliffCavesWork {
   u8 unk0000[0x1000];
@@ -39,18 +38,18 @@ void Func_0200320c(void) {
     case 0:
       work->field106c += 0x1000;
       if (work->field106c > 0x6665) {
-        work->field106c = SPLIT_CONSTANT(0x6666);
+        work->field106c = 0x6666;
         state = 1;
       }
       break;
     case 1:
       work->field106c += 0x3000;
       if (work->field106c > 0x14ccb) {
-        work->field106c = SPLIT_CONSTANT(0x14ccc);
+        work->field106c = 0x14ccc;
         state = 999;
       }
       break;
     }
     wait(1);
-  } while (state != SPLIT_CONSTANT(999));
+  } while (state != 999);
 }

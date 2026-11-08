@@ -17,16 +17,12 @@ void Func_020032b0(s32 a);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Task_Add(void (*func)(void), s32 priority);
 
-static __inline__ void SetBlend(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
-                                s32 g) {
+static __inline__ void SetBlend(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g) {
   /* FAKEMATCH(wrapper): forwarded inline; see scene_call.h. */
   Func_02003270(a, b, c, d, e, f, g);
 }
 
 s32 Func_02000e84(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 26 of 237 instructions
-   * differ in tla-en. */
   s16 scene = gMainRoutineWork.scene;
   s32 entrance = gMainRoutineWork.entrance;
   struct Actor *object;
@@ -73,7 +69,7 @@ s32 Func_02000e84(void) {
     if (entrance == 1 || entrance == 2 || entrance == 8 || entrance == 10 ||
         entrance == 12 || entrance == 14) {
       Func_02002118();
-      if (GameFlag_Test(SPLIT_CONSTANT(0xa31))) {
+      if (GameFlag_Test(0xa31)) {
         Func_02003170(30, 12, 4, 3, 12, 12);
         Func_02003178(64, 64, 4, 3, 76, 12);
       }
@@ -87,13 +83,13 @@ s32 Func_02000e84(void) {
       Func_02000058(13, 5);
       Func_02000058(14, 2);
       Func_02000058(15, 3);
-      if (!GameFlag_Test(SPLIT_CONSTANT(0xa32)))
+      if (!GameFlag_Test(0xa32))
         Func_020031f8(12, 0, 0);
-      if (!GameFlag_Test(SPLIT_CONSTANT(0xa33)))
+      if (!GameFlag_Test(0xa33))
         Func_020031f8(13, 0, 0);
-      if (!GameFlag_Test(SPLIT_CONSTANT(0xa34)))
+      if (!GameFlag_Test(0xa34))
         Func_020031f8(14, 0, 0);
-      if (!GameFlag_Test(SPLIT_CONSTANT(0xa35)))
+      if (!GameFlag_Test(0xa35))
         Func_020031f8(15, 0, 0);
     }
   }
@@ -102,8 +98,8 @@ s32 Func_02000e84(void) {
     // use, and with one name they share one.
     extern char SceneId_Ov6ACRoom3Second __asm__("SceneId_Ov6ACRoom3");
 
-    Func_020031b8(gMainRoutineWork.map + ((s32)&SceneId_Ov6ACRoom3Second -
-                                          (s32)&SceneId_Ov6a8Room2),
+    Func_020031b8(gMainRoutineWork.map +
+                      ((s32)&SceneId_Ov6ACRoom3Second - (s32)&SceneId_Ov6a8Room2),
                   0x5000000);
   }
   return 0;

@@ -17,9 +17,6 @@ s32 Func_02003bd0();
 /// cell value Func_02000348 returns (its high byte 0xff when the object is
 /// away) into two places; with the leader 208 pixels up a block copy follows.
 void Func_02000620(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 10 of 74 instructions
-   * differ in tla-en. */
   struct Actor *object;
   struct Actor *leader;
   s32 value;
@@ -29,12 +26,12 @@ void Func_02000620(void) {
   Func_02003bc8();
   Func_02003c88(0);
   if ((object->x >> 20) == 32) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0x311));
+    GameFlag_SetBit(0x311);
     value &= 0xff;
     Func_02000384(4, 70, 67, value);
     Func_02000384(2, 33, 54, value);
   } else {
-    GameFlag_ClearBit(SPLIT_CONSTANT(0x311));
+    GameFlag_ClearBit(0x311);
     value = (value & 0xff) | 0xff00;
     Func_02000384(4, 70, 67, value);
     Func_02000384(2, 33, 54, value);

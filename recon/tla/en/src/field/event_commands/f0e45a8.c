@@ -72,15 +72,15 @@ void Func_080e45a8(struct EffectSprite *sprite, struct EffectParticle *particle,
   position[2] = 0;
   position[0] = 0;
   if (high)
-    Vector_AddPolarOffset(SPLIT_CONSTANT(0x3333), Random16(), position);
+    Vector_AddPolarOffset(0x3333, Random16(), position);
   else
-    Vector_AddPolarOffset(SPLIT_CONSTANT(0xcccc), Random16(), position);
+    Vector_AddPolarOffset(0xcccc, Random16(), position);
   particle->velocityX = position[0];
   particle->velocityY = 0;
   particle->velocityZ = position[2];
   Func_080eaf98(sprite, 8, 8, 0x40000000, tiles);
-  sprite->scaleX = SPLIT_CONSTANT(0x3333);
-  sprite->scaleY = SPLIT_CONSTANT(0x3333);
+  sprite->scaleX = 0x3333;
+  sprite->scaleY = 0x3333;
   sprite->priority = BattleEffect_GetObjectPriority(mainObject);
   sprite->depth = BattleEffect_GetObjectDepth(mainObject) + 2;
   sprite->color = 1;

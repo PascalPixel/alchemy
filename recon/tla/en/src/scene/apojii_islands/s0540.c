@@ -18,7 +18,7 @@ void Func_02000540(void) {
   if (busy != 0)
     return;
   if (gData_020024c8 == -1) {
-    CallLr3((void (*)())Iwram_CopyWordsEntry, (s32)Data_020029d8, SPLIT_CONSTANT(0x5000060), 32);
+    Call3((void (*)())Iwram_CopyWords, (s32)Data_020029d8, 0x05000060, 32);
     Iwram_CopyWords(Data_020029f8, Data_020029d8, 32);
     Iwram_CopyWords(Data_02002a18, (void *)0x050001a0, 32);
     Iwram_CopyWords(Data_02002a38, Data_02002a18, 32);

@@ -83,7 +83,7 @@ retry:
   p[0] = x;
   p[2] = z;
   object->speedLimit = 0x20000;
-  object->acceleration = SPLIT_CONSTANT(0x1999);
+  object->acceleration = 0x1999;
   object->action = 0;
   Func_02002008(object, x, object->y, z);
   Func_02001fe0(object, 2);
@@ -100,7 +100,7 @@ walkNext:
   flags = &entry->collisionFlags;
 overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
-    if (ValueLr4((s32 (*)())Func_02002050, (s32)&entry->x, radius, (s32)position,
+    if (Value4((s32 (*)())Func_02002050, (s32)&entry->x, radius, (s32)position,
                entry->radius - 2) >= 0)
       goto blocked;
   }
@@ -112,7 +112,7 @@ overlap:
   targetX = q[0];
   targetZ = q[2];
   object->speedLimit = 0x20000;
-  object->acceleration = SPLIT_CONSTANT(0x1999);
+  object->acceleration = 0x1999;
   Func_02002008(object, q[0], q[1], q[2]);
   Func_02002010(object);
   if (cell != startCell)

@@ -16,9 +16,6 @@ void Func_02001620(s32 id);
   } while (i > 0)
 
 void Func_0200138c(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 30 of 196 instructions
-   * differ in tla-en. */
   struct Actor *object;
   s32 column;
   s32 row;
@@ -31,22 +28,22 @@ void Func_0200138c(void) {
   column = object->x >> 20;
   row = object->z >> 20;
   if (column == 12 && row == 15) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0x221));
+    GameFlag_SetBit(0x221);
     object->motionFlags = 0;
     SINK(32);
     Func_02001620(10);
     FieldEvent_Wait(20);
-  } else if (!Flag_Test(SPLIT_CONSTANT(0x205)) && column == 16 && row == 15) {
+  } else if (!Flag_Test(0x205) && column == 16 && row == 15) {
     object->motionFlags = 0;
-    Flag_Set(SPLIT_CONSTANT(0x205));
-    GameFlag_SetBit(SPLIT_CONSTANT(0x221));
+    Flag_Set(0x205);
+    GameFlag_SetBit(0x221);
     SINK(48);
     Func_02001620(10);
     FieldEvent_Wait(30);
   } else if (column == 19 && row == 15) {
     Func_02002030(18, 16, 1, 1, column, row);
     object->motionFlags = 0;
-    GameFlag_SetBit(SPLIT_CONSTANT(0x221));
+    GameFlag_SetBit(0x221);
     SINK(32);
     Func_02001620(10);
     if (!GameFlag_Test(102)) {

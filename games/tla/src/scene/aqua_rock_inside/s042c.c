@@ -4,9 +4,6 @@
 /// lifts it one pixel and sets its flag; object 10 also redraws two blocks of
 /// row 12.
 void Func_0200042c(s32 unused, s32 id) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 8 of 61 instructions
-   * differ in tla-en. */
   struct Actor *object = Actor_GetById(id);
 
   if (id == 10) {
@@ -19,7 +16,7 @@ void Func_0200042c(s32 unused, s32 id) {
 
         object->y += step;
       }
-      GameFlag_SetBit(SPLIT_CONSTANT(0x95a));
+      GameFlag_SetBit(0x95a);
       Func_02003d1c(0, 12, 1, 1, 9, row);
       Func_02003d1c(0, 12, 1, 1, 13, row);
     }
@@ -31,7 +28,7 @@ void Func_0200042c(s32 unused, s32 id) {
 
         object->y += step;
       }
-      GameFlag_SetBit(SPLIT_CONSTANT(0x95b));
+      GameFlag_SetBit(0x95b);
     }
   }
 }

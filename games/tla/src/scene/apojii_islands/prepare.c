@@ -12,9 +12,6 @@ struct MapBits {
 /// The overlay's entry: sets the map mode and screen effect 0x202, then starts
 /// each room's own setup.
 s32 Func_02000fb8(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 18 of 61 instructions
-   * differ in tla-en. */
   s32 *effect;
   s16 scene;
   struct MainRoutineWork *party;
@@ -24,17 +21,17 @@ s32 Func_02000fb8(void) {
   asm("");
   effect = &((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect;
   party = &gMainRoutineWork;
-  *effect = SPLIT_CONSTANT(0x202);
-  /* FAKEMATCH: the empty asm takes gMainRoutineWork, so its address loads
-   * before the 0x202 store and the scene's offset starts after it, as in the
-   * native (plain: differ 2; the store before the party pointer: differ 2). */
+  *effect = 0x202;
+  /* FAKEMATCH: the empty asm takes gMainRoutineWork, so its address loads before
+   * the 0x202 store and the scene's offset starts after it, as in the native
+   * (plain: differ 2; the store before the party pointer: differ 2). */
   asm("" : : "r"(party));
   scene = party->scene;
   if (scene == (s32)&SceneId_Ov679Room2) {
     Func_02001054();
   } else if (scene == (s32)&SceneId_Ov679Room1) {
     Task_Add(Func_02000540, 0x480);
-    if (GameFlag_Test(SPLIT_CONSTANT(0x95e)))
+    if (GameFlag_Test(0x95e))
       Func_02000974();
   } else if (scene == (s32)&SceneId_Ov679Room3) {
     *effect = 0x100;

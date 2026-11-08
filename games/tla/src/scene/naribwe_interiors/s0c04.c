@@ -9,13 +9,10 @@ s32 Func_02000b60(s32 group);
 s32 Func_02000ba0(s32 limit, s32 group, s32 *out);
 
 u8 *Func_02000c04(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 14 of 167 instructions
-   * differ in tla-en. */
   s32 *hints = (s32 *)Value2((s32 (*)())HeapSlot_AllocEwram, 252, 320);
   s32 limits[4];
   s32 count = 0;
-  s32 lowest = SPLIT_CONSTANT(0x270f);
+  s32 lowest = 9999;
   s32 lowestGroup = 0;
   u32 group;
   s32 index;

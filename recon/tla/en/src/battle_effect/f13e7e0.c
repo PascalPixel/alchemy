@@ -20,7 +20,7 @@
 
 // The whole effect work block: struct BattleEffectWork names only its first
 // 0x78f4 bytes.
-#define BATTLE_EFFECT_WORK_SIZE SPLIT_CONSTANT(0x7b7c)
+#define BATTLE_EFFECT_WORK_SIZE 0x7b7c
 
 // ⚓️'s blitter modes run the other way from The Broken Seal's.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
@@ -57,19 +57,19 @@ void wait(s32 frames);
 
 static inline s32 ClearWords(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_ClearWordsEntry, 14 of 376 instructions differ in tla-en. */
+   * Iwram_ClearWords, 14 of 376 instructions differ in tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 
 static inline s32 FillWords(void *destination, s32 size, u32 value) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_FillWordsEntry, 2 of 376 instructions differ in tla-en. */
+   * Iwram_FillWords, 2 of 376 instructions differ in tla-en. */
   return Iwram_FillWords(destination, size, value);
 }
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWordsEntry, 27 of 376 instructions differ in tla-en. */
+   * Iwram_CopyWords, 27 of 376 instructions differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 

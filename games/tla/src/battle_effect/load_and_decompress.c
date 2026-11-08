@@ -2,7 +2,6 @@
 /// Resources: decompress a resource with a palette.
 
 #include "resource.h"
-#include "call.h"
 #include "iwram_call.h"
 #include "io_reg.h"
 
@@ -17,7 +16,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal) {
      * call through the header, all six ⚓️ editions differ. */
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-    ValueLr3((s32 (*)())copy, (s32)((void *)BG_PLTT), (s32)(res), (s32)(128));
+    copy((void *)BG_PLTT, res, 128);
   }
   if (skip_pal != 0)
     res += 128;

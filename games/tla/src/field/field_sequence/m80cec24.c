@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "macros.h"
 #include "main_routine_work.h"
 
@@ -10,9 +9,6 @@ extern s16 Data_080f2204[];
 /// after the first header for this scene whose flag is -1 or not yet set, or
 /// NULL.
 s16 *Func_080ceba8(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 0 of 57 instructions
-   * differ in tla-en. */
   s32 scene = gMainRoutineWork.scene;
   s16 *p = Data_080f2204;
   s16 *found = NULL;
@@ -25,8 +21,7 @@ s16 *Func_080ceba8(void) {
     flag = *p++;
     if (header == 0)
       break;
-    if ((header & SPLIT_CONSTANT(0x3fff)) == scene &&
-        (flag == -1 || !GameFlag_Test(flag))) {
+    if ((header & 0x3fff) == scene && (flag == -1 || !GameFlag_Test(flag))) {
       found = p;
       break;
     }

@@ -80,13 +80,10 @@ void Func_02000468(void) { Func_02001d44_(52, 69, 1, 1, 53, 69, 2); }
 void Func_02000488(void) { Func_02001d44_(53, 64, 1, 1, 52, 64, 2); }
 
 void Func_020004a8(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 59 instructions
-   * differ in tla-en. */
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_02001d44_(59, 64, 4, 3, 49, 71, 2);
-  if (GameFlag_Test(SPLIT_CONSTANT(0xfbb)) == 0) {
+  if (GameFlag_Test(0xfbb) == 0) {
     Func_02001c2c_(69, PIXELS(808), PIXELS(1176));
     if (leader->x >> 20 == 50 && leader->z >> 20 == 73) {
       Func_02001bcc();

@@ -141,9 +141,9 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   if (effect->side == 0) {
-    BattleEffect_StartTiledCanvas(SPLIT_CONSTANT(0x2001));
+    BattleEffect_StartTiledCanvas(0x2001);
   } else {
-    BattleEffect_StartTiledCanvasFilled(SPLIT_CONSTANT(0x2001));
+    BattleEffect_StartTiledCanvasFilled(0x2001);
   }
   REG_BG2PA = 0x100;
   REG_BLDALPHA = 0x610;

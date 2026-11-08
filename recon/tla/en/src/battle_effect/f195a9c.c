@@ -127,7 +127,7 @@ void Func_08195a9c(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
             Iwram_MulQ16(*cx - *ax, *by - *ay) >=
         0) {
       work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-      Dma_Set(uvs[i], uv, (DMA_ENABLE | DMA_32BIT) << 16 | 6, SPLIT_CONSTANT(REG_DMA3));
+      Dma_Set(uvs[i], uv, (DMA_ENABLE | DMA_32BIT) << 16 | 6, REG_DMA3);
       *ax += 64 << 16;
       *ay += 64 << 16;
       *bx += 64 << 16;

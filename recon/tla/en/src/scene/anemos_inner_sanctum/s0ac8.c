@@ -91,7 +91,7 @@ void Func_02000ac8(void) {
     base = 48;
     targetX = 0x208;
     targetZ = 48;
-    if (GameFlag_Test(SPLIT_CONSTANT(0xa87)))
+    if (GameFlag_Test(0xa87))
       goto seen;
     break;
   case 51:
@@ -99,7 +99,7 @@ void Func_02000ac8(void) {
     base = 68;
     targetX = 0x228;
     targetZ = 48;
-    if (GameFlag_Test(SPLIT_CONSTANT(0xa88)))
+    if (GameFlag_Test(0xa88))
       goto seen;
     break;
   case 52:
@@ -107,7 +107,7 @@ void Func_02000ac8(void) {
     base = 88;
     targetX = 0x1f8;
     targetZ = 40;
-    if (GameFlag_Test(SPLIT_CONSTANT(0xa89)))
+    if (GameFlag_Test(0xa89))
       goto seen;
     break;
   case 53:
@@ -115,7 +115,7 @@ void Func_02000ac8(void) {
     base = 108;
     targetX = 0x238;
     targetZ = 40;
-    if (GameFlag_Test(SPLIT_CONSTANT(0xa8a))) {
+    if (GameFlag_Test(0xa8a)) {
     seen:
       GameFlag_SetBit(0x200);
       return;
@@ -248,17 +248,17 @@ void Func_02000ac8(void) {
     }
     Call1((void (*)())FieldEvent_Wait, 12);
     Call1((void (*)())wait, 16);
-    Call2((void (*)())Func_02003458, SPLIT_CONSTANT(0x7fff), 0);
+    Call2((void (*)())Func_02003458, 0x7fff, 0);
     Call1((void (*)())Func_02003468, 1);
     Call1((void (*)())wait, 1);
     Call2((void (*)())Func_02003458, 0x10000, 0);
     Call1((void (*)())Func_02003468, 32);
-    Call1((void (*)())Func_020034b8, SPLIT_CONSTANT(0x23e));
+    Call1((void (*)())Func_020034b8, 0x23e);
     Call3((void (*)())Func_02000a78, targetX, targetZ, part);
     Call1((void (*)())FieldEvent_Wait, 80);
     if (GameFlag_Test(0xa87) && GameFlag_Test(0xa88) && GameFlag_Test(0xa89) &&
         GameFlag_Test(0xa8a)) {
-      Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0xa8b));
+      Call1((void (*)())GameFlag_SetBit, 0xa8b);
       Call1((void (*)())Func_020034b8, 188);
       Call6((void (*)())Func_02003328, 52, 7, 33, 7, 1, 2);
       Call1((void (*)())wait, 5);

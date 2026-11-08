@@ -141,7 +141,7 @@ void Func_08191530(struct BattleEffectArgument *effect) {
   sheetDraw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   palette = Resource_GetTableEntry((s32)&ResourceId_CloudSwirlSheet);
   /* FAKEMATCH(wrapper): the copy through Swirl_CopyPalette; as a direct
-   * Iwram_CopyWordsEntry, 22 of 468 instructions differ in tla-en. */
+   * Iwram_CopyWords, 22 of 468 instructions differ in tla-en. */
   Swirl_CopyPalette(palette);
   palette += 128;
   Resource_DecodeType01(palette, work->sheet);

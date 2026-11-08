@@ -1,5 +1,5 @@
-@ Scaffold: recon/tla/en/src/scene/gaia_rock/s06ec.c as the retired alchemy-gcc, with its three non-stock Thumb rules, compiled it
-@ for en de es fr it ja. Never counts; it goes when the C matches the stock compiler.
+@ Scaffold: recon/tla/en/src/scene/gaia_rock/s06ec.c as the retired alchemy-gcc compiled it
+@ for en de es fr it ja. Never counts; it goes when the C matches with -mtune=gba.
 	.ifdef TLA_EDITION_EN
 	.set SCAFFOLD_FORM, 0
 	.endif

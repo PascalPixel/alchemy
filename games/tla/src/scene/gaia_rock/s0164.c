@@ -25,9 +25,6 @@ void Func_02000100(s32 id, s32 cue);
 /// clear, drops and sets the flag; object 19, while flag 0x921 is clear, copies
 /// cells at x 77, drops at (79, 12) and at x 81 sets the flag.
 void Func_02000164(s32 unused, s32 id) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 8 of 109 instructions
-   * differ in tla-en. */
   struct Actor *object = Actor_GetById(id);
   struct Actor *p;
 
@@ -38,7 +35,7 @@ void Func_02000164(s32 unused, s32 id) {
     GameFlag_SetBit(0x920);
     Call6((void (*)())Func_02000e44, 6, 27, 1, 1, 5, 27);
   }
-  if (id == 19 && GameFlag_Test(SPLIT_CONSTANT(0x921)) == 0) {
+  if (id == 19 && GameFlag_Test(0x921) == 0) {
     if ((object->x >> 19) == 77)
       Call6((void (*)())Func_02000e44, 33, 102, 1, 2, 37, 102);
     /* FAKEMATCH(temporary): the object read again through p for the last two
@@ -49,7 +46,7 @@ void Func_02000164(s32 unused, s32 id) {
       Call6((void (*)())Func_02000e44, 38, 46, 1, 1, 39, 46);
     }
     if ((p->x >> 19) == 81) {
-      GameFlag_SetBit(SPLIT_CONSTANT(0x921));
+      GameFlag_SetBit(0x921);
       {
         /* FAKEMATCH(temporary): the row in its own register; as a plain 46,
          * 2 of 109 instructions differ in tla-en. */

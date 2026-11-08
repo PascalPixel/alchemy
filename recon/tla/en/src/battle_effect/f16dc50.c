@@ -1,5 +1,4 @@
 #include "battle_effect.h"
-#include "call.h"
 #include "battle_display.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
@@ -141,7 +140,7 @@ extern const u8 Data_081991a4[];
 
 static inline s32 ClearWords(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_ClearWordsEntry, 14 of 1101 instructions differ in tla-en. */
+   * Iwram_ClearWords, 14 of 1101 instructions differ in tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 
@@ -186,7 +185,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
                              work->sheet + 0x4000, 1, 0);
   Iwram_CopyWords((void *)BG_PLTT,
-                  ValueLr1((s32 (*)())Resource_GetTableEntry, (s32)((s32)&ResourceId_BlueFlameSheet)), 128);
+                  Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
   // A block of its own: camera, savedYaw and target take their stack slots
   // after the blitter pair's address.
   {
@@ -312,7 +311,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
         screen.x = 176;
       }
       gCameraSceneParameters[3] = 184 - screen.x;
-      IO_WRITE_QUEUE_PUSH(SPLIT_CONSTANT(0x4000028), (64 - screen.x) << 8, 0x30000);
+      IO_WRITE_QUEUE_PUSH(0x04000028, (64 - screen.x) << 8, 0x30000);
 
       // Dust where the Djinni lands.
       if ((u32)frame <= 63) {
@@ -485,7 +484,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
           Transform_Push();
           spireShade = 0;
           if (frame <= 31) {
-            scale = frame * SPLIT_CONSTANT(0x2710) - 260000;
+            scale = frame * 10000 - 260000;
           } else {
             scale = 60000;
           }

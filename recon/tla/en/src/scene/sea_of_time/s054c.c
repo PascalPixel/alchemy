@@ -88,7 +88,7 @@ void Func_0200054c(void) {
   dx = object->x - center.x;
   dz = object->z - center.z;
   {
-    s32 (*mul)(s32 a, s32 b) = Iwram_MulQ16Entry;
+    s32 (*mul)(s32 a, s32 b) = Iwram_MulQ16;
     x = mul(dx, turn[0]);
     x -= mul(dz, s);
     z = mul(dx, s);
@@ -105,11 +105,11 @@ void Func_0200054c(void) {
   phase &= frame;
   if (phase == 0) {
     if ((frame & 10) == 0)
-      Func_02002054(SPLIT_CONSTANT(0x255));
+      Func_02002054(0x255);
     spark.mode = 2;
     spark.kind = 7;
-    spark.scaleX = SPLIT_CONSTANT(0xcccc);
-    spark.scaleY = SPLIT_CONSTANT(0xcccc);
+    spark.scaleX = 0xcccc;
+    spark.scaleY = 0xcccc;
     c = Math_Cosine(object->facing);
     {
       s32 sine = Math_Sine(object->facing);

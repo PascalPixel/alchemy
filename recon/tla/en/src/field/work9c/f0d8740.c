@@ -1,5 +1,4 @@
 #include "resource.h"
-#include "call.h"
 #include "types.h"
 #include "actor_view.h"
 #include "ram_buffer.h"
@@ -88,7 +87,7 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
 
   BattleEffect_InitializeSlots();
   effectSlots = Ram_HeapSlots->effectWork;
-  Shop_RestoreSceneTilesFar(SPLIT_CONSTANT(0x204084));
+  Shop_RestoreSceneTilesFar(0x204084);
   wait(30);
   djinni->visible = 0;
   Sound_PlayFar(173);

@@ -21,12 +21,9 @@ extern u8 MsgAlhafra92[];
 /// otherwise it asks a yes-or-no question. A nonzero answer ends with another
 /// line; the other sets the flag, and the actor and the leader step aside.
 void Func_0200066c(s32 actor) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 12 of 92 instructions
-   * differ in tla-en. */
   s32 message = (s32)MsgAlhafra92;
 
-  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0x8b9)) != 0) {
+  if (Value1(GameFlag_Test, 0x8b9) != 0) {
     Func_02001c74(message + 4);
     FieldMessage_ShowAtActor(actor, 0);
   } else {
@@ -37,11 +34,12 @@ void Func_0200066c(s32 actor) {
       Func_02001c74(message + 1);
       Func_02001c8c(actor, 0);
     } else {
-      GameFlag_SetBit(SPLIT_CONSTANT(0x8b9));
+      GameFlag_SetBit(0x8b9);
       FieldEvent_Wait(20);
       Func_02001c74(message + 2);
       Call2(Func_02001c8c, actor, 0);
-      Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 72, 344);
+      Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 72,
+            344);
       Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
       FieldEvent_Wait(10);
       Call3(Actor_SetSpeedParameters, actor, 0x10000, 0x8000);

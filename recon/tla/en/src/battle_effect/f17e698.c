@@ -92,13 +92,13 @@ void BattleEffect_EndCanvasLayer(void);
 
 static inline s32 ClearWords(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_ClearWordsEntry, 2 of 386 instructions differ in tla-en. */
+   * Iwram_ClearWords, 2 of 386 instructions differ in tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWordsEntry, 4 of 386 instructions differ in tla-en. */
+   * Iwram_CopyWords, 4 of 386 instructions differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 

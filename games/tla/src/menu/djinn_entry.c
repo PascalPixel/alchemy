@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 
 extern u8 MsgDjinnName[]; ///< the first djinni's name
 
@@ -34,14 +33,10 @@ s32 Func_08101a04(u32 entry) {
 /// colour. The names run 20 to an element.
 // As ☀️'s MsgDjinnName (games/tbs/src/menu/menu.c).
 void Func_08101a54(s32 window, s32 x, s32 y, s32 entry) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 0 of 53 instructions
-   * differ in tla-en. */
   s32 element = (entry & 0xe0) / 32;
 
-  Text_DrawCharacterAtOffsetFar((s32)MsgDjinnName + element * 20 + (entry & 31),
-                                window, x + 8, y);
-  Window_SetTilemapEntryFar(window, element + SPLIT_CONSTANT(0x5001), x / 8,
-                            y / 8, 0);
+  Text_DrawCharacterAtOffsetFar(
+      (s32)MsgDjinnName + element * 20 + (entry & 31), window, x + 8, y);
+  Window_SetTilemapEntryFar(window, element + 0x5001, x / 8, y / 8, 0);
   Text_SetColorFar(15);
 }

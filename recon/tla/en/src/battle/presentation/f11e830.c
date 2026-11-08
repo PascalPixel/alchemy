@@ -29,7 +29,7 @@ void Func_0811e830(struct SavedBattleObj *saved) {
 
   unitId = saved->unitId;
   object = BattleObject_Get(unitId)->object;
-  QueueIoWriteDelay2(SPLIT_CONSTANT(0x4000050), 0x3f40);
+  QueueIoWriteDelay2(0x04000050, 0x3f40);
   BattleHighlight_SetSpriteMode(unitId, 1);
   for (i = 0; i != 16; i++) {
     s32 fade;

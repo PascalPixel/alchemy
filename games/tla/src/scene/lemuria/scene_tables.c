@@ -120,13 +120,10 @@ void Func_020001f0(const struct WarpTarget *warp, s32 door, s32 mode) {
 }
 
 void Func_02000278(s32 door) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 18 of 52 instructions
-   * differ in tla-en. */
   const struct WarpTarget *warp = &gData_020021bc;
   s32 mode = 0;
 
-  if (door == 3 && GameFlag_Test(SPLIT_CONSTANT(0x96a))) {
+  if (door == 3 && GameFlag_Test(0x96a)) {
     Func_02001c6c((s32)&MsgTheDoorIs);
     Func_02001c84(-1, 0);
     return;

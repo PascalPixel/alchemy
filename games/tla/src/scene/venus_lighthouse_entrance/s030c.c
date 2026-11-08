@@ -25,30 +25,27 @@ s32 Func_0200298c();
 extern u8 gData_0200b000[];
 
 void Func_0200030c(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 24 of 127 instructions
-   * differ in tla-en. */
   s32 t1;
   s32 t3;
   s32 t9;
   s32 t16;
 
-  GameFlag_SetBit(SPLIT_CONSTANT(0x891));
+  GameFlag_SetBit(0x891);
   t1 = Actor_GetById(10);
   FIELD_AT((t1 + 0x55), u8, 0) = 0;
-  FIELD_AT(t1, s32, 72) = SPLIT_CONSTANT(0x28f);
+  FIELD_AT(t1, s32, 72) = 0x28f;
   FIELD_AT(t1, s32, 48) = 0x18000;
   FIELD_AT(t1, s32, 52) = 0x8000;
   Call4(Actor_SetPositionAndResetMotion, t1, PIXELS(216), PIXELS(96),
         PIXELS(176));
   t3 = Actor_GetById(11);
   FIELD_AT((t3 + 0x55), u8, 0) = 0;
-  FIELD_AT(t3, s32, 72) = SPLIT_CONSTANT(0x7ae);
+  FIELD_AT(t3, s32, 72) = 0x7ae;
   FIELD_AT(t3, s32, 48) = 0x18000;
   FIELD_AT(t3, s32, 52) = 0x8000;
   Call4(Actor_SetPositionAndResetMotion, t3, PIXELS(616), PIXELS(96),
         PIXELS(152));
-  Call2(Func_0200297c, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x1999));
+  Call2(Func_0200297c, 0xcccc, 0x1999);
   Call4(Camera_MoveWithinMapBounds, PIXELS(376), -1, PIXELS(248), 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

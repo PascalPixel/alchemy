@@ -1,9 +1,6 @@
 #include "local.h"
 
 void Func_02000a98(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 4 of 26 instructions
-   * differ in tla-en. */
   s32 i;
 
   Func_02003628();
@@ -13,5 +10,5 @@ void Func_02000a98(void) {
     Func_020036b8(33, 55);
     wait(15);
   }
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa66));
+  GameFlag_SetBit(0xa66);
 }

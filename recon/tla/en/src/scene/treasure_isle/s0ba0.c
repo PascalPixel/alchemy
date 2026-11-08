@@ -29,7 +29,7 @@ void Func_02000ba0(void) {
   if (busy != 0)
     return;
   if (gData_02001aa4 == -1) {
-    CallLr3((void (*)())Iwram_CopyWordsEntry, Data_02001aa8, (void *)SPLIT_CONSTANT(0x5000060), 32);
+    Call3((void (*)())Iwram_CopyWords, Data_02001aa8, (void *)0x05000060, 32);
     Iwram_CopyWords((void *)gData_02001ac8, Data_02001aa8, 32);
     Iwram_CopyWords((void *)Data_02001ae8, (void *)0x05000140, 32);
     Iwram_CopyWords(Data_02001b08, (void *)Data_02001ae8, 32);

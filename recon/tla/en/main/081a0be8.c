@@ -1,5 +1,5 @@
 // Differ 6 of 88 (tla-en, 2026-11-07).
-// 2026-11-07: Iwram_ClearWordsEntry through an inline wrapper, as the Broken Seal's
+// 2026-11-07: Iwram_ClearWords through an inline wrapper, as the Broken Seal's
 // iwram_call.h writes it, puts the size shift after the address load (8 to 6);
 // left, scheduling: the pack loop's two pointer copies ahead of its count's
 // shift and in swapped order, and the first copy loop's canvas pointer.
@@ -15,7 +15,7 @@
 // The clear goes through an inline wrapper, as the Broken Seal's iwram_call.h
 // writes it: called straight through the fixed entry, the build shifts the
 // size before loading the routine's address.
-#undef Iwram_ClearWordsEntry
+#undef Iwram_ClearWords
 static inline s32 Iwram_ClearWords(void *destination, s32 size) {
   return Iwram_ClearWordsEntry(destination, size);
 }

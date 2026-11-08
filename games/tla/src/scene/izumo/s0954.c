@@ -3,10 +3,7 @@
 #include "scene_tables.h"
 
 void Func_02000954(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 10 of 43 instructions
-   * differ in tla-en. */
-  if (!GameFlag_Test(SPLIT_CONSTANT(0x92a))) {
+  if (!GameFlag_Test(2346)) {
     const u8 *message;
 
     Func_02000d00();
@@ -32,16 +29,13 @@ void Func_02000954(void) {
 }
 
 s32 Func_020009d0(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 38 of 123 instructions
-   * differ in tla-en. */
   /* FAKEMATCH: Call3 sets Func_02000d40's arguments up in the native's order,
    * as in Func_020006a4 (a direct call: differ 2). */
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x302));
+  GameFlag_ClearBit(0x302);
   WORD_AT(Ram_HeapSlots->eventWork, 428) = 0x100;
   Task_Add(Func_0200060c, TASK_PASS_FRAME);
   Func_02000de0(gData_02000e10);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x927))) {
+  if (GameFlag_Test(0x927)) {
     BYTE_AT(Actor_GetById(15), 90) = 2;
     Actor_SetModeById(25, 5);
     Actor_SetModeById(26, 5);
@@ -50,19 +44,16 @@ s32 Func_020009d0(void) {
     Actor_SetModeById(29, 6);
     Actor_SetModeById(30, 6);
     Actor_SetModeById(31, 5);
-    if (gMainRoutineWork.entrance == 8 &&
-        GameFlag_Test(SPLIT_CONSTANT(0x928)) &&
-        !GameFlag_Test(SPLIT_CONSTANT(0x929)) &&
-        !GameFlag_Test(SPLIT_CONSTANT(0x92a))) {
+    if (gMainRoutineWork.entrance == 8 && GameFlag_Test(0x928) &&
+        !GameFlag_Test(0x929) && !GameFlag_Test(0x92a)) {
       Event_StartScreenTransition();
       Func_020006a4();
     }
-    if (GameFlag_Test(SPLIT_CONSTANT(0x929)) &&
-        !GameFlag_Test(SPLIT_CONSTANT(0x92a))) {
+    if (GameFlag_Test(0x929) && !GameFlag_Test(0x92a)) {
       Call3((void (*)())Func_02000d40, 32, PIXELS(200), PIXELS(216));
       Actor_SetSpritePriority(32, 3);
       Actor_GetById(32)->motionFlags |= 2;
-      GameFlag_SetBit(SPLIT_CONSTANT(0x302));
+      GameFlag_SetBit(0x302);
     }
   }
   Actor_SetSpritePriority(24, 3);

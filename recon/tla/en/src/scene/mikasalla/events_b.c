@@ -23,7 +23,7 @@ void Func_02000188(void) {
 void Func_020001e0(void) {
   Func_02000618(5, 49, 5, 41, 1, 1);
   Func_02000630_(4, 48, 3, 2, 4, 40);
-  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 91)));
+  GameFlag_SetBit(0x85b);
 }
 
 void Func_02000218(void) {
@@ -78,7 +78,7 @@ s32 Func_0200030c(void) {
       Func_02000628_(28, 92, 2, 2, 15, 92);
       Func_02000628(30, 92, 2, 2, 17, 92);
     }
-  } else if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 91)))) {
+  } else if (GameFlag_Test(0x85b)) {
     Func_020001e0();
   }
   return 0;

@@ -1,5 +1,4 @@
 #include "shrine_of_the_sea_god.h"
-#include "call.h"
 
 void Task_RemoveFar(void (*func)(void));
 void Func_02001340(struct ShrineOfTheSeaGodObject *object,
@@ -10,9 +9,6 @@ void Func_020018ac(void);
 void Func_020018ac(void) { Func_0200142c(Actor_GetById(16)); }
 
 void Func_020018bc(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 0 of 116 instructions
-   * differ in tla-en. */
   struct ShrineOfTheSeaGodObject *leader =
       Actor_GetById(gMainRoutineWork.currentOwner);
   struct ShrineOfTheSeaGodObject *pillar = Actor_GetById(16);
@@ -29,9 +25,9 @@ void Func_020018bc(void) {
   pillar->priorityFlags |= 2;
   Task_Add(Func_020018ac, 0x480);
   Func_02001658(leader, 2);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner,
-                           SPLIT_CONSTANT(0x9999), SPLIT_CONSTANT(0x1999));
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+                                     1);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x9999, 0x1999);
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 406, 360);
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 400, 392);
   Func_02003b48(161);
@@ -40,5 +36,5 @@ void Func_020018bc(void) {
   Task_RemoveFar(Func_020018ac);
   wait(1);
   Func_020039e0();
-  GameFlag_SetBit(SPLIT_CONSTANT(0x232));
+  GameFlag_SetBit(0x232);
 }

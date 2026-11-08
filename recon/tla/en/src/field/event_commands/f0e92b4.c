@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "effect_sprite.h"
@@ -116,7 +115,7 @@ void Func_080e92b4(void) {
   next = 0;
   mode = 0;
   selector = Func_080ce31c(scene->fieldKind);
-  pending = Func_080ce458(SPLIT_CONSTANT(0x50000005), scene->fieldKind, selector);
+  pending = Func_080ce458(0x50000005, scene->fieldKind, selector);
   if (child != NULL) {
     if (animation != NULL) {
       if (animation->width * animation->height <= 0x800) {
@@ -248,7 +247,7 @@ void Func_080e92b4(void) {
           timer = -1;
         }
         if (pending != NULL)
-          ValueLr3((s32 (*)())pending->callback, (s32)(0), (s32)(timer), (s32)(selector));
+          pending->callback(0, timer, selector);
       } else {
         if (timer == animation->height * 3) {
           phase = 2;

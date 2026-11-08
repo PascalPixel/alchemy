@@ -21,18 +21,12 @@ void Func_020002f0(void);
 /// Func_020002f0 resets the room, both objects are waited on until they land
 /// (at most 30 frames each) and stop, and the camera follows the leader again.
 void Func_02000a74(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 62 of 222 instructions
-   * differ in tla-en. */
   struct Actor *object;
   s32 i;
 
-  if (Value1(GameFlag_Test, 2576) +
-          Value1(GameFlag_Test, SPLIT_CONSTANT(0xa12)) +
-          Value1(GameFlag_Test, SPLIT_CONSTANT(0xa14)) +
-          Value1(GameFlag_Test, SPLIT_CONSTANT(0xa11)) +
-          Value1(GameFlag_Test, SPLIT_CONSTANT(0xa13)) +
-          Value1(GameFlag_Test, SPLIT_CONSTANT(0xa15)) ==
+  if (Value1(GameFlag_Test, 2576) + Value1(GameFlag_Test, 2578) +
+          Value1(GameFlag_Test, 2580) + Value1(GameFlag_Test, 2577) +
+          Value1(GameFlag_Test, 2579) + Value1(GameFlag_Test, 2581) ==
       0)
     return;
   Camera_MoveWithinMapBounds(148 << 18, -1, PIXELS(248), 1);
@@ -40,22 +34,22 @@ void Func_02000a74(void) {
   FieldEvent_Wait(10);
   if (Value1(GameFlag_Test, 2576))
     Func_020009f8(18, 35, 15, -16, 0);
-  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0xa11)))
+  if (Value1(GameFlag_Test, 2577))
     Func_020009f8(19, 35, 15, -16, 0);
-  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0xa12)))
+  if (Value1(GameFlag_Test, 2578))
     Func_020009f8(18, 31, 16, 16, 0);
-  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0xa13)))
+  if (Value1(GameFlag_Test, 2579))
     Func_020009f8(19, 31, 16, 16, 0);
-  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0xa14)))
+  if (Value1(GameFlag_Test, 2580))
     Func_020009f8(18, 33, 10, -16, 0);
-  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0xa15)))
+  if (Value1(GameFlag_Test, 2581))
     Func_020009f8(19, 33, 10, -16, 0);
   GameFlag_ClearBit(2576);
-  GameFlag_ClearBit(SPLIT_CONSTANT(0xa11));
-  GameFlag_ClearBit(SPLIT_CONSTANT(0xa12));
-  GameFlag_ClearBit(SPLIT_CONSTANT(0xa13));
-  GameFlag_ClearBit(SPLIT_CONSTANT(0xa14));
-  GameFlag_ClearBit(SPLIT_CONSTANT(0xa15));
+  GameFlag_ClearBit(2577);
+  GameFlag_ClearBit(2578);
+  GameFlag_ClearBit(2579);
+  GameFlag_ClearBit(2580);
+  GameFlag_ClearBit(2581);
   Func_020002f0();
   wait(2);
   object = Actor_GetById(18);

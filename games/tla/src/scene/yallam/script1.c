@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "scene_tables.h"
@@ -32,13 +31,10 @@ static inline void Yallam_Offset(s32 id, s32 x, s32 z) {
 }
 
 void Func_0200038c(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 0 of 59 instructions
-   * differ in tla-en. */
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Yallam_02002598(26, 95, 2, 1, 26, 76, 2);
-  if (GameFlag_Test(SPLIT_CONSTANT(0xf62)) == 0) {
+  if (GameFlag_Test(0xf62) == 0) {
     Yallam_020024f8(66, PIXELS(424), PIXELS(232));
     if (leader->x >> 20 == 26 && leader->z >> 20 == 14) {
       Func_02002488();

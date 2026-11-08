@@ -55,7 +55,7 @@ void Func_02000d2c(void) {
   rock->update = Func_02000c14;
   Call3((void (*)())Actor_SetSpeedParameters, 19, 0x20000, 0x10000);
   Call3((void (*)())Actor_ResetAndSetPosition, 19, 492, 246);
-  rock->gravity = SPLIT_CONSTANT(0xcccc);
+  rock->gravity = 0xcccc;
   rock->motionFlags = 3;
   rock->terrainId = 0;
   Actor_WaitForMoveById(19);
@@ -66,7 +66,7 @@ void Func_02000d2c(void) {
   Func_020029b0(188);
   Call3((void (*)())Func_02002868, 0x50000, 0x50000, 0x10000);
   Func_020029b0(141);
-  Call3((void (*)())Func_02002868, -1, -1, SPLIT_CONSTANT(0xe666));
+  Call3((void (*)())Func_02002868, -1, -1, 0xe666);
   Call3((void (*)())Func_020028d0, 10, 0x1e00000, 0xf80000);
   Call3((void (*)())Actor_ResetAndSetPosition, 10, 440, 232);
   Actor_GetById(10)->velocityY = 0xa0000;
@@ -83,12 +83,12 @@ burst:
   Actor_SetSingleChildFlags(clod, 0);
   clod->velocityY = (angle << 2) + 0x20000;
   cosine = Math_Cosine(angle);
-  mul = Iwram_MulQ16Entry;
+  mul = Iwram_MulQ16;
   speed <<= 3;
   clod->velocityZ = mul(speed, cosine);
   clod->velocityX = mul(speed, Math_Sine(angle));
   clod->acceleration = 0;
-  clod->gravity = SPLIT_CONSTANT(0x547a);
+  clod->gravity = 0x547a;
   clod->scaleX = scale;
   clod->scaleY = scale;
   clod->bounce = 0x8000;
@@ -99,7 +99,7 @@ next:
   Func_02002870();
   Call2((void (*)())Task_Add, (s32)Func_02000ca0, 0x480);
   wait(40);
-  Call2((void (*)())Func_02002918, SPLIT_CONSTANT(0xe666), SPLIT_CONSTANT(0x1ccc));
+  Call2((void (*)())Func_02002918, 0xe666, 0x1ccc);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x1500000, -1, 0x1180000, 1);
   i = 11;
   row = 114;

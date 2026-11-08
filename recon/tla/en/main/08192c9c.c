@@ -147,7 +147,7 @@
 //    `add r4, sp; str r4, [sp, #64]` in the frame == 446 block, right after
 //    Iwram_FillWords(work->sheet + 0x1810, ...). That is a second occurrence
 //    of the address in one basic block, so PRE's reaching register gets two
-//    sets. A do { } while (0) around that one Iwram_FillWordsEntry reproduces it:
+//    sets. A do { } while (0) around that one Iwram_FillWords reproduces it:
 //    differ 3150, frame 420 as in the native, every slot's use count within a
 //    few of the listing's except the swaps in 2. It is a one-pass block, so it
 //    stays out. A static inline, a label, a goto to the next line, an empty if,

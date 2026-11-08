@@ -55,7 +55,7 @@ void Func_02000550(void) {
   if (Func_02005834(0) == 1) {
     direction = gData_02005af0;
     Func_020020f0(0);
-    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x104, 255)));
+    GameFlag_SetBit(515);
     /* FAKEMATCH: a u16 local stores its 0 from a register (movs, strh); the
      * constant would load from the pool (differ 11). */
     *(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x166) = zero;

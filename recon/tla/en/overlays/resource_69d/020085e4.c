@@ -10,7 +10,7 @@
 //   but is a forced temporary (S2) and is not used here.
 // - the native ends the sprite priority copy with orrs r3, r2; a held local,
 //   s32 priority = BYTE_AT(leader->sprite, 9) & 12, gives differ 6, gap 3.
-// - ldr r5, [pool] for Iwram_MulQ16Entry before ldr r1, [speed]: the load of speed
+// - ldr r5, [pool] for Iwram_MulQ16 before ldr r1, [speed]: the load of speed
 //   depends on the Math_Cosine call, the pool load does not, so sched2 takes
 //   the pool load first. A local function pointer, or speed read as WORD_AT
 //   or const, changes nothing.

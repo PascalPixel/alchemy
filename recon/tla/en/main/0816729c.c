@@ -1,7 +1,7 @@
 // Differ 54 of 2680 (tla-en, 2026-11-07).
 // 2026-11-07, from 56: an empty asm (FAKEMATCH barrier) between the closing
 // fill and the release loop (54). Left as below.
-// 2026-11-07: ring = 0 before shift = 0 and a plain Iwram_FillWordsEntry for the strike's
+// 2026-11-07: ring = 0 before shift = 0 and a plain Iwram_FillWords for the strike's
 // first sheet fill (60 to 56); the flash step, both queue loops and DRAW_ALT's
 // argument order still tie as below.
 // 2026-11-06: differ 60: scheduling and reload ties only, as below.
@@ -13,7 +13,7 @@
 // first; 304 - 2 * frame and five other spellings of the flash's step; five other dead
 // conditions on the rings' left; the do { } around the whole DRAW_ALT or its draw alone;
 // the frame <= 63 sheet chosen by +=, ?: or a reversed test; and after the gathering a plain
-// Iwram_FillWordsEntry, which settles the release loop's movs r7, #0 but moves the fill's own
+// Iwram_FillWords, which settles the release loop's movs r7, #0 but moves the fill's own
 // lsls r1 ahead of its pointer load, the same 60.
 // Left: order rows in the queue loops, the draws and the frame's model stores; the second
 // queue loop's table and source swapped between r4 and r5 (equal refs); and the rings'
@@ -250,7 +250,7 @@ static inline void FILL(void *dst, s32 size, s32 value) {
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWordsEntry, 186 of 2680 instructions differ in tla-en. */
+   * Iwram_CopyWords, 186 of 2680 instructions differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 

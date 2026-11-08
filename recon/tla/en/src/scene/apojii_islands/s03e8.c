@@ -18,9 +18,9 @@ void Func_020003e8(void) {
   if (*(s8 *)(work + 0xca4) != 0)
     return;
   if (gData_020024c4 == -1) {
-    CallLr3((void (*)())Iwram_CopyWordsEntry, Data_02002958, (void *)SPLIT_CONSTANT(0x5000060), 32);
+    Call3((void (*)())Iwram_CopyWords, Data_02002958, (void *)0x05000060, 32);
     Iwram_CopyWords(Data_02002978, Data_02002958, 32);
-    Iwram_CopyWords(gData_02002998, (void *)SPLIT_CONSTANT(0x5000080), 32);
+    Iwram_CopyWords(gData_02002998, (void *)0x05000080, 32);
     Iwram_CopyWords(gData_020029b8, gData_02002998, 32);
     gData_020024c4 = 0;
   }

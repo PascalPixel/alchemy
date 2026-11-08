@@ -16,12 +16,9 @@ void Func_02003a5c(void) {
 }
 
 void Func_02003a8c(void) {
-  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
-   * shifted byte plus an addend; as plain constants, 10 of 33 instructions
-   * differ in tla-en. */
   Func_02005390();
-  Func_020053a8(0, SPLIT_CONSTANT(0x20f), 8, 9);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x849))) {
+  Func_020053a8(0, 0x20f, 8, 9);
+  if (GameFlag_Test(0x849)) {
     Func_02005230(10, 0, 0);
   } else {
     Actor_SetSingleChildFlags(Actor_GetById(10), 0);

@@ -377,8 +377,8 @@ Resource_DirectoryTable:
 	resource PortalSheet, BattleEffect_PortalSheet
 	resource SkullSheet, BattleEffect_SkullSheet
 	resource HeartSheet, BattleEffect_HeartSheet
-	resource , BattleEffect_CounterRevealSheet
-	resource , BattleEffect_RedCrescentSheetA
+	resource CounterRevealSheet, BattleEffect_CounterRevealSheet
+	resource RedCrescentSheetA, BattleEffect_RedCrescentSheetA
 	resource , BattleEffect_BlueBeastSheet
 	resource , BattleEffect_RedCrescentSheetB
 	resource SpiralSheet, BattleEffect_SpiralSheet
@@ -492,14 +492,14 @@ Resource_DirectoryTable:
 	resource BlueFlameBurst, FieldEffect_BlueFlameBurst
 	resource Leaves, FieldEffect_Leaves
 	resource DustPuffA, FieldEffect_DustPuffA
-	resource , FieldEffect_DustPuffB
+	resource DustPuffB, FieldEffect_DustPuffB
 	resource , Resource_Data1E3
 	resource , FieldEffect_GoldStar
 	resource , FieldEffect_GoldCrystal
 	resource FlamingArrow, FieldEffect_FlamingArrow
 	resource BowDraw, FieldEffect_BowDraw
 	resource FieldEffectExplosion, FieldEffect_Explosion
-	resource , Resource_Data1E9
+	resource Data1E9, Resource_Data1E9
 	resource SparkleFade, FieldEffect_SparkleFade
 	resource StarSparkleFade, FieldEffect_StarSparkleFade
 	resource , FieldEffect_WhitePuff
@@ -509,7 +509,7 @@ Resource_DirectoryTable:
 	resource FallingRock, FieldEffect_FallingRock
 	resource WaterSplash, FieldEffect_WaterSplash
 	resource FieldEffectIceShard, FieldEffect_IceShard
-	resource , FieldEffect_WhiteSparkle
+	resource WhiteSparkle, FieldEffect_WhiteSparkle
 	resource Runes, FieldEffect_Runes
 	resource Pebbles, FieldEffect_Pebbles
 	resource GoldenTrident, FieldEffect_GoldenTrident

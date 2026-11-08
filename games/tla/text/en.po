@@ -18980,7 +18980,7 @@ msgctxt "MsgPriceHeading"
 msgid "04666"
 msgstr "Price"
 
-msgctxt "message"
+msgctxt "MsgShopCannotEquip"
 msgid "04667"
 msgstr "Can't equip"
 
@@ -19020,7 +19020,7 @@ msgctxt "MsgCannotRemoveIt"
 msgid "04676"
 msgstr "You can't remove it!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShopStatLabel"
 msgid "04677"
 msgstr "ATK"
 
@@ -19284,7 +19284,7 @@ msgstr ""
 "Anything else need\n"
 "repairing?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgLetMeGiveYouThis"
 msgid "04724"
 msgstr ""
 "Let me give you this\n"
@@ -19297,7 +19297,7 @@ msgstr ""
 "So who gets this\n"
 "{argument_item_name:1}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDontWantIt"
 msgid "04726"
 msgstr "What! You don't want it?{page_break}"
 

@@ -54,7 +54,7 @@ SECTIONS
         "*/games/tla/src/scene/magma_rock/s22ac.o"(.text)
         "*/games/tla/src/scene/magma_rock/s244c.o"(.text)
         "*/games/tla/src/scene/magma_rock/s24c8.o"(.text)
-        "*/resource_691_overlay.o"(.text.x0200a518)
+        "*/games/tla/src/scene/magma_rock/s2518.o"(.text)
         "*/games/tla/src/scene/magma_rock/s2618.o"(.text)
         "*/games/tla/src/scene/magma_rock/prepare.o"(.text)
         "*/games/tla/src/scene/magma_rock/s2d08.o"(.text)

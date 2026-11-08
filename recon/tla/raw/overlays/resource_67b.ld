@@ -42,7 +42,7 @@ SECTIONS
         "*/games/tla/src/scene/aqua_rock/s1f90.o"(.text)
         "*/games/tla/src/scene/aqua_rock/s20bc.o"(.text)
         "*/resource_67b_overlay.o"(.text.x0200a250)
-        "*/resource_67b_overlay.o"(.text.x0200a3c0)
+        "*/games/tla/src/scene/aqua_rock/s23c0.o"(.text)
         "*/games/tla/src/scene/aqua_rock/events_i.o"(.text)
         "*/games/tla/src/scene/aqua_rock/s2550.o"(.text)
         "*/games/tla/src/scene/aqua_rock/events_k.o"(.text)

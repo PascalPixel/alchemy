@@ -1,4 +1,7 @@
 // Differ 2 of 292 (tla-en, 2026-11-08, -mtune=gba); the same row as on 2026-11-07.
+// Round 2 (2026-11-08): the index store inside the y block or a block of its
+// own, a block-scoped copy of output for the call, NULL as 0 (all 2); y read
+// into a local first (4); 8 permuter minutes: nothing better.
 // 2026-11-08 (sched2 dump): the native needs the next store ahead of the y
 // load (it is, at priority 6, only behind a barrier or with an aliasing load)
 // and mov r0, r8 free to fill the load's delay. The block's loop-end note

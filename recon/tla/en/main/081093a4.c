@@ -1,4 +1,7 @@
-// Differ 12 of 238 (tla-en, 2026-11-08, -mtune=gba): order only. Both empty asms around the stat
+// Differ 12 of 238 (tla-en, 2026-11-08, -mtune=gba): order only. Rechecked
+// 8 November: dropping the restore block 16, the copies block 14, both 18;
+// the with[] copies in a block 16 or 15, reordered 18 to 28; saved as u16 or
+// s16 18; the loop start moved up, no change; permuter, 9 minutes: none better. Both empty asms around the stat
 // copies are now once-only blocks (the restore store; the last two copies), with no device
 // left (no blocks, 18). Left: the with[] loads, the saved entry and the loop setup in order.
 // Near miss, differ 12 of 238 (tla-en, 2026-11-05), with untagged empty asms, one-pass

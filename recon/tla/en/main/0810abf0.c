@@ -1,4 +1,11 @@
 // Differ 45 of 297 (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-08 (later): unchanged. messageBase unpinned but declared first (77;
+// shop outranks it, no tie), with chooseAgain too (89); messageBase = 0 at the
+// top with chooseAgain, unitId and memberIndex copied from it under the pin
+// (208); unitId = chooseAgain (45); the three retry-end stores with or without
+// once-only blocks (134), or added beside the early store (45: deleted as
+// dead); 8 minutes of permute: 39 to 40 again only by reading coins into
+// chooseAgain or passing an unset temporary to wait, not kept.
 // 2026-11-08: the pin re-measured (77 without it, kept); a second memberIndex =
 // 0 after unitId = 0 (47: the store is folded away), chooseAgain = 1 at each
 // retry's end (134), memberIndex = 0 before chooseAgain = 0 (79), unitId and

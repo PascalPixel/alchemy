@@ -1,7 +1,7 @@
-// Differ 28 of 871 (tla-en, 2026-11-08, -mtune=gba), the same rows: the caster takes r6 and the offset r7
-// where the listing swaps them; the event work's pointer is loaded once before
-// the loop where the listing reloads it each pass; green's product sits in r5
-// against r3; one scheduling pair (i = 63 against the -13 mask's copy).
+// Differ 28 of 871 (tla-en, 2026-11-08, -mtune=gba), the same rows: the
+// caster takes r6 and the offset r7 where the listing swaps them; the event
+// work's pointer is loaded once before the loop where the listing reloads it
+// each pass; green's product sits in r5 against r3; one scheduling pair (i = 63 against the -13 mask's copy).
 // Later on 6 November: result = 0 before pending = NULL with the event work's
 // pointer in its own local gives both stores and slots back in r5 (from 34).
 // 8 November: the empty asm after pending = NULL was free and is gone; the
@@ -9,7 +9,12 @@
 // single green expression (30), green += add earlier (30), the eventWork
 // reload with a giv-shaped index (46), declaration and init orders, a
 // do-while or separate decrement for the sprite loop, and a dead global
-// update anywhere measure 28 or worse.
+// update anywhere measure 28 or worse. Later on 8 November: the event work
+// reloaded each pass with offset set in the for (34: slots, offset and caster
+// rotate to r7, r5, r6 against r5, r6, r7), hoisted inside the for (28), the
+// pointer through a volatile cast (34), green through x, y, a scale or
+// packed, or as (sin * 8 >> 16) then += 23 (33 to 455), the sprite loop
+// steps or i = 63 set first (28 to 69) leave it at 28.
 // 6 November: priorityFlags |= 2 orders the OR; if (fade == -1) add = 0; else
 // add = fade / 4 reloads fade as the listing does; green as sin * 8, then
 // (green >> 16) + 23. Measured and left: result = 0 before pending = NULL
@@ -300,10 +305,10 @@ loaded:
       blue += add;
       if (blue > 31)
         blue = 31;
-  do {
-      packed = (blue << 10) | (green << 5) | red;
-      ((u16 *)0x05000200)[255 - i] = packed;
-  } while (0);
+      do {
+        packed = (blue << 10) | (green << 5) | red;
+        ((u16 *)0x05000200)[255 - i] = packed;
+      } while (0);
     }
     if (fade != -1 && fade <= 126)
       fade++;
@@ -430,7 +435,7 @@ loaded:
   }
   if (pending != NULL)
     Field_RunPsynergyEvent(pending, scene->firstObjectId,
-                                 scene->secondObjectId);
+                           scene->secondObjectId);
   Resource_ResetEntry(entry);
   if (result == 2)
     BattleEffect_FadeToSavedPalettes(100);

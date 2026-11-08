@@ -1,4 +1,6 @@
-// Differ 12 of 69 (tla-en, 2026-11-08, -mtune=gba). The listing's pool gives the
+// Differ 12 of 69 (tla-en, 2026-11-08, -mtune=gba). Rechecked 8 November:
+// once-only blocks over every run of stores, and empty ones between them, in
+// this and the listing's order: 12 at best; permuter, 6 minutes: none better. The listing's pool gives the
 // native's address order: 7518, 751c, 7520, 7528, gScrollTarget, 7524, 7514.
 // Written in that order: 32 (sched1 then hoists 7524's address and
 // Func_081a133c into r1 and r0); 7524 as s16 32, u8 or s32 35; 7524 = 1

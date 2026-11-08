@@ -6,7 +6,10 @@
 // place of the asm (4); the map pointer read after the store (13); the 0 in a
 // local (13); the store through a pointer local (4); the bit-field in a u16 or
 // u32 container (2 with the asm, 4 to 6 without); 8 permuter minutes found
-// nothing better. In sched2 the ldrb and the subs are both ready after the
+// nothing better. Later still: the store through an s32 pointer local, a
+// trailing empty block, or the asm with an empty block, 2; blocks around the
+// store and the bit-field store (4 to 6), the map read inline (13); MapWork17
+// as s8 or one declaration, 2; 8 more permuter minutes. nothing better. In sched2 the ldrb and the subs are both ready after the
 // store and the ldrb's longer chain wins. Older notes below predate -mtune=gba.
 // Under -Os, 5 November: differ 4 of 30 (tla-en); older figures below predate it.
 // Near miss, differ 6 of 30 (tla-en, 2026-10-31): scheduler order only. The

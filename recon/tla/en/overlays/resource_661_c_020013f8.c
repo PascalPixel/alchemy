@@ -1,6 +1,11 @@
-// Differ 4 of 124 (tla-en, 2026-11-08, -mtune=gba), unchanged this round: a
-// function-level work pointer (65), the owner read into a local (4), the
-// pointer to currentOwner itself (46), and an 8-minute permute found nothing.
+// Differ 4 of 124 (tla-en, 2026-11-08, -mtune=gba), unchanged this round: the
+// twin Func_020012dc's shape (object read at the top, Scene_Call4090: 65),
+// the work pointer taken after the second call, inside or outside a once-only
+// block (56), an inline MoveLeader helper (54 to 56; 4 with the work pointer
+// between the calls, the same rows), the shifts or the second call folded into
+// the arguments (54). Earlier: a function-level work pointer (65), the owner
+// read into a local (4), the pointer to currentOwner itself (46), and an
+// 8-minute permute found nothing.
 // From 30: the last three moves take the
 // work's address between the two cell calls, so it crosses the second call
 // and lands in r5 as the native's does; that also gives the start its r2.

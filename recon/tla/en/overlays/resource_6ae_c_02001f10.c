@@ -1,4 +1,10 @@
-// Differ 34 of 1038 (tla-en, 2026-11-08, -mtune=gba). Rechecked 2026-11-08: the
+// Differ 34 of 1038 (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-08, second round: the zero and one locals are gone (the stores take 0
+// and the ors 1; CSE builds the same registers, still 34). Local-alloc ranks the
+// mask (6 refs over 620) below the FIELD_AT store's zero (4 over 390); mask &= the
+// field at 21 written back (115), once-only blocks around that store or the first
+// camera call (42), a cast or a constant local for the camera's first argument,
+// a prototype (34): no better. Earlier, 2026-11-08: the
 // held struct sizes the frame (without it 38; a volatile word in its place 34);
 // W_Func_02005714 is needed (direct 146, Call3 36); zero or mask as u32, u8, s16
 // or u16 (34, mask s16 83), declared in either order (34); zero set before the
@@ -94,8 +100,8 @@ void Func_02001f10(void) {
   struct {
     u8 bytes[4];
   } held;
-  s32 lastArg, spill, zero, scratch;
-  s32 owner, actor, mask, owner2, one, t1;
+  s32 lastArg, spill, scratch;
+  s32 owner, actor, mask, owner2, t1;
   s32 t2, t16, t34;
   s32 t85, t86, t87;
   s32 t158, t162;
@@ -278,12 +284,10 @@ L_0200a47a:
   t158 = Value1(Actor_GetById, 20);
   mask = 254;
   FIELD_AT(t158, u8, 90) = (mask & (FIELD_AT(t158, u8, 90)));
-  zero = 0;
   Call3(Actor_SetPositionAndReset, 20, 0x1e8, 0x12c);
   Call1(FieldEvent_Wait, 1);
   t162 = Value1(Actor_GetById, 20);
-  one = 1;
-  FIELD_AT(t162, u8, 90) = ((FIELD_AT(t162, u8, 90)) | one);
+  FIELD_AT(t162, u8, 90) = ((FIELD_AT(t162, u8, 90)) | 1);
   Call1(FieldEvent_Wait, 20);
   Call2(Motion_SetVarCbAndRefresh, 20, 2);
   t166 = Value1(Actor_GetById, 20);
@@ -291,7 +295,7 @@ L_0200a47a:
   Call3(Actor_SetPositionAndReset, 20, 0x1e6, 0x134);
   Call1(FieldEvent_Wait, 1);
   t170 = Value1(Actor_GetById, 20);
-  FIELD_AT(t170, u8, 90) = ((FIELD_AT(t170, u8, 90)) | one);
+  FIELD_AT(t170, u8, 90) = ((FIELD_AT(t170, u8, 90)) | 1);
   Call2(Func_02005724, 0xcccc, 0x1999);
   Camera_MoveWithinMapBounds(0x2000000, 0x600000, 0x1400000, 1);
   Func_02005734();
@@ -309,7 +313,7 @@ L_0200a47a:
   Call3(Actor_ArmCallback, 25, 0xa000, 0);
   Call2(Func_020056f4, 0x8014, 0);
   actor = Value1(Actor_GetById, 32);
-  FIELD_AT(actor, s32, 108) = zero;
+  FIELD_AT(actor, s32, 108) = 0;
   Call1(wait, 1);
   FIELD_AT(actor, s32, 24) = 0x10000;
   FIELD_AT(actor, s32, 28) = 0x10000;
@@ -335,12 +339,12 @@ L_0200a47a:
   Call3(Actor_ArmCallback, 26, 0xc000, 0);
   Call3(Actor_ArmCallback, 25, 0xc000, 0);
   actor = Value1(Actor_GetById, 30);
-  FIELD_AT(actor, s32, 108) = zero;
+  FIELD_AT(actor, s32, 108) = 0;
   Call1(wait, 1);
   FIELD_AT(actor, s32, 24) = 0x10000;
   FIELD_AT(actor, s32, 28) = 0x10000;
   actor = Value1(Actor_GetById, 31);
-  FIELD_AT(actor, s32, 108) = zero;
+  FIELD_AT(actor, s32, 108) = 0;
   Call1(wait, 1);
   FIELD_AT(actor, s32, 24) = 0x10000;
   FIELD_AT(actor, s32, 28) = 0x10000;
@@ -379,7 +383,7 @@ L_0200a47a:
   Call1(FieldEvent_Wait, 1);
   t248 = Value1(Actor_GetById, 21);
   scratch = FIELD_AT(t248, u8, 90);
-  FIELD_AT(t248, u8, 90) = (one | scratch);
+  FIELD_AT(t248, u8, 90) = (1 | scratch);
   Call3(Actor_ArmCallback, 21, 0xe000, 0);
   Call3(Actor_SetPositionAndReset, 22, 0x1ce, 0x118);
   Call2(Func_02005704, 22, 0);

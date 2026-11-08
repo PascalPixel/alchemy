@@ -1,4 +1,8 @@
 // Differ 2 of 82 (tla-en, 2026-11-08, -mtune=gba); without the barrier, 4.
+// Round 2 (2026-11-08), no barrier, 4 as before: the transform through a
+// function-pointer local, a (s32 *) cast of the view, a copy of screen, a
+// once-only block before the call, the projection set first or depth negated
+// as its own statement (4 to 8); 8 permuter minutes: nothing under 4.
 // Also 2026-11-08: no barrier, the plain C sets the literal before adds r7, r1
 // as the native does, and only the merged sp copy is left (4); an 8-minute
 // permute of that form found nothing better. A memory, cc or plain asm, a

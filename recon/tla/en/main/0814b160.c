@@ -3,6 +3,12 @@
 // steps i and marker with r1 and r2 swapped. No gain (16 to 24) from marker stepped first,
 // ++i in the test, a for loop (both init and step orders), marker
 // set outside the guard, and an 8-minute permuter run (best 22).
+// Also 16 or worse (2026-11-08): marker block-scoped, set before i, or as
+// &work->particles[i] (31: the giv then points at variant), i and marker as
+// += 1 or x = x + 1, ++i in the test, the test reversed, effect->count in a
+// local, declaration orders, once-only blocks around each step and the
+// marker's set, start as i * 16 or u32. The head's order follows the marker's
+// move, which source order puts before the giv for 36.
 // Measured 2026-11-05 (tla-en): differ 16 of 222. Left: two hoisted constants
 // in swapped registers (36 and the stride), r0 and r1 at the head of the loop,
 // r1 and r2 at its tail.

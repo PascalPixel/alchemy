@@ -1,4 +1,8 @@
 // Differ 22 of 4580 (tla-en, 2026-11-08, -mtune=gba). Measure 081843fc,081848ec together.
+// Round 7 (2026-11-08), all 22: the sparks height argument as (table + n)[0],
+// *(n + table) or through a const u8 * cast, every spark table and Data_081999ee
+// declared non-const, and cellBuffer + 0x1000 as an integer sum either way round
+// or &(0x1000)[cellBuffer] (an or 24).
 // Tried 2026-11-08 (round 6), none below 22: the idx barrier re-measured (without it
 // 3367, its 4 bytes move every later pool; a once-only block in its place the same;
 // re-reading p->variant there 44); for the sparks' last height n + table,

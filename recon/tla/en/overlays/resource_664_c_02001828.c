@@ -1,5 +1,11 @@
-// Differ 2 of 1527 (tla-en, 2026-11-08, -mtune=gba): one sched2 tie left, the gust's
+// Differ 2 of 1527 (tla-en, 2026-11-08, -mtune=gba): one sched2 row left, the gust's
 // motionFlags strb issues before mov r1, r8 (the effect copy) instead of after it.
+// Not a tie: the target load depends on that byte store, so the strb (priority 57)
+// outranks the copy (55). Tried 8 November (3rd round): overlay 663's MotionView
+// bit-field store frees both target loads (8); a view with a pointer member
+// keeps both (2), with a u32 or FieldSprite * member frees both (8); the effect
+// as struct EffectWork, the target as [5], a volatile or raw byte store (2);
+// the store first (18) or between the scales (16); 8 minutes of permute (2).
 // Tried 2026-11-08: a once-only block around that store (20) or around the priority
 // copy (16); the store before the scales (18) or after the priority copy (65); the
 // target in a local, or = 0 for = hit (2).

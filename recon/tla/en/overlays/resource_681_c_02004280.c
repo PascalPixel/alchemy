@@ -1,4 +1,7 @@
-// Differ 17 of 229 (tla-en, 2026-11-08, -mtune=gba), with no barrier left: the
+// Differ 17 of 229 (tla-en, 2026-11-08, -mtune=gba); 8 November round: cse merges the
+// two Data_0202de00 pool loads, and a once-only block around the copy, the call or
+// wait(1) only moves the merge to cse2 (19, 52, 19); u32 type, &Data_0202de00[0], a
+// cast source or the call direct stay 17. Earlier: with no barrier left: the
 // scroll reset's empty asm was free and the other two are once-only blocks.
 // What differs is Data_0202de00, kept in r5 across the copy (CSE shares the
 // address; lreg gives its pseudo r5) where the native loads it from the same

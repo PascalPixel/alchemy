@@ -1,4 +1,8 @@
 // Differ 2 of 332 (tla-en, 2026-11-08, -mtune=gba); the same two rows as below (z loads before mov r0, r8).
+// 2026-11-08, round three: devices re-measured unchanged (the first asm as a once-only block 8);
+// the first loop indexed (delay as -i * 2: 6; sprite 115), the second loop's sprite indexed 4, a
+// once-only block around x, z, either, or the call 2, a copy of owner as the base 2, and 8
+// permuter minutes (20,278 candidates, best 10) left the z load before mov r0, r8.
 // Re-measured 2026-11-08, each device tagged at its site: without the first empty asm 18, the second
 // 16, the pin on size 4, the asm on party 81 (a once-only block there 79); x and z read in the other
 // order 10, the once-only block dropped or moved 4. sprite reused for the picture tiles and the 63 mask

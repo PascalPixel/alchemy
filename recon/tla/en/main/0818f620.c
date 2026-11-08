@@ -5,6 +5,11 @@
 // once-only block before its LoadBlitter (12, 18); permute 9 min: nothing
 // below 2. The pool load is reload's rematerialized cells (r5), which outranks
 // str r7 on priority in sched2.
+// Round 3 (2026-11-08): cells as gMapCellBuffer at either call, u32 cells, u8 *
+// canvas, unsigned index, *(discs + index), cells first (6), size / 2 (119), a
+// half local (53), a draw local (154), once-only blocks at the last quarter (6
+// to 24), y before x or the steps swapped (18), joined clamps; permute 6 min:
+// nothing below 2.
 // Measured 2026-11-05 (tla-en): differ 2 of 1022. The Iwram calls written as
 // static inline wrappers take this from 20 to 2: the DrawDisc stores and both
 // clears come right, so these calls were inline functions in the source. Left:

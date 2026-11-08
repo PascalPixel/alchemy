@@ -1,4 +1,5 @@
 // Differ 32 of 627 (tla-en, 2026-11-08, -mtune=gba): the same three places.
+// 2026-11-08, second pass: a separate corner counter (299), scrollU as (-frame * 8 - 1) & 127 (32) or with xor (45), caster.y through i (69), the corner as j * 2 without vertex (212), vertex or j first in the step list (46, 54), baseY += wobble then radiusY = baseY (32), half reused as baseY or radiusY (246, 153), radiusY last (153). The rows left are reload's round-robin choices.
 // 2026-11-08: radiusY without baseY (120), its operands swapped, corner as &array[vertex], half as -(thickness / 2) all 32; i = 0 or corner moved (122 to 228); scrollU or a once-only block around the transform calls 34 to 36.
 // 2026-11-07: radiusY in place with baseY copies, declaration orders, register, scrollU casts all 32 or worse; 10-min permute none better.
 // 2026-11-06: scheduling and allocation only, in three places: the

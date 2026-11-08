@@ -1,5 +1,10 @@
 // Differ 28 of 171 (tla-en, 2026-11-08, -mtune=gba): screenX and screenY in each
-// other's registers. screenX is local to its block, so local-alloc gives it r2
+// other's registers. Later on 8 November: 8 more minutes of permute (seed
+// 9117, 4362 candidates) found nothing under 28; screenX, screenY or both
+// block-scoped in the loop body, or register (28; 30 on the shifted-later
+// shape); a once-only block around screenX, screenY or x - 4 (28, 30); the
+// unshifted difference in its own local (63); x = screenX then x -= 4 (28).
+// screenX is local to its block, so local-alloc gives it r2
 // (only y, in r3, is live) before global gives screenY r0; the listing's r0
 // for screenX needs r2 busy at its birth (the unshifted z - y, which the
 // listing shifts after screenX) or screenX global. Tried 2026-11-08: screenY =

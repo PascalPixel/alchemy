@@ -15,7 +15,11 @@
 // Permute 4 minutes from here: nothing below 4 (twice).
 // 2026-11-08: count, point or first and second block-scoped, the step list
 // swapped, point++ in the body, the null test as !rail (all 4); 8 permuter
-// minutes found nothing below 4.
+// minutes found nothing below 4. Second pass: count = 0 at each step of the
+// rail setup, a do-while loop, point++ before count++ in the step list, the
+// null test as rail == 0 or setting collisionFlags itself (all 4); best =
+// NULL before point (14); position's sums reordered (4 to 197); 8 permuter
+// minutes randomising the else block (no candidate beat 4).
 // Measured 2026-10-31 (second pass): the 127 is a reload into the next of
 // the spill registers r0 to r3 in turn after r1 (268), r2 (best's NULL) and
 // r3 (bestDistance); without best = NULL it lands in r3, so the null check

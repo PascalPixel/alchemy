@@ -1,4 +1,9 @@
 // Differ 2 of 303 (tla-en, 2026-11-08, -mtune=gba).
+// Round 3 (2026-11-08): the native emits the flags move (r3) ahead of r1 and
+// r2; here all four argument moves are expanded r0, r1, r2, r3 and tie. Tried
+// u32, u8 and u16 flags, narrow and unsigned parameters, a void return, a
+// shift local, a mode local, a flags copy, once-only blocks around and after
+// the call, the fill wrapper dropped (6); permute 6 min: nothing below 2.
 // 2026-11-07: Iwram_FillWords through an inline wrapper (as the Broken Seal's
 // iwram_call.h) fixes the fill's order, 6 to 2; left: the slot 104 argument
 // is loaded first before Func_08196404 (the native loads it last: r3, r1, r2,

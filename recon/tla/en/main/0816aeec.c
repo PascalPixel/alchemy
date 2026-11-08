@@ -1,4 +1,7 @@
-// Differ 90 of 902 (tla-en, 2026-11-08, -mtune=gba). The grid's column step
+// Differ 90 of 902 (tla-en, 2026-11-08, -mtune=gba). Re-measured 8 November,
+// later: unchanged; the pin is a frame question (without it the frame is 120
+// bytes, not 132, 941), and a 12-byte unused local in five places does not
+// restore it (933 to 937). The grid's column step
 // is listed c++, b++, d++, column++, x += 8 (94 to 90; all 120 step orders and
 // all 1,260 orders of the row-top statements measured, nothing under 90; 8
 // minutes of permuter on the grid, seed 4417, 90). The pin is still needed

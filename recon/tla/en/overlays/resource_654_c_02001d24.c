@@ -1,8 +1,14 @@
 // Differ 4 of 656 (tla-en, 2026-11-08, -mtune=gba): two sched2 ties, the rotation
 // store (strh) ahead of field18's str, and ahead of SetModeById's `movs r1, #1`;
-// sched2 picks the strh for its extra later dependants. Tried: once-only blocks
-// (6 to 10), store and declaration orders (4 to 84), rate, rotation or flags at
-// function level (4 to 92), the stores through a u16 pointer cast (4 to 78).
+// sched2 picks the strh for its extra later dependants. This round the motion
+// flags are stored as a plain 0 through one pointer kept for both stores (the
+// rate's low byte, the rotation and rate locals and the block are gone at no
+// cost; as `object->motionFlags`, 14 of 656 differ: the pointer's r7 must be
+// formed with the first store). Re-measured: the once-only block (6 without),
+// the ObjAngle inline (128 without). Tried: once-only blocks (6 to 81), store
+// and declaration orders (4 to 84), the stores through a u16 pointer cast (4 to
+// 78), the second site's stores swapped (4, the same rows); a 6-minute permute
+// of the stores' stretch found nothing better.
 // Differ 4 of 656 (tla-en, 2026-11-07), from 10: the scene helpers the header
 // no longer defines (ObjLaunch, ObjMode, ObjModeWait, Wait, FlagSet) compiled as
 // implicit declarations; they are now Actor_Jump, Actor_SetModeById,
@@ -12,8 +18,8 @@
 // argument against the closing rotation store (orders tried, no gain).
 // Under -Os, 5 November: differ 14 of 656 (tla-en); older figures below predate it.
 // Near miss (16 of 656 instructions differ, was 80). Object 13's motion flags
-// are cleared after its sprite's rotation is set, so the zero is the low byte
-// of the register holding field18's -0x10000, as the native stores it (with
+// are cleared after its sprite's rotation is set; the native stores the zero
+// from the register holding field18's -0x10000, which a plain 0 now gives too (with
 // the flags cleared first, or chained to field18, the known zero in r6 is
 // shared and the registers after it move). Left: instruction order only, the
 // motion flags' address formed and stored ahead of the rotation's store, and
@@ -39,6 +45,7 @@ void Func_02001d24(void) {
   struct ShrineOfTheSeaGodObject *object;
   struct ShrineOfTheSeaGodObject *leader;
   struct ShrineOfTheSeaGodSprite *sprite;
+  u8 *motionFlags;
   const void *callback;
 
   if (ShrineOfTheSeaGod_FlagCheck(0x873))
@@ -77,15 +84,11 @@ void Func_02001d24(void) {
   Actor_Jump(13, 4, 0);
   ShrineOfTheSeaGod_ObjCommit(13, 248, 168);
   Actor_SetModeById(13, 6);
-  {
-    s32 rotation = 0xd000;
-    u8 *flags = &object->motionFlags;
-    s32 rate = -0x10000;
-
-    object->field18 = rate;
-    sprite->rotation = rotation;
-    *flags = rate;
-  }
+  // The pointer serves both motion flag stores, formed beside the first.
+  motionFlags = &object->motionFlags;
+  object->field18 = -0x10000;
+  sprite->rotation = 0xd000;
+  *motionFlags = 0;
   object->y += 0x60000;
   Actor_SetSingleChildFlags(Actor_GetById(13), 0);
   ShrineOfTheSeaGod_ObjSpeed(13, 0x6666, 0x3333);
@@ -95,7 +98,7 @@ void Func_02001d24(void) {
   do {
     Actor_WaitForMoveById(13);
   } while (0);
-  object->motionFlags = 3;
+  *motionFlags = 3;
   object->height = 0x200000;
   object->field18 = 0x10000;
   sprite->rotation = 0;

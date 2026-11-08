@@ -1,4 +1,8 @@
 // Differ 2 of 549 (tla-en, 2026-11-08, -mtune=gba).
+// Rechecked 2026-11-08: still the same tie. No gain from swapping the for
+// list's init or step (step swap 4), quad set before the loop, a while or
+// do-while form, a block-scoped quad, i * 3 <= frame (6), scale assigned or
+// declared outside, i < 16 (62), and 8 more permuter minutes.
 // 2026-11-08: the pair is a sched2 LUID tie. Loop puts the i * 3 giv's init
 // after quad = work (insn order i, quad, giv), so the reload of work wins over
 // the giv's spill store. Without gain: quad set earlier or in the for list

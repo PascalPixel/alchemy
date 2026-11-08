@@ -1,4 +1,9 @@
-// Differ 14 of 1556 (tla-en, 2026-11-08, -mtune=gba, multiplies 3 3); from 20: a once-only block
+// Differ 14 of 1556 (tla-en, 2026-11-08, -mtune=gba, multiplies 3 3). Third pass, 8 November,
+// no gain: a block-scoped count local for the shard loop's 256 before or after p, half or i (80,
+// 86); the shard setup's p, half and i in other orders (14 to 50); model->shade = 0 literal (20);
+// the shade store before the vertices or texture store (22); pixels before logWidth (30);
+// 8 minutes of permute over the impact model setup: nothing below 14.
+// Earlier the same day, from 20: a once-only block
 // around the arc's v[2] store (j's load and increment after the muls, 20 to 16) and the shard loop's
 // i = 0 set above half's halving (16 to 14). Left: the 256 limit's register at the shard loop (r6,
 // listing r2); half's sign + hx at the shard and ring sites, where the listing has hx + sign; the

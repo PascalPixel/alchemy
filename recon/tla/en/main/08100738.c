@@ -1,8 +1,9 @@
-// Differ 12 of 90 (tla-en, 2026-11-08, -mtune=gba). Left: the item mask is
-// built before Unit_Get here, after it natively (assigned after the call, or
-// masked in one expression, 22 to 26). The pin re-measured 8 November: 14 without it.
-// Tried 8 November: the mask before the menu load, after the inventory read, in a
-// once-only block, the menu read first (12 to 38); a 10-minute permute found nothing below 12.
+// Differ 12 of 90 (tla-en, 2026-11-08, -mtune=gba), no device. Left: the item
+// mask is built before Unit_Get here, after it natively (assigned after the
+// call 24, masked in one expression 22).
+// 2026-11-08: Inventory_RemoveFar declared as game.h declares it (returning s32)
+// replaces the r1 pin (as void, 14 without the pin); the mask before the menu load,
+// after the inventory read, in a once-only block, the menu read first (12 to 38).
 // Every edition shared this form under the older tune (2026-11-07): ja 0x08100740, de 0x0810a904, es 0x0810688c,
 // fr 0x081028a8 and it 0x08100854 differ 12 of 90, as English at 0x08100738.
 // Draft of Item_Use (Func_08100738): applies the slot's action, then consumes
@@ -21,6 +22,7 @@
 #include "ram_buffer.h"
 #include "item.h"
 #include "battle_unit.h"
+#include "game.h"
 
 struct InventoryMenuState {
   u8 unk000[0x1c4];
@@ -30,7 +32,6 @@ struct InventoryMenuState {
 };
 
 struct BattleUnit *Unit_Get(s32 owner);
-void Inventory_RemoveFar(s32 ownerId, s32 slot);
 s32 ItemMenu_CollectItems(struct BattleUnit *owner, u16 *items, s32 mode);
 s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
                                 s32 fixedScale);
@@ -51,12 +52,7 @@ s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
   if (useResult != -1) {
     item = Item_Get(unit->inventory[slot]);
     if (item->useType == 1) {
-      {
-        /* FAKEMATCH(pin): the form kept; as Inventory_RemoveFar(ownerId, slot),
-         * 14 of 90 instructions differ in tla-en. */
-        register __typeof__(slot) hoisted asm("r1") = slot;
-        Inventory_RemoveFar(ownerId, hoisted);
-      }
+      Inventory_RemoveFar(ownerId, slot);
       menu->itemCount = ItemMenu_CollectItems(unit, menu->items, 0);
     }
     if (item->useType == 4) {

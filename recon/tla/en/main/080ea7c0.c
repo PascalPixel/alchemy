@@ -1,4 +1,7 @@
-// Differ 2 of 104 (tla-en, 2026-11-08, -mtune=gba); tried again 2026-11-08 without gain: a while loop,
+// Differ 2 of 104 (tla-en, 2026-11-08, -mtune=gba). Round two, no gain: the reset as its own
+// once-only block before the loop (2), ++actors, an index or &list[0] spelling, map assigned late,
+// cell assigned apart (all 2); the cursor a separate local from a renamed argument (6); an if on
+// list->actor around a do-while (21); permute 8 min: nothing. Round one, no gain: a while loop,
 // the reset in its own once-only block, the map read late, list assigned late or inside the for (4), a
 // u16 flag, the 0xffff end as a local (23), the actor id as a local (34); permute 8 min: nothing better. The list is pinned to r9
 // (tagged pin: unpinned, 25 of 104, re-measured 2026-11-08); an if around a do-while, a

@@ -1,4 +1,9 @@
 // Differ 2 of 1246 (tla-en, 2026-11-08, -mtune=gba); tla-ja 2 of 1240.
+// Round 2 (2026-11-08): both once-only blocks re-measured (without the first
+// 6, without the second 4); the block before the entry load, beside it or
+// before holdTilemapUpload (2 to 8), the three statements in other orders (8 to
+// 22), a block-scoped work copy or holdTilemapUpload pointer, an entry-index
+// local (2), work fetched again (18); 8 permuter minutes: nothing better.
 // Two empty once-only blocks (after the list redraw's first stores and after
 // the cursor sprite's words) closed the row address, the zero for
 // standbyElements and the VramCache_Reload argument pair (8 to 2 in both

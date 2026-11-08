@@ -10,6 +10,11 @@
 // rounds is free now (11 either way) and is dropped. A permuter candidate at 6
 // reused the shape pointer for Ram_MapCellBuffer inside its own expression,
 // which loads 0x02010000 where gMapShapeGrid belongs: wrong code, not kept.
+// Round of 8 November: the read held in a u8, s32 or u32 before the shape store
+// and written after it puts the store where the native has it but swaps the
+// read and constant registers and loses the second write's own reload (28);
+// the store folded into the |= through a comma (13); 8 permuter minutes from
+// that order found nothing below 14.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

@@ -1,4 +1,8 @@
 // Differ 2 of 444 (tla-en, 2026-11-08, -mtune=gba).
+// Later on 2026-11-08: pushed for moved as the actionFlags value (2), moved = 0 set
+// later or folded into the store (66, 80), moved declared first (52), once-only
+// blocks round the acceleration store or before or after the actionFlags store (4
+// to 6), (s8)moved and a folded pusherFlags assignment (2) left the tie.
 // 2026-11-07: all 120 orders of the target's four stores and *layer = 2, moved
 // as u8 or s16, temporaries, asm barriers and 8 permuter minutes left it at 2.
 // Move cast on a target, the twin of The Broken Seal's FieldPsynergy_SteerPushedTarget (same

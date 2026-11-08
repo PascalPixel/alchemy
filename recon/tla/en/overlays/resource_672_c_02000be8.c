@@ -1,4 +1,9 @@
 // Differ 14 of 145 (tla-en, 2026-11-08, -mtune=gba).
+// 8 November, third pass: the rise loop's gap is global's order. fade (6 refs over 8
+// insns) outranks step + 1 (4 over 12), takes r1 and leaves r0; the listing allocates step + 1
+// first. No gain: 1 + step, blend built from 16 - fade, the sink loop's dead form, step + 1
+// through blend with step = blend, step = step + 1 (14 each), one expression (51); 8 minutes
+// of permute over the rise block: nothing below 14.
 // 8 November, second pass: the dead device still measures (without it 24, the plain sink
 // loop 29). No gain: fade and blend swapped in the rise loop (24), step++ before the store or
 // as step += 1, the blend built 16 - fade first, step + 1 through blend with step = blend (14),

@@ -1,4 +1,10 @@
 // Differ 26 of 828 (tla-en, 2026-11-08, -mtune=gba).
+// Tried 2026-11-08, later: pos declared after texture (26), after cells (44),
+// before i (116); pos = &screen before frame in the for init (30), before the
+// circles, cells or the target read (53 to 69); growth as frame * 512 - 0x2000
+// or with the constant first (26), defaulted first (41), arms swapped (28), frame
+// copied to a block local (26), a once-only block before growth or shade (26,
+// 28); 5 or 6 unused locals 32, 8 or 10 the same 26.
 // The dead read of shade moved to the first argument settles the movs r1, #4
 // tie (28 to 26); the two devices, removed, still cost (no locals 32, a plain
 // 4 297, out = pos twice 355). Tried 2026-11-08 without gain: pos = &screen

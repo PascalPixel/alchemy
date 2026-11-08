@@ -1,5 +1,9 @@
-// Differ 14 of 1150 (tla-en, 2026-11-08, -mtune=gba, multiplies 3 3; 24 before): order only, the
-// first loop's movs r4 and add r2, fp, and the texture block's r0/r2 and r1/r0 reloads.
+// Differ 12 of 1150 (tla-en, 2026-11-08, -mtune=gba): order only, the first loop's movs r4
+// (line) one place early, and the texture block's r0/r2 and r1/r0 reloads (the native loads
+// gData_02014000 into r0 after moving the model to r6). 8 November, second round: the mote
+// loop's i = 0 set before cell as its own statement (14 to 12; after cell 14); line or j
+// set outside the for (12 to 20); pixels first, between the bitfields, before the allocation,
+// through a local or in a once-only block, and the model stores reordered (12 to 119).
 // 8 November: the texture block's empty-asm barrier replaced by a once-only block around the
 // vertices store (14, no device; without either 16). The wrapper still measures 2 (direct call,
 // a constant local or a block all 16 to 18). No gain: the motes loop's init orders (14 to 22),
@@ -213,10 +217,11 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
       for (j = 0, line = 0; j != 10; line += 16, j++) {
         u8 *cell;
 
+        i = 0;
         cell = (u8 *)(line * 2);
         cell += (s32)sprites;
 
-        for (i = 0; i != 32; i++) {
+        for (; i != 32; i++) {
           s32 offset = gData_08197410[motes] + i + 0x700;
           s32 value = ((u8 *)work)[offset];
 

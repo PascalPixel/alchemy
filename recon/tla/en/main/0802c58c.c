@@ -11,6 +11,11 @@
 // block index in a local or as gMapBlocks + i (24 to 211), reversed (24),
 // x and y divided by (1 << 21); the region read into a reused local (39 to
 // 91), as a signed bitfield (20); Func_0802d088 taking u8 (28) or u32/u16.
+// Also 8 November, all 14 or worse: the block chosen in its own scope, the
+// region cast (s32) or u32 (16) or read as a raw word (16 to 29), index
+// spelled * 32 (14) or | (179), the switch value in graphicsSet (41), the
+// table spelled &[][0], *resourceSets + n * 9 or by bytes (14), graphicsSet
+// u32 or u8 (14), each declaration moved first (14, x0 32).
 // Earlier notes follow.
 // Near miss, differ 45 of 277 (2026-10-18), first pass: The Broken Seal's
 // Map_UpdateCurrentTileBlockUntilBlocked, then this game's staged reload of

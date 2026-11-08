@@ -1,4 +1,8 @@
-// Differ 8 of 84 (tla-en, 2026-11-08, -mtune=gba); the same rows. Round two: the
+// Differ 4 of 84 (tla-en, 2026-11-08, -mtune=gba): an empty once-only block before the
+// first call (8 to 6) and z read into a block-scoped local for it (6 to 4) finish the
+// shape row before x is loaded, as the native does. Left: the grid's address takes r3
+// for the native's r1 (one register); 6-minute permuter run from here, nothing better.
+// Earlier, differ 8 of 84 (2026-11-08). Round two: the
 // grid's address as a local (33 to 35), shapes split from the grid (36 to 45),
 // a once-only block around shapes (10), blocks before shapes (10), x as a
 // local (25), ActorX with a temporary (8); permuter 4 more minutes, nothing.
@@ -64,14 +68,25 @@ void Func_080eadfc(void) {
     struct SwitchCell *cells = map->layers[target->terrainId].cells;
     struct SwitchCell *blocks = map->layers[2].cells;
     u8 *shapes = &gMapShapeGrid[((s32)cells - 0x02010000) >> 2];
-    u32 key = Func_080202f0(target->terrainId, target->x, target->z);
-    /* FAKEMATCH(wrapper): x read through ActorX for the height call; as
-     * target->x, 20 of 84 instructions differ in tla-en. */
-    s32 level =
-        Map_GetTerrainHeightFar(target->terrainId, ActorX(target), target->z);
-    s32 slot = Func_080eab70(target);
+    u32 key;
+    s32 level;
+    s32 slot;
     s32 tag;
     u8 flags;
+
+    // An empty once-only block, and z read first: the shape row is finished
+    // before the first call's arguments are loaded.
+    do {
+    } while (0);
+    {
+      s32 z = target->z;
+      key = Func_080202f0(target->terrainId, target->x, z);
+    }
+    /* FAKEMATCH(wrapper): x read through ActorX for the height call; as
+     * target->x, 16 of 84 instructions differ in tla-en. */
+    level =
+        Map_GetTerrainHeightFar(target->terrainId, ActorX(target), target->z);
+    slot = Func_080eab70(target);
 
     shapes += slot;
     tag = Func_080eab98(target->terrainId, key, (level >> 19) + 4);

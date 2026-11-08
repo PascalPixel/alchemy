@@ -1,7 +1,7 @@
 // Differ 8 of 168 (tla-en, 2026-11-08, -mtune=gba), from 22. Func_020024d4 of
 // overlay 6ab. Scale computed before the calls gives the mul pointer r8 and
 // the angle r10, as natively.
-// Left: scheduling only. Natively the half's copy (mov r1, r9) and the zero
+// Left: scheduling only. Natively the 0x8000 copy (mov r1, r9) and the zero
 // come before the stores to scaleX and scaleY, the sprite load (ldr r5,
 // [r7, #80]) follows them and the owner's animation load (ldr r3, [r3, #80])
 // comes after the stores to bounce, velocityX and acceleration; here both
@@ -12,7 +12,13 @@
 // the scale stores. Tried 8 November: statement orders of gravity, scale,
 // bounce, sprite, velocityX, acceleration and source (8 or worse), once-only
 // blocks (14 to 20), a zero local (91), a union or s32 read of the animation
-// (12), and 8 minutes of permute from the s32 form (best 8).
+// (12), and 8 minutes of permute from the s32 form (best 8). Tried later on 8
+// November: the 0x8000 local and the cosine block dropped (free, so gone);
+// chained scale stores, block-scoped sprite and velocity locals, radius
+// shifted at its read, bounce, acceleration or velocityY moved (8 or worse);
+// both animation loads read as s32 (12); 10 minutes of permute (best 8). In
+// sched2 the two loads rank 54 and 53 against 52 for the zero and the bounce
+// copy, so they always issue first.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -88,7 +94,6 @@ void Func_020024d4(struct Actor *actor) {
       s32 angle, radius;
       u32 sum;
       s32 scale;
-      s32 half;
       struct Sprite *sprite;
       struct Sprite *source;
       s32 velocity;
@@ -97,21 +102,17 @@ void Func_020024d4(struct Actor *actor) {
       radius = Random16Far();
       sum = Random16Far();
       sum += Random16Far();
-      half = 0x8000;
-      scale = (sum >> 2) + half;
+      scale = (sum >> 2) + 0x8000;
       Func_020041dc(object, gData_02004774);
       Actor_SetSingleChildFlags(object, 0);
       object->velocityY = angle * 4 + 0x20000;
-      {
-        s32 cosine = Math_Cosine(angle);
-        radius <<= 3;
-        object->velocityZ = Iwram_MulQ16(radius, cosine);
-      }
+      radius <<= 3;
+      object->velocityZ = Iwram_MulQ16(radius, Math_Cosine(angle));
       velocity = Iwram_MulQ16(radius, Math_Sine(angle));
       object->gravity = 0x547a;
       object->scaleX = scale;
       object->scaleY = scale;
-      object->bounce = half;
+      object->bounce = 0x8000;
       sprite = object->animation;
       object->velocityX = velocity;
       object->acceleration = 0;

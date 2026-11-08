@@ -76,7 +76,6 @@ void Func_02002d08(struct Actor *actor) {
       s32 angle, radius;
       u32 sum;
       s32 scale;
-      s32 half;
       struct Sprite *sprite;
       struct Sprite *source;
       s32 velocity;
@@ -85,21 +84,17 @@ void Func_02002d08(struct Actor *actor) {
       radius = Random16Far();
       sum = Random16Far();
       sum += Random16Far();
-      half = 0x8000;
-      scale = (sum >> 2) + half;
+      scale = (sum >> 2) + 0x8000;
       Func_02005490(object, gData_02005dbc);
       Actor_SetSingleChildFlags(object, 0);
       object->velocityY = angle * 4 + 0x20000;
-      {
-        s32 cosine = Math_Cosine(angle);
-        radius <<= 3;
-        object->velocityZ = Iwram_MulQ16(radius, cosine);
-      }
+      radius <<= 3;
+      object->velocityZ = Iwram_MulQ16(radius, Math_Cosine(angle));
       velocity = Iwram_MulQ16(radius, Math_Sine(angle));
       object->gravity = 0x547a;
       object->scaleX = scale;
       object->scaleY = scale;
-      object->bounce = half;
+      object->bounce = 0x8000;
       sprite = object->animation;
       object->velocityX = velocity;
       object->acceleration = 0;

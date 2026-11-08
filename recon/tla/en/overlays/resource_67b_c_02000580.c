@@ -6,6 +6,10 @@
 // carries it and the frame is 16, not 20 (31; 32 with tick a second u16 read); s = slots
 // as the inner for's init (50); s set before the inner loop from gate (36); tick and
 // row in one chained assignment (12). Permuter, 6 minutes: no gain.
+// 8 November, second pass, no gain: s declared at the top (22), s set after row and
+// tick's declarations or as gate->unk00 + 1 (12), a volatile s (76), row and unk0E
+// through s = slots (95) or s = gate + 2 bytes (56), the (u16) and (s16) column
+// spellings dropped (212). Permuter, 6 minutes: no gain.
 // Before: the native's sp+12 is a plain
 // copy of the slots pointer, mov r0, r8; str r0, [sp, #12], set at the inner top;
 // the slot's row and unk0E are read through it (r0 + r9) and the increment reloads

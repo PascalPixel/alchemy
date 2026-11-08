@@ -1,4 +1,11 @@
 // Differ 54 of 2680 (tla-en, 2026-11-08, -mtune=gba; the same in ja, de, es, fr, it).
+// 2026-11-08, third pass: unchanged. In the second queue loop a block pointer
+// src = Ram_MapCellBuffer stepped as src += 0x400, i++ puts table and source in the
+// native's r4 and r5, but cse then shares the decode call's constant with src (adds
+// r1, r5 where the native reloads it): 54, as a once-only block anywhere near it (60
+// to 68). Five spellings of the source address, i < 13, *(table + i), a non-const or
+// sized table, an order pointer stepped with i (66): 54 or worse. 8 minutes of permuter
+// on the frame-76 block from the pointer form (seed 5521): nothing better.
 // 2026-11-08, later: unchanged. Tiles and order pointers in the second queue loop (56
 // to 76), all six orders of the flash's chained assignment and its split form (54),
 // 7 minutes of permuter on the frame-76 block (seed 8821, 54).

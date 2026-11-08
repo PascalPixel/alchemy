@@ -2,7 +2,10 @@
 // 2026-11-08: once-only blocks around the bounce or acceleration store (14, 20),
 // the animation pointers read as s32 (8 or 12: same-base offsets already
 // disambiguate, so alias sets do not hold the loads), sprite first, scale
-// order: 8.
+// order: 8. Round two (2026-11-08): every statement order in the store run,
+// the half and the zero as constants, and an 8-minute permute stay at 8. sched2
+// hoists the two animation loads above the stores; reading owner->animation as
+// s32 holds the tail in the native order but delays the owner load (12).
 // Draft, differ 22 (tla-en, 2026-11-05). Func_020029c8 of overlay 6aa.
 // Overlay 6ab's Func_020024d4 with this overlay's symbols; see that draft.
 #include "types.h"

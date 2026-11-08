@@ -1,5 +1,9 @@
 // Differ 6 of 747 (tla-en, 2026-11-08, -mtune=gba): two stack reloads issue
 // a place earlier here, and one ldrb takes its address registers swapped.
+// Second 2026-11-08 round, no gain: a block after the ball->y store, the
+// heights as *(cell + table) or (table + cell)[0], cell as u32, !mode, (s16)y
+// (6); the width as *(table + cell) (8); one radius line before the arms (49);
+// the divide split (37); 8 more permuter minutes.
 // 2026-11-07: from 20 by ordinary forms: an empty once-only block before the
 // second blitter build (16), the last height as *(table + cell) (12),
 // ball->variant++ in a once-only block (8), the flip flags in a local (6).

@@ -2,6 +2,10 @@
 // one barrier). Without the r4 pin 96, pin r6 96, no empty asm 30 (an empty
 // once-only block in its place 28, around the allocation 30, around the suspend
 // store 78), no r1 hoist 24, no devices at all 92. Other editions not re-measured.
+// Round 7 (2026-11-08): devices re-measured, the same figures; the size hoist as a
+// plain block-local copy instead of the r1 pin 24; pin r5 110. Not adoptable as it
+// stands: r4 is call-clobbered (-fcall-used-r4), so the pinned backup is read back
+// from r4 after calls that may change it; the native keeps it in r6.
 // Tried 2026-11-08: with no device, a set-once tiles local for 0x06004000 set after
 // the allocation 51 (49 with the r1 hoist; set first 59; block-local or the copy
 // back as a literal 51): global.c still ranks it above the pool's 0 (4 refs over

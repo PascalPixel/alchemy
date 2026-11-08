@@ -1,4 +1,9 @@
 // Differ 58 of 3921 (tla-en, 2026-11-08, -mtune=gba): as below; both empty asms now tagged.
+// Seventh round, 8 November, unchanged: a once-only block in place of either asm (62);
+// the 0x800 copy with the asm dropped (60); the last sprite's store after its priority
+// (68); the 512-particle reset through a none = -1 local (62), a block pointer (60),
+// ~0 or a once-only block before it (58). Its -1 comes from the cleared 0 (subs #1)
+// where the native builds movs 1, negs: the same shared-zero root as the third phase.
 // Sixth round, 8 November, unchanged: the third phase's z = (z - 0x800) - ay * 40 in five
 // spellings, z declared with its zero, the step list reversed, Random16 and the stores
 // reordered (58 to 60); a once-only block or empty asm after BattleEffect_SpawnObjects(1,

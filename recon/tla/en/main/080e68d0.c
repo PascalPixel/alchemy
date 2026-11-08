@@ -1,9 +1,10 @@
-// Differ 20 of 938 (tla-en, 2026-11-08, -mtune=gba): sched2 order only. The
-// constant local for Task_Add's 0x480 is worth 4 (24 without); the r2 pin is
-// tagged (22 without; a block temporary, a once-only block, u32 b, reading
-// scene->frame or scene->stage back, or a for loop do no better).
-// 2026-11-07: event loaded before caster, 26 to 20; 12 permuter minutes found
-// nothing further.
+// Differ 6 of 938 (tla-en, 2026-11-08, -mtune=gba): sched2 order and one register.
+// 2026-11-08: i = 0 as its own statement before each particle loop and particle++
+// in the for step of the first two (20 to 8); pending first holding the event flag
+// word's address (8 to 6, from an 8-minute permuter run). Left: that address in r7
+// where the listing has r3, and the 0xd4c chain's last add after other->scaleX = 0.
+// The constant local for Task_Add's 0x480 is worth 4 (10 without); the r2 pin is
+// tagged (8 without).
 // Draft, differ 50 of 938, skeleton gap 24 (tla-en, 2026-11-01): a field
 // Psynergy that grows something from the
 // ground before the caster (on a 16-pixel grid, unless the event mode is 3):
@@ -158,7 +159,9 @@ void Func_080e68d0(void) {
   if (object == NULL)
     goto end;
   object->motionFlags = 0;
-  if (*(u16 *)((u8 *)event + 0xd4c) & 2) {
+  // pending is reused: it first holds the address of the event's flag word.
+  pending = (u8 *)event + 0xd4c;
+  if (*(u16 *)pending & 2) {
     if ((object->animationKind & 15) == 1) {
       ((struct EffectSprite *)object->animation)->oam.priority = 1;
       object->priorityFlags &= 254;
@@ -239,8 +242,9 @@ void Func_080e68d0(void) {
     particleEntry = Resource_FindFreeEntry();
     particleTile = VramCache_Load(particleEntry, 0x800, work);
     work->particleTile = particleTile;
+    i = 0;
     particle = work->particles;
-    for (i = 0; i < 64; i++) {
+    for (; i < 64; i++, particle++) {
       sprite = &work->sprites[i];
       Func_080eaf98(sprite, 8, 8, 0x40000000, particleTile);
       sprite->oam.palette256 = 1;
@@ -257,7 +261,6 @@ void Func_080e68d0(void) {
       particle->velocityZ = 0;
       Vector_AddPolarOffset(0x13333, Random16(), &particle->velocityX);
       particle->timer = -i * 2;
-      particle++;
     }
   } else if (work->mode == 2) {
     if (*alternate == 0)
@@ -268,8 +271,9 @@ void Func_080e68d0(void) {
     particleEntry = Resource_FindFreeEntry();
     particleTile = VramCache_Load(particleEntry, 0x800, work);
     work->particleTile = particleTile;
+    i = 0;
     particle = work->particles;
-    for (i = 0; i < 64; i++) {
+    for (; i < 64; i++, particle++) {
       sprite = &work->sprites[i];
       Func_080eaf98(sprite, 8, 8, 0x40000000, particleTile);
       sprite->oam.palette256 = 1;
@@ -285,7 +289,6 @@ void Func_080e68d0(void) {
       particle->velocityZ = 0;
       Vector_AddPolarOffset(0x10000, Random16(), &particle->velocityX);
       particle->timer = -i;
-      particle++;
     }
   } else if (work->mode == 3) {
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_WhiteSparkle),
@@ -293,9 +296,10 @@ void Func_080e68d0(void) {
     particleEntry = Resource_FindFreeEntry();
     particleTile = VramCache_Load(particleEntry, 0x80, work);
     work->particleTile = particleTile;
+    i = 0;
     particle = work->particles;
     sprite = work->sprites;
-    for (i = 0; i < 64; i++) {
+    for (; i < 64; i++) {
       Func_080eaf98(sprite, 4, 4, 0, particleTile + (i & 1) * 2);
       sprite->oam.palette256 = 1;
       sprite->oam.palette = 0;
@@ -369,7 +373,7 @@ void Func_080e68d0(void) {
       scene->frame = frame;
       {
         /* FAKEMATCH(pin): the form kept; as Field_RunPsynergyEvent(pending,
-         * stage, frame), 22 of 938 instructions differ in tla-en. */
+         * stage, frame), 8 of 938 instructions differ in tla-en. */
         register s32 pinned asm("r2") = frame;
 
         Field_RunPsynergyEvent(pending, stage, pinned);

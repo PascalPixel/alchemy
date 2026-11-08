@@ -1,6 +1,13 @@
-// Differ 33 of 99 (tla-en, 2026-11-08, -mtune=gba), with the first cell's index through a
+// Differ 33 of 99 (tla-en, 2026-11-08, -mtune=gba), plain: no device.
+// 2026-11-08, second round (permuter from the plain form): level declared bare and
+// set after x and error gives the same 33 the 64-bit index temporary gave, so that
+// FAKEMATCH(temporary) is gone (a u64 x * 2 also gave 33). Left as below: the pool
+// order at the fill call, and row and column in r0, r2 for the native r2, r0 in the
+// first block, so the second block's column = row copy is gone. Also 33: no last
+// local, x and error set after level, the second edge = 63 dropped, row = 63; row -= x.
+// Second 7-min permute from this form: nothing better. Earlier (with the 64-bit index):
 // 2026-11-08 round: no better from an inline cell-pair helper (122), once-only blocks around the copy or the row (74 to 92), column and row as 63 - x and 63 - y with a second 63 - y (122), the index as column + row * 64, grid + index or u64 (33), the edge set once (62); 10-min permute, 35 at best.
-// 64-bit temporary (a tagged device, below; plain, 67). Left: the pool order at the fill call (the
+// 64-bit temporary (then a tagged device; plain with level initialized, 67). Left: the pool order at the fill call (the
 // native loads the routine's address first), and in the ring's first block row and column in r0, r2
 // for the native r2, r0, so the second block's column = row copy (adds r0, r2, #0) is gone and its
 // fresh 63 is loaded before the first test. The native looks like a 63 held in a pseudo that gets
@@ -38,10 +45,11 @@ void Func_02000138(u8 *grid, s32 count, s32 scale) {
   do {
     s32 y = 0;
     s32 last = count - 1;
-    s32 level = (Math_Cosine((i << 14) / last) * 15) >> 16;
+    s32 level;
     s32 x = i;
     s32 error = i;
 
+    level = (Math_Cosine((i << 14) / last) * 15) >> 16;
     level = level * scale / 0x10000;
     if (level > 15)
       level = 15;
@@ -53,14 +61,7 @@ void Func_02000138(u8 *grid, s32 count, s32 scale) {
       u8 *cell;
       s32 edge;
       row -= y;
-      {
-        /* FAKEMATCH(temporary): the index through a 64-bit temporary; as
-         * cell = &grid[row * 64 + column], 67 of 99 instructions differ in
-         * tla-en. */
-        s64 index = row * 64 + column;
-
-        cell = &grid[index];
-      }
+      cell = &grid[row * 64 + column];
       cell[0] = level;
       edge = 63;
       if (column < edge)

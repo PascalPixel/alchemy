@@ -1,5 +1,9 @@
 // Differ 40 of 1122 (tla-en, 2026-11-08, -mtune=gba, multiplies 3 3), with one tagged
 // temporary; the earlier 42's muls ahead of ldr r1, [sp, #32] is gone.
+// 2026-11-08 (latest), unchanged at 40: the temporary re-measured (171 without);
+// the droplets' cells as &gMapCellBuffer[offset] or through a block local, the
+// 0xc1 load from &gMapCellBuffer[0], a glint height local (40 each); the tridents
+// as shade, pixels, reset with pixels through textureAddress 321, reset between 310.
 // 2026-11-08 (later), unchanged at 40. Re-tried: the first setup's pixels store after
 // unk04 or around the mesh (42 to 100); a zero local for its stores (no change, or 59
 // for the tridents'); the tridents in the listing's order (shade, pixels, reset) with the

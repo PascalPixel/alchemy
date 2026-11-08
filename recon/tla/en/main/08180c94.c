@@ -4,6 +4,12 @@
 // (&source) before `adds r1, r4` (place); tried a source pointer local
 // (function level 80, in the block 11), an array source, request for place;
 // a 7-minute permute found nothing better.
+// Round 3 (2026-11-08): &source is precomputed at expand (an addressof of the
+// DImode struct) ahead of place's r1 move, which sets the tie. Tried source as
+// a one-element array, an s32 pair (23), volatile (17), a pointer local, a
+// void * parameter, an inline call wrapper, request passed directly, place and
+// source in the block, declaration orders, the copy after object or place
+// (24 to 50), the object local as argument (77); permute 6 min: nothing below 2.
 // 2026-11-07: from 14. The model's vertices as s32 * (a void * store aliased
 // the texture word and held its store back); one sparks pointer shared by the
 // burst and the draw loop (the pool register r0); delay = 0 apart from i = 0;

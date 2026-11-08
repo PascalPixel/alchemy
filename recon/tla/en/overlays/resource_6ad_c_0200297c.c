@@ -1,11 +1,10 @@
-// Differ 6 of 186 (tla-ja, 2026-11-08, -mtune=gba): unchanged after a second
-// round (about 40 rewrites on the three twins, a 10-minute permuter run whose
-// only gain was a wrong return type).
+// Differ 4 of 186 (tla-ja, 2026-11-08, -mtune=gba): the old z read into its own
+// local (as the plain sum, 6). Permuter runs gain only through a wrong return
+// type.
 // The Japanese release's own function: Func_0200297c of overlay 6ad, overlay
 // 6ab's Func_02002148 in its Japanese form with this overlay's symbols; see
-// that draft. Left: actor->z loaded before the sum and the clamp constant's
-// load order around it, and the last store's zero set before the address's
-// copy.
+// that draft. Left: the clamp constant 0x10000 set before the sum (the listing
+// sets it after), and the last store's zero set before the address's copy.
 #include "edition.h"
 
 #include "types.h"
@@ -84,7 +83,7 @@ void Func_0200297c(void) {
         break;
       } else {
         s32 result;
-        s32 x, z, off;
+        s32 x, z, off, oldZ;
 
         position.x = actor->x + (work->unk68 << 19);
         position.y = actor->y;
@@ -103,7 +102,9 @@ void Func_0200297c(void) {
         do {
           x = actor->x += work->unk68 << 17;
         } while (0);
-        z = actor->z + (work->unk6a << 17);
+        // The old z read into its own local, after the step in x.
+        oldZ = actor->z;
+        z = oldZ + (work->unk6a << 17);
         actor->z = z;
         off = (x & 0xfffff) + 0xfff80000;
         if (off > 0x10000)

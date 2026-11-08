@@ -5,6 +5,10 @@
 // local for the 1 (any type, in the case or at the top) fixes case 98 but moves the split
 // offset's scratch from r2 to r0 at four other sites (36); once-only blocks, the case
 // placed first, a pointer for the switch: 12 or worse. Permuter 7 minutes: no gain.
+// 8 November, second pass: a case-local s16 on = 1 does give case 98 the native
+// registers, but the split offsets' reload scratch becomes r0 function-wide (36); a
+// once-only block round the store, (&gMainRoutineWork)->, *& (45): 12 or worse.
+// Permuter 5 minutes, seed 7: no gain.
 // Under -Os, 5 November: differ 51 of 270 (tla-en); older figures below predate it.
 // Draft, differ 104 of 270: the world map's entrance handler: restores the
 // ship's place, then runs the script for the entrance taken. Left: register

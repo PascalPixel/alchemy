@@ -1,4 +1,12 @@
-// Differ 38 of 1034 (tla-en, 2026-11-08, -mtune=gba). Blue's mask is plain
+// Differ 18 of 1034 (tla-en, 2026-11-08, -mtune=gba). 2026-11-08, from 38: the colour
+// loop now has the adopted sibling f190b74.c's form: entry read once, blue as
+// ((u16)entry >> 10) & 31 (lsls 16, lsrs 26, pooled 31), a dead green taken and
+// clamped (tagged; without it 79), red = max & entry from a one-constant local
+// (hoisted 31 and its copy; red = 31 & entry gives 66), and color set before i in
+// the for (22 to 18). Left: the trail's slot (r3 for r1, 10; slot before y, as
+// an initializer, split or in a once-only block, and a 6-minute permute of the
+// block: none better), the burst's adds r7, r3, r2 (2), the model block (2).
+// Older notes follow. Blue's mask is plain
 // again, (*color >> 10) & 31: the (u16) casts gain nothing under the GBA tune.
 // The red and blue clamps and the frame < 0 test are the ROM's dead code
 // (without the test, 400). Tried, none better: green set after the clamp (75);
@@ -331,13 +339,21 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
     }
     if (frame == 60) {
       u16 *color;
+      s32 max = 31; // One constant: red takes its 31 from it.
 
       // Into the sky: the red haze, its palette made grey-blue.
       BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
-      for (i = 0, color = (u16 *)(BG_PLTT + 96); i != 128; i++, color++) {
-        s32 red = *color & 31;
-        s32 green = red;
-        s32 blue = (*color >> 10) & 31;
+      for (color = (u16 *)(BG_PLTT + 96), i = 0; i != 128; i++, color++) {
+        s32 entry = *color;
+        s32 red;
+        u16 green;
+        s32 blue;
+
+        red = max & entry;
+        /* FAKEMATCH(dead): green is taken and clamped, then never used; as no
+         * green at all, 79 of 1034 instructions differ in tla-en. */
+        green = ((u16)entry >> 5) & 31;
+        blue = ((u16)entry >> 10) & 31;
         // DEAD: both channels are already at most 31.
         if (red > 31) {
           red = 31;
@@ -345,7 +361,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
         if (blue > 31) {
           blue = 31;
         }
-        *color = (red << 10) | (green << 5) | blue;
+        green = green > 31 ? 31 : green;
+        *color = (red << 10) | (red << 5) | blue;
       }
       BattleEffect_BuildRepeatingTilemap();
       gBgScroll[1].y = 104;

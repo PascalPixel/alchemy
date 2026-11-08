@@ -1,4 +1,9 @@
-// Differ 20 of 171 (tla-en, 2026-11-08, -mtune=gba); without the wrapper 22. Re-measured 8
+// Differ 20 of 171 (tla-en, 2026-11-08, -mtune=gba); without the wrapper 22. BoxByte reads the
+// table through a pointer local, so the address is table plus index as in the listing: the row's
+// ldrsb now matches (same count; a table local with the +1 inside BoxByte 27, j = 0 as its own
+// statement 20, an 8-minute permuter run on this form none better). Left: the pass's top, where
+// index + 1 takes r2 and the table r3 (listing the reverse), and height's load against j's 0.
+// Re-measured 8
 // November, no gain: 8 permuter minutes (18,838 candidates); index as u32, kind << 2, [0][index],
 // index[table], a table local, a row pointer (102), j = 0 or index in once-only blocks or moved,
 // cell.z's operands swapped (26), index declared before layer (28). Left: the index in r2 and the
@@ -97,7 +102,8 @@ s32 Func_02003e2c(struct Actor *object, struct Vector3 *cell);
 static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 
 static __inline__ s32 BoxByte(s32 index) {
-  return ((s8 *)gData_0200407c)[index];
+  s8 *table = (s8 *)gData_0200407c;
+  return table[index];
 }
 
 static __inline__ s32 BoxSpan(s32 *kind, s32 start) {

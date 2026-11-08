@@ -4,6 +4,12 @@
 // is built in r3 before special is stored, the native builds it in r0 after;
 // the -1s chained, reordered or named once, special or best set later, do no
 // better (14 to 34); 20 permuter minutes found nothing below 14.
+// 8 November, second round: the -1 is a spilled constant reloaded into r3 (the
+// greg dump), so the native's r0 reload means r1 to r3 were taken there; the
+// -1s assigned just before the loop in all six orders (14 or 34), best or a -1
+// declared before the calls (34 to 53), facing, focused or special retyped
+// (14 to 39), flags initialised at its declaration (14); 9 more permuter
+// minutes, nothing below 14.
 // Picks
 // the Psynergy event (kind 5) for kind in front of the controlled owner: the
 // first facing match, else the nearest of the area events (target | 0x100),

@@ -1,4 +1,10 @@
 // Differ 24 of 205 (tla-en, 2026-11-08, -mtune=gba): r8 and r10 swapped, as below.
+// Round 7 (2026-11-08), all 24 unless given: unitId as s16 or register, the
+// action call in its if, !Inventory_CountFar, an else in place of the continue;
+// for (;;) 113, declarations reversed 43, Func_080f8060 reading shop->listWindow 47;
+// 8 permute minutes (nearly every candidate failed to compile). greg ranks
+// listWindow (14 refs over 120 insns) above unitId (19 over 270), so unitId
+// needs about 24 refs or listWindow a life over about 150 insns to take r8.
 // Twin of ☀️'s Shop_ChooseMember (games/tbs/src/shop/shop/sell.c): picks the
 // party member whose items the shop works on (sell, repair or the third
 // action), four members a page, with ⚓️'s party cursor helper (Func_08108690)

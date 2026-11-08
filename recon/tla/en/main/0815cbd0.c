@@ -6,6 +6,10 @@
 // once-only blocks that each hold a draw, its release and the next blitter's
 // build give the same 6 (one block per quarter, as before, 12; the sheet as
 // (u8 *)work + 0x700, &work->sheet[0], sizes as 32 or x and y cast: 6).
+// The fourth draw needs no block (6 either way, so it has none); other
+// placements: a block per load and draw 18, per draw and release 12, per
+// draw alone 12, per release and load 12; the sheet or the draw pointer in
+// a block-scoped local, 6 and 60; 7 minutes of permuting left 6 (2026-11-08).
 // Measured 2026-11-05 (tla-en): differ 6 of 228, with the barrier.
 
 // Draft of BattleEffect_RunSpiderWeb, effect kind 345: a spider web over the targets.
@@ -155,7 +159,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
     // The four quarters: the one picture as it is, mirrored, flipped, and
     // both. Each blitter is built, drawn with and released before the next
     // is built; each once-only block holds a draw, its release and the next
-    // build (as one block per quarter, 12 differ).
+    // build (as one block per quarter, 12 differ); the last draw needs none.
     LOAD_QUARTER(CLIP);
     do {
       DRAW_QUARTER(33, 41);
@@ -172,10 +176,8 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
       HeapSlot_Release(HEAP_BLITTER);
       LOAD_QUARTER(CLIP | COMPOSITE_FLIP);
     } while (0);
-    do {
-      DRAW_QUARTER(64, 72);
-      HeapSlot_Release(HEAP_BLITTER);
-    } while (0);
+    DRAW_QUARTER(64, 72);
+    HeapSlot_Release(HEAP_BLITTER);
 
     // The battle resumes, hit cue 143; every target flashes at frame 10.
     if (frame == 32)

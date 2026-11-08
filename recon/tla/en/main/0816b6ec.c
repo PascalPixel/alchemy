@@ -1,5 +1,9 @@
 // Differ 10 of 609 (tla-en, 2026-11-08, -mtune=gba), the same rows. Rechecked
-// 2026-11-08: once-only loops at four places in the head loop, u8 head, k < 2
+// 2026-11-08 again: head stores 2, 1, 0 10, other orders 14; head as u8, in
+// the for or in a once-only block 10; model->vertices = Data_02010108 or the
+// pointer set by the texture 20; set after the list, in any declaration slot,
+// 366; passed to the transform too 16 (the native reloads there); the i = 0
+// arms still 49 without. Earlier, 2026-11-08: once-only loops at four places in the head loop, u8 head, k < 2
 // (18), the head pointer set in the for, a 32 local at three scopes (10 to 16),
 // funnel at the head loop (42); permuter 8 minutes: none. The i = 0 arms are
 // now tagged and the frame-sizing blitter is a plain note (S2). Left: allocation and scheduling only (frame

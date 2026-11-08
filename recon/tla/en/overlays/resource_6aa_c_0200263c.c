@@ -11,7 +11,10 @@
 // (8 November): the once-only block dropped (10), z = actor->z += (6),
 // z's sum in a block (10) or swapped (8), the last store in a block or
 // through a zero local (6), &position passed to Func_02004c38 (6, 22 plain),
-// 8 minutes of permute (best 10).
+// 8 minutes of permute (best 10). Later: z read
+// before x's sum (24), z's step through a block local or the work cast (6), the
+// last store through a u16 pointer (20); 6 minutes of permute: only a void
+// function returning unsigned int (4), rejected.
 #include "edition.h"
 #include "types.h"
 #include "call.h"

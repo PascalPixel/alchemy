@@ -3,6 +3,12 @@
 // sum before the store as the native does (6 to 4). Left: the sum in r0 where the native
 // gives it r4. No gain: the sum in angle (4), in kind, spawned or a block local (6), in
 // height (11) or i (29), value shifted in place (27); volatile blend stores (6).
+// Later on 8 November, all still 4: the sum before the priority or blend
+// stores, 2 + kind, kind = value after it, the call's result tested in the
+// if, if (kind); an 8-minute permute found nothing better. The native r4
+// means the sum conflicts with r0 to r3 (kind still live, or the sum formed
+// before the stores in RTL); here value (also the loop's and the end's
+// value) is tied to kind's r0.
 // Older notes, before value took the sum:
 // From 16: the burst loop is a goto loop (no loop notes, so GCSE no longer
 // hoists the array's address), and one array serves as the velocity and

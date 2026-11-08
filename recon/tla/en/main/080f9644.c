@@ -1,4 +1,9 @@
 // Differ 2 of 1355 (tla-en, 2026-11-08, -mtune=gba), with one tagged pin.
+// Rechecked 2026-11-08: unpinned it is still 4 (IwramCopyWords's address
+// loads first, then source, then size). No gain from a function-pointer local,
+// a size or source temporary, the literal at either copy, struct or swapped
+// copy types, an unsigned size, once-only blocks (8 to 10), or an 8-minute
+// permute of the unpinned form.
 // 2026-11-08: the icon is declared as a window sprite, with its list link
 // (struct ItemMenuIcon *next) at 0 and signed kind and state bytes, as The
 // Broken Seal's struct WindowSprite: its stores now may alias the work's

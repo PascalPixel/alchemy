@@ -1,4 +1,7 @@
-// Differ 2 of 216 (tla-en, 2026-11-08, -mtune=gba); the same row as below. Tried 2026-11-08 without
+// Differ 2 of 216 (tla-en, 2026-11-08, -mtune=gba); the same row as below. Round two, no gain:
+// work assigned after the calls, before or after best and bestDistance, or block-scoped (62);
+// unk644 read into flag (76 with work late, 26 with it early) or state (60); the cursor reads
+// before the best values (20); permute 8 min from work assigned late: back to 2 only. Tried without
 // gain: work declared first, unk644 read into a local (2); the global used directly, work assigned
 // after the calls or in a block (62: work leaves r5, which the native shares with the first loop's
 // place pointer); a once-only block around or after the calls (4); permute 8 min: nothing better.

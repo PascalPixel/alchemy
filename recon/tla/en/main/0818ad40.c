@@ -1,4 +1,16 @@
-// Differ 44 of 1246 (tla-en, 2026-11-08, -mtune=gba; the same on 2026-11-07).
+// Differ 42 of 1246 (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-08, from 44: the shards' step->variant + time read into a local k
+// first (k / 8 % 3 in the cell sum) loads the variant ahead of i % 4, as the
+// listing does (42). Left: the flight's x in r0 (global-alloc prefers the
+// quotient's copy) for the listing's r3, the sleep draw's overflow load
+// (r4 here, loaded after x in the listing, r6), and the shards' zero for i
+// (r1 for r2) and time's scratch. Tried and no gain: k with the sum reversed
+// (90), k / 8 as its own step (398 to 409), the variant read before step,
+// the cell built in two statements (284); for the flight, a once-only block
+// after x, an empty else, `register`, x in the test, no q (all 42); `x <<= 8`
+// before the store (52); the sleep draw's operands regrouped or a block-scoped
+// pointer (42). 8 minutes of permute (seed 4242): nothing below 42.
+// Earlier, at 44:
 // 2026-11-08, no change: the flight's x as `x = t / 48; x += first`, `x = first;
 // x += q`, x declared first, `x = -(x << 8)` before the store (all 44), and
 // `scroll = -(x << 8); REG_BG2X = scroll` (93); the sleep draw's operand orders
@@ -573,9 +585,11 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
         shade = fade * 696;
         for (i = 0; i != 32; i++) {
           s32 cell;
+          s32 k;
 
           step = &work->particles[i];
-          cell = i % 4 * 3 + (step->variant + time) / 8 % 3;
+          k = step->variant + time;
+          cell = i % 4 * 3 + k / 8 % 3;
           draw[0](canvas, work->sheet + 0x2580 + (shade + Data_081974dc[cell]),
                   overflow + HI(step->x) - Data_081974f4[cell] / 2,
                   HI(step->y) - Data_08197500[cell] / 2, Data_081974f4[cell],

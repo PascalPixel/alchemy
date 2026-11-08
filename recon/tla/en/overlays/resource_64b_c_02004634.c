@@ -3,6 +3,11 @@
 // Re-measured 8 November: storing motionFlags and action next to each other
 // (26 to 32), a chained zero (30), a zero local (15) and once-only blocks (33,
 // 56) never relate the action address to motionFlags' as the native does.
+// Also 8 November: the native order (terrainHeight, animation, motionFlags,
+// action) 30, with motionFlags before animation 28, action after
+// watchedObject 34, the two zeros through an inline helper 26 to 32, an
+// explicit u8 pointer with the action at +15 59, a once-only block 33 or 56;
+// a ten-minute permuter run found nothing closer.
 // 2026-11-07, from 17: the detail is the sprite's
 // record at 0x28 (LinkedSprite put it at 0x2c). Left: motionFlags and action
 // stored through one pointer (adds r3, #85; adds r3, #15) natively, two here;

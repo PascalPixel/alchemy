@@ -1,4 +1,13 @@
 // Differ 31 of 713 (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-08, second pass, no gain: onObject cleared at the block's top, before
+// the scan pointer, after the bound, in the for init or with angleIndex (34 to 37,
+// r4 and r6 still swapped; 589 after the bound), cleared just before or after the
+// first step's call (31, 39); heading reused as onObject (77, 460); input set at
+// the top or after pushed and used by the first key test (52, 42), assigned inside
+// the angle's expression (31), a const pointer initialized at its declaration (40:
+// instruction count right and the debug test matches, the probes' reloads shift);
+// the debug test nested or as != 0 (31). A 9-minute permute: nothing below 31
+// (almost none of its candidates compiled).
 // 2026-11-08: of the 31, only four rows are code (the extra mov sl, the onObject
 // clear, the debug test's reload of the pointer); the rest are branch and pool
 // offsets moved by the one extra instruction. No gain from: gInput direct in the

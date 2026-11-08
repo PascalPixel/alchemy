@@ -1,4 +1,10 @@
-// Differ 36 of 543 (tla-en, 2026-11-08, -mtune=gba). The palette copy is a
+// Differ 36 of 543 (tla-en, 2026-11-08, -mtune=gba). Later the same day: a j * 8 row
+// pointer set before the do loop 41 (loop.c folds cells into the giv), offset = 0
+// before length 57, an angle variable stepped by length 270, j * length in a
+// local 79, gMapCellBuffer at the transform 40, shade = 0 before the arm 96;
+// declaration and step orders 36 to 59. Ten more minutes of permuter (seed
+// 9311, stack distance counted): nothing below 36.
+// The palette copy is a
 // plain Iwram_CopyWords call again: under the GBA tune the forwarding wrapper
 // gains nothing (36 either way), so the device is gone. Rechecked the same
 // day: offset declared last in the block, in a block of its own, or j before

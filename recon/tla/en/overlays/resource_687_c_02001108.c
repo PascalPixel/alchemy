@@ -1,4 +1,11 @@
 // Differ 14 of 350 (tla-en, 2026-11-08, -mtune=gba).
+// Round 2, 8 November, none better: table read as (gData_020026c0 - 1)[i] (149),
+// target read before color (128), loop steps i++ first (16), palette or changed
+// in the for-init or palette set before the loop (24), rain block with x and z
+// read before mask (20), masks applied in place (14 to 46), rain stores
+// reversed (26); permuter 8 minutes found nothing under 14. The palette and
+// table swap r3 and r4 because reload hands out its spill registers in turn:
+// the native reloads the table first.
 // Draft, differ 16 of 350 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Left: the fade loop's palette and table swap r4 and r3 on their way to r10 and
 // r11; one add's and one shift's place in the schedule.

@@ -1,33 +1,31 @@
-// Differ 2 of 217 (tla-en, 2026-11-08, -mtune=gba), from 112: forwarding the
-// products through Value2 and the sound through Call2. One tie left: the native's
-// add r2, r8 ahead of strb r3, [r0, #9]. A word bit-field for the priority and the
-// counter through its struct field do not move it, nor any order of the five
-// statements.
-// Tried 8 November (2nd round): the counter stored plainly (24) or in a once-only
-// block (26); the counter pointer computed before the priority copy (30); the
-// priority read into a local, either sprite in a local, value s16 or u16, the
-// counter as (s16 *)work + 181 (all 2); the priority as byte masks (23 to 35);
-// 8 minutes of permute (2).
-// Under -Os, 5 November: differ 112 of 217 (tla-en); older figures below predate it.
-// Draft, differ 131 of 217 (was 143): Func_020010b4's twin for another shot:
-// it also stops while the leader's movement is 5, and on a cell of kind 212 it
-// ends with one of two end scripts by its angle; otherwise, the first time it
-// reaches the leader (within 16 pixels on the same height when the leader
-// climbs, else within 8 on the same level) and flag 0x104 is clear, it
-// carries the leader along (counter 0x16a 200, movement 0); it moves 1.5
-// pixels a frame along its angle, upward when its angle is 0xc000. The
-// counter's 200 goes through an s32 (as a halfword constant it comes from the
-// pool). Left: as Func_020010b4's draft, the shot and the zero swap r6 and
-// r7, which moves most rows.
+// Matches (tla-en, 2026-11-08, -mtune=gba): written as its adopted twin
+// Func_020010b4 (games/tla/src/scene/airs_rock_inside/s10b4.c) is: struct Shot
+// for the hit bytes, the positions and the speed in locals, the counter through
+// struct EventWork's unk16a, Iwram_MulQ16 called directly. As the older draft
+// (a u8 pointer to the hit byte, Value2 forwards), 2 of 217 differed.
+// Func_020010b4's twin for another shot: it also stops while the render mode
+// is 5, and on a cell of kind 212 it ends with one of two end scripts by its
+// angle; otherwise, the first time it reaches the leader (within 16 pixels on
+// the same height when the leader climbs, else within 8 on the same level) and
+// flag 0x104 is clear, it carries the leader along (counter 0x16a 200, render
+// mode 0); it moves 1.5 pixels a frame along its angle, upward when its angle
+// is 0xc000.
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
+#include "call.h"
+#include "field/event_work.h"
 
 extern u8 gData_020061ac[], gData_02006194[];
+struct Shot {
+  u8 unk00[0x62];
+  u8 unk62; ///< set once it has hit the leader
+  u8 unk63; ///< set with unk62, cleared when it ends
+};
+
 struct Actor *Actor_GetById(u32 id);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 s32 Func_02000690(s32 layer, s32 x, s32 z);
@@ -39,12 +37,13 @@ s32 GameFlag_Test(s32 flag);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 
-
 void Func_02000d48(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   u8 *work = Ram_HeapSlots->eventWork;
-  u8 *hit;
   s32 near;
+  s32 *leaderPosition;
+  s32 *shotPosition;
+  s32 speed = 0x18000;
 
   if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
       *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0 ||
@@ -54,7 +53,7 @@ void Func_02000d48(struct Actor *shot) {
   }
   Actor_SetAnimationSpeed(shot, 16);
   if (Func_02000690(2, shot->x >> 20, (shot->z - shot->y) >> 20) >> 8 == 212) {
-    ((u8 *)shot)[0x63] = 0;
+    ((struct Shot *)shot)->unk63 = 0;
     shot->update = 0;
     Call2((void (*)())Func_02005f8c, (s32)shot, 539);
     if (shot->angle == 0xc000)
@@ -63,15 +62,16 @@ void Func_02000d48(struct Actor *shot) {
       Func_02005d6c(shot, gData_02006194);
     return;
   }
-  hit = (u8 *)shot + 0x62;
-  if (*hit == 0) {
+  if (((struct Shot *)shot)->unk62 == 0) {
     near = 0;
+    leaderPosition = &leader->x;
+    shotPosition = &shot->x;
     if (gMainRoutineWork.renderMode == 2) {
-      if (Func_02000d18(&leader->x, &shot->x) <= 16 &&
+      if (Func_02000d18(leaderPosition, shotPosition) <= 16 &&
           leader->z >> 20 == shot->z >> 20)
         near = 1;
     } else {
-      if (Func_02000cec(&leader->x, &shot->x) <= 8 &&
+      if (Func_02000cec(leaderPosition, shotPosition) <= 8 &&
           leader->y >> 20 == shot->y >> 20)
         near = 1;
     }
@@ -81,22 +81,17 @@ void Func_02000d48(struct Actor *shot) {
       leader->priorityFlags &= ~1;
       ((struct FieldSprite *)leader->animation)->priority =
           ((struct FieldSprite *)shot->animation)->priority;
-      {
-        s16 *counter = (s16 *)(work + 0x16a);
-        s32 value = 200;
-
-        *counter = value;
-      }
+      ((struct EventWork *)work)->unk16a = 200;
       gMainRoutineWork.renderMode = 0;
-      *hit = 1;
-      ((u8 *)shot)[0x63] = 1;
+      ((struct Shot *)shot)->unk62 = 1;
+      ((struct Shot *)shot)->unk63 = 1;
     }
   }
   if (shot->angle == 0xc000) {
-    shot->x += Value2((s32 (*)())Iwram_MulQ16, Math_Cosine(shot->angle), 0x18000);
-    shot->y -= Value2((s32 (*)())Iwram_MulQ16, Math_Sine(shot->angle), 0x18000);
+    shot->x += Iwram_MulQ16(Math_Cosine(shot->angle), speed);
+    shot->y -= Iwram_MulQ16(Math_Sine(shot->angle), speed);
   } else {
-    shot->x += Value2((s32 (*)())Iwram_MulQ16, Math_Cosine(shot->angle), 0x18000);
-    shot->z += Value2((s32 (*)())Iwram_MulQ16, Math_Sine(shot->angle), 0x18000);
+    shot->x += Iwram_MulQ16(Math_Cosine(shot->angle), speed);
+    shot->z += Iwram_MulQ16(Math_Sine(shot->angle), speed);
   }
 }

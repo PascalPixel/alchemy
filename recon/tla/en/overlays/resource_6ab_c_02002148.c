@@ -1,11 +1,13 @@
-// Differ 6 of 186 (tla-ja, 2026-11-08, -mtune=gba): unchanged; tla-en and tla-de
-// match. The Japanese form: measure with --edition tla-ja. The English C in
+// Differ 4 of 186 (tla-ja, 2026-11-08, -mtune=gba); tla-en and tla-de match.
+// The old z read into its own local in the Japanese form (as the plain sum,
+// 6 of 186 differ in tla-ja; tla-en keeps the plain sum). The Japanese form:
+// measure with --edition tla-ja. The English C in
 // games/tla/src/scene/mars_lighthouse_star_room/s2148.c without its overlap
 // scan, and the position read through a union. Twins: 6ad Func_0200297c, 6ac
-// Func_020024e4, 6aa Func_0200263c. Left: actor->z loaded before the sum
-// natively, and the last store's zero after the address's copy (the zero is set
-// first, a tie in sched2). Tried without effect: z read in or out of the
-// once-only block, a mask or zero local, the sums and clamps respelled.
+// Func_020024e4, 6aa Func_0200263c. Left: the clamp constant 0x10000 set before
+// the sum (the listing sets it after), and the last store's zero after the
+// address's copy (the zero is set first, a tie in sched2). Tried without effect:
+// a mask, limit or zero local, the sums and clamps respelled.
 #include "edition.h"
 
 #include "types.h"
@@ -89,7 +91,7 @@ void Func_02002148(void) {
         s32 radius;
         struct Actor *other;
         u8 *flags;
-        s32 x, z, off;
+        s32 x, z, off, oldZ;
         s32 i;
 
         position.x = actor->x + (work->unk68 << 19);
@@ -122,7 +124,13 @@ void Func_02002148(void) {
         do {
           x = actor->x += work->unk68 << 17;
         } while (0);
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+        // The old z read into its own local, after the step in x.
+        oldZ = actor->z;
+        z = oldZ + (work->unk6a << 17);
+#else
         z = actor->z + (work->unk6a << 17);
+#endif
         actor->z = z;
         off = (x & 0xfffff) + 0xfff80000;
         if (off > 0x10000)

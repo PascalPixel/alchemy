@@ -1,4 +1,5 @@
-// Differ 15 of 137 (tla-en, 2026-11-08, -mtune=gba): the column is read through `table` while both tests read the symbol, so gcse's copy of the table's address lives in r7 and is reloaded only after the row loop, as in the native. Left: before the loop the native loads the address into r7 and copies it to r2 (here into r2, copied to r7); the menu state is copied from r4 into r3 before its test (here tested in r4); the rest is pool offsets. Reading the state only at the end, a second local for it, or other types for it measure 15 or worse. Also 15 or worse (2026-11-08): once-only blocks around the table's or the state's assignments or before the tests, s8, u16, s32 or u32 state, u32 i, the table set before i or at its declaration, a non-const table; 10 permute minutes reached 11 only by taking the table's address (a dead device).
+// Differ 13 of 137 (tla-en, 2026-11-08, -mtune=gba): the first entry is read into `offset` before the table's address is set, so the address loads into r7 and copies to r2 as in the native; that read still goes through r7 where the native reads through r2. Left besides: the menu state is copied from r4 into r3 before its test (here tested in r4); the rest is pool offsets. The entry read after the table is set, through `table`, or into a u8, and the state read once after the loop, measure 15 or worse. 10 permute minutes (2026-11-08) reached 11 only by taking the table's address (a dead device).
+// 2026-11-08 before the offset local: differ 15 of 137. The column is read through `table` while both tests read the symbol, so gcse's copy of the table's address lives in r7 and is reloaded only after the row loop, as in the native. Reading the state only at the end, a second local for it, or other types for it measure 15 or worse. Also 15 or worse: once-only blocks around the table's or the state's assignments or before the tests, s8, u16, s32 or u32 state, u32 i, the table set before i or at its declaration, a non-const table; every mix of table and symbol in the two tests and the column read.
 // 2026-11-05: differ 42 of 137, 20 normalized, 2 with registers ignored (tla-en, 2026-11-05): the guarded goto loop with the menu state read first and again at the loop's exit gives the native's shape. Left: two copies the native has and this lacks, the table's address through r7 into r2 and the state from r4 into r3 before its test; forms with a second local fold away.
 // Draft, differ 80 of 137, 2026-10-15: The Broken Seal's
 // Window_DrawColumnBorders on this game's window (signed position,
@@ -34,6 +35,7 @@ void Func_080426e0(struct Window *window, u32 flags) {
   u32 row;
   u16 *dest;
   const s8 *table;
+  s8 offset;
 
   if ((flags & 1) == 0)
     flags &= ~2;
@@ -42,8 +44,9 @@ void Func_080426e0(struct Window *window, u32 flags) {
     first = 0;
   }
   i = first;
+  offset = gWindow_PartyColumnOffsets[i];
   table = gWindow_PartyColumnOffsets;
-  if (gWindow_PartyColumnOffsets[i] >= 0) {
+  if (offset >= 0) {
   next:
     col = table[i] + bias;
     if (col < max) {

@@ -3,6 +3,11 @@
 // carries its S2 tag (the X barrier 293 without it, the pin 22, the threshold
 // barrier 42; an empty once-only block or a volatile o in their place does no
 // better). Kind 14 as y = cos term + off; y -= half height: still 6.
+// Second 2026-11-08 round, no gain: kind 14 as y = cos term + off then
+// y -= half, the table read as [i & 3] or >> 1, x and m declared swapped, a
+// cast on the product (6); off before amp (14), a block round y (12), y and x
+// swapped (80); kind 96 with m * 0x360 + buffer or -18 + x (6), a block after
+// the blitter load (8).
 // Settled 2026-11-08, both plain C:
 // - Kind 16: a zero pixel is stored and the loop continues (if (v == 0) { ...
 //   = 0; continue; }). The two stores cross-jump into one, and the continue

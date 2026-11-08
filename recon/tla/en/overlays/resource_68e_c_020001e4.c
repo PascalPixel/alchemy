@@ -1,5 +1,12 @@
 // Differ 52 of 286 (tla-en, 2026-11-08, -mtune=gba), from 56: the first text id
 // through result (permuter; FAKEMATCH temporary); with -1 for minusOne, 93.
+// 2026-11-08, later: 21 of the 25 Call and Value wrappers measured one by one
+// and dropped as free (52 each and together); the four kept pay: the first
+// FieldMessage_ShowAtActor 179 direct, the two minusOne calls 76 each (and direct
+// they would pass all 64 bits), the GameFlag_Test 91. A prototype for
+// FieldMessage_ShowAtActor does not help (179). No change from message = result =
+// MsgWhatWillYou (52), -1 != result, the pick loop with the subtraction in its
+// test, a block-local or u32 prizeRoll; a weights pointer 91, a while pick loop 95.
 // 2026-11-08: re-measured, both temporaries still pay (without result 56, minusOne
 // as -1 or s32 93); the unused state local dropped (no change). No change (52)
 // from declaration order, minusOne at the other -1 sites, the pick loop's test
@@ -84,7 +91,7 @@ s32 Func_020001e4(void) {
 
   Func_02001380();
   choice = 0;
-  Call1((void (*)())Func_020013f8, 0);
+  Func_020013f8(0);
 prompt:
   coins = gMainRoutineWork.coins;
   medals = PartyInventory_CountItem(229);
@@ -96,12 +103,12 @@ prompt:
   Call2((void (*)())FieldMessage_ShowAtActor, -1, 0);
   window = (s32)Window_Create(0, 0, 17, 4, 2);
   result = (s32)MsgCoins2;
-  Call4((void (*)())Text_DrawCharacterAtOffset, result, window, 0, 0);
+  Text_DrawCharacterAtOffset(result, window, 0, 0);
   Text_DrawNumberInWindow(coins, 6, window, 72, 0);
-  Call4((void (*)())Text_DrawCharacterAtOffset, result + 1, window, 0, 8);
+  Text_DrawCharacterAtOffset(result + 1, window, 0, 8);
   Text_DrawNumberInWindow(medals, 6, window, 72, 8);
   choice = Menu_SelectCoinsOrMedals(choice);
-  Call2((void (*)())Window_Close, window, 2);
+  Window_Close(window, 2);
   Message_CloseFinishedWindows();
   if (choice == -1)
     goto end;
@@ -117,8 +124,8 @@ prompt:
     notice = message + 2;
   }
   Func_020013c8(notice);
-  Call2((void (*)())Func_020013d8, -1, 0);
-  Call1((void (*)())wait, 1);
+  Func_020013d8(-1, 0);
+  wait(1);
   goto prompt;
 full:
   if (PartyInventory_CountFreeSlots() == 0) {
@@ -130,47 +137,47 @@ full:
 toss:
   window = (s32)Window_Create(20, 15, 9, 4, 2);
   result = (s32)MsgToss2;
-  Call4((void (*)())Text_DrawCharacterAtOffset, result, window, 0, 0);
-  Call4((void (*)())Text_DrawCharacterAtOffset, result + 1, window, 0, 8);
-  Call1((void (*)())wait, 5);
-  Call1((void (*)())Func_02001408, 116);
+  Text_DrawCharacterAtOffset(result, window, 0, 0);
+  Text_DrawCharacterAtOffset(result + 1, window, 0, 8);
+  wait(5);
+  Func_02001408(116);
   for (;;) {
     if (gInput.pressed & 1) {
-      Call1((void (*)())Func_02001408, 112);
+      Func_02001408(112);
       result = 0;
       break;
     }
     if (gInput.pressed & 2) {
-      Call1((void (*)())Func_02001408, 113);
+      Func_02001408(113);
       result = -1;
       break;
     }
-    Call1((void (*)())wait, 1);
+    wait(1);
   }
-  Call2((void (*)())Window_Close, window, 2);
+  Window_Close(window, 2);
   if (result != -1) {
     if (choice == 0) {
       Call1((void (*)())Party_AdjustCoins, minusOne);
     } else if (choice == 1) {
-      Call1((void (*)())PartyInventory_Remove, 229);
+      PartyInventory_Remove(229);
     }
     result = Func_02001184(choice);
     if (choice == 0) {
       if (result != 4) {
         Party_AdjustCoins(gData_0200173c[result]);
-        Call1((void (*)())Func_02001408, 91);
+        Func_02001408(91);
         Func_02001328(gData_0200173c[result], 5);
         Func_020013c8((s32)MsgYouWonCoin);
-        Call2((void (*)())Func_020013d8, -1, 0);
+        Func_020013d8(-1, 0);
       } else {
-        Call1((void (*)())Func_02001408, 113);
-        Call1((void (*)())FieldEvent_Wait, 10);
+        Func_02001408(113);
+        FieldEvent_Wait(10);
       }
     } else {
       choice = 0;
       if (result == 0 && Value1((s32 (*)())GameFlag_Test, 0x90b) == 0) {
-        Call1((void (*)())GameFlag_SetBit, 0x90b);
-        Call1((void (*)())Func_0200049c, -1);
+        GameFlag_SetBit(0x90b);
+        Func_0200049c(-1);
       } else {
         for (window = 0; window < result * 3 + 3; window++)
           choice += (s8)gMainRoutineWork.unk13d[window];

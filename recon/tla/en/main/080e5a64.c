@@ -2,7 +2,11 @@
 // the offset (12 before), and an empty once-only block in place of the empty asm after the
 // palette store (no block, 10). Left: red finished after green in the palette store, where
 // the native finishes it first. Tried 8 November: red finished in its own local, the loop
-// setup reordered, the colour built in steps (8 to 20).
+// setup reordered, the colour built in steps (8 to 20). Round two, all 8 or worse:
+// every order of the colour's three terms (8 to 26), red finished before green's
+// call or in its own statement, either *12 as its own statement, the palette store
+// through an array or a constant local, the once-only block moved or dropped (10),
+// each device dropped (base plain 52, phase direct 12); permuter 6 minutes, nothing.
 // Near miss, differ 16 of 302 (tla-en, 2026-11-05), with untagged empty asms, one-pass
 // blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Near miss, differ 28 of 302 (54 before; 2026-10-26). The palette loop is a

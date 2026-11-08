@@ -22,6 +22,13 @@
 // as the symbol, 4 or 6; a once-only block round the store, 8; a 6-minute
 // permute found nothing better. The value's constant note doubles its live
 // length, so the address pseudo takes r3.
+// Later on 2026-11-08: sched2 puts a pool load (a true dependence on the
+// DMA asm's memory clobber) before a constant, so the constant value always
+// loads second. With the destination as the constant and the vector as the
+// symbol through iwram (iwram = IwramIrqMain; gIrqVector = iwram), the value
+// loads first and the pool order is native, but the registers swap again
+// (6); every form giving the value r3 (gIrqVector = iwram = constant, a
+// pointer set first, a block-scoped pointer) loads the address first (4).
 // Before adoption the fixed address belongs in irq.h, listed once (O2).
 #include "types.h"
 #include "dma.h"

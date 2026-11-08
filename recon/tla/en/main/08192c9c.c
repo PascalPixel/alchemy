@@ -1,6 +1,9 @@
 // Differ 34 of 5364 (tla-en, 2026-11-08, -mtune=gba), measured with all five
 // addresses below (rechecked 2026-11-08: the opening fade's empty asm dropped for r = m, still 34;
 // FILL_WORDS without its once-only block 731, calling Iwram_FillWords directly 38).
+// Later the same day: the cues before the splash through a static inline wrapper
+// add one pseudo per integration (10 in all) and leave 34; the 280 are not small
+// inline helpers.
 // Left: spill slots 32 to 60 numbered in another order (seven
 // sites); the large rings' sheet multiply (adds r3, r7; muls r3, r0) now matches. Measure in address order,
 // 0819284c,08192894,081929fc,08192a4c,08192c9c: the parent alone gives 549 and

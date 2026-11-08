@@ -1,4 +1,9 @@
 // Differ 2 of 1216 (tla-en, 2026-11-08, -mtune=gba).
+// Rechecked 2026-11-08: the turn is spelled with a block constant full = 2560
+// set before the shift; full - (frame << 5) in one expression, a separate
+// shift temporary, or full declared after it lose frame's reload (33 to 39);
+// full at the top of the function (27) or the block (10) hoists the split.
+// In sched2 the split's second half has the earlier LUID and wins the tie.
 // One sched2 tie is left: the native has the turn shift ahead of the second
 // half of the 2560 split. The 2560 holds r3 so frame is reloaded into r4;
 // setting it after the shift lets frame stay in r3 (33 differ). Also tried

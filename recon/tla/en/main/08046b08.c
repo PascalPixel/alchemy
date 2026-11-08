@@ -1,4 +1,8 @@
 // Differ 40 of 3111 (tla-en, 2026-11-08, -mtune=gba): three barriers, not six.
+// Seventh round, 8 November: unchanged. At the cursor sprite, without its asm
+// the draft loads the call's second argument ahead of the word stores (56);
+// a constant local for the first word or the tile read into a block local 56,
+// the words swapped 58, through the name sprite's pointer 119 to 132.
 // Sixth round, 8 November: without the first fill loop's asm 42, without both 44;
 // the list loop's test as j < 4, the fill loop with j++ as its own statement, 42;
 // the fill as if-do-while 66, j != 4 94, a goto to the fill loop 870.

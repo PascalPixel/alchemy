@@ -1,5 +1,10 @@
 // Differ 8 of 658 (tla-en, 2026-11-08, -mtune=gba).
-// BattleEffect_RunDiamondBerg. 2026-11-08: a local zero, set after unk04's
+// BattleEffect_RunDiamondBerg. Round two, 2026-11-08, none better: unk04's zero
+// through its own block-scoped local, a volatile store or a model copy (8);
+// zero set before unk04's store, or as unk04 = zero = 0 (248); unk04 stored
+// before the texture's fields (39) or first (39); kind first (8); the scroll
+// zeros swapped or both through zero (8); the pixels store moved (37, 41);
+// permuter 6 minutes, nothing. 2026-11-08: a local zero, set after unk04's
 // store, for both scrollU = 0 stores gives scrollU and scrollV the native's r0
 // (10 to 8); declared with its 0, 10. Left: unk04's zero (the native's r3,
 // stored first; here r2, after kind). Every placement of the unk04 store, a

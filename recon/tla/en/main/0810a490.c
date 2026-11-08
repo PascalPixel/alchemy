@@ -1,4 +1,10 @@
-// Differ 10 of 196 (tla-en, 2026-11-08, -mtune=gba).
+// Differ 4 of 196 (tla-en, 2026-11-08, -mtune=gba). memberIndex = 0 as its
+// own statement, then an empty once-only loop (plain C): 10 to 4. Left: the
+// copy of itemWindow (mov r9, r1) issued five rows early, with the zero
+// store one row early. Tried: the zero store inside a once-only block (6),
+// unitId inside or around one (10 to 12), a second empty loop (4), shop set
+// as a statement (4); permuter 8 and 6 minutes from 6 and from 4: nothing
+// under 4.
 // 8 November: 8 minutes of permute found nothing under 10; memberIndex = 0 declared first moves the zero store to the native's place but costs 21.
 // 8 November, later: the cause is in sched2, not aliasing: the zero store to
 // memberIndex and the saved item's load are independent (scalar frame slot
@@ -58,13 +64,22 @@ s32 Func_08108690(s32 *cursor, s32 count, s32 columns);
 
 void Func_0810a490(void *window, void *itemWindow) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
-  u32 savedSelectedItem = shop->selectedItem;
-  s32 memberIndex = 0;
-  s32 unitId = 0;
-  s32 creditCost = Data_0810c38e[gMainRoutineWork.counterC];
+  u32 savedSelectedItem;
+  s32 memberIndex;
+  s32 unitId;
+  s32 creditCost;
   s32 redraw;
   s32 slot;
   s32 message;
+
+  memberIndex = 0;
+  // An empty once-only loop: it ends the zero store's block, so the store is
+  // issued before the saved item's load, as the native does.
+  do {
+  } while (0);
+  savedSelectedItem = shop->selectedItem;
+  unitId = 0;
+  creditCost = Data_0810c38e[gMainRoutineWork.counterC];
 
   if (creditCost > gMainRoutineWork.counterB)
     return;

@@ -1,11 +1,12 @@
-// Differ 6 of 186 (tla-ja, 2026-11-08, -mtune=gba): unchanged; the two unions
-// and the once-only block still pay (8, 22, 10 without each).
+// Differ 4 of 186 (tla-ja, 2026-11-08, -mtune=gba): the old z read into its own
+// local (as the plain sum, 6); the two unions and the once-only block still pay
+// (6, 20, 10 without each).
 // Func_020024e4 of overlay 6ac: the Japanese release's own function, written
 // as overlay 6aa's Japanese draft of Func_0200263c with this overlay's symbols
 // (from 20: the position and velocityX through unions, actor->z first in the
-// sums; both unions are still devices to replace). Left: actor->z loaded
-// before the sum natively, and the last store's zero after the address's
-// copy; scheduling only.
+// sums; both unions are still devices to replace). Left: the clamp constant
+// 0x10000 set before the sum (the listing sets it after), and the last store's
+// zero after the address's copy; scheduling only.
 #include "edition.h"
 #include "types.h"
 #include "call.h"
@@ -83,7 +84,7 @@ void Func_020024e4(void) {
         break;
       } else {
         s32 result;
-        s32 x, z, off;
+        s32 x, z, off, oldZ;
 
         position.x = actor->x + (work->unk68 << 19);
         position.y = actor->y;
@@ -102,7 +103,9 @@ void Func_020024e4(void) {
         do {
           x = actor->x += work->unk68 << 17;
         } while (0);
-        z = actor->z + (work->unk6a << 17);
+        // The old z read into its own local, after the step in x.
+        oldZ = actor->z;
+        z = oldZ + (work->unk6a << 17);
         actor->z = z;
         off = (x & 0xfffff) + 0xfff80000;
         if (off > 0x10000)

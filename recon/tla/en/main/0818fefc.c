@@ -1,4 +1,4 @@
-// Differ 38 of 1361 (tla-en, 2026-11-08, -mtune=gba). Rechecked: f and twice
+// Differ 38 of 1361 (tla-en, 2026-11-08, -mtune=gba). Re-tried 2026-11-08 (later), none better: once-only blocks around texture2's pixels (66), its fields (64), model->kind (68) or the closing transition store (38); texture2's fields before the model list (62); the closing background id through a local, transition[4] = zero (48); s * 3 * 16, the sine inlined into r, m's increment as its own statement, v[1] as 24 + ... (all 38), -3 as the cosine's factor (42). Rechecked: f and twice
 // are still needed (167 and 129 without) and are now tagged; the once-only
 // block still gains 2. No better: the req word through pair[0], texture2's
 // fields before its pixels (46), the first model's vertices after its texture

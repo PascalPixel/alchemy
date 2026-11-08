@@ -10,6 +10,8 @@
 // test nested in an else. Permuter hits at 18-20 (6 November) were bogus
 // (actor id 0x3490000, x truncated to short). No compiled ⚓️ code pools
 // 0x2000000. The 0xd4c store matches through the one-pass block that
+// Also 8 November: 0x2000000 as a constant local of the whole function, or of
+// the arm, still splits (20).
 // Func_02000624 also takes.
 #include "../../../../games/tla/src/scene/madra_interiors/madra_interiors.h"
 

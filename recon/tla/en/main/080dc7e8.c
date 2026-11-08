@@ -1,4 +1,12 @@
-// Differ 12 of 171 (tla-en, 2026-11-08, -mtune=gba).
+// Differ 12 of 171 (tla-en, 2026-11-08, -mtune=gba). Left: only the slot loop's
+// two pointers, r5 and r6 swapped.
+// 2026-11-08 (third pass): the slots are now struct FieldParticle (72 bytes, the
+// owned byte is its active flag), as BattleEffect_ClearOwnedSlot takes them; still 12.
+// Tried: a while, do-while or continue loop, the step reordered or its own statement,
+// the slot block-scoped or set in the for, a separate wait counter (28), slot
+// declared before event (26), Task_Remove returning s32: all 12 or worse; a
+// 1-minute permute found nothing under 12. Re-measured: the halfword 17 local is
+// worth 4 (16 without it); the layer temporary 8 (20 without it).
 // 2026-11-08 (second pass): the slot loop as an explicit owned-byte pointer,
 // an index loop, a do-while or reordered steps, all 12; an 8-minute permute
 // found nothing under 12. The two loop pointers are loop.c's biv and giv,
@@ -30,12 +38,7 @@
 #include "types.h"
 #include "actor.h"
 #include "ram_buffer.h"
-
-struct CleanupSlot {
-  u8 unk00[69];
-  s8 owned;
-  u8 unk46[2];
-};
+#include "field_particle.h"
 
 struct CleanupWork {
   u8 unk000[16];
@@ -46,7 +49,7 @@ struct CleanupWork {
   s32 x;
   s32 y;
   s32 z;
-  struct CleanupSlot slots[24];
+  struct FieldParticle slots[24];
   u8 unk710[8];
   u8 ownerByte;
   u8 layer;
@@ -77,7 +80,7 @@ struct CleanupEventWork {
   s8 unkcb7;
 };
 
-void BattleEffect_ClearOwnedSlot(void *slot);
+void BattleEffect_ClearOwnedSlot(struct FieldParticle *slot);
 void Func_080dc954(void);
 void BattleEffect_WaitForArcGroups(void);
 void BattleEffect_EndArcEffect(void);
@@ -94,17 +97,17 @@ void BattleEffect_CleanupSceneObjects(void) {
   s8 *block = Ram_HeapSlots->block32;
   struct CleanupMap *map = (struct CleanupMap *)Ram_HeapSlots->mapWork;
   struct Actor *owner = work->owner;
-  struct CleanupSlot *slot = work->slots;
+  struct FieldParticle *slot = work->slots;
   s32 i;
   s16 first;
   s16 layer;
 
   for (i = 23; i >= 0; i--, slot++) {
-    if (slot->owned)
+    if (slot->active)
       BattleEffect_ClearOwnedSlot(slot);
   }
   // A local that holds one constant: as a halfword it makes the first test
-  // cmp #17; blt as the native (with the literal, 20 of 171 differ in tla-en).
+  // cmp #17; blt as the native (with the literal, 16 of 171 differ in tla-en).
   first = 17;
   if (work->kind >= first && (work->kind <= 27 || work->kind == 30))
     Func_080dc954();

@@ -6,6 +6,10 @@
 // renderMode or before the priority copy, or its address taken early (14 to
 // 29); near's 0 in a once-only block (8) or the positions declared as
 // Func_020010b4 does (98); 8 permuter minutes found nothing better.
+// Later 2026-11-08: the sprites through locals, a typed EventWork local, a
+// u8 bit-field view of byte 9, a cast 200, every single move of a declaration
+// (2); the leader stores reordered (6 to 82); the copy or priorityFlags in a
+// once-only block (82); without the asm (4); 8 more permuter minutes.
 // One tie in sched2 (both priority 11, RTL order wins): the native computes
 // the counter's address (add r2, r8) ahead of the sprite's strb, as in 664's
 // Func_02000d48. Func_02000d48's twin, with another ending.

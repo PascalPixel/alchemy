@@ -9,6 +9,11 @@
 // once-only block (14 to 22), the reload of leader->z through a block local or
 // volatile (14); permuter 8 minutes best 14. Only r1 and r3 swap: reload gives the
 // follower's 460 the first free register, which natively the leader holds.
+// Round 2, 8 November: every order of x, the once-only block, follower, z and
+// other (best 14), once-only blocks round base, follower or a store (14 to 16),
+// the reload through a block local or a volatile cast and declaration orders
+// (14). Both 460 and the leader's base are reload registers, so which takes r3
+// follows reload's turn order, not the C.
 #include "types.h"
 #include "call.h"
 #include "actor.h"

@@ -1,4 +1,4 @@
-// Differ 2 of 263 (tla-en, 2026-11-08, -mtune=gba); 2026-11-08: the same tie; tint = 9 or update = NULL
+// Differ 2 of 263 (tla-en, 2026-11-08, -mtune=gba). Later on 2026-11-08: a switch for the tint (54), the angle store before the sprite read (6), the update store between them (2), once-only blocks round the sprite read, the update or the angle store (8 to 96), tint = 9 set earlier (2 or 54), u16 back (23), back as dir ^ 0x8000 (21), u32 tint, an anim pointer local and moved declarations (2) left the tie. Earlier that day: the same tie; tint = 9 or update = NULL
 // moved (2), the angle store after the tint tests (82); the sprite read after
 // the stores, an s16 sprite or a block-scoped entry pointer (2); else-if tint
 // tests (62); the angle as dir + 0x8000 (40); empty blocks before or after the

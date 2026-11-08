@@ -1,5 +1,10 @@
 // Differ 4 of 376 (tla-en, 2026-11-08, -mtune=gba): one sched2 tie, r1 and the
 // pitch global's pool load hoisted above the Data_03001244 store.
+// 2026-11-08, later: volatile on either global, pitch read through perspective
+// or into an early local, the ratio in a local, the call through a local, and
+// empty once-only blocks (before: 4; between the stores: the order matches
+// but the store takes the r9 zero, 9) left 4; 10 permuter minutes found
+// nothing.
 // 2026-11-08: Render_ResetTransformState declared returning u32 (permuter;
 // tagged) took 6 to 4, fixing the argument move against the eye offset's third
 // store; the two global stores swapped, retyped, through a pointer, split by a

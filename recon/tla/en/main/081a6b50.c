@@ -9,6 +9,11 @@
 // local; s16 rows, u32 tile; const gData_081a84e6 (6); u32 rows (6); top
 // first (14); 8 more permuter minutes. In sched2 the once-only block's note
 // holds "adds r2, r3, #6" behind rows' spill store.
+// Later 2026-11-08 (2 unless said): every single move of a declaration (rows
+// before x, or tile after rows, 14); tile, rows, x, left or an empty block in
+// blocks of their own; top in one (4); an empty block between the offsets (4);
+// offsetY first (29); left computed in the block (4); a pointer to the frame
+// row (24); 8 more permuter minutes.
 // Draft, differ 27 of 360, skeleton gap 9 (tla-en, 2026-11-01)
 // A frame callback of the intro (its state in heap slot 43, 0x030000ac): clears
 // OAM, then in phase 0 steps an animation through gData_081a8378 along the path

@@ -5,6 +5,9 @@
 // an empty once-only block at any statement, step or x written another way,
 // and a 9-minute permuter run leave 20 or more. Left: mode 4's giv order and
 // the sched2 rows below; pin and statement-move searches found nothing.
+// Later on 2026-11-08, no gain: in the last loop (mode 0 and 1's rows, the
+// "mode 4 tail" below) x as a local of the inner loop (20), step * j (20), the
+// [1] store first (295), w before r (712), an 8-minute permuter run on it (20).
 // Draft, differ 36 of 1748, skeleton gap 13 (tla-en, 2026-11-01)
 // Same instruction count as the listing; the frame (176 bytes), every stack
 // slot and all the loops' registers match. What is left, about 18 pairs:

@@ -1,4 +1,8 @@
 // Differ 12 of 132 (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-08 (second pass): a pointer to result[0] set after the call, in or
+// after a once-only block, set before it, passed to it, or as a Vector3 pointer,
+// all 40 to 47 (CSE merges it with the call's argument, held in r9); the zero
+// local still measures 20 without it.
 // 2026-11-08: a pointer to result[1] set after the call (far = &result[1],
 // reading *far and far[1]) gives the native's allocation exactly but its
 // offsets are 4 off (16); the same pointer at result[0] is merged by CSE

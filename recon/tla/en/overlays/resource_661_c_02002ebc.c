@@ -3,7 +3,10 @@
 // 4, the value now in r3 but the pool base in r2; not kept. The plain store, a
 // MainRoutineWork pointer (the adopted scenes' form), once-only blocks around
 // it and every type of v (u64 itself 82): 6 or 82. Permuter 8 minutes: only
-// the u64 temporary.
+// the u64 temporary. Later 8 November, no gain: the store through a work pointer,
+// an offset local, an s8 or u8 value, the value at function scope (6); Call4's
+// held local, Call3 or an empty block at the top dropped (10); CamBounds,
+// Call4 or Call3 removed (73, 12, 8).
 // Draft, differ 6 of 187 (tla-en, 5 November), from 82: reload's spill registers rotate through the function, and the native's set is r1, r2, r3.
 // The battle rule store is what brings r1 in: with a local value it needs three.
 // Left: only that store. Native: ldr r3, pool; r1 = offset; adds r2, r3, r1; movs r3, #2; strb r3, [r2]: the value in r3 after an address pseudo in r2.

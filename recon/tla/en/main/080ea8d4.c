@@ -6,6 +6,11 @@
 // index is computed, takes r1 where the native's late reload takes r2; the
 // index spellings tried (a layer local, a terrain local, the cell computed
 // after the stores, + slot) give 4 or worse.
+// 8 November, later: the map copy comes from expansion (insn 60 copies fp
+// before the index). Spellings that use fp directly (map->layers + id,
+// byte offsets) let combine fold it early (6 or 8); index casts, a map
+// copy local, + slot keep 4; once-only block, early layers local (10); 10
+// permuter minutes found nothing.
 // Older notes: the cell is marked through struct MapCell; the step is set in
 // an if around the loop (the plain for loop sets it before the test) with
 // x - 0x100000 left to the pool as the native has it; the owner's y is stored

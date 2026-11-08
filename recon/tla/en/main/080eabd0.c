@@ -1,4 +1,9 @@
 // Differ 40 of 125 (tla-en, 2026-11-08, -mtune=gba): register choice only, no device.
+// 8 November, later: unchanged. Also 40: the shape row as const + cells, as
+// (u32) or as a pointer difference, the flags read in one assignment, a block
+// index, u32 flags or tag; shapes += slot after the call 58, the motion stores
+// chained 42, cells before the slot 50, a layer local 55; 8 minutes of
+// permuting (seed 4417): nothing below 40.
 // 8 November: the empty-asm barrier between the two flag stores is now an empty
 // once-only block (40, the same; 42 with neither). Also 40: the block store in a
 // once-only block, shapes += slot before the flags, u32 slot or flags, the cells

@@ -1,4 +1,10 @@
-// Differ 17 of 230 (tla-en, 2026-11-08, -mtune=gba); id = second + 1 in place of the copy, 17.
+// Differ 15 of 230 (tla-en, 2026-11-08, -mtune=gba): the second racer's Func_02005624 call and id++ moved out of
+// its once-only block, id++ before the call (from 17). Left: cse2 still folds id = second into id++ (the native loads
+// r6 from [sp] beside the lookup and adds 1 between the calls; once-only blocks around the copy or the increment,
+// a goto label, the lookup through id, second as a copy of id, or no second local all stay 15), the first racer's
+// stores sit one slot apart, and the third racer's heading 2 reuses r5. An 8-minute permute: only invalid candidates
+// (a float cast, id set after its use) below 15.
+// Earlier, at 17: id = second + 1 in place of the copy, 17.
 // Tried 8 November, all 17 or worse: id = second after the lookup, id++ or id = second + 1 between the second
 // racer's calls, id++ in its own once-only block, ++id in the lookup, id = first + 1 or first; id++, second set
 // late, declaration orders, once-only blocks around the third racer or its unk62 store (21), racers 2 and 3 in one
@@ -57,9 +63,9 @@ s32 Func_02004d48(s32 first, s32 check) {
     racer->state = 1;
     racer->unk4c = 0;
     Func_02005654();
-    Func_02005624(racer, 2);
   } while (0);
   id++;
+  Func_02005624(racer, 2);
   racer = Actor_GetById(id);
   racer->unk64 = 8;
   racer->unk66 = 7;

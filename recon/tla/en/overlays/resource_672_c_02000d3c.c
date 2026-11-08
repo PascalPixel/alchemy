@@ -2,7 +2,8 @@
 // 8 November, no gain: step++ in place of step = next, or after the store (6), ++step or
 // step++ first (19), (step + 1) / 4 (6), blend at function scope, the division through a block local, declaration orders,
 // 1 + step (6); the store as blend | alpha (20), blend built before alpha (22); 8 minutes
-// of permute (6).
+// of permute (6); later, the division as fade = next; fade /= 4 (15), through (u32) or >> 2 (12),
+// next at function scope, the range as two tests (6); 8 more minutes of permute (6).
 // 7 November (permuter): alpha before blend, and fade reused for cue 298 after the loop,
 // which makes fade a global pseudo in r0 as in the native (16 to 6). Left: the division's
 // copy of next ties to fade in r0 where the native gives it r3.

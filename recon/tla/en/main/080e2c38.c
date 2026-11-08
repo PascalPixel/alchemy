@@ -1,10 +1,6 @@
-// Differ 2 of 124 (tla-en, 2026-11-08, -mtune=gba): only the sprites pointer's last add
-// lands one instruction before the position buffer's address (mov r6, sp).
-// History: 28 -> 6 earlier; 6 -> 2 by computing the vram pointer between
-// the particles and sprites pointers.
-// 2026-11-08: every order of the three pointers (2 to 12), the steps in the
-// body or reordered, position or i declared elsewhere, a cursor for position,
-// a once-only block, i <= 95 and 8 permuter minutes (27,777 candidates) left 2.
+// Matches (tla-en, 2026-11-08, -mtune=gba): the sprite is indexed by i, so loop.c makes
+// it a giv set after the hoisted position address; the vram pointer set between
+// the arrays' pointers (the last device) is no longer needed.
 // The 96-particle burst's task (heap slot 0x5c work,
 // started by Func_080e2acc). Each particle whose delay counter is between 0
 // and 63 shows the picture (delay / 8) % 6 of the burst's tiles 48 units out
@@ -55,17 +51,14 @@ void Func_080e2c38(void) {
   struct BurstSprite *sprite;
   s32 position[3];
   s32 i;
-  s16 *vram;
 
   work = (struct BurstWork *)Ram_HeapSlots->battleFxWork[0];
   particle = work->particles;
-  // The vram pointer is set between the two arrays' pointers to match.
-  vram = &work->vram;
-  sprite = work->sprites;
 
-  for (i = 0; i < 96; i++, sprite++, particle++) {
+  for (i = 0; i < 96; i++, particle++) {
+    sprite = &work->sprites[i];
     if ((u32)particle->delay < 64) {
-      sprite->tile = *vram + (particle->delay >> 3) % 6 * 2;
+      sprite->tile = work->vram + (particle->delay >> 3) % 6 * 2;
       position[0] = particle->x;
       position[1] = particle->y;
       position[2] = particle->z;

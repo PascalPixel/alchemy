@@ -1,4 +1,8 @@
-// Differ 8 of 324 (tla-en, 2026-11-08, -mtune=gba). Copy orders re-measured
+// Differ 8 of 324 (tla-en, 2026-11-08, -mtune=gba). Rechecked 2026-11-08: the
+// dead copy as x or z 8, removed 33; best and bestDistance set in the other
+// order 18; the point pointer set inside the else 14; count <= 127, u32 (96)
+// or redeclared 8; permuter 8 min: 6 only by reading a pointer to position
+// that the ladder path leaves unset (rejected). Copy orders re-measured
 // the same; also: a once-only block, `|=`, goto or `else if` in place of the
 // dead copy 33; any self-copy of position keeps 8; once-only blocks around the
 // best point's copies 49 to 67; permuter 7 min: nothing better.

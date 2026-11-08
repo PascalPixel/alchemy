@@ -5,6 +5,11 @@
 // 2026-11-08: the barrier still pays (without it, or a once-only block in
 // its place, 15); once-only blocks round either store, reordered loop steps
 // and x as x << 4 stay 13; an 8-minute permute found nothing under 13.
+// Round 2: no move of `ime` (top, before frames, block-scoped, in or beside a
+// once-only block) replaces the barrier (15); y through a scrollY local makes
+// loop.c hoist the scroll address and 352 (60); a block-local x * 16, gBgScroll->
+// or 352 + -y / 128 stay 13. The native's x store inherits the address's reload
+// register; here it needs one more `mov r2, r8` (228 against 227).
 // Draft, differ 25 of 227 (was 45): queues the second world map picture (its
 // tiles, frames and palette) and scrolls it in over 96 frames, then fades and
 // restores the window palette. The scroll's x is x * 16 kept in a temporary

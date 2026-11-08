@@ -1,4 +1,5 @@
-// Differ 48 of 110 (tla-en, 2026-11-08, -mtune=gba): the wavy scroll lines of the layer, read by a DMA each scanline; a barrier keeps the loop's top test, and register allocation is left (p sl, a r8, s1 r5 here; native p r5, a sl, s1 r8).
+// Differ 2 of 110 (tla-en, 2026-11-08, -mtune=gba): the wavy scroll lines of the layer, read by a DMA each scanline. Left: the native stores the event flag's register (r3, known 0) into the layer, here i's register (r6).
+// 2026-11-08 (later): 48 to 2. The loop steps a before b (12 with the pins below; b first had suited only the old allocation), x is declared first so it wins its priority tie with sine (r9, sine fp), and two pins put the pointer in r5 and the first sine in r8, where local-alloc otherwise gives s1 the lowest free register. Re-measured: without the barrier 58, without the p pin 66, without the s1 pin 38, without both 52. The store before i = 0 (14: i and b then swap), the flag stored as itself or i = flag (2), the store in a do { } while (0) (4), the barrier after frame (2) or before the loop (12), x read later (46), i < 160 (30).
 // 2026-11-08: the loop writes through a block-scoped pointer copied from line (54 to 48: line then takes a low register outside the loop, as the native's r5). Re-measured: without the barrier 78. Not better: p from Data_02006340 (48), line block-scoped at the reload (68), the store before i = 0 (60), line++ as its own statement (54), the steps in the for list (54), sine calls inline (54). 8 minutes of permute: nothing better.
 // Left, one cause: the native keeps a test at the loop's top (cmp r6, #160, beq) with i known to be 0; here CSE folds it, whatever the
 // spelling (for, while, labels, if around a do). With those refs i ranks first in the native (r6), line r5, the first sine r8; here line r8, the first sine r5, i r10.
@@ -23,20 +24,22 @@ extern u16 Data_02006340[];
 s32 Math_Sine(s32 angle);
 
 void Func_020002a4(void) {
+  // Declared first: x then wins its allocation tie with sine.
+  s32 x;
   s32 (*sine)(s32) = *(s32 (**)(s32))(((u32)Math_Sine & ~3) + 4);
   struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[1];
   u16 *line = Data_02006340;
 
   if (*(s8 *)((u8 *)Ram_HeapSlots->eventWork + 0xca4) == 0) {
     u32 frame;
-    s32 x, z, a, b;
+    s32 z, a, b;
     s32 stepA, stepB;
     s32 i;
     volatile u16 *dma;
 
     i = 0;
     *(s32 *)&layer->unk08[20] = 0;
-    /* FAKEMATCH(barrier): asm("" : "+r"(i)) keeps the loop's top test; as i = 0 alone, 78 of 110 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): asm("" : "+r"(i)) keeps the loop's top test; as i = 0 alone, 58 of 110 instructions differ in tla-en. */
     asm("" : "+r"(i));
     frame = gFrameCount;
     z = *(s16 *)((u8 *)layer + 6);
@@ -46,14 +49,16 @@ void Func_020002a4(void) {
     a = z * stepA + (frame << 10);
     b = z * stepB - (frame << 10);
     {
-      u16 *p = line;
+      /* FAKEMATCH(pin): p held in r5; as a plain local, 66 of 110 instructions differ in tla-en. */
+      register u16 *p asm("r5") = line;
 
       for (; i != 160; i++) {
-        s32 s1 = sine(a);
+        /* FAKEMATCH(pin): s1 held in r8; as a plain local, 38 of 110 instructions differ in tla-en. */
+        register s32 s1 asm("r8") = sine(a);
         s32 s2 = sine(b);
         *p++ = ((s1 * 3 + s2 * 7) >> 19) + x;
-        b += 0x1320;
         a += 0x3300;
+        b += 0x1320;
       }
     }
     line = Data_02006340;

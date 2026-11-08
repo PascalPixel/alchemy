@@ -1,4 +1,5 @@
 // Differ 36 of 2579 (tla-en, 2026-11-08, -mtune=gba; the same in ja, de, es, fr, it).
+// 2026-11-08 (latest), none better: an s32 mask builds -13 with movs, negs but drops the copy (67, also with a copied local, x = mask & byte, or (x & mask) | 4); the and-or as one byte expression (76), u8 x with -13 (74), s8 x (71), an s8 byte read (61), a (u8) mask (36), the s8 mask at the outer block, set late or copied (36).
 // 2026-11-08 (later), from 38: the closing shade ramp sets its column pointer in the j loop's
 // initializer, so c is built after j = 0 as in the listing (36). Re-tried: the mask as an s32 or
 // s8 inside the block, an s8 read of the byte, the and-or as one expression; the else arm's index

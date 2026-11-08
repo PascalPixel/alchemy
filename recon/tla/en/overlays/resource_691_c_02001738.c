@@ -1,4 +1,8 @@
-// Differ 4 of 294 (tla-en, 2026-11-08, -mtune=gba), from 8. The sprite is now
+// Differ 4 of 294 (tla-en, 2026-11-08, -mtune=gba), unchanged this round: byte 17
+// as a plain flags byte set with |= (14 slot first, 73 bit first), parts[i]
+// stored between the slot copy and the bit (38), once-only blocks around
+// either store (85 to 102), and a 5-minute permute from the slot-first form
+// (12) found only the bit-first form again. From 8: the sprite is now
 // read through PartSprite (slot at 16, retainCacheEntry at bit 0 of 17, as
 // f021a84.c lays the field sprite out), with the bit set before the slot copy:
 // no char alias holds the parts[i] store, which now lands after the sprite[17]

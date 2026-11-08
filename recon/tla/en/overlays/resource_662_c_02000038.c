@@ -1,4 +1,9 @@
 // Differ 49 of 160 (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-08, later: x ax z az bx bz gives kind * 4 its native r2 (68) but swaps
+// the two offsets (r1, r4 for native r4, r1); 10 minutes of permute from there
+// reached 54 at best. Native order with kind *= 4 on a flat table 112 (103 in this
+// order); the layers through a MapLayer pointer 94; an s32 word view of unk08 or
+// gData_02001968[0] or *gData_02001968 for the first test: no gain.
 // 2026-11-08, unchanged: once-only blocks around each statement of the tail
 // (51 to 103), the native order x z ax az bx bz with a block around any one
 // statement (82 to 112), a local holding 4 for the shifts and indices (49; it

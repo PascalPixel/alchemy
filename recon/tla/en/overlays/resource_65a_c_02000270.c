@@ -10,6 +10,7 @@
 // indexed store, or the store folded into the call give 11 to 34. Eight
 // minutes of permute found only invalid candidates (a pointer assigned twice
 // in one expression).
+// 8 November: 655's round applies here unchanged (same function, 11).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

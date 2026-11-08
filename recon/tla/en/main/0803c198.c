@@ -4,6 +4,10 @@
 // at the block's end or start (18, 31), after it (20), or set before the NULL
 // test (46); a 9-minute permute of the plain form found only the 253
 // temporary again (16).
+// 8 November, second round: active stored at each later place, plain (46 to
+// 52) or with the temporary (18 to 22); the once-only block dropped (16);
+// the 253 set after kind or before the call (24, 49); index, vram or the
+// temporary retyped (14); an 8-minute permute, nothing below 14.
 // 2026-11-07: the second round's 253 temporary kept, tagged, with the cell
 // late (33 to 16), and a once-only block over the OAM words and sentinel
 // (permuter, 14); left: ip holds the 253, where the native holds the 1.

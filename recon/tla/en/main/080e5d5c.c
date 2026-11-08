@@ -1,4 +1,10 @@
-// Differ 30 of 639 (tla-en, 2026-11-08, -mtune=gba); the pins tagged, measured then.
+// Differ 28 of 639 (tla-en, 2026-11-08, -mtune=gba); the pins tagged, measured then.
+// 2026-11-08, second pass: frame++ folded into the Field_RunPsynergyEvent call puts
+// its argument moves in the native order (30 to 28). Pins re-measured on that form:
+// 88 and 41 without. Left: the lift reload (r4 for r0), speed's copy-then-add
+// fused under the pin, and the j loop's 1 in r1, so wait(1) loads its own. Splitting
+// speed += 0x28000, lift as lift += ..., the stores reordered, a sprite pointer
+// stepped by the loop, and declaration order: no gain.
 // 2026-11-08: both pins re-measured (90 and 43 without, unchanged); without the
 // once-only block around Iwram_FillWords 32. Unpinned, the speed form costs only
 // the extra movs r0, #1 before wait(1) and the pool shift it causes; a 10-minute
@@ -147,13 +153,13 @@ void Func_080e5d5c(void) {
   s32 glowEntry;
   s32 inReach;
   s32 lift;
-  /* FAKEMATCH(pin): the glow tile held in r9; as a plain local, 90 of 639
+  /* FAKEMATCH(pin): the glow tile held in r9; as a plain local, 88 of 639
    * instructions differ in tla-en. */
   register s32 glowTile asm("r9");
   s32 spot;
   s32 size = 0x800;
   s32 rise;
-  /* FAKEMATCH(pin): the speed held in r6; as a plain local, 43 of 639
+  /* FAKEMATCH(pin): the speed held in r6; as a plain local, 41 of 639
    * instructions differ in tla-en. */
   register s32 speed asm("r6");
   s32 angle;
@@ -311,8 +317,7 @@ void Func_080e5d5c(void) {
         glow = &work->glow;
         Func_080eb01c(glow);
       }
-      Field_RunPsynergyEvent(pending, work->fading, frame);
-      frame++;
+      Field_RunPsynergyEvent(pending, work->fading, frame++);
     }
     Task_Remove(Func_080e5a64);
     wait(10);

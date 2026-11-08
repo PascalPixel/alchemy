@@ -4,6 +4,13 @@
 // here ties to fade in r1 where the native keeps fade apart in r0 and the temp
 // in r3. As 16 - fade | fade << 8, i falls to r0 (also 16). Older figures and
 // notes below predate this.
+// Also 16 or worse (2026-11-08): the value as one expression either way round,
+// the right side first, blend++ in place of next, fade = (blend + 1) / 4,
+// next, fade and alpha at function scope, fade as s16, u16, s8 or u8, alpha
+// as s16, u16 or s32, next or blend as u32, the range as (u32)(i - 17) <= 62,
+// once-only blocks around the store or the or; a 10-minute permuter run found
+// nothing below 16. In the lreg dump fade is local to its block and takes r1
+// before global allocation ties the division temp to it.
 // Draft, differ 50 of 69, skeleton gap 6/8 (tla-en, 2026-11-01)
 // The twin Func_02000be8 opens with this same fade. The native rebuilds its
 // constants every pass and compares with 352 (blt), which is a label-and-goto

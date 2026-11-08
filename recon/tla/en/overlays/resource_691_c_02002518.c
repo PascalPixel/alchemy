@@ -3,8 +3,11 @@
 // sprite copy (the store after part->animation, or chained with the create,
 // gives the same 8; after the sprite bytes, 97). Tried 2026-11-08: 02001738's
 // PartSprite form (bit before slot, its differ 4) gives 10 here, slot first 10,
-// mixed struct and char spellings 8 to 14, a 4-minute permute 8. The allocation notes below
-// predate -Os.
+// mixed struct and char spellings 8 to 14, a 4-minute permute 8. Round two (2026-11-08): the sprite
+// as a struct (vramBlock, keepEntry) lets the parts[i] store float, 10;
+// storing parts[i] after the vramBlock copy in any typing swaps i and anchor
+// (97); the motionFlags zero moved or chained, 8 to 14; a 6-minute permute 8.
+// The allocation notes below predate -Os.
 // Draft, differ 26 of 112, skeleton gap 3 (tla-en, 2026-11-01)
 // Builds four parts around the watched object of an object whose update is
 // Func_020015e4, each copying the first part's sprite and position and taking

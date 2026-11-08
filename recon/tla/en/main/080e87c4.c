@@ -1,10 +1,8 @@
-// Differ 2 of 226 (tla-en, 2026-11-08, -mtune=gba). 4 to 2: i = 0 set before
-// the first loop's two pointers (the native zeroes r8 first). Left: the fill's
-// routine address loads after its size (tried: the routine or one argument in
-// a local, an inline helper as uiinit.c has, the once-only block over fewer
-// or more statements, a cast spelling of the call; permuter 7 minutes:
-// nothing). The barrier and the once-only block still pay (38 and 4 without).
-// Earlier: the second loop's sprite
+// Matches (tla-en, 2026-11-08, -mtune=gba); also tla-ja and tla-it. 2 to 0:
+// the fill called through a local set after an empty once-only block, as
+// f0e82cc.c does, so its routine address loads before the size. The barrier
+// still pays (36 without). Earlier, 4 to 2: i = 0 set before the first
+// loop's two pointers (the native zeroes r8 first). Earlier: the second loop's sprite
 // pointer is its own block-scoped local, set after the mote (24 to 6): the
 // count takes r7 and the sprite r5 as in the ROM; the barrier opens the loop
 // body instead of the timer's arm (6 to 4, permuter).
@@ -95,7 +93,15 @@ void Func_080e87c4(void) {
   // statements, 6 of 226 differ in tla-en).
   do {
   Sound_PlayFar(167);
-  Iwram_FillWords((void *)0x06002000, 0x500, 0xf000f000);
+  {
+    s32 (*fill)(void *, s32, u32);
+    // A once-only block: the fill's entry loads ahead of the size (as a
+    // direct Iwram_FillWords call, 2 of 226 differ).
+    do {
+    } while (0);
+    fill = Iwram_FillWords;
+    fill((void *)0x06002000, 0x500, 0xf000f000);
+  }
   Window_LoadGraphics();
   } while (0);
   {
@@ -142,7 +148,7 @@ void Func_080e87c4(void) {
     spark = work->sprites;
     for (i = 63; i >= 0; i--, spark++, mote++) {
       /* FAKEMATCH(barrier): the index masks loaded inside the loop, where
-       * loop.c would hoist 0xfffffc00 into r9; as no asm, 40 of 226
+       * loop.c would hoist 0xfffffc00 into r9; as no asm, 36 of 226
        * instructions differ in tla-en. */
       asm("");
       if (mote->timer >= 0) {

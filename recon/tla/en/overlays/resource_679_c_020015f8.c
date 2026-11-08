@@ -1,4 +1,8 @@
-// Differ 19 of 189 (tla-en, 2026-11-08, -mtune=gba): a dead self-update of a
+// Differ 19 of 189 (tla-en, 2026-11-08, -mtune=gba); 8 November round: the device is still
+// needed (29 without it, any global works); top masked before the kind load (87), attr
+// set before kind (21), the store through marker->oam (121), a copy of attr for the
+// store, attr outside the loop (25), the store in its own once-only block, and an
+// 8-minute permute (best 25) found nothing below 19. Earlier: a dead self-update of a
 // global after left &= 0x1ff (tagged; any global works, a local or a second
 // once-only block does not) puts i and viewY back in r8 and sl, from 29. Left:
 // only the missing copy of the OAM address (below). Without the once-only block

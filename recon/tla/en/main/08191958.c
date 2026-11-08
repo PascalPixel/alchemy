@@ -1,4 +1,10 @@
-// Differ 12 of 185 (tla-en, 2026-11-08, -mtune=gba). Left: midpoint at sp+0
+// Differ 12 of 185 (tla-en, 2026-11-08, -mtune=gba). Rechecked 8 November: the
+// word declared elsewhere, as u8 or s32[1] (12 to 18); midpoint a volatile
+// parameter (51) or a volatile local copy (42 to 48), which put it above the
+// ramp; the row inline, set late or in its own scope (12 to 14); the outer
+// test i <= 127 (16); the falling edge 63 - (i * 2 - 192) (23); permuter, 9
+// minutes: none better. The native word at sp+0 looks like a spill slot
+// allocated after work's, which a declared local cannot give. Left: midpoint at sp+0
 // here, sp+8 in the listing (2 rows), and, in the band loop, the row offset and
 // the falling edge's per-row copy in each other's registers (r4, r0). This
 // round: x reused as the frame count (34 to 26; ordinary C, a local reused for

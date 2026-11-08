@@ -1,4 +1,8 @@
 // Differ 30 of 218 (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-08, second pass: gMapBlocks + index, the z term first (50), z * 32, a
+// volatile backdrop store, the backdrop read before the resources, the resources
+// assigned inside the store (40), *resources, the shifted block word kept in a
+// local for the switch (82): none under 30. A 10-minute permute found nothing.
 // 2026-11-08: a buffer variable for Data_0202d000 alone already swaps r5 and
 // r6 (84); a palette pointer local, an s32 or u16 backdrop colour, once-only
 // blocks around the stores, and other block-index and region spellings gain

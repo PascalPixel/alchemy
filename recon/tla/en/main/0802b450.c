@@ -1,4 +1,9 @@
 // Differ 32 of 148 (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-08, second round: `mask = 0x7ff; mask &= cell; mask |= *dst &
+// 0xfffff800` with the 0x7ff set after the tile and gives the native's cell r2,
+// mask r3 and word r2 (35); a once-only block between tile = 0xfff and its and
+// then 33, but reload still ands the 0xfff in r3 before ip instead of from ip
+// (the native sets 0x7ff between them, which ranks the mask below the cell).
 // 2026-11-08 round: still 32; `mask &= cell` forms 51, `low |= *dst & 0xfffff800` now 66 (not 35), `mask & cell`, `tile & cell`, `~0x7ff`, cell loaded apart from src++ all 32; 10-min permute, 34 at best.
 // Editions: the 320 bytes are the same in every edition (Japanese at
 // 0802b3cc), so one form serves all six; each measures the same 32

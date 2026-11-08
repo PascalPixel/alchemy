@@ -1,4 +1,9 @@
 // Differ 6 of 1139 (tla-en, 2026-11-08, -mtune=gba), the same scroll-zero rows.
+// Second 2026-11-08 round, no gain: a once-only block round scrollU or
+// after unk04 (6), round scrollV (8), after the allocation (16); (u8)0, a block
+// local for mesh, scrollV = scrollU (6); a u8 zero local (20); scrollU first
+// (20), after mesh or texture (46, 48); texture set before the allocation (80);
+// 8 more permuter minutes.
 // 2026-11-08: sched2 puts movs r3, #0 first because the scrollU byte store
 // precedes the mesh reload in RTL (prio 12 against kind's 11); the listing's
 // order needs both scroll stores after the reloads, and every such store order

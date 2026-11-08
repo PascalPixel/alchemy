@@ -1,4 +1,8 @@
-// Differ 14 of 568 (tla-en, 2026-11-08, -mtune=gba), with one tagged barrier.
+// Matches (tla-en, 2026-11-08, -mtune=gba), with one tagged barrier.
+// 8 November (third pass), from 14: the splash loop as a goto loop with the barrier
+// (now a plain asm) right after splash = 25000, so splash ranks below the second
+// &texture and takes r9 (4); i = 0 set before the gather's pointers (2); the drops'
+// zeros through a block-scoped local set before their loop (0). Earlier notes follow.
 // 8 November (later), from 40: both shade stores read the frame-wide zero local, the glow's
 // after its vertices (38, then 32 with the splash's), and splash = 25000 is set after the
 // splashes' mesh, where the listing builds it (14). Left: splash takes r8 and the second
@@ -313,15 +317,20 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     s32 splash;
 
     if (frame == 0) {
+      s32 still;
+
       EffectPosition_ProjectBattler(effect->actors[0], &screen);
+      // A local holding 0 for the drops' rest values: the listing builds the 0 between
+      // i and the drop pointer (with literal zeros, 2 of 568 differ).
+      still = 0;
       for (i = 0, drop = work->particles; i != WYRD_DROPS; i++, drop++) {
         drop->x = (screen.x / 2 + (Random16() & 15) - 8) << 16;
         drop->y = -8;
-        drop->velocityX = 0;
-        drop->velocityY = 0;
+        drop->velocityX = still;
+        drop->velocityY = still;
         drop->z = (Random16() & 3) + 4;
         drop->velocityZ = 160 - i * 16;
-        drop->variant = 0;
+        drop->variant = still;
       }
       {
         struct EffectStep *glow = &work->particles[63];
@@ -365,10 +374,13 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
 
     // The glow gathers what the landed drops bring.
     {
-      struct EffectStep *glow = &work->particles[63];
-      struct EffectStep *landed = work->particles;
+      struct EffectStep *glow;
+      struct EffectStep *landed;
 
-      for (i = 0; i != 8; i++, landed++) {
+      i = 0;
+      glow = &work->particles[63];
+      landed = work->particles;
+      for (; i != 8; i++, landed++) {
         if (landed->variant > 0) {
           glow->variant += landed->velocityZ;
           landed->velocityZ /= 2;
@@ -397,22 +409,29 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     model->kind = 7;
     model->mesh = Data_08199244;
     splash = 25000;
-    for (i = 0, drop = work->particles; i != 6; i++, drop++) {
-      if (frame > i * 4 + 64) {
-        /* FAKEMATCH(barrier): asm volatile("" : "+r"(splash)); as the plain
-           Func_080151e4(12500, 25000, 12500), 71 of 568 instructions differ
-           in tla-en. */
-        asm volatile("" : "+r"(splash));
-        model->shade = zero;
-        texture.pixels = work->sheet + 0x4000 + ((i % 2) << 10);
-        Render_ResetTransformState();
-        Func_08015160(drop->x - 0x400000, drop->y - 0x300000, 0);
-        Func_080151e4(splash >> 1, splash, splash >> 1);
-        SceneTransform_ApplyPitch(-0x4000);
-        Render_TransformVertices(gData_08199210, vertices, 4);
-        Render_DrawModelList(model);
-        BattleEffectKernels_IntegrateVector2(drop, 60, -0x8000);
-      }
+    /* FAKEMATCH(barrier): asm("" : "+r"(splash)); as the plain splash = 25000
+       with no asm, 137 of 568 instructions differ in tla-en. */
+    asm("" : "+r"(splash));
+    // A goto loop: no loop notes, so loop.c neither hoists the halving nor
+    // weights splash's refs by a third depth (with a for loop, 14).
+    i = 0;
+    drop = work->particles;
+  nextSplash:
+    if (frame > i * 4 + 64) {
+      model->shade = zero;
+      texture.pixels = work->sheet + 0x4000 + ((i % 2) << 10);
+      Render_ResetTransformState();
+      Func_08015160(drop->x - 0x400000, drop->y - 0x300000, 0);
+      Func_080151e4(splash >> 1, splash, splash >> 1);
+      SceneTransform_ApplyPitch(-0x4000);
+      Render_TransformVertices(gData_08199210, vertices, 4);
+      Render_DrawModelList(model);
+      BattleEffectKernels_IntegrateVector2(drop, 60, -0x8000);
+    }
+    i++;
+    drop++;
+    if (i != 6) {
+      goto nextSplash;
     }
     Heap_Release(model);
     Heap_Release(vertices);

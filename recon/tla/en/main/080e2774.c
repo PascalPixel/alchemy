@@ -6,6 +6,12 @@
 // top as z then -= (10), the record from cx or cz (41, 27); 20 permuter
 // minutes found nothing below 10. Earlier: top first (40), cellZ as
 // cz - scrollZ + lift (26), cellZ before cellX (36).
+// 8 November: the top edge through a layer-z local, shifted in place or not,
+// and every spelling of z - (layer z >> 20) stay at 10 (14 with top before
+// lift): the shifted layer z is a block-local pseudo that takes r3 by order,
+// while the native's shares r2; the record's cellZ through casts, a
+// TouchCopy pointer (84) or a once-only block (66) does not move its load.
+// Another 8 permuter minutes found nothing below 10.
 // Near miss, differ 20 of 169 (tla-en, 2026-10-31): allocation and
 // scheduling only. The top edge: the native shifts layer z in place in r2
 // and reloads z into r3; this shifts into r3 and reloads z into r2 (lift

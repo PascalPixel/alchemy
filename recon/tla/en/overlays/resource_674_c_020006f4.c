@@ -1,11 +1,12 @@
-// Differ 25 of 687 (tla-en, 2026-11-08, -mtune=gba): the pool zero, as below. Zero as u64 or s64
-// (as champa/s0c40.c gets its pool zero) gives 26; 5 minutes of permuting found nothing.
-// 2026-11-08 again: zero as s8, s16, u32 or void *, (u8)zero at the store, or set before
-// the yes/no, the leader read, the second spawn or noticed: 25 or worse (33). The RTL shows
-// why: a local of any width is promoted to SImode, and reload rematerialises its REG_EQUIV
-// 0 as an SImode movs; champa's pool word comes from a HImode reload of 0, which the
-// minipool pass turns into a pc-relative load. A HImode pseudo holding 0 is what is missing.
-// Under -Os, 5 November: differ 25 of 687 (tla-en); older figures below predate it.
+// Matches (tla-en, 2026-11-08, -mtune=gba; tla-ja, -de, -es, -fr and -it too):
+// zero is a one-member struct of a u16, so it is a HImode pseudo, which local
+// promotion never widens; reload's HImode 0 goes to a pool word, as the
+// listing's ldr r3 and the branch over its pool show (tagged temporary). The
+// notes below predate this and record what was tried before.
+// Earlier, differ 25 of 687: zero as u64 or s64 gave 26; as s8, s16, u32 or
+// void *, (u8)zero at the store, or set before the yes/no, the leader read, the
+// second spawn or noticed: 25 or worse (33). A local of any width is promoted
+// to SImode, and reload rematerialises its REG_EQUIV 0 as an SImode movs.
 // Draft, differ 25 of 687, skeleton gap 3 (tla-en, 2026-11-01)
 // The Islets' trade of item 453 with object 10: with it in the party, if flag
 // 513 is set (asked before) the camera moves and object 10 asks again
@@ -107,7 +108,12 @@ void FieldMessage_Show(const u8 *message, s32 a);
 void Func_020006f4(void) {
   struct Actor *item, *leader, *given;
   const u8 *asked, *noticed;
-  s32 zero;
+  /* FAKEMATCH(temporary): zero wrapped in a struct of one u16, so it stays a
+   * HImode pseudo and its 0 is loaded from the pool; as s32 zero, 25 of 687
+   * instructions differ in tla-en. */
+  struct {
+    u16 v;
+  } zero;
 
   Func_02003e64();
   Func_02003fa4(0);
@@ -175,7 +181,7 @@ void Func_020006f4(void) {
         Func_02003e3c(item, 453);
         Actor_SetSingleChildFlags(item, 0);
         item->motionFlags = 0;
-        zero = 0;
+        zero.v = 0;
         item->unk5c[0] = 1;
       }
       STEP(gMainRoutineWork.currentOwner, 120, 190);
@@ -209,7 +215,7 @@ void Func_020006f4(void) {
         Func_02003f54(10, 264, 20);
         Func_02003f24(noticed + 4);
         Func_02003f2c(0x800a, 0);
-        HAND_BACK(item, item, zero)
+        HAND_BACK(item, item, zero.v)
       } else {
         Func_02003fbc();
         Func_02003f54(10, 265, 20);

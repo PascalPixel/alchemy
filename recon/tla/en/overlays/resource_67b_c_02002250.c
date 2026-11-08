@@ -1,4 +1,12 @@
-// Differ 30 of 169 (tla-en, 2026-11-08, -mtune=gba); declaration orders,
+// Differ 30 of 169 (tla-en, 2026-11-08, -mtune=gba), with no fake device:
+// age declared volatile (a member, ordinary C) gives the listing's reload of
+// age after the OAM stores, the job the tagged oam temporary did (30 either
+// way; the plain store without either is 67). Also measured at 30 or worse
+// today: *oam++ = 0 then *oam (30), screenX unsigned, screenY = z then
+// -= y, screenX >= -11 && <= 323 (30 each), screenX computed late, from
+// x >>= 16, or after screenY (30 to 90), once-only blocks round any OAM
+// store (67, 69); a 6-minute permute (4,660 candidates) found nothing under
+// 30. Earlier: declaration orders,
 // screenX set inside x's expression, a temporary for z - y, once-only blocks
 // and a dead global update (85 or more) all leave it at 30 or worse.
 // Left: allocation only. screenX and screenY take r2 and r0 the wrong way
@@ -19,8 +27,8 @@
 // animation pictures where it is on screen (Func_020028d0).
 // Earlier: viewX, viewZ and lift once took r9, r10 and r8 the wrong way round
 // (all three carry 5 refs); that part of the gap is now closed.
-// Forms that are load-bearing: the store through `oam` makes CSE reload age
-// (tagged); the for loop is needed for the -16 compare. `word` set twice
+// Forms that are load-bearing: the volatile age (the reload; earlier a
+// tagged store through an `oam` temporary did it); the for loop is needed for the -16 compare. `word` set twice
 // was free by 8 November and is gone.
 #include "types.h"
 #include "call.h"
@@ -33,7 +41,8 @@ struct Bubble {
   s32 x;
   s32 y;
   s32 z;
-  s32 age;
+  // volatile: the listing reads age again after the OAM stores.
+  volatile s32 age;
   u32 oam[3];
 };
 
@@ -61,7 +70,6 @@ void Func_02002250(void) {
   struct Actor *source;
   struct Bubble *bubble;
   s32 i, x, y, z, screenX, screenY;
-  u32 *oam;
 
   if (Random16Far() < 0x1000 && (source = work->source) != 0) {
     bubble = &work->bubbles[work->next];
@@ -102,9 +110,7 @@ void Func_02002250(void) {
         x &= 0x1ff;
         screenY &= 255;
         bubble->oam[0] = 0;
-        /* FAKEMATCH(temporary): the form kept; as bubble->oam[1] = ..., 67 of 169 instructions differ in tla-en. */
-        oam = &bubble->oam[1];
-        *oam = screenY | (x << 16) | 0x2000;
+        bubble->oam[1] = screenY | (x << 16) | 0x2000;
         bubble->oam[2] = (tile + (bubble->age & 3) * 2) | 0x400;
         Func_020028d0(bubble->oam, z);
       }

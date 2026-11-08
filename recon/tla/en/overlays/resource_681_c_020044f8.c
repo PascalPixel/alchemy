@@ -1,4 +1,8 @@
 // Differ 44 of 418 (tla-en, 2026-11-08, -mtune=gba): register names only.
+// Fourth pass (2026-11-08), unchanged: the last step's number stored before x
+// is read, next set before the cell, o = 0 after the border pointers (all 44),
+// i before o (54). 9 minutes of permuting (seed 9137): nothing below 44, and
+// nearly every random rewrite failed to compile around the labels.
 // Third pass (2026-11-08): the wrapper and the path local re-measured (a direct
 // call 140, gPath directly 69: both stay); the cell block-scoped in the second
 // loop, the scan-down pointer from AT_ADDRESS, step++ for step = next, the cell

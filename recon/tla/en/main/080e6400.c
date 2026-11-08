@@ -3,6 +3,10 @@
 // 2026-11-08: vram as a shift, an integer sum or two steps, typed copy
 // parameters, 14 + timer (all 4); once-only blocks (12, 14); 10 permuter
 // minutes found nothing below 4.
+// 2026-11-08, later: vram split, reversed, indexed or from a constant local,
+// the picture as work->picture or void *, a size local, the copy through a
+// local (all 4), the ripple phase read first (124); 10 more permuter minutes
+// found nothing.
 // Differ 4 of 596 (tla-en, 2026-11-07); 8 on 2026-10-31, then 4; 14 min of permuter
 // and spelling, scope and order reshapes found nothing. Two sched2 ties remain:
 // the native loads the 0x06010000 pool word into r3 before `movs r4, #200`

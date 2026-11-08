@@ -1,4 +1,7 @@
-// Differ 10 of 159 (tla-en, 2026-11-08, -mtune=gba).
+// Differ 10 of 159 (tla-en, 2026-11-08, -mtune=gba). Rechecked 2026-11-08:
+// the store first in or out of once-only blocks, with z = 0 in one, or with
+// slot as u32 36; slot declared elsewhere 10 to 90; z = 0 in a once-only block
+// 12; permuter 8 min: nothing under 10.
 // 8 November: cells += origin in a once-only block gives 14 to 10. Left: the native loads a
 // and the pool address before entry and stores a << 8 before reloading origin; the draft
 // stores after cells += origin. The store first (with or without blocks) gives 36: z = 0

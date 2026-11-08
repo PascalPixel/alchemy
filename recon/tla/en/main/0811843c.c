@@ -1,4 +1,9 @@
 // Differ 30 of 183 (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-08, second pass: the loop step order is the one stable gap (ours steps
+// the copies, tags, vitals offsets; the native the reverse). Declaration orders,
+// unit declared outside the loop, i < 5, != 0, zero set elsewhere or in a once-only
+// block, the tag loop with its steps as statements or in the for list: 30 to 32;
+// PP as snap->vitals 61, HP through Data_0200ffec 161, the id table indexed 227.
 // 2026-11-08: the pin re-measured (141 without); the destination set before the
 // source, in any spelling, 125; zero set elsewhere, i < 5, >= 1 and a local
 // snapshot pointer 30 to 32, a local copies pointer 34. A 10-minute permute found

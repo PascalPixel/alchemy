@@ -1,4 +1,10 @@
-// Differ 10 of 2278 (tla-en, 2026-11-08, -mtune=gba; 12 before; rechecked later
+// Differ 10 of 2278 (tla-en, 2026-11-08, -mtune=gba). Third round that day: the
+// streak as do-while (49), n + j or j first, a pointer base, a block pointer,
+// n = held, held as u8 or s16, n initialised at its declaration: 10; a literal
+// 0 or a counting-down n 12; empty once-only loops around held or the loop 10
+// to 16; either barrier alone as an empty once-only loop 12; the turned
+// flash's picture sum respelled four ways 10, through a local 207 to 221.
+// Earlier (12 before; rechecked later
 // that day: n = held = 0, n++ as a statement, u32 held, a literal 0, the
 // flash draw's sums respelled, the barriers as once-only loops (14): no gain;
 // the empty once-only loop at the glint is plain C, retagged as a note). The glint's

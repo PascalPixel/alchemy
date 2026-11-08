@@ -1,4 +1,9 @@
 // Differ 36 of 1146 (tla-en, 2026-11-08, -mtune=gba).
+// Later the same day, not better: the slot read through a volatile cast in
+// place of its barrier (64); a once-only block for the 4 or around the second
+// Djinni build (73 to 125); locals for the mode 4 site's two blitters (65, 73);
+// center's zeroes in a once-only block (54); every palette copy through the
+// wrapper (93).
 // 2026-11-08: the center's coordinates stored from a function-level zero
 // local (52 to 38: the listing's r2 zero and r4 for &screen), then start != 0
 // for start > 0 (beq as the listing, 38 to 36; additive still holds the

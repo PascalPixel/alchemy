@@ -7,6 +7,10 @@
 // to 164; the pixels store moved anywhere earlier, 134 to 172; once-only
 // blocks around the neighbouring stores, or i cleared before the loop, 8;
 // permuter 8 minutes, nothing better.)
+// (Round three, 2026-11-08: the pixels store after the mesh, kind, texture or
+// logHeight, 132 to 138; once-only blocks around alpha, kind, texture or
+// vertices, 8 to 14; the jaw loop as a do loop or with angle first, 8; a
+// separate jaw counter, 471; the shake block still worth 2.)
 // 2026-11-07: the empty asm after the declarations did nothing and is gone;
 // statement orders, once-only blocks, a pixels local and the ring sums (and 10
 // permuter minutes) stay at 10: the ring loop loads &screen before the

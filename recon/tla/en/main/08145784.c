@@ -1,5 +1,11 @@
 // Differ 10 of 549 (tla-en, 2026-11-08, -mtune=gba); the same root: gcse copies
-// the side into r3. Measured 2026-11-08: column = 0 only in the side-0 arm 31,
+// the side into r3. Third round, 2026-11-08: both zeros in the side-0 arm
+// gives the native if/else and leaves only the copy (adds r3, r0, #0) and the
+// pool it shifts (31); with it, draw through *(draw + side), side + 0, !side,
+// (u32)i >> 31, an empty once-only loop before or inside the test: 31 to 33;
+// on the current form, empty once-only loops: 10. Permuter 6 min from the
+// if/else form: 14 at best.
+// Earlier: measured 2026-11-08: column = 0 only in the side-0 arm 31,
 // the side-0 arm dropped 470; row = i >> 8 or (u32)i >> 31, a once-only block
 // or goto for the side-0 arm, column++ or row = column: 10; the else first 37,
 // side as a block u8 local 514. Devices re-measured and retagged (S2): one

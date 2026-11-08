@@ -1,5 +1,16 @@
-// Differ 28 of 714 (tla-en, 2026-11-08, -mtune=gba).
-// 8 November: three older devices measured free and removed (the s32 local for
+// Differ 18 of 714 (tla-en, 2026-11-08, -mtune=gba).
+// 8 November, later: motionFlags = 0 now comes before the third
+// SetMoveTarget, as the listing's strb shows (28 to 18), and the z temporary
+// (a tagged FAKEMATCH) is replaced by centerZ, a local holding 0x20a40000 for
+// its whole life (18; one assignment without it is 53). Left, one cause: the
+// flag result still sits in r8 as the known zero for velocityY and
+// terrainHeight, so centerZ is reloaded from the pool at both SetMoveTarget
+// calls where the listing keeps it in r8. A centerX local (65), the test
+// reversed through a goto, !(... != 0), a (u32) < 1 test (18 each), a
+// chained zero store (18, 20), GameFlag_Test direct (67) and a once-only
+// block round the zero stores (28) do not move it; an 8-minute permute (8,710
+// candidates) found nothing under 18.
+// Earlier on 8 November: three older devices measured free and removed (the s32 local for
 // motionFlags = 2, the zero local for velocityY and terrainHeight, the long
 // cast on the second velocityY store: 28 each and together); the z temporary
 // still costs (65 as one assignment; 61 measured today) and the u16 store of
@@ -143,14 +154,14 @@ void Func_02001e34(void) {
   s32 owner;
   s32 count;
   s32 i;
+  // Holds one constant for its whole life: the Djinni's z centre, kept in a
+  // register for both SetMoveTarget calls.
+  s32 centerZ = 0x20a40000;
 
   djinni = Actor_GetById(9);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   x = (leader->x - 0x27880000) / 2 + 0x27880000;
-  /* FAKEMATCH(temporary): the form kept; as one assignment, 65 of 714
-     instructions differ in tla-en. */
-  z = 0x20a40000;
-  z = (leader->z - 0x20a40000) / 2 + z;
+  z = (leader->z - centerZ) / 2 + centerZ;
   if (Flag_IsSet(0x16e) == 0) {
     if (gInput & 64)
       Flag_Set(0x175);
@@ -199,7 +210,7 @@ void Func_02001e34(void) {
     djinni->acceleration = 0x10000;
     djinni->velocityY = 0;
     djinni->terrainHeight = 0;
-    SetMoveTarget(djinni, 0x27880000, 0, 0x20a40000);
+    SetMoveTarget(djinni, 0x27880000, 0, centerZ);
     while (i >= 0) {
       djinni->scaleX += 0x800;
       djinni->scaleY += 0x800;
@@ -243,8 +254,8 @@ void Func_02001e34(void) {
     Func_02004cf0(9, 0);
     Actor_Jump(9, 2, 30);
     Func_02004cf0(9, 0);
-    SetMoveTarget(djinni, x, 0x100000, z);
     djinni->motionFlags = 0;
+    SetMoveTarget(djinni, x, 0x100000, z);
     while (i >= 0) {
       *(u16 *)&djinni->angle += 0x1000;
       wait(1);
@@ -335,7 +346,7 @@ void Func_02001e34(void) {
   Flag_Clear(0x171);
   Func_02004e28();
   Func_02004cd8(TUTORIAL_MESSAGE(MsgSoWeGo));
-  SetMoveTarget(djinni, 0x27880000, 0, 0x20a40000);
+  SetMoveTarget(djinni, 0x27880000, 0, centerZ);
   FieldEvent_Wait(30);
   Func_02004cf0(9, 0);
   Actor_SetAngleToward(9, owner, 0);

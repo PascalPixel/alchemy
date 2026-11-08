@@ -1,6 +1,15 @@
 // Differ 6 of 107 (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-08, why: with 0xfff set after the 0xf000 and, the RTL is in the
+// native's order, but reload inherits r3 (still holding 0xfff) for the and
+// (`ands r3, r2`) instead of reloading sl through r0; the native's reload
+// shows nothing carried across, as after a label. A real loop between the set
+// and the and gives exactly that sequence (104 common, 5 extra insns), so the
+// native has some label or block boundary there that emits no code. Not it:
+// the set in or before a once-only block, two blocks, a mask local copied in,
+// s32 scene, a break in the block, an unused static label address (all 57),
+// the load and mask in one expression (66); 8 minutes of permuting left 6.
 // 2026-11-08: 0xfff set after the 0xf000 and gets the native's head order but
-// combine folds it into the and, losing the sl reload (57; in a once-only
+// reload reuses r3 for the and (not combine, as first noted), losing the sl reload (57; in a once-only
 // block, 57; the and in one, 55); a mask local, flags read first (56), a
 // second once-only block, `flags = flags & 0xf000` and 8 minutes of permuting
 // left 6.

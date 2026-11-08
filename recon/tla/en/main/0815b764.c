@@ -1,4 +1,12 @@
 // Differ 42 of 1932 (tla-en, 2026-11-08, -mtune=gba); without the particle loop's asm, 44.
+// 2026-11-08, second pass, unchanged at 42: the devices re-measured (without the
+// particle loop's asm 44, without the ship-burst asm 317; that asm after the
+// model's allocation 42, reading frame - 76 390); t, sc and the yaw in every
+// equivalent spelling (42), the j arms swapped (365); the particle's variant
+// stored first, last or in a once-only block (46 to 48); the palette's value
+// operands swapped (42), its red as a local (129), a stepped pal (124); the
+// first closing fill doubly blocked or the wait blocked (42), canvas for its
+// destination (72).
 // 2026-11-08, from 50: once-only blocks around the first two closing fills
 // (after the wait(1) that follows REG_BG1CNT) put each destination's load ahead
 // of its size, as the listing has them (44, then 42; around the third, the
@@ -573,7 +581,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
         p->x = src[0] << 16;
         p->variant = -8 * i;
         /* FAKEMATCH(barrier): an empty asm parts the particle's first stores from
-         * the rest; as no asm, 52 of 1932 instructions differ in tla-en. */
+         * the rest; as no asm, 44 of 1932 instructions differ in tla-en. */
         __asm__("");
         p->y = src[1] << 16;
         p->z = src[2] << 6;
@@ -756,7 +764,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       verts = Heap_AllocEwram(32);
       /* FAKEMATCH(barrier): an empty asm reads frame into r7 here, where the
        * listing reloads it, and the loop's step inits take it from there; as
-       * no asm, 333 of 1932 instructions differ in tla-en. */
+       * no asm, 317 of 1932 instructions differ in tla-en. */
       asm("" : : "r"(frame));
       model = Render_AllocateModelList(1);
       j = 0;

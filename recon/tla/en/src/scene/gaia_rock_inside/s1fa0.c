@@ -31,7 +31,7 @@ void Func_02001fa0(void) {
   FIELD_AT(t0, s32, 12) = -1966080;
   FIELD_AT(t0, s32, 20) = -2097152;
   GameFlag_ClearBit(0x142);
-  Func_02004f8c(0x1042);
+  Func_02004f8c(SPLIT_CONSTANT(0x1000, 66));
 }
 
 /// Examines the altar.

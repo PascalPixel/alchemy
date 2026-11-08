@@ -44,7 +44,7 @@ s32 Func_02000bb0(void) {
         Flag_Set(0x173);
         Flag_Clear(0x172);
         Flag_Clear(0x16c);
-        Flag_Set(0x202);
+        Flag_Set(SPLIT_CONSTANT(0x200, 2));
         line = msg + 7;
         gMainRoutineWork.linkTallies[3] = answer;
         goto message;
@@ -63,10 +63,10 @@ s32 Func_02000bb0(void) {
       LinkLobby_WriteSlotValue(0);
       Func_02001a64((s32)MsgYourOpponentHas);
       FieldMessage_ShowAtActor(8, 0);
-      Flag_Clear(0x202);
+      Flag_Clear(SPLIT_CONSTANT(0x200, 2));
       Flag_Clear(0x173);
     }
-    if (Flag_IsSet(0x202)) {
+    if (Flag_IsSet(SPLIT_CONSTANT(0x200, 2))) {
       line = msg + 3;
       // The first branch's answers jump into this block's message tail, and an
       // accepted challenge back into its opening: the native keeps one copy of
@@ -75,13 +75,13 @@ s32 Func_02000bb0(void) {
       Func_02001a64(line);
     open_message:
       FieldMessage_ShowAtActor(8, 0);
-    } else if (!Flag_IsSet(0x201) && !Flag_IsSet(0x300)) {
+    } else if (!Flag_IsSet(SPLIT_CONSTANT(0x102, 255)) && !Flag_IsSet(0x300)) {
       Func_02001a64(msg);
       FieldMessage_ShowAtActor(8, 0);
       Flag_Set(0x300);
     } else {
       Flag_Set(0x300);
-      if (Flag_IsSet(0x201))
+      if (Flag_IsSet(SPLIT_CONSTANT(0x102, 255)))
         Func_02001a64(msg + 2);
       else
         Func_02001a64(msg + 1);
@@ -90,15 +90,15 @@ s32 Func_02000bb0(void) {
         if (Func_0200006c(0)) {
           Flag_Set(0x16c);
           Flag_Set(0x172);
-          if (Flag_IsSet(0x201))
+          if (Flag_IsSet(SPLIT_CONSTANT(0x102, 255)))
             Func_02001a64(msg + 3);
           else
             Func_02001a64(msg + 4);
           LinkLobby_WriteSlotValue(1);
-          Flag_Set(0x202);
+          Flag_Set(SPLIT_CONSTANT(0x200, 2));
           goto open_message;
         } else {
-          Flag_Set(0x205);
+          Flag_Set(SPLIT_CONSTANT(0x106, 255));
         }
       } else {
         Func_02001a64(msg);

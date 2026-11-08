@@ -1,5 +1,5 @@
 // Differ 2 of 303 (tla-en, 2026-11-07).
-// 2026-11-07: Iwram_FillWords through an inline wrapper (as the Broken Seal's
+// 2026-11-07: Iwram_FillWordsEntry through an inline wrapper (as the Broken Seal's
 // iwram_call.h) fixes the fill's order, 6 to 2; left: the slot 104 argument
 // is loaded last before Func_08196404 (the build loads it first; all four
 // candidates have priority 9, so the listing's RTL had r0 set last). Tried:
@@ -19,7 +19,7 @@
 // The fill goes through an inline wrapper, as the Broken Seal's iwram_call.h
 // writes it: called straight through the fixed entry, the build loads 0x4000
 // before the routine's address.
-#undef Iwram_FillWords
+#undef Iwram_FillWordsEntry
 static inline s32 Iwram_FillWords(void *destination, s32 size, u32 value) {
   return Iwram_FillWordsEntry(destination, size, value);
 }

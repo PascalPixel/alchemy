@@ -134,7 +134,7 @@ void Func_02002f70(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x202;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Func_020057a4(0x13333, 0x2666);
+  Func_020057a4(0x13333, SPLIT_CONSTANT(0x2600, 102));
   Camera_SetBounds(PIXELS(440), -1, PIXELS(312), 1);
   Actor_SetSpeed(5, 0x10000, 0x8000);
   Actor_SetSpeed(24, 0x10000, 0x8000);
@@ -189,9 +189,9 @@ void Func_02002f70(void) {
   Motion_SetModeAndWaitAnimation(7, 4);
   Func_02005764(0x8007, 0);
   Func_0200578c(24, 257, 40);
-  Func_02005764(0x8006, 0);
+  Func_02005764(SPLIT_CONSTANT(0x8000, 6), 0);
   Actor_SetModeById(23, 4);
-  Func_02005764(0x9017, 0);
+  Func_02005764(SPLIT_CONSTANT(0x9000, 23), 0);
   FieldEvent_Wait(20);
   Func_020057e4(0x10000, 0);
   Func_020057dc(0, 0);

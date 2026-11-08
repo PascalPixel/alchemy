@@ -229,7 +229,7 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
   if (variant == 3) {
     // Clear the canvas and its tiles and hand the layer to the next scene.
     /* FAKEMATCH(wrapper): both clears forwarded through ClearWords_, which sets
-     * the size for each call and holds the routine; as Iwram_ClearWords called
+     * the size for each call and holds the routine; as Iwram_ClearWordsEntry called
      * directly, 14 of 469 instructions differ in tla-en. */
     ClearWords_((void *)0x06004000, 0x3c00);
     ClearWords_(canvas, 0x3c00);

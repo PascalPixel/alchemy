@@ -46,7 +46,7 @@ void Func_02003b88(void) {
 }
 
 void Func_02003bf0(void) {
-  if (GameFlag_Test(0x202))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x200, 2)))
     Func_02003898();
   Func_02003a08(376, 288);
 }

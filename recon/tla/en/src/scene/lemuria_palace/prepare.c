@@ -18,7 +18,7 @@ s32 Func_02000158(void) {
   Actor_SetSpritePriority(8, 3);
   if (gMainRoutineWork.entrance == 6)
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
-  if (GameFlag_Test(0x96a)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 106))) {
     Func_02002024(7, 0, 0);
     Func_02002024(15, 0, 0);
   }

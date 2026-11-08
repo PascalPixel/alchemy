@@ -12,7 +12,7 @@ void Func_0200489c(void) {
   Func_02005b94(17, 0x100, 20);
   Func_02005b4c((s32)MsgLookLookThe);
   Func_02005b64(17, 0);
-  Func_02005c9c(0x241);
+  Func_02005c9c(SPLIT_CONSTANT(0x142, 255));
   Actor_SetMovementTypeById(12, gData_0200614c);
   Actor_SetMovementTypeAndWaitById(13, gData_0200614c);
   Actor_SetMovementTypeById(12, gData_0200613c);
@@ -21,7 +21,7 @@ void Func_0200489c(void) {
   Actor_SetPartAttribute(Actor_GetById(13), 12);
   FieldEvent_Wait(120);
   Func_020045d0();
-  GameFlag_SetBit(0x8fc);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 252));
   GameFlag_SetBit(265);
   Func_02005bc4(12);
 }
@@ -44,7 +44,7 @@ void Func_02004978(void) {
   Task_Add(Func_02002f34, 0x480);
   FieldEvent_Wait(120);
   Func_020045d0();
-  GameFlag_SetBit(0x8fc);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 252));
   GameFlag_SetBit(265);
   Func_02005bc4(12);
 }

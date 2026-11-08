@@ -27,7 +27,7 @@ static __inline__ void Func_02001f2c_(s32 a, s32 b, s32 c, s32 d, s32 e,
 }
 
 void Func_02000078(void) {
-  if (Flag_IsSet(0x985)) {
+  if (Flag_IsSet(SPLIT_CONSTANT(0x900, 133))) {
     u8 *work = Ram_HeapSlots->eventWork;
     u32 i;
 
@@ -49,7 +49,7 @@ void Func_02000078(void) {
     i++;
     if (i <= 63)
       goto loop;
-    if (!Flag_IsSet(0x201)) {
+    if (!Flag_IsSet(SPLIT_CONSTANT(0x102, 255))) {
       Func_020020d4(158);
       Func_02001f2c_(51, 38, 70, 22, 1, 2);
     }

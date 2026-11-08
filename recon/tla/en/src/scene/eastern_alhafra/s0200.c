@@ -98,21 +98,21 @@ void Func_02000200(s32 mode, s32 id) {
     hit = 1;
   }
   if (x == 25 && z == 33) {
-    GameFlag_SetBit(0x8a1);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x800, 161));
     hit = 1;
   }
   if (x == 21 && z == 33) {
-    GameFlag_SetBit(0x8a4);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x800, 164));
     hit = 1;
   }
   if (x == 27 && z == 33) {
-    GameFlag_SetBit(0x8a5);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x800, 165));
     hit = 1;
   }
   if (hit) {
     if (id != 10)
       Func_02004c9c(310);
-    object->gravity = 0x170a;
+    object->gravity = SPLIT_CONSTANT(0x1700, 10);
     object->motionFlags = 3;
     Actor_SetSingleChildFlags(Actor_GetById(id), 1);
     wait(5);
@@ -128,7 +128,7 @@ void Func_02000200(s32 mode, s32 id) {
   create:
     spark = Func_02004a1c(276, object->x, object->y, object->z);
     sparks[i] = spark;
-    spark->scaleX = 0xa666;
+    spark->scaleX = SPLIT_CONSTANT(0xa600, 102);
     Func_02004a0c(spark, 1);
     Actor_SetSingleChildFlags(spark, 0);
     Func_02004c9c(154);

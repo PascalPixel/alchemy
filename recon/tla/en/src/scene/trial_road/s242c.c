@@ -242,7 +242,7 @@ s32 Func_0200242c(void) {
         if (!GameFlag_Test(265))
           leader->y = leader->terrainHeight =
               Map_GetTerrainHeight(0, leader->x, leader->z);
-        if (GameFlag_Test(2559)) {
+        if (GameFlag_Test(SPLIT_CONSTANT(0x900, 255))) {
           struct TrialRoadState *road;
 
           GameFlag_SetBit(324);
@@ -252,10 +252,10 @@ s32 Func_0200242c(void) {
           // The call's argument reads through the other struct: through the
           // same one GCSE moves the load into both predecessors (11 more of
           // gap).
-          if (road->field16[0] < road->field1a || GameFlag_Test(642)) {
+          if (road->field16[0] < road->field1a || GameFlag_Test(SPLIT_CONSTANT(0x200, 130))) {
             Func_02000218(road->mirrored,
                           ((struct TrialRoadDeal *)road)->field16[0]);
-            GameFlag_SetBit(642);
+            GameFlag_SetBit(SPLIT_CONSTANT(0x200, 130));
             GameFlag_SetBit(644);
           }
           if (road->field16[0] < road->field1c)
@@ -265,7 +265,7 @@ s32 Func_0200242c(void) {
           Task_Add(Func_0200223c, 0x480);
         } else {
           Func_02000218(state->mirrored, state->field16[0]);
-          GameFlag_SetBit(642);
+          GameFlag_SetBit(SPLIT_CONSTANT(0x200, 130));
           GameFlag_SetBit(644);
           Func_020002a4(state->mirrored, state->field16[0]);
         }
@@ -273,8 +273,8 @@ s32 Func_0200242c(void) {
     }
   } else if (scene == (s32)&SceneId_Ov697Room3) {
   } else if (scene == (s32)&SceneId_Ov697Room4) {
-  } else if (scene == (s32)&SceneId_Ov697Room2 && GameFlag_Test(2559) &&
-             !GameFlag_Test(901)) {
+  } else if (scene == (s32)&SceneId_Ov697Room2 && GameFlag_Test(SPLIT_CONSTANT(0x900, 255)) &&
+             !GameFlag_Test(SPLIT_CONSTANT(0x300, 133))) {
     if (gTrialRoadState->mirrored != 0)
       Map_Stamp(26, 79, 1, 2, 13, 79);
     else

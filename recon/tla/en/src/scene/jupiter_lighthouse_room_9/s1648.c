@@ -43,7 +43,7 @@ void Func_02001648(struct CellTarget *table, struct CellTargetEntry *entry) {
   leader->angle = 0x4000;
   leader->motionFlags = 0;
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
-  Io_Write16(0xf1f, &REG_WINOUT);
+  Io_Write16(SPLIT_CONSTANT(0xe20, 255), &REG_WINOUT);
   REG_DISPCNT |= 0x8000;
   x = 0;
   table->shown = 1;

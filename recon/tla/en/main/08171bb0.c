@@ -160,7 +160,7 @@ void SceneTransform_ApplyPosition(void *position);
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 6 of 1748 instructions differ in tla-en. */
+   * Iwram_CopyWordsEntry, 6 of 1748 instructions differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 

@@ -4,7 +4,7 @@ void Func_02002550(void) {
   struct AquaRockWork *work = &gData_020034f0;
   void *buffer;
 
-  Iwram_ClearWords(work, 0x70c);
+  Iwram_ClearWords(work, SPLIT_CONSTANT(0x700, 12));
   buffer = MemAlloc_(0x100);
   Func_020028b8(gData_02002c74, buffer);
   work->vramEntry = Resource_FindFreeEntry();

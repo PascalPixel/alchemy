@@ -390,7 +390,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
             texture.pixels = work->sheet + 0x4000;
             Func_08015160(endX[i] << 16, endY[i] << 16, 0);
             Func_080150e4(0x3060 - (arcs[i * 2] << 5));
-            Func_0801521c(20768);
+            Func_0801521c(SPLIT_CONSTANT(0x5100, 32));
             Render_TransformVertices(Data_081991e0, vertices, 4);
             Render_DrawModelList(model);
           }

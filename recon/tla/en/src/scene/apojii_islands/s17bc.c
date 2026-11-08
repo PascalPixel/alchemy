@@ -5,10 +5,10 @@
 void Func_020017bc(void) {
   /* FAKEMATCH: through a local pointer the resident clear's entry loads before
    * the size is finished, as in the native (direct: differ 2). */
-  s32 (*clear)(void *destination, s32 size) = Iwram_ClearWords;
+  s32 (*clear)(void *destination, s32 size) = Iwram_ClearWordsEntry;
   s32 priority;
 
-  clear(gData_02002aa0, 0x1004);
+  clear(gData_02002aa0, SPLIT_CONSTANT(0x1000, 4));
   gData_02002aa0[0] = Resource_FindFreeEntry();
   /* FAKEMATCH: the empty asm keeps the entry's store ahead of the size, as in
    * the native (plain: differ 2; a block pointer, a struct with the entry

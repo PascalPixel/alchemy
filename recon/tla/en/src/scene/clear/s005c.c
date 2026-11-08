@@ -57,7 +57,7 @@ void Func_0200005c(void) {
     REG_BG2CNT = control;
   }
   gBgScroll[2].y = 0;
-  blank = 0x1ff;
+  blank = SPLIT_CONSTANT(0x100, 255);
   res = Resource_GetTableEntry(id);
   Dma_Set(res, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
   res += 0x1c0;

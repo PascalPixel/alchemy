@@ -35,7 +35,7 @@ void Func_020022f4(void) {
   s32 t3;
   s32 b1;
 
-  GameFlag_SetBit(0x91d);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 29));
   Func_020051ac();
   Func_02005324(0);
   Func_0200524c(((s32)MsgGaroh13));
@@ -63,20 +63,20 @@ void Func_020022f4(void) {
   Func_020052b4();
   FieldEvent_Wait(20);
   Call3(Func_0200520c, 8, PIXELS(144), PIXELS(720));
-  Call3(Actor_SetSpeedParameters, 8, 0xcccc, 0x6666);
+  Call3(Actor_SetSpeedParameters, 8, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
   Call3(Actor_SetPositionAndReset, 8, 168, 720);
   FieldEvent_Wait(10);
   Call3(Actor_SetSpeedParameters, 8, 0x20000, 0x10000);
   Call3(Actor_Jump, 8, 6, 0);
   Call3(Actor_SetPositionAndReset, 8, 200, 720);
   FieldEvent_Wait(10);
-  Call3(Actor_SetSpeedParameters, 8, 0xcccc, 0x6666);
+  Call3(Actor_SetSpeedParameters, 8, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
   Call3(Actor_SetPositionAndReset, 8, 216, 712);
   Call3(Actor_SetPositionAndReset, 8, 320, 712);
   Call3(Func_0200525c, 9, 0, 0);
   Motion_SetVarCbAndRefresh(8, 2);
   FieldEvent_Wait(10);
-  Call3(Actor_SetSpeedParameters, 8, 0x9999, 0x4ccc);
+  Call3(Actor_SetSpeedParameters, 8, SPLIT_CONSTANT(0x9900, 153), SPLIT_CONSTANT(0x4c00, 204));
   t1 = Actor_GetById(8);
   *(u8 *)((t1 + 90)) = (254 & *(u8 *)((t1 + 90)));
   Call3(Actor_SetPositionAndReset, 8, 296, 712);
@@ -155,7 +155,7 @@ void Func_020022f4(void) {
   }
   FieldEvent_Wait(20);
   FieldEvent_Wait(10);
-  Call3(Actor_SetSpeedParameters, 9, 0x13333, 0x9999);
+  Call3(Actor_SetSpeedParameters, 9, 0x13333, SPLIT_CONSTANT(0x9900, 153));
   Actor_SetModeById(9, 2);
   t3 = Actor_GetById(*(s32 *)(v5));
   if (t3 == 0)

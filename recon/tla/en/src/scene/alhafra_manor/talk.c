@@ -83,7 +83,7 @@ void Func_02000150(s32 actor) {
 void Func_0200019c(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
-  GameFlag_SetBit(0x8ba);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 186));
   Func_020014b8();
   Func_020015b8(0);
   Func_02001538((s32)&MsgAlhafraManor18);
@@ -103,7 +103,7 @@ void Func_0200019c(void) {
 void Func_02000238(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
-  GameFlag_SetBit(0x8bb);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 187));
   Func_020014b8();
   Func_020015b8(0);
   Func_02001538((s32)&MsgAlhafraManor23);
@@ -116,23 +116,23 @@ void Func_02000238(void) {
   FieldEvent_Wait(10);
   Motion_SetVarCbAndRefresh(8, 2);
   FieldEvent_Wait(10);
-  Call3((void (*)())Func_02001548, 0x4008, 0, 10);
+  Call3((void (*)())Func_02001548, SPLIT_CONSTANT(0x4000, 8), 0, 10);
   Motion_SetModeAndWaitAnimation(8, 3);
   FieldEvent_Wait(10);
-  Call3((void (*)())Func_02001548, 0x4008, 0, 10);
+  Call3((void (*)())Func_02001548, SPLIT_CONSTANT(0x4000, 8), 0, 10);
   Motion_SetVarCbAndRefresh(8, 2);
   FieldEvent_Wait(10);
-  Call3((void (*)())Func_02001548, 0x4008, 0, 10);
+  Call3((void (*)())Func_02001548, SPLIT_CONSTANT(0x4000, 8), 0, 10);
   Actor_ArmCallback(8, FACING_NORTHEAST, 0);
   FieldEvent_Wait(50);
   Actor_ArmCallback(8, FACING_EAST, 0);
   FieldEvent_Wait(10);
-  Call3((void (*)())Func_02001548, 0x4008, 0, 10);
+  Call3((void (*)())Func_02001548, SPLIT_CONSTANT(0x4000, 8), 0, 10);
   Motion_SetVarCbAndRefresh(8, 2);
   FieldEvent_Wait(10);
-  Call3((void (*)())Func_02001548, 0x4008, 0, 10);
+  Call3((void (*)())Func_02001548, SPLIT_CONSTANT(0x4000, 8), 0, 10);
   Motion_SetModeAndWaitAnimation(8, 4);
-  Func_02001548(0x4008, 0, 10);
+  Func_02001548(SPLIT_CONSTANT(0x4000, 8), 0, 10);
   Func_020014c0();
 }
 
@@ -143,7 +143,7 @@ void Func_02000370(void) {
     Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
     FieldEvent_Wait(10);
   }
-  GameFlag_SetBit(0x8bc);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 188));
   Func_020014b8();
   Func_020015b8(0);
   Func_02001538((s32)&MsgAlhafraManor24);

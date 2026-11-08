@@ -59,7 +59,7 @@ s32 Func_080afbec(s32 unitId, s32 enemyId, s32 suffix) {
   {
     /* FAKEMATCH: the entry taken first puts its pool load ahead of the size,
      * where the native issues it (differ 4 without) */
-    s32 (*clear)(void *destination, s32 size) = Iwram_ClearWords;
+    s32 (*clear)(void *destination, s32 size) = Iwram_ClearWordsEntry;
 
     clear(unit, BATTLE_UNIT_SIZE);
   }

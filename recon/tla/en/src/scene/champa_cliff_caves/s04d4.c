@@ -44,15 +44,15 @@ s32 Func_020004d4(void) {
       party->entrance = 23;
       Func_02001868();
     }
-    if (GameFlag_Test(0x977) && !GameFlag_Test(0x978)) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 119)) && !GameFlag_Test(0x978)) {
       Func_0200361c_(10, 326);
       Func_020034d4_(10, 0x2980000, 0xe80000);
       Actor_GetById(10)->motionFlags = 4;
     }
-    if (GameFlag_Test(0x977))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 119)))
       Func_020034d4_(8, 0x2980000, 0xc80000);
   } else if (party->scene == (s32)&SceneId_Ov685Room3) {
-    if (GameFlag_Test(0x97e)) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 126))) {
       Actor_SetModeById(8, 11);
       Actor_SetSingleChildFlags(Actor_GetById(8), 0);
     }

@@ -38,17 +38,17 @@ void Func_02000688(s32 actor) {
 }
 
 void Func_020006b0(s32 actor) {
-  GameFlag_SetBit(0x301);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x300, 1));
   Func_02000950(actor, 18, 184, 184);
 }
 
 void Func_020006cc(s32 actor) {
-  GameFlag_SetBit(0x302);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x300, 2));
   Func_020009c0(actor, 19, 200, 200);
 }
 
 void Func_020006e8(s32 actor) {
-  GameFlag_SetBit(0x303);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x204, 255));
   Func_02000a10(actor, 216, 216, 14, 0);
 }
 

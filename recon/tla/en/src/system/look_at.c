@@ -40,7 +40,7 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   {
     u32 *dst = code;
     dot = (Dot3Fn)dst;
-    mul = Iwram_MulQ16;
+    mul = Iwram_MulQ16Entry;
     divide = Iwram_UnsignedDivideEntry;
     Dma_Set(RelocatedQ16DotProduct, dst, (DMA_ENABLE | DMA_32BIT) << 16 | 8,
             REG_DMA3);

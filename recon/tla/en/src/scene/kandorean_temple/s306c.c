@@ -22,8 +22,8 @@ void Func_0200306c(void) {
   leader->motionFlags = 0;
   wait(1);
   GameFlag_SetBit(0x208);
-  GameFlag_ClearBit(0x209);
-  GameFlag_SetBit(0x301);
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x10a, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x300, 1));
   GameFlag_ClearBit(0x300);
   Func_020053d8(162);
   Func_02000d64();

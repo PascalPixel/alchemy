@@ -19,11 +19,11 @@ void Event_ResolvePendingActions(s32 skip) {
 
   state->actionCounter = 0;
   if (state->pendingFirst != 0 && !(skip & 1))
-    Event_ExecutePackedAction(0x2090);
+    Event_ExecutePackedAction(SPLIT_CONSTANT(0x2000, 144));
   if (state->pendingSecond != 0 && !(skip & 2))
-    Event_ExecutePackedAction(0x209b);
+    Event_ExecutePackedAction(SPLIT_CONSTANT(0x2000, 155));
   if (gMainRoutineWork.pendingThird != 0 && !(skip & 4))
-    Event_ExecutePackedAction(0x208b);
+    Event_ExecutePackedAction(SPLIT_CONSTANT(0x2000, 139));
 }
 
 s32 Party_GetLeaderActor(void) {

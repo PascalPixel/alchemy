@@ -151,7 +151,7 @@ extern const u8 Data_081991e0[];  // its corners
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 85 of 543 instructions differ in tla-en. */
+   * Iwram_CopyWordsEntry, 85 of 543 instructions differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 

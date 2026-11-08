@@ -53,7 +53,7 @@ s32 Func_02003d9c(void) {
   FIELD_AT((t7 + 0x23), u8, 0) = (FIELD_AT((t7 + 0x23), u8, 0) | 0x80);
   t8 = Actor_GetById(22);
   FIELD_AT((t8 + 0x23), u8, 0) = (0x80 | FIELD_AT((t8 + 0x23), u8, 0));
-  t9 = GameFlag_Test(0xa21);
+  t9 = GameFlag_Test(SPLIT_CONSTANT(0xa00, 33));
   if (t9 == 0) {
     Func_02004644();
   } else {
@@ -86,7 +86,7 @@ s32 Func_02003d9c(void) {
           if (FIELD_AT(gMainRoutineWork, s16, 482) == 0xd) {
             Func_02001bc4();
           } else {
-            t25 = GameFlag_Test(0xa21);
+            t25 = GameFlag_Test(SPLIT_CONSTANT(0xa00, 33));
             if (t25 != 0) {
               Call3(Func_02005884, 27, 0, 0);
               Func_02005884(28, 0, 0);

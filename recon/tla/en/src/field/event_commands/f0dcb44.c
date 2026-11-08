@@ -122,7 +122,7 @@ void Func_080dcb44(void) {
         to.x -= 0x60000;
         to.y -= 0xc0000;
       }
-      object = Func_080200c0(677, to.x, to.y, to.z);
+      object = Func_080200c0(SPLIT_CONSTANT(0x1a6, 255), to.x, to.y, to.z);
       if (object != NULL) {
         sprite = object->animation;
         object->motionFlags = 0;

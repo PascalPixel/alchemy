@@ -138,7 +138,7 @@ void Func_02000920(void) {
 }
 
 s32 Func_0200097c(void) {
-  if (GameFlag_Test(0x8ff) == 0)
+  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 255)) == 0)
     return 0;
   return (GameFlag_Test(0x940) != 0) + 1;
 }
@@ -158,7 +158,7 @@ s32 Func_020009a4(void) {
 }
 
 s32 Func_020009f8(void) {
-  if (GameFlag_Test(0x8ff) == 0)
+  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 255)) == 0)
     return 0;
   if (PartyInventory_FindOwner(326) == -1) {
     if (GameFlag_Test(0x940) == 0) {
@@ -166,7 +166,7 @@ s32 Func_020009f8(void) {
           PartyInventory_FindOwner(440) == -1 ||
           PartyInventory_FindOwner(441) == -1)
         return 9;
-      return (GameFlag_Test(0x905) != 0) + 10;
+      return (GameFlag_Test(SPLIT_CONSTANT(0x900, 5)) != 0) + 10;
     }
   } else {
     if (GameFlag_Test(0x940) == 0)

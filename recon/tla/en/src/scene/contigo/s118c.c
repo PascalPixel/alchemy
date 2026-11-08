@@ -30,12 +30,12 @@ void Func_0200118c(void) {
   object->unk63 = 1;
   if (event->unk166 == 0) {
     Actor_SetAngleToward(15, gMainRoutineWork.currentOwner, 0);
-    if (GameFlag_Test(0x9b2) != 0)
+    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 178)) != 0)
       Func_0200412c((s32)MsgContigo143);
     else
       Func_0200412c((s32)MsgContigo42);
   } else {
-    if (GameFlag_Test(0x9b2) != 0)
+    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 178)) != 0)
       Func_0200412c((s32)MsgContigo149);
     else
       Func_0200412c((s32)MsgContigo50);

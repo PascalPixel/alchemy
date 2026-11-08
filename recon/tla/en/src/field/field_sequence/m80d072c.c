@@ -157,7 +157,7 @@ again:
   case 3:
     if (line >= state->irqFirstLine) {
       READ_DISPCNT(dispcnt);
-      REG_DISPCNT = (dispcnt & 0xFFF8) | 2;
+      REG_DISPCNT = (dispcnt & SPLIT_CONSTANT(0xff00, 248)) | 2;
       state->irqPhase = 9;
     }
     break;
@@ -171,13 +171,13 @@ again:
   case 1:
     if (line >= state->irqFirstLine) {
       READ_DISPCNT(dispcnt);
-      REG_DISPCNT = (dispcnt & 0xFFF8) | 2;
+      REG_DISPCNT = (dispcnt & SPLIT_CONSTANT(0xff00, 248)) | 2;
       state->irqPhase++;
       goto again;
     }
     if (line >= state->irqSecondLine) {
       READ_DISPCNT(dispcnt);
-      REG_DISPCNT = dispcnt & 0xFFF8;
+      REG_DISPCNT = dispcnt & SPLIT_CONSTANT(0xff00, 248);
       state->irqPhase = 3;
       goto again;
     }

@@ -57,18 +57,18 @@ void Func_0200065c(void) {
   u8 *buffer;
   u8 *flags;
 
-  if (GameFlag_Test(0xa23) != 0) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 35)) != 0) {
     Func_02005814();
     Call1((void (*)())Func_02005984, 0);
     Call2((void (*)())FieldMessage_Show, (s32)MsgThereSeemsTo, 5);
     answer = Event_AskYesNoWithActorAnimation(4, 0);
     if (answer != 0) {
       Call3((void (*)())Actor_SetSpeedParameters, 4, 0x10000, 0x8000);
-      Call3((void (*)())Actor_SetPositionAndReset, 4, 0x202, 0x135);
+      Call3((void (*)())Actor_SetPositionAndReset, 4, SPLIT_CONSTANT(0x200, 2), 0x135);
     } else {
-      Call1((void (*)())GameFlag_SetBit, 0xa21);
-      Call1((void (*)())GameFlag_SetBit, 0x8df);
-      Call1((void (*)())GameFlag_ClearBit, 0xa25);
+      Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0xa00, 33));
+      Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x7e0, 255));
+      Call1((void (*)())GameFlag_ClearBit, SPLIT_CONSTANT(0xa00, 37));
       Call1((void (*)())GameFlag_ClearBit, 0x161);
       Call1((void (*)())GameFlag_ClearBit, 0x144);
       Call3((void (*)())Actor_ArmCallback, 27, 0xd000, 0);
@@ -78,7 +78,7 @@ void Func_0200065c(void) {
       Call2((void (*)())Func_020058ec, 4, 0xc000);
       Call1((void (*)())FieldEvent_Wait, 20);
       Call2((void (*)())Func_0200595c, 0x10000, 0);
-      Call2((void (*)())Func_02005954, 0x10003, 1);
+      Call2((void (*)())Func_02005954, SPLIT_CONSTANT(0x10000, 3), 1);
       Call1((void (*)())Func_02005964, 20);
       Call1((void (*)())wait, 20);
       Call1((void (*)())PartyInventory_Remove, 245);
@@ -95,8 +95,8 @@ void Func_0200065c(void) {
         created->priorityFlags &= 254;
         created->motionFlags = 0;
         created->unk5c[0] = 1;
-        created->speedLimit = 0x6666;
-        created->acceleration = 0xccc;
+        created->speedLimit = SPLIT_CONSTANT(0x6600, 102);
+        created->acceleration = SPLIT_CONSTANT(0xc00, 204);
         buffer = HeapSlot_AllocFar(68, 0x608);
         Call1((void (*)())Func_020057d4, 246);
         Call3((void (*)())VramCache_Load, sprite->vramBlock, 128,
@@ -109,7 +109,7 @@ void Func_0200065c(void) {
       actor37->y = 0x600000;
       actor37->z = actor4->z;
       actor37->motionFlags = 3;
-      actor37->acceleration = 0xccc;
+      actor37->acceleration = SPLIT_CONSTANT(0xc00, 204);
       actor37->speedLimit = 0x6666;
       actor37->scaleX = 0x2000;
       actor37->scaleY = 0x2000;
@@ -118,7 +118,7 @@ void Func_0200065c(void) {
       if (created != 0) {
         flags = &created->motionFlags;
         *flags = 0;
-        created->gravity = 0x9999;
+        created->gravity = SPLIT_CONSTANT(0x9900, 153);
         created->bounce = 0xcccc;
         created->velocityY = 0x80000;
         Call4((void (*)())Func_02005784, created, 0x2000000, 0x800000,
@@ -160,7 +160,7 @@ void Func_0200065c(void) {
         actor37->action = 0;
         Call1((void (*)())Func_0200578c, created);
         *flags = state;
-        Call1((void (*)())FieldEvent_Wait, 90);
+        CallLr1((void (*)())FieldEvent_Wait, 90);
         *flags = 0;
         Call4((void (*)())Func_02005784, created, 0x2000000, 0x5c0000,
               0x1080000);
@@ -248,7 +248,7 @@ void Func_0200065c(void) {
       Call1((void (*)())wait, 16);
       Call1((void (*)())Func_020059f4, 63);
       Call1((void (*)())wait, 180);
-      Call2((void (*)())Func_02005954, 0x7fff, 0);
+      Call2((void (*)())Func_02005954, SPLIT_CONSTANT(0x7f00, 255), 0);
       Call1((void (*)())Func_02005964, 60);
       Call1((void (*)())Func_020059f4, 141);
       Call1((void (*)())wait, 60);

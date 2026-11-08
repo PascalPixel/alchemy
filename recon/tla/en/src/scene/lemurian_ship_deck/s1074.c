@@ -41,9 +41,9 @@ void Func_02001074(void) {
 
   if (Flag_IsSet(0x212))
     return;
-  if (Flag_IsSet(0x988))
+  if (Flag_IsSet(SPLIT_CONSTANT(0x900, 136)))
     return;
-  Flag_Set(0x212);
+  Flag_Set(SPLIT_CONSTANT(0x200, 18));
   if (Flag_IsSet(0x211)) {
     Func_02001f5c();
     Func_020020ac(0);
@@ -65,7 +65,7 @@ void Func_02001074(void) {
     Flag_Set(0x988);
     Func_02001f64();
   } else if (Flag_IsSet(0x210)) {
-    Flag_Set(0x211);
+    Flag_Set(SPLIT_CONSTANT(0x112, 255));
   } else {
     Flag_Set(0x210);
   }

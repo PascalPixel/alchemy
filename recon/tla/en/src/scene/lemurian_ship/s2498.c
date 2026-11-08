@@ -12,7 +12,7 @@ void Func_02002498(void) {
   Func_02002dc8(gData_02003010);
   Actor_GetById(8)->priorityFlags |= 32;
   Actor_SetSpritePriority(8, 1);
-  if (GameFlag_Test(0x938)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 56))) {
     LemurianShip_BlendStart(44, 0, 1, 1, 48, 32);
     Actor_SetPositionAndResetMotion(Actor_GetById(16), PIXELS(776), 0,
                                     PIXELS(520));
@@ -22,7 +22,7 @@ void Func_02002498(void) {
   } else {
     Func_0200245c(9);
   }
-  if (GameFlag_Test(0x939)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 57))) {
     LemurianShip_BlendStart(44, 0, 1, 1, 53, 32);
     Actor_SetPositionAndResetMotion(Actor_GetById(17), PIXELS(856), 0,
                                     PIXELS(520));
@@ -32,7 +32,7 @@ void Func_02002498(void) {
   } else {
     Func_0200245c(10);
   }
-  if (GameFlag_Test(0x93a)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 58))) {
     LemurianShip_BlendStart(44, 0, 1, 1, 43, 37);
     Actor_SetPositionAndResetMotion(Actor_GetById(18), PIXELS(696), 0,
                                     PIXELS(600));
@@ -42,7 +42,7 @@ void Func_02002498(void) {
   } else {
     Func_0200245c(11);
   }
-  if (GameFlag_Test(0x93b)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 59))) {
     LemurianShip_BlendStart(44, 0, 1, 1, 48, 37);
     Actor_SetPositionAndResetMotion(Actor_GetById(19), PIXELS(776), 0,
                                     PIXELS(600));
@@ -52,7 +52,7 @@ void Func_02002498(void) {
   } else {
     Func_0200245c(12);
   }
-  if (GameFlag_Test(0x93c)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 60))) {
     LemurianShip_BlendStart(44, 0, 1, 1, 50, 37);
     Actor_SetPositionAndResetMotion(Actor_GetById(20), PIXELS(808), 0,
                                     PIXELS(600));
@@ -62,7 +62,7 @@ void Func_02002498(void) {
   } else {
     Func_0200245c(13);
   }
-  if (GameFlag_Test(0x93e)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 62))) {
     LemurianShip_BlendStart(44, 0, 1, 1, 48, 43);
     Actor_SetPositionAndResetMotion(Actor_GetById(22), PIXELS(776), 0,
                                     PIXELS(696));
@@ -77,13 +77,13 @@ void Func_02002498(void) {
   if (LemurianShip_FlagCheck(0x228)) {
     Func_02001944(9, 16);
     GameFlag_ClearBit(0x228);
-  } else if (LemurianShip_FlagCheck(0x229)) {
+  } else if (LemurianShip_FlagCheck(SPLIT_CONSTANT(0x12a, 255))) {
     Func_02001944(10, 17);
     GameFlag_ClearBit(0x229);
   } else if (LemurianShip_FlagCheck(0x22a)) {
     Func_02001944(11, 18);
-    GameFlag_ClearBit(0x22a);
-  } else if (LemurianShip_FlagCheck(0x22b)) {
+    GameFlag_ClearBit(SPLIT_CONSTANT(0x200, 42));
+  } else if (LemurianShip_FlagCheck(SPLIT_CONSTANT(0x12c, 255))) {
     Func_02001944(12, 19);
     GameFlag_ClearBit(0x22b);
   } else if (LemurianShip_FlagCheck(0x22c)) {
@@ -91,6 +91,6 @@ void Func_02002498(void) {
     GameFlag_ClearBit(0x22c);
   } else if (LemurianShip_FlagCheck(0x22e)) {
     Func_02001944(15, 22);
-    GameFlag_ClearBit(0x22e);
+    GameFlag_ClearBit(SPLIT_CONSTANT(0x200, 46));
   }
 }

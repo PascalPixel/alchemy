@@ -1,0 +1,51 @@
+#include "battle.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "system.h"
+#include "types.h"
+#include "scene_tables.h"
+#include "actor.h"
+#include "main_routine_work.h"
+#include "ram_buffer.h"
+#include "event_work.h"
+#include "call.h"
+#include "text/msg_ids.h"
+
+void GameFlag_SetBit();
+
+const struct ActorPlacement *Scene_GetPlacements(void) {
+  return gActorPlacements;
+}
+
+void Func_02000358(void) {
+  GameFlag_SetBit(0x200);
+  return;
+}
+
+void Func_02000364(void) {
+  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
+   * shifted byte plus an addend; as plain constants, 4 of 6 instructions differ
+   * in tla-en. */
+  GameFlag_SetBit(SPLIT_CONSTANT(0x102, 255));
+  return;
+}
+
+void Func_02000374(void) {
+  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
+   * shifted byte plus an addend; as plain constants, 4 of 6 instructions differ
+   * in tla-en. */
+  GameFlag_SetBit(SPLIT_CONSTANT(0x200, 2));
+  return;
+}
+
+void Func_02000384(void) {
+  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
+   * shifted byte plus an addend; as plain constants, 4 of 6 instructions differ
+   * in tla-en. */
+  GameFlag_SetBit(SPLIT_CONSTANT(0x104, 255));
+  return;
+}

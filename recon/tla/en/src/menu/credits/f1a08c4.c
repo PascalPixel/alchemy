@@ -32,7 +32,7 @@ void Func_081a08c4(void) {
     }
   }
   Dma_Set(gDisplayScroll_Objects, (void *)0x07000000, 0x84000100,
-          (u32 *)0x040000d4);
+          (u32 *)SPLIT_CONSTANT(0x4000000, 212));
 
   if (gDisplayScroll_Busy == 1 && (gInput.held & 3)) {
     gDisplayScroll_Busy = 0;

@@ -65,7 +65,7 @@ void Func_020009c0(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
   Func_02000e74(arg1, (arg2 << 16), (arg3 << 16));
   object0->y = 0x200000;
   object0->motionFlags = 3;
-  object0->gravity = 0x170a;
+  object0->gravity = SPLIT_CONSTANT(0x1700, 10);
   wait(50);
 L_02008a06:
   return;

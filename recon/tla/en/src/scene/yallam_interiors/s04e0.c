@@ -33,7 +33,7 @@ void Func_02000524(void) {
 
   if (Func_020004e0())
     YallamInteriors_FlagSet(0x10f);
-  else if (!YallamInteriors_FlagCheck(0x301) && !Func_02000a90())
+  else if (!YallamInteriors_FlagCheck(SPLIT_CONSTANT(0x300, 1)) && !Func_02000a90())
     GameFlag_ClearBit(0x10f);
 
   if (!YallamInteriors_FlagCheck(0x10f)) {
@@ -48,7 +48,7 @@ void Func_02000524(void) {
       Func_02000a18(message + 2);
     }
     YallamInteriors_MessagePut(14, 0);
-  } else if (YallamInteriors_FlagCheck(0x301)) {
+  } else if (YallamInteriors_FlagCheck(SPLIT_CONSTANT(0x300, 1))) {
     Func_02000a18((s32)MsgICanTWait);
     YallamInteriors_MessagePut(14, 0);
   } else if (Func_02000a90()) {
@@ -72,7 +72,7 @@ void Func_02000524(void) {
       Actor_SetAngleToward(14, gMainRoutineWork.currentOwner, 0);
       Func_02000a80(14);
       if (Func_02000a90()) {
-        YallamInteriors_ObjSpeed(14, 0x6666, 0x3333);
+        YallamInteriors_ObjSpeed(14, SPLIT_CONSTANT(0x6600, 102), SPLIT_CONSTANT(0x3300, 51));
         Call3((void (*)())Actor_ResetAndSetPositionInMode2, 14, 568,
               408);
         Actor_WaitForMoveById(14);
@@ -94,7 +94,7 @@ void Func_02000524(void) {
 #if TLA_PATCH_1
         Func_020009f8(17, 0, 0);
 #endif
-        GameFlag_SetBit(0x301);
+        GameFlag_SetBit(SPLIT_CONSTANT(0x300, 1));
       } else {
         Actor_ResetAndSetPosition(14, 491, 398);
         Actor_WaitForMoveById(14);

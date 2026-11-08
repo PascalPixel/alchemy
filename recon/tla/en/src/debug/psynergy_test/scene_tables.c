@@ -77,7 +77,7 @@ void Func_020000a4(s32 message, s32 count) {
   for (i = 0; i < count; i++) {
     Func_02000df4(1, 1);
     Func_02000df4(5, 2);
-    Func_02000df4(0x1e240, 5);
+    Func_02000df4(SPLIT_CONSTANT(0x1e200, 64), 5);
     Func_02000078(message);
     goto check;
   wait:

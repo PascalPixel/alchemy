@@ -58,7 +58,7 @@ void Func_0200329c(void) {
     PaletteQueue_Add(a0, a1, a2, a3);
   }
   PaletteQueue_Add(4, 12, 5, 4);
-  if (GameFlag_Test(0xaa5) && (done = GameFlag_Test(265)) == 0) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 165)) && (done = GameFlag_Test(265)) == 0) {
     Func_02003edc(10, 0x1180000, 0x1d40000);
     Actor_GetById(10)->motionFlags = done;
     {
@@ -72,7 +72,7 @@ void Func_0200329c(void) {
   Actor_SetSingleChildFlags(Actor_GetById(12), 0);
   Task_Add(Func_02001c4c, 0x480);
   if ((u16)(gMainRoutineWork.entrance - 4) <= 1) {
-    GameFlag_SetBit(0x217);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x118, 255));
     if (!GameFlag_Test(265)) {
       {
         s32 a3 = 0x4000;

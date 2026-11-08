@@ -31,7 +31,7 @@ void Func_02003da0(s32 unused, s32 value) {
   void *buffer;
 
   if (!GameFlag_Test(0x109))
-    Call2((void (*)())Iwram_ClearWordsEntry, (s32)work, 456);
+    CallLr2((void (*)())Iwram_ClearWordsEntry, (s32)work, 456);
   buffer = (void *)Value1((s32 (*)())Heap_AllocEwram, 0x800);
   Func_02003f70(gField_Tiles64D, buffer);
   work->entry = Resource_FindFreeEntry();
@@ -39,7 +39,7 @@ void Func_02003da0(s32 unused, s32 value) {
   Heap_Release(buffer);
   work->block = Heap_AllocEwram(0x3c0);
   work->value = value;
-  Task_Add((s32)Func_020039b8, 0x48d);
+  Task_Add((s32)Func_020039b8, SPLIT_CONSTANT(0x400, 141));
   Task_Add((s32)Func_02003b80, 0x480);
   Actor_GetById(Func_020041f0())->priorityFlags |= 0x40;
 }

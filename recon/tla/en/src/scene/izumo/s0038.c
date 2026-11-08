@@ -1,4 +1,4 @@
-#include "izumo.h"
+#include "../../../../../../games/tla/src/scene/izumo/izumo.h"
 #include "flag_call.h"
 #include "scene_tables.h"
 
@@ -15,11 +15,11 @@ void Func_02000048(void) {
   Func_02000df0();
   Func_02000e08(132);
   if (x == 20 && z == 9) {
-    if (Flag_IsSet(0x301)) {
+    if (Flag_IsSet(SPLIT_CONSTANT(0x300, 1))) {
       Func_02000ce0(36, 12, 22, 8, 3, 3);
       Call6((void (*)())Func_02000ce8, 36, 12, 3, 3, 22, 8);
     }
-    if (!Flag_IsSet(0x924)) {
+    if (!Flag_IsSet(SPLIT_CONSTANT(0x900, 36))) {
       Func_02000d00();
       Func_02000dd0(0);
       Camera_FollowActor(22, 1);
@@ -38,12 +38,12 @@ void Func_02000048(void) {
       Func_02000d70(22, 0);
       Actor_ArmCallback(22, FACING_SOUTH, 0);
       Func_02000d08();
-      Flag_Set(0x924);
+      Flag_Set(SPLIT_CONSTANT(0x900, 36));
     }
     Flag_Set(0x250);
   } else if (x == 19 && z == 9) {
     Flag_Clear(0x250);
-    if (Flag_IsSet(0x301)) {
+    if (Flag_IsSet(SPLIT_CONSTANT(0x300, 1))) {
       Func_02000ce0(36, 8, 22, 8, 3, 3);
       Call6((void (*)())Func_02000ce8, 36, 8, 3, 3, 22, 8);
     }

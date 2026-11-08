@@ -23,7 +23,7 @@ void Func_02000a18(s32 id, s32 mode, s32 frame) {
       GameFlag_SetBit(821);
       break;
     case 19:
-      GameFlag_ClearBit(821);
+      GameFlag_ClearBit(SPLIT_CONSTANT(0x300, 53));
       break;
     case 20:
       GameFlag_SetBit(823);

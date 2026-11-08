@@ -25,11 +25,11 @@ void Func_0200132c(void) {
    * differ 2). */
   __asm__ volatile("" : "+r"(b), "+r"(c));
   Func_02005354(1, b, c);
-  Flag_Set(0x203);
+  Flag_Set(SPLIT_CONSTANT(0x104, 255));
 }
 
 s32 Func_02001344(void) {
-  if (!Flag_IsSet(0x91b))
+  if (!Flag_IsSet(SPLIT_CONSTANT(0x900, 27)))
     return Flag_IsSet(0x91e);
 }
 

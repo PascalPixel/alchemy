@@ -88,10 +88,10 @@ void Func_02000d48(struct Actor *shot) {
     }
   }
   if (shot->angle == 0xc000) {
-    shot->x += Value2((s32 (*)())Iwram_MulQ16, Math_Cosine(shot->angle), 0x18000);
-    shot->y -= Value2((s32 (*)())Iwram_MulQ16, Math_Sine(shot->angle), 0x18000);
+    shot->x += Value2((s32 (*)())Iwram_MulQ16Entry, Math_Cosine(shot->angle), 0x18000);
+    shot->y -= Value2((s32 (*)())Iwram_MulQ16Entry, Math_Sine(shot->angle), 0x18000);
   } else {
-    shot->x += Value2((s32 (*)())Iwram_MulQ16, Math_Cosine(shot->angle), 0x18000);
-    shot->z += Value2((s32 (*)())Iwram_MulQ16, Math_Sine(shot->angle), 0x18000);
+    shot->x += Value2((s32 (*)())Iwram_MulQ16Entry, Math_Cosine(shot->angle), 0x18000);
+    shot->z += Value2((s32 (*)())Iwram_MulQ16Entry, Math_Sine(shot->angle), 0x18000);
   }
 }

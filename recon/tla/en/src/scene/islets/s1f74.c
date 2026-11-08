@@ -9,7 +9,7 @@ void Func_02001f74(void) {
   Actor_Stop(10);
   wait(1);
   object->motionFlags = 0;
-  Call3((void (*)())Actor_SetSpeedParameters, 10, 0x19999, 0xcccc);
+  Call3((void (*)())Actor_SetSpeedParameters, 10, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
   Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)object, PIXELS(268),
         PIXELS(64), PIXELS(390));
   wait(1);
@@ -31,7 +31,7 @@ void Func_02001f74(void) {
   Actor_SetModeById(10, 5);
   object->motionFlags = 0;
   Func_02003f3c(10, FACING_EAST);
-  GameFlag_SetBit(0x215);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x116, 255));
   wait(1);
   Func_02003e6c();
 }

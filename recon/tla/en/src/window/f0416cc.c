@@ -58,11 +58,11 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
   } while (0);
   attr = work->level << 12;
   /* FAKEMATCH(wrapper): the clear forwarded through ClearWords, which keeps
-   * its own constants; as Iwram_ClearWords called directly, 69 of 428
+   * its own constants; as Iwram_ClearWordsEntry called directly, 69 of 428
    * instructions differ in tla-en. */
   ClearWords(pens, 16);
   /* FAKEMATCH(wrapper): both fills forwarded through FillWords; as
-   * Iwram_FillWords called directly, 8 of 428 instructions differ in tla-en. */
+   * Iwram_FillWordsEntry called directly, 8 of 428 instructions differ in tla-en. */
   if (attr == 0xF000) {
     pens[1] = gText_ColourPens[work->colour & 15];
     pens[3] = 3;
@@ -133,7 +133,7 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
           }
           dst += 248;
         }
-        if (code == 0xF01D || code == 0xF01F)
+        if (code == SPLIT_CONSTANT(0xf000, 29) || code == 0xF01F)
           x += 8;
         else if (code == 0xF01E)
           x += 3;

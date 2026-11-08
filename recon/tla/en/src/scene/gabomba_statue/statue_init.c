@@ -47,7 +47,7 @@ void Func_020034f4(void) {
     Map_CopyBlock(33, 24, 3, 3, 27, 29);
   }
   Func_020053bc(gData_02005d7c);
-  if (!GameFlag_Test(0x8ce) || !GameFlag_Test(0x8cf))
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x800, 206)) || !GameFlag_Test(SPLIT_CONSTANT(0x7d0, 255)))
     Actor_GetById(26)->y = PIXELS(16);
   Func_02005824();
   Exit_Set(0, 513, 8, 9);

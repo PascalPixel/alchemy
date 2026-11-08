@@ -29,7 +29,7 @@ struct Actor *Actor_GetById(s32 id);
 void Func_020051a0(void);
 
 void Func_020055c4(s32 a, s32 b) {
-  struct TrialRoadLink *link = HeapSlot_AllocEwram(236, 0x3934);
+  struct TrialRoadLink *link = HeapSlot_AllocEwram(236, SPLIT_CONSTANT(0x3900, 52));
   void *buffer = Heap_AllocEwram(576);
   s32 zero;
   s32 owner;
@@ -62,6 +62,6 @@ void Func_020055c4(s32 a, s32 b) {
   Func_02005770(gData_020062d4, buffer);
   *vramEntry = Resource_FindFreeEntry();
   VramCache_Load(*vramEntry, 576, buffer);
-  Task_Add(Func_020051a0, 0x476);
+  Task_Add(Func_020051a0, SPLIT_CONSTANT(0x400, 118));
   Heap_Release(buffer);
 }

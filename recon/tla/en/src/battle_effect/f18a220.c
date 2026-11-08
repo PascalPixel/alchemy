@@ -402,7 +402,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
         else
           Func_08015160(Trig_Sin(frame * 682) << 7, 0, 0);
       }
-      SceneTransform_ApplyYaw(0x1770);
+      SceneTransform_ApplyYaw(SPLIT_CONSTANT(0x1700, 112));
       Func_080150e4(frame << 10);
       Func_0801521c(scale);
       Func_080151e4(0x10000, 0x20000, 0x10000);

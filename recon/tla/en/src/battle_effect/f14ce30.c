@@ -21,7 +21,7 @@
 // order: Func_08196404 builds additive for 0, max for 1, transparent for 2.
 enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 
-#define FORMATION_THORN_VINES 645 // eight objects
+#define FORMATION_THORN_VINES SPLIT_CONSTANT(0x186, 255) // eight objects
 
 // The camera work, as far as this scene reads it.
 struct EffectCamera {

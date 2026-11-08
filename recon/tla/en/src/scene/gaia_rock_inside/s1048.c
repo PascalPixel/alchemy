@@ -71,7 +71,7 @@ void Func_02001048(void) {
   Func_02004f14(10, 0);
   Motion_SetModeAndWaitAnimation(10, 3);
   Call4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
-  GameFlag_SetBit(0x9de);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 222));
   if (object->script == gData_020056c4 || object->script == gData_02005728) {
     gData_0200646c[2] = gData_020064ec = gData_0200646c[14];
     gData_0200646c[4] = gData_020064f0 = gData_0200646c[16];

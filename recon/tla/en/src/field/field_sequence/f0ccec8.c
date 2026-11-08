@@ -113,7 +113,7 @@ s32 Func_080ccec8(s32 id) {
   busyFlags = 0;
   silent = id & 0x1000;
   event = Ram_HeapSlots->eventWork;
-  id &= 0xfff;
+  id &= SPLIT_CONSTANT(0xf00, 255);
   found = 0;
   object = Actor_GetById(id);
   if (id > 63) {
@@ -180,7 +180,7 @@ s32 Func_080ccec8(s32 id) {
         Sound_PlayFar(83);
         MessageArgument_PushFar(contents, 5);
         FieldMessage_ShowFar((s32)&MsgKey0e17, 3);
-        BattleParty_ApplyDrain(1999, 0);
+        BattleParty_ApplyDrain(SPLIT_CONSTANT(0x6d0, 255), 0);
         PartyStatus_CreateWindowFar(1);
         Sound_PlayFar(126);
         if (Party_CountActiveOwnersFar() == 1)

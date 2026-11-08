@@ -12,7 +12,7 @@ void Func_02000e2c(void) {
   u32 i;
   s32 done;
 
-  done = GameFlag_Test(0x202);
+  done = GameFlag_Test(SPLIT_CONSTANT(0x200, 2));
   if (!done && GameFlag_Test(0x204)) {
     object = Actor_GetById(8);
     column = object->x >> 20;
@@ -46,8 +46,8 @@ void Func_02000e2c(void) {
       }
     }
   }
-  done = GameFlag_Test(0x203);
-  if (!done && GameFlag_Test(0x205)) {
+  done = GameFlag_Test(SPLIT_CONSTANT(0x104, 255));
+  if (!done && GameFlag_Test(SPLIT_CONSTANT(0x106, 255))) {
     object = Actor_GetById(9);
     column = object->x >> 20;
     if (column == 29) {
@@ -80,7 +80,7 @@ void Func_02000e2c(void) {
       }
     }
   }
-  if (GameFlag_Test(0x202) && GameFlag_Test(0x203)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x200, 2)) && GameFlag_Test(SPLIT_CONSTANT(0x104, 255))) {
     Func_02002c68();
     Func_02002da8(0);
     Func_02002de0(188);

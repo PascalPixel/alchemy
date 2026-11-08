@@ -1,11 +1,11 @@
-#include "izumo.h"
+#include "../../../../../../games/tla/src/scene/izumo/izumo.h"
 #include "scene_tables.h"
 
 void Func_020006a4(void) {
   /* FAKEMATCH: the Call3 and Value calls of call.h set each call's arguments up
    * in the native's order (differ 2 for each one called directly, 12 with all
    * six direct). */
-  GameFlag_SetBit(0x929);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 41));
   Func_02000d00();
   Func_02000dd0(0);
   Func_02000d60(MsgWait2);
@@ -32,7 +32,7 @@ void Func_020006a4(void) {
   Value2((s32 (*)())FieldMessage_ShowAtActor, 32, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
     FieldEvent_Wait(90);
-    Call3((void (*)())Actor_SetSpeedParameters, 32, 0x6666, 0x3333);
+    Call3((void (*)())Actor_SetSpeedParameters, 32, SPLIT_CONSTANT(0x6600, 102), SPLIT_CONSTANT(0x3300, 51));
     Actor_ResetAndSetPositionInMode2(32, 200, 216);
     Actor_WaitForMoveById(32);
     Func_02000da8(32, 1);
@@ -42,7 +42,7 @@ void Func_020006a4(void) {
     Func_02000d70(32, 0);
     Actor_SetSpritePriority(32, 3);
     Actor_GetById(32)->motionFlags |= 2;
-    GameFlag_SetBit(0x302);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x300, 2));
   } else {
     Func_02000814();
   }
@@ -77,12 +77,12 @@ void Func_02000814(void) {
   FieldEvent_Wait(15);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
   FieldEvent_Wait(30);
-  Actor_SetSpeedParameters(32, 0x3333, 0x1999);
+  Actor_SetSpeedParameters(32, SPLIT_CONSTANT(0x3300, 51), SPLIT_CONSTANT(0x1900, 153));
   Actor_GetById(32)->motionFlags = 0;
   Actor_SetSpritePriority(32, 3);
   Actor_ResetAndSetPositionInMode2(32, 200, 208);
   Actor_WaitForMoveById(32);
   Func_02000d40(32, 0, 0);
-  GameFlag_SetBit(0x92a);
-  GameFlag_ClearBit(0x302);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 42));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x300, 2));
 }

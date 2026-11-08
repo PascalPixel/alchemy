@@ -11,7 +11,7 @@ void Func_020007dc(s32 step) {
     position.x = 0x15b0000;
     position.y = 0;
     position.z = 0x1780000;
-    Func_02000708(&position, 1, 0xcccc);
+    Func_02000708(&position, 1, SPLIT_CONSTANT(0xcc00, 204));
     break;
   case 3:
     Func_02002fc0(31, 85, 20, 85, 3, 4);
@@ -37,7 +37,7 @@ void Func_02000840(struct Actor *object) {
       dx = mask & Random16Far();
     }
     dy = Random16Far() & 7;
-    params.kind = 673;
+    params.kind = SPLIT_CONSTANT(0x1a2, 255);
     Func_020000b8(object->x + ((dx - 8) << 16), object->y + ((dy - 8) << 16),
                   object->z, 0, 0x8000, phase, 0x100000, &params);
   }
@@ -48,7 +48,7 @@ void Func_020008a8(void) {
 
   Func_02003048();
   Func_02003148(0);
-  GameFlag_SetBit(0x944);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 68));
   Call6((void (*)())Func_02002fe8, 11, 22, 3, 2, 20, 22);
   object->gravity = 0x8000;
   object->motionFlags = 3;
@@ -63,7 +63,7 @@ void Func_02000920(void) {
   Func_02003048();
   Func_02003148(0);
   FieldMessage_Show(MsgThereSSomething, 1);
-  if (GameFlag_Test(0x949)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 73))) {
     struct EventWork *work = Ram_HeapSlots->eventWork;
 
     work->unk15a = 1;

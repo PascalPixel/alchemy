@@ -57,13 +57,13 @@ first:
 chosen:
   if (item != -1) {
     if (!GameFlag_Test_(0x975)) {
-      GameFlag_SetBit(0x975);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 117));
       Func_02000804(item);
     } else if (!GameFlag_Test_(0x976)) {
-      GameFlag_SetBit(0x976);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 118));
       Func_02000978(item);
     } else if (!GameFlag_Test_(0x977)) {
-      GameFlag_SetBit(0x977);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 119));
       Func_0200343c_(164 << 18, 208 << 16, 0, -4);
       Func_0200343c_(164 << 18, 224 << 16, 0, -4);
       Func_0200343c_(164 << 18, 240 << 16, 0, -4);
@@ -78,7 +78,7 @@ chosen:
     Actor_SetAngleToward(actor, gMainRoutineWork.currentOwner, 5);
     if (!GameFlag_Test_(0x975))
       Func_0200350c((s32)MsgIMeanIt);
-    else if (!GameFlag_Test_(0x976))
+    else if (!GameFlag_Test_(SPLIT_CONSTANT(0x900, 118)))
       Func_0200350c((s32)MsgTheLegendSaysThat);
     else if (!GameFlag_Test_(0x977))
       Func_0200350c((s32)MsgYesThereS);

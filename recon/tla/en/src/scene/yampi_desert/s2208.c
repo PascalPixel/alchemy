@@ -42,7 +42,7 @@ void Func_02002208(struct Actor *object) {
     break;
   case 7:
     if (Func_020021f0(object)) {
-      if (GameFlag_Test(0x203)) {
+      if (GameFlag_Test(SPLIT_CONSTANT(0x104, 255))) {
         object->update = NULL;
         gData_02004808 = 200;
       } else {

@@ -71,7 +71,7 @@ void Func_02001ee8(void) {
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (gData_0200567c != (object->x >> 20) ||
         gData_02005678 != (object->z >> 20))
-      GameFlag_ClearBit(0x201);
+      GameFlag_ClearBit(SPLIT_CONSTANT(0x102, 255));
   }
 }
 

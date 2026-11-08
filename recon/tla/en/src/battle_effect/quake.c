@@ -101,7 +101,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
 
   // Copy the background's characters and cut the band out of them.
   /* FAKEMATCH(wrapper): the copy through an inline forwarder; as a direct
-   * Iwram_CopyWords call, 58 of 444 instructions differ in tla-en. */
+   * Iwram_CopyWordsEntry call, 58 of 444 instructions differ in tla-en. */
   CopyWords_(Ram_MapCellBuffer, (void *)0x06008000, 0x8000);
   for (row = 0; row != 16; row++) {
     y = row + 96;

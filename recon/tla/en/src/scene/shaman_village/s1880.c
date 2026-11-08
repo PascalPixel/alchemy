@@ -58,7 +58,7 @@ void Func_02001880(void) {
    * owner's r6; as plain C, 36 instructions differ in tla-en. */
   __asm__("" : : "m"(shaman->unk63));
   Func_02003040();
-  ShamanVillage_CamSpeed(0xcccc, 0x1999);
+  ShamanVillage_CamSpeed(SPLIT_CONSTANT(0xcc00, 204), 0x1999);
   Camera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(168), 1);
   ShamanVillage_ObjSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
   ShamanVillage_ObjSpeed(15, 0x19999, 0xcccc);
@@ -128,7 +128,7 @@ void Func_02001aa4(void) {
    * owner's (r5, then r6), as in Func_02001880 above. */
   __asm__("" : : "m"(shaman->unk63));
   Func_02003040();
-  ShamanVillage_CamSpeed(0xcccc, 0x1999);
+  ShamanVillage_CamSpeed(SPLIT_CONSTANT(0xcc00, 204), 0x1999);
   Camera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(168), 1);
   ShamanVillage_ObjSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
   ShamanVillage_ObjSpeed(15, 0x19999, 0xcccc);

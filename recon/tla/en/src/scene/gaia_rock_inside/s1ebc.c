@@ -18,7 +18,7 @@ s32 Func_02004f74(s32 entrance, s32 count);
 void Func_02001ebc(void) {
   s32 count;
 
-  if (GameFlag_Test(0x927)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 39))) {
     FieldMessage_Show((s32)MsgGaiaRockInside08, 1);
   } else {
     s32 a = GameFlag_Test(0x9bc);
@@ -26,7 +26,7 @@ void Func_02001ebc(void) {
     s32 c = GameFlag_Test(0x9be);
     s32 scene;
 
-    count = a + b + c + GameFlag_Test(0x9bf);
+    count = a + b + c + GameFlag_Test(SPLIT_CONSTANT(0x8c0, 255));
     /* FAKEMATCH(barrier): the count is summed before the battle rule store;
      * without it, 8 of 68 instructions differ in tla-en. */
     __asm__ volatile("");

@@ -157,7 +157,7 @@ void Heap_Release(void *buffer);
 #define LOAD_BG_PALETTE(resource)                                              \
   {                                                                            \
     void *palette = Resource_GetTableEntry((s32)&(resource));                  \
-    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;                  \
+    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;                  \
                                                                                \
     copy((void *)BG_PLTT, palette, 128);                                       \
   }
@@ -225,7 +225,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSheet,
                                work->sheet + 0x1000, 1, 0);
     {
-      s32 (*clear)(void *, s32) = Iwram_ClearWords;
+      s32 (*clear)(void *, s32) = Iwram_ClearWordsEntry;
 
       clear(work->sheet, 0x1000);
     }
@@ -441,7 +441,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
             p->x = to.x << 16;
             p->y = to.y << 16;
             a = Random16();
-            s = (Random16() & 511) + 256;
+            s = (Random16() & SPLIT_CONSTANT(0x100, 255)) + 256;
             p->velocityX = Trig_Sin(a) * s >> 8;
             p->velocityY = Trig_Cos(a) * s >> 7;
             p->variant = (Random16() & 15) + 16;
@@ -476,7 +476,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         y = y - twice + 88;
       }
       draw[0](canvas, FIGURE(work), x, y, 20, 40);
-      Func_081496c8(frame, 0xaaab, 0x5555, 0);
+      Func_081496c8(frame, SPLIT_CONSTANT(0xaa00, 171), SPLIT_CONSTANT(0x5500, 85), 0);
     } else if (mode == 2 || mode == 7) {
       struct EffectPosition target;
 
@@ -1009,7 +1009,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           p->y = (pos.y - (Random16() & 31) - 16) << 16;
           p->z = Random16();
         }
-        Sound_PlayFar(619);
+        Sound_PlayFar(SPLIT_CONSTANT(0x16c, 255));
       }
       texture.logWidth = 5;
       texture.logHeight = 5;
@@ -1365,14 +1365,14 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         if (frame <= 31)
           scale = frame * 1500;
         else if (frame > 59)
-          scale = 228000 - frame * 3000;
+          scale = 228000 - frame * SPLIT_CONSTANT(0xb00, 184);
         else
           scale = 48000;
       } else {
         if (frame <= 31)
           scale = frame * 1500;
         else if (frame > 39)
-          scale = 168000 - frame * 3000;
+          scale = 168000 - frame * SPLIT_CONSTANT(0xb00, 184);
         else
           scale = 48000;
       }

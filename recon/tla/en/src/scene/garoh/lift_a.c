@@ -7,9 +7,9 @@ void Func_02000e00(void) {
   Task_Add(Func_02000a68, 1152);
   if (Flag_IsSet(0x310)) {
     if (Flag_IsSet(0x318))
-      Func_020052cc(0x10003, 1);
+      Func_020052cc(SPLIT_CONSTANT(0x10000, 3), 1);
     else
-      Func_020052cc(0x10007, 1);
+      Func_020052cc(SPLIT_CONSTANT(0x10000, 7), 1);
   }
   Func_0200536c(gData_02005450);
   Func_020052d4(1);

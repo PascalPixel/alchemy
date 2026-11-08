@@ -146,13 +146,13 @@ void Func_02000e38(void) {
       Call2((void (*)())Actor_SetModeById, gMainRoutineWork.currentOwner, 1);
     }
     Call2((void (*)())Func_02003f3c, 11, 0xc000);
-    Call1((void (*)())GameFlag_SetBit, 0xaa1);
-    Call1((void (*)())GameFlag_SetBit, 534);
+    Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0xa00, 161));
+    Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x200, 22));
   } else {
-    if (Value1((s32 (*)())GameFlag_Test, 0xaa1)) {
+    if (Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 161))) {
       Call2((void (*)())Actor_WatchAndSetScript, 11,
             gMainRoutineWork.currentOwner);
-      if (Value1((s32 (*)())GameFlag_Test, 534))
+      if (Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x200, 22)))
         Func_02003f24(MsgIDonTLike);
       else
         Func_02003f24(MsgIDonTWantTo);

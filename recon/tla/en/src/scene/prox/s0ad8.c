@@ -31,7 +31,7 @@ extern u8 MsgProx62[];
 void Func_02000ad8(void) {
   Func_02004464();
   Func_020045ec(0);
-  Call2(Func_0200456c, 0x4cccc, 0x9999);
+  Call2(Func_0200456c, 0x4cccc, SPLIT_CONSTANT(0x9900, 153));
   Call4(Camera_MoveWithinMapBounds, PIXELS(160), -1, PIXELS(160), 1);
   Func_0200457c();
   FieldEvent_Wait(40);
@@ -111,6 +111,6 @@ void Func_02000ad8(void) {
   Call3(Actor_ArmCallback, 10, 0xb000, 80);
   Call2(Motion_SetModeAndWaitAnimation, 10, 4);
   Func_02004534(10, 0);
-  GameFlag_SetBit(0x9c1);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 193));
   Func_0200446c();
 }

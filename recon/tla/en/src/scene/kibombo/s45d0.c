@@ -93,8 +93,8 @@ void Func_020047e4(void) {
   Motion_SetModeAndWaitAnimation(17, 4);
   Func_02005b64(17, 0);
   Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
-  Func_02005b64(0x4011, 0);
-  GameFlag_SetBit(0x8fc);
+  Func_02005b64(SPLIT_CONSTANT(0x4000, 17), 0);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 252));
   GameFlag_SetBit(265);
   Func_02005bc4(12);
 }

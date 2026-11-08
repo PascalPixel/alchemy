@@ -148,7 +148,7 @@ void Func_0200112c(void) {
   Value2((s32 (*)())Func_02004b9c, gMainRoutineWork.currentOwner, 1);
   Func_02004b94();
   Call1((void (*)())FieldEvent_Wait, 20);
-  Call3((void (*)())Actor_SetSpeedParameters, 5, 0x13333, 0x9999);
+  Call3((void (*)())Actor_SetSpeedParameters, 5, 0x13333, SPLIT_CONSTANT(0x9900, 153));
   Call2((void (*)())Actor_SetModeById, 5, 2);
   object0 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object0 == 0)
@@ -158,7 +158,7 @@ void Func_0200112c(void) {
 L_020094c6:
   Call1((void (*)())Actor_WaitForMoveById, 5);
   Call3((void (*)())Func_02004b04, 5, 0, 0);
-  Call3((void (*)())Actor_SetSpeedParameters, 6, 0x13333, 0x9999);
+  Call3((void (*)())Actor_SetSpeedParameters, 6, 0x13333, SPLIT_CONSTANT(0x9900, 153));
   Call2((void (*)())Actor_SetModeById, 6, 2);
   object1 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object1 == 0)
@@ -168,7 +168,7 @@ L_020094c6:
 L_02009504:
   Call1((void (*)())Actor_WaitForMoveById, 6);
   Call3((void (*)())Func_02004b04, 6, 0, 0);
-  Call3((void (*)())Actor_SetSpeedParameters, 26, 0x13333, 0x9999);
+  Call3((void (*)())Actor_SetSpeedParameters, 26, 0x13333, SPLIT_CONSTANT(0x9900, 153));
   Call2((void (*)())Actor_SetModeById, 26, 2);
   object2 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object2 == 0)
@@ -194,12 +194,12 @@ void Func_02001574(void) {
   struct Actor *object6;
   struct Actor *object7;
 
-  result0 = Value1((s32 (*)())GameFlag_Test, 0x8ab);
+  result0 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x800, 171));
   if (result0 != 0)
     goto L_02009586;
   goto L_020097dc;
 L_02009586:
-  result1 = Value1((s32 (*)())GameFlag_Test, 0x8a7);
+  result1 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x7a8, 255));
   if (result1 == 0)
     goto L_02009596;
   goto L_020097dc;
@@ -207,7 +207,7 @@ L_02009596:
   Func_02004a94();
   Func_02004be4(0);
   Func_02004b3c((s32)MsgYouDoPlan);
-  GameFlag_SetBit(0x8ac);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 172));
   Call3((void (*)())Actor_SetPositionAndReset, 4, 264, 448);
   Call4((void (*)())Func_02004bec, 26, 0, -16, 0x4000);
   Call4((void (*)())Func_02004bec, 5, 16, 0, 0x8000);
@@ -242,7 +242,7 @@ L_02009604:
   result3 = Value1((s32 (*)())GameFlag_Test, 7);
   if (result3 == 0)
     goto L_02009716;
-  Call3((void (*)())Actor_SetSpeedParameters, 7, 0x13333, 0x9999);
+  Call3((void (*)())Actor_SetSpeedParameters, 7, 0x13333, SPLIT_CONSTANT(0x9900, 153));
   Actor_SetModeById(7, 2);
   object4 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object4 == 0)
@@ -253,7 +253,7 @@ L_02009706:
   Actor_WaitForMoveById(7);
   Func_02004b04(7, 0, 0);
 L_02009716:
-  Call3((void (*)())Actor_SetSpeedParameters, 5, 0x13333, 0x9999);
+  Call3((void (*)())Actor_SetSpeedParameters, 5, 0x13333, SPLIT_CONSTANT(0x9900, 153));
   Actor_SetModeById(5, 2);
   object5 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object5 == 0)
@@ -380,7 +380,7 @@ L_02009a2e:
   result3 = Value1((s32 (*)())GameFlag_Test, 7);
   if (result3 == 0)
     goto L_02009ac2;
-  Call3((void (*)())Actor_SetSpeedParameters, 7, 0x13333, 0x9999);
+  Call3((void (*)())Actor_SetSpeedParameters, 7, 0x13333, SPLIT_CONSTANT(0x9900, 153));
   Actor_SetModeById(7, 2);
   object4 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object4 == 0)
@@ -391,7 +391,7 @@ L_02009ab2:
   Actor_WaitForMoveById(7);
   Func_02004b04(7, 0, 0);
 L_02009ac2:
-  Call3((void (*)())Actor_SetSpeedParameters, 5, 0x13333, 0x9999);
+  Call3((void (*)())Actor_SetSpeedParameters, 5, 0x13333, SPLIT_CONSTANT(0x9900, 153));
   Actor_SetModeById(5, 2);
   object5 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object5 == 0)
@@ -401,7 +401,7 @@ L_02009ac2:
 L_02009af8:
   Actor_WaitForMoveById(5);
   Func_02004b04(5, 0, 0);
-  Call3((void (*)())Actor_SetSpeedParameters, 6, 0x13333, 0x9999);
+  Call3((void (*)())Actor_SetSpeedParameters, 6, 0x13333, SPLIT_CONSTANT(0x9900, 153));
   Actor_SetModeById(6, 2);
   object6 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object6 == 0)
@@ -411,7 +411,7 @@ L_02009af8:
 L_02009b36:
   Actor_WaitForMoveById(6);
   Func_02004b04(6, 0, 0);
-  Call3((void (*)())Actor_SetSpeedParameters, 26, 0x13333, 0x9999);
+  Call3((void (*)())Actor_SetSpeedParameters, 26, 0x13333, SPLIT_CONSTANT(0x9900, 153));
   Actor_SetModeById(26, 2);
   object7 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object7 == 0)

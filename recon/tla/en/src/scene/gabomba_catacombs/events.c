@@ -169,7 +169,7 @@ void Func_020005e8(void) { Func_02001274_(7, 23, 0, 4, 5, 60, 56); }
 
 void Func_02000608(void) {
   Func_02001274_(7, 23, 0, 4, 5, 60, 56);
-  if (GameFlag_Test(0x9b5) == 0) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 181)) == 0) {
     Func_0200127c_(249, 168, 424);
     ((struct GabombaCatacombsParty *)&gMainRoutineWork)->value254 = 0x19b5;
     gMainRoutineWork.battleRule24b = 2;
@@ -199,7 +199,7 @@ void Func_020006cc(void) {
 void Func_02000704(void) {
   struct Actor *object = Actor_GetById(9);
 
-  GameFlag_SetBit(0x201);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x102, 255));
   object->motionFlags = 0;
   object->priorityFlags = 0;
   Func_02001164_(0, 4, 1, 1, 8, 15);
@@ -208,7 +208,7 @@ void Func_02000704(void) {
 void Func_02000740(void) {
   struct Actor *object = Actor_GetById(10);
 
-  GameFlag_SetBit(0x202);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x200, 2));
   object->motionFlags = 0;
   object->priorityFlags = 0;
   Func_02001164_(0, 4, 1, 1, 9, 16);
@@ -217,7 +217,7 @@ void Func_02000740(void) {
 void Func_0200077c(void) {
   struct Actor *object = Actor_GetById(11);
 
-  GameFlag_SetBit(0x203);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x104, 255));
   object->motionFlags = 0;
   object->priorityFlags = 0;
   Func_02001164_(0, 4, 1, 1, 8, 17);
@@ -235,7 +235,7 @@ void Func_020007b8(void) {
 void Func_020007f0(void) {
   struct Actor *object = Actor_GetById(13);
 
-  GameFlag_SetBit(0x205);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x106, 255));
   object->motionFlags = 0;
   object->priorityFlags = 0;
   Func_02001164_(0, 4, 1, 1, 5, 16);
@@ -244,7 +244,7 @@ void Func_020007f0(void) {
 void Func_0200082c(void) {
   struct Actor *object = Actor_GetById(14);
 
-  GameFlag_SetBit(0x206);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x200, 6));
   object->motionFlags = 0;
   object->priorityFlags = 0;
   Func_02001164_(0, 4, 1, 1, 6, 15);

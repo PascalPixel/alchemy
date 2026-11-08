@@ -40,7 +40,7 @@ void Func_02000074(void) { Func_02001d1c_(64, 0, 4, 3, 89, 28, 1); }
 
 void Func_02000094(void) {
   Func_02001d1c_(64, 0, 4, 3, 89, 28, 1);
-  if (!GameFlag_Test(0x9b8)) {
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x900, 184))) {
     Func_02001d44_(249, 424, 488);
     ((struct MainRoutineWork254 *)&gMainRoutineWork)->value = 0x19b8;
     gMainRoutineWork.battleRule24b = 2;

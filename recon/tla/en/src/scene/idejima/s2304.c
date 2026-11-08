@@ -152,7 +152,7 @@ void Func_02002304(void) {
   Import_ActorSetAnimation(8, 4);
   Import_EventShowMessageAndWait(8, 0);
   Actor_Jump(5, 4, 0);
-  Call2((void (*)())Import_EventShowMessageAndWait, 0x1005, 0);
+  Call2((void (*)())Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x1000, 5), 0);
   Actor_ArmCallback(6, a8000, 20);
   Motion_SetModeAndWaitAnimation(10, 3);
   Call2((void (*)())Import_EventShowMessageAndWait, 0x100a, 0);
@@ -178,7 +178,7 @@ void Func_02002304(void) {
   Import_EventShowMessageAndWait(5, 0);
   Call3((void (*)())Actor_ArmCallback, 6, FACING_NORTHWEST, 0);
   Import_EventShowMessageAndWait(6, 0);
-  Call2((void (*)())Import_EventShowMessageAndWait, 0x100a, 0);
+  Call2((void (*)())Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x1000, 10), 0);
   Call3((void (*)())Actor_ArmCallback, 6, FACING_SOUTHWEST, 0);
   Actor_RefreshSelectorById(6);
   Motion_SetModeAndWaitAnimation(6, 3);
@@ -268,7 +268,7 @@ void Func_02002304(void) {
   Import_ActorShowEmote(6, 0x100, 0);
   Call3((void (*)())Actor_ArmCallback, 6, FACING_SOUTHEAST, 0);
   Actor_RefreshSelectorById(6);
-  Import_EventShowMessageAndWait(0x5006, 0);
+  Import_EventShowMessageAndWait(SPLIT_CONSTANT(0x5000, 6), 0);
   Actor_ArmCallback(8, a3000, 0);
   Call3((void (*)())Actor_ArmCallback, 5, FACING_SOUTHEAST, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
@@ -277,12 +277,12 @@ void Func_02002304(void) {
   Import_EventShowMessageAndWait(8, 0);
   Import_ActorShowEmote(10, 0x108, 0);
   Import_EventShowMessageAndWait(0x100a, 0);
-  Import_CameraSetSpeed(0x9999, 0x1333);
+  Import_CameraSetSpeed(SPLIT_CONSTANT(0x9900, 153), SPLIT_CONSTANT(0x1300, 51));
   Camera_MoveWithinMapBounds(PIXELS(396), -1, PIXELS(234), 1);
-  Call3((void (*)())Actor_SetSpeedParameters, 5, 0xcccc, 0x6666);
-  Call3((void (*)())Actor_SetSpeedParameters, 6, 0xcccc, 0x6666);
+  Call3((void (*)())Actor_SetSpeedParameters, 5, 0xcccc, SPLIT_CONSTANT(0x6600, 102));
+  Call3((void (*)())Actor_SetSpeedParameters, 6, 0xcccc, SPLIT_CONSTANT(0x6600, 102));
   Call3((void (*)())Actor_SetSpeedParameters, 8, 0xcccc, 0x6666);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, SPLIT_CONSTANT(0x6600, 102));
   leader->action = 0;
   Actor_SetMovementTypeById(8, gData_020035bc);
   Actor_SetMovementTypeById(5, gData_02003534);
@@ -293,8 +293,8 @@ void Func_02002304(void) {
   while (leader->action == 0);
   Func_020032e0();
   Import_ActorShowEmote(5, 0x100, 20);
-  Import_EventShowMessageAndWait(0x1005, 0);
-  Import_EventShowMessageAndWait(0x1006, 0);
+  Import_EventShowMessageAndWait(SPLIT_CONSTANT(0x1000, 5), 0);
+  Import_EventShowMessageAndWait(SPLIT_CONSTANT(0x1000, 6), 0);
   Import_EventShowMessageAndWait(8, 0);
   Func_020032e8(13);
 }

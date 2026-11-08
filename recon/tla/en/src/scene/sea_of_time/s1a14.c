@@ -91,7 +91,7 @@ void Func_02001a14(void) {
       s32 x = Random16Far();
       s32 y = Random16Far();
 
-      params[2] = 0xcccc;
+      params[2] = SPLIT_CONSTANT(0xcc00, 204);
       params[3] = 0xcccc;
       params[0] = 1;
       params[1] = 7;
@@ -120,7 +120,7 @@ void Func_02001a14(void) {
     wait(1);
   }
   Func_02001f64(actor);
-  Func_02002054(0x22d);
+  Func_02002054(SPLIT_CONSTANT(0x12e, 255));
   do {
     wait(10);
     changed = 0;

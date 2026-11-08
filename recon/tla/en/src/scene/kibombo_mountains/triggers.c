@@ -28,7 +28,7 @@ void Func_02000f84(void) { Func_02000da8(8); }
 void Func_02000f90(void) { Func_02000da8(8); }
 
 void Func_02000f9c(void) {
-  if (!GameFlag_Test(514) && !GameFlag_Test(513))
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x200, 2)) && !GameFlag_Test(SPLIT_CONSTANT(0x102, 255)))
     Func_02000e28(10);
 }
 
@@ -43,6 +43,6 @@ void Func_02000fdc(void) {
 }
 
 void Func_02000ff4(void) {
-  if (!GameFlag_Test(515) && !GameFlag_Test(514))
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x104, 255)) && !GameFlag_Test(SPLIT_CONSTANT(0x200, 2)))
     Func_02000e28(10);
 }

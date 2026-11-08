@@ -193,7 +193,7 @@ void Func_020027cc(void) {
   Func_02005854(220);
   wait(1);
   Func_020057e4_(0x10000, 0);
-  Func_020057dc(0x7fff, 0);
+  Func_020057dc(SPLIT_CONSTANT(0x7f00, 255), 0);
   Func_020057ec(40);
   wait(80);
   Func_02000f6c();
@@ -236,7 +236,7 @@ void Func_020027cc(void) {
   Func_02005854(11);
   Func_02004d48(11, 0);
   FieldEvent_Wait(80);
-  GameFlag_SetBit(0x8f7);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x7f8, 255));
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_020057c4(12);

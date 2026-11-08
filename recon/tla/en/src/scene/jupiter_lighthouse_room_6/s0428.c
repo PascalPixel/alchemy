@@ -1,4 +1,4 @@
-#include "jupiter_lighthouse_room_6.h"
+#include "../../../../../../games/tla/src/scene/jupiter_lighthouse_room_6/jupiter_lighthouse_room_6.h"
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"

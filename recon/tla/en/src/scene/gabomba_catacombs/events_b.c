@@ -13,7 +13,7 @@ void Func_0200094c(void) {
       Func_0200114c(steam, 1);
       Func_02001154(steam, gData_0200128c);
     }
-    Func_02001284(0x26f);
+    Func_02001284(SPLIT_CONSTANT(0x170, 255));
   }
   Func_020008a0(leader, 0xd999);
 }

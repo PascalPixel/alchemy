@@ -42,7 +42,7 @@ void Func_020003b8(s32 unused, s32 id) {
   s32 i;
 
   if (object->x >> 20 == 63 && object->z >> 20 == 15) {
-    GameFlag_SetBit(2572);
+    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 12));
     object->motionFlags = 3;
     wait(2);
     i = 0;

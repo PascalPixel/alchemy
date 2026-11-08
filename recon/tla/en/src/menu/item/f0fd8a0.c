@@ -69,7 +69,7 @@ s32 Func_080fd8a0(s32 window, s32 *work, struct MenuResult *state) {
 #endif
     }
   } else {
-    GameFlag_ClearBit(0x2ff);
+    GameFlag_ClearBit(SPLIT_CONSTANT(0x200, 255));
   }
 
   row = 0;

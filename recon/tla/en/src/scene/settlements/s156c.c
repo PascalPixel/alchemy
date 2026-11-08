@@ -32,7 +32,7 @@ void Func_0200156c(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
   spawn.kind = 0x115;
-  spawn.scaleX = 0xcccc;
+  spawn.scaleX = SPLIT_CONSTANT(0xcc00, 204);
   spawn.scaleY = 0xcccc;
   spawn.speed = 0x10000;
   spawn.acceleration = 0x10000;

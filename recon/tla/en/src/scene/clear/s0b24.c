@@ -9,7 +9,7 @@
 
 // The copies go through an inline wrapper, as the Broken Seal's iwram_call.h
 // writes it.
-#undef Iwram_CopyWords
+#undef Iwram_CopyWordsEntry
 static inline s32 Iwram_CopyWords(void *destination, const void *source,
                                   s32 size) {
   return Iwram_CopyWordsEntry(destination, source, size);

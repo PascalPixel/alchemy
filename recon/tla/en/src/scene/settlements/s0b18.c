@@ -11,7 +11,7 @@ static __inline__ void Place(s32 id, s32 x, s32 z) {
 
 s32 Func_02000b18(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room9) {
-    if (Flag_Test(0x205)) {
+    if (Flag_Test(SPLIT_CONSTANT(0x106, 255))) {
       CopyCells2(9, 11, 1, 1, 11, 12);
       Func_02002018(12, 32, 11, 15, 1, 1);
       Func_02002018(77, 15, 75, 15, 1, 1);

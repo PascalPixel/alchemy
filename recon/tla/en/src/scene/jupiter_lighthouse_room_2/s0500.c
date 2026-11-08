@@ -51,7 +51,7 @@ void Func_02000500(s32 unused, s32 id) {
     Func_0200232c(188);
   }
   if (object->x >> 20 == 20 && object->z >> 20 == 39) {
-    GameFlag_SetBit(0xa02);
+    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 2));
     Actor_SetSingleChildFlags(Actor_GetById(id), 0);
     Actor_SetSpritePriority(id, 3);
     Func_0200227c(id, 0, 0);

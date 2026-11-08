@@ -284,7 +284,7 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
     SideObject_CreateFar(ownerId, 0, side, window, 0, 0);
   {
     /* FAKEMATCH(temporary): the copy routine held in a local; as
-     * Iwram_CopyWords called directly, 22 of 906 instructions differ in tla-en.
+     * Iwram_CopyWordsEntry called directly, 22 of 906 instructions differ in tla-en.
      */
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 

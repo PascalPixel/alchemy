@@ -85,20 +85,20 @@ static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
 }
 
 void Func_0200072c(void) {
-  if (GameFlag_Test(0x8cb) != 0)
+  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 203)) != 0)
     Map_CopyCells(72, 63, 36, 38, 1, 2);
   else
     Map_CopyCells(71, 63, 36, 38, 1, 2);
-  GameFlag_SetBit(0x203);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x104, 255));
 }
 
 void Func_02000778(void) {
   Map_CopyCells(70, 63, 36, 38, 1, 2);
-  GameFlag_ClearBit(0x203);
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x104, 255));
 }
 
 void Func_020007a0(void) {
-  if (GameFlag_Test(0x203) != 0 && Flag_Test(0x8cb) == 0) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x104, 255)) != 0 && Flag_Test(SPLIT_CONSTANT(0x800, 203)) == 0) {
     Func_0200110c();
     Func_020011ac(1);
     Func_02001214(161);

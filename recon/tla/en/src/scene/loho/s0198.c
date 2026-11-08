@@ -149,7 +149,7 @@ L_0200821a:
     goto L_020081b6;
 L_0200821e:
   Call4(Camera_MoveWithinMapBounds, 0x1e80000, -1, 0x1740000, 1);
-  GameFlag_SetBit(0xa5f);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x960, 255));
   Call3(Actor_SetPositionAndCommit, 4, 0x1e7, 0x179);
   Call2(Func_020013a0, 4, 0xc000);
   FieldEvent_Wait(30);
@@ -193,7 +193,7 @@ L_0200838c:
   if (i >= 0)
     goto L_0200838c;
   Dma_Set((const void *)(s32)Field_Palette685, (void *)0x50003e0, 0x80000010,
-          (volatile u32 *)0x40000d4);
+          (volatile u32 *)SPLIT_CONSTANT(0x4000000, 212));
   i = 0;
   /* FAKEMATCH(dead): this test that never passes, with its edge into the loop,
    * which combine folds away; as the loop entered only at its top, 28 of 1050
@@ -305,7 +305,7 @@ L_02008474:
   Func_020013c8();
   Call3(Actor_ArmCallback, 18, 0x5000, 0);
   Call2(Func_02001390, 18, 0);
-  Call3(Actor_SetSpeedParameters, 17, 0xcccc, 0x6666);
+  Call3(Actor_SetSpeedParameters, 17, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
   Actor_OffsetPositionAndReset(17, 0, 16);
   Actor_WaitForMoveById(17);
   Call2(Func_020013a0, 17, 0x2000);
@@ -343,7 +343,7 @@ L_02008474:
   Actor_SetMovementTypeById(16, (s32)gData_02001470);
   Call3(Actor_SetSpeedParameters, 18, 0x8000, 0x4000);
   Actor_SetMovementTypeById(18, (s32)gData_0200151c);
-  Call3(Actor_SetSpeedParameters, 17, 0x6666, 0x3333);
+  Call3(Actor_SetSpeedParameters, 17, SPLIT_CONSTANT(0x6600, 102), SPLIT_CONSTANT(0x3300, 51));
   Actor_SetMovementTypeById(17, (s32)gData_0200154c);
   Actor_RefreshSelectorById(16);
   Func_020013a0(16, 0x6000);
@@ -375,7 +375,7 @@ L_020088f0:
   Call3(Actor_SetAngleToward, 17, 4, 0);
   Call3(Actor_SetSpeedParameters, 16, 0x10000, 0x8000);
   Actor_SetMovementTypeById(16, (s32)gData_0200158c);
-  Call2(Func_020013b8, 0x1cccc, 0x3999);
+  Call2(Func_020013b8, SPLIT_CONSTANT(0x1cc00, 204), SPLIT_CONSTANT(0x3900, 153));
   Call4(Camera_MoveWithinMapBounds, 0x21e0000, -1, 0x15e0000, 1);
   Func_020013c8();
   FieldMessage_ShowAtActor(17, 0);
@@ -423,17 +423,17 @@ L_020089c4:
   Actor_WaitForMoveById(18);
   Actor_RefreshSelectorById(16);
   Call2(Func_020013a0, 16, 0);
-  Call3(Actor_SetSpeedParameters, 16, 0x4ccc, 0x2666);
-  Call3(Actor_SetSpeedParameters, 17, 0x4ccc, 0x2666);
-  Call3(Actor_SetSpeedParameters, 18, 0x4ccc, 0x2666);
+  Call3(Actor_SetSpeedParameters, 16, SPLIT_CONSTANT(0x4c00, 204), SPLIT_CONSTANT(0x2600, 102));
+  Call3(Actor_SetSpeedParameters, 17, SPLIT_CONSTANT(0x4c00, 204), SPLIT_CONSTANT(0x2600, 102));
+  Call3(Actor_SetSpeedParameters, 18, SPLIT_CONSTANT(0x4c00, 204), SPLIT_CONSTANT(0x2600, 102));
   FieldEvent_Wait(40);
-  Actor_SetSpeedParameters(20, 0x1999, 0xccc);
+  Actor_SetSpeedParameters(20, SPLIT_CONSTANT(0x1900, 153), SPLIT_CONSTANT(0xc00, 204));
   t226 = Actor_GetById(20);
   FIELD_AT(t226, u8, 85) = 0;
   Actor_SetMovementTypeById(20, (s32)gData_0200166c);
   Actor_RefreshSelectorById(20);
-  Call3(Actor_SetSpeedParameters, 20, 0x4ccc, 0x2666);
-  Call2(Func_020013b8, 0x4ccc, 0x999);
+  Call3(Actor_SetSpeedParameters, 20, SPLIT_CONSTANT(0x4c00, 204), SPLIT_CONSTANT(0x2600, 102));
+  Call2(Func_020013b8, SPLIT_CONSTANT(0x4c00, 204), SPLIT_CONSTANT(0x900, 153));
   Camera_MoveWithinMapBounds(0x1cc0000, -1, 0x15e0000, 1);
   FieldEvent_Wait(30);
   t233 = Actor_GetById(16);

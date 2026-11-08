@@ -30,7 +30,7 @@ static __inline__ s32 Flag_Test(s32 flag) {
 s32 Func_020002d8(void) {
   s32 set;
 
-  set = GameFlag_Test(0x203);
+  set = GameFlag_Test(SPLIT_CONSTANT(0x104, 255));
   if (set != 0) {
     return set;
   }
@@ -56,12 +56,12 @@ s32 Func_02000344(void) {
 
   LinkLobby_WriteSlotValue(4);
   GameFlag_ClearBit(0x200);
-  GameFlag_ClearBit(0x203);
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x104, 255));
   Func_02001a14();
   Func_02001ab4(0);
   work->raisedTrigger = 0;
   Func_02001a64((s32)MsgTheLinkWas);
   FieldMessage_ShowAtActor(8, 0);
-  GameFlag_ClearBit(0x205);
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x106, 255));
   Func_02001a1c();
 }

@@ -292,8 +292,8 @@ void Func_081b83c4(void) {
   s32 digits;
 
   spritePalette = HeapSlot_Alloc(96, 0x200);
-  dice = HeapSlot_AllocEwram(92, 0x7b7c);
-  sprites = HeapSlot_AllocEwram(180, 0x614);
+  dice = HeapSlot_AllocEwram(92, SPLIT_CONSTANT(0x7b00, 124));
+  sprites = HeapSlot_AllocEwram(180, SPLIT_CONSTANT(0x600, 20));
   camera = HeapSlot_AllocEwram(48, 76);
   Resource_ReservedNoOp((s32)&ResourceId_FarCall00C);
   Camera_ResetSceneDefaultsB();
@@ -651,7 +651,7 @@ void Func_081b83c4(void) {
             s32 speedZ = die->velocityZ >> 8;
 
             speed = Iwram_Sqrt(speedX * speedX + speedZ * speedZ) * 56 / 64;
-            angle = Random16() & 0xffff;
+            angle = Random16() & SPLIT_CONSTANT(0xff00, 255);
             die->velocityX = Trig_Sin(angle) * speed >> 8;
             die->velocityZ = Trig_Cos(angle) * speed >> 8;
           } else {
@@ -680,7 +680,7 @@ void Func_081b83c4(void) {
         die->velocityY = die->velocityY * 63 / 64;
         die->velocityZ = die->velocityZ * 63 / 64;
         die->variant += spinRate[index];
-        if (die->variant > 0x47ff)
+        if (die->variant > SPLIT_CONSTANT(0x4700, 255))
           die->variant -= 0x4800;
         if (spinRate[index] > 0)
           spinRate[index]--;
@@ -1076,7 +1076,7 @@ void Func_081b83c4(void) {
         multiplierDigits = 5;
       sprites->oam[spriteCount].attr01 =
           (((560 - multiplierDigits * 10) & 0x1ff) << 16) | 0x40000018;
-      sprites->oam[spriteCount].attr2 = 0x9118;
+      sprites->oam[spriteCount].attr2 = SPLIT_CONSTANT(0x9100, 24);
       spriteCount++;
       spriteCount = Func_081b8180(spriteCount, 48, 20, multiplier, 10, 5);
       spriteCount = Func_081b8180(spriteCount, MULTIPLIER_ZERO_X, 20, 0, 11, 1);
@@ -1089,13 +1089,13 @@ void Func_081b83c4(void) {
       s32 left;
 
       x = (timer > 0 && lower == 1) ? timer * 12 + 64 : 64;
-      wobble = lower == 0 ? Trig_Sin((frame << 10) & 0x7fff) >> 14 : 0;
+      wobble = lower == 0 ? Trig_Sin((frame << 10) & SPLIT_CONSTANT(0x7f00, 255)) >> 14 : 0;
       left = x + slide * 15;
       if (target <= 23)
         spriteCount = Func_081b8180(spriteCount, left - 110, wobble + 60,
                                     target + 1, 14, 2);
       x = (timer > 0 && lower == 0) ? timer * 12 + 64 : 64;
-      wobble = lower == 1 ? Trig_Sin((frame << 10) & 0x7fff) >> 14 : 0;
+      wobble = lower == 1 ? Trig_Sin((frame << 10) & SPLIT_CONSTANT(0x7f00, 255)) >> 14 : 0;
       left = x + slide * 15;
       if (target > 4)
         spriteCount = Func_081b8180(spriteCount, left - 110, 94 - wobble,
@@ -1171,7 +1171,7 @@ void Func_081b83c4(void) {
         if (timer > 67) {
           s32 elapsed = timer - 68;
 
-          angle = elapsed * 1489;
+          angle = elapsed * SPLIT_CONSTANT(0x500, 209);
           x = (Trig_Cos(angle) * 48 >> 16) + 52;
           y = 48 - (Trig_Sin(angle) * 48 >> 16);
         }
@@ -1276,7 +1276,7 @@ void Func_081b83c4(void) {
         y = screen[1] - 0xc00 / half;
         if (y + 92 > -16) {
           sprites->oam[spriteCount].attr01 =
-              (((index + 4) << 25) | (((x + 632) & 0x1ff) << 16)) |
+              (((index + 4) << 25) | (((x + 632) & SPLIT_CONSTANT(0x100, 255)) << 16)) |
               ((y + 348) & 255) | 0x40002300;
           sprites->oam[spriteCount].attr2 = 0x890;
           spriteCount++;

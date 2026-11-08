@@ -85,7 +85,7 @@ main	rom_main_00	games/tla/src/system/debug_number	.text
 main	rom_main_00	recon/tla/raw/src/system/memory	.text
 main	rom_main_00	recon/tla/raw/src/system/render	.text
 main	rom_main_00	recon/tla/raw/src/system/look_at	.text
-main	rom_main_00	recon/tla/raw/src/system/transfer	.text
+main	rom_main_00	games/tla/src/system/transfer	.text
 main	rom_main_00	recon/tla/raw/src/system/camera_store_scene_parameters	.text
 main	rom_main_00	recon/tla/it/rom	.rom.000157a4	it
 main	rom_main_00	recon/tla/fr/rom	.rom.000157a4	fr
@@ -1176,8 +1176,7 @@ main	rom_main_04	recon/tla/raw/src/field/field_sequence/rule_position	.text
 main	rom_main_04	recon/tla/raw/src/field/field_sequence/special	.text
 main	rom_main_04	recon/tla/raw/src/field/field_sequence/is_active_owner	.text
 main	rom_main_04	recon/tla/raw/src/field/field_sequence/remap_character	.text
-main	rom_main_04	games/tla/src/field/event/spawn	.text	ja en de fr
-main	rom_main_04	games/tla/src/field/event/spawn	.text	es it
+main	rom_main_04	games/tla/src/field/event/spawn	.text
 main	rom_main_04	recon/tla/raw/src/field/event/f0ca6e8	.text
 main	rom_main_04	recon/tla/raw/src/field/event/f0ca9cc	.text	en de es fr it
 main	rom_main_04	recon/tla/raw/src/field/event/f0ca9cc	.text	ja
@@ -2627,7 +2626,7 @@ main	rom_main_08	games/tla/src/battle/motion/objects	.text
 main	rom_main_08	recon/tla/raw/src/battle/motion/f11b9fc	.text
 main	rom_main_08	recon/tla/raw/src/battle/motion/reset_battle_object_record_groups	.text
 main	rom_main_08	recon/tla/raw/src/battle/motion/camera_flag	.text
-main	rom_main_08	recon/tla/raw/src/battle/motion/get_motion_record	.text
+main	rom_main_08	games/tla/src/battle/motion/get_motion_record	.text
 main	rom_main_08	recon/tla/raw/src/battle/motion/reset_motion_at_anchor	.text
 main	rom_main_08	recon/tla/raw/src/battle/motion/f11bf18	.text
 main	rom_main_08	recon/tla/raw/src/battle/motion/set_object_position	.text

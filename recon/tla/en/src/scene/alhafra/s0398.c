@@ -24,11 +24,11 @@ extern const u8 MsgAlhafra70[];
 extern const u8 MsgAlhafra71[];
 
 void Func_02000398(s32 id) {
-  if (!GameFlag_Test(0x8b5)) {
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x800, 181))) {
     ((struct AlhafraEventWork *)Ram_HeapSlots->eventWork)->value15a = 1;
     Func_02001c74(MsgAlhafra65);
     Func_02001c8c(id, 0);
-  } else if (Value1(GameFlag_Test, 0x8b6)) {
+  } else if (Value1(GameFlag_Test, SPLIT_CONSTANT(0x800, 182))) {
     Func_02001c74(MsgAlhafra71);
     Func_02001c8c(id, 0);
   } else {
@@ -40,7 +40,7 @@ void Func_02000398(s32 id) {
     FieldMessage_ShowAtActor(id, 0);
     FieldEvent_Wait(10);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
-      GameFlag_SetBit(0x8b6);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x800, 182));
       FieldEvent_Wait(20);
       Func_02001c84(id, 0, 10);
       ((struct AlhafraEventWork *)Ram_HeapSlots->eventWork)->value1c4++;

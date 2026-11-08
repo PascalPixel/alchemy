@@ -59,7 +59,7 @@ extern u8 gData_02003a98[];
 extern u8 gMainRoutineWork[];
 
 void Func_02000aa0(s32 a0) {
-  GameFlag_SetBit(0x8b3);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 179));
   Func_02001be4();
   Func_02001cfc(0);
   Func_02001c74((s32)MsgAlhafra10);
@@ -210,7 +210,7 @@ void Func_02000aa0(s32 a0) {
   Call3(Actor_ArmCallback, 29, 0x5000, 0);
   Call3(Actor_ArmCallback, 30, 0xe000, 0);
   FieldEvent_Wait(20);
-  Call3(Func_02001c84, 0x101e, 0, 0xa);
+  Call3(Func_02001c84, SPLIT_CONSTANT(0x1000, 30), 0, 0xa);
   Actor_SetModeById(29, 1);
   FieldEvent_Wait(20);
   Motion_SetModeAndWaitAnimation(29, 3);
@@ -289,7 +289,7 @@ void Func_02000aa0(s32 a0) {
   FieldEvent_Wait(20);
   Actor_ArmCallback(29, 0, 0);
   FieldEvent_Wait(20);
-  Call3(Func_02001c84, 0x201d, 0, 0xa);
+  Call3(Func_02001c84, SPLIT_CONSTANT(0x2000, 29), 0, 0xa);
   Func_02001ca4(0x22, 0x100, 0x28);
   Call3(Func_02001c84, 0x22, 0, 0xa);
   Call3(Actor_ArmCallback, 29, 0x8000, 0);
@@ -435,13 +435,13 @@ void Func_02000aa0(s32 a0) {
   Call3(Actor_ArmCallback, 30, 0xc000, 0);
   Call3(Actor_ArmCallback, 33, 0xc000, 0);
   Call3(Actor_ArmCallback, 34, 0xc000, 0);
-  Call3(Actor_SetSpeedParameters, 29, 0x1e666, 0xf333);
-  Call3(Actor_SetSpeedParameters, 30, 0x1e666, 0xf333);
-  Call3(Actor_SetSpeedParameters, 31, 0x1e666, 0xf333);
-  Call3(Actor_SetSpeedParameters, 32, 0x1e666, 0xf333);
-  Call3(Actor_SetSpeedParameters, 33, 0x1e666, 0xf333);
-  Call3(Actor_SetSpeedParameters, 34, 0x1e666, 0xf333);
-  Call3(Actor_SetSpeedParameters, 35, 0x1e666, 0xf333);
+  Call3(Actor_SetSpeedParameters, 29, SPLIT_CONSTANT(0x1e600, 102), SPLIT_CONSTANT(0xf300, 51));
+  Call3(Actor_SetSpeedParameters, 30, SPLIT_CONSTANT(0x1e600, 102), SPLIT_CONSTANT(0xf300, 51));
+  Call3(Actor_SetSpeedParameters, 31, SPLIT_CONSTANT(0x1e600, 102), SPLIT_CONSTANT(0xf300, 51));
+  Call3(Actor_SetSpeedParameters, 32, SPLIT_CONSTANT(0x1e600, 102), SPLIT_CONSTANT(0xf300, 51));
+  Call3(Actor_SetSpeedParameters, 33, SPLIT_CONSTANT(0x1e600, 102), SPLIT_CONSTANT(0xf300, 51));
+  Call3(Actor_SetSpeedParameters, 34, SPLIT_CONSTANT(0x1e600, 102), SPLIT_CONSTANT(0xf300, 51));
+  Call3(Actor_SetSpeedParameters, 35, SPLIT_CONSTANT(0x1e600, 102), 0xf333);
   Call3(Actor_OffsetPositionAndReset, 29, 0, -150);
   Call3(Actor_OffsetPositionAndReset, 30, 0, -150);
   Call3(Actor_OffsetPositionAndReset, 31, 0, -150);

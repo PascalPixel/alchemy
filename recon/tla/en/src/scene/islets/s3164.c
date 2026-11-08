@@ -31,7 +31,7 @@ void Func_02003164(void) {
   Func_02003edc(11, 0, 0);
   Func_02003f4c(12);
   Func_02003f4c(13);
-  set = GameFlag_Test(0x212);
+  set = GameFlag_Test(SPLIT_CONSTANT(0x200, 18));
   if (set) {
     struct Actor *first = Actor_GetById(12);
     struct Actor *second = Actor_GetById(13);
@@ -64,6 +64,6 @@ void Func_02003164(void) {
     last->motionFlags = still;
   }
   Func_020020ec(last->x, last->z, 1, 255);
-  if (GameFlag_Test(0x213))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x114, 255)))
     Call6((void (*)())Func_02003e24, 5, 2, 1, 2, 5, 28);
 }

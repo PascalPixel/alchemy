@@ -40,7 +40,7 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align) {
     GameFlag_SetBit(0x200);
   } else {
     /* FAKEMATCH(wrapper): the copy forwarded through DisplayScroll_CopyWords,
-     * which keeps its own constants; as Iwram_CopyWords called directly, 71
+     * which keeps its own constants; as Iwram_CopyWordsEntry called directly, 71
      * of 279 instructions differ in tla-en. */
     DisplayScroll_CopyWords(buf, buf + 0x800, 0x100);
     Iwram_FillWords(buf + 0x100, 0x800, 0);

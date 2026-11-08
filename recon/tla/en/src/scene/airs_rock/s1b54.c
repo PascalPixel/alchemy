@@ -42,9 +42,9 @@ void Func_02001b54(struct Actor *object) {
       /* FAKEMATCH(wrapper): forwarded, so each product builds its own constant and
        * they share the routine's address; as direct calls, 106 of 153
        * instructions differ in tla-en. */
-      position.x = object->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
+      position.x = object->x + ValueLr2((s32 (*)())Iwram_MulQ16Entry, 0x80000,
                                       Math_Cosine(object->angle));
-      position.z = object->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
+      position.z = object->z + ValueLr2((s32 (*)())Iwram_MulQ16Entry, 0x80000,
                                       Math_Sine(object->angle));
     }
     shot = (struct Actor *)Import_ActorCreate(280, position.x,

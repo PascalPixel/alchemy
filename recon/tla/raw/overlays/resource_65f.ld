@@ -22,7 +22,7 @@ SECTIONS
         "*/recon/tla/raw/src/scene/garoh/s0aa8.o"(.text)
         "*/games/tla/src/scene/garoh/prepare.o"(.text)
         "*/recon/tla/raw/src/scene/garoh/s0be4.o"(.text)
-        "*/recon/tla/raw/src/scene/garoh/s0d30.o"(.text)
+        "*/games/tla/src/scene/garoh/s0d30.o"(.text)
         "*/recon/tla/raw/src/scene/garoh/lift_a.o"(.text)
         "*/recon/tla/raw/src/scene/garoh/lift.o"(.text)
         "*/recon/tla/raw/src/field/field_effect/advance_motion.o"(.text)

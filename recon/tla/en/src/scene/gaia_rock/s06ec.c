@@ -65,7 +65,7 @@ s32 Func_020006ec(void) {
     }
     actor = Actor_GetById(19);
     actor->priorityFlags = 0;
-    if (GameFlag_Test(0x921)) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 33))) {
       actor->motionFlags = 0;
       actor->x = 0x2880000;
       actor->y = 0x400000;
@@ -81,12 +81,12 @@ s32 Func_020006ec(void) {
         Call6((void (*)())Func_02000e44, 38, 46, 1, 1, 39, 46);
       }
     }
-    if (GameFlag_Test(0x927) && !GameFlag_Test(0x9ab)) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 39)) && !GameFlag_Test(SPLIT_CONSTANT(0x900, 171))) {
       Call3((void (*)())Func_02000e8c, 20, 0x31e0000, 0x3200000);
       Func_02000e44(53, 52, 1, 1, 49, 49);
       Func_02000e44(53, 52, 1, 1, 50, 49);
       Actor_SetModeById(20, 5);
-      if (!Flag_IsSet(0xa61)) {
+      if (!Flag_IsSet(SPLIT_CONSTANT(0xa00, 97))) {
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
         Actor_StartRepeatedMotion(20, 3);
@@ -96,7 +96,7 @@ s32 Func_020006ec(void) {
         Func_02000eac(20, 0);
         Actor_StartRepeatedMotion(20, 2);
         FieldEvent_Wait(30);
-        GameFlag_SetBit(0xa61);
+        GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 97));
         Func_02000e7c();
       }
     }

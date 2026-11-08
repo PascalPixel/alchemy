@@ -1,4 +1,4 @@
-#include "izumo.h"
+#include "../../../../../../games/tla/src/scene/izumo/izumo.h"
 #include "io_reg.h"
 
 extern u32 gFrameCount;

@@ -33,7 +33,7 @@ void Func_02002f1c(void) {
     *next = 0;
   }
   Task_Add(Func_02002d7c, 0x480);
-  if (GameFlag_Test(0xa2c)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 44))) {
     object = Actor_GetById(10);
     Call3((void (*)())Func_02003edc, 10, PIXELS(176), PIXELS(168));
     Actor_SetModeById(10, 4);
@@ -46,7 +46,7 @@ void Func_02002f1c(void) {
   } else {
     Func_02003684(10);
   }
-  if (!GameFlag_Test(0xaa2)) {
+  if (!GameFlag_Test(SPLIT_CONSTANT(0xa00, 162))) {
     Actor_WatchAndSetScript(9, 19);
     Actor_SetModeById(19, 0);
     Actor_GetById(19)->actionFlags &= ~1;
@@ -60,7 +60,7 @@ void Func_02002f1c(void) {
     Func_02003ee4(19, PIXELS(234), PIXELS(204), angle);
     Actor_GetById(19)->collisionFlags |= 0x80;
     Call3((void (*)())Actor_SetSpeedParameters, 9, 0x20000, 0x10000);
-    Call3((void (*)())Actor_SetSpeedParameters, 19, 0x19999, 0xcccc);
+    Call3((void (*)())Actor_SetSpeedParameters, 19, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
     Actor_SetMovementTypeById(9, gData_02004274);
     Actor_SetMovementTypeById(19, gData_02004274);
     GameFlag_SetBit(0x200);
@@ -74,7 +74,7 @@ void Func_020030b4(void) {
     GameFlag_ClearBit(0x12f);
   Actor_SetSingleChildFlags(Actor_GetById(10), 0);
   Actor_SetModeById(10, 4);
-  if (GameFlag_Test(0xaa3)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 163))) {
     spawned = (struct Actor *)Value4((s32 (*)())Func_02003df4, 489, 0x680000,
                                      0x180000, 0xa00000);
     if (spawned != 0) {

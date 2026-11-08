@@ -47,9 +47,9 @@ void Menu_UpdateCancelSound(void) {
   frame = gFrameCount;
   if ((frame & 3) == 0) {
     if (frame & 4)
-      CopyWords(gData_08105948, Iwram_CopyWords, (void *)0x06002540, 32);
+      CopyWords(gData_08105948, Iwram_CopyWordsEntry, (void *)0x06002540, 32);
     else
-      FillWords(Iwram_FillWords, (void *)0x06002540, 32, 0x44444444);
+      FillWords(Iwram_FillWordsEntry, (void *)0x06002540, 32, 0x44444444);
   }
   input = &gInput;
   mask = 8;

@@ -24,7 +24,7 @@
 
 // gTransform contains twelve s32 values in Q16 (1.0 = 0x10000).
 // Entries 0-8 form the 3x3 rotation; entries 9-11 hold the translation.
-// Iwram_TransformMatrix multiplies the supplied matrix into the current one.
+// Iwram_TransformMatrixEntry multiplies the supplied matrix into the current one.
 
 #define MTX_DMA DMA_COPY_WORDS(12) ///< DMA for one matrix.
 

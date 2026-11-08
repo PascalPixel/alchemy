@@ -60,7 +60,7 @@ void Func_02001c6c(void) {
     Func_020058e0(17, 0, 0);
   else
     Func_0200078c(17);
-  if (!GameFlag_Test(0x365))
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x300, 101)))
     Func_020058e0(18, 0, 0);
   else
     Func_0200078c(18);

@@ -37,7 +37,7 @@ void Func_02000d80(void) {
   struct EventWork1cc *work;
   s32 result, i;
 
-  if (GameFlag_Test(0xa68)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 104))) {
     work = Ram_HeapSlots->eventWork;
     owner = gMainRoutineWork.currentOwner;
     carried = work->object;
@@ -83,7 +83,7 @@ void Func_02000d80(void) {
       for (i = 59; i >= 0; i--) {
         leader->y += 0x20000;
         leader->angle += 0x1000;
-        if (Random16Far() <= 0xfff)
+        if (Random16Far() <= SPLIT_CONSTANT(0xf00, 255))
           Func_02001d30(leader);
         wait(1);
       }

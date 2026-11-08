@@ -44,7 +44,7 @@ s32 Func_020017f4(void) {
     Actor_SetPartAttribute(Actor_GetById(9), 4);
     Actor_SetPartAttribute(Actor_GetById(10), 4);
     Actor_SetPartAttribute(Actor_GetById(11), 4);
-    if (GameFlag_Test(0xa6b))
+    if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 107)))
       Actor_SetPartAttribute(Actor_GetById(12), 5);
     else
       Actor_SetPartAttribute(Actor_GetById(12), 6);
@@ -78,7 +78,7 @@ s32 Func_020017f4(void) {
     Value2((s32 (*)())Actor_SetSpritePriority, 24, 1);
     Func_02002550();
     Func_0200276c();
-    if (GameFlag_Test(0xa68)) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 104))) {
       Func_020025a8(26);
       Func_02002834(26);
       Func_02002948(5);
@@ -90,7 +90,7 @@ s32 Func_020017f4(void) {
     Actor_SetSpritePriority(26, 1);
     if (gMainRoutineWork.entrance == 5)
       Func_0200169c();
-    if (GameFlag_Test(0x955)) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 85))) {
       Call3(Func_020029d8, 17, PIXELS(392), PIXELS(824));
       Call3(Func_020029d8, 18, PIXELS(424), PIXELS(824));
       Call3(Func_020029d8, 19, PIXELS(456), PIXELS(824));
@@ -100,7 +100,7 @@ s32 Func_020017f4(void) {
       Call6(Func_02002958, 64, 66, 11, 7, 87, 50);
       Actor_GetById(21)->update = Func_02001670;
     }
-    if (GameFlag_Test(0xa6b)) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 107))) {
       Call6(Func_02002960, 62, 41, 1, 2, 33, 41);
       Call6(Func_02002968, 116, 95, 3, 13, 0x60, 0x20);
       Call6(Func_02002968, 122, 95, 3, 13, 0x20, 0x60);
@@ -111,26 +111,26 @@ s32 Func_020017f4(void) {
       Func_02002158();
   } else if (scene == (s32)&SceneId_Ov67bRoom2) {
     Actor_SetSingleChildFlags(Actor_GetById(14), 0);
-    if (GameFlag_Test(545))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x122, 255)))
       Call6(Func_02002960, 42, 32, 1, 1, 44, 32);
-    if (GameFlag_Test(546))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x200, 34)))
       Call6(Func_02002960, 48, 32, 1, 1, 46, 32);
-    if (GameFlag_Test(547))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x124, 255)))
       Call6(Func_02002960, 44, 44, 1, 1, 46, 44);
     Actor_SetModeById(12, 2);
-    if (GameFlag_Test(0x951)) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 81))) {
       Call3(Func_020029d8, 12, PIXELS(856), PIXELS(840));
       Call6(Func_02002960, 54, 58, 1, 1, 53, 52);
     }
     Actor_SetModeById(13, 2);
-    if (GameFlag_Test(0x952)) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 82))) {
       Call3(Func_020029d8, 13, PIXELS(856), PIXELS(936));
       Call6(Func_02002960, 54, 58, 1, 1, 53, 58);
     }
     if (gMainRoutineWork.entrance == 5 || gMainRoutineWork.entrance == 7) {
       Func_02002550();
       Func_0200276c();
-      if (GameFlag_Test(0xa68)) {
+      if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 104))) {
         Func_020025a8(14);
         Func_02002834(14);
       } else {
@@ -144,7 +144,7 @@ s32 Func_020017f4(void) {
       Func_02002550();
       Func_0200276c();
       Actor_GetById(8)->update = Func_02000b58;
-      if (GameFlag_Test(0xa69)) {
+      if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 105))) {
         Func_020025a8(8);
         Func_02002834(8);
         Func_020029d8(15, PIXELS(264), PIXELS(792));

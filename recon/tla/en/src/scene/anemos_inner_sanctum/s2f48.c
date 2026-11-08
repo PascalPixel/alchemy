@@ -53,7 +53,7 @@ void Func_02002f48(void) {
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = Effect_AdvanceMotion;
-  options.startScaleX = 0xa3d7;
+  options.startScaleX = SPLIT_CONSTANT(0xa300, 215);
   options.startScaleY = 0xa3d7;
   i = 0;
   // A goto loop carries no loop notes: as a do-while loop, loop.c moves the
@@ -95,7 +95,7 @@ loop:
   /* FAKEMATCH(wrapper): the call forwarded through Call3, which builds each -1
    * in its own register; as a direct call, 7 of 169 instructions differ in
    * tla-en. */
-  Call3(Func_02003368, -1, -1, 0xe666);
+  Call3(Func_02003368, -1, -1, SPLIT_CONSTANT(0xe600, 102));
   Func_02003370();
   Func_02003410(gMainRoutineWork.currentOwner, 0x100);
   actor->gravity = 0x10000;

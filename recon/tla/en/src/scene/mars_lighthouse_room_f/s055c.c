@@ -39,7 +39,7 @@ void Func_0200055c(s32 id) {
         object->acceleration = 0;
         object->scaleX = scale;
         object->scaleY = scale;
-        object->gravity = 0x547a;
+        object->gravity = SPLIT_CONSTANT(0x5400, 122);
         object->velocityX = vx;
         object->bounce = 0x8000;
       }

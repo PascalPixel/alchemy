@@ -51,7 +51,7 @@ s32 Func_02000988(void) {
     Func_02000768();
     return 0;
   }
-  if (GameFlag_Test(0x8f3) && !GameFlag_Test(0x8ef)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 243)) && !GameFlag_Test(SPLIT_CONSTANT(0x7f0, 255))) {
     Func_020007d8();
     return 0;
   }
@@ -64,21 +64,21 @@ s32 Func_02000988(void) {
       goto done;
     Func_020012f4();
     Func_0200130c(0, 0x200, 10, 11);
-    if (GameFlag_Test(0x8ab)) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x800, 171))) {
       Func_020012fc();
       Func_02001304(0, 8, 9);
     }
-    if (GameFlag_Test(0x885))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x800, 133)))
       Func_0200124c(14, 0, 0);
     else
       Actor_GetById(14)->scaleY = 0x14000;
-    if (GameFlag_Test(0x201))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x102, 255)))
       Call6(Func_020011d4, 79, 28, 1, 1, 81, 28);
-    if (GameFlag_Test(0x202))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x200, 2)))
       Call6(Func_020011d4, 115, 35, 1, 1, 117, 35);
     Func_02000fcc(0, 240);
     Func_02001068(0, 17, 0, 0, 64);
-    if (GameFlag_Test(0x886)) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x800, 134))) {
       actor = Actor_GetById(17);
       Call6(Func_020011dc, 124, 1, 1, 1, 119, 43);
       Call3(Func_0200124c, 17, PIXELS(1912), PIXELS(728));
@@ -88,7 +88,7 @@ s32 Func_02000988(void) {
     }
   } while (0);
   Actor_SetModeById(16, 4);
-  if (GameFlag_Test(0x884)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 132))) {
     Call6(Func_020011d4, 74, 31, 1, 1, 74, 33);
     Func_0200124c(15, PIXELS(1193), PIXELS(530));
     Actor_GetById(15)->priorityFlags |= 2;

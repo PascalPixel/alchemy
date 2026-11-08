@@ -53,9 +53,9 @@ void Func_02003a8c(void) {
   Actor_SetPartAttribute(Actor_GetById(15), 2);
   Actor_SetPartAttribute(Actor_GetById(8), 0);
   Actor_SetPartAttribute(Actor_GetById(9), 3);
-  if (!Value1((s32 (*)())GameFlag_Test, 0x9e5))
+  if (!Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x900, 229)))
     return;
-  GameFlag_ClearBit(0x9e5);
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x900, 229));
   if (gMainRoutineWork.entrance == 18) {
     diff = gMainRoutineWork.coins - *(s32 *)gSceneState;
     Func_0200406c();

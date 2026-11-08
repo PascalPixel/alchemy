@@ -22,18 +22,18 @@ void Func_0200036c(void) {
   Func_02001084();
   Func_02001164(0);
   Call3((void (*)())Actor_ResetAndSetPosition, 17, 764, 384);
-  Call3((void (*)())Actor_SetPositionAndCommit, 16, 746, 380);
+  Call3((void (*)())Actor_SetPositionAndCommit, 16, SPLIT_CONSTANT(0x200, 234), 380);
   Actor_GetById(17)->velocityY = PIXELS(4);
   Actor_WaitForMoveById(17);
   Actor_GetById(17)->priorityFlags |= 2;
-  if (!Flag_IsSet(0x8ff) && !Flag_IsSet(0x201)) {
+  if (!Flag_IsSet(SPLIT_CONSTANT(0x800, 255)) && !Flag_IsSet(SPLIT_CONSTANT(0x102, 255))) {
     Actor_Stop(10);
     Call3((void (*)())Actor_SetPositionAndCommit, 10, 764, 388);
     Call3((void (*)())Actor_ResetAndSetPosition, 17, 764, 376);
     Call3((void (*)())Actor_SetPositionAndReset, 10, 764, 380);
     Actor_SetModeById(10, 4);
     Func_02001124(10, 257);
-    Flag_Set(0x202);
+    Flag_Set(SPLIT_CONSTANT(0x200, 2));
   }
   Func_0200108c();
 }

@@ -60,7 +60,7 @@ void Func_02001c00(void) {
   opt = &options;
   opt->kind = 1;
   opt->palette = 14;
-  opt->scaleX = 0xcccc;
+  opt->scaleX = SPLIT_CONSTANT(0xcc00, 204);
   opt->scaleY = 0xcccc;
   i = 0;
 first:
@@ -103,7 +103,7 @@ second:
   Actor_SetSingleChildFlags(leader, 1);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
   Call3((void (*)())Func_02003ac4, 0x50000, 0x80000, 0x10000);
-  Call3((void (*)())Func_02003ac4, -1, -1, 0xe666);
+  Call3((void (*)())Func_02003ac4, -1, -1, SPLIT_CONSTANT(0xe600, 102));
   Func_02003acc();
   Func_02003b74(gMainRoutineWork.currentOwner, 1);
   Func_02003b6c();

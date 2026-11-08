@@ -40,7 +40,7 @@ struct GustObject *Func_02000910(struct GustObject *source) {
   struct GustObject *object;
 
   Func_02001ca0(222);
-  position.x = source->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
+  position.x = source->x + ValueLr2((s32 (*)())Iwram_MulQ16Entry, 0x80000,
                                   Math_Cosine(source->angle));
   position.z = source->z + Iwram_MulQ16(0x80000, Math_Sine(source->angle));
   object = Func_02001b80(280, position.x, source->y, position.z);

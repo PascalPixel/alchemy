@@ -82,13 +82,13 @@ void Func_02000514(void) {
   actor15 = Actor_GetById(15);
   actor16 = Actor_GetById(16);
   facing = (Actor_GetById(gMainRoutineWork.currentOwner)->angle + 0x2000) & 0xc000;
-  if (actor16 != NULL && Value1(GameFlag_Test, 0x8a4) == 0)
+  if (actor16 != NULL && Value1(GameFlag_Test, SPLIT_CONSTANT(0x800, 164)) == 0)
     Func_02004c7c(actor16->x, actor16->z, 2, 255);
   if (Func_02004240(&unk) != 0) {
-    if (Value1(GameFlag_Test, 0x8a4) == 0 || facing == 0xc000) {
+    if (Value1(GameFlag_Test, SPLIT_CONSTANT(0x800, 164)) == 0 || facing == 0xc000) {
       Func_020044c4(unk);
     } else {
-      GameFlag_SetBit(0x8a6);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x800, 166));
       Func_02004a94();
       Func_02004be4(0);
       Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(336), -1, PIXELS(560), 1);
@@ -102,7 +102,7 @@ void Func_02000514(void) {
       Actor_SetModeById(15, 3);
       Actor_OffsetPositionAndResetMotion(15, 0, 16);
       FieldEvent_Wait(20);
-      actor15->gravity = 0xccc;
+      actor15->gravity = SPLIT_CONSTANT(0xc00, 204);
       actor15->motionFlags = 3;
       i = 0;
       if (actor15->y > 0) {
@@ -119,6 +119,6 @@ void Func_02000514(void) {
       Func_02004a9c();
     }
   }
-  if (actor16 != NULL && Value1(GameFlag_Test, 0x8a4) == 0)
+  if (actor16 != NULL && Value1(GameFlag_Test, SPLIT_CONSTANT(0x800, 164)) == 0)
     Func_02004c7c(actor16->x, actor16->z, 2, 0);
 }

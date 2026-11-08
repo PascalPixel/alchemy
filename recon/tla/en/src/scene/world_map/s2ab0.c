@@ -62,7 +62,7 @@ void Func_02002ab0(void) {
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
   Actor_SetSingleChildFlags(Actor_GetById(10), 0);
-  Call3((void (*)())Actor_SetSpeedParameters, 10, 0x6666, 0x3333);
+  Call3((void (*)())Actor_SetSpeedParameters, 10, SPLIT_CONSTANT(0x6600, 102), SPLIT_CONSTANT(0x3300, 51));
   boat->action = 0;
   boat->acceleration = 0x2000;
   boat->speedLimit = 0x2000;
@@ -104,7 +104,7 @@ void Func_02002ab0(void) {
   Func_02004cf0(8, 0);
   Call3((void (*)())Func_02004b78, 0x10000, 0x20000, 0x10000);
   Func_02004db0();
-  Call2((void (*)())Func_02004df8, 0x9999, 1);
+  Call2((void (*)())Func_02004df8, SPLIT_CONSTANT(0x9900, 153), 1);
   map->unk11e = 0;
   map->unk11c = 0xe000;
   wait(1);
@@ -132,7 +132,7 @@ void Func_02002ab0(void) {
   Call2((void (*)())Func_02004d10, 8, 0x101);
   Func_02004cf0(8, 0);
   Call3((void (*)())Actor_SetSpeedParameters, 8, 0x10000, 0x8000);
-  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 8, 0xe18, 0x1e0f);
+  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 8, SPLIT_CONSTANT(0xe00, 24), SPLIT_CONSTANT(0x1e00, 15));
   Func_02004e30(163);
   Func_020042e0(0);
   Func_02004d40(65);

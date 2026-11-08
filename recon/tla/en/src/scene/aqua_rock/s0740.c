@@ -23,25 +23,25 @@ void Func_02000740(void) {
   if (++gData_02003204 > 239)
     gData_02003204 = 0;
   if (gData_02003208 <= 149) {
-    if (GameFlag_Test(0x321))
-      GameFlag_SetBit(0x201);
+    if (GameFlag_Test(SPLIT_CONSTANT(0x300, 33)))
+      GameFlag_SetBit(SPLIT_CONSTANT(0x102, 255));
     else
-      GameFlag_ClearBit(0x201);
+      GameFlag_ClearBit(SPLIT_CONSTANT(0x102, 255));
   } else {
-    GameFlag_SetBit(0x201);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x102, 255));
   }
   if (++gData_02003208 > 239)
     gData_02003208 = 0;
   if (gData_0200320c <= 149)
-    GameFlag_ClearBit(0x202);
+    GameFlag_ClearBit(SPLIT_CONSTANT(0x200, 2));
   else
-    GameFlag_SetBit(0x202);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x200, 2));
   if (++gData_0200320c > 239)
     gData_0200320c = 0;
   if (gData_02003210 <= 149)
-    GameFlag_ClearBit(0x203);
+    GameFlag_ClearBit(SPLIT_CONSTANT(0x104, 255));
   else
-    GameFlag_SetBit(0x203);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x104, 255));
   if (++gData_02003210 > 239)
     gData_02003210 = 0;
 }

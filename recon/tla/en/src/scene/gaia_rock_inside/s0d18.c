@@ -45,7 +45,7 @@ void Func_02000d18(void) {
   s32 sourceY = 20;
 
   Func_02004ff4(104, sourceY, 1, height, height, sourceX, sourceY);
-  if (GameFlag_Test(0x9c4))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 196)))
     return;
   count = 0;
   for (i = 0; i <= 11; i++) {

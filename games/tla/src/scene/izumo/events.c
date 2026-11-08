@@ -1,0 +1,120 @@
+#include "izumo.h"
+#include "scene_tables.h"
+
+const u8 *Func_020001ac(void) {
+  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
+   * shifted byte plus an addend; as plain constants, 8 of 11 instructions
+   * differ in tla-en. */
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 39)))
+    return gData_02001644;
+  return gData_02001494;
+}
+
+void Func_020001cc(void) {
+  Call7((void (*)())Func_02000df8, 53, 5, 8, 9, 23, 30, 0);
+}
+
+void Func_020001ec(void) {
+  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
+   * shifted byte plus an addend; as plain constants, 4 of 60 instructions
+   * differ in tla-en. */
+  struct FieldActor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+
+  Call7((void (*)())Func_02000df8, 53, 5, 8, 9, 23, 30, 0);
+  if (!GameFlag_Test(SPLIT_CONSTANT(0xea0, 255))) {
+    Call3((void (*)())Func_02000d40, 64, PIXELS(456), PIXELS(584));
+    if (object->x >> 20 == 28 && object->z >> 20 == 36) {
+      Func_02000d00();
+      Func_02000dd0(0);
+      Func_02000d90(gMainRoutineWork.currentOwner, 258);
+      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, -16, 0);
+      object->velocityY = 0x60000;
+      Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
+      Func_02000d08();
+    }
+  }
+}
+
+void Func_0200027c(void) {
+  struct FieldActor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+
+  Call7((void (*)())Func_02000df8, 53, 5, 8, 9, 23, 30, 0);
+  if (!GameFlag_Test(4000)) {
+    Call3((void (*)())Func_02000d40, 65, PIXELS(472), PIXELS(552));
+    if (object->x >> 20 == 29 && object->z >> 20 == 34) {
+      Func_02000d00();
+      Func_02000dd0(0);
+      Func_02000d90(gMainRoutineWork.currentOwner, 258);
+      Call3((void (*)())Actor_OffsetPositionAndResetMotion,
+            gMainRoutineWork.currentOwner, 0, -16);
+      object->velocityY = 0x60000;
+      Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
+      Func_02000d08();
+    }
+  }
+}
+
+void Func_0200030c(void) {
+  Call7((void (*)())Func_02000df8, 44, 5, 8, 5, 7, 32, 0);
+}
+
+void Func_0200032c(void) {
+  Call7((void (*)())Func_02000df8, 55, 0, 4, 2, 16, 23, 0);
+}
+
+void Func_0200034c(void) {
+  Call7((void (*)())Func_02000df8, 42, 0, 6, 2, 9, 18, 0);
+}
+
+void Func_0200036c(void) {
+  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
+   * shifted byte plus an addend; as plain constants, 4 of 58 instructions
+   * differ in tla-en. */
+  struct FieldActor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+
+  Call7((void (*)())Func_02000df8, 42, 0, 6, 2, 9, 18, 0);
+  if (!GameFlag_Test(SPLIT_CONSTANT(0xf00, 161))) {
+    Call3((void (*)())Func_02000d40, 66, PIXELS(168), PIXELS(328));
+    if (object->x >> 20 == 10 && object->z >> 20 == 20) {
+      Func_02000d00();
+      Func_02000dd0(0);
+      Func_02000d90(gMainRoutineWork.currentOwner, 258);
+      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
+      object->velocityY = 0x60000;
+      Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
+      Func_02000d08();
+    }
+  }
+}
+
+void Func_020003f8(void) {
+  Call7((void (*)())Func_02000df8, 49, 0, 5, 4, 24, 16, 0);
+}
+
+void Func_02000418(void) {
+  Call7((void (*)())Func_02000df8, 36, 0, 5, 3, 16, 9, 0);
+}
+
+void Func_02000438(void) {
+  u8 *work = Ram_HeapSlots->eventWork;
+
+  Func_02000d00();
+  Func_02000dd0(0);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
+  Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
+  Func_02000e08(123);
+  Func_02000db0(*(s16 *)(work + 340));
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Func_02000d08();
+}
+
+const u8 *Func_0200049c(void) {
+  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
+   * shifted byte plus an addend; as plain constants, 8 of 11 instructions
+   * differ in tla-en. */
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 39)))
+    return gData_02001b00;
+  return gData_020018b4;
+}

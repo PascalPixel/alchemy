@@ -17,7 +17,7 @@ void Func_0200051c(s32 unused, s32 cell) {
       if (x == 4) {
         Func_0200015c(20);
         Func_0200106c(3, 28, 1, 1, x, 28);
-        Flag_Set(0x8e7);
+        Flag_Set(SPLIT_CONSTANT(0x7e8, 255));
       }
     }
   }
@@ -33,7 +33,7 @@ void Func_0200051c(s32 unused, s32 cell) {
         if (z == 30) {
           Func_0200015c(13);
           Func_0200106c(32, 30, 1, 2, x, z);
-          Flag_Set(0x8e8);
+          Flag_Set(SPLIT_CONSTANT(0x800, 232));
         }
       }
     }

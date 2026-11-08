@@ -47,7 +47,7 @@ s32 Func_02000514(void) {
     gMainRoutineWork.entrance = gMainRoutineWork.secondary = 8;
     Func_02000658();
   }
-  if (!GameFlag_Test(0x8a7) && GameFlag_Test(0x8ff)) {
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x7a8, 255)) && GameFlag_Test(SPLIT_CONSTANT(0x800, 255))) {
     Func_02001500(18, 0, 0);
     Func_02001500(19, 0, 0);
   }

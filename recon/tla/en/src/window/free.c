@@ -83,13 +83,13 @@ struct UiChannelSlot *BattleMessage_Continue(struct Window *window,
 }
 
 s32 Vram_ClearWindowBlock(void) {
-  s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWords;
+  s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWordsEntry;
 
   return fill((void *)0x06002500, 0xf00, 0);
 }
 
 void Vram_FillWindowBlockPattern(void) {
-  s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWords;
+  s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWordsEntry;
 
   fill((void *)0x06002500, 0xf00, 0x44444444);
 }

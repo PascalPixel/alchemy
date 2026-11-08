@@ -33,11 +33,11 @@ void Func_02001250(s32 show, s32 first, u32 count) {
 
 void Func_02001290(void) {
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
-  GameFlag_SetBit(0x20a);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x200, 10));
 }
 
 void Func_020012b4(void) {
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
-  GameFlag_ClearBit(0x20a);
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x200, 10));
 }

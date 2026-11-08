@@ -71,7 +71,7 @@ void Func_020026b8(void) {
   REG_DISPCNT &= ~0x100;
   Func_02003af0(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
                 buffer);
-  Dma_Set(buffer, (void *)0x600e800, 0x840000d0, (volatile u32 *)0x040000d4);
+  Dma_Set(buffer, (void *)0x600e800, SPLIT_CONSTANT(0x84000000, 208), (volatile u32 *)0x040000d4);
   Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, 0x840000d0,
           (volatile u32 *)0x040000d4);
   Heap_Release(buffer);
@@ -89,13 +89,13 @@ void Func_020026b8(void) {
   Func_02003af0(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
   cell = buffer;
   for (i = 0; i != 0x120; i++) {
-    *cell += 0xff40;
+    *cell += SPLIT_CONSTANT(0xff00, 64);
     cell++;
   }
   cell = buffer;
   for (i = 0; i != 18; i++) {
     Dma_Set(cell, (void *)(0x600200f + (i << 6)), 0x84000008,
-            (volatile u32 *)0x040000d4);
+            (volatile u32 *)SPLIT_CONSTANT(0x4000000, 212));
     cell += 16;
   }
   Heap_Release(buffer);
@@ -120,7 +120,7 @@ void Func_020026b8(void) {
       spark->bounce = spark->x;
       spark->gravity = 0x18000;
       spark->unk4c = spark->z;
-      spark->speedLimit = Random16Far() & 0xffff;
+      spark->speedLimit = Random16Far() & SPLIT_CONSTANT(0xff00, 255);
       Func_02003b28(spark, 7);
       Func_02003b38(spark, gData_02003d1c);
       Actor_SetSingleChildFlags(spark, 0);
@@ -138,10 +138,10 @@ void Func_020026b8(void) {
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 0;
   Call2((void (*)())Func_02003c58, 0x10000, 0);
-  Call2((void (*)())Func_02003c50, 0x7fff, 0);
+  Call2((void (*)())Func_02003c50, SPLIT_CONSTANT(0x7f00, 255), 0);
   Func_02003c60(1);
   wait(1);
-  Call2((void (*)())Func_02003c58, 0x7fff, 0);
+  Call2((void (*)())Func_02003c58, SPLIT_CONSTANT(0x7f00, 255), 0);
   Call2((void (*)())Func_02003c50, 0x10000, 0);
   Func_02003c60(8);
   Task_Add(Func_0200257c, 0xc80);
@@ -169,7 +169,7 @@ void Func_020026b8(void) {
   Call1((void (*)())Func_02003cd8, 390);
   REG_BLDALPHA = 0x10;
   REG_BLDCNT = 0x3f41;
-  Call3((void (*)())Func_02003b98, -1, -1, 0xe666);
+  Call3((void (*)())Func_02003b98, -1, -1, SPLIT_CONSTANT(0xe600, 102));
   ((u8 *)Actor_GetById(12))[98] = 6;
   for (i = 0; i != 129; i++) {
     REG_BLDALPHA = ((i >> 3) << 8) | (0x10 - (i >> 3));
@@ -198,6 +198,6 @@ void Func_020026b8(void) {
   Actor_GetById(12)->priorityFlags |= 1;
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02003c30();
-  GameFlag_SetBit(0x87a);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 122));
   Func_02003bd0();
 }

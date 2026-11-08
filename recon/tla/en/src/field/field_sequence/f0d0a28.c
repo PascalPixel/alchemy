@@ -28,7 +28,7 @@ void ScreenTransition_UpdateDissolve(void) {
       Task_Remove(ScreenTransition_UpdateDissolve);
       dma0 = REG_DMA0;
       control = dma0[5];
-      dma0[5] = control & 0xc5ff;
+      dma0[5] = control & SPLIT_CONSTANT(0xc500, 255);
       dma0[5] &= 0x7fff;
       (void)dma0[5];
       return;

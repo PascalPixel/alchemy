@@ -64,7 +64,7 @@ void Func_080b1088(void) {
     save[0] = inventory[0];
     save[1] = inventory[1];
   }
-  GameFlag_SetBit(0x9ff);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 255));
   Func_080ae16c(1);
   for (i = 0xe50; i <= 0xe59; i++)
     GameFlag_ClearBit(i);

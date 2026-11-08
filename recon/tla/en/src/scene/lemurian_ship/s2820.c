@@ -11,7 +11,7 @@ void Func_02002820(void) {
 
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   LEMURIAN_SHIP_TASK_ADD(Func_02001474, 0x480);
-  if (GameFlag_Test(0x93f)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x840, 255))) {
     object = Actor_GetById(64);
     object->motionFlags = 0;
     Actor_SetPositionAndResetMotion(Actor_GetById(64), PIXELS(136), PIXELS(-32),
@@ -27,7 +27,7 @@ void Func_02002820(void) {
     Func_02002cd0(13, 0, 0);
     wait(1);
   }
-  if (GameFlag_Test(0x9e4)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 228))) {
     struct LemurianShipObject *marker = Actor_GetById(64);
 
     Func_02002cd0(64, marker->x, marker->z + 0xfed00000);
@@ -40,6 +40,6 @@ void Func_02002820(void) {
   }
   if (LemurianShip_FlagCheck(0x22f)) {
     Func_02001a9c();
-    GameFlag_ClearBit(0x22f);
+    GameFlag_ClearBit(SPLIT_CONSTANT(0x130, 255));
   }
 }

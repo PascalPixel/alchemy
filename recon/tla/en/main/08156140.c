@@ -283,7 +283,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                                  work->sheet + 0x1000, 1, 1);
     if (mode == 5) {
       void *palette = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
-      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
       copy((void *)BG_PLTT, palette, 128);
     }
@@ -291,7 +291,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                                work->sheet + 0x2000, 1, 0);
     if (mode == 5) {
       void *palette = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
-      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
       copy((void *)BG_PLTT, palette, 128);
     }

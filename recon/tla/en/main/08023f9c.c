@@ -11,7 +11,7 @@
 // rebound; each object records the distance it moved this frame at 0x70; the
 // arrival axes are numbered 16 to 18.
 // Left: every instruction and register agrees; one pair swaps: in the slope
-// slowdown the native stores velocityX ahead of the reload of Iwram_MulQ16 for
+// slowdown the native stores velocityX ahead of the reload of Iwram_MulQ16Entry for
 // the second call. An empty asm after the store fixes it but pulls the next
 // argument copy below the store (still 4); a scheduling rule (K2 calls
 // -mthumb-slow-loads an approximation) is the likely cause. Tried without gain:

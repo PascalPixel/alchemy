@@ -74,7 +74,7 @@ void Func_020006ec(s32 mode) {
 }
 
 void Func_02000730(void) {
-  GameFlag_SetBit(0x8a8);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 168));
   Func_02004a94();
   Func_02004be4(0);
   Func_02004b3c(MsgWhatSYour);
@@ -114,19 +114,19 @@ void Func_02000730(void) {
 }
 
 void Func_02000838(void) {
-  if (GameFlag_Test(0x8a7)) {
-    if (Value1(GameFlag_Test, 0x904) == 0) {
-      GameFlag_SetBit(0x904);
+  if (GameFlag_Test(SPLIT_CONSTANT(0x7a8, 255))) {
+    if (Value1(GameFlag_Test, SPLIT_CONSTANT(0x900, 4)) == 0) {
+      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 4));
       Func_02001cb0();
     }
-  } else if (GameFlag_Test(0x8ab)) {
+  } else if (GameFlag_Test(SPLIT_CONSTANT(0x800, 171))) {
     if (GameFlag_Test(0x8a0) && Func_02004a84(151) == -1 &&
-        Value1(GameFlag_Test, 0x8ad) == 0) {
-      GameFlag_SetBit(0x8ad);
+        Value1(GameFlag_Test, SPLIT_CONSTANT(0x800, 173)) == 0) {
+      GameFlag_SetBit(SPLIT_CONSTANT(0x800, 173));
       Func_020017ec();
     }
-  } else if (Value1(GameFlag_Test, 0x8a9) == 0) {
-    GameFlag_SetBit(0x8a9);
+  } else if (Value1(GameFlag_Test, SPLIT_CONSTANT(0x800, 169)) == 0) {
+    GameFlag_SetBit(SPLIT_CONSTANT(0x800, 169));
     Func_0200112c();
   }
 }
@@ -154,7 +154,7 @@ void Func_02000940(s32 countdown) {
 
 void Func_02000954(void) {}
 
-void Func_02000958(void) { GameFlag_SetBit(0x8be); }
+void Func_02000958(void) { GameFlag_SetBit(SPLIT_CONSTANT(0x800, 190)); }
 
 void Func_02000968(void) {
   struct Actor *leader;
@@ -163,7 +163,7 @@ void Func_02000968(void) {
 run:
   if (Func_02004a84(151) != -1)
     return;
-  GameFlag_SetBit(0x8bf);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x7c0, 255));
   Func_02004a94();
   Func_02004be4(0);
   Call3(Actor_SetPositionAndReset, 4, 488, 440);
@@ -181,7 +181,7 @@ run:
   Func_02004a9c();
   return;
 check:
-  if (GameFlag_Test(0x8ab) && GameFlag_Test(0x8a7) == 0 && GameFlag_Test(0x8be))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 171)) && GameFlag_Test(SPLIT_CONSTANT(0x7a8, 255)) == 0 && GameFlag_Test(SPLIT_CONSTANT(0x800, 190)))
     goto run;
 }
 

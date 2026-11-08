@@ -35,7 +35,7 @@ void Func_02000914(void) {
   s32 t0;
   s32 t8;
 
-  t0 = Value1(GameFlag_Test, 0xa3d);
+  t0 = Value1(GameFlag_Test, SPLIT_CONSTANT(0xa00, 61));
   if (t0 != 0) {
   } else {
     Func_02004464();
@@ -50,33 +50,33 @@ void Func_02000914(void) {
     }
     t8 = Func_02004584();
     FIELD_AT((t8 + 0x55), u8, 0) = t0;
-    Func_0200456c(0x19999, 0x3333);
+    Func_0200456c(0x19999, SPLIT_CONSTANT(0x3300, 51));
     Camera_MoveWithinMapBounds(PIXELS(552), -1, PIXELS(388), 1);
     FieldEvent_Wait(10);
-    Call3(Actor_SetSpeedParameters, 8, 0x13333, 0x9999);
+    Call3(Actor_SetSpeedParameters, 8, 0x13333, SPLIT_CONSTANT(0x9900, 153));
     Call3(Actor_SetPositionAndReset, 8, 526, 384);
     Call3(Actor_ArmCallback, 9, FACING_WEST, 0);
     Call3(Actor_SetPositionAndReset, 8, 540, 388);
     Call2(Func_0200454c, 8, 0);
     Actor_SetModeById(8, 4);
     Func_0200451c((s32)MsgProx47);
-    Call2(Func_02004534, 0x4008, 0);
+    Call2(Func_02004534, SPLIT_CONSTANT(0x4000, 8), 0);
     Func_0200455c(9, 0x101, 0);
     Call2(Func_02004534, 9, 0);
     Call2(Actor_SetModeById, 8, 3);
-    Call2(Func_02004534, 0x4008, 0);
+    Call2(Func_02004534, SPLIT_CONSTANT(0x4000, 8), 0);
     Func_0200455c(9, 0x100, 20);
     Call3(Actor_ArmCallback, 9, 0xb000, 0);
     Call2(Func_02004534, 9, 0);
     Call3(Actor_ArmCallback, 8, 0xb000, 40);
     Call2(Func_0200454c, 8, 0);
     Call2(Actor_SetModeById, 8, 4);
-    Call2(Func_02004534, 0x4008, 0);
+    Call2(Func_02004534, SPLIT_CONSTANT(0x4000, 8), 0);
     Call2(Func_0200454c, 9, FACING_WEST);
     Call2(Motion_SetModeAndWaitAnimation, 9, 3);
     Call2(Func_02004534, 9, 0);
     Func_0200455c(8, 0x109, 20);
-    Call2(Func_02004534, 0x4008, 0);
+    Call2(Func_02004534, SPLIT_CONSTANT(0x4000, 8), 0);
     Call2(Actor_SetModeById, 9, 3);
     Call2(Func_02004534, 9, 0);
     Call3(Actor_ArmCallback, 9, 0xb000, 0);

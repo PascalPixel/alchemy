@@ -17,7 +17,7 @@ void Func_020010e4(void) {
   /* FAKEMATCH(wrapper): forwarded so 0x10000 is built again for the next
    * call; as a direct call, 8 of 37 instructions differ in tla-en. */
   Call2((void (*)())Func_02003250, 0x10000, 0);
-  Func_02003248(0x10003, 0);
+  Func_02003248(SPLIT_CONSTANT(0x10000, 3), 0);
   Func_02003258(20);
   wait(20);
   *color = 0x7fff;
@@ -37,7 +37,7 @@ void Func_02001154(void) {
   /* FAKEMATCH(wrapper): forwarded so 0x10000 is built again for the next
    * call; as a direct call, 8 of 37 instructions differ in tla-en. */
   Call2((void (*)())Func_02003250, 0x10000, 0);
-  Func_02003248(0x10003, 0);
+  Func_02003248(SPLIT_CONSTANT(0x10000, 3), 0);
   Func_02003258(20);
   wait(20);
   *color = 0x7fff;
@@ -57,7 +57,7 @@ void Func_020011c4(void) {
   /* FAKEMATCH(wrapper): forwarded so 0x10000 is built again for the next
    * call; as a direct call, 8 of 37 instructions differ in tla-en. */
   Call2((void (*)())Func_02003250, 0x10000, 0);
-  Func_02003248(0x10003, 0);
+  Func_02003248(SPLIT_CONSTANT(0x10000, 3), 0);
   Func_02003258(20);
   wait(20);
   *color = 0x7fff;
@@ -77,7 +77,7 @@ void Func_02001234(void) {
   /* FAKEMATCH(wrapper): forwarded so 0x10000 is built again for the next
    * call; as a direct call, 8 of 37 instructions differ in tla-en. */
   Call2((void (*)())Func_02003250, 0x10000, 0);
-  Func_02003248(0x10003, 0);
+  Func_02003248(SPLIT_CONSTANT(0x10000, 3), 0);
   Func_02003258(20);
   wait(20);
   *color = 0x7fff;
@@ -134,7 +134,7 @@ void Func_02001324(s32 x, s32 z, s32 c, s32 d, s32 e, s32 f) {
 /// 0xa2e is set. Each opens as Func_020010e4 does.
 void Func_020013a0(void) {
   if (PartyInventory_FindOwner(222) == -1) {
-    if (!Value1((s32 (*)())GameFlag_Test, 0xa2f)) {
+    if (!Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x930, 255))) {
       u16 *color = (volatile u16 *)&OBJ_PLTT_COLOR(0, 15);
 
       Func_020031e0();
@@ -146,7 +146,7 @@ void Func_020013a0(void) {
       /* FAKEMATCH(wrapper): forwarded so 0x10000 is built again for the next
        * call; as a direct call, 12 of 155 instructions differ in tla-en. */
       Call2((void (*)())Func_02003250, 0x10000, 0);
-      Func_02003248(0x10003, 0);
+      Func_02003248(SPLIT_CONSTANT(0x10000, 3), 0);
       Func_02003258(20);
       wait(20);
       *color = 0x7fff;
@@ -155,7 +155,7 @@ void Func_020013a0(void) {
       Func_02003248(0x10000, 0);
       Func_02003258(20);
       wait(20);
-      GameFlag_SetBit(0xa2f);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x930, 255));
       Func_020031e8();
     }
   }
@@ -177,7 +177,7 @@ void Func_020013a0(void) {
     FieldEvent_Wait(20);
     /* FAKEMATCH(wrapper): as above. */
     Call2((void (*)())Func_02003250, 0x10000, 0);
-    Func_02003248(0x10003, 0);
+    Func_02003248(SPLIT_CONSTANT(0x10000, 3), 0);
     Func_02003258(20);
     wait(20);
     *color = 0x7fff;
@@ -194,7 +194,7 @@ void Func_020013a0(void) {
     Func_02003248(0x10000, 0);
     Func_02003258(20);
     wait(40);
-    GameFlag_SetBit(0xa2e);
+    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 46));
     Func_020031e8();
   }
 }

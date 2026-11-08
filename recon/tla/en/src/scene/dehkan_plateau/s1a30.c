@@ -121,7 +121,7 @@ void Func_02001a30(void) {
     n = work->exit - 18;
     flag = work->exit + 0x22e;
     record = &gData_020041b8[n * 6];
-    if (GameFlag_Test(0x33a))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x300, 58)))
       gData_020041b8[26] = 3;
   } else {
     return;
@@ -178,7 +178,7 @@ void Func_02001a30(void) {
           Func_02003be0(srcX, srcY, toX, toZ, width, height);
         }
       } else if (scene == SCENE(Ov655Room5)) {
-        if ((n == 0 && GameFlag_Test(0x241)) ||
+        if ((n == 0 && GameFlag_Test(SPLIT_CONSTANT(0x142, 255))) ||
             (n == 11 && GameFlag_Test(0x24c))) {
           s32 srcX = gData_02004052[8], srcY = gData_02004052[9], width = 1,
               height = 2;
@@ -216,7 +216,7 @@ void Func_02001a30(void) {
       leader->y += -0x9999;
       wait(1);
     }
-    ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = SPLIT_CONSTANT(0x10a, 255);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Func_02003d00(work->exit);
@@ -239,7 +239,7 @@ void Func_02001a30(void) {
     }
     FieldEvent_Wait(12);
     GameFlag_SetBit(flag);
-    GameFlag_SetBit(0x201);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x102, 255));
     {
       s16 scene = gMainRoutineWork.scene;
       if (scene == SCENE(Ov655Room5) || scene == SCENE(Ov655Room3)) {

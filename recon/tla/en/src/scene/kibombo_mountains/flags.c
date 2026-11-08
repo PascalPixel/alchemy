@@ -12,6 +12,6 @@ void Func_0200103c(struct Actor *object, s32 value);
 void Func_02000da8(s32 value);
 void Func_02000e28(s32 value);
 
-void Func_02000428(void) { GameFlag_SetBit(0x882); }
+void Func_02000428(void) { GameFlag_SetBit(SPLIT_CONSTANT(0x800, 130)); }
 
 void Func_02000438(void) { Func_0200114c(); }

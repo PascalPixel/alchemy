@@ -29,7 +29,7 @@ u8 *Func_020003f8(void) {
   case 65:
     return gData_02006598;
   case 68:
-    if (!GameFlag_Test(0x8de))
+    if (!GameFlag_Test(SPLIT_CONSTANT(0x800, 222)))
       return gData_02006700;
   case 77:
     return gData_02006790;

@@ -59,7 +59,7 @@ void Func_0200051c(void) {
   Animation_ApplyChildValues(Actor_GetById(12), 6);
   Animation_ApplyChildValues(Actor_GetById(13), 6);
   Animation_ApplyChildValues(Actor_GetById(14), 6);
-  if (GameFlag_Test(0x8a7)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x7a8, 255))) {
     Func_02001488(15, 0, 0);
     Func_02001488(18, 0, 0);
     Func_02001488(16, 0, 0);
@@ -70,14 +70,14 @@ void Func_0200051c(void) {
     Func_02001488(22, 0, 0);
     Func_02001488(24, 0, 0);
     Actor_GetById(23)->update = Func_02001220;
-  } else if (GameFlag_Test(0x8ab)) {
+  } else if (GameFlag_Test(SPLIT_CONSTANT(0x800, 171))) {
     Func_02001488(23, 0, 0);
     Actor_SetSpritePriority(18, 2);
     Actor_SetSpritePriority(16, 2);
     Actor_SetSpritePriority(17, 2);
     Actor_SetSpritePriority(19, 2);
     Actor_SetSpritePriority(20, 2);
-    if (!GameFlag_Test(0x8bd)) {
+    if (!GameFlag_Test(SPLIT_CONSTANT(0x800, 189))) {
       Call3((void (*)())Func_02001488, 17, PIXELS(712), PIXELS(216));
       Call3((void (*)())Func_02001488, 19, PIXELS(744), PIXELS(216));
     } else {
@@ -98,14 +98,14 @@ void Func_0200051c(void) {
   if (gMainRoutineWork.entrance == 9 && !GameFlag_Test(0x109)) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Call3((void (*)())Actor_SetSpeedParameters, 8, 0x4ccc, 0x2666);
+    Call3((void (*)())Actor_SetSpeedParameters, 8, SPLIT_CONSTANT(0x4c00, 204), SPLIT_CONSTANT(0x2600, 102));
     Actor_OffsetPositionAndResetMotion(8, 0, 16);
     Actor_WaitForMoveById(8);
   }
 }
 
 s32 Func_020007a4(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov66aRoom2 && GameFlag_Test(0x8a7)) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov66aRoom2 && GameFlag_Test(SPLIT_CONSTANT(0x7a8, 255))) {
     Func_02001408_(23, 46, 4, 5, 21, 14);
     Func_02001408_(86, 44, 5, 6, 84, 12);
     Func_02001400_(22, 45, 5, 6, 20, 13);

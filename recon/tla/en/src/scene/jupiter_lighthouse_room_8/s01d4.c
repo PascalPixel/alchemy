@@ -18,8 +18,8 @@ static __inline__ void Func_02002228_(s32 id, s32 x, s32 z) {
 s32 Func_020001d4(void) {
   Scene_SetArrivalFlags(0);
   if (GameFlag_Test(0x109) == 0)
-    GameFlag_ClearBit(0xa18);
-  if (GameFlag_Test(0xa18)) {
+    GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 24));
+  if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 24))) {
     struct FieldActor *object = Actor_GetById(10);
 
     object->motionFlags = 0;

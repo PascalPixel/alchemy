@@ -20,7 +20,7 @@ SECTIONS
         "*/recon/tla/raw/src/scene/jupiter_lighthouse_basement/s0a64.o"(.text)
         "*/recon/tla/raw/src/scene/jupiter_lighthouse_basement/s0b04.o"(.text)
         "*/recon/tla/raw/src/scene/jupiter_lighthouse_basement/s0c94.o"(.text)
-        "*/recon/tla/raw/src/scene/jupiter_lighthouse_basement/light.o"(.text)
+        "*/games/tla/src/scene/jupiter_lighthouse_basement/light.o"(.text)
         "*/recon/tla/raw/src/scene/jupiter_lighthouse_basement/lightcue.o"(.text)
         "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
         "*/resource_699_overlay.o"(.text.x0200905a)

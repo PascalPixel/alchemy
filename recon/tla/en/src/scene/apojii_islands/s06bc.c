@@ -12,7 +12,7 @@ void Func_020006bc(void) {
   s32 i;
 
   if (gData_020024cc[0] == -1) {
-    Iwram_CopyWords(gData_02002a58, (void *)0x05000080, 32);
+    Iwram_CopyWords(gData_02002a58, (void *)SPLIT_CONSTANT(0x5000000, 128), 32);
     gData_020024cc[0] = 0;
   }
   base = (gData_020024cc[0] / 2) % 15;

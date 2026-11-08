@@ -12,7 +12,7 @@ SECTIONS
         "*/recon/tla/raw/src/debug/psynergy_test_2/s029c.o"(.text)
         "*/recon/tla/raw/src/debug/psynergy_test_2/sparks.o"(.text)
         "*/recon/tla/raw/src/debug/psynergy_test_2/scale.o"(.text)
-        "*/recon/tla/raw/src/debug/psynergy_test_2/drop.o"(.text)
+        "*/games/tla/src/debug/psynergy_test_2/drop.o"(.text)
         "*/recon/tla/raw/src/debug/psynergy_test_2/s0468.o"(.text)
         "*/games/tla/src/debug/psynergy_test_2/import.o"(.text)
         "*/games/tla/src/debug/psynergy_test_2/data.o"(.data)

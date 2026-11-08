@@ -69,6 +69,6 @@ void Func_02001db0(void) {
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   Func_02003fb4();
   Call2((void (*)())Func_02003f3c, 9, FACING_NORTHWEST + FACING_STEP);
-  GameFlag_SetBit(0xaa2);
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 162));
   Func_02003e6c();
 }

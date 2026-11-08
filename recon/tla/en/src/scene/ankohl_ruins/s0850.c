@@ -9,7 +9,7 @@ void Func_02000850(s32 unused, s32 id) {
   if (id == 8 && gMainRoutineWork.scene == (s32)&SceneId_Ov686Room1) {
     if (object->x >> 20 == 4) {
       AnkohlRuins_Call2dfc(4, 68, 1, 1, 2, 69);
-      GameFlag_SetBit(0x9c6);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 198));
     }
     AnkohlRuins_Call2dfc(3, 68, 1, 1, 4, 69);
     AnkohlRuins_Call2dfc(3, 69, 1, 1, 3, 70);
@@ -19,7 +19,7 @@ void Func_02000850(s32 unused, s32 id) {
     AnkohlRuins_Call2dfc(31, 70, 1, 1, 32, 70);
     if (object->x >> 20 == 32) {
       Func_02002dfc(32, 69, 1, 1, 33, 69);
-      GameFlag_SetBit(0x9c7);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 199));
     }
   }
   /* FAKEMATCH(barrier): a memory barrier makes the Room4 test reload
@@ -30,19 +30,19 @@ void Func_02000850(s32 unused, s32 id) {
     if (id == 8) {
       AnkohlRuins_Call2dfc(3, 114, 1, 1, 3, 113);
       if (object->x >> 20 == 2)
-        GameFlag_SetBit(0x9c8);
+        GameFlag_SetBit(SPLIT_CONSTANT(0x900, 200));
     }
     if (id == 18) {
       AnkohlRuins_Call2dfc(40, 94, 1, 1, 40, 93);
       if (object->x >> 20 == 39)
-        GameFlag_SetBit(0x9c9);
+        GameFlag_SetBit(SPLIT_CONSTANT(0x900, 201));
     }
     if (id == 19) {
       AnkohlRuins_Call2dfc(36, 72, 1, 1, 38, 72);
       Func_02002dfc(37, 74, 1, 1, 37, 73);
       if (object->x >> 20 == 38) {
         Func_02002dfc(37, 70, 1, 1, 37, 71);
-        GameFlag_SetBit(0x9ca);
+        GameFlag_SetBit(SPLIT_CONSTANT(0x900, 202));
       }
     }
   }
@@ -52,7 +52,7 @@ void Func_02000850(s32 unused, s32 id) {
     Func_02002dfc(19, 82, 1, 1, 19, 83);
     if (object->x >> 20 == 17) {
       Func_02002dfc(16, 84, 1, 1, 18, 84);
-      GameFlag_SetBit(0x9cb);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 203));
     }
   }
 }

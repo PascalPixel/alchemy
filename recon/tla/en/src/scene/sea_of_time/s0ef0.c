@@ -38,7 +38,7 @@ void Func_02000ef0(void) {
   if ((gFrameCount & 3) == 0) {
     options.priority = 2;
     options.palette = 7;
-    options.startScaleX = 0x16666;
+    options.startScaleX = SPLIT_CONSTANT(0x16600, 102);
     options.startScaleY = 0x13333;
     cosine = Math_Cosine(actor->angle);
     sine = Math_Sine(actor->angle);

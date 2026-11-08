@@ -208,12 +208,12 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   if (mode == BREATH_PIKE) {
     void *palette = Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet);
-    s32 (*copyWords)(void *, const void *, s32) = Iwram_CopyWords;
+    s32 (*copyWords)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
     copyWords((void *)BG_PLTT, palette, 128);
   } else {
     void *palette = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
-    s32 (*copyWords)(void *, const void *, s32) = Iwram_CopyWords;
+    s32 (*copyWords)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
     copyWords((void *)BG_PLTT, palette, 128);
   }

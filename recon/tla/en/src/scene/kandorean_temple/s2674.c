@@ -17,7 +17,7 @@ void Func_020026cc(void) {
   Camera_MoveWithinMapBounds(PIXELS(328), -1, PIXELS(174), 1);
   Func_020052e8();
   FieldEvent_Wait(20);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 328, 174);
   Motion_SetVarCbAndRefresh(11, 2);
   Func_020053d8(146);

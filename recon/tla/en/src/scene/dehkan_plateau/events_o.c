@@ -91,6 +91,6 @@ void Actor_SetSingleChildFlags(struct Actor *object,
 void Func_02003d08(s32 a, s32 b);
 
 void Func_0200118c(void) {
-  GameFlag_SetBit(0x209);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x10a, 255));
   Func_02003d08(16, 47);
 }

@@ -154,7 +154,7 @@ void Func_080db0b0(s32 id) {
     }
     slot->s.swing = 2048;
     slot->s.active = 1;
-    // A once-only block: the sine is taken before Iwram_MulQ16 is loaded.
+    // A once-only block: the sine is taken before Iwram_MulQ16Entry is loaded.
     do {
       sine = Trig_Sin(slot->s.phase - 4000);
     } while (0);

@@ -20,7 +20,7 @@ void Func_0802d088(s32 region, s32 gradual) {
     work->region = region;
     if (region == 9)
       work->target = 12;
-    else if (region == 18 && !GameFlag_Test(0x8ef))
+    else if (region == 18 && !GameFlag_Test(SPLIT_CONSTANT(0x7f0, 255)))
       work->target = -6;
     else
       work->target = 0;

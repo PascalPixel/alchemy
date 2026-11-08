@@ -20,7 +20,7 @@ void Func_02000b68(s32 unused, s32 id) {
   Func_02002a48(0);
   object->update = (void (*)(void))Func_02000b10;
   wait(30);
-  if (GameFlag_Test(0xa68) == 0)
+  if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 104)) == 0)
     Func_02002834(26);
   else
     Func_02002834(0);
@@ -35,8 +35,8 @@ void Func_02000b68(s32 unused, s32 id) {
   Func_02002a20(0x7fff, 0);
   Func_02002a28(20);
   FieldEvent_Wait(20);
-  if (GameFlag_Test_(0xa68) == 0) {
-    GameFlag_SetBit(0xa68);
+  if (GameFlag_Test_(SPLIT_CONSTANT(0xa00, 104)) == 0) {
+    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 104));
     Func_02002958_(64, 64, 1, 2, 51, 82);
     Func_02002958_(66, 64, 1, 2, 115, 18);
     Func_02002948(5);
@@ -46,7 +46,7 @@ void Func_02000b68(s32 unused, s32 id) {
     object->update = (void (*)(void))Func_02000b58;
     Func_020025a8(26);
   } else {
-    GameFlag_ClearBit(0xa68);
+    GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 104));
     Func_02002958_(65, 64, 1, 2, 51, 82);
     Func_02002958_(67, 64, 1, 2, 115, 18);
     Func_02002948(7);

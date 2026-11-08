@@ -28,7 +28,7 @@ void BattleEffect_LoadBufferPalette(const u16 *colours) {
      * started, as the native does; called directly the address loads first
      * (differ 2). */
     s32 (*copy)(void *destination, const void *source, s32 size) =
-        Iwram_CopyWords;
+        Iwram_CopyWordsEntry;
 
     copy(buffers->palette, colours, 0x1c0);
     BattleEffect_BuildBuffer(0x10000, buffers, buffers->target, 1);

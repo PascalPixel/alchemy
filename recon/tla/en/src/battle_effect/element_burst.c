@@ -27,7 +27,7 @@ typedef DrawRectangle BlitterPair[2];
 
 // The whole effect work block: struct BattleEffectWork names only its first
 // 0x78f4 bytes.
-#define BATTLE_EFFECT_WORK_SIZE 0x7b7c
+#define BATTLE_EFFECT_WORK_SIZE SPLIT_CONSTANT(0x7b00, 124)
 
 // ⚓️'s blitter modes run the other way from The Broken Seal's.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
@@ -94,7 +94,7 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
 
   work = HeapSlot_Alloc(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
   canvas = HeapSlot_Alloc(SLOT_BATTLE_CANVAS, 0x4000);
-  sheet = HeapSlot_Alloc(SLOT_BATTLE_SHEET, 0x60e);
+  sheet = HeapSlot_Alloc(SLOT_BATTLE_SHEET, SPLIT_CONSTANT(0x600, 14));
   work->vblanksSinceTransfer = 1;
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0);
@@ -122,7 +122,7 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
   {
     /* FAKEMATCH(temporary): called through a local pointer to its fixed entry,
      * which the native loads before the palette address; as a plain
-     * Iwram_CopyWords call, 2 of 380 instructions differ in tla-en. */
+     * Iwram_CopyWordsEntry call, 2 of 380 instructions differ in tla-en. */
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
     copy((void *)BG_PLTT, palette, 128);

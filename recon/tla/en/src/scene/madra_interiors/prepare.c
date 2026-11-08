@@ -105,7 +105,7 @@ void Func_020007dc(void) {
         1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_SetSpeedParameters(7, 0xcccc, 0x6666);
+  Actor_SetSpeedParameters(7, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
   Func_02001e18((s32)MsgMadraInteriors28);
   Func_02001e28(10, 0, 10);
   Call3((void (*)())Actor_SetPositionAndReset, 4, 396, 869);
@@ -311,7 +311,7 @@ L_02008e64:
 L_02008eb2:
   Actor_WaitForMoveById(11);
   Func_02001db8(11, 0, 0);
-  GameFlag_SetBit(0x911);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 17));
   Func_02001d58();
   return;
 }

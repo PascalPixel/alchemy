@@ -26,7 +26,7 @@ void Func_02000244(struct Actor *object) {
   if ((s16)object->unk66 == 38)
     Func_02001da8(object, 2);
   if (object->y > 0)
-    object->unk66 = 0xffff;
+    object->unk66 = SPLIT_CONSTANT(0xff00, 255);
   if (Math_Sine(angle) < 0)
     ((struct FieldSprite *)object->animation)->priority = 1;
   else

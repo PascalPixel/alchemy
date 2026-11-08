@@ -79,7 +79,7 @@ void Func_02000b48(struct Actor *self) {
          * block, so the speed loads first; as a plain call, 2 of 197
          * instructions differ in tla-en. */
         do {
-          multiply = Iwram_MulQ16;
+          multiply = Iwram_MulQ16Entry;
         } while (0);
         self->x += multiply(cosine, speed);
       }

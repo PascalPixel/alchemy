@@ -34,7 +34,7 @@ void Func_0200130c(void) {
   Actor_StartRepeatedMotion(9, 2);
   FieldEvent_Wait(20);
   Call2(Func_020018f8, 0x10000, 0);
-  Func_020018f0(0x10003, 1);
+  Func_020018f0(SPLIT_CONSTANT(0x10000, 3), 1);
   Func_02001900(60);
   FieldEvent_Wait(60);
   Call3(Func_02001860, (s32)MsgIAmThe, 0, 6);
@@ -50,7 +50,7 @@ void Func_0200130c(void) {
    * first argument ahead of the scene store's address (alchemy permute);
    * without it the argument follows the store (differ 4). */
   do {
-    FIELD_AT(gMainRoutineWork, u16, 0x254) = 0x19cd;
+    FIELD_AT(gMainRoutineWork, u16, 0x254) = SPLIT_CONSTANT(0x1900, 205);
     FIELD_AT(gMainRoutineWork, u8, 0x24b) = 2;
   } while (0);
   FIELD_AT(gMainRoutineWork, u16, 0x1f6) = (s32)&SceneId_Ov664Room4;

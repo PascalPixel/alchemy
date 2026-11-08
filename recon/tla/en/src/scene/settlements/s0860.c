@@ -71,8 +71,8 @@ void Func_02000860(void) {
   }
   Func_02002170();
   Func_02002170();
-  Settlements_Func_02002180(1, 0x203, 8, 9);
-  if (GameFlag_Test(0xf5d)) {
+  Settlements_Func_02002180(1, SPLIT_CONSTANT(0x104, 255), 8, 9);
+  if (GameFlag_Test(SPLIT_CONSTANT(0xf00, 93))) {
     Func_020020c0(11, 0, 0);
     return;
   }

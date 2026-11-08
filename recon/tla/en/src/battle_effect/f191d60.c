@@ -333,7 +333,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
           Render_ResetTransformState();
           Func_08015160(16 << 16, Data_08199f3c[i] << 16, 0);
           Func_080151e4(scale, scale, scale);
-          SceneTransform_ApplyPitch(0xbb8);
+          SceneTransform_ApplyPitch(SPLIT_CONSTANT(0xb00, 184));
           model->scrollU = ((frame + i * 5) & 7) << 4;
           Render_TransformVertices(Data_08198cac, projected, 32);
           Render_DrawModelList(model);

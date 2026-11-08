@@ -19,7 +19,7 @@ extern const u8 gData_02001708[];
 extern const u8 gData_02001840[];
 
 const u8 *Func_0200004c(void) {
-  if (GameFlag_Test(0x8a7))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x7a8, 255)))
     return gData_02001840;
   return gData_02001708;
 }

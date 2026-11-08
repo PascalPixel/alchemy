@@ -7,7 +7,7 @@ void Func_020010c8(void) {
   } else {
     Func_020048c4();
     Func_02004a24(0);
-    if (GameFlag_Test(0x9fe))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 254)))
       Func_0200498c((s32)MsgShamanMoapaDefeatIncredible);
     else
       Func_0200498c((s32)MsgShamanTribeForbidsTalking);
@@ -38,7 +38,7 @@ void Func_0200113c(void) {
     } else {
       ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
       Func_020049a4(11, 0);
-      GameFlag_SetBit(0x9ed);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 237));
     }
   }
   Func_020048cc();
@@ -68,15 +68,15 @@ void Func_020011f8(void) {
 void Func_0200122c(void) {
   Func_020048c4();
   Func_02004a24(0);
-  if (GameFlag_Test(0x301)) {
-    if (GameFlag_Test(0xa21))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x300, 1))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 33)))
       Func_0200498c((s32)MsgShamanFortuneAvoidNortheast);
     else
       Func_0200498c((s32)MsgShamanFortuneAvoidSouth);
     Func_020049a4(17, 0);
   } else {
     Import_SoundPlay(0);
-    if (GameFlag_Test(0xa21))
+    if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 33)))
       Func_0200498c((s32)MsgShamanFortuneOfferAfterTrial);
     else
       Func_0200498c((s32)MsgShamanFortuneOfferBeforeTrial);
@@ -105,7 +105,7 @@ void Func_0200122c(void) {
       Func_020049a4(17, 0);
       Motion_SetVarCbAndRefresh(17, 1);
       Func_020049a4(17, 0);
-      GameFlag_SetBit(0x301);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x300, 1));
     }
     Func_02004a2c();
   }
@@ -119,7 +119,7 @@ void Func_02001380(void) {
     Import_SoundPlay(78);
     Func_020048c4();
     Func_02004a24(0);
-    Func_020049e4(0x19999, 0x3333);
+    Func_020049e4(0x19999, SPLIT_CONSTANT(0x3300, 51));
     ShamanVillage_CamMove(PIXELS(224), -1, PIXELS(280), 1);
     Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x13333, 0x9999);
     ShamanVillage_ObjWalk(gMainRoutineWork.currentOwner, 182, 280);
@@ -141,7 +141,7 @@ void Func_02001380(void) {
     ShamanVillage_CamMove(PIXELS(224), -1, PIXELS(280), 1);
     Func_020049f4();
     ShamanVillage_ObjTurn(15, FACING_WEST);
-    ShamanVillage_MessagePut(0x200f, 0);
+    ShamanVillage_MessagePut(SPLIT_CONSTANT(0x2000, 15), 0);
     ShamanVillage_CamMove(PIXELS(178), -1, PIXELS(220), 1);
     Func_020049f4();
     FieldEvent_Wait(10);
@@ -185,7 +185,7 @@ void Func_02001380(void) {
 void Func_02001644(void) {
   Func_020048c4();
   Func_02004a24(0);
-  Func_020049e4(0x33333, 0x6666);
+  Func_020049e4(0x33333, SPLIT_CONSTANT(0x6600, 102));
   ShamanVillage_CamMove(PIXELS(182), -1, PIXELS(304), 1);
   Func_020049f4();
   Func_0200498c((s32)MsgShamanGiveUpTrialPrompt);
@@ -194,11 +194,11 @@ void Func_02001644(void) {
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Func_020049a4(15, 0);
-    Func_020049e4(0x4cccc, 0x9999);
+    Func_020049e4(0x4cccc, SPLIT_CONSTANT(0x9900, 153));
     Camera_MoveWithinMapBounds(PIXELS(168), -1, PIXELS(368), 1);
     Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
     ShamanVillage_ObjWalk(gMainRoutineWork.currentOwner, 168, 368);
-    GameFlag_ClearBit(0x201);
+    GameFlag_ClearBit(SPLIT_CONSTANT(0x102, 255));
   } else {
     ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
     Func_020049a4(15, 0);
@@ -224,14 +224,14 @@ void Func_02001764(void) {
   Func_0200498c((s32)MsgShamanChallengeTrialRoadPrompt);
   ShamanVillage_MessageOpen(0x200f, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
-    Func_020049a4(0x200f, 0);
+    Func_020049a4(SPLIT_CONSTANT(0x2000, 15), 0);
     Func_0200289c();
   } else {
     ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
     ShamanVillage_MessageOpen(0x200f, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
       Import_SoundPlay(76);
-      Func_020049a4(0x200f, 0);
+      Func_020049a4(SPLIT_CONSTANT(0x2000, 15), 0);
       GameFlag_SetBit(0x200);
       Func_02001380();
     } else {

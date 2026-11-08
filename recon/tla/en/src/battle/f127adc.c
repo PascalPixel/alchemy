@@ -36,7 +36,7 @@ s32 BattleEnemy_ClaimNameLetter(s32 no, s32 n) {
     if (w->channels[i] < 0) {
       w->channels[i] = 1;
       w->usedMasks[i] = 3;
-      return 0x8001;
+      return SPLIT_CONSTANT(0x8000, 1);
     }
     for (; retry <= 31; retry++) {
       w->channels[i] = (w->channels[i] + 1) % CH_CNT;

@@ -48,7 +48,7 @@ void Func_02000ad0(struct Actor *object) {
         object, (u8)((u32)((struct CounterBits *)count)->rest % 6));
   if (((u8 *)object)[98] == 0) {
     if ((*count & 15) == 0) {
-      Func_02000f3c(0x256);
+      Func_02000f3c(SPLIT_CONSTANT(0x200, 86));
       work->unka0[work->unka6] = 0;
       work->unka6 ^= 1;
     }

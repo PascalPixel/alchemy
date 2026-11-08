@@ -158,7 +158,7 @@ void Func_02002a64(void) {
   Func_02005754(MsgGabombaUnderstandsChannel);
   Func_02005764(23, 0);
   Func_020057bc()->motionFlags = 0;
-  Func_020057a4(0xcccc, 0x1999);
+  Func_020057a4(SPLIT_CONSTANT(0xcc00, 204), 0x1999);
   /* FAKEMATCH(temporary): the else branch's 0x6007 set here in a local, which
    * gives the event work counter r3 and r2 as the native has them; as
    * Func_02005764(0x6007, 0), 20 of 521 instructions differ in tla-en. */
@@ -170,7 +170,7 @@ void Func_02002a64(void) {
   Actor_ArmCallback(7, 0, 0);
   Func_02005774_(6, 0x8000);
   Actor_SetModeById(6, 3);
-  Func_02005764(0x4006, 0);
+  Func_02005764(SPLIT_CONSTANT(0x4000, 6), 0);
   FieldMessage_ShowAtActor(0x6005, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Func_0200578c_ArgsFirst(7, 256, 20);
@@ -180,7 +180,7 @@ void Func_02002a64(void) {
     Actor_Walk(7, 364, 308);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xe000, 0);
     Func_02005774_(7, 0x6000);
-    Func_02005764(0x6007, 0);
+    Func_02005764(SPLIT_CONSTANT(0x6000, 7), 0);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
   } else {
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
@@ -201,7 +201,7 @@ void Func_02002a64(void) {
   Func_02005764_(0x6017, 0);
   Motion_SetModeAndWaitAnimation(7, 3);
   Func_0200578c_ArgsFirst(23, 265, 20);
-  Func_02005764(0x6017, 0);
+  Func_02005764(SPLIT_CONSTANT(0x6000, 23), 0);
   Func_02005764_(0x4007, 0);
   Func_0200578c_ArgsFirst(7, 256, 40);
   Func_02005764_(0x4007, 0);
@@ -213,7 +213,7 @@ void Func_02002a64(void) {
   Actor_Walk(6, 440, 296);
   Func_02005774_(6, 0x8000);
   Motion_SetModeAndWaitAnimation(6, 3);
-  Func_02005764(0x4006, 0);
+  Func_02005764(SPLIT_CONSTANT(0x4000, 6), 0);
   Actor_Turn(7, 0xe000, 0);
   Func_0200578c_ArgsFirst(7, 261, 0);
   Actor_Turn(6, 0x2000, 0);
@@ -242,7 +242,7 @@ void Func_02002a64(void) {
   Func_02005764(6, 0);
   Func_02005764(23, 0);
   Func_02005764(7, 0);
-  Func_02005764(0x2005, 0);
+  Func_02005764(SPLIT_CONSTANT(0x2000, 5), 0);
   Camera_MoveWithinMapBounds(196 << 17, -1, 146 << 17, 1);
   Func_020057b4();
   Actor_SetModeById(23, 3);
@@ -257,7 +257,7 @@ void Func_02002a64(void) {
   Actor_SetMovementTypeById(23, gData_02005c40);
   Actor_SetMovementTypeById(6, gData_02005c40);
   Actor_SetMovementTypeAndWaitById(5, gData_02005c40);
-  GameFlag_SetBit(0x8f6);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 246));
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_0200581c();

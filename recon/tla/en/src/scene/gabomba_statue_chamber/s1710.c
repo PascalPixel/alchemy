@@ -95,7 +95,7 @@ void Func_02001710(s32 p0) {
   Call3((void (*)())Actor_ArmCallback, 5, 0xc000, 0);
   Call3((void (*)())Actor_ArmCallback, 11, 0xd000, 0);
   Call3((void (*)())Actor_ArmCallback, 6, facing, 0);
-  Call3((void (*)())Actor_SetSpeedParameters, 12, 0xcccc, 0x6666);
+  Call3((void (*)())Actor_SetSpeedParameters, 12, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
   Call3((void (*)())Actor_SetPositionAndReset, 12, 0x188, 168);
   Call1((void (*)())Func_02001f10, 210);
   Func_02000f00();
@@ -107,11 +107,11 @@ void Func_02001710(s32 p0) {
     guard->motionFlags = zero;
   }
   Func_02001064();
-  Call3((void (*)())Actor_SetSpeedParameters, 8, 0x6666, 0x3333);
+  Call3((void (*)())Actor_SetSpeedParameters, 8, SPLIT_CONSTANT(0x6600, 102), SPLIT_CONSTANT(0x3300, 51));
   Call3((void (*)())Actor_SetPositionAndCommit, 8, 0x1a8, 152);
   Call2((void (*)())Func_02001e70, 12, 0x5000);
   Call1((void (*)())Func_02001e48, (s32)MsgIMightBe);
-  Call2((void (*)())Func_02001e60, 0x400c, 0);
+  Call2((void (*)())Func_02001e60, SPLIT_CONSTANT(0x4000, 12), 0);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 12, 3);
   Call3((void (*)())Actor_SetPositionAndReset, 12, 0x188, 140);
   Call1((void (*)())wait, 1);
@@ -119,40 +119,40 @@ void Func_02001710(s32 p0) {
   Call1((void (*)())wait, 1);
   Func_02001e88(5, turn, 20);
   Call3((void (*)())Actor_ArmCallback, 5, angleC, 0);
-  FieldMessage_ShowAtActor(0x4005, 0);
+  FieldMessage_ShowAtActor(SPLIT_CONSTANT(0x4000, 5), 0);
   if (Event_AskYesNoWithActorAnimation(*owner, 0) == 0) {
     Call2((void (*)())Func_02001e70, 7, 0);
     Call2((void (*)())Actor_SetModeById, 7, 3);
-    Call2((void (*)())Func_02001e60, 0x4007, 0);
+    Call2((void (*)())Func_02001e60, SPLIT_CONSTANT(0x4000, 7), 0);
     ((struct GroupWork *)heap->eventWork)->unk1c4++;
   } else {
     ((struct GroupWork *)heap->eventWork)->unk1c4++;
     Call2((void (*)())Func_02001e70, 7, angleC);
-    Call2((void (*)())Func_02001e60, 0x4007, 0);
+    Call2((void (*)())Func_02001e60, SPLIT_CONSTANT(0x4000, 7), 0);
     Func_02001f08();
   }
   Call3((void (*)())Actor_ArmCallback, 6, 0x8000, 0);
   Call2((void (*)())Func_02001e90, 6, 0x102);
   Call1((void (*)())FieldEvent_Wait, 20);
-  Call2((void (*)())Func_02001e60, 0x4006, 0);
+  Call2((void (*)())Func_02001e60, SPLIT_CONSTANT(0x4000, 6), 0);
   Call2((void (*)())Func_02001e70, 11, 0);
   Call2((void (*)())Actor_SetModeById, 11, 4);
-  Call2((void (*)())Func_02001e60, 0x400b, 0);
+  Call2((void (*)())Func_02001e60, SPLIT_CONSTANT(0x4000, 11), 0);
   Call2((void (*)())Func_02001e70, 11, 0xd000);
-  Call2((void (*)())Func_02001e60, 0x400b, 0);
+  Call2((void (*)())Func_02001e60, SPLIT_CONSTANT(0x4000, 11), 0);
   Call2((void (*)())Func_02001e70, 11, 0x3000);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 11, 3);
-  Call2((void (*)())Func_02001e60, 0x400b, 0);
+  Call2((void (*)())Func_02001e60, SPLIT_CONSTANT(0x4000, 11), 0);
   Call3((void (*)())Actor_ArmCallback, 7, 0x8000, 0);
   Call3((void (*)())Actor_ArmCallback, 7, 0x8000, 20);
   Call2((void (*)())Actor_SetModeById, gMainRoutineWork.currentOwner, 3);
   Call2((void (*)())Actor_SetModeById, 7, 3);
   Call2((void (*)())Actor_SetModeById, 5, 3);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 6, 3);
-  Call3((void (*)())Actor_SetSpeedParameters, 11, 0xcccc, 0x6666);
-  Call3((void (*)())Actor_SetSpeedParameters, 7, 0xcccc, 0x6666);
+  Call3((void (*)())Actor_SetSpeedParameters, 11, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
+  Call3((void (*)())Actor_SetSpeedParameters, 7, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
   Call3((void (*)())Actor_SetSpeedParameters, 5, 0x10000, 0x8000);
-  Call3((void (*)())Actor_SetSpeedParameters, 6, 0x13333, 0x9999);
+  Call3((void (*)())Actor_SetSpeedParameters, 6, 0x13333, SPLIT_CONSTANT(0x9900, 153));
   {
     s32 path = (s32)gData_02001f4c;
 
@@ -161,6 +161,6 @@ void Func_02001710(s32 p0) {
     Call2((void (*)())Actor_SetMovementTypeById, 5, path);
     Call2((void (*)())Actor_SetMovementTypeAndWaitById, 6, path);
   }
-  Call1((void (*)())GameFlag_SetBit, 0x8fd);
+  Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x800, 253));
   Func_02001da8();
 }

@@ -61,7 +61,7 @@ s32 Func_02000314(void) {
     Actor_SetModeById(20, 8);
     Actor_SetModeById(21, 8);
     Actor_SetModeById(22, 7);
-    if (GameFlag_Test(0xa3d) == 0)
+    if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 61)) == 0)
       Func_020029ac();
   } else if (gMainRoutineWork.entrance == 2) {
     Func_02001f10();

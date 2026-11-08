@@ -57,9 +57,9 @@ void Func_02002c1c(void) {
   Func_02005230(18, 0, 0);
   Func_02005230(19, 0, 0);
   Func_02005230(20, 0, 0);
-  GameFlag_ClearBit(0x20e);
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x200, 14));
   GameFlag_ClearBit(0x20c);
-  GameFlag_ClearBit(0x20d);
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x10e, 255));
 L_0200acd2:
   t19 = GameFlag_Test(0x300);
   if (t19 == 0)

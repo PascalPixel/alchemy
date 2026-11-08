@@ -69,7 +69,7 @@ void Func_02003284(void) {
   Func_02003cc0(20);
   Actor_GetById(20)->priorityFlags |= 32;
   Actor_SetSpritePriority(20, 2);
-  if (GameFlag_Test(0x841) != 0)
+  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 65)) != 0)
     Func_0200172c();
   else
     /* FAKEMATCH(wrapper): forwarded, so each call builds its own constants; as direct
@@ -92,7 +92,7 @@ void Func_02003284(void) {
   Actor_SetSpritePriority(14, 1);
   Actor_SetSpritePriority(15, 1);
   Func_02001930();
-  if (GameFlag_Test(0x86e) != 0) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 110)) != 0) {
     s32 angle = 0x4000;
 
     /* FAKEMATCH(wrapper): forwarded, so the angle loads ahead of the coordinates; as
@@ -100,14 +100,14 @@ void Func_02003284(void) {
     Call4((void (*)())Func_02003c70, 25, 212 << 17, 208 << 15, angle);
   }
   Actor_SetModeById(18, 3);
-  if (GameFlag_Test(0x86f) != 0) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x770, 255)) != 0) {
     object = Actor_GetById(18);
     Call6((void (*)())Func_02003bf0, 27, 8, 1, 1, 27, 9);
     Actor_SetModeById(18, 4);
     object->priorityFlags |= 2;
     *((u8 *)object + 89) &= ~1;
-    GameFlag_SetBit(517);
-    GameFlag_SetBit(577);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x106, 255));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x142, 255));
     Func_02003be0(69, 51, 92, 11, 1, 1);
     {
       s32 angle = 0x4000;
@@ -117,7 +117,7 @@ void Func_02003284(void) {
   }
   if (GameFlag_Test(0x870) != 0) {
     GameFlag_SetBit(528);
-    GameFlag_SetBit(534);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x200, 22));
     Func_02003c68(25, 0, 0);
   }
   Func_020001d0(gData_02003f80);

@@ -27,9 +27,9 @@ void Func_02001be0(s32 progress) {
   if (kind + level == gData_02003fc4)
     return;
   gData_02003fc4 = kind + level;
-  Call2((void (*)())Iwram_ClearWords, (s32)(gData_02003fd8), (s32)(0x100));
+  Call2((void (*)())Iwram_ClearWordsEntry, (s32)(gData_02003fd8), (s32)(0x100));
   {
-    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
     if (kind == 0) {
       copy(gData_02003fd8, gData_020040d8[8], 0x80);

@@ -2,7 +2,7 @@
 
 void Func_02000768(void) {
   OBJECT_BYTE(Actor_GetById(17), 98) = 0;
-  GameFlag_SetBit(0x307);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x208, 255));
 }
 
 void Func_02000784(void) { Func_020059c0(); }

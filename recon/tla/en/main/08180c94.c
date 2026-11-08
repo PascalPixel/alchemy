@@ -154,13 +154,13 @@ struct SummonObject {
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 2 of 575 instructions differ in tla-en. */
+   * Iwram_CopyWordsEntry, 2 of 575 instructions differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 
 static inline s32 FillWords(void *destination, s32 size, u32 value) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_FillWords, 30 of 575 instructions differ in tla-en. */
+   * Iwram_FillWordsEntry, 30 of 575 instructions differ in tla-en. */
   return Iwram_FillWords(destination, size, value);
 }
 

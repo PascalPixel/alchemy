@@ -18,7 +18,7 @@ void Func_02001a3c(void) {
   Func_020039d8();
   Func_02003b08(0);
   Func_02003a70((s32)MsgFieldRopeThrownAgain);
-  Func_02003a80(0x200c, 0);
+  Func_02003a80(SPLIT_CONSTANT(0x2000, 12), 0);
   ShrineOfTheSeaGod_ObjSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   ShrineOfTheSeaGod_ObjSpeed(14, 0xcccc, 0x6666);
   ShrineOfTheSeaGod_ObjWalk(gMainRoutineWork.currentOwner, 272, 336);
@@ -52,7 +52,7 @@ void Func_02001a3c(void) {
   FieldEvent_Wait(20);
   Func_02003a80(0x800d, 0);
   Motion_SetModeAndWaitAnimation(12, 3);
-  Func_02003a80(0x400c, 0);
+  Func_02003a80(SPLIT_CONSTANT(0x4000, 12), 0);
   Func_02003ab8(0x33333, 0x6666);
   ShrineOfTheSeaGod_CamMove(420 << 16, -1, 200 << 16, 1);
   ShrineOfTheSeaGod_ObjSpeed(12, 0x19999, 0xcccc);

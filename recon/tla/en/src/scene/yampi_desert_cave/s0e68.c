@@ -60,7 +60,7 @@ void Func_02000f10(s32 unused, s32 id) {
       YampiDesertCave_Call1848(103, 16, 1, 1, 103, 15);
       column = object->x >> 20;
       if (column == 38) {
-        GameFlag_SetBit(0x305);
+        GameFlag_SetBit(SPLIT_CONSTANT(0x300, 5));
         Func_02001848(38, 15, 1, 1, column, 16);
       } else {
         YampiDesertCave_Call1848(38, 15, 1, 1, 39, 16);

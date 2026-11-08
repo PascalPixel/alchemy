@@ -90,8 +90,8 @@ void Func_08126e00(void) {
         /* FAKEMATCH(temporary): the multiply called through a local pointer
          * to its fixed entry, set before the spiral, so its address is
          * loaded before the cursor and the axis count; as plain
-         * Iwram_MulQ16 calls, 12 of 267 instructions differ in tla-en. */
-        mul = Iwram_MulQ16;
+         * Iwram_MulQ16Entry calls, 12 of 267 instructions differ in tla-en. */
+        mul = Iwram_MulQ16Entry;
         pos = spark->pos;
         for (k = 2; k >= 0; k--) {
           step = mul(mul(-*pos >> 8, scale), 0x13000);

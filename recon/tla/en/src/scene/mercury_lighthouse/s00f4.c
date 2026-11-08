@@ -27,7 +27,7 @@ void Func_020000f4(void) {
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   phase = gFrameCount & 15;
   if (phase == 0) {
-    object = Func_02000550(0x2a2, 0, 0, 0);
+    object = Func_02000550(SPLIT_CONSTANT(0x200, 162), 0, 0, 0);
     if (object != NULL) {
       sprite = object->animation;
       x = Random16Far() * 40 + 0x32c0000;

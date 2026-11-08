@@ -1,7 +1,7 @@
 #include "garoh_interiors.h"
 
 void Func_02000710(void) {
-  GameFlag_SetBit(0x91b);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 27));
   Func_020007f4();
   Func_02000884(0);
   FieldEvent_Wait(30);

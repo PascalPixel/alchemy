@@ -3,7 +3,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/northern_reaches/entry.o"(.text)
-        "*/recon/tla/raw/src/scene/northern_reaches/scene_tables.o"(.text)
+        "*/games/tla/src/scene/northern_reaches/scene_tables.o"(.text)
         "*/recon/tla/raw/src/scene/northern_reaches/s01d8.o"(.text)
         "*/games/tla/src/scene/northern_reaches/scene_events.o"(.text)
         "*/recon/tla/raw/src/scene/northern_reaches/s0618.o"(.text)

@@ -16,7 +16,7 @@ void Func_020010ec(void) {
   Func_02003eac(0);
   FieldMessage_Show(MsgCheckedThePsynergy, 1);
   Func_02003ef4(126);
-  Func_02003eb4(999, 0);
+  Func_02003eb4(SPLIT_CONSTANT(0x2e8, 255), 0);
   FieldEvent_Wait(10);
   GameFlag_ClearBit(0x142);
   FieldMessage_Show(MsgCheckedThePsynergy + 1, 1);
@@ -34,7 +34,7 @@ void Func_02001170(void) {
   s32 i;
   s32 result;
 
-  if (GameFlag_Test(0x24b)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x14c, 255))) {
     /* FAKEMATCH: called as void through a cast, these two calls set r0 before
      * r1 as the native does; called as declared (value-returning, as the third)
      * they load r1 first (differ 4). */
@@ -45,8 +45,8 @@ void Func_02001170(void) {
     Func_02003688(38, 2, 19, 1);
     for (i = 8; i >= 0; i--)
       result = Func_020036b8(33, 55);
-    GameFlag_SetBit(0x24a);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x200, 74));
     if (result == 1)
-      GameFlag_SetBit(0xa65);
+      GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 101));
   }
 }

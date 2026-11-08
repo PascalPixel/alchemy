@@ -37,13 +37,13 @@ void Func_02000af4(void) {
 
   Func_0200406c();
   Func_02004204(0);
-  if (GameFlag_Test(0x9b2))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 178)))
     FieldMessage_Show((s32)MsgContigo163, 1);
   else
     FieldMessage_Show((s32)MsgContigo64, 1);
   Actor_SetModeById(17, 3);
   Func_020041d4(0x10000, 0);
-  Func_020041cc(0x204084, 1);
+  Func_020041cc(SPLIT_CONSTANT(0x204000, 132), 1);
   Func_020041dc(16);
   Func_02004264();
   Func_0200427c(Actor_GetById(17), 2);

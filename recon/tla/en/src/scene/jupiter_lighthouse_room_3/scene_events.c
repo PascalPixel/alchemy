@@ -12,13 +12,13 @@ void Func_02000134(s32 unused, s32 id) {
   register s32 mode asm("r2");
 
   if (object->x >> 20 == 20 && object->z >> 20 == 36) {
-    GameFlag_SetBit(0xa04);
+    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 4));
     placed = 1;
   }
   /* FAKEMATCH: the volatile x read stops PRE keeping x in r2 across the first
    * test and reloading it after the call (plain: differ 22). */
   if (*(volatile s32 *)&object->x >> 20 == 32 && object->z >> 20 == 36) {
-    GameFlag_SetBit(0xa05);
+    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 5));
     placed = 1;
   }
   if (placed) {
@@ -57,7 +57,7 @@ s32 Func_02000250(void) {
   s32 x;
 
   Scene_SetArrivalFlags(0);
-  if (GameFlag_Test(0xa04)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 4))) {
     object = Actor_GetById(14);
     object->motionFlags = 0;
     object->terrainHeight = PIXELS(-32);
@@ -65,7 +65,7 @@ s32 Func_02000250(void) {
     Func_020023b0_(14, PIXELS(328), PIXELS(584));
     Func_02002368(object->x, object->z, 0, 0);
   }
-  if (GameFlag_Test(0xa05)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 5))) {
     object = Actor_GetById(15);
     object->motionFlags = 0;
     object->terrainHeight = PIXELS(-32);

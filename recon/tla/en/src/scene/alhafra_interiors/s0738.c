@@ -45,7 +45,7 @@ void Func_02000738(void) {
   s32 t0;
   s32 t1;
 
-  t0 = Value1(GameFlag_Test, 0x903);
+  t0 = Value1(GameFlag_Test, SPLIT_CONSTANT(0x900, 3));
   if (t0 != 0) {
   } else {
 #if TLA_PATCH_1 /* The Japanese edition does not check 0x200. */
@@ -54,7 +54,7 @@ void Func_02000738(void) {
     } else
 #endif
     {
-      GameFlag_SetBit(0x903);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 3));
       Func_02000a94();
       Func_02000b8c(0);
       Func_02000b24((s32)MsgAlhafraInteriors120);

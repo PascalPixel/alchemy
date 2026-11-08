@@ -15,9 +15,9 @@ void Func_020044d4(void) {
   Actor_GetById(16)->angle = 0xc000;
   wait(1);
   Event_StartScreenTransition();
-  Actor_SetSpeedParameters_(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_SetSpeedParameters_(gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
   Actor_SetPositionAndReset_(gMainRoutineWork.currentOwner, 328, 392);
-  Func_020052d8_(0xcccc, 0x1999);
+  Func_020052d8_(SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x1900, 153));
   Camera_MoveWithinMapBounds(PIXELS(408), -1, PIXELS(400), 1);
   Actor_SetPositionAndReset_(gMainRoutineWork.currentOwner, 376, 408);
   FieldEvent_Wait(20);
@@ -26,12 +26,12 @@ void Func_020044d4(void) {
   Func_02005298(12, 0);
   Actor_ArmCallback_(12, FACING_WEST, 20);
   Func_020052c8(12, 256, 0);
-  Actor_SetSpeedParameters_(12, 0x19999, 0xcccc);
+  Actor_SetSpeedParameters_(12, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
   Actor_SetPositionAndReset_(12, 456, 408);
   Func_02005298(12, 0);
   Func_02005240(16, gMainRoutineWork.currentOwner);
   wait(1);
-  Actor_SetSpeedParameters_(16, 0xcccc, 0x6666);
+  Actor_SetSpeedParameters_(16, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
   Actor_SetPositionAndReset_(16, 376, 392);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_ArmCallback_(16, FACING_SOUTHEAST + FACING_STEP, 40);
@@ -72,12 +72,12 @@ void Func_020046d8(void) {
   Actor_ArmCallback_(12, FACING_SOUTHEAST + FACING_STEP, 20);
   Actor_ArmCallback_(12, FACING_SOUTH + FACING_STEP, 20);
   Actor_ArmCallback_(12, FACING_SOUTHEAST + FACING_STEP, 0);
-  Func_020052d8(0x4cccc, 0x9999);
+  Func_020052d8(0x4cccc, SPLIT_CONSTANT(0x9900, 153));
   Camera_MoveWithinMapBounds(PIXELS(456), PIXELS(40), PIXELS(664), 1);
   Func_020052e8();
   FieldEvent_Wait(40);
   Func_02005280((s32)&MsgKandoreanTemple06);
-  Func_02005298(0x800c, 0);
+  Func_02005298(SPLIT_CONSTANT(0x8000, 12), 0);
   Actor_SetPositionAndReset_(12, 472, 648);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -85,8 +85,8 @@ void Func_020046d8(void) {
 }
 
 void Func_020047f0(void) {
-  Actor_SetSpeedParameters_(12, 0x19999, 0xcccc);
+  Actor_SetSpeedParameters_(12, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
   Actor_SetPositionAndReset_(12, 496, 392);
   Actor_ArmCallback_(12, FACING_WEST, 0);
-  Func_02005298(0x400c, 0);
+  Func_02005298(SPLIT_CONSTANT(0x4000, 12), 0);
 }

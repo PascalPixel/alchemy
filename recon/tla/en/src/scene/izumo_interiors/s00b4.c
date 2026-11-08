@@ -62,7 +62,7 @@ static inline void LeaderAnimate(s32 animation, s32 frames) {
 }
 
 const u8 *Func_020000b4(void) {
-  if (GameFlag_Test(0x927))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 39)))
     return gData_02002d80;
   if (gMainRoutineWork.entrance == 7)
     return gData_02002cf0;
@@ -70,7 +70,7 @@ const u8 *Func_020000b4(void) {
 }
 
 const u8 *Func_020000f0(void) {
-  if (GameFlag_Test(0x927))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 39)))
     return gData_0200323c;
   if (gMainRoutineWork.entrance == 7)
     return gData_02003164;
@@ -85,7 +85,7 @@ void Func_0200012c(s32 actor) {
   } else {
     Func_020021c4();
     Func_020022bc(0);
-    if (GameFlag_Test(0x927)) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 39))) {
       Func_02002244((s32)MsgNowThatPeace);
       Func_02002254(12, 0);
     } else {
@@ -104,7 +104,7 @@ void Func_020001a8(s32 actor) {
   } else {
     Func_020021c4();
     Func_020022bc(0);
-    if (GameFlag_Test(0x927))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 39)))
       Func_02002244((s32)MsgBriggsFromChampa);
     else
       Func_02002244((s32)MsgOfCourseI);
@@ -121,7 +121,7 @@ void Func_02000220(s32 actor) {
   } else {
     Func_020021c4();
     Func_020022bc(0);
-    if (GameFlag_Test(0x927))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 39)))
       Func_02002244((s32)MsgYouMustSee);
     else
       Func_02002244((s32)MsgIzumoSLeaders);
@@ -133,7 +133,7 @@ void Func_02000220(s32 actor) {
 void Func_02000298(void) {
   Func_020021c4();
   Func_020022bc(0);
-  if (!FlagCheck(0x922)) {
+  if (!FlagCheck(SPLIT_CONSTANT(0x900, 34))) {
     Func_02002244((s32)MsgSusaSNot);
     Func_02002254(8, 0);
     FieldEvent_Wait(30);
@@ -159,7 +159,7 @@ void Func_02000298(void) {
 }
 
 void Func_02000358(void) {
-  GameFlag_SetBit(0x923);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 35));
   Func_02002244((s32)MsgIPrayThat);
   Func_02002254(8, 0);
 }
@@ -170,7 +170,7 @@ void Func_02000378(void) {
   Func_020021c4();
   Func_020022bc(0);
   Actor_SetAngleToward(15, gMainRoutineWork.currentOwner, 0);
-  if (GameFlag_Test(0x92c)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 44))) {
     Func_02002244((s32)MsgWithThisDancing);
     Func_02002254(15, 0);
   } else {
@@ -212,7 +212,7 @@ void Func_02000458(void) {
   } else {
     Func_02002244((s32)MsgAndWhatWere);
     Func_02002254(15, 0);
-    if (GameFlag_Test(0x923)) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 35))) {
       LeaderAnimate(256, 30);
       Func_0200226c(15, 259, 30);
       Func_02002254(15, 0);

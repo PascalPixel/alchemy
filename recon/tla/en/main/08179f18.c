@@ -211,7 +211,7 @@ void Heap_Release(void *buffer);
 
 static inline s32 ClearWords(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_ClearWords, 50 of 2583 instructions differ in tla-en. */
+   * Iwram_ClearWordsEntry, 50 of 2583 instructions differ in tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 

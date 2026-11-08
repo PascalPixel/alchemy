@@ -42,12 +42,12 @@ void Func_02000900(struct Counted *object) {
   }
   if (object->count > 2) {
     other->movementState = 1;
-    GameFlag_SetBit(0x206);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x200, 6));
   }
   {
     u8 *otherCount = &other->count;
 
-    if (*otherCount > 2 && !GameFlag_Test(0x206) &&
+    if (*otherCount > 2 && !GameFlag_Test(SPLIT_CONSTANT(0x200, 6)) &&
         other->script != gData_020056c4 && other->script != gData_02005728) {
       object->movementState = 1;
       GameFlag_SetBit(0x205);

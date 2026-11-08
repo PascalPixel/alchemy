@@ -30,7 +30,7 @@ loop:
     Func_02002c1c(-4, object->terrainId, id);
     Func_020029d0(1);
     wait(16);
-    TundariaTower_SetWork(-1, -1, 0xe666);
+    TundariaTower_SetWork(-1, -1, SPLIT_CONSTANT(0xe600, 102));
     wait(8);
     Actor_SetPositionAndResetMotion(object, 0, 0, 0);
     wait(2);

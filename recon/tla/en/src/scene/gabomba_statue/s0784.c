@@ -43,7 +43,7 @@ void Func_02000784(void) {
     test.z = z + actor->velocityZ;
     if (Func_02005684(actor, &test) == 0) {
       s32 s, c, angle;
-      angle = 0x1555 - turn;
+      angle = SPLIT_CONSTANT(0x1500, 85) - turn;
       s = Math_Sine(angle);
       c = Math_Cosine(angle);
       tx = table->x + Iwram_MulQ16(c, dx) + Iwram_MulQ16(s, dz);

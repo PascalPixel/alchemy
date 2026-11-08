@@ -19,8 +19,8 @@ void Func_02001cac(void) {
   *scroll = first;
   dma = REG_DMA0;
 
-  dma[5] &= 0xc5ff; // Clear start timing and repeat.
-  dma[5] &= 0x7fff; // Stop.
+  dma[5] &= SPLIT_CONSTANT(0xc500, 255); // Clear start timing and repeat.
+  dma[5] &= SPLIT_CONSTANT(0x7f00, 255); // Stop.
   lines++;
   (void)dma[5];
   Dma_Set(lines, (void *)scroll, DMA_HBLANK_HALFWORD_PER_LINE,

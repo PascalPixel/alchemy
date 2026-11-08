@@ -81,7 +81,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // its arguments.
 static inline s32 (*Iwram_GetCopyWords(void))(void *destination,
                                               const void *source, s32 size) {
-  return Iwram_CopyWords;
+  return Iwram_CopyWordsEntry;
 }
 
 // Dragon Cloud (effect kind 49): a puff arc rises over the user, then a
@@ -142,7 +142,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                              Ram_MapCellBuffer, 1, 0);
   /* FAKEMATCH(wrapper): the entry fetched through Iwram_GetCopyWords; as
-     Iwram_CopyWords called directly, 2 of 1123 instructions differ in tla-en.
+     Iwram_CopyWordsEntry called directly, 2 of 1123 instructions differ in tla-en.
    */
   if (effect->variant == 1)
     Iwram_GetCopyWords()(

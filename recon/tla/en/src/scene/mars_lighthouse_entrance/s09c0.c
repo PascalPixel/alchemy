@@ -49,9 +49,9 @@ void Func_020009e8(void) {
 void Func_02000a24(void) {
   struct Actor *object = Actor_GetById(12);
 
-  if (!Flag_IsSet(0xa4d)) {
-    Func_02004de0(0x23d);
-    Flag_Set(0x232);
+  if (!Flag_IsSet(SPLIT_CONSTANT(0xa00, 77))) {
+    Func_02004de0(SPLIT_CONSTANT(0x13e, 255));
+    Flag_Set(SPLIT_CONSTANT(0x200, 50));
     object->x = S16_AT(object, 100) << 16;
     object->z = S16_AT(object, 102) << 16;
     Flag_Set(0xa4c);

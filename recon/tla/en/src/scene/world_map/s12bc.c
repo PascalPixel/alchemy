@@ -81,7 +81,7 @@ void Func_020012bc(s32 entrance) {
     Func_02004cd8((s32)MsgHeyWaitA);
     Call3((void (*)())Func_02004ce8, 20, 0, 5);
     Func_02004db0();
-    Func_02004df8(0x18ccc, 16);
+    Func_02004df8(SPLIT_CONSTANT(0x18c00, 204), 16);
     Value3((s32 (*)())Func_02004d08, 4, 0x102, 30);
     Call3((void (*)())Actor_CommitPositionAndActivate, 4, 0, 32);
     Call3((void (*)())Actor_ArmCallback, 4, west, 0);
@@ -191,7 +191,7 @@ void Func_020012bc(s32 entrance) {
     Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
     Func_02004d48(102, 3);
   } else if (entrance == 74) {
-    GameFlag_ClearBit(0xa76);
+    GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 118));
     east74 = 0x4000;
     Call4((void (*)())Func_02004c90, 20, 0x27b80000, 0x25900000, east74);
     Call4((void (*)())Func_02004c90, 21, 0x27a80000, 0x25900000, east74);
@@ -203,7 +203,7 @@ void Func_020012bc(s32 entrance) {
     }
     Call4((void (*)())Func_02004c90, 4, 0x27b80000, 0x25b00000, 0xa000);
     Camera_FollowActor(4, 0);
-    Func_02004df8(0x18ccc, 1);
+    Func_02004df8(SPLIT_CONSTANT(0x18c00, 204), 1);
     Call2((void (*)())Actor_SetModeById, 4, 19);
     Actor_SetSingleChildFlags(Actor_GetById(4), 0);
     Event_StartScreenTransition();
@@ -244,7 +244,7 @@ void Func_020012bc(s32 entrance) {
                   ((struct SavedDestination *)&gMainRoutineWork)->entrance);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
   } else {
-    GameFlag_ClearBit(0xa76);
+    GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 118));
     eastB = 0x4000;
     Call4((void (*)())Func_02004c90, 20, 0x27b80000, 0x25a00000, eastB);
     westB = 0xc000;
@@ -366,7 +366,7 @@ void Func_020012bc(s32 entrance) {
     Call2((void (*)())Actor_SetModeById, 4, 3);
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 23, 3);
     FieldEvent_Wait(10);
-    Call3((void (*)())Actor_SetSpeedParameters, 23, 0x13333, 0x9999);
+    Call3((void (*)())Actor_SetSpeedParameters, 23, 0x13333, SPLIT_CONSTANT(0x9900, 153));
     Call2((void (*)())Actor_SetModeById, 23, 2);
     {
       struct Actor *object = Actor_GetById(4);

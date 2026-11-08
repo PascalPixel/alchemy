@@ -18,7 +18,7 @@ static __inline__ void Func_0200400c_(s32 srcX, s32 srcY, s32 width, s32 height,
 
 void Func_02003880(void) {
   Func_02001c44(18);
-  if (GameFlag_Test(0xa21) != 0) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 33)) != 0) {
     Func_0200400c_(44, 40, 8, 3, 44, 36);
     Func_020040d4(19, 0, 0);
     Func_020040d4(20, 0, 0);
@@ -40,7 +40,7 @@ void Func_02003880(void) {
     Func_020040d4(11, 0, 0);
     Func_020040d4(12, 0, 0);
     Func_020040d4(13, 0, 0);
-    if (GameFlag_Test(0x9b2) == 0) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 178)) == 0) {
       Func_020040d4(10, 0, 0);
       Func_020040d4(14, 0, 0);
       Func_020040d4(15, 0, 0);

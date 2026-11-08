@@ -23,7 +23,7 @@ s32 Func_0200200c(void) {
   FIELD_AT(Ram_HeapSlots->eventWork, s32, 428) = 0x201;
   if (gMainRoutineWork.entrance != 7)
     Call1((void (*)())GameFlag_ClearBit, 0x350);
-  if (GameFlag_Test(0x927) && !GameFlag_Test(0x928) &&
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 39)) && !GameFlag_Test(SPLIT_CONSTANT(0x900, 40)) &&
       gMainRoutineWork.entrance == 7) {
     Call1((void (*)())Func_0200231c, 7);
     Call3((void (*)())Func_02002214, 22, 0x900000, 0x2380000);
@@ -33,7 +33,7 @@ s32 Func_0200200c(void) {
     Call3((void (*)())Func_02002214, 18, 0, 0);
     Call3((void (*)())Func_02002214, 19, 0, 0);
   }
-  if (GameFlag_Test(0x927) && GameFlag_Test(0x928) &&
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 39)) && GameFlag_Test(SPLIT_CONSTANT(0x900, 40)) &&
       gMainRoutineWork.entrance == 7 && GameFlag_Test(0x350)) {
     Call1((void (*)())Func_0200231c, 7);
     Call3((void (*)())Func_02002214, 16, 0, 0);
@@ -41,11 +41,11 @@ s32 Func_0200200c(void) {
     Call3((void (*)())Func_02002214, 18, 0, 0);
     Call3((void (*)())Func_02002214, 19, 0, 0);
   }
-  if (gMainRoutineWork.entrance == 5 && !GameFlag_Test(0x927)) {
+  if (gMainRoutineWork.entrance == 5 && !GameFlag_Test(SPLIT_CONSTANT(0x900, 39))) {
     Call2((void (*)())Actor_SetModeById, 17, 5);
     Call2((void (*)())Func_02002274, 17, 0x101);
   }
-  if (gMainRoutineWork.entrance == 7 && !GameFlag_Test(0x927)) {
+  if (gMainRoutineWork.entrance == 7 && !GameFlag_Test(SPLIT_CONSTANT(0x900, 39))) {
     struct Actor *object;
 
     Call2((void (*)())Actor_SetModeById, 9, 5);

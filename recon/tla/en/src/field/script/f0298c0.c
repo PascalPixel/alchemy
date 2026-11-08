@@ -211,9 +211,9 @@ s32 Func_080298c0(struct Actor *actor) {
         effect->motionFlags = 2;
         if (collision == 0)
           Sound_PlayFar(596);
-        effect->gravity = 0xa3d;
+        effect->gravity = SPLIT_CONSTANT(0xa00, 61);
         effect->velocityY = 0;
-        effect->scaleX = 0x4ccc;
+        effect->scaleX = SPLIT_CONSTANT(0x4c00, 204);
         effect->scaleY = 0x4ccc;
         if (sprite != NULL) {
           Animation_ApplyChildArgument(sprite, 2);

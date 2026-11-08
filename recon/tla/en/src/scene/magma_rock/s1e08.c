@@ -46,5 +46,5 @@ void Func_02001e08(void) {
   cell[0] = object->x >> 20;
   cell[2] = object->z >> 20;
   if (cell[0] == 16 && cell[2] == 36)
-    GameFlag_SetBit(0x8d9);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x800, 217));
 }

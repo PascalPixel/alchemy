@@ -32,11 +32,11 @@ void Func_020001a0(s32 unused, s32 id) {
     s32 cell;
 
 
-    if (!Flag_IsSet(0x223) && (x = block->x >> 20) == 47 &&
+    if (!Flag_IsSet(SPLIT_CONSTANT(0x124, 255)) && (x = block->x >> 20) == 47 &&
         (z = block->z >> 20) == 28) {
       Func_0200015c(14);
       Call6((void (*)())Func_0200106c, 49, 28, 1, 1, x, z);
-      Flag_Set(0x223);
+      Flag_Set(SPLIT_CONSTANT(0x124, 255));
       Actor_SetSpritePriority(14, 2);
       other = Actor_GetById(10);
       cell = other->z >> 20;
@@ -50,7 +50,7 @@ void Func_020001a0(s32 unused, s32 id) {
       if (block->z < other->z)
         Flag_Set(0x201);
       else
-        Flag_Set(0x203);
+        Flag_Set(SPLIT_CONSTANT(0x104, 255));
     } else {
       Actor_SetSpritePriority(id, 1);
     }
@@ -78,7 +78,7 @@ void Func_020001a0(s32 unused, s32 id) {
         other->z = 0;
         Flag_Set(0x200);
       } else {
-        Call3((void (*)())Iwram_CopyWords, (s32)&saved, (s32)other, 128);
+        CallLr3((void (*)())Iwram_CopyWordsEntry, (s32)&saved, (s32)other, 128);
         Actor_ResetTargetsAndVelocity(9);
         Actor_Jump(9, 4, 0);
         FieldEvent_Wait(30);

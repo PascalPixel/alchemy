@@ -1,4 +1,4 @@
-#include "jupiter_lighthouse_room_6.h"
+#include "../../../../../../games/tla/src/scene/jupiter_lighthouse_room_6/jupiter_lighthouse_room_6.h"
 
 void Func_020000b4(s32 mode) {
   if (mode == 1) {
@@ -23,7 +23,7 @@ void Func_02000154(void) {
 
   if (!JupiterLighthouseRoom6_FlagCheck(0xa19) && object->x >> 20 == 4 &&
       object->z >> 20 == 37) {
-    GameFlag_SetBit(0xa19);
+    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 25));
     Func_020000b4(1);
   }
 }

@@ -23,8 +23,8 @@ void Func_02001c88(void) {
     }
     wait(1);
   }
-  if (GameFlag_Test(0x931)) {
-    if (GameFlag_Test(0x221))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 49))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x122, 255)))
       Actor_SetSpritePriority(9, 1);
     else
       Func_02002cd0(9, 0, 0);
@@ -40,6 +40,6 @@ void Func_02001c88(void) {
     GameFlag_ClearBit(0x220);
   } else if (LemurianShip_FlagCheck(0x221)) {
     Func_02001944(9, 11);
-    GameFlag_ClearBit(0x221);
+    GameFlag_ClearBit(SPLIT_CONSTANT(0x122, 255));
   }
 }

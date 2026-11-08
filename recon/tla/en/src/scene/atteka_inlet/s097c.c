@@ -41,10 +41,10 @@ void Func_0200097c(void) {
   Func_020010a8(24, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Call3(Actor_ArmCallback, 23, 0x3000, 0);
-  Call2(Func_020010d0, 0x19999, 0x3333);
+  Call2(Func_020010d0, 0x19999, SPLIT_CONSTANT(0x3300, 51));
   Func_020010e8()->motionFlags = 0;
   Call4(Camera_MoveWithinMapBounds, PIXELS(512), -1, PIXELS(380), 1);
-  Call3(Actor_SetSpeedParameters, 24, 0x19999, 0xcccc);
+  Call3(Actor_SetSpeedParameters, 24, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
   Call3(Actor_SetPositionAndReset, 24, 520, 432);
   Call3(Actor_SetPositionAndReset, 24, 520, 388);
   Call3(Actor_ArmCallback, 23, 0x3000, 0);
@@ -82,6 +82,6 @@ void Func_0200097c(void) {
   Motion_SetModeAndWaitAnimation(23, 3);
   Func_020010c8(23, 264, 0);
   Func_020010a8(23, 0);
-  GameFlag_SetBit(0x9ad);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 173));
   Func_02001018();
 }

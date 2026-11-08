@@ -87,7 +87,7 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 owner) {
 
     /* FAKEMATCH: the barrier of the pin above. */
     __asm__ volatile("");
-    index = BattleUnit_GetWeaponKind(item & 0x1ff);
+    index = BattleUnit_GetWeaponKind(item & SPLIT_CONSTANT(0x100, 255));
     switch (unit->classId) {
     case ISAAC:
       result = gData_081287d4[index];

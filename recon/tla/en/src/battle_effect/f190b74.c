@@ -251,7 +251,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         shard->velocityY = -(Trig_Cos(angle) * speed) >> 5;
         shard->z = Random16();
         shard->velocityZ = (Random16() & 0x3ff) + 0x400;
-        shard->variant = (Random16() & 0x3fff) + 0x2000;
+        shard->variant = (Random16() & SPLIT_CONSTANT(0x3f00, 255)) + 0x2000;
         shard++;
       }
     }
@@ -261,7 +261,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       s32 x;
 
       if (effect->side == 0) {
-        x = 2872 - frame * 32;
+        x = SPLIT_CONSTANT(0xb00, 56) - frame * 32;
         if (x < -38)
           x = -38;
       } else {

@@ -277,7 +277,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           Func_080151e4(0x8000, 0x10000, 0x8000);
           Func_08015160((from.x - 128) << 16, (from.y - 74) << 16, 0);
           Func_080150e4((i << 12) - 0x3800);
-          Func_080151e4(0x5555, Trig_Sin(age << 11) * Data_08199ebc[i] / 64 * 2,
+          Func_080151e4(SPLIT_CONSTANT(0x5500, 85), Trig_Sin(age << 11) * Data_08199ebc[i] / 64 * 2,
                         0x8000);
           Render_TransformVertices(Data_08199ea4, projected, 4);
           Render_DrawModelList(model);

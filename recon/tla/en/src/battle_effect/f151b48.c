@@ -71,9 +71,9 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
   sheet = Ram_HeapSlots->unk64[0];
   xOffset = 0;
   if (effect->side == 0)
-    BattleEffect_StartTiledCanvasFilled(0x2001);
+    BattleEffect_StartTiledCanvasFilled(SPLIT_CONSTANT(0x2000, 1));
   else
-    BattleEffect_StartTiledCanvas(0x2001);
+    BattleEffect_StartTiledCanvas(SPLIT_CONSTANT(0x2000, 1));
   if (effect->variant == 2)
     REG_BG2PA = 0x80; // twice as wide
   else

@@ -58,60 +58,60 @@ s32 Func_02002438(s32 a0) {
 
   if (scene == (s32)&SceneId_Ov686Room1) {
     C1(Func_02002ed4, 0);
-    if (Test(0x9d2))
+    if (Test(SPLIT_CONSTANT(0x900, 210)))
       C3(Func_02002e6c, 10, 0, 0);
-    if (Test(0x9d3))
+    if (Test(SPLIT_CONSTANT(0x900, 211)))
       C3(Func_02002e6c, 11, 0, 0);
-    if (Test(0x9d4))
+    if (Test(SPLIT_CONSTANT(0x900, 212)))
       C3(Func_02002e6c, 12, 0, 0);
-    if (Test(0x9d5))
+    if (Test(SPLIT_CONSTANT(0x900, 213)))
       C3(Func_02002e6c, 13, 0, 0);
-    if (Test(0x9d6))
+    if (Test(SPLIT_CONSTANT(0x900, 214)))
       C3(Func_02002e6c, 14, 0, 0);
-    if (Test(0x9d7))
+    if (Test(SPLIT_CONSTANT(0x900, 215)))
       C3(Func_02002e6c, 15, 0, 0);
-    if (Test(0x9d8))
+    if (Test(SPLIT_CONSTANT(0x900, 216)))
       C3(Func_02002e6c, 16, 0, 0);
     if (Test(0x990))
       C3(Func_02002e6c, 17, 0, 0);
-    if (Test(0x991))
+    if (Test(SPLIT_CONSTANT(0x900, 145)))
       C3(Func_02002e6c, 18, 0, 0);
-    if (Test(0x992))
+    if (Test(SPLIT_CONSTANT(0x900, 146)))
       C3(Func_02002e6c, 19, 0, 0);
-    if (Test(0x993))
+    if (Test(SPLIT_CONSTANT(0x900, 147)))
       C3(Func_02002e6c, 20, 0, 0);
-    if (Test(0x994))
+    if (Test(SPLIT_CONSTANT(0x900, 148)))
       C3(Func_02002e6c, 21, 0, 0);
-    if (Test(0x995))
+    if (Test(SPLIT_CONSTANT(0x900, 149)))
       C3(Func_02002e6c, 22, 0, 0);
-    if (Test(0x996))
+    if (Test(SPLIT_CONSTANT(0x900, 150)))
       C3(Func_02002e6c, 23, 0, 0);
-    if (Test(0x997))
+    if (Test(SPLIT_CONSTANT(0x900, 151)))
       C3(Func_02002e6c, 24, 0, 0);
-    if (Test(0x998))
+    if (Test(SPLIT_CONSTANT(0x900, 152)))
       C3(Func_02002e6c, 25, 0, 0);
-    if (Test(0x999))
+    if (Test(SPLIT_CONSTANT(0x900, 153)))
       C3(Func_02002e6c, 26, 0, 0);
-    if (Test(0x99a))
+    if (Test(SPLIT_CONSTANT(0x900, 154)))
       C3(Func_02002e6c, 27, 0, 0);
-    if (Test(0x99b))
+    if (Test(SPLIT_CONSTANT(0x900, 155)))
       C3(Func_02002e6c, 28, 0, 0);
-    if (Test(0x99c))
+    if (Test(SPLIT_CONSTANT(0x900, 156)))
       C3(Func_02002e6c, 29, 0, 0);
-    if (Test(0x99d))
+    if (Test(SPLIT_CONSTANT(0x900, 157)))
       C3(Func_02002e6c, 30, 0, 0);
-    if (Test(0x9c6)) {
+    if (Test(SPLIT_CONSTANT(0x900, 198))) {
       C3(Func_02002e6c, 8, 0x480000, 0x580000);
       C6(Func_02002dfc, 4, 68, 1, 1, 2, 69);
     }
   } else if (scene == (s32)&SceneId_Ov686Room2) {
-    if (Test(0x99e))
+    if (Test(SPLIT_CONSTANT(0x900, 158)))
       C3(Func_02002e6c, 9, 0, 0);
-    if (Test(0x99f))
+    if (Test(SPLIT_CONSTANT(0x8a0, 255)))
       C3(Func_02002e6c, 10, 0, 0);
     if (Test(0x9a0))
       C3(Func_02002e6c, 11, 0, 0);
-    if (Test(0x9dc)) {
+    if (Test(SPLIT_CONSTANT(0x900, 220))) {
       s32 width;
 
       object = Actor_GetById(8);
@@ -121,10 +121,10 @@ s32 Func_02002438(s32 a0) {
       C6(Func_02002df4, 35, 6, 7, 16, width, 7);
       C6(Func_02002df4, 35, 70, 7, 16, width, 71);
       if (work->entrance == 6 || work->entrance == 17 || work->entrance == 15)
-        C1(Func_02002eec, 0x23f);
+        C1(Func_02002eec, SPLIT_CONSTANT(0x140, 255));
     }
   } else if (scene == (s32)&SceneId_Ov686Room3) {
-    if (Test(0x9c7)) {
+    if (Test(SPLIT_CONSTANT(0x900, 199))) {
       C3(Func_02002e6c, 8, 0x2080000, 0x680000);
       C6(Func_02002dfc, 32, 69, 1, 1, 33, 69);
     }
@@ -132,7 +132,7 @@ s32 Func_02002438(s32 a0) {
       C3(Func_02002e6c, 10, 0, 0);
       C2(Actor_SetModeById, 9, 4);
     }
-    if (Test(0x201)) {
+    if (Test(SPLIT_CONSTANT(0x102, 255))) {
       s32 width = 13;
 
       C6(Func_02002dfc, 13, 30, 3, 2, width, 24);
@@ -140,19 +140,19 @@ s32 Func_02002438(s32 a0) {
       C6(Func_02002dfc, 41, 48, 3, 2, width, 41);
     }
   } else if (scene == (s32)&SceneId_Ov686Room4) {
-    if (Test(0x9a1))
+    if (Test(SPLIT_CONSTANT(0x900, 161)))
       C3(Func_02002e6c, 11, 0, 0);
-    if (Test(0x9a2))
+    if (Test(SPLIT_CONSTANT(0x900, 162)))
       C3(Func_02002e6c, 12, 0, 0);
-    if (Test(0x9a3))
+    if (Test(SPLIT_CONSTANT(0x900, 163)))
       C3(Func_02002e6c, 13, 0, 0);
-    if (Test(0x9a4))
+    if (Test(SPLIT_CONSTANT(0x900, 164)))
       C3(Func_02002e6c, 14, 0, 0);
-    if (Test(0x9a5))
+    if (Test(SPLIT_CONSTANT(0x900, 165)))
       C3(Func_02002e6c, 15, 0, 0);
-    if (Test(0x9a6))
+    if (Test(SPLIT_CONSTANT(0x900, 166)))
       C3(Func_02002e6c, 16, 0, 0);
-    if (Test(0x9a7))
+    if (Test(SPLIT_CONSTANT(0x900, 167)))
       C3(Func_02002e6c, 17, 0, 0);
     if (Test(0x9c8))
       C3(Func_02002e6c, 8, 0x280000, 0x3080000);
@@ -178,7 +178,7 @@ s32 Func_02002438(s32 a0) {
       s32 width;
 
       if ((u16)(gMainRoutineWork.entrance - 13) <= 4)
-        C1(Func_02002eec, 0x23f);
+        C1(Func_02002eec, SPLIT_CONSTANT(0x140, 255));
       width = 12;
       C6(Func_02002df4, 16, 27, 3, 13, width, 47);
       C6(Func_02002df4, 16, 91, 3, 13, width, 111);
@@ -221,14 +221,14 @@ s32 Func_02002438(s32 a0) {
     if ((u16)(gMainRoutineWork.entrance - 13) <= 3)
       goto task;
   } else if (scene == (s32)&SceneId_Ov686Room5) {
-    if (Test(0x9db))
+    if (Test(SPLIT_CONSTANT(0x900, 219)))
       C3(Func_02002e6c, 9, 0, 0);
-    if (Test(0x9cb)) {
+    if (Test(SPLIT_CONSTANT(0x900, 203))) {
       C3(Func_02002e6c, 8, 0x1180000, 0x1380000);
       C6(Func_02002dfc, 16, 84, 1, 1, 18, 84);
     }
     if (work->entrance == 1 || work->entrance == 12) {
-      C1(Func_02002eec, 0x23f);
+      C1(Func_02002eec, SPLIT_CONSTANT(0x140, 255));
     task:
       C2(Task_Add, (s32)Func_020010f4, 0x480);
     }
@@ -237,13 +237,13 @@ s32 Func_02002438(s32 a0) {
 
     if (work->entrance <= 4)
       Func_02001420(a0);
-    if (Test(0x9e2)) {
+    if (Test(SPLIT_CONSTANT(0x900, 226))) {
       s32 x = 14;
 
       C6(Func_02002df4, 26, 67, 1, 3, x, 65);
       C6(Func_02002dfc, 15, 5, 1, 1, x, 5);
     }
-    if (Test(0x9e3)) {
+    if (Test(SPLIT_CONSTANT(0x900, 227))) {
       s32 x = 2;
 
       C6(Func_02002df4, 26, 67, 1, 3, x, 83);

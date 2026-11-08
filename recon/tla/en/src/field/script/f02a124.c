@@ -101,7 +101,7 @@ s32 Func_0802a124(struct Actor *object) {
       leftPosition.x = object->x;
       leftPosition.y = object->y;
       leftPosition.z = object->z;
-      Vector_AddPolarOffset(0x80000, direction + 0x1555, &leftPosition);
+      Vector_AddPolarOffset(0x80000, direction + SPLIT_CONSTANT(0x1500, 85), &leftPosition);
       rightPosition.x = object->x;
       /* FAKEMATCH(temporary): y read into its own local; read in the block,
        * 2 of 470 instructions differ in tla-en. */

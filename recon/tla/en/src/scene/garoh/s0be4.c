@@ -12,8 +12,8 @@ void Func_02000be4(void) {
   if (GameFlag_Test(0x91b) == 0 || GameFlag_Test(0x310) != 0) {
     GameFlag_SetBit(0x310);
     Func_020052cc(0x10007, 1);
-    if (GameFlag_Test(0x311))
-      Func_020052cc(0x10003, 2);
+    if (GameFlag_Test(SPLIT_CONSTANT(0x300, 17)))
+      Func_020052cc(SPLIT_CONSTANT(0x10000, 3), 2);
     Func_020052d4(1);
     Event_WaitTransitionFrames();
     Func_0200538c();

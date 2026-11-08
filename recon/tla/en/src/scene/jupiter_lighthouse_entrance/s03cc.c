@@ -46,7 +46,7 @@ void Func_020003cc(void) {
     actor->y = linked->y + i;
     actor->z = linked->z;
     if (i <= 0x3ffff)
-      i += 0x1999;
+      i += SPLIT_CONSTANT(0x1900, 153);
     actor->angle = (u8)gFrameCount << 12;
     actor->priorityFlags ^= 2 << (gFrameCount & 1);
     wait(1);

@@ -27,7 +27,7 @@ void BattleEffect_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
   s32 (*divide)(s32, s32);
 
   if (frames > 0) {
-    divide = Iwram_SignedDivide;
+    divide = Iwram_SignedDivideEntry;
     index = 0x53F;
     do {
       first = *source;

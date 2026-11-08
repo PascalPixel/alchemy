@@ -119,12 +119,12 @@ void Func_02000198(void) {
     break;
   case 36:
     Event_PlayCue(187);
-    ColorBuffer_ApplyTarget(0x7fff, 0);
+    ColorBuffer_ApplyTarget(SPLIT_CONSTANT(0x7f00, 255), 0);
     ColorBuffer_Interpolate(12);
     break;
   case 48:
     Actor_Stop(36);
-    GameFlag_SetBit(0x202);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x200, 2));
     break;
   }
   if (spawn) {

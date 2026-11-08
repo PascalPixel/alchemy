@@ -14,5 +14,5 @@ void Func_0200060c(void) {
    * native has (one reordered row as a plain argument). */
   angle = 0xc000;
   Call4(Func_02002aa4, 31, PIXELS(312), PIXELS(593), angle);
-  GameFlag_SetBit(0xa74);
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 116));
 }

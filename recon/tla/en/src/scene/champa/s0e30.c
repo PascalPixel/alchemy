@@ -88,11 +88,11 @@ void Func_02000e30(void) {
   if (t0 == 0) {
     return;
   }
-  GameFlag_SetBit(0x971);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 113));
   Func_02002a44();
   Func_02002b64(0);
   Func_02002adc((s32)MsgChampa25);
-  Call3(Actor_SetSpeedParameters, 25, 0xcccc, 0x6666);
+  Call3(Actor_SetSpeedParameters, 25, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
   Call3(Actor_SetSpeedParameters, 26, 0x10000, 0x8000);
   Call3(Actor_SetSpeedParameters, 27, 0x10000, 0x8000);
   Call3(Func_02002a9c, 25, 0x1380000, 0x2080000);
@@ -135,17 +135,17 @@ void Func_02000e30(void) {
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(0x19, 0x101, 0x1e)
-  Champa_MessageOpen(0x2019, 0);
+  Champa_MessageOpen(SPLIT_CONSTANT(0x2000, 25), 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     FieldEvent_Wait(15);
-    Func_02002af4(0x2019, 0);
+    Func_02002af4(SPLIT_CONSTANT(0x2000, 25), 0);
     FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
         (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
   } else {
     FieldEvent_Wait(35);
     FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
         (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
-    Func_02002af4(0x2019, 0);
+    Func_02002af4(SPLIT_CONSTANT(0x2000, 25), 0);
   }
   Call3(Actor_ArmCallback, 7, 0, 0);
   Func_02002b04(4, 0x8000);
@@ -171,9 +171,9 @@ void Func_02000e30(void) {
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(0x19, 0x109, 0x1e)
-  Call2(Func_02002af4, 0x2019, 0);
+  Call2(Func_02002af4, SPLIT_CONSTANT(0x2000, 25), 0);
   FieldEvent_Wait(5);
-  FieldMessage_ShowAtActor(0x2019, 0);
+  FieldMessage_ShowAtActor(SPLIT_CONSTANT(0x2000, 25), 0);
   Call3(Actor_ArmCallback, 6, 0xe000, 0);
   Call3(Actor_ArmCallback, 7, 0, 0);
   Call2(Func_02002b04, 28, 0);
@@ -351,7 +351,7 @@ void Func_02000e30(void) {
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(5, 0x107, 0x1e)
-  Call2(Func_02002af4, 0x2005, 0);
+  Call2(Func_02002af4, SPLIT_CONSTANT(0x2000, 5), 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(0x19, 0x109, 0x1e)
@@ -397,7 +397,7 @@ void Func_02000e30(void) {
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(5, 0x105, 0x1e)
-  Call2(Func_02002af4, 0x2005, 0);
+  Call2(Func_02002af4, SPLIT_CONSTANT(0x2000, 5), 0);
   Call2(Actor_StartRepeatedMotion, 25, 3);
   Call2(Func_02002b24, 0x19, 0x102);
   FieldEvent_Wait(40);
@@ -495,7 +495,7 @@ void Func_02000e30(void) {
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(6, 0x100, 0x14)
   Call2(Func_02002b04, 6, 0x8000);
-  Call2(Func_02002af4, 0x2006, 0);
+  Call2(Func_02002af4, SPLIT_CONSTANT(0x2000, 6), 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(0x19, 0x108, 0x1e)
@@ -581,7 +581,7 @@ void Func_02000e30(void) {
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(5, 0x101, 0x1e)
-  Call2(Func_02002af4, 0x2005, 0);
+  Call2(Func_02002af4, SPLIT_CONSTANT(0x2000, 5), 0);
   Call2(Func_02002b04, 25, 0x3000);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
@@ -697,7 +697,7 @@ void Func_02000e30(void) {
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(0x19, 0x108, 0x1e)
-  Call2(Func_02002af4, 0x2019, 0);
+  Call2(Func_02002af4, SPLIT_CONSTANT(0x2000, 25), 0);
   Call2(Actor_StartRepeatedMotion, 28, 3);
   Call2(Func_02002b24, 0x1c, 0x102);
   FieldEvent_Wait(40);
@@ -723,7 +723,7 @@ void Func_02000e30(void) {
   FieldEvent_Wait(30);
   Call2(Func_02002af4, 0x1c, 0);
   Call2(Motion_SetModeAndWaitAnimation, 25, 4);
-  Call2(Func_02002af4, 0x2019, 0);
+  Call2(Func_02002af4, SPLIT_CONSTANT(0x2000, 25), 0);
   Call2(Func_02002b04, 6, 0x4000);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
@@ -732,13 +732,13 @@ void Func_02000e30(void) {
   Motion_SetModeAndWaitAnimation(25, 3);
   FieldEvent_Wait(25);
   Call2(Motion_SetVarCbAndRefresh, 5, 2);
-  Call2(Func_02002af4, 0x2005, 0);
+  Call2(Func_02002af4, SPLIT_CONSTANT(0x2000, 5), 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(0x19, 0x105, 0x1e)
-  Call2(Func_02002af4, 0x2019, 0);
+  Call2(Func_02002af4, SPLIT_CONSTANT(0x2000, 25), 0);
   Call2(Motion_SetModeAndWaitAnimation, 25, 4);
-  Call2(Func_02002af4, 0x2019, 0);
+  Call2(Func_02002af4, SPLIT_CONSTANT(0x2000, 25), 0);
   Call3(Actor_ArmCallback, 4, 0x8000, 0);
   Func_02002b04(7, 0);
   FieldEvent_Wait(40);
@@ -754,18 +754,18 @@ void Func_02000e30(void) {
   Call2(Func_02002af4, 7, 0);
   Motion_SetModeAndWaitAnimation(25, 3);
   FieldEvent_Wait(10);
-  Call2(Func_02002af4, 0x2019, 0);
+  Call2(Func_02002af4, SPLIT_CONSTANT(0x2000, 25), 0);
   Call2(Motion_SetModeAndWaitAnimation, 25, 4);
-  Call2(Func_02002af4, 0x2019, 0);
+  Call2(Func_02002af4, SPLIT_CONSTANT(0x2000, 25), 0);
   Call2(Motion_SetVarCbAndRefresh, 6, 2);
   Call2(Func_02002af4, 6, 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(0x19, 0x108, 0x1e)
-  Call2(Func_02002af4, 0x2019, 0);
+  Call2(Func_02002af4, SPLIT_CONSTANT(0x2000, 25), 0);
   Func_02002b04(25, 0x5000);
   FieldEvent_Wait(10);
-  Func_02002af4(0x2019, 0);
+  Func_02002af4(SPLIT_CONSTANT(0x2000, 25), 0);
   Func_02002bc4(0x4e);
   Call3(Actor_CommitPositionAndActivate, 25, 0, 80);
   Func_02002a9c(25, 0, 0);
@@ -777,7 +777,7 @@ void Func_02000e30(void) {
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(5, 0x107, 0x1e)
-  Call2(Func_02002af4, 0x2005, 0);
+  Call2(Func_02002af4, SPLIT_CONSTANT(0x2000, 5), 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(6, 0x103, 0x1e)
@@ -800,7 +800,7 @@ void Func_02000e30(void) {
   Call3(Actor_ArmCallback, 4, 0x6000, 0);
   Func_02002b04(5, 0xa000);
   FieldEvent_Wait(10);
-  Call2(Func_02002af4, 0x2005, 0);
+  Call2(Func_02002af4, SPLIT_CONSTANT(0x2000, 5), 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(6, 0x100, 0x1e)
@@ -823,7 +823,7 @@ void Func_02000e30(void) {
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(7, 0x100, 0x1e)
-  Call2(Func_02002af4, 0x2007, 0);
+  Call2(Func_02002af4, SPLIT_CONSTANT(0x2000, 7), 0);
   Call2(Motion_SetModeAndWaitAnimation, 28, 4);
   Call2(Func_02002af4, 0x1c, 0);
   Call2(Actor_StartRepeatedMotion, 7, 3);
@@ -832,11 +832,11 @@ void Func_02000e30(void) {
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(5, 0x101, 0x1e)
-  Call2(Func_02002af4, 0x2005, 0);
+  Call2(Func_02002af4, SPLIT_CONSTANT(0x2000, 5), 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(6, 0x101, 0x1e)
-  Call2(Func_02002af4, 0x2006, 0);
+  Call2(Func_02002af4, SPLIT_CONSTANT(0x2000, 6), 0);
   Call3(Actor_ArmCallback, 5, 0x8000, 0);
   Func_02002b04(6, 1);
   FieldEvent_Wait(25);
@@ -902,12 +902,12 @@ void Func_02000e30(void) {
   Call2(Func_02002af4, 0x1c, 0);
   Call3(Actor_Jump, 5, 6, 15);
   Call3(Actor_Jump, 5, 6, 23);
-  Call2(Func_02002af4, 0x2005, 0);
+  Call2(Func_02002af4, SPLIT_CONSTANT(0x2000, 5), 0);
   Call2(Motion_SetModeAndWaitAnimation, 28, 3);
   Call2(Func_02002af4, 0x1c, 0);
   Call3(Actor_Jump, 6, 6, 15);
   Call3(Actor_Jump, 6, 6, 23);
-  Call2(Func_02002af4, 0x2006, 0);
+  Call2(Func_02002af4, SPLIT_CONSTANT(0x2000, 6), 0);
   Call2(Motion_SetModeAndWaitAnimation, 28, 3);
   Func_02002af4(0x1c, 0);
   FieldEvent_Wait(10);
@@ -921,21 +921,21 @@ void Func_02000e30(void) {
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(7, 0x108, 0x1e)
-  Call2(Func_02002af4, 0x2007, 0);
+  Call2(Func_02002af4, SPLIT_CONSTANT(0x2000, 7), 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(0x1c, 0x102, 0x1e)
   Call2(Func_02002af4, 0x1c, 0);
   Motion_SetModeAndWaitAnimation(7, 3);
   FieldEvent_Wait(10);
-  Call2(Func_02002af4, 0x2007, 0);
+  Call2(Func_02002af4, SPLIT_CONSTANT(0x2000, 7), 0);
   FieldEvent_Wait(5);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * CHAMPA_EMOTE. */
   CHAMPA_EMOTE(0x1c, 0x101, 0x2d)
   Motion_SetModeAndWaitAnimation(7, 3);
   FieldEvent_Wait(10);
-  Call2(Func_02002af4, 0x2007, 0);
+  Call2(Func_02002af4, SPLIT_CONSTANT(0x2000, 7), 0);
   Motion_SetVarCbAndRefresh(28, 2);
   FieldEvent_Wait(20);
   Call3(Actor_ArmCallback, 5, 0xc000, 0);
@@ -949,7 +949,7 @@ void Func_02000e30(void) {
   Call2(Actor_SetModeById, 7, 3);
   Motion_SetModeAndWaitAnimation(28, 3);
   FieldEvent_Wait(20);
-  Call3(Actor_SetSpeedParameters, 5, 0x13333, 0x9999);
+  Call3(Actor_SetSpeedParameters, 5, 0x13333, SPLIT_CONSTANT(0x9900, 153));
   Actor_SetModeById(5, 2);
   t673 = Actor_GetById(FIELD_AT(gMainRoutineWork, s32, 532));
   if (t673 != 0) {

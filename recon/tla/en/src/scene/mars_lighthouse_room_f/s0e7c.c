@@ -75,7 +75,7 @@ s32 Func_02000e7c(void) {
         Func_02005598_(10, 0, 0);
       else
         Func_02005598_(9, 0, 0);
-      if (Flag_IsSet(0xa43))
+      if (Flag_IsSet(SPLIT_CONSTANT(0xa00, 67)))
         Func_020006f4(0);
       if (Flag_IsSet(0xa44))
         Func_02000444(1, 0);
@@ -99,7 +99,7 @@ s32 Func_02000e7c(void) {
     if (entrance == 2)
       Func_02002604();
     if (entrance == 9) {
-      Flag_Set(0x351);
+      Flag_Set(SPLIT_CONSTANT(0x300, 81));
       Func_02005560();
       Func_02005648(0);
       Camera_SetBounds(-1, -1, -1, 0);
@@ -138,7 +138,7 @@ s32 Func_02000e7c(void) {
     *flags = bits;
     if (Flag_IsSet(0x220))
       Func_02000c80(11);
-    if (Flag_IsSet(0x221))
+    if (Flag_IsSet(SPLIT_CONSTANT(0x122, 255)))
       Func_02000c80(12);
     Func_020009ec();
     if (Flag_IsSet(0x350))
@@ -161,7 +161,7 @@ s32 Func_02000e7c(void) {
       Func_020054e8_(7, 88, 7, 1, 7, 71);
       Func_02005598_(11, 0, 0);
     }
-    if (Flag_IsSet(0xa37))
+    if (Flag_IsSet(SPLIT_CONSTANT(0xa00, 55)))
       Func_02005598_(12, 0x780000, 0x1280000);
     if (entrance - 14 <= 1U) {
       Func_02002624(gData_02005c2c, gData_02005c32, Func_02001490, 88);
@@ -202,7 +202,7 @@ s32 Func_02000e7c(void) {
         Func_02005598_(17, 0x2180000, 0x2280000);
     }
     Actor_GetById(16)->motionFlags = 0;
-    if (Flag_IsSet(0xa38)) {
+    if (Flag_IsSet(SPLIT_CONSTANT(0xa00, 56))) {
       Func_02005598_(16, 0x3280000, 0x1380000);
       Actor_GetById(16)->y = 0;
       Actor_GetById(16)->terrainHeight = 0;

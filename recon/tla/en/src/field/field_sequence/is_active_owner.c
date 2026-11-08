@@ -94,7 +94,7 @@ void BattleEffect_SelectBattleCue(s32 zone, s32 slot) {
      * ownerOverride's offset; as plain statements, 2 of 92 instructions differ
      * in tla-en. */
     
-    if (party->ownerOverride != 0 && !GameFlag_Test(0x8df))
+    if (party->ownerOverride != 0 && !GameFlag_Test(SPLIT_CONSTANT(0x7e0, 255)))
       music = 56;
     else if (Func_080ca5a0(4))
       music = 50;

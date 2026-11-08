@@ -22,7 +22,7 @@ void Func_02003f78(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(20);
-  Func_020049a4(0x200f, 0);
+  Func_020049a4(SPLIT_CONSTANT(0x2000, 15), 0);
   Func_0200289c();
   GameFlag_ClearBit(0x12f);
   Func_020048cc();

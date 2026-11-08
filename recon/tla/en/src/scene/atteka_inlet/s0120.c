@@ -41,14 +41,14 @@ void Func_02000120(void) {
      * directly, gMainRoutineWork's offsets take r3 instead of r2 (differ 22,
      * found by alchemy permute). */
     if (Value1(GameFlag_Test, 0x9d0)) {
-      GameFlag_SetBit(0x8df);
-      GameFlag_SetBit(0x9b2);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x7e0, 255));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 178));
     }
     Func_020010f0(4);
   } else {
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     Func_020010a8(18, 0);
-    Call3(Actor_SetSpeedParameters, 18, 0x19999, 0xcccc);
+    Call3(Actor_SetSpeedParameters, 18, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
     Actor_SetModeById(18, 2);
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (object != NULL)
@@ -56,7 +56,7 @@ void Func_02000120(void) {
                                        *(s16 *)((u8 *)object + 18));
     Actor_WaitForMoveById(18);
     Func_02001060(18, 0, 0);
-    GameFlag_SetBit(0x201);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x102, 255));
     Func_02001018();
   }
 }

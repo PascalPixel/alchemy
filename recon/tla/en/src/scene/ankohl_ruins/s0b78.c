@@ -41,7 +41,7 @@ void Func_02000b78(s32 rows, s32 frames, s32 x, s32 y, s32 startZ, s32 count) {
       }
       dy = Random16Far() & 31;
       Func_0200015c(((x + left * 16) << 16) + ((dx - 8) << 16), (y + dy) << 16, z << 16, 0, 0,
-                    0x100, 0x80001, &params);
+                    0x100, SPLIT_CONSTANT(0x80000, 1), &params);
     }
     FieldEvent_Wait(frames);
     z += 2;

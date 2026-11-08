@@ -76,10 +76,10 @@ void Func_0819574c(s32 vertexCount, s32 faceCount) {
     ay = ax + 1;
     by = ax + 4;
     // A local holding the multiply routine's address (one value throughout).
-    mul = Iwram_MulQ16;
-    Dma_Set(&vertices[faces[i].corner[0]], ax, 0x84000003, REG_DMA3);
-    Dma_Set(&vertices[faces[i].corner[1]], bx, 0x84000003, REG_DMA3);
-    Dma_Set(&vertices[faces[i].corner[2]], cx, 0x84000003, REG_DMA3);
+    mul = Iwram_MulQ16Entry;
+    Dma_Set(&vertices[faces[i].corner[0]], ax, SPLIT_CONSTANT(0x84000000, 3), REG_DMA3);
+    Dma_Set(&vertices[faces[i].corner[1]], bx, SPLIT_CONSTANT(0x84000000, 3), REG_DMA3);
+    Dma_Set(&vertices[faces[i].corner[2]], cx, SPLIT_CONSTANT(0x84000000, 3), REG_DMA3);
 
     // The z of the edges' cross product: negative for a face turned away.
     facing = mul(*bx - *ax, *cy - *ay) - mul(*cx - *ax, *by - *ay);

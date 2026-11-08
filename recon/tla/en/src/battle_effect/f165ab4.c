@@ -32,7 +32,7 @@
 #define FORMATION_SIZE 9
 #define ORB_LEFT 7
 #define ORB_RIGHT 8
-#define ROCK_OBJECT 653
+#define ROCK_OBJECT SPLIT_CONSTANT(0x18e, 255)
 #define FIRST_ROCK 9
 #define ROCK_COUNT 6
 #define PUFF_COUNT 58 // particles 6 to 63

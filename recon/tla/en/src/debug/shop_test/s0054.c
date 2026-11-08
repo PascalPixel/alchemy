@@ -35,7 +35,7 @@ void Func_02000054(s32 message, s32 count) {
 loop:
   Func_02000d08(1, 1);
   Func_02000d08(5, 2);
-  Func_02000d08(0x1e240, 5);
+  Func_02000d08(SPLIT_CONSTANT(0x1e200, 64), 5);
   Message_CloseFinishedWindows();
   Message_OpenWindow(message, 5, 0, 0x22);
   frames = 0;

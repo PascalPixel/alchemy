@@ -70,13 +70,13 @@ void Func_0200057c(void) {
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   Func_0200479c(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
                 buffer);
-  Dma_Set(buffer, (void *)0x0600e800, 0x840000d0, REG_DMA3);
-  Dma_Set(buffer + 0x1a0, (void *)0x0600ec00, 0x840000d0, REG_DMA3);
+  Dma_Set(buffer, (void *)0x0600e800, SPLIT_CONSTANT(0x84000000, 208), REG_DMA3);
+  Dma_Set(buffer + 0x1a0, (void *)0x0600ec00, SPLIT_CONSTANT(0x84000000, 208), REG_DMA3);
   Heap_Release(buffer);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   Actor_SetSpritePriority(14, 1);
   do {
-    s32 control = 0x40d;
+    s32 control = SPLIT_CONSTANT(0x400, 13);
 
     REG_BG0CNT = control;
   } while (0);
@@ -89,7 +89,7 @@ void Func_0200057c(void) {
   cell = buffer;
 mask:
   {
-    s32 t = (*cell + 0xff40) & 0xfff;
+    s32 t = (*cell + 0xff40) & SPLIT_CONSTANT(0xf00, 255);
     *cell = t | 0x1000;
   }
   i++;
@@ -121,7 +121,7 @@ row:
       spark->bounce = spark->x;
       spark->gravity = 0x18000;
       spark->unk4c = spark->z;
-      spark->speedLimit = Random16Far() & 0xffff;
+      spark->speedLimit = Random16Far() & SPLIT_CONSTANT(0xff00, 255);
       Import_ActorSetMode((struct FieldActor *)spark, 7);
       Import_ActorSetScript((struct FieldActor *)spark, gData_02004ae0);
       Actor_SetSingleChildFlags(spark, 0);
@@ -203,7 +203,7 @@ frame:
       s32 x = ((Random16Far() & 127) << 16) + (208 << 15);
 
       Func_020000b8(x, 0, (472 - (Random16Far() & 127)) << 16, v[0], v[1], v[2],
-                    0x1020001, &options);
+                    SPLIT_CONSTANT(0x1020000, 1), &options);
     }
   }
   REG_BLDALPHA = ((j >> 2) << 8) | (16 - (j >> 2));
@@ -245,7 +245,7 @@ clear:
   Func_02004844(36, 64, 2, 83, 16, 16);
   REG_BLDCNT = 0x3f41;
   REG_BLDALPHA = 15;
-  Call3(Func_02004864, -1, -1, 0xe666);
+  Call3(Func_02004864, -1, -1, SPLIT_CONSTANT(0xe600, 102));
   Import_SoundPlay(390);
   OBJ14_BYTE(98) = 6;
   i = 0;
@@ -289,5 +289,5 @@ fade:
 
     Func_0200484c(1, 5, 9, 1, width, height);
   }
-  GameFlag_SetBit(2380);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 76));
 }

@@ -88,7 +88,7 @@ s32 Func_080ce61c(u32 code) {
       return 0;
     }
     if (abilityId == 153) {
-      if (gMainRoutineWork.ownerOverride != 0 && GameFlag_Test(0x8df)) {
+      if (gMainRoutineWork.ownerOverride != 0 && GameFlag_Test(SPLIT_CONSTANT(0x7e0, 255))) {
         GameFlag_SetBit(327);
         ((struct EventWork *)event)->unk16a = 253;
         return 0;
@@ -139,7 +139,7 @@ s32 Func_080ce61c(u32 code) {
   selector = Func_080ce31c(group);
   before = Func_080ce458(0x10000005, group, selector);
   after = Func_080ce458(5, group, selector);
-  during = Func_080ce458(0x50000005, group, selector);
+  during = Func_080ce458(SPLIT_CONSTANT(0x50000000, 5), group, selector);
   if (abilityId == 156 && gMainRoutineWork.scene != (s32)&SceneId_WorldMap &&
       before == NULL && after == NULL && during == NULL) {
     FIELD_PSYNERGY_MESSAGE(userId, 156, MsgKey0dbd);

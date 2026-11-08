@@ -34,7 +34,7 @@ void Func_02004644(void) {
   left->y = left->terrainHeight;
   right->motionFlags = 0;
   right->y = right->terrainHeight;
-  if (GameFlag_Test_(0xa0a)) {
+  if (GameFlag_Test_(SPLIT_CONSTANT(0xa00, 10))) {
     left->y += 0x66640;
     rider->y += 0x1eb80;
     rider->x += -0x28f40;
@@ -42,7 +42,7 @@ void Func_02004644(void) {
     Animation_ApplyChildValues(Actor_GetById(9), 4);
     Animation_ApplyChildValues(Actor_GetById(11), 4);
   }
-  if (GameFlag_Test_(0xa0b)) {
+  if (GameFlag_Test_(SPLIT_CONSTANT(0xa00, 11))) {
     right->y += 0x66640;
     rider->y += 0x1eb80;
     rider->x += 0x28f40;
@@ -50,7 +50,7 @@ void Func_02004644(void) {
     Animation_ApplyChildValues(Actor_GetById(10), 4);
     Animation_ApplyChildValues(Actor_GetById(12), 4);
   }
-  if (GameFlag_Test_(0xa0a) && GameFlag_Test_(0xa0b)) {
+  if (GameFlag_Test_(SPLIT_CONSTANT(0xa00, 10)) && GameFlag_Test_(SPLIT_CONSTANT(0xa00, 11))) {
     left->y += 0x199900;
     right->y += 0x199900;
     rider->y += 0x1b8480;

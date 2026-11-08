@@ -27,7 +27,7 @@ u8 *Func_0200012c(void) {
   if (scene == (s32)&SceneId_Kibombo5)
     return gData_02006a98;
   if (scene == (s32)&SceneId_Kibombo3) {
-    if (GameFlag_Test(0x8ee))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x800, 238)))
       gData_02006cd8[22] = 0;
     return gData_02006cd8;
   }
@@ -158,7 +158,7 @@ void Func_020003f8(void) {
 }
 
 void Func_0200042c(void) {
-  if (Kibombo_FlagCheck(0x9df)) {
+  if (Kibombo_FlagCheck(SPLIT_CONSTANT(0x8e0, 255))) {
     Func_02005a9c();
     Func_02005c3c(0);
     Actor_SetAngleToward(36, gMainRoutineWork.currentOwner, 0);
@@ -256,7 +256,7 @@ void Func_0200065c(s32 mode) {
 void Func_02000668(void) {
   Func_02005a64(38, 34, 16, 11, 1, 1);
   Kibombo_BlendStart(38, 34, 1, 1, 16, 11);
-  GameFlag_SetBit(0x205);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x106, 255));
 }
 
 void Func_020006a0(s32 mode) {
@@ -267,7 +267,7 @@ void Func_020006a0(s32 mode) {
 void Func_020006ac(void) {
   Func_02005a64(36, 36, 14, 9, 1, 1);
   Kibombo_BlendStart(36, 36, 1, 1, 14, 9);
-  GameFlag_SetBit(0x206);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x200, 6));
 }
 
 void Func_020006e4(s32 mode) {
@@ -278,7 +278,7 @@ void Func_020006e4(s32 mode) {
 void Func_020006f0(void) {
   Func_02005a64(38, 36, 18, 9, 1, 1);
   Kibombo_BlendStart(38, 36, 1, 1, 18, 9);
-  GameFlag_SetBit(0x207);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x108, 255));
 }
 
 void Func_02000728(s32 mode) {
@@ -314,7 +314,7 @@ void Func_020007c8(void) {
   Func_02005c3c(0);
   Kibombo_CamMove(-1, -1, -1, 0);
   Func_02005bbc()->motionFlags = 0;
-  Func_02005ba4(0x9999, 0x1333);
+  Func_02005ba4(SPLIT_CONSTANT(0x9900, 153), 0x1333);
   Camera_MoveWithinMapBounds(PIXELS(88), -1, PIXELS(392), 1);
   Kibombo_ObjSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Kibombo_ObjWalk(gMainRoutineWork.currentOwner, 72, 392);
@@ -336,7 +336,7 @@ void Func_020007c8(void) {
   Actor_SetMovementTypeById(5, gData_02005d5c);
   Actor_SetMovementTypeAndWaitById(6, gData_02005da0);
   Func_02005b64(7, 0);
-  if (GameFlag_Test(0x911))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 17)))
     Func_02000978();
   else
     Func_02000b2c();
@@ -347,7 +347,7 @@ void Func_020007c8(void) {
   Actor_SetMovementTypeById(5, gData_02005e54);
   Actor_SetMovementTypeById(6, gData_02005e54);
   Actor_SetMovementTypeAndWaitById(26, gData_02005e54);
-  GameFlag_SetBit(0x8f3);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 243));
   Func_02005aa4();
 }
 

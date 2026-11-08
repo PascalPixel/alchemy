@@ -24,7 +24,7 @@ void Func_02000440(void) {
   s32 t7;
   s32 t11;
 
-  GameFlag_SetBit(0x892);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 146));
   Func_020028b4();
   Func_020029cc(0);
   Import_SoundPlay(165);

@@ -31,7 +31,7 @@ void Func_02001b50(void) {
     Actor_SetModeById(14, 4);
     leader->motionFlags = 0;
     leader->y = lift->y;
-    GameFlag_SetBit(0x209);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x10a, 255));
     riding = 1;
   }
   if (riding) {
@@ -44,6 +44,6 @@ void Func_02001b50(void) {
                                      1);
   leader->motionFlags = 3;
   GameFlag_ClearBit(0x208);
-  GameFlag_ClearBit(0x209);
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x10a, 255));
   GameFlag_ClearBit(0x17d);
 }

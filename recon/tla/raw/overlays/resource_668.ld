@@ -3,7 +3,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/eastern_alhafra/entry.o"(.text)
-        "*/recon/tla/raw/src/scene/eastern_alhafra/scene_tables.o"(.text)
+        "*/games/tla/src/scene/eastern_alhafra/scene_tables.o"(.text)
         "*/recon/tla/raw/src/scene/eastern_alhafra/s0200.o"(.text)
         "*/games/tla/src/scene/eastern_alhafra/events2.o"(.text)
         "*/recon/tla/raw/src/scene/eastern_alhafra/s0514.o"(.text)

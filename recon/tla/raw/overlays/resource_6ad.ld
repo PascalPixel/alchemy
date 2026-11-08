@@ -75,7 +75,7 @@ SECTIONS
         "*/recon/tla/raw/src/scene/mars_lighthouse_room_f/s4d10.o"(.text)
         "*/recon/tla/raw/src/scene/mars_lighthouse_room_f/s4fc0.o"(.text)
         "*/recon/tla/raw/src/scene/mars_lighthouse_room_f/s5048.o"(.text)
-        "*/recon/tla/raw/src/scene/mars_lighthouse_room_f/light.o"(.text)
+        "*/games/tla/src/scene/mars_lighthouse_room_f/light.o"(.text)
         "*/recon/tla/raw/src/scene/mars_lighthouse_room_f/s538c.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_f/lightcue.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_f/import.o"(.text)

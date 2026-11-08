@@ -1,4 +1,4 @@
-#include "jupiter_lighthouse_room_7.h"
+#include "../../../../../../games/tla/src/scene/jupiter_lighthouse_room_7/jupiter_lighthouse_room_7.h"
 
 s32 Func_020005a0(struct Actor *object);
 void Func_02002b54(s32 x, s32 z, s32 a, s32 b);
@@ -10,7 +10,7 @@ void Func_020005e8(s32 mode) {
 
   // Goto loops: as for loops, the stored constants (3, 4, 0x208000) are hoisted
   // out of the loops and 42 of 181 instructions differ in tla-en.
-  if (!GameFlag_Test(0xa1a)) {
+  if (!GameFlag_Test(SPLIT_CONSTANT(0xa00, 26))) {
     Func_02002b2c(80, 46, 1, 7, 72, 9);
     Func_02002b2c(80, 53, 8, 5, 72, 16);
     Call6((void (*)())Func_02002b2c, 78, 47, 1, 1, 8, 74);

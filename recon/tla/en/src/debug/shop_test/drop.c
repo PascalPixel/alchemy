@@ -38,7 +38,7 @@ void Func_02000b50(s32 mode, s32 id, s32 x, s32 z) {
     Func_02000df8(id, x << 16, z << 16);
     object->y = 0x200000;
     object->motionFlags = 3;
-    object->gravity = 0x170a;
+    object->gravity = SPLIT_CONSTANT(0x1700, 10);
     wait(50);
   }
 }

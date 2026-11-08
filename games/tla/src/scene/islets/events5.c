@@ -1,0 +1,47 @@
+#include "types.h"
+#include "actor.h"
+#include "main_routine_work.h"
+#include "ram_buffer.h"
+#include "event_work.h"
+#include "call.h"
+#include "text/msg_ids.h"
+
+void FieldEvent_Wait();
+void Event_FinishScreenTransition();
+void Event_WaitTransitionFrames();
+void Func_02003e64();
+void Func_02003f7c();
+void Func_02003fa4();
+void Func_02003ffc();
+void Actor_SetSingleChildFlags();
+struct Actor *Actor_GetById();
+void Actor_SetModeById();
+void Func_02003f84();
+
+void Func_02003620(void) {
+  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
+   * shifted byte plus an addend; as plain constants, 6 of 34 instructions
+   * differ in tla-en. */
+  s32 v5;
+  struct Actor *object0;
+
+  Func_02003e64();
+  Func_02003fa4(0);
+  Func_02003ffc(SPLIT_CONSTANT(0x200, 38));
+  v5 = &gMainRoutineWork;
+  v5 = (v5 + 0x214);
+  object0 = Actor_GetById(*(s32 *)((u8 *)v5 + 0));
+  Actor_SetSingleChildFlags((s32)object0, 0);
+  Actor_SetModeById(*(s32 *)((u8 *)v5 + 0), 18);
+  FieldEvent_Wait(40);
+  *(s32 *)((u8 *)((s32)Ram_HeapSlots->eventWork + 0x1ac) + 0) = 0x209;
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Func_02003f7c(3);
+  return;
+}
+
+void Func_0200367c(void) {
+  Func_02003f84();
+  return;
+}

@@ -66,16 +66,16 @@ void Func_02003634(void) {
   Actor_SetSingleChildFlags(t22, 0);
   t24 = Actor_GetById(22);
   Actor_SetSingleChildFlags(t24, 0);
-  t26 = GameFlag_Test(0x8fb);
+  t26 = GameFlag_Test(SPLIT_CONSTANT(0x800, 251));
   if (t26 == 0)
     goto L_0200b6f2;
-  t27 = GameFlag_Test(0x8fd);
+  t27 = GameFlag_Test(SPLIT_CONSTANT(0x800, 253));
   if (t27 != 0)
     goto L_0200b6f2;
   Func_02002f70();
   goto L_0200b856;
 L_0200b6f2:
-  t29 = GameFlag_Test(0x8fc);
+  t29 = GameFlag_Test(SPLIT_CONSTANT(0x800, 252));
   if (t29 == 0)
     goto L_0200b762;
   t30 = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -93,10 +93,10 @@ L_0200b6f2:
   wait(1);
   Func_020056bc();
 L_0200b762:
-  t42 = GameFlag_Test(0x8f6);
+  t42 = GameFlag_Test(SPLIT_CONSTANT(0x800, 246));
   if (t42 == 0)
     goto L_0200b78e;
-  t43 = GameFlag_Test(0x8fd);
+  t43 = GameFlag_Test(SPLIT_CONSTANT(0x800, 253));
   if (t43 != 0)
     goto L_0200b78e;
   Func_020052a4(0);
@@ -114,7 +114,7 @@ L_0200b78e:
   Func_020027cc();
   goto L_0200b856;
 L_0200b7c0:
-  t50 = GameFlag_Test(0x8f6);
+  t50 = GameFlag_Test(SPLIT_CONSTANT(0x800, 246));
   if (t50 != 0)
     goto L_0200b7e4;
   if (FIELD_AT(&gMainRoutineWork, s16, 482) != 1) {
@@ -128,20 +128,20 @@ L_0200b7dc:
     goto L_0200b7e4;
   Func_02002a64();
 L_0200b7e4:
-  t53 = Value1((s32 (*)())GameFlag_Test, 0x8fc);
+  t53 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x800, 252));
   if (t53 == 0)
     goto L_0200b856;
   Func_020056b4();
   Func_0200580c(0);
-  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x201;
+  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = SPLIT_CONSTANT(0x102, 255);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x209;
-  GameFlag_ClearBit(0x8fc);
-  t59 = GameFlag_Test(0x9eb);
+  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = SPLIT_CONSTANT(0x10a, 255);
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x800, 252));
+  t59 = GameFlag_Test(SPLIT_CONSTANT(0x900, 235));
   if (t59 == 0)
     goto L_0200b84a;
-  t60 = GameFlag_Test(0x9ec);
+  t60 = GameFlag_Test(SPLIT_CONSTANT(0x900, 236));
   if (t60 != 0)
     goto L_0200b84a;
   Func_02003338();

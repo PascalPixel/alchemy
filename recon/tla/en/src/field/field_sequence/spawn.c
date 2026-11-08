@@ -33,7 +33,7 @@ void BattleEffect_SpawnRandomParticleAtPosition(
   position.z = source->position.z;
   random = Random16();
   Vector_AddPolarOffset(random << 4, Random16(), &position);
-  object = Actor_Spawn(0x2a1, position.x, position.y, position.z);
+  object = Actor_Spawn(SPLIT_CONSTANT(0x1a2, 255), position.x, position.y, position.z);
   if (object != 0) {
     s32 mask;
     u8 flags;

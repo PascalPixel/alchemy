@@ -41,7 +41,7 @@ loop:
     Func_02000bc0(-4, object->terrainId, id);
     Func_02000974(1);
     wait(16);
-    Call3((void (*)())Func_02003c00, -1, -1, 0xe666);
+    Call3((void (*)())Func_02003c00, -1, -1, SPLIT_CONSTANT(0xe600, 102));
     wait(8);
     Actor_SetPositionAndResetMotion(object, 0, 0, 0);
     wait(2);

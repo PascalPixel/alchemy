@@ -25,7 +25,7 @@ void Func_02000214(s32 value);
 s32 Func_0200021c(void);
 
 const u8 *Func_0200004c(void) {
-  if (GameFlag_Test(2219))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 171)))
     return gData_02000318;
   return gData_02000270;
 }

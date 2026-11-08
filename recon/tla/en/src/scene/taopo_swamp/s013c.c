@@ -99,5 +99,5 @@ do {
   actor->animationKind = 1;
   Func_020028d0(id, 0, 0);
   Func_020028a0();
-  GameFlag_SetBit(0x8e5);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 229));
 }

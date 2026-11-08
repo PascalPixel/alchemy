@@ -51,7 +51,7 @@ void Window_LoadGraphics(void) {
     color = 0x3140;
     pal++;
     *pal = color;
-    color = 0x2920;
+    color = SPLIT_CONSTANT(0x2900, 32);
     pal++;
     *pal = color;
     color = 0x49a0;

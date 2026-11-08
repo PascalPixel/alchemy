@@ -166,7 +166,7 @@ void Func_02000510(void) {
   FieldEvent_Wait(40);
   Call3(Actor_ArmCallback, 5, 0x4000, 0);
   FieldEvent_Wait(30);
-  Call3(Func_0200294c, 0x2005, 0, 10);
+  Call3(Func_0200294c, SPLIT_CONSTANT(0x2000, 5), 0, 10);
   Value3(Func_02002964, 9, 0x101, 30);
   Func_0200294c(9, 0, 0);
   Actor_CommitPositionAndActivate(9, 0, 16);
@@ -255,7 +255,7 @@ void Func_02000510(void) {
   FieldEvent_Wait(20);
   Call3(Actor_ArmCallback, 9, 0x2000, 0);
   FieldEvent_Wait(25);
-  Call3(Func_0200294c, 0x1009, 0, 10);
+  Call3(Func_0200294c, SPLIT_CONSTANT(0x1000, 9), 0, 10);
   Call3(Actor_ArmCallback, 8, 0x2000, 0);
   Call3(Actor_ArmCallback, 5, 0x2000, 0);
   FieldEvent_Wait(20);
@@ -323,7 +323,7 @@ void Func_02000510(void) {
   FieldEvent_Wait(10);
   Motion_SetVarCbAndRefresh(9, 2);
   FieldEvent_Wait(10);
-  Call3(Func_0200294c, 0x1009, 0, 10);
+  Call3(Func_0200294c, SPLIT_CONSTANT(0x1000, 9), 0, 10);
   FieldEvent_Wait(10);
   Actor_SetModeById(9, 8);
   FieldEvent_Wait(50);
@@ -332,7 +332,7 @@ void Func_02000510(void) {
   Func_02002a5c((s32)record, 2);
   Import_SoundPlay(178);
   FieldEvent_Wait(20);
-  Call2(Func_02002a34, 8, 0x4084);
+  Call2(Func_02002a34, 8, SPLIT_CONSTANT(0x4000, 132));
   FieldEvent_Wait(60);
   Call1(Import_SoundPlay, 0x186);
   Actor_SetSpritePriority(12, 0);
@@ -571,7 +571,7 @@ void Func_02000510(void) {
 
     *(u16 *)((s32)record + 6) = shown;
   }
-  Call3(Func_0200294c, 0x1009, 0, 10);
+  Call3(Func_0200294c, SPLIT_CONSTANT(0x1000, 9), 0, 10);
   Call3(Actor_SetSpeedParameters, 9, 0x18000, 0xc000);
   Actor_CommitPositionAndActivate(9, 0, 16);
   Actor_ArmCallback(9, 0, 0);
@@ -594,7 +594,7 @@ void Func_02000510(void) {
   FieldEvent_Wait(20);
   Motion_SetModeAndWaitAnimation(9, 3);
   FieldEvent_Wait(10);
-  Call3(Func_0200294c, 0x1009, 0, 10);
+  Call3(Func_0200294c, SPLIT_CONSTANT(0x1000, 9), 0, 10);
   Call3(Actor_SetSpeedParameters, 9, 0xb333, 0x5999);
   Actor_CommitPositionAndActivate(9, 48, 0);
   Call3(Actor_ArmCallback, 9, 0x1000, 0);
@@ -607,14 +607,14 @@ void Func_02000510(void) {
   *(u8 *)(Actor_GetById(15) + 90) |= 1;
   FieldEvent_Wait(10);
   Value3(Func_02002964, 9, 0x108, 30);
-  Call3(Func_0200294c, 0x1009, 0, 10);
+  Call3(Func_0200294c, SPLIT_CONSTANT(0x1000, 9), 0, 10);
   Motion_SetVarCbAndRefresh(14, 2);
   FieldEvent_Wait(10);
   Func_0200294c(14, 0, 10);
   Actor_CommitPositionAndActivate(9, 16, 0);
   FieldEvent_Wait(10);
   Value3(Func_02002964, 9, 0x107, 30);
-  Call3(Func_0200294c, 0x1009, 0, 10);
+  Call3(Func_0200294c, SPLIT_CONSTANT(0x1000, 9), 0, 10);
   Actor_StartRepeatedMotion(14, 2);
   Motion_SetVarCbAndRefresh(15, 2);
   FieldEvent_Wait(20);
@@ -633,7 +633,7 @@ void Func_02000510(void) {
   FieldEvent_Wait(10);
   Motion_SetModeAndWaitAnimation(9, 3);
   FieldEvent_Wait(10);
-  Call3(Func_0200294c, 0x1009, 0, 10);
+  Call3(Func_0200294c, SPLIT_CONSTANT(0x1000, 9), 0, 10);
   Actor_StartRepeatedMotion(14, 3);
   Call2(Func_0200296c, 14, 0x102);
   Actor_StartRepeatedMotion(15, 3);
@@ -655,7 +655,7 @@ void Func_02000510(void) {
   }
   Func_0200290c(15, 0, 0);
   FieldEvent_Wait(10);
-  Call3(Actor_SetSpeedParameters, 9, 0xcccc, 0x6666);
+  Call3(Actor_SetSpeedParameters, 9, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
   Actor_CommitPositionAndActivate(9, 64, 0);
   Func_0200290c(9, 0, 0);
   FieldEvent_Wait(30);
@@ -712,7 +712,7 @@ void Func_02000510(void) {
   FieldEvent_Wait(20);
   Motion_SetModeAndWaitAnimation(8, 3);
   FieldEvent_Wait(20);
-  Call3(Actor_SetSpeedParameters, 8, 0x13333, 0x9999);
+  Call3(Actor_SetSpeedParameters, 8, 0x13333, SPLIT_CONSTANT(0x9900, 153));
   Actor_SetModeById(8, 2);
   record = Value1(Actor_GetById, 5);
   if ((s32)record != 0) {

@@ -91,7 +91,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
   if (effect->variant != 2) {
     void *palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteB);
     s32 (*copy)(void *destination, const void *source, s32 size) =
-        Iwram_CopyWords;
+        Iwram_CopyWordsEntry;
 
     /* FAKEMATCH(temporary): the routine's address named once the palette's
      * source is fetched, so its pool load leads the destination's shift; as

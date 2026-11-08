@@ -1,4 +1,4 @@
-#include "jupiter_lighthouse_room_7.h"
+#include "../../../../../../games/tla/src/scene/jupiter_lighthouse_room_7/jupiter_lighthouse_room_7.h"
 #include "scene_tables.h"
 
 void Func_020009f8(s32 id, s32 x, s32 z, s32 dx, s32 dz) {

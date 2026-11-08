@@ -33,7 +33,7 @@ void WindowSystem_InitField(void) {
   work->dirty = 1;
   work->glyphResource = 99;
   work->level = 15;
-  FillWords(Iwram_FillWords, work->tilemap, sizeof(work->tilemap), 0xf000f000);
+  FillWords(Iwram_FillWordsEntry, work->tilemap, sizeof(work->tilemap), 0xf000f000);
   WindowSprite_InitializeFreeList();
   Portrait_ClearSlots();
   Task_Add((s32)WindowSystem_UploadTilemap, TASK_PASS_FRAME);
@@ -62,9 +62,9 @@ void WindowSystem_InitBattle(s32 kind) {
   WindowSprite_InitializeFreeList();
   Task_Add((s32)WindowSystem_UploadTilemap, TASK_PASS_FRAME);
   WindowSystem_StartBattleUpdate(kind);
-  WindowSystem_CopyTileLowerRows(0xf013, 128);
-  WindowSystem_CopyTileLowerRows(0xf014, 129);
-  WindowSystem_CopyTileLowerRows(0xf015, 130);
+  WindowSystem_CopyTileLowerRows(SPLIT_CONSTANT(0xf000, 19), 128);
+  WindowSystem_CopyTileLowerRows(SPLIT_CONSTANT(0xf000, 20), 129);
+  WindowSystem_CopyTileLowerRows(SPLIT_CONSTANT(0xf000, 21), 130);
   {
     u8 mode = 4;
 

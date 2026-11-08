@@ -20,7 +20,7 @@ void Func_020044d4(s32 id, s32 x, s32 z, s32 y);
 void Func_020045ec(s32 value);
 
 void Func_02001770(void) {
-  if (GameFlag_Test(0xa3d) == 0 && GameFlag_Test(64) == 0) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 61)) == 0 && GameFlag_Test(64) == 0) {
     u8 *work = Ram_HeapSlots->eventWork;
 
     Func_02004464();

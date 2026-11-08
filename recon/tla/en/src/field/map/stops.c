@@ -16,7 +16,7 @@ s32 Func_0802e444(s32 value, s32 delta) {
     if (step == 1) {
       value += delta;
       if (value < 0)
-        value = 715;
+        value = SPLIT_CONSTANT(0x1cc, 255);
       if (value >= 716)
         value = 0;
     } else if (delta > 0) {

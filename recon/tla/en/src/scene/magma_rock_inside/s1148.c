@@ -54,7 +54,7 @@ void Func_02001190(s32 mode, s32 cue) {
     target = work->target;
     SET_POSITION(target, 0, 0, 0);
   }
-  if (cue == 0x3e7)
+  if (cue == SPLIT_CONSTANT(0x2e8, 255))
     Func_02004bd4();
   if (cue == 178)
     Func_02004c98(work->target, 3);

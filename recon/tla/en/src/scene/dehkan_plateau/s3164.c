@@ -59,7 +59,7 @@ void Func_02003164(void) {
     Func_02003db8(gData_02003fc0);
   }
   Func_020018a8();
-  if (GameFlag_Test(0x86c) != 0) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 108)) != 0) {
     /* FAKEMATCH: the named angle is started before the two coordinates, as the
      * native does; as a literal argument it is started after them (differ 4).
      */
@@ -68,7 +68,7 @@ void Func_02003164(void) {
     Actor_PlaceFacing(24, 222 << 18, 168 << 16, angle);
     Func_02003be0(68, 33, 105, 6, 1, 1);
     Func_02003be0(69, 33, 105, 4, 1, 1);
-    GameFlag_SetBit(583);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x148, 255));
   }
   if (GameFlag_Test(0x86d) != 0)
     Func_02003c68(24, 0, 0);

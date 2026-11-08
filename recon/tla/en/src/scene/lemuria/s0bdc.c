@@ -58,21 +58,21 @@ s32 Func_02000bdc(void) {
   t16 = Actor_GetById(18);
   FIELD_AT(v6, s32, 104) = t16;
   FIELD_AT(v6, s32, 108) = (s32)Func_020000e8;
-  t17 = GameFlag_Test(0x908);
+  t17 = GameFlag_Test(SPLIT_CONSTANT(0x900, 8));
   if (t17 == 0)
     goto L_02008c9c;
   Call3(Func_02001c2c, 30, PIXELS(440), PIXELS(1048));
 L_02008c9c:
-  t19 = GameFlag_Test(0x964);
+  t19 = GameFlag_Test(SPLIT_CONSTANT(0x900, 100));
   if (t19 == 0)
     goto L_02008cd4;
-  t20 = GameFlag_Test(0x969);
+  t20 = GameFlag_Test(SPLIT_CONSTANT(0x900, 105));
   if (t20 != 0)
     goto L_02008cd4;
   Call3(Func_02001c2c, 24, PIXELS(456), PIXELS(520));
   Call3(Func_02001c2c, 25, PIXELS(472), PIXELS(520));
 L_02008cd4:
-  t23 = GameFlag_Test(0x969);
+  t23 = GameFlag_Test(SPLIT_CONSTANT(0x900, 105));
   if (t23 != 0)
     goto L_02008cee;
   Func_02001c2c(26, 0, 0);
@@ -81,40 +81,40 @@ L_02008cee:
   t25 = Actor_GetById(26);
   FIELD_AT(t25, s32, 108) = (s32)Func_02001b3c;
 L_02008cf8:
-  t26 = GameFlag_Test(0x966);
+  t26 = GameFlag_Test(SPLIT_CONSTANT(0x900, 102));
   if (t26 == 0)
     goto L_02008d2a;
-  t27 = GameFlag_Test(0x969);
+  t27 = GameFlag_Test(SPLIT_CONSTANT(0x900, 105));
   if (t27 != 0)
     goto L_02008d2a;
   Call3(Func_02001c2c, 7, PIXELS(56), PIXELS(1016));
   Actor_SetModeById(7, 9);
 L_02008d2a:
   Func_02001d24();
-  Func_02001d3c(0, 0x962, 8, 9);
+  Func_02001d3c(0, SPLIT_CONSTANT(0x900, 98), 8, 9);
   t32 = Actor_GetById(8);
   FIELD_AT(t32, u8, 35) = (FIELD_AT(t32, u8, 35) | 32);
   t33 = Actor_GetById(9);
   v5 = (32 | FIELD_AT(t33, u8, 35));
   FIELD_AT(t33, u8, 35) = v5;
-  t34 = Value1(GameFlag_Test, 0x96f);
+  t34 = Value1(GameFlag_Test, SPLIT_CONSTANT(0x870, 255));
   if (t34 == 0)
     goto L_02008da6;
   Actor_SetSpritePriority(28, 2);
   Actor_SetSpritePriority(27, 2);
   Call3(Func_02001c2c, 28, PIXELS(840), PIXELS(920));
   Call3(Func_02001c2c, 27, PIXELS(840), PIXELS(936));
-  Call4(Func_02001d3c, 1, 0x96f, 28, 27);
+  Call4(Func_02001d3c, 1, SPLIT_CONSTANT(0x870, 255), 28, 27);
 L_02008da6:
   t40 = Actor_GetById(28);
   Actor_SetSingleChildFlags(t40, 0);
-  t42 = GameFlag_Test(0x963);
+  t42 = GameFlag_Test(SPLIT_CONSTANT(0x900, 99));
   if (t42 == 0)
     goto L_02008dcc;
   Func_02001d4c(10, 1);
   Func_02000560();
 L_02008dcc:
-  t45 = GameFlag_Test(0x303);
+  t45 = GameFlag_Test(SPLIT_CONSTANT(0x204, 255));
   if (t45 != 0)
     goto L_02008de2;
   Actor_SetWideSprite(67, 0);
@@ -124,17 +124,17 @@ L_02008de2:
     goto L_02008df6;
   Actor_SetWideSprite(68, 0);
 L_02008df6:
-  t49 = GameFlag_Test(0x306);
+  t49 = GameFlag_Test(SPLIT_CONSTANT(0x300, 6));
   if (t49 != 0)
     goto L_02008e0c;
   Actor_SetWideSprite(70, 0);
 L_02008e0c:
-  t51 = GameFlag_Test(0x307);
+  t51 = GameFlag_Test(SPLIT_CONSTANT(0x208, 255));
   if (t51 != 0)
     goto L_02008e22;
   Actor_SetWideSprite(71, 0);
 L_02008e22:
-  t53 = GameFlag_Test(0x966);
+  t53 = GameFlag_Test(SPLIT_CONSTANT(0x900, 102));
   if (t53 == 0)
     goto L_02008e44;
   Call6(Func_02001b8c, 3, 1, 1, 1, 54, 45);

@@ -35,7 +35,7 @@ extern char SceneId_Ov64a;
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define TILES_FLAG_OFFSET 0x118c
 #else
-#define TILES_FLAG_OFFSET 0x138c
+#define TILES_FLAG_OFFSET SPLIT_CONSTANT(0x1300, 140)
 #endif
 
 #define Ram_Input FIXED_ADDRESS((struct InputState *), 0x03001150, gInput)
@@ -135,11 +135,11 @@ s32 Func_02000318(void) {
 #endif
   Func_02000244(1, 2, 30);
   Func_0200086c(78);
-  Call3((void (*)())Func_02000244, 0x8040, 2, 30);
+  Call3((void (*)())Func_02000244, SPLIT_CONSTANT(0x8000, 64), 2, 30);
   Call3((void (*)())Func_02000244, 0, 2, 30);
-  Call3((void (*)())Func_02000244, 0x8041, 2, 30);
+  Call3((void (*)())Func_02000244, SPLIT_CONSTANT(0x8000, 65), 2, 30);
   Call3((void (*)())Func_02000244, 0, 2, 30);
-  Call3((void (*)())Func_02000244, 0x8045, 2, 30);
+  Call3((void (*)())Func_02000244, SPLIT_CONSTANT(0x8000, 69), 2, 30);
   Call3((void (*)())Func_02000244, 1, 2, 30);
   Call3((void (*)())Func_0200084c, (s32)&ResourceId_EndingVillagersPictureA,
         (s32)Ram_MapCellBuffer, 0);
@@ -208,7 +208,7 @@ L_02008692:
 L_02008704:
   wait(1);
   count++;
-  if (count > 10799)
+  if (count > SPLIT_CONSTANT(0x2a00, 47))
     goto L_0200871e;
   if (Ram_Input->pressed == 0)
     goto L_02008704;

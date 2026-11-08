@@ -1,0 +1,67 @@
+#include "local.h"
+
+void Func_020010f4(s32 unused, s32 id) {
+  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
+   * shifted byte plus an addend; as plain constants, 4 of 25 instructions
+   * differ in tla-en. */
+  struct Actor *object = Actor_GetById(id);
+
+  object->priorityFlags = 0;
+  object->motionFlags = 0;
+  Func_02002960_(42, 32, 1, 1, 44, 32);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x122, 255));
+}
+
+void Func_0200112c(s32 unused, s32 id) {
+  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
+   * shifted byte plus an addend; as plain constants, 4 of 25 instructions
+   * differ in tla-en. */
+  struct Actor *object = Actor_GetById(id);
+
+  object->priorityFlags = 0;
+  object->motionFlags = 0;
+  Func_02002960_(48, 32, 1, 1, 46, 32);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x200, 34));
+}
+
+void Func_02001164(s32 unused, s32 id) {
+  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
+   * shifted byte plus an addend; as plain constants, 4 of 25 instructions
+   * differ in tla-en. */
+  struct Actor *object = Actor_GetById(id);
+
+  object->priorityFlags = 0;
+  object->motionFlags = 0;
+  Func_02002960_(44, 44, 1, 1, 46, 44);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x124, 255));
+}
+
+void Func_0200119c(s32 unused, s32 id) {
+  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
+   * shifted byte plus an addend; as plain constants, 4 of 30 instructions
+   * differ in tla-en. */
+  struct Actor *object = Actor_GetById(id);
+  s32 column = object->x >> 20;
+
+  if (column == 53) {
+    wait(30);
+    object->z += 0x10000;
+    GameFlag_SetBit(SPLIT_CONSTANT(0x900, 81));
+    Func_02002960(54, 58, 1, 1, column, 52);
+  }
+}
+
+void Func_020011e0(s32 unused, s32 id) {
+  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
+   * shifted byte plus an addend; as plain constants, 4 of 30 instructions
+   * differ in tla-en. */
+  struct Actor *object = Actor_GetById(id);
+  s32 column = object->x >> 20;
+
+  if (column == 53) {
+    wait(30);
+    object->z += 0x10000;
+    GameFlag_SetBit(SPLIT_CONSTANT(0x900, 82));
+    Func_02002960(54, 58, 1, 1, column, 58);
+  }
+}

@@ -21,7 +21,7 @@ const u8 *Func_02001890(void) {
 }
 
 void Func_02001904(void) {
-  if (!GameFlag_Test(0x307))
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x208, 255)))
     OBJECT_BYTE(Actor_GetById(17), 98) = 1;
   else
     Func_020058e0(20, 0, 0);
@@ -64,22 +64,22 @@ void Func_02001974(void) {
     Actor_SetModeById(17, 5);
   else
     Func_0200070c(17, -16);
-  if (!GameFlag_Test(0x215))
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x116, 255)))
     Actor_SetModeById(18, 5);
   else
     Func_0200070c(18, -16);
-  if (!GameFlag_Test(0x216))
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x200, 22)))
     Actor_SetModeById(19, 5);
   else
     Func_0200070c(19, -16);
-  if (!GameFlag_Test(0x217))
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x118, 255)))
     Actor_SetModeById(20, 5);
   else
     Func_0200070c(20, -16);
 }
 
 void Func_02001a70(void) {
-  if (!GameFlag_Test(0x327))
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x228, 255)))
     OBJECT_BYTE(Actor_GetById(15), 98) = 1;
   else
     Func_020058e0(20, 0, 0);

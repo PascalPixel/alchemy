@@ -135,7 +135,7 @@ s32 Func_081a6154(s32 mode) {
       if (Title_WaitOrPress(1))
         return 0;
     }
-    PaletteFade_SetTarget(0x7fff, 0);
+    PaletteFade_SetTarget(SPLIT_CONSTANT(0x7f00, 255), 0);
     PaletteFade_Start(1);
     if (Title_WaitOrPress(2)) {
       Fade_Wait();

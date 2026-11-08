@@ -23,7 +23,7 @@ s32 Func_020004c4(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Func_02000610(201);
-    Func_020005d0(0x7fff, 0);
+    Func_020005d0(SPLIT_CONSTANT(0x7f00, 255), 0);
     Func_020005d8(20);
     wait(20);
     Func_020005c8(9);

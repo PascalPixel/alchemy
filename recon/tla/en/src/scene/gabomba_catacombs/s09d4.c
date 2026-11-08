@@ -136,7 +136,7 @@ void Func_020009d4(void) {
   Actor_WaitForMoveById(9);
   Func_020011cc(9, 0, 0);
   Actor_WaitForMoveById(9);
-  GameFlag_SetBit(0x9ce);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 206));
   Func_02001264();
   Call2(Func_0200123c, speed, 0);
   Func_0200124c(60);

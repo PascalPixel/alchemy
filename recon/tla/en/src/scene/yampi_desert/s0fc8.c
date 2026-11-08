@@ -19,7 +19,7 @@ void Func_02000fc8(void) {
   u32 i;
   s32 angle;
 
-  if (!GameFlag_Test(0x88b))
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x800, 139)))
     return;
   Func_02004040();
   Func_020041b8(0);
@@ -45,7 +45,7 @@ loop_3:
   FieldEvent_Wait(20);
   Scene_CamBounds(PIXELS(232), -1, PIXELS(196), 1);
   Func_02004100(gMainRoutineWork.currentOwner, 0x101, 0);
-  Scene_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Scene_SetSpeed(gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 232, 164);
   FieldEvent_Wait(20);
   angle = 0x4000;
@@ -62,7 +62,7 @@ loop_3:
   Actor_SetSpritePriority(21, 2);
   Actor_SetPartAttribute(Actor_GetById(21), 0);
   Actor_SetSingleChildFlags(Actor_GetById(21), 1);
-  Scene_SetSpeed(21, 0x19999, 0xcccc);
+  Scene_SetSpeed(21, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
   Actor_SetPositionAndCommit(21, 216, 184);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, angle, 0);
   Func_020040e8(21, 0);

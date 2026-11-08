@@ -37,7 +37,7 @@ void Func_020001d8(void) {
     object->priorityFlags |= 0x80;
     Animation_ApplyChildValues(object, 5);
   }
-  if (!GameFlag_Test(0xa3c))
+  if (!GameFlag_Test(SPLIT_CONSTANT(0xa00, 60)))
     return;
   PlaceObject(8, 0x2000000, 0x1080000);
   PlaceObject(9, 0x2000000, 0x10f0000);
@@ -53,7 +53,7 @@ void Func_020001d8(void) {
   object = Actor_GetById(9);
   object->motionFlags = 4;
   object->y = 0x700000;
-  object->scaleX = 0x14ccc;
+  object->scaleX = SPLIT_CONSTANT(0x14c00, 204);
   object->scaleY = 0x14ccc;
   Animation_ApplyChildValues(object, 5);
   Actor_SetSingleChildFlags(object, 0);

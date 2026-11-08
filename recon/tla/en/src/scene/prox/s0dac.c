@@ -37,10 +37,10 @@ void Func_02000dac(void) {
 
   Func_02004464();
   Func_020045ec(0);
-  Call2(Func_0200456c, 0xcccc, 0x1999);
+  Call2(Func_0200456c, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x1900, 153));
   Call4(Camera_MoveWithinMapBounds, PIXELS(160), -1, PIXELS(160), 1);
-  Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0xcccc,
-        0x6666);
+  Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0xcc00, 204),
+        SPLIT_CONSTANT(0x6600, 102));
   Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 134, 156);
   Call2(Func_0200454c, gMainRoutineWork.currentOwner, FACING_NORTH);
   Prox_Jump(11, 0x100, 20);
@@ -56,15 +56,15 @@ void Func_02000dac(void) {
   Func_020044dc(0, gMainRoutineWork.currentOwner);
   wait(1);
   Call3(Actor_ArmCallback, 14, 0xb000, 0);
-  Call3(Actor_SetSpeedParameters, 18, 0xcccc, 0x6666);
-  Call3(Actor_SetSpeedParameters, 0, 0xcccc, 0x6666);
+  Call3(Actor_SetSpeedParameters, 18, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
+  Call3(Actor_SetSpeedParameters, 0, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
   Actor_SetMovementTypeById(0, (s32)gData_020049c4);
   Actor_SetMovementTypeAndWaitById(18, (s32)gData_02004980);
   Call3(Actor_ArmCallback, 11, 0x3000, 0);
   Func_0200455c(11, 0x108, 20);
   Call2(Func_02004534, 11, 0);
   Actor_SetModeById(18, 3);
-  Call2(Func_02004534, 0x8012, 0);
+  Call2(Func_02004534, SPLIT_CONSTANT(0x8000, 18), 0);
   Actor_SetModeById(0, 3);
   Call2(Func_02004534, 0xa000, 0);
   Call3(Actor_ArmCallback, 11, 0, 0);
@@ -94,22 +94,22 @@ void Func_02000dac(void) {
   Call3(Actor_ArmCallback, 17, 0xd000, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
   Call2(Func_0200454c, 18, 0xb000);
-  Call2(Func_02004534, 0x8012, 0);
+  Call2(Func_02004534, SPLIT_CONSTANT(0x8000, 18), 0);
   Actor_SetModeById(0, 0);
   FieldEvent_Wait(10);
   Actor_SetModeById(0, 1);
   FieldEvent_Wait(10);
   Call2(Func_0200454c, 0, FACING_SOUTHEAST);
   Actor_SetModeById(18, 3);
-  Call2(Func_02004534, 0x8012, 0);
+  Call2(Func_02004534, SPLIT_CONSTANT(0x8000, 18), 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-  Call3(Actor_SetSpeedParameters, 0, 0xcccc, 0x6666);
+  Call3(Actor_SetSpeedParameters, 0, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
   Call3(Actor_SetPositionAndReset, 0, 160, 154);
   Call3(Actor_ArmCallback, 0, FACING_NORTHWEST, 0);
   Call2(Motion_SetModeAndWaitAnimation, 18, 4);
-  Call2(Func_02004534, 0x8012, 0);
+  Call2(Func_02004534, SPLIT_CONSTANT(0x8000, 18), 0);
   Prox_Jump(18, 0x109, 20);
-  Call2(Func_02004534, 0x8012, 0);
+  Call2(Func_02004534, SPLIT_CONSTANT(0x8000, 18), 0);
   Prox_Jump(11, 0x105, 0);
   Func_0200455c(10, 0x105, 60);
   Func_0200455c(0, 0x109, 20);
@@ -166,14 +166,14 @@ test_wait:
   Call2(Func_02004534, 10, 0);
   Call2(Func_0200454c, 18, 0xd000);
   Actor_SetModeById(18, 3);
-  Call2(Func_02004534, 0x8012, 0);
+  Call2(Func_02004534, SPLIT_CONSTANT(0x8000, 18), 0);
   Actor_SetModeById(11, 3);
   Call2(Func_02004534, 11, 0);
   Call2(Func_0200454c, 0, FACING_NORTH);
   Call2(Func_02004534, 0xa000, 0);
   Actor_SetModeById(10, 3);
   Call2(Func_02004534, 10, 0);
-  Call2(Func_02004534, 0x8012, 0);
+  Call2(Func_02004534, SPLIT_CONSTANT(0x8000, 18), 0);
   Actor_SetModeById(11, 4);
   Call2(Func_02004534, 11, 0);
   Call2(Func_0200454c, 0, FACING_WEST);
@@ -192,7 +192,7 @@ test_wait:
   }
   Prox_Jump(18, 0x108, 0);
   Call2(Func_0200454c, 18, FACING_WEST);
-  Call2(Func_02004534, 0x8012, 0);
+  Call2(Func_02004534, SPLIT_CONSTANT(0x8000, 18), 0);
   Call3(Actor_ArmCallback, 11, 0, 0);
   Call2(Func_0200454c, 10, FACING_WEST);
   Actor_SetModeById(11, 3);
@@ -222,7 +222,7 @@ test_wait:
   Actor_SetModeById(16, 3);
   Call2(Motion_SetModeAndWaitAnimation, 17, 3);
   Call2(Func_0200454c, 18, FACING_WEST);
-  Call2(Func_02004534, 0x8012, 0);
+  Call2(Func_02004534, SPLIT_CONSTANT(0x8000, 18), 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
   Call2(Func_0200454c, 0, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
@@ -248,6 +248,6 @@ test_wait:
   Call2(Func_0200454c, 11, 0x3000);
   Call2(Motion_SetModeAndWaitAnimation, 11, 3);
   Func_02004534(11, 0);
-  GameFlag_SetBit(0x9c2);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 194));
   Func_0200446c();
 }

@@ -24,7 +24,7 @@ void Func_02004424(void) {
   Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
   Kibombo_MessagePut(0x4011, 0);
   Kibombo_ObjTurn(17, FACING_SOUTH + FACING_STEP);
-  Func_02005b64(0x4011, 0);
+  Func_02005b64(SPLIT_CONSTANT(0x4000, 17), 0);
   Task_RemoveFar(Func_02002ccc);
   Kibombo_ObjTurn(17, FACING_NORTH + FACING_STEP);
   Func_02005bdc(0x10000, 0);

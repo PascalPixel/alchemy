@@ -24,7 +24,7 @@ SECTIONS
         "*/recon/tla/raw/src/scene/jupiter_lighthouse_aerie/s1080.o"(.text)
         "*/recon/tla/raw/src/scene/jupiter_lighthouse_aerie/s17a8.o"(.text)
         "*/recon/tla/raw/src/scene/jupiter_lighthouse_aerie/s1a78.o"(.text)
-        "*/recon/tla/raw/src/scene/jupiter_lighthouse_aerie/light.o"(.text)
+        "*/games/tla/src/scene/jupiter_lighthouse_aerie/light.o"(.text)
         "*/recon/tla/raw/src/scene/jupiter_lighthouse_aerie/lightcue.o"(.text)
         "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
         "*/recon/tla/raw/src/field/field_effect/move.o"(.text)

@@ -28,7 +28,7 @@ void Func_02000054(s32 mode) {
     Func_02002b68(556);
     for (i = 0; i <= 63; i++) {
       left->y += 0x1999;
-      rider->y += 0x7ae;
+      rider->y += SPLIT_CONSTANT(0x700, 174);
       // Through a union, so this store may alias the sprite read after it.
       ((union ActorCoordinate *)&rider->x)->value += -0xa3d;
       *(u16 *)(sprite + 18) += 32;
@@ -38,9 +38,9 @@ void Func_02000054(s32 mode) {
     Func_02002b68(556);
     for (i = 0; i <= 63; i++) {
       right->y += 0x1999;
-      rider->y += 0x7ae;
-      rider->x += 0xa3d;
-      *(u16 *)(sprite + 18) += 0xffe0;
+      rider->y += SPLIT_CONSTANT(0x700, 174);
+      rider->x += SPLIT_CONSTANT(0xa00, 61);
+      *(u16 *)(sprite + 18) += SPLIT_CONSTANT(0xff00, 224);
       wait(1);
     }
   }
@@ -49,7 +49,7 @@ void Func_02000054(s32 mode) {
   FieldEvent_Wait(30);
   Func_0200105c(left);
   Func_0200105c(right);
-  Func_02002b68(522);
+  Func_02002b68(SPLIT_CONSTANT(0x200, 10));
   for (i = 255; i >= 0; i--) {
     Actor_GetById(9)->y += 0x1999;
     Actor_GetById(10)->y += 0x1999;

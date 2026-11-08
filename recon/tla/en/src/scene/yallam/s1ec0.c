@@ -91,7 +91,7 @@ L_02009f9c:
   v7 = FIELD_AT(v6, s32, 8);
   Call3(Actor_SetSpeedParameters, 8, 0x26666, 0x13333);
   Actor_Jump(8, 6, 0);
-  Call3(Actor_SetPositionAndCommit, 8, 200, 0x29e);
+  Call3(Actor_SetPositionAndCommit, 8, 200, SPLIT_CONSTANT(0x200, 158));
   Actor_Jump(8, 4, 0);
   Func_02002450(v6, v7, 0, v8);
   FieldEvent_Wait(5);
@@ -104,7 +104,7 @@ L_02009f9c:
   v7 = FIELD_AT(v6, s32, 8);
   Call3(Actor_SetSpeedParameters, 10, 0x26666, 0x13333);
   Actor_Jump(10, 6, 0);
-  Call3(Actor_SetPositionAndCommit, 10, 200, 0x29e);
+  Call3(Actor_SetPositionAndCommit, 10, 200, SPLIT_CONSTANT(0x200, 158));
   Actor_Jump(10, 4, 0);
   Func_02002450(v6, v7, 0, v8);
   FieldEvent_Wait(5);
@@ -117,7 +117,7 @@ L_02009f9c:
   v7 = FIELD_AT(v6, s32, 8);
   Call3(Actor_SetSpeedParameters, 9, 0x26666, 0x13333);
   Actor_Jump(9, 6, 0);
-  Call3(Actor_SetPositionAndCommit, 9, 200, 0x29e);
+  Call3(Actor_SetPositionAndCommit, 9, 200, SPLIT_CONSTANT(0x200, 158));
   Actor_Jump(9, 4, 0);
   Func_02002450(v6, v7, 0, v8);
   FieldEvent_Wait(10);
@@ -131,13 +131,13 @@ L_02009f9c:
   v7 = FIELD_AT(v6, s32, 8);
   Call3(Actor_SetSpeedParameters, 11, 0x26666, 0x13333);
   Actor_Jump(11, 6, 0);
-  Call3(Actor_SetPositionAndCommit, 11, 200, 0x29e);
+  Call3(Actor_SetPositionAndCommit, 11, 200, SPLIT_CONSTANT(0x200, 158));
   Actor_Jump(11, 4, 0);
   Func_02002450(v6, v7, 0, v8);
   Actor_WaitForMoveById(11);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-  Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 184, 686);
-  Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 186, 674);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
+  Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 184, SPLIT_CONSTANT(0x200, 174));
+  Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 186, SPLIT_CONSTANT(0x200, 162));
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
   t63 = Actor_GetById(8);
   FIELD_AT(t63, u8, 90) = (FIELD_AT(t63, u8, 90) | 1);

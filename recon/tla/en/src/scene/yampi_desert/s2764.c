@@ -57,13 +57,13 @@ void Func_02002764(struct Actor *object) {
     WALK(8, 168 << 16, 148 << 17)
     ARRIVE(9, 10)
     WALK(10, 184 << 16, 148 << 17)
-    ARRIVE_OR(11, 0x201, 48, 12)
+    ARRIVE_OR(11, SPLIT_CONSTANT(0x102, 255), 48, 12)
     WALK(12, 140 << 17, 148 << 17)
     ARRIVE(13, 14)
     WALK(14, 140 << 17, 164 << 17)
   case 15:
     if (Func_020021f0(object)) {
-      if (GameFlag_Test(0x202)) {
+      if (GameFlag_Test(SPLIT_CONSTANT(0x200, 2))) {
         object->update = NULL;
         gData_02004808 = 202;
       } else {
@@ -76,7 +76,7 @@ void Func_02002764(struct Actor *object) {
     WALK(18, 200 << 16, 180 << 17)
     ARRIVE(19, 20)
     WALK(20, 200 << 16, 156 << 17)
-    ARRIVE_OR(21, 0x201, 34, 22)
+    ARRIVE_OR(21, SPLIT_CONSTANT(0x102, 255), 34, 22)
     WALK(22, 200 << 16, 132 << 17)
     ARRIVE(23, 0)
     WALK_ON(32, 148 << 17, 156 << 17)

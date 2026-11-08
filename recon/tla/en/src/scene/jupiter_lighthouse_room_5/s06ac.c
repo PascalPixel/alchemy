@@ -57,7 +57,7 @@ static inline void Func_02002980_(s32 a0, s32 a1) {
 
 void Func_020006ac(void) {
   if (!Flag_IsSet(0xa0e)) {
-    Flag_Set(0xa0e);
+    Flag_Set(SPLIT_CONSTANT(0xa00, 14));
     Func_020028b0();
     Func_020029a8(0);
     Func_02002980_(0x10000, 0);
@@ -73,7 +73,7 @@ void Func_020006ac(void) {
   }
 }
 
-void Func_02000724(void) { GameFlag_ClearBit(0xa0e); }
+void Func_02000724(void) { GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 14)); }
 
 /// Actor 22 rises in a shower of sparks: one every other frame for 32 frames.
 void Func_02000734(void) {

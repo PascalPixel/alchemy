@@ -32,5 +32,5 @@ burst:
   if (i != 8)
     goto burst;
   Func_02005dcc(0x50000, 0x70000, 0x10000);
-  Call3((void (*)())Func_02005dcc, -1, -1, 0xe666);
+  Call3((void (*)())Func_02005dcc, -1, -1, SPLIT_CONSTANT(0xe600, 102));
 }

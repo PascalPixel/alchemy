@@ -12,7 +12,7 @@ void FieldEvent_Wait(s32 frames);
 void Func_02002af4(s32 speaker, s32 flags);
 
 void Func_020004b4(s32 actor) {
-  if (GameFlag_Test(0x97f)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x880, 255))) {
     Func_02002adc((s32)MsgChampa30);
     FieldMessage_ShowAtActor(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02002bb4(), 0) == 0) {

@@ -14,7 +14,7 @@ void Func_02001594(void) {
 void Func_020015d4(s32 mode) {
   if (mode == 1) {
     Func_02001594();
-    GameFlag_SetBit(0x88d);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x800, 141));
   }
 }
 
@@ -29,12 +29,12 @@ void Func_020015ec(s32 show) {
 
 void Func_02001628(void) {
   Func_020015ec(1);
-  GameFlag_SetBit(0x20d);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x10e, 255));
 }
 
 void Func_0200163c(void) {
   Func_020015ec(0);
-  GameFlag_ClearBit(0x20d);
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x10e, 255));
 }
 
 void Func_02001650(s32 show, s32 first, u32 count) {

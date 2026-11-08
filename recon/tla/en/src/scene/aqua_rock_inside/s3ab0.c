@@ -72,11 +72,11 @@ void Func_02003ab0(const u16 *spots, const u16 *levels, void (*handler)(void)) {
   work->handler = handler;
   if (REG_BLDCNT == 0) {
     {
-      s32 alpha = 0xc08;
+      s32 alpha = SPLIT_CONSTANT(0xc00, 8);
       REG_BLDALPHA = alpha;
     }
     {
-      s32 cnt = 0x3f10;
+      s32 cnt = SPLIT_CONSTANT(0x3f00, 16);
       REG_BLDCNT = cnt;
     }
   }

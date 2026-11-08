@@ -54,7 +54,7 @@ void Party_SetFields1f2And1f4();
 void Func_02000430(void) {
   s32 angle;
 
-  if (Value1((s32 (*)())GameFlag_Test, 0x821) == 0)
+  if (Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x800, 33)) == 0)
     return;
   if (Value1((s32 (*)())GameFlag_Test, 0) == 0)
     return;

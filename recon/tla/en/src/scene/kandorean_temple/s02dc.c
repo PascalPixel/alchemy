@@ -33,7 +33,7 @@ s32 Func_020002dc(struct Actor *object) {
 
 s32 Func_0200035c(struct Actor *object) {
   object->motionFlags = 0;
-  object->scaleX = 0xcccc;
+  object->scaleX = SPLIT_CONSTANT(0xcc00, 204);
   object->scaleY = 0xcccc;
   object->collisionFlags |= 8;
   Actor_SetSingleChildFlags(object, 0);

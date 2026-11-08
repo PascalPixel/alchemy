@@ -3,7 +3,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/lemuria_interiors/entry.o"(.text)
-        "*/recon/tla/raw/src/scene/lemuria_interiors/scene_tables.o"(.text)
+        "*/games/tla/src/scene/lemuria_interiors/scene_tables.o"(.text)
         "*/recon/tla/raw/src/scene/lemuria_interiors/s0104.o"(.text)
         "*/recon/tla/raw/src/scene/lemuria_interiors/events.o"(.text)
         "*/games/tla/src/scene/lemuria_interiors/scene_events.o"(.text)

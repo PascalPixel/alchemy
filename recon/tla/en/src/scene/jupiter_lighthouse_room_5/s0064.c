@@ -22,7 +22,7 @@ void Func_02000064(s32 unused, s32 id) {
       wait(1);
     }
     Func_02000e04(id);
-    GameFlag_SetBit(0xa09);
+    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 9));
   } else {
     Func_020029d8();
   }

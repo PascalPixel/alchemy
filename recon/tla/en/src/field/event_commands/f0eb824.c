@@ -30,7 +30,7 @@ void Func_080eb824(void) {
   do {
     Iwram_FillWords(work, sizeof(*work), 0);
   } while (0);
-  work->tile = *(u16 *)(windowTiles + 0x1348);
+  work->tile = *(u16 *)(windowTiles + SPLIT_CONSTANT(0x1300, 72));
   work->mode = CANVAS_SPRITE_16_COLORS;
   work->command = 0;
   work->x = 16;

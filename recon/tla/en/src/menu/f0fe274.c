@@ -52,14 +52,14 @@ void Func_08038290(void);
 static __inline__ void CopyWords_(void *destination, const void *source,
                                   s32 size) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants; as direct Iwram_CopyWords calls, CSE keeps 0x05000000 in a
+   * constants; as direct Iwram_CopyWordsEntry calls, CSE keeps 0x05000000 in a
    * saved register and 48 of 216 instructions differ in tla-en. */
   Iwram_CopyWords(destination, source, size);
 }
 
 s32 Func_080fe274(void) {
   struct OwnerMenuState *state =
-      (struct OwnerMenuState *)HeapSlot_Alloc(220, 0x0cec);
+      (struct OwnerMenuState *)HeapSlot_Alloc(220, SPLIT_CONSTANT(0xc00, 236));
   void *palette = Heap_AllocEwram(64);
   void *tiles = Heap_AllocEwram(0x2800);
   s32 result = -1;

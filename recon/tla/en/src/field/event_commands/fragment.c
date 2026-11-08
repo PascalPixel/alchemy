@@ -82,7 +82,7 @@ void BattleEffect_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src) {
   dist <<= 4;
   Vector_AddPolarOffset(dist, Random16(), &pos);
 
-  obj = Actor_Spawn(0x2a1, pos.x, pos.y, pos.z);
+  obj = Actor_Spawn(SPLIT_CONSTANT(0x1a2, 255), pos.x, pos.y, pos.z);
   if (obj != 0) {
     obj->mode55 = 2;
     obj->field48 = 0x1999;

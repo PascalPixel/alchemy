@@ -51,7 +51,7 @@ s32 Func_020007b8(void) {
   do {
     result = 0;
   } while (0);
-  flag = GameFlag_Test(0x302);
+  flag = GameFlag_Test(SPLIT_CONSTANT(0x300, 2));
   gLinkExchangeState = result;
   if (!flag) {
     wait(5);

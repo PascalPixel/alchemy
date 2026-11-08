@@ -85,7 +85,7 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
    * tla-en. */
   {
     const void *source_ = Resource_GetTableEntry(palette);
-    __typeof__(Iwram_CopyWords) routine = Iwram_CopyWords;
+    __typeof__(Iwram_CopyWordsEntry) routine = Iwram_CopyWordsEntry;
     routine((void *)BG_PLTT, source_, 128);
   }
   if (mode == 3)

@@ -1,6 +1,6 @@
 #include "../../../../../../games/tla/src/scene/taopo_swamp/local.h"
 
-void Func_020002f4(s32 a) { Func_02002958_(a, 65, 0x301); }
+void Func_020002f4(s32 a) { Func_02002958_(a, 65, SPLIT_CONSTANT(0x300, 1)); }
 
 void Func_02000304(s32 a) { Func_02002958_(a, 64, 0x300); }
 
@@ -10,7 +10,7 @@ void Func_02000334(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_02002990_(76, 70, 14, 8, 14, 37, 0);
-  if (GameFlag_Test(0xf99) == 0) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0xf00, 153)) == 0) {
     Func_020028d0_(64, PIXELS(264), PIXELS(664));
     if (leader->x >> 20 == 16 && leader->z >> 20 == 41) {
       Func_02002898();

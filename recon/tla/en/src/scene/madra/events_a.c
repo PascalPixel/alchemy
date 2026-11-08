@@ -81,7 +81,7 @@ void Func_02000108(s32 arg) {
   }
   if (GameFlag_Test(0x8ff))
     Func_02002bd0((s32)&MsgItLooksLikeThe);
-  else if (GameFlag_Test(0x8ab))
+  else if (GameFlag_Test(SPLIT_CONSTANT(0x800, 171)))
     Func_02002bd0((s32)&MsgTheArmorerAnd);
   else
     Func_02002bd0((s32)&MsgAfterTheChampa);
@@ -96,7 +96,7 @@ void Func_0200018c(s32 arg) {
   }
   if (GameFlag_Test(0x8ff))
     Func_02002bd0((s32)&MsgPeopleAreSaying);
-  else if (GameFlag_Test(0x8ab))
+  else if (GameFlag_Test(SPLIT_CONSTANT(0x800, 171)))
     Func_02002bd0((s32)&MsgIKnewThere);
   else
     Func_02002bd0((s32)&MsgOwOwOw);
@@ -111,7 +111,7 @@ void Func_02000210(s32 arg) {
   }
   if (GameFlag_Test(0x8ff))
     Func_02002bd0((s32)&MsgMyBoyfriendShin);
-  else if (GameFlag_Test(0x8ab))
+  else if (GameFlag_Test(SPLIT_CONSTANT(0x800, 171)))
     Func_02002bd0((s32)&MsgAllMyInjuries);
   else
     Func_02002bd0((s32)&MsgMySisterWas);

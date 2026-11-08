@@ -73,9 +73,9 @@ void Func_0200060c(void) {
   s32 x;
   s32 i;
 
-  if (GameFlag_Test_(2591))
+  if (GameFlag_Test_(SPLIT_CONSTANT(0x920, 255)))
     return;
-  GameFlag_SetBit(514);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x200, 2));
   Func_020047d4();
   Func_0200494c(0);
   Func_020049c4(124);
@@ -100,7 +100,7 @@ void Func_0200060c(void) {
   if (GameFlag_Test_(2573))
     spot = 0;
   if (spot != 0)
-    GameFlag_SetBit(2573);
+    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 13));
   if ((u32)(spot - 2) <= 1) {
     Func_020048e4_(0x40000, 0x8000);
     Camera_FollowActor(23, 1);

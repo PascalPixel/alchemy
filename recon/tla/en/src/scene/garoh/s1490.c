@@ -12,7 +12,7 @@ void Func_020013b0(s32 id);
   {                                                                            \
     struct Actor *leader_;                                                     \
                                                                                \
-    Call3((void (*)())Actor_SetSpeedParameters, id, 0x13333, 0x9999);          \
+    Call3((void (*)())Actor_SetSpeedParameters, id, 0x13333, SPLIT_CONSTANT(0x9900, 153));          \
     Actor_SetModeById(id, 2);                                                  \
     leader_ = Actor_GetById(gMainRoutineWork.currentOwner);                    \
     if (leader_ != NULL)                                                       \
@@ -69,7 +69,7 @@ void Func_02001490(void) {
   Func_0200524c((s32)MsgGaroh01);
   Call3((void (*)())Func_0200525c, 8, 0, 0);
   Value3((s32 (*)())Func_0200528c, 4, 0x100, 40);
-  Call3((void (*)())Actor_SetSpeedParameters, 4, 0xcccc, 0x6666);
+  Call3((void (*)())Actor_SetSpeedParameters, 4, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
   Call3((void (*)())Actor_SetPositionAndReset, 4, 152, 304);
   Call4((void (*)())Func_02005334, 9, 32, -16, 0xb000);
   Call4((void (*)())Func_02005334, 5, 0, 0, 0xc000);
@@ -173,7 +173,7 @@ loop2:
   Call3((void (*)())Actor_ArmCallback, 8, 0x3000, 0);
   Call1((void (*)())FieldEvent_Wait, 30);
   Value3((s32 (*)())Func_0200528c, 8, 0x102, 50);
-  Call3((void (*)())Actor_SetSpeedParameters, 8, 0x9999, 0x4ccc);
+  Call3((void (*)())Actor_SetSpeedParameters, 8, SPLIT_CONSTANT(0x9900, 153), SPLIT_CONSTANT(0x4c00, 204));
   Actor_GetById(8)->actionFlags &= 254;
   Call3((void (*)())Actor_SetPositionAndReset, 8, 128, 148);
   Call1((void (*)())FieldEvent_Wait, 1);
@@ -221,7 +221,7 @@ loop2:
   Call3((void (*)())Func_0200525c, 9, 0, 0);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 6, 2);
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call3((void (*)())Func_0200525c, 0x2006, 0, 0);
+  Call3((void (*)())Func_0200525c, SPLIT_CONSTANT(0x2000, 6), 0, 0);
   Value3((s32 (*)())Func_0200528c, 9, 0x108, 30);
   Call3((void (*)())Func_0200525c, 9, 0, 0);
   if (GameFlag_Test(7))
@@ -237,7 +237,7 @@ loop2:
   Call3((void (*)())Func_0200525c, 9, 0, 0);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 6, 2);
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call3((void (*)())Func_0200525c, 0x2006, 0, 0);
+  Call3((void (*)())Func_0200525c, SPLIT_CONSTANT(0x2000, 6), 0, 0);
   Value3((s32 (*)())Func_0200528c, 9, 0x100, 30);
   Call3((void (*)())Func_0200525c, 9, 0, 0);
   Value3((s32 (*)())Func_0200528c, 6, 0x101, 50);
@@ -271,12 +271,12 @@ loop2:
   Call1((void (*)())FieldEvent_Wait, 20);
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call3((void (*)())Func_0200525c, 0x2009, 0, 0);
+  Call3((void (*)())Func_0200525c, SPLIT_CONSTANT(0x2000, 9), 0, 0);
   Call3((void (*)())Actor_ArmCallback, 5, 0xa000, 0);
   if (GameFlag_Test(7))
     Call3((void (*)())Actor_ArmCallback, 7, 0xb000, 0);
   Call1((void (*)())FieldEvent_Wait, 20);
-  Value2((s32 (*)())FieldMessage_ShowAtActor, 0x2005, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, SPLIT_CONSTANT(0x2000, 5), 0);
   Call3((void (*)())Actor_ArmCallback, 4, 0x2000, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Call1((void (*)())FieldEvent_Wait, 30);
@@ -286,7 +286,7 @@ loop2:
     Call1((void (*)())FieldEvent_Wait, 20);
     if (GameFlag_Test(7))
       Call3((void (*)())Actor_ArmCallback, 7, 0xc000, 0);
-    Call3((void (*)())Func_0200525c, 0x2009, 0, 0);
+    Call3((void (*)())Func_0200525c, SPLIT_CONSTANT(0x2000, 9), 0, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
   } else {
     Call1((void (*)())FieldEvent_Wait, 40);
@@ -301,7 +301,7 @@ loop2:
   }
   Call3((void (*)())Actor_Jump, 9, 6, 15);
   Call3((void (*)())Actor_Jump, 9, 6, 23);
-  Call3((void (*)())Func_0200525c, 0x2009, 0, 0);
+  Call3((void (*)())Func_0200525c, SPLIT_CONSTANT(0x2000, 9), 0, 0);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 5, 2);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call3((void (*)())Actor_ArmCallback, 5, 0xc000, 0);
@@ -316,17 +316,17 @@ loop2:
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
   Call1((void (*)())FieldEvent_Wait, 20);
   Value3((s32 (*)())Func_0200528c, 6, 0x101, 30);
-  Call3((void (*)())Func_0200525c, 0x2006, 0, 0);
+  Call3((void (*)())Func_0200525c, SPLIT_CONSTANT(0x2000, 6), 0, 0);
   Call2((void (*)())Actor_StartRepeatedMotion, 9, 3);
   Call2((void (*)())Func_02005294, 9, 0x102);
   Call1((void (*)())FieldEvent_Wait, 40);
-  Call3((void (*)())Func_0200525c, 0x2009, 0, 0);
+  Call3((void (*)())Func_0200525c, SPLIT_CONSTANT(0x2000, 9), 0, 0);
   Call1((void (*)())Func_020013b0, 6);
   Call1((void (*)())FieldEvent_Wait, 20);
-  Call3((void (*)())Func_0200525c, 0x2006, 0, 0);
+  Call3((void (*)())Func_0200525c, SPLIT_CONSTANT(0x2000, 6), 0, 0);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 9, 2);
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call3((void (*)())Actor_SetSpeedParameters, 9, 0x6666, 0x3333);
+  Call3((void (*)())Actor_SetSpeedParameters, 9, SPLIT_CONSTANT(0x6600, 102), SPLIT_CONSTANT(0x3300, 51));
   Actor_GetById(9)->actionFlags &= 254;
   Call3((void (*)())Actor_CommitPositionAndActivate, 9, 0, -16);
   Call1((void (*)())FieldEvent_Wait, 1);
@@ -334,7 +334,7 @@ loop2:
   Call1((void (*)())FieldEvent_Wait, 20);
   Call2((void (*)())Func_02005294, 9, 0x102);
   Call1((void (*)())FieldEvent_Wait, 40);
-  Call3((void (*)())Func_0200525c, 0x2009, 0, 0);
+  Call3((void (*)())Func_0200525c, SPLIT_CONSTANT(0x2000, 9), 0, 0);
   Call3((void (*)())Actor_ArmCallback, 5, 0xa000, 0);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call3((void (*)())Func_0200525c, 5, 0, 0);
@@ -360,7 +360,7 @@ loop2:
   Call3((void (*)())Actor_CommitPositionAndActivate, 9, 0, 16);
   Call1((void (*)())FieldEvent_Wait, 20);
   Value3((s32 (*)())Func_0200528c, 9, 0x103, 30);
-  Call3((void (*)())Func_0200525c, 0x2009, 0, 0);
+  Call3((void (*)())Func_0200525c, SPLIT_CONSTANT(0x2000, 9), 0, 0);
   Value3((s32 (*)())Func_0200528c, 4, 0x100, 0);
   Value3((s32 (*)())Func_0200528c, 5, 0x100, 0);
   if (GameFlag_Test(7))
@@ -368,7 +368,7 @@ loop2:
   Value3((s32 (*)())Func_0200528c, 6, 0x100, 50);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 9, 2);
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call3((void (*)())Func_0200525c, 0x2009, 0, 0);
+  Call3((void (*)())Func_0200525c, SPLIT_CONSTANT(0x2000, 9), 0, 0);
   Call3((void (*)())Actor_SetSpeedParameters, 9, 0x20000, 0x10000);
   Call3((void (*)())Actor_CommitPositionAndActivate, 9, -16, 0);
   Call3((void (*)())Actor_ArmCallback, 5, 0xa000, 0);
@@ -380,9 +380,9 @@ loop2:
   Call1((void (*)())FieldEvent_Wait, 20);
   Value3((s32 (*)())Func_0200528c, 4, 0x102, 40);
   ACTOR_MODE_THEN_WAIT(9, 4, 33);
-  Call3((void (*)())Func_0200525c, 0x2009, 0, 0);
+  Call3((void (*)())Func_0200525c, SPLIT_CONSTANT(0x2000, 9), 0, 0);
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
-  Call3((void (*)())Func_0200525c, 0x2009, 0, 0);
+  Call3((void (*)())Func_0200525c, SPLIT_CONSTANT(0x2000, 9), 0, 0);
   Call3((void (*)())Actor_Jump, 9, 6, 15);
   Call3((void (*)())Actor_Jump, 9, 6, 23);
   if (GameFlag_Test(7))

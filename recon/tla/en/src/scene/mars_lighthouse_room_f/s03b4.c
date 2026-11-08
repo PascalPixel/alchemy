@@ -30,7 +30,7 @@ void Func_02000444(s32 state) {
   if (state == 1) {
     Func_020054e0(29, 56, 3, 4, 10, 50);
     Func_020054f0(93, 56, 3, 4, 74, 50);
-    GameFlag_SetBit(0xa44);
+    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 68));
   }
 }
 
@@ -38,7 +38,7 @@ void Func_02000480(s32 state) {
   if (state == 1) {
     Func_020054e0(29, 56, 3, 4, 18, 50);
     Func_020054f0(93, 56, 3, 4, 82, 50);
-    GameFlag_SetBit(0xa45);
+    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 69));
   }
 }
 
@@ -46,7 +46,7 @@ void Func_020004bc(s32 state) {
   if (state == 1) {
     Func_020054e0(29, 56, 3, 4, 14, 50);
     Func_020054f0(93, 56, 3, 4, 78, 50);
-    GameFlag_SetBit(0xa46);
+    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 70));
   }
 }
 
@@ -61,7 +61,7 @@ void Func_02000514(void) {
 
   Func_02005598(10, 0, 0);
   Func_02005598(9, S16_AT(object, 100) << 16, S16_AT(object, 102) << 16);
-  GameFlag_SetBit(0xa42);
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 66));
   Func_020056c0(136);
 }
 

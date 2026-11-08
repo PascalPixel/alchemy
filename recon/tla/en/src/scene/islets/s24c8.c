@@ -2,7 +2,7 @@
 
 void Func_020024c8(void) {
   Call6((void (*)())Func_02003e24, 5, 2, 1, 2, 5, 28);
-  GameFlag_SetBit(0x213);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x114, 255));
 }
 
 void Func_020024f0(void) {
@@ -27,7 +27,7 @@ void Func_0200253c(void) {
   if (gInput.held & 0x80) {
     state = gSceneState;
     object = Actor_GetById(gMainRoutineWork.currentOwner);
-    if ((u16)(*state + 0xfff6) > 200) {
+    if ((u16)(*state + SPLIT_CONSTANT(0xff00, 246)) > 200) {
       Func_02003e64();
       Func_02003fa4(0);
       object->motionFlags = 0;

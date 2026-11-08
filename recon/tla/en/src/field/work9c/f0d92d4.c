@@ -46,7 +46,7 @@ void Func_080d92d4(s32 index, s32 fromId, s32 toId) {
     x = (toX - from->x) >> 8;
     y = (toY - from->y) >> 8;
     z = (toZ - from->z) >> 8;
-    mul = Iwram_MulQ16;
+    mul = Iwram_MulQ16Entry;
     xx = mul(x, x);
     yy = mul(y, y);
     length = xx + yy + mul(z, z);

@@ -24,7 +24,7 @@ void Func_02000974(void) {
   Motion_SetModeAndWaitAnimation(16, 3);
   Func_02001d54(16, 0);
   Func_02001ccc();
-  GameFlag_ClearBit(0x95e);
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x900, 94));
 }
 
 void Func_02000a48(void) { Func_02001e0c_(68, 38, 39, 24, 68, 4, 1); }
@@ -33,7 +33,7 @@ void Func_02000a68(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_02001e0c_(68, 38, 38, 21, 68, 4, 1);
-  if (GameFlag_Test(0xf9b) == 0) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0xf00, 155)) == 0) {
     Func_02001d04_(65, PIXELS(376), PIXELS(376));
     if (leader->x >> 20 == 23 && leader->z >> 20 == 23) {
       Func_02001cc4();
@@ -51,7 +51,7 @@ void Func_02000af8(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_02001e0c_(68, 38, 38, 21, 68, 4, 1);
-  if (GameFlag_Test(0xf9a) == 0) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0xf00, 154)) == 0) {
     Func_02001d04_(64, PIXELS(600), PIXELS(408));
     if (leader->x >> 20 == 37 && leader->z >> 20 == 25) {
       Func_02001cc4();
@@ -71,7 +71,7 @@ void Func_02000ba8(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_02001e0c_(67, 38, 11, 6, 67, 8, 1);
-  if (GameFlag_Test(0xf9e) == 0) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0xf00, 158)) == 0) {
     Func_02001d04_(64, PIXELS(200), PIXELS(152));
     if (leader->x >> 20 == 12 && leader->z >> 20 == 9) {
       Func_02001cc4();

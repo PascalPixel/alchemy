@@ -217,10 +217,10 @@ s32 Func_02000a34(s32 value) {
   FieldEvent_Wait(20);
   Motion_SetVarCbAndRefresh(8, 2);
   FieldEvent_Wait(5);
-  Call3((void (*)())Func_0200351c, 0x2008, 0, 5);
+  Call3((void (*)())Func_0200351c, SPLIT_CONSTANT(0x2000, 8), 0, 5);
   Func_02003534(8, 0x8000);
   FieldEvent_Wait(10);
-  Func_0200351c(0x2008, 0, 5);
+  Func_0200351c(SPLIT_CONSTANT(0x2000, 8), 0, 5);
   Func_02003534(8, 0x5000);
   FieldEvent_Wait(10);
   /* FAKEMATCH(one-pass): the block orders the arguments r0 first; as a plain

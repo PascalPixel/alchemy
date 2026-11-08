@@ -38,7 +38,7 @@ s32 Func_02000360(void) {
   Task_Add(Func_020002f8, 0x480);
   Flag_Clear(0x12f);
 #if TLA_PATCH_1 /* From patch 1. */
-  if (Flag_IsSet(0x90a))
+  if (Flag_IsSet(SPLIT_CONSTANT(0x900, 10)))
     Actor_SetSpritePriority(9, 1);
   else
     Func_020004bc(9, 0, 0);
@@ -47,7 +47,7 @@ s32 Func_02000360(void) {
 }
 
 s32 Func_020003cc(void) {
-  if (!Flag_IsSet(0x8df)) {
+  if (!Flag_IsSet(SPLIT_CONSTANT(0x7e0, 255))) {
     Func_0200045c(57, 52, 64, 15, 1, 1);
     Func_0200045c(60, 53, 67, 16, 6, 3);
     Func_0200045c(50, 52, 16, 16, 6, 3);

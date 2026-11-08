@@ -20,10 +20,10 @@ s32 Func_02000ecc(void) {
   Func_02001254(0);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room1 &&
       (entrance = gMainRoutineWork.entrance) == 1) {
-    if (GameFlag_Test(0xa27)) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 39))) {
       gMainRoutineWork.retreatScene = (s32)&SceneId_Ov671Room7;
       gMainRoutineWork.retreatEntrance = entrance;
-    } else if (GameFlag_Test(0xa28)) {
+    } else if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 40))) {
       gMainRoutineWork.retreatScene = (s32)&SceneId_Ov672Room1;
       gMainRoutineWork.retreatEntrance = 3;
     }
@@ -35,15 +35,15 @@ s32 Func_02000ecc(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room3) {
     if (GameFlag_Test(0x200))
       Call6(Func_02001164, 6, 23, 1, 1, 8, 23);
-    if (GameFlag_Test(513))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x102, 255)))
       Call6(Func_02001164, 0, 4, 1, 1, 8, 15);
     if (GameFlag_Test(514))
       Call6(Func_02001164, 0, 4, 1, 1, 9, 0x10);
-    if (GameFlag_Test(515))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x104, 255)))
       Call6(Func_02001164, 0, 4, 1, 1, 8, 17);
     if (GameFlag_Test(516))
       Call6(Func_02001164, 0, 4, 1, 1, 6, 17);
-    if (GameFlag_Test(517))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x106, 255)))
       Call6(Func_02001164, 0, 4, 1, 1, 5, 0x10);
     if (GameFlag_Test(518))
       Call6(Func_02001164, 0, 4, 1, 1, 6, 15);
@@ -52,7 +52,7 @@ s32 Func_02000ecc(void) {
       GameFlag_Test(0x200))
     Call6(Func_02001164, 15, 18, 1, 1, 17, 18);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room4 &&
-      GameFlag_Test(0x9ce) && !GameFlag_Test(0xf93) && !GameFlag_Test(265)) {
+      GameFlag_Test(SPLIT_CONSTANT(0x900, 206)) && !GameFlag_Test(SPLIT_CONSTANT(0xf00, 147)) && !GameFlag_Test(265)) {
     statue = Actor_GetById(0x40);
     Call3(Func_020011cc, 0x40, 0xa80000, 0x980000);
     statue->motionFlags = 6;

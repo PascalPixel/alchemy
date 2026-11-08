@@ -26,7 +26,7 @@ void Func_02002af0(void);
 void Func_02002b18(s32 skip);
 
 void Func_020001b4(void) {
-  GameFlag_SetBit(0xa0a);
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 10));
   Func_02002a88();
   Func_02002b18(0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
@@ -50,7 +50,7 @@ void Func_020001b4(void) {
 }
 
 void Func_02000264(void) {
-  GameFlag_SetBit(0xa0b);
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 11));
   Func_02002a88();
   Func_02002b18(0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);

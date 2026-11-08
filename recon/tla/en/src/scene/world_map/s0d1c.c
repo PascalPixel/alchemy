@@ -20,7 +20,7 @@ void Func_02000d1c(void) {
   Func_02004c20();
   Func_02004db8(0);
   if (Value3((s32 (*)())Func_02004c38, 19, 0x198, -1) == 0)
-    GameFlag_ClearBit(0xa77);
+    GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 119));
   Func_02004c28();
 }
 
@@ -41,5 +41,5 @@ void Func_02000d4c(void) {
    * positions first. */
   __asm__ volatile("" : "+r"(a), "+r"(id));
   Func_02004c90(id, PIXELS(10168), PIXELS(9648), a);
-  GameFlag_SetBit(0xa77);
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 119));
 }

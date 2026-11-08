@@ -84,7 +84,7 @@ s32 Func_020019cc(void) {
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Call2((void (*)())FieldMessage_Show, message + 2, 1);
   Call3((void (*)())Func_02004e24, 0x50000, 0x70000, 0x10000);
-  Call3((void (*)())Func_02004e24, -1, -1, 0xe666);
+  Call3((void (*)())Func_02004e24, -1, -1, SPLIT_CONSTANT(0xe600, 102));
   Func_02004e2c();
   Func_02004ddc();
   level = REG_BLDALPHA & 0xff;
@@ -106,8 +106,8 @@ s32 Func_020019cc(void) {
   Func_02004dd4();
   Call3((void (*)())Func_02004ebc, 12, 0, 0);
   Call2((void (*)())Party_LearnAbility, 4, 139);
-  Call1((void (*)())GameFlag_SetBit, 0x9ba);
-  Call3((void (*)())Actor_SetSpeedParameters, 11, 0x13333, 0x9999);
+  Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x900, 186));
+  Call3((void (*)())Actor_SetSpeedParameters, 11, 0x13333, SPLIT_CONSTANT(0x9900, 153));
   Call2((void (*)())Actor_SetModeById, 11, 2);
   {
     struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);

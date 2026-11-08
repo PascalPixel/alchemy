@@ -36,7 +36,7 @@ void Func_02001b14(void) {
   Func_02001e80(9);
   Func_02001e80(10);
   wait(1);
-  if (GameFlag_Test(0x8fd)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 253))) {
     Func_02001010();
     Func_02001064();
     GabombaStatueChamber_ObjPosSet(8, PIXELS(424), PIXELS(152));
@@ -63,7 +63,7 @@ void Func_02001b14(void) {
     register struct MainRoutineWork *party asm("r3") = &gMainRoutineWork;
 
     if (party->entrance == 3) {
-      GameFlag_ClearBit(0xa27);
+      GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 39));
       GameFlag_SetBit(0xa28);
     }
   }

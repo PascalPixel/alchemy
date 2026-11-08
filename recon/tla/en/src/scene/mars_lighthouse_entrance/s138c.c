@@ -112,7 +112,7 @@ L_020093dc:
   Call6((void (*)())Func_02004c30, 35, 105, 24, 10, 3, 117);
 L_02009420:
   Call1((void (*)())Func_020002bc, (s32)gData_020053d8);
-  t12 = Value1((s32 (*)())GameFlag_Test, 0xa3e);
+  t12 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 62));
   if (t12 != 0)
     goto L_02009436;
   goto L_020098be;
@@ -128,7 +128,7 @@ L_02009454:
   Call4((void (*)())Func_020022e4, (s32)gData_020053e6, (s32)gData_020053f8, 0,
         88);
   Call1((void (*)())Func_020002bc, (s32)gData_020053fe);
-  t17 = Value1((s32 (*)())GameFlag_Test, 0xa3f);
+  t17 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x940, 255));
   if (t17 == 0)
     goto L_020094ae;
   Call6((void (*)())Func_02004c30, 47, 94, 10, 6, 47, 100);
@@ -136,7 +136,7 @@ L_02009454:
   Call3((void (*)())Func_02004cd8, 18, 0, 0);
   goto L_020094e0;
 L_020094ae:
-  t21 = Value1((s32 (*)())GameFlag_Test, 0xa3e);
+  t21 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 62));
   if (t21 == 0)
     goto L_020094d6;
   Call1((void (*)())GameFlag_SetBit, 0x230);
@@ -149,7 +149,7 @@ L_020094e0:
   t26 = Value1((s32 (*)())Actor_GetById, 20);
   FIELD_AT(t26, u8, 35) |= 2;
   Call2((void (*)())Actor_SetSpritePriority, 20, 2);
-  t29 = Value1((s32 (*)())GameFlag_Test, 0xa47);
+  t29 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 71));
   if (t29 == 0)
     goto L_0200953c;
   Call6((void (*)())Func_02004c30, 28, 92, 8, 8, 28, 100);
@@ -162,7 +162,7 @@ L_0200953c:
   if (t34 == 0)
     goto L_0200955a;
   Func_02000798();
-  Call1((void (*)())GameFlag_SetBit, 0x231);
+  Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x132, 255));
   goto L_02009564;
 L_0200955a:
   Call3((void (*)())Func_02004cd8, 20, 0, 0);
@@ -201,7 +201,7 @@ L_020095b4:
   t56 = FIELD_AT(t55, s16, 100);
   t57 = FIELD_AT(t55, s16, 102);
   Call3((void (*)())Func_02004cd8, 18, (t56 << 16), (t57 << 16));
-  Call1((void (*)())Func_02004de0, 0x23d);
+  Call1((void (*)())Func_02004de0, SPLIT_CONSTANT(0x13e, 255));
   v_r5 = 2;
 L_0200963c:
   Call1((void (*)())Func_02000414, 18);
@@ -209,7 +209,7 @@ L_0200963c:
   v_r5 = (v_r5 - 1);
   if (v_r5 >= 0)
     goto L_0200963c;
-  Call1((void (*)())GameFlag_SetBit, 0xa3e);
+  Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0xa00, 62));
   Call3((void (*)())Func_02004c50, -1, -1, 0xe666);
   Call1((void (*)())FieldEvent_Wait, 120);
   Call1((void (*)())Func_02004d30, 20);
@@ -247,12 +247,12 @@ L_0200970c:
   t78 = Value1((s32 (*)())GameFlag_Test, 0xa4c);
   if (t78 == 0)
     goto L_02009764;
-  Call1((void (*)())GameFlag_SetBit, 0x232);
+  Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x200, 50));
   goto L_0200976e;
 L_02009764:
   Call3((void (*)())Func_02004cd8, 12, 0, 0);
 L_0200976e:
-  t81 = Value1((s32 (*)())GameFlag_Test, 0xa49);
+  t81 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 73));
   if (t81 != 0)
     goto L_0200977e;
   goto L_020098be;
@@ -326,7 +326,7 @@ L_020097fa:
 L_02009884:
   t109 = Value1((s32 (*)())Actor_GetById, 9);
   FIELD_AT(t109, u8, 35) |= 2;
-  t111 = Value1((s32 (*)())GameFlag_Test, 0xa4e);
+  t111 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 78));
   if (t111 == 0)
     goto L_020098be;
   Call3((void (*)())Func_02004cd8, 8, 0x580000, 0x2b80000);

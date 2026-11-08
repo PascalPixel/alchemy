@@ -57,7 +57,7 @@ s32 Func_02000134(void) {
     /* FAKEMATCH: the wait counter's address taken once before the test, where
      * the native loads it for both branches; written in each branch it is
      * loaded in each (differ 11). */
-    set = Flag_IsSet(0x303);
+    set = Flag_IsSet(SPLIT_CONSTANT(0x204, 255));
     waitCounter = &gData_020022b8;
     if (!set) {
       if (++*waitCounter > 25) {
@@ -81,27 +81,27 @@ s32 Func_02000134(void) {
     }
     if (gData_020022b8 == 0) {
       if (Func_0200006c(0) && (Func_0200006c(1) || Func_0200006c(2))) {
-        Flag_Set(0x201);
-        if (Flag_IsSet(0x202))
+        Flag_Set(SPLIT_CONSTANT(0x102, 255));
+        if (Flag_IsSet(SPLIT_CONSTANT(0x200, 2)))
           work->raisedTrigger = 1;
         result = 1;
       } else {
-        Flag_Clear(0x201);
+        Flag_Clear(SPLIT_CONSTANT(0x102, 255));
         result = 0;
       }
     }
-    if (Flag_IsSet(0x201) && Flag_IsSet(0x202) && !Flag_IsSet(0x200))
+    if (Flag_IsSet(SPLIT_CONSTANT(0x102, 255)) && Flag_IsSet(SPLIT_CONSTANT(0x200, 2)) && !Flag_IsSet(0x200))
       work->raisedTrigger = 1;
   }
-  if ((Flag_IsSet(0x201) || Flag_IsSet(0x202)) && !Flag_IsSet(0x173) &&
+  if ((Flag_IsSet(SPLIT_CONSTANT(0x102, 255)) || Flag_IsSet(SPLIT_CONSTANT(0x200, 2))) && !Flag_IsSet(0x173) &&
       !Func_0200006c(0) && gData_020022b8 > 24) {
     work->raisedTrigger = 2;
-    Flag_Set(0x205);
-    Flag_Clear(0x201);
-    Flag_Clear(0x202);
+    Flag_Set(SPLIT_CONSTANT(0x106, 255));
+    Flag_Clear(SPLIT_CONSTANT(0x102, 255));
+    Flag_Clear(SPLIT_CONSTANT(0x200, 2));
     LinkLobby_WriteSlotValue(4);
   }
-  if (Flag_IsSet(0x205))
+  if (Flag_IsSet(SPLIT_CONSTANT(0x106, 255)))
     work->raisedTrigger = 2;
   return result;
 }

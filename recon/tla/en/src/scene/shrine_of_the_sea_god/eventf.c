@@ -150,7 +150,7 @@ void Func_02003094(void) {
   }
   Func_02003b18();
   Func_02003b20(0, 515, 10, 11);
-  if (GameFlag_Test(0x872)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 114))) {
     Func_02003a30(12, 0, 0);
     Func_02003a30(13, 0, 0);
   }
@@ -181,7 +181,7 @@ void Func_02003134(void) {
   ShrineOfTheSeaGod_BlendStart(3, 15, 1, 1, 6, 15);
   if (GameFlag_Test(0x873)) {
     Func_02003a30(11, 0, 0);
-  } else if (GameFlag_Test(0x872)) {
+  } else if (GameFlag_Test(SPLIT_CONSTANT(0x800, 114))) {
     /* FAKEMATCH: the function-scope angle temporary preserves its early
      * constant construction; a direct argument through the unbound helper
      * differs 2. */
@@ -223,7 +223,7 @@ void Func_0200320c(void) {
     block->priorityFlags |= 2;
     ShrineOfTheSeaGod_BlendStart(0, 50, 3, 1, 24, 70);
   }
-  if (GameFlag_Test(0x84c))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 76)))
     ShrineOfTheSeaGod_ObjSetPos(Actor_GetById(8), 200 << 16, 0, 296 << 16);
   Func_02003b30(gData_02003cbc);
   if (GameFlag_Test(0x875))
@@ -272,7 +272,7 @@ void Func_0200338c(void) {
   Func_02000f18(12);
   if (GameFlag_Test(0x200))
     ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 8, 18);
-  if (GameFlag_Test(0x201))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x102, 255)))
     ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 10, 18);
   if (GameFlag_Test(0x202))
     ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 10, 17);
@@ -281,8 +281,8 @@ void Func_0200338c(void) {
   Func_02002e70();
   ShrineOfTheSeaGod_TaskAdd(Func_020011a0, 0x480);
   if (GameFlag_Test(115) || GameFlag_Test(0x340)) {
-    GameFlag_SetBit(0x205);
-  } else if (GameFlag_Test(0x87c)) {
+    GameFlag_SetBit(SPLIT_CONSTANT(0x106, 255));
+  } else if (GameFlag_Test(SPLIT_CONSTANT(0x800, 124))) {
     struct ShrineOfTheSeaGodObject *block = Actor_GetById(14);
     s32 moved = GameFlag_Test(265);
 
@@ -291,7 +291,7 @@ void Func_0200338c(void) {
       ShrineOfTheSeaGod_ObjPlace(14, 392 << 16, 296 << 16);
     }
     Actor_WatchAndSetScript(14, gMainRoutineWork.currentOwner);
-  } else if (GameFlag_Test(0x877)) {
+  } else if (GameFlag_Test(SPLIT_CONSTANT(0x778, 255))) {
     /* FAKEMATCH: the function-scope angle temporary preserves its early
      * constant construction; a direct argument through the unbound helper
      * differs 4. */
@@ -305,7 +305,7 @@ void Func_02003504(void) {
 
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
   Actor_SetSingleChildFlags(Actor_GetById(8), 0);
-  open = GameFlag_Test(0x301);
+  open = GameFlag_Test(SPLIT_CONSTANT(0x300, 1));
   if (open) {
     ShrineOfTheSeaGod_ObjPlace(8, 248 << 16, 264 << 16);
     Actor_SetSpritePriority(8, 3);

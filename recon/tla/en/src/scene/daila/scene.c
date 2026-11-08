@@ -52,15 +52,15 @@ s32 Func_02000b44(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila2) {
     if (Import_GameFlagIsSet(0x210))
       MapCopyAttr(10, 19, 1, 1, 11, 19);
-    if (Import_GameFlagIsSet(0x211))
+    if (Import_GameFlagIsSet(SPLIT_CONSTANT(0x112, 255)))
       MapCopyAttr(25, 20, 1, 1, 26, 20);
-    if (Import_GameFlagIsSet(0x212))
+    if (Import_GameFlagIsSet(SPLIT_CONSTANT(0x200, 18)))
       MapCopyAttr(28, 23, 1, 1, 29, 23);
-    if (Import_GameFlagIsSet(0x213))
+    if (Import_GameFlagIsSet(SPLIT_CONSTANT(0x114, 255)))
       MapCopyAttr(17, 11, 1, 1, 18, 11);
     if (Import_GameFlagIsSet(0x214))
       MapCopyAttr(30, 17, 1, 1, 31, 17);
-    if (Import_GameFlagIsSet(0x215))
+    if (Import_GameFlagIsSet(SPLIT_CONSTANT(0x116, 255)))
       MapCopyAttr(16, 23, 1, 1, 17, 23);
   }
   return 0;

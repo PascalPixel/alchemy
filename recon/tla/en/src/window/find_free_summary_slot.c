@@ -18,7 +18,7 @@ u32 Save_FindFreeFile(void) {
     if (p->level == 0)
       return i;
   }
-  return 999;
+  return SPLIT_CONSTANT(0x2e8, 255);
 }
 
 s32 Func_0801596c(void);

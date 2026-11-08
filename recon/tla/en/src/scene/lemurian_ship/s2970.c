@@ -11,7 +11,7 @@ void Func_02002970(void) {
 
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   Func_02002dc8(gData_0200304e);
-  if (GameFlag_Test(0x982)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 130))) {
     LemurianShip_MapCopy(4, 124, 31, 64, 3, 2);
     GameFlag_SetBit(0x202);
     GameFlag_SetBit(0x203);
@@ -28,14 +28,14 @@ void Func_02002970(void) {
     LemurianShip_ObjPlace(10, PIXELS(568), PIXELS(152));
   }
   if (GameFlag_Test(0x204)) {
-    if (GameFlag_Test(0x202))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x200, 2)))
       Actor_SetModeById(8, 3);
     else
       Actor_SetModeById(8, 2);
   }
   Actor_SetSingleChildFlags(Actor_GetById(9), 0);
   if (!GameFlag_Test(0x109))
-    GameFlag_SetBit(0x203);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x104, 255));
   if (LemurianShip_FlagCheck(0x203)) {
     object = Actor_GetById(9);
     Func_02002c30(29, 68, 29, 69, 1, 1);
@@ -46,8 +46,8 @@ void Func_02002970(void) {
     GameFlag_SetBit(0x205);
     LemurianShip_ObjPlace(11, PIXELS(472), PIXELS(152));
   }
-  if (GameFlag_Test(0x205)) {
-    if (GameFlag_Test(0x203))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x106, 255))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x104, 255)))
       Actor_SetModeById(9, 3);
     else
       Actor_SetModeById(9, 2);
@@ -57,7 +57,7 @@ void Func_02002970(void) {
   LemurianShip_TaskAdd(Func_02001464, 0x480);
   if (!GameFlag_Test(0x210))
     Actor_SetPartAttribute(Actor_GetById(10), 15);
-  if (!GameFlag_Test(0x211))
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x112, 255)))
     Actor_SetPartAttribute(Actor_GetById(11), 15);
   LEMURIAN_SHIP_TASK_ADD(Func_0200155c, 0x480);
 }

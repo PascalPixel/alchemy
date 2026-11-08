@@ -50,7 +50,7 @@ s32 FieldMessage_ShowAtActor();
 #define WALK_TO_LEADER(id)                                                     \
   {                                                                            \
     struct Actor *leader_;                                                     \
-    Call3(Actor_SetSpeedParameters, (id), 0x13333, 0x9999);                    \
+    Call3(Actor_SetSpeedParameters, (id), 0x13333, SPLIT_CONSTANT(0x9900, 153));                    \
     Actor_SetModeById((id), 2);                                                \
     leader_ = Actor_GetById(gMainRoutineWork.currentOwner);                    \
     if (leader_ != 0)                                                          \
@@ -186,7 +186,7 @@ void Func_02000658(void) {
   Call3(Actor_ArmCallback, 9, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   Value3(Func_02001560, 9, 259, 30);
-  Func_02001548(0x1009, 0, 10);
+  Func_02001548(SPLIT_CONSTANT(0x1000, 9), 0, 10);
   Value3(Func_02001560, 8, 258, 45);
   Call3(Actor_CommitPositionAndActivate, 8, -16, 0);
   Call3(Actor_ArmCallback, 8, FACING_NORTHWEST, 0);
@@ -329,7 +329,7 @@ void Func_02000658(void) {
   Call3(Func_02001548, 0x2009, 0, 10);
   Actor_ArmCallback(9, 0xb000, 0);
   FieldEvent_Wait(20);
-  Call3(Func_02001548, 0x2009, 0, 10);
+  Call3(Func_02001548, SPLIT_CONSTANT(0x2000, 9), 0, 10);
   Actor_ArmCallback(6, FACING_EAST, 0);
   Call3(Actor_ArmCallback, 5, FACING_WEST, 0);
   Call3(Actor_ArmCallback, 4, FACING_NORTHWEST, 0);
@@ -337,7 +337,7 @@ void Func_02000658(void) {
   Call3(Actor_ArmCallback, 13, 0x5000, 0);
   FieldEvent_Wait(50);
   Func_02001560(9, 263, 30);
-  Call3(Func_02001548, 0x2009, 0, 10);
+  Call3(Func_02001548, SPLIT_CONSTANT(0x2000, 9), 0, 10);
   Call3(Actor_ArmCallback, 6, FACING_SOUTHEAST, 0);
   Call3(Actor_ArmCallback, 5, FACING_SOUTHEAST, 0);
   Call3(Actor_ArmCallback, 4, FACING_SOUTHEAST, 0);
@@ -346,7 +346,7 @@ void Func_02000658(void) {
   FieldEvent_Wait(35);
   Motion_SetVarCbAndRefresh(9, 2);
   FieldEvent_Wait(10);
-  Func_02001548(0x2009, 0, 10);
+  Func_02001548(SPLIT_CONSTANT(0x2000, 9), 0, 10);
   Actor_CommitPositionAndActivate(8, -32, 0);
   FieldEvent_Wait(10);
   Actor_Jump(8, 6, 15);
@@ -380,7 +380,7 @@ void Func_02000658(void) {
   Actor_ArmCallback(7, FACING_EAST, 0);
   Actor_ArmCallback(13, 0x5000, 0);
   FieldEvent_Wait(20);
-  FieldMessage_ShowAtActor(0x2005, 0);
+  FieldMessage_ShowAtActor(SPLIT_CONSTANT(0x2000, 5), 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Func_020015f0();
     FieldEvent_Wait(30);
@@ -396,15 +396,15 @@ void Func_02000658(void) {
   }
   Motion_SetModeAndWaitAnimation(13, 3);
   FieldEvent_Wait(10);
-  Call3(Func_02001548, 0x200d, 0, 10);
+  Call3(Func_02001548, SPLIT_CONSTANT(0x2000, 13), 0, 10);
   Call3(Actor_ArmCallback, 7, FACING_NORTHEAST, 0);
   Actor_ArmCallback(4, FACING_NORTH, 0);
   FieldEvent_Wait(30);
   Func_02001560(13, 264, 30);
-  Call3(Func_02001548, 0x200d, 0, 10);
+  Call3(Func_02001548, SPLIT_CONSTANT(0x2000, 13), 0, 10);
   Motion_SetModeAndWaitAnimation(13, 3);
   FieldEvent_Wait(10);
-  Func_02001548(0x200d, 0, 10);
+  Func_02001548(SPLIT_CONSTANT(0x2000, 13), 0, 10);
   Actor_SetModeById(4, 3);
   Actor_SetModeById(6, 3);
   Actor_SetModeById(5, 3);

@@ -1,0 +1,36 @@
+#include "types.h"
+#include "actor.h"
+#include "main_routine_work.h"
+#include "ram_buffer.h"
+#include "event_work.h"
+#include "call.h"
+#include "text/msg_ids.h"
+
+void Func_02001060();
+void Func_020011c0();
+void GameFlag_Test();
+
+s32 Func_02000fe8(void) {
+  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
+   * shifted byte plus an addend; as plain constants, 8 of 35 instructions
+   * differ in tla-en. */
+  s32 result0;
+  s32 result1;
+
+  result0 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x900, 169));
+  if (result0 == 0)
+    goto L_0200900e;
+  Call6((void (*)())Func_02001060, 0, 2, 1, 1, 2, 8);
+L_0200900e:
+  result1 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x900, 170));
+  if (result1 == 0)
+    goto L_02009030;
+  Call6((void (*)())Func_02001060, 0, 32, 1, 1, 14, 38);
+L_02009030:
+  return 0;
+}
+
+void Func_02001038(void) {
+  Func_020011c0();
+  return;
+}

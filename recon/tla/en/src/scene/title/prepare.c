@@ -63,7 +63,7 @@ s32 Func_0200005c(void) {
   next:
     frames++;
   test:
-    limit = 3599;
+    limit = SPLIT_CONSTANT(0xd10, 255);
     /* FAKEMATCH: the bound goes through an empty asm: the native compares 3599
      * with bgt, where combine plainly canonicalizes the test to 3600 with bge
      * (differ 4). */

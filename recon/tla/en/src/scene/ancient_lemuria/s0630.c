@@ -68,7 +68,7 @@ s32 Func_020006bc(void) {
     GameFlag_ClearBit(0x12f);
   else
     GameFlag_SetBit(0x12f);
-  if (GameFlag_Test(0x961)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 97))) {
     Func_0200195c_(8, 136 << 16, 584 << 16);
     Func_0200195c(9, 0, 0);
     Func_0200195c(10, 0, 0);

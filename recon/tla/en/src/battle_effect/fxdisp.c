@@ -66,8 +66,8 @@ void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
   s32 kind;
   s32 value;
 
-  HeapSlot_AllocEwram(100, 0x60e);
-  HeapSlot_Alloc(92, 0x7b7c);
+  HeapSlot_AllocEwram(100, SPLIT_CONSTANT(0x600, 14));
+  HeapSlot_Alloc(92, SPLIT_CONSTANT(0x7b00, 124));
   HeapSlot_Alloc(96, 0x4000);
   work = (struct BattleFxWorkTail *)Ram_HeapSlots->battleFxWork[0];
   work->effect = effect;

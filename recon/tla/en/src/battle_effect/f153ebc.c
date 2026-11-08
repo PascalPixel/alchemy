@@ -352,8 +352,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   gBgScroll[1].x = scrollX;
   Func_0814cca8();
   Palette_LoadBasicObjColors();
-  Dma_Set(OBJ_PLTT, (void *)(BG_PLTT + 80), 0x80000010,
-          (volatile u32 *)0x040000d4);
+  Dma_Set(OBJ_PLTT, (void *)(BG_PLTT + 80), SPLIT_CONSTANT(0x80000000, 16),
+          (volatile u32 *)SPLIT_CONSTANT(0x4000000, 212));
   BG_PLTT[94] = BG_PLTT[244];
   for (i = 0; i != GIANT_PIECES; i++)
     ResourceObject_ReleaseFar(work->objects[i]);

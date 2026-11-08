@@ -67,8 +67,8 @@ void Func_02000a24(void) {
   s16 *target;
   s32 angle = 0xe000;
 
-  GameFlag_ClearBit(0xa71);
-  GameFlag_SetBit(0xa72);
+  GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 113));
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 114));
   Func_02001080();
   Func_020011e0(0);
   Camera_MoveWithinMapBounds(PIXELS(199), -1, PIXELS(273), 0);

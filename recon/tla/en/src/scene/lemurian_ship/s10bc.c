@@ -17,7 +17,7 @@ void Func_020010d8(void) {
 void Func_020010f8(void) {
   Func_02002de0(106);
   Actor_SetModeById(9, 2);
-  GameFlag_SetBit(0x205);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x106, 255));
   Func_02000e2c();
 }
 
@@ -60,7 +60,7 @@ void Func_020011f4(void) {
   Func_02002da8(0);
   work->field16a = 0;
   GameFlag_ClearBit(0x203);
-  GameFlag_ClearBit(0x205);
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x106, 255));
   FieldEvent_Wait(20);
   Func_02002de0(186);
   for (i = 0; i <= 63; i++) {

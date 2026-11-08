@@ -150,10 +150,10 @@ void LuckyDice_Run(void) {
   (void)&affineB;
   (void)&affineC;
   (void)&affineD;
-  HeapSlot_Alloc(100, 0x60e);
+  HeapSlot_Alloc(100, SPLIT_CONSTANT(0x600, 14));
   spritePalette = HeapSlot_Alloc(96, 0x200);
-  diceWork = HeapSlot_AllocEwram(92, 0x7b7c);
-  sprites = HeapSlot_AllocEwram(180, 0x614);
+  diceWork = HeapSlot_AllocEwram(92, SPLIT_CONSTANT(0x7b00, 124));
+  sprites = HeapSlot_AllocEwram(180, SPLIT_CONSTANT(0x600, 20));
   camera = HeapSlot_AllocEwram(48, 76);
   Resource_ReservedNoOp((s32)&ResourceId_FarCall00C);
   Camera_ResetSceneDefaults();
@@ -602,7 +602,7 @@ void LuckyDice_Run(void) {
             bounceSpeed = Iwram_Sqrt(bounceVelocityX * bounceVelocityX +
                                      bounceVelocityZ * bounceVelocityZ) *
                           56 / 64;
-            bounceAngle = Random16() & 0xffff;
+            bounceAngle = Random16() & SPLIT_CONSTANT(0xff00, 255);
             rollingDie->velocityX = Trig_Sin(bounceAngle) * bounceSpeed >> 8;
             rollingDie->velocityZ = Trig_Cos(bounceAngle) * bounceSpeed >> 8;
           } else {

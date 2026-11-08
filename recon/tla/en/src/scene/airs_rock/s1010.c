@@ -79,8 +79,8 @@ void Func_02001010(void) {
   REG_DISPCNT &= ~0x100;
   Func_02003af0(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
                 buffer);
-  Dma_Set(buffer, (void *)0x600e800, 0x840000d0, (volatile u32 *)0x040000d4);
-  Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, 0x840000d0,
+  Dma_Set(buffer, (void *)0x600e800, SPLIT_CONSTANT(0x84000000, 208), (volatile u32 *)0x040000d4);
+  Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, SPLIT_CONSTANT(0x84000000, 208),
           (volatile u32 *)0x040000d4);
   Heap_Release(buffer);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
@@ -107,7 +107,7 @@ offset:
   i = 0;
 row:
   Dma_Set(cell, (void *)(0x600200f + (i << 6)), 0x84000008,
-          (volatile u32 *)0x040000d4);
+          (volatile u32 *)SPLIT_CONSTANT(0x4000000, 212));
   i++;
   cell += 16;
   if (i != 18)
@@ -132,7 +132,7 @@ row:
       spark->bounce = spark->x;
       spark->gravity = 0x18000;
       spark->unk4c = spark->z;
-      spark->speedLimit = Random16Far() & 0xffff;
+      spark->speedLimit = Random16Far() & SPLIT_CONSTANT(0xff00, 255);
       Func_02003b28(spark, 7);
       Func_02003b38(spark, gData_02003d1c);
       Actor_SetSingleChildFlags(spark, 0);
@@ -151,7 +151,7 @@ row:
   REG_BLDALPHA = 0xf00;
   REG_BLDCNT = 0x3f41;
   REG_DISPCNT |= 0x100;
-  Call3((void (*)())Func_02003b98, 0x10000, 0x10000, 0x10000);
+  CallLr3((void (*)())Func_02003b98, 0x10000, 0x10000, 0x10000);
   i = 0;
 glow:
   REG_BLDALPHA = ((15 - (i >> 2)) << 8) | (i >> 2);
@@ -163,7 +163,7 @@ glow:
   FieldEvent_Wait(60);
   REG_BLDALPHA = 15;
   REG_BLDCNT = 0xc42;
-  Call3((void (*)())Func_02003b98, 0x30000, 0x30000, 0x10000);
+  CallLr3((void (*)())Func_02003b98, 0x30000, 0x30000, 0x10000);
   {
     u32 j = 0;
 
@@ -196,7 +196,7 @@ glow:
   FieldEvent_Wait(1);
   REG_BLDCNT = 0x3f41;
   REG_BLDALPHA = 15;
-  Call3((void (*)())Func_02003b98, -1, -1, 0xe666);
+  Call3((void (*)())Func_02003b98, -1, -1, SPLIT_CONSTANT(0xe600, 102));
   Call1((void (*)())Func_02003cd8, 390);
   ((u8 *)Actor_GetById(8))[98] = 6;
   i = 0;
@@ -238,6 +238,6 @@ fade:
     Camera_FollowActor(*ownerId, 1);
   }
   Func_02003c30();
-  GameFlag_SetBit(0x858);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 88));
   Func_02003bd0();
 }

@@ -96,7 +96,7 @@ retry:
   p[0] = x;
   p[2] = z;
   object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
+  object->acceleration = SPLIT_CONSTANT(0x1900, 153);
   object->action = 0;
   Func_020054b8(object, x, object->y, z);
   Func_02005480(object, 2);

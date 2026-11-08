@@ -51,17 +51,17 @@ void Func_0200062c(void) {
   asm("");
   if (FIELD_AT(t1, s32, 12) > 0x600000)
     goto L_02008654;
-  t2 = Value1(GameFlag_Test, 0x969);
+  t2 = Value1(GameFlag_Test, SPLIT_CONSTANT(0x900, 105));
   if (t2 == 0)
     goto L_02008666;
 L_02008654:
   FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x15a), s16, 0) = 1;
   goto L_020088d4;
 L_02008666:
-  t3 = Value1(GameFlag_Test, 0x966);
+  t3 = Value1(GameFlag_Test, SPLIT_CONSTANT(0x900, 102));
   if (t3 == 0)
     goto L_02008682;
-  t4 = Value1(GameFlag_Test, 0x968);
+  t4 = Value1(GameFlag_Test, SPLIT_CONSTANT(0x900, 104));
   if (t4 == 0)
     goto L_02008694;
 L_02008682:
@@ -69,7 +69,7 @@ L_02008682:
   Call2(Func_02001c84, -1, 0);
   goto L_020088d4;
 L_02008694:
-  Call1(GameFlag_SetBit, 0x968);
+  Call1(GameFlag_SetBit, SPLIT_CONSTANT(0x900, 104));
   Func_02001bcc();
   Call1(Func_02001d04, 0);
   Call1(Func_02001c6c, (s32)&MsgAreYouKids);
@@ -98,7 +98,7 @@ L_02008694:
     goto L_02008778;
   goto L_020088cc;
 L_02008778:
-  t31 = Value1(GameFlag_Test, 0x962);
+  t31 = Value1(GameFlag_Test, SPLIT_CONSTANT(0x900, 98));
   if (t31 == 0)
     goto L_02008788;
   goto L_020088cc;
@@ -134,7 +134,7 @@ L_02008788:
   Actor_CommitPositionAndActivate(12, 32, 0);
   Camera_FollowActor(4, 1);
   Call3(Actor_CommitPositionAndActivate, 12, 0, -32);
-  GameFlag_SetBit(0x96f);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x870, 255));
 L_020088cc:
   Func_020001bc();
   Func_02001bd4();

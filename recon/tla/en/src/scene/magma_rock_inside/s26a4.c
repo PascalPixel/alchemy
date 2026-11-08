@@ -51,5 +51,5 @@ fadeOut:
   Func_02004cb0(object);
   Func_02004d48();
   REG_BLDCNT = 0;
-  REG_DISPCNT &= 0x7fff;
+  REG_DISPCNT &= SPLIT_CONSTANT(0x7f00, 255);
 }

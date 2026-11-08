@@ -71,7 +71,7 @@ s32 Func_0200058c(s32 a0, s32 a1, s32 a2, s32 a3) {
   Func_02001fcc();
   Func_020020cc(0);
   Func_0200205c((s32)MsgLemuriaPalace11);
-  Call3((void (*)())Actor_SetSpeedParameters, 16, 0x13333, 0x9999);
+  Call3((void (*)())Actor_SetSpeedParameters, 16, 0x13333, SPLIT_CONSTANT(0x9900, 153));
   Call3((void (*)())Actor_CommitPositionAndActivate, 16, -24, 0);
   Call2((void (*)())Func_0200207c, 16, FACING_SOUTH + FACING_STEP);
   {
@@ -100,15 +100,15 @@ L_0200863c:
   Actor_CommitPositionAndActivate(16, 24, 0);
   Call3((void (*)())Actor_ArmCallback, 16, FACING_SOUTH + FACING_STEP, 0);
   Actor_WatchAndSetScript(16, FIELD_AT(r5_1, s32, 0));
-  GameFlag_SetBit(0x96a);
-  GameFlag_SetBit(0x96b);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 106));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 107));
   Party_AddActiveOwner(7);
   v3 = Actor_GetById(64);
   FIELD_AT(v3, s32, 28) = r7_1;
   Actor_ArmCallback(14, FACING_EAST, 0);
-  Call3((void (*)())Actor_SetSpeedParameters, 13, 0xb333, 0x5999);
-  Call3((void (*)())Actor_SetSpeedParameters, 14, 0xb333, 0x5999);
-  Call3((void (*)())Actor_SetSpeedParameters, 7, 0xb333, 0x5999);
+  Call3((void (*)())Actor_SetSpeedParameters, 13, SPLIT_CONSTANT(0xb300, 51), SPLIT_CONSTANT(0x5900, 153));
+  Call3((void (*)())Actor_SetSpeedParameters, 14, SPLIT_CONSTANT(0xb300, 51), SPLIT_CONSTANT(0x5900, 153));
+  Call3((void (*)())Actor_SetSpeedParameters, 7, SPLIT_CONSTANT(0xb300, 51), SPLIT_CONSTANT(0x5900, 153));
   Call3((void (*)())Actor_SetPositionAndReset, 4, 872, 528);
   Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(872), -1, PIXELS(408),
         1);
@@ -122,7 +122,7 @@ L_0200863c:
   FieldEvent_Wait(10);
   FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452) =
       (FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452)) + 1;
-  Call3((void (*)())Func_0200206c, 0x200d, 0, 5);
+  Call3((void (*)())Func_0200206c, SPLIT_CONSTANT(0x2000, 13), 0, 5);
   Call3((void (*)())Actor_ArmCallback, 7, FACING_SOUTH, 0);
   Call3((void (*)())Actor_ArmCallback, 14, FACING_SOUTHEAST + FACING_STEP, 0);
   Call2((void (*)())Func_0200207c, 15, FACING_SOUTH + FACING_STEP);
@@ -133,7 +133,7 @@ L_0200863c:
   FieldEvent_Wait(10);
   Func_0200206c(14, 0, 5);
   Motion_SetModeAndWaitAnimation(13, 4);
-  Call3((void (*)())Func_0200206c, 0x200d, 0, 5);
+  Call3((void (*)())Func_0200206c, SPLIT_CONSTANT(0x2000, 13), 0, 5);
   Motion_SetVarCbAndRefresh(15, 2);
   FieldEvent_Wait(5);
   Call2((void (*)())Func_0200207c, 15, FACING_WEST);
@@ -154,7 +154,7 @@ L_0200863c:
   FieldEvent_Wait(10);
   Motion_SetModeAndWaitAnimation(13, 3);
   FieldEvent_Wait(10);
-  Call3((void (*)())Func_0200206c, 0x200d, 0, 5);
+  Call3((void (*)())Func_0200206c, SPLIT_CONSTANT(0x2000, 13), 0, 5);
   Camera_FollowActor(13, 1);
   Call3((void (*)())Actor_ResetAndSetPositionInMode2, 13, 864, 444);
   FieldEvent_Wait(20);
@@ -182,7 +182,7 @@ L_0200863c:
   FieldEvent_Wait(10);
   Motion_SetModeAndWaitAnimation(13, 3);
   FieldEvent_Wait(10);
-  Call3((void (*)())Func_0200206c, 0x200d, 0, 5);
+  Call3((void (*)())Func_0200206c, SPLIT_CONSTANT(0x2000, 13), 0, 5);
   Func_0200207c(7, FACING_EAST);
   FieldEvent_Wait(10);
   Motion_SetModeAndWaitAnimation(7, 3);
@@ -236,26 +236,26 @@ L_0200863c:
   Call2((void (*)())Func_0200207c, 13, FACING_SOUTHEAST + FACING_STEP);
   FieldEvent_Wait(10);
   Value3((s32 (*)())Func_0200208c, 13, 0x108, 30);
-  Call3((void (*)())Func_0200206c, 0x200d, 0, 5);
+  Call3((void (*)())Func_0200206c, SPLIT_CONSTANT(0x2000, 13), 0, 5);
   Actor_StartRepeatedMotion(17, 3);
   Call2((void (*)())Func_02002094, 17, 0x102);
   FieldEvent_Wait(37);
   Func_0200206c(17, 0, 5);
   Motion_SetModeAndWaitAnimation(13, 3);
   FieldEvent_Wait(10);
-  Call3((void (*)())Func_0200206c, 0x200d, 0, 0);
+  Call3((void (*)())Func_0200206c, SPLIT_CONSTANT(0x2000, 13), 0, 0);
   Func_0200206c(15, 0, 5);
   Call2((void (*)())Func_0200207c, 13, FACING_NORTH + FACING_STEP);
   FieldEvent_Wait(15);
   Func_0200206c(15, 0, 5);
   Call2((void (*)())Func_0200207c, 13, FACING_SOUTHEAST + FACING_STEP);
   FieldEvent_Wait(10);
-  Call3((void (*)())Func_0200206c, 0x200d, 0, 5);
+  Call3((void (*)())Func_0200206c, SPLIT_CONSTANT(0x2000, 13), 0, 5);
   Value3((s32 (*)())Func_0200208c, 13, 0x105, 30);
-  Call3((void (*)())Func_0200206c, 0x200d, 0, 5);
+  Call3((void (*)())Func_0200206c, SPLIT_CONSTANT(0x2000, 13), 0, 5);
   Motion_SetVarCbAndRefresh(13, 2);
   FieldEvent_Wait(5);
-  Call3((void (*)())Func_0200206c, 0x200d, 0, 0);
+  Call3((void (*)())Func_0200206c, SPLIT_CONSTANT(0x2000, 13), 0, 0);
   Func_0200206c(15, 0, 5);
   Motion_SetVarCbAndRefresh(7, 2);
   FieldEvent_Wait(10);
@@ -265,9 +265,9 @@ L_0200863c:
   Func_0200206c(7, 0, 5);
   Func_0200207c(13, FACING_NORTH + FACING_STEP);
   FieldEvent_Wait(5);
-  Call3((void (*)())Func_0200206c, 0x200d, 0, 5);
+  Call3((void (*)())Func_0200206c, SPLIT_CONSTANT(0x2000, 13), 0, 5);
   Motion_SetModeAndWaitAnimation(13, 4);
-  Call3((void (*)())Func_0200206c, 0x200d, 0, 5);
+  Call3((void (*)())Func_0200206c, SPLIT_CONSTANT(0x2000, 13), 0, 5);
   Motion_SetVarCbAndRefresh(17, 2);
   Func_0200206c(17, 0, 5);
   Call3((void (*)())Actor_ArmCallback, 7, FACING_SOUTHEAST, 0);
@@ -277,7 +277,7 @@ L_0200863c:
   Motion_SetModeAndWaitAnimation(13, 3);
   FieldEvent_Wait(10);
   Func_020001d8(13);
-  Func_02002114(32, 0x2108);
+  Func_02002114(32, SPLIT_CONSTANT(0x2100, 8));
   FieldEvent_Wait(32);
   FieldEvent_Wait(20);
   Func_020003a0();
@@ -290,7 +290,7 @@ L_0200863c:
   Value3((s32 (*)())Func_0200208c, 17, 0x100, 0);
   Value3((s32 (*)())Func_0200208c, 6, 0x100, 0);
   Value3((s32 (*)())Func_0200208c, 5, 0x100, 55);
-  Call3((void (*)())Func_0200206c, 0x200d, 0, 5);
+  Call3((void (*)())Func_0200206c, SPLIT_CONSTANT(0x2000, 13), 0, 5);
   Func_0200206c(15, 0, 10);
   Func_0200208c(17, 0x105, 50);
   v10 = Func_020001d8(13);
@@ -300,7 +300,7 @@ L_0200863c:
   *(s32 *)Data_02003024 = r8_1;
   Call1((void (*)())Func_02002124, 153);
   Func_02000510();
-  Call3((void (*)())Func_0200206c, 0x200d, 0, 10);
+  Call3((void (*)())Func_0200206c, SPLIT_CONSTANT(0x2000, 13), 0, 10);
   Func_0200206c(14, 0, 5);
   v12 = Actor_GetById(17);
   FIELD_AT(v12, u8, 90) &= ~1;
@@ -314,7 +314,7 @@ L_0200863c:
   FieldEvent_Wait(40);
   Func_0200206c(17, 0, 5);
   Value3((s32 (*)())Func_0200208c, 13, 0x108, 30);
-  Call3((void (*)())Func_0200206c, 0x200d, 0, 5);
+  Call3((void (*)())Func_0200206c, SPLIT_CONSTANT(0x2000, 13), 0, 5);
   Func_0200207c(6, FACING_EAST);
   FieldEvent_Wait(10);
   Value3((s32 (*)())Func_0200208c, 6, 0x101, 30);
@@ -336,7 +336,7 @@ L_0200863c:
   FieldEvent_Wait(20);
   Motion_SetModeAndWaitAnimation(13, 3);
   FieldEvent_Wait(10);
-  Func_0200206c(0x200d, 0, 5);
+  Func_0200206c(SPLIT_CONSTANT(0x2000, 13), 0, 5);
   v14 = Func_020001d8(13);
   Func_02000550();
   FieldEvent_Wait(10);
@@ -395,16 +395,16 @@ L_02008ff2:
   Motion_SetModeAndWaitAnimation(15, 3);
   FieldEvent_Wait(15);
   Call3((void (*)())Actor_ArmCallback, 14, FACING_WEST, 0);
-  Func_0200207c(13, 0x7fff);
+  Func_0200207c(13, SPLIT_CONSTANT(0x7f00, 255));
   FieldEvent_Wait(10);
-  Call3((void (*)())Func_0200206c, 0x200d, 0, 5);
+  Call3((void (*)())Func_0200206c, SPLIT_CONSTANT(0x2000, 13), 0, 5);
   Func_0200207c(7, FACING_EAST);
   FieldEvent_Wait(10);
   Motion_SetModeAndWaitAnimation(7, 3);
   FieldEvent_Wait(10);
   Func_0200206c(7, 0, 5);
   Value3((s32 (*)())Func_0200208c, 13, 0x108, 30);
-  Call3((void (*)())Func_0200206c, 0x200d, 0, 5);
+  Call3((void (*)())Func_0200206c, SPLIT_CONSTANT(0x2000, 13), 0, 5);
   Motion_SetModeAndWaitAnimation(7, 4);
   Func_0200206c(7, 0, 5);
   Value3((s32 (*)())Func_0200208c, 13, 0x101, 50);
@@ -441,12 +441,12 @@ L_02008ff2:
   FieldEvent_Wait(5);
   Func_0200206c(14, 0, 5);
   Value3((s32 (*)())Func_0200208c, 13, 0x108, 30);
-  Call3((void (*)())Func_0200206c, 0x200d, 0, 5);
+  Call3((void (*)())Func_0200206c, SPLIT_CONSTANT(0x2000, 13), 0, 5);
   Motion_SetModeAndWaitAnimation(17, 3);
   FieldEvent_Wait(10);
   Func_0200206c(17, 0, 5);
   Motion_SetModeAndWaitAnimation(13, 4);
-  Func_0200206c(0x200d, 0, 5);
+  Func_0200206c(SPLIT_CONSTANT(0x2000, 13), 0, 5);
   Value3((s32 (*)())Func_0200208c, 17, 0x109, 30);
   Func_0200206c(17, 0, 5);
   Motion_SetVarCbAndRefresh(7, 2);
@@ -542,7 +542,7 @@ L_02008ff2:
   Motion_SetVarCbAndRefresh(15, 2);
   FieldEvent_Wait(5);
   Func_0200206c(15, 0, 5);
-  Call3((void (*)())Actor_SetSpeedParameters, 15, 0x13333, 0x9999);
+  Call3((void (*)())Actor_SetSpeedParameters, 15, 0x13333, SPLIT_CONSTANT(0x9900, 153));
   Call3((void (*)())Actor_CommitPositionAndActivate, 15, -50, 24);
   Actor_WatchAndSetScript(13, 15);
   Actor_WatchAndSetScript(14, 15);
@@ -606,9 +606,9 @@ L_02008ff2:
   FieldEvent_Wait(10);
   Func_0200206c(17, 0, 5);
   Motion_SetModeAndWaitAnimation(13, 4);
-  Call3((void (*)())Func_0200206c, 0x200d, 0, 5);
+  Call3((void (*)())Func_0200206c, SPLIT_CONSTANT(0x2000, 13), 0, 5);
   Motion_SetModeAndWaitAnimation(13, 4);
-  Call3((void (*)())Func_0200206c, 0x200d, 0, 5);
+  Call3((void (*)())Func_0200206c, SPLIT_CONSTANT(0x2000, 13), 0, 5);
   Actor_ArmCallback(7, FACING_EAST, 0);
   Call3((void (*)())Actor_ArmCallback, 14, FACING_WEST, 0);
   Actor_ArmCallback(6, FACING_EAST, 0);
@@ -680,7 +680,7 @@ L_02009988:
   FieldEvent_Wait(15);
   Motion_SetVarCbAndRefresh(13, 2);
   FieldEvent_Wait(10);
-  Call3((void (*)())Func_0200206c, 0x200d, 0, 5);
+  Call3((void (*)())Func_0200206c, SPLIT_CONSTANT(0x2000, 13), 0, 5);
   Func_0200207c(7, FACING_EAST);
   FieldEvent_Wait(10);
   Value3((s32 (*)())Func_0200208c, 7, 0x101, 30);
@@ -691,7 +691,7 @@ L_02009988:
   Call3((void (*)())Actor_ArmCallback, 7, FACING_SOUTHEAST, 0);
   Call2((void (*)())Func_0200207c, 13, FACING_SOUTHEAST + FACING_STEP);
   FieldEvent_Wait(5);
-  Call3((void (*)())Func_0200206c, 0x200d, 0, 5);
+  Call3((void (*)())Func_0200206c, SPLIT_CONSTANT(0x2000, 13), 0, 5);
   Motion_SetModeAndWaitAnimation(17, 3);
   FieldEvent_Wait(10);
   Func_0200206c(17, 0, 5);
@@ -704,15 +704,15 @@ L_02009988:
   Call3((void (*)())Actor_ArmCallback, 14, FACING_SOUTHEAST + FACING_STEP, 0);
   Call2((void (*)())Func_0200207c, 13, FACING_SOUTHEAST + FACING_STEP);
   FieldEvent_Wait(10);
-  Call3((void (*)())Func_0200206c, 0x200d, 0, 5);
+  Call3((void (*)())Func_0200206c, SPLIT_CONSTANT(0x2000, 13), 0, 5);
   Motion_SetModeAndWaitAnimation(14, 3);
   FieldEvent_Wait(10);
   Func_0200206c(14, 0, 5);
   Value3((s32 (*)())Func_0200208c, 13, 0x102, 30);
-  Call3((void (*)())Func_0200206c, 0x200d, 0, 5);
+  Call3((void (*)())Func_0200206c, SPLIT_CONSTANT(0x2000, 13), 0, 5);
   Motion_SetModeAndWaitAnimation(13, 3);
   FieldEvent_Wait(10);
-  Call3((void (*)())Func_0200206c, 0x200d, 0, 5);
+  Call3((void (*)())Func_0200206c, SPLIT_CONSTANT(0x2000, 13), 0, 5);
   Motion_SetVarCbAndRefresh(14, 2);
   FieldEvent_Wait(10);
   Func_0200206c(14, 0, 5);
@@ -733,7 +733,7 @@ L_02009988:
   FieldEvent_Wait(20);
   Motion_SetVarCbAndRefresh(13, 2);
   FieldEvent_Wait(10);
-  Func_0200206c(0x200d, 0, 10);
+  Func_0200206c(SPLIT_CONSTANT(0x2000, 13), 0, 10);
   Func_0200207c(13, FACING_NORTH + FACING_STEP);
   FieldEvent_Wait(5);
   Call3((void (*)())Actor_SetPositionAndReset, 13, 864, 392);
@@ -762,7 +762,7 @@ L_02009988:
   Motion_SetModeAndWaitAnimation(17, 3);
   FieldEvent_Wait(10);
   Call3((void (*)())Actor_ArmCallback, 4, FACING_NORTH, 0);
-  Call3((void (*)())Actor_SetSpeedParameters, 17, 0x13333, 0x9999);
+  Call3((void (*)())Actor_SetSpeedParameters, 17, 0x13333, SPLIT_CONSTANT(0x9900, 153));
   Actor_SetModeById(17, 2);
   {
     s32 party = (s32)&gMainRoutineWork;
@@ -785,7 +785,7 @@ L_02009988:
   }
   Actor_WaitForMoveById(5);
   Func_02002024(5, 0, 0);
-  Call3((void (*)())Actor_SetSpeedParameters, 6, 0x13333, 0x9999);
+  Call3((void (*)())Actor_SetSpeedParameters, 6, 0x13333, SPLIT_CONSTANT(0x9900, 153));
   Actor_SetModeById(6, 2);
   v26 = Actor_GetById(FIELD_AT(r5_5, s32, 0));
   r0 = v26;
@@ -804,7 +804,7 @@ L_02009988:
   FieldEvent_Wait(20);
   Motion_SetModeAndWaitAnimation(7, 3);
   FieldEvent_Wait(10);
-  Call3((void (*)())Actor_SetSpeedParameters, 7, 0x13333, 0x9999);
+  Call3((void (*)())Actor_SetSpeedParameters, 7, 0x13333, SPLIT_CONSTANT(0x9900, 153));
   Actor_SetModeById(7, 2);
   v27 = Actor_GetById(FIELD_AT(r5_5, s32, 0));
   r0 = v27;

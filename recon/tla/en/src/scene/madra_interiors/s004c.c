@@ -6,7 +6,7 @@ const u8 *Func_0200004c(void) {
     return gData_02002828;
   if (gMainRoutineWork.entrance == 20)
     return gData_02002750;
-  if (GameFlag_Test(0x8ff))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 255)))
     return gData_02002480;
   return gData_02002240;
 }
@@ -60,7 +60,7 @@ void Func_020000fc(void) {
       }
       Func_02001e30(22, 0);
     } else {
-      if (GameFlag_Test(0x8ab))
+      if (GameFlag_Test(SPLIT_CONSTANT(0x800, 171)))
         Func_02001e18((s32)MsgMadraInteriors87);
       else
         Func_02001e18((s32)MsgMadraInteriors39);

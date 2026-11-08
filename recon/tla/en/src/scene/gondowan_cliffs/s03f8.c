@@ -51,7 +51,7 @@ void Func_020003f8(s32 unk0, s32 id) {
     }
     actor->update = Func_020003cc;
     Call3((void (*)())Actor_SetSpeedParameters, id, 0x30000, 0x18000);
-    Call3((void (*)())Actor_ResetAndSetPosition, id, 1193, 530);
+    Call3((void (*)())Actor_ResetAndSetPosition, id, SPLIT_CONSTANT(0x400, 169), SPLIT_CONSTANT(0x200, 18));
     actor->gravity = 0xcccc;
     actor->motionFlags = 3;
     actor->terrainId = 0;
@@ -60,7 +60,7 @@ void Func_020003f8(s32 unk0, s32 id) {
     Func_0200131c(188);
     Call3((void (*)())Func_020011f4, 0x50000, 0x50000, 0x10000);
     Func_0200131c(141);
-    Call3((void (*)())Func_020011f4, -1, -1, 0xe666);
+    Call3((void (*)())Func_020011f4, -1, -1, SPLIT_CONSTANT(0xe600, 102));
     ((struct FieldSprite *)actor->animation)->rotation = 0x1000;
     // Cleared through a word: as a function pointer the store sinks below the
     // effect options.
@@ -78,7 +78,7 @@ void Func_020003f8(s32 unk0, s32 id) {
     Actor_SetModeById(id, 3);
     Func_020011fc();
     Actor_GetById(15)->priorityFlags |= 2;
-    GameFlag_SetBit(0x884);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x800, 132));
   }
   Func_02001214();
 }

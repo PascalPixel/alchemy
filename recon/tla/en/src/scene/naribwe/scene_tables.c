@@ -9,7 +9,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const u8 *Func_0200004c(void) {
   if (gMainRoutineWork.entrance == 10)
     return gData_020008c4;
-  if (GameFlag_Test(0x8ff))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 255)))
     return gData_02000954;
   return gData_020006cc;
 }

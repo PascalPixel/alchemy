@@ -64,5 +64,5 @@ next:
   if (*list != 0xffff)
     goto next;
 done:
-  GameFlag_ClearBit(0x20b);
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x10c, 255));
 }

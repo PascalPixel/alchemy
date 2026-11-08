@@ -112,7 +112,7 @@ void Func_080e572c(void) {
 
   sparkEntry = Resource_FindFreeEntry();
   sparkTile = VramCache_Load(sparkEntry, 64, Data_080f3984);
-  for (i = 0, particle = work->sparks, mul = Iwram_MulQ16,
+  for (i = 0, particle = work->sparks, mul = Iwram_MulQ16Entry,
       sprite = work->sparkSprites;
        i < 32;) {
     Func_080eaf98(sprite, 4, 4, 0, sparkTile);
@@ -164,7 +164,7 @@ void Func_080e572c(void) {
   work->newBursts = 0;
   Task_Add(Func_080e4d9c, 0x480);
   kind = scene->fieldKind;
-  pending = Func_080ce458(0x50000005, kind, Func_080ce31c(kind));
+  pending = Func_080ce458(SPLIT_CONSTANT(0x50000000, 5), kind, Func_080ce31c(kind));
   frame = 0;
   while (work->phase != 999) {
     wait(1);

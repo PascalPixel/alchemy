@@ -46,7 +46,7 @@ void Func_02000848(void) {
   window = Window_Create(0, 0, 30, 7, 2);
   details = Window_Create(0, 8, 13, 10, 2);
   Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010, REG_DMA3);
-  Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001, REG_DMA3);
+  Dma_Set((const void *)0x050001e8, (void *)0x050001dc, SPLIT_CONSTANT(0x80000000, 1), REG_DMA3);
   Func_02000e78(112);
   wait(1);
   while (1) {
@@ -115,13 +115,13 @@ void Func_02000848(void) {
     }
     if (step == -1) {
       for (item = (item + ITEM_COUNT) % entryCount;
-           Func_02000d48(item & 0x1ff)->icon == 0;
+           Func_02000d48(item & SPLIT_CONSTANT(0x100, 255))->icon == 0;
            item = (item + ITEM_COUNT - 1) % entryCount)
         ;
     }
     if (step == 1) {
       for (item = (item + ITEM_COUNT) % entryCount;
-           Func_02000d48(item & 0x1ff)->icon == 0;
+           Func_02000d48(item & SPLIT_CONSTANT(0x100, 255))->icon == 0;
            item = (item + ITEM_COUNT + 1) % entryCount)
         ;
     }

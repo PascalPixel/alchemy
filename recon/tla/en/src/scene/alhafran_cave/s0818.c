@@ -55,11 +55,11 @@ void Func_02000818(void) {
   /* FAKEMATCH(wrapper): 79 calls forwarded through call.h's Call2, Call3,
    * Call4 and Value3; as direct calls, 221 of 993 instructions differ in
    * tla-en (any one alone, 2 to 71). */
-  if (GameFlag_Test(0x8ab) == 0)
+  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 171)) == 0)
     return;
-  if (GameFlag_Test(0x8a7) == 1)
+  if (GameFlag_Test(SPLIT_CONSTANT(0x7a8, 255)) == 1)
     return;
-  GameFlag_SetBit(0x8bd);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 189));
   Func_02001430();
   Func_02001528(0);
   Call3((void (*)())Actor_SetSpeedParameters, 22, 0x10000, 0x8000);
@@ -91,7 +91,7 @@ void Func_02000818(void) {
   FieldEvent_Wait(10);
   Func_020014c8(16, 0, 10);
   Value3((s32 (*)())Func_020014e8, 22, 0x100, 30);
-  Call3((void (*)())Func_020014c8, 0x2016, 0, 10);
+  Call3((void (*)())Func_020014c8, SPLIT_CONSTANT(0x2000, 22), 0, 10);
   Call3((void (*)())Actor_ArmCallback, 22, 0x3000, 0);
   FieldEvent_Wait(30);
   Func_020014e8(22, 0x107, 50);
@@ -126,7 +126,7 @@ void Func_02000818(void) {
   Func_020014c8(24, 0, 10);
   actor21 = Actor_GetById(21);
   actor15 = Actor_GetById(15);
-  Call2((void (*)())Func_020015a0, 8, 0x1210);
+  Call2((void (*)())Func_020015a0, 8, SPLIT_CONSTANT(0x1200, 16));
   Func_020015b0();
   Func_020015c8(Actor_GetById(21), 2);
   Func_02001600(201);
@@ -213,7 +213,7 @@ void Func_02000818(void) {
   FieldEvent_Wait(10);
   Call3((void (*)())Actor_ArmCallback, 21, 0x3000, 0);
   FieldEvent_Wait(20);
-  Func_020015a0(8, 0x1210);
+  Func_020015a0(8, SPLIT_CONSTANT(0x1200, 16));
   Func_020015b0();
   Func_020015c8(Actor_GetById(21), 2);
   Func_02001600(201);
@@ -269,14 +269,14 @@ void Func_02000818(void) {
   Actor_CommitPositionAndActivate(22, 0, 8);
   Call3((void (*)())Actor_ArmCallback, 22, 0x8000, 0);
   FieldEvent_Wait(20);
-  Call3((void (*)())Func_020014c8, 0x2016, 0, 10);
+  Call3((void (*)())Func_020014c8, SPLIT_CONSTANT(0x2000, 22), 0, 10);
   Motion_SetVarCbAndRefresh(21, 2);
   FieldEvent_Wait(10);
   Call2((void (*)())Func_020014f0, 21, 0x100);
   Func_020014c8(21, 0, 10);
   Motion_SetModeAndWaitAnimation(22, 3);
   FieldEvent_Wait(10);
-  Call3((void (*)())Func_020014c8, 0x2016, 0, 10);
+  Call3((void (*)())Func_020014c8, SPLIT_CONSTANT(0x2000, 22), 0, 10);
   Actor_ArmCallback(21, 0, 0);
   FieldEvent_Wait(20);
   Motion_SetModeAndWaitAnimation(21, 3);
@@ -284,19 +284,19 @@ void Func_02000818(void) {
   Func_020014c8(21, 0, 10);
   Motion_SetModeAndWaitAnimation(22, 3);
   FieldEvent_Wait(10);
-  Call3((void (*)())Func_020014c8, 0x2016, 0, 10);
+  Call3((void (*)())Func_020014c8, SPLIT_CONSTANT(0x2000, 22), 0, 10);
   Motion_SetModeAndWaitAnimation(21, 3);
   FieldEvent_Wait(10);
   Func_020014c8(21, 0, 10);
   Actor_ArmCallback(22, 0xf000, 0);
   FieldEvent_Wait(30);
-  Call3((void (*)())Func_020014c8, 0x2016, 0, 10);
+  Call3((void (*)())Func_020014c8, SPLIT_CONSTANT(0x2000, 22), 0, 10);
   Motion_SetModeAndWaitAnimation(24, 3);
   FieldEvent_Wait(10);
   Func_020014c8(24, 0, 10);
   Actor_ArmCallback(22, 0xb000, 0);
   FieldEvent_Wait(20);
-  Func_020014c8(0x2016, 0, 10);
+  Func_020014c8(SPLIT_CONSTANT(0x2000, 22), 0, 10);
   Motion_SetModeAndWaitAnimation(18, 3);
   FieldEvent_Wait(30);
   Motion_SetModeAndWaitAnimation(22, 3);

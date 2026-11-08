@@ -24,7 +24,7 @@ void Func_080d5c70(s32 unused) {
   Sound_PlayFar(147);
   if (work->controlMode == 3) {
     Io_Write16(RGB(31, 31, 31), (u16 *)&BG_PLTT_COLOR(15, 3));
-    ScreenTransition_Finish(0x401, 16);
+    ScreenTransition_Finish(SPLIT_CONSTANT(0x400, 1), 16);
     work->screenStatus = 0;
     wait(16);
     for (i = 0; i < 16; i++) {
@@ -34,7 +34,7 @@ void Func_080d5c70(s32 unused) {
     }
   } else {
     Io_Write16(RGB(31, 31, 31), &PLTT_BACKDROP);
-    ScreenTransition_Finish(0x207, 16);
+    ScreenTransition_Finish(SPLIT_CONSTANT(0x108, 255), 16);
     work->screenStatus = 0;
     wait(16);
     for (i = 0; i < 16; i++) {

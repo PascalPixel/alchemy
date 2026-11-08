@@ -29,7 +29,7 @@ void Func_02000388(void) {
   party->battleGroup = 0x1a9f;
   party->battleRule = 2;
   Func_02000d04(103, 3);
-  GameFlag_SetBit(0x201);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x102, 255));
 }
 
 void Func_02000408(void) {

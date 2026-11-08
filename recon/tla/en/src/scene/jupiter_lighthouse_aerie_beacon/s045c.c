@@ -23,10 +23,10 @@ void Func_0200045c(void) {
   s32 t0;
   s32 t2;
 
-  t0 = GameFlag_Test(0xa23);
+  t0 = GameFlag_Test(SPLIT_CONSTANT(0xa00, 35));
   if (t0 != 0) {
     GameFlag_SetBit(0x200);
-    t2 = GameFlag_Test(0xa21);
+    t2 = GameFlag_Test(SPLIT_CONSTANT(0xa00, 33));
     if (t2 == 0) {
       Func_02005814();
       Func_02005984(0);

@@ -63,7 +63,7 @@ extern u16 Data_08197984[];  // ... cell offsets
 extern u16 gData_08197410[]; // dot sizes 1 to 10: cell offsets in the sheet
 
 #define STREAK_SHEET 0x3000 // the ember streaks, after the flashes
-#define FORMATION_RESOURCE 647
+#define FORMATION_RESOURCE SPLIT_CONSTANT(0x188, 255)
 
 // Summon 7 (mode 0; mode 1 is the same scene cast from the caster's side,
 // without the formation): streaks rain down and splash, sparks and grains
@@ -102,7 +102,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
     const void *lightning =
         Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet);
     s32 (*copy)(void *destination, const void *source, s32 size) =
-        Iwram_CopyWords;
+        Iwram_CopyWordsEntry;
 
     /* FAKEMATCH(temporary): the routine's address named once the palette's
      * source is fetched, so its pool load leads the destination's shift; as

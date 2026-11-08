@@ -18,8 +18,8 @@ void Func_02002830(void) {
   work->field1ac = 0x201;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Call3((void (*)())Actor_SetSpeedParameters, 9, 0x9999, 0x4ccc);
-  Actor_SetSpeedParameters(10, 0x9999, 0x4ccc);
+  Call3((void (*)())Actor_SetSpeedParameters, 9, SPLIT_CONSTANT(0x9900, 153), SPLIT_CONSTANT(0x4c00, 204));
+  Actor_SetSpeedParameters(10, SPLIT_CONSTANT(0x9900, 153), SPLIT_CONSTANT(0x4c00, 204));
   Actor_GetById(10)->update = (void (*)(void))Func_02000df8;
   object->update = (void (*)(void))Func_02000df8;
   Call3((void (*)())Actor_ResetAndSetPositionInMode2, 10, 280, 468);
@@ -32,7 +32,7 @@ void Func_02002830(void) {
   Func_02003f24((s32)MsgHereWeAre);
   Func_02003f2c(9, 0);
   Actor_SetModeById(9, 1);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_Jump(gMainRoutineWork.currentOwner, 6, 0);
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 312, 440);

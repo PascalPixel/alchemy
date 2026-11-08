@@ -8,7 +8,7 @@ void Func_02000d70(void) {
   Func_02000cf8(16, 0);
   Func_02000cf8(17, 0);
   Func_02000cf8(18, 1);
-  if (GameFlag_Test(0x253))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x154, 255)))
     Map_CopyCells(0, 48, 1, 3, 19, 23);
   if (GameFlag_Test(0x254))
     Map_CopyCells(0, 48, 1, 3, 19, 26);

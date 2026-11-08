@@ -10,7 +10,7 @@ void Func_02002d40(void);
 
 void Func_020035b8(void) {
   Func_02004180(0);
-  if (GameFlag_Test(0x302) == 0)
+  if (GameFlag_Test(SPLIT_CONSTANT(0x300, 2)) == 0)
     Actor_SetWideSprite(64, 0);
 }
 
@@ -39,13 +39,13 @@ void Func_020035d8(void) {
   Func_02002d40();
   Task_Add(Func_02001e58, TASK_PASS_VBLANK);
   if (gMainRoutineWork.entrance == 2) {
-    GameFlag_ClearBit(0xa29);
+    GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 41));
     GameFlag_SetBit(0xa2a);
     GameFlag_ClearBit(0xa2b);
   }
 #if TLA_PATCH_1
   else if (gMainRoutineWork.entrance == 4) {
-    if (GameFlag_Test(0xa29)) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 41))) {
       scene = (s32)&SceneId_Ov661Room1;
       MAIN_ROUTINE_WORK_U16(0x260) = scene;
       Scene_StoreU16(&MAIN_ROUTINE_WORK_U16(0x262), 1);

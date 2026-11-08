@@ -78,7 +78,7 @@ void Func_02000114(s32 unused, s32 id) {
       wait(1);
     }
     Func_02000724(id);
-    GameFlag_SetBit(0xa06);
+    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 6));
   }
 }
 
@@ -97,14 +97,14 @@ void Func_020001ac(void) {
 }
 
 void Func_020001dc(s32 item) {
-  GameFlag_SetBit(0xa07);
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 7));
   Func_02001f08(134);
   Func_0200017c();
   PartyInventory_Remove(item);
 }
 
 void Func_020001fc(s32 item) {
-  GameFlag_SetBit(0xa08);
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 8));
   Func_02001f08(134);
   Func_020001ac();
   PartyInventory_Remove(item);

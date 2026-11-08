@@ -168,7 +168,7 @@ void Func_02000cd0(void) {
   Func_020059f4_(0x186);
   Func_020057ac_(-1, -1, 0xe666);
   Func_020057b4();
-  Func_02005914_(0x6666, 0xccc);
+  Func_02005914_(SPLIT_CONSTANT(0x6600, 102), 0xccc);
   Camera_MoveWithinMapBounds_(0x2000000, 0x600000, 0x1280000, 1);
   Func_02005924();
   FieldEvent_Wait_(20);

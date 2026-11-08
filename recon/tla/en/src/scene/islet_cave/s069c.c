@@ -26,7 +26,7 @@ void Event_WaitTransitionFrames(void);
 s32 Func_0200069c(void) {
   s32 scene, dim;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = SPLIT_CONSTANT(0x10a, 255);
   Func_0200131c(0);
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov675Room1) {
@@ -37,7 +37,7 @@ s32 Func_0200069c(void) {
     Actor_SetSingleChildFlags(Actor_GetById(9), 0);
     if (gMainRoutineWork.entrance == 2) {
       Func_0200129c(8, 0, 0);
-      GameFlag_SetBit(0x9cf);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x8d0, 255));
     }
   } else if (scene == (s32)&SceneId_Ov675Room2) {
     if (GameFlag_Test(85) || GameFlag_Test(165)) {

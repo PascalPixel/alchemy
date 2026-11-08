@@ -9,7 +9,7 @@ void Func_02000c34(void) {
   Func_020041b8(0);
   Func_020021d4();
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 16);
-  Func_02004118(0x26666, 0x4ccc);
+  Func_02004118(0x26666, SPLIT_CONSTANT(0x4c00, 204));
   Scene_CamBounds(PIXELS(300), -1, PIXELS(248), 1);
   Actor_SetPositionAndCommit(16, 254, 248);
   Actor_SetPositionAndCommit(16, 352, 240);
@@ -40,7 +40,7 @@ void Func_02000d50(void) {
   Func_020041b8(0);
   Func_020021d4();
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 21);
-  Func_02004118(0x26666, 0x4ccc);
+  Func_02004118(0x26666, SPLIT_CONSTANT(0x4c00, 204));
   Camera_MoveWithinMapBounds(PIXELS(246), -1, PIXELS(616), 1);
   Scene_SetPositionAndCommit(21, 248, 648);
   Scene_SetPositionAndCommit(21, 248, 576);

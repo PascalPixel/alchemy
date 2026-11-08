@@ -44,7 +44,7 @@ next:
       object->velocityZ = Iwram_MulQ16(radius, Math_Cosine(angle));
       object->velocityX = Iwram_MulQ16(radius, Math_Sine(angle));
       object->acceleration = 0;
-      object->gravity = 0x547a;
+      object->gravity = SPLIT_CONSTANT(0x5400, 122);
       object->scaleX = scale;
       object->scaleY = object->scaleX;
       object->bounce = 0x8000;

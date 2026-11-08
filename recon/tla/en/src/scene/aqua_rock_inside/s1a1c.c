@@ -43,7 +43,7 @@ void Func_02001a1c(void) {
   Func_02003d7c();
   Func_02003eac(0);
   FieldMessage_Show((s32)&MsgCheckedTheTabletIt, 1);
-  t4 = Value1(GameFlag_Test, 0x9ae);
+  t4 = Value1(GameFlag_Test, SPLIT_CONSTANT(0x900, 174));
   if (t4 == 0)
     goto L_02009a46;
   Func_02003d84();
@@ -81,7 +81,7 @@ L_02009a46:
   FieldMessage_Show(((s32)&MsgCheckedTheTabletIt + 2), 1);
   Func_02001620(14, 7);
   Party_LearnAbility(7, 138);
-  GameFlag_SetBit(0x9ae);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 174));
   Func_02003ef4(107);
   FieldEvent_Wait(30);
   Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
@@ -103,7 +103,7 @@ L_02009a46:
   Actor_SetModeById(7, 3);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
   FieldEvent_Wait(20);
-  Call3(Actor_SetSpeedParameters, 7, 0x13333, 0x9999);
+  Call3(Actor_SetSpeedParameters, 7, 0x13333, SPLIT_CONSTANT(0x9900, 153));
   Actor_SetModeById(7, 2);
   t59 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (t59 == 0)

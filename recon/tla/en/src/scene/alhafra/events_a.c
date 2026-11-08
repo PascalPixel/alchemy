@@ -30,12 +30,12 @@ extern const u8 gData_020025b0[];
 extern struct DoorStep gData_0200277c[];
 
 const u8 *Func_0200004c(void) {
-  if (GameFlag_Test(0x8a7)) {
-    if (GameFlag_Test(0x90f) == 0)
+  if (GameFlag_Test(SPLIT_CONSTANT(0x7a8, 255))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x810, 255)) == 0)
       return gData_020025b0;
     return gData_02002358;
   }
-  if (GameFlag_Test(0x8ab))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 171)))
     return gData_02002100;
   return gData_02001e48;
 }

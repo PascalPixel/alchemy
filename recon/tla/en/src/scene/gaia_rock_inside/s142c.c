@@ -19,7 +19,7 @@ struct GaiaRockInsideOrbit {
 
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
-// Called by its linked name: through Iwram_MulQ16's fixed address the
+// Called by its linked name: through Iwram_MulQ16Entry's fixed address the
 // multiply's address is loaded one call early (2 of 75 instructions differ in
 // tla-en).
 s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));

@@ -91,6 +91,6 @@ void Func_020000b0(s32 arg) {
 }
 
 void Func_02000100(void) {
-  GameFlag_SetBit(0x909);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 9));
   Func_0200058c(19, 0, 0);
 }

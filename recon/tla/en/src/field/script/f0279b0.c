@@ -93,7 +93,7 @@ s32 Func_080279b0(struct Actor *object) {
 
   angle = gData_0802ec5c[(gInput.held >> 4) & 15];
   direction = angle;
-  if (direction == 0xffff) {
+  if (direction == SPLIT_CONSTANT(0xff00, 255)) {
     collision |= 4;
   } else {
     collision = 0;
@@ -106,7 +106,7 @@ s32 Func_080279b0(struct Actor *object) {
       leftPosition.x = object->x;
       leftPosition.y = object->y;
       leftPosition.z = object->z;
-      Vector_AddPolarOffset(0x80000, direction + 0x1555, &leftPosition);
+      Vector_AddPolarOffset(0x80000, direction + SPLIT_CONSTANT(0x1500, 85), &leftPosition);
       rightPosition.x = object->x;
       rightPosition.y = object->y;
       rightPosition.z = object->z;

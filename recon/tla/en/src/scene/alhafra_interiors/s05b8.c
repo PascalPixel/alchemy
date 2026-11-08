@@ -34,20 +34,20 @@ s32 Func_020005b8(void) {
   *(s32 *)(gData_02001c60 + 24) = 0x18000;
   Actor_GetById(14)->update = Func_02000578;
   Actor_GetById(15)->update = Func_02000598;
-  if (GameFlag_Test(0x8a7)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x7a8, 255))) {
     if (Actor_GetById(gMainRoutineWork.currentOwner)->x >= 0x2000000)
       GameFlag_SetBit(0x200);
     else
       GameFlag_ClearBit(0x200);
-    if (GameFlag_Test(0x200) && GameFlag_Test(0x823) && !GameFlag_Test(0x903)) {
+    if (GameFlag_Test(0x200) && GameFlag_Test(SPLIT_CONSTANT(0x800, 35)) && !GameFlag_Test(SPLIT_CONSTANT(0x900, 3))) {
       Call3(Func_02000aec, 31, PIXELS(376), PIXELS(316));
       Call3(Func_02000aec, 32, PIXELS(392), PIXELS(344));
     } else {
       Func_02000aec(31, 0, 0);
       Func_02000aec(32, 0, 0);
     }
-  } else if (GameFlag_Test(0x8ab)) {
-    if (GameFlag_Test(0x971))
+  } else if (GameFlag_Test(SPLIT_CONSTANT(0x800, 171))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 113)))
       Func_02000aec(31, 0, 0);
   } else {
     Actor_SetSpritePriority(24, 2);

@@ -14,7 +14,7 @@ void Func_020017dc(struct Actor *actor) {
 
   Func_020056b4(actor);
   Func_0200580c(0);
-  Func_02005854(581);
+  Func_02005854(SPLIT_CONSTANT(0x146, 255));
   acceleration = 0x19999;
   /* FAKEMATCH: ⚓️ loads the speed and the acceleration from the pool separately
    */
@@ -30,7 +30,7 @@ void Func_02001820(struct Actor *actor) {
 
   Func_020056b4(actor);
   Func_0200580c(0);
-  Func_02005854(581);
+  Func_02005854(SPLIT_CONSTANT(0x146, 255));
   acceleration = 0x19999;
   /* FAKEMATCH: ⚓️ loads the speed and the acceleration from the pool separately
    */
@@ -46,7 +46,7 @@ void Func_02001864(struct Actor *actor) {
 
   Func_020056b4(actor);
   Func_0200580c(0);
-  Func_02005854(581);
+  Func_02005854(SPLIT_CONSTANT(0x146, 255));
   acceleration = 0x19999;
   /* FAKEMATCH: ⚓️ loads the speed and the acceleration from the pool separately
    */
@@ -62,7 +62,7 @@ void Func_020018a8(struct Actor *actor) {
 
   Func_020056b4(actor);
   Func_0200580c(0);
-  Func_02005854(581);
+  Func_02005854(SPLIT_CONSTANT(0x146, 255));
   acceleration = 0x19999;
   /* FAKEMATCH: ⚓️ loads the speed and the acceleration from the pool separately
    */

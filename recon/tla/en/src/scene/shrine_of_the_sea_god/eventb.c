@@ -17,7 +17,7 @@ void Func_02002384(void) {
   ShrineOfTheSeaGod_ObjWalk(15, 580, 344);
   Actor_WatchAndSetScript(15, gMainRoutineWork.currentOwner);
   FieldEvent_Wait(20);
-  GameFlag_SetBit(0x874);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 116));
   Func_020039e0();
 }
 

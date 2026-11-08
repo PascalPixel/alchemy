@@ -108,7 +108,7 @@ L_02009e48:
   FieldEvent_Wait(30);
   Func_02002254(15, 0);
   FieldEvent_Wait(60);
-  GameFlag_SetBit(0x92c);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 44));
   PartyInventory_Remove(0x1c3);
   Func_020021cc();
 }

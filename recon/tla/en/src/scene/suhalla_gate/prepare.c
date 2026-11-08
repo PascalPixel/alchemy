@@ -2,7 +2,7 @@
 
 void Func_020002e0(void) {
   Func_02000978_(108, 38, 1, 1, 102, 56);
-  GameFlag_SetBit(0x8de);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 222));
 }
 
 void Func_02000308(void) {

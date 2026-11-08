@@ -51,7 +51,7 @@ s32 Func_080fcab8(void) {
   // German, Spanish, French and Italian also suspend the field tasks and keep
   // the tiles at 0x06004000 aside, filled with a pattern, while the picker is
   // open. Those four stay on their scaffolds: 46 of 164 instructions differ,
-  // all allocation, as the native keeps Iwram_CopyWords in fp and reloads the
+  // all allocation, as the native keeps Iwram_CopyWordsEntry in fp and reloads the
   // tile address from the pool where this keeps the address in a register.
   struct InventoryMenuState *screen;
 #if TLA_PATCH_2
@@ -62,7 +62,7 @@ s32 Func_080fcab8(void) {
   s32 owner;
   s32 result;
 
-  screen = HeapSlot_Alloc(220, 0xcec);
+  screen = HeapSlot_Alloc(220, SPLIT_CONSTANT(0xc00, 236));
 #if TLA_PATCH_2
   savedTiles = Heap_AllocEwram(0x2000);
 #endif
@@ -89,7 +89,7 @@ s32 Func_080fcab8(void) {
     u8 *event = Ram_HeapSlots->eventWork;
     u16 request;
 
-    BattleAction_Get(0x3fff & screen->selectedItems[0]);
+    BattleAction_Get(SPLIT_CONSTANT(0x3f00, 255) & screen->selectedItems[0]);
     request = item | (owner << 10);
     *(u16 *)(event + 0x166) = request;
   }

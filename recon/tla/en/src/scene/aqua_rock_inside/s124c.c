@@ -38,8 +38,8 @@ shake:
     layer[3] += 0x4000;
     wait(1);
   }
-  Func_02003d44_(-1, -1, 0xe666);
+  Func_02003d44_(-1, -1, SPLIT_CONSTANT(0xe600, 102));
   Func_02003d84();
   Func_02003d1c_(38, 9, 7, 6, 13, 9);
-  GameFlag_SetBit(0x349);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x300, 73));
 }

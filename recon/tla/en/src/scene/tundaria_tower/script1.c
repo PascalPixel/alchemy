@@ -22,7 +22,7 @@ void Func_02000548(void) {
   Func_02003048();
   TundariaTower_02002fe8(19, 55, 7, 8, 24, 46);
   TundariaTower_02002fc0(24, 102, 24, 110, 7, 8);
-  GameFlag_SetBit(2370);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 66));
   Func_02003050();
 }
 
@@ -30,6 +30,6 @@ void Func_0200058c(void) {
   Func_02003048();
   TundariaTower_02002fe8(37, 55, 7, 8, 32, 46);
   TundariaTower_02002fc0(32, 102, 32, 110, 7, 8);
-  GameFlag_SetBit(2371);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 67));
   Func_02003050();
 }

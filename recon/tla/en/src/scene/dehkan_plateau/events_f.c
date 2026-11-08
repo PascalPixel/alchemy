@@ -57,19 +57,19 @@ static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
 }
 
 void Func_02002140(void) {
-  s32 set = GameFlag_Test(0x207);
+  s32 set = GameFlag_Test(SPLIT_CONSTANT(0x108, 255));
 
   if (set == 0) {
     Actor_GetById(8)->motionFlags = set;
     Map_CopyAttributes(51, 12, 1, 1, 47, 12);
-    GameFlag_SetBit(0x202);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x200, 2));
   }
 }
 
 void Func_02002180(void) {
-  if (GameFlag_Test(0x207) == 0) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x108, 255)) == 0) {
     Map_CopyAttributes(48, 11, 1, 1, 47, 12);
-    GameFlag_ClearBit(0x202);
+    GameFlag_ClearBit(SPLIT_CONSTANT(0x200, 2));
   }
 }
 

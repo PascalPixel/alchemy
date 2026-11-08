@@ -4,7 +4,7 @@
 void Party_RemoveOwnerRestored(s32 owner);
 
 void Func_02001218(void) {
-  if (!Kibombo_FlagCheck(0x92e)) {
+  if (!Kibombo_FlagCheck(SPLIT_CONSTANT(0x900, 46))) {
     Func_02005bc4(5);
     return;
   }

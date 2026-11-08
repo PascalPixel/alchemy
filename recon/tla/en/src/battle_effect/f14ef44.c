@@ -20,7 +20,7 @@
 static __inline__ s32 CopyWords_(void *destination, const void *source,
                                  s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 18 of 1243 instructions differ in tla-en. */
+   * Iwram_CopyWordsEntry, 18 of 1243 instructions differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 

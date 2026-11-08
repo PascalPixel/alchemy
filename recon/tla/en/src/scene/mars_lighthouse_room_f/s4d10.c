@@ -70,7 +70,7 @@ void Func_02004d10(struct PushTarget target) {
             ABS(gData_02005f64[footprint * 4 + 3])) >>
            4;
   Func_02004a44(0, cell[0], cell[2], width, height, 0);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x1999);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, SPLIT_CONSTANT(0x1900, 153));
   Actor_SetModeById(gMainRoutineWork.currentOwner, 8);
   wait(15);
   {

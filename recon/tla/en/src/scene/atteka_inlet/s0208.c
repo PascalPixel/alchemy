@@ -29,7 +29,7 @@ void Func_02001108(s32 value);
 /// Once flag 0x9d0 is set and while flag 0x9b2 is clear, objects 9 and 10 are
 /// placed, jump in and talk, four cells of the map change and flag 0x9b0 is set.
 void Func_02000208(void) {
-  if (GameFlag_Test(0x9d0) && !GameFlag_Test(0x9b2)) {
+  if (GameFlag_Test(0x9d0) && !GameFlag_Test(SPLIT_CONSTANT(0x900, 178))) {
     Func_02001010();
     Func_02001108(0);
     Camera_MoveWithinMapBounds(96 << 16, -1, 308 << 16, 1);
@@ -61,18 +61,18 @@ void Func_02000208(void) {
     Actor_GetById(9)->velocityY = 0x40000;
     FieldEvent_Wait(10);
     Func_02001098((s32)MsgWhereDoYouThink);
-    Call2(Func_020010a8, 0x4009, 0);
+    Call2(Func_020010a8, SPLIT_CONSTANT(0x4000, 9), 0);
     Func_020010c8(10, 265, 0);
     Func_020010a8(10, 0);
     Call3(Actor_ArmCallback, 9, 0x3000, 0);
-    Call2(Func_020010a8, 0x4009, 0);
+    Call2(Func_020010a8, SPLIT_CONSTANT(0x4000, 9), 0);
     Call2(Func_020010b8, 10, 0xb000);
     Actor_SetModeById(10, 3);
     Func_020010a8(10, 0);
     Actor_ArmCallback(10, FACING_EAST, 0);
     Func_020010c8(9, 264, 0);
     Actor_ArmCallback(9, FACING_EAST, 20);
-    Func_020010a8(0x4009, 0);
+    Func_020010a8(SPLIT_CONSTANT(0x4000, 9), 0);
     Func_020010a8(10, 0);
     Func_02000ff8(1, 16, 1, 1, 3, 19);
     Func_02000ff8(1, 16, 1, 1, 4, 19);

@@ -7,7 +7,7 @@ s32 Func_02001228(struct Actor *object) {
 
   if (y + object->velocityY < object->terrainHeight) {
     spark = Func_02002808_(0x10d, object->x, y, object->z);
-    scale = 0x8ccc;
+    scale = SPLIT_CONSTANT(0x8c00, 204);
     if (spark) {
       spark->scaleX = scale;
       spark->scaleY = scale;

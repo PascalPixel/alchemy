@@ -53,7 +53,7 @@ void Func_02000994(void) {
   s32 southwest = FACING_SOUTHWEST;
   s32 west = FACING_WEST;
 
-  if (Flag_IsSet(0xa21) && !Flag_IsSet(0x9d0)) {
+  if (Flag_IsSet(SPLIT_CONSTANT(0xa00, 33)) && !Flag_IsSet(0x9d0)) {
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     x = object->x;
     z = object->z;
@@ -61,8 +61,8 @@ void Func_02000994(void) {
     z >>= 20;
     Func_02004c20();
     Func_02004db8(0);
-    if (Flag_IsSet(0x9b3)) {
-      Func_02004df8(0x16666, 6);
+    if (Flag_IsSet(SPLIT_CONSTANT(0x900, 179))) {
+      Func_02004df8(SPLIT_CONSTANT(0x16600, 102), 6);
       Func_02004c98(5, gMainRoutineWork.currentOwner);
       wait(1);
       Actor_SetPositionAndReset(5, (x << 4) + 24, (z << 4) - 12);
@@ -79,7 +79,7 @@ void Func_02000994(void) {
     } else {
       s32 besideZ;
 
-      Func_02004df8(0x16666, 6);
+      Func_02004df8(SPLIT_CONSTANT(0x16600, 102), 6);
       Func_02004c98(5, gMainRoutineWork.currentOwner);
       wait(1);
       x <<= 4;

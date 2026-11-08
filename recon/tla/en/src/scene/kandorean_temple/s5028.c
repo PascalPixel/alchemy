@@ -41,6 +41,6 @@ void Func_02005028(void) {
   FieldEvent_Wait(10);
   Func_02005170(41, 3, 20, 3, 1, 1);
   FieldEvent_Wait(10);
-  GameFlag_SetBit(0x92d);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 45));
   Func_020051c8();
 }

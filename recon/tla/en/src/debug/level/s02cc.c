@@ -130,7 +130,7 @@ void Func_020002cc(void) {
     back:
       item = (item + ITEM_COUNT - 1) % count;
     check_back:
-      if (Func_020006bc(item & 0x1ff)->icon == 0)
+      if (Func_020006bc(item & SPLIT_CONSTANT(0x100, 255))->icon == 0)
         goto back;
     }
     if (step == 1) {
@@ -139,7 +139,7 @@ void Func_020002cc(void) {
     ahead:
       item = (item + ITEM_COUNT + 1) % count;
     check_ahead:
-      if (Func_020006bc(item & 0x1ff)->icon == 0)
+      if (Func_020006bc(item & SPLIT_CONSTANT(0x100, 255))->icon == 0)
         goto ahead;
     }
     step = 0;

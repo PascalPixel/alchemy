@@ -214,7 +214,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
       position.y = 0x480000;
       velocity.x = 0x90000;
       velocity.y = -0x20000;
-      BattleEffect_SpawnObjects(2, 657, 2);
+      BattleEffect_SpawnObjects(2, SPLIT_CONSTANT(0x192, 255), 2);
     }
     if (frame == 108) {
       ResourceObject_ReleaseFar(work->objects[0]);
@@ -414,7 +414,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
           }
           if (frame >= start + 10 && frame < start + 18) {
             blitters[0](canvas,
-                        (gData_02014000 + 0xc56) +
+                        (gData_02014000 + SPLIT_CONSTANT(0xc00, 86)) +
                             (((frame + i) / 4) & 3) * 2880,
                         column - 12, 0, 24, 112);
           }

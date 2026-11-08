@@ -24,7 +24,7 @@ static __inline__ void Actor_SetPosition(s32 id, s32 x, s32 z) {
 void Func_02001728(struct Actor *actor) {
   Func_020056b4(actor);
   Func_0200580c(0);
-  Func_02005854(581);
+  Func_02005854(SPLIT_CONSTANT(0x146, 255));
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0x19999);
   Actor_SetPosition(gMainRoutineWork.currentOwner, 152, 424);
   Func_020056bc();
@@ -36,7 +36,7 @@ void Func_0200176c(void) {
 
   Func_020056b4(actor);
   Func_0200580c(0);
-  Func_02005854(581);
+  Func_02005854(SPLIT_CONSTANT(0x146, 255));
   actor->motionFlags = 0;
   speed = 0x19999;
   /* FAKEMATCH: the native loads the speed before the owner, whose base is

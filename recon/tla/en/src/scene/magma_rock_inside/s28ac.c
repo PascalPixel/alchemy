@@ -29,7 +29,7 @@ void Func_020028ac(void) {
     wait(5);
     i++;
   } while (i != 16);
-  GameFlag_SetBit(0x305);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x300, 5));
   other = Actor_GetById(9);
   Func_02004d40();
   Func_02004e90(0);
@@ -39,7 +39,7 @@ void Func_020028ac(void) {
   Camera_MoveWithinMapBounds(0x780000, -1, 0x1580000, 1);
   Func_02004e20();
   FieldEvent_Wait(30);
-  Func_02004f30(0x22d);
+  Func_02004f30(SPLIT_CONSTANT(0x12e, 255));
   {
     register u16 alpha __asm__("r3") =
         0x1000; /* FAKEMATCH: the blend value pinned to r3, as the
@@ -63,7 +63,7 @@ void Func_020028ac(void) {
     FieldEvent_Wait(5);
     i++;
   } while (i != 32);
-  Func_02004f30(0x22a);
+  Func_02004f30(SPLIT_CONSTANT(0x200, 42));
   Func_02004c98(other, 4);
   Func_02004cb0(actor);
   FieldEvent_Wait(1);

@@ -71,7 +71,7 @@ void Func_02001cf0(void) {
   EVENT_WORK->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Call2(Func_0200456c, 0xcccc, 0x1999);
+  Call2(Func_0200456c, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x1900, 153));
   Camera_MoveWithinMapBounds(PIXELS(184), -1, PIXELS(448), 1);
   Func_0200457c();
   FieldEvent_Wait(20);
@@ -96,7 +96,7 @@ void Func_02001cf0(void) {
   Call2(Actor_SetModeById, 27, 4);
   Call2(Func_02004534, 27, 0);
   Call2(Actor_SetModeById, 19, 4);
-  Call2(Func_02004534, 0x4013, 0);
+  Call2(Func_02004534, SPLIT_CONSTANT(0x4000, 19), 0);
   Prox_Jump(0, 0x109, 20);
   Call2(Func_02004534, 0, 0);
   Call3(Actor_ArmCallback, 27, FACING_WEST, 20);
@@ -112,7 +112,7 @@ void Func_02001cf0(void) {
   Call2(Func_02004534, 0, 0);
   Call2(Func_02004564, 0x13, 0x102);
   FieldEvent_Wait(20);
-  Call2(Func_02004534, 0x4013, 0);
+  Call2(Func_02004534, SPLIT_CONSTANT(0x4000, 19), 0);
   Call2(Func_0200454c, 0, FACING_NORTHEAST);
   Call2(Motion_SetModeAndWaitAnimation, 0, 3);
   Call2(Func_02004534, 0, 0);
@@ -159,7 +159,7 @@ void Func_02001cf0(void) {
   Call3(Actor_ArmCallback, 27, 0xb000, 20);
   Call2(Motion_SetModeAndWaitAnimation, 27, 3);
   Call2(Func_0200454c, 27, FACING_WEST);
-  Call2(Func_02004534, 0x401b, 0);
+  Call2(Func_02004534, SPLIT_CONSTANT(0x4000, 27), 0);
   Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0, 0);
   Call2(Func_0200454c, 0, 0);
   Call2(Actor_SetModeById, gMainRoutineWork.currentOwner, 3);
@@ -202,29 +202,29 @@ void Func_02001cf0(void) {
   Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Call3(Actor_ArmCallback, 0, FACING_SOUTH, 0);
   Call2(Func_0200454c, 27, 0x5000);
-  Call2(Func_02004534, 0x401b, 0);
+  Call2(Func_02004534, SPLIT_CONSTANT(0x4000, 27), 0);
   Call2(Func_0200454c, 0, 0);
   Prox_MessageOpen(0x4000, 0);
   Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_WEST, 0);
   t144 = Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   if (t144 == 0) {
-    Call2(Func_0200456c, 0x26666, 0x4ccc);
+    Call2(Func_0200456c, 0x26666, SPLIT_CONSTANT(0x4c00, 204));
     Call4(Camera_MoveWithinMapBounds, PIXELS(184), -1, PIXELS(512), 1);
     Call2(Func_0200454c, 0, FACING_SOUTH);
-    Call3(Actor_SetSpeedParameters, 0, 0x19999, 0xcccc);
+    Call3(Actor_SetSpeedParameters, 0, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
     Call3(Actor_SetPositionAndReset, 0, 168, 520);
     Call2(Func_02004534, 0x4000, 0);
-    Func_02004534(0x2005, 0);
+    Func_02004534(SPLIT_CONSTANT(0x2000, 5), 0);
     EVENT_WORK->messageId += 2;
   } else {
     EVENT_WORK->messageId += 2;
-    Call2(Func_0200456c, 0x26666, 0x4ccc);
+    Call2(Func_0200456c, 0x26666, SPLIT_CONSTANT(0x4c00, 204));
     Call4(Camera_MoveWithinMapBounds, PIXELS(184), -1, PIXELS(512), 1);
     Call2(Func_0200454c, 0, FACING_SOUTH);
-    Call3(Actor_SetSpeedParameters, 0, 0x19999, 0xcccc);
+    Call3(Actor_SetSpeedParameters, 0, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
     Call3(Actor_SetPositionAndReset, 0, 168, 520);
     Call2(Func_02004534, 0x4000, 0);
-    Func_02004534(0x2005, 0);
+    Func_02004534(SPLIT_CONSTANT(0x2000, 5), 0);
   }
   t159 = Func_02004584();
   FIELD_AT((t159 + 0x55), u8, 0) = 0;
@@ -232,12 +232,12 @@ void Func_02001cf0(void) {
   Func_0200457c();
   Call3(Actor_Jump, 17, 4, 10);
   Call2(Func_02004534, 17, 0);
-  Call2(Func_0200456c, 0x13333, 0x2666);
+  Call2(Func_0200456c, 0x13333, SPLIT_CONSTANT(0x2600, 102));
   Call4(Camera_MoveWithinMapBounds, PIXELS(172), -1, PIXELS(520), 1);
   Call2(Actor_WatchAndSetScript, 0, 0x11);
   Call2(Actor_WatchAndSetScript, gMainRoutineWork.currentOwner, 0x11);
   Call2(Actor_WatchAndSetScript, 0x1b, 0x11);
-  Call3(Actor_SetSpeedParameters, 17, 0x19999, 0xcccc);
+  Call3(Actor_SetSpeedParameters, 17, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
   Call3(Actor_SetPositionAndReset, 17, 140, 478);
   Call3(Actor_SetPositionAndReset, 17, 150, 540);
   Call3(Actor_SetPositionAndReset, 17, 160, 560);
@@ -248,14 +248,14 @@ void Func_02001cf0(void) {
   wait(1);
   Func_020044cc(17, 0, 0);
   FieldEvent_Wait(10);
-  Call2(Func_0200456c, 0x26666, 0x4ccc);
+  Call2(Func_0200456c, 0x26666, SPLIT_CONSTANT(0x4c00, 204));
   Call4(Camera_MoveWithinMapBounds, PIXELS(184), -1, PIXELS(448), 1);
   Call3(Actor_SetPositionAndReset, 0, 168, 484);
   Call2(Func_0200454c, 0, 0);
   Call2(Func_02004534, 0x4000, 0);
   Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_WEST, 0);
   Call2(Func_0200454c, 27, FACING_WEST);
-  Call2(Func_02004534, 0x401b, 0);
+  Call2(Func_02004534, SPLIT_CONSTANT(0x4000, 27), 0);
   Call3(Actor_ArmCallback, 25, 0x5000, 0);
   Call2(Motion_SetModeAndWaitAnimation, 25, 3);
   Call2(Func_02004534, 25, 0);
@@ -267,8 +267,8 @@ void Func_02001cf0(void) {
   Call2(Actor_SetModeById, 0, 3);
   Call2(Actor_SetModeById, gMainRoutineWork.currentOwner, 3);
   Call2(Motion_SetModeAndWaitAnimation, 27, 3);
-  Call3(Actor_SetSpeedParameters, 0, 0x19999, 0xcccc);
-  Call3(Actor_SetSpeedParameters, 27, 0x19999, 0xcccc);
+  Call3(Actor_SetSpeedParameters, 0, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
+  Call3(Actor_SetSpeedParameters, 27, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
   Actor_SetModeById(0, 2);
   t202 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (t202 != 0) {
@@ -292,6 +292,6 @@ void Func_02001cf0(void) {
     work->delay = 0x10;
   }
   GameFlag_ClearBit(0x12f);
-  GameFlag_SetBit(0x9c5);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 197));
   Func_0200446c();
 }

@@ -12,7 +12,7 @@ extern u8 Data_020004b8[];
 void Func_080ca368(s32 scene, s32 entrance) {
   const s16 *rule = gParty_PairResolveRules;
 
-  if (GameFlag_Test(0x8de) == 0)
+  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 222)) == 0)
     return;
   while (rule[0] != -1) {
     if (rule[0] == scene &&
@@ -33,7 +33,7 @@ void Func_080ca3f4(s32 scene, s32 entrance) {
   const s16 *rule = gParty_PairResolveRules;
   struct MainRoutineWork *party;
 
-  if (GameFlag_Test(0x8de) == 0)
+  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 222)) == 0)
     return;
   party = &gMainRoutineWork;
   /* FAKEMATCH(one-pass block): the empty block loads gMainRoutineWork's address

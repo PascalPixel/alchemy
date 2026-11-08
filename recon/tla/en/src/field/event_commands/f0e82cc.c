@@ -71,7 +71,7 @@ u32 Random16(void);
 void BattleEffect_PrepareBufferInterpolation(void);
 
 void Func_080e82cc(void) {
-  struct RingWork *work = HeapSlot_AllocEwram(92, 0x298c);
+  struct RingWork *work = HeapSlot_AllocEwram(92, SPLIT_CONSTANT(0x2900, 140));
   struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct RingEvent *event = Ram_HeapSlots->eventWork;
   struct Actor *caster = scene->mainObject;
@@ -121,10 +121,10 @@ void Func_080e82cc(void) {
 
       /* FAKEMATCH(one-pass): an empty block before the fill's entry is read, so the
          entry loads ahead of the size's constant; as a direct
-         Iwram_FillWords call, 2 of 563 instructions differ in tla-en. */
+         Iwram_FillWordsEntry call, 2 of 563 instructions differ in tla-en. */
       do {
       } while (0);
-      fill = Iwram_FillWords;
+      fill = Iwram_FillWordsEntry;
       fill((void *)0x06002000, 0x800, 0);
     }
 
@@ -168,7 +168,7 @@ void Func_080e82cc(void) {
     work->phase = 0;
     event->up = 1;
     event->unkcad = 1;
-    event->timer = 999;
+    event->timer = SPLIT_CONSTANT(0x2e8, 255);
     off = 0;
     Task_Add(Func_080e807c, 0x480);
     wait(1);

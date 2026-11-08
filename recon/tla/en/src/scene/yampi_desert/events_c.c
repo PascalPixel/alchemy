@@ -20,10 +20,10 @@ void Func_02002ce0(s32 id) {
 
 void Func_02002d10(void) {
   if (GameFlag_Test(265)) {
-    if (GameFlag_Test(0x20d) == 0)
+    if (GameFlag_Test(SPLIT_CONSTANT(0x10e, 255)) == 0)
       Func_0200163c();
   } else {
-    GameFlag_SetBit(0x20d);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x10e, 255));
   }
 }
 

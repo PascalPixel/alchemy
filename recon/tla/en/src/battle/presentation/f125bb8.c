@@ -10,7 +10,7 @@ void Func_08125bb8(s32 *destination) {
   u32 index;
 
   /* FAKEMATCH(wrapper): each fill forwarded through FillWords_, so its size
-     reaches the call's register at each call; as direct Iwram_FillWords calls,
+     reaches the call's register at each call; as direct Iwram_FillWordsEntry calls,
      37 of 36 instructions differ in tla-en. */
   FillWords_(destination, 0x100, -1);
   destination += 0x40;

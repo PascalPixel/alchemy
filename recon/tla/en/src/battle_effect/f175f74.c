@@ -193,7 +193,7 @@ extern u8 gData_02014000[];
 #define REG_BG2CNT (*(u16 *)0x0400000c)
 #define REG_BG2PA (*(u16 *)0x04000020)
 #define REG_BG2X (*(u32 *)0x04000028)
-#define REG_WIN0H (*(u16 *)0x04000040)
+#define REG_WIN0H (*(u16 *)SPLIT_CONSTANT(0x4000000, 64))
 #define REG_WININ (*(u16 *)0x04000048)
 #define REG_BLDCNT (*(u16 *)0x04000050)
 #define REG_BLDALPHA (*(u16 *)0x04000052)
@@ -279,14 +279,14 @@ void BattleEffect_EndCanvasLayer(void);
 
 static __inline__ s32 CpuCopy(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): copies go through this inline and the next; as direct
-   * calls to Iwram_CopyWords and Iwram_FillWords, 277 of 4354 instructions
+   * calls to Iwram_CopyWordsEntry and Iwram_FillWordsEntry, 277 of 4354 instructions
    * differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 
 static __inline__ s32 CpuFill(void *destination, s32 size, u32 value) {
   /* FAKEMATCH(wrapper): fills go through this inline and the one above; as
-   * direct calls to Iwram_CopyWords and Iwram_FillWords, 277 of 4354
+   * direct calls to Iwram_CopyWordsEntry and Iwram_FillWordsEntry, 277 of 4354
    * instructions differ in tla-en. */
   return Iwram_FillWords(destination, size, value);
 }
@@ -760,7 +760,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         CpuCopy(PLTT, source, 128);
         Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD,
                                    work->buffer + 0x2400, 0, 0);
-        CpuCopy(glyphs, work->buffer + 0x2400, 0x302);
+        CpuCopy(glyphs, work->buffer + 0x2400, SPLIT_CONSTANT(0x300, 2));
         Resource_LoadAndDecompress((s32)&ResourceId_CurseSealSheet,
                                    work->buffer + 0x1000, 1, 1);
         posX = 144 << 15;
@@ -1361,7 +1361,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         model->depth = last;
         Render_ResetTransformState();
         Func_08015160(0x20000, -0x200000, 0);
-        Func_0801521c(0x58f0);
+        Func_0801521c(SPLIT_CONSTANT(0x5800, 240));
         SceneTransform_ApplyPitch(0x2000);
         SceneTransform_ApplyYaw(frame << 10);
         Render_TransformVertices(gData_08199210, texture, 4);
@@ -1459,7 +1459,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     s32 limit;
 
     i = 0;
-    limit = 0x302;
+    limit = SPLIT_CONSTANT(0x300, 2);
   empty:
     i += 35;
     if (i != limit) {
@@ -1513,7 +1513,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     if (frame == 120) {
       work->transferMode = 1;
       work->transferValue = 0;
-      ColorBuffer_ScaleFar(scene->palette, PLTT + 0x60, 0x99a0, 128);
+      ColorBuffer_ScaleFar(scene->palette, PLTT + 0x60, SPLIT_CONSTANT(0x9900, 160), 128);
       for (i = 0; i != arg->count; i++) {
         struct ActorPos *actor = *GetBattleObjectSlotFar(arg->actors[i]);
 

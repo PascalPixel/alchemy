@@ -390,7 +390,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
          load leads the arguments; as a direct call, 2 of 2239 instructions
          differ in tla-en. */
       {
-        __typeof__(Iwram_CopyWords) routine = Iwram_CopyWords;
+        __typeof__(Iwram_CopyWordsEntry) routine = Iwram_CopyWordsEntry;
         routine((void *)BG_PLTT, palette, 128);
       }
     }

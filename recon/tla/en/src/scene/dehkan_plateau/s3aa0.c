@@ -20,10 +20,10 @@ void Func_02003aa0(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   if (GameFlag_Test(95) != 0)
-    GameFlag_SetBit(521);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x10a, 255));
   Func_02000038(gData_02003fb8);
   Func_020001d0(gData_02003f92);
-  if (GameFlag_Test(519) == 0) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x108, 255)) == 0) {
     Func_02002140();
     wait(10);
   }

@@ -71,7 +71,7 @@ void Func_02000b54(void) {
 
 void Func_02000b84(s32 state, s32 frame) {
   if (state == 1) {
-    Func_02004de0(0x23e);
+    Func_02004de0(SPLIT_CONSTANT(0x200, 62));
     Func_02004d58(0x10000, 0);
     Func_02004d60(60);
     Func_02004c30(12, 95, 8, 6, 12, 101);
@@ -82,7 +82,7 @@ void Func_02000b84(s32 state, s32 frame) {
   if (frame > 96 && frame < 272 && frame % 30 == 0)
     Func_02000414(12);
   if (frame == 276) {
-    Func_02004d58(0x7fff, 0);
+    Func_02004d58(SPLIT_CONSTANT(0x7f00, 255), 0);
     Func_02004d60(20);
   }
 }
@@ -91,5 +91,5 @@ void Func_02000c1c(void) {
   Func_02004c28(35, 11, 3, 6, 53, 11);
   Func_02004c30(35, 75, 3, 6, 117, 11);
   Func_02004c30(35, 75, 3, 6, 53, 75);
-  Flag_Set(0xa49);
+  Flag_Set(SPLIT_CONSTANT(0xa00, 73));
 }

@@ -31,7 +31,7 @@ void Func_02002b84(void) {
   Actor_SetSpritePriority(21, 3);
   Func_020040f8(21);
   Actor_GetById(21)->motionFlags = 3;
-  if (GameFlag_Test(0x88b)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 139))) {
     angle = 0x4000;
     Scene_Call4098(21, 232 << 16, 168 << 16, angle);
   } else {

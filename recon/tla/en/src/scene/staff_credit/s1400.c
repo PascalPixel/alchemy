@@ -132,8 +132,8 @@ void Func_02001400(s32 mode) {
     Task_RemoveFar(Func_0200130c);
     Func_02001f74();
     level = gData_02003fc0;
-    QueueIoWriteDelay2(0x04000052, level);
-    QueueIoWriteDelay2(0x04000050, 0);
+    QueueIoWriteDelay2(SPLIT_CONSTANT(0x4000000, 82), level);
+    QueueIoWriteDelay2(SPLIT_CONSTANT(0x4000000, 80), 0);
   } else {
     gData_02003fc0 = 0xd00;
     FieldEvent_Wait(4);
@@ -146,8 +146,8 @@ void Func_02001400(s32 mode) {
     Task_RemoveFar(Func_0200130c);
     Func_02001f74();
     level = gData_02003fc0;
-    QueueIoWriteDelay2(0x04000052, level);
-    QueueIoWriteDelay2(0x04000050, 0);
+    QueueIoWriteDelay2(SPLIT_CONSTANT(0x4000000, 82), level);
+    QueueIoWriteDelay2(SPLIT_CONSTANT(0x4000000, 80), 0);
   }
   Heap_Release(buffer);
   GameFlag_SetBit(0x101);

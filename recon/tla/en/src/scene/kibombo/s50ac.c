@@ -18,7 +18,7 @@ void Func_02005114(void) {
   Actor_SetSingleChildFlags(Actor_GetById(11), 0);
   Actor_GetById(11)->scaleY = 0x8000;
   Func_020050ac();
-  GameFlag_ClearBit(0x86b);
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x800, 107));
   Func_02005b8c(25);
   Actor_SetModeById(25, 2);
   KIBOMBO_TASK_ADD(Func_02003030, 0x480)

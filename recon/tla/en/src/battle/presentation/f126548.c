@@ -35,7 +35,7 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   horizon = 0x800;
   wrap = 0;
   /* FAKEMATCH(temporary): Q16_ONE held in ratio for the scale test and the
-     Iwram_RatioMulQ14 call; as the constant in both, 4 of 199 instructions
+     Iwram_RatioMulQ14Entry call; as the constant in both, 4 of 199 instructions
      differ in tla-en. */
   ratio = Q16_ONE;
   if (scale >= ratio) {
@@ -58,7 +58,7 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   affine->pd = step;
   x = Iwram_MulQ16(ratio, Iwram_MulQ16(centerX, scale - 0x10000));
   y = Iwram_MulQ16(ratio, Iwram_MulQ16(centerY, scale - 0x10000));
-  affine->x = ((x + 0x7fff) >> 8) + offsetX + horizon;
+  affine->x = ((x + SPLIT_CONSTANT(0x7f00, 255)) >> 8) + offsetX + horizon;
   affine->y = ((y + 0x7fff) >> 8) + offsetY - 0x1000;
   groundEndLine =
       (Iwram_RatioMulQ14((s16)affine->pd, 0x4000 - affine->y) >> 16) + 1;

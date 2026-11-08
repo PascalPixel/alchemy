@@ -40,7 +40,7 @@ void Func_080eb594(void) {
       register u8 *buffer asm("r0");
       s32 (*fill)(void *, s32, u32);
 
-      fill = Iwram_FillWords;
+      fill = Iwram_FillWordsEntry;
       /* FAKEMATCH(barrier): the size's first half (128) and IwramFillWords'
        * entry are loaded before the canvas is copied; as Iwram_FillWords(
        * canvas, CANVAS_SIZE, 0), 2 of 98 instructions differ in tla-en. */

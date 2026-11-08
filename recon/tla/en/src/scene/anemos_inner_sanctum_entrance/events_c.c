@@ -73,7 +73,7 @@ s32 Func_02000740(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Func_02000408();
-    GameFlag_ClearBit(0x201);
+    GameFlag_ClearBit(SPLIT_CONSTANT(0x102, 255));
   }
   return 0;
 }

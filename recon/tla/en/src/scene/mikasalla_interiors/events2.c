@@ -24,7 +24,7 @@ void Func_020004dc(void);
 void Func_020004b0(void) {
   s32 result0;
 
-  result0 = Value1((s32 (*)())GameFlag_Test, 0xa39);
+  result0 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 57));
   if (result0 != 0)
     goto L_020084c6;
   Func_020004dc();
@@ -62,8 +62,8 @@ L_02008568:
   ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
   Func_02000614(18, 0);
 L_02008582:
-  GameFlag_SetBit(0xa39);
-  GameFlag_SetBit(0x341);
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 57));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x300, 65));
   Func_020005cc();
   return;
 }

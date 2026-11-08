@@ -14,7 +14,7 @@ void Func_02000870(void) {
   s32 opened;
   u8 *state;
 
-  if (!GameFlag_Test(0x983)) {
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x900, 131))) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     Func_02002c68();
     Func_02002da8(0);

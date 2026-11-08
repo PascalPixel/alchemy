@@ -58,7 +58,7 @@ void Func_0200290c(void) {
     else if (gMainRoutineWork.entrance == 6)
       Func_020037e0();
   }
-  if (GameFlag_Test(0x301))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x300, 1)))
     Task_Add(Func_02001634, TASK_PASS_VBLANK);
   else if (GameFlag_Test(0x300))
     Task_Add(Func_02001804, TASK_PASS_VBLANK);

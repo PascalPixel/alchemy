@@ -36,7 +36,7 @@ void Func_02000188(void) {
   s32 t26;
   s32 t29;
 
-  GameFlag_SetBit(0x973);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 115));
   Func_02002a44();
   Func_02002b64(0);
   Func_02002adc((s32)MsgChampa49);
@@ -58,8 +58,8 @@ void Func_02000188(void) {
   Call3(Func_02002aec, 0x21, 0, 5);
   Call3(Actor_Jump, 32, 6, 0);
   Call3(Actor_Jump, 33, 6, 0);
-  Call3(Actor_SetSpeedParameters, 32, 0x1cccc, 0xe666);
-  Actor_SetSpeedParameters(33, 0x1cccc, 0xe666);
+  Call3(Actor_SetSpeedParameters, 32, SPLIT_CONSTANT(0x1cc00, 204), SPLIT_CONSTANT(0xe600, 102));
+  Actor_SetSpeedParameters(33, SPLIT_CONSTANT(0x1cc00, 204), SPLIT_CONSTANT(0xe600, 102));
   t24 = Actor_GetById(32);
   FIELD_AT((t24 + 0x5a), u8, 0) = (0xfe & FIELD_AT((t24 + 0x5a), u8, 0));
   Call3(Actor_OffsetPositionAndReset, 32, 0, -16);
@@ -75,11 +75,11 @@ void Func_02000188(void) {
   Call3(Actor_ArmCallback, 32, 0xb000, 0);
   Call2(Func_02002b04, 33, 0xd000);
   FieldEvent_Wait(5);
-  Call3(Func_02002aec, 0x8021, 0, 5);
+  Call3(Func_02002aec, SPLIT_CONSTANT(0x8000, 33), 0, 5);
   Call3(Func_02002aec, 0x22, 0, 5);
   Call2(Actor_WatchAndSetScript, 32, 34);
   Call2(Actor_WatchAndSetScript, 33, 34);
-  Call3(Actor_SetSpeedParameters, 34, 0x13333, 0x9999);
+  Call3(Actor_SetSpeedParameters, 34, 0x13333, SPLIT_CONSTANT(0x9900, 153));
   Call3(Actor_CommitPositionAndActivate, 34, 0, 32);
   Call2(Func_02002b04, 34, 0x3000);
   Camera_MoveWithinMapBounds(PIXELS(208), -1, PIXELS(296), 1);

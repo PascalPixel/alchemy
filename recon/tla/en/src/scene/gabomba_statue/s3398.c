@@ -33,9 +33,9 @@ s32 Func_02003398(void) {
 
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 521;
   if (gMainRoutineWork.scene != (s32)&SceneId_Ov671Room1) {
-    if (GameFlag_Test(515))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x104, 255)))
       Func_020020f0(0);
-    else if (GameFlag_Test(0x8cd))
+    else if (GameFlag_Test(SPLIT_CONSTANT(0x800, 205)))
       Func_020020f0(-1);
     else
       Func_020020f0(1);

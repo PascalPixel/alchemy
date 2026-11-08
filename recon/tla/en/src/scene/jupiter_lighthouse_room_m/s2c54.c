@@ -56,19 +56,19 @@ s32 Func_02002c54(void) {
     Func_0200474c(49, 106, 4, 3, 49, 76);
     Func_02004744(49, 45, 4, 1, 49, 44);
   }
-  if (GameFlag_Test(2591)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x920, 255))) {
     Func_0200474c(49, 106, 4, 3, 49, 76);
     Func_02004744(49, 45, 4, 1, 49, 44);
     Func_02004844(23, 0, 0);
     if (GameFlag_Test_(2595)) {
-      if (!GameFlag_Test(2593)) {
+      if (!GameFlag_Test(SPLIT_CONSTANT(0xa00, 33))) {
         Func_02000c08();
         Func_02001e38();
       }
     } else if (!GameFlag_Test_(2596)) {
       if (gMainRoutineWork.entrance == 3) {
         Func_02000c08();
-        GameFlag_SetBit(2596);
+        GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 36));
         Func_02000cac(gMainRoutineWork.entrance == 3);
       }
     } else {
@@ -77,7 +77,7 @@ s32 Func_02002c54(void) {
         Func_02001c7c();
       } else if (gMainRoutineWork.entrance == 77) {
         Func_02001ed0();
-        GameFlag_SetBit(2595);
+        GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 35));
         GameFlag_ClearBit(2596);
       } else {
         Func_02000b48();
@@ -85,7 +85,7 @@ s32 Func_02002c54(void) {
     }
   }
   Actor_GetById(23)->motionFlags = 0;
-  if (GameFlag_Test(2573))
+  if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 13)))
     Func_02004844(23, 0, 0);
   if (gMainRoutineWork.entrance == 99)
     Func_02001ed0();

@@ -266,7 +266,7 @@ s32 Func_02001774(void) {
     *effect = 516;
     if (!GameFlag_Test(0x300))
       Actor_SetWideSprite(0x40, 1);
-    if (!GameFlag_Test(769))
+    if (!GameFlag_Test(SPLIT_CONSTANT(0x300, 1)))
       Actor_SetWideSprite(65, 1);
   } else if (scene == (s32)&SceneId_Ov678Room4) {
     *effect = 516;
@@ -278,9 +278,9 @@ s32 Func_02001774(void) {
     Func_02002960(0);
     if (GameFlag_Test(0x310))
       Func_020028d0(8, 0, 0);
-    if (GameFlag_Test(0xa6d))
+    if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 109)))
       Call3(Func_020028d0, 9, PIXELS(280), PIXELS(232));
-    if (GameFlag_Test(0xa6e))
+    if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 110)))
       Call3(Func_020028d0, 10, PIXELS(472), PIXELS(248));
     Func_02002614(gData_02002a78, gData_02002ab6, Func_02001304);
   } else if (scene == (s32)&SceneId_Ov678Room6) {
@@ -294,7 +294,7 @@ s32 Func_02001774(void) {
     piece = Actor_GetById(8);
     piece->motionFlags = 0;
     Actor_SetSingleChildFlags(piece, 0);
-    if (GameFlag_Test(545)) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x122, 255))) {
       Call6(Func_02002840, 28, 8, 1, 1, 26, 8);
       Func_020027f8(piece, 0);
     } else {
@@ -306,7 +306,7 @@ s32 Func_02001774(void) {
     }
     piece = Actor_GetById(9);
     piece->motionFlags = 0;
-    if (GameFlag_Test(0xa6f)) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x970, 255))) {
       Call3(Func_020028d0, 9, PIXELS(264), PIXELS(424));
       piece->terrainHeight = 0;
       piece->y = 0;
@@ -327,7 +327,7 @@ s32 Func_02001774(void) {
       object = Actor_GetById(10);
       object->motionFlags = 0;
       Actor_SetSingleChildFlags(object, 0);
-      if (GameFlag_Test(545)) {
+      if (GameFlag_Test(SPLIT_CONSTANT(0x122, 255))) {
         Func_020027f8(object, 0);
       } else {
         Actor_SetSpritePriority(10, 3);
@@ -341,8 +341,8 @@ s32 Func_02001774(void) {
     *effect = 516;
     Func_02002614(gData_02002ad8, 0, Func_0200151c);
     if (!GameFlag_Test(824)) {
-      GameFlag_SetBit(825);
-    } else if (GameFlag_Test(826)) {
+      GameFlag_SetBit(SPLIT_CONSTANT(0x300, 57));
+    } else if (GameFlag_Test(SPLIT_CONSTANT(0x300, 58))) {
       Actor_SetModeById(8, 3);
       Func_020028d0(8, PIXELS(184), PIXELS(344));
       Actor_GetById(8)->collisionFlags = 0;
@@ -350,9 +350,9 @@ s32 Func_02001774(void) {
       Actor_SetSpritePriority(8, 3);
       Call6(Func_02002840, 11, 19, 1, 1, 11, 21);
     }
-    if (!GameFlag_Test(827)) {
+    if (!GameFlag_Test(SPLIT_CONSTANT(0x23c, 255))) {
       GameFlag_SetBit(828);
-    } else if (GameFlag_Test(829)) {
+    } else if (GameFlag_Test(SPLIT_CONSTANT(0x300, 61))) {
       Actor_SetModeById(9, 3);
       Func_020028d0(9, PIXELS(504), PIXELS(184));
       Actor_GetById(9)->collisionFlags = 0;
@@ -372,9 +372,9 @@ s32 Func_02001774(void) {
       piece->motionFlags = 0;
       piece->y = 0x200000;
     }
-    if (!GameFlag_Test(817)) {
-      GameFlag_SetBit(818);
-    } else if (GameFlag_Test(819)) {
+    if (!GameFlag_Test(SPLIT_CONSTANT(0x300, 49))) {
+      GameFlag_SetBit(SPLIT_CONSTANT(0x300, 50));
+    } else if (GameFlag_Test(SPLIT_CONSTANT(0x234, 255))) {
       Actor_SetModeById(9, 3);
       Func_020028d0(9, PIXELS(120), PIXELS(248));
       Actor_GetById(9)->collisionFlags = 0;
@@ -384,10 +384,10 @@ s32 Func_02001774(void) {
       Actor_SetModeById(9, 0);
     }
     if (!GameFlag_Test(820)) {
-      GameFlag_SetBit(821);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x300, 53));
     } else {
       Call6(Func_02002840, 27, 14, 1, 1, 27, 13);
-      if (GameFlag_Test(822)) {
+      if (GameFlag_Test(SPLIT_CONSTANT(0x300, 54))) {
         Actor_SetModeById(10, 3);
         Func_020028d0(10, PIXELS(408), PIXELS(264));
         Actor_GetById(10)->collisionFlags = 0;
@@ -400,7 +400,7 @@ s32 Func_02001774(void) {
   } else if (scene == (s32)&SceneId_Ov678Room11) {
     *effect = 516;
     if (!GameFlag_Test(0x340)) {
-      GameFlag_SetBit(833);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x300, 65));
     } else {
       Actor_SetModeById(8, 0);
       Call6(Func_02002840, 7, 39, 1, 1, 7, 38);

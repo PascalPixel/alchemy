@@ -97,7 +97,7 @@ body:
         /* FAKEMATCH(wrapper): forwarded through Call3, which builds each -1
          * apart; as Func_02003ac4(-1, -1, 0xe666), 23 of 191 instructions
          * differ in tla-en. */
-        Call3((void (*)())Func_02003ac4, -1, -1, 0xe666);
+        Call3((void (*)())Func_02003ac4, -1, -1, SPLIT_CONSTANT(0xe600, 102));
         wait(8);
         *flags = 3;
         wait(5);

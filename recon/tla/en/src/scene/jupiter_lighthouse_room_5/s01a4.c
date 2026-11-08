@@ -48,10 +48,10 @@ void Func_020001a4(void) {
   struct FieldSprite *sprite;
   s32 angle;
 
-  if (Flag_IsSet(0x201) == 0 && gFrameCount % 3 != 0)
+  if (Flag_IsSet(SPLIT_CONSTANT(0x102, 255)) == 0 && gFrameCount % 3 != 0)
     return;
   center = Actor_GetById(23);
-  if (Flag_IsSet(0x201) != 0) {
+  if (Flag_IsSet(SPLIT_CONSTANT(0x102, 255)) != 0) {
     u32 random;
 
     random = Random16Far();

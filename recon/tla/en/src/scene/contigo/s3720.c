@@ -57,7 +57,7 @@ void Func_02003720(void) {
   BYTE_AT(object, 98) = 1;
   BYTE_AT(object, 99) = zero;
   *(void **)((u8 *)object + 108) = Func_020006d0;
-  if (GameFlag_Test(0xa21) != 0 && GameFlag_Test(0x9b2) == 0) {
+  if (GameFlag_Test(0xa21) != 0 && GameFlag_Test(SPLIT_CONSTANT(0x900, 178)) == 0) {
     Actor_Stop(15);
     Func_020040d4(15, 0, 0);
     Func_020040d4(13, 0, 0);
@@ -68,7 +68,7 @@ void Func_02003720(void) {
     BYTE_AT(object, 99) = 0;
     *(void **)((u8 *)object + 108) = Func_020006d0;
   }
-  if (GameFlag_Test(0x9e7) != 0 && GameFlag_Test(0x9e6) == 0) {
+  if (GameFlag_Test(0x9e7) != 0 && GameFlag_Test(SPLIT_CONSTANT(0x900, 230)) == 0) {
     Func_020040d4_(17, PIXELS(32), PIXELS(708));
   } else {
     Actor_SetPartAttribute(Actor_GetById(17), 15);

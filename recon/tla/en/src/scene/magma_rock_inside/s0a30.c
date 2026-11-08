@@ -35,7 +35,7 @@ void Func_02000a30(void) {
       object->terrainId = 2;
       object->motionFlags = 3;
       wait(1);
-      if (GameFlag_Test(770)) {
+      if (GameFlag_Test(SPLIT_CONSTANT(0x300, 2))) {
         object->gravity = 0x1000;
         object->priorityFlags |= 2;
         REG_BLDALPHA = 0x1000;
@@ -86,19 +86,19 @@ void Func_02000a30(void) {
       GameFlag_SetBit(2544);
   } else if (scene == (s32)&SceneId_Ov692Room3) {
     if (z == 41)
-      GameFlag_SetBit(2545);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 241));
   } else if (scene == (s32)&SceneId_Ov692Room4) {
     if (x == 21) {
       if (z == 43)
-        GameFlag_SetBit(2546);
+        GameFlag_SetBit(SPLIT_CONSTANT(0x900, 242));
       if (z == 45)
-        GameFlag_SetBit(2547);
+        GameFlag_SetBit(SPLIT_CONSTANT(0x900, 243));
       if (z == 47)
-        GameFlag_SetBit(2548);
+        GameFlag_SetBit(SPLIT_CONSTANT(0x900, 244));
     }
   } else if (scene == (s32)&SceneId_Ov692Room6) {
     if (x == 47) {
-      GameFlag_SetBit(2549);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 245));
       {
         /* FAKEMATCH(temporary): the column and row in locals, so each stack
          * word builds in its own register; as constants, 4 of 281 instructions
@@ -110,10 +110,10 @@ void Func_02000a30(void) {
       }
     }
     if (x == 57)
-      GameFlag_SetBit(2550);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 246));
   } else if (scene == (s32)&SceneId_Ov692Room7) {
     if (x == 43)
-      GameFlag_SetBit(2551);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 247));
   }
   Func_02004d48();
 }

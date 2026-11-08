@@ -1,0 +1,67 @@
+#include "battle.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "system.h"
+#include "types.h"
+#include "scene_tables.h"
+#include "actor.h"
+#include "main_routine_work.h"
+#include "ram_buffer.h"
+#include "event_work.h"
+#include "call.h"
+#include "text/msg_ids.h"
+
+void Func_02001080();
+void Func_02001088();
+void Func_02001098();
+void Func_020010f0();
+void Func_020011e0();
+void Func_02001200();
+void GameFlag_ClearBit();
+void GameFlag_SetBit();
+
+const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+
+void Func_0200039c(void) {
+  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
+   * shifted byte plus an addend; as plain constants, 4 of 18 instructions
+   * differ in tla-en. */
+  s32 result0;
+
+  Func_02001080();
+  Func_020011e0(0);
+  result0 = Value3((s32 (*)())Func_02001098, 22, 0x190, -1);
+  if (result0 != 0)
+    goto L_020083c4;
+  GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 115));
+L_020083c4:
+  Func_02001088();
+  return;
+}
+
+void Func_020003cc(void) {
+  s32 angle;
+
+  angle = 0x5000;
+  Call4((void (*)())Func_020010f0, 19, PIXELS(231), PIXELS(199), angle);
+  Call4((void (*)())Func_020010f0, 20, PIXELS(220), PIXELS(191), angle);
+  Call4((void (*)())Func_020010f0, 21, PIXELS(204), PIXELS(191), angle);
+  return;
+}
+
+void Func_02000404(void) {
+  /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
+   * shifted byte plus an addend; as plain constants, 4 of 18 instructions
+   * differ in tla-en. */
+  s32 angle;
+
+  Call2((void (*)())Func_02001200, 22, 0x190);
+  angle = 0xc000;
+  Call4((void (*)())Func_020010f0, 22, PIXELS(212), PIXELS(199), angle);
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 115));
+  return;
+}

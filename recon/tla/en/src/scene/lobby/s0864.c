@@ -79,7 +79,7 @@ s32 Func_02000864(void) {
       return;
     Func_02001a14();
     Func_02001ab4(0);
-    Flag_Set(0x203);
+    Flag_Set(SPLIT_CONSTANT(0x104, 255));
     LinkLobby_WriteSlotValue(2);
     if (!Func_0200006c(2))
       window = Message_OpenWindow(MsgAwaitingYourOpponent, 5, 4, 1);
@@ -88,7 +88,7 @@ s32 Func_02000864(void) {
       stop = 0;
       if (!Flag_IsSet(0x201))
         stop = 1;
-      if (Flag_IsSet(0x205))
+      if (Flag_IsSet(SPLIT_CONSTANT(0x106, 255)))
         stop = 1;
       if (!Func_0200006c(2) && !Func_0200006c(1)) {
         if (++cnt > 25)
@@ -145,10 +145,10 @@ s32 Func_02000864(void) {
         LinkLobby_WriteSlotValue(4);
         Task_Add((TaskFunc)Func_02000134, TASK_PASS_VBLANK);
         Func_02001944(Func_02000134, 1);
-        Flag_Clear(0x201);
+        Flag_Clear(SPLIT_CONSTANT(0x102, 255));
         Flag_Clear(0x202);
-        Flag_Clear(0x303);
-        Flag_Clear(0x203);
+        Flag_Clear(SPLIT_CONSTANT(0x204, 255));
+        Flag_Clear(SPLIT_CONSTANT(0x104, 255));
         Flag_Clear(0x200);
         work->raisedTrigger = 2;
         Func_02001a1c();

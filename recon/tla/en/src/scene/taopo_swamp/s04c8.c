@@ -24,23 +24,23 @@ void Func_020004c8(s32 hole) {
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov678Room5) {
     found = Func_02002708(gData_020029b8[hole - 10]);
-    if (hole == 12 && GameFlag_Test(0xa6e))
+    if (hole == 12 && GameFlag_Test(SPLIT_CONSTANT(0xa00, 110)))
       return;
-    if (hole == 18 && GameFlag_Test(0xa6d))
+    if (hole == 18 && GameFlag_Test(SPLIT_CONSTANT(0xa00, 109)))
       return;
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov678Room7) {
     u8 *table = gData_020029c0 + 1;
     s32 at = hole - 10;
     found = Func_02002708(table[at]);
-    if (hole == 10 && GameFlag_Test(545))
+    if (hole == 10 && GameFlag_Test(SPLIT_CONSTANT(0x122, 255)))
       return;
-    if (hole == 12 && GameFlag_Test(545))
+    if (hole == 12 && GameFlag_Test(SPLIT_CONSTANT(0x122, 255)))
       return;
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov678Room8) {
     found = Func_02002708(hole - 10);
-    if (hole == 10 && GameFlag_Test(545))
+    if (hole == 10 && GameFlag_Test(SPLIT_CONSTANT(0x122, 255)))
       return;
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov678Room9)

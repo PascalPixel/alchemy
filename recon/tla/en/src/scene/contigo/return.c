@@ -5,7 +5,7 @@ extern const u8 gData_02004ac0[];
 extern const u8 gData_02004b18[];
 
 void Func_02002e18(void) {
-  if (GameFlag_Test(0x9b2)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 178))) {
     Func_0200406c();
     Func_02004204(0);
     Contigo_CamSpeed(0xcccc, 0x1999);
@@ -207,7 +207,7 @@ void Func_02002e18(void) {
     Actor_SetMovementTypeById(2, gData_02004b18);
     Actor_SetMovementTypeById(0, gData_02004b18);
     Actor_SetMovementTypeAndWaitById(9, gData_02004b18);
-    GameFlag_SetBit(2513);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x900, 209));
     Func_02004074();
   }
 }

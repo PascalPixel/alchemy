@@ -15,7 +15,7 @@ void Func_020040cc(void) {
   Kibombo_TaskAdd(Func_02002ccc, 0x480);
   FieldEvent_Wait(40);
   Func_02005c9c(78);
-  Kibombo_CamSpeed(0xcccc, 0x1999);
+  Kibombo_CamSpeed(SPLIT_CONSTANT(0xcc00, 204), 0x1999);
   Kibombo_CamMove(PIXELS(264), -1, PIXELS(388), 1);
   Func_02005bb4();
   Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
@@ -27,7 +27,7 @@ void Func_020040cc(void) {
   Actor_GetById(27)->motionFlags = 0;
   Actor_SetPositionAndResetMotion(Actor_GetById(27), PIXELS(265), PIXELS(24),
                                   PIXELS(344));
-  Func_02005ba4(0x6666, 0xccc);
+  Func_02005ba4(SPLIT_CONSTANT(0x6600, 102), 0xccc);
   Camera_MoveWithinMapBounds(PIXELS(264), -1, PIXELS(340), 1);
   Kibombo_ObjSpeed(17, 0x3333, 0x1999);
   Actor_SetPositionAndReset(17, 264, 374);
@@ -113,7 +113,7 @@ void Func_02004294(void) {
   Func_02005b64(17, 0);
   Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
   Func_02005b64(0x4000 + 17, 0);
-  GameFlag_ClearBit(0x8f7);
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x7f8, 255));
   Func_02005c9c(11);
   FieldEvent_Wait(80);
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;

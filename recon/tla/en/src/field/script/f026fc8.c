@@ -21,7 +21,7 @@ void Func_08026fc8(struct Actor *object, s32 mode) {
   created = Func_08023220(14, object->x, object->y + 0x40000, object->z);
   sprite = object->animation;
   if (!(object->unk66 & 1))
-    Sound_PlayFar(623);
+    Sound_PlayFar(SPLIT_CONSTANT(0x170, 255));
   if (created != NULL) {
     struct Child *child = created->animation;
 

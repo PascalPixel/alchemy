@@ -70,7 +70,7 @@ extern const u8 gData_02001990[];
 extern const u8 gData_02001c18[];
 
 const struct Trigger *Scene_GetEvents(void) {
-  s32 flag = GameFlag_Test(0x873);
+  s32 flag = GameFlag_Test(SPLIT_CONSTANT(0x800, 115));
   struct MainRoutineWork *party = &gMainRoutineWork;
   s32 id = (s32)&SceneId_DailaInteriors2;
 

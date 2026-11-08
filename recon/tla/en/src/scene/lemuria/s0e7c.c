@@ -88,7 +88,7 @@ void Func_02000e7c(s32 id) {
   FieldEvent_Wait(10);
   Motion_SetModeAndWaitAnimation(12, 3);
   FieldEvent_Wait(10);
-  Call3((void (*)())Actor_SetSpeedParameters, 12, 0x13333, 0x9999);
+  Call3((void (*)())Actor_SetSpeedParameters, 12, 0x13333, SPLIT_CONSTANT(0x9900, 153));
   Actor_SetModeById(12, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
@@ -116,7 +116,7 @@ void Func_0200109c(void) {
   Actor_WaitForMoveById(12);
   FieldEvent_Wait(5);
   Func_02001c7c(12, 0, 5);
-  Call3((void (*)())Actor_SetSpeedParameters, 12, 0x13333, 0x9999);
+  Call3((void (*)())Actor_SetSpeedParameters, 12, 0x13333, SPLIT_CONSTANT(0x9900, 153));
   Actor_SetModeById(12, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)

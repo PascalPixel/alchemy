@@ -140,7 +140,7 @@ void Func_02003658(void) {
   Call3((void (*)())Func_0200567c, 28, 0, 0);
   Call3((void (*)())Func_0200567c, 29, 0, 0);
   Call3((void (*)())Func_0200567c, 30, 0, 0);
-  Call2((void (*)())Func_02005724, 0x19999, 0x3333);
+  Call2((void (*)())Func_02005724, 0x19999, SPLIT_CONSTANT(0x3300, 51));
   A((Value0((s32 (*)())Func_0200573c)))->motionFlags = 0;
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x2000000, 0x600000, 0x1380000,
         1);
@@ -186,8 +186,8 @@ void Func_02003658(void) {
   A(object)->unk5c = 1;
   A(object)->priorityFlags |= 2;
   Call2((void (*)())Actor_SetSingleChildFlags, created, 0);
-  A(object)->speedLimit = 0x6666;
-  A(object)->acceleration = 0xccc;
+  A(object)->speedLimit = SPLIT_CONSTANT(0x6600, 102);
+  A(object)->acceleration = SPLIT_CONSTANT(0xc00, 204);
   A(object)->gravity = 0x8000;
   block = Value2((s32 (*)())HeapSlot_AllocFar, 68, 0x608);
   Call1((void (*)())Func_020055ec, 247);
@@ -248,7 +248,7 @@ L_0200b8ac:
   Call2((void (*)())Func_0200575c, 0x4063ff, 0);
   Call1((void (*)())Func_0200576c, 16);
   Call1((void (*)())wait, 20);
-  Call2((void (*)())Func_0200575c, 0x7fff, 0);
+  Call2((void (*)())Func_0200575c, SPLIT_CONSTANT(0x7f00, 255), 0);
   Call1((void (*)())Func_0200576c, 24);
   Call1((void (*)())wait, 60);
   Call1((void (*)())Func_020057dc, 141);
@@ -320,7 +320,7 @@ L_0200b8ac:
   Call1((void (*)())wait, 120);
   Call3((void (*)())Func_020055c4, 0x10000, 0x10000, 0x10000);
   Call1((void (*)())Func_020057dc, 78);
-  A((Value1((s32 (*)())Actor_GetById, 23)))->scaleY = 0x51e;
+  A((Value1((s32 (*)())Actor_GetById, 23)))->scaleY = SPLIT_CONSTANT(0x500, 30);
   Call2((void (*)())Actor_SetMovementTypeById, 24, (s32)gData_02006120);
   Call2((void (*)())Actor_SetMovementTypeById, 25, (s32)gData_02006120);
   Call2((void (*)())Actor_SetMovementTypeById, 26, (s32)gData_02006120);
@@ -383,7 +383,7 @@ L_0200bcea:
   Call3((void (*)())Actor_ArmCallback, 3, 0x4000, 0);
   Call3((void (*)())Actor_ArmCallback, 1, 0xe000, 0);
   Call2((void (*)())Func_02005704, 0, 0);
-  Call3((void (*)())Func_020056ec, 0x4005, 0, 10);
+  Call3((void (*)())Func_020056ec, SPLIT_CONSTANT(0x4000, 5), 0, 10);
   Call3((void (*)())Func_020055c4, -1, -1, 0xe666);
   Func_020055cc();
   Call2((void (*)())Func_0200578c, 23, 24);
@@ -412,7 +412,7 @@ L_0200bcea:
   Call2((void (*)())FieldMessage_Show, message, 1);
   Func_02005794();
   Call1((void (*)())Func_02000640, 3);
-  Call2((void (*)())Func_02005704, 0x6003, 0x4000);
+  Call2((void (*)())Func_02005704, SPLIT_CONSTANT(0x6000, 3), 0x4000);
   A((Value1((s32 (*)())Actor_GetById, 3)))->update = 0;
   // Read as a word, so the store to the actor before it may alias.
   later =
@@ -421,7 +421,7 @@ L_0200bcea:
   Func_02005714(3, 0x100, 20);
   Call3((void (*)())Func_020056ec, 3, 0, 20);
   Call1((void (*)())Func_020057dc, 201);
-  Call2((void (*)())Func_0200575c, 0x7fff, 0);
+  Call2((void (*)())Func_0200575c, SPLIT_CONSTANT(0x7f00, 255), 0);
   Call1((void (*)())Func_0200576c, 20);
   Call1((void (*)())wait, 20);
   Call1((void (*)())Func_02005744, 3);

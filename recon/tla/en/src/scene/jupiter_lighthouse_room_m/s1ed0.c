@@ -161,8 +161,8 @@ void Func_02001ed0(void) {
   Actor_SetModeById(4, 3);
   ACTOR_SET_MODE_AND_WAIT(0x1c, 3, 0x14);
   FieldEvent_Wait(0xa);
-  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 4, 0x2ab, 0xba);
-  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 0x1c, 0x29b, 0xca);
+  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 4, SPLIT_CONSTANT(0x1ac, 255), 0xba);
+  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 0x1c, SPLIT_CONSTANT(0x19c, 255), 0xca);
   Actor_SetMovementTypeById(4, (s32)gData_02004a6c);
   Actor_SetMovementTypeById(0x1c, (s32)gData_02004a90);
   Call3((void (*)())Actor_ArmCallback, 0x1a, 0x8000, 0);
@@ -326,7 +326,7 @@ void Func_02001ed0(void) {
   Walk(0x1a, 0x108, 0x1e);
   Actor_SetAngleToward(0x1a, 4, 0);
   Actor_SetAngleToward(4, 0x1b, 0);
-  Call3((void (*)())Actor_SetPositionAndReset, 0x1b, 0x2bb, 0xca);
+  Call3((void (*)())Actor_SetPositionAndReset, 0x1b, SPLIT_CONSTANT(0x1bc, 255), 0xca);
   ACTOR_SET_MODE_AND_WAIT(0x1b, 3, 0x14);
   FieldEvent_Wait(0xa);
   Func_0200489c(0x1b, 0, 5);

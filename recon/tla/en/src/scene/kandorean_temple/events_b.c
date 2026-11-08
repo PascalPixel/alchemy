@@ -3,7 +3,7 @@
 void Func_020004a8(void) {
   struct Actor *object;
 
-  if (GameFlag_Test(0x842) == 0) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 66)) == 0) {
     GameFlag_SetBit(0x230);
     Func_020051c0();
     Func_02005370(0);
@@ -19,7 +19,7 @@ void Func_020004a8(void) {
     Actor_SetModeById(14, 3);
     Motion_SetModeAndWaitAnimation(4, 3);
     FieldEvent_Wait(20);
-    Actor_SetSpeedParameters_(14, 0x13333, 0x9999);
+    Actor_SetSpeedParameters_(14, 0x13333, SPLIT_CONSTANT(0x9900, 153));
     Actor_SetModeById(14, 2);
     object = Actor_GetById(4);
     if (object)

@@ -12,11 +12,11 @@ void Func_020037e4(void) {
   if (work->field7c4 != 0) {
     if (GameFlag_Test(0x220))
       Func_02000624();
-    else if (GameFlag_Test(0x221))
+    else if (GameFlag_Test(SPLIT_CONSTANT(0x122, 255)))
       Func_02000668();
-    else if (GameFlag_Test(0x222))
+    else if (GameFlag_Test(SPLIT_CONSTANT(0x200, 34)))
       Func_020006ac();
-    else if (GameFlag_Test(0x223))
+    else if (GameFlag_Test(SPLIT_CONSTANT(0x124, 255)))
       Func_020006f0();
   }
 }
@@ -48,7 +48,7 @@ void Func_020038ec(void) {
 
   Func_02005a9c();
   Func_02005c3c(0);
-  if (GameFlag_Test(0x202))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x200, 2)))
     Func_02003898();
   Func_02005c9c(123);
   Event_FinishScreenTransition();

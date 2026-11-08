@@ -140,7 +140,7 @@ extern const u8 Data_081991a4[];
 
 static inline s32 ClearWords(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_ClearWords, 14 of 1101 instructions differ in tla-en. */
+   * Iwram_ClearWordsEntry, 14 of 1101 instructions differ in tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 
@@ -311,7 +311,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
         screen.x = 176;
       }
       gCameraSceneParameters[3] = 184 - screen.x;
-      IO_WRITE_QUEUE_PUSH(0x04000028, (64 - screen.x) << 8, 0x30000);
+      IO_WRITE_QUEUE_PUSH(SPLIT_CONSTANT(0x4000000, 40), (64 - screen.x) << 8, 0x30000);
 
       // Dust where the Djinni lands.
       if ((u32)frame <= 63) {
@@ -484,7 +484,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
           Transform_Push();
           spireShade = 0;
           if (frame <= 31) {
-            scale = frame * 10000 - 260000;
+            scale = frame * SPLIT_CONSTANT(0x2700, 16) - 260000;
           } else {
             scale = 60000;
           }

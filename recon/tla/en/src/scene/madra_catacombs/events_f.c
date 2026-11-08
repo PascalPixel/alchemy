@@ -80,7 +80,7 @@ void Func_02000a28(void) {
 
   animation->frame = ((struct AnimationRecord18 *)lever->animation)->frame;
   if (Flag_Test(0x204) != 0 && animation->frame == 0) {
-    Func_02001214(0x217);
+    Func_02001214(SPLIT_CONSTANT(0x118, 255));
     rock->x += PIXELS(-2);
     rock->velocityY = PIXELS(2);
     GameFlag_ClearBit(0x204);

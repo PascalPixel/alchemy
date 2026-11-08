@@ -65,7 +65,7 @@ void Func_02002020(void) {
   Actor_SetModeById(9, 3);
   FieldEvent_Wait(40);
   Func_02005014(191);
-  t26 = GameFlag_Test(0xa62);
+  t26 = GameFlag_Test(SPLIT_CONSTANT(0xa00, 98));
   v_r5 = 119;
   if (t26 != 0)
     goto L_0200a1d8;
@@ -106,7 +106,7 @@ L_0200a18c:
   v_r5 = 40;
   Func_02004df4(119, 31, 1, 2, 89, v_r5);
   Func_02004df4(119, 31, 1, 2, 100, v_r5);
-  GameFlag_SetBit(0xa62);
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 98));
   goto L_0200a1f8;
 L_0200a1d8:
   t43 = Random16Far();

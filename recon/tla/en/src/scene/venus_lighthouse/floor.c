@@ -133,7 +133,7 @@ void Func_0200078c(void) {
     leader->motionFlags |= 1;
     leader->terrainHeight = 0;
     leader->y = 0;
-  } else if (!Venus_FlagCheck(0x201)) {
+  } else if (!Venus_FlagCheck(SPLIT_CONSTANT(0x102, 255))) {
     Import_EventStart();
     Import_EventResolvePendingActions(0);
     Import_EventWait(5);

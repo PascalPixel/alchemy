@@ -17,6 +17,6 @@ void Func_02001bec(void) {
     Func_02003fc8(object);
   }
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
-  GameFlag_SetBit(0x88c);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 140));
   Func_02004048();
 }

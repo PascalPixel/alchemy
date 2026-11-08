@@ -85,7 +85,7 @@ void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
       continue;
     if (object->recordStorageKind != 0)
       continue;
-    if ((battleObject->resource & 0xfff) == 561 ||
+    if ((battleObject->resource & 0xfff) == SPLIT_CONSTANT(0x132, 255) ||
         (battleObject->resource & 0xfff) == 631 ||
         (battleObject->resource & 0xfff) == 638 ||
         (battleObject->resource & 0xfff) == 585 ||
@@ -107,7 +107,7 @@ void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
         records++;
       }
       record->flags = 0;
-      record = ResourceObject_CreateFar(spriteId + 0x2001);
+      record = ResourceObject_CreateFar(spriteId + SPLIT_CONSTANT(0x2000, 1));
       if (record != 0) {
         record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
         *records = record;

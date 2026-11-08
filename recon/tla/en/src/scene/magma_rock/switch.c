@@ -21,7 +21,7 @@ void Func_02001a8c(s32 mode, s32 cue) {
 
   work->target = Actor_GetById(17);
   Func_020014bc(mode, cue);
-  GameFlag_SetBit(0x202);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x200, 2));
 }
 
 void Func_02001ac0(s32 mode, s32 cue) {
@@ -29,7 +29,7 @@ void Func_02001ac0(s32 mode, s32 cue) {
 
   work->target = Actor_GetById(18);
   Func_020014bc(mode, cue);
-  GameFlag_SetBit(0x203);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x104, 255));
 }
 
 void Func_02001af4(s32 mode, s32 cue) {

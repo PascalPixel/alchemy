@@ -46,11 +46,11 @@ void Func_02000960(void) {
 }
 
 void Func_020009a4(void) {
-  if (!Flag_IsSet(0x91b)) {
+  if (!Flag_IsSet(SPLIT_CONSTANT(0x900, 27))) {
     if (!Flag_IsSet(0x91e))
       Func_02002694();
   } else {
-    if (!Flag_IsSet(0x91f))
+    if (!Flag_IsSet(SPLIT_CONSTANT(0x820, 255)))
       Func_02003878();
   }
 }
@@ -60,7 +60,7 @@ const void *Func_020009dc(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov65FRoom1) {
-    if (Flag_IsSet(0x91b))
+    if (Flag_IsSet(SPLIT_CONSTANT(0x900, 27)))
       return gData_02005f78;
     return gData_02005e34;
   }

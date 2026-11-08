@@ -184,7 +184,7 @@ L_02008a2c:
   Func_02004394(13, 0);
   Actor_SetModeById(13, 10);
   Actor_SetModeById(14, 9);
-  GameFlag_SetBit(0xa3b);
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 59));
   Func_0200445c();
   Func_020042e4();
 }

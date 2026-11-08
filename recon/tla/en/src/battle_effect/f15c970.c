@@ -88,7 +88,7 @@ void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {
                              Ram_MapCellBuffer, 1, 0);
   if (mode == 0) {
     void *palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
-    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
     copy((void *)0x05000000, palette, 128);
   }
   work->transferMode = 2;

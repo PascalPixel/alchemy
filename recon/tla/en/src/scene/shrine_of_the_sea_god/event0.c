@@ -14,9 +14,9 @@ void Func_02000280(void) {
   if (y > 0xc0000) {
     GameFlag_SetBit(0x340);
     if (*state == 4)
-      GameFlag_SetBit(0x341);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x300, 65));
     else if (*state == 5)
-      GameFlag_SetBit(0x342);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x300, 66));
     Func_02003ae0(14, 67);
   }
 }

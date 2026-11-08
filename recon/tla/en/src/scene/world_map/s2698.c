@@ -50,7 +50,7 @@ void Func_02002698(void) {
   Func_02004cf0(5, 0);
   Func_02004db0();
   Func_02004e30(145);
-  Func_02004d80(0x7fff, 0);
+  Func_02004d80(SPLIT_CONSTANT(0x7f00, 255), 0);
   Func_02004d78_(0x10000, 0);
   Func_02004d88(60);
   Task_Add(Func_02002594, TASK_PASS_VBLANK);
@@ -64,7 +64,7 @@ void Func_02002698(void) {
   Func_02004db0();
   Func_02004b78_(0x70000, 0x70000, 0x10000);
   Camera_MoveWithinMapBounds_(PIXELS(1988), -1, PIXELS(7553), 1);
-  Func_02004df8(0x9999, 60);
+  Func_02004df8(SPLIT_CONSTANT(0x9900, 153), 60);
   Func_02004d30();
   FieldEvent_Wait(30);
   Func_02004da8();

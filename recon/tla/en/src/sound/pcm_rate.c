@@ -23,7 +23,7 @@ void Sound_SetFixedSampleFreq(u32 mode) {
 
   mode = (mode >> 16) & 15;
   work->transferPeriod = 3;
-  work->outputRate = 31536;
+  work->outputRate = SPLIT_CONSTANT(0x7b00, 48);
   work->rate = mode;
   samples = 528;
   work->pcmSamplesPerVBlank = samples;

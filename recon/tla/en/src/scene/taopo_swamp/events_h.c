@@ -7,13 +7,13 @@ s32 Func_02001564(struct Actor *object) {
   s32 scale;
 
   if (object->y + object->velocityY < object->terrainHeight) {
-    flag = GameFlag_Test(0x221);
+    flag = GameFlag_Test(SPLIT_CONSTANT(0x122, 255));
     if (flag) {
       Func_020029b0(106);
       return 0;
     }
     spark = Func_02002808_(0x10d, object->x, object->y, object->z);
-    scale = 0x8ccc;
+    scale = SPLIT_CONSTANT(0x8c00, 204);
     if (spark) {
       spark->scaleX = scale;
       spark->scaleY = scale;

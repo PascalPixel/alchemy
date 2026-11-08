@@ -78,7 +78,7 @@ void StatusPanel_DrawHpPp(struct BattleUnit *unit, struct RenderInput *window);
 static inline void RestoreUnit(struct BattleUnit *unit,
                                struct BattleUnit *backup) {
   /* FAKEMATCH(wrapper): both restores forwarded through an inline, so the size
-     loads after the call's other arguments; as direct Iwram_CopyWords calls, 2
+     loads after the call's other arguments; as direct Iwram_CopyWordsEntry calls, 2
      of 494 instructions differ in tla-en. */
   Iwram_CopyWords(unit, backup, sizeof(struct BattleUnit));
 }

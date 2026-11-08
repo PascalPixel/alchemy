@@ -86,11 +86,11 @@ void BattleEffect_ProcessPendingStampTransfer(void) {
   s32 *pending;
 
   IRQ_LOCK(ime);
-  pending = (s32 *)(work + 0x78ec);
+  pending = (s32 *)(work + SPLIT_CONSTANT(0x7800, 236));
   if (*pending == 1) {
     *pending = 0;
     IRQ_UNLOCK(ime);
-    CopyWords_(*(void **)(work + 0x7b74), work + 0x6780, 0x1000);
+    CopyWords_(*(void **)(work + SPLIT_CONSTANT(0x7b00, 116)), work + 0x6780, 0x1000);
     FillWords_(work + 0x6780, 0x1000, 0);
   } else {
     IRQ_UNLOCK(ime);

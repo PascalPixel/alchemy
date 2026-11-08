@@ -25,7 +25,7 @@ void Func_02003dec(void) {
   Kibombo_CamMove(PIXELS(264), PIXELS(16), PIXELS(420), 1);
   Func_02005bb4();
   FieldEvent_Wait(40);
-  Func_02005ba4(0x6666, 0xccc);
+  Func_02005ba4(SPLIT_CONSTANT(0x6600, 102), 0xccc);
   Kibombo_CamMove(PIXELS(264), PIXELS(32), PIXELS(320), 1);
   Func_02005bb4();
   FieldEvent_Wait(80);
@@ -38,7 +38,7 @@ void Func_02003dec(void) {
   Kibombo_ObjArm(17, FACING_SOUTHEAST + FACING_STEP, 20);
   Func_02005b64(0x4000 + 17, 0);
   Func_02005c9c(11);
-  GameFlag_SetBit(0x8f2);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 242));
   Func_02005c9c(148);
   Actor_GetById(18)->velocityY = PIXELS(4);
   wait(5);
@@ -59,7 +59,7 @@ void Func_02003dec(void) {
   Actor_ArmCallback(17, FACING_NORTH + FACING_STEP, 20);
   Func_020032b0();
   FieldEvent_Wait(40);
-  Func_02005ba4(0x3333, 0x666);
+  Func_02005ba4(SPLIT_CONSTANT(0x3300, 51), 0x666);
   Camera_MoveWithinMapBounds(PIXELS(264), 0, PIXELS(400), 1);
   Func_02005bb4();
   FieldEvent_Wait(200);

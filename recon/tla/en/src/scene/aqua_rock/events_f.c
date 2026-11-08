@@ -67,5 +67,5 @@ settle:
   GameFlag_ClearBit(0x12f);
   Func_02002a18(77);
   Func_020029a0();
-  GameFlag_SetBit(0x955);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 85));
 }

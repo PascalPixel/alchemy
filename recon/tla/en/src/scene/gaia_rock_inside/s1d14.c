@@ -32,7 +32,7 @@ void Func_02001d14(void) {
   volatile u16 level;
   s32 i;
 
-  if (GameFlag_Test(0x9ee) || GameFlag_Test(0x9ba))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 238)) || GameFlag_Test(SPLIT_CONSTANT(0x900, 186)))
     return;
   person = Actor_GetById(12);
   level = REG_BLDALPHA;
@@ -61,10 +61,10 @@ void Func_02001d14(void) {
     person->z -= Q16_ONE;
     FieldEvent_Wait(2);
   }
-  GameFlag_SetBit(0x9ee);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 238));
   /* FAKEMATCH(wrapper): the form kept; as a direct call, 25 of 173
    * instructions differ in tla-en. */
-  Call3((void (*)())Func_02004e24, -1, -1, 0xe666);
+  Call3((void (*)())Func_02004e24, -1, -1, SPLIT_CONSTANT(0xe600, 102));
   object->x = 0;
   object->z = 0;
   FieldEvent_Wait(1);

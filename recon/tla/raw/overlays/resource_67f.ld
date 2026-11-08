@@ -32,7 +32,7 @@ SECTIONS
         "*/recon/tla/raw/src/scene/izumo_ruins/s10b0.o"(.text)
         "*/recon/tla/raw/src/scene/izumo_ruins/s1148.o"(.text)
         "*/games/tla/src/scene/izumo_ruins/events.o"(.text)
-        "*/recon/tla/raw/src/scene/izumo_ruins/s1228.o"(.text)
+        "*/games/tla/src/scene/izumo_ruins/s1228.o"(.text)
         "*/recon/tla/raw/src/scene/izumo_ruins/s12dc.o"(.text)
         "*/games/tla/src/scene/izumo_ruins/prepare.o"(.text)
         "*/games/tla/src/scene/izumo_ruins/import.o"(.text)

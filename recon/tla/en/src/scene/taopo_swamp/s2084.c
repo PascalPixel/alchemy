@@ -7,17 +7,17 @@ static __inline__ void Blend_SetAlpha(s32 value) {
 void Func_02002084(s32 fade) {
   Func_02002828();
   if (fade) {
-    Blend_SetAlpha(0xe06);
+    Blend_SetAlpha(SPLIT_CONSTANT(0xe00, 6));
     /* FAKEMATCH: the one-pass block finishes the blend value before the shared
      * register address; without it, 2 instructions differ in tla-en. */
     do {
     } while (0);
     wait(10);
-    Blend_SetAlpha(0xd04);
+    Blend_SetAlpha(SPLIT_CONSTANT(0xd00, 4));
     wait(10);
-    Blend_SetAlpha(0xd02);
+    Blend_SetAlpha(SPLIT_CONSTANT(0xd00, 2));
     wait(10);
-    Blend_SetAlpha(0xc01);
+    Blend_SetAlpha(SPLIT_CONSTANT(0xc00, 1));
     wait(10);
     Blend_SetAlpha(0xc00);
     wait(10);

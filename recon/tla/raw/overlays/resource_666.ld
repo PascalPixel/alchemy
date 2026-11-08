@@ -11,7 +11,7 @@ SECTIONS
         "*/recon/tla/raw/src/scene/alhafra_interiors/s02bc.o"(.text)
         "*/games/tla/src/scene/alhafra_interiors/s0444.o"(.text)
         "*/games/tla/src/scene/alhafra_interiors/s047c.o"(.text)
-        "*/recon/tla/raw/src/scene/alhafra_interiors/s04b8.o"(.text)
+        "*/games/tla/src/scene/alhafra_interiors/s04b8.o"(.text)
         "*/recon/tla/raw/src/scene/alhafra_interiors/s04f4.o"(.text)
         "*/games/tla/src/scene/alhafra_interiors/s0578.o"(.text)
         "*/games/tla/src/scene/alhafra_interiors/s0598.o"(.text)

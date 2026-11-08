@@ -35,7 +35,7 @@ void Func_02001224(s32 unused, s32 id) {
   Func_02002a20(0x7fff, 0);
   Func_02002a28(20);
   FieldEvent_Wait(20);
-  GameFlag_SetBit(0xa69);
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 105));
   Func_02002960(15, 48, 1, 1, 16, 48);
   Func_02002960(17, 50, 1, 1, 16, 50);
   object->update = (void (*)(void))Func_02000b58;
@@ -56,7 +56,7 @@ void Func_02001224(s32 unused, s32 id) {
   Actor_GetById(15)->update = (void (*)(void))Func_02001d98;
   FieldEvent_Wait(30);
   for (i = 5; i >= 0; i--) {
-    Func_02002a70(623);
+    Func_02002a70(SPLIT_CONSTANT(0x170, 255));
     wait(10);
   }
   FieldEvent_Wait(30);

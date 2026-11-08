@@ -23,7 +23,7 @@ s32 Func_0200086c(void) {
     scene = party->scene;
   }
   if (scene == (s32)&SceneId_Ov677Room1) {
-    if (Flag_IsSet(0x301)) {
+    if (Flag_IsSet(SPLIT_CONSTANT(0x300, 1))) {
       Call3((void (*)())Func_020009f8, 14, PIXELS(600), PIXELS(360));
       Call3((void (*)())Func_020009f8, 16, PIXELS(632), PIXELS(346));
       Call3((void (*)())Actor_ArmCallback, 16, FACING_SOUTH, 0);

@@ -34,7 +34,7 @@ void Func_02003c84(void) {
   wait(1);
 
   Func_02005c9c(212);
-  Func_02005bd4(0x7fff, 0);
+  Func_02005bd4(SPLIT_CONSTANT(0x7f00, 255), 0);
   Func_02005be4(1);
   wait(1);
   Camera_MoveWithinMapBounds(PIXELS(248), -1, 134 << 18, 0);

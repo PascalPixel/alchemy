@@ -104,7 +104,7 @@ void Func_0200036c(void) {
     Func_02002bd0((s32)&MsgWhereCouldMenardi);
     Func_02002be0(33, 0, 10);
     Func_02002b30();
-    GameFlag_SetBit(0x20f);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x110, 255));
   }
 }
 
@@ -134,7 +134,7 @@ void Func_02000404(void) {
     Func_02002bd0(msg);
     FieldMessage_ShowAtActor(26, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02002c80(), 0) == 0) {
-      GameFlag_SetBit(0x281);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x182, 255));
       FieldEvent_Wait(10);
       Func_02002c08(26, 0x102, 0);
       Func_02002bd0(msg + 1);
@@ -158,7 +158,7 @@ void Func_02000490(void) {
     Func_02002bd0(msg);
     FieldMessage_ShowAtActor(26, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02002c80(), 0) == 0) {
-      GameFlag_SetBit(0x281);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x182, 255));
       FieldEvent_Wait(10);
       Func_02002c08(26, 0x102, 0);
       Func_02002bd0(msg + 1);

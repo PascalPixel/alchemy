@@ -48,7 +48,7 @@ void Sound_Play(s32 id) {
   flags = id & 0xf000;
   if (gData_03001138.unk03 != 0)
     return;
-  id &= 0xfff;
+  id &= SPLIT_CONSTANT(0xf00, 255);
 
   if (id == 78) {
     if (gData_02005814 != 0)

@@ -7,7 +7,7 @@ void Func_02000714(struct Actor *object) {
 
   object->y += 0x8000;
 
-  step = 0x51e;
+  step = SPLIT_CONSTANT(0x500, 30);
   object->scaleX += step;
   object->scaleY += step;
   object->action += 2;

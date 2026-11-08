@@ -100,7 +100,7 @@ s32 BattleParty_ApplyStatusDamage(void) {
   }
 
   if (result != 0) {
-    BattleEffect_ApplyColorToSourceBuffer(0x1ff, 0);
+    BattleEffect_ApplyColorToSourceBuffer(SPLIT_CONSTANT(0x100, 255), 0);
     BattleEffect_StartBufferInterpolation(4);
     Sound_PlayFar(133);
   }

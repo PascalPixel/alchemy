@@ -329,7 +329,7 @@ void Func_02000cac(s32 arg) {
   I_Actor_SetSpeedParameters(26, 0x4000, angle);
   I_Actor_SetSpeedParameters(27, 0x4000, angle);
   I_Actor_ResetAndSetPositionInMode2(26, 714, 193);
-  I_Actor_ResetAndSetPositionInMode2(27, 698, 209);
+  I_Actor_ResetAndSetPositionInMode2(27, SPLIT_CONSTANT(0x200, 186), 209);
   Actor_SetMovementTypeById(26, gData_020049cc);
   Actor_SetMovementTypeById(27, gData_020049dc);
   FieldEvent_Wait(20);

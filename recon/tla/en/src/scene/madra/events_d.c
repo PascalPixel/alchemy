@@ -81,7 +81,7 @@ static __inline__ void CommitPos(s32 id, s32 x, s32 z) {
 
 void Func_020029ac(void) { GameFlag_SetBit(0x910); }
 
-void Func_020029b8(void) { GameFlag_SetBit(0x914); }
+void Func_020029b8(void) { GameFlag_SetBit(SPLIT_CONSTANT(0x900, 20)); }
 
 void Func_020029c8(void) {
   s32 next;

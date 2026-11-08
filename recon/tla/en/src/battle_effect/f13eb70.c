@@ -22,7 +22,7 @@ typedef DrawRectangle BlitterPair[2];
 
 // The whole effect work block: struct BattleEffectWork names only its first
 // 0x78f4 bytes.
-#define BATTLE_EFFECT_WORK_SIZE 0x7b7c
+#define BATTLE_EFFECT_WORK_SIZE SPLIT_CONSTANT(0x7b00, 124)
 
 // ⚓️'s blitter modes run the other way from The Broken Seal's.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
@@ -81,19 +81,19 @@ void wait(s32 frames);
 
 static inline s32 ClearWords(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_ClearWords, 14 of 1102 instructions differ in tla-en. */
+   * Iwram_ClearWordsEntry, 14 of 1102 instructions differ in tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 
 static inline s32 FillWords(void *destination, s32 size, u32 value) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_FillWords, 4 of 1102 instructions differ in tla-en. */
+   * Iwram_FillWordsEntry, 4 of 1102 instructions differ in tla-en. */
   return Iwram_FillWords(destination, size, value);
 }
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 47 of 1102 instructions differ in tla-en. */
+   * Iwram_CopyWordsEntry, 47 of 1102 instructions differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 
@@ -213,7 +213,7 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
   work->savedBg1Y = gBgScroll[1].y;
   gBgScroll[1].x = 0;
   IO_WRITE_QUEUE_PUSH(0x0400000a, 0x1f81, 0x20000);
-  FillWords((void *)0x050000c0, 0x100, 0x7fff7fff);
+  FillWords((void *)SPLIT_CONSTANT(0x5000000, 192), 0x100, 0x7fff7fff);
   Sound_PlayFar(212);
   Func_0814cd48(effect->actors[0], 7, 3, 0, 30);
 

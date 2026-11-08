@@ -20,16 +20,16 @@ void Func_080dd754(void) {
   party = &gMainRoutineWork;
   actor = ObjectTable_Get(party->currentOwner);
   if (*(s8 *)(work + 0xca5) != 0) {
-    timer = (s16 *)(work + 0xca6);
+    timer = (s16 *)(work + SPLIT_CONSTANT(0xc00, 166));
     if (*timer != 0)
       (*timer)--;
   }
 
-  dx = Iwram_MulQ16(*(s16 *)(work + 0xca8) - actor->x / Q16_ONE, 0xd105);
+  dx = Iwram_MulQ16(*(s16 *)(work + 0xca8) - actor->x / Q16_ONE, SPLIT_CONSTANT(0xd100, 5));
   dz = *(s16 *)(work + 0xcaa) - (actor->z - actor->y) / Q16_ONE;
   if (dx * dx + dz * dz >= 3600 || *(s16 *)(work + 0xca6) == 0) {
     u16 *slot = (u16 *)(work + 358);
-    u32 request = 0x2090;
+    u32 request = SPLIT_CONSTANT(0x2000, 144);
 
     *slot = request;
   }

@@ -18,19 +18,19 @@ void Func_02000d74(void) {
   Actor_ArmCallback(26, FACING_EAST, 0);
   Actor_ArmCallback(5, FACING_EAST, 0);
   Actor_ArmCallback(6, FACING_EAST, 10);
-  Func_02005ba4(0x4cccc, 0x9999);
+  Func_02005ba4(0x4cccc, SPLIT_CONSTANT(0x9900, 153));
   Kibombo_CamMove(PIXELS(264), -1, PIXELS(388), 1);
   Func_02005bb4();
   FieldEvent_Wait(40);
   Kibombo_ObjArm(17, FACING_SOUTHEAST + FACING_STEP, 20);
   Motion_SetModeAndWaitAnimation(17, 3);
-  Func_02005b64(0x4011, 0);
+  Func_02005b64(SPLIT_CONSTANT(0x4000, 17), 0);
   Func_02005c9c(26);
   Actor_SetSingleChildFlags(Actor_GetById(27), 0);
   Actor_GetById(27)->motionFlags = 0;
   Actor_SetPositionAndResetMotion(Actor_GetById(27), PIXELS(265), PIXELS(24),
                                   PIXELS(344));
-  Func_02005ba4(0x6666, 0xccc);
+  Func_02005ba4(SPLIT_CONSTANT(0x6600, 102), 0xccc);
   Camera_MoveWithinMapBounds(PIXELS(264), -1, PIXELS(340), 1);
   Kibombo_ObjSpeed(17, 0x3333, 0x1999);
   Kibombo_ObjWalk(17, 264, 374);
@@ -76,7 +76,7 @@ void Func_02000d74(void) {
   Kibombo_ObjSpeed(17, 0x19999, 0xcccc);
   Actor_SetPositionAndReset(17, 264, 392);
   FieldEvent_Wait(20);
-  Func_02005b64(0x8011, 0);
+  Func_02005b64(SPLIT_CONSTANT(0x8000, 17), 0);
   Func_02005c9c(148);
   Func_02005c9c(11);
   Func_020032b0();
@@ -108,7 +108,7 @@ void Func_02000d74(void) {
   Kibombo_ObjSpeed(26, 0xcccc, 0x6666);
   Actor_ResetAndSetPositionInMode2(26, 104, 368);
   FieldEvent_Wait(20);
-  Func_02005ba4(0xcccc, 0x1999);
+  Func_02005ba4(SPLIT_CONSTANT(0xcc00, 204), 0x1999);
   Camera_MoveWithinMapBounds(PIXELS(111), -1, PIXELS(356), 1);
   Actor_WaitForMoveById(26);
   Actor_SetModeById(26, 1);
@@ -121,7 +121,7 @@ void Func_02000d74(void) {
   Kibombo_ObjArm(26, FACING_SOUTH + FACING_STEP, 20);
   Kibombo_MessageOpen(0x601a, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
-    Func_02005b64(0x601a, 0);
+    Func_02005b64(SPLIT_CONSTANT(0x6000, 26), 0);
     ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
   } else {
     ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1c4++;

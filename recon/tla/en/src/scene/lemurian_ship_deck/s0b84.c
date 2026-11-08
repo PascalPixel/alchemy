@@ -102,7 +102,7 @@ void Func_020002cc(void) {
   Value2(Task_Add, (s32)Func_02000258, 0x480);
   gData_020024b0 = 0;
   Task_Add(Func_02000288, 0x480);
-  Call2((void (*)())Func_0200205c, 0xcccc, 0x1999);
+  Call2((void (*)())Func_0200205c, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x1900, 153));
   Camera_MoveWithinMapBounds(PIXELS(542), PIXELS(44), PIXELS(396), 1);
   Func_0200206c();
   Call1((void (*)())FieldEvent_Wait, 80);
@@ -156,7 +156,7 @@ void Func_020002cc(void) {
   Func_02002034(5, 0);
   Call2((void (*)())Func_02002054, 6, 0x102);
   Call2((void (*)())Func_02002044, 6, FACING_SOUTHWEST);
-  Func_02002034(0x4006, 0);
+  Func_02002034(SPLIT_CONSTANT(0x4000, 6), 0);
   Func_02002034(5, 0);
   Func_02002034(9, 0);
   Call3((void (*)())Actor_ArmCallback, 6, FACING_NORTH, 0);
@@ -178,7 +178,7 @@ void Func_020002cc(void) {
   Event_WaitTransitionFrames();
   gMainRoutineWork.renderMode = 7;
   gMainRoutineWork.ownerOverride = 1;
-  GameFlag_SetBit(0x8de);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 222));
   Func_0200207c(10);
 }
 

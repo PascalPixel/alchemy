@@ -55,5 +55,5 @@ void Func_020006ac(void) {
     }
     list++;
   }
-  GameFlag_SetBit(0x20b);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x10c, 255));
 }

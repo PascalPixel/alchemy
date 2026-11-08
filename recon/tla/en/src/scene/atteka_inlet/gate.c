@@ -39,7 +39,7 @@ static inline void Place(s32 id, s32 x, s32 z) {
 }
 
 void Func_0200077c(void) {
-  if (GameFlag_Test(0x820) && GameFlag_Test(0x9b1) && !GameFlag_Test(0x9ad))
+  if (GameFlag_Test(0x820) && GameFlag_Test(0x9b1) && !GameFlag_Test(SPLIT_CONSTANT(0x900, 173)))
     Func_0200097c();
 }
 

@@ -24,17 +24,17 @@ void Func_02000428(void) {
   Func_02005a68(124);
   if (state->mirrored == 0) {
     Actor_SetModeById(9, 6);
-    GameFlag_SetBit(645);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x186, 255));
     if (found != 0) {
       Actor_SetModeById(10, 6);
-      GameFlag_SetBit(646);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x200, 134));
     }
   } else {
     Actor_SetModeById(11, 6);
-    GameFlag_SetBit(645);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x186, 255));
     if (found != 0) {
       Actor_SetModeById(12, 6);
-      GameFlag_SetBit(646);
+      GameFlag_SetBit(SPLIT_CONSTANT(0x200, 134));
     }
   }
   GameFlag_SetBit(644);

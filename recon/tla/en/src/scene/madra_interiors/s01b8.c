@@ -9,7 +9,7 @@ void Func_020001b8(s32 actor) {
   } else {
     if (GameFlag_Test(0x8ff))
       Func_02001e18((s32)MsgMadraInteriors149);
-    else if (GameFlag_Test(0x8ab))
+    else if (GameFlag_Test(SPLIT_CONSTANT(0x800, 171)))
       Func_02001e18((s32)MsgMadraInteriors81);
     else
       Func_02001e18((s32)MsgMadraInteriors33);
@@ -32,7 +32,7 @@ void Func_0200023c(void) {
 void Func_0200028c(void) {
   s32 msg;
 
-  if (GameFlag_Test(0x98a)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 138))) {
     if (GameFlag_Test(0x310))
       msg = (s32)MsgMadraInteriors111;
     else
@@ -52,7 +52,7 @@ void Func_0200028c(void) {
 }
 
 void Func_02000308(void) {
-  if (GameFlag_Test(0x98a)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 138))) {
     if (GameFlag_Test(0x310)) {
       Func_02001e18((s32)MsgMadraInteriors112);
       Func_02001e30(11, 0);
@@ -70,7 +70,7 @@ void Func_02000308(void) {
 }
 
 void Func_02000368(void) {
-  if (GameFlag_Test(0x98a)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 138))) {
     if (GameFlag_Test(0x310)) {
       Func_02001e18((s32)MsgMadraInteriors113);
       Func_02001e30(10, 0);
@@ -93,7 +93,7 @@ void Func_02000368(void) {
 }
 
 void Func_020003c8(void) {
-  if (GameFlag_Test(0x98a)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 138))) {
     if (GameFlag_Test(0x310)) {
       Func_02001e18((s32)MsgMadraInteriors114);
       Func_02001e30(11, 0);
@@ -117,7 +117,7 @@ void Func_020003c8(void) {
 
 void Func_02000428(void) {
   if (!FlagCheck(0x211)) {
-    GameFlag_SetBit(0x211);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x112, 255));
     Func_02001e18((s32)MsgUhhhnnnUhhhnnn2);
     Actor_CommitPositionAndActivate(14, -12, 0);
     FieldEvent_Wait(20);
@@ -143,13 +143,13 @@ const u8 *Func_020004c4(void) {
     return gData_02002bb8;
   if (GameFlag_Test(0x8ff))
     return gData_0200308c;
-  if (GameFlag_Test(0x8ab))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 171)))
     return gData_02002da4;
   return gData_020028a0;
 }
 
 void Func_02000534(void) {
-  if (GameFlag_Test(0x8ab)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 171))) {
     ActorPlace(26, PIXELS(888), PIXELS(8));
   } else {
     Func_02001d38(Actor_GetById(26), 242);

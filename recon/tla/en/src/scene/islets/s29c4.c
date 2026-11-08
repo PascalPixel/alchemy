@@ -58,8 +58,8 @@ void Func_020029c4(void) {
 #endif
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Call3(Actor_SetSpeedParameters, 9, 0xcccc, 0x6666);
-  Actor_SetSpeedParameters(10, 0xcccc, 0x6666);
+  Call3(Actor_SetSpeedParameters, 9, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
+  Actor_SetSpeedParameters(10, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
   OBJECT(10)->update = Func_02000df8;
   guide->update = Func_02000df8;
   done = (u8 *)guide + 0x63;
@@ -77,10 +77,10 @@ void Func_020029c4(void) {
   Func_02003f24(MsgWellHereWe);
   Func_02003f2c(9, 0);
   Actor_SetModeById(9, 1);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_Jump(gMainRoutineWork.currentOwner, 6, 0);
-  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 152, 742);
+  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 152, SPLIT_CONSTANT(0x200, 230));
   Call2(Func_02003f3c, gMainRoutineWork.currentOwner, FACING_SOUTH);
   Func_02003f2c(9, 0);
   Func_02003fb4();

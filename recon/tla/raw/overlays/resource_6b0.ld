@@ -44,7 +44,7 @@ SECTIONS
         "*/games/tla/src/scene/anemos_inner_sanctum/s1938.o"(.text)
         "*/recon/tla/raw/src/scene/anemos_inner_sanctum/s19a8.o"(.text)
         "*/recon/tla/raw/src/scene/anemos_inner_sanctum/s1a94.o"(.text)
-        "*/recon/tla/raw/src/scene/anemos_inner_sanctum/s1b88.o"(.text)
+        "*/games/tla/src/scene/anemos_inner_sanctum/s1b88.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s1bec.o"(.text)
         "*/recon/tla/raw/src/scene/anemos_inner_sanctum/s1c60.o"(.text)
         "*/recon/tla/raw/src/scene/anemos_inner_sanctum/s1c94.o"(.text)

@@ -71,7 +71,7 @@ void Func_02001650(void) {
   PartyInventory_Remove(242);
   GameFlag_SetBit(0x983);
   GameFlag_SetBit(0x930);
-  GameFlag_SetBit(0x931);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 49));
   GameFlag_SetBit(0x933);
   GameFlag_SetBit(0x934);
   GameFlag_SetBit(0x935);
@@ -84,7 +84,7 @@ void Func_02001650(void) {
   GameFlag_SetBit(0x93c);
   GameFlag_SetBit(0x93e);
   GameFlag_SetBit(0x932);
-  GameFlag_SetBit(0x93f);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x840, 255));
   gMainRoutineWork.ownerOverride = 1;
   Func_02002d70(90);
 }

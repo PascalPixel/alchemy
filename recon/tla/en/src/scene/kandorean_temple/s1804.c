@@ -47,7 +47,7 @@ void Func_02001804(void) {
     if (*timer == 2280)
       Call6((void (*)())Func_02005178, 37, 12, 1, 1, 37, 14);
     if (*timer > 2300 && *phase == 0) {
-      if (GameFlag_Test(0x209)) {
+      if (GameFlag_Test(SPLIT_CONSTANT(0x10a, 255))) {
         Call6((void (*)())Func_02005178, 22, 0, 1, 1, 37, 14);
         Task_RemoveFar(Func_02001804);
       } else {

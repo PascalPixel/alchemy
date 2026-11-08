@@ -10,7 +10,7 @@ SECTIONS
         "*/recon/tla/raw/src/scene/naribwe_interiors/s0390.o"(.text)
         "*/recon/tla/raw/src/scene/naribwe_interiors/reading.o"(.text)
         "*/games/tla/src/scene/naribwe_interiors/s0ba0.o"(.text)
-        "*/recon/tla/raw/src/scene/naribwe_interiors/s0c04.o"(.text)
+        "*/games/tla/src/scene/naribwe_interiors/s0c04.o"(.text)
         "*/recon/tla/raw/src/scene/naribwe_interiors/prepare.o"(.text)
         "*/games/tla/src/scene/naribwe_interiors/import.o"(.text)
         "*/games/tla/src/scene/naribwe_interiors/data.o"(.data)

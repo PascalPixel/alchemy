@@ -47,7 +47,7 @@ void Func_02000bd8(void) {
   Func_0200437c((s32)&MsgMarsStar02);
   Func_02004394(13, 0);
   Actor_SetModeById(13, 10);
-  if (!GameFlag_Test(0xa3a)) {
+  if (!GameFlag_Test(SPLIT_CONSTANT(0xa00, 58))) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     Func_020043a4(gMainRoutineWork.currentOwner, 0x4000);
     Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
@@ -70,16 +70,16 @@ void Func_02000bd8(void) {
       }
     }
     Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
-    GameFlag_SetBit(0xa3a);
+    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 58));
     Actor_SetPositionAndResetMotion(Data_02004cec, 0, 0, 0);
     wait(1);
     Func_020041ec(Data_02004cec);
     wait(1);
-    Func_020043c4(0x4cccc, 0x9999);
+    Func_020043c4(0x4cccc, SPLIT_CONSTANT(0x9900, 153));
     Camera_MoveWithinMapBounds(170 << 18, -1, 146 << 16, 1);
     Func_020043d4();
     Func_0200440c_(0x10000, 0);
-    Func_02004404(0x10003, 0);
+    Func_02004404(SPLIT_CONSTANT(0x10000, 3), 0);
     Func_02004414(20);
     wait(20);
     {

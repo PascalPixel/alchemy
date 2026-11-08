@@ -42,13 +42,13 @@ void FieldMessage_Show(s32 message, s32 position);
 void Func_020008a4(void) {
   s32 angle;
 
-  if (!Flag_IsSet(0xa24))
+  if (!Flag_IsSet(SPLIT_CONSTANT(0xa00, 36)))
     return;
-  if (Flag_IsSet(0xa23))
+  if (Flag_IsSet(SPLIT_CONSTANT(0xa00, 35)))
     return;
-  if (Flag_IsSet(0xa22))
+  if (Flag_IsSet(SPLIT_CONSTANT(0xa00, 34)))
     return;
-  Flag_Set(0xa22);
+  Flag_Set(SPLIT_CONSTANT(0xa00, 34));
   Func_020028b0();
   Func_020029a8(0);
   Func_02002928(MsgFieldWaitingForCompanion);
@@ -101,7 +101,7 @@ void Func_020008a4(void) {
   Motion_SetModeAndWaitAnimation(22, 3);
   FieldEvent_Wait(30);
   Func_02002938(22, 0, 5);
-  Flag_Set(0xa25);
+  Flag_Set(SPLIT_CONSTANT(0xa00, 37));
   Flag_Set(0x161);
   Flag_Set(0x144);
   Func_020028b8();

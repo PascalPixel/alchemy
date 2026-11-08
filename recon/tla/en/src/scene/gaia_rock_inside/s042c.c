@@ -55,7 +55,7 @@ s32 Func_0200042c(void) {
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = Effect_AdvanceMotion;
-  options.startScaleX = 0xa3d7;
+  options.startScaleX = SPLIT_CONSTANT(0xa300, 215);
   options.startScaleY = 0xa3d7;
   i = 0;
   // A goto loop carries no loop notes: as a do, for or while loop, loop.c
@@ -90,7 +90,7 @@ loop:
   Func_02004f34(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
   Call3((void (*)())Func_02004e24, 0x50000, 0x50000, 0x10000);
-  Call3((void (*)())Func_02004e24, -1, -1, 0xe666);
+  Call3((void (*)())Func_02004e24, -1, -1, SPLIT_CONSTANT(0xe600, 102));
   Func_02004e2c();
   Func_02004f34(gMainRoutineWork.currentOwner, 0x100);
   actor->gravity = 0x10000;

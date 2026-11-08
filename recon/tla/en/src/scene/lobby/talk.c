@@ -47,7 +47,7 @@ s32 Func_02001130(s32 actor) {
   if (GameFlag_Test(0x304)) {
     GameFlag_Test(0x2f4);
     base = GameFlag_Test(actor + 0x2f0);
-    if (GameFlag_Test(0x305)) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x300, 5))) {
       if (base)
         base = (s32)MsgEverybodyDeservesA;
       else
@@ -91,7 +91,7 @@ s32 Func_0200122c(s32 actor) {
   }
   Func_02001a14();
   Func_02001ab4(0);
-  if (GameFlag_Test(0x206)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x200, 6))) {
     switch (actor) {
     case 13:
       message = (s32)MsgILlBe;
@@ -115,7 +115,7 @@ s32 Func_0200122c(s32 actor) {
       message = (s32)MsgSometimesYourClass;
       break;
     }
-    GameFlag_SetBit(0x206);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x200, 6));
   }
   Func_02001a64(message);
   FieldMessage_ShowAtActor(actor, 0);

@@ -31,7 +31,7 @@ s32 Func_02000c94(void) {
   Func_02001fac();
   Func_02002044(0);
   GameFlag_SetBit(0x200);
-  Func_02002054(0x22d);
+  Func_02002054(SPLIT_CONSTANT(0x12e, 255));
   do {
     wait(10);
     changed = 0;

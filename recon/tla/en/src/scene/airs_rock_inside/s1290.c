@@ -48,9 +48,9 @@ void Func_02001290(struct Actor *object) {
       /* FAKEMATCH(wrapper): forwarded, so each product builds its own 0x80000
        * and they share the routine's address; as direct calls, 129 of 184
        * instructions differ in tla-en. */
-      position.x = object->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
+      position.x = object->x + ValueLr2((s32 (*)())Iwram_MulQ16Entry, 0x80000,
                                       Math_Cosine(object->angle));
-      position.z = object->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
+      position.z = object->z + ValueLr2((s32 (*)())Iwram_MulQ16Entry, 0x80000,
                                       Math_Sine(object->angle));
     }
     for (i = 0; i != 3; i++) {

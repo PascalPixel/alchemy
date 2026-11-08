@@ -112,7 +112,7 @@ void Render_ApplyProjectedPlacement(struct PlacedObject *object, s32 *pos,
     anchorY = Iwram_MulQ16(cos, offsetY) - Iwram_MulQ16(sin, offsetX);
   }
   x = (px >> 16) - halfWidth + ((anchorX + 0xffff) >> 16);
-  y = ((pz - py) >> 16) - halfHeight - ((anchorY + 0xffff) >> 16);
+  y = ((pz - py) >> 16) - halfHeight - ((anchorY + SPLIT_CONSTANT(0xff00, 255)) >> 16);
   if (x < 240 && y < 160) {
     part = &object->part;
     part->x = x;

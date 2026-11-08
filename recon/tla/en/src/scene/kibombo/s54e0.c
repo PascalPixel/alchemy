@@ -6,7 +6,7 @@ void Func_020054e0(void) {
   s16 entrance;
 
   Func_0200538c();
-  if (GameFlag_Test(0x8fb)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 251))) {
     Func_02003640(1, 0);
     Func_020036e0(1, 5);
   }

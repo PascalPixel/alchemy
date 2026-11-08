@@ -34,14 +34,14 @@ void Func_02001cc8(void) {
   x = object->x >> 20;
   z = object->z >> 20;
   if (x == 16 && z == 43)
-    GameFlag_SetBit(0x85f);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x760, 255));
   else if (x == 45 && z == 45)
     GameFlag_SetBit(0x860);
   else if (x == 21 && z == 48)
-    GameFlag_SetBit(0x861);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x800, 97));
   else if (x == 39 && z == 49)
     GameFlag_SetBit(0x862);
   else if (x == 49 && z == 18)
-    GameFlag_SetBit(0x887);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x788, 255));
   Func_02003bd0();
 }

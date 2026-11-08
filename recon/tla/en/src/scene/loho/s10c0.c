@@ -32,7 +32,7 @@ s32 Func_020010c0(void) {
   } else {
     Func_020010a0();
   }
-  if (GameFlag_Test(0xa5f)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x960, 255))) {
     Func_02001348(20, 0, 0);
     Func_02001350(14, PIXELS(248), PIXELS(480), FACING_EAST);
     if (!GameFlag_Test(0x90a)) {

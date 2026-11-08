@@ -7,7 +7,7 @@ SECTIONS
         "*/games/tla/src/scene/islets/s004c.o"(.text)
         "*/games/tla/src/scene/islets/s019c.o"(.text)
         "*/games/tla/src/scene/islets/events2.o"(.text)
-        "*/resource_674_overlay.o"(.text.x020086f4)
+        "*/games/tla/src/scene/islets/s06f4.o"(.text)
         "*/games/tla/src/scene/islets/s0da0.o"(.text)
         "*/games/tla/src/scene/islets/s0e38.o"(.text)
         "*/games/tla/src/scene/islets/s1278.o"(.text)

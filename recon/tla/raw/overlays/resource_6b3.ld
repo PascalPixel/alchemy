@@ -4,7 +4,7 @@ SECTIONS
     {
         "*/games/tla/src/scene/epilogue/entry.o"(.text)
         "*/games/tla/src/scene/epilogue/scene_tables.o"(.text)
-        "*/games/tla/src/scene/epilogue/s005c.o"(.text)
+        "*/recon/tla/raw/src/scene/epilogue/s005c.o"(.text)
         "*/recon/tla/raw/src/scene/epilogue/s0098.o"(.text)
         "*/recon/tla/raw/src/scene/epilogue/s0158.o"(.text)
         "*/recon/tla/raw/src/scene/epilogue/s0244.o"(.text)

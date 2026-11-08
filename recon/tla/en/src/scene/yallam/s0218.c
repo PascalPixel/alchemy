@@ -1,4 +1,4 @@
-#include "../../../../../../games/tla/src/scene/yallam/yallam.h"
+#include "yallam.h"
 #include "types.h"
 #include "main_routine_work.h"
 

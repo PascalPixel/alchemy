@@ -21,7 +21,7 @@ SECTIONS
         "*/recon/tla/raw/src/scene/champa/s0c04.o"(.text)
         "*/games/tla/src/scene/champa/s0c40.o"(.text)
         "*/recon/tla/raw/src/scene/champa/s0c90.o"(.text)
-        "*/games/tla/src/scene/champa/s0d4c.o"(.text)
+        "*/recon/tla/raw/src/scene/champa/s0d4c.o"(.text)
         "*/games/tla/src/scene/champa/s0e04.o"(.text)
         "*/games/tla/src/scene/champa/s0e24.o"(.text)
         "*/recon/tla/raw/src/scene/champa/s0e30.o"(.text)

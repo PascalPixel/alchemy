@@ -16,7 +16,7 @@ SECTIONS
         "*/recon/tla/raw/src/scene/lobby/s0864.o"(.text)
         "*/recon/tla/raw/src/scene/lobby/counter.o"(.text)
         "*/recon/tla/raw/src/scene/lobby/s0da0.o"(.text)
-        "*/games/tla/src/scene/lobby/prompt.o"(.text)
+        "*/recon/tla/raw/src/scene/lobby/prompt.o"(.text)
         "*/games/tla/src/scene/lobby/sound_call.o"(.text)
         "*/recon/tla/raw/src/scene/lobby/s0fbc.o"(.text)
         "*/recon/tla/raw/src/scene/lobby/talk.o"(.text)

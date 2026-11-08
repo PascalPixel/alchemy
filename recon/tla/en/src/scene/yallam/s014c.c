@@ -1,4 +1,4 @@
-#include "../../../../../../games/tla/src/scene/yallam/yallam.h"
+#include "yallam.h"
 #include "version.h"
 
 // Japanese has no stop beside the leader.

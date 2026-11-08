@@ -6,7 +6,7 @@ SECTIONS
         "*/games/tla/src/scene/lemuria_palace/scene_tables.o"(.text)
         "*/games/tla/src/scene/lemuria_palace/s00c8.o"(.text)
         "*/games/tla/src/scene/lemuria_palace/scene_events.o"(.text)
-        "*/games/tla/src/scene/lemuria_palace/s00f4.o"(.text)
+        "*/recon/tla/raw/src/scene/lemuria_palace/s00f4.o"(.text)
         "*/recon/tla/raw/src/scene/lemuria_palace/prepare.o"(.text)
         "*/recon/tla/raw/src/scene/lemuria_palace/s01d8.o"(.text)
         "*/recon/tla/raw/src/scene/lemuria_palace/s02b4.o"(.text)

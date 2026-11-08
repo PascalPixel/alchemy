@@ -4,7 +4,7 @@ SECTIONS
     {
         "*/games/tla/src/scene/islet_cave/entry.o"(.text)
         "*/recon/tla/raw/src/scene/islet_cave/s0038.o"(.text)
-        "*/games/tla/src/scene/islet_cave/s0158.o"(.text)
+        "*/recon/tla/raw/src/scene/islet_cave/s0158.o"(.text)
         "*/games/tla/src/scene/islet_cave/s01d4.o"(.text)
         "*/recon/tla/raw/src/scene/islet_cave/s01f8.o"(.text)
         "*/recon/tla/raw/src/scene/islet_cave/s0328.o"(.text)

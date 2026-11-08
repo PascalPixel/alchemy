@@ -171,7 +171,7 @@ INCLUDES := -Igames/$(GAME)/include \
 # Game C (K1, K2): alchemy-gcc's GCC of July 2000, one option set per game;
 # ⚓️'s overlays swap -O2 for -Os below, by file and place in the build.
 CFLAGS_tbs := -O2 -mthumb -mthumb-interwork -nostdinc -fcall-used-r4
-CFLAGS_tla := -O2 -mthumb -nostdinc -fcall-used-r4 -mtune=arm9tdmi
+CFLAGS_tla := -O2 -mthumb -nostdinc -fcall-used-r4
 CFLAGS := $(CFLAGS_$(GAME)) $(INCLUDES) -D$(DEFINE)=1 -I$(BUILD)
 
 # The sound and flash libraries: pret's old_agbcc. ARM C: GCC 2.95.2.

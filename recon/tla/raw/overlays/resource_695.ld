@@ -15,7 +15,7 @@ SECTIONS
         "*/recon/tla/raw/src/scene/shaman_village_cave/s083c.o"(.text)
         "*/recon/tla/raw/src/scene/shaman_village_cave/s087c.o"(.text)
         "*/recon/tla/raw/src/scene/shaman_village_cave/s0a24.o"(.text)
-        "*/recon/tla/raw/src/scene/shaman_village_cave/s0d84.o"(.text)
+        "*/games/tla/src/scene/shaman_village_cave/s0d84.o"(.text)
         "*/recon/tla/raw/src/scene/shaman_village_cave/s0e04.o"(.text)
         "*/recon/tla/raw/src/scene/shaman_village_cave/events.o"(.text)
         "*/games/tla/src/scene/shaman_village_cave/import.o"(.text)

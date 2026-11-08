@@ -11,7 +11,7 @@ SECTIONS
         "*/games/tla/src/field/object/prepare_object.o"(.text)
         "*/resource_66b_overlay.o"(.text.x0200815e)
         "*/games/tla/src/scene/gondowan_cliffs/s0160.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
+        "*/recon/tla/raw/src/field/field_effect/move.o"(.text)
         "*/resource_66b_overlay.o"(.text.x020081ea)
         "*/recon/tla/raw/src/scene/gondowan_cliffs/s01ec.o"(.text)
         "*/games/tla/src/scene/gondowan_cliffs/s03cc.o"(.text)

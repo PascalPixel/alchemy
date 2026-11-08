@@ -6,7 +6,7 @@ SECTIONS
         "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
         "*/games/tla/src/field/object/prepare_object.o"(.text)
         "*/games/tla/src/scene/treasure_isle/s00d0.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
+        "*/recon/tla/raw/src/field/field_effect/move.o"(.text)
         "*/recon/tla/raw/src/scene/treasure_isle/s015c.o"(.text)
         "*/games/tla/src/scene/treasure_isle/scene_tables.o"(.text)
         "*/games/tla/src/scene/treasure_isle/s0350.o"(.text)

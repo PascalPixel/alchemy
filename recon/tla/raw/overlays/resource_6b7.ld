@@ -9,7 +9,7 @@ SECTIONS
         "*/games/tla/src/debug/level/s00fc.o"(.text)
         "*/games/tla/src/debug/level/level.o"(.text)
         "*/games/tla/src/debug/level/s017c.o"(.text)
-        "*/games/tla/src/debug/level/talk.o"(.text)
+        "*/recon/tla/raw/src/debug/level/talk.o"(.text)
         "*/recon/tla/raw/src/debug/level/s02cc.o"(.text)
         "*/games/tla/src/debug/level/finish.o"(.text)
         "*/games/tla/src/debug/level/s0590.o"(.text)

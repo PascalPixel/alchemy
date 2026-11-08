@@ -3,7 +3,7 @@
 #include "main_routine_work.h"
 #include "scene_call.h"
 #include "text/msg_ids.h"
-#include "../../../../../../games/tla/src/scene/daila_interiors/daila.h"
+#include "daila.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
 

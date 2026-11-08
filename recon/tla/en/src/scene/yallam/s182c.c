@@ -1,4 +1,4 @@
-#include "../../../../games/tla/src/scene/yallam/yallam.h"
+#include "yallam.h"
 #include "task.h"
 
 void Func_0200182c(void) {

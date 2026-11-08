@@ -5,7 +5,7 @@ SECTIONS
         "*/games/tla/src/scene/yampi_desert/entry.o"(.text)
         "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
         "*/resource_661_overlay.o"(.text.x0200807e)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
+        "*/recon/tla/raw/src/field/field_effect/move.o"(.text)
         "*/resource_661_overlay.o"(.text.x020080b6)
         "*/recon/tla/raw/src/scene/yampi_desert/s00b8.o"(.text)
         "*/games/tla/src/scene/yampi_desert/placements.o"(.text)

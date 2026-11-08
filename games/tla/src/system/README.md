@@ -35,10 +35,9 @@ are in [The Lost Age: Game Pak](../gamepak/README.md).
   does; how each overlay is linked is in
   [The Lost Age: scene](../scene/README.md).
 - The task table holds 24 tasks (`TASK_COUNT`), not 20.
-- Every Thumb file is compiled with `-mtune=arm9tdmi` added to The Broken
-  Seal's options, and without `-mthumb-interwork` (`CFLAGS_tla` in the
-  `Makefile`). Of the stock option sets, these compile the most of this game's
-  code as the game has it.
+- Every Thumb file is compiled with The Broken Seal's options without
+  `-mthumb-interwork` (`CFLAGS_tla` in the `Makefile`): this game's functions
+  return with `pop {pc}`, which interworking code never does.
 - This game's fixed addresses are its own, listed in
   `games/tla/include/system/ram_buffer.h`, `iwram_call.h` and
   `gamepak/rom_header.h`.

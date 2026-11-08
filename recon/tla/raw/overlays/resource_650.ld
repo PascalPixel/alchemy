@@ -8,7 +8,7 @@ SECTIONS
         "*/recon/tla/raw/src/scene/idejima/s049c.o"(.text)
         "*/recon/tla/raw/src/scene/idejima/depart.o"(.text)
         "*/recon/tla/raw/src/scene/idejima/wave.o"(.text)
-        "*/games/tla/src/scene/idejima/s15a0.o"(.text)
+        "*/recon/tla/raw/src/scene/idejima/s15a0.o"(.text)
         "*/recon/tla/raw/src/scene/idejima/drift.o"(.text)
         "*/games/tla/src/scene/shared/drift_spawn.o"(.text)
         "*/recon/tla/raw/src/scene/idejima/s16d8.o"(.text)

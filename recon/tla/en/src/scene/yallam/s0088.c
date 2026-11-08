@@ -1,4 +1,4 @@
-#include "../../../../../../games/tla/src/scene/yallam/yallam.h"
+#include "yallam.h"
 
 s32 Func_02000088(struct Actor *object, struct Actor *target,
                   s32 range, s32 force) {

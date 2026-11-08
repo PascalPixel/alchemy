@@ -11,7 +11,7 @@ SECTIONS
         "*/recon/tla/raw/src/scene/gabomba_statue_chamber/s0184.o"(.text)
         "*/recon/tla/raw/src/scene/gabomba_statue_chamber/s0a98.o"(.text)
         "*/games/tla/src/scene/gabomba_statue_chamber/call_b60.o"(.text)
-        "*/games/tla/src/scene/gabomba_statue_chamber/s0b70.o"(.text)
+        "*/recon/tla/raw/src/scene/gabomba_statue_chamber/s0b70.o"(.text)
         "*/resource_672_overlay.o"(.text.x02008be8)
         "*/resource_672_overlay.o"(.text.x02008d3c)
         "*/recon/tla/raw/src/scene/gabomba_statue_chamber/flag_e50.o"(.text)

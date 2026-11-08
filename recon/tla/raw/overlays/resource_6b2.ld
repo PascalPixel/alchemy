@@ -3,8 +3,8 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/mercury_lighthouse/entry.o"(.text)
-        "*/games/tla/src/scene/mercury_lighthouse/s0038.o"(.text)
-        "*/recon/tla/raw/src/scene/mercury_lighthouse/s0060.o"(.text)
+        "*/recon/tla/raw/src/scene/mercury_lighthouse/s0038.o"(.text)
+        "*/games/tla/src/scene/mercury_lighthouse/s0060.o"(.text)
         "*/games/tla/src/scene/mercury_lighthouse/scene_tables.o"(.text)
         "*/recon/tla/raw/src/scene/mercury_lighthouse/s00f4.o"(.text)
         "*/recon/tla/raw/src/scene/mercury_lighthouse/s01b0.o"(.text)

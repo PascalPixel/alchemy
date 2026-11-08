@@ -1,0 +1,30 @@
+#include "../../../../../../games/tla/src/scene/settlements/local.h"
+
+void Func_0200156c(s32 id);
+
+static __inline__ void Place(s32 id, s32 x, s32 z) {
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
+  Func_020020c0(id, x, z);
+}
+
+void Func_02000f2c(void) {
+  struct Actor *object = Actor_GetById(9);
+  s32 column = object->x >> 20;
+  s32 row = object->z >> 20;
+  s32 i;
+
+  if (!GameFlag_Test(0x204) && column == 11 && row == 12) {
+    object->motionFlags = 0;
+    for (i = 10; i > 0; i--) {
+      object->y -= 0x20000;
+      FieldEvent_Wait(1);
+    }
+    Func_0200156c(9);
+    Func_020020c0(9, 0, 0);
+    Place(21, PIXELS(184), PIXELS(184));
+    Actor_GetById(21)->motionFlags = 0;
+    Actor_GetById(21)->y -= 0x400000;
+    CopyCells2(9, 11, 1, 1, 11, 12);
+    GameFlag_SetBit(0x204);
+  }
+}

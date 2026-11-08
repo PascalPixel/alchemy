@@ -1,36 +1,37 @@
-// Differ 4 of 376 (tla-en, 2026-11-08, -mtune=gba): one sched2 tie, r1 and the
-// pitch global's pool load hoisted above the Data_03001244 store.
-// 2026-11-08, later: volatile on either global, pitch read through perspective
-// or into an early local, the ratio in a local, the call through a local, and
-// empty once-only blocks (before: 4; between the stores: the order matches
-// but the store takes the r9 zero, 9) left 4; 10 permuter minutes found
-// nothing.
-// 2026-11-08: Render_ResetTransformState declared returning u32 (permuter;
-// tagged) took 6 to 4, fixing the argument move against the eye offset's third
-// store; the two global stores swapped, retyped, through a pointer, split by a
-// once-only block, a shared zero local, pitch[0] or 10 minutes more of
-// permuting left 4.
-// 2026-11-07: the eye offset cleared after the
-// pitch call, as the twin does, took 25 to 6; reordering its stores, scoping it
-// in a block, the two global stores swapped or retyped did not help.
-// Earlier, 25: 0x106 through its own
-// pointer local (field106) took 30 to 25; written plainly through it, 60.
-// Earlier, 30: 0x104 and 0x106 as plain stores or Store16 both, or as
-// halfword indexes: 30 to 60.
-// Earlier, differ 32 (56 before, 2026-10-26: the affine identity,
-// REG_BG3Y, REG_BLDALPHA and REG_DISPCNT written with Io_Write16 and the
-// scroll cleared layer by layer, as the twin does; 250 before that): The Broken
-// Seal's Map_InitializePerspectiveScene on this game's map work (0x978 bytes,
-// heap slot offset 32) and affine work (offset 28), with the world map's update
-// (0802c240) and affine frame (0802c088) callbacks. Resource ids 0x197 to
-// 0x199: PerspectiveDataA and DefaultMapCells as ☀️ names them, the third a
-// placeholder. The ARM routine is copied by its linker size
+// Matches: differ 0 (tla-en, 2026-11-08); tla-ja, tla-de, tla-es, tla-fr and
+// tla-it measure differ 0 as well.
+// The last sched2 tie (differ 4: r1 and gData_03001144's pool load hoisted
+// above the Data_03001244 store) fell to reading the map work through
+// Func_0802c240's struct WorldView: a field read carries the struct's alias
+// set, which conflicts with the u32 store, so the pitch read waits for that
+// store as the listing's does; through a u16 pointer the two never alias.
+// Pitch, yaw, far plane, distance and fixedEye now go through the struct, and
+// pitch takes 0xe000 as a plain store; each step measured 0.
+// Left: one device, FAKEMATCH(signature) on Render_ResetTransformState
+// (declared u32, returns void elsewhere): as void, 2 of 376 differ, the eye
+// offset's argument move (mov r0, fp) scheduled before mov r1, sl and the z
+// store. sched2 ties the three on priority; as void, the later mov r0, sl
+// stays output-dependent on mov r0, fp, which gives it one more dependent and
+// first place. Tried as void: z stored first, the camera argument uncast, the
+// look-at target spelled camera + 12 (2 each). An empty asm between the stores
+// cannot help (mov r1, sl must precede the z store); a real return value from
+// Iwram_TransformVector would be a signature device too (the routine returns
+// nothing meaningful).
+// Earlier: the eye offset cleared after the pitch call, as the twin does, took
+// 25 to 6; 0x106 through its own pointer local (field106) took 30 to 25
+// (written plainly through it, 60; 0x104 and 0x106 as plain stores, Store16 or
+// halfword indexes, 60).
+// Adopting: The Broken Seal's Map_InitializePerspectiveScene on this game's
+// map work (0x978 bytes, heap slot offset 32) and affine work (offset 28), with
+// the world map's update (0802c240) and affine frame (0802c088) callbacks.
+// struct WorldView is f02c240.c's, split at 0x968 and 0x96c (the frame fields);
+// it should become one shared definition. Resource ids 0x197 to 0x199:
+// PerspectiveDataA and DefaultMapCells as The Broken Seal names them, the third
+// a placeholder. The ARM routine is copied by its linker size
 // (Data_0802146cSize, to define in constants.ld as Render_ConvertMapCode -
-// Data_0802146c when this adopts), the halfword constants the native builds
-// in registers go through int stores (Io_Set16, Store16), and the frame
-// fields are at 0x968 and 0x96c. Left: scheduling: the native sets r0 for the
-// first vector transform after the eye offset's z store, and loads the pitch
-// before gData_03001144's address.
+// Data_0802146c), and the halfword constants the native builds in registers go
+// through int stores (Io_Set16, Store16). The diff compares instructions only:
+// check the literal pools with make compare-editions.
 #include "types.h"
 #include "io_write.h"
 #include "dma.h"
@@ -72,22 +73,42 @@ void Func_0802c088(void);
 static __inline__ void Io_Set16(s32 value, volatile u16 *reg) { *reg = value; }
 static __inline__ void Store16(s32 value, u16 *field) { *field = value; }
 
+struct WorldView {
+  s32 *origin;
+  s32 shakeX, shakeY, shakeDecay;
+  u8 unk010[0xd4];
+  s32 viewX;
+  s32 viewY;
+  u8 unk0ec[0x30];
+  u16 pitch;
+  u16 yaw;
+  u8 unk120[0x83c];
+  s32 farPlane;
+  s32 distance;
+  u8 unk964[4];
+  s32 unk968;
+  u16 unk96c;
+  u8 unk96e[3];
+  s8 flat;
+  s8 paused;
+  u8 unk973[3];
+  s8 fixedEye;
+};
+
 struct EyeOffset {
   s32 x, y, z;
 };
 
 void Func_0802b998(void) {
   /* FAKEMATCH(signature): Render_ResetTransformState declared returning u32;
-   * as void, 6 of 376 instructions differ in tla-en. */
+   * as void, 2 of 376 instructions differ in tla-en. */
   u8 *perspective;
+  struct WorldView *view;
   u8 *camera;
   u8 *affineWork;
   u8 *affinePages;
   u16 *field106;
   s32 *cameraPosition;
-  s32 *distance;
-  u16 *yaw;
-  u16 *pitch;
   volatile u32 fill;
   struct EyeOffset eyeOffset;
   s32 farPlane;
@@ -96,9 +117,10 @@ void Func_0802b998(void) {
   REG_DISPCNT &= 0xc1ff;
   Fade_FromBlack(0);
   perspective = HeapSlot_Alloc(32, 0x978);
+  view = (struct WorldView *)perspective;
   Dma_Fill32Cell(fill, 0, perspective, 0x978);
-  *(s32 *)(perspective + 0xe4) = 0;
-  *(s32 *)(perspective + 0xe8) = 0;
+  view->viewX = 0;
+  view->viewY = 0;
   *(s32 *)(perspective + 0xec) = 0x200000;
   *(s32 *)(perspective + 0xf0) = 0x400000;
   *(s32 *)(perspective + 0xf4) = 0x3fe00000;
@@ -135,12 +157,11 @@ void Func_0802b998(void) {
   affineWork = HeapSlot_Alloc(28, 0x3484);
   affinePages = affineWork + 0xc80;
   farPlane = 0x1fe0000;
-  *(s32 *)(perspective + 0x95c) = farPlane;
-  distance = (s32 *)(perspective + 0x960);
-  *distance = farPlane;
-  *(s32 *)(perspective + 0x968) = 0x10000;
+  view->farPlane = farPlane;
+  view->distance = farPlane;
+  view->unk968 = 0x10000;
   cameraPosition = (s32 *)(camera + 12);
-  *(u16 *)(perspective + 0x96c) = 0;
+  view->unk96c = 0;
   *(s32 *)(camera + 24) = 0;
   *(s32 *)(camera + 28) = 0;
   gCameraSceneParameters[3] = 120;
@@ -151,10 +172,8 @@ void Func_0802b998(void) {
   cameraPosition[2] = 0;
   Render_ResetTransformState();
   SceneTransform_ApplyPosition(cameraPosition);
-  yaw = (u16 *)(perspective + 0x11e);
-  SceneTransform_ApplyYaw(*yaw);
-  pitch = (u16 *)(perspective + 0x11c);
-  SceneTransform_ApplyPitch(*pitch);
+  SceneTransform_ApplyYaw(view->yaw);
+  SceneTransform_ApplyPitch(view->pitch);
   eyeOffset.x = 0;
   eyeOffset.y = 0;
   eyeOffset.z = farPlane;
@@ -162,10 +181,10 @@ void Func_0802b998(void) {
   Render_ResetTransformState();
   Transform_SetLookAt((s32 *)camera, cameraPosition);
   RamCode_LoadSlot(104, Data_0802146c, Data_0802146cSize);
-  Func_0802dd70(Iwram_RatioMulQ14(Trig_Cos(*pitch), Trig_Sin(*pitch)),
+  Func_0802dd70(Iwram_RatioMulQ14(Trig_Cos(view->pitch), Trig_Sin(view->pitch)),
                 cameraPosition, affineWork);
   Data_03001244 = 0;
-  gData_03001144 = *pitch;
+  gData_03001144 = view->pitch;
   ((void (*)(void *, s32 *, void *, void *))Ram_HeapSlots->unk64[1])(
       camera, cameraPosition, affineWork,
       affinePages + (gFrameCount & 1) * 0x1400);
@@ -173,16 +192,16 @@ void Func_0802b998(void) {
   cameraPosition[1] = 0;
   cameraPosition[2] = 0;
   Render_ResetTransformState();
-  Io_Set16(0xe000, pitch);
-  *yaw = 0;
+  view->pitch = 0xe000;
+  view->yaw = 0;
   Render_ResetTransformState();
   SceneTransform_ApplyPosition(cameraPosition);
-  SceneTransform_ApplyYaw(*yaw);
-  SceneTransform_ApplyPitch(*pitch);
-  if (*(s8 *)(perspective + 0x976) == 0) {
+  SceneTransform_ApplyYaw(view->yaw);
+  SceneTransform_ApplyPitch(view->pitch);
+  if (view->fixedEye == 0) {
     eyeOffset.x = 0;
     eyeOffset.y = 0;
-    eyeOffset.z = *distance + 0x10000;
+    eyeOffset.z = view->distance + 0x10000;
     Iwram_TransformVector(&eyeOffset, (s32 *)camera);
   }
   REG_MOSAIC = 0;

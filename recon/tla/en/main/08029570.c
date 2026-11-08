@@ -1,15 +1,29 @@
-// Differ 8 of 324 (tla-en, 2026-11-08, -mtune=gba). Rechecked 2026-11-08: the
-// dead copy as x or z 8, removed 33; best and bestDistance set in the other
-// order 18; the point pointer set inside the else 14; count <= 127, u32 (96)
-// or redeclared 8; permuter 8 min: 6 only by reading a pointer to position
-// that the ladder path leaves unset (rejected). Copy orders re-measured
-// the same; also: a once-only block, `|=`, goto or `else if` in place of the
-// dead copy 33; any self-copy of position keeps 8; once-only blocks around the
-// best point's copies 49 to 67; permuter 7 min: nothing better.
-// The null test is `ladder == NULL` first, its block padded by a tagged dead
-// self-copy so ifcvt case 2 (then block over BRANCH_COST) keeps the 127 below
-// the test; left: the 127 in r1, not r0, and the y copy loaded before x (copy
-// orders yzx, zxy, yxz 8; zyx 12; xyz 49). Permuter 3 min: nothing better.
+// Matches: differ 0 (tla-en, 2026-11-08); also differ 0 in tla-ja, tla-de,
+// tla-es, tla-fr and tla-it. Two tagged dead self-copies make the match:
+// - In the null ladder block, `Ram_HeapSlots->eventWork` copied onto itself
+//   gives the block a second insn, so ifcvt's case 2 (then block over
+//   BRANCH_COST, 1 for Thumb at -O2) keeps the ladder count's 127 below the
+//   test; addressed off a fresh constant in a low register, it needs no
+//   reload, so reload's round-robin of r0 to r3 puts the 127 in r0 right
+//   after collisionFlags' r3, as the native does. The old pad,
+//   `position.y = position.y`, reloaded &position (r9) into r0 and pushed the
+//   127 into r1 (differ 8, any position member or order: 8 or 22); a
+//   self-copy through object folds away at expand (33); through gInput, cse
+//   reuses the opening &gInput and moves it to r5 (4); LADDER_WORK onto
+//   itself 53; an empty asm there also gives 0, but is a barrier.
+// - Before the best point's copies, position.x copied onto itself is a store
+//   that kills best->x's availability, so gcse's PRE no longer inserts the
+//   x load at the pair block's end and reuses the compare's (copies x, y, z
+//   with no kill, 45); copying y first instead (the old form, no device)
+//   leaves only the copy order (4). A struct copy of the position emits
+//   ldmia/stmia (185); an inline copy helper on &best->position keeps an
+//   adds, as cse never folds the +4 into the loads (35); one on best is PRE'd
+//   as before (49).
+// Earlier, differ 8 of 324 (tla-en, 2026-11-08): best and bestDistance set in
+// the other order 18; the point pointer set inside the else 14; count <= 127,
+// u32 (96) or redeclared 8; a once-only block, `|=`, goto or `else if` in
+// place of the null pad 33; the sibling's `goto stop` into the arrival block
+// 27 (a beq to the shared block, not the native's own null block).
 // Earlier, differ 26 of 324 (tla-en, 2026-11-06): the null test read
 // `if (ladder != NULL) { ... } else collisionFlags = 1;`, so the ladder count's
 // start stays after the test; left: the null path's block sits after the
@@ -134,8 +148,11 @@ s32 Func_08029570(struct Actor *object) {
     bestDistance = 0x10000000;
     if (ladder == NULL) {
       collisionFlags = 1;
-      /* FAKEMATCH(dead): the form kept; as the bare `collisionFlags = 1;`, 33 of 324 instructions differ in tla-en. */
-      position.y = position.y;
+      /* FAKEMATCH(dead): the event work slot copied onto itself, a second insn
+         with no reload that keeps if-conversion from lifting the ladder count
+         above the null test; as the bare `collisionFlags = 1;`, 29 of 324
+         instructions differ in tla-en. */
+      Ram_HeapSlots->eventWork = Ram_HeapSlots->eventWork;
     } else {
       for (count = 0; count < 128; count++, point++) {
         if (point->active == 1) {
@@ -165,8 +182,13 @@ s32 Func_08029570(struct Actor *object) {
             pair->speed = 0x20000;
           object->watchedObject = (struct Actor *)best;
         }
-        position.y = best->y;
+        /* FAKEMATCH(dead): position.x copied onto itself before the copies,
+           a store that stops gcse carrying the compare's x load past the
+           pair block; as the plain x, y and z copies, 45 of 324 instructions
+           differ in tla-en. */
+        position.x = position.x;
         position.x = best->x;
+        position.y = best->y;
         position.z = best->z;
       }
     }

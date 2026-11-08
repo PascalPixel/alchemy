@@ -1,52 +1,58 @@
-// Differ 38 of 1361 (tla-en, 2026-11-08, -mtune=gba). Re-tried 2026-11-08 (later), none better: once-only blocks around texture2's pixels (66), its fields (64), model->kind (68) or the closing transition store (38); texture2's fields before the model list (62); the closing background id through a local, transition[4] = zero (48); s * 3 * 16, the sine inlined into r, m's increment as its own statement, v[1] as 24 + ... (all 38), -3 as the cosine's factor (42). Rechecked: f and twice
-// are still needed (167 and 129 without) and are now tagged; the once-only
-// block still gains 2. No better: the req word through pair[0], texture2's
-// fields before its pixels (46), the first model's vertices after its texture
-// sizes (40), the closing transition store through zero (48), meshA's sine
-// folded into r, d as (frame - 72) * 2.
-// 2026-11-07: a once-only block around the first texture's pixels and mesh
-// (permuter) took 40 to 38; frame * 2 - 144 spellings, texture2 and model
-// store orders, and once-only blocks elsewhere did not help.
-// Scheduling only: sched2 order in seven
-// places (s * 48 in the meshA loop, m's increment, frame * 2 - 144 in r3, the
-// first req word through r2, the first model's stores, texture2's fields and
-// the closing transition store). texture2's two fields before its pixels, as
-// the listing stores them, fix that row but add two insns at addressof: gcse's
-// table grows from 551 to 553 buckets, sfp-120 hashes past sfp-96 and the
-// &texture2/&pos slot swap returns (differ 48); three 0 defaults reach 555 and
-// still 48. Measured 2026-11-05: differ 40; orders of the plain assignments
-// searched. 2026-11-06: the req word store moved after place[3] (56),
-// after place[1] (149) or spelled pair[0] (40, no change).
-// Draft, differ 62 of 1361, skeleton gap 20/20 (tla-en, 2026-11-01)
-// BattleEffect_RunMegiddo. Frame (220), control flow, calls, pools and nearly
-// every register agree. What is left is two causes.
-// 1. Eighteen lines are one swap: the listing keeps &texture2 in [sp, #24] and
-// &pos in [sp, #20], the draft the reverse. Both are PRE's reaching registers,
-// numbered in gcse's hash table order, and that table's size follows the
-// function's insn count, so this draft is a few insns short before gcse. A dead
-// if (zero) block of four stores at the end of the function flips it (differ
-// 44, swap gone), but it is a device short of 0, so it came out. Natural
-// rewrites tried without a flip: seven reshaped temporaries and zero spellings.
-// 2. The other 44 are scheduling pairs, mostly a load the draft issues earlier
-// than the listing (effect at the top and before the caster's slot, frame
-// before k's loop, effect before list2), the known load-after-store gap, which
-// is a model question for K2 and out of scope here. Also: frame * 2 - 144 takes
-// its temporary in r3, the listing r2; the m loop's r2 restore lands after the
-// strb; the first req word is stored through r2, not sp; the 0xffb40000 load.
-// Forced locals, tagged 2026-11-08 (FAKEMATCH temporary): f (a copy
-// of frame, so thread_jumps cannot join the two frame > 1 tests before cse2 and
-// the label ends cse2's path: without it differ 195) and twice (without it 153).
-// tilt and i = 0 before the loop put frame * 3 after i's reload. Plain finds:
-// side's if/else order sets x before the test; v[2] and place use zero (spilled,
-// reloaded) but the first model's shade and scrollV are literal; strip and
-// sheet2 are one-constant locals the listing reloads; tint overlaps the 3 so -24
-// lands in r2. RESET_AND_SCALE_HALF's do-while ends cse1's block, so the 5s are
-// not shared with % 5 (without it 126).
-// blit is two words: slot 76 is its unused half. req is a byte array so its slot
-// comes before the first texture's: both must be BLKmode, as a DImode texture's
-// address hoists out of the loop and a DImode req is placed after it.
-// Permute, about five minutes on the dead-block state: inlining y's value, kept.
-// The ResourceId_Data names are placeholders for ids with no symbol yet.
+// Draft, differ 8 of 1361 (tla-en, 2026-11-08)
+// BattleEffect_RunMegiddo. All six editions measure 8 (tla-ja's copy is at
+// 0818ff00: pass that address). Left, three causes:
+// 1. req's first word (2 rows): the listing stores it as [sp, #116], the draft
+// through r2 (the call's argument). The direct store needs req as a DImode
+// struct: struct { s32 v[2]; } req; req.v[0] = req.v[1] = scale * 2; gives the
+// listing's exact rows, as f175f74's scale160 does (purge_addressof writes
+// (mem (plus sfp -104)) itself), but its slot is then assigned at addressof,
+// below textureBytes (req at 108, the texture at 116: 4 rows). Putting the
+// texture in a DImode struct or union too, so it is placed after req, costs
+// 531 and more: CSE turns the offset-0 store through t into an ADDRESSOF,
+// purge gives it a second sfp-112 pseudo, loop matches the two invariants
+// (savings 2) and hoists &texture out of the frame loop. A whole-life
+// pointer to req set at the top: 555.
+// 2. The first model's copy, adds r7, r0, before add r6, sp, #108 (2 rows):
+// sched2 ties them at priority 177 and haifa prefers the insn with more
+// dependents (model 7, t 5). All 5040 orders of the seven stores (none below
+// 8), chained stores, t before the call (541): no better.
+// 3. frame * 2 - 144 takes its temporary in r3, the listing r2 (4 rows): the
+// only local in the frame 64..71 block, so local-alloc gives it r3; what
+// takes r3 there in the listing is not known. (frame - 64) * 2 - 16,
+// 2 * (frame - 72), frame + frame: no change. Permuter, six minutes here:
+// nothing below 8.
+// How 38 became 8 (2026-11-08):
+// - gcse's expression table has ((insns at addressof + 2) / 2) | 1 buckets,
+// a frame address hashing to (13926 + offset) mod buckets. &texture2 (sfp-120)
+// must come before &pos (sfp-12) or their reaching registers swap slots 20
+// and 24 (18 rows): good at 531..551 and 557..575 buckets, so at 1101 insns
+// or fewer, or 1110 to 1149. This draft has 1110 (557 buckets); the four 0
+// defaults (scroll, angle, tilt, v) supply the last four. Without them 1106
+// insns, 555 buckets, differ 28.
+// - The closing background id is read as a word and narrowed: an int load, so
+// the transition store (int) must stay before it, as in the listing; read as
+// u16 the store sinks below the ldrh (4 rows). It adds 3 insns at addressof.
+// A union read did the same with none, but nothing suggests a union there.
+// - The first texture's sizes are char stores into textureBytes. As bitfields
+// through t they take ModelTexture's alias set, which holds the pixels
+// pointer, so they wait for model->vertices (2 rows).
+// - Vertices are written through struct ModelVertex, whose alias set is not
+// char's, so m's reload may pass the z store, as in the listing (4 rows).
+// - The mesh loop's height: y = (c * 16) >> 16 before r, + 24 at the store
+// (2 rows).
+// - The once-only block holds only the pixels store; half is set in a plain
+// block after model->mesh, so 0x8000 is built between the strip load and the
+// mesh store (the old macro's loop notes were a sched2 barrier there; 6 rows).
+// - texture2's sizes before its pixels, as the listing stores them (12 rows;
+// these two insns are what first pushed the table to 553 buckets).
+// Older notes still true: f and twice are still needed (159 and 99 without,
+// tagged). Plain finds: side's if/else order sets x before the test; the
+// ring's z and place use zero (spilled, reloaded) but the first model's shade
+// and scrollV are literal; strip and sheet2 are one-constant locals the
+// listing reloads; tint overlaps the 3 so -24 lands in r2; the half local is
+// needed (131 without). blit is two words: slot 76 is its unused half. req is
+// a byte array so its slot comes before the first texture's (see 1). The
+// ResourceId_Data names are placeholders for ids with no symbol yet.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -62,6 +68,16 @@ struct ModelTexture {
   u32 logHeight : 8;
   u32 unk02 : 16;
   const void *pixels;
+};
+
+// One model vertex: signed byte coordinates, padded to a word. Written
+// through this struct, its stores are not char stores, so a reload of the
+// stack may pass them.
+struct ModelVertex {
+  s8 x;
+  s8 y;
+  s8 z;
+  s8 pad;
 };
 
 struct RenderModel {
@@ -187,14 +203,6 @@ s32 Render_ProjectPoint(const void *point, s32 *screen);
 void ResourceObject_ReleaseFar(void *object);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 
-#define RESET_AND_SCALE_HALF()                                                 \
-  do {                                                                         \
-    s32 half = 0x8000;                                                         \
-                                                                               \
-    Render_ResetTransformState();                                              \
-    Func_080151e4(half, 0x10000, half);                                        \
-  } while (0)
-
 // Megiddo: the caster rises in a column of light, a winged figure gathers
 // above and dives in a storm of feathers and rings onto the target.
 void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
@@ -265,14 +273,15 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
   for (j = 0; j != 16; j++) {
     s32 c = -Trig_Cos(j * 1092) * 3;
     s32 s = Trig_Sin(j * 1092);
+    s32 y = (c * 16) >> 16;
     s32 r = (s * 48) >> 16;
 
     for (m = 0; m != 2; m++) {
-      u8 *v = meshA + j * 8 + m * 4;
+      struct ModelVertex *v = (struct ModelVertex *)(meshA + j * 8 + m * 4);
 
-      v[0] = (Trig_Sin(m << 13) * r) >> 16;
-      v[1] = ((c * 16) >> 16) + 24;
-      v[2] = (Trig_Cos(m << 13) * r) >> 16;
+      v->x = (Trig_Sin(m << 13) * r) >> 16;
+      v->y = y + 24;
+      v->z = (Trig_Cos(m << 13) * r) >> 16;
     }
   }
   casterValue = caster[18];
@@ -363,15 +372,15 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
 
     for (k = 0; k != 33; k++) {
       for (i = 0; i != 2; i++) {
-        u8 *v = ring + k * 8 + i * 4;
+        struct ModelVertex *v = (struct ModelVertex *)(ring + k * 8 + i * 4);
         s32 r = 80;
 
         if (i != 1) {
           r = ((Trig_Sin((frame + k * 4) << 12) * 2) >> 16) + 120;
         }
-        v[0] = (Trig_Sin(k << 11) * r) >> 16;
-        v[1] = (Trig_Cos(k << 11) * r) >> 16;
-        v[2] = zero;
+        v->x = (Trig_Sin(k << 11) * r) >> 16;
+        v->y = (Trig_Cos(k << 11) * r) >> 16;
+        v->z = zero;
       }
     }
 
@@ -483,7 +492,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       work->transferMode = 1;
       work->transferValue = 0x10101010;
     }
-    /* FAKEMATCH(temporary): f, a copy of frame tested below; as frame > 1, 167 of 1361 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): f, a copy of frame tested below; as frame > 1, 159 of 1361 instructions differ in tla-en. */
     f = frame;
     if (frame > 174) {
       Func_08164a4c(2, 2, 2);
@@ -492,7 +501,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
     if (frame > 1) {
       u8 *obj;
       s32 *pair;
-      s32 v;
+      s32 v = 0; // Default: set before it is read.
 
       if (frame > 142) {
         s32 n = frame - 143;
@@ -525,18 +534,24 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       model = Render_AllocateModelList(1);
       t = (struct ModelTexture *)textureBytes;
       model->kind = 6;
+      // The texture's sizes go in as bytes (char stores), its pixels as a word.
+      textureBytes[0] = 6;
       model->vertices = transformed;
-      t->logWidth = 6;
-      t->logHeight = 4;
+      textureBytes[1] = 4;
       model->texture = t;
       model->shade = 0;
       model->scrollV = 0;
-      // A once-only block: it ends CSE's block before the transform.
+      // A once-only block: it ends CSE's block after the % 5.
       do {
         t->pixels = work->sheet + 0x1000 + ((frame / 2) % 5) * 0x400;
-        model->mesh = strip;
       } while (0);
-      RESET_AND_SCALE_HALF();
+      model->mesh = strip;
+      {
+        s32 half = 0x8000;
+
+        Render_ResetTransformState();
+        Func_080151e4(half, 0x10000, half);
+      }
       Func_08015160(x - 0x7e0000, z - 0x4c0000, 0);
       Func_0801521c(46536);
       Func_0801521c(scale);
@@ -554,16 +569,17 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       model->scrollV = zero;
       if (frame > 142) {
         s32 n = frame - 143;
-        s32 scroll;
-        s32 angle;
-        s32 tilt;
+        // Default: scroll, angle and tilt are each set before they are read.
+        s32 scroll = 0;
+        s32 angle = 0;
+        s32 tilt = 0;
         s32 twice;
 
         if (n > 32) {
           n = 32;
         }
         i = 0;
-        /* FAKEMATCH(temporary): twice, frame * 2 kept apart; as scroll = frame * 3, 129 of 1361 instructions differ in tla-en. */
+        /* FAKEMATCH(temporary): twice, frame * 2 kept apart; as scroll = frame * 3, 99 of 1361 instructions differ in tla-en. */
         twice = frame * 2;
         angle = -0x4000;
         tilt = n * 384;
@@ -643,9 +659,9 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
 
     verts = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
-    texture2.pixels = sheet2;
     texture2.logWidth = 7;
     texture2.logHeight = 7;
+    texture2.pixels = sheet2;
     model->kind = 7;
     model->mesh = gData_08199364;
     model->texture = &texture2;
@@ -741,8 +757,9 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
   caster[18] = casterValue;
   BattleActor_CommitPlacementFar();
   transition[4] = 0;
-  BattleBackground_LoadFar(1, *(u16 *)((u8 *)Ram_HeapSlots->battleWork + 0x670),
-                           24);
+  // The background id is the low halfword of the word at 0x670.
+  BattleBackground_LoadFar(
+      1, (u16)*(s32 *)((u8 *)Ram_HeapSlots->battleWork + 0x670), 24);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();

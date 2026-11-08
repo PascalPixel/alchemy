@@ -1,25 +1,31 @@
-// Differ 17 of 229 (tla-en, 2026-11-08, -mtune=gba); 8 November round: cse merges the
-// two Data_0202de00 pool loads, and a once-only block around the copy, the call or
-// wait(1) only moves the merge to cse2 (19, 52, 19); u32 type, &Data_0202de00[0], a
-// cast source or the call direct stay 17. Earlier: with no barrier left: the
-// scroll reset's empty asm was free and the other two are once-only blocks.
-// What differs is Data_0202de00, kept in r5 across the copy (CSE shares the
-// address; lreg gives its pseudo r5) where the native loads it from the same
-// pool slot for each call, as reload does for an unallocated pseudo with a
-// REG_EQUIV; a local for it, a block around either call, or the call made
-// directly leave it at 17 or worse. Older notes below may predate this.
-// Measured under -Os, 5 November 2026: differ 31 (tla-en); notes below may predate it.
-// Draft, differ 49 of 229: Gaia Rock's entry setup. In the first room (scene
-// 0xb1) from entrances up to 4 it hides the leader's sprite layer, sets the
-// sky cell window, places the statues by the stage and, once that stage's flag
-// is set, starts person 8's climbing; from entrances past 8 it resets layer
-// 2's scroll; in the next rooms it picks the music for the entrance. The sum
-// is a signed indexed loop with its total set before Unit_Get (so it lives in
-// r5), the angle is unsigned, and the second room's cases run 102 before 103
-// (the 100 and 101 blocks cross-jump into the third room's). Left, ordering:
-// the BG0CNT address is begun before the sky byte's store, *stage is loaded
-// into r0 rather than r3, the scroll reset's 0x3f80 is built early, and
-// Data_0202de00 stays in r5 where the native loads it from the pool twice.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Also differ 0 in tla-ja, tla-de, tla-es, tla-fr and tla-it (instructions; the
+// diff omits pools). Gaia Rock's entry setup. In the first room (scene 0xb1)
+// from entrances up to 4 it hides the leader's sprite layer, sets the sky cell
+// window, places the statues by the stage and, once that stage's flag is set,
+// starts person 8's climbing; from entrances past 8 it resets layer 2's scroll
+// and starts the room's display blend script; in the next rooms it picks the
+// music for the entrance.
+// The last 17 differences were the blend script's buffer. It is
+// Ram_MapCollision + 0x1e00, the buffer Func_0802a6b8 decodes a map's blend
+// script into before DisplayBlend_StartScript (Func_02004de4 is that call's
+// overlay veneer), so it is written that way and Data_0202de00 is gone; the
+// pool word stays 0x0202de00, which is where ewram.s places Data_0202de00.
+// Called directly, the copy's address goes into a pseudo that CSE then shares
+// with the blend call (r5, held across the copy). The native loads it straight
+// into r0 for each call, after the source and the routine's address. That is
+// what an inline does: the constant replaces the inline's parameter where r0
+// is set, so nothing holds it across the call. Hence CopyWords_ (tagged
+// wrapper); the blend call then needs no forwarder. Tried and worse or no
+// better: a local set at the scroll reset (r8, 64), a volatile asm between the
+// calls (4: r0 loaded after r2), an integer address with direct calls or
+// Call1 (17), Call3 for the copy (6: loads in the wrong order), a never-true
+// test on map[261] between the calls (52; combine leaves it). The two Call3
+// forwarders for Func_02004ebc are still needed (direct: 2 each, 4 both).
+// Earlier notes: the sum is a signed indexed loop with its total set before
+// Unit_Get (so it lives in r5), the angle is unsigned, and the second room's
+// cases run 102 before 103 (the 100 and 101 blocks cross-jump into the third
+// room's).
 #include "call.h"
 #include "types.h"
 #include "actor.h"
@@ -38,8 +44,7 @@ extern char SceneId_Ov681Room1;
 extern char SceneId_Ov681Room2;
 extern char SceneId_Ov681Room5;
 extern u8 gData_020023c4[];
-extern const u8 gData_020053e4[];
-extern u8 Data_0202de00[];
+extern u32 gData_020053e4[];
 
 u8 *Unit_Get(s32 owner);
 void Func_020044f8(s32 level);
@@ -53,10 +58,15 @@ s32 Func_02004904(void);
 void Func_02004d9c(struct Actor *object, s32 mode);
 void Func_02004dc4(void);
 void wait(s32 frames);
-void Func_02004de4(void *data);
+void Func_02004de4(u16 *script);
 void Func_02004274(s32 song);
 void Func_02000aac(void);
 void Func_02000a60(void);
+
+static __inline__ void CopyWords_(void *destination, const void *source,
+                                  s32 size) {
+  Iwram_CopyWords(destination, source, size);
+}
 
 s32 Func_02004280(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room1) {
@@ -125,8 +135,12 @@ s32 Func_02004280(void) {
           FIELD_AT(layer, s32, 12);
       Func_02004dc4();
       wait(1);
-      Iwram_CopyWords(Data_0202de00, gData_020053e4, 24);
-      Call1((void (*)())Func_02004de4, (s32)Data_0202de00);
+      /* FAKEMATCH(wrapper): the copy forwarded through CopyWords_, so the
+         blend buffer's address is loaded straight into r0 at each call; as a
+         direct Iwram_CopyWords call, 17 of 229 instructions differ in
+         tla-en. */
+      CopyWords_(Ram_MapCollision + 0x1e00, gData_020053e4, 24);
+      Func_02004de4((u16 *)(Ram_MapCollision + 0x1e00));
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room2) {
     switch (gMainRoutineWork.entrance) {

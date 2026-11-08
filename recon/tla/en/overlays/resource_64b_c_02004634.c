@@ -1,30 +1,19 @@
-// Differ 15 of 120 (tla-en, 2026-11-08, -mtune=gba), with no device: the forwarding
-// inline around the create no longer pays (15 with or without it) and is gone.
-// Re-measured 8 November: storing motionFlags and action next to each other
-// (26 to 32), a chained zero (30), a zero local (15) and once-only blocks (33,
-// 56) never relate the action address to motionFlags' as the native does.
-// Also 8 November: the native order (terrainHeight, animation, motionFlags,
-// action) 30, with motionFlags before animation 28, action after
-// watchedObject 34, the two zeros through an inline helper 26 to 32, an
-// explicit u8 pointer with the action at +15 59, a once-only block 33 or 56;
-// a ten-minute permuter run found nothing closer.
-// 2026-11-07, from 17: the detail is the sprite's
-// record at 0x28 (LinkedSprite put it at 0x2c). Left: motionFlags and action
-// stored through one pointer (adds r3, #85; adds r3, #15) natively, two here;
-// every order of the five child stores measured, none better.
-// Under -Os, 5 November: differ 17 of 120 (tla-en); older figures below predate it.
-// Draft of Func_02004634 (overlay 64B, 120 instructions), differ 69: the linked
-// pair of effects, ported from ☀️'s WorldMap_CreateAttachedEffects (⚓️ creates
-// kind 271, its updates are Func_020045e4 and Func_02004598, the sprite's
-// detail sits at 0x28). As a for loop (differ 95) loop.c hoists the 63 mask and
-// the pair array's address and a fourth high register is saved; as a goto loop
-// the mask stays inside and the prologue is the native's (71; 69 with the
-// create through a forwarding inline). Left: the pair array's address is still
-// copied before the loop (the native copies sp to r8 after each create), the
-// motion flags and the action are stored through one pointer there and two
-// here, the zero for nextFrame and the detail byte is the native's pool
-// halfword but lands in r8 not r10, and the tile field loads its mask first
-// where the native loads the halfword first.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// The linked pair of effects, ported from ☀️'s WorldMap_CreateAttachedEffects
+// (⚓️ creates kind 271, its updates are Func_020045e4 and Func_02004598, the
+// sprite's detail is its record at 0x28). Two things closed it, with no
+// device: the child's stores in ☀️'s order (terrainHeight, animation,
+// motionFlags, action), and the keep-cache-entry bit written as a one-bit
+// field. As `sprite->unk11 |= 1` the byte store masks the old byte with a
+// zero register, CSE takes motionFlags' QI zero for it, and that zero, dead
+// after combine, is local-allocated to r3 inside the motionFlags address's
+// life; the address prefers STACK_REG, so global-alloc places it after and
+// it lands in r1, and reload's move2add never turns the action's address into
+// `adds r3, #15` (differ 15; in the old order 15, in ☀️'s order 30). The
+// plain for loop and a FieldSprite pointer straight from the animation also
+// match now. All six editions measure differ 0 (2026-11-08). Adopting it
+// wants FieldSprite's unk11 split into its bits in field_sprite.h, which
+// takes the SpriteCacheBits cast away.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -37,14 +26,14 @@ struct LinkedDetail {
   u8 field16;
 };
 
-struct LinkedSprite {
-  struct FieldSprite sprite;
-  struct LinkedDetail *detail;
-};
-
 struct LinkedEffectWork {
   u8 unk000[0x7c0];
   u16 vramBlock;
+};
+
+/// FieldSprite's byte 0x11 read as its bits.
+struct SpriteCacheBits {
+  u8 retainCacheEntry : 1; ///< keeps the VRAM cache entry when it is released
 };
 
 struct WorldMapOam {
@@ -63,31 +52,27 @@ void Func_020045e4(struct Actor *object);
 void Func_02004634(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
-  struct LinkedSprite *part;
   struct FieldSprite *sprite;
   struct LinkedEffectWork *work = Ram_HeapSlots->effectWork;
   s32 i;
 
-  // goto loop: a for loop lets loop.c hoist the mask and the array address
-  // (95).
-  i = 0;
-do {
-  {
+  for (i = 0; i < 2; ++i) {
     child = Func_02004b30(271, parent->x, parent->y, parent->z);
     pair[i] = child;
     if (child != NULL) {
-      child->motionFlags = 0;
       child->terrainHeight = parent->terrainHeight;
-      part = child->animation;
+      sprite = child->animation;
+      child->motionFlags = 0;
       child->action = 0;
       child->watchedObject = parent;
-      if (part != NULL) {
-        sprite = &part->sprite;
+      if (sprite != NULL) {
         Animation_ApplyChildArgument(sprite, 0);
         sprite->nextFrame = 0;
         Resource_ResetEntry(sprite->vramBlock);
         sprite->vramBlock = work->vramBlock;
-        sprite->unk11 |= 1;
+        // A one-bit field: as a byte `|= 1` its zero mask moves the
+        // motionFlags address out of r3 (differ 15).
+        ((struct SpriteCacheBits *)&sprite->unk11)->retainCacheEntry = 1;
         sprite->tile =
             (gResourceTableEntries[sprite->vramBlock].offset >> 5) & 0x3ff;
         sprite->fullColor = 0;
@@ -97,7 +82,6 @@ do {
       }
     }
   }
-} while (++i <= 1);
   {
     struct Actor *p = pair[0];
     struct FieldSprite *sp = p->animation;

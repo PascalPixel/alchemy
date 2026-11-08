@@ -1,42 +1,44 @@
-// Differ 2 of 360 (tla-en, 2026-11-08, -mtune=gba).
-// 2026-11-07: a once-only block around offsetX and offsetY, 4 to 2; the listing
-// stores rows between "adds r2, r3, #6" and "adds r3, #8" (the block's loop
-// note keeps it ahead; a block over all four loads puts it after). Spellings,
-// types, orders and 14 permuter minutes found nothing better. Also 2026-11-08
-// (2 unless said): the block around offsetY alone (rows' store then lands,
-// offsetX's ldrsh comes one slot early), around rows too, around left too;
-// offsetX alone (6), both blocks (4), an empty block (4 to 6); frame in a
-// local; s16 rows, u32 tile; const gData_081a84e6 (6); u32 rows (6); top
-// first (14); 8 more permuter minutes. In sched2 the once-only block's note
-// holds "adds r2, r3, #6" behind rows' spill store.
-// Later 2026-11-08 (2 unless said): every single move of a declaration (rows
-// before x, or tile after rows, 14); tile, rows, x, left or an empty block in
-// blocks of their own; top in one (4); an empty block between the offsets (4);
-// offsetY first (29); left computed in the block (4); a pointer to the frame
-// row (24); 8 more permuter minutes.
-// Draft, differ 27 of 360, skeleton gap 9 (tla-en, 2026-11-01)
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Every edition (tla-en, tla-ja, tla-de, tla-es, tla-fr, tla-it) differs 0,
+// the logo pieces' resting places chosen by LANGUAGE below (German, Spanish
+// and Italian 24, 88, 152; French 19, 83, 147; English and Japanese 30, 83,
+// 140).
+// 2026-11-08: the last 2 were the frame table's const: its loads then do not
+// wait on the spill stores, and sched2 lifts offsetX's load over offsetY's
+// address. Declared plain, as gData_081a84e6 is, offsetX's load waits for rows'
+// spill and the listing's order follows with no device; the once-only block
+// around offsetX and offsetY that earlier rounds kept (2 of 360) is gone.
 // A frame callback of the intro (its state in heap slot 43, 0x030000ac): clears
 // OAM, then in phase 0 steps an animation through gData_081a8378 along the path
-// in gData_081a84e6, drawing its 8-wide grid of 8x8 sprites, until the path ends
-// (-1): then loads resources 0x1b and 0x1c and enters phase 1, which places the
-// three logo pieces with Title_PlaceLogoPiece, grows their shared affine scale
-// to 256, fades the blend in and loads resources 0x1d to 0x1f at frames 8, 16
-// and 24.
-// Left, all scheduling; registers, frame and control flow agree:
-// - offsetX's load, the +8 and offsetY's load order differently just before
-//   the sprite loops (the listing loads offsetY before adding x to offsetX).
-// - The listing stores the row offset's 0 between "movs r6, #16" and
-//   "add r6, sp"; the draft stores it last, so the peephole folds the pair into
-//   "add r6, sp, #16". That one lost instruction shifts every later pool
-//   and branch distance, which is most of the 27.
-// gData_081a84e6 is declared non-const here: a const table's load is scheduled
-// across the frame store. The sprite expressions' spellings steer induction
-// variables and loop reversal; orders of the frame loads and forms that compute
-// y, the OAM address or the tile in the outer loop were tried and lose.
+// in gData_081a84e6, drawing its 8-wide grid of 8x8 sprites, until the path
+// ends (-1): then loads resources 0x1b and 0x1c and enters phase 1, which
+// places the three logo pieces with Title_PlaceLogoPiece, grows their shared
+// affine scale to 256, fades the blend in and loads resources 0x1d to 0x1f at
+// frames 8, 16 and 24.
+// Both tables are declared non-const: a const table's loads are scheduled
+// across the stores before them. The sprite expressions' spellings steer
+// induction variables and loop reversal.
 #include "types.h"
+#include "edition.h"
 #include "io_reg.h"
 #include "dma.h"
 #include "ram_buffer.h"
+
+// Where the left, middle and right logo pieces come to rest.
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_ITALIAN
+#define LOGO_LEFT_X 24
+#define LOGO_MIDDLE_X 88
+#define LOGO_RIGHT_X 152
+#elif LANGUAGE == LANGUAGE_FRENCH
+#define LOGO_LEFT_X 19
+#define LOGO_MIDDLE_X 83
+#define LOGO_RIGHT_X 147
+#else
+#define LOGO_LEFT_X 30
+#define LOGO_MIDDLE_X 83
+#define LOGO_RIGHT_X 140
+#endif
 
 struct TitleLogoState {
   s16 phase;
@@ -63,7 +65,7 @@ struct OamEntry {
   u16 unused;
 };
 
-extern const s16 gData_081a8378[];
+extern s16 gData_081a8378[];
 extern s16 gData_081a84e6[];
 extern u8 Data_02026800[];
 extern char ResourceId_Data01B;
@@ -134,11 +136,8 @@ void Func_081a6b50(void) {
     }
     tile = gData_081a8378[logo->frame];
     rows = gData_081a8378[logo->frame + 1];
-    // A once-only block: its loop notes order the offset loads as the listing.
-    do {
-      offsetX = gData_081a8378[logo->frame + 3];
-      offsetY = gData_081a8378[logo->frame + 4];
-    } while (0);
+    offsetX = gData_081a8378[logo->frame + 3];
+    offsetY = gData_081a8378[logo->frame + 4];
     left = x + offsetX - 28;
     top = gData_081a84e6[logo->step + 1] + offsetY;
     for (row = 0; row < rows; row++) {
@@ -152,11 +151,11 @@ void Func_081a6b50(void) {
       }
     }
   } else if (logo->phase == 1) {
-    pieceX = (logo->step - 256) / 4 + 30;
+    pieceX = (logo->step - 256) / 4 + LOGO_LEFT_X;
     y = (logo->step - 256) / 32 + 50;
     Title_PlaceLogoPiece(0, pieceX, y);
-    Title_PlaceLogoPiece(128, 83, y);
-    pieceX = 140 - (logo->step - 256) / 4;
+    Title_PlaceLogoPiece(128, LOGO_MIDDLE_X, y);
+    pieceX = LOGO_RIGHT_X - (logo->step - 256) / 4;
     Title_PlaceLogoPiece(256, pieceX, y);
     matrix = (volatile u16 *)0x07000006;
     *matrix = logo->step;

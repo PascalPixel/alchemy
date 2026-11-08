@@ -1,33 +1,25 @@
-// Differ 2 of 1246 (tla-en, 2026-11-08, -mtune=gba); tla-ja 2 of 1240.
-// Round 2 (2026-11-08): both once-only blocks re-measured (without the first
-// 6, without the second 4); the block before the entry load, beside it or
-// before holdTilemapUpload (2 to 8), the three statements in other orders (8 to
-// 22), a block-scoped work copy or holdTilemapUpload pointer, an entry-index
-// local (2), work fetched again (18); 8 permuter minutes: nothing better.
-// Two empty once-only blocks (after the list redraw's first stores and after
-// the cursor sprite's words) closed the row address, the zero for
-// standbyElements and the VramCache_Reload argument pair (8 to 2 in both
-// editions). Left: work (sp+72) is loaded for holdTilemapUpload after the
-// entry load, the native before the index add. Tried without effect: a
-// block-scoped copy of work, the index spellings, the three stores' orders and
-// once-only blocks around them; permuter 8 min: nothing better.
-// 8 before (2026-11-08); 4 on 2026-11-01 under the older compiler.
-// Draft, differ 4 of 1246, skeleton gap 1 (tla-en, 2026-11-01): the battle
-// Djinn menu, The Broken Seal's BattleDjinnMenu_Run
-// (games/tbs/src/window/screens/battle_djinn_menu.c) on this game's work,
-// messages and change preview (Func_080464dc). The list window is 10 tiles wide
-// from column 20, a recovering Djinni's turns take two digits at x 48, and
-// letting go of R redraws the list as well as the stats page. Left: two swapped
-// load pairs, both scheduling. For VramCache_Reload the listing loads
-// cursorSlot from the stack before gResource_FixedBlockBTiles from the pool,
-// the draft the other way round; after previewPage++ it reloads previewPage
-// before previewPages. Tried without effect: a local for the tiles address at
-// each scope, s32 and u32 argument types, the sprite words through s32
-// pointers, the increment's and the compare's spellings. The element offset
-// tables stay non-const: const lets their loads move past the stack argument.
-// Japanese (tla-ja 0804888c): the same one load left (work at sp+68). Its
-// list is narrower and its messages shorter (LANGUAGE), and letting go of R
-// does not redraw the list (TLA_PATCH_1).
+// Matches: differ 0 (tla-en, 2026-11-08)
+// All six editions measure differ 0 (tla-ja 1240, tla-de and tla-fr 1246,
+// tla-es and tla-it 1252 instructions, each by --symbol Func_0804868c); no
+// fake-match tag. The battle Djinn menu, The Broken Seal's
+// BattleDjinnMenu_Run (games/tbs/src/window/screens/battle_djinn_menu.c) on
+// this game's work, messages and change preview (Func_080464dc). The list
+// window is 10 tiles wide from column 20, a recovering Djinni's turns take two
+// digits at x 48, and letting go of R redraws the list as well as the stats
+// page. Japanese (tla-ja 0804888c): its list is narrower and its messages
+// shorter (LANGUAGE), and letting go of R does not redraw the list
+// (TLA_PATCH_1). Spanish and Italian also redraw the list when an already
+// chosen or recovering Djinni closes the preview window (TLA_PATCH_4).
+// What closed the last load (2026-11-08): the first holdTilemapUpload store
+// spelt *&work->holdTilemapUpload. A struct member store carries the work
+// struct's alias set, so it cannot alias the list window's x read after it;
+// through *& it is a plain byte store that may, which gives the work load the
+// priority to issue before the entry index's add. That also made the
+// once-only block after these stores unnecessary (removed). The once-only
+// block after the cursor sprite's words stays: without it the pool load of
+// gResource_FixedBlockBTiles issues before cursorSlot's (differ 2).
+// Spelling every work store through *& or a byte index breaks the rest
+// (38 to 84): only this one site needs it.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -301,10 +293,9 @@ s32 Func_0804868c(s32 member) {
         redraw != 0) {
       selectedDjinn = djinnEntries[firstEntry + selectedRow];
       standbyElements = 0;
-      work->holdTilemapUpload = 1;
-      // Once-only: schedules the entry load and its stores as the original.
-      do {
-      } while (0);
+      // Spelt *&: a byte store that may alias the window it highlights next,
+      // which keeps the work load before the entry index's add.
+      *&work->holdTilemapUpload = 1;
       Window_HighlightRect(listWindow->x + 1, listWindow->y + drawnRow * 2 + 1,
                            listWindow->width - 2, 1, 15);
       if (previewPage != 0) {
@@ -331,6 +322,9 @@ s32 Func_0804868c(s32 member) {
           if (previewWindow != NULL) {
             Window_Close(previewWindow, 1);
             previewWindow = NULL;
+#if TLA_PATCH_4
+            redrawList = 1;
+#endif
             previewPage = 0;
           }
         } else if (selectedDjinn & DJINN_ENTRY_STANDBY) {
@@ -344,6 +338,9 @@ s32 Func_0804868c(s32 member) {
             if (previewWindow != NULL) {
               Window_Close(previewWindow, 1);
               previewWindow = NULL;
+#if TLA_PATCH_4
+              redrawList = 1;
+#endif
               previewPage = 0;
             }
           } else {

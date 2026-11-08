@@ -1,30 +1,15 @@
-// Differ 32 of 627 (tla-en, 2026-11-08, -mtune=gba): the same three places.
-// 2026-11-08, second pass: a separate corner counter (299), scrollU as (-frame * 8 - 1) & 127 (32) or with xor (45), caster.y through i (69), the corner as j * 2 without vertex (212), vertex or j first in the step list (46, 54), baseY += wobble then radiusY = baseY (32), half reused as baseY or radiusY (246, 153), radiusY last (153). The rows left are reload's round-robin choices.
-// 2026-11-08: radiusY without baseY (120), its operands swapped, corner as &array[vertex], half as -(thickness / 2) all 32; i = 0 or corner moved (122 to 228); scrollU or a once-only block around the transform calls 34 to 36.
-// 2026-11-07: radiusY in place with baseY copies, declaration orders, register, scrollU casts all 32 or worse; 10-min permute none better.
-// 2026-11-06: scheduling and allocation only, in three places: the
-// corners' setup (the listing zeroes i first and adds the wobble to height + half in place;
-// all 60 orders of those five statements measured, this one best), the 0x8000's second half
-// and the scrollU block's registers (frame in r4, caster in r1).
-// Second pass (2026-11-06): the scrollU block's rows are reload's round-robin
-// choices (frame reloaded into r3 here, r4 natively), and sched2 then lifts the
-// 0x8000's shift into the stall that r3 leaves. Measured: radiusY built in place
-// (radiusY = height + half; ... radiusY += wobble) in every order, 65 to 177
-// (radiusY outranks radiusX and takes r6, radiusX goes to the caller-save
-// slot); radiusX in place too, 177; baseY's orders around radiusY = baseY +
-// wobble, 32 at best; every order of the model's five stores and of the five
-// stores before the strip draw, 32 at best; seven spellings of scrollU's mask,
-// 32. A 5-minute permute reached 20 only by storing 127 and reading it back.
-// 2026-11-05: the model's mesh and vertices are typed pointers, not void.
-// Measured 2026-11-05 (tla-en): differ 38 of 627, instruction counts equal. The loop
-// over corners now agrees whole: half a real local, corner a struct, radiusX over
-// radiusY in rank (radiusY in r2, caller-saved at sp+12), the vertex buffer's address
-// one local per frame (reloaded from the pool, so no high register holds it), and
-// sweep stepped before vertex. Left: at the corners' setup the listing has i's zero
-// first and height + half in r2 in place, with the wobble added late; here base goes
-// through its own local (r0). Three scheduling rows: blit.draw's load, the 0x8000's
-// second half after a call, and scrollU's store at the claw.
-// Earlier: 2026-11-01 frame found through the two-word blitter struct.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// All six editions differ 0 (tla-ja at 0x0817c6b0, the others at 0x0817c6ac).
+// What closed the last 32 rows (2026-11-08): the strip mesh and the corner
+// buffer are per-frame locals beside the vertex buffer (strip, cells), so each
+// is spilled and rematerialised from the pool at its use, which sets reload's
+// round robin (frame in r4 and caster in r1 at the scrollU block); the corners
+// are written as cells[vertex + i] and loop.c builds the pointer after radiusX
+// (vertex * 4 + cells); radiusY = baseY + wobble before radiusX keeps radiusX
+// in r7 and lets baseY sit in r2 for the in-place add; i = 0 before half puts
+// i's zero ahead of the negation. Earlier rounds (2026-11-01 to 11-08) settled
+// the blitter struct, half as a real local, the corner struct and sweep's
+// place in the step list.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -187,6 +172,8 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
   struct EffectStep *particle;
   s32 i;
   void *buffer;
+  u8 *strip;
+  struct Corner *cells;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -252,6 +239,8 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
     }
 
     buffer = Data_02011000;
+    strip = Data_02012000;
+    cells = (struct Corner *)gMapCellBuffer;
     if (frame >= 0) {
       s32 width;
       s32 step;
@@ -282,7 +271,6 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
         s32 thickness;
         s32 radiusX;
         s32 radiusY;
-        struct Corner *corner;
         s32 half;
         s32 baseY;
 
@@ -295,19 +283,17 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
           thickness = 24;
         }
         thickness = thickness * width / 0x10000;
+        i = 0;
         half = thickness / -2;
         baseY = height + half;
-        corner = (struct Corner *)gMapCellBuffer + vertex;
         radiusY = baseY + wobble;
-        i = 0;
         radiusX = distance + half + wobble;
         for (; i != 2; i++) {
-          corner->x = ((Trig_Cos(angle) * radiusX) >> 16) - distance;
-          corner->y = -((Trig_Sin(angle) * radiusY) >> 16);
-          corner->z = 0;
+          cells[vertex + i].x = ((Trig_Cos(angle) * radiusX) >> 16) - distance;
+          cells[vertex + i].y = -((Trig_Sin(angle) * radiusY) >> 16);
+          cells[vertex + i].z = 0;
           radiusY += thickness;
           radiusX += thickness;
-          corner++;
         }
         if (j == 32) {
           endX = (((distance + wobble) * Trig_Cos(angle)) >> 16) - distance;
@@ -330,7 +316,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
           texture.logWidth = 6;
           texture.logHeight = 5;
           texture.pixels = work->sheet;
-          model->mesh = Data_02012000;
+          model->mesh = strip;
           model->scrollU = 127 & ~(frame << 3);
           Render_ResetTransformState();
           Func_08015160((caster.x / 2 - 64) << 16,
@@ -340,7 +326,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
             SceneTransform_ApplyYaw(0x8000);
           }
           Func_0801521c(0x40000);
-          Render_TransformVertices(gMapCellBuffer, buffer, 66);
+          Render_TransformVertices(cells, buffer, 66);
           Render_DrawModelList(model);
 
           // The claw at the arc's end.

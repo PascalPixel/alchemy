@@ -1,19 +1,11 @@
-// Differ 14 of 255 (tla-en, 2026-11-08, -mtune=gba). Func_020002f4 of overlay 6ab,
-// rewritten readable from the translator's map, nested for its one exit.
-// Left: the leader's position block: the follower's offset through r1 and the
-// leader through r3 natively, r3 and r1 here, with one untagged once-only
-// block that holds x first (the leader's stores swapped leave it; the follower
-// pointer after z, 18).
-// Tried 8 November, none better: no `base` (14, same), follower set before x (16 to
-// 18), the follower read after the leader's stores (21 to 23), a second or moved
-// once-only block (14 to 22), the reload of leader->z through a block local or
-// volatile (14); permuter 8 minutes best 14. Only r1 and r3 swap: reload gives the
-// follower's 460 the first free register, which natively the leader holds.
-// Round 2, 8 November: every order of x, the once-only block, follower, z and
-// other (best 14), once-only blocks round base, follower or a store (14 to 16),
-// the reload through a block local or a volatile cast and declaration orders
-// (14). Both 460 and the leader's base are reload registers, so which takes r3
-// follows reload's turn order, not the C.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Func_020002f4 of overlay 6ab, rewritten readable from the translator's map,
+// nested for its one exit; differ 0 in all six editions (2026-11-08), with no
+// device. The leader's position block settled in plain C: the leader's x is
+// stored before z is computed. Reload hands out r1, r2 and r3 in turn, so the
+// leader's reload has to come between x's 0x80000 and z's constant for the
+// follower's 460 to land in r3 and the leader in r1, as in the listing; the
+// earlier drafts stored both of the leader's coordinates after z and swapped them.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -69,18 +61,13 @@ s32 Func_020002f4(void) {
     struct Overlay6abEventWork *work = Ram_HeapSlots->eventWork;
     s32 column = GameFlag_GetByte(0x340);
     s32 row = GameFlag_GetByte(0x348);
-    struct Actor **follower;
     struct Actor *other;
-    s32 x, z, base;
+    s32 x;
 
     x = (column << 20) + 0x80000;
-    do {} while (0);
-    base = -0x1280000;
-    follower = &work->unk1cc;
-    z = (row << 20) + base;
-    other = *follower;
-    leader->z = z;
     leader->x = x;
+    leader->z = (row << 20) - 0x1280000;
+    other = work->unk1cc;
     other->x = x;
     other->z = leader->z;
     Func_020041fc();

@@ -1,63 +1,45 @@
-// Differ 6 of 747 (tla-en, 2026-11-08, -mtune=gba): two stack reloads issue
-// a place earlier here, and one ldrb takes its address registers swapped.
-// Second 2026-11-08 round, no gain: a block after the ball->y store, the
-// heights as *(cell + table) or (table + cell)[0], cell as u32, !mode, (s16)y
-// (6); the width as *(table + cell) (8); one radius line before the arms (49);
-// the divide split (37); 8 more permuter minutes.
-// 2026-11-07: from 20 by ordinary forms: an empty once-only block before the
-// second blitter build (16), the last height as *(table + cell) (12),
-// ball->variant++ in a once-only block (8), the flip flags in a local (6).
-// Left: frames' stack load ahead of the ball->y store, y's ldrsh ahead of the
-// mode reload, ldrb r3, [r4, r6] for [r6, r4] in the flash draw. No gain: an
-// array for flight, other spellings of height and cell, blocks round the
-// ball's stores, 15 permuter minutes.
-// 2026-11-08: still 6. Each device re-measured by removing it: the wrapper
-// (8), the variant block (10), the empty block (238), gData_08197498[cell]
-// (10). No gain: y as ball->y >> 16, !mode, frames in a local, heights through
-// a local pointer (99), y read after the radius arms (49), a block round the
-// ball->y store (8), 8 more permuter minutes.
-// 2026-11-05: differ 20 of 747 (tla-en). A wrapper on the palette copy gains 2.
-// 2026-11-01: differ 32 of 747, skeleton gap 32 (tla-en).
-// Every register and branch now agrees; what is left is five sched2 orders, no
-// shape and no allocation. All five are the K2 load model's: a load or a pooled
-// chain issued ahead of a store or spill the listing does first.
-// - After the ball's ball->y store, frames' stack load goes before the store.
-// - ball->y's high halfword loads before the variant store; the listing does
-// the
-//   x store and the mode reload first.
-// - The flash draw: the table load, heights and the canvas reload.
-// - The bounce's preheader: the spill of size * 2 and its shift.
-// - The bolts' preheader: i, bolt and the texture address before the three
-// model
-//   stores.
-// Tried: an empty do-while or asm("") before y gives 28, and one before the
-// bolt loop gives 26 (with a picture local set after it, every instruction but
-// with r1 and r2 swapped, differ 52); the one in the arm leaves ldr r0 and ldr
-// r1 swapped. Five or more devices would not reach 0, so none is kept. Also no
-// gain: locals for size * 2 and size / 2, a union view of the halfword, s32
-// model fields. What fixed the shape, so keep it:
-// - flight: x and frames are one 8-byte local. Its partial sets keep frames
-// live
-//   into the else arm, which stops IF-CASE-1 and keeps both arms of if (mode ==
-//   0); the frame then has its slots (frames at sp 28, x at sp 24). As a pair
-//   {frames, radius} it loses the hoisted radius >> 31 and the frame is 92.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// The other five editions' scaffolds hold this function inside a larger
+// section that diff cannot bound (it refuses --edition there). Checked by
+// hand instead: the draft's assembly is the same for all six editions, and
+// the ROM's instructions at 0x0816fca8 are tla-en's in every edition but for
+// call targets and pool words, so it should match in all six.
+// What closed it (2026-11-08, from 6):
+// - x and frames are two plain s32 locals, not one 8-byte struct. A whole
+//   spilled pseudo's reloads carry no alias set, so frames' reload waits for
+//   the ball->y store and ball->y's high halfword waits for the x store, as
+//   in the listing; as struct members both took the slot's own alias set and
+//   moved ahead (the two stack reloads of differ 6). The slots stay put
+//   (frames at sp 28, x at sp 24).
+// - With frames plain, if-conversion (IF-CASE-1) hoists `frames = 24` above
+//   the mode test; the tagged empty asm in that arm keeps both arms (27
+//   without). No milder form stopped it: a dead self-copy of x, radius, work,
+//   draw[0], draw[1] or frames, a temporary for 24 or 40, a once-only block in
+//   either arm, a ternary, a switch, the test reversed, a loop left by break
+//   or inline helpers (27 to 55), `else if (mode == 1)` (40), the asm in the
+//   else arm or after the join (27), a volatile store through a cast (258), a
+//   block-scoped {x, frames} struct (181), frame = 0 in both arms (53).
+// - The flash tables are not const and both height reads are
+//   gData_08197498[cell]: ldrb [table, cell], and the second read stays after
+//   the stores before it (const with [cell] 6, const with *(table + cell) 2).
+// - ball->variant++ no longer needs its once-only block (0 either way).
+// Devices kept: the wrapper on the palette copy (2 without it); ordinary C:
+// the empty once-only block before the second blitter build (234 without).
+// What fixed the shape earlier, so keep it:
 // - draw[2]: the unused word is sp 44.
 // - buffer is set once at the top and lives across calls, so no register
-// survives
-//   for it and it is rematerialized at each use; 0x1b5a then takes ip.
-// - The empty do-while before the second blitter build ends CSE's block, so the
-// width and height tables stay
-//   in the flash loop, each in its own short-lived pseudo until cse2 merges
-//   them.
-// - The bounce has its own pointer dot, apart from the arrival's spark: r6 and
-// r7.
+//   survives for it and it is rematerialized at each use; 0x1b5a then takes
+//   ip.
+// - The empty do-while before the second blitter build ends CSE's block, so
+//   the width and height tables stay in the flash loop, each in its own
+//   short-lived pseudo until cse2 merges them.
+// - The bounce has its own pointer dot, apart from the arrival's spark: r6
+//   and r7.
 // - The two arms join after velocityX with a plain /, so the second divide
-// reloads
-//   work where cross-jumping shares only the bl and its store.
+//   reloads work where cross-jumping shares only the bl and its store.
 // - radius * radius / 2 stays in the loop test; variant is stepped by hand so
-// the
-//   pool holds the +24 address; Task_Add, Task_Remove and Func_08196404 as
-//   declared.
+//   the pool holds the +24 address; Task_Add, Task_Remove and Func_08196404
+//   as declared.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -164,17 +146,18 @@ extern char ResourceId_LightningBoltSheet;
 extern char ResourceId_VioletPaletteC;
 extern struct EffectStep gData_02014000[]; // the sparks
 extern u16 gData_08197410[];               // gBattleEffect_MoteCells
-extern const u16 gData_08197486[];         // the flashes' cells: offsets,
-extern const u8 gData_08197492[];          // widths
-extern const u8 gData_08197498[];          // and heights
-extern const u8 Data_08198bee[4];          // their flips
-extern const u8 gData_08199268[];          // a bolt's mesh
-extern const u8 gData_081991b0[];          // its corners (Thunder Mine)
-extern const u8 Data_081991c0[];           // and (Earth Force)
+// Not const: a const table's second height read issues two places early.
+extern u16 gData_08197486[];      // the flashes' cells: offsets,
+extern u8 gData_08197492[];       // widths
+extern u8 gData_08197498[];       // and heights
+extern const u8 Data_08198bee[4]; // their flips
+extern const u8 gData_08199268[]; // a bolt's mesh
+extern const u8 gData_081991b0[]; // its corners (Thunder Mine)
+extern const u8 Data_081991c0[];  // and (Earth Force)
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 8 of 747 instructions differ in tla-en. */
+   * Iwram_CopyWords, 2 of 747 instructions differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 
@@ -189,10 +172,8 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
   DrawRectangle draw[2];
   u8 *sprites;
   s32 radius;
-  struct {
-    s32 x;
-    s32 frames;
-  } flight;
+  s32 frames;
+  s32 x;
   s32 y;
   struct EffectPosition target;
   struct EffectPosition source;
@@ -251,9 +232,13 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   if (mode == 0) {
-    flight.frames = 24;
+    frames = 24;
+    /* FAKEMATCH(barrier): an empty asm after Thunder Mine's 24, which puts
+     * its arm over BRANCH_COST so if-conversion keeps both arms; as the bare
+     * `frames = 24;`, 27 of 747 instructions differ in tla-en. */
+    asm("");
   } else {
-    flight.frames = 40;
+    frames = 40;
   }
 
   for (frame = 0; frame != 50; frame++) {
@@ -264,7 +249,7 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
       if (mode == 0) {
         ball->x = source.x << 16;
         ball->y = (source.y - 32) << 16;
-        ball->velocityX = ((target.x << 16) - ball->x) / flight.frames;
+        ball->velocityX = ((target.x << 16) - ball->x) / frames;
       } else {
         if (effect->side == 0) {
           ball->x = (source.x - 32) << 16;
@@ -272,9 +257,9 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
           ball->x = (source.x + 32) << 16;
         }
         ball->y = (source.y - 80) << 16;
-        ball->velocityX = (((target.x - 32) << 16) - ball->x) / flight.frames;
+        ball->velocityX = (((target.x - 32) << 16) - ball->x) / frames;
       }
-      ball->velocityY = (((target.y - 32) << 16) - ball->y) / flight.frames;
+      ball->velocityY = (((target.y - 32) << 16) - ball->y) / frames;
       Sound_PlayFar(221);
       for (i = 0, bolt = &work->particles[1]; i != 63; i++, bolt++) {
         bolt->z = Random16();
@@ -295,7 +280,7 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     // Arrival.
-    if (frame == flight.frames) {
+    if (frame == frames) {
       s32 n;
 
       for (n = 0, spark = gData_02014000; n != 128; n++, spark++) {
@@ -323,14 +308,11 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     // The ball, growing to 48 (64), with four flashes about it.
-    if (frame <= flight.frames) {
+    if (frame <= frames) {
       s32 largest;
 
-      // Once-only block: keeps y's load after the variant store.
-      do {
-        ball->variant++;
-      } while (0);
-      flight.x = ball->x >> 17;
+      ball->variant++;
+      x = ball->x >> 17;
       y = HI(ball->y);
       if (mode == 0) {
         radius = frame * 2 + 16;
@@ -351,13 +333,13 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
           }
         }
       }
-      Func_0818caa8(buffer, flight.x, y, radius);
+      Func_0818caa8(buffer, x, y, radius);
       for (i = 0; i != 4; i++) {
         s32 cell = i & 3;
         s32 half = radius / 2;
         s32 angle = Random16();
-        s32 flashX = flight.x + ((Trig_Sin(angle) * half) >> 16) -
-                     (gData_08197492[cell] >> 1);
+        s32 flashX =
+            x + ((Trig_Sin(angle) * half) >> 16) - (gData_08197492[cell] >> 1);
         s32 flashY =
             y + ((Trig_Cos(angle) * half) >> 16) - (gData_08197498[cell] >> 1);
         s32 flags = 3 | Data_08198bee[Random16() & 3];
@@ -369,14 +351,14 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
         Func_08196404(188, 7, 7, flags, 1);
         ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
             canvas, work->sheet + 0x800 + gData_08197486[cell], flashX, flashY,
-            gData_08197492[cell], *(gData_08197498 + cell));
+            gData_08197492[cell], gData_08197498[cell]);
         HeapSlot_Release(188);
       }
       BattleEffectKernels_IntegrateVector2(ball, 64, 0);
     }
 
     // Thunder Mine's sparks bounce.
-    if (mode == 0 && frame >= flight.frames) {
+    if (mode == 0 && frame >= frames) {
       for (i = 0, dot = gData_02014000; i != 512; i++, dot++) {
         if (dot->variant >= 0) {
           s32 size = (dot->variant >> 3) + 2;
@@ -396,7 +378,7 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     // The trailing bolts, each eight frames long.
-    if (frame <= flight.frames) {
+    if (frame <= frames) {
       vertices = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
       texture.logWidth = 5;

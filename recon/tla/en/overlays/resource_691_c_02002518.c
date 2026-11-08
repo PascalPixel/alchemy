@@ -1,40 +1,52 @@
-// Differ 8 of 112 (tla-en, 2026-11-08, -mtune=gba), under -Os. Registers agree;
-// left is the order of the parts[i] store, i * 4, and the two zeros around the
-// sprite copy (the store after part->animation, or chained with the create,
-// gives the same 8; after the sprite bytes, 97). Tried 2026-11-08: 02001738's
-// PartSprite form (bit before slot, its differ 4) gives 10 here, slot first 10,
-// mixed struct and char spellings 8 to 14, a 4-minute permute 8. Round two (2026-11-08): the sprite
-// as a struct (vramBlock, keepEntry) lets the parts[i] store float, 10;
-// storing parts[i] after the vramBlock copy in any typing swaps i and anchor
-// (97); the motionFlags zero moved or chained, 8 to 14; a 6-minute permute 8.
-// The allocation notes below predate -Os.
-// Draft, differ 26 of 112, skeleton gap 3 (tla-en, 2026-11-01)
+// Matches: differ 0 (tla-en, 2026-11-08), under -Os with -mtune=gba.
+// The last 8 came from the sprite's type, not the statement order: read
+// through the layered sprite layout matched in field/f02254c.c (scale, an s32,
+// at 12; slot at 16; retainCacheEntry at bit 0 of 17), the bit's store
+// conflicts in alias set with the s32 position loads that follow and so issues
+// before the parts[0] reload, while the parts[i] store, an Actor pointer, stays
+// free and fills the load slot after the bit's read, as natively. Through a
+// u8 * every byte aliases the parts[] array and the store stays first (8); with
+// only u8 and u16 fields before the slot (the earlier PartSprite and
+// f021a84.c's layout) the reload rises above the bit's store (10). Any word
+// field in the first 16 bytes gives 0; the layout is f02254c.c's whole.
+// Func_02001738 holds the same 50 statements: in a scratch copy, its PartSprite
+// with an s32 at 12 and the slot copied before the bit also measures 0.
+//
 // Builds four parts around the watched object of an object whose update is
 // Func_020015e4, each copying the first part's sprite and position and taking
-// Func_02001528. Func_02001738 holds the same 50 statements with the same
-// native registers, so they are written as helpers here, not as a device: the
-// inline alone took differ 97 to 28 (it clears reload's r4), and AttachPart,
-// the four statements repeated at both ends, to 26. i is unsigned: a signed i
-// narrows `i - 1` to subs, unsigned gives the native's adds #255.
-// Left, about 16 lines: allocation. The native has anchor in r8 and i in r10;
-// here i takes r8 and anchor r10. Global-alloc ranks i (11 refs, live 96) above
-// anchor (7 refs, live 80); anchor needs 10 refs, or i 7 or fewer, and no plain
-// form found gives either. Tried: a real for or do loop (loop.c reduces the
-// array index, differ 116), anchor as a local passed in, parts passed in
-// (differ 68), a zero or update local (no gain, or worse).
-// Left, about 10 lines: the native stores parts[i] between the read and write of
-// sprite[17], with i * 4 computed before the sprite copy. Storing after the
-// copy brings the shift after `first` dies and cascades (differ 71). A comma
-// in the store's right side, with the byte 16 store through u8 *, gives the
-// exact order (differ 26 before AttachPart), so the order is real, but that
-// spelling is a disguise and stays out. Reading the sprite through the layered
-// sprite layout of 08021a84 (slot at 16, retainCacheEntry at bit 0 of 17) reads
-// better but lets the store float, differ 28; byte 98 is not unk5c (that is 94).
+// Func_02001528. The statements shared with Func_02001738 are written as
+// helpers: the inline BuildParts took differ 97 to 28 (it clears reload's r4),
+// and AttachPart, the four statements repeated at both ends, to 26. i is
+// unsigned: a signed i narrows `i - 1` to subs, unsigned gives the native's
+// adds #255. A real for or do loop lets loop.c reduce the array index (116).
 #include "types.h"
 #include "call.h"
 #include "actor.h"
+#include "field/sprite.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
+
+struct LayeredSprite {
+  u8 unk00[4];
+  u32 attributes;
+  u8 unk08[4];
+  s32 scale;
+  u8 slot;
+  u8 retainCacheEntry : 1;
+  u8 useOwnScale : 1;
+  u8 unk11 : 6;
+  u16 rotation;
+  u8 width;
+  u8 height;
+  s8 offsetX;
+  s8 offsetY;
+  u8 lastNo;
+  u8 dirty;
+  u8 flags;
+  u8 count;
+  struct AnimationSpritePart shadow;
+  struct AnimationEntry *entries[4];
+};
 
 struct Actor *Actor_GetById(s32 id);
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
@@ -56,8 +68,8 @@ static inline void AttachPart(struct Actor *part, struct Actor *anchor,
 static inline void BuildParts(struct Actor *anchor) {
   struct Actor *parts[4];
   struct Actor *part;
-  u8 *first;
-  u8 *sprite;
+  struct LayeredSprite *first;
+  struct LayeredSprite *sprite;
   u32 i;
 
   parts[0] = Import_ActorCreate(0x15f, anchor->x + 0x10000,
@@ -68,8 +80,8 @@ next:
   part = Import_ActorCreate(0x15f, 0, 0, 0);
   parts[i] = part;
   sprite = part->animation;
-  sprite[16] = first[16];
-  sprite[17] |= 1;
+  sprite->slot = first->slot;
+  sprite->retainCacheEntry = 1;
   part->x = parts[0]->x;
   part->y = parts[0]->y;
   part->z = parts[0]->z;

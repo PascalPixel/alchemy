@@ -1,26 +1,18 @@
-// Differ 12 of 132 (tla-en, 2026-11-08, -mtune=gba).
-// 2026-11-08 (second pass): a pointer to result[0] set after the call, in or
-// after a once-only block, set before it, passed to it, or as a Vector3 pointer,
-// all 40 to 47 (CSE merges it with the call's argument, held in r9); the zero
-// local still measures 20 without it.
-// 2026-11-08: a pointer to result[1] set after the call (far = &result[1],
-// reading *far and far[1]) gives the native's allocation exactly but its
-// offsets are 4 off (16); the same pointer at result[0] is merged by CSE
-// with the call's argument (40), and an 8-minute permute found nothing
-// valid under 12. Removing the zero local, 20.
-// Trial: ☀️'s WorldMap_BuildScanlineTable (games/tbs/src/field/field.c)
-// word for word over ⚓️'s projection record differs 70 of 132 (register
-// choice: the line counter and the camera point's address swap fp and a
-// stack slot); this draft, written from the listing, comes closer.
-// For each of the 160 scanlines, projects a ground point through the camera
-// (gCameraSceneParameters) and stores its x and y offsets in 16.16, or zeros
-// when the line is above the horizon. The pointer to result[2] (found by the
-// permuter) and height declared before nearZ give the native's registers
-// and stack slots; comparing distance with a local zero (permuter, 20 to 12)
-// is a local holding one constant, ordinary C under S2. Left (allocation only): the
-// native passes add r1, sp, #16 to the transform call and spills a fresh
-// copy of the result's address after it, where agscc spills one pointer
-// before the call. Plain result[] reads 55; a pointer to result[0] 40 to 49.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// The same routine as ☀️'s WorldMap_BuildScanlineTable (games/tbs/src/field/
+// field/view.c), over ⚓️'s projection record (gCameraSceneParameters: the
+// focal length at [0], the centre line at [4]). For each of the 160
+// scanlines, projects a ground point through the camera and stores its width
+// scale and signed ground distance in 16.16, or zeros above the horizon.
+// What settled it (2026-11-08): the transform reached through an inline
+// function, as ☀️'s iwram_call.h reaches every IWRAM entry; the inline's
+// parameter keeps the call's argument apart from cameraCoordinates, set
+// after the call as in ☀️, so CSE no longer merges the two (as the direct
+// macro call, 41 of 132 instructions differ). The vector's zero height
+// comes from a local holding 0, as in ☀️. Earlier rounds' pointers to
+// result[1] or result[2], and a zero local in the distance test, are gone.
+// Before adoption: ⚓️'s iwram_call.h calls this entry directly; the inline
+// below is ☀️'s header form and belongs there if other users still match.
 #include "types.h"
 #include "iwram_call.h"
 
@@ -34,41 +26,48 @@ struct ScanlineRow {
   s32 unk10;
 };
 
+// ☀️'s iwram_call.h form of this entry: an inline function over the fixed
+// address.
+#undef Iwram_TransformVector
+static inline void Iwram_TransformVector(const void *vector, s32 *result) {
+  Iwram_TransformVectorEntry(vector, result);
+}
+
 void Func_0802dd70(s32 depth, s32 *position, struct ScanlineRow *row) {
   s32 vector[3];
   s32 result[3];
   s32 height;
   s32 nearZ;
+  s32 *cameraCoordinates;
   s32 i;
   s32 z;
   s32 ratio;
   s32 dx;
-  s32 zero; // A local that holds one constant: distance is compared with it.
   s32 sum;
-  s32 *far;
+  s32 zero;
 
   zero = 0;
   vector[0] = position[0];
-  vector[1] = 0;
+  vector[1] = zero;
   vector[2] = position[2];
   Iwram_TransformVector(vector, result);
-  far = &result[2];
-  height = result[1] - Iwram_MulQ16(*far, depth);
+  cameraCoordinates = result;
+  height = cameraCoordinates[1] - Iwram_MulQ16(cameraCoordinates[2], depth);
   nearZ = -gCameraSceneParameters[0];
   for (i = 0; i < 160; i++) {
     s32 distance;
 
     z = Iwram_RatioMulQ14(nearZ, (gCameraSceneParameters[4] - i) << 16);
     distance = z - depth;
-    if (distance == zero)
+    if (distance == 0)
       distance = 1;
     ratio = Iwram_RatioMulQ14(distance, height);
     if (ratio < 0) {
       row->x = Iwram_RatioMulQ14(gCameraSceneParameters[0],
                                  Iwram_MulQ16(-ratio, 0x8000));
       z = Iwram_MulQ16(ratio, z);
-      dx = (result[2] - ratio) >> 4;
-      z -= result[1];
+      dx = (cameraCoordinates[2] - ratio) >> 4;
+      z -= cameraCoordinates[1];
       sum = Iwram_MulQ16(dx, dx);
       z >>= 4;
       sum += Iwram_MulQ16(z, z);

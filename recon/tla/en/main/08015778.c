@@ -1,42 +1,17 @@
-// Differ 2 of 82 (tla-en, 2026-11-08, -mtune=gba); without the barrier, 4.
-// Round 2 (2026-11-08), no barrier, 4 as before: the transform through a
-// function-pointer local, a (s32 *) cast of the view, a copy of screen, a
-// once-only block before the call, the projection set first or depth negated
-// as its own statement (4 to 8); 8 permuter minutes: nothing under 4.
-// Also 2026-11-08: no barrier, the plain C sets the literal before adds r7, r1
-// as the native does, and only the merged sp copy is left (4); an 8-minute
-// permute of that form found nothing better. A memory, cc or plain asm, a
-// once-only block, a label, a block-scoped view pointer or a separate view.z
-// local give 4 to 57; __asm__("" :) without volatile and an asm reading
-// screen keep 2.
-// 2026-11-07: depth read before the projection's address and y kept in its own
-// local (6 to 2 with the operand barrier; plain, 4: CSE merges the view's two
-// sp copies). Left: sched2 ties adds r7, r1 with the transform's literal; in
-// plain C the literal wins on its later r3 dependent, which the barrier hides.
-// Near miss, differ 6 of 82 (tla-en, 2026-10-31): the native forms the view's
-// address twice (mov r1, sp for the transform, mov r6, sp after it); here CSE
-// merges both into one copy, as nothing in plain C ends its block between
-// them. An operand barrier after the call (__asm__ volatile("" :)) flushes
-// CSE and gives both native forms, still 6: sched2 then puts adds r7, r1
-// before the transform's address and the projection's load before view.z
-// (ties at priority 10 and 7). Under that barrier, depth before projection:
-// 12 (projection to r8); projection read straight from the global, no
-// barrier: 43; projection set before the call: 37.
-// Draft, differ 6 of 82 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer, nor any pair of empty asm statements or
-// one-pass blocks (device search).
-// Draft, differ 6 of 82 (2026-10-24): an empty asm after the transform call
-// takes one reordered pair off. Left: the native forms the view's address
-// twice (mov r1, sp before the call, mov r6, sp after); here one copy serves
-// both.
-// Draft, differ 8 of 82: the native passes the view's address to the
-// transform as a fresh mov r1, sp and forms it again after the call (mov r6,
-// sp); here one copy in r6 is made before the call and r1 is copied from it,
-// which shifts three loads by a slot. Measured: a one-pass block after the
-// call (55), the view through a pointer set after the call behind an operand
-// barrier (13) or in a one-pass block (10); four minutes of permuter found
-// nothing better.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// The transform is called through The Broken Seal's typed inline from
+// iwram_call.h (as f1693d0.c calls Iwram_CopyWords), tagged as a wrapper: the
+// inlined call keeps CSE from merging the view's two addresses, so the
+// native's mov r1, sp before the call and mov r6, sp after it both come out,
+// and the literal load is scheduled before adds r7, r1. Called directly, 4 of
+// 82 differ (one sp copy shared across the call); this replaces the operand
+// barrier after the call (differ 2), a worse device.
+// Earlier, without the inline: the transform through a function-pointer
+// local, a (s32 *) cast of the view, a copy of screen, a once-only block
+// before the call, the projection set first or depth negated as its own
+// statement (4 to 8); a memory, cc or plain asm, a once-only block, a label, a
+// block-scoped view pointer or a separate view.z local (4 to 57); 20 permuter
+// minutes in all found nothing under 4.
 #include "types.h"
 #include "iwram_call.h"
 
@@ -54,6 +29,15 @@ struct ProjectedPoint {
   s32 z;
 };
 
+// The Broken Seal's typed inline from iwram_call.h, the layer every call goes
+// through there.
+#undef Iwram_TransformVector
+static inline void Iwram_TransformVector(const void *vector, s32 *result) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to the
+   * fixed entry, 4 of 82 instructions differ in tla-en. */
+  Iwram_TransformVectorEntry(vector, result);
+}
+
 extern struct Projection gCameraSceneParameters;
 s32 Render_ProjectPoint(const void *point, struct ProjectedPoint *screen) {
   struct ProjectedPoint view;
@@ -64,9 +48,6 @@ s32 Render_ProjectPoint(const void *point, struct ProjectedPoint *screen) {
   s32 y;
 
   Iwram_TransformVector(point, &view.x);
-  /* FAKEMATCH(barrier): an operand barrier after the transform; as no barrier,
-     4 of 82 instructions differ in tla-en. */
-  __asm__ volatile("" :);
   depth = -view.z;
   projection = &gCameraSceneParameters;
   if (depth >= projection->near && depth <= projection->far) {

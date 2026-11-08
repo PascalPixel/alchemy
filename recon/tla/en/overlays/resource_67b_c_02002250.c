@@ -1,35 +1,26 @@
-// Differ 30 of 169 (tla-en, 2026-11-08, -mtune=gba), with no fake device:
-// age declared volatile (a member, ordinary C) gives the listing's reload of
-// age after the OAM stores, the job the tagged oam temporary did (30 either
-// way; the plain store without either is 67). Also measured at 30 or worse
-// today: *oam++ = 0 then *oam (30), screenX unsigned, screenY = z then
-// -= y, screenX >= -11 && <= 323 (30 each), screenX computed late, from
-// x >>= 16, or after screenY (30 to 90), once-only blocks round any OAM
-// store (67, 69); a 6-minute permute (4,660 candidates) found nothing under
-// 30. Earlier: declaration orders,
-// screenX set inside x's expression, a temporary for z - y, once-only blocks
-// and a dead global update (85 or more) all leave it at 30 or worse.
-// Left: allocation only. screenX and screenY take r2 and r0 the wrong way
-// round, which moves the str of oam[1]; the prologue and frame now agree.
-// A 5-minute permute (7,500 candidates) found nothing under 30.
-// Why (6 November, from the lreg and greg dumps): screenX lives in one block,
-// so local-alloc takes it first and gives it r2; screenY spans the && chain
-// and global-alloc gets what is left (r0). Were screenX global, priorities
-// (screenY 14 refs over 28 insns, z 9 over 35, screenX 3 over 6) would give
-// exactly the native's r2, r1, r0. Measured: x = (screenX - 4) & 0x1ff inside
-// the if (107), screenY through a temporary for z - y (53, 61), screenX
-// computed first (45) or before screenY (30); a 10-minute permute
-// (14,000 candidates) found nothing under 30.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// All six editions measure 0 (tla-en, ja, de, es, fr, it), no fake device.
 // Aqua Rock's rising bubbles (gData_020034f0, 64 entries of 28 bytes after a
 // 12-byte head): now and then a bubble starts near the source object; each
 // live bubble rises until it reaches the ground's height, then drifts back 2
 // pixels a frame, ends at height 23 or row 48, and is drawn as one of four
 // animation pictures where it is on screen (Func_020028d0).
-// Earlier: viewX, viewZ and lift once took r9, r10 and r8 the wrong way round
-// (all three carry 5 refs); that part of the gap is now closed.
-// Forms that are load-bearing: the volatile age (the reload; earlier a
-// tagged store through an `oam` temporary did it); the for loop is needed for the -16 compare. `word` set twice
-// was free by 8 November and is gone.
+// Forms that are load-bearing, all ordinary C under S2:
+// - screenX first holds the ground's height (a local reused for a second
+//   value). That makes it live in two blocks, so global-alloc rather than
+//   local-alloc places it, and by priority (screenY 14 refs over 28 insns,
+//   z 9 over 35) screenY, z and screenX take the listing's r2, r1 and r0.
+//   Without the reuse screenX was local, took r2 first and left screenY r0,
+//   which moved the str of oam[1] (differ 30).
+// - screenX += 11 in place before the range test: with screenX global, a
+//   separate screenX + 11 took its own register and 334 another (41).
+// - the volatile age: the listing reads age again after the OAM stores
+//   (37 without it).
+// - the for loop, for the -16 compare.
+// Before (differ 30): oam temporaries, unsigned screenX, the range test as
+// two compares, screenX computed late or from x >>= 16, temporaries for
+// z - y, once-only blocks and permutes of up to 14,000 candidates all left
+// the r2/r0 swap.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -83,7 +74,9 @@ void Func_02002250(void) {
   bubble = work->bubbles;
   for (i = 63; i >= 0; i--, bubble++) {
     if (bubble->x != 0) {
-      if (Map_GetTerrainHeight(0, bubble->x, bubble->z) > bubble->y)
+      // screenX holds the ground's height here, before its own value.
+      screenX = Map_GetTerrainHeight(0, bubble->x, bubble->z);
+      if (screenX > bubble->y)
         bubble->y += 0x20000;
       else
         bubble->z += -0x20000;
@@ -106,7 +99,10 @@ void Func_02002250(void) {
       screenY >>= 16;
       screenY -= 4;
       z = y + 58;
-      if ((u32)(screenX + 11) <= 334 && screenY > -16 && screenY <= 239) {
+      // screenX now holds its offset into the range test (on screen from
+      // -11 to 323).
+      screenX += 11;
+      if ((u32)screenX <= 334 && screenY > -16 && screenY <= 239) {
         x &= 0x1ff;
         screenY &= 255;
         bubble->oam[0] = 0;

@@ -1,33 +1,28 @@
-// Differ 8 of 658 (tla-en, 2026-11-08, -mtune=gba).
-// BattleEffect_RunDiamondBerg. Round two, 2026-11-08, none better: unk04's zero
-// through its own block-scoped local, a volatile store or a model copy (8);
-// zero set before unk04's store, or as unk04 = zero = 0 (248); unk04 stored
-// before the texture's fields (39) or first (39); kind first (8); the scroll
-// zeros swapped or both through zero (8); the pixels store moved (37, 41);
-// permuter 6 minutes, nothing. 2026-11-08: a local zero, set after unk04's
-// store, for both scrollU = 0 stores gives scrollU and scrollV the native's r0
-// (10 to 8); declared with its 0, 10. Left: unk04's zero (the native's r3,
-// stored first; here r2, after kind). Every placement of the unk04 store, a
-// once-only block around it and a 5-minute permuter run over the setup's line
-// order gained nothing. 2026-11-07: the heights table read through a
-// local closed the shards' draw (12 to 10); 720 store orders, asm barriers and
-// a 6-minute permuter run left the model's zeros. Left:
-// - The model's first setup: the native stores unk04 first with its own zero
-//   in r3 and a second zero in r0 for scrollU and scrollV. Here one zero serves
-//   both: CSE gives all three stores one pseudo, loop.c merges it with the
-//   shards' variant = 0 hoisted out of the frame loop, and reload
-//   rematerializes it in r2 for unk04 and scrollU. All 720 orders of the six
-//   word stores were measured: this one has the lowest differ. All orders of
-//   the flash's setup gain nothing.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// BattleEffect_RunDiamondBerg: differ 0 of 658 in all six editions (tla-en,
+// tla-ja, tla-de, tla-es, tla-fr, tla-it; -mtune=gba), literal pools left to
+// the full compare. Left: adopt it beside its linker neighbours; it carries no
+// fake match (blit's second word, beat's spelling and the heights local are
+// ordinary C with their notes).
+// What closed the model's setup (8 to 0), 2026-11-08:
+// - the texture's pixels are const void *, as most matched effects declare
+//   them: a u32 pixels shared the model words' alias set and pinned its
+//   store between unk04's and kind's.
+// - the setup runs kind, texture, pixels, unk04, mesh, vertices. Reload hands
+//   out its spare registers r0 to r4 round robin, so &texture (r1), cells (r2)
+//   and unk04's zero (r3) take the native's registers only in that order;
+//   sched2 then lifts unk04's store to the front. All 5,040 orders of the seven
+//   setup statements were measured: 14 give 0, this one reads plainest. The
+//   separate zero for scrollU and scrollV is no longer needed.
 // Facts that closed the rest:
 // - cells is one local for the whole function, spilled and rematerialized
 //   from its constant; that is why each load reloads gMapCellBuffer.
 // - each shard loop has its own shard pointer (r5, r5, r7).
 // - BattleEffect_LoadBlitter, Task_Add and Task_Remove return s32, as defined;
 //   the void prototype swaps the blitter call's argument moves.
-// - pixels is u32, as in project_vertices.c's struct Texture: it shares an
-//   alias set with the model's words, which keeps those stores in order.
-// - pixels, x, y and height are read in that order before the draw.
+// - the shard's pixels, x, y and height are read in that order before the
+//   draw; the heights table through a local keeps the width off the stack.
+// - beat as t % 8: 4 differ; height as gData_08197826[cell]: 2; one blit: 68.
 
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -42,7 +37,7 @@ struct ModelTexture {
   u32 logWidth : 8;
   u32 logHeight : 8;
   u32 unk02 : 16;
-  u32 pixels;
+  const void *pixels;
 };
 
 struct RenderModel {
@@ -316,21 +311,18 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
 
     if (frame > 5) {
       void *vertices;
-      // Holds 0: its own register gives scrollU and scrollV their zero.
-      s32 zero;
 
       vertices = Heap_AllocEwram(0x400);
       model = Render_AllocateModelList(1);
       texture.logWidth = 7;
       texture.logHeight = 7;
-      model->texture = &texture;
-      model->unk04 = 0;
-      zero = 0;
       model->kind = 7;
-      texture.pixels = (u32)cells;
+      model->texture = &texture;
+      texture.pixels = cells;
+      model->unk04 = 0;
       model->mesh = Data_08198ec4;
       model->vertices = vertices;
-      model->scrollU = zero;
+      model->scrollU = 0;
       model->scrollV = 0;
 
       // The frost ripples.
@@ -363,9 +355,9 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
       // A flash at each blow, at the target.
       texture.logWidth = 7;
       texture.logHeight = 7;
-      texture.pixels = (u32)(work->sheet + 0x3080);
+      texture.pixels = work->sheet + 0x3080;
       model->mesh = gData_08199364;
-      model->scrollU = zero;
+      model->scrollU = 0;
       model->scrollV = 0;
       for (k = 0; k != 8; k++) {
         s32 t = frame - 31 - k * 8;

@@ -1,21 +1,17 @@
-// Differ 14 of 277 (tla-en, 2026-11-08, -mtune=gba): allocation, as below.
-// Taking gData_0802ed34 into a local (resourceSets) before the loops fixes the
-// window reload in the reload test (37 before). Left, allocation only: the
-// native forms gMapBlocks in r1 after the row shift (the draft, r3), rereads
-// the region through r3 for the divide (the draft, r0), and holds the table in
-// r2 (the draft, r1). Block index forms and region casts do not help; a
-// permuter run on this form found nothing closer. Data_0202d000 as a local
-// gives the early r5 load (39 to 37). Tried 8 November, all 14 or worse: the
-// table indexed directly, non-const (37), its local assigned late (41 to 55)
-// or declared const (37), spelled resourceSets[0] + graphicsSet * 9; the
-// block index in a local or as gMapBlocks + i (24 to 211), reversed (24),
-// x and y divided by (1 << 21); the region read into a reused local (39 to
-// 91), as a signed bitfield (20); Func_0802d088 taking u8 (28) or u32/u16.
-// Also 8 November, all 14 or worse: the block chosen in its own scope, the
-// region cast (s32) or u32 (16) or read as a raw word (16 to 29), index
-// spelled * 32 (14) or | (179), the switch value in graphicsSet (41), the
-// table spelled &[][0], *resourceSets + n * 9 or by bytes (14), graphicsSet
-// u32 or u8 (14), each declaration moved first (14, x0 32).
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Differ 0 of 277 in all six editions (tla-en, tla-ja, tla-de, tla-es, tla-fr,
+// tla-it), plain C, no device. Two forms closed the last 14:
+// - The block table read at Camelot's fixed address, (struct WorldBlock
+//   *)Ram_MapBlocks + index, as f0cb144.c reads it. The constant sum puts the
+//   index first and reload forms the address in r1 after the row shift. Reload
+//   picks spill registers round robin, so this reload also gives the window
+//   reload its r3 and lets the table be indexed directly (r2), which needed
+//   the resourceSets local before.
+// - The region for the divide read into a local that also holds the busy
+//   result (value). Set twice, it goes to global allocation and the read goes
+//   through r3, as the original does. Read straight into the divide, the read
+//   ties to r0. Used for the Func_0802d088 argument as well, both reads go
+//   through r3.
 // Earlier notes follow.
 // Near miss, differ 45 of 277 (2026-10-18), first pass: The Broken Seal's
 // Map_UpdateCurrentTileBlockUntilBlocked, then this game's staged reload of
@@ -46,7 +42,6 @@ struct MapTileWindow {
   s32 reloadSteps;
 };
 
-extern struct WorldBlock gMapBlocks[];
 extern const u32 gData_0802ed34[4][9];
 extern u8 Data_0202d000[];
 extern u8 gData_02038000[];
@@ -64,8 +59,7 @@ void Func_080c8970(void *palette);
 void MapAnimation_StartChannels(const u16 *script);
 
 void Func_0802c58c(void) {
-  struct MapTileWindow *window =
-      (struct MapTileWindow *)Ram_HeapSlots->mapWork;
+  struct MapTileWindow *window = (struct MapTileWindow *)Ram_HeapSlots->mapWork;
   s32 x = 0;
   s32 y = 0;
   s32 x0;
@@ -74,11 +68,10 @@ void Func_0802c58c(void) {
   s32 row;
   s32 col;
   s32 tile;
-  const u32 (*resourceSets)[9] = gData_0802ed34;
   struct WorldBlock *block;
   const u32 *resources;
   s32 graphicsSet;
-  s32 busy;
+  s32 value;
   u8 *buffer;
 
   if (window->origin != NULL) {
@@ -100,9 +93,13 @@ void Func_0802c58c(void) {
       }
     }
   }
-  block = &gMapBlocks[((x / 0x200000) & 31) + (((y / 0x200000) & 31) << 5)];
+  block = (struct WorldBlock *)Ram_MapBlocks +
+          (((x / 0x200000) & 31) + (((y / 0x200000) & 31) << 5));
   Func_0802d088(block->region, 1);
-  switch (block->region / 10) {
+  // One local holds the region, then the busy result: set twice, it reads
+  // the region into r3 for the divide, as the original does.
+  value = block->region;
+  switch (value / 10) {
   case 3:
     graphicsSet = 3;
     break;
@@ -116,15 +113,15 @@ void Func_0802c58c(void) {
     graphicsSet = 0;
     break;
   }
-  resources = resourceSets[graphicsSet];
+  resources = gData_0802ed34[graphicsSet];
   if (resources != window->resources) {
     window->resources = resources;
     window->reloadSteps = 12;
   }
-  busy = Func_080c8950();
+  value = Func_080c8950();
   if (window->reloadSteps == 0)
     return;
-  if (busy != 0)
+  if (value != 0)
     return;
   buffer = Heap_Alloc(0x200);
   switch (window->reloadSteps) {

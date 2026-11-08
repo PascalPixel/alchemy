@@ -1,42 +1,24 @@
-// Differ 6 of 1139 (tla-en, 2026-11-08, -mtune=gba), the same scroll-zero rows.
-// Second 2026-11-08 round, no gain: a once-only block round scrollU or
-// after unk04 (6), round scrollV (8), after the allocation (16); (u8)0, a block
-// local for mesh, scrollV = scrollU (6); a u8 zero local (20); scrollU first
-// (20), after mesh or texture (46, 48); texture set before the allocation (80);
-// 8 more permuter minutes.
-// 2026-11-08: sched2 puts movs r3, #0 first because the scrollU byte store
-// precedes the mesh reload in RTL (prio 12 against kind's 11); the listing's
-// order needs both scroll stores after the reloads, and every such store order
-// (kind, texture, mesh, vertices, then the scrolls: 64) slips the reload
-// registers; an 8-minute permuter run found nothing. The discarded reads of
-// bg2pa and bg2pd are // DEAD: notes, not a
-// device (S2): as plain stores, 10.
-// 2026-11-07: lift scaled in its declaration fixes the asrs order; the dome
-// model stores kind second and scrollU third (search of all 5040 orders and
-// texture placements). Left, sched2 only: the listing sets the scroll zero
-// after mesh is loaded; a 7-minute permuter run found nothing.
-// 2026-11-05: differ 10 of 1139 (tla-en). A discarded volatile read closes
-// bg2pa and bg2pd.
-// Draft, differ 24 of 1139, skeleton gap 18 (tla-en, 2026-11-01)
-// BattleEffect_RunGeode: frame, spill slots and allocation agree with the
-// listing, the draft is 2 instructions short and nothing else is left but order.
-// Left:
-// - bg2pa and bg2pd: the listing does a discarded ldrh before each strh, the 2
-//   missing instructions, as 0815b764 does. A volatile 16-bit bitfield does not
-//   produce it (gap 31); the discarded volatile read does (ordinary C, S2).
-// - The dome model's store order is a search result, not a reading. kind is
-//   stored late only so reload gives mesh and projected the listing's registers
-//   (r1 and r2 want kind's r1 free first); stored second, as the listing shows,
-//   the rotation of reload registers slips one and the gap rises to 136. All 720
-//   orders of its fields were tried.
-// - sched2 places frame = 0 and row = 0 a few instructions early. Making the
-//   position addresses user pointers closes the first (gap 16) but puts them in
-//   the wrong spill slots (differ 84); here loop.c hoists them, as in the listing.
+// Matches: differ 0 (tla-en, 2026-11-08); tla-ja, tla-de, tla-es, tla-fr and
+// tla-it measure differ 0 as well.
+// BattleEffect_RunGeode. What closed the last six rows (the scroll zero):
+// picture holds gMapCellBuffer for the whole function (ordinary C, S2), shared
+// by the picture copy and the dome's texture. Global allocation leaves it
+// unallocated with its REG_EQUIV, so the texture's gMapCellBuffer load becomes
+// a reload and takes r3 in the reload rotation (r1, r2, r3); mesh and projected
+// then reload into r1 and r2 with the model stored in the listing's order:
+// unk04, kind, texture, mesh, vertices, then both scrolls. The scroll stores
+// must follow vertices in the source: the spill reloads (alias set 0) conflict
+// with every store through the model, so a store before a reload in RTL stays
+// before it. Earlier rounds had stored scrollU third and mesh before texture
+// to get those reload registers, which put movs r3, #0 too early.
 // Measured facts worth keeping: row and curl are declared before pitch, whose
 // slots show it; the counter i is shared by the picture copy, the fade and the
 // rings but not by the dome's columns; vertices[row * 16 + column] gives the
 // reduced index the listing spills last; lift and reach are separate variables
-// from y and radius; the fade level goes through battle + 0x66c and is reread.
+// from y and radius, and lift is scaled in its declaration; the fade level goes
+// through battle + 0x66c and is reread; bg2pa and bg2pd keep the ROM's
+// discarded reads (// DEAD:, 10 differ as plain stores); loop.c hoists
+// frame = 0 and row = 0 as in the listing.
 
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -176,9 +158,8 @@ struct ModelVertex {
 void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
-  /* FAKEMATCH(frame): the blitter is declared as The Broken Seal's pair
-   * though only the first is used; its second word is the unused word at
-   * sp 72 of the native's stack frame (differ 960 as one DrawRectangle). */
+  // Unused: blit[1], the second of The Broken Seal's pair of blitters, gives
+  // the stack frame its 4 bytes at sp 72 (differ 960 as one DrawRectangle).
   DrawRectangle blit[2];
   s32 *transition;
   u8 *projected;
@@ -188,6 +169,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
   s32 curl;
   s32 pitch;
   u8 *battle;
+  u8 *picture;
   void *caster;
   s32 screenB[3];
   s32 screenA[3];
@@ -233,8 +215,10 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
   battle = (u8 *)Ram_HeapSlots->battleWork;
   caster = *GetBattleObjectSlotFar(effect->actor);
   gBgScroll[1].x = -56;
+  // The battlefield's picture, later the dome's texture.
+  picture = gMapCellBuffer;
   {
-    u8 *cell = gMapCellBuffer;
+    u8 *cell = picture;
     s32 x;
 
     // Take the battlefield's picture off BG2's tiles, row by row.
@@ -414,13 +398,13 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
       model = Render_AllocateModelList(1);
       texture.logWidth = 8;
       texture.logHeight = 7;
-      texture.pixels = gMapCellBuffer;
+      texture.pixels = picture;
       model->unk04 = 3;
       model->kind = 8;
-      model->scrollU = 0;
-      model->mesh = mesh;
       model->texture = &texture;
+      model->mesh = mesh;
       model->vertices = projected;
+      model->scrollU = 0;
       model->scrollV = 0;
       Render_ResetTransformState();
       if (frame > 7) {

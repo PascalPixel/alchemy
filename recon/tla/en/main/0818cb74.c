@@ -1,5 +1,26 @@
-// Differ 40 of 1122 (tla-en, 2026-11-08, -mtune=gba, multiplies 3 3), with one tagged
-// temporary; the earlier 42's muls ahead of ldr r1, [sp, #32] is gone.
+// Draft, differ 36 of 1122 (tla-en, 2026-11-08), no device; 36 in every edition
+// (tla-ja's copy is at 0x0818cb78: diff --edition tla-ja --symbol BattleEffect_RunTrident).
+// 2026-11-08 (last), from 40: the spray's grow and the tridents' start are one local
+// (a local reused for a second value, untagged). Its first set is now frame * 4 - 156,
+// not a constant, so local-alloc no longer doubles its live length (it doubles a pseudo
+// whose first set has a constant REG_EQUAL, which ranked start's 3 * 11 / 116 under the
+// second &texture's 3 * 9 / 85); it takes r10 in both places, the second &texture
+// spills to sp+20 as in the listing, and the textureAddress temporary is gone. Left:
+// - The droplet loop's gMapCellBuffer (14 with the pool offsets it moves): cse2 reuses
+//   the loop's load for the 0xc1 load. A cell-base local for both takes r8 (59).
+// - The first setup's pixels store and scrollU zero (6): all 40320 orders of its eight
+//   stores after the bitfields measured, the current one best (36). Its pixels as the
+//   symbol (the listing's pool word is gMapCellBuffer) moves the second pool (62).
+// - The tridents (4): the listing runs shade, pixels, then Render_ResetTransformState.
+//   In that order (222) reload inherits x from r0 for x << 12 where the listing reloads
+//   it (mov r1, r8), and that one reload turns reload's register rotation for the rest
+//   of the function. The listing's asrs before movs r1, #3 and its uninherited x both
+//   fit a block boundary (a label) right after x = ...; none found: once-only blocks
+//   around x, the shade or the pixels, an inline helper, five spellings of the pixels,
+//   a pointer for the loop's &texture, x set inside the pixels expression, __modsi3
+//   called by name, and even an empty asm (a diagnostic only) all still inherit.
+// - sched2 ties (12): the spark loop's table load before its walker (an indexed walker
+//   58, a table pointer 57), the glints' y (four spellings, 36 to 158) and 0x700.
 // 2026-11-08 (latest), unchanged at 40: the temporary re-measured (171 without);
 // the droplets' cells as &gMapCellBuffer[offset] or through a block local, the
 // 0xc1 load from &gMapCellBuffer[0], a glint height local (40 each); the tridents
@@ -257,7 +278,6 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
   s32 placement[4];
   struct PlacementSource source;
   struct ModelTexture texture;
-  struct ModelTexture *textureAddress;
   struct RenderModel *model;
   void *vertices;
   struct EffectStep *p;
@@ -266,6 +286,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
   s32 size;
   s32 offset;
   s32 x;
+  s32 grow; // Also each trident's first frame: one local, reused.
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -392,8 +413,6 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
 
     // Spray: a pool of foam, then droplets thrown up.
     if ((u32)(frame - 12) <= 52) {
-      s32 grow;
-
       if (frame == 12) {
         for (i = 0; i != 32; i++) {
           work->particles[i].variant = -2 * i;
@@ -457,8 +476,6 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
       model->vertices = vertices;
       texture.pixels = Ram_MapCellBuffer;
       model->scrollV = 0;
-      /* FAKEMATCH(temporary): textureAddress holds &texture across the rings; as model->texture = &texture, 171 of 1122 instructions differ in tla-en. */
-      textureAddress = &texture;
 
       // Eight rings of foam.
       for (i = 0; i != 8; i++) {
@@ -489,13 +506,12 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
       // The tridents.
       if (frame <= 71) {
         const s32 *spin;
-        s32 start;
         struct EffectStep *t;
         struct EffectStep *spinner;
 
         texture.logWidth = 5;
         texture.logHeight = 7;
-        model->texture = textureAddress;
+        model->texture = &texture;
         model->kind = 7;
         model->mesh = gData_08199268;
         model->vertices = vertices;
@@ -509,11 +525,11 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
             t->variant = (i % 6) * 4;
           }
         }
-        for (i = 0, start = 18, spinner = &work->particles[32]; i != 7;
-             start += 4, i++, spinner++) {
+        for (i = 0, grow = 18, spinner = &work->particles[32]; i != 7;
+             grow += 4, i++, spinner++) {
 
           scale = i * 4;
-          if (frame < start || frame >= scale + 42) {
+          if (frame < grow || frame >= scale + 42) {
             continue;
           }
           x = (spinner->variant / 8) % 3;

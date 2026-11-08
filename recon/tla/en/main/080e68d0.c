@@ -1,12 +1,19 @@
-// Differ 6 of 938 (tla-en, 2026-11-08, -mtune=gba): sched2 order and one register.
-// 2026-11-08: i = 0 as its own statement before each particle loop and particle++
-// in the for step of the first two (20 to 8); pending first holding the event flag
-// word's address (8 to 6, from an 8-minute permuter run). Left: that address in r7
-// where the listing has r3, and the 0xd4c chain's last add after other->scaleX = 0.
-// The constant local for Task_Add's 0x480 is worth 4 (10 without); the r2 pin is
-// tagged (8 without).
-// Draft, differ 50 of 938, skeleton gap 24 (tla-en, 2026-11-01): a field
-// Psynergy that grows something from the
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Also differ 0 in tla-ja (080e688c), tla-de (080f38d0), tla-es (080ef8c4),
+// tla-fr (080eb8c4) and tla-it (080e68c4), whole-function at each edition's
+// own address.
+// 2026-11-08, third pass: the flag word at 0xd4c read as a u16 member of the
+// event work (FxEvent, which nests struct EventWork) instead of through a u16
+// cast closes both remaining sched2 spots (6 to 2) without reusing pending for
+// its address. A sub-word member read takes its struct's alias set: the
+// object's u8 stores (the Actor's set) no longer come before it, and the other
+// object's s32 stores (a child of the event work's set) do, as in the listing.
+// The r2 pin became a tagged barrier, 2 without: the native copies frame into
+// r2 before the two scene stores, so sched2's tie puts that move first. A plain
+// copy is folded away by CSE; frame++ folded into the call (57), a for loop and
+// an inline wrapper with its arguments reversed (2 each) do not move it. The
+// constant local for Task_Add's 0x480 is still worth 4.
+// A field Psynergy that grows something from the
 // ground before the caster (on a 16-pixel grid, unless the event mode is 3):
 // object 353 rises, and a second object (354, or 355 when the scene's flag
 // at 0x41 is set) waits there. It fails, scattering sixteen particles with
@@ -20,19 +27,15 @@
 // calling Func_080e716c at frame 24 and the others running the effect's
 // stage-5 event each frame (stage 1 from frame 30, 2 from 50). The object
 // then bursts (Func_080dbf94).
-// Every register and stack slot agrees; left: sched2's order at about eleven
-// spots, all the same kind. The native issues its stores earlier than here
-// and its constant chains later (the spill stores before `movs r4, #197`, the
-// flag word's 0xd4c chain, `str failed` before the copies of the scan's
-// pointers, both phase strhs before the Func_080e6400 pool load).
-// The shape that set the
-// allocation: &work->sprites[i] in the first two loops (loop strength
-// reduction keeps the copy at the top of each pass), a stepped pointer in the
-// third, frame apart from i, and the locals declared in stack-slot order.
+// The shape that set the allocation: &work->sprites[i] in the first two loops
+// (loop strength reduction keeps the copy at the top of each pass), a stepped
+// pointer in the third, frame apart from i, and the locals declared in
+// stack-slot order.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "effect_sprite.h"
+#include "field/event_work.h"
 
 struct RiseParticle {
   s32 x;
@@ -79,10 +82,18 @@ struct FxScene {
   s16 frame;
 };
 
+// The event work with its flag word past the shared struct. Read as a member,
+// the flag word takes this struct's alias set, which orders its reads after
+// s32 stores but not after an Actor's u8 stores, as the listing has them.
 struct FxEvent {
-  u8 unk00[20];
-  struct Actor *objects[80];
+  struct EventWork work;
+  u8 unkcbc[0x90];
+  /// Bit 0 clear runs Func_080dba5c; bit 1 set fixes the risen object's sprite
+  /// priority at 1 directly, else its priority flag is set.
+  u16 unkd4c;
 };
+
+STATIC_ASSERT(offsetof(struct FxEvent, unkd4c) == 0xd4c);
 
 extern char ResourceId_DustPuffA, ResourceId_DustPuffB, ResourceId_WhiteSparkle,
     ResourceId_Data1E9;
@@ -147,7 +158,7 @@ void Func_080e68d0(void) {
   s32 frame;
   s32 i;
 
-  if (((s8 *)event)[394] != 3) {
+  if (event->work.controlMode != 3) {
     scene->x = (caster->x & 0xfff00000) + 0x80000;
     scene->y = caster->y;
     scene->z = (caster->z & 0xfff00000) + 0x80000;
@@ -159,9 +170,7 @@ void Func_080e68d0(void) {
   if (object == NULL)
     goto end;
   object->motionFlags = 0;
-  // pending is reused: it first holds the address of the event's flag word.
-  pending = (u8 *)event + 0xd4c;
-  if (*(u16 *)pending & 2) {
+  if (event->unkd4c & 2) {
     if ((object->animationKind & 15) == 1) {
       ((struct EffectSprite *)object->animation)->oam.priority = 1;
       object->priorityFlags &= 254;
@@ -185,7 +194,7 @@ void Func_080e68d0(void) {
   other->motionFlags = 0;
   other->priorityFlags = 1;
   other->scaleX = 0;
-  if (!(*(u16 *)((u8 *)event + 0xd4c) & 1))
+  if (!(event->unkd4c & 1))
     Func_080dba5c();
   Sound_PlayFar(138);
   Func_080dbed0(object, scene->x, scene->y + 0x200000, scene->z);
@@ -201,7 +210,7 @@ void Func_080e68d0(void) {
 
   failed = 0;
   for (i = 0; i < 80; i++) {
-    target = event->objects[i];
+    target = event->work.objects[i];
     if (target != NULL && target->script != NULL &&
         (Func_08020330(target) == 406 || (target->collisionFlags & 1)) &&
         target != scene->mainObject && ((u8 *)target->animation)[27] != 0 &&
@@ -369,14 +378,15 @@ void Func_080e68d0(void) {
         stage = 1;
       if (frame == 50)
         stage = 2;
-      scene->stage = stage;
-      scene->frame = frame;
       {
-        /* FAKEMATCH(pin): the form kept; as Field_RunPsynergyEvent(pending,
-         * stage, frame), 8 of 938 instructions differ in tla-en. */
-        register s32 pinned asm("r2") = frame;
+        /* FAKEMATCH(barrier): the form kept; as Field_RunPsynergyEvent(pending,
+         * stage, frame), 2 of 938 instructions differ in tla-en. */
+        s32 frameCopy;
 
-        Field_RunPsynergyEvent(pending, stage, pinned);
+        asm("" : "=r"(frameCopy) : "0"(frame));
+        scene->stage = stage;
+        scene->frame = frame;
+        Field_RunPsynergyEvent(pending, stage, frameCopy);
       }
       frame++;
     }

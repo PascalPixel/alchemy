@@ -1,18 +1,37 @@
-// Differ 4 of 596 (tla-en, 2026-11-08, -mtune=gba): the same two ties; vram before
-// picture (24), the copy size in one local (4), vram after the ripple (99).
-// 2026-11-08: vram as a shift, an integer sum or two steps, typed copy
-// parameters, 14 + timer (all 4); once-only blocks (12, 14); 10 permuter
-// minutes found nothing below 4.
-// 2026-11-08, later: vram split, reversed, indexed or from a constant local,
-// the picture as work->picture or void *, a size local, the copy through a
-// local (all 4), the ripple phase read first (124); 10 more permuter minutes
-// found nothing.
-// Differ 4 of 596 (tla-en, 2026-11-07); 8 on 2026-10-31, then 4; 14 min of permuter
-// and spelling, scope and order reshapes found nothing. Two sched2 ties remain:
-// the native loads the 0x06010000 pool word into r3 before `movs r4, #200`
-// (here the ldrsh's anti-dependence on r3 makes the independent movs win),
-// and for the indirect copy it moves r1 = 32 before r0 = picture (here both
-// have three dependents, so RTL order puts r0 first).
+// Matches: differ 0 (tla-en, 2026-11-08)
+// All six editions build the same 1,224 bytes but for the calls' offsets
+// (checked by assembling the draft per edition against each ROM's copy:
+// tla-ja 080e63bc, tla-de 080f3400, tla-es 080ef3f4, tla-fr 080eb3f4, tla-it
+// 080e63f4, each call landing on that edition's callee); the diff tool cannot
+// measure those scaffold sections itself (no Thumb marker).
+// One tagged device: FAKEMATCH(barrier) on `phase`. Review also the copy's
+// return type, which is untagged as the routine's true type.
+// How the two sched2 ties closed (-fsched-verbose=6 on the sched2 dump):
+// - r1 = 32 before r0 = picture at the copy: the two moves tie on priority
+//   and dependents, so RTL order put r0 first. With the copy typed as
+//   returning a value (call_value sets r0), the later r0 = &pictureSprite
+//   depends on the call instead of on r0 = picture, which drops to two
+//   dependents and loses to r1. copy_strided.s does return the source's end
+//   in r0 on every path; the other three call sites (f021a84.c, f0e4a34.c,
+//   f0e92b4.c) compile the same with either type.
+// - the 0x06010000 pool load before `movs r4, #200`: both have priority 20
+//   (each reaches `adds r3, r7, r4` at cost 3), and after the tile ldrsh,
+//   which reads r3, the pool load is anti-dependent (class 2) and the movs
+//   independent (class 3). No C reshapes that: the reload round-robin
+//   (0x400 in r0, 0x192e r1, scratch r2, pool r3, 0x192a r4, scratch r0)
+//   shows the native's order is picture, tile, vram, timer, as here, and a
+//   once-only block at the tile load would pull the picture ahead of it. The
+//   asm on `phase` (r8, untouched until the re-test) is a no-code insn with
+//   no unit, so it issues in the ldrsh's stall; after it both candidates are
+//   class 3 and the pool load wins on three dependents to two. Without it,
+//   2 differ. An asm on the pool constant instead lowers its priority (a link
+//   into an asm costs nothing): 2. Milder kinds cannot add a no-code insn.
+// Earlier rounds (differ 4): vram before picture (24), the copy size in one
+// local (4), vram after the ripple (99); vram as a shift, an integer sum or
+// two steps, split, reversed, indexed or from a constant local, typed copy
+// parameters, 14 + timer, the picture as work->picture or void *, the copy
+// through a local (all 4); once-only blocks (12, 14, 22 with the tile address
+// alone inside); the ripple phase read first (124); 34 permuter minutes.
 // The frame callback of Func_080e68d0's effect, a state machine on its phase
 // (0x1928) and timer (0x192a) in one of four modes (0x1938). Mode 0: the
 // second object appears full width, the first takes mode 3 and rises for 16
@@ -57,6 +76,11 @@ struct RiseWork {
   s16 mode;
 };
 
+/// Render_CopyStrided as the heap holds it: copies rows 8 bytes at a time and
+/// returns the end of the source.
+typedef const u8 *(*CopyStridedFn)(const u8 *source, s32 stride, s32 rows,
+                                   void *destination);
+
 void Func_080e62f4(u8 *source, u8 *destination, s32 phase);
 void BattleEffect_UpdateGrowingParticleSprite(struct EffectSprite *sprite,
                                               struct EffectParticle *particle,
@@ -74,6 +98,7 @@ void Func_080e6400(void) {
   struct EffectParticle *particle;
   u8 *vram;
   u8 *picture;
+  s16 *phase;
   s32 jitter;
   s32 i;
 
@@ -102,15 +127,21 @@ void Func_080e6400(void) {
         work->phase = 999;
       break;
     }
-    if (work->phase == 2) {
+    phase = &work->phase;
+    if (*phase == 2) {
+      /* FAKEMATCH(barrier): an empty asm on phase, which issues in the tile
+       * load's stall so the vram base's pool load wins its tie with the timer
+       * offset; as no asm, 2 of 596 instructions differ in tla-en. */
+      asm("" : "+r"(phase));
       picture = work->picture;
       vram = (u8 *)0x06010000 + work->pictureTile * 32;
       Func_080e62f4(work->tiles, picture, work->timer + 14);
-      ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->unk4c[2])(picture, 32,
-                                                                    32, vram);
+      // The heap copy of Render_CopyStrided (copy_strided.s) hands back the
+      // source's end in r0; the call is scheduled as one that returns it.
+      ((CopyStridedFn)Ram_HeapSlots->unk4c[2])(picture, 32, 32, vram);
       sprite = &work->pictureSprite;
       Func_080eb01c(sprite);
-      if (work->phase == 2) {
+      if (*phase == 2) {
         for (i = 0, particle = work->particles; i < 18; i++, particle++) {
           sprite = &work->sprites[i];
           if (particle->timer >= 0 && particle->timer < 32)

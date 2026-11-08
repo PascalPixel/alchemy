@@ -1,22 +1,47 @@
-// Differ 34 of 5364 (tla-en, 2026-11-08, -mtune=gba), measured with all five
-// addresses below (rechecked 2026-11-08: the opening fade's empty asm dropped for r = m, still 34;
-// FILL_WORDS without its once-only block 731, calling Iwram_FillWords directly 38).
-// Later the same day: the cues before the splash through a static inline wrapper
-// add one pseudo per integration (10 in all) and leave 34; the 280 are not small
-// inline helpers.
-// Left: spill slots 32 to 60 numbered in another order (seven
-// sites); the large rings' sheet multiply (adds r3, r7; muls r3, r0) now matches. Measure in address order,
-// 0819284c,08192894,081929fc,08192a4c,08192c9c: the parent alone gives 549 and
-// parent first 1062, both counting the nested functions as moved.
-// 2026-11-08, the slots: the eight spilled are PRE's reaching registers 4269 to 4288 (sp 32 to 60 hold 4288,
-// 4286, 4280, 4279, 4278, 4277, 4271, 4269: lower regno, higher slot), numbered in hash-bucket order (table
-// 1981). The listing's order is 4279, 4280, 4288, 4269, 4271, 4277, 4286, 4278 from sp 60 down. 275 to 294
-// unused locals, at the top or in a block anywhere before the splash's call (tested after the opening and
-// just before the splash loop), now give differ 0 in tla-en; every other count from 1 to 400 stays at 34 or
-// worse, and the same 280 inside Iris_DrawSplash give 26 (integrate.c makes its unused locals' pseudos after
-// the body). A dead `if (0)` call of the splash adds 343 pseudos (34). So the source makes 275 to 294 pseudos
-// before the splash that leave no insn by gcse (a dead block, an integration whose code folds away, or
-// locals); which is open. Not adopted: 280 declared names are a device S2 has no kind for.
+// Matches: differ 0 (tla-en, 2026-11-08), measured with all five addresses in
+// address order, 0819284c,08192894,081929fc,08192a4c,08192c9c (the parent
+// alone counts the nested functions as moved). It takes three tagged dead
+// devices, each tag with its plain form's figure: 284 unused locals in the
+// parent (34 without), t * 4 / 3 in both ring arms of Iris_DrawSplash (186)
+// and i / 3 in the 423 band (29). The first is new this round; the divisions
+// were in the draft untagged.
+// Other editions, the parent alone (08192c9c; tla-ja 08192ca0): ja, de, es, fr
+// and it each match all 4851 of the parent's instructions in order; their
+// figure, differ 418, is the listing running on into Func_0819574c, which
+// their scaffold section also holds. diff cannot bound the nested functions
+// there (no symbol at the section's start, 0819284c or ja's 08192850) and
+// omits literal pools, so the twelve-edition compare decides which editions
+// adopt it.
+// Review: the previous round did not adopt the unused locals, as declared
+// names no S2 kind names; they are tagged dead here as f127588's unused array
+// is. Retiring them needs the source's form for about 280 pseudos with no insn
+// at gcse (a dead block, an integration that folds away, or locals).
+// 2026-11-08, the slots: the eight spilled are PRE's reaching registers 4269
+// to 4288 (sp 32 to 60 hold 4288, 4286, 4280, 4279, 4278, 4277, 4271, 4269:
+// lower regno, higher slot), numbered in hash-bucket order (1981 buckets,
+// (regnos + constants) mod 1981). Their expressions, by draft regno: t << 2
+// (1890, t's argument), sprites + 1908 and sprites + 1931 (1905 is the splash's
+// sprites), 3448 >> 1, 3620 << 1, 3683 << 1 and >> 1, and sfp - 188, whose
+// bucket (1852) no pseudo moves. The listing's order is 4279, 4280, 4288, 4269,
+// 4271, 4277, 4286, 4278 from sp 60 down: 3683's pair and t << 2 wrap past the
+// table's end, 3620 << 1 passes sfp - 188 and 3448 >> 1 stays below it.
+// Measured this round with unused locals as the probe: the shift need not be
+// uniform. At least 95 extra pseudos before the splash's t (anywhere from the
+// top to just before the drops loop; 50 to 90 give 132 to 140, 16 at 90) and
+// 275 to 294 in all before the healing rings' 3448 match (100 before the
+// drops loop and 180 after the splash: 0; 250 or 300 in all: 132 or 162). So
+// the native's extra pseudos may be spread through the code up to the healing
+// rings. Also measured: a dead `if (0)` splash call is 341 pseudos (34 before
+// the drops loop or at the loop's top; 171 and 186 with a dead division
+// dropped); 280 locals in a nested function leave the parent untouched (each
+// nested function numbers its own pseudos); the four nested functions defined
+// in a block opening at the drops loop give 1575, at the loop's top 327.
+// Earlier the same day: the opening fade's empty asm dropped for r = m (34);
+// FILL_WORDS without its once-only block 731, calling Iwram_FillWords directly
+// 38; the cues before the splash through a static inline wrapper add one
+// pseudo per integration (10 in all) and leave 34; the same 280 locals inside
+// Iris_DrawSplash give 26 (integrate.c makes the unused locals' pseudos after
+// the body's).
 // 2026-11-06, the ring row: the cosine kept in py with `py * radius` in the
 // argument puts lsls first but keeps py in r0 past canvas's load (95); the sheet
 // as a local set after the cosine call, then the multiply (`py *= radius` 52,
@@ -520,6 +545,9 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         offset = 196;
       else if (t <= 23)
         offset = 98;
+      /* FAKEMATCH(dead): t * 4 / 3 into dead, in both ring arms, which flow
+       * deletes once PRE has copied t * 4 into the join ahead of ring and
+       * blit; as neither arm's, 186 of 5364 instructions differ in tla-en. */
       dead = t * 4;
       dead /= 3;
       ring = sprites + offset;
@@ -547,6 +575,7 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         offset = 394;
       else if (t <= 23)
         offset = 344;
+      // The large arm's dead division, again (its FAKEMATCH is above).
       dead = t * 4;
       dead /= 3;
       ring = sprites + offset;
@@ -780,6 +809,32 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   s32 off;
   u8 *dst;
   u8 *tiles;
+  /* FAKEMATCH(dead): 284 unused locals (275 to 294 match) number the
+   * splash's pseudos and every later one as the native's, which orders PRE's
+   * spilled registers in the frame; as none, 34 of 5364 instructions differ in
+   * tla-en. */
+  s32 z0, z1, z2, z3, z4, z5, z6, z7, z8, z9, z10, z11, z12, z13, z14, z15, z16,
+      z17, z18, z19, z20, z21, z22, z23, z24, z25, z26, z27, z28, z29, z30, z31,
+      z32, z33, z34, z35, z36, z37, z38, z39, z40, z41, z42, z43, z44, z45, z46,
+      z47, z48, z49, z50, z51, z52, z53, z54, z55, z56, z57, z58, z59, z60, z61,
+      z62, z63, z64, z65, z66, z67, z68, z69, z70, z71, z72, z73, z74, z75, z76,
+      z77, z78, z79, z80, z81, z82, z83, z84, z85, z86, z87, z88, z89, z90, z91,
+      z92, z93, z94, z95, z96, z97, z98, z99, z100, z101, z102, z103, z104,
+      z105, z106, z107, z108, z109, z110, z111, z112, z113, z114, z115, z116,
+      z117, z118, z119, z120, z121, z122, z123, z124, z125, z126, z127, z128,
+      z129, z130, z131, z132, z133, z134, z135, z136, z137, z138, z139, z140,
+      z141, z142, z143, z144, z145, z146, z147, z148, z149, z150, z151, z152,
+      z153, z154, z155, z156, z157, z158, z159, z160, z161, z162, z163, z164,
+      z165, z166, z167, z168, z169, z170, z171, z172, z173, z174, z175, z176,
+      z177, z178, z179, z180, z181, z182, z183, z184, z185, z186, z187, z188,
+      z189, z190, z191, z192, z193, z194, z195, z196, z197, z198, z199, z200,
+      z201, z202, z203, z204, z205, z206, z207, z208, z209, z210, z211, z212,
+      z213, z214, z215, z216, z217, z218, z219, z220, z221, z222, z223, z224,
+      z225, z226, z227, z228, z229, z230, z231, z232, z233, z234, z235, z236,
+      z237, z238, z239, z240, z241, z242, z243, z244, z245, z246, z247, z248,
+      z249, z250, z251, z252, z253, z254, z255, z256, z257, z258, z259, z260,
+      z261, z262, z263, z264, z265, z266, z267, z268, z269, z270, z271, z272,
+      z273, z274, z275, z276, z277, z278, z279, z280, z281, z282, z283;
 
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0x2000);
@@ -1360,7 +1415,11 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       top = i;
       for (; i != top + 40 && (v = (i - top) * 2, i <= 127); i++) {
         if (i >= 0) {
-dead = i / 3;
+          /* FAKEMATCH(dead): i / 3 into dead, which flow deletes; its call puts
+           * the band's loop over loop.c's threshold, which then keeps
+           * (i - top) * 2 as the listing does; as none, 29 of 5364 instructions
+           * differ in tla-en. */
+          dead = i / 3;
           if (v > 63)
             v = 63;
           off = ((i & 7) << 3) + ((i >> 3) << 10);

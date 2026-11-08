@@ -1,57 +1,38 @@
-// Differ 14 of 350 (tla-en, 2026-11-08, -mtune=gba).
-// Round 2, 8 November, none better: table read as (gData_020026c0 - 1)[i] (149),
-// target read before color (128), loop steps i++ first (16), palette or changed
-// in the for-init or palette set before the loop (24), rain block with x and z
-// read before mask (20), masks applied in place (14 to 46), rain stores
-// reversed (26); permuter 8 minutes found nothing under 14. The palette and
-// table swap r3 and r4 because reload hands out its spill registers in turn:
-// the native reloads the table first.
-// Draft, differ 16 of 350 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Left: the fade loop's palette and table swap r4 and r3 on their way to r10 and
-// r11; one add's and one shift's place in the schedule.
-// Tried 8 November, none better: the table read first in the body (128), a table
-// local (158), indexed BG_PLTT_COLOR (31, the table first but the palette not
-// strength-reduced: "not worth while"), palette init before `changed`, in a
-// block, or after i (14 to 24), do or while fade loops (14), s16 table (14);
-// shower: mask first or last, rain stores reversed or chained, x or z offset
-// precomputed (14 to 118). Permuter 8 minutes: a temporary for `(z & mask) << 16`
-// gives 12, a temporary device (S2), so not kept while the draft stays a draft.
-// scene/sea_of_time. Control flow, calls, frame (the fill word at sp+98 above
-// the two effect options at sp+56 and sp+16) and data accesses follow the
-// listing. Nearly all of what is left comes from one cause: the listing shows
-// no GCSE PRE anywhere in this function, and here PRE runs.
-// The evidence: (1) the native zero-extends each channel afresh at both compares
-// and at the pack, keeps it sign-extended (lsls/asrs) at its stores; here PRE
-// treats `channel << 16` as partly redundant, combine drops the asrs, the draft
-// is 19 instructions short and the shorter loop lets loop.c hoist 0xffff, which
-// the native rebuilds in the body. (2) The shower's options address is rebuilt
-// in the native's body with no entry jump; PRE hoists it here, so the shower
-// enters at its bottom test (one `b` the native lacks).
-// Measured 1 November 2026, as a scratch diagnostic only, with the plain line
-// diff of the objects (not the differ count above): this exact C has 205 lines
-// of difference from the listing at the build's options, 187 with -fno-gcse and
-// 47 with -Os, where the fade loop matches but for one add order and what is
-// left is the entry block's registers, `mask` in r1 or r0 for the native's r6,
-// and the shower's entry `b`. So the C is about right and its distance is the
-// options. That is a question for Pascal (K3), out of scope here; no option was
-// changed and none is proposed by this draft.
-// Tried at the build's options, none better. Removing devices: non-volatile
-// fill (228), plain u16 palette pointer (292), direct calls without Call3 (229).
-// Loop forms: top-entered shower (228), for shower (228), for sparks (252), do
-// fade loop (228). Locals: no `mask` (269), one `mask` for the function (261),
-// x and z shared (253), s32 i (223), s32 color (264); red as else-if, which the
-// native's jump over the second compare suggests (225). Pack written
-// r | g << 5 | b << 10: gap 73, differ 263. A `mask` set in each block but
-// shared gives differ 219, gap 79, and is a temporary device (S2), so not kept.
-// Function-scope channels, mask declared first and other pack orders change
-// nothing. Earlier: if/else stage variables (314), s16 channels (gap 92).
-// Forms found: `mask` (one-constant local) gives the native's single #31 in
-// the spark and shower blocks, though it takes r1 where the native has r6; the
-// outer fade loop is goto, which keeps gData_020026c0 in its body as the native
-// does; the palette is a stepped `volatile u16 *` set in that body, since an
-// indexed BG_PLTT_COLOR there loses the strength reduction. RGB(r, g, b) is the
-// native's pack order. Registers: native i r8, palette r10, offset r9, table
-// r11. The native's mask 31 is reg:HI, reloaded from the pool.
+// Draft, differ 2 of 350 (tla-en, 2026-11-08)
+// Differ 2 in all six editions, the same two rows. scene/sea_of_time. Left: in the fade loop's entry block the native sets the
+// table offset (r9) before the palette pointer (r10); here the palette comes
+// first: `mov sl, r4` and `mov r9, r0` swap. Both are reduced givs of i, and
+// sched2 breaks their tie by RTL order. Here loop.c's first pass reduces the
+// palette (its base is a constant), and the offset only in the second pass,
+// once the table address hoisted by the first pass counts as invariant; so the
+// palette's init comes first. The native's order needs both reduced in one
+// pass with the offset first, yet its increments still palette first: that
+// fits only a palette giv of a second biv incremented before i, or one placed
+// by AUTO_INC_DEC after its store. No plain form found gives either.
+// Round 3, 8 November: palette indexed from a base pointer, palette[i], instead
+// of a stepped pointer (14 to 4: loop.c now reduces it as a giv of i, as the
+// native's register order shows); the shower's two offsets as locals, z's
+// declared first (4 to 2: sched2 then takes `ands r2, r6` before `lsls r5`).
+// Tried in round 3, none better than 2: an entry pointer &palette[i] (same),
+// palette base set before the fade label (same), palette[i - 1] from entry 1
+// (same), BG_PLTT_COLOR(3, i) for the read or the store (31, 193), a pointer
+// local per entry (31), non-volatile palette (same), palette as a struct of 16
+// colours (137, 240), table through a `u16 *` local (157 to 160: one pointer
+// giv), *(gData_020026c0 + (i - 1)) (155), (gData_020026c0 - 1)[i] (155),
+// palette[(s32)i], do-while or bottom i++ (same), i < 15 (6); shower: masks in
+// place (10), z masked in place (36), two masked locals (10), offsets in x
+// then z order (4). Permuter 10 minutes on the differ-2 draft: nothing better.
+// Older rounds (before round 3, other forms): table read first in the body
+// (128), indexed BG_PLTT_COLOR (31), do or while fade loops, s16 table, x and z
+// read before mask (20), rain stores reversed (26); removing devices:
+// non-volatile fill (228), direct calls without Call3 (229); loop forms for the
+// sparks or shower (228 to 252); no `mask` (269), one `mask` for the function
+// (261), s32 i (223), s32 color (264), red as else-if (225).
+// Forms kept: `mask` (one-constant local) gives the native's single #31 in the
+// spark and shower blocks; the outer fade loop is goto, which keeps
+// gData_020026c0 in its body as the native does; RGB(r, g, b) is the native's
+// pack order. Registers: native i r8, palette r10, offset r9, table r11. The
+// native's mask 31 is reg:HI, reloaded from the pool.
 #include "../../../../games/tla/src/scene/sea_of_time/sea_of_time.h"
 #include "main_routine_work.h"
 #include "io_reg.h"
@@ -104,8 +85,9 @@ void Func_02001108(void) {
 fade:
     wait(10);
     changed = 0;
-    for (i = 1, palette = &BG_PLTT_COLOR(3, 1); i != 15; palette++, i++) {
-      u16 color = *palette;
+    palette = &BG_PLTT_COLOR(3, 0);
+    for (i = 1; i != 15; i++) {
+      u16 color = palette[i];
       u16 target = gData_020026c0[i - 1];
       u16 r = color & 31;
       u16 g = (color >> 5) & 31;
@@ -138,7 +120,7 @@ fade:
         b--;
         changed = 1;
       }
-      *palette = RGB(r, g, b);
+      palette[i] = RGB(r, g, b);
     }
     if (changed)
       goto fade;
@@ -182,13 +164,15 @@ next:
     s32 x = Random16Far();
     s32 mask = 31;
     s32 z = Random16Far();
+    s32 offsetZ = (z & mask) << 16;
+    s32 offsetX = (x & mask) << 16;
 
     rain.scaleX = 0x18000;
     rain.scaleY = 0x18000;
     rain.kind = 7;
     rain.mode = 1;
-    Func_0200015c(((x & mask) << 16) + 0x1500000, 0,
-                  ((z & mask) << 16) + 0xb00000, 0, 0x10000, 0, 0xb0000, &rain);
+    Func_0200015c(offsetX + 0x1500000, 0, offsetZ + 0xb00000, 0,
+                  0x10000, 0, 0xb0000, &rain);
     wait(1);
   }
   i++;

@@ -1,37 +1,25 @@
-// Differ 2 of 1216 (tla-en, 2026-11-08, -mtune=gba).
-// Rechecked 2026-11-08: the turn is spelled with a block constant full = 2560
-// set before the shift; full - (frame << 5) in one expression, a separate
-// shift temporary, or full declared after it lose frame's reload (33 to 39);
-// full at the top of the function (27) or the block (10) hoists the split.
-// In sched2 the split's second half has the earlier LUID and wins the tie.
-// One sched2 tie is left: the native has the turn shift ahead of the second
-// half of the 2560 split. The 2560 holds r3 so frame is reloaded into r4;
-// setting it after the shift lets frame stay in r3 (33 differ). Also tried
-// today: non-const tables, frame copies, once-only blocks, an else arm; reordered spellings, a
-// y or src local, array forms and 14 permuter minutes found nothing better.
-// 2026-11-05: differ 4 of 1216 (tla-en). Two sched2 ties left: the second shift of
-// 2560 in the turn, and the 6000 multiply before screen's reload. Measured: the
-// listing draws after it projects; cells, projected and mesh are set once at the
-// top (spilled, rebuilt from the pool); turn holds frame << 5 and takes full less it.
-// 2026-11-05: differ 51 of 1216 (tla-en). A wrapper and a statement move gain
-// 16. Left as below.
-// Draft, differ 75 of 1216, skeleton gap 29 (tla-en, 2026-11-01)
-// The frame (144) and every stack slot now agree. What fixed them: blit is an
-// 8-byte struct, a DImode pseudo whose spill slot leaves the unused word at sp
-// 84; target, savedYaw, caster and frames sit in a block opened after
-// Func_0815585c, so the screen and focus pointers take their slots first;
-// focus is declared before screen. The debris loop indexes work->particles[i]
-// (p would be set before the count test), and the sphere writes
-// vertex[row * 8 + k] through a struct, which keeps radius's spill store once.
-// Left, all scheduling or allocation:
-// - Core's model: shade takes r0 and the Data_02012000 pseudo r1; the native
-//   has shade in r1 and rematerializes the symbol (ternary, reused scale, store
-//   order and field reads changed nothing).
-// - The turn is written (80 - frame) * 32, which reloads frame into r4 as the
-//   native does; the native's 2560 is live before the shift, and no spelling
-//   tried (2560 - frame * 32, a separate -=, -32 * frame) gives that.
-// - The packed argument's shifts sit after the pointer stores; the picture
-//   blit loads screen.y's pointer into r2, not r0; a few one-pair swaps.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Plain C, no FAKEMATCH device. The last tie was the turn: the native writes
+// 2560 after frame << 5 (the order of 2560 - (frame << 5)) yet reloads frame
+// into r4 instead of keeping it in r3 from the tests. That reload comes from
+// the if/else with the frame <= 71 arm first, its turn = speed copy a no-op
+// once speed and turn share r2: the else arm opens on a label while reload
+// runs, so frame is reloaded fresh; jump2 later folds the jumps into the one
+// ble. The palette copy also drops the CopyWords wrapper: a source local, then
+// a copy local holding Iwram_CopyWords, loads the call address where the
+// native does (the direct call measured 2 of 1216).
+// Earlier rounds, kept as history:
+// 2026-11-08: differ 2 of 1216. The turn was spelled with a block constant
+// full = 2560 set before the shift; full - (frame << 5) in one expression lost
+// frame's reload (33); an asm clobber of r3 (a barrier) also matched.
+// 2026-11-05: differ 4, then 51 and 75 (2026-11-01). What settled the frame
+// (144) and every stack slot: blit is an 8-byte struct, a DImode pseudo whose
+// spill slot leaves the unused word at sp 84; target, savedYaw, caster and
+// frames sit in a block opened after Func_0815585c, so the screen and focus
+// pointers take their slots first; focus is declared before screen. The debris
+// loop indexes work->particles[i] (p would be set before the count test), and
+// the sphere writes vertex[row * 8 + k] through a struct, which keeps radius's
+// spill store once. cells, projected and mesh are set once at the top.
 
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -126,7 +114,6 @@ void Transform_Pop(void);
 // ⚓️'s blitter modes run the other way from The Broken Seal's.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1])
 
 void Actor_SetAnimationSpeedFar(void *object, s32 value);
 void Func_0818de3c(void *triangles, s32 columns, s32 rows, s32 cellWidth,
@@ -160,12 +147,6 @@ struct ModelVertex {
   s8 z;
   s8 unk03;
 };
-
-static inline s32 CopyWords(void *destination, const void *source, s32 size) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 4 of 1216 instructions differ in tla-en. */
-  return Iwram_CopyWords(destination, source, size);
-}
 
 void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
   u8 *mesh;
@@ -236,9 +217,14 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
                                1);
     Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet,
                                work->sheet + 0x2000, 1, 1);
-    CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                    128);
+    {
+      const void *source =
+          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
+      // A local for the routine: loads its address where the listing does.
+      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+
+      copy((void *)BG_PLTT, source, 128);
+    }
     frames = 102;
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_PetalSheet, cells, 1,
@@ -278,10 +264,15 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
 
     if (mode == 0) {
       if ((u32)frame <= 15) {
-        s32 turn = 256;
+        s32 speed = 256;
+        s32 turn;
 
-        if (frame > 71) {
-          { s32 full = 2560; turn = frame << 5; turn = full - turn; }
+        // DEAD: frame is at most 15 here, so the second arm never runs. The
+        // copy from speed and this arm order give frame's reload into r4.
+        if (frame <= 71) {
+          turn = speed;
+        } else {
+          turn = 2560 - (frame << 5);
         }
         if (effect->side == 0) {
           camera[27] -= turn;

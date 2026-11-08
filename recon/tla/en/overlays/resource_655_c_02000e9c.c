@@ -1,20 +1,16 @@
-// Differ 11 of 76 (tla-en, 2026-11-08, -mtune=gba), under -Os.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Also differ 0 in tla-ja, tla-de, tla-es, tla-fr and tla-it, under -Os with
+// -mtune=gba; pool words gMapShapeGrid (0x02024000) and 0xfdff0000 as the
+// scaffold's. No device: written as the adopted siblings Func_02000c64
+// (dehkan_plateau/s0c64.c) and Func_02000038 (madra_catacombs/s0038.c) write it.
 // Raises the cells under the held actor again: the shape grid entry and the
 // two cells' attributes.
-// Left: the shape store. The native reads the cell's attributes through one
-// copy of its pointer (r3), stores the shape through r1 and writes the
-// attributes through a second copy (r1); here one copy serves the read and the
-// write and the shape store comes first. Storing the shape after the cell read
-// or after its write (28 to 36), indexed (30), through a volatile pointer (17)
-// or a volatile cell (42) is worse. The one-field ShapeCell view of earlier
-// rounds is free now (11 either way) and is dropped. A permuter candidate at 6
-// reused the shape pointer for Ram_MapCellBuffer inside its own expression,
-// which loads 0x02010000 where gMapShapeGrid belongs: wrong code, not kept.
-// Round of 8 November: the read held in a u8, s32 or u32 before the shape store
-// and written after it puts the store where the native has it but swaps the
-// read and constant registers and loses the second write's own reload (28);
-// the store folded into the |= through a comma (13); 8 permuter minutes from
-// that order found nothing below 14.
+// What closed it: the grid as FIXED_ADDRESS, as the siblings take it. Linked
+// through the symbol, the grid sat in its own pseudo, one reload fewer turned
+// reload's register rotation by one and the shape store took r3, so the cell
+// read and write shared one copy of the cell pointer (11). As a constant it is
+// reloaded, the rotation lands where the native's does, and the ShapeCell view
+// lets sched2 sink the shape store past the cell read; without the view, 6.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -77,6 +73,12 @@ struct EffectView {
   void (*update)(struct Actor *object);
 };
 
+// One-field view: the shape store is memory of its own to sched2, which sinks
+// it past the cell read; a plain store keeps its order.
+struct ShapeCell {
+  u8 shape;
+};
+
 #define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
 
 void Func_02000e9c(void) {
@@ -93,7 +95,7 @@ void Func_02000e9c(void) {
     return;
   layer = &held->terrainId;
   cells = (u8 *)Ram_HeapSlots->mapWork->layers[*layer].cells;
-  shapes = gMapShapeGrid +
+  shapes = FIXED_ADDRESS((u8 *), 0x02024000, gMapShapeGrid) +
            (((struct MapCell *)cells) - (struct MapCell *)Ram_MapCellBuffer);
   shape = Func_02003c10(*layer, held->x, held->z);
   level = Map_GetTerrainHeight(*layer, held->x, held->z);
@@ -103,7 +105,7 @@ void Func_02000e9c(void) {
   newShape = Func_02003dd0(*layer, shape, level);
   shapes += index;
   index <<= 2;
-  *shapes = newShape;
+  ((struct ShapeCell *)shapes)->shape = newShape;
   cells += index;
   ((struct MapCell *)cells)->attributeB |= 192;
   cells += 0x200;

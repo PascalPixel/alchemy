@@ -1,14 +1,53 @@
-// Differ 6 of 7666 (tla-en, 2026-11-08, -mtune=gba); 6 in tla-ja, de, es, fr
-// and it as well. Re-measured 2026-11-08: each device is still needed and now
-// carries its S2 tag (the X barrier 293 without it, the pin 22, the threshold
-// barrier 42; an empty once-only block or a volatile o in their place does no
-// better). Kind 14 as y = cos term + off; y -= half height: still 6.
-// Second 2026-11-08 round, no gain: kind 14 as y = cos term + off then
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Differ 0 of 7666 in tla-ja, de, es, fr and it as well (2026-11-08,
+// -mtune=gba). Four tagged devices remain, each re-measured as its plain form:
+// the X barrier (287), the kind 85 pin (16), its threshold barrier (36) and
+// the kind 96 pin (2). Before adoption: Data_02010208 and the Value_ symbols
+// need homes, and CLEAR, FILL and RELEASE_BLITTERS need S2's wrapper test.
+//
+// The last two ties fell to where the loop notes of the once-only blocks sit.
+// A loop note makes the next insn a sched2 barrier that depends on the last
+// set and use of every register, and every insn after it depends on the
+// barrier, so a barrier soon after a call takes the place of the later
+// dependants an argument load would otherwise have. A call depends on the
+// last set of each argument register; a later set of the register is an
+// output dependant. Counting those settles rank_for_schedule's dependant
+// test, ahead of luid:
+// - Kind 14: RELEASE_BLITTERS put its barrier on Release(104)'s argument,
+//   leaving mov r2, r8 (the m reload) four dependants, as many as the mul.
+//   The two releases plain and the once-only block round Func_08196404 give
+//   it both release calls and the barrier: five, and it goes first. Kinds 68
+//   and 84 still need RELEASE_BLITTERS (6 in that form).
+// - Kind 96: RELOAD_BLITTER's barrier on the first draw's next release left
+//   the 18 copy (mov r8, r0) three dependants like the r1 and r3 loads, and
+//   luid put it first. One once-only block from Release(104) through the
+//   second LoadBlitter keeps the loop end that stops CSE before the second
+//   target read (without it, 812: slot 12 goes) and moves the barrier past
+//   both calls: r1 and r3 now have five, r8 three. r1 and r3 then tie, and
+//   luid puts r1 (its load is r1 before r3 in load_register_parameters)
+//   where the listing has r3. No barrier position separates them (every one
+//   that ends CSE's block also depends on r1's load through its read of r5),
+//   CSE folds any local or assignment holding 56 back into the step-5 load,
+//   and an asm on such a local leaves the 56 load few dependants (2). The pin
+//   sets r3 while the arguments are evaluated, after x and before the 18.
+//   Other placements: the block from Release(188) also gives 0 with the pin;
+//   without the pin, the old RELOAD_BLITTER form 4, the block from the first
+//   draw on 4, an empty block before the second draw 2, the block round the
+//   second draw 812, a repeated frame < 20 test 604.
+// - Kind 14's tie fits a multiply timed 2 rather than 3 (amp is 12 or 32,
+//   GBATEK's m = 1): the mul's priority would drop to 159. Not tested; a tune
+//   change is Pascal's (K2, K3). Kind 96's has no such reading.
+//
+// Before 2026-11-08 (differ 6): the two ties above were each read as a full
+// tie settled by luid. Tried then, no gain: kind 14 as y = cos term + off then
 // y -= half, the table read as [i & 3] or >> 1, x and m declared swapped, a
 // cast on the product (6); off before amp (14), a block round y (12), y and x
-// swapped (80); kind 96 with m * 0x360 + buffer or -18 + x (6), a block after
-// the blitter load (8).
-// Settled 2026-11-08, both plain C:
+// swapped (80); the table read before the multiply with a local for the cosine
+// and the half height (20); reassociating off or the table term (18 to 28);
+// kind 96 with m * 0x360 + buffer or -18 + x (6), a local for the source, x,
+// 18, 56 or 48 (40 to 120), m as a ternary, preset to 3, u32 or u8,
+// &buffer[...]. A 20-minute permuter run on each region found nothing.
+// Settled earlier on 2026-11-08, both plain C:
 // - Kind 16: a zero pixel is stored and the loop continues (if (v == 0) { ...
 //   = 0; continue; }). The two stores cross-jump into one, and the continue
 //   label puts the strb in its own block, so j++ (priority 2 through the
@@ -16,21 +55,6 @@
 // - Center, and every other division: plain / and % in place of __divsi3 and
 //   __modsi3 calls. At the center the libcall form puts ldr r5 [sp, 16] first;
 //   the other twelve sites are neutral either way.
-// Two scheduling ties are left, each a full tie in sched2's rank_for_schedule
-// (priority, class against the last insn, dependant count) settled by luid:
-// - Kind 14's y: mov r2, r8 (reload of m, prio 160, 4 dependants) belongs
-//   before adds r5 and muls (prio 160, 4 dependants); the mul is earlier in RTL.
-//   Moving the table read before the multiply (a local for the cosine and for
-//   the half height) reorders it but reallocates the block (20); reassociating
-//   off or the table term changes the arithmetic (18 to 28); amp * cos, y or m
-//   as block locals and >> 1 change nothing; declaring amp before off gives 18.
-// - Kind 96's pair: the listing has movs r3, #56, adds r1, r5, mov r8, r0, the
-//   reverse of luid order (here r8, r1, r0, r3; all prio 119, 3 dependants).
-//   Tried: a local for the source, for x, for 18, 56 or 48 (40 to 120); the
-//   first reload as RELOAD_BLITTER or RELEASE_BLITTERS (8 to 10); the second
-//   unwrapped (812); m as a ternary, preset to 3, u32 or u8; &buffer[...].
-// A 20-minute permuter run on each region (about 1,100 and 2,100 candidates)
-// found nothing below 6.
 //
 // Before 2026-11-08: differ 10, the same four ties under the older tune.
 // Measured 2026-11-05: slots normalized 5, sizes equal.
@@ -46,17 +70,19 @@
 //   is kind 84's and kind 90's.
 // - k = 0 before threshold makes row * 69 outrank k at kind 85 (L 40 against 38).
 //
-// Before adoption: every device below still needs S2's exact tag with N measured.
-// RELEASE_BLITTERS and RELOAD_BLITTER are exempt only if every use matches through
-// them; CLEAR and FILL are wrappers unless they are the game's own layer; the "X"
-// at the first projection is a barrier. Kind 85 holds r2 across h with a pin and two
-// asms (reload otherwise gives h r2 where the listing has r3, one step behind, with
-// nothing visible taking it) and cuts threshold in its loop (a copy GCSE otherwise
-// propagates away, though the listing keeps t in lr and threshold in ip; the source's
-// form of that copy is not known). Data_02010208 and Value_ symbols need homes.
+// The devices: RELEASE_BLITTERS is exempt only if every use matches through it
+// (kinds 68 and 84 do; kind 14 now spells the releases out); CLEAR and FILL are
+// wrappers unless they are the game's own layer; the "X" at the first projection
+// is a barrier. Kind 85 holds r2 across h with a pin and two asms (reload
+// otherwise gives h r2 where the listing has r3, one step behind, with nothing
+// visible taking it; y's clamp as >=, a ternary or in a once-only block, h set
+// first or in a block, do no better, 16 to 41) and cuts threshold in its loop (a
+// copy GCSE otherwise propagates away, though the listing keeps t in lr and
+// threshold in ip; the source's form of that copy is not known).
 //
-// What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
-// their blitters in a do { } while (0), which ends CSE's block, so the two table
+// What settled i in r11: the three-round loops at kinds 14, 68 and 84 end a
+// do { } while (0) after their releases (kind 14's now holds Func_08196404,
+// 2026-11-08), which ends CSE's block, so the two table
 // loads stay short-lived, the loop no longer hoists them, and with m first and
 // m, x and y local to the loop, r8, r10 and r9 fill before i is allocated.
 // A pair of block locals freed most of the rest: life and its half at kinds 5 and
@@ -108,7 +134,8 @@
 // is m = ...; m += ...; in two statements.
 // Target's slot: PRE's reaching register survives copy propagation only with a
 // second set, which comes from the second target read at kinds 96 to 98 staying
-// in its block. RELOAD_BLITTER's do { } while (0) ends CSE's block there and
+// in its block. A do { } while (0) ending after the second blitter load (since
+// 2026-11-08 one block from Release(104), no longer RELOAD_BLITTER's) ends CSE's block there and
 // gives slot 12 with 37 uses and the six direct reads at sp+240. It stands for
 // every adjacent release and load, so S2's macro exemption applies only once
 // every use matches through it. It may instead be CSE's flush after 1,000 insns
@@ -396,7 +423,6 @@ void Sound_PlayFar(s32);
 #define IWRAM_SLOT_BC (IWRAM->slotbc)
 static __inline__ void CLEAR(void *dst, s32 size) { ((s32 (*)(void *, s32))0x03000258)(dst, size); }
 static __inline__ void FILL(void *dst, s32 size, s32 value) { ((s32 (*)(void *, s32, s32))0x03000260)(dst, size, value); }
-#define RELOAD_BLITTER(slot, n) do { HeapSlot_Release(slot); BattleEffect_LoadBlitter(slot, n); } while (0)
 #define RELEASE_BLITTERS() HeapSlot_Release(188); do { HeapSlot_Release(104); } while (0)
 
 extern u8 gMapCellBuffer[];
@@ -794,7 +820,7 @@ CLEAR(buffer, 0x1000);
       pos[0] = pos[0] / 2;
       drawFuncs.draw[0](screen, buffer + 0x3c56, pos[0] - 10, pos[1] - 4, 20,
                         40);
-      /* FAKEMATCH(barrier): keeps o live past the draw; as no asm, 293 of 7666
+      /* FAKEMATCH(barrier): keeps o live past the draw; as no asm, 287 of 7666
        * instructions differ in tla-en. */
       __asm__("" : : "X"(o));
     }
@@ -1319,8 +1345,13 @@ CLEAR(buffer, 0x1000);
           x = ((Trig_Sin(angle) << 3) >> 16) + target[0] / 2 -
               gData_08197492[m] / 2;
           y = ((Trig_Cos(angle) * amp) >> 16) + off - gData_08197498[m] / 2;
-          RELEASE_BLITTERS();
-          Func_08196404(188, 7, 7, gData_0819887e[Random16() & 3] | 3, 0);
+          HeapSlot_Release(188);
+          HeapSlot_Release(104);
+          // Once-only block: its loop notes keep sched2 from moving the
+          // releases' argument loads, as the listing has them.
+          do {
+            Func_08196404(188, 7, 7, gData_0819887e[Random16() & 3] | 3, 0);
+          } while (0);
           IWRAM_SLOT_BC(screen, buffer + gData_08197486[m], x, y + 56,
                         gData_08197492[m], gData_08197498[m]);
           HeapSlot_Release(188);
@@ -1523,7 +1554,7 @@ CLEAR(buffer, 0x1000);
       if (y > 16)
         y = 16;
       {
-        /* FAKEMATCH(pin): hold keeps r2 for h; as h = 96 alone, 22 of 7666
+        /* FAKEMATCH(pin): hold keeps r2 for h; as h = 96 alone, 16 of 7666
          * instructions differ in tla-en. */
         register s32 hold __asm__("r2");
         __asm__("" : "=r"(hold));
@@ -1540,7 +1571,7 @@ CLEAR(buffer, 0x1000);
             s32 k;
             s32 threshold;
             for (k = 0, threshold = t; k != 69; k++) {
-              /* FAKEMATCH(barrier): keeps the copy of t; as no asm, 42 of 7666
+              /* FAKEMATCH(barrier): keeps the copy of t; as no asm, 36 of 7666
                * instructions differ in tla-en. */
               __asm__("" : "=r"(threshold) : "0"(threshold));
               if (work->frames[(row & 15) * 69 + k] < threshold)
@@ -1585,10 +1616,20 @@ CLEAR(buffer, 0x1000);
         else
           m = 3;
         HeapSlot_Release(188);
-        HeapSlot_Release(104); BattleEffect_LoadBlitter(104, 3);
-        IWRAM_SLOT_68(screen, buffer + m * 0x360, target[0] / 2 - 18, 56, 18,
-                      48);
-        RELOAD_BLITTER(104, 7);
+        // Once-only block: it ends CSE's block before the second draw reads
+        // target again, with no scheduling barrier inside the first draw.
+        do {
+          /* FAKEMATCH(pin): r3 takes 56 while the first draw's arguments are
+           * evaluated; as a plain 56, 2 of 7666 instructions differ in
+           * tla-en. */
+          register s32 pinned __asm__("r3");
+          HeapSlot_Release(104);
+          BattleEffect_LoadBlitter(104, 3);
+          IWRAM_SLOT_68(screen, buffer + m * 0x360, target[0] / 2 - 18,
+                        pinned = 56, 18, 48);
+          HeapSlot_Release(104);
+          BattleEffect_LoadBlitter(104, 7);
+        } while (0);
         IWRAM_SLOT_68(screen, buffer + m * 0x360, target[0] / 2, 56, 18, 48);
         HeapSlot_Release(104);
         BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);

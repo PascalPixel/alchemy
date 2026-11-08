@@ -1,20 +1,12 @@
-// Differ 15 of 230 (tla-en, 2026-11-08, -mtune=gba): the second racer's Func_02005624 call and id++ moved out of
-// its once-only block, id++ before the call (from 17). Left: cse2 still folds id = second into id++ (the native loads
-// r6 from [sp] beside the lookup and adds 1 between the calls; once-only blocks around the copy or the increment,
-// a goto label, the lookup through id, second as a copy of id, or no second local all stay 15), the first racer's
-// stores sit one slot apart, and the third racer's heading 2 reuses r5. An 8-minute permute: only invalid candidates
-// (a float cast, id set after its use) below 15.
-// Earlier, at 17: id = second + 1 in place of the copy, 17.
-// Tried 8 November, all 17 or worse: id = second after the lookup, id++ or id = second + 1 between the second
-// racer's calls, id++ in its own once-only block, ++id in the lookup, id = first + 1 or first; id++, second set
-// late, declaration orders, once-only blocks around the third racer or its unk62 store (21), racers 2 and 3 in one
-// block (101), an inline placement helper (103), no second local (27); an 8-minute permute found nothing below 17.
-// 2026-11-06: the native keeps id = second as its own copy (ldr r6, [sp] beside the second racer's lookup, adds r6, #1 between that racer's two calls); here combine folds it into second + 1, and sched2 moves the load and add past the call; the first racer's set-up stores and Func_02005624's two arguments come in a slightly different order, and the third racer's heading 2 reuses r5 where the native builds it again.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Plain C, no devices; differ 0 in all six editions (tla-en, tla-ja, tla-de, tla-es, tla-fr, tla-it).
+// What closed it (from 15): the second and third racers are looked up with Actor_GetById(id++) after id = second,
+// and the fourth with Actor_GetById(id). The post-increment puts id = second + 1 before the second racer's lookup,
+// so reload loads r6 from [sp] beside the lookup's own load and sched2 sinks the add between that racer's calls,
+// as the listing has it. With the set-up as plain statements (the once-only block gone), the third racer's heading
+// 2 comes from the second racer's halfword 2 and is rebuilt (movs r2, #2) rather than reusing r5, and local-alloc
+// gives r5 = 2, r8 = 1, r10 = 7, r9 = 0 as the listing does.
 // Places four racers, runs them, and compares the times of the two teams.
-// 6 November: constants written as literals (21) and only the second racer in a one-pass block (17) give the native's r9 = 0, r10 = 7, r8 = 1, r5 = 2; the result's
-// last branch matches once the no-first-time case returns (63 to 45). Tried for the id copy: id initialised at the top, before or inside the block, id++ between the calls,
-// the lookup through id, id = first, first + 1/2/3 without id (93 to 119), Func_02005624 prototypes; all 17 or worse.
-// Earlier (5 November): every order of the constants' sets as named locals, assignment expressions (69 to 73), separators, types of two.
 #include "types.h"
 #include "call.h"
 
@@ -53,20 +45,15 @@ s32 Func_02004d48(s32 first, s32 check) {
   Func_02005654();
   Func_02005624(racer, 2);
   id = second;
-  do {
-    // A once-only block: its end holds the order around it (as plain
-    // statements, 99 of 230 differ in tla-en).
-    racer = Actor_GetById(second);
-    racer->unk64 = 2;
-    racer->unk66 = 7;
-    racer->unk62 = 0;
-    racer->state = 1;
-    racer->unk4c = 0;
-    Func_02005654();
-  } while (0);
-  id++;
+  racer = Actor_GetById(id++);
+  racer->unk64 = 2;
+  racer->unk66 = 7;
+  racer->unk62 = 0;
+  racer->state = 1;
+  racer->unk4c = 0;
+  Func_02005654();
   Func_02005624(racer, 2);
-  racer = Actor_GetById(id);
+  racer = Actor_GetById(id++);
   racer->unk64 = 8;
   racer->unk66 = 7;
   racer->unk62 = 2;
@@ -74,7 +61,6 @@ s32 Func_02004d48(s32 first, s32 check) {
   racer->unk4c = 0;
   Func_02005654();
   Func_02005624(racer, 2);
-  id++;
   racer = Actor_GetById(id);
   racer->unk64 = 10;
   racer->unk66 = 7;

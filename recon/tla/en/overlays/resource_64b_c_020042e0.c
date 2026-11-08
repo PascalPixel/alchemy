@@ -1,27 +1,22 @@
-// Differ 13 of 227 (tla-en, 2026-11-08, -mtune=gba), under -Os. Left as below:
-// the scroll address loads before x is stored and the store of x comes before
-// y is computed (y first, a pointer to the scroll, a u16 or s16 scrollX leave
-// it; y through a temporary, 72).
-// 2026-11-08: the barrier still pays (without it, or a once-only block in
-// its place, 15); once-only blocks round either store, reordered loop steps
-// and x as x << 4 stay 13; an 8-minute permute found nothing under 13.
-// Round 2: no move of `ime` (top, before frames, block-scoped, in or beside a
-// once-only block) replaces the barrier (15); y through a scrollY local makes
-// loop.c hoist the scroll address and 352 (60); a block-local x * 16, gBgScroll->
-// or 352 + -y / 128 stay 13. The native's x store inherits the address's reload
-// register; here it needs one more `mov r2, r8` (228 against 227).
-// Draft, differ 25 of 227 (was 45): queues the second world map picture (its
-// tiles, frames and palette) and scrolls it in over 96 frames, then fades and
-// restores the window palette. The scroll's x is x * 16 kept in a temporary
-// before the divide by 128 (as one expression GCC folds it to x / 8, which
-// the native does not; a device on adoption). Tried before: a goto loop (58),
-// a BgScroll pointer set before or inside the loop (48).
-// The scroll's x goes through scrollX, a local declared first (45 to 25),
-// which moves the scroll address's load into the loop as the native has it;
-// x and y through two locals stored together, 68. Left: the native stores x
-// only after y is computed, and keeps the closing zero in r6; the queue pushes
-// differ in order by one instruction each. Permuter forms at 19 to 23 are
-// one-pass blocks and temporaries.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Also differ 0 in tla-ja, tla-de, tla-es, tla-fr and tla-it. In tla-en the
+// object assembled by the build's GAS 2.10 equals the listing byte for byte,
+// literal pool and relocations included (a newer assembler pads before the
+// pool with a nop where the ROM has a zero halfword).
+// Queues the second world map picture (its tiles, frames and palette) and
+// scrolls it in over 96 frames, then fades and restores the window palette.
+// What closed it (13 to 0): the scroll's y goes through scrollY, a u16 (or
+// s16) local computed before either store, so the scroll address loads after
+// both values, as the native has it; as an s32 or u32 local its 352 is shared
+// with y's step (72). With that, the plain IO_WRITE_QUEUE_PUSH replaces the
+// ime local and its barrier (IO_WRITE_QUEUE_PUSH_IME without the barrier
+// orders the two pool loads the other way, 2), and mode, a function-level
+// local holding 0, replaces the once-only block around the fade's argument
+// (as a literal 0, the closing stores' zero lands in r5, 6). scrollX stays an
+// s32 (a u16 or s16, 7). One device is left, t (tagged in the loop);
+// (s32)((u32)x * 16) / 128 also matches, but its cast misstates the
+// arithmetic. 561 is 33 * 17 and 0x2d60 is 33 * 352: x and y run through the
+// 33rd to 128th multiples of their steps.
 #include "types.h"
 #include "call.h"
 #include "io_reg.h"
@@ -47,34 +42,33 @@ void Func_02004d88(s32 frames);
 void Func_02004e30(s32 cue);
 
 void Func_020042e0(void) {
-  s32 scrollX;
-  volatile u16 *ime;
   u8 *buffer = Heap_AllocEwram(0x4000);
   u8 *frames;
-  s32 x, y, i, t;
+  s32 x, y, i, t, scrollX;
+  u16 scrollY;
+  s32 mode;
 
   Func_02004aa8(gWorldMapPackedTilesB, buffer);
   frames = buffer + 0x2000;
   Func_02004aa8(gWorldMapPackedPicturesB, frames);
-  ime = &REG_IME;
-  /* FAKEMATCH(barrier): the empty asm on ime changes its allocation rank; as no
-   * asm, 15 of 227 instructions differ in tla-en. */
-  asm("" : "=r"(ime) : "0"(ime));
-  IO_WRITE_QUEUE_PUSH_IME(ime, 0x050001c0, (u32)gWorldMapPalettesB, 0x80000010);
-  IO_WRITE_QUEUE_PUSH_IME(ime, 0x06000000, (u32)buffer, 0x84000400);
-  IO_WRITE_QUEUE_PUSH_IME(ime, 0x06001000, (u32)frames, 0x84000800);
+  IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)gWorldMapPalettesB, 0x80000010);
+  IO_WRITE_QUEUE_PUSH(0x06000000, (u32)buffer, 0x84000400);
+  IO_WRITE_QUEUE_PUSH(0x06001000, (u32)frames, 0x84000800);
   QueueIoWriteDelay2(0x04000050, 0x3f41);
   QueueIoWriteDelay2(0x04000052, 0x1010);
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 352;
-  IO_WRITE_QUEUE_PUSH_IME(ime, 0x04000008, 0xc200, 0x20000);
+  IO_WRITE_QUEUE_PUSH(0x04000008, 0xc200, 0x20000);
   y = 0x2d60;
   x = 561;
   for (i = 95; i >= 0; i--) {
+    /* FAKEMATCH(temporary): x * 16 held in t before the divide; as scrollX =
+     * x * 16 / 128, 22 of 227 instructions differ in tla-en. */
     t = x * 16;
     scrollX = t / 128;
+    scrollY = -y / 128 + 352;
     gBgScroll[0].x = scrollX;
-    gBgScroll[0].y = -y / 128 + 352;
+    gBgScroll[0].y = scrollY;
     wait(1);
     y += 352;
     x += 17;
@@ -82,11 +76,10 @@ void Func_020042e0(void) {
   Func_02004e30(164);
   wait(120);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
-  {
-    s32 held = 0;
-
-    Func_02004d78(0x7fff, held);
-  }
+  // mode holds one 0 for the rest of the function; the closing scroll reset
+  // stores it again.
+  mode = 0;
+  Func_02004d78(0x7fff, mode);
   Func_02004d88(1);
   QueueIoWriteDelay2(0x04000052, 0x1000);
   wait(1);
@@ -100,7 +93,8 @@ void Func_020042e0(void) {
   wait(1);
   Func_02004ad8();
   Func_02004ac8();
-  Func_02004bb8(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
+  Func_02004bb8(gMainRoutineWork.paletteGlow[0],
+                gMainRoutineWork.paletteGlow[1]);
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;
 }

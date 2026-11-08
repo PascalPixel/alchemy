@@ -1,47 +1,30 @@
-// Differ 4 of 124 (tla-en, 2026-11-08, -mtune=gba), unchanged this round: the
-// twin Func_020012dc's shape (object read at the top, Scene_Call4090: 65),
-// the work pointer taken after the second call, inside or outside a once-only
-// block (56), an inline MoveLeader helper (54 to 56; 4 with the work pointer
-// between the calls, the same rows), the shifts or the second call folded into
-// the arguments (54). Earlier: a function-level work pointer (65), the owner
-// read into a local (4), the pointer to currentOwner itself (46), and an
-// 8-minute permute found nothing.
-// From 30: the last three moves take the
-// work's address between the two cell calls, so it crosses the second call
-// and lands in r5 as the native's does; that also gives the start its r2.
-// Left: the pool load of &gMainRoutineWork sits before the second
-// Func_020012d4 call here (2 rows in each of the two 19 moves) and just after
-// it natively. Thumb has no first scheduling pass and sched2 keeps a pool load
-// before a call, so the native's load was after the call in RTL while the
-// pointer still crossed a call. Tried without gain: the work pointer taken
-// before the first call (13), after the second (56, the 15 move crossjumps
-// too), at function level or per branch (65, 78), through Scene_Call4090
-// (12 to 54), the shifts in place (8 to 26); a 3-minute permute reached 26
-// only through a long long temporary.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Two things close it. Func_020012d4 is declared const, which it is (it reads
+// no memory): a call to it no longer flushes pending loads in sched2, so the
+// pool load of &gMainRoutineWork drifts past the second cell call as the
+// native's does. The original likely had the helper static in this file,
+// where mark_constant_function infers the same. And the move takes the work's
+// address at the top of its block, so the pointer crosses both cell calls and
+// takes r5 (x then r6), as in the native. One macro serves all four moves: in
+// the first, CSE reuses the owner address read at the top (r8).
+// Without const: the pointer taken between the two calls stayed at differ 4
+// (the load sat before the second call); the twin's plain macro is 56; a
+// function-level work pointer is 65; an inline MoveLeader helper is 13.
 // The twin of Func_020012dc for the other room (row 89): resets the stone,
 // copies the four blocks and moves the leader off the cells the blocks cover.
 #include "../../../../games/tla/src/scene/yampi_desert/scene.h"
 #include "actor.h"
 
-s32 Func_020012d4(s32 cell);
+// Const: the cell helper only computes from its argument.
+s32 Func_020012d4(s32 cell) __attribute__((const));
 
 /// Moves the leader to the centre of a cell, in pixels.
 #define MOVE_LEADER_TO(column, row)                                            \
   {                                                                            \
-    s32 x_ = Func_020012d4(column);                                            \
-    s32 z_ = Func_020012d4(row);                                               \
-    Func_02004090(gMainRoutineWork.currentOwner, x_ << 16, z_ << 16);               \
-  }
-
-#define MOVE_LEADER_AGAIN(column, row_)                                        \
-  {                                                                            \
-    struct MainRoutineWork *work;                                              \
-    s32 x_;                                                                    \
-    s32 z_;                                                                    \
-    x_ = Func_020012d4(column);                                                \
-    work = &gMainRoutineWork;                                                  \
-    z_ = Func_020012d4(row_);                                                  \
-    Func_02004090(work->currentOwner, x_ << 16, z_ << 16);                     \
+    struct MainRoutineWork *work = &gMainRoutineWork;                          \
+    s32 x = Func_020012d4(column);                                             \
+    s32 z = Func_020012d4(row);                                                \
+    Func_02004090(work->currentOwner, x << 16, z << 16);                       \
   }
 
 void Func_020013f8(void) {
@@ -59,11 +42,11 @@ void Func_020013f8(void) {
   if (column == 15 && row == 44)
     MOVE_LEADER_TO(15, 43)
   else if (column == 17 && row == 44)
-    MOVE_LEADER_AGAIN(17, 43)
+    MOVE_LEADER_TO(17, 43)
   else if (column == 19) {
     if (row == 40)
-      MOVE_LEADER_AGAIN(19, 41)
+      MOVE_LEADER_TO(19, 41)
     else if (row == 42)
-      MOVE_LEADER_AGAIN(18, 42)
+      MOVE_LEADER_TO(18, 42)
   }
 }

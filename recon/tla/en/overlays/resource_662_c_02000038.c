@@ -1,62 +1,26 @@
-// Differ 49 of 160 (tla-en, 2026-11-08, -mtune=gba).
-// 2026-11-08, later: x ax z az bx bz gives kind * 4 its native r2 (68) but swaps
-// the two offsets (r1, r4 for native r4, r1); 10 minutes of permute from there
-// reached 54 at best. Native order with kind *= 4 on a flat table 112 (103 in this
-// order); the layers through a MapLayer pointer 94; an s32 word view of unk08 or
-// gData_02001968[0] or *gData_02001968 for the first test: no gain.
-// 2026-11-08, unchanged: once-only blocks around each statement of the tail
-// (51 to 103), the native order x z ax az bx bz with a block around any one
-// statement (82 to 112), a local holding 4 for the shifts and indices (49; it
-// folds), a row pointer into the footprint table (70; 105 in native order).
-// Permute 10 minutes: its 43 reused bz, first holding 4 and then the second
-// layer's word, as az's index, which reads the wrong word: not kept.
-// Reordered map reads under
-// -mtune=gba: x z ax az bx bz 84, x ax z az bx bz 68, bx x z ax az bz 61, bx x ax
-// z bz az 55, bx bz x z ax az 59; this order is still best.
-// 2026-11-07: kind as u32 stepped through u16 casts (kind = (u16)i; kind = (u16)(kind + 1); i = (s16)kind) puts
-// the search's u16 view in r2 before i's asrs, as native; the loop now matches. Left: i = 0 before sprite fixes the
-// prologue but moves the 0x10000 reload to r1 (55); the tail's native order x, z, ax, az, bx, bz gets the constants
-// right (328, 332, 384, 388) but kind * 4 (5 refs over 17 insns) loses to the second offset (5 over 15) and takes
-// r1 (84); on this head all 720 orders with w and h first and 16,000 of the rest were measured: none beats this.
-// Earlier (61 of 160, 2026-11-06):
-// 2026-11-06 (later): s16 i = 0 declared before sprite gives the listing's prologue (i's zero in r1 set first,
-// the value28 read on a zero of its own in r2), but 67 overall: in the search the step still shifts i (asrs r1)
-// before the u16 view (lsrs), which then ties to the step's register r3 where the listing has the view first in r2.
-// On that base kind = i + 1; i = kind and i++; kind = i give 69; i = kind = i + 1 gives 73 on this draft; a
-// once-only block around i = 0 gives 63.
-// Native order with az and bx, bz read raw: differ 94; permuter 8 min: no gain.
-// Near miss: the search's u16 view lands in
-// r3, not r2, so kind and kind * 4 are two registers; the second layer's first
-// word is read ahead of the object's x, and the first layer's words are read
-// after z, not inside it. Reading the second layer's x first is what puts the
-// table's first offset in r4 and its absolute value in r1, as native has them;
-// in the native order (x, ax, z, az, bx, bz) they swap, differ 80. Measured
-// every order of the eight statements with w, x, ax, bx before h, z, az, bz:
-// w and h first is always best. Draft is 161 instructions to native 160.
-// Under -Os, 5 November: differ 80 of 160 (tla-en); older figures below predate it.
-// Draft, differ 108 of 160, skeleton gap 13 (tla-en, 2026-11-01)
+// Matches: differ 0 (tla-en, 2026-11-08); tla-ja, tla-de, tla-es, tla-fr and
+// tla-it also differ 0 of 160, so every edition can adopt it.
 // Yampi Desert Cave: finds a pushed object's kind by its sprite, copies its
 // footprint between the map layers, then marks its cells.
-// Proven: the search is a goto loop (a real loop strength-reduces i << 16). The
-// step's pool 0x10000 needs a u16 view stepped apart from i (kind = i; kind++;
-// i = kind) so combine splits it; a plain i++ gives adds, lsls, asrs. The second
-// call's arguments must be locals, computed from, then to, so both stack
-// arguments are live together; inline they store one at a time.
-// Left, all allocation. i has 7 refs but i = 0's REG_EQUAL doubles its live
-// length (30), so (u16)sprite's shift, 4 refs over 13, ranks first and takes r1;
-// native has i in r1 and the shift in r4. kind and kind * 4 are one pseudo in
-// native (r2 across the branch): s32 kind; kind *= 4 makes one, but it still
-// lands in r1, and it reuses a local for a second value, so it is not kept. The
-// loop's u16 view wants r2: native sets it before i, while the shift is live.
-// kind * 4 in r1 instead of r2 is what rotates the ABS registers, moves the ldr
-// past mov r9, and turns the 328 and 332 reloads into the other order; the 13
-// skeleton lines are that block and the lsrs, asrs pair, so they should follow.
-// Reading the first layer's words inline in the call gives differ 102 at
-// skeleton gap 15. Native keeps ax's shift in r1 across az's load.
-// Tried, no gain: while, for and break forms of the search (gap 23 to 37), i = 0
-// inside the index, reversed compare, a s32 sprite << 16 (drops ldrsh), offset,
-// dx and dz locals, declaration orders, toX and toZ for the first call, u16 ax.
-// The compiler change did not close this one.
+// No device: every form below is ordinary C under S2.
+// - The search is a goto loop stepped through u16 casts (kind = (u16)i;
+//   kind = (u16)(kind + 1); i = (s16)kind): a real loop strength-reduces
+//   i << 16, and a plain i++ gives adds, lsls, asrs.
+// - i is reused twice, for the table's second byte and then for the first
+//   layer's x offset. As a CSE temporary the second byte (5 refs over 15
+//   insns) outranks kind * 4 (5 over 17) in global allocation and takes r2,
+//   pushing kind * 4 to r1 (84 in this statement order). As its own local the
+//   x offset ties to its load and leaves r1 (58 with only the first reuse).
+// - Statement order x, z, x offset, z offset, then the second layer's raw
+//   words, shifted after the first call: reload then builds 332 in r0 and
+//   reaches 384 and 388 by adding to it, as the listing does.
+// - Both calls' stack arguments are locals computed after the layer reads, so
+//   each pair is live together; inline, the first call's pair stores one at a
+//   time and its u16 views swap r2 and r3 (36). The first pair needs its own
+//   locals: sharing toX and toZ with the second call sets them twice, which
+//   makes them global (also 36).
+// Before adoption: MapLayer.unk08's two words are read through s32 casts, and
+// Func_02001848's parameter names come from this caller alone.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -79,9 +43,10 @@ s32 Func_02000038(s32 id) {
   s16 i;
   u32 kind;
   s32 w, h, x, z;
-  s32 ax, az;
+  s32 az;
   s32 bx, bz;
   s32 toX, toZ, fromX, fromZ;
+  s32 layer1X, layer1Z;
 
   i = 0;
   if ((u16)sprite != gData_02001968[i]) {
@@ -96,14 +61,19 @@ s32 Func_02000038(s32 id) {
   if (kind == 6)
     return 0;
   w = (ABS(gData_02001974[kind][0]) + ABS(gData_02001974[kind][2])) >> 4;
-  h = (ABS(gData_02001974[kind][1]) + ABS(gData_02001974[kind][3])) >> 4;
-  bx = *(s32 *)&map->layers[2].unk08[0];
+  // i is reused: the footprint's second byte here, the first layer's x offset
+  // in cells below.
+  i = gData_02001974[kind][1];
+  h = (ABS(i) + ABS(gData_02001974[kind][3])) >> 4;
   x = (object->x + (gData_02001974[kind][0] << 16)) >> 20;
-  z = (object->z + (gData_02001974[kind][1] << 16)) >> 20;
-  ax = *(s32 *)&map->layers[1].unk08[0] >> 20;
-  bz = *(s32 *)&map->layers[2].unk08[4];
+  z = (object->z + (i << 16)) >> 20;
+  i = *(s32 *)&map->layers[1].unk08[0] >> 20;
   az = *(s32 *)&map->layers[1].unk08[4] >> 20;
-  Func_02001848(x, z, w, h, (u16)ax + x, (u16)az + z);
+  bx = *(s32 *)&map->layers[2].unk08[0];
+  bz = *(s32 *)&map->layers[2].unk08[4];
+  layer1X = (u16)i + x;
+  layer1Z = (u16)az + z;
+  Func_02001848(x, z, w, h, layer1X, layer1Z);
   fromX = (u16)(bx >> 20) + x;
   fromZ = (u16)(bz >> 20) + z;
   toX = x + 64;

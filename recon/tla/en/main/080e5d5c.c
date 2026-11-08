@@ -1,27 +1,34 @@
-// Differ 28 of 639 (tla-en, 2026-11-08, -mtune=gba); the pins tagged, measured then.
-// 2026-11-08, second pass: frame++ folded into the Field_RunPsynergyEvent call puts
-// its argument moves in the native order (30 to 28). Pins re-measured on that form:
-// 88 and 41 without. Left: the lift reload (r4 for r0), speed's copy-then-add
-// fused under the pin, and the j loop's 1 in r1, so wait(1) loads its own. Splitting
-// speed += 0x28000, lift as lift += ..., the stores reordered, a sprite pointer
-// stepped by the loop, and declaration order: no gain.
-// 2026-11-08: both pins re-measured (90 and 43 without, unchanged); without the
-// once-only block around Iwram_FillWords 32. Unpinned, the speed form costs only
-// the extra movs r0, #1 before wait(1) and the pool shift it causes; a 10-minute
-// permute of it reached 30 only by narrowing Iwram_FillWords' size to unsigned
-// char, which passes 0 (rejected). Lift and loop spellings: no change.
-// 2026-11-06: allocation only (lift r4/r0, the 1 for j++,
-// one fused add); a 5-minute permute reached 28 only by changing a signature.
-// Also measured (2026-11-06, second pass): speed unpinned with its 0x28000 added
-// as its own statement (speed += 0x28000) gives the native's copy-then-add in
-// r6 without the pin, but the j loop's 1 then sits in r1 and wait(1) loads its
-// own, one instruction more that shifts every pool (43); a 5-minute permute
-// from there found nothing lower. The lift and j++ rows are reload's
-// round-robin register choices (lift through r2 and r4 here, r4 and r0
-// natively), one step out of phase with the native's.
-// Earlier: near miss at 30 (2026-11-05) with untagged pins ("r9", "r6"), empty asms,
-// one-pass blocks and locals found by search; each needs its S2 tag on adoption.
-// Draft, differ 99 of 639, skeleton gap 11 (tla-en, 2026-11-01)
+// Draft, differ 4 of 639 (tla-en, 2026-11-08)
+// Left: the airborne test's two registers. The listing loads motionFlags into
+// r2 and builds the 4 in r3 (ldrb r2 / movs r3, #4 / ands r3, r2); the kept
+// form, the mask held in inReach, gives ldrb r3 / movs r2, #4. Every edition
+// measures the same (tla-ja, de, es, fr and it: 4; de, es and fr by --symbol).
+// The plain test (child->motionFlags & 4) gives the listing's ands but 12: the
+// else-if branch's two reloads, scene's base for the scene->y store and the
+// 0x200000 for lift, take r2 and r4 where the listing has r4 and r0. They are
+// reload's round-robin choices (spill registers r0 to r4), one step behind the
+// listing's: the listing makes one more round-robin reload than this draft
+// between the scene->x store in the NULL branch (r1, both) and the scene->y
+// store. Confirmed: the NULL branch passing (s32 *)(glowEntry = (s32)&scene->x)
+// makes that reload (adds r2, #4 then needs a spill register) and the else-if
+// branch then matches exactly, but its store to glowEntry stays (7). What the
+// listing's extra reload is was not found; the motionFlags mask in a spilled
+// local (inReach, glowEntry or starEntry) is the nearest. Tried without gain:
+// the test as a bitfield, (flags >> 2) & 1, a u8 local, casts, a dedicated mask
+// local (16), the test stored in inReach, spot or glowEntry, nested ifs,
+// child != NULL first (44), lift as lift += ..., split, reordered or through a
+// long long (4, other rows), the NULL branch's stores in one statement, a
+// caster copy, a centre pointer for &scene->x (33), and two permute runs over
+// the opening (10 and 12 minutes; best 4, by the same reused local).
+// 2026-11-08, third pass (28 to 4): both pins and the zero default i = 0 are
+// gone. The particles are stepped by a pointer the loop advances after j, so
+// j++ takes its 1 in r0 before the particle's 28 and wait(1) reuses it; with
+// that, speed += 0x28000 as its own statement gives the copy-then-add in r6
+// unpinned. The objects loop counting with j puts j above scene in the
+// allocator's order (j to r10, scene to r9) without the r9 pin. Pins measured
+// on that form: none needed (an r9 pin on the glow tile now costs 68).
+// Earlier passes (2026-11-01 to 11-08) reached 28 only with pins on the glow
+// tile (r9) and speed (r6).
 // A field Psynergy that raises a glowing object
 // (object 352) before the caster or at the target: the scene sits 32 pixels
 // before the caster, or on the target's ground when it is airborne. With a
@@ -34,19 +41,9 @@
 // parks at 999; then the object bursts (Func_080dbf94). Otherwise the
 // object sinks and shrinks (BattleEffect_SinkAndShrinkObject) and scatters
 // sixteen particles. Cue 114 ends both.
-// Frame, stack slots and control flow agree. Left: scene and the counters
-// i, j trade r9 and r10 (nearly every remaining pair). The allocator ranks
-// scene (34 refs, life 404) above j (18, 184), where the listing needs j
-// first; scene with 3 fewer refs or j with 2 more would flip it, but no
-// spelling found has that without changing the instructions. Tried: the
-// counters in other groupings (loops 1 and 2, or all in one: the second
-// i = 0 goes to CSE and the frame grows), count-up loops, sprite as a pointer
-// or set later. Smaller, partly from that swap: lift's reload takes r2 and r4
-// for r4 and r0, the 1 for j++ sits in r1 so wait(1) reloads it, which also
-// moves the pool branch by one instruction.
 // Found by allocation: size is a whole-function constant left unallocated;
-// glow is reassigned in the frame loop; rise is its own counter; the
-// particles are indexed by j, so loop.c makes the givs after j = 0.
+// glow is reassigned in the frame loop; rise is its own counter; j counts the
+// objects, stars and particles alike.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -153,27 +150,25 @@ void Func_080e5d5c(void) {
   s32 glowEntry;
   s32 inReach;
   s32 lift;
-  /* FAKEMATCH(pin): the glow tile held in r9; as a plain local, 88 of 639
-   * instructions differ in tla-en. */
-  register s32 glowTile asm("r9");
+  s32 glowTile;
   s32 spot;
   s32 size = 0x800;
   s32 rise;
-  /* FAKEMATCH(pin): the speed held in r6; as a plain local, 41 of 639
-   * instructions differ in tla-en. */
-  register s32 speed asm("r6");
+  s32 speed;
   s32 angle;
   s32 frame;
-  s32 i;
   s32 j;
+  struct ShineParticle *particle;
 
   lift = 0x200000;
+  /* FAKEMATCH(temporary): the mask 4 held in inReach; as child->motionFlags & 4,
+   * 12 of 639 instructions differ in tla-en. */
   if (child == NULL) {
     scene->x = caster->x;
     scene->y = caster->y;
     scene->z = caster->z;
     Vector_AddPolarOffset(lift, scene->facing, &scene->x);
-  } else if (child->motionFlags & 4) {
+  } else if (child->motionFlags & (inReach = 4)) {
     scene->y = child->terrainHeight;
     lift = child->y - child->terrainHeight + 0x200000;
   }
@@ -182,8 +177,8 @@ void Func_080e5d5c(void) {
     spot = ~Func_080cda84(scene->fieldKind, caster, &scene->x);
     inReach = (u32)(-spot | spot) >> 31;
     if (inReach == 1) {
-      for (i = 0; i < 80; i++) {
-        object = event->objects[i];
+      for (j = 0; j < 80; j++) {
+        object = event->objects[j];
         if (object != NULL && object->script != NULL &&
             (object->collisionFlags & 1) &&
             Func_080dbe80(&scene->x, 4, &object->x, object->radius - 2) >= 0)
@@ -213,8 +208,6 @@ void Func_080e5d5c(void) {
   } else {
     ((u8 *)shine)[35] = 1;
   }
-  // Default: the zero the canvas and glow fields below reuse.
-  i = 0;
   shine->angle = caster->angle;
   Actor_SetMode(shine, 2);
   if (!(*(u16 *)((u8 *)event + 0xd4c) & 1))
@@ -237,8 +230,10 @@ void Func_080e5d5c(void) {
                         Ram_HeapSlots->battleFxWork[1]);
   canvas->command = CANVAS_UPLOAD;
 
+  // A once-only block: without it the canvas mode load is scheduled one row
+  // later (6 differ).
   do {
-  Iwram_FillWords(work, size, 0);
+    Iwram_FillWords(work, size, 0);
   } while (0);
   glowEntry = Resource_FindFreeEntry();
   glowTile = VramCache_Load(glowEntry, size, work);
@@ -260,20 +255,21 @@ void Func_080e5d5c(void) {
                         work);
   starEntry = Resource_FindFreeEntry();
   starTile = VramCache_Load(starEntry, 0x100, work);
-  for (j = 0; j < 32; j++) {
+  for (j = 0, particle = work->particles; j < 32; j++, particle++) {
     sprite = &work->sprites[j];
-    speed = Random16() * 18 / 10 + 0x28000;
+    speed = Random16() * 18 / 10;
+    speed += 0x28000;
     angle = j * 0x1555 + (Random16() >> 5);
     pos[0] = scene->x;
     pos[1] = scene->y;
     pos[2] = scene->z;
     Vector_AddPolarOffset(0x40000, angle, pos);
     Camera_WorldToScreen(pos);
-    work->particles[j].x = pos[0];
-    work->particles[j].y = pos[2];
-    work->particles[j].velocityX = Iwram_MulQ16(Trig_Cos(angle), speed);
-    work->particles[j].velocityY = Iwram_MulQ16(Trig_Sin(angle), speed);
-    work->particles[j].timer = -j;
+    particle->x = pos[0];
+    particle->y = pos[2];
+    particle->velocityX = Iwram_MulQ16(Trig_Cos(angle), speed);
+    particle->velocityY = Iwram_MulQ16(Trig_Sin(angle), speed);
+    particle->timer = -j;
     Func_080eaf98(sprite, 8, 8, 0x40000000, starTile);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;

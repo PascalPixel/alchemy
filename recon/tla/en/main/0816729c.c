@@ -1,4 +1,36 @@
-// Differ 54 of 2680 (tla-en, 2026-11-08, -mtune=gba; the same in ja, de, es, fr, it).
+// Draft, differ 52 of 2680 (tla-en, 2026-11-08; the same 52 in ja, de, es, fr, it)
+// 2026-11-08, fourth pass, 54 to 52: the shake's scroll value is a local y before
+// the store (movs r3, #3 then the gBgScroll pool load, as the native). What is left,
+// each traced in the rtl dumps (diff --rtl), so the next round need not re-derive it:
+// - Flash step (subs r3 where the native has subs r2): addG is spilled, and reload's
+//   combine_reloads gives its output reload the first dead hard register in the
+//   insn's REG_DEAD notes; flow lists the 304 (r3) before frame * 2 (r2). The native
+//   needs frame * 2's note first. A temp v, v = frame * 2, split stores, << 1: 52.
+// - Rings' first cx reload (r2 where the native has r4, both halves): reload's
+//   round robin starts after the last register allocate_reload_reg handed out; here
+//   that is mov r1, lr (radius), so r2. The native's r4 needs one more allocation of
+//   r2 or r3 before it, likely half's output reload into fp (and halfSlope's into ip)
+//   going through allocate_reload_reg instead of combine_reloads' dead-register path.
+//   cx < dx, dx >= cx, cx - dx < 0, the branch before right, seven declaration
+//   orders: 52 or worse (to 760).
+// - Queue loop 1 (stmia {r5} before the count store): sched2 priorities are the
+//   value store 21 (a true dependence into the objects load, both alias set int),
+//   count + 1 19, the count's strh 18. A union read of objects (alias set 0) ties
+//   the strh at 21 but loses on dependents (2 to 3): 54. An objects pointer stepped
+//   in the for (i++, p++) gives the native's latch (adds r1, #4 last) but builds the
+//   base before the pool loads: 70. work->objects[i], u8 ** or u16 **: 60.
+// - Release loop (ldr r6 before movs r0, #238): the giv's init reloads work (operand
+//   1) before rebuilding 0x77dc (operand 2), equal priority, so RTL order wins; the
+//   native rebuilds first. *(objects + i), an objects local, *objects++, i < 16, i = 0
+//   before the barrier: 52 to 60.
+// - DRAW_ALT at frame > 143: the native copies 0x030000bc into sl after the register
+//   arguments, so the constant's set comes later in its RTL. draw[1], a slot
+//   pointer, (*(DrawRectangle *)&...), a sheet local: 52 to 262.
+// - The four DRAW_ALT draws: the native moves sheet into r1 after r2 and r3 in draws
+//   1 to 3 but not 4, where sheet dies; priorities (245) and dependents (3) are equal,
+//   so its r1 move comes later in RTL there.
+// - Queue loop 2's r4/r5 swap and the IO_WRITE_QUEUE_PUSH_IME form in either loop
+//   (56, 58) as below.
 // 2026-11-08, third pass: unchanged. In the second queue loop a block pointer
 // src = Ram_MapCellBuffer stepped as src += 0x400, i++ puts table and source in the
 // native's r4 and r5, but cse then shares the decode call's constant with src (adds
@@ -1047,7 +1079,9 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     }
     HeapSlot_Release(SLOT_ALT);
     if (frame > 63) {
-      gBgScroll[1].y = Random16() % 4 + 30;
+      s32 y = Random16() % 4 + 30;
+
+      gBgScroll[1].y = y;
     }
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;

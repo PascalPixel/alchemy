@@ -1,15 +1,30 @@
-// Differ 4 of 875 (tla-en, 2026-11-08, -mtune=gba): sched2 order only; a
-// pool load and a store after a call swap places.
-// 2026-11-08: the load is reload's rematerialised IwramMulQ16 (insn after the
-// store in RTL order); sched2 lifts it for its longer latency. A block-local
-// ratio or function pointer, a once-only block, nested tests, reversed copies
-// and 8 permuter minutes did not move it. Second pass the same day: the
-// slowdown's first or second or third product through dx, dy or dz (47 to
-// 49), a once-only block after or around its first store (80, 82), its ratio
-// in speed or reducedSpeed (127, 113), the tests as == 0 (4), and 10
-// permuter minutes randomising the slowdown (best 49).
-// 2026-11-07: two of 2026-11-01's three swaps are gone with no source change;
-// reshaping, an empty asm and 14 permuter minutes left the third.
+// Draft, differ 4 of 875 (tla-en, 2026-11-08)
+// All six editions differ by the same 4. Left: one swap in the slope
+// slowdown; every other instruction and register agrees. After the first
+// Iwram_MulQ16 product the native runs `adds r1, r5` (the next argument),
+// `str r0, [r7, #36]` (velocityX), then `ldr r6, =Iwram_MulQ16` (reload's
+// rematerialised pointer for the second and third products); the draft puts
+// the ldr first.
+// Why no source form closes it (sched2 -fsched-verbose dump, 2026-11-08):
+// that reload is `(set r6 (const_int))`, and sched2 gives a constant load no
+// dependence at all (r6 is call-saved). After the call it ties the store and
+// the copy on priority (69 each) and wins rank_for_schedule's class test:
+// independent beats the copy's anti-dependence on the call and the store's
+// data dependence on it. The native order is exactly what sched2 gives when
+// that load depends on the call, the copy or the store, as if the compiler
+// read a pool constant as memory after the call's memory flush. Nothing in C
+// gives a constant load a dependence: a local pointer pinned to r6 and set
+// after the store is still hoisted (20); storing through a velocity pointer
+// regroups the block (163); a full barrier after the store holds the copy
+// below the store (4) and one anywhere else orders the copy after the store;
+// a global register variable would add the dependence but takes r6 from the
+// whole function. This is a compiler question (K3), not a source one.
+// Tried before without gain: a block-local ratio or function pointer, a
+// once-only block, nested tests, reversed copies, the products through dx,
+// dy or dz (47 to 49), a once-only block after or around the first store (80,
+// 82), the ratio in speed or reducedSpeed (127, 113), the tests as == 0 (4),
+// and 32 permuter minutes in all (best 49 when randomising the slowdown).
+// 2026-11-07: two of 2026-11-01's three swaps are gone with no source change.
 // Written from The Broken Seal's Actor_UpdateAllThumb
 // (games/tbs/src/field/field/actor_motion.c), which runs each object's hook
 // and script and moves it toward its target each frame (Func_080230e0 adds it
@@ -18,14 +33,9 @@
 // another (bit 7) 16 pixels below in the cell it moves into, remembering it at
 // 0x7c and keeping its speed there; a fall lands at the ground height less the
 // rebound; each object records the distance it moved this frame at 0x70; the
-// arrival axes are numbered 16 to 18.
-// Left: every instruction and register agrees; one pair swaps: in the slope
-// slowdown the native stores velocityX ahead of the reload of Iwram_MulQ16 for
-// the second call. An empty asm after the store fixes it but pulls the next
-// argument copy below the store (still 4); a scheduling rule (K2 calls
-// -mthumb-slow-loads an approximation) is the likely cause. Tried without gain:
-// the order of the velocity sums and of standing and standingOn, operand order,
-// a != 0 test, pos's order, a velocityX temporary in the slowdown.
+// arrival axes are numbered 16 to 18. Also tried without gain: the order of
+// the velocity sums and of standing and standingOn, operand order, a != 0
+// test, pos's order, a velocityX temporary in the slowdown.
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"

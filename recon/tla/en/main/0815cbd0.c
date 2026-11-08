@@ -1,16 +1,32 @@
-// Differ 6 of 228 (tla-en, 2026-11-08, -mtune=gba), plain C with no device.
-// Left: at the first three quarters the listing sets the draw's x and y
-// before the sheet (add r1, sl); here the add comes first, a sched2 tie the
-// listing's fourth quarter breaks the other way (all four prio 149, settled
-// by luid). 2026-11-08: the empty asm at the head of each quarter is gone:
-// once-only blocks that each hold a draw, its release and the next blitter's
-// build give the same 6 (one block per quarter, as before, 12; the sheet as
-// (u8 *)work + 0x700, &work->sheet[0], sizes as 32 or x and y cast: 6).
-// The fourth draw needs no block (6 either way, so it has none); other
-// placements: a block per load and draw 18, per draw and release 12, per
-// draw alone 12, per release and load 12; the sheet or the draw pointer in
-// a block-scoped local, 6 and 60; 7 minutes of permuting left 6 (2026-11-08).
-// Measured 2026-11-05 (tla-en): differ 6 of 228, with the barrier.
+// Matches: differ 0 (tla-en, 2026-11-08); tla-ja, tla-de, tla-es, tla-fr and
+// tla-it differ 0 too. One device, FAKEMATCH(signature): the three releases
+// between draws are called as returning s64; as plain void calls, 6 of 228.
+// Why it is needed: the once-only blocks end CSE's block at each quarter, so
+// each draw forms work + 0x700 again (movs, lsls, add r1, sl) and loop.c
+// folds each 0x700 into its single use while it hoists the blitter base
+// (which the setup's r6 shares). But their loop notes are sched2 barriers,
+// and a barrier after a draw depends on that draw's add r1, sl (its use of
+// work), so the add ties with the x and y sets on dependents (5 each) and
+// wins on insn order: add, x, y, canvas where the listing has x, y, add,
+// canvas (its fourth draw, with no barrier after it, ties all four and keeps
+// insn order, as here). A release that sets r1 takes over the dependence of
+// both the release and the next build on the add, which leaves it 4 against
+// x's and y's 5 and above the canvas move's 3. The draw itself returning s64
+// instead leaves the add tied with the canvas move (canvas first).
+// Tried without the device, 2026-11-08: no blocks at all, 164 (CSE merges
+// the four sums and loop.c hoists one into sl); work copied to itself before
+// quarters two to four (a dead self-assignment, no blocks), 27: the loop body
+// matches, but CSE still merges the four 0x700 constants, loop.c hoists the
+// one left and cse2 ties it to the setup's, which takes r5 for the setup's
+// sheet; the same with the sheet as (u8 *)work + 0x700, 27; with the offset
+// in a local set before the loop (gcse propagates it, PRE then hoists the
+// sum), 50. The barrier-free schedule needs separate CSE blocks with no
+// barrier between draws, which nothing in C gives: loop notes, labels and
+// volatile asms all end the scheduler's freedom too.
+// Earlier (2026-11-08): one block per quarter 12; a block per load and draw
+// 18, per draw and release 12, per draw alone 12, per release and load 12;
+// the sheet or the draw pointer in a block-scoped local, 6 and 60; 7 minutes
+// of permuting left 6. 2026-11-05: differ 6 of 228 with an empty asm barrier.
 
 // Draft of BattleEffect_RunSpiderWeb, effect kind 345: a spider web over the targets.
 
@@ -160,20 +176,24 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
     // both. Each blitter is built, drawn with and released before the next
     // is built; each once-only block holds a draw, its release and the next
     // build (as one block per quarter, 12 differ); the last draw needs none.
+    /* FAKEMATCH(signature): the three releases between draws called as
+     * returning s64, so each call sets r1 and the scheduler sets a draw's x
+     * and y before its sheet; as plain void calls, 6 of 228 instructions
+     * differ in tla-en. */
     LOAD_QUARTER(CLIP);
     do {
       DRAW_QUARTER(33, 41);
-      HeapSlot_Release(HEAP_BLITTER);
+      ((s64 (*)(s32))HeapSlot_Release)(HEAP_BLITTER);
       LOAD_QUARTER(CLIP | COMPOSITE_FLIP_X);
     } while (0);
     do {
       DRAW_QUARTER(64, 41);
-      HeapSlot_Release(HEAP_BLITTER);
+      ((s64 (*)(s32))HeapSlot_Release)(HEAP_BLITTER);
       LOAD_QUARTER(CLIP | COMPOSITE_FLIP_Y);
     } while (0);
     do {
       DRAW_QUARTER(33, 72);
-      HeapSlot_Release(HEAP_BLITTER);
+      ((s64 (*)(s32))HeapSlot_Release)(HEAP_BLITTER);
       LOAD_QUARTER(CLIP | COMPOSITE_FLIP);
     } while (0);
     DRAW_QUARTER(64, 72);

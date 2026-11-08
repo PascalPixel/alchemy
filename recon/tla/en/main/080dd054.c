@@ -1,32 +1,26 @@
-// Differ 2 of 444 (tla-en, 2026-11-08, -mtune=gba).
-// Later on 2026-11-08: pushed for moved as the actionFlags value (2), moved = 0 set
-// later or folded into the store (66, 80), moved declared first (52), once-only
-// blocks round the acceleration store or before or after the actionFlags store (4
-// to 6), (s8)moved and a folded pusherFlags assignment (2) left the tie.
-// 2026-11-07: all 120 orders of the target's four stores and *layer = 2, moved
-// as u8 or s16, temporaries, asm barriers and 8 permuter minutes left it at 2.
-// Move cast on a target, the twin of The Broken Seal's FieldPsynergy_SteerPushedTarget (same
-// locals in the same order, the same blocks and the same push, with this
-// game's calls). The hand (BattleEffect_StartItemBreak) appears 16 pixels above
-// the target on the caster's side and pushes it 16 pixels the way the d-pad
-// points, for as long as the player pushes; A, B, L or R end it unless the
-// effect scene's mode is set. Where it cannot go, cue 114 plays every 16
-// frames. This game adds the scene's direction hook (its 0xffff ends the
-// effect), the target's layer kept and restored, the push's pending event
-// (Func_080ce458) run once the target has moved, a target that lands on its
-// cell only with no event, and the palette byte read from 0x40 rather than the
-// shared struct's savedPalette at 0x44. Func_080202f0 takes the layer and
-// beyond's x and z, as the twin's cell test does. Stack slots follow the
-// declaration order, so the declarations are the twin's.
-// Left: one scheduling pair, moved's ldrb before adds r3 #51 (the listing has
-// it after; in sched2 the two are ready together). The *layer pair now
-// matches. Registers, slots and blocks all agree. Tried without gain: seven orders
-// of the opening assignments, three of the target's field stores, user and
-// target swapped, s32 and u32 local types, target->actionFlags = 0, a direct
-// read of terrainId and a combined layer assignment. A load-order tie in sched2.
-// 2026-11-08: once-only blocks around each nearby store, (u8)moved, pushed for
-// moved, the declaration order of moved and pushed, a constant local for
-// 0x3333 and 7 permuter minutes (22,560 candidates) gave 2 to 22.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Also differ 0 in tla-ja and tla-it by address, and in tla-de, tla-es and
+// tla-fr by --symbol Func_080dd054 (their scaffolds place it elsewhere); no
+// device. The last pair (moved's ldrb against adds r3, #51) closed with
+// target->terrainId = 2 written through the struct, not *layer: the store then
+// carries Actor's alias set, no longer conflicts with moved's spill slot, and
+// sched2's tie falls to source order. Earlier rounds (orders of the stores,
+// moved's type and slot, once-only blocks, barriers, permuter) left it at 2.
+// Move cast on a target, the twin of The Broken Seal's
+// FieldPsynergy_SteerPushedTarget (same locals in the same order, the same
+// blocks and the same push, with this game's calls). The hand
+// (BattleEffect_StartItemBreak) appears 16 pixels above the target on the
+// caster's side and pushes it 16 pixels the way the d-pad points, for as long
+// as the player pushes; A, B, L or R end it unless the effect scene's mode is
+// set. Where it cannot go, cue 114 plays every 16 frames. This game adds the
+// scene's direction hook (its 0xffff ends the effect), the target's layer kept
+// and restored, the push's pending event (Func_080ce458) run once the target
+// has moved, a target that lands on its cell only with no event, and the
+// palette byte read from 0x40 rather than the shared struct's savedPalette at
+// 0x44. Func_080202f0 takes the layer and beyond's x and z, as the twin's cell
+// test does. Stack slots follow the declaration order, so the declarations are
+// the twin's; the opening read stays through layer (a direct read moves its
+// slot, 22).
 #include "types.h"
 #include "ram_buffer.h"
 #include "field/field_psynergy_work.h"
@@ -48,21 +42,18 @@ struct Actor *BattleEffect_StartItemBreak(struct Actor *object);
 void BattleEffect_SnapScaleToFull(struct Actor *object);
 s32 Func_080ce31c(s32 kind);
 struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector);
-void Actor_StartScriptFar(struct Actor *object,
-                                  const void *script);
+void Actor_StartScriptFar(struct Actor *object, const void *script);
 void Animation_ApplyChildValuesFar(struct Actor *object, u32 values);
 void Vector_AddPolarOffset(s32 radius, s32 angle, struct Vec3 *position);
 u32 BattleEffect_GetCycledTableWord(u32 keys);
 s32 Func_08020210(struct Actor *object, struct Vec3 *position);
-struct Actor *
-ScriptObject_FindOverlappingEntryFar(struct Actor *object,
-                                     struct Vec3 *position);
+struct Actor *ScriptObject_FindOverlappingEntryFar(struct Actor *object,
+                                                   struct Vec3 *position);
 s32 Func_080202f0(s32 layer, s32 x, s32 z);
 struct Actor *Actor_GetById(s32 id);
-void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
-                                         s32 y, s32 z);
-s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode,
-                                 s32 target);
+void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
+                                        s32 z);
+s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target);
 void BattleEffect_StopMainActor(void);
 void UpdateRisingParticleBurst(void *object);
 void Actor_ApplyRandomChildValues(void);
@@ -135,7 +126,8 @@ void Func_080dd054(void) {
   target->speedLimit = 0x6666;
   target->acceleration = 0x3333;
   target->actionFlags = moved;
-  *layer = 2;
+  // Through the struct rather than *layer, as the listing's store order needs.
+  target->terrainId = 2;
   while (1) {
     wait(1);
     if ((s8)scene->mode == 0 && (gInput.pressed & 0x303))
@@ -251,10 +243,8 @@ void Func_080dd054(void) {
   if (pushed) {
     pusher->update = NULL;
     Actor_SetMode(pusher, 4);
-    Actor_SetPositionAndResetMotionFar(pusher, pusher->x, pusher->y,
-                                        pusher->z);
-    Field_RunPsynergyEvent(event, scene->firstObjectId,
-                                 scene->secondObjectId);
+    Actor_SetPositionAndResetMotionFar(pusher, pusher->x, pusher->y, pusher->z);
+    Field_RunPsynergyEvent(event, scene->firstObjectId, scene->secondObjectId);
   }
   BattleEffect_StopMainActor();
   if (moved == 1) {

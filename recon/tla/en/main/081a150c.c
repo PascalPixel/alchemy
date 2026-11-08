@@ -1,23 +1,13 @@
-// Differ 12 of 69 (tla-en, 2026-11-08, -mtune=gba). Rechecked 8 November:
-// once-only blocks over every run of stores, and empty ones between them, in
-// this and the listing's order: 12 at best; permuter, 6 minutes: none better. The listing's pool gives the
-// native's address order: 7518, 751c, 7520, 7528, gScrollTarget, 7524, 7514.
-// Written in that order: 32 (sched1 then hoists 7524's address and
-// Func_081a133c into r1 and r0); 7524 as s16 32, u8 or s32 35; 7524 = 1
-// before 7520 = 0 with gScrollTarget after 7528: 12.
-// 8 November: all 5,040 orders of the seven stores, best 12 (this one);
-// a constant local for 7524's 1: 35; a zero local: 26; chained stores: 16 or
-// more; volatile on any of them: no change. Permuter, 6 minutes: 10 only by
-// storing Data_02007514 twice (a dead store), not taken.
-// Draft, differ 12 of 69 (was 32): sets up a scrolling picture scene:
-// clears the frame flags and the scroll words, resets the task table and adds
-// Func_081a133c, then sets up BG2, BG3 and blending as Func_081a06e0 does,
-// with BLDALPHA 16, and calls Func_081a1830. gData_02007520 is cleared after
-// Data_02007524 is set, which puts the native's loads of the scroll words'
-// addresses one store ahead. Left: instruction order in that run: the native
-// loads Data_02007520's address into r1 before Data_02007528's store, the
-// rest one step earlier; the pool follows the load order. A barrier after
-// Data_02007514's store gives 14; no second barrier helps.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Sets up a scrolling picture scene: clears the frame flags and the scroll
+// words, resets the task table and adds Func_081a133c, then sets up BG2, BG3
+// and blending as Func_081a06e0 does, with BLDALPHA 16, and calls
+// Func_081a1830. The key was one chained assignment, gScrollTarget =
+// gData_02007520 = Data_02007528: the native loads those three addresses
+// nested (the map pointer's innermost, in r3, then r1, then r0), which no order
+// of seven separate stores gives (12 at best). Types follow the credits files
+// (f1a133c.c, f1a15dc.c): Data_02007528 is the map pointer, the halfwords s16;
+// with Data_02007528 as u32 and no cast it matches too.
 #include "types.h"
 #include "io_reg.h"
 #include "io_write.h"
@@ -27,11 +17,11 @@
 
 extern u8 gData_03001110;
 extern u32 Data_02007518;
-extern u32 gData_0200751c;
-extern u16 gData_02007520;
-extern u32 Data_02007528;
-extern u16 Data_02007524;
-extern u16 Data_02007514;
+extern s32 gData_0200751c;
+extern s16 gData_02007520;
+extern u8 *Data_02007528;
+extern s16 Data_02007524;
+extern s16 Data_02007514;
 
 void Func_081a133c(void);
 void DisplayScroll_BuildHblankWordTable(u32 *table);
@@ -45,12 +35,12 @@ void Func_081a150c(void) {
   Task_ResetAll();
   Data_02007518 = 0;
   gData_0200751c = 0;
-  Data_02007528 = 0;
-  gScrollTarget = 0;
+  // One chained assignment: the three addresses are loaded nested, the map
+  // pointer's innermost.
+  gScrollTarget = gData_02007520 = (s32)(Data_02007528 = NULL);
   Data_02007524 = 1;
-  gData_02007520 = 0;
   Data_02007514 = 0;
-  Task_Add((s32)Func_081a133c, TASK_PASS_VBLANK);
+  Task_Add(Func_081a133c, TASK_PASS_VBLANK);
   Io_Write16(0x40, &REG_DISPCNT);
   DisplayScroll_BuildHblankWordTable((u32 *)0x06007800);
   DisplayScroll_BuildHblankWordTable((u32 *)0x0600f800);

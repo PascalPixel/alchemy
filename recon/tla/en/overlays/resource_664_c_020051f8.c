@@ -1,13 +1,25 @@
-// Differ 3 of 1079 (tla-ja, 2026-11-08, -mtune=gba): the three are the far branches to the
-// shared return, which the listing writes as raw .2byte bl pairs. Checked 7 November:
-// the draft object's 2732 bytes equal the listing's except the nine scene-id words
-// (relocations here, raw ids there) and the pool padding (nop here, 0 there, which
-// the build's assembler writes as 0), so the code is a byte match.
-// The Japanese release's own Func_020051f8 of overlay 664, absent from the
-// later editions, which link games/tla/src/scene/airs_rock_inside/s51f8.c
-// instead. It differs from it only in the first room: the entrance-16 arrival
-// does not test flag 265. Measure with --edition tla-ja: tla-en compares
-// it with that later function (differ 61 of 1091).
+// Matches: differ 0 (tla-en, 2026-11-08)
+// One source for all six editions of Func_020051f8 of overlay 664: the
+// Japanese release's older form (still its own TLA_EDITION_JA block of
+// .text.x0200d1f8 in recon/tla/raw/overlays/resource_664_overlay.s) and the
+// later one games/tla/src/scene/airs_rock_inside/s51f8.c links under
+// #if TLA_PATCH_1. They differ only in the first room: the entrance-16
+// arrival tests flag 265 from TLA_PATCH_1 on (title_intro.c's
+// `!TLA_PATCH_1 ||` spelling). Measured 8 November: differ 0 of 1091 in
+// tla-en, tla-de, tla-es, tla-fr and tla-it, and tla-en's compiler output is
+// line for line out/tla-en/obj/.../s51f8.s; tla-ja differ 3 of 1079, the
+// three far branches to the shared return, which its listing writes as raw
+// .2byte bl pairs (f000 fc50, f000 fc48, f000 fc44 in both). The tla-ja
+// object's 2732 bytes equal that scaffold section's but for the nine
+// scene-id words (relocations here, raw ids there) and four pool-padding
+// halfwords (nop here, 0 there, which the build's assembler writes as 0), so
+// tla-ja is a byte match too.
+// To adopt: this body replaces s51f8.c's (dropping its #if TLA_PATCH_1
+// wrap), the scaffold's TLA_EDITION_JA block for Func_020051f8 (lines
+// 1856 to 3071 today, the .L_ja_ pool with it) goes, then
+// make compare-editions; the draft is retired once all twelve print OK.
+#include "version.h"
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -61,7 +73,9 @@ s32 Func_020051f8(void) {
   GameFlag_SetBit(0x89f);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room1) {
     Func_02002770();
-    if (gMainRoutineWork.entrance == 16) {
+    // The Japanese release arrives here whatever flag 265 says.
+    if (gMainRoutineWork.entrance == 16 &&
+        (!TLA_PATCH_1 || !GameFlag_Test(265))) {
       Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 1;
       wait(8);
       Func_02005d84();

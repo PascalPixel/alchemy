@@ -1,4 +1,30 @@
-// Differ 36 of 2579 (tla-en, 2026-11-08, -mtune=gba; the same in ja, de, es, fr, it).
+// Draft, differ 34 of 2579 (tla-en, 2026-11-08)
+// The same 34 in ja, de, es, fr and it (-mtune=gba); every edition's bytes agree with en's here.
+// 2026-11-08 (last), from 36: the closing once-only block now holds the backdrop call as well as
+// gBgScroll[1].y = 32, so the store, the ldrh it may alias and the call share one schedule block and
+// movs r0, #1 fills the store's delay before the ldrh, as in the listing (34). What is left, read from
+// the --rtl dumps, so the next round need not rediscover it:
+// - Mask (6): adds r2, r4, #0 is thumb_movqi's register move, so the listing keeps a QImode copy of a
+//   -13 that reload loads in SImode. A signed-char byte expression, ((s8 *)obj)[9] & -13, does give a
+//   QImode -13 that loop.c hoists, but its (subreg:SI) copy falls to the single-use replacement and
+//   reload builds -13 straight into r2 (65). Char locals are promoted to SImode, zero-extended, so an
+//   s8 local holds 243 (hence movs r4, #243 now); (u8) of an s32 mask is folded back by CSE (89);
+//   u8 or s8 masks with byte expressions, at either block, 50 to 74.
+// - Object loop order (4): loop.c emits reduced givs' starts and steps in the biv's list, latest found
+//   first. The pointer that survives is the address giv of *last, found in the i loop after row, so its
+//   step comes first. Row would step first if last's own giv absorbed that address giv (last must be
+//   used twice: a register giv used once never combines) or if row's j * 9 survived as the Apply call's
+//   (that pseudo used twice). Tried: last declared before row (34, the same), row inside the i loop
+//   (622), particles[j * 9 + u] (622: the stepped objects pointer and a frame slot go).
+// - Else arm (16): reload's round-robin (last_spill_reg). The listing's i, 0x77dc and fp reloads take
+//   r1, r2, r0, so its last allocation before the arm landed on r0; here it is the place pointer's r2
+//   in the same block, and the i == 8 arm reloads only into its outputs. Unmoved by five more spellings
+//   of the arm's read, the place stores swapped (50), i >= 8 (38) or the i == 8 arm's modulo as plain %.
+// - Blasts (8): at the shaded circle, lsls r2 and add r0, fp tie on priority, class and dependants, so
+//   RTL order (r0 loaded first) decides; at the first blit, ldr r0 canvas is anti-dependent on ldr r4,
+//   [r0], so it ranks below add r1 and adds r3; at the second, LOAD_BLITTER's loop notes make the first
+//   insn after them (the store of half) a barrier, where the listing has movs r1, #192 first. Dropping
+//   either barrier (466 and worse) or loading the blitter into a local first (554) is worse.
 // 2026-11-08 (latest), none better: an s32 mask builds -13 with movs, negs but drops the copy (67, also with a copied local, x = mask & byte, or (x & mask) | 4); the and-or as one byte expression (76), u8 x with -13 (74), s8 x (71), an s8 byte read (61), a (u8) mask (36), the s8 mask at the outer block, set late or copied (36).
 // 2026-11-08 (later), from 38: the closing shade ramp sets its column pointer in the j loop's
 // initializer, so c is built after j = 0 as in the listing (36). Re-tried: the mask as an s32 or
@@ -52,7 +78,7 @@
 //   before str r5 at the second. Order only; the listing's order needs 0x10000 set before the call's arguments.
 //   Constant locals, routine locals, sheet locals and inline forwards do not move them.
 // - The else arm's reload order, r0, r1, r2 here and r1, r2, r0 in the listing (one rotation); the object
-//   loop's row before last step; add r6 after movs r4; the end's 0x670 before y's 32; the cell column.
+//   loop's row before last step; add r6 after movs r4.
 // Adoption: the resource directory has no names yet for the ids written here as ResourceId_Data0B4, Data0C2, Data0C9,
 // Data0CA, Data104, CornerRuneASheet, ForestCanopyTiles and SunbeamCloudsBackdrop. Barrier-free so far; the
 // do { } while (0) of LOAD_BLITTER and WAIT_TRANSFER's volatile reads need their S2 reading then.
@@ -1023,11 +1049,12 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   {
     u16 *background = (u16 *)((u8 *)Ram_HeapSlots->battleWork + 0x670);
 
-    // A once-only block: the listing stores 32 after the backdrop address.
+    // A once-only block: the listing stores 32 after the backdrop address and
+    // sets up the call while the store settles.
     do {
       gBgScroll[1].y = 32;
+      BattleBackground_LoadFar(1, *background, 24);
     } while (0);
-    BattleBackground_LoadFar(1, *background, 24);
   }
   wait(1);
   gCameraSceneParameters[4] = 120;

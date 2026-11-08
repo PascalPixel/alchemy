@@ -1,35 +1,17 @@
-// Differ 10 of 159 (tla-en, 2026-11-08, -mtune=gba). Rechecked 2026-11-08:
-// the store first in or out of once-only blocks, with z = 0 in one, or with
-// slot as u32 36; slot declared elsewhere 10 to 90; z = 0 in a once-only block
-// 12; permuter 8 min: nothing under 10.
-// 8 November: cells += origin in a once-only block gives 14 to 10. Left: the native loads a
-// and the pool address before entry and stores a << 8 before reloading origin; the draft
-// stores after cells += origin. The store first (with or without blocks) gives 36: z = 0
-// then takes r3 and the loop's registers shift. 6 minutes of permute found nothing under 10.
-// 7 November: the word at Data_0202c001 + 0x1df through a local pointer (permuter) gives
-// 19 to 14. Left: allocation, as below.
-// Before: differ 19 of 159 (tla-en, 5 November 2026), from 84: Func_020032d4's form.
-// Left: the native stores a << 8 before adding origin, with the pool address in r1
-// and a in r2; written in that order the rotation shifts by one (36).
-// Measured under -Os, 5 November 2026: differ 84 (tla-en); notes below may predate it.
-// Draft, differ 108 of 159, skeleton gap 34 (tla-en, 2026-11-01)
+// Matches: differ 0 (tla-en, 2026-11-08); differ 0 in tla-ja, tla-de, tla-es,
+// tla-fr and tla-it too, with no device. Func_020032d4's form (the store
+// before cells += origin, loops from labels), with the slot's address loaded
+// between entry and origin: its pseudo then lives across origin's computation
+// and takes r1, and the reloads of a, origin, the 0 and height rotate through
+// r2, r1, r2, r3 as the native does. Declared anywhere else it gives 4
+// (before left), 59 (after top, markers, width or height) or 36 (after
+// origin); cells += origin before the store gave at best 10.
 // Scans the visible part of layer 1's cell grid (view bounds minX to maxZ) for
 // cells whose collisionCode lies in [base, base + 4) and records each as a
 // CellMarker of gData_02002aa0 (its centre in 16.16 pixels, heights a and b,
 // its offset from base), marking the cell with 120 in layer 0's terrainIds.
-// Left: both loops are labels and gotos because any real loop lets loop.c hoist
-// the constants and the map loads, which the native keeps in the body (gap 60
-// or more as for, while or do). Each counter's step is one structural miss: the
-// native builds (x << 16) + 0x10000 with the constant loaded by reload, then
-// takes asrs and lsrs of it; the draft does adds #1, lsls. Spelling it
-// t = (u16)x + 1; x = t; if ((u16)t < width) gets that form for x (gap 31) but
-// is a forced temporary and gcse's PRE then shares x << 16 with the body, so it
-// is not kept; the native's step has no x << 16 for gcse to see, and the
-// three-insn combine that would split it was not found. The rest is allocation:
-// the native keeps z in lr, cells in r8, base in sl and z << 16 in r11 with
-// width on the stack; the draft has base in lr, z << 16 in r8, z in sl, width in
-// r11 and cells on the stack, with base and z << 16 outranking z and cells in
-// global's priorities. Declaration order and scopes do not move them.
+// Both loops are labels and gotos: any real loop lets loop.c hoist the
+// constants and the map loads, which the native keeps in the body.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -65,17 +47,14 @@ void Func_020017f8(u32 base, s32 a, s32 b) {
   s32 width = (map->maxX - map->minX) >> 20;
   s32 height = (map->maxZ - map->minZ) >> 20;
   struct CellMarker *entry = &markers->markers[markers->count];
+  s32 *slot = (s32 *)(Data_0202c001 + 0x1df);
   s32 origin = ((map->minZ >> 20) << 7) + (map->minX >> 20);
   struct MapCell *cell;
-  s32 *slot = (s32 *)(Data_0202c001 + 0x1df);
   s16 x, z;
   u32 value;
 
-  // A once-only block: it keeps the step apart from the store below.
-  do {
-    cells += origin;
-  } while (0);
   *slot = a << 8;
+  cells += origin;
   z = 0;
   if (z < height) {
   outer:

@@ -1,21 +1,60 @@
-// Differ 42 of 1246 (tla-en, 2026-11-08, -mtune=gba).
+// Draft, differ 2 of 1246 (tla-en, 2026-11-08)
+// Left: the dissolve's zero (movs r5, #0) is scheduled one slot early, ahead of
+// mov lr (the 7 of i & 7) and mov ip (frame - 48); the listing has it after
+// both. sched2 breaks the tie by RTL order, and loop.c hoists `first = 0` from
+// the top of the outer body ahead of the inner loop's invariants. The literal
+// 0 (set inside the if, after the compare) hoists in the listing's place, but
+// then first has no second lifetime (25, below); a variable set inside the if
+// is not hoisted at all, since first lives elsewhere (264). What would settle
+// it: a second lifetime for first, in r5 and with no r0 or r1 preference, that
+// leaves the dissolve's literal 0 alone. The listing has no other r5 value that
+// only stores: the 0x2001 and 0xc80 arguments, &middle, the wave's angle, the
+// model, the step pointers, the strike's -1 and the burst's force all copy to
+// r0 or r1, and the shards' i % 4 * 3 meets cell (r0) as its first operand.
+// Other editions: their bytes equal tla-en's but for call targets and pool
+// words (ja's copy sits at 0818ad44), and the draft compiles the same in all
+// six, so each differs in the same 2 instructions; diff cannot measure them
+// (their scaffold sections carry no Thumb marker), so they were compared by
+// disassembling the draft object and the scaffold bytes.
+// What settled it this round (2026-11-08, from 42):
+// - The flight's x took r0 because first's burst lifetime (`first = 127; first
+//   &= Random16()`) gives first an r0 preference: cse puts the known 127
+//   second, so the AND's first operand is Random16's r0, and global.c's
+//   expand_preferences merges first's preferences into x where first dies in
+//   `x = first + q`. The burst now has its own force (it matches as before) and
+//   first's second lifetime is the dissolve's zero, which only stores: x takes
+//   r3 (42 to 28).
+// - REG_BG2X before scroll: `x <<= 8; REG_BG2X = -x; scroll = -x` (24; with
+//   `REG_BG2X = -(x << 8); scroll = -(x << 8)` 26).
+// - The sheep frames at Ram_MapCellBuffer + 0x683e, a number, not CARD_NOISE's
+//   symbol: reload then builds the address, and its rotation through the spill
+//   registers moves on one, giving the listing's r4, r6, r0 for the sleep
+//   draw's scratches (24 to 12).
+// - The shards' `fade * 696` inside the draw, not a shade local: loop.c hoists
+//   it after i = 0, so fade (r1) is still live at i's reload and i takes r2;
+//   with the cell sum back as one expression (no k) the shards match (12 to 2).
+// Tried this round without gain: first's second lifetime as `card.y - 1` (4:
+// the decrement lands in r5), as the shards' width Data_081974f4[cell] (8: its
+// load moves ahead of the x argument), as the shards' i % 4 * 3 (44: an r0
+// preference again), as the sheep's address sum (40); first local with the
+// literal 0 (25: first ties to card.x's load); `first = 0` at the top of the
+// inner loop or in its init (2), inside the if (264), before the outer loop
+// (33: i = 0 reuses it); a row pointer or a level local for the inner loop's
+// invariants (4, 6); the flight as one expression (14: card.x + q, then - 64).
+// Earlier rounds (their "Left" items are settled above):
 // 2026-11-08, from 44: the shards' step->variant + time read into a local k
-// first (k / 8 % 3 in the cell sum) loads the variant ahead of i % 4, as the
-// listing does (42). Left: the flight's x in r0 (global-alloc prefers the
-// quotient's copy) for the listing's r3, the sleep draw's overflow load
-// (r4 here, loaded after x in the listing, r6), and the shards' zero for i
-// (r1 for r2) and time's scratch. Tried and no gain: k with the sum reversed
-// (90), k / 8 as its own step (398 to 409), the variant read before step,
-// the cell built in two statements (284); for the flight, a once-only block
-// after x, an empty else, `register`, x in the test, no q (all 42); `x <<= 8`
-// before the store (52); the sleep draw's operands regrouped or a block-scoped
-// pointer (42). 8 minutes of permute (seed 4242): nothing below 42.
-// Earlier, at 44:
-// 2026-11-08, no change: the flight's x as `x = t / 48; x += first`, `x = first;
-// x += q`, x declared first, `x = -(x << 8)` before the store (all 44), and
-// `scroll = -(x << 8); REG_BG2X = scroll` (93); the sleep draw's operand orders
-// (44) and a local for its left edge (60); the shards' cell sum reordered (44
-// to 284). 8 minutes of permute found nothing under 65.
+// first loaded the variant ahead of i % 4 (42). Tried and no gain: k with the
+// sum reversed (90), k / 8 as its own step (398 to 409), the variant read
+// before step, the cell built in two statements (284); for the flight, a
+// once-only block after x, an empty else, `register`, x in the test, no q (all
+// 42); `x <<= 8` before a combined store (52); the sleep draw's operands
+// regrouped or a block-scoped pointer (42). 8 minutes of permute (seed 4242):
+// nothing below 42.
+// 2026-11-08, no change at 44: the flight's x as `x = t / 48; x += first`,
+// `x = first; x += q`, x declared first, `x = -(x << 8)` before the store (all
+// 44), and `scroll = -(x << 8); REG_BG2X = scroll` (93); the sleep draw's
+// operand orders (44) and a local for its left edge (60); the shards' cell sum
+// reordered (44 to 284). 8 minutes of permute found nothing under 65.
 // 2026-11-07: the sheep's 127 mask as a block local (`u32 mask = 127`, both
 // velocities) breaks the sleep spawn's inheritance of r6: sp+8 is reloaded into
 // r0 as the listing (83 to 44). Left: the flight's x in r0 for r3, the sleep
@@ -387,7 +426,9 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
         overflow = x - 112;
         x = 112;
       }
-      REG_BG2X = scroll = -(x << 8);
+      x <<= 8;
+      REG_BG2X = -x;
+      scroll = -x;
       card.y--;
       scale += 0x400;
       if (scale > 0x8000)
@@ -424,9 +465,12 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
           u8 *card = CARD;
 
           for (i = 0; i != 64; i++) {
+            // first, free here, holds the cleared pixel: a second lifetime
+            // keeps the flight's copy of card.x (see the header).
+            first = 0;
             for (j = 0; j != 32; j++) {
               if (noise[(i & 7) * 32 + j] == frame - 48)
-                card[i * 32 + j] = 0;
+                card[i * 32 + j] = first;
             }
           }
         }
@@ -532,7 +576,10 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       for (i = 0; i != 64; i++) {
         step = &work->particles[i];
         if (step->variant >= 0 && step->variant <= 63) {
-          draw[0](canvas, CARD_NOISE + ((step->variant / 4 & 3) << 10),
+          // CARD_NOISE at its fixed address: reload builds the number here, as
+          // the listing's scratch registers show.
+          draw[0](canvas,
+                  Ram_MapCellBuffer + 0x683e + ((step->variant / 4 & 3) << 10),
                   overflow + HI(step->x) - 16, HI(step->y) - 16, 32, 32);
           BattleEffectKernels_IntegrateVector2(step, 62, 0x2000);
           step->variant++;
@@ -557,14 +604,15 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
         Func_0814cd48(effect->actors[0], 7, -1, 0, 16);
         for (i = 0; i != 64; i++) {
           s32 angle = Random16() & 0xffff;
-          first = 127;
-          first &= Random16();
+          s32 force = 127; // The AND lands in the register holding 127.
+
+          force &= Random16();
 
           step = &work->particles[i];
           step->x = 64 << 16;
           step->y = (i + 48) << 16;
-          step->velocityX = (Trig_Cos(angle) * (first + 64)) >> 6;
-          step->velocityY = (Trig_Sin(angle) * (first + 64)) >> 6;
+          step->velocityX = (Trig_Cos(angle) * (force + 64)) >> 6;
+          step->velocityY = (Trig_Sin(angle) * (force + 64)) >> 6;
           step->variant = Random16() & 255;
         }
         work->transferMode = 2;
@@ -575,22 +623,19 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       // The shards tumble through three cells and darken.
       if (time >= 24 && time <= 60) {
         s32 fade = 0;
-        s32 shade;
 
         if (time > 28) {
           fade = (time - 24) / 4;
           if (fade > 7)
             fade = 7;
         }
-        shade = fade * 696;
         for (i = 0; i != 32; i++) {
           s32 cell;
-          s32 k;
 
           step = &work->particles[i];
-          k = step->variant + time;
-          cell = i % 4 * 3 + k / 8 % 3;
-          draw[0](canvas, work->sheet + 0x2580 + (shade + Data_081974dc[cell]),
+          cell = i % 4 * 3 + (step->variant + time) / 8 % 3;
+          draw[0](canvas,
+                  work->sheet + 0x2580 + (fade * 696 + Data_081974dc[cell]),
                   overflow + HI(step->x) - Data_081974f4[cell] / 2,
                   HI(step->y) - Data_08197500[cell] / 2, Data_081974f4[cell],
                   Data_08197500[cell]);

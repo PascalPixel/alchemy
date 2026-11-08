@@ -1,4 +1,40 @@
-// Differ 40 of 3111 (tla-en, 2026-11-08, -mtune=gba): three barriers, not six.
+// Draft, differ 38 of 3111 (tla-en, 2026-11-08)
+// Eighth round, 8 November: 40 to 38, three tagged barriers (the cursor sprite,
+// the two fill loops). The list icons' loop now sets sprite in its for, after
+// iconEntry, so add r5, sp, #480 follows mov r8, r0 as in the native. Left:
+// note 1 (about 28), the range column's movs r1, #16 (2), page 2's help-window
+// loads (6) and, on page 0, movs r2, #128 before the status kind's reload (2).
+// Note 1 is two separate facts, both about pseudo numbers:
+// - statusSprites' hoist (sfp - 212) is a gcse PRE register, and PRE numbers
+//   its registers by hash bucket, (13926 + offset) mod buckets, with buckets
+//   = (insns at gcse) / 2 | 1, 1383 here, so -212 wraps and sorts last. With
+//   1397 to 1523 buckets (or 1269 to 1371) it sorts below the other hoists as
+//   in the native: padding the function's end with 30 or 40 empty asms (a
+//   probe only) moved it and the four other hoists to slots 20 to 40, the
+//   native's order one slot lower because next still sits at 52. So the
+//   original has at least 25 more, or 21 fewer, RTL insns at gcse than this
+//   draft; 20 or 26 asms (1393, 1395 buckets) change nothing.
+// - next (slot 20) must be numbered after every PRE register and before the
+//   Psynergy list's 64 + j * 16 giv (slot 16, reduced in loop.c's first pass,
+//   which takes loops last to first): a giv reduced in that first pass.
+//   djinnList[j] is reduced there only when the loop counts 68 insns or fewer
+//   (benefit 4 times threshold 17; 79 now): every constant set (0xf00 and
+//   0x3e0000 twice each, 0x10000, 0xff, the 0 argument, MsgDjinnName, 0x5001,
+//   0x80000000) out of the loop and column's copy gone. Mask locals bring
+//   only the second pass to 68: the giv then outnumbers the Psynergy giv
+//   (slots 16 and 20 swap) and PRE shares the masked values across the
+//   calls, 211.
+// Tried, nothing better: a block-local pointer for the status sprites (40);
+// the range column's call with tileFlags (40), a ternary (70) or range =
+// ability->range - 1 (95); page 2's help window through locals in all 64
+// orders (best 38: y and width first give the native's order, but reload's
+// round robin gives y's index r3 and the window's ldr r0 moves one earlier);
+// rowBase or released as its fifth argument (38); the status help message's
+// operand orders (38); djinnList + j and byte-offset spellings (no giv, 850).
+// Other editions, each at its own address: tla-ja 93 (08046d04: help texts of
+// 32 not 52 characters, one more branch on the Djinn page, a few layout
+// constants), tla-de 223, tla-es 282, tla-fr 238, tla-it 282 (58 to 72 more
+// instructions of language layout); all stay on their scaffolds.
 // Seventh round, 8 November: unchanged. At the cursor sprite, without its asm
 // the draft loads the call's second argument ahead of the word stores (56);
 // a constant local for the first word or the tile read into a block local 56,
@@ -775,7 +811,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
     cursorSprite.oam.word.attr01 = 0x40000400;
     cursorSprite.oam.word.attr23 = 0;
     /* FAKEMATCH(barrier): an empty asm stores the sprite words straight after
-     * their load, before the call's arguments; as no asm, 56 of 3111
+     * their load, before the call's arguments; as no asm, 54 of 3111
      * instructions differ in tla-en. */
     asm("");
     cursorSprite.oam.f.tile =
@@ -859,7 +895,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
           iconSprites[j].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[j]);
         }
         /* FAKEMATCH(barrier): an empty asm keeps the list loop's exit on the fill
-         * loop's test; as no asm, 42 of 3111 instructions differ in tla-en. */
+         * loop's test; as no asm, 40 of 3111 instructions differ in tla-en. */
         asm("");
         for (; j <= 3; j++)
           iconSprites[j].oam.f.tile =
@@ -941,7 +977,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
             Window_DrawThreeTileColumn(statusWindow, 16, j * 2 + 8, range, 0);
           }
           /* FAKEMATCH(barrier): an empty asm keeps the list loop's exit on the fill
-           * loop's test; as no asm, 42 of 3111 instructions differ in tla-en. */
+           * loop's test; as no asm, 40 of 3111 instructions differ in tla-en. */
           asm("");
           for (; j <= 3; j++)
             iconSprites[j].oam.f.tile =
@@ -1320,9 +1356,9 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         struct SummaryResourceEntry *iconEntry;
         s32 iconRow;
 
-        sprite = iconSprites;
-        for (i = 0, iconEntry = gResourceTableEntries, iconRow = 0; i <= 3;
-             i++) {
+        for (i = 0, iconEntry = gResourceTableEntries, sprite = iconSprites,
+            iconRow = 0;
+             i <= 3; i++) {
           sprite->oam.word.attr01 = 0x40000400;
           // A once-only block: the sprite word is stored straight after its
           // load.

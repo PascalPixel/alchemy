@@ -1,6 +1,14 @@
-// Differ 8 of 168 (tla-en, 2026-11-08, -mtune=gba), from 22. Func_02002870 of overlay 6ac.
-// Overlay 6ab's Func_020024d4 with this overlay's symbols; the same 8 differ.
-// See that draft for what was tried.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Func_02002870 of overlay 6ac; differ 0 of 168 in tla-en, tla-ja, tla-de,
+// tla-es, tla-fr and tla-it. Overlay 6ab's Func_020024d4 with this overlay's
+// symbols. The last 8 were sched2 ties, closed by two plain-C changes: the
+// sprite's vramBlock read as *&sprite->vramBlock (an equivalent spelling, S2)
+// takes the char alias set, so it may alias the six s32 stores to the object
+// and they all rank 54, ahead of the sprite and owner animation loads; and
+// the bounce store written after acceleration, so the zero (r6) comes before
+// the 0x8000 copy (r1) in insn order and wins their tie at 55. The char read
+// alone leaves 2, the reorder alone 10. The same two changes match the twins
+// in overlays 6aa, 6ab and 6ad (measured from scratch copies, 8 November 2026).
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -94,12 +102,14 @@ void Func_02002870(struct Actor *actor) {
       object->gravity = 0x547a;
       object->scaleX = scale;
       object->scaleY = scale;
-      object->bounce = 0x8000;
       sprite = object->animation;
       object->velocityX = velocity;
       object->acceleration = 0;
+      object->bounce = 0x8000;
       source = work->owner->animation;
-      Resource_ResetEntry(sprite->vramBlock);
+      // *&: read as a char, this load may alias the stores above and follows
+      // them, as natively.
+      Resource_ResetEntry(*&sprite->vramBlock);
       sprite->keepEntry = 1;
       sprite->vramBlock = work->vramBlock;
       ResourceMetadata_ClearRecord(sprite->record);

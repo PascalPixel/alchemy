@@ -1,33 +1,32 @@
-// Differ 4 of 300 (tla-en, 2026-11-08, -mtune=gba), with no device: the empty
-// asm after the sprite load is no longer needed. Left: only the register that
-// carries the rail loop's starting count of 127 into fp (built in r0, the
-// native r1), reload's round-robin choice of spill register; every other
-// instruction matches. Script command 0x1c, a sibling of Actor_MoveByKeys
-// that moves an object along the nearest rail point within 32 pixels of the
-// direction pad's step; it copies positions as in Func_08025698. Measured: the spilled locals take
-// their stack slots in reverse declaration order (declared in code order,
-// differ 66); the rail loop counts up (counting down, loop.c keeps
-// IwramMulQ16 in fp and spills the count, differ 128 then, 110 now); the
-// turn is an s32 (as u16, differ 141). Tried without gain (2026-10-31):
-// count <= 127, a while loop, point++ in the body (4); rail indexed by
-// count (35); best, bestDistance, point and the null check reordered (14 to
-// 35); value set before watchedObject or after the position (12, 16).
-// Permute 4 minutes from here: nothing below 4 (twice).
-// 2026-11-08: count, point or first and second block-scoped, the step list
-// swapped, point++ in the body, the null test as !rail (all 4); 8 permuter
-// minutes found nothing below 4. Second pass: count = 0 at each step of the
-// rail setup, a do-while loop, point++ before count++ in the step list, the
-// null test as rail == 0 or setting collisionFlags itself (all 4); best =
-// NULL before point (14); position's sums reordered (4 to 197); 8 permuter
-// minutes randomising the else block (no candidate beat 4).
-// Measured 2026-10-31 (second pass): the 127 is a reload into the next of
-// the spill registers r0 to r3 in turn after r1 (268), r2 (best's NULL) and
-// r3 (bestDistance); without best = NULL it lands in r3, so the null check
-// on rail takes no spill register here, and the native spends one more
-// between bestDistance and the count. Without the null check (12), or with
-// if (rail != NULL) around the loop (6), it stays r0; an empty asm before
-// the null check (4), after it (19) or between best and bestDistance (10)
-// does not move it; count as u32 or the loop to != 128 (105), as u16 (161).
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Also differ 0 in tla-ja, tla-de, tla-es, tla-fr and tla-it. One device:
+// the null rail test reads rail through __builtin_expect (FAKEMATCH(wrapper)
+// at the test). Script command 0x1c, a sibling of Actor_MoveByKeys that
+// moves an object along the nearest rail point within 32 pixels of the
+// direction pad's step; it copies positions as in Func_08025698.
+// Why the device (read from the RTL dumps, 2026-11-08): a missing rail work
+// has its own collisionFlags = 1 block, between the test and the loop, as
+// the arrival case has. Reload gives that block's 1 the spill register r0
+// (round robin after r1 for 268, r2 for best's NULL, r3 for bestDistance),
+// so the loop's starting count of 127 takes r1 as in the native; jump2 then
+// cross-jumps the block into the arrival case's identical one and the test
+// becomes the native's single beq. As plain C, if-conversion (14.ce,
+// IF-CASE-2) hoists the loop's preheader, the reversed count's 127, above
+// the test, because the jump around the null block is predicted taken: 21
+// differ. The expectation predicts it not taken, which is all that stops the
+// hoist. Other ways to stop it: an empty asm in the preheader (its 4-byte
+// length estimate pushes the beq out of range, 15) or in both blocks (asm is
+// not cross-jumped, so the null block keeps a jump, 15); value = 16 again in
+// the null block or the preheader (CSE drops it, 21);
+// __builtin_expect(rail == NULL, 1) (builds a store flag, 14). Plain C has no
+// other lever: the preheader holds no memory, call or hard register, and the
+// jump to it is NE, which both heuristics predict taken. The old shape, one
+// shared block behind goto stop, was differ 4 with no device (127 in r0).
+// Measured earlier: the spilled locals take their stack slots in reverse
+// declaration order (in code order, 66); the rail loop counts up in C
+// (counting down, 110); the turn is an s32 (as u16, 141); count as u32 or
+// the loop to != 128 (105). The position's zeros are written as 0: CSE
+// substitutes collisionFlags' register for them, as the native does.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -86,10 +85,8 @@ extern const u16 gData_0802ec5c[16];
 void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
 struct Actor *Actor_GetByIdFar(s32 id);
-void Actor_SelectAnimation(struct Actor *object,
-                                            s32 argument);
-void Actor_SetAnimationSpeed(struct Actor *object,
-                                         s32 value);
+void Actor_SelectAnimation(struct Actor *object, s32 argument);
+void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 s32 Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 
 s32 Func_080292fc(struct Actor *object) {
@@ -123,9 +120,9 @@ s32 Func_080292fc(struct Actor *object) {
     value = 0;
   } else {
     value = 16;
-    position.x = collisionFlags;
-    position.y = collisionFlags;
-    position.z = collisionFlags;
+    position.x = 0;
+    position.y = 0;
+    position.z = 0;
     Vector_AddPolarOffset(0x80000, angle, &position);
     position.x += object->x;
     position.y = object->y - position.z;
@@ -134,8 +131,12 @@ s32 Func_080292fc(struct Actor *object) {
     point = rail->points;
     best = NULL;
     bestDistance = 0x10000000;
-    if (rail == NULL)
-      goto stop;
+    /* FAKEMATCH(wrapper): the null test reads rail through __builtin_expect;
+     * as rail == NULL, 21 of 300 instructions differ in tla-en. */
+    if (!__builtin_expect((s32)rail, 0)) {
+      collisionFlags = 1;
+      goto done;
+    }
     for (count = 0; count < 128; count++, point++) {
       if (point->active == 1) {
         s32 dx = (position.x - point->x) >> 8;
@@ -169,7 +170,6 @@ s32 Func_080292fc(struct Actor *object) {
     }
     object->scaleX = speed;
     if (best->x == object->x && best->y == object->y && best->z == object->z) {
-    stop:
       collisionFlags = 1;
     } else {
       pair->moving = 1;
@@ -183,6 +183,7 @@ s32 Func_080292fc(struct Actor *object) {
       sprite->angle = best->angle + turn;
     }
   }
+done:
   work = Ram_HeapSlots->eventWork;
   if (work != NULL) {
     if (collisionFlags & 3)

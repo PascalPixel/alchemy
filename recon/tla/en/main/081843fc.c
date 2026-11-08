@@ -1,4 +1,45 @@
-// Differ 22 of 4580 (tla-en, 2026-11-08, -mtune=gba). Measure 081843fc,081848ec together.
+// Draft, differ 8 of 4580 (tla-en, 2026-11-08). Measure 081843fc,081848ec together.
+// Round 8 (2026-11-08), 22 to 8:
+// - Camelot's fixed EWRAM buffers as FIXED_ADDRESS constants, not linked symbols.
+//   A symbol's address loads from the pool as a memory read, which sched2 keeps
+//   ahead of the next call; a constant's set has no such tie. The bolts
+//   (0x02014000) now load just before the FlashBurst call, as in the listing,
+//   with no reload rotation change (22 to 18); the band's strip (0x02012000) after
+//   frame's copy (18 to 16); cellBuffer and the first object loop's cells as
+//   Ram_MapCellBuffer, so cse no longer knows the base at cellBuffer + 0x1000 and
+//   keeps 0x1000 first (16 to 14; cellBuffer alone 74). quads and debris as
+//   constants change nothing, steps 36.
+// - gData_08197498 declared u8[], as the adopted battle effects declare it, and
+//   indexed at the draw: the height's ldrb keeps base first and still waits for
+//   the width's store (14 to 12). 08197492, 08197486 or 081999ee non-const: no
+//   change.
+// - The blitter's once-only block sits before its call, not around it (12 to 8, a
+//   tagged dead device, found by a ten-minute permute on the sparks): the listing
+//   has a scheduling barrier at the call's arguments and none after the call, so
+//   the width table's sl copy waits for the source sum. As ordinary C, the
+//   colour in a once-only block before the call gets 10 (the x site's mov sl then
+//   trails its subs); an empty block after the call 10; no block at all 542;
+//   the colour block after Random16 3136, x, y and the colour in one block 18.
+// What is left (rows of --show at 8), all RTL-order ties in sched2:
+// - The tornado (row 2725): the hoisted 0x1b5a's copy to ip comes before the
+//   i * 45 giv's zero. loop.c moves movables before it emits giv inits, so this
+//   order needs the constant hoisted in the second loop pass. dst respelled
+//   (0x145a first, &sheet[0x145a], inside the sum, the sum reversed) and src
+//   from cellBuffer directly: no change; a user k += 45 counter 57.
+// - The sparks' y (row 3041): the listing restores n (r4) before the height
+//   table's load; here the table's set comes first in RTL and n's caller-save
+//   restore sits before the ldrb after it. y split in two: no change.
+// - The wave (rows 4085, 4121): off's zero comes before the frame giv's copy
+//   (user code always precedes loop.c's giv inits), and j++'s reloaded 1 before
+//   off's caller-save restore (the restore goes before the first use of r1,
+//   off += 8, after j++). off as j * 8 is not reduced (giv not worth while,
+//   0 vs 31: 341).
+// Other editions at 8 (2026-11-08): tla-ja's extent starts 2781 instructions
+// before this function (tool figure 2789), and the same 8 rows differ inside it.
+// tla-de, tla-es, tla-fr and tla-it (tool figure 4586) take a 9160-instruction
+// extent; the rows before the wave's step block are the same as tla-en's, and
+// the alignment splits at that block (row 4122), so no other difference shows.
+// The idx barrier's plain form now measures 3369.
 // Round 7 (2026-11-08), all 22: the sparks height argument as (table + n)[0],
 // *(n + table) or through a const u8 * cast, every spark table and Data_081999ee
 // declared non-const, and cellBuffer + 0x1000 as an integer sum either way round
@@ -41,6 +82,7 @@
 // Pools checked against the listing's first pool (2026-11-06): the first object
 // loop starts from gMapCellBuffer, not the constant Ram_MapCellBuffer, which
 // pooled a 0x02010000 of its own and put every later offset 4 out (101 to 61).
+// (Round 8: with cellBuffer a constant too, both take Ram_MapCellBuffer.)
 // Settled above, the pool order was the one pool difference: the listing pools IwramCopyWords before
 // Data_02016000, as its second object loop loads them. Reusing the first loop's
 // cells there gets the order but swaps r6 and r7 (65); for-init, indexed and
@@ -56,15 +98,6 @@
 // insns that depend on this one, then RTL order; the dump's table gives all but
 // the listing's, and dependents count anti and alias edges, so types and registers
 // settle ties.
-// What is left, all small (rows of --show at 22):
-// - cellBuffer + 0x1000 has its operands the other way (row 242).
-// - The tornado's hoisted 0x145a goes to ip before j's zero (row 2726).
-// - The sparks: the gData_08197498 address loads before n's reload (row 3042), the
-//   sl copy schedules early (rows 3066 to 3074), ldrb [n, base] (row 3081).
-// - The bolts' load sinks past four calls in the listing (rows 3634 to 3687), here
-//   past none.
-// - The wave: off's zero before frame's copy (row 4091), j's 1 before off's
-//   restore (row 4127), the band's strip load after frame's copy (row 4195).
 // What round 5 settled by reading the listing and the loop dumps:
 // - The burst's stride is a local set before its call: its life of 6 is below
 //   loop.c's bar in the first pass and above it in the second, so its multiply is a
@@ -303,7 +336,7 @@ extern const struct WordPair Data_08196ef8;
 extern const u16 gData_08197410[];
 extern const u16 gData_08197486[];
 extern const u8 gData_08197492[];
-extern const u8 gData_08197498[];
+extern u8 gData_08197498[];
 extern const u8 gData_081991b0[];
 extern const u8 Data_081991d0[];
 extern const u8 Data_081991e0[];
@@ -370,12 +403,6 @@ static inline void FILL_WORDS(void *dst, s32 size, s32 value) {
   Iwram_FillWords(dst, size, value);
 }
 
-// Sets up the alternate blitter as one statement.
-#define LOAD_ALT_BLITTER(slot, colour)                                         \
-  do {                                                                         \
-    Func_08196404(slot, 7, 7, colour, 0);                                      \
-  } while (0)
-
 #define SLOT_ALT 188 // unkb8[1]
 #define OBJ_TILES(obj)                                                         \
   (0x06010000 + gResourceTableEntries[((struct SpriteObject *)(obj))->slot].tile)
@@ -422,7 +449,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   u16 *src2;
   u8 *e;
   s32 zero;
-  u8 *cellBuffer = gMapCellBuffer;
+  u8 *cellBuffer = Ram_MapCellBuffer;
   s32 span = 0x80000;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -488,7 +515,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     COPY_WORDS((void *)OBJ_PLTT, e, 384);
     e += 384;
     Resource_DecodeType01(e, cellBuffer);
-    cells = gMapCellBuffer;
+    cells = Ram_MapCellBuffer;
     for (i = 0; i != 24; cells += 1024, i++) {
       obj = Func_0815b290(32, 32, 0x80002000, 0);
       obj->priority = 2;
@@ -994,7 +1021,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             p->y = Data_08199880[n] << 3;
             p->z = a << 8;
           }
-          /* FAKEMATCH(barrier): idx held through an empty asm so off + idx is rebuilt; as the plain sum, 3367 of 4580 instructions differ in tla-en. */
+          /* FAKEMATCH(barrier): idx held through an empty asm so off + idx is rebuilt; as the plain sum, 3369 of 4580 instructions differ in tla-en. */
           __asm__("" : "=r"(idx) : "0"(idx));
           p->velocityY = Data_081998f2[idx + off];
           p->velocityZ = Data_0819995e[idx + off];
@@ -1420,10 +1447,17 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
               x -= gData_08197492[n] >> 1;
               y = top + (Trig_Cos(angle) * r >> 17) - (gData_08197498[n] >> 1);
 
-              {s32 c = Data_081999ee[Random16() & 3] | 3; LOAD_ALT_BLITTER(SLOT_ALT, c);}
+              {
+                s32 c = Data_081999ee[Random16() & 3] | 3;
+
+                /* FAKEMATCH(dead): an empty once-only block before the blitter call; as a once-only block around the call, 12 of 4580 instructions differ in tla-en. */
+                do {
+                } while (0);
+                Func_08196404(SLOT_ALT, 7, 7, c, 0);
+              }
               ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
                   canvas, work->sheet + 0x800 + gData_08197486[n], x, y,
-                  gData_08197492[n], *(gData_08197498 + n));
+                  gData_08197492[n], gData_08197498[n]);
               HeapSlot_Release(SLOT_ALT);
             }
           }
@@ -1626,11 +1660,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     s32 slideStep;
     u8 *bolts;
     void *quads = Data_02011000;
-    void *strip = Data_02012000;
+    void *strip = FIXED_ADDRESS((u8 *), 0x02012000, Data_02012000);
     struct EffectStep *steps = Data_02016d00;
     struct EffectStep *debris = &Data_02016d00[64];
 
-    bolts = gData_02014000;
+    bolts = FIXED_ADDRESS((u8 *), 0x02014000, gData_02014000);
     slide = 0;
     slideStep = 0;
     FILL_WORDS(canvas, 0x4000, 0x3f3f3f3f);

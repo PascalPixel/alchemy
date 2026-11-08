@@ -1,24 +1,14 @@
-// Differ 8 of 168 (tla-en, 2026-11-08, -mtune=gba), from 22. Func_020024d4 of
-// overlay 6ab. Scale computed before the calls gives the mul pointer r8 and
-// the angle r10, as natively.
-// Left: scheduling only. Natively the 0x8000 copy (mov r1, r9) and the zero
-// come before the stores to scaleX and scaleY, the sprite load (ldr r5,
-// [r7, #80]) follows them and the owner's animation load (ldr r3, [r3, #80])
-// comes after the stores to bounce, velocityX and acceleration; here both
-// loads issue first. sched2 shows the owner's animation load (void *) does not
-// depend on the s32 stores; read through an s32 it waits for all of them (12:
-// the scale computation then moves ahead of the gravity store), so the native
-// load seems to wait on the bounce, velocity and acceleration stores but not
-// the scale stores. Tried 8 November: statement orders of gravity, scale,
-// bounce, sprite, velocityX, acceleration and source (8 or worse), once-only
-// blocks (14 to 20), a zero local (91), a union or s32 read of the animation
-// (12), and 8 minutes of permute from the s32 form (best 8). Tried later on 8
-// November: the 0x8000 local and the cosine block dropped (free, so gone);
-// chained scale stores, block-scoped sprite and velocity locals, radius
-// shifted at its read, bounce, acceleration or velocityY moved (8 or worse);
-// both animation loads read as s32 (12); 10 minutes of permute (best 8). In
-// sched2 the two loads rank 54 and 53 against 52 for the zero and the bounce
-// copy, so they always issue first.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Func_020024d4 of overlay 6ab, differ 0 in all six editions (tla-en, tla-ja,
+// tla-de, tla-es, tla-fr, tla-it), plain C with no device. Scale computed
+// before the calls gives the mul pointer r8 and the angle r10, as natively.
+// What closed the last 8: the sprite is field_sprite.h's FieldSprite layout,
+// whose s32 scale at 0x0c makes the struct's alias set hold s32's, so the
+// sprite's vramBlock read waits on the object's s32 stores and they rank 54
+// with the sprite load; then velocityX and acceleration stored before bounce
+// put the zero ahead of the 0x8000 copy, as natively. Earlier tries (statement
+// orders, once-only blocks, a zero local, s32 or union reads of the animation,
+// permute) stayed at 8 or worse with the struct lacking that s32.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -37,7 +27,8 @@ struct Sprite {
   u16 size : 2;
   u16 tile : 10;
   u16 attr2Rest : 6;
-  u8 unk0a[6];
+  u8 unk0a[2];
+  s32 scale; ///< as field_sprite.h's FieldSprite has it
   u8 vramBlock;
   u8 keepEntry : 1;
   u8 unk11 : 7;
@@ -112,10 +103,10 @@ void Func_020024d4(struct Actor *actor) {
       object->gravity = 0x547a;
       object->scaleX = scale;
       object->scaleY = scale;
-      object->bounce = 0x8000;
-      sprite = object->animation;
       object->velocityX = velocity;
       object->acceleration = 0;
+      object->bounce = 0x8000;
+      sprite = object->animation;
       source = work->owner->animation;
       Resource_ResetEntry(sprite->vramBlock);
       sprite->keepEntry = 1;

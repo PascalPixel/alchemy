@@ -1,29 +1,53 @@
-// Differ 24 of 205 (tla-en, 2026-11-08, -mtune=gba): r8 and r10 swapped, as below.
-// Round 7 (2026-11-08), all 24 unless given: unitId as s16 or register, the
-// action call in its if, !Inventory_CountFar, an else in place of the continue;
-// for (;;) 113, declarations reversed 43, Func_080f8060 reading shop->listWindow 47;
-// 8 permute minutes (nearly every candidate failed to compile). greg ranks
-// listWindow (14 refs over 120 insns) above unitId (19 over 270), so unitId
-// needs about 24 refs or listWindow a life over about 150 insns to take r8.
+// Matches: differ 0 (tla-en, 2026-11-08)
 // Twin of ☀️'s Shop_ChooseMember (games/tbs/src/shop/shop/sell.c): picks the
 // party member whose items the shop works on (sell, repair or the third
 // action), four members a page, with ⚓️'s party cursor helper (Func_08108690)
 // in place of the left and right tests. Taken from the twin: redraw starts at
 // 1 where it is declared.
-// 2026-11-08: the window style local and the input pointer are gone (plain
-// constant and gInput.pressed measure the same 24). Re-tried without gain: the
-// window read back through the struct at any one use (30 to 101), unitId
-// declared or initialised elsewhere (43), memberIndex = unitId = 0 (24),
-// redraw as u8 (35), an action local, nested else, goto for the cancel, and
-// 8 permute minutes (no candidate beat 24).
-// Left: only unitId and listWindow are swapped, r10 and r8 here against r8 and
-// r10 in the native; all 24 differing rows are those two. Tried before: every
-// order of the declarations and of the opening assignments, for and do loops,
-// the twin's continue, a chained store of the window, chained zero
-// initializers (three instructions longer).
+// Every edition is differ 0: tla-en, tla-fr and tla-it at this address;
+// tla-ja, tla-de and tla-es measured with --symbol Func_08109ad8. Japanese
+// needs the money window a tile narrower (MONEY_WINDOW_WIDTH by LANGUAGE, as
+// games/tla/src/shop/f108b70.c has it). Before adopting, confirm with
+// make compare-editions.
+// Matched with one tagged barrier, an r8 clobber at the loop exit. Without
+// it the same C is differ 24 of 205: unitId and listWindow swap r8 and r10,
+// and nothing else differs. Why no plain form reached it: unitId = 0 and
+// redraw = 1 both carry a constant REG_EQUAL note, so local-alloc doubles their
+// live lengths (unitId 135 to 270, redraw 85 to 170), and greg ranks shop
+// 0.59, result 0.57, redraw 0.40, listWindow 0.35 (14 refs over 120), unitId
+// 0.28 (19 over 270), &shop->mode 0.14. Three back edges reach the redraw test,
+// so the redraw blocks weigh 4, the A test 3 and the A path 2. unitId would
+// need 24 to 26 weighted refs, or listWindow 11 or fewer, and no form that
+// keeps these instructions gives either; without the doubling unitId (0.56)
+// passes redraw and takes r7. The clobber keeps listWindow, live after the
+// loop, out of r8, and unitId, dead there, takes it. No milder device was
+// found: copies merge in CSE, inline parameters substitute directly, and dead
+// reads are deleted in flow before the counts are taken.
+// Round 8 (2026-11-08), not kept: the action tail written in each arm for
+// cross-jumping (114: it is not merged), the window read back right after its
+// store (24: CSE drops the load), asm "+r", "+g", "+X" or "+rm" on unitId
+// before Inventory_CountFar (100, four instructions longer).
+// Round 7 and earlier, all 24 unless given: unitId as s16 or register, the
+// action call in its if, !Inventory_CountFar, an else in place of the
+// continue, for (;;) 113, declarations reversed 43, Func_080f8060 reading
+// shop->listWindow 47, the window style local and the input pointer (gone,
+// same 24), the window read back through the struct at any one use (30 to
+// 101), unitId declared or initialised elsewhere (43), memberIndex = unitId =
+// 0, redraw as u8 (35), an action local, nested else, goto for the cancel,
+// every order of the declarations and of the opening assignments, for and do
+// loops, the twin's continue, a chained store of the window, chained zero
+// initializers (three instructions longer), and 16 permute minutes.
 #include "types.h"
 #include "input.h"
 #include "ram_buffer.h"
+#include "edition.h"
+
+// The Japanese money window is a tile narrower, as in shop/f108b70.c.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define MONEY_WINDOW_WIDTH 11
+#else
+#define MONEY_WINDOW_WIDTH 12
+#endif
 
 struct ShopCursorAnchor {
   u8 unk00[5];
@@ -75,7 +99,7 @@ s32 Func_08109ad8(void) {
   s32 redraw = 1;
   s32 result;
 
-  shop->moneyWindow = Window_CreateFar(0, 9, 12, 4, 2);
+  shop->moneyWindow = Window_CreateFar(0, 9, MONEY_WINDOW_WIDTH, 4, 2);
   Func_08109188();
   shop->itemWindow = Window_CreateFar(16, 12, 14, 8, 2);
   listWindow = Window_CreateFar(0, 14, 13, 3, 2);
@@ -125,6 +149,10 @@ s32 Func_08109ad8(void) {
       wait(1);
     }
   }
+  /* FAKEMATCH(barrier): an empty asm clobbering r8 at the loop exit, which
+   * keeps listWindow (live here) out of r8 and leaves it to unitId (dead
+   * here); as no asm, 24 of 205 instructions differ in tla-en. */
+  __asm__("" : : : "r8");
   Func_0810bea8(0);
   Menu_ReleaseEntryObjectsFar();
   Window_CloseFar(listWindow, 2);

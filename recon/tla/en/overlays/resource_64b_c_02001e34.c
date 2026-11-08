@@ -1,5 +1,30 @@
-// Differ 18 of 714 (tla-en, 2026-11-08, -mtune=gba).
-// 8 November, later: motionFlags = 0 now comes before the third
+// Draft, differ 2 of 714 (tla-en, 2026-11-08)
+// Every edition is differ 2 (tla-en, ja, de, es, fr, it), the same one row.
+// Left: `mov sl, r2`, the copy of the motionFlags address into sl for the
+// later stores, comes before the stores of 0 to velocityY and terrainHeight
+// where the listing has it after them. Both forms compute the address as the
+// listing does (movs r2, #85; adds r2, r2, r6: an add whose output is the sl
+// pseudo), and the copy is reload's output copy right after that add; sched2
+// ties it with both stores (priority 2, class 3, two dependents each) and
+// takes it first by its lower LUID. So the listing's copy, or a dependence
+// that ranks the stores first, sits elsewhere. Tried at 2 without gain: a u8
+// *flags set after the stores, at function or then-arm scope, with or without
+// an unread reassignment, a second pointer, or a once-only block round the
+// first store (2 to 82; a pointer moved to the stack or the entry's reload
+// registers moved); zero at the first visit's stores or SetMoveTarget (2);
+// motionFlags = 2 moved after each later store (8 to 52); an 8-minute permute
+// from 2 (about 36,000 candidates) found nothing under 2.
+// 8 November, last round, 18 to 2: centerZ dropped (both centres are CSE's
+// shared constants, as the listing's register order shows); the flag device
+// (tagged temporary) kills the test's known zero (16 with motionFlags = 2
+// stored through *&, which then stopped the bit-field path's early zero); and
+// the local zero, one constant for its whole life used once (the permuter's
+// find), puts the stores of 0 on its own rematerialized zero and fixes the
+// reload registers at MsgWellYouWeren and the first angle loop (2, the plain
+// member store then as good as *&). The device is still needed with zero (53
+// without it); zero unused is 26. Not moved: TUTORIAL_MESSAGE's operand
+// order (16 both ways), the angle add spelled four ways (16).
+// Before, differ 18. 8 November, later: motionFlags = 0 now comes before the third
 // SetMoveTarget, as the listing's strb shows (28 to 18), and the z temporary
 // (a tagged FAKEMATCH) is replaced by centerZ, a local holding 0x20a40000 for
 // its whole life (18; one assignment without it is 53). Left, one cause: the
@@ -139,12 +164,15 @@ void Func_02004e00(void);
 void Func_02004e28(void);
 void Func_02004e30(s32 cue);
 
-/// A tutorial message: the second set (from MsgDjinnGiveTutorialB) while flag
-/// 0x175 is set.
-#define TUTORIAL_MESSAGE(base)                                                 \
-  (Flag_IsSet(0x175) *                                                         \
+/// A tutorial message: the second set (from MsgDjinnGiveTutorialB) when
+/// secondSet is 1.
+#define TUTORIAL_SET_MESSAGE(secondSet, base)                                  \
+  ((secondSet) *                                                               \
        ((s32)MsgDjinnGiveTutorialB - (s32)MsgDjinnGiveTutorialA) +             \
    (s32)(base))
+
+/// A tutorial message: the second set while flag 0x175 is set.
+#define TUTORIAL_MESSAGE(base) TUTORIAL_SET_MESSAGE(Flag_IsSet(0x175), base)
 
 void Func_02001e34(void) {
   struct Actor *djinni;
@@ -154,15 +182,22 @@ void Func_02001e34(void) {
   s32 owner;
   s32 count;
   s32 i;
-  // Holds one constant for its whole life: the Djinni's z centre, kept in a
-  // register for both SetMoveTarget calls.
-  s32 centerZ = 0x20a40000;
+  s32 flag;
+  // Holds 0 for its whole life; see its one use.
+  s32 zero = 0;
 
   djinni = Actor_GetById(9);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   x = (leader->x - 0x27880000) / 2 + 0x27880000;
-  z = (leader->z - centerZ) / 2 + centerZ;
-  if (Flag_IsSet(0x16e) == 0) {
+  z = (leader->z - 0x20a40000) / 2 + 0x20a40000;
+  /* FAKEMATCH(temporary): flag holds the id 0x16e, then the test's result,
+   * then flag 0x175's result for MsgHey2, so the test's known zero dies before
+   * the stores of 0 to velocityY and terrainHeight; as
+   * `if (Flag_IsSet(0x16e) == 0)` with TUTORIAL_MESSAGE(MsgHey2), 53 of 714
+   * instructions differ in tla-en. */
+  flag = 0x16e;
+  flag = GameFlag_Test(flag);
+  if (flag == 0) {
     if (gInput & 64)
       Flag_Set(0x175);
     Func_02004c20();
@@ -197,7 +232,8 @@ void Func_02001e34(void) {
     }
     Actor_SetAngleToward(9, owner, 0);
     wait(16);
-    Func_02004cd8(TUTORIAL_MESSAGE(MsgHey2));
+    flag = Flag_IsSet(0x175);
+    Func_02004cd8(TUTORIAL_SET_MESSAGE(flag, MsgHey2));
     i = 15;
     Func_02004cf0(9, 0);
     Func_02004db0();
@@ -210,7 +246,7 @@ void Func_02001e34(void) {
     djinni->acceleration = 0x10000;
     djinni->velocityY = 0;
     djinni->terrainHeight = 0;
-    SetMoveTarget(djinni, 0x27880000, 0, centerZ);
+    SetMoveTarget(djinni, 0x27880000, 0, 0x20a40000);
     while (i >= 0) {
       djinni->scaleX += 0x800;
       djinni->scaleY += 0x800;
@@ -346,7 +382,7 @@ void Func_02001e34(void) {
   Flag_Clear(0x171);
   Func_02004e28();
   Func_02004cd8(TUTORIAL_MESSAGE(MsgSoWeGo));
-  SetMoveTarget(djinni, 0x27880000, 0, centerZ);
+  SetMoveTarget(djinni, 0x27880000, 0, 0x20a40000);
   FieldEvent_Wait(30);
   Func_02004cf0(9, 0);
   Actor_SetAngleToward(9, owner, 0);
@@ -380,7 +416,10 @@ refused:
   Actor_Jump(9, 2, 20);
   Func_02004cf0(9, 0);
   Func_02004db0();
-  Func_02004dd0(9, 0, 7);
+  // The constant local: with a plain 0 here, the zero that motionFlags = 2
+  // leaves is shared by the first visit's stores of 0 and its reloads take
+  // other registers (differ 26).
+  Func_02004dd0(9, zero, 7);
   Func_02004dc0();
   Func_02004c28();
   Flag_Clear(0x16e);

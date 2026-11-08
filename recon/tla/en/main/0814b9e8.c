@@ -1,26 +1,21 @@
-// Differ 2 of 549 (tla-en, 2026-11-08, -mtune=gba).
-// Rechecked 2026-11-08: still the same tie. No gain from swapping the for
-// list's init or step (step swap 4), quad set before the loop, a while or
-// do-while form, a block-scoped quad, i * 3 <= frame (6), scale assigned or
-// declared outside, i < 16 (62), and 8 more permuter minutes.
-// 2026-11-08: the pair is a sched2 LUID tie. Loop puts the i * 3 giv's init
-// after quad = work (insn order i, quad, giv), so the reload of work wins over
-// the giv's spill store. Without gain: quad set earlier or in the for list
-// first, a delay counter at every declaration position (30 to 72), quad from
-// &work->particles[i], once-only blocks, non-const tables, 3 * i, and 10
-// permuter minutes. The inline CopyWords_ is still needed (4 without it).
-// Measured 2026-11-05 (tla-en): differ 2 of 549, no device. Left: one pair, the
-// loop's opening: ldr r6, [sp, #32] (quad) comes before str r2, [sp, #12] (i * 3's
-// start) here and after it in the listing. A delay variable set before quad gives
-// that order but swaps the slots at sp+12 and sp+16 (24 rows).
-// Settled today: draw is the first of a two-element array declared after canvas.
-// sp+24 is its unread second element, and as an array each use reads the stack
-// again, so r7 is free to reload it across both Djinn calls; that gives the
-// listing's caller-save of the sheet pointer in r4 and x in r8, with no barrier.
-// The quads' delay is i * 3 (the slot at sp+12 is a giv), and the step of quad
-// belongs in the for update, after i++. The older notes below predate all this.
+// Matches: differ 0 (tla-en, 2026-11-08); differ 0 too in tla-ja, tla-de,
+// tla-es, tla-fr and tla-it. No device. diff leaves out the literal pool, so
+// the whole extent is settled only by make compare-editions at adoption.
+// The last pair (ldr r6, [sp, #32] for quad after str r2, [sp, #12] for the
+// delay) closed with the quads loop's own form: quad is &work->particles[i],
+// a giv of i, and delay = i * 3 sits one insn ahead of the scale load. That
+// life of 2 makes delay worth reducing in the first loop pass (170 against
+// 86 insns; written inside the test it scored 85 against 86 and waited for
+// the second pass), and loop.c reduces a biv's givs latest first, so the
+// delay's start is emitted before quad's and sched2's LUID tie falls the
+// listing's way. Its reduced register is loop's own, so the slots at sp+12
+// and sp+16 stay where the listing has them (a user counter swapped them).
+// Settled earlier: draw is the first of a two-element array declared after
+// canvas. sp+24 is its unread second element, and as an array each use reads
+// the stack again, so r7 is free to reload it across both Djinn calls; that
+// gives the listing's caller-save of the sheet pointer in r4 and x in r8.
+// The inline CopyWords_ is still needed (4 without it).
 
-// Draft, differ 183 of 549, skeleton gap 31 (tla-en, 2026-11-01)
 // Func_0814b9e8, the body of three effect kinds through BattleEffect_RunBalm
 // (mode 0), BattleEffect_RunTinder (mode 1) and BattleEffect_RunPhoenix
 // (mode 2) in games/tla/src/battle_effect/render_mode_entry.c.
@@ -34,26 +29,11 @@
 // (Render_AllocateModelList, Render_TransformVertices, Render_DrawModelList), whose job and texture
 // layouts follow project_vertices.c.
 
-// What is left: the frame is 80 of 88. The Djinn's sheet pointer lives in r7
-// here; the listing keeps it in r4, saved around the first draw at sp+8 (a
-// caller-save slot), and reloads draw into r7. Global allocation only does
-// that when r7 is taken at that point, and no pseudo in the listing explains
-// it yet; a real answer settles that 4 bytes and the spill rotation behind
-// most of the remaining sched2 order. The other 4 bytes are sp+24, a slot
-// the listing allocates between canvas (sp+28) and draw (sp+20) and never
-// reads, so a pseudo there lost all its references to reload. The rest of
-// the gap is load order in sched2, and the stack offsets.
-
 // What moved it: lineX and lineY take their +64 and -16 at the assignment
 // (reload splits x = t + 64 into a copy and an add, and sched2 moves the add
 // across the call); the two blitter calls take flags 7 and 3; the quads'
 // height is a running variable, because the shifted forms never strength
-// reduce; fade is set in two steps; each use has its own x/y variable; delay
-// is a plain counter, declared last for its slot at sp+12.
-
-// Tried without gain: a local copy of draw for the two Djinn calls (CSE
-// removes it), a named sheet pointer, i = 0 after the loop's pointer, x and y
-// in the block, about 450 random declaration orders.
+// reduce; fade is set in two steps; each use has its own x/y variable.
 
 #include "types.h"
 #include "system.h"
@@ -287,10 +267,15 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
       job->faces = gData_08199340;
       job->vertices = vertices;
 
-      for (i = 0, quad = work->particles; i != QUAD_COUNT; i++, quad++) {
-        s32 scale = quad->variant;
+      for (i = 0; i != QUAD_COUNT; i++) {
+        s32 scale;
+        s32 delay;
 
-        if (frame >= i * 3) {
+        quad = &work->particles[i];
+        delay = i * 3;
+        scale = quad->variant;
+
+        if (frame >= delay) {
           s32 across;
           s32 deep;
 

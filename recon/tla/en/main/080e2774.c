@@ -1,31 +1,18 @@
-// Differ 10 of 169 (tla-en, 2026-11-08, -mtune=gba): cellX computed before the
-// cell's z is loaded (20 to 10) settles the loop top. Left: the top edge
-// (layer z shifted in r3, not in place in r2) and the record's cellZ load
-// issued before its address. Tried with it: top before lift (14), lift first
-// (71), declarations reordered (10 to 32), cellZ as lift + cz - scrollZ (12),
-// top as z then -= (10), the record from cx or cz (41, 27); 20 permuter
-// minutes found nothing below 10. Earlier: top first (40), cellZ as
-// cz - scrollZ + lift (26), cellZ before cellX (36).
-// 8 November: the top edge through a layer-z local, shifted in place or not,
-// and every spelling of z - (layer z >> 20) stay at 10 (14 with top before
-// lift): the shifted layer z is a block-local pseudo that takes r3 by order,
-// while the native's shares r2; the record's cellZ through casts, a
-// TouchCopy pointer (84) or a once-only block (66) does not move its load.
-// Another 8 permuter minutes found nothing below 10.
-// Near miss, differ 20 of 169 (tla-en, 2026-10-31): allocation and
-// scheduling only. The top edge: the native shifts layer z in place in r2
-// and reloads z into r3; this shifts into r3 and reloads z into r2 (lift
-// computed between the edges measured 20, after them 24). The loop top:
-// the native reloads lift into r4 and the x scroll into r2 before loading
-// the cell's x; this reloads the scroll into r3 first. The record: the
-// native forms the cellZ address before loading the cell's z; this loads
-// first. Shape that mattered: an index loop (a pointer loop lets GCSE carry
-// the test's load of x into the body, 70), the layer pointer reloaded after
-// the branch (shifting saved layerX/layerZ lets PRE share the shift with
-// the scroll), cz declared before cx but loaded after it (z takes r6), the
-// offsets dx/dz with the copied coordinates written in the call and again
-// in the record so CSE keeps them (named locals left destZ in r10, 38),
-// and the count read once into n.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Every edition measures differ 0 of 169: tla-en, tla-ja and tla-it at
+// 080e2774; tla-de (080ef774), tla-es (080eb768) and tla-fr (080e7768) by
+// --symbol Func_080e2774. Plain C, no device. What settled the last 10:
+// TouchCopies laid out as Func_080e25e8 has it, a TouchCell array before the
+// copies (a u8 pad gave the record stores a char alias set disjoint from the
+// cell's s16, so sched2 hoisted the cellZ load above its address; 10 to 8),
+// and both layer shifts named before either subtraction, so the shifted
+// layer z overlaps the shifted x and takes r2 in place (8 to 0). Shape that
+// mattered before: an index loop (a pointer loop lets GCSE carry the test's
+// load of x into the body), the layer pointer reloaded after the branch, cz
+// declared before cx but loaded after it (z takes r6), cellX computed before
+// the cell's z is loaded, the offsets dx/dz with the copied coordinates
+// written in the call and again in the record, and the count read once
+// into n.
 // Func_080e25e8's sibling with the rectangle given in map cells. For
 // each cell in the event work's list at 0xcc0 (ending in -1), taken relative
 // to map layer 0's scroll and the controlled owner's terrain height, that
@@ -70,7 +57,7 @@ struct MapCell {
 };
 
 struct TouchCopies {
-  u8 unk0000[0x174c];
+  struct TouchCell unk0000[1491];
   struct TouchCopy copies[64];
   s8 count;
 };
@@ -93,13 +80,16 @@ void Func_080e2774(s32 x, s32 z, s16 layerIndex, s16 width, s16 height, s32 toX,
   s32 lift;
   s32 scrollX = layer->x >> 20;
   s32 scrollZ = layer->z >> 20;
+  s32 layerX, layerZ;
   s32 left, top, i;
 
   if (layerIndex <= 2)
     layer += layerIndex;
-  left = x - (layer->x >> 20);
+  layerX = layer->x >> 20;
+  layerZ = layer->z >> 20;
+  left = x - layerX;
+  top = z - layerZ;
   lift = -(owner->terrainHeight >> 20);
-  top = z - (layer->z >> 20);
 
   for (i = 0; cell[i].x != -1; i++) {
     s32 cz, cx, cellX, cellZ;

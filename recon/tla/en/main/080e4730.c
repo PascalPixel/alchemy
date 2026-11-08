@@ -1,24 +1,23 @@
-// Differ 2 of 332 (tla-en, 2026-11-08, -mtune=gba); the same two rows as below (z loads before mov r0, r8).
-// 2026-11-08, round three: devices re-measured unchanged (the first asm as a once-only block 8);
-// the first loop indexed (delay as -i * 2: 6; sprite 115), the second loop's sprite indexed 4, a
-// once-only block around x, z, either, or the call 2, a copy of owner as the base 2, and 8
-// permuter minutes (20,278 candidates, best 10) left the z load before mov r0, r8.
-// Re-measured 2026-11-08, each device tagged at its site: without the first empty asm 18, the second
-// 16, the pin on size 4, the asm on party 81 (a once-only block there 79); x and z read in the other
-// order 10, the once-only block dropped or moved 4. sprite reused for the picture tiles and the 63 mask
-// is a local reused for a second value (ordinary C, no tag). Tried without gain: z passed inline,
-// z through another base, x and z declaration order, y added late, a once-only block between x and z.
-// Draft, differ 2 of 332 (tla-en, 2026-11-05); 1 with slots and pool offsets normalized, 1 with registers blind too. pictureTiles and the 63 mask are one reused local with the first loop's sprite (a local reused, ordinary C), party live to the picture's entry and sprite past the move (two empty asms with inputs, tagged barrier), one pin on the copy's size for the argument order, one one-pass before x. The two rows left are the move call's arguments: the listing has mov r0, r8 between ldr r1 and ldr r3, the load of z, here both loads come first: z's load outranks the move at the tie and no form tried delays it.
-// Draft, differ 76 of 332 (tla-en, 2026-11-05); 38 with slots and pool offsets normalized, 6 with registers blind too. sprite first holds the 0x400 size (a fresh 0x400 for rippled needs it); rippled, pictureOffset and ripple declared in slot order; the two empty asms with inputs keep sprite and party live and are measurement, untagged: they show r5 and r6 are busy at those points in the native, nothing in the listing says why. Left is reload rotation: the native has one more reload before the owner's reload after the animation call, and 63 is a reload in r5.
-// Measured 2026-11-05 (tla-en): 116 of 332, unchanged; 114 with i = 0 before the first loop's
-// pointers. 4000 random declaration orders and party set anywhere earlier: no gain. First
-// difference: y's 0xa0000 goes to r6 in the listing and r5 here, and gMainRoutineWork
-// then to r6 and r3. Removing the party local makes the draft 327 long, so party stays.
-// Draft, differ 116 of 332 (tla-en, 2026-11-05); 108 with slots and pool offsets normalized, 20 with registers blind too.
-// Near miss, differ 163 (244 before statements reordered 2026-10-26) of 332: the native keeps resource 0x1e1 in the pool,
-// hoists the picture's VRAM offset (tiles << 5) out of the frame loop and
-// keeps the effect pointer and the frame counter in other registers; the
-// rest follows from those.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// All six editions differ 0 on 2026-11-08 (tla-de at 080f1730, tla-es at
+// 080ed724, tla-fr at 080e9724; ja and it at 080e4730). Two tagged devices
+// remain, re-measured at their sites: the pin on the copy's size (2: as a plain
+// local, mov r1, sl comes before the size copy into r2) and the asm on party
+// (79). Matched by plain C where three devices and a once-only block stood
+// before: the position call takes owner->x, owner->y + 0xa0000 and owner->z
+// inline, and the 63 mask is its own local set before that call. Crossing both
+// calls it lives in r5, so the 0xa0000 reload goes to r6 and sched2 sinks the
+// movs into the load delay after the animation call; as a separate local
+// regmove keeps the ands and orrs in r5 (sprite, copied from VramCache_Load's
+// r0, ranked lower). Left for the two devices: the asm keeps party in r6 from
+// the animation call to the picture's entry, which steers the reload rotation
+// of that stretch and, as a barrier, the argument order of VramCache_Load;
+// moved earlier it costs 44 to 95, after VramCache_Load 2, and party set before
+// the position call folds party + 532 into a pool constant (249). Without it
+// the pin's order also falls to the tie-break (both removed: 229). Tried for
+// the pin without gain: the size passed as sprite, source read after the size,
+// the size set before the block. A natural later use of party (or another
+// pseudo held in r6 there with no visible read) is what would settle both.
 // An event command in the heap slot 0x5c work (0x192c bytes). The
 // other objects of the effect owner's group pause, the block cue callback
 // stops, and resource 0x1e1's 64 particles (Func_080e45a8) start with delays
@@ -94,6 +93,7 @@ void Func_080e4730(void) {
   s32 frame;
   s32 i;
   s32 delay;
+  s32 mask;
 
   Func_080dc954();
   gMainRoutineWork[620] = 0;
@@ -116,30 +116,16 @@ void Func_080e4730(void) {
   Camera_MoveWithinMapBounds(-1, -1, -1, 0);
   motionFlags = &owner->motionFlags;
   *motionFlags = 0;
-  {
-    s32 y = owner->y + 0xa0000;
-    s32 x;
-    s32 z;
-
-    // A once-only block: dropped or moved, 4 of 332 differ.
-    do {
-    } while (0);
-    x = owner->x;
-    z = owner->z;
-
-    Actor_SetPositionAndResetMotionFar(owner, x, y, z);
-  }
-  /* FAKEMATCH(barrier): the form kept; as no asm, 18 of 332 instructions differ in tla-en. */
-  asm("" : : "r"(sprite));
+  // Set before the move: 63 is held in a saved register across both calls.
+  mask = 63;
+  Actor_SetPositionAndResetMotionFar(owner, owner->x, owner->y + 0xa0000,
+                                     owner->z);
   party = gMainRoutineWork;
   Animation_SetIndexAndInitializeObjectsFar(owner, *(s32 *)(party + 532));
-  sprite = 63;
-  ((u8 *)owner->animation)[5] &= sprite;
-  sprite &= ((u8 *)owner->animation)[7];
-  sprite |= 128;
-  /* FAKEMATCH(barrier): the form kept; as no asm, 16 of 332 instructions differ in tla-en. */
-  asm("" : "=r"(sprite) : "0"(sprite));
-  ((u8 *)owner->animation)[7] = sprite;
+  ((u8 *)owner->animation)[5] &= mask;
+  mask &= ((u8 *)owner->animation)[7];
+  mask |= 128;
+  ((u8 *)owner->animation)[7] = mask;
   if (*(s8 *)(event + 394) == 3)
     *(s32 *)((u8 *)owner->animation + 12) = 0xc000;
   owner->angle = 0x4000;
@@ -152,14 +138,14 @@ void Func_080e4730(void) {
 
     sprite = 0x400;
     {
-      /* FAKEMATCH(pin): the form kept; as a plain local, 4 of 332 instructions differ in tla-en. */
+      /* FAKEMATCH(pin): the form kept; as a plain local, 2 of 332 instructions differ in tla-en. */
       register s32 size asm("r2") = sprite;
 
       Func_080e43a4(source, work, size);
     }
   }
   Animation_ApplyChildValueToFirstFar(owner->animation, 15);
-  /* FAKEMATCH(barrier): the form kept; as no asm, 81 of 332 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): the form kept; as no asm, 79 of 332 instructions differ in tla-en. */
   asm("" : : "r"(party));
   pictureEntry = Resource_FindFreeEntry();
   sprite = VramCache_Load(pictureEntry, sprite, NULL);

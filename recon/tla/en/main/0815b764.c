@@ -1,4 +1,36 @@
-// Differ 42 of 1932 (tla-en, 2026-11-08, -mtune=gba); without the particle loop's asm, 44.
+// Draft, differ 40 of 1932 (tla-en, 2026-11-08)
+// Every edition measures the same 40 (tla-ja, tla-de, tla-es, tla-fr, tla-it):
+// the function's code is one form in all six, so what is left is the C, not an
+// edition difference.
+// 2026-11-08, third pass, from 42: the first closing fill reads its destination
+// into a local before its once-only block (40). Its loop note is a scheduling
+// barrier after the destination's ldr, so the size, the zero and the call
+// address follow it as in the listing. Left (about 34 rows, all in two places):
+// - The ship-burst block (draw && frame <= 131), about 30 rows. The listing
+//   computes frame * 3 from r7 (the frame reload) before the -t * 512 init uses
+//   r7 as its temporary, and only then sets the t * 3072 giv (r7) from it; so
+//   t's own init reloads frame into r5 instead of copying it. The giv steps run
+//   r9, r10, r8, r7 on both sides, so the inits go out in the same giv order
+//   (t << 9, t << 11, -t * 512, t * 3072, t); one init cannot interleave with
+//   another, so something before -t * 512's init must already compute frame * 3
+//   (a hoisted invariant, an earlier giv such as t * 3 placed after the yaw in
+//   the body, or a statement before the loop) for CSE to reuse. Not found:
+//   frame * 3 or frame * 3072 spelled into sc, with or without t inlined (the
+//   outer frame loop then reduces it and the frame grows: 419 to 558); an asm
+//   reading frame * 3 at or after the model (54 to 388); a t * 3 giv forced
+//   into the else arm (46). The two zeros: the shade store shares j's zero
+//   here (r0); j = model->shade = 0 gives the listing's r3 for shade but 44; j
+//   = 0 in every slot of the setup crossed with the asm at four slots (40 at
+//   best, as now, up to 1268). A focused permute of that block (8 minutes,
+//   about 10,000 candidates): nothing below 40.
+// - The palette loop's step pair (2 rows): the listing steps pal before the
+//   other two givs. Computing the value before the store (a local c, or g |
+//   ... ) gives that order through the store's address giv, but its later init
+//   then lengthens pal's life, so pal takes r4 and the givs r0 and r1 (56); a
+//   non-volatile pal, &pal[i] first, operands swapped, * 1024: 40 to 121.
+// - The else arm's 0x1c000 - (t << 11), 4 rows: the constant takes r0 here
+//   (local-alloc ties it to the result) and r3 in the listing; every spelling
+//   measured 40; probably follows the ship-burst block.
 // 2026-11-08, second pass, unchanged at 42: the devices re-measured (without the
 // particle loop's asm 44, without the ship-burst asm 317; that asm after the
 // model's allocation 42, reading frame - 76 390); t, sc and the yaw in every
@@ -874,10 +906,16 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   Func_081180e8(134);
   REG_BG1CNT = 0x1f83;
   wait(1);
-  // Once-only blocks: the listing loads each fill's destination before its size.
-  do {
-    FillWords_(Ram_HeapSlots->battleFxWork[1], 0x4000, 0);
-  } while (0);
+  // Once-only blocks: the listing loads each fill's destination before its size;
+  // the first destination is read before its block, whose loop note then keeps
+  // the size and the call's address behind that load.
+  {
+    void *destination = Ram_HeapSlots->battleFxWork[1];
+
+    do {
+      FillWords_(destination, 0x4000, 0);
+    } while (0);
+  }
   do {
     FillWords_((void *)0x06004000, 0x3c00, 0);
   } while (0);

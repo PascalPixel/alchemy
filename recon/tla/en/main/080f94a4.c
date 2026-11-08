@@ -1,42 +1,37 @@
-// Differ 22 of 162 (tla-en, 2026-11-08, -mtune=gba), with three tagged devices (two pins,
-// one barrier). Without the r4 pin 96, pin r6 96, no empty asm 30 (an empty
-// once-only block in its place 28, around the allocation 30, around the suspend
-// store 78), no r1 hoist 24, no devices at all 92. Other editions not re-measured.
-// Round 7 (2026-11-08): devices re-measured, the same figures; the size hoist as a
-// plain block-local copy instead of the r1 pin 24; pin r5 110. Not adoptable as it
-// stands: r4 is call-clobbered (-fcall-used-r4), so the pinned backup is read back
-// from r4 after calls that may change it; the native keeps it in r6.
-// Tried 2026-11-08: with no device, a set-once tiles local for 0x06004000 set after
-// the allocation 51 (49 with the r1 hoist; set first 59; block-local or the copy
-// back as a literal 51): global.c still ranks it above the pool's 0 (4 refs over
-// 202 insns against 3 over 234), so VRAM keeps a register. Once-only blocks around
-// the copies 108. A three-minute permute of the device-free form found only invalid
-// candidates (24, copying the backup onto itself).
-// 2026-11-06: the same 22 in de, es, fr and it;
-// 0 of 109 in tla-ja (2026-11-07, its whole extent; the listing runs on).
-// Near miss with an r4 pin, empty asm and r1 hoist found by search, now tagged. The rest is allocation: the native keeps the
-// backup in r6 and reloads 0x06004000 from the pool, here VRAM takes r6. Tried
-// 2026-11-06: no pin (96), pin r6 (96), no hoist (24), ☀️ twin's cache/process
-// pointers (89).
+// Matches: differ 0 (tla-en, 2026-11-08)
+// With two tagged wrapper devices and no other: the two IWRAM calls go through
+// draft-local inlines (CopyWords_, FillWords_), as ☀️'s twin ItemMenu_Run does
+// through its iwram_call.h layer. Integration substitutes the constant
+// arguments straight into r0 to r2, so 0x06004000 never becomes one shared
+// pseudo: the native reloads it from the pool at each call, keeps the backup in
+// r6 and gives r11 to the window flag's 0 (the pseudo the suspend store's
+// read-modify-write leaves). Called directly, CSE shares 0x06004000 across all
+// three calls, it outranks the 0 in global.c and takes r7. Both wrappers are
+// needed: copy direct 92, fill direct 47, both direct 92. The earlier near miss
+// (22, an r4 pin on the backup, an r1 pin on the size and an empty asm) is
+// replaced; it was not adoptable, as r4 is call-clobbered (-fcall-used-r4).
+// ⚓️'s iwram_call.h says the game calls the fixed entries directly, so the
+// inlines are tagged as f101638.c's are; if ⚓️ turns out to share ☀️'s layer,
+// they become ordinary C there.
+// Editions (2026-11-08, each at its own address): de, es, fr and it match all
+// 162 instructions of the function, ja (TLA_PATCH_1 off) all 109; their
+// listings run on past the final pop into ItemMenu_RunCommands, because the
+// scaffold's labels cover the whole block, so the tool prints differ 1358 (de,
+// es, it), 1363 (fr) and 1362 (ja) for the rest of the block. de, es and fr
+// need the address: 081034a4, 080ff498, 080fb4a4.
 // First draft of Func_080f94a4: the item picker an event script opens, the
-// twin of ☀️'s ItemMenu_Run (games/tbs/src/menu/menu.c) in its
+// twin of ☀️'s ItemMenu_Run (games/tbs/src/menu/menu/item.c) in its
 // TBS_PATCH_1 form: opens the item menu over the field (saving the window
 // tiles at 0x06004000), runs ItemMenu_RunCommands (Func_080f9644), records the
-// choice in the event work and returns 1 if one was made. Differ 96 of 162
-// (draft 166), register choice more than order: the native keeps the heap
-// slots base 0x03000000 in r7, the size in r10 and the result in r8, reloads
-// 0x06004000 from the pool at each use, and loads the window flag's 0 once
-// from the pool into r11 for all three stores (here each is a movs); this
-// draft keeps the base in r8, VRAM in r7 and the size in r9.
-// Editions: German, Spanish, French and Italian compile the English form (their
-// listings differ from English only in call and pool addresses). Japanese is
-// the older, shorter form (TLA_PATCH_1 off): no 0x2000-byte backup of the
-// window tiles at 0x06004000, so no Heap_AllocEwram, Menu_SuspendFieldTasks,
-// copy and fill, Text_UseExtraTilesFar, Func_08038290, copy back, first
-// windowTiles[6] clear, Heap_Release, Menu_ResumeFieldTasks or second wait(1).
-// Their listings' labels cover the whole block through 0x080fa2dc (English
-// addresses): ItemMenu_RunCommands (080f9644.c), then ItemMenu_Use, Func_080fa368
-// and the item interface helpers, already C in games/tla/src/menu/item.
+// choice in the event work and returns 1 if one was made.
+// Japanese is the older, shorter form (TLA_PATCH_1 off): no 0x2000-byte backup
+// of the window tiles at 0x06004000, so no Heap_AllocEwram,
+// Menu_SuspendFieldTasks, copy and fill, Text_UseExtraTilesFar, Func_08038290,
+// copy back, first windowTiles[6] clear, Heap_Release, Menu_ResumeFieldTasks or
+// second wait(1). Its listing's labels cover the whole block through 0x080fa2dc
+// (English addresses): ItemMenu_RunCommands (080f9644.c), then ItemMenu_Use,
+// Func_080fa368 and the item interface helpers, already C in
+// games/tla/src/menu/item.
 #include "types.h"
 #include "version.h"
 #include "heap_release.h"
@@ -90,11 +85,22 @@ void Func_08038290(void);
 void Event_ClearInvalidPackedValuesFar(void);
 void wait(s32 frames);
 
+static __inline__ s32 CopyWords_(void *destination, const void *source,
+                                 s32 size) {
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
+   * constants; as direct calls, 92 of 162 instructions differ in tla-en. */
+  return Iwram_CopyWords(destination, source, size);
+}
+
+static __inline__ s32 FillWords_(void *destination, s32 size, u32 value) {
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
+   * constants; as a direct call, 47 of 162 instructions differ in tla-en. */
+  return Iwram_FillWords(destination, size, value);
+}
+
 s32 Func_080f94a4(void) {
 #if TLA_PATCH_1
-  /* FAKEMATCH(pin): the backup held in r4; as a plain local, 96 of 162
-   * instructions differ in tla-en. */
-  register void *backup asm("r4");
+  void *backup;
 #endif
   struct InventoryMenuState *screen;
   s32 item;
@@ -109,9 +115,6 @@ s32 Func_080f94a4(void) {
 #if TLA_PATCH_1
   size = 0x2000;
   backup = Heap_AllocEwram(size);
-  /* FAKEMATCH(barrier): an empty asm after the allocation; without it, 30 of
-   * 162 instructions differ in tla-en. */
-  asm("");
 #endif
   Ram_HeapSlots->objectSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
@@ -125,13 +128,8 @@ s32 Func_080f94a4(void) {
   screen->messageWindow = Window_CreateFar(13, 0, 17, 3, 2);
 #if TLA_PATCH_1
   Menu_SuspendFieldTasks();
-  Iwram_CopyWords(backup, (void *)0x06004000, size);
-  {
-    /* FAKEMATCH(pin): the size held in r1 for the fill; as size passed
-     * directly, 24 of 162 instructions differ in tla-en. */
-    register s32 hoisted asm("r1") = size;
-    Iwram_FillWords((void *)0x06004000, hoisted, 0x33333333);
-  }
+  CopyWords_(backup, (void *)0x06004000, size);
+  FillWords_((void *)0x06004000, size, 0x33333333);
   Text_UseExtraTilesFar(1);
 #endif
 
@@ -155,7 +153,7 @@ s32 Func_080f94a4(void) {
 #if TLA_PATCH_1
   Func_08038290();
   Text_UseExtraTilesFar(0);
-  Iwram_CopyWords((void *)0x06004000, backup, size);
+  CopyWords_((void *)0x06004000, backup, size);
   Ram_HeapSlots->windowTiles[6] = 0;
   Heap_Release(backup);
   wait(1);

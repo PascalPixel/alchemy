@@ -1,17 +1,13 @@
-// Differ 4 of 294 (tla-en, 2026-11-08, -mtune=gba), unchanged this round: byte 17
-// as a plain flags byte set with |= (14 slot first, 73 bit first), parts[i]
-// stored between the slot copy and the bit (38), once-only blocks around
-// either store (85 to 102), and a 5-minute permute from the slot-first form
-// (12) found only the bit-first form again. From 8: the sprite is now
-// read through PartSprite (slot at 16, retainCacheEntry at bit 0 of 17, as
-// f021a84.c lays the field sprite out), with the bit set before the slot copy:
-// no char alias holds the parts[i] store, which now lands after the sprite[17]
-// load as natively. Left: the slot copy (`ldrb r3, [r6, #16]` and its store)
-// issues after the bit's store here, ahead of it natively. Slot copy first
-// (differ 12: the store and the parts[0] reload rise a slot), either side
-// through a char cast (4 or 8), the slot read into a local first (85), first
-// read after the create (252), parts[i] after the sprite (237): all worse; an
-// 8-minute permute from 4 found nothing better.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Plain C, no device. The last 4 fell to the sprite's type: each part's sprite
+// is read through resource_obj.c's ResourceSprite (image words, scale, slot at
+// 16, retainCacheEntry at bit 0 of 17), with the slot copied before the bit is
+// set. Its word fields give its byte fields an alias set that meets the parts'
+// s32 position copies but not the parts array, so sched2 hoists the slot load
+// to just after the create and keeps the bit's store ahead of the parts[0]
+// reload, as the native does. A sprite type of bytes only (the old PartSprite,
+// 4 bit first, 12 slot first) or f021a84.c's LayeredSprite layout (no word
+// fields, 12) lets the reload rise above the bit's store.
 //
 // The earlier reload rotation (differ 113) came from three expansions, each
 // now fixed in plain C: the type 0x15f as a literal kept a pseudo in r0 across
@@ -79,11 +75,28 @@ void Func_020011b8(void);
 void Func_020015e4(void);
 void Func_02001528(void);
 
-struct PartSprite {
-  u8 unk00[16];
+struct AnimationEntry;
+
+/// The sprite as ResourceObject_Create fills it, laid out as resource_obj.c
+/// declares it.
+struct ResourceSprite {
+  u32 imageAttributes[3];
+  s32 scale;
   u8 slot;
   u8 retainCacheEntry : 1;
-  u8 unk11 : 7;
+  u8 useOwnScale : 1;
+  u8 unk11 : 6;
+  u16 rotation;
+  u8 width;
+  u8 height;
+  s8 offsetX;
+  s8 offsetY;
+  u8 lastNo;
+  u8 dirty;
+  u8 flags;
+  u8 count;
+  u32 shadowAttributes[3];
+  struct AnimationEntry *entries[4];
 };
 
 void Func_02001738(struct Actor *object) {
@@ -127,14 +140,14 @@ void Func_02001738(struct Actor *object) {
     parts[0] = Import_ActorCreate(type, object->x + 0x10000,
                                   object->y + 0x200000, object->z);
     for (i = 1; i != 4; i++) {
-      struct PartSprite *first = parts[0]->animation;
+      struct ResourceSprite *first = parts[0]->animation;
       struct Actor *part = Import_ActorCreate(type, 0, 0, 0);
-      struct PartSprite *sprite;
+      struct ResourceSprite *sprite;
 
       parts[i] = part;
       sprite = part->animation;
-      sprite->retainCacheEntry = 1;
       sprite->slot = first->slot;
+      sprite->retainCacheEntry = 1;
       part->x = parts[0]->x;
       part->y = parts[0]->y;
       part->z = parts[0]->z;

@@ -1,4 +1,27 @@
-// Differ 2 of 303 (tla-en, 2026-11-08, -mtune=gba).
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Two tagged devices, both on ⚓️'s allowance: the fill wrapper (4 without it)
+// and Nothing(), an s32 inline that returns nothing (2 without it).
+// Round 4 (2026-11-08): why the flags move needs Nothing(). In block 5 the
+// stack store of the mode argument holds the unit for two cycles; at the next
+// pick it is still sched2's last insn, and rank_for_schedule puts the r3 move
+// (anti-dependent on the store through r3, cost 0) in class 2 below the
+// independent r0, r1 and r2 moves, so r1 goes first. An insn with no unit
+// issues in that stall and takes the store's place as the last insn; the four
+// moves then tie on class, and the r3 move's five dependants against r1's and
+// r2's three and r0's two give the native's r3, r1, r2, r0. Reload keeps one
+// such insn only: a clobber of the return register, left where an inline
+// function with a return type falls off its end and its value is ignored.
+// Nothing() called between the flags and the call leaves exactly that; the
+// sched2 dump (diff --rtl) shows it issued on no unit at t=2. Tried for it:
+// an s32 wrapper around the blitter build falling off its end (2: its clobber
+// follows the call and waits on it), the pair initialized in a block after the
+// call, { draw, 0 } (11: the clobber is a pseudo's, deleted by reload, and r7's
+// zero stays), the fill through a local pointer in place of its wrapper (4).
+// Every edition has these bytes but for relocations: tla-de, tla-es, tla-fr
+// and tla-it at 0818c7b8 differ from tla-en in 4 bytes (two bl offsets, at
+// +0x82 Resource_GetTableEntry and +0xf4, and two pool words), tla-ja at
+// 0818c7bc in bl offsets, jump-table entries and pool words only; the diff
+// tool measures none of them (their scaffold sections carry no Thumb marker).
 // Round 3 (2026-11-08): the native emits the flags move (r3) ahead of r1 and
 // r2; here all four argument moves are expanded r0, r1, r2, r3 and tie. Tried
 // u32, u8 and u16 flags, narrow and unsigned parameters, a void return, a
@@ -31,8 +54,14 @@
 // before the routine's address.
 #undef Iwram_FillWords
 static inline s32 Iwram_FillWords(void *destination, s32 size, u32 value) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_FillWordsEntry, 4 of 303 instructions differ in tla-en. */
   return Iwram_FillWordsEntry(destination, size, value);
 }
+
+// Does nothing and gives no value: inlined with its value ignored, it leaves
+// only a clobber of the return register, an insn with no code.
+static inline s32 Nothing(void) {}
 
 // The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
 #define HEAP_SLOT_BLITTER 104
@@ -51,7 +80,7 @@ extern char ResourceId_MarsDjinnSheet;
 
 void BattleEffect_StartTiledCanvas(s32 bgControl);
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                   s32 mode);
+                  s32 mode);
 void *Resource_GetTableEntry(s32 id);
 s32 Task_Add(void (*func)(void), s32 order);
 s32 Task_Remove(void (*func)(void));
@@ -99,6 +128,11 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
     if (effect->side != 0)
       flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP;
   }
+  /* FAKEMATCH(signature): Nothing() typed s32 though it returns nothing; its
+   * return-register clobber issues in the mode store's second cycle, so the
+   * flags move is picked before r1 and r2; without the call, 2 of 303
+   * instructions differ in tla-en. */
+  Nothing();
   Func_08196404(HEAP_SLOT_BLITTER, 7, 7, flags, BLIT_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
 

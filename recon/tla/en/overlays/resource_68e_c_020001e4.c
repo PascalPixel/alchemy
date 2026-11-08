@@ -1,47 +1,36 @@
-// Differ 52 of 286 (tla-en, 2026-11-08, -mtune=gba), from 56: the first text id
-// through result (permuter; FAKEMATCH temporary); with -1 for minusOne, 93.
-// 2026-11-08, later: 21 of the 25 Call and Value wrappers measured one by one
-// and dropped as free (52 each and together); the four kept pay: the first
-// FieldMessage_ShowAtActor 179 direct, the two minusOne calls 76 each (and direct
-// they would pass all 64 bits), the GameFlag_Test 91. A prototype for
-// FieldMessage_ShowAtActor does not help (179). No change from message = result =
-// MsgWhatWillYou (52), -1 != result, the pick loop with the subtraction in its
-// test, a block-local or u32 prizeRoll; a weights pointer 91, a while pick loop 95.
-// 2026-11-08: re-measured, both temporaries still pay (without result 56, minusOne
-// as -1 or s32 93); the unused state local dropped (no change). No change (52)
-// from declaration order, minusOne at the other -1 sites, the pick loop's test
-// folded, the roll read first, a weight local or i <= 14; an s8 or u8 pointer
-// for the halving 79, a state pointer 100. 8 minutes of permute: nothing better.
-// 2026-11-06: A 64-bit -1 local for the free-slots notice and Party_AdjustCoins keeps CSE from sharing the compare's -1 (89 to 56); a permuter lead. Left, allocation only: the first cancel compare's -1 in r3 (native r2) and the coin and medal tests in r2, r3 (native r3, r1); the first FieldMessage_ShowAtActor -1 scheduled before movs r1, #0; the roll and work address in r0, r1 (native r1, r0); the final halving's registers. Not better: the s32 or u32 local (81), it in the second cancel compare (64-bit compare), a direct ShowAtActor call (67, 173), an s8 pointer for the halving (83).
-// 2026-11-06, later: the register swaps all follow reload's round-robin through its spill registers
-// (allocate_reload_reg steps last_spill_reg through spill_regs, kept in register order). The
-// native's first reload, MsgWhatWillYou into r8, comes through r1, the second spill register, so
-// its spill set holds r0 to r3; here greg chooses only r3 and r2 and the first reload takes r2.
-// What would settle it: the insn where the native needs r1 for a reload with r2 and r3 busy.
-// No change (56) from a block-local or 16-, 32- or 64-bit cancel -1, the pick loop's seven
-// rewordings, or a weight local for the halving.
-// 2026-11-06, differ 89: under -Os, the pick loop a plain for loop. Left then: every -1 the native loads fresh (both cancel compares into r2, the free-slots notice, Party_AdjustCoins) is shared here by CSE from the compare's pseudo (r5, r0), costing 3 instructions and the branch offsets; the roll in r0 and work address in r1 (native r1, r0); the final halving's slot, base and weight in r0, r2, r4 (native r2, r0, r1). The native acts like a -1 local left without a register and rematerialized at each use (the FieldMessage_ShowAtActor -1 is scheduled after movs r1, #0 in both editions), but here a cancel local takes r11 (differ 96) and direct calls share -1 through r10 (122) or more (133 all direct, 109 with a cancel local).
-// Draft, differ 144 of 286, skeleton gap 32 (tla-en, 2026-11-01)
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Also differ 0 in tla-de, tla-es, tla-fr and tla-it (French through
+// COUNT_WINDOW_WIDTH and COUNT_NUMBER_X). tla-ja stays on its scaffold: its
+// message ids have other names, so the draft does not compile there, and its
+// listing is an older layout (about 300 instructions, saves r11, holds choice
+// in r8).
 // The Lost Age's twin of The Broken Seal's TolbiSpring_RunSpringGame
 // (games/tbs/src/scene/tolbi_games.c): choose coin or medal, toss, award.
 // The prompt is a goto loop, as a real outer loop hoists its pool loads, and
-// the shared notice tail sits at a join so its -1 is reloaded. One local per
-// callee-saved register of the listing: choice also adds up the weights (r7),
-// result also holds the text ids (r5), window also the prize index (r6);
-// separate locals put choice in r9 and cost 15 of skeleton.
-// Left: 1. the -1 of each cancel compare stays in r5 and is reused by the
-// free-slots notice and Party_AdjustCoins, where the listing reloads it into
-// r2 after the calls; Call and Value do not stop that, nor did one mask
-// variable set before each compare (gap 49), a cancel local or a switch.
-// 2. gInput and the 1 are hoisted out of the key loop. A goto into the loop
-// stops the hoist but puts the confirm block after that goto; a goto loop
-// pulls the block inline. 3. The weight sum shares result * 3 only by
-// recomputing it: a count local gives gap 33, a do-while 42. 4. The first read
-// of weight 0 and the pick loop share state + 1, which the listing recomputes.
+// the shared notice tail sits at a join so its -1 is reloaded. result also
+// holds the text ids (r5) and window the windows (r6); the weight total and
+// prize index have their own locals, as in the twin.
+// What closed it (52 to 0, 2026-11-08): FieldMessage_ShowAtActor returns s32
+// (games/tla/src/field/event/f0d3c88.c); called as a value-returning function,
+// movs r1, #0 falls between movs r0, #1 and negs r0, r0 as in the listing (48).
+// Separate total and prize locals instead of reusing choice and window (26):
+// window's argument-register preferences no longer pass to the halving's slot,
+// so the weight takes r1, r1 joins reload's spill registers, and reload's round
+// robin gives the listing's r1, r2, r3, r1, r2 at the top. Then the text id no
+// longer needs to pass through result (0).
+// Devices left, each measured at the match: minusOne (temporary, 57) and four
+// call.h wrappers, the two FieldMessage_ShowAtActor calls (144, 28),
+// Party_AdjustCoins (28) and GameFlag_Test (43). Tried and no better: minusOne
+// as s32, u32, s16 or s8 (57; s64 and u64 both match), one s32 -1 local for the
+// compares and calls (50), a separate text local (13 or 17), a call through a
+// cast for the first ShowAtActor (144). Func_020013d8 and Func_0200049c are
+// declared void and GameFlag_SetBit s32, as their definitions are (no change).
+
 #include "types.h"
 #include "call.h"
 #include "text/msg_ids.h"
 #include "main_routine_work.h"
+#include "edition.h"
 
 #include "input.h"
 extern u16 gData_0200173c[];
@@ -50,14 +39,14 @@ void Func_02001380();
 void Func_020013f8();
 s32 PartyInventory_CountItem();
 void Func_020013c8();
-void FieldMessage_ShowAtActor();
+s32 FieldMessage_ShowAtActor();
 struct Window *Window_Create();
 void Text_DrawCharacterAtOffset();
 void Text_DrawNumberInWindow();
 s32 Menu_SelectCoinsOrMedals();
 void Window_Close();
 void Message_CloseFinishedWindows();
-s32 Func_020013d8();
+void Func_020013d8();
 void wait();
 void Func_02001408();
 s32 PartyInventory_CountFreeSlots();
@@ -68,10 +57,20 @@ s32 Func_02001184();
 void Func_02001328();
 void FieldEvent_Wait();
 s32 GameFlag_Test();
-void GameFlag_SetBit();
-s32 Func_0200049c();
+s32 GameFlag_SetBit();
+void Func_0200049c();
 s32 Random16Far();
 void Func_02001388();
+
+// French draws the count window two tiles wider, its numbers 16 pixels further
+// right.
+#if LANGUAGE == LANGUAGE_FRENCH
+#define COUNT_WINDOW_WIDTH 19
+#define COUNT_NUMBER_X 88
+#else
+#define COUNT_WINDOW_WIDTH 17
+#define COUNT_NUMBER_X 72
+#endif
 
 #define WEIGHT(i) ((s8)gMainRoutineWork.unk13d[i])
 
@@ -84,10 +83,12 @@ s32 Func_020001e4(void) {
   s32 result;
   s32 prizeRoll;
   s32 notice;
+  s32 total;
+  s32 prize;
   /* FAKEMATCH(temporary): minusOne, a 64-bit -1 for two calls, so CSE does
-   * not share the cancel compare's -1; as -1, 93 of 286 instructions differ in
-   * tla-en. */
-  u64 minusOne = -1;
+   * not share the cancel compare's -1 with them; as -1, 57 of 286 instructions
+   * differ in tla-en. */
+  s64 minusOne = -1;
 
   Func_02001380();
   choice = 0;
@@ -95,18 +96,17 @@ s32 Func_020001e4(void) {
 prompt:
   coins = gMainRoutineWork.coins;
   medals = PartyInventory_CountItem(229);
-  /* FAKEMATCH(temporary): the text id passes through result; as message =
-   * (s32)MsgWhatWillYou, 56 of 286 instructions differ in tla-en. */
-  result = (s32)MsgWhatWillYou;
-  message = result;
+  message = (s32)MsgWhatWillYou;
   Func_020013c8(message);
-  Call2((void (*)())FieldMessage_ShowAtActor, -1, 0);
-  window = (s32)Window_Create(0, 0, 17, 4, 2);
+  /* FAKEMATCH(wrapper): forwarded, so the -1 is built after movs r1, #0; as a
+   * direct call, 144 of 286 instructions differ in tla-en. */
+  Value2(FieldMessage_ShowAtActor, -1, 0);
+  window = (s32)Window_Create(0, 0, COUNT_WINDOW_WIDTH, 4, 2);
   result = (s32)MsgCoins2;
   Text_DrawCharacterAtOffset(result, window, 0, 0);
-  Text_DrawNumberInWindow(coins, 6, window, 72, 0);
+  Text_DrawNumberInWindow(coins, 6, window, COUNT_NUMBER_X, 0);
   Text_DrawCharacterAtOffset(result + 1, window, 0, 8);
-  Text_DrawNumberInWindow(medals, 6, window, 72, 8);
+  Text_DrawNumberInWindow(medals, 6, window, COUNT_NUMBER_X, 8);
   choice = Menu_SelectCoinsOrMedals(choice);
   Window_Close(window, 2);
   Message_CloseFinishedWindows();
@@ -130,7 +130,9 @@ prompt:
 full:
   if (PartyInventory_CountFreeSlots() == 0) {
     Func_020013c8(message + 4);
-    Call2((void (*)())FieldMessage_ShowAtActor, minusOne, 0);
+    /* FAKEMATCH(wrapper): forwarded, so the -1 is built after movs r1, #0; as a
+     * direct call, 28 of 286 instructions differ in tla-en. */
+    Value2(FieldMessage_ShowAtActor, minusOne, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) != 0)
       goto end;
   }
@@ -157,7 +159,9 @@ toss:
   Window_Close(window, 2);
   if (result != -1) {
     if (choice == 0) {
-      Call1((void (*)())Party_AdjustCoins, minusOne);
+      /* FAKEMATCH(wrapper): forwarded, so its -1 is built at the call; as a
+       * direct call, 28 of 286 instructions differ in tla-en. */
+      Value1(Party_AdjustCoins, minusOne);
     } else if (choice == 1) {
       PartyInventory_Remove(229);
     }
@@ -174,24 +178,26 @@ toss:
         FieldEvent_Wait(10);
       }
     } else {
-      choice = 0;
-      if (result == 0 && Value1((s32 (*)())GameFlag_Test, 0x90b) == 0) {
+      total = 0;
+      /* FAKEMATCH(wrapper): forwarded, so the flag number is built for each
+       * call; as a direct call, 43 of 286 instructions differ in tla-en. */
+      if (result == 0 && Value1(GameFlag_Test, 0x90b) == 0) {
         GameFlag_SetBit(0x90b);
         Func_0200049c(-1);
       } else {
-        for (window = 0; window < result * 3 + 3; window++)
-          choice += (s8)gMainRoutineWork.unk13d[window];
-        prizeRoll = (u32)(Random16Far() * choice) >> 16;
-        for (window = 0; window < 15; window++) {
-          prizeRoll -= WEIGHT(window);
+        for (prize = 0; prize < result * 3 + 3; prize++)
+          total += (s8)gMainRoutineWork.unk13d[prize];
+        prizeRoll = (u32)(Random16Far() * total) >> 16;
+        for (prize = 0; prize < 15; prize++) {
+          prizeRoll -= WEIGHT(prize);
           if (prizeRoll < 0)
             break;
         }
-        if (window == 15)
-          window = 14;
-        Func_0200049c(gData_02001700[window]);
-        if (WEIGHT(window) > 1)
-          gMainRoutineWork.unk13d[window] = WEIGHT(window) / 2;
+        if (prize == 15)
+          prize = 14;
+        Func_0200049c(gData_02001700[prize]);
+        if (WEIGHT(prize) > 1)
+          gMainRoutineWork.unk13d[prize] = WEIGHT(prize) / 2;
       }
     }
   }

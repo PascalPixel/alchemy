@@ -1,20 +1,27 @@
-// Differ 6 of 186 (tla-ja, 2026-11-08, -mtune=gba); against tla-en, whose function
-// differs, 206.
+// Matches: differ 0 (tla-ja, 2026-11-08, -mtune=gba); against tla-en, whose
+// function differs (the patch-1 form, 236 instructions), 208, and the same in
+// tla-de, tla-es, tla-fr and tla-it. Literal pool words checked in order.
 // The Japanese release's own Func_0200263c of overlay 6aa: the patch-1 C in
 // games/tla/src/scene/mars_lighthouse_entrance/s263c.c without its overlap
-// scan, as overlay 6ab's Japanese draft of Func_02002148 (also 6 of 186).
-// Two tagged unions remain (position 22 plain, velocityX 8 plain; without both
-// 24): the union's s16 member keeps position's stores ordered before the
-// work's s16 reads, and volatile work members or a volatile position do
-// not (64 to 76, 22). Left: actor->z loaded before the sum natively, and
-// the last store's zero after the address's copy; scheduling only. No gain
-// (8 November): the once-only block dropped (10), z = actor->z += (6),
-// z's sum in a block (10) or swapped (8), the last store in a block or
-// through a zero local (6), &position passed to Func_02004c38 (6, 22 plain),
-// 8 minutes of permute (best 10). Later: z read
-// before x's sum (24), z's step through a block local or the work cast (6), the
-// last store through a u16 pointer (20); 6 minutes of permute: only a void
-// function returning unsigned int (4), rejected.
+// scan, as overlay 6ab's Japanese draft of Func_02002148. Adopting it means a
+// non-patch-1 form in s263c.c, linked by resource_6aa.ld for Japanese only.
+// What closed it (8 November): Func_02004c38's far routine Func_08020210
+// takes (object, position), so the call passes &position (r1 = sp at both
+// calls); position is a plain struct Vector3 again, its union replaced by
+// once-only blocks around position.z (and, in the step branch, the call with
+// it, or the call's &position is rebuilt: one more mov r1, sp); actor->z is
+// loaded into off inside a once-only block before z's sum, so the loop notes
+// hold the load between x's store and the work read with no filler between;
+// the function returns s32 (tagged), whose epilogue use of r0 ranks work's
+// copy ahead of the final zero. Two tagged devices remain, both signature:
+// the velocityX union (the work's s16 read must wait on that s32 store with
+// i's init filling the gap, which only an alias does; a barrier would hold
+// i's init back too, volatile casts make the read ldrh, 21) and the s32
+// return (asm operands after or before the last store: 2 or 17). The work
+// at gData_020023c4 + 0x188 is ride.h's RideWork (unk04 is its active).
+// Earlier rounds, for the record: z = actor->z += (6), z's sum swapped (8),
+// the last store in a block, through a zero local (6) or a u16 pointer (20),
+// z read before x's sum (24), 14 minutes of permute.
 #include "edition.h"
 #include "types.h"
 #include "call.h"
@@ -36,24 +43,20 @@ void Func_02004ca8(void);
 void Func_02004da0(s32 a);
 void Func_02004bc0(struct Actor *actor, s32 a);
 s32 Func_02004c18(s32 terrain, s32 x, s32 z);
-s32 Func_02004c38(struct Actor *actor);
+s32 Func_02004c38(struct Actor *actor, struct Vector3 *position);
 void Func_02004ce8();
 void wait(s32 frames);
 void Animation_ApplyChildValues(struct Actor *actor, s32 a);
 void Func_02002614(void);
 extern u8 gData_020023c4[];
 
-void Func_0200263c(void) {
+s32 Func_0200263c(void) {
   struct MainRoutineWork *main = &gMainRoutineWork;
   struct Work020023c4 *work;
-  /* FAKEMATCH(signature): position kept as a union with an s16 member, whose
-   * stores then alias the work's s16 reads and keep their order; as struct
-   * Vector3, 22 of 186 instructions differ in tla-ja. */
-  union {
-    struct Vector3 v;
-    s16 h;
-  } positionU;
-#define position positionU.v
+  struct Vector3 position;
+  /* FAKEMATCH(signature): the function returns s32 and returns nothing, so
+   * the epilogue's use of r0 ranks work's copy ahead of the last store's
+   * zero; as void, 2 of 186 instructions differ in tla-ja. */
 
   if (main->renderMode == 0) {
     struct Actor *actor;
@@ -71,8 +74,8 @@ void Func_0200263c(void) {
         s32 i;
 
         /* FAKEMATCH(signature): velocityX stored through a union with a u16
-         * member; as the plain member store, 8 of 186 instructions differ in
-         * tla-ja. */
+         * member, so the store aliases the work's s16 read after it; as the
+         * plain member store, 2 of 186 instructions differ in tla-ja. */
         ((union {
            s32 value;
            u16 half;
@@ -83,8 +86,13 @@ void Func_0200263c(void) {
         for (i = 0; i <= 9; i++) {
           position.x = actor->x + (work->unk68 << 19);
           position.y = actor->y;
-          position.z = actor->z + (work->unk6a << 19);
-          if (Func_02004c38(actor) != 0) {
+          // A once-only block: its start holds position's first two stores
+          // ahead of the work read (as the plain statement, 8 of 186
+          // instructions differ in tla-ja).
+          do {
+            position.z = actor->z + (work->unk6a << 19);
+          } while (0);
+          if (Func_02004c38(actor, &position) != 0) {
             actor->velocityX = 0;
             actor->velocityZ = 0;
             break;
@@ -98,8 +106,13 @@ void Func_0200263c(void) {
 
         position.x = actor->x + (work->unk68 << 19);
         position.y = actor->y;
-        position.z = actor->z + (work->unk6a << 19);
-        result = Func_02004c38(actor);
+        // A once-only block, as in the loop above, with the call inside so
+        // the call reuses position's address (as plain statements, 8 of 186
+        // instructions differ in tla-ja).
+        do {
+          position.z = actor->z + (work->unk6a << 19);
+          result = Func_02004c38(actor, &position);
+        } while (0);
         if (result > 0)
           break;
         if (result < 0) {
@@ -108,12 +121,14 @@ void Func_0200263c(void) {
                 -1);
           break;
         }
-        // A once-only block: its end holds the order around it (as the plain
-        // statement, 10 of 186 instructions differ in tla-ja).
+        x = actor->x += work->unk68 << 17;
+        // off, reused, holds actor->z before the step, loaded in a once-only
+        // block whose ends hold the load between x's store and the work read
+        // (as z = actor->z + ..., 8 of 186 instructions differ in tla-ja).
         do {
-          x = actor->x += work->unk68 << 17;
+          off = actor->z;
         } while (0);
-        z = actor->z + (work->unk6a << 17);
+        z = off + (work->unk6a << 17);
         actor->z = z;
         off = (x & 0xfffff) + 0xfff80000;
         if (off > 0x10000)

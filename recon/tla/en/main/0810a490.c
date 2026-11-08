@@ -1,36 +1,31 @@
-// Differ 4 of 196 (tla-en, 2026-11-08, -mtune=gba). memberIndex = 0 as its
-// own statement, then an empty once-only loop (plain C): 10 to 4. Left: the
-// copy of itemWindow (mov r9, r1) issued five rows early, with the zero
-// store one row early. Tried: the zero store inside a once-only block (6),
-// unitId inside or around one (10 to 12), a second empty loop (4), shop set
-// as a statement (4); permuter 8 and 6 minutes from 6 and from 4: nothing
-// under 4.
-// 8 November: 8 minutes of permute found nothing under 10; memberIndex = 0 declared first moves the zero store to the native's place but costs 21.
-// 8 November, later: the cause is in sched2, not aliasing: the zero store to
-// memberIndex and the saved item's load are independent (scalar frame slot
-// against a struct load), so sub sp and the zero store lose on priority to
-// window's copy. Tried: memberIndex before the saved item, unitId first,
-// creditCost first, a chained zero, the saved item through a u16 pointer or
-// as u16 or s32 (10 to 116).
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 10 of 196 in tla-en. First difference: the native issues `sub sp, #8` earlier
-// (row 12) than this does (row 22).
-// Draft, differ 35 of 196: the shop's Game Ticket gift, as ☀️'s
-// Func_0810a490 (games/tbs/src/shop/shop.c), with ⚓️'s party cursor
-// helper (Func_08108690) in place of the left and right tests. Left: the
-// prologue's order (shop load, the zero store to memberIndex and the saved
-// item's store sit two to six slots apart), the B test reusing the pressed
-// word already in a register where the native keeps gInput's address in r1
-// and reloads (ands into r2 kills it), and one constant's halves at the end;
-// instruction order and that one CSE choice. Tried: the locals in other
-// orders (35).
+// Matches: differ 0 (tla-en, 2026-11-08). The shop's Game Ticket gift, as
+// The Broken Seal's Shop_BuySpecialItem (games/tbs/src/shop/shop/stock.c),
+// with this game's party cursor helper (Func_08108690) in place of the left
+// and right tests. Plain C with no device. What closed the last 4: the menu
+// runtime's s32 partyMemberScale[4] at 0x138 (Func_0810928c in
+// games/tla/src/shop/f10928c.c writes those words), which puts int in the
+// struct's alias set. sched2 then keeps the saved item's load behind the
+// zero store to memberIndex, so that store, sub sp and the zero take the
+// native's early slots and itemWindow's copy lands just before the load. A
+// struct of bytes and halfwords only let the load pass the store (differ 10).
+// The empty once-only loop earlier rounds put after memberIndex = 0 to force
+// the store early (differ 4) is gone.
+// Editions: ja keeps this function at .rom.0010a498, fr and it at
+// .rom.0010a494, and de (0x08112494) and es (0x0810e494) inside larger
+// scaffold sections, which diff cannot read. Their 0x1dc bytes differ from
+// tla-en's only in the bl offsets and the pool's table address and message
+// ids, so this C can be adopted in all six. The message ids differ by
+// edition: 04724, 04687 and 04695 (tla-en ids) need catalog names before
+// adoption, as MsgHereYouGo and MsgDontWantIt have.
 #include "types.h"
 #include "input.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 
 struct ShopRuntime {
-  u8 unk000[0x4ca];
+  u8 unk000[0x138];
+  s32 partyMemberScale[4];
+  u8 unk148[0x382];
   s16 partyMemberIds[25];
   u16 selectedItem;
   u8 unk4fe[6];
@@ -73,10 +68,6 @@ void Func_0810a490(void *window, void *itemWindow) {
   s32 message;
 
   memberIndex = 0;
-  // An empty once-only loop: it ends the zero store's block, so the store is
-  // issued before the saved item's load, as the native does.
-  do {
-  } while (0);
   savedSelectedItem = shop->selectedItem;
   unitId = 0;
   creditCost = Data_0810c38e[gMainRoutineWork.counterC];

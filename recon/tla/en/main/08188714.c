@@ -1,48 +1,19 @@
-// Differ 8 of 636 (tla-en, 2026-11-08, -mtune=gba): the ring loop agrees now; left, in the
-// jaw block, the pixels (Ram_MapCellBuffer) loaded late into r3 (early into r4
-// natively) and the zero for r8 built in r4 here (r0 natively). Without the
-// once-only block, or with the pixels in a local, 10. No device: a once-only
-// block around the shake replaces the empty asm after the leap sound (8 either way).
-// (Round two, 2026-11-08: the pixels as a local, function- or block-wide, 10
-// to 164; the pixels store moved anywhere earlier, 134 to 172; once-only
-// blocks around the neighbouring stores, or i cleared before the loop, 8;
-// permuter 8 minutes, nothing better.)
-// (Round three, 2026-11-08: the pixels store after the mesh, kind, texture or
-// logHeight, 132 to 138; once-only blocks around alpha, kind, texture or
-// vertices, 8 to 14; the jaw loop as a do loop or with angle first, 8; a
-// separate jaw counter, 471; the shake block still worth 2.)
-// 2026-11-07: the empty asm after the declarations did nothing and is gone;
-// statement orders, once-only blocks, a pixels local and the ring sums (and 10
-// permuter minutes) stay at 10: the ring loop loads &screen before the
-// multiply, and the jaw block loads the pixels early into r4 and clears i in
-// r0.
-//
-// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 28
-// of 636 with a one-pass block and two empty asm the greedy device search
-// placed (36 without them); the rest is the instruction order described
-// below.
-// Near miss: listing 636 instructions, draft 636, differ 66. ☀️ twin:
-// BattleEffect_RunDeathPlunge (effect.c, call order 0.675): the leap, the flip
-// and the flash ring are ☀️'s; ⚓️ added a second variant that bursts sparks and
-// spins the jaw quad of Triple Chomp (BattleEffect_RunTripleChomp) at the
-// target. The native frame (104) holds effect at sp+56, work 52, canvas 48,
-// frame 44, the blitter pair at 36 and 40, the target 32, the user's and the
-// target's heights at 28 and 24, the target's screen position's address at 20
-// and the user's action flags' at 16, frame - 56 at 12 and frame * 2 - 92 at 8;
-// the texture is at sp+60, the user's screen position at 68, the user's point
-// at 80 and the target's screen position at 92. Written from the listing on the
-// ☀️ body (2026-10-15, fx-n3): 102 at the first compile, with the instruction
-// count and the frame already the native's. The aggregate locals declared
-// target screen, point, screen, texture (the first declared takes the highest
-// slot): 98. The burst loop's sparks taken as &work->particles[i] (either loop;
-// both: also 76): 76. The jaw loop stepping angle before i: 66. Left (66 rows,
-// about 30 pairs): the native issues a load one slot before the constant or
-// address next to it (the heap base before effect's spill, work before 0x700,
-// the pooled 0x1010 between the halves of BLDALPHA's address, the target before
-// 0x91eb, the stack loads before 0xab85 and shakeFrames' offset, the point's y
-// and z loads, the sheet offsets), and in the jaw block it stores the vertices
-// before the texture's pixels and clears i in r0. Tried: the texture's pixels
-// stored first or before the vertices: 186.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Every edition differs 0 (tla-ja's copy is at 0x08188718); no FAKEMATCH
+// device. The last 8 closed with three changes, each needed: the texture's
+// pixels typed u8 *, as the Breath effects (Func_0818bc98) type them, so the
+// pixels store no longer waits on the vertices store and sched2 keeps the
+// vertices after the kind and the texture; Ram_MapCellBuffer held in a
+// function-wide local, which gets no register and is rebuilt at the store (into
+// r4, so the zero for i lands in r0); and the jaw set up in the Breath effects'
+// order (size, kind, texture, mesh, vertices, pixels, then alpha). Without the
+// local, 10; in the old order (mesh before kind), 10; with void *pixels, 2.
+// The once-only block around the shake after the leap sound stays (2 as the
+// plain statement).
+// ☀️ twin: BattleEffect_RunDeathPlunge (effect.c): the leap, the flip and the
+// flash ring are ☀️'s; ⚓️ added a second variant that bursts sparks and spins
+// the jaw quad of Triple Chomp (BattleEffect_RunTripleChomp) at the target.
+// Left: adoption into the module of its linker neighbours in all six editions.
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -72,7 +43,7 @@ struct ModelTexture {
   u32 logWidth : 8;
   u32 logHeight : 8;
   u32 unk02 : 16;
-  void *pixels;
+  u8 *pixels;
 };
 
 // One entry of a model list, as Render_AllocateModelList allocates them and
@@ -160,6 +131,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
   struct Model *model;
   void *vertices;
   s32 i;
+  u8 *pixels; // The jaw's texture, held for the whole effect.
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -169,7 +141,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Ram_MapCellBuffer, 0, 0);
+  pixels = Ram_MapCellBuffer;
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, pixels, 0, 0);
   if (effect->variant == 1) {
     Iwram_CopyWords((void *)0x05000000,
                     Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
@@ -311,14 +284,11 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
 
           texture.logWidth = 7;
           texture.logHeight = 7;
-          model->mesh = gData_08199364;
           model->kind = 7;
           model->texture = &texture;
+          model->mesh = gData_08199364;
           model->vertices = vertices;
-          // A once-only block: it keeps the pixels store after the vertices.
-          do {
-            texture.pixels = Ram_MapCellBuffer;
-          } while (0);
+          texture.pixels = pixels;
           model->alpha = alpha;
           for (i = 0, angle = 0x2000; i != 2; angle += 0x4000, i++) {
             Render_ResetTransformState();
@@ -351,8 +321,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
     }
     if (frame == 0) {
       Sound_PlayFar(136);
-      // A once-only block: it keeps the shake after the sound (10 as the plain
-      // statement).
+      // A once-only block: it keeps the shake after the sound.
       do {
         work->shakeFrames = 6;
       } while (0);

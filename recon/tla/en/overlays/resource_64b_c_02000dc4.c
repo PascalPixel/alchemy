@@ -1,34 +1,33 @@
-// Differ 12 of 270 (tla-en, 2026-11-08, -mtune=gba; 12 on 5 November), from 51. Left: case 98's store
-// has the sum in r3 and the offset and value in r2 in the native; turned here. A block-local pointer
-// to gMainRoutineWork (12), *& or a u16 pointer to the field (45); permuter 6 minutes: 12.
-// 8 November: lreg gives the sum (pseudo 159) r2 because the constant 1 outranks it. A constant
-// local for the 1 (any type, in the case or at the top) fixes case 98 but moves the split
-// offset's scratch from r2 to r0 at four other sites (36); once-only blocks, the case
-// placed first, a pointer for the switch: 12 or worse. Permuter 7 minutes: no gain.
-// 8 November, second pass: a case-local s16 on = 1 does give case 98 the native
-// registers, but the split offsets' reload scratch becomes r0 function-wide (36); a
-// once-only block round the store, (&gMainRoutineWork)->, *& (45): 12 or worse.
-// Permuter 5 minutes, seed 7: no gain.
-// Under -Os, 5 November: differ 51 of 270 (tla-en); older figures below predate it.
-// Draft, differ 104 of 270: the world map's entrance handler: restores the
-// ship's place, then runs the script for the entrance taken. Left: register
-// choice in the ship block (the native keeps gMainRoutineWork in r5, the override
-// in r6, savedX's address in r7) and the pool reload it does at the join.
+// Matches: differ 0 (tla-en, 2026-11-08); differ 0 in tla-ja, tla-de, tla-es,
+// tla-fr and tla-it too. The world map's entrance handler: restores the ship's
+// place, then runs the script for the entrance taken. diff compares
+// instructions only: the pool words and the 98-entry jump table are left to
+// make compare-editions. Case 98's flags go through the scene layer's Flag_Set
+// (flag_call.h), as 345 matched sites do: called directly, each flag id is a
+// pseudo of the case's block, local-alloc's block then holds seven quantities
+// and qsorts them, so the constant 1 (shorter life) takes r3 before the store's
+// address and the native's r2/r3 turn round (12 of 270). Through the inline the
+// ids go straight to r0, the block keeps three (address, 1, the scene's pool
+// word), and local-alloc's three-quantity hand sort, which compares quantity
+// numbers, not the order array, places the address first, as in
+// lemuria_entrance/s0190.c. Case 59's Value1/Call1 became Flag_IsSet/Flag_Set
+// (still 0). The one device left is the Call4 wrapper round Func_02004b60,
+// tagged below; tried before this round: a pointer to gMainRoutineWork or to
+// the field, *&, a constant local for the 1 (case 98 right, reload scratch r0
+// elsewhere, 36), once-only blocks, permuter 18 minutes in all.
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "actor.h"
 #include "event_work.h"
 #include "call.h"
+#include "flag_call.h"
 
 extern char MsgIVeHeard[];
 extern char SceneId_WorldMap;
 extern char SceneId_Ov6a5;
 extern u8 gData_0200632c[];
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
 void wait(s32 frames);
 void FieldEvent_Wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
@@ -81,6 +80,9 @@ s32 Func_02000dc4(void) {
   Func_02004d20(0x80000, 0x10000);
   GameFlag_ClearBit(0x12f);
   Func_02003960();
+  /* FAKEMATCH(wrapper): the three Func_02004b60 calls forwarded through Call4,
+   * so each builds its own constants (the 256 is not shared); as direct calls,
+   * 12 of 270 instructions differ in tla-en. */
   if (GameFlag_Test(0x90f))
     Call4((void (*)())Func_02004b60, 0, 240, 336, 288);
   if (GameFlag_Test(0xa21)) {
@@ -107,9 +109,8 @@ s32 Func_02000dc4(void) {
     Func_02003490();
     break;
   case 59:
-    if (Value1((s32 (*)())GameFlag_Test, 0x90a) == 0 &&
-        GameFlag_Test(0xa5f) != 0) {
-      Call1((void (*)())GameFlag_SetBit, 0x90a);
+    if (!Flag_IsSet(0x90a) && GameFlag_Test(0xa5f) != 0) {
+      Flag_Set(0x90a);
       Func_02001c5c();
     }
     break;
@@ -152,10 +153,10 @@ s32 Func_02000dc4(void) {
     break;
   case 98:
     gMainRoutineWork.ownerOverride = 1;
-    GameFlag_SetBit(0x8de);
-    GameFlag_SetBit(0x8df);
-    GameFlag_SetBit(0x163);
-    GameFlag_SetBit(0x11d);
+    Flag_Set(0x8de);
+    Flag_Set(0x8df);
+    Flag_Set(0x163);
+    Flag_Set(0x11d);
     Func_02004d38((s32)&SceneId_WorldMap, 61);
     break;
   case 99:

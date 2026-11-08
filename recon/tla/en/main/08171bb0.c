@@ -1,27 +1,11 @@
-// Differ 20 of 1748 (tla-en, 2026-11-08, -mtune=gba): as below.
-// 2026-11-08: the CopyWords wrapper is gone: the three palette copies call
-// Iwram_CopyWords on a palette local of the whole function (20, as with the
-// wrapper; 26 as a direct call on BG_PLTT). Without mode 2's zero local, 32;
-// an empty once-only block at any statement, step or x written another way,
-// and a 9-minute permuter run leave 20 or more. Left: mode 4's giv order and
-// the sched2 rows below; pin and statement-move searches found nothing.
-// Later on 2026-11-08, no gain: in the last loop (mode 0 and 1's rows, the
-// "mode 4 tail" below) x as a local of the inner loop (20), step * j (20), the
-// [1] store first (295), w before r (712), an 8-minute permuter run on it (20).
-// Draft, differ 36 of 1748, skeleton gap 13 (tla-en, 2026-11-01)
-// Same instruction count as the listing; the frame (176 bytes), every stack
-// slot and all the loops' registers match. What is left, about 18 pairs:
-// - Scheduling only, same instructions (K2's load and split-constant model, a
-//   compiler question): ldr effect before frames = 38's store; the three
-//   BG_PLTT copies (the listing's ldr of IwramCopyWords comes before
-//   lsls #19); the third particles[63] copy of each of the three blocks (its
-//   three-insn constant outranks the store here, lsls r2 comes after it in the
-//   listing); mov r2, fp in mode 2; str [sp, #28] in mode 3; mode 3's
-//   mov r7, sl; model->shade's store against the two scroll stores.
-// - Mode 4's tail: x (sp 32) and the row (sp 24) update in the other order,
-//   so r3 and r5 swap, and x's zero comes from r4 instead of r1. x as
-//   j * step in the loop is the nearest form.
-// What the listing showed (each moved differ by tens or hundreds):
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Also differ 0 in tla-de, tla-es, tla-fr and tla-it. tla-ja is not measured:
+// its scaffold is an .incbin section with no instruction-set marker, which
+// alchemy-devtools diff cannot decode; the function's bytes there differ from
+// tla-en's only in bl offsets and pool words (+2 or +4), so adopting it in all
+// six editions needs the whole twelve-edition comparison.
+// The forms below are what made it match; each moved differ by tens or more,
+// so keep them when humanizing:
 // - resource ids load from the pool, so they are ResourceId_ symbols;
 // - buffers are Ram_MapCellBuffer plus a constant, never symbols: as symbols
 //   load_mems hoists the mirror's 0x02014208 into lr, which the listing rebuilds
@@ -35,22 +19,28 @@
 // - s32 *out in mode <= 1 keeps point's address out of r5, so k gets it;
 // - the wave loops' outer counter is its own variable, the inner one is the
 //   i of every other loop (r8), and p is a separate variable per loop;
-// - j * step with step a variable, here x and mode 4's x, are givs worth
-//   reducing, which gives the native's stack slots and its copies; -4 * j is
-//   not (loop.c: not worth while), and -j * 3 written in the loop is mode 3's;
+// - every row's x is worked out in the inner loop: gcse hoists its first step
+//   and loop.c the rest, after the copies it hoists itself. Mode 2 and 4's
+//   -j * 4 + 64 so puts x's copy after j << 10; mode 0 and 1's -(j + j) * 2
+//   builds on the address's j * 2, which gcse cannot hoist, so the outer loop
+//   reduces x before the j * 2 givs (x's zero from j, its update before the
+//   row's). j * step there is hoisted whole by gcse (differ 20); -j * 4,
+//   j * -4, -(j * 4) and -(j * 2) * 2 fold or are not worth reducing (700);
 // - h is i * w * 2, a giv: as a running sum gcse hoists w * 2;
-// - (frame + i * 4) << 11 is reduced where (i << 13) - (frame << 11) is not;
-//   mode 3's wave and scroll are running values, i = 0 set before them;
-// - mode 4's angle is (frame + j * 2) << 10 and r and w plain j * 2 (a running
-//   y lets gcse hoist the shift, two as a variable merges the givs);
+// - (frame + i * 4) << 11 is reduced where (i << 13) - (frame << 11) is not,
+//   and mode 3's wave and scroll are givs of i too, so their first values come
+//   after loop.c's copy of &spos (mov r7, sl); as running values, before it.
+//   Mode 3's complement is masked in its own statement: in one expression
+//   with the mask the complement is the giv reduced (mvns, subs #48);
+// - mode 0 and 1's angle is (frame + j * 2) << 10 and r and w plain j * 2 (a
+//   running y lets gcse hoist the shift, two as a variable merges the givs);
 // - frame * 630 written inline, not phase * 2, keeps its last shift inside
 //   the bar loop, and the shade of the two rings reuses shade (r10);
 // - Trig_Cos(a) * r, not r * Trig_Cos(a), and the model's stores in the order
-//   texture, mesh, vertices, shade.
-// Tried without gain: step in mode 3, two in mode 3 (frame 180), an address or
-// pointer for the rows instead of [j][i], x in other places in mode 4, every
-// order of the second model block's stores, of wave, scroll and i, and of
-// q->variant, a local for the packed side.
+//   texture, mesh, vertices, shade;
+// - a texture's pixels are const u8 *: as const void * their store may alias
+//   the model's byte stores (the model holds void pointers), and sched2 puts
+//   the two scroll stores before model->shade's.
 
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -65,7 +55,7 @@ struct ModelTexture {
   u32 logWidth : 8;
   u32 logHeight : 8;
   u32 unk02 : 16;
-  const void *pixels;
+  const u8 *pixels;
 };
 
 struct RenderModel {
@@ -416,20 +406,16 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
       }
 
       if (mode == 2 || mode == 4) {
-        s32 step = -4;
-
         for (j = 0; j != 33; j++) {
           s32 r = j;
-          s32 x;
 
           if (r > 28) {
             r = 28;
           }
-          x = j * step + 64;
           for (i = 0; i != 2; i++) {
             s32 zero = 0;
 
-            MAP_CELLS[j][i][0] = x;
+            MAP_CELLS[j][i][0] = -j * 4 + 64;
             MAP_CELLS[j][i][1] = ((Trig_Cos((j << 10) - (frame << 11)) * r) >> 16) + i * 48 - 24;
             MAP_CELLS[j][i][2] = zero;
           }
@@ -449,8 +435,6 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           }
         }
       } else {
-        s32 step = -4;
-
         for (j = 0; j != 33; j++) {
           s32 r = j * 2 + j;
           s32 w = j * 2;
@@ -462,7 +446,8 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
             w = 40;
           }
           for (i = 0; i != 2; i++) {
-            MAP_CELLS[j][i][0] = j * step;
+            // -4 * j, built on the row's j * 2 so it is worked out here.
+            MAP_CELLS[j][i][0] = -(j + j) * 2;
             MAP_CELLS[j][i][1] = ((Trig_Cos((frame + j * 2) << 10) * r) >> 16) + (i * w << 1) - w;
             MAP_CELLS[j][i][2] = 0;
           }
@@ -592,8 +577,6 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           }
         }
       } else if (mode == 3) {
-        s32 scroll, wave;
-
         EffectPosition_ProjectScaledBattler(effect->actor, &spos);
         if (frame == 8) {
           Sound_PlayFar(144);
@@ -610,23 +593,23 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           }
         }
         model->scrollV = 0;
-        i = 0;
-        wave = frame << 11;
-        scroll = frame << 3;
-        for (; i != 1; i++) {
-          model->scrollU = ~scroll & 127;
+        for (i = 0; i != 1; i++) {
+          s32 scroll = ~((frame + i * 6) << 3);
+
+          // Masked in its own statement: with the mask in one expression the
+          // complement, not the scroll, is the running value.
+          scroll &= 127;
+          model->scrollU = scroll;
           Render_ResetTransformState();
           Func_08015160((spos.x / 2 - 64) << 16, (spos.y << 16) - 0x340000, 0);
           if (effect->side == 1) {
             SceneTransform_ApplyYaw(0x8000);
           }
           SceneTransform_ApplyPitch(i << 15);
-          Func_080150e4((Trig_Sin(wave) << 11) >> 16);
+          Func_080150e4((Trig_Sin((frame + i * 8) << 11) << 11) >> 16);
           Func_080151e4(0x14e20, 0x8000, 0x10000);
           Render_TransformVertices(gMapCellBuffer, vertices, 66);
           Render_DrawModelList(model);
-          wave += 0x4000;
-          scroll += 48;
         }
       } else {
         if (frame <= 29) {

@@ -1,36 +1,18 @@
-// Differ 16 of 69 (tla-en, 2026-11-08, -mtune=gba), under -Os. With the shift
-// as the value (alpha = fade << 8; alpha |= 16 - fade) i now takes r4 as the
-// native does; left is next in r0 (native r1) and the division temp, which
-// here ties to fade in r1 where the native keeps fade apart in r0 and the temp
-// in r3. As 16 - fade | fade << 8, i falls to r0 (also 16). Older figures and
-// notes below predate this.
-// Also 16 or worse (2026-11-08): the value as one expression either way round,
-// the right side first, blend++ in place of next, fade = (blend + 1) / 4,
-// next, fade and alpha at function scope, fade as s16, u16, s8 or u8, alpha
-// as s16, u16 or s32, next or blend as u32, the range as (u32)(i - 17) <= 62,
-// once-only blocks around the store or the or; a 10-minute permuter run found
-// nothing below 16. In the lreg dump fade is local to its block and takes r1
-// before global allocation ties the division temp to it.
-// Draft, differ 50 of 69, skeleton gap 6/8 (tla-en, 2026-11-01)
-// The twin Func_02000be8 opens with this same fade. The native rebuilds its
-// constants every pass and compares with 352 (blt), which is a label-and-goto
-// loop: a for or while hoists them and compares with 351 (differ 80).
-// Left: BLDALPHA's right side narrows to HImode, so 16 is pooled, and the
-// address is built before the right side. Reaching for that with a local
-// `s32 value = BLEND_ALPHA(alpha, fade); REG_BLDALPHA = value;` gives skeleton 0
-// and differ 30, but it is a forced temporary, so it is not kept; a form that
-// keeps SImode and evaluates the right side first without one would land there.
-// At that point only registers differ, and the cause is measured:
-// - i prefers STACK_REG (i - 17 fits thumb_addsi3's !k,!O alternative), so it
-//   falls to ip or r0, where the native has r4; it needs one more LO_REGS use.
-// - The native's fade is a global pseudo (r0, with temp r3, next r1; the sink
-//   loop has r1, r2, r3), while here it is local to its block and ties to the
-//   division temp. Block scope or function scope makes no difference.
-// - blend (.368) ranks below back (.370), so r5 and r6 swap. One more insn in
-//   both live ranges would reverse that, and may be the same missing copy.
-// Tried with no gain: a u32 offset local or copy for i - 17, ++i, i + 1, the
-// range spelled three ways, blend set after the call, a local for 352 or for
-// 0x10000, swapped layer order, i moved up, one variable reused for the value.
+// Matches: differ 0 (tla-en, 2026-11-08); also differ 0 in tla-ja, tla-de,
+// tla-es, tla-fr and tla-it, plain C with no device.
+// What closed it: the quotient written twice, ((blend + 1) / 4) << 8 and then
+// 16 - (blend + 1) / 4, with blend++ after the store. The second division
+// keeps its own compare and branch through local allocation (they are gone
+// from the final code), so the quotient and the shifted value span blocks and
+// become global pseudos: blend + 1 takes r1, the division's copy r3 and the
+// quotient r0, as the listing has them. With the quotient in a named local
+// (next = blend + 1; fade = next / 4) it is local to its block, takes r1
+// first, the division's copy ties to it and next falls to r0 (differ 16 under
+// every reshaping and a 10-minute permuter run). Func_02000be8's rise loop and
+// Func_02000d3c stop on that same tie; this form is the one to try there.
+// The loop is a label and goto: a for or while hoists its constants and
+// compares with 351 where the listing rebuilds them every pass and compares
+// with 352.
 #include "../../../../games/tla/src/scene/gabomba_statue_chamber/gabomba_statue_chamber.h"
 #include "../../../../games/tla/include/system/io_reg.h"
 
@@ -63,13 +45,11 @@ void Func_02001ba8(void) {
       i = 0;
     loop:
       if (i >= 17 && i <= 79) {
-        s32 next = blend + 1;
-        s32 fade = next / 4;
-        u32 alpha = fade << 8;
+        u32 alpha = ((blend + 1) / 4) << 8;
 
-        alpha |= 16 - fade;
+        alpha |= 16 - (blend + 1) / 4;
         REG_BLDALPHA = alpha;
-        blend = next;
+        blend++;
       }
       front->y += 0x10000;
       back->y += 0x10000;

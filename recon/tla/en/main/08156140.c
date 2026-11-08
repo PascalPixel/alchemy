@@ -1,4 +1,33 @@
-// Differ 10 of 2278 (tla-en, 2026-11-08, -mtune=gba). Third round that day: the
+// Draft, differ 4 of 2278 (tla-en, 2026-11-08)
+// Every edition measures 4 (tla-ja, de, es, fr, it alike), the same four rows.
+// Left: in the turned flash's first draw the native issues adds r1, r2, r1 and
+// adds r3, #138 before mov r4, sl, and adds r1, r1, r3 before ldr r2, [r7];
+// the draft issues mov r4, sl and ldr r2, [r7] one row earlier each. The
+// sched2 dump (--rtl) shows why: all three rows rank 138 and mov r4, sl wins
+// on its four dependents, one of them the release's loop-note barrier (sl's
+// last use), then ldr r2, [r7] wins on its six (the two stack argument stores
+// alias it). Dropping that barrier alone would still leave ldr r2, [r7] first;
+// both native choices follow if an anti dependence cost 1 instead of 0, so
+// this is the K2 scheduling question, not a source shape. Fourth round tried
+// for it: the picture sum's terms or &sheet[...], -table + x, once-only blocks
+// around the draw, load and draw, or release and the next load (12, 22), the
+// asm before the release (6), plain releases with no asm (46 to 74: loop.c
+// then hoists Data_081984f4 into fp in place of Data_081984d7), and the
+// permuter on that draw for 7 min (14,700 candidates): none.
+// Settled this round: the streak's counter and zero. A function-scope local
+// holding the zero shows the native's registers: n as k with x as the zero
+// (for (k = 0, x = 0; ...)) gives the loop exactly but makes x outlive the
+// ABS copy, so cse compares x instead of it (20); k with shift or a fresh
+// zero lets k outrank shift and swaps them everywhere (46); hit as the zero
+// moves hit to r2 (24 to 26); register, u8, s16 or u32 held, held set in the
+// for init or in the loop, once-only loops round held (refs are recounted
+// after combine, so they add nothing): no gain. What works is held carried
+// through the loop by an asm operand (a tagged barrier), set after n in the
+// for init so the two movs come in the native's order: 10 to 4. Re-measured
+// the other devices: each flash barrier now pays 2 (6 without it), the dead
+// updates 35 and 28.
+//
+// Earlier, differ 10 (tla-en, 2026-11-08, -mtune=gba). Third round that day: the
 // streak as do-while (49), n + j or j first, a pointer base, a block pointer,
 // n = held, held as u8 or s16, n initialised at its declaration: 10; a literal
 // 0 or a counting-down n 12; empty once-only loops around held or the loop 10
@@ -64,9 +93,8 @@
 // so none was added: a barrier here could not reach differ 0.
 // - In the glint loop the native reads p->x and p->y before the multiply; the
 // draft's muls goes first. Eight spellings of the two sums made no gain.
-// - The streak's n and its zero sit in r2 and r1, the native r1 and r2. Types,
-// declaration order, a named zero and reusing k, shift or spawned did not swap
-// them; `held` keeps the constant, which gained 2.
+// - The streak's n and its zero (r1 and r2 in the native) now match, through
+// the tagged asm operand on `held`; without it they swap (see the top note).
 // - After RELEASE_DRAW_BLITTER at the two flipped flashes the native loads r1
 // before r0, the draft r0 first; a plain call there is differ 132.
 // - RELEASE_DRAW_BLITTER is plain at two sites (comet, first; glint), where it
@@ -600,7 +628,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
             if (target->x < 0) {
               hit = x < 0;
               /* FAKEMATCH(dead): the twin's cancelling updates under a test
-               * that emits nothing; as no updates, 103 of 2278 instructions
+               * that emits nothing; as no updates, 35 of 2278 instructions
                * differ in tla-en. */
               if (target) {
                 hit ^= x;
@@ -611,7 +639,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
             } else {
               hit = x >= 0;
               /* FAKEMATCH(dead): the same for the other side; as no updates,
-               * 100 of 2278 instructions differ in tla-en. */
+               * 28 of 2278 instructions differ in tla-en. */
               if (target) {
                 hit ^= x;
                 hit ^= x;
@@ -658,10 +686,15 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
               if (mode == 16 || mode == 17) {
                 // The streak lets its particle loose.
                 s32 n;
-                s32 held = 0;
+                s32 held;
 
-                for (n = 0; n != 1; n++)
+                for (n = 0, held = 0; n != 1; n++) {
+                  /* FAKEMATCH(barrier): the asm operand keeps held a register
+                   * the loop carries, so it is allocated r2 before n; as no
+                   * asm, 12 of 2278 instructions differ in tla-en. */
+                  __asm__("" : "+r"(held));
                   PARTICLES[PTCL_STREAKS + j + n].variant = held;
+                }
               } else if (mode != 15) {
                 // Sparks.
                 shift = mode == 5 ? 12 : 11;
@@ -758,7 +791,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                              flash->y - Data_081984ec[step],
                              Data_081984d7[step], Data_081984de[step]);
               RELEASE_DRAW_BLITTER();
-              /* FAKEMATCH(barrier): the empty asm parts the scheduler's rows; as no asm, 12 of 2278 instructions differ in tla-en. */
+              /* FAKEMATCH(barrier): the empty asm parts the scheduler's rows; as no asm, 6 of 2278 instructions differ in tla-en. */
               __asm__("");
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
               DRAW_ALTERNATE(
@@ -773,7 +806,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                              flash->y - Data_081984d7[step],
                              Data_081984de[step], Data_081984d7[step]);
               RELEASE_DRAW_BLITTER();
-              /* FAKEMATCH(barrier): the empty asm parts the scheduler's rows; as no asm, 12 of 2278 instructions differ in tla-en. */
+              /* FAKEMATCH(barrier): the empty asm parts the scheduler's rows; as no asm, 6 of 2278 instructions differ in tla-en. */
               __asm__("");
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
               DRAW_ALTERNATE(

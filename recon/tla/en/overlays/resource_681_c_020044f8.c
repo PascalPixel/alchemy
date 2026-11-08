@@ -1,28 +1,21 @@
-// Differ 44 of 418 (tla-en, 2026-11-08, -mtune=gba): register names only.
-// Fourth pass (2026-11-08), unchanged: the last step's number stored before x
-// is read, next set before the cell, o = 0 after the border pointers (all 44),
-// i before o (54). 9 minutes of permuting (seed 9137): nothing below 44, and
-// nearly every random rewrite failed to compile around the labels.
-// Third pass (2026-11-08): the wrapper and the path local re-measured (a direct
-// call 140, gPath directly 69: both stay); the cell block-scoped in the second
-// loop, the scan-down pointer from AT_ADDRESS, step++ for step = next, the cell
-// set after next, 44 (unchanged); the scan-down pointer from cell 55, the cell set
-// after the first scan 46 or at the end 406, the neighbours read through cell[]
-// 54 to 421, a step pointer 88, once-only blocks round the cell, next or a store
-// 46 to 417. 8 minutes of permuting (seed 5521): nothing below 44.
-// The native has the cell in ip, the row's y << 3 in lr and the step's offset in r9;
-// here the two offsets outrank the cell (5 refs over 75 and 86
-// against 4 over 111), take ip and lr, and the cell takes r9. That also moves the reload
-// registers' rotation in the third and fourth scans. Pinning the cell to ip gives the
-// names but loses one reload, which moves the rotation (38). Sharing the cell with the
-// walk's store gives it 8 refs over 116, which takes r7 before the step.
-// path is one local holding a constant: its doubled live length is what puts steps
-// behind tries, and at the end it reloads from the pool.
-// Also measured (2026-11-06): a second counter for the second loop, 129 (the walk's step
-// leaves r7); the cell shared with the walk's store, 244 (it takes r7 in the walk);
-// the first scan read through cell[GRID_WIDTH], 67; the last two stores swapped, 66.
-// Second pass (2026-11-06): the cell set after next, 44; as &AT(x, y), 46; a
-// 5-minute permute found 36 only by adding a store to gRandomState.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// All six editions measure differ 0 (tla-en, tla-ja, tla-de, tla-es, tla-fr,
+// tla-it), so it can be adopted into resource_681 in every edition. Not yet
+// confirmed by make compare-editions, which the adopter runs.
+// Fifth pass (2026-11-08), from differ 44 to 0, in plain C:
+// - The border loop counts with step, not a separate i. step then outranks the
+//   cell, so the cell, shared with the walk's store, gets ip (8 refs over 116,
+//   below step) and the two offsets take lr and r9, as in the native.
+// - The walk stores through the cell variable. Its reload in the walk leaves the
+//   code unchanged.
+// - o = 0 is set before b, so sched2 places it between b's two halves.
+// - Each neighbour block sets v = step before reading c. v's r2 then stays busy
+//   over the next block's offset reloads, which puts the reload rotation back on
+//   r0 and r1 and on r3 in the fourth block.
+// - The side scans read AT(++nx, y) and AT(--nx, y), so the step comes after the
+//   row's offset, as sched2 orders it in the native.
+// The one device left is the wrapper below; a direct call measures 102 of 418.
+// path stays a local holding one constant; gPath used directly measures 25.
 //
 // Lays out the maze path once (flag 0x3f0, not after flag 0x109): seeded by
 // the given value, a random walk of fourteen steps from the middle of a 28 by
@@ -79,7 +72,7 @@ u32 Random16Far(void);
 
 static __inline__ void *Heap_AllocEwram_(s32 size) {
   /* FAKEMATCH(wrapper): forwarded inline, as scene_call.h describes; as a
-   * direct call, 140 of 418 instructions differ in tla-en. */
+   * direct call, 102 of 418 instructions differ in tla-en. */
   return Heap_AllocEwram(size);
 }
 
@@ -91,7 +84,7 @@ void Func_020044f8(s32 seed) {
   Unk_Path *path;
   Unk_Step *steps;
   Unk_Cell *cell;
-  s32 x, y, nx, ny, step, tries, dir, i, v, next;
+  s32 x, y, nx, ny, step, tries, dir, v, next;
   u32 saved;
 
   saved = gRandomState;
@@ -112,9 +105,10 @@ restart:
     s32 o, t;
     x = GRID_WIDTH / 2;
     y = GRID_WIDTH / 2;
-    b = &AT(GRID_WIDTH, 0);
-    i = GRID_WIDTH;
     o = 0;
+    b = &AT(GRID_WIDTH, 0);
+    // step counts the border's rows here, before the walk numbers its steps.
+    step = GRID_WIDTH;
     a = grid->cells;
     e = grid->cells;
   border:
@@ -127,8 +121,8 @@ restart:
     t = o + GRID_WIDTH * GRID_WIDTH * 4;
     ((s8 *)grid)[t] = 99;
     o += sizeof(Unk_Cell);
-    i--;
-    if (i >= 0)
+    step--;
+    if (step >= 0)
       goto border;
   }
   for (step = 1; step <= 14;) {
@@ -167,13 +161,12 @@ restart:
       ny = y - 1;
       break;
     }
-    {
-      Unk_Cell *here = AT_ADDRESS(x, y);
-      here->unk_0 = step;
-      step++;
-      here->unk_1 = nx;
-      here->unk_2 = ny;
-    }
+    // The same cell variable the second loop reads its steps from.
+    cell = AT_ADDRESS(x, y);
+    cell->unk_0 = step;
+    step++;
+    cell->unk_1 = nx;
+    cell->unk_2 = ny;
     x = nx;
     y = ny;
   }
@@ -185,9 +178,11 @@ restart:
     next = step + 1;
 
     {
-    s32 c = AT(x, y + 1).unk_0;
+    s32 c;
 
     v = step;
+    c = AT(x, y + 1).unk_0;
+
     if (c == next)
       v = next;
     else if (c == step - 1)
@@ -208,9 +203,11 @@ restart:
     steps[step].unk_2 = v;
 
     {
-    s32 c = AT(x, y - 1).unk_0;
+    s32 c;
 
     v = step;
+    c = AT(x, y - 1).unk_0;
+
     if (c == next)
       v = next;
     else if (c == step - 1)
@@ -231,9 +228,11 @@ restart:
     steps[step].unk_5 = v;
 
     {
-    s32 c = AT(x - 1, y).unk_0;
+    s32 c;
 
     v = step;
+    c = AT(x - 1, y).unk_0;
+
     if (c == next)
       v = next;
     else if (c == step - 1)
@@ -241,8 +240,7 @@ restart:
     else {
       nx = x;
     scanRight:
-      nx++;
-      c = AT(nx, y).unk_0;
+      c = AT(++nx, y).unk_0;
       if (c == v - 1) {
         v = c;
         goto scanRight;
@@ -254,9 +252,11 @@ restart:
     steps[step].unk_3 = v;
 
     {
-    s32 c = AT(x + 1, y).unk_0;
+    s32 c;
 
     v = step;
+    c = AT(x + 1, y).unk_0;
+
     if (c == next)
       v = next;
     else if (c == step - 1)
@@ -264,8 +264,7 @@ restart:
     else {
       nx = x;
     scanLeft:
-      nx--;
-      c = AT(nx, y).unk_0;
+      c = AT(--nx, y).unk_0;
       if (c == v - 1) {
         v = c;
         goto scanLeft;

@@ -1,22 +1,19 @@
-// Differ 6 of 1647 (tla-en, 2026-11-08, -mtune=gba); the same rows as on 2026-11-07.
-// 2026-11-08: unchanged by `*(candidateIds + targetIndex)` (128), the sprite
-// frame's sum reversed or in a local, drawCursors' store as 0, the return types
-// of Resource_ResetEntry, VramCache_AllocEntry, Sound_PlayFar (all 6), or
-// once-only blocks at the loop head (108 to 112, the GCSE hash-table effect);
-// the signature device re-measured at 8 without it. Also unchanged: drawCursors
-// cleared before firstSprite is set (6), the selected id read into a
-// block-scoped local (6); worse: the clear or firstSprite moved past the call
-// (16 to 28), the sprite's word stores swapped (10), a once-only block before
-// the tile reload or around the word store (108).
-// Differ 8 of 1748 in tla-de, tla-fr, tla-es and tla-it at their own addresses
-// (0804a984, 0804a9a0, 0804a994, 0804a96c; 2026-11-07): the same loop-head
-// pairs as English. The four European editions share one image that asks the
-// cartridge its language at run time (System_GetLanguage): the "!" help window
-// (kind 7) is 10 columns wide in Italian and 11 in Spanish, the condition lists
-// (kinds 4 and 6) 17 in Spanish, and the HP window draws KP, PV or PS by
-// language. Their condition window is pinned to r10 rather than r9.
-// 2026-11-07: Oam_AddSpriteAtDepth declared returning s32 (permuter), 8 to 6; a
-// further 15 minutes of permuting and loop-head reorderings found nothing.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Also differ 0 in tla-ja at 0804aa4c, whose "Set Djinni" window (8 tiles),
+// condition list (14) and Mystery name copy (10) are narrower (the TARGET_*
+// widths). Differ 2 of 1748 in tla-de, tla-es, tla-fr and tla-it at their own
+// addresses (0804a984, 0804a994, 0804a9a0, 0804a96c): in the marker loop the
+// projection call's arguments, `ldrh r0, [r3, r6]` (spreadActorIds[i]) and
+// `adds r1, r4, #0` (&markerPosition), are swapped. Both rank 41 with four
+// dependents and the ldrh is ready the cycle `mov r3, fp` frees it, so sched2's
+// tie goes to the lower luid, the r0 argument; English and Japanese, whose
+// offset sits in a stack slot, show that order. Unchanged by moving track's
+// computation before marker's; `*(spreadActorIds + i)` gives 531 in tla-en.
+// The four European editions share one image that asks the cartridge its
+// language at run time (System_GetLanguage): the "Set Djinni" window (kind 7)
+// is 10 tiles wide in Italian and 11 in Spanish, the condition lists (kinds 4
+// and 6) 17 in Spanish, and the HP window draws KP, PV or PS by language.
+//
 // Battle target selection, The Broken Seal's BattleTarget_RunSelection
 // (games/tbs/src/window/screens/battle_targets.c) on this game's work and
 // messages. The modes are numbered differently (2 the party, 4 the acting unit
@@ -25,23 +22,25 @@
 // remembers (0x10c); the enemies "Mystery Man" and "Mystery Woman" are enemy
 // kinds 355 and 352.
 //
-// Left: every instruction is present and the registers and frame agree; the 6
-// are 3 pairs swapped by sched2 at the loop head: the candidateIds base and
-// index slot loads, and cursorSlot's load against `movs r3, #31`. In the block
-// after a __modsi3 call the slot load outranks the store on load cost (prio 7
-// against 5), so the tie the listing shows is not reachable from the source:
-// that is -mthumb-slow-loads' approximation (K2), not a shape question.
-// Reordering the sprite's two word stores gives differ 10 now; byte-offset
-// forms of the first candidateIds read go backwards.
+// 2026-11-08: the last 6 (three pairs swapped at the loop head) were a
+// scheduling barrier the listing has between the cursor sprite's words and the
+// tile reload: with it, the three pairs come out as listed, which no cost or
+// tie in one block allows. The once-only block that opens the loop supplies
+// it; its end also ends CSE's block, which recomputes &selectedPosition, one
+// more insn before GCSE. The pin is replaced by The Broken Seal's milder pair,
+// a dead null and an r8/r10 clobber, and the signature device measures 2.
 //
-// Two forms here are held by measurement. The spill slots of the addresses GCSE
-// hoists follow its hash table, whose size comes from the function's insn count:
-// the listing's order needs 719 buckets or fewer (or 733 or more) at this frame.
-// The pin's copies add seven insns, so TARGET_BOB spells the rounding out, which
-// drops one copy at each of its three uses (differ 130 to 36). If the pin goes,
-// TARGET_BOB can go back to `/ 32768`. The pin itself stays because the plain
-// `conditionWindow = NULL` is spilled; The Broken Seal gets r9 from a null with
-// no constant note instead, a tagged dead device this round does not add.
+// Held by measurement: the spill slots of the addresses GCSE hoists follow its
+// expression hash table, whose size is half the insns before GCSE: the listing
+// needs 719 buckets or fewer (or 733 or more), and this draft is at 719, so
+// one more insn there spills differently (108). Spelling TARGET_HELP_COLUMN's
+// `/ 8` out as TARGET_BOB does (7 insns fewer, 715 buckets) gives the same
+// figures in every edition and leaves room. TARGET_BOB's spelled-out rounding
+// is needed in its own right: `bob / 32768` gives 354 in tla-en. The European
+// count temporary stays (144 without it, every row a spill slot: its hash table
+// drops from 801 to 765). The barrier is left out of the European editions,
+// whose listing keeps conditionWindow in r10, where the dead null alone puts
+// it.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -50,11 +49,16 @@
 #include "version.h"
 #include "module/system/system.h"
 
-// The register the condition window's pin takes (see the tag).
-#if TLA_PATCH_2
-#define CONDITION_WINDOW_REGISTER "r10"
+// Widths in tiles that fit each language's text: the "Set Djinni" window
+// (Msg_0d0c), the condition list, and the Mystery names' copy.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define TARGET_SET_DJINNI_WIDTH 8
+#define TARGET_CONDITION_LIST_WIDTH 14
+#define TARGET_MYSTERY_NAME_CAPACITY 10
 #else
-#define CONDITION_WINDOW_REGISTER "r9"
+#define TARGET_SET_DJINNI_WIDTH 9
+#define TARGET_CONDITION_LIST_WIDTH 16
+#define TARGET_MYSTERY_NAME_CAPACITY 14
 #endif
 
 extern u8 Msg_0c5a[];
@@ -148,24 +152,24 @@ s32 GameFlag_Test(s32 flag);
 void BattleMotion_ProjectConditionalPositionFar(s32 unit,
                                                 struct TargetPoint *point);
 struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height,
-                                     s32 flags);
+                                   s32 flags);
 s32 Trig_Sin(s32 angle);
 s32 Oam_AddSpriteAtDepth(void *sprite, s32 depth); // Returns void; see the tag.
 s32 AffineMatrix_BuildForEffect(struct TargetAffine *affine);
 void BattleHighlight_SetModesFar(u16 *units, s32 mode);
 void Window_Close(void *window, s32 mode);
-void Text_DrawStringAtOffset(const u8 *text, struct TargetWindow *window,
-                               s32 x, s32 y);
-void Text_DrawNumberInWindow(s32 value, s32 digits,
-                               struct TargetWindow *window, s32 x, s32 y);
-void Text_DrawCharacterAtOffset(s32 message, struct TargetWindow *window,
-                                  s32 x, s32 y);
+void Text_DrawStringAtOffset(const u8 *text, struct TargetWindow *window, s32 x,
+                             s32 y);
+void Text_DrawNumberInWindow(s32 value, s32 digits, struct TargetWindow *window,
+                             s32 x, s32 y);
+void Text_DrawCharacterAtOffset(s32 message, struct TargetWindow *window, s32 x,
+                                s32 y);
 void Func_08041f70(s32 color);
 void Message_CopyExpanded(s32 message, u16 *text, s32 capacity);
 s32 Text_GetWideStringWidth(u16 *text);
 void Vram_ClearWindowBlock(void);
-void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window,
-                                     s32 x, s32 y);
+void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x,
+                                 s32 y);
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
 void Resource_ResetEntry(s32 slot);
@@ -199,8 +203,10 @@ void Resource_ResetEntry(s32 slot);
 #else
 #define TARGET_CONDITION_LIST_WINDOW()                                         \
   {                                                                            \
-    TARGET_HELP_COLUMN(7, 9, 14);                                              \
-    conditionWindow = Window_Create(helpColumn, helpRow, 16, count + 2, 6);    \
+    TARGET_HELP_COLUMN(7, TARGET_CONDITION_LIST_WIDTH - 7,                     \
+                       30 - TARGET_CONDITION_LIST_WIDTH);                      \
+    conditionWindow = Window_Create(                                           \
+        helpColumn, helpRow, TARGET_CONDITION_LIST_WIDTH, count + 2, 6);       \
   }
 #endif
 
@@ -216,7 +222,7 @@ void Resource_ResetEntry(s32 slot);
 
 s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
   /* FAKEMATCH(signature): Oam_AddSpriteAtDepth declared returning s32; as
-   * void, 8 of 1647 instructions differ in tla-en. */
+   * void, 2 of 1647 instructions differ in tla-en. */
   u16 candidateIds[8];
   struct TargetSprite cursorSprites[6];
   struct TargetTrack cursorTracks[6];
@@ -231,11 +237,7 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
   struct BattleUnit *unit;
   struct TargetBattle *battle;
   struct TargetWindow *window;
-  /* FAKEMATCH(pin): the condition window in r9 (r10 in the European editions),
-   * where the native keeps it; as an ordinary local its NULL default's constant note halves its priority,
-   * it is spilled and 494 of 1647 instructions differ in tla-en (6 with the
-   * pin; 2026-11-08). */
-  register struct TargetWindow *conditionWindow asm(CONDITION_WINDOW_REGISTER);
+  struct TargetWindow *conditionWindow;
   s32 targetIndex;
   s32 targetCount;
   s32 candidateCount;
@@ -269,7 +271,10 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
   targetCount = 0;
   redraw = 0xffff;
   cursorSlot = VramCache_AllocEntry(256);
-  conditionWindow = NULL;
+  /* FAKEMATCH(dead): a null derived from selection, with no constant
+   * equivalence, keeps conditionWindow in a register; as conditionWindow =
+   * NULL, 492 of 1647 instructions differ in tla-en. */
+  conditionWindow = (struct TargetWindow *)((u32)(u16)selection >> 16);
   if (spread == 0)
     spread = 1;
   if (mode == 2 || mode == 4)
@@ -360,15 +365,25 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
     cursorTracks[0].x = actorPosition.x;
     cursorTracks[0].y = 0x80;
   }
+#if !TLA_PATCH_2
+  /* FAKEMATCH(barrier): an empty asm clobbering r8 and r10 once selection and
+   * mode are dead, so conditionWindow takes r9, selection r10 and mode r8; as
+   * no asm, 96 of 1647 instructions differ in tla-en. */
+  __asm__("" : : : "r8", "r10");
+#endif
   window = Window_Create(0, 12, 30, 4, 74);
 
   for (;;) {
-    firstSprite = cursorSprites;
-    drawCursors = 0;
-    BattleMotion_ProjectConditionalPositionFar(candidateIds[targetIndex],
-                                               &selectedPosition);
-    ((u32 *)firstSprite)[1] = 0x40002000;
-    ((u32 *)firstSprite)[2] = drawCursors;
+    // A once-only block: its end keeps the tile reload after the sprite's
+    // words, as the listing schedules them.
+    do {
+      firstSprite = cursorSprites;
+      drawCursors = 0;
+      BattleMotion_ProjectConditionalPositionFar(candidateIds[targetIndex],
+                                                 &selectedPosition);
+      ((u32 *)firstSprite)[1] = 0x40002000;
+      ((u32 *)firstSprite)[2] = drawCursors;
+    } while (0);
     firstSprite->tile = VramCache_Reload(
         cursorSlot, ((gFrameCount >> 2) & 31) * 256 + gData_0805c9c4);
     TARGET_BOB(selectedPosition.y);
@@ -472,7 +487,8 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
           }
 #else
             TARGET_HELP_COLUMN(4, 4, 22);
-            conditionWindow = Window_Create(helpColumn, 8, 9, 3, 6);
+            conditionWindow =
+                Window_Create(helpColumn, 8, TARGET_SET_DJINNI_WIDTH, 3, 6);
 #endif
             Func_08041f70(2);
             Text_DrawCharacterAtOffset((s32)Msg_0d0c, conditionWindow, 0, 0);
@@ -484,36 +500,36 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
 #if TLA_PATCH_2
             switch (System_GetLanguage()) {
             case CARTRIDGE_LANGUAGE_GERMAN:
-              Text_DrawStringAtOffset(gOwnerStatus_KpString, conditionWindow,
-                                        0, 0);
+              Text_DrawStringAtOffset(gOwnerStatus_KpString, conditionWindow, 0,
+                                      0);
               break;
             case CARTRIDGE_LANGUAGE_FRENCH:
             case CARTRIDGE_LANGUAGE_SPANISH:
-              Text_DrawStringAtOffset(gOwnerStatus_PvString, conditionWindow,
-                                        0, 0);
+              Text_DrawStringAtOffset(gOwnerStatus_PvString, conditionWindow, 0,
+                                      0);
               break;
             case CARTRIDGE_LANGUAGE_ITALIAN:
-              Text_DrawStringAtOffset(gOwnerStatus_HpString, conditionWindow,
-                                        0, 0);
+              Text_DrawStringAtOffset(gOwnerStatus_HpString, conditionWindow, 0,
+                                      0);
               break;
             }
 #else
             Text_DrawStringAtOffset(gOwnerStatus_HpString, conditionWindow, 0,
-                                      0);
+                                    0);
 #endif
             Text_DrawNumberInWindow(unit->hp, 4, conditionWindow, 16, 0);
             Text_DrawStringAtOffset(gOwnerStatus_SlashString, conditionWindow,
-                                      48, 0);
+                                    48, 0);
             Text_DrawNumberInWindow(unit->maxHp, 4, conditionWindow, 56, 0);
             break;
           case 2:
             TARGET_HELP_COLUMN(7, 6, 17);
             conditionWindow = Window_Create(helpColumn, 8, 13, 3, 6);
             Text_DrawStringAtOffset(gOwnerStatus_PpString, conditionWindow, 0,
-                                      0);
+                                    0);
             Text_DrawNumberInWindow(unit->pp, 4, conditionWindow, 16, 0);
             Text_DrawStringAtOffset(gOwnerStatus_SlashString, conditionWindow,
-                                      48, 0);
+                                    48, 0);
             Text_DrawNumberInWindow(unit->maxPp, 4, conditionWindow, 56, 0);
             break;
           case 5:
@@ -550,28 +566,27 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
             TARGET_CONDITION_LIST_WINDOW();
             count = 0;
             if (unit->delusion != 0) {
-              Text_DrawCharacterAtOffset((s32)Msg_0d05, conditionWindow, 0,
-                                           0);
+              Text_DrawCharacterAtOffset((s32)Msg_0d05, conditionWindow, 0, 0);
               count = 1;
             }
             if (unit->stun != 0) {
               Text_DrawCharacterAtOffset((s32)Msg_0d06, conditionWindow, 0,
-                                           count * 8);
+                                         count * 8);
               count++;
             }
             if (unit->sleep != 0) {
               Text_DrawCharacterAtOffset((s32)Msg_0d07, conditionWindow, 0,
-                                           count * 8);
+                                         count * 8);
               count++;
             }
             if (unit->psySeal != 0) {
               Text_DrawCharacterAtOffset((s32)Msg_0d08, conditionWindow, 0,
-                                           count * 8);
+                                         count * 8);
               count++;
             }
             if (unit->grimReaper != 0) {
               Text_DrawCharacterAtOffset((s32)Msg_0d09, conditionWindow, 0,
-                                           count * 8);
+                                         count * 8);
               count++;
             }
             if (count == 0)
@@ -588,7 +603,7 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
               count++;
 #if TLA_PATCH_2
             /* FAKEMATCH(temporary): count read back through a pointer to it;
-             * as `count == 0`, 148 of 1748 instructions differ in tla-de
+             * as `count == 0`, 144 of 1748 instructions differ in tla-de
              * (spill slots). */
             countAddress = &count;
 #endif
@@ -614,38 +629,37 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
             TARGET_CONDITION_LIST_WINDOW();
             count = 0;
             if (unit->poison != 0) {
-              Text_DrawCharacterAtOffset((s32)Msg_0d04, conditionWindow, 0,
-                                           0);
+              Text_DrawCharacterAtOffset((s32)Msg_0d04, conditionWindow, 0, 0);
               count = 1;
             }
             if (unit->delusion != 0) {
               Text_DrawCharacterAtOffset((s32)Msg_0d05, conditionWindow, 0,
-                                           count * 8);
+                                         count * 8);
               count++;
             }
             if (unit->stun != 0) {
               Text_DrawCharacterAtOffset((s32)Msg_0d06, conditionWindow, 0,
-                                           count * 8);
+                                         count * 8);
               count++;
             }
             if (unit->sleep != 0) {
               Text_DrawCharacterAtOffset((s32)Msg_0d07, conditionWindow, 0,
-                                           count * 8);
+                                         count * 8);
               count++;
             }
             if (unit->psySeal != 0) {
               Text_DrawCharacterAtOffset((s32)Msg_0d08, conditionWindow, 0,
-                                           count * 8);
+                                         count * 8);
               count++;
             }
             if (unit->grimReaper != 0) {
               Text_DrawCharacterAtOffset((s32)Msg_0d09, conditionWindow, 0,
-                                           count * 8);
+                                         count * 8);
               count++;
             }
             if (unit->haunt != 0) {
               Text_DrawCharacterAtOffset((s32)Msg_0d0a, conditionWindow, 0,
-                                           count * 8);
+                                         count * 8);
               count++;
             }
             if (count != 0)
@@ -667,7 +681,7 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
           width = (s32)Msg_0c5a;
           if (target->enemyId == 355)
             width++;
-          Message_CopyExpanded(width, targetName, 14);
+          Message_CopyExpanded(width, targetName, TARGET_MYSTERY_NAME_CAPACITY);
         } else {
           for (i = 0; i <= 13; i++) {
             targetName[i] = n = target->name[i];

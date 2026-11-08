@@ -1,56 +1,30 @@
-// Differ 10 of 609 (tla-en, 2026-11-08, -mtune=gba), the same rows. Rechecked
-// 2026-11-08 again: head stores 2, 1, 0 10, other orders 14; head as u8, in
-// the for or in a once-only block 10; model->vertices = Data_02010108 or the
-// pointer set by the texture 20; set after the list, in any declaration slot,
-// 366; passed to the transform too 16 (the native reloads there); the i = 0
-// arms still 49 without. Earlier, 2026-11-08: once-only loops at four places in the head loop, u8 head, k < 2
-// (18), the head pointer set in the for, a 32 local at three scopes (10 to 16),
-// funnel at the head loop (42); permuter 8 minutes: none. The i = 0 arms are
-// now tagged and the frame-sizing blitter is a plain note (S2). Left: allocation and scheduling only (frame
-// 0's segment pointer and the 32 trade r6 and r4, its stores order, and the
-// vertex pointer loaded before Render_AllocateModelList, not after).
-// 2026-11-07: Task_Add and Task_Remove from task.h (s32, not void): 12 to 10.
-// No gain: head stores in other orders, 32 or the buffer in a local,
-// inner-scope i, j or vertices, vertices set after the list (18 to 366), 15
-// minutes permuted.
-// 2026-11-06, measured: i = 0 in both arms of the length (if-conversion then
-// keeps the native's two moves) with -(length + k * 24): 71 to 58; the task in
-// a local (transfer): 58 to 34; frame 0's pointer its own local (head): 30; the
-// cell buffer in a local (funnel) at the head loop and the transform only (at
-// all four sites 160): 16; the 32 stored before the 0: 12.
-// Earlier: differ 40, frame 0 only.
-// 2026-11-06, measured: the vertex pointer set before the model list (crossing
-// the call, so it takes r6) with the draw passing Data_02010108 itself: 50 to 44
-// (set after the list, it takes r0 and every reload register moves, 398); k = 0
-// before the tail and head pointers, as the native orders them: 44 to 40. The
-// segment y as -(length + k * 24) keeps -length per row as the native does but
-// still sets the length conditionally (71); a y counted down per row (64 with
-// its own local, 304 sharing y); if, switch, ternary or a set then conditional
-// set for the length all give the same conditional set.
-// 2026-11-05: differ 50 of 609 (tla-en). Measured: x and y as one expression, scale
-// per arm, one counter k for k, j and the target loop gave the listing's r7 and
-// count.
-// Draft of Func_0816b6ec, decompiled from the listing: differ 196 of 609 (draft
-// 607), the same 48 calls and control flow.
-// Left (2026-10-19): r6 and r7 trade places for the vertex pointer, the
-// funnel count j and Aroma's target loop; the funnel's segment length is
-// chosen by a set and a conditional set where the native branches to two
-// moves, and the funnel's -length is hoisted out of the segment loop where
-// the native negates it in each pass; the tail copy loop's counter and
-// pointer take r6 and r5 for r1 and r2; the rest is scheduling.
-// Tried (differ):
-// first draft                                                       509
-// other declared before screen (their native stack order)          509
-// the blitter as The Broken Seal's pair (below)                      487
-// the blitter declared before camera (the native's slot order)      477
-// no phase variable: the bob and the scale read frame << 11, which
-// loop.c turns into the native's late induction variable          469
-// a segment's y as -length - k * 24 (an induction variable of k, as
-// the native's), not a y counted down                              196
-// the vertex pointer in a local set after the model list (the native
-// loads it there into r6): 196 used in both places, 482 at the store
-// only; the length as an if (196), mode != 0 ? 30 : 80 (196), y as s8
-// or s16 (468, 268), -(length + k * 24) (209)
+// Matches: differ 0 (tla-en, 2026-11-08)
+// No device: the old FAKEMATCH(dead) i = 0 in both length arms is gone. What
+// made the last 10 match, each measured against this form (differ if undone):
+// - each kind sets its radius (32) beside its length, so the arms are two
+//   moves and jump2 merges the radius move into the join, as the listing
+//   does; one radius set before or after the if: 41;
+// - the radius lives in vertices until the frame sets the vertex buffer
+//   (one local reused, S2), which gives the buffer r6 after
+//   Render_AllocateModelList while the transform reloads Data_02010108;
+//   the radius in its own local: 358 (vertices then takes r0);
+// - the funnel's length lives in the djinni's x (r5): as its own local, 10
+//   (its allocation priority ties the cell buffer's, and the tie goes to
+//   the lower register number, so the two trade r4 and r5);
+// - the head pointer computed in the k loop from a row offset (row = i * 8),
+//   so loop.c emits its start after the segment y's: the pointer set per
+//   row and stepped by 4, 2 (scheduling); gMapCellBuffer + i * 8 + k * 4
+//   in the k loop, 313 (the outer loop then strength-reduces i * 8);
+// - head stores 1, 0, 2 (1, 2, 0: 2); vertices set after the model list
+//   (before it: 2).
+// Other editions: alchemy-devtools diff refuses them (their scaffold has no
+// Thumb marker); disassembled from each ROM, de, es, fr and it are the same
+// bytes as en, and ja differs only in the two pool words for Data_08198b24,
+// which sits 4 bytes later there (0x08198b28), a relocation the link fills.
+// Earlier rounds (2026-10-19 to 2026-11-08) took the first draft from 509 to
+// 10: the blitter as The Broken Seal's pair, the bob and scale reading
+// frame << 11, the segment y as -(length + k * 24), the task in a local,
+// funnel at the corner loop and transform only, one counter k throughout.
 
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -193,7 +167,7 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
   camera = Ram_HeapSlots->cameraWork;
   sprites = Ram_HeapSlots->unk64[0];
   // Read through funnel at the corner loop and the transform only; through it
-  // at the head loop, 42 of 609 differ (2026-11-08).
+  // at the head loop, 14 of 609 differ (2026-11-08).
   funnel = gMapCellBuffer;
   BattleEffect_StartCanvasLayer(0);
   if (mode == 0) {
@@ -234,28 +208,29 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
     s32 y;
     s32 angle;
     s8 *corner;
+    s32 x; // The djinni's x; at frame 0, the funnel's length.
 
     if (frame == 0) {
-      s32 length;
       s8 *head;
+      s32 row;
 
       yaw = 0;
-      /* FAKEMATCH(dead): i = 0 in each arm keeps the length as two moves; as
-       * one i = 0 in the for, 49 of 609 instructions differ in tla-en. */
+      // Each kind sets its funnel's length and its radius, 32 for both; the
+      // radius is kept in vertices until the frame sets the vertex buffer.
       if (mode == 0) {
-        length = 80;
-        i = 0;
+        x = 80;
+        vertices = (u8 *)32;
       } else {
-        length = 30;
-        i = 0;
+        x = 30;
+        vertices = (u8 *)32;
       }
-      for (; i != WAFT_SEGMENTS; i++) {
-        head = (s8 *)gMapCellBuffer + i * 8;
+      for (i = 0; i != WAFT_SEGMENTS; i++) {
+        row = i * 8;
         for (k = 0; k != 2; k++) {
-          head[1] = -(length + k * 24);
-          head[2] = 32;
+          head = (s8 *)gMapCellBuffer + row + k * 4;
+          head[1] = -(x + k * 24);
           head[0] = 0;
-          head += 4;
+          head[2] = (s32)vertices;
         }
       }
       Sound_PlayFar(179);
@@ -270,8 +245,10 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
 
     // The djinni, bobbing over the caster and rising from frame 8.
     if (frame <= 79) {
-      s32 x = ((Trig_Sin(frame << 11) << 3) >> 16) + screen.x / 2 - 10;
-      s32 y = ((Trig_Cos(frame << 11) << 2) >> 16) + screen.y - 24;
+      s32 y;
+
+      x = ((Trig_Sin(frame << 11) << 3) >> 16) + screen.x / 2 - 10;
+      y = ((Trig_Cos(frame << 11) << 2) >> 16) + screen.y - 24;
 
       if (frame > 7) {
         y = y - frame * 4 + 32;
@@ -337,8 +314,8 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
 
     Render_ResetTransformState();
     Transform_SetLookAt(camera, camera + 3);
-    vertices = Data_02010108;
     model = Render_AllocateModelList(1);
+    vertices = Data_02010108;
     shade = 0;
     if (frame <= 15) {
       shade = frame * 4 - 64;

@@ -1,29 +1,5 @@
-// Differ 2 of 1527 (tla-en, 2026-11-08, -mtune=gba): one sched2 row left, the gust's
-// motionFlags strb issues before mov r1, r8 (the effect copy) instead of after it.
-// Not a tie: the target load depends on that byte store, so the strb (priority 57)
-// outranks the copy (55). Tried 8 November (3rd round): overlay 663's MotionView
-// bit-field store frees both target loads (8); a view with a pointer member
-// keeps both (2), with a u32 or FieldSprite * member frees both (8); the effect
-// as struct EffectWork, the target as [5], a volatile or raw byte store (2);
-// the store first (18) or between the scales (16); 8 minutes of permute (2).
-// Tried 2026-11-08: a once-only block around that store (20) or around the priority
-// copy (16); the store before the scales (18) or after the priority copy (65); the
-// target in a local, or = 0 for = hit (2).
-// Tried 8 November (2nd round): the target or its priority read into a local
-// before the store (61); an empty once-only block after the store (18) or before it
-// (8); the scales in a once-only block (8); both stores in one (12); motionFlags
-// first of the gust's stores (18); effect copied into a block local (2);
-// 8 minutes of permute over the gust's setup (2).
-// Before: differ 20 of 1527 (tla-en, 5 November 2026): order ties only, the cell
-// stores ahead of the gust's as in Func_0200095c, the target read at each use.
-// Left: motionFlags' strb and the watched-object store in the pick-up block, ldr r5
-// and movs r1 at steps.
-// Under -Os, 5 November: differ 52 of 1527 (tla-en); older figures below predate it.
-// Measured 5 November (-Os), differ about 89 of 1527: while loops bring the
-// allocation to the native's. Left: the argument to Func_02005d8c shifts a copy of
-// z (adds r4, r5) that CSE merges here, then reload's rotation (the zero of carried
-// in r5 here r3), and order around steps -= 2.
-// Draft, differ 309 of 1527, skeleton gap 37/34 (tla-en, 2026-11-01)
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Also differ 0 in tla-ja, tla-de, tla-es, tla-fr and tla-it.
 // Whirlwind inside Air's Rock, overlay 664's larger
 // copy of overlay 663's Func_0200095c: a gust (object type 280) rises from
 // the target (the effect work's object at 0x14) and grows, shedding sparks
@@ -37,49 +13,35 @@
 // moved cells each fourth frame while it throws dust (cue 235, then 298),
 // shrinks and rises away, and for kinds 5 and 6 in Ov664Room4 and 6 shakes
 // the walls open or shut (cue 157, flags 769 and 770).
-// This round: re-measured under the new options (394 to 374 at once), then fixed
-// a wrong statement (the hit == 6 dust takes its random off z, y stays plain),
-// read the Room 6 dust loops through `at`, a local holding &velocity (no copy
-// into a second pseudo), and dropped Call2 at Func_02005ed4.
-// Left, in order of size:
-// 1. Allocation, nearly all of differ. The native's high registers are effect r8,
-//    leader r10, steps r9, gFrameCount's address r11; here the address takes r10,
-//    leader r9, steps r11, and reload's rotation then moves every scratch register
-//    after it (the pick-up arms' zero, r0 kept or not, the shared `mov r9, r5`
-//    tail, the extra `adds r4, r5, #0` before the z argument). find_reg walks r8,
-//    r10, r9, r11, so the native needs leader > steps > address, and here the
-//    address is 2 * 6 / 116 = 0.103 against leader 2 * 6 / 175 and steps
-//    3 * 9 / 440. Its 116 is already doubled for the REG_EQUIV. Weighted refs cannot
-//    do it; unweighted (address 3) they fit. Overlay 663's Func_0200095c has the
-//    same finding and needs a dead second entry to get it. Whether loop depth
-//    weighs in these loops is a compiler question, out of scope. Merging carried
-//    into steps ranks steps high enough but is one local for two values.
-// 2. Room 6 dust loops: velocity's address is r6 and dust's r7, the native the
-//    other way round; refs 10 / 51 against 5 / 32. Same cause as 1.
-// 3. PRE on the second gFrameCount read in the growing and dust loops: the native
-//    reads again at the join. Cause found: CSE1's skip-blocks path merges the
-//    address, so GCSE sees one mem expression. A label still alive at CSE1 in the
-//    skipped block stops it: `{ s32 k = 0; if (k) wait(1); }` in the spark block
-//    gave the native's `bne.n +118` and load, but it is dead code and differ 365;
-//    no plain form found, and an inline around Random16Far changes nothing.
-//    gFrameCount volatile (The Broken Seal's declaration) fixes these and breaks
-//    the travel loop, where the native reuses the test's read in Math_Cosine's
-//    argument: 367 against 374. Ram_FrameCount at any site is the same or worse.
-// 4. The growing loop's first movs (#230) before the branch: the `if (test) {
-//    label: body; if (test) goto label; }` form gave 361 against 312, because the
-//    bottom constant lands in r0, not r5. A real while hoists the address (408).
-// 5. The native's -13 in r4 copied to r2 in all three pick-up arms; the draft has
-//    no such copy, which is the 3 instructions it is short of the listing.
+// What closed it (2 to 0): the gust's motionFlags store is a u8 member, so it
+// carries struct Actor's alias set, and struct Actor holds a struct Actor *
+// (watchedObject): the target's load (a struct Actor *) waited on that store at
+// a store's cost, and the strb (priority 57) went ahead of mov r1, r8 (55). The
+// native's store still holds the target's animation (void *) and x, y, z (s32)
+// loads but not the target's own load: with the target's word read as long
+// (the one read at the priority copy; the later reads share its register), the
+// strb falls to 54, the copy goes first, and the strb then wins the tie with
+// the target load on dependents and order, as in the listing. The device is
+// tagged at that read. Also differ 0, also type puns: every TARGET read as long,
+// or the store through a view of the gust (s32 words to 80, a void * at 80, u8
+// bytes at 84). Not enough: a view of u32 bit-fields or u8 bytes alone frees
+// every target load (8); a view with a void * at 80 and u8 padding, then u32 or
+// s32 bit-fields or u8 bytes (2); the word read as s32, u32 or void * (26, the
+// target read again after the priority's store); const struct Actor ** (2).
+// watchedObject as void * in actor.h, tried in a copy, gives 14 here (the
+// pick-up arms move): the native's object type likely has no member of the
+// target's pointer type, a question for actor.h, not this draft.
+// With the long read, the Room 6 dust loops read velocity directly; the local
+// `at` (&velocity) is gone.
+// Devices, each tagged in the function: the long read (signature, 2 without it)
+// and the Call2, Call3, Call4 and Call6 forwards (wrapper, 416 as direct calls).
 // Kept: the cell and the step are two-word structs: a two-word pseudo gets no
 // register, which is why their fields live at sp+24 and sp+32 and their dead
 // stores stay. hit, shifted as its own statement, gives the native's reload copy
-// through its stack slot; started merged into i is one pseudo at sp+20. The three
-// loops that open with a branch to their test are label loops. The other Call
-// forwards are needed: direct calls at Func_02005dcc 625, Func_02005d9c 443,
-// Func_02005dac 370, all of them 698.
-// Tried without gain: the pick-up statements in other orders (311 to 351), x and z
-// shifted in the other order, the z argument from the locals, `- 0x10000` for the
-// pooled constants, `at` set before the first store (318) or the second (333).
+// through its stack slot, and its 0 is the byte stored to motionFlags; started
+// merged into i is one pseudo at sp+20. The three loops that open with a branch
+// to their test are label loops. The travel setup keeps x and z as locals copied
+// into cell (cell computed directly, 66).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -166,11 +128,14 @@ void Func_02001828(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   u8 *effect = (u8 *)Ram_HeapSlots->effectWork;
   struct Actor *gust, *spark, *object;
-  struct Vector3 velocity, *at;
+  struct Vector3 velocity;
   struct EffectOptions leaves, dust;
   struct Cell dir, cell;
   s32 i, hit = 0, steps = 0, carried, one;
 
+  /* FAKEMATCH(wrapper): calls forwarded through call.h's Call2, Call3, Call4
+   * and Call6, so each builds its own constants; as direct calls, 416 of 1527
+   * instructions differ in tla-en. */
   Func_02005e14();
   Func_02005f2c(0);
   Func_02005f94(207);
@@ -181,8 +146,13 @@ void Func_02001828(void) {
   gust->scaleX = 0x1b333;
   gust->scaleY = 0x3333;
   gust->motionFlags = hit;
+  /* FAKEMATCH(signature): the target's word read as long, an alias set outside
+   * struct Actor's, so the load need not wait for the motion flags' store; as
+   * TARGET(effect), 2 of 1527 instructions differ in tla-en. */
   ((struct FieldSprite *)gust->animation)->priority =
-      ((struct FieldSprite *)TARGET(effect)->animation)->priority;
+      ((struct FieldSprite *)((struct Actor *)*(long *)(effect + 20))
+           ->animation)
+          ->priority;
   Func_02005d8c(gust, TARGET(effect)->x, TARGET(effect)->y,
                 TARGET(effect)->z + 0xffff0000);
   gust->terrainHeight = Map_GetTerrainHeight(0, gust->x, gust->z);
@@ -442,11 +412,10 @@ shrink:
         velocity.y = Actor_GetById(8)->y;
         velocity.z = Actor_GetById(8)->z + 0x80000;
         Actor_SetSpritePriority(8, 2);
-        at = &velocity;
         for (i = 0; i != 8; i++) {
           dust.priority = 1;
-          Func_020002f4(at->x + ((Random16Far() & 15) << 16),
-                        at->y + ((Random16Far() & 31) << 16), at->z,
+          Func_020002f4(velocity.x + ((Random16Far() & 15) << 16),
+                        velocity.y + ((Random16Far() & 31) << 16), velocity.z,
                         0, 0, -0x8000, EFFECT_USE_PRIORITY, &dust);
         }
         wait(30);
@@ -468,11 +437,10 @@ shrink:
         velocity.x = Actor_GetById(8)->x + 0xfff80000;
         velocity.y = Actor_GetById(8)->y;
         velocity.z = Actor_GetById(8)->z;
-        at = &velocity;
         for (i = 0; i != 8; i++) {
           dust.priority = 1;
-          Func_020002f4(at->x + ((Random16Far() & 15) << 16),
-                        at->y, at->z - ((Random16Far() & 31) << 16),
+          Func_020002f4(velocity.x + ((Random16Far() & 15) << 16),
+                        velocity.y, velocity.z - ((Random16Far() & 31) << 16),
                         0, 0, -0x8000, EFFECT_USE_PRIORITY, &dust);
         }
         wait(20);

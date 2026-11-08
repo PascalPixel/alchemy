@@ -1,4 +1,34 @@
-// Differ 58 of 3921 (tla-en, 2026-11-08, -mtune=gba): as below; both empty asms now tagged.
+// Draft, differ 58 of 3921 (tla-en, 2026-11-08)
+// All six editions 58 (tla-ja measured at its own address, 0817ea5c). Both empty asms tagged.
+// Eighth round, 8 November, unchanged at 58, about 27 attempts. Read from the greg and
+// sched2 dumps (--rtl), so the next round need not repeat them:
+// - Third phase, first loop. Listing's reload registers: i's zero r4, z's zero r0 (a
+//   fresh reload), z's read r2, -0x800 r3, -0x100 r4, 1 r0, the compare r1, the next
+//   loop's i r2 (so its -1 stays movs/negs in r1). Here z's zero inherits r4 through
+//   find_equiv_reg, z's read is r1 and everything after runs one behind. Two things
+//   are missing, not one: a fresh reload for z's zero AND one more reload register
+//   spent (or r1 busy) before z's read; a fresh z alone would still read into r1.
+//   The step order is now z -= 0x100 before i++ (58 either way): one register further
+//   on, it gives the listing's -0x100 r4, 1 r0, compare r1.
+// - Not the cause: postreload (a 0..255 constant costs 0 in a SET, so it never turns
+//   movs into mov); asm volatile("") between the inits (find_equiv_reg ignores it,
+//   58); an asm with operands or a split init (the entry test stays, 89); an unused
+//   label between them (deleted before reload, 58). s16 z gives z's zero a fresh
+//   reload (find_equiv_reg rejects the wrong-mode zero) but costs the sign extension
+//   (85); u16 115; u32 58; j in place of z 58 (j is sl too); direct
+//   work->particles[i] 78. Giv forms (75) get the next loop's registers right, but
+//   loop.c emits the giv's init after the hoisted zero: 124 live insns against 126,
+//   11 refs each, so the giv ranks first and takes r7.
+// - Spawn call: sched2 gives it priority 2 (its only dependants are i's zero, r2 then
+//   r8) against 3 for movs r5, #238 and the IwramCopyWords pool load, so both go above
+//   it. The listing's order (bl, movs r5, ldr r6, movs r2, lsls r5, mov r8, adds r5) is
+//   exactly what haifa gives if the r6 load depends on the call: the call's priority
+//   becomes 3 and its two dependants win the tie with r5. That needs the address as a
+//   memory read after the call; as a constant set (the FIXED_ADDRESS cast, a direct
+//   Iwram_CopyWords call, a CopyFunc cast, all 58) it does not depend. A once-only
+//   block ending at the call, opened at Task_Remove, Palette_LoadBasicObjColors, the
+//   0x1010 store, the actors' 0xff store or the list spawn: 62 to 64 (the arguments
+//   lose their order, as before).
 // Seventh round, 8 November, unchanged: a once-only block in place of either asm (62);
 // the 0x800 copy with the asm dropped (60); the last sprite's store after its priority
 // (68); the 512-particle reset through a none = -1 local (62), a block pointer (60),
@@ -1225,7 +1255,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     if (frame == 0) {
       s32 z;
 
-      for (i = 0, z = 0; i != 16; i++, z -= 0x100) {
+      for (i = 0, z = 0; i != 16; z -= 0x100, i++) {
         Particle *p;
 
         p = &work->particles[i];

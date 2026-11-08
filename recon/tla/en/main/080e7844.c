@@ -1,36 +1,25 @@
-// Differ 28 of 871 (tla-en, 2026-11-08, -mtune=gba), the same rows: the
-// caster takes r6 and the offset r7 where the listing swaps them; the event
-// work's pointer is loaded once before the loop where the listing reloads it
-// each pass; green's product sits in r5 against r3; one scheduling pair (i = 63 against the -13 mask's copy).
-// Later on 6 November: result = 0 before pending = NULL with the event work's
-// pointer in its own local gives both stores and slots back in r5 (from 34).
-// 8 November: the empty asm after pending = NULL was free and is gone; the
-// once-only block round the palette store still holds it (32 without). A
-// single green expression (30), green += add earlier (30), the eventWork
-// reload with a giv-shaped index (46), declaration and init orders, a
-// do-while or separate decrement for the sprite loop, and a dead global
-// update anywhere measure 28 or worse. Later on 8 November: the event work
-// reloaded each pass with offset set in the for (34: slots, offset and caster
-// rotate to r7, r5, r6 against r5, r6, r7), hoisted inside the for (28), the
-// pointer through a volatile cast (34), green through x, y, a scale or
-// packed, or as (sin * 8 >> 16) then += 23 (33 to 455), the sprite loop
-// steps or i = 63 set first (28 to 69) leave it at 28.
-// 6 November: priorityFlags |= 2 orders the OR; if (fade == -1) add = 0; else
-// add = fade / 4 reloads fade as the listing does; green as sin * 8, then
-// (green >> 16) + 23. Measured and left: result = 0 before pending = NULL
-// gives both stores but differ 47; green read through blue (a reused
-// temporary) gives 30; offset set later, caster set first, the caster read
-// through slots, a layer pointer, a giv-shaped object index and every slots
-// access through Ram_HeapSlots all measure worse. The lreg dump has the caster
-// at 6 refs over 50 insns, the offset 7 over 92, slots 5 over 98, so the
-// caster is allocated first.
-// 7 November: slots->eventWork read in the loop (the listing's reload) gives
-// slots and the offset their listing order but the caster then outranks both
-// (47); green through red as a reused temporary moves its product to r1 (28);
-// a sine local, do-while, goto loop and [i + 5] index measure worse; 7 minutes
-// of permuting found nothing under 28.
-// Earlier: near miss, differ 44 of 871 (tla-en, 2026-11-05); draft, differ 75
-// of 871, skeleton gap 31 (tla-en, 2026-11-01)
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Plain C, no FAKEMATCH device. Per edition, each at its own address in the
+// edition's map: tla-en, tla-de (0x080f4844), tla-es (0x080f0838), tla-fr
+// (0x080ec838) and tla-it (0x080e7838) differ 0; tla-ja (0x080e7800) differs
+// 10 of 869, all from the window work's tile halfword, which Japanese keeps at
+// 0x1148 where every other edition keeps it at 0x1348 (both reads; the shorter
+// constant also moves two pool offsets and a branch). With that offset chosen
+// by edition the draft measures 0 in tla-ja too; the adopted Func_080eb824
+// reads the same halfword and stays off Japanese, and nothing here yet says
+// whether the move is LANGUAGE or TLA_PATCH_1, so the offset is left English.
+// What closed it (8 November, from 28): the heap-slot reads at the top go
+// through Ram_HeapSlots and the loop reads slots->eventWork each pass through
+// a slots local set just before the loop, so CSE copies the top's constant
+// into it and gives it a preference for r5; the kind (290) is a local set
+// after i, so it is allocated after slots, offset and caster and lands in r8;
+// the caster is read before found, fade and pending, which schedules its load
+// and offset = 20 ahead of their stores. Green's sine goes through blue (the
+// product leaves r5 for r3). The sprite loop counts i up and takes its sprite
+// as &work->sprites[i]: loop.c then reverses it in its second pass, after it
+// has hoisted the -13 mask, which orders that copy before i = 63. The
+// once-only block round the palette store is still needed (4 without).
+// Earlier: differ 28 (2026-11-08), 44 (2026-11-05), 75 (2026-11-01).
 // A field Psynergy cast 32 pixels before the caster:
 // a glowing disc (FieldEffect_GlowDisc, copied to the sprite VRAM the window
 // work's halfword at 0x1348 names) grows there while up to 64 white puffs
@@ -42,11 +31,10 @@
 // disc; 1 grows it larger with puffs for 80 frames; 2 also fades the screen
 // to white over 100 frames. A marked object is set on its terrain again, the
 // event runs, and the palettes fade back.
-// Frame, stack slots and most allocation agree.
-// The spawn count shares i with the other loops (i only takes caller-saved r4
-// that way), the slot is its own local, and the disc's tile goes through packed;
-// a block-scoped sprite, a separate counter and a shared wave local all measured
-// worse.
+// Forms kept from earlier rounds: the spawn count shares i with the other loops
+// (i only takes caller-saved r4 that way), the slot is its own local, and the
+// disc's tile goes through packed; a block-scoped sprite, a separate counter
+// and a shared wave local all measured worse.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -130,10 +118,10 @@ void BattleEffect_PrepareBufferInterpolation(void);
 
 void Func_080e7844(void) {
   struct PuffWork *work = HeapSlot_Alloc(92, 0x2160);
-  struct HeapSlots *slots = Ram_HeapSlots;
-  struct FxScene *scene = slots->effectWork;
-  u8 *vramWork = slots->windowTiles;
-  s32 offset = 20; // byte offset of the event work's 80 object pointers
+  struct HeapSlots *slots;
+  struct FxScene *scene = Ram_HeapSlots->effectWork;
+  u8 *vramWork = Ram_HeapSlots->windowTiles;
+  s32 offset; // byte offset of the event work's 80 object pointers
   struct Actor *caster;
   struct Actor *object;
   struct ObjectAnimation *animation;
@@ -153,6 +141,7 @@ void Func_080e7844(void) {
   s32 fade;
   s32 result;
   s32 found;
+  s32 kind;
   void *pending;
   s32 scaleY;
   s32 scaleX;
@@ -165,22 +154,26 @@ void Func_080e7844(void) {
   s32 packed;
   s32 i;
   u8 *dst;
-  u8 *eventWork;
 
+  caster = scene->mainObject;
   found = -1;
   fade = -1;
   pending = NULL;
-  caster = scene->mainObject;
   BattleEffect_InitializeSharedScene();
   pos[0] = caster->x;
   pos[1] = caster->y;
   pos[2] = caster->z;
   Vector_AddPolarOffset(0x200000, scene->facing, pos);
-  eventWork = slots->eventWork;
-  for (i = 0; i < 80; i++, offset += 4) {
-    object = *(struct Actor **)(eventWork + offset);
+
+  // The kind and the heap slots are locals that hold one value each, set
+  // after i so the kind's constant is built where the listing builds it.
+  i = 0;
+  kind = 290;
+  slots = Ram_HeapSlots;
+  for (offset = 20; i < 80; i++, offset += 4) {
+    object = *(struct Actor **)((u8 *)slots->eventWork + offset);
     animation = object->animation;
-    if (object->script != NULL && animation->definition[0] == 290 &&
+    if (object->script != NULL && animation->definition[0] == kind &&
         animation->unk18 == 1 &&
         Func_080dbe80(pos, 4, &object->x, object->radius - 2) >= 0) {
       result = 2;
@@ -221,15 +214,14 @@ loaded:
   entry = Resource_FindFreeEntry();
   tile = VramCache_Load(entry, 0x800, work);
   particle = work->particles;
-  fresh = work->sprites;
-  for (i = 63; i >= 0; i--) {
+  for (i = 0; i < 64; i++) {
+    fresh = &work->sprites[i];
     Func_080eaf98(fresh, 8, 15, 0x40000000, tile);
     fresh->depth = 250;
     fresh->oam.priority = 0;
     fresh->oam.palette256 = 1;
     fresh->oam.palette = 0;
     particle->timer = -1;
-    fresh++;
     particle++;
   }
   Sound_PlayFar(130);
@@ -292,8 +284,8 @@ loaded:
         add = 0;
       else
         add = fade / 4;
-      green = Trig_Sin((frame / 2 + i) << 11) * 8;
-      green = (green >> 16) + 23;
+      blue = Trig_Sin((frame / 2 + i) << 11); // blue reused for green's sine
+      green = (blue * 8 >> 16) + 23;
       blue = Trig_Sin(((frame / 4 + i) << 11) + 0x4800);
       blue = (blue * 10 >> 16) + 12;
       red = add + 28;
@@ -305,7 +297,7 @@ loaded:
       blue += add;
       if (blue > 31)
         blue = 31;
-      do {
+      do { // once-only block: the listing schedules the store with it
         packed = (blue << 10) | (green << 5) | red;
         ((u16 *)0x05000200)[255 - i] = packed;
       } while (0);

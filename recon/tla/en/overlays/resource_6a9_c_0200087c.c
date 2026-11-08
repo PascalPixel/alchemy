@@ -1,14 +1,15 @@
-// Differ 4 of 255 (tla-en, 2026-11-08, -mtune=gba).
-// 8 November (permuter): kind + 2 read into value, reused, after the blend store, puts the
-// sum before the store as the native does (6 to 4). Left: the sum in r0 where the native
-// gives it r4. No gain: the sum in angle (4), in kind, spawned or a block local (6), in
-// height (11) or i (29), value shifted in place (27); volatile blend stores (6).
-// Later on 8 November, all still 4: the sum before the priority or blend
-// stores, 2 + kind, kind = value after it, the call's result tested in the
-// if, if (kind); an 8-minute permute found nothing better. The native r4
-// means the sum conflicts with r0 to r3 (kind still live, or the sum formed
-// before the stores in RTL); here value (also the loop's and the end's
-// value) is tied to kind's r0.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// One tagged device, FAKEMATCH(dead): the sum's local is also assigned the
+// burst's flags inside the effect call's arguments. That makes it a global
+// pseudo, which avoids r0 to r3 and takes the native r4. As a block-local pseudo,
+// local-alloc ties it to the shifted value (r3, 6 differ). Through value it took
+// value's r0 (4 differ). The flags assignment works only inside the call's
+// arguments, where its life is short: as a statement before the call, 136
+// differ. Also from this round: the zero variable was not needed (CSE carries the bounce's 0 into the branch, same
+// code), and a direct call to OverlayObject_PrepareObject matches too.
+// Tried without gain on 8 November: the sum in angle (4, r5), i (68), height
+// (11), spawned (18) or the zero (72); s16, u16, s8 or u8 sum (6, 13); a u8
+// prototype for the collision call (extends, 10 to 29); * 0x100000 (27).
 // Older notes, before value took the sum:
 // From 16: the burst loop is a goto loop (no loop notes, so GCSE no longer
 // hoists the array's address), and one array serves as the velocity and
@@ -66,9 +67,9 @@ void Func_0200087c(void) {
   s32 value;
   s32 angle;
   u32 i;
-  s32 zero;
   s32 spawned;
   u16 *blendControl;
+  s32 sum;
 
   work = FIELD_AT(0x3000000, s32, 108);
   current = *(s32 *)0x30000e0;
@@ -84,7 +85,6 @@ void Func_0200087c(void) {
     object->terrainId = 2;
     object->motionFlags = 3;
     object->bounce = 0;
-    zero = 0;
     Call1((void (*)())wait, 1);
     kind = Value3((s32 (*)())Func_020010a4, 2, object->x, object->z);
     if (kind != 0) {
@@ -92,17 +92,16 @@ void Func_0200087c(void) {
       *(u16 *)0x4000052 = 0x1000;
       blendControl = (u16 *)0x4000050;
       *blendControl = 0x3f10;
-      // value is reused for the sum; as kind + 2 in place, 6 differ.
-      value = kind + 2;
+      sum = kind + 2;
       spawned = Value4((s32 (*)())OverlayObject_PrepareObject, object->x, 0,
-                       object->z + (value << 20), 312);
+                       object->z + (sum << 20), 312);
       Call1((void (*)())Func_02001164, 204);
       Call1((void (*)())OverlayObject_WaitUntilIdle, (s32)object);
       Call1((void (*)())OverlayObject_WaitUntilIdle, (s32)object);
-      object->x = object->y = object->z = zero;
+      object->x = object->y = object->z = 0;
       Call1((void (*)())Func_0200108c, spawned);
       Call1((void (*)())wait, 1);
-      *blendControl = zero;
+      *blendControl = 0;
     } else {
       Call1((void (*)())OverlayObject_WaitUntilIdle, (s32)object);
       Call1((void (*)())OverlayObject_WaitUntilIdle, (s32)object);
@@ -127,8 +126,10 @@ void Func_0200087c(void) {
             ((u32)(Value0((s32 (*)())Random16Far) * 3 << 14) >> 16) - 0x6000;
         velocity[2] +=
             ((u32)(Value0((s32 (*)())Random16Far) * 3 << 13) >> 16) - 0x3000;
+        /* FAKEMATCH(dead): the form kept; as 0x10b0000 passed directly, 6 of
+         * 255 instructions differ in tla-en. */
         Func_0200015c(object->x, object->y, object->z, velocity[0], velocity[1],
-                      velocity[2], 0x10b0000, &options);
+                      velocity[2], sum = 0x10b0000, &options);
         i++;
       }
       if (i <= 16)

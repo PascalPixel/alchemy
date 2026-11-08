@@ -1,18 +1,31 @@
-// Differ 2 of 1355 (tla-en, 2026-11-08, -mtune=gba), with one tagged pin.
-// Rechecked 2026-11-08: unpinned it is still 4 (IwramCopyWords's address
-// loads first, then source, then size). No gain from a function-pointer local,
-// a size or source temporary, the literal at either copy, struct or swapped
-// copy types, an unsigned size, once-only blocks (8 to 10), or an 8-minute
-// permute of the unpinned form.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Plain C, no device: the pin is gone. The trade's two snapshot copies reach
+// the word copy from IwramIrqMain (ITEM_IWRAM_COPY_WORDS, The Broken Seal's own
+// form for these two copies; the rollback copies stay Iwram_CopyWords). The
+// constant 0x03000730 is ready at once after the second Heap_Alloc, so sched2
+// put its load first; IwramIrqMain + 0x630 is a symbol, whose pool load waits
+// on the call like the arguments and falls after `mov r8, r0`, as the native.
+// The shared size variable stays (14 differ with BATTLE_UNIT_SIZE at each
+// call). Other editions (each one's own extent, compared by hand against its
+// listing; branch and pool offsets left out):
+//   tla-de, tla-es, tla-it (+12 bytes): the give step calls
+//     ItemMenu_SetMessageWindowHeight6() after `selectedItem &= 0x1ff`; the
+//     trade calls it after ItemMenu_SetMessageWindowHeight5() and then the
+//     0x3c-byte routine after ItemMenu_HideAllIcons that tla-en lacks
+//     (tla-it 080fa484, still scaffold). tla-it also draws "Traded" at x 13.
+//   tla-fr (+28 bytes): those calls, plus an Event_ClearInvalidPackedValuesFar
+//     in the give step and a second modal message (x 11, y 14) with a
+//     WindowSprite_RedrawSavedRectFar in the trade.
+//   tla-ja (-0x7c bytes): an older layout; WindowSprite_RedrawSavedRectFar and
+//     Func_080fc6bc calls fall elsewhere; not drafted.
+//   Text layout (window height, x) is LANGUAGE; the extra routine needs a name
+//   and its edition rule before these editions can link this C.
 // 2026-11-08: the icon is declared as a window sprite, with its list link
 // (struct ItemMenuIcon *next) at 0 and signed kind and state bytes, as The
 // Broken Seal's struct WindowSprite: its stores now may alias the work's
 // icon pointer, so the pointer is reloaded after each without the volatile
 // selectedItemIcon (gone), and the x/y stores keep the native order (6 to 2).
 // The list icon is a plain pointer (the union with a word changed nothing).
-// Left: the trade's first copy loads IwramCopyWords's address and source two
-// slots before the native does; without the pin 4 differ. An 8-minute permute
-// from the unpinned form found nothing under 4.
 // 2026-11-07: prototypes for the modal message, the text draw and the equip
 // preview (s32, as their definitions), and Unit_RefreshPsynergyFar returning
 // s32 as The Broken Seal declares it, took 22 to 6; the empty asm is gone.
@@ -20,15 +33,15 @@
 // remove), the twin of The Broken Seal's ItemMenu_RunCommands
 // (games/tbs/src/menu/menu/item.c), with The Lost Age's work layout
 // (Ram_HeapSlots->menuRuntime). The trade's allocations and copies share one
-// size variable (18 differ with the literal at each call). Its messages are
-// numbered here (Msg04103 ...), their names in The Broken Seal beside them;
-// they need names in the catalogs before it links.
+// size variable. Its messages are numbered here (Msg04103 ...), their names in
+// The Broken Seal beside them; they need names in the catalogs before it links.
 #include "heap_release.h"
 #include "types.h"
 #include "iwram_call.h"
 #include "item.h"
 #include "owner_state.h"
 #include "ram_buffer.h"
+#include "irq.h"
 
 struct ItemMenuIcon {
   struct ItemMenuIcon *next;
@@ -71,6 +84,17 @@ struct ItemCommandWork {
   u8 equipPreview;
   u8 listMode;
 };
+
+/// The resident IWRAM word copy, called through its address.
+typedef s32 (*ItemWordCopyFn)(void *dst, const void *src, s32 size);
+
+/// Iwram_CopyWords's routine reached from IwramIrqMain rather than at its
+/// fixed address, as in The Broken Seal: the trade's snapshot copies load the
+/// linked address after their arguments (at Iwram_CopyWords the constant is
+/// loaded before them).
+#define ITEM_IWRAM_COPY_WORDS                                                  \
+  ((ItemWordCopyFn)(IwramIrqMain +                                             \
+                    FIXED_OFFSET(0x630, IwramCopyWords, IwramIrqMain)))
 
 // The item menu's messages, by number (their ☀️ names in the comments).
 extern u8 Msg04103[]; // "Whose item?" (MsgWhoseItem)
@@ -428,14 +452,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       size = BATTLE_UNIT_SIZE;
       sourceCopy = Heap_Alloc(size);
       targetCopy = Heap_Alloc(size);
-      {
-        /* FAKEMATCH(pin): size held in r2 for the first copy; as
-           Iwram_CopyWords(sourceCopy, source, size), 4 of 1355 instructions
-           differ in tla-en. */
-        register s32 sizeArg asm("r2") = size;
-        Iwram_CopyWords(sourceCopy, source, sizeArg);
-      }
-      Iwram_CopyWords(targetCopy, target, size);
+      ITEM_IWRAM_COPY_WORDS(sourceCopy, source, size);
+      ITEM_IWRAM_COPY_WORDS(targetCopy, target, size);
       movedSource = 0;
       while (movedSource <= 29) {
         result = Inventory_RemoveFar(menu->itemOwner, menu->selectedSlot);

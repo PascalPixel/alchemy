@@ -1,4 +1,37 @@
-// Differ 36 of 1146 (tla-en, 2026-11-08, -mtune=gba).
+// Draft, differ 28 of 1146 (tla-en, 2026-11-08)
+// Every edition measures 28 (tla-en, -ja, -de, -es, -fr, -it): the same
+// pairs, so no edition's bytes differ here from English.
+// Fifth round, 8 November: the mode 4 site takes flags | COMPOSITE_FLIP_Y
+// into a local between the first build and the first entry's fetch (36 to
+// 28). Global allocation tied draw[0]'s and draw[1]'s value pseudos by
+// refs over live length; that one insn fewer in draw[0]'s range gives it r8
+// and the second sl, as the listing does, with no change in reload order.
+// Re-measured: the 4's barrier pays 83, the slot's 60, the copy wrapper 30.
+// Left (28): the Djinni's two builds (about 18), center's ldr r0 / adds r1
+// and screen.x's store (6: the one-pass's scheduling barrier), the lights'
+// first build's movs r1 before ldr r3 (2) and the mode 9 palette copy's
+// lsls before ldr r3 (2; shared by cross-jumping with modes 3, 5 and 8).
+// What the Djinni shows: the listing's 4 and the 0 and 1 for the [sp]
+// argument are reload picks (r4, r5, r4, r5), so the 4 is a pseudo with
+// REG_EQUIV 4 that no hard register holds, and each xor its own. Two
+// function-level locals holding 4 (flags ^ four, flags ^ four2, the 0 from
+// additive) give the first build exactly; but loop.c then folds the second
+// xor (invariant, used once, in a loop with calls) into its r3 load, after
+// the [sp] store, so draw[0]'s and draw[1]'s value pseudos tie at 23 insns,
+// draw[0] takes r4 by caller-save and the hoisted pointers' spill slots
+// rotate (114; with BLIT_ADDITIVE 102). The listing needs the second xor
+// left before the store (one insn more in draw[0]'s range) with its 4
+// still a reload; an empty asm on the xor's result does that (draw[0] r8
+// again) but moves the reload picks (102). Not found: a plain form that
+// keeps that xor out of loop.c's reach. Also not better this round: the
+// barrier on the first build's 4 instead (84: the second build then
+// matches but for its 0, and reloads rotate after it), one literal and one
+// function-level 4 (96 to 118), the second xor taken before draw[0]'s fetch
+// (28, no change), the mode 9 copy through the wrapper (111: cross-jumping
+// lost), the Djinni's 0 from additive with the current barrier (102), the
+// picture's + SERIES_B_PICTURE after draw[1]'s fetch (50), center's zeroes
+// from additive (28) and &center[0] (28). 15 minutes of permuter (seed
+// 4127, 17,500 candidates) found nothing below 28.
 // Later the same day, not better: the slot read through a volatile cast in
 // place of its barrier (64); a once-only block for the 4 or around the second
 // Djinni build (73 to 125); locals for the mode 4 site's two blitters (65, 73);
@@ -101,8 +134,8 @@
 // 144, gap 27). A one-pass around the frame + 53 tint gives 126 with beq, so
 // the true form stops that path; goto forms and braces change nothing.
 // - order pairs left: the literal load inside the split 0x05000000 at two
-// palette copies; reload rotation at center's zeroes and at the mode 4 site's
-// second fetch.
+// palette copies; reload rotation at center's zeroes (the mode 4 site's
+// second fetch settled on 8 November, fifth round).
 
 // Tried (2026-10-15 to 2026-11-02): a one-pass per site over all ten builds
 // (best is the Djinni's first alone), declaration-order sweeps, a counter per
@@ -206,7 +239,7 @@ extern u16 Data_08197424[]; // gBattleEffect_FlareCells
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 38 of 1146 instructions differ in tla-en. */
+   * Iwram_CopyWords, 30 of 1146 instructions differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 
@@ -396,7 +429,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
 
       LOAD_BLITTER(draw[0], flags ^ COMPOSITE_FLIP_X, BLIT_MAX);
       /* FAKEMATCH(barrier): the 4 held by an empty asm with an output; as flags ^
-         COMPOSITE_FLIP_X, 91 of 1146 instructions differ in tla-en. */
+         COMPOSITE_FLIP_X, 83 of 1146 instructions differ in tla-en. */
       __asm__("" : "=r"(four) : "0"(four));
       LOAD_BLITTER_ALTERNATE(draw[1], flags ^ four, BLIT_ADDITIVE);
 
@@ -439,7 +472,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
             void **slot = &Ram_HeapSlots->unkb8[1];
 
             /* FAKEMATCH(barrier): the slot's address held by an empty asm with an
-               output; as draw[1] = Ram_HeapSlots->unkb8[1], 68 of 1146
+               output; as draw[1] = Ram_HeapSlots->unkb8[1], 60 of 1146
                instructions differ in tla-en. */
             __asm__("" : "=r"(slot) : "0"(slot));
             draw[1] = (DrawRectangle)*slot;
@@ -530,11 +563,15 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
         // Six 64x32 pictures two frames apart, mirrored below into 64x64.
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
           s32 cel = (frame - member * 8 - 80) / 2 % 6;
-          u8 *picture; // the cel, drawn as its upper and mirrored lower half
+          u8 *picture;    // the cel, drawn as its upper and mirrored lower half
+          s32 lowerFlags; // the lower half drawn flipped
 
-          LOAD_BLITTER(draw[0], flags, BLIT_MAX);
-          Func_08196404(BLITTER_SLOT_ALTERNATE, 7, 7, flags | COMPOSITE_FLIP_Y,
-                        BLIT_MAX);
+          // The lower half's flags are taken before the first entry is
+          // fetched, which leaves the first entry r8 and the second sl.
+          Func_08196404(BLITTER_SLOT, 7, 7, flags, BLIT_MAX);
+          lowerFlags = flags | COMPOSITE_FLIP_Y;
+          draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+          Func_08196404(BLITTER_SLOT_ALTERNATE, 7, 7, lowerFlags, BLIT_MAX);
           picture = work->sheet + cel * 2048 + SERIES_B_PICTURE;
           draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
           draw[0](canvas, picture, screen.x - 32,

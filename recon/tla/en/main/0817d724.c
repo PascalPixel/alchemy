@@ -1,12 +1,31 @@
-// Differ 18 of 1034 (tla-en, 2026-11-08, -mtune=gba). 2026-11-08, from 38: the colour
-// loop now has the adopted sibling f190b74.c's form: entry read once, blue as
+// Draft, differ 2 of 1034 (tla-en, 2026-11-08). tla-ja (at 0817d728), tla-de,
+// tla-es, tla-fr and tla-it measure the same 2. Left: in the model block the
+// listing schedules the frame's reload (mov r0, fp) before the strip's pool
+// load (ldr r7); here the load goes first. In sched2 the two tie (priority 85,
+// four dependents each), so insn order decides, and the strip's reload comes
+// first because the mesh store precedes scrollU. Reload's rotation (r4 for
+// 0x700, then r7, then r0) gives the listing's registers only in that order:
+// scrollU first swaps them (22). Tried 2026-11-08, none better: every order of
+// pixels, mesh and scrollU (22 to 52), texture after pixels (4), scrollU's
+// value as a local at seven points (2 to 220), eight spellings of
+// 127 & ~(frame << 2) (all 2), strip set at four other places (2 to 208), and
+// permutes of the block (8 minutes) and of the whole function (10 minutes).
+// Leads: a source whose frame reload comes first while r7 is busy, or a fifth
+// dependent on the frame copy.
+// Settled 2026-11-08, each measured: max = 31 is set in the colour loop's for,
+// after i (18 to 16: the listing schedules movs r6, #31 last); the burst is
+// indexed &work->particles[first + i] inside its loop, so strength reduction
+// adds the offset to work (adds r7, r3, r2; 16 to 14); the trail's slot is
+// computed before y, and startY is set in the for after i = 0 (14 to 2: slot
+// crosses the branch in r1, and y still live at i = 0 sends the zero to r4 and
+// the pool base to r7, as the listing's rotation has them). Without the dead
+// green the draft now measures 331.
+// Older notes follow. 2026-11-08, from 38 to 18: the colour loop took the
+// adopted sibling f190b74.c's form: entry read once, blue as
 // ((u16)entry >> 10) & 31 (lsls 16, lsrs 26, pooled 31), a dead green taken and
-// clamped (tagged; without it 79), red = max & entry from a one-constant local
-// (hoisted 31 and its copy; red = 31 & entry gives 66), and color set before i in
-// the for (22 to 18). Left: the trail's slot (r3 for r1, 10; slot before y, as
-// an initializer, split or in a once-only block, and a 6-minute permute of the
-// block: none better), the burst's adds r7, r3, r2 (2), the model block (2).
-// Older notes follow. Blue's mask is plain
+// clamped (tagged), red = max & entry from a one-constant local (hoisted 31 and
+// its copy; red = 31 & entry gives 66), and color set before i in the for (22
+// to 18). Blue's mask is plain
 // again, (*color >> 10) & 31: the (u16) casts gain nothing under the GBA tune.
 // The red and blue clamps and the frame < 0 test are the ROM's dead code
 // (without the test, 400). Tried, none better: green set after the clamp (75);
@@ -339,11 +358,12 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
     }
     if (frame == 60) {
       u16 *color;
-      s32 max = 31; // One constant: red takes its 31 from it.
+      s32 max; // One constant, set in the for: red takes its 31 from it.
 
       // Into the sky: the red haze, its palette made grey-blue.
       BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
-      for (color = (u16 *)(BG_PLTT + 96), i = 0; i != 128; i++, color++) {
+      for (color = (u16 *)(BG_PLTT + 96), i = 0, max = 31; i != 128;
+           i++, color++) {
         s32 entry = *color;
         s32 red;
         u16 green;
@@ -351,7 +371,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
 
         red = max & entry;
         /* FAKEMATCH(dead): green is taken and clamped, then never used; as no
-         * green at all, 79 of 1034 instructions differ in tla-en. */
+         * green at all, 331 of 1034 instructions differ in tla-en. */
         green = ((u16)entry >> 5) & 31;
         blue = ((u16)entry >> 10) & 31;
         // DEAD: both channels are already at most 31.
@@ -499,9 +519,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
     burstFrame = frame - 134;
     if ((u32)burstFrame <= 7) {
       s32 first = burstFrame * 4;
-      struct EffectStep *burst;
-
-      for (i = 0, burst = &work->particles[first]; i != 4; i++, burst++) {
+      for (i = 0; i != 4; i++) {
+        struct EffectStep *burst = &work->particles[first + i];
         s32 angle;
         s32 speed;
 
@@ -531,15 +550,16 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       s32 startY;
       s32 slot;
       s32 first;
-      s32 y = 120;
+      s32 y;
 
+      slot = (frame - 16) & 63;
+      y = 120;
       if (frame > 59) {
         y = height - 80;
       }
-      startY = y << 16;
-      slot = (frame - 16) & 63;
       first = slot * 2;
-      for (i = 0, trail = &SPARKS[128 + first]; i != 2; i++, trail++) {
+      for (i = 0, startY = y << 16, trail = &SPARKS[128 + first]; i != 2;
+           i++, trail++) {
         s32 random;
         s32 angle;
         s32 speed;

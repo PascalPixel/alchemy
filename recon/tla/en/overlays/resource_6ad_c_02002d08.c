@@ -1,6 +1,12 @@
-// Differ 8 of 168 (tla-en, 2026-11-08, -mtune=gba), from 22. Func_02002d08 of overlay 6ad.
-// Overlay 6ab's Func_020024d4 with this overlay's symbols; the same 8 differ.
-// See that draft for what was tried.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Func_02002d08 of overlay 6ad; tla-ja, tla-de, tla-es, tla-fr and tla-it also
+// measure differ 0. Two changes closed the last 8 (overlay 6ab's twin
+// Func_020024d4 has the history): the stores in the order of the matched
+// sibling Func_02002658 (velocityX, acceleration, gravity, scale, bounce), so
+// the zero is set before the bounce's 0x8000 copy and wins sched2's tie; and
+// the vramBlock read through its own address, a plain byte that may alias the
+// object's stores, which gives them the priority that keeps both animation
+// loads behind them.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -78,7 +84,6 @@ void Func_02002d08(struct Actor *actor) {
       s32 scale;
       struct Sprite *sprite;
       struct Sprite *source;
-      s32 velocity;
 
       angle = Random16Far();
       radius = Random16Far();
@@ -90,16 +95,17 @@ void Func_02002d08(struct Actor *actor) {
       object->velocityY = angle * 4 + 0x20000;
       radius <<= 3;
       object->velocityZ = Iwram_MulQ16(radius, Math_Cosine(angle));
-      velocity = Iwram_MulQ16(radius, Math_Sine(angle));
+      object->velocityX = Iwram_MulQ16(radius, Math_Sine(angle));
+      object->acceleration = 0;
       object->gravity = 0x547a;
       object->scaleX = scale;
       object->scaleY = scale;
       object->bounce = 0x8000;
       sprite = object->animation;
-      object->velocityX = velocity;
-      object->acceleration = 0;
       source = work->owner->animation;
-      Resource_ResetEntry(sprite->vramBlock);
+      // Through a byte pointer: as sprite->vramBlock both animation loads
+      // move ahead of the stores (10 of 168 instructions differ in tla-en).
+      Resource_ResetEntry(*&sprite->vramBlock);
       sprite->keepEntry = 1;
       sprite->vramBlock = work->vramBlock;
       ResourceMetadata_ClearRecord(sprite->record);

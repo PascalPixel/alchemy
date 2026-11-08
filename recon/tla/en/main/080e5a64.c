@@ -1,21 +1,23 @@
-// Differ 8 of 302 (tla-en, 2026-11-08, -mtune=gba): the phase read through a pointer set before
-// the offset (12 before), and an empty once-only block in place of the empty asm after the
-// palette store (no block, 10). Left: red finished after green in the palette store, where
-// the native finishes it first. Tried 8 November: red finished in its own local, the loop
-// setup reordered, the colour built in steps (8 to 20). Round two, all 8 or worse:
-// every order of the colour's three terms (8 to 26), red finished before green's
-// call or in its own statement, either *12 as its own statement, the palette store
-// through an array or a constant local, the once-only block moved or dropped (10),
-// each device dropped (base plain 52, phase direct 12); permuter 6 minutes, nothing.
-// Near miss, differ 16 of 302 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
-// Near miss, differ 28 of 302 (54 before; 2026-10-26). The palette loop is a
-// goto loop, as the native rebuilds the palette address from i each pass and
-// loads it from the pool (a for loop strength-reduces it, 54), with 0x90000
-// and 0x7c00 held in registers across the loop as the native holds them; the
-// 0x90000 is set in two steps so that it is not rematerialized at each use
-// (assigned once, 62). Left: instruction order in the palette store and in
-// the switch's stores.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Matched 8 November 2026 from differ 8: each channel finished in its own
+// local (red, then green) before the colour is built, and the colour build
+// and palette store wrapped in a once-only block, whose loop notes keep the
+// scheduler from moving the channels' finishing past it. Without the block
+// 10 (empty blocks before and after the store also match); the colour put
+// straight into the store 10; green finished first 4; the channels finished
+// inside the colour expression 8; each wave local reassigned in place 32.
+// Devices kept: the phase offset in two steps (tagged temporary); the phase
+// read through a pointer kept across the loop (untagged, 4 without it); the
+// palette loop as a goto loop (a for loop strength-reduces the address and
+// rematerializes 0x90000, 62; a do-while loop 60). Tried for the offset:
+// 9 << 16, 0x90000 set at the top of the function, at its declaration or as
+// u32, all 48.
+// Editions: diff cannot measure the other five, whose scaffold sections
+// (tla-de 0x080f2a64, tla-es 0x080eea58, tla-fr 0x080eaa58, tla-it 0x080e5a58,
+// tla-ja 0x080e5a20, each 0x28c bytes) carry no Thumb marker. Their bytes
+// disassemble to tla-en's instructions with the same calls in the same order;
+// only the switch's five jump-table entries and the pool word holding the
+// table's address differ, all filled in by the linker.
 // A task for the heap slot 0x5c work. In state 1 it
 // cycles object palette 14's 32 colours, each a blue with red and green
 // waving on the same sine; while the sparkles are on, each of the 12
@@ -78,10 +80,11 @@ void Func_080e5a64(void) {
   struct BlendWork *blend = Ram_HeapSlots->unkec[1];
   struct ShineParticle *particle;
   struct ShineSprite *sprite;
-  s32 red, green;
+  s32 redWave, greenWave;
   s32 i;
   s32 base, blue;
   s32 color;
+  s32 red, green;
   u32 *phase;
 
   work->fading = 0;
@@ -90,18 +93,20 @@ void Func_080e5a64(void) {
     // The phase read through a pointer kept across the loop.
     phase = &blend->phase;
     /* FAKEMATCH(temporary): the phase offset built in two steps, so it stays
-     * in a register across the loop; as base = 0x90000, 52 of 302
+     * in a register across the loop; as base = 0x90000, 48 of 302
      * instructions differ in tla-en. */
     base = 9;
     base <<= 16;
     blue = 0x7c00;
   palette:
-    red = Trig_Sin(((((*phase >> 1) + i) << 16) + base) >> 5) * 12;
-    green = Trig_Sin(((((*phase >> 1) + i) << 16) + base) >> 5) * 12;
-    color = (((green >> 16) + 16) << 5) | blue | ((red >> 16) + 16);
-    *(u16 *)(0x050003c0 + i * 2) = color;
-    // An empty once-only block after the palette store.
+    redWave = Trig_Sin(((((*phase >> 1) + i) << 16) + base) >> 5) * 12;
+    greenWave = Trig_Sin(((((*phase >> 1) + i) << 16) + base) >> 5) * 12;
+    red = (redWave >> 16) + 16;
+    green = (greenWave >> 16) + 16;
+    // A once-only block around the palette store.
     do {
+      color = (green << 5) | blue | red;
+      *(u16 *)(0x050003c0 + i * 2) = color;
     } while (0);
     if (++i < 32)
       goto palette;

@@ -1,40 +1,22 @@
-// Differ 2 of 292 (tla-en, 2026-11-08, -mtune=gba); the same row as on 2026-11-07.
-// Round 2 (2026-11-08): the index store inside the y block or a block of its
-// own, a block-scoped copy of output for the call, NULL as 0 (all 2); y read
-// into a local first (4); 8 permuter minutes: nothing better.
-// 2026-11-08 (sched2 dump): the native needs the next store ahead of the y
-// load (it is, at priority 6, only behind a barrier or with an aliasing load)
-// and mov r0, r8 free to fill the load's delay. The block's loop-end note
-// makes the index reload mov r3, sl gate the call's argument copies; an empty
-// block after the next store makes the y load gate them at cost 3; reading y
-// through (u8 *) makes it wait on the next store (4). Empty or wrapping blocks
-// round x, next, the sentinel or the call, and u8 or u16 spellings of the y
-// store, measured 2 to 6.
-// 2026-11-07: measured 4 (the call's argument copies ran ahead of the y
-// load); a once-only block around the y store (permuter) gives 2 with plain
-// sprite->y. Left: mov r0, r8 lands after the index store, where the native
-// has it between the y load and store; blocks around the index store or the
-// call, a list local and a cellY temporary measured 4, u8 index 36, and 11
-// more permuter minutes found nothing.
-// Earlier (2026-10-31), differ 2 of 292: one row of scheduling
-// remains, with no device. The lsls's priority is the lineSpacing load's
-// plus 3 and the store's at most plus 2 (with a true memory dependence), so
-// no form of these same instructions ties them. Measured on 2026-10-31:
-// volatile or raw-offset reads of either spacing (differ 2), an empty asm
-// before or after the lineSpacing read (2, 4), a one-pass block or u16
-// temporary around it (4, 2), volatile spacing locals (123, 119), one or
-// two asm "+r" ties on spacingX (24, 113).
-// The native stores glyphSpacing's spill a row
-// earlier, between the movs and the lsls that build 0xf38. In sched2 that
-// store has priority 5 (its successors are the reuse of r3 and the
-// lineSpacing load), the lsls 7, so it cannot go first; no order or type of
-// the two spacing reads changes that graph (swapped, s32 or u16 spacings,
-// assignments after the declarations, width first: differ 16, 40, 156, 2
-// and 2), and a 4-minute permuter run (about 10,000 candidates) found
-// nothing better.
-// Draft, differ 8 of 292 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer (device search).
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Also differ 0 in tla-de, tla-fr, tla-it, and tla-es at its own address
+// (diff ... 0803bdec --edition tla-es: es places it at 0x0803bdec, 0x284
+// bytes, a symbol without .type, so the default lookup stops on the scaffold).
+// tla-ja does not measure: its form sits at 0x0803be40, inside the
+// Text_MeasureEntry incbin of recon/tla/ja/rom.s, and is ☀️'s Japanese
+// branch (font NULL unless the battle message window's own lookup sets it,
+// the mark glyph from code >> 14 drawn second with code & 0x3fff, width from
+// Func_0803a8fc, the page arrow at x + 3 and y + 1, a space 7 wide) on a
+// WindowWork laid out 0x200 lower (glyphSpacing at 0x1140, glyphResource at
+// 0x1146); it stays on its scaffold until a Japanese form and layout exist.
+// Settled 2026-11-08 by the types: the sprite cell is output->sprite, a
+// struct QueuedSprite, read and written through its RenderOam fields
+// (oam.x, oam.y). The y load then takes RenderOam's alias set, a child of
+// WindowSprite's, so it waits on the x store but not on the next store,
+// and mov r0, r8 fills its delay; the old GlyphCell view gave no memory
+// dependence and needed a once-only block, whose loop note held the call's
+// argument copies back (differ 2). With the real types ☀️'s order (y, index,
+// then next) and its page arrow expressions match too; no device remains.
 // The RAM routine is Glyph_DrawCode (window/glyph_arm_entries.s) and its
 // size the linker constant Glyph_DrawCodeSize.
 // ☀️'s Glyph_Draw (the international form) on this game's
@@ -50,19 +32,6 @@
 #include "resource.h"
 #include "ram_code.h"
 
-struct GlyphCell {
-  struct GlyphCell *next;
-  u8 y;
-  u16 affine : 2;
-  u16 mode : 2;
-  u16 mosaic : 1;
-  u16 colors : 1;
-  u16 shape : 2;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-};
-
 typedef s32 (*GlyphRoutine)(struct Window *, u32, u32, u32, const u8 *);
 
 extern const u8 Glyph_DrawCode[];
@@ -70,8 +39,6 @@ extern u8 Glyph_DrawCodeSize[];
 extern char ResourceId_WindowTiles;
 
 s32 Func_0803a8fc(s32 character, u32 *tiles);
-
-#define SPRITE_CELL(output) ((struct GlyphCell *)&(output)->sprite)
 
 s32 Func_0803bde4(struct Window *window, s32 character, s32 x, s32 y,
                   s32 mode) {
@@ -104,7 +71,7 @@ s32 Func_0803bde4(struct Window *window, s32 character, s32 x, s32 y,
   } else {
     u32 tiles[32];
     struct WindowSprite *output;
-    struct GlyphCell *sprite;
+    struct QueuedSprite *sprite;
     s32 index;
 
     output = WindowSprite_AcquireFree();
@@ -144,16 +111,11 @@ s32 Func_0803bde4(struct Window *window, s32 character, s32 x, s32 y,
     }
 
     if ((u8)output->active == 2) {
-      s32 column;
-      u16 row;
-
-      sprite = SPRITE_CELL(output);
+      sprite = &output->sprite;
       if (work->glyphResource == 99)
         work->glyphResource = Resource_FindFreeEntry();
-      column = 0xfffe;
-      sprite->x = (window->x + (column + window->width)) * 8 + 4;
-      row = (u8)window->y + (row = (u8)window->height + 254);
-      sprite->y = row * 8 - 1;
+      sprite->oam.x = (window->x << 3) + ((window->width - 2) << 3) + 4;
+      sprite->oam.y = (window->y << 3) + ((window->height - 2) << 3) - 1;
     } else {
       u16 *attr;
 
@@ -166,16 +128,13 @@ s32 Func_0803bde4(struct Window *window, s32 character, s32 x, s32 y,
         *attr++ = y + (spacingY >> 1) + window->y * 8 - 2;
       *attr = (x + (spacingX >> 1) + window->x * 8 + 2) | 0x4000;
       attr[1] = work->glyphTiles + index;
-      sprite = SPRITE_CELL(output);
+      sprite = &output->sprite;
     }
     output->sentinel = 253;
-    output->x = sprite->x;
-    output->next = NULL;
-    // Once-only: the block keeps the load behind the stores of x and next.
-    do {
-      output->y = sprite->y;
-    } while (0);
+    output->x = sprite->oam.x;
+    output->y = sprite->oam.y;
     output->index = index;
+    output->next = NULL;
     WindowSprite_AppendToList(&window->output, output);
   }
 done:

@@ -1,41 +1,24 @@
-// Differ 36 of 543 (tla-en, 2026-11-08, -mtune=gba). Later the same day: a j * 8 row
-// pointer set before the do loop 41 (loop.c folds cells into the giv), offset = 0
-// before length 57, an angle variable stepped by length 270, j * length in a
-// local 79, gMapCellBuffer at the transform 40, shade = 0 before the arm 96;
-// declaration and step orders 36 to 59. Ten more minutes of permuter (seed
-// 9311, stack distance counted): nothing below 36.
-// The palette copy is a
-// plain Iwram_CopyWords call again: under the GBA tune the forwarding wrapper
-// gains nothing (36 either way), so the device is gone. Rechecked the same
-// day: offset declared last in the block, in a block of its own, or j before
-// it, and j++ stepped first, all stay 36; offset declared first, or length
-// last, 46; a j * 8 row (cells[j], j << 3) 314. A ten-minute permute with
-// stack distance counted found nothing below 36.
-// 2026-11-06: rechecked; only stack slots (offset at sp+36, listing sp+20; j * length, the length << 5 copies) and two store ties differ: allocation and scheduling, left as a draft (W4).
-// Earlier 2026-11-06: offset is a C variable again, stepped in the for header before j++ (offset += 8, j++), so the preheader reloads cells from the pool and adds offset as the listing does; every pool offset now agrees. Left: stack slots only, offset at sp+36 (listing sp+20), j * length at sp+20 (sp+24), the length << 5 copies at sp+24 and sp+32 (sp+32 and sp+36), which also reorders the step loads; and two scheduling ties: the first model's shade and kind stores before mesh, and the hand's scrollU store before vertices. Tried: offset as u32 (no change); worse: offset declared elsewhere (46), a row pointer stepped with row++ (210), gMapCellBuffer in place of cells (91 to 217), a local for length << 5 (171) or for camera + 3 (72), other orders of the model stores (40 to 58).
-// 2026-11-05: differ 41 of 543 (tla-en): a row pointer from j * 8 replaces the offset variable, which lets loop.c make the giv (slot sp+20); the model stores in the listing's order. Left: the native adds cells at the row from the pool (here the giv holds it, set in the preheader), camera + 3 at sp+28 under both length << 5 copies (here sp+32), one tie on the shade store; the rest is pool offsets.
-// 2026-11-05: differ 69 of 543 (tla-en). buffer holds Data_02012000, set once at the
-// top so reload rebuilds it. Left as below.
-// 2026-11-05: differ 81 of 543 (tla-en). A wrapper gains 4. Left as below.
-// Draft, differ 87 of 543, skeleton gap 17 (tla-en, 2026-11-01)
-// BattleEffect_RunFirePuppet. Everything but two spots follows the listing, and
-// allocation matches through the arm: one counter i serves the strike loop and
-// the vertex loop (hence r10 in both), the radii are i * width givs, and cells
-// and projected are locals so their constants stay spilled and reload from the
-// pool. shade holds 0 from the allocation on (S2: one constant, no device).
-// Left:
-// - The listing reduces j * 8 to a loop.c giv, stepped between the angle's giv
-//   and j++, with the highest pseudo (slot sp+20). Here offset is a C variable:
-//   same += 8, but its slot is sp+36, which moves the angle and length << 5 down
-//   one slot each, and it steps after j++, which costs the reuse of r0 = 1 as
-//   Render_AllocateModelList's argument (the extra movs).
-//   cells[j][i] instead folds to (j * 2 + i) * 4 and steps j * 2 with a shift:
-//   differ 67, gap 19. j * 8 alone gets "not worth while" in loop.c (benefit 2);
-//   it needs a second j * 8 giv to combine with, not yet found.
-// - camera + 3 sits below both length << 5 copies here (sp+24), between them
-//   and the angle in the listing (sp+28): a later pseudo there.
-// - The stores to model after the texture: the 6 and the projected address load
-//   in another order. All 120 orders of those statements leave the gap at 17.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// BattleEffect_RunFirePuppet, 543 instructions. tla-de, tla-es, tla-fr and
+// tla-it also differ 0; tla-ja's copy starts at 0817bd8c, where it differs 0
+// too (diff ... --edition tla-ja --symbol BattleEffect_RunFirePuppet; by the
+// file's address it lands 4 bytes early and reports 823).
+// What closed the last 36 (stack slots and two store ties):
+// - The cells are Ram_MapCellBuffer, the fixed address, indexed cells[j][i].
+//   The do loop's base then starts as (j * 2) * 4 plus a constant loaded after
+//   it, so loop.c's second pass reduces that j * 8 to its own register, the
+//   highest (sp+20), stepped by 8 after j * length (sp+24), and the base adds
+//   the address from the pool. gMapCellBuffer, the symbol, does not do this.
+// - Render_TransformVertices names both buffers directly. The two extra insns
+//   before gcse grow its expression table from 213 buckets to 215, which puts
+//   length << 5's PRE register (sp+32) ahead of camera + 3's (sp+28).
+// - pixels is const u8 *, kind and shade are long: none of the three stores
+//   may then alias the s32 effect->actor load (or the hand's vertices store
+//   the texture), so sched2 stores mesh and vertices first in both models.
+//   With an s32 kind or shade, or const void *pixels, each costs 2.
+// Before: a C offset variable stepped by 8 left offset, j * length and both
+// length << 5 copies in the wrong slots (36); a row pointer from j * 8 let
+// loop.c fold the address into the giv (41).
 
 #include "types.h"
 #include "battle_effect.h"
@@ -50,16 +33,16 @@ struct ModelTexture {
   u32 logWidth : 8;
   u32 logHeight : 8;
   u32 unk02 : 16;
-  const void *pixels;
+  const u8 *pixels;
 };
 
 struct RenderModel {
-  s32 kind;
+  long kind;  // long, as shade: the store cannot alias effect->actor
   s32 unk04;
   const void *mesh;
   void *vertices;
   struct ModelTexture *texture;
-  s32 shade;
+  long shade; // long: stored after mesh and vertices, as an s32 is not
   u8 scrollU;
   u8 scrollV;
 };
@@ -129,7 +112,6 @@ void Transform_Pop(void);
 // ⚓️'s blitter modes run the other way from The Broken Seal's.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1])
 
 // The target's motion object, as the effect reads it.
 struct PuppetTarget {
@@ -152,7 +134,6 @@ struct ModelVertex {
   s8 z;
   s8 pad;
 };
-extern struct ModelVertex gMapCellBuffer[][2];
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
 extern const u8 gData_08199340[]; // the hand's mesh
@@ -245,8 +226,9 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
     if (frame > 15) {
       s32 length;
       s32 j;
-      s32 offset;
-      struct ModelVertex (*cells)[2] = gMapCellBuffer;
+      // The fixed address, not the symbol: loop.c steps the row offset alone.
+      struct ModelVertex (*cells)[2] =
+          (struct ModelVertex (*)[2])Ram_MapCellBuffer;
       u8 *projected = Data_02011000;
       s32 shade;
 
@@ -259,22 +241,20 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       }
 
       // The arm's vertices, thicker at its root.
-      for (j = 0, offset = 0; j != PUPPET_SEGMENTS; offset += 8, j++) {
+      for (j = 0; j != PUPPET_SEGMENTS; j++) {
         s32 width = 50 - ((Trig_Sin(j * 862 + 4310) * 44) >> 16);
         s32 wobble = ((Trig_Sin((frame + j) << 11) << 4) >> 16) * j / 32;
         s32 outer;
-        struct ModelVertex *row;
 
         i = 0;
         outer = width + wobble;
         do {
-          row = (struct ModelVertex *)((s8 *)cells + offset);
-          row[i].x =
+          cells[j][i].x =
               ((Trig_Cos(j * length) * (i * width + wobble + 16)) >> 16) -
               outer / 2 - 16;
-          row[i].y =
+          cells[j][i].y =
               -((Trig_Sin(j * length) * (i * width + j + wobble + 32)) >> 16);
-          row[i].z = 0;
+          cells[j][i].z = 0;
           i++;
         } while (i != 2);
         if (j == 32) {
@@ -307,7 +287,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       if (frame > 73) {
         Func_0801521c((212 << 10) - (frame << 11));
       }
-      Render_TransformVertices(cells, projected, 66);
+      Render_TransformVertices(Ram_MapCellBuffer, Data_02011000, 66);
       Render_DrawModelList(model);
 
       // The hand at the arm's end.
@@ -331,7 +311,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     wait(1);
   }
-  HeapSlot_Release(104);
+  HeapSlot_Release(SLOT_BLITTER);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

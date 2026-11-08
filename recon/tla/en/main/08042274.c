@@ -1,37 +1,42 @@
-// 2026-11-08: differ 0 of 74 under -mtune=gba, but adopted in en the ROM still
-// differs in the one pool word (0xfffff01e for 0x0000f01e), as below. The
-// listing's word load is the halfword route (GAS writes a pool ldrh as ldr):
-// as u32, s32 or a plain store the constant is split instead (differ 6).
-// Matched code pools a halfword constant zero-extended when it is stored
-// through a pointer (debug_text.c's *dst++ = 0xf000, REG_WIN0H = 0xf0f0):
-// here `u16 *p = output; p[1] = 0xf01e;` gives the listing's word 61470, but
-// the pool then sits right after the load behind a branch (differ 5), since
-// *thumb_movhi_insn gives a pool load a range of 64 bytes, ldrh's own reach,
-// where the ldr GAS writes reaches 1020 and the listing's pool is 88 bytes
-// on (a compiler question, 2026-11-08).
-// Near miss, differ 0 of 74 instructions but one pool word (tla-en,
-// 2026-10-31): every instruction matches, but the literal pool does not: the
-// u16 temporary is promoted to a signed SImode constant (-4066), so 0xf01e is
-// pooled as the word 0xfffff01e, where the native holds 0x0000f01e, 88 bytes
-// after its load. Adopted in en and de it compared 2 bytes short of the ROM
-// there. Without the temporary the constant is built in three instructions
-// (differ 6); as s16, differ 2 with the same pool word; as a u32 temporary,
-// differ 6 (re-measured 2026-10-31). Stored as a halfword constant (index =
-// 1; output[index] = 0xf01e) the pool word is 0x0000f01e, but alchemy-gcc's
-// halfword load reaches only 64 bytes, so the pool moves behind a new branch
-// after the store (differ 5, re-measured 2026-10-31); a word-sized 0xf01e is
-// always built by -mthumb-split-constants, whose split runs again after
-// reload, so no plain C form or device found moves the pool word: the
-// native's zero-extended word 88 bytes on needs a halfword pool load with a
-// longer reach than alchemy-gcc's movhi gives (a compiler question).
-// The Broken Seal's Text_DrawPrefixedNumberAtOffset in the form of its
-// English edition (its Spanish, French and Italian ones set both halfwords
-// in the branches; this game's Japanese edition has another layout),
-// reading the window's x and y as signed halfwords, with a barrier after
-// the second halfword's store (without it, differ 2). Before the new
-// option the native loaded the fifth argument from the stack and the window
-// tiles before it copied the value (differ 2).
+// Draft, differ 0 of 74 (tla-en, 2026-11-08): every instruction matches in
+// all six editions, and tla-es, tla-fr and tla-it match byte for byte (their
+// form sets both halfwords in the branches and pools no 0xf01e; compiled for
+// each and compared with its function, only the two calls' link-time offsets
+// differ), so those three can be adopted without the others (S4). tla-en,
+// tla-ja and tla-de pool the word 0xfffff01e where the ROM holds 0x0000f01e,
+// 88 bytes after its load (ldr r3, [pc, #88]): 2 bytes short of the ROM.
+// What is left there is a compiler question (K3), not a C form:
+// - A zero-extended 0xf01e is a halfword constant: as `u16 *p = output;
+//   p[1] = 0xf01e;` *thumb_movhi_insn pools the word 61470, but its pool load
+//   reaches 64 bytes, so the pool moves behind a branch after the store
+//   (differ 5). The ROM shows the same reach: in tla-en's remaining
+//   main-image listings the 90 other pooled halfwords stored by strh sit 10
+//   to 62 bytes from their pools, several at 62; only this one is 90 bytes
+//   away, so its load was not a movhi pool load.
+// - The ROM keeps `adds r2, r4, #4` after the second strh, as the plain
+//   output[1] = 0xf01e does (a constant set, split into three instructions,
+//   differ 6). Every pool load is a load to the scheduler, which draws that
+//   add into its delay (differ 2 without the once-only block). So the
+//   original's 0xf01e was a constant set through sched2 that went to the word
+//   pool (ldr, 1020 bytes' reach) instead of being split, as the 524 words
+//   from 0x100 to 0xffff the remaining main-image listings pool while
+//   splitting others in the same functions (0x17f loaded for a call at
+//   0x08167402; adopted C pools none). alchemy-gcc splits every such SImode
+//   constant after reload (*thumb_movsi_gba_const), so none reaches the pool.
+// Tried 2026-11-08: (s16)0xf01e stored directly (split, differ 6); the plain
+// store inside the once-only block (differ 6). The once-only block replaces
+// the earlier barrier (an empty asm after the store, differ 2 without it).
+// Earlier rounds (2026-10-31): the local as s16, differ 2 with the same pool
+// word; as u32, differ 6; index = 1; output[index] = 0xf01e pools 61470 behind
+// a new branch (differ 5). Before -mtune=gba the native loaded the fifth
+// argument from the stack and the window tiles before it copied the value
+// (differ 2).
+// The Broken Seal's Text_DrawPrefixedNumberAtOffset in both its forms:
+// English, German and Japanese set the second halfword after the branches;
+// Spanish, French and Italian set both in them. The window's x and y are read
+// as signed halfwords.
 #include "types.h"
+#include "edition.h"
 #include "ram_buffer.h"
 #include "window.h"
 #include "render_input.h"
@@ -51,22 +56,32 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work,
   s32 src;
   s32 dst;
   s32 phase;
-  u16 second;
 
   canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   text = String_FormatNumber(formatted, value, 4);
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
+    (LANGUAGE == LANGUAGE_ITALIAN)
+  if (variant == 0) {
+    output[0] = 0xf01d;
+    output[1] = 0xf01e;
+  } else {
+    output[0] = 0xf01f;
+    output[1] = 0xf005;
+  }
+#else
   if (variant == 0) {
     output[0] = 0xf01d;
   } else {
     output[0] = 0xf01f;
   }
-  /* FAKEMATCH(temporary): 0xf01e held in a u16 local before the store; as
-     output[1] = 0xf01e, 6 of 74 instructions differ in tla-en. */
-  second = 0xf01e;
-  output[1] = second;
-  /* FAKEMATCH(barrier): an empty asm after the second halfword's store; as
-     the plain store, 2 of 74 instructions differ in tla-en. */
-  asm("");
+  // A once-only block: its end keeps the loop's set-up after this store.
+  do {
+    // Held in a u16 local, 0xf01e is loaded; stored directly, it is built.
+    u16 second = 0xf01e;
+
+    output[1] = second;
+  } while (0);
+#endif
   for (index = 0; index <= 4; index++) {
     output[index + 2] = text[index];
   }

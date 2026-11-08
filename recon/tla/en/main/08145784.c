@@ -1,25 +1,23 @@
-// Differ 10 of 549 (tla-en, 2026-11-08, -mtune=gba); the same root: gcse copies
-// the side into r3. Third round, 2026-11-08: both zeros in the side-0 arm
-// gives the native if/else and leaves only the copy (adds r3, r0, #0) and the
-// pool it shifts (31); with it, draw through *(draw + side), side + 0, !side,
-// (u32)i >> 31, an empty once-only loop before or inside the test: 31 to 33;
-// on the current form, empty once-only loops: 10. Permuter 6 min from the
-// if/else form: 14 at best.
-// Earlier: measured 2026-11-08: column = 0 only in the side-0 arm 31,
-// the side-0 arm dropped 470; row = i >> 8 or (u32)i >> 31, a once-only block
-// or goto for the side-0 arm, column++ or row = column: 10; the else first 37,
-// side as a block u8 local 514. Devices re-measured and retagged (S2): one
-// position 14, a literal zero 91, row = 0 454. Permuter 6 and 8 minutes,
-// nothing better.
-// Differ 10 of 549 (tla-en, 2026-11-07). Left: one root: gcse copies the side
-// (load in r0, copy in r3 for the first draws) where the native keeps one r0;
-// column = 0 set before the side test also makes the test a beq over the
-// else instead of the native if/else. 2026-11-07: column = 0 hoisted
-// aligned the literal pool (31 to 10); row = 0 hoisted 28, the else
-// reordered 12, no else 49, the test inverted 39; permuter (13 min) nothing
-// better.
-
-// Near miss, differ 97 of 549 (the draft has 550).
+// Matches: differ 0 (tla-en, 2026-11-08); differ 0 as well in tla-ja, tla-de,
+// tla-es, tla-fr and tla-it by alchemy-devtools diff, which leaves literal
+// pools out, so the edition build (make compare-editions) still has to confirm
+// each before adoption. Devices: two tagged dead stores (row = i >> 31, the
+// twin's, and side = 0 in the party arm); the second position and the zero
+// held in r8 are ordinary C, each measured at its comment.
+// What closed it (2026-11-08): the test loaded the side once and gcse made a
+// second register for the PANEL_B draw (its load is redone after the 72 to 75
+// draw's call), then its last copy propagation pointed the first two draws
+// back at the test's register, so both stayed live at the join and the copy
+// (adds r3, r0, #0) stayed. A store to the tested local in either arm kills
+// that copy at the join: the draws keep gcse's register, cse2 moves the test
+// onto it and one register is left. Any local that is dead there works (amp
+// reused, a fresh side, the store in either arm, any value, row = side = 0);
+// without the store, 31. The --rtl dumps show it: 07.gcse "COPY-PROP:
+// Replacing reg" for insns 509 and 571 is the line that must not appear.
+// Tried before (10 at best): column = 0 or row = 0 hoisted, the else first,
+// the test inverted or as !side, side through a local without the store, the
+// draw through *(draw + side), once-only loops and blocks, goto, no else, and
+// the permuter (over 30 minutes in all); none removed the copy.
 
 // Effect kind 40. Twin: The Broken Seal's BattleEffect_RunCounterReveal, ported
 // call for call and with its three devices (each measured here). The Lost
@@ -30,20 +28,6 @@
 // callbacks at 0xc80; and the strike at frame 72 is Func_08118088 on the target
 // with a shake of 8 and the results phase 144, where The Broken Seal throws the
 // target by hand at 88 and drops it at 120; the screen shakes each frame.
-
-// Left: order. The prologue matches; the rest are single swaps of a load with
-// its neighbour, a literal pool two bytes off the native's (each branch over
-// it is 2 short), and the side read once into r3 for the panel index where
-// the native indexes with r0 (one extra instruction).
-
-// Tried (2026-10-15): the plain port without the row device 524 (gcse folds
-// row); with it 130; the map buffer through a local set after the first
-// load 103, before the zero 97; the rows ordered row, column (no change).
-// Tried (2026-11-06): side through a local, the test inverted or as !side, the
-// draw through a pointer: 31 to 37. Permuter (5 min): 10 and 14 only by
-// adding instructions that realign the pool (a junk temporary, frame - 1).
-// Tried (2026-11-06, later): row before column in either branch (33); the
-// zeros set before an if (side != 0) with no else (49).
 
 #include "battle.h"
 #include "graphics.h"
@@ -110,7 +94,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   void *canvas;
   DrawRectangle draw[2];
   // Unused: the second position gives the stack frame its 72 bytes, as in
-  // The Broken Seal's twin (one position: 14 of 549 differ, 2026-11-08).
+  // The Broken Seal's twin (one position: 4 of 549 differ, 2026-11-08).
   struct EffectPosition pos[2];
   s32 curve[2];
   s32 visible;
@@ -124,7 +108,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
 
   // The zero is held in r8 through the setup calls, as in The Broken Seal's
-  // twin (the literal 0 stored directly: 91 of 549 differ, 2026-11-08).
+  // twin (the literal 0 stored directly: 81 of 549 differ, 2026-11-08).
   zero = 0;
 
   // Set up: half-and-half blending, the image with its palette, the crescent
@@ -225,14 +209,21 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
 
     // The image, then from frame 72 its panels, each shown for two frames.
     if (visible != 0) {
-      column = 0;
-      if (effect->side == 0) {
+      s32 side = effect->side;
+
+      if (side == 0) {
+        column = 0;
         row = 0;
       } else {
         column = 1;
         /* FAKEMATCH(dead): i is 160 here, so this reads 0, as in The Broken
-         * Seal's twin; as row = 0, 454 of 549 instructions differ in tla-en. */
+         * Seal's twin; as row = 0, 477 of 549 instructions differ in tla-en. */
         row = i >> 31;
+        /* FAKEMATCH(dead): side is not read again; the store keeps gcse's copy
+         * of the side from replacing the draws' index, so the test and the
+         * draws share one register; as without it, 31 of 549 instructions
+         * differ in tla-en. */
+        side = 0;
       }
       if (frame <= 71) {
         draw[effect->side](canvas, work->sheet, Data_081978f0[column * 7],

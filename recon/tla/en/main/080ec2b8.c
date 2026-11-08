@@ -1,24 +1,26 @@
-// Differ 2 of 216 (tla-en, 2026-11-08, -mtune=gba); the same row as below. Round two, no gain:
-// work assigned after the calls, before or after best and bestDistance, or block-scoped (62);
-// unk644 read into flag (76 with work late, 26 with it early) or state (60); the cursor reads
-// before the best values (20); permute 8 min from work assigned late: back to 2 only. Tried without
-// gain: work declared first, unk644 read into a local (2); the global used directly, work assigned
-// after the calls or in a block (62: work leaves r5, which the native shares with the first loop's
-// place pointer); a once-only block around or after the calls (4); permute 8 min: nothing better.
-// Near miss, differ 2 of 216 (tla-en, 2026-11-06): plain C, no devices; only
-// the work's address loads before the two calls here, after them in the native
-// (loading it after the calls by assignment is differ 62: work leaves r5).
-// First draft of Func_080ec2b8, written from the listing: picks the world map
-// place for the cursor. The nearest shown place (its flag-entry state not 0 or
-// 15, its flag 0x180 + n set) to the cursor wins; when the cursor is already
-// on it (distance squared at most 4) it steps by step through the table to
-// the next shown place, wrapping at both ends, giving up after two wraps.
-// With no place shown, Func_080ec1d0 gives the leader's place.
+// Matches: differ 0 (tla-en, 2026-11-08), plain C, no devices. The work is
+// reached at its constant address (Ram_WorldMapWork, as Func_080ebf94 reaches
+// it): as the linked symbol gWorldMapWork its address loaded before the two
+// calls (differ 2, and 62 when assigned after them); as a constant it loads
+// after them into r5. The cursor and the target (unk644, unk648) are 16.16
+// words read as >> 16, the header's layout; unk648's own literal (0x0202a648)
+// comes from the constant. Every edition's bytes agree with this draft except
+// the call offsets (compared with each scaffold extent: tla-ja 0x080ec200,
+// tla-de 0x080f92b8, tla-es 0x080f52ac, tla-fr 0x080f12ac, tla-it 0x080ec2ac;
+// the diff tool cannot bound those extents), so it can adopt in all six.
+//
+// Picks the world map place for the cursor. The nearest shown place (its
+// flag-entry state not 0 or 15, its flag 0x180 + n set) to the cursor wins;
+// when the cursor is already on it (distance squared at most 4) it steps by
+// step through the table to the next shown place, wrapping at both ends,
+// giving up after two wraps. With no place shown, Func_080ec1d0 gives the
+// leader's place.
 //
 // The first loop indexes the table and breaks on an empty entry; one flag and
 // one state variable serve both loops, which gives the native's r5, r6 and r7
 // (separate per-loop variables are differ 38).
 #include "types.h"
+#include "ram_buffer.h"
 
 // A flag entry as the world map reads it: its world position.
 struct WorldMapPlace {
@@ -30,19 +32,16 @@ struct WorldMapPlace {
   u8 unk08[12];
 };
 
+// The world map screen's work, laid out as field/world_map.h has it.
 struct WorldMapWork {
   u16 vramBlock;
   u16 windowSlot;
-  s16 xFraction;
-  s16 x;
-  s16 zFraction;
-  s16 z;
+  s32 x; // the cursor's screen column, 16.16 pixels
+  s32 z; // the cursor's screen row, 16.16 pixels
   u8 unk0c[0x638];
   s32 unk644;
+  s32 unk648;
 };
-
-extern struct WorldMapWork gWorldMapWork;
-extern s16 Data_0202a648[2];
 
 s32 Party_GetLeaderActor(void);
 struct WorldMapPlace *FlagEntries_GetTable(void);
@@ -66,17 +65,17 @@ void Func_080ec2b8(s32 *screenX, s32 *screenY, s32 step) {
   s32 wraps;
   s32 flag;
   u32 state;
-  struct WorldMapWork *work = &gWorldMapWork;
+  struct WorldMapWork *work = Ram_WorldMapWork;
 
   Party_GetLeaderActor();
   places = FlagEntries_GetTable();
   bestDistance = 0x4000000;
   best = -1;
-  cursorX = work->x;
-  cursorY = work->z;
+  cursorX = work->x >> 16;
+  cursorY = work->z >> 16;
   if (work->unk644 != 0) {
     cursorX = work->unk644 >> 16;
-    cursorY = Data_0202a648[1];
+    cursorY = work->unk648 >> 16;
   }
   for (count = 0; count < 128; count++) {
 

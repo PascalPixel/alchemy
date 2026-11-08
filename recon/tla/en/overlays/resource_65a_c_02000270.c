@@ -1,16 +1,32 @@
-// Differ 11 of 76 (tla-en, 2026-11-08, -mtune=gba), under -Os.
+// Draft, differ 11 of 76 (tla-en, 2026-11-08)
+// Under -Os and -mtune=gba; ja, de, es, fr and it measure the same 11.
 // Overlay 655's Func_02000e9c (resource_655_c_02000e9c.c) instruction for
-// instruction, with this overlay's own import stubs; written out here since
-// 8 November rather than included, so this draft no longer moves when 655's
-// does. Raises the cells under the held actor again. Left: the native's shape
-// store sits between the first cell's read and write (its reload of the cell
-// pointer shows the order is there before scheduling); here it comes first.
-// The one-field ShapeCell view 655 uses is free (11 either way) and is
-// dropped; the store after the cell's |=, a read-store-write block, an
-// indexed store, or the store folded into the call give 11 to 34. Eight
-// minutes of permute found only invalid candidates (a pointer assigned twice
-// in one expression).
-// 8 November: 655's round applies here unchanged (same function, 11).
+// instruction, with this overlay's own import stubs; written out here so this
+// draft no longer moves when 655's does. Raises the cells under the held actor
+// again.
+// Left: the first cell's reload registers. The native copies the shape pointer
+// to r1, the cell pointer to r3 for the read and to r1 again for the write;
+// here the shape store takes r3, the read r1 and the write reuses that r1.
+// Reload hands out r1, r2, r3 in turn (reload1.c, last_spill_reg), so the
+// native's registers follow from this draft's own order (shape store first)
+// when the turn already stands on r3 before the region: one more allocated
+// reload than here between the 0xfdff0000 reload and the shape store. The
+// likeliest is gMapShapeGrid loaded by reload at its add, `ldr r3` either way,
+// instead of local-alloc's pseudo 59. A shape store through a one-byte struct
+// view has its own alias set, which lets sched2 lift the read above the store
+// as the native has it; a throwaway extra read before the region moved the
+// turn, and the read, the 512 and the second cell then took the native's
+// registers. No source form found yet makes the grid a reload: a grid local
+// assigned at the top, before the cell load or at the add (35, 45, 11);
+// &gMapShapeGrid[i], an int offset, a u32 sum or the grid assigned first and
+// added to (11, 11, 11, 29).
+// Also tried 8 November: the read held in a local before the shape store (u8,
+// u16, s16, u32, s32, const, cast at the or, a constant local: 28 to 35;
+// regmove ties the or's result to the read, not to 192); the or'ed value held
+// across the store (33: the later shape store drops shapes below cells in
+// local-alloc priority and swaps r8 and sl); the store in a statement
+// expression inside the |= (31); the view stored after the |= (33). Six
+// permuter minutes from the view found only a wrong-shift candidate (9).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

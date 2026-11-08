@@ -1,10 +1,35 @@
-// Differ 2 of 1022 (tla-en, 2026-11-08, -mtune=gba): one pair, the pool load ahead
-// of str r7 at the second DrawDisc. Tried 2026-11-08: the ball steps after the
-// call (92), index after x and y (18), y before x in mode 0 (67); round two: index
+// Draft, differ 2 of 1022 (tla-en, 2026-11-08)
+// Left: one pair in the glow arm's (mode 0) fourth quarter: ldr r5, =cells
+// issues between str r0, [sp] and str r7, [sp, #4]; the listing has both
+// stores first. tla-de, -es, -fr and -it: the same 2; tla-ja the same 2 at
+// 0x0818f624 (diff ... 0818f624 --edition tla-ja).
+// Round 4 (2026-11-08), from the sched2 dump with -fsched-verbose: after
+// str r0 the pool load (reload of cells into r5, free once the ldrsh has read
+// the disc pointer) and str r7 tie on every rank_for_schedule key: priority 6
+// each (load 3 + add 3; store 3 + blitter pointer load 3), class 3 each, three
+// dependents each (the add or the pointer load, the draw call, the closing
+// HeapSlot_Release). So LUID decides, and reload puts the pool load before the
+// add, which expand_call always emits before the stack stores; combine will
+// not move the add into the r1 move, since the r0 move precedes it. Nothing
+// the listing shows can give str r7 a fourth dependent or the pool load a
+// lower priority, so this order is out of reach of this RTL with this
+// compiler: a scheduler-model question (K2, K3), not a source one. Tried, all
+// 2 unless noted: q4's source as cells + discs[index] (6, operand order),
+// (u8 *)cells + discs[index] (6), &((u8 *)cells)[...] (6), *(discs + index),
+// gMapCellBuffer in q4 (117) or in every quarter (76); DrawDisc as a macro
+// (66), with a disc pointer parameter (84), returning s32 (66), index first or
+// before size, const s16 *discs; a volatile blitter pointer read; a volatile
+// disc read (156); register cells, const cells (96), cells assigned as a
+// statement. No device fits: a volatile asm after the fourth draw is a full
+// barrier that adds a dependent to both (the tie stays); a non-volatile asm
+// writing size is deleted as dead; anything put in an argument lands before
+// the stores.
+// Rounds 1 and 2 (2026-11-08), the same pair. Tried: the ball steps after the
+// call (92), index after x and y (18), y before x in mode 0 (67); index
 // declaration orders, (size - 2) / 2, quarter 2 with cells first (6), a
 // once-only block before its LoadBlitter (12, 18); permute 9 min: nothing
-// below 2. The pool load is reload's rematerialized cells (r5), which outranks
-// str r7 on priority in sched2.
+// below 2. (They read the pool load as outranking str r7 on priority; round 4
+// found the two tied, decided by LUID.)
 // Round 3 (2026-11-08): cells as gMapCellBuffer at either call, u32 cells, u8 *
 // canvas, unsigned index, *(discs + index), cells first (6), size / 2 (119), a
 // half local (53), a draw local (154), once-only blocks at the last quarter (6

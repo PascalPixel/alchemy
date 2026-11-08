@@ -1,5 +1,8 @@
-// Differ 2 of 1300 (tla-en, 2026-11-08, -mtune=gba). The clobber is a tagged barrier (without it, 23: move2add turns the second 0x2c0 address into adds r0, #2); the volatile reads and the one-pass block round the arrival (without it, 87) are ordinary C. Left: movs r4, #0 (the reload of the hoisted 0 into r10) ties with the arrival strb at priority 41 and goes first; moving the state store or the call out of the block, an empty block or plain asm for the clobber, party-> for ownerOverride and Event_SetDestination inside the block measured 2, 2, 23, 60 and 32. Later on 2026-11-08: the state store alone in a once-only block (58), the state store before the block (4), an empty block for the clobber (23), r1 or r3 clobbers (23), the arrival test folded into its assignment (2) and a permuter run (no better than 2) left it. Older notes follow.
-// Draft, differ 183 of 1300, skeleton gap 41 (tla-en, 2026-11-01)
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Also differ 0 in tla-ja, tla-de, tla-es, tla-fr and tla-it (2026-11-08, each
+// at its own address; diff leaves out literal pools, so the twelve-edition
+// build is still the judge). Japanese has no wait(1) after Func_080cb82c for a
+// Psynergy command whose 0x2000 bit is clear, chosen here by TLA_PATCH_1.
 // FieldSequence_Run, this game's form of ☀️'s FieldSequence_Run
 // (games/tbs/src/field/field_sequence/run.c): runs the current scene until the
 // party leaves it and returns how (the warp, or 999 after the party falls). It
@@ -12,19 +15,24 @@
 // world map, its zoom, the four ship commands), a touch or exit, a push, a
 // battle, examining, the menu, talking, searching, Psynergy, an item or the
 // pause menu.
-// Left, all that keeps the skeleton from 0:
-// - The native rereads memory with no store between: gInput.held for the 2 and
-//   4 keys of the menu's debug test (the draft folds them to & 6), and
-//   gDebugMode for the pause menu's second debug test. ☀️ has gKeysHeld
-//   volatile and tags this same gDebugMode reread; either needs a declaration
-//   or a volatile device. Both, measured with casts, give differ 101, gap 23.
-// - The native holds the 0 for ownerOverride in r10 from before
-//   Func_080e7804, and that block has no move2add on 0x2c0. Only loop.c hoists
-//   such a 0: a one-pass block around that call to the ownerOverride stores
-//   gives it. On top of the volatile reads, and with the compare spelt
-//   (s16)(s32), that gives differ 39, gap 21. Untagged it would be a device, so
-//   it is not here; the 0 may mean a real loop or macro still unfound.
-// - Five scheduling ties, each a pair of rows out of order.
+// One device is left: the r0 clobber before Func_080c9e1c is a tagged barrier
+// (without it, 21: move2add turns the 0x2c0 address into adds r0, #2 after the
+// 0x2be one). The native forgets r0 there with nothing in its bytes; a label,
+// a call or a store to r0 between the two addresses at reload would do it, and
+// none is found in C yet. Measured without the clobber: the arrival test as an
+// if/else whose two zero stores cross-jump (83: the extra store shifts reload's
+// round-robin registers), the test folded with || (21), the entrance read into
+// value first (6); with other clobbers: an empty block, plain asm, r1 or r3 (23).
+// What closed it (8 November, from 2): every store to a gMainRoutineWork
+// member, ARRIVAL's included, reads its field and masks it with a 0 made before
+// the store. CSE kept the state store's 0 for ownerOverride, so its reload into
+// r10 came before the strb in insn order and won their sched2 tie (equal
+// priority, dependants and class). Stored through a pointer the state makes no
+// 0; the 0 is a local in the once-only block after the store, and its one use
+// counts at loop depth, so it stays in r10 across the call (outside the block,
+// 87; the store spelt ARRIVAL.state = 2, 4).
+// The menu's gInput.held and the pause menu's gDebugMode rereads are volatile
+// casts (ordinary C, as ☀️'s volatile gKeysHeld).
 // Found: value is one variable in the native (scene attributes, the fade flag,
 // the fallen count, the toggle, the talk target), which sets the r5 allocation.
 // Data_0200xxxx are read through pointers set before the loop: unallocated,
@@ -38,6 +46,7 @@
 #include "iwram_call.h"
 #include "scene_ids.h"
 #include "macros.h"
+#include "version.h"
 
 struct FieldWork {
   u8 unk000[16];
@@ -367,19 +376,24 @@ s32 FieldSequence_Run(void) {
     }
     arrivalState = ARRIVAL.state;
     if (arrivalState == 1) {
-      // Once-only: the block is what makes loop.c hoist the 0 for ownerOverride.
+      // Through a pointer: stored as ARRIVAL.state, the byte is read and masked
+      // with a 0 made before the store, which then serves ownerOverride.
+      *(s8 *)&ARRIVAL.state = 2;
+      // Once-only: inside the block the 0's one use counts at loop depth, so
+      // it stays in a register across Func_080e7804.
       do {
-      ARRIVAL.state = 2;
-      Func_080e7804();
-      if (ARRIVAL.scene != (s16)(s32)&SceneId_Ov64a)
-        goto clearOwner;
-      /* FAKEMATCH(barrier): the form kept; as no asm, 23 of 1300 instructions differ in tla-en. */
-      asm("" : : : "r0");
-      if ((value = Func_080c9e1c(ARRIVAL.entrance)) & 16)
-      clearOwner:
-        gMainRoutineWork.ownerOverride = 0;
-      else if (value & 32)
-        gMainRoutineWork.ownerOverride = 1;
+        s32 zero = 0;
+
+        Func_080e7804();
+        if (ARRIVAL.scene != (s16)(s32)&SceneId_Ov64a)
+          goto clearOwner;
+        /* FAKEMATCH(barrier): the form kept; as no asm, 21 of 1300 instructions differ in tla-en. */
+        asm("" : : : "r0");
+        if ((value = Func_080c9e1c(ARRIVAL.entrance)) & 16)
+        clearOwner:
+          gMainRoutineWork.ownerOverride = zero;
+        else if (value & 32)
+          gMainRoutineWork.ownerOverride = 1;
       } while (0);
       Event_SetDestination(ARRIVAL.scene, ARRIVAL.entrance);
     } else if (arrivalState == 2) {
@@ -588,7 +602,8 @@ s32 FieldSequence_Run(void) {
         UiTimedNotice_CloseIfActiveFar();
         if (packed == 0) {
           Func_080cb82c();
-          wait(1);
+          if (TLA_PATCH_1)
+            wait(1);
         }
         Func_080ce61c(work->psynergy);
         if (packed == 0)

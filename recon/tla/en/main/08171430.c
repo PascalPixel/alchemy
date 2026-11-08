@@ -1,4 +1,27 @@
-// Differ 26 of 828 (tla-en, 2026-11-08, -mtune=gba).
+// Draft, differ 26 of 828 (tla-en, 2026-11-08); 26 in every edition, the same rows.
+// Left: the frame loop's preheader order (16 rows: the listing computes
+// camera->pos, &texture, then pos = &screen; here pos comes first) and frame in r4
+// against r1 at the pillars' frame <= 47 test, its constant in r1 against r2 (6).
+// 2026-11-08 (latest), unchanged at 26. Found in the dumps: gcse PRE puts its
+// hoisted copies at the end of the preheader block in expression-number order
+// (order of first occurrence), after any set already in that block, so a pos =
+// &screen before the loop always comes first; pos's slot (between y and shade)
+// says it is a user variable, not a PRE temporary. With pos = &screen set after
+// the bolts' setup and no set before the loop (nothing reads pos on frame 0: no
+// ring is live and no bolt is past 11), PRE hoists camera->pos, &texture and
+// &screen in the listing's order and cprop leaves the ring's reads of pos alone,
+// but pos = R stays in the loop (loop.c moves no set that follows the loop's first
+// jump and whose register is read earlier in the loop): 417. Tried without gain:
+// the frame loop as do-while, while, or for (;;) with a break (26 each); pos set
+// in the for condition or the increment (221), in the frame == 0 block (58), as a
+// block local at the loop's top (58), before the circle loop (59), first in the
+// function (92); no pos, &screen used directly in the ring and the bolts (156);
+// at the pillars z and x with the cosine or sine first, z as 0 - ..., growth as a
+// ternary or frame < 48, growth and scale at function level or declared first (26
+// each). The pillars' code before the frame reload is the listing's, so reload's
+// round-robin choice there differs by state the output does not show (a pseudo
+// live in r4 and r0 at the jump, or one reload more earlier); not found. A
+// 12-minute random permute (9,865 candidates) found nothing below 26.
 // Tried 2026-11-08, later: pos declared after texture (26), after cells (44),
 // before i (116); pos = &screen before frame in the for init (30), before the
 // circles, cells or the target read (53 to 69); growth as frame * 512 - 0x2000

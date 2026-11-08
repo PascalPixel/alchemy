@@ -1,46 +1,23 @@
-// Differ 40 of 125 (tla-en, 2026-11-08, -mtune=gba): register choice only, no device.
-// 8 November, later: unchanged. Also 40: the shape row as const + cells, as
-// (u32) or as a pointer difference, the flags read in one assignment, a block
-// index, u32 flags or tag; shapes += slot after the call 58, the motion stores
-// chained 42, cells before the slot 50, a layer local 55; 8 minutes of
-// permuting (seed 4417): nothing below 40.
-// 8 November: the empty-asm barrier between the two flag stores is now an empty
-// once-only block (40, the same; 42 with neither). Also 40: the block store in a
-// once-only block, shapes += slot before the flags, u32 slot or flags, the cells
-// and shapes set after the declarations, slot * 4 + 3 indexing; the shape stored
-// before the block 58, a slot * 4 offset local 65, the flag byte through a u8
-// pointer 65, the slot read after the declarations 52. 8 minutes of permuting
-// (seed 9313): nothing below 40.
-// Editions, 7 November: every edition measures the same 40 (ja 080eab14,
-// de 080f7bd0, es 080f3bc4, fr 080efbc4, it 080eabc4); each listing is 0x118
-// bytes, one function, and its instructions are the English ones, so the
-// difference is the register choice below, not an edition form.
-// Register choice only. Also 6 November: Func_080eace8's stepping (shapes,
-// cells += slot) 74; shapes += slot alone 58; the shape row built in two
-// steps (grid then index, or an index local) 40, unchanged; the shape store
-// through struct ShapeCell 40, or 74 to 79 after the cell's byte 3; 6 minutes
-// of permuting found nothing below 40.
-// 6 November, second round: by greg's dump the cell table (6 weighted refs
-// over 23 insns) outranks the slot (6 over 39) and the shape row (4 over 29);
-// the native needs the shape row first, then the slot, then the table, so the
-// shape row must carry more refs or a shorter life. cells += slot with
-// shapes += slot measured 74 again; 8 more minutes of permuting, best 43.
-// The native keeps
-// the shape row in r5, the slot in r8 (then slot * 4) and the cell table in r10;
-// this gives the cell table r5, the shape row r8 and the slot r10. The native stores the shape before the
-// block (both u8 stores, so in source order); written in that order this
-// measures 58, the same rotation unchanged, so the block store stays first here.
-// Locals at function scope, a local grid pointer, pointer increments
-// (cells += slot: 74), a typed flags field with a ShapeCell store as in
-// Func_080eace8 (74), u32/u16 slot and other spellings of the shape row
-// measured 58 or worse.
-// Draft, differ 66 of 125: register choice and order. The native keeps the
-// layer's cell table in r10 and the shape row (offset already added) in r5,
-// and builds the slot's offset into r8 after Func_080eab98; this keeps the
-// shape row in r8 and the cell pointer in r5, so the tail's stores read
-// differently. Byte 3 read once into a local measured 66; read for the
-// save and again for the |= 0x80 (the store to the word at 76 may alias
-// it), 77.
+// Matches: differ 0 (tla-en, 2026-11-08), no device.
+// What closed it from 40 (8 November): three plain-C shapes, each settled from
+// the lreg and greg dumps rather than by permuting.
+// - shapes += slot before Func_080eab98: combine does not fold an add across a
+//   call into the store, so the shape row's own register takes the slot and the
+//   slot then dies into slot * 4 (the listing's r5 and r8); sched2 moves the add
+//   back after the call. Written after the call it folds into the store (58).
+// - One cell pointer reused for the cell and then the block: a local that dies
+//   twice is left to global-alloc, so neither address ties to the cell table or
+//   to slot * 4 in local-alloc (the listing's r1, with the table in r10).
+// - grid as a function-scope local, as in Func_080eaa14 and Func_080eace8: it
+//   gets no register and is reloaded from the pool each pass, which moves
+//   reload's round-robin onto the listing's choices (slot * 4 in r1, the step
+//   of actors in r2). The row's add then needs the index first, hence the
+//   integer sum; &grid[row] adds the grid first (2).
+// The empty once-only block between the two flag stores is gone: it hoisted
+// the zero out of the loop, which this shape no longer wants.
+// Editions, 7 November: each listing is 0x118 bytes, one function, and its
+// instructions are the English ones (ja 080eab14, de 080f7bd0, es 080f3bc4,
+// fr 080efbc4, it 080eabc4).
 // Raises the map under a list of actors (ids until 0xffff). For each
 // it reads the actor's cell key and height, clears its motion and collision
 // flags, shows its sprite, gives the cell's shape in gMapShapeGrid
@@ -56,8 +33,7 @@
 struct SwitchCell {
   u8 unk00[2];
   u8 block;
-  u8 unk03_0 : 7;
-  u8 raised : 1;
+  u8 flags;
 };
 
 struct RestoreLayer {
@@ -84,6 +60,7 @@ void Actor_SetSingleChildFlagsFar(struct Actor *object,
 void Func_080eabd0(u16 *actors) {
   struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapWork;
   struct SwitchCell *blocks = map->layers[2].cells;
+  u8 *grid = gMapShapeGrid;
   struct Actor *leader;
   s32 height;
 
@@ -94,20 +71,26 @@ void Func_080eabd0(u16 *actors) {
         Map_GetTerrainHeightFar(object->terrainId, object->x, object->z) >> 19;
     s32 slot = Func_080eab70(object);
     struct SwitchCell *cells = map->layers[object->terrainId].cells;
-    u8 *shapes = &gMapShapeGrid[((s32)cells - 0x02010000) >> 2];
+    // The row's address as an integer sum, index first: &grid[row] adds the
+    // grid first.
+    u8 *shapes = (u8 *)((((s32)cells - 0x02010000) >> 2) + (s32)grid);
+    struct SwitchCell *cell;
     s32 tag;
     u8 flags;
 
     object->motionFlags = 0;
-    do { } while (0);
     object->collisionFlags = 0;
     Actor_SetSingleChildFlagsFar(object, 0);
+    shapes += slot;
     tag = Func_080eab98(object->terrainId, key, level + 4);
-    flags = ((u8 *)&cells[slot])[3];
+    cell = &cells[slot];
+    flags = cell->flags;
     object->unk4c = flags;
-    ((u8 *)&cells[slot])[3] = flags | 0x80;
-    blocks[slot].block = 0xff;
-    shapes[slot] = tag;
+    cell->flags = flags | 0x80;
+    *shapes = tag;
+    // Reused for the block in layer 2's table.
+    cell = &blocks[slot];
+    cell->block = 0xff;
   }
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   height = Map_GetTerrainHeightFar(leader->terrainId, leader->x, leader->z);

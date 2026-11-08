@@ -1,44 +1,39 @@
-// Differ 14 of 1556 (tla-en, 2026-11-08, -mtune=gba, multiplies 3 3). Third pass, 8 November,
-// no gain: a block-scoped count local for the shard loop's 256 before or after p, half or i (80,
-// 86); the shard setup's p, half and i in other orders (14 to 50); model->shade = 0 literal (20);
-// the shade store before the vertices or texture store (22); pixels before logWidth (30);
-// 8 minutes of permute over the impact model setup: nothing below 14.
-// Earlier the same day, from 20: a once-only block
-// around the arc's v[2] store (j's load and increment after the muls, 20 to 16) and the shard loop's
-// i = 0 set above half's halving (16 to 14). Left: the 256 limit's register at the shard loop (r6,
-// listing r2); half's sign + hx at the shard and ring sites, where the listing has hx + sign; the
-// shade store after texture2.logWidth's. The halving's order is cse's: it replaces the copy `half =
-// hx` by hx only when half's last use comes before hx's, as at x0 (the hoop); half lives on to the
-// ring, so combine swaps the operands instead. A block-local for the ring or the shard fixes that
-// site's order but spills one more pseudo (frame 212, differ 400); x0 for the shard, 140. Tried 8
-// November with no gain: once-only blocks around the shade, logWidth, vertices and half stores,
-// shade or kind set earlier, logHeight before logWidth, halving written as /= and -=.
-// Earlier: 18, from 16: the rows below (half's sign + hx at
-// two sites, the 256 limit's register, the shade store), plus the 7 mask's movs after a muls
-// (multiplies at 5).
-// 2026-11-07: once-only blocks around the two FillWords_ calls, 24 to 16; left: half's sign + hx at the
-// shard and ring sites, the 256 limit's register (r6, listing r2) and the shade store after logWidth.
-// Tried with no gain: written-out halving, half's declaration place, separate shard/ring locals (frame
-// +4), indexed or for-init p, texture2 and model store orders, 8 permuter minutes.
-// BattleEffect_RunMeteorBlow: allocation, slots and spill rotation agree with
-// the listing. Left, as listing against draft: the 256 limit is built in r2
-// before the shard pointer's load (here r6, since p is already live in r2); the
-// shade store precedes texture2.logWidth's; and shard and ring take hx + sign,
-// `adds r3, r4, r3`, while half, set four times, gets sign + hx (x0, set twice,
-// keeps hx + sign; moving the ring to x0 fixes the shard and breaks the ring).
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Also differ 0 in tla-de, tla-es, tla-fr and tla-it, and in tla-ja, where the
+// function sits at 0x0818df60 (diff --edition tla-ja --symbol
+// BattleEffect_RunMeteorBlow). Two tagged dead devices at the shard setup, each
+// a cancelling ++/-- pair. count's, in the shard loop: the listing builds the
+// 256 first in the block (r2, before the shard pointer is live there) and adds
+// the same register to the radius. Loop motion puts a literal 256 after the
+// setup (r6, differ 10); a count local set first fixes the setup, but GCSE's
+// constant propagation then folds 256 into the radius add and reload rebuilds
+// it every pass (74). hx's, after the shard's halving: the three halvings of hx
+// (shard, hoop, ring) must each keep hx + sign (`adds r3, r4, r3`) and must not
+// share a sign through GCSE (one more spilled pseudo, frame 212, 392). hx / 2
+// and the written-out (hx + ((u32)hx >> 31)) >> 1 are the only two forms on hx
+// itself; through a copy (half = hx) combine adds the sign first. The pair cuts
+// the shard's sign off from the hoop's, so shard and hoop both say hx / 2 and
+// the ring is written out. To drop a device, find plain C that does the same;
+// tried without gain: count in the radius without the pair (74), a literal 256
+// with the setup in other orders (10 to 50), the shard's halving moved into the
+// loop with p indexed (18 to 400), a dead store count = 256 in the loop (10),
+// the ring's halving as if (half < 0) half++ and a shift (64).
+// Also found 8 November: texture pixels are const u8 *, as adopted battle
+// effects have them; with const void * texture2's stores alias the vertices and
+// mesh stores and sched2 put texture2.logWidth's before model->shade's (2 of
+// the old 14).
 // Forms the listing proved: one function-wide i (r7, base r4; split counters
 // cost 300+); blit[2] for the word at sp+92; blank, the 0 that dies at the mesh
 // loop, so the 0 is local in r9 and offset is free to follow; mode across
 // Func_08196404 so r6 keeps 1; fade and g share r1; value spans work->frame and
-// the sky term (non-local, so b keeps r3); half is the shard's x and the hoop's;
-// no tex pointer, PRE builds &texture2; p split per loop; x0 and half keep a
-// copy of hx, else GCSE shares its sign and the frame grows 4.
+// the sky term (non-local, so b keeps r3); half is the shard's x and the
+// ring's; no tex pointer, PRE builds &texture2; p split per loop; a once-only
+// block around the arc's v[2] store; i = 0 set above the shard's halving.
 // FillWords_ is The Broken Seal's typed inline (iwram_call.h), as adopted
 // battle effects keep it: it leaves 0x4000 without a pseudo, which otherwise
 // takes r5 first; plain calls measure differ 302. A one-constant local does not
-// replace it (cprop folds it back). Tried with no gain: count local for 256,
-// indexed p, Value3, a VRAM local, CopyWords_, moving transition, the written
-// out halving, and the ring setup's orders; empty asm changes nothing.
+// replace it (cprop folds it back). Tried with no gain: indexed p, Value3, a
+// VRAM local, CopyWords_, moving transition; empty asm changes nothing.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -53,7 +48,7 @@ struct ModelTexture {
   u32 logWidth : 8;
   u32 logHeight : 8;
   u32 unk02 : 16;
-  const void *pixels;
+  const u8 *pixels;
 };
 
 // The same texture written as bytes.
@@ -61,7 +56,7 @@ struct ModelTextureSize {
   u8 logWidth;
   u8 logHeight;
   u16 unk02;
-  const void *pixels;
+  const u8 *pixels;
 };
 
 struct PointPair {
@@ -629,14 +624,29 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
     }
     if (frame == 16) {
       struct EffectStep *p;
-    
+      // The shard count; the radius below adds the same 256, from the same
+      // register.
+      s32 count = 256;
+
       p = (struct EffectStep *)gMapCellBuffer;
-      half = hx;
       i = 0;
-      half = (half / 2) << 16;
-      for (; i != 256; i++, p++) {
-        s32 r = (Random16() & 511) + 256;
-        s32 a = (Random16() & 0x7fff) + 0x4000;
+      half = (hx / 2) << 16;
+      /* FAKEMATCH(dead): hx's cancelling updates end the shard's halving here,
+       * so GCSE does not carry its sign on to the hoop's hx / 2; as the setup
+       * without them, 392 of 1556 instructions differ in tla-en. */
+      hx++;
+      hx--;
+      for (; i != count; i++, p++) {
+        s32 r;
+        s32 a;
+
+        /* FAKEMATCH(dead): count's cancelling updates keep GCSE from folding
+         * 256 into the radius, which then adds count's register; as the loop
+         * without them, 74 of 1556 instructions differ in tla-en. */
+        count++;
+        count--;
+        r = (Random16() & 511) + count;
+        a = (Random16() & 0x7fff) + 0x4000;
 
         p->x = half;
         p->y = 0x720000;
@@ -663,8 +673,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
     texture2.pixels = work->sheet + 0x4000;
     model->kind = 7;
     model->mesh = gData_081990d0;
-    x0 = hx;
-    x0 = x0 / 2 - 60;
+    x0 = hx / 2 - 60;
     step = frame << 11;
     i = 0;
     back = -step;
@@ -700,8 +709,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
     texture2.pixels = work->sheet + 0x5000;
     texture2.logWidth = 7;
     texture2.logHeight = 7;
-    half = hx;
-    half = half / 2 - 64;
+    // hx / 2 written out: as hx / 2 it would share the hoop's sign through
+    // GCSE, and through a copy of hx combine would add the sign first.
+    half = ((hx + (s32)((u32)hx >> 31)) >> 1) - 64;
     for (i = 0; i != 3; i++) {
       s32 start = Data_08199e98[i] + 8;
 

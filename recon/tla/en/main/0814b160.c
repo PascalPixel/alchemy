@@ -1,43 +1,23 @@
-// Differ 16 of 222 (tla-en, 2026-11-08, -mtune=gba): the marker loop's
-// head sets 36 (the actors offset) and work in swapped registers, and its tail
-// steps i and marker with r1 and r2 swapped. No gain (16 to 24) from marker stepped first,
-// ++i in the test, a for loop (both init and step orders), marker
-// set outside the guard, and an 8-minute permuter run (best 22).
-// Also 16 or worse (2026-11-08): marker block-scoped, set before i, or as
-// &work->particles[i] (31: the giv then points at variant), i and marker as
-// += 1 or x = x + 1, ++i in the test, the test reversed, effect->count in a
-// local, declaration orders, once-only blocks around each step and the
-// marker's set, start as i * 16 or u32. The head's order follows the marker's
-// move, which source order puts before the giv for 36.
-// Measured 2026-11-05 (tla-en): differ 16 of 222. Left: two hoisted constants
-// in swapped registers (36 and the stride), r0 and r1 at the head of the loop,
-// r1 and r2 at its tail.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Also differ 0 of 222 in tla-ja, tla-de, tla-es, tla-fr and tla-it
+// (2026-11-08), plain C with no FAKEMATCH device. The last 16 were the marker
+// loop's register order: marker as its own pointer stepped beside i (The
+// Broken Seal's form) puts its step between the actors offset's and i's.
+// Set instead as &work->particles[i] at the top of the drawing branch,
+// before the target's lookup, it becomes a conditionally set induction
+// value: loop.c reduces it after the actors offset (36, then work, at the
+// head; 2, 28, then 1 at the tail) and, past the side test's label, keeps
+// its read at [marker, #24]. Set every iteration or after the lookup, the
+// reduction points at variant instead (differ 31).
 
-// Near miss, differ 18 of 222 (effect kinds 41 and 354, the target markers).
-
-// ☀️ twin: BattleEffect_RunCurse (games/tbs/src/effect/effect.c), shape
-// 0.771, structure 1.000. ⚓️'s changes: the effect argument read directly
-// (the dispatcher stores work->effect), the star cross sheet (directory row
-// 0x13b), the blitter from BattleEffect_LoadBlitter(104, 0x23) (transparent, ⚓️ mode
-// 2) and the transfer callback at 0xc80. ☀️ needs its family's blitter pair
-// for the frame (a FAKEMATCH tag there), and so does this one: as a single
-// DrawRectangle the stack frame is 4 bytes short (differ 170).
-
-// The frame slots and every instruction match. What is left is order: the
-// native loads the heap slot before it sets the first argument, loads each
-// pool word (0x100, -0x7000) ahead of the register's address, sets r1
-// before r0 for BattleEffect_LoadBlitter, and reloads its spills one row earlier in the
-// marker loop.
-
-// Tried (differ):
-// the repository draft (local copy of the work struct)                44
-// the blitter flags in a local first                                  44
-// BattleEffect_LoadBlitter declared returning s32 as ☀️'s LoadWork does          42
-// ☀️'s slot form (slot = &battleFxWork[1]; canvas = slot[0];
-// work = slot[-1]; draw[0] = slot[2])                               48
-// greedy declaration-order scan, every local through every place     42
-// the frame's blitter read before the transfer value is cleared, and
-// i stepped before marker in the marker loop (statement swaps)       18
+// ☀️ twin: BattleEffect_RunCurse
+// (games/tbs/src/battle_effect/battle_effect/target_motes.c). ⚓️'s changes:
+// the effect argument read directly (the dispatcher stores work->effect), the
+// star cross sheet (directory row 0x13b), the blitter from
+// BattleEffect_LoadBlitter(104, 0x23) (transparent, ⚓️ mode 2), the transfer
+// callback at 0xc80 and the marker taken by index. Both need the family's
+// blitter pair for the frame: as a single DrawRectangle the stack frame is 4
+// bytes short (differ 170).
 
 #include "types.h"
 #include "system.h"
@@ -63,9 +43,12 @@ extern char ResourceId_StarCrossSheet; // directory row 0x13b
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);               // ☀️ ProcessPendingGraphicsTransfer
-void Func_081180e8(s32 phase);          // ☀️ BattleEvent_StartPhaseFar
-s32 BattleEffect_LoadBlitter(s32 slot, s32 flags); // ☀️ BattleEffect_BuildBlitter
+// ☀️ ProcessPendingGraphicsTransfer
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
+// ☀️ BattleEvent_StartPhaseFar
+void Func_081180e8(s32 phase);
+// ☀️ BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 void Sound_PlayFar(s32 cue);
 
 // A spinning star marks each target in turn, sixteen frames apart: a post
@@ -96,8 +79,9 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
   if (effect->side == 1) {
     REG_BG2X = -0x7000;
   }
-  BattleEffect_LoadBlitter(HEAP_BLITTER,
-                BLITTER_TRANSPARENT << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
+  BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_TRANSPARENT << 4 |
+                                             COMPOSITE_CLIP_X |
+                                             COMPOSITE_CLIP_Y);
   work->transferMode = 1;
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferValue = 0;
@@ -115,7 +99,6 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
     }
     i = 0;
     if (effect->count != 0) {
-      marker = work->particles;
       do {
         start = i << 4;
         if (frame == start) {
@@ -123,6 +106,7 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
         }
         if (frame >= start && frame < start + MARKER_FRAMES) {
           // The post under the target, then the star, six frames a cel.
+          marker = &work->particles[i];
           EffectPosition_ProjectScaledBattler(effect->actors[i], &pos);
           if (effect->side == 1) {
             pos.x -= 112;
@@ -138,7 +122,6 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
           }
         }
         i++;
-        marker++;
       } while (i != effect->count);
     }
     work->transferPending = 1;

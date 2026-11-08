@@ -1,13 +1,14 @@
-// Differ 8 of 168 (tla-en, 2026-11-08, -mtune=gba): as overlay 6ab's twin. Tried
-// 2026-11-08: once-only blocks around the bounce or acceleration store (14, 20),
-// the animation pointers read as s32 (8 or 12: same-base offsets already
-// disambiguate, so alias sets do not hold the loads), sprite first, scale
-// order: 8. Round two (2026-11-08): every statement order in the store run,
-// the half and the zero as constants, and an 8-minute permute stay at 8. sched2
-// hoists the two animation loads above the stores; reading owner->animation as
-// s32 holds the tail in the native order but delays the owner load (12).
-// Draft, differ 22 (tla-en, 2026-11-05). Func_020029c8 of overlay 6aa.
-// Overlay 6ab's Func_020024d4 with this overlay's symbols; see that draft.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Func_020029c8 of overlay 6aa, overlay 6ab's Func_020024d4 with this
+// overlay's symbols; tla-ja, tla-de, tla-es, tla-fr and tla-it also measure
+// differ 0. Closed from 8 by plain C, no device: the sprite's s32 scale at
+// 0x0c (FieldSprite's) gives struct Sprite an int member, so its alias set
+// overlaps the object's s32 stores and the ldrb of sprite->vramBlock must wait
+// for them; that lowers the two animation loads' sched2 priority under the
+// stores (2 left). Storing velocityX before acceleration and bounce then puts
+// the zero ahead of the 0x8000 copy, which settles their tie (0). The half
+// local, the cosine block, the velocity local and the split sum and x were
+// then dropped at no cost.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -26,7 +27,8 @@ struct Sprite {
   u16 size : 2;
   u16 tile : 10;
   u16 attr2Rest : 6;
-  u8 unk0a[6];
+  u8 unk0a[2];
+  s32 scale; ///< 16.16, as FieldSprite (field_sprite.h) has it
   u8 vramBlock;
   u8 keepEntry : 1;
   u8 unk11 : 7;
@@ -71,8 +73,7 @@ void Func_020029c8(struct Actor *actor) {
 
     a = Random16Far();
     b = Random16Far();
-    x = actor->x + a * 16;
-    x -= b * 16;
+    x = actor->x + a * 16 - b * 16;
     c = Random16Far();
     d = Random16Far();
     e = Random16Far();
@@ -83,33 +84,24 @@ void Func_020029c8(struct Actor *actor) {
       s32 angle, radius;
       u32 sum;
       s32 scale;
-      s32 half;
       struct Sprite *sprite;
       struct Sprite *source;
-      s32 velocity;
 
       angle = Random16Far();
-      radius = Random16Far();
-      sum = Random16Far();
-      sum += Random16Far();
-      half = 0x8000;
-      scale = (sum >> 2) + half;
+      radius = Random16Far() * 8;
+      sum = Random16Far() + Random16Far();
+      scale = (sum >> 2) + 0x8000;
       Func_02004bd0(object, gData_020056d0);
       Actor_SetSingleChildFlags(object, 0);
       object->velocityY = angle * 4 + 0x20000;
-      {
-        s32 cosine = Math_Cosine(angle);
-        radius <<= 3;
-        object->velocityZ = Iwram_MulQ16(radius, cosine);
-      }
-      velocity = Iwram_MulQ16(radius, Math_Sine(angle));
+      object->velocityZ = Iwram_MulQ16(radius, Math_Cosine(angle));
+      object->velocityX = Iwram_MulQ16(radius, Math_Sine(angle));
       object->gravity = 0x547a;
       object->scaleX = scale;
       object->scaleY = scale;
-      object->bounce = half;
-      sprite = object->animation;
-      object->velocityX = velocity;
       object->acceleration = 0;
+      object->bounce = 0x8000;
+      sprite = object->animation;
       source = work->owner->animation;
       Resource_ResetEntry(sprite->vramBlock);
       sprite->keepEntry = 1;
@@ -121,7 +113,6 @@ void Func_020029c8(struct Actor *actor) {
       sprite->unk14[1] = source->unk14[1];
       sprite->shape = source->shape;
       sprite->size = source->size;
-
       sprite->tile = source->tile;
     }
   }

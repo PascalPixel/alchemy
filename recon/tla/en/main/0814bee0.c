@@ -1,28 +1,28 @@
-// Differ 12 of 1150 (tla-en, 2026-11-08, -mtune=gba): order only, the first loop's movs r4
-// (line) one place early, and the texture block's r0/r2 and r1/r0 reloads (the native loads
-// gData_02014000 into r0 after moving the model to r6). 8 November, second round: the mote
-// loop's i = 0 set before cell as its own statement (14 to 12; after cell 14); line or j
-// set outside the for (12 to 20); pixels first, between the bitfields, before the allocation,
-// through a local or in a once-only block, and the model stores reordered (12 to 119).
-// 8 November: the texture block's empty-asm barrier replaced by a once-only block around the
-// vertices store (14, no device; without either 16). The wrapper still measures 2 (direct call,
-// a constant local or a block all 16 to 18). No gain: the motes loop's init orders (14 to 22),
-// the texture stores reordered (16 to 24).
-// Differ 22 of 1150 (tla-en, 2026-11-06). Left: order only: movs r4/add r2,fp
-// at the start, movs r3 #58 twice, and the texture block's r0/r2 and r1/r0 reloads.
-
-// Draft of BattleEffect_RunZagan, differ 46 of 1150, skeleton gap 21 (tla-en, 2026-11-01)
-// Same calls, control flow, frame and spill slots. What is left is instruction
-// order and two reload registers:
-// - The three work->objects loops (start, frame 157, end): the listing places
-//   the movs/lsls/adds/add that builds the pointer after the block's stores,
-//   here it starts first (priority 4 in sched2). Writing the pointer as a user
-//   variable changes nothing. The same late `add r2, fp` shows at the top of
-//   the mote loop, around the `str r0, [sp, #8]` of the fade copy.
-// - The texture block: the listing loads gData_02014000 into r0, which forces
-//   `adds r6, r0, #0` early and lets `mov r1, fp` reuse r1; here it lands in
-//   r2. Reordering the field stores only made it worse.
-// - frame <= 59 and the else branch: `movs r3, #58` falls one place early.
+// Draft, differ 2 of 1150 (tla-en, 2026-11-08); no device left. Every edition
+// differs by the same 2.
+// Left: one swap in the mote loop's preheader. The listing sets line (r4) to 0
+// after `mov ip, r1` (the hoisted 6 of gData_08197410[motes]); here before it.
+// sched2 breaks that tie by RTL order, so in the original r4's 0 is emitted
+// after loop.c's hoisted invariants, where strength reduction puts a reduced
+// giv's start (the j * 7 copy's `movs r0, #0` sits there too): the for's own
+// init cannot get there. A reduced j * 16 would, but every form tried either
+// lets CSE fold line * 2 into j << 5 or reduces j * 32 instead (6 to 703):
+// line = j * 16 at the top of the body, in the for's step, as u16, s16 or u8;
+// the store as sprites[line * 2 + i] in five spellings or through a u16
+// pointer; cell = sprites + line * 2 in three spellings. j * size (a local
+// 16) reduces the right giv and orders r4 right, but keeps 16 in r8 (105).
+// line + line, line scoped in the frame-27 block, u32, the inits swapped: 2
+// or worse. What would settle it: a source form whose 16-step register is a
+// reduced giv while its doubling stays outside every giv.
+// 8 November, third round (12 to 2): the rings' texture pointer is a local,
+// ringPixels, holding gData_02014000 for the whole function; left without a
+// register it is reloaded at each use, which loads it into r0 after the
+// model's copy and moves the vertices' reload into r1 (12 to 4); the
+// once-only block around the vertices store then goes (4 to 2). Task_Add is
+// declared from task.h, returning s32 as it does: its call sets r0, which is
+// all the wrapper did, so the wrapper and its tag are gone (a void Task_Add
+// measures 4). Earlier rounds: the three objects loops, `movs r3, #58` and
+// the texture's barrier were settled by 6 November.
 // What the shape rests on, each measured: position and velocity are 8-byte
 // structs held in registers, so each spills as a pair and every field reloads;
 // `j * 7` stays an expression so its hoisted copy takes the [sp, #8] slot; the
@@ -39,6 +39,7 @@
 #include "iwram_call.h"
 #include "heap_release.h"
 #include "ram_buffer.h"
+#include "task.h"
 
 struct ModelTexture {
   u32 logWidth : 8;
@@ -102,8 +103,6 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Task_Add(void (*func)(void), s32 order);
-void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
@@ -131,7 +130,6 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 #include "bg_scroll.h"
 #include "input.h"
-static __inline__ s32 Through2_(s32 (*routine)(), s32 a0, s32 a1) { return routine(a0, a1); }
 
 void Func_08179e6c(void);
 void Animation_ApplyChildArgumentFar(void *object, s32 animation);
@@ -182,6 +180,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
   void *vertices;
   struct EffectStep *p;
   s32 none;
+  u8 *ringPixels;
   s32 line;
   s32 motes;
   s32 scroll;
@@ -190,6 +189,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
   s32 j;
 
   none = 0;
+  ringPixels = gData_02014000; // the rings' texture, for the whole function
   battle = (u8 *)Ram_HeapSlots->battleWork;
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -200,8 +200,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(0);
   Func_08179e6c();
   work->transferMode = none;
-  /* FAKEMATCH(wrapper): the call through an inline forwarder, whose parameter leaves the constant set in argument order; as a direct call, 2 of 1150 instructions differ in tla-en. */
-  Through2_((s32 (*)())Task_Add, (s32)(BattleEffect_ProcessPendingGraphicsTransfer), (s32)(0xc80));
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // The screen slides over to the field.
   for (scroll = -80, frame = 0; frame != 28; frame++) {
@@ -470,8 +469,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
                   (position.x / 2 >> 16) - 12, (position.y >> 16) - 58, 60, 100);
     }
     if (frame == 157) {
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, gData_02014000, 0,
-                                 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, ringPixels, 0, 0);
     }
     if ((frame & 1) && skip) {
       goto shake;
@@ -488,14 +486,11 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
       model = Render_AllocateModelList(1);
       texture.logWidth = 7;
       texture.logHeight = 7;
-      texture.pixels = gData_02014000;
+      texture.pixels = ringPixels;
       model->texture = &texture;
       model->kind = 7;
       model->mesh = Data_08198ec4;
-      // A once-only block: it keeps the store after the mesh's.
-      do {
-        model->vertices = vertices;
-      } while (0);
+      model->vertices = vertices;
       model->scrollU = 0;
       model->scrollV = 0;
       for (k = 0; k != 4; k++) {

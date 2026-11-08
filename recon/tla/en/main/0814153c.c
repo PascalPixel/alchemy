@@ -1,44 +1,42 @@
-// Differ 20 of 2159 (tla-en, 2026-11-08, -mtune=gba).
-// 2026-11-08, measured again: each empty once-only block before the two fills
-// is worth 2 (22 without either, 24 without both); CopyWords_ as
-// direct calls, 139; an empty once-only block at any other statement,
-// constant locals for the fills' sizes and VRAM and palette addresses, the
-// first model's shade store moved, and a permuter run (1,100 candidates) leave 20 or more.
-// Left: slots 16 and 20 swapped (place, texture3), 16 rows; the first model's shade zero in r3 where the listing has r2, 4 rows. Was 26 (2026-11-08), 70 (2026-11-05). Rises on the way came from removing false forms (Ram_MapCellBuffer for the symbol PRE shared; the empty asm on count, 154 to 168, which also moved a pool off the listing).
-// 2026-11-08: the first model's kind now follows pixels as in the listing. That had cost &texture (pseudo 465) r7:
-// its live length went 74 to 76 and the 0x10000 constant (11 refs over 104) outranked it. In the u <= 35 block,
-// texture.logWidth = 6 before model->shade = sh ends 465's life one insn earlier (75), and the block's code is unchanged.
-// Measured this round: slots 16 and 20 hash sfp-44 and sfp-76 as 13926 + offset, mod (insns at gcse / 2) | 1 = 857;
-// the listing's order needs 13882 mod T below 32, so T = 867 (20 to 23 more insns: 21 dead `frame = N;` at the
-// top give differ 6, only the shade zero left) or T = 815 (about 84 fewer). Unused locals do not move them (no regno
-// in the hash). A 0 default on any local of the opening (frame, i, j, k, scroll to fade, model, p, obj) raises the
-// figure (26 to 716) or leaves the table at 857. The shade zero: local-alloc gives it r3, the first free register;
-// a zero local at function, block or loop scope costs 186 to 234; shade = 0 through the function's shade, 61.
-// BattleEffect_RunEclipse. Measured here: a constant loop.c hoists and global.c gives no register is rebuilt at each use by reload, and reload picks its registers round-robin, so a constant that is one (sparks, vertices, mesh2) puts the names right for many lines after it. `movs rN, #128; lsls` in a loop is usually such a hoisted constant; so is a pool load early in a block.
-// Settled: size set twice stays a hoisted register (one set is replaced into the call by loop.c's single-use
-// rule), the copy's destination is the base plus i rows, the ring's angle is its own variable.
-// Earlier notes (2026-11-05), the kind's settled since:
-// - Slots 16 and 20: place and texture3's address are gcse's reaching registers, numbered by hash bucket over
-//   a table sized by the insn count at gcse. 20 to 23 more insns there swap them (measured with dead stores to
-//   canvas at the top: differ 56, from 70). Most locals take a 0 default badly (frame, i, j, k, scroll and on raise the
-//   figure), and only canvas, work, savedScroll, transition, sprites, battle and origin stay at 70.
-// - The first model's kind (settled 2026-11-08, above): the listing stores it after pixels and has the zero reloaded in r2. Kind after
-//   pixels with a zero local closes the block but moves r7 and the blocks before it (284). Without the
-//   local, kind anywhere after pixels gives 188 to 194 (&texture loses r7); between the bitfields and pixels, 30.
-// Measured: blit is two words (slot 88, 92 unused); one i for shard, flash,
-// streak and slot; j for the fill columns and sparks, k for the ring columns;
-// model and verts belong to each block; ring and offset are set together so
-// ring spills; t, its shade and the yaw are values of i; cells is set several
-// times so that loop.c leaves it in the block; fade is its own variable.
-// x0 and y0 are set inside the sparks loop, hoisted after j = 0. The ring's
-// vertices are struct stores: the second spill of rr is then dropped, which
-// bytes through s8 * do not allow.
-// 0x02014000 is a number in q, and in the sparks' p of the same loop, so that
-// both share one pool word as the listing does (p as the symbol: an extra word,
-// differ 70) while CSE cannot share the symbol (as the symbol, differ 557 to 786). Dropping c costs 47; both are kept.
-// A pool word for a small number is a symbol: the ResourceId_ names here have
-// to be given to rows of Resource_DirectoryTable before adoption, and the list
-// end 0xff and the REG_DISPCNT = 1 pool words are still movs here. FillWords_ and CopyWords_ are S2 wrappers, tagged and measured on adoption.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// tla-ja, tla-de, tla-es, tla-fr and tla-it measure differ 2: all 2159 of the
+// function's instructions agree there too; the two extra rows are the two
+// `.4byte 0x00004770` words after the pool (0814293c and 08142940 in English),
+// which those editions' symbol extent takes in and decodes as `bx lr`. They are
+// two empty routines of their own, to be placed beside this one on adoption.
+// How it matched (2026-11-08, from 20):
+// - The first model's shade zero is the variable the 136..171 model's shade
+//   uses (modelShade): global-alloc gives the shared pseudo r2, since that
+//   block's -16 sits in r3, so the zero is r2 as in the listing. A fresh zero
+//   local cost 172 to 186; the function's shade, 85.
+// - That store then tied in sched2 with the texture word's load and lost on
+//   dependence count. texture.pixels as const u8 * (as f16c274.c has it) takes
+//   the mesh and vertices stores out of the texture's alias set, and the store
+//   goes first (as const void *: differ 2).
+// - Slots 16 and 20 (place's and texture3's addresses, gcse reaching registers
+//   numbered by hash bucket: 13926 + frame offset, mod (insns at gcse / 2) | 1)
+//   need that table at 867 buckets, 1732 to 1735 insns at gcse; the draft had
+//   1712 (857). Natural forms that leave every instruction alone give 14: the
+//   spawn, tornado and spark loops indexed (2, 4 and 3), the gradient indexed
+//   (2), cx >> 16 and cy >> 16 written where used (2), the glow's 136..171 as a
+//   range test (1). Six 0 defaults (a streak's x and y, the beam's model and
+//   verts, a spark's a and r) give the rest; without them, 863 buckets and
+//   differ 14. Tried and worse: the fill of 512 variants indexed (100), the
+//   dragon tiles indexed (111), the ring's angle as a product (42), u spelled
+//   out everywhere (172), the beam particle indexed (373), dst dropped (651).
+//   The four unsigned range tests read as ranges compile the same.
+// Settled before: one i for shard, flash, streak and slot; j for the fill
+// columns and streaks, k for the ring columns; model and verts belong to each
+// block; ring and offset are set together so ring spills; cells is set several
+// times so loop.c leaves it in the block; fade and the ring's angle are their
+// own variables; t, its shade and the yaw are values of i; size set twice
+// stays a hoisted register; the ring's vertices are struct stores (through s8
+// *, rr spills twice); c, count's copy, stays (without it, 107); 0x02014000 is a
+// number in q and in the sparks' p so both share one pool word (as the symbol,
+// differ 70 to 786); each empty once-only block before the two fills is worth
+// 2. blit is two words (slot 88, 92 unused).
+// Before adoption: the ResourceId_ names have to be given to rows of
+// Resource_DirectoryTable (the listing's pool holds the bare ids).
 
 #include "types.h"
 #include "battle_effect.h"
@@ -53,7 +51,7 @@ struct ModelTexture {
   u32 logWidth : 8;
   u32 logHeight : 8;
   u32 unk02 : 16;
-  const void *pixels;
+  const u8 *pixels;
 };
 
 struct RenderModel {
@@ -253,9 +251,6 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   s32 shade;
   s32 offset;
   u8 *cells;
-  s32 origin;
-  s32 x0;
-  s32 y0;
   s32 fade;
   s16 list[14];
   s32 place[4];
@@ -267,6 +262,10 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   struct EffectStep *p;
   struct EclipseObject *obj;
 
+  /* FAKEMATCH(wrapper): every fill and copy forwarded through FillWords_ and
+     CopyWords_, so a constant size reaches the call's register at each call;
+     as direct Iwram_FillWords and Iwram_CopyWords calls, 618 of 2159
+     instructions differ in tla-en. */
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   savedScroll = gBgScroll[1].x;
@@ -457,31 +456,30 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       {
         s32 size = work->particles[16].variant;
 
-        x0 = cx >> 16;
-        y0 = cy >> 16;
-        Func_0818caa8(work->sheet, x0, y0, size * 2);
+        Func_0818caa8(work->sheet, cx >> 16, cy >> 16, size * 2);
       }
     }
     if (frame > 47) {
       struct RenderModel *model;
       void *verts;
+      s32 modelShade;
 
       if (frame == 48) {
-        p = work->particles;
-        for (i = 0; i != 16; i++, p++) {
-          p->x = Random16() & 0xffff;
-          p->y = (Random16() & 255) + 128;
+        for (i = 0; i != 16; i++) {
+          work->particles[i].x = Random16() & 0xffff;
+          work->particles[i].y = (Random16() & 255) + 128;
           if (Random16() & 1) {
-            p->y = -p->y;
+            work->particles[i].y = -work->particles[i].y;
           }
-          p->variant = i * -8;
+          work->particles[i].variant = i * -8;
         }
         Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet + 0x2000, 1, 0);
         Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x4000, 0, 0);
       }
       verts = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
-      model->shade = 0;
+      modelShade = 0;
+      model->shade = modelShade;
       texture.logWidth = 5;
       texture.logHeight = 2;
       texture.pixels = work->sheet + 0x4000;
@@ -489,34 +487,33 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       model->mesh = Data_08199220;
       model->texture = &texture;
       model->vertices = verts;
-      p = work->particles;
-      for (i = 0; i != 8; i++, p++) {
-        p->variant++;
-        p->x += p->y;
-        if ((u32)p->variant <= 47) {
+      for (i = 0; i != 8; i++) {
+        work->particles[i].variant++;
+        work->particles[i].x += work->particles[i].y;
+        if (work->particles[i].variant >= 0 && work->particles[i].variant <= 47) {
           Render_ResetTransformState();
           {
             s32 x = ((i & 3) << 17) + 0x20000; s32 o = -0x400000; Func_08015160(cx + x + o, cy - (((i & 3) + 2) << 16) + o, 0);
           }
           Func_080151e4(0x8000, 0x10000, 0x10000);
-          Func_080150e4(p->x);
-          Func_080151e4(Trig_Sin(p->variant * 682) + 0x4000, 0x20000, 0x10000);
+          Func_080150e4(work->particles[i].x);
+          Func_080151e4(Trig_Sin(work->particles[i].variant * 682) + 0x4000, 0x20000, 0x10000);
           Render_TransformVertices(gData_081991b0, verts, 4);
           Render_DrawModelList(model);
         }
       }
-      if (u <= 35) {
+      if (frame >= 136 && frame <= 171) {
         s32 s = 0x40000 - u * 6000;
-        s32 sh = u * 4 - 64;
 
-        if (sh > -16) {
-          sh = -16;
+        modelShade = u * 4 - 64;
+        if (modelShade > -16) {
+          modelShade = -16;
         }
         texture.logWidth = 6;
-        model->shade = sh;
+        model->shade = modelShade;
         texture.logHeight = 6;
         model->kind = 7;
-        texture.pixels = sparks;
+        texture.pixels = (const u8 *)sparks;
         model->texture = &texture;
         model->mesh = gData_08199340;
         model->vertices = verts;
@@ -529,7 +526,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         Render_TransformVertices(gData_08199210, verts, 4);
         Render_DrawModelList(model);
       }
-      if ((u32)(frame - 172) <= 48) {
+      if (frame >= 172 && frame <= 220) {
         Render_ResetTransformState();
         Func_08015160(cx + -0x3e0000, cy + -0x420000, 0);
         Func_080151e4(0x8000, 0x10000, 0x10000);
@@ -545,25 +542,24 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       Heap_Release(model);
       Heap_Release(verts);
     }
-    if ((u32)(frame - 148) <= 71) {
+    if (frame >= 148 && frame <= 219) {
       for (j = 0; j != 4; j++) {
         s32 t = (frame + j) & 3;
-        s32 x;
-        s32 y;
+        // Default: set for real below.
+        s32 x = 0;
+        s32 y = 0;
 
-        x0 = cx >> 16;
-        y0 = cy >> 16;
         if (frame <= 171) {
           s32 size = work->particles[16].variant * 2;
 
-          x = Random16() % size + x0 - (size >> 1) - (gData_08197492[t] >> 1);
-          y = Random16() % size + y0 - (size >> 1) - (gData_08197498[t] >> 1);
+          x = Random16() % size + (cx >> 16) - (size >> 1) - (gData_08197492[t] >> 1);
+          y = Random16() % size + (cy >> 16) - (size >> 1) - (gData_08197498[t] >> 1);
         } else {
           u32 a = Random16() & 63;
           s32 r = work->particles[16].variant;
 
-          x = x0 - (a >> 1) - (gData_08197492[t] >> 1) + Random16() % r - r / 2 - 8;
-          y = a + y0 - (gData_08197498[t] >> 1);
+          x = (cx >> 16) - (a >> 1) - (gData_08197492[t] >> 1) + Random16() % r - r / 2 - 8;
+          y = a + (cy >> 16) - (gData_08197498[t] >> 1);
         }
         Func_08196404(SLOT_ALT, 7, 7, Data_08197744[Random16() & 3] | 3, 1);
         ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
@@ -613,14 +609,12 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   for (i = 0; i != 120; i++) {
     s32 v = i / 2;
-    u8 *c;
 
     if (v > 63) {
       v = 63;
     }
-    for (j = 0, c = work->sheet + i; j != 120; j++) {
-      *c = v;
-      c += 120;
+    for (j = 0; j != 120; j++) {
+      work->sheet[j * 120 + i] = v;
     }
   }
   fade = 0;
@@ -641,8 +635,9 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       }
     }
     if (frame <= 109) {
-      struct RenderModel *model;
-      void *verts;
+      // Default: set for real below.
+      struct RenderModel *model = 0;
+      void *verts = 0;
 
       verts = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
@@ -752,8 +747,9 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
     }
     for (i = 0; i != 16; i++) {
       struct EffectStep *q = (struct EffectStep *)0x02014000 + ((frame * 16 + i) & 511);
-      s32 a;
-      s32 r;
+      // Default: set for real below.
+      s32 a = 0;
+      s32 r = 0;
 
 
       a = Random16();
@@ -765,8 +761,8 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       q->variant = (Random16() & 15) + 16;
     }
     {const u16 *cells_ = gData_08197410;
-    p = (struct EffectStep *)0x02014000;
-    for (i = 0; i != 512; i++, p++) {
+    for (i = 0; i != 512; i++) {
+      p = (struct EffectStep *)0x02014000 + i;
       if (p->variant >= 0) {
         s32 n = (p->variant >> 3) + 1;
         s32 off = n * 2 - 2;
@@ -859,7 +855,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       for (i = 0; i != 4; i++) {
         s32 t = frame + 24 - i * 6;
 
-        if ((u32)t <= 63) {
+        if (t >= 0 && t <= 63) {
           s32 s = (Data_081977e4[i] * t << 10) + 0x4000;
 
           shade = 0;

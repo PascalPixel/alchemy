@@ -1,34 +1,25 @@
-// Differ 34 of 1038 (tla-en, 2026-11-08, -mtune=gba).
-// 2026-11-08, second round: the zero and one locals are gone (the stores take 0
-// and the ors 1; CSE builds the same registers, still 34). Local-alloc ranks the
-// mask (6 refs over 620) below the FIELD_AT store's zero (4 over 390); mask &= the
-// field at 21 written back (115), once-only blocks around that store or the first
-// camera call (42), a cast or a constant local for the camera's first argument,
-// a prototype (34): no better. Earlier, 2026-11-08: the
-// held struct sizes the frame (without it 38; a volatile word in its place 34);
-// W_Func_02005714 is needed (direct 146, Call3 36); zero or mask as u32, u8, s16
-// or u16 (34, mask s16 83), declared in either order (34); zero set before the
-// mask (61); the last or as scratch | one (34) or with its result in one or
-// scratch (79 to 82); a prototype for Camera_MoveWithinMapBounds (34); the
-// permuter, 6 minutes (4920 candidates), found nothing better.
-// Near miss, differ 34 of 1038 (tla-en, 2026-11-06): the slots and the
-// mask/zero register choice, as below. Left: the slots (14 rows):
-// the one spilled actor at sp+4 natively with four empty bytes below it, here
-// at sp with the four above it: a local always sits above reload's slots, and
-// a real stack struct for it takes the frame's address in a register. Rank
-// (16 rows): mask (6 refs, 620 insns) against the zero (4 refs, 390),
-// local-alloc's order; the native has mask first, r8, and a pin on the zero
-// (r10) reaches those rows. Both Camera_MoveWithinMapBounds calls: the native
-// shifts r0 first; here r0 comes last. The last flag set ors into r3 where
-// the native ors into r2. The FIELD_AT and t names are the translator's and
-// need replacing before adoption. Both long-lived zeros (r8 early, the
-// one beside the mask) are the 0 a FIELD_AT byte store builds as (field & 0) |
-// value; plain pointer-cast stores lose them (differ 84), and a u8:1 bitfield
-// at 90 builds the mask as -2 with no zero (differ 78). Tried without gain: wrapper
-// calls made direct near the mask lengthen its life (626, 34); u8 or u16 mask
-// 72; arrays, unions and an 8-byte struct for the spilled actor stay a pseudo
-// (frame 4, 38). Second pass (2026-11-06): the two direct
-// Camera_MoveWithinMapBounds calls through Call4, unchanged (34).
+// Matches: differ 0 (tla-en, 2026-11-08); tla-ja, tla-de, tla-es, tla-fr and
+// tla-it also differ 0 against their own overlay objects.
+// Two tagged devices, added this round, hold the wait loop on actor 21's byte
+// at 98: the copy scratch = actor inside the loop, and a last store of 0 to
+// scratch. Read straight from actor, GCSE's PRE hoists actor + 98 out of the
+// loop into r5 (8 rows); the copy is a register set in the loop, so nothing is
+// hoisted, but CSE keeps the copy only while scratch outlives actor (its last
+// use, as reg_scan sees it, falls after actor's last use at actor 31), which
+// the final store gives it. Real late uses of scratch instead (the field read
+// at the last flag set or the third flag clear, or the actor pointer there) let
+// regmove merge the or's result into scratch or reshuffle allocation (14 to
+// 187). What closed the rest (2026-11-08, third round): the flag clears and
+// sets written as FIELD_AT(..., u8, 90) &= 254 and |= 1 (34 to 12); the CSE'd
+// 254 then outranks the store's zero for r8, and the last or's result gets no
+// hard register, so reload gives it the slot below the spilled actor 32 and
+// deletes its store: that is the native's four empty bytes at sp, so the held
+// struct went (12 to 8). Func_02005734 returns void (its far call reaches
+// Func_080d4548, void in field/camera/bounds.c), which orders both camera
+// calls' shifts as the native does (34 to 30). The call through
+// W_Func_02005714 is a wrapper kept from earlier rounds, now tagged (direct
+// 103, Call3 2: r0 set before r2). Before adoption: the FIELD_AT macro and the
+// t names are the translator's and need real types and names.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -52,7 +43,7 @@ s32 Func_02005704();
 s32 Func_02005714();
 s32 Func_0200571c();
 s32 Func_02005724();
-s32 Func_02005734();
+void Func_02005734();
 s32 Func_0200573c();
 s32 Func_02005744();
 s32 Func_0200575c();
@@ -97,11 +88,8 @@ static __inline__ void W_Func_02005714(s32 a0, s32 a1, s32 a2) {
 }
 
 void Func_02001f10(void) {
-  struct {
-    u8 bytes[4];
-  } held;
   s32 lastArg, spill, scratch;
-  s32 owner, actor, mask, owner2, t1;
+  s32 owner, actor, owner2, t1;
   s32 t2, t16, t34;
   s32 t85, t86, t87;
   s32 t158, t162;
@@ -264,16 +252,19 @@ void Func_02001f10(void) {
   actor = Value1(Actor_GetById, 21);
 L_0200a47a:
   Call1(wait, 1);
+  /* FAKEMATCH(temporary): actor copied into scratch inside the loop, so actor +
+   * 98 stays in the loop; as FIELD_AT(actor, u8, 98) == 0, 8 of 1038
+   * instructions differ in tla-en. */
   scratch = actor;
-  scratch = (scratch + 98);
-  scratch = FIELD_AT(scratch, u8, 0);
-  if (scratch == 0)
+  if (FIELD_AT(scratch, u8, 98) == 0)
     goto L_0200a47a;
   Call3(Actor_ArmCallback, 20, 0x2000, 0);
   Call2(Func_02005704, 21, 0x2000);
   Call2(Func_020056f4, 21, 0);
   Call2(Actor_SetSpritePriority, 20, 2);
   Call2(Actor_SetSpritePriority, 22, 2);
+  /* FAKEMATCH(wrapper): this call through W_Func_02005714; as Func_02005714(20,
+   * 0x100, 0), 103 of 1038 instructions differ in tla-en (as Call3, 2). */
   W_Func_02005714(20, 0x100, 0);
   Call3(Actor_SetSpeedParameters, 20, 0x19999, 0xcccc);
   Call3(Actor_SetPositionAndReset, 20, 0x1ea, 0x128);
@@ -282,20 +273,19 @@ L_0200a47a:
   Call3(Actor_ArmCallback, 20, 0xe000, 20);
   Call3(Actor_SetSpeedParameters, 20, 0x3333, 0x1999);
   t158 = Value1(Actor_GetById, 20);
-  mask = 254;
-  FIELD_AT(t158, u8, 90) = (mask & (FIELD_AT(t158, u8, 90)));
+  FIELD_AT(t158, u8, 90) &= 254;
   Call3(Actor_SetPositionAndReset, 20, 0x1e8, 0x12c);
   Call1(FieldEvent_Wait, 1);
   t162 = Value1(Actor_GetById, 20);
-  FIELD_AT(t162, u8, 90) = ((FIELD_AT(t162, u8, 90)) | 1);
+  FIELD_AT(t162, u8, 90) |= 1;
   Call1(FieldEvent_Wait, 20);
   Call2(Motion_SetVarCbAndRefresh, 20, 2);
   t166 = Value1(Actor_GetById, 20);
-  FIELD_AT(t166, u8, 90) = (mask & (FIELD_AT(t166, u8, 90)));
+  FIELD_AT(t166, u8, 90) &= 254;
   Call3(Actor_SetPositionAndReset, 20, 0x1e6, 0x134);
   Call1(FieldEvent_Wait, 1);
   t170 = Value1(Actor_GetById, 20);
-  FIELD_AT(t170, u8, 90) = ((FIELD_AT(t170, u8, 90)) | 1);
+  FIELD_AT(t170, u8, 90) |= 1;
   Call2(Func_02005724, 0xcccc, 0x1999);
   Camera_MoveWithinMapBounds(0x2000000, 0x600000, 0x1400000, 1);
   Func_02005734();
@@ -376,14 +366,11 @@ L_0200a47a:
   Call2(Func_02005704, 22, 0xa000);
   Call3(Actor_SetSpeedParameters, 21, 0x26666, 0x13333);
   t244 = Value1(Actor_GetById, 21);
-  scratch = FIELD_AT(t244, u8, 90);
-  mask = (mask & scratch);
-  FIELD_AT(t244, u8, 90) = (u8)mask;
+  FIELD_AT(t244, u8, 90) &= 254;
   Call3(Actor_SetPositionAndReset, 21, 0x1da, 0x13c);
   Call1(FieldEvent_Wait, 1);
   t248 = Value1(Actor_GetById, 21);
-  scratch = FIELD_AT(t248, u8, 90);
-  FIELD_AT(t248, u8, 90) = (1 | scratch);
+  FIELD_AT(t248, u8, 90) |= 1;
   Call3(Actor_ArmCallback, 21, 0xe000, 0);
   Call3(Actor_SetPositionAndReset, 22, 0x1ce, 0x118);
   Call2(Func_02005704, 22, 0);
@@ -397,11 +384,13 @@ L_0200a47a:
   Call2(Func_0200575c, 0, 0);
   Call1(Func_0200576c, 120);
   Call1(wait, 120);
-  Call1(Actor_GetById, 22);
-  Func_020054e4();
-  Call1(Actor_GetById, 25);
-  Func_020054e4();
+  Func_020054e4(Value1(Actor_GetById, 22));
+  Func_020054e4(Value1(Actor_GetById, 25));
   Call1(FieldEvent_Wait, 80);
   Call1(Func_02005744, 2);
+  /* FAKEMATCH(dead): a last store to scratch that nothing reads, so scratch
+   * outlives actor and CSE keeps the loop's copy; as the function without it, 8
+   * of 1038 instructions differ in tla-en. */
+  scratch = 0;
   return;
 }

@@ -1,26 +1,34 @@
-// Differ 31 of 713 (tla-en, 2026-11-08, -mtune=gba).
-// 2026-11-08, second pass, no gain: onObject cleared at the block's top, before
-// the scan pointer, after the bound, in the for init or with angleIndex (34 to 37,
-// r4 and r6 still swapped; 589 after the bound), cleared just before or after the
-// first step's call (31, 39); heading reused as onObject (77, 460); input set at
-// the top or after pushed and used by the first key test (52, 42), assigned inside
-// the angle's expression (31), a const pointer initialized at its declaration (40:
-// instruction count right and the debug test matches, the probes' reloads shift);
-// the debug test nested or as != 0 (31). A 9-minute permute: nothing below 31
-// (almost none of its candidates compiled).
-// 2026-11-08: of the 31, only four rows are code (the extra mov sl, the onObject
-// clear, the debug test's reload of the pointer); the rest are branch and pool
-// offsets moved by the one extra instruction. No gain from: gInput direct in the
-// debug test (40: that test matches, the first two probes take r1 and r3 for
-// the object and 0x1000), the pointer set at the top, just before the debug
-// test or inside its condition (40 to 60), onObject cleared inside the block or
-// in the loop init (37, r4 and r6 swapped; 589 when after the bound),
-// onObject++ or |= 1 (37, 44), onObject's variable reused for the heading
-// count or the angle (178 to 216). A 5-minute permute: nothing below 31.
-// 2026-11-07: onObject cleared before the step (r4 and r6 now right) and the
-// keys read through a pointer (the probes now match): 48 to 31. Left: the
-// onObject clear lands before the priorityFlags branch, and the pointer takes
-// sl where the original reloads gInput from the pool in the debug test.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Also differ 0 in tla-ja, tla-de, tla-es, tla-fr and tla-it (whole-function
+// diff, 713 instructions each). Two tagged dead tests remain (S2); both are
+// needed and leave no instruction.
+// How it matches (2026-11-08, from 31): gInput is read directly (the keys
+// pointer is gone, so no mov sl); the debug test has its own copy of
+// "collision = 0; goto counted", whose reload takes r1 in the debug test and
+// puts the first two probes on the native's reload registers (round robin,
+// reload1.c last_spill_reg: object r2, angle r3, 0x1000 r0). jump2's
+// cross-jumping then folds that copy into the clear block, so the debug test
+// branches to clear as in the listing. With only the scan loop jumping to
+// clear, cleanup_cfg would pull the clear block into the loop and loop.c move
+// it out after the straight probes (183): the dead headingCount test is a
+// second reference that keeps it in place until CSE folds the test away.
+// onObject is cleared inside the block, after the scan pointer, as the listing
+// schedules it; alone that gives it r4 and the bound r6 (12: onObject, 4 refs
+// over 100 insns, outranks the bound's 3 refs over a doubled 92). The dead test
+// of onObject after the block makes onObject live on the path that skips the
+// block, so it crosses calls, takes r6 and leaves r4 to the bound; the test
+// itself is gone by jump2.
+// Tried for those two without gain: an empty asm reading onObject after the
+// block (also 0, but a barrier), onObject = onObject (12), an empty asm (12);
+// the bound compared in both arms of the absolute difference (47: cross-jumping
+// keeps both compares), a scan counter of its own (117), a goto-built scan loop
+// (96), onObject zeroed both before the step and in the block (24, 39: CSE
+// copies collision's zero); a "cleared:" label between clear's store and its
+// jump (185: jump threading removes it), the debug store before goto clear (40:
+// dead before reload), pushed = 0 there (32: two more instructions), the debug
+// test as the else of an if over the probes (40, or 121 with the scan's own
+// copy: the two copies take r1 and r2 and do not merge), and the key test on
+// (held >> 9) & 1 (44).
 // Twin of The Broken Seal's Actor_UpdatePlayerControl
 // (games/tbs/src/field/field/player_control.c), script command 0x24 in both
 // games: the same 8-pixel step with five probes, the same six fallback
@@ -35,16 +43,11 @@
 // difference written as 0x100000 - delta; the bound in a local so it stays a
 // hoisted 0x7ffff (a literal compares as >= 0x80000); the clear block between
 // the loop and the blocked block. Differ 191 before.
-// Left: r4 and r6 swapped between the bound and onObject in the object loop
-// (onObject, 4 refs, outranks the bound, whose constant REG_EQUIV doubles its
-// live length); in the first two probes the object is read through r1 and r0,
-// not r2 and r1, with the 0x1000 constant in r3, not r0. Those are reload's
-// round-robin spill registers (reload1.c last_spill_reg) one step behind the
-// native: the last reload before the probe (collision = 0, in r0) matches, so
-// the native has one more reload, taking r1, in the debug test or the first
-// collision call, that leaves no instruction. From the third probe on it
-// matches.
-// Tried without gain: every order of the three opening values
+// Earlier (2026-11-06 to 08, at 48 and 31, before the two dead tests): a keys
+// pointer in sl made the probes match at the cost of a mov sl; onObject cleared
+// before the step had r4 and r6 right but the clear before the priorityFlags
+// branch; permutes of 5 and 9 minutes found nothing below 31.
+// Tried without gain at 48: every order of the three opening values
 // (movementAnimation first is the best), the mask operands swapped, a pointer
 // to the keys, an interpreter copy of the argument, declaration order and scope
 // of onObject, the bound, direction and headingCount, the twin's declaration
@@ -111,7 +114,6 @@ s32 Func_080267bc(struct Actor *object) {
   s32 onObject;
   struct Actor *other;
   struct EventWork *work;
-  struct InputState *input;
 
   movementAnimation = 2;
   collision = 0;
@@ -125,14 +127,12 @@ s32 Func_080267bc(struct Actor *object) {
     object->acceleration = 0xccc;
   }
 
-  input = &gInput;
-  angle = gData_0802ec5c[(input->held >> 4) & 15];
+  angle = gData_0802ec5c[(gInput.held >> 4) & 15];
   if ((u16)angle == 0xffff) {
     collision |= 4;
     goto counted;
   }
   collision = 0;
-  onObject = 0;
   position.x = object->x;
   position.y = object->y;
   position.z = object->z;
@@ -140,6 +140,7 @@ s32 Func_080267bc(struct Actor *object) {
   if (object->priorityFlags & 0x40) {
     s32 withinHalfCell;
 
+    onObject = 0;
     other = (struct Actor *)Ram_HeapSlots->scriptObjects;
     withinHalfCell = 0x7ffff;
     for (angleIndex = 0; angleIndex < 64; angleIndex++, other++) {
@@ -168,8 +169,14 @@ s32 Func_080267bc(struct Actor *object) {
       goto counted;
     }
   }
-  if (gDebugMode != 0 && (input->held & 0x200))
-    goto clear;
+  /* FAKEMATCH(dead): the test that gives onObject the 1 it already holds kept;
+     as no test, 12 of 713 instructions differ in tla-en. */
+  if (onObject)
+    onObject = 1;
+  if (gDebugMode != 0 && (gInput.held & 0x200)) {
+    collision = 0;
+    goto counted;
+  }
   if (!Func_0802d87c(object, &position)) {
     testPosition.x = object->x;
     testPosition.y = object->y;
@@ -208,6 +215,10 @@ s32 Func_080267bc(struct Actor *object) {
     angleOffsets[headingCount++] = direction - 0x2000;
     angleOffsets[headingCount++] = direction + 0x3000;
     angleOffsets[headingCount++] = direction - 0x3000;
+    /* FAKEMATCH(dead): the never-true test of headingCount kept; as no test,
+       183 of 713 instructions differ in tla-en. */
+    if (headingCount == 0)
+      goto clear;
     for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
       heading = angleOffsets[angleIndex];
       position.x = object->x;

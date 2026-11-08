@@ -1,5 +1,38 @@
-// Differ 90 of 902 (tla-en, 2026-11-08, -mtune=gba). Re-measured 8 November,
-// later: unchanged; the pin is a frame question (without it the frame is 120
+// Draft, differ 88 of 902 (tla-en, 2026-11-08)
+// 2026-11-08, thirteenth pass, 90 to 88, no new device. The waves step the
+// column between the height (now a local y) and the store, so column++ leads
+// the + 64 as in the listing (6 lines to 4). The palette copy names the
+// routine in a local once the palette is fetched (a local holding one
+// constant, untagged, as in f18bc98.c and f15c970.c): its pool load now leads
+// the destination's shift as in the listing; differ does not show it only
+// because every pool offset still moves with the grid's two extra
+// instructions (permuter weighted score 3890 to 3700).
+// Left: the grid's d (slot 8 in the listing) and + 15 copy (ip in the
+// listing) are swapped, which also costs the two extra instructions and the
+// pool offsets (about 80 of the 88); in the waves the strb is scheduled
+// before the compare's mov r0, r8 (4: both rank 2, and the strb wins on its
+// three dependents).
+// Why no row-top d can close the swap: refs and live lengths are recounted
+// after combine (recompute_reg_usage before local-alloc), so only the final
+// RTL counts. d and the + 15 copy both have 11 refs (a set in the row, three
+// refs in the column loop), and the copy is a loop-moved insn emitted just
+// before the column loop's LOOP_BEG, after every user statement, so d always
+// lives longer (46 at best against 45) and ranks lower: greg gives the copy
+// r7, which reload spills, and d ip. The listing needs d ranked between c
+// (8571) and the copy (7333): 13 or 14 final refs at d's length, or d set
+// after the copy, which means a giv loop reduces (reduced inits follow the
+// moved insns). Tried this pass: d as a giv of the column (a + 17, q, i or v
+// + column + 17, b + 16, c + 1, all of b, c, d from a; with and without the
+// pin): 323 to 943, because q, being r4, blocks givs, and a giv from v shares
+// v + column with a or reroutes the outer loop (frame 124 or 128); d = q;
+// d += 17 (combine folds it before the recount: 90); d = d (90); asm uses of
+// d in the row or at the loop end (volatile: 679 to 681); the y + 64 or the
+// vertex step in other places in the waves (88 to 111); the permuter, 10
+// minutes, seed 9137, on the 90 form (nothing). Every other edition's bytes
+// equal tla-en's but for link-filled call targets and pool words, so the
+// figure is the same in all six (diff cannot decode their scaffolds).
+// Before this pass: differ 90 of 902 (tla-en, 2026-11-08, -mtune=gba).
+// Re-measured 8 November, later: unchanged; the pin is a frame question (without it the frame is 120
 // bytes, not 132, 941), and a 12-byte unused local in five places does not
 // restore it (933 to 937). The grid's column step
 // is listed c++, b++, d++, column++, x += 8 (94 to 90; all 120 step orders and
@@ -408,8 +441,15 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
     }
-    Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_CrystalSheet), 128);
+    {
+      const void *palette =
+          Resource_GetTableEntry((s32)&ResourceId_CrystalSheet);
+      // The routine's address, named once the palette is fetched: its pool
+      // load then leads the destination's shift.
+      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+
+      copy((void *)BG_PLTT, palette, 128);
+    }
   }
 
   // The water's grid: 16 by 8 vertices, and a quad (two triangles) for
@@ -564,10 +604,16 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
       s8 *vertex;
 
       for (column = 0, vertex = (s8 *)gMapCellBuffer + offset + 1;
-           column != WATER_COLUMNS; column++) {
+           column != WATER_COLUMNS;) {
         s32 amplitude = (16 - column) * height / 32;
+        s32 y = ((Trig_Sin(angle + column * 5000 + Trig_Sin(row * 3553)) *
+                  amplitude) >>
+                 16) -
+                amplitude;
 
-        *vertex = ((Trig_Sin(angle + column * 5000 + Trig_Sin(row * 3553)) * amplitude) >> 16) - amplitude + 64;
+        // The column steps before the store, in the listing's order.
+        column++;
+        *vertex = y + 64;
         vertex += 4;
       }
     }

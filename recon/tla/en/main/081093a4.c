@@ -1,46 +1,24 @@
-// Differ 12 of 238 (tla-en, 2026-11-08, -mtune=gba): order only. Rechecked
-// 8 November: dropping the restore block 16, the copies block 14, both 18;
-// the with[] copies in a block 16 or 15, reordered 18 to 28; saved as u16 or
-// s16 18; the loop start moved up, no change; permuter, 9 minutes: none better. Both empty asms around the stat
-// copies are now once-only blocks (the restore store; the last two copies), with no device
-// left (no blocks, 18). Left: the with[] loads, the saved entry and the loop setup in order.
-// Near miss, differ 12 of 238 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 18 of 238 in tla-en. The native spills its arguments to the stack before it
-// builds the heap slots' address; this builds the address first (row 8).
-// Near miss, differ 28 of 238 (2026-10-12): The Broken Seal's
-// Shop_DrawEquipComparison with this game's Unit_Get, Item_Get and menu runtime
-// slot. Every instruction and register is the native's; seven rows are in
-// another order: (1) movs r3, #192 is started before sub sp and the unitId
-// store; (2) and (3) the first inventory entry and the replaced entry are
-// loaded after their masks are started (native: load first); (4) item_id |
-// 0x200 is copied to r1 before the slot offset and the saved load; (5) in the
-// with[] block mov r0, r8 comes one row late and adds r3, #66 before the pool
-// branch; (6) in the without[] block each load comes one row before the loop's
-// movs r5, mov r8 and movs r7; (7) both icon offsets are started before shop is
-// reloaded from the stack. Tried: an empty asm barrier first in the function
-// (the argument copies move up, worse), an entry temporary behind a barrier for
-// (3) (the entry is spilled), a barrier after saved is read (differ 44), a
-// barrier after without[3] (fixes none of (6), moves the loop setup below it),
-// shop copied to a local behind an empty barrier for (7) (no change) or a
-// register-use barrier (a new spill, differ 178). The three message names are
-// not in the catalogs yet: 04667 (Can't equip), 04677 (ATK, the first stat
-// label) and 00607 (the first item name).
+// Matches: differ 0 (tla-en, 2026-11-08). The Broken Seal's
+// Shop_DrawEquipComparison with this game's Unit_Get, Item_Get and menu
+// runtime slot, plain C with no device. What closed the last 12: the unit is
+// the shared struct BattleUnit, whose word fields (djinnAvailable onwards) put
+// int in its alias set, so sched2 keeps each stat load behind the s32 store
+// to with[] or without[] before it and the restore store behind with[3].
+// The private ShopUnit (bytes and halfwords only) let them pass; the two
+// once-only blocks earlier rounds added made up for part of that and are gone
+// (kept with this struct, differ 14). Editions: tla-en matches; ja, fr and it
+// keep it at .rom.001093a4, de at .rom.001113a4 and es at .rom.0010d3a4,
+// scaffold sections diff cannot read. This draft compiled for each of them
+// differs from its ROM only at the same 18 relocation sites (calls and the
+// three message words), and the six ROMs differ from each other only there, so
+// it can be adopted in all six. The three message names are not in the catalogs
+// yet: 04667 (Can't equip), 04677 (ATK, the first stat label) and 00607 (the
+// first item name).
 #include "types.h"
+#include "battle_unit.h"
 #include "item.h"
 #include "ram_buffer.h"
 #include "render_input.h"
-
-struct ShopUnit {
-  u8 unk00[60];
-  u16 atk;
-  u16 def;
-  u16 agi;
-  u8 luck;
-  u8 unk43[149];
-  u16 inventory[15];
-};
 
 struct ShopWork {
   u8 unk000[0x4f4];
@@ -52,24 +30,23 @@ extern u8 MsgShopCannotEquip[];
 extern u8 MsgShopStatLabel[];
 extern u8 MsgItemName[];
 
-struct ShopUnit *Unit_Get(s32 unitId);
+struct BattleUnit *Unit_Get(s32 unitId);
 void Unit_CalculateFar(s32 unitId);
 s32 Item_CanOwnerEquip(s32 owner, s32 item);
 s32 Inventory_FindEquippedFar(s32 unitId, s32 type);
 void WindowSprite_PrepareForRedrawFar(s32 window);
 void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
 void Text_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x,
-                                  s32 y);
+                                s32 y);
 void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-void Window_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width,
-                                 s32 style);
+void Window_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width, s32 style);
 struct WindowSprite *WindowSprite_CreateFar(s32 code, s32 layers,
                                             struct RenderInput *input, s32 x,
                                             s32 y);
 
 void Func_081093a4(s32 window, s32 unitId, s32 itemId) {
   struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
-  struct ShopUnit *unit = Unit_Get(unitId);
+  struct BattleUnit *unit = Unit_Get(unitId);
   struct ItemDefinition *item = Item_Get(itemId);
   s32 replaced = -1;
   s32 slot;
@@ -110,32 +87,25 @@ void Func_081093a4(s32 window, s32 unitId, s32 itemId) {
   with[1] = unit->def;
   with[2] = unit->agi;
   with[3] = unit->luck;
-  // A once-only block: the saved entry is copied back after luck is stored.
-  do {
-    unit->inventory[slot] = saved;
-  } while (0);
+  unit->inventory[slot] = saved;
   Unit_CalculateFar(unitId);
   without[0] = unit->atk;
   without[1] = unit->def;
-  // A once-only block around the last two copies.
-  do {
-    without[2] = unit->agi;
-    without[3] = unit->luck;
-  } while (0);
+  without[2] = unit->agi;
+  without[3] = unit->luck;
   for (i = 0; i <= 2; i++) {
     if (without[i] > with[i])
-      ((u8 *)WindowSprite_CreateFar(shop->statDownIcon, 0x40000000,
-                                    (struct RenderInput *)window, 56,
-                                    i * 16 - 4))[4] = 0;
+      WindowSprite_CreateFar(shop->statDownIcon, 0x40000000,
+                             (struct RenderInput *)window, 56, i * 16 - 4)
+          ->kind = 0;
     else if (without[i] < with[i])
-      ((u8 *)WindowSprite_CreateFar(shop->statUpIcon, 0x40000000,
-                                    (struct RenderInput *)window, 56,
-                                    i * 16 - 4))[4] = 0;
+      WindowSprite_CreateFar(shop->statUpIcon, 0x40000000,
+                             (struct RenderInput *)window, 56, i * 16 - 4)
+          ->kind = 0;
     Text_DrawNumberInWindowFar(without[i], 3, window, 32, i * 16);
     if (without[i] != with[i])
       Text_DrawNumberInWindowFar(with[i], 3, window, 72, i * 16);
-    Text_DrawCharacterAtOffsetFar((s32)MsgShopStatLabel + i, window, 0,
-                                    i * 16);
+    Text_DrawCharacterAtOffsetFar((s32)MsgShopStatLabel + i, window, 0, i * 16);
     Window_DrawDividerLineFar(window, 0, i * 2 + 2, 13, i * 2 + 2);
   }
   if (replaced != -1)

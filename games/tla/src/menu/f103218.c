@@ -1,21 +1,10 @@
-// Matches (tla-en, 2026-11-08, -mtune=gba); no device left.
-// 2026-11-08: the djinn tile loop's counter starts from a zero local of the
-// whole function (firstElement), its tile number is a local, and the tile
-// column is one value stepped between the two calls, which retired the r2 pin;
-// an empty once-only block after the loop keeps the HP block from copying
-// x * 8 into r6 (7 without it); the closing copy's size is a local set before
-// the page test, which retired the copy routine's temporary (2 with sizeof
-// at the call). Measured 2026-10-26 under the Makefile's options
-// (-mthumb-slow-loads), differ 57 of 906 in tla-en.
-// First draft of Func_08103218: draws a member's status with a djinni change
-// applied, the twin of ☀️'s DjinnMenu_DrawStatPreview
-// (games/tbs/src/menu/menu/djinn.c): the unit is saved, the change applied
-// and measured, its differences drawn with arrows (Func_08104ba8) or, past
-// page 0, its Psynergy pages, and the saved unit copied back. The messages
-// take the twin's names (03342, 02915, 01447, 04124, 04307, 04308 and 04313
-// in the English catalog, still unnamed there). The block that opens with the twin's i = 0 keeps
-// the second page test, and with it x * 8 and y * 8 recomputed in each
-// stat's block (649 with the two page-0 blocks one test apart).
+/// @file
+/// Previews a djinni change on a member's status, the twin of The Broken
+/// Seal's DjinnMenu_DrawStatPreview: the unit is saved, the change applied and
+/// the unit recalculated; page 0 draws the stats with an arrow beside each one
+/// that changes, later pages the Psynergy gained and lost; then the saved unit
+/// is copied back.
+
 #include "battle_unit.h"
 #include "iwram_call.h"
 #include "ram_buffer.h"
@@ -32,9 +21,8 @@ struct DjinnMenuWork {
 
 extern const char gDjinnMenu_TextSlash[];
 extern const char gDjinnMenu_TextLevel[];
-extern char MsgPreviewStatLabel[], MsgClassName[], MsgAbilityName[],
-    MsgPsynergyPp[], MsgPsynergyGained[], MsgPsynergyLost[],
-    MsgPsynergyUnchanged[];
+extern char MsgKey0d0e[], MsgClassName[], MsgAbilityNothing[], MsgPsynergyPp[],
+    MsgKey10d3[], MsgKey10d4[], MsgKey10d9[];
 
 struct BattleUnit *Unit_Get(s32 owner);
 void Unit_CalculateFar(s32 owner);
@@ -54,8 +42,8 @@ void Icon_CreateWithLoadedResource(s32 window, s32 x, s32 y, s32 action);
 void Func_08104ba8(s32 window, s32 x, s32 y, s32 variant);
 s32 Text_SetColorFar(s32 colour);
 void SideObject_CreateFar(s32 owner, s32 a, s32 side, s32 window, s32 b, s32 c);
-s32 OwnerAction_DiffSlots(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
-                          u16 *out, s32 *firstCount, s32 *secondCount);
+s32 Func_08101860(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
+                  u16 *out, s32 *firstCount, s32 *secondCount);
 
 s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
                   s32 addPairSlot, s32 previewMode, s32 page, s32 side) {
@@ -144,7 +132,7 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
     Text_DrawStringAtOffsetFar((s32)gDjinnMenu_TextLevel, window, x * 8 + 40,
                                y * 8 + 16);
     Text_DrawNumberInWindowFar(unit->level, 2, window, x * 8 + 88, y * 8 + 16);
-    label = (s32)MsgPreviewStatLabel;
+    label = (s32)MsgKey0d0e;
     Text_DrawCharacterAtOffsetFar(label, window, x * 8, y * 8 + 56);
     Text_DrawCharacterAtOffsetFar(label + 1, window, x * 8, y * 8 + 64);
     Text_DrawCharacterAtOffsetFar(label + 2, window, x * 8, y * 8 + 72);
@@ -179,8 +167,10 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
         Window_SetTilemapEntryFar(window, unit->djinnActiveCounts[i] + 0xf030,
                                   tileColumn, y + 5, 0);
       }
-      // An empty once-only block: it ends the tile loop's block before the stats.
-      do { } while (0);
+      // An empty once-only block: it ends the tile loop's block before the
+      // stats.
+      do {
+      } while (0);
       if (unit->hp != originalUnit->hp) {
         Text_DrawNumberInWindowFar(unit->hp, 4, window, x * 8 + 72, y * 8 + 56);
         if (unit->hp > originalUnit->hp)
@@ -239,8 +229,8 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
 
     rows = 6 - (previewMode != 3);
     first = rows * (page - 1);
-    count = OwnerAction_DiffSlots(originalUnit->actionSlots, unit->actionSlots,
-                                  actions, &gained, &lost);
+    count = Func_08101860(originalUnit->actionSlots, unit->actionSlots, actions,
+                          &gained, &lost);
     line = 0;
     for (row = 0; first < count && row < rows; row++, first++) {
       Icon_CreateWithLoadedResource(window, x * 8, (y + line * 2) * 8 + 4,
@@ -251,7 +241,7 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
         Text_SetColorFar(2);
       else
         Text_SetColorFar(15);
-      Text_DrawCharacterAtOffsetFar((s32)MsgAbilityName +
+      Text_DrawCharacterAtOffsetFar((s32)MsgAbilityNothing +
                                         (actions[first] & 0x3fff),
                                     window, x * 8 + 16, (y + line * 2) * 8 + 8);
       Text_DrawNumberAtOffsetFar(BattleAction_Get(actions[first])->ppCost, 2,
@@ -267,18 +257,18 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
       lines = 0;
       if (gained) {
         Text_SetColorFar(4);
-        Text_DrawCharacterAtOffsetFar((s32)MsgPsynergyGained, window, x * 8,
+        Text_DrawCharacterAtOffsetFar((s32)MsgKey10d3, window, x * 8,
                                       y * 8 + 88);
         lines = 1;
       }
       if (lost) {
         Text_SetColorFar(2);
-        Text_DrawCharacterAtOffsetFar((s32)MsgPsynergyLost, window, x * 8,
+        Text_DrawCharacterAtOffsetFar((s32)MsgKey10d4, window, x * 8,
                                       (y + lines) * 8 + 88);
         lines++;
       }
       if (lines == 0)
-        Text_DrawCharacterAtOffsetFar((s32)MsgPsynergyUnchanged, window, x * 8,
+        Text_DrawCharacterAtOffsetFar((s32)MsgKey10d9, window, x * 8,
                                       y * 8 + 88);
       Text_SetColorFar(15);
       Window_DrawDividerLineFar(window, 0, 11, 13, 11);

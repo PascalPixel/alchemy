@@ -18601,7 +18601,7 @@ msgctxt "message"
 msgid "04584"
 msgstr "Non hai abbastanza PP."
 
-msgctxt "message"
+msgctxt "MsgPsynergyPp"
 msgid "04585"
 msgstr "PP"
 

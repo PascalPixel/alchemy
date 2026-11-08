@@ -247,7 +247,7 @@ Resource_DirectoryTable:
 	resource , BattleEffect_CrystalBitmapSheet
 	resource SmallFlameSheet, BattleEffect_SmallFlameSheet
 	resource CornerRuneASheet, BattleEffect_CornerRuneASheet
-	resource , BattleEffect_CornerRuneBSheet
+	resource CornerRuneBSheet, BattleEffect_CornerRuneBSheet
 	resource , Resource_Data0EE
 	resource , Resource_Data0EF
 	resource , Resource_Data0F0
@@ -256,7 +256,7 @@ Resource_DirectoryTable:
 	resource Data0F3, Resource_Data0F3
 	resource SmokeBandSheet, BattleEffect_SmokeBandSheet
 	resource Data0F5, Resource_Data0F5
-	resource , BattleEffect_DustCloudSheet
+	resource DustCloudSheet, BattleEffect_DustCloudSheet
 	resource Data0F7, Resource_Data0F7
 	resource Data0F8, Resource_Data0F8
 	resource , Resource_Data0F9
@@ -372,7 +372,7 @@ Resource_DirectoryTable:
 	resource TanPalette, BattleEffect_TanPalette
 	resource , BattleEffect_EffectPalette04
 	resource , BattleEffect_EffectPalette05
-	resource , BattleEffect_WispSheet
+	resource WispSheet, BattleEffect_WispSheet
 	resource GreenVineSheet, BattleEffect_GreenVineSheet
 	resource PortalSheet, BattleEffect_PortalSheet
 	resource SkullSheet, BattleEffect_SkullSheet

@@ -1,66 +1,6 @@
-// Matches (tla-en, 2026-11-08, -mtune=gba; also tla-ja, de, es, fr and it).
-// 4 to 0: the then-branch second loop writes CLAMP_Y out as two plain ifs (the
-// macro's once-only block held the -0x10000 pool load after the store).
-// 8 to 6: (i & 3) + 5 written out three times in place of a local m
-// (permuter); 6 to 4: the t <= 43 loop reads p = &work->particles[i] each
-// pass in place of a stepped pointer (faces now load before work).
-// The barrier in the frame above 137 is now a once-only block around the
-// logHeight store (4 either way, 6 with neither). Tried for the rest: eight
-// spellings of the place[2] sum, an xs pointer as the else branch has, once-only
-// blocks and empty once-only loops after each statement of the loop. Permuter,
-// about 15 min.
-// 2026-11-07: 28 to 8 by frame 168 as base.x, base.y, vel.x, vel.y; battle set
-// before verts; i = 0 ahead of xs in the else branch. Permuter, 7 min: nothing.
-// Measured 2026-11-05 (tla-en): differ 28 of 2209. Left: order and a swapped
-// zero and constant in the setup; a multiply the native issues later than
-// alchemy-gcc does: sched2 ranks the chain into muls too high (its cost of 4),
-// so the constant or the multiply comes ahead of independent rows.
-
-// Draft, differ 40 of 2209, skeleton gap 32 (tla-en, 2026-11-01)
-// BattleEffect_RunAzul. Control flow, types, stack slots, frame and allocation
-// agree with the listing; what is left is instruction order inside blocks, with
-// no reload rotation behind it:
-// - Setup: ldr r5 (battle) and the IwramCopyWords load go before the spill
-//   stores in the listing, after them here. Every order of the five statements
-//   was measured; this one has the listing's registers.
-// - Frame 0: the listing's str r2, [sp, #16] comes before ldr r5, [sp, #28].
-// - Frame 168 costs 14: base.x, base.y, vel.x, vel.y is the listing's register
-//   order (r1 to r4) and closes the skeleton, but gives 44: the listing issues
-//   vel's load, zero and stores first, and that load must fall before the pool
-//   the zero starts, or the pool lands after the sky loop. The kept order has
-//   the pool right and vel.x and base.x in each other's registers. All 24
-//   orders measured; locals for the constants not tried.
-// - Then branch, second loop: mov r1, r8, ldr r7, [sp, #56] and the -0x10000
-//   pool load each sit one or two places off. A row local and the sum's order
-//   change nothing.
-// - Else branch: xs set before the second loop gives the listing's mov sl and
-//   mov r4, sl, one place early.
-// - Frame 10 to 53 setup: ldr r5 and ldr r7 swapped; i first changes nothing.
-// - Frame above 137: the shade store goes after strb, here before it.
-// These look like the K2 load-order model rather than source: a statement-order
-// climb (moves of up to four lines, every simple statement) found nothing more.
-// No FAKEMATCH device: the frame above 137 parts its rows with a once-only block.
-// What closed the most, for the next function of this shape:
-// - base, pos and vel are 8-byte structs in DImode pseudos, not six s32s. Their
-//   slots pair up, and += gives the reload order.
-// - mapCells, planes and stripEnd are set before the frame loop and get no
-//   register, so each is rematerialized at its use, as the listing reloads
-//   them. mapCells is for the two texture sites only; the other uses stay
-//   symbols.
-// - A pool's place: a HImode constant has range 60, and the pool is forced
-// right
-//   after the last fix added, so a nearby load moves it.
-// - struct AzulVertex *v: a char store kills the spill slot in reload_cse and a
-//   second caller save returns.
-// - (gData_02014000 + i * 2048 + k * 128)[j], and k = 0 before the grid call
-// with
-//   angle and offset after it.
-// - Other fixes: real s32 Task_Add, Trig_Sin(a) * r operand order, shade = 0
-// ahead
-//   of size so r1 is live there, one size for both blocks, count and mask
-//   locals.
-// ResourceId_Data* are placeholders in the style of ResourceId_Data134, one per
-// id, to give the pool loads the listing has.
+/// @file
+/// Azul: the sea rises into a wall of water, a great serpent coils out of it
+/// and swallows the foes, then the wave breaks over them in a spray.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -153,7 +93,7 @@ void Transform_Pop(void);
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
-// ⚓️'s blitter modes run the other way from The Broken Seal's.
+// The Lost Age's blitter modes run the other way from The Broken Seal's.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1])
@@ -199,9 +139,9 @@ struct AzulObject {
 
 extern struct ResourceTableEntry gResourceTableEntries[];
 extern char ResourceId_Data134;
-extern char ResourceId_Data190;
-extern char ResourceId_Data16A;
-extern char ResourceId_Data0EC;
+extern char ResourceId_BlueBeamSheet;
+extern char ResourceId_WispSheet;
+extern char ResourceId_CornerRuneASheet;
 extern char ResourceId_Data0C2;
 extern char ResourceId_Data0B4;
 extern u8 gMapCellBuffer[];
@@ -313,7 +253,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
     u8 *dst;
     s32 count;
 
-    Resource_LoadAndDecompress((s32)&ResourceId_Data190, cells, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet, cells, 1, 1);
     i = 0;
     count = 288;
     dst = work->sheet + 0x2df8;
@@ -478,6 +418,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         *c++ = 0;
       }
     }
+    // DEAD: frame never falls below 0; the source keeps the test.
     if (frame >= 0) {
       base.x += vel.x;
       base.y += vel.y;
@@ -519,8 +460,9 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         }
         for (i = 0; i != 16; i++) {
           place[0] = ((39 - Data_08198830[(i & 3) + 5]) << 16) + base.x;
-          place[2] = ((-(Data_0819883c[(i & 3) + 5] * 30 / 32) - i / 4 * 60) << 16) +
-                     base.y + 0x420000;
+          place[2] =
+              ((-(Data_0819883c[(i & 3) + 5] * 30 / 32) - i / 4 * 60) << 16) +
+              base.y + 0x420000;
           // CLAMP_Y written out: the macro's once-only block holds the clamp's
           // constant after the store (4 of 2209 differ).
           if (place[2] < -0x10000)
@@ -736,7 +678,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
           v++;
         }
       }
-      Resource_LoadAndDecompress((s32)&ResourceId_Data16A, gData_02014000, 1,
+      Resource_LoadAndDecompress((s32)&ResourceId_WispSheet, gData_02014000, 1,
                                  0);
       for (i = 0; i != 6; i++) {
         for (k = 0; k != 16; k++) {
@@ -746,8 +688,8 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
           }
         }
       }
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0EC, gData_02014000, 1,
-                                 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneASheet,
+                                 gData_02014000, 1, 0);
       Func_0816ae40(gData_02014000, gMapCellBuffer, 64, 64);
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gData_02014000, 0,
                                  0);
@@ -824,8 +766,8 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
           texture2.pixels = gData_02014000;
           texture2.logWidth = 7;
           model->mesh = gData_08199364;
-          // A once-only block: its end parts the scheduler's rows, as the native's
-          // order needs (without it, 6 of 2209 differ).
+          // A once-only block: its end parts the scheduler's rows, as the
+          // native's order needs (without it, 6 of 2209 differ).
           do {
             texture2.logHeight = 7;
           } while (0);

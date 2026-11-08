@@ -1,68 +1,8 @@
-// Matches (tla-en, 2026-11-08, -mtune=gba; also tla-ja, de, es, fr and it).
-// 4 to 0: the drain loop reads its mote as &work->particles[SPARKS * 2 + i]
-// each pass in place of a stepped pointer (&screen is then built first, as
-// in the native). 16 to 4: the side test as a conditional whose arms store
-// their flag (each arm then keeps its own value and test, as the native does).
-// 38 to 16: SameSide with the user-left arm first, each arm the sign bit
-// of a & b or ~(a | b) (35; as b < 0 and b >= 0 the arms fold into jumps or
-// one select, 44 to 51), and the user->x read in a one-pass block (16).
-// Left: arm 1 is ands and a jump to the shared lsrs, where the native has
-// lsrs with the test copied into it (the mvns arm is then its own), and the
-// drain loop's pointer built after &screen. Also tried: (u32)b >> 31 in arm 1
-// (44), (a & b) >> 31 with ~b (27), ~(a ^ b) >> 31 (37). Before, at 38: the
-// SameSide arms (the
-// native puts the user-left arm first with the flag test copied into it, two
-// instructions this draft lacks, which also shifts the pool offsets by 4), the
-// velocityZ store scheduled before the copy of mote->x, and the drain loop's
-// pointer built after &screen. 46 to 38: each loop's pointer is set in the
-// for after i = 0 (the native zeroes i first). Tried since, none below 38:
-// SameSide with the user-left arm first as returns, a ternary, shifts, a flag
-// local or nested ifs (47 to 83); its condition written in place (47, 48);
-// moteX in a local taken for dx (38); the abs values before the pull (114,
-// 484); the drain loop's pointer set before the camera calls (42).
-// 2026-10-26 (round 5, later): differ 58. Each spark and mote loop has its own
-// block-scoped pointer (the first frame's two, the spark draw loop's, the drain
-// block's): 114 to 96 for the sparks, 58 with the motes; the allocation in both
-// loops now matches. Left: the SameSide arms (below), the prologue's heap base
-// built after the effect's spill and scheduling rows.
-// Draft of BattleEffect_RunSoulShatter, effect kind 115 (Soul Shatter), The
-// Broken Seal's BattleEffect_RunUndeadSword as The Lost Age reworked it
-// (structure twin 0.703): the same two mirrored halves of a column and the same
-// sixteen sparks, over a longer effect in which the target is thrown up
-// and 32 motes of its soul drift back into the user (pulled as
-// BattleEffect_RunNirvana's orb is).
-
-// Listing 589 instructions, draft 587, differ 114 (2026-10-26, round 5).
-// The spark's blitter is draw[(i & 3) ? 0 : 1] written in the call with the
-// size table read in place (the native folds the choice into a byte offset,
-// 4 or 0, right after the cell clamp, sharing the divide's 3): 144 to 123.
-// The test that a mote has passed the user is SameSide, an inline function
-// whose two returns keep the flag values the native computes (lsrs and
-// mvns) instead of a jump on each sign: 123 to 114. The native also copies
-// the flag test into the first arm and puts the user-left arm first (two
-// instructions this draft lacks); written with the user-left arm first, as
-// a conditional, an if/else on a local or explicit returns of 1 and 0, the
-// tests fold back into jumps (123 to 125). Left: allocation in the spark
-// and mote loops (the native keeps the spark in r5 and the mote in r6, here
-// r7; declaration order and the loop forms change nothing) and the pool
-// offsets.
-// Before (144): the mirror choice in a local 0/1 flag scaled at the call;
-// as a byte offset into the pair 165.
-// Tried (differ):
-// first draft                                                       261
-// position declared before screen (stack slots)                     261
-// the mirror choice in a local after the clamp (the 3 is then
-// shared and spilled as in the native)                             204
-// work read before canvas                                            198
-// the column centre read into a local before the height              186
-// the user's half height scoped to the drain block (its slot after
-// the position pointer's)                                          176
-// the choice as &draw[(i & 3) == 0] taken early                      399
-// the choice as a byte offset into the pair                          165
-// alchemy permute 8 minutes, 2 jobs: 170 with one variable expanded
-// in place (an unclear rewrite of the printed source; not kept)
-// the pull's three deltas in locals, each shifted as ☀️'s BattleEffect_RunDrain
-// shifts them (the native's load order)                           144
+/// @file
+/// Soul Shatter, The Broken Seal's BattleEffect_RunUndeadSword as The Lost Age
+/// reworked it: the same two mirrored halves of a column and sixteen sparks,
+/// over a longer effect in which the target is thrown up and 32 motes of its
+/// soul drift back into the user.
 
 #include "types.h"
 #include "io_reg.h"

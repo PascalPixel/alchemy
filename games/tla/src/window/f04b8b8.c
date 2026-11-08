@@ -1,14 +1,9 @@
-// Matches (tla-en, 2026-11-08, -mtune=gba).
-// Lets the player pick which reserve member takes party slot `slot` in battle,
-// previewing each choice in place (left and right cycle, A confirms through
-// Func_08118140 and swaps the two in gMainRoutineWork.activeOwners, B restores
-// the slot). The loop enters at its test, as the native does (a while loop's
-// test gets copied ahead of the body); the keys are read through a volatile
-// view of gInput, as the native reloads them. The locals after the reserve
-// call are declared in a block that opens after it, so the owners address
-// takes its spill slot before sel and reserve after result (from 19: 9). A
-// once-only block (plain C under S2) after the first Sound_PlayFar, in place
-// of the earlier one around it, takes the rest (9 to 0).
+/// @file
+/// Lets the player choose which reserve member takes a party slot in battle,
+/// previewing each choice in place: left and right cycle through the reserve,
+/// A confirms and swaps the two in gMainRoutineWork.activeOwners, and B puts
+/// the slot's member back.
+
 #include "types.h"
 #include "battle_work.h"
 #include "main_routine_work.h"
@@ -27,6 +22,7 @@ void BattleHighlight_SetModesFar(u16 *, s32);
 s32 BattleLayout_HighlightPartyPanels(u16 *ids);
 void wait(s32);
 
+// The keys, read through a volatile view: the loop reloads them on each test.
 #define INPUT ((volatile struct InputState *)&gInput)
 
 s32 Func_0804b8b8(s32 slot) {

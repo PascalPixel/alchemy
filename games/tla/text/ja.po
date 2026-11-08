@@ -16756,7 +16756,7 @@ msgctxt "message"
 msgid "04123"
 msgstr "EPがたりません"
 
-msgctxt "message"
+msgctxt "MsgPsynergyPp"
 msgid "04124"
 msgstr "しょうひEP"
 

@@ -1,53 +1,8 @@
-// Matches (tla-en, 2026-11-08, -mtune=gba).
-// 2026-11-08: variant 0 halves the flash with scale /= 2, not scale >>= 1; the
-// division puts scale's sign ahead of the flash loop, which closed the last
-// pair (mov sl after asrs r6), 2 to 0.
-// 2026-11-07: the texture's pixels as u8 * (alias set apart from the model's
-// vertices) put mov r8 ahead of the vertices store (4 to 2).
-// 2026-11-01, differ 32 of 1251, skeleton gap 14 (historical; since closed):
-// all that was left was order, with the same instructions and registers. In every
-// site a store to the stack comes earlier in the
-// native than sched2 puts it here: the frame's store before the mode's reload
-// at the loop's entry and foot; the outgoing arguments' strs before the reload
-// of the blitter address (sp+20) at both glows' draws and both sparks' draws;
-// the spilled x-64 (sp+8) ahead of y-64 before the flash loop; str to sp+12
-// ahead of mov r8 after the model's allocation. At the Beam's glow the sched2 dump shows the moved
-// instructions tied at priority 5 and broken by last-scheduled and LUID. The
-// reading that the native costs a stack store higher is an inference, the
-// twin notes' "spill store under-costed" family, checked in detail at that one
-// site only. If it holds, it is a question about the compiler's model (K2) and
-// out of scope for a draft.
-// Tried without gain on these sites: top and height computed first at the glow
-// (64), height alone (66), left alone (32, no change); left and top as
-// loop-body locals (177) or set before the flash loop (142 to 185); kind stored
-// before the texture's size (40). No device was added: the glow's interleaving
-// of the x and y chains looks out of reach of one, and a device that stops
-// short of differ 0 comes back out; none was measured.
-// What closed the rest, measured in order from 129:
-// - The mouth's x and y live in a block after the frame-0 setup, x first: the
-//   address of user that loop.c hoists to sp+36 is a pseudo made at the frame-0
-//   code, so the mouth's pseudos must come after it (107).
-// - The beam reads user.y before the ring's clamp and takes 48 off at each use,
-//   hoisted after the clamp (91).
-// - Frame 0's stores in the order x, y, velocities, z, velocityZ, variant (85).
-// - i * 4 first in Blast Breath's range test (44).
-// - The jet's alpha declared before its angle (42).
-// - 10192 as a local set before the age: reload then cannot use r3 for frame,
-//   and the rotation matches (36).
-// - The palette as a local and the copy routine as a local after it, so its
-//   address is loaded before the destination constant (32; the routine local
-//   alone: 40).
-// No close ☀️ twin (call order BattleEffect_RunDragonCloud 0.417): ⚓️'s own
-// effect on ☀️'s frame, its bursts and jaws drawn as textured quads by ⚓️'s
-// model kernels, as in Triple Chomp (BattleEffect_RunTripleChomp).
-// BattleEffect_LoadBlitter returns s32, as nibble_pair.c defines it. The native
-// stack frame (108): the mode at sp+64, work 60, canvas 56, frame 52, graphics
-// 48, the user's position's address 44 (and a copy at 36), the target's 40, the
-// mouth's x 32 and y 28, the sheet's glow cell 24, the blitter pair's address
-// 20, the vertices 16, the texture's address 12 and x-64 at 8; the texture is
-// at sp+68, the blitter pair at 76, the target at 84 and the user at 96. effect
-// stays in r11. The range tests are grouped as their own operand of the &&, so
-// they fold into the native's unsigned compares; the vertex pool is 1024 bytes.
+/// @file
+/// The breaths (Beam, Rolling Flame, Ghost Soldier, Pike Assault and Blast
+/// Breath): motes gather at the user's mouth and burst out of it, then each
+/// breath fires its own way.
+
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -59,10 +14,12 @@
 #define HEAP_SLOT_BLITTER 104
 #define HEAP_SLOT_BLITTER_ALTERNATE 188
 
-// The transfer task runs at this priority, where ☀️'s runs at 0x480.
+// The transfer task runs at this priority, where The Broken Seal's runs at
+// 0x480.
 #define TASK_PASS_FRAME 0xc80
 
-// ⚓️'s blitter modes count the other way from ☀️'s COMPOSITE_* modes.
+// The Lost Age's blitter modes count the other way from The Broken Seal's
+// COMPOSITE_* modes.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 // BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
@@ -578,6 +535,7 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
           if (frame >= i * 4 + Data_08199d9b[mode] &&
               frame < Data_08199d97[mode] - 8 && (frame & 3) == i) {
             work->shakeFrames = 8;
+            // DEAD: never true inside Blast Breath; the source keeps the test.
             if (mode == 6)
               Func_0814cd48(effect->actors[i], 14, 5, i, 3);
             else

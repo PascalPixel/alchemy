@@ -1,16 +1,6 @@
-// Matches (tla-en, 2026-11-08, -mtune=gba).
-// The last pair (the ember draw's ldrh r1 against the reload of sprites at
-// sp+44) closed when the mote cells table was declared as the adopted files
-// declare their tables, a non-const extern array.
-// Under the older tune the other two sites resisted offset, x and cells
-// locals, operand order, a late model copy and a ringY local; no device was
-// added.
-// What closed the gap from 364, for anyone reopening this: a one-constant
-// buffer local (rematerialized from the pool at each use), the Data_02011000
-// and gData_02015000 fixed addresses, s32 from BattleEffect_LoadBlitter and
-// Task_Add, one counter i for every loop, vertices and shade in a block after
-// the pillar (their slots sit below the hoisted x at sp+32), direct indexing in
-// the burst's ember loop, and each draw loop's pointer set inside a test.
+/// @file
+/// Raging Heat: a spinning ring of heat over the targets, and a pillar of
+/// flame that falls onto them and bursts into sparks and embers.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -43,7 +33,8 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -60,13 +51,14 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
-void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
+void BattleEffect_SpawnObjects(s32 count, s32 resource,
+                               s32 mode); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                               s32 speedLimit, s32 velocityY, s32 percent);
+                                   s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
                                        s32 flags);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -74,7 +66,7 @@ void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                      s32 drag);
+                                          s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
@@ -90,7 +82,7 @@ s32 Trig_Cos(s32 angle);
 
 void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleEffect_StartTiledCanvas(s32 bgControl);
@@ -101,7 +93,7 @@ void Transform_Pop(void);
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
-// ⚓️'s blitter modes run the other way from The Broken Seal's.
+// The Lost Age's blitter modes run the other way from The Broken Seal's.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1])
@@ -116,7 +108,7 @@ extern char ResourceId_Data0C2;
 extern char ResourceId_OrangePaletteB;
 #define Data_02011000 ((u8 *)0x02011000)
 #define gData_02015000 ((struct EffectStep *)0x02015000) // the embers
-extern u16 gData_08197410[];         // gBattleEffect_MoteCells
+extern u16 gData_08197410[]; // gBattleEffect_MoteCells
 // Per level (effect->variant): the sparks, their spread, the rings' size
 // and the embers.
 extern const u8 Data_08199400[][4];
@@ -153,26 +145,25 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = 0xa10;
-  BattleEffect_LoadBlitter(SLOT_BLITTER,
-                BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  BattleEffect_LoadBlitter(
+      SLOT_BLITTER,
+      BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(188,
-                BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                           COMPOSITE_FLIP_X));
+  BattleEffect_LoadBlitter(188, BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X |
+                                                           COMPOSITE_CLIP_Y |
+                                                           COMPOSITE_FLIP_X));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   for (i = 0; i != effect->count; i++) {
     EffectPosition_ProjectScaledBattler(effect->actors[i], &targets[i]);
   }
   centerX = targets[0].x + (targets[effect->count - 1].x - targets[0].x) / 2;
   baseY = targets[0].y - 48;
-  Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneBSheet, buffer,
-                             1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneBSheet, buffer, 1, 1);
   Func_0816ae40(buffer, work->sheet, 64, 64);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                              work->sheet + 0x4000, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, buffer, 1,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, buffer, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Data_02011000, 0, 0);
   work->transferMode = 2;
   work->transferValue = 50;
@@ -236,9 +227,11 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
         draw[1](canvas, buffer, centerX / 2, y, 24, 64);
       }
       i = 0;
+      /* FAKEMATCH(dead): the test repeats the loop's own; as a plain for loop,
+       * 4 of 669 instructions differ in tla-en. */
       if (i != Data_08199400[effect->variant][0]) {
-        for (particle = work->particles;
-             i != Data_08199400[effect->variant][0]; i++, particle++) {
+        for (particle = work->particles; i != Data_08199400[effect->variant][0];
+             i++, particle++) {
           if ((u32)particle->variant <= 23) {
             if (particle->variant > 1) {
               draw[0](canvas,
@@ -293,7 +286,8 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
         Render_ResetTransformState();
         Func_080151e4(0x8000, 0x10000, 0x8000);
         if (i == 0) {
-          Func_08015160((centerX << 16) - 0x800000, (baseY << 16) - 0x400000, 0);
+          Func_08015160((centerX << 16) - 0x800000, (baseY << 16) - 0x400000,
+                        0);
         } else {
           Func_08015160((centerX << 16) - 0x800000,
                         ((baseY + 8) << 16) - 0x400000, 0);

@@ -16767,7 +16767,7 @@ msgctxt "message"
 msgid "04123"
 msgstr "You need more PP."
 
-msgctxt "message"
+msgctxt "MsgPsynergyPp"
 msgid "04124"
 msgstr "PP"
 

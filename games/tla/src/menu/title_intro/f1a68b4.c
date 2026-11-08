@@ -1,20 +1,10 @@
-// Matches (tla-en, 2026-11-08, -mtune=gba).
-// 2026-11-08: from 6 by the row copies counting j up (j = 0; j < 30), which
-// puts `movs r4, #29` where the listing has it. The second loop reads its step
-// through a volatile cast (ordinary C under S2, noted at the read), which keeps
-// the ldrh, its copy and the sign extension apart; plainly read, combine folds
-// them into a second ldrsh (differ 29).
-// Earlier notes follow.
-// The step is an s32 local read from its u16 field: the test casts it to
-// s16 where the listing has ldrsh.
-// Runs one step of the intro's vertical picture scroll. The
-// position moves from pos toward limit by step, waiting frames between moves
-// (1 when a key cuts the wait short, else 0 with pos updated). Scrolling
-// down, each 8 lines of scroll DMA the next 30 map rows' worth of tiles
-// (0x780 bytes) and number the next map row, wrapping the tiles to block 0
-// and the row cursor to 0x0600f800 after 32 rows; scrolling up undoes a row
-// when the counter runs out. Two countdowns in the heap slot at 0xac start
-// a fade to white or back when they reach 1.
+/// @file
+/// Scrolls the intro's tall picture from one position to another: each step
+/// moves it by the scroll's step and waits its frames, streams in the next map
+/// rows' tiles when scrolling down and takes them back when scrolling up, and
+/// starts the fade to white or back when its countdown reaches 1. A key press
+/// cuts the scroll short.
+
 #include "types.h"
 #include "dma.h"
 #include "bg_scroll.h"
@@ -104,7 +94,7 @@ s32 Func_081a68b4(struct TitleScroll *s) {
       if (Title_WaitOrPress(s->frames))
         goto fail;
       // Read through a volatile cast: keeps the ldrh, its copy and the sign
-      // extension apart (plainly read, 35 of 236 differ in tla-en).
+      // extension apart, where a plain read folds them into one ldrsh.
       step = *(volatile u16 *)&s->step;
     }
   }

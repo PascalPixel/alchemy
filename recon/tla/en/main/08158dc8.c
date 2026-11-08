@@ -1,3 +1,10 @@
+// Differ 0 of 1676 in all six editions (2026-11-08, -mtune=gba). The last row
+// was the smoke draw's height read: gData_08197492 and gData_08197498 are now
+// declared u8, not const u8, as the adopted battle_effect files declare them,
+// and the draw reads gData_08197498[cell]. A const array index is an unchanging
+// load the scheduler hoists over the outgoing argument store; a pointer form
+// puts the symbol last in the address ([cell, table]). The two FAKEMATCH(dead)
+// tests are still needed (re-measured without each: 248, 249).
 // Differ 2 of 1676 (tla-en, 2026-11-08, -mtune=gba).
 // 2026-11-07: 14 to 2. The CSE stops are now a never-true test with two jumps
 // to one label (FAKEMATCH dead, below) in place of the one-pass blocks: the
@@ -174,8 +181,8 @@ extern u32 gCameraSceneParameters[];
 extern const s16 Data_08196e2c[6][2]; // the three lines' end points
 extern const u16 gData_08197410[];    // gBattleEffect_MoteCells
 extern const u16 gData_08197486[];    // gBattleEffect_GlintCells
-extern const u8 gData_08197492[];     // gBattleEffect_GlintCellWidths
-extern const u8 gData_08197498[];     // gBattleEffect_GlintCellHeights
+extern u8 gData_08197492[];           // gBattleEffect_GlintCellWidths
+extern u8 gData_08197498[];           // gBattleEffect_GlintCellHeights
 extern const u8 Data_0819855e[];      // gThor_TargetPalettes
 extern const u8 Data_08198562[];      // gThor_SmokeFlips
 
@@ -452,7 +459,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       BLITTER_ALTERNATE(canvas, work->sheet, 32, (frame - 151) * 20 - 12, 32,
                         96);
       HeapSlot_Release(188);
-      /* FAKEMATCH(dead): if (never || neverToo) beamHeight = 0; as nothing, 251
+      /* FAKEMATCH(dead): if (never || neverToo) beamHeight = 0; as nothing, 249
        * of 1676 instructions differ in tla-en. */
       if (never || neverToo) {
         beamHeight = 0;
@@ -689,15 +696,14 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
           x = ((Trig_Sin(angle) * 8) >> 16) + formationScreenX -
               (gData_08197492[cell] >> 1);
           y = ((Trig_Cos(angle) * 40) >> 16) - (gData_08197498[cell] >> 1);
-          /* FAKEMATCH(dead): if (never || neverToo) y = 0; as nothing, 250 of
+          /* FAKEMATCH(dead): if (never || neverToo) y = 0; as nothing, 248 of
            * 1676 instructions differ in tla-en. */
           if (never || neverToo) {
             y = 0;
           }
           Func_08196404(188, 7, 7, 3 | Data_08198562[Random16() & 3], 1);
           BLITTER_ALTERNATE(canvas, Ram_MapCellBuffer + gData_08197486[cell], x,
-                            y + 56, gData_08197492[cell],
-                            *(gData_08197498 + cell));
+                            y + 56, gData_08197492[cell], gData_08197498[cell]);
           HeapSlot_Release(188);
         }
       }

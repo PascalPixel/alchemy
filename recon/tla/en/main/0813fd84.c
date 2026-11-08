@@ -1,4 +1,13 @@
-// Differ 44 of 2579 (tla-en, 2026-11-08, -mtune=gba). Tried 2026-11-08: an s32 or s16
+// Differ 38 of 2579 (tla-en, 2026-11-08, -mtune=gba; the same in ja, de, es, fr, it).
+// 2026-11-08, from 44: a once-only block around the closing gBgScroll[1].y = 32 puts the
+// store after the backdrop address (38); 0x670 is still built a step late. No other
+// once-only block, at or before any statement, goes under 38. Re-tried for the mask
+// without gain: an s32 copy from an outer s32 or s8 mask, a mask set late, (u8) or
+// (s8) casts (cprop folds the constant to 243), the bit-field (69), goto for the
+// creation loop (642 and worse); the counter decrement as its own statement, an
+// offset or y local and a byte local at the end, the else arm's index spelled four
+// ways, and 2 x 20 minutes of permuter: nothing better.
+// Before, 44. Tried 2026-11-08: an s32 or s16
 // mask, the priority bit-field (75 each), the byte through a pointer (76).
 // Near miss: the priority mask's hoisted -13 and its copy, then scheduling and reload order only. The frame, every
 // slot and every pool agree.
@@ -1008,7 +1017,10 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   {
     u16 *background = (u16 *)((u8 *)Ram_HeapSlots->battleWork + 0x670);
 
-    gBgScroll[1].y = 32;
+    // A once-only block: the listing stores 32 after the backdrop address.
+    do {
+      gBgScroll[1].y = 32;
+    } while (0);
     BattleBackground_LoadFar(1, *background, 24);
   }
   wait(1);

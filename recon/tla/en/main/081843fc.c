@@ -1,4 +1,27 @@
-// Differ 41 of 4580 (tla-en, 2026-11-08, -mtune=gba). Measure 081843fc,081848ec together.
+// Differ 22 of 4580 (tla-en, 2026-11-08, -mtune=gba). Measure 081843fc,081848ec together.
+// 2026-11-08, 41 to 22, no device added:
+// - The wave's rows set i, x and v in that order in the inner for-init, v from the
+//   set-once cellBuffer as an integer sum, off + (s32)cellBuffer: i's zero is its
+//   own again, the buffer is a reload in r0 as in the listing, and the length gap
+//   and every shifted branch and pool after it are gone (41 to 26). gMapCellBuffer
+//   there keeps it a pseudo in r3 (94); cellBuffer + off puts r0 first (28).
+// - The frame-82 and frame-0 fills are once-only blocks around Iwram_FillWords:
+//   the pointer then loads before the size at 82 and work before the offset at 0
+//   (26 to 22). The same block at the other fills changes nothing or costs 2.
+// Tried 2026-11-08 without gain: for row 242, a size local in the sum and the size
+// argument (block-local, set before the loops, or function-level: 26 to 322 with a
+// pooled 0x1000), gMapCellBuffer + size (28), i * 1024 after the loop (51), a direct
+// Iwram_CopyWords (26); cse's fold puts an operand with a known constant second, so
+// the listing's order needs a size cse does not know. Row 3081's
+// gData_08197498[n] fixes the operands but moves the y copy past the ldrb (28).
+// bolts set before the FlashBurst load puts its ldr where the listing has it but
+// moves reload's rotation to r5 for the rest of the block (349); before ClawSlash
+// 42. The wave's off += 8 before j++ fixes row 4127 but swaps the two step adds.
+// A phase local for frame + j * 2 (859) and off as j * 8 (345 inline, 349 as a
+// row-local off = j * 8, which loop.c does not reduce) are far worse. Twenty-minute
+// permute runs with PERM_RANDOMIZE on the sparks, the wave, the tornado, the
+// bolts' block and the second object loop found nothing below 22 (most candidates
+// failed to compile).
 // 2026-11-07, 61 to 41: the second object loop and the frame-450 swap index a
 // set-once cells (cells + i * 1024) instead of stepping it, so loop.c reduces a
 // giv whose start it emits after the hoisted IwramCopyWords: the pool order and
@@ -23,20 +46,15 @@
 // insns that depend on this one, then RTL order; the dump's table gives all but
 // the listing's, and dependents count anti and alias edges, so types and registers
 // settle ties.
-// What is left, all small:
-// - The wave's buffer load (row 4080): the listing has it as a reload in r0 before
-//   i's zero in r3; here it takes r3 and i reuses x's zero, one instruction short.
-//   i before x gives the zero but moves the rotation one on for the rest of the
-//   scene. A set-once local and an integer sum have not moved the r3. The buffer
-//   is a block-local pseudo local-alloc gives r3, not a reload: the listing's r0
-//   needs something local in r3 across it (i = zero and i, v, x orders: 61 to 902).
+// What is left, all small (rows of --show at 22):
 // - cellBuffer + 0x1000 has its operands the other way (row 242).
-// - The frame-82 fill loads Iwram after its size (row 2923); FILL_WORDS there stays 41.
-// - The bolts' load sinks past five calls in the listing (rows 3626 to 3677), here
-//   past none; set later, r5 falls into reload's choice at row 3629.
-// - The sparks' stack arguments (rows 3038 to 3073), the tornado's hoisted offset
-//   (row 2723), the fill's two loads (row 3766), the band's frame read (row 4182) and
-//   the claw's pointer reload (row 4236).
+// - The tornado's hoisted 0x145a goes to ip before j's zero (row 2726).
+// - The sparks: the gData_08197498 address loads before n's reload (row 3042), the
+//   sl copy schedules early (rows 3066 to 3074), ldrb [n, base] (row 3081).
+// - The bolts' load sinks past four calls in the listing (rows 3634 to 3687), here
+//   past none.
+// - The wave: off's zero before frame's copy (row 4091), j's 1 before off's
+//   restore (row 4127), the band's strip load after frame's copy (row 4195).
 // What round 5 settled by reading the listing and the loop dumps:
 // - The burst's stride is a local set before its call: its life of 6 is below
 //   loop.c's bar in the first pass and above it in the second, so its multiply is a
@@ -1345,7 +1363,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         if (frame == 82) {
           work->shakeFrames = 8;
           Sound_PlayFar(208);
-          Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+          do {
+            Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+          } while (0);
         }
         if (frame == 96) {
           Sound_PlayFar(104);
@@ -1635,7 +1655,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         Func_081180e8(134);
       }
       if (frame == 0) {
-        Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+        do {
+          Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+        } while (0);
         work->scrollStepX = -16;
         gCameraSceneParameters[3] = -968;
         gCameraSceneParameters[4] = 120;
@@ -1732,10 +1754,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         y = 0;
         off = 0;
         for (; j != 12; j++, off += 8) {
-          struct MeshVertex *v = (struct MeshVertex *)(gMapCellBuffer + off);
-          s32 x = 0;
+          struct MeshVertex *v;
+          s32 x;
 
-          for (i = 0; i != 2; i++, x += 10, v++) {
+          for (i = 0, x = 0, v = (struct MeshVertex *)(off + (s32)cellBuffer);
+               i != 2; i++, x += 10, v++) {
             v->x = x + (Trig_Sin((frame + j * 2) << 10) * 2 >> 16) + jitter - 5;
             v->y = y;
             v->z = z;

@@ -3,6 +3,15 @@
 // sites); the large rings' sheet multiply (adds r3, r7; muls r3, r0) now matches. Measure in address order,
 // 0819284c,08192894,081929fc,08192a4c,08192c9c: the parent alone gives 549 and
 // parent first 1062, both counting the nested functions as moved.
+// 2026-11-08, the slots: the eight spilled are PRE's reaching registers 4269 to 4288 (sp 32 to 60 hold 4288,
+// 4286, 4280, 4279, 4278, 4277, 4271, 4269: lower regno, higher slot), numbered in hash-bucket order (table
+// 1981). The listing's order is 4279, 4280, 4288, 4269, 4271, 4277, 4286, 4278 from sp 60 down. 275 to 294
+// unused locals, at the top or in a block anywhere before the splash's call (tested after the opening and
+// just before the splash loop), now give differ 0 in tla-en; every other count from 1 to 400 stays at 34 or
+// worse, and the same 280 inside Iris_DrawSplash give 26 (integrate.c makes its unused locals' pseudos after
+// the body). A dead `if (0)` call of the splash adds 343 pseudos (34). So the source makes 275 to 294 pseudos
+// before the splash that leave no insn by gcse (a dead block, an integration whose code folds away, or
+// locals); which is open. Not adopted: 280 declared names are a device S2 has no kind for.
 // 2026-11-06, the ring row: the cosine kept in py with `py * radius` in the
 // argument puts lsls first but keeps py in r0 past canvas's load (95); the sheet
 // as a local set after the cosine call, then the multiply (`py *= radius` 52,

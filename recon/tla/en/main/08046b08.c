@@ -1,5 +1,14 @@
-// Differ 40 of 3111 (tla-en, 2026-11-08, -mtune=gba; the same on 2026-11-07); each of the six empty asms still
-// pays (42 to 56 without one, the tags updated).
+// Differ 40 of 3111 (tla-en, 2026-11-08, -mtune=gba): three barriers, not six.
+// Fifth round, 8 November: the name sprite's and both place_sprites loops' empty
+// asms are now empty once-only blocks (do { } while (0)), 40 each, so plain C; at
+// the cursor sprite a once-only block reads 98 to 115 in any position (the asm
+// stays, 56 without), at the two fill loops 42 (the same as no asm: the list
+// loop's exit is threaded past the fill test before reload; while, goto-free
+// do-while and j < 4 forms 44 or 94). Page 2's help-window call loads x before
+// y here (sched2 tie by luid, equal dependents); y first through a local reads
+// 44 (index registers swap). djinnList[j] or &djinnList[j] read 850 (no giv,
+// one slot fewer). 20 minutes of permuter (seed 7741; most
+// candidates did not compile): nothing below 40.
 // Fourth round, 7 November: next set in the Djinn loop's for after j = 0 (46 to
 // 40, its copy now through r2 as the native); 8 minutes of permuter, nothing
 // better. Slots run by descending pseudo number, so next must outnumber the
@@ -463,10 +472,9 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
     if (redraw != 0)
       Func_08045528(member, portraitSlot);
     sprite->oam.word.attr01 = 0x80000400;
-    /* FAKEMATCH(barrier): an empty asm stores the sprite word straight after
-     * its load, before the call's arguments; as no asm, 50 of 3111
-     * instructions differ in tla-en. */
-    asm("");
+    // A once-only block: the sprite word is stored straight after its load.
+    do {
+    } while (0);
     sprite->oam.word.attr23 = 0;
     sprite->oam.f.tile = gResourceTableEntries[portraitSlot].offset >> 5;
     sprite->oam.f.x = 8;
@@ -1289,10 +1297,9 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       sprite = statusSprites;
       for (i = 0, entry = gResourceTableEntries, iconX = 112; i <= 10; i++) {
         sprite->oam.word.attr01 = 0x40000400;
-        /* FAKEMATCH(barrier): an empty asm stores the sprite word straight
-         * after its load; as no asm, 54 of 3111 instructions differ in
-         * tla-en. */
-        asm("");
+        // A once-only block: the sprite word is stored straight after its load.
+        do {
+        } while (0);
         sprite->oam.word.attr23 = 0;
         sprite->oam.f.tile = entry[*slot++].offset >> 5;
         sprite->oam.f.x = iconX;
@@ -1310,10 +1317,10 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         for (i = 0, iconEntry = gResourceTableEntries, iconRow = 0; i <= 3;
              i++) {
           sprite->oam.word.attr01 = 0x40000400;
-          /* FAKEMATCH(barrier): an empty asm stores the sprite word straight
-           * after its load; as no asm, 42 of 3111 instructions differ in
-           * tla-en. */
-          asm("");
+          // A once-only block: the sprite word is stored straight after its
+          // load.
+          do {
+          } while (0);
           sprite->oam.word.attr23 = 0;
           sprite->oam.f.tile = iconEntry[iconSlots[i]].offset >> 5;
           if (page == 3)

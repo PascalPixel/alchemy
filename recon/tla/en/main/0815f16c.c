@@ -1,15 +1,31 @@
-// Differ 10 of 7666 (tla-en, 2026-11-08, -mtune=gba): the same four ties as
-// under the older tune. Measured 2026-11-05: slots normalized 5, sizes equal.
-// What is left is four scheduling ties, each one row moved; none has a register or
-// form behind it, and no reshaping tried moves them:
-// - Kind 16: strb before adds r0; here adds r0 first. Written with buffer[j] the
-//   tie goes the listing's way (the source step is moved up from the loop's end),
-//   but the two pointers then swap r1 and r2: dst lives 13 insns, src 12, equal refs.
-// - Center: ldr r5 [sp, 16] before str r2 [sp, 56]; here after it.
-// - Kind 14's y: mov r2, r8 before adds r5 and muls; here after them.
-// - Kind 96's pair: mov r8, r0 after movs r3, #56 and adds r1; here before them.
-// Those are the load and multiply rows of K2's approximated table; see the report.
+// Differ 6 of 7666 (tla-en, 2026-11-08, -mtune=gba); 6 in tla-ja, de, es, fr
+// and it as well.
+// Settled 2026-11-08, both plain C:
+// - Kind 16: a zero pixel is stored and the loop continues (if (v == 0) { ...
+//   = 0; continue; }). The two stores cross-jump into one, and the continue
+//   label puts the strb in its own block, so j++ (priority 2 through the
+//   compare) no longer outranks it.
+// - Center, and every other division: plain / and % in place of __divsi3 and
+//   __modsi3 calls. At the center the libcall form puts ldr r5 [sp, 16] first;
+//   the other twelve sites are neutral either way.
+// Two scheduling ties are left, each a full tie in sched2's rank_for_schedule
+// (priority, class against the last insn, dependant count) settled by luid:
+// - Kind 14's y: mov r2, r8 (reload of m, prio 160, 4 dependants) belongs
+//   before adds r5 and muls (prio 160, 4 dependants); the mul is earlier in RTL.
+//   Moving the table read before the multiply (a local for the cosine and for
+//   the half height) reorders it but reallocates the block (20); reassociating
+//   off or the table term changes the arithmetic (18 to 28); amp * cos, y or m
+//   as block locals and >> 1 change nothing; declaring amp before off gives 18.
+// - Kind 96's pair: the listing has movs r3, #56, adds r1, r5, mov r8, r0, the
+//   reverse of luid order (here r8, r1, r0, r3; all prio 119, 3 dependants).
+//   Tried: a local for the source, for x, for 18, 56 or 48 (40 to 120); the
+//   first reload as RELOAD_BLITTER or RELEASE_BLITTERS (8 to 10); the second
+//   unwrapped (812); m as a ternary, preset to 3, u32 or u8; &buffer[...].
+// A 20-minute permuter run on each region (about 1,100 and 2,100 candidates)
+// found nothing below 6.
 //
+// Before 2026-11-08: differ 10, the same four ties under the older tune.
+// Measured 2026-11-05: slots normalized 5, sizes equal.
 // What settled the rest this round, all from the listing:
 // - sched2 moves the head of an else arm above the branch (interblock). Kind 70's
 //   p and i look set before its if; they belong to the loop in the else arm.
@@ -302,8 +318,6 @@ extern const u8 gData_08199268[];
 extern const u8 gData_08199340[];
 extern const u8 gData_08199364[];
 
-s32 __divsi3(s32, s32);
-s32 __modsi3(s32, s32);
 s32 Trig_Cos(s32);
 s32 Trig_Sin(s32);
 void HeapSlot_Release(s32);
@@ -447,11 +461,13 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       s32 fade; j = 0; fade = i * 8; src = buffer;
       for (; j != 0x400; j++) {
         v = *src++;
-        if (v != 0) {
-          v -= fade;
-          if (v <= 0)
-            v = 1;
+        if (v == 0) {
+          buffer[j + i * 0x400] = 0;
+          continue;
         }
+        v -= fade;
+        if (v <= 0)
+          v = 1;
         buffer[j + i * 0x400] = v;
       }
     }
@@ -872,9 +888,9 @@ CLEAR(buffer, 0x1000);
   {
     s32 *c = center;
 
-    c[0] = __divsi3(object2->x - origin[0], 6);
-    c[1] = __divsi3(object2->y - origin[1] + 0x1e0000, 6);
-    c[2] = __divsi3(object2->z - origin[2], 6);
+    c[0] = (object2->x - origin[0]) / 6;
+    c[1] = (object2->y - origin[1] + 0x1e0000) / 6;
+    c[2] = (object2->z - origin[2]) / 6;
   }
   for (i = 0; i != 64; i++)
     work->particle[i].life = 0;
@@ -1149,7 +1165,7 @@ CLEAR(buffer, 0x1000);
             p = &work->particle[i / 2];
             if (p->life > 0) {
                 s32 n;
-              n = __divsi3(p->life, 20) + 2;
+              n = p->life / 20 + 2;
               EffectPosition_ProjectPoint(p, point);
               point[0] = point[0] / 2;
               drawFuncs.draw[(i / 2) & 1](
@@ -1405,7 +1421,7 @@ CLEAR(buffer, 0x1000);
           s32 x;
         s32 o1;
         x = target[0] / 2;
-        m = __modsi3(frame / 2, 3);
+        m = frame / 2 % 3;
         x -= 20;
         o1 = m * 0xa00;
         drawFuncs.draw[0](screen, buffer + 0xc56 + o1, x, 16, 40,
@@ -1659,7 +1675,7 @@ CLEAR(buffer, 0x1000);
         drawFuncs.draw[0](screen, buffer, 35, 17, 60, 95);
       if (frame == 5)
         FILL(screen, 0x4000, 0x3f3f3f3f);
-      if (frame >= 0 && (m = __divsi3(frame, 3)) < 7) {
+      if (frame >= 0 && (m = frame / 3) < 7) {
         if (action->side == 0)
           drawFuncs.draw[0](screen, buffer + gData_081988ee[m],
                             gData_08198918[m], gData_08198926[m] - 16,
@@ -1674,7 +1690,7 @@ CLEAR(buffer, 0x1000);
         s32 m;
         t = frame - 8 - i * 2;
         if (t >= 0 && t <= 8) {
-          m = __divsi3(t, 3);
+          m = t / 3;
           if (action->side == 0)
             drawFuncs.draw[0](screen, buffer + gData_08198934[m],
                               gData_08198940[i][0] - gData_0819893a[m] / 2,
@@ -1825,7 +1841,7 @@ CLEAR(buffer, 0x1000);
         if (frame < 12)
           BattleEffectKernels_IntegrateVector2(SPARKS, 64, 0);
         else if (frame == 12)
-          p->vy = __divsi3(-p->vy, 3);
+          p->vy = -p->vy / 3;
         else if (frame < 13 || frame > 18)
           BattleEffectKernels_IntegrateVector2(SPARKS, 64, 0x4000);
       }
@@ -1881,8 +1897,8 @@ CLEAR(buffer, 0x1000);
         for (i = 0; i != 16; i++) {
             s32 m;
           particle = &SPARKS[i];
-          { s32 a; a = __modsi3(i, 5) * 3;
-          m = a + __modsi3(__divsi3(particle->life, 96), 3); }
+          { s32 a; a = i % 5 * 3;
+          m = a + particle->life / 96 % 3; }
           drawFuncs.draw[i > 2 ? 0 : 1](screen, buffer + 0x800 + gData_08197834[m],
                                  (particle->x >> 16) - gData_0819781a[m] / 2,
                                  (particle->y >> 16) - gData_08197826[m] / 2,
@@ -1940,8 +1956,8 @@ CLEAR(buffer, 0x1000);
           s32 h;
           s32 left;
           s32 top;
-          m = __modsi3(i, 5) * 3;
-          m += __modsi3(__divsi3(particle->z, 96), 3);
+          m = i % 5 * 3;
+          m += particle->z / 96 % 3;
           w = gData_0819749e[m];
           left = (particle->x >> 16) - w / 2;
           top = particle->y >> 16;
@@ -2339,7 +2355,7 @@ CLEAR(buffer, 0x1000);
           s32 m;
           s32 x;
           s32 y;
-          m = __modsi3(i, 3);
+          m = i % 3;
           x = point2[0] + ((Trig_Sin(p->x) * p->z) >> 16);
           y = point2[1] + ((Trig_Cos(p->x) * p->z) >> 16);
           p->z -= 4;
@@ -2385,7 +2401,7 @@ CLEAR(buffer, 0x1000);
             s32 m;
           m = 0;
           if (p->life > 11)
-            m = __divsi3(p->life - 12, 3);
+            m = (p->life - 12) / 3;
           EffectPosition_ProjectPoint(p, point);
           point[0] = point[0] / 2;
           drawFuncs.draw[0](screen, buffer + m * 0x800, point[0] - 16,
@@ -2406,7 +2422,7 @@ CLEAR(buffer, 0x1000);
       for (i = 0; i != 16; i++, p++) {
         s32 three;
         three = 3;
-        m = __modsi3(i, three);
+        m = i % three;
         EffectPosition_ProjectPoint(p, point);
         point[0] = point[0] / 2;
         drawFuncs.draw[i & 1](screen, buffer + m * 0x240, point[0] - 12,

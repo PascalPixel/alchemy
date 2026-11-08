@@ -1,5 +1,11 @@
-// Differ 4 of 1864 (tla-en, 2026-11-08, -mtune=gba, multiplies 3 3; 6 before): two order pairs left
-// (a subs before a stack load, and movs r0, #104 at the second blitter call).
+// Differ 0 of 1864 in all six editions (tla-en, -ja, -de, -es, -fr, -it; 2026-11-08,
+// -mtune=gba, multiplies 3 3; 4 before). The two hoisted blocks are gone: the
+// flipped column's and the glint's blitter are plain calls, each followed by an
+// empty once-only loop (FAKEMATCH(dead), 8 and 4 without), which settles both
+// order pairs. Tried before it: a block local for the x, the picture or the
+// slot, the call wrapped with the draw or the release, sums respelt: no gain.
+// Was: differ 4, two order pairs (a subs before a stack load, and movs r0, #104
+// at the second blitter call).
 // 2026-11-07: Func_08196404 returns s32 (as games/tla declares it): 12 -> 6. Left: three
 // order pairs (glint's 0 between the record loads; the columns' first blitter call
 // and its flipped twin's argument moves); 12 minutes of permuter found nothing. The
@@ -478,10 +484,13 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
       gBlitter(canvas, work->sheet + stage * 864 + 0xc80,
                targetPosition.x / 2 - 18, 56, 18, 48);
       HeapSlot_Release(SLOT_BLITTER);
-  {
-    __typeof__(RECORD(mode, RECORD_BLEND)) hoisted = RECORD(mode, RECORD_BLEND);
-    BUILD_BLITTER(SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X, hoisted );
-  }
+      Func_08196404(SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
+                    RECORD(mode, RECORD_BLEND));
+      do {
+        /* FAKEMATCH(dead): an empty once-only loop after the flipped column's
+         * blitter; as BUILD_BLITTER alone, 8 of 1864 instructions differ in
+         * tla-en. */
+      } while (0);
       gBlitter(canvas, work->sheet + stage * 864 + 0xc80, targetPosition.x / 2,
                56, 18, 48);
       HeapSlot_Release(SLOT_BLITTER);
@@ -549,10 +558,12 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
             (gData_08197492[image] / 2);
         y = center.y - (Trig_Cos(angle) * (radius + 4) >> 17) -
             (gData_08197498[image] / 2);
-  {
-    __typeof__(Data_08197605[Random16() & 3] | CLIP) hoisted = Data_08197605[Random16() & 3] | CLIP;
-    BUILD_BLITTER(SLOT_BLITTER_ALTERNATE, 7, 7, hoisted , BLIT_ADDITIVE);
-  }
+        Func_08196404(SLOT_BLITTER_ALTERNATE, 7, 7,
+                      Data_08197605[Random16() & 3] | CLIP, BLIT_ADDITIVE);
+        do {
+          /* FAKEMATCH(dead): an empty once-only loop after the glint's blitter;
+           * as BUILD_BLITTER alone, 4 of 1864 instructions differ in tla-en. */
+        } while (0);
         gBlitterAlternate(canvas, work->sheet + gData_08197486[image], x, y,
                           gData_08197492[image], gData_08197498[image]);
         HeapSlot_Release(SLOT_BLITTER_ALTERNATE);

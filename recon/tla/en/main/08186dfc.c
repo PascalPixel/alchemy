@@ -1,3 +1,11 @@
+// Differ 0 of 2667 in all six editions (2026-11-08, -mtune=gba; tla-ja measured
+// at its own address, 08186e00). Devices: the CLEAR inline (S2 wrapper or the game's own
+// layer) and one FAKEMATCH(dead) before the fill loop: a never-true test on
+// model->scrollU that combine folds, so its label survives to post-reload CSE
+// (which then keeps ldr r3 from the pool instead of adds r3, r0) and is gone
+// by sched2 (flow2 merges the blocks). (u8)i, (i & 1) > 1, i != 0, i >> 31,
+// a test CSE or the front end folds (if (model->scrollU > 255)) and a bare
+// i = 0 do not: 2 to 192.
 // Differ 2 of 2667 (tla-en, 2026-11-08, -mtune=gba): one row, the fill loop's; the dive
 // ramp now matches. No device but the CLEAR inline, which needs S2's wrapper tag
 // or the game's own layer. Tried 2026-11-08 at the fill: shades[i], a fill
@@ -876,6 +884,18 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         model->texture = &texture3;
         model->vertices = verts;
         model->shade = (s32)shades;
+        {
+          /* FAKEMATCH(dead): if (scroll > 255) i = 0; as nothing, 2 of 2667
+           * instructions differ in tla-en. */
+          // A never-true test: combine folds it after CSE, so its label ends
+          // post-reload CSE's run (the fill pointer reloads its pool word,
+          // not r0's copy) and flow2 merges the blocks before sched2.
+          s32 scroll = model->scrollU;
+
+          if (scroll > 255) {
+            i = 0;
+          }
+        }
         for (i = 0; i != 31; i++) {
           Data_02010fa0[i] = 1;
         }

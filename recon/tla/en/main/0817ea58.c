@@ -1,4 +1,12 @@
-// Differ 58 of 3921 (tla-en, 2026-11-08, -mtune=gba): as below.
+// Differ 58 of 3921 (tla-en, 2026-11-08, -mtune=gba): as below; both empty asms now tagged.
+// Fifth round, 8 November: the two asms re-measured (i's cut 60 without, 60 as
+// &DECODE_BUFFER[i * 0x400], 0x400 * i, (u32)i or a cast address; the empty asm 62
+// without and 62 as a once-only block), so both stay, tagged. Third phase: z and i
+// in either order, z from frame or i, a fresh counter, z -= 0x100 in the body, a
+// do-while, a once-only block between the inits all 58 (the second zero always
+// inherits the first reload's register: the listing's second zero has its own
+// reload, so one reload upstream differs); the giv forms 75 to 129. 20 minutes of
+// permuter on the third phase's loop (seed 9131, PERM_RANDOMIZE): nothing below 58.
 // Fourth round, 7 November: the map loop matches but for k = 0's place (2 rows)
 // with the row loop a do-while that sets w = 32 after the load (tagged dead): w is
 // then hoisted after table and 6, so its live length is shortest and the ranking
@@ -427,6 +435,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       obj = Func_0815b290(32, 64, 0xc000a000, 0);
       work->sprites[i + 18] = obj;
       obj->priority = 3;
+      /* FAKEMATCH(barrier): an asm operand cuts i, known 21, from the copy's source; as
+       * DECODE_BUFFER + i * 0x400 with no asm, 60 of 3921 instructions differ in tla-en. */
       __asm__("" : "=r"(i) : "0"(i));
       Iwram_Copy((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
                  DECODE_BUFFER + i * 0x400, 0x800);
@@ -439,6 +449,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       work->sprites[41] = obj;
       Iwram_Copy((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
                  DECODE_BUFFER, 0x100);
+      /* FAKEMATCH(barrier): an empty asm keeps the call before the loop's hoisted
+       * constants; as no asm, 62 of 3921 instructions differ in tla-en. */
       __asm__("");
       for (i = 0; i != 15; i++) {
         work->sprites[42 + i] = Func_0815b3b0(16, 8, 0x4000, 0xf000);

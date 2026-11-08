@@ -1,14 +1,23 @@
-// Differ 26 of 2159 (tla-en, 2026-11-08, -mtune=gba).
-// Left: slots 16 and 20 swapped (place, texture3) and the first model's kind stored early. Was 70 (2026-11-05). Rises on the way came from removing false forms (Ram_MapCellBuffer for the symbol PRE shared; the empty asm on count, 154 to 168, which also moved a pool off the listing).
+// Differ 20 of 2159 (tla-en, 2026-11-08, -mtune=gba).
+// Left: slots 16 and 20 swapped (place, texture3), 16 rows; the first model's shade zero in r3 where the listing has r2, 4 rows. Was 26 (2026-11-08), 70 (2026-11-05). Rises on the way came from removing false forms (Ram_MapCellBuffer for the symbol PRE shared; the empty asm on count, 154 to 168, which also moved a pool off the listing).
+// 2026-11-08: the first model's kind now follows pixels as in the listing. That had cost &texture (pseudo 465) r7:
+// its live length went 74 to 76 and the 0x10000 constant (11 refs over 104) outranked it. In the u <= 35 block,
+// texture.logWidth = 6 before model->shade = sh ends 465's life one insn earlier (75), and the block's code is unchanged.
+// Measured this round: slots 16 and 20 hash sfp-44 and sfp-76 as 13926 + offset, mod (insns at gcse / 2) | 1 = 857;
+// the listing's order needs 13882 mod T below 32, so T = 867 (20 to 23 more insns: 21 dead `frame = N;` at the
+// top give differ 6, only the shade zero left) or T = 815 (about 84 fewer). Unused locals do not move them (no regno
+// in the hash). A 0 default on any local of the opening (frame, i, j, k, scroll to fade, model, p, obj) raises the
+// figure (26 to 716) or leaves the table at 857. The shade zero: local-alloc gives it r3, the first free register;
+// a zero local at function, block or loop scope costs 186 to 234; shade = 0 through the function's shade, 61.
 // BattleEffect_RunEclipse. Measured here: a constant loop.c hoists and global.c gives no register is rebuilt at each use by reload, and reload picks its registers round-robin, so a constant that is one (sparks, vertices, mesh2) puts the names right for many lines after it. `movs rN, #128; lsls` in a loop is usually such a hoisted constant; so is a pool load early in a block.
 // Settled: size set twice stays a hoisted register (one set is replaced into the call by loop.c's single-use
 // rule), the copy's destination is the base plus i rows, the ring's angle is its own variable.
-// Left, in order of reach:
+// Earlier notes (2026-11-05), the kind's settled since:
 // - Slots 16 and 20: place and texture3's address are gcse's reaching registers, numbered by hash bucket over
 //   a table sized by the insn count at gcse. 20 to 23 more insns there swap them (measured with dead stores to
 //   canvas at the top: differ 56, from 70). Most locals take a 0 default badly (frame, i, j, k, scroll and on raise the
 //   figure), and only canvas, work, savedScroll, transition, sprites, battle and origin stay at 70.
-// - The first model's kind: the listing stores it after pixels and has the zero reloaded in r2. Kind after
+// - The first model's kind (settled 2026-11-08, above): the listing stores it after pixels and has the zero reloaded in r2. Kind after
 //   pixels with a zero local closes the block but moves r7 and the blocks before it (284). Without the
 //   local, kind anywhere after pixels gives 188 to 194 (&texture loses r7); between the bitfields and pixels, 30.
 // Measured: blit is two words (slot 88, 92 unused); one i for shard, flash,
@@ -468,10 +477,10 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       verts = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
       model->shade = 0;
-      model->kind = 6;
       texture.logWidth = 5;
       texture.logHeight = 2;
       texture.pixels = work->sheet + 0x4000;
+      model->kind = 6;
       model->mesh = Data_08199220;
       model->texture = &texture;
       model->vertices = verts;
@@ -498,8 +507,8 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         if (sh > -16) {
           sh = -16;
         }
-        model->shade = sh;
         texture.logWidth = 6;
+        model->shade = sh;
         texture.logHeight = 6;
         model->kind = 7;
         texture.pixels = sparks;

@@ -1,5 +1,13 @@
-// Differ 12 of 2278 (tla-en, 2026-11-08, -mtune=gba): order, as below; each
-// barrier still pays 2 (16 without both). Tried on 2026-11-08: the streak
+// Differ 10 of 2278 (tla-en, 2026-11-08, -mtune=gba; 12 before): the glint's blitter
+// as a plain call and an empty once-only loop (tagged dead) settles the glint's
+// mov r8 and mov sl. Left: the streak's n and zero in each other's registers, and
+// in the turned flash's first draw, mov r4, sl and ldr r2, [r7] one row apart.
+// Each barrier pays 2 (12 without one, 14 without both). Tried for the barriers on
+// 2026-11-08: once-only blocks around the release, the load, the draw or both, an
+// empty once-only loop, locals for the slot and the flags: none. For the streak:
+// a once-only block around held, n or the store, held set in the loop, u32 n,
+// n < 1, a block pointer, an empty once-only loop after any statement near the
+// streak or the flashes: none. Permuter, about 20 min. Earlier tried for the streak
 // release loop's zero and counter (the native has them the other way round)
 // with held declared first or set later, a literal 0, a stepped pointer (12 to 14).
 // Measured 2026-11-05 (tla-en): differ 20 of 2278. Left: order: a multiply the
@@ -59,9 +67,9 @@
 // How the allocation was found, for the next reader:
 // - The smoke counter and the spark shift are one local, as in the twin, with
 // spawned in the hit block.
-// - LOAD_GLINT_BLITTER and RELEASE_DRAW_BLITTER are do { } while (0) macros
-// (S2: no device while every use matches through them). The glint macro's
-// label keeps loop.c from hoisting the glint size tables, and with that mode
+// - The glint blitter was a do { } while (0) macro, as RELEASE_DRAW_BLITTER is
+// (2026-11-08: now a plain call followed by an empty once-only loop, 12 to 10).
+// The loop's label keeps loop.c from hoisting the glint size tables, and with that mode
 // lands in r9; as a plain call the draft loses 94 instructions, since work
 // then wins a register. The release macro took the gap from 144 to 130.
 // - beam is assigned inside the call's argument; assigned before it, the
@@ -199,12 +207,6 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 
 // The second blitter, loaded again for each draw that needs its own.
 #define DRAW_ALTERNATE ((DrawRectangle)Ram_HeapSlots->unkb8[1])
-
-// A glint's blitter, in a random palette.
-#define LOAD_GLINT_BLITTER()                                                   \
-  do {                                                                         \
-    Func_08196404(188, 7, 7, Data_0819850a[Random16() & 3] | CLIP, 0);         \
-  } while (0)
 
 // Frees the second blitter after a draw.
 #define RELEASE_DRAW_BLITTER()                                                 \
@@ -747,7 +749,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                              flash->y - Data_081984ec[step],
                              Data_081984d7[step], Data_081984de[step]);
               RELEASE_DRAW_BLITTER();
-              /* FAKEMATCH(barrier): the empty asm parts the scheduler's rows; as no asm, 14 of 2278 instructions differ in tla-en. */
+              /* FAKEMATCH(barrier): the empty asm parts the scheduler's rows; as no asm, 12 of 2278 instructions differ in tla-en. */
               __asm__("");
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
               DRAW_ALTERNATE(
@@ -762,7 +764,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                              flash->y - Data_081984d7[step],
                              Data_081984de[step], Data_081984d7[step]);
               RELEASE_DRAW_BLITTER();
-              /* FAKEMATCH(barrier): the empty asm parts the scheduler's rows; as no asm, 14 of 2278 instructions differ in tla-en. */
+              /* FAKEMATCH(barrier): the empty asm parts the scheduler's rows; as no asm, 12 of 2278 instructions differ in tla-en. */
               __asm__("");
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
               DRAW_ALTERNATE(
@@ -840,7 +842,12 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
             s32 glintY = HI(p->y) - ((Trig_Cos(angle) * radius) >> 17) -
                          (gData_08197498[glint] >> 1);
 
-            LOAD_GLINT_BLITTER();
+            Func_08196404(188, 7, 7, Data_0819850a[Random16() & 3] | CLIP, 0);
+            do {
+              /* FAKEMATCH(dead): an empty once-only loop after the glint's blitter;
+               * as the call inside a once-only block instead, 12 of 2278
+               * instructions differ in tla-en. */
+            } while (0);
             DRAW_ALTERNATE(canvas, work->sheet + 0x22 + gData_08197486[glint],
                            glintX, glintY, gData_08197492[glint],
                            gData_08197498[glint]);

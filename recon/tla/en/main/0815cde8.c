@@ -1,6 +1,13 @@
-// Differ 8 of 2209 (tla-en, 2026-11-08, -mtune=gba). Scheduling only: the then-branch
-// second loop (Data_08198830 pool load, base.y load, -0x10000 pool) and the
-// t <= 43 setup (work loaded before faces).
+// Differ 4 of 2209 (tla-en, 2026-11-08, -mtune=gba; 8 before). Scheduling only: the then-branch
+// second loop (base.y loaded one row early, the -0x10000 pool load after the store
+// where the native has it before the sum). 8 to 6: (i & 3) + 5 written out three
+// times in place of a local m (permuter); 6 to 4: the t <= 43 loop reads
+// p = &work->particles[i] each pass in place of a stepped pointer (faces now load
+// before work). The barrier in the frame above 137 is now a once-only block around
+// the logHeight store (4 either way, 6 with neither). Tried for the rest: eight
+// spellings of the place[2] sum, an xs pointer as the else branch has, once-only
+// blocks and empty once-only loops after each statement of the loop. Permuter,
+// about 15 min.
 // 2026-11-07: 28 to 8 by frame 168 as base.x, base.y, vel.x, vel.y; battle set
 // before verts; i = 0 ahead of xs in the else branch. Permuter, 7 min: nothing.
 // Measured 2026-11-05 (tla-en): differ 28 of 2209. Left: order and a swapped
@@ -31,7 +38,7 @@
 // - Frame above 137: the shade store goes after strb, here before it.
 // These look like the K2 load-order model rather than source: a statement-order
 // climb (moves of up to four lines, every simple statement) found nothing more.
-// One FAKEMATCH(barrier) device, in the frame above 137.
+// No FAKEMATCH device: the frame above 137 parts its rows with a once-only block.
 // What closed the most, for the next function of this shape:
 // - base, pos and vel are 8-byte structs in DImode pseudos, not six s32s. Their
 //   slots pair up, and += gives the reload order.
@@ -510,14 +517,12 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
                                             (s32 *)Data_08198828, 0);
         }
         for (i = 0; i != 16; i++) {
-          s32 m = i & 3;
-
-          place[0] = ((39 - Data_08198830[m + 5]) << 16) + base.x;
-          place[2] = ((-(Data_0819883c[m + 5] * 30 / 32) - i / 4 * 60) << 16) +
+          place[0] = ((39 - Data_08198830[(i & 3) + 5]) << 16) + base.x;
+          place[2] = ((-(Data_0819883c[(i & 3) + 5] * 30 / 32) - i / 4 * 60) << 16) +
                      base.y + 0x420000;
           CLAMP_Y(place);
           obj = work->objects[i + 12];
-          obj->tile = ((struct AzulObject *)work->objects[m + 5])->tile;
+          obj->tile = ((struct AzulObject *)work->objects[(i & 3) + 5])->tile;
           Render_ApplyProjectedPlacementFar(obj, place, (s32 *)Data_08198828,
                                             0);
         }
@@ -669,8 +674,8 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       model->kind = 8;
       model->vertices = vertices;
       model->scrollU = gBgScroll[1].x;
-      p = work->particles;
-      for (i = 0; i != 31; i++, p++) {
+      for (i = 0; i != 31; i++) {
+        p = &work->particles[i];
         model->mesh = &faces[i * 3];
         Render_ResetTransformState();
         Func_08015160(p->x + -0x400000, p->y + -0x400000, 0);
@@ -813,10 +818,11 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
           texture2.pixels = gData_02014000;
           texture2.logWidth = 7;
           model->mesh = gData_08199364;
-          /* FAKEMATCH(barrier): the empty asm parts the scheduler's rows; as no
-           * asm, 10 of 2209 instructions differ in tla-en. */
-          __asm__("");
-          texture2.logHeight = 7;
+          // A once-only block: its end parts the scheduler's rows, as the native's
+          // order needs (without it, 6 of 2209 differ).
+          do {
+            texture2.logHeight = 7;
+          } while (0);
           model->shade = shade;
           Render_ResetTransformState();
           Func_08015160(0x2c0000, 0, 0);

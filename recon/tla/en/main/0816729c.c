@@ -1,4 +1,13 @@
-// Differ 54 of 2680 (tla-en, 2026-11-08, -mtune=gba).
+// Differ 54 of 2680 (tla-en, 2026-11-08, -mtune=gba; the same in ja, de, es, fr, it).
+// 2026-11-08: every device re-measured. Each dead branch still needed (241, 116);
+// the barrier still needed (56; no once-only block at any statement, nor a
+// release loop through a pointer, do-while or i < 16, replaces it); the wrapper is
+// needed only at the first palette copy, the other five calls are now direct
+// at no cost. A once-only block at every statement: nothing under 54. Tried
+// without gain: tiles, object or index locals in the second queue loop (181 to
+// 187), y locals, a fn local or a sheet copy for the four DRAW_ALT draws, seven
+// spellings of the flash step, plain forms for the dead branches (ternary,
+// clamp after, goto, 88 to 241); 2 x 20 minutes of permuter, nothing better.
 // 2026-11-07, from 56: an empty asm (FAKEMATCH barrier) between the closing
 // fill and the release loop (54). Left as below.
 // 2026-11-07: ring = 0 before shift = 0 and a plain Iwram_FillWords for the strike's
@@ -249,8 +258,9 @@ static inline void FILL(void *dst, s32 size, s32 value) {
   (0x06010000 + gResourceTableEntries[(obj)->resource].tile)
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 186 of 2680 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the first palette copy calls through this inline; as a
+   * direct call to Iwram_CopyWords there, 103 of 2680 instructions differ in
+   * tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 
@@ -307,7 +317,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
 
     obj->priority = 2;
     work->objects[i] = obj;
-    CopyWords((void *)OBJ_TILES(obj), cells + i * 0x400, 0x400);
+    Iwram_CopyWords((void *)OBJ_TILES(obj), cells + i * 0x400, 0x400);
   }
   gCameraSceneParameters[4] = 240;
   wait(1);
@@ -327,7 +337,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gData_02014000, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   pal = Resource_GetTableEntry((s32)&ResourceId_BlueCrescentSheet);
-  CopyWords((void *)BG_PLTT, pal, 128);
+  Iwram_CopyWords((void *)BG_PLTT, pal, 128);
   work->transferMode = 2;
   work->transferValue = 50;
   REG_BG2CNT = 0x784;
@@ -348,14 +358,14 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       {
         s32 size = 512;
 
-        CopyWords((void *)OBJ_PLTT, pal, 512);
+        Iwram_CopyWords((void *)OBJ_PLTT, pal, 512);
         pal += size;
       }
       Resource_DecodeType01(pal, Ram_MapCellBuffer);
       for (i = 0; i != 16; i++) {
         struct JudgmentObject *obj = work->objects[i];
 
-        CopyWords((void *)OBJ_TILES(obj), Ram_MapCellBuffer + i * 0x400,
+        Iwram_CopyWords((void *)OBJ_TILES(obj), Ram_MapCellBuffer + i * 0x400,
                         0x400);
       }
       depth = -0x400000;
@@ -439,7 +449,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       {
         s32 size = 512;
 
-        CopyWords((void *)OBJ_PLTT, pal, 512);
+        Iwram_CopyWords((void *)OBJ_PLTT, pal, 512);
         pal += size;
       }
       Resource_DecodeType01(pal, Ram_MapCellBuffer);
@@ -455,7 +465,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       {
         s32 size = 512;
 
-        CopyWords((void *)OBJ_PLTT, pal, 512);
+        Iwram_CopyWords((void *)OBJ_PLTT, pal, 512);
         pal += size;
       }
       Resource_DecodeType01(pal, Ram_MapCellBuffer);
@@ -865,7 +875,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
             right = cx + dx;
             /* FAKEMATCH(dead): a branch whose store the next line overwrites
              * restores the label CSE and reload saw between the edges; without
-             * it, 324 of 2680 instructions differ in tla-en. */
+             * it, 241 of 2680 instructions differ in tla-en. */
             if (dx > cx)
               left = 0;
             left = cx - dx;
@@ -899,7 +909,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
             right = cx + dx;
             /* FAKEMATCH(dead): a branch whose store the next line overwrites
              * restores the label CSE and reload saw between the edges; without
-             * it, 199 of 2680 instructions differ in tla-en. */
+             * it, 116 of 2680 instructions differ in tla-en. */
             if (dx > cx)
               left = 0;
             left = cx - dx;

@@ -50,7 +50,7 @@ s32 LinkBattle_ReceiveParty(void) {
         }
       } while (name_text[i] != 0);
     }
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||                      \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
     name_text[i] = ' ';
     len = i + 1;
@@ -139,18 +139,20 @@ s32 LinkBattle_SendParty(void) {
   size = LINK_PARTY_OFFER_BYTES;
   Heap_Release(buffer);
   buffer = (u8 *)Heap_AllocEwram(size);
-  // The once-only block keeps the list pointer copy before the count.
+  /* FAKEMATCH: a one-pass loop is a sched2 barrier, so the list pointer's copy
+   * is emitted before the count's address as in the reference (differ 4 without
+   * it), as The Broken Seal's LinkBattle_SendParty. */
   do {
     Iwram_CopyWords(buffer, Djinn_GetRecoveryTableFar(0), size);
   } while (0);
   list = &((struct LinkOfferTable *)buffer)->list;
   for (j = 0; j < list->count;) {
     list->entries[j].unitId = work->ownerSlots[list->entries[j].unitId];
-    // The once-only block ends the scheduling region: the entry pointer
-    // advances before the count is reloaded.
+    /* FAKEMATCH: the empty one-pass block ends the scheduling region after the
+     * step, so the entry pointer advances before the count is reloaded as in
+     * the reference (differ 2 without it). */
     j++;
-    do {
-    } while (0);
+    
   }
   if (Serial_StartSend(buffer, LINK_PARTY_OFFER_BYTES) != -1) {
     Serial_WaitForSend();

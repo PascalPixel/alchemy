@@ -22,9 +22,6 @@ struct Actor *Func_02000dac(s32 *direction, s32 *slot, s32 *kind) {
   s32 x, z, left, top, right, bottom;
 
   *direction = leader->angle >> 12;
-  // Once-only block: keeps the original's order of the code around it.
-  do {
-  } while (0);
   i = 8;
   entry = &work->objects[8];
 outer:

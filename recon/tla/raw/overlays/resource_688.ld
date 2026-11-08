@@ -10,7 +10,7 @@ SECTIONS
         "*/games/tla/src/scene/lemuria_entrance/s0120.o"(.text)
         "*/games/tla/src/scene/lemuria_entrance/s0190.o"(.text)
         "*/games/tla/src/scene/lemuria_entrance/prepare.o"(.text)
-        "*/recon/tla/raw/src/scene/lemuria_entrance/s0310.o"(.text)
+        "*/games/tla/src/scene/lemuria_entrance/s0310.o"(.text)
         "*/games/tla/src/scene/lemuria_entrance/s03cc.o"(.text)
         "*/games/tla/src/scene/lemuria_entrance/import.o"(.text)
         "*/games/tla/src/scene/lemuria_entrance/data.o"(.data)

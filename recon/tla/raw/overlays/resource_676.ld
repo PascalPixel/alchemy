@@ -17,7 +17,7 @@ SECTIONS
         "*/games/tla/src/scene/yallam/s06a4.o"(.text)
         "*/games/tla/src/scene/yallam/s06bc.o"(.text)
         "*/games/tla/src/scene/yallam/s1688.o"(.text)
-        "*/recon/tla/raw/src/scene/yallam/s182c.o"(.text)
+        "*/games/tla/src/scene/yallam/s182c.o"(.text)
         "*/games/tla/src/scene/yallam/s1904.o"(.text)
         "*/games/tla/src/scene/yallam/s1944.o"(.text)
         "*/games/tla/src/scene/yallam/s1d14.o"(.text)

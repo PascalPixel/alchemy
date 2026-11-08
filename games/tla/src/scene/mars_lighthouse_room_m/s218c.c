@@ -28,7 +28,8 @@ extern u8 gData_020023c4[];
 
 s32 GameFlag_Test(s32 flag);
 struct Actor *Actor_GetById(s32 id);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object,
+                                        s32 flags);
 s32 Task_Add(void (*func)(void), s32 priority);
 void Func_02001f94(void);
 
@@ -62,8 +63,6 @@ void Func_0200218c(u16 *targets, u16 *stops, s32 a2, s32 a3) {
         target->flags = flags;
         target->object = Actor_GetById(id);
         target->height = height << 16;
-        do {
-        } while (0);
         target->index = i;
         target++;
       }

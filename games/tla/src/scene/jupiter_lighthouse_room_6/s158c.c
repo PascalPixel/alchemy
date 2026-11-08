@@ -42,7 +42,8 @@ void Func_0200158c(struct CellTarget *table, struct CellTargetEntry *entry) {
   FieldEvent_Wait(12);
   leader->angle = 0x4000;
   leader->motionFlags = 0;
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+                                     0);
   Io_Write16(0xf1f, &REG_WINOUT);
   REG_DISPCNT |= 0x8000;
   table->shown = 1;
@@ -59,9 +60,6 @@ void Func_0200158c(struct CellTarget *table, struct CellTargetEntry *entry) {
     x++;
   } while (x <= 39);
   Actor_GetById(gMainRoutineWork.currentOwner)->animationKind = 0;
-  // Once-only block: keeps the original's order of the code around it.
-  do {
-  } while (0);
   table->shown = 0;
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
   Event_FinishScreenTransition();

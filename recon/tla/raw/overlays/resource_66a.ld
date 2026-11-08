@@ -7,7 +7,7 @@ SECTIONS
         "*/games/tla/src/scene/alhafran_cave/s004c.o"(.text)
         "*/games/tla/src/scene/alhafran_cave/s02f8.o"(.text)
         "*/games/tla/src/scene/alhafran_cave/s07a4.o"(.text)
-        "*/recon/tla/raw/src/scene/alhafran_cave/s0818.o"(.text)
+        "*/games/tla/src/scene/alhafran_cave/s0818.o"(.text)
         "*/games/tla/src/scene/alhafran_cave/s1220.o"(.text)
         "*/games/tla/src/scene/alhafran_cave/s1230.o"(.text)
         "*/games/tla/src/scene/alhafran_cave/s129c.o"(.text)

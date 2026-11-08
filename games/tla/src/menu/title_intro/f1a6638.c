@@ -22,9 +22,6 @@ s32 Func_081a6638(void) {
   s32 row;
 
   REG_DISPCNT = 0;
-  // Once-only block: keeps the original's order of the code around it.
-  do {
-  } while (0);
   map = (u16 *)0x0600e800;
   tile = 0;
   for (row = 0; row < 20; row++) {

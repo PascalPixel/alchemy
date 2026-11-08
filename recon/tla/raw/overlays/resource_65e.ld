@@ -6,7 +6,7 @@ SECTIONS
         "*/games/tla/src/scene/mikasalla_interiors/scene_tables.o"(.text)
         "*/games/tla/src/scene/mikasalla_interiors/events.o"(.text)
         "*/games/tla/src/scene/mikasalla_interiors/events3.o"(.text)
-        "*/recon/tla/raw/src/scene/mikasalla_interiors/s0340.o"(.text)
+        "*/games/tla/src/scene/mikasalla_interiors/s0340.o"(.text)
         "*/games/tla/src/scene/mikasalla_interiors/prepare.o"(.text)
         "*/games/tla/src/scene/mikasalla_interiors/s0470.o"(.text)
         "*/games/tla/src/scene/mikasalla_interiors/events2.o"(.text)

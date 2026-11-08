@@ -1,0 +1,69 @@
+#include "garoh_interiors.h"
+
+void GameFlag_ClearBit(s32 flag);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
+void Actor_SetMovementTypeById(s32 id, s32 action);
+void Func_02000710(void);
+void Func_020007dc(s32 value);
+void Func_0200081c(s32 id, s32 x, s32 z);
+void Func_02000824(s32 id, s32 x, s32 z, s32 angle);
+void Func_0200087c(s32 value);
+void Func_02000894(s32 id, s32 angle);
+
+s32 Func_02000580(void) {
+  s32 turn;
+
+  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 521;
+  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+  Func_0200087c(0);
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov660Room1) {
+    if (GameFlag_Test(0x91b) || gMainRoutineWork.entrance == 99) {
+      Func_0200081c(19, 0, 0);
+      Func_0200081c(20, 0, 0);
+      Actor_SetMovementTypeById(18, 3);
+    } else {
+      {
+        s32 x;
+        s32 z;
+        s32 id;
+
+        turn = 0x2000;
+        x = 153;
+        id = 17;
+        /* FAKEMATCH(barrier): the forced id keeps its load right after that
+         * half; as no asm, 2 of 158 instructions differ in tla-en. */
+        asm volatile("" : "+l"(id));
+        x <<= 17;
+        z = 335 << 16;
+        Func_02000824(id, x, z, turn);
+      }
+      {
+        s32 angle = 0x6000;
+        s32 z = 336 << 16;
+
+        Func_02000824(18, 345 << 16, z, angle);
+      }
+      Actor_SetSingleChildFlags(Actor_GetById(19), 0);
+      Actor_SetSingleChildFlags(Actor_GetById(20), 0);
+      Actor_GetById(17)->motionFlags = 0;
+      Actor_GetById(17)->y = 0;
+      Actor_GetById(18)->motionFlags = 0;
+      Actor_GetById(18)->y = 0;
+      Actor_GetById(19)->motionFlags = 0;
+      Actor_GetById(19)->y = 0;
+      Actor_GetById(20)->motionFlags = 0;
+      Actor_GetById(20)->y = 0;
+      Func_02000894(17, 0xe000);
+      Actor_SetSingleChildFlags(Actor_GetById(17), 0);
+      Func_02000894(18, turn);
+      Actor_SetSingleChildFlags(Actor_GetById(18), 0);
+    }
+    if (gMainRoutineWork.entrance == 99 && !GameFlag_Test(0x91b))
+      Func_02000710();
+  }
+  if (GameFlag_Test(0x91b))
+    GameFlag_ClearBit(0x310);
+  if (GameFlag_Test(0x310))
+    Func_020007dc(0xa00);
+  return 0;
+}

@@ -59,8 +59,6 @@ void Func_020024a8(struct CellTarget *table, struct CellTargetEntry *entry) {
     x++;
   } while (x <= 39);
   Actor_GetById(gMainRoutineWork.currentOwner)->animationKind = 0;
-  do {
-  } while (0);
   table->shown = 0;
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
   Event_FinishScreenTransition();

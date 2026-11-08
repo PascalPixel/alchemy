@@ -14,7 +14,7 @@ SECTIONS
         "*/games/tla/src/scene/lemuria_spring/s049c.o"(.text)
         "*/games/tla/src/scene/lemuria_spring/s0884.o"(.text)
         "*/games/tla/src/scene/lemuria_spring/s08f0.o"(.text)
-        "*/recon/tla/raw/src/scene/lemuria_spring/s0904.o"(.text)
+        "*/games/tla/src/scene/lemuria_spring/s0904.o"(.text)
         "*/games/tla/src/scene/lemuria_spring/ride.o"(.text)
         "*/games/tla/src/scene/lemuria_spring/import.o"(.text)
         "*/games/tla/src/scene/lemuria_spring/data.o"(.data)

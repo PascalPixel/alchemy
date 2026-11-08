@@ -7,7 +7,7 @@ SECTIONS
         "*/games/tla/src/scene/eastern_alhafra_ship/s0058.o"(.text)
         "*/games/tla/src/scene/eastern_alhafra_ship/events.o"(.text)
         "*/games/tla/src/scene/eastern_alhafra_ship/scene_events.o"(.text)
-        "*/recon/tla/raw/src/scene/eastern_alhafra_ship/s0250.o"(.text)
+        "*/games/tla/src/scene/eastern_alhafra_ship/s0250.o"(.text)
         "*/games/tla/src/scene/eastern_alhafra_ship/prepare.o"(.text)
         "*/games/tla/src/scene/eastern_alhafra_ship/spawn.o"(.text)
         "*/games/tla/src/scene/eastern_alhafra_ship/s0438.o"(.text)

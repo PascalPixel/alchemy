@@ -4,7 +4,7 @@ SECTIONS
     {
         "*/games/tla/src/scene/madra_catacombs/entry.o"(.text)
         "*/games/tla/src/scene/madra_catacombs/s0038.o"(.text)
-        "*/recon/tla/raw/src/scene/madra_catacombs/s014c.o"(.text)
+        "*/games/tla/src/scene/madra_catacombs/s014c.o"(.text)
         "*/resource_65a_overlay.o"(.text.x02008270)
         "*/games/tla/src/scene/madra_catacombs/s0318.o"(.text)
         "*/games/tla/src/scene/madra_catacombs/scene_tables.o"(.text)
@@ -21,7 +21,7 @@ SECTIONS
         "*/games/tla/src/scene/madra_catacombs/s0d54.o"(.text)
         "*/games/tla/src/scene/madra_catacombs/prepare.o"(.text)
         "*/games/tla/src/scene/madra_catacombs/events_e.o"(.text)
-        "*/recon/tla/raw/src/scene/madra_catacombs/s102c.o"(.text)
+        "*/games/tla/src/scene/madra_catacombs/s102c.o"(.text)
         "*/games/tla/src/scene/madra_catacombs/import.o"(.text)
         "*/games/tla/src/scene/madra_catacombs/data.o"(.data)
     }

@@ -22,9 +22,6 @@ s32 Func_081a6724(void) {
   s32 row;
 
   REG_DISPCNT = 0;
-  // The once-only block keeps the display write ahead of the map setup.
-  do {
-  } while (0);
   map = (u16 *)0x0600e800;
   tile = FIRST_TILE;
   for (row = 0; row < 20; row++) {

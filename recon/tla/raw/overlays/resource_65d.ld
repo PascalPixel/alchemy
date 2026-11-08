@@ -6,7 +6,7 @@ SECTIONS
         "*/games/tla/src/scene/mikasalla/scene_tables.o"(.text)
         "*/games/tla/src/scene/mikasalla/exits.o"(.text)
         "*/games/tla/src/scene/mikasalla/events_a.o"(.text)
-        "*/recon/tla/raw/src/scene/mikasalla/events_b.o"(.text)
+        "*/games/tla/src/scene/mikasalla/events_b.o"(.text)
         "*/games/tla/src/scene/mikasalla/s0438.o"(.text)
         "*/games/tla/src/scene/mikasalla/events_c.o"(.text)
         "*/games/tla/src/scene/mikasalla/import.o"(.text)

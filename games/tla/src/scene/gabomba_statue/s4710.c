@@ -79,8 +79,6 @@ void Func_02004710(void) {
       p = (u32 *)oam;
       *p++ = 0;
       *p++ = sy | (x << 16) | 0x40002000;
-      do {
-      } while (0);
       *p = (tile + (kind << 3)) | 0x800;
       if (state->rotation != 0) {
         oam->mode = 1;

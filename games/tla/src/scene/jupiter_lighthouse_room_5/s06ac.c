@@ -99,9 +99,6 @@ void Func_02000734(void) {
   p->tile = 0x2a0;
   p->spread = 0x6666;
   p->rise = 0x30000;
-  // The once-only block keeps the last field's store ahead of the loop's setup.
-  do {
-  } while (0);
   for (i = 0; i <= 31; i++) {
     FieldEvent_Wait(1);
     if (!(i & 1)) {

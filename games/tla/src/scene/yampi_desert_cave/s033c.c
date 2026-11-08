@@ -22,8 +22,6 @@ struct Actor *Func_0200033c(s32 *direction, s32 *slot, s32 *kind) {
   s32 x, z, left, top, right, bottom;
 
   *direction = leader->angle >> 12;
-  do {
-  } while (0);
   i = 8;
   entry = &work->objects[8];
 outer:

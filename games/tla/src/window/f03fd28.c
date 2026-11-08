@@ -4,9 +4,31 @@
 #include "ram_buffer.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "edition.h"
 
 #define SLIDER_PALETTE 14
 #define RESOURCE_SLOTS 96
+
+// The settings window's layout, sized to its labels: the window, the last
+// column of its dividers, the hue and brightness sliders and the message
+// speed icons. Japanese writes "Message speed" on one line.
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+#define OPTION_WINDOW_X 2
+#define OPTION_WINDOW_WIDTH 26
+#define OPTION_DIVIDER_END 25
+#define OPTION_SLIDER_X 100
+#define OPTION_CHOICE_X 92
+#else
+#define OPTION_WINDOW_X 1
+#if (LANGUAGE == LANGUAGE_ENGLISH)
+#define OPTION_WINDOW_WIDTH 27
+#else
+#define OPTION_WINDOW_WIDTH 28
+#endif
+#define OPTION_DIVIDER_END 26
+#define OPTION_SLIDER_X 140
+#define OPTION_CHOICE_X 84
+#endif
 
 extern const u8 gResource_FixedBlockBTiles[];
 extern const u8 Data_0804e584[];
@@ -71,19 +93,23 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void) {
   s32 msg;
 
   work = (struct WorkspaceWork *)Ram_HeapSlots->unkd0[0];
-  win = Window_Create(1, 5, 27, 14, 2);
-  Window_DrawDividerLine(win, 0, 2, 26, 2);
-  Window_DrawDividerLine(win, 0, 4, 26, 4);
-  Window_DrawDividerLine(win, 0, 7, 26, 7);
-  Window_DrawDividerLine(win, 0, 10, 26, 10);
+  win = Window_Create(OPTION_WINDOW_X, 5, OPTION_WINDOW_WIDTH, 14, 2);
+  Window_DrawDividerLine(win, 0, 2, OPTION_DIVIDER_END, 2);
+  Window_DrawDividerLine(win, 0, 4, OPTION_DIVIDER_END, 4);
+  Window_DrawDividerLine(win, 0, 7, OPTION_DIVIDER_END, 7);
+  Window_DrawDividerLine(win, 0, 10, OPTION_DIVIDER_END, 10);
   msg = (s32)&MsgWindowColorLabel;
   Text_DrawCharacterAtOffset(msg, win, 8, 0);
   msg++;
   Text_DrawCharacterAtOffset(msg, win, 8, 16);
+#if (LANGUAGE != LANGUAGE_JAPANESE)
   msg = (s32)&MsgMessageSpeedLabel;
   Text_DrawCharacterAtOffset(msg, win, 8, 32);
   msg++;
   Text_DrawCharacterAtOffset(msg, win, 32, 40);
+#else
+  Text_DrawCharacterAtOffset((s32)&MsgMessageSpeedLabel, win, 8, 40);
+#endif
   Text_DrawCharacterAtOffset((s32)MsgSpeechLabel, win, 8, 64);
   Text_DrawCharacterAtOffset((s32)MsgAutoSleepLabel, win, 8, 88);
 
@@ -100,15 +126,15 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void) {
             0x80000020, REG_DMA3);
     VramCache_Load(x, 256, Data_0804e584);
     y = 0;
-    out = WindowSprite_Create(x, 0x40004000, win, 134, y);
+    out = WindowSprite_Create(x, 0x40004000, win, OPTION_SLIDER_X - 6, y);
     out->sprite.oam.palette = SLIDER_PALETTE;
-    out = WindowSprite_Create(x, 0x40004000, win, 166, y);
+    out = WindowSprite_Create(x, 0x40004000, win, OPTION_SLIDER_X + 26, y);
     out->sprite.oam.index += 4;
     out->sprite.oam.palette = SLIDER_PALETTE;
     y = 16;
-    out = WindowSprite_Create(x, 0x40004000, win, 134, y);
+    out = WindowSprite_Create(x, 0x40004000, win, OPTION_SLIDER_X - 6, y);
     out->sprite.oam.palette = 15;
-    out = WindowSprite_Create(x, 0x40004000, win, 166, y);
+    out = WindowSprite_Create(x, 0x40004000, win, OPTION_SLIDER_X + 26, y);
     out->sprite.oam.index += 4;
     out->sprite.oam.palette = 15;
   }
@@ -119,7 +145,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void) {
     out = WindowSprite_Create(x, 0x40000000, win, 0, 0);
     out->sprite.oam.palette256 = 1;
     work->marker[0].output = out;
-    x = (s16)win->x * 8 + 140;
+    x = (s16)win->x * 8 + OPTION_SLIDER_X;
     x += __divsi3(work->option[0] * 60, work->optionCount[0]);
     y = (s16)win->y * 8 + 4;
     Func_08108048(&work->marker[0], x, y);
@@ -131,7 +157,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void) {
     out = WindowSprite_Create(x, 0x40000000, win, 0, 0);
     out->sprite.oam.palette256 = 1;
     work->marker[1].output = out;
-    x = (s16)win->x * 8 + 140;
+    x = (s16)win->x * 8 + OPTION_SLIDER_X;
     x += __divsi3(work->option[1] * 60, work->optionCount[1]);
     y = (s16)win->y * 8 + 20;
     Func_08108048(&work->marker[1], x, y);
@@ -139,11 +165,11 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void) {
 
   y = 28;
   work->frame[0][0] = RenderResource_CreateCommandIcon(
-      gOptionMenu_SpeedIcons[0], 0, win, 84, y);
+      gOptionMenu_SpeedIcons[0], 0, win, OPTION_CHOICE_X, y);
   work->frame[0][1] = RenderResource_CreateCommandIcon(
-      gOptionMenu_SpeedIcons[1], 0, win, 108, y);
+      gOptionMenu_SpeedIcons[1], 0, win, OPTION_CHOICE_X + 24, y);
   work->frame[0][2] = RenderResource_CreateCommandIcon(
-      gOptionMenu_SpeedIcons[2], 0, win, 132, y);
+      gOptionMenu_SpeedIcons[2], 0, win, OPTION_CHOICE_X + 48, y);
   y = 52;
   work->frame[1][0] = RenderResource_CreateCommandIcon(
       gOptionMenu_SpeechIcons[0], 0, win, 100, y);

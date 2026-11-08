@@ -1,8 +1,13 @@
 #include "types.h"
 #include "main_routine_work.h"
+#include "edition.h"
 #include "version.h"
 
-#if TLA_PATCH_2
+#if LANGUAGE == LANGUAGE_JAPANESE
+// Japanese drops the colon after "L" and "R" and draws the ability's name 8
+// pixels further left when that name is wider than this.
+#define COLON_NAME_WIDTH_LIMIT 11
+#elif TLA_PATCH_2
 // German, Spanish, French and Italian leave out the owner's name when the
 // ability's name is wider than this.
 #define OWNER_NAME_WIDTH_LIMIT 10
@@ -10,28 +15,35 @@
 
 extern u8 MsgShortcutSetL[], MsgShortcutSetR[];
 extern u8 MsgAbilityNothing[];
+#if LANGUAGE == LANGUAGE_JAPANESE
+extern const u8 gMenu_ShortcutLString[];
+extern const u8 gMenu_ShortcutLColonString[];
+extern const u8 gMenu_ShortcutRString[];
+extern const u8 gMenu_ShortcutRColonString[];
+#endif
 
 void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void Text_GetMessageSizeFar(u8 *message, s32 *left, s32 *top, s32 *width,
                             s32 *height);
+#if LANGUAGE == LANGUAGE_JAPANESE
+void Text_DrawStringInWindowFar(const u8 *text, s32 window, s32 x, s32 y);
+#else
 void MessageArgument_PushFar(s32 item, s32 digits);
+#endif
 void *Unit_Get(s32 unit);
 void Text_DrawStringAtOffsetFar(s32 text, s32 window, s32 x, s32 y);
 
 /// Draws the two packed values of gMainRoutineWork (owner << 10 | ability), the
 /// shortcuts' messages, into a window: a heading (one when both are set,
-/// another otherwise), then for each its value through MessageArgument_PushFar,
-/// a label and the owner's name, or an empty-slot message. Measures each
-/// ability's name: German, Spanish, French and Italian leave out the owner's
-/// name when that name is wide. Returns 1.
+/// another otherwise), then for each its ability's name and the owner's name,
+/// or an empty-slot message. Measures each ability's name first. The
+/// international editions draw the name through MessageArgument_PushFar and a
+/// label message; German, Spanish, French and Italian leave out the owner's
+/// name when the ability's name is wide. Japanese draws "L" or "L:" (and "R"
+/// or "R:") itself, then the name, dropping the colon for a wide name. Returns
+/// 1.
+#if LANGUAGE != LANGUAGE_JAPANESE
 s32 Func_080fd55c(s32 window) {
-  // Japanese chooses its row by whether the name is wider than 11 and stays on
-  // its scaffold. German, Spanish, French and Italian stay on theirs too:
-  // differ 88 of 165 in tla-de, allocation only. Their native keeps &height in
-  // r8 and rebuilds the slot's address and the id mask after each measurement;
-  // this form keeps the mask in r8, the slot's address in r7 across the call,
-  // and spills &height (a 24-byte frame for 20). Neither u8 nor u32 for wide or
-  // width, a slot pointer, nor 8 minutes of permute did better.
   s32 left;
   s32 top;
   s32 width;
@@ -50,8 +62,9 @@ s32 Func_080fd55c(s32 window) {
   name = &MsgAbilityNothing[gMainRoutineWork.packedEvents[0] & 0x3ff];
   Text_GetMessageSizeFar(name, &left, &top, &width, &height);
 #if TLA_PATCH_2
-  wide = 1;
-  if ((u32)width <= OWNER_NAME_WIDTH_LIMIT)
+  if (width < 0 || width > OWNER_NAME_WIDTH_LIMIT)
+    wide = 1;
+  else
     wide = 0;
 #endif
   if (gMainRoutineWork.packedEvents[0] != 0) {
@@ -69,8 +82,9 @@ s32 Func_080fd55c(s32 window) {
   name = &MsgAbilityNothing[gMainRoutineWork.packedEvents[1] & 0x3ff];
   Text_GetMessageSizeFar(name, &left, &top, &width, &height);
 #if TLA_PATCH_2
-  wide = 1;
-  if ((u32)width <= OWNER_NAME_WIDTH_LIMIT)
+  if (width < 0 || width > OWNER_NAME_WIDTH_LIMIT)
+    wide = 1;
+  else
     wide = 0;
 #endif
   if (gMainRoutineWork.packedEvents[1] != 0) {
@@ -86,3 +100,53 @@ s32 Func_080fd55c(s32 window) {
   }
   return 1;
 }
+#else
+s32 Func_080fd55c(s32 window) {
+  s32 left;
+  s32 top;
+  s32 width;
+  s32 height;
+  u8 *name;
+
+  if (gMainRoutineWork.packedEvents[0] != 0 &&
+      gMainRoutineWork.packedEvents[1] != 0)
+    Text_DrawCharacterAtOffsetFar((s32)MsgShortcutSetR + 1, window, 0, -8);
+  else
+    Text_DrawCharacterAtOffsetFar((s32)MsgShortcutSetL - 2, window, 0, -8);
+
+  name = &MsgAbilityNothing[gMainRoutineWork.packedEvents[0] & 0x3ff];
+  Text_GetMessageSizeFar(name, &left, &top, &width, &height);
+  if (gMainRoutineWork.packedEvents[0] != 0) {
+    if (width < 0 || width > COLON_NAME_WIDTH_LIMIT) {
+      Text_DrawStringInWindowFar(gMenu_ShortcutLString, window, 0, 0);
+      Text_DrawCharacterAtOffsetFar((s32)name, window, 8, 0);
+    } else {
+      Text_DrawStringInWindowFar(gMenu_ShortcutLColonString, window, 0, 0);
+      Text_DrawCharacterAtOffsetFar((s32)name, window, 16, 0);
+    }
+    Text_DrawStringAtOffsetFar(
+        (s32)Unit_Get(gMainRoutineWork.packedEvents[0] >> 10), window, 80, 0);
+  } else {
+    Text_DrawStringInWindowFar(gMenu_ShortcutLColonString, window, 0, 0);
+    Text_DrawCharacterAtOffsetFar((s32)MsgShortcutSetR + 2, window, 24, 0);
+  }
+
+  name = &MsgAbilityNothing[gMainRoutineWork.packedEvents[1] & 0x3ff];
+  Text_GetMessageSizeFar(name, &left, &top, &width, &height);
+  if (gMainRoutineWork.packedEvents[1] != 0) {
+    if (width < 0 || width > COLON_NAME_WIDTH_LIMIT) {
+      Text_DrawStringInWindowFar(gMenu_ShortcutRString, window, 0, 8);
+      Text_DrawCharacterAtOffsetFar((s32)name, window, 8, 8);
+    } else {
+      Text_DrawStringInWindowFar(gMenu_ShortcutRColonString, window, 0, 8);
+      Text_DrawCharacterAtOffsetFar((s32)name, window, 16, 8);
+    }
+    Text_DrawStringAtOffsetFar(
+        (s32)Unit_Get(gMainRoutineWork.packedEvents[1] >> 10), window, 80, 8);
+  } else {
+    Text_DrawStringInWindowFar(gMenu_ShortcutRColonString, window, 0, 8);
+    Text_DrawCharacterAtOffsetFar((s32)MsgShortcutSetR + 3, window, 24, 8);
+  }
+  return 1;
+}
+#endif

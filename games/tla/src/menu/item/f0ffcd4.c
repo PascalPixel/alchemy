@@ -1,10 +1,24 @@
 #include "types.h"
+#include "edition.h"
+#include "version.h"
 #include "input.h"
 #include "ram_buffer.h"
 #include "menu_result.h"
 
 // The pressed keys, read again at each test.
 #define KEYS_PRESSED (((struct InputState *)&gInput)->pressed)
+
+// The rows of a page of the list and where the cursor points at its first row:
+// the Japanese page lists six abilities, a row higher.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define PAGE_ROWS 6
+#define CURSOR_X 58
+#define CURSOR_Y 52
+#else
+#define PAGE_ROWS 5
+#define CURSOR_X 55
+#define CURSOR_Y 60
+#endif
 
 struct PsynergyMenuState {
   u8 unk000[8];
@@ -89,11 +103,18 @@ s32 Func_080ffcd4(void) {
         PsynergyMenu_DrawListPage(window, 0, &state);
       }
       PsynergyMenu_DrawRangePage(window, 0, &state);
+#if TLA_PATCH_2
+      // German, Spanish, French and Italian draw the help again after each
+      // page.
+      Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 2, window, 0, -24);
+      Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp, window, 64, -24);
+#endif
       refresh = 0;
     }
     wait(1);
-    navigation = Func_080f8f9c(0, state.entryCount, 5, &state.row, &state.page);
-    Func_080f8a44(55, state.row * 16 + 60);
+    navigation =
+        Func_080f8f9c(0, state.entryCount, PAGE_ROWS, &state.row, &state.page);
+    Func_080f8a44(CURSOR_X, state.row * 16 + CURSOR_Y);
     if (navigation == 1) {
       refresh = 1;
       listNeedsRedraw = 1;

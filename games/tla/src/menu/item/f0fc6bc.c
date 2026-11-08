@@ -2,6 +2,14 @@
 #include "ram_buffer.h"
 #include "input.h"
 #include "menu_result.h"
+#include "edition.h"
+
+// The Japanese list puts its help line at another column.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define CHANGE_HELP_X 16
+#else
+#define CHANGE_HELP_X 0
+#endif
 
 struct ListIcon {
   u8 unk00[5];
@@ -127,7 +135,7 @@ s32 Func_080fc6bc(s32 pane) {
           Func_080fc608(window, 0, &state);
           if (pane == 0)
             Text_DrawCharacterAtOffsetFar((s32)MsgChangeCharacterHelp, window,
-                                          0, 88);
+                                          CHANGE_HELP_X, 88);
           redraw = 0;
         }
         Func_080fc558(window, work, &state);

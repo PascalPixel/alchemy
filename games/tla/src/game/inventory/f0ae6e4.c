@@ -1,5 +1,6 @@
 #include "types.h"
 #include "main_routine_work.h"
+#include "version.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -67,4 +68,8 @@ void Func_080ae6e4(void) {
   Func_080ae6c8(206, 0);
   Func_080ae6c8(207, 2);
   gMainRoutineWork.coins += *(s32 *)&gMainRoutineWork.unk284[8];
+#if TLA_PATCH_4
+  if ((u32)gMainRoutineWork.coins > 999999)
+    gMainRoutineWork.coins = 999999;
+#endif
 }

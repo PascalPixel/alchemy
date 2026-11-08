@@ -3,6 +3,15 @@
 #include "input.h"
 #include "frame.h"
 #include "system/io_write_queue.h"
+#include "edition.h"
+
+// The tile column where a party member's command row ends and its name window
+// begins.
+#if LANGUAGE != LANGUAGE_JAPANESE
+#define WINDOW_X 22
+#else
+#define WINDOW_X 23
+#endif
 
 extern u8 MsgCommandName[];
 
@@ -132,7 +141,7 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
   if (mode == 0)
     selectionUi->window = Window_Create(20, 17, 10, 3, 6);
   else
-    selectionUi->window = Window_Create(22, 17, 8, 3, 6);
+    selectionUi->window = Window_Create(WINDOW_X, 17, 30 - WINDOW_X, 3, 6);
   selectionUi->drawnIndex = -1;
   if (mode == 0) {
     kindCount = 0;
@@ -182,7 +191,7 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
 
       selectionUi->entries[entryIndex].positionX = x + 155;
       if (mode != 0)
-        selectionUi->entries[entryIndex].positionX = x + 171;
+        selectionUi->entries[entryIndex].positionX = x + WINDOW_X * 8 - 5;
       selectionUi->entries[entryIndex].positionY = 136;
       entryIndex++;
     } while (entryIndex < selectionUi->iconCount);
@@ -207,8 +216,8 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
             s32 col;
 
             for (col = 0; col <= 2; col++)
-              *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + 4 +
-                (col & 3)) = 0xf07f;
+              *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + WINDOW_X -
+                18 + (col & 3)) = 0xf07f;
           }
         }
         for (panel = 0; panel < selectionUi->iconCount; panel++) {
@@ -216,13 +225,14 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
             s32 col;
 
             for (col = 0; col <= 2; col++) {
-              volatile u16 *vram = (volatile u16 *)0x0600f800 + 21 * 32 + 22;
+              volatile u16 *vram =
+                  (volatile u16 *)0x0600f800 + 21 * 32 + WINDOW_X;
 
               vram[panel * 3 + entryIndex * 32 + (col & 3) -
                    selectionUi->iconCount * 3] =
                   panel * 16 + entryIndex * 4 + col + 0x100;
               *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + (col & 3) -
-                selectionUi->iconCount * 3 + 22) = 0;
+                selectionUi->iconCount * 3 + WINDOW_X) = 0;
             }
           }
         }
@@ -305,12 +315,10 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
 
               ((u8 *)Ram_HeapSlots->windowTiles)[5] |= 4;
               if (selectionUi->commandKinds[selectionUi->selectedIndex] == 15)
-                message = Message_ShowAndWait(
-                    Func_0804519c() + 10, 15, 8);
+                message = Message_ShowAndWait(Func_0804519c() + 10, 15, 8);
               else if (selectionUi->commandKinds[selectionUi->selectedIndex] ==
                        16)
-                message = Message_ShowAndWait(Func_0804519c() + 9,
-                                                            15, 8);
+                message = Message_ShowAndWait(Func_0804519c() + 9, 15, 8);
               ((u8 *)Ram_HeapSlots->windowTiles)[5] &= ~4;
               Func_08118128(102, 155);
               Window_Close(message, 1);
@@ -381,8 +389,8 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
           /* FAKEMATCH(volatile): the add of 0x452 stays apart from the store it
            * addresses; as a plain store, 11 of 1119 instructions differ in
            * tla-en. */
-          *(volatile u16 *)(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + 5 +
-                            (col & 3)) = 0xf07f;
+          *(volatile u16 *)(work->tilemap + (entryIndex + 17) * 32 + panel * 3 +
+                            5 + (col & 3)) = 0xf07f;
       }
     }
   }

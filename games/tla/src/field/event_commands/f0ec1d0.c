@@ -1,5 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "version.h"
 
 s32 Party_GetLeaderActor(void);
 void GameFlag_ClearBit(s32 flag);
@@ -7,17 +8,15 @@ void GameFlag_SetBit(s32 flag);
 void *ObjectTable_Get(s32 id);
 
 void Func_080ec1d0(s32 *screenX, s32 *screenY) {
-  /* FAKEMATCH(pin): x held in r6; as a plain local, 23 of 92 instructions
-   * differ in tla-en. */
-  register s32 x asm("r6") = Party_GetLeaderActor();
+  s32 leader = Party_GetLeaderActor();
   u8 *state = Ram_HeapSlots->eventWork;
   u8 *object;
+  s32 x;
   s32 z;
-  s32 shift;
 
   GameFlag_ClearBit(286);
   if (*(s8 *)(state + 394) == 3) {
-    object = ObjectTable_Get(x);
+    object = ObjectTable_Get(leader);
     if (object == 0)
       return;
     x = *(s16 *)(object + 10);
@@ -25,13 +24,19 @@ void Func_080ec1d0(s32 *screenX, s32 *screenY) {
     if (z < 1832) {
       if (x < 12000) {
         GameFlag_SetBit(286);
-        shift = 1966;
+        // From patch 1 this case is offset from the leader's position; the
+        // Japanese release puts it at one fixed point.
+#if TLA_PATCH_1
         x += 65;
+        z += 1966;
+#else
+        x = 8872;
+        z = 3320;
+#endif
       } else {
-        shift = 6084;
         x -= 627;
+        z += 6084;
       }
-      z += shift;
     }
     *screenX = 853 * x / 16384 - 269;
     *screenY = z * 640 / 16384 - 112;

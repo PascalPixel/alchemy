@@ -4,6 +4,20 @@
 #include "input.h"
 #include "frame.h"
 
+// How much of the line under the cursor is copied: more outside Japanese.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define CURSOR_TEXT_LENGTH 32
+#else
+#define CURSOR_TEXT_LENGTH 52
+#endif
+
+// How much of a refusal is copied: more in German, Spanish, French and Italian.
+#if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_JAPANESE)
+#define REFUSAL_TEXT_LENGTH 32
+#else
+#define REFUSAL_TEXT_LENGTH 52
+#endif
+
 extern u8 MsgItemName[];
 extern u8 MsgItemPlainName[];
 extern u8 MsgKey0d46[];
@@ -84,8 +98,8 @@ struct ItemMenuOam {
 // MenuSprite_Initialize.
 #define MENU_SPRITE_INITIALIZE(sprite, shape)                                  \
   do {                                                                         \
-    (sprite).oam.word.attr01 = (shape);                    \
-    (sprite).oam.word.attr23 = 0;                          \
+    (sprite).oam.word.attr01 = (shape);                                        \
+    (sprite).oam.word.attr23 = 0;                                              \
   } while (0)
 
 extern const u8 gResource_FixedBlockBTiles[];
@@ -93,29 +107,22 @@ extern const u8 gResource_FixedBlockBTiles[];
 s32 VramCache_AllocEntry(s32 size);
 s32 VramCache_Reload(s32 entry, const void *tiles);
 struct ItemMenuWindow *Window_Create(s32 x, s32 y, s32 width, s32 height,
-                                       s32 flags);
+                                     s32 flags);
 void Func_08049a04(u32 sourceTile, u32 destinationTile);
 void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 palette);
 void Vram_FillWindowBlockPattern(void);
 s32 Item_ClassifyUseAbility(s32 member, s32 item);
 void *Item_Get(s32 item);
 void Message_CopyExpanded(s32 message, u16 *text, s32 capacity);
-
-// How much of a refusal is copied: more in German, Spanish, French and Italian.
-#if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_JAPANESE)
-#define REFUSAL_TEXT_LENGTH 32
-#else
-#define REFUSAL_TEXT_LENGTH 52
-#endif
 void Text_DrawWideStringAtOffset(u16 *text, struct ItemMenuWindow *window,
-                                     s32 x, s32 y);
+                                 s32 x, s32 y);
 void WindowSprite_RedrawSavedRect(struct ItemMenuWindow *window);
 void Func_08041f70(s32 color);
 void Text_DrawCharacterAtOffset(s32 message, struct ItemMenuWindow *window,
-                                  s32 x, s32 y);
+                                s32 x, s32 y);
 s32 ItemIcon_LoadIntoSlot(s32 item, s32 slot);
 void Window_SetTilemapEntry(struct ItemMenuWindow *window, s32 entry, s32 x,
-                              s32 y, s32 flags);
+                            s32 y, s32 flags);
 void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
 void Sound_PlayFar(s32 cue);
 void Input_ResetKeyRepeat(void);
@@ -131,7 +138,9 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
   struct ItemMenuWindow *messageWindow;
   s32 iconCount;
   s32 preferredRow;
-  struct { s32 x, y; } cursorPosition;
+  struct {
+    s32 x, y;
+  } cursorPosition;
   struct ItemMenuNavigation *navigation;
   struct ItemMenuWindow *window;
   s32 firstEntry;
@@ -170,8 +179,8 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
     u32 t = 0;
 
     y = i * 2;
-    /* FAKEMATCH(barrier): an empty asm after the row, which keeps it and the zero
-     * ahead of the stores; without it, 12 of 790 instructions differ in
+    /* FAKEMATCH(barrier): an empty asm after the row, which keeps it and the
+     * zero ahead of the stores; without it, 12 of 790 instructions differ in
      * tla-en. */
     asm("");
     iconSprite = &sprites[i];
@@ -194,19 +203,20 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
       Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
-                          window->width - 2, 1, 15);
+                           window->width - 2, 1, 15);
       Vram_FillWindowBlockPattern();
       if (count != 0) {
         if (Item_ClassifyUseAbility(member,
                                     entries[firstEntry + selectedRow]) == 2)
-          Message_CopyExpanded((s32)MsgKey0d4f, messageText, 52);
+          Message_CopyExpanded((s32)MsgKey0d4f, messageText,
+                               CURSOR_TEXT_LENGTH);
         else
           Message_CopyExpanded((entries[firstEntry + selectedRow] & 0x1ff) +
-                                       (s32)MsgItemPlainName,
-                                   messageText, 52);
+                                   (s32)MsgItemPlainName,
+                               messageText, CURSOR_TEXT_LENGTH);
         sprite = &cursorStorage;
       } else {
-        Message_CopyExpanded((s32)MsgKey0d46, messageText, 52);
+        Message_CopyExpanded((s32)MsgKey0d46, messageText, CURSOR_TEXT_LENGTH);
       }
       Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       drawnRow = selectedRow;
@@ -222,8 +232,8 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
             Func_08041f70(4);
           else if (item & ITEM_BROKEN)
             Func_08041f70(2);
-          Text_DrawCharacterAtOffset((item & 0x1ff) + (s32)MsgItemName,
-                                       window, 16, i * 16);
+          Text_DrawCharacterAtOffset((item & 0x1ff) + (s32)MsgItemName, window,
+                                     16, i * 16);
           Func_08041f70(15);
           sprites[i].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[i]);
         }
@@ -240,7 +250,7 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
         }
       }
       Window_HighlightRect(window->x + 1, window->y + selectedRow * 2 + 1,
-                          window->width - 2, 1, 14);
+                           window->width - 2, 1, 14);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
     }
@@ -252,20 +262,19 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
           if (i == firstEntry / 5)
             iconTile = i + 0xf30b;
         }
-        Window_SetTilemapEntry(
-            window, iconTile, window->width - (count + 4) / 5 + i - 2, -1, 0);
+        Window_SetTilemapEntry(window, iconTile,
+                               window->width - (count + 4) / 5 + i - 2, -1, 0);
       }
       pageTile = -1;
       Window_SetTilemapEntry(window, 0xf334,
-                               window->width - (count + 4) / 5 - 3, pageTile, 0);
+                             window->width - (count + 4) / 5 - 3, pageTile, 0);
       Window_SetTilemapEntry(window, 0xf335, window->width - 2, pageTile, 0);
       do {
         work->dirty |= 2 << ((u32)(window->y - 1) >> 2);
       } while (0);
     }
 
-    for (i = 0; i < iconCount; i++)
-      {
+    for (i = 0; i < iconCount; i++) {
       iconSprite = &sprites[i];
       Oam_AddSpriteAtDepth(iconSprite, 240);
     }
@@ -275,8 +284,7 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
     sprite = &cursorStorage;
     ((u32 *)sprite)[1] = 0x40000000;
     ((u32 *)sprite)[2] = 0;
-    sprite->tile =
-        VramCache_Reload(cursorHandle, gResource_FixedBlockBTiles);
+    sprite->tile = VramCache_Reload(cursorHandle, gResource_FixedBlockBTiles);
     sprite->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
     sprite->y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
     if (count != 0)
@@ -300,11 +308,14 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
         }
         Sound_PlayFar(114);
         if (unusableReason == 2)
-          Message_CopyExpanded((s32)MsgKey0d4f, messageText, REFUSAL_TEXT_LENGTH);
+          Message_CopyExpanded((s32)MsgKey0d4f, messageText,
+                               REFUSAL_TEXT_LENGTH);
         else if (entries[result] & ITEM_BROKEN)
-          Message_CopyExpanded((s32)MsgKey0d4d, messageText, REFUSAL_TEXT_LENGTH);
+          Message_CopyExpanded((s32)MsgKey0d4d, messageText,
+                               REFUSAL_TEXT_LENGTH);
         else
-          Message_CopyExpanded((s32)MsgKey0d4c, messageText, REFUSAL_TEXT_LENGTH);
+          Message_CopyExpanded((s32)MsgKey0d4c, messageText,
+                               REFUSAL_TEXT_LENGTH);
         Vram_FillWindowBlockPattern();
         Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       } else {

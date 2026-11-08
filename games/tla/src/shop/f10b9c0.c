@@ -8,11 +8,20 @@
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define PRICE_WINDOW_X 16
 #define PRICE_WINDOW_WIDTH 14
-#define DETAILS_WINDOW_WIDTH 13
+#elif LANGUAGE == LANGUAGE_GERMAN
+#define PRICE_WINDOW_X 13
+#define PRICE_WINDOW_WIDTH 17
 #else
 #define PRICE_WINDOW_X 14
 #define PRICE_WINDOW_WIDTH 16
+#endif
+
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define DETAILS_WINDOW_WIDTH 13
+#elif LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_FRENCH
 #define DETAILS_WINDOW_WIDTH 16
+#else
+#define DETAILS_WINDOW_WIDTH 18
 #endif
 
 struct ShopCursorAnchor {
@@ -59,6 +68,7 @@ void Message_CloseFinishedWindowsFar(void);
 void ItemMenu_DrawItemDetailsFar(void *window, s32 item);
 void Window_CloseFar(void *window, s32 style);
 void WindowSprite_PrepareForRedrawFar(void *window);
+void Shop_DrawItemCount(void *window, s32 unitId);
 
 s32 Func_0810b9c0(s32 unitId) {
   void *nameWindow;
@@ -145,6 +155,11 @@ s32 Func_0810b9c0(s32 unitId) {
       Window_CloseFar(details, 2);
       WindowSprite_PrepareForRedrawFar(shop->listWindow);
       wait(1);
+      // German, Spanish and Italian also redraw the item window here.
+#if TLA_PATCH_4 || (TLA_PATCH_2 && !TLA_PATCH_3)
+      Shop_DrawItemCount(shop->itemWindow, unitId);
+      wait(1);
+#endif
       // Japanese does not redraw the cursor or the two windows here.
 #if TLA_PATCH_1
       redraw = 1;

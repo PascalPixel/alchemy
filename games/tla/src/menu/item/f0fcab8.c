@@ -43,6 +43,21 @@ void Text_UseExtraTilesFar(s32 flag);
 void Func_08038290(void);
 void wait(s32 frames);
 
+#if TLA_PATCH_2
+static __inline__ s32 CopyWords_(void *destination, const void *source,
+                                 s32 size) {
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
+   * constants; as direct calls, 46 of 164 instructions differ in tla-de. */
+  return Iwram_CopyWords(destination, source, size);
+}
+
+static __inline__ s32 FillWords_(void *destination, s32 size, u32 value) {
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
+   * constants; as a direct call, 68 of 164 instructions differ in tla-de. */
+  return Iwram_FillWords(destination, size, value);
+}
+#endif
+
 /// A second item picker an event script opens, built as Func_080f94a4: opens
 /// the item menu over the field and runs its command loop; when that returns 1,
 /// looks up the chosen item's action (unused) and records owner << 10 | item in
@@ -50,9 +65,7 @@ void wait(s32 frames);
 s32 Func_080fcab8(void) {
   // German, Spanish, French and Italian also suspend the field tasks and keep
   // the tiles at 0x06004000 aside, filled with a pattern, while the picker is
-  // open. Those four stay on their scaffolds: 46 of 164 instructions differ,
-  // all allocation, as the native keeps Iwram_CopyWords in fp and reloads the
-  // tile address from the pool where this keeps the address in a register.
+  // open.
   struct InventoryMenuState *screen;
 #if TLA_PATCH_2
   void *savedTiles;
@@ -72,8 +85,8 @@ s32 Func_080fcab8(void) {
   Window_InitializeWork(0);
 #if TLA_PATCH_2
   Menu_SuspendFieldTasks();
-  Iwram_CopyWords(savedTiles, (void *)0x06004000, 0x2000);
-  Iwram_FillWords((void *)0x06004000, 0x2000, 0x33333333);
+  CopyWords_(savedTiles, (void *)0x06004000, 0x2000);
+  FillWords_((void *)0x06004000, 0x2000, 0x33333333);
   Text_UseExtraTilesFar(1);
 #endif
   screen->partyCount = Party_ListActiveOwnersFar(screen->ownerIds);
@@ -103,7 +116,7 @@ s32 Func_080fcab8(void) {
 #if TLA_PATCH_2
   Func_08038290();
   Text_UseExtraTilesFar(0);
-  Iwram_CopyWords((void *)0x06004000, savedTiles, 0x2000);
+  CopyWords_((void *)0x06004000, savedTiles, 0x2000);
   Ram_HeapSlots->windowTiles[6] = 0;
   Heap_Release(savedTiles);
   wait(1);

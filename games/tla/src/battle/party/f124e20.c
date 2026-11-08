@@ -9,6 +9,38 @@
 #include "motobj.h"
 #include "owner_value.h"
 #include "ram_buffer.h"
+#include "edition.h"
+
+// The Japanese text holds these messages in the same order two places later,
+// but its labels for several of them belong to their neighbours, so the
+// Japanese release reaches each of those by its place beside a message whose
+// label fits its text.
+#if LANGUAGE == LANGUAGE_JAPANESE
+// ねむりからさめた! ("wakes from slumber"), three before MsgResNormal.
+#define MSG_WAKES ((s32)&MsgResNormal - 3)
+// すばやさが もどった! ("Agility returns to normal"), after MsgDefNormal.
+#define MSG_AGI_NORMAL ((s32)&MsgDefNormal + 1)
+// われにかえった! ("regains consciousness"), two after MsgDefNormal.
+#define MSG_CONSCIOUS ((s32)&MsgDefNormal + 2)
+// まぼろしを うちやぶった! ("sees clearly once again"), three before
+// MsgConscious2.
+#define MSG_CURE_DELUSION ((s32)&MsgConscious2 - 3)
+// エナジーふうじがとけた! ("Psynergy seal is gone"), two before MsgConscious2.
+#define MSG_CURE_SEAL ((s32)&MsgConscious2 - 2)
+// しびれがきえた! ("no longer stunned"), the message before MsgConscious2.
+#define MSG_CURE_STUN ((s32)&MsgConscious2 - 1)
+// リフレクトのこうかがきえた! ("Reflect no longer affects"), after
+// MsgRefrainEnd.
+#define MSG_REFLECT_END ((s32)&MsgRefrainEnd + 1)
+#else
+#define MSG_WAKES ((s32)&MsgWakes)
+#define MSG_AGI_NORMAL ((s32)&MsgAgiNormal)
+#define MSG_CONSCIOUS ((s32)&MsgConscious)
+#define MSG_CURE_DELUSION ((s32)&MsgCureDelusion)
+#define MSG_CURE_SEAL ((s32)&MsgCureSeal)
+#define MSG_CURE_STUN ((s32)&MsgCureStun)
+#define MSG_REFLECT_END ((s32)&MsgReflectEnd)
+#endif
 
 struct TurnEndList {
   struct DjinnRecoveryEntry entries[72];
@@ -62,7 +94,7 @@ s32 sub_08124af8(s32 id);
   if (test(unitId) != 0) {                                                     \
     BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));             \
     MessageArgument_PushFar(unitId, 1);                                        \
-    Message_ShowAndWaitCoreFar((s32)&message);                                 \
+    Message_ShowAndWaitCoreFar(message);                                       \
     BattleMessage_WaitForAdvance();                                            \
   }
 
@@ -71,7 +103,7 @@ s32 sub_08124af8(s32 id);
     BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));             \
     MessageArgument_PushFar(unitId, 1);                                        \
     BattleObject_UpdatePose(unitId);                                           \
-    Message_ShowAndWaitCoreFar((s32)&message);                                 \
+    Message_ShowAndWaitCoreFar(message);                                       \
     BattleMessage_WaitForAdvance();                                            \
   }
 
@@ -215,18 +247,19 @@ void Func_08124e20(void) {
             BattleMessage_WaitForAdvance();
           }
         }
-        ANNOUNCE_END(BattleUnit_CountDownAgilityModifier, MsgAgiNormal);
-        ANNOUNCE_END(BattleUnit_CountDownAttackModifier, MsgAtkNormal);
-        ANNOUNCE_END(BattleUnit_CountDownDefenseModifier, MsgDefNormal);
-        ANNOUNCE_END(BattleUnit_CountDownResistanceModifier, MsgResNormal);
-        ANNOUNCE_END(BattleUnit_CountDownDelusion, MsgCureDelusion);
-        ANNOUNCE_END(BattleUnit_CountDownConfusion, MsgConscious);
-        ANNOUNCE_END(BattleUnit_CountDownCharm, MsgConscious2);
-        ANNOUNCE_END_POSE(BattleUnit_CountDownStun, MsgCureStun);
-        ANNOUNCE_END_POSE(BattleUnit_CountDownSleep, MsgWakes);
-        ANNOUNCE_END(Battle_AdvanceCounterAndCheckChance, MsgCureSeal);
-        ANNOUNCE_END(sub_08124af8, MsgRefrainEnd);
-        ANNOUNCE_END(BattleUnit_CountDownReflect, MsgReflectEnd);
+        ANNOUNCE_END(BattleUnit_CountDownAgilityModifier, MSG_AGI_NORMAL);
+        ANNOUNCE_END(BattleUnit_CountDownAttackModifier, (s32)&MsgAtkNormal);
+        ANNOUNCE_END(BattleUnit_CountDownDefenseModifier, (s32)&MsgDefNormal);
+        ANNOUNCE_END(BattleUnit_CountDownResistanceModifier,
+                     (s32)&MsgResNormal);
+        ANNOUNCE_END(BattleUnit_CountDownDelusion, MSG_CURE_DELUSION);
+        ANNOUNCE_END(BattleUnit_CountDownConfusion, MSG_CONSCIOUS);
+        ANNOUNCE_END(BattleUnit_CountDownCharm, (s32)&MsgConscious2);
+        ANNOUNCE_END_POSE(BattleUnit_CountDownStun, MSG_CURE_STUN);
+        ANNOUNCE_END_POSE(BattleUnit_CountDownSleep, MSG_WAKES);
+        ANNOUNCE_END(Battle_AdvanceCounterAndCheckChance, MSG_CURE_SEAL);
+        ANNOUNCE_END(sub_08124af8, (s32)&MsgRefrainEnd);
+        ANNOUNCE_END(BattleUnit_CountDownReflect, MSG_REFLECT_END);
       }
     }
   }

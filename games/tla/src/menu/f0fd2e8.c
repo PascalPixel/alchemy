@@ -1,4 +1,5 @@
 #include "types.h"
+#include "version.h"
 #include "input.h"
 #include "ram_buffer.h"
 
@@ -66,7 +67,9 @@ void wait(s32 frames);
 void Menu_HighlightPageEntry(struct MenuWindow *window, s32 selection,
                              s32 count);
 void WindowSprite_RedrawSavedRectFar(s32 window);
+void WindowSprite_ClearListFar(s32 window);
 void Text_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
+void Text_DrawMessageFar(u8 *message, s32 window, s32 x, s32 y);
 void Func_080f8a44(s32 x, s32 y);
 void Sound_PlayFar(s32 cue);
 s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
@@ -105,10 +108,23 @@ s32 Func_080fd2e8(s32 browseOnly) {
         }
         Menu_HighlightPageEntry(menu->rowWindow, selection, count);
         if (!GameFlag_Test(0x151) && !shown) {
+          // The Japanese release clears the info window; from patch 1 it
+          // redraws the window's saved rectangle.
+#if TLA_PATCH_1
           WindowSprite_RedrawSavedRectFar(menu->infoWindow);
+#else
+          WindowSprite_ClearListFar(menu->infoWindow);
+#endif
+          // Japanese draws the description as a resource string.
+#if LANGUAGE == LANGUAGE_JAPANESE
+          Text_DrawMessageFar((menu->infoMessage & 0x3fff) +
+                                  MsgAbilityDescription,
+                              menu->infoWindow, 0, 0);
+#else
           Text_DrawCharacterAtOffsetFar((menu->infoMessage & 0x3fff) +
                                             MsgAbilityDescription,
                                         menu->infoWindow, 0, 0);
+#endif
           shown = 1;
         } else {
           GameFlag_ClearBit(0x151);

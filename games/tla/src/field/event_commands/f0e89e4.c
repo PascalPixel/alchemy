@@ -5,6 +5,7 @@
 #include "map.h"
 #include "main_routine_work.h"
 #include "view_move.h"
+#include "version.h"
 
 // How far the view stays from the edge it is beside, in pixels.
 #define VIEW_EDGE_MARGIN 12
@@ -31,7 +32,7 @@ void Func_080e89e4(s32 direction) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   struct Actor *center = event->viewCenter;
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  register s32 viewX asm("r11") = map->viewX >> 16;
+  s32 viewX = map->viewX >> 16;
   s32 viewZ = map->viewZ >> 16;
   struct ViewMoveWork *work = Ram_HeapSlots->battleFxWork[0];
   struct MapBounds bounds;
@@ -44,6 +45,8 @@ void Func_080e89e4(s32 direction) {
   s32 top;
   s32 bottom;
 
+  // Japanese does not check the map's rectangle list here.
+#if TLA_PATCH_1
   if (*(s32 *)map->unk0fc != 0) {
     if (direction & VIEW_MOVE_X) {
       Map_SetScreenShakeFar(0x30000, 0, 0x10000);
@@ -54,6 +57,7 @@ void Func_080e89e4(s32 direction) {
       return;
     }
   }
+#endif
   if (event->controlMode == 3) {
     if (direction & VIEW_MOVE_X) {
       Map_SetScreenShakeFar(0x30000, 0, 0x10000);
@@ -65,6 +69,12 @@ void Func_080e89e4(s32 direction) {
     }
   }
 
+  /* FAKEMATCH(barrier): three empty asms before the bounds are fetched, which
+   * lengthen viewX's and viewZ's lives so the allocator ranks them below the
+   * bounds; as no asm, 14 of 169 instructions differ in tla-en. */
+  __asm__("");
+  __asm__("");
+  __asm__("");
   Func_08020328(gMainRoutineWork.map, &bounds);
   minX = bounds.minX;
   maxX = bounds.maxX;

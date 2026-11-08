@@ -7,6 +7,90 @@
 #include "input.h"
 #include "main_routine_work.h"
 #include "bg_scroll.h"
+#include "edition.h"
+
+// Lucky Dice's layout, fitted to each language's text: the coins window at the
+// top and its label, the help window (Throw / Quit) and the winnings window at
+// the bottom with their text, in tiles for windows and pixels within them, and
+// the centre of the result lettering in sprite x, which wraps at 512.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define DICE_COINS_WINDOW_X 18
+#define DICE_COINS_WINDOW_WIDTH 11
+#define DICE_COINS_LABEL_X 48
+#elif LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_FRENCH
+#define DICE_COINS_WINDOW_X 16
+#define DICE_COINS_WINDOW_WIDTH 14
+#define DICE_COINS_LABEL_X 53
+#elif LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
+#define DICE_COINS_WINDOW_X 17
+#define DICE_COINS_WINDOW_WIDTH 13
+#define DICE_COINS_LABEL_X 56
+#else
+#define DICE_COINS_WINDOW_X 18
+#define DICE_COINS_WINDOW_WIDTH 12
+#define DICE_COINS_LABEL_X 48
+#endif
+
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define DICE_HELP_WINDOW_X 23
+#define DICE_HELP_WINDOW_WIDTH 7
+#elif LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH
+#define DICE_HELP_WINDOW_X 20
+#define DICE_HELP_WINDOW_WIDTH 10
+#elif LANGUAGE == LANGUAGE_FRENCH
+#define DICE_HELP_WINDOW_X 21
+#define DICE_HELP_WINDOW_WIDTH 9
+#else
+#define DICE_HELP_WINDOW_X 22
+#define DICE_HELP_WINDOW_WIDTH 8
+#endif
+
+// The help window reopened after a payout; in Spanish it is a tile narrower
+// than the one Lucky Dice opens with, for the same two lines.
+#if LANGUAGE == LANGUAGE_SPANISH
+#define DICE_REOPENED_HELP_WINDOW_X 21
+#define DICE_REOPENED_HELP_WINDOW_WIDTH 9
+#else
+#define DICE_REOPENED_HELP_WINDOW_X DICE_HELP_WINDOW_X
+#define DICE_REOPENED_HELP_WINDOW_WIDTH DICE_HELP_WINDOW_WIDTH
+#endif
+
+// The winnings window opens at this x less half its digits and is this width
+// plus its digits; after the winnings label the number stands at
+// DICE_WINNINGS_NUMBER_X, and the coins label at DICE_WINNINGS_COINS_X past
+// the number's digits.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define DICE_WINNINGS_WINDOW_X 10
+#define DICE_WINNINGS_WINDOW_WIDTH 10
+#define DICE_WINNINGS_COINS_X 40
+#define DICE_WINNINGS_NUMBER_X 40
+#elif LANGUAGE == LANGUAGE_GERMAN
+#define DICE_WINNINGS_WINDOW_X 7
+#define DICE_WINNINGS_WINDOW_WIDTH 14
+#define DICE_WINNINGS_COINS_X 53
+#define DICE_WINNINGS_NUMBER_X 53
+#elif LANGUAGE == LANGUAGE_FRENCH
+#define DICE_WINNINGS_WINDOW_X 9
+#define DICE_WINNINGS_WINDOW_WIDTH 13
+#define DICE_WINNINGS_COINS_X 53
+#define DICE_WINNINGS_NUMBER_X 53
+#elif LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
+#define DICE_WINNINGS_WINDOW_X 9
+#define DICE_WINNINGS_WINDOW_WIDTH 13
+#define DICE_WINNINGS_COINS_X 64
+#define DICE_WINNINGS_NUMBER_X 56
+#else
+#define DICE_WINNINGS_WINDOW_X 8
+#define DICE_WINNINGS_WINDOW_WIDTH 13
+#define DICE_WINNINGS_COINS_X 56
+#define DICE_WINNINGS_NUMBER_X 56
+#endif
+
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define DICE_RESULT_LABEL_CENTER_X 640
+#else
+#define DICE_RESULT_LABEL_CENTER_X 632
+#endif
 
 struct DiceParticle {
   s32 x;
@@ -79,7 +163,6 @@ void wait(s32 frames);
 
 extern char MsgLuckyDiceCoins;
 extern char MsgLuckyDiceWinnings;
-extern char MsgLuckyDiceThrow;
 extern char ResourceId_FarCall00C;
 extern char ResourceId_LuckyDiceBoard;
 extern char ResourceId_LuckyDiceSprites;
@@ -252,13 +335,18 @@ void LuckyDice_Run(void) {
   diceWork->particles[1].z = -0xa00000;
 
   WindowSystem_InitFieldFar();
-  window = Window_CreateFar(18, 0, 12, 3, 6);
+  window =
+      Window_CreateFar(DICE_COINS_WINDOW_X, 0, DICE_COINS_WINDOW_WIDTH, 3, 6);
   sprites->coinsWindow = window;
-  Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, window, 48, 0);
+  Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, window,
+                                DICE_COINS_LABEL_X, 0);
   Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6, sprites->coinsWindow, 0,
                              0);
-  window = Window_CreateFar(22, 16, 8, 4, 6);
+  window =
+      Window_CreateFar(DICE_HELP_WINDOW_X, 16, DICE_HELP_WINDOW_WIDTH, 4, 6);
   sprites->helpWindow = window;
+  // Throw and Quit: every language's text keeps them ten and eleven messages
+  // after the coins label.
   Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins + 10, window, 0, 0);
   Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins + 11,
                                 sprites->helpWindow, 0, 8);
@@ -314,7 +402,8 @@ void LuckyDice_Run(void) {
           s32 labelX;
           s32 labelY;
 
-          labelX = 0x278 - gLuckyDice_LabelCounts[resultKind] * 16 + index * 32;
+          labelX = DICE_RESULT_LABEL_CENTER_X -
+                   gLuckyDice_LabelCounts[resultKind] * 16 + index * 32;
           labelY = 96;
           sprites->oam[spriteCount].attr01 =
               (((labelX & 0x1ff) << 16) | labelY) | 0x80002000;
@@ -339,14 +428,15 @@ void LuckyDice_Run(void) {
         } else {
           digits = 5;
         }
-        window = Window_CreateFar(8 - digits / 2, 16, digits + 13, 3, 6);
+        window = Window_CreateFar(DICE_WINNINGS_WINDOW_X - digits / 2, 16,
+                                  digits + DICE_WINNINGS_WINDOW_WIDTH, 3, 6);
         sprites->winningsWindow = window;
         Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings, window, 0, 0);
         Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings - 1,
-                                      sprites->winningsWindow, digits * 8 + 56,
-                                      0);
+                                      sprites->winningsWindow,
+                                      digits * 8 + DICE_WINNINGS_COINS_X, 0);
         Text_DrawNumberInWindowFar(winnings, digits, sprites->winningsWindow,
-                                   56, 0);
+                                   DICE_WINNINGS_NUMBER_X, 0);
       }
       if (payoutTimer > 0) {
         payoutTimer--;
@@ -365,17 +455,20 @@ void LuckyDice_Run(void) {
     } else if (state == 3) {
       if (payoutTimer == 0) {
         winnings = 0;
-        Text_DrawNumberInWindowFar(0, digits, sprites->winningsWindow, 56, 0);
+        Text_DrawNumberInWindowFar(0, digits, sprites->winningsWindow,
+                                   DICE_WINNINGS_NUMBER_X, 0);
         Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                                    sprites->coinsWindow, 0, 0);
       }
       if (payoutTimer == 15) {
         state = 0;
         Window_CloseFar(sprites->winningsWindow, 1);
-        window = Window_CreateFar(22, 16, 8, 4, 6);
+        window = Window_CreateFar(DICE_REOPENED_HELP_WINDOW_X, 16,
+                                  DICE_REOPENED_HELP_WINDOW_WIDTH, 4, 6);
         sprites->helpWindow = window;
-        Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceThrow, window, 0, 0);
-        Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceThrow + 1,
+        Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins + 10, window, 0,
+                                      0);
+        Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins + 11,
                                       sprites->helpWindow, 0, 8);
         resetDice = 1;
       }

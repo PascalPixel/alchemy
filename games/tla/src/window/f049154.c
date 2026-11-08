@@ -1,7 +1,26 @@
 #include "types.h"
+#include "edition.h"
 #include "ram_buffer.h"
 #include "input.h"
 #include "frame.h"
+
+// Where the Japanese layout differs: the summon list's window and its Djinn
+// costs, in tiles. The Japanese edition decodes a summon's description
+// (Message_DecodeRaw) into at most 32 halfwords; the others copy its text
+// (Message_CopyExpanded) into at most 52.
+#if LANGUAGE != LANGUAGE_JAPANESE
+#define SUMMON_MENU_WINDOW_X 13
+#define SUMMON_MENU_WINDOW_WIDTH 17
+#define SUMMON_COST_X 11
+#define BATTLE_MENU_MESSAGE_CAPACITY 52
+#define BATTLE_MENU_MESSAGE_COPY Message_CopyExpanded
+#else
+#define SUMMON_MENU_WINDOW_X 14
+#define SUMMON_MENU_WINDOW_WIDTH 16
+#define SUMMON_COST_X 10
+#define BATTLE_MENU_MESSAGE_CAPACITY 32
+#define BATTLE_MENU_MESSAGE_COPY Message_DecodeRaw
+#endif
 
 extern u8 MsgAbilityNothing[];
 extern u8 MsgAbilityDescription[];
@@ -89,21 +108,22 @@ extern const u8 gResource_FixedBlockBTiles[];
 s32 VramCache_AllocEntry(s32 size);
 s32 VramCache_Reload(s32 entry, const void *tiles);
 struct SummonMenuWindow *Window_Create(s32 x, s32 y, s32 width, s32 height,
-                                         s32 flags);
+                                       s32 flags);
 s32 Summon_ListLearnedFar(u8 *summons);
 const struct SummonDefinition *SummonDefinition_Get(s32 summon);
 void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 palette);
 void Vram_FillWindowBlockPattern(void);
 void Message_CopyExpanded(s32 message, u16 *text, s32 capacity);
+void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
 void Text_DrawWideStringAtOffset(u16 *text, struct SummonMenuWindow *window,
-                                     s32 x, s32 y);
+                                 s32 x, s32 y);
 void WindowSprite_RedrawSavedRect(struct SummonMenuWindow *window);
 void Window_SetTilemapEntry(struct SummonMenuWindow *window, s32 entry, s32 x,
-                              s32 y, s32 flags);
+                            s32 y, s32 flags);
 void Ability_LoadGlyph(s32 ability, s32 mode, s32 *slot, s32 *glyph, s32 count);
 void Func_08041f70(s32 color);
 void Text_DrawCharacterAtOffset(s32 message, struct SummonMenuWindow *window,
-                                  s32 x, s32 y);
+                                s32 x, s32 y);
 void Func_0803c274(struct SummonMenuWindow *window, s32 character, s32 x, s32 y,
                    s32 mode);
 void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
@@ -134,7 +154,9 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
   struct SummonMenuWindow *counts;
   s32 mask;
   s32 preferredRow;
-  struct { s32 x, y; } cursorPosition;
+  struct {
+    s32 x, y;
+  } cursorPosition;
   const struct SummonDefinition *summon;
   struct SummonMenuNavigation *navigation;
   struct SummonMenuSprite *sprite;
@@ -160,7 +182,8 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
     selectedRow = NAVIGATION->row;
     preferredRow = NAVIGATION->preferredRow;
   } while (0);
-  window = Window_Create(13, 11, 17, 9, 6);
+  window =
+      Window_Create(SUMMON_MENU_WINDOW_X, 11, SUMMON_MENU_WINDOW_WIDTH, 9, 6);
 
   for (index = 0; index < 4; index++) {
     s32 y;
@@ -170,8 +193,8 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
     u32 t = 0;
 
     y = index * 2;
-    /* FAKEMATCH(barrier): an empty asm after the row, which keeps it and the zero
-     * ahead of the stores; without it, 12 of 984 instructions differ in
+    /* FAKEMATCH(barrier): an empty asm after the row, which keeps it and the
+     * zero ahead of the stores; without it, 12 of 984 instructions differ in
      * tla-en. */
     asm("");
     sprite = &sprites[index];
@@ -236,8 +259,8 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
          * other arguments; as x inside the call, 2 of 984 instructions differ
          * in tla-en. */
         asm("" : "=r"(x) : "0"(x));
-        Window_HighlightRect(x, window->y + drawnRow * 2 + 1, window->width - 2, 1,
-                             15);
+        Window_HighlightRect(x, window->y + drawnRow * 2 + 1, window->width - 2,
+                             1, 15);
       }
       Vram_FillWindowBlockPattern();
       {
@@ -246,8 +269,9 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
 
         definition =
             SummonDefinition_Get(orderedSummons[firstEntry + selectedRow]);
-        Message_CopyExpanded(definition->abilityId + (s32)MsgAbilityDescription, text,
-                                 52);
+        BATTLE_MENU_MESSAGE_COPY(definition->abilityId +
+                                     (s32)MsgAbilityDescription,
+                                 text, BATTLE_MENU_MESSAGE_CAPACITY);
         Text_DrawWideStringAtOffset(text, description, 0, 4);
         drawnRow = selectedRow;
         mask = 0;
@@ -267,8 +291,7 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
           s32 element;
 
           for (element = 0; element <= 3; element++) {
-            Window_SetTilemapEntry(counts, element + 0x5001, element * 2, 0,
-                                     0);
+            Window_SetTilemapEntry(counts, element + 0x5001, element * 2, 0, 0);
             if (standby[element] > 9)
               tile = standby[element] + 0xf196;
             else
@@ -298,14 +321,14 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
             if (!affordable)
               Func_08041f70(2);
             Text_DrawCharacterAtOffset(SummonDefinition_Get(id)->abilityId +
-                                             (s32)MsgAbilityNothing,
-                                         window, 16, index * 16);
+                                           (s32)MsgAbilityNothing,
+                                       window, 16, index * 16);
             for (element = 0; element <= 3; element++) {
               if (summon->djinnRequired[element] != 0) {
-                Window_SetTilemapEntry(window, element + 0x5001, col * 2 + 11,
-                                         y, 0);
+                Window_SetTilemapEntry(window, element + 0x5001,
+                                       col * 2 + SUMMON_COST_X, y, 0);
                 Func_0803c274(window, summon->djinnRequired[element] + '0',
-                              col * 2 + 12, y, 0);
+                              col * 2 + SUMMON_COST_X + 1, y, 0);
                 col++;
               }
             }
@@ -331,7 +354,7 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
         }
       }
       Window_HighlightRect(window->x + 1, window->y + selectedRow * 2 + 1,
-                          window->width - 2, 1, 14);
+                           window->width - 2, 1, 14);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
     }
@@ -345,8 +368,7 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
     cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
     ((u32 *)cur)[1] = 0x40000000;
     ((u32 *)cur)[2] = 0;
-    cur->tile =
-        VramCache_Reload((u16)cursorHandle, gResource_FixedBlockBTiles);
+    cur->tile = VramCache_Reload((u16)cursorHandle, gResource_FixedBlockBTiles);
     cur->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
     cur->y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
     sprite = (struct SummonMenuSprite *)&cursorStorage;
@@ -361,7 +383,7 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
         if ((1 << element & mask) == 0)
           tile = 15;
         Window_HighlightRect(counts->x + element * 2 + 1, counts->y + 1, 2, 1,
-                            tile);
+                             tile);
       }
     }
 
@@ -374,7 +396,7 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
             window, tile, window->width - (count + 3) / 4 + index - 2, -1, 0);
       }
       Window_SetTilemapEntry(window, 0xf334,
-                               window->width - (count + 3) / 4 - 3, -1, 0);
+                             window->width - (count + 3) / 4 - 3, -1, 0);
       Window_SetTilemapEntry(window, 0xf335, window->width - 2, -1, 0);
       do {
         work->dirty |= 2 << ((u32)(window->y - 1) >> 2);

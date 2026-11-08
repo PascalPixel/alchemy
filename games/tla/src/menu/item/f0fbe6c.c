@@ -3,6 +3,25 @@
 #include "input.h"
 #include "io_reg.h"
 #include "dma.h"
+#include "edition.h"
+
+// The Japanese window asks いくつ? ("How many?") on the count's row instead of
+// the top row, draws the counter こ after each count held, and keeps its cursor
+// further left.
+#if LANGUAGE == LANGUAGE_JAPANESE
+// いくつ?, the message three before MsgShortcutHelp.
+#define MSG_HOW_MANY ((s32)MsgShortcutHelp - 3)
+#define HOW_MANY_X 0
+#define HOW_MANY_Y 32
+// こ, the counter after a count: the message before MsgItemCommandUse.
+#define MSG_PIECE ((s32)MsgItemCommandUse - 1)
+#define CURSOR_X 88
+#else
+#define MSG_HOW_MANY ((s32)MsgHowMany)
+#define HOW_MANY_X 32
+#define HOW_MANY_Y 0
+#define CURSOR_X 128
+#endif
 
 struct QuantityIcon {
   u8 unk00[5];
@@ -22,8 +41,12 @@ struct QuantityMenu {
   struct QuantityIcon *selectedItemIcon;
 };
 
+#if LANGUAGE == LANGUAGE_JAPANESE
+extern u8 MsgShortcutHelp[], MsgItemCommandUse[];
+#else
 // "How many?"
 extern u8 MsgHowMany[];
+#endif
 extern u8 MsgItemName[];
 extern const u8 gMenu_QuantityTiles[];
 
@@ -73,13 +96,14 @@ s32 Func_080fbe6c(s32 base, s32 range, s32 mode) {
     WindowSprite_CreateFar(entry, 0x40004000, window, 48, 32);
     arrow = WindowSprite_CreateFar(entry, 0x40004000, window, 80, 32);
     arrow->tile = arrow->tile + 4;
-    Func_080f8ab4(128, 40);
+    Func_080f8ab4(CURSOR_X, 40);
     while (!GameFlag_Test(0x150)) {
       if (changed) {
         changed = 0;
         value = (value + range) % range;
         WindowSprite_RedrawSavedRectFar(window);
-        Text_DrawCharacterAtOffsetFar((s32)MsgHowMany, window, 32, 0);
+        Text_DrawCharacterAtOffsetFar(MSG_HOW_MANY, window, HOW_MANY_X,
+                                      HOW_MANY_Y);
         Dma_Set(gMenu_QuantityTiles, tiles, (DMA_ENABLE | DMA_32BIT) << 16 | 64,
                 REG_DMA3);
         Shop_FillSelectorFar(30, 14, tiles);
@@ -91,9 +115,16 @@ s32 Func_080fbe6c(s32 base, s32 range, s32 mode) {
         Text_DrawCharacterAtOffsetFar(
             (menu->selectedItems[0] & 0x1ff) + (s32)MsgItemName, window, 16, 8);
         Text_DrawNumberInWindowFar(ownerCount - value - 1, 2, window, 16, 24);
-        if (mode == 0)
+#if LANGUAGE == LANGUAGE_JAPANESE
+        Text_DrawCharacterAtOffsetFar(MSG_PIECE, window, 32, 24);
+#endif
+        if (mode == 0) {
           Text_DrawNumberInWindowFar(targetCount + value + 1, 2, window, 80,
                                      24);
+#if LANGUAGE == LANGUAGE_JAPANESE
+          Text_DrawCharacterAtOffsetFar(MSG_PIECE, window, 96, 24);
+#endif
+        }
         Text_DrawStringAtOffsetFar(Unit_Get(menu->paneOwner[0]), window, 16,
                                    16);
         if (mode == 0)
@@ -109,7 +140,7 @@ s32 Func_080fbe6c(s32 base, s32 range, s32 mode) {
         Sound_PlayFar(113);
         break;
       }
-      Func_080f8a44(128, 40);
+      Func_080f8a44(CURSOR_X, 40);
       if (gInput.repeat & 32) {
         value--;
         changed = 1;

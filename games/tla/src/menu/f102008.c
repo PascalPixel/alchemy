@@ -1,8 +1,26 @@
 #include "types.h"
+#include "edition.h"
+#include "version.h"
 #include "ram_buffer.h"
 #include "input.h"
 #include "main_routine_work.h"
 #include "battle_unit.h"
+
+// A grid cell's highlight is a tile narrower in Japanese.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define GRID_CELL_WIDTH 5
+#else
+#define GRID_CELL_WIDTH 6
+#endif
+
+// Spanish, French and Italian name the Djinni before its owner in one message
+// on the trade's help line, so the Djinni's icon leads the line.
+#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ||             \
+    LANGUAGE == LANGUAGE_ITALIAN
+#define TRADE_HELP_DJINNI_FIRST 1
+#else
+#define TRADE_HELP_DJINNI_FIRST 0
+#endif
 
 struct DjinnMenuBackdrop {
   u16 ids[8][10];
@@ -89,6 +107,7 @@ void WindowSprite_RedrawSavedRectFar(s32 window);
 void WindowSprite_ClearListFar(s32 window);
 void Text_DrawStringAtOffsetFar(const u8 *text, s32 window, s32 x, s32 y);
 void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
 void Text_DrawNumberInWindowFar(s32 value, s32 width, s32 window, s32 x, s32 y);
 void MessageArgument_PushFar(s32 value, s32 kind);
 void Window_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 mode);
@@ -208,8 +227,8 @@ s32 Func_08102008(s32 mode) {
           if (fromX / 4 * 4 == page) {
             height = backdrop->counts[fromX];
             UiPanel_HighlightGridCell(listWindow, fromX, fromY, 1);
-            UiPanel_SetRectPalette(listWindow, (fromX - page) * 7 + 1, 2, 6,
-                                   height, 6);
+            UiPanel_SetRectPalette(listWindow, (fromX - page) * 7 + 1, 2,
+                                   GRID_CELL_WIDTH, height, 6);
             menu->figureY = 54;
           } else {
             menu->figureY = 200;
@@ -231,6 +250,9 @@ s32 Func_08102008(s32 mode) {
           }
         }
         Menu_SetPageArrowsB(memberColumn, menu->memberCount);
+#if !TLA_PATCH_1
+        wait(1);
+#endif
       }
       if (!(columnFlags[memberColumn] & 1))
         UiPanel_HighlightGridCell(listWindow, memberColumn, djinnRow, 1);
@@ -306,8 +328,20 @@ s32 Func_08102008(s32 mode) {
           Text_DrawCharacterAtOffsetFar(message, helpWindow, 0, 16);
         }
       }
+#if TLA_PATCH_1
       wait(1);
+#endif
       if (mode == 1) {
+#if TRADE_HELP_DJINNI_FIRST
+        Window_SetTilemapEntryFar(
+            helpWindow, DJINN_ELEMENT(menu->pairEntries[0]) + 0x5001, 0, 0, 0);
+        MessageArgument_PushFar(menu->shownMember[0], 1);
+        MessageArgument_PushFar(DJINN_ELEMENT(menu->pairEntries[0]) * 20 +
+                                    DJINN_NUMBER(menu->pairEntries[0]) + 300,
+                                4);
+        Text_DrawCharacterAtOffsetFar((s32)MsgDjinnOwnerLabel, helpWindow, 8,
+                                      0);
+#else
         MessageArgument_PushFar(menu->shownMember[0], 1);
         Text_DrawCharacterAtOffsetFar((s32)MsgDjinnOwnerLabel, helpWindow, 0,
                                       0);
@@ -318,15 +352,30 @@ s32 Func_08102008(s32 mode) {
             helpWindow, DJINN_ELEMENT(menu->pairEntries[0]) + 0x5001, 6, 0, 0);
         Text_DrawCharacterAtOffsetFar((s32)MsgDjinnOwnerLabel + 1, helpWindow,
                                       56, 0);
+#endif
         Text_DrawCharacterAtOffsetFar((s32)MsgDjinnOwnerLabel + 2, helpWindow,
                                       0, 8);
       }
+#if TLA_PATCH_1
       wait(1);
+#endif
       WindowSprite_ClearListFar(listWindow);
       if (selectedRow != -1) {
+#if TLA_PATCH_1
         Window_ClearInteriorTilesFar(listWindow, 0, 96, 224, 104);
+#endif
+        // Japanese draws the effect as a resource string.
+#if LANGUAGE == LANGUAGE_JAPANESE
+        Text_DrawMessageFar(element * 20 + number + (s32)MsgDjinnEffect,
+                            listWindow, 0, 96);
+#else
         Text_DrawCharacterAtOffsetFar(
             element * 20 + number + (s32)MsgDjinnEffect, listWindow, 0, 96);
+#endif
+#if TLA_PATCH_4
+      } else {
+        Window_ClearInteriorTilesFar(listWindow, 0, 96, 224, 104);
+#endif
       }
       ((struct DjinnWindowWork *)Ram_HeapSlots->windowTiles)->dirty = 1;
       redraw = 0;
@@ -534,9 +583,15 @@ s32 Func_08102008(s32 mode) {
       if (selectedRow != -1 && state == 2) {
         Sound_PlayFar(114);
         WindowSprite_ClearListFar(listWindow);
+#if TLA_PATCH_1
         Window_ClearInteriorTilesFar(listWindow, 0, 96, 224, 104);
+#endif
+#if LANGUAGE == LANGUAGE_JAPANESE
+        Text_DrawMessageFar((s32)MsgDjinnNowRecovering, listWindow, 0, 96);
+#else
         Text_DrawCharacterAtOffsetFar((s32)MsgDjinnNowRecovering, listWindow, 0,
                                       96);
+#endif
         continue;
       }
       if (mode == 1) {

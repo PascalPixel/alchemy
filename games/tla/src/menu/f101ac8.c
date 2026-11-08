@@ -1,4 +1,5 @@
 #include "types.h"
+#include "version.h"
 #include "ram_buffer.h"
 
 struct DjinnMenuState {
@@ -77,9 +78,20 @@ void DjinnMenu_DrawPage(struct DjinnList *list, s32 page) {
           }
         }
       }
+      // From patch 4 each column waits a frame after it is drawn.
+#if TLA_PATCH_4
+      wait(1);
+#endif
     }
   }
+  // The Japanese release reads the window tiles again for the first store
+  // and does not wait; from patch 1 the page waits three frames.
+#if TLA_PATCH_1
   tiles[3] = 1;
   tiles[6] = 0;
   wait(3);
+#else
+  Ram_HeapSlots->windowTiles[3] = 1;
+  tiles[6] = 0;
+#endif
 }

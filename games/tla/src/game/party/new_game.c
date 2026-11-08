@@ -1,6 +1,7 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "dma.h"
+#include "version.h"
 
 #define DMA3 ((volatile struct DmaRegisters *)&REG_DMA3SAD)
 #define DMA3_BUSY (DMA_ENABLE << 16)
@@ -45,13 +46,27 @@ void Func_080addf0(void) {
   START_DMA(&zero, &gMainRoutineWork,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 184);
   zero = 0;
+#if TLA_PATCH_1
   START_DMA(&zero, gData_02001000,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 1992);
-  // The Japanese release waits through a copy of the channel register the
-  // transfer above left in r3 where alchemy-gcc rebuilds the address (one
-  // instruction); no form tried reproduces it, so that edition keeps this
-  // function on its scaffold.
   WaitDma(DMA3);
+#else
+  {
+    /* FAKEMATCH(pin): the channel kept in r3 through the transfer and copied
+     * from there for the wait, r3 then holding the busy bit; as START_DMA and
+     * WaitDma(DMA3), 10 of 320 instructions differ in tla-ja. */
+    register u32 held asm("r3") = (u32)DMA3;
+    struct DmaRegisters volatile *channel;
+
+    Dma_Set((const void *)&zero, gData_02001000,
+            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 1992,
+            (volatile u32 *)held);
+    channel = (struct DmaRegisters volatile *)held;
+    held = DMA3_BUSY;
+    while ((channel->control & held) != 0) {
+    }
+  }
+#endif
   zero = 0;
   START_DMA(&zero, gGameFlagBytes,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 128);

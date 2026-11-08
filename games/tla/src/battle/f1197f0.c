@@ -3,6 +3,7 @@
 #include "iwram_call.h"
 #include "battle_action.h"
 #include "battle_display.h"
+#include "version.h"
 
 struct EncounterWork {
   s32 enemyGroup;
@@ -372,7 +373,10 @@ s32 Func_081197f0(s32 enemyGroup) {
 
     Func_08118e64();
     battle->extraQueue = battle->nextExtraQueue;
+#if TLA_PATCH_1
+    // Japanese leaves the next turn's queue in place.
     battle->nextExtraQueue = 0;
+#endif
     battle->extraCount = battle->nextExtraCount;
     battle->nextExtraCount = 0;
     battle->encounterMode = 0;

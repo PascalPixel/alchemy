@@ -16,11 +16,19 @@
 #define EQUIP_WINDOW_WIDTH 15
 #endif
 
-// The rows the item list scrolls by.
-#if TLA_PATCH_1
-#define LIST_ROWS 5
+// The rows one page of the item list shows: Japanese fits six, the other
+// editions five.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define PAGE_ROWS 6
 #else
-#define LIST_ROWS 6
+#define PAGE_ROWS 5
+#endif
+
+// The French list puts its cursor 4 pixels further right.
+#if LANGUAGE == LANGUAGE_FRENCH
+#define CURSOR_X 100
+#else
+#define CURSOR_X 96
 #endif
 
 struct InventoryMenuState {
@@ -55,7 +63,7 @@ void Text_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
 s32 GameFlag_Test(s32 flag);
 s32 ItemMenu_CollectItems(struct BattleUnit *owner, u16 *items, s32 mode);
 void WindowSprite_RedrawSavedRectFar(s32 window);
-void InventoryMenu_SortByListOrder(u16 *items, s32 mode);
+s32 InventoryMenu_SortByListOrder(u16 *items, s32 mode);
 s32 Func_080ff7b4(struct MenuResult *result, s32 index);
 void ItemMenu_DrawIcons(u16 *items, s32 mode);
 void ItemMenu_DrawCategory(s32 window, s32 owner, s32 mode);
@@ -122,11 +130,11 @@ s32 Func_0810021c(void) {
     }
     wait(1);
     navigation =
-        Func_080f8f9c(0, state.entryCount, LIST_ROWS, &state.row, &state.page);
-    Func_080f8a44(96, state.row * 16 + 52);
+        Func_080f8f9c(0, state.entryCount, PAGE_ROWS, &state.row, &state.page);
+    Func_080f8a44(CURSOR_X, state.row * 16 + 52);
     if (navigation == 1) {
-      listNeedsRedraw = 1;
       refresh = 1;
+      listNeedsRedraw = 1;
     }
     if (navigation == 0)
       refresh = 1;

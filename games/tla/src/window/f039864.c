@@ -260,12 +260,29 @@ s32 Message_StepScript(struct UiChannelSlot *channel) {
       }
 #endif
 #if LANGUAGE != LANGUAGE_JAPANESE
+#if TLA_PATCH_4
+      if (!(channel->work->flags & 8) && code > 32 && nextCode > 32) {
+        s16 pairWidth =
+            gFont_Glyphs[code - 32].width + gFont_Glyphs[nextCode - 32].width;
+
+        if (work->outline == 1) {
+          if ((u16)pairWidth <= 14) {
+            code |= nextCode << 8;
+            channel->entry = (channel->entry + 1) & ENTRY_MASK;
+          }
+        } else if ((u16)pairWidth <= 15) {
+          code |= nextCode << 8;
+          channel->entry = (channel->entry + 1) & ENTRY_MASK;
+        }
+      }
+#else
       if (!(channel->work->flags & 8) && code > 32 && nextCode > 32 &&
           (u16)(gFont_Glyphs[code - 32].width +
                 gFont_Glyphs[nextCode - 32].width) <= 15) {
         code |= nextCode << 8;
         channel->entry = (channel->entry + 1) & ENTRY_MASK;
       }
+#endif
 #endif
       if (work->textMode != 0 && channel->unk26 != 0)
         pixelY = (channel->y + 128) / 320 - 3;

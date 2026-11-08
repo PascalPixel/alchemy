@@ -8,20 +8,21 @@
 unsigned char Vram_FillWindowBlockPattern(void);
 void Text_DrawWideStringAtOffset(s16 *, s32, s32, s32);
 
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define TEXT_COUNT 32
+// The Japanese edition decodes the message (Message_DecodeRaw) into at most 32
+// halfwords; the others copy its text (Message_CopyExpanded) into at most 52.
+#if LANGUAGE != LANGUAGE_JAPANESE
+#define BATTLE_MENU_MESSAGE_CAPACITY 52
+#define BATTLE_MENU_MESSAGE_COPY Message_CopyExpanded
 #else
-#define TEXT_COUNT 52
+#define BATTLE_MENU_MESSAGE_CAPACITY 32
+#define BATTLE_MENU_MESSAGE_COPY Message_DecodeRaw
 #endif
 
 s32 Window_Create(s32, s32, s32, s32, s32);
 void Window_Close(struct Work *work, s32 release);
 
-#if LANGUAGE == LANGUAGE_JAPANESE
-void Message_CopyExpanded(s32, s16 *, s32);
-#else
 s32 Message_CopyExpanded(s32, s16 *, s32);
-#endif
+void Message_DecodeRaw(s32, s16 *, s32);
 
 extern u8 gMainRoutineWork[];
 extern void *gBattleWork;
@@ -51,7 +52,8 @@ s32 Message_ShowLocalizedAndWait(void) {
     attrs = 42;
     work = Window_Create(0, 7, 30, 4, attrs);
     Vram_FillWindowBlockPattern();
-    Message_CopyExpanded((s32)&MsgNoTimeToRun, buffer, TEXT_COUNT);
+    BATTLE_MENU_MESSAGE_COPY((s32)&MsgNoTimeToRun, buffer,
+                             BATTLE_MENU_MESSAGE_CAPACITY);
     Text_DrawWideStringAtOffset(buffer, work, 0, 4);
     do {
       wait(1);

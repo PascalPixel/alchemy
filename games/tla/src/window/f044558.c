@@ -34,6 +34,27 @@
 #define NAME_BLANK_ROW 5
 #define NAME_LAST_ROW NAME_FINISH_ROW
 
+// The width of the window showing the name, in tiles.
+#if LANGUAGE == LANGUAGE_SPANISH
+#define NAME_LABEL_WIDTH 9
+#else
+#define NAME_LABEL_WIDTH 8
+#endif
+
+// Whether the edition draws the remove and finish keys' labels as text over
+// the keyboard, and how wide its finish key is, in tiles.
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_FRENCH
+#define NAME_KEY_LABELS 1
+#else
+#define NAME_KEY_LABELS 0
+#endif
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_ITALIAN
+#define NAME_FINISH_WIDTH 4
+#else
+#define NAME_FINISH_WIDTH 3
+#endif
+
 // A dakuten or handakuten, which joins the kana before it and is no letter of
 // its own.
 #define IS_KANA_MARK(c)                                                        \
@@ -64,6 +85,15 @@ extern const u8 gNameEntry_AlternateKeyboardTilemap[];
 void Text_DrawString(u8 *text, s32 window, s32 x, s32 y);
 // Japanese only, at 0x08044488 there.
 s32 Func_08044488(s32 letter, s32 previous);
+// Japanese only, at 0x080444c4 there: how many letters `name` has, its marks
+// not counted.
+s32 Func_080444c4(const u8 *name);
+#endif
+#if NAME_KEY_LABELS
+extern u8 gNameEntry_DeleteKeyLabel[];
+extern u8 gNameEntry_EndKeyLabel[];
+
+void Text_DrawStringInWindow(u8 *text, struct Window *window, s32 x, s32 y);
 #endif
 
 u8 *Unit_Get(s32 owner);
@@ -94,9 +124,6 @@ void Func_0803d450(s32 member);
 // letter, and goes with it when that kana is removed; Select or the top
 // command key turns to the other kana page. It also returns without waiting
 // for every button to be released, which the later editions added.
-// XXX: Japanese draft, not yet matched: differ 104 of 694 in tla-ja, the
-// mark tests keeping a copy of the character (copy loop, removal, letter) and
-// the caret's x, then branch offsets.
 #if LANGUAGE == LANGUAGE_JAPANESE
 s32 Func_08044558(s32 member) {
   struct Window *nameWindow;
@@ -113,9 +140,10 @@ s32 Func_08044558(s32 member) {
   struct Window *keyboardWindow;
   union NameCursor keyCursor;
   union NameCursor nameCaret;
-  s32 keyColumn, keyRow, vramSlot;
+  s32 keyColumn, keyRow, vramSlot, x;
   struct WindowSprite *output;
   struct NameCursorMotion *keyMotion;
+  u32 letter;
   u8 *end;
   u16 *palette;
 
@@ -133,13 +161,13 @@ s32 Func_08044558(s32 member) {
     s32 i;
 
     for (i = 0; i < NAME_MAX_BYTES; i++) {
-      u8 c = originalName[i];
+      letter = originalName[i];
 
-      editedName[i] = c;
-      if (c != 0) {
-        letterCount++;
+      editedName[i] = letter;
+      if (letter != 0) {
         byteCount++;
-        if (IS_KANA_MARK(c))
+        letterCount++;
+        if (IS_KANA_MARK(letter))
           letterCount--;
       }
     }
@@ -169,7 +197,8 @@ s32 Func_08044558(s32 member) {
     nameCaret.sprite = output;
     output->sentinel = 255;
     output->sprite.oam.priority = 0;
-    Func_08108048(&nameCaret.cursor, Text_SetString(editedName) * 10 + 72, 22);
+    x = 72 + Func_080444c4(editedName) * 10;
+    Func_08108048(&nameCaret.cursor, x, 22);
   }
   palette = (u16 *)0x050001c0;
   Dma_Set((void *)0x050001e0, palette, 0x84000008, REG_DMA3);
@@ -196,8 +225,8 @@ s32 Func_08044558(s32 member) {
     }
     if (textDirty) {
       textDirty = 0;
-      Func_08108040(&nameCaret.cursor, Text_SetString(editedName) * 10 + 72, 22,
-                    3);
+      x = 72 + Func_080444c4(editedName) * 10;
+      Func_08108040(&nameCaret.cursor, x, 22, 3);
     }
     Func_08108030(keyMotion);
     Func_08108038(&nameCaret.cursor);
@@ -293,14 +322,12 @@ s32 Func_08044558(s32 member) {
       Sound_PlayFar(113);
     remove_character:
       if (letterCount != 0) {
-        u8 c;
-
+        letterCount--;
         end--;
         byteCount--;
-        letterCount--;
-        c = end[1];
+        letter = end[1];
         end[1] = 0;
-        if (IS_KANA_MARK(c)) {
+        if (IS_KANA_MARK(letter)) {
           end--;
           byteCount--;
           end[1] = 0;
@@ -342,10 +369,12 @@ s32 Func_08044558(s32 member) {
     }
     {
       u32 tx = (s16)keyboardWindow->x + keyColumn + 1;
-      u32 letter = ((u8 *)render->tilemap +
-                    (((s16)keyboardWindow->y + keyRow + 1) << 6))[tx << 1];
       u8 *slot;
 
+      // `tx + tx`: as `tx << 1`, the shift is scheduled before the row's
+      // address.
+      letter = ((u8 *)render->tilemap +
+                (((s16)keyboardWindow->y + keyRow + 1) << 6))[tx + tx];
       // The keyboard keeps the marks as 0xFE and 0xFF.
       if (letter == 0xFE)
         letter = TEXT_MARK_VOICED;
@@ -406,9 +435,13 @@ s32 Func_08044558(s32 member) {
   Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
                 gMainRoutineWork.paletteGlow[1]);
   keyboardWindow = Window_Create(3, 6, 24, 9, 2);
-  nameWindow = Window_Create(8, 3, 8, 3, 2);
+  nameWindow = Window_Create(8, 3, NAME_LABEL_WIDTH, 3, 2);
   Func_0803d3c0(member, 0, 3, 1);
   Func_08044348(keyboardWindow, gNameEntry_KeyboardTilemap);
+#if NAME_KEY_LABELS
+  Text_DrawStringInWindow(gNameEntry_DeleteKeyLabel, keyboardWindow, 144, 32);
+  Text_DrawStringInWindow(gNameEntry_EndKeyLabel, keyboardWindow, 144, 40);
+#endif
   Window_DrawDividerLine(keyboardWindow, 18, 0, 18, 7);
   render->dirty = textDirty;
   text[0] = result;
@@ -463,7 +496,7 @@ s32 Func_08044558(s32 member) {
       if (keyRow == 4)
         width = 3;
       if (keyRow == 5)
-        width = 3;
+        width = NAME_FINISH_WIDTH;
     }
     Window_SetTilemapFlagRect(keyboardWindow, keyColumn, keyRow, width, 1, 14);
     wait(1);

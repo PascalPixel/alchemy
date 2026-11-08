@@ -1,6 +1,14 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "battle_unit.h"
+#include "edition.h"
+
+// The Japanese edition draws the Lv label through Text_DrawStringInWindowFar.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define DRAW_LEVEL_LABEL Text_DrawStringInWindowFar
+#else
+#define DRAW_LEVEL_LABEL Text_DrawStringAtOffsetFar
+#endif
 
 struct MenuIcon {
   u8 unk00[5];
@@ -79,7 +87,7 @@ void Func_080ff370(s32 window, s32 ownerId, s32 mode) {
   if (mode == 1) {
     if (!hasDjinn)
       djinnRow--;
-    Text_DrawStringAtOffsetFar(gMenu_LvString, window, 64, djinnRow * 8 + 16);
+    DRAW_LEVEL_LABEL(gMenu_LvString, window, 64, djinnRow * 8 + 16);
     Text_DrawCharacterAtOffsetFar(MsgPowerLabel, window, 64, djinnRow * 8 + 24);
     Text_DrawCharacterAtOffsetFar(MsgPowerLabel + 1, window, 64,
                                   djinnRow * 8 + 32);

@@ -1,5 +1,6 @@
 #include "types.h"
 #include "edition.h"
+#include "version.h"
 #include "ram_buffer.h"
 #include "input.h"
 #include "frame.h"
@@ -21,12 +22,38 @@ struct OptionScreen {
   struct WindowSprite *choiceIcons[3][3];
 };
 
-// Where the first choice's field ends: wider in German, French and Italian.
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH) ||                 \
+// The layout that fits each language's text: the help window's column and
+// width in tiles, then, in pixels from the settings window's left, where the
+// sliders start and where the choices' fields start and end.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define HELP_WINDOW_X 2
+#define HELP_WINDOW_WIDTH 26
+#define SLIDER_X 100
+#define CHOICE_X 168
+#define CHOICE_RIGHT 192
+#define FIRST_CHOICE_RIGHT 192
+#else
+#define HELP_WINDOW_X 1
+#define HELP_WINDOW_WIDTH 28
+#define SLIDER_X 140
+#define CHOICE_X 160
+#define CHOICE_RIGHT 184
+// The first choice's field is wider in German, French and Italian.
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH) ||          \
     (LANGUAGE == LANGUAGE_ITALIAN)
 #define FIRST_CHOICE_RIGHT 208
 #else
 #define FIRST_CHOICE_RIGHT 200
+#endif
+#endif
+
+// The heading above the settings window, a picture of
+// gRenderResource_PairSourceTable: Japanese takes 8, the Setup heading; from
+// patch 1 the screen takes 7, the Pause heading the pause menu also shows.
+#if TLA_PATCH_1
+#define SETTINGS_HEADING 7
+#else
+#define SETTINGS_HEADING 8
 #endif
 
 extern u8 MsgKey113b[], MsgKey1141[], MsgKey1144[], MsgKey1146[], MsgKey1161[];
@@ -40,7 +67,7 @@ void Func_0803fd14(void);
 struct RenderInput *Menu_OpenWorkspaceOptions(void);
 void Func_0803f9c0(s32 hue, s32 brightness);
 struct RenderInput *Window_Create(s32 x, s32 y, s32 width, s32 height,
-                                    s32 style);
+                                  s32 style);
 struct WindowSprite *
 RenderResource_CreatePair(s32 group, struct RenderInput *input, s32 x, s32 y);
 void Func_08045018(struct WindowSprite *pair);
@@ -51,9 +78,9 @@ void wait(s32 frames);
 void Sound_PlayFar(s32 cue);
 void Window_Close(struct RenderInput *window, s32 release);
 void Window_ClearInteriorTiles(struct RenderInput *window, s32 x0, s32 y0,
-                                 s32 x1, s32 y1);
+                               s32 x1, s32 y1);
 void Text_DrawCharacterAtOffset(s32 message, struct RenderInput *window,
-                                  u32 offsetX, u32 offsetY);
+                                u32 offsetX, u32 offsetY);
 void WindowSprite_ClearList(struct RenderInput *window);
 void Text_DrawMessage(s32 message, struct RenderInput *window, s32 x, s32 y);
 void FieldMessage_Show(s32 message, s32 mode);
@@ -81,9 +108,9 @@ s32 Func_080400e8(void) {
   selectedOption = 0;
   Func_0803fc38();
   work = Ram_HeapSlots->unkd0[0];
-  helpWindow = Window_Create(1, 2, 28, 3, 2);
+  helpWindow = Window_Create(HELP_WINDOW_X, 2, HELP_WINDOW_WIDTH, 3, 2);
   settingsWindow = Menu_OpenWorkspaceOptions();
-  pair = RenderResource_CreatePair(7, settingsWindow, 64, -48);
+  pair = RenderResource_CreatePair(SETTINGS_HEADING, settingsWindow, 64, -48);
   wait(1);
   hue = &work->option[0];
   brightness = &work->option[1];
@@ -108,7 +135,7 @@ s32 Func_080400e8(void) {
         if (i != work->option[2])
           dimmed = 1;
         RenderResource_LoadCommandIcon(gOptionMenu_SpeedIcons[i], resourceIndex,
-                                 dimmed);
+                                       dimmed);
       }
       for (i = 0; i <= 1; i++) {
         icon = work->choiceIcons[1][i];
@@ -118,8 +145,8 @@ s32 Func_080400e8(void) {
         dimmed = 0;
         if (i != work->option[3])
           dimmed = 1;
-        RenderResource_LoadCommandIcon(gOptionMenu_SpeechIcons[i], resourceIndex,
-                                 dimmed);
+        RenderResource_LoadCommandIcon(gOptionMenu_SpeechIcons[i],
+                                       resourceIndex, dimmed);
       }
       for (i = 0; i <= 1; i++) {
         icon = work->choiceIcons[2][i];
@@ -130,27 +157,28 @@ s32 Func_080400e8(void) {
         if (i != work->option[4])
           dimmed = 1;
         RenderResource_LoadCommandIcon(gOptionMenu_SleepIcons[i], resourceIndex,
-                                 dimmed);
+                                       dimmed);
       }
 
-      x = (s16)settingsWindow->x * 8 + 140;
+      x = (s16)settingsWindow->x * 8 + SLIDER_X;
       x += (*hue * 60) / work->optionCount[0];
       y = (s16)settingsWindow->y * 8 + 4;
       Func_08108040(work->marker[0], x, y, 1);
-      x = (s16)settingsWindow->x * 8 + 140;
+      x = (s16)settingsWindow->x * 8 + SLIDER_X;
       x += (*brightness * 60) / work->optionCount[1];
       y = (s16)settingsWindow->y * 8 + 20;
       Func_08108040(work->marker[1], x, y, 1);
 
       x = work->option[2] + (s32)MsgKey113b;
-      Window_ClearInteriorTiles(settingsWindow, 160, 40, FIRST_CHOICE_RIGHT, 48);
-      Text_DrawCharacterAtOffset(x, settingsWindow, 160, 40);
+      Window_ClearInteriorTiles(settingsWindow, CHOICE_X, 40,
+                                FIRST_CHOICE_RIGHT, 48);
+      Text_DrawCharacterAtOffset(x, settingsWindow, CHOICE_X, 40);
       x = work->option[3] + (s32)MsgKey1141;
-      Window_ClearInteriorTiles(settingsWindow, 160, 64, 184, 72);
-      Text_DrawCharacterAtOffset(x, settingsWindow, 160, 64);
+      Window_ClearInteriorTiles(settingsWindow, CHOICE_X, 64, CHOICE_RIGHT, 72);
+      Text_DrawCharacterAtOffset(x, settingsWindow, CHOICE_X, 64);
       x = work->option[4] + (s32)MsgKey1144;
-      Window_ClearInteriorTiles(settingsWindow, 160, 88, 184, 96);
-      Text_DrawCharacterAtOffset(x, settingsWindow, 160, 88);
+      Window_ClearInteriorTiles(settingsWindow, CHOICE_X, 88, CHOICE_RIGHT, 96);
+      Text_DrawCharacterAtOffset(x, settingsWindow, CHOICE_X, 88);
       Func_0803f9c0(*hue, *brightness);
 
       x = (s16)settingsWindow->x * 8;
@@ -224,7 +252,8 @@ s32 Func_080400e8(void) {
     gMainRoutineWork.unk244[6] = work->option[4];
     gAutoSleepEnabled = gMainRoutineWork.unk244[6];
   } else {
-    Func_0803f9c0(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
+    Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
+                  gMainRoutineWork.paletteGlow[1]);
   }
   Func_0803fd14();
   wait(1);

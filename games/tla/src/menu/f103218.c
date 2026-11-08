@@ -6,10 +6,44 @@
 /// is copied back.
 
 #include "battle_unit.h"
+#include "edition.h"
 #include "iwram_call.h"
 #include "ram_buffer.h"
 #include "types.h"
 #include "window.h"
+
+// The stat preview's columns, in pixels from x * 8: the Japanese edition draws
+// Attack, Defense and Agility with four digits from HP's column and Luck a tile
+// further left, sets every arrow in one column, and puts the Psynergy page's PP
+// heading further left.
+//
+// The Japanese text leaves the preview's messages unnamed, so each is written
+// by its place after a named one: "HP", the first of the six stat labels, 13
+// after "Luck rises"; "* Psynergy Gained" and "* Psynergy Lost", the two after
+// the status help; "* No change", the one after "Trade".
+#if LANGUAGE != LANGUAGE_JAPANESE
+#define STAT_DIGITS 3
+#define STAT_X 48
+#define LUCK_X 56
+#define POOL_ARROW_X 62
+#define STAT_ARROW_X 70
+#define PP_HEADING_X 88
+#define MSG_STAT_LABELS ((s32)MsgKey0d0e)
+#define MSG_PSYNERGY_GAINED ((s32)MsgKey10d3)
+#define MSG_PSYNERGY_LOST ((s32)MsgKey10d4)
+#define MSG_NO_CHANGE ((s32)MsgKey10d9)
+#else
+#define STAT_DIGITS 4
+#define STAT_X 32
+#define LUCK_X 48
+#define POOL_ARROW_X 64
+#define STAT_ARROW_X 64
+#define PP_HEADING_X 56
+#define MSG_STAT_LABELS ((s32)MsgLuckRises + 13)
+#define MSG_PSYNERGY_GAINED ((s32)MsgDjinnStatusHelp + 1)
+#define MSG_PSYNERGY_LOST ((s32)MsgDjinnStatusHelp + 2)
+#define MSG_NO_CHANGE ((s32)MsgDjinnCompareTrade + 1)
+#endif
 
 struct DjinnMenuWork {
   u8 unk000[0x16c];
@@ -21,8 +55,12 @@ struct DjinnMenuWork {
 
 extern const char gDjinnMenu_TextSlash[];
 extern const char gDjinnMenu_TextLevel[];
-extern char MsgKey0d0e[], MsgClassName[], MsgAbilityNothing[], MsgPsynergyPp[],
-    MsgKey10d3[], MsgKey10d4[], MsgKey10d9[];
+extern char MsgClassName[], MsgAbilityNothing[], MsgPsynergyPp[];
+#if LANGUAGE != LANGUAGE_JAPANESE
+extern char MsgKey0d0e[], MsgKey10d3[], MsgKey10d4[], MsgKey10d9[];
+#else
+extern char MsgLuckRises[], MsgDjinnStatusHelp[], MsgDjinnCompareTrade[];
+#endif
 
 struct BattleUnit *Unit_Get(s32 owner);
 void Unit_CalculateFar(s32 owner);
@@ -91,10 +129,14 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
       Text_DrawNumberInWindowFar(unit->hp, 4, window, x * 8 + 32, y * 8 + 56);
       Text_DrawNumberInWindowFar(unit->pp, 4, window, x * 8 + 32, y * 8 + 64);
     }
-    Text_DrawNumberInWindowFar(unit->atk, 3, window, x * 8 + 48, y * 8 + 72);
-    Text_DrawNumberInWindowFar(unit->def, 3, window, x * 8 + 48, y * 8 + 80);
-    Text_DrawNumberInWindowFar(unit->agi, 3, window, x * 8 + 48, y * 8 + 88);
-    Text_DrawNumberInWindowFar(unit->luck, 2, window, x * 8 + 56, y * 8 + 96);
+    Text_DrawNumberInWindowFar(unit->atk, STAT_DIGITS, window, x * 8 + STAT_X,
+                               y * 8 + 72);
+    Text_DrawNumberInWindowFar(unit->def, STAT_DIGITS, window, x * 8 + STAT_X,
+                               y * 8 + 80);
+    Text_DrawNumberInWindowFar(unit->agi, STAT_DIGITS, window, x * 8 + STAT_X,
+                               y * 8 + 88);
+    Text_DrawNumberInWindowFar(unit->luck, 2, window, x * 8 + LUCK_X,
+                               y * 8 + 96);
   }
 
   switch (previewMode) {
@@ -132,7 +174,7 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
     Text_DrawStringAtOffsetFar((s32)gDjinnMenu_TextLevel, window, x * 8 + 40,
                                y * 8 + 16);
     Text_DrawNumberInWindowFar(unit->level, 2, window, x * 8 + 88, y * 8 + 16);
-    label = (s32)MsgKey0d0e;
+    label = MSG_STAT_LABELS;
     Text_DrawCharacterAtOffsetFar(label, window, x * 8, y * 8 + 56);
     Text_DrawCharacterAtOffsetFar(label + 1, window, x * 8, y * 8 + 64);
     Text_DrawCharacterAtOffsetFar(label + 2, window, x * 8, y * 8 + 72);
@@ -174,48 +216,48 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
       if (unit->hp != originalUnit->hp) {
         Text_DrawNumberInWindowFar(unit->hp, 4, window, x * 8 + 72, y * 8 + 56);
         if (unit->hp > originalUnit->hp)
-          Func_08104ba8(window, x * 8 + 62, y * 8 + 56, 0);
+          Func_08104ba8(window, x * 8 + POOL_ARROW_X, y * 8 + 56, 0);
         else
-          Func_08104ba8(window, x * 8 + 62, y * 8 + 56, 1);
+          Func_08104ba8(window, x * 8 + POOL_ARROW_X, y * 8 + 56, 1);
       }
       if (unit->pp != originalUnit->pp) {
         Text_DrawNumberInWindowFar(unit->pp, 4, window, x * 8 + 72, y * 8 + 64);
         if (unit->pp > originalUnit->pp)
-          Func_08104ba8(window, x * 8 + 62, y * 8 + 64, 0);
+          Func_08104ba8(window, x * 8 + POOL_ARROW_X, y * 8 + 64, 0);
         else
-          Func_08104ba8(window, x * 8 + 62, y * 8 + 64, 1);
+          Func_08104ba8(window, x * 8 + POOL_ARROW_X, y * 8 + 64, 1);
       }
       if (unit->atk != originalUnit->atk) {
         Text_DrawNumberInWindowFar(unit->atk, 4, window, x * 8 + 72,
                                    y * 8 + 72);
         if (unit->atk > originalUnit->atk)
-          Func_08104ba8(window, x * 8 + 70, y * 8 + 72, 0);
+          Func_08104ba8(window, x * 8 + STAT_ARROW_X, y * 8 + 72, 0);
         else
-          Func_08104ba8(window, x * 8 + 70, y * 8 + 72, 1);
+          Func_08104ba8(window, x * 8 + STAT_ARROW_X, y * 8 + 72, 1);
       }
       if (unit->def != originalUnit->def) {
         Text_DrawNumberInWindowFar(unit->def, 4, window, x * 8 + 72,
                                    y * 8 + 80);
         if (unit->def > originalUnit->def)
-          Func_08104ba8(window, x * 8 + 70, y * 8 + 80, 0);
+          Func_08104ba8(window, x * 8 + STAT_ARROW_X, y * 8 + 80, 0);
         else
-          Func_08104ba8(window, x * 8 + 70, y * 8 + 80, 1);
+          Func_08104ba8(window, x * 8 + STAT_ARROW_X, y * 8 + 80, 1);
       }
       if (unit->agi != originalUnit->agi) {
         Text_DrawNumberInWindowFar(unit->agi, 4, window, x * 8 + 72,
                                    y * 8 + 88);
         if (unit->agi > originalUnit->agi)
-          Func_08104ba8(window, x * 8 + 70, y * 8 + 88, 0);
+          Func_08104ba8(window, x * 8 + STAT_ARROW_X, y * 8 + 88, 0);
         else
-          Func_08104ba8(window, x * 8 + 70, y * 8 + 88, 1);
+          Func_08104ba8(window, x * 8 + STAT_ARROW_X, y * 8 + 88, 1);
       }
       if (unit->luck != originalUnit->luck) {
         Text_DrawNumberInWindowFar(unit->luck, 2, window, x * 8 + 88,
                                    y * 8 + 96);
         if (unit->luck > originalUnit->luck)
-          Func_08104ba8(window, x * 8 + 70, y * 8 + 96, 0);
+          Func_08104ba8(window, x * 8 + STAT_ARROW_X, y * 8 + 96, 0);
         else
-          Func_08104ba8(window, x * 8 + 70, y * 8 + 96, 1);
+          Func_08104ba8(window, x * 8 + STAT_ARROW_X, y * 8 + 96, 1);
       }
     }
   }
@@ -249,27 +291,26 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
       line++;
     }
     Text_SetColorFar(15);
-    Text_DrawCharacterAtOffsetFar((s32)MsgPsynergyPp, window, x * 8 + 88,
-                                  y * 8);
+    Text_DrawCharacterAtOffsetFar((s32)MsgPsynergyPp, window,
+                                  x * 8 + PP_HEADING_X, y * 8);
     if (previewMode != 3) {
       s32 lines;
 
       lines = 0;
       if (gained) {
         Text_SetColorFar(4);
-        Text_DrawCharacterAtOffsetFar((s32)MsgKey10d3, window, x * 8,
+        Text_DrawCharacterAtOffsetFar(MSG_PSYNERGY_GAINED, window, x * 8,
                                       y * 8 + 88);
         lines = 1;
       }
       if (lost) {
         Text_SetColorFar(2);
-        Text_DrawCharacterAtOffsetFar((s32)MsgKey10d4, window, x * 8,
+        Text_DrawCharacterAtOffsetFar(MSG_PSYNERGY_LOST, window, x * 8,
                                       (y + lines) * 8 + 88);
         lines++;
       }
       if (lines == 0)
-        Text_DrawCharacterAtOffsetFar((s32)MsgKey10d9, window, x * 8,
-                                      y * 8 + 88);
+        Text_DrawCharacterAtOffsetFar(MSG_NO_CHANGE, window, x * 8, y * 8 + 88);
       Text_SetColorFar(15);
       Window_DrawDividerLineFar(window, 0, 11, 13, 11);
     }

@@ -6,6 +6,7 @@
 #include "map.h"
 #include "fixed_math.h"
 #include "view_move.h"
+#include "version.h"
 
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
 
@@ -15,14 +16,18 @@
 /// beside neither. A held view does not move.
 void Func_080e8b44(s32 direction, s32 phase, s32 amplitude) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
-  struct Actor *center = event->viewCenter;
   struct ViewMoveWork *work = Ram_HeapSlots->battleFxWork[0];
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct Actor *center = event->viewCenter;
   s32 x;
   s32 z;
   s32 edge;
 
-  if (*(s32 *)map->unk0fc != 0 || event->controlMode == 3)
+  // Japanese does not check the map's rectangle list here.
+#if TLA_PATCH_1
+  if (*(s32 *)Ram_HeapSlots->mapWork->unk0fc != 0)
+    return;
+#endif
+  if (event->controlMode == 3)
     return;
 
   if (direction & VIEW_MOVE_X) {

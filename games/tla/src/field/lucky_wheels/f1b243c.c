@@ -5,10 +5,17 @@
 #include "effect_step.h"
 #include "ram_buffer.h"
 #include "edition.h"
+#include "version.h"
 
-// The prompt windows (all held, start, hold, release, stop the reels) and the
-// ticket count's digits, placed and sized for each language's words.
-#if LANGUAGE == LANGUAGE_ITALIAN
+// The prompt windows (all held, start, hold, release, stop the reels, choose
+// the reels to hold) and the ticket count's digits, placed and sized for each
+// language's words. Japanese shows hold and release in one window.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define LUCKY_WHEELS_ALL_HELD_X 12
+#define LUCKY_WHEELS_ALL_HELD_WIDTH 18
+#define LUCKY_WHEELS_START_X 18
+#define LUCKY_WHEELS_START_WIDTH 12
+#elif LANGUAGE == LANGUAGE_ITALIAN
 #define LUCKY_WHEELS_ALL_HELD_X 10
 #define LUCKY_WHEELS_ALL_HELD_WIDTH 20
 #define LUCKY_WHEELS_START_X 21
@@ -24,7 +31,10 @@
 #define LUCKY_WHEELS_START_X 16
 #define LUCKY_WHEELS_START_WIDTH 14
 #endif
-#if LANGUAGE == LANGUAGE_GERMAN
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define LUCKY_WHEELS_HOLD_X 18
+#define LUCKY_WHEELS_HOLD_WIDTH 12
+#elif LANGUAGE == LANGUAGE_GERMAN
 #define LUCKY_WHEELS_HOLD_X 22
 #define LUCKY_WHEELS_HOLD_WIDTH 8
 #define LUCKY_WHEELS_RELEASE_X 21
@@ -52,12 +62,22 @@
 #define LUCKY_WHEELS_COIN_DIGITS 2
 #define LUCKY_WHEELS_COIN_X 64
 #endif
-#if LANGUAGE == LANGUAGE_SPANISH
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define LUCKY_WHEELS_STOP_X 23
+#define LUCKY_WHEELS_STOP_WIDTH 7
+#elif LANGUAGE == LANGUAGE_SPANISH
 #define LUCKY_WHEELS_STOP_X 21
 #define LUCKY_WHEELS_STOP_WIDTH 9
 #else
 #define LUCKY_WHEELS_STOP_X 18
 #define LUCKY_WHEELS_STOP_WIDTH 12
+#endif
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define LUCKY_WHEELS_CHOOSE_HELD_X 7
+#define LUCKY_WHEELS_CHOOSE_HELD_WIDTH 16
+#else
+#define LUCKY_WHEELS_CHOOSE_HELD_X 3
+#define LUCKY_WHEELS_CHOOSE_HELD_WIDTH 24
 #endif
 // The title's letters; the Spanish title's first letter is its last letter's
 // tile turned over both ways, drawn 16 pixels left and 8 down.
@@ -67,6 +87,14 @@
 #else
 #define REEL_TITLE_LETTERS 8
 #define REEL_TITLE_FIRST_TURNED 0
+#endif
+// The first tile of the title's letters: the Japanese letters take fewer tiles,
+// so they start later in VRAM (0x06017000 rather than 0x06016e00) and end at
+// the same place.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define REEL_TITLE_TILE 0x380
+#else
+#define REEL_TITLE_TILE 0x370
 #endif
 
 struct Reel {
@@ -101,7 +129,11 @@ struct ReelWork {
   struct Window *subWindow;
   u8 unk4d0[8];
   u16 scanlineOffsets[160];
+#if TLA_PATCH_1
+  // The Japanese release has no phase: it closes and reopens its prompt
+  // window every frame.
   s32 phase;
+#endif
 };
 
 struct ReelEffectWork {
@@ -147,7 +179,6 @@ extern char MsgSlotsAllHeld[];
 extern char MsgSlotsCannotPull[];
 
 void Func_081b243c(void) {
-  struct ReelWork *work;
   struct ReelEffectWork *fx;
   s32 objMode;
   u16 keys;
@@ -162,6 +193,7 @@ void Func_081b243c(void) {
   s32 lever;
   s32 k;
   s32 i;
+  struct ReelWork *work;
 
   work = (struct ReelWork *)Ram_HeapSlots->canvasMap;
   fx = (struct ReelEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -272,6 +304,7 @@ void Func_081b243c(void) {
       }
 
       if (work->state == 5) {
+#if TLA_PATCH_1
         if (work->cursor == 5) {
           if (allHeld != 0) {
             if (work->phase != 1 && work->phase != 2) {
@@ -316,6 +349,31 @@ void Func_081b243c(void) {
           }
           work->phase = 5;
         }
+#else
+        Window_CloseFar(work->window, 1);
+        if (work->cursor == 5) {
+          if (allHeld != 0) {
+            work->window = Window_CreateFar(LUCKY_WHEELS_ALL_HELD_X, 0,
+                                            LUCKY_WHEELS_ALL_HELD_WIDTH, 3, 6);
+            Text_DrawCharacterAtOffsetFar((s32)MsgSlotsAllHeld, work->window, 0,
+                                          0);
+          } else {
+            work->window = Window_CreateFar(LUCKY_WHEELS_START_X, 0,
+                                            LUCKY_WHEELS_START_WIDTH, 3, 6);
+            Text_DrawCharacterAtOffsetFar((s32)MsgSlotsStart, work->window, 0,
+                                          0);
+          }
+        } else {
+          work->window = Window_CreateFar(LUCKY_WHEELS_HOLD_X, 0,
+                                          LUCKY_WHEELS_HOLD_WIDTH, 3, 6);
+          if (work->reels[work->cursor].held == 0)
+            Text_DrawCharacterAtOffsetFar((s32)MsgSlotsHold, work->window, 0,
+                                          0);
+          else
+            Text_DrawCharacterAtOffsetFar((s32)MsgSlotsRelease, work->window, 0,
+                                          0);
+        }
+#endif
       } else {
         Window_CloseFar(work->window, 1);
       }
@@ -339,14 +397,18 @@ void Func_081b243c(void) {
         Sound_PlayFar(112);
       }
     } else if (work->state == 11) {
+#if TLA_PATCH_1
       if (work->phase == 0) {
         work->phase = 1;
         Text_DrawCharacterAtOffsetFar((s32)MsgSlotsPullLever, work->window, 0,
                                       8);
       }
+#endif
       if (work->pressed & KEY_A) {
         work->state = 5;
+#if TLA_PATCH_1
         work->phase = 0;
+#endif
         Sound_PlayFar(112);
         Window_CloseFar(work->window, 1);
       }
@@ -442,12 +504,16 @@ void Func_081b243c(void) {
           Window_CloseFar(work->window, 1);
         } else {
           work->state = 11;
+#if TLA_PATCH_1
           work->phase = 0;
+#endif
           Window_CloseFar(work->window, 1);
           if (work->spins <= 3) {
             s32 message;
 
-            work->window = Window_CreateFar(3, 16, 24, 4, 6);
+            work->window =
+                Window_CreateFar(LUCKY_WHEELS_CHOOSE_HELD_X, 16,
+                                 LUCKY_WHEELS_CHOOSE_HELD_WIDTH, 4, 6);
             message = (s32)MsgSlotsChooseHeld;
             Text_DrawCharacterAtOffsetFar(message, work->window, 0, 0);
             Text_DrawCharacterAtOffsetFar(message + 1, work->window, 0, 8);
@@ -538,7 +604,9 @@ void Func_081b243c(void) {
             (*(s16 *)((u8 *)&p->x + 2) << 16) | objMode |
             ((*(s16 *)((u8 *)&p->y + 2) + 256) & 255) | 0x80000000;
       work->obj[work->spriteCount].attr2 =
-          ((gLuckyWheels_TitleLetterTiles[i] << 4) + 0x370) | 0xf000;
+          ((gLuckyWheels_TitleLetterTiles[i] << 4) + REEL_TITLE_TILE) | 0xf000;
+#if TLA_PATCH_1
+      // The Japanese release draws the letters without moving them.
       p->y += p->velocityY;
       p->velocityY += 0x4000;
       if (work->timer % 256 == i * 4 + 200) {
@@ -551,6 +619,7 @@ void Func_081b243c(void) {
           p->velocityY = -p->velocityY / 2;
         p->variant++;
       }
+#endif
       work->spriteCount++;
     }
   }

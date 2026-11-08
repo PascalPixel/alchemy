@@ -10,6 +10,7 @@
 #include "input.h"
 #include "ram_buffer.h"
 #include "actor.h"
+#include "version.h"
 
 s32 BattleParty_PrepareReserveOwnersFar(u16 *owners);
 s32 Func_08118140(s32, s32);
@@ -55,7 +56,13 @@ s32 Func_0804b8b8(s32 slot) {
     do {
       goto test;
       for (;;) {
+        // Japanese also takes A on the first frame, before the first preview
+        // has been drawn.
+#if TLA_PATCH_1
         if ((INPUT->pressed & 1) && !redraw) {
+#else
+        if (INPUT->pressed & 1) {
+#endif
           if (Func_08118140(1, 0) == 0) {
             Sound_PlayFar(114);
             goto test;

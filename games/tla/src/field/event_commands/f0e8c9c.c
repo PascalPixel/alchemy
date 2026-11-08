@@ -1,4 +1,5 @@
 #include "types.h"
+#include "version.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "map.h"
@@ -16,12 +17,16 @@ void Camera_FollowActor(s32 id, s32 mode);
 // and lets the view follow the scene's first object again. Where the view
 // was held, it only stops the screen shake.
 void Func_080e8c9c(void) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
   struct ViewMoveWork *work = Ram_HeapSlots->battleFxWork[0];
   struct EffectScene *scene = Ram_HeapSlots->effectWork;
   struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct MapWork *map = Ram_HeapSlots->mapWork;
 
+#if TLA_PATCH_1
   if (*(s32 *)map->unk0fc != 0 || event->controlMode == 3) {
+#else
+  if (event->controlMode == 3) {
+#endif
     Map_SetScreenShakeFar(0, 0, 0);
   } else {
     map->minX = work->savedMinX;

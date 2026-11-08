@@ -1,9 +1,18 @@
 #include "types.h"
 #include "input.h"
 #include "ram_buffer.h"
+#include "edition.h"
 
 // The pressed keys, read again at each test.
 #define KEYS_PRESSED (((struct InputState *)&gInput)->pressed)
+
+// The switch-characters help follows the A-button label on the help line:
+// Japanese starts it 64 pixels in, the other editions 80.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define SWITCH_CHARACTER_HELP_X 64
+#else
+#define SWITCH_CHARACTER_HELP_X 80
+#endif
 
 struct CharacterMenuState {
   u8 unk000[8];
@@ -103,8 +112,8 @@ s32 Func_080feec0(void) {
           if (hasAilments == 0) {
             Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 1, window, 0,
                                           -24);
-            Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp, window, 80,
-                                          -24);
+            Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp, window,
+                                          SWITCH_CHARACTER_HELP_X, -24);
           }
         } else {
           if (hasDjinn != 0)

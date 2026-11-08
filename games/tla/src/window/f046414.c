@@ -11,6 +11,25 @@
 #define TOTAL_LABEL_X 32
 #endif
 
+// The stats page: Japanese makes its window a tile wider, draws the old values
+// a column further left, Defense and Agility in four places as HP, PP and
+// Attack (the other editions give those two three places from the next
+// column), and starts the prompt under them (MsgKey0d0d) 16 pixels further
+// right.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define STATS_WINDOW_WIDTH 21
+#define OLD_VALUE_X 4
+#define OLD_DEFENSE_AGILITY_TEXT 7
+#define OLD_DEFENSE_AGILITY_X 4
+#define PSYNERGY_PROMPT_X 40
+#else
+#define STATS_WINDOW_WIDTH 20
+#define OLD_VALUE_X 5
+#define OLD_DEFENSE_AGILITY_TEXT 8
+#define OLD_DEFENSE_AGILITY_X 6
+#define PSYNERGY_PROMPT_X 24
+#endif
+
 // The tile drawn beside each row of the second list.
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
@@ -164,7 +183,7 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
   if (window != NULL)
     Window_Close(window, 1);
   if (page == 0)
-    window = Window_Create(0, 8, 20, 11, 6);
+    window = Window_Create(0, 8, STATS_WINDOW_WIDTH, 11, 6);
   else
     window = Window_Create(0, 5, 21, 14, 6);
   if (window == NULL)
@@ -202,26 +221,28 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
 
     oldHp = savedUnit->hp;
     String_FormatNumberToHalfwords(numberText, oldHp);
-    Text_RenderWideStringInWindow(numberText + 7, window, 5, 1);
+    Text_RenderWideStringInWindow(numberText + 7, window, OLD_VALUE_X, 1);
     oldPp = savedUnit->pp;
     String_FormatNumberToHalfwords(numberText, oldPp);
-    Text_RenderWideStringInWindow(numberText + 7, window, 5, 2);
+    Text_RenderWideStringInWindow(numberText + 7, window, OLD_VALUE_X, 2);
     oldAtk = savedUnit->atk;
     String_FormatNumberToHalfwords(numberText, oldAtk);
-    Text_RenderWideStringInWindow(numberText + 7, window, 5, 3);
+    Text_RenderWideStringInWindow(numberText + 7, window, OLD_VALUE_X, 3);
     oldDef = savedUnit->def;
     String_FormatNumberToHalfwords(numberText, oldDef);
-    Text_RenderWideStringInWindow(numberText + 8, window, 6, 4);
+    Text_RenderWideStringInWindow(numberText + OLD_DEFENSE_AGILITY_TEXT, window,
+                                  OLD_DEFENSE_AGILITY_X, 4);
     oldAgi = savedUnit->agi;
     String_FormatNumberToHalfwords(numberText, oldAgi);
-    Text_RenderWideStringInWindow(numberText + 8, window, 6, 5);
+    Text_RenderWideStringInWindow(numberText + OLD_DEFENSE_AGILITY_TEXT, window,
+                                  OLD_DEFENSE_AGILITY_X, 5);
     String_FormatNumberToHalfwords(numberText, savedUnit->luck);
-    Text_RenderWideStringInWindow(numberText + 8, window, 6, 6);
+    Text_RenderWideStringInWindow(numberText + 8, window, OLD_VALUE_X + 1, 6);
 
     Window_DrawDividerLine(window, 0, 8, 19, 8);
     if (gained != 0 || lost != 0)
       Func_08041f70(PREVIEW_RED);
-    Text_DrawCharacterAtOffset((s32)MsgKey0d0d, window, 24, 64);
+    Text_DrawCharacterAtOffset((s32)MsgKey0d0d, window, PSYNERGY_PROMPT_X, 64);
     Func_08041f70(PREVIEW_WHITE);
   }
 

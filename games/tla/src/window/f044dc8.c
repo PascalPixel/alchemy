@@ -4,6 +4,19 @@
 #include "window.h"
 #include "uiwindow.h"
 #include "battle_summon.h"
+#include "edition.h"
+
+// The window that lists the Djinn a summon needs is wider and taller in
+// Spanish and French, whose text gives each Djinn count a line of its own.
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH)
+#define TO_SUMMON_WINDOW_X 2
+#define TO_SUMMON_WINDOW_WIDTH 25
+#define TO_SUMMON_WINDOW_HEIGHT 9
+#else
+#define TO_SUMMON_WINDOW_X 3
+#define TO_SUMMON_WINDOW_WIDTH 24
+#define TO_SUMMON_WINDOW_HEIGHT 7
+#endif
 
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void MessageArgument_Push(s32 value, s32 kind);
@@ -54,7 +67,8 @@ void Func_08044dc8(s32 summon) {
   Window_Close(window, 2);
   wait(1);
 
-  window = Window_Create(3, 1, 24, 7, 0);
+  window = Window_Create(TO_SUMMON_WINDOW_X, 1, TO_SUMMON_WINDOW_WIDTH,
+                         TO_SUMMON_WINDOW_HEIGHT, 0);
   if (window == NULL)
     return;
   MessageArgument_Push(Data_0805f676[summon & 31], 4);

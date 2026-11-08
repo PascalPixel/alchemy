@@ -3,6 +3,15 @@
 #include "input.h"
 #include "frame.h"
 #include "render_input.h"
+#include "version.h"
+
+// The heading's top, in pixels from the window's; from patch 1 it sits 8
+// pixels lower.
+#if TLA_PATCH_1
+#define HEADING_Y (-16)
+#else
+#define HEADING_Y (-24)
+#endif
 
 struct WorkspaceScreen {
   u8 unk000[0x574];
@@ -60,7 +69,7 @@ s32 Func_08040798(s32 initial) {
   work = Ram_HeapSlots->unkd0[0];
   wait(1);
   window = Func_08040628();
-  pair = RenderResource_CreatePair(7, window, 40, -16);
+  pair = RenderResource_CreatePair(7, window, 40, HEADING_Y);
   if (settingsOnly != 0) {
     rows = 1;
     first = 2;

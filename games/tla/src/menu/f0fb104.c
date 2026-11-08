@@ -1,6 +1,22 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
+#include "edition.h"
+
+// Where the cursor points at a command. The German, French and Spanish
+// releases ask two helpers of their own (named by their German addresses):
+// the first reads x from a table that sets the middle column 9 pixels left of
+// the even 40-pixel spacing the other releases compute, the second gives y.
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH) ||          \
+    (LANGUAGE == LANGUAGE_SPANISH)
+s32 Func_08106b80(s32 column, s32 row);
+s32 Func_08106ba8(s32 column, s32 row);
+#define COMMAND_CURSOR_X(column, row) Func_08106b80(column, row)
+#define COMMAND_CURSOR_Y(column, row) Func_08106ba8(column, row)
+#else
+#define COMMAND_CURSOR_X(column, row) ((column) * 40 + 86)
+#define COMMAND_CURSOR_Y(column, row) ((row) * 8 + 30)
+#endif
 
 struct CommandMenu {
   u8 unk000[0x28];
@@ -107,7 +123,7 @@ s32 Func_080fb104(void) {
     row = (s8)(lastCommand / 3);
     commandIndex = row * 3 + column;
   }
-  Func_080f8ab4(column * 40 + 86, row * 8 + 30);
+  Func_080f8ab4(COMMAND_CURSOR_X(column, row), COMMAND_CURSOR_Y(column, row));
 
   for (;;) {
     if (GameFlag_Test(0x150) != 0)
@@ -132,7 +148,7 @@ s32 Func_080fb104(void) {
         Func_080f8170(menu->statusWindow, menu->paneOwner[0], 0, 0);
       }
     }
-    Func_080f8a44(column * 40 + 86, row * 8 + 30);
+    Func_080f8a44(COMMAND_CURSOR_X(column, row), COMMAND_CURSOR_Y(column, row));
     wait(1);
 
     if ((gInput.pressed & 1) != 0) {

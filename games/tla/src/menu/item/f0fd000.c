@@ -1,6 +1,7 @@
 #include "types.h"
 #include "input.h"
 #include "ram_buffer.h"
+#include "version.h"
 
 // The pressed keys, read again at each test.
 #define KEYS_PRESSED (((struct InputState *)&gInput)->pressed)
@@ -105,7 +106,10 @@ s32 Func_080fd000(u16 *ownerIds) {
       Menu_HighlightPageEntry(menu->rowWindow, selection, count);
       if (!GameFlag_Test(0x151) && !shown) {
         WindowSprite_ClearListFar(menu->infoWindow);
+#if TLA_PATCH_1
+        // Japanese does not redraw the info window here.
         WindowSprite_RedrawSavedRectFar(menu->infoWindow);
+#endif
         Text_DrawWorkValueWithLabel(menu->infoWindow);
         shown = 1;
       } else {

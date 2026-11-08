@@ -4,6 +4,28 @@
 #include "render_input.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
+#include "edition.h"
+
+// Japanese draws the name and the ailment labels 8 pixels further right, the
+// Lv label through Text_DrawStringInWindowFar, and the equip panel's "cannot
+// equip" line 16 pixels in, as the class panel's is. Spanish swaps the learn
+// panel's two lines: the note above the Psynergy's name.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define STATUS_PANEL_NAME_X 40
+#define DRAW_LEVEL_LABEL Text_DrawStringInWindowFar
+#define STATUS_PANEL_CANNOT_EQUIP_X 16
+#else
+#define STATUS_PANEL_NAME_X 32
+#define DRAW_LEVEL_LABEL Text_DrawStringAtOffsetFar
+#define STATUS_PANEL_CANNOT_EQUIP_X 0
+#endif
+#if LANGUAGE == LANGUAGE_SPANISH
+#define STATUS_PANEL_LEARN_NAME_Y 56
+#define STATUS_PANEL_LEARN_NOTE_Y 48
+#else
+#define STATUS_PANEL_LEARN_NAME_Y 48
+#define STATUS_PANEL_LEARN_NOTE_Y 56
+#endif
 
 #define STATUS_PANEL_LOWER_ONLY 0x100
 #define STATUS_PANEL_KIND_MASK 0xff
@@ -49,16 +71,18 @@ extern const u8 gStatusPanel_LvString[];
 
 struct BattleUnit *Unit_Get(s32 owner);
 s32 Window_UpdateOrCreate(struct RenderInput **handle, s32 x, s32 y, s32 w,
-                            s32 h, s32 mode);
+                          s32 h, s32 mode);
 void wait(s32 frames);
 void Window_ClearInteriorTilesFar(struct RenderInput *window, s32 x, s32 y,
-                                    s32 width, s32 height);
+                                  s32 width, s32 height);
 void Text_DrawStringAtOffsetFar(const u8 *text, struct RenderInput *window,
-                                  s32 x, s32 y);
+                                s32 x, s32 y);
+void Text_DrawStringInWindowFar(const u8 *text, struct RenderInput *window,
+                                s32 x, s32 y);
 void Text_DrawCharacterAtOffsetFar(s32 message, struct RenderInput *window,
-                                     s32 x, s32 y);
+                                   s32 x, s32 y);
 void Text_DrawNumberInWindowFar(s32 value, s32 digits,
-                                  struct RenderInput *window, s32 x, s32 y);
+                                struct RenderInput *window, s32 x, s32 y);
 s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 requested, s32 owner);
 void WindowSprite_ClearListFar(struct RenderInput *window);
 void *SideObject_CreateFar(s32 owner, s32 x, s32 y, struct RenderInput *window,
@@ -69,10 +93,9 @@ void Unit_UpdateClassFar(s32 owner);
 void Inventory_EquipFar(s32 owner, s32 slot);
 void Unit_CalculateFar(s32 owner);
 void Window_SetTilemapEntryFar(struct RenderInput *window, s32 entry, s32 x,
-                                 s32 y, s32 mode);
-void Text_DrawStatComparison(struct BattleUnit *unit,
-                               struct BattleUnit *backup,
-                               struct RenderInput *window);
+                               s32 y, s32 mode);
+void Text_DrawStatComparison(struct BattleUnit *unit, struct BattleUnit *backup,
+                             struct RenderInput *window);
 void StatusPanel_DrawHpPp(struct BattleUnit *unit, struct RenderInput *window);
 
 static inline void RestoreUnit(struct BattleUnit *unit,
@@ -101,8 +124,7 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
   item = unit->inventory[slot];
   def = Item_Get(item & ITEM_ID_MASK);
   if (!(mode & STATUS_PANEL_LOWER_ONLY))
-    created =
-        Window_UpdateOrCreate(&state->statusWindow, 0, 5, 13, 12, 0x102);
+    created = Window_UpdateOrCreate(&state->statusWindow, 0, 5, 13, 12, 0x102);
   window = state->statusWindow;
 
   if (!(mode & STATUS_PANEL_LOWER_ONLY)) {
@@ -110,32 +132,32 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
       wait(1);
       Window_ClearInteriorTilesFar(state->statusWindow, 0, 0, 88, 32);
     }
-    Text_DrawStringAtOffsetFar(unit->name, window, 32, 0);
+    Text_DrawStringAtOffsetFar(unit->name, window, STATUS_PANEL_NAME_X, 0);
     CharacterMenu_BuildAvailability(ailments, 1, owner);
     ailmentRows = 0;
     if (ailments[1]) {
-      Text_DrawCharacterAtOffsetFar(MESSAGE_POISON_LABEL, window, 32,
-                                      ailmentRows * 8 + 8);
+      Text_DrawCharacterAtOffsetFar(MESSAGE_POISON_LABEL, window,
+                                    STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
     if (ailments[2]) {
-      Text_DrawCharacterAtOffsetFar(MESSAGE_VENOM_LABEL, window, 32,
-                                      ailmentRows * 8 + 8);
+      Text_DrawCharacterAtOffsetFar(MESSAGE_VENOM_LABEL, window,
+                                    STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
     if (ailments[3]) {
-      Text_DrawCharacterAtOffsetFar(MESSAGE_CURSE_LABEL, window, 32,
-                                      ailmentRows * 8 + 8);
+      Text_DrawCharacterAtOffsetFar(MESSAGE_CURSE_LABEL, window,
+                                    STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
     if (ailments[4]) {
-      Text_DrawCharacterAtOffsetFar(MESSAGE_HAUNT_LABEL, window, 32,
-                                      ailmentRows * 8 + 8);
+      Text_DrawCharacterAtOffsetFar(MESSAGE_HAUNT_LABEL, window,
+                                    STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
     if (ailmentRows < 2) {
       value = unit->level;
-      Text_DrawStringAtOffsetFar(gStatusPanel_LvString, window, 40, 16);
+      DRAW_LEVEL_LABEL(gStatusPanel_LvString, window, 40, 16);
       Text_DrawNumberInWindowFar(value, 4, window, 56, 16);
     }
   }
@@ -198,7 +220,8 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
   case STATUS_PANEL_EQUIP:
   case STATUS_PANEL_EQUIP + 1:
     if (!Item_CanOwnerEquip(owner, item)) {
-      Text_DrawCharacterAtOffsetFar(MESSAGE_CANNOT_EQUIP, window, 0, 48);
+      Text_DrawCharacterAtOffsetFar(MESSAGE_CANNOT_EQUIP, window,
+                                    STATUS_PANEL_CANNOT_EQUIP_X, 48);
       break;
     }
     backup = Heap_Alloc(sizeof(struct BattleUnit));
@@ -226,12 +249,14 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
     }
     if (known) {
       Text_DrawCharacterAtOffsetFar(psynergy + MESSAGE_ABILITY_NAME, window, 0,
-                                      48);
-      Text_DrawCharacterAtOffsetFar(MESSAGE_LEARNED, window, 0, 56);
+                                    STATUS_PANEL_LEARN_NAME_Y);
+      Text_DrawCharacterAtOffsetFar(MESSAGE_LEARNED, window, 0,
+                                    STATUS_PANEL_LEARN_NOTE_Y);
     } else {
       Text_DrawCharacterAtOffsetFar(psynergy + MESSAGE_ABILITY_NAME, window, 0,
-                                      48);
-      Text_DrawCharacterAtOffsetFar(MESSAGE_WILL_LEARN, window, 0, 56);
+                                    STATUS_PANEL_LEARN_NAME_Y);
+      Text_DrawCharacterAtOffsetFar(MESSAGE_WILL_LEARN, window, 0,
+                                    STATUS_PANEL_LEARN_NOTE_Y);
     }
     break;
   }

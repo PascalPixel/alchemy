@@ -1,6 +1,7 @@
 #include "types.h"
 #include "dma.h"
 #include "input.h"
+#include "version.h"
 
 struct DisplayScrollObject {
   u32 attr01;
@@ -38,8 +39,12 @@ void Func_081a08c4(void) {
     gDisplayScroll_Busy = 0;
     Data_02007500++;
   }
+#if TLA_PATCH_1
+  // From patch 1 a held button also releases state 3; the Japanese release
+  // checks only state 1.
   if (gDisplayScroll_Busy == 3 && (gInput.held & 3))
     gDisplayScroll_Busy = 0;
+#endif
   if (gDisplayScroll_Busy == 0) {
     if ((gVBlankCount & 3) == 0)
       gDisplayScroll_Position++;

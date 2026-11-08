@@ -4,6 +4,7 @@
 #include "io_write_queue.h"
 #include "iwram_call.h"
 #include "edition.h"
+#include "version.h"
 #include "ram_buffer.h"
 #include "fixed_math.h"
 
@@ -324,6 +325,9 @@ void Func_080ec4d4(void) {
   Func_080140d8(marker, 246);
 
   if (work->shown != nearest) {
+    // The Japanese release prepares the window and draws the new name in the
+    // same frame; the later ones draw it 6 frames after preparing the window.
+#if TLA_PATCH_1
     if (Data_0202a654[0] == 0) {
       WindowSprite_PrepareForRedrawFar(work->window);
       Data_0202a654[0] = 1;
@@ -331,6 +335,11 @@ void Func_080ec4d4(void) {
     } else if (--Data_0202a656[0] <= 0) {
       Data_0202a654[0] = 0;
       work->shown = nearest;
+#else
+    {
+      work->shown = nearest;
+      WindowSprite_PrepareForRedrawFar(work->window);
+#endif
       if (nearest != -1) {
         if (nearestName == -1)
           nearestName = (s32)MsgPresentLocation;

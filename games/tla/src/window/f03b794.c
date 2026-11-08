@@ -1,14 +1,18 @@
 #include "types.h"
+#include "version.h"
+#include "ram_buffer.h"
+#include "window.h"
 
 void Func_0803bb58(s32 no, u32 *pw, u32 *ph, u16 *spacing);
 void Text_MeasureEntry(s32 no, u32 *pw, u32 *ph, u16 *spacing);
 
-// The Japanese release's version also widens the window by 2 and lowers the
-// right limit to 29 while the window work's mode is set; written so, its
-// first two instructions after the frame come out swapped, so it stays on its
-// scaffold.
+// In the Japanese release, while the window work's mode is set, a measured
+// window is 2 tiles wider and kept off the screen's last column.
 void Window_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
-                          u16 *spacing, u32 flags) {
+                        u16 *spacing, u32 flags) {
+#if !TLA_PATCH_1
+  struct WindowWork *work;
+#endif
   s32 x;
   s32 y;
   s32 limit;
@@ -17,6 +21,9 @@ void Window_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
   s32 over;
   s32 pos;
 
+#if !TLA_PATCH_1
+  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+#endif
   x = *px;
   y = *py;
   limit = 30;
@@ -34,6 +41,12 @@ void Window_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
   if (!(flags & 2)) {
     *pw = (*pw + 19) >> 3;
     *ph = (*ph + 15) >> 3;
+#if !TLA_PATCH_1
+    if (work->mode != 0) {
+      *pw += 2;
+      limit = 29;
+    }
+#endif
   }
 
   right = x + *pw;

@@ -16,6 +16,15 @@
 #define TEXT_CODE_3_WIDTH gFont_GlyphWidths[0]
 #endif
 
+// The French, Spanish and Italian fonts: tile 0xF005 advances three pixels,
+// as 0xF01E does in every font.
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
+    (LANGUAGE == LANGUAGE_ITALIAN)
+#define TEXT_IS_NARROW_TILE(code) ((code) == 0xF01E || (code) == 0xF005)
+#else
+#define TEXT_IS_NARROW_TILE(code) ((code) == 0xF01E)
+#endif
+
 extern char ResourceId_WindowTiles;
 extern const u8 gText_ColourPens[];
 extern const u8 gFont_GlyphWidths[];
@@ -135,7 +144,7 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
         }
         if (code == 0xF01D || code == 0xF01F)
           x += 8;
-        else if (code == 0xF01E)
+        else if (TEXT_IS_NARROW_TILE(code))
           x += 3;
         else {
 #if TEXT_JAPANESE_FONT

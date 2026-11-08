@@ -9,6 +9,7 @@
 #include "heap_release.h"
 #include "task.h"
 #include "canvas_sprite.h"
+#include "window.h"
 
 #define OBJ_TILES ((u8 *)0x06010000)
 #define TILE_SIZE 32
@@ -19,7 +20,8 @@
 /// sprite and Func_080eb594 uploads the canvas each frame;
 /// BattleEffect_EndCanvasSprite ends it.
 void Func_080eb824(void) {
-  u8 *windowTiles = Ram_HeapSlots->windowTiles;
+  struct WindowWork *windowWork =
+      (struct WindowWork *)Ram_HeapSlots->windowTiles;
   struct CanvasSpriteWork *work =
       HeapSlot_Alloc(HEAP_SLOT_CANVAS_SPRITE, sizeof(*work));
   u8 *canvas = HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_SIZE);
@@ -30,7 +32,7 @@ void Func_080eb824(void) {
   do {
     Iwram_FillWords(work, sizeof(*work), 0);
   } while (0);
-  work->tile = *(u16 *)(windowTiles + 0x1348);
+  work->tile = windowWork->glyphTiles;
   work->mode = CANVAS_SPRITE_16_COLORS;
   work->command = 0;
   work->x = 16;

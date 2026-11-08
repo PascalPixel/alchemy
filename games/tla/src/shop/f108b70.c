@@ -122,6 +122,7 @@ s32 Func_08108b70(void) {
   void *partyWindow;
   s32 selected = 0;
   s32 quantity;
+  s32 stockCount;
   s16 *stockIds;
   struct ItemDefinition *heldDefinition;
   struct ItemDefinition *selectedDefinition;
@@ -129,7 +130,6 @@ s32 Func_08108b70(void) {
   void *itemWindow;
   s32 redraw;
   s32 selectionIndex;
-  s32 stockCount;
   s32 itemId;
   struct ItemDefinition *stockDefinition;
   s32 selectionResult;
@@ -141,8 +141,6 @@ s32 Func_08108b70(void) {
 
   /* FAKEMATCH(dead): both A tests store into key, never read; as plain
      `if (gInput.pressed & 1)`, 8 of 540 instructions differ in tla-en. */
-  // tla-ja still differs in 14 of 531 instructions: the stack slots of
-  // stockIds, stockCount and selectedDefinition.
   shop->itemWindow = 0;
   shop->moneyWindow =
       Window_CreateFar(MONEY_WINDOW_X, 7, MONEY_WINDOW_WIDTH, 4, 2);

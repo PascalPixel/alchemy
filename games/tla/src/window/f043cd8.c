@@ -6,6 +6,17 @@
 #include "input.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "edition.h"
+
+// Where the leader's name and the area name start in a file's row of the file
+// list, in pixels: the European languages start both farther left.
+#if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
+#define FILE_LIST_LEADER_X 12
+#define FILE_LIST_AREA_X 72
+#else
+#define FILE_LIST_LEADER_X 6
+#define FILE_LIST_AREA_X 62
+#endif
 
 void *HeapSlot_Alloc(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
@@ -154,9 +165,9 @@ s32 Func_08043cd8(s32 selectedFile, s32 menuMode) {
       Text_DrawMessage((s32)MsgSavePostReunion, fileList, 10, i * 16);
     } else {
       y = i * 16;
-      Text_DrawString(summary->name, fileList, 12, y);
+      Text_DrawString(summary->name, fileList, FILE_LIST_LEADER_X, y);
       Text_DrawMessage(save->summary[i].area + (s32)MsgDebugAreaName, fileList,
-                       72, y);
+                       FILE_LIST_AREA_X, y);
     }
   }
   modePicture = RenderResource_CreatePair(menuMode, fileList, 72, -24);

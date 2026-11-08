@@ -6,6 +6,25 @@
 #include "effect_step.h"
 #include "iwram_call.h"
 #include "ram_buffer.h"
+#include "edition.h"
+#include "version.h"
+
+// The help window is narrower in Japanese, and one row shorter there when it
+// shows only the controls. The Japanese jackpot banner is shorter, so its
+// tiles start later in VRAM and end at the same place.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define HELP_WINDOW_X 6
+#define HELP_WINDOW_WIDTH 18
+#define CONTROLS_WINDOW_HEIGHT 3
+#define JACKPOT_TILES 0x06017000
+#define JACKPOT_COPY DMA_COPY_WORDS(1024)
+#else
+#define HELP_WINDOW_X 2
+#define HELP_WINDOW_WIDTH 26
+#define CONTROLS_WINDOW_HEIGHT 4
+#define JACKPOT_TILES 0x06016e00
+#define JACKPOT_COPY DMA_COPY_WORDS(1152)
+#endif
 
 struct Reel {
   s32 position;
@@ -37,7 +56,11 @@ struct ReelWork {
   s32 subWindow;
   u8 unk4d0[8];
   u16 scanlineOffsets[160];
+#if TLA_PATCH_1
+  // The Japanese release has no phase: it allocates the reel state four
+  // bytes shorter, and its slot task never reads one.
   s32 phase;
+#endif
 };
 
 struct ReelEffectWork {
@@ -126,7 +149,7 @@ void LuckyWheels_Run(void) {
   sheet = HeapSlot_Alloc(100, 0x60e);
   canvas = HeapSlot_Alloc(96, 0x8000);
   work = HeapSlot_AllocEwram(92, 0x7b7c);
-  state = HeapSlot_AllocEwram(180, 0x61c);
+  state = HeapSlot_AllocEwram(180, sizeof(struct ReelWork));
   tiles = Ram_MapCellBuffer;
   save = (struct ReelSave *)Data_0200024c;
   Resource_ReservedNoOp((s32)&ResourceId_FarCall00C);
@@ -222,7 +245,7 @@ void LuckyWheels_Run(void) {
     Dma_Set(entry, (void *)0x050003e0, 0x84000008, REG_DMA3);
     entry += 32;
     Resource_DecodeType01(entry, tiles);
-    Dma_Set(tiles, (void *)0x06016e00, 0x84000480, REG_DMA3);
+    Dma_Set(tiles, (void *)JACKPOT_TILES, JACKPOT_COPY, REG_DMA3);
     WindowSystem_InitFieldFar();
     Func_081b336c();
 
@@ -268,12 +291,13 @@ void LuckyWheels_Run(void) {
     Graphics_ScaleRgb555(bgShade, (u16 *)0x05000000, 0, 0x100);
     REG_DISPCNT = 0x3740;
     if (PartyInventory_CountItemFar(228) == 1) {
-      s32 window = Window_CreateFar(2, 16, 26, 4, 6);
+      s32 window = Window_CreateFar(HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH,
+                                    CONTROLS_WINDOW_HEIGHT, 6);
 
       state->window = window;
       Text_DrawCharacterAtOffsetFar((s32)MsgSlotsControls, window, 0, 0);
     } else {
-      s32 window = Window_CreateFar(2, 16, 26, 4, 6);
+      s32 window = Window_CreateFar(HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH, 4, 6);
       s32 message;
 
       state->window = window;

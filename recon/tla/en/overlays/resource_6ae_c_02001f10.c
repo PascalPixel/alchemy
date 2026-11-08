@@ -1,4 +1,10 @@
-// Differ 34 of 1038 (tla-en, 2026-11-08, -mtune=gba).
+// Differ 34 of 1038 (tla-en, 2026-11-08, -mtune=gba). Rechecked 2026-11-08: the
+// held struct sizes the frame (without it 38; a volatile word in its place 34);
+// W_Func_02005714 is needed (direct 146, Call3 36); zero or mask as u32, u8, s16
+// or u16 (34, mask s16 83), declared in either order (34); zero set before the
+// mask (61); the last or as scratch | one (34) or with its result in one or
+// scratch (79 to 82); a prototype for Camera_MoveWithinMapBounds (34); the
+// permuter, 6 minutes (4920 candidates), found nothing better.
 // Near miss, differ 34 of 1038 (tla-en, 2026-11-06): the slots and the
 // mask/zero register choice, as below. Left: the slots (14 rows):
 // the one spilled actor at sp+4 natively with four empty bytes below it, here

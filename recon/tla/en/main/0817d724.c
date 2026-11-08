@@ -1,4 +1,11 @@
-// Differ 38 of 1034 (tla-en, 2026-11-08, -mtune=gba).
+// Differ 38 of 1034 (tla-en, 2026-11-08, -mtune=gba). Blue's mask is plain
+// again, (*color >> 10) & 31: the (u16) casts gain nothing under the GBA tune.
+// The red and blue clamps and the frame < 0 test are the ROM's dead code
+// (without the test, 400). Tried, none better: green set after the clamp (75);
+// (u16)(*color << 16 >> 26) gives lsls 16 but asrs 26 and a second ldrh (50);
+// the same through (u32) loads twice and keeps lsrs 10 (55); a u32 c local
+// (80); once-only blocks around blue, slot or startY, first folded into one
+// expression, &SPARKS[128] + first, the burst as particles + first (all 38).
 // Later 6 November, none better: green dropped for red twice (75; red's clamp
 // then stays in r2 as the listing's); with it, a u16 c local gives the listing's
 // lsls 16, lsrs 26 and pooled 31 for blue but loads with ldrsh (ARM promotes a
@@ -330,7 +337,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       for (i = 0, color = (u16 *)(BG_PLTT + 96); i != 128; i++, color++) {
         s32 red = *color & 31;
         s32 green = red;
-        s32 blue = (u16)(*color >> 10) & (u16)31;
+        s32 blue = (*color >> 10) & 31;
+        // DEAD: both channels are already at most 31.
         if (red > 31) {
           red = 31;
         }
@@ -404,6 +412,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       }
       Func_08164a4c(2, 2, 2);
     }
+    // DEAD: frame is never negative.
     if (frame < 0) {
       goto next;
     }

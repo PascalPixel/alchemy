@@ -1,7 +1,12 @@
-// Differ 6 of 88 (tla-en, 2026-11-08, -mtune=gba): unchanged under the GBA
-// 8 November: the for steps or the pack loop's steps reordered, 6 to 8; loop 2 written like loop 3 (an offset step) 30 to 42.
-// tune; the copy and pointer orders below still resist (both pointer orders,
-// the pointers set in the for, the tile address spelled three ways).
+// Differ 6 of 88 (tla-en, 2026-11-08, -mtune=gba): scheduling only. Both
+// left sites set a loop-made count or offset (0x600, slot * 32) after the
+// copies of canvas into src and dst, where the listing sets it first.
+// 2026-11-08: no gain from the for steps or the pack loop's steps reordered
+// (6 to 8), loop 2 written like loop 3 (30 to 42), both pointer orders, the
+// pointers set in the for, src = dst = canvas, a once-only block before or
+// round the pointer copies (8 to 12), canvas[i] for *dst++ (6), the pack loop
+// indexed by i * 2 (44), bounds as <=, != or counting down (6 to 66), the
+// tile address spelled three ways, and 8 permuter minutes.
 // 2026-11-07: Iwram_ClearWords through an inline wrapper, as the Broken Seal's
 // iwram_call.h writes it, puts the size shift after the address load (8 to 6);
 // left, scheduling: the pack loop's two pointer copies ahead of its count's

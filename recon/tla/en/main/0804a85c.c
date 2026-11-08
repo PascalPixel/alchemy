@@ -1,4 +1,9 @@
 // Differ 6 of 1647 (tla-en, 2026-11-08, -mtune=gba); the same rows as on 2026-11-07.
+// 2026-11-08: unchanged by `*(candidateIds + targetIndex)` (128), the sprite
+// frame's sum reversed or in a local, drawCursors' store as 0, the return types
+// of Resource_ResetEntry, VramCache_AllocEntry, Sound_PlayFar (all 6), or
+// once-only blocks at the loop head (108 to 112, the GCSE hash-table effect);
+// the signature device re-measured at 8 without it.
 // Differ 8 of 1748 in tla-de, tla-fr, tla-es and tla-it at their own addresses
 // (0804a984, 0804a9a0, 0804a994, 0804a96c; 2026-11-07): the same loop-head
 // pairs as English. The four European editions share one image that asks the

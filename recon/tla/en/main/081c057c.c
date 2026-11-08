@@ -1,5 +1,7 @@
 // Differ 45 of 31 (tla-en, 2026-11-08, -mtune=gba).
 // On the game route; old_agbcc -O2 -mthumb-interwork (SOUND_C) emits the listing's 31 instructions exactly, only the pool words and call targets left.
+// 2026-11-08: unchanged; the diff tool compiles on the game route only, so 45
+// stands until the route question (K1) is settled.
 // Blocked, 5 November 2026: the work copy of ☀️'s m4aSongNumStartOrChange.
 // Through the sound route (old_agbcc -O2 -mthumb-interwork, SOUND_C) this C emits
 // the listing's instructions; the game route differs by 45. What stops it is not

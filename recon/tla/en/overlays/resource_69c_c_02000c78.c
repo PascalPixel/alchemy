@@ -1,8 +1,6 @@
-// Differ 22 of 126 (tla-en, 2026-11-08, -mtune=gba): as below; the
-// sums before the shifts, or mapX and mapZ as u16, measure 22 to 40.
-// Twin of resource_6ad_c_02004938.c. Control flow, frame and data match; what is left is
-// allocation (the fourth offset loads into r3, not r2) and the scheduling of the map-origin
-// loads. Moving z before mapX: 40; permuter (5 min): nothing below 22.
+// Matches (tla-en, 2026-11-08, -mtune=gba; tla-ja, -de, -es, -fr and -it also differ 0).
+// Twin of resource_6ad_c_02004938.c (adopted as mars_lighthouse_room_f/s4938.c), written in its
+// form: z before the map origin, and i reused to hold mapX (22 to 0).
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -46,10 +44,11 @@ s32 Func_02000c78(s32 id) {
   width = (ABS(gData_02002484[j][0]) + ABS(gData_02002484[j][2])) >> 4;
   height = (ABS(gData_02002484[j][1]) + ABS(gData_02002484[j][3])) >> 4;
   x = (object->x + (gData_02002484[j][0] << 16)) >> 20;
-  mapX = *(s32 *)(map + 328) >> 20;
   z = (object->z + (gData_02002484[j][1] << 16)) >> 20;
+  mapX = *(s32 *)(map + 328) >> 20;
+  i = mapX; // i is reused to hold mapX.
   mapZ = *(s32 *)(map + 332) >> 20;
-  toX = x + (u16)mapX;
+  toX = x + (u16)i;
   toZ = z + (u16)mapZ;
   Func_02002330(x, z, width, height, toX, toZ);
   Map_FillCellRectByte2(0, x, z, width, height, 255);

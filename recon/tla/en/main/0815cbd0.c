@@ -1,8 +1,12 @@
-// Differ 6 of 228 (tla-en, 2026-11-08, -mtune=gba): the same add r1, sl rows; without the QUARTER asm, 12. The sheet
-// as (u8 *)work + 0x700 or through a block local: 6.
-// Measured 2026-11-05 (tla-en): differ 6 of 228. Left: the blitter's add r1, sl
-// before the size constants at three of the four quarters; the empty asm in
-// QUARTER closes the other three rows.
+// Differ 6 of 228 (tla-en, 2026-11-08, -mtune=gba), plain C with no device.
+// Left: at the first three quarters the listing sets the draw's x and y
+// before the sheet (add r1, sl); here the add comes first, a sched2 tie the
+// listing's fourth quarter breaks the other way (all four prio 149, settled
+// by luid). 2026-11-08: the empty asm at the head of each quarter is gone:
+// once-only blocks that each hold a draw, its release and the next blitter's
+// build give the same 6 (one block per quarter, as before, 12; the sheet as
+// (u8 *)work + 0x700, &work->sheet[0], sizes as 32 or x and y cast: 6).
+// Measured 2026-11-05 (tla-en): differ 6 of 228, with the barrier.
 
 // Draft of BattleEffect_RunSpiderWeb, effect kind 345: a spider web over the targets.
 
@@ -27,8 +31,8 @@
 // blitter mode is a constant, and the effect ends by chaining into the
 // summon canvas effect instead of closing the canvas.
 
-// Listing 228 instructions, draft 228, differ 28 (2026-10-26), with no
-// device. Each quarter is one statement macro, QUARTER, that builds its
+// History, under older tunes: listing 228 instructions, draft 228, differ 28
+// (2026-10-26), with no device. Each quarter was one statement macro, QUARTER, that builds its
 // blitter, draws and releases it inside do { } while (0): the block's loop
 // notes end CSE's block at each quarter, so the native's work + 0x700 is
 // formed again for each draw rather than hoisted out of the frame loop or
@@ -105,18 +109,14 @@ s32 Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void SummonEffect_RunCanvasMode1(void *action);
 
-// One quarter of the web, drawn with its own transparent blitter, built and
-// released around the draw.
-#define QUARTER(flags, x, y)                                                   \
-  do {                                                                         \
-    /* FAKEMATCH(barrier): the empty asm parts the size from the release before \
-     * it; as no asm, 12 of 228 instructions differ in tla-en. */                \
-    __asm__("");                                                                \
-    BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_TRANSPARENT, flags));  \
-    ((DrawRectangle)Ram_HeapSlots->unk64[1])(canvas, work->sheet, x, y, size,  \
-                                             size);                            \
-    HeapSlot_Release(HEAP_BLITTER);                                    \
-  } while (0)
+// Builds the transparent blitter for one quarter.
+#define LOAD_QUARTER(flags)                                                    \
+  BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_TRANSPARENT, flags))
+
+// Draws one quarter of the web with the blitter just built.
+#define DRAW_QUARTER(x, y)                                                     \
+  ((DrawRectangle)Ram_HeapSlots->unk64[1])(canvas, work->sheet, x, y, size,   \
+                                           size)
 
 void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
   struct EffectPosition middle;
@@ -153,11 +153,29 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
       *blend = (0x7c - (frame << 1)) | 0x1000;
 
     // The four quarters: the one picture as it is, mirrored, flipped, and
-    // both.
-    QUARTER(CLIP, 33, 41);
-    QUARTER(CLIP | COMPOSITE_FLIP_X, 64, 41);
-    QUARTER(CLIP | COMPOSITE_FLIP_Y, 33, 72);
-    QUARTER(CLIP | COMPOSITE_FLIP, 64, 72);
+    // both. Each blitter is built, drawn with and released before the next
+    // is built; each once-only block holds a draw, its release and the next
+    // build (as one block per quarter, 12 differ).
+    LOAD_QUARTER(CLIP);
+    do {
+      DRAW_QUARTER(33, 41);
+      HeapSlot_Release(HEAP_BLITTER);
+      LOAD_QUARTER(CLIP | COMPOSITE_FLIP_X);
+    } while (0);
+    do {
+      DRAW_QUARTER(64, 41);
+      HeapSlot_Release(HEAP_BLITTER);
+      LOAD_QUARTER(CLIP | COMPOSITE_FLIP_Y);
+    } while (0);
+    do {
+      DRAW_QUARTER(33, 72);
+      HeapSlot_Release(HEAP_BLITTER);
+      LOAD_QUARTER(CLIP | COMPOSITE_FLIP);
+    } while (0);
+    do {
+      DRAW_QUARTER(64, 72);
+      HeapSlot_Release(HEAP_BLITTER);
+    } while (0);
 
     // The battle resumes, hit cue 143; every target flashes at frame 10.
     if (frame == 32)
@@ -181,4 +199,5 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
   SummonEffect_RunCanvasMode1(effect);
 }
 
-#undef QUARTER
+#undef LOAD_QUARTER
+#undef DRAW_QUARTER

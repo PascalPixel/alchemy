@@ -1,4 +1,9 @@
 // Differ 20 of 2159 (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-08, measured again: each empty once-only block before the two fills
+// is worth 2 (22 without either, 24 without both); CopyWords_ as
+// direct calls, 139; an empty once-only block at any other statement,
+// constant locals for the fills' sizes and VRAM and palette addresses, the
+// first model's shade store moved, and a permuter run (1,100 candidates) leave 20 or more.
 // Left: slots 16 and 20 swapped (place, texture3), 16 rows; the first model's shade zero in r3 where the listing has r2, 4 rows. Was 26 (2026-11-08), 70 (2026-11-05). Rises on the way came from removing false forms (Ram_MapCellBuffer for the symbol PRE shared; the empty asm on count, 154 to 168, which also moved a pool off the listing).
 // 2026-11-08: the first model's kind now follows pixels as in the listing. That had cost &texture (pseudo 465) r7:
 // its live length went 74 to 76 and the 0x10000 constant (11 refs over 104) outranked it. In the u <= 35 block,

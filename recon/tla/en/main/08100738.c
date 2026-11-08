@@ -1,6 +1,8 @@
 // Differ 12 of 90 (tla-en, 2026-11-08, -mtune=gba). Left: the item mask is
 // built before Unit_Get here, after it natively (assigned after the call, or
-// masked in one expression, 24 to 26).
+// masked in one expression, 22 to 26). The pin re-measured 8 November: 14 without it.
+// Tried 8 November: the mask before the menu load, after the inventory read, in a
+// once-only block, the menu read first (12 to 38); a 10-minute permute found nothing below 12.
 // Every edition shared this form under the older tune (2026-11-07): ja 0x08100740, de 0x0810a904, es 0x0810688c,
 // fr 0x081028a8 and it 0x08100854 differ 12 of 90, as English at 0x08100738.
 // Draft of Item_Use (Func_08100738): applies the slot's action, then consumes

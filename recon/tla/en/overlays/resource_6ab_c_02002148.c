@@ -1,11 +1,12 @@
-// Draft, differ 6 of 186 (tla-ja, 2026-11-05): the Japanese form only;
-// measure with --edition tla-ja. The English C in
+// Differ 6 of 186 (tla-ja, 2026-11-08, -mtune=gba): unchanged; tla-en and tla-de
+// match. The Japanese form: measure with --edition tla-ja. The English C in
 // games/tla/src/scene/mars_lighthouse_star_room/s2148.c without its overlap
 // scan, and the position read through a union. Twins: 6ad Func_0200297c, 6ac
 // Func_020024e4, 6aa Func_0200263c. Left: actor->z loaded before the sum
-// natively, and the last store's zero after the address's copy.
+// natively, and the last store's zero after the address's copy (the zero is set
+// first, a tie in sched2). Tried without effect: z read in or out of the
+// once-only block, a mask or zero local, the sums and clamps respelled.
 #include "edition.h"
-
 
 #include "types.h"
 #include "call.h"
@@ -39,7 +40,12 @@ extern u8 gData_020023c4[];
 void Func_02002148(void) {
   struct MainRoutineWork *main = &gMainRoutineWork;
   struct Work020023c4 *work;
-  union { struct Vector3 v; s16 h; } positionU;
+  /* FAKEMATCH(temporary): the position held in a union beside a halfword;
+   * as a plain struct Vector3, 22 of 186 instructions differ in tla-ja. */
+  union {
+    struct Vector3 v;
+    s16 h;
+  } positionU;
 #define position positionU.v
 
   if (main->renderMode == 0) {
@@ -57,6 +63,8 @@ void Func_02002148(void) {
       if (Func_0200422c(actor->terrainId, actor->x, actor->z) == 7) {
         s32 i;
 
+        /* FAKEMATCH(temporary): velocityX stored through a union; as the plain
+         * store, 8 of 186 instructions differ in tla-ja. */
         ((union {
            s32 value;
            u16 half;
@@ -109,9 +117,8 @@ void Func_02002148(void) {
           }
         }
 #endif
-        /* FAKEMATCH(one-pass): the statement in a once-only block, whose end
-         * holds the order around it; as the plain statement, 8 of 236
-         * instructions differ in tla-en. */
+        // A once-only block: its end holds the order around it (as the plain
+        // statement, 10 of 186 instructions differ in tla-ja).
         do {
           x = actor->x += work->unk68 << 17;
         } while (0);

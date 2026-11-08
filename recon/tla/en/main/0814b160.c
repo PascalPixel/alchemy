@@ -1,5 +1,8 @@
-// Differ 16 of 222 (tla-en, 2026-11-08, -mtune=gba): order and the
-// registers of two constants, as below.
+// Differ 16 of 222 (tla-en, 2026-11-08, -mtune=gba): the marker loop's
+// head sets 36 (the actors offset) and work in swapped registers, and its tail
+// steps i and marker with r1 and r2 swapped. No gain (16 to 24) from marker stepped first,
+// ++i in the test, a for loop (both init and step orders), marker
+// set outside the guard, and an 8-minute permuter run (best 22).
 // Measured 2026-11-05 (tla-en): differ 16 of 222. Left: two hoisted constants
 // in swapped registers (36 and the stride), r0 and r1 at the head of the loop,
 // r1 and r2 at its tail.
@@ -121,6 +124,7 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
           y = pos.y;
           pos.y = y - 16;
           draw[0](canvas, work->sheet + 1728, pos.x - 8, y - 20, 16, 20);
+          // DEAD: always true here; the ROM keeps the test.
           if (frame >= start) {
             cel = ((frame - start) + marker->variant) / 6 % MARKER_CELS;
             draw[0](canvas, work->sheet + cel * 192, pos.x - 8, pos.y - 16, 16,

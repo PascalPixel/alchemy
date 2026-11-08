@@ -1,7 +1,8 @@
-// Differ 4 of 589 (tla-en, 2026-11-08, -mtune=gba); the same rows as on 2026-11-07.
-// 16 to 4: the side test as a conditional whose arms store their flag (each
-// arm then keeps its own value and test, as the native does); left: the
-// drain loop's pointer built after &screen (permute 7 minutes: no change).
+// Matches (tla-en, 2026-11-08, -mtune=gba; also tla-ja, de, es, fr and it).
+// 4 to 0: the drain loop reads its mote as &work->particles[SPARKS * 2 + i]
+// each pass in place of a stepped pointer (&screen is then built first, as
+// in the native). 16 to 4: the side test as a conditional whose arms store
+// their flag (each arm then keeps its own value and test, as the native does).
 // 38 to 16: SameSide with the user-left arm first, each arm the sign bit
 // of a & b or ~(a | b) (35; as b < 0 and b >= 0 the arms fold into jumps or
 // one select, 44 to 51), and the user->x read in a one-pass block (16).
@@ -289,7 +290,6 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
     // From frame 32 the motes fly; mote i turns toward the user's middle
     // from frame 32 + i and vanishes once it passes the user.
     if (frame > 31) {
-      struct EffectStep *mote;
       struct MotionObject *user;
       s32 userHalfHeight;
       struct BattleCamera *camera;
@@ -299,8 +299,8 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
       camera = Ram_HeapSlots->cameraWork;
       Render_ResetTransformState();
       Transform_SetLookAt(camera->eye, camera->pos);
-      for (i = 0, mote = &work->particles[SPARKS * 2]; i != MOTES;
-           i++, mote++) {
+      for (i = 0; i != MOTES; i++) {
+        struct EffectStep *mote = &work->particles[SPARKS * 2 + i];
         if (mote->variant >= 0) {
           s32 size = (i & 1) + 9;
           s32 userX;

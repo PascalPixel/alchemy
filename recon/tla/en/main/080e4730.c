@@ -1,7 +1,10 @@
-// Differ 2 of 332 (tla-en, 2026-11-08, -mtune=gba); the same two rows as below. Each device still pays: without the
-// first empty asm 18, the second 16, the pin on size 4, the asm on party 81; x and z read in the
-// other order 10, the once-only block dropped or moved 4.
-// Draft, differ 2 of 332 (tla-en, 2026-11-05); 1 with slots and pool offsets normalized, 1 with registers blind too. pictureTiles and the 63 mask are one reused local with the first loop's sprite (a temporary, to tag), party live to the picture's entry and sprite past the move (two empty asms with inputs, to tag), one pin on the copy's size for the argument order, one one-pass before x. The two rows left are the move call's arguments: the listing has mov r0, r8 between ldr r1 and ldr r3, the load of z, here both loads come first: z's load outranks the move at the tie and no form tried delays it.
+// Differ 2 of 332 (tla-en, 2026-11-08, -mtune=gba); the same two rows as below (z loads before mov r0, r8).
+// Re-measured 2026-11-08, each device tagged at its site: without the first empty asm 18, the second
+// 16, the pin on size 4, the asm on party 81 (a once-only block there 79); x and z read in the other
+// order 10, the once-only block dropped or moved 4. sprite reused for the picture tiles and the 63 mask
+// is a local reused for a second value (ordinary C, no tag). Tried without gain: z passed inline,
+// z through another base, x and z declaration order, y added late, a once-only block between x and z.
+// Draft, differ 2 of 332 (tla-en, 2026-11-05); 1 with slots and pool offsets normalized, 1 with registers blind too. pictureTiles and the 63 mask are one reused local with the first loop's sprite (a local reused, ordinary C), party live to the picture's entry and sprite past the move (two empty asms with inputs, tagged barrier), one pin on the copy's size for the argument order, one one-pass before x. The two rows left are the move call's arguments: the listing has mov r0, r8 between ldr r1 and ldr r3, the load of z, here both loads come first: z's load outranks the move at the tie and no form tried delays it.
 // Draft, differ 76 of 332 (tla-en, 2026-11-05); 38 with slots and pool offsets normalized, 6 with registers blind too. sprite first holds the 0x400 size (a fresh 0x400 for rippled needs it); rippled, pictureOffset and ripple declared in slot order; the two empty asms with inputs keep sprite and party live and are measurement, untagged: they show r5 and r6 are busy at those points in the native, nothing in the listing says why. Left is reload rotation: the native has one more reload before the owner's reload after the animation call, and 63 is a reload in r5.
 // Measured 2026-11-05 (tla-en): 116 of 332, unchanged; 114 with i = 0 before the first loop's
 // pointers. 4000 random declaration orders and party set anywhere earlier: no gain. First
@@ -114,6 +117,7 @@ void Func_080e4730(void) {
     s32 x;
     s32 z;
 
+    // A once-only block: dropped or moved, 4 of 332 differ.
     do {
     } while (0);
     x = owner->x;
@@ -121,6 +125,7 @@ void Func_080e4730(void) {
 
     Actor_SetPositionAndResetMotionFar(owner, x, y, z);
   }
+  /* FAKEMATCH(barrier): the form kept; as no asm, 18 of 332 instructions differ in tla-en. */
   asm("" : : "r"(sprite));
   party = gMainRoutineWork;
   Animation_SetIndexAndInitializeObjectsFar(owner, *(s32 *)(party + 532));
@@ -128,6 +133,7 @@ void Func_080e4730(void) {
   ((u8 *)owner->animation)[5] &= sprite;
   sprite &= ((u8 *)owner->animation)[7];
   sprite |= 128;
+  /* FAKEMATCH(barrier): the form kept; as no asm, 16 of 332 instructions differ in tla-en. */
   asm("" : "=r"(sprite) : "0"(sprite));
   ((u8 *)owner->animation)[7] = sprite;
   if (*(s8 *)(event + 394) == 3)
@@ -142,12 +148,14 @@ void Func_080e4730(void) {
 
     sprite = 0x400;
     {
+      /* FAKEMATCH(pin): the form kept; as a plain local, 4 of 332 instructions differ in tla-en. */
       register s32 size asm("r2") = sprite;
 
       Func_080e43a4(source, work, size);
     }
   }
   Animation_ApplyChildValueToFirstFar(owner->animation, 15);
+  /* FAKEMATCH(barrier): the form kept; as no asm, 81 of 332 instructions differ in tla-en. */
   asm("" : : "r"(party));
   pictureEntry = Resource_FindFreeEntry();
   sprite = VramCache_Load(pictureEntry, sprite, NULL);

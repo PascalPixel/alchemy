@@ -1,4 +1,11 @@
-// Differ 6 of 260 (tla-en, 2026-11-08, -mtune=gba), with three devices (S2 tags needed on
+// Differ 6 of 260 (tla-en, 2026-11-08, -mtune=gba; re-measured: no change). 2026-11-08:
+// the negation leaves the shift in shown's own pseudo and the 1 in a fresh
+// one (the native: the shift in a temporary, 1 in shown); casts, ternaries,
+// an else chain, a local for the result, u32 or u8 returns: no change or
+// worse (28 to 151). Each device re-measured (13, 22, 24 without), and an
+// empty once-only block in place of either barrier, 13 and 22. An 8-minute
+// permuter run: nothing under 6.
+// Earlier: with three devices (S2 tags needed on
 // adoption): work pinned to r9 (pin), and empty asms that read and write next
 // (barrier: keeps kind's join copy) and leader (barrier: one more reference,
 // so leader outranks slot). Plain moves that took it 41 to 6: the map work read

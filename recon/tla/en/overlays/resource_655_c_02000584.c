@@ -1,6 +1,7 @@
-// Differ 8 of 150 (tla-en, 2026-11-08, -mtune=gba): the shape grid sum's operand
-// order and sl (any spelling of the sum, 8), and cell->attributeB = 128 stored
-// before the height's shift. Older figures below predate it.
+// Matches (tla-en, 2026-11-08, -mtune=gba); ja, de, es, fr and it measure 0 too.
+// Closed from 8: the last call reads object->terrainId rather than through
+// terrain (4), and the grid's address is a local held for the whole function
+// (0). No device. Everything below is the history of older compilers.
 // Draft, differ 62 of 150, skeleton gap 12 (tla-en, 2026-11-01)
 // Func_020001d0 with actors 8 to 10 placed at the leader first and attributes
 // copied for set flags. Ported from 67F's Func_02000584, the same function; the
@@ -96,6 +97,8 @@ struct EffectView {
 
 void Func_02000584(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
+  // Holds the grid's address for the whole function.
+  u8 *grid = gMapShapeGrid;
 
   Func_02003c78(8, gMainRoutineWork.currentOwner);
   Func_02003c78(9, gMainRoutineWork.currentOwner);
@@ -117,7 +120,7 @@ void Func_02000584(u16 *list) {
     s32 next = flag + 1;
     u8 *terrain = &object->terrainId;
     struct MapCell *cells = map->layers[*terrain].cells;
-    u8 *shapes = gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
+    u8 *shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
 
     object->unk5c[0] = 3;
     if (GameFlag_Test(next)) {
@@ -135,7 +138,7 @@ void Func_02000584(u16 *list) {
 
       Func_02003cc0(id);
       cell->attributeB = 128;
-      *slot = Func_02003dd0(*terrain, shape, (ground >> 19) + 4);
+      *slot = Func_02003dd0(object->terrainId, shape, (ground >> 19) + 4);
       if (GameFlag_Test(flag))
         ObjectVisual_CopyAttributes(id, 9);
     }

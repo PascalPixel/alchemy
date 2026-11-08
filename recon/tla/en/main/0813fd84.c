@@ -1,4 +1,9 @@
-// Differ 38 of 2579 (tla-en, 2026-11-08, -mtune=gba; the same in ja, de, es, fr, it).
+// Differ 36 of 2579 (tla-en, 2026-11-08, -mtune=gba; the same in ja, de, es, fr, it).
+// 2026-11-08 (later), from 38: the closing shade ramp sets its column pointer in the j loop's
+// initializer, so c is built after j = 0 as in the listing (36). Re-tried: the mask as an s32 or
+// s8 inside the block, an s8 read of the byte, the and-or as one expression; the else arm's index
+// through a local objects pointer or as *(objects + m); the object loop's row and last stepped
+// in its for; the closing background id read into a local or a second once-only block: no better.
 // 2026-11-08, from 44: a once-only block around the closing gBgScroll[1].y = 32 puts the
 // store after the backdrop address (38); 0x670 is still built a step late. No other
 // once-only block, at or before any statement, goes under 38. Re-tried for the mask
@@ -1048,8 +1053,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
     if (v > 63) {
       v = 63;
     }
-    c = (u8 *)(i + (s32)work + 1792);
-    for (j = 0; j != 120; j++) {
+    for (j = 0, c = (u8 *)(i + (s32)work + 1792); j != 120; j++) {
       *c = v;
       c += 120;
     }

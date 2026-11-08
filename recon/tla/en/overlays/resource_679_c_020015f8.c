@@ -1,4 +1,10 @@
-// Differ 29 of 189 (tla-en, 2026-11-08, -mtune=gba; the same on 2026-11-06), allocation only: i declared first (29), z as
+// Differ 19 of 189 (tla-en, 2026-11-08, -mtune=gba): a dead self-update of a
+// global after left &= 0x1ff (tagged; any global works, a local or a second
+// once-only block does not) puts i and viewY back in r8 and sl, from 29. Left:
+// only the missing copy of the OAM address (below). Without the once-only block
+// 21; the update before kind 19, after attr 89; a separate oam and attr 19; an
+// 8-minute permute from 19 found nothing better.
+// Before: differ 29, allocation only: i declared first (29), z as
 // z - viewY - viewZ (157), attr before kind (31); direct gData_02002aa0 (29), view
 // without its pointer (57), permuter 5 minutes (35).
 // Draft, differ 29 of 189 (tla-en, 2026-11-05). Older notes below may predate this figure.
@@ -19,7 +25,7 @@
 // marker->oam repeated at the call, *attr++, and an inline helper. That one
 // missing register is the rest of the gap: the palette then stays in r7 instead
 // of ip, the 0 in ip instead of lr, and top and flip sit one register off. Two
-// more lines are the prologue's order of sub sp and the hi-register moves.
+// more lines were the hi-register moves, now closed.
 // if/else or a ternary for flip is worse (gap 15).
 #include "types.h"
 #include "call.h"
@@ -102,6 +108,8 @@ void Func_020015f8(void) {
     // without it).
     do {
       left &= 0x1ff;
+      /* FAKEMATCH(dead): the form kept; as nothing, 29 of 189 instructions differ in tla-en. */
+      Ram_HeapSlots->mapWork += 0;
     } while (0);
     kind = marker->kind;
     attr = marker->oam;

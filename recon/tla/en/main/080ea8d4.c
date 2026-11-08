@@ -1,20 +1,15 @@
-// Differ 10 of 141 (tla-en, 2026-11-08, -mtune=gba); the pins tagged, measured then.
-// 2026-11-07: the cell marked through struct MapCell
-// (its own alias set) reads x before the store with no empty asm or x local;
-// left: prologue order (sub sp, the list spill) and fp copied to r1 for r2.
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 12 of 141 in tla-en. First difference: this issues `sub sp, #4` earlier (row
-// 8) than the native does (row 11).
-// Near miss, differ 14 of 141 (2026-10-19; 26 before). The native spills
-// the list's start (sp 0) and keeps the map work in r11 and the 0x100000
-// step in r9, set after the first test: both are fixed here, the step set
-// in an if around the loop (26 -> 18; the plain for loop sets it before
-// the test, 52), with x - 0x100000 left to the pool as the native has it
-// (26 with the step). The owner's y is stored before its terrain height
-// (16) and the actor's x is read before its cell is marked (14). What
-// remains: the prologue (the native subtracts sp after its first movs and
-// spills the list after the map load), the 0xffff's order around the first
-// test, and the map's copy taking r1 where the native takes r2.
+// Differ 4 of 141 (tla-en, 2026-11-08, -mtune=gba); the pins re-measured then.
+// 8 November: the loop walks the list itself and a copy of its start, taken
+// after the map load, is the value spilled to sp 0 (10 -> 4): the prologue
+// order (sub sp, the spill after the map load) now matches. The map work is
+// struct MapWork from map.h. Left: the map's copy, made before the terrain
+// index is computed, takes r1 where the native's late reload takes r2; the
+// index spellings tried (a layer local, a terrain local, the cell computed
+// after the stores, + slot) give 4 or worse.
+// Older notes: the cell is marked through struct MapCell; the step is set in
+// an if around the loop (the plain for loop sets it before the test) with
+// x - 0x100000 left to the pool as the native has it; the owner's y is stored
+// before its terrain height.
 // Func_080ea7c0's sibling that also touches the four cells around each
 // actor. For each (actor, flag) entry until 0xffff it clears the actor's
 // motion flags and collision bit 0, shows its sprite, marks its map cell
@@ -33,17 +28,6 @@ struct ActorFlag {
   s16 flag;
 };
 
-struct RestoreLayer {
-  u8 unk00[0x138 - 0x108];
-  struct MapCell *cells;
-  u8 unk34[4];
-};
-
-struct RestoreMap {
-  u8 unk000[0x108];
-  struct RestoreLayer layers[1];
-};
-
 struct Actor *Actor_GetById(u32 actor);
 s32 Func_080eab70(struct Actor *object);
 void Actor_SetSingleChildFlagsFar(struct Actor *object,
@@ -57,30 +41,27 @@ void Func_080ea8a8(s32 x, s32 z, s32 layer, s32 height);
 s32 Func_08020310(s32 x, s32 z, s32 layer, s32 height);
 
 void Func_080ea8d4(struct ActorFlag *list) {
-  /* FAKEMATCH(pin): the map work held in r11; as a plain local, 14 of 141
+  /* FAKEMATCH(pin): the map work held in r11; as a plain local, 24 of 141
    * instructions differ in tla-en. */
-  register struct RestoreMap *map asm("r11") =
-      (struct RestoreMap *)Ram_HeapSlots->mapWork;
-  struct ActorFlag *entry;
+  register struct MapWork *map asm("r11") = Ram_HeapSlots->mapWork;
+  struct ActorFlag *first = list;
   struct Actor *owner;
-  s32 x;
-  /* FAKEMATCH(pin): the step held in r9; as a plain local, 35 of 141
+  /* FAKEMATCH(pin): the step held in r9; as a plain local, 33 of 141
    * instructions differ in tla-en. */
   register s32 step asm("r9");
 
-  entry = list;
-  if (entry->actor != 0xffff) {
+  if (list->actor != 0xffff) {
     step = 0x100000;
     do {
-      struct Actor *object = Actor_GetById(entry->actor);
-      u16 flag = entry->flag;
+      struct Actor *object = Actor_GetById(list->actor);
+      u16 flag = list->flag;
       s32 slot = Func_080eab70(object);
       struct MapCell *cell = &map->layers[object->terrainId].cells[slot];
 
       object->motionFlags = 0;
       object->collisionFlags &= ~1;
       Actor_SetSingleChildFlagsFar(object, 0);
-            cell->collisionCode = 0xff;
+      cell->collisionCode = 0xff;
       Func_080ea8a8(object->x + step, object->z, object->terrainId,
                     object->terrainHeight);
       Func_080ea8a8(object->x - 0x100000, object->z, object->terrainId,
@@ -95,10 +76,10 @@ void Func_080ea8d4(struct ActorFlag *list) {
       } else {
         Actor_SetMode(object, 1);
       }
-      entry++;
-    } while (entry->actor != 0xffff);
+      list++;
+    } while (list->actor != 0xffff);
   }
-  Func_080eaa14(list);
+  Func_080eaa14(first);
   owner = Actor_GetById(Party_GetLeaderActor());
   if (Func_08020310(owner->x, owner->z, owner->terrainId, owner->terrainHeight))
     owner->terrainHeight = owner->y =

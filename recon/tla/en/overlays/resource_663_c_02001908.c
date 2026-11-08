@@ -1,10 +1,18 @@
-// Differ 2 of 266 (tla-en, 2026-11-08, -mtune=gba). Also tried 2026-11-08: the
-// sprites in locals (either order), value after counter (2); the counter stored
-// directly, moved after renderMode or before the priority copy (14 to 29).
-// One tie, the same as 664's Func_02000d48: the counter's address (add r2, r8) ahead of the sprite's strb in the native. Func_02000d48's twin, with another ending.
+// Differ 2 of 266 (tla-en, 2026-11-08, -mtune=gba). The counter is now stored
+// through struct EventWork's unk16a as Air's Rock's Func_020010b4 does (2, in
+// place of the pointer-and-value block); through an s16 or u16 pointer or an
+// index, 16; in a once-only block, 35. Also tried 2026-11-08: the sprites in
+// locals (either order), value after counter (2); the counter moved after
+// renderMode or before the priority copy, or its address taken early (14 to
+// 29); near's 0 in a once-only block (8) or the positions declared as
+// Func_020010b4 does (98); 8 permuter minutes found nothing better.
+// One tie in sched2 (both priority 11, RTL order wins): the native computes
+// the counter's address (add r2, r8) ahead of the sprite's strb, as in 664's
+// Func_02000d48. Func_02000d48's twin, with another ending.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
+#include "field/event_work.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "field_sprite.h"
@@ -61,8 +69,8 @@ void Func_02001908(struct Actor *shot) {
       s32 *leaderPosition = &leader->x, *shotPosition = &shot->x;
 
       near = 0;
-      /* FAKEMATCH(barrier): the empty asm on near changes its allocation rank; as no
-       * asm, 4 of 266 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): the empty asm holds near's 0 ahead of the position
+       * arguments; as no asm, 4 of 266 instructions differ in tla-en. */
       asm("" : "=r"(near) : "0"(near));
       if (gMainRoutineWork.renderMode == 2) {
         if (Func_020018d8(leaderPosition, shotPosition) <= 16 &&
@@ -80,12 +88,7 @@ void Func_02001908(struct Actor *shot) {
       leader->priorityFlags &= ~1;
       ((struct FieldSprite *)leader->animation)->priority =
           ((struct FieldSprite *)shot->animation)->priority;
-      {
-        s16 *counter = (s16 *)(work + 0x16a);
-        s32 value = 200;
-
-        *counter = value;
-      }
+      ((struct EventWork *)work)->unk16a = 200;
       gMainRoutineWork.renderMode = 0;
       *hit = 1;
       ((u8 *)shot)[0x63] = 1;

@@ -1,5 +1,10 @@
-// Differ 6 of 376 (tla-en, 2026-11-08, -mtune=gba): two sched2 ties, the argument
-// move against the third store, and r1 and the pool load against a store.
+// Differ 4 of 376 (tla-en, 2026-11-08, -mtune=gba): one sched2 tie, r1 and the
+// pitch global's pool load hoisted above the Data_03001244 store.
+// 2026-11-08: Render_ResetTransformState declared returning u32 (permuter;
+// tagged) took 6 to 4, fixing the argument move against the eye offset's third
+// store; the two global stores swapped, retyped, through a pointer, split by a
+// once-only block, a shared zero local, pitch[0] or 10 minutes more of
+// permuting left 4.
 // 2026-11-07: the eye offset cleared after the
 // pitch call, as the twin does, took 25 to 6; reordering its stores, scoping it
 // in a block, the two global stores swapped or retyped did not help.
@@ -49,7 +54,7 @@ void Fade_FromBlack(s32 vblanks);
 s32 Trig_Cos(s32 angle);
 s32 Trig_Sin(s32 angle);
 void Projection_Set(s32 distance, s32 nearPlane, s32 farPlane);
-void Render_ResetTransformState(void);
+u32 Render_ResetTransformState(void); // Returns void; see the tag.
 void SceneTransform_ApplyPosition(void *position);
 void SceneTransform_ApplyYaw(s32 yaw);
 void SceneTransform_ApplyPitch(s32 pitch);
@@ -67,6 +72,8 @@ struct EyeOffset {
 };
 
 void Func_0802b998(void) {
+  /* FAKEMATCH(signature): Render_ResetTransformState declared returning u32;
+   * as void, 6 of 376 instructions differ in tla-en. */
   u8 *perspective;
   u8 *camera;
   u8 *affineWork;

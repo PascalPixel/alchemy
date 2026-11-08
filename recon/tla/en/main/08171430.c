@@ -1,4 +1,11 @@
-// Differ 28 of 828 (tla-en, 2026-11-08, -mtune=gba): as below.
+// Differ 26 of 828 (tla-en, 2026-11-08, -mtune=gba).
+// The dead read of shade moved to the first argument settles the movs r1, #4
+// tie (28 to 26); the two devices, removed, still cost (no locals 32, a plain
+// 4 297, out = pos twice 355). Tried 2026-11-08 without gain: pos = &screen
+// first in the for init or before it (32), before the circles (61); &screen in
+// the ring loop (28 to 333); growth as (frame - 16) << 9 (253), a default-first
+// if (43), arms swapped (30).
+// Left: the preheader's RTL order (16 rows) and frame in r4 against r1 (6).
 // 2026-11-07: camera->pos and frame << 8 are PRE temporaries numbered in
 // hash-bucket order (camera+12 hash 150, frame<<8 156 of 345); 7+ unused locals
 // after i raise camera's regno so the slots swap (34 to 28, tagged). Left: the
@@ -212,7 +219,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
   s32 i;
   /* FAKEMATCH(dead): seven unused locals that raise camera's register
    * number, so gcse's hash puts camera->pos after frame << 8 and their
-   * slots come out as the listing's; as no locals, 34 of 828 instructions
+   * slots come out as the listing's; as no locals, 32 of 828 instructions
    * differ in tla-en. */
   s32 unused1;
   s32 unused2;
@@ -501,7 +508,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
     /* FAKEMATCH(dead): a read of shade the compiler folds to nothing, which
      * spills shade to the listing's slot; as a plain 4, 297 of 828 instructions
      * differ in tla-en. */
-    Func_08158ce0(4, 4 + ((shade & 255) >> 8));
+    Func_08158ce0(4 + ((shade & 255) >> 8), 4);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

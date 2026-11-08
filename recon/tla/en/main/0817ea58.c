@@ -1,4 +1,9 @@
 // Differ 58 of 3921 (tla-en, 2026-11-08, -mtune=gba): as below; both empty asms now tagged.
+// Sixth round, 8 November, unchanged: the third phase's z = (z - 0x800) - ay * 40 in five
+// spellings, z declared with its zero, the step list reversed, Random16 and the stores
+// reordered (58 to 60); a once-only block or empty asm after BattleEffect_SpawnObjects(1,
+// 663, 1), which the native calls before its loop constants (60 to 62); a once-only
+// block in place of the second empty asm at every statement near it (62 or worse).
 // Fifth round, 8 November: the two asms re-measured (i's cut 60 without, 60 as
 // &DECODE_BUFFER[i * 0x400], 0x400 * i, (u32)i or a cast address; the empty asm 62
 // without and 62 as a once-only block), so both stay, tagged. Third phase: z and i

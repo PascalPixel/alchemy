@@ -1,4 +1,9 @@
 // Differ 14 of 145 (tla-en, 2026-11-08, -mtune=gba).
+// 8 November, second pass: the dead device still measures (without it 24, the plain sink
+// loop 29). No gain: fade and blend swapped in the rise loop (24), step++ before the store or
+// as step += 1, the blend built 16 - fade first, step + 1 through blend with step = blend (14),
+// >> 2 (92), one expression (42), unsigned fade or blend (78), i first (16), once-only blocks
+// (14). 8 minutes of permute again reached 12 only by reusing i for fade (wrong, not kept).
 // 8 November: 8 minutes of permute reached 12 only by reusing the loop counter i for fade (wrong behaviour, not kept); fade in an inner block 32, step + 1 in its own local 14, without the dead device 24.
 // 8 November: cue 298 as a plain constant (fade no longer reused for it) gives 16 to 14;
 // the sink loop now matches. Left: the rise loop's step + 1 in r0 and its quotient in r1, the

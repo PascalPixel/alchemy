@@ -1,13 +1,15 @@
-// Differ 16 of 497 (tla-en, 2026-11-08, -mtune=gba), down from 334: x &= 511 in place and
+// Matches (tla-en, 2026-11-08, -mtune=gba; all six editions measure 0): the picture's 576-byte
+// allocation is an inline helper, so CSE no longer shares the constant with VramCache_Load's size
+// (permute found it; without it, 16), and an empty once-only block after y's sum in each marker
+// keeps sched2 from hoisting x's reload for x & 511 above y + 4 (without it, 8). Three tagged pins
+// remain (originZ r6, x r9, arg r0), re-measured on the match. Earlier, 16, down from 334: x &= 511 in place and
 // before y &= 255 (the native ties x & 511 to x); the pointer to originZ held
 // in r6 and set just before the lift call (unpinned, tile + n outranks it in
 // global.c, 0.129 against 0.111, takes r6 and leaves frame 32 where the native
 // spills entry + 12 and the second &scrollY for frame 40); side read inside the
 // marker block; entry++ inside the marker call; the markers' size bits held in
 // one function-wide local (permute found it; as a literal, 95). Three tagged
-// pins (originZ r6, x r9, arg r0). Left: the 576 size kept in r6 across
-// Heap_AllocEwram where the native loads it twice (CSE shares the constant and
-// local-alloc gives it a register; 6 instructions), and the branches past it.
+// pins (originZ r6, x r9, arg r0).
 // Before 6 November (the notes below, with frame and pins since settled):
 // Tried 2026-11-06: the row loop built from a label and goto (no change: both
 // compiles keep &scrollY in a slot from before the loop); 10 minutes of permute
@@ -79,18 +81,21 @@ void Func_02005770(const void *source, void *destination);
 void Func_02005790(void *entry, s32 priority);
 s32 Func_02002ce8(s32 side);
 
+// The picture's buffer: 576 bytes of EWRAM, the size VramCache_Load copies.
+static inline void *TrialRoadLink_AllocPicture(void) { return Heap_AllocEwram(576); }
+
 // left and right are the arms' offsets, each opening with its sign, so the
 // subtractions compile in the order the native has them.
 #define MARKER(left, right, which, tileAdd)                                    \
   do {                                                                         \
     s32 lift;                                                                  \
-    /* FAKEMATCH(pin): originZ in r6; as a plain s32 *, 316 of 497 */          \
+    /* FAKEMATCH(pin): originZ in r6; as a plain s32 *, 304 of 497 */          \
     /* instructions differ in tla-en. */                                       \
     register s32 *originZ asm("r6");                                           \
-    /* FAKEMATCH(pin): x in r9; as a plain s32, 377 of 497 instructions */     \
+    /* FAKEMATCH(pin): x in r9; as a plain s32, 365 of 497 instructions */     \
     /* differ in tla-en. */                                                    \
     register s32 x asm("r9");                                                  \
-    /* FAKEMATCH(pin): arg in r0; as a plain s32, 60 of 497 instructions */    \
+    /* FAKEMATCH(pin): arg in r0; as a plain s32, 44 of 497 instructions */    \
     /* differ in tla-en. */                                                    \
     register s32 arg asm("r0");                                                \
     s32 side = gMainRoutineWork.entrance & 1;                                  \
@@ -104,6 +109,9 @@ s32 Func_02002ce8(s32 side);
     originZ = &work->originZ;                                                  \
     lift = Func_02002ce8(arg);                                                 \
     y = (object->z - *originZ) / PIXELS(16) + work->scrollY - lift * 36 + 4;   \
+    /* Once-only: ends the block, so y + 4 is scheduled before x & 511. */   \
+    do {                                                                       \
+    } while (0);                                                               \
     x &= 511;                                                                  \
     y &= 255;                                                                  \
     *cursor++ = 0;                                                             \
@@ -138,7 +146,7 @@ void Func_020051a0(void) {
     if (++work->fade == 1) {
       void *buffer;
       Dma_Set(Data_020062b4, (void *)0x050003c0, 0x80000010, REG_DMA3);
-      buffer = Heap_AllocEwram(576);
+      buffer = TrialRoadLink_AllocPicture();
       Func_02005770(gData_020062d4, buffer);
       VramCache_Load(*vramEntry, 576, buffer);
       Heap_Release(buffer);

@@ -1,4 +1,5 @@
-// Differ 54 of 110 (tla-en, 2026-11-08, -mtune=gba; the store before i = 0, 66; no barrier, 74): the wavy scroll lines of the layer, read by a DMA each scanline; a barrier keeps the loop's top test, and register allocation is left (line sl, a r8, s1 r5 here; native line r5, a sl, s1 r8).
+// Differ 48 of 110 (tla-en, 2026-11-08, -mtune=gba): the wavy scroll lines of the layer, read by a DMA each scanline; a barrier keeps the loop's top test, and register allocation is left (p sl, a r8, s1 r5 here; native p r5, a sl, s1 r8).
+// 2026-11-08: the loop writes through a block-scoped pointer copied from line (54 to 48: line then takes a low register outside the loop, as the native's r5). Re-measured: without the barrier 78. Not better: p from Data_02006340 (48), line block-scoped at the reload (68), the store before i = 0 (60), line++ as its own statement (54), the steps in the for list (54), sine calls inline (54). 8 minutes of permute: nothing better.
 // Left, one cause: the native keeps a test at the loop's top (cmp r6, #160, beq) with i known to be 0; here CSE folds it, whatever the
 // spelling (for, while, labels, if around a do). With those refs i ranks first in the native (r6), line r5, the first sine r8; here line r8, the first sine r5, i r10.
 // 2026-11-06: jump.c copies the exit test before the loop and CSE folds it in every plain form (for, while, for(;;) with break, i set from the stored flag, a known-true inner if); a goto loop keeps the top test but is never rotated (83). In the native s1 also goes to r8, not local-alloc's r5, so it is live outside one block there. Indexing Data_02006340[i] 95, the comma increment 74, no step locals 114.
@@ -35,7 +36,7 @@ void Func_020002a4(void) {
 
     i = 0;
     *(s32 *)&layer->unk08[20] = 0;
-    /* FAKEMATCH(barrier): asm("" : "+r"(i)) keeps the loop's top test; as i = 0 alone, 74 of 110 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): asm("" : "+r"(i)) keeps the loop's top test; as i = 0 alone, 78 of 110 instructions differ in tla-en. */
     asm("" : "+r"(i));
     frame = gFrameCount;
     z = *(s16 *)((u8 *)layer + 6);
@@ -44,12 +45,16 @@ void Func_020002a4(void) {
     stepB = 0x1320;
     a = z * stepA + (frame << 10);
     b = z * stepB - (frame << 10);
-    for (; i != 160; i++) {
-      s32 s1 = sine(a);
-      s32 s2 = sine(b);
-      *line++ = ((s1 * 3 + s2 * 7) >> 19) + x;
-      b += 0x1320;
-      a += 0x3300;
+    {
+      u16 *p = line;
+
+      for (; i != 160; i++) {
+        s32 s1 = sine(a);
+        s32 s2 = sine(b);
+        *p++ = ((s1 * 3 + s2 * 7) >> 19) + x;
+        b += 0x1320;
+        a += 0x3300;
+      }
     }
     line = Data_02006340;
     *(volatile u16 *)0x04000018 = line[0];

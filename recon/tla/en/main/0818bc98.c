@@ -1,11 +1,11 @@
-// Differ 2 of 1251 (tla-en, 2026-11-08, -mtune=gba); the same row as on 2026-11-07.
+// Matches (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-08: variant 0 halves the flash with scale /= 2, not scale >>= 1; the
+// division puts scale's sign ahead of the flash loop, which closed the last
+// pair (mov sl after asrs r6), 2 to 0.
 // 2026-11-07: the texture's pixels as u8 * (alias set apart from the model's
-// vertices) put mov r8 ahead of the vertices store (4 to 2). Left: mov sl
-// after asrs r6 at the flash loop's preheader; gcse's PRE inserts mouthY - 64
-// (expression 262) before scale >> 31 (272), and reload's copy to sl then wins
-// sched2's LUID tie. A fix needs scale's sign hashed before the flash loop.
-// Draft, differ 32 of 1251, skeleton gap 14 (tla-en, 2026-11-01)
-// All that is left is order, with the same instructions and registers. In every
+// vertices) put mov r8 ahead of the vertices store (4 to 2).
+// 2026-11-01, differ 32 of 1251, skeleton gap 14 (historical; since closed):
+// all that was left was order, with the same instructions and registers. In every
 // site a store to the stack comes earlier in the
 // native than sched2 puts it here: the frame's store before the mode's reload
 // at the loop's entry and foot; the outgoing arguments' strs before the reload
@@ -444,7 +444,7 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
           s32 alpha = 128 - age * 8;
 
           if (effect->variant == 0)
-            scale >>= 1;
+            scale /= 2;
           else if (effect->variant == 1)
             scale = scale * 3 / 2;
           if (alpha > 0)

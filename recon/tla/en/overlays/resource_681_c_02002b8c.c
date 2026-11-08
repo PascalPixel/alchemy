@@ -1,8 +1,7 @@
-// Differ 19 of 131 (tla-en, 2026-11-08, -mtune=gba), under -Os. Left: the native loads frame's 0 from
-// the pool (a HI constant, and the jump over the pool); here CSE reuses a word zero.
-// Older notes below may predate this figure.
-// Measured under -Os, 5 November 2026: differ 24 (tla-en); notes below may predate it.
-// Draft, differ 75 of 131: the frame callback of the room where persons 8 to 16
+// Matches (tla-en, 2026-11-08, -mtune=gba), under -Os: frame and pending are both read through
+// pointers into gSceneState, which gives the native pool load of frame's 0 and its pool after the loop
+// (as state->frame, 19 of 131 differ).
+// The frame callback of the room where persons 8 to 16
 // sway: all stop while flag 0x106 is set or the event work holds them; else,
 // once per pending step, at frame 60 of each 240 they lean one way and at 180
 // come back.
@@ -32,6 +31,7 @@ void Func_02002b58(s32 id, s32 x, s32 z);
 void Func_02002b8c(void) {
   struct SwayState *state = &gSceneState;
   u16 *pending = &state->pending;
+  u16 *frame = &state->frame;
   void *work = Ram_HeapSlots->eventWork;
   s32 stopped = GameFlag_Test(0x106);
   s32 id;
@@ -50,7 +50,7 @@ void Func_02002b8c(void) {
   if (*pending == 0)
     return;
 step:
-  switch (state->frame) {
+  switch (*frame) {
   case 60:
     Func_02002b58(8, 0, 3);
     Func_02002b58(9, 3, 0);
@@ -70,8 +70,8 @@ step:
     } while (id <= 16);
     break;
   }
-  if (++state->frame == 240)
-    state->frame = 0;
+  if (++*frame == 240)
+    *frame = 0;
   if (--*pending != 0)
     goto step;
 }

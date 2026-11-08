@@ -1,4 +1,11 @@
 // Differ 6 of 1139 (tla-en, 2026-11-08, -mtune=gba), the same scroll-zero rows.
+// 2026-11-08: sched2 puts movs r3, #0 first because the scrollU byte store
+// precedes the mesh reload in RTL (prio 12 against kind's 11); the listing's
+// order needs both scroll stores after the reloads, and every such store order
+// (kind, texture, mesh, vertices, then the scrolls: 64) slips the reload
+// registers; an 8-minute permuter run found nothing. The discarded reads of
+// bg2pa and bg2pd are // DEAD: notes, not a
+// device (S2): as plain stores, 10.
 // 2026-11-07: lift scaled in its declaration fixes the asrs order; the dome
 // model stores kind second and scrollU third (search of all 5040 orders and
 // texture placements). Left, sched2 only: the listing sets the scroll zero
@@ -11,7 +18,7 @@
 // Left:
 // - bg2pa and bg2pd: the listing does a discarded ldrh before each strh, the 2
 //   missing instructions, as 0815b764 does. A volatile 16-bit bitfield does not
-//   produce it (gap 31) and any volatile form would be a device.
+//   produce it (gap 31); the discarded volatile read does (ordinary C, S2).
 // - The dome model's store order is a search result, not a reading. kind is
 //   stored late only so reload gives mesh and projected the listing's registers
 //   (r1 and r2 want kind's r1 free first); stored second, as the listing shows,
@@ -377,8 +384,8 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
       {
         s32 ratio = 0x2000 / size;
 
-        /* FAKEMATCH(volatile): a discarded read before each store, the form
-         * kept; as plain stores, 4 of 1139 instructions differ in tla-en. */
+        // DEAD: the ROM reads each scale before storing it and drops the value
+        // (as plain stores, 10 of 1139 differ).
         *(volatile u16 *)&work->bg2pa;
         work->bg2pa = ratio;
         *(volatile u16 *)&work->bg2pd;

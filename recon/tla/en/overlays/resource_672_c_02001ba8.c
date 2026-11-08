@@ -1,5 +1,9 @@
-// Differ 16 of 69 (tla-en, 2026-11-08, -mtune=gba), under -Os: i in r0 where the
-// native has r4, and the fade's registers; older figures below predate it.
+// Differ 16 of 69 (tla-en, 2026-11-08, -mtune=gba), under -Os. With the shift
+// as the value (alpha = fade << 8; alpha |= 16 - fade) i now takes r4 as the
+// native does; left is next in r0 (native r1) and the division temp, which
+// here ties to fade in r1 where the native keeps fade apart in r0 and the temp
+// in r3. As 16 - fade | fade << 8, i falls to r0 (also 16). Older figures and
+// notes below predate this.
 // Draft, differ 50 of 69, skeleton gap 6/8 (tla-en, 2026-11-01)
 // The twin Func_02000be8 opens with this same fade. The native rebuilds its
 // constants every pass and compares with 352 (blt), which is a label-and-goto
@@ -54,9 +58,9 @@ void Func_02001ba8(void) {
       if (i >= 17 && i <= 79) {
         s32 next = blend + 1;
         s32 fade = next / 4;
-        u32 alpha = 16 - fade;
+        u32 alpha = fade << 8;
 
-        alpha |= fade << 8;
+        alpha |= 16 - fade;
         REG_BLDALPHA = alpha;
         blend = next;
       }

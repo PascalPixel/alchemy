@@ -1,41 +1,15 @@
-// Differ 26 of 126 (tla-en, 2026-11-08, -mtune=gba).
-// 7 November: written as overlay 674's Func_02003684 (box bytes a and b as locals,
-// fromX narrowed in place, the step as (i + 1) * 65536): 28 to 26, allocation left.
-// Before: differ 28 of 126 (tla-en, 2026-11-06). Left: scheduling of the map reads and
-// found in r3, not r2 (allocation). x, z, fromX, fromZ in the native's read
-// order, wide then shifted, gives 44 (twice); the permuter's best was 66.
-// Draft, differ 28 of 126 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 28 of 126 (tla-en); older figures below predate it.
-// Draft, differ 60 of 126, skeleton gap 3 (tla-en, 2026-11-01)
+// Matches (tla-en, 2026-11-08, -mtune=gba); also differ 0 in tla-ja, tla-de, tla-es, tla-fr and tla-it.
+// Before: differ 26 of 126 (tla-en, 2026-11-08). Closed by three plain-C changes, no device:
+// both box sums (x and z before their >> 20) computed ahead of the map reads; the
+// found index held in fromX (s32) instead of a u16 found; and the map's 0x148 read
+// shifted into b, which is dead by then, before fromX narrows it. Each local reuse is
+// ordinary C (S2). The same listing as overlay 674's Func_02003684, matched the same way.
 // For a pushable object (its animation one of the six kinds in gData_02004ca4)
 // copies the cells under its box (gData_02004cb0: four signed bytes a kind, in
 // sixteenths of a cell) from the map's spare area (Func_02004a54) and fills both
 // layers' byte 2 there with 255; returns 1, or 0 for an object of no known kind.
-// The same listing as overlay 674's Func_02003684, whose search this takes.
-// The compiler change closed nothing by itself. Rebuilt from 674's draft: 93 to
-// 60, no device. The search stays a goto loop: for, while and break hoist the
-// step (gap 12). (i << 16) + 65536 is what keeps the listing's step; i++ gives
-// gap 5, next = i + 1 gap 3.
-// Left, gap: the order of the map reads against x's >> 20 and their narrowing.
-// fromX = (u16)fromX after both reads, in place of toX and toZ, reaches differ 56,
-// gap 0, as 674 does. It is not used here: it reuses a local, which needs a
-// ruling, and the native keeps the wide value and the narrowed one in different
-// registers (r1, r2), so it is not the source's form either. A separate narrowed
-// local gives gap 3 to 5.
-// Left, allocation (read from the lreg and greg dumps at differ 56):
-// 1. The native gives i r1 and kind << 16 r4; this gives them r4 and r1. Priority
-// is i 7 refs over 28 insns, the shift 4 over 13, so the shift goes first. One
-// more ref on i, or i shorter than 23 insns, would swap them. A later i = 0, a
-// 32-bit kind (folds to ldrh) and declaration orders do not.
-// 2. The native gives found r2, then found * 4 r2, abs(box 0) r1 and box 1 r1;
-// this gives found r3 (it prefers r3 and does not conflict with it), the offset
-// r1, and r2 for the other two. The offset (5 refs over 17) loses to box 1 (5
-// over 15). The instruction stream fixes those counts, so the native looks like
-// one pseudo for found and its offset. found *= 4 builds that (reg 45, 8 refs
-// over 21) but is the same reuse, stays at differ 56 and takes r1, not r2, so
-// it does not settle this. Tried, no gain: flat table, found as s32, u32 or
-// (u16)i, box bytes and absolute values as locals, height in two steps, swapped
-// compares, an ABS macro.
+// The search stays a goto loop: for, while and break hoist the step (a for loop
+// gives differ 29); (i + 1) * 65536 and (i << 16) + 65536 both match.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -57,7 +31,6 @@ s32 Func_020040ec(s32 id) {
   s16 i = 0;
   s32 next;
   u32 index;
-  u16 found;
   s32 a, b;
   s32 fromX, fromZ;
   s32 width, height, x, z;
@@ -70,18 +43,20 @@ s32 Func_020040ec(s32 id) {
     if (index <= 5 && (u16)kind != gData_02004ca4[index])
       goto again;
   }
-  found = i;
-  if (found == 6)
+  fromX = (u16)i;
+  if (fromX == 6)
     return 0;
-  a = gData_02004cb0[found][0];
-  width = (Abs(a) + Abs(gData_02004cb0[found][2])) >> 4;
-  b = gData_02004cb0[found][1];
-  height = (Abs(b) + Abs(gData_02004cb0[found][3])) >> 4;
-  x = (object->x + (a << 16)) >> 20;
-  fromX = *(s32 *)(map + 0x148) >> 20;
-  z = (object->z + (b << 16)) >> 20;
+  a = gData_02004cb0[fromX][0];
+  width = (Abs(a) + Abs(gData_02004cb0[fromX][2])) >> 4;
+  b = gData_02004cb0[fromX][1];
+  height = (Abs(b) + Abs(gData_02004cb0[fromX][3])) >> 4;
+  x = object->x + (a << 16);
+  z = object->z + (b << 16);
+  b = *(s32 *)(map + 0x148) >> 20;
+  x >>= 20;
+  z >>= 20;
   fromZ = *(s32 *)(map + 0x14c) >> 20;
-  fromX = (u16)fromX;
+  fromX = (u16)b;
   Func_02004a54(x, z, width, height, x + fromX, z + (u16)fromZ);
   Map_FillCellRectByte2(0, x, z, width, height, 255);
   Map_FillCellRectByte2(2, x, z, width, height, 255);

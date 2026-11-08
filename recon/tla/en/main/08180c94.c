@@ -1,4 +1,9 @@
-// Differ 4 of 575 (tla-en, 2026-11-08, -mtune=gba): the same two argument ties.
+// Differ 2 of 575 (tla-en, 2026-11-08, -mtune=gba), from 4: the disc's scale is
+// a local set once before the frames, so its 0x10000 is loaded at the call
+// after size, as the native's. Left: one argument tie, `add r2, sp, #44`
+// (&source) before `adds r1, r4` (place); tried a source pointer local
+// (function level 80, in the block 11), an array source, request for place;
+// a 7-minute permute found nothing better.
 // 2026-11-07: from 14. The model's vertices as s32 * (a void * store aliased
 // the texture word and held its store back); one sparks pointer shared by the
 // burst and the draw loop (the pool register r0); delay = 0 apart from i = 0;
@@ -193,6 +198,10 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
   s32 ringOffset;
   s32 ringX;
   s32 discY;
+  // The disc's scale, 1.0 for the whole scene: one constant in a local, set
+  // before the frames, so reload loads it at the call (as 0x10000 in place,
+  // 4 of 575 differ in tla-en).
+  s32 scale;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -213,6 +222,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
   work->fadeFrames = 24;
   work->fadeStep = 0;
 
+  scale = 0x10000;
   frame = 0;
   burst = -80 * 8;
 next_frame:
@@ -334,7 +344,7 @@ next_frame:
     size = 128;
     if (grow <= 64) {
       size = grow * 2;
-      Func_0815b434(gMapCellBuffer, size, 0x10000);
+      Func_0815b434(gMapCellBuffer, size, scale);
     }
     Func_0818caa8(gMapCellBuffer, i >> 16, discY >> 16, size);
     if (frame == 56) {

@@ -1,8 +1,13 @@
 // Differ 12 of 150 (tla-en, 2026-11-08, -mtune=gba).
-// Draft, differ 14 of 150 (tla-en, 2026-11-05). Each of the 14 colours of BG palette 3
-// steps one unit per channel toward gData_020026c0, every 10 frames, until none changes:
-// the fade written as Func_02001108 writes it. Left: palette and table swap r4 and r3 on
-// their way to r8 and r11, and one add's place.
+// Each of the 14 colours of BG palette 3 steps one unit per channel toward
+// gData_020026c0, every 10 frames, until none changes: the fade written as
+// Func_02001108 writes it. Left: the palette pointer and the table address
+// swap r4 and r3 on their way to r8 and r11 (the native gives the palette r8),
+// and one add's place. Tried on 8 November, none better: the for's init or
+// step reordered (14 to 18), the palette set before the for (12 to 18), a
+// do-while for the outer loop, declaration orders, s32 i, s16 or const table,
+// a table pointer local (98), the table read before the colour (62), an
+// unsigned `changed`; eight minutes of permute found nothing below 12.
 #include "types.h"
 #include "call.h"
 #include "system/io_reg.h"

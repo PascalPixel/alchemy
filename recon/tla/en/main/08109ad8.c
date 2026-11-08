@@ -1,18 +1,20 @@
 // Differ 24 of 205 (tla-en, 2026-11-08, -mtune=gba): r8 and r10 swapped, as below.
-// Draft, differ 24 of 205, skeleton gap 0 (tla-en, 2026-11-01)
 // Twin of ☀️'s Shop_ChooseMember (games/tbs/src/shop/shop/sell.c): picks the
 // party member whose items the shop works on (sell, repair or the third
 // action), four members a page, with ⚓️'s party cursor helper (Func_08108690)
 // in place of the left and right tests. Taken from the twin: redraw starts at
-// 1 where it is declared. The window style became its own local (one constant
-// for its whole life, no device); the result sharing it had kept redraw out of
-// its own register.
+// 1 where it is declared.
+// 2026-11-08: the window style local and the input pointer are gone (plain
+// constant and gInput.pressed measure the same 24). Re-tried without gain: the
+// window read back through the struct at any one use (30 to 101), unitId
+// declared or initialised elsewhere (43), memberIndex = unitId = 0 (24),
+// redraw as u8 (35), an action local, nested else, goto for the cancel, and
+// 8 permute minutes (no candidate beat 24).
 // Left: only unitId and listWindow are swapped, r10 and r8 here against r8 and
-// r10 in the native; all 24 differing rows are those two. Tried: every order
-// of the declarations and of the opening assignments, for and do loops, the
-// twin's continue, a chained store of the window, reading the window back
-// through the struct, chained zero initializers (three instructions longer);
-// three minutes of alchemy-devtools permute found nothing better.
+// r10 in the native; all 24 differing rows are those two. Tried before: every
+// order of the declarations and of the opening assignments, for and do loops,
+// the twin's continue, a chained store of the window, chained zero
+// initializers (three instructions longer).
 #include "types.h"
 #include "input.h"
 #include "ram_buffer.h"
@@ -63,22 +65,19 @@ s32 Func_08109ad8(void) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   s32 unitId = 0;
   s32 memberIndex = 0;
-  s32 style = 2;
   void *listWindow;
   s32 redraw = 1;
   s32 result;
 
-  shop->moneyWindow = Window_CreateFar(0, 9, 12, 4, style);
+  shop->moneyWindow = Window_CreateFar(0, 9, 12, 4, 2);
   Func_08109188();
-  shop->itemWindow = Window_CreateFar(16, 12, 14, 8, style);
-  listWindow = Window_CreateFar(0, 14, 13, 3, style);
+  shop->itemWindow = Window_CreateFar(16, 12, 14, 8, 2);
+  listWindow = Window_CreateFar(0, 14, 13, 3, 2);
   shop->listWindow = listWindow;
   shop->cursorAnchor->active = 4;
   shop->mode = 12;
   Func_080f8060(listWindow, 2, 0);
   while (1) {
-    struct InputState *input;
-
     if (redraw != 0) {
       unitId = shop->partyMemberIds[memberIndex];
       Shop_PlaceCursor(listWindow, (memberIndex % 4) * 24 - 12, 0);
@@ -91,8 +90,7 @@ s32 Func_08109ad8(void) {
       Shop_DrawItemCount(shop->itemWindow, unitId);
       redraw = 0;
     }
-    input = &gInput;
-    if (input->pressed & 1) {
+    if (gInput.pressed & 1) {
       wait(1);
       if (Inventory_CountFar(unitId) == 0) {
         Sound_PlayFar(113);
@@ -112,7 +110,7 @@ s32 Func_08109ad8(void) {
       shop->cursorAnchor->active = 4;
       shop->mode = 12;
       redraw = 2;
-    } else if (input->pressed & 2) {
+    } else if (gInput.pressed & 2) {
       Sound_PlayFar(113);
       result = -1;
       break;

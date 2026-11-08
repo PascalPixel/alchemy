@@ -1,4 +1,9 @@
 // Differ 45 of 297 (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-08: the pin re-measured (77 without it, kept); a second memberIndex =
+// 0 after unitId = 0 (47: the store is folded away), chooseAgain = 1 at each
+// retry's end (134), memberIndex = 0 before chooseAgain = 0 (79), unitId and
+// memberIndex copied from chooseAgain (47); 8 minutes of permute reached 39 to
+// 40 only by reading coins into chooseAgain or an unset temporary, not kept.
 // Editions, 2026-11-07: ja, de, es and fr take the English form. Italian
 // (0810abf4, 282 instructions, one function) creates no price window (both
 // Shop_DrawSelectMsg and the closing Window_CloseFar take 0), keeps

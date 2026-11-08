@@ -1,10 +1,9 @@
-// Differ 6 of 236 (tla-en, 2026-11-08, -mtune=gba): scheduling only, `movs r4, #29` one
-// instruction out of place in both row copies. The second loop reads its step
-// through a volatile cast (ordinary C under S2, noted at the read), which keeps the ldrh, its copy and
-// the sign extension apart; plainly read, combine folds them into a second
-// ldrsh (differ 35). Tried without effect on the step: a temporary, a block,
-// an empty asm, an assignment in the increment, a do-while, s16 or u16 step
-// locals, a volatile field (75). The row loop as j counting up is worse (18).
+// Matches (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-08: from 6 by the row copies counting j up (j = 0; j < 30), which
+// puts `movs r4, #29` where the listing has it. The second loop reads its step
+// through a volatile cast (ordinary C under S2, noted at the read), which keeps
+// the ldrh, its copy and the sign extension apart; plainly read, combine folds
+// them into a second ldrsh (differ 29).
 // Earlier notes follow.
 // The step is an s32 local read from its u16 field: the test casts it to
 // s16 where the listing has ldrsh.
@@ -58,7 +57,7 @@ s32 Func_081a68b4(struct TitleScroll *s) {
         Dma_Set(s->src, s->dst, 0x840001e0, REG_DMA3);
         s->src += 0x780;
         s->dst += 0x780;
-        for (j = 29; j >= 0; j--)
+        for (j = 0; j < 30; j++)
           *s->cursor++ = s->tile++;
         *s->cursor++ = 0x1ff;
         *s->cursor++ = 0x1ff;
@@ -95,7 +94,7 @@ s32 Func_081a68b4(struct TitleScroll *s) {
           Dma_Set(s->src, s->dst, 0x840001e0, REG_DMA3);
           s->src -= 0x780;
           s->dst -= 0x780;
-          for (j = 29; j >= 0; j--)
+          for (j = 0; j < 30; j++)
             *s->cursor++ = s->tile++;
           s->cursor -= 30;
           s->tile -= 30;

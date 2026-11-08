@@ -1,4 +1,9 @@
-// Differ 6 of 187 (tla-en, 2026-11-08, -mtune=gba).
+// Differ 6 of 187 (tla-en, 2026-11-08, -mtune=gba). 2026-11-08: the store's
+// value through a 64-bit temporary (`s64 wide = v`, a `temporary` device) gives
+// 4, the value now in r3 but the pool base in r2; not kept. The plain store, a
+// MainRoutineWork pointer (the adopted scenes' form), once-only blocks around
+// it and every type of v (u64 itself 82): 6 or 82. Permuter 8 minutes: only
+// the u64 temporary.
 // Draft, differ 6 of 187 (tla-en, 5 November), from 82: reload's spill registers rotate through the function, and the native's set is r1, r2, r3.
 // The battle rule store is what brings r1 in: with a local value it needs three.
 // Left: only that store. Native: ldr r3, pool; r1 = offset; adds r2, r3, r1; movs r3, #2; strb r3, [r2]: the value in r3 after an address pseudo in r2.

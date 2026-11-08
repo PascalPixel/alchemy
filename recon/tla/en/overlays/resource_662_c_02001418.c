@@ -1,16 +1,21 @@
-// Differ 22 of 390 (tla-en, 2026-11-08, -mtune=gba).
-// 2026-11-06, the same 22. Left: scheduling only (movs r0 before the shifted coordinates at three Func_020018a8 calls) and r5/r6 for step and placed; the permuter reached 20 only by reusing step as a temporary for 16.
+// Matches (tla-en, 2026-11-08, -mtune=gba; tla-ja, -de, -es, -fr and -it also differ 0).
+// 2026-11-08: the table index as step / 32 * 2 kept in step (22 to 18 with both barriers; then
+// the index barrier was free), GameFlag_GetByte through Value1 in place of the barrier on placed
+// (cse2 otherwise shares 0x278 with GameFlag_SetByte and keeps it in r7), and Func_020018a8 through
+// Call3 at the three calls with shifted coordinates (6 to 0), as events.c calls through Value1.
+// 2026-11-06, differ 22. Left then: scheduling only (movs r0 before the shifted coordinates at three Func_020018a8 calls) and r5/r6 for step and placed; the permuter reached 20 only by reusing step as a temporary for 16.
 // Under -Os, 5 November: differ 34 of 390 (tla-en); older figures below predate it.
 // Draft, differ 85 of 390 (was 86; ja 90 of 386 before): Yampi Desert Cave's
 // map setup for its three rooms: pillars, palette cycle, Retreat destination,
 // BG priorities and the chest follower. Left: register choice and the native
-// reloading gMainRoutineWork after room 1. Func_020018c8(10) goes through Call1
-// (86 to 85).
+// reloading gMainRoutineWork after room 1. (Func_020018c8(10) then went
+// through Call1, 86 to 85; it is direct now.)
 #include "../../../../games/tla/src/scene/yampi_desert_cave/yampi_desert_cave.h"
 #include "actor.h"
 #include "event_work.h"
 #include "io_reg.h"
 #include "edition.h"
+#include "call.h"
 
 extern char SceneId_Ov661Room1;
 extern char SceneId_Ov661Room8;
@@ -66,7 +71,8 @@ s32 Func_02001418(void) {
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room2) {
     if (GameFlag_Test(0x303)) {
-      Func_020018a8(8, 138 << 18, 216 << 16);
+      /* FAKEMATCH(wrapper): the form kept; as a direct call, 2 of 390 instructions differ in tla-en. */
+      Call3(Func_020018a8, 8, 138 << 18, 216 << 16);
       YampiDesertCave_Call1848(32, 13, 1, 1, 34, 13);
       YampiDesertCave_Call1848(95, 3, 3, 3, 98, 13);
     } else {
@@ -98,7 +104,8 @@ s32 Func_02001418(void) {
     if (GameFlag_Test(0x301))
       Func_020018a8(15, 0, 0);
     if (GameFlag_Test(0x304)) {
-      Func_020018a8(13, 168 << 16, 184 << 16);
+      /* FAKEMATCH(wrapper): the form kept; as a direct call, 2 of 390 instructions differ in tla-en. */
+      Call3(Func_020018a8, 13, 168 << 16, 184 << 16);
       YampiDesertCave_Call1848(12, 11, 1, 1, 10, 11);
     } else {
 #if (LANGUAGE == LANGUAGE_JAPANESE)
@@ -110,27 +117,22 @@ s32 Func_02001418(void) {
 #endif
     }
     if (GameFlag_Test(0x305)) {
-      Func_020018a8(12, 154 << 18, 132 << 17);
+      /* FAKEMATCH(wrapper): the form kept; as a direct call, 2 of 390 instructions differ in tla-en. */
+      Call3(Func_020018a8, 12, 154 << 18, 132 << 17);
       YampiDesertCave_Call1848(38, 15, 1, 1, 38, 16);
     } else {
       YampiDesertCave_Call1848(38, 15, 1, 1, 39, 16);
     }
     if (!GameFlag_Test(65) && !GameFlag_Test(145)) {
-      s32 step = GameFlag_GetByte(0x278);
+      /* FAKEMATCH(wrapper): the form kept; as GameFlag_GetByte(0x278), 18 of 390 instructions differ in tla-en. */
+      s32 step = Value1((s32 (*)())GameFlag_GetByte, 0x278);
       s32 placed = GameFlag_Test(0x271);
-      /* FAKEMATCH(barrier): the empty asm on placed changes its allocation rank; as no
-       * asm, 32 of 390 instructions differ in tla-en. */
-      asm("" : : "r"(placed));
 
       if (placed) {
-        s32 index = step / 32;
-        /* FAKEMATCH(barrier): the empty asm on index changes its allocation rank; as no
-         * asm, 24 of 390 instructions differ in tla-en. */
-        asm("" : : "r"(index));
-
+        step = step / 32 * 2;
         Func_020018a8(16, 0, 0);
-        Func_020018a8(17, gData_020019cc[index * 2] << 19,
-                      gData_020019cc[index * 2 + 1] << 19);
+        Func_020018a8(17, gData_020019cc[step] << 19,
+                      gData_020019cc[step + 1] << 19);
       } else {
         if (GameFlag_Test(0x109))
           GameFlag_SetByte(0x278, 0);

@@ -1,5 +1,8 @@
-// Differ 10 of 2278 (tla-en, 2026-11-08, -mtune=gba; 12 before): the glint's blitter
-// as a plain call and an empty once-only loop (tagged dead) settles the glint's
+// Differ 10 of 2278 (tla-en, 2026-11-08, -mtune=gba; 12 before; rechecked later
+// that day: n = held = 0, n++ as a statement, u32 held, a literal 0, the
+// flash draw's sums respelled, the barriers as once-only loops (14): no gain;
+// the empty once-only loop at the glint is plain C, retagged as a note). The glint's
+// blitter as a plain call and an empty once-only loop settles the glint's
 // mov r8 and mov sl. Left: the streak's n and zero in each other's registers, and
 // in the turned flash's first draw, mov r4, sl and ldr r2, [r7] one row apart.
 // Each barrier pays 2 (12 without one, 14 without both). Tried for the barriers on
@@ -844,9 +847,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
 
             Func_08196404(188, 7, 7, Data_0819850a[Random16() & 3] | CLIP, 0);
             do {
-              /* FAKEMATCH(dead): an empty once-only loop after the glint's blitter;
-               * as the call inside a once-only block instead, 12 of 2278
-               * instructions differ in tla-en. */
+              // The empty once-only loop keeps loop.c from hoisting the glint
+              // size tables (without it, 1901 of 2278 differ, 2026-11-08).
             } while (0);
             DRAW_ALTERNATE(canvas, work->sheet + 0x22 + gData_08197486[glint],
                            glintX, glintY, gData_08197492[glint],

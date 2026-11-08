@@ -1,7 +1,8 @@
-// Differ 12 of 302 (tla-en, 2026-11-08, -mtune=gba): the colour built in a local before its
-// store (found by permute; 16 before). Left: instruction order in the palette
-// store and the switch; the empty asm in the palette loop is tagged (14 without). Tried 8 November: red
-// finished in its own local, the loop setup reordered (12 to 20).
+// Differ 8 of 302 (tla-en, 2026-11-08, -mtune=gba): the phase read through a pointer set before
+// the offset (12 before), and an empty once-only block in place of the empty asm after the
+// palette store (no block, 10). Left: red finished after green in the palette store, where
+// the native finishes it first. Tried 8 November: red finished in its own local, the loop
+// setup reordered, the colour built in steps (8 to 20).
 // Near miss, differ 16 of 302 (tla-en, 2026-11-05), with untagged empty asms, one-pass
 // blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Near miss, differ 28 of 302 (54 before; 2026-10-26). The palette loop is a
@@ -77,24 +78,27 @@ void Func_080e5a64(void) {
   s32 i;
   s32 base, blue;
   s32 color;
+  u32 *phase;
 
   work->fading = 0;
   if (work->state == 1) {
     i = 0;
+    // The phase read through a pointer kept across the loop.
+    phase = &blend->phase;
     /* FAKEMATCH(temporary): the phase offset built in two steps, so it stays
-     * in a register across the loop; as base = 0x90000, 54 of 302
+     * in a register across the loop; as base = 0x90000, 52 of 302
      * instructions differ in tla-en. */
     base = 9;
     base <<= 16;
     blue = 0x7c00;
   palette:
-    red = Trig_Sin(((((blend->phase >> 1) + i) << 16) + base) >> 5) * 12;
-    green = Trig_Sin(((((blend->phase >> 1) + i) << 16) + base) >> 5) * 12;
+    red = Trig_Sin(((((*phase >> 1) + i) << 16) + base) >> 5) * 12;
+    green = Trig_Sin(((((*phase >> 1) + i) << 16) + base) >> 5) * 12;
     color = (((green >> 16) + 16) << 5) | blue | ((red >> 16) + 16);
     *(u16 *)(0x050003c0 + i * 2) = color;
-    /* FAKEMATCH(barrier): an empty asm after the palette store; as no asm, 14 of
-     * 302 instructions differ in tla-en. */
-    asm("");
+    // An empty once-only block after the palette store.
+    do {
+    } while (0);
     if (++i < 32)
       goto palette;
   }

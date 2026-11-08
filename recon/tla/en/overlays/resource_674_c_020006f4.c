@@ -1,5 +1,10 @@
 // Differ 25 of 687 (tla-en, 2026-11-08, -mtune=gba): the pool zero, as below. Zero as u64 or s64
 // (as champa/s0c40.c gets its pool zero) gives 26; 5 minutes of permuting found nothing.
+// 2026-11-08 again: zero as s8, s16, u32 or void *, (u8)zero at the store, or set before
+// the yes/no, the leader read, the second spawn or noticed: 25 or worse (33). The RTL shows
+// why: a local of any width is promoted to SImode, and reload rematerialises its REG_EQUIV
+// 0 as an SImode movs; champa's pool word comes from a HImode reload of 0, which the
+// minipool pass turns into a pc-relative load. A HImode pseudo holding 0 is what is missing.
 // Under -Os, 5 November: differ 25 of 687 (tla-en); older figures below predate it.
 // Draft, differ 25 of 687, skeleton gap 3 (tla-en, 2026-11-01)
 // The Islets' trade of item 453 with object 10: with it in the party, if flag

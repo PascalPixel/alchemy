@@ -1,8 +1,12 @@
-// Differ 8 of 1246 (tla-en, 2026-11-08, -mtune=gba).
-// Left: scheduling only, two sites: near the start the row address (add r3,
-// sl) and the zero stored to sp+40 come early; near the end a call's second
-// argument (a pool word) is loaded before its first (sp+60), the native after.
-// 4 on 2026-11-01 under the older compiler.
+// Differ 2 of 1246 (tla-en, 2026-11-08, -mtune=gba); tla-ja 2 of 1240.
+// Two empty once-only blocks (after the list redraw's first stores and after
+// the cursor sprite's words) closed the row address, the zero for
+// standbyElements and the VramCache_Reload argument pair (8 to 2 in both
+// editions). Left: work (sp+72) is loaded for holdTilemapUpload after the
+// entry load, the native before the index add. Tried without effect: a
+// block-scoped copy of work, the index spellings, the three stores' orders and
+// once-only blocks around them; permuter 8 min: nothing better.
+// 8 before (2026-11-08); 4 on 2026-11-01 under the older compiler.
 // Draft, differ 4 of 1246, skeleton gap 1 (tla-en, 2026-11-01): the battle
 // Djinn menu, The Broken Seal's BattleDjinnMenu_Run
 // (games/tbs/src/window/screens/battle_djinn_menu.c) on this game's work,
@@ -16,11 +20,9 @@
 // each scope, s32 and u32 argument types, the sprite words through s32
 // pointers, the increment's and the compare's spellings. The element offset
 // tables stay non-const: const lets their loads move past the stack argument.
-// Japanese (tla-ja 0804888c, 2026-11-07): differ 8 of 1240, scheduling only:
-// the same VramCache_Reload pair, and at the top of the loop the listing adds
-// sl to the entry index after loading work and stores alreadySelected's 0
-// before the index load. Its list is narrower and its messages shorter
-// (LANGUAGE), and letting go of R does not redraw the list (TLA_PATCH_1).
+// Japanese (tla-ja 0804888c): the same one load left (work at sp+68). Its
+// list is narrower and its messages shorter (LANGUAGE), and letting go of R
+// does not redraw the list (TLA_PATCH_1).
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -295,6 +297,9 @@ s32 Func_0804868c(s32 member) {
       selectedDjinn = djinnEntries[firstEntry + selectedRow];
       standbyElements = 0;
       work->holdTilemapUpload = 1;
+      // Once-only: schedules the entry load and its stores as the original.
+      do {
+      } while (0);
       Window_HighlightRect(listWindow->x + 1, listWindow->y + drawnRow * 2 + 1,
                            listWindow->width - 2, 1, 15);
       if (previewPage != 0) {
@@ -603,6 +608,9 @@ s32 Func_0804868c(s32 member) {
     cursorPos.y = (selectedRow * 2 + listWindow->y) * 8 + 20;
     ((struct DjinnMenuSprite *)sprite)->attr01 = 0x40000000;
     ((struct DjinnMenuSprite *)sprite)->attr23 = 0;
+    // Once-only: keeps cursorSlot's load before the tiles address.
+    do {
+    } while (0);
     sprite->tile = VramCache_Reload(cursorSlot, gResource_FixedBlockBTiles);
     sprite->x = cursorPos.x + ((gFrameCount & 4) >> 1) - 6;
     sprite->y = cursorPos.y - ((gFrameCount & 4) >> 2) - 8;

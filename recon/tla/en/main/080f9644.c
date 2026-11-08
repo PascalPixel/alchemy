@@ -1,18 +1,23 @@
-// Differ 6 of 1355 (tla-en, 2026-11-08, -mtune=gba).
+// Differ 2 of 1355 (tla-en, 2026-11-08, -mtune=gba), with one tagged pin.
+// 2026-11-08: the icon is declared as a window sprite, with its list link
+// (struct ItemMenuIcon *next) at 0 and signed kind and state bytes, as The
+// Broken Seal's struct WindowSprite: its stores now may alias the work's
+// icon pointer, so the pointer is reloaded after each without the volatile
+// selectedItemIcon (gone), and the x/y stores keep the native order (6 to 2).
+// The list icon is a plain pointer (the union with a word changed nothing).
+// Left: the trade's first copy loads IwramCopyWords's address and source two
+// slots before the native does; without the pin 4 differ. An 8-minute permute
+// from the unpinned form found nothing under 4.
 // 2026-11-07: prototypes for the modal message, the text draw and the equip
 // preview (s32, as their definitions), and Unit_RefreshPsynergyFar returning
 // s32 as The Broken Seal declares it, took 22 to 6; the empty asm is gone.
-// Left: the icon x/y stores load the volatile pointer before their constant,
-// and the trade copy loads IwramCopyWords two slots early; an 8-minute permute
-// found nothing better.
 // Earlier: the item menu's command loop (use, give, drop, equip, swap, trade,
 // remove), the twin of The Broken Seal's ItemMenu_RunCommands
 // (games/tbs/src/menu/menu/item.c), with The Lost Age's work layout
 // (Ram_HeapSlots->menuRuntime). The trade's allocations and copies share one
-// size variable (48 differ with the literal at each call). The volatile on
-// selectedItemIcon (41 differ without it) still needs its evidence. Its
-// messages are numbered here (Msg04103 ...), their names in The Broken Seal
-// beside them; they need names in the catalogs before it links.
+// size variable (18 differ with the literal at each call). Its messages are
+// numbered here (Msg04103 ...), their names in The Broken Seal beside them;
+// they need names in the catalogs before it links.
 #include "heap_release.h"
 #include "types.h"
 #include "iwram_call.h"
@@ -21,8 +26,9 @@
 #include "ram_buffer.h"
 
 struct ItemMenuIcon {
-  u8 unk00[5];
-  u8 state;
+  struct ItemMenuIcon *next;
+  s8 kind;
+  s8 state;
   u16 x;
   u16 y;
   u8 unk0a[4];
@@ -31,10 +37,7 @@ struct ItemMenuIcon {
 
 struct ItemCommandWork {
   u8 unk000[0x14];
-  union {
-    struct ItemMenuIcon *icon;
-    u32 word;
-  } list;
+  struct ItemMenuIcon *listIcon;
   u8 unk018[0x10];
   s32 statusWindow;
   u8 unk02c[4];
@@ -55,7 +58,7 @@ struct ItemCommandWork {
   u8 partyCount;
   u8 itemOwner;
   u8 targetOwner;
-  struct ItemMenuIcon *volatile selectedItemIcon;
+  struct ItemMenuIcon *selectedItemIcon;
   u8 unk21c[2];
   s16 completionFlag;
   u8 unk220[0x3e];
@@ -145,7 +148,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_SetMessageWindowHeight3();
       ItemMenu_SetItemWindowRow3();
       menu->selectedItemIcon->state = 13;
-      menu->list.icon->state = 1;
+      menu->listIcon->state = 1;
       ItemMenu_DrawMessage(0, (s32)&Msg04104);
       selection = ItemMenu_RunList(0);
       state = 0;
@@ -180,7 +183,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           WindowSprite_ClearListFar(menu->infoWindow);
           InventoryMenu_ShowModalMessage(menu->messageOffset + (s32)Msg04384, 0,
                                          -1);
-          menu->list.icon->state = 13;
+          menu->listIcon->state = 13;
           menu->itemCount = ItemMenu_CollectItems(Unit_GetFar(menu->itemOwner),
                                                   menu->items, 0);
           ItemMenu_DrawIcons(menu->items, 0);
@@ -230,7 +233,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           WindowSprite_ClearListFar(menu->infoWindow);
           InventoryMenu_ShowModalMessage(menu->messageOffset + (s32)Msg04384, 0,
                                          -1);
-          menu->list.icon->state = 13;
+          menu->listIcon->state = 13;
           ItemMenu_TryBreak();
           state = 1;
         }
@@ -295,7 +298,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         ItemMenu_SetItemWindowRow3();
         ItemMenu_RefreshOwner(menu->itemOwner, 0);
         menu->selectedItemIcon->state = 13;
-        menu->list.icon->state = 13;
+        menu->listIcon->state = 13;
         wait(1);
         WindowSprite_ClearListFar(menu->infoWindow);
         InventoryMenu_ShowModalMessage((s32)Msg04270, 15, 13);
@@ -381,7 +384,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         break;
       }
       ItemMenu_RefreshOwner(menu->targetOwner, 1);
-      menu->list.icon->state = 13;
+      menu->listIcon->state = 13;
       wait(1);
       if (aborted == 1) {
         WindowSprite_ClearListFar(menu->infoWindow);
@@ -422,7 +425,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       targetCopy = Heap_Alloc(size);
       {
         /* FAKEMATCH(pin): size held in r2 for the first copy; as
-           Iwram_CopyWords(sourceCopy, source, size), 8 of 1355 instructions
+           Iwram_CopyWords(sourceCopy, source, size), 4 of 1355 instructions
            differ in tla-en. */
         register s32 sizeArg asm("r2") = size;
         Iwram_CopyWords(sourceCopy, source, sizeArg);
@@ -536,7 +539,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       Unit_CalculateFar(menu->itemOwner);
       Func_080772c0(menu->itemOwner);
-      menu->list.icon->state = 13;
+      menu->listIcon->state = 13;
       menu->itemCount =
           ItemMenu_CollectItems(Unit_GetFar(menu->itemOwner), menu->items, 0);
       ItemMenu_DrawIcons(menu->items, 0);
@@ -558,7 +561,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       Unit_GetFar(menu->itemOwner)->inventory[menu->selectedSlot] &= 0xfdff;
       Unit_CalculateFar(menu->itemOwner);
       Func_080772c0(menu->itemOwner);
-      menu->list.icon->state = 13;
+      menu->listIcon->state = 13;
       menu->itemCount =
           ItemMenu_CollectItems(Unit_GetFar(menu->itemOwner), menu->items, 0);
       ItemMenu_DrawIcons(menu->items, 0);
@@ -574,12 +577,12 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       break;
 
     case 10:
-      menu->list.icon->state = 13;
+      menu->listIcon->state = 13;
       Menu_SelectQuantity(menu->selectedItem);
       WindowSprite_RedrawSavedRectFar(menu->statusWindow);
       ItemMenu_DrawEquipPreview(menu->itemOwner, menu->selectedSlot, 0,
                                 menu->itemOwner);
-      menu->list.icon->state = 1;
+      menu->listIcon->state = 1;
       state = 9;
       break;
 

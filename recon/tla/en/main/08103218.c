@@ -1,19 +1,19 @@
-// Differ 20 of 906 (tla-en, 2026-11-08, -mtune=gba); both tags measured again, unchanged.
-// 2026-11-07: the closing copy's r0 pin became a temporary (same 20); the rest
-// is the djinn tile loop, where GCSE's copy of i << 24 takes r3 beside the
-// native's r6. Measured 2026-10-26 under the Makefile's options
-// (-mthumb-slow-loads), differ 57 of 906 in tla-en. First difference: this
-// issues `lsls r3, r3, #18` earlier (row 18) than the native does (row 20).
+// Matches (tla-en, 2026-11-08, -mtune=gba); no device left.
+// 2026-11-08: the djinn tile loop's counter starts from a zero local of the
+// whole function (firstElement), its tile number is a local, and the tile
+// column is one value stepped between the two calls, which retired the r2 pin;
+// an empty once-only block after the loop keeps the HP block from copying
+// x * 8 into r6 (7 without it); the closing copy's size is a local set before
+// the page test, which retired the copy routine's temporary (2 with sizeof
+// at the call). Measured 2026-10-26 under the Makefile's options
+// (-mthumb-slow-loads), differ 57 of 906 in tla-en.
 // First draft of Func_08103218: draws a member's status with a djinni change
 // applied, the twin of ☀️'s DjinnMenu_DrawStatPreview
 // (games/tbs/src/menu/menu/djinn.c): the unit is saved, the change applied
 // and measured, its differences drawn with arrows (Func_08104ba8) or, past
 // page 0, its Psynergy pages, and the saved unit copied back. The messages
 // take the twin's names (03342, 02915, 01447, 04124, 04307, 04308 and 04313
-// in the English catalog, still unnamed there). Differ 81 of 906: the
-// element tile loop's s8 counter takes r5 where the native keeps it in r6
-// (with one copy more here), and the rest is loads and stores the native
-// issues a step earlier. The block that opens with the twin's i = 0 keeps
+// in the English catalog, still unnamed there). The block that opens with the twin's i = 0 keeps
 // the second page test, and with it x * 8 and y * 8 recomputed in each
 // stat's block (649 with the two page-0 blocks one test apart).
 #include "battle_unit.h"
@@ -59,6 +59,10 @@ s32 OwnerAction_DiffSlots(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
 
 s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
                   s32 addPairSlot, s32 previewMode, s32 page, s32 side) {
+  // One constant for its whole life: the djinn tile loop starts from it.
+  s32 firstElement = 0;
+  // One constant for its whole life: the closing copy's size.
+  s32 size;
   struct BattleUnit *unit;
   struct BattleUnit *originalUnit;
   s32 giveElement;
@@ -165,16 +169,18 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
       column = x;
       if (originalUnit->classIndex != unit->classIndex)
         column += 5;
-      for (i = 0; i < 4; i++) {
-        Window_SetTilemapEntryFar(window, 0x5001 + i, column + i * 2, y + 5, 0);
-        {
-          /* FAKEMATCH(pin): the tile column held in r2; as column + i * 2 + 1
-           * passed directly, 39 of 906 instructions differ in tla-en. */
-          register s32 tileColumn asm("r2") = column + i * 2 + 1;
-          Window_SetTilemapEntryFar(window, unit->djinnActiveCounts[i] + 0xf030,
-                                    tileColumn, y + 5, 0);
-        }
+      for (i = firstElement; i < 4; i++) {
+        s32 tileColumn;
+        s32 tile = 0x5001 + i;
+
+        tileColumn = column + i * 2;
+        Window_SetTilemapEntryFar(window, tile, tileColumn, y + 5, 0);
+        tileColumn++;
+        Window_SetTilemapEntryFar(window, unit->djinnActiveCounts[i] + 0xf030,
+                                  tileColumn, y + 5, 0);
       }
+      // An empty once-only block: it ends the tile loop's block before the stats.
+      do { } while (0);
       if (unit->hp != originalUnit->hp) {
         Text_DrawNumberInWindowFar(unit->hp, 4, window, x * 8 + 72, y * 8 + 56);
         if (unit->hp > originalUnit->hp)
@@ -280,16 +286,10 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
     ((struct WindowWork *)Ram_HeapSlots->windowTiles)->dirty = 1;
   }
 
+  size = sizeof(struct BattleUnit);
   if (page == 0)
     SideObject_CreateFar(ownerId, 0, side, window, 0, 0);
-  {
-    /* FAKEMATCH(temporary): the copy routine held in a local; as
-     * Iwram_CopyWords called directly, 22 of 906 instructions differ in tla-en.
-     */
-    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
-
-    copy(unit, originalUnit, sizeof(struct BattleUnit));
-  }
+  Iwram_CopyWords(unit, originalUnit, size);
   Heap_Release(originalUnit);
   return 1;
 }

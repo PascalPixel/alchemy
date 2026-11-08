@@ -1,5 +1,10 @@
 // Differ 52 of 286 (tla-en, 2026-11-08, -mtune=gba), from 56: the first text id
 // through result (permuter; FAKEMATCH temporary); with -1 for minusOne, 93.
+// 2026-11-08: re-measured, both temporaries still pay (without result 56, minusOne
+// as -1 or s32 93); the unused state local dropped (no change). No change (52)
+// from declaration order, minusOne at the other -1 sites, the pick loop's test
+// folded, the roll read first, a weight local or i <= 14; an s8 or u8 pointer
+// for the halving 79, a state pointer 100. 8 minutes of permute: nothing better.
 // 2026-11-06: A 64-bit -1 local for the free-slots notice and Party_AdjustCoins keeps CSE from sharing the compare's -1 (89 to 56); a permuter lead. Left, allocation only: the first cancel compare's -1 in r3 (native r2) and the coin and medal tests in r2, r3 (native r3, r1); the first FieldMessage_ShowAtActor -1 scheduled before movs r1, #0; the roll and work address in r0, r1 (native r1, r0); the final halving's registers. Not better: the s32 or u32 local (81), it in the second cancel compare (64-bit compare), a direct ShowAtActor call (67, 173), an s8 pointer for the halving (83).
 // 2026-11-06, later: the register swaps all follow reload's round-robin through its spill registers
 // (allocate_reload_reg steps last_spill_reg through spill_regs, kept in register order). The
@@ -72,7 +77,6 @@ s32 Func_020001e4(void) {
   s32 result;
   s32 prizeRoll;
   s32 notice;
-  struct MainRoutineWork *state;
   /* FAKEMATCH(temporary): minusOne, a 64-bit -1 for two calls, so CSE does
    * not share the cancel compare's -1; as -1, 93 of 286 instructions differ in
    * tla-en. */

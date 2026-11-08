@@ -1,4 +1,9 @@
-// Differ 6 of 255 (tla-en, 2026-11-08, -mtune=gba).
+// Differ 4 of 255 (tla-en, 2026-11-08, -mtune=gba).
+// 8 November (permuter): kind + 2 read into value, reused, after the blend store, puts the
+// sum before the store as the native does (6 to 4). Left: the sum in r0 where the native
+// gives it r4. No gain: the sum in angle (4), in kind, spawned or a block local (6), in
+// height (11) or i (29), value shifted in place (27); volatile blend stores (6).
+// Older notes, before value took the sum:
 // From 16: the burst loop is a goto loop (no loop notes, so GCSE no longer
 // hoists the array's address), and one array serves as the velocity and
 // then the position, giving the native frame of 68 with options at sp+16 and
@@ -81,8 +86,10 @@ void Func_0200087c(void) {
       *(u16 *)0x4000052 = 0x1000;
       blendControl = (u16 *)0x4000050;
       *blendControl = 0x3f10;
+      // value is reused for the sum; as kind + 2 in place, 6 differ.
+      value = kind + 2;
       spawned = Value4((s32 (*)())OverlayObject_PrepareObject, object->x, 0,
-                       object->z + ((kind + 2) << 20), 312);
+                       object->z + (value << 20), 312);
       Call1((void (*)())Func_02001164, 204);
       Call1((void (*)())OverlayObject_WaitUntilIdle, (s32)object);
       Call1((void (*)())OverlayObject_WaitUntilIdle, (s32)object);

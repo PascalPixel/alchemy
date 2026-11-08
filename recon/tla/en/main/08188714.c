@@ -3,6 +3,10 @@
 // natively) and the zero for r8 built in r4 here (r0 natively). Without the
 // once-only block, or with the pixels in a local, 10. No device: a once-only
 // block around the shake replaces the empty asm after the leap sound (8 either way).
+// (Round two, 2026-11-08: the pixels as a local, function- or block-wide, 10
+// to 164; the pixels store moved anywhere earlier, 134 to 172; once-only
+// blocks around the neighbouring stores, or i cleared before the loop, 8;
+// permuter 8 minutes, nothing better.)
 // 2026-11-07: the empty asm after the declarations did nothing and is gone;
 // statement orders, once-only blocks, a pixels local and the ring sums (and 10
 // permuter minutes) stay at 10: the ring loop loads &screen before the

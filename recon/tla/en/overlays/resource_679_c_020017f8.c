@@ -1,4 +1,8 @@
-// Differ 14 of 159 (tla-en, 2026-11-08, -mtune=gba).
+// Differ 10 of 159 (tla-en, 2026-11-08, -mtune=gba).
+// 8 November: cells += origin in a once-only block gives 14 to 10. Left: the native loads a
+// and the pool address before entry and stores a << 8 before reloading origin; the draft
+// stores after cells += origin. The store first (with or without blocks) gives 36: z = 0
+// then takes r3 and the loop's registers shift. 6 minutes of permute found nothing under 10.
 // 7 November: the word at Data_0202c001 + 0x1df through a local pointer (permuter) gives
 // 19 to 14. Left: allocation, as below.
 // Before: differ 19 of 159 (tla-en, 5 November 2026), from 84: Func_020032d4's form.
@@ -64,7 +68,10 @@ void Func_020017f8(u32 base, s32 a, s32 b) {
   s16 x, z;
   u32 value;
 
-  cells += origin;
+  // A once-only block: it keeps the step apart from the store below.
+  do {
+    cells += origin;
+  } while (0);
   *slot = a << 8;
   z = 0;
   if (z < height) {

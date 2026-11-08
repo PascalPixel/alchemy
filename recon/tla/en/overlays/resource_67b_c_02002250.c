@@ -1,5 +1,6 @@
-// Differ 30 of 169 (tla-en, 2026-11-08, -mtune=gba); declaration orders and
-// screenX set inside x's expression leave it at 30.
+// Differ 30 of 169 (tla-en, 2026-11-08, -mtune=gba); declaration orders,
+// screenX set inside x's expression, a temporary for z - y, once-only blocks
+// and a dead global update (85 or more) all leave it at 30 or worse.
 // Left: allocation only. screenX and screenY take r2 and r0 the wrong way
 // round, which moves the str of oam[1]; the prologue and frame now agree.
 // A 5-minute permute (7,500 candidates) found nothing under 30.
@@ -18,11 +19,9 @@
 // animation pictures where it is on screen (Func_020028d0).
 // Earlier: viewX, viewZ and lift once took r9, r10 and r8 the wrong way round
 // (all three carry 5 refs); that part of the gap is now closed.
-// Forms that are load-bearing: `word` set twice keeps the third zero of the
-// loop from combining with the two `bubble->x = 0` (three would be hoisted,
-// take a saved register and push tile to the stack, and the -16 compare would
-// fold differently); the store through `oam` makes CSE reload age; the
-// for loop is needed for that same -16.
+// Forms that are load-bearing: the store through `oam` makes CSE reload age
+// (tagged); the for loop is needed for the -16 compare. `word` set twice
+// was free by 8 November and is gone.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -62,7 +61,6 @@ void Func_02002250(void) {
   struct Actor *source;
   struct Bubble *bubble;
   s32 i, x, y, z, screenX, screenY;
-  u32 word;
   u32 *oam;
 
   if (Random16Far() < 0x1000 && (source = work->source) != 0) {
@@ -103,11 +101,10 @@ void Func_02002250(void) {
       if ((u32)(screenX + 11) <= 334 && screenY > -16 && screenY <= 239) {
         x &= 0x1ff;
         screenY &= 255;
-        word = 0;
-        bubble->oam[0] = word;
-        word = screenY | (x << 16) | 0x2000;
+        bubble->oam[0] = 0;
+        /* FAKEMATCH(temporary): the form kept; as bubble->oam[1] = ..., 67 of 169 instructions differ in tla-en. */
         oam = &bubble->oam[1];
-        *oam = word;
+        *oam = screenY | (x << 16) | 0x2000;
         bubble->oam[2] = (tile + (bubble->age & 3) * 2) | 0x400;
         Func_020028d0(bubble->oam, z);
       }

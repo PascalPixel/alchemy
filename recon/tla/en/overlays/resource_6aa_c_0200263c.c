@@ -1,12 +1,17 @@
-// Differ 6 of 186 (tla-ja, 2026-11-08, -mtune=gba); plain velocityX 8, plain position
-// 22, as before. (Against tla-en, whose function differs, 206.)
+// Differ 6 of 186 (tla-ja, 2026-11-08, -mtune=gba); against tla-en, whose function
+// differs, 206.
 // The Japanese release's own Func_0200263c of overlay 6aa: the patch-1 C in
 // games/tla/src/scene/mars_lighthouse_entrance/s263c.c without its overlap
 // scan, as overlay 6ab's Japanese draft of Func_02002148 (also 6 of 186).
-// The position read through a union (plain: 22 differ) and velocityX stored
-// through a union (plain: 8 differ) are still devices to replace. Left:
-// actor->z loaded before the sum natively, and the last store's zero after
-// the address's copy; scheduling only.
+// Two tagged unions remain (position 22 plain, velocityX 8 plain; without both
+// 24): the union's s16 member keeps position's stores ordered before the
+// work's s16 reads, and volatile work members or a volatile position do
+// not (64 to 76, 22). Left: actor->z loaded before the sum natively, and
+// the last store's zero after the address's copy; scheduling only. No gain
+// (8 November): the once-only block dropped (10), z = actor->z += (6),
+// z's sum in a block (10) or swapped (8), the last store in a block or
+// through a zero local (6), &position passed to Func_02004c38 (6, 22 plain),
+// 8 minutes of permute (best 10).
 #include "edition.h"
 #include "types.h"
 #include "call.h"
@@ -38,6 +43,9 @@ extern u8 gData_020023c4[];
 void Func_0200263c(void) {
   struct MainRoutineWork *main = &gMainRoutineWork;
   struct Work020023c4 *work;
+  /* FAKEMATCH(signature): position kept as a union with an s16 member, whose
+   * stores then alias the work's s16 reads and keep their order; as struct
+   * Vector3, 22 of 186 instructions differ in tla-ja. */
   union {
     struct Vector3 v;
     s16 h;
@@ -59,6 +67,9 @@ void Func_0200263c(void) {
       if (Func_02004c18(actor->terrainId, actor->x, actor->z) == 7) {
         s32 i;
 
+        /* FAKEMATCH(signature): velocityX stored through a union with a u16
+         * member; as the plain member store, 8 of 186 instructions differ in
+         * tla-ja. */
         ((union {
            s32 value;
            u16 half;

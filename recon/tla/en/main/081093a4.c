@@ -1,6 +1,6 @@
-// Differ 12 of 238 (tla-en, 2026-11-08, -mtune=gba): order only.
-// 2026-11-07: the closing replaced-item test is plain C (its temporary and empty asm gave
-// nothing); the two empty asms around the stat copies stay (14 and 16 without). Left: order.
+// Differ 12 of 238 (tla-en, 2026-11-08, -mtune=gba): order only. Both empty asms around the stat
+// copies are now once-only blocks (the restore store; the last two copies), with no device
+// left (no blocks, 18). Left: the with[] loads, the saved entry and the loop setup in order.
 // Near miss, differ 12 of 238 (tla-en, 2026-11-05), with untagged empty asms, one-pass
 // blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
@@ -107,17 +107,18 @@ void Func_081093a4(s32 window, s32 unitId, s32 itemId) {
   with[1] = unit->def;
   with[2] = unit->agi;
   with[3] = unit->luck;
-  /* FAKEMATCH(barrier): the native stores luck before it copies the saved
-   * entry back; as no asm, 16 of 238 instructions differ in tla-en (14 without
-   * the untagged one below, 18 without both). */
-  __asm__("");
-  unit->inventory[slot] = saved;
+  // A once-only block: the saved entry is copied back after luck is stored.
+  do {
+    unit->inventory[slot] = saved;
+  } while (0);
   Unit_CalculateFar(unitId);
   without[0] = unit->atk;
   without[1] = unit->def;
-  asm("");
-  without[2] = unit->agi;
-  without[3] = unit->luck;
+  // A once-only block around the last two copies.
+  do {
+    without[2] = unit->agi;
+    without[3] = unit->luck;
+  } while (0);
   for (i = 0; i <= 2; i++) {
     if (without[i] > with[i])
       ((u8 *)WindowSprite_CreateFar(shop->statDownIcon, 0x40000000,

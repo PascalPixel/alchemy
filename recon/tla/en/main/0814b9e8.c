@@ -1,4 +1,10 @@
 // Differ 2 of 549 (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-08: the pair is a sched2 LUID tie. Loop puts the i * 3 giv's init
+// after quad = work (insn order i, quad, giv), so the reload of work wins over
+// the giv's spill store. Without gain: quad set earlier or in the for list
+// first, a delay counter at every declaration position (30 to 72), quad from
+// &work->particles[i], once-only blocks, non-const tables, 3 * i, and 10
+// permuter minutes. The inline CopyWords_ is still needed (4 without it).
 // Measured 2026-11-05 (tla-en): differ 2 of 549, no device. Left: one pair, the
 // loop's opening: ldr r6, [sp, #32] (quad) comes before str r2, [sp, #12] (i * 3's
 // start) here and after it in the listing. A delay variable set before quad gives

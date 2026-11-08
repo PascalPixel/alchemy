@@ -1,4 +1,11 @@
-// Differ 40 of 125 (tla-en, 2026-11-08, -mtune=gba).
+// Differ 40 of 125 (tla-en, 2026-11-08, -mtune=gba): register choice only, no device.
+// 8 November: the empty-asm barrier between the two flag stores is now an empty
+// once-only block (40, the same; 42 with neither). Also 40: the block store in a
+// once-only block, shapes += slot before the flags, u32 slot or flags, the cells
+// and shapes set after the declarations, slot * 4 + 3 indexing; the shape stored
+// before the block 58, a slot * 4 offset local 65, the flag byte through a u8
+// pointer 65, the slot read after the declarations 52. 8 minutes of permuting
+// (seed 9313): nothing below 40.
 // Editions, 7 November: every edition measures the same 40 (ja 080eab14,
 // de 080f7bd0, es 080f3bc4, fr 080efbc4, it 080eabc4); each listing is 0x118
 // bytes, one function, and its instructions are the English ones, so the
@@ -87,9 +94,7 @@ void Func_080eabd0(u16 *actors) {
     u8 flags;
 
     object->motionFlags = 0;
-    /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
-     * 42 of 125 instructions differ in tla-en. */
-    asm("");
+    do { } while (0);
     object->collisionFlags = 0;
     Actor_SetSingleChildFlagsFar(object, 0);
     tag = Func_080eab98(object->terrainId, key, level + 4);

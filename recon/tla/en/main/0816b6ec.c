@@ -1,4 +1,8 @@
-// Differ 10 of 609 (tla-en, 2026-11-08, -mtune=gba), the same rows: allocation and scheduling only (frame
+// Differ 10 of 609 (tla-en, 2026-11-08, -mtune=gba), the same rows. Rechecked
+// 2026-11-08: once-only loops at four places in the head loop, u8 head, k < 2
+// (18), the head pointer set in the for, a 32 local at three scopes (10 to 16),
+// funnel at the head loop (42); permuter 8 minutes: none. The i = 0 arms are
+// now tagged and the frame-sizing blitter is a plain note (S2). Left: allocation and scheduling only (frame
 // 0's segment pointer and the 32 trade r6 and r4, its stores order, and the
 // vertex pointer loaded before Render_AllocateModelList, not after).
 // 2026-11-07: Task_Add and Task_Remove from task.h (s32, not void): 12 to 10.
@@ -33,7 +37,7 @@
 // Tried (differ):
 // first draft                                                       509
 // other declared before screen (their native stack order)          509
-// the blitter as The Broken Seal's pair (FAKEMATCH below)           487
+// the blitter as The Broken Seal's pair (below)                      487
 // the blitter declared before camera (the native's slot order)      477
 // no phase variable: the bob and the scale read frame << 11, which
 // loop.c turns into the native's late induction variable          469
@@ -162,10 +166,9 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sprites;
-  /* FAKEMATCH(frame): the blitter is declared as The Broken Seal's pair
-   * though only the first is used; its second word is the unused word at
-   * sp 40 of the native's 84-byte stack frame. As one DrawRectangle the frame is
-   * 80 bytes and every stack offset moves (differ 509). */
+  // Unused: the second blitter, as in The Broken Seal's pair, gives the
+  // stack frame its 84 bytes (the word at sp 40); as one DrawRectangle, 48
+  // of 609 differ (2026-11-08).
   DrawRectangle blit[2];
   s32 *camera;
   struct EffectPosition other;
@@ -185,8 +188,8 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   camera = Ram_HeapSlots->cameraWork;
   sprites = Ram_HeapSlots->unk64[0];
-  // Read through funnel at the head loop and the transform only; through it
-  // at the other two sites the registers move (differ 160).
+  // Read through funnel at the corner loop and the transform only; through it
+  // at the head loop, 42 of 609 differ (2026-11-08).
   funnel = gMapCellBuffer;
   BattleEffect_StartCanvasLayer(0);
   if (mode == 0) {
@@ -233,8 +236,8 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
       s8 *head;
 
       yaw = 0;
-      // i = 0 in each arm keeps the length as two moves; set once after the
-      // choice, if-conversion makes it a set and a conditional set.
+      /* FAKEMATCH(dead): i = 0 in each arm keeps the length as two moves; as
+       * one i = 0 in the for, 49 of 609 instructions differ in tla-en. */
       if (mode == 0) {
         length = 80;
         i = 0;

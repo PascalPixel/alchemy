@@ -1,5 +1,9 @@
 // Differ 14 of 1150 (tla-en, 2026-11-08, -mtune=gba, multiplies 3 3; 24 before): order only, the
 // first loop's movs r4 and add r2, fp, and the texture block's r0/r2 and r1/r0 reloads.
+// 8 November: the texture block's empty-asm barrier replaced by a once-only block around the
+// vertices store (14, no device; without either 16). The wrapper still measures 2 (direct call,
+// a constant local or a block all 16 to 18). No gain: the motes loop's init orders (14 to 22),
+// the texture stores reordered (16 to 24).
 // Differ 22 of 1150 (tla-en, 2026-11-06). Left: order only: movs r4/add r2,fp
 // at the start, movs r3 #58 twice, and the texture block's r0/r2 and r1/r0 reloads.
 
@@ -483,9 +487,10 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
       model->texture = &texture;
       model->kind = 7;
       model->mesh = Data_08198ec4;
-      /* FAKEMATCH(barrier): the empty asm parts the scheduler's rows; as no asm, 2 of 1150 instructions differ in tla-en. */
-      __asm__("");
-      model->vertices = vertices;
+      // A once-only block: it keeps the store after the mesh's.
+      do {
+        model->vertices = vertices;
+      } while (0);
       model->scrollU = 0;
       model->scrollV = 0;
       for (k = 0; k != 4; k++) {

@@ -1,12 +1,15 @@
-// Differ 11 of 76 (tla-en, 2026-11-08, -mtune=gba), under -Os. Left: the shape
-// store, which the native sinks past the cell's first read (reloading the cell
-// pointer for each access), comes first here; the store after the cell read,
-// through a plain u8 or indexed, does not move it.
-// Draft, differ 26 of 76 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 28 of 76 (tla-en); older figures below predate it.
-// Draft, differ 19 of 76: raises the cells under the held actor again.
-// Two minutes of permute took it from 79. Left: register choice of the
-// layer pointer and the order of the shape store and the cell flags.
+// Differ 11 of 76 (tla-en, 2026-11-08, -mtune=gba), under -Os.
+// Raises the cells under the held actor again: the shape grid entry and the
+// two cells' attributes.
+// Left: the shape store. The native reads the cell's attributes through one
+// copy of its pointer (r3), stores the shape through r1 and writes the
+// attributes through a second copy (r1); here one copy serves the read and the
+// write and the shape store comes first. Storing the shape after the cell read
+// or after its write (28 to 36), indexed (30), through a volatile pointer (17)
+// or a volatile cell (42) is worse. The one-field ShapeCell view of earlier
+// rounds is free now (11 either way) and is dropped. A permuter candidate at 6
+// reused the shape pointer for Ram_MapCellBuffer inside its own expression,
+// which loads 0x02010000 where gMapShapeGrid belongs: wrong code, not kept.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -71,13 +74,6 @@ struct EffectView {
 
 #define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
 
-// A one-field view: the shape store is memory of its own to sched2, which sinks
-// it past the cell's first read. A struct is padded to 4 bytes here, so the
-// pointer stays plain.
-struct ShapeCell {
-  u8 shape;
-};
-
 void Func_02000e9c(void) {
   struct Actor *held = HELD_OBJECT(Ram_HeapSlots->eventWork);
   u8 *layer;
@@ -102,7 +98,7 @@ void Func_02000e9c(void) {
   newShape = Func_02003dd0(*layer, shape, level);
   shapes += index;
   index <<= 2;
-  ((struct ShapeCell *)shapes)->shape = newShape;
+  *shapes = newShape;
   cells += index;
   ((struct MapCell *)cells)->attributeB |= 192;
   cells += 0x200;

@@ -1,4 +1,9 @@
 // Differ 6 of 107 (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-08: 0xfff set after the 0xf000 and gets the native's head order but
+// combine folds it into the and, losing the sl reload (57; in a once-only
+// block, 57; the and in one, 55); a mask local, flags read first (56), a
+// second once-only block, `flags = flags & 0xf000` and 8 minutes of permuting
+// left 6.
 // 2026-11-07: an empty once-only block after the 0xf000 and (permuter) puts
 // the ldrsh before the ldrh as in the native; left is the 0xf000 mask and its
 // and, built after the 0xfff where the native builds them first.

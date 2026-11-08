@@ -1,4 +1,8 @@
 // Differ 12 of 171 (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-08 (second pass): the slot loop as an explicit owned-byte pointer,
+// an index loop, a do-while or reordered steps, all 12; an 8-minute permute
+// found nothing under 12. The two loop pointers are loop.c's biv and giv,
+// and the giv wins r5 on priority. The layer local is now tagged.
 // 2026-11-08: the wait loop as nested ifs (mode and block, then i = 0, then the busy
 // byte) sets i before the busy test as the native does (16 to 12); i = 0 before the
 // whole if, 18. Left: the first loop's slot pointer and owned-byte pointer swap r5
@@ -126,6 +130,8 @@ void BattleEffect_CleanupSceneObjects(void) {
   map->z = work->z;
   if (owner != NULL) {
     ((u8 *)owner)[35] = work->ownerByte;
+    /* FAKEMATCH(temporary): the layer passes through the s16 local layer; as
+     * a plain store, 20 of 171 instructions differ in tla-en. */
     ((struct CleanupAnimation *)owner->animation)->layer = layer = work->layer;
   }
   if (work->kind != 8)

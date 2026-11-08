@@ -1,21 +1,19 @@
-// Differ 12 of 931 (tla-en, 2026-11-08, -mtune=gba), now with no device: the stacked
-// u16 is a volatile local assigned inside the BG1CNT store, which keeps its store
-// at sp+10 without the taken-address device (*&control, also 12). Left: the two
-// BG1_SET_PRIORITY_1 sites' `mov r1, sp` and pool load issued early (scheduling).
-// Measured under -Os, 5 November 2026: differ 12 (tla-en); notes below may predate it.
-// Draft, differ 59 of 931, skeleton gap 7/6 (tla-en, 2026-11-01)
+// Matches (tla-en, 2026-11-08, -mtune=gba); differ 0 in all six editions.
 // Aqua Rock's map preparation: for each room and entrance it sets the water
 // level, places the statues and boulders the flags have moved, opens or closes
 // the cells around them, and in the rooms whose water drains it shows the
 // drained state once its flag is set.
-// Left: BG1_SET_PRIORITY_1's stacked value. The listing keeps a u16 at sp+10
-// (mov r1, sp; adds r1, #10; strh) that is stored and never reloaded. A scalar
-// stays in memory with its address taken (a device) or as a volatile local; u16 control[1] loses the
-// store; u16 control[2] keeps it as add r1, sp, #8; strh r3, [r1, #2].
-// Also left: the actor-clearing loops of rooms 4 and 6. As for loops loop.c
-// hoists their movs #0, and the room 9 loop as a for also brings adds r1, #2
-// into the prologue, so they are goto loops; a jump threads over their exit,
-// giving bgt in room 4 and one extra b in room 6. A zero local spills.
+// BG1_SET_PRIORITY_1: the listing keeps the masked BG1CNT as a u16 at sp+10
+// that is stored and never reloaded, so `control` is a volatile local (as a
+// plain local, 96 of 931 differ in tla-en). The masked value is held in a
+// block local and the register written in a once-only block; the macro is a
+// plain block, since a do { } while (0) around it moves `mov r1, sp` ahead of
+// the BG1CNT read (4 of 931 differ), and the single expression
+// `REG_BG1CNT = (control = REG_BG1CNT & 0xfffc) | 1` issues the stack address
+// late (12 of 931).
+// The actor-clearing loops of rooms 4 and 6 are goto loops: as for loops,
+// loop.c hoists their movs #0, and the room 9 loop as a for also brings
+// adds r1, #2 into the prologue.
 // The Func_020036b8 loops are for loops counting up: loop.c reverses the i < N
 // ones and leaves room 5's i <= 4, as the listing has them. Each i is a
 // separate variable on purpose: one shared counter takes r6 and pushes object
@@ -38,11 +36,14 @@ struct MapBits {
 };
 
 #define BG1_SET_PRIORITY_1()                                                   \
-  do {                                                                         \
-    /* volatile: the value is stored at sp+10 and never read back (as a     \
-     * plain local, 84 of 931 differ in tla-en). */                            \
-    REG_BG1CNT = (control = REG_BG1CNT & 0xfffc) | 1;                          \
-  } while (0)
+  {                                                                            \
+    u16 value;                                                                 \
+                                                                               \
+    value = (control = REG_BG1CNT & 0xfffc);                                   \
+    do {                                                                       \
+      REG_BG1CNT = value | 1;                                                  \
+    } while (0);                                                               \
+  }
 
 void Func_02003278(void);
 void Func_020032d4(u32 first, s32 level, s32 baseLevel);

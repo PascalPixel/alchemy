@@ -1,4 +1,14 @@
-// Differ 20 of 1556 (tla-en, 2026-11-08, -mtune=gba, multiplies 3 3); 18 before that, from 16: the rows below (half's sign + hx at
+// Differ 14 of 1556 (tla-en, 2026-11-08, -mtune=gba, multiplies 3 3); from 20: a once-only block
+// around the arc's v[2] store (j's load and increment after the muls, 20 to 16) and the shard loop's
+// i = 0 set above half's halving (16 to 14). Left: the 256 limit's register at the shard loop (r6,
+// listing r2); half's sign + hx at the shard and ring sites, where the listing has hx + sign; the
+// shade store after texture2.logWidth's. The halving's order is cse's: it replaces the copy `half =
+// hx` by hx only when half's last use comes before hx's, as at x0 (the hoop); half lives on to the
+// ring, so combine swaps the operands instead. A block-local for the ring or the shard fixes that
+// site's order but spills one more pseudo (frame 212, differ 400); x0 for the shard, 140. Tried 8
+// November with no gain: once-only blocks around the shade, logWidth, vertices and half stores,
+// shade or kind set earlier, logHeight before logWidth, halving written as /= and -=.
+// Earlier: 18, from 16: the rows below (half's sign + hx at
 // two sites, the 256 limit's register, the shade store), plus the 7 mask's movs after a muls
 // (multiplies at 5).
 // 2026-11-07: once-only blocks around the two FillWords_ calls, 24 to 16; left: half's sign + hx at the
@@ -300,7 +310,10 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       v[1] = y;
       c = (Trig_Cos(j << 13) * r) >> 16;
       j++;
-      v[2] = c;
+      // Once-only block: j's reload follows the multiply, as in the native.
+      do {
+        v[2] = c;
+      } while (0);
     }
   }
   mode = 3;
@@ -614,8 +627,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
     
       p = (struct EffectStep *)gMapCellBuffer;
       half = hx;
+      i = 0;
       half = (half / 2) << 16;
-      for (i = 0; i != 256; i++, p++) {
+      for (; i != 256; i++, p++) {
         s32 r = (Random16() & 511) + 256;
         s32 a = (Random16() & 0x7fff) + 0x4000;
 

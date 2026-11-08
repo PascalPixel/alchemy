@@ -3,6 +3,11 @@
 // add r2, r8 ahead of strb r3, [r0, #9]. A word bit-field for the priority and the
 // counter through its struct field do not move it, nor any order of the five
 // statements.
+// Tried 8 November (2nd round): the counter stored plainly (24) or in a once-only
+// block (26); the counter pointer computed before the priority copy (30); the
+// priority read into a local, either sprite in a local, value s16 or u16, the
+// counter as (s16 *)work + 181 (all 2); the priority as byte masks (23 to 35);
+// 8 minutes of permute (2).
 // Under -Os, 5 November: differ 112 of 217 (tla-en); older figures below predate it.
 // Draft, differ 131 of 217 (was 143): Func_020010b4's twin for another shot:
 // it also stops while the leader's movement is 5, and on a cell of kind 212 it

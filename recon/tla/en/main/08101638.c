@@ -1,24 +1,18 @@
-// Differ 6 of 237 (tla-en, 2026-11-08, -mtune=gba), with four tagged devices
-// (2026-11-08: each still pays; without the fill wrapper, the r0 pin or the empty
-// asm 8, without the copy wrapper 140, without the once-only block 10).
-// Near miss, differ 6 of 237 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 16 of 237 in tla-en. First difference: this issues `ldrh r3, [r6, #0]`
-// earlier (row 108) than the native does (row 111).
-// First draft of Func_08101638: opens the Djinn menu's backdrop screen, the
+// Matches (tla-en, 2026-11-08, -mtune=gba), with the two tagged IWRAM
+// wrappers (without the copy wrapper 134 differ, without the fill wrapper 2;
+// The Broken Seal's iwram_call.h declares Iwram_CopyWords the same way, as an
+// inline forwarding to the entry, so on adoption they may be that header's
+// habit rather than devices). Declaring the icon as a window sprite, with its
+// list link (struct MenuIcon *next) at 0 in place of five unknown bytes,
+// closed it: the arrows' stores now keep the native order, and the r0 pin,
+// the empty asm between the arrows and the once-only block around the first
+// arrow, each measured as paying under the old struct, are gone.
+// Draft of Func_08101638: opens the Djinn menu's backdrop screen, the
 // twin of The Broken Seal's Menu_OpenBackdropScreen
 // (games/tbs/src/menu/menu/djinn.c): saves the tiles and palettes it covers,
 // draws the backdrop, lists the owners (Func_081019a4), then makes the
 // list's cursor and the two page arrows and places the arrows at the list
 // window's corners.
-// Differ 18 of 237 (2026-10-19), instruction order only: the native loads
-// palette 15's colour 4 before it builds the first store's address, stores
-// arrows[0] before it reads the arrow's attribute byte, and loads the
-// window's x before the 0xffff mask. The two IWRAM wrappers keep each
-// call's constants (as plain calls, differ 127 with the x and y chains
-// fixed); an empty asm before the colour store costs the pool estimate four
-// bytes (differ 40). Three minutes of permute found nothing nearer.
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -38,8 +32,9 @@ struct SpriteAttr {
 };
 
 struct MenuIcon {
-  u8 unk00[5];
-  u8 active;
+  struct MenuIcon *next; // the window sprite's list link, as The Broken Seal's
+  s8 kind;
+  s8 active;
   u16 x;
   u16 y;
   u8 unk0a[0x0a];
@@ -73,7 +68,7 @@ extern u8 gMenu_BackdropBorderTile[];
 extern char ResourceId_ShopGemTiles;
 
 s32 Window_UpdateOrCreate(struct MenuWindow **window, s32 x, s32 y, s32 width,
-                            s32 height, s32 frame);
+                          s32 height, s32 frame);
 void wait(s32 frames);
 void Graphics_ExpandVramTilesByColorTableFar(void *tiles);
 void *Palette_GetBasicObjColors(void);
@@ -81,7 +76,7 @@ void Graphics_AdjustPalettes(s32 bank);
 void Func_081019a4(void *list);
 void WindowSprite_ClearListFar(struct MenuWindow *window);
 struct MenuIcon *Icon_CreateWithResourceVariant(struct MenuWindow *window,
-                                                  s32 x, s32 y);
+                                                s32 x, s32 y);
 s32 Resource_FindFreeEntry(void);
 void VramBlock_LoadResourceFar(s32 entry, s32 size, s32 resource);
 struct MenuIcon *WindowSprite_CreateFar(s32 entry, s32 attributes,
@@ -91,13 +86,13 @@ struct MenuIcon *WindowSprite_CreateFar(s32 entry, s32 attributes,
 static __inline__ void CopyWords_(void *destination, const void *source,
                                   s32 size) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants; as direct calls, 140 of 237 instructions differ in tla-en. */
+   * constants; as direct calls, 134 of 237 instructions differ in tla-en. */
   Iwram_CopyWords(destination, source, size);
 }
 
 static __inline__ void FillWords_(void *destination, s32 size, u32 value) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants; as direct calls, 8 of 237 instructions differ in tla-en. */
+   * constants; as direct calls, 2 of 237 instructions differ in tla-en. */
   Iwram_FillWords(destination, size, value);
 }
 
@@ -136,16 +131,9 @@ void Func_08101638(void) {
   entry = Resource_FindFreeEntry();
   if (entry < 96) {
     VramBlock_LoadResourceFar(entry, 128, (s32)&ResourceId_ShopGemTiles);
-  do {
-  {
-    /* FAKEMATCH(pin): entry held in r0 ahead of the call; as the plain
-     * argument, 8 of 237 instructions differ in tla-en. */
-    register __typeof__(entry) hoisted asm("r0") = entry;
-    icon = WindowSprite_CreateFar( hoisted , 0x40000000, window, 0, 0);
-  }
+    icon = WindowSprite_CreateFar(entry, 0x40000000, window, 0, 0);
     icon->active = 13;
     menu->arrows[0] = icon;
-  } while (0);
     icon->oam.affineIndex |= 8;
     icon = WindowSprite_CreateFar(entry, 0x40000000, window, 0, 0);
     icon->active = 13;
@@ -158,9 +146,6 @@ void Func_08101638(void) {
   icon->oam.x = icon->x = x;
   y = window->y * 8 + 4;
   icon->oam.y = icon->y = y;
-  /* FAKEMATCH(barrier): an empty asm between the arrows; as no asm, 8 of 237
-   * instructions differ in tla-en. */
-  asm("");
   icon = menu->arrows[1];
   x += 224;
   icon->oam.x = icon->x = x;

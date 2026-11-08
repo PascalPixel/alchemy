@@ -1,41 +1,17 @@
-// Differ 22 of 406 (tla-en, 2026-11-08, -mtune=gba); the phase stores after
-// maskX 42, before x >>= 1, after cellY or after the cell sum 36.
-// 2026-11-07: Task_Add called by its prototype now measures the same 22, so
-// the cast wrapper is gone; phase stores together before cells (36), maskY
-// local read before the phase stores (56), and 11.5 permute minutes over the
-// loop and tail found nothing better that keeps the cell index in words.
-// Was differ 36 of 406, skeleton gap 15 (2026-11-01); 22 now with no change
-// to this file. Left: the layer loop's phase stores and maskY order, and
-// Task_Add's 0x485 against its function address, all scheduling. Tried
-// 2026-11-06: phase stores after maskX with maskY after cellY (differ 44).
-// The twin of The Broken Seal's MapGrid_LoadMap (a port of its shape, 42 and
-// gap 18 before). It loads a layout index from gData_0802f380: blocks,
-// collision (filled with -1 first, which The Broken Seal has not), cells,
-// shape grid, tile animations, blend script and the script at 0x0202e000;
-// sets up the three layers from the header, here with cell positions and a
-// shape pointer; loads the palette and tiles unless flag 0x170 says they are
-// loaded, and starts Func_0802ad84. Name it would take: MapGrid_LoadMap.
-// Found by order search
-// (150 s hill climb over the layer loop's statements): scaleX read after
-// cellY, and the two phase stores after cells.
-// Left, all order: each origin address is computed before its ldrb in the
-// native, after it here; the 0x104 constant is hoisted past the flags store;
-// 0x485's split constant is hoisted past REG_DISPCNT; the phase zero comes
-// earlier in the native, in r2, and maskY's shift after scaleX's load. These
-// look like one scheduling priority (latency of loads against split
-// constants), so they stay a near miss.
-// Tried, no gain: phase stores before the cell position (order right, but
-// the view and MulQ16 registers swap, differ 58, gap 16); a mask local;
-// pointers to minY or to all four bounds (differ 59); an origin local; cast
-// or local forms of enabled (differ 136); cell locals; a reversed cell sum;
-// (y >> 1) << 7 (differ 159); a scaleY local; a counted-down loop; a value
-// temporary or the offset first in the MulQ16 sums (differ 44).
-// Earlier measures: Io_Write16 for the three BGxCNT writes (direct stores,
-// differ 172) and a word local for the final MOSAIC, BLDCNT and DISPCNT
-// stores (direct, differ 93); Io_Write16 or a word local for the first
-// DISPCNT write (differ 104 to 106); an empty asm on the table address moved
-// the index's copy (differ 74). Permute 6 minutes found only a cast that
-// changes MulQ16's address.
+// Matches (tla-en, 2026-11-08, -mtune=gba); all six editions measure 0.
+// The twin of The Broken Seal's MapGrid_LoadMap. It loads a layout index from
+// gData_0802f380: blocks, collision (filled with -1 first, which The Broken
+// Seal has not), cells, shape grid, tile animations, blend script and the
+// script at 0x0202e000; sets up the three layers from the header, here with
+// cell positions and a shape pointer; loads the palette and tiles unless flag
+// 0x170 says they are loaded, and starts Func_0802ad84. Name it would take:
+// MapGrid_LoadMap.
+// 2026-11-08, from 22: maskY's period read into a local before the phase
+// stores puts the stores where the native has them (36 alone); the shape grid
+// held in a block local set in the loop fixes the allocation that followed (6,
+// found by permute); a once-only block around the last REG_DISPCNT store keeps
+// the task order after it (0; a once-only block around the Task_Add call does
+// the same). No device is left: the locals and the block are ordinary C.
 #include "types.h"
 #include "io_reg.h"
 #include "dma.h"
@@ -189,6 +165,9 @@ s32 Func_0802a6b8(s32 index) {
     u32 y = layerSource->y;
     s32 scaleX;
     s32 cell;
+    // Set in the loop; the native allocates its registers so.
+    u8 *shapeGrid;
+    u32 maskY;
 
     mapLayer->offsetX = x << 19;
     mapLayer->offsetY = y << 19;
@@ -196,18 +175,21 @@ s32 Func_0802a6b8(s32 index) {
     mapLayer->speedX = layerSource->speedX * 4096;
     mapLayer->speedY = layerSource->speedY * 4096;
     mapLayer->maskX = layerSource->periodX & 127;
-    mapLayer->maskY = (layerSource->periodY & 127) << 7;
+    // The period is read before the phase stores, as the native orders them.
+    maskY = layerSource->periodY & 127;
+    mapLayer->phaseX = 0;
+    mapLayer->phaseY = 0;
+    mapLayer->maskY = maskY << 7;
     x >>= 1;
     y = (y >> 1) * 128;
     mapLayer->cellY = y;
     scaleX = layerSource->scaleX * 4096;
     cell = y + x;
+    shapeGrid = gMapShapeGrid;
     mapLayer->cells = (struct MapCell *)Ram_MapCellBuffer + cell;
     mapLayer->scaleX = scaleX;
-    mapLayer->phaseX = 0;
-    mapLayer->phaseY = 0;
     mapLayer->cellX = x;
-    mapLayer->shapes = gMapShapeGrid + cell;
+    mapLayer->shapes = shapeGrid + cell;
     mapLayer->x = Iwram_MulQ16(*viewX, scaleX) + mapLayer->offsetX;
     mapLayer->y = Iwram_MulQ16(*viewY, mapLayer->scaleY) + mapLayer->offsetY;
     layerSource++;
@@ -263,7 +245,10 @@ s32 Func_0802a6b8(s32 index) {
   REG_MOSAIC = displayFlags;
   REG_BLDCNT = displayFlags;
   displayFlags = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
-  REG_DISPCNT = displayFlags;
+  // A once-only block: the native builds the task order after this store.
+  do {
+    REG_DISPCNT = displayFlags;
+  } while (0);
   Task_Add(Func_0802ad84, 0x485);
   return 2;
 }

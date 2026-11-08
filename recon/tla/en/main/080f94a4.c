@@ -2,6 +2,12 @@
 // one barrier). Without the r4 pin 96, pin r6 96, no empty asm 30 (an empty
 // once-only block in its place 28, around the allocation 30, around the suspend
 // store 78), no r1 hoist 24, no devices at all 92. Other editions not re-measured.
+// Tried 2026-11-08: with no device, a set-once tiles local for 0x06004000 set after
+// the allocation 51 (49 with the r1 hoist; set first 59; block-local or the copy
+// back as a literal 51): global.c still ranks it above the pool's 0 (4 refs over
+// 202 insns against 3 over 234), so VRAM keeps a register. Once-only blocks around
+// the copies 108. A three-minute permute of the device-free form found only invalid
+// candidates (24, copying the backup onto itself).
 // 2026-11-06: the same 22 in de, es, fr and it;
 // 0 of 109 in tla-ja (2026-11-07, its whole extent; the listing runs on).
 // Near miss with an r4 pin, empty asm and r1 hoist found by search, now tagged. The rest is allocation: the native keeps the

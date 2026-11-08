@@ -1,10 +1,11 @@
-// Differ 4 of 2209 (tla-en, 2026-11-08, -mtune=gba; 8 before). Scheduling only: the then-branch
-// second loop (base.y loaded one row early, the -0x10000 pool load after the store
-// where the native has it before the sum). 8 to 6: (i & 3) + 5 written out three
-// times in place of a local m (permuter); 6 to 4: the t <= 43 loop reads
-// p = &work->particles[i] each pass in place of a stepped pointer (faces now load
-// before work). The barrier in the frame above 137 is now a once-only block around
-// the logHeight store (4 either way, 6 with neither). Tried for the rest: eight
+// Matches (tla-en, 2026-11-08, -mtune=gba; also tla-ja, de, es, fr and it).
+// 4 to 0: the then-branch second loop writes CLAMP_Y out as two plain ifs (the
+// macro's once-only block held the -0x10000 pool load after the store).
+// 8 to 6: (i & 3) + 5 written out three times in place of a local m
+// (permuter); 6 to 4: the t <= 43 loop reads p = &work->particles[i] each
+// pass in place of a stepped pointer (faces now load before work).
+// The barrier in the frame above 137 is now a once-only block around the
+// logHeight store (4 either way, 6 with neither). Tried for the rest: eight
 // spellings of the place[2] sum, an xs pointer as the else branch has, once-only
 // blocks and empty once-only loops after each statement of the loop. Permuter,
 // about 15 min.
@@ -520,7 +521,12 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
           place[0] = ((39 - Data_08198830[(i & 3) + 5]) << 16) + base.x;
           place[2] = ((-(Data_0819883c[(i & 3) + 5] * 30 / 32) - i / 4 * 60) << 16) +
                      base.y + 0x420000;
-          CLAMP_Y(place);
+          // CLAMP_Y written out: the macro's once-only block holds the clamp's
+          // constant after the store (4 of 2209 differ).
+          if (place[2] < -0x10000)
+            place[2] = -0x10000;
+          if (place[2] > 0x9fffff)
+            place[2] = 0xa00000;
           obj = work->objects[i + 12];
           obj->tile = ((struct AzulObject *)work->objects[(i & 3) + 5])->tile;
           Render_ApplyProjectedPlacementFar(obj, place, (s32 *)Data_08198828,

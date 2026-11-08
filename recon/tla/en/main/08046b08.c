@@ -1,4 +1,7 @@
 // Differ 40 of 3111 (tla-en, 2026-11-08, -mtune=gba): three barriers, not six.
+// Sixth round, 8 November: without the first fill loop's asm 42, without both 44;
+// the list loop's test as j < 4, the fill loop with j++ as its own statement, 42;
+// the fill as if-do-while 66, j != 4 94, a goto to the fill loop 870.
 // Fifth round, 8 November: the name sprite's and both place_sprites loops' empty
 // asms are now empty once-only blocks (do { } while (0)), 40 each, so plain C; at
 // the cursor sprite a once-only block reads 98 to 115 in any position (the asm

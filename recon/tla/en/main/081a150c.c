@@ -3,6 +3,10 @@
 // Written in that order: 32 (sched1 then hoists 7524's address and
 // Func_081a133c into r1 and r0); 7524 as s16 32, u8 or s32 35; 7524 = 1
 // before 7520 = 0 with gScrollTarget after 7528: 12.
+// 8 November: all 5,040 orders of the seven stores, best 12 (this one);
+// a constant local for 7524's 1: 35; a zero local: 26; chained stores: 16 or
+// more; volatile on any of them: no change. Permuter, 6 minutes: 10 only by
+// storing Data_02007514 twice (a dead store), not taken.
 // Draft, differ 12 of 69 (was 32): sets up a scrolling picture scene:
 // clears the frame flags and the scroll words, resets the task table and adds
 // Func_081a133c, then sets up BG2, BG3 and blending as Func_081a06e0 does,

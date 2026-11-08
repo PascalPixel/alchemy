@@ -1,5 +1,9 @@
-// Differ 20 of 171 (tla-en, 2026-11-08, -mtune=gba); without the wrapper 22. Earlier on
-// 2026-11-08: 24, permuter 6 minutes none better.
+// Differ 20 of 171 (tla-en, 2026-11-08, -mtune=gba); without the wrapper 22. Re-measured 8
+// November, no gain: 8 permuter minutes (18,838 candidates); index as u32, kind << 2, [0][index],
+// index[table], a table local, a row pointer (102), j = 0 or index in once-only blocks or moved,
+// cell.z's operands swapped (26), index declared before layer (28). Left: the index in r2 and the
+// table in r3 at the pass's top (listing the reverse), height's load against j's 0, the row's ldrsb
+// operands. Earlier on 2026-11-08: 24, permuter 6 minutes none better.
 // 7 November: the cell call through a forwarding inline (FAKEMATCH wrapper, as
 // 668's Func_02004240) gives 26 to 24. Left as below.
 // Before: differ 26 of 171 (tla-en, 2026-11-06), from 30: every spill slot agrees now.

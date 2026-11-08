@@ -2,7 +2,12 @@
 // before the ldrb of byte 0x17, here after it. Plain (no asm, no block): 6. Tried
 // 2026-11-08: the bit-field store alone in the block (6), the store to
 // gData_02006294 in a block of its own (4), the byte masked by hand (13), the
-// bit-field store first (13). Older notes below predate -mtune=gba.
+// bit-field store first (13). Later 2026-11-08: a once-only empty block in
+// place of the asm (4); the map pointer read after the store (13); the 0 in a
+// local (13); the store through a pointer local (4); the bit-field in a u16 or
+// u32 container (2 with the asm, 4 to 6 without); 8 permuter minutes found
+// nothing better. In sched2 the ldrb and the subs are both ready after the
+// store and the ldrb's longer chain wins. Older notes below predate -mtune=gba.
 // Under -Os, 5 November: differ 4 of 30 (tla-en); older figures below predate it.
 // Near miss, differ 6 of 30 (tla-en, 2026-10-31): scheduler order only. The
 // native loads the address of gData_02006294 first, issues the ldrb of byte

@@ -1,4 +1,11 @@
-// Differ 52 of 1146 (tla-en, 2026-11-08, -mtune=gba).
+// Differ 36 of 1146 (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-08: the center's coordinates stored from a function-level zero
+// local (52 to 38: the listing's r2 zero and r4 for &screen), then start != 0
+// for start > 0 (beq as the listing, 38 to 36; additive still holds the
+// lights' 0). Re-measured: every device still pays (the 4's barrier 91,
+// the slot's 68, the copy wrapper 38, the center's one-pass 723). Not better:
+// once-only blocks in place of either barrier (139, 84), a function-level
+// four (93 to 452), the mode 4 site's draw[1] fetched before picture (68).
 // 2026-11-07: the last arm's palette copy (mode 0 and the rest) through an
 // inline (FAKEMATCH wrapper, as f13e7e0.c's) settles its ldr r3 before
 // lsls r0, #19 (54 to 52); the other four copies stay direct (through it, no
@@ -194,7 +201,7 @@ extern u16 Data_08197424[]; // gBattleEffect_FlareCells
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 54 of 1146 instructions differ in tla-en. */
+   * Iwram_CopyWords, 38 of 1146 instructions differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 
@@ -219,6 +226,8 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
   // Holds BLIT_ADDITIVE for the whole function: the lights' second build
   // then reloads its 0 in place of a fresh constant.
   s32 additive = BLIT_ADDITIVE;
+  // Holds 0 for the whole function: the center's coordinates are stored from it.
+  s32 zero = 0;
   s32 frame;
   s32 i;
   s32 origin[3];
@@ -382,7 +391,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
 
       LOAD_BLITTER(draw[0], flags ^ COMPOSITE_FLIP_X, BLIT_MAX);
       /* FAKEMATCH(barrier): the 4 held by an empty asm with an output; as flags ^
-         COMPOSITE_FLIP_X, 85 of 1146 instructions differ in tla-en. */
+         COMPOSITE_FLIP_X, 91 of 1146 instructions differ in tla-en. */
       __asm__("" : "=r"(four) : "0"(four));
       LOAD_BLITTER_ALTERNATE(draw[1], flags ^ four, BLIT_ADDITIVE);
 
@@ -410,7 +419,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
       point[1] = height;
       point[2] = object->z;
       SceneTransform_ApplyPosition(point);
-      if (start > 0) {
+      if (start != 0) {
         if (frame == member * 8 + 53)
           Func_0814cd48(effect->actors[member], 7, -1, member, 16);
       } else {
@@ -425,7 +434,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
             void **slot = &Ram_HeapSlots->unkb8[1];
 
             /* FAKEMATCH(barrier): the slot's address held by an empty asm with an
-               output; as draw[1] = Ram_HeapSlots->unkb8[1], 86 of 1146
+               output; as draw[1] = Ram_HeapSlots->unkb8[1], 68 of 1146
                instructions differ in tla-en. */
             __asm__("" : "=r"(slot) : "0"(slot));
             draw[1] = (DrawRectangle)*slot;
@@ -473,9 +482,9 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
       }
 
       // Where the center is on the screen.
-      center[0] = 0;
-      center[1] = 0;
-      center[2] = 0;
+      center[0] = zero;
+      center[1] = zero;
+      center[2] = zero;
       EffectPosition_ProjectPoint(center, &screen);
       do {
         screen.x = screen.x * 4 / 5 + shift;

@@ -1,4 +1,13 @@
 // Differ 31 of 713 (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-08: of the 31, only four rows are code (the extra mov sl, the onObject
+// clear, the debug test's reload of the pointer); the rest are branch and pool
+// offsets moved by the one extra instruction. No gain from: gInput direct in the
+// debug test (40: that test matches, the first two probes take r1 and r3 for
+// the object and 0x1000), the pointer set at the top, just before the debug
+// test or inside its condition (40 to 60), onObject cleared inside the block or
+// in the loop init (37, r4 and r6 swapped; 589 when after the bound),
+// onObject++ or |= 1 (37, 44), onObject's variable reused for the heading
+// count or the angle (178 to 216). A 5-minute permute: nothing below 31.
 // 2026-11-07: onObject cleared before the step (r4 and r6 now right) and the
 // keys read through a pointer (the probes now match): 48 to 31. Left: the
 // onObject clear lands before the priorityFlags branch, and the pointer takes

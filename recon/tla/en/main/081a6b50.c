@@ -2,7 +2,13 @@
 // 2026-11-07: a once-only block around offsetX and offsetY, 4 to 2; the listing
 // stores rows between "adds r2, r3, #6" and "adds r3, #8" (the block's loop
 // note keeps it ahead; a block over all four loads puts it after). Spellings,
-// types, orders and 14 permuter minutes found nothing better.
+// types, orders and 14 permuter minutes found nothing better. Also 2026-11-08
+// (2 unless said): the block around offsetY alone (rows' store then lands,
+// offsetX's ldrsh comes one slot early), around rows too, around left too;
+// offsetX alone (6), both blocks (4), an empty block (4 to 6); frame in a
+// local; s16 rows, u32 tile; const gData_081a84e6 (6); u32 rows (6); top
+// first (14); 8 more permuter minutes. In sched2 the once-only block's note
+// holds "adds r2, r3, #6" behind rows' spill store.
 // Draft, differ 27 of 360, skeleton gap 9 (tla-en, 2026-11-01)
 // A frame callback of the intro (its state in heap slot 43, 0x030000ac): clears
 // OAM, then in phase 0 steps an animation through gData_081a8378 along the path

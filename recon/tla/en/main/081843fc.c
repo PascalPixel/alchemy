@@ -1,4 +1,10 @@
 // Differ 22 of 4580 (tla-en, 2026-11-08, -mtune=gba). Measure 081843fc,081848ec together.
+// Tried 2026-11-08 (round 6), none below 22: the idx barrier re-measured (without it
+// 3367, its 4 bytes move every later pool; a once-only block in its place the same;
+// re-reading p->variant there 44); for the sparks' last height n + table,
+// n[table] and integer sums 22, a heights local 514, the y read as *(table + n)
+// 278; the set-once bolts (read only by its load call) set before the scroll store,
+// the background load or the 08164b2c call 44, the wait 972, passed directly 382.
 // 2026-11-08, 41 to 22, no device added:
 // - The wave's rows set i, x and v in that order in the inner for-init, v from the
 //   set-once cellBuffer as an integer sum, off + (s32)cellBuffer: i's zero is its
@@ -984,7 +990,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             p->y = Data_08199880[n] << 3;
             p->z = a << 8;
           }
-          /* FAKEMATCH(barrier): idx held through an empty asm so off + idx is rebuilt; as the plain sum, 3374 of 4580 instructions differ in tla-en. */
+          /* FAKEMATCH(barrier): idx held through an empty asm so off + idx is rebuilt; as the plain sum, 3367 of 4580 instructions differ in tla-en. */
           __asm__("" : "=r"(idx) : "0"(idx));
           p->velocityY = Data_081998f2[idx + off];
           p->velocityZ = Data_0819995e[idx + off];

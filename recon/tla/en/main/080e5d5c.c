@@ -1,4 +1,9 @@
 // Differ 30 of 639 (tla-en, 2026-11-08, -mtune=gba); the pins tagged, measured then.
+// 2026-11-08: both pins re-measured (90 and 43 without, unchanged); without the
+// once-only block around Iwram_FillWords 32. Unpinned, the speed form costs only
+// the extra movs r0, #1 before wait(1) and the pool shift it causes; a 10-minute
+// permute of it reached 30 only by narrowing Iwram_FillWords' size to unsigned
+// char, which passes 0 (rejected). Lift and loop spellings: no change.
 // 2026-11-06: allocation only (lift r4/r0, the 1 for j++,
 // one fused add); a 5-minute permute reached 28 only by changing a signature.
 // Also measured (2026-11-06, second pass): speed unpinned with its 0x28000 added

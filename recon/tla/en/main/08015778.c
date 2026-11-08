@@ -1,4 +1,10 @@
 // Differ 2 of 82 (tla-en, 2026-11-08, -mtune=gba); without the barrier, 4.
+// Also 2026-11-08: no barrier, the plain C sets the literal before adds r7, r1
+// as the native does, and only the merged sp copy is left (4); an 8-minute
+// permute of that form found nothing better. A memory, cc or plain asm, a
+// once-only block, a label, a block-scoped view pointer or a separate view.z
+// local give 4 to 57; __asm__("" :) without volatile and an asm reading
+// screen keep 2.
 // 2026-11-07: depth read before the projection's address and y kept in its own
 // local (6 to 2 with the operand barrier; plain, 4: CSE merges the view's two
 // sp copies). Left: sched2 ties adds r7, r1 with the transform's literal; in

@@ -1,4 +1,12 @@
 // Differ 2 of 292 (tla-en, 2026-11-08, -mtune=gba); the same row as on 2026-11-07.
+// 2026-11-08 (sched2 dump): the native needs the next store ahead of the y
+// load (it is, at priority 6, only behind a barrier or with an aliasing load)
+// and mov r0, r8 free to fill the load's delay. The block's loop-end note
+// makes the index reload mov r3, sl gate the call's argument copies; an empty
+// block after the next store makes the y load gate them at cost 3; reading y
+// through (u8 *) makes it wait on the next store (4). Empty or wrapping blocks
+// round x, next, the sentinel or the call, and u8 or u16 spellings of the y
+// store, measured 2 to 6.
 // 2026-11-07: measured 4 (the call's argument copies ran ahead of the y
 // load); a once-only block around the y store (permuter) gives 2 with plain
 // sprite->y. Left: mov r0, r8 lands after the index store, where the native

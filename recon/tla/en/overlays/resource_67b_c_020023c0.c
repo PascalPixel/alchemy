@@ -1,7 +1,15 @@
 // Differ 28 of 171 (tla-en, 2026-11-08, -mtune=gba): screenX and screenY in each
-// 8 November: 8 minutes of permute found nothing under 28; the loop end's counter and pointer steps reordered, 28 or 44.
-// other's registers. Tried 2026-11-08: screenX first (49), screenY shifted after
-// the sums (30 or 49).
+// other's registers. screenX is local to its block, so local-alloc gives it r2
+// (only y, in r3, is live) before global gives screenY r0; the listing's r0
+// for screenX needs r2 busy at its birth (the unshifted z - y, which the
+// listing shifts after screenX) or screenX global. Tried 2026-11-08: screenY =
+// z - y shifted after screenX (scheduling then matches, 30: only the swap
+// left); that difference in a temporary of its own (63); x = (x >> 16) - 4
+// with x + 15 (28 to 30); a two-sided range test (28); declaration orders
+// (28, 30); x - 4 deferred to the store (59, 80). 8 November, earlier: 8
+// minutes of permute found nothing under 28; the loop end's counter and
+// pointer steps reordered, 28 or 44; screenX first (49), screenY shifted
+// after the sums (30 or 49).
 // 2026-11-06: Permuter (4 min) and three more
 // orderings of the screenX and screenY steps found nothing below 28; z subtracts
 // viewZ and lift in two statements, as the native does (30 to 28), and the

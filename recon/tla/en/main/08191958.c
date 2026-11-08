@@ -1,4 +1,20 @@
-// Differ 34 of 185 (tla-en, 2026-11-08, -mtune=gba); the same frame and rows as below.
+// Differ 12 of 185 (tla-en, 2026-11-08, -mtune=gba). Left: midpoint at sp+0
+// here, sp+8 in the listing (2 rows), and, in the band loop, the row offset and
+// the falling edge's per-row copy in each other's registers (r4, r0). This
+// round: x reused as the frame count (34 to 26; ordinary C, a local reused for
+// a second value), the row as (i & 7) + (i >> 3) * 64 (to 28 alone, 22 with
+// x), and an unused volatile word declared last, which gives the frame its
+// 140 bytes and puts the ramp at sp+12 (20); it sits above the spills, where
+// the listing's word is below them. Then midpoint tested as *&midpoint (an
+// equivalent spelling; found by the permuter as a pointer to it), which gives
+// midpoint a stack slot of its own and work its sp+4 (12; 18 without the
+// volatile word; the word in a block after the address is taken, 12). Not
+// moving the swap: the row hoisted to
+// the outer loop (30), declared at the top, set late or in a block (20), the
+// colour at the top (20) or as an else-if chain (26), the falling edge spelt
+// 63 - (i * 2 - 192), 255 - (i << 1) and others (33), a block-scoped column
+// counter (30); a copy of midpoint called through it (24 to 60).
+// Earlier: differ 34 of 185 (tla-en, 2026-11-08, -mtune=gba).
 // Differ 34 of 185 (tla-en, 2026-11-06).
 // The frame (native 140, here 136: every spill one slot lower, 16 rows) and,
 // in the band loop, the row offset and the falling edge in each other's
@@ -62,10 +78,10 @@ void Func_08191958(u8 side, u8 speed, void (*midpoint)(void)) {
   u8 *canvas;
   struct BattleEffectWork *work;
   u16 ramp[63];
-  s32 frames;
   s32 half;
   s32 x;
   s32 i;
+  volatile s32 unused; // Unused: gives the stack frame its 140 bytes.
 
   scrollX = (side & 1) * 192 - 64;
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -79,7 +95,7 @@ void Func_08191958(u8 side, u8 speed, void (*midpoint)(void)) {
   // middle 64 and falling again over the last 32, in 8x8 256-colour tiles.
   for (i = 0; i != 128; i++) {
     for (x = 0; x != 128; x++) {
-      s32 row = (i >> 3) * 64 + (i & 7);
+      s32 row = (i & 7) + (i >> 3) * 64;
       s32 color;
 
       if (i <= 31)
@@ -102,14 +118,15 @@ void Func_08191958(u8 side, u8 speed, void (*midpoint)(void)) {
   IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT[1], (u32)ramp, 0x8000003f);
 
   REG_BG2X = scrollX << 8;
-  frames = 192 / ((s8)speed < 0 ? -(s8)speed : (s8)speed) + 1;
-  half = (frames - 1) >> 1;
-  for (i = 0; i != frames; i++) {
+  x = 192 / ((s8)speed < 0 ? -(s8)speed : (s8)speed) + 1;
+  half = (x - 1) >> 1;
+  for (i = 0; i != x; i++) {
     scrollX += (s8)speed;
     REG_BG2X = scrollX << 8;
     work->transferPending = 1;
     wait(1);
-    if (i == half && midpoint != NULL)
+    // Spelt *&midpoint: the address puts midpoint in its own stack slot.
+    if (i == half && *&midpoint != NULL)
       midpoint();
   }
   HeapSlot_Release(104);

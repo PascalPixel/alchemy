@@ -1,10 +1,15 @@
 // Differ 2 of 303 (tla-en, 2026-11-08, -mtune=gba).
 // 2026-11-07: Iwram_FillWords through an inline wrapper (as the Broken Seal's
 // iwram_call.h) fixes the fill's order, 6 to 2; left: the slot 104 argument
-// is loaded last before Func_08196404 (the build loads it first; all four
-// candidates have priority 9, so the listing's RTL had r0 set last). Tried:
+// is loaded first before Func_08196404 (the native loads it last: r3, r1, r2,
+// r0); all four candidates have priority 9 and sched2 breaks the tie by LUID,
+// so the native's r0 move came after the others in its RTL. Tried:
 // slot types, a slot local, an inline call wrapper, per-branch calls, argument
 // spellings; alchemy-devtools permute (6 min, 4 jobs): nothing below 2.
+// 2026-11-08: also a function-scope slot local used by both calls, a mode
+// local (as f16ec58.c), flags types and declaration places, flags |=, an
+// unprototyped call; permute 8 min: nothing below 2. Func_08196404 returns s32,
+// as the adopted files declare it (no change).
 // Earlier: differ 16 to 6 over 2026-10-15 to 11-05 (the pooled-store device,
 // since dropped, was no longer needed). Allocation and frame match (effect
 // spilled to sp+8 because the blitter pair holds r6 and r7; the cell buffer
@@ -40,7 +45,7 @@ extern char ResourceId_StarCrescentSheet;
 extern char ResourceId_MarsDjinnSheet;
 
 void BattleEffect_StartTiledCanvas(s32 bgControl);
-void Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                    s32 mode);
 void *Resource_GetTableEntry(s32 id);
 s32 Task_Add(void (*func)(void), s32 order);

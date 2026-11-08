@@ -1,4 +1,8 @@
 // Differ 30 of 218 (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-08: a buffer variable for Data_0202d000 alone already swaps r5 and
+// r6 (84); a palette pointer local, an s32 or u16 backdrop colour, once-only
+// blocks around the stores, and other block-index and region spellings gain
+// nothing (30 to 77).
 // 30 on 2026-11-06; 38 on 2026-10-18. A buffer
 // variable set one call early, reused for the next buffer: 84. A 5-minute
 // permute found nothing under 44; the rest is allocation and scheduling.

@@ -1,55 +1,12 @@
-// Differ 17 of 167 (tla-en, 2026-11-08, -mtune=gba) with two tagged barriers at the loop's end: asm on i keeps the test on i,
-// asm on tile drops tile below the hoisted copies so it spills as native (27 with the tile one alone, 62 with the i one
-// alone; without both, the plain form below measures 31). Left: oam + 1 takes r5 and tile + 2 r9 (native r9, r5:
-// tile + 2 ranks 3/31 below oam + 1 3/27), and the affine store's lsls one row early. Arm orders and all 720 entry
-// orders tried with the barriers (17 best); three barriers 46; tile += 2 in the for header with asm on i 23.
-// Without devices, 31: The entry now matches, with no device: byte 5 is a two-bit mode field
-// and its rest, as the gabomba_statue sibling s4710.c declares it (oam->mode = 3, 57); the copy loop counts up (the
-// compiler reverses it); the scale is a plain s32 local stored into z = 0, x, y in that order, which drops the zero local
-// and the volatile block (tile reads work->block itself); the locals in the order digit, old, now, tile, oam, value
-// (31, best of all 720). Left: only the loop below (test on i + 1; i + 1 r5, tile + 2 r9, oam + 1 r11 against native
-// r11, r5, r9). A for (;;) whose arms end `if (i > 4) return;` keeps the test on i but then tile ranks 5/101 above
-// i + 1 (3/34) and takes r11, spilling value (62, best of 720 orders).
-// Before that, 61: A permuter find, both forms ordinary C (no tag): block is a volatile
-// local and effect.z is stored from a local holding 0 (from 67). The volatile costs a stack slot the
-// listing lacks (frame 24, not 20), so this is a nearer count, not a nearer shape.
+// Matches (tla-en, 2026-11-08, -mtune=gba), under -Os, with no device: the loop is one body (the
+// affine index chosen by an if, one call) with i, tile and oam all stepped in the for header; as arms that
+// each step oam, 15 differ; with tile also stepped in the arms, the two hoisted copies swap registers (17).
 // No twin: the routine is the Gabomba statue clock (clock.c's ClockWork at gData_020023c4 + 0x288); no
-// other scene or ☀️ has its five-digit counter loop. Loop test (7 November): each arm ending
-// `if (i > 4) return; goto loop;` keeps the test on i (an in-block copy, which global cprop skips) and
-// crossjump still merges the arms as native; then the three hoisted copies rank 3/29, 3/30, 3/31 against
-// tile's 10/101, so the one copied last loses its register to tile; with block and tile declared first tile spills as
-// native and the loop matches but for old and oam + 1 swapping r9/r10, yet the entry falls apart (115).
-// Earlier: native stores z = 0 before x and y from r0, but
-// a u16 scale local for that order costs a zero-extend (72); gcse cprop pass 2 still swaps i for
-// its hoisted i + 1 in the test. Tried 7 November: i++ in the header with all 2520 entry orders
-// (109 best), a break or goto test in the arms (129, 151), types of i and tile, a 10-minute permute (73).
-// Devices tried (each would need a FAKEMATCH tag): asm("" : "+r"(i)) before the test keeps the test on i
-// and puts tile + 2, oam + 1 in r5, r9 as native, but then tile takes r11 and i + 1 spills (115; 109
-// best of 2520 entry orders; an 8-minute permute dropped it); in an arm 94; on tile 109; pinning i,
-// oam or now 119 to 156; a temporary for the test, or a continue from either arm, changed nothing (67).
-// 2026-11-06, draft 170, no devices. From 104: the scale is
-// stored straight into effect.x and effect.y copied from it (one extra ldrh, but no scale
-// pseudo, which settles most of the entry's allocation: 75), then the entry's locals in
-// the order digit, old, value, block, tile, now, oam (67, best of all 2520 orders with
-// block before tile; the old scale local's best order was 100). A volatile scale (73, frame
-// 24) and a 2 held in a local for i == 2 were permuter finds not kept.
-// Left: the loop's hoisted copies, as below (i + 1 r5, tile + 2 r9, oam + 1 r11; the
-// test reads i + 1), and a few entry rows.
-// Earlier state, 104 of 167: the hoisted copies' registers and the entry's schedule, as below.
-// Why the test reads i + 1: gcse's second cprop, after -Os hoisting, replaces i with
-// the hoisted i + 1 in the loop's exit test, since both arms copy it into i; the
-// listing tests i. Pinning i to r6 (measured 2026-11-06, not kept) stops that but
-// also stops the hoist and the folding of the entry test: 114.
-// Builds the five-digit counter's sprites: decodes three digit lists,
-// copies each digit's picture into the tiles and loads them, builds two affine matrices and fills five OAM entries.
-// The arms' increments hoist under -Os as the native's do and the frame slots agree (scaled, plain, tile at sp+0, 4, 8).
-// Left: the hoisted copies' registers. Native: i + 1 in r11, oam + 1 in r9, tile + 2 in r5, tested as i after its copy back.
-// Here the loop test reads i + 1 itself (cmp r5, #4), giving it 4 refs, so it ranks first and takes r5.
-// Also the entry's order follows from those ranks. Tried: all 36 orders of the arms' increments, i < 5, do-while, goto.
-// Also tried (6 November): one merged body (124); i++ in the header, tile and oam in the arms (110: the test then reads i
-// and tile + 2, oam + 1 take r5, r9 as native, but tile itself takes r11 and i + 1 spills); other header and arm splits
-// (108 to 116); oam++ as the call's argument (138); a second loop counter (126); s32 or u16 tile (110, 132); &work->value
-// at each use (130); a dozen orders of the entry's declarations (104 to 130); (*digit - 48) * 64 (104).
+// other scene or ☀️ has its five-digit counter loop.
+// The entry: byte 5 is a two-bit mode field and its rest, as the gabomba_statue sibling s4710.c declares it;
+// the copy loop counts up (the compiler reverses it); the scale is a plain s32 local stored into z = 0, x, y.
+// Builds the five-digit counter's sprites: decodes three digit lists, copies each digit's picture into the
+// tiles and loads them, builds two affine matrices and fills five OAM entries.
 #include "types.h"
 #include "call.h"
 #include "iwram_call.h"
@@ -123,30 +80,16 @@ void Func_02005090(void) {
   scaled = AffineMatrix_BuildForEffect(&effect);
   old = work->old;
   now = work->now;
-  for (i = 0; i <= 4;) {
+  for (i = 0; i <= 4; i++, tile += 2, oam++) {
     p = (u32 *)oam;
     *p++ = 0;
     *p++ = (i << 20) | 0x8000;
     *p = tile | 0x400;
     oam->mode = 3;
-    if (*old++ != *now++ || i == 2) {
+    if (*old++ != *now++ || i == 2)
       oam->affine = scaled;
-      Func_020055ec(oam, 236);
-      tile += 2;
-      oam++;
-      i++;
-    } else {
+    else
       oam->affine = plain;
-      Func_020055ec(oam, 236);
-      tile += 2;
-      oam++;
-      i++;
-    }
-    /* FAKEMATCH(barrier): the empty asm on i keeps the loop test on i rather than its hoisted
-     * i + 1; as no asm, 27 of 167 instructions differ in tla-en. */
-    asm("" : "+r"(i));
-    /* FAKEMATCH(barrier): the empty asm on tile lowers its allocation rank so it stays on the stack;
-     * as no asm, 62 of 167 instructions differ in tla-en. */
-    asm("" : "+r"(tile));
+    Func_020055ec(oam, 236);
   }
 }

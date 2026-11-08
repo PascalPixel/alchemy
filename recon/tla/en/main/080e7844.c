@@ -4,8 +4,12 @@
 // against r3; one scheduling pair (i = 63 against the -13 mask's copy).
 // Later on 6 November: result = 0 before pending = NULL with the event work's
 // pointer in its own local gives both stores and slots back in r5 (from 34).
-// Still holds untagged empty asms, one-pass blocks and locals found by search;
-// each needs its S2 tag on adoption, measured then.
+// 8 November: the empty asm after pending = NULL was free and is gone; the
+// once-only block round the palette store still holds it (32 without). A
+// single green expression (30), green += add earlier (30), the eventWork
+// reload with a giv-shaped index (46), declaration and init orders, a
+// do-while or separate decrement for the sprite loop, and a dead global
+// update anywhere measure 28 or worse.
 // 6 November: priorityFlags |= 2 orders the OR; if (fade == -1) add = 0; else
 // add = fade / 4 reloads fade as the listing does; green as sin * 8, then
 // (green >> 16) + 23. Measured and left: result = 0 before pending = NULL
@@ -161,7 +165,6 @@ void Func_080e7844(void) {
   found = -1;
   fade = -1;
   pending = NULL;
-  asm("");
   caster = scene->mainObject;
   BattleEffect_InitializeSharedScene();
   pos[0] = caster->x;

@@ -1,8 +1,11 @@
-// Differ 6 of 186 (tla-ja, 2026-11-08, -mtune=gba): unchanged.
+// Differ 6 of 186 (tla-ja, 2026-11-08, -mtune=gba): unchanged after a second
+// round (about 40 rewrites on the three twins, a 10-minute permuter run whose
+// only gain was a wrong return type).
 // The Japanese release's own function: Func_0200297c of overlay 6ad, overlay
 // 6ab's Func_02002148 in its Japanese form with this overlay's symbols; see
 // that draft. Left: actor->z loaded before the sum and the clamp constant's
-// load order around it.
+// load order around it, and the last store's zero set before the address's
+// copy.
 #include "edition.h"
 
 #include "types.h"
@@ -35,6 +38,8 @@ extern u8 gData_020023c4[];
 void Func_0200297c(void) {
   struct MainRoutineWork *main = &gMainRoutineWork;
   struct Work020023c4 *work;
+  /* FAKEMATCH(temporary): the position held in a union beside a halfword;
+   * as a plain struct Vector3, 22 of 186 instructions differ in tla-ja. */
   union {
     struct Vector3 v;
     s16 h;
@@ -56,6 +61,8 @@ void Func_0200297c(void) {
       if (Func_020054d8(actor->terrainId, actor->x, actor->z) == 7) {
         s32 i;
 
+        /* FAKEMATCH(temporary): velocityX stored through a union; as the plain
+         * store, 8 of 186 instructions differ in tla-ja. */
         ((union {
            s32 value;
            u16 half;

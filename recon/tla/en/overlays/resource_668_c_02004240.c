@@ -1,4 +1,8 @@
-// Differ 2 of 171 (tla-en, 2026-11-08, -mtune=gba).
+// Matches (tla-en, 2026-11-08, -mtune=gba): the push->x product read into a local
+// before object->x (replacing the once-only block around the load) gives the
+// native's mov r1, r9 ahead of the load (2 to 0). The wrapper device stays: as a
+// direct call the call takes &cell from r5 (2 of 171); a once-only block or a
+// result local around the call do not move it.
 // 8 November: 7 minutes of permute found nothing under 2; dx * steps or steps * dx, with and without the block, 4 to 6.
 // 8 November: a once-only block around the load of object->x, as in overlay
 // 69c's twin, sets r0 = 1 in the native's place (4 to 2). Left: the load of
@@ -94,7 +98,7 @@ s32 Func_02004240(struct PushState *push) {
         cell.x = push->x + (gData_02004cb0[kind][0] << 16);
         for (i = 0; i < width; i++) {
           /* FAKEMATCH(wrapper): the call through CallFunc_02004a64; as a direct
-           * call, 4 of 171 instructions differ in tla-en. */
+           * call, 2 of 171 instructions differ in tla-en. */
           if (CallFunc_02004a64(object, &cell) == 2)
             goto blocked;
           cell.x += 0x100000;
@@ -110,12 +114,9 @@ s32 Func_02004240(struct PushState *push) {
     if (steps == 0)
       return 0;
     {
-      s32 x;
-      // A once-only block: keeps the load of object->x ahead of the multiply.
-      do {
-        x = object->x;
-      } while (0);
-      push->x = x + dx * steps;
+      s32 move = dx * steps;
+
+      push->x = object->x + move;
     }
     push->y = object->y;
     push->z = object->z + dz * steps;

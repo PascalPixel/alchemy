@@ -1,4 +1,8 @@
 // Differ 30 of 183 (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-08: the pin re-measured (141 without); the destination set before the
+// source, in any spelling, 125; zero set elsewhere, i < 5, >= 1 and a local
+// snapshot pointer 30 to 32, a local copies pointer 34. A 10-minute permute found
+// nothing under 30.
 // 2026-11-07: reading the first snapshot byte through a local holding 0 puts 304 in r0 as a
 // reload, so the copies rotate r0, r1, r2 as natively (88 to 30, found by the permuter; the
 // copies written to Data_0200ff6c directly, 34 through the local pointer). Left: the PP store's

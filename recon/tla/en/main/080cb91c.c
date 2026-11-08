@@ -1,4 +1,4 @@
-// Differ 2 of 1300 (tla-en, 2026-11-08, -mtune=gba), devices untagged yet (without the clobber, 23; without the one-pass block, 87): the volatile reads, the one-pass block round the arrival and the clobber settle the rest; only movs r4, #0 falls before the arrival store where the native has it after. Older notes follow.
+// Differ 2 of 1300 (tla-en, 2026-11-08, -mtune=gba). The clobber is a tagged barrier (without it, 23: move2add turns the second 0x2c0 address into adds r0, #2); the volatile reads and the one-pass block round the arrival (without it, 87) are ordinary C. Left: movs r4, #0 (the reload of the hoisted 0 into r10) ties with the arrival strb at priority 41 and goes first; moving the state store or the call out of the block, an empty block or plain asm for the clobber, party-> for ownerOverride and Event_SetDestination inside the block measured 2, 2, 23, 60 and 32. Older notes follow.
 // Draft, differ 183 of 1300, skeleton gap 41 (tla-en, 2026-11-01)
 // FieldSequence_Run, this game's form of ☀️'s FieldSequence_Run
 // (games/tbs/src/field/field_sequence/run.c): runs the current scene until the
@@ -367,11 +367,13 @@ s32 FieldSequence_Run(void) {
     }
     arrivalState = ARRIVAL.state;
     if (arrivalState == 1) {
+      // Once-only: the block is what makes loop.c hoist the 0 for ownerOverride.
       do {
       ARRIVAL.state = 2;
       Func_080e7804();
       if (ARRIVAL.scene != (s16)(s32)&SceneId_Ov64a)
         goto clearOwner;
+      /* FAKEMATCH(barrier): the form kept; as no asm, 23 of 1300 instructions differ in tla-en. */
       asm("" : : : "r0");
       if ((value = Func_080c9e1c(ARRIVAL.entrance)) & 16)
       clearOwner:

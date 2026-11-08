@@ -2,6 +2,10 @@
 // tick = row (not a second (u16) read) takes it from 35 to 12: the row and
 // unk0E reads now follow the native order; left are the copy below and the
 // native's separate ldrh for tick through it. Permuter, 6 minutes: no gain.
+// 8 November, no gain: s = slots inside a once-only block survives cprop, but r8 then
+// carries it and the frame is 16, not 20 (31; 32 with tick a second u16 read); s = slots
+// as the inner for's init (50); s set before the inner loop from gate (36); tick and
+// row in one chained assignment (12). Permuter, 6 minutes: no gain.
 // Before: the native's sp+12 is a plain
 // copy of the slots pointer, mov r0, r8; str r0, [sp, #12], set at the inner top;
 // the slot's row and unk0E are read through it (r0 + r9) and the increment reloads

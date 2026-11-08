@@ -1,4 +1,7 @@
-// Differ 2 of 216 (tla-en, 2026-11-08, -mtune=gba); the same row as below.
+// Differ 2 of 216 (tla-en, 2026-11-08, -mtune=gba); the same row as below. Tried 2026-11-08 without
+// gain: work declared first, unk644 read into a local (2); the global used directly, work assigned
+// after the calls or in a block (62: work leaves r5, which the native shares with the first loop's
+// place pointer); a once-only block around or after the calls (4); permute 8 min: nothing better.
 // Near miss, differ 2 of 216 (tla-en, 2026-11-06): plain C, no devices; only
 // the work's address loads before the two calls here, after them in the native
 // (loading it after the calls by assignment is differ 62: work leaves r5).

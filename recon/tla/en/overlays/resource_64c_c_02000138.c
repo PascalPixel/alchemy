@@ -1,4 +1,5 @@
 // Differ 33 of 99 (tla-en, 2026-11-08, -mtune=gba), with the first cell's index through a
+// 2026-11-08 round: no better from an inline cell-pair helper (122), once-only blocks around the copy or the row (74 to 92), column and row as 63 - x and 63 - y with a second 63 - y (122), the index as column + row * 64, grid + index or u64 (33), the edge set once (62); 10-min permute, 35 at best.
 // 64-bit temporary (a tagged device, below; plain, 67). Left: the pool order at the fill call (the
 // native loads the routine's address first), and in the ring's first block row and column in r0, r2
 // for the native r2, r0, so the second block's column = row copy (adds r0, r2, #0) is gone and its

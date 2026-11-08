@@ -1,4 +1,15 @@
-// Differ 28 of 714 (tla-en, 2026-11-08, -mtune=gba): as below.
+// Differ 28 of 714 (tla-en, 2026-11-08, -mtune=gba).
+// 8 November: three older devices measured free and removed (the s32 local for
+// motionFlags = 2, the zero local for velocityY and terrainHeight, the long
+// cast on the second velocityY store: 28 each and together); the z temporary
+// still costs (65 as one assignment; 61 measured today) and the u16 store of
+// 1 through a constant local stays (105 without). The listing keeps both
+// centres in registers (0x27880000 in r9, 0x20a40000 in r8); here r8 holds
+// the flag result as the known zero, so the z centre is reloaded at both
+// SetMoveTarget calls. Tried without gain: !Flag_IsSet (28), a once-only
+// block around either zero store (38, 40), z += offset (28, 62 split), x
+// given the same temporary (73); a 9-minute permute (9407 candidates) found
+// nothing under 28.
 // 6 November: z first set to its centre, a temporary (permuter), turns 65 to
 // 30: the native keeps 0x20a40000 in r8 for both SetMoveTarget calls. Left:
 // the flag result still sits in r8 as the zero for velocityY and
@@ -182,18 +193,12 @@ void Func_02001e34(void) {
     Func_02004df8(0x13333, 6);
     Func_02004e00();
     Func_02004da8();
-    {
-      s32 two = 2;
-      *(u8 *)&djinni->motionFlags = two;
-    }
+    djinni->motionFlags = 2;
     djinni->gravity = 0x4000;
     djinni->speedLimit = 0x10000;
     djinni->acceleration = 0x10000;
-    {
-      s32 zero = 0;
-      djinni->velocityY = zero;
-      djinni->terrainHeight = zero;
-    }
+    djinni->velocityY = 0;
+    djinni->terrainHeight = 0;
     SetMoveTarget(djinni, 0x27880000, 0, 0x20a40000);
     while (i >= 0) {
       djinni->scaleX += 0x800;
@@ -248,7 +253,7 @@ void Func_02001e34(void) {
     Actor_SetModeById(owner, 1);
     Func_02004cf0(9, 0);
     djinni->motionFlags = 2;
-    *(long *)&djinni->velocityY = 0;
+    djinni->velocityY = 0;
     djinni->terrainHeight = 0;
     i = 7;
     while (i >= 0) {

@@ -1,4 +1,9 @@
-// Differ 38 of 1361 (tla-en, 2026-11-08, -mtune=gba): as below.
+// Differ 38 of 1361 (tla-en, 2026-11-08, -mtune=gba). Rechecked: f and twice
+// are still needed (167 and 129 without) and are now tagged; the once-only
+// block still gains 2. No better: the req word through pair[0], texture2's
+// fields before its pixels (46), the first model's vertices after its texture
+// sizes (40), the closing transition store through zero (48), meshA's sine
+// folded into r, d as (frame - 72) * 2.
 // 2026-11-07: a once-only block around the first texture's pixels and mesh
 // (permuter) took 40 to 38; frame * 2 - 144 spellings, texture2 and model
 // store orders, and once-only blocks elsewhere did not help.
@@ -28,7 +33,7 @@
 // is a model question for K2 and out of scope here. Also: frame * 2 - 144 takes
 // its temporary in r3, the listing r2; the m loop's r2 restore lands after the
 // strb; the first req word is stored through r2, not sp; the 0xffb40000 load.
-// Forced locals, untagged, must be tagged or replaced before adoption: f (a copy
+// Forced locals, tagged 2026-11-08 (FAKEMATCH temporary): f (a copy
 // of frame, so thread_jumps cannot join the two frame > 1 tests before cse2 and
 // the label ends cse2's path: without it differ 195) and twice (without it 153).
 // tilt and i = 0 before the loop put frame * 3 after i's reload. Plain finds:
@@ -478,6 +483,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       work->transferMode = 1;
       work->transferValue = 0x10101010;
     }
+    /* FAKEMATCH(temporary): f, a copy of frame tested below; as frame > 1, 167 of 1361 instructions differ in tla-en. */
     f = frame;
     if (frame > 174) {
       Func_08164a4c(2, 2, 2);
@@ -557,6 +563,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
           n = 32;
         }
         i = 0;
+        /* FAKEMATCH(temporary): twice, frame * 2 kept apart; as scroll = frame * 3, 129 of 1361 instructions differ in tla-en. */
         twice = frame * 2;
         angle = -0x4000;
         tilt = n * 384;

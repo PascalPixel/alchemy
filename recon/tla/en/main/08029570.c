@@ -1,4 +1,7 @@
-// Differ 8 of 324 (tla-en, 2026-11-08, -mtune=gba); copy orders re-measured the same.
+// Differ 8 of 324 (tla-en, 2026-11-08, -mtune=gba). Copy orders re-measured
+// the same; also: a once-only block, `|=`, goto or `else if` in place of the
+// dead copy 33; any self-copy of position keeps 8; once-only blocks around the
+// best point's copies 49 to 67; permuter 7 min: nothing better.
 // The null test is `ladder == NULL` first, its block padded by a tagged dead
 // self-copy so ifcvt case 2 (then block over BRANCH_COST) keeps the 127 below
 // the test; left: the 127 in r1, not r0, and the y copy loaded before x (copy

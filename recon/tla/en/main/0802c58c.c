@@ -5,7 +5,13 @@
 // the region through r3 for the divide (the draft, r0), and holds the table in
 // r2 (the draft, r1). Block index forms and region casts do not help; a
 // permuter run on this form found nothing closer. Data_0202d000 as a local
-// gives the early r5 load (39 to 37). Earlier notes follow.
+// gives the early r5 load (39 to 37). Tried 8 November, all 14 or worse: the
+// table indexed directly, non-const (37), its local assigned late (41 to 55)
+// or declared const (37), spelled resourceSets[0] + graphicsSet * 9; the
+// block index in a local or as gMapBlocks + i (24 to 211), reversed (24),
+// x and y divided by (1 << 21); the region read into a reused local (39 to
+// 91), as a signed bitfield (20); Func_0802d088 taking u8 (28) or u32/u16.
+// Earlier notes follow.
 // Near miss, differ 45 of 277 (2026-10-18), first pass: The Broken Seal's
 // Map_UpdateCurrentTileBlockUntilBlocked, then this game's staged reload of
 // the world map graphics when the region under the followed point changes

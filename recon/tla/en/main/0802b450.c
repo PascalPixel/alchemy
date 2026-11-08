@@ -1,4 +1,5 @@
 // Differ 32 of 148 (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-08 round: still 32; `mask &= cell` forms 51, `low |= *dst & 0xfffff800` now 66 (not 35), `mask & cell`, `tile & cell`, `~0x7ff`, cell loaded apart from src++ all 32; 10-min permute, 34 at best.
 // Editions: the 320 bytes are the same in every edition (Japanese at
 // 0802b3cc), so one form serves all six; each measures the same 32
 // (2026-11-07).

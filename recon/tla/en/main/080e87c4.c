@@ -1,10 +1,13 @@
-// Differ 4 of 226 (tla-en, 2026-11-08, -mtune=gba). The second loop's sprite
+// Differ 2 of 226 (tla-en, 2026-11-08, -mtune=gba). 4 to 2: i = 0 set before
+// the first loop's two pointers (the native zeroes r8 first). Left: the fill's
+// routine address loads after its size (tried: the routine or one argument in
+// a local, an inline helper as uiinit.c has, the once-only block over fewer
+// or more statements, a cast spelling of the call; permuter 7 minutes:
+// nothing). The barrier and the once-only block still pay (38 and 4 without).
+// Earlier: the second loop's sprite
 // pointer is its own block-scoped local, set after the mote (24 to 6): the
 // count takes r7 and the sprite r5 as in the ROM; the barrier opens the loop
-// body instead of the timer's arm (6 to 4, permuter). The barrier and the
-// once-only block still pay (40 and 6 without). Left: the fill's routine address
-// loads after its size here (first natively), and the first loop's mov r8 is
-// one row later.
+// body instead of the timer's arm (6 to 4, permuter).
 // Near miss, differ 36 of 226 (2026-10-18, written from the listing; ☀️ has
 // no twin): the burst of 64 sparkles Func_080e807c's effect ends with. The
 // resource is directory entry 0x1ea, FieldEffect_SparkleFade: adoption names it
@@ -111,9 +114,10 @@ void Func_080e87c4(void) {
   slot = Resource_FindFreeEntry();
   tile = VramCache_Load(slot, 0x100, work);
 
+  i = 0;
   mote = work->motes;
   sprite = work->sprites;
-  for (i = 0; i < 64; i++, sprite++, mote++) {
+  for (; i < 64; i++, sprite++, mote++) {
     angle = Random16();
     mote->x = object->x;
     mote->y = object->y + 0x100000;

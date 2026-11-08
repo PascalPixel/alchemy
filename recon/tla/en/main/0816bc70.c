@@ -1,5 +1,10 @@
-// Differ 10 of 658 (tla-en, 2026-11-08, -mtune=gba).
-// BattleEffect_RunDiamondBerg. 2026-11-07: the heights table read through a
+// Differ 8 of 658 (tla-en, 2026-11-08, -mtune=gba).
+// BattleEffect_RunDiamondBerg. 2026-11-08: a local zero, set after unk04's
+// store, for both scrollU = 0 stores gives scrollU and scrollV the native's r0
+// (10 to 8); declared with its 0, 10. Left: unk04's zero (the native's r3,
+// stored first; here r2, after kind). Every placement of the unk04 store, a
+// once-only block around it and a 5-minute permuter run over the setup's line
+// order gained nothing. 2026-11-07: the heights table read through a
 // local closed the shards' draw (12 to 10); 720 store orders, asm barriers and
 // a 6-minute permuter run left the model's zeros. Left:
 // - The model's first setup: the native stores unk04 first with its own zero
@@ -306,6 +311,8 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
 
     if (frame > 5) {
       void *vertices;
+      // Holds 0: its own register gives scrollU and scrollV their zero.
+      s32 zero;
 
       vertices = Heap_AllocEwram(0x400);
       model = Render_AllocateModelList(1);
@@ -313,11 +320,12 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
       texture.logHeight = 7;
       model->texture = &texture;
       model->unk04 = 0;
+      zero = 0;
       model->kind = 7;
       texture.pixels = (u32)cells;
       model->mesh = Data_08198ec4;
       model->vertices = vertices;
-      model->scrollU = 0;
+      model->scrollU = zero;
       model->scrollV = 0;
 
       // The frost ripples.
@@ -352,7 +360,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
       texture.logHeight = 7;
       texture.pixels = (u32)(work->sheet + 0x3080);
       model->mesh = gData_08199364;
-      model->scrollU = 0;
+      model->scrollU = zero;
       model->scrollV = 0;
       for (k = 0; k != 8; k++) {
         s32 t = frame - 31 - k * 8;

@@ -1,7 +1,10 @@
 // Differ 20 of 1748 (tla-en, 2026-11-08, -mtune=gba): as below.
-// 2026-11-05: differ 20 of 1748 (tla-en). Wrappers on the three palette copies
-// gain 6. Left: mode 4's giv order and the sched2 rows below; pin and
-// statement-move searches found nothing.
+// 2026-11-08: the CopyWords wrapper is gone: the three palette copies call
+// Iwram_CopyWords on a palette local of the whole function (20, as with the
+// wrapper; 26 as a direct call on BG_PLTT). Without mode 2's zero local, 32;
+// an empty once-only block at any statement, step or x written another way,
+// and a 9-minute permuter run leave 20 or more. Left: mode 4's giv order and
+// the sched2 rows below; pin and statement-move searches found nothing.
 // Draft, differ 36 of 1748, skeleton gap 13 (tla-en, 2026-11-01)
 // Same instruction count as the listing; the frame (176 bytes), every stack
 // slot and all the loops' registers match. What is left, about 18 pairs:
@@ -44,7 +47,7 @@
 // Tried without gain: step in mode 3, two in mode 3 (frame 180), an address or
 // pointer for the rows instead of [j][i], x in other places in mode 4, every
 // order of the second model block's stores, of wave, scroll and i, and of
-// q->variant, a local for the packed side, a local for the palette.
+// q->variant, a local for the packed side.
 
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -159,12 +162,6 @@ u8 *Unit_Get(s32 unit);
 void Render_ProjectVertices(const u8 *vertices, void *projected, s32 count);
 void SceneTransform_ApplyPosition(void *position);
 
-static inline s32 CopyWords(void *destination, const void *source, s32 size) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 26 of 1748 instructions differ in tla-en. */
-  return Iwram_CopyWords(destination, source, size);
-}
-
 // The water-column scene shared by Whorl (0), Gale (1), Lethe Albion (2),
 // Poison Flow (3) and Raging Flood (4): a twisting funnel of water (or wind)
 // rises around the target, with spray, bubbles and a burst.
@@ -187,6 +184,8 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
   s32 shade;
   s32 i;
   s32 j;
+  // One constant for its whole life: the three palette copies' destination.
+  void *palette = (void *)BG_PLTT;
   void *vertices = Ram_MapCellBuffer + 0x1000;
   u8 *sheet = Ram_MapCellBuffer + 0x4000;
   void *mesh = Ram_MapCellBuffer + 0x2000;
@@ -228,7 +227,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
         }
       }
       }
-      CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
+      Iwram_CopyWords(palette, Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
     } else {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, sheet, 0, 0);
     }
@@ -265,10 +264,10 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet, work->sheet + 0x2000, 1, 1);
   if (mode == 3) {
-    CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
+    Iwram_CopyWords(palette, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
   }
   if (mode == 4 || mode == 2) {
-    CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet), 128);
+    Iwram_CopyWords(palette, Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet), 128);
   }
   columns = (mode == 2 || mode == 4) ? 8 : 4;
   Render_BuildQuadStrip(mesh, columns, 32, 32);

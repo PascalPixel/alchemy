@@ -16,6 +16,12 @@
 // register allocation only; a 4-minute permute found nothing better; on 2026-11-08 the
 // vector written straight from the constant, through a pointer or as u32, and
 // the constant set earlier, gave 2 or worse.
+// Also 2026-11-08: the vector through a pointer set first gives the native
+// registers but loads the address first (4); the store direct from the
+// constant the same (4); the destination as the constant with the vector
+// as the symbol, 4 or 6; a once-only block round the store, 8; a 6-minute
+// permute found nothing better. The value's constant note doubles its live
+// length, so the address pseudo takes r3.
 // Before adoption the fixed address belongs in irq.h, listed once (O2).
 #include "types.h"
 #include "dma.h"

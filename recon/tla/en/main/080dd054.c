@@ -20,6 +20,9 @@
 // of the opening assignments, three of the target's field stores, user and
 // target swapped, s32 and u32 local types, target->actionFlags = 0, a direct
 // read of terrainId and a combined layer assignment. A load-order tie in sched2.
+// 2026-11-08: once-only blocks around each nearby store, (u8)moved, pushed for
+// moved, the declaration order of moved and pushed, a constant local for
+// 0x3333 and 7 permuter minutes (22,560 candidates) gave 2 to 22.
 #include "types.h"
 #include "ram_buffer.h"
 #include "field/field_psynergy_work.h"

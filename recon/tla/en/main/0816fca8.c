@@ -7,6 +7,11 @@
 // mode reload, ldrb r3, [r4, r6] for [r6, r4] in the flash draw. No gain: an
 // array for flight, other spellings of height and cell, blocks round the
 // ball's stores, 15 permuter minutes.
+// 2026-11-08: still 6. Each device re-measured by removing it: the wrapper
+// (8), the variant block (10), the empty block (238), gData_08197498[cell]
+// (10). No gain: y as ball->y >> 16, !mode, frames in a local, heights through
+// a local pointer (99), y read after the radius arms (49), a block round the
+// ball->y store (8), 8 more permuter minutes.
 // 2026-11-05: differ 20 of 747 (tla-en). A wrapper on the palette copy gains 2.
 // 2026-11-01: differ 32 of 747, skeleton gap 32 (tla-en).
 // Every register and branch now agrees; what is left is five sched2 orders, no

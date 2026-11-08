@@ -1,9 +1,7 @@
-// Differ 2 of 669 (tla-en, 2026-11-08, -mtune=gba).
-// Registers, stack slots and pool order all match the listing. Under the GBA
-// tune the ring preheader's spill store and the fading ring's store now fall
-// in the listing's order; what is left is sched2's order at one site:
-//  - ember draw: ldrh r1 comes before ldr r6, [sp, #44]; here the reload is
-//    ready a cycle sooner.
+// Matches (tla-en, 2026-11-08, -mtune=gba).
+// The last pair (the ember draw's ldrh r1 against the reload of sprites at
+// sp+44) closed when the mote cells table was declared as the adopted files
+// declare their tables, a non-const extern array.
 // Under the older tune the other two sites resisted offset, x and cells
 // locals, operand order, a late model copy and a ringY local; no device was
 // added.
@@ -118,7 +116,7 @@ extern char ResourceId_Data0C2;
 extern char ResourceId_OrangePaletteB;
 #define Data_02011000 ((u8 *)0x02011000)
 #define gData_02015000 ((struct EffectStep *)0x02015000) // the embers
-extern const u16 gData_08197410[];         // gBattleEffect_MoteCells
+extern u16 gData_08197410[];         // gBattleEffect_MoteCells
 // Per level (effect->variant): the sparks, their spread, the rings' size
 // and the embers.
 extern const u8 Data_08199400[][4];

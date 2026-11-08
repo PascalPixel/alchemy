@@ -1,12 +1,10 @@
-// Differ 14 of 213 (tla-en, 2026-11-08, -mtune=gba). 8 November, 22 to 14: the for step advances
-// collision before i (the loop end's 1 and 4 now in the native's registers; mover first 22,
-// collision, mover, i 14). Left: the prologue adds the shape's offset to gMapCollision's
-// address (native adds r1, r1, r2 after its pool load ahead of the shapes load; here the
-// offset is the first operand and the pool load comes later), and the branch distance after it.
-// Tried 8 November: collision set from work->shape (60), as a byte offset (14), set after the
-// declarations (14), declared before shapes or cells (54, 46). Tried earlier: collision declared before shapes or cells (54, 62), set in the for init, as gMapCollision + shape, from work->shape (68); permuter 4 min best 25.
+// Matches (tla-en, 2026-11-08, -mtune=gba). 8 November, 14 to 0: a mover at offset 0 clears its
+// cell attribute byte (the native stores 0 there when the offset is 0, which the older draft
+// left out); the collision column is reached through Ram_MapCollision, Camelot's fixed address
+// (12), and set with i just before the loop (2). The for step advances collision before i.
 #include "../../../../games/tla/src/scene/trial_road/trial_road.h"
 #include "iwram_call.h"
+#include "ram_buffer.h"
 
 struct TrialRoadMover {
   s16 id;
@@ -30,7 +28,6 @@ struct TrialRoadMovers {
   struct TrialRoadMover movers[16];
 };
 
-extern s32 gMapCollision[];
 
 s32 Math_Sine(s32 angle);
 
@@ -42,13 +39,15 @@ void Func_02003da0(void) {
   s32 shape = work->shape;
   u8 *shapes = *(u8 **)((u8 *)map + 316);
   u8 *cells = map->layers[0].cells;
-  s32 *collision = &gMapCollision[shape];
+  s32 *collision;
   struct Actor *object;
   struct Actor *marker;
   s32 cell;
   u8 *attributes;
   s32 i;
-  for (i = 0; i <= 15; collision++, i++, mover++) {
+  i = 0;
+  collision = (s32 *)Ram_MapCollision + shape;
+  for (; i <= 15; collision++, i++, mover++) {
     if (mover->id == 0)
       continue;
     object = Actor_GetById(mover->id);
@@ -94,7 +93,8 @@ void Func_02003da0(void) {
       s32 bits = 16;
       bits |= attributes[3];
       attributes[3] = bits;
-    }
+    } else
+      attributes[3] = 0;
     marker = mover->marker;
     if (marker != 0) {
       if (mover->offset == 0) {

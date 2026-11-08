@@ -1,5 +1,7 @@
-// Differ 20 of 938 (tla-en, 2026-11-08, -mtune=gba): sched2 order only; the two hoisted
-// locals (one a pin on r2) need their S2 tag on adoption: as plain C, 24 and 22.
+// Differ 20 of 938 (tla-en, 2026-11-08, -mtune=gba): sched2 order only. The
+// constant local for Task_Add's 0x480 is worth 4 (24 without); the r2 pin is
+// tagged (22 without; a block temporary, a once-only block, u32 b, reading
+// scene->frame or scene->stage back, or a for loop do no better).
 // 2026-11-07: event loaded before caster, 26 to 20; 12 permuter minutes found
 // nothing further.
 // Draft, differ 50 of 938, skeleton gap 24 (tla-en, 2026-11-01): a field
@@ -339,8 +341,10 @@ void Func_080e68d0(void) {
   work->phase = 0;
   work->timer = 0;
   {
-    __typeof__(0x480) hoisted = 0x480;
-    Task_Add(Func_080e6400, hoisted );
+    // A local holding one constant: keeps 0x480's load where the native has it.
+    s32 order = 0x480;
+
+    Task_Add(Func_080e6400, order);
   }
   if (work->mode == 1) {
     frame = 0;
@@ -363,10 +367,13 @@ void Func_080e68d0(void) {
         stage = 2;
       scene->stage = stage;
       scene->frame = frame;
-  {
-    register __typeof__(frame) hoisted asm("r2") = frame;
-    Field_RunPsynergyEvent(pending, stage, hoisted );
-  }
+      {
+        /* FAKEMATCH(pin): the form kept; as Field_RunPsynergyEvent(pending,
+         * stage, frame), 22 of 938 instructions differ in tla-en. */
+        register s32 pinned asm("r2") = frame;
+
+        Field_RunPsynergyEvent(pending, stage, pinned);
+      }
       frame++;
     }
     Field_RunPsynergyEvent(pending, 999, frame);

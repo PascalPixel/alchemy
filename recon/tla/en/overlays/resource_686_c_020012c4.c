@@ -1,8 +1,8 @@
-// Differ 16 of 148 (tla-en, 2026-11-08, -mtune=gba).
-// Draft, differ 16 of 148 (tla-en, 5 November 2026), under -Os. Left: only the first block's reload
-// registers, r0 and r1 swapped for the map and the work (the native has the map's in r1, the work's in r0
-// and inherits r0 for the tile's read). The native stores map->origin[1] to its one frame slot and nothing
-// reads it: here a volatile local, a device to tag; a cancelled term gives the same code.
+// Matches (tla-en, 2026-11-08, -mtune=gba; all six editions measure 0): the work pointer is declared before the origin, and the
+// tile read before the sprite pointer, so the work's reload takes r0 and is inherited for the tile's
+// read, and the map's takes r1 (under -Os on 5 November, differ 16 of 148 in those two registers).
+// The native stores map->origin[1] to its one frame slot and nothing reads it: a volatile local here,
+// ordinary C under S2 (as a plain local, 62 differ).
 // The level is read in each case and hoisted to the jump, case 4's x = -0x100000 comes last so that case 0
 // and 3 cross-jump into it, and sy's subtraction sits between x -= viewX and x's shift so that the row test's
 // temporary is born after it.
@@ -39,11 +39,12 @@ void Func_020012c4(void) {
   s32 *view = &map->viewX;
   s32 viewX = view[0] & 0xffff0000;
   s32 viewZ = view[1] & 0xffff0000;
-  s32 *origin = *(s32 **)map;
   struct AnkohlRuinsFloatWork *work = &Data_02004030;
+  s32 *origin = *(s32 **)map;
+  // Unused: the native stores it to its one frame slot and never reads it.
   volatile s32 kept = origin[1];
-  struct AnkohlRuinsFloatSprite *sprite = work->sprites;
   s32 tile = gResourceTableEntries[work->tile].offset >> 5;
+  struct AnkohlRuinsFloatSprite *sprite = work->sprites;
   s32 i;
 
   if (GameFlag_Test(0x205) == 0 && work->level < 0x200000) {

@@ -1,5 +1,8 @@
-// Differ 4 of 656 (tla-en, 2026-11-08, -mtune=gba): the same two store ties; once-only
-// blocks around either rotation store or field18, and the stores swapped, measured 4 to 10.
+// Differ 4 of 656 (tla-en, 2026-11-08, -mtune=gba): two sched2 ties, the rotation
+// store (strh) ahead of field18's str, and ahead of SetModeById's `movs r1, #1`;
+// sched2 picks the strh for its extra later dependants. Tried: once-only blocks
+// (6 to 10), store and declaration orders (4 to 84), rate, rotation or flags at
+// function level (4 to 92), the stores through a u16 pointer cast (4 to 78).
 // Differ 4 of 656 (tla-en, 2026-11-07), from 10: the scene helpers the header
 // no longer defines (ObjLaunch, ObjMode, ObjModeWait, Wait, FlagSet) compiled as
 // implicit declarations; they are now Actor_Jump, Actor_SetModeById,

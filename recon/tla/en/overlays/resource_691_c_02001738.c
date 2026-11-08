@@ -1,13 +1,13 @@
-// Differ 8 of 294 (tla-en, 2026-11-08, -mtune=gba). Tried 2026-11-08: sprite set before
-// the parts[i] store (38), the first byte read into a local first (8 or 233).
-// 2026-11-06: one scheduling choice in the
-// loop. The native moves `str r0, [r7, r5]` (parts[i] = part) past the sprite
-// bytes' first[16] load, sprite[16] store and sprite[17] load; here it stays
-// ahead of them, held by the char alias. Through a struct (a vramBlock byte
-// and a keepEntry bit at 17, as drafts 6ab and 6ac) the store does drift, but
-// so does the sprite[17] load and parts[0]'s reload (differ 12; FieldSprite
-// from field_sprite.h, differ 14); storing parts[i] after the sprite bytes
-// gives differ 237.
+// Differ 4 of 294 (tla-en, 2026-11-08, -mtune=gba), from 8. The sprite is now
+// read through PartSprite (slot at 16, retainCacheEntry at bit 0 of 17, as
+// f021a84.c lays the field sprite out), with the bit set before the slot copy:
+// no char alias holds the parts[i] store, which now lands after the sprite[17]
+// load as natively. Left: the slot copy (`ldrb r3, [r6, #16]` and its store)
+// issues after the bit's store here, ahead of it natively. Slot copy first
+// (differ 12: the store and the parts[0] reload rise a slot), either side
+// through a char cast (4 or 8), the slot read into a local first (85), first
+// read after the create (252), parts[i] after the sprite (237): all worse; an
+// 8-minute permute from 4 found nothing better.
 //
 // The earlier reload rotation (differ 113) came from three expansions, each
 // now fixed in plain C: the type 0x15f as a literal kept a pseudo in r0 across
@@ -75,6 +75,13 @@ void Func_020011b8(void);
 void Func_020015e4(void);
 void Func_02001528(void);
 
+struct PartSprite {
+  u8 unk00[16];
+  u8 slot;
+  u8 retainCacheEntry : 1;
+  u8 unk11 : 7;
+};
+
 void Func_02001738(struct Actor *object) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   // The parts' actor type, held from the top: global allocation leaves it in
@@ -116,14 +123,14 @@ void Func_02001738(struct Actor *object) {
     parts[0] = Import_ActorCreate(type, object->x + 0x10000,
                                   object->y + 0x200000, object->z);
     for (i = 1; i != 4; i++) {
-      u8 *first = parts[0]->animation;
+      struct PartSprite *first = parts[0]->animation;
       struct Actor *part = Import_ActorCreate(type, 0, 0, 0);
-      u8 *sprite;
+      struct PartSprite *sprite;
 
       parts[i] = part;
       sprite = part->animation;
-      sprite[16] = first[16];
-      sprite[17] |= 1;
+      sprite->retainCacheEntry = 1;
+      sprite->slot = first->slot;
       part->x = parts[0]->x;
       part->y = parts[0]->y;
       part->z = parts[0]->z;

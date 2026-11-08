@@ -1,6 +1,8 @@
-// Differ 2 of 1216 (tla-en, 2026-11-08, -mtune=gba; re-measured), the same ties. Both ties are sched2 LUID ties: the
-// native has the turn shift (and screen.y's pointer reload) ahead of the
-// 2560 split (and the 6000 multiply) in RTL order; reordered spellings, a
+// Differ 2 of 1216 (tla-en, 2026-11-08, -mtune=gba).
+// One sched2 tie is left: the native has the turn shift ahead of the second
+// half of the 2560 split. The 2560 holds r3 so frame is reloaded into r4;
+// setting it after the shift lets frame stay in r3 (33 differ). Also tried
+// today: non-const tables, frame copies, once-only blocks, an else arm; reordered spellings, a
 // y or src local, array forms and 14 permuter minutes found nothing better.
 // 2026-11-05: differ 4 of 1216 (tla-en). Two sched2 ties left: the second shift of
 // 2560 in the turn, and the 6000 multiply before screen's reload. Measured: the
@@ -156,7 +158,7 @@ struct ModelVertex {
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 67 of 1216 instructions differ in tla-en. */
+   * Iwram_CopyWords, 4 of 1216 instructions differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 

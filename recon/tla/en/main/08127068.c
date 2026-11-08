@@ -1,37 +1,22 @@
-// Differ 6 of 255 (tla-en, 2026-11-08, -mtune=gba).
-// Near miss, differ 6 of 255 (tla-en, 2026-10-31): only mode's slot; its
-// store and two reloads use sp+0 where the native uses sp+4. Without the
-// unused u8[4] the frame is 4 bytes and 10 differ. A declared local always
-// sits above mode, which reload spills last, so no declaration can put the
-// native's spare word below it: that word is a slot reload allocates after
-// mode's (a caller-save area left unused once its pseudo is spilled is one
-// candidate) or outgoing argument space, which no call here needs. Also
-// measured: radius or angle shared by both loops (10, 39), 0x200 in a local
-// (85), the sheet pointer apart from the palette pointer (45).
-// Under -mthumb-slow-loads (26 October 2026): differ 10 of 255 in tla-en.
-// Tried, one edit at a time: an empty asm barrier after each statement, each
-// adjacent pair of statements swapped, each local pinned to each register,
-// each call argument copied into its argument register (pinned) at the call
-// or up to three statements before it; none reaches 0. Six minutes of permute
-// reach 8 only with a padding declaration.
+// Matches (tla-en, 2026-11-08, -mtune=gba), with one tagged dead device.
+// The frame: the native reserves 8 bytes with mode spilled to sp+4 and the
+// word below it unused. That word is the outgoing argument area of a call
+// with a fifth, stacked argument, which the code no longer makes: The Broken
+// Seal's twin loads its blitters with five arguments
+// (BattleEffect_BuildBlitterFar(slot, 7, 7, 3, 3)). A never-taken call of that
+// form reserves it (FAKEMATCH(dead) below). Measured before it: an unused
+// u8[4] gives 8 bytes but takes sp+4 itself (differ 6); an unused s32[1] or
+// one-word struct gets no slot; radius or angle shared by both loops (10, 39),
+// 0x200 in a local (85), the sheet pointer apart from the palette pointer (45).
 // Draft of Func_08127068, The Broken Seal's ElementGlow_InitializeStarField
-// (games/tbs/src/battle/battle.c): differ 12 of 255 (tla-en, 2026-10-15),
-// ported with The Lost Age's heap slots (work 92, canvas 96, blitters 104
-// and 188) and packed blitter loader: Func_08138048(slot, mode << 4 | flags)
-// is BattleEffect_LoadWorkFar(slot, 7, 7, flags, 3 - mode), and returns its
-// s32 as nibble_pair.c's BattleEffect_LoadBlitter now does (14 to 12). The twin's
-// empty loop and unused Spark are not needed; its one-pass block for BG2X
-// stays. The callbacks are added at 0x480. The four resources are rows
-// 0x18c to 0x18f of the directory, read from the pool, so they need their
-// ResourceId_ names in games/tla/src/gamepak/resource_directory.s before
-// adoption.
-
-// Left: the frame. The native reserves 8 bytes and keeps mode at sp+4,
-// with the 4 bytes below it unused; without the u8[4] mode is the only
-// slot (sub sp, #4). Tried for the frame: an unused s32[1] or one-word
-// struct (no slot), a u8[4] or volatile short (it takes sp+4 and leaves
-// mode sp+0, differ 6). alchemy permute 8 minutes from 89: best 14 (the
-// helper).
+// (games/tbs/src/battle/battle/element_glow.c), ported with The Lost Age's
+// heap slots (work 92, canvas 96, blitters 104 and 188) and packed blitter
+// loader: Func_08138048(slot, mode << 4 | flags) is the veneer of
+// BattleEffect_LoadBlitter. The twin's empty loop and unused Spark are not
+// needed; its one-pass block for BG2X stays. The callbacks are added at
+// 0x480. The four resources are rows 0x18c to 0x18f of the directory, read
+// from the pool, so they need their ResourceId_ names in
+// games/tla/src/gamepak/resource_directory.s before adoption.
 
 #include "types.h"
 #include "dma.h"
@@ -81,6 +66,9 @@ s32 Func_08138048(s32 slot, s32 modeAndFlags);
 s32 Task_Add(TaskFunc func, s32 order);
 s32 Func_08126e00(void);
 s32 Func_08127038(void);
+// The Broken Seal's five-argument blitter loader, named but never called.
+s32 BattleEffect_BuildBlitterFar(s32 slot, s32 source, s32 destination,
+                                 s32 flags, s32 mode);
 
 // The rings' vectors go through these two polar helpers, as the native
 // rebuilds 0x200 at each call (movs, lsls) and keeps only the radius and the
@@ -106,8 +94,6 @@ s32 Func_08127068(s32 mode) {
   s32 i;
   u8 *data;
   s32 zero;
-  // Unused: gives the stack frame its 8 bytes, above mode rather than below.
-  UNUSED u8 unused[4];
 
   ((s32 *)Ram_HeapSlots->transitionWork)[2] = 1;
   work = HeapSlot_AllocEwram(92, sizeof *work);
@@ -176,6 +162,11 @@ s32 Func_08127068(s32 mode) {
   Io_Write16(0, &REG_BG2PB);
   Io_Write16(0, &REG_BG2PC);
   Io_Write16(0x100, &REG_BG2PD);
+  /* FAKEMATCH(dead): a never-taken five-argument call reserves the frame's
+   * outgoing argument word below mode; as no call, 10 of 255 instructions
+   * differ in tla-en (6 with an unused u8[4] in its place). */
+  if (0)
+    BattleEffect_BuildBlitterFar(104, 7, 7, 3, 3);
   Func_08138048(104, 0x03);
   Func_08138048(188, 0x13);
   Task_Add(Func_08126e00, 0x480);

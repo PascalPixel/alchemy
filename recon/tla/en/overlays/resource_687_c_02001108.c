@@ -2,6 +2,13 @@
 // Draft, differ 16 of 350 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Left: the fade loop's palette and table swap r4 and r3 on their way to r10 and
 // r11; one add's and one shift's place in the schedule.
+// Tried 8 November, none better: the table read first in the body (128), a table
+// local (158), indexed BG_PLTT_COLOR (31, the table first but the palette not
+// strength-reduced: "not worth while"), palette init before `changed`, in a
+// block, or after i (14 to 24), do or while fade loops (14), s16 table (14);
+// shower: mask first or last, rain stores reversed or chained, x or z offset
+// precomputed (14 to 118). Permuter 8 minutes: a temporary for `(z & mask) << 16`
+// gives 12, a temporary device (S2), so not kept while the draft stays a draft.
 // scene/sea_of_time. Control flow, calls, frame (the fill word at sp+98 above
 // the two effect options at sp+56 and sp+16) and data accesses follow the
 // listing. Nearly all of what is left comes from one cause: the listing shows

@@ -1,5 +1,12 @@
 // Differ 40 of 1122 (tla-en, 2026-11-08, -mtune=gba, multiplies 3 3), with one tagged
 // temporary; the earlier 42's muls ahead of ldr r1, [sp, #32] is gone.
+// 2026-11-08 (later), unchanged at 40. Re-tried: the first setup's pixels store after
+// unk04 or around the mesh (42 to 100); a zero local for its stores (no change, or 59
+// for the tridents'); the tridents in the listing's order (shade, pixels, reset) with the
+// temporary (226), its pixels through textureAddress (321), or textureAddress set at the
+// tridents (52); the droplets' cells through a block local, a once-only block after the
+// loop or around the 0xc1 load, or the loop as do-while (40 each); the glint's sheet
+// spelled two ways (40); 8 minutes of permuter: nothing better.
 // 2026-11-07 (latest), from 60: the listing loads one pool word for the cell
 // base, the droplets and the 0xc1 load (0x3f4 three times), so all three are
 // gMapCellBuffer, not Ram_MapCellBuffer (an integer folds base + 0x5000); with
@@ -446,7 +453,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
       model->vertices = vertices;
       texture.pixels = Ram_MapCellBuffer;
       model->scrollV = 0;
-      /* FAKEMATCH(temporary): textureAddress holds &texture across the rings; as model->texture = &texture, 191 of 1122 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): textureAddress holds &texture across the rings; as model->texture = &texture, 171 of 1122 instructions differ in tla-en. */
       textureAddress = &texture;
 
       // Eight rings of foam.

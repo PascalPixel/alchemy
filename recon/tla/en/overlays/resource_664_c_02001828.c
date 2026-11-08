@@ -3,6 +3,11 @@
 // Tried 2026-11-08: a once-only block around that store (20) or around the priority
 // copy (16); the store before the scales (18) or after the priority copy (65); the
 // target in a local, or = 0 for = hit (2).
+// Tried 8 November (2nd round): the target or its priority read into a local
+// before the store (61); an empty once-only block after the store (18) or before it
+// (8); the scales in a once-only block (8); both stores in one (12); motionFlags
+// first of the gust's stores (18); effect copied into a block local (2);
+// 8 minutes of permute over the gust's setup (2).
 // Before: differ 20 of 1527 (tla-en, 5 November 2026): order ties only, the cell
 // stores ahead of the gust's as in Func_0200095c, the target read at each use.
 // Left: motionFlags' strb and the watched-object store in the pick-up block, ldr r5

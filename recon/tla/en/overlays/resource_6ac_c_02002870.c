@@ -1,10 +1,6 @@
-// Differ 8 of 168 (tla-en, 2026-11-08, -mtune=gba).
-// Left: scheduling only: the native copies r9 and the zero before the stores to
-// 24 and 28 and interleaves the two loads from offset 80 with the stores to 68,
-// 36 and 52; this issues both loads right after the stores to 24 and 28, then
-// the copies.
-// Draft (22 on 2026-11-05, before the GBA tune). Func_02002870 of overlay 6ac.
-// Overlay 6ab's Func_020024d4 with this overlay's symbols; see that draft.
+// Differ 8 of 168 (tla-en, 2026-11-08, -mtune=gba), from 22. Func_02002870 of overlay 6ac.
+// Overlay 6ab's Func_020024d4 with this overlay's symbols; the same 8 differ.
+// See that draft for what was tried.
 #include "types.h"
 #include "call.h"
 #include "actor.h"

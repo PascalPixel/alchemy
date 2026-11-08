@@ -1,5 +1,7 @@
 // Differ 34 of 5364 (tla-en, 2026-11-08, -mtune=gba), measured with all five
-// addresses below. Left: spill slots 32 to 60 numbered in another order (seven
+// addresses below (rechecked 2026-11-08: the opening fade's empty asm dropped for r = m, still 34;
+// FILL_WORDS without its once-only block 731, calling Iwram_FillWords directly 38).
+// Left: spill slots 32 to 60 numbered in another order (seven
 // sites); the large rings' sheet multiply (adds r3, r7; muls r3, r0) now matches. Measure in address order,
 // 0819284c,08192894,081929fc,08192a4c,08192c9c: the parent alone gives 549 and
 // parent first 1062, both counting the nested functions as moved.
@@ -41,7 +43,7 @@
 //   variable that is set twice so cprop leaves PRE's copy, which puts it ahead of
 //   ring and blit. Flow deletes the divisions. They are S2's `dead` unless the source's
 //   form appears; they need their tags before adoption.
-// - Opening fade: the asm that sets r from m is an untagged `barrier` too; r has to be set
+// - Opening fade: r is set from the constant local m (2026-11-08: the empty asm that did it is free under -mtune=gba, 34 either way; r = 31 or a once-only block 39 to 41); r has to be set
 //   before the and, or it ties to c. Every other fade reads `m & c` beside its m, so
 //   whether m hoists follows threshold against insn_count (the second fade's u16
 //   v is one insn more; the 446 fade's mask sits before its loop).
@@ -948,7 +950,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
             s32 m = 31;
             s32 r;
 
-            __asm__("" : "=r"(r) : "0"(m));
+            r = m;
             r &= c;
 
             r += 1;

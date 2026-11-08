@@ -1,6 +1,10 @@
-// Draft, differ 12 of 270 (tla-en, 2026-11-08, -mtune=gba; 12 on 5 November), from 51. Left: case 98's store
+// Differ 12 of 270 (tla-en, 2026-11-08, -mtune=gba; 12 on 5 November), from 51. Left: case 98's store
 // has the sum in r3 and the offset and value in r2 in the native; turned here. A block-local pointer
 // to gMainRoutineWork (12), *& or a u16 pointer to the field (45); permuter 6 minutes: 12.
+// 8 November: lreg gives the sum (pseudo 159) r2 because the constant 1 outranks it. A constant
+// local for the 1 (any type, in the case or at the top) fixes case 98 but moves the split
+// offset's scratch from r2 to r0 at four other sites (36); once-only blocks, the case
+// placed first, a pointer for the switch: 12 or worse. Permuter 7 minutes: no gain.
 // Under -Os, 5 November: differ 51 of 270 (tla-en); older figures below predate it.
 // Draft, differ 104 of 270: the world map's entrance handler: restores the
 // ship's place, then runs the script for the entrance taken. Left: register

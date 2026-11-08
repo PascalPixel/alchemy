@@ -1,5 +1,8 @@
-// Differ 17 of 230 (tla-en, 2026-11-08, -mtune=gba); id = second + 1 in place of the
-// copy, 17.
+// Differ 17 of 230 (tla-en, 2026-11-08, -mtune=gba); id = second + 1 in place of the copy, 17.
+// Tried 8 November, all 17 or worse: id = second after the lookup, id++ or id = second + 1 between the second
+// racer's calls, id++ in its own once-only block, ++id in the lookup, id = first + 1 or first; id++, second set
+// late, declaration orders, once-only blocks around the third racer or its unk62 store (21), racers 2 and 3 in one
+// block (101), an inline placement helper (103), no second local (27); an 8-minute permute found nothing below 17.
 // 2026-11-06: the native keeps id = second as its own copy (ldr r6, [sp] beside the second racer's lookup, adds r6, #1 between that racer's two calls); here combine folds it into second + 1, and sched2 moves the load and add past the call; the first racer's set-up stores and Func_02005624's two arguments come in a slightly different order, and the third racer's heading 2 reuses r5 where the native builds it again.
 // Places four racers, runs them, and compares the times of the two teams.
 // 6 November: constants written as literals (21) and only the second racer in a one-pass block (17) give the native's r9 = 0, r10 = 7, r8 = 1, r5 = 2; the result's

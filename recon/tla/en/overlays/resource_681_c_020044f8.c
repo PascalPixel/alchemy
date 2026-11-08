@@ -1,4 +1,11 @@
 // Differ 44 of 418 (tla-en, 2026-11-08, -mtune=gba): register names only.
+// Third pass (2026-11-08): the wrapper and the path local re-measured (a direct
+// call 140, gPath directly 69: both stay); the cell block-scoped in the second
+// loop, the scan-down pointer from AT_ADDRESS, step++ for step = next, the cell
+// set after next, 44 (unchanged); the scan-down pointer from cell 55, the cell set
+// after the first scan 46 or at the end 406, the neighbours read through cell[]
+// 54 to 421, a step pointer 88, once-only blocks round the cell, next or a store
+// 46 to 417. 8 minutes of permuting (seed 5521): nothing below 44.
 // The native has the cell in ip, the row's y << 3 in lr and the step's offset in r9;
 // here the two offsets outrank the cell (5 refs over 75 and 86
 // against 4 over 111), take ip and lr, and the cell takes r9. That also moves the reload

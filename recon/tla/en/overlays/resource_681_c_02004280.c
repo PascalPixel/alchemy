@@ -1,6 +1,10 @@
-// Differ 17 of 229 (tla-en, 2026-11-08, -mtune=gba): besides the orders below,
-// Data_0202de00 is kept in r5 across the copy where the native loads it from the
-// pool for each call. Older notes below may predate this figure.
+// Differ 17 of 229 (tla-en, 2026-11-08, -mtune=gba), with no barrier left: the
+// scroll reset's empty asm was free and the other two are once-only blocks.
+// What differs is Data_0202de00, kept in r5 across the copy (CSE shares the
+// address; lreg gives its pseudo r5) where the native loads it from the same
+// pool slot for each call, as reload does for an unallocated pseudo with a
+// REG_EQUIV; a local for it, a block around either call, or the call made
+// directly leave it at 17 or worse. Older notes below may predate this.
 // Measured under -Os, 5 November 2026: differ 31 (tla-en); notes below may predate it.
 // Draft, differ 49 of 229: Gaia Rock's entry setup. In the first room (scene
 // 0xb1) from entrances up to 4 it hides the leader's sprite layer, sets the
@@ -71,9 +75,9 @@ s32 Func_02004280(void) {
       map[261] = 1;
       {
         volatile u16 control = *(volatile u16 *)0x0400000c & ~3;
-        /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
-         * 31 of 229 instructions differ in tla-en. */
-        asm("");
+        // Once-only block: keeps the sky cell window's store after its read.
+        do {
+        } while (0);
 
         *(volatile u16 *)0x0400000c = control | 1;
       }
@@ -99,9 +103,6 @@ s32 Func_02004280(void) {
 
       *(s32 *)(gData_020023c4 + 0x288) = 1;
       layer = map + 376;
-      /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
-       * 25 of 229 instructions differ in tla-en. */
-      asm("");
       FIELD_AT(layer, u16, 40) = 127;
       FIELD_AT(layer, s32, 24) = 0;
       FIELD_AT(layer, s32, 28) = 0;
@@ -110,9 +111,9 @@ s32 Func_02004280(void) {
       FIELD_AT(layer, s32, 16) = 0x10000;
       FIELD_AT(layer, s32, 20) = 0x10000;
       FIELD_AT(layer, u16, 42) = 0x3f80;
-      /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
-       * 23 of 229 instructions differ in tla-en. */
-      asm("");
+      // Once-only block: keeps the scale defaults before the position sums.
+      do {
+      } while (0);
       FIELD_AT(layer, s32, 0) =
           Iwram_MulQ16(FIELD_AT(map, s32, 228), FIELD_AT(layer, s32, 16)) +
           FIELD_AT(layer, s32, 8);

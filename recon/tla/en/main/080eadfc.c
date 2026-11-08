@@ -1,4 +1,8 @@
-// Differ 8 of 84 (tla-en, 2026-11-08, -mtune=gba); the same rows. Without the ActorX wrapper 20; ActorX or an
+// Differ 8 of 84 (tla-en, 2026-11-08, -mtune=gba); the same rows. Round two: the
+// grid's address as a local (33 to 35), shapes split from the grid (36 to 45),
+// a once-only block around shapes (10), blocks before shapes (10), x as a
+// local (25), ActorX with a temporary (8); permuter 4 more minutes, nothing.
+// Earlier the same day: Without the ActorX wrapper 20; ActorX or an
 // ActorZ inline on the first call, the shape offset as u32 or as gMapShapeGrid + (...): 8;
 // permuter 5 minutes, nothing better.
 // Differ 8 of 84 (tla-en, 2026-11-07): x for Map_GetTerrainHeightFar read through an

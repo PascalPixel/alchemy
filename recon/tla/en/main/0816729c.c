@@ -1,4 +1,7 @@
 // Differ 54 of 2680 (tla-en, 2026-11-08, -mtune=gba; the same in ja, de, es, fr, it).
+// 2026-11-08, later: unchanged. Tiles and order pointers in the second queue loop (56
+// to 76), all six orders of the flash's chained assignment and its split form (54),
+// 7 minutes of permuter on the frame-76 block (seed 8821, 54).
 // 2026-11-08: every device re-measured. Each dead branch still needed (241, 116);
 // the barrier still needed (56; no once-only block at any statement, nor a
 // release loop through a pointer, do-while or i < 16, replaces it); the wrapper is

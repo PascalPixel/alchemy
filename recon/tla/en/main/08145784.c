@@ -1,5 +1,10 @@
-// Differ 10 of 549 (tla-en, 2026-11-08, -mtune=gba); the same root. column = 0 only in the side-0 arm 31, the
-// side-0 arm dropped 470; permuter 6 minutes, nothing better.
+// Differ 10 of 549 (tla-en, 2026-11-08, -mtune=gba); the same root: gcse copies
+// the side into r3. Measured 2026-11-08: column = 0 only in the side-0 arm 31,
+// the side-0 arm dropped 470; row = i >> 8 or (u32)i >> 31, a once-only block
+// or goto for the side-0 arm, column++ or row = column: 10; the else first 37,
+// side as a block u8 local 514. Devices re-measured and retagged (S2): one
+// position 14, a literal zero 91, row = 0 454. Permuter 6 and 8 minutes,
+// nothing better.
 // Differ 10 of 549 (tla-en, 2026-11-07). Left: one root: gcse copies the side
 // (load in r0, copy in r3 for the first draws) where the native keeps one r0;
 // column = 0 set before the side test also makes the test a beq over the
@@ -98,9 +103,8 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle draw[2];
-  /* FAKEMATCH: the second position is never used: it gives the frame its
-   * native 72 bytes, as in The Broken Seal's twin. Measured (2026-10-15):
-   * one position, differ 101 for 97. */
+  // Unused: the second position gives the stack frame its 72 bytes, as in
+  // The Broken Seal's twin (one position: 14 of 549 differ, 2026-11-08).
   struct EffectPosition pos[2];
   s32 curve[2];
   s32 visible;
@@ -113,9 +117,8 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
 
-  /* FAKEMATCH: the zero is held in r8 through the setup calls, as in The
-   * Broken Seal's twin, for the transfer value. Measured (2026-10-15): the
-   * literal 0 stored directly, differ 176 for 97. */
+  // The zero is held in r8 through the setup calls, as in The Broken Seal's
+  // twin (the literal 0 stored directly: 91 of 549 differ, 2026-11-08).
   zero = 0;
 
   // Set up: half-and-half blending, the image with its palette, the crescent
@@ -221,10 +224,8 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
         row = 0;
       } else {
         column = 1;
-        /* FAKEMATCH: i is 160 here, so this is 0, as in The Broken Seal's
-         * twin; with a literal 0 gcse folds row away and column becomes a
-         * store-flag, and the frame loop loses its register (differ 524 for
-         * 97, the native keeping row in r10). */
+        /* FAKEMATCH(dead): i is 160 here, so this reads 0, as in The Broken
+         * Seal's twin; as row = 0, 454 of 549 instructions differ in tla-en. */
         row = i >> 31;
       }
       if (frame <= 71) {

@@ -1,6 +1,9 @@
-// Differ 94 of 902 (tla-en, 2026-11-08, -mtune=gba). The palette copy is a
-// plain Iwram_CopyWords call again (the forwarding wrapper gains nothing under
-// the GBA tune); the pin on q is now tagged.
+// Differ 90 of 902 (tla-en, 2026-11-08, -mtune=gba). The grid's column step
+// is listed c++, b++, d++, column++, x += 8 (94 to 90; all 120 step orders and
+// all 1,260 orders of the row-top statements measured, nothing under 90; 8
+// minutes of permuter on the grid, seed 4417, 90). The pin is still needed
+// (941 without). The palette copy is a plain Iwram_CopyWords call; the pin on
+// q is tagged.
 // 2026-11-07, twelfth pass, 140 to 94, no new device. The vertex from
 // (row * 16 + column) * 4 (a vertex from c or q is not reduced, q being a
 // hard register; row * 16 is hoisted, merged with the pinned copy, and the
@@ -414,7 +417,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
     s32 x;
     s8 *cells = (s8 *)gMapCellBuffer;
 
-    /* FAKEMATCH(pin): q held in r4; as a plain local, 955 of 902 instructions
+    /* FAKEMATCH(pin): q held in r4; as a plain local, 941 of 902 instructions
      * differ in tla-en. */
     register s32 q asm("r4");
     q = v;
@@ -426,7 +429,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
     b = q + 1;
 
     for (; column != WATER_COLUMNS;
-         column++, x += 8, b++, c++, d++) {
+         c++, b++, d++, column++, x += 8) {
       s8 *vertex = cells + (row * 16 + column) * 4;
       s32 a = i + column;
       s32 u = column * 8;

@@ -2,6 +2,9 @@
 // lands one instruction before the position buffer's address (mov r6, sp).
 // History: 28 -> 6 earlier; 6 -> 2 by computing the vram pointer between
 // the particles and sprites pointers.
+// 2026-11-08: every order of the three pointers (2 to 12), the steps in the
+// body or reordered, position or i declared elsewhere, a cursor for position,
+// a once-only block, i <= 95 and 8 permuter minutes (27,777 candidates) left 2.
 // The 96-particle burst's task (heap slot 0x5c work,
 // started by Func_080e2acc). Each particle whose delay counter is between 0
 // and 63 shows the picture (delay / 8) % 6 of the burst's tiles 48 units out

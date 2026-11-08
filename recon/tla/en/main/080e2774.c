@@ -1,6 +1,11 @@
-// Differ 20 of 169 (tla-en, 2026-11-08, -mtune=gba). Tried 2026-11-08: top before
-// lift (24), lift first (71), top first (40), cellZ as cz - scrollZ + lift (26),
-// cellZ before cellX (36).
+// Differ 10 of 169 (tla-en, 2026-11-08, -mtune=gba): cellX computed before the
+// cell's z is loaded (20 to 10) settles the loop top. Left: the top edge
+// (layer z shifted in r3, not in place in r2) and the record's cellZ load
+// issued before its address. Tried with it: top before lift (14), lift first
+// (71), declarations reordered (10 to 32), cellZ as lift + cz - scrollZ (12),
+// top as z then -= (10), the record from cx or cz (41, 27); 20 permuter
+// minutes found nothing below 10. Earlier: top first (40), cellZ as
+// cz - scrollZ + lift (26), cellZ before cellX (36).
 // Near miss, differ 20 of 169 (tla-en, 2026-10-31): allocation and
 // scheduling only. The top edge: the native shifts layer z in place in r2
 // and reloads z into r3; this shifts into r3 and reloads z into r2 (lift
@@ -94,8 +99,8 @@ void Func_080e2774(s32 x, s32 z, s16 layerIndex, s16 width, s16 height, s32 toX,
     s32 cz, cx, cellX, cellZ;
 
     cx = cell[i].x;
-    cz = cell[i].z;
     cellX = cx - scrollX;
+    cz = cell[i].z;
     cellZ = cz + lift - scrollZ;
 
     if (cellX >= left && cellX < left + width && cellZ >= top &&

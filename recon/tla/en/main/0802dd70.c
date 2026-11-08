@@ -1,4 +1,9 @@
 // Differ 12 of 132 (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-08: a pointer to result[1] set after the call (far = &result[1],
+// reading *far and far[1]) gives the native's allocation exactly but its
+// offsets are 4 off (16); the same pointer at result[0] is merged by CSE
+// with the call's argument (40), and an 8-minute permute found nothing
+// valid under 12. Removing the zero local, 20.
 // Trial: ☀️'s WorldMap_BuildScanlineTable (games/tbs/src/field/field.c)
 // word for word over ⚓️'s projection record differs 70 of 132 (register
 // choice: the line counter and the camera point's address swap fp and a
@@ -8,7 +13,7 @@
 // when the line is above the horizon. The pointer to result[2] (found by the
 // permuter) and height declared before nearZ give the native's registers
 // and stack slots; comparing distance with a local zero (permuter, 20 to 12)
-// is a forced temporary to tag if it survives. Left (allocation only): the
+// is a local holding one constant, ordinary C under S2. Left (allocation only): the
 // native passes add r1, sp, #16 to the transform call and spills a fresh
 // copy of the result's address after it, where agscc spills one pointer
 // before the call. Plain result[] reads 55; a pointer to result[0] 40 to 49.
@@ -34,7 +39,7 @@ void Func_0802dd70(s32 depth, s32 *position, struct ScanlineRow *row) {
   s32 z;
   s32 ratio;
   s32 dx;
-  s32 zero; // Forced temporary (permuter): distance is compared with it.
+  s32 zero; // A local that holds one constant: distance is compared with it.
   s32 sum;
   s32 *far;
 

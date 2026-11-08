@@ -1,4 +1,9 @@
 // Differ 31 of 119 (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-08, no gain: owner = owners after the call, before or in the for init
+// (62, 71), set inside the call's argument (31), owners[i] or &owners[i] in the
+// loop (69, 71), owner++ after the call, items += 108 apart, the inner for as a
+// while, declaration order (all 31). An 8-minute permute compiled almost none of
+// its candidates (SHAMAN_VILLAGE_EMOTE) and found nothing.
 // Was differ 56 under -Os (2026-11-05) and 75 (2026-11-01); the register notes below
 // predate -Os. Now the countdown sits in r10 as native; left: native rebuilds sp
 // (mov r0, sp for the call, mov r7, sp for the owner pointer) and loads the id into

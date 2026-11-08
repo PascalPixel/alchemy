@@ -6,6 +6,9 @@
 // (4), the 0x1b34 store after the -1 stores (26). Before, on 2026-11-07: for-init,
 // do-while, event->points, barriers and the permuter (25,681 candidates) left
 // it; an empty asm cost 36.
+// 2026-11-08, round two: point set in the for, by the d3c store or in a
+// once-only block, the locals reordered, i < 21, (u16)-1, point ending the
+// list, and 7 permuter minutes (42,564 candidates) gave 2 to 212.
 // Closed: pool -1 comes from the s16 pointer, movs -1 and 0xffff from the
 // struct's fields; `point` is stepped after work's byte, and the second
 // coordinate goes through its own cursor set after the first store. A hand

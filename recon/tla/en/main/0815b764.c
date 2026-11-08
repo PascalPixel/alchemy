@@ -1,4 +1,18 @@
-// Differ 50 of 1932 (tla-en, 2026-11-08, -mtune=gba; the same on 2026-11-07); without the particle loop's asm, 52.
+// Differ 42 of 1932 (tla-en, 2026-11-08, -mtune=gba); without the particle loop's asm, 44.
+// 2026-11-08, from 50: once-only blocks around the first two closing fills
+// (after the wait(1) that follows REG_BG1CNT) put each destination's load ahead
+// of its size, as the listing has them (44, then 42; around the third, the
+// wait or REG_BG1CNT no gain or worse). Re-measured the devices: the particle
+// loop's asm is still worth 2 (a once-only block in its place, or around one
+// of its stores, 52 to 1301); the ship-burst block's asm still holds 283 (325
+// without; once-only blocks around each of that block's statements instead,
+// 325 or 327; the asm after the model's allocation also 42, with frame's ldr
+// then two rows early). j = 0 after model->vertices gives the listing's late
+// zero store but 53 (the giv inits then reload frame). The palette loop's
+// pointer step (pal + i, &pal[i] at the top, a stepped pal): 42 or worse.
+// Left: the ship-burst giv order (about 30 rows), the first closing fill's
+// size still set before its destination's load (a local for the destination:
+// no gain), the palette loop's step pair.
 // 2026-11-07, from 52: an empty asm (FAKEMATCH barrier) after variant in the
 // frame 133 particle loop settles that step pair (50). Left as below.
 // 2026-11-07, from 62: gData_0819746d and gData_08197473 declared without
@@ -852,8 +866,13 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   Func_081180e8(134);
   REG_BG1CNT = 0x1f83;
   wait(1);
-  FillWords_(Ram_HeapSlots->battleFxWork[1], 0x4000, 0);
-  FillWords_((void *)0x06004000, 0x3c00, 0);
+  // Once-only blocks: the listing loads each fill's destination before its size.
+  do {
+    FillWords_(Ram_HeapSlots->battleFxWork[1], 0x4000, 0);
+  } while (0);
+  do {
+    FillWords_((void *)0x06004000, 0x3c00, 0);
+  } while (0);
   FillWords_((void *)0x06008000, 0x7800, 0);
   wait(1);
   REG_BLDALPHA = 0x100e;

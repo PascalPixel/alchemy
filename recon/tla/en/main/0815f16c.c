@@ -1,5 +1,8 @@
 // Differ 6 of 7666 (tla-en, 2026-11-08, -mtune=gba); 6 in tla-ja, de, es, fr
-// and it as well.
+// and it as well. Re-measured 2026-11-08: each device is still needed and now
+// carries its S2 tag (the X barrier 293 without it, the pin 22, the threshold
+// barrier 42; an empty once-only block or a volatile o in their place does no
+// better). Kind 14 as y = cos term + off; y -= half height: still 6.
 // Settled 2026-11-08, both plain C:
 // - Kind 16: a zero pixel is stored and the loop continues (if (v == 0) { ...
 //   = 0; continue; }). The two stores cross-jump into one, and the continue
@@ -786,6 +789,8 @@ CLEAR(buffer, 0x1000);
       pos[0] = pos[0] / 2;
       drawFuncs.draw[0](screen, buffer + 0x3c56, pos[0] - 10, pos[1] - 4, 20,
                         40);
+      /* FAKEMATCH(barrier): keeps o live past the draw; as no asm, 293 of 7666
+       * instructions differ in tla-en. */
       __asm__("" : : "X"(o));
     }
     work->unk78e8 = 1;
@@ -1513,6 +1518,8 @@ CLEAR(buffer, 0x1000);
       if (y > 16)
         y = 16;
       {
+        /* FAKEMATCH(pin): hold keeps r2 for h; as h = 96 alone, 22 of 7666
+         * instructions differ in tla-en. */
         register s32 hold __asm__("r2");
         __asm__("" : "=r"(hold));
         h = 96;
@@ -1528,6 +1535,8 @@ CLEAR(buffer, 0x1000);
             s32 k;
             s32 threshold;
             for (k = 0, threshold = t; k != 69; k++) {
+              /* FAKEMATCH(barrier): keeps the copy of t; as no asm, 42 of 7666
+               * instructions differ in tla-en. */
               __asm__("" : "=r"(threshold) : "0"(threshold));
               if (work->frames[(row & 15) * 69 + k] < threshold)
                 buffer[row * 69 + k] = 0;

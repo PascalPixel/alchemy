@@ -1,4 +1,9 @@
 // Differ 44 of 1246 (tla-en, 2026-11-08, -mtune=gba; the same on 2026-11-07).
+// 2026-11-08, no change: the flight's x as `x = t / 48; x += first`, `x = first;
+// x += q`, x declared first, `x = -(x << 8)` before the store (all 44), and
+// `scroll = -(x << 8); REG_BG2X = scroll` (93); the sleep draw's operand orders
+// (44) and a local for its left edge (60); the shards' cell sum reordered (44
+// to 284). 8 minutes of permute found nothing under 65.
 // 2026-11-07: the sheep's 127 mask as a block local (`u32 mask = 127`, both
 // velocities) breaks the sleep spawn's inheritance of r6: sp+8 is reloaded into
 // r0 as the listing (83 to 44). Left: the flight's x in r0 for r3, the sleep

@@ -1,5 +1,9 @@
 // Differ 4 of 875 (tla-en, 2026-11-08, -mtune=gba): sched2 order only; a
 // pool load and a store after a call swap places.
+// 2026-11-08: the load is reload's rematerialised IwramMulQ16 (insn after the
+// store in RTL order); sched2 lifts it for its longer latency. A block-local
+// ratio or function pointer, a once-only block, nested tests, reversed copies
+// and 8 permuter minutes did not move it.
 // 2026-11-07: two of 2026-11-01's three swaps are gone with no source change;
 // reshaping, an empty asm and 14 permuter minutes left the third.
 // Written from The Broken Seal's Actor_UpdateAllThumb

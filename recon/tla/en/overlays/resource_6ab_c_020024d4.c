@@ -1,9 +1,18 @@
 // Differ 8 of 168 (tla-en, 2026-11-08, -mtune=gba), from 22. Func_020024d4 of
-// 8 November: 8 minutes of permute found nothing under 8; once-only blocks around the sprite load or the stores 14 to 20; the sprite load after either velocity store, 8.
 // overlay 6ab. Scale computed before the calls gives the mul pointer r8 and
-// the angle r10, as natively, but moves its shift; natively lsrs and add come
-// after the gravity store. Left: the shift's place, and the sprite's and
-// owner's loads after the zero and the half's copy natively.
+// the angle r10, as natively.
+// Left: scheduling only. Natively the half's copy (mov r1, r9) and the zero
+// come before the stores to scaleX and scaleY, the sprite load (ldr r5,
+// [r7, #80]) follows them and the owner's animation load (ldr r3, [r3, #80])
+// comes after the stores to bounce, velocityX and acceleration; here both
+// loads issue first. sched2 shows the owner's animation load (void *) does not
+// depend on the s32 stores; read through an s32 it waits for all of them (12:
+// the scale computation then moves ahead of the gravity store), so the native
+// load seems to wait on the bounce, velocity and acceleration stores but not
+// the scale stores. Tried 8 November: statement orders of gravity, scale,
+// bounce, sprite, velocityX, acceleration and source (8 or worse), once-only
+// blocks (14 to 20), a zero local (91), a union or s32 read of the animation
+// (12), and 8 minutes of permute from the s32 form (best 8).
 #include "types.h"
 #include "call.h"
 #include "actor.h"

@@ -12989,7 +12989,7 @@ msgctxt "message"
 msgid "03232"
 msgstr "Lancia una carta dal mazzo fuoco."
 
-msgctxt "MsgSpiritDrain"
+msgctxt "message"
 msgid "03233"
 msgstr "Lancia una carta dal mazzo tuono."
 
@@ -13001,19 +13001,19 @@ msgctxt "message"
 msgid "03235"
 msgstr "Lancia una carta dal mazzo ghiaccio."
 
-msgctxt "MsgKoDown"
+msgctxt "message"
 msgid "03236"
 msgstr "Avviluppa i nemici in una illusione."
 
-msgctxt "MsgSuffocate"
+msgctxt "message"
 msgid "03237"
 msgstr "Riduce l'attacco di un nemico."
 
-msgctxt "MsgBlownAway"
+msgctxt "message"
 msgid "03238"
 msgstr "Addormenta i nemici."
 
-msgctxt "MsgFieldBroken"
+msgctxt "message"
 msgid "03239"
 msgstr "Chiama il tristo mietitore sui nemici."
 
@@ -13029,7 +13029,7 @@ msgctxt "message"
 msgid "03242"
 msgstr "Chiedi l'aiuto di un alleato animale."
 
-msgctxt "MsgNoEffect"
+msgctxt "message"
 msgid "03243"
 msgstr "Scaglia un uccello rapace sul nemico."
 
@@ -13065,11 +13065,11 @@ msgctxt "message"
 msgid "03251"
 msgstr "Evoca spiritelli per recuperare 115 PS."
 
-msgctxt "MsgFieldProtects"
+msgctxt "message"
 msgid "03252"
 msgstr "Attacca con denti aguzzi."
 
-msgctxt "MsgDissipated"
+msgctxt "message"
 msgid "03253"
 msgstr "Attacca con un becco aguzzo."
 
@@ -13081,59 +13081,59 @@ msgctxt "message"
 msgid "03255"
 msgstr "Attacca con un colpo feroce."
 
-msgctxt "MsgLeechGain"
+msgctxt "message"
 msgid "03256"
 msgstr "Attacca con un colpo di ghiaccio."
 
-msgctxt "MsgLeechTake"
+msgctxt "message"
 msgid "03257"
 msgstr "Evoca le fate per recuperare 120 PS."
 
-msgctxt "MsgMorePpLossE"
+msgctxt "message"
 msgid "03258"
 msgstr "Recupera 170 PS grazie alla natura."
 
-msgctxt "MsgMorePpLossP"
+msgctxt "message"
 msgid "03259"
 msgstr "Rianima un alleato grazie ai nonmorti."
 
-msgctxt "MsgAtkDown"
+msgctxt "message"
 msgid "03260"
 msgstr "Attacca con potenza demonica."
 
-msgctxt "MsgAtkUp"
+msgctxt "message"
 msgid "03261"
 msgstr "Attacca con un'ascia possente."
 
-msgctxt "MsgDefDown"
+msgctxt "message"
 msgid "03262"
 msgstr "Attacca con giavellotti fantasma."
 
-msgctxt "MsgDefUp"
+msgctxt "message"
 msgid "03263"
 msgstr "Attacca con un colpo feroce."
 
-msgctxt "MsgRevived"
+msgctxt "message"
 msgid "03264"
 msgstr "Attacca con un colpo feroce."
 
-msgctxt "MsgResDown"
+msgctxt "message"
 msgid "03265"
 msgstr "Evoca spiritelli per recuperare 125 PS."
 
-msgctxt "MsgResUp"
+msgctxt "message"
 msgid "03266"
 msgstr "Evoca le fate per recuperare 250 PS."
 
-msgctxt "MsgPoisoned"
+msgctxt "message"
 msgid "03267"
 msgstr "Ridà 180 PS alla squadra."
 
-msgctxt "MsgDelusion"
+msgctxt "message"
 msgid "03268"
 msgstr "Ridà 300 PS grazie alle fiamme pure."
 
-msgctxt "MsgConfused"
+msgctxt "message"
 msgid "03269"
 msgstr "Rianima un alleato grazie alla fenice."
 
@@ -13141,15 +13141,15 @@ msgctxt "message"
 msgid "03270"
 msgstr "?"
 
-msgctxt "MsgStunned"
+msgctxt "message"
 msgid "03271"
 msgstr "Evoca uno zombie per colpire."
 
-msgctxt "MsgAsleep"
+msgctxt "message"
 msgid "03272"
 msgstr "Colpisci con la furia di un demone."
 
-msgctxt "MsgPsyBlock"
+msgctxt "message"
 msgid "03273"
 msgstr "Colpisci con la furia di Dullahan."
 
@@ -13157,11 +13157,11 @@ msgctxt "message"
 msgid "03274"
 msgstr "Chiama il fuoco dell'abisso."
 
-msgctxt "MsgHpRegen"
+msgctxt "message"
 msgid "03275"
 msgstr "Chiama il fuoco dell'abisso."
 
-msgctxt "MsgReflect"
+msgctxt "message"
 msgid "03276"
 msgstr "Chiama il fuoco dell'abisso."
 
@@ -13169,7 +13169,7 @@ msgctxt "message"
 msgid "03277"
 msgstr "Evoca un vento avvelenato."
 
-msgctxt "MsgEvilSpirit"
+msgctxt "message"
 msgid "03278"
 msgstr "Immobilizza i nemici con la paura."
 
@@ -13769,7 +13769,7 @@ msgctxt "message"
 msgid "03427"
 msgstr "Difensore"
 
-msgctxt "MsgUpToFight"
+msgctxt "message"
 msgid "03428"
 msgstr "Valoroso"
 
@@ -14848,7 +14848,7 @@ msgctxt "MsgCurseDamage"
 msgid "03693"
 msgstr "Danno maledizione su {argument_actor_name:1}: {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgSpiritDrain"
 msgid "03694"
 msgstr "Esaurito spirito di {argument_actor_name:1}!"
 
@@ -14860,19 +14860,19 @@ msgctxt "message"
 msgid "03696"
 msgstr "Uccisione di {argument_actor_name:1}."
 
-msgctxt "message"
+msgctxt "MsgKoDown"
 msgid "03697"
 msgstr "{argument_actor_name:1} va KO!"
 
-msgctxt "message"
+msgctxt "MsgSuffocate"
 msgid "03698"
 msgstr "{argument_actor_name:1} soffoca!"
 
-msgctxt "message"
+msgctxt "MsgBlownAway"
 msgid "03699"
 msgstr "{argument_actor_name:1} è distante!"
 
-msgctxt "message"
+msgctxt "MsgFieldBroken"
 msgid "03700"
 msgstr "Il campo di forza di {argument_actor_name:1} è rotto!"
 
@@ -14888,7 +14888,7 @@ msgctxt "MsgNimblyDodgesBlow"
 msgid "03703"
 msgstr "{argument_actor_name:1} schiva il colpo!"
 
-msgctxt "message"
+msgctxt "MsgNoEffect"
 msgid "03704"
 msgstr "Ma non ha effetto su {argument_actor_name:1}!"
 
@@ -14924,11 +14924,11 @@ msgctxt "message"
 msgid "03712"
 msgstr "ma non ha effetto!"
 
-msgctxt "message"
+msgctxt "MsgFieldProtects"
 msgid "03713"
 msgstr "{argument_actor_name:1} sta bene grazie a una barriera!"
 
-msgctxt "message"
+msgctxt "MsgDissipated"
 msgid "03714"
 msgstr "{argument_actor_name:1} ha dissipato la Psinergia!"
 
@@ -14940,59 +14940,59 @@ msgctxt "message"
 msgid "03716"
 msgstr "Ulteriori PS sottratti: {argument_signed_number}."
 
-msgctxt "message"
+msgctxt "MsgLeechGain"
 msgid "03717"
 msgstr "Ulteriori PP recuperati: {argument_signed_number}."
 
-msgctxt "message"
+msgctxt "MsgLeechTake"
 msgid "03718"
 msgstr "Ulteriori PP sottratti: {argument_signed_number}."
 
-msgctxt "message"
+msgctxt "MsgMorePpLossE"
 msgid "03719"
 msgstr "Ulteriori PP persi: {argument_signed_number}."
 
-msgctxt "message"
+msgctxt "MsgMorePpLossP"
 msgid "03720"
 msgstr "Ulteriori PP persi: {argument_signed_number}."
 
-msgctxt "message"
+msgctxt "MsgAtkDown"
 msgid "03721"
 msgstr "Attacco di {argument_actor_name:1} cala di {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgAtkUp"
 msgid "03722"
 msgstr "Attacco di {argument_actor_name:1} sale di {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgDefDown"
 msgid "03723"
 msgstr "Difesa di {argument_actor_name:1} cala di {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgDefUp"
 msgid "03724"
 msgstr "Difesa di {argument_actor_name:1} sale di {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgRevived"
 msgid "03725"
 msgstr "{argument_actor_name:1} riprende conoscenza!"
 
-msgctxt "message"
+msgctxt "MsgResDown"
 msgid "03726"
 msgstr "Resistenza di {argument_actor_name:1} cala di {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgResUp"
 msgid "03727"
 msgstr "Resistenza di {argument_actor_name:1} sale di {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgPoisoned"
 msgid "03728"
 msgstr "Il corpo di {argument_actor_name:1} è avvelenato!"
 
-msgctxt "message"
+msgctxt "MsgDelusion"
 msgid "03729"
 msgstr "La delusione avvolge {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgConfused"
 msgid "03730"
 msgstr "La confusione prende {argument_actor_name:1}!"
 
@@ -15000,15 +15000,15 @@ msgctxt "MsgCharmed"
 msgid "03731"
 msgstr "Rubato cuore di {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgStunned"
 msgid "03732"
 msgstr "Lo stupore prende {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgAsleep"
 msgid "03733"
 msgstr "{argument_actor_name:1} s'addormenta!"
 
-msgctxt "message"
+msgctxt "MsgPsyBlock"
 msgid "03734"
 msgstr "Psinergia di {argument_actor_name:1} è bloccata!"
 
@@ -15016,11 +15016,11 @@ msgctxt "message"
 msgid "03735"
 msgstr "{argument_actor_name:1} è nella morsa della maledizione!"
 
-msgctxt "message"
+msgctxt "MsgHpRegen"
 msgid "03736"
 msgstr "{argument_actor_name:1} recupera PS!"
 
-msgctxt "message"
+msgctxt "MsgReflect"
 msgid "03737"
 msgstr "{argument_actor_name:1} sente gli effetti di Riflesso!"
 
@@ -15028,7 +15028,7 @@ msgctxt "message"
 msgid "03738"
 msgstr "S'insinua nel campo di {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgEvilSpirit"
 msgid "03739"
 msgstr "Uno spirito malvagio prende {argument_actor_name:1}!"
 
@@ -15683,7 +15683,7 @@ msgctxt "MsgEnemyAbility0d63"
 msgid "03888"
 msgstr "{argument_actor_name:1} cerca aiuto."
 
-msgctxt "message"
+msgctxt "MsgUpToFight"
 msgid "03889"
 msgstr "{argument_actor_name:1} può combattere!"
 

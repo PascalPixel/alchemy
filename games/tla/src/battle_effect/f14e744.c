@@ -1,37 +1,5 @@
-// Differ 6 of 337 (tla-en, 2026-11-08, -mtune=gba): sched2 order only; the
-// multiply after a call issues before the loads of sl + 4 here, after them natively.
-// 2026-11-07: a pointer to screen (FAKEMATCH temporary) fixes the hoisted
-// addresses 36 and 48 (16 -> 4). Left: a multiply the native
-// issues later than alchemy-gcc does: sched2 ranks the chain into muls too high
-// (its cost of 4), so the constant or the multiply comes ahead of independent
-// rows.
-
-// Near miss of BattleEffect_RunBreak, effect kind 43: differ 36 of 337 (draft
-// 337).
-
-// Twin: The Broken Seal's BattleEffect_RunBreak (effect.c), call for
-// call. The Lost Age reads the effect from its argument (it never stores
-// work->effect), takes its heap blocks as Ram_HeapSlots fields, loads the
-// blitter through BattleEffect_LoadBlitter (BLIT_MAX is 1 where The Broken
-// Seal's COMPOSITE_MAX is 2) and gives its task the priority 0xc80.
-
-// Left: about a dozen rows where the native issues a load one slot earlier
-// than agscc (canvas before the 1 for StartCanvasLayer, the blitter word
-// before the loop's zero, object->z before its store, the cell offset table
-// before the size), and the member loop's three invariants (the actor
-// offset 36, &screen, &point) set up in the reverse order.
-
-// Tried:
-// - member declared before sheet: 56 -> 36 (sheet and member swap their
-// frame slots sp+16 and sp+20 into the native's).
-// - greedy declaration-order sweep from there, two passes: no gain (36).
-
-// 2026-10-26, under -mthumb-slow-loads: differ 30 of 337, the instructions
-// and registers otherwise the native's. What remains is single rows where
-// the native issues a spill or argument store before a load (the known
-// store-then-load scheduling limit); barriers and one-pass blocks at each
-// statement, statement moves and each local scoped to a block gain only
-// the prologue's row or rows of that kind.
+/// @file
+/// Break's ice shards (effect kind 43).
 
 #include "types.h"
 #include "battle_effect.h"
@@ -51,8 +19,8 @@
 #include "system.h"
 #include "transform.h"
 
-// The canvas layer and its helpers; the comments give The Broken Seal's
-// names where the twin is known.
+/// The canvas layer and its helpers; the comments give The Broken Seal's
+/// names where the twin is known.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
@@ -66,9 +34,9 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 actor);
 
-// The Lost Age's blitter modes, BattleEffect_LoadBlitter's high nibble: 3 minus
-// The Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and
-// COMPOSITE_TRANSPARENT.
+/// The Lost Age's blitter modes, BattleEffect_LoadBlitter's high nibble: 3
+/// minus The Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and
+/// COMPOSITE_TRANSPARENT.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
 
@@ -81,12 +49,11 @@ extern char ResourceId_IceBlockSheet; // its palette
 extern u16 gData_08197410[];          // gBattleEffect_MoteCells
 extern s32 gData_081982e4[];          // gDrain_Gravities
 
-// Ice shards burst up from each target in turn, 20 frames apart.
-
-// Setup: 128 shards per target are scattered around the middle of its body
-// and thrown sideways and up. Frame loop: from its cue a target flashes, and
-// its shards fall under one of four gravities until they drop below y = 112.
-// The effect runs 20 frames per target plus 56.
+/// Ice shards burst up from each target in turn, 20 frames apart.
+/// Setup: 128 shards per target are scattered around the middle of its body
+/// and thrown sideways and up. Frame loop: from its cue a target flashes, and
+/// its shards fall under one of four gravities until they drop below y = 112.
+/// The effect runs 20 frames per target plus 56.
 void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -127,7 +94,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
 
     offset = member * SHARDS_PER_MEMBER * sizeof(struct EffectStep);
     /* FAKEMATCH(temporary): position, a pointer standing in for &screen; as
-       EffectPosition_ProjectPoint(point, &screen), 18 of 337 instructions
+       EffectPosition_ProjectPoint(point, &screen), 12 of 337 instructions
        differ in tla-en. */
     position = &screen;
     object = GetBattleObjectSlotFar(effect->actors[member])->object;

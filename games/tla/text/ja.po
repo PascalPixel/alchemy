@@ -13941,7 +13941,7 @@ msgctxt "MsgDiceGameDoubleUp"
 msgid "03455"
 msgstr "ダブルアップしますか?"
 
-msgctxt "message"
+msgctxt "MsgFieldPasswordKana"
 msgid "03456"
 msgstr "あいうえお"
 
@@ -13993,11 +13993,11 @@ msgctxt "message"
 msgid "03468"
 msgstr "だ  でど"
 
-msgctxt "MsgFieldSpace"
+msgctxt "message"
 msgid "03469"
 msgstr "ばびぶべぼ"
 
-msgctxt "message"
+msgctxt "MsgFieldSpace"
 msgid "03470"
 msgstr "すすむ"
 
@@ -14005,15 +14005,15 @@ msgctxt "message"
 msgid "03471"
 msgstr "もどる"
 
-msgctxt "MsgFieldInvalidPassword"
+msgctxt "message"
 msgid "03472"
 msgstr "おわる"
 
-msgctxt "MsgFieldPasswordAccepted"
+msgctxt "MsgFieldInvalidPassword"
 msgid "03473"
 msgstr "パスワードがちがいます"
 
-msgctxt "message"
+msgctxt "MsgFieldPasswordAccepted"
 msgid "03474"
 msgstr "パスワードOK!"
 

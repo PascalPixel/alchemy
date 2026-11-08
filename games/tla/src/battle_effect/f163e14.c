@@ -1,34 +1,5 @@
-// Differ 4 of 699 (tla-en, 2026-11-08, -mtune=gba). Left: one site, the
-// velocity.x * 58 multiply (movs r3, #58; muls) issued ahead of the four
-// focus and velocity loads, where the native issues it after them; under the
-// GBA tune (multiply cost 5) sched2 still ranks it first; 2 of 699 on
-// 2026-11-05. 58 * velocity.x, the focus adds swapped, the y step
-// first or a once-only block around the x step measured no better (4 to 69).
-
-// Draft, differ 68 of 699: Func_08163e14, unused (no handler, summon case or
-// call reaches it), a second copy of The Broken Seal's
-// BattleEffect_RunNereid (summon 2's, which The Lost Age keeps at
-// BattleEffect_RunNereid).
-
-// Twin: ☀️ BattleEffect_RunNereid (games/tbs/src/effect/effect.c),
-// ported: the palette goes by DMA 3, the blitters come from
-// BattleEffect_FetchRectangleBlitters(0, draw), the effect stays an argument (its
-// count and actors are read from it; only BattleEffect_SelectLivingTargets reads the work's copy),
-// formation resource 649, callback BattleEffect_ProcessPendingGraphicsTransfer at 0xc80.
-
-// The column table is not const: the native reads it again after each draw
-// call, and as const data the reuse moved every register (differ 292).
-
-// Left: everything is reordered rows where the native puts a load or a store
-// ahead of an independent constant (the argument's store before 0x03000000,
-// the work's reloads, the pooled values, the 58 multiply), the kind
-// Func_08164b2c's header traces to a load costing 3 and a store 2.
-// 2026-10-26, under -mthumb-slow-loads: differ 16 of 699, the instructions
-// and registers otherwise the native's. What remains is single rows where
-// the native issues a spill or argument store before a load (the known
-// store-then-load scheduling limit); barriers and one-pass blocks at each
-// statement, statement moves and each local scoped to a block gain only
-// the prologue's row or rows of that kind.
+/// @file
+/// Unused: a second copy of Nereid's summon effect.
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -82,14 +53,10 @@ extern const s32 gData_08198974[]; // ☀️ gNereid_Gravity
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
-void BattleEffect_FetchRectangleBlitters(
-    s32 side,
-    DrawRectangle *draw);
-void BattleEffect_SelectLivingTargets(
-    struct BattleEffectArgument *effect);
-void BattleEffect_SpawnObjects(s32 count, s32 resource,
-                   s32 priority);
-void Func_081180e8(s32 phase);    // BattlePlayback_StartFar
+void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *draw);
+void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect);
+void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 priority);
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void Sound_PlayFar(s32 cue);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames); // BattleEffect_TintBattler
@@ -104,19 +71,22 @@ struct Point2D {
   s32 y;
 };
 
-// A formation of twelve sweeps in from the right; three pillars of fire
-// stream upward and a fountain of embers spouts from the ground, falls, and
-// at the end rises away, while the targets jolt every twelve frames.
-//
-// Setup: open the canvas, load the spray and pillar pictures and the ember
-// cells, empty the particle pools, and spawn the formation. Each frame (124,
-// A or B skipping from 33 to 98): the formation glides in and slows; 32
-// embers spout at frame 28 and 16 more a frame from 32 to 79; the spray rolls
-// along the ground until frame 95; the pillars stream up from 32 to 79; each
-// ember grows as it falls (the brighter blitter once it falls) and grows
-// again toward the end; the targets flash and jump every 12 frames from 30 to
-// 79. At the end the formation bursts and its objects are released.
-void Func_08163e14(struct BattleEffectArgument *effect) {
+/// Unused: nothing reaches it (no handler, summon case or call). A second
+/// copy of The Broken Seal's BattleEffect_RunNereid, which this game keeps
+/// for summon 2 as BattleEffect_RunNereid. As written:
+/// a formation of twelve sweeps in from the right; three pillars of fire
+/// stream upward and a fountain of embers spouts from the ground, falls, and
+/// at the end rises away, while the targets jolt every twelve frames.
+///
+/// Setup: open the canvas, load the spray and pillar pictures and the ember
+/// cells, empty the particle pools, and spawn the formation. Each frame (124,
+/// A or B skipping from 33 to 98): the formation glides in and slows; 32
+/// embers spout at frame 28 and 16 more a frame from 32 to 79; the spray rolls
+/// along the ground until frame 95; the pillars stream up from 32 to 79; each
+/// ember grows as it falls (the brighter blitter once it falls) and grows
+/// again toward the end; the targets flash and jump every 12 frames from 30 to
+/// 79. At the end the formation bursts and its objects are released.
+UNUSED void Func_08163e14(struct BattleEffectArgument *effect) {
   DrawRectangle draw[2];
   void *canvas;
   struct BattleEffectWork *work;

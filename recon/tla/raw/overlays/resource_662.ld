@@ -5,7 +5,7 @@ SECTIONS
         "*/games/tla/src/scene/yampi_desert_cave/entry.o"(.text)
         "*/resource_662_overlay.o"(.text.x02008038)
         "*/games/tla/src/field/map/cellfill.o"(.text)
-        "*/resource_662_overlay.o"(.text.x020081d4)
+        "*/games/tla/src/scene/yampi_desert_cave/s01d4.o"(.text)
         "*/games/tla/src/scene/yampi_desert_cave/s033c.o"(.text)
         "*/games/tla/src/scene/yampi_desert_cave/s0458.o"(.text)
         "*/games/tla/src/scene/yampi_desert_cave/s0754.o"(.text)

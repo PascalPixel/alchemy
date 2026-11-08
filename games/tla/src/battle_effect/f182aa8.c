@@ -1,57 +1,5 @@
-// Differ 2 of 2781 (tla-en, 2026-11-08, -mtune=gba), the same row as before. Frame
-// 164 and every stack slot as in the listing. Pools are not yet checked against
-// the listing. The draft holds one barrier and one temporary; both are tagged.
-// What is left, one row out of place: the third shock's clamp. The listing has
-// adds r3, #162; movs r1, #255; adds r6, r2, #0; muls r6, r3; lsls r1, r1, #8;
-// adds r1, #255; the draft has the multiply before movs r1. The sched2 dump gives
-// the multiply priority 5 (cost 4 to the branch) and movs r1 priority 4, so the
-// multiply wins on priority, not on a tie: moving the constant earlier in the RTL
-// does not change it. r1 is a reload in the listing (the rotation runs r0, r1, r2,
-// r4 through it), so a local holding 65535 is not the form either. Tried: limit
-// locals (folded by CSE or hoisted), an inline clamp, ternaries, an empty asm on
-// a limit, a pinned limit, ten minutes of alchemy-devtools permute (5132 candidates,
-// none better). What could lower the multiply's priority or delay it one cycle
-// is not known.
-// What round 5 settled by reading the listing and the loop and sched2 dumps:
-// - The first object loop steps its own cells from the symbol, with i set first:
-//   objects r5, cells r7.
-// - The ring of stones and the healing sparks each have their own pointer; the
-//   sparks index it, so its step is a reduced giv whose start follows the hoisted
-//   table (Ram_EffectSteps[i], 103 to 75).
-// - spin is ((frame - 1) << 9) + 512: its slot steps as a giv of frame, while the
-//   shock loops' frame << 9 stays a plain shift. With frame << 9 PRE folds those
-//   two into spin; a spin stepped by hand takes a low stack slot (257 to 179).
-// - ty is set before s in the third shock: it holds r7 through s's reloads, which
-//   is why the frame read takes r0 (179 to 128).
-// - The coil mesh is a set-once local like zero and the cell buffer: reload makes
-//   it in turn, in r0 (67 to 10). Two palette copies move 128 words, not 512; two
-//   fills go through an inline so the function address loads before the value.
-// - The stone's screen x is read before its y (10 to 2).
-// What earlier rounds settled: the zeros stored through memory come from one zero
-// set once after the opening slide; it takes no register, so reload makes each in
-// its turn and no loop hoists it. Reload hands out spill registers in turn, so one
-// stray reload shifts every later figure: work from the top down. The second
-// palette's s is its own. The spark, the ninth cell and the spawn read their
-// position, d and p first and on locals of their own; i = 0 comes before its
-// neighbours in four loops.
-// Measured: gData_02015000 is a constant address, the native pools its +24 and
-// a symbol leaves an add; gMapCellBuffer is the set-once local for its first
-// five uses and the symbol for the three texture.pixels, chosen per site. Row
-// is no variable: particles[k * 7 + i] in a real for gives the native's stepped
-// k * 7. Data_ tables are not const, the native rereads them after calls;
-// colours as bitfields extract with two shifts where the native shifts and
-// masks, so COLOR_* cast to u16 for the halfword mask the native pools; the
-// model s and the second palette's s are one variable, sh and ty one each
-// across the model blocks; i is also the particle loops' inner counter; k
-// doubles as the palette's blue target, which blocks r4. blit[2] and grid are
-// 8-byte locals, which gives the unused word at sp+68 and the pair at sp+56.
-// BLIT_CELL's order (cell offset, width, height) sets the live length of the
-// height table's address, and that decides frame's register. CopyWords and
-// FillWords are inline so their constant stays out of CSE (without CopyWords,
-// differ 1366); they carry no tag, the question against S2's wrapper kind is open.
-// ResourceId_BellMaidenTiles (0xa7), ResourceId_BlueFlameSheet (0x130), Data0FB
-// and Data0FC are not yet named in resource_directory.s; adoption names them
-// there. They are symbols because the native loads ids from the pool.
+/// @file
+/// Coatlicue, the serpent goddess's summon.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -144,7 +92,7 @@ void Transform_Pop(void);
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
-// ⚓️'s blitter modes run the other way from The Broken Seal's.
+/// ⚓️'s blitter modes run the other way from The Broken Seal's.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1])
@@ -154,7 +102,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #include "input.h"
 #include "io_write_queue.h"
 
-// The effect sprite Func_0815b290 returns, as far as this function reads it.
+/// The effect sprite Func_0815b290 returns, as far as this function reads it.
 struct SpriteView {
   s32 unk00;
   s32 attributes;
@@ -178,7 +126,8 @@ struct WordPair {
 extern struct ResourceTableEntry gResourceTableEntries[];
 extern u8 gMapCellBuffer[];
 extern struct EffectStep gData_02015000[];
-#define Ram_EffectSteps FIXED_ADDRESS((struct EffectStep *), 0x02015000, gData_02015000)
+#define Ram_EffectSteps                                                        \
+  FIXED_ADDRESS((struct EffectStep *), 0x02015000, gData_02015000)
 extern u8 Data_02014400[];
 extern u8 Data_02014800[];
 extern u32 gCameraSceneParameters[];
@@ -299,15 +248,21 @@ void Heap_Release(void *buffer);
   } while (0)
 
 static inline void CopyWords(void *destination, const void *source, s32 size) {
+  /* FAKEMATCH(wrapper): the copy through this inline, so its size stays out of
+   * CSE; as direct calls to Iwram_CopyWords, 528 of 2781 instructions differ in
+   * tla-en. */
   Iwram_CopyWords(destination, source, size);
 }
 
 static inline void FillWords(void *destination, s32 size, s32 value) {
+  /* FAKEMATCH(wrapper): the fill through this inline, so the function address
+   * loads before the value; as direct calls to Iwram_FillWords, 8 of 2781
+   * instructions differ in tla-en. */
   Iwram_FillWords(destination, size, value);
 }
 
-// Coatlicue: the ground opens over a green dusk, the serpent goddess rises in
-// a spiral of stone, her coils sweep the field and her light heals the party.
+/// Coatlicue: the ground opens over a green dusk, the serpent goddess rises in
+/// a spiral of stone, her coils sweep the field and her light heals the party.
 void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   u8 *canvas;
   struct BattleEffectWork *work;
@@ -378,16 +333,17 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     CopyWords((void *)OBJ_PLTT, e, 512);
     Resource_DecodeType01(e + 512, cellBuffer);
     {
-    u8 *cells;
+      u8 *cells;
 
-    i = 0;
-    cells = gMapCellBuffer;
-    for (; i != 12; cells += 1024, i++) {
-      obj = Func_0815b290(32, 32, 0x80002000, 0);
-      obj->priority = 2;
-      work->objects[i] = obj;
-      CopyWords((void *)OBJ_TILES(obj), cells, 1024);
-    }}
+      i = 0;
+      cells = gMapCellBuffer;
+      for (; i != 12; cells += 1024, i++) {
+        obj = Func_0815b290(32, 32, 0x80002000, 0);
+        obj->priority = 2;
+        work->objects[i] = obj;
+        CopyWords((void *)OBJ_TILES(obj), cells, 1024);
+      }
+    }
   }
   Graphics_LoadGreyRamp();
   Resource_LoadAndDecompress((s32)&ResourceId_Data0FB, cellBuffer, 0, 0);
@@ -549,7 +505,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         s32 t = COLOR_RED(s);
         s32 sr;
 
-        /* FAKEMATCH(barrier): t held apart from s through an empty asm; as sr = COLOR_RED(s) + tr, 15 of 2781 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): t held apart from s through an empty asm; as sr =
+         * COLOR_RED(s) + tr, 31 of 2781 instructions differ in tla-en. */
         __asm__("" : "=r"(t) : "0"(t));
         sr = t + tr;
         if (cb < sb - 1) {
@@ -604,7 +561,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         s32 t;
 
         s = *e;
-        /* FAKEMATCH(temporary): red through a temporary set twice; as r = COLOR_RED(s) + d, 17 of 2781 instructions differ in tla-en. */
+        /* FAKEMATCH(temporary): red through a temporary set twice; as r =
+         * COLOR_RED(s) + d, 79 of 2781 instructions differ in tla-en. */
         t = 31;
         t &= s;
         r = t + d;
@@ -644,20 +602,20 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       }
     }
     {
-    s32 d = frame - 274;
-    if ((u32)d <= 23) {
-      struct EffectStep *p = &(&Ram_EffectSteps[80])[d];
-      {
-        s32 x = ((Random16() & 15) + 52) << 16;
+      s32 d = frame - 274;
+      if ((u32)d <= 23) {
+        struct EffectStep *p = &(&Ram_EffectSteps[80])[d];
+        {
+          s32 x = ((Random16() & 15) + 52) << 16;
 
-        p->y = 0x640000;
-        p->x = x;
+          p->y = 0x640000;
+          p->x = x;
+        }
+        p->velocityX = ((Random16() & 31) - 16) << 12;
+        p->velocityY = -((Random16() & 15) + 8) << 12;
+        p->z = (Random16() & 7) + 5;
+        p->variant = 32;
       }
-      p->velocityX = ((Random16() & 31) - 16) << 12;
-      p->velocityY = -((Random16() & 15) + 8) << 12;
-      p->z = (Random16() & 7) + 5;
-      p->variant = 32;
-    }
     }
     if (frame == 310) {
       struct EffectStep *p = Ram_EffectSteps;

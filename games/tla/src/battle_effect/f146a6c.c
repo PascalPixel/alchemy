@@ -1,49 +1,5 @@
-// Differ 6 of 410 (tla-en, 2026-11-08, -mtune=gba), from 4 under the older tune: with multiplies at 5 the
-// 0x199a chain now also runs ahead of the frame and variant loads and the store of the ring
-// pointer (both loads and the str r1, [sp, #12] after the muls). Tried: the angle as
-// ((variant - frame) << 11) + j * 0x199a (10), * 2048 or 0x199a * j (6).
-// 2026-11-07, at 4: sched2 ranks 0x199a's lsls 102 against 101 for the frame and
-// variant loads (muls costs 4), so it goes ahead of them; operand order, casts,
-// u16/unsigned constants, a local for the constant or j * 0x199a, j % 2,
-// ring[j + i * 10] all stay 4; a phase local gives 42; permute 8 minutes, 4.
-// Measured 2026-11-05 (tla-en): differ 4 of 410. Left: one row: a multiply the
-// native issues later than alchemy-gcc does: sched2 ranks the chain into muls
-// too high (its cost of 4), so the constant or the multiply comes ahead of
-// independent rows (0x199a's shift after two loads).
-
-// Near miss, differ 8 of 410 (tla-en, 2026-10-30): sched2 order at three
-// places, same frame, registers and instructions.
-//
-// The prologue (str r0, [sp, #52] before the 0x03000000 base) now matches
-// with no device; the empty asm the 2026-10-25 note needed there is gone.
-// What is left (alchemy-devtools diff --rtl, sched2 dump):
-// - Before the loop that sets each star's course and before the per-frame
-//   star loop, the native reloads work
-//   from [sp, #48] after the stores of i (and of i * 10) that close the block;
-//   alchemy-gcc issues it first, because -mthumb-slow-loads gives a load with
-//   nothing depending on it in its block one more cycle of priority
-//   (arm_priority_cost: 3 against 2 for target's ldr r7, [r0]). The load is
-//   last in RTL order, so no source order reaches the native's.
-// - At the head of the ring-point loop the native issues both sine operand
-//   loads (frame, star->variant; priority 101) before the lsls and adds that
-//   rebuild 0x199a, which alchemy-gcc ranks 102 and 101 on the multiply's
-//   chain. Spelling the angle as 0x199a * j or with * 2048 changes nothing;
-//   adding (star->variant - frame) << 11 instead gives 12.
-// alchemy permute (4 minutes, 8,000 candidates, 2026-10-30) found nothing
-// below 8.
-
-// Twin: The Broken Seal's BattleEffect_RunShiningStar (effect kind 62 there and
-// here), ported call for call. The Lost Age's changes: the effect argument is
-// read directly (the dispatcher stores work->effect), resource 0x134 is
-// unpacked into the sheet slot where The Broken Seal decodes its particle
-// sprites, the one blitter comes from BattleEffect_LoadBlitter(104, MAX) before the
-// transfer settings, the callback runs at 0xc80, and the radii are bytes.
-// The two tables are not const: as const arrays loop.c hoists the cell offset
-// out of the draw loops and spills it (differ 182).
-
-// BattleEffect_LoadBlitter is declared to return s32, as The Lost Age's LoadWork
-// returns its store-flag and The Broken Seal's returns s32: void it is 32
-// (alchemy permute, 12 minutes, found this and nothing else).
+/// @file
+/// Shining Star's rings of stars.
 
 #include "battle.h"
 #include "graphics.h"
@@ -65,18 +21,20 @@
 #define HEAP_BLITTER HEAP_OFFSET(unk64[1])
 #define HEAP_BLITTER_ALTERNATE HEAP_OFFSET(unkb8[1])
 
-// The blitter generator's modes, The Broken Seal's in reverse order.
+/// The blitter generator's modes, The Broken Seal's in reverse order.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-// The canvas routines every effect shares, with their Broken Seal names.
+/// The canvas routines every effect shares, with their Broken Seal names.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);         // ..ProcessPendingGraphicsTransfer
+void BattleEffect_ProcessPendingGraphicsTransfer(
+    void); // ..ProcessPendingGraphicsTransfer
 void BattleEffect_CountDownBattlerTints(void);
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
 void Func_081180e8(s32 phase);    // BattlePlayback_StartFar
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames); // BattleEffect_TintBattler
 void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase,
@@ -95,16 +53,16 @@ extern u8 gMapCellBuffer[];
 #define DOT_SIZE 2
 #define GROUND_Y 0x1dffff
 
-// Eight rings of stars fly from the caster to the target, one every eight
-// frames and spinning as they go; each bounces where it meets the ground,
-// shaking the screen and flashing the targets.
+/// Eight rings of stars fly from the caster to the target, one every eight
+/// frames and spinning as they go; each bounces where it meets the ground,
+/// shaking the screen and flashing the targets.
 void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
   /* FAKEMATCH(dead): a blitter pair, as the twin has, of which only draw[0] is
    * used, the second word filling four bytes of the native frame; as one
-   * DrawRectangle, 52 of 410 instructions differ in tla-en. */
+   * DrawRectangle, 50 of 410 instructions differ in tla-en. */
   DrawRectangle draw[2];
   s32 i;
   u8 *graphics;
@@ -129,8 +87,8 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
-  BattleEffect_LoadBlitter(HEAP_BLITTER,
-                BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  BattleEffect_LoadBlitter(
+      HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 2;
   work->transferValue = 50;

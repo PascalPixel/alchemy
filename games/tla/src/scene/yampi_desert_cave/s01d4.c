@@ -1,28 +1,6 @@
-// Differ 4 of 171 (tla-en, 2026-11-08, -mtune=gba): the final position[0] loads
-// object->x after the multiply where the native loads it first, which also
-// moves movs r0, #1.
-// 7 November: an inline wrapper round the cell call (FAKEMATCH) makes the
-// native rebuild add r1, sp, #28. A once-only block after position[0] moves
-// movs r0, #1 behind the store but not the load; result locals, operand
-// orders, types and an inline sum all leave 4.
-// Finds how far a pushed object can slide in the leader's direction, probing
-// its footprint cell by cell until Func_02001850 reports a wall.
-// 6 November: the once-only block is gone. The head matches in plain order
-// (dx, dz, position[5] = 0 before count = 0), and the outer loop computes
-// probe[2] from offset * 4 + 1 between the two steps that set offset.
-// Proven: offset is set in two steps at the top of the outer loop (one step,
-// or both before probe[2], gives 113). The row loop must be goto or the size
-// grows by 14. The cell loop's form changes nothing: for, while, do and goto
-// all compile alike, and so do a struct probe, a pointer in the row, &probe[0],
-// *probe and the step spelt as an assignment.
-// Reading of the dumps (before 6 November): PRE and cprop put every sfp-12 on
-// reg 100. Only r5 stays apart in the native: the row store and the cell step
-// share a pseudo that the call's argument does not. Ours has the step reuse the
-// argument's pseudo.
-// Tried, no gain: declaration orders, a scoped pointer in the step, a union
-// with direct y and z, y set inside the loop, kind read after the first
-// section, result in a local in four placements, the tail's operands swapped,
-// the tail as if/else.
+/// @file
+/// How far a pushed object can slide.
+
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -39,6 +17,10 @@ static inline s32 Func_02001850_Call(struct Actor *object, s32 *position) {
   return Func_02001850(object, position);
 }
 
+/// Finds how far a pushed object can slide in the leader's direction, probing
+/// its footprint cell by cell until Func_02001850 reports a wall. Returns 1
+/// with the end position in position[0] to position[2], or 0 if it cannot
+/// move.
 s32 Func_020001d4(s32 *position) {
   s32 probe[3];
   s32 direction;
@@ -64,6 +46,7 @@ s32 Func_020001d4(s32 *position) {
     position[0] = object->x + dx;
     position[2] = object->z + dz;
     probe[1] = object->y;
+    // The row loop is built from labels: as a loop it grows by 14 bytes.
   next:
     offset = kind;
     probe[2] = position[2] + (gData_02001974[offset * 4 + 1] << 16);
@@ -75,7 +58,7 @@ s32 Func_020001d4(s32 *position) {
     probe[0] = position[0] + (gData_02001974[offset] << 16);
     for (i = 0; i < w; i++) {
       /* FAKEMATCH(wrapper): the call through Func_02001850_Call; as
-         Func_02001850(object, probe), 6 of 171 instructions differ in tla-en.
+         Func_02001850(object, probe), 2 of 171 instructions differ in tla-en.
        */
       if (Func_02001850_Call(object, probe) == 2)
         goto hit;

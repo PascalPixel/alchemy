@@ -1,8 +1,5 @@
 #include "edition.h"
 
-// The Japanese and French forms differ and are still on their listing.
-#if (LANGUAGE != LANGUAGE_JAPANESE && LANGUAGE != LANGUAGE_FRENCH)
-
 #include "types.h"
 #include "main_routine_work.h"
 #include "iwram_call.h"
@@ -39,11 +36,13 @@ extern u8 gData_0200247c[];
 extern u8 gData_0200265e[];
 extern u8 Data_0200274a[];
 extern u8 Data_0200288a[];
+extern u8 Data_0200284e[];
 extern u8 gGameFlagBytes[];
 extern u8 Data_02012f94[];
 extern char MsgFieldSpace[];
 extern char MsgFieldPasswordAccepted[];
 extern char MsgFieldInvalidPassword[];
+extern char MsgFieldPasswordKana[];
 
 #define MSGNO(name) ((s32)(name))
 
@@ -102,6 +101,49 @@ static inline void Cursor_Show(struct ShopCursor *cursor, s32 x, s32 y) {
   Func_020023f0(cursor);
 }
 
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+// The Japanese grid has 20 columns of kana and its side column is 20.
+#define SIDE_COLUMN 20
+#define SIDE_HIGHLIGHT_WIDTH 3
+#define CHECK_WINDOW_X 8
+#define CHECK_WINDOW_WIDTH 14
+// Japanese decodes into the bytes after its 260-byte entered password.
+#define DECODED_PASSWORD Data_0200284e
+#define CURSOR_ON_SIDE_COLUMN(column) ((column) == SIDE_COLUMN)
+#else
+#define SIDE_COLUMN 16
+#define SIDE_HIGHLIGHT_WIDTH 6
+#define CHECK_WINDOW_X 5
+#define CHECK_WINDOW_WIDTH 20
+#define DECODED_PASSWORD Data_0200288a
+#define CURSOR_ON_SIDE_COLUMN(column) ((column) > SIDE_COLUMN - 1)
+#endif
+
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+/// Draws the kana rows and the key help into the main window.
+#define DRAW_TITLE(window)                                                     \
+  {                                                                            \
+    message = MSGNO(MsgFieldPasswordKana);                                     \
+    Text_DrawCharacterAtOffset(message++, window, 0, 0);                       \
+    Text_DrawCharacterAtOffset(message++, window, 0, 8);                       \
+    Text_DrawCharacterAtOffset(message++, window, 0, 16);                      \
+    Text_DrawCharacterAtOffset(message++, window, 0, 24);                      \
+    Text_DrawCharacterAtOffset(message++, window, 48, 0);                      \
+    Text_DrawCharacterAtOffset(message++, window, 48, 8);                      \
+    Text_DrawCharacterAtOffset(message++, window, 48, 16);                     \
+    Text_DrawCharacterAtOffset(message++, window, 48, 24);                     \
+    Text_DrawCharacterAtOffset(message++, window, 96, 0);                      \
+    Text_DrawCharacterAtOffset(message++, window, 96, 8);                      \
+    Text_DrawCharacterAtOffset(message++, window, 96, 16);                     \
+    Text_DrawCharacterAtOffset(message++, window, 96, 24);                     \
+    Text_DrawCharacterAtOffset(message++, window, 144, 0);                     \
+    Text_DrawCharacterAtOffset(message++, window, 144, 8);                     \
+    Window_DrawDividerLine(window, 24, 0, 24, 5);                              \
+    Text_DrawCharacterAtOffset(message++, window, 192, 0);                     \
+    Text_DrawCharacterAtOffset(message++, window, 192, 8);                     \
+    Text_DrawCharacterAtOffset(message, window, 192, 24);                      \
+  }
+#else
 /// Draws the password screen's title and key help into the main window.
 #define DRAW_TITLE(window)                                                     \
   {                                                                            \
@@ -115,6 +157,7 @@ static inline void Cursor_Show(struct ShopCursor *cursor, s32 x, s32 y) {
     Text_DrawCharacterAtOffset(message++, window, 160, 8);                     \
     Text_DrawCharacterAtOffset(message, window, 160, 24);                      \
   }
+#endif
 
 s32 Func_02000e44(void) {
   struct ShopCursor cursorStore;
@@ -229,35 +272,35 @@ s32 Func_02000e44(void) {
           s32 next = column + 1;
 
           if (row == 2)
-            column = next % 16;
+            column = next % SIDE_COLUMN;
           else
-            column = next % 17;
+            column = next % (SIDE_COLUMN + 1);
         }
       }
       if (gInput.repeat & 32) {
         Func_02002408(111);
         if (row == 2)
-          column = (column + 15) % 16;
+          column = (column + SIDE_COLUMN - 1) % SIDE_COLUMN;
         else
-          column = (column + 16) % 17;
+          column = (column + SIDE_COLUMN) % (SIDE_COLUMN + 1);
       }
       if (gInput.repeat & 128) {
         Func_02002408(111);
         row = (row + 1) % 4;
-        if (column == 16 && row == 2)
+        if (column == SIDE_COLUMN && row == 2)
           row = 3;
       }
       if (gInput.repeat & 64) {
         Func_02002408(111);
         row = (row + 3) % 4;
-        if (column != 16)
+        if (column != SIDE_COLUMN)
           goto not_side;
         if (row == 2)
           row = 1;
       }
     }
-    drawMode = 6;
-    if (column != 16) {
+    drawMode = SIDE_HIGHLIGHT_WIDTH;
+    if (column != SIDE_COLUMN) {
     not_side:
       drawMode = 1;
     }
@@ -269,7 +312,7 @@ s32 Func_02000e44(void) {
       drawColumn++;
     if (column > 14)
       drawColumn++;
-    if (column > 15)
+    if (column > SIDE_COLUMN - 1)
       drawColumn++;
     Func_02000db4(window, drawColumn, row, drawMode, height, 14);
     {
@@ -282,7 +325,7 @@ s32 Func_02000e44(void) {
         x += 8;
       if (column > 14)
         x += 8;
-      if (column > 15)
+      if (CURSOR_ON_SIDE_COLUMN(column))
         x += 8;
       cursorX += (x - cursorX) / 2;
       cursorY += (y - cursorY) / 2;
@@ -311,14 +354,12 @@ s32 Func_02000e44(void) {
     if (advance == 0) {
       s32 mask;
       u16 raw;
-      /* FAKEMATCH(pin): the keys in r2, as the native keeps them; as a plain
-       * local, 4 of 1077 instructions differ in tla-en. */
-      register s32 keys asm("r2");
+      s32 keys;
       struct InputState *input = &gInput;
 
-      if (column == 16 && row == 0)
+      if (column == SIDE_COLUMN && row == 0)
         raw = input->repeat;
-      else if (column == 16 && row == 1)
+      else if (column == SIDE_COLUMN && row == 1)
         raw = input->repeat;
       else
         raw = input->pressed;
@@ -328,7 +369,7 @@ s32 Func_02000e44(void) {
       mask &= keys;
       if (mask && state == 0) {
         action = 0;
-        if (column == 16) {
+        if (column == SIDE_COLUMN) {
           if (row == 0)
             action = 1;
           else if (row == 1)
@@ -336,7 +377,7 @@ s32 Func_02000e44(void) {
           else if (row == 3)
             action = 3;
         } else if (cursor < length) {
-          s32 code = gData_0200265e[column + row * 16];
+          s32 code = gData_0200265e[column + row * SIDE_COLUMN];
 
           if (code <= 63) {
             Func_02002408(112);
@@ -361,15 +402,15 @@ s32 Func_02000e44(void) {
           struct MainRoutineWork *party;
           s16 crc;
 
-          action = Func_02002068(Data_0200274a, length, Data_0200288a);
+          action = Func_02002068(Data_0200274a, length, DECODED_PASSWORD);
           size2 = action - 2;
-          check = Func_0200217c(size2, Data_0200288a);
+          check = Func_0200217c(size2, DECODED_PASSWORD);
 
           state = 0;
-          box = Window_Create(5, 12, 20, 3, 2);
+          box = Window_Create(CHECK_WINDOW_X, 12, CHECK_WINDOW_WIDTH, 3, 2);
           crc = check;
-          if (Data_0200288a[size2] == (u16)crc >> 8 &&
-              Data_0200288a[action - 1] == (u16)crc % 256) {
+          if (DECODED_PASSWORD[size2] == (u16)crc >> 8 &&
+              DECODED_PASSWORD[action - 1] == (u16)crc % 256) {
             Text_DrawCharacterAtOffset(MSGNO(MsgFieldPasswordAccepted), box, 0,
                                        0);
             Func_02002408(112);
@@ -389,7 +430,7 @@ s32 Func_02000e44(void) {
             Party_AddActiveOwner(1);
             Party_AddActiveOwner(2);
             Party_AddActiveOwner(3);
-            Func_020018e0(mode, Data_0200288a);
+            Func_020018e0(mode, DECODED_PASSWORD);
             Window_Close(box, 2);
             Window_Close(grid, 2);
             Window_Close(window, 2);
@@ -453,7 +494,7 @@ s32 Func_02000e44(void) {
     }
     action = length;
     /* FAKEMATCH(barrier): the count is not known to be the length, whose
-     * remainder the native reloads from the stack; as no asm, 4 of 1077
+     * remainder the native reloads from the stack; as no asm, 2 of 1077
      * instructions differ in tla-en. */
     asm volatile("" : "+r"(action));
     if (length > 49) {
@@ -490,5 +531,3 @@ s32 Func_02000e44(void) {
     wait(1);
   }
 }
-
-#endif

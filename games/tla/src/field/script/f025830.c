@@ -1,22 +1,6 @@
-// Differ 4 of 370 (tla-en, 2026-11-08, -mtune=gba).
-// 2026-11-07: a pass-through wrapper on the first turn's first draw (8 to 4);
-// left: the ldrsh of the angle scheduled after the square, not before.
-// Twin of The Broken Seal's ActorScript_WanderNearHome (SC_WANDER_HOME): the
-// same operands, probes, retries, home check and flag bit, on this game's
-// headers. Every probe now copies x, y, z in the twin's order (the z-first
-// probes were what held this at differ 30). Also tried
-// (2026-11-07): angle at every earlier statement, attempts moved, once-only
-// blocks, volatile angle reads, a separate unsquared limit (drops the
-// dead spill store, 9), declaration orders; 15 minutes of permuting.
-// Tried: naming the first draw in a local (s32 spread) gives differ 10, but
-// that is a forced temporary, so it is not kept; turn built by statements
-// (differ 30 to 115), turn at function scope (56), angle before the division
-// (24), tries before the square (22 to 28), dx in two statements (67), dz
-// before dx (121), an s32 angle (14, no gain).
-// The angle is an s16 (ldrsh, and asrs after ArcTan2) widened to u16 in a
-// separate s32 turn: as one u16 expression the inner widening folds away
-// (differ 140); ArcTan2's result is cast to u16 before 0x8000 is added (as an
-// s16 sum the constant loads from the pool, differ 73).
+/// @file
+/// The script command that wanders near home.
+
 #include "types.h"
 #include "system.h"
 #include "actor.h"
@@ -40,6 +24,13 @@ s32 ArcTan2(s32 y, s32 x);
 
 static inline s32 PassThrough(s32 value) { return value; }
 
+/// Moves the object to a random spot within its home radius, as The Broken
+/// Seal's ActorScript_WanderNearHome does: up to seven tries at a point a
+/// random distance away in a random turn of its heading, each refused if
+/// anything overlaps it or blocks the path or the cells beside it. An object
+/// outside its home radius (or out of tries) heads back toward home instead.
+/// Operands: the minimum distance, the distance range and the
+/// home radius.
 s32 Func_08025830(struct ActorScriptView *object) {
   struct FieldPosition candidatePosition;
   struct FieldPosition probePosition;
@@ -58,6 +49,8 @@ s32 Func_08025830(struct ActorScriptView *object) {
   minimumDistance = *operands++;
   distanceRange = *operands++;
   homeRadiusSquared = *operands / 0x10000;
+  // The angle is an s16 widened to u16 in a separate turn: as one u16
+  // expression the inner widening folds away.
   angle = object->scriptValue;
   homeRadiusSquared *= homeRadiusSquared;
   attempts = 0;
@@ -71,7 +64,7 @@ s32 Func_08025830(struct ActorScriptView *object) {
           minimumDistance + Iwram_MulQ16(Random16(), distanceRange);
       {
         /* FAKEMATCH(wrapper): the first draw passed through PassThrough; as
-         * (Random16() >> 2), 8 of 370 instructions differ in tla-en. */
+         * (Random16() >> 2), 4 of 370 instructions differ in tla-en. */
         s32 turn =
             (u16)angle + PassThrough(Random16() >> 2) - (Random16() >> 2);
 

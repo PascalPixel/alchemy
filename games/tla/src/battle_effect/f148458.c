@@ -1,44 +1,5 @@
-// Differ 6 of 689 (tla-en, 2026-11-08, -mtune=gba), from 2 before it: the
-// 58 multiply now also comes ahead of the loads of [sp, #28] and [sp, #20] and
-// the store of focus.x (58 * x, y first, *= then /=: 6 to 35). Before, 2: one row: a multiply the
-// native issues later than alchemy-gcc does: sched2 ranks the chain into muls
-// too high (its cost of 4), so the constant or the multiply comes ahead of
-// independent rows (movs r3, #58 after the loads).
-
-// Near miss, differ 14 of 689 (tla-en, 2026-10-30): plain C, no device;
-// three single-slot scheduler swaps remain, which no source form reached.
-
-// Summon 2 (BattleEffect_RunSceneEffect's case 2). Twin: The Broken Seal's
-// BattleEffect_RunNereid, ported call for call. The Lost Age's changes:
-// the heap blocks are read canvas, work, sheet; three
-// Resource_LoadAndDecompress loads where The Broken Seal copies a palette
-// and decodes two sheets; BattleEffect_FetchRectangleBlitters for the blitter pair;
-// formation resource 649 for 380; the callback at 0xc80; and the hit loop reads
-// the effect argument. The resource rows WaterSpraySheet (303) and
-// FirePillarSheetA (326) have no name yet in directory.s.
-
-// Left (2026-10-30): the prologue and the pools now agree; three sched2
-// choices differ. After Task_Add the native builds focus's and rise's
-// constants before storing velocity.y, and stores velocity.x last; here
-// each pool load is stored as soon as it lands. In the motion update the
-// native loads focus.y and velocity.y before `movs r3, #58`; here sched2
-// ranks the 58 at priority 6 against the loads' 5. In a spark's draw the
-// native stores size to [sp] before reloading &draw from [sp, #32]; here
-// the reload ranks 13 against the store's 12.
-
-// Tried (trial 2, 2026-10-15): the plain port 91; the hit loop through the
-// argument 88; the one-pass block around REG_BLDALPHA 60; alchemy permute
-// 8 + 6 minutes found nothing below 58 without a second block.
-// Under -mthumb-slow-loads (2026-10-25): plain C 20, the REG_BLDALPHA block 26,
-// an empty asm before the first statement 18 (the argument's spill then
-// comes first). Most rows left are loads from memory or the stack that
-// alchemy-gcc issues one slot earlier than the native.
-// 2026-10-30, from plain C at 14: focus and velocity as arrays 14, as four
-// scalars 50 (one pair as scalars 34); the five starting values in other
-// orders 14 to 365; the motion update's statements reordered 24 to 32;
-// 58 * velocity.x 14; the spark's blitter through a temporary 120; size * 2
-// as size + size or size << 1 14; alchemy permute 4 minutes (5,646
-// candidates) found nothing below 14.
+/// @file
+/// Nereid, summon 2.
 
 #include "battle.h"
 #include "graphics.h"
@@ -64,18 +25,20 @@
 // The high halfword of a 16.16 value: its whole pixels.
 #define HI(v) (((s16 *)&(v))[1])
 
-// The canvas routines every effect shares, with their Broken Seal names.
+/// The canvas routines every effect shares, with their Broken Seal names.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
+void BattleEffect_ProcessPendingGraphicsTransfer(
+    void);                     // ..ProcessPendingGraphicsTransfer
 void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
-                   s32 frames);                    // BattleEffect_TintBattler
+                   s32 frames); // BattleEffect_TintBattler
 void BattleEffect_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void BattleEffect_SelectLivingTargets(
     struct BattleEffectArgument *effect); // ..SelectLivingTargets
-void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 priority); // ..SpawnObjects
+void BattleEffect_SpawnObjects(s32 count, s32 resource,
+                               s32 priority);    // ..SpawnObjects
 void Func_0816442c(s32 formation, s32 x, s32 y); // ..PlaceFormationObjects
 void Func_0816467c(s32 formation, s32 x, s32 y); // ..RunImpactBurst
 void Sound_PlayFar(s32 cue);
@@ -99,12 +62,18 @@ extern u16 gData_08197410[]; // spark sizes 1 to 10: cell offsets in the sheet
 #define COLUMN_WIDTH 34
 #define COLUMN_HEIGHT 104
 
-// Summon 2: a formation of twelve sweeps in from the right and settles over
-// the enemies while a band of spray rises from below. At frame 28, and every
-// frame from 32 to 79, sparks burst up from beside the formation and fall
-// back; three columns of fire stream up meanwhile, and every twelve frames
-// the targets flash and jump. After frame 80 the sparks rise away. A or B
-// skips frames 33 to 97.
+/// Summon 2: a formation of twelve sweeps in from the right and settles over
+/// the enemies while a band of spray rises from below. At frame 28, and every
+/// frame from 32 to 79, sparks burst up from beside the formation and fall
+/// back; three columns of fire stream up meanwhile, and every twelve frames
+/// the targets flash and jump. After frame 80 the sparks rise away. A or B
+/// skips frames 33 to 97.
+/// Nereid (summon 2, BattleEffect_RunSceneEffect's case 2), ported call for
+/// call from The Broken Seal's BattleEffect_RunNereid. This game reads its heap
+/// blocks canvas, work, sheet; loads three resources where The Broken Seal
+/// copies a palette and decodes two sheets; takes its blitter pair from
+/// BattleEffect_FetchRectangleBlitters and its formation from resource 649; and
+/// reads the effect argument in the hit loop.
 void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
   DrawRectangle draw[2];
   void *canvas;

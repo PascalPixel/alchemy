@@ -1,25 +1,6 @@
-// Differ 2 of 298 (tla-en, 2026-11-08, -mtune=gba). 30 to 2: the pull's distance test
-// takes |user->x| in its own local rather than reusing dx. Left, scheduling
-// only: in the ring loop the native loads the frame's spin (frame << 10) from
-// its stack slot before the multiply by 5461, alchemy-gcc after (operand orders
-// and 5 minutes of permuting do not move it). Earlier notes:
-// 2026-10-26 (round 5): differ 46 of 298. canvas read after work (a
-// statement-move search): 48 to 46.
-// Draft, differ 48 of 298 (2026-10-26; 95 before), from the listing (The
-// Broken Seal's BattleEffect_RunDrain is only a hint): a mote leaves the first
-// target as a ring of 24 sparks turning about it and is pulled toward the
-// user until it passes it. The blitter declared before the camera and the
-// sheet gives the native's stack slots; the spark size kept in a local set
-// before the ring loop gives the native's unfolded size arithmetic (12 - 2,
-// a register 3). The pull's three deltas are shifted in their locals, as
-// ☀️'s RunDrain shifts its deltas (95 -> 48: the native's registers and load
-// order there). Left, scheduling: the native spills the effect before it
-// builds the heap base (the known store-before-build pattern) and loads the
-// work's slot before the camera's; after each of the orb's first two
-// position stores it sets an argument before the next load from the target
-// (str, movs, ldr), where alchemy-gcc loads first; and two loads of the ring
-// loop sit a row from the native's. Tried before: the deltas in all six
-// orders (97 to 179); now the six orders of the shifted deltas (71 to 188).
+/// @file
+/// Nirvana's ring of sparks.
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "system.h"
@@ -41,7 +22,7 @@ struct EffectCamera {
 };
 
 extern char ResourceId_Data134;
-extern char ResourceId_Data17F;
+extern char ResourceId_PinkBurstSheet;
 extern u16 gData_08197410[];
 
 void BattleEffect_StartCanvasLayer(s32 layer);
@@ -57,11 +38,11 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32);
 void Func_080150e4(s32 angle);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void BattleEffect_CountDownBattlerTints(void);
 
-// A mote leaves the first target and is drawn as a ring of 24 sparks
-// turning about it while it is pulled back to the user.
+/// A mote leaves the first target and is drawn as a ring of 24 sparks
+/// turning about it while it is pulled back to the user.
 void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
   struct BattleFxWork *work;
   void *canvas;
@@ -81,7 +62,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   Iwram_CopyWords((void *)0x05000000,
-                  Resource_GetTableEntry((s32)&ResourceId_Data17F), 128);
+                  Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet), 128);
   object = GetBattleObjectSlotFar(effect->actors[0])->object;
   half = BattleUnit_GetEffectHeightFar(effect->actors[0]) / 2;
   orb = work->particles;

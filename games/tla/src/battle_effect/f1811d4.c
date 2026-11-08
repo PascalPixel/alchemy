@@ -1,21 +1,5 @@
-// Differ 2 of 861 (tla-en, 2026-11-08, -mtune=gba): sched2 order only; the
-// reload of [sp, #36] issues after the multiply here, before it natively.
-// 2026-11-07: only one swap is left, after the speed update: the listing
-// loads backgroundX before movs r3, #52; sched2 ranks the movs higher
-// (priority 6, through muls and the sign branch, against the load's 5).
-// Temporaries, comma forms, operand order, a constant local and a once-only
-// block do not move it; 7 minutes of permuting found nothing.
-// BattleEffect_RunVengeance (2026-11-01, differ 16): three sched2 ties:
-// strh REG_BLDALPHA against the movs that zeroes the tile offset; ldr of
-// backgroundX against movs #52 before the muls; and the preheader of the
-// blade loop, where the listing stores the two hoisted blitter copies and
-// the i * 12 giv before forming sheet + 0x42cc in r9. Order of the C
-// statements, for-init forms and a local for 0x42cc do not move them.
-// What matters here: the blade's state, side and x are read straight from
-// memory each time, so that GCSE's one reaching register gives r4, r6 and r0;
-// a local for any of them breaks allocation. Likewise blade comes from
-// &work->particles[i] as a reduced giv, and mask and frames are locals
-// holding one constant, which leaves 108 and 124 out of the tree folder.
+/// @file
+/// Vengeance: the avenger's blades.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -48,7 +32,8 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -65,13 +50,14 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
-void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
+void BattleEffect_SpawnObjects(s32 count, s32 resource,
+                               s32 mode); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                               s32 speedLimit, s32 velocityY, s32 percent);
+                                   s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
                                        s32 flags);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -79,7 +65,7 @@ void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                      s32 drag);
+                                          s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
@@ -95,7 +81,7 @@ s32 Trig_Cos(s32 angle);
 
 void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleEffect_StartTiledCanvas(s32 bgControl);
@@ -106,7 +92,7 @@ void Transform_Pop(void);
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
-// ⚓️'s blitter modes run the other way from The Broken Seal's.
+/// ⚓️'s blitter modes run the other way from The Broken Seal's.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1])
@@ -117,12 +103,12 @@ extern const u8 Data_081995f3[][7]; // per level: which blades strike
 #define VENGEANCE_FRAMES 124
 #define BLADES 7
 
-// Abilities: Vengeance.
-//
-// The avenger (a tiled background in a window) slides in from the far
-// side and raises its arm every twelve frames from frame 22; each time a
-// blade (one of seven) flies across, and those the level picks strike the
-// target, the last one hardest. Everything is mirrored on the right side.
+/// Abilities: Vengeance.
+///
+/// The avenger (a tiled background in a window) slides in from the far
+/// side and raises its arm every twelve frames from frame 22; each time a
+/// blade (one of seven) flies across, and those the level picks strike the
+/// target, the last one hardest. Everything is mirrored on the right side.
 void BattleEffect_RunVengeance(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -202,12 +188,13 @@ void BattleEffect_RunVengeance(struct BattleEffectArgument *effect) {
   REG_WININ = 0x3737;
   REG_WINOUT = 0x2033;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0B0, work->sheet, 1, 1);
-  BattleEffect_LoadBlitter(SLOT_BLITTER,
-                BLITTER(BLIT_TRANSPARENT, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  BattleEffect_LoadBlitter(
+      SLOT_BLITTER,
+      BLITTER(BLIT_TRANSPARENT, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(188,
-                BLITTER(BLIT_TRANSPARENT, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                              COMPOSITE_FLIP_X));
+  BattleEffect_LoadBlitter(
+      188, BLITTER(BLIT_TRANSPARENT,
+                   COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   work->transferMode = 1;
   work->transferValue = 0;
@@ -326,8 +313,8 @@ void BattleEffect_RunVengeance(struct BattleEffectArgument *effect) {
             Func_08118088(effect->actors[0], 4);
             Func_081180e8(134);
           } else {
-            BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x80000,
-                                      0x20000, i * 10 + 110);
+            BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000,
+                                          0x80000, 0x20000, i * 10 + 110);
             Sound_PlayFar(133);
           }
           Func_0814cd48(effect->actors[0], 7, 5, 0, 4);
@@ -342,33 +329,33 @@ void BattleEffect_RunVengeance(struct BattleEffectArgument *effect) {
       if (effect->side == 0) {
         if (blade->variant == 0) {
           draw[0](canvas, work->sheet + 0x42cc, (blade->x >> 16) - 111,
-               HI(blade->y) + 24, 51, 12);
+                  HI(blade->y) + 24, 51, 12);
           draw[0](canvas, work->sheet + 0x42cc, HI(blade->x) + 17,
-               HI(blade->y) + 96, 51, 12);
+                  HI(blade->y) + 96, 51, 12);
           draw[0](canvas, work->sheet + 0x4200, HI(blade->x) - 128,
-               HI(blade->y) + 24, 17, 12);
+                  HI(blade->y) + 24, 17, 12);
           draw[0](canvas, work->sheet + 0x4200, HI(blade->x), HI(blade->y) + 96,
-               17, 12);
+                  17, 12);
         } else {
           draw[0](canvas, work->sheet + 0x42cc, pos.x / 2 + blade->x - 111,
-               HI(blade->y) + 24, 51, 12);
+                  HI(blade->y) + 24, 51, 12);
           draw[0](canvas, work->sheet + 0x42cc, pos.x / 2 + blade->x + 17,
-               HI(blade->y) + 96, 51, 12);
+                  HI(blade->y) + 96, 51, 12);
         }
       } else if (blade->variant == 0) {
-        draw[1](canvas, work->sheet + 0x42cc, blade->x >> 16,
-                    HI(blade->y) + 24, 51, 12);
+        draw[1](canvas, work->sheet + 0x42cc, blade->x >> 16, HI(blade->y) + 24,
+                51, 12);
         draw[1](canvas, work->sheet + 0x42cc, HI(blade->x) - 128,
-                    HI(blade->y) + 96, 51, 12);
+                HI(blade->y) + 96, 51, 12);
         draw[1](canvas, work->sheet + 0x4200, HI(blade->x) + 51,
-                    HI(blade->y) + 24, 17, 12);
+                HI(blade->y) + 24, 17, 12);
         draw[1](canvas, work->sheet + 0x4200, HI(blade->x) - 77,
-                    HI(blade->y) + 96, 17, 12);
+                HI(blade->y) + 96, 17, 12);
       } else {
         draw[1](canvas, work->sheet + 0x42cc, pos.x / 2 + blade->x,
-                    HI(blade->y) + 24, 51, 12);
+                HI(blade->y) + 24, 51, 12);
         draw[1](canvas, work->sheet + 0x42cc, pos.x / 2 + blade->x - 128,
-                    HI(blade->y) + 96, 51, 12);
+                HI(blade->y) + 96, 51, 12);
       }
     }
 

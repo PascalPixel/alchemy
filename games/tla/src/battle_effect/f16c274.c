@@ -1,35 +1,5 @@
-// Differ 2 of 491 (tla-en, 2026-11-08, -mtune=gba): sched2 order only; the
-// target's reload issues after radius + 80 here, before it natively.
-// 2026-11-07: the map cell clear through an inline (FAKEMATCH wrapper, as
-// f13e7e0.c's) loads the buffer before the size (4 to 2). Left: the target's
-// reload before radius + 80, a luid tie in sched2.
-// 2026-11-07: the texture's pixels as const u8 * (as f16dc50's), so its stores no
-// longer alias the model's void * fields: the vertices store follows the
-// texture's (6 to 4). Left: two luid ties in sched2 (the clear's size after
-// gMapCellBuffer's load; target's reload before radius + 80).
-// 2026-11-05: differ 6 of 491 (tla-en). Plain block scopes for the shard pointers,
-// cells set once and rebuilt from the pool, camera block opened before its PRE
-// hash changes; three order rows left.
-// Draft of BattleEffect_RunCrystal, decompiled from the listing: differ 168 of
-// 491 (draft 491), same calls and control flow.
-// Left (2026-10-19): the loop counter i takes sl where the native has r8
-// (the disc, shard and flash loops, about 40 rows); the disc loop's
-// gMapCellBuffer is loaded straight into r0 where the native reloads a
-// hoisted copy into r4; the two GCSE pointers for camera + 12 and &texture
-// take each other's stack slots (16 and 20); the rest is scheduling.
-// Tried (differ):
-// first draft                                                       310
-// center, other, screen, texture declared in the native's stack order
-// (no change in the count; the layout is the native's)             310
-// the pillar's y as cos + center[1] - 24, then += frame * 3          298
-// the shard's pulse as width * sin / 2 >> 16 (the native's rounding)
-// and sin * width (its multiply order)                             273
-// the blitter as The Broken Seal's pair (FAKEMATCH below)           186
-// camera and target declared in a block around the frame loop, so
-// their pseudos follow the centre pointer's as the native's do      168
-// the centre through an explicit pointer declared before camera
-// (same slots, 188); the disc loop with its own counter (175);
-// frame or shard declared with camera (168)
+/// @file
+/// Crystal: a spinning crystal and drifting shards.
 
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -65,10 +35,10 @@ struct BattleObjectPosition {
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(
-    void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+void BattleEffect_LoadBlitter(s32 slot,
+                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -113,25 +83,24 @@ extern u32 gCameraSceneParameters[];
 
 static inline s32 ClearWords(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_ClearWords, 4 of 491 instructions differ in tla-en. */
+   * Iwram_ClearWords, 2 of 491 instructions differ in tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 
-// Abilities: Crystal.
-//
-// Sixteen shaded discs, 2 to 32 pixels across, are built in the map cell
-// buffer. A pillar of light rises at the target for 20 frames while a
-// textured crystal spins up over it from frame 16; from frame 48 thirty-two
-// shards, one every two frames, drift up from around the target, pulsing in
-// size and jittering until they settle, and the targets flash at frames 64,
-// 68, ... before the scene fades out from frame 96.
+/// Abilities: Crystal.
+///
+/// Sixteen shaded discs, 2 to 32 pixels across, are built in the map cell
+/// buffer. A pillar of light rises at the target for 20 frames while a
+/// textured crystal spins up over it from frame 16; from frame 48 thirty-two
+/// shards, one every two frames, drift up from around the target, pulsing in
+/// size and jittering until they settle, and the targets flash at frames 64,
+/// 68, ... before the scene fades out from frame 96.
 void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
-  /* FAKEMATCH(frame): the blitter is declared as The Broken Seal's pair
-   * though only the first is used; its second word is the unused word at
-   * sp 44 of the native's 104-byte stack frame. As one DrawRectangle the frame
-   * is 100 bytes and every stack offset moves (differ 273). */
+  /* FAKEMATCH(dead): a blitter pair, as the twin has, of which only draw[0] is
+   * used, the second word filling four bytes of the native frame; as one
+   * DrawRectangle, 165 of 491 instructions differ in tla-en. */
   DrawRectangle draw[2];
   u16 *discOffsets;
   s32 center[3];
@@ -167,16 +136,16 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
     BattleEffect_LoadBlitter(104, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   } else {
     BattleEffect_LoadBlitter(104, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                  COMPOSITE_FLIP_X);
+                                      COMPOSITE_FLIP_X);
   }
   draw[0] = BLITTER;
   {
     void *camera;
     struct BattleObjectPosition *target;
 
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+    work->transferMode = 2;
+    work->transferValue = 75;
+    Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
     camera = Ram_HeapSlots->cameraWork;
     target = *GetBattleObjectSlotFar(effect->actors[0]);
 

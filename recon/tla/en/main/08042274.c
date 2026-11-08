@@ -1,3 +1,5 @@
+// 2026-11-08: differ 0 of 74 under -mtune=gba, but adopted in en the ROM still
+// differs in the one pool word (0xfffff01e for 0x0000f01e), as below.
 // Near miss, differ 0 of 74 instructions but one pool word (tla-en,
 // 2026-10-31): every instruction matches, but the literal pool does not: the
 // u16 temporary is promoted to a signed SImode constant (-4066), so 0xf01e is

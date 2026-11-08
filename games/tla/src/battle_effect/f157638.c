@@ -1,39 +1,5 @@
-// Differ 4 of 415 (tla-en, 2026-11-08, -mtune=gba); 2 under the older tune.
-// Left: one row: the Djinn's y multiply (Trig_Cos by the radius), which the
-// native issues after the first stack argument's store and alchemy-gcc right
-// after the call; operand order and a radius local do not move it.
-
-// Draft of BattleEffect_RunMercury, effect kind 281: the Mercury Djinn's flames.
-
-// On screen: a small Mercury Djinn circles over the targets, one turn every
-// 32 frames, on a radius of 64 - 2 x frame pixels (half that across) that
-// shrinks through the middle at frame 32 and opens out on the other side.
-// At frames 4, 7, 10, 21 and 34 it throws a blue flame that shoots left 12
-// pixels a frame and shatters on its fifth frame into 32 dots, with cue
-// 133 and a shake; six frames after each throw every target flashes and
-// recoils. The dots shrink with age and fall back under gravity.
-
-// Setup: the battle effect canvas and the max and additive blitter pair,
-// the dot sheet in the sheet block, the Djinn sheet in the effect work,
-// and the blue flame sheet turned on its side (decoded into the map cell
-// buffer, then transposed into the effect work) so the flames fly across.
-// Frame loop, 96 frames: move, draw and shatter the flames, draw the Djinn
-// and throw on the launch frames, then draw and move the dots. At frame 56
-// the battle resumes and resolves the targets.
-// Teardown: the callback and both blitters are released and the canvas
-// layer is closed.
-
-// Port of The Broken Seal's BattleEffect_RunMercury (kind 251
-// there), with The Lost Age's heap slots and task priority and no
-// work->effect store.
-
-// Listing 415 instructions, draft 415, differ 30 (trial 0, 2026-10-15).
-// Left: 15 single rows one place apart, the native issuing pool and stack
-// loads and call constants one slot earlier.
-
-// Tried:
-// ☀️'s body with The Lost Age's names                       30
-// alchemy permute, 5 minutes                                43 at best
+/// @file
+/// The Mercury Djinn's flames (effect kind 281).
 
 #include "types.h"
 #include "battle_effect_work.h"
@@ -55,36 +21,36 @@
 // The pixel half of a 16.16 value.
 #define HI(v) (((s16 *)&(v))[1])
 
-extern char ResourceId_ParticleSpritesA;
+extern char ResourceId_Data134;
 extern char ResourceId_MercuryDjinnSmallSheet;
 extern char ResourceId_BlueFlameSheet;
-// The frames the Djinn throws its five flames on (☀️'s
-// gDjinnAttacks_LaunchFrames).
+/// The frames the Djinn throws its five flames on (☀️'s
+/// gDjinnAttacks_LaunchFrames).
 extern const u8 Data_0819850e[];
-// Byte offsets of the dot cels in the particle sheet, by size - 1.
+/// Byte offsets of the dot cels in the particle sheet, by size - 1.
 extern const u16 gData_08197410[];
 
 u32 Random16(void);
 void wait(s32 frames);
 void Sound_PlayFar(s32 cue);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-// Closes the canvas layer.
+/// Closes the canvas layer.
 void BattleEffect_EndCanvasLayer(void);
-// Copies the canvas to VRAM when a transfer is pending.
+/// Copies the canvas to VRAM when a transfer is pending.
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
-// Counts down the actors' flash timers.
+/// Counts down the actors' flash timers.
 void BattleEffect_CountDownBattlerTints(void);
-// Fetches the max and additive blitters, flipped or not.
+/// Fetches the max and additive blitters, flipped or not.
 void BattleEffect_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
 void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 width, s32 height);
-// BattlePlayback_Start through its far call.
+/// BattlePlayback_Start through its far call.
 void Func_081180e8(s32 hitCue);
-// An actor's recoil motion, through a far call.
+/// An actor's recoil motion, through a far call.
 void Func_08118088(s32 actor, s32 motion);
-// Flashes an actor in a palette for some frames.
+/// Flashes an actor in a palette for some frames.
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
-// Shakes the camera while work->shakeFrames lasts.
+/// Shakes the camera while work->shakeFrames lasts.
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
@@ -92,8 +58,16 @@ s32 Task_Add(void (*func)(void), s32 order);
 s32 Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 
+/// A small Mercury Djinn circles over the targets, one turn every 32 frames, on
+/// a radius of 64 - 2 x frame pixels (half that across) that shrinks through
+/// the middle at frame 32 and opens out on the other side. At frames 4, 7, 10,
+/// 21 and 34 it throws a blue flame that shoots left 12 pixels a frame and
+/// shatters on its fifth frame into 32 dots, with a shake; six frames after
+/// each throw every target flashes and recoils. The dots shrink with age and
+/// fall back under gravity. The effect runs 96 frames; at frame 56 the battle
+/// resumes and resolves the targets (hit cue 133).
 void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
   struct HeapSlots *slots;
   struct BattleEffectWork *work;
@@ -119,7 +93,7 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
 
   // The flame picture is the blue flame sheet turned on its side.
   cells = Ram_MapCellBuffer;
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                              work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, cells, 1, 1);

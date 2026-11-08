@@ -1,39 +1,6 @@
-// Draft, differ 8 of 632 (tla-en, 2026-11-08, -mtune=gba; 6 on 5 November): the same two places,
-// each now a row longer with multiplies at 5: the native's movs r2, #2 ahead of ldr r0, [sp, #28]
-// (and mov r3, r8 with it) after the second cell test, and
-// its ldr r1, [r7, #80] ahead of adds r6, r6, r3. Both are sched2 priorities one
-// short on the same chain; a separate copy into the multiply made it worse (58).
-// What closed it from 318, none of it a compiler question: spill registers rotate
-// (allocate_reload_reg), so one extra register in the spill set moves every reload
-// after it. r4 entered the set at the create call, where 280 in a pseudo kept r0
-// busy; through Value4 it loads after the other arguments and r4 stays out. The
-// rest of the rotation: hit shifted first in the travel loop, the cell stores ahead
-// of the gust's, the column read in each arm so gcse hoists the ldrh and not the
-// shift. MotionView is a test, not a type: a store whose alias set is not char's
-// frees the ldr after it, which is what the native's order there shows; no evidence
-// yet says what motionFlags really is.
-// Whirlwind in Air's Rock: a gust (object type 280)
-// rises from the target (the effect work's object at 0x14) and grows,
-// shedding sparks (object type 0x2a0, Func_02000840) every fourth frame
-// while the target flickers; then it travels in the leader's facing, two
-// cells a step, until Func_02000348 finds a cell with something on it,
-// throwing leaves (Effect_Spawn, object type 674) as it goes. Nothing
-// there (0xff) ends with cue 136; otherwise it stops one and a half cells
-// short and blows the thing found (gData_02004674 row hit - 30: its cells'
-// source and offset), copying its cells and attributes along each fourth
-// frame while it throws dust, sets that thing's flag (0x850 + hit - 1)
-// with cue 298; then the gust shrinks and rises away over 8 frames.
-// 655, not 455, is the growth step: 200 << 1 + 255 in the listing.
-// Found: x and z (sp+20), dx and dz (sp+28) are 8-byte structs. A DImode pseudo
-// written by the word keeps the native's otherwise dead store before the travel
-// loop, and the copies in the blow loop survive CSE. The target is read at each
-// use, never a variable. A folded jump does not reset loop depth: find_basic_blocks
-// reuses the bb notes. Named struct table fields made the skeleton worse (67).
-// Kept: the travel and blow loops are built from labels, because as while
-// loops loop.c hoists the addresses of dust and velocity out of them. The table
-// is not const: every call makes the native read it again. A local holding the
-// column zero-extended gives the native's ldrh with the shifts in each arm.
-// Call2 and Call6 stop constants being shared between arguments.
+/// @file
+/// The Whirlwind gust in Air's Rock.
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -72,17 +39,36 @@ void GameFlag_SetBit(s32 flag);
 void Func_02003b48(struct Actor *object);
 void Func_02003c38(s32 actor, s32 a);
 void Func_02003c30(void);
+void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                   s32 velocityZ, u32 flags,
+                   const struct EffectOptions *options);
 
 struct EffectWork {
   u8 unknown[20];
   struct Actor *target;
 };
 
-struct MotionView { u8 pad[84]; u32 kind : 8; u32 flags : 8; };
+/// The actor word at 84 seen as bit fields, for one store (see Func_0200095c).
+struct MotionView {
+  u8 pad[84];
+  u32 kind : 8;
+  u32 flags : 8;
+};
+
+/// A map cell, or a step between cells, kept as one 8-byte pair: written by the
+/// word, it keeps the native's store before the travel loop.
 struct Cell {
   s32 x, z;
 };
 
+/// Whirlwind on a target in Air's Rock: a gust (object type 280) rises from the
+/// target and grows, shedding sparks every fourth frame while the target
+/// flickers; then it travels in the leader's facing, two cells a step, until
+/// Func_02000348 finds a cell with something on it, throwing leaves as it goes.
+/// With nothing there (255) it ends with cue 136; otherwise it stops one and a
+/// half cells short and blows the thing found along, copying its cells each
+/// fourth frame, and sets that thing's flag (0x850 + hit - 1) with cue 298.
+/// Then the gust shrinks and rises away over 8 frames.
 void Func_0200095c(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct EffectWork *effect = (struct EffectWork *)Ram_HeapSlots->effectWork;
@@ -92,14 +78,20 @@ void Func_0200095c(void) {
   struct Cell delta, cell;
   s32 cellZ, cellX, newZ, newX, flag = 0, steps = 0, hit, angle, i;
 
+  /* FAKEMATCH(wrapper): calls forwarded through call.h's Value4, Call2, Call4
+   * and Call6, so each builds its own constants; as direct calls, 382 of 632
+   * instructions differ in tla-en. */
   Func_02003bc8();
   Func_02003c88(0);
   Func_02003cd8(207);
-  gust = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 280, leader->x, leader->y, leader->z);
+  gust = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 280, leader->x,
+                                leader->y, leader->z);
   Func_02003b28(gust, 2);
   Actor_SetSingleChildFlags(gust, 0);
   gust->scaleX = 0x1b333;
   gust->scaleY = 0x3333;
+  // Stored through a bit field view: its alias set frees the load after it, as
+  // the native orders it (as gust->motionFlags, 2 of 632 differ in tla-en).
   ((struct MotionView *)gust)->flags = flag;
   ((struct FieldSprite *)gust->animation)->priority =
       ((struct FieldSprite *)effect->target->animation)->priority;
@@ -128,6 +120,7 @@ void Func_0200095c(void) {
       spark->update = Func_02000840;
     }
     if (gFrameCount & 1) {
+      // 655, not 455: 200 << 1 + 255 in the listing.
       gust->scaleX += 655;
       gust->scaleY += 655;
       Actor_SetPartAttribute(effect->target, 15);
@@ -163,20 +156,21 @@ void Func_0200095c(void) {
   gust->acceleration = 0x40000;
   Func_02003b58(gust, cell.x << 16, gust->y, cell.z << 16);
   Call2(Func_02003c20, 0x50000, 0x50000);
-  Call4((void (*)())Camera_MoveWithinMapBounds, (s32)(newX << 16), (s32)(-1), (s32)(newZ << 16), (s32)(1));
+  Call4((void (*)())Camera_MoveWithinMapBounds, (s32)(newX << 16), (s32)(-1),
+        (s32)(newZ << 16), (s32)(1));
   while (Func_02003ba8(gust) == 0) {
-  if ((gFrameCount & 1) == 0) {
-    leaves.priority = 1;
-    leaves.type = 674;
-    leaves.palette = 2;
-    velocity.x = Math_Cosine((gFrameCount & 0x1ff) << 12) << 1;
-    velocity.y = gust->y + ((Random16Far() & 31) << 16);
-    velocity.z = Math_Sine((gFrameCount & 0x1ff) << 12);
-    Effect_Spawn(gust->x, velocity.y, gust->z, velocity.x, 0, velocity.z,
-                 EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                 &leaves);
-  }
-  FieldEvent_Wait(1);
+    if ((gFrameCount & 1) == 0) {
+      leaves.priority = 1;
+      leaves.type = 674;
+      leaves.palette = 2;
+      velocity.x = Math_Cosine((gFrameCount & 0x1ff) << 12) << 1;
+      velocity.y = gust->y + ((Random16Far() & 31) << 16);
+      velocity.z = Math_Sine((gFrameCount & 0x1ff) << 12);
+      Func_0200015c(gust->x, velocity.y, gust->z, velocity.x, 0, velocity.z,
+                    EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                    &leaves);
+    }
+    FieldEvent_Wait(1);
   }
   if (hit == 255) {
     Func_02003cd8(136);
@@ -189,42 +183,43 @@ void Func_0200095c(void) {
     Func_02003cd8(235);
     hit -= 30;
     while (Func_02003ba8(gust) == 0) {
-    if ((gFrameCount & 1) == 0) {
-      dust.priority = 1;
-      dust.startScaleX = dust.startScaleY = (Random16Far() & 0xffff) + 0x10000;
-      velocity.x = Math_Cosine((gFrameCount & 0x1ff) << 12) << 1;
-      velocity.y = 0x10000;
-      velocity.z = Math_Sine((gFrameCount & 0x1ff) << 12);
-      Effect_Spawn(gust->x, gust->y, gust->z, velocity.x, velocity.y,
-                   velocity.z, EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
-                   &dust);
-    }
-    if ((gFrameCount & 3) == 0) {
-      s32 sourceX;
-      cell.x = gData_02004674[hit][2] + (gust->x >> 20);
-      cell.z = gData_02004674[hit][3] + (gust->z >> 20);
-      cellX = cell.x;
-      cellZ = cell.z;
-      if (hit & 1) {
-        sourceX = (u16)gData_02004674[hit][0];
-        Call6(Func_02003b68, (s16)sourceX, gData_02004674[hit][1], cellX,
-              cellZ - 1, 1, 3);
-        Call6(Func_02003b80, gData_02004674[hit][0], gData_02004674[hit][1], 1,
-              2, cellX, cellZ);
-        Call6(Func_02003b80, gData_02004674[hit][0], gData_02004674[hit][1], 1,
-              2, gust->x >> 20, gust->z >> 20);
-      } else {
-        sourceX = (u16)gData_02004674[hit][0];
-        Call6(Func_02003b68, (s16)sourceX, gData_02004674[hit][1], cellX,
-              cell.z - (hit >> 1), 1, 1);
-        Call6(Func_02003b80, gData_02004674[hit][0], gData_02004674[hit][1], 1,
-              1, cellX, cellZ);
-        Call6(Func_02003b80, gData_02004674[hit][0], gData_02004674[hit][1], 1,
-              1, gust->x >> 20, gust->z >> 20);
+      if ((gFrameCount & 1) == 0) {
+        dust.priority = 1;
+        dust.startScaleX = dust.startScaleY =
+            (Random16Far() & 0xffff) + 0x10000;
+        velocity.x = Math_Cosine((gFrameCount & 0x1ff) << 12) << 1;
+        velocity.y = 0x10000;
+        velocity.z = Math_Sine((gFrameCount & 0x1ff) << 12);
+        Func_0200015c(gust->x, gust->y, gust->z, velocity.x, velocity.y,
+                      velocity.z, EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
+                      &dust);
       }
-      Func_02003b50();
-    }
-    FieldEvent_Wait(1);
+      if ((gFrameCount & 3) == 0) {
+        s32 sourceX;
+        cell.x = gData_02004674[hit][2] + (gust->x >> 20);
+        cell.z = gData_02004674[hit][3] + (gust->z >> 20);
+        cellX = cell.x;
+        cellZ = cell.z;
+        if (hit & 1) {
+          sourceX = (u16)gData_02004674[hit][0];
+          Call6(Func_02003b68, (s16)sourceX, gData_02004674[hit][1], cellX,
+                cellZ - 1, 1, 3);
+          Call6(Func_02003b80, gData_02004674[hit][0], gData_02004674[hit][1],
+                1, 2, cellX, cellZ);
+          Call6(Func_02003b80, gData_02004674[hit][0], gData_02004674[hit][1],
+                1, 2, gust->x >> 20, gust->z >> 20);
+        } else {
+          sourceX = (u16)gData_02004674[hit][0];
+          Call6(Func_02003b68, (s16)sourceX, gData_02004674[hit][1], cellX,
+                cell.z - (hit >> 1), 1, 1);
+          Call6(Func_02003b80, gData_02004674[hit][0], gData_02004674[hit][1],
+                1, 1, cellX, cellZ);
+          Call6(Func_02003b80, gData_02004674[hit][0], gData_02004674[hit][1],
+                1, 1, gust->x >> 20, gust->z >> 20);
+        }
+        Func_02003b50();
+      }
+      FieldEvent_Wait(1);
     }
     if (hit == 2) {
       Call6(Func_02003b68, gData_02004674[2][0], gData_02004674[2][1], cell.x,

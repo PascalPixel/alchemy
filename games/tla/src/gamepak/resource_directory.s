@@ -162,9 +162,9 @@ Resource_DirectoryTable:
 	resource SlotsTripleBanner, Slots_TripleBanner
 	resource SlotsPerfectBanner, Slots_PerfectBanner
 	resource SlotsFinalGameBanner, Slots_FinalGameBanner
-	resource , Summon_GreenHairedMaidenTiles
+	resource GreenHairedMaidenTiles, Summon_GreenHairedMaidenTiles
 	resource SeaSerpentTiles, Summon_SeaSerpentTiles
-	resource , Summon_PinkPetalsTiles
+	resource PinkPetalsTiles, Summon_PinkPetalsTiles
 	resource CrimsonBeastTiles, Summon_CrimsonBeastTiles
 	resource RedSlashTiles, Summon_RedSlashTiles
 	resource RedCrescentTiles, Summon_RedCrescentTiles
@@ -177,7 +177,7 @@ Resource_DirectoryTable:
 	resource , Summon_GoldenDragonTiles
 	resource , Summon_RobedGoddessTiles
 	resource LeafWarriorTiles, Summon_LeafWarriorTiles
-	resource , Summon_BellMaidenTiles
+	resource BellMaidenTiles, Summon_BellMaidenTiles
 	resource , Summon_WingedKnightATiles
 	resource , Summon_WingedKnightBTiles
 	resource , Summon_WingedKnightCTiles
@@ -186,7 +186,7 @@ Resource_DirectoryTable:
 	resource , Summon_WhiteSpikesTiles
 	resource , Summon_GoldenScalesTiles
 	resource , BattleEffect_GlowOrbSetSheet
-	resource , Resource_Data0B0
+	resource Data0B0, Resource_Data0B0
 	resource , Resource_Data0B1
 	resource , Resource_Data0B2
 	resource , Resource_Data0B3
@@ -261,8 +261,8 @@ Resource_DirectoryTable:
 	resource Data0F8, Resource_Data0F8
 	resource , Resource_Data0F9
 	resource , Resource_Data0FA
-	resource , Resource_Data0FB
-	resource , Resource_Data0FC
+	resource Data0FB, Resource_Data0FB
+	resource Data0FC, Resource_Data0FC
 	resource Data0FD, Resource_Data0FD
 	resource ArcFragmentsSheet, BattleEffect_ArcFragmentsSheet
 	resource , Resource_Data0FF

@@ -1,33 +1,6 @@
-// Differ 4 of 2583 (tla-en, 2026-11-08, -mtune=gba).
-// Draft, differ 4 of 2583 (tla-en, 2026-11-05), draft 2583: one site, pool words as the listing's.
-// Everything else in the function agrees.
-// What is left is the scheduler ranking a multiply against a stack load, in the ring: b = m * grow, then
-// m * spread. The listing loads spread into r1 before the first multiply and stores a after it. Both rank
-// 43; the multiply wins on its 5 dependents against 3.
-// Three sites stopped on this: the first setup loop (multiply 7 against shift 6), the second Trig_Cos
-// tail (multiply 5 against load 4) and the ring. With a multiply costing 3 rather than 4 in the core unit,
-// all three rank as the listing orders them, with no device. That table line is the compiler's and is
-// left alone. The first two now hold by devices, a one-pass block and an empty asm.
-// The empty asm that orders the Trig_Cos tail does not fit the ring: HoldFor(m, spread) counts 4 bytes,
-// and the ring's back branch, bne.n -248 here, goes long past -250 (39, 7 rows). A second one on its own
-// would raise the load by the 1 it needs and has the same cost. Also tried in the ring, none closer:
-// one-pass blocks around the load and after the division; a pinned load; a local for the product (66, 73);
-// rr ahead of b (538, the slots and later allocation follow it).
-// Devices held, each tagged below with N measured against this draft: e and c pinned, SheetOf and
-// ClearWords wrappers, the one-pass block with its named constant, HoldFor's empty asm.
-// Settled 2026-11-05, each measured:
-// - The second Trig_Cos tail's load ahead of its multiply through HoldFor (6 to 4).
-// - cells and source are one number, 0x02010000, so the pools hold one word for both (34 to 6).
-// - The particle pointer is &work->particles[i]: a reduced giv sets it behind the first test (48 to 40).
-// - k = 0 ahead of offset, and offset + (s32)sheet for the operand order (40 to 36).
-// - The sheet's address through SheetOf ends CSE's block, so 0x700 does not cross the decode call in a
-//   register (100 to 82); with e in r6 and i set after the decode the whole sheet head follows (82 to 48).
-// - The sheet counts with i; t = row * 2 stepped so nothing hoists or reduces; offsets by k (126 to 100).
-// - w->y[i] += 0 in petals 0 and 1 holds the reload rotation; source is a number, so it stays a
-//   constant reload; draw[2] is one DImode pseudo; petals is a number, keeping its REG_EQUIV.
-// Open before adoption: the ring; what would put e in r6 without the pin (r5 is free for it here,
-// and every function-level variable tried either keeps r5 or moves the setup); c in r1 likewise; the
-// resource names (Data09A and others) from the game's data; names from evidence (H3).
+/// @file
+/// Flora, the blossom spirit's summon.
+
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -59,7 +32,8 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -76,13 +50,14 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
-void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
+void BattleEffect_SpawnObjects(s32 count, s32 resource,
+                               s32 mode); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                               s32 speedLimit, s32 velocityY, s32 percent);
+                                   s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
                                        s32 flags);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -90,7 +65,7 @@ void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                      s32 drag);
+                                          s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
@@ -106,7 +81,7 @@ s32 Trig_Cos(s32 angle);
 
 void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleEffect_StartTiledCanvas(s32 bgControl);
@@ -117,7 +92,7 @@ void Transform_Pop(void);
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
-// ⚓️'s blitter modes run the other way from The Broken Seal's.
+/// ⚓️'s blitter modes run the other way from The Broken Seal's.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1])
@@ -141,9 +116,9 @@ struct FloraObject {
   u8 resource;
 };
 
-// Flora's petals in the scratch block at 0x02014000: the bloom's fifteen
-// tile numbers, each petal's animation phase, position and velocity, and
-// the object palette as it fades.
+/// Flora's petals in the scratch block at 0x02014000: the bloom's fifteen
+/// tile numbers, each petal's animation phase, position and velocity, and
+/// the object palette as it fades.
 struct FloraWork {
   u16 tiles[15];
   u16 phase[32];
@@ -176,13 +151,13 @@ extern const s8 Data_0819944a[];
 extern const u8 gData_08199210[];
 extern const u8 gData_08199364[];
 extern char ResourceId_VioletSkyBackdrop;
-extern char ResourceId_Data098;
-extern char ResourceId_Data09A;
+extern char ResourceId_GreenHairedMaidenTiles;
+extern char ResourceId_PinkPetalsTiles;
 extern char ResourceId_Data0C2;
 extern char ResourceId_Data134;
-extern char ResourceId_Data150;
-extern char ResourceId_Data166;
-extern char ResourceId_Data167;
+extern char ResourceId_MarsDjinnSheet;
+extern char ResourceId_CyanPalette;
+extern char ResourceId_TanPalette;
 extern u8 Data_02010020[];
 extern u8 Data_020100a0[];
 extern u8 Data_020102a0[];
@@ -212,28 +187,19 @@ void Heap_Release(void *buffer);
 
 static inline s32 ClearWords(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_ClearWords, 50 of 2583 instructions differ in tla-en. */
+   * Iwram_ClearWords, 16 of 2583 instructions differ in tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 
-// Flora: petals swirl in on the wind, the blossom spirit rises among them,
-// her spiral of light and its rings sweep the field, and a storm of petals
-// strikes the foes.
-static inline u8 *SheetOf(struct BattleEffectWork *owner)
-{
+static inline u8 *SheetOf(struct BattleEffectWork *owner) {
   /* FAKEMATCH(wrapper): the address through this inline; as work->sheet at the
-   * call, 90 of 2583 instructions differ in tla-en. */
+   * call, 56 of 2583 instructions differ in tla-en. */
   return owner->sheet;
 }
 
-static inline s32 HoldFor(s32 value, s32 offset) {
-  /* FAKEMATCH(barrier): an empty asm reading the offset, in an inline so the two
-   * tails stay one line and cross-jump; as Trig_Cos(a) * s / 256, 6 of 2583
-   * instructions differ in tla-en. */
-  asm("" : "+r"(value) : "r"(offset));
-  return value;
-}
-
+/// Flora: petals swirl in on the wind, the blossom spirit rises among them,
+/// her spiral of light and its rings sweep the field, and a storm of petals
+/// strikes the foes.
 void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   u8 *canvas;
   struct BattleEffectWork *work;
@@ -300,7 +266,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       work->scrollStepY = 0;
       Task_Add(Func_0813baec, 3200);
       transition[4] = 1;
-      e = Resource_GetTableEntry((s32)&ResourceId_Data09A);
+      e = Resource_GetTableEntry((s32)&ResourceId_PinkPetalsTiles);
       Iwram_CopyWords((void *)0x050003e0, e, 32);
       e += 32;
       Resource_DecodeType01(e, source);
@@ -324,7 +290,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         ((struct FloraObject *)work->objects[12 + i])->tile =
             w->tiles[*phase / 256];
       }
-      e = Resource_GetTableEntry((s32)&ResourceId_Data098);
+      e = Resource_GetTableEntry((s32)&ResourceId_GreenHairedMaidenTiles);
       e += 480;
       Resource_DecodeType01(e, source);
       cells = (u8 *)0x02010000;
@@ -374,12 +340,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     s32 t;
     s32 u2;
 
-    /* FAKEMATCH(one-pass): the row shift in a block, 256 named ahead of it; as
-     * (i % 8 << 5) + 256 and i / 8 * 22 + 128, 36 of 2583 instructions differ
-     * in tla-en. */
-    do {
-      t = (i - q * 8) << 5;
-    } while (0);
+    t = (i - q * 8) << 5;
     u2 = q * 22;
     w->x[i] = t + left;
     w->y[i] = u2 + 128;
@@ -402,11 +363,11 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       REG_BG2X = -0x3c00;
     }
     if (frame > 285) {
-      Func_0815f0a0((s32)&ResourceId_Data166);
+      Func_0815f0a0((s32)&ResourceId_CyanPalette);
     } else if (frame > 199) {
-      Func_0815f0a0((s32)&ResourceId_Data167);
+      Func_0815f0a0((s32)&ResourceId_TanPalette);
     } else if (frame > 180) {
-      Func_0815f0a0((s32)&ResourceId_Data150);
+      Func_0815f0a0((s32)&ResourceId_MarsDjinnSheet);
     }
     if (frame == 108) {
       REG_BG2PA = 0x80;
@@ -424,7 +385,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     }
     u = frame - 112;
     if (u <= 31) {
-      u16 *e = Resource_GetTableEntry((s32)&ResourceId_Data098);
+      u16 *e = Resource_GetTableEntry((s32)&ResourceId_GreenHairedMaidenTiles);
 
       for (i = 0; i != 240; i++, e++) {
         s32 c = w->palette[i];
@@ -535,6 +496,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           w->y[i] += -0x10000;
         } else if (frame <= 111) {
           w->x[i] += 0x30000;
+          // DEAD: y moves by 0; the ROM keeps its load and store.
           w->y[i] += 0;
         }
         if (frame == 112) {
@@ -555,6 +517,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           w->y[i] += 0x6710;
         } else if (frame <= 141) {
           w->x[i] += 0x30000;
+          // DEAD: y moves by 0; the ROM keeps its load and store.
           w->y[i] += 0;
         }
         if (frame == 112) {
@@ -656,7 +619,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           w->x[i] = ((Random16() & 7) << 16) + 0xa80000;
           w->y[i] = ((Random16() & 7) << 16) + 0x5c0000;
           w->vx[i] = Trig_Sin(a) * s / 256;
-          w->vy[i] = HoldFor(Trig_Cos(a), i * 4) * s / 256;
+          w->vy[i] = Trig_Cos(a) * s / 256;
         } else if (frame == 252) {
           u32 a = Random16() & 0xffff;
           s32 s = ((Random16() & 255) << 1) + 256;
@@ -664,7 +627,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           w->x[i] = ((Random16() & 7) << 16) + 0x5c0000;
           w->y[i] = ((Random16() & 7) << 16) + 0x680000;
           w->vx[i] = Trig_Sin(a) * s / 256;
-          w->vy[i] = HoldFor(Trig_Cos(a), i * 4) * s / 256;
+          w->vy[i] = Trig_Cos(a) * s / 256;
         } else if (frame > 111) {
           w->x[i] += w->vx[i];
           w->y[i] += w->vy[i];
@@ -792,7 +755,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         x = out.x + 48;
         y = out.y + 92;
         draw[1](canvas, sprites + gData_08197410[size - 1], x - size / 2,
-              y - size, size, size * 2);
+                y - size, size, size * 2);
       }
       HeapSlot_Release(SLOT_ALT);
     }
@@ -904,9 +867,10 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   REG_BG2PA = 0x80;
   {
-    /* FAKEMATCH(pin): e in r6; as a plain u8 *, 95 of 2583 instructions differ
+    /* FAKEMATCH(pin): e in r6; as a plain u8 *, 61 of 2583 instructions differ
      * in tla-en. */
-    register u8 *e asm("r6") = Resource_GetTableEntry((s32)&ResourceId_Data09A);
+    register u8 *e asm("r6") =
+        Resource_GetTableEntry((s32)&ResourceId_PinkPetalsTiles);
     s32 row;
     s32 a;
     s32 b;
@@ -916,7 +880,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     s32 t;
     u8 *sheet;
     s32 hi;
-    /* FAKEMATCH(pin): c in r1; as a plain u32, 671 of 2583 instructions differ
+    /* FAKEMATCH(pin): c in r1; as a plain u32, 641 of 2583 instructions differ
      * in tla-en. */
     register u32 c asm("r1");
 
@@ -971,7 +935,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     for (i = 0; i != 64; i++, p++) {
       if (frame > i) {
         draw[0](canvas, work->sheet + 0x1000 + (p->variant / 4 % 15 << 8),
-             HI(p->x) - 4, HI(p->y), 16, 16);
+                HI(p->x) - 4, HI(p->y), 16, 16);
         BattleEffectKernels_IntegrateVector2(p, 64, 0);
         p->velocityX += -0x1000;
         p->variant++;

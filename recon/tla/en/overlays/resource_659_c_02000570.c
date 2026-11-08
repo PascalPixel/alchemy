@@ -16,7 +16,8 @@
 #include "../../../../games/tla/src/scene/madra_interiors/madra_interiors.h"
 
 static inline void ActorPlaceFacing(s32 actor, s32 x, s32 z, s32 angle) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
+  /* FAKEMATCH(wrapper): forwarded inline, as scene_call.h describes; as direct
+   * calls to Func_02001dc0, 28 of 72 instructions differ in tla-en. */
   Func_02001dc0(actor, x, z, angle);
 }
 
@@ -26,7 +27,7 @@ void Func_02000570(void) {
   void *event;
 
   if (!FlagCheck(0x8ab)) {
-      event = Ram_HeapSlots->eventWork;
+    event = Ram_HeapSlots->eventWork;
     FIELD_AT(event, u16, 0xd4c) = 3;
     if (!FlagCheck(0x911)) {
       Func_020007dc();

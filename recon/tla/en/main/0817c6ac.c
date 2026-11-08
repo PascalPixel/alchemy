@@ -163,9 +163,8 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
-  /* FAKEMATCH(dead): the blitter in a two-word struct whose second word nothing
-   * reads, the 4 bytes of the frame; as a plain local, 106 of 627 instructions
-   * differ in tla-en. */
+  // Unused: the second word gives the stack frame its 4 bytes (as a plain
+  // local, 106 differ).
   struct {
     DrawRectangle draw;
     s32 unused;

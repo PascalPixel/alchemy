@@ -1,11 +1,11 @@
-// Differ 2 of 171 (tla-en, 2026-11-08, -mtune=gba), under -Os. How far a pushed actor
+// Matches (tla-en, 2026-11-08, -mtune=gba; ja de fr es it too), under -Os. How far a pushed actor
 // slides: from the actor Func_02000f34 finds, steps its footprint one step at a
 // time in the push direction until a cell of it is blocked (Func_02002338
 // returns 2), and leaves the stopping point in move; returns 0 when it cannot
-// move at all. Shared with overlay 6a1 and others. Left: the load of actor->x
-// lands ahead of the mov r1, r9 copy of dx instead of after it. History: 6 to 2
-// (2026-11-07) with an inline call wrapper (fresh add r1, sp, #28) and a
-// once-only block around the x load.
+// move at all. Shared with overlay 6a1 and others. History: 6 to 2
+// (2026-11-07) with an inline call wrapper (fresh add r1, sp, #28); 2 to 0
+// (2026-11-08) by writing move->x = actor->x + dx * count plainly, without the
+// once-only block that had held the x load.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -70,7 +70,7 @@ s32 Func_02000dcc(struct PushMove *move) {
         position[0] = move->x + (gData_02002484[direction][0] << 16);
         for (col = 0; col < width; col++) {
           /* FAKEMATCH(wrapper): the call through Func_02002338_Inline; as
-           * Func_02002338(actor, position), 4 of 171 instructions differ in
+           * Func_02002338(actor, position), 2 of 171 instructions differ in
            * tla-en. */
           if (Func_02002338_Inline(actor, position) == 2)
             goto blocked;
@@ -86,14 +86,7 @@ s32 Func_02000dcc(struct PushMove *move) {
     *layer = 0;
     if (count == 0)
       return 0;
-    {
-      s32 x;
-      // A once-only block: keeps the load of actor->x ahead of the multiply.
-      do {
-        x = actor->x;
-      } while (0);
-      move->x = x + dx * count;
-    }
+    move->x = actor->x + dx * count;
     move->y = actor->y;
     move->z = actor->z + dz * count;
     return 1;

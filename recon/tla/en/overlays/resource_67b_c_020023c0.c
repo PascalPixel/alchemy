@@ -1,4 +1,5 @@
 // Differ 28 of 171 (tla-en, 2026-11-08, -mtune=gba): screenX and screenY in each
+// 8 November: 8 minutes of permute found nothing under 28; the loop end's counter and pointer steps reordered, 28 or 44.
 // other's registers. Tried 2026-11-08: screenX first (49), screenY shifted after
 // the sums (30 or 49).
 // 2026-11-06: Permuter (4 min) and three more

@@ -1,5 +1,5 @@
-// Differ 24 of 171 (tla-en, 2026-11-08, -mtune=gba; the same on 2026-11-07); without the wrapper 26; permuter
-// 6 minutes 2026-11-08: 24.
+// Differ 20 of 171 (tla-en, 2026-11-08, -mtune=gba); without the wrapper 22. Earlier on
+// 2026-11-08: 24, permuter 6 minutes none better.
 // 7 November: the cell call through a forwarding inline (FAKEMATCH wrapper, as
 // 668's Func_02004240) gives 26 to 24. Left as below.
 // Before: differ 26 of 171 (tla-en, 2026-11-06), from 30: every spill slot agrees now.
@@ -140,7 +140,7 @@ s32 Func_020037d8(struct PushState *push) {
           cell.x = push->x + (BoxByte(index) << 16);
           for (i = 0; i < width; i++) {
             /* FAKEMATCH(wrapper): the call through CallFunc_02003e2c; as a direct
-             * call, 26 of 171 instructions differ in tla-en. */
+             * call, 22 of 171 instructions differ in tla-en. */
             if (CallFunc_02003e2c(object, &cell) == 2)
               goto blocked;
             cell.x += 0x100000;

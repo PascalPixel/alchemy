@@ -171,10 +171,9 @@ static inline s32 CopyWords(void *destination, const void *source, s32 size) {
 void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
   struct BattleEffectWork *work;
   u8 *canvas;
-  /* FAKEMATCH(frame): the blitter is declared as The Broken Seal's pair
-   * though only the first is used; its second word is the unused word at
-   * sp 76 of the native's 176-byte stack frame. As one DrawRectangle the frame
-   * is 172 bytes and every stack offset below it moves. */
+  // Unused: the second of The Broken Seal's blitter pair gives the stack frame
+  // its 176 bytes (the unused word at sp 76); as one DrawRectangle the frame is
+  // 172 bytes and every stack offset below it moves.
   DrawRectangle blit[2];
   s32 frame;
   s16 *camera;

@@ -1,4 +1,5 @@
 // Differ 2 of 171 (tla-en, 2026-11-08, -mtune=gba).
+// 8 November: 7 minutes of permute found nothing under 2; dx * steps or steps * dx, with and without the block, 4 to 6.
 // 8 November: a once-only block around the load of object->x, as in overlay
 // 69c's twin, sets r0 = 1 in the native's place (4 to 2). Left: the load of
 // object->x lands ahead of the mov r1, r9 copy of dx instead of after it

@@ -174,10 +174,8 @@ static inline s32 FillWords(void *destination, s32 size, u32 value) {
 void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
-  /* FAKEMATCH(frame): the blitter as a pair of which only the first is used;
-   * as one two-word DImode pseudo its spill takes sp+20 and the unused sp+24
-   * the native stack frame has. As a single DrawRectangle the stack frame is 64
-   * bytes and every slot above it moves (differ 325 against 299). */
+  // Unused: the second blitter gives the stack frame its sp+24 (as one, every
+  // slot above it moves: 36 of 575 differ in tla-en).
   DrawRectangle draw[2];
   struct ModelTexture texture;
   s32 request[4];

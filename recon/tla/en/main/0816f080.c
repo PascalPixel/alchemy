@@ -1,4 +1,8 @@
-// Differ 50 of 568 (tla-en, 2026-11-08, -mtune=gba), with one tagged barrier.
+// Differ 40 of 568 (tla-en, 2026-11-08, -mtune=gba), with one tagged barrier.
+// 8 November, from the permuter (12 minutes): the glow's clear called through a
+// local holding its entry, so the entry loads before the sheet (50 to 48), and
+// the glow's variant cleared from a local holding 0, set before the frame loop
+// (48 to 40; set at its declaration 106, also used for the drops 159).
 // Sixth round, 7 November: model->shade = 0 after model->texture (52 -> 50).
 // Measured, none better: the asm before the scale call (58), after it or after
 // the integration (54), after Func_08015160 (54); splash set before the splash
@@ -206,6 +210,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
   void *canvas;
   DrawRectangle draw[2];
   s32 frame;
+  s32 zero;
   u8 *sprites;
   void *caster;
   struct BattleEffectWork *work;
@@ -248,10 +253,12 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     s32 x;
     s32 half;
     s32 offset;
+    // The clear through a local: the native loads its entry before the sheet.
+    s32 (*clear)(void *destination, s32 size) = Iwram_ClearWords;
 
     size = width / 2;
     half = size / 2;
-    Iwram_ClearWords(work->sheet + 0x1000, 0x800);
+    clear(work->sheet + 0x1000, 0x800);
     Func_0815b434(work->sheet, size, 0x10000);
     y = 0;
     offset = 0;
@@ -287,6 +294,9 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0D8, work->sheet + 0x4000, 0,
                              0);
 
+  // The glow's variant is cleared from a local holding 0 (with a literal 0,
+  // 48 of 568 differ in tla-en).
+  zero = 0;
   for (frame = 0; frame != WYRD_FRAMES; frame++) {
     struct RenderModel *model;
     void *vertices;
@@ -310,7 +320,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
 
         glow->x = (screen.x / 2) << 16;
         glow->y = 0x700000;
-        glow->variant = 0;
+        glow->variant = zero;
       }
     }
 
@@ -382,7 +392,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     for (i = 0, drop = work->particles; i != 6; i++, drop++) {
       if (frame > i * 4 + 64) {
         /* FAKEMATCH(barrier): asm volatile("" : "+r"(splash)); as the plain
-           Func_080151e4(12500, 25000, 12500), 114 of 568 instructions differ
+           Func_080151e4(12500, 25000, 12500), 106 of 568 instructions differ
            in tla-en. */
         asm volatile("" : "+r"(splash));
         model->shade = 0;

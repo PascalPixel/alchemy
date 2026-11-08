@@ -1,8 +1,8 @@
-// Differ 2 of 171 (tla-en, 2026-11-08, -mtune=gba). Func_02004a8c of overlay
-// 6ad: overlay 69c's Func_02000dcc with this overlay's symbols (6 to 2); see
-// that draft. The forwarding call layer gives the call its own add r1, sp, #28
-// and the once-only block sets r0 = 1 in the native's place. Left: the load of
-// actor->x lands ahead of the mov r1, r9 copy of dx instead of after it.
+// Matches (tla-en, 2026-11-08, -mtune=gba); also ja, de, es, fr and it.
+// Func_02004a8c of overlay 6ad: overlay 69c's Func_02000dcc with this
+// overlay's symbols; see that draft. The forwarding call layer gives the call
+// its own add r1, sp, #28 (2 without it); the once-only block around the load
+// of actor->x no longer pays under the GBA tune (2 with it, 0 without).
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -67,7 +67,7 @@ s32 Func_02004a8c(struct PushMove *move) {
         position[0] = move->x + (gData_02005f64[direction][0] << 16);
         for (col = 0; col < width; col++) {
           /* FAKEMATCH(wrapper): the call through Func_020054f8_Inline; as
-           * Func_020054f8(actor, position), 4 of 171 instructions differ in
+           * Func_020054f8(actor, position), 2 of 171 instructions differ in
            * tla-en. */
           if (Func_020054f8_Inline(actor, position) == 2)
             goto blocked;
@@ -83,14 +83,7 @@ s32 Func_02004a8c(struct PushMove *move) {
     *layer = 0;
     if (count == 0)
       return 0;
-    {
-      s32 x;
-      // A once-only block: keeps the load of actor->x ahead of the multiply.
-      do {
-        x = actor->x;
-      } while (0);
-      move->x = x + dx * count;
-    }
+    move->x = actor->x + dx * count;
     move->y = actor->y;
     move->z = actor->z + dz * count;
     return 1;

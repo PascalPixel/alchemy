@@ -13,11 +13,9 @@
 // the native needs the shape row first, then the slot, then the table, so the
 // shape row must carry more refs or a shorter life. cells += slot with
 // shapes += slot measured 74 again; 8 more minutes of permuting, best 43.
-// The empty asm is still untagged and must go or be tagged before adoption.
 // The native keeps
 // the shape row in r5, the slot in r8 (then slot * 4) and the cell table in r10;
-// this gives the cell table r5, the shape row r8 and the slot r10. The empty asm
-// is untagged; without it, differ 42. The native stores the shape before the
+// this gives the cell table r5, the shape row r8 and the slot r10. The native stores the shape before the
 // block (both u8 stores, so in source order); written in that order this
 // measures 58, the same rotation unchanged, so the block store stays first here.
 // Locals at function scope, a local grid pointer, pointer increments
@@ -89,7 +87,9 @@ void Func_080eabd0(u16 *actors) {
     u8 flags;
 
     object->motionFlags = 0;
-  asm("");
+    /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+     * 42 of 125 instructions differ in tla-en. */
+    asm("");
     object->collisionFlags = 0;
     Actor_SetSingleChildFlagsFar(object, 0);
     tag = Func_080eab98(object->terrainId, key, level + 4);

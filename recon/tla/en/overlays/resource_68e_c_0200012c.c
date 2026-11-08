@@ -1,7 +1,7 @@
-// Differ 4 of 80 (tla-en, 2026-11-08, -mtune=gba).
-// BLDALPHA's 0x80c through a one-constant local (8 to 4) gives the native's r8 and r7.
-// Left: the blend value's adds and mov sl go before the BLDCNT address (sched order);
-// a 5-minute permute found nothing under 4.
+// Matches (tla-en, 2026-11-08, -mtune=gba); differ 0 in all six editions.
+// An empty once-only block in place of the empty asm between the two blend
+// stores (4 to 0; 8 with neither), so no device is left. BLDALPHA's 0x80c through a
+// one-constant local gives the native's r8 and r7 (29 without).
 // Earlier: the scene start that sets the event work's 0x1ac
 // word to 0x100, the leader's bit 5 at 0x23, blending 0x3f42 and 0x80c, modes
 // 2 for objects 24 and 25 and, when gMainRoutineWork's 0x1e2 halfword is 1 and
@@ -40,9 +40,10 @@ s32 Func_0200012c(void) {
   FIELD_AT((t0 + 0x23), u8, 0) = (0x20 | FIELD_AT((t0 + 0x23), u8, 0));
   blend = 0x3f42;
   FIELD_AT(0x4000050, u16, 0) = blend;
-  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
-   * 8 of 80 instructions differ in tla-en. */
-  asm("");
+  // A once-only block: its end holds the order around it (as the plain
+  // statements, 8 of 80 differ in tla-en).
+  do {
+  } while (0);
   alpha = 0x80c;
   FIELD_AT(0x4000052, u16, 0) = alpha;
   Call2(Actor_SetModeById, 0x18, 2);

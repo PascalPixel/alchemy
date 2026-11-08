@@ -1,6 +1,8 @@
-// Differ 10 of 636 (tla-en, 2026-11-08, -mtune=gba): order: a move after
-// a multiply here (before it natively), a pool constant loaded late into r3 (early
-// into r4 natively), and the zero for r8 built in r4 here (r0 natively).
+// Differ 8 of 636 (tla-en, 2026-11-08, -mtune=gba): the ring loop agrees now; left, in the
+// jaw block, the pixels (Ram_MapCellBuffer) loaded late into r3 (early into r4
+// natively) and the zero for r8 built in r4 here (r0 natively). Without the
+// once-only block, or with the pixels in a local, 10. No device: a once-only
+// block around the shake replaces the empty asm after the leap sound (8 either way).
 // 2026-11-07: the empty asm after the declarations did nothing and is gone;
 // statement orders, once-only blocks, a pixels local and the ring sums (and 10
 // permuter minutes) stay at 10: the ring loop loads &screen before the
@@ -341,10 +343,11 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
     }
     if (frame == 0) {
       Sound_PlayFar(136);
-      /* FAKEMATCH(barrier): an empty asm after the leap sound; as plain C, 12
-       * of 636 instructions differ in tla-en. */
-      __asm__("");
-      work->shakeFrames = 6;
+      // A once-only block: it keeps the shake after the sound (10 as the plain
+      // statement).
+      do {
+        work->shakeFrames = 6;
+      } while (0);
     }
     if (frame == 53)
       work->shakeFrames = 6;

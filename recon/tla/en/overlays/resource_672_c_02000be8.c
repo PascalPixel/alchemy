@@ -1,4 +1,5 @@
 // Differ 14 of 145 (tla-en, 2026-11-08, -mtune=gba).
+// 8 November: 8 minutes of permute reached 12 only by reusing the loop counter i for fade (wrong behaviour, not kept); fade in an inner block 32, step + 1 in its own local 14, without the dead device 24.
 // 8 November: cue 298 as a plain constant (fade no longer reused for it) gives 16 to 14;
 // the sink loop now matches. Left: the rise loop's step + 1 in r0 and its quotient in r1, the
 // native r1 and r0. No gain: the sink loop's forms in the rise loop (14, 23), ++step or step++

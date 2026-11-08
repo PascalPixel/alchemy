@@ -1,4 +1,4 @@
-// Differ 30 of 714 (tla-en, 2026-11-08, -mtune=gba): as below.
+// Differ 28 of 714 (tla-en, 2026-11-08, -mtune=gba): as below.
 // 6 November: z first set to its centre, a temporary (permuter), turns 65 to
 // 30: the native keeps 0x20a40000 in r8 for both SetMoveTarget calls. Left:
 // the flag result still sits in r8 as the zero for velocityY and

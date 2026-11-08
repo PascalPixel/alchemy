@@ -1,9 +1,12 @@
-// Differ 16 of 171 (tla-en, 2026-11-08, -mtune=gba).
+// Differ 12 of 171 (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-08: the wait loop as nested ifs (mode and block, then i = 0, then the busy
+// byte) sets i before the busy test as the native does (16 to 12); i = 0 before the
+// whole if, 18. Left: the first loop's slot pointer and owned-byte pointer swap r5
+// and r6 (counting up, slot++ in the body, slot set at the loop or declared first,
+// the callee typed: all 12; a 6-minute permute found nothing under 12).
 // 2026-11-06: the owner's layer goes through an s16
 // local declared at the top (layer = work->layer, 24 to 16); declared in the if, 50;
-// as s32 22, u8 24. Expect it to be a tagged temporary on adoption. Left: the first
-// loop's slot pointer and owned-byte pointer swap r5 and r6, and i = 0 is set
-// before the mode test in the native.
+// as s32 22, u8 24. Expect it to be a tagged temporary on adoption.
 // Draft, differ 30 of 171 (2026-10-26): the event work is now read through a
 // struct, which makes the held unsigned kind device unneeded (the byte
 // stores no longer make the kind reload); still 30. Order and register
@@ -105,13 +108,15 @@ void BattleEffect_CleanupSceneObjects(void) {
     return;
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
-  if (event->mode == 3 && block != NULL && block[0x2a01] != 0) {
+  if (event->mode == 3 && block != NULL) {
     i = 0;
-    do {
-      wait(1);
-      if (++i > 89)
-        break;
-    } while (block[0x2a01] != 0);
+    if (block[0x2a01] != 0) {
+      do {
+        wait(1);
+        if (++i > 89)
+          break;
+      } while (block[0x2a01] != 0);
+    }
   }
   event->unkcb7 = 0;
   Func_080dbb40();

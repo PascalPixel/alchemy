@@ -1,8 +1,9 @@
 // Differ 19 of 231 (tla-en, 2026-11-08, -mtune=gba).
 // Now only the owners/reserve spill slots swapped and selected's address built
 // in two steps; the redraw reorder is gone. A once-only block around everything
-// after the slot setup (from the permuter) took 23 to 19; tag it
-// FAKEMATCH(one-pass) if it survives to a match. Earlier: 23, 29 (31 before;
+// after the slot setup (from the permuter) took 23 to 19 (a once-only
+// block is plain C under S2: a note, no tag). 8 November: 8 minutes of permute reached 18 only
+// by making result a u8, which returns 255 for -1 (not kept). Earlier: 23, 29 (31 before;
 // 2026-10-26, result cleared after the battle work is read): lets the player
 // pick which reserve member takes party slot `slot` in battle, previewing each
 // choice in place (left and right cycle, A confirms through Func_08118140 and

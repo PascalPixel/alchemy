@@ -1,6 +1,8 @@
-// Differ 16 of 137 (tla-en, 2026-11-08, -mtune=gba), under -Os, from 53: x and y subtract as they read, z in two steps; all allocation agrees.
-// Left: reload's rotation at the sprite word: native tile r2, 0x800 r4, then the counter in r2; here 0x800 r2, the counter r4. The sprite word's operand orders, a
-// signed tile and the counter's decrement apart leave it.
+// Matches (tla-en, 2026-11-08, -mtune=gba), under -Os; also tla-ja, tla-de, tla-es, tla-fr and tla-it.
+// 8 November, 16 to 0: the sprite word's priority bits in a local set once at the top (permuter;
+// 16 to 12; as the constant in the store, 20 now), and the counter stepped before the splash
+// pointer as its own statement (12 to 0). Earlier, from 53: x and y subtract as they read,
+// z in two steps.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -43,6 +45,8 @@ void Func_020034fc(void) {
   struct Splash *splash;
   s32 i;
   u32 tile;
+  // The sprite word's priority bits (priority 2): a local that holds this one value.
+  s32 priority = 0x800;
 
   viewX &= 0xffff0000;
   viewZ = view[1] & 0xffff0000;
@@ -74,10 +78,11 @@ void Func_020034fc(void) {
         screenY &= 255;
         splash->sprite[0] = 0;
         splash->sprite[1] = screenY | (column << 16) | 0x40002000;
-        *frame = (tile + (((Random16Far() * 3) >> 16) << 3)) | 0x800;
+        *frame = (tile + (((Random16Far() * 3) >> 16) << 3)) | priority;
         Func_02003c94(splash->sprite, z);
       }
     }
+    i--;
     splash++;
-  } while (--i >= 0);
+  } while (i >= 0);
 }

@@ -1,4 +1,5 @@
-// Differ 56 of 286 (tla-en, 2026-11-08, -mtune=gba); with -1 or direct calls still 89.
+// Differ 52 of 286 (tla-en, 2026-11-08, -mtune=gba), from 56: the first text id
+// through result (permuter; FAKEMATCH temporary); with -1 for minusOne, 93.
 // 2026-11-06: A 64-bit -1 local for the free-slots notice and Party_AdjustCoins keeps CSE from sharing the compare's -1 (89 to 56); a permuter lead. Left, allocation only: the first cancel compare's -1 in r3 (native r2) and the coin and medal tests in r2, r3 (native r3, r1); the first FieldMessage_ShowAtActor -1 scheduled before movs r1, #0; the roll and work address in r0, r1 (native r1, r0); the final halving's registers. Not better: the s32 or u32 local (81), it in the second cancel compare (64-bit compare), a direct ShowAtActor call (67, 173), an s8 pointer for the halving (83).
 // 2026-11-06, later: the register swaps all follow reload's round-robin through its spill registers
 // (allocate_reload_reg steps last_spill_reg through spill_regs, kept in register order). The
@@ -73,7 +74,7 @@ s32 Func_020001e4(void) {
   s32 notice;
   struct MainRoutineWork *state;
   /* FAKEMATCH(temporary): minusOne, a 64-bit -1 for two calls, so CSE does
-   * not share the cancel compare's -1; as -1, 89 of 286 instructions differ in
+   * not share the cancel compare's -1; as -1, 93 of 286 instructions differ in
    * tla-en. */
   u64 minusOne = -1;
 
@@ -83,7 +84,10 @@ s32 Func_020001e4(void) {
 prompt:
   coins = gMainRoutineWork.coins;
   medals = PartyInventory_CountItem(229);
-  message = (s32)MsgWhatWillYou;
+  /* FAKEMATCH(temporary): the text id passes through result; as message =
+   * (s32)MsgWhatWillYou, 56 of 286 instructions differ in tla-en. */
+  result = (s32)MsgWhatWillYou;
+  message = result;
   Func_020013c8(message);
   Call2((void (*)())FieldMessage_ShowAtActor, -1, 0);
   window = (s32)Window_Create(0, 0, 17, 4, 2);

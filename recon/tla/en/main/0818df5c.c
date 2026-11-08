@@ -1,4 +1,4 @@
-// Differ 18 of 1556 (tla-en, 2026-11-08, -mtune=gba), from 16: the rows below (half's sign + hx at
+// Differ 20 of 1556 (tla-en, 2026-11-08, -mtune=gba, multiplies 3 3); 18 before that, from 16: the rows below (half's sign + hx at
 // two sites, the 256 limit's register, the shade store), plus the 7 mask's movs after a muls
 // (multiplies at 5).
 // 2026-11-07: once-only blocks around the two FillWords_ calls, 24 to 16; left: half's sign + hx at the

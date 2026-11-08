@@ -1,4 +1,7 @@
-// Differ 20 of 2278 (tla-en, 2026-11-08, -mtune=gba).
+// Differ 12 of 2278 (tla-en, 2026-11-08, -mtune=gba): order, as below; each
+// barrier still pays 2 (16 without both). Tried on 2026-11-08: the streak
+// release loop's zero and counter (the native has them the other way round)
+// with held declared first or set later, a literal 0, a stepped pointer (12 to 14).
 // Measured 2026-11-05 (tla-en): differ 20 of 2278. Left: order: a multiply the
 // native issues later than alchemy-gcc does: sched2 ranks the chain into muls
 // too high (its cost of 4), so the constant or the multiply comes ahead of
@@ -744,7 +747,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                              flash->y - Data_081984ec[step],
                              Data_081984d7[step], Data_081984de[step]);
               RELEASE_DRAW_BLITTER();
-              /* FAKEMATCH(barrier): the empty asm parts the scheduler's rows; as no asm, 2 of 2278 instructions differ in tla-en. */
+              /* FAKEMATCH(barrier): the empty asm parts the scheduler's rows; as no asm, 14 of 2278 instructions differ in tla-en. */
               __asm__("");
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
               DRAW_ALTERNATE(
@@ -759,7 +762,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                              flash->y - Data_081984d7[step],
                              Data_081984de[step], Data_081984d7[step]);
               RELEASE_DRAW_BLITTER();
-              /* FAKEMATCH(barrier): the empty asm parts the scheduler's rows; as no asm, 2 of 2278 instructions differ in tla-en. */
+              /* FAKEMATCH(barrier): the empty asm parts the scheduler's rows; as no asm, 14 of 2278 instructions differ in tla-en. */
               __asm__("");
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
               DRAW_ALTERNATE(

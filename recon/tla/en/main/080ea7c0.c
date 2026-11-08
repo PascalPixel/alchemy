@@ -1,5 +1,5 @@
 // Differ 2 of 104 (tla-en, 2026-11-08, -mtune=gba). The list is pinned to r9
-// (pin, untagged yet: unpinned, 25 of 104); an if around a do-while, a
+// (tagged pin: unpinned, 25 of 104, re-measured 2026-11-08); an if around a do-while, a
 // for with no init and a test of the list as well all measure 4 to 44.
 // 2026-11-07: the argument itself is the cursor, reset from the list in a
 // once-only block (6 -> 2); what remains is the first test, which the native
@@ -45,6 +45,7 @@ void Func_080eaa14(struct ActorFlag *list);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 
 void Func_080ea7c0(struct ActorFlag *actors) {
+  /* FAKEMATCH(pin): the form kept; as a plain local, 25 of 104 instructions differ in tla-en. */
   register struct ActorFlag *list asm("r9") = actors;
   struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapWork;
   struct Actor *leader;

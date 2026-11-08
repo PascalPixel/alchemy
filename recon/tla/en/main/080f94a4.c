@@ -1,9 +1,10 @@
-// Differ 22 of 162 (tla-en, 2026-11-08, -mtune=gba). Without the pin 96, pin r6 96,
-// no empty asm 30, no hoist 24, no devices at all 92. Other editions not re-measured.
+// Differ 22 of 162 (tla-en, 2026-11-08, -mtune=gba), with three tagged devices (two pins,
+// one barrier). Without the r4 pin 96, pin r6 96, no empty asm 30 (an empty
+// once-only block in its place 28, around the allocation 30, around the suspend
+// store 78), no r1 hoist 24, no devices at all 92. Other editions not re-measured.
 // 2026-11-06: the same 22 in de, es, fr and it;
 // 0 of 109 in tla-ja (2026-11-07, its whole extent; the listing runs on).
-// Near miss with an untagged r4 pin, empty asm and r1 hoist found by search; each
-// needs its S2 tag on adoption. The rest is allocation: the native keeps the
+// Near miss with an r4 pin, empty asm and r1 hoist found by search, now tagged. The rest is allocation: the native keeps the
 // backup in r6 and reloads 0x06004000 from the pool, here VRAM takes r6. Tried
 // 2026-11-06: no pin (96), pin r6 (96), no hoist (24), ☀️ twin's cache/process
 // pointers (89).
@@ -81,6 +82,8 @@ void wait(s32 frames);
 
 s32 Func_080f94a4(void) {
 #if TLA_PATCH_1
+  /* FAKEMATCH(pin): the backup held in r4; as a plain local, 96 of 162
+   * instructions differ in tla-en. */
   register void *backup asm("r4");
 #endif
   struct InventoryMenuState *screen;
@@ -96,6 +99,8 @@ s32 Func_080f94a4(void) {
 #if TLA_PATCH_1
   size = 0x2000;
   backup = Heap_AllocEwram(size);
+  /* FAKEMATCH(barrier): an empty asm after the allocation; without it, 30 of
+   * 162 instructions differ in tla-en. */
   asm("");
 #endif
   Ram_HeapSlots->objectSystem->suspended = 1;
@@ -112,8 +117,10 @@ s32 Func_080f94a4(void) {
   Menu_SuspendFieldTasks();
   Iwram_CopyWords(backup, (void *)0x06004000, size);
   {
-    register __typeof__(size) hoisted asm("r1") = size;
-    Iwram_FillWords((void *)0x06004000, hoisted , 0x33333333);
+    /* FAKEMATCH(pin): the size held in r1 for the fill; as size passed
+     * directly, 24 of 162 instructions differ in tla-en. */
+    register s32 hoisted asm("r1") = size;
+    Iwram_FillWords((void *)0x06004000, hoisted, 0x33333333);
   }
   Text_UseExtraTilesFar(1);
 #endif

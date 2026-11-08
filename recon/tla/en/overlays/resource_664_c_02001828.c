@@ -1,5 +1,8 @@
-// Differ 8 of 1527 (tla-en, 2026-11-08, -mtune=gba): measured again, draft unchanged; left: two
-// sched2 ties (the motionFlags strb against mov r1, r8; ldr r5 and movs r1 at steps).
+// Differ 2 of 1527 (tla-en, 2026-11-08, -mtune=gba): one sched2 tie left, the gust's
+// motionFlags strb issues before mov r1, r8 (the effect copy) instead of after it.
+// Tried 2026-11-08: a once-only block around that store (20) or around the priority
+// copy (16); the store before the scales (18) or after the priority copy (65); the
+// target in a local, or = 0 for = hit (2).
 // Before: differ 20 of 1527 (tla-en, 5 November 2026): order ties only, the cell
 // stores ahead of the gust's as in Func_0200095c, the target read at each use.
 // Left: motionFlags' strb and the watched-object store in the pick-up block, ldr r5

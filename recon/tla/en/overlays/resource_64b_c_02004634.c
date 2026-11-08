@@ -1,4 +1,5 @@
-// Differ 15 of 120 (tla-en, 2026-11-08, -mtune=gba).
+// Differ 15 of 120 (tla-en, 2026-11-08, -mtune=gba), with no device: the forwarding
+// inline around the create no longer pays (15 with or without it) and is gone.
 // 2026-11-07, from 17: the detail is the sprite's
 // record at 0x28 (LinkedSprite put it at 0x2c). Left: motionFlags and action
 // stored through one pointer (adds r3, #85; adds r3, #15) natively, two here;
@@ -51,13 +52,6 @@ void Resource_ResetEntry(s32 entry);
 void Func_02004598(struct Actor *object);
 void Func_020045e4(struct Actor *object);
 
-static __inline__ struct Actor *Func_02004b30_(s32 kind, s32 x, s32 y,
-                                                       s32 z) {
-  /* FAKEMATCH: forwarding through the inline, as Func_020039f4 needs (71
-   * direct). */
-  return Func_02004b30(kind, x, y, z);
-}
-
 void Func_02004634(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
@@ -71,7 +65,7 @@ void Func_02004634(struct Actor *parent) {
   i = 0;
 do {
   {
-    child = Func_02004b30_(271, parent->x, parent->y, parent->z);
+    child = Func_02004b30(271, parent->x, parent->y, parent->z);
     pair[i] = child;
     if (child != NULL) {
       child->motionFlags = 0;

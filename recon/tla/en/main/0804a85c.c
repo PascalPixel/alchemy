@@ -222,9 +222,6 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
   struct BattleUnit *unit;
   struct TargetBattle *battle;
   struct TargetWindow *window;
-  /* FAKEMATCH(pin): the condition window in r9, where the native keeps it, as
-   * The Broken Seal's; as an ordinary local it is spilled and 952 of 1647
-   * instructions differ in tla-en (937 with the pin). */
   /* FAKEMATCH(pin): the condition window in r9 (r10 in the European editions),
    * where the native keeps it; as an ordinary local its NULL default's constant note halves its priority,
    * it is spilled and 494 of 1647 instructions differ in tla-en (6 with the

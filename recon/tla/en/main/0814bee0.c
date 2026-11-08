@@ -1,4 +1,5 @@
-// Differ 24 of 1150 (tla-en, 2026-11-08, -mtune=gba).
+// Differ 14 of 1150 (tla-en, 2026-11-08, -mtune=gba, multiplies 3 3; 24 before): order only, the
+// first loop's movs r4 and add r2, fp, and the texture block's r0/r2 and r1/r0 reloads.
 // Differ 22 of 1150 (tla-en, 2026-11-06). Left: order only: movs r4/add r2,fp
 // at the start, movs r3 #58 twice, and the texture block's r0/r2 and r1/r0 reloads.
 

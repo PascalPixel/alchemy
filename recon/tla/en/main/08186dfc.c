@@ -1,7 +1,9 @@
-// Differ 4 of 2667 (tla-en, 2026-11-08, -mtune=gba), the same two rows; sizes equal. No device
-// but the CLEAR inline, which needs S2's wrapper tag or the game's own layer.
-// Left, two rows:
-// - Dive ramp: ldr r2 (the pool constant) before muls; here after it. The dump gives
+// Differ 2 of 2667 (tla-en, 2026-11-08, -mtune=gba): one row, the fill loop's; the dive
+// ramp now matches. No device but the CLEAR inline, which needs S2's wrapper tag
+// or the game's own layer. Tried 2026-11-08 at the fill: shades[i], a fill
+// pointer, a do-while (2 each); an empty once-only block before it (6).
+// Left earlier, two rows:
+// - Dive ramp (settled): ldr r2 (the pool constant) before muls; here after it. The dump gives
 //   the mul priority 7 (cost 4, measured before -mtune=gba) and the load 6; the same ramp's second row, whose
 //   frame was read earlier, has muls first in the listing too. See the report.
 // - Fill loop: ldr r3 for its pointer where post-reload CSE here turns the load into

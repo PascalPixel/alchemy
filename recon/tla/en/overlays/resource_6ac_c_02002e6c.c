@@ -1,4 +1,5 @@
 // Differ 2 of 86 (tla-en, 2026-11-08, -mtune=gba): one row, the native loads
+// 8 November: 7 minutes of permute found nothing under 2; *position as the first argument, 2.
 // position[0] before position[1] and [2] for the call, this one after; x, y
 // and z in locals, a pointer or a struct leave it at 2. Older notes follow.
 // Near miss, overlay 6AC Func_02002e6c (0x0200ae6c): differ 12 of 86, all
@@ -34,9 +35,8 @@ void Func_02002e6c(struct Actor *self) {
   object->acceleration = 0x2000;
   animation->angle = angle - 0x4000;
   object->scaleX = 0;
-  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-   * order around it; as the plain statement, 4 of 86 instructions differ
-   * in tla-en (2026-11-08). */
+  // A once-only block: its end holds the order around it (as the plain
+  // statement, 4 of 86 differ in tla-en, 2026-11-08).
   do {
     object->scaleY = 0;
   } while (0);

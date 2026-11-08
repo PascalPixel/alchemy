@@ -1,6 +1,8 @@
-// Differ 2 of 171 (tla-en, 2026-11-08, -mtune=gba). Func_02000c44 of overlay
-// 6a1: overlay 69c's Func_02000dcc with this overlay's symbols (6 to 2); see
-// that draft.
+// Matches (tla-en, 2026-11-08, -mtune=gba; the same in tla-ja, -de, -es, -fr and -it).
+// Func_02000c44 of overlay 6a1: overlay 69c's Func_02000dcc with this overlay's
+// symbols. 6 to 2 by that draft's devices; to 0 under -mtune=gba with actor->x
+// and move->direction read plainly (its once-only block and pointer temporary
+// no longer pay). The wrapper still does: as a plain call, 2 of 171.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -31,7 +33,6 @@ s32 Func_02000c44(struct PushMove *move) {
   s32 stepIndex;
   s32 position[3];
   s32 direction;
-  s32 *p;
   s32 width;
   s32 height;
   s32 dx;
@@ -41,9 +42,9 @@ s32 Func_02000c44(struct PushMove *move) {
   s32 col;
   u8 *layer;
 
-  actor = Func_02000dac(&stepIndex, &move->unk10, p = (s32 *)&move->direction);
+  actor = Func_02000dac(&stepIndex, &move->unk10, &move->direction);
   if (actor != 0) {
-    direction = *p;
+    direction = move->direction;
     width = (ABS(gData_020022dc[direction][0]) +
              ABS(gData_020022dc[direction][2])) >>
             4;
@@ -65,7 +66,7 @@ s32 Func_02000c44(struct PushMove *move) {
         position[0] = move->x + (gData_020022dc[direction][0] << 16);
         for (col = 0; col < width; col++) {
           /* FAKEMATCH(wrapper): the call through Func_020021b8_Inline; as
-           * Func_020021b8(actor, position), 4 of 171 instructions differ in
+           * Func_020021b8(actor, position), 2 of 171 instructions differ in
            * tla-en. */
           if (Func_020021b8_Inline(actor, position) == 2)
             goto blocked;
@@ -81,14 +82,7 @@ s32 Func_02000c44(struct PushMove *move) {
     *layer = 0;
     if (count == 0)
       return 0;
-    {
-      s32 x;
-      // A once-only block: keeps the load of actor->x ahead of the multiply.
-      do {
-        x = actor->x;
-      } while (0);
-      move->x = x + dx * count;
-    }
+    move->x = actor->x + dx * count;
     move->y = actor->y;
     move->z = actor->z + dz * count;
     return 1;

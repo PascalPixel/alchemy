@@ -1,4 +1,5 @@
 // Differ 6 of 88 (tla-en, 2026-11-08, -mtune=gba): unchanged under the GBA
+// 8 November: the for steps or the pack loop's steps reordered, 6 to 8; loop 2 written like loop 3 (an offset step) 30 to 42.
 // tune; the copy and pointer orders below still resist (both pointer orders,
 // the pointers set in the for, the tile address spelled three ways).
 // 2026-11-07: Iwram_ClearWords through an inline wrapper, as the Broken Seal's

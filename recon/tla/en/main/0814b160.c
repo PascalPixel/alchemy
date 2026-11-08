@@ -64,8 +64,8 @@ void Sound_PlayFar(s32 cue);
 void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
   void *canvas;
   struct BattleEffectWork *work;
-  /* FAKEMATCH: the family's blitter pair, as in ☀️: this effect loads only
-   * one. A single DrawRectangle leaves the frame 4 bytes short: differ 170. */
+  // Unused: the second blitter gives the stack frame its 4 bytes (as one, 156
+  // of 222 differ in tla-en); the family's pair, as in The Broken Seal.
   DrawRectangle draw[2];
   struct EffectStep *marker;
   s32 i;

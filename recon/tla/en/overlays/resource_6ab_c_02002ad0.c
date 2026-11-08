@@ -2,7 +2,7 @@
 // Draft of overlay 6ab's Func_02002ad0, the twin of overlay 6ac's
 // Func_02002e6c: its draft (resource_6ac_c_02002e6c.c) with this overlay's
 // symbols. Left, as in that draft (2 of 86 on 2026-11-08): one row, the native
-// loads position[0] after position[1] and [2] for the call, this one before;
+// loads position[0] before position[1] and [2] for the call, this one after;
 // x, y or z in locals, a pointer, a struct, *position measured no better.
 #include "../../../../games/tla/src/scene/mars_lighthouse_room_m/mars_lighthouse_room_m.h"
 
@@ -29,9 +29,8 @@ void Func_02002ad0(struct Actor *self) {
   object->acceleration = 0x2000;
   animation->angle = angle - 0x4000;
   object->scaleX = 0;
-  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-   * order around it; as the plain statement, 4 of 86 instructions differ
-   * in tla-en. */
+  // A once-only block: its end holds the order around it (as the plain
+  // statement, 4 of 86 differ in tla-en).
   do {
     object->scaleY = 0;
   } while (0);

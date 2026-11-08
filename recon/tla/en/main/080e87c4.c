@@ -1,12 +1,18 @@
-// Differ 24 of 226 (tla-en, 2026-11-08, -mtune=gba); the barrier tagged and the
-// block and constant local noted, measured then. 2026-11-06: 5 min of permute: no gain.
+// Differ 4 of 226 (tla-en, 2026-11-08, -mtune=gba). The second loop's sprite
+// pointer is its own block-scoped local, set after the mote (24 to 6): the
+// count takes r7 and the sprite r5 as in the ROM; the barrier opens the loop
+// body instead of the timer's arm (6 to 4, permuter). The barrier and the
+// once-only block still pay (40 and 6 without). Left: the fill's routine address
+// loads after its size here (first natively), and the first loop's mov r8 is
+// one row later.
 // Near miss, differ 36 of 226 (2026-10-18, written from the listing; ☀️ has
 // no twin): the burst of 64 sparkles Func_080e807c's effect ends with. The
 // resource is directory entry 0x1ea, FieldEffect_SparkleFade: adoption names it
 // SparkleFade in gamepak/resource_directory.s. What remains: the frame count
 // takes r5 and the second loop's sprite r7, where the ROM has r7 and r5
 // (separate block-scoped pointers 44, the count fixed in r7 93, other
-// declaration orders 36); and reordered pairs where the native loads
+// declaration orders 36; all since settled); and reordered pairs where the
+// native loads
 // gMainRoutineWork's address, the second pool word and the mote's y before the
 // constants beside them, copies the angle after them, and builds the 13 of
 // the priority mask before the store before it.
@@ -83,7 +89,7 @@ void Func_080e87c4(void) {
   Task_Remove(Func_080e807c);
   wait(1);
   // A once-only block: its end holds the order around it (as plain
-  // statements, 26 of 226 differ in tla-en).
+  // statements, 6 of 226 differ in tla-en).
   do {
   Sound_PlayFar(167);
   Iwram_FillWords((void *)0x06002000, 0x500, 0xf000f000);
@@ -127,16 +133,17 @@ void Func_080e87c4(void) {
   wait(1);
 
   for (frame = 0; frame < 40; frame++) {
+    struct EffectSprite *spark;
     mote = work->motes;
-    sprite = work->sprites;
-    for (i = 63; i >= 0; i--, sprite++, mote++) {
+    spark = work->sprites;
+    for (i = 63; i >= 0; i--, spark++, mote++) {
+      /* FAKEMATCH(barrier): the index masks loaded inside the loop, where
+       * loop.c would hoist 0xfffffc00 into r9; as no asm, 40 of 226
+       * instructions differ in tla-en. */
+      asm("");
       if (mote->timer >= 0) {
-        sprite->oam.index = tile + (mote->timer & 3) * 2;
-        /* FAKEMATCH(barrier): the index masks loaded inside the loop, where
-         * loop.c would hoist 0xfffffc00 into r9; as no asm, 58 of 226
-         * instructions differ in tla-en. */
-        asm("");
-        Func_080eb298(sprite, mote);
+        spark->oam.index = tile + (mote->timer & 3) * 2;
+        Func_080eb298(spark, mote);
         BattleEffect_IntegrateVector3(&mote->x, 62, 0x8000);
       }
       mote->timer++;

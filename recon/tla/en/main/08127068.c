@@ -82,11 +82,10 @@ s32 Task_Add(TaskFunc func, s32 order);
 s32 Func_08126e00(void);
 s32 Func_08127038(void);
 
-/* FAKEMATCH: the rings' vectors go through these two polar helpers, as the
- * native rebuilds 0x200 at each call (movs, lsls) and keeps only the radius
- * and the multiply's entry in registers; written out, loop.c hoists 0x200
- * too and global allocation trades the work's register for the 1 (differ
- * 89). One helper for velX alone measures the same 14 (alchemy permute). */
+// The rings' vectors go through these two polar helpers, as the native
+// rebuilds 0x200 at each call (movs, lsls) and keeps only the radius and the
+// multiply's entry in registers; written out, loop.c hoists 0x200 too (81 of
+// 255 differ, 2026-11-08).
 static __inline__ s32 PolarX(s32 angle, s32 radius) {
   return Iwram_MulQ16(Trig_Cos(angle), radius);
 }
@@ -166,8 +165,8 @@ s32 Func_08127068(s32 mode) {
     break;
   }
   Dma_Set(data, (void *)BG_PLTT, 0x84000000 | 32, REG_DMA3);
-  /* FAKEMATCH: as in The Broken Seal, the one-pass block keeps the zero
-   * ahead of the BG2X address, which reload derives from the DMA register's. */
+  // A once-only block, as in The Broken Seal: it keeps the zero ahead of the
+  // BG2X address, which reload derives from the DMA register's (8 without it).
   do {
     zero = 0;
     REG_BG2X = zero;

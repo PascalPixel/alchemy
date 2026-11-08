@@ -1,4 +1,5 @@
 // Differ 8 of 168 (tla-en, 2026-11-08, -mtune=gba), from 22. Func_020024d4 of
+// 8 November: 8 minutes of permute found nothing under 8; once-only blocks around the sprite load or the stores 14 to 20; the sprite load after either velocity store, 8.
 // overlay 6ab. Scale computed before the calls gives the mul pointer r8 and
 // the angle r10, as natively, but moves its shift; natively lsrs and add come
 // after the gravity store. Left: the shift's place, and the sprite's and

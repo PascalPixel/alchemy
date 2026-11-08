@@ -1,5 +1,7 @@
-// Differ 20 of 106 (tla-en, 2026-11-08, -mtune=gba); unchanged by the GBA tune
-// (index + 242 as the second call's id, a copy of id, the sums reversed: 20).
+// Differ 14 of 106 (tla-en, 2026-11-08, -mtune=gba): index reused for the
+// second message's base (the permuter, 8 minutes) puts the sum in r0 as the
+// native does (20 to 14; a new local for it 20). Before: index + 242 as the
+// second call's id, a copy of id, the sums reversed: 20.
 // Draft (59 before the gotos below), from the listing: the search command.
 // Collision codes 242 to 247 show their pair of messages from Data_080eff22;
 // otherwise the search event (kind 3) of the cell runs: its "checked the ..."
@@ -11,8 +13,8 @@
 // "found nothing" lines, MsgButFoundNothing 3615 (4076). The native lays the
 // callback out before the message, both after the two tests, which the
 // gotos give (as if and else, 51; the tests the other way round, 26).
-// Left: the id and its index (id - 242) take r5 and r6 in the native, r1
-// and r5 here, and the second message sum is formed in r0 there (adds r0,
+// Left: the id takes r5 in the native, r1 here (index now takes r6 as
+// there), and the second message sum is formed in r0 there (adds r0,
 // r5, r0) and in r5 here, then copied; and the native loads the event's
 // target halfword before the kind's mask. Tried: the index inline in the
 // test or the load, the message as u8 or u32, the sums the other way round
@@ -55,7 +57,9 @@ s32 Func_080cd808(s32 id) {
     Leader_StopMoving();
     message = Data_080eff22[index];
     FieldMessage_ShowFar(message + (s32)MsgSearchStart, 1);
-    FieldMessage_ShowFar(message + (s32)MsgSearchEmpty, 1);
+    // index reused for the second message base (as a plain sum, 20 of 106 differ).
+    index = (s32)MsgSearchEmpty;
+    FieldMessage_ShowFar(message + index, 1);
     return 0;
   }
   event = Func_080ccd78(3, id);

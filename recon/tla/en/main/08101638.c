@@ -1,5 +1,6 @@
-// Differ 6 of 237 (tla-en, 2026-11-08, -mtune=gba); without the r0 hoist 8, without
-// the empty asm 8.
+// Differ 6 of 237 (tla-en, 2026-11-08, -mtune=gba), with four tagged devices
+// (2026-11-08: each still pays; without the fill wrapper, the r0 pin or the empty
+// asm 8, without the copy wrapper 140, without the once-only block 10).
 // Near miss, differ 6 of 237 (tla-en, 2026-11-05), with untagged empty asms, one-pass
 // blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
@@ -89,14 +90,14 @@ struct MenuIcon *WindowSprite_CreateFar(s32 entry, s32 attributes,
 
 static __inline__ void CopyWords_(void *destination, const void *source,
                                   s32 size) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as the scene layer does. */
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
+   * constants; as direct calls, 140 of 237 instructions differ in tla-en. */
   Iwram_CopyWords(destination, source, size);
 }
 
 static __inline__ void FillWords_(void *destination, s32 size, u32 value) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as the scene layer does. */
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
+   * constants; as direct calls, 8 of 237 instructions differ in tla-en. */
   Iwram_FillWords(destination, size, value);
 }
 
@@ -137,6 +138,8 @@ void Func_08101638(void) {
     VramBlock_LoadResourceFar(entry, 128, (s32)&ResourceId_ShopGemTiles);
   do {
   {
+    /* FAKEMATCH(pin): entry held in r0 ahead of the call; as the plain
+     * argument, 8 of 237 instructions differ in tla-en. */
     register __typeof__(entry) hoisted asm("r0") = entry;
     icon = WindowSprite_CreateFar( hoisted , 0x40000000, window, 0, 0);
   }
@@ -155,6 +158,8 @@ void Func_08101638(void) {
   icon->oam.x = icon->x = x;
   y = window->y * 8 + 4;
   icon->oam.y = icon->y = y;
+  /* FAKEMATCH(barrier): an empty asm between the arrows; as no asm, 8 of 237
+   * instructions differ in tla-en. */
   asm("");
   icon = menu->arrows[1];
   x += 224;

@@ -119,7 +119,7 @@ s32 Func_02001418(void) {
       s32 step = GameFlag_GetByte(0x278);
       s32 placed = GameFlag_Test(0x271);
       /* FAKEMATCH(barrier): the empty asm on placed changes its allocation rank; as no
-       * asm, 34 of 390 instructions differ in tla-en. */
+       * asm, 32 of 390 instructions differ in tla-en. */
       asm("" : : "r"(placed));
 
       if (placed) {

@@ -1,6 +1,6 @@
-// Differ 38 of 5364 (tla-en, 2026-11-08, -mtune=gba).
-// Left: 34 are spill slots 32 to 60 numbered in another order (seven sites), 4
-// the large rings' sheet multiply (adds r3, r7; muls r3, r0) early here. Measure in address order,
+// Differ 34 of 5364 (tla-en, 2026-11-08, -mtune=gba), measured with all five
+// addresses below. Left: spill slots 32 to 60 numbered in another order (seven
+// sites); the large rings' sheet multiply (adds r3, r7; muls r3, r0) now matches. Measure in address order,
 // 0819284c,08192894,081929fc,08192a4c,08192c9c: the parent alone gives 549 and
 // parent first 1062, both counting the nested functions as moved.
 // 2026-11-06, the ring row: the cosine kept in py with `py * radius` in the

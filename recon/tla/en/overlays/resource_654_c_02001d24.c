@@ -1,4 +1,5 @@
-// Differ 4 of 656 (tla-en, 2026-11-08, -mtune=gba): the same two store ties.
+// Differ 4 of 656 (tla-en, 2026-11-08, -mtune=gba): the same two store ties; once-only
+// blocks around either rotation store or field18, and the stores swapped, measured 4 to 10.
 // Differ 4 of 656 (tla-en, 2026-11-07), from 10: the scene helpers the header
 // no longer defines (ObjLaunch, ObjMode, ObjModeWait, Wait, FlagSet) compiled as
 // implicit declarations; they are now Actor_Jump, Actor_SetModeById,
@@ -25,7 +26,8 @@ void Func_02003990(struct ShrineOfTheSeaGodObject *object, s32 x, s32 y, s32 z);
 void Func_02003a90(s32 actor, s32 angle);
 
 static inline void ShrineOfTheSeaGod_ObjAngle(s32 actor, s32 angle) {
-  /* FAKEMATCH: scene calls reach the main image through one inline layer. */
+  // An inline layer, as the scene header's other helpers (called direct, 100 of
+  // 656 differ in tla-en, 2026-11-08).
   Func_02003a90(actor, angle);
 }
 void Actor_SetMovementTypeAndWaitById(s32 actor, const void *callback);

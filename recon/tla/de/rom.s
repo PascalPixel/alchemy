@@ -30,24 +30,18 @@ Func_0802b998:
 	.incbin "baserom.gba", 0x000394e6, 0x00000002
 	.section .rom.0003972a, "ax"
 	.incbin "baserom.gba", 0x0003972a, 0x00000002
-	.section .rom.00039864, "ax"
-	.global Message_StepScript
-	.type Message_StepScript, %function
-	.thumb_func
-Message_StepScript:
-	.incbin "baserom.gba", 0x00039864, 0x0000062c
 	.section .rom.0003a406, "ax"
 	.incbin "baserom.gba", 0x0003a406, 0x00000002
 	.section .rom.0003aa8a, "ax"
 	.incbin "baserom.gba", 0x0003aa8a, 0x00000002
 	.section .rom.0003ae60, "ax"
-	.incbin "baserom.gba", 0x0003ae60, 0x0000016c
-	.section .rom.0003afcc, "ax"
-	.global Message_Decode
-	.type Message_Decode, %function
+	.global Func_0803aed8
+	.type Func_0803aed8, %function
 	.thumb_func
-Message_Decode:
-	.incbin "baserom.gba", 0x0003afcc, 0x000007e0
+Func_0803aed8:
+	.incbin "baserom.gba", 0x0003ae60, 0x0000016c
+	.section .rom.0003b7aa, "ax"
+	.incbin "baserom.gba", 0x0003b7aa, 0x00000002
 	.section .rom.0003b930, "ax"
 	.global Text_MeasureEntry
 	.type Text_MeasureEntry, %function
@@ -67,12 +61,6 @@ Func_0803bb58:
 	.incbin "baserom.gba", 0x0003ef9a, 0x00000002
 	.section .rom.0003f226, "ax"
 	.incbin "baserom.gba", 0x0003f226, 0x00000002
-	.section .rom.0003fd7c, "ax"
-	.global Menu_OpenWorkspaceOptions
-	.type Menu_OpenWorkspaceOptions, %function
-	.thumb_func
-Menu_OpenWorkspaceOptions:
-	.incbin "baserom.gba", 0x0003fd7c, 0x000003c0
 	.section .rom.00040a9a, "ax"
 	.incbin "baserom.gba", 0x00040a9a, 0x00000002
 	.section .rom.0004171e, "ax"
@@ -96,12 +84,6 @@ Text_DrawPrefixedNumberAtOffset:
 	.thumb_func
 Func_080426e0:
 	.incbin "baserom.gba", 0x00042734, 0x00000128
-	.section .rom.00043d2c, "ax"
-	.global Func_08043cd8
-	.type Func_08043cd8, %function
-	.thumb_func
-Func_08043cd8:
-	.incbin "baserom.gba", 0x00043d2c, 0x0000066c
 	.section .rom.0004532e, "ax"
 	.incbin "baserom.gba", 0x0004532e, 0x00000002
 	.section .rom.0004559a, "ax"
@@ -249,13 +231,11 @@ Func_080f9644:
 	.section .rom.0010939e, "ax"
 	.incbin "baserom.gba", 0x0010939e, 0x00000002
 	.section .rom.00109af8, "ax"
-	.incbin "baserom.gba", 0x00109af8, 0x00000210
-	.section .rom.00109e80, "ax"
-	.global Func_080ffcd4
-	.type Func_080ffcd4, %function
+	.global PsynergyMenu_DrawRangePage
+	.type PsynergyMenu_DrawRangePage, %function
 	.thumb_func
-Func_080ffcd4:
-	.incbin "baserom.gba", 0x00109e80, 0x00000230
+PsynergyMenu_DrawRangePage:
+	.incbin "baserom.gba", 0x00109af8, 0x00000210
 	.section .rom.0010a904, "ax"
 	.balign 4
 	.global Func_08100738
@@ -326,12 +306,6 @@ Func_0811843c:
 	.incbin "baserom.gba", 0x0012695a, 0x00000002
 	.section .rom.001269c2, "ax"
 	.incbin "baserom.gba", 0x001269c2, 0x00000002
-	.section .rom.00126be4, "ax"
-	.global Graphics_AdvancePaletteCycle
-	.type Graphics_AdvancePaletteCycle, %function
-	.thumb_func
-Graphics_AdvancePaletteCycle:
-	.incbin "baserom.gba", 0x00126be4, 0x00000130
 	.section .rom.0013fd84, "ax"
 	.global BattleEffect_RunCruelRuin
 	.type BattleEffect_RunCruelRuin, %function
@@ -502,12 +476,6 @@ Func_081a729c:
 	.thumb_func
 Title_NoOpPalette:
 	.incbin "baserom.gba", 0x001a7534, 0x00000004
-	.section .rom.001ac15c, "ax"
-	.global LuckyDice_Run
-	.type LuckyDice_Run, %function
-	.thumb_func
-LuckyDice_Run:
-	.incbin "baserom.gba", 0x001ac15c, 0x000011ec
 	.section .rom.001b8272, "ax"
 	.incbin "baserom.gba", 0x001b8272, 0x00000002
 	.section .rom.001c075a, "ax"

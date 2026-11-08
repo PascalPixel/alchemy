@@ -30,12 +30,6 @@ Func_0802b998:
 	.incbin "baserom.gba", 0x000394e6, 0x00000002
 	.section .rom.0003972a, "ax"
 	.incbin "baserom.gba", 0x0003972a, 0x00000002
-	.section .rom.00039864, "ax"
-	.global Message_StepScript
-	.type Message_StepScript, %function
-	.thumb_func
-Message_StepScript:
-	.incbin "baserom.gba", 0x00039864, 0x00000650
 	.section .rom.0003a42a, "ax"
 	.incbin "baserom.gba", 0x0003a42a, 0x00000002
 	.section .rom.0003aaae, "ax"
@@ -43,13 +37,13 @@ Message_StepScript:
 	.section .rom.0003ac2c, "ax"
 	.incbin "baserom.gba", 0x0003ac2c, 0x0000001c
 	.section .rom.0003aea0, "ax"
-	.incbin "baserom.gba", 0x0003aea0, 0x000001a4
-	.section .rom.0003b044, "ax"
-	.global Message_Decode
-	.type Message_Decode, %function
+	.global Func_0803aed8
+	.type Func_0803aed8, %function
 	.thumb_func
-Message_Decode:
-	.incbin "baserom.gba", 0x0003b044, 0x00000768
+Func_0803aed8:
+	.incbin "baserom.gba", 0x0003aea0, 0x000001a4
+	.section .rom.0003b7aa, "ax"
+	.incbin "baserom.gba", 0x0003b7aa, 0x00000002
 	.section .rom.0003bb6e, "ax"
 	.incbin "baserom.gba", 0x0003bb6e, 0x00000002
 	.global Func_0803bb58
@@ -75,12 +69,6 @@ Menu_OpenWorkspaceOptions:
 	.incbin "baserom.gba", 0x00040aa6, 0x00000002
 	.section .rom.0004172a, "ax"
 	.incbin "baserom.gba", 0x0004172a, 0x00000002
-	.section .rom.0004172c, "ax"
-	.global Text_DrawStringAsTiles
-	.type Text_DrawStringAsTiles, %function
-	.thumb_func
-Text_DrawStringAsTiles:
-	.incbin "baserom.gba", 0x0004172c, 0x000003fc
 	.section .rom.0004207a, "ax"
 	.incbin "baserom.gba", 0x0004207a, 0x00000002
 	.section .rom.000421f2, "ax"
@@ -106,12 +94,6 @@ Func_080426e0:
 	.thumb_func
 Func_08043cd8:
 	.incbin "baserom.gba", 0x00043d44, 0x0000066c
-	.section .rom.00044e54, "ax"
-	.global Func_08044dc8
-	.type Func_08044dc8, %function
-	.thumb_func
-Func_08044dc8:
-	.incbin "baserom.gba", 0x00044e54, 0x00000184
 	.section .rom.00045346, "ax"
 	.incbin "baserom.gba", 0x00045346, 0x00000002
 	.section .rom.000455b2, "ax"
@@ -217,52 +199,6 @@ Func_080d784c:
 	.incbin "baserom.gba", 0x000e499a, 0x00000002
 	.section .rom.000e4d4e, "ax"
 	.incbin "baserom.gba", 0x000e4d4e, 0x00000002
-	.section .rom.000e4d9c, "ax"
-	.global Func_080dbda8
-	.type Func_080dbda8, %function
-	.thumb_func
-Func_080dbda8:
-	.incbin "baserom.gba", 0x000e4d9c, 0x00000020
-	.section .rom.000e4dbc, "ax"
-	.global Func_080dbdc8
-	.type Func_080dbdc8, %function
-	.thumb_func
-Func_080dbdc8:
-	.incbin "baserom.gba", 0x000e4dbc, 0x0000000c
-	.section .rom.000e4dc8, "ax"
-	.global Func_080dbdd4
-	.type Func_080dbdd4, %function
-	.thumb_func
-Func_080dbdd4:
-	.incbin "baserom.gba", 0x000e4dc8, 0x00000014
-	.section .rom.000e4ddc, "ax"
-	.global Func_080dbde8
-	.type Func_080dbde8, %function
-	.thumb_func
-Func_080dbde8:
-	.incbin "baserom.gba", 0x000e4ddc, 0x0000000c
-	.section .rom.000e4de8, "ax"
-	.global Func_080dbdf4
-	.type Func_080dbdf4, %function
-	.thumb_func
-Func_080dbdf4:
-	.incbin "baserom.gba", 0x000e4de8, 0x00000014
-	.section .rom.000e4dfc, "ax"
-	.global Func_080dbe08
-	.type Func_080dbe08, %function
-	.thumb_func
-Func_080dbe08:
-	.incbin "baserom.gba", 0x000e4dfc, 0x0000003c
-	.section .rom.000e4e38, "ax"
-	.global Func_080dbe44
-	.type Func_080dbe44, %function
-	.thumb_func
-Func_080dbe44:
-	.incbin "baserom.gba", 0x000e4e38, 0x0000003c
-	.section .rom.000e4e74, "ax"
-	.global Func_080dbe80
-Func_080dbe80:
-	.incbin "baserom.gba", 0x000e4e74, 0x00000050
 	.section .rom.000e651a, "ax"
 	.incbin "baserom.gba", 0x000e651a, 0x00000002
 	.section .rom.000e6a22, "ax"
@@ -576,19 +512,6 @@ BattleEffect_RunOdyssey:
 	.thumb_func
 BattleEffect_RunIris:
 	.incbin "baserom.gba", 0x00192c9c, 0x00002e00
-	.section .rom.001ac15c, "ax"
-	.global LuckyDice_Run
-	.type LuckyDice_Run, %function
-	.thumb_func
-LuckyDice_Run:
-	.incbin "baserom.gba", 0x001ac15c, 0x000011ec
-	.section .rom.001b243c, "ax"
-	.balign 4
-	.global Func_081b243c
-	.type Func_081b243c, %function
-	.thumb_func
-Func_081b243c:
-	.incbin "baserom.gba", 0x001b243c, 0x00000e98
 	.section .rom.001b8272, "ax"
 	.incbin "baserom.gba", 0x001b8272, 0x00000002
 	.section .rom.001c075a, "ax"

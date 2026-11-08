@@ -10,23 +10,23 @@ msgstr ""
 "X-Alchemy-Symbol-Count: 253\n"
 "X-Alchemy-Target: tla-de\n"
 
-msgctxt "message"
+msgctxt "MsgSaveNoData"
 msgid "00000"
 msgstr "(Keine Datei)"
 
-msgctxt "message"
+msgctxt "MsgSaveContinue"
 msgid "00001"
 msgstr "(Von einem Heiligtum aus forts.)"
 
-msgctxt "message"
+msgctxt "MsgSaveNotCleared"
 msgid "00002"
 msgstr "(Noch nicht beendet)"
 
-msgctxt "message"
+msgctxt "MsgSaveCorrupted"
 msgid "00003"
 msgstr "(Die Datei ist fehlerhaft)"
 
-msgctxt "message"
+msgctxt "MsgSavePostReunion"
 msgid "00004"
 msgstr "(Daten nach Wiederverein.)"
 
@@ -19877,7 +19877,7 @@ msgctxt "message"
 msgid "04871"
 msgstr "{button_icon:1}: Wählen"
 
-msgctxt "message"
+msgctxt "MsgWindowColorLabel"
 msgid "04872"
 msgstr "Farbe des Fensters"
 
@@ -19901,7 +19901,7 @@ msgctxt "message"
 msgid "04877"
 msgstr "Schnell"
 
-msgctxt "message"
+msgctxt "MsgMessageSpeedLabel"
 msgid "04878"
 msgstr "Text-"
 
@@ -19909,7 +19909,7 @@ msgctxt "message"
 msgid "04879"
 msgstr "Geschw."
 
-msgctxt "message"
+msgctxt "MsgSpeechLabel"
 msgid "04880"
 msgstr "Sprache"
 
@@ -19921,7 +19921,7 @@ msgctxt "message"
 msgid "04882"
 msgstr "Ein"
 
-msgctxt "message"
+msgctxt "MsgAutoSleepLabel"
 msgid "04883"
 msgstr "Auto-Schlaf"
 

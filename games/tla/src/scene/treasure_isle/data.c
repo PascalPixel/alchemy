@@ -1,6 +1,14 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"
+#include "edition.h"
+
+// The Rusty Sword's name; the Japanese edition holds message 0 in its place.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define RUSTY_SWORD_MESSAGE 0
+#else
+#define RUSTY_SWORD_MESSAGE MSGNO(MsgRustySword2)
+#endif
 
 void Func_020005ac(void);
 void Func_02000684(void);
@@ -299,7 +307,7 @@ s32 gData_020018f4[] = {
     0x602,
     0x205002a,
     (s32)Func_02000f4c,
-    MSGNO(MsgRustySword2),
+    RUSTY_SWORD_MESSAGE,
     (s32)0xffff0017,
     (s32)Func_02000864,
     0x8c15,

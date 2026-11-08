@@ -43,13 +43,13 @@ Message_StepScript:
 	.section .rom.0003ac2c, "ax"
 	.incbin "baserom.gba", 0x0003ac2c, 0x0000001c
 	.section .rom.0003aea0, "ax"
-	.incbin "baserom.gba", 0x0003aea0, 0x00000144
-	.section .rom.0003afe4, "ax"
-	.global Message_Decode
-	.type Message_Decode, %function
+	.global Func_0803aed8
+	.type Func_0803aed8, %function
 	.thumb_func
-Message_Decode:
-	.incbin "baserom.gba", 0x0003afe4, 0x000007cc
+Func_0803aed8:
+	.incbin "baserom.gba", 0x0003aea0, 0x00000144
+	.section .rom.0003b7ae, "ax"
+	.incbin "baserom.gba", 0x0003b7ae, 0x00000002
 	.section .rom.0003b934, "ax"
 	.global Text_MeasureEntry
 	.type Text_MeasureEntry, %function
@@ -577,12 +577,6 @@ BattleEffect_RunOdyssey:
 	.thumb_func
 BattleEffect_RunIris:
 	.incbin "baserom.gba", 0x00192c9c, 0x00002e00
-	.section .rom.001ac15c, "ax"
-	.global LuckyDice_Run
-	.type LuckyDice_Run, %function
-	.thumb_func
-LuckyDice_Run:
-	.incbin "baserom.gba", 0x001ac15c, 0x000011ec
 	.section .rom.001b8272, "ax"
 	.incbin "baserom.gba", 0x001b8272, 0x00000002
 	.section .rom.001c075a, "ax"

@@ -30,24 +30,18 @@ Func_0802b998:
 	.incbin "baserom.gba", 0x000394e6, 0x00000002
 	.section .rom.0003972a, "ax"
 	.incbin "baserom.gba", 0x0003972a, 0x00000002
-	.section .rom.00039864, "ax"
-	.global Message_StepScript
-	.type Message_StepScript, %function
-	.thumb_func
-Message_StepScript:
-	.incbin "baserom.gba", 0x00039864, 0x00000638
 	.section .rom.0003a412, "ax"
 	.incbin "baserom.gba", 0x0003a412, 0x00000002
 	.section .rom.0003aa96, "ax"
 	.incbin "baserom.gba", 0x0003aa96, 0x00000002
 	.section .rom.0003ae6c, "ax"
-	.incbin "baserom.gba", 0x0003ae6c, 0x000001b8
-	.section .rom.0003b024, "ax"
-	.global Message_Decode
-	.type Message_Decode, %function
+	.global Func_0803aed8
+	.type Func_0803aed8, %function
 	.thumb_func
-Message_Decode:
-	.incbin "baserom.gba", 0x0003b024, 0x00000778
+Func_0803aed8:
+	.incbin "baserom.gba", 0x0003ae6c, 0x000001b8
+	.section .rom.0003b79a, "ax"
+	.incbin "baserom.gba", 0x0003b79a, 0x00000002
 	.section .rom.0003b920, "ax"
 	.global Text_MeasureEntry
 	.type Text_MeasureEntry, %function
@@ -266,12 +260,6 @@ Func_080f9644:
 	.thumb_func
 Func_080ffcd4:
 	.incbin "baserom.gba", 0x00101e24, 0x00000230
-	.section .rom.0010238c, "ax"
-	.global Func_0810021c
-	.type Func_0810021c, %function
-	.thumb_func
-Func_0810021c:
-	.incbin "baserom.gba", 0x0010238c, 0x0000029c
 	.section .rom.001028a8, "ax"
 	.balign 4
 	.global Func_08100738
@@ -507,12 +495,6 @@ BattleEffect_RunOdyssey:
 	.thumb_func
 BattleEffect_RunIris:
 	.incbin "baserom.gba", 0x00192c9c, 0x00002e00
-	.section .rom.001ac15c, "ax"
-	.global LuckyDice_Run
-	.type LuckyDice_Run, %function
-	.thumb_func
-LuckyDice_Run:
-	.incbin "baserom.gba", 0x001ac15c, 0x000011ec
 	.section .rom.001b8272, "ax"
 	.incbin "baserom.gba", 0x001b8272, 0x00000002
 	.section .rom.001c075a, "ax"

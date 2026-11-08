@@ -10,7 +10,7 @@ msgstr ""
 "X-Alchemy-Symbol-Count: 408\n"
 "X-Alchemy-Target: tla-ja\n"
 
-msgctxt "MsgRustySword2"
+msgctxt "MsgSaveNoData"
 msgid "00000"
 msgstr "(きろくされてません)"
 
@@ -4145,7 +4145,7 @@ msgctxt "message"
 msgid "01023"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgRustySword2"
 msgid "01024"
 msgstr "さびたソード"
 
@@ -12873,7 +12873,7 @@ msgctxt "message"
 msgid "03202"
 msgstr "{argument_actor_name:234} すばやくかわした!"
 
-msgctxt "message"
+msgctxt "MsgPartyDefeated"
 msgid "03203"
 msgstr "{protagonist_name}たちは 戦いに やぶれた・・・"
 
@@ -12897,7 +12897,7 @@ msgctxt "MsgGotItem"
 msgid "03208"
 msgstr "{argument_item_name:134} 手に入れた"
 
-msgctxt "message"
+msgctxt "MsgGoesDownInDefeat"
 msgid "03209"
 msgstr "{protagonist_name}は 戦いに やぶれた・・・"
 
@@ -12967,7 +12967,7 @@ msgctxt "MsgCannotEscape"
 msgid "03225"
 msgstr "しかし にげられなかった!"
 
-msgctxt "message"
+msgctxt "MsgNoTimeToRun"
 msgid "03226"
 msgstr "ここで にげるわけにはいかない!"
 
@@ -16856,7 +16856,7 @@ msgctxt "message"
 msgid "04148"
 msgstr "クラスエナジー"
 
-msgctxt "message"
+msgctxt "MsgSwitchCharacterHelp"
 msgid "04149"
 msgstr "LR:キャラへんこう"
 
@@ -17912,7 +17912,7 @@ msgctxt "message"
 msgid "04404"
 msgstr "Aボタン:けってい"
 
-msgctxt "message"
+msgctxt "MsgWindowColorLabel"
 msgid "04405"
 msgstr "ウインドウカラー"
 
@@ -17920,11 +17920,11 @@ msgctxt "message"
 msgid "04406"
 msgstr "ウインドウのあかるさ"
 
-msgctxt "message"
+msgctxt "MsgMessageSpeedLabel"
 msgid "04407"
 msgstr "メッセージスピード"
 
-msgctxt "message"
+msgctxt "MsgKey113b"
 msgid "04408"
 msgstr "おそい"
 
@@ -17936,11 +17936,11 @@ msgctxt "message"
 msgid "04410"
 msgstr "はやい"
 
-msgctxt "message"
+msgctxt "MsgSpeechLabel"
 msgid "04411"
 msgstr "かいわおん"
 
-msgctxt "message"
+msgctxt "MsgKey1141"
 msgid "04412"
 msgstr "なし"
 
@@ -17948,11 +17948,11 @@ msgctxt "message"
 msgid "04413"
 msgstr "あり"
 
-msgctxt "message"
+msgctxt "MsgAutoSleepLabel"
 msgid "04414"
 msgstr "じどうスリープ"
 
-msgctxt "message"
+msgctxt "MsgKey1144"
 msgid "04415"
 msgstr "OFF"
 
@@ -17960,7 +17960,7 @@ msgctxt "message"
 msgid "04416"
 msgstr "ON"
 
-msgctxt "message"
+msgctxt "MsgKey1146"
 msgid "04417"
 msgstr "ウインドウバックのいろあいちょうせい"
 
@@ -18071,7 +18071,7 @@ msgstr ""
 "SELECT+L+Rで\n"
 "もとのがめんに もどります{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKey1161"
 msgid "04444"
 msgstr ""
 "スリープモードからは\n"
@@ -18912,7 +18912,7 @@ msgctxt "MsgPriceHeading"
 msgid "04652"
 msgstr "うりね"
 
-msgctxt "message"
+msgctxt "MsgShopCannotEquip"
 msgid "04653"
 msgstr "そうびできません"
 
@@ -18952,7 +18952,7 @@ msgctxt "MsgCannotRemoveIt"
 msgid "04662"
 msgstr "はずせません!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShopStatLabel"
 msgid "04663"
 msgstr "こうげき"
 
@@ -19205,7 +19205,7 @@ msgctxt "MsgRepairAnythingElse"
 msgid "04709"
 msgstr "ほかにも しゅうりするかい?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgLetMeGiveYouThis"
 msgid "04710"
 msgstr ""
 "かってくれた おれいに\n"
@@ -19217,7 +19217,7 @@ msgstr ""
 "{argument_item_name:134}\n"
 "だれに わたすんだい?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDontWantIt"
 msgid "04712"
 msgstr "なんだよ! いらないのかい {page_break}"
 

@@ -103,16 +103,6 @@ void System_WaitForFrameInterrupt(void) {
 #define SLEEP_IDLE_FRAMES 10800
 #define RGB_WHITE 0x7fff
 
-#undef Io_Write16
-#define Io_Write16(value_, reg_)                                               \
-  do {                                                                         \
-    /* FAKEMATCH: plain halfword stores pool the sleep constants; a            \
-     * word-valued temporary */                                                \
-    /* preserves their measured register construction. */                      \
-    u32 word_ = (u16)(value_);                                                 \
-    *(reg_) = word_;                                                           \
-  } while (0)
-
 static __inline__ void System_Reset(void) {
   /* FAKEMATCH: the ordinary indirect call uses r5/r6 and returns through LR;
    * this register carries the native ARM restart target in r4. */
@@ -244,8 +234,8 @@ void wait(s32 frames) {
           System_WaitForFrameInterrupt();
         while (gInput.held)
           System_WaitForFrameInterrupt();
-        Io_Write16(display, &REG_DISPCNT);
-        Io_Write16(backdrop, &PLTT_BACKDROP);
+        Io_Write16((u16)display, &REG_DISPCNT);
+        Io_Write16((u16)backdrop, &PLTT_BACKDROP);
         gSleepRequested = 0;
         gIdleFrameCount = 0;
       } else
@@ -494,11 +484,3 @@ void Input_HandleKeyInterrupt(void) {
 #undef INPUT_KEY_REPEAT_FIRST
 #undef INPUT_KEY_REPEAT_NEXT
 #undef SOUND_PRESET_COUNT
-// wait()'s Io_Write16 above stands in for io_write.h's; the parts after this
-// one write through io_write.h's again.
-#undef Io_Write16
-#define Io_Write16(v, reg)                                                     \
-  do {                                                                         \
-    u32 value_ = (v);                                                          \
-    *(reg) = value_;                                                           \
-  } while (0)

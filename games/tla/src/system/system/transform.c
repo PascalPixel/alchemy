@@ -431,10 +431,9 @@ struct ProjectedPoint {
   s32 z;
 };
 
-// The Broken Seal's typed inline from iwram_call.h, the layer every call goes
-// through there.
-#undef Iwram_TransformVector
-static inline void Iwram_TransformVector(const void *vector, s32 *result) {
+// The Broken Seal's typed Iwram_TransformVector inline from iwram_call.h, the
+// layer every call goes through there.
+static inline void Render_TransformVector(const void *vector, s32 *result) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to the
    * fixed entry, 4 of 82 instructions differ in tla-en. */
   Iwram_TransformVectorEntry(vector, result);
@@ -448,7 +447,7 @@ s32 Render_ProjectPoint(const void *point, struct ProjectedPoint *screen) {
   s32 x;
   s32 y;
 
-  Iwram_TransformVector(point, &view.x);
+  Render_TransformVector(point, &view.x);
   depth = -view.z;
   projection = (struct Projection *)gCameraSceneParameters;
   if (depth >= projection->near && depth <= projection->far) {
@@ -474,7 +473,3 @@ s32 Render_ProjectPoint(const void *point, struct ProjectedPoint *screen) {
 #undef COS
 #undef FixedSqrt
 #undef RelocatedQ16DotProduct
-// Render_ProjectPoint's inline above stands in for iwram_call.h's
-// Iwram_TransformVector; the parts after this one call the entry directly
-// again.
-#define Iwram_TransformVector Iwram_TransformVectorEntry

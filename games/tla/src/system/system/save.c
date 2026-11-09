@@ -4,13 +4,11 @@
 
 #include "../system_internal.h"
 
-// serial.h's START_DMA writes DMA3's registers itself; the save code's starts
-// each DMA through Dma_Set.
-#undef START_DMA
-#define DMA3 ((volatile struct DmaRegisters *)&REG_DMA3SAD)
+// The save code starts each DMA through Dma_Set, where serial.h's START_DMA
+// writes DMA3's registers itself.
 #define DMA3_BUSY (DMA_ENABLE << 16)
 
-#define START_DMA(source_, destination_, control_)                             \
+#define SAVE_START_DMA(source_, destination_, control_)                        \
   Dma_Set((const void *)(source_), (void *)(destination_), (control_), REG_DMA3)
 
 static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
@@ -60,7 +58,7 @@ s32 Func_0801596c(void) {
     work->partId[index] = 16;
     work->counter[index] = 0;
     status = Save_ReadSector(index);
-    START_DMA(work->slot, &header, DMA_COPY_WORDS(4));
+    SAVE_START_DMA(work->slot, &header, DMA_COPY_WORDS(4));
     WAIT_DMA();
     slot = &header;
 
@@ -159,7 +157,7 @@ s32 Save_ReadSector(s32 index) {
   ReadFlash(index, 0, work->slot, 0x1000);
   ReadFlash(index + 1, 0, work->slot + 0x1000, 0x1000);
   ReadFlash(index + 2, 0, work->slot + 0x2000, 0x1000);
-  START_DMA(work->slot, &header, DMA_COPY_WORDS(4));
+  SAVE_START_DMA(work->slot, &header, DMA_COPY_WORDS(4));
   WAIT_DMA();
   return (u16)Save_ChecksumSector() - header.checksum;
 }
@@ -172,23 +170,23 @@ s32 Func_08015ca4(s32 partId, void *source) {
   u32 sector;
 
   zero = 0;
-  START_DMA(&zero, work->slot,
-            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
-                (sizeof(work->slot) / 4));
+  SAVE_START_DMA(&zero, work->slot,
+                 (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
+                     (sizeof(work->slot) / 4));
   WAIT_DMA();
   current = Save_FindLatestSector(partId);
   sector = Save_SelectWriteSector(partId);
   if (sector > 14)
     return 1;
-  START_DMA(source, work->slot + 16,
-            DMA_COPY_WORDS((sizeof(work->slot) - 16) / 4));
+  SAVE_START_DMA(source, work->slot + 16,
+                 DMA_COPY_WORDS((sizeof(work->slot) - 16) / 4));
   WAIT_DMA();
-  START_DMA(gSave_HeaderTemplate, &header, DMA_COPY_WORDS(2));
+  SAVE_START_DMA(gSave_HeaderTemplate, &header, DMA_COPY_WORDS(2));
   WAIT_DMA();
   header.partId = partId;
   header.checksum = Save_ChecksumSector();
   header.counter = Save_GetLatestCounter(partId) + 1;
-  START_DMA(&header, work->slot, DMA_COPY_WORDS(4));
+  SAVE_START_DMA(&header, work->slot, DMA_COPY_WORDS(4));
   WAIT_DMA();
   work->sectorCount = 0;
   work->sectorTotal = 3;
@@ -200,7 +198,7 @@ s32 Func_08015ca4(s32 partId, void *source) {
     return 3;
   if (header.counter > 0xfde8) {
     header.counter = 1;
-    START_DMA(&header, work->slot, DMA_COPY_WORDS(4));
+    SAVE_START_DMA(&header, work->slot, DMA_COPY_WORDS(4));
     WAIT_DMA();
     if (Save_WriteSector(current) != 0)
       return 4;
@@ -222,8 +220,8 @@ u32 Save_ReadPart(s32 partId, void *destination) {
   if (index > 14)
     return 1;
   Save_ReadSector(index);
-  START_DMA(work->slot + 16, destination,
-            DMA_COPY_WORDS((sizeof(work->slot) - 16) / 4));
+  SAVE_START_DMA(work->slot + 16, destination,
+                 DMA_COPY_WORDS((sizeof(work->slot) - 16) / 4));
   WAIT_DMA();
   return 0;
 }
@@ -290,13 +288,14 @@ s32 Save_InvalidateSector(s32 index) {
   volatile u32 zero;
 
   zero = 0;
-  START_DMA(&zero, &header, (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 4);
+  SAVE_START_DMA(&zero, &header,
+                 (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 4);
   WAIT_DMA();
-  START_DMA(gSave_HeaderTemplate, &header, DMA_COPY_WORDS(2));
+  SAVE_START_DMA(gSave_HeaderTemplate, &header, DMA_COPY_WORDS(2));
   WAIT_DMA();
   header.partId = 16;
   header.counter = 0;
-  START_DMA(&header, work->slot, DMA_COPY_WORDS(4));
+  SAVE_START_DMA(&header, work->slot, DMA_COPY_WORDS(4));
   WAIT_DMA();
   if (Save_WriteSector(index) != 0)
     return 1;
@@ -388,11 +387,4 @@ void Save_ReleaseWork(void) {
 
 #undef DMA3_BUSY
 #undef WAIT_DMA
-// The parts after this one start a DMA through serial.h's START_DMA again.
-#undef START_DMA
-#define START_DMA(source_, destination_, control_)                             \
-  do {                                                                         \
-    DMA3->source = (u32)(source_);                                             \
-    DMA3->destination = (u32)(destination_);                                   \
-    DMA3->control = (control_);                                                \
-  } while (0)
+#undef SAVE_START_DMA

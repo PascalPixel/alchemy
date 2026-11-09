@@ -1,13 +1,11 @@
 #include "local.h"
 
-void Vector_AddPolarOffsetFar(s32 distance, s32 angle, s32 *vector);
 struct Actor *Actor_FindInCell(s32 *position, struct Actor *self);
 void Func_02004d40(void);
 void Func_02004d48(void);
-void Func_02004f30(s32 sound);
 
 void Func_020011fc(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *target;
   s32 position[3];
   s32 stepX;
@@ -18,15 +16,15 @@ void Func_020011fc(void) {
   position[0] = (leader->x & 0xfff00000) + 0x80000;
   position[1] = leader->y - 0x100000;
   position[2] = (leader->z & 0xfff00000) + 0x80000;
-  Vector_AddPolarOffsetFar(0x200000, angle, position);
+  FieldVector_AddPolarOffset(0x200000, angle, position);
   target = Actor_FindInCell(position, leader);
   if (target == 0)
     return;
   Func_02004d40();
-  Func_02004e90(0);
+  FieldEvent_ResolvePendingActions(0);
   Func_02004c98(leader, 6);
-  wait(6);
-  Func_02004f30(152);
+  System_Wait(6);
+  Event_PlaySound(152);
   Func_02004c98(leader, 7);
   leader->speedLimit = 0x30000;
   leader->acceleration = 0x20000;
@@ -41,7 +39,7 @@ void Func_020011fc(void) {
     leader->z += target->z - position[2] + stepZ;
     position[0] = target->x;
     position[2] = target->z;
-    wait(1);
+    System_Wait(1);
     i++;
   } while (i != 12);
   leader->x = target->x;

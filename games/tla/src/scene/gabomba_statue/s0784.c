@@ -31,7 +31,7 @@ void Func_02000784(void) {
     dz = actor->z - table->z;
     back = -turn;
     {
-      s32 s = Math_Sine(back);
+      s32 s = Math_Sin(back);
       s32 c = Math_Cosine(back);
       x = table->x + Iwram_MulQ16(c, dx) + Iwram_MulQ16(s, dz);
       z = table->z - Iwram_MulQ16(s, dx) + Iwram_MulQ16(c, dz);
@@ -42,7 +42,7 @@ void Func_02000784(void) {
     if (Func_02005684(actor, &test) == 0) {
       s32 s, c, angle;
       angle = 0x1555 - turn;
-      s = Math_Sine(angle);
+      s = Math_Sin(angle);
       c = Math_Cosine(angle);
       tx = table->x + Iwram_MulQ16(c, dx) + Iwram_MulQ16(s, dz);
       tz = table->z - Iwram_MulQ16(s, dx) + Iwram_MulQ16(c, dz);
@@ -51,7 +51,7 @@ void Func_02000784(void) {
       if (Func_02005684(actor, &test) == 0) {
         s32 s, c, angle;
         angle = back - 0x1555;
-        s = Math_Sine(angle);
+        s = Math_Sin(angle);
         c = Math_Cosine(angle);
         tx = table->x + Iwram_MulQ16(c, dx) + Iwram_MulQ16(s, dz);
         tz = table->z - Iwram_MulQ16(s, dx) + Iwram_MulQ16(c, dz);

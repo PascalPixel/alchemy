@@ -6,34 +6,20 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "field_effect.h"
-#include "call.h"
+#include "event_inline.h"
 
 extern char SceneId_Ov692Room2;
 extern char SceneId_Ov692Room3;
 extern char SceneId_Ov692Room5;
 extern const s32 gData_0200502c[];
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
 void Func_02004d40(void);
 void Func_02004d48(void);
-void Func_02004d18(void);
-void Func_02004e90(s32 value);
-void Func_02004f30(s32 sound);
-void Func_02004d10(s32 a, s32 b, s32 c);
-void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
-void Actor_SetSpritePriority(u32 id, s32 variant);
-void Actor_SetModeById(u32 id, s32 mode);
 void Func_02000694(s32 layer, s32 x, s32 z, s32 mask);
-void Func_02004cd8(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 u32 Random16Far(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
-void Vector_AddPolarOffsetFar(s32 distance, s32 angle, s32 *vector);
 
 /// A Magma Rock room's opening event: the leader is centred on its cell, the
 /// screen shakes, and by room (2, 3 or 5, the last by entrance) it picks the
@@ -42,7 +28,7 @@ void Vector_AddPolarOffsetFar(s32 distance, s32 angle, s32 *vector);
 /// of six effects rise along the opening while it widens and the blend fades
 /// over 64 steps. Then the cells close again and the leader steps back a cell.
 void Func_02001828(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   u32 facing = (leader->angle + 0x2000) & 0xc000;
   s32 position[3];
   struct EffectOptions options;
@@ -62,21 +48,21 @@ void Func_02001828(void) {
    * builds its own constants and stack arguments; as direct calls, 163 of 496
    * instructions differ in tla-en. */
   Func_02004d40();
-  Func_02004e90(0);
+  FieldEvent_ResolvePendingActions(0);
   // One local reused for the position's address, the loop counters and the
   // owner's address: the native keeps all of them in r6.
   j = (u32)position;
   ((s32 *)j)[0] = (leader->x & 0xfff00000) + 0x80000;
   ((s32 *)j)[2] = (leader->z & 0xfff00000) + 0x80000;
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, ((s32 *)j)[0] >> 16,
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, ((s32 *)j)[0] >> 16,
                             ((s32 *)j)[2] >> 16);
   FieldEvent_Wait(20);
-  Func_02004f30(584);
+  Event_PlaySound(584);
   flags = &leader->priorityFlags;
   *flags &= ~64;
   FieldEvent_Wait(20);
-  Call3((void (*)())Func_02004d10, 0x10000, 0x20000, 0x10000);
-  Func_02004f30(107);
+  MapGrid_SetShake(0x10000, 0x20000, 0x10000);
+  Event_PlaySound(107);
   FieldEvent_Wait(30);
   // Each test reads the scene again: the native reloads gMainRoutineWork for
   // room 3's test and reuses that load for room 5's.
@@ -88,14 +74,14 @@ void Func_02001828(void) {
     baseX = 160 << 17;
     ((s32 *)j)[1] = 0;
     ((s32 *)j)[2] = 212 << 17;
-    if (Value1((s32 (*)())GameFlag_Test, 768))
+    if (Event_GetFlag(768))
       open = 212;
-    GameFlag_ClearBit(768);
+    Event_ClearFlag(768);
     facing = 0;
     ((s32 (*)())Func_02000694)(0, 15, 13, 64);
-    Actor_SetSpritePriority(15, 3);
+    FieldActor_SetSpritePriority(15, 3);
     for (j = 0; j != 7; j++)
-      Actor_SetModeById(j + 9, 1);
+      Actor_SetAnimation(j + 9, 1);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room3) {
     srcX = 28;
     i = 83;
@@ -104,12 +90,12 @@ void Func_02001828(void) {
     baseX = 224 << 17;
     ((s32 *)j)[1] = 0;
     ((s32 *)j)[2] = 172 << 17;
-    if (Value1((s32 (*)())GameFlag_Test, 769))
+    if (Event_GetFlag(769))
       open = 212;
-    GameFlag_ClearBit(769);
+    Event_ClearFlag(769);
     ((s32 (*)())Func_02000694)(0, 24, 15, 64);
     ((s32 (*)())Func_02000694)(0, 9, 16, 64);
-    Actor_SetModeById(11, 4);
+    Actor_SetAnimation(11, 4);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room5) {
     // The native tests and clears flag 770 in both arms.
     if (gMainRoutineWork.entrance <= 8) {
@@ -124,9 +110,9 @@ void Func_02001828(void) {
       baseX = 198 << 18;
       ((s32 *)j)[1] = 0;
       ((s32 *)j)[2] = 216 << 16;
-      if (Value1((s32 (*)())GameFlag_Test, 770))
+      if (Event_GetFlag(770))
         open = 212;
-      GameFlag_ClearBit(770);
+      Event_ClearFlag(770);
     } else {
       srcX = 51;
       i = 104;
@@ -135,21 +121,21 @@ void Func_02001828(void) {
       baseX = 206 << 18;
       ((s32 *)j)[1] = 0;
       ((s32 *)j)[2] = 170 << 18;
-      if (Value1((s32 (*)())GameFlag_Test, 770))
+      if (Event_GetFlag(770))
         open = 212;
-      GameFlag_ClearBit(770);
+      Event_ClearFlag(770);
     }
   }
-  Func_02004f30(181);
-  Call3((void (*)())Func_02004d10, 0x50000, 0x70000, 0x10000);
-  Call3((void (*)())Func_02004d10, -1, -1, 0xe666);
+  Event_PlaySound(181);
+  MapGrid_SetShake(0x50000, 0x70000, 0x10000);
+  MapGrid_SetShake(-1, -1, 0xe666);
   rowAbove = i - 1;
-  Call6((void (*)())Func_02004cd8, srcX, i, srcX, rowAbove, 3, 4);
+  MapGrid_CopyCellsTo(srcX, i, srcX, rowAbove, 3, 4);
   if (open == 0) {
-    Func_02004d18();
+    MapGrid_WaitForShakeToSettle();
     FieldEvent_Wait(20);
   } else {
-    Call3((void (*)())Func_02004d10, 0x20000, 0x10000, 0x10000);
+    MapGrid_SetShake(0x20000, 0x10000, 0x10000);
     options.type = 403;
     options.priority = 2;
     options.palette = 10;
@@ -163,25 +149,25 @@ void Func_02001828(void) {
         Func_0200015c(p[0], p[1], p[2] + (i << 18) + 0x170000, 0, 0x10000, 0,
                       0x330000, &options);
       }
-      wait(3);
-      Call6((void (*)())Func_02004cd8, 75, 64, dstX, dstZ, 3, (i >> 1) + 1);
+      System_Wait(3);
+      MapGrid_CopyCellsTo(75, 64, dstX, dstZ, 3, (i >> 1) + 1);
     }
     for (j = 0; j != 64; j++) {
       REG_BLDALPHA = ((j >> 2) << 8) | (16 - (j >> 2));
       REG_BLDCNT = 0x3f44;
-      wait(3);
+      System_Wait(3);
     }
-    Call6((void (*)())Func_02004cd8, 78, 64, dstX, dstZ, 3, 5);
+    MapGrid_CopyCellsTo(78, 64, dstX, dstZ, 3, 5);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room2)
-    Actor_GetById(15)->priorityFlags |= 1;
-  Func_02004f30(288);
-  Func_02004f30(181);
-  Func_02004d10(0x50000, 0x70000, 0x10000);
-  Call3((void (*)())Func_02004d10, -1, -1, 0xe666);
-  Call6((void (*)())Func_02004cd8, 72, 63, srcX, rowAbove, 3, 4);
-  Func_02004d18();
-  Func_02004f30(584);
+    Actor_Get(15)->priorityFlags |= 1;
+  Event_PlaySound(288);
+  Event_PlaySound(181);
+  MapGrid_SetShake(0x50000, 0x70000, 0x10000);
+  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_CopyCellsTo(72, 63, srcX, rowAbove, 3, 4);
+  MapGrid_WaitForShakeToSettle();
+  Event_PlaySound(584);
   {
     s32 bit = 64;
     bit |= *flags;
@@ -189,7 +175,7 @@ void Func_02001828(void) {
   }
   FieldEvent_Wait(20);
   j = (u32)&gMainRoutineWork.currentOwner;
-  Actor_GetById(*(s32 *)j)->actionFlags &= ~1;
+  Actor_Get(*(s32 *)j)->actionFlags &= ~1;
   /* FAKEMATCH(temporary): the position's address held in a pointer, so that
    * the two halfword reads are taken from it as the native does (movs r2, #2;
    * ldrsh r1, [r5, r2]); as position[] and ((s16 *)position)[1], 37 of 496
@@ -198,10 +184,9 @@ void Func_02001828(void) {
   p[0] = (leader->x & 0xfff00000) + 0x80000;
   p[1] = leader->y;
   p[2] = (leader->z & 0xfff00000) + 0x80000;
-  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, (s32)facing ^ 0x8000,
-        (s32)p);
+  FieldVector_AddPolarOffset(0x100000, (s32)facing ^ 0x8000, p);
   leader->angle = facing;
-  Actor_SetPositionAndReset(*(s32 *)j, ((s16 *)p)[1], ((s16 *)p)[5]);
-  Actor_GetById(*(s32 *)j)->actionFlags |= 1;
+  Actor_WalkToAndWait(*(s32 *)j, ((s16 *)p)[1], ((s16 *)p)[5]);
+  Actor_Get(*(s32 *)j)->actionFlags |= 1;
   Func_02004d48();
 }

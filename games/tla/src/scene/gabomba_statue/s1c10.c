@@ -102,5 +102,5 @@ void Func_02001c10(void) {
       Actor_SetSingleChildFlags(object, 0);
     }
   }
-  Task_Add(Func_02001b98, TASK_PASS_VBLANK);
+  Task_AddFrame(Func_02001b98, TASK_PASS_VBLANK);
 }

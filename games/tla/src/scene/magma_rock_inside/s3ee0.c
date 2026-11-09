@@ -7,12 +7,12 @@ s32 Func_02003ee0(void) {
   s32 scene = gMainRoutineWork.scene;
   s32 entrance = gMainRoutineWork.entrance;
 
-  if (!GameFlag_Test(0x109)) {
+  if (!Event_GetFlag(0x109)) {
     if ((scene == (s32)&SceneId_Ov692Room2 && entrance == 8) ||
         (scene == (s32)&SceneId_Ov692Room7 && entrance == 11)) {
-      GameFlag_ClearBit(0x300);
-      GameFlag_ClearBit(0x301);
-      GameFlag_ClearBit(0x302);
+      Event_ClearFlag(0x300);
+      Event_ClearFlag(0x301);
+      Event_ClearFlag(0x302);
     }
   }
   return 0;

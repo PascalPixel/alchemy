@@ -11,9 +11,9 @@ void Func_02003628(void) {
   /* FAKEMATCH: the native stores the entry before it starts the size; without
    * the barrier the size's first half comes first (differ 2). */
   __asm__("");
-  VramCache_Load(gData_02005970.vramEntry, 0x400, buffer);
+  Vram_Load(gData_02005970.vramEntry, 0x400, buffer);
   Heap_Release(buffer);
   priority = 0x41c;
-  Task_Add(Func_020034fc, priority);
-  Sound_Play(220);
+  FieldTask_AddFrame(Func_020034fc, priority);
+  Event_PlaySound(220);
 }

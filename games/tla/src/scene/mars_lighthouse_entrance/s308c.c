@@ -14,7 +14,7 @@ s32 Func_0200308c(struct Actor *object) {
     Func_02004c68(object, 1);
   } else if (frame <= 30) {
     if (frame == 30) {
-      Func_02004de0(136);
+      Event_PlaySound(136);
       Func_02004bc0(object->watchedObject, 2);
     }
   } else if (frame <= 60) {
@@ -27,7 +27,7 @@ s32 Func_0200308c(struct Actor *object) {
     }
   } else {
     Func_02004bc0(object->watchedObject, 1);
-    Func_02004de0(184);
+    Event_PlaySound(184);
     object->y = Map_GetTerrainHeight(0, object->x, object->z);
     object->watchedObject = 0;
     return 0;
@@ -40,7 +40,7 @@ s32 Func_02003138(struct Actor *object) {
   s32 frame = object->action;
 
   if (frame == 0) {
-    Func_02004de0(136);
+    Event_PlaySound(136);
     Func_02004bc0(object->watchedObject, 2);
     object->y = Map_GetTerrainHeight(0, object->x, object->z) + 0x100000;
     object->scaleX = frame;
@@ -58,7 +58,7 @@ s32 Func_02003138(struct Actor *object) {
     }
   } else {
     Func_02004bc0(object->watchedObject, 1);
-    Func_02004de0(184);
+    Event_PlaySound(184);
     object->y = Map_GetTerrainHeight(0, object->x, object->z);
     object->watchedObject = 0;
     return 0;

@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "frame.h"
 #include "actor.h"
+#include "event_inline.h"
 
 struct RideEntry {
   s16 a;
@@ -41,11 +42,9 @@ struct RideWork {
 
 extern u8 gData_020023c4[];
 extern u16 gData_02004cf0[];
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-s32 GameFlag_Test(s32 flag);
 void Func_020041ec(void *handle);
 void Func_0200297c(void);
 void Func_0200236c(void);

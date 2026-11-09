@@ -16,32 +16,32 @@ extern u8 gMainRoutineWork[];
 void Func_02001c24(s32 a0) {
   s32 t0;
 
-  t0 = ((s32)Actor_GetById(FIELD_AT(gMainRoutineWork, s32, 532)));
+  t0 = ((s32)Actor_Get(FIELD_AT(gMainRoutineWork, s32, 532)));
   Func_02004464();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   if (a0 != 0) {
     Actor_SetSingleChildFlags(
-        ((s32)Actor_GetById(FIELD_AT(gMainRoutineWork, s32, 532))), 0);
-    Actor_SetPositionAndResetMotion(t0, (FIELD_AT(t0, s32, 8) + -65536),
+        ((s32)Actor_Get(FIELD_AT(gMainRoutineWork, s32, 532))), 0);
+    FieldActor_SetPositionAndResetMotion(t0, (FIELD_AT(t0, s32, 8) + -65536),
                                     FIELD_AT(t0, s32, 12),
                                     (FIELD_AT(t0, s32, 16) + -393216));
-    wait(1);
+    System_Wait(1);
     Event_StartScreenTransition();
-    Motion_SetModeAndWaitAnimation(FIELD_AT(gMainRoutineWork, s32, 532), 0x17);
+    Actor_SetAnimationAndWait(FIELD_AT(gMainRoutineWork, s32, 532), 0x17);
   } else {
-    Actor_SetPositionAndResetMotion(t0, (FIELD_AT(t0, s32, 8) + 0x10000),
+    FieldActor_SetPositionAndResetMotion(t0, (FIELD_AT(t0, s32, 8) + 0x10000),
                                     FIELD_AT(t0, s32, 12),
                                     (FIELD_AT(t0, s32, 16) + -393216));
-    wait(1);
+    System_Wait(1);
     Event_StartScreenTransition();
-    Motion_SetModeAndWaitAnimation(FIELD_AT(gMainRoutineWork, s32, 532), 0x18);
+    Actor_SetAnimationAndWait(FIELD_AT(gMainRoutineWork, s32, 532), 0x18);
   }
   Actor_SetSingleChildFlags(
-      ((s32)Actor_GetById(FIELD_AT(gMainRoutineWork, s32, 532))), 1);
-  Actor_SetSpeedParameters(FIELD_AT(gMainRoutineWork, s32, 532), 0x8000,
+      ((s32)Actor_Get(FIELD_AT(gMainRoutineWork, s32, 532))), 1);
+  Actor_SetSpeed(FIELD_AT(gMainRoutineWork, s32, 532), 0x8000,
                            0x4000);
   Actor_SetDestinationOffset(FIELD_AT(gMainRoutineWork, s32, 532), 0, 8);
-  Actor_WaitForMoveById(FIELD_AT(gMainRoutineWork, s32, 532));
+  FieldActor_WaitForMoveById(FIELD_AT(gMainRoutineWork, s32, 532));
   Actor_SetAnimation(FIELD_AT(gMainRoutineWork, s32, 532), 1);
   Func_0200446c();
 }

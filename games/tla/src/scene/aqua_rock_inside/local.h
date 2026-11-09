@@ -9,49 +9,24 @@
 #include "iwram_call.h"
 #include "io_reg.h"
 #include "field_sprite.h"
+#include "event_inline.h"
 
 extern const struct SceneEntrance gSceneEntrances[];
 extern const u32 gSceneExits[];
 extern const struct ActorPlacement gActorPlacements[];
 extern const struct Trigger gSceneEvents[];
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void wait(s32 frames);
-void Event_Wait(s32 frames);
-struct Actor *Actor_GetById(s32 id);
-void Actor_SetModeById(u32 id, s32 mode);
-struct Actor *Import_ActorCreate(s32 kind, s32 x, s32 y, s32 z);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
-void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Animation_ApplyChildArgument(void *animation, s32 value);
 u8 *ResourceMetadata_Register(void *animation, s32 id);
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_CenterOnColumn(s32 id, s32 column, s32 offset);
-void Actor_OffsetPositionAndResetMotion(s32 id, s32 x, s32 z);
-void Actor_WaitForMoveById(s32 id);
-void Actor_CommitPositionAndActivate(s32 id, s32 x, s32 z);
-void Actor_SetSpritePriority(u32 id, s32 variant);
-void Actor_SetAngleToward(s32 id, s32 target, s32 flags);
-void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
-void Actor_Jump(s32 id, s32 a, s32 b);
-void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
-void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
-void Camera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
-void FieldMessage_ShowAtActor(s32 id, s32 flags);
-s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Task_Add(void *func, s32 priority);
-void Task_RemoveFar(void *func);
 s32 Random16Far(void);
 s32 Resource_FindFreeEntry(void);
-s32 VramCache_Load(s32 entry, s32 size, void *data);
 void *HeapSlot_AllocEwram(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
@@ -136,39 +111,25 @@ struct FieldSpriteFlags {
   u8 flag0 : 1;
 };
 
-s32 Math_Sine(s32 angle);
 s32 Math_Cosine(s32 angle);
 void *Heap_Alloc(s32 size);
 void Heap_Release(void *block);
 void Animation_SetStateFlags(struct Actor *object, s32 flags);
-void FieldMessage_Show(const u8 *message, s32 mode);
-s32 PartyInventory_FindOwner(s32 item);
-void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Func_02003c7c(const void *source, void *destination);
 void Func_02003cc4(struct Actor *object, s32 mode);
 void Func_02003ccc(struct Actor *object, const void *data);
 void Func_02003cdc(void);
-void Map_CopyCellsRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_0802b450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02003d54(void);
 void Func_02003d64(s32 item, s32 mode);
 void Func_02003d7c(void);
 void Func_02003d84(void);
 void Func_02003df4(s32 id, s32 a, s32 b);
-void Camera_SetSpeedParameters(s32 a, s32 b);
 void Func_02003e54(void);
-void Func_080d2b4c(s32 a, s32 b);
 void Func_02003e6c(void);
-void Event_ResolvePendingActions(s32 a);
 void Func_02003eb4(s32 a, s32 b);
 void Func_02003ecc(s32 a);
-void Func_080d3b28(s32 a, s32 b);
-void Sound_Play(s32 cue);
 void Func_02002bd4(struct Actor *object);
 s32 Func_02002ed4(struct Actor *object);
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
-void Import_EventSetExitRequest(s32 a);
 void Func_02003ed4(void);
 
 void Func_020006d0(void);

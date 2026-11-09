@@ -3,13 +3,13 @@
 /// ends.
 
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "map.h"
 #include "ram_buffer.h"
 #include "scene_tables.h"
 #include "system/io_reg.h"
+#include "event_inline.h"
 
 // A once-only block with a local that holds one constant, as the native
 // builds the value.
@@ -27,19 +27,11 @@ struct Overlay6aaEventWork {
 
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void FieldEvent_Wait(s32 frames);
 void Func_02000df0(void);
 void Func_02004bc0(struct Actor *object, s32 a1);
 void Func_02004ca8(void);
-void Func_02004d00(s32 id, s32 a1, s32 a2);
-void Func_02004d30(s32 a0);
-void Func_02004da0(s32 a0);
-void Func_02004de0(s32 cue);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
-struct Actor *Actor_GetById(u32 id);
-void Actor_SetModeById(u32 id, s32 mode);
-void wait(s32 frames);
 extern struct MapCell gMapCellBuffer[];
 
 void Func_02000e3c(s32 arg) {
@@ -50,19 +42,19 @@ void Func_02000e3c(s32 arg) {
   s32 x, z;
   s32 i;
 
-  actor = Actor_GetById(gMainRoutineWork.currentOwner);
+  actor = Actor_Get(gMainRoutineWork.currentOwner);
   Func_02004ca8();
-  Func_02004da0(0);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  FieldEvent_ResolvePendingActions(0);
+  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   actor->update = NULL;
   {
     s32 value = 0x100;
 
-    Func_02004d00(gMainRoutineWork.currentOwner, value, 0);
+    FieldActor_ShowEmote(gMainRoutineWork.currentOwner, value, 0);
   }
   Func_02004bc0(actor, 27);
   Actor_SetAnimationSpeed(actor, 48);
-  wait(30);
+  System_Wait(30);
   actor->angle = FACING_SOUTH;
   actor->motionFlags = 0;
   buffer = gMapCellBuffer;
@@ -79,23 +71,23 @@ void Func_02000e3c(s32 arg) {
     REG_DISPCNT |= DISPCNT_OBJWIN_ON;
     Func_02000df0();
   }
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
   FieldEvent_Wait(16);
   i = 0;
 next:
   if (i == 5)
-    Func_02004de0(204);
+    Event_PlaySound(204);
   actor->scaleX -= 0x400;
   actor->scaleY -= 0x300;
   actor->y -= 0x9999;
-  wait(1);
+  System_Wait(1);
   i++;
   if (i <= 39)
     goto next;
-  Actor_GetById(gMainRoutineWork.currentOwner)->animationKind = 0;
+  Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
   ((struct Overlay6aaEventWork *)Ram_HeapSlots->eventWork)->screenEffect =
       0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02004d30(arg);
+  FieldEvent_SetExitRequest(arg);
 }

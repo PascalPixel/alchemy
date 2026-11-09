@@ -9,8 +9,8 @@ extern const u8 gData_02005728[];
 void Func_02004dac(struct Actor *object, const u8 *script);
 
 s32 Func_020008b4(void) {
-  struct Actor *object = Actor_GetById(9);
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(9);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
 
   if (leader->z >> 19 <= 45 && leader->x >> 19 <= 57)
     Func_02004dac(object, gData_02005728);

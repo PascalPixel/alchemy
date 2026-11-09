@@ -110,7 +110,7 @@ s32 Func_02002020(void) {
     }
     if (!GameFlag_Test(0x238)) {
       Func_02001e78(9);
-      Actor_SetModeById(9, 3);
+      Actor_SetAnimation(9, 3);
     }
     object = Actor_GetById(12);
     Actor_SetSingleChildFlags(object, 0);
@@ -121,11 +121,11 @@ s32 Func_02002020(void) {
       Func_02001f04();
   } else if (scene == (s32)&SceneId_Ov67cRoom9) {
     if (GameFlag_Test(0x24b)) {
-      Actor_SetPartAttribute(Actor_GetById(9), 5);
+      Actor_SetSpriteColor(Actor_GetById(9), 5);
       Func_02001e78(9);
-      Actor_SetModeById(9, 3);
+      Actor_SetAnimation(9, 3);
     } else {
-      Actor_SetPartAttribute(Actor_GetById(9), 6);
+      Actor_SetSpriteColor(Actor_GetById(9), 6);
     }
     FIELD_AT(Actor_GetById(10), u8, 98) = 1;
     FIELD_AT(Actor_GetById(11), u8, 98) = 1;

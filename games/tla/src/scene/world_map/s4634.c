@@ -40,7 +40,7 @@ void Func_02004634(struct Actor *parent) {
   s32 i;
 
   for (i = 0; i < 2; ++i) {
-    child = ((struct Actor *)Import_ActorCreate(271, parent->x, parent->y,
+    child = (FieldActor_Create(271, parent->x, parent->y,
                                                 parent->z));
     pair[i] = child;
     if (child != NULL) {

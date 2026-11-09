@@ -11,8 +11,8 @@ extern u8 gMainRoutineWork[];
 extern u8 MsgAlhafraInteriors48[];
 
 void Func_0200047c(s32 a0, s32 a1) {
-  Actor_TurnToFaceEachOther(a1, FIELD_AT(gMainRoutineWork, s32, 532), 0);
-  Event_SetMessageId((s32)MsgAlhafraInteriors48);
-  Event_ShowMessageAndWait(a1, 0);
+  Actor_FaceEachOther(a1, FIELD_AT(gMainRoutineWork, s32, 532), 0);
+  FieldEvent_SetMessageId((s32)MsgAlhafraInteriors48);
+  Event_ShowMessage(a1, 0);
   Actor_FaceDirection(a1, 0xe000, 0);
 }

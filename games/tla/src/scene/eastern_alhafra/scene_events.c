@@ -52,74 +52,74 @@ void Func_020006ec(s32 mode) {
 }
 
 void Func_02000730(void) {
-  GameFlag_SetBit(0x8a8);
+  Event_SetFlag(0x8a8);
   Func_02004a94();
-  Event_ResolvePendingActions(0);
-  Event_SetMessageId(MsgWhatSYour);
-  Func_080d47b4(22, 0x101, 40);
-  Actor_SetAngleToward(22, gMainRoutineWork.currentOwner, 0);
-  Event_Wait(20);
+  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_SetMessageId(MsgWhatSYour);
+  Actor_ShowEmote(22, 0x101, 40);
+  Actor_FaceActor(22, gMainRoutineWork.currentOwner, 0);
+  FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(22, 0, 10);
-  Motion_SetVarCbAndRefresh(22, 2);
-  Event_Wait(10);
-  FieldMessage_ShowAtActor(22, 0);
-  if (Event_AskYesNoWithActorAnimation(4, 0) != 0) {
-    Event_Wait(30);
+  Actor_RunRepeatedMotion(22, 2);
+  FieldEvent_Wait(10);
+  Event_OpenMessage(22, 0);
+  if (FieldEvent_AskYesNoWithActorAnimation(4, 0) != 0) {
+    FieldEvent_Wait(30);
     FieldEvent_ShowMessageThenWait(22, 0, 0);
   } else {
-    Event_Wait(20);
+    FieldEvent_Wait(20);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
-    FieldMessage_ShowAtActor(22, 0);
-    if (Event_AskYesNoWithActorAnimation(4, 0) != 0) {
-      Event_Wait(30);
+    Event_OpenMessage(22, 0);
+    if (FieldEvent_AskYesNoWithActorAnimation(4, 0) != 0) {
+      FieldEvent_Wait(30);
       FieldEvent_ShowMessageThenWait(22, 0, 0);
     } else {
-      Event_Wait(20);
+      FieldEvent_Wait(20);
       ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
-      FieldMessage_ShowAtActor(22, 0);
-      if (Event_AskYesNoWithActorAnimation(4, 0) != 0) {
-        Event_Wait(30);
+      Event_OpenMessage(22, 0);
+      if (FieldEvent_AskYesNoWithActorAnimation(4, 0) != 0) {
+        FieldEvent_Wait(30);
         FieldEvent_ShowMessageThenWait(22, 0, 0);
       } else {
-        Event_Wait(20);
+        FieldEvent_Wait(20);
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
-        Event_ShowMessageThenWait(22, 0, 0);
+        FieldEvent_ShowMessageThenWait(22, 0, 0);
       }
     }
   }
-  Actor_ArmCallback(22, FACING_EAST, 0);
+  Actor_FaceDirection(22, FACING_EAST, 0);
   Func_02004a9c();
 }
 
 void Func_02000838(void) {
-  if (GameFlag_Test(0x8a7)) {
+  if (Event_GetFlag(0x8a7)) {
     if (Event_GetFlag(0x904) == 0) {
-      GameFlag_SetBit(0x904);
+      Event_SetFlag(0x904);
       Func_02001cb0();
     }
-  } else if (GameFlag_Test(0x8ab)) {
-    if (GameFlag_Test(0x8a0) && Func_02004a84(151) == -1 &&
+  } else if (Event_GetFlag(0x8ab)) {
+    if (Event_GetFlag(0x8a0) && Func_02004a84(151) == -1 &&
         Event_GetFlag(0x8ad) == 0) {
-      GameFlag_SetBit(0x8ad);
+      Event_SetFlag(0x8ad);
       Func_020017ec();
     }
   } else if (Event_GetFlag(0x8a9) == 0) {
-    GameFlag_SetBit(0x8a9);
+    Event_SetFlag(0x8a9);
     Func_0200112c();
   }
 }
 
 void Func_020008cc(struct DoorStep *step, s32 countdown, s32 unused) {
   Func_02004a94();
-  Event_ResolvePendingActions(0);
-  Sound_Play(158);
-  Map_PlayMapEdit(step->script, step->x, step->z);
-  Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+  FieldEvent_ResolvePendingActions(0);
+  Event_PlaySound(158);
+  MapGrid_AnimateCells(step->script, step->x, step->z);
+  Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 2;
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
-  Event_Wait(10);
-  Import_EventSetExitRequest(countdown);
+  FieldEvent_Wait(10);
+  FieldEvent_SetExitRequest(countdown);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_02004a9c();
@@ -140,25 +140,25 @@ void Func_02000968(void) {
 run:
   if (Func_02004a84(151) != -1)
     return;
-  GameFlag_SetBit(0x8bf);
+  Event_SetFlag(0x8bf);
   Func_02004a94();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   Actor_WalkToAndWait(4, 488, 440);
   FieldActor_LaunchFromLeader(5, -16, 0, 0);
-  Actor_ArmCallbackAndRefresh(4, FACING_WEST);
-  Event_Wait(20);
-  Event_SetMessageId(MsgIDonTKnowWhatWe);
+  Actor_FaceDirectionAndWait(4, FACING_WEST);
+  FieldEvent_Wait(20);
+  FieldEvent_SetMessageId(MsgIDonTKnowWhatWe);
   FieldEvent_ShowMessageThenWait(5, 0, 5);
-  Actor_SetModeById(5, 2);
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  Actor_SetAnimation(5, 2);
+  leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader != NULL)
-    Actor_ResetAndSetPosition(5, ((s16 *)leader)[5], ((s16 *)leader)[9]);
-  Actor_WaitForMoveById(5);
+    Actor_SetDestination(5, ((s16 *)leader)[5], ((s16 *)leader)[9]);
+  FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
   Func_02004a9c();
   return;
 check:
-  if (GameFlag_Test(0x8ab) && GameFlag_Test(0x8a7) == 0 && GameFlag_Test(0x8be))
+  if (Event_GetFlag(0x8ab) && Event_GetFlag(0x8a7) == 0 && Event_GetFlag(0x8be))
     goto run;
 }
 

@@ -43,9 +43,9 @@ void Func_02000e54(void) {
   Iwram_ClearWords(gData_02002660, 64);
   Func_02001b28(gField_CachedTilesB, buffer);
   gData_0200265c = Resource_FindFreeEntry();
-  VramCache_Load(gData_0200265c, 0x800, buffer);
+  Vram_Load(gData_0200265c, 0x800, buffer);
   Heap_Release(buffer);
-  Task_Add(Func_02000c18, TASK_PASS_VBLANK);
+  Task_AddFrame(Func_02000c18, TASK_PASS_VBLANK);
   gData_0200265e = 0;
   gData_02002760 = 0;
   gData_02002762 = -1;
@@ -57,9 +57,9 @@ void Func_02000ed4(void) {
   Iwram_ClearWords(gData_02002660, 64);
   Func_02001b28(gField_CachedTilesC, buffer);
   gData_0200265c = Resource_FindFreeEntry();
-  VramCache_Load(gData_0200265c, 0x800, buffer);
+  Vram_Load(gData_0200265c, 0x800, buffer);
   Heap_Release(buffer);
-  Task_Add(Func_02000c18, TASK_PASS_VBLANK);
+  Task_AddFrame(Func_02000c18, TASK_PASS_VBLANK);
   gData_0200265e = 0;
   gData_02002760 = 1;
   gData_02002762 = -1;

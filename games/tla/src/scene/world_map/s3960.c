@@ -28,5 +28,5 @@ static inline void ClearWords(void *destination, s32 size) {
 
 void Func_02003960(void) {
   ClearWords(gData_02006c08, 0x200);
-  Task_Add(Func_020036a8, TASK_PASS_VBLANK);
+  Task_AddFrame(Func_020036a8, TASK_PASS_VBLANK);
 }

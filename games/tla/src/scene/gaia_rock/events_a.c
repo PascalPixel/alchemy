@@ -3,13 +3,11 @@
 #include "scene_ids.h"
 #include "actor.h"
 #include "version.h"
+#include "event_inline.h"
 
 struct Trigger;
 
 void Func_02000bc0(s32 id, s32 flag);
-struct Actor *Actor_GetById(s32 id);
-void wait(s32 frames);
-void Func_02000f24(s32 cue);
 
 extern const u8 gData_0200102c[];
 extern const u8 gData_02001044[];
@@ -37,23 +35,23 @@ void Func_020000f0(void) { Func_02000bc0(19, 0x302); }
 // editions after the Japanese one also run the given cue first.
 #if !TLA_PATCH_1
 void Func_02000100(s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
   /* FAKEMATCH: pinned, the counter takes r6 and the object r5, as in the native
    * (differ 12 unpinned). */
   register s32 frames asm("r6");
 
   object->motionFlags = 3;
   for (frames = 60; frames != 0; frames--) {
-    wait(1);
+    System_Wait(1);
     if (object->velocityY == 0)
       break;
   }
-  wait(10);
+  System_Wait(10);
   object->motionFlags = 0;
 }
 #else
 void Func_02000100(s32 id, s32 cue) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
   /* FAKEMATCH: pinned, the flags' address is built in r2 with 85 in it first
    * (movs r2, #85; adds r2, r2, r5) and the 3 takes r3, as in the native
    * (unpinned they swap r2 and r3: differ 10). */
@@ -75,14 +73,14 @@ void Func_02000100(s32 id, s32 cue) {
    * reload copy comes before the store (differ 2). */
   held = flags;
   while (frames != 0) {
-    wait(1);
+    System_Wait(1);
     frames--;
     if (object->velocityY == 0)
       break;
   }
   if (cue != 0)
-    Func_02000f24(cue);
-  wait(10);
+    Event_PlaySound(cue);
+  System_Wait(10);
   *held = 0;
 }
 #endif

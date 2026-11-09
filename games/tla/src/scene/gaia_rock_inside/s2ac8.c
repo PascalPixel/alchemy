@@ -6,7 +6,6 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
 s32 Actor_GetById();
 s32 Actor_SetAngleToward();
 s32 ResourceMetadata_Register();

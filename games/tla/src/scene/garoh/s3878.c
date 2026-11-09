@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "event_inline.h"
 
 #define ACTOR_MODE_THEN_WAIT(id, mode, frames)                                 \
@@ -92,14 +91,14 @@ L_0200b920:;
   Actor_SetPosition(11, 0x1480000, 0x880000);
   t2 = (s32)Actor_Get(11);
   Actor_SetSingleChildFlags(t2, 0);
-  Call1(Func_02001418, 11);
+  Func_02001418(11);
   FieldEvent_Wait(30);
   Actor_SetSpeed(10, 0xb333, 0x5999);
   Actor_SetPosition(10, 0x1480000, 0x800000);
   FieldEvent_Wait(10);
   Actor_WalkByAndWait(10, 0, 16);
   FieldEvent_Wait(20);
-  Call1(Func_02001454, 11);
+  Func_02001454(11);
   Actor_SetPosition(11, 0, 0);
   FieldCamera_FollowActor(10, 1);
   FieldEvent_Wait(20);
@@ -146,12 +145,12 @@ L_0200ba8c:;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
      * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(9, a1, a2);
+    Actor_ShowEmote(9, a1, a2);
   }
   FieldEvent_ShowMessageThenWait(9, 0, 0);
-  Func_080d47b4(10, 0x107, 30);
+  Actor_ShowEmote(10, 0x107, 30);
   FieldEvent_ShowMessageThenWait(0x600a, 0, 0);
-  Func_080d47b4(9, 0x109, 30);
+  Actor_ShowEmote(9, 0x109, 30);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   Actor_RunRepeatedMotion(10, 2);
   FieldEvent_Wait(10);
@@ -162,7 +161,7 @@ L_0200ba8c:;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
      * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(9, a1, a2);
+    Actor_ShowEmote(9, a1, a2);
   }
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   Actor_WalkByAndWait(10, 16, 0);
@@ -175,7 +174,7 @@ L_0200ba8c:;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
      * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(5, a1, a2);
+    Actor_ShowEmote(5, a1, a2);
   }
   FieldEvent_ShowMessageThenWait(5, 0, 0);
   Actor_FaceDirection(10, 0x2000, 0);
@@ -197,7 +196,7 @@ L_0200ba8c:;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
      * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Actor_ArmCallback(10, a1, a2);
+    Actor_FaceDirection(10, a1, a2);
   }
   FieldEvent_Wait(25);
   ACTOR_MODE_THEN_WAIT(10, 3, 20);
@@ -209,16 +208,16 @@ L_0200ba8c:;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
      * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(9, a1, a2);
+    Actor_ShowEmote(9, a1, a2);
   }
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   ACTOR_MODE_THEN_WAIT(10, 4, 33);
   FieldEvent_ShowMessageThenWait(0x600a, 0, 0);
-  Func_080d47b4(9, 0x103, 45);
+  Actor_ShowEmote(9, 0x103, 45);
   FieldActor_Jump(9, 6, 15);
   FieldActor_Jump(9, 6, 23);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
-  Func_080d47b4(10, 0x108, 30);
+  Actor_ShowEmote(10, 0x108, 30);
   FieldEvent_ShowMessageThenWait(0x600a, 0, 0);
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_Wait(10);
@@ -236,7 +235,7 @@ L_0200ba8c:;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
      * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Actor_CommitPositionAndActivate(10, a1, a2);
+    Actor_WalkByAndWait(10, a1, a2);
   }
   FieldEvent_Wait(10);
   ACTOR_MODE_THEN_WAIT(10, 4, 33);
@@ -258,7 +257,7 @@ L_0200ba8c:;
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
-  Func_080d47b4(10, 0x105, 30);
+  Actor_ShowEmote(10, 0x105, 30);
   FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
   Actor_RunRepeatedMotion(10, 2);
   FieldEvent_Wait(10);
@@ -269,7 +268,7 @@ L_0200ba8c:;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
      * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(6, a1, a2);
+    Actor_ShowEmote(6, a1, a2);
   }
   FieldEvent_ShowMessageThenWait(6, 0, 0);
   {
@@ -278,7 +277,7 @@ L_0200ba8c:;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
      * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Actor_ArmCallback(10, a1, a2);
+    Actor_FaceDirection(10, a1, a2);
   }
   FieldEvent_Wait(20);
   ACTOR_MODE_THEN_WAIT(10, 3, 20);
@@ -290,7 +289,7 @@ L_0200ba8c:;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
      * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(10, a1, a2);
+    Actor_ShowEmote(10, a1, a2);
   }
   FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
@@ -302,7 +301,7 @@ L_0200ba8c:;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
      * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Actor_ArmCallback(10, a1, a2);
+    Actor_FaceDirection(10, a1, a2);
   }
   FieldEvent_Wait(20);
   ACTOR_MODE_THEN_WAIT(10, 4, 33);
@@ -333,7 +332,7 @@ L_0200bf6a:;
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
-  Func_080d47b4(10, 0x101, 30);
+  Actor_ShowEmote(10, 0x101, 30);
   FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
   FieldEvent_Wait(10);
@@ -349,7 +348,7 @@ L_0200bf6a:;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
      * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(10, a1, a2);
+    Actor_ShowEmote(10, a1, a2);
   }
   FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
@@ -361,7 +360,7 @@ L_0200bf6a:;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
      * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Actor_ArmCallback(9, a1, a2);
+    Actor_FaceDirection(9, a1, a2);
   }
   FieldEvent_Wait(30);
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
@@ -375,7 +374,7 @@ L_0200bf6a:;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
      * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Actor_ArmCallback(10, a1, a2);
+    Actor_FaceDirection(10, a1, a2);
   }
   FieldEvent_Wait(30);
   ACTOR_MODE_THEN_WAIT(10, 3, 20);
@@ -390,7 +389,7 @@ L_0200bf6a:;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
      * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Actor_ArmCallback(9, a1, a2);
+    Actor_FaceDirection(9, a1, a2);
   }
   FieldEvent_Wait(25);
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
@@ -405,7 +404,7 @@ L_0200bf6a:;
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
-  Func_080d47b4(10, 0x100, 30);
+  Actor_ShowEmote(10, 0x100, 30);
   FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
   Actor_FaceDirection(9, 0, 0);
   FieldEvent_Wait(20);
@@ -468,10 +467,10 @@ L_0200c2bc:;
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
   FieldEvent_Wait(10);
   FieldEvent_Wait(20);
-  Func_080d47b4(6, 0x106, 40);
+  Actor_ShowEmote(6, 0x106, 40);
   Actor_FaceDirection(6, 0x8000, 0);
   FieldEvent_Wait(20);
-  FieldMessage_ShowAtActor(6, 0);
+  Event_OpenMessage(6, 0);
   Actor_FaceDirection(9, 0x5000, 0);
   Actor_FaceDirection(4, 0, 0);
   Actor_FaceDirection(5, 0, 0);
@@ -500,7 +499,7 @@ L_0200c456:;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
      * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(9, a1, a2);
+    Actor_ShowEmote(9, a1, a2);
   }
   Actor_ShowEmote(5, 0x101, 0);
   t11 = Event_GetFlag(7);
@@ -514,21 +513,21 @@ L_0200c484:;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
      * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(10, a1, a2);
+    Actor_ShowEmote(10, a1, a2);
   }
   Actor_FaceDirection(9, 0x5000, 0);
   Actor_FaceDirection(6, 0xe000, 0);
   FieldEvent_Wait(30);
   FieldEvent_ShowMessageThenWait(6, 0, 0);
-  Func_080d47b4(9, 0x101, 30);
+  Actor_ShowEmote(9, 0x101, 30);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
-  Func_080d47b4(6, 0x107, 30);
+  Actor_ShowEmote(6, 0x107, 30);
   FieldEvent_ShowMessageThenWait(6, 0, 0);
   ACTOR_MODE_THEN_WAIT(10, 4, 33);
   FieldEvent_ShowMessageThenWait(10, 0, 0);
   Actor_FaceDirection(6, 0xc000, 0);
   FieldEvent_Wait(20);
-  Func_080d47b4(6, 0x103, 30);
+  Actor_ShowEmote(6, 0x103, 30);
   FieldEvent_ShowMessageThenWait(6, 0, 0);
   ACTOR_MODE_THEN_WAIT(6, 4, 33);
   FieldEvent_ShowMessageThenWait(6, 0, 0);
@@ -538,9 +537,9 @@ L_0200c484:;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
      * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(9, a1, a2);
+    Actor_ShowEmote(9, a1, a2);
   }
-  Func_080d47b4(10, 0x105, 50);
+  Actor_ShowEmote(10, 0x105, 50);
   Actor_RunRepeatedMotion(6, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(6, 0, 0);
@@ -589,7 +588,7 @@ L_0200c694:;
   Actor_SetAttachedEffect(9, 0x102);
   FieldEvent_Wait(40);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
-  Func_080d47b4(10, 0x100, 30);
+  Actor_ShowEmote(10, 0x100, 30);
   FieldEvent_ShowMessageThenWait(10, 0, 0);
   Actor_RunRepeatedMotion(10, 2);
   FieldEvent_Wait(10);
@@ -648,7 +647,7 @@ L_0200c892:;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
      * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Actor_ArmCallback(9, a1, a2);
+    Actor_FaceDirection(9, a1, a2);
   }
   FieldEvent_Wait(20);
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
@@ -664,7 +663,7 @@ L_0200c892:;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
      * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Actor_ArmCallback(10, a1, a2);
+    Actor_FaceDirection(10, a1, a2);
   }
   FieldEvent_Wait(20);
   ACTOR_MODE_THEN_WAIT(10, 3, 20);
@@ -676,8 +675,8 @@ L_0200c892:;
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   Actor_FaceDirection(10, 0xc000, 0);
   FieldEvent_Wait(40);
-  Call1(Func_020013b0, 10);
-  Call1(Func_020013b0, 10);
+  Func_020013b0(10);
+  Func_020013b0(10);
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(10, 16, 0);
   FieldEvent_Wait(20);
@@ -693,13 +692,13 @@ L_0200c892:;
     s32 a2 = 0;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
      * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
-    Actor_CommitPositionAndActivate(10, a1, a2);
+    Actor_WalkByAndWait(10, a1, a2);
   }
   FieldEvent_Wait(20);
   ACTOR_MODE_THEN_WAIT(10, 4, 33);
   {
     s32 a0 = 10;
-    Actor_ArmCallback(a0, 0, 0);
+    Actor_FaceDirection(a0, 0, 0);
   }
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(10, 16, 0);
@@ -714,7 +713,7 @@ L_0200c892:;
   Actor_WalkByAndWait(10, 0, -12);
   FieldEvent_Wait(20);
   FieldEvent_Wait(20);
-  Func_080d47b4(10, 0x106, 40);
+  Actor_ShowEmote(10, 0x106, 40);
   Actor_FaceDirection(10, 0x4000, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(10, 0, 0);
@@ -761,12 +760,12 @@ L_0200caf6:;
   Actor_WalkByAndWait(12, 0, 8);
   FieldEvent_Wait(5);
   Actor_WalkByAndWait(12, 0, 8);
-  Event_Wait(5);
+  FieldEvent_Wait(5);
   Actor_WalkByAndWait(12, 0, 8);
   FieldEvent_Wait(5);
-  Func_080d47b4(5, 0x100, 30);
+  Actor_ShowEmote(5, 0x100, 30);
   FieldEvent_ShowMessageThenWait(0x2005, 0, 0);
-  Func_080d47b4(10, 0x101, 30);
+  Actor_ShowEmote(10, 0x101, 30);
   Actor_FaceDirection(10, 0x3000, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
@@ -793,18 +792,18 @@ L_0200cc42:;
   t20 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (t20 != 0)
     goto L_0200cc7c;
-  Event_Wait(30);
+  FieldEvent_Wait(30);
   FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
   *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
       (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
   goto L_0200cca2;
 L_0200cc7c:;
-  Event_Wait(40);
+  FieldEvent_Wait(40);
   *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
       (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
   {
     s32 a0 = 0x200a;
-    Event_ShowMessageThenWait(a0, 0, 0);
+    FieldEvent_ShowMessageThenWait(a0, 0, 0);
   }
 L_0200cca2:;
   Actor_FaceDirection(5, 0xc000, 0);
@@ -858,7 +857,7 @@ L_0200cda2:;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
      * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(6, a1, a2);
+    Actor_ShowEmote(6, a1, a2);
   }
   FieldEvent_ShowMessageThenWait(6, 0, 0);
   Actor_FaceDirection(5, 0, 0);
@@ -875,7 +874,7 @@ L_0200cda2:;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
      * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Actor_ArmCallback(5, a1, a2);
+    Actor_FaceDirection(5, a1, a2);
   }
   FieldEvent_Wait(20);
   ACTOR_MODE_THEN_WAIT(10, 4, 33);
@@ -889,7 +888,7 @@ L_0200cda2:;
     s32 a2 = 30;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
      * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
-    Func_080d47b4(5, a1, a2);
+    Actor_ShowEmote(5, a1, a2);
   }
   FieldEvent_ShowMessageThenWait(0x2005, 0, 0);
   {
@@ -897,7 +896,7 @@ L_0200cda2:;
     s32 a2 = 0;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
      * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
-    Actor_ArmCallback(10, a1, a2);
+    Actor_FaceDirection(10, a1, a2);
   }
   FieldEvent_Wait(20);
   ACTOR_MODE_THEN_WAIT(10, 3, 20);
@@ -980,7 +979,7 @@ L_0200d0fa:;
   p2 = (s32)gMainRoutineWork;
   {
     s32 a0 = *(s32 *)((p2 + 0x214));
-    Camera_FollowActor(a0, 1);
+    FieldCamera_FollowActor(a0, 1);
   }
   Func_020051b4();
 }

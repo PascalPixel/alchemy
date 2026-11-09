@@ -22,8 +22,8 @@ void Actor_ResetTargetsAndVelocity(u32 objectId);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 
 void Func_02000f00(void) {
-  struct Actor *walker = Actor_GetById(9);
-  struct Actor *object = Actor_GetById(10);
+  struct Actor *walker = Actor_Get(9);
+  struct Actor *object = Actor_Get(10);
   u8 *sprite = object->animation;
   u8 *animation = FIELD_AT(sprite, u8 *, 40);
 

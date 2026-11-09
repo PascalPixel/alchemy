@@ -6,7 +6,6 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
 s32 Func_02004af0();
 
 void Func_02002a24(void) { Func_02004af0(0xc, 0x304); }

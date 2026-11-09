@@ -8,11 +8,11 @@ void Func_02004c20(void);
 
 void Func_0200310c(void) {
   Func_02004c20();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_MoveToAndWait(8, 10720, 9075);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(66);
+  FieldEvent_SetExitRequest(66);
 }

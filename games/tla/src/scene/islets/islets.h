@@ -7,7 +7,6 @@
 #include "ram_buffer.h"
 #include "map.h"
 #include "input.h"
-#include "call.h"
 #include "text/msg_ids.h"
 
 struct IsletsEventWork {
@@ -21,33 +20,15 @@ struct IsletsEventWork {
 
 extern u32 gFrameCount;
 
-void wait(s32 frames);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void Event_Wait(s32 frames);
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
-void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void Task_Add(void (*func)(void), s32 priority);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
-struct Actor *Import_ActorCreate(s32 kind, s32 x, s32 y, s32 z);
 void Func_02003de4(struct Actor *object, s32 value);
 void Func_02003dec(struct Actor *object, const void *script);
-void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
-void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02003e64(void);
 void Func_02003e6c(void);
-void Event_SetMessageId(s32 message);
-void Event_ShowMessageAndWait(s32 actor, s32 flags);
-void Actor_ArmCallbackAndRefresh(s32 actor, s32 angle);
-void Import_EventSetExitRequest(s32 exit);
-void Event_ResolvePendingActions(s32 value);
-void Sound_Play(s32 cue);
 void Func_020034ec(void);
 
 void Func_02001cac(void);
@@ -72,7 +53,6 @@ void Func_02002f1c(void);
 void Func_020030b4(void);
 void Func_02003164(void);
 void Func_0200329c(void);
-void Func_0802372c(struct Actor *object, s32 value);
 
 struct IsletsMapFlags {
   u8 unk00[0x17];
@@ -125,33 +105,17 @@ void Func_020020ec(s32 x, s32 z, s32 layers, s32 value);
 void Func_020021d0(void);
 void Func_02002bd8(void);
 void Func_02003fe4(void);
-void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
-void Script_WaitForEventTimeout(struct Actor *object);
-void Map_PlayMapEdit(s32 value, s32 first, s32 second);
 s32 Func_02003e2c(struct Actor *object, struct IsletsVector *position);
 struct Actor *Func_02003fdc(struct IsletsVector *position, s32 mode);
 s32 Func_020037d8(struct IsletsTarget *target);
 void Func_02003a5c(struct IsletsTarget target);
-void Vector_AddPolarOffsetFar(s32 distance, s32 angle,
-                              struct IsletsVector *position);
-void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
-void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void Actor_SetMovementTypeById(s32 actor, const void *script);
-void Actor_OffsetPositionAndResetMotion(s32 actor, s32 x, s32 z);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
 
 void Func_02001f58(void);
 void Func_02001278(struct Actor *object);
 void Func_02000df8(struct Actor *object);
 void Func_020034d8(void);
 void Func_02003eec(s32 actor, s32 target);
-void Func_080dc978(s32 actor, s32 target);
 void Func_02003fb4(void);
-void Task_RemoveFar(void (*func)(void));
-void Actor_Stop(s32 actor);
-void Actor_Jump(s32 actor, s32 speed, s32 frames);
-void Actor_SetPositionAndCommit(s32 actor, s32 x, s32 z);
-void Actor_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
 void Event_StartScreenTransition(void);
 
 #endif

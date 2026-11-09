@@ -29,13 +29,13 @@ static __inline__ void Exit_Set(s32 index, s32 flag, s32 a, s32 b) {
 
 void Func_020034f4(void) {
   if ((u16)(gMainRoutineWork.entrance - 3) <= 1) {
-    Actor_SetMovementTypeById(27, gData_02005944);
-    Actor_SetMovementTypeById(28, gData_02005944);
+    Actor_SetScript(27, gData_02005944);
+    Actor_SetScript(28, gData_02005944);
     MapGrid_CopyCellAttributes(33, 24, 3, 3, 27, 29);
   }
   Func_020053bc(gData_02005d7c);
-  if (!GameFlag_Test(0x8ce) || !GameFlag_Test(0x8cf))
-    Actor_GetById(26)->y = PIXELS(16);
+  if (!Event_GetFlag(0x8ce) || !Event_GetFlag(0x8cf))
+    Actor_Get(26)->y = PIXELS(16);
   Func_02005824();
   Exit_Set(0, 513, 8, 9);
   Exit_Set(1, 514, 10, 11);

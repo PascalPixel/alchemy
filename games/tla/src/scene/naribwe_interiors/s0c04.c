@@ -1,6 +1,7 @@
 #include "types.h"
 #include "text/msg_ids.h"
 #include "call.h"
+#include "event_inline.h"
 
 void *HeapSlot_AllocEwram(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);

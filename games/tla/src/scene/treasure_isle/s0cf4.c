@@ -2,7 +2,6 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
-#include "flag_call.h"
 #include "task.h"
 #include "scene_tables.h"
 #include "event_inline.h"
@@ -40,14 +39,14 @@ s32 Func_02000cf4(void) {
   ((struct TreasureIsleEventWork *)Ram_HeapSlots->eventWork)->route = 0x204;
   Func_0200105c();
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom1) {
-    Flag_Set(0x300);
-    Flag_Set(0x301);
-    Flag_Set(0x302);
-    if (Flag_IsSet(0x300))
+    Event_SetFlag(0x300);
+    Event_SetFlag(0x301);
+    Event_SetFlag(0x302);
+    if (Event_GetFlag(0x300))
       PlaceObject(8, PIXELS(264), PIXELS(440));
-    if (Flag_IsSet(0x301))
+    if (Event_GetFlag(0x301))
       PlaceObject(9, PIXELS(328), PIXELS(440));
-    if (Flag_IsSet(0x302))
+    if (Event_GetFlag(0x302))
       PlaceObject(10, PIXELS(440), PIXELS(344));
   }
   /* FAKEMATCH(barrier): an empty asm with a memory clobber before each later
@@ -55,41 +54,41 @@ s32 Func_02000cf4(void) {
    * the next; without this one, 27 of 241 instructions differ in tla-en. */
   __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom2) {
-    Task_Add(Func_02000ba0, TASK_PASS_VBLANK);
+    Task_AddFrame(Func_02000ba0, TASK_PASS_VBLANK);
     Func_02001064(0, 8, 9);
-    if (Flag_IsSet(0x308))
+    if (Event_GetFlag(0x308))
       PlaceObject(10, PIXELS(264), PIXELS(184));
-    if (Flag_IsSet(0x303))
+    if (Event_GetFlag(0x303))
       Func_020003fc(gData_0200117c, 0);
-    if (Flag_IsSet(0x304))
+    if (Event_GetFlag(0x304))
       Func_020003fc(gData_0200117c, 1);
-    if (Flag_IsSet(0x305))
+    if (Event_GetFlag(0x305))
       Func_020003fc(gData_0200117c, 2);
-    if (Flag_IsSet(0x306))
+    if (Event_GetFlag(0x306))
       Func_020003fc(gData_0200117c, 3);
-    if (Flag_IsSet(0x307))
+    if (Event_GetFlag(0x307))
       Func_020003fc(gData_0200117c, 4);
   }
   /* FAKEMATCH(barrier): as above; without it, 35 of 241 instructions differ in
    * tla-en. */
   __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom3) {
-    Task_Add(Func_02000ba0, TASK_PASS_VBLANK);
+    Task_AddFrame(Func_02000ba0, TASK_PASS_VBLANK);
     Func_02001064(0, 8, 9);
-    if (Flag_IsSet(0x309))
+    if (Event_GetFlag(0x309))
       PlaceObject(10, PIXELS(664), PIXELS(248));
-    if (Flag_IsSet(0x30a))
+    if (Event_GetFlag(0x30a))
       Func_020003fc(gData_020011cc, 0);
-    if (Flag_IsSet(0x30b))
+    if (Event_GetFlag(0x30b))
       Func_020003fc(gData_020011cc, 1);
-    if (Flag_IsSet(0x30c))
+    if (Event_GetFlag(0x30c))
       Func_020003fc(gData_020011cc, 2);
   }
   /* FAKEMATCH(barrier): as above; without it, 39 of 241 instructions differ in
    * tla-en. */
   __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom4) {
-    if (Flag_IsSet(0x30d))
+    if (Event_GetFlag(0x30d))
       PlaceObject(8, PIXELS(696), PIXELS(600));
     /* FAKEMATCH(signature): Func_02001064 declared returning s32, though it
      * reaches Func_080d9e98, whose draft returns nothing; as void, these calls
@@ -104,7 +103,7 @@ s32 Func_02000cf4(void) {
        * to the 12, as the native has them; unpinned, 12 of 241 instructions
        * differ in tla-en. */
       register u8 *flags asm("r2") =
-          (u8 *)Actor_GetById(i + 9)->animation + 37;
+          (u8 *)Actor_Get(i + 9)->animation + 37;
 
       *flags |= 12;
     }

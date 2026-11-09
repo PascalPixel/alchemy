@@ -1,4 +1,5 @@
 #include "version.h"
+#include "event_inline.h"
 
 #if TLA_PATCH_1
 
@@ -14,17 +15,12 @@ extern volatile s16 gData_02002ce8;
 extern s16 gData_020022b6[];
 void Func_020016b0(struct Actor *object);
 void Func_0200173c(void);
-s32 Func_02002028(s32 layer, s32 x, s32 z);
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 ArcTan2(s32 y, s32 x);
-void Func_02002008(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02001fe0(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-void Func_02002010(struct Actor *object);
 s32 Func_02002048(struct Actor *object);
 s32 Func_02002050(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
-void wait(s32 frames);
 
 void Func_02001a1c(void) {
   struct Actor *object;
@@ -66,7 +62,7 @@ retry:
   targetZ = z;
   targetX = x;
   layer = &object->terrainId;
-  startCell = Func_02002028(*layer, targetX, targetZ);
+  startCell = GetMapCellCollision(*layer, targetX, targetZ);
   dz = targetZ - object->z;
   dx = targetX - object->x;
   if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
@@ -80,8 +76,8 @@ retry:
   }
   /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 2
    * of 347 instructions differ in tla-en. */
-  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
-  cell = Func_02002028(*layer, p[0], p[2]);
+  FieldVector_AddPolarOffset(0x100000, angle, position);
+  cell = GetMapCellCollision(*layer, p[0], p[2]);
   if (cell == 255 ||
       Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
     object->angle = angle;
@@ -96,13 +92,13 @@ retry:
   object->speedLimit = 0x20000;
   object->acceleration = 0x1999;
   object->action = 0;
-  Func_02002008(object, x, object->y, z);
+  Actor_SetMoveTarget(object, x, object->y, z);
   Func_02001fe0(object, 2);
   Actor_SetAnimationSpeed(object, 48);
   for (i = 0; i <= 179 && Func_02002048(object) == 0; i++) {
     if (gData_02002ce8 != 0)
       goto end;
-    wait(1);
+    System_Wait(1);
   }
   object->update = (void (*)(void))Func_020016b0;
   goto walk;
@@ -132,11 +128,11 @@ overlap:
   targetZ = q[2];
   object->speedLimit = 0x20000;
   object->acceleration = 0x1999;
-  Func_02002008(object, q[0], q[1], q[2]);
+  Actor_SetMoveTarget(object, q[0], q[1], q[2]);
   i = 0;
   goto test;
 next:
-  wait(1);
+  System_Wait(1);
   i++;
 test:
   if (i <= 179 && Func_02002048(object) == 0 && gData_02002ce8 == 0)
@@ -151,20 +147,20 @@ walk:
   __asm__("" : : : "sfp");
   /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 6
    * of 347 instructions differ in tla-en. */
-  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
+  FieldVector_AddPolarOffset(0x100000, angle, position);
   q = position;
-  cell = Func_02002028(*layer, q[0], q[2]);
+  cell = GetMapCellCollision(*layer, q[0], q[2]);
   if (cell != 255)
     goto walkNext;
 blocked:
   object->speedLimit = 0x20000;
   object->acceleration = 0x10000;
-  Func_02002008(object, targetX, object->y, targetZ);
-  Func_02002010(object);
-  wait(2);
+  Actor_SetMoveTarget(object, targetX, object->y, targetZ);
+  Actor_WaitForMove(object);
+  System_Wait(2);
   goto retry;
 changed:
-  wait(10);
+  System_Wait(10);
 end:
   object->update = NULL;
   object->actionFlags |= 1;
@@ -188,17 +184,12 @@ extern volatile s16 gData_02002ce8;
 extern s16 gData_020022b6[];
 void Func_020016b0(struct Actor *object);
 void Func_0200173c(void);
-s32 Func_02002028(s32 layer, s32 x, s32 z);
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 ArcTan2(s32 y, s32 x);
-void Func_02002008(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02001fe0(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-void Func_02002010(struct Actor *object);
 s32 Func_02002048(struct Actor *object);
 s32 Func_02002050(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
-void wait(s32 frames);
 
 void Func_02001a1c(void) {
   struct Actor *object;
@@ -238,7 +229,7 @@ retry:
   targetZ = z;
   targetX = x;
   layer = &object->terrainId;
-  startCell = Func_02002028(*layer, targetX, targetZ);
+  startCell = GetMapCellCollision(*layer, targetX, targetZ);
   dz = targetZ - object->z;
   dx = targetX - object->x;
   if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
@@ -252,8 +243,8 @@ retry:
   }
   /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 2
    * of 332 instructions differ in tla-ja. */
-  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
-  cell = Func_02002028(*layer, p[0], p[2]);
+  FieldVector_AddPolarOffset(0x100000, angle, position);
+  cell = GetMapCellCollision(*layer, p[0], p[2]);
   if (cell == 255 ||
       Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
     object->angle = angle;
@@ -268,10 +259,10 @@ retry:
   object->speedLimit = 0x20000;
   object->acceleration = 0x1999;
   object->action = 0;
-  Func_02002008(object, x, object->y, z);
+  Actor_SetMoveTarget(object, x, object->y, z);
   Func_02001fe0(object, 2);
   Actor_SetAnimationSpeed(object, 48);
-  Func_02002010(object);
+  Actor_WaitForMove(object);
   object->update = (void (*)(void))Func_020016b0;
   goto walk;
 walkNext:
@@ -300,11 +291,11 @@ overlap:
   targetZ = q[2];
   object->speedLimit = 0x20000;
   object->acceleration = 0x1999;
-  Func_02002008(object, q[0], q[1], q[2]);
+  Actor_SetMoveTarget(object, q[0], q[1], q[2]);
   i = 0;
   goto test;
 next:
-  wait(1);
+  System_Wait(1);
   i++;
 test:
   if (i <= 179 && Func_02002048(object) == 0 && gData_02002ce8 == 0)
@@ -319,20 +310,20 @@ walk:
   __asm__("" : : : "sfp");
   /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 6
    * of 332 instructions differ in tla-ja. */
-  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
+  FieldVector_AddPolarOffset(0x100000, angle, position);
   q = position;
-  cell = Func_02002028(*layer, q[0], q[2]);
+  cell = GetMapCellCollision(*layer, q[0], q[2]);
   if (cell != 255)
     goto walkNext;
 blocked:
   object->speedLimit = 0x20000;
   object->acceleration = 0x10000;
-  Func_02002008(object, targetX, object->y, targetZ);
-  Func_02002010(object);
-  wait(2);
+  Actor_SetMoveTarget(object, targetX, object->y, targetZ);
+  Actor_WaitForMove(object);
+  System_Wait(2);
   goto retry;
 changed:
-  wait(10);
+  System_Wait(10);
 end:
   object->update = NULL;
   object->actionFlags |= 1;

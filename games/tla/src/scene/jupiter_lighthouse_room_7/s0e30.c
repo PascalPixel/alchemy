@@ -23,21 +23,21 @@ s32 Func_02000e30(void) {
   FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x204;
   if ((u32)((FIELD_AT(&gMainRoutineWork, u16, 482) + -3) << 16) > (u32)0x10000)
     goto L_02008e6e;
-  t1 = ((s32)Actor_GetById(gMainRoutineWork.currentOwner));
+  t1 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
   FIELD_AT(t1, u8, 35) = (32 | FIELD_AT(t1, u8, 35));
 L_02008e6e:
-  t2 = ((s32)Actor_GetById(8));
+  t2 = ((s32)Actor_Get(8));
   FIELD_AT(t2, s32, 24) = 0xc000;
-  t3 = ((s32)Actor_GetById(8));
+  t3 = ((s32)Actor_Get(8));
   FIELD_AT(t3, s32, 28) = 0xc000;
   Func_020019dc((s32)&gData_020031c4);
-  t5 = GameFlag_Test(0xa1b);
+  t5 = Event_GetFlag(0xa1b);
   if (t5 == 0)
     goto L_02008eaa;
-  Actor_SetHorizontalPositionWithTerrain(16, PIXELS(136), PIXELS(600));
+  Actor_SetPosition(16, PIXELS(136), PIXELS(600));
   Func_02000060(0);
 L_02008eaa:
-  t8 = GameFlag_Test(0x202);
+  t8 = Event_GetFlag(0x202);
   if (t8 == 0)
     goto L_02008ebe;
   Func_02000060(0);
@@ -47,43 +47,43 @@ L_02008ebe:
   Func_02001eb8(18, 2);
   Func_02001eb8(19, 1);
   Func_02001eb8(20, 0);
-  t15 = GameFlag_Test(0xa10);
+  t15 = Event_GetFlag(0xa10);
   if (t15 != 0)
     goto L_02008f08;
-  t16 = GameFlag_Test(0xa12);
+  t16 = Event_GetFlag(0xa12);
   if (t16 != 0)
     goto L_02008f08;
-  t17 = GameFlag_Test(0xa14);
+  t17 = Event_GetFlag(0xa14);
   if (t17 == 0)
     goto L_02008f12;
 L_02008f08:
-  Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
+  Actor_SetPosition(18, 0, 0);
 L_02008f12:
-  t19 = GameFlag_Test(0xa11);
+  t19 = Event_GetFlag(0xa11);
   if (t19 != 0)
     goto L_02008f3c;
-  t20 = GameFlag_Test(0xa13);
+  t20 = Event_GetFlag(0xa13);
   if (t20 != 0)
     goto L_02008f3c;
-  t21 = GameFlag_Test(0xa15);
+  t21 = Event_GetFlag(0xa15);
   if (t21 == 0)
     goto L_02008f46;
 L_02008f3c:
-  Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
+  Actor_SetPosition(19, 0, 0);
 L_02008f46:
-  t23 = ((s32)Actor_GetById(gMainRoutineWork.currentOwner));
+  t23 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
   FIELD_AT(t23, u8, 35) = (64 | FIELD_AT(t23, u8, 35));
-  t24 = ((s32)Actor_GetById(10));
+  t24 = ((s32)Actor_Get(10));
   FIELD_AT(t24, u8, 35) = (FIELD_AT(t24, u8, 35) | 128);
-  t25 = ((s32)Actor_GetById(11));
+  t25 = ((s32)Actor_Get(11));
   FIELD_AT(t25, u8, 35) = (FIELD_AT(t25, u8, 35) | 128);
-  t26 = ((s32)Actor_GetById(12));
+  t26 = ((s32)Actor_Get(12));
   FIELD_AT(t26, u8, 35) = (FIELD_AT(t26, u8, 35) | 128);
-  t27 = ((s32)Actor_GetById(13));
+  t27 = ((s32)Actor_Get(13));
   FIELD_AT(t27, u8, 35) = (FIELD_AT(t27, u8, 35) | 128);
-  t28 = ((s32)Actor_GetById(14));
+  t28 = ((s32)Actor_Get(14));
   FIELD_AT(t28, u8, 35) = (FIELD_AT(t28, u8, 35) | 128);
-  t29 = ((s32)Actor_GetById(15));
+  t29 = ((s32)Actor_Get(15));
   v5 = (128 | FIELD_AT(t29, u8, 35));
   FIELD_AT(t29, u8, 35) = v5;
   return 0;

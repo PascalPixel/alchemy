@@ -49,7 +49,7 @@ void Func_02001538(void);
 
 void Func_02001718(const s32 *from, const s32 *to) {
   struct SparkWork *work = HeapSlot_AllocFar(220, sizeof(struct SparkWork));
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct SparkSprite *sprite;
   struct Spark *spark;
   s32 entry;

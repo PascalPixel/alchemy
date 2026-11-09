@@ -23,7 +23,7 @@ struct SparkWork {
 void VenusLighthouseEntrance_StopSparks(void) {
   struct SparkWork *work = Ram_HeapSlots->menuRuntime;
 
-  Task_RemoveFar(Func_0200258c);
+  FieldTask_Remove(Func_0200258c);
   Resource_ResetEntry(work->resource);
   HeapSlot_Release(220);
 }

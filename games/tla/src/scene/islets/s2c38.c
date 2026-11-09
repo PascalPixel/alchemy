@@ -1,29 +1,29 @@
 #include "islets.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 void Func_02002c38(void) {
   struct IsletsMapFlags *map = (struct IsletsMapFlags *)Ram_HeapSlots->mapWork;
   struct Actor *spawned;
 
   if (gMainRoutineWork.entrance == 2)
-    GameFlag_ClearBit(0x12f);
+    Event_ClearFlag(0x12f);
   map->mode = 1;
-  Actor_SetSingleChildFlags(Actor_GetById(11), 0);
-  Call3((void (*)())Actor_SetSpeedParameters, 10, 0xcccc, 0x6666);
-  Actor_GetById(10)->collisionFlags |= 0x80;
-  if (GameFlag_Test(0xaa1)) {
-    spawned = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 489,
-                                     0x1180000, 0, 0x3480000);
+  Actor_SetSingleChildFlags(Actor_Get(11), 0);
+  Actor_SetSpeed(10, 0xcccc, 0x6666);
+  Actor_Get(10)->collisionFlags |= 0x80;
+  if (Event_GetFlag(0xaa1)) {
+    spawned = FieldActor_Create(489, 0x1180000, 0, 0x3480000);
     if (spawned != 0) {
       spawned->motionFlags = 0;
-      Func_0802372c(spawned, 454);
+      Actor_SetItemIcon(spawned, 454);
       Actor_SetSingleChildFlags(spawned, 0);
       spawned->collisionFlags = 9;
       spawned->unk5c[0] = 1;
     }
-    Actor_GetById(11)->angle = FACING_NORTH + FACING_STEP;
+    Actor_Get(11)->angle = FACING_NORTH + FACING_STEP;
   } else {
-    Actor_SetModeById(11, 5);
+    Actor_SetAnimation(11, 5);
   }
-  Value2((s32 (*)())Task_Add, (s32)Func_02002bd8, 0x480);
+  Task_AddFrame(Func_02002bd8, 0x480);
 }

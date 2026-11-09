@@ -31,7 +31,7 @@ void Func_020052a4(s32 mode) {
   struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
   u8 *tiles;
 
-  if (!GameFlag_Test(0x109)) {
+  if (!Event_GetFlag(0x109)) {
     Iwram_ClearWords(clock, sizeof(struct ClockWork));
     clock->timer = 3600;
     clock->ringing = 1;
@@ -41,30 +41,30 @@ void Func_020052a4(s32 mode) {
   clock->tiles = tiles;
   clock->digits = tiles + 0x2c0;
   clock->tileEntry = Resource_FindFreeEntry();
-  VramCache_Load(clock->tileEntry, 320, NULL);
+  Vram_Load(clock->tileEntry, 320, NULL);
   clock->mode = mode;
   if (mode)
-    Task_Add(Func_02005210, TASK_PASS_VBLANK);
+    Task_AddFrame(Func_02005210, TASK_PASS_VBLANK);
   else
-    Task_Add(Func_0200525c, TASK_PASS_VBLANK);
+    Task_AddFrame(Func_0200525c, TASK_PASS_VBLANK);
 }
 
 void Func_0200533c(void) {
   struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
 
   if (clock->mode)
-    Task_RemoveFar(Func_02005210);
+    FieldTask_Remove(Func_02005210);
   else
-    Task_RemoveFar(Func_0200525c);
+    FieldTask_Remove(Func_0200525c);
 }
 
 void Func_02005364(void) {
   struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
 
   if (clock->mode)
-    Task_Add(Func_02005210, TASK_PASS_VBLANK);
+    Task_AddFrame(Func_02005210, TASK_PASS_VBLANK);
   else
-    Task_Add(Func_0200525c, TASK_PASS_VBLANK);
+    Task_AddFrame(Func_0200525c, TASK_PASS_VBLANK);
   clock->timer = 3600;
 }
 

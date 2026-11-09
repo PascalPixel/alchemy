@@ -2,7 +2,6 @@
 /// Finds how far the object the leader pushes can slide.
 
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 
 /// Where a pushed object comes to rest, read by the push that follows.

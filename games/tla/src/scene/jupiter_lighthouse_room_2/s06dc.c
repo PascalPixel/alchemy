@@ -8,5 +8,5 @@ void Func_020006dc(void) {
 
 
   if (party->renderMode == 10)
-    Func_080dbdd4(0x1500000, 0x2500000, 0, 255);
+    MapGrid_SetCellBehavior(0x1500000, 0x2500000, 0, 255);
 }

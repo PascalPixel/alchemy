@@ -5,20 +5,17 @@ extern s32 Data_020067f0;
 extern s32 Data_020067f4;
 extern s32 Data_020067f8;
 
-s32 Func_02004f00(void);
-void Func_02004cf0(s32 srcX, s32 srcZ, s32 width, s32 height, s32 destX,
-                   s32 destZ);
 s32 Func_02000658(s32 layer, s32 x, s32 z);
 
 static inline void CopyCells(s32 srcX, s32 srcZ, s32 width, s32 height,
                              s32 destX, s32 destZ) {
   /* FAKEMATCH(wrapper): CopyCells forwarded inline; as direct calls to
-   * Func_02004cf0, 12 of 70 instructions differ in tla-en. */
-  Func_02004cf0(srcX, srcZ, width, height, destX, destZ);
+   * Func_0802b450, 12 of 70 instructions differ in tla-en. */
+  Func_0802b450(srcX, srcZ, width, height, destX, destZ);
 }
 
 void Func_020024ac(void) {
-  struct Actor *object = Actor_GetById(Func_02004f00());
+  struct Actor *object = Actor_Get(FieldParty_GetLeaderActor());
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   s32 key = (x << 16) + z;

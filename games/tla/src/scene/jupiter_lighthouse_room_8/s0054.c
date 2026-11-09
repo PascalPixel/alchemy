@@ -11,7 +11,7 @@ void Func_02000ec8(struct Probe probe);
 
 void Func_02000054(void) {
   if (Func_02001f60())
-    Import_EventSetExitRequest(13);
+    FieldEvent_SetExitRequest(13);
 }
 
 void Func_02000068(void) {

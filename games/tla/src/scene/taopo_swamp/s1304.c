@@ -47,8 +47,8 @@ void Func_02001304(void) {
     Func_02002978(-1);
     break;
   }
-  if ((u32)(timer - 251) <= 178 && GameFlag_Test(0xa6e) && !GameFlag_Test(59) &&
-      !GameFlag_Test(0x310))
+  if ((u32)(timer - 251) <= 178 && Event_GetFlag(0xa6e) && !Event_GetFlag(59) &&
+      !Event_GetFlag(0x310))
     ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 100;
   Func_0200273c(480);
 }
@@ -69,9 +69,9 @@ void Func_02001424(void) {
     break;
   }
   if ((u32)(timer - 11) <= 118) {
-    if (GameFlag_Test(0x221))
+    if (Event_GetFlag(0x221))
       Func_02000810(8);
-    else if (GameFlag_Test(0x220))
+    else if (Event_GetFlag(0x220))
       Func_020008d8(8);
   }
   Func_0200273c(480);
@@ -93,9 +93,9 @@ void Func_020014a0(void) {
     break;
   }
   if ((u32)(timer - 11) <= 118) {
-    if (GameFlag_Test(0x221))
+    if (Event_GetFlag(0x221))
       Func_020009c0(10);
-    else if (GameFlag_Test(0x220))
+    else if (Event_GetFlag(0x220))
       Func_02000a94(10);
   }
   Func_0200273c(480);

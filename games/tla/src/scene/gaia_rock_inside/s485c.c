@@ -11,14 +11,14 @@ void Func_0200485c(s32 direction) {
   switch (next) {
   case 250:
   case 251:
-    Import_EventSetExitRequest(next);
+    FieldEvent_SetExitRequest(next);
     break;
   case 0:
     next = 1;
   default:
     *state = next;
-    Import_EventSetExitRequest(direction);
+    FieldEvent_SetExitRequest(direction);
     break;
   }
-  Sound_Play(123);
+  Event_PlaySound(123);
 }

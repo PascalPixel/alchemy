@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "map.h"
 #include "ram_buffer.h"

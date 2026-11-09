@@ -24,7 +24,7 @@ s32 Func_02004d48(s32 first, s32 check) {
   s32 done;
   s32 result;
 
-  actor = ((struct Unk02004d48 *)Actor_GetById(first));
+  actor = ((struct Unk02004d48 *)Actor_Get(first));
   actor->unk64 = 0;
   actor->unk66 = 7;
   actor->unk62 = 2;
@@ -36,7 +36,7 @@ s32 Func_02004d48(s32 first, s32 check) {
   Func_02005654();
   Func_02005624(actor, 2);
   id = second;
-  actor = ((struct Unk02004d48 *)Actor_GetById(id++));
+  actor = ((struct Unk02004d48 *)Actor_Get(id++));
   actor->unk64 = 2;
   actor->unk66 = 7;
   actor->unk62 = 0;
@@ -44,7 +44,7 @@ s32 Func_02004d48(s32 first, s32 check) {
   actor->unk4c = 0;
   Func_02005654(actor);
   Func_02005624(actor, 2);
-  actor = ((struct Unk02004d48 *)Actor_GetById(id++));
+  actor = ((struct Unk02004d48 *)Actor_Get(id++));
   actor->unk64 = 8;
   actor->unk66 = 7;
   actor->unk62 = 2;
@@ -52,7 +52,7 @@ s32 Func_02004d48(s32 first, s32 check) {
   actor->unk4c = 0;
   Func_02005654(actor);
   Func_02005624(actor, 2);
-  actor = ((struct Unk02004d48 *)Actor_GetById(id));
+  actor = ((struct Unk02004d48 *)Actor_Get(id));
   actor->unk64 = 10;
   actor->unk66 = 7;
   actor->unk62 = 0;
@@ -64,28 +64,28 @@ s32 Func_02004d48(s32 first, s32 check) {
     done = 1;
     for (frame = 0; frame <= 15; frame++) {
       for (id = first; id < first + 4; id++) {
-        actor = ((struct Unk02004d48 *)Actor_GetById(id));
+        actor = ((struct Unk02004d48 *)Actor_Get(id));
         if (actor->unk63 != 0 && actor->unk63 != 7)
           done = 0;
         Func_02004938(actor, frame, id);
       }
-      wait(1);
+      System_Wait(1);
     }
     if (done)
       break;
   }
-  wait(20);
+  System_Wait(20);
   result = 3;
   if (check) {
     u32 a = 0;
     u32 b = 0;
     {
-      struct Unk02004d48 *r = ((struct Unk02004d48 *)Actor_GetById(first));
+      struct Unk02004d48 *r = ((struct Unk02004d48 *)Actor_Get(first));
       if (r->x != 0)
         a = r->unk4c;
     }
     {
-      struct Unk02004d48 *r = ((struct Unk02004d48 *)Actor_GetById(second));
+      struct Unk02004d48 *r = ((struct Unk02004d48 *)Actor_Get(second));
       if (r->x != 0) {
         u32 value = r->unk4c;
         if (a == 0 || a > value)
@@ -93,12 +93,12 @@ s32 Func_02004d48(s32 first, s32 check) {
       }
     }
     {
-      struct Unk02004d48 *r = ((struct Unk02004d48 *)Actor_GetById(first + 2));
+      struct Unk02004d48 *r = ((struct Unk02004d48 *)Actor_Get(first + 2));
       if (r->x != 0)
         b = r->unk4c;
     }
     {
-      struct Unk02004d48 *r = ((struct Unk02004d48 *)Actor_GetById(first + 3));
+      struct Unk02004d48 *r = ((struct Unk02004d48 *)Actor_Get(first + 3));
       if (r->x != 0) {
         u32 value = r->unk4c;
         if (b == 0 || b > value)
@@ -111,10 +111,10 @@ s32 Func_02004d48(s32 first, s32 check) {
         result = 0;
         if (a != b) {
           if (a < b) {
-            GameFlag_SetBit(0x9eb);
+            Event_SetFlag(0x9eb);
             result = 1;
           } else {
-            GameFlag_SetBit(0x9eb);
+            Event_SetFlag(0x9eb);
             result = 2;
           }
         }

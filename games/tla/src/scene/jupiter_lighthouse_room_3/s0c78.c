@@ -22,7 +22,7 @@ void Map_FillCellRectByte2(s32 layer, s32 x, s32 y, u32 width, u32 height,
 
 s32 Func_02000c78(s32 id) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
-  struct Actor *actor = Actor_GetById(id);
+  struct Actor *actor = Actor_Get(id);
   s16 shape = *(s16 *)((struct FieldSprite *)actor->animation)->record;
   s16 i = 0;
   u32 j;
@@ -54,7 +54,7 @@ s32 Func_02000c78(s32 id) {
   mapZ = *(s32 *)(map + 332) >> 20;
   toX = x + (u16)i;
   toZ = z + (u16)mapZ;
-  Map_CopyCellAttributeRect(x, z, width, height, toX, toZ);
+  MapGrid_CopyCellAttributes(x, z, width, height, toX, toZ);
   Map_FillCellRectByte2(0, x, z, width, height, 255);
   Map_FillCellRectByte2(2, x, z, width, height, 255);
   return 1;

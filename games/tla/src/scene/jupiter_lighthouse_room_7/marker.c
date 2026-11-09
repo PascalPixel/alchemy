@@ -17,7 +17,7 @@ void Func_02001a48(const u8 *data, s32 a, s32 b);
 void Func_02002bec(void);
 
 void Func_02000778(s32 unused, s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
 
   if (id == 20) {
     Func_02002b54(object->x, object->z, 0, 6);

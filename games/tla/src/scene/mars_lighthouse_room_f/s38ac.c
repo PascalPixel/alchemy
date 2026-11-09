@@ -3,6 +3,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "iwram_call.h"
+#include "event_inline.h"
 
 struct CellTargetEntry {
   s16 x;
@@ -52,16 +53,9 @@ struct CellMapWork {
 
 extern struct CellTarget gData_020070a8;
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void Func_020054e0(s32 srcX, s32 srcZ, s32 width, s32 height, s32 dstX,
-                   s32 dstZ);
 void *Heap_Alloc(s32 size);
 void Heap_Release(void *buffer);
 s32 Resource_FindFreeEntry(void);
-s32 VramCache_Load(u32 slot, u32 size, const void *source);
-s32 Task_Add(void (*func)(void), s32 priority);
 void Func_02003780(void);
 
 s32 Func_020038ac(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
@@ -123,16 +117,16 @@ s32 Func_020038ac(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
           entry->z = cz;
           entry->flag = flag;
           flag++;
-          if (!GameFlag_Test(0x109)) {
+          if (!Event_GetFlag(0x109)) {
             if (event == last)
-              GameFlag_SetBit(entry->flag);
-          } else if (GameFlag_Test(entry->flag)) {
+              Event_SetFlag(entry->flag);
+          } else if (Event_GetFlag(entry->flag)) {
             s32 sourceX = table->x;
             s32 sourceZ = table->z;
 
             cx |= (s16)(table->x & 64);
             cz |= (s16)(table->z & 64);
-            Func_020054e0(sourceX, sourceZ + 1, 1, 1, cx, cz);
+            MapGrid_CopyCells(sourceX, sourceZ + 1, 1, 1, cx, cz);
           }
           entry++;
           table->count++;
@@ -167,8 +161,8 @@ s32 Func_020038ac(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
     if (j < height)
       goto row;
   }
-  if (GameFlag_Test(0x109)) {
-    struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  if (Event_GetFlag(0x109)) {
+    struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
     s32 leaderX = leader->x >> 20;
     s32 leaderZ = leader->z >> 20;
     s32 k;
@@ -211,8 +205,8 @@ s32 Func_020038ac(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
       goto fill;
   }
   table->tile = Resource_FindFreeEntry();
-  VramCache_Load(table->tile, 0x100, buffer);
+  Vram_Load(table->tile, 0x100, buffer);
   Heap_Release(buffer);
-  Task_Add(Func_02003780, 0x480);
+  Task_AddFrame(Func_02003780, 0x480);
   return table->count;
 }

@@ -31,7 +31,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 void *Func_0200004c(void) {
-  if (GameFlag_Test(0x8ab))
+  if (Event_GetFlag(0x8ab))
     return gData_02004fe4;
   return gData_02004dbc;
 }
@@ -40,7 +40,7 @@ void Func_0200006c(s32 mode, s32 id) {
   if (id == 0)
     Func_02004004();
   if (mode == 1) {
-    GameFlag_SetBit(0x8a7);
+    Event_SetFlag(0x8a7);
     Func_02000fa4();
   }
   if (mode == 2)
@@ -58,8 +58,8 @@ void Func_020000c8(s32 mode, s32 arg) {
 
   Func_02004868(gData_02004d0c, mode, arg);
   if (mode == 1) {
-    a = Actor_GetById(19);
-    b = Actor_GetById(21);
+    a = Actor_Get(19);
+    b = Actor_Get(21);
     a->speedLimit = 0x40000;
     a->acceleration = 0x8000;
     b->acceleration = 0x8000;
@@ -77,7 +77,7 @@ void Func_020000c8(s32 mode, s32 arg) {
     do {
       Func_02004c24(1, 18, 19);
       Func_02004c24(2, 20, 21);
-      wait(1);
+      System_Wait(1);
       Func_02004c8c(1);
       Func_02004c8c(2);
       if (Func_02004a7c(a) != 0 && Func_02004a7c(b) != 0)
@@ -94,15 +94,15 @@ void Func_02000190(s32 unused, s32 id) {
   s32 x;
   s32 z;
 
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  object = Actor_GetById(id);
+  leader = Actor_Get(gMainRoutineWork.currentOwner);
+  object = Actor_Get(id);
   object->motionFlags = 0;
   if (id == 10) {
     leaderX = leader->x >> 20;
     x = object->x >> 20;
     z = object->z >> 20;
     if (x == 34 && z == 32 && leaderX == 33)
-      Func_080dbdd4(0x2100000, 0x2000000, 2, 255);
+      MapGrid_SetCellBehavior(0x2100000, 0x2000000, 2, 255);
     if (x == 33 && z == 32 && leaderX == 32)
       MapGrid_SetCellBehavior(0x2000000, 0x2000000, 2, 255);
   }

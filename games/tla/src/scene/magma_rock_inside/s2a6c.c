@@ -1,4 +1,5 @@
 #include "types.h"
+#include "event_inline.h"
 
 struct Orbiter {
   u8 unk00[8];
@@ -15,7 +16,6 @@ struct Orbiter {
   struct Orbiter *parent;
 };
 
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *position);
 void Func_02002a14(struct Orbiter *object);
 
 s32 Func_02002a6c(struct Orbiter *object) {
@@ -30,7 +30,7 @@ s32 Func_02002a6c(struct Orbiter *object) {
   object->y = parent->y + 0x80000;
   object->z = parent->z;
   heading = *angle;
-  Vector_AddPolarOffsetFar(object->radius, heading, position = &object->x);
+  FieldVector_AddPolarOffset(object->radius, heading, position = &object->x);
   if (--object->timer == 0)
     return 0;
   if (object->radius == 0x20000)
@@ -41,7 +41,7 @@ s32 Func_02002a6c(struct Orbiter *object) {
   *position = parent->x;
   object->y = parent->y + 0x80000;
   object->z = parent->z;
-  Vector_AddPolarOffsetFar(object->radius, (s16)*angle, position);
+  FieldVector_AddPolarOffset(object->radius, (s16)*angle, position);
   Func_02002a14(object);
   object->radius -= 0x40000;
   return 1;

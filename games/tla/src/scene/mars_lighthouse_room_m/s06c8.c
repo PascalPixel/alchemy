@@ -1,10 +1,10 @@
 #include "mars_lighthouse_room_m.h"
+#include "event_inline.h"
 
 extern u16 gData_02003a7e;
 extern s16 gData_02003a80;
 extern s16 gData_02003a82;
 
-void Func_02003178(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 /// Moves the Func_0200080c cells for a new state: the cells of the old index
 /// (gData_02003a80) are put back with (0, 122, 3, 3), gData_02003a7e becomes 0
@@ -19,7 +19,7 @@ void Func_020006c8(s32 state) {
   if (state == gData_02003a82)
     return;
   if ((state ^ gData_02003a82) & 1)
-    Func_020032b8(560);
+    Event_PlaySound(560);
   gData_02003a82 = state;
   /* FAKEMATCH: a forced temporary: the low bit is taken before the state is
    * copied for the next index, as in the native (in the test itself: differ
@@ -35,60 +35,60 @@ void Func_020006c8(s32 state) {
   else
     *flash = 16;
   if (gData_02003a80 == 0)
-    Call6((void (*)())Func_02003178, 0, 122, 3, 3, 17, 67);
+    MapGrid_CopyCellsLayered(0, 122, 3, 3, 17, 67);
   /* FAKEMATCH: each empty asm with a memory clobber keeps GCSE from carrying
    * one load of the index across the calls; the native reloads it for every
    * test (without them: differ 133). */
   asm("" : : : "memory");
   if (gData_02003a80 == 1)
-    Call6((void (*)())Func_02003178, 0, 122, 3, 3, 8, 72);
+    MapGrid_CopyCellsLayered(0, 122, 3, 3, 8, 72);
   /* FAKEMATCH: as above. */
   asm("" : : : "memory");
   if (gData_02003a80 == 2)
-    Call6((void (*)())Func_02003178, 0, 122, 3, 3, 17, 72);
+    MapGrid_CopyCellsLayered(0, 122, 3, 3, 17, 72);
   /* FAKEMATCH: as above. */
   asm("" : : : "memory");
   if (gData_02003a80 == 3)
-    Call6((void (*)())Func_02003178, 0, 122, 3, 3, 8, 67);
+    MapGrid_CopyCellsLayered(0, 122, 3, 3, 8, 67);
   gData_02003a80 = next / 2;
   if (gData_02003a80 == 0)
-    Call6((void (*)())Func_02003178, 0, 125, 3, 3, 17, 67);
+    MapGrid_CopyCellsLayered(0, 125, 3, 3, 17, 67);
   if (gData_02003a80 == 1)
-    Call6((void (*)())Func_02003178, 0, 125, 3, 3, 8, 72);
+    MapGrid_CopyCellsLayered(0, 125, 3, 3, 8, 72);
   /* FAKEMATCH: as above. */
   asm("" : : : "memory");
   if (gData_02003a80 == 2)
-    Call6((void (*)())Func_02003178, 0, 125, 3, 3, 17, 72);
+    MapGrid_CopyCellsLayered(0, 125, 3, 3, 17, 72);
   /* FAKEMATCH: as above. */
   asm("" : : : "memory");
   if (gData_02003a80 == 3)
-    Call6((void (*)())Func_02003178, 0, 125, 3, 3, 8, 67);
+    MapGrid_CopyCellsLayered(0, 125, 3, 3, 8, 67);
 }
 
-/// Calls Func_02003178 with (0, 125, 3, 3) for four places, steps
+/// Calls Func_0802b450 with (0, 125, 3, 3) for four places, steps
 /// gData_02003a7e through 12 and 8 to 0, then calls it with (0, 122, 3, 3) for
 /// the same places.
 void Func_0200080c(void) {
-  Call6((void (*)())Func_02003178, 0, 125, 3, 3, 17, 67);
-  Call6((void (*)())Func_02003178, 0, 125, 3, 3, 8, 72);
-  Func_02003178(0, 125, 3, 3, 17, 72);
-  Func_02003178(0, 125, 3, 3, 8, 67);
-  wait(1);
+  MapGrid_CopyCellsLayered(0, 125, 3, 3, 17, 67);
+  MapGrid_CopyCellsLayered(0, 125, 3, 3, 8, 72);
+  MapGrid_CopyCellsLayered(0, 125, 3, 3, 17, 72);
+  MapGrid_CopyCellsLayered(0, 125, 3, 3, 8, 67);
+  System_Wait(1);
   gData_02003a7e = 12;
-  wait(12);
+  System_Wait(12);
   gData_02003a7e = 8;
-  wait(4);
+  System_Wait(4);
   gData_02003a7e = 12;
-  wait(4);
+  System_Wait(4);
   gData_02003a7e = 8;
-  wait(4);
+  System_Wait(4);
   gData_02003a7e = 12;
-  wait(4);
+  System_Wait(4);
   gData_02003a7e = 0;
-  wait(12);
-  Func_02003178(0, 122, 3, 3, 17, 67);
-  Func_02003178(0, 122, 3, 3, 8, 72);
-  Func_02003178(0, 122, 3, 3, 17, 72);
-  Func_02003178(0, 122, 3, 3, 8, 67);
-  wait(1);
+  System_Wait(12);
+  MapGrid_CopyCellsLayered(0, 122, 3, 3, 17, 67);
+  MapGrid_CopyCellsLayered(0, 122, 3, 3, 8, 72);
+  MapGrid_CopyCellsLayered(0, 122, 3, 3, 17, 72);
+  MapGrid_CopyCellsLayered(0, 122, 3, 3, 8, 67);
+  System_Wait(1);
 }

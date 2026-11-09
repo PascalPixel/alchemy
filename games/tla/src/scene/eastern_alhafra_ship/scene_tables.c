@@ -12,7 +12,6 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "call.h"
 #include "text/msg_ids.h"
 
 extern u8 gData_0200345c[];

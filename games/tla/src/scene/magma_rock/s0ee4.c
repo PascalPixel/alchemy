@@ -12,7 +12,7 @@ void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Func_02000dc0(void);
 
 void Func_02000ee4(u16 id, s16 first, s16 side) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
   struct Actor *a;
   struct Actor *b;
   u16 left;
@@ -22,14 +22,14 @@ void Func_02000ee4(u16 id, s16 first, s16 side) {
   u8 *flags;
   u8 facing;
 
-  if (GameFlag_Test(0x109))
+  if (Event_GetFlag(0x109))
     return;
   left = first;
   right = side;
   linked = left + right;
-  object->x = Actor_GetById(linked)->x;
-  object->y = Actor_GetById(linked)->y;
-  object->z = Actor_GetById(linked)->z;
+  object->x = Actor_Get(linked)->x;
+  object->y = Actor_Get(linked)->y;
+  object->z = Actor_Get(linked)->z;
   Scene_SetActorSpritePriority(object, 2);
   HALF_AT(object, 102) = first;
   /* FAKEMATCH(temporary): the byte is computed before its address; as
@@ -40,15 +40,15 @@ void Func_02000ee4(u16 id, s16 first, s16 side) {
   next = left + 1;
   flags = &object->motionFlags;
   if (right != 0) {
-    a = Actor_GetById(left);
-    b = Actor_GetById(next);
+    a = Actor_Get(left);
+    b = Actor_Get(next);
     if (a->x < b->x)
       object->angle = FACING_WEST;
     else
       object->angle = 0;
   } else {
-    a = Actor_GetById(left);
-    b = Actor_GetById(next);
+    a = Actor_Get(left);
+    b = Actor_Get(next);
     if (a->x > b->x)
       object->angle = FACING_WEST;
     else

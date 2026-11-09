@@ -38,18 +38,18 @@ void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 velocity) {
   Func_020057d4(object);
   saved = *flags;
   Func_02005624(object, 6);
-  wait(6);
-  Sound_Play(152);
+  System_Wait(6);
+  Event_PlaySound(152);
   Func_02005624(object, 7);
   object->speedLimit = 0x30000;
   object->acceleration = 0x20000;
   object->velocityY = velocity;
   *flags &= 0x7e;
   Actor_SetSingleChildFlags(object, 0);
-  Actor_SetMoveTarget(object, object->x + dx, object->y, object->z + dz);
-  Script_WaitForEventTimeout(object);
+  FieldActor_SetMoveTarget(object, object->x + dx, object->y, object->z + dz);
+  Actor_WaitForMove(object);
   *flags = saved;
   Func_02005624(object, 6);
   Actor_SetSingleChildFlags(object, 1);
-  wait(3);
+  System_Wait(3);
 }

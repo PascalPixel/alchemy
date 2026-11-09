@@ -1,6 +1,7 @@
 #include "types.h"
 #include "call.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -9,44 +10,14 @@
    } *)(base))                                                                 \
        ->v)
 
-s32 Event_Wait();
 s32 Func_02001344();
 s32 Func_02001418();
 s32 Func_02001454();
 s32 Func_020051ac();
 s32 Func_020051b4();
-s32 Actor_SetHorizontalPositionWithTerrain();
-s32 Event_SetMessageId();
-s32 Event_ShowMessageThenWait();
-s32 Func_080d47b4();
-s32 Func_080d489c();
-s32 Camera_SetSpeedParameters();
 s32 Func_020052b4();
 s32 Func_020052bc();
-s32 Import_EventSetExitRequest();
-s32 Event_ResolvePendingActions();
-s32 Func_080d3070();
-s32 GameFlag_SetBit();
-s32 GameFlag_Test();
-s32 Event_AskYesNoWithActorAnimation();
-s32 Camera_MoveWithinMapBounds();
-s32 Motion_SetVarCbAndRefresh();
 s32 Actor_SetSingleChildFlags();
-s32 Actor_ArmCallback();
-s32 Actor_WaitForMoveById();
-s32 Actor_CommitPositionAndActivate();
-s32 Actor_Stop();
-s32 Actor_Jump();
-s32 Actor_OffsetPositionAndReset();
-s32 Actor_ResetAndSetPosition();
-s32 Actor_SetPositionAndReset();
-s32 Actor_SetSpeedParameters();
-s32 Actor_StartRepeatedMotion();
-s32 Camera_FollowActor();
-s32 Actor_GetById();
-s32 Actor_WatchAndSetScript();
-s32 Actor_SetModeById();
-s32 FieldMessage_ShowAtActor();
 extern u8 MsgGaroh14[];
 
 void Func_02002694(void) {
@@ -74,33 +45,33 @@ void Func_02002694(void) {
   s32 p1;
   s32 p2;
 
-  GameFlag_SetBit(0x91e);
+  Event_SetFlag(0x91e);
   Func_020051ac();
-  Event_ResolvePendingActions(0);
-  Event_SetMessageId(((s32)MsgGaroh14));
-  Call3(Actor_SetHorizontalPositionWithTerrain, 10, PIXELS(328), PIXELS(40));
-  Call3(Actor_SetHorizontalPositionWithTerrain, 8, PIXELS(328), PIXELS(40));
-  Call3(Actor_ArmCallback, 10, FACING_SOUTH, 0);
-  Call3(Actor_ArmCallback, 8, FACING_SOUTH, 0);
-  Call3(Actor_SetPositionAndReset, 4, 320, 224);
-  Call3(Actor_ArmCallback, 4, FACING_NORTH, 0);
-  Event_Wait(10);
-  Call3(Event_ShowMessageThenWait, 0x8009, 0, 0);
-  Call4(Func_080d3070, 9, -16, -8, FACING_NORTH);
-  Actor_WaitForMoveById(9);
-  Event_Wait(30);
-  Call2(Camera_SetSpeedParameters, 0x10000, 0x2000);
-  Call4(Camera_MoveWithinMapBounds, PIXELS(328), -1, PIXELS(152), 1);
-  Call3(Actor_ArmCallback, 9, FACING_NORTHWEST, 0);
-  Event_Wait(25);
-  Actor_ArmCallback(9, FACING_NORTHEAST, 0);
-  Event_Wait(25);
-  Call3(Actor_ArmCallback, 9, FACING_NORTHWEST, 0);
-  Event_Wait(25);
-  Actor_ArmCallback(9, FACING_NORTH, 0);
-  Event_Wait(25);
-  Call3(Event_ShowMessageThenWait, 9, 0, 0);
-  Call3(Actor_ArmCallback, 4, FACING_NORTHWEST, 0);
+  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_SetMessageId(((s32)MsgGaroh14));
+  Actor_SetPosition(10, PIXELS(328), PIXELS(40));
+  Actor_SetPosition(8, PIXELS(328), PIXELS(40));
+  Actor_FaceDirection(10, FACING_SOUTH, 0);
+  Actor_FaceDirection(8, FACING_SOUTH, 0);
+  Actor_WalkToAndWait(4, 320, 224);
+  Actor_FaceDirection(4, FACING_NORTH, 0);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(0x8009, 0, 0);
+  FieldActor_LaunchFromLeader(9, -16, -8, FACING_NORTH);
+  FieldActor_WaitForMoveById(9);
+  FieldEvent_Wait(30);
+  FieldCamera_SetSpeed(0x10000, 0x2000);
+  FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(152), 1);
+  Actor_FaceDirection(9, FACING_NORTHWEST, 0);
+  FieldEvent_Wait(25);
+  Actor_FaceDirection(9, FACING_NORTHEAST, 0);
+  FieldEvent_Wait(25);
+  Actor_FaceDirection(9, FACING_NORTHWEST, 0);
+  FieldEvent_Wait(25);
+  Actor_FaceDirection(9, FACING_NORTH, 0);
+  FieldEvent_Wait(25);
+  FieldEvent_ShowMessageThenWait(9, 0, 0);
+  Actor_FaceDirection(4, FACING_NORTHWEST, 0);
   {
     s32 a0 = 9;
     s32 a1 = FACING_SOUTHEAST;
@@ -108,7 +79,7 @@ void Func_02002694(void) {
      * finishes the second; the plain call loads the first earlier and the third
      * last (differ 2). */
     __asm__("" : "+l"(a0), "+l"(a1));
-    Actor_ArmCallback(a0, a1, 0);
+    Actor_FaceDirection(a0, a1, 0);
   }
   {
     s32 a0 = 4;
@@ -118,186 +89,186 @@ void Func_02002694(void) {
     Func_020052bc(a0, 1);
   }
   Func_020052b4();
-  Call2(Camera_SetSpeedParameters, 0x18000, 0x3000);
-  FieldMessage_ShowAtActor(9, 0);
-  if (Event_AskYesNoWithActorAnimation(4, 0) != 0)
+  FieldCamera_SetSpeed(0x18000, 0x3000);
+  Event_OpenMessage(9, 0);
+  if (FieldEvent_AskYesNoWithActorAnimation(4, 0) != 0)
     goto L_0200a818;
-  Event_Wait(20);
-  Func_080d47b4(9, 0x109, 30);
-  Event_ShowMessageThenWait(9, 0, 0);
+  FieldEvent_Wait(20);
+  Actor_ShowEmote(9, 0x109, 30);
+  FieldEvent_ShowMessageThenWait(9, 0, 0);
   *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
       (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
   goto L_0200a846;
 L_0200a818:;
-  Event_Wait(30);
-  Func_080d47b4(9, 0x109, 30);
+  FieldEvent_Wait(30);
+  Actor_ShowEmote(9, 0x109, 30);
   *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
       (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
-  Event_ShowMessageThenWait(9, 0, 0);
+  FieldEvent_ShowMessageThenWait(9, 0, 0);
 L_0200a846:;
-  Call3(Event_ShowMessageThenWait, 8, 0, 0);
-  Motion_SetVarCbAndRefresh(4, 2);
-  Event_Wait(10);
-  Call3(Actor_ArmCallback, 4, FACING_NORTH, 0);
-  Call3(Actor_ArmCallback, 9, FACING_NORTH, 0);
-  Event_Wait(20);
-  Call4(Func_080d3070, 5, 16, 0, FACING_NORTH);
-  Call4(Func_080d3070, 6, 32, 0, FACING_NORTH);
-  t2 = GameFlag_Test(7);
+  FieldEvent_ShowMessageThenWait(8, 0, 0);
+  Actor_RunRepeatedMotion(4, 2);
+  FieldEvent_Wait(10);
+  Actor_FaceDirection(4, FACING_NORTH, 0);
+  Actor_FaceDirection(9, FACING_NORTH, 0);
+  FieldEvent_Wait(20);
+  FieldActor_LaunchFromLeader(5, 16, 0, FACING_NORTH);
+  FieldActor_LaunchFromLeader(6, 32, 0, FACING_NORTH);
+  t2 = Event_GetFlag(7);
   if (t2 == 0)
     goto L_0200a8b2;
-  Call4(Func_080d3070, 7, 48, -8, FACING_NORTHWEST);
+  FieldActor_LaunchFromLeader(7, 48, -8, FACING_NORTHWEST);
 L_0200a8b2:;
-  Actor_WaitForMoveById(6);
-  Event_Wait(20);
+  FieldActor_WaitForMoveById(6);
+  FieldEvent_Wait(20);
   {
     s32 a1 = 0x100;
     s32 a2 = 30;
     /* FAKEMATCH: the native loads the later arguments before the first; the
      * plain call loads the first earlier. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(5, a1, a2);
+    Actor_ShowEmote(5, a1, a2);
   }
-  Call3(Event_ShowMessageThenWait, 5, 0, 0);
-  Call3(Actor_ArmCallback, 6, FACING_NORTHWEST, 0);
-  Event_Wait(20);
-  Call3(Actor_ArmCallback, 6, FACING_NORTHEAST, 0);
-  Event_Wait(20);
-  Call3(Actor_ArmCallback, 6, FACING_NORTHWEST, 0);
-  Event_Wait(20);
-  Call3(Actor_ArmCallback, 6, FACING_NORTH, 0);
-  Event_Wait(20);
-  Call3(Event_ShowMessageThenWait, 6, 0, 0);
+  FieldEvent_ShowMessageThenWait(5, 0, 0);
+  Actor_FaceDirection(6, FACING_NORTHWEST, 0);
+  FieldEvent_Wait(20);
+  Actor_FaceDirection(6, FACING_NORTHEAST, 0);
+  FieldEvent_Wait(20);
+  Actor_FaceDirection(6, FACING_NORTHWEST, 0);
+  FieldEvent_Wait(20);
+  Actor_FaceDirection(6, FACING_NORTH, 0);
+  FieldEvent_Wait(20);
+  FieldEvent_ShowMessageThenWait(6, 0, 0);
   {
     s32 a1 = 0x101;
     s32 a2 = 30;
     /* FAKEMATCH: the native loads the later arguments before the first; the
      * plain call loads the first earlier. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(9, a1, a2);
+    Actor_ShowEmote(9, a1, a2);
   }
-  Call3(Actor_ArmCallback, 9, FACING_NORTHWEST, 0);
-  Event_Wait(25);
-  Call3(Actor_ArmCallback, 9, FACING_NORTHEAST, 0);
-  Event_Wait(25);
-  Call3(Actor_ArmCallback, 9, FACING_NORTHWEST, 0);
-  Event_Wait(25);
-  Call3(Actor_ArmCallback, 9, FACING_NORTHEAST, 0);
-  Event_Wait(25);
-  Actor_ArmCallback(9, FACING_SOUTHEAST, 0);
-  Event_Wait(25);
-  Call3(Event_ShowMessageThenWait, 9, 0, 0);
-  Call3(Actor_ArmCallback, 6, FACING_WEST, 0);
-  Actor_ArmCallback(5, FACING_EAST, 0);
-  Event_Wait(40);
-  Call3(Actor_ArmCallback, 6, FACING_NORTHWEST, 0);
-  Actor_ArmCallback(5, FACING_NORTHWEST, 0);
-  Event_Wait(25);
-  Call2(Actor_SetModeById, 6, 3);
+  Actor_FaceDirection(9, FACING_NORTHWEST, 0);
+  FieldEvent_Wait(25);
+  Actor_FaceDirection(9, FACING_NORTHEAST, 0);
+  FieldEvent_Wait(25);
+  Actor_FaceDirection(9, FACING_NORTHWEST, 0);
+  FieldEvent_Wait(25);
+  Actor_FaceDirection(9, FACING_NORTHEAST, 0);
+  FieldEvent_Wait(25);
+  Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
+  FieldEvent_Wait(25);
+  FieldEvent_ShowMessageThenWait(9, 0, 0);
+  Actor_FaceDirection(6, FACING_WEST, 0);
+  Actor_FaceDirection(5, FACING_EAST, 0);
+  FieldEvent_Wait(40);
+  Actor_FaceDirection(6, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(5, FACING_NORTHWEST, 0);
+  FieldEvent_Wait(25);
+  Actor_SetAnimation(6, 3);
   {
     s32 a0 = 5;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
+    FieldActor_SetAnimation(a0, 3);
   }
-  Event_Wait(20);
-  Event_Wait(10);
-  Call3(Event_ShowMessageThenWait, 9, 0, 0);
-  Call3(Event_ShowMessageThenWait, 10, 0, 0);
-  Call3(Actor_ArmCallback, 5, FACING_NORTH, 0);
-  Call3(Actor_ArmCallback, 6, FACING_NORTH, 0);
-  Call3(Actor_ArmCallback, 4, FACING_NORTH, 0);
-  Call3(Actor_ArmCallback, 9, FACING_NORTHEAST, 0);
-  Call4(Camera_MoveWithinMapBounds, PIXELS(328), -1, PIXELS(144), 1);
+  FieldEvent_Wait(20);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(9, 0, 0);
+  FieldEvent_ShowMessageThenWait(10, 0, 0);
+  Actor_FaceDirection(5, FACING_NORTH, 0);
+  Actor_FaceDirection(6, FACING_NORTH, 0);
+  Actor_FaceDirection(4, FACING_NORTH, 0);
+  Actor_FaceDirection(9, FACING_NORTHEAST, 0);
+  FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(144), 1);
   Func_020052b4();
-  Event_Wait(20);
-  Call3(Actor_SetHorizontalPositionWithTerrain, 11, PIXELS(328), PIXELS(136));
-  t3 = Actor_GetById(11);
+  FieldEvent_Wait(20);
+  Actor_SetPosition(11, PIXELS(328), PIXELS(136));
+  t3 = Actor_Get(11);
   Actor_SetSingleChildFlags(t3, 0);
   Func_02001418(11);
-  Event_Wait(20);
-  Call3(Event_ShowMessageThenWait, 5, 0, 0);
-  Call3(Actor_SetSpeedParameters, 8, 0xb333, 0x5999);
-  Call3(Actor_SetSpeedParameters, 10, 0xb333, 0x5999);
-  Call3(Actor_SetHorizontalPositionWithTerrain, 10, PIXELS(328), PIXELS(128));
-  Event_Wait(10);
-  Call3(Actor_CommitPositionAndActivate, 10, 0, 16);
-  Call3(Actor_SetHorizontalPositionWithTerrain, 8, PIXELS(328), PIXELS(128));
-  Event_Wait(10);
-  Call3(Actor_OffsetPositionAndReset, 8, 0, 16);
-  Actor_CommitPositionAndActivate(10, 0, 16);
-  Event_Wait(10);
+  FieldEvent_Wait(20);
+  FieldEvent_ShowMessageThenWait(5, 0, 0);
+  Actor_SetSpeed(8, 0xb333, 0x5999);
+  Actor_SetSpeed(10, 0xb333, 0x5999);
+  Actor_SetPosition(10, PIXELS(328), PIXELS(128));
+  FieldEvent_Wait(10);
+  Actor_WalkByAndWait(10, 0, 16);
+  Actor_SetPosition(8, PIXELS(328), PIXELS(128));
+  FieldEvent_Wait(10);
+  Actor_WalkBy(8, 0, 16);
+  Actor_WalkByAndWait(10, 0, 16);
+  FieldEvent_Wait(10);
   Func_02001454(11);
-  Call3(Actor_SetHorizontalPositionWithTerrain, 11, 0, 0);
-  Camera_FollowActor(10, 1);
-  Event_Wait(20);
-  Call3(Actor_OffsetPositionAndReset, 8, 0, 24);
-  Call3(Actor_CommitPositionAndActivate, 10, 0, 24);
-  Call3(Actor_CommitPositionAndActivate, 8, 16, 8);
-  Actor_ArmCallback(8, FACING_SOUTH, 0);
-  Event_Wait(20);
-  Camera_MoveWithinMapBounds(PIXELS(328), -1, PIXELS(208), 1);
+  Actor_SetPosition(11, 0, 0);
+  FieldCamera_FollowActor(10, 1);
+  FieldEvent_Wait(20);
+  Actor_WalkBy(8, 0, 24);
+  Actor_WalkByAndWait(10, 0, 24);
+  Actor_WalkByAndWait(8, 16, 8);
+  Actor_FaceDirection(8, FACING_SOUTH, 0);
+  FieldEvent_Wait(20);
+  FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(208), 1);
   Func_020052b4();
-  Event_Wait(20);
-  Motion_SetVarCbAndRefresh(8, 2);
-  Event_Wait(10);
-  Call3(Event_ShowMessageThenWait, 8, 0, 0);
-  Call2(Actor_StartRepeatedMotion, 9, 2);
-  Call2(Actor_StartRepeatedMotion, 6, 2);
-  Actor_StartRepeatedMotion(5, 2);
-  t4 = GameFlag_Test(7);
+  FieldEvent_Wait(20);
+  Actor_RunRepeatedMotion(8, 2);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(8, 0, 0);
+  FieldActor_StartRepeatedMotion(9, 2);
+  FieldActor_StartRepeatedMotion(6, 2);
+  FieldActor_StartRepeatedMotion(5, 2);
+  t4 = Event_GetFlag(7);
   if (t4 == 0)
     goto L_0200ab98;
-  Actor_StartRepeatedMotion(7, 2);
+  FieldActor_StartRepeatedMotion(7, 2);
 L_0200ab98:;
-  Motion_SetVarCbAndRefresh(4, 2);
-  Event_Wait(20);
+  Actor_RunRepeatedMotion(4, 2);
+  FieldEvent_Wait(20);
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 4);
+    FieldActor_SetAnimation(a0, 4);
   }
-  Event_Wait(33);
-  Call3(Event_ShowMessageThenWait, 10, 0, 0);
-  Func_080d47b4(6, 0x100, 30);
-  Call3(Event_ShowMessageThenWait, 6, 0, 0);
-  Call2(Actor_StartRepeatedMotion, 8, 3);
-  Func_080d489c(8, 0x102);
-  Event_Wait(40);
-  Call3(Event_ShowMessageThenWait, 8, 0, 0);
-  Motion_SetVarCbAndRefresh(9, 2);
-  Event_Wait(10);
-  Call3(Event_ShowMessageThenWait, 9, 0, 0);
-  Call3(Actor_Jump, 8, 6, 15);
-  Call3(Actor_Jump, 8, 6, 23);
+  FieldEvent_Wait(33);
+  FieldEvent_ShowMessageThenWait(10, 0, 0);
+  Actor_ShowEmote(6, 0x100, 30);
+  FieldEvent_ShowMessageThenWait(6, 0, 0);
+  FieldActor_StartRepeatedMotion(8, 3);
+  Actor_SetAttachedEffect(8, 0x102);
+  FieldEvent_Wait(40);
+  FieldEvent_ShowMessageThenWait(8, 0, 0);
+  Actor_RunRepeatedMotion(9, 2);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(9, 0, 0);
+  FieldActor_Jump(8, 6, 15);
+  FieldActor_Jump(8, 6, 23);
   {
     s32 a1 = FACING_SOUTHWEST;
     s32 a2 = 0;
     /* FAKEMATCH: the native loads the later arguments before the first; the
      * plain call loads the first earlier. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Actor_ArmCallback(8, a1, a2);
+    Actor_FaceDirection(8, a1, a2);
   }
-  Event_Wait(20);
+  FieldEvent_Wait(20);
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 4);
+    FieldActor_SetAnimation(a0, 4);
   }
-  Event_Wait(33);
-  Call3(Event_ShowMessageThenWait, 10, 0, 0);
+  FieldEvent_Wait(33);
+  FieldEvent_ShowMessageThenWait(10, 0, 0);
   {
     s32 a1 = 0x101;
     s32 a2 = 0;
     /* FAKEMATCH: the native loads the later arguments before the first; the
      * plain call loads the first earlier. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(4, a1, a2);
+    Actor_ShowEmote(4, a1, a2);
   }
   {
     s32 a1 = 0x101;
@@ -305,105 +276,105 @@ L_0200ab98:;
     /* FAKEMATCH: the native loads the later arguments before the first; the
      * plain call loads the first earlier. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(5, a1, a2);
+    Actor_ShowEmote(5, a1, a2);
   }
-  Call3(Func_080d47b4, 6, 0x101, 0);
-  if (GameFlag_Test(7) == 0)
+  Actor_ShowEmote(6, 0x101, 0);
+  if (Event_GetFlag(7) == 0)
     goto L_0200ac86;
-  Call3(Func_080d47b4, 7, 0x101, 0);
+  Actor_ShowEmote(7, 0x101, 0);
 L_0200ac86:;
-  Func_080d47b4(9, 0x101, 60);
-  Motion_SetVarCbAndRefresh(10, 2);
-  Event_Wait(10);
-  FieldMessage_ShowAtActor(10, 0);
-  t6 = Event_AskYesNoWithActorAnimation(4, 0);
+  Actor_ShowEmote(9, 0x101, 60);
+  Actor_RunRepeatedMotion(10, 2);
+  FieldEvent_Wait(10);
+  Event_OpenMessage(10, 0);
+  t6 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (t6 == 0)
     goto L_0200ace6;
-  Event_Wait(40);
+  FieldEvent_Wait(40);
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 4);
+    FieldActor_SetAnimation(a0, 4);
   }
-  Event_Wait(33);
+  FieldEvent_Wait(33);
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Event_ShowMessageThenWait(a0, 0, 0);
+    FieldEvent_ShowMessageThenWait(a0, 0, 0);
   }
   *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
       (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
   goto L_0200ad16;
 L_0200ace6:;
-  Event_Wait(30);
-  Motion_SetVarCbAndRefresh(10, 2);
-  Event_Wait(10);
+  FieldEvent_Wait(30);
+  Actor_RunRepeatedMotion(10, 2);
+  FieldEvent_Wait(10);
   *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
       (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
-  Event_ShowMessageThenWait(10, 0, 0);
+  FieldEvent_ShowMessageThenWait(10, 0, 0);
 L_0200ad16:;
-  Motion_SetVarCbAndRefresh(8, 2);
-  Event_Wait(10);
-  Call3(Event_ShowMessageThenWait, 8, 0, 0);
-  Actor_ArmCallback(10, FACING_EAST, 0);
-  Event_Wait(30);
+  Actor_RunRepeatedMotion(8, 2);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(8, 0, 0);
+  Actor_FaceDirection(10, FACING_EAST, 0);
+  FieldEvent_Wait(30);
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
+    FieldActor_SetAnimation(a0, 3);
   }
-  Event_Wait(20);
-  Call3(Event_ShowMessageThenWait, 10, 0, 0);
+  FieldEvent_Wait(20);
+  FieldEvent_ShowMessageThenWait(10, 0, 0);
   {
     s32 a1 = 0x101;
     s32 a2 = 30;
     /* FAKEMATCH: the native loads the later arguments before the first; the
      * plain call loads the first earlier. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(5, a1, a2);
+    Actor_ShowEmote(5, a1, a2);
   }
-  Call3(Event_ShowMessageThenWait, 5, 0, 0);
-  Motion_SetVarCbAndRefresh(10, 2);
-  Event_Wait(10);
-  Call3(Actor_ArmCallback, 8, FACING_SOUTH, 0);
-  Actor_ArmCallback(10, FACING_SOUTH, 0);
-  Event_Wait(20);
-  Call3(Event_ShowMessageThenWait, 10, 0, 0);
-  Func_080d47b4(6, 0x106, 30);
-  Actor_ArmCallback(6, FACING_NORTHWEST, 0);
-  Event_Wait(20);
-  Call3(Event_ShowMessageThenWait, 6, 0, 0);
+  FieldEvent_ShowMessageThenWait(5, 0, 0);
+  Actor_RunRepeatedMotion(10, 2);
+  FieldEvent_Wait(10);
+  Actor_FaceDirection(8, FACING_SOUTH, 0);
+  Actor_FaceDirection(10, FACING_SOUTH, 0);
+  FieldEvent_Wait(20);
+  FieldEvent_ShowMessageThenWait(10, 0, 0);
+  Actor_ShowEmote(6, 0x106, 30);
+  Actor_FaceDirection(6, FACING_NORTHWEST, 0);
+  FieldEvent_Wait(20);
+  FieldEvent_ShowMessageThenWait(6, 0, 0);
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 4);
+    FieldActor_SetAnimation(a0, 4);
   }
-  Event_Wait(33);
-  Call3(Event_ShowMessageThenWait, 10, 0, 0);
+  FieldEvent_Wait(33);
+  FieldEvent_ShowMessageThenWait(10, 0, 0);
   {
     s32 a1 = 0x101;
     s32 a2 = 30;
     /* FAKEMATCH: the native loads the later arguments before the first; the
      * plain call loads the first earlier. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(10, a1, a2);
+    Actor_ShowEmote(10, a1, a2);
   }
-  Call3(Event_ShowMessageThenWait, 10, 0, 0);
+  FieldEvent_ShowMessageThenWait(10, 0, 0);
   {
     s32 a1 = 0x101;
     s32 a2 = 0;
     /* FAKEMATCH: the native loads the later arguments before the first; the
      * plain call loads the first earlier. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(4, a1, a2);
+    Actor_ShowEmote(4, a1, a2);
   }
   {
     s32 a1 = 0x101;
@@ -411,563 +382,563 @@ L_0200ad16:;
     /* FAKEMATCH: the native loads the later arguments before the first; the
      * plain call loads the first earlier. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(5, a1, a2);
+    Actor_ShowEmote(5, a1, a2);
   }
-  Call3(Func_080d47b4, 6, 0x101, 0);
-  if (GameFlag_Test(7) == 0)
+  Actor_ShowEmote(6, 0x101, 0);
+  if (Event_GetFlag(7) == 0)
     goto L_0200ae32;
-  Call3(Func_080d47b4, 7, 0x101, 0);
+  Actor_ShowEmote(7, 0x101, 0);
 L_0200ae32:;
   {
     s32 a1 = 0x101;
     s32 a2 = 60;
-    Func_080d47b4(9, a1, a2);
+    Actor_ShowEmote(9, a1, a2);
   }
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
+    FieldActor_SetAnimation(a0, 3);
   }
-  Event_Wait(20);
+  FieldEvent_Wait(20);
   Call2(FieldMessage_ShowAtActor, 10, 0);
-  Call3(Actor_ArmCallback, 9, FACING_SOUTHEAST, 0);
-  Call3(Actor_ArmCallback, 5, FACING_WEST, 0);
-  Call3(Actor_ArmCallback, 6, FACING_WEST, 0);
-  t8 = GameFlag_Test(7);
+  Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(5, FACING_WEST, 0);
+  Actor_FaceDirection(6, FACING_WEST, 0);
+  t8 = Event_GetFlag(7);
   if (t8 == 0)
     goto L_0200ae8e;
-  Call3(Actor_ArmCallback, 7, FACING_WEST, 0);
+  Actor_FaceDirection(7, FACING_WEST, 0);
 L_0200ae8e:;
-  Event_Wait(20);
-  t9 = Event_AskYesNoWithActorAnimation(4, 0);
+  FieldEvent_Wait(20);
+  t9 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (t9 == 0)
     goto L_0200aed2;
-  Event_Wait(40);
-  Motion_SetVarCbAndRefresh(5, 2);
-  Event_Wait(20);
-  Event_ShowMessageThenWait(5, 0, 0);
+  FieldEvent_Wait(40);
+  Actor_RunRepeatedMotion(5, 2);
+  FieldEvent_Wait(20);
+  FieldEvent_ShowMessageThenWait(5, 0, 0);
   *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
       (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
   goto L_0200af08;
 L_0200aed2:;
-  Event_Wait(30);
+  FieldEvent_Wait(30);
   {
     s32 a0 = 5;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
+    FieldActor_SetAnimation(a0, 3);
   }
-  Event_Wait(20);
-  Event_Wait(20);
+  FieldEvent_Wait(20);
+  FieldEvent_Wait(20);
   *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
       (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
-  Event_ShowMessageThenWait(5, 0, 0);
+  FieldEvent_ShowMessageThenWait(5, 0, 0);
 L_0200af08:;
-  Call3(Actor_ArmCallback, 10, FACING_NORTHEAST, 0);
-  Actor_ArmCallback(8, FACING_SOUTHWEST, 0);
-  Event_Wait(30);
-  Call3(Event_ShowMessageThenWait, 8, 0, 0);
-  Call3(Actor_ArmCallback, 9, FACING_NORTHEAST, 0);
-  Call3(Actor_ArmCallback, 5, FACING_NORTH, 0);
-  Call3(Actor_ArmCallback, 6, FACING_NORTH, 0);
-  t10 = GameFlag_Test(7);
+  Actor_FaceDirection(10, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(8, FACING_SOUTHWEST, 0);
+  FieldEvent_Wait(30);
+  FieldEvent_ShowMessageThenWait(8, 0, 0);
+  Actor_FaceDirection(9, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(5, FACING_NORTH, 0);
+  Actor_FaceDirection(6, FACING_NORTH, 0);
+  t10 = Event_GetFlag(7);
   if (t10 == 0)
     goto L_0200af6a;
-  Call3(Actor_ArmCallback, 7, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(7, FACING_NORTHWEST, 0);
 L_0200af6a:;
-  Event_Wait(30);
-  Motion_SetVarCbAndRefresh(6, 2);
-  Event_Wait(10);
-  Call3(Event_ShowMessageThenWait, 6, 0, 0);
-  Call3(Actor_ArmCallback, 10, FACING_SOUTH, 0);
-  Event_Wait(30);
-  Call3(Event_ShowMessageThenWait, 10, 0, 0);
+  FieldEvent_Wait(30);
+  Actor_RunRepeatedMotion(6, 2);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(6, 0, 0);
+  Actor_FaceDirection(10, FACING_SOUTH, 0);
+  FieldEvent_Wait(30);
+  FieldEvent_ShowMessageThenWait(10, 0, 0);
   {
     s32 a0 = 9;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
+    FieldActor_SetAnimation(a0, 3);
   }
-  Event_Wait(20);
-  Call3(Event_ShowMessageThenWait, 9, 0, 0);
+  FieldEvent_Wait(20);
+  FieldEvent_ShowMessageThenWait(9, 0, 0);
   {
     s32 a1 = 0x100;
     s32 a2 = 30;
     /* FAKEMATCH: the native loads the later arguments before the first; the
      * plain call loads the first earlier. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(10, a1, a2);
+    Actor_ShowEmote(10, a1, a2);
   }
-  Call3(Event_ShowMessageThenWait, 10, 0, 0);
-  Call2(Actor_SetModeById, 4, 3);
-  Call2(Actor_SetModeById, 5, 3);
-  Actor_SetModeById(6, 3);
-  if (GameFlag_Test(7) == 0)
+  FieldEvent_ShowMessageThenWait(10, 0, 0);
+  Actor_SetAnimation(4, 3);
+  Actor_SetAnimation(5, 3);
+  FieldActor_SetAnimation(6, 3);
+  if (Event_GetFlag(7) == 0)
     goto L_0200affc;
-  Actor_SetModeById(7, 3);
+  FieldActor_SetAnimation(7, 3);
 L_0200affc:;
-  Actor_SetModeById(9, 3);
-  Event_Wait(20);
-  Event_Wait(20);
-  Call3(Actor_ArmCallback, 9, FACING_SOUTHEAST, 0);
-  Event_Wait(20);
-  Call3(Event_ShowMessageThenWait, 9, 0, 0);
+  FieldActor_SetAnimation(9, 3);
+  FieldEvent_Wait(20);
+  FieldEvent_Wait(20);
+  Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
+  FieldEvent_Wait(20);
+  FieldEvent_ShowMessageThenWait(9, 0, 0);
   {
     s32 a1 = FACING_NORTHEAST;
     s32 a2 = 0;
     /* FAKEMATCH: the native loads the later arguments before the first; the
      * plain call loads the first earlier. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Actor_ArmCallback(9, a1, a2);
+    Actor_FaceDirection(9, a1, a2);
   }
-  Event_Wait(30);
+  FieldEvent_Wait(30);
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
+    FieldActor_SetAnimation(a0, 3);
   }
-  Event_Wait(20);
-  Call3(Event_ShowMessageThenWait, 10, 0, 0);
+  FieldEvent_Wait(20);
+  FieldEvent_ShowMessageThenWait(10, 0, 0);
   {
     s32 a1 = 0x102;
     s32 a2 = 30;
     /* FAKEMATCH: the native loads the later arguments before the first; the
      * plain call loads the first earlier. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(8, a1, a2);
+    Actor_ShowEmote(8, a1, a2);
   }
-  Call3(Event_ShowMessageThenWait, 8, 0, 0);
-  Call3(Actor_ArmCallback, 10, FACING_NORTHEAST, 0);
-  Event_Wait(30);
-  Motion_SetVarCbAndRefresh(5, 2);
-  Event_Wait(10);
-  Call3(Event_ShowMessageThenWait, 5, 0, 0);
-  Actor_ArmCallback(10, FACING_SOUTHEAST + FACING_STEP, 0);
-  Event_Wait(20);
-  Call3(Event_ShowMessageThenWait, 10, 0, 0);
+  FieldEvent_ShowMessageThenWait(8, 0, 0);
+  Actor_FaceDirection(10, FACING_NORTHEAST, 0);
+  FieldEvent_Wait(30);
+  Actor_RunRepeatedMotion(5, 2);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(5, 0, 0);
+  Actor_FaceDirection(10, FACING_SOUTHEAST + FACING_STEP, 0);
+  FieldEvent_Wait(20);
+  FieldEvent_ShowMessageThenWait(10, 0, 0);
   {
     s32 a1 = 0x109;
     s32 a2 = 30;
     /* FAKEMATCH: the native loads the later arguments before the first; the
      * plain call loads the first earlier. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(6, a1, a2);
+    Actor_ShowEmote(6, a1, a2);
   }
-  Call3(Event_ShowMessageThenWait, 6, 0, 0);
-  Call3(Actor_ArmCallback, 8, FACING_SOUTH, 0);
-  Event_Wait(20);
-  Motion_SetVarCbAndRefresh(8, 2);
-  Event_Wait(10);
-  Call3(Event_ShowMessageThenWait, 8, 0, 0);
-  Actor_ArmCallback(9, FACING_EAST, 0);
-  Event_Wait(20);
-  Call3(Event_ShowMessageThenWait, 9, 0, 0);
+  FieldEvent_ShowMessageThenWait(6, 0, 0);
+  Actor_FaceDirection(8, FACING_SOUTH, 0);
+  FieldEvent_Wait(20);
+  Actor_RunRepeatedMotion(8, 2);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(8, 0, 0);
+  Actor_FaceDirection(9, FACING_EAST, 0);
+  FieldEvent_Wait(20);
+  FieldEvent_ShowMessageThenWait(9, 0, 0);
   {
     s32 a1 = FACING_NORTHEAST;
     s32 a2 = 0;
     /* FAKEMATCH: the native loads the later arguments before the first; the
      * plain call loads the first earlier. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Actor_ArmCallback(9, a1, a2);
+    Actor_FaceDirection(9, a1, a2);
   }
-  Event_Wait(30);
+  FieldEvent_Wait(30);
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
+    FieldActor_SetAnimation(a0, 3);
   }
-  Event_Wait(20);
-  Call3(Event_ShowMessageThenWait, 10, 0, 0);
+  FieldEvent_Wait(20);
+  FieldEvent_ShowMessageThenWait(10, 0, 0);
   {
     s32 a1 = 0x102;
     s32 a2 = 30;
     /* FAKEMATCH: the native loads the later arguments before the first; the
      * plain call loads the first earlier. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(5, a1, a2);
+    Actor_ShowEmote(5, a1, a2);
   }
-  Call3(Event_ShowMessageThenWait, 5, 0, 0);
-  Motion_SetVarCbAndRefresh(10, 2);
-  Event_Wait(10);
-  Call3(Event_ShowMessageThenWait, 10, 0, 0);
+  FieldEvent_ShowMessageThenWait(5, 0, 0);
+  Actor_RunRepeatedMotion(10, 2);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(10, 0, 0);
   {
     s32 a0 = 9;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 4);
+    FieldActor_SetAnimation(a0, 4);
   }
-  Event_Wait(33);
-  Call3(Event_ShowMessageThenWait, 9, 0, 0);
-  Call3(Actor_ArmCallback, 8, FACING_SOUTH, 0);
-  Event_Wait(20);
-  Actor_CommitPositionAndActivate(8, 0, 16);
-  Event_Wait(10);
-  Call3(Actor_Jump, 8, 6, 15);
-  Call3(Actor_Jump, 8, 6, 23);
+  FieldEvent_Wait(33);
+  FieldEvent_ShowMessageThenWait(9, 0, 0);
+  Actor_FaceDirection(8, FACING_SOUTH, 0);
+  FieldEvent_Wait(20);
+  Actor_WalkByAndWait(8, 0, 16);
+  FieldEvent_Wait(10);
+  FieldActor_Jump(8, 6, 15);
+  FieldActor_Jump(8, 6, 23);
   {
     s32 a1 = 0x102;
     s32 a2 = 30;
     /* FAKEMATCH: the native loads the later arguments before the first; the
      * plain call loads the first earlier. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(6, a1, a2);
+    Actor_ShowEmote(6, a1, a2);
   }
-  Call3(Event_ShowMessageThenWait, 6, 0, 0);
-  Call3(Actor_SetSpeedParameters, 10, 0x28000, 0x14000);
-  Call3(Actor_SetSpeedParameters, 8, 0x28000, 0x14000);
-  Actor_ArmCallback(10, FACING_EAST, 0);
-  Event_Wait(20);
-  Call3(Actor_CommitPositionAndActivate, 10, 8, 0);
-  Actor_Jump(8, 4, 0);
-  t12 = Actor_GetById(10);
+  FieldEvent_ShowMessageThenWait(6, 0, 0);
+  Actor_SetSpeed(10, 0x28000, 0x14000);
+  Actor_SetSpeed(8, 0x28000, 0x14000);
+  Actor_FaceDirection(10, FACING_EAST, 0);
+  FieldEvent_Wait(20);
+  Actor_WalkByAndWait(10, 8, 0);
+  FieldActor_Jump(8, 4, 0);
+  t12 = Actor_Get(10);
   v5 = 254;
   *(u8 *)((t12 + 90)) = (v5 & *(u8 *)((t12 + 90)));
-  Actor_OffsetPositionAndReset(10, -8, 0);
-  t13 = Actor_GetById(8);
+  Actor_WalkBy(10, -8, 0);
+  t13 = Actor_Get(8);
   v5 = (v5 & *(u8 *)((t13 + 90)));
   *(u8 *)((t13 + 90)) = v5;
-  Actor_CommitPositionAndActivate(8, 16, 0);
-  Event_Wait(1);
-  t14 = Actor_GetById(8);
+  Actor_WalkByAndWait(8, 16, 0);
+  FieldEvent_Wait(1);
+  t14 = Actor_Get(8);
   /* FAKEMATCH: the value is ORed into the register that holds the constant, as
    * the native does; as one |= the constant is built second. */
   b1 = 1;
   b1 |= *(u8 *)((t14 + 90));
   *(u8 *)((t14 + 90)) = b1;
-  Actor_SetModeById(8, 5);
-  Event_Wait(20);
-  Call3(Actor_SetSpeedParameters, 8, 0x14ccc, 0xa666);
-  Call3(Actor_SetSpeedParameters, 10, 0xb333, 0x5999);
+  FieldActor_SetAnimation(8, 5);
+  FieldEvent_Wait(20);
+  Actor_SetSpeed(8, 0x14ccc, 0xa666);
+  Actor_SetSpeed(10, 0xb333, 0x5999);
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 4);
+    FieldActor_SetAnimation(a0, 4);
   }
-  Event_Wait(33);
-  Event_Wait(10);
+  FieldEvent_Wait(33);
+  FieldEvent_Wait(10);
   {
     s32 a0 = 8;
     /* FAKEMATCH: the native loads the first argument after the second is
      * finished; the plain call loads it one instruction earlier (differ 2). */
     __asm__("" : "+l"(a0));
-    Call3(Func_080d47b4, a0, 0x102, 50);
+    Actor_ShowEmote(a0, 0x102, 50);
   }
-  Call2(Actor_SetModeById, 8, 1);
-  Call3(Actor_Jump, 8, 6, 0);
-  Call3(Actor_ArmCallback, 8, FACING_WEST, 0);
-  Event_Wait(30);
-  Call2(Func_080d489c, 8, 0x102);
+  Actor_SetAnimation(8, 1);
+  FieldActor_Jump(8, 6, 0);
+  Actor_FaceDirection(8, FACING_WEST, 0);
+  FieldEvent_Wait(30);
+  Actor_SetAttachedEffect(8, 0x102);
   {
     s32 a0 = 8;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
+    FieldActor_SetAnimation(a0, 3);
   }
-  Event_Wait(20);
-  Event_Wait(15);
-  Call2(Func_080d489c, 8, 0x102);
+  FieldEvent_Wait(20);
+  FieldEvent_Wait(15);
+  Actor_SetAttachedEffect(8, 0x102);
   {
     s32 a0 = 8;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
+    FieldActor_SetAnimation(a0, 3);
   }
-  Event_Wait(20);
-  Event_Wait(20);
+  FieldEvent_Wait(20);
+  FieldEvent_Wait(20);
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
+    FieldActor_SetAnimation(a0, 3);
   }
-  Event_Wait(20);
-  Event_Wait(10);
-  Call3(Event_ShowMessageThenWait, 10, 0, 0);
+  FieldEvent_Wait(20);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(10, 0, 0);
   {
     s32 a1 = 0x101;
     s32 a2 = 30;
     /* FAKEMATCH: the native loads the later arguments before the first; the
      * plain call loads the first earlier. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(8, a1, a2);
+    Actor_ShowEmote(8, a1, a2);
   }
-  Call3(Event_ShowMessageThenWait, 8, 0, 0);
+  FieldEvent_ShowMessageThenWait(8, 0, 0);
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 4);
+    FieldActor_SetAnimation(a0, 4);
   }
-  Event_Wait(33);
-  Call3(Event_ShowMessageThenWait, 10, 0, 0);
-  Call3(Actor_ArmCallback, 8, FACING_SOUTH + FACING_STEP, 0);
-  Event_Wait(45);
-  Call3(Actor_ArmCallback, 8, FACING_WEST, 0);
-  Event_Wait(20);
-  Call3(Event_ShowMessageThenWait, 8, 0, 0);
+  FieldEvent_Wait(33);
+  FieldEvent_ShowMessageThenWait(10, 0, 0);
+  Actor_FaceDirection(8, FACING_SOUTH + FACING_STEP, 0);
+  FieldEvent_Wait(45);
+  Actor_FaceDirection(8, FACING_WEST, 0);
+  FieldEvent_Wait(20);
+  FieldEvent_ShowMessageThenWait(8, 0, 0);
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 4);
+    FieldActor_SetAnimation(a0, 4);
   }
-  Event_Wait(33);
-  Call3(Event_ShowMessageThenWait, 10, 0, 0);
-  Actor_ArmCallback(10, FACING_SOUTH + FACING_STEP, 0);
-  Event_Wait(45);
-  Actor_ArmCallback(10, FACING_EAST, 0);
-  Event_Wait(20);
-  Call3(Event_ShowMessageThenWait, 10, 0, 0);
+  FieldEvent_Wait(33);
+  FieldEvent_ShowMessageThenWait(10, 0, 0);
+  Actor_FaceDirection(10, FACING_SOUTH + FACING_STEP, 0);
+  FieldEvent_Wait(45);
+  Actor_FaceDirection(10, FACING_EAST, 0);
+  FieldEvent_Wait(20);
+  FieldEvent_ShowMessageThenWait(10, 0, 0);
   {
     s32 a0 = 8;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
+    FieldActor_SetAnimation(a0, 3);
   }
-  Event_Wait(20);
-  Event_Wait(20);
+  FieldEvent_Wait(20);
+  FieldEvent_Wait(20);
   {
     s32 a1 = FACING_SOUTH;
     s32 a2 = 0;
     /* FAKEMATCH: the native loads the later arguments before the first; the
      * plain call loads the first earlier. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Actor_ArmCallback(8, a1, a2);
+    Actor_FaceDirection(8, a1, a2);
   }
-  Event_Wait(35);
+  FieldEvent_Wait(35);
   {
     s32 a0 = 8;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
+    FieldActor_SetAnimation(a0, 3);
   }
-  Event_Wait(20);
-  Event_Wait(20);
-  Call3(Event_ShowMessageThenWait, 8, 0, 0);
-  Call2(Actor_SetModeById, 4, 3);
-  Call2(Actor_SetModeById, 5, 3);
-  Call2(Actor_SetModeById, 6, 3);
+  FieldEvent_Wait(20);
+  FieldEvent_Wait(20);
+  FieldEvent_ShowMessageThenWait(8, 0, 0);
+  Actor_SetAnimation(4, 3);
+  Actor_SetAnimation(5, 3);
+  Actor_SetAnimation(6, 3);
   {
     s32 a0 = 9;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
+    FieldActor_SetAnimation(a0, 3);
   }
-  Event_Wait(20);
-  Event_Wait(20);
-  Call2(Actor_WatchAndSetScript, 4, 8);
-  Call2(Actor_WatchAndSetScript, 9, 8);
-  Call2(Actor_WatchAndSetScript, 5, 8);
-  Call2(Actor_WatchAndSetScript, 6, 8);
-  Actor_WatchAndSetScript(10, 8);
-  t15 = GameFlag_Test(7);
+  FieldEvent_Wait(20);
+  FieldEvent_Wait(20);
+  FieldActor_WatchAndSetScript(4, 8);
+  FieldActor_WatchAndSetScript(9, 8);
+  FieldActor_WatchAndSetScript(5, 8);
+  FieldActor_WatchAndSetScript(6, 8);
+  FieldActor_WatchAndSetScript(10, 8);
+  t15 = Event_GetFlag(7);
   if (t15 == 0)
     goto L_0200b46e;
-  Actor_WatchAndSetScript(7, 8);
+  FieldActor_WatchAndSetScript(7, 8);
 L_0200b46e:;
-  Call3(Actor_SetPositionAndReset, 8, 376, 208);
-  Call3(Actor_CommitPositionAndActivate, 8, 0, 16);
-  Call3(Actor_CommitPositionAndActivate, 8, -16, 24);
-  Call3(Actor_CommitPositionAndActivate, 8, -32, 16);
-  Actor_CommitPositionAndActivate(8, 0, 48);
-  Event_Wait(20);
-  Actor_Stop(4);
-  Actor_Stop(9);
-  Actor_Stop(5);
-  Actor_Stop(6);
-  Actor_Stop(10);
-  t16 = GameFlag_Test(7);
+  Actor_WalkToAndWait(8, 376, 208);
+  Actor_WalkByAndWait(8, 0, 16);
+  Actor_WalkByAndWait(8, -16, 24);
+  Actor_WalkByAndWait(8, -32, 16);
+  Actor_WalkByAndWait(8, 0, 48);
+  FieldEvent_Wait(20);
+  FieldActor_Stop(4);
+  FieldActor_Stop(9);
+  FieldActor_Stop(5);
+  FieldActor_Stop(6);
+  FieldActor_Stop(10);
+  t16 = Event_GetFlag(7);
   if (t16 == 0)
     goto L_0200b4da;
-  Actor_Stop(7);
+  FieldActor_Stop(7);
 L_0200b4da:;
-  Call3(Actor_SetHorizontalPositionWithTerrain, 8, 0, 0);
-  Motion_SetVarCbAndRefresh(10, 2);
-  Event_Wait(10);
-  Call3(Event_ShowMessageThenWait, 10, 0, 0);
-  Call3(Actor_ArmCallback, 9, FACING_NORTHEAST, 0);
-  Call3(Actor_ArmCallback, 5, FACING_NORTH, 0);
-  Call3(Actor_ArmCallback, 6, FACING_NORTH, 0);
-  Call3(Actor_ArmCallback, 4, FACING_NORTH, 0);
-  t17 = GameFlag_Test(7);
+  Actor_SetPosition(8, 0, 0);
+  Actor_RunRepeatedMotion(10, 2);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(10, 0, 0);
+  Actor_FaceDirection(9, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(5, FACING_NORTH, 0);
+  Actor_FaceDirection(6, FACING_NORTH, 0);
+  Actor_FaceDirection(4, FACING_NORTH, 0);
+  t17 = Event_GetFlag(7);
   if (t17 == 0)
     goto L_0200b542;
-  Call3(Actor_ArmCallback, 7, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(7, FACING_NORTHWEST, 0);
 L_0200b542:;
-  Event_Wait(30);
+  FieldEvent_Wait(30);
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
+    FieldActor_SetAnimation(a0, 3);
   }
-  Event_Wait(20);
-  Call3(Event_ShowMessageThenWait, 10, 0, 0);
-  Func_080d47b4(9, 0x102, 30);
-  Call3(Event_ShowMessageThenWait, 9, 0, 0);
-  Func_080d47b4(10, 0x108, 30);
-  Call3(Event_ShowMessageThenWait, 10, 0, 0);
+  FieldEvent_Wait(20);
+  FieldEvent_ShowMessageThenWait(10, 0, 0);
+  Actor_ShowEmote(9, 0x102, 30);
+  FieldEvent_ShowMessageThenWait(9, 0, 0);
+  Actor_ShowEmote(10, 0x108, 30);
+  FieldEvent_ShowMessageThenWait(10, 0, 0);
   {
     s32 a1 = 0x101;
     s32 a2 = 30;
     /* FAKEMATCH: the native loads the later arguments before the first; the
      * plain call loads the first earlier. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(6, a1, a2);
+    Actor_ShowEmote(6, a1, a2);
   }
-  Call3(Event_ShowMessageThenWait, 6, 0, 0);
-  Func_080d47b4(10, 0x109, 30);
-  Call3(Event_ShowMessageThenWait, 10, 0, 0);
-  Func_080d47b4(9, 0x100, 30);
-  Call3(Event_ShowMessageThenWait, 9, 0, 0);
+  FieldEvent_ShowMessageThenWait(6, 0, 0);
+  Actor_ShowEmote(10, 0x109, 30);
+  FieldEvent_ShowMessageThenWait(10, 0, 0);
+  Actor_ShowEmote(9, 0x100, 30);
+  FieldEvent_ShowMessageThenWait(9, 0, 0);
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
+    FieldActor_SetAnimation(a0, 3);
   }
-  Event_Wait(20);
-  Event_Wait(10);
-  Motion_SetVarCbAndRefresh(5, 2);
-  Event_Wait(10);
-  Actor_ArmCallback(5, FACING_SOUTH, 0);
-  Event_Wait(30);
-  Call3(Event_ShowMessageThenWait, 5, 0, 0);
+  FieldEvent_Wait(20);
+  FieldEvent_Wait(10);
+  Actor_RunRepeatedMotion(5, 2);
+  FieldEvent_Wait(10);
+  Actor_FaceDirection(5, FACING_SOUTH, 0);
+  FieldEvent_Wait(30);
+  FieldEvent_ShowMessageThenWait(5, 0, 0);
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 4);
+    FieldActor_SetAnimation(a0, 4);
   }
-  Event_Wait(33);
-  Call3(Event_ShowMessageThenWait, 10, 0, 0);
-  Func_080d47b4(5, 0x101, 50);
-  Actor_ArmCallback(5, FACING_NORTHWEST + FACING_STEP, 0);
-  Event_Wait(30);
-  Call3(Actor_ArmCallback, 9, FACING_SOUTHEAST, 0);
-  Event_Wait(20);
-  Call3(Event_ShowMessageThenWait, 9, 0, 0);
+  FieldEvent_Wait(33);
+  FieldEvent_ShowMessageThenWait(10, 0, 0);
+  Actor_ShowEmote(5, 0x101, 50);
+  Actor_FaceDirection(5, FACING_NORTHWEST + FACING_STEP, 0);
+  FieldEvent_Wait(30);
+  Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
+  FieldEvent_Wait(20);
+  FieldEvent_ShowMessageThenWait(9, 0, 0);
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
+    FieldActor_SetAnimation(a0, 3);
   }
-  Event_Wait(20);
-  Event_Wait(10);
-  Call3(Event_ShowMessageThenWait, 10, 0, 0);
-  Actor_ArmCallback(9, FACING_NORTHEAST, 0);
-  Event_Wait(20);
-  Call2(Actor_SetModeById, 4, 3);
-  Call2(Actor_SetModeById, 5, 3);
-  Call2(Actor_SetModeById, 6, 3);
+  FieldEvent_Wait(20);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(10, 0, 0);
+  Actor_FaceDirection(9, FACING_NORTHEAST, 0);
+  FieldEvent_Wait(20);
+  Actor_SetAnimation(4, 3);
+  Actor_SetAnimation(5, 3);
+  Actor_SetAnimation(6, 3);
   {
     s32 a0 = 9;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
+    FieldActor_SetAnimation(a0, 3);
   }
-  Event_Wait(20);
-  Event_Wait(20);
-  Call3(Actor_ArmCallback, 9, FACING_SOUTHEAST, 0);
-  Call3(Actor_ArmCallback, 5, FACING_WEST, 0);
-  Call3(Actor_ArmCallback, 6, FACING_WEST, 0);
-  if (GameFlag_Test(7) == 0)
+  FieldEvent_Wait(20);
+  FieldEvent_Wait(20);
+  Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(5, FACING_WEST, 0);
+  Actor_FaceDirection(6, FACING_WEST, 0);
+  if (Event_GetFlag(7) == 0)
     goto L_0200b6f4;
-  Call3(Actor_ArmCallback, 7, FACING_WEST, 0);
+  Actor_FaceDirection(7, FACING_WEST, 0);
 L_0200b6f4:;
-  Event_Wait(20);
-  Call2(Actor_SetModeById, 5, 3);
-  Actor_SetModeById(6, 3);
-  t19 = GameFlag_Test(7);
+  FieldEvent_Wait(20);
+  Actor_SetAnimation(5, 3);
+  FieldActor_SetAnimation(6, 3);
+  t19 = Event_GetFlag(7);
   if (t19 == 0)
     goto L_0200b71c;
-  Actor_SetModeById(7, 3);
+  FieldActor_SetAnimation(7, 3);
 L_0200b71c:;
-  Actor_SetModeById(9, 3);
-  Event_Wait(20);
-  Event_Wait(20);
+  FieldActor_SetAnimation(9, 3);
+  FieldEvent_Wait(20);
+  FieldEvent_Wait(20);
   {
     s32 a0 = 4;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
+    FieldActor_SetAnimation(a0, 3);
   }
-  Event_Wait(20);
-  Event_Wait(10);
-  Call3(Actor_SetSpeedParameters, 9, 0x13333, 0x9999);
-  Actor_SetModeById(9, 2);
+  FieldEvent_Wait(20);
+  FieldEvent_Wait(10);
+  Actor_SetSpeed(9, 0x13333, 0x9999);
+  FieldActor_SetAnimation(9, 2);
   p1 = (s32)&gMainRoutineWork;
   v5 = (p1 + 0x214);
-  t20 = Actor_GetById(*(s32 *)(v5));
+  t20 = Actor_Get(*(s32 *)(v5));
   if (t20 == 0)
     goto L_0200b77a;
-  Actor_ResetAndSetPosition(9, *(s16 *)(t20 + 10), *(s16 *)(t20 + 18));
+  Actor_SetDestination(9, *(s16 *)(t20 + 10), *(s16 *)(t20 + 18));
 L_0200b77a:;
-  Actor_WaitForMoveById(9);
-  Call3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
-  Call3(Actor_SetSpeedParameters, 5, 0x13333, 0x9999);
-  Actor_SetModeById(5, 2);
-  t21 = Actor_GetById(*(s32 *)(v5));
+  FieldActor_WaitForMoveById(9);
+  Actor_SetPosition(9, 0, 0);
+  Actor_SetSpeed(5, 0x13333, 0x9999);
+  FieldActor_SetAnimation(5, 2);
+  t21 = Actor_Get(*(s32 *)(v5));
   if (t21 == 0)
     goto L_0200b7b8;
-  Actor_ResetAndSetPosition(5, *(s16 *)(t21 + 10), *(s16 *)(t21 + 18));
+  Actor_SetDestination(5, *(s16 *)(t21 + 10), *(s16 *)(t21 + 18));
 L_0200b7b8:;
-  Actor_WaitForMoveById(5);
-  Call3(Actor_SetHorizontalPositionWithTerrain, 5, 0, 0);
-  Call3(Actor_SetSpeedParameters, 6, 0x13333, 0x9999);
-  Actor_SetModeById(6, 2);
-  t22 = Actor_GetById(*(s32 *)(v5));
+  FieldActor_WaitForMoveById(5);
+  Actor_SetPosition(5, 0, 0);
+  Actor_SetSpeed(6, 0x13333, 0x9999);
+  FieldActor_SetAnimation(6, 2);
+  t22 = Actor_Get(*(s32 *)(v5));
   if (t22 == 0)
     goto L_0200b7f6;
-  Actor_ResetAndSetPosition(6, *(s16 *)(t22 + 10), *(s16 *)(t22 + 18));
+  Actor_SetDestination(6, *(s16 *)(t22 + 10), *(s16 *)(t22 + 18));
 L_0200b7f6:;
-  Actor_WaitForMoveById(6);
-  Actor_SetHorizontalPositionWithTerrain(6, 0, 0);
-  t23 = GameFlag_Test(7);
+  FieldActor_WaitForMoveById(6);
+  Actor_SetPosition(6, 0, 0);
+  t23 = Event_GetFlag(7);
   if (t23 == 0)
     goto L_0200b84e;
-  Call3(Actor_SetSpeedParameters, 7, 0x13333, 0x9999);
-  Actor_SetModeById(7, 2);
-  t24 = Actor_GetById(*(s32 *)(v5));
+  Actor_SetSpeed(7, 0x13333, 0x9999);
+  FieldActor_SetAnimation(7, 2);
+  t24 = Actor_Get(*(s32 *)(v5));
   if (t24 == 0)
     goto L_0200b83e;
-  Actor_ResetAndSetPosition(7, *(s16 *)(t24 + 10), *(s16 *)(t24 + 18));
+  Actor_SetDestination(7, *(s16 *)(t24 + 10), *(s16 *)(t24 + 18));
 L_0200b83e:;
-  Actor_WaitForMoveById(7);
-  Actor_SetHorizontalPositionWithTerrain(7, 0, 0);
+  FieldActor_WaitForMoveById(7);
+  Actor_SetPosition(7, 0, 0);
 L_0200b84e:;
   p2 = (s32)&gMainRoutineWork;
   {
     s32 a0 = *(s32 *)((p2 + 0x214));
-    Camera_FollowActor(a0, 1);
+    FieldCamera_FollowActor(a0, 1);
   }
   Func_02001344();
-  Import_EventSetExitRequest(11);
+  FieldEvent_SetExitRequest(11);
   Func_020051b4();
 }

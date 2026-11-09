@@ -3,6 +3,7 @@
 #include "call.h"
 #include "io_reg.h"
 #include "system/io_write.h"
+#include "event_inline.h"
 
 struct Unk_020003a0Sprite {
   u8 unk00[5];
@@ -40,10 +41,8 @@ void *Heap_Alloc(s32 size);
 void Heap_Release(void *p);
 void Func_02001f6c(const u8 *source, void *destination);
 s32 Resource_FindFreeEntry(void);
-s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Func_02002104(struct Unk_020003a0Sprite *sprite, s32 a, s32 b, u32 attr,
                    s32 tile);
-s32 Task_Add(void (*func)(void), s32 priority);
 void Func_020002b4(void);
 
 void Func_020003a0(void) {
@@ -61,7 +60,7 @@ void Func_020003a0(void) {
   firstSlot = &gData_02003020;
   *firstSlot = Resource_FindFreeEntry();
   firstTile = &Data_02003088;
-  *firstTile = VramCache_Load(gData_02003020, 0x1000, buffer);
+  *firstTile = Vram_Load(gData_02003020, 0x1000, buffer);
   Func_02002104(&Data_02003060, 0, 0, 0xc0000000, Data_02003088);
   Data_02003060.unk1e = 1;
   Data_02003060.priority = 2;
@@ -72,7 +71,7 @@ void Func_020003a0(void) {
   secondSlot = &gData_02003094;
   *secondSlot = Resource_FindFreeEntry();
   secondTile = &Data_02003058;
-  *secondTile = VramCache_Load(gData_02003094, 0x1000, buffer);
+  *secondTile = Vram_Load(gData_02003094, 0x1000, buffer);
   Func_02002104(&Data_02003030, 0, 0, 0xc0000000, Data_02003058);
   Data_02003030.unk1e = 2;
   Data_02003030.priority = 2;
@@ -83,6 +82,6 @@ void Func_020003a0(void) {
   Data_02003024 = 0;
   Data_02003098 = 0;
   gData_0200308c = 0;
-  Task_Add(Func_020002b4, TASK_PASS_VBLANK);
+  Task_AddFrame(Func_020002b4, TASK_PASS_VBLANK);
   Heap_Release(buffer);
 }

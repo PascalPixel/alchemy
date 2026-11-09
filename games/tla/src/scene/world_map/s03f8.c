@@ -2,7 +2,6 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
-#include "flag_call.h"
 #include "text/msg_ids.h"
 #include "event_inline.h"
 
@@ -27,7 +26,7 @@ u8 *Func_020003f8(void) {
   case 65:
     return gData_02006598;
   case 68:
-    if (!GameFlag_Test(0x8de))
+    if (!Event_GetFlag(0x8de))
       return gData_02006700;
   case 77:
     return gData_02006790;
@@ -42,19 +41,19 @@ void Func_02000458(void) {
   u8 *work = Ram_HeapSlots->eventWork;
 
   gMainRoutineWork.renderMode = 8;
-  if (Flag_IsSet(0x147)) {
+  if (Event_GetFlag(0x147)) {
     Func_02004da8();
     Func_02004ba8(153, 4);
-    FieldMessage_Show((s32)MsgBlank2, 4);
+    Message_ShowCentered((s32)MsgBlank2, 4);
   }
-  if (Actor_GetById(Party_GetLeaderActor()) != NULL)
+  if (Actor_Get(FieldParty_GetLeaderActor()) != NULL)
     Func_02004b28();
   Func_02003bf0();
-  if (Flag_IsSet(0x147))
+  if (Event_GetFlag(0x147))
     work[3387] = 0;
   else
     work[3387] = 1;
-  if (Flag_IsSet(0x147)) {
+  if (Event_GetFlag(0x147)) {
     Message_CloseFinishedWindows();
     Func_02004db0();
   }

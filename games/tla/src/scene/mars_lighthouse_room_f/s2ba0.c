@@ -65,12 +65,12 @@ s32 Func_02002ba0(void) {
    * 3 of 138 instructions differ in tla-en. */
   ((s32 (*)(s32, s32))Func_02002800)(-10, 0);
 #endif
-  Func_020055d0(0x70000, 0xe000);
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  FieldCamera_SetSpeed(0x70000, 0xe000);
+  leader = Actor_Get(gMainRoutineWork.currentOwner);
   ride = (struct RideWork *)(gData_020023c4 + 0x188);
   Flag_Set(0x106);
   Func_02005560();
-  Func_02005648(0);
+  FieldEvent_ResolvePendingActions(0);
   Flag_Clear(0x106);
   leader->update = (void (*)(void))Func_02002954;
   leader->angle = 0x4000;
@@ -86,7 +86,7 @@ s32 Func_02002ba0(void) {
         leader->z = (leader->z & 0xfff00000) + 0x80000;
     }
     ride->active = 0;
-    wait(1);
+    System_Wait(1);
   }
   FieldEvent_Wait(30);
   leader->update = 0;

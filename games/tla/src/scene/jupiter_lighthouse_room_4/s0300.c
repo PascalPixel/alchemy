@@ -14,7 +14,7 @@ void Func_02000300(void) {
 
   i = 0;
   for (phase = 0; i != 7; i++) {
-    object = ((struct Actor *)Import_ActorCreate(672, 0, 0, 0));
+    object = (FieldActor_Create(672, 0, 0, 0));
     object->motionFlags = 0;
     object->priorityFlags = 0;
     object->speedLimit = (Random16Far() << 2) + 0x60000;
@@ -23,7 +23,7 @@ void Func_02000300(void) {
     object->action = Random16Far();
     object->unk66 = phase;
     Actor_SetSingleChildFlags(object, 0);
-    Actor_SetPartAttribute(object, 2);
+    Actor_SetSpriteColor(object, 2);
     ((struct FieldSprite *)object->animation)->priority = 1;
     phase += 5;
   }

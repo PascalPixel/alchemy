@@ -6,7 +6,7 @@ extern s16 gData_02002bda;
 extern struct Actor *gData_02002bdc[];
 
 void Func_020015a0(s32 id, s32 value) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
 
   if (object) {
     object->action = value;

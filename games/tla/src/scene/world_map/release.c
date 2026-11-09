@@ -39,5 +39,5 @@ void Func_02004a1c(void) {
   Func_02004aa8(gWorldMapPackedTilesC, gData_02006f20);
   Resource_ResetEntry(*(s16 *)gData_02006e0e);
   *(s16 *)gData_02006e0c = -1;
-  Task_RemoveFar(Func_020048f4);
+  FieldTask_Remove(Func_020048f4);
 }

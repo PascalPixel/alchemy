@@ -17,7 +17,7 @@ void Func_02001cc8(void) {
   s32 x, z;
 
   Func_02003bc8();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   Func_02003cc0();
   Func_020003e8(gData_02003d94);
   if (Map_GetTerrainHeight(2, object->x, object->z) != object->y) {
@@ -25,21 +25,21 @@ void Func_02001cc8(void) {
     object->motionFlags = 3;
     OverlayObject_WaitUntilIdle(object);
     OverlayObject_WaitUntilIdle(object);
-    Sound_Play(188);
+    Event_PlaySound(188);
     object->motionFlags = 0;
     object->terrainId = 0;
   }
   x = object->x >> 20;
   z = object->z >> 20;
   if (x == 16 && z == 43)
-    GameFlag_SetBit(0x85f);
+    Event_SetFlag(0x85f);
   else if (x == 45 && z == 45)
-    GameFlag_SetBit(0x860);
+    Event_SetFlag(0x860);
   else if (x == 21 && z == 48)
-    GameFlag_SetBit(0x861);
+    Event_SetFlag(0x861);
   else if (x == 39 && z == 49)
-    GameFlag_SetBit(0x862);
+    Event_SetFlag(0x862);
   else if (x == 49 && z == 18)
-    GameFlag_SetBit(0x887);
+    Event_SetFlag(0x887);
   Func_02003bd0();
 }

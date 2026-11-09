@@ -5,5 +5,5 @@ void Func_02000cec(void) {
 
   Func_02002838_(50, (n & 1) * 5 + 59, 13, 5, 18, 15);
   if (gData_02003460 == 0)
-    Task_RemoveFar(Func_02000cec);
+    FieldTask_Remove(Func_02000cec);
 }

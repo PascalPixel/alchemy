@@ -8,7 +8,6 @@
 #include "frame.h"
 #include "scene_ids.h"
 #include "call.h"
-#include "flag_call.h"
 #include "field/event_work.h"
 #include "event_inline.h"
 
@@ -87,7 +86,7 @@ void Party_AddActiveOwner(s32 id);
     (party)->scene = (party)->savedScene;                                      \
     (party)->entrance = (party)->savedEntrance;                                \
     Func_020023e0((party)->scene, (party)->entrance);                          \
-    Flag_Clear(0x109);                                                         \
+    Event_ClearFlag(0x109);                                                         \
   }
 
 s32 Func_02000328(void) {
@@ -242,7 +241,7 @@ top:
       i = Menu_RunConfirmSelection(1, (s32)MsgYeah, YEAH_WIDTH, 0);
       Message_CloseFinishedWindows();
       if (i == 0) {
-        Flag_Set(46);
+        Event_SetFlag(46);
         gMainRoutineWork.unk284[3] = 2;
         goto leave;
       }
@@ -260,7 +259,7 @@ top:
     result = Func_020022d8(1);
     if (result == -1)
       goto top;
-    Flag_Set(0x109);
+    Event_SetFlag(0x109);
     {
       struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -273,7 +272,7 @@ top:
           goto refuse;
         }
         RETURN_TO_SAVED(party)
-        Flag_Set(0x13e);
+        Event_SetFlag(0x13e);
       } else if (party->playTime != gData_02001000) {
         recovery = (s32)MsgSomeDataIsCorrupted;
         FieldMessage_Show(recovery, 9);
@@ -290,10 +289,10 @@ top:
           goto top;
         }
         RETURN_TO_SAVED(party)
-        Flag_Set(0x13f);
+        Event_SetFlag(0x13f);
       }
     }
-    Flag_Clear(0x106);
+    Event_ClearFlag(0x106);
     goto finish;
   }
   if (result == 2) {
@@ -312,11 +311,11 @@ top:
       struct MainRoutineWork *party = &gMainRoutineWork;
 
       party->currentOwner = 4;
-      if (Flag_IsSet(0x9ff))
+      if (Event_GetFlag(0x9ff))
         Func_02002390();
       Func_0803f9c0(party->paletteGlow[0], party->paletteGlow[1]);
-      Flag_Clear(0x109);
-      Flag_Clear(0x106);
+      Event_ClearFlag(0x109);
+      Event_ClearFlag(0x106);
       party->ownerOverride = 0;
       gSleepDisabled = 1;
       Func_020023b8((s32)&SceneId_Ov6b5, 1);
@@ -371,7 +370,7 @@ again:
       goto shut;
   }
 #if TLA_PATCH_1
-  Flag_Set(0x109);
+  Event_SetFlag(0x109);
 #endif
 finish:
   ((struct EventWork *)Ram_HeapSlots->eventWork)->countdown = 999;

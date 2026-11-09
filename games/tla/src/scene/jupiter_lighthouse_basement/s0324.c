@@ -37,9 +37,9 @@ s32 Func_02000324(void) {
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x204;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov699Room1) {
     Func_020004dc(1);
-    if (!GameFlag_Test(0x109) && gMainRoutineWork.entrance == 4)
+    if (!Event_GetFlag(0x109) && gMainRoutineWork.entrance == 4)
       Func_02001d3c(gMainRoutineWork.currentOwner);
-    if (!GameFlag_Test(0x109) && gMainRoutineWork.entrance == 6)
+    if (!Event_GetFlag(0x109) && gMainRoutineWork.entrance == 6)
       Func_02001d3c(gMainRoutineWork.currentOwner);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov699Room2) {

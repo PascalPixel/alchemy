@@ -1,5 +1,6 @@
 #include "types.h"
 #include "call.h"
+#include "event_inline.h"
 
 struct OrbitEffect {
   u8 unk00[6];
@@ -22,7 +23,6 @@ struct OrbitEffect {
 
 u32 Random16Far(void);
 void Func_02000e5c(struct OrbitEffect *effect, s32 priority);
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *position);
 struct OrbitEffect *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Func_02000474(struct OrbitEffect *effect);
 
@@ -42,7 +42,7 @@ loop:
     position[1] = source->y + i * 0xcccc + 0x40000;
     position[2] = source->z;
     radius = Random16Far();
-    Vector_AddPolarOffsetFar(radius * 5 + 0x30000, Random16Far(), position);
+    FieldVector_AddPolarOffset(radius * 5 + 0x30000, Random16Far(), position);
     effect = (struct OrbitEffect *)Value4(
         (s32 (*)())Actor_Spawn, 308, position[0], position[1], position[2]);
     if (effect != NULL) {

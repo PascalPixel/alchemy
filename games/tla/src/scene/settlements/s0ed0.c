@@ -15,12 +15,12 @@ void Func_02000ed0(void) {
 
   Func_02001fa8(1, 0, Func_02000e30);
   priority = 0xc80;
-  Task_Add(Func_02000e90, priority);
+  FieldTask_AddFrame(Func_02000e90, priority);
 }
 
 void Func_02000ef0(void) { Func_02002190(gData_0200226c); }
 
 void Func_02000f00(void) {
-  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 2;
+  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 2;
   Func_02002190(gData_0200226c);
 }

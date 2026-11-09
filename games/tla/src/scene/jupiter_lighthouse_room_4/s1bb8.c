@@ -29,7 +29,7 @@ void Func_02001818(struct LightPuzzle *puzzle, struct LightTile *tile);
 void Func_02001888(struct LightPuzzle *puzzle, struct LightTile *tile);
 
 s32 Func_02001bb8(void) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   struct LightPuzzle *puzzle = &gData_02002864;
@@ -38,9 +38,9 @@ s32 Func_02001bb8(void) {
 
   for (i = 0; i < (s16)puzzle->count; i++, tile++) {
     if (tile->x == x && tile->z == z) {
-      if (!GameFlag_Test(tile->flag)) {
+      if (!Event_GetFlag(tile->flag)) {
         Func_02001818(puzzle, tile);
-        GameFlag_SetBit(tile->flag);
+        Event_SetFlag(tile->flag);
         puzzle->current = i;
         break;
       }

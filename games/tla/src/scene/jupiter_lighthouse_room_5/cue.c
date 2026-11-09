@@ -8,6 +8,6 @@ void Func_02001650();
 
 void Func_02000294(void) {
   if (gData_02003278 != 0)
-    Sound_Play(201);
+    Event_PlaySound(201);
   Func_02001650(gData_02003274);
 }

@@ -19,14 +19,14 @@ void Func_02001444(void) {
   struct Actor *object;
 
   Func_02003aec();
-  Event_ResolvePendingActions(0);
-  Event_Wait(10);
+  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_Wait(10);
   object = work->target;
   object->update = NULL;
-  Actor_SetPartAttribute(object, 7);
-  Event_Wait(3);
-  Actor_SetPartAttribute(work->target, 0);
-  Event_Wait(1);
+  Actor_SetSpriteColor(object, 7);
+  FieldEvent_Wait(3);
+  Actor_SetSpriteColor(work->target, 0);
+  FieldEvent_Wait(1);
   Func_020011e4(work->target);
   Func_02003af4();
 }
@@ -36,7 +36,7 @@ void Func_0200148c(void) {
   struct Actor *object;
 
   Func_02003aec();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   object = work->target;
   object->action = 0x400;
   object->update = Func_02000ff4;

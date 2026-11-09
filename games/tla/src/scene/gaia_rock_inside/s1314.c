@@ -22,7 +22,7 @@ void Func_02001314(s32 a0) {
   FIELD_AT(t0, s32, 28) = 0x6666;
   FIELD_AT(t0, s32, 24) = 0x6666;
   FIELD_AT((t0 + 0x55), u8, 0) = 0;
-  Actor_SetPartAttribute(t0, 2);
+  Actor_SetSpriteColor(t0, 2);
   Scene_SetActorSpritePriority(t0, 1);
   Func_02004d9c(t0, 1);
   Actor_SetSingleChildFlags(t0, 0);

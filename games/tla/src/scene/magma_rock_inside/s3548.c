@@ -1,5 +1,4 @@
 #include "local.h"
-#include "call.h"
 
 extern s16 gData_0200525c[];
 extern s16 gData_020052bc[];
@@ -12,7 +11,7 @@ void Func_02003548(void) {
   /* FAKEMATCH: forwarding the first flag call through call.h keeps 0x302 from
    * being shared with the script calls, which build it again after the scene
    * test (a direct call: differ 56). */
-  Call1((void (*)())GameFlag_SetBit, 0x302);
+  Event_SetFlag(0x302);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room4) {
     s16 *script = gData_0200525c;
 
@@ -28,16 +27,16 @@ void Func_02003548(void) {
     Func_02000800(20, gData_0200531c, 0x302);
     Func_02000800(21, gData_0200537c, 0x302);
     Func_02000800(22, gData_0200537c, 0x302);
-    if (Actor_GetById(16)->step == 0) {
-      Actor_GetById(16)->step = 10;
-      Actor_GetById(18)->step = 10;
-      Actor_GetById(20)->step = 10;
-      Actor_GetById(22)->step = 10;
+    if (Actor_Get(16)->step == 0) {
+      Actor_Get(16)->step = 10;
+      Actor_Get(18)->step = 10;
+      Actor_Get(20)->step = 10;
+      Actor_Get(22)->step = 10;
     }
-    Actor_SetModeById(23, 4);
-    Actor_SetModeById(24, 4);
-    Actor_SetModeById(25, 4);
-    Actor_SetModeById(26, 2);
+    Actor_SetAnimation(23, 4);
+    Actor_SetAnimation(24, 4);
+    Actor_SetAnimation(25, 4);
+    Actor_SetAnimation(26, 2);
   }
 }
 
@@ -54,7 +53,7 @@ void Func_02003630(struct Actor *arg) {
 
   asm("");
   object = arg;
-  owner = Actor_GetById(party->currentOwner);
+  owner = Actor_Get(party->currentOwner);
   ownerY = owner->y >> 16;
   y = object->y >> 16;
   flags = &object->priorityFlags;

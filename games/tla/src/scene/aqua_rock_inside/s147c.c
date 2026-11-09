@@ -28,11 +28,11 @@ s32 Func_0200147c(struct Orbit *object) {
 
   object->angle += object->speed;
   object->x = IwramMulQ16(Math_Cosine(object->angle), object->radius);
-  z = IwramMulQ16(Math_Sine(object->angle), object->radius);
+  z = IwramMulQ16(Math_Sin(object->angle), object->radius);
   object->x += object->centreX;
   object->z = (z >> 1) + object->centreZ;
   if (object->growth != 141 && (gFrameCount & 1)) {
-    object->radius = object->growth * Math_Sine(object->phase << 10);
+    object->radius = object->growth * Math_Sin(object->phase << 10);
     object->growth += 10;
   }
   if (object->speed == 0)

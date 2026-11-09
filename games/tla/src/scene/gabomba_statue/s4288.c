@@ -44,7 +44,7 @@ nextColumn: {
   struct PuzzleCell *cell = &state->cells[row * 11 + column];
 
   if (cell->occupied != 0) {
-    struct Actor *object = Actor_GetById(id);
+    struct Actor *object = Actor_Get(id);
     s32 mapX;
     s32 mapZ;
     s32 kind;
@@ -61,7 +61,7 @@ nextColumn: {
          * in tla-en. */
         x += column;
         z += row;
-        Map_CopyCellsRect(0, 11, 1, 1, x, z);
+        MapGrid_CopyCells(0, 11, 1, 1, x, z);
       }
       cell->occupied = 2;
     } else {
@@ -77,7 +77,7 @@ nextColumn: {
       mapZ = state->originZ;
       mapX += column;
       mapZ += row;
-      Map_CopyCellsRect(1, kind, 1, 1, mapX, mapZ);
+      MapGrid_CopyCells(1, kind, 1, 1, mapX, mapZ);
     }
     id++;
   }

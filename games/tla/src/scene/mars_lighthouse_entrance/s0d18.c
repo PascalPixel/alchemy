@@ -4,11 +4,11 @@
 #include "main_routine_work.h"
 #include "actor.h"
 #include "vram_tab.h"
+#include "event_inline.h"
 
 extern u16 gData_020068a2;
 extern u32 Data_020068a4[3];
 
-struct Actor *Actor_GetById(s32 id);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02004b80(u32 *oam, s32 depth);
 
@@ -19,7 +19,7 @@ void Func_02000d18(void) {
   s32 cameraZ = camera[1] & 0xffff0000;
   s32 originY = map->origin[1];
   s32 tile = gResourceTableEntries[gData_020068a2].offset >> 5;
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 y, z, depth, sx, sy;
   u32 *word;
 

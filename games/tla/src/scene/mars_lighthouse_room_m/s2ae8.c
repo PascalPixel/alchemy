@@ -1,10 +1,10 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "vector3.h"
 #include "map.h"
+#include "event_inline.h"
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
@@ -24,15 +24,7 @@ struct WorkEvent {
   s16 unk166;
 };
 
-s32 GameFlag_Test(s32 flag);
-struct Actor *Actor_GetById(s32 id);
-void Vector_AddPolarOffsetFar(s32 distance, u32 angle, struct Vector3 *v);
 s32 Func_02003168(s32 terrain, s32 x, s32 z);
-void Func_02003140(struct Actor *actor, s32 x, s32 y, s32 z);
-void Func_02003170(s32 a, s32 b, s32 c, s32 d, s32 x, s32 z);
-void Func_02003178(s32 a, s32 b, s32 c, s32 d, s32 x, s32 z);
-void Func_02003198(s32 a, s32 b, s32 c);
-void Func_020032b8(s32 sound);
 void Func_02002870(struct Actor *actor);
 void Func_020029f4(s32 x, s32 y, s32 z, u32 angle);
 extern u8 gData_020023c4[];
@@ -67,7 +59,7 @@ void Func_02002ae8(struct Actor *actor) {
     struct Work020023c4 *other;
     struct Actor *target;
 
-    flag = GameFlag_Test(0x106);
+    flag = Event_GetFlag(0x106);
     if (work->unk166 != 0)
       flag |= 1;
     actor->movementState = flag;
@@ -75,20 +67,20 @@ void Func_02002ae8(struct Actor *actor) {
     position.x = actor->x;
     position.y = actor->y;
     position.z = actor->z;
-    Vector_AddPolarOffsetFar(0x80000, actor->angle, &position);
+    FieldVector_AddPolarOffset(0x80000, actor->angle, &position);
     if (Func_02003168(0, position.x, position.z) == 7) {
       actor->targetZ = 0x80000000;
       actor->targetY = 0x80000000;
       actor->targetX = 0x80000000;
       actor->acceleration = 0x4000;
       actor->action = 1;
-      Func_020032b8(145);
+      Event_PlaySound(145);
       /* FAKEMATCH(wrapper): forwarded, so each argument builds its own 0x50000;
        * as a direct call, 6 of 362 instructions differ in tla-en. */
-      Call3((void (*)())Func_02003198, 0x50000, 0x50000, 0x10000);
+      MapGrid_SetShake(0x50000, 0x50000, 0x10000);
       /* FAKEMATCH(wrapper): forwarded, so each argument builds its own -1; as a
        * direct call, 17 of 362 instructions differ in tla-en. */
-      Call3((void (*)())Func_02003198, -1, -1, 0xe666);
+      MapGrid_SetShake(-1, -1, 0xe666);
       if (actor->watchedObject != NULL)
         ((void (*)(struct Actor *))actor->watchedObject)(actor);
     }
@@ -113,18 +105,18 @@ void Func_02002ae8(struct Actor *actor) {
         cell = (struct MapCell *)(offset + (s32)cellsA);
         if (cell->collisionCode == 77) {
           cell->collisionCode = 0;
-          Func_02003178(64, 64, 1, 1, xA, zA);
-          Func_02003170(64, 64, 1, 1, x, z);
-          Func_020032b8(0x23d);
+          MapGrid_CopyCellsLayered(64, 64, 1, 1, xA, zA);
+          MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
+          Event_PlaySound(0x23d);
           Func_020029f4((x << 20) + 0x80000, actor->y, (z << 20) + 0x80000,
                         actor->angle);
         }
         cell = (struct MapCell *)(offset + (s32)cellsB);
         if (cell->collisionCode == 77) {
           cell->collisionCode = 0;
-          Func_02003178(64, 64, 1, 2, xB, zB);
-          Func_02003170(64, 64, 1, 1, x, z);
-          Func_020032b8(0x23c);
+          MapGrid_CopyCellsLayered(64, 64, 1, 2, xB, zB);
+          MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
+          Event_PlaySound(0x23c);
           Func_020029f4((x << 20) + 0x80000, actor->y, (z << 20) + 0x80000,
                         actor->angle);
         }
@@ -135,11 +127,11 @@ void Func_02002ae8(struct Actor *actor) {
       actor->scaleX += 0x1000;
       actor->scaleY += 0x1000;
     }
-    Func_02003140(actor, position.x, position.y, position.z);
+    FieldActor_SetMoveTarget(actor, position.x, position.y, position.z);
 
     work2 = Ram_HeapSlots->eventWork;
     other = (struct Work020023c4 *)(gData_020023c4 + 0x188);
-    target = Actor_GetById(gMainRoutineWork.currentOwner);
+    target = Actor_Get(gMainRoutineWork.currentOwner);
     if (ABS(actor->x - target->x) < 0x140000 &&
         (u32)(actor->y - target->y + 0x7ffff) <= 0x1ffffe &&
         ABS(actor->z - target->z) < 0x140000) {

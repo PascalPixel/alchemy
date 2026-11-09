@@ -1,4 +1,5 @@
 #include "tundaria_tower.h"
+#include "call.h"
 
 void Func_02001868(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;

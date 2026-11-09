@@ -20,7 +20,7 @@ void Func_020021c4(struct Actor *object, const s32 *script);
 
 void Func_02000d94(struct Actor *self) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 position[3];
   s32 distance;
   s32 near;
@@ -32,7 +32,7 @@ void Func_02000d94(struct Actor *self) {
   }
   Actor_SetAnimationSpeed(self, 16);
   if ((++*(u16 *)&self->action & 31) == 31)
-    Sound_Play(231);
+    Event_PlaySound(231);
   ((struct FieldSprite *)self->animation)->priority =
       ((struct FieldSprite *)leader->animation)->priority;
   if (Func_020022fc(self->x, self->z, 2) != 255) {
@@ -53,7 +53,7 @@ void Func_02000d94(struct Actor *self) {
         near = 0;
         if (Func_02000d68(&leader->x, &self->x) <= 12 && distance < 0xc0000)
           near = 1;
-        if (near && !GameFlag_Test(260)) {
+        if (near && !Event_GetFlag(260)) {
           leader->angle = self->angle;
           leader->watchedObject = self;
           leader->priorityFlags &= ~1;
@@ -71,7 +71,7 @@ void Func_02000d94(struct Actor *self) {
           Math_Cosine(self->angle), self->speedLimit);
       self->z += ((s32 (*)(s32, s32))(
           IwramIrqMain + FIXED_OFFSET(0x11c, IwramMulQ16, IwramIrqMain)))(
-          Math_Sine(self->angle), self->speedLimit);
+          Math_Sin(self->angle), self->speedLimit);
       return;
     }
   }
@@ -86,6 +86,6 @@ stop:
     self->update = (void *)zero;
   }
   Func_020021c4(self, gData_02002b3c);
-  Sound_Play(228);
+  Event_PlaySound(228);
   Data_02002b94 = 0;
 }

@@ -15,38 +15,38 @@ static __inline__ void Func_020033e0_(s32 id, s32 x, s32 z) {
 }
 
 void Func_02001d68(void) {
-  struct Actor *object = Actor_GetById(9);
+  struct Actor *object = Actor_Get(9);
 
   Func_02003398();
-  Event_ResolvePendingActions(0);
-  Actor_SetModeById(9, 2);
+  FieldEvent_ResolvePendingActions(0);
+  Actor_SetAnimation(9, 2);
   object->y = -0x400000;
   Func_020033e0_(9, PIXELS(728), PIXELS(120));
-  Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
+  Actor_SetPosition(gMainRoutineWork.currentOwner,
                                          PIXELS(728), PIXELS(120));
-  Actor_GetById(gMainRoutineWork.currentOwner)->y = -0x300000;
+  Actor_Get(gMainRoutineWork.currentOwner)->y = -0x300000;
   Event_StartScreenTransition();
   object->acceleration = 0x10000;
   object->speedLimit = 0x10000;
-  Actor_SetMoveTarget(object, object->x, object->y + 0x300000, object->z);
-  Script_WaitForEventTimeout(object);
-  GameFlag_SetBit(0x300);
+  FieldActor_SetMoveTarget(object, object->x, object->y + 0x300000, object->z);
+  Actor_WaitForMove(object);
+  Event_SetFlag(0x300);
   Func_020033a0();
 }
 
 void Func_02001df4(void) {
-  struct Actor *object = Actor_GetById(11);
+  struct Actor *object = Actor_Get(11);
 
   Func_02003398();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   object->motionFlags = 0;
   object->y = -0x400000;
-  Actor_GetById(gMainRoutineWork.currentOwner)->y = -0x300000;
+  Actor_Get(gMainRoutineWork.currentOwner)->y = -0x300000;
   Event_StartScreenTransition();
   object->acceleration = 0x10000;
   object->speedLimit = 0x10000;
-  Actor_SetMoveTarget(object, object->x, object->y + 0x300000, object->z);
-  Script_WaitForEventTimeout(object);
-  GameFlag_SetBit(0x304);
+  FieldActor_SetMoveTarget(object, object->x, object->y + 0x300000, object->z);
+  Actor_WaitForMove(object);
+  Event_SetFlag(0x304);
   Func_020033a0();
 }

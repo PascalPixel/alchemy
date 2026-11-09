@@ -13,7 +13,7 @@ s32 Actor_SetAnimationSpeed();
 s32 Func_020005dc(void) {
   s32 t0;
 
-  t0 = ((s32)Actor_GetById(9));
+  t0 = ((s32)Actor_Get(9));
   Func_02004d9c(t0, 3);
   Actor_SetAnimationSpeed(t0, 0);
   return 0;

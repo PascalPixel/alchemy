@@ -2,36 +2,28 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
-void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void Actor_SetPositionAndCommit(s32 actor, s32 x, s32 z);
-struct Actor *Func_020055e8(void);
 
 void Func_02003af0(void) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = object->x;
   s32 z = object->z;
 
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x40000, 0x20000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x40000, 0x20000);
 
   x >>= 20;
   z >>= 20;
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, (x << 4) + 8,
                              (z << 4) + 8);
-  wait(1);
-  Actor_SetPositionAndResetMotion(object, (x << 20) + PIXELS(8), object->y,
+  System_Wait(1);
+  FieldActor_SetPositionAndResetMotion(object, (x << 20) + PIXELS(8), object->y,
                                   (z << 20) + PIXELS(8));
   FieldEvent_Wait(4);
-  Func_020055e8()->y -= 0x80000;
+  FieldCamera_GetActor()->y -= 0x80000;
 }
 
-void Func_020056c0(s32 sound);
 /// Map_CopyCellsRect through this overlay's import.
-void Func_020054e0(s32 srcX, s32 srcZ, s32 width, s32 height, s32 dstX,
-                   s32 dstZ);
 
 /// The cells Func_02003f18 watches, and the cell it copies over the one the
 /// leader steps on.
@@ -47,7 +39,7 @@ struct CellTargetEntry;
 /// row's 64 bit; Func_02003f18 calls it the first time the leader steps on
 /// one of the table's cells.
 void Func_02003b78(struct CellTarget *table, struct CellTargetEntry *entry) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s16 sourceX;
   s32 leaderX = leader->x;
   s16 sourceZBit;
@@ -66,7 +58,7 @@ void Func_02003b78(struct CellTarget *table, struct CellTargetEntry *entry) {
   sourceZBit = table->z & 64;
   z = (leader->z >> 20) | sourceZBit;
   Func_02003af0();
-  Func_020056c0(161);
-  Func_020054e0(table->x, table->z + 1, 1, 1, x, z);
+  Event_PlaySound(161);
+  MapGrid_CopyCells(table->x, table->z + 1, 1, 1, x, z);
   FieldEvent_Wait(12);
 }

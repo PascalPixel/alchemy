@@ -27,7 +27,7 @@ void Func_02000d4c(s32 firstId, s32 firstX, s32 firstY, s32 firstA, s32 firstB,
   Func_02002a2c(first, 0, firstA, firstB);
   if (frames != 0) {
     while (!Message_AllTyped())
-      wait(frames);
+      System_Wait(frames);
   }
   /* FAKEMATCH(volatile): the counter's second store and the second x both
    * volatile, so x is loaded after the store; as work->message++ and s32
@@ -36,6 +36,6 @@ void Func_02000d4c(s32 firstId, s32 firstX, s32 firstY, s32 firstA, s32 firstB,
                      BattleEffect_GetResourceId(second) << 16);
   Func_02002a2c(second, 0, secondA, secondB);
   while (!Message_AllTyped())
-    wait(1);
-  wait(1);
+    System_Wait(1);
+  System_Wait(1);
 }

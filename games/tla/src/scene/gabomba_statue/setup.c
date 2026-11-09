@@ -19,9 +19,9 @@ void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
 void Func_02000f50(s32 id) {
-  Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
-  Actor_Stop(id);
-  Actor_SetModeById(id, 1);
+  Actor_SetPosition(id, 0, 0);
+  FieldActor_Stop(id);
+  Actor_SetAnimation(id, 1);
 }
 
 void Func_02000f6c(void) {
@@ -38,37 +38,37 @@ void Func_02000f6c(void) {
 void Func_02000fc0(void) {
   s32 result;
 
-  GameFlag_SetBit(0x205);
+  Event_SetFlag(0x205);
   Func_020056b4();
-  Event_ResolvePendingActions(0);
-  Sound_Play(78);
+  FieldEvent_ResolvePendingActions(0);
+  Event_PlaySound(78);
   Func_0200533c();
-  Event_Wait(40);
-  Event_SetMessageId(MsgGabombaAcceptOffering);
-  Event_ShowMessageAndWait(24, 0);
-  Camera_MoveWithinMapBounds(PIXELS(392), -1, PIXELS(256), 1);
+  FieldEvent_Wait(40);
+  FieldEvent_SetMessageId(MsgGabombaAcceptOffering);
+  Event_ShowMessage(24, 0);
+  FieldCamera_MoveTo(PIXELS(392), -1, PIXELS(256), 1);
   Func_020057b4();
-  Sound_Play(220);
-  wait(1);
+  Event_PlaySound(220);
+  System_Wait(1);
   PaletteFade_ApplySource(0x10000, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
-  BattleEffect_StartBufferInterpolation(40);
-  wait(80);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
-  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
+  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_Interpolate(40);
+  System_Wait(80);
+  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
   Func_02000f6c();
-  wait(1);
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(10);
-  wait(20);
-  Sound_Play(130);
-  Actor_SetPartAttribute(Actor_GetById(9), 7);
-  Actor_SetPartAttribute(Actor_GetById(10), 7);
-  wait(8);
-  Actor_SetPartAttribute(Actor_GetById(10), 3);
-  Actor_SetPartAttribute(Actor_GetById(9), 0);
-  wait(8);
-  Sound_Play(11);
+  System_Wait(1);
+  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_Interpolate(10);
+  System_Wait(20);
+  Event_PlaySound(130);
+  Actor_SetSpriteColor(Actor_Get(9), 7);
+  Actor_SetSpriteColor(Actor_Get(10), 7);
+  System_Wait(8);
+  Actor_SetSpriteColor(Actor_Get(10), 3);
+  Actor_SetSpriteColor(Actor_Get(9), 0);
+  System_Wait(8);
+  Event_PlaySound(11);
   result = Func_02004d48(11, 1);
   Func_0200581c();
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x201;
@@ -76,16 +76,16 @@ void Func_02000fc0(void) {
   Event_WaitTransitionFrames();
   switch (result) {
   case 3:
-    Import_EventSetExitRequest(14);
+    FieldEvent_SetExitRequest(14);
     break;
   case 1:
-    Import_EventSetExitRequest(15);
+    FieldEvent_SetExitRequest(15);
     break;
   case 2:
-    Import_EventSetExitRequest(16);
+    FieldEvent_SetExitRequest(16);
     break;
   case 0:
-    Import_EventSetExitRequest(17);
+    FieldEvent_SetExitRequest(17);
     break;
   }
 }

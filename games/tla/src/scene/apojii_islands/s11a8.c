@@ -1,6 +1,5 @@
 #include "local.h"
 #include "scene_ids.h"
-#include "call.h"
 
 struct EventWork1cc {
   u8 unk000[0x1cc];
@@ -11,7 +10,7 @@ void Func_020011a8(void) {
   struct EventWork1cc *work = Ram_HeapSlots->eventWork;
   s32 owner = gMainRoutineWork.currentOwner;
   struct Actor *anchor = work->object;
-  struct Actor *leader = Actor_GetById(owner);
+  struct Actor *leader = Actor_Get(owner);
   s32 position[3];
   s32 result;
 
@@ -26,16 +25,16 @@ void Func_020011a8(void) {
     if (result < 0) {
       /* FAKEMATCH(wrapper): Call2 kept; as a direct call, 2 of 151 instructions
        * differ in tla-en. */
-      Call2(Func_080d489c, owner, 0x102);
-      Actor_SetMoveTarget(leader, leader->x, leader->y, leader->z + 0x80000);
+      Actor_SetAttachedEffect(owner, 0x102);
+      FieldActor_SetMoveTarget(leader, leader->x, leader->y, leader->z + 0x80000);
       Func_02001c6c(leader, 49);
-      Script_WaitForEventTimeout(leader);
+      Actor_WaitForMove(leader);
       do {
-        wait(1);
+        System_Wait(1);
       } while (leader->y != leader->terrainHeight);
       Func_020010d8(leader);
       Func_02001c6c(leader, 49);
-      wait(3);
+      System_Wait(3);
     } else {
       position[0] = leader->x;
       position[1] = leader->y;

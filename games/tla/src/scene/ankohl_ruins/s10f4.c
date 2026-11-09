@@ -17,7 +17,7 @@ extern struct MapCell gMapCellBuffer[];
 s32 Func_02002e0c(struct Actor *object, s32 *position);
 
 void Func_020010f4(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct AnkohlRuinsEventWork *work =
       (struct AnkohlRuinsEventWork *)Ram_HeapSlots->eventWork;
   struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapWork;
@@ -27,7 +27,7 @@ void Func_020010f4(void) {
   s32 index;
   s32 position[3];
 
-  if (GameFlag_Test(0x104))
+  if (Event_GetFlag(0x104))
     return;
   if (map == NULL) {
     upper = gMapCellBuffer;

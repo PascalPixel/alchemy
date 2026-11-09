@@ -3,6 +3,7 @@
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "io_write_queue.h"
+#include "event_inline.h"
 
 struct TreasureIsleEventWork {
   u8 unk000[0x166];

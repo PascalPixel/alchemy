@@ -1,9 +1,9 @@
 #include "types.h"
 #include "actor.h"
+#include "event_inline.h"
 
 extern u16 gData_02005f58[];
 
-void Vector_AddPolarOffsetFar(s32 length, s32 angle, s32 *position);
 struct Actor *Func_02005680(s32 *position, s32 mode);
 s32 Func_020054f8(struct Actor *object, s32 *position);
 
@@ -17,7 +17,7 @@ void Func_02004fc0(struct Actor *object) {
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
-  Vector_AddPolarOffsetFar(0x100000, angle, position);
+  FieldVector_AddPolarOffset(0x100000, angle, position);
   hit = Func_02005680(position, 1);
   if (hit != 0) {
     i = 0;
@@ -32,11 +32,11 @@ void Func_02004fc0(struct Actor *object) {
     i++;
     if (i <= 5)
       goto next;
-    Actor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
+    FieldActor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
   }
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
   if (Func_020054f8(object, position) > 0)
-    Actor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
+    FieldActor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
 }

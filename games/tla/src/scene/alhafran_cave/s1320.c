@@ -1,14 +1,14 @@
 #include "local.h"
 
 void Func_02001320(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
   struct AlhafranCaveMapCell *cell =
       ((struct AlhafranCaveMapWork *)Ram_HeapSlots->mapWork)
           ->layers[layer]
           .cells;
 
   cell += Func_02001588();
-  if (GameFlag_Test(flag)) {
+  if (Event_GetFlag(flag)) {
     /* FAKEMATCH: the flags are read before the cell store and ORed into the
      * register that holds 2, as the native does; as one |= the 0 for the cell
      * is built before the read */

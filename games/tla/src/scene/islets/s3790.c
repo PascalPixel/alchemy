@@ -1,4 +1,5 @@
 #include "islets.h"
+#include "event_inline.h"
 
 void Func_02003790(s32 layer, s32 x, s32 z, u32 width, u32 height, s32 value) {
   struct MapCell *cells = Ram_HeapSlots->mapWork->layers[layer].cells;

@@ -7,22 +7,18 @@
 #include "iwram_call.h"
 #include "input.h"
 #include "call.h"
+#include "event_inline.h"
 
 extern volatile s16 gData_020062a4;
 extern s16 gData_02004780[];
 void Func_0200385c(struct Actor *object);
 void Func_020038e8(void);
-s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 ArcTan2(s32 y, s32 x);
-void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_020043c4(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-void Script_WaitForEventTimeout(struct Actor *object);
 s32 Func_0200444c(struct Actor *object);
 s32 Func_02004454(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
-void wait(s32 frames);
 
 void Func_02003bc8(void) {
   struct Actor *object;
@@ -82,7 +78,7 @@ retry:
   }
   /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 2
    * of 347 instructions differ in tla-en. */
-  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
+  FieldVector_AddPolarOffset(0x100000, angle, position);
   cell = GetMapCellCollision(*layer, p[0], p[2]);
   if (cell == 255 ||
       Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
@@ -102,12 +98,12 @@ retry:
   Func_020043c4(object, 2);
   Actor_SetAnimationSpeed(object, 48);
 #if !TLA_PATCH_1
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
 #else
   for (i = 0; i <= 179 && Func_0200444c(object) == 0; i++) {
     if (gData_020062a4 != 0)
       goto end;
-    wait(1);
+    System_Wait(1);
   }
 #endif
   object->update = (void (*)(void))Func_0200385c;
@@ -146,7 +142,7 @@ overlap:
   i = 0;
   goto test;
 next:
-  wait(1);
+  System_Wait(1);
   i++;
 test:
   if (i <= 179 && Func_0200444c(object) == 0 && gData_020062a4 == 0)
@@ -161,7 +157,7 @@ walk:
   __asm__("" : : : "sfp");
   /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 6
    * of 347 instructions differ in tla-en. */
-  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
+  FieldVector_AddPolarOffset(0x100000, angle, position);
   q = position;
   cell = GetMapCellCollision(*layer, q[0], q[2]);
   if (cell != 255)
@@ -170,11 +166,11 @@ blocked:
   object->speedLimit = 0x20000;
   object->acceleration = 0x10000;
   Actor_SetMoveTarget(object, targetX, object->y, targetZ);
-  Script_WaitForEventTimeout(object);
-  wait(2);
+  Actor_WaitForMove(object);
+  System_Wait(2);
   goto retry;
 changed:
-  wait(10);
+  System_Wait(10);
 end:
   object->update = NULL;
   object->actionFlags |= 1;

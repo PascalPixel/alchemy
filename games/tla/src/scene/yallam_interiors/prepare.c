@@ -1,6 +1,5 @@
 #include "types.h"
 #include "scene_tables.h"
-#include "flag_call.h"
 #include "yallam_interiors.h"
 #include "version.h"
 #include "event_inline.h"
@@ -23,7 +22,7 @@ s32 Func_0200086c(void) {
     scene = party->scene;
   }
   if (scene == (s32)&SceneId_Ov677Room1) {
-    if (Flag_IsSet(0x301)) {
+    if (Event_GetFlag(0x301)) {
       Actor_SetPosition(14, PIXELS(600), PIXELS(360));
       Actor_SetPosition(16, PIXELS(632), PIXELS(346));
       Actor_FaceDirection(16, FACING_SOUTH, 0);

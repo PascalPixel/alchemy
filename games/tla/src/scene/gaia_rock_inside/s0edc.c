@@ -13,8 +13,8 @@ extern u8 MsgGaiaRockInside05[];
 
 void Func_02000edc(void) {
   Func_02004e5c();
-  Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgGaiaRockInside05);
-  Event_ShowMessageAndWait(0xa, 0);
+  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_SetMessageId((s32)MsgGaiaRockInside05);
+  Event_ShowMessage(0xa, 0);
   Func_02004e64();
 }

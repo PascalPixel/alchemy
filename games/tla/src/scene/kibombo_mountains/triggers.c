@@ -24,21 +24,21 @@ void Func_02000f84(void) { Func_02000da8(8); }
 void Func_02000f90(void) { Func_02000da8(8); }
 
 void Func_02000f9c(void) {
-  if (!GameFlag_Test(514) && !GameFlag_Test(513))
+  if (!Event_GetFlag(514) && !Event_GetFlag(513))
     Func_02000e28(10);
 }
 
 void Func_02000fc4(void) {
-  if (!GameFlag_Test(512))
+  if (!Event_GetFlag(512))
     Func_02000da8(9);
 }
 
 void Func_02000fdc(void) {
-  if (!GameFlag_Test(512))
+  if (!Event_GetFlag(512))
     Func_02000da8(9);
 }
 
 void Func_02000ff4(void) {
-  if (!GameFlag_Test(515) && !GameFlag_Test(514))
+  if (!Event_GetFlag(515) && !Event_GetFlag(514))
     Func_02000e28(10);
 }

@@ -189,8 +189,8 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
   }
   Resource_ResetEntry(sparkEntry);
   Heap_Release(sparks);
-  Event_Wait(40);
-  Map_SetScreenShake(0, 0, 0);
+  FieldEvent_Wait(40);
+  MapGrid_SetShake(0, 0, 0);
   Resource_ResetEntry(entry);
   HeapSlot_Release(220);
 }

@@ -22,7 +22,7 @@ void Func_020047fc(const u16 *list) {
   spec = list;
 next:
   id = spec[0];
-  object = Actor_GetById(id);
+  object = Actor_Get(id);
   mode = spec[1];
   flag = spec[2];
   object->collisionFlags &= 0xfe;

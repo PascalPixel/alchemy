@@ -1,11 +1,11 @@
 #include "yallam.h"
 
 void Func_02001688(void) {
-  struct Actor *a = Actor_GetById(8);
-  struct Actor *b = Actor_GetById(10);
-  struct Actor *c = Actor_GetById(9);
-  struct Actor *d = Actor_GetById(11);
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *a = Actor_Get(8);
+  struct Actor *b = Actor_Get(10);
+  struct Actor *c = Actor_Get(9);
+  struct Actor *d = Actor_Get(11);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 value = (s16)a->unk66;
 
   switch (value) {
@@ -42,30 +42,30 @@ void Func_02001688(void) {
 void Func_02001730(void) {
   struct Actor *object;
 
-  object = Actor_GetById(8);
+  object = Actor_Get(8);
   gData_02002fc0[0].action = object->action;
   gData_02002fc0[0].mode = (s16)object->unk66;
   gData_02002fc0[0].byte98 = BYTE_AT(object, 98);
   gData_02002fc0[0].byte99 = BYTE_AT(object, 99);
-  object = Actor_GetById(10);
+  object = Actor_Get(10);
   gData_02002fc0[1].action = object->action;
   gData_02002fc0[1].mode = (s16)object->unk66;
   gData_02002fc0[1].byte98 = BYTE_AT(object, 98);
   gData_02002fc0[1].byte99 = BYTE_AT(object, 99);
-  object = Actor_GetById(9);
+  object = Actor_Get(9);
   gData_02002fc0[2].action = object->action;
   gData_02002fc0[2].mode = (s16)object->unk66;
   gData_02002fc0[2].byte98 = BYTE_AT(object, 98);
   gData_02002fc0[2].byte99 = BYTE_AT(object, 99);
-  object = Actor_GetById(11);
+  object = Actor_Get(11);
   gData_02002fc0[3].action = object->action;
   gData_02002fc0[3].mode = (s16)object->unk66;
   gData_02002fc0[3].byte98 = BYTE_AT(object, 98);
   gData_02002fc0[3].byte99 = BYTE_AT(object, 99);
-  object = Actor_GetById(gMainRoutineWork.currentOwner);
+  object = Actor_Get(gMainRoutineWork.currentOwner);
   gData_02002fc0[4].action = object->action;
   gData_02002fc0[4].mode = (s16)object->unk66;
   gData_02002fc0[4].byte98 = BYTE_AT(object, 98);
   gData_02002fc0[4].byte99 = BYTE_AT(object, 99);
-  Task_RemoveFar(Func_02001688);
+  FieldTask_Remove(Func_02001688);
 }

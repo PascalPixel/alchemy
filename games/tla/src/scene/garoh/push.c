@@ -1,7 +1,6 @@
 #include "garoh.h"
+#include "event_inline.h"
 
-void Func_0802b450(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                   s32 destY);
 void Func_02005304(s32 a, s32 b);
 void Func_0200530c(s32 a, s32 b);
 void Func_02005314(void);
@@ -19,16 +18,16 @@ static inline void BlendBack(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) {
 void Func_02001360(s32 x, s32 y, s32 z, s32 value, s32 timer);
 
 void Func_020013b0(s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
 
   Func_02001360(object->x + 0x80000, object->y + 0x1c0000, object->z, 0x1000,
                 20);
-  Sound_Play(151);
-  Event_Wait(20);
+  Event_PlaySound(151);
+  FieldEvent_Wait(20);
   Func_02001360(object->x - 0x80000, object->y + 0x1c0000, object->z, 0xf000,
                 20);
-  Sound_Play(151);
-  Event_Wait(20);
+  Event_PlaySound(151);
+  FieldEvent_Wait(20);
 }
 
 void Func_02001418(s32 actor) {

@@ -34,15 +34,15 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 void Func_02000054(struct DoorStep *step, s32 countdown, s32 unused) {
   Func_02001fcc();
-  Event_ResolvePendingActions(0);
-  Sound_Play(158);
-  Map_PlayMapEdit(step->script, step->x, step->z);
-  Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+  FieldEvent_ResolvePendingActions(0);
+  Event_PlaySound(158);
+  MapGrid_AnimateCells(step->script, step->x, step->z);
+  Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 2;
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
-  Event_Wait(10);
-  Import_EventSetExitRequest(countdown);
+  FieldEvent_Wait(10);
+  FieldEvent_SetExitRequest(countdown);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_02001fd4();

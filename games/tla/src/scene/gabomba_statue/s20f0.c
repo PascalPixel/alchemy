@@ -43,8 +43,8 @@ void Func_020020f0(s32 direction) {
     else if (direction == -1)
       MapGrid_CopyCellAttributes(35, 12, 1, 3, 27, 12);
   } else if (scene == (s32)&SceneId_Ov671Room6) {
-    Actor_SetModeById(13, 5);
-    Actor_SetSingleChildFlags(Actor_GetById(13), 0);
+    Actor_SetAnimation(13, 5);
+    Actor_SetSingleChildFlags(Actor_Get(13), 0);
   } else if (scene == (s32)&SceneId_Ov671Room7) {
     Func_020020b0(8, direction, 0);
     Func_020020b0(9, direction, 1);

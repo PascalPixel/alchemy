@@ -61,7 +61,7 @@ void Func_02004710(void) {
     affine = AffineMatrix_BuildForEffect(&effect);
   }
   for (id = state->first; id < state->end; id++) {
-    struct Actor *piece = Actor_GetById(id);
+    struct Actor *piece = Actor_Get(id);
     s32 px = piece->x;
     if (px != 0) {
       s32 x = px - scrollX;

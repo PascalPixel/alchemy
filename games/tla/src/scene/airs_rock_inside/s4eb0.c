@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "field_sprite.h"
 

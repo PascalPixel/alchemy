@@ -5,13 +5,12 @@
 #include "map.h"
 #include "event_work.h"
 #include "scene_ids.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void Task_Add(void (*func)(void), s32 priority);
 
 void Func_02000b2c(s32 id, s32 x, s32 y, s32 z) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
   struct MapCell *cell = Ram_HeapSlots->mapWork->layers[2].cells;
   s32 cellX = x / 0x100000;
   s32 cellZ = (z - y + 0x7fff) / 0x100000;

@@ -2,7 +2,6 @@
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "actor.h"
-#include "flag_call.h"
 #include "event_inline.h"
 
 struct SceneWork {
@@ -21,7 +20,7 @@ s32 Func_02000618(void) {
 
   ((struct SceneWork *)Ram_HeapSlots->eventWork)->unk1ac = 256;
   state = &gMainRoutineWork;
-  Actor_GetById(state->currentOwner)->priorityFlags |= 32;
+  Actor_Get(state->currentOwner)->priorityFlags |= 32;
   if (state->entrance == 90) {
     Event_SetFlag(0x90a);
     state->ownerOverride = 1;

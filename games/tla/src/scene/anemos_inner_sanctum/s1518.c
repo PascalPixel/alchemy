@@ -16,26 +16,26 @@ void Func_020033a0(void);
 /// actor 9 with cue 198, 4 pixels at once and then 128 more, before the screen
 /// transition finishes.
 void Func_02001518(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *object;
 
   Func_02003398();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room4) {
-    object = Actor_GetById(8);
-    Import_EventSetExitRequest(13);
+    object = Actor_Get(8);
+    FieldEvent_SetExitRequest(13);
   } else {
-    object = Actor_GetById(9);
-    Import_EventSetExitRequest(11);
+    object = Actor_Get(9);
+    FieldEvent_SetExitRequest(11);
   }
   {
     s32 x = ((leader->x >> 20) << 4) + 8;
     s32 z = ((leader->z >> 20) << 4) + 8;
 
-    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, x, z);
+    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, x, z);
   }
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 10);
-  Event_Wait(30);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 10);
+  FieldEvent_Wait(30);
   object->motionFlags = 0;
   /* FAKEMATCH: through Call4 each -1 is built on its own, as in the native;
    * called directly the three share one register, two instructions shorter
@@ -43,13 +43,13 @@ void Func_02001518(void) {
   FieldCamera_MoveTo(-1, -1, -1, 0);
   object->speedLimit = 0x20000;
   object->acceleration = 0x800;
-  Sound_Play(198);
-  Actor_SetMoveTarget(object, object->x, object->y + 0x40000, object->z);
-  Script_WaitForEventTimeout(object);
+  Event_PlaySound(198);
+  FieldActor_SetMoveTarget(object, object->x, object->y + 0x40000, object->z);
+  Actor_WaitForMove(object);
   Scene_SetActorSpritePriority(leader, 1);
   Scene_SetActorSpritePriority(object, 1);
-  Actor_SetMoveTarget(object, object->x, object->y + 0x800000, object->z);
-  Event_Wait(80);
+  FieldActor_SetMoveTarget(object, object->x, object->y + 0x800000, object->z);
+  FieldEvent_Wait(80);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_020033a0();

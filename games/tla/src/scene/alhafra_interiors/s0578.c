@@ -6,7 +6,6 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
 s32 Func_02000bbc();
 extern u8 gData_02001c90[];
 

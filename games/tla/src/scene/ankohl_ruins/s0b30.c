@@ -6,7 +6,7 @@
 /// moves, for at most 60 frames until its vertical speed is 0, then clears
 /// them ten frames later; Func_02000100 of Gaia Rock is the same function.
 void Func_02000b30(s32 id, s32 cue) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
   /* FAKEMATCH(pin): the flags' address built in r2 with 85 in it first; as a
    * plain pointer, 17 of 32 instructions differ in tla-en. */
   register u8 *flags asm("r2");
@@ -28,13 +28,13 @@ void Func_02000b30(s32 id, s32 cue) {
    * tla-en. */
   held = flags;
   while (frames != 0) {
-    wait(1);
+    System_Wait(1);
     frames--;
     if (object->velocityY == 0)
       break;
   }
   if (cue != 0)
-    Sound_Play(cue);
-  wait(10);
+    Event_PlaySound(cue);
+  System_Wait(10);
   *held = 0;
 }

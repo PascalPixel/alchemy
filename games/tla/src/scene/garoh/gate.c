@@ -1,5 +1,6 @@
 #include "garoh.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 extern char SceneId_Ov65FRoom1;
 extern char SceneId_Ov65FRoom2;
@@ -24,8 +25,6 @@ struct EventWork {
 
 extern s32 gData_0200632c;
 
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Import_EventSetExitRequest(s32 a);
 void Func_02002694(void);
 void Func_02003878(void);
 
@@ -38,11 +37,11 @@ static inline void CamMove(s32 x, s32 y, s32 z, s32 mode) {
 void Func_02000960(void) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
 
-  Sound_Play(123);
+  Event_PlaySound(123);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->unk1ac = 521;
   CamMove(-1, -1, -1, 0);
   Flag_Set(0x121);
-  Import_EventSetExitRequest(event->unk154);
+  FieldEvent_SetExitRequest(event->unk154);
 }
 
 void Func_020009a4(void) {

@@ -54,7 +54,7 @@ void Func_02001c88(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_OPTION_MASK) == 0 || options == 0)
     return;
   if ((flags & EFFECT_USE_PALETTE) != 0)
-    Actor_SetPartAttribute(effect, options->palette);
+    Actor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
     effect->priorityFlags &= ~1;
     Scene_SetActorSpritePriority(effect, options->priority);

@@ -1,21 +1,10 @@
 #include "jupiter_lighthouse_room_m.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
 void Func_020047d4(void);
 void Func_020047dc(void);
-void Event_ResolvePendingActions(s32 value);
-void Sound_Play(s32 sound);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Camera_FollowActor(s32 id, s32 flag);
 void Func_020048f4(void);
-void Func_0802b450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Camera_SetSpeedParameters(s32 a, s32 b);
-void Map_SetScreenShake(s32 a, s32 b, s32 c);
-void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
-void Actor_SetSpritePriority(u32 id, s32 variant);
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
 
 static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
                                                            s32 dz) {
@@ -103,7 +92,7 @@ void Func_0200060c(void) {
     GameFlag_SetBit(2573);
   if ((u32)(spot - 2) <= 1) {
     Func_020048e4_(0x40000, 0x8000);
-    Camera_FollowActor(23, 1);
+    FieldCamera_FollowActor(23, 1);
     Func_020048f4();
     Sound_Play(310);
     object->gravity = 0x8000;
@@ -112,7 +101,7 @@ void Func_0200060c(void) {
     i = 0;
     if (object->y > object->terrainHeight) {
       do {
-        wait(1);
+        System_Wait(1);
         i++;
         if (i > 29)
           break;
@@ -126,7 +115,7 @@ void Func_0200060c(void) {
     if (spot == 2)
       Actor_OffsetPositionAndResetMotion_(23, -32, 0);
     else
-      Actor_OffsetPositionAndResetMotion(23, 32, 0);
+      Actor_SetDestinationOffset(23, 32, 0);
     Event_Wait(7);
     Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
     object->gravity = 0x8000;
@@ -136,12 +125,12 @@ void Func_0200060c(void) {
     Sound_Play(144);
     Event_Wait(20);
     Func_0200475c_(-1, -1, 0xe666);
-    Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
+    Actor_SetPosition(23, 0, 0);
     Event_Wait(10);
   } else if (spot == 1 || spot == 4) {
-    Actor_SetSpritePriority(23, 1);
+    FieldActor_SetSpritePriority(23, 1);
     Func_020048e4_(0x40000, 0x8000);
-    Camera_FollowActor(23, 1);
+    FieldCamera_FollowActor(23, 1);
     Func_020048f4();
     Sound_Play(310);
     object->gravity = 0x8000;
@@ -154,11 +143,11 @@ void Func_0200060c(void) {
     Sound_Play(144);
     Event_Wait(20);
     Func_0200475c_(-1, -1, 0xe666);
-    Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
+    Actor_SetPosition(23, 0, 0);
     Event_Wait(10);
   }
   Event_Wait(20);
-  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_020048f4();
   Func_020047dc();
 }

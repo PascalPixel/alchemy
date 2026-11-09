@@ -1,11 +1,12 @@
 #include "mars_lighthouse_room_m.h"
+#include "event_inline.h"
 
 void Func_02002df4(s32 sourceId, s32 id, s32 value, s32 angle,
                    const void *script) {
-  struct Actor *source = Actor_GetById(sourceId);
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *source = Actor_Get(sourceId);
+  struct Actor *object = Actor_Get(id);
 
-  Actor_SetPositionAndResetMotion(object, source->x, source->y, source->z);
+  FieldActor_SetPositionAndResetMotion(object, source->x, source->y, source->z);
   Func_02003120(object, script);
   Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;

@@ -22,9 +22,6 @@ void Func_02000798(void);
 void Func_020019c4(void);
 void Func_020046b4(void);
 void Func_02004718(void);
-void Func_02004bf8(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_02004d58(s32 a0, s32 a1);
-void Func_02004d60(s32 frames);
 void Func_02004dc8(void);
 void Func_02004dd0(void);
 void BattleEffect_PrepareBufferInterpolation(void);
@@ -33,18 +30,18 @@ void Func_02000590(void) {
   if (!Flag_IsSet(0xa36)) {
     Func_020046b4();
     Func_02004ca8();
-    Func_02004da0(0);
+    FieldEvent_ResolvePendingActions(0);
     Func_02004dd0();
-    WORD_AT(Actor_GetById(gMainRoutineWork.currentOwner), 108) = 0;
-    Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+    WORD_AT(Actor_Get(gMainRoutineWork.currentOwner), 108) = 0;
+    Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 0);
     Func_02004cd8_(gMainRoutineWork.currentOwner, PIXELS(688), PIXELS(360));
-    Camera_MoveWithinMapBounds(PIXELS(688), -1, PIXELS(360), 1);
+    FieldCamera_MoveTo(PIXELS(688), -1, PIXELS(360), 1);
     Func_02004d20();
     Func_02004dc8();
     FieldEvent_Wait(40);
     Func_02004718();
     BattleEffect_PrepareBufferInterpolation();
-    wait(10);
+    System_Wait(10);
     Func_02004cb0();
     Flag_Set(0xa36);
   } else {
@@ -56,7 +53,7 @@ void Func_02000590(void) {
 
       party[0x2c2] = 2;
     }
-    Func_02004d30(18);
+    FieldEvent_SetExitRequest(18);
     FieldEvent_Wait(40);
     Func_02004718();
   }
@@ -71,25 +68,25 @@ void Func_02000648(void) {
 
     party[0x2c2] = 2;
   }
-  Func_02004d30(17);
+  FieldEvent_SetExitRequest(17);
   FieldEvent_Wait(40);
   Func_02004718();
 }
 
 void Func_02000678(s32 state, s32 frame) {
   if (state == 1) {
-    Func_02004de0(0x23e);
-    Func_02004d58(0x10000, 0);
-    Func_02004d60(60);
+    Event_PlaySound(0x23e);
+    PaletteFade_ApplyTarget(0x10000, 0);
+    PaletteFade_Interpolate(60);
     Func_02004c30_(47, 94, 10, 6, 47, 100);
     Func_02004c28_(110, 40, 12, 4, 46, 40);
-    Func_02004cd8(18, 0, 0);
+    Actor_SetPosition(18, 0, 0);
     Flag_Set(0xa3f);
   }
   if (frame > 96 && frame < 272 && frame % 30 == 0)
     Func_02000414(18);
   if (frame == 276) {
-    Func_02004d58(0x7fff, 0);
-    Func_02004d60(20);
+    PaletteFade_ApplyTarget(0x7fff, 0);
+    PaletteFade_Interpolate(20);
   }
 }

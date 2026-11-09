@@ -1,4 +1,5 @@
 #include "izumo.h"
+#include "call.h"
 #include "version.h"
 #include "scene_tables.h"
 

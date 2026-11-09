@@ -37,13 +37,13 @@ void Func_02001c94(void) {
   s32 i;
 
   Func_02003398();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   // A goto loop, as in overlay 6a6's Func_02000e54 (its twin): it carries no
   // loop notes.
   i = 8;
 loop:
   {
-    struct Actor *object = Actor_GetById(i);
+    struct Actor *object = Actor_Get(i);
 
     if (object != NULL)
       object->motionFlags = 0;
@@ -51,20 +51,20 @@ loop:
   i++;
   if ((u32)i <= 63)
     goto loop;
-  Sound_Play(158);
+  Event_PlaySound(158);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room1) {
-    Map_PlayMapEdit(gData_020043e4, 33, 7);
+    MapGrid_AnimateCells(gData_020043e4, 33, 7);
   } else {
     s32 index = work->value / 2 - 1;
 
     Func_02003320_(gData_02004410[index].data, gData_02004410[index].a,
                    gData_02004410[index].b);
   }
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
-  Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 0, -4);
-  Event_Wait(6);
-  Import_EventSetExitRequest(work->value);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
+  FieldEvent_Wait(6);
+  FieldEvent_SetExitRequest(work->value);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_020033a0();

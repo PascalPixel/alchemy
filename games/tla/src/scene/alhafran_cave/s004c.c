@@ -20,22 +20,22 @@ void Func_02000098(void) {}
 void Func_0200009c(void) {}
 
 void Func_020000a0(s32 id) {
-  Event_SetMessageId((s32)&MsgOhStoppedBy);
-  FieldMessage_ShowAtActor(id, 0);
-  if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
-    Event_Wait(10);
-    Event_SetMessageId((s32)(&MsgOhStoppedBy + 1));
+  FieldEvent_SetMessageId((s32)&MsgOhStoppedBy);
+  Event_OpenMessage(id, 0);
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
+    FieldEvent_Wait(10);
+    FieldEvent_SetMessageId((s32)(&MsgOhStoppedBy + 1));
   } else {
-    Event_Wait(20);
-    Event_SetMessageId((s32)(&MsgOhStoppedBy + 2));
+    FieldEvent_Wait(20);
+    FieldEvent_SetMessageId((s32)(&MsgOhStoppedBy + 2));
   }
-  Event_ShowMessageAndWait(id, 0);
+  Event_ShowMessage(id, 0);
 }
 
 void Func_020000ec(void) { Func_02001580(gData_02001608); }
 
 void Func_020000fc(void) {
-  GameFlag_SetBit(0x204);
+  Event_SetFlag(0x204);
   Func_02001420_(0x1900000, 0x1300000, 0, 4);
   Func_02001420_(0x1a00000, 0x1300000, 0, 4);
   Func_02001420(0x1b00000, 0x1300000, 0, 4);
@@ -45,7 +45,7 @@ void Func_020000fc(void) {
 }
 
 void Func_02000168(void) {
-  GameFlag_ClearBit(0x204);
+  Event_ClearFlag(0x204);
   Func_02001420_(0x1900000, 0x1300000, 0, 0);
   Func_02001420_(0x1a00000, 0x1300000, 0, 0);
   Func_02001420(0x1b00000, 0x1300000, 0, 0);
@@ -72,7 +72,7 @@ u8 *Func_020001e8(void) {
 }
 
 void Func_02000220(void) {
-  s32 y = Actor_GetById(gMainRoutineWork.currentOwner)->y;
+  s32 y = Actor_Get(gMainRoutineWork.currentOwner)->y;
 
   if (y < 0x80000)
     gMainRoutineWork.unk2c3 = 0;
@@ -81,7 +81,7 @@ void Func_02000220(void) {
 }
 
 s32 Func_02000258(void) {
-  struct Actor *object = Actor_GetById(8);
+  struct Actor *object = Actor_Get(8);
 
   Func_020015f0(gData_02001be0, object->x, object->y + 0x1c0000, object->z);
   return 0;

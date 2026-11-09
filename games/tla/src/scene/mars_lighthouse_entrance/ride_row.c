@@ -1,4 +1,5 @@
 #include "ride.h"
+#include "event_inline.h"
 
 s32 Func_02002418(s32 index) {
   return ((struct RideRow *)(gData_020023c4 + 0x188 + index * 16))->a;
@@ -13,7 +14,7 @@ s32 Func_02002438(void) { return RIDE_WORK->counter; }
 s32 Func_02002444(s32 limit) {
   struct RideWork *work = RIDE_WORK;
 
-  if (!GameFlag_Test(260)) {
+  if (!Event_GetFlag(260)) {
     if (++work->counter >= limit)
       work->counter = 0;
   }

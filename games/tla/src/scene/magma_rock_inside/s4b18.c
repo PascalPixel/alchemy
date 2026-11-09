@@ -1,6 +1,6 @@
-#include "call.h"
 #include "types.h"
 #include "system/task.h"
+#include "event_inline.h"
 
 extern char ResourceId_FallingRock;
 
@@ -36,7 +36,6 @@ struct RockWork *HeapSlot_AllocFar(s32 slot, s32 size);
 void *Resource_GetTableEntry(s32 id);
 void Func_02004c58(void *entry, void *destination);
 s32 Resource_FindFreeEntry(void);
-s32 VramCache_Load(s32 entry, s32 size, void *data);
 void Func_02004f10(struct RockSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 void Func_020049d8(void);
@@ -57,7 +56,7 @@ void Func_02004b18(void) {
 
   Func_02004c58(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
   entry = Resource_FindFreeEntry();
-  tile = Value3((s32 (*)())VramCache_Load, entry, 0x500, (s32)work);
+  tile = Vram_Load(entry, 0x500, work);
   work->tileBase = tile;
   work->resource = entry;
   rock = work->rocks;

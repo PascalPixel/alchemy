@@ -21,9 +21,9 @@ void Func_02001d7c(void) {
   struct Actor *object;
   struct RideAnimation *animation;
 
-  if (!GameFlag_Test(0x109))
+  if (!Event_GetFlag(0x109))
     Iwram_ClearWords(work, 116);
-  object = (struct Actor *)Func_020041e4(365, 1, 0, 0);
+  object = (struct Actor *)FieldActor_Create(365, 1, 0, 0);
   object->unk5c[0] = 2;
   Func_020041cc(object, 1);
   animation = object->animation;

@@ -19,13 +19,13 @@ void Func_020000d0(void) {
 
   t0 = Event_GetFlag(0x200);
   if (t0 == 0) {
-    GameFlag_SetBit(0x200);
+    Event_SetFlag(0x200);
     Func_02000070();
   }
   Func_02001380();
-  Event_ResolvePendingActions(0);
-  Actor_SetPositionAndReset(actor, 120, 152);
-  Actor_ArmCallback(actor, FACING_SOUTH, 0);
+  FieldEvent_ResolvePendingActions(0);
+  Actor_WalkToAndWait(actor, 120, 152);
+  Actor_FaceDirection(actor, FACING_SOUTH, 0);
   Func_020001e4();
   Func_02001388();
 }

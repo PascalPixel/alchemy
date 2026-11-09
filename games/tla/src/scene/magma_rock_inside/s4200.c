@@ -1,18 +1,14 @@
 #include "../../../../games/tla/src/scene/trial_road/trial_road.h"
+#include "event_inline.h"
 
 struct TrapEntry {
   u16 actor;
   u16 flag;
 };
 
-void wait(s32 frames);
-void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x,
-                                      s32 y, s32 z);
 void Func_02004c98(struct Actor *object, s32 a);
-void Func_02004f30(s32 cue);
 void Func_02004d40(void);
 void Func_02004d48(void);
-void Func_02004d10(s32 a, s32 b, s32 c);
 void Func_020046e8(s32 value);
 void Func_0200481c(void);
 void Func_02004934(s32 a, s32 b, s32 c);
@@ -20,12 +16,12 @@ void Func_02004934(s32 a, s32 b, s32 c);
 static __inline__ void Func_02005838_(s32 a, s32 b, s32 c) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  Func_02004d10(a, b, c);
+  Map_SetScreenShake(a, b, c);
 }
 
 void Func_02004200(const void *data, s32 id) {
   const struct TrapEntry *entry = data;
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
   s32 flag;
 
   if (entry->actor != 0xffff) {
@@ -36,24 +32,24 @@ void Func_02004200(const void *data, s32 id) {
     }
     flag = entry->flag;
     Func_02004d40();
-    if (!GameFlag_Test(flag + 1)) {
-      Func_02004f30(185);
+    if (!Event_GetFlag(flag + 1)) {
+      Event_PlaySound(185);
       Func_02005838_(0x10000, 0x40000, 0x10000);
       Func_020046e8(0);
-      wait(8);
+      System_Wait(8);
       Func_02004c98(object, 2);
       Func_02004934(-4, OBJECT_BYTE(object, 34), id);
       Func_020046e8(1);
-      wait(16);
+      System_Wait(16);
       Func_02005838_(-1, -1, 0xe666);
-      wait(8);
-      Actor_SetPositionAndResetMotion(object, 0, 0, 0);
-      wait(2);
-      Func_02004f30(188);
+      System_Wait(8);
+      FieldActor_SetPositionAndResetMotion(object, 0, 0, 0);
+      System_Wait(2);
+      Event_PlaySound(188);
       Func_0200481c();
-      wait(20);
-      GameFlag_SetBit(flag);
-      GameFlag_SetBit(flag + 1);
+      System_Wait(20);
+      Event_SetFlag(flag);
+      Event_SetFlag(flag + 1);
     }
     Func_02004d48();
     return;

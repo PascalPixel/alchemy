@@ -48,7 +48,7 @@ s32 Func_0200136c(struct Orbiter *orbiter) {
   orbiter->x = anchor->x;
   orbiter->y = anchor->y + 0x80000;
   orbiter->z = anchor->z;
-  Vector_AddPolarOffsetFar(orbiter->radius, *angle, &orbiter->x);
+  FieldVector_AddPolarOffset(orbiter->radius, *angle, &orbiter->x);
   Func_02001314(orbiter);
   orbiter->radius -= 0x40000;
   return 1;

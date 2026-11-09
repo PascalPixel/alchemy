@@ -1,4 +1,5 @@
 #include "mars_lighthouse_room_m.h"
+#include "event_inline.h"
 
 void Func_02002118(void) {
   struct MarsLighthouseRoomMRideWork *work =
@@ -6,9 +7,9 @@ void Func_02002118(void) {
   struct Actor *object;
   struct MarsLighthouseRoomMAnimation *animation;
 
-  if (!GameFlag_Test(0x109))
+  if (!Event_GetFlag(0x109))
     Iwram_ClearWords(work, 116);
-  object = (struct Actor *)Func_02003128(365, 1, 0, 0);
+  object = (struct Actor *)FieldActor_Create(365, 1, 0, 0);
   object->unk5c[0] = 2;
   Func_02003118(object, 1);
   animation = object->animation;

@@ -10,7 +10,7 @@ static __inline__ void PosSet(s32 id, s32 x, s32 z) {
 }
 
 void Func_02002618(s32 id, s32 dx, s32 dz) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
 
   if (object != NULL)
     PosSet(id, *(s16 *)((u8 *)object + 10) + dx,

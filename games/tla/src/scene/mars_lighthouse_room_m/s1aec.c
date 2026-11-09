@@ -1,4 +1,5 @@
 #include "mars_lighthouse_room_m.h"
+#include "event_inline.h"
 
 void Func_02001aec(struct Actor *object) {
   object->motionFlags = 0;
@@ -11,8 +12,7 @@ void Func_02001aec(struct Actor *object) {
 }
 
 void Func_02001b1c(struct MarsLighthouseRoomMVector *position, s32 value, s32 flag) {
-  struct Actor *object = (struct Actor *)Value4(
-      (s32 (*)())Func_02003128, 366, position->x, position->y, position->z);
+  struct Actor *object = FieldActor_Create(366, position->x, position->y, position->z);
 
   if (object != 0) {
     object->bounce = 0;

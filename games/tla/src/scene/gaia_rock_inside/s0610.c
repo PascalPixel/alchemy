@@ -10,7 +10,7 @@ void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02004dac(struct Actor *object, const u8 *script);
 
 s32 Func_02000610(void) {
-  struct FieldSprite *sprite = Actor_GetById(9)->animation;
+  struct FieldSprite *sprite = Actor_Get(9)->animation;
 
   sprite->rotation -= 0x300;
   return 0;
@@ -46,11 +46,11 @@ void Func_0200062c(struct Actor *object) {
 }
 
 s32 Func_02000678(void) {
-  struct Actor *source = Actor_GetById(9);
+  struct Actor *source = Actor_Get(9);
   struct Actor *object;
   struct FieldSprite *sprite;
 
-  object = ((struct Actor *)Import_ActorCreate(14, source->x + 0x80000,
+  object = (FieldActor_Create(14, source->x + 0x80000,
                                                source->y - 0x20000, source->z));
   object->motionFlags = 0;
   Actor_SetSingleChildFlags(object, 0);

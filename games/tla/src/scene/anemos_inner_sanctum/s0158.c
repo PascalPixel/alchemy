@@ -11,5 +11,5 @@ extern u8 Func_020001f8[];
 
 void Func_02000158(void) {
   FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x100;
-  Task_RemoveFar((s32)Func_020001f8);
+  FieldTask_Remove((s32)Func_020001f8);
 }

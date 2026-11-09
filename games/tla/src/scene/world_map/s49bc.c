@@ -16,8 +16,8 @@ void Func_02004aa8(const u8 *a, u8 *b);
 void Func_020049bc(void) {
   Func_02004aa8(gWorldMapPackedTilesC, gData_02006f20);
   gData_02006e0e = Resource_FindFreeEntry();
-  VramCache_Load(gData_02006e0e, 0x100, 0);
+  Vram_Load(gData_02006e0e, 0x100, 0);
   gData_02006e0c = -1;
   gData_02006e10 = 10;
-  Task_Add(Func_020048f4, TASK_PASS_VBLANK - 10);
+  Task_AddFrame(Func_020048f4, TASK_PASS_VBLANK - 10);
 }

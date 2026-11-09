@@ -14,7 +14,7 @@ void Func_02004114(void);
 void Func_02004310(void) {
   struct SparkWork *work = Ram_HeapSlots->menuRuntime;
 
-  Task_RemoveFar(Func_02004114);
+  FieldTask_Remove(Func_02004114);
   Resource_ResetEntry(work->resource);
   HeapSlot_Release(220);
 }

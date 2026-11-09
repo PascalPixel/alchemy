@@ -18,38 +18,38 @@ void Func_02002020(void) {
   s32 t1, t2, t3, t26, t27, t28, t34, t35, t37, t38, t43, t44, t50, v_r10, v_r5,
       v_r6, v_r7, v_r8;
 
-  t1 = ((s32)Actor_GetById(8));
+  t1 = ((s32)Actor_Get(8));
   v_r7 = t1;
-  t2 = ((s32)Actor_GetById(9));
+  t2 = ((s32)Actor_Get(9));
   v_r8 = t2;
-  t3 = ((s32)Actor_GetById(13));
+  t3 = ((s32)Actor_Get(13));
   v_r10 = t3;
   Func_02004e5c();
-  Event_ResolvePendingActions(0);
-  FieldMessage_Show((s32)&MsgGaiaRockInside01, 1);
-  Sound_Play(193);
+  FieldEvent_ResolvePendingActions(0);
+  Message_ShowCentered((s32)&MsgGaiaRockInside01, 1);
+  Event_PlaySound(193);
   Func_02004e3c(v_r10, 1);
   v_r5 = (s32)&gMainRoutineWork;
   v_r5 = (v_r5 + 0x214);
   Func_02004ec4(13, FIELD_AT(v_r5, s32, 0));
   Actor_SetDestination(13, 496, 712);
   FIELD_AT(v_r10, s32, 40) = 0x60000;
-  Actor_WaitForMoveById(13);
-  Event_Wait(45);
-  Actor_SetAngleToward(8, FIELD_AT(v_r5, s32, 0), 0);
-  Actor_SetAngleToward(9, FIELD_AT(v_r5, s32, 0), 0);
-  Sound_Play(0x240);
-  Actor_SetModeById(8, 5);
-  Actor_SetModeById(9, 5);
-  wait(30);
-  Actor_SetModeById(8, 2);
-  Actor_SetModeById(9, 2);
-  Event_Wait(30);
-  Actor_SetModeById(8, 3);
-  Actor_SetModeById(9, 3);
-  Event_Wait(40);
-  Sound_Play(191);
-  t26 = GameFlag_Test(0xa62);
+  FieldActor_WaitForMoveById(13);
+  FieldEvent_Wait(45);
+  Actor_FaceActor(8, FIELD_AT(v_r5, s32, 0), 0);
+  Actor_FaceActor(9, FIELD_AT(v_r5, s32, 0), 0);
+  Event_PlaySound(0x240);
+  Actor_SetAnimation(8, 5);
+  Actor_SetAnimation(9, 5);
+  System_Wait(30);
+  Actor_SetAnimation(8, 2);
+  Actor_SetAnimation(9, 2);
+  FieldEvent_Wait(30);
+  Actor_SetAnimation(8, 3);
+  Actor_SetAnimation(9, 3);
+  FieldEvent_Wait(40);
+  Event_PlaySound(191);
+  t26 = Event_GetFlag(0xa62);
   v_r5 = 119;
   if (t26 != 0)
     goto L_0200a1d8;
@@ -60,12 +60,12 @@ L_0200a10a:
   t28 = Random16Far();
   FIELD_AT(v_r8, s32, 40) = t28;
   v_r5 = (v_r5 + -1);
-  wait(1);
+  System_Wait(1);
   if (v_r5 >= 0)
     goto L_0200a10a;
   Actor_SetSpeed(8, 0x4000, 0xccc);
   Actor_SetSpeed(9, 0x4000, 0xccc);
-  Actor_OffsetPositionAndResetMotion(8, 24, 0);
+  Actor_SetDestinationOffset(8, 24, 0);
   Actor_SetDestinationOffset(9, -24, 0);
   v_r6 = v_r7;
   v_r6 = (v_r6 + 86);
@@ -75,7 +75,7 @@ L_0200a10a:
     FIELD_AT(v_r7, s32, 40) = t34;
     t35 = Random16Far();
     FIELD_AT(v_r8, s32, 40) = t35;
-    wait(1);
+    System_Wait(1);
   }
   v_r5 = 9;
 L_0200a18c:
@@ -84,13 +84,13 @@ L_0200a18c:
   t38 = Random16Far();
   FIELD_AT(v_r8, s32, 40) = t38;
   v_r5 = (v_r5 + -1);
-  wait(1);
+  System_Wait(1);
   if (v_r5 >= 0)
     goto L_0200a18c;
   v_r5 = 40;
-  Map_CopyCellsRect(119, 31, 1, 2, 89, v_r5);
-  Map_CopyCellsRect(119, 31, 1, 2, 100, v_r5);
-  GameFlag_SetBit(0xa62);
+  MapGrid_CopyCells(119, 31, 1, 2, 89, v_r5);
+  MapGrid_CopyCells(119, 31, 1, 2, 100, v_r5);
+  Event_SetFlag(0xa62);
   goto L_0200a1f8;
 L_0200a1d8:
   t43 = Random16Far();
@@ -98,21 +98,21 @@ L_0200a1d8:
   t44 = Random16Far();
   FIELD_AT(v_r8, s32, 40) = t44;
   v_r5 = (v_r5 + -1);
-  wait(1);
+  System_Wait(1);
   if (v_r5 >= 0)
     goto L_0200a1d8;
-  Event_Wait(30);
+  FieldEvent_Wait(30);
 L_0200a1f8:
-  Actor_SetModeById(8, 4);
-  Actor_SetModeById(9, 4);
-  Event_Wait(30);
-  t50 = ((s32)Actor_GetById(gMainRoutineWork.currentOwner));
+  Actor_SetAnimation(8, 4);
+  Actor_SetAnimation(9, 4);
+  FieldEvent_Wait(30);
+  t50 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
   if (t50 == 0)
     goto L_0200a22e;
-  Actor_ResetAndSetPosition(13, FIELD_AT(t50, s16, 10), FIELD_AT(t50, s16, 18));
+  Actor_SetDestination(13, FIELD_AT(t50, s16, 10), FIELD_AT(t50, s16, 18));
 L_0200a22e:
   FIELD_AT(v_r10, s32, 40) = 0x60000;
-  Actor_WaitForMoveById(13);
-  Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
+  FieldActor_WaitForMoveById(13);
+  Actor_SetPosition(13, 0, 0);
   Func_02004e64();
 }

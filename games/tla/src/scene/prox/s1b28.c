@@ -7,6 +7,7 @@
        ->v)
 
 #include "call.h"
+#include "event_inline.h"
 s32 Func_020019a4();
 
 void Func_02001b28(void) { Call6(Func_020019a4, 0x34, 0x27, 0x32, 9, 2, 2); }

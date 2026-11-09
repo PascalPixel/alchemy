@@ -5,7 +5,7 @@ void Func_02001288(void) {
     s32 x = (Random16Far() << 5) + 0x2080000;
     s32 z = 0xb00000 - (Random16Far() << 3);
     s32 y = 0xa00000;
-    struct Actor *object = Import_ActorCreate(0x12d, x, y, z);
+    struct Actor *object = FieldActor_Create(0x12d, x, y, z);
     s32 scale = 0x547a;
 
     if (object != NULL) {

@@ -31,27 +31,27 @@ void Func_02000660(void) {
 }
 
 void Func_02000688(s32 actor) {
-  GameFlag_SetBit(0x300);
+  Event_SetFlag(0x300);
   Func_0200092c(actor, 36, 28, 1, 1, 10, 10);
 }
 
 void Func_020006b0(s32 actor) {
-  GameFlag_SetBit(0x301);
+  Event_SetFlag(0x301);
   Func_02000950(actor, 18, 184, 184);
 }
 
 void Func_020006cc(s32 actor) {
-  GameFlag_SetBit(0x302);
+  Event_SetFlag(0x302);
   Func_020009c0(actor, 19, 200, 200);
 }
 
 void Func_020006e8(s32 actor) {
-  GameFlag_SetBit(0x303);
+  Event_SetFlag(0x303);
   Func_02000a10(actor, 216, 216, 14, 0);
 }
 
 void Func_0200070c(void) {
-  Func_02000e5c(19, ((u8 *)Actor_GetById(19))[0x62], 0x310);
+  Func_02000e5c(19, ((u8 *)Actor_Get(19))[0x62], 0x310);
 }
 
 void Func_02000724(void) {
@@ -60,7 +60,7 @@ void Func_02000724(void) {
 
   frames = 16;
   flags = 10;
-  Map_CopyCellsRect(48, 26, 2, 4, frames, flags);
+  MapGrid_CopyCells(48, 26, 2, 4, frames, flags);
 }
 
 void Func_02000740(void) {}
@@ -68,11 +68,11 @@ void Func_02000740(void) {}
 void Func_02000744(void) {}
 
 void Func_02000748(s32 actor) {
-  Func_02000c4c(Actor_GetById(actor), gData_02001860);
-  Func_02000c4c(Actor_GetById(gMainRoutineWork.currentOwner), gData_020017b0);
-  wait(100);
-  Func_02000d4c(Actor_GetById(actor));
-  Func_02000d4c(Actor_GetById(gMainRoutineWork.currentOwner));
+  Func_02000c4c(Actor_Get(actor), gData_02001860);
+  Func_02000c4c(Actor_Get(gMainRoutineWork.currentOwner), gData_020017b0);
+  System_Wait(100);
+  Func_02000d4c(Actor_Get(actor));
+  Func_02000d4c(Actor_Get(gMainRoutineWork.currentOwner));
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }

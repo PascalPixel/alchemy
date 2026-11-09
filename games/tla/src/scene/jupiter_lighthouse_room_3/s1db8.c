@@ -10,14 +10,13 @@ struct PushEvent {
 };
 
 void Func_02001cc0(void);
-void Map_CopyCellsRect(s32 x, s32 z, s32 a, s32 b, s32 cellX, s32 cellZ);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
 void Func_02001db8(struct PushEvent *event) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x;
   s32 z;
   s32 mask;
@@ -30,16 +29,16 @@ void Func_02001db8(struct PushEvent *event) {
   z = object->z >> 20;
   z |= (s16)(event->z & mask);
   Func_02001cc0();
-  Sound_Play(229);
-  Map_CopyCellsRect(event->x, event->z + 2, 1, 1, x, z);
-  Event_Wait(12);
+  Event_PlaySound(229);
+  MapGrid_CopyCells(event->x, event->z + 2, 1, 1, x, z);
+  FieldEvent_Wait(12);
   {
     u32 zero = 0;
 
     object->angle = 0x4000;
     object->motionFlags = zero;
   }
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner),
                                      0);
   {
     /* FAKEMATCH: a word temporary builds 0xf1f with movs, lsls, adds as the
@@ -52,18 +51,18 @@ void Func_02001db8(struct PushEvent *event) {
   } while (0);
   REG_DISPCNT |= 0x8000;
   event->busy = 1;
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
-  Event_Wait(16);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
+  FieldEvent_Wait(16);
   for (x = 0; x < 40; x++) {
     if (x == 5)
-      Sound_Play(204);
+      Event_PlaySound(204);
     object->scaleX += -0x400;
     object->scaleY += -0x300;
     object->y += -0x9999;
-    wait(1);
+    System_Wait(1);
   }
   do {
-    Actor_GetById(gMainRoutineWork.currentOwner)->animationKind = 0;
+    Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
   } while (0);
   event->busy = 0;
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;

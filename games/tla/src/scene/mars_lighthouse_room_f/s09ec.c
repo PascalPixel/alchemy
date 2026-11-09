@@ -12,32 +12,32 @@ void Func_020009ec(void) {
   Func_020027ac(1, 65);
   Func_020027ac(0, 65);
   Flag_Clear(0x350);
-  if (Actor_GetById(10)->z >> 20 != 15 && Actor_GetById(9)->z >> 20 != 15) {
+  if (Actor_Get(10)->z >> 20 != 15 && Actor_Get(9)->z >> 20 != 15) {
     Func_020027ac(1, 33);
     return;
   }
-  if (Actor_GetById(9)->z >> 20 != 13) {
+  if (Actor_Get(9)->z >> 20 != 13) {
     Func_020027ac(0, 17);
     return;
   }
-  if (Actor_GetById(8)->x >> 20 != 37) {
+  if (Actor_Get(8)->x >> 20 != 37) {
     Func_020027ac(2, 49);
     return;
   }
   Flag_Set(0x350);
   if (!Flag_IsSet(0x351)) {
-    Func_020055d0(0x20000, 0x4000);
-    Camera_MoveWithinMapBounds(PIXELS(616), -1, PIXELS(24), 1);
+    FieldCamera_SetSpeed(0x20000, 0x4000);
+    FieldCamera_MoveTo(PIXELS(616), -1, PIXELS(24), 1);
     FieldEvent_Wait(60);
     Func_02005660();
-    Func_020055f0(9);
+    FieldEvent_SetExitRequest(9);
   }
 }
 
 void Func_02000aac(void) {
   Func_020027ac(3, 3);
-  Func_020055d0(0x10000, 0x2000);
-  Camera_MoveWithinMapBounds(PIXELS(184), -1, PIXELS(560), 1);
+  FieldCamera_SetSpeed(0x10000, 0x2000);
+  FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(560), 1);
 }
 
 void Func_02000ad8(void) {
@@ -45,13 +45,13 @@ void Func_02000ad8(void) {
 
   Flag_Set(0x106);
   Func_02005560();
-  Func_02005648(0);
+  FieldEvent_ResolvePendingActions(0);
   work->unk166 = 0;
   Flag_Clear(0x106);
   Flag_Clear(0x104);
   FieldEvent_Wait(60);
-  Func_020055d0(0x30000, 0x6000);
-  Camera_MoveWithinMapBounds(PIXELS(184), -1, PIXELS(744), 1);
+  FieldCamera_SetSpeed(0x30000, 0x6000);
+  FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(744), 1);
   Func_020055e0();
   FieldEvent_Wait(60);
   Func_02005568();
@@ -64,20 +64,20 @@ void Func_02000b40(void) {
     Func_02004d10(box);
     Func_020009ec();
     if (Func_020027dc(0) != 64 && Flag_IsSet(0x221)) {
-      struct Actor *object = Actor_GetById(12);
+      struct Actor *object = Actor_Get(12);
 
       object->update = NULL;
       Animation_ApplyChildValues(object, 0);
-      Actor_SetModeById(12, 6);
+      Actor_SetAnimation(12, 6);
       Flag_Clear(0x221);
       Func_02000cb8(12);
     }
     if (Func_020027dc(2) != 64 && Flag_IsSet(0x220)) {
-      struct Actor *object = Actor_GetById(11);
+      struct Actor *object = Actor_Get(11);
 
       object->update = NULL;
       Animation_ApplyChildValues(object, 0);
-      Actor_SetModeById(11, 6);
+      Actor_SetAnimation(11, 6);
       Flag_Clear(0x220);
       Func_02000cb8(11);
     }
@@ -86,13 +86,13 @@ void Func_02000b40(void) {
     const s16 *table;
     u32 *keys;
 
-    Actor_GetById(gMainRoutineWork.currentOwner);
+    Actor_Get(gMainRoutineWork.currentOwner);
     keys = &gInput.held;
     table = gData_02005f18;
     angle = *(s16 *)((u8 *)table + (((*keys >> 4) & 15) << 1));
     if (angle != -1) {
       struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
-      struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+      struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
       s32 position[3];
       s32 x;
       s32 z;
@@ -100,7 +100,7 @@ void Func_02000b40(void) {
 
       SET_VECTOR(position, (leader->x & 0xfff00000) + 0x80000, leader->y,
                  (leader->z & 0xfff00000) + 0x80000);
-      Vector_AddPolarOffsetFar(0x100000, angle, position);
+      FieldVector_AddPolarOffset(0x100000, angle, position);
       x = position[0] >> 20;
       z = position[2] >> 20;
       cells = Ram_MapCellBuffer;

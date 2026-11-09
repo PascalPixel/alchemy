@@ -1,4 +1,5 @@
 #include "ride.h"
+#include "event_inline.h"
 
 void Func_02002614(struct Actor *object) {
   switch (gFrameCount & 7) {

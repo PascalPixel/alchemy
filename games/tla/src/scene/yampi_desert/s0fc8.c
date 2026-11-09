@@ -1,6 +1,5 @@
 #include "scene.h"
 #include "actor.h"
-#include "call.h"
 #include "scene_tables.h"
 
 void Func_02000b84(s32 x, s32 y, s32 z);

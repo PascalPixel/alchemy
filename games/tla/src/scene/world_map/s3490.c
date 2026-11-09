@@ -21,30 +21,30 @@ static __inline__ void Actor_SetPositionAndCommit_(s32 actor, s32 x,
 
 void Func_02003490(void) {
   Func_02004c20();
-  Event_ResolvePendingActions(0);
-  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+  FieldEvent_ResolvePendingActions(0);
+  Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
+  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner),
                                      0);
-  Actor_GetById(gMainRoutineWork.currentOwner)->update = Func_0200343c;
-  Actor_GetById(gMainRoutineWork.currentOwner)->acceleration = 0x2000;
-  Actor_GetById(gMainRoutineWork.currentOwner)->speedLimit = 0x20000;
-  wait(5);
-  Func_080d46a4(0xc000, 60);
+  Actor_Get(gMainRoutineWork.currentOwner)->update = Func_0200343c;
+  Actor_Get(gMainRoutineWork.currentOwner)->acceleration = 0x2000;
+  Actor_Get(gMainRoutineWork.currentOwner)->speedLimit = 0x20000;
+  System_Wait(5);
+  FieldEffect_ScheduleRatioTransition(0xc000, 60);
   Event_StartScreenTransition();
-  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 14537, 8577);
-  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 14465, 8662);
-  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 14452, 8766);
-  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 14387, 8828);
-  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 14331, 8888);
-  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 14284, 8904);
+  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14537, 8577);
+  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14465, 8662);
+  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14452, 8766);
+  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14387, 8828);
+  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14331, 8888);
+  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14284, 8904);
   Actor_SetPositionAndCommit_(gMainRoutineWork.currentOwner, 14255, 8870);
   Actor_SetPositionAndCommit_(gMainRoutineWork.currentOwner, 14255, 8831);
-  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 14255, 8772);
-  Func_080d46a4(0x14000, 120);
-  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 14275, 8736);
-  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 14257, 8720);
+  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14255, 8772);
+  FieldEffect_ScheduleRatioTransition(0x14000, 120);
+  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14275, 8736);
+  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14257, 8720);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_02004c28();
-  Import_EventSetExitRequest(78);
+  FieldEvent_SetExitRequest(78);
 }

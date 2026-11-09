@@ -29,12 +29,12 @@ void Func_02001a20(void);
 void Func_02001dd0(void);
 
 void Func_02001c68(s32 dx, s32 dz, s32 value) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   u8 *event = Ram_HeapSlots->eventWork;
   struct JupiterLighthouseAerieWork *work =
       (struct JupiterLighthouseAerieWork *)gData_02002864;
-  s32 x = ((s32)GameFlag_GetByte(work->flag));
-  s32 z = ((s32)GameFlag_GetByte(work->flag + 8));
+  s32 x = ((s32)FieldGameFlag_GetByte(work->flag));
+  s32 z = ((s32)FieldGameFlag_GetByte(work->flag + 8));
 
   if (x != 0 || z != 0) {
     struct Actor *shadow;

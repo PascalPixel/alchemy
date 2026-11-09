@@ -9,7 +9,6 @@ extern char SceneId_Ov690Room9;
 
 extern const u8 gData_02002272[];
 
-void Actor_SetModeById(u32 id, s32 mode);
 void Func_02000860(void);
 void Func_02000e04(void);
 void Func_0200125c(void);
@@ -18,7 +17,7 @@ void Func_02002188(const void *data);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Place(s32 id, s32 x, s32 z) { Func_020020c0(id, x, z); }
+static __inline__ void Place(s32 id, s32 x, s32 z) { Actor_SetHorizontalPositionWithTerrain(id, x, z); }
 
 s32 Func_02000988(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x100;
@@ -31,7 +30,7 @@ s32 Func_02000988(void) {
     Func_02002140(0);
     Func_02002188(gData_0200226c);
     if (GameFlag_Test(0x206))
-      Func_020020c0(10, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
     Actor_GetById(10)->priorityFlags |= 2;
     Actor_SetModeById(18, 2);
     Actor_SetModeById(19, 2);
@@ -41,7 +40,7 @@ s32 Func_02000988(void) {
     Func_02000e04();
 #if TLA_PATCH_1
     if (GameFlag_Test(0x204)) {
-      Func_020020c0(9, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
       Place(21, PIXELS(184), PIXELS(184));
       Actor_GetById(21)->motionFlags = 0;
       CopyCells2(9, 11, 1, 1, 11, 12);

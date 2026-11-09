@@ -36,8 +36,8 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void Func_02000064(void) {
-  Func_0802b450(47, 9, 9, 4, 25, 9);
-  Func_0802b450(47, 69, 9, 10, 25, 69);
+  MapGrid_CopyCellsLayered(47, 9, 9, 4, 25, 9);
+  MapGrid_CopyCellsLayered(47, 69, 9, 10, 25, 69);
   MapGrid_CopyCellAttributes(111, 8, 9, 5, 89, 8);
   return;
 }
@@ -49,16 +49,16 @@ void Func_020000a8(void) {
   result0 = Event_GetFlag(0x200);
   if (result0 != 0)
     goto L_02008100;
-  GameFlag_SetBit(0x200);
+  Event_SetFlag(0x200);
   Func_02000a68();
-  Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgShipIceWallFirstApproach);
-  object1 = Actor_GetById(8);
-  Script_WaitForEventTimeout((s32)object1);
-  Actor_ArmCallbackAndRefresh(8, FACING_NORTH);
-  Event_Wait(5);
-  Event_ShowMessageThenWait(5, 0, 5);
-  Event_ShowMessageThenWait(11, 0, 5);
+  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_SetMessageId((s32)MsgShipIceWallFirstApproach);
+  object1 = Actor_Get(8);
+  Actor_WaitForMove((s32)object1);
+  Actor_FaceDirectionAndWait(8, FACING_NORTH);
+  FieldEvent_Wait(5);
+  FieldEvent_ShowMessageThenWait(5, 0, 5);
+  FieldEvent_ShowMessageThenWait(11, 0, 5);
   Func_02000a70();
 L_02008100:
   return;
@@ -71,26 +71,26 @@ void Func_02000108(void) {
   result0 = Event_GetFlag(0x90c);
   if (result0 != 0)
     goto L_020081d2;
-  GameFlag_SetBit(0x90c);
+  Event_SetFlag(0x90c);
   Func_02000a68();
-  Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgShipIceWallCrewReposition);
-  object1 = Actor_GetById(8);
-  Script_WaitForEventTimeout((s32)object1);
-  Event_Wait(5);
-  Event_ShowMessageThenWait(5, 0, 5);
-  Camera_MoveWithinMapBounds(PIXELS(464), -1, PIXELS(176), 1);
+  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_SetMessageId((s32)MsgShipIceWallCrewReposition);
+  object1 = Actor_Get(8);
+  Actor_WaitForMove((s32)object1);
+  FieldEvent_Wait(5);
+  FieldEvent_ShowMessageThenWait(5, 0, 5);
+  FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(176), 1);
   Func_02000af0();
-  Event_Wait(5);
+  FieldEvent_Wait(5);
   Actor_SetPosition(11, PIXELS(408), PIXELS(288));
   Actor_SetPosition(5, PIXELS(408), PIXELS(288));
   Actor_SetPosition(6, PIXELS(408), PIXELS(288));
-  Event_ShowMessageThenWait(11, 0, 5);
-  Event_ShowMessageThenWait(6, 0, 5);
-  Event_ShowMessageThenWait(11, 0, 5);
-  Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(5, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(6, 0, 0);
+  FieldEvent_ShowMessageThenWait(11, 0, 5);
+  FieldEvent_ShowMessageThenWait(6, 0, 5);
+  FieldEvent_ShowMessageThenWait(11, 0, 5);
+  Actor_SetPosition(11, 0, 0);
+  Actor_SetPosition(5, 0, 0);
+  Actor_SetPosition(6, 0, 0);
   Func_02000a70();
 L_020081d2:
   return;

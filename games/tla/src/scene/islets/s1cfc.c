@@ -1,9 +1,9 @@
 #include "islets.h"
+#include "event_inline.h"
 
 extern u8 gData_02004f04;
 extern s16 gData_02004f10[2][160];
 
-s32 Math_Sine(s32 angle);
 
 void Func_02001cfc(void) {
   s16 *layer = (s16 *)&Ram_HeapSlots->mapWork->layers[2];
@@ -17,7 +17,7 @@ void Func_02001cfc(void) {
     /* FAKEMATCH(one-pass): the one-pass block kept; as plain statements, 2 of
      * 65 instructions differ in tla-en. */
     do {
-      sine = Math_Sine((*count + *(u8 *)&gFrameCount + layer[3]) << 9);
+      sine = Math_Sin((*count + *(u8 *)&gFrameCount + layer[3]) << 9);
       v[0] = sine;
     } while (0);
     value = layer[1] + (sine >> 15);

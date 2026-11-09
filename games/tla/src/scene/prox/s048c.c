@@ -18,19 +18,19 @@ extern struct ActorPlacement gData_0200551c[];
 const struct ActorPlacement *Func_0200048c(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov6a8Room1 && GameFlag_Test(0x9c5) &&
-      !GameFlag_Test(0x9cc))
+  if (scene == (s32)&SceneId_Ov6a8Room1 && Event_GetFlag(0x9c5) &&
+      !Event_GetFlag(0x9cc))
     return gData_02004b2c;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov6a8Room2)
     return gData_02004c4c;
   if (scene == (s32)&SceneId_Ov6a8Room3) {
-    if (GameFlag_Test(0xa3d))
+    if (Event_GetFlag(0xa3d))
       return gData_02004f04;
     return gData_02004d9c;
   }
   if (scene == (s32)&SceneId_Ov6a8Room4) {
-    if (GameFlag_Test(0xa3d)) {
+    if (Event_GetFlag(0xa3d)) {
       gData_0200521c[1].talkFacing = 3;
       gData_0200521c[4].talkFacing = 3;
       return gData_0200521c;
@@ -38,7 +38,7 @@ const struct ActorPlacement *Func_0200048c(void) {
     return gData_0200506c;
   }
   if (scene == (s32)&SceneId_Ov6a8Room5) {
-    if (GameFlag_Test(0xa3d))
+    if (Event_GetFlag(0xa3d))
       return gData_020054a4;
     return gData_02005444;
   }

@@ -1,4 +1,5 @@
 #include "mars_lighthouse_room_m.h"
+#include "event_inline.h"
 
 void Func_0200168c(void) {
   gData_02003938 = 0;
@@ -6,5 +7,5 @@ void Func_0200168c(void) {
   gData_02003924 = 2;
   gData_02003920 = 2;
   gData_02003918 = 1;
-  Value2((s32 (*)())Task_Add, (s32)Func_0200170c, 0x480);
+  Task_AddFrame(Func_0200170c, 0x480);
 }

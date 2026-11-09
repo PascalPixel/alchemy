@@ -1,4 +1,5 @@
 #include "mars_lighthouse_room_m.h"
+#include "event_inline.h"
 
 const u8 *Func_02000080(void) {
   s16 scene = gMainRoutineWork.scene;

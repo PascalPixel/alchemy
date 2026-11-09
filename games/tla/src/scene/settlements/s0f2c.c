@@ -4,7 +4,7 @@ void Func_0200156c(s32 id);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Place(s32 id, s32 x, s32 z) { Func_020020c0(id, x, z); }
+static __inline__ void Place(s32 id, s32 x, s32 z) { Actor_SetHorizontalPositionWithTerrain(id, x, z); }
 
 void Func_02000f2c(void) {
   struct Actor *object = Actor_GetById(9);
@@ -16,10 +16,10 @@ void Func_02000f2c(void) {
     object->motionFlags = 0;
     for (i = 10; i > 0; i--) {
       object->y -= 0x20000;
-      FieldEvent_Wait(1);
+      Event_Wait(1);
     }
     Func_0200156c(9);
-    Func_020020c0(9, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
     Place(21, PIXELS(184), PIXELS(184));
     Actor_GetById(21)->motionFlags = 0;
     Actor_GetById(21)->y -= 0x400000;

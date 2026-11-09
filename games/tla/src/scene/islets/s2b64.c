@@ -1,4 +1,5 @@
 #include "islets.h"
+#include "event_inline.h"
 
 s32 Func_02002b64(void) {
   struct IsletsEventWork *work = Ram_HeapSlots->eventWork;
@@ -20,11 +21,11 @@ s32 Func_02002b64(void) {
 }
 
 void Func_02002bd8(void) {
-  if (Actor_GetById(gMainRoutineWork.currentOwner)->y > 0x80000) {
-    Actor_GetById(9)->collisionFlags &= ~8;
-    Actor_GetById(10)->collisionFlags &= ~8;
+  if (Actor_Get(gMainRoutineWork.currentOwner)->y > 0x80000) {
+    Actor_Get(9)->collisionFlags &= ~8;
+    Actor_Get(10)->collisionFlags &= ~8;
   } else {
-    Actor_GetById(9)->collisionFlags |= 8;
-    Actor_GetById(10)->collisionFlags |= 8;
+    Actor_Get(9)->collisionFlags |= 8;
+    Actor_Get(10)->collisionFlags |= 8;
   }
 }

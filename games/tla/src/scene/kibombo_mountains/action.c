@@ -10,5 +10,5 @@ void Func_02000e28(s32 value);
 
 void Func_02000190(s32 unused, s32 id) {
   if (id == 15)
-    Actor_SetSpritePriority(15, 1);
+    FieldActor_SetSpritePriority(15, 1);
 }

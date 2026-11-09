@@ -10,7 +10,7 @@
 extern u8 MsgAlhafraInteriors06[];
 
 void Func_02000298(s32 a0) {
-  Func_080d47b4(a0, 0x107, 0x1e);
-  Event_SetMessageId((s32)MsgAlhafraInteriors06);
-  Event_ShowMessageAndWait(a0, 0);
+  Actor_ShowEmote(a0, 0x107, 0x1e);
+  FieldEvent_SetMessageId((s32)MsgAlhafraInteriors06);
+  Event_ShowMessage(a0, 0);
 }

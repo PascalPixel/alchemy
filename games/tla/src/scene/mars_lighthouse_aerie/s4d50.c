@@ -27,8 +27,8 @@ void Func_02004d50(s32 id) {
     work[0x138a] = zero;
     ones.value = 0xffff;
     party->held = raw.value | ones.value;
-    Actor_GetById(held)->update = (void *)zero;
-    Actor_SetPartAttribute(Actor_GetById(held), 0);
+    Actor_Get(held)->update = (void *)zero;
+    Actor_SetSpriteColor(Actor_Get(held), 0);
   }
 }
 

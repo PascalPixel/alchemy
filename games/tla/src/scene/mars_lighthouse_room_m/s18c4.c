@@ -1,4 +1,5 @@
 #include "mars_lighthouse_room_m.h"
+#include "event_inline.h"
 
 s32 Func_020018c4(struct Actor *a, struct Actor *b) {
   if ((a->x - b->x >= 0 ? a->x - b->x : b->x - a->x) < 0x80000 &&

@@ -14,10 +14,10 @@ void Func_02001bb0(void) { Func_02002e30(gData_02003dba); }
 
 void Func_02001bc0(void) {
   Field_SetCellBehaviorAt(0, 0x1080000, 0x2280000, 30);
-  GameFlag_SetBit(0x212);
+  Event_SetFlag(0x212);
 }
 
 void Func_02001be0(void) {
   Field_SetCellBehaviorAt(0, 0x1080000, 0x2280000, 0);
-  GameFlag_ClearBit(0x212);
+  Event_ClearFlag(0x212);
 }

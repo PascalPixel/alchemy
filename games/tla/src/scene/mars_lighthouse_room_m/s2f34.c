@@ -1,4 +1,5 @@
 #include "mars_lighthouse_room_m.h"
+#include "event_inline.h"
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_020031a8(struct Actor *object, s32 mode);
@@ -16,7 +17,7 @@ s32 Func_02002f34(struct Actor *object) {
     Func_020031a8(object, 1);
   } else if (frame <= 30) {
     if (frame == 30) {
-      Func_020032b8(136);
+      Event_PlaySound(136);
       Func_02003118(object->watchedObject, 2);
     }
   } else if (frame <= 60) {
@@ -29,7 +30,7 @@ s32 Func_02002f34(struct Actor *object) {
     }
   } else {
     Func_02003118(object->watchedObject, 1);
-    Func_020032b8(184);
+    Event_PlaySound(184);
     object->y = Map_GetTerrainHeight(0, object->x, object->z);
     object->watchedObject = 0;
     return 0;
@@ -42,7 +43,7 @@ s32 Func_02002fe0(struct Actor *object) {
   s32 frame = object->action;
 
   if (frame == 0) {
-    Func_020032b8(136);
+    Event_PlaySound(136);
     Func_02003118(object->watchedObject, 2);
     object->y = Map_GetTerrainHeight(0, object->x, object->z) + 0x100000;
     object->scaleX = frame;
@@ -60,7 +61,7 @@ s32 Func_02002fe0(struct Actor *object) {
     }
   } else {
     Func_02003118(object->watchedObject, 1);
-    Func_020032b8(184);
+    Event_PlaySound(184);
     object->y = Map_GetTerrainHeight(0, object->x, object->z);
     object->watchedObject = 0;
     return 0;

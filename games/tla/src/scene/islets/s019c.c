@@ -1,4 +1,5 @@
 #include "islets.h"
+#include "event_inline.h"
 
 const u8 *Func_0200019c(void) {
   s16 scene = gMainRoutineWork.scene;

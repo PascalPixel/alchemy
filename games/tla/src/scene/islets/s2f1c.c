@@ -1,14 +1,10 @@
 #include "islets.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 void Func_02002d0c(s32 id);
 void Func_02002d7c(void);
 void Func_02003684(s32 actor);
-void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z,
-                                                    s32 angle);
-void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void Actor_SetMovementTypeById(s32 actor, const void *script);
-void Actor_WatchAndSetScript(s32 actor, s32 other);
 extern const u8 gData_02004274[];
 
 /// The room's setup: flags, the objects' places and the scene state.
@@ -20,53 +16,52 @@ void Func_02002f1c(void) {
   s32 angle;
   s32 i;
 
-  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
+  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
   if (gMainRoutineWork.entrance == 2)
-    GameFlag_ClearBit(0x12f);
+    Event_ClearFlag(0x12f);
   i = 11;
   do {
     Func_02002d0c(i++);
   } while (i <= 18);
   state = gSceneState;
   next = &gSceneState[1];
-  if (!GameFlag_Test(0x109)) {
+  if (!Event_GetFlag(0x109)) {
     *state = 0;
     *next = 0;
   }
-  Task_Add(Func_02002d7c, 0x480);
-  if (GameFlag_Test(0xa2c)) {
-    object = Actor_GetById(10);
-    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 10, PIXELS(176),
-          PIXELS(168));
-    Actor_SetModeById(10, 4);
+  FieldTask_AddFrame(Func_02002d7c, 0x480);
+  if (Event_GetFlag(0xa2c)) {
+    object = Actor_Get(10);
+    Actor_SetPosition(10, PIXELS(176), PIXELS(168));
+    Actor_SetAnimation(10, 4);
     object->priorityFlags |= 2;
     object->motionFlags = 0;
     object->y = PIXELS(-8);
     object->terrainHeight = PIXELS(-8);
-    Map_CopyCellAttributeRect(9, 1, 4, 1, 9, 10);
-    Map_CopyCellAttributeRect(9, 64, 4, 1, 9, 74);
+    MapGrid_CopyCellAttributes(9, 1, 4, 1, 9, 10);
+    MapGrid_CopyCellAttributes(9, 64, 4, 1, 9, 74);
   } else {
     Func_02003684(10);
   }
-  if (!GameFlag_Test(0xaa2)) {
-    Actor_WatchAndSetScript(9, 19);
-    Actor_SetModeById(19, 0);
-    Actor_GetById(19)->actionFlags &= ~1;
-  } else if (!GameFlag_Test(0x109)) {
-    other = Actor_GetById(9);
+  if (!Event_GetFlag(0xaa2)) {
+    FieldActor_WatchAndSetScript(9, 19);
+    Actor_SetAnimation(19, 0);
+    Actor_Get(19)->actionFlags &= ~1;
+  } else if (!Event_GetFlag(0x109)) {
+    other = Actor_Get(9);
     other->angle = FACING_SOUTH + FACING_STEP;
     other->collisionFlags |= 0x80;
     /* FAKEMATCH: the angle in a temporary is built before the position (differ
      * 4 as a constant argument). */
     angle = 0x3000;
-    Actor_SetHorizontalPositionAndAngleWithTerrain(19, PIXELS(234), PIXELS(204),
+    Actor_SetPositionAndFacing(19, PIXELS(234), PIXELS(204),
                                                    angle);
-    Actor_GetById(19)->collisionFlags |= 0x80;
-    Call3((void (*)())Actor_SetSpeedParameters, 9, 0x20000, 0x10000);
-    Call3((void (*)())Actor_SetSpeedParameters, 19, 0x19999, 0xcccc);
-    Actor_SetMovementTypeById(9, gData_02004274);
-    Actor_SetMovementTypeById(19, gData_02004274);
-    GameFlag_SetBit(0x200);
+    Actor_Get(19)->collisionFlags |= 0x80;
+    Actor_SetSpeed(9, 0x20000, 0x10000);
+    Actor_SetSpeed(19, 0x19999, 0xcccc);
+    Actor_SetScript(9, gData_02004274);
+    Actor_SetScript(19, gData_02004274);
+    Event_SetFlag(0x200);
   }
 }
 
@@ -74,22 +69,20 @@ void Func_020030b4(void) {
   struct Actor *spawned;
 
   if (gMainRoutineWork.entrance == 3)
-    GameFlag_ClearBit(0x12f);
-  Actor_SetSingleChildFlags(Actor_GetById(10), 0);
-  Actor_SetModeById(10, 4);
-  if (GameFlag_Test(0xaa3)) {
-    spawned = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 489,
-                                     0x680000, 0x180000, 0xa00000);
+    Event_ClearFlag(0x12f);
+  Actor_SetSingleChildFlags(Actor_Get(10), 0);
+  Actor_SetAnimation(10, 4);
+  if (Event_GetFlag(0xaa3)) {
+    spawned = FieldActor_Create(489, 0x680000, 0x180000, 0xa00000);
     if (spawned != 0) {
       spawned->motionFlags = 0;
-      Func_0802372c(spawned, 453);
+      Actor_SetItemIcon(spawned, 453);
       Actor_SetSingleChildFlags(spawned, 0);
       spawned->unk5c[0] = 1;
     }
-    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 10, PIXELS(104),
-          PIXELS(204));
+    Actor_SetPosition(10, PIXELS(104), PIXELS(204));
   }
-  Actor_SetSpritePriority(11, 1);
-  Actor_SetPartAttribute(Actor_GetById(11), 15);
-  Actor_GetById(11)->priorityFlags |= 2;
+  FieldActor_SetSpritePriority(11, 1);
+  Actor_SetSpriteColor(Actor_Get(11), 15);
+  Actor_Get(11)->priorityFlags |= 2;
 }

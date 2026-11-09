@@ -6,7 +6,7 @@ extern u32 gFrameCount;
 void Func_02000394(void) {
   u16 *src = (u16 *)0x050000c2;
   u16 *dst = (u16 *)0x05000082;
-  s32 delta = (Math_Sine((gFrameCount << 11) >> 1) * 2) >> 16;
+  s32 delta = (Math_Sin((gFrameCount << 11) >> 1) * 2) >> 16;
   s32 i = 0;
 
 next:

@@ -25,10 +25,10 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 void VenusLighthouseEntrance_RunActorSparkBurst(void *object) {
   Func_02002a34(8, 0x4084);
   Func_02002a44();
-  Func_02002a5c(Actor_GetById(5), 2);
-  Event_Wait(20);
+  Func_02002a5c(Actor_Get(5), 2);
+  FieldEvent_Wait(20);
   Func_020023a4(object);
-  Func_02002a5c(Actor_GetById(5), 0);
+  Func_02002a5c(Actor_Get(5), 0);
   Func_02002a54();
   Func_02002a4c();
   Field_StartPaletteTransition(8);
@@ -37,5 +37,5 @@ void VenusLighthouseEntrance_RunActorSparkBurst(void *object) {
 void VenusLighthouseEntrance_UpdateSparkTrail(struct Actor *object) {
   Func_0200260c(object, object->x, object->y, object->z);
   if (++object->action % 8 == 0)
-    Sound_Play(125);
+    Event_PlaySound(125);
 }

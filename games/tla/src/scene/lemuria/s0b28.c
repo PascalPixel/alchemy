@@ -15,7 +15,7 @@ void Func_02000b28(void) {
   s32 sine;
 
   for (*count = 0; *count != 160; (*count)++) {
-    sine = Math_Sine((*count + (u8)gFrameCount + (layer->y >> 16)) << 9);
+    sine = Math_Sin((*count + (u8)gFrameCount + (layer->y >> 16)) << 9);
     v[0] = sine;
     *lines++ = (layer->x >> 16) + (sine >> 15) + *count % 3 - 1;
   }

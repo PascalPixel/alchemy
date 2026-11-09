@@ -19,7 +19,7 @@ void Func_020003e8(u16 *ids) {
   s32 x, z;
 
   while (*ids != 0xffff) {
-    object = Actor_GetById(*ids);
+    object = Actor_Get(*ids);
     blocked = (u8 *)object + 0x63;
     *blocked = 0;
     if (Func_02000348(0, object->x >> 20, object->z >> 20) & 0x40) {

@@ -3,26 +3,17 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "field_effect.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 void Func_020042dc(void);
-void Func_0200444c(s32 value);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_020041fc(void);
-void wait(s32 frames);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_0200446c(s32 sound);
-void FieldEvent_Wait(s32 frames);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 u32 Random16Far(void);
 void Effect_AdvanceMotion(union FieldObject *object);
 void Func_0200363c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
-void Func_020043bc(s32 id, s32 value);
-void Func_02004264(s32 a, s32 b, s32 c);
-void Func_0200426c(void);
 void Func_020042e4(void);
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
@@ -30,21 +21,21 @@ static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
 }
 
 static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
-  Func_02004264(a, b, c);
+  Map_SetScreenShake(a, b, c);
 }
 
 void Func_02003e04(void) {
-  struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   /* FAKEMATCH(pin): i in r10, which leaves r8 to the options pointer; as a
    * plain local, 22 of 177 instructions differ in tla-en. */
   register u32 i asm("r10");
   struct EffectOptions options;
 
   Func_020042dc();
-  Func_0200444c(0);
+  FieldEvent_ResolvePendingActions(0);
   CamBounds(-1, -1, -1, 0);
   Func_020041fc();
-  wait(1);
+  System_Wait(1);
   actor->y = 0x820000;
   actor->gravity = 0x8000;
   actor->bounce = 0;
@@ -52,7 +43,7 @@ void Func_02003e04(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Func_0200446c(204);
+  Event_PlaySound(204);
   actor->motionFlags = 3;
   FieldEvent_Wait(24);
   options.palette = 7;
@@ -67,7 +58,7 @@ void Func_02003e04(void) {
     angle = i << 12;
     velocity[0] = Math_Cosine(angle);
     velocity[1] = 0;
-    velocity[2] = Math_Sine(angle);
+    velocity[2] = Math_Sin(angle);
     velocity[0] += velocity[0] >> 1;
     velocity[0] += (Random16Far() * 0xc000 >> 16) - 0x6000;
     velocity[2] += (Random16Far() * 0x6000 >> 16) - 0x3000;
@@ -75,16 +66,16 @@ void Func_02003e04(void) {
                   velocity[2], 0x1090001, &options);
     i++;
   } while (i <= 16);
-  Func_0200446c(188);
-  Func_020043bc(gMainRoutineWork.currentOwner, 0x101);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
+  Event_PlaySound(188);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
   SetWorkTriple(0x50000, 0x50000, 0x10000);
   SetWorkTriple(-1, -1, 0xe666);
-  Func_0200426c();
-  Func_020043bc(gMainRoutineWork.currentOwner, 0x100);
+  MapGrid_WaitForShakeToSettle();
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
   actor->gravity = 0x10000;
   actor->bounce = 0x4000;
   FieldEvent_Wait(10);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   Func_020042e4();
 }

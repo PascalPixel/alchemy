@@ -2,7 +2,6 @@
 #include "field_sprite.h"
 
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 
 /// Swings the object along an arc beside its watched object, drawing it behind
 /// (priority 2) while its z is short of 0x108 and in front (priority 1) after.
@@ -12,7 +11,7 @@ void Func_020005a0(struct Actor *object) {
   struct Actor *parent = object->watchedObject;
 
   object->x = parent->x + Math_Cosine(angle) * (object->speedLimit + 28);
-  object->z = (Math_Sine(angle) << 4) + 0x1080000;
+  object->z = (Math_Sin(angle) << 4) + 0x1080000;
   object->targetX = object->x;
   object->targetZ = object->z;
   if (object->z < 0x1080000)

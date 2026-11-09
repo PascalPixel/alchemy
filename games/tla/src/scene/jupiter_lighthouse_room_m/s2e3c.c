@@ -17,12 +17,12 @@ s32 Func_02002e3c(void) {
   Func_02002fc4(1);
   Func_02003a38();
   Func_02003ac0(20, 0);
-  object = ((struct FieldActor *)Actor_GetById(20));
-  if (GameFlag_Test(0xa0c)) {
+  object = ((struct FieldActor *)Actor_Get(20));
+  if (Event_GetFlag(0xa0c)) {
     Actor_SetPosition(20, PIXELS(1016), PIXELS(248));
     MapGrid_CopyCellsLayered(104, 42, 5, 11, 61, 42);
     MapGrid_CopyCellsLayered(106, 52, 1, 1, 63, 84);
-    Func_080dbdd4(0x4100000, 0xa00000, 2, 236);
+    MapGrid_SetCellBehavior(0x4100000, 0xa00000, 2, 236);
   }
   object->motionFlags = 0;
   {

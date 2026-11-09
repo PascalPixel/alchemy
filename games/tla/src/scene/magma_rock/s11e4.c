@@ -42,14 +42,14 @@ s32 Func_020011e4(struct Actor *source) {
     s32 y = source->y;
     s32 z = source->z;
 
-    object = (struct Actor *)Import_ActorCreate(403, x, y, z);
+    object = FieldActor_Create(403, x, y, z);
   }
   step = Math_Cosine(source->angle) << 1;
   object->motionFlags = 0;
   Func_02003a54(object, 1);
   Actor_SetSingleChildFlags(object, 0);
   Func_02003aec();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
@@ -82,12 +82,12 @@ stop:
   object->acceleration = 0x20000;
   object->speedLimit = 0x20000;
   object->update = Func_02000d40;
-  Actor_SetMoveTarget(object, position[0], position[1], position[2]);
-  /* FAKEMATCH(wrapper): the form kept; as Camera_SetSpeedParameters(0x20000,
+  FieldActor_SetMoveTarget(object, position[0], position[1], position[2]);
+  /* FAKEMATCH(wrapper): the form kept; as FieldCamera_SetSpeed(0x20000,
    * 0x4000), 2 of 260 instructions differ in tla-en. */
   FieldCamera_SetSpeed(0x20000, 0x4000);
-  Camera_MoveWithinMapBounds(position[0], position[1], position[2], 1);
-  Script_WaitForEventTimeout(object);
+  FieldCamera_MoveTo(position[0], position[1], position[2], 1);
+  Actor_WaitForMove(object);
   object->update = NULL;
   Func_02003a6c(object);
   for (i = 0; i != 16; i++) {
@@ -106,33 +106,33 @@ stop:
       Func_0200015c(position[0], position[1], position[2], (dx - 16) << 13,
                     (dz - 16) << 13, parity, 0x1320000, &options);
     }
-    wait(1);
+    System_Wait(1);
   }
-  wait(24);
-  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  System_Wait(24);
+  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02003b6c();
-  wait(10);
+  System_Wait(10);
   return Func_02003af4();
 
 hit:
   object->acceleration = 0x20000;
   object->speedLimit = 0x20000;
   object->update = Func_02000d40;
-  Actor_SetMoveTarget(object, position[0], position[1], position[2]);
-  /* FAKEMATCH(wrapper): the form kept; as Camera_SetSpeedParameters(0x20000,
+  FieldActor_SetMoveTarget(object, position[0], position[1], position[2]);
+  /* FAKEMATCH(wrapper): the form kept; as FieldCamera_SetSpeed(0x20000,
    * 0x4000), 2 of 260 instructions differ in tla-en. */
   FieldCamera_SetSpeed(0x20000, 0x4000);
-  Camera_MoveWithinMapBounds(position[0], position[1], position[2], 1);
-  Script_WaitForEventTimeout(object);
+  FieldCamera_MoveTo(position[0], position[1], position[2], 1);
+  Actor_WaitForMove(object);
   object->update = NULL;
   Func_02003a6c(object);
-  /* FAKEMATCH(wrapper): the form kept; as GameFlag_SetBit(0x2f0), 8 of 260
+  /* FAKEMATCH(wrapper): the form kept; as Event_SetFlag(0x2f0), 8 of 260
    * instructions differ in tla-en. */
   Event_SetFlag(0x2f0);
   Func_02000c08(i);
-  GameFlag_ClearBit(0x2f0);
-  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  Event_ClearFlag(0x2f0);
+  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02003b6c();
-  wait(10);
+  System_Wait(10);
   return Func_02003af4();
 }

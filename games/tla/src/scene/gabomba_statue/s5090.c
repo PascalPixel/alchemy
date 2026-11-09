@@ -65,7 +65,7 @@ void Func_02005090(void) {
     now += 64;
     digit++;
   }
-  VramCache_Load(clock->tileEntry, 320, clock->digits);
+  Vram_Load(clock->tileEntry, 320, clock->digits);
   effect.z = 0;
   effect.x = 0x200;
   effect.y = 0x200;

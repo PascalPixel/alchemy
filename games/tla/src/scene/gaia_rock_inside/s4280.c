@@ -108,7 +108,7 @@ s32 Func_02004280(void) {
                        FIELD_AT(layer, s32, 20)) +
           FIELD_AT(layer, s32, 12);
       Func_02004dc4();
-      wait(1);
+      System_Wait(1);
       /* FAKEMATCH(wrapper): the copy forwarded through CopyWords_, so the
          blend buffer's address is loaded straight into r0 at each call; as a
          direct Iwram_CopyWords call, 17 of 229 instructions differ in

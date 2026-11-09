@@ -4,7 +4,6 @@
 #include "ram_buffer.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
-#include "call.h"
 #include "field/event_work.h"
 
 extern u8 gData_020061cc[];

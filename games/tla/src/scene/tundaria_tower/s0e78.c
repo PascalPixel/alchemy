@@ -1,4 +1,5 @@
 #include "tundaria_tower.h"
+#include "call.h"
 
 void Func_02002fd0(void);
 

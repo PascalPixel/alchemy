@@ -22,14 +22,14 @@ void Func_02000ff4(struct Actor *object) {
 
   if (object->action > 528) {
     if (object->action & 2)
-      Actor_SetPartAttribute(object, 10);
+      Actor_SetSpriteColor(object, 10);
     else
-      Actor_SetPartAttribute(object, 0);
+      Actor_SetSpriteColor(object, 0);
   } else if (object->action > 400) {
     if (object->action & 16)
-      Actor_SetPartAttribute(object, 10);
+      Actor_SetSpriteColor(object, 10);
     else
-      Actor_SetPartAttribute(object, 0);
+      Actor_SetSpriteColor(object, 0);
   } else {
     object->update = Func_02001738;
     object->action = 1;

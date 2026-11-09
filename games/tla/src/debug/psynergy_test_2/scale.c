@@ -5,22 +5,22 @@
 
 void Func_02000384(s32 mode, s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
   if (mode == 1)
-    Map_CopyCellsRect(a, b, c, d, e, f);
+    MapGrid_CopyCells(a, b, c, d, e, f);
 }
 
 void Func_020003a8(s32 mode, s32 id, s32 x, s32 z) {
   struct Actor *object;
   s32 scale;
 
-  object = Actor_GetById(id);
+  object = Actor_Get(id);
   if (mode == 1) {
-    Actor_SetHorizontalPositionWithTerrain(id, x << 16, z << 16);
+    Actor_SetPosition(id, x << 16, z << 16);
     object->scaleX = 0;
     object->scaleY = 0;
   }
   if (mode == 2) {
     while (object->scaleX < Q16_ONE) {
-      wait(1);
+      System_Wait(1);
       scale = object->scaleX;
       scale += 0x51e;
       object->scaleX = scale;

@@ -26,7 +26,7 @@ void Func_02000460(s32 mode) {
     Iwram_CopyWords(gData_0200261c, (void *)&BG_PLTT_COLOR(12, 0), 32);
     Iwram_CopyWords(gData_0200263c, (void *)&BG_PLTT_COLOR(13, 0), 32);
   }
-  if (GameFlag_Test(0xa00) || mode == 1) {
+  if (Event_GetFlag(0xa00) || mode == 1) {
     s32 zero = 0; /* FAKEMATCH: ⚓️ builds the zero in r2 and the counter address
                      in r3 */
 
@@ -42,7 +42,7 @@ void Func_020004e4(s32 id) {
   struct FieldActor *object;
   s32 height;
 
-  object = ((struct FieldActor *)Actor_GetById(id));
+  object = ((struct FieldActor *)Actor_Get(id));
   object->motionFlags = 4;
   height = object->terrainHeight;
   WORD_AT(object, 68) = 0;

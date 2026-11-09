@@ -7,19 +7,19 @@ void Func_02000304(s32 a) { Func_02002958_(a, 64, 0x300); }
 void Func_02000314(void) { Func_02002990_(76, 70, 14, 8, 14, 37, 0); }
 
 void Func_02000334(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
 
   Func_02002990_(76, 70, 14, 8, 14, 37, 0);
-  if (GameFlag_Test(0xf99) == 0) {
+  if (Event_GetFlag(0xf99) == 0) {
     Func_020028d0_(64, PIXELS(264), PIXELS(664));
     if (leader->x >> 20 == 16 && leader->z >> 20 == 41) {
       Func_02002898();
-      Event_ResolvePendingActions(0);
-      Func_080d489c(gMainRoutineWork.currentOwner, 0x102);
+      FieldEvent_ResolvePendingActions(0);
+      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
       Actor_OffsetPositionAndResetMotion_(gMainRoutineWork.currentOwner, 0,
                                                  -16);
       leader->velocityY = 0x60000;
-      Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
+      FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Func_020028a0();
     }
   }

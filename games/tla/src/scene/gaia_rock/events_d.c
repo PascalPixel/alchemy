@@ -2,19 +2,18 @@
 #include "actor.h"
 #include "frame.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Func_02000e24(struct Actor *object, s32 a);
 void Func_02000e2c(struct Actor *object, const u8 *script);
-void Func_02000e3c(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02000e5c(struct Actor *object, s32 a);
 void Func_02000f1c(struct Actor *object, s32 a);
 
 extern const u8 gData_020015c4[];
 
 void Func_02000670(void) {
-  struct Actor *object = Actor_GetById(17);
+  struct Actor *object = Actor_Get(17);
   u8 phase = gFrameCount;
 
   if (phase == 0) {
@@ -27,7 +26,7 @@ void Func_02000670(void) {
       object->scaleY = 0x1999;
       object->priorityFlags = phase;
       Func_02000e24(object, 2);
-      Func_02000e3c(object, object->x - PIXELS(32), object->y, object->z);
+      FieldActor_SetMoveTarget(object, object->x - PIXELS(32), object->y, object->z);
       Func_02000e2c(object, gData_020015c4);
       Func_02000e5c(object, 2);
     }

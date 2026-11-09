@@ -1,17 +1,12 @@
 #include "jupiter_lighthouse_room_m.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 extern s32 gData_02005a3c;
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
 void Func_02004994(s32 id, s32 mode);
 void Func_02004984(void);
 void Func_0200498c(s32 a, s32 b, s32 c, s32 d);
-void Func_0802b450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
 void Func_02000c08(void);
 void Func_02001e38(void);
 void Func_02000cac(s32 value);
@@ -44,31 +39,31 @@ s32 Func_02002c54(void) {
   Func_02004984();
   Func_0200498c(0, 512, 21, 22);
   gData_02005a3c = 0;
-  object = Actor_GetById(24);
+  object = Actor_Get(24);
   object->motionFlags = 0;
   object->y = 0;
   object->terrainHeight = 0;
-  object = Actor_GetById(25);
+  object = Actor_Get(25);
   object->motionFlags = 0;
   object->y = PIXELS(32);
   object->terrainHeight = PIXELS(32);
-  if (GameFlag_Test(514)) {
-    Func_0802b450(49, 106, 4, 3, 49, 76);
-    Map_CopyCellAttributeRect(49, 45, 4, 1, 49, 44);
+  if (Event_GetFlag(514)) {
+    MapGrid_CopyCellsLayered(49, 106, 4, 3, 49, 76);
+    MapGrid_CopyCellAttributes(49, 45, 4, 1, 49, 44);
   }
-  if (GameFlag_Test(2591)) {
-    Func_0802b450(49, 106, 4, 3, 49, 76);
-    Map_CopyCellAttributeRect(49, 45, 4, 1, 49, 44);
-    Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
+  if (Event_GetFlag(2591)) {
+    MapGrid_CopyCellsLayered(49, 106, 4, 3, 49, 76);
+    MapGrid_CopyCellAttributes(49, 45, 4, 1, 49, 44);
+    Actor_SetPosition(23, 0, 0);
     if (GameFlag_Test_(2595)) {
-      if (!GameFlag_Test(2593)) {
+      if (!Event_GetFlag(2593)) {
         Func_02000c08();
         Func_02001e38();
       }
     } else if (!GameFlag_Test_(2596)) {
       if (gMainRoutineWork.entrance == 3) {
         Func_02000c08();
-        GameFlag_SetBit(2596);
+        Event_SetFlag(2596);
         Func_02000cac(gMainRoutineWork.entrance == 3);
       }
     } else {
@@ -77,16 +72,16 @@ s32 Func_02002c54(void) {
         Func_02001c7c();
       } else if (gMainRoutineWork.entrance == 77) {
         Func_02001ed0();
-        GameFlag_SetBit(2595);
-        GameFlag_ClearBit(2596);
+        Event_SetFlag(2595);
+        Event_ClearFlag(2596);
       } else {
         Func_02000b48();
       }
     }
   }
-  Actor_GetById(23)->motionFlags = 0;
-  if (GameFlag_Test(2573))
-    Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
+  Actor_Get(23)->motionFlags = 0;
+  if (Event_GetFlag(2573))
+    Actor_SetPosition(23, 0, 0);
   if (gMainRoutineWork.entrance == 99)
     Func_02001ed0();
   return 0;

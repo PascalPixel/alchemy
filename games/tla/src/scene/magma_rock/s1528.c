@@ -1,7 +1,6 @@
 /// @file
 /// One of the four parts Func_02001738 builds: rises and falls with its owner's action counter.
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))

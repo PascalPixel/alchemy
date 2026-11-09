@@ -233,7 +233,7 @@ toss:
         Event_ShowMessageAndWait((s32)minusOne, 0);
       } else {
         Sound_Play(113);
-        Event_Wait(10);
+        FieldEvent_Wait(10);
       }
     } else {
       total = 0;
@@ -241,7 +241,7 @@ toss:
        * call; as a direct call, 43 of 286 instructions differ in tla-en and 40
        * of 300 in tla-ja. */
       if (result == 0 && Event_GetFlag(0x90b) == 0) {
-        GameFlag_SetBit(0x90b);
+        Event_SetFlag(0x90b);
         Func_0200049c((s32)minusOne);
       } else {
         for (prize = 0; prize < result * 3 + 3; prize++)

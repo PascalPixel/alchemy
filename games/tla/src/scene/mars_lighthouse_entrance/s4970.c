@@ -1,7 +1,7 @@
 #include "types.h"
 #include "actor.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Func_02004a60(s32 id, u32 mode, s32 flag, s32 layer);
@@ -22,7 +22,7 @@ void Func_02004970(const u16 *list) {
   spec = list;
   do {
     id = spec[0];
-    object = Actor_GetById(id);
+    object = Actor_Get(id);
     mode = spec[1];
     flag = spec[2];
     object->collisionFlags &= 0xfe;

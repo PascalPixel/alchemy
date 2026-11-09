@@ -1,8 +1,7 @@
 #include "mars_lighthouse_star_room.h"
 
 void Func_020019b4(s32 *position, s32 speed, s32 flag) {
-  struct Actor *object = (struct Actor *)Value4(
-      (s32 (*)())Func_020041e4, 366, position[0], position[1], position[2]);
+  struct Actor *object = FieldActor_Create(366, position[0], position[1], position[2]);
 
   if (object != NULL) {
     object->bounce = 0;
@@ -17,8 +16,7 @@ void Func_020019b4(s32 *position, s32 speed, s32 flag) {
 }
 
 void Func_020019fc(s32 *position, s32 speed, s32 flag) {
-  struct Actor *object = (struct Actor *)Value4(
-      (s32 (*)())Func_020041e4, 366, position[0], position[1], position[2]);
+  struct Actor *object = FieldActor_Create(366, position[0], position[1], position[2]);
 
   if (object != NULL) {
     object->bounce = 0;

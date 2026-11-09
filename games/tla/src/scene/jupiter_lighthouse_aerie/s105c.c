@@ -1,4 +1,5 @@
 #include "jupiter_lighthouse_aerie.h"
+#include "event_inline.h"
 
 void Func_0200105c(struct Actor *object) {
   BYTE_AT(object, 99) = 0;

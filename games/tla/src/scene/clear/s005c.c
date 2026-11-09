@@ -99,7 +99,7 @@ scroll_pair:
      * loop's zero kept in r5 (differ 20 with a byte pin). */
     register u16 zero asm("r5");
 
-    leader = Actor_GetById(gMainRoutineWork.currentOwner);
+    leader = Actor_Get(gMainRoutineWork.currentOwner);
     zero = 0;
     leader->motionFlags = zero;
   }
@@ -124,5 +124,5 @@ void Func_0200015c(void) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - (u16)level) << 8) | (u16)level,
                       IO_WRITE_16);
   if (level > 15)
-    Task_RemoveFar(Func_0200015c);
+    FieldTask_Remove(Func_0200015c);
 }

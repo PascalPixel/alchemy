@@ -6,6 +6,7 @@
 #include "main_routine_work.h"
 #include "actor.h"
 #include "flag_call.h"
+#include "event_inline.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define S16_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
@@ -50,15 +51,9 @@ struct Box {
 
 #define SCENE_WORK ((struct SceneWork *)Ram_HeapSlots->eventWork)
 
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-void Actor_SetModeById(u32 id, s32 mode);
-void Vector_AddPolarOffsetFar(s32 length, s32 angle, s32 *position);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 use_setter);
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -67,26 +62,15 @@ u32 Random16Far(void);
 s32 Func_0200246c(s32 index, s32 value);
 s32 Func_0200249c(s32 index);
 void Func_02004bd0(struct Actor *object, const void *script);
-struct Actor *Func_02004bd8(s32 kind, s32 x, s32 y, s32 z);
-void Func_02004c20(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
-void Func_02004c28(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
-void Func_02004c30(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 void Func_02004ca8(void);
 void Func_02004cb0(void);
-void Func_02004cd8(s32 id, s32 x, s32 z);
-void Func_02004d10(s32 a0, s32 a1);
 void Func_02004d20(void);
-void Func_02004d30(s32 a0);
 void Func_02004d40(void);
 void Func_02004d48(void);
-void Func_02004da0(s32 a0);
 void Func_02004db0(void);
-void Func_02004de0(s32 cue);
 void Func_02004bc0(struct Actor *object, s32 a1);
-void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 void Animation_SetStateFlags(struct Actor *object, s32 flags);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 
 void Func_02001e1c(struct Actor *object, s32 part);
 
@@ -94,21 +78,21 @@ void Func_02001e1c(struct Actor *object, s32 part);
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void Func_02004c28_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
                                   s32 a5) {
-  Func_02004c28(a0, a1, a2, a3, a4, a5);
+  Map_CopyCellAttributeRect(a0, a1, a2, a3, a4, a5);
 }
 
 static inline void Func_02004c30_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
                                   s32 a5) {
-  Func_02004c30(a0, a1, a2, a3, a4, a5);
+  Func_0802b450(a0, a1, a2, a3, a4, a5);
 }
 
 static inline void Func_02004cd8_(s32 id, s32 x, s32 z) {
-  Func_02004cd8(id, x, z);
+  Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 
 static inline struct Actor *Func_02004bd8_(s32 kind, s32 x, s32 y,
                                                    s32 z) {
-  return Func_02004bd8(kind, x, y, z);
+  return Import_ActorCreate(kind, x, y, z);
 }
 
 static inline void Camera_SetBounds(s32 x, s32 y, s32 z, s32 use_setter) {

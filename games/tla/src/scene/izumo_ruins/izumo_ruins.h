@@ -6,7 +6,6 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "input.h"
-#include "call.h"
 #include "text/msg_ids.h"
 #include "event_inline.h"
 
@@ -54,7 +53,6 @@ extern u8 gMapCellBuffer[];
 extern char SceneId_Ov67FRoom1;
 extern char SceneId_Ov67FRoom2;
 
-void FieldEvent_Wait(s32 frames);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 

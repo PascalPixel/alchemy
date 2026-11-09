@@ -15,10 +15,10 @@ void Func_02000554(s32 a0) {
 
   t0 = Event_GetFlag(0x972);
   if (t0 == 0) {
-    GameFlag_SetBit(0x972);
-    Event_SetMessageId((s32)MsgChampa35);
+    Event_SetFlag(0x972);
+    FieldEvent_SetMessageId((s32)MsgChampa35);
   } else {
-    Event_SetMessageId((s32)MsgChampa36);
+    FieldEvent_SetMessageId((s32)MsgChampa36);
   }
-  Event_ShowMessageAndWait(a0, 0);
+  Event_ShowMessage(a0, 0);
 }

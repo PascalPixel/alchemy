@@ -19,7 +19,7 @@ void Func_02000478(s32 radius, u32 count) {
   u32 i;
   s32 angle;
 
-  object = Actor_GetById(8);
+  object = Actor_Get(8);
   options.update = Effect_AdvanceMotion;
   options.startScaleX = 0xcccc;
   options.startScaleY = 0xcccc;
@@ -29,7 +29,7 @@ next:
   angle = i * (0x10000 / (s32)count);
   dir.x = Math_Cosine(angle) * radius / 256;
   dir.y = 0;
-  dir.z = Math_Sine(angle) * radius / 256;
+  dir.z = Math_Sin(angle) * radius / 256;
   dir.x += dir.x >> 1;
   dir.x += ((Random16Far() * 3) << 14 >> 16) - 0x6000;
   dir.z += ((Random16Far() * 3) << 13 >> 16) - 0x3000;

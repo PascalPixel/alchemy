@@ -1,15 +1,15 @@
 #include "local.h"
 
 void Func_02000ad8(void) {
-  Func_0802b450(106, 14, 14, 13, 81, 14);
-  Func_0802b450(44, 78, 14, 12, 17, 78);
-  Map_CopyCellAttributeRect(81, 14, 14, 13, 17, 14);
-  GameFlag_SetBit(0xa6a);
+  MapGrid_CopyCellsLayered(106, 14, 14, 13, 81, 14);
+  MapGrid_CopyCellsLayered(44, 78, 14, 12, 17, 78);
+  MapGrid_CopyCellAttributes(81, 14, 14, 13, 17, 14);
+  Event_SetFlag(0xa6a);
 }
 
 s32 Func_02000b24(s32 id, s32 value) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
 
   if (object != 0) {
     struct MapCell *cells = map->layers[0].cells;
@@ -21,19 +21,19 @@ s32 Func_02000b24(s32 id, s32 value) {
 }
 
 void Func_02000b5c(void) {
-  struct Actor *object = Actor_GetById(12);
+  struct Actor *object = Actor_Get(12);
 
   Func_02003d1c_(64, 43, 1, 1, object->x >> 20, object->z >> 20);
 }
 
 void Func_02000b84(void) {
-  struct Actor *object = Actor_GetById(12);
+  struct Actor *object = Actor_Get(12);
 
   Func_02003d1c_(64, 42, 1, 1, object->x >> 20, object->z >> 20);
 }
 
 void Func_02000bac(void) {
-  struct Actor *object = Actor_GetById(12);
+  struct Actor *object = Actor_Get(12);
 
   Func_02003d1c_(64, 41, 1, 1, object->x >> 20, object->z >> 20);
 }

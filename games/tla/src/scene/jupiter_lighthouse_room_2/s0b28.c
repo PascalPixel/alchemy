@@ -13,7 +13,7 @@ void Func_02000b28(s32 id) {
   struct FieldActor *object;
   s32 height;
 
-  object = ((struct FieldActor *)Actor_GetById(id));
+  object = ((struct FieldActor *)Actor_Get(id));
   object->motionFlags = 4;
   height = object->terrainHeight;
   WORD_AT(object, 68) = 0;

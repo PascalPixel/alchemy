@@ -1,5 +1,6 @@
 #include "types.h"
 #include "frame.h"
+#include "event_inline.h"
 
 struct Orbit {
   u8 unk00[8];
@@ -18,7 +19,6 @@ struct Orbit {
 };
 
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 // Called by its linked name, as Gaia Rock's Func_0200142c does.
 s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));
 
@@ -28,11 +28,11 @@ s32 Func_02002b2c(struct Orbit *object) {
 
   object->angle += object->speed;
   object->x = IwramMulQ16(Math_Cosine(object->angle), object->radius);
-  z = IwramMulQ16(Math_Sine(object->angle), object->radius);
+  z = IwramMulQ16(Math_Sin(object->angle), object->radius);
   object->x += object->centreX;
   object->z = (z >> 1) + object->centreZ;
   if (object->growth != 141 && (gFrameCount & 1)) {
-    object->radius = object->growth * Math_Sine(object->phase << 10);
+    object->radius = object->growth * Math_Sin(object->phase << 10);
     object->growth += 10;
   }
   if (object->speed == 0)

@@ -33,12 +33,12 @@ struct RideEntry *Func_02001068(s32 slot, s32 id, s32 timer, s32 low,
                                 s32 high) {
   struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
   struct RideEntry *entry = &work->entries[slot];
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
   struct Actor *rider;
 
-  Actor_GetById(id);
+  Actor_Get(id);
   Actor_SetSingleChildFlags(object, 0);
-  if (!GameFlag_Test(0x109)) {
+  if (!Event_GetFlag(0x109)) {
     if (high < low) {
       s32 swap = low;
 
@@ -61,7 +61,7 @@ struct RideEntry *Func_02001068(s32 slot, s32 id, s32 timer, s32 low,
     entry->unk14 = 0;
     object->priorityFlags |= 2;
   }
-  rider = ((struct Actor *)Import_ActorCreate(0x8000, object->x, object->y,
+  rider = (FieldActor_Create(0x8000, object->x, object->y,
                                               object->z));
   rider->collisionFlags = 0;
   rider->motionFlags = 0;

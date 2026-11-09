@@ -33,12 +33,12 @@ void Func_02001a6c(s32 value) {
 }
 
 void Func_02001a8c(void) {
-  struct Actor *object = Actor_GetById(15);
+  struct Actor *object = Actor_Get(15);
 
   Func_020056b4(object);
-  Event_ResolvePendingActions(0);
-  Event_Wait(20);
-  Sound_Play(214);
+  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_Wait(20);
+  Event_PlaySound(214);
   Func_02005624(object, 5);
   object->scaleY = 0x10000;
   Func_020056bc();
@@ -51,17 +51,17 @@ void Func_02001ac0(void) {
 
 void Func_02001adc(s32 id) {
   Func_02005784(id);
-  Actor_SetPartAttribute(Actor_GetById(id), 15);
-  Actor_SetSpritePriority(id, 1);
-  Actor_GetById(id)->priorityFlags |= 2;
+  Actor_SetSpriteColor(Actor_Get(id), 15);
+  FieldActor_SetSpritePriority(id, 1);
+  Actor_Get(id)->priorityFlags |= 2;
 }
 
 void Func_02001b0c(void) {
-  if (GameFlag_Test(265)) {
-    if (!GameFlag_Test(512))
+  if (Event_GetFlag(265)) {
+    if (!Event_GetFlag(512))
       Func_0200193c();
   } else {
-    GameFlag_SetBit(512);
+    Event_SetFlag(512);
   }
 }
 void Func_02001b38(void) {
@@ -70,7 +70,7 @@ void Func_02001b38(void) {
 next:
   {
     s32 id = i + 8;
-    struct Actor *object = Actor_GetById(id);
+    struct Actor *object = Actor_Get(id);
 
     Func_02001adc(id);
     object->motionFlags = 0;
@@ -88,7 +88,7 @@ void Func_02001b68(void) {
 next:
   {
     s32 id = i + 29;
-    struct Actor *object = Actor_GetById(id);
+    struct Actor *object = Actor_Get(id);
 
     Func_02001adc(id);
     object->motionFlags = 0;
@@ -105,14 +105,14 @@ void Func_02001b98(void) {
   u8 *event = Ram_HeapSlots->eventWork;
   s32 i;
 
-  if (GameFlag_Test(262) || *(s16 *)(event + 358) != 0) {
+  if (Event_GetFlag(262) || *(s16 *)(event + 358) != 0) {
     open = 1;
     value = 0;
   }
   i = 8;
 next:
   {
-    struct Actor *object = Actor_GetById(i);
+    struct Actor *object = Actor_Get(i);
 
     if (object != NULL && object->animationKind == 1) {
       struct FieldPart *part =

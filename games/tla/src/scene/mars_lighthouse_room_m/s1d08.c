@@ -1,4 +1,5 @@
 #include "mars_lighthouse_room_m.h"
+#include "event_inline.h"
 
 struct SpriteParts {
   u8 unk00[9];
@@ -32,8 +33,7 @@ void Func_02001cc4(struct Actor *object, s32 part) {
 
 void Func_02001d08(struct MarsLighthouseRoomMVector *position, s32 value,
                    s32 flag) {
-  struct Actor *object = (struct Actor *)Value4(
-      (s32 (*)())Func_02003128, 366, position->x, position->y, position->z);
+  struct Actor *object = FieldActor_Create(366, position->x, position->y, position->z);
 
   if (object != 0) {
     object->bounce = 0;
@@ -49,8 +49,7 @@ void Func_02001d08(struct MarsLighthouseRoomMVector *position, s32 value,
 
 void Func_02001d50(struct MarsLighthouseRoomMVector *position, s32 value,
                    s32 flag) {
-  struct Actor *object = (struct Actor *)Value4(
-      (s32 (*)())Func_02003128, 366, position->x, position->y, position->z);
+  struct Actor *object = FieldActor_Create(366, position->x, position->y, position->z);
 
   if (object != 0) {
     object->bounce = 0;
@@ -66,8 +65,7 @@ void Func_02001d50(struct MarsLighthouseRoomMVector *position, s32 value,
 
 void Func_02001d98(struct MarsLighthouseRoomMVector *position, s32 value,
                    s32 flag) {
-  struct Actor *object = (struct Actor *)Value4(
-      (s32 (*)())Func_02003128, 366, position->x, position->y, position->z);
+  struct Actor *object = FieldActor_Create(366, position->x, position->y, position->z);
 
   if (object != 0) {
     object->bounce = 0;

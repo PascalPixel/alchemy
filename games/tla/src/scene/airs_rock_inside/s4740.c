@@ -1,5 +1,6 @@
 #include "scene_tables.h"
 #include "airs_rock_inside.h"
+#include "call.h"
 #include "text/msg_ids.h"
 
 void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);

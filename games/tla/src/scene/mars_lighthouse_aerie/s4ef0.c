@@ -3,13 +3,13 @@
 #include "ram_buffer.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "event_inline.h"
 
 extern u16 *gData_02006ce0;
 extern u16 *Data_02006ce4;
 extern u16 *Data_02006ce8;
 extern u16 *Data_02006cd4;
 
-void Func_0200575c(s32 a, s32 b);
 void Func_020051e0(void);
 
 /// Records the four palette lists, writes each listed palette entry from its
@@ -45,7 +45,7 @@ void Func_02004ef0(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   }
   Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
-  Func_0200575c(0x10000, 0);
+  PaletteFade_ApplyTarget(0x10000, 0);
   if ((s8)gMainRoutineWork.unk2c2 == 2)
     Func_020051e0();
 }

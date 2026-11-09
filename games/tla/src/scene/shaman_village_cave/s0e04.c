@@ -6,9 +6,6 @@ struct ShamanVillageCaveSceneWork {
   s32 screenEffect;
 };
 
-s32 GameFlag_Test(s32 flag);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Func_020003cc(void);
 void Func_02000404(void);
 void Func_02000a24(void);
@@ -25,14 +22,14 @@ s32 Func_02000e04(void) {
 
   ((struct ShamanVillageCaveSceneWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 516;
-  if (GameFlag_Test(0x9a9))
-    Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
-  if (GameFlag_Test(0x9aa))
-    Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
-  if (GameFlag_Test(83) || GameFlag_Test(163))
-    GameFlag_SetBit(0x205);
-  if (GameFlag_Test(0x9a8)) {
-    object = Actor_GetById(15);
+  if (Event_GetFlag(0x9a9))
+    Actor_SetPosition(8, 0, 0);
+  if (Event_GetFlag(0x9aa))
+    Actor_SetPosition(10, 0, 0);
+  if (Event_GetFlag(83) || Event_GetFlag(163))
+    Event_SetFlag(0x205);
+  if (Event_GetFlag(0x9a8)) {
+    object = Actor_Get(15);
     object->motionFlags = 0;
     object->priorityFlags = 0;
     object->x = 0x2680000;
@@ -40,34 +37,34 @@ s32 Func_02000e04(void) {
     Actor_SetSingleChildFlags(object, 0);
     Func_02001060_(40, 19, 1, 1, 38, 19);
   }
-  Actor_SetSingleChildFlags(Actor_GetById(16), 0);
-  Actor_SetModeById(16, 1);
-  if (GameFlag_Test(770)) {
-    object = Actor_GetById(16);
-    Actor_SetModeById(16, 5);
-    Actor_SetPartAttribute(Actor_GetById(16), 0);
+  Actor_SetSingleChildFlags(Actor_Get(16), 0);
+  Actor_SetAnimation(16, 1);
+  if (Event_GetFlag(770)) {
+    object = Actor_Get(16);
+    Actor_SetAnimation(16, 5);
+    Actor_SetSpriteColor(Actor_Get(16), 0);
     object->motionFlags = 0;
     object->priorityFlags = 0;
     object->y = 0;
     Func_02001060_(8, 42, 1, 1, 6, 42);
   }
-  if (GameFlag_Test(518))
+  if (Event_GetFlag(518))
     ShamanVillageCave_ObjPlace(17, PIXELS(328), PIXELS(792));
-  Actor_SetPartAttribute(Actor_GetById(19), 1);
-  Actor_SetPartAttribute(Actor_GetById(20), 0);
-  Actor_SetPartAttribute(Actor_GetById(21), 2);
-  if ((!GameFlag_Test(265) &&
+  Actor_SetSpriteColor(Actor_Get(19), 1);
+  Actor_SetSpriteColor(Actor_Get(20), 0);
+  Actor_SetSpriteColor(Actor_Get(21), 2);
+  if ((!Event_GetFlag(265) &&
        (gMainRoutineWork.entrance == 20 || gMainRoutineWork.entrance == 21)) ||
-      GameFlag_Test(0xa71)) {
+      Event_GetFlag(0xa71)) {
     Func_020003cc();
-    if (!GameFlag_Test(265) && gMainRoutineWork.entrance == 20) {
+    if (!Event_GetFlag(265) && gMainRoutineWork.entrance == 20) {
       Func_02000a24();
-    } else if (!GameFlag_Test(265) && gMainRoutineWork.entrance == 21) {
-      GameFlag_SetBit(0xa71);
+    } else if (!Event_GetFlag(265) && gMainRoutineWork.entrance == 21) {
+      Event_SetFlag(0xa71);
       Func_0200087c();
     }
   }
-  if (GameFlag_Test(0xa73))
+  if (Event_GetFlag(0xa73))
     Func_02000404();
   return 0;
 }

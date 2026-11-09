@@ -43,5 +43,5 @@ loop:
   i++;
   if (i != 4)
     goto loop;
-  GameFlag_SetBit(0x8dc);
+  Event_SetFlag(0x8dc);
 }

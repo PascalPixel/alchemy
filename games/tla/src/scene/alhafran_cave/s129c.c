@@ -7,7 +7,7 @@ void Func_0200129c(const u16 *entry, s32 mode, s32 frame) {
     s32 id = work->objectId;
 
     if (id == value) {
-      struct Actor *object = Actor_GetById(id);
+      struct Actor *object = Actor_Get(id);
       s32 kind;
       s32 flag;
 
@@ -18,7 +18,7 @@ void Func_0200129c(const u16 *entry, s32 mode, s32 frame) {
       if (frame <= 7)
         object->scaleY -= 0x1f00;
       if (mode == 1) {
-        GameFlag_SetBit(flag);
+        Event_SetFlag(flag);
         Func_02001320(id, kind, flag, object->terrainId);
         object->scaleY = 0x10000;
       }

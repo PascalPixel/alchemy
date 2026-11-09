@@ -12,7 +12,7 @@ void Func_02000c40(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
   struct FieldActor *object;
   struct FieldSprite *sprite;
 
-  object = Import_ActorCreate(0x1e8, x, y, z);
+  object = FieldActor_Create(0x1e8, x, y, z);
   if (object != 0) {
     sprite = object->sprite;
     Func_020029dc(object, 1);

@@ -6,7 +6,6 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
 s32 Actor_GetById();
 
 void Func_020008f0(s32 a0, s32 a1) {

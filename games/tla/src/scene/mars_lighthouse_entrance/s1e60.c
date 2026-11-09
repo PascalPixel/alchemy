@@ -81,7 +81,7 @@ s32 Func_02001f38(struct Actor *a, struct Actor *b) {
 }
 
 void Func_02001f90(struct Actor *object) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 dx = object->bounce;
   s32 dz;
   struct SpriteParts *parts;
@@ -117,7 +117,7 @@ void Func_0200202c(struct Actor *object, s32 unused) {
   Actor_SetSingleChildFlags(object, 0);
   Func_02004bc0(object, 2);
   Func_02004bd0(object, gData_020056a0);
-  Actor_SetPartAttribute(object, 10);
+  Actor_SetSpriteColor(object, 10);
   object->action = 0;
   object->speedLimit = 0;
   object->acceleration = 0;

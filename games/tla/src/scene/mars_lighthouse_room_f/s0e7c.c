@@ -5,7 +5,6 @@ extern char SceneId_Ov6adRoom1;
 extern char SceneId_Ov6adRoom2;
 extern char SceneId_Ov6adRoom3;
 extern char SceneId_Ov6adRoom4;
-s32 Task_Add();
 void Func_02000444(s32 state, s32 a1);
 void Func_02000480(s32 state, s32 a1);
 void Func_020004bc(s32 state, s32 a1);
@@ -101,19 +100,19 @@ s32 Func_02000e7c(void) {
     if (entrance == 9) {
       Flag_Set(0x351);
       Func_02005560();
-      Func_02005648(0);
+      Event_ResolvePendingActions(0);
       Camera_SetBounds(-1, -1, -1, 0);
       Func_02005598_(work->currentOwner, 0, 0);
       Func_02005598_(17, 0, 0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
-      FieldEvent_Wait(30);
+      Event_Wait(30);
       Func_02005598_(18, 0, 0);
       Func_02005598_(17, 0x1080000, 0x2080000);
-      Func_020056c0(136);
-      FieldEvent_Wait(60);
+      Sound_Play(136);
+      Event_Wait(60);
       Flag_Set(0x109);
-      return ((s32 (*)())Func_020055f0)(3);
+      return ((s32 (*)())Import_EventSetExitRequest)(3);
     }
     if (Flag_IsSet(0x350)) {
       Func_02005598_(8, 0x2580000, 0x900000);

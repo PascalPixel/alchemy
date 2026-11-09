@@ -6,5 +6,5 @@ void Func_02000ca0(void) {
 
   Func_02002838_(47 - (timer & 1) * 2, 64 - step, 2, step, 29, 15 - step);
   if (gData_0200345c == 0)
-    Task_RemoveFar(Func_02000ca0);
+    FieldTask_Remove(Func_02000ca0);
 }

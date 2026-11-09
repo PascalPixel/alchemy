@@ -1,5 +1,6 @@
 #include "jupiter_lighthouse_room_m.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 extern u32 gData_02005524[];
 extern u32 gData_02005548[];
@@ -8,11 +9,7 @@ extern u32 gData_020055ec[];
 extern u32 gData_02005644[];
 extern u32 gData_0200569c[];
 
-void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
-                                                    s32 angle);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void Actor_SetMovementTypeById(s32 id, const void *script);
-void Task_Add(void (*func)(void), s32 priority);
 s32 Func_02000a78(void);
 
 static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle) {
@@ -47,11 +44,11 @@ void Func_02000b48(void) {
   PLACE(2, 731, 232, FACING_NORTH);
   PLACE(27, 731, 213, FACING_SOUTH);
   PLACE(26, 737, 202, FACING_EAST);
-  Actor_SetMovementTypeById(0, gData_0200558c);
-  Actor_SetMovementTypeById(2, gData_02005644);
-  Actor_SetMovementTypeById(26, gData_020055ec);
-  Actor_SetMovementTypeById(27, gData_0200569c);
-  Actor_SetMovementTypeById(3, gData_02005548);
+  Actor_SetScript(0, gData_0200558c);
+  Actor_SetScript(2, gData_02005644);
+  Actor_SetScript(26, gData_020055ec);
+  Actor_SetScript(27, gData_0200569c);
+  Actor_SetScript(3, gData_02005548);
 }
 
 void Func_02000c08(void) {
@@ -60,17 +57,17 @@ void Func_02000c08(void) {
   PLACE(3, 816, 285, FACING_SOUTHEAST);
   PLACE(1, 824, 302, FACING_NORTH);
   PLACE(29, 821, 302, FACING_NORTH);
-  Actor_SetSingleChildFlags(Actor_GetById(1), 0);
-  Actor_SetMovementTypeById(1, gData_02005524);
+  Actor_SetSingleChildFlags(Actor_Get(1), 0);
+  Actor_SetScript(1, gData_02005524);
   {
     /* FAKEMATCH: the priority passes through a block temporary, so 0x480 is
      * built before the task function's address is loaded; as an argument, 2 of
      * 57 instructions differ in tla-en. */
     s32 priority = 0x480;
 
-    Task_Add((void (*)(void))Func_02000a78, priority);
+    FieldTask_AddFrame((void (*)(void))Func_02000a78, priority);
   }
-  Actor_SetModeById(0, 38);
-  Actor_SetModeById(2, 31);
-  Actor_SetModeById(3, 9);
+  Actor_SetAnimation(0, 38);
+  Actor_SetAnimation(2, 31);
+  Actor_SetAnimation(3, 9);
 }

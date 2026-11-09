@@ -1,5 +1,6 @@
 #include "../mars_lighthouse_entrance/room.h"
 #include "field/event_work.h"
+#include "event_inline.h"
 
 struct RideSlot {
   u16 id;
@@ -21,13 +22,12 @@ struct RideWork {
 
 extern u8 gData_020023c4[];
 
-struct Actor *Actor_GetById(s32 id);
 s32 Func_020018c4(struct Actor *a, struct Actor *b);
 s32 Func_02001928(struct Actor *a, struct Actor *b);
 
 void Func_02001988(struct Actor *object) {
   struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
-  struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 dx = object->bounce;
   s32 dz;
@@ -72,7 +72,7 @@ void Func_02001988(struct Actor *object) {
     event->exit = work->value0a;
   }
   for (i = 0; i < 4 && (id = work->slots[i].id) != 0; i++) {
-    actor = Actor_GetById(id);
+    actor = Actor_Get(id);
 
     if (actor->y == actor->terrainHeight && Func_02001928(object, actor)) {
       if (work->slots[i].blocked == 0) {

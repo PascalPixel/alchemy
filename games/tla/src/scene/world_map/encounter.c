@@ -30,7 +30,7 @@ u32 Random16Far(void);
     party = &gMainRoutineWork;                                                      \
     if (party->encounterSteps >= work->threshold * 9 / 10) {                   \
       if (Random16Far() < 0x8000) {                                            \
-        Func_080d2b4c(a, b);                                                   \
+        Field_RequestDjinnBattle(a, b);                                                   \
         work->bias = 0;                                                        \
       } else {                                                                 \
         party->encounterSteps = work->threshold;                               \
@@ -52,7 +52,7 @@ u32 Random16Far(void);
     if (party->renderMode == 1) {                                              \
       if (party->encounterSteps >= work->threshold * 9 / 10) {                 \
         if (Random16Far() < 0x8000) {                                          \
-          Func_080d2b4c(a, b);                                                 \
+          Field_RequestDjinnBattle(a, b);                                                 \
           work->bias = 0;                                                      \
         } else {                                                               \
           party->encounterSteps = work->threshold;                             \

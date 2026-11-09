@@ -6,7 +6,6 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
 s32 Func_0200231c();
 extern u8 gData_02002b88[];
 extern u8 gData_02002b60[];

@@ -17,7 +17,7 @@ void Func_020003dc(struct Actor *object, s32 height) {
   s32 count = 60;
 
   while (count != 0) {
-    wait(1);
+    System_Wait(1);
     count--;
     if (object->y <= height)
       break;

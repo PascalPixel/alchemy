@@ -21,6 +21,11 @@ static inline s32 Task_AddFrame(TaskFunc func, s32 priority) {
   return Task_Add(func, priority);
 }
 
+/// Task_AddFrame, for a caller that leaves the slot unread.
+static inline void FieldTask_AddFrame(TaskFunc func, s32 priority) {
+  Task_Add(func, priority);
+}
+
 static inline void FieldMessage_DecodeRawUnbounded(s32 message, u16 *buffer) {
   Message_DecodeRawUnbounded(message, buffer);
 }

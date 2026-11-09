@@ -15,10 +15,10 @@ void Func_020032e8(struct Actor *object, const u8 *script);
 
 void Func_020006a4(struct Actor *source) {
   struct Actor *object =
-      ((struct Actor *)Import_ActorCreate(672, source->x, source->y, source->z));
+      (FieldActor_Create(672, source->x, source->y, source->z));
 
   object->motionFlags = 0;
-  Actor_SetPartAttribute(object, BYTE_AT(source, 98));
+  Actor_SetSpriteColor(object, BYTE_AT(source, 98));
   Scene_SetActorSpritePriority(object, 2);
   Func_020032e0(object, 1);
   Actor_SetSingleChildFlags(object, 0);

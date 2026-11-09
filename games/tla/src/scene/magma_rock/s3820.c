@@ -38,11 +38,11 @@ void Func_02003820(s32 x, s32 y, s32 z, s32 count) {
       entry->x = x;
       entry->y = y;
       entry->z = z;
-      Vector_AddPolarOffsetFar(Random16Far() * 8 + 0x80000, angle, entry);
+      FieldVector_AddPolarOffset(Random16Far() * 8 + 0x80000, angle, entry);
       entry->velocityX = 0;
       entry->velocityY = 0x50000;
       entry->velocityZ = 0;
-      Vector_AddPolarOffsetFar(Random16Far() * 2 + 0x20000, angle,
+      FieldVector_AddPolarOffset(Random16Far() * 2 + 0x20000, angle,
                                &entry->velocityX);
       {
         s32 mask = 63;

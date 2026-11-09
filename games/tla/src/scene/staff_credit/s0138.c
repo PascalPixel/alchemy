@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "iwram_call.h"
 
 s32 Math_Cosine(s32 angle);

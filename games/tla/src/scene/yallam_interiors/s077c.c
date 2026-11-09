@@ -1,6 +1,5 @@
 #include "types.h"
 #include "main_routine_work.h"
-#include "flag_call.h"
 #include "event_inline.h"
 
 extern const u8 MsgAhSoYou[];
@@ -22,10 +21,10 @@ void Func_02000a88(s32 value);
 s32 Func_02000a90(void);
 
 void Func_0200077c(s32 actor) {
-  if (!Flag_IsSet(0x10f)) {
+  if (!Event_GetFlag(0x10f)) {
     Event_SetMessageId((s32)MsgThisThisIs);
     Event_ShowMessageAndWait(actor, 0);
-  } else if (Flag_IsSet(0x301)) {
+  } else if (Event_GetFlag(0x301)) {
     Event_SetMessageId((s32)MsgItTakesOur);
     Event_ShowMessageAndWait(actor, 0);
   } else if (Func_02000a90()) {

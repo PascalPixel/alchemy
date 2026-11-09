@@ -1,4 +1,5 @@
 #include "izumo.h"
+#include "call.h"
 #include "scene_tables.h"
 
 const u8 *Func_020001ac(void) {

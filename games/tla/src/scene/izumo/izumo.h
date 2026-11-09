@@ -5,7 +5,6 @@
 #include "ram_buffer.h"
 #include "field_event.h"
 #include "main_routine_work.h"
-#include "call.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))

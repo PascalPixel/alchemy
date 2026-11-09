@@ -1,4 +1,5 @@
 #include "izumo.h"
+#include "call.h"
 #include "scene_tables.h"
 
 void Func_020006a4(void) {

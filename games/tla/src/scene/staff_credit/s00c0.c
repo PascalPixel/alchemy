@@ -2,7 +2,6 @@
 /// Steps a palette's colours.
 
 #include "types.h"
-#include "call.h"
 
 /// Adds a red, green and blue step to each colour of a palette, clamped to 0 to
 /// 31.

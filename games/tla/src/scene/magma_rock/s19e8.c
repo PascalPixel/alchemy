@@ -18,12 +18,12 @@ void Func_020019e8(s32 mode, s32 cue) {
     s32 scene = party->scene;
 
     if (scene == (s32)&SceneId_Ov691Room1)
-      work->target = Actor_GetById(15);
+      work->target = Actor_Get(15);
     else if (scene == (s32)&SceneId_Ov691Room2)
-      work->target = Actor_GetById(14);
+      work->target = Actor_Get(14);
     Func_020014bc(mode, cue);
   }
-  GameFlag_SetBit(0x200);
+  Event_SetFlag(0x200);
 }
 
 /// In room 1 or 2, targets actor 16 or 10, runs Func_020014bc and sets flag
@@ -36,10 +36,10 @@ void Func_02001a38(s32 mode, s32 cue) {
     s32 scene = party->scene;
 
     if (scene == (s32)&SceneId_Ov691Room1)
-      work->target = Actor_GetById(16);
+      work->target = Actor_Get(16);
     else if (scene == (s32)&SceneId_Ov691Room2)
-      work->target = Actor_GetById(10);
+      work->target = Actor_Get(10);
     Func_020014bc(mode, cue);
   }
-  GameFlag_SetBit(0x201);
+  Event_SetFlag(0x201);
 }

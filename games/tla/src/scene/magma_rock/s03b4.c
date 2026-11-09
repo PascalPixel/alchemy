@@ -97,15 +97,15 @@ void Func_020003b4(void) {
 
   Func_02003a54(lead, 8);
   rate = 0x3333;
-  wait(15);
-  Sound_Play(185);
+  System_Wait(15);
+  Event_PlaySound(185);
   next->moveRateX = rate;
   next->moveRateZ = rate;
-  Actor_SetMoveTarget(next, dst.x, dst.y, dst.z);
+  FieldActor_SetMoveTarget(next, dst.x, dst.y, dst.z);
   lead->moveRateX = rate;
   lead->moveRateZ = rate;
-  Actor_SetMoveTarget(lead, dst.x, dst.y, dst.z);
-  Script_WaitForEventTimeout(next);
+  FieldActor_SetMoveTarget(lead, dst.x, dst.y, dst.z);
+  Actor_WaitForMove(next);
   Func_02003bdc();
   next->x.fixed = dst.x;
   {

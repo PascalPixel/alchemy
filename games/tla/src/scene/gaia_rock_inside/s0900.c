@@ -27,7 +27,7 @@ struct EventWork900 {
 };
 
 void Func_02000900(struct Counted *object) {
-  struct Counted *other = (struct Counted *)Actor_GetById(9);
+  struct Counted *other = (struct Counted *)Actor_Get(9);
 
   if (object->count == 30 || other->count == 30) {
     ((struct EventWork900 *)Ram_HeapSlots->eventWork)->timer = 42;
@@ -38,23 +38,23 @@ void Func_02000900(struct Counted *object) {
   }
   if (object->count > 2) {
     other->movementState = 1;
-    GameFlag_SetBit(0x206);
+    Event_SetFlag(0x206);
   }
   {
     u8 *otherCount = &other->count;
 
-    if (*otherCount > 2 && !GameFlag_Test(0x206) &&
+    if (*otherCount > 2 && !Event_GetFlag(0x206) &&
         other->script != gData_020056c4 && other->script != gData_02005728) {
       object->movementState = 1;
-      GameFlag_SetBit(0x205);
+      Event_SetFlag(0x205);
     }
     if (object->count == 0) {
       other->movementState = 0;
-      GameFlag_ClearBit(0x206);
+      Event_ClearFlag(0x206);
     }
     if (*otherCount == 0) {
       object->movementState = 0;
-      GameFlag_ClearBit(0x205);
+      Event_ClearFlag(0x205);
     }
     if (object->count > 35)
       object->count = 35;

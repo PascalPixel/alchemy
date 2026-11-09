@@ -1,5 +1,6 @@
 #include "islets.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 void Func_0200267c(void) {
   struct IsletsEventWork *work = Ram_HeapSlots->eventWork;
@@ -8,26 +9,25 @@ void Func_0200267c(void) {
   s16 *exit;
   s32 index;
 
-  object = Actor_GetById(party->currentOwner);
+  object = Actor_Get(party->currentOwner);
   Func_02003e64();
-  Event_ResolvePendingActions(0);
-  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
-  Actor_SetModeById(party->currentOwner, 2);
-  Actor_SetSpeedParameters(party->currentOwner, 0x8000, 0x4000);
-  Actor_SetMoveTarget(object, ((8 - (object->x >> 16) % 16) << 16) + object->x,
+  FieldEvent_ResolvePendingActions(0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
+  Actor_SetAnimation(party->currentOwner, 2);
+  Actor_SetSpeed(party->currentOwner, 0x8000, 0x4000);
+  FieldActor_SetMoveTarget(object, ((8 - (object->x >> 16) % 16) << 16) + object->x,
                       object->y, object->z);
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
   object->angle = FACING_NORTH;
   exit = &work->exit;
   index = *exit;
-  Sound_Play(158);
+  Event_PlaySound(158);
   index--;
-  Call3((void (*)())Map_PlayMapEdit, gData_020046bc[index].value,
-        gData_020046bc[index].pair.first, gData_020046bc[index].pair.second);
-  Actor_SetMovementTypeById(party->currentOwner, gData_02004028);
-  wait(12);
-  Sound_Play(123);
+  MapGrid_AnimateCells(gData_020046bc[index].value, gData_020046bc[index].pair.first, gData_020046bc[index].pair.second);
+  Actor_SetScript(party->currentOwner, gData_02004028);
+  System_Wait(12);
+  Event_PlaySound(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(*exit);
+  FieldEvent_SetExitRequest(*exit);
 }

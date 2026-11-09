@@ -46,7 +46,7 @@ void Func_02000c4c(struct Actor *object, struct SparkleWork *work) {
   s32 offset;
 
   work->vramEntry = Resource_FindFreeEntry();
-  VramCache_Load(work->vramEntry, 256, gData_02000f44);
+  Vram_Load(work->vramEntry, 256, gData_02000f44);
   work->unka6 = 0;
   work->unka0 = 999;
   work->unka2 = 999;

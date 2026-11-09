@@ -1,0 +1,330 @@
+/// @file
+/// Djinn: definitions, setting and standby, and their counts.
+// Part of game.c.
+
+#include "../game_internal.h"
+
+s32 GameFlag_Test(s32);
+
+const u16 *Djinn_GetDefinition(u32 group, u32 index) {
+  s32 entry;
+
+  entry = 0;
+  if (group <= 3 && index <= 19) {
+    entry = group * 20 + index;
+  }
+  return gDjinn_Definitions[entry];
+}
+
+s32 Djinn_AddToLeastLoadedOwner(s32 index, s32 bit) {
+  s32 flag = bit + index * 20 + 48;
+  s32 bestNo = 0;
+  s32 bestVal = 999;
+  s32 count;
+  s32 result;
+  u8 *owners;
+
+  if (GameFlag_Test(flag) != 0)
+    return -1;
+
+  result = Party_CountActiveOwners();
+  if (bestNo < result) {
+    struct MainRoutineWork *party = &gMainRoutineWork;
+
+    owners = party->activeOwners;
+    count = result;
+    do {
+      struct OwnerDjinnState *state = Unit_Get(*owners);
+
+      if (state->counts.banks.owned[index] <= 9) {
+        u8 *p = state->counts.banks.owned;
+        s32 value = 0;
+        s32 i = 3;
+
+        do {
+          u8 byte = *p;
+          p++;
+          value += byte;
+          i--;
+        } while (i >= 0);
+
+        if (bestVal > value) {
+          bestVal = value;
+          bestNo = *owners;
+        }
+      }
+      count--;
+      owners++;
+    } while (count != 0);
+  }
+
+  if (bestVal == 999)
+    return -2;
+
+  Djinn_AddToOwner(bestNo, index, bit);
+  DjinnRecovery_AddStandby(bestNo, index, bit);
+  GameFlag_SetBit(flag);
+  return bestNo;
+}
+
+s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit) {
+  struct OwnerDjinnState *state = Unit_Get(owner);
+  u32 owned;
+
+  if (state->counts.slots[index] > 9)
+    return -1;
+  owned = state->flags.slots[index];
+  if ((owned & (1 << bit)) != 0)
+    return -1;
+  state->counts.slots[index]++;
+  state->flags.slots[index] |= 1 << bit;
+  return 0;
+}
+
+struct TradeOfferList {
+  struct TradeOffer offers[72];
+  s32 count;
+};
+
+struct TradeOfferTable {
+  u8 unk00[8];
+  struct TradeOfferList list;
+};
+
+/// Whether the djinn can be set: it is owned, fewer than ten are set, it is
+/// not set already, and no trade offer holds it unless the offer has run out.
+s32 Djinn_IsReady(s32 owner, s32 index, s32 bit) {
+  struct OwnerDjinnState *state = Unit_Get(owner);
+  struct TradeOfferList *table;
+  s32 i;
+  s32 status;
+  u32 owned;
+
+  if (state->counts.banks.owned[index] == 0)
+    return 0;
+  if (state->counts.banks.active[index] > 9) {
+    state->counts.banks.active[index] = 10;
+    return 0;
+  }
+  owned = state->flags.banks.owned[index];
+  if ((owned & (1 << bit)) == 0)
+    return 0;
+  if ((state->flags.banks.active[index] & (1 << bit)) != 0)
+    return 0;
+
+  table = &((struct TradeOfferTable *)Djinn_GetRecoveryTable(
+                (owner < 0 || owner > 7)))
+               ->list;
+  for (i = 0; i < table->count; i++) {
+    if (index == table->offers[i].element && bit == table->offers[i].djinn)
+      break;
+  }
+  if (i == table->count ||
+      ((status = table->offers[i].status) <= 0 && status != -2))
+    return 1;
+  return 0;
+}
+
+u32 Djinn_IsActive(s32 owner, s32 index, s32 bit) {
+  s32 value =
+      ((struct OwnerDjinnState *)Unit_Get(owner))->flags.banks.active[index] &
+      (1 << bit);
+
+  return (u32)(-value | value) >> 31;
+}
+
+s32 Djinn_Activate(s32 owner, s32 index, s32 bit) {
+  struct OwnerDjinnState *state = Unit_Get(owner);
+  s32 result = Djinn_IsReady(owner, index, bit);
+
+  if (result != 0) {
+    u32 owned = state->flags.banks.owned[index];
+    if (owned & (1 << bit)) {
+      state->flags.banks.active[index] |= 1 << bit;
+    } else {
+      return 0;
+    }
+    state->counts.banks.active[index]++;
+    Unit_UpdateClass(owner);
+  }
+  return result;
+}
+
+u32 Djinn_Deactivate(s32 owner, s32 index, s32 bit) {
+  struct OwnerDjinnState *state = Unit_Get(owner);
+  u32 present = Djinn_IsActive(owner, index, bit);
+
+  if (present != 0) {
+    state->counts.banks.active[index]--;
+    state->flags.banks.active[index] &= ~(1 << bit);
+    Unit_UpdateClass(owner);
+  }
+  return present;
+}
+
+s32 DjinnRecovery_Remove(s32 owner, s32 index, s32 bit) {
+  struct TradeOfferList *table;
+  s32 found = 0;
+  s32 i;
+
+  table = &((struct TradeOfferTable *)Djinn_GetRecoveryTable(
+                (owner < 0 || owner > 7)))
+               ->list;
+  for (i = 0; i < table->count; i++) {
+    if (index == table->offers[i].element && bit == table->offers[i].djinn) {
+      table->count--;
+      found = 1;
+      break;
+    }
+  }
+  for (; i < table->count; i++)
+    table->offers[i] = table->offers[i + 1];
+  return found;
+}
+
+u32 *DjinnRecovery_AddStandby(u32 owner, u32 element, u32 djinn) {
+  struct TradeOfferState *state;
+  u8 *entries;
+  struct TradeOffer *entry;
+  u32 *count_p;
+  u32 count;
+  u32 offset;
+
+  DjinnRecovery_Remove(owner, element, djinn);
+  state = Djinn_GetRecoveryTable(owner > 7);
+  entries = (u8 *)state->offers;
+  count_p = &state->count;
+  count = *count_p;
+  /* FAKEMATCH: byte strides preserve the first store's order and registers. */
+  offset = count * sizeof(struct TradeOffer);
+  entries[offset] = element;
+  count++;
+  entry = (struct TradeOffer *)(entries + offset);
+  entry->djinn = djinn;
+  entry->owner = owner;
+  entry->status = TRADE_OFFER_PENDING;
+  *count_p = count;
+  return count_p;
+}
+
+s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target) {
+  struct OwnerDjinnState *state = Unit_Get(source);
+  u32 mask;
+  u32 present;
+
+  if ((state->flags.banks.owned[index] & (mask = 1U << bit)) != 0) {
+    present = Djinn_IsActive(source, index, bit);
+    if (Djinn_AddToOwner(target, index, bit) == 0) {
+      Djinn_Deactivate(source, index, bit);
+      state->flags.banks.owned[index] &= ~mask;
+      state->counts.banks.owned[index]--;
+
+      if (present != 0) {
+        Djinn_Activate(target, index, bit);
+      } else {
+        DjinnRecovery_Remove(source, index, bit);
+        DjinnRecovery_AddStandby(target, index, bit);
+      }
+      return 0;
+    }
+  }
+  return -1;
+}
+
+s32 DjinnRecovery_CountStandby(u8 *counts) {
+  s32 found = 0;
+  struct TradeOfferState *state = Djinn_GetRecoveryTable(0);
+  struct TradeOffer *entry = state->offers;
+  s32 index;
+
+  if (counts != 0) {
+    u8 *slot;
+
+    slot = counts + 3;
+    *slot = found;
+    slot = counts + 2;
+    *slot = found;
+    slot = counts + 1;
+    *slot = found;
+    counts[0] = found;
+  }
+  index = 0;
+  if (state->count != 0) {
+    do {
+      if (entry->status == TRADE_OFFER_PENDING) {
+        if (counts != 0)
+          counts[entry->element]++;
+        found++;
+      }
+      index++;
+      entry++;
+    } while (index != state->count);
+  }
+  return found;
+}
+
+u16 Djinn_GetDefinitionHeader(u32 group, u32 index) {
+  return *Djinn_GetDefinition(group, index);
+}
+
+s32 Owner_SumDjinnCounts(s32 owner, s32 index) {
+  struct OwnerDjinnState *state;
+  s32 result;
+
+  state = Unit_Get(owner);
+  if (index == -1) {
+    result = state->counts.banks.owned[0];
+    result += state->counts.banks.owned[1];
+    result += state->counts.banks.owned[2];
+    result += state->counts.banks.owned[3];
+  } else {
+    result = state->counts.banks.owned[index];
+  }
+  return result;
+}
+
+s32 Party_SumDjinnCounts(s32 index) {
+  u16 owners[16];
+  s32 result = 0;
+  s32 count = Party_ListActiveOwners((s16 *)owners);
+
+  if (result < count) {
+    u16 *owner = owners;
+    s32 remaining = count;
+
+    do {
+      struct OwnerDjinnState *state = Unit_Get(*owner++);
+
+      if (index == -1) {
+        result += state->counts.banks.owned[0];
+        result += state->counts.banks.owned[1];
+        result += state->counts.banks.owned[2];
+        result += state->counts.banks.owned[3];
+      } else {
+        result += state->counts.banks.owned[index];
+      }
+      remaining--;
+    } while (remaining != 0);
+  }
+  return result;
+}
+
+void Djinn_ActivateOfferedForParty(void) {
+  u16 owners[16];
+  s32 count = Party_ListActiveOwners((s16 *)owners);
+  s32 i;
+  s32 element;
+  s32 djinn;
+
+  DjinnRecovery_CountDownTwentyFar();
+  for (i = 0; i < count; i++) {
+    for (element = 0; element <= 3; element++) {
+      for (djinn = 0; djinn <= 19; djinn++) {
+        if (Djinn_IsReady(owners[i], element, djinn)) {
+          Djinn_Activate(owners[i], element, djinn);
+          DjinnRecovery_Remove(owners[i], element, djinn);
+        }
+      }
+    }
+  }
+}

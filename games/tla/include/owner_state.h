@@ -59,7 +59,9 @@ struct TradeOfferState {
 };
 
 struct ClassDefinition {
-  u8 unk00[0x50];
+  s32 series;     ///< the series Class_Determine picks a class from
+  u8 required[4]; ///< each element's level the class needs, in tens
+  u8 unk08[0x48];
   u8 weakEffects[4];
 };
 

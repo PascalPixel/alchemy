@@ -400,7 +400,7 @@ static void ValeCave_MoveWestCratesIntoWater(void) {
     Actor_Get(ACTOR_WEST_CRATES)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     GameFlag_Set(FLAG_VALE_CAVE_WEST_CRATES_SUNK);
     Actor_Get(ACTOR_WEST_CRATES)->y.fixed = -PIXELS(8);
-    Import_ActorSetAnimation(ACTOR_WEST_CRATES, 2);
+    Actor_SetAnimation(ACTOR_WEST_CRATES, 2);
     Actor_Release(leftEffect);
     Actor_Release(rightEffect);
     Event_Wait(30);
@@ -444,7 +444,7 @@ static void ValeCave_MoveEastCratesIntoWater(void) {
     Actor_Get(ACTOR_EAST_CRATES)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     GameFlag_Set(FLAG_VALE_CAVE_EAST_CRATES_SUNK);
     Actor_Get(ACTOR_EAST_CRATES)->y.fixed = -PIXELS(8);
-    Import_ActorSetAnimation(ACTOR_EAST_CRATES, 2);
+    Actor_SetAnimation(ACTOR_EAST_CRATES, 2);
     Actor_Release(leftEffect);
     Actor_Release(rightEffect);
     Event_Wait(30);
@@ -622,7 +622,7 @@ static void ValeCave_KiteKeepsAway(void) {
 /// Reached by Halt on Kite in the second room.
 static void ValeCave_HaltKite(void) {
   Event_Start();
-  Import_ActorSetAnimation(ACTOR_KITE, 0);
+  Actor_SetAnimation(ACTOR_KITE, 0);
   Event_End();
 }
 
@@ -643,20 +643,20 @@ static void ValeCave_PushLogOverEdge(void) {
     Actor_MoveAndRedraw(probe);
     // At the ledge's edge (column 17) the log slides west and drops.
     if ((probe.position.x >> 20) == 17) {
-      Import_ActorSetAnimation(probe.actorSlot, 3);
+      Actor_SetAnimation(probe.actorSlot, 3);
       stationaryMotion = 0;
       Actor_Get(probe.actorSlot)->motionFlags = stationaryMotion;
       movedLog = Actor_Get(probe.actorSlot);
       movedLog->bounce = stationaryMotion;
       Actor_SetDestinationOffset(probe.actorSlot, -12, 0);
       Actor_WaitForMoveById(probe.actorSlot);
-      Import_ActorSetAnimation(probe.actorSlot, 3);
+      Actor_SetAnimation(probe.actorSlot, 3);
       Actor_SetSpritePriority(ACTOR_EAST_LOG, 3);
       Actor_Get(probe.actorSlot)->motionFlags =
           ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       Actor_SetDestinationOffset(probe.actorSlot, -6, 0);
       ValeCave_WaitForActorLanding(Actor_Get(probe.actorSlot));
-      Import_ActorSetAnimation(probe.actorSlot, 8);
+      Actor_SetAnimation(probe.actorSlot, 8);
       {
         struct Actor *movedLog = Actor_Get(probe.actorSlot);
 
@@ -693,29 +693,29 @@ static void ValeCave_PushLogOffLedge(void) {
   Event_Start();
   Event_Wait(10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 10);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(15);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 8, 0);
   Event_Wait(4);
   Event_PlaySound(SE_STOP_ACTION_SE);
   Sound_Play(SE_HEAVY_MOVE);
   Actor_SetSpeed(ACTOR_WEST_LOG, PIXELS(1) / 2, PIXELS(1) / 10);
-  Import_ActorSetAnimation(ACTOR_WEST_LOG, 2);
+  Actor_SetAnimation(ACTOR_WEST_LOG, 2);
   stationaryMotion = 0;
   Actor_Get(ACTOR_WEST_LOG)->motionFlags = stationaryMotion;
   pushedLog = Actor_Get(ACTOR_WEST_LOG);
   pushedLog->bounce = stationaryMotion;
   Actor_SetDestinationOffset(ACTOR_WEST_LOG, 12, 0);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_WaitForMoveById(ACTOR_WEST_LOG);
   Sound_Play(SE_STOP_ACTION_SE);
   Sound_Play(SE_HEAVY_STOP);
-  Import_ActorSetAnimation(ACTOR_WEST_LOG, 3);
+  Actor_SetAnimation(ACTOR_WEST_LOG, 3);
   Actor_Get(ACTOR_WEST_LOG)->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_SetDestinationOffset(ACTOR_WEST_LOG, 6, 0);
   ValeCave_WaitForActorLanding(Actor_Get(ACTOR_WEST_LOG));
-  Import_ActorSetAnimation(ACTOR_WEST_LOG, 8);
+  Actor_SetAnimation(ACTOR_WEST_LOG, 8);
   Actor_SetSpritePriority(ACTOR_WEST_LOG, 3);
   Actor_Get(ACTOR_WEST_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   PushedActor_FillGridAttributeRectangle(0, 12, 16, 1, 4, CELL_BEHAVIOR_NORMAL);
@@ -738,12 +738,12 @@ static void ValeCave_PushLogNorth(void) {
   if (PushedActor_FindClearPosition(&probe) != 0) {
     Actor_MoveAndRedraw(probe);
     // Slide into the new cell before replacing the cell behavior footprint.
-    Import_ActorSetAnimation(ACTOR_SOUTH_LOG, 3);
+    Actor_SetAnimation(ACTOR_SOUTH_LOG, 3);
     Actor_SetSpeed(ACTOR_SOUTH_LOG, PIXELS(1) / 4, PIXELS(1) / 2);
     Actor_SetDestinationOffset(ACTOR_SOUTH_LOG, 0, -16);
     Event_Wait(45);
     Sound_Play(SE_LOG_FALL);
-    Import_ActorSetAnimation(ACTOR_SOUTH_LOG, 8);
+    Actor_SetAnimation(ACTOR_SOUTH_LOG, 8);
     {
       struct Actor *slidingLog = Actor_Get(ACTOR_SOUTH_LOG);
       s32 clearedRows = 2;
@@ -989,8 +989,8 @@ static void ValeCave_ApplyEntryState(void) {
 ///
 /// Reached by stepping on cell behavior 20 or 21 in the second room.
 static void ValeCave_TouchRidingLog(void) {
-  Import_ActorSetAnimation(ACTOR_RIDING_LOG, 1);
-  Import_ActorSetAnimation(ACTOR_RIDING_LOG, 2);
+  Actor_SetAnimation(ACTOR_RIDING_LOG, 1);
+  Actor_SetAnimation(ACTOR_RIDING_LOG, 2);
 }
 
 // The lifetimes FieldEffect_Spawn gives its effects through

@@ -181,7 +181,7 @@ static void GomaCaveEntrance_PushWestPillar(void) {
 
   work = gFieldWork;
   Event_Start();
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   Actor_SetSpeed(ACTOR_WEST_PILLAR, PIXELS(1) / 5, PIXELS(1) / 10);
@@ -193,7 +193,7 @@ static void GomaCaveEntrance_PushWestPillar(void) {
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_WaitForMoveById(ACTOR_WEST_PILLAR);
   Event_Wait(20);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   GomaCaveEntrance_MoveWestPillar();
   Scene_PlayQueuedMusic();
   Event_End();
@@ -224,7 +224,7 @@ s32 Scene_Initialize(void) {
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   Event_Wait(10);
   Scene_QueueMusic(SE_AMBIENT_WATER);
-  Import_ActorSetAnimation(ACTOR_SUNKEN_STUMP, STUMP_ANIMATION_SINK);
+  Actor_SetAnimation(ACTOR_SUNKEN_STUMP, STUMP_ANIMATION_SINK);
   Actor_Get(ACTOR_SUNKEN_STUMP)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   {
     struct Actor *record = Actor_Get(ACTOR_STUMP);
@@ -244,7 +244,7 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED) != 0) {
     Actor_SetPosition(ACTOR_STUMP, PIXELS(136), PIXELS(196));
     Actor_Get(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    Import_ActorSetAnimation(ACTOR_STUMP, STUMP_ANIMATION_SINK);
+    Actor_SetAnimation(ACTOR_STUMP, STUMP_ANIMATION_SINK);
     MapGrid_CopyCellAttributes(39, 12, 3, 1, 8, 12);
     MapGrid_CopyCellAttributes(43, 11, 3, 1, 12, 11);
   }
@@ -299,7 +299,7 @@ static void GomaCaveEntrance_IvanRejoins(void) {
   Event_Wait(20);
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     // Garet falls back into line.
-    Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
+    Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
       Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
@@ -337,7 +337,7 @@ static void GomaCaveEntrance_IvanRejoins(void) {
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
     Event_Wait(20);
     Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
-    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
@@ -358,7 +358,7 @@ static void GomaCaveEntrance_IvanRejoins(void) {
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     Event_Wait(20);
     Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
-    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
@@ -366,7 +366,7 @@ static void GomaCaveEntrance_IvanRejoins(void) {
     Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
     // "I have a great idea. Leave it to me!": Whirlwind.
     GomaCaveEntrance_WhirlwindOnStumpIvy();
-    Import_ActorSetAnimation(ACTOR_IVAN, ANIM_STAND);
+    Actor_SetAnimation(ACTOR_IVAN, ANIM_STAND);
     Event_Wait(20);
 #if TBS_PATCH_1
     Scene_PlayQueuedMusic();
@@ -444,7 +444,7 @@ static void GomaCaveEntrance_IvanRejoins(void) {
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Event_Wait(20);
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 40);
-    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     Event_Wait(20);
     // "Please, allow me to join your quest.": Ivan rejoins with his rod.
@@ -464,8 +464,8 @@ static void GomaCaveEntrance_IvanRejoins(void) {
     Actor_FaceActor(ACTOR_GARET, ACTOR_IVAN, 0);
     Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
     Event_Wait(20);
-    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Event_Wait(50);
     Actor_SetSpeed(ACTOR_GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
@@ -589,7 +589,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
                         EFFECT_SCALE_TO_TARGET,
                     &params);
   Sound_Play(SE_CAST);
-  Import_ActorSetAnimation(stumpId, STUMP_ANIMATION_SPLASH);
+  Actor_SetAnimation(stumpId, STUMP_ANIMATION_SPLASH);
   MapGrid_WaitForShakeToSettle();
 }
 

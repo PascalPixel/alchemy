@@ -806,7 +806,7 @@ static void ValePrologue_DoraSendsIsaacToThePlaza(void) {
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_KYLE, ANIM_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_KYLE, 0);
-  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
+  Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_KYLE, FACING_SOUTH, 0);
   Event_ShowMessageThenWait(ACTOR_KYLE, 0, 20);
@@ -1182,7 +1182,7 @@ static void ValePrologue_BumpIntoShovingMan(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 282, 855);
   Actor_SetAnimation(ACTOR_SHOVING_MAN, ANIM_STAND);
   Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
-  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_SHOVING_MAN, 0);
+  Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_SHOVING_MAN, 0);
   Scene_PlayQueuedMusic();
   Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -1271,7 +1271,7 @@ static void ValePrologue_GaretLeavesHisChest(void) {
   s32 agreedToLeaveBelongings;
 
   Event_OpenMessage(ACTOR_GARET_CHILD, 0);
-  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
+  Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
   agreedToLeaveBelongings = 0;
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_SetMessageId(MsgValeThinkForgetThings);
@@ -1338,7 +1338,7 @@ static void ValePrologue_UnusedGaretJoinsIsaac(void) {
     Actor_SetSpeed(ACTOR_GARET_CHILD, PIXELS(2), PIXELS(1));
     Actor_RunScriptAndWait(ACTOR_GARET_CHILD,
                            gValePrologue_UnusedGaretRunsUpScript);
-    Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
     Event_Wait(30);
     Actor_SetScript(ACTOR_GARET_CHILD, gValePrologue_UnusedGaretPantingScript);
     Event_ShowMessage(ACTOR_GARET_CHILD, 0);
@@ -1386,7 +1386,7 @@ static void ValePrologue_WarnAboutMtAleph(void) {
   }
   Actor_SetSpeed(ACTOR_GARET_CHILD, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_GARET_CHILD, 281, 507);
-  Actor_TurnToFaceEachOther(ACTOR_GARET_CHILD, ACTOR_PARTY_LEADER, 0);
+  Actor_FaceEachOther(ACTOR_GARET_CHILD, ACTOR_PARTY_LEADER, 0);
   Event_Wait(30);
   Event_SetMessageId(MsgValeNorthLeadsToMtAleph);
   Event_ShowMessage(ACTOR_GARET_CHILD, 0);
@@ -1423,7 +1423,7 @@ static void ValePrologue_GaretCommentsOnBlockedPath(s32 x, s32 y) {
   }
   Actor_SetSpeed(ACTOR_GARET_CHILD, speed, acceleration);
   Actor_WalkToAndWait(ACTOR_GARET_CHILD, x, y);
-  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
+  Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
   Event_Wait(20);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1510,7 +1510,7 @@ static void ValePrologue_WatchBoulderFall(void) {
     Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_NORTH, 20);
     FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
     FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(331), 1);
-    FieldCamera_WaitForArrival();
+    FieldCamera_WaitForMove();
     for (i = 0; i < 40; i++) {
       ValePrologue_FlashPaletteAndSpawnEffects(Actor_Get(ACTOR_ELDER_EAST));
       ValePrologue_FlashPaletteAndSpawnEffects(Actor_Get(ACTOR_ELDER_WEST));
@@ -1599,7 +1599,7 @@ static void ValePrologue_WatchBoulderFall(void) {
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
     FieldCamera_SetSpeed(PIXELS(6), PIXELS(3) / 4);
     FieldCamera_MoveTo(PIXELS(84), -1, PIXELS(564), 1);
-    FieldCamera_WaitForArrival();
+    FieldCamera_WaitForMove();
     Scene_PlayQueuedMusic();
     Actor_FaceActor(ACTOR_GARET_CHILD, ACTOR_PARTY_LEADER, 0);
     Event_Wait(20);
@@ -1745,13 +1745,13 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
     }
   }
   Actor_WalkToAndWait(ACTOR_GARET_CHILD, 132, 1094);
-  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
+  Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_SOUTH, 20);
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(1232), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_KYLE, 2);
   Event_ShowMessageThenWait(ACTOR_KYLE, 0, 10);
@@ -1762,7 +1762,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 10);
   FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(1253), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(20);
   Sound_Play(SE_HEAVY_IMPACT);
   Actor_Jump(ACTOR_FELIX_CHILD, 4, 0);
@@ -1799,7 +1799,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
   Actor_RunRepeatedMotion(ACTOR_JENNA_CHILD, 2);
   FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
   FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(1232), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Actor_SetAttachedEffect(ACTOR_JENNA_CHILD,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_DORA,
@@ -1814,7 +1814,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
   Actor_SetDestination(ACTOR_JENNA_CHILD, 227, 1201);
   Event_Wait(90);
   FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(1253), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Actor_SetPosition(ACTOR_FELIX_CHILD, PIXELS(243), PIXELS(1277));
   wait(1);
   Sound_Play(SE_DRIP);
@@ -1830,11 +1830,11 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
   Event_Wait(20);
   FieldCamera_SetSpeedParameters(PIXELS(8) / 5, PIXELS(1) / 5);
   FieldCamera_MoveWithinMapBounds(PIXELS(216), -1, PIXELS(1232), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Actor_RunRepeatedMotion(ACTOR_JENNAS_FATHER, 2);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_JENNAS_FATHER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  Actor_TurnToFaceEachOther(ACTOR_JENNAS_FATHER, ACTOR_KYLE, 0);
+  Actor_FaceEachOther(ACTOR_JENNAS_FATHER, ACTOR_KYLE, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_KYLE, 2);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_KYLE, 0);
@@ -1887,7 +1887,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
   Actor_ShowEmote(ACTOR_JENNAS_MOTHER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_JENNA_CHILD, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 10);
-  Actor_TurnToFaceEachOther(ACTOR_JENNAS_FATHER, ACTOR_JENNAS_MOTHER, 0);
+  Actor_FaceEachOther(ACTOR_JENNAS_FATHER, ACTOR_JENNAS_MOTHER, 0);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_KYLE, FACING_EAST, 10);
@@ -1895,7 +1895,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
   Actor_FaceDirection(ACTOR_JENNAS_MOTHER, FACING_WEST, 10);
   Actor_SetAnimation(ACTOR_JENNAS_FATHER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_JENNAS_MOTHER, ANIM_NOD);
-  Actor_TurnToFaceEachOther(ACTOR_KYLE, ACTOR_DORA, 0);
+  Actor_FaceEachOther(ACTOR_KYLE, ACTOR_DORA, 0);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_KYLE, 1);
   Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_KYLE, 0, 10);
@@ -2055,7 +2055,7 @@ static void ValePrologue_DoraGoesForHelp(void) {
   }
   Actor_SetScript(ACTOR_DORA, gValePrologue_DoraLeavesForHelp);
   Event_Wait(90);
-  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
+  Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
   Event_Wait(40);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET_CHILD, ANIM_NOD);
@@ -2082,7 +2082,7 @@ static void ValePrologue_TalkAboutSavingFelix(void) {
   Event_Start();
   Actor_SetAnimation(ACTOR_KYLE, ANIM_STAND);
   Event_Wait(10);
-  Actor_TurnToFaceEachOther(ACTOR_KYLE, ACTOR_PARTY_LEADER, 20);
+  Actor_FaceEachOther(ACTOR_KYLE, ACTOR_PARTY_LEADER, 20);
   if (GameFlag_Get(FLAG_VALE_STORM_KYLE_GREETED_ISAAC) != 0) {
     Event_SetMessageId(MsgValeTwoDontEnough);
     Event_ShowMessageThenWait(ACTOR_KYLE, 0, 10);
@@ -2177,7 +2177,7 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
       Event_Wait(60);
       FieldCamera_SetSpeedParameters(PIXELS(3) / 5, PIXELS(3) / 40);
       FieldCamera_MoveTo(PIXELS(187), -1, PIXELS(1328), 1);
-      FieldCamera_WaitForArrival();
+      FieldCamera_WaitForMove();
       Event_Wait(40);
       Actor_RunRepeatedMotion(ACTOR_JENNA_CHILD, 2);
       Event_ShowMessageThenWait(ACTOR_JENNA_CHILD, 0, 20);
@@ -2206,9 +2206,8 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
       Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 20);
       Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
       Event_ShowMessage(ACTOR_DORA, 0);
-      Actor_TurnToFaceEachOther(ACTOR_JENNA_CHILD, ACTOR_EXHAUSTED_STRONGMAN,
-                                0);
-      Actor_TurnToFaceEachOther(ACTOR_GARET_CHILD, ACTOR_PARTY_LEADER, 0);
+      Actor_FaceEachOther(ACTOR_JENNA_CHILD, ACTOR_EXHAUSTED_STRONGMAN, 0);
+      Actor_FaceEachOther(ACTOR_GARET_CHILD, ACTOR_PARTY_LEADER, 0);
       Event_Wait(40);
       Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
       Actor_FaceActor(ACTOR_GARET_CHILD, ACTOR_DORA, 0);
@@ -2801,7 +2800,7 @@ static void ValePrologue_GaretFollowsIsaac(void) {
   wait(1);
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   FieldCamera_MoveTo(PIXELS(162), 0, PIXELS(1285), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_GARET_CHILD, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_GARET_CHILD, 0,

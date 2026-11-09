@@ -480,13 +480,12 @@ static void MogallForest_FirstArea_PushLog(void) {
     if (probe.actorSlot == ACTOR_FIRST_AREA_RIVER_LOG &&
         (probe.position.z >> 20) == 26) {
       GameFlag_Set(FLAG_MOGALL_FOREST_FIRST_AREA_LOG_ROLLED);
-      Import_ActorSetAnimation(ACTOR_FIRST_AREA_RIVER_LOG,
-                               MOGALL_FOREST_LOG_ROLLING);
+      Actor_SetAnimation(ACTOR_FIRST_AREA_RIVER_LOG, MOGALL_FOREST_LOG_ROLLING);
       Actor_SetSpeed(ACTOR_FIRST_AREA_RIVER_LOG, PIXELS(1) / 4, PIXELS(1) / 2);
       Actor_OffsetPositionAndResetMotion(ACTOR_FIRST_AREA_RIVER_LOG, 0, -16);
       Event_Wait(45);
-      Import_ActorSetAnimation(ACTOR_FIRST_AREA_RIVER_LOG,
-                               MOGALL_FOREST_LOG_FALLING_IN);
+      Actor_SetAnimation(ACTOR_FIRST_AREA_RIVER_LOG,
+                         MOGALL_FOREST_LOG_FALLING_IN);
       Sound_Play(SE_LOG_FALL);
       Actor_SetSpritePriority(ACTOR_FIRST_AREA_RIVER_LOG, 1);
       Actor_Get(ACTOR_FIRST_AREA_RIVER_LOG)->priorityFlags =
@@ -535,8 +534,8 @@ static void MogallForest_FirstArea_JumpSouth(void) {
   if (MogallForest_TryJumpLeaderTo(&position) != 0) {
     Event_Start();
     *motionFlags = 0;
-    Import_ActorSetAnimation(ACTOR_FIRST_AREA_RIVER_LOG,
-                             MOGALL_FOREST_LOG_STEPPED_ON);
+    Actor_SetAnimation(ACTOR_FIRST_AREA_RIVER_LOG,
+                       MOGALL_FOREST_LOG_STEPPED_ON);
     actor->y.fixed += -PIXELS(1);
     actor->groundHeight += -PIXELS(1);
     wait(2);
@@ -557,7 +556,7 @@ static void MogallForest_FirstArea_JumpSouth(void) {
 /// "The broken sign reads: North: Fuchin Temple / South: Mogall Prairie..."
 static void MogallForest_ReadBrokenSign(void) {
   Event_Start();
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldMessage_Show(MSGNO(MsgMogallForestBrokenSign), 1);
   Event_End();
 }
@@ -716,12 +715,12 @@ static void MogallForest_SecondArea_PushLog(void) {
 
       attributes = 0;
       GameFlag_Set(FLAG_MOGALL_FOREST_SECOND_AREA_LOG_ROLLED);
-      Import_ActorSetAnimation(ACTOR_SECOND_AREA_RIVER_LOG,
-                               MOGALL_FOREST_LOG_ROLLING);
+      Actor_SetAnimation(ACTOR_SECOND_AREA_RIVER_LOG,
+                         MOGALL_FOREST_LOG_ROLLING);
       Actor_OffsetPositionAndResetMotion(ACTOR_SECOND_AREA_RIVER_LOG, -16, 6);
       Event_Wait(30);
-      Import_ActorSetAnimation(ACTOR_SECOND_AREA_RIVER_LOG,
-                               MOGALL_FOREST_LOG_FALLING_IN);
+      Actor_SetAnimation(ACTOR_SECOND_AREA_RIVER_LOG,
+                         MOGALL_FOREST_LOG_FALLING_IN);
       Sound_Play(SE_LOG_FALL);
 
       Actor_Get(ACTOR_SECOND_AREA_RIVER_LOG)->priorityFlags =
@@ -950,10 +949,10 @@ static void MogallForest_ThirdArea_PushLog(void) {
         Event_End();
         return;
       }
-      Import_ActorSetAnimation(probe.actorSlot, MOGALL_FOREST_LOG_ROLLING);
+      Actor_SetAnimation(probe.actorSlot, MOGALL_FOREST_LOG_ROLLING);
       Actor_OffsetPositionAndResetMotion(probe.actorSlot, 18, 6);
       Event_Wait(30);
-      Import_ActorSetAnimation(probe.actorSlot, MOGALL_FOREST_LOG_FALLING_IN);
+      Actor_SetAnimation(probe.actorSlot, MOGALL_FOREST_LOG_FALLING_IN);
       Sound_Play(SE_LOG_FALL);
       Actor_Get(probe.actorSlot)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     } else {
@@ -985,8 +984,8 @@ static void MogallForest_ThirdArea_JumpWest(void) {
     Event_Start();
 
     *motionFlags = 0;
-    Import_ActorSetAnimation(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG,
-                             MOGALL_FOREST_LOG_STEPPED_ON);
+    Actor_SetAnimation(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG,
+                       MOGALL_FOREST_LOG_STEPPED_ON);
 
     leader->y.fixed += -PIXELS(1);
     leader->groundHeight += -PIXELS(1);
@@ -1464,8 +1463,8 @@ s32 MogallForest_Initialize(void) {
       }
       wait(1);
       Actor_SetPosition(ACTOR_FIRST_AREA_RIVER_LOG, PIXELS(528), PIXELS(408));
-      Import_ActorSetAnimation(ACTOR_FIRST_AREA_RIVER_LOG,
-                               MOGALL_FOREST_LOG_IN_RIVER);
+      Actor_SetAnimation(ACTOR_FIRST_AREA_RIVER_LOG,
+                         MOGALL_FOREST_LOG_IN_RIVER);
       MapGrid_CopyCellAttributes(38, 27, 4, 2, 31, 25);
       Actor_Get(ACTOR_FIRST_AREA_RIVER_LOG)->priorityFlags =
           ACTOR_PRIORITY_UNDERFOOT;
@@ -1504,8 +1503,8 @@ s32 MogallForest_Initialize(void) {
         wait(1);
         Actor_SetPosition(ACTOR_SECOND_AREA_RIVER_LOG, PIXELS(552),
                           PIXELS(510));
-        Import_ActorSetAnimation(ACTOR_SECOND_AREA_RIVER_LOG,
-                                 MOGALL_FOREST_LOG_IN_RIVER);
+        Actor_SetAnimation(ACTOR_SECOND_AREA_RIVER_LOG,
+                           MOGALL_FOREST_LOG_IN_RIVER);
         Actor_Get(ACTOR_SECOND_AREA_RIVER_LOG)->priorityFlags =
             ACTOR_PRIORITY_UNDERFOOT;
         MapGrid_CopyCellAttributes(44, 30, 2, 4, 34, 30);
@@ -1594,8 +1593,8 @@ s32 MogallForest_Initialize(void) {
         Scene_RedrawActorFootprint(ACTOR_THIRD_AREA_NORTH_RIVER_LOG);
       } else {
         wait(1);
-        Import_ActorSetAnimation(ACTOR_THIRD_AREA_NORTH_RIVER_LOG,
-                                 MOGALL_FOREST_LOG_IN_RIVER);
+        Actor_SetAnimation(ACTOR_THIRD_AREA_NORTH_RIVER_LOG,
+                           MOGALL_FOREST_LOG_IN_RIVER);
         Actor_SetPosition(ACTOR_THIRD_AREA_NORTH_RIVER_LOG, PIXELS(698),
                           PIXELS(398));
         Actor_Get(ACTOR_THIRD_AREA_NORTH_RIVER_LOG)->priorityFlags |=
@@ -1610,8 +1609,8 @@ s32 MogallForest_Initialize(void) {
         Scene_RedrawActorFootprint(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG);
       } else {
         wait(1);
-        Import_ActorSetAnimation(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG,
-                                 MOGALL_FOREST_LOG_IN_RIVER);
+        Actor_SetAnimation(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG,
+                           MOGALL_FOREST_LOG_IN_RIVER);
         Actor_SetPosition(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG, PIXELS(666),
                           PIXELS(550));
         Actor_Get(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG)->priorityFlags =

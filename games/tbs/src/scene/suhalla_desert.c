@@ -321,7 +321,7 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
     Event_Start();
     Actor_SetAttachedEffect(leaderActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-    Import_ActorSetAnimation(leaderActorId, ANIM_LEADER_LOOK_AROUND);
+    Actor_SetAnimation(leaderActorId, ANIM_LEADER_LOOK_AROUND);
     storm = Actor_Get(stormIdCopy);
     if (storm != 0) {
       Actor_SetDestination(leaderActorId, storm->x.part.pixel,
@@ -447,7 +447,7 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, (leaderX + 8), (leaderZ - 40));
     Event_Wait(1);
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-    Import_ActorSetAnimation(ACTOR_IODEM, ANIM_STAND);
+    Actor_SetAnimation(ACTOR_IODEM, ANIM_STAND);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Event_SetMessageId(MsgSuhallaSandstorm);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
@@ -464,7 +464,7 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
-    Import_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
+    Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if ((s32)leader != 0) {
       Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
@@ -560,7 +560,7 @@ static void SuhallaDesert_IodemAsksWhetherToPressOn(void) {
     Actor_WalkToAndWait(ACTOR_IODEM, 440, 1256);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Import_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
+    Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
       Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,

@@ -599,9 +599,9 @@ static void BabiPalace_OfferCloakBall(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Event_Wait(30);
     Actor_SetPosition(ACTOR_CLOAK_BALL, 0, 0);
-    ItemDisplay_ShowItem(ITEM_CLOAK_BALL, 3);
+    Item_ShowFound(ITEM_CLOAK_BALL, 3);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-    PartyInventory_GiveItem(ITEM_CLOAK_BALL, 0);
+    Party_GiveItem(ITEM_CLOAK_BALL, 0);
     GameFlag_Set(FLAG_BABI_PALACE_CLOAK_BALL);
   }
 }

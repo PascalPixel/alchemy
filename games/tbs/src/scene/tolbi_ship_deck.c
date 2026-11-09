@@ -970,7 +970,7 @@ static void TolbiShipDeck_GoBelow(void) {
   }
   if (throughDoor != 0) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
-    FieldActor_CenterAndWalk(ACTOR_PARTY_LEADER, 1, -10);
+    Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 1, -10);
     Event_Wait(10);
   } else {
     Sound_Play(SE_MAP_EXIT);
@@ -1007,7 +1007,7 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_KALAY_CREWMAN, 10);
     FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
     FieldCamera_MoveTo(PIXELS(190), -1, PIXELS(708), 1);
-    FieldCamera_WaitForArrival();
+    FieldCamera_WaitForMove();
     Event_Wait(40);
     Actor_RunRepeatedMotion(ACTOR_KALAY_CAPTAIN, 1);
     Event_SetMessageId(MsgTolbiShipWonderCouldHaveHappened);
@@ -1218,7 +1218,7 @@ static void TolbiShipDeck_CatchCrewmanFromWest(void) {
 static void TolbiShipDeck_ConfrontCrewman(void) {
   FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
   FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(824), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(20);
   TolbiShipDeck_OpenSecondDoor();
   MapGrid_CopyCellsTo(30, 108, 13, 108, 1, 2);
@@ -1673,7 +1673,7 @@ static void TolbiShipDeck_MonstersBoard(void) {
   TolbiShipDeck_Say(SPEAKER(ACTOR_SEA_OURANOS,
                             SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT));
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(12) / 5, PIXELS(6) / 5);
-  FieldActor_SetDestination(ACTOR_PARTY_LEADER, 154, 609);
+  Actor_SetDestination(ACTOR_PARTY_LEADER, 154, 609);
   Sound_Play(SE_ENEMY_CRY);
   zero = 0;
   Actor_Get(ACTOR_SEA_FIRST_ATTACK_MONSTER)->timer = zero;
@@ -1775,7 +1775,7 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   Actor_SetSpeed(ACTOR_SEA_SECOND_ATTACK_MONSTER + 1, PIXELS(8) / 5,
                  PIXELS(4) / 5);
   Actor_SetDestination(ACTOR_SEA_SECOND_ATTACK_MONSTER + 1, 172, 644);
-  FieldActor_MoveToAndWait(ACTOR_SEA_SECOND_ATTACK_MONSTER, 200, 660);
+  Actor_MoveToAndWait(ACTOR_SEA_SECOND_ATTACK_MONSTER, 200, 660);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4), PIXELS(2));
   Actor_SetDestination(ACTOR_PARTY_LEADER, 174, 620);
   Actor_MoveToAndWait(ACTOR_SEA_SECOND_ATTACK_MONSTER, 180, 580);
@@ -1921,8 +1921,8 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   Actor_SetDestination(ACTOR_PARTY_LEADER, 216, 612);
   Actor_SetSpeed(ACTOR_SEA_THIRD_ATTACK_MONSTER + 2, PIXELS(8) / 5,
                  PIXELS(4) / 5);
-  FieldActor_MoveToAndWait(ACTOR_SEA_THIRD_ATTACK_MONSTER + 2, 196, 600);
-  FieldActor_MoveToAndWait(ACTOR_SEA_THIRD_ATTACK_MONSTER + 2, 216, 600);
+  Actor_MoveToAndWait(ACTOR_SEA_THIRD_ATTACK_MONSTER + 2, 196, 600);
+  Actor_MoveToAndWait(ACTOR_SEA_THIRD_ATTACK_MONSTER + 2, 216, 600);
   Actor_Stop(ACTOR_SEA_THIRD_ATTACK_MONSTER);
   wait(1);
   Actor_SetSpeed(ACTOR_SEA_THIRD_ATTACK_MONSTER, PIXELS(8) / 5, PIXELS(4) / 5);

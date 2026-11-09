@@ -174,7 +174,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// The actor stands still and says the selected message.
 static void LogRoomsB_ShowStandingActorDialogue(s32 actorId) {
   Event_Start();
-  Import_ActorSetAnimation(actorId, ANIM_STAND);
+  Actor_SetAnimation(actorId, ANIM_STAND);
   Event_ShowMessage(actorId, 0);
   Event_End();
 }
@@ -215,7 +215,7 @@ static void LogRoomsB_WelcomeIsaacBack(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultIsaacYouveComeBackVault);
   Actor_TurnToFaceEachOther(ACTOR_MAYOR, ACTOR_PARTY_LEADER, 2);
-  Import_ActorSetAnimation(ACTOR_MAYOR, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_MAYOR, ANIM_STAND);
   Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_MAYOR, ANIM_SHAKE_HEAD);
   Event_Wait(20);

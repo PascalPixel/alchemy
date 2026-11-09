@@ -288,7 +288,7 @@ static void Lunpa_HideSecrets(void) {
   TreasureSpot_SetPosition(TREASURE_SPOT_PSYNERGY_STONE, 0, 0);
   MapGrid_CopyCells(32, 42, 3, 2, 1, 15);
   GameFlag_Clear(FLAG_LUNPA_PUDDLE_FROZEN);
-  Import_ActorSetAnimation(ACTOR_HIDDEN_PUDDLE, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_HIDDEN_PUDDLE, ANIM_STAND);
   puddle = Actor_Get(ACTOR_HIDDEN_PUDDLE);
   puddle->update = NULL;
   Actor_SetColorMode(Actor_Get(ACTOR_HIDDEN_PUDDLE), 0);
@@ -519,14 +519,14 @@ static void Lunpa_WatchForFortressApproach(void) {
 /// fortress, and the leader steps back.
 static void Lunpa_GaretTurnsIsaacBack(void) {
   Event_Start();
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_SetMessageId(MsgLunpaGaretRefusesToReturn);
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 100);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 12);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   GameFlag_Clear(FLAG_LUNPA_FORTRESS_GATES_GARET_WARNING);
   Event_End();
 }
@@ -555,7 +555,7 @@ static void Lunpa_EnterDoor(void) {
                        gLunpaDoors[doorIndex].y);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   if (doorIndex != DOOR_TEMPLE) {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -8);
     Event_Wait(10);
@@ -573,7 +573,7 @@ static void Lunpa_EnterHiddenPassage(void) {
     if (GameFlag_Get(FLAG_LUNPA_SECRETS_HIDDEN) == 0) {
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
       Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
-      Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+      Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
       Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -8);
       Event_Wait(13);
       Import_EventSetExitRequest(LUNPA_TO_STONE_ROOMS);
@@ -588,7 +588,7 @@ static void Lunpa_EnterFortress(void) {
   Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -8);
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_CopyCells(53, 4, 2, 2, 41, 4);
@@ -659,10 +659,10 @@ static void Lunpa_GuardsBlockGate(void) {
     Actor_WaitForMoveById(ACTOR_LEFT_GUARD);
     Actor_WaitForMoveById(ACTOR_RIGHT_GUARD);
     Actor_Stop(ACTOR_LEFT_GUARD);
-    Import_ActorSetAnimation(ACTOR_LEFT_GUARD, 0);
+    Actor_SetAnimation(ACTOR_LEFT_GUARD, 0);
     Actor_FaceDirection(ACTOR_LEFT_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
     Actor_Stop(ACTOR_RIGHT_GUARD);
-    Import_ActorSetAnimation(ACTOR_RIGHT_GUARD, 0);
+    Actor_SetAnimation(ACTOR_RIGHT_GUARD, 0);
     Actor_FaceDirection(ACTOR_RIGHT_GUARD, FACING_SOUTH + FACING_STEP, 0);
     Event_SetMessageId(MsgLunpaGuardsWarnPartyAway);
     Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
@@ -705,14 +705,14 @@ static void Lunpa_GuardsCatchParty(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
   Actor_SetSpeed(ACTOR_LEFT_GUARD, PIXELS(2), PIXELS(1));
   Actor_SetSpeed(ACTOR_RIGHT_GUARD, PIXELS(2), PIXELS(1));
-  Import_ActorSetAnimation(ACTOR_RIGHT_GUARD, ANIM_SHAKE_HEAD);
+  Actor_SetAnimation(ACTOR_RIGHT_GUARD, ANIM_SHAKE_HEAD);
   Event_Wait(35);
   Event_SetMessageId(warningMessageBase + CATCH_RIGHT_GUARD_WONDERS);
   Event_ShowMessage(ACTOR_RIGHT_GUARD, 0);
   Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   Event_SetMessageId(warningMessageBase + CATCH_LEFT_GUARD_REFUSES_ENTRY);
   Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
-  Import_ActorSetAnimation(ACTOR_RIGHT_GUARD, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_RIGHT_GUARD, ANIM_NOD);
   Event_Wait(25);
   Event_SetMessageId(warningMessageBase + CATCH_RIGHT_GUARD_SENDS_PARTY_OFF);
   Event_ShowMessage(ACTOR_RIGHT_GUARD, 0);
@@ -827,7 +827,7 @@ static void Lunpa_GuardsThrowIsaacOut(void) {
   Actor_SetSpeed(ACTOR_RIGHT_GUARD, PIXELS(9) / 5, PIXELS(9) / 10);
   Actor_WalkTo(ACTOR_LEFT_GUARD, 152, 288);
   Actor_WalkTo(ACTOR_RIGHT_GUARD, 168, 288);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
   Actor_SetDestination(ACTOR_PARTY_LEADER, 160, 296);
   Task_AddFrame(Lunpa_KickUpLeaderDust, TASK_PASS_FRAME);
   Event_Wait(1);
@@ -839,11 +839,11 @@ static void Lunpa_GuardsThrowIsaacOut(void) {
   Event_Wait(30);
   Actor_Get(ACTOR_LEFT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_Get(ACTOR_RIGHT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
   Sound_Play(SE_SCUFFLE);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-  Import_ActorSetAnimation(ACTOR_LEFT_GUARD, ANIM_STAND);
-  Import_ActorSetAnimation(ACTOR_RIGHT_GUARD, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_LEFT_GUARD, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_RIGHT_GUARD, ANIM_STAND);
   Task_Remove(Lunpa_KickUpLeaderDust);
   // Throw the leader down the steps, then wait for the first landing.
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags |= ACTOR_FALLS;
@@ -854,7 +854,7 @@ static void Lunpa_GuardsThrowIsaacOut(void) {
     Event_Wait(1);
   }
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SPRAWLED);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_SPRAWLED);
   Sound_Play(SE_LANDING_THUD);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -869,7 +869,7 @@ static void Lunpa_GuardsThrowIsaacOut(void) {
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(10);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Task_Remove(Lunpa_KickUpLeaderDust);
   Event_Wait(50);
   Event_SetMessageId(MsgLunpaGuardForbidsReturn);
@@ -882,8 +882,8 @@ static void Lunpa_GuardsThrowIsaacOut(void) {
   Actor_WalkTo(ACTOR_RIGHT_GUARD, 176, 200);
   Actor_WaitForMoveById(ACTOR_LEFT_GUARD);
   Actor_WaitForMoveById(ACTOR_RIGHT_GUARD);
-  Import_ActorSetAnimation(ACTOR_LEFT_GUARD, ANIM_STAND);
-  Import_ActorSetAnimation(ACTOR_RIGHT_GUARD, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_LEFT_GUARD, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_RIGHT_GUARD, ANIM_STAND);
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_LEFT_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_RIGHT_GUARD, FACING_SOUTH + FACING_STEP, 0);

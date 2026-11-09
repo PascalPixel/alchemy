@@ -169,6 +169,10 @@ void Import_ActorSetPosition();
 /// Switches an actor's sprite to an ActorAnimation
 /// (Actor_SetModeById).
 void Import_ActorSetAnimation();
+/// Switches an actor to an ActorAnimation, such as ANIM_NOD.
+static inline void Actor_SetAnimation(s32 actorId, s32 animation) {
+  Import_ActorSetAnimation(actorId, animation);
+}
 /// Sets a game flag (GameFlag_Set), for the two scenes whose calls compile only
 /// as calls of a void routine.
 void Import_GameFlagSet(s32 flag);

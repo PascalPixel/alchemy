@@ -384,7 +384,7 @@ static void ColosseumAzartMatch_DousePipe(void) {
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   FieldCamera_MoveTo(PIXELS(600), -1, PIXELS(200), 1);
   Actor_SelectAnimation(actor, 3);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   none = 0;
   actor->motionFlags = none;
   actor->acceleration = PIXELS(2) / 5;
@@ -565,7 +565,7 @@ static void ColosseumAzartMatch_PushPipeworksPillar(void) {
     Event_Start();
     FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
     FieldCamera_MoveTo(PIXELS(552), -1, PIXELS(200), 1);
-    FieldCamera_WaitForArrival();
+    FieldCamera_WaitForMove();
     ColosseumAzartMatch_AnimatePipeworksWater();
     Event_Wait(15);
     Event_End();
@@ -575,7 +575,7 @@ static void ColosseumAzartMatch_PushPipeworksPillar(void) {
   Event_Start();
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   FieldCamera_MoveTo(PIXELS(600), -1, PIXELS(200), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   actor = Actor_Get(ACTOR_PIPE_WEST);
   actor->motionFlags = none;
   actor->acceleration = PIXELS(2) / 5;
@@ -627,7 +627,7 @@ static void ColosseumAzartMatch_ReachArena(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1288, 192);
   Actor_SetAnimation(ACTOR_OPPONENT, ANIM_STAND);
-  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 0);
+  Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 0);
   Event_Wait(10);
   Actor_SetAnimation(ACTOR_OPPONENT, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -902,22 +902,22 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
       Event_ShowMessage(guide, 0);
       FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveTo(PIXELS(312), -1, PIXELS(104), 1);
-      FieldCamera_WaitForArrival();
+      FieldCamera_WaitForMove();
       Event_ShowMessage(guide, 0);
       FieldCamera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
       FieldCamera_MoveTo(PIXELS(776), -1, PIXELS(104), 1);
       Event_ShowMessage(guide, 0);
-      FieldCamera_WaitForArrival();
+      FieldCamera_WaitForMove();
       Event_ShowMessage(guide, 0);
       FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveTo(PIXELS(1240), -1, PIXELS(168), 1);
-      FieldCamera_WaitForArrival();
+      FieldCamera_WaitForMove();
       // BUG: FACING_SOUTHWEST is passed where an actor id belongs; no
       // actor has it, so the guide does not turn.
       Actor_FaceActor(guide, FACING_SOUTHWEST, 0);
       Event_ShowMessage(guide, 0);
       FieldCamera_MoveTo(PIXELS(1304), -1, PIXELS(168), 1);
-      FieldCamera_WaitForArrival();
+      FieldCamera_WaitForMove();
       Actor_FaceActor(guide, ACTOR_PARTY_LEADER, 0);
       Event_ShowMessage(guide, 0);
       Event_ShowMessage(guide, 0);
@@ -992,7 +992,7 @@ static void ColosseumAzartMatch_TalkToRockAttendant(s32 actorId) {
       Event_SetMessageId(MsgColossoCallRockChallenge);
       FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(168), 1);
-      FieldCamera_WaitForArrival();
+      FieldCamera_WaitForMove();
       Event_ShowMessage(actorId, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 280, 200);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
@@ -1065,11 +1065,11 @@ static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
       Event_SetMessageId(MsgColossoAreaCalledPipeworks);
       FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveTo(PIXELS(592), -1, PIXELS(120), 1);
-      FieldCamera_WaitForArrival();
+      FieldCamera_WaitForMove();
       Event_Wait(60);
       FieldCamera_SetSpeedParameters(PIXELS(3) / 2, PIXELS(3) / 16);
       FieldCamera_MoveWithinMapBounds(PIXELS(608), -1, PIXELS(216), 1);
-      FieldCamera_WaitForArrival();
+      FieldCamera_WaitForMove();
       Event_ShowMessage(attendant, 0);
       Colosso_ShowPointer(56, 64, 0);
       Event_Wait(60);
@@ -1127,7 +1127,7 @@ static void ColosseumAzartMatch_TalkToBridgeAttendant(s32 actorId) {
       ColosseumAzartMatch_ResetBrokenBridge();
       FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveTo(PIXELS(840), -1, PIXELS(216), 1);
-      FieldCamera_WaitForArrival();
+      FieldCamera_WaitForMove();
       Event_ShowMessage(actorId, 0);
       ColosseumAzartMatch_StartBrokenBridge();
       Event_Wait(60);
@@ -1168,7 +1168,7 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
     Event_SetMessageId(MsgColossoPlaceNormallyCalledLumberWater);
     FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
     FieldCamera_MoveTo(PIXELS(1088), -1, PIXELS(168), 1);
-    FieldCamera_WaitForArrival();
+    FieldCamera_WaitForMove();
     Event_ShowMessage(actorId, 0);
     Colosso_ShowPointer(120, 72, 0);
     Event_ShowMessage(actorId, 0);

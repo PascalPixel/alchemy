@@ -170,7 +170,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Stands the actor still while showing the message already selected.
 static void VaultRevisit_ShowStandingActorMessage(s32 actorId) {
   Event_Start();
-  Import_ActorSetAnimation(actorId, ANIM_STAND);
+  Actor_SetAnimation(actorId, ANIM_STAND);
   Event_ShowMessage(actorId, 0);
   Event_End();
 }
@@ -234,7 +234,7 @@ static void VaultRevisit_GreetWarriorGuy(void) {
   Event_Start();
   text = MsgVaultWarriorGuy;
   Event_SetMessageId(text);
-  Import_ActorSetAnimation(ACTOR_BOY_ROUND_THE_WELL, 0);
+  Actor_SetAnimation(ACTOR_BOY_ROUND_THE_WELL, 0);
   Actor_TurnToFaceEachOther(ACTOR_BOY_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   if (Event_GetFlag(FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED) == 0) {
     Actor_ShowEmote(ACTOR_BOY_ROUND_THE_WELL,
@@ -262,7 +262,7 @@ static void VaultRevisit_WishEldersWereBrave(void) {
   actor->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
   Event_Start();
   Event_SetMessageId(MsgVaultWishVaultsElders);
-  Import_ActorSetAnimation(ACTOR_GIRL_ROUND_THE_WELL, 0);
+  Actor_SetAnimation(ACTOR_GIRL_ROUND_THE_WELL, 0);
   Actor_TurnToFaceEachOther(ACTOR_GIRL_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   Event_ShowMessageThenWait(ACTOR_GIRL_ROUND_THE_WELL, 0, 10);
   actor->facing = originalFacing;
@@ -375,7 +375,7 @@ static void VaultRevisit_ReadMindOnJailKey(void) {
   if (requestHeard == 0) {
     Event_Start();
     Actor_Get(ACTOR_STRONGMAN_ON_WATCH)->paused = 1;
-    Import_ActorSetAnimation(ACTOR_STRONGMAN_ON_WATCH, ANIM_STAND);
+    Actor_SetAnimation(ACTOR_STRONGMAN_ON_WATCH, ANIM_STAND);
     Actor_RunRepeatedMotion(ACTOR_STRONGMAN_ON_WATCH, 1);
     Event_Wait(20);
     Event_SetMessageId(MsgVaultGuysCheckJail);
@@ -602,11 +602,11 @@ static void VaultRevisit_RevealPassage(void) {
 static void VaultRevisit_TalkToDog(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultRuffRrruff2);
-  Import_ActorSetAnimation(ACTOR_VAULT_DOG, 0);
+  Actor_SetAnimation(ACTOR_VAULT_DOG, 0);
   Actor_TurnToFaceEachOther(ACTOR_VAULT_DOG, ACTOR_PARTY_LEADER, 0);
   Event_Wait(2);
   Event_ShowMessage(ACTOR_VAULT_DOG, 0);
-  Import_ActorSetAnimation(ACTOR_VAULT_DOG, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_VAULT_DOG, ANIM_STAND);
 
   if (PartyInventory_FindMember(ITEM_BONE) != -1 &&
       GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {

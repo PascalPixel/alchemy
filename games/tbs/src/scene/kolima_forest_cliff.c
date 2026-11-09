@@ -88,11 +88,11 @@ static void KolimaForestCliff_PushLog(void) {
     if (result.actorSlot == ACTOR_RIVER_LOG &&
         (result.position.x >> 20) == 12) {
       struct Actor *actor;
-      Import_ActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_ROLL_WEST);
+      Actor_SetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_ROLL_WEST);
       Actor_SetDestinationOffset(ACTOR_RIVER_LOG, -18, 6);
       Event_Wait(30);
       Sound_Play(SE_LOG_FALL);
-      Import_ActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_DROP_IN);
+      Actor_SetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_DROP_IN);
       Actor_Get(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       MapGrid_CopyCellAttributes(32, 20, 2, 4, 11, 16);
       PushedActor_FillGridAttributeRectangle(2, 12, 16, 1, 4,

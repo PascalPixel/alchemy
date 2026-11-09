@@ -263,7 +263,7 @@ static void Tolbi_TalkToOlderBrother(void) {
   }
   Event_SetMessageId(msg);
   Actor_SetAnimation(ACTOR_TOLBI_OLDER_BROTHER, 0);
-  Actor_TurnToFaceEachOther(ACTOR_TOLBI_OLDER_BROTHER, ACTOR_PARTY_LEADER, 2);
+  Actor_FaceEachOther(ACTOR_TOLBI_OLDER_BROTHER, ACTOR_PARTY_LEADER, 2);
   Event_ShowMessageThenWait(ACTOR_TOLBI_OLDER_BROTHER, 0, 10);
   kid->facing = facing;
   wait(1);
@@ -301,7 +301,7 @@ static void Tolbi_TalkToYoungerSister(void) {
   }
   Event_SetMessageId(msg);
   Actor_SetAnimation(ACTOR_TOLBI_YOUNGER_SISTER, 0);
-  Actor_TurnToFaceEachOther(ACTOR_TOLBI_YOUNGER_SISTER, ACTOR_PARTY_LEADER, 2);
+  Actor_FaceEachOther(ACTOR_TOLBI_YOUNGER_SISTER, ACTOR_PARTY_LEADER, 2);
   Event_ShowMessageThenWait(ACTOR_TOLBI_YOUNGER_SISTER, 0, 10);
   kid->facing = facing;
   wait(1);
@@ -387,10 +387,10 @@ static void Tolbi_TalkToSnackVendor(void) {
     GameFlag_Set(FLAG_TOLBI_CORN_GIVEN);
     Event_SetMessageId(MsgTolbiLeftovers);
     Event_ShowMessage(ACTOR_TOLBI_SNACK_VENDOR, 0);
-    ItemDisplay_ShowItem(ITEM_CORN, 3);
+    Item_ShowFound(ITEM_CORN, 3);
     Event_ShowMessage(ACTOR_TOLBI_SNACK_VENDOR, 0);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-    PartyInventory_GiveItem(ITEM_CORN, 0);
+    Party_GiveItem(ITEM_CORN, 0);
   } else {
     Event_SetMessageId(MsgTolbiFestivalLongerUsual);
     Event_ShowMessage(ACTOR_TOLBI_SNACK_VENDOR, 0);

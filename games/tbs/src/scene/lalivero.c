@@ -584,8 +584,8 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Event_Wait(30);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
-  Actor_TurnToFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
+  Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
+  Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
   Event_Wait(60);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
@@ -675,7 +675,7 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Event_Wait(30);
   Actor_SetPosition(ACTOR_BLACK_ORB, 0, 0);
   gFieldWork->message += 1;
-  PartyInventory_GiveItem(ITEM_BLACK_ORB, 0);
+  Party_GiveItem(ITEM_BLACK_ORB, 0);
   Event_Wait(10);
   Actor_Get(ACTOR_IODEM)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(ACTOR_IODEM, 0, -16);

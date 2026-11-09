@@ -516,7 +516,7 @@ static void LemurianShip_SetSail(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
   // Mia, last, looks back at the shore before she boards.
-  FieldActor_WalkByAndWait(3, 0, -32);
+  Actor_WalkByAndWait(3, 0, -32);
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
   Event_Wait(60);
@@ -528,7 +528,7 @@ static void LemurianShip_SetSail(void) {
   Event_Wait(20);
   // On deck, all four turn west together and nod.
   FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(168), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);

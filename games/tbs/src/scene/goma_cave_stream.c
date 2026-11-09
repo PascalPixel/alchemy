@@ -142,7 +142,7 @@ s32 Scene_Initialize(void) {
         stump = Actor_Get(ACTOR_STUMP);
         Actor_SetSpriteFlags(stump, 0);
         Actor_Get(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-        Import_ActorSetAnimation(ACTOR_STUMP, STUMP_ANIMATION_SINK);
+        Actor_SetAnimation(ACTOR_STUMP, STUMP_ANIMATION_SINK);
         MapGrid_CopyCellAttributes(19, 74, 9, 3, 19, 17);
       }
     }
@@ -220,7 +220,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
                         EFFECT_SCALE_TO_TARGET,
                     &options);
   Sound_Play(SE_CAST);
-  Import_ActorSetAnimation(stumpId, STUMP_ANIMATION_SPLASH);
+  Actor_SetAnimation(stumpId, STUMP_ANIMATION_SPLASH);
   MapGrid_WaitForShakeToSettle();
 }
 

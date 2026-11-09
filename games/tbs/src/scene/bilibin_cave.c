@@ -447,7 +447,7 @@ static void BilibinCave_RestoreEntrance(void) {
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN) != 0) {
 
     MapGrid_CopyCellAttributes(31, 0, 1, 1, 8, 13);
-    Import_ActorSetAnimation(ACTOR_SPROUT, 0);
+    Actor_SetAnimation(ACTOR_SPROUT, 0);
   }
 }
 
@@ -458,8 +458,8 @@ static void BilibinCave_RestoreRapierRoom(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 
-  Import_ActorSetAnimation(ACTOR_RAPIER_ROOM_WEST_TORCH, TORCH_ANIMATION_UNLIT);
-  Import_ActorSetAnimation(ACTOR_RAPIER_ROOM_EAST_TORCH, TORCH_ANIMATION_LIT);
+  Actor_SetAnimation(ACTOR_RAPIER_ROOM_WEST_TORCH, TORCH_ANIMATION_UNLIT);
+  Actor_SetAnimation(ACTOR_RAPIER_ROOM_EAST_TORCH, TORCH_ANIMATION_LIT);
 
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED) != 0) {
     Actor_SetPosition(ACTOR_RAPIER_ROOM_FIRE, 0, 0);
@@ -493,21 +493,21 @@ static void BilibinCave_RestoreIceRoom(void) {
   BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_LOW_ICE + 1);
   BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_LOW_ICE + 2);
   BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_LOW_ICE + 3);
-  Import_ActorSetAnimation(ACTOR_FIRST_ICE_PILLAR, PUDDLE_ANIMATION_PILLAR);
-  Import_ActorSetAnimation(ACTOR_FIRST_ICE_PILLAR + 1, PUDDLE_ANIMATION_PILLAR);
-  Import_ActorSetAnimation(ACTOR_FIRST_ICE_PILLAR + 2, PUDDLE_ANIMATION_PILLAR);
-  Import_ActorSetAnimation(ACTOR_FIRST_ICE_PILLAR + 3, PUDDLE_ANIMATION_PILLAR);
-  Import_ActorSetAnimation(ACTOR_FIRST_ICE_PILLAR + 4, PUDDLE_ANIMATION_PILLAR);
-  Import_ActorSetAnimation(ACTOR_FIRST_LOW_ICE, PUDDLE_ANIMATION_LOW_ICE);
-  Import_ActorSetAnimation(ACTOR_FIRST_LOW_ICE + 1, PUDDLE_ANIMATION_LOW_ICE);
-  Import_ActorSetAnimation(ACTOR_FIRST_LOW_ICE + 2, PUDDLE_ANIMATION_LOW_ICE);
-  Import_ActorSetAnimation(ACTOR_FIRST_LOW_ICE + 3, PUDDLE_ANIMATION_LOW_ICE);
-  Import_ActorSetAnimation(ACTOR_FIRST_TORCH, TORCH_ANIMATION_LIT);
-  Import_ActorSetAnimation(ACTOR_FIRST_TORCH + 1, TORCH_ANIMATION_LIT);
-  Import_ActorSetAnimation(ACTOR_FIRST_TORCH + 2, TORCH_ANIMATION_LIT);
-  Import_ActorSetAnimation(ACTOR_FIRST_TORCH + 3, TORCH_ANIMATION_LIT);
-  Import_ActorSetAnimation(ACTOR_FIRST_TORCH + 4, TORCH_ANIMATION_LIT);
-  Import_ActorSetAnimation(ACTOR_FIRST_TORCH + 5, TORCH_ANIMATION_LIT);
+  Actor_SetAnimation(ACTOR_FIRST_ICE_PILLAR, PUDDLE_ANIMATION_PILLAR);
+  Actor_SetAnimation(ACTOR_FIRST_ICE_PILLAR + 1, PUDDLE_ANIMATION_PILLAR);
+  Actor_SetAnimation(ACTOR_FIRST_ICE_PILLAR + 2, PUDDLE_ANIMATION_PILLAR);
+  Actor_SetAnimation(ACTOR_FIRST_ICE_PILLAR + 3, PUDDLE_ANIMATION_PILLAR);
+  Actor_SetAnimation(ACTOR_FIRST_ICE_PILLAR + 4, PUDDLE_ANIMATION_PILLAR);
+  Actor_SetAnimation(ACTOR_FIRST_LOW_ICE, PUDDLE_ANIMATION_LOW_ICE);
+  Actor_SetAnimation(ACTOR_FIRST_LOW_ICE + 1, PUDDLE_ANIMATION_LOW_ICE);
+  Actor_SetAnimation(ACTOR_FIRST_LOW_ICE + 2, PUDDLE_ANIMATION_LOW_ICE);
+  Actor_SetAnimation(ACTOR_FIRST_LOW_ICE + 3, PUDDLE_ANIMATION_LOW_ICE);
+  Actor_SetAnimation(ACTOR_FIRST_TORCH, TORCH_ANIMATION_LIT);
+  Actor_SetAnimation(ACTOR_FIRST_TORCH + 1, TORCH_ANIMATION_LIT);
+  Actor_SetAnimation(ACTOR_FIRST_TORCH + 2, TORCH_ANIMATION_LIT);
+  Actor_SetAnimation(ACTOR_FIRST_TORCH + 3, TORCH_ANIMATION_LIT);
+  Actor_SetAnimation(ACTOR_FIRST_TORCH + 4, TORCH_ANIMATION_LIT);
+  Actor_SetAnimation(ACTOR_FIRST_TORCH + 5, TORCH_ANIMATION_LIT);
   BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_ICE_PILLAR);
   BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_ICE_PILLAR + 1);
   BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_ICE_PILLAR + 2);
@@ -527,29 +527,29 @@ static void BilibinCave_RestoreIceRoom(void) {
   // priority.
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED) != 0) {
     Actor_SetPosition(ACTOR_ICE_ROOM_FIRE, 0, 0);
-    Import_ActorSetAnimation(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_PILLAR);
+    Actor_SetAnimation(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_PILLAR);
     Actor_Get(ACTOR_FIRST_PUDDLE)->motionFlags = 0;
     Actor_Get(ACTOR_FIRST_PUDDLE)->y.fixed = -PIXELS(4);
     Actor_Get(ACTOR_FIRST_PUDDLE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetSpritePriority(ACTOR_FIRST_PUDDLE, 2);
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 18, 14);
   } else {
-    Import_ActorSetAnimation(ACTOR_ICE_ROOM_FIRE, 2);
+    Actor_SetAnimation(ACTOR_ICE_ROOM_FIRE, 2);
     actor = Actor_Get(ACTOR_ICE_ROOM_FIRE);
     Actor_SetSpriteFlags(actor, 0);
-    Import_ActorSetAnimation(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
+    Actor_SetAnimation(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
   }
   // Rebuild the Frost target and return moved actors to their saved
   // cells.
-  Import_ActorSetAnimation(ACTOR_SECOND_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
+  Actor_SetAnimation(ACTOR_SECOND_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) != 0) {
     destinationCellX = 36;
-    Import_ActorSetAnimation(ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
+    Actor_SetAnimation(ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
     MapGrid_CopyCellAttributes(0, 1, 1, 1, destinationCellX, 22);
     MapGrid_CopyCellAttributes(0, 2, 1, 1, destinationCellX, 24);
   } else {
     destinationCellX = 36;
-    Import_ActorSetAnimation(ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_PILLAR);
+    Actor_SetAnimation(ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_PILLAR);
     MapGrid_CopyCellAttributes(1, 1, 1, 1, destinationCellX, 22);
     MapGrid_CopyCellAttributes(1, 2, 1, 1, destinationCellX, 24);
   }

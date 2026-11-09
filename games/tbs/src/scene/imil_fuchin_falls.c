@@ -1673,7 +1673,7 @@ static void FuchinFallsCave_CollectDragonsEye(void) {
     ItemDisplay_ShowPicture(gImilFuchinFalls_DragonsEye, 3);
   }
 
-  PartyInventory_GiveItem(ITEM_DRAGONS_EYE, 0);
+  Party_GiveItem(ITEM_DRAGONS_EYE, 0);
   GameFlag_Set(FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND);
 
   if (gImilFuchinFalls_DragonsEye != NULL) {

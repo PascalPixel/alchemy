@@ -476,7 +476,7 @@ static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
   emitterHandle =
       FieldEffect_PlayCueAndStartEmitterOnTarget(0, chestActorId, itemId);
 
-  if (PartyInventory_GiveItem(itemId, 0) != -1) {
+  if (Party_GiveItem(itemId, 0) != -1) {
     Actor_SetAnimation(chestActorId, CHEST_ANIMATION_OPEN_EMPTY);
     GameFlag_Set(FLAG_MCCOY_PALACE_REWARD_TAKEN);
     GameFlag_Set(chestFlag);

@@ -145,7 +145,7 @@ static void WestLunpaCave_GateDrawPropped(void) {
   struct Actor *pillar;
 
   pillar = Actor_Get(ACTOR_GATE_PUDDLE);
-  Import_ActorSetAnimation(ACTOR_GATE_PUDDLE, PUDDLE_ANIMATION_FROZEN);
+  Actor_SetAnimation(ACTOR_GATE_PUDDLE, PUDDLE_ANIMATION_FROZEN);
   if (pillar != NULL) {
     Actor_SetSpriteFlags(pillar, 0);
     pillar->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
@@ -282,7 +282,7 @@ static void WestLunpaCave_HammetFindsBunza(void) {
     Actor_SetSpeed(ACTOR_BUNZA, PIXELS(3) / 2, PIXELS(3) / 4);
     Actor_WalkTo(ACTOR_BUNZA, 184, 400);
     Actor_WaitForMoveById(ACTOR_BUNZA);
-    Import_ActorSetAnimation(ACTOR_BUNZA, ANIM_STAND);
+    Actor_SetAnimation(ACTOR_BUNZA, ANIM_STAND);
     Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Event_Wait(30);
@@ -360,10 +360,10 @@ static void WestLunpaCave_HammetFindsBunza(void) {
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
-    Import_ActorSetAnimation(ACTOR_HAMMET, ANIM_WALK);
+    Actor_SetAnimation(ACTOR_HAMMET, ANIM_WALK);
     Actor_WalkBy(ACTOR_HAMMET, 0, -16);
     Actor_WaitForMoveById(ACTOR_HAMMET);
-    Import_ActorSetAnimation(ACTOR_HAMMET, ANIM_STAND);
+    Actor_SetAnimation(ACTOR_HAMMET, ANIM_STAND);
     Event_SetMessageId(recognition + RECOGNITION_HAMMET_NAMES_BUNZA);
     Event_ShowMessage(ACTOR_HAMMET, 0);
     Actor_ShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 65);
@@ -410,7 +410,7 @@ static void Reunion_Converse(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_BUNZA, FACING_EAST, 0);
-  Import_ActorSetAnimation(ACTOR_BUNZA, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_BUNZA, ANIM_STAND);
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
   wait(1);
   MapGrid_CenterOnFollowedPoint();
@@ -450,9 +450,9 @@ static void Reunion_Converse(void) {
   Event_SetMessageId(reunion + REUNION_HAMMET_THANKS_PARTY);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_HAMMET, 0);
   Event_Wait(30);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Event_Wait(120);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH - FACING_STEP, 0);
   Event_Wait(30);
@@ -601,7 +601,7 @@ static void Reunion_Converse(void) {
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0);
   Actor_WaitForMoveById(ACTOR_BUNZA);
   Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
-  Import_ActorSetAnimation(ACTOR_BUNZA, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_BUNZA, ANIM_STAND);
   Actor_SetAnimationAndWait(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Event_SetMessageId(reunion + REUNION_BUNZA_WARNS_OF_SEARCH);
@@ -675,14 +675,14 @@ static void Reunion_Converse(void) {
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
   Actor_TurnToFaceEachOther(ACTOR_HAMMET, ACTOR_IVAN, 0);
   Event_Wait(60);
-  Import_ActorSetAnimation(ACTOR_HAMMET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_HAMMET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(60);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_FaceActor(ACTOR_BUNZA, ACTOR_PARTY_LEADER, 0);
-  Import_ActorSetAnimation(ACTOR_BUNZA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_BUNZA, ANIM_NOD);
   Event_Wait(60);
   WagonChoice_Run();
 }
@@ -858,22 +858,22 @@ static void Party_StaysBehind(void) {
   Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Event_Wait(60);
   Actor_SetDestinationOffset(ACTOR_HAMMET, -16, 0);
   Actor_WaitForMoveById(ACTOR_HAMMET);
-  Import_ActorSetAnimation(ACTOR_HAMMET, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_HAMMET, ANIM_STAND);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH + FACING_STEP, 0);
   Event_Wait(30);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_WalkTo(ACTOR_BUNZA, 156, 528);
   Event_Wait(20);
   Actor_WalkTo(ACTOR_HAMMET, 164, 528);
@@ -911,7 +911,7 @@ static void Party_StaysBehind(void) {
 
   // Merge the companions back into the leader and restore player camera
   // control.
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
@@ -919,7 +919,7 @@ static void Party_StaysBehind(void) {
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
@@ -927,7 +927,7 @@ static void Party_StaysBehind(void) {
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
-  Import_ActorSetAnimation(ACTOR_MIA, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
@@ -965,22 +965,22 @@ static void Party_RidesWagon(void) {
   Event_ShowMessage(ACTOR_BUNZA, 0);
   Actor_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
   Event_Wait(20);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Event_Wait(80);
   Actor_SetDestinationOffset(ACTOR_HAMMET, -16, 0);
   Actor_WaitForMoveById(ACTOR_HAMMET);
-  Import_ActorSetAnimation(ACTOR_HAMMET, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_HAMMET, ANIM_STAND);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH + FACING_STEP, 0);
   Event_Wait(30);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_WalkTo(ACTOR_BUNZA, 152, 528);
   Event_Wait(20);
   Actor_WalkTo(ACTOR_HAMMET, 160, 528);
@@ -1001,7 +1001,7 @@ static void Party_RidesWagon(void) {
   Actor_SetPosition(ACTOR_HAMMET, 0, 0);
   Actor_SetPosition(ACTOR_BUNZA, 0, 0);
 
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
@@ -1009,7 +1009,7 @@ static void Party_RidesWagon(void) {
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
@@ -1017,7 +1017,7 @@ static void Party_RidesWagon(void) {
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
-  Import_ActorSetAnimation(ACTOR_MIA, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
@@ -1054,10 +1054,10 @@ s32 Scene_Initialize(void) {
       WestLunpaCave_GateDrawPropped();
     }
     if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN) != 0) {
-      Import_ActorSetAnimation(ACTOR_NORTH_PUDDLE, PUDDLE_ANIMATION_FROZEN);
+      Actor_SetAnimation(ACTOR_NORTH_PUDDLE, PUDDLE_ANIMATION_FROZEN);
     }
     if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN) != 0) {
-      Import_ActorSetAnimation(ACTOR_SOUTH_PUDDLE, PUDDLE_ANIMATION_FROZEN);
+      Actor_SetAnimation(ACTOR_SOUTH_PUDDLE, PUDDLE_ANIMATION_FROZEN);
     }
   }
   return 0;

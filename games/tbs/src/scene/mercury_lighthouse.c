@@ -631,7 +631,7 @@ static void MercuryLighthouse_WalkLeaderIn(void) {
   Event_Start();
   Task_AddFrame(MercuryLighthouse_SparkleAroundLeader, TASK_PASS_FRAME);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(5) / 2, PIXELS(5) / 4);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Sound_Play(SE_SPARKLING_PASSAGE);
   // Each touched entry has its own landing point; the patched path waits first.
@@ -1473,12 +1473,12 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   Actor_WalkToAndWait(ACTOR_MIA, 840, 648);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 20);
-  Import_ActorSetAnimation(ACTOR_MIA, 16);
+  Actor_SetAnimation(ACTOR_MIA, 16);
   mia = Actor_Get(ACTOR_MIA);
   mia->scaleX = -Q16_ONE;
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
-  Import_ActorSetAnimation(ACTOR_MIA, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_STAND);
   mia = Actor_Get(ACTOR_MIA);
   mia->scaleX = Q16_ONE;
   Event_Wait(20);
@@ -1616,7 +1616,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST + FACING_STEP, 20);
-    Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Event_Wait(30);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 0);
@@ -1650,7 +1650,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
       Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
       Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
     }
-    Import_ActorSetAnimation(ACTOR_MIA, 16);
+    Actor_SetAnimation(ACTOR_MIA, 16);
     Event_Wait(30);
     Actor_RunRepeatedMotion(ACTOR_MIA, 1);
     Event_Wait(20);
@@ -1698,18 +1698,18 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST + FACING_STEP, 0);
     Event_Wait(10);
-    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Event_Wait(20);
     // Garet and Ivan rejoin the leader.
-    Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
+    Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != 0) {
       Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel,
                            actor->z.part.pixel);
     }
-    Import_ActorSetAnimation(ACTOR_IVAN, ANIM_WALK);
+    Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != 0) {
       Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel,
@@ -1948,7 +1948,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 792, 200);
     Event_Wait(10);
-    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_BATHE);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_BATHE);
     MercuryLighthouse_RaiseActorWithSparks(ACTOR_PARTY_LEADER);
     Event_Wait(60);
     Task_Remove(MercuryLighthouse_CycleWaterfallPalette);
@@ -2011,7 +2011,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 792, 200);
     Event_Wait(10);
-    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_BATHE);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_BATHE);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_StartRepeatedMotion(ACTOR_GARET, 2);
@@ -2021,7 +2021,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
     Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_IVAN, 20);
-    Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Event_Wait(40);
     Actor_WalkToAndWait(ACTOR_GARET, 792, 216);
@@ -2052,7 +2052,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
 /// rejuvenation to all that lives."
 static void MercuryLighthouse_ReadHermesFountainInscription(void) {
   Event_Start();
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldMessage_Show(MSGNO(MsgImilHermesHealingWaterFountain), 1);
   Event_End();
 }
@@ -2061,7 +2061,7 @@ static void MercuryLighthouse_ReadHermesFountainInscription(void) {
 /// behavior 20: the door is locked tight.
 static void MercuryLighthouse_InspectLockedDoor(void) {
   Event_Start();
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldMessage_Show(MSGNO(MsgFieldDoorTightlyLocked), 1);
   Event_End();
 }
@@ -2072,7 +2072,7 @@ static void MercuryLighthouse_InspectLockedDoor(void) {
 static void MercuryLighthouse_InspectHealingFountain(void) {
 
   Event_Start();
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) == 0)
     FieldMessage_Show(MSGNO(MsgMercuryLighthouseFountainSeemsDry), 1);
   else
@@ -2632,7 +2632,7 @@ s32 MercuryLighthouse_Initialize(void) {
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
       PaletteFade_StartInterpolation(30);
       Event_WaitTransitionFrames();
-      Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+      Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
       Event_Wait(30);
       FieldMessage_ShowCentered(MsgMercuryHonorsGoddessRainbows, 0, 0);
       PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
@@ -2697,7 +2697,7 @@ s32 MercuryLighthouse_Initialize(void) {
       if (!GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA)) {
         if (!GameFlag_Get(FLAG_MIA_SENSED_SOMEONE_INSIDE)) {
           Actor_FaceDirection(ACTOR_MIA, FACING_EAST, 0);
-          Import_ActorSetAnimation(ACTOR_MIA, 16);
+          Actor_SetAnimation(ACTOR_MIA, 16);
         } else {
           Actor_SetPosition(ACTOR_MIA, PIXELS(840), PIXELS(632));
           Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
@@ -2746,9 +2746,9 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(60);
-  Import_ActorSetAnimation(ACTOR_MIA, 16);
+  Actor_SetAnimation(ACTOR_MIA, 16);
   Event_Wait(50);
-  Import_ActorSetAnimation(ACTOR_MIA, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_STAND);
   Event_OpenMessage(ACTOR_MIA, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
     // Each "no" brings "Please, don't hide anything." until the party says
@@ -2786,9 +2786,9 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   Actor_WalkToAndWait(ACTOR_MIA, 728, 632);
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
-  Import_ActorSetAnimation(ACTOR_MIA, 16);
+  Actor_SetAnimation(ACTOR_MIA, 16);
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
-  Import_ActorSetAnimation(ACTOR_MIA, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_STAND);
   Actor_FaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
@@ -2804,7 +2804,7 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   Djinn_Give(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ));
   Djinn_Set(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ));
   Unit_Calculate(MIA);
-  Import_ActorSetAnimation(ACTOR_MIA, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
@@ -2871,9 +2871,9 @@ static void MercuryLighthouse_RideLift(void) {
   Event_Wait(30);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 704, 584);
   Actor_Get(ACTOR_PARTY_LEADER)->bounce = 0;
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
   Event_Wait(6);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAP);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAP);
   Actor_Get(ACTOR_PARTY_LEADER)->speedLimit = PIXELS(3);
   Actor_Get(ACTOR_PARTY_LEADER)->acceleration = PIXELS(2);
   Sound_Play(SE_JUMP);
@@ -2883,7 +2883,7 @@ static void MercuryLighthouse_RideLift(void) {
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 1);
   Actor_Get(ACTOR_PARTY_LEADER)->bounce = Q16_ONE / 4;
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
   Event_Wait(6);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 30);
   Sound_Play(SE_LIFT);

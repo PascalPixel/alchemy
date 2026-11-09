@@ -439,8 +439,8 @@ static void Vale_CatchNut(void) {
   Event_Start();
   Actor_SetPosition(ACTOR_NUT, 0, 0);
   GameFlag_Set(FLAG_VALE_NUT_CAUGHT);
-  ItemDisplay_ShowItem(ITEM_NUT, 3);
-  PartyInventory_GiveItem(ITEM_NUT, 0);
+  Item_ShowFound(ITEM_NUT, 3);
+  Party_GiveItem(ITEM_NUT, 0);
   Event_End();
 }
 
@@ -449,8 +449,8 @@ static void Vale_CatchNutAfterKalay(void) {
   Event_Start();
   Actor_SetPosition(ACTOR_NUT_AFTER_KALAY, 0, 0);
   GameFlag_Set(FLAG_VALE_NUT_CAUGHT);
-  ItemDisplay_ShowItem(ITEM_NUT, 3);
-  PartyInventory_GiveItem(ITEM_NUT, 0);
+  Item_ShowFound(ITEM_NUT, 3);
+  Party_GiveItem(ITEM_NUT, 0);
   Event_End();
 }
 
@@ -473,8 +473,7 @@ static void Vale_TalkAboutTheMayorAndTremors(void) {
     Event_ShowMessage(ACTOR_GIRL_JEALOUS_OF_GARET, 0);
   } else {
     Event_SetMessageId(MsgValeYourGrandpaIsTheMayor);
-    Actor_TurnToFaceEachOther(ACTOR_GIRL_JEALOUS_OF_GARET, ACTOR_PARTY_LEADER,
-                              4);
+    Actor_FaceEachOther(ACTOR_GIRL_JEALOUS_OF_GARET, ACTOR_PARTY_LEADER, 4);
     Event_AskYesNo(ACTOR_GIRL_JEALOUS_OF_GARET, 0);
   }
   Event_End();
@@ -492,13 +491,13 @@ static void Vale_WarnAboutGoingBeyondKradensCottage(void) {
   } else if (GameFlag_Get(flag) == 0) {
     GameFlag_Set(flag);
     Event_SetMessageId(MsgValeDoYouNeedToGo);
-    Actor_TurnToFaceEachOther(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN,
-                              ACTOR_PARTY_LEADER, 4);
+    Actor_FaceEachOther(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, ACTOR_PARTY_LEADER,
+                        4);
     Event_AskYesNo(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, 0);
   } else {
     Event_SetMessageId(MsgValeDontGoBeyondKradensCottage);
-    Actor_TurnToFaceEachOther(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN,
-                              ACTOR_PARTY_LEADER, 4);
+    Actor_FaceEachOther(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, ACTOR_PARTY_LEADER,
+                        4);
     Event_ShowMessage(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, 0);
   }
   Event_End();
@@ -512,12 +511,12 @@ static void Vale_ArgueWithGaretsSister(void) {
     GameFlag_Set(FLAG_VALE_GARET_TOLD_OFF_FOR_FLOWERS);
     Event_SetMessageId(MsgValeYouMakeMeSoMad);
     Actor_ShowEmote(ACTOR_GARETS_SISTER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-    Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARETS_SISTER, 20);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARETS_SISTER, 20);
     Event_ShowMessageThenWait(ACTOR_GARETS_SISTER, 0, 6);
     Actor_FaceDirection(ACTOR_GARETS_SISTER, FACING_WEST, 30);
     Actor_Jump(ACTOR_GARETS_SISTER, 2, 20);
     Event_ShowMessageThenWait(ACTOR_GARETS_SISTER, 0, 6);
-    Actor_TurnToFaceEachOther(ACTOR_GARETS_SISTER, ACTOR_PARTY_LEADER, 10);
+    Actor_FaceEachOther(ACTOR_GARETS_SISTER, ACTOR_PARTY_LEADER, 10);
     Actor_ShowEmote(ACTOR_GARETS_SISTER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     Event_ShowMessageThenWait(ACTOR_GARETS_SISTER, 0, 10);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
@@ -547,8 +546,7 @@ static void Vale_DoraFretsAboutTheRoof(void) {
 /// asks whether Jenna is back.
 static void Vale_AskWhetherJennaHasReturned(void) {
   Event_Start();
-  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER,
-                            ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, 20);
+  Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, 20);
   Event_SetMessageId(MsgValeIsJennaBackYet);
   Event_ShowMessage(ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, 0);
   GameFlag_Set(FLAG_VALE_ASKED_IF_JENNA_IS_BACK);
@@ -740,7 +738,7 @@ static void Vale_HaveJennaStopTheAlephDetour(void) {
   wait(1);
   Actor_SetSpeed(ACTOR_JENNA, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_JENNA, 110, 283);
-  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JENNA, 2);
+  Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JENNA, 2);
   Event_SetMessageId(MsgValeKradenIsWaitingForUs);
   if (leader->x.fixed < jenna->x.fixed) {
     Event_ShowMessageThenWait(
@@ -1271,7 +1269,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(100);
-  Actor_TurnToFaceEachOther(ACTOR_JENNA, ACTOR_GARET, 30);
+  Actor_FaceEachOther(ACTOR_JENNA, ACTOR_GARET, 30);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Event_Wait(10);
@@ -1309,7 +1307,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 30);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
-  Actor_TurnToFaceEachOther(ACTOR_JENNA, ACTOR_GARET, 30);
+  Actor_FaceEachOther(ACTOR_JENNA, ACTOR_GARET, 30);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Event_Wait(30);
@@ -1541,7 +1539,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(100);
   GameFlag_Set(FLAG_VALE_ROOF_JUST_MENDED);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
@@ -2077,7 +2075,7 @@ static void Vale_MendingTheRoof(void) {
   Actor_WalkToAndWait(ACTOR_JENNA, 374, 1008);
   Actor_WalkToAndWait(ACTOR_JENNA, 347, 955);
   Actor_WalkToAndWait(ACTOR_OPENING_WOMAN, 318, 947);
-  Actor_TurnToFaceEachOther(ACTOR_JENNA, ACTOR_OPENING_WOMAN, 40);
+  Actor_FaceEachOther(ACTOR_JENNA, ACTOR_OPENING_WOMAN, 40);
   Actor_RunRepeatedMotion(ACTOR_OPENING_WOMAN, 2);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(10);
@@ -2085,14 +2083,14 @@ static void Vale_MendingTheRoof(void) {
   FieldCamera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
   Actor_WalkToAndWait(ACTOR_JENNA, 333, 920);
   Actor_WalkToAndWait(ACTOR_JENNA, 299, 924);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST + FACING_STEP, 30);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Event_Wait(20);
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   FieldCamera_MoveTo(PIXELS(387), PIXELS(160), PIXELS(866), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Actor_Jump(ACTOR_OPENING_DORA, 2, 20);
   Event_SetMessageId(message + 1);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_OPENING_DORA, 0,
@@ -2100,7 +2098,7 @@ static void Vale_MendingTheRoof(void) {
   leader->scaleX = Q16_ONE;
   leader->scaleY = Q16_ONE;
   Actor_SetMovementTypeById(ACTOR_PARTY_LEADER, MOVEMENT_TYPE_STAND);
-  Actor_TurnToFaceEachOther(ACTOR_OPENING_DORA, ACTOR_PARTY_LEADER, 40);
+  Actor_FaceEachOther(ACTOR_OPENING_DORA, ACTOR_PARTY_LEADER, 40);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -2111,7 +2109,7 @@ static void Vale_MendingTheRoof(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
   Actor_SetScript(ACTOR_PARTY_LEADER, gVale_LeaderHammers);
   FieldCamera_FollowActor(ACTOR_JENNA, 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH + FACING_STEP, 10);
@@ -2133,7 +2131,7 @@ static void Vale_MendingTheRoof(void) {
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   FieldCamera_MoveTo(PIXELS(396), -1, PIXELS(588), 1);
   Actor_WalkToAndWait(ACTOR_JENNA, 456, 739);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
@@ -2187,7 +2185,7 @@ static void Vale_MendingTheRoof(void) {
   // Finish the reunion conversation after the repair effects settle.
   Event_Wait(10);
   Actor_WalkToAndWait(ACTOR_JENNA, 424, 624);
-  Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_JENNA, 60);
+  Actor_FaceEachOther(ACTOR_GARET, ACTOR_JENNA, 60);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(
@@ -2671,7 +2669,7 @@ static void Vale_RoofMended(void) {
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(80);
-  Actor_TurnToFaceEachOther(ACTOR_JENNA, ACTOR_GARET, 30);
+  Actor_FaceEachOther(ACTOR_JENNA, ACTOR_GARET, 30);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Event_Wait(10);
@@ -2705,7 +2703,7 @@ static void Vale_RoofMended(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 10);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
-  Actor_TurnToFaceEachOther(ACTOR_JENNA, ACTOR_GARET, 30);
+  Actor_FaceEachOther(ACTOR_JENNA, ACTOR_GARET, 30);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Event_Wait(20);
@@ -2942,7 +2940,7 @@ static void Vale_RoofMended(void) {
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(100);
   MapGrid_CopyCellAttributes(49, 46, 8, 4, 20, 50);
   GameFlag_Set(FLAG_VALE_ROOF_JUST_MENDED);

@@ -968,7 +968,7 @@ static void ColosseumNavampaMatch_ReachArena(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1496, 192);
   Actor_SetAnimation(ACTOR_OPPONENT, ANIM_STAND);
-  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 0);
+  Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 0);
   Event_Wait(10);
   Actor_SetAnimation(ACTOR_OPPONENT, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1600,7 +1600,7 @@ static void ColosseumNavampaMatch_TalkToScalesAttendant(s32 guideId) {
     Event_SetMessageId(MsgColossoStageCalledScales);
     FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
     FieldCamera_MoveWithinMapBounds(PIXELS(152), -1, PIXELS(200), 1);
-    FieldCamera_WaitForArrival();
+    FieldCamera_WaitForMove();
     Event_Wait(30);
     Event_ShowMessage(guideId, 0);
     Colosso_ShowPointer(104, 68, 0);
@@ -1665,7 +1665,7 @@ static void ColosseumNavampaMatch_TalkToSteppingStoneAttendant(s32 guideId) {
     FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
     FieldCamera_MoveTo(PIXELS(376), -1, PIXELS(152), 1);
     x = 280;
-    FieldCamera_WaitForArrival();
+    FieldCamera_WaitForMove();
     Event_Wait(30);
     Event_ShowMessage(guideId, 0);
     Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, x, 200);
@@ -1723,7 +1723,7 @@ static void ColosseumNavampaMatch_TalkToWallWedgeAttendant(s32 guideId) {
       ColosseumNavampaMatch_ResetWallWedge();
       FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveWithinMapBounds(PIXELS(616), -1, PIXELS(184), 1);
-      FieldCamera_WaitForArrival();
+      FieldCamera_WaitForMove();
       Event_Wait(30);
       Event_ShowMessage(guideId, 0);
       ColosseumNavampaMatch_StartWallWedge();
@@ -1781,7 +1781,7 @@ static void ColosseumNavampaMatch_TalkToFreeClimbAttendant(s32 guideId) {
       Event_SetMessageId(MsgColossoPlaceNormallyCalledFreeClimb);
       FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveTo(PIXELS(856), -1, PIXELS(168), 1);
-      FieldCamera_WaitForArrival();
+      FieldCamera_WaitForMove();
       Event_Wait(30);
       Event_ShowMessage(guideId, 0);
       Event_ShowMessage(guideId, 0);
@@ -1872,7 +1872,7 @@ static void ColosseumNavampaMatch_TalkToMovingSidewalkAttendant(s32 guideId) {
       Event_SetMessageId(MsgColossoCalledMovingSidewalkStage);
       FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveTo(PIXELS(1080), -1, PIXELS(168), 1);
-      FieldCamera_WaitForArrival();
+      FieldCamera_WaitForMove();
       Event_Wait(30);
       Event_ShowMessage(guideId, 0);
       Event_ShowMessage(guideId, 0);
@@ -1937,7 +1937,7 @@ static void ColosseumNavampaMatch_TalkToLogRollingAttendant(s32 actorId) {
     Event_SetMessageId(MsgColossoAnotherLogRollingArea);
     FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
     FieldCamera_MoveWithinMapBounds(PIXELS(1288), -1, PIXELS(152), 1);
-    FieldCamera_WaitForArrival();
+    FieldCamera_WaitForMove();
     Event_Wait(30);
     Event_ShowMessage(actorId, 0);
     Colosso_ShowPointer(180, 88, 0);

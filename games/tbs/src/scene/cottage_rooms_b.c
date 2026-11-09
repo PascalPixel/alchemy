@@ -572,7 +572,7 @@ s32 CottageRoomsB_Initialize(void) {
           TilesetAnim_Resume(11);
           actor = Actor_Get(ACTOR_DORA);
           Actor_SetSpriteFlags(actor, 0);
-          Import_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_IN_BED);
+          Actor_SetAnimation(ACTOR_DORA, ANIM_DORA_IN_BED);
         }
       }
     } else {
@@ -645,7 +645,7 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   Actor_SetPosition(ACTOR_MASKED_MAN, 0, 0);
   // Isaac lies asleep in bed; his tunic is set beside him.
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_ISAAC_ASLEEP);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_ISAAC_ASLEEP);
   sprite->rotation = 1365;
   Actor_Get(ACTOR_TUNIC)->motionFlags = 0;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_TUNIC), 0);
@@ -702,7 +702,7 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   Event_Wait(20);
   TilesetAnim_Resume(8);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_ISAAC_GET_UP);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_ISAAC_GET_UP);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 557, 679);
   TilesetAnim_Pause(8);
   TilesetAnim_Resume(9);
@@ -754,8 +754,8 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   Actor_RefreshSelectorById(ACTOR_DORA);
   Actor_WalkToAndWait(ACTOR_DORA, 419, 661);
   Actor_WalkToAndWait(ACTOR_DORA, 408, 661);
-  Import_ActorSetAnimation(ACTOR_DORA, ANIM_STAND);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_DORA, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 10);
   // "Have you got everything you need?" Yes: "Good for you, Isaac."; no: "I'm
   // sorry, but we don't have time..."
@@ -765,7 +765,7 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   }
   Event_Wait(20);
   Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0, 20);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Event_Wait(20);
   Actor_SetScript(ACTOR_DORA, gCottageRoomsB_DoraLeavesScript);
@@ -861,7 +861,7 @@ static void CottageRoomsB_HurryToThePlaza(void) {
   Event_Wait(20);
   // They nod, Kyle runs back down, and the two turn back (SE_RUN_BACK).
   Actor_FaceDirection(ACTOR_DORA, FACING_WEST, 20);
-  Import_ActorSetAnimation(ACTOR_DORA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_DORA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_KYLE, ANIM_NOD);
   Actor_WalkTo(ACTOR_KYLE, 415, 589);
@@ -890,7 +890,7 @@ ramp:
   }
   // Dora and Isaac look back, startled, then nod to each other.
   Actor_RefreshSelectorById(ACTOR_PARTY_LEADER);
-  Import_ActorSetAnimation(ACTOR_DORA, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_DORA, ANIM_STAND);
   Actor_StartRepeatedMotion(ACTOR_DORA, 2);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(10);
@@ -903,7 +903,7 @@ ramp:
   Event_Wait(80);
   Actor_SetPosition(ACTOR_KYLE, 0, 0);
   Actor_TurnToFaceEachOther(ACTOR_DORA, ACTOR_PARTY_LEADER, 20);
-  Import_ActorSetAnimation(ACTOR_DORA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_DORA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(40);
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
@@ -1020,7 +1020,7 @@ static void CottageRoomsB_VisitSickDora(void) {
   Actor_SetDestination(ACTOR_DORA, 584, 406);
   TilesetAnim_Pause(11);
   TilesetAnim_Resume(12);
-  Import_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_HEAD_BOWED);
+  Actor_SetAnimation(ACTOR_DORA, ANIM_DORA_HEAD_BOWED);
   Event_Wait(80);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Event_Wait(40);
@@ -1031,7 +1031,7 @@ static void CottageRoomsB_VisitSickDora(void) {
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_DORA_HEAD_SWAYING);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Import_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_HEAD_TURNED);
+  Actor_SetAnimation(ACTOR_DORA, ANIM_DORA_HEAD_TURNED);
   Event_Wait(40);
   // "You haven't, have you?" "Have you forgotten your promise, Isaac?"
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
@@ -1041,7 +1041,7 @@ static void CottageRoomsB_VisitSickDora(void) {
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_DORA_HEAD_BOWED);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Import_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_HEAD_SWAYING);
+  Actor_SetAnimation(ACTOR_DORA, ANIM_DORA_HEAD_SWAYING);
   // "You promised you wouldn't come back until your quest was complete,
   // right?" Either reply has its own answer; she is less surprised when Mind
   // Read has told Isaac of her illness.
@@ -1090,7 +1090,7 @@ static void CottageRoomsB_VisitSickDora(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetDestination(ACTOR_PARTY_LEADER, 558, 388);
   Actor_SetSpeed(ACTOR_DORA, PIXELS(6) / 5, PIXELS(3) / 5);
-  Import_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_STRAIGHTEN);
+  Actor_SetAnimation(ACTOR_DORA, ANIM_DORA_STRAIGHTEN);
   Actor_MoveToAndWait(ACTOR_DORA, 586, 400);
   Event_Wait(40);
   Actor_WalkToAndWait(ACTOR_DORA, 580, 382);

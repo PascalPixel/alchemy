@@ -302,7 +302,7 @@ static void LamaTemple_EnterHamasRoom(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
   Event_Wait(16);
   Import_EventSetExitRequest(LAMA_TEMPLE_TO_LACQUER_ROOMS_A_HAMAS_ROOM);
@@ -336,9 +336,9 @@ static void LamaTemple_RunHamasFarewell(void) {
   Event_Wait(20);
   Event_SetMessageId(MsgMountainAdeptsLetMeThankAgain);
   Event_ShowMessageThenWait(ACTOR_TEMPLE_HAMA, 0, 20);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_TEMPLE_HAMA, ANIM_SHAKE_HEAD);
@@ -408,9 +408,9 @@ static void LamaTemple_RunHamasFarewell(void) {
   Actor_RunRepeatedMotion(ACTOR_TEMPLE_HAMA, 2);
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_TEMPLE_HAMA, 0, 20);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_TEMPLE_HAMA, ANIM_NOD);
@@ -489,8 +489,8 @@ static void LamaTemple_RunHamasFarewell(void) {
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
 
@@ -513,7 +513,7 @@ static void LamaTemple_RunHamasFarewell(void) {
 static void LamaTemple_ReadWallWriting(void) {
 
   Event_Start();
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldMessage_Show(MsgMountainHeWhoHasPowerSee, 1);
   Event_End();
 }
@@ -678,7 +678,7 @@ static void AlpineCrossing_HamaReachesHsu(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
   Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTHWEST + FACING_STEP, 20);
-  Import_ActorSetAnimation(ACTOR_HSU, ANIM_HSU_STRUGGLE);
+  Actor_SetAnimation(ACTOR_HSU, ANIM_HSU_STRUGGLE);
   Event_End();
   GameFlag_Set(FLAG_HAMA_REACHED_HSU);
 }
@@ -725,8 +725,8 @@ static void AlpineCrossing_LiftBoulder(void) {
   Actor_SetSpeed(ACTOR_FEIZHI, PIXELS(1) / 5, PIXELS(1) / 10);
 
   // The first heave: two tugs draw Hsu halfway out.
-  Import_ActorSetAnimation(ACTOR_HAMA, ANIM_HAMA_PULL);
-  Import_ActorSetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_PULL);
+  Actor_SetAnimation(ACTOR_HAMA, ANIM_HAMA_PULL);
+  Actor_SetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_PULL);
   Event_Wait(20);
   Sound_Play(SE_CHEST_CLOSE);
   Actor_SetDestinationOffset(ACTOR_HAMA, 2, 0);
@@ -734,8 +734,8 @@ static void AlpineCrossing_LiftBoulder(void) {
   Actor_SetDestinationOffset(ACTOR_FEIZHI, 2, 0);
   Actor_WaitForMoveById(ACTOR_FEIZHI);
   Event_Wait(30);
-  Import_ActorSetAnimation(ACTOR_HAMA, ANIM_HAMA_PULL);
-  Import_ActorSetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_PULL);
+  Actor_SetAnimation(ACTOR_HAMA, ANIM_HAMA_PULL);
+  Actor_SetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_PULL);
   Event_Wait(20);
   Sound_Play(SE_CHEST_CLOSE);
   Actor_SetDestinationOffset(ACTOR_HAMA, 4, 0);
@@ -743,8 +743,8 @@ static void AlpineCrossing_LiftBoulder(void) {
   Actor_SetDestinationOffset(ACTOR_FEIZHI, 4, 0);
   Actor_WaitForMoveById(ACTOR_FEIZHI);
   Actor_Stop(ACTOR_HSU);
-  Import_ActorSetAnimation(ACTOR_HAMA, ANIM_STAND);
-  Import_ActorSetAnimation(ACTOR_FEIZHI, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_HAMA, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_FEIZHI, ANIM_STAND);
   Event_Wait(50);
   Actor_Jump(ACTOR_FEIZHI, 2, 0);
   Event_Wait(20);
@@ -757,8 +757,8 @@ static void AlpineCrossing_LiftBoulder(void) {
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
 
   // The second heave pulls Hsu free.
-  Import_ActorSetAnimation(ACTOR_HAMA, ANIM_HAMA_PULL);
-  Import_ActorSetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_PULL);
+  Actor_SetAnimation(ACTOR_HAMA, ANIM_HAMA_PULL);
+  Actor_SetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_PULL);
   Event_Wait(20);
   Sound_Play(SE_CHEST_CLOSE);
   Actor_SetDestinationOffset(ACTOR_HAMA, 2, 0);
@@ -766,8 +766,8 @@ static void AlpineCrossing_LiftBoulder(void) {
   Actor_SetDestinationOffset(ACTOR_FEIZHI, 2, 0);
   Actor_WaitForMoveById(ACTOR_FEIZHI);
   Event_Wait(30);
-  Import_ActorSetAnimation(ACTOR_HAMA, ANIM_HAMA_PULL);
-  Import_ActorSetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_PULL);
+  Actor_SetAnimation(ACTOR_HAMA, ANIM_HAMA_PULL);
+  Actor_SetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_PULL);
   Event_Wait(20);
   Sound_Play(SE_CHEST_CLOSE);
   Actor_SetDestinationOffset(ACTOR_HAMA, 4, 0);
@@ -775,8 +775,8 @@ static void AlpineCrossing_LiftBoulder(void) {
   Actor_SetDestinationOffset(ACTOR_FEIZHI, 4, 0);
   Actor_WaitForMoveById(ACTOR_FEIZHI);
   Event_Wait(40);
-  Import_ActorSetAnimation(ACTOR_HAMA, ANIM_STAND);
-  Import_ActorSetAnimation(ACTOR_FEIZHI, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_HAMA, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_FEIZHI, ANIM_STAND);
   Actor_Jump(ACTOR_FEIZHI, 2, 0);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH + FACING_STEP, 20);
@@ -791,7 +791,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   Actor_SetSpeed(ACTOR_FEIZHI, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_FEIZHI, 168, 296);
   Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH + FACING_STEP, 20);
-  Import_ActorSetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_CROUCH);
+  Actor_SetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_CROUCH);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
@@ -814,7 +814,7 @@ static void AlpineCrossing_LiftBoulder(void) {
 /// "North: Altin Mine. West: Lama Temple."
 static void AlpineCrossing_ReadSignpost(void) {
   Event_Start();
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldMessage_Show(MsgMountainNorthAltinMineWestLama, 1);
   Event_End();
 }
@@ -921,9 +921,9 @@ s32 Scene_Initialize(void) {
     // meditate and the mossy rock stands; the rock's own cell attributes are
     // saved at (21, 73) for Reveal to restore.
     Scene_QueueMusic(SE_AMBIENT_WIND);
-    Import_ActorSetAnimation(ACTOR_MEDITATING_MONK, ANIM_MONK_MEDITATE);
-    Import_ActorSetAnimation(ACTOR_MONK_SENSING_ANXIETY, ANIM_MONK_MEDITATE);
-    Import_ActorSetAnimation(ACTOR_PASSAGE_ROCK, TURNING_ROCK_ANIMATION_MOSSY);
+    Actor_SetAnimation(ACTOR_MEDITATING_MONK, ANIM_MONK_MEDITATE);
+    Actor_SetAnimation(ACTOR_MONK_SENSING_ANXIETY, ANIM_MONK_MEDITATE);
+    Actor_SetAnimation(ACTOR_PASSAGE_ROCK, TURNING_ROCK_ANIMATION_MOSSY);
     MapGrid_CopyCellAttributes(21, 9, 1, 1, 21, 73);
     LamaTemple_ShowFalseWall();
     if (GameFlag_Get(FLAG_HSU_RESCUED)) {
@@ -942,11 +942,11 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_WATER_FOR_FROST), 0);
     Actor_Get(ACTOR_WATER_FOR_FROST)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     if (GameFlag_Get(FLAG_ALPINE_CROSSING_PUDDLE_FROZEN)) {
-      Import_ActorSetAnimation(ACTOR_WATER_FOR_FROST, PUDDLE_ANIMATION_FROZEN);
+      Actor_SetAnimation(ACTOR_WATER_FOR_FROST, PUDDLE_ANIMATION_FROZEN);
       AlpineCrossing_FreezePuddle();
     }
     if (GameFlag_Get(FLAG_ALPINE_CROSSING_SPROUT_GROWN)) {
-      Import_ActorSetAnimation(ACTOR_PLANT, SPROUT_ANIMATION_GROWN);
+      Actor_SetAnimation(ACTOR_PLANT, SPROUT_ANIMATION_GROWN);
       AlpineCrossing_GrowSprout();
     }
     if (gMainRoutineWork.entrance ==

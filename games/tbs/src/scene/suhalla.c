@@ -231,7 +231,7 @@ s32 Scene_Initialize(void) {
 
   if (GameFlag_Get(FLAG_SUHALLA_SPROUT_GROWN) != 0) {
     Suhalla_GrowSprout();
-    Import_ActorSetAnimation(ACTOR_SPROUT, SPROUT_ANIMATION_GROWN);
+    Actor_SetAnimation(ACTOR_SPROUT, SPROUT_ANIMATION_GROWN);
   }
   return 0;
 }

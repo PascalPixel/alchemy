@@ -968,20 +968,20 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   // Survey both sides of the room before returning to Kraden.
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   FieldCamera_MoveTo(PIXELS(1585), -1, PIXELS(150), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(10);
   FieldCamera_SetSpeed(PIXELS(6) / 5, PIXELS(3) / 20);
   FieldCamera_MoveTo(PIXELS(1621), -1, PIXELS(100), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   FieldCamera_MoveTo(PIXELS(1718), -1, PIXELS(100), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_STAND);
   FieldCamera_MoveTo(PIXELS(1752), -1, PIXELS(150), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(40);
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   FieldCamera_MoveTo(PIXELS(1668), -1, PIXELS(256), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
 
@@ -1012,7 +1012,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
-  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, 5, 0);
+  Actor_FaceEachOther(ACTOR_PARTY_LEADER, 5, 0);
   Event_Wait(40);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 1);
@@ -1147,15 +1147,15 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   // Pan across the statues, then return to the party's position.
   FieldCamera_MoveTo(PIXELS(1672), -1, PIXELS(524), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(20);
   FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
   FieldCamera_MoveTo(PIXELS(1880), -1, PIXELS(524), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(20);
   FieldCamera_SetSpeed(PIXELS(16) / 5, PIXELS(2) / 5);
   FieldCamera_MoveTo(PIXELS(1769), -1, PIXELS(548), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 30);

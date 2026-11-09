@@ -386,7 +386,7 @@ static void TimberRoomsBC_IodemCallsOut(void) {
   Field_EndBusyAndReveal();
   Event_Wait(10);
   FieldCamera_MoveWithinMapBounds(PIXELS(120), -1, PIXELS(96), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(30);
   Event_SetMessageId(MsgLaliveroPleaseWaitForMeOutside);
   Event_ShowMessage(ACTOR_IODEM, 0);
@@ -574,8 +574,8 @@ static void TimberRoomsBC_ReportToFaran(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
-  Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
-  Actor_TurnToFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
+  Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
+  Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
   Event_Wait(40);
   Event_Wait(10);
   // Faran believes Sheba lived; Iodem explains Adepts.

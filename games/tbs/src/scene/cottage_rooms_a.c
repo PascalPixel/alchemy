@@ -247,8 +247,7 @@ const struct Trigger *CottageRoomsA_GetTriggers(void) {
 static void CottageRoomsA_AskAboutKradensStudies(void) {
   Event_Start();
   Event_SetMessageId(MsgValeKradenCameToStudyMt);
-  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_MAN_ON_KRADENS_STUDIES,
-                            6);
+  Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_MAN_ON_KRADENS_STUDIES, 6);
   Event_AskYesNo(ACTOR_MAN_ON_KRADENS_STUDIES, 0);
   Event_End();
 }
@@ -261,8 +260,7 @@ static void CottageRoomsA_AskAboutKradensStudies(void) {
 static void CottageRoomsA_AskToScareVisitors(void) {
   Event_Start();
   Event_SetMessageId(MsgValeLetsScareKradensVisitors);
-  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER,
-                            ACTOR_STRONGMAN_SCARING_VISITORS, 6);
+  Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_STRONGMAN_SCARING_VISITORS, 6);
   Event_AskYesNo(ACTOR_STRONGMAN_SCARING_VISITORS, 0);
   Event_End();
 }
@@ -289,7 +287,7 @@ static void CottageRoomsA_GiveFarewellHerb(void) {
     Event_SetMessageId(gift);
     Event_ShowMessageThenWait(ACTOR_ITEM_MERCHANT, 0, 20);
     FieldMessage_Show((gift + 1), 1);
-    PartyInventory_GiveItem(ITEM_HERB, 0);
+    Party_GiveItem(ITEM_HERB, 0);
     GameFlag_Set(FLAG_VALE_FAREWELL_HERB_RECEIVED);
   }
   Event_End();
@@ -739,7 +737,7 @@ static void CottageRoomsA_GaretComesHome(void) {
   Event_Wait(20);
   FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
   FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_GARET, 0, 20);

@@ -144,12 +144,12 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   const s32 *actionScript;
 
   Event_Start();
-  Import_ActorSetAnimation(ACTOR_FIRST_VILLAGER, ANIM_STILL);
-  Import_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 1, ANIM_STILL);
-  Import_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 2, ANIM_STILL);
-  Import_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 3, ANIM_STILL);
-  Import_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 4, ANIM_STILL);
-  Import_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 5, ANIM_STILL);
+  Actor_SetAnimation(ACTOR_FIRST_VILLAGER, ANIM_STILL);
+  Actor_SetAnimation(ACTOR_FIRST_VILLAGER + 1, ANIM_STILL);
+  Actor_SetAnimation(ACTOR_FIRST_VILLAGER + 2, ANIM_STILL);
+  Actor_SetAnimation(ACTOR_FIRST_VILLAGER + 3, ANIM_STILL);
+  Actor_SetAnimation(ACTOR_FIRST_VILLAGER + 4, ANIM_STILL);
+  Actor_SetAnimation(ACTOR_FIRST_VILLAGER + 5, ANIM_STILL);
   Actor_WalkToAndWait(ACTOR_GARETS_SISTER, 265, 487);
   Actor_FaceDirection(ACTOR_GARETS_SISTER, FACING_NORTHWEST, 0);
   Actor_WalkToAndWait(ACTOR_GARETS_BROTHER, 256, 500);
@@ -246,21 +246,21 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   FieldCamera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
   FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(320), 1);
   Event_Wait(40);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   Actor_SetDestination(ACTOR_PARTY_LEADER, 120, 320);
   Actor_MoveToAndWait(ACTOR_GARET, 104, 320);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   FieldCamera_WaitForArrival();
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Event_Wait(50);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(3) / 2, PIXELS(3) / 4);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   Actor_MoveToAndWait(ACTOR_GARET, 105, 342);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
@@ -272,23 +272,23 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Event_OpenMessage(ACTOR_GARET, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Event_Wait(60);
-    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
     Event_Wait(50);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
+    Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
     Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
     Actor_MoveToAndWait(ACTOR_GARET, 103, 320);
-    Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
+    Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   } else {
     Event_Wait(60);
-    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
     Event_Wait(50);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
-    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 120, 340);
-    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   }
 
   // The villagers spot them: "Garet!" "Isaac!" Garet's brother cries "Garet!"
@@ -326,8 +326,8 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_RefreshSelectorById(ACTOR_GARET);
   Event_Wait(50);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_RefreshSelectorById(ACTOR_GARET);
   Event_Wait(60);
 
@@ -345,10 +345,10 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   FieldCamera_WaitForArrival();
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_WEST, 0);
   Actor_SetSpeed(ACTOR_GREAT_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Import_ActorSetAnimation(ACTOR_GREAT_HEALER, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_GREAT_HEALER, ANIM_WALK);
   Actor_MoveToAndWait(ACTOR_GREAT_HEALER, 265, 455);
   Actor_MoveToAndWait(ACTOR_GREAT_HEALER, 246, 455);
-  Import_ActorSetAnimation(ACTOR_GREAT_HEALER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_GREAT_HEALER, ANIM_STAND);
   Event_Wait(30);
 
   // "Where have you been?" "What happened?"
@@ -368,7 +368,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
   Event_Wait(20);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   Event_Wait(40);
   // Dora notices who is missing.
@@ -409,7 +409,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(40);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   Event_Wait(60);
 
@@ -438,7 +438,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Event_Wait(40);
   Actor_TurnToFaceEachOther(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
   Event_Wait(40);
-  Import_ActorSetAnimation(ACTOR_GREAT_HEALER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GREAT_HEALER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
   Event_Wait(30);
 

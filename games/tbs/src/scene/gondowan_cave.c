@@ -247,7 +247,7 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
       Actor_WalkTo(ACTOR_IODEM, 152, 232);
       Event_ClearFlag(FLAG_IODEM_FOLLOWING_PARTY);
       Actor_WaitForMoveById(ACTOR_IODEM);
-      Import_ActorSetAnimation(ACTOR_IODEM, ANIM_STAND);
+      Actor_SetAnimation(ACTOR_IODEM, ANIM_STAND);
       gMainRoutineWork.restartScene = (s32)&SceneId_StuccoRoomsB;
       gMainRoutineWork.restartEntrance = STUCCO_ROOMS_B_SANCTUM_NORTH;
     } else {
@@ -255,7 +255,7 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
       // the party, and Isaac steps away from the step trigger.
       gFieldWork->message += 1;
       Event_ShowMessage(ACTOR_IODEM, 0);
-      Import_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
+      Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
       leader = Actor_Get(ACTOR_PARTY_LEADER);
       if (leader != 0) {
         Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
@@ -264,10 +264,10 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
       Actor_WaitForMoveById(ACTOR_IODEM);
       Actor_SetPosition(ACTOR_IODEM, PIXELS(0), PIXELS(0));
       Event_Wait(30);
-      Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+      Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
       Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-      Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+      Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
     }
     Event_End();
   }
@@ -281,12 +281,12 @@ static void GondowanCave_IodemRejoins(void) {
   Event_Start();
   Actor_FaceActor(ACTOR_IODEM, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(10);
   Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
   Event_SetMessageId(MsgKaragolIveBeenWaitingForIsaac);
   Event_ShowMessage(ACTOR_IODEM, 0);
-  Import_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
   {
     struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -399,7 +399,7 @@ static void GondowanCave_PushPillar(void) {
 static inline void GondowanCave_PlaceDroppedPillar(s32 animation) {
   Actor_SetPosition(ACTOR_PILLAR, PIXELS(0), PIXELS(0));
   Actor_SetPosition(ACTOR_DROPPED_PILLAR, PIXELS(696), PIXELS(288));
-  Import_ActorSetAnimation(ACTOR_DROPPED_PILLAR, animation);
+  Actor_SetAnimation(ACTOR_DROPPED_PILLAR, animation);
 }
 
 /// Move on the pillar in GondowanCave, and after each push: past column 42 it
@@ -490,10 +490,10 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   actor->update = 0;
   actor->sprite->rotation = TRIG_TURN / 16;
   Sound_Play(SE_CAST);
-  Import_ActorSetAnimation(actorId, STUMP_ANIMATION_SPLASH);
+  Actor_SetAnimation(actorId, STUMP_ANIMATION_SPLASH);
   MapGrid_WaitForShakeToSettle();
   Event_Wait(10);
-  Import_ActorSetAnimation(actorId, STUMP_ANIMATION_SINK);
+  Actor_SetAnimation(actorId, STUMP_ANIMATION_SINK);
 }
 
 /// Unused: an empty function nothing refers to.
@@ -525,7 +525,7 @@ s32 Scene_Initialize(void) {
     }
     if (GameFlag_Get(FLAG_GONDOWAN_CAVE_STUMP_MOVED) != 0) {
       Actor_SetPosition(ACTOR_STUMP, PIXELS(440), PIXELS(308));
-      Import_ActorSetAnimation(ACTOR_STUMP, STUMP_ANIMATION_SINK);
+      Actor_SetAnimation(ACTOR_STUMP, STUMP_ANIMATION_SINK);
       MapGrid_CopyCellAttributes(29, 19, 1, 1, 27, 19);
     }
     if (GameFlag_Get(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED) != 0) {

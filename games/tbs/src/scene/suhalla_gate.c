@@ -229,13 +229,11 @@ s32 Scene_Initialize(void) {
         SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST)
       GameFlag_Set(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST);
   } else if (sceneId == (s32)&SceneId_SuhallaGateDew) {
-    Import_ActorSetAnimation(ACTOR_FIRST_SPROUT, SPROUT_ANIMATION_GROWN);
-    Import_ActorSetAnimation(ACTOR_FIRST_SPROUT + 1, SPROUT_ANIMATION_GROWN);
-    Import_ActorSetAnimation(ACTOR_FIRST_SPROUT + 2,
-                             SPROUT_ANIMATION_HALF_GROWN);
-    Import_ActorSetAnimation(ACTOR_FIRST_SPROUT + 3, SPROUT_ANIMATION_GROWN);
-    Import_ActorSetAnimation(ACTOR_FIRST_SPROUT + 4,
-                             SPROUT_ANIMATION_HALF_GROWN);
+    Actor_SetAnimation(ACTOR_FIRST_SPROUT, SPROUT_ANIMATION_GROWN);
+    Actor_SetAnimation(ACTOR_FIRST_SPROUT + 1, SPROUT_ANIMATION_GROWN);
+    Actor_SetAnimation(ACTOR_FIRST_SPROUT + 2, SPROUT_ANIMATION_HALF_GROWN);
+    Actor_SetAnimation(ACTOR_FIRST_SPROUT + 3, SPROUT_ANIMATION_GROWN);
+    Actor_SetAnimation(ACTOR_FIRST_SPROUT + 4, SPROUT_ANIMATION_HALF_GROWN);
     // UB: the scene places only actors up to ACTOR_DEW, so there is no
     // actor 15 and Actor_GetById returns NULL (watched in tbs-en
     // as the scene loads from each of its entrances); the store goes to
@@ -291,7 +289,7 @@ static void SuhallaGate_GuardsBlockPassage(void) {
   Actor_WalkToAndWait(ACTOR_EAST_GUARD, 152, 384);
   Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH, 0);
-  Import_ActorSetAnimation(ACTOR_WEST_GUARD, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_WEST_GUARD, ANIM_STAND);
   MapGrid_CopyCellAttributes(6, 27, 1, 1, 7, 27);
 #if TBS_PATCH_3
   MapGrid_CopyCellAttributes(11, 26, 1, 1, 7, 26);
@@ -401,7 +399,7 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
   Event_ShowMessageThenWait(ACTOR_IODEM, 0, 20);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH + FACING_STEP, 10);
   Event_ShowMessageThenWait(ACTOR_IODEM, 0, 10);
-  Import_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,

@@ -249,7 +249,7 @@ MercuryLighthouseEntrance_GetActorPlacements(void) {
 /// at the center of all..."
 static void MercuryLighthouseEntrance_ReadHeartInscription(void) {
   Event_Start();
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldMessage_Show(MsgMercuryWhoHonorsHeart, 1);
   Event_End();
 }
@@ -520,7 +520,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     Sound_Play(SE_THUMP);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
     MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
     MapGrid_WaitForShakeToSettle();
@@ -533,7 +533,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
       PaletteFade_StartInterpolation(30);
       Event_WaitTransitionFrames();
-      Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+      Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
       Event_Wait(30);
       FieldMessage_ShowCentered(MsgMercuryWhoHonorsHeart, 0, 0);
       PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);

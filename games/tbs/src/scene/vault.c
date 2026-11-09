@@ -317,7 +317,7 @@ static void Vault_AskAboutFleeingTravelers(void) {
 
   Event_Start();
   Event_SetMessageId(MsgVaultThoseTravelersLeftInBig);
-  Import_ActorSetAnimation(ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, ANIM_STAND);
   Vault_FaceActorAndWait(ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, ACTOR_PARTY_LEADER,
                          2);
   Vault_AskYesNoAndShowReply(ACTOR_OLD_WOMAN_ON_THE_TRAVELERS);
@@ -372,7 +372,7 @@ static void Vault_StrongmanOnWatchSuspectsOutsiders(void) {
 static void Vault_TalkToDog(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultRuffRrruff);
-  Import_ActorSetAnimation(ACTOR_VAULT_DOG, 0);
+  Actor_SetAnimation(ACTOR_VAULT_DOG, 0);
   Vault_FaceActorAndWait(ACTOR_VAULT_DOG, ACTOR_PARTY_LEADER, 2);
   Event_ShowMessage(ACTOR_VAULT_DOG, 0);
   Event_End();
@@ -387,7 +387,7 @@ static void Vault_PityIvan(void) {
   actor->timer |= 2;
   Event_Start();
   Event_SetMessageId(MsgVaultPoorGuyLeft);
-  Import_ActorSetAnimation(ACTOR_BOY_ROUND_THE_WELL, 0);
+  Actor_SetAnimation(ACTOR_BOY_ROUND_THE_WELL, 0);
   Vault_FaceActorAndWait(ACTOR_BOY_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   Vault_ShowMessageAndWait(ACTOR_BOY_ROUND_THE_WELL, 10);
   actor->facing = savedFacing;
@@ -405,7 +405,7 @@ static void Vault_TalkOfHammetsCaravan(void) {
   actor->timer |= 2;
   Event_Start();
   Event_SetMessageId(MsgVaultMasterHammetsCaravan);
-  Import_ActorSetAnimation(ACTOR_GIRL_ROUND_THE_WELL, 0);
+  Actor_SetAnimation(ACTOR_GIRL_ROUND_THE_WELL, 0);
   Vault_FaceActorAndWait(ACTOR_GIRL_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   Vault_ShowMessageAndWait(ACTOR_GIRL_ROUND_THE_WELL, 10);
   actor->facing = savedFacing;
@@ -432,7 +432,7 @@ static void Vault_LookForRoofer(void) {
 /// Stops an actor, faces the leader and shows the current message.
 static void Vault_ShowStandingActorMessage(s32 actorId) {
   Event_Start();
-  Import_ActorSetAnimation(actorId, ANIM_STAND);
+  Actor_SetAnimation(actorId, ANIM_STAND);
   Vault_FaceActorAndWait(actorId, ACTOR_PARTY_LEADER, 2);
   Event_ShowMessage(actorId, 0);
   Event_End();
@@ -496,7 +496,7 @@ static void Vault_AskWhetherIvanWentToLunpa(void) {
   Event_SetMessageId(MsgVaultDidntGoLunpa);
   if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) != 0)
     ++gFieldWork->message;
-  Import_ActorSetAnimation(ACTOR_BOY_ROUND_THE_WELL, 0);
+  Actor_SetAnimation(ACTOR_BOY_ROUND_THE_WELL, 0);
   Vault_FaceActorAndWait(ACTOR_BOY_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   Vault_ShowMessageAndWait(ACTOR_BOY_ROUND_THE_WELL, 10);
   actor->facing = savedFacing;
@@ -514,7 +514,7 @@ static void Vault_ThankForCapturingThieves(void) {
   actor->timer |= 2;
   Event_Start();
   Event_SetMessageId(MsgVaultEveryoneGratefulCaptured);
-  Import_ActorSetAnimation(ACTOR_GIRL_ROUND_THE_WELL, 0);
+  Actor_SetAnimation(ACTOR_GIRL_ROUND_THE_WELL, 0);
   Vault_FaceActorAndWait(ACTOR_GIRL_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   Vault_ShowMessageAndWait(ACTOR_GIRL_ROUND_THE_WELL, 10);
   actor->facing = savedFacing;
@@ -530,7 +530,7 @@ static void Vault_ThankForCapturingThieves(void) {
 static void Vault_AskAboutPrisoners(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultThoseMenCapturedTheyreIn);
-  Import_ActorSetAnimation(ACTOR_STRONGMAN_ON_WATCH, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_STRONGMAN_ON_WATCH, ANIM_STAND);
   Vault_FaceActorAndWait(ACTOR_STRONGMAN_ON_WATCH, ACTOR_PARTY_LEADER, 2);
   Vault_AskYesNoAndShowReply(ACTOR_STRONGMAN_ON_WATCH);
   Event_End();
@@ -552,10 +552,10 @@ static void Vault_AskWhoCapturedThieves(void) {
 static void Vault_TalkToDogAfterCapture(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultRuffRrruff2);
-  Import_ActorSetAnimation(ACTOR_VAULT_DOG, 0);
+  Actor_SetAnimation(ACTOR_VAULT_DOG, 0);
   Vault_FaceActorAndWait(ACTOR_VAULT_DOG, ACTOR_PARTY_LEADER, 2);
   Event_ShowMessage(ACTOR_VAULT_DOG, 0);
-  Import_ActorSetAnimation(ACTOR_VAULT_DOG, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_VAULT_DOG, ANIM_STAND);
   if (PartyInventory_FindMember(ITEM_BONE) != -1 &&
       GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
     u16 *menuRequest = &gFieldWork->fieldMenu;
@@ -660,7 +660,7 @@ static void Vault_ReadDogMind(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     Event_SetMessageId(MsgVaultStealingInMidstVolcanicEruption);
-    Import_ActorSetAnimation(ACTOR_VAULT_DOG, 0);
+    Actor_SetAnimation(ACTOR_VAULT_DOG, 0);
     Event_Wait(2);
   } else if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE) != 0) {
     Event_SetMessageId(MsgVaultCarefulSearchWillRevealPassage);
@@ -929,7 +929,7 @@ s32 Scene_Initialize(void) {
           Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
           Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
           Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-          Import_ActorSetAnimation(ACTOR_IVAN, ANIM_WALK);
+          Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
           actor = Actor_Get(ACTOR_PARTY_LEADER);
           if (actor != 0) {
             Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel,
@@ -962,7 +962,7 @@ s32 Scene_Initialize(void) {
           Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
           Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
           Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-          Import_ActorSetAnimation(ACTOR_IVAN, ANIM_WALK);
+          Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
           actor = Actor_Get(ACTOR_PARTY_LEADER);
           if (actor != 0) {
             Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel,

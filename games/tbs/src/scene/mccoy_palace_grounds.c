@@ -152,8 +152,8 @@ static void McCoyPalaceGrounds_CatchFloatingNut(void) {
   Event_Start();
   Actor_SetPosition(ACTOR_FLOATING_NUT, 0, 0);
   GameFlag_Set(FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT);
-  ItemDisplay_ShowItem(ITEM_NUT, 3);
-  PartyInventory_GiveItem(ITEM_NUT, 0);
+  Item_ShowFound(ITEM_NUT, 3);
+  Party_GiveItem(ITEM_NUT, 0);
   Event_End();
 }
 

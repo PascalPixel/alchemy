@@ -395,7 +395,7 @@ static void Altin_TalkToThirstyOldWoman(void) {
     Event_SetMessageId(MsgAltinOnesWhoDefeatedWaterBeasts);
     Event_AskYesNo(ACTOR_THIRSTY_OLD_WOMAN, 0);
   } else {
-    Import_ActorSetAnimation(ACTOR_THIRSTY_OLD_WOMAN, ANIM_SHAKE_HEAD);
+    Actor_SetAnimation(ACTOR_THIRSTY_OLD_WOMAN, ANIM_SHAKE_HEAD);
     Event_SetMessageId(MsgAltinWeCantDrinkWaterMonsters);
     Event_ShowMessageThenWait(ACTOR_THIRSTY_OLD_WOMAN, 0, 10);
     if (GameFlag_Get(FLAG_ALTIN_WATER_BEAST_LEFT) == 0) {
@@ -655,7 +655,7 @@ static void Altin_EnterDoor(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   if (doorIndex == DOOR_STRAIGHT_IN) {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, 0);
   } else {
@@ -748,7 +748,7 @@ static void Altin_BeastHopAway(void) {
   Event_Wait(4);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Event_Wait(40);
-  Import_ActorSetAnimation(ACTOR_WATER_BEAST, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_WATER_BEAST, ANIM_STAND);
 }
 
 /// After Move: remembers whether the pillar now stands in map column 22, the
@@ -832,7 +832,7 @@ static void Altin_ApplyWaterLevel(void) {
   } else {
     Scene_QueueMusic(SE_AMBIENT_WATER);
     Actor_SetSpriteColorById(ACTOR_WATER_BEAST, SPRITE_COLOR_RBG);
-    Import_ActorSetAnimation(ACTOR_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
+    Actor_SetAnimation(ACTOR_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
     Task_AddFrame(Altin_BeastSpawnSpray, TASK_PASS_FRAME);
   }
   if (gMainRoutineWork.entrance == ALTIN_FROM_SANCTUM) {
@@ -966,7 +966,7 @@ static void Altin_ScareOffBeast(void) {
   FieldCamera_MoveTo(PIXELS(63), -1, PIXELS(450), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(30);
-  Import_ActorSetAnimation(ACTOR_WATER_BEAST, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_WATER_BEAST, ANIM_STAND);
   // The spitting stops: its sound and its spray end.
   Scene_QueueMusic(-1);
   Task_Remove(Altin_BeastSpawnSpray);

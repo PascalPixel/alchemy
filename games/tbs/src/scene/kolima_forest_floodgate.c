@@ -268,7 +268,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
     MapGrid_CopyCells(67, 34, 2, 5, 79, 25);
     wait(6);
     MapGrid_CopyCells(69, 34, 2, 5, 79, 25);
-    Import_ActorSetAnimation(ACTOR_FLOODGATE_SPRAY, SPLASH_ANIMATION_BURST);
+    Actor_SetAnimation(ACTOR_FLOODGATE_SPRAY, SPLASH_ANIMATION_BURST);
     Sound_Play(SE_LOG_FALL);
     wait(6);
     MapGrid_CopyCells(71, 34, 2, 5, 79, 25);
@@ -292,7 +292,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
     wait(30);
     MapGrid_CopyCells(65, 45, 2, 4, 15, 28);
     MapGrid_CopyCells(71, 50, 2, 5, 79, 25);
-    Import_ActorSetAnimation(ACTOR_FLOODGATE_SPRAY, SPLASH_ANIMATION_CHURN);
+    Actor_SetAnimation(ACTOR_FLOODGATE_SPRAY, SPLASH_ANIMATION_CHURN);
     Sound_Play(SE_WATER_DRAIN);
     wait(6);
     MapGrid_CopyCells(69, 50, 2, 5, 79, 25);
@@ -350,20 +350,20 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
 static void KolimaForestFloodgate_PushShortLogWest(void) {
 
   Event_Start();
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(6);
   Sound_Play(SE_HEAVY_MOVE);
   Actor_SetSpeed(ACTOR_SHORT_LOG, PIXELS(1) / 2, PIXELS(1) / 5);
-  Import_ActorSetAnimation(ACTOR_SHORT_LOG, 2);
+  Actor_SetAnimation(ACTOR_SHORT_LOG, 2);
   Actor_SetDestination(ACTOR_SHORT_LOG, 72, 176);
   Event_Wait(6);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 3 * PIXELS(1) / 10, PIXELS(1) / 5);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, -8, 0);
   Event_Wait(24);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_WaitForMoveById(ACTOR_SHORT_LOG);
-  Import_ActorSetAnimation(ACTOR_SHORT_LOG, 1);
+  Actor_SetAnimation(ACTOR_SHORT_LOG, 1);
   Sound_Play(SE_STOP_ACTION_SE);
   Sound_Play(SE_HEAVY_STOP);
   MapGrid_CopyCellAttributes(5, 9, 1, 4, 6, 9);
@@ -377,20 +377,20 @@ static void KolimaForestFloodgate_PushShortLogWest(void) {
 static void KolimaForestFloodgate_PushShortLogEast(void) {
 
   Event_Start();
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(6);
   Sound_Play(SE_HEAVY_MOVE);
   Actor_SetSpeed(ACTOR_SHORT_LOG, PIXELS(1) / 2, PIXELS(1) / 5);
-  Import_ActorSetAnimation(ACTOR_SHORT_LOG, 2);
+  Actor_SetAnimation(ACTOR_SHORT_LOG, 2);
   Actor_SetDestination(ACTOR_SHORT_LOG, 104, 176);
   Event_Wait(6);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 3 * PIXELS(1) / 10, PIXELS(1) / 5);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 8, 0);
   Event_Wait(24);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_WaitForMoveById(ACTOR_SHORT_LOG);
-  Import_ActorSetAnimation(ACTOR_SHORT_LOG, 1);
+  Actor_SetAnimation(ACTOR_SHORT_LOG, 1);
   Sound_Play(SE_STOP_ACTION_SE);
   Sound_Play(SE_HEAVY_STOP);
   MapGrid_CopyCellAttributes(5, 9, 1, 4, 4, 9);
@@ -425,7 +425,7 @@ s32 KolimaForestFloodgate_Initialize(void) {
   KolimaForestFloodgate_StampLogCells(gKolimaForestFloodgate_DefaultRecords,
                                       CELL_BEHAVIOR_WALL);
   KolimaForestFloodgate_DrawWaterLevel();
-  Import_ActorSetAnimation(ACTOR_FLOODGATE_SPRAY, 0);
+  Actor_SetAnimation(ACTOR_FLOODGATE_SPRAY, 0);
   Actor_Get(ACTOR_FLOODGATE_SPRAY)->motionFlags = 0;
   actor = Actor_Get(ACTOR_SIGN);
   actor->radius = 8;
@@ -589,7 +589,7 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   actor = run->actor;
   quarter = facing / (TRIG_TURN / 4);
   Event_Start();
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(6);
   actor->speedLimit = PIXELS(1) / 2;
   actor->acceleration = PIXELS(1) / 5;
@@ -597,7 +597,7 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   Actor_SelectAnimation(actor, gKolimaForestFloodgate_PushAnimations[quarter]);
   FieldActor_SetMoveTarget(actor, x, 0, z);
   Event_Wait(6);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(*work));
   Actor_StartCamera(work->camera, (s32)actor);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 3 * PIXELS(1) / 10, PIXELS(1) / 5);
@@ -605,7 +605,7 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
                              gKolimaForestFloodgate_PushStepX[quarter],
                              gKolimaForestFloodgate_PushStepZ[quarter]);
   Event_Wait(24);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_WaitForMove(actor);
   Actor_SelectAnimation(actor, 1);
   Sound_Play(SE_STOP_ACTION_SE);

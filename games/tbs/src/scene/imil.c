@@ -663,13 +663,13 @@ static void Imil_TalkToWeaponMerchant(void) {
       Event_Start();
       FieldCamera_SetSpeedParameters(PIXELS(6), PIXELS(3) / 4);
       FieldCamera_MoveTo(PIXELS(426), -1, PIXELS(492), 1);
-      FieldCamera_WaitForArrival();
+      FieldCamera_WaitForMove();
       Event_Wait(20);
       Actor_RunScriptAndWait(ACTOR_WEAPON_MERCHANT, gImil_BobScript);
       Event_SetMessageId(MsgMercuryStoreClosedUntilWell);
       Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
       FieldCamera_MoveWithinMapBounds(PIXELS(426), -1, PIXELS(616), 1);
-      FieldCamera_WaitForArrival();
+      FieldCamera_WaitForMove();
       Event_End();
     }
   }
@@ -699,13 +699,13 @@ static void Imil_TalkToArmorMerchant(void) {
       Event_Start();
       FieldCamera_SetSpeedParameters(PIXELS(6), PIXELS(3) / 4);
       FieldCamera_MoveTo(PIXELS(426), -1, PIXELS(492), 1);
-      FieldCamera_WaitForArrival();
+      FieldCamera_WaitForMove();
       Event_Wait(20);
       Actor_RunScriptAndWait(ACTOR_ARMOR_MERCHANT, gImil_BobScript);
       Event_SetMessageId(MsgMercuryTooSickBusiness);
       Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
       FieldCamera_MoveWithinMapBounds(PIXELS(426), -1, PIXELS(616), 1);
-      FieldCamera_WaitForArrival();
+      FieldCamera_WaitForMove();
       Event_End();
     }
   }
@@ -969,7 +969,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
       ACTOR_GARET, ACTOR_WATCH_KEEP_MOTION | ACTOR_MIA, gImil_FaceTargetScript);
   FieldActor_SetTargetAndCallback(
       ACTOR_IVAN, ACTOR_WATCH_KEEP_MOTION | ACTOR_MIA, gImil_FaceTargetScript);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   table = gImil_BobScript;
   Actor_SetScript(ACTOR_OLD_MAN, table);
   Event_Wait(40);

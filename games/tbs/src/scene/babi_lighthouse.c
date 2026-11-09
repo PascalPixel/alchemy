@@ -518,7 +518,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Event_Wait(10);
   FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(288), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_WITNESS, ANIM_NOD);
   Event_Wait(30);
@@ -577,7 +577,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Event_Wait(30);
   Event_ShowMessage(ACTOR_FARAN, 0);
   FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(320), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(20);
   // The party learns where the kidnappers went and is asked to pursue them.
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
@@ -710,8 +710,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Event_Wait(40);
   Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
-  Actor_TurnToFaceEachOther(ACTOR_DOUBTING_THE_DOOR, ACTOR_WORRIED_FOR_SHEBA,
-                            50);
+  Actor_FaceEachOther(ACTOR_DOUBTING_THE_DOOR, ACTOR_WORRIED_FOR_SHEBA, 50);
   Actor_SetAnimation(ACTOR_DOUBTING_THE_DOOR, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIM_NOD);
   Event_Wait(30);
@@ -777,7 +776,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Event_Wait(20);
   FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(328), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(10);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTHWEST + FACING_STEP, 0);
@@ -888,7 +887,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
                   0);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 70);
   FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(312), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_DOUBTING_THE_DOOR, 0);
@@ -1010,8 +1009,8 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Event_Wait(25);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
-  Actor_TurnToFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
+  Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
+  Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
   Event_Wait(30);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);

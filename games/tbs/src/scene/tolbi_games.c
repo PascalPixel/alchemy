@@ -460,8 +460,8 @@ s32 TolbiSpring_Initialize(void) {
             item = TolbiSpring_SelectLuckyWheelsPrize(wonPrizes[prizeIndex]);
             MessageArgument_Push(item, 2);
             Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
-            ItemDisplay_ShowItem(item, 3);
-            PartyInventory_GiveItem(item, 0);
+            Item_ShowFound(item, 3);
+            Party_GiveItem(item, 0);
             Event_Wait(10);
             Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
             Event_Wait(30);
@@ -515,8 +515,8 @@ static void TolbiSpring_RevealPrize(s32 item) {
 
   Event_Wait(70);
   Sound_Play(SE_RECOVERY);
-  ItemDisplay_ShowItem(item, 3);
-  PartyInventory_GiveItem(item, 0);
+  Item_ShowFound(item, 3);
+  Party_GiveItem(item, 0);
   Event_Wait(20);
 
   TolbiSpring_ShowPrizePicture(97, 29);

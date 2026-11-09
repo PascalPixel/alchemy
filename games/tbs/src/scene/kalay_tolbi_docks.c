@@ -579,7 +579,7 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
         gFieldWork->message += 3;
         Event_ShowMessage(ACTOR_SELLING_TICKETS, 0);
         // Complete both inventory and coin changes only after confirmation.
-        PartyInventory_GiveItem(ITEM_BOAT_TICKET, 0);
+        Party_GiveItem(ITEM_BOAT_TICKET, 0);
         Event_SetFlag(FLAG_KALAY_DOCKS_TICKET_BOUGHT);
         Party_AdjustCoins(-ticketPrice);
       }
@@ -835,14 +835,14 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Actor_WalkToAndWait(ACTOR_GARET, 232, 1424);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
   FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(1440), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(10);
   Actor_Jump(ACTOR_GARET, 6, 15);
   Actor_Jump(ACTOR_GARET, 6, 40);
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(20);
   FieldCamera_MoveTo(PIXELS(264), -1, PIXELS(1448), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
@@ -927,7 +927,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 216, 272);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_TOUR_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Event_ShowMessage(ACTOR_TOUR_GUIDE, 0);

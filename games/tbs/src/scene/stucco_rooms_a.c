@@ -377,7 +377,7 @@ static void StuccoRoomsA_OpenDoorAndExit(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   leader->motionFlags = 0;
 
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -8);
   Event_Wait(10);
 

@@ -299,7 +299,7 @@ static void CrossboneIsleKeys_BaneFirstEscape(void) {
     Event_Start();
     FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
     Actor_PlaceCurrentWithinCameraBounds(ACTOR_BANE, 1);
-    FieldCamera_WaitForArrival();
+    FieldCamera_WaitForMove();
     Actor_FaceDirection(ACTOR_BANE, FACING_EAST, 20);
     Actor_SetAttachedEffect(ACTOR_BANE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -332,7 +332,7 @@ static void CrossboneIsleKeys_BaneSecondEscape(void) {
       // Focus on the Djinni before its next jump away.
       FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
       Actor_PlaceCurrentWithinCameraBounds(ACTOR_BANE, 1);
-      FieldCamera_WaitForArrival();
+      FieldCamera_WaitForMove();
       Actor_FaceDirection(ACTOR_BANE, FACING_SOUTH, 20);
       Actor_SetAttachedEffect(ACTOR_BANE,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -639,9 +639,9 @@ static void CrossboneIsleKeys_HideRedKey(void) {
 /// taken.
 static inline void CrossboneIsleKeys_CollectKey(s32 actorId, s32 itemId,
                                                 s32 collectedFlag) {
-  ItemDisplay_ShowItem(itemId, 3);
+  Item_ShowFound(itemId, 3);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  PartyInventory_GiveItem(itemId, 0);
+  Party_GiveItem(itemId, 0);
   Actor_SetPosition(actorId, 0, 0);
   GameFlag_Set(collectedFlag);
 }
@@ -847,7 +847,7 @@ static void CrossboneIsleKeys_DodgeFourthPursuer(void) {
     }
     leaderColumn = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed / PIXELS(16);
     if (leaderColumn < Actor_Get(ACTOR_FOURTH_STATUE)->x.fixed / PIXELS(16)) {
-      FieldActor_SetDestinationOffset(ACTOR_FOURTH_STATUE, -8, 0);
+      Actor_SetDestinationOffset(ACTOR_FOURTH_STATUE, -8, 0);
     }
     Actor_WaitForMoveById(ACTOR_FOURTH_STATUE);
     leader = Actor_Get(ACTOR_PARTY_LEADER);

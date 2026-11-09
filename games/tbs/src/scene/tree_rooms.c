@@ -608,7 +608,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Event_Wait(20);
   FieldCamera_SetSpeed(PIXELS(6) / 5, PIXELS(3) / 20);
   FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(152), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(10);
   // Open the passage in Tret's room before continuing the conversation.
   openingColumn = 10;
@@ -631,7 +631,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
   FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(90), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(40);
   TreeRooms_PlayGesture(TRET_GESTURE_OPEN_EYES);
   Event_Wait(60);

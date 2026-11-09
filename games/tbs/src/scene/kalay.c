@@ -612,7 +612,7 @@ static void Kalay_OpenDoorAndExit(void) {
   }
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -8);
   Event_Wait(10);
   Import_EventSetExitRequest(*trigger);
@@ -637,7 +637,7 @@ static void Kalay_EnterPalace(void) {
   Kalay_AnimatePalaceDoor();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
   Event_Wait(10);
   Import_EventSetExitRequest(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE);
@@ -732,7 +732,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_RunRepeatedMotion(ACTOR_FIRST_TOURIST + 1, 2);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 1, FACING_NORTHWEST + FACING_STEP,
                         10);
-    Import_ActorSetAnimation(ACTOR_FIRST_TOURIST + 1, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_FIRST_TOURIST + 1, ANIM_NOD);
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 1, 0, 10);
     Actor_SetAttachedEffect(ACTOR_FIRST_TOURIST + 5,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -745,13 +745,13 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 4, 0, 10);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_WEST, 10);
     Actor_RunRepeatedMotion(ACTOR_FIRST_TOURIST + 4, 2);
-    Import_ActorSetAnimation(ACTOR_FIRST_TOURIST + 4, ANIM_SHAKE_HEAD);
+    Actor_SetAnimation(ACTOR_FIRST_TOURIST + 4, ANIM_SHAKE_HEAD);
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 4, 0, 10);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_NORTHWEST + FACING_STEP,
                         0);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 5, FACING_SOUTH + FACING_STEP,
                         20);
-    Import_ActorSetAnimation(ACTOR_FIRST_TOURIST + 4, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_FIRST_TOURIST + 4, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_FIRST_TOURIST + 5, ANIM_NOD);
     Actor_RunRepeatedMotion(ACTOR_HEAD_GUIDE, 2);
     Actor_SetAttachedEffect(ACTOR_HEAD_GUIDE,
@@ -786,7 +786,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Event_ShowMessageThenWait(ACTOR_OURANOS, 0, 10);
     Actor_RunRepeatedMotion(ACTOR_FIRST_TOURIST + 6, 1);
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 6, 0, 10);
-    Import_ActorSetAnimation(ACTOR_FIRST_TOURIST + 6, ANIM_SHAKE_HEAD);
+    Actor_SetAnimation(ACTOR_FIRST_TOURIST + 6, ANIM_SHAKE_HEAD);
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 6, 0, 10);
     Actor_RunRepeatedMotion(ACTOR_SECOND_GUIDE, 2);
     Actor_ShowEmote(ACTOR_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -934,7 +934,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Event_SetMessageId(message);
     Event_ShowMessageThenWait(ACTOR_OURANOS, 0, 10);
     Actor_RunRepeatedMotion(ACTOR_FIRST_TOURIST + 6, 1);
-    Import_ActorSetAnimation(ACTOR_FIRST_TOURIST + 6, ANIM_SHAKE_HEAD);
+    Actor_SetAnimation(ACTOR_FIRST_TOURIST + 6, ANIM_SHAKE_HEAD);
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 6, 0, 10);
     Actor_ShowEmote(ACTOR_OURANOS, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     Actor_ShowEmote(ACTOR_HEAD_GUIDE, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
@@ -999,13 +999,13 @@ static void Kalay_WatchTourGroupDeparture(void) {
                         4);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 6, FACING_SOUTH + FACING_STEP, 0);
     Actor_FaceDirection(ACTOR_OURANOS, FACING_NORTHWEST + FACING_STEP, 4);
-    Import_ActorSetAnimation(ACTOR_FIRST_TOURIST, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_FIRST_TOURIST, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_FIRST_TOURIST + 1, ANIM_NOD);
-    Import_ActorSetAnimation(ACTOR_FIRST_TOURIST + 2, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_FIRST_TOURIST + 2, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_FIRST_TOURIST + 3, ANIM_NOD);
-    Import_ActorSetAnimation(ACTOR_FIRST_TOURIST + 5, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_FIRST_TOURIST + 5, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_FIRST_TOURIST + 4, ANIM_NOD);
-    Import_ActorSetAnimation(ACTOR_FIRST_TOURIST + 6, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_FIRST_TOURIST + 6, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_OURANOS, ANIM_NOD);
     Actor_Jump(ACTOR_HEAD_GUIDE, 2, 40);
     Event_ShowMessageThenWait(ACTOR_HEAD_GUIDE, 0, 10);
@@ -1408,7 +1408,7 @@ static void Kalay_PrepareTunnel(void) {
     if (GameFlag_Get(FLAG_TUNNEL_PUDDLE_FROZEN) != 0) {
       Actor_Get(ACTOR_PUDDLE);
       column = 9;
-      Import_ActorSetAnimation(ACTOR_PUDDLE, PUDDLE_ANIMATION_FROZEN);
+      Actor_SetAnimation(ACTOR_PUDDLE, PUDDLE_ANIMATION_FROZEN);
       MapGrid_CopyCellAttributes(0, 0, 1, 1, column, 14);
       MapGrid_CopyCellAttributes(0, 0, 1, 1, column, 45);
       {
@@ -1610,7 +1610,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Actor_Get(ACTOR_SECOND_PALACE_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkTo(ACTOR_PALACE_GUARD, 184, 232);
   Actor_WalkToAndWait(ACTOR_SECOND_PALACE_GUARD, 198, 232);
-  Import_ActorSetAnimation(ACTOR_PALACE_GUARD, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PALACE_GUARD, ANIM_STAND);
   Event_Wait(20);
   Actor_Get(ACTOR_PALACE_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_Get(ACTOR_SECOND_PALACE_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
@@ -1740,7 +1740,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Actor_Get(ACTOR_SECOND_PALACE_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkTo(ACTOR_PALACE_GUARD, 168, 232);
   Actor_WalkToAndWait(ACTOR_SECOND_PALACE_GUARD, 212, 232);
-  Import_ActorSetAnimation(ACTOR_PALACE_GUARD, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PALACE_GUARD, ANIM_STAND);
   Event_Wait(20);
   Actor_Get(ACTOR_PALACE_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_Get(ACTOR_SECOND_PALACE_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
@@ -1753,7 +1753,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 192, 222);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  Import_ActorSetAnimation(ACTOR_PALACE_GUARD, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PALACE_GUARD, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_SECOND_PALACE_GUARD, ANIM_NOD);
   Actor_WalkTo(ACTOR_PALACE_GUARD, 184, 232);
   Actor_WalkToAndWait(ACTOR_SECOND_PALACE_GUARD, 198, 232);
@@ -1807,7 +1807,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(300), 1);
   Actor_SetSpeed(ACTOR_WAGON, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_WAGON, 440, 300);
-  Import_ActorSetAnimation(ACTOR_WAGON, 0);
+  Actor_SetAnimation(ACTOR_WAGON, 0);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Event_Wait(40);
   Actor_SetSpeed(ACTOR_BUNZA, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -1864,8 +1864,8 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_WalkTo(ACTOR_GARET, 378, 310);
   Actor_WalkTo(ACTOR_IVAN, 400, 288);
   Actor_WalkToAndWait(ACTOR_MIA, 410, 308);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_STAND);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 40);
@@ -1914,9 +1914,9 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 20);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -1933,7 +1933,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 2, 0, 10);
   Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTHEAST + FACING_STEP, 10);
-  Import_ActorSetAnimation(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
+  Actor_SetAnimation(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
   Event_ShowMessageThenWait(ACTOR_BUNZA, 0, 10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 10);
@@ -1944,7 +1944,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH + FACING_STEP, 10);
-  Import_ActorSetAnimation(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
+  Actor_SetAnimation(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
   Event_ShowMessageThenWait(ACTOR_BUNZA, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 40);
@@ -1959,7 +1959,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTHEAST + FACING_STEP, 10);
-  Import_ActorSetAnimation(ACTOR_HAMMET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_HAMMET, ANIM_NOD);
   Event_OpenMessage(ACTOR_HAMMET, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
@@ -1979,8 +1979,8 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 10);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_TUNNEL_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -2030,9 +2030,9 @@ static void Kalay_HammetReturnsToPalace(void) {
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
   Event_Wait(20);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Actor_WalkToAndWait(ACTOR_BUNZA, 420, 282);
   Actor_WalkToAndWait(ACTOR_BUNZA, 420, 312);

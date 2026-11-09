@@ -309,7 +309,7 @@ s32 LacquerRoomsB_Initialize(void) {
     Actor_CreateConfigured(PIXELS(484), 0, PIXELS(568), SPRITE_CHEST);
   } else if (entrance == LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
-    Import_ActorSetAnimation(ACTOR_HSU, ANIM_HSU_IN_BED);
+    Actor_SetAnimation(ACTOR_HSU, ANIM_HSU_IN_BED);
   }
   return 0;
 }

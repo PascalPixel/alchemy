@@ -264,7 +264,7 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 232, 264);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
-    Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_KRADEN, 20);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_KRADEN, 20);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
     // Garet and Jenna step out of Isaac and stand either side of him.
@@ -349,8 +349,8 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 10);
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 6);
     // The three agree and turn to go.
-    Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 10);
-    Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JENNA, 0);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 10);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JENNA, 0);
     Actor_FaceActor(ACTOR_KRADEN, ACTOR_GARET, 10);
     Actor_FaceActor(ACTOR_KRADEN, ACTOR_JENNA, 10);
     ValeKradensCottage_NodTogether();
@@ -394,7 +394,7 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 10);
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Event_Wait(16);
-    Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JENNA, 40);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JENNA, 40);
     Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
@@ -648,7 +648,7 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   // The camera pans down to the strangers, and the ominous music plays.
   FieldCamera_SetSpeed(PIXELS(6), PIXELS(3) / 4);
   FieldCamera_MoveTo(PIXELS(215), -1, PIXELS(345), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(20);
   Sound_Play(MUS_OMINOUS);
 
@@ -718,7 +718,7 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   accusationMessage = MsgValeYoureTheOnesSneakingAround;
   Event_SetMessageId(accusationMessage);
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
-  Actor_TurnToFaceEachOther(ACTOR_SATUROS, ACTOR_MENARDI, 40);
+  Actor_FaceEachOther(ACTOR_SATUROS, ACTOR_MENARDI, 40);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH + FACING_STEP, 20);
   Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 60);
@@ -859,7 +859,7 @@ static void ValeKradensCottage_OverhearKraden(void) {
     // The camera goes up to the door. Pacing, Kraden says they know more of
     // Sol Sanctum than Vale's elders.
     FieldCamera_MoveWithinMapBounds(PIXELS(232), -1, PIXELS(240), 1);
-    FieldCamera_WaitForArrival();
+    FieldCamera_WaitForMove();
     Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
     Event_ShowMessage(ACTOR_KRADEN, 0);
@@ -893,7 +893,7 @@ static void ValeKradensCottage_OverhearKraden(void) {
     Event_Wait(20);
     // The camera returns to Isaac, and Garet and Jenna walk back into him.
     FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 1);
-    FieldCamera_WaitForArrival();
+    FieldCamera_WaitForMove();
     Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {

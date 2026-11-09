@@ -183,7 +183,7 @@ static void StuccoRoomsB_EnterDoor(void) {
                        gStuccoRoomsBDoors[doorIndex].y);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Import_EventSetExitRequest(*trigger);
 }
 

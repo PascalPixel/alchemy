@@ -1425,10 +1425,10 @@ static void VenusLighthouse_SearchStatue(void) {
   // Follow the revealed path after the statue and color effect have finished.
   FieldCamera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
   FieldCamera_MoveTo(PIXELS(456), -1, PIXELS(542), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(50);
   FieldCamera_MoveTo(PIXELS(456), -1, PIXELS(423), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_End();
   work->busy = 0;
 }
@@ -1466,7 +1466,7 @@ static void VenusLighthouse_MovePillarTowardWall(void) {
       Actor_SetSpeed(ACTOR_GARET, walkSpeed, walkAcceleration);
       Actor_WalkToAndWait(ACTOR_GARET, garetX, 88);
       Actor_WalkToAndWait(ACTOR_GARET, garetX, 104);
-      Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
+      Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
       Event_Wait(20);
       Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
       Event_Wait(20);
@@ -1573,7 +1573,7 @@ static void VenusLighthouse_TalkToScholarByDoor(void) {
   Actor_FaceDirection(ACTOR_DOOR_SCHOLAR, FACING_NORTHEAST, 0);
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(448), -1, PIXELS(432), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_ShowMessage(ACTOR_DOOR_SCHOLAR, 0);
   Event_End();
 }
@@ -2310,7 +2310,7 @@ static void VenusLighthouse_CarryFloatingPillar(void) {
       FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_GetActor()->motionFlags = 0;
       FieldCamera_MoveWithinMapBounds(PIXELS(136), PIXELS(8), PIXELS(344), 1);
-      FieldCamera_WaitForArrival();
+      FieldCamera_WaitForMove();
       // Stack the pillar, then rebalance the two supports and attach the height
       // follower.
       VenusLighthouse_StackFloatingPillar(settledIndex +
@@ -3548,7 +3548,7 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
     row++;
   } while (row <= 12);
   MapGrid_CopyCellsTo(81, 41, 89, 14, 9, 2);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Event_Wait(60);
   GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED);
@@ -3612,7 +3612,7 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
     row++;
   } while (row <= 12);
   MapGrid_CopyCellsTo(86, 41, 97, 14, 5, 2);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Event_Wait(60);
   GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED);

@@ -838,7 +838,7 @@ static void VaultCave_UpdateTimedFallingActors(void) {
     }
     // A water drop landing on either movable pillar restarts at the top.
     if (VaultCave_ResetFallingActorAtActorCell(ACTOR_NORTHERN_PILLAR) != 0) {
-      Import_ActorSetAnimation(ACTOR_NORTHERN_PILLAR, 1);
+      Actor_SetAnimation(ACTOR_NORTHERN_PILLAR, 1);
       if (Event_GetFlag(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0) {
         GameFlag_Set(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK);
         Sound_Play(SE_DUST_PUFF);
@@ -1036,27 +1036,27 @@ s32 Scene_Initialize(void) {
     case VAULT_CAVE_VAMBRACE_FROST_ROOM_FROM_CHEST:
       VaultCave_StartFrostControlledFalls();
       if (GameFlag_Get(FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN) != 0) {
-        Import_ActorSetAnimation(ACTOR_WEST_UPPER_PUDDLE, 5);
+        Actor_SetAnimation(ACTOR_WEST_UPPER_PUDDLE, 5);
         VaultCave_FreezeWestUpperPuddle();
       }
       if (GameFlag_Get(FLAG_VAULT_CAVE_WEST_LOWER_PUDDLE_FROZEN) != 0) {
-        Import_ActorSetAnimation(ACTOR_WEST_LOWER_PUDDLE, 5);
+        Actor_SetAnimation(ACTOR_WEST_LOWER_PUDDLE, 5);
         VaultCave_FreezeWestLowerPuddle();
       }
       if (GameFlag_Get(FLAG_VAULT_CAVE_INNER_WEST_LOWER_PUDDLE_FROZEN) != 0) {
-        Import_ActorSetAnimation(ACTOR_INNER_WEST_LOWER_PUDDLE, 5);
+        Actor_SetAnimation(ACTOR_INNER_WEST_LOWER_PUDDLE, 5);
         VaultCave_FreezeInnerWestLowerPuddle();
       }
       if (GameFlag_Get(FLAG_VAULT_CAVE_EAST_UPPER_PUDDLE_FROZEN) != 0) {
-        Import_ActorSetAnimation(ACTOR_EAST_UPPER_PUDDLE, 5);
+        Actor_SetAnimation(ACTOR_EAST_UPPER_PUDDLE, 5);
         VaultCave_FreezeEastUpperPuddle();
       }
       if (GameFlag_Get(FLAG_VAULT_CAVE_EAST_LOWER_PUDDLE_FROZEN) != 0) {
-        Import_ActorSetAnimation(ACTOR_EAST_LOWER_PUDDLE, 5);
+        Actor_SetAnimation(ACTOR_EAST_LOWER_PUDDLE, 5);
         VaultCave_FreezeEastLowerPuddle();
       }
       if (GameFlag_Get(FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN) != 0) {
-        Import_ActorSetAnimation(ACTOR_FAR_EAST_PUDDLE, 5);
+        Actor_SetAnimation(ACTOR_FAR_EAST_PUDDLE, 5);
         VaultCave_FreezeFarEastPuddle();
       }
       Task_AddFrame(VaultCave_UpdatePuddlePriorities, TASK_PASS_FRAME);
@@ -1071,16 +1071,16 @@ s32 Scene_Initialize(void) {
           ACTOR_PRIORITY_UNDERFOOT;
       break;
     }
-    Import_ActorSetAnimation(ACTOR_PILLAR_EAST_OF_SOUTHERN_SWITCH, 2);
-    Import_ActorSetAnimation(ACTOR_SOUTHERN_PILLAR, 2);
+    Actor_SetAnimation(ACTOR_PILLAR_EAST_OF_SOUTHERN_SWITCH, 2);
+    Actor_SetAnimation(ACTOR_SOUTHERN_PILLAR, 2);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_PILLAR_EAST_OF_SOUTHERN_SWITCH), 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_SOUTHERN_PILLAR), 0);
     Actor_Get(ACTOR_SOUTHERN_PILLAR)->collisionFlags = 1;
   }
   if (gMainRoutineWork.next == (s32)&SceneId_VaultCaveMouth) {
-    Import_ActorSetAnimation(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH, 2);
+    Actor_SetAnimation(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH, 2);
     if (GameFlag_Get(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0) {
-      Import_ActorSetAnimation(ACTOR_NORTHERN_PILLAR, 2);
+      Actor_SetAnimation(ACTOR_NORTHERN_PILLAR, 2);
     }
     Actor_SetSpriteFlags(Actor_Get(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH), 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_NORTHERN_PILLAR), 0);

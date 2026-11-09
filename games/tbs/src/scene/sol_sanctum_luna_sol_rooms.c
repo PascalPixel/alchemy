@@ -577,12 +577,12 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
   SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 6);
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   FieldCamera_MoveTo(PIXELS(575), -1, PIXELS(181), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(120);
   SolSanctumLunaSolRooms_ShowMessageAndWait(
       SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 80);
   FieldCamera_MoveTo(PIXELS(492), -1, PIXELS(168), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 20);
   SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN,
@@ -913,7 +913,7 @@ static void SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed(void) {
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_Jump(ACTOR_KRADEN, 6, 30);
   FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(174), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(30);
   SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN,
                                             20);
@@ -972,7 +972,7 @@ static void SolSanctumLunaSolRooms_SpringTrap(void) {
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_Jump(ACTOR_KRADEN, 6, 30);
   FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(174), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(30);
   SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN,
                                             20);
@@ -1090,7 +1090,7 @@ static void SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 20);
   Actor_Jump(ACTOR_KRADEN, 6, 30);
   FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(174), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(30);
   for (twelveFrameFlashes = 0; twelveFrameFlashes != 4; twelveFrameFlashes++) {
     SolSanctumLunaSolRooms_FlashSavedStatueLights(12);
@@ -1148,7 +1148,7 @@ static void SolSanctumLunaSolRooms_KradenSeesLunaPictureChange(void) {
       Event_SetMessageId(MsgSolSanctumThePictureOfLunaChanged);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 576, 232);
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
-      FieldCamera_WaitForArrival();
+      FieldCamera_WaitForMove();
       Event_Wait(10);
       Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
       Actor_WalkToAndWait(ACTOR_KRADEN, 576, 152);
@@ -1284,7 +1284,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
       TilesetAnim_Resume(10);
       GameFlag_Set(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN);
     }
-    Actor_TurnToFaceEachOther(ACTOR_KRADEN, ACTOR_PARTY_LEADER, 30);
+    Actor_FaceEachOther(ACTOR_KRADEN, ACTOR_PARTY_LEADER, 30);
     Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimation(ACTOR_KRADEN, ANIM_STAND);

@@ -305,7 +305,7 @@ static void Sanctum_TalkAboutGoldenStatue(void) {
   }
 
   Actor_SetAnimation(ACTOR_SANCTUM_MEMBER, 1);
-  Actor_TurnToFaceEachOther(ACTOR_SANCTUM_MEMBER, ACTOR_PARTY_LEADER, 0);
+  Actor_FaceEachOther(ACTOR_SANCTUM_MEMBER, ACTOR_PARTY_LEADER, 0);
   Event_Wait(2);
   Event_ShowMessage(ACTOR_SANCTUM_MEMBER, 0);
   Event_End();
@@ -492,7 +492,7 @@ static void Sanctum_WarnBeforeLeaving(void) {
   Event_Start();
   FieldCamera_SetSpeedParameters(PIXELS(1), PIXELS(1) / 8);
   Actor_PlaceCurrentWithinCameraBounds(ACTOR_GARET, 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_FaceActor(ACTOR_HEALER, ACTOR_PARTY_LEADER, 0);
   Event_Wait(10);
@@ -613,14 +613,14 @@ static void Sanctum_RequestQuestAcceptance(void) {
   Event_Start();
   // A repeat visit skips the account of Sol Sanctum.
   if (GameFlag_Get(FLAG_SANCTUM_QUEST_RESTARTED) != 0) {
-    Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
     Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(ACTOR_DORA, ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(ACTOR_WEST_HEALER, ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_PARTY_LEADER, 0);
     FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
-    FieldCamera_WaitForArrival();
+    FieldCamera_WaitForMove();
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     gFieldWork->transitionFrames = 64;
     Event_StartScreenTransition();
@@ -631,7 +631,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     PaletteFade_StartInterpolation(1);
     Event_Wait(1);
     FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
-    FieldCamera_WaitForArrival();
+    FieldCamera_WaitForMove();
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     Event_StartScreenTransition();
@@ -865,7 +865,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_Wait(20);
     Event_ShowMessage(ACTOR_EAST_HEALER, 0);
     Event_Wait(20);
-    Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
     Event_Wait(60);
     Actor_SetAnimationAndWait(ACTOR_HEALER, 4);
     Event_Wait(20);
@@ -874,18 +874,18 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_Wait(20);
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_Wait(30);
-    Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
     Event_Wait(20);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
-    Actor_TurnToFaceEachOther(ACTOR_WEST_HEALER, ACTOR_EAST_HEALER, 0);
+    Actor_FaceEachOther(ACTOR_WEST_HEALER, ACTOR_EAST_HEALER, 0);
     Event_Wait(20);
     Actor_SetAnimation(ACTOR_WEST_HEALER, 3);
     Actor_SetAnimation(ACTOR_EAST_HEALER, 3);
     Actor_WaitForAnimationChange(ACTOR_EAST_HEALER);
     Event_Wait(30);
-    Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
-    Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_GARETS_GRANDFATHER, 0);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
+    Actor_FaceEachOther(ACTOR_GARET, ACTOR_GARETS_GRANDFATHER, 0);
     Event_Wait(20);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimation(ACTOR_DORA, 3);
@@ -932,7 +932,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Actor_ShowEmote(ACTOR_GARETS_GRANDFATHER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                     0);
     Event_Wait(20);
-    Actor_TurnToFaceEachOther(ACTOR_WEST_HEALER, ACTOR_EAST_HEALER, 0);
+    Actor_FaceEachOther(ACTOR_WEST_HEALER, ACTOR_EAST_HEALER, 0);
     Event_Wait(40);
     Actor_FaceActor(ACTOR_WEST_HEALER, ACTOR_HEALER, 0);
     Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_HEALER, 0);
@@ -944,10 +944,10 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_Wait(20);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Actor_StartRepeatedMotion(ACTOR_GARET, 1);
-    Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
     Actor_StartRepeatedMotion(ACTOR_WEST_HEALER, 1);
     Actor_StartRepeatedMotion(ACTOR_EAST_HEALER, 1);
-    Actor_TurnToFaceEachOther(ACTOR_WEST_HEALER, ACTOR_EAST_HEALER, 0);
+    Actor_FaceEachOther(ACTOR_WEST_HEALER, ACTOR_EAST_HEALER, 0);
     Actor_SetAttachedEffect(ACTOR_GARETS_GRANDFATHER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(60);
@@ -1046,8 +1046,8 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_Wait(20);
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_Wait(40);
-    Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
-    Actor_TurnToFaceEachOther(ACTOR_WEST_HEALER, ACTOR_EAST_HEALER, 0);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
+    Actor_FaceEachOther(ACTOR_WEST_HEALER, ACTOR_EAST_HEALER, 0);
     Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_PARTY_LEADER, 0);
     Event_Wait(60);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
@@ -1064,7 +1064,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Actor_WalkToAndWait(ACTOR_HEALER, 200, 136);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
     Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_PARTY_LEADER, 0);
-    Actor_TurnToFaceEachOther(ACTOR_HEALER, ACTOR_GARET, 0);
+    Actor_FaceEachOther(ACTOR_HEALER, ACTOR_GARET, 0);
     Event_Wait(40);
     Actor_SetAnimationAndWait(ACTOR_HEALER, 3);
     Event_Wait(50);
@@ -1173,12 +1173,12 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Actor_SetSpeed(ACTOR_EAST_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
   FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_WEST_HEALER, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_PARTY_LEADER, 0);
-  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
+  Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
   Event_Wait(10);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_DORA, 3);
@@ -1277,7 +1277,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Actor_SetPosition(ACTOR_WISE_ONE, 0, 0);
   Event_Wait(40);
   FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(60);
   Event_Wait(120);
@@ -1328,8 +1328,8 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Event_Wait(180);
   Actor_ShowEmote(ACTOR_GARETS_GRANDFATHER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Event_Wait(60);
-  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
-  Actor_TurnToFaceEachOther(ACTOR_WEST_HEALER, ACTOR_EAST_HEALER, 0);
+  Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
+  Actor_FaceEachOther(ACTOR_WEST_HEALER, ACTOR_EAST_HEALER, 0);
   Event_Wait(40);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_HEALER, 0);
@@ -1474,7 +1474,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Actor_ShowEmote(ACTOR_GARETS_GRANDFATHER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Event_Wait(60);
   Actor_WalkToAndWait(ACTOR_GARETS_GRANDFATHER, 200, 136);
-  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARETS_GRANDFATHER, 0);
+  Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARETS_GRANDFATHER, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_GARETS_GRANDFATHER, 0);
   Actor_FaceActor(ACTOR_DORA, ACTOR_GARETS_GRANDFATHER, 0);
   Event_Wait(30);
@@ -1849,7 +1849,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   Actor_SetAnimation(ACTOR_HEALER, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(60);
-  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
+  Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(10);
@@ -1864,7 +1864,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   Actor_Jump(ACTOR_PARTY_LEADER, 2, 0);
   Event_Wait(20);
   Event_Wait(15);
-  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARETS_GRANDFATHER, 0);
+  Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARETS_GRANDFATHER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(10);
@@ -1937,7 +1937,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   Actor_SetAnimation(ACTOR_DORA, 3);
   Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, 3);
   Event_Wait(30);
-  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
+  Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);

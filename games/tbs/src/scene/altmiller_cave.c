@@ -937,7 +937,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
-  Actor_TurnToFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
+  Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Event_Wait(20);
@@ -1042,8 +1042,8 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
-  Actor_TurnToFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
+  Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
+  Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
   AltmillerCave_FacePartyNorth();
   Event_Wait(30);
   Event_Wait(10);
@@ -1135,8 +1135,8 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_IVAN, 0, 48);
   Event_Wait(10);
-  Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
-  Actor_TurnToFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
+  Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
+  Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
   AltmillerCave_FacePartyNorth();
   Event_Wait(50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -1200,7 +1200,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_Wait(10);
-  Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 50);
+  Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Event_Wait(30);
@@ -1248,7 +1248,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(10);
   Event_Wait(10);
   FieldCamera_FollowActor(ACTOR_FIRST_SOLDIER, 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(70);
   Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
@@ -1275,7 +1275,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   AltmillerCave_FacePartyNorth();
   Actor_FaceDirection(ACTOR_BABI, FACING_WEST, 0);
   FieldCamera_MoveTo(PIXELS(248), -1, PIXELS(216), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(20);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
@@ -1350,7 +1350,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(30);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Actor_TurnToFaceEachOther(ACTOR_FIRST_SOLDIER, ACTOR_SECOND_SOLDIER, 70);
+  Actor_FaceEachOther(ACTOR_FIRST_SOLDIER, ACTOR_SECOND_SOLDIER, 70);
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_SECOND_SOLDIER, FACING_SOUTHEAST, 0);
   Event_Wait(30);
@@ -1363,8 +1363,8 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
-  Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
-  Actor_TurnToFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
+  Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
+  Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
   AltmillerCave_FacePartyNorth();
   Event_Wait(30);
   Event_Wait(10);
@@ -1454,8 +1454,8 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_SetScript(ACTOR_FIRST_SOLDIER, gAltmillerCave_FirstGuardLeavePath);
   Actor_SetScript(ACTOR_BABI, gAltmillerCave_BabiLeavePath);
   Event_Wait(10);
-  Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
-  Actor_TurnToFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
+  Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
+  Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
   Actor_RefreshSelectorById(ACTOR_BABI);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
@@ -1469,7 +1469,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
   Event_Wait(20);
   FieldCamera_MoveTo(PIXELS(248), -1, PIXELS(248), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_BABI, FACING_NORTH, 0);
   Event_Wait(20);
@@ -1556,7 +1556,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Io_Write16(ALTMILLER_CAVE_DARKNESS_BLEND, &REG_BLDCNT);
   Io_Write16(ALTMILLER_CAVE_DARK_ALPHA, &REG_BLDALPHA);
   Actor_PlaceCurrentWithinCameraBounds(ACTOR_PARTY_LEADER, 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
@@ -1619,7 +1619,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     Event_SetMessageId(MsgAltmillerGreatItsDecidedJustHave);
     Event_ShowMessage(ACTOR_GARET, 0);
     Event_Wait(10);
-    Actor_TurnToFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
+    Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
     Event_Wait(30);
@@ -1637,7 +1637,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     Event_SetMessageId(MsgAltmillerDontLetMeDownLike);
     Event_ShowMessage(ACTOR_GARET, 0);
     Event_Wait(10);
-    Actor_TurnToFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
+    Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
     Event_Wait(30);
@@ -1719,7 +1719,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
-  Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_IVAN, 50);
+  Actor_FaceEachOther(ACTOR_GARET, ACTOR_IVAN, 50);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Event_Wait(30);
@@ -1731,7 +1731,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Event_Wait(30);
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(20);
-  Actor_TurnToFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
+  Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Event_Wait(30);
@@ -1797,7 +1797,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
     Actor_SetSpeed(ACTOR_GARET, PIXELS(2), PIXELS(1));
     Actor_WalkByAndWait(ACTOR_GARET, 0, -16);
     Event_Wait(10);
-    Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 30);
+    Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 30);
     Event_ShowMessage(ACTOR_GARET, 0);
   } else {
     Event_SetMessageId(MsgAltmillerDontTrustAnyone);
@@ -1805,7 +1805,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
     Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkByAndWait(ACTOR_GARET, 0, -16);
     Event_Wait(10);
-    Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 30);
+    Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 30);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     Event_Wait(20);
     Event_ShowMessage(ACTOR_GARET, 0);
@@ -1818,7 +1818,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(2), PIXELS(1));
   Actor_WalkByAndWait(ACTOR_IVAN, 0, -16);
   Event_Wait(10);
-  Actor_TurnToFaceEachOther(ACTOR_IVAN, ACTOR_PARTY_LEADER, 30);
+  Actor_FaceEachOther(ACTOR_IVAN, ACTOR_PARTY_LEADER, 30);
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(10);
@@ -1839,7 +1839,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(30);
-  Actor_TurnToFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 30);
+  Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 30);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(30);
@@ -1872,7 +1872,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Event_Wait(30);
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
-  Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 50);
+  Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Event_Wait(30);
@@ -1883,13 +1883,13 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Event_Wait(30);
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
-  Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 50);
+  Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Event_Wait(30);
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
-  Actor_TurnToFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
+  Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Event_Wait(30);

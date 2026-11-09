@@ -925,7 +925,7 @@ static void AltinPeak_ForceLogOver(void) {
   while (1) {
     rotationStep += 8;
     sprite->rotation += rotationStep;
-    cosine = Math_Cos(sprite->rotation + TRIG_TURN / 4);
+    cosine = Trig_Cos(sprite->rotation + TRIG_TURN / 4);
     actor->x.fixed = (cosine << 4) + originX;
     if (sprite->rotation > 0x8fff) {
       break;
@@ -936,7 +936,7 @@ static void AltinPeak_ForceLogOver(void) {
   while (1) {
     rotationStep += 8;
     sprite->rotation -= rotationStep;
-    cosine = Math_Cos(sprite->rotation + TRIG_TURN / 4);
+    cosine = Trig_Cos(sprite->rotation + TRIG_TURN / 4);
     actor->x.fixed = (cosine << 4) + originX;
     if (sprite->rotation <= TRIG_TURN * 7 / 16) {
       break;
@@ -947,8 +947,8 @@ static void AltinPeak_ForceLogOver(void) {
   while (1) {
     rotationStep += rotationStep >> 3;
     sprite->rotation += rotationStep;
-    cosine = Math_Cos(sprite->rotation + TRIG_TURN / 4);
-    sine = Math_Sin(sprite->rotation + TRIG_TURN / 2);
+    cosine = Trig_Cos(sprite->rotation + TRIG_TURN / 4);
+    sine = Trig_Sin(sprite->rotation + TRIG_TURN / 2);
     actor->x.fixed = (cosine << 4) + originX;
     if (sprite->rotation > TRIG_TURN / 2) {
       actor->y.fixed = originHeight - (sine << 3);
@@ -1101,13 +1101,13 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   FieldCamera_MoveTo(PIXELS(788), -PIXELS(64), PIXELS(610), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Sound_Play(SE_BOSS_ROAR);
   Event_Wait(240);
   if (GameFlag_Get(FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS) != 0) {
     FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
     FieldCamera_MoveTo(PIXELS(854), 0, PIXELS(584), 1);
-    FieldCamera_WaitForArrival();
+    FieldCamera_WaitForMove();
     Actor_WalkToAndWait(ACTOR_GARET, 840, 552);
     Actor_WalkToAndWait(ACTOR_GARET, 854, 562);
     Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
@@ -1307,7 +1307,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Event_Start();
   FieldCamera_SetSpeedParameters(PIXELS(12) / 5, PIXELS(3) / 10);
   FieldCamera_MoveTo(PIXELS(298), -1, PIXELS(337), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Sound_Play(SE_BEAST_CRY);
   Actor_RunRepeatedMotion(ACTOR_FIRST_WATER_BEAST, 2);
   Event_Wait(40);
@@ -1418,7 +1418,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   FieldCamera_SetSpeedParameters(PIXELS(24) / 5, PIXELS(3) / 5);
   FieldCamera_MoveWithinMapBounds(leader->x.fixed, leader->y.fixed,
                                   leader->z.fixed, 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   FieldActor_SetTargetAndCallback(ACTOR_FIRST_WATER_BEAST,
                                   ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
                                   gAltinPeak_FaceLeaderScript);
@@ -1438,7 +1438,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   Actor_Stop(ACTOR_FIRST_WATER_BEAST);
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   FieldCamera_MoveTo(PIXELS(279), PIXELS(64), PIXELS(216), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Sound_Play(SE_BEAST_CRY);
   Actor_RunRepeatedMotion(ACTOR_FIRST_WATER_BEAST, 2);
   Event_Wait(40);
@@ -1510,7 +1510,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   FieldCamera_SetSpeed(PIXELS(24) / 5, PIXELS(3) / 5);
   FieldCamera_MoveWithinMapBounds(actor->x.fixed, actor->y.fixed,
                                   actor->z.fixed, 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   GameFlag_Set(FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN);
   Event_End();
 }
@@ -2057,16 +2057,16 @@ static void AltinPeak_AwardFrostJewelAndDrain(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
-  ItemDisplay_ShowItem(ITEM_FROST_JEWEL, 3);
-  PartyInventory_GiveItem(ITEM_FROST_JEWEL, 0);
+  Item_ShowFound(ITEM_FROST_JEWEL, 3);
+  Party_GiveItem(ITEM_FROST_JEWEL, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
   FieldCamera_MoveTo(PIXELS(100), 0, PIXELS(249), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(20);
   AltinPeak_DrainFirstWater();
   FieldCamera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_SetTriggers(gAltinPeak_FirstWaterBeastTriggersDrained);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -2528,7 +2528,7 @@ static void AltinPeak_RollCart(s32 id, s32 heading) {
   leader->z.fixed = 0;
   Sprite_AddAnimation(actor->sprite, SPRITE_CART_RIDER);
   FieldCamera_FollowActor(id, 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   FieldCamera_SetSpeed(PIXELS(16), PIXELS(2));
   actor->facing = heading;
   actor->speedLimit = PIXELS(2);

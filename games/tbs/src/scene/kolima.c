@@ -417,7 +417,7 @@ static void Kolima_LowerBridge(void) {
   Event_Start();
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   FieldCamera_MoveTo(PIXELS(168), 0, PIXELS(246), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_BRIDGE_VILLAGER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                   40);
@@ -752,7 +752,7 @@ static void Kolima_WitnessForestCurse(void) {
   if (*partyLayout != 0) {
     Actor_FaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
   }
-  Actor_TurnToFaceEachOther(ACTOR_IVAN, ACTOR_GARET, 60);
+  Actor_FaceEachOther(ACTOR_IVAN, ACTOR_GARET, 60);
   if (*partyLayout != 0) {
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   }

@@ -1156,7 +1156,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_SetAnimation(ACTOR_CARAVAN_FIRST_WAGON + 2, ANIM_STAND);
   Actor_SetAnimation(ACTOR_CARAVAN_FIRST_WAGON + 3, ANIM_STAND);
   FieldCamera_MoveTo(PIXELS(5640), -1, PIXELS(1784), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(20);
   WorldMap_Freeze();
   Actor_SetPosition(ACTOR_CARAVAN_MAN, PIXELS(5640), PIXELS(1752));
@@ -1225,7 +1225,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_FaceDirection(ACTOR_CARAVAN_MAN, FACING_NORTHWEST + FACING_STEP, 0);
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(5608), -1, PIXELS(1736), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Actor_SetPosition(ACTOR_INVISIBLE_ROCK_GUIDE, PIXELS(5544), PIXELS(1704));
   wait(1);
   Actor_SetSpeed(ACTOR_INVISIBLE_ROCK_GUIDE, PIXELS(3) / 10, PIXELS(3) / 20);
@@ -1264,7 +1264,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Event_Wait(60);
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   FieldCamera_MoveTo(PIXELS(5640), -1, PIXELS(1784), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   WorldMap_Freeze();
   Actor_SetAttachedEffect(ACTOR_CARAVAN_MAN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1316,7 +1316,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_SetPosition(ACTOR_GARET, PIXELS(5908), PIXELS(1600));
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   FieldCamera_MoveTo(PIXELS(5848), -1, PIXELS(1608), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   action = gCaravanWagonHeadsNorth;
   Actor_SetScript(ACTOR_CARAVAN_FIRST_WAGON, action);
   Event_Wait(20);
@@ -1336,7 +1336,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   FieldCamera_MoveTo(PIXELS(5880), -1, PIXELS(1608), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 80);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1910,7 +1910,7 @@ static void WorldMap_RunBlackOrbEvent(void) {
   FieldEffect_ScheduleRatioTransition(7 * Q16_ONE / 5, 10);
   FieldCamera_SetSpeedParameters(PIXELS(8), PIXELS(1));
   FieldCamera_MoveWithinMapBounds(PIXELS(6024), -1, PIXELS(3432), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(40);
   WorldMap_Freeze();
   Actor_SetAttachedEffect(gWorldMapIodem,
@@ -1946,8 +1946,8 @@ static void WorldMap_RunBlackOrbEvent(void) {
   Actor_WalkToAndWait(gWorldMapIodem, 6036, 3400);
   Event_Wait(1);
   Actor_Get(gWorldMapIodem)->steeringFlags |= ACTOR_FACES_MOTION;
-  ItemDisplay_ShowItem(ITEM_BLACK_ORB, 3);
-  PartyInventory_GiveItem(ITEM_BLACK_ORB, 0);
+  Item_ShowFound(ITEM_BLACK_ORB, 3);
+  Party_GiveItem(ITEM_BLACK_ORB, 0);
   Actor_RunRepeatedMotion(gWorldMapIodem, 1);
   Event_SetMessageId(MsgWorldMapNowUseOnShip);
   Event_ShowMessageThenWait(gWorldMapIodem, 0, 10);

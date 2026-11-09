@@ -837,7 +837,7 @@ static void CrossboneIsleSteppingStones_FlipWaterSwitch(void) {
   Event_Start();
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(281), -1, PIXELS(432), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   FieldMessage_Show(MsgFieldFlippedSwitch, 1);
   waterRaised = Event_GetFlag(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED);
   // Raise or drain the water before redrawing the logs' footprints.
@@ -1413,7 +1413,7 @@ static void CrossboneIsleSteppingStones_FreezeThirdPuddle(void) {
     Event_Start();
     FieldCamera_SetSpeedParameters(PIXELS(3) / 5, PIXELS(3) / 40);
     FieldCamera_MoveWithinMapBounds(PIXELS(312), -1, PIXELS(184), 1);
-    FieldCamera_WaitForArrival();
+    FieldCamera_WaitForMove();
     Event_Wait(20);
     MapGrid_CopyCellsTo(73, 10, 60, 10, 1, 2);
     Event_Wait(20);

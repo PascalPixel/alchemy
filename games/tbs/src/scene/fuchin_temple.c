@@ -447,7 +447,7 @@ static void FuchinTemple_NyunpaOffersTest(void) {
     Sound_Play(SE_JUMP);
     nyunpa = Actor_Get(ACTOR_NYUNPA);
     nyunpa->velocityY = PIXELS(8);
-    Import_ActorSetAnimation(ACTOR_NYUNPA, ANIM_STAND);
+    Actor_SetAnimation(ACTOR_NYUNPA, ANIM_STAND);
     Event_Wait(30);
     Event_SetMessageId(MsgXianMustSurviveTestGrottoBefore);
   } else {
@@ -464,7 +464,7 @@ static void FuchinTemple_NyunpaOffersTest(void) {
     Actor_Get(ACTOR_NYUNPA)->paused = alreadyDeclinedTrial;
     nyunpa = Actor_Get(ACTOR_NYUNPA);
     nyunpa->velocityY = PIXELS(8);
-    Import_ActorSetAnimation(ACTOR_NYUNPA, ANIM_STAND);
+    Actor_SetAnimation(ACTOR_NYUNPA, ANIM_STAND);
     Event_Wait(30);
     Event_OpenMessage(ACTOR_NYUNPA, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
@@ -556,7 +556,7 @@ static void FuchinTemple_NyunpaOffersTest(void) {
     Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 10);
     GameFlag_Set(FLAG_NYUNPA_TEST_ACCEPTED);
   }
-  Import_ActorSetAnimation(ACTOR_NYUNPA, ANIM_NYUNPA_MEDITATE);
+  Actor_SetAnimation(ACTOR_NYUNPA, ANIM_NYUNPA_MEDITATE);
   Event_End();
 }
 
@@ -913,7 +913,7 @@ static void FuchinTemple_PushTreeByHand(void) {
   u16 facing;
 
   Event_Start();
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(20);
 
   facing = leader->facing;
@@ -928,7 +928,7 @@ static void FuchinTemple_PushTreeByHand(void) {
     FuchinTemple_ToppleTreeEast();
   }
 
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FuchinTemple_StudentExplainsChiRules(FUCHIN_TEMPLE_CHI_PUSHED_BY_HAND);
   Event_End();
 }
@@ -1240,8 +1240,8 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   }
   Actor_FaceDirection(ACTOR_KICKING_STUDENT, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_PUNCHING_STUDENT, FACING_WEST, 20);
-  Import_ActorSetAnimation(ACTOR_KICKING_STUDENT, ANIM_STUDENT_KICKS);
-  Import_ActorSetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_STUDENT_PUNCHES);
+  Actor_SetAnimation(ACTOR_KICKING_STUDENT, ANIM_STUDENT_KICKS);
+  Actor_SetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_STUDENT_PUNCHES);
   Actor_SetScript(ACTOR_JUMPING_STUDENT, gFuchinTemple_JumpingStudentScript);
 }
 
@@ -1284,7 +1284,7 @@ static void FuchinTemple_FehSeesChi(void) {
   actor->update = 0;
   actor = Actor_Get(ACTOR_MESSENGER_STUDENT);
   actor->update = 0;
-  Import_ActorSetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_STAND);
   FieldCamera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
   FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(200), 1);
   FieldCamera_WaitForArrival();
@@ -1401,13 +1401,13 @@ static void FuchinTemple_FehSeesChi(void) {
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_FEH, 2);
   Event_Wait(20);
-  Import_ActorSetAnimation(ACTOR_WELCOMING_STUDENT, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_KICKING_STUDENT, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_JUMPING_STUDENT, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_PROUD_STUDENT, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_WATCHING_STUDENT, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_TREE_STUDENT, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_WELCOMING_STUDENT, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_KICKING_STUDENT, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_JUMPING_STUDENT, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PROUD_STUDENT, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_WATCHING_STUDENT, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_TREE_STUDENT, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MESSENGER_STUDENT, ANIM_NOD);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_FEH, FACING_SOUTH + FACING_STEP, 20);
@@ -1415,42 +1415,42 @@ static void FuchinTemple_FehSeesChi(void) {
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_WELCOMING_STUDENT, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_KICKING_STUDENT, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_JUMPING_STUDENT, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_PROUD_STUDENT, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_WATCHING_STUDENT, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_TREE_STUDENT, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_WELCOMING_STUDENT, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_KICKING_STUDENT, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_JUMPING_STUDENT, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PROUD_STUDENT, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_WATCHING_STUDENT, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_TREE_STUDENT, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MESSENGER_STUDENT, ANIM_NOD);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_FEH, 2);
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_FEH, FACING_WEST, 20);
   Actor_RunRepeatedMotion(ACTOR_FEH, 2);
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
-  Import_ActorSetAnimation(ACTOR_WELCOMING_STUDENT, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_KICKING_STUDENT, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_JUMPING_STUDENT, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_PROUD_STUDENT, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_WATCHING_STUDENT, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_TREE_STUDENT, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_WELCOMING_STUDENT, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_KICKING_STUDENT, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_JUMPING_STUDENT, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PROUD_STUDENT, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_WATCHING_STUDENT, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_TREE_STUDENT, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MESSENGER_STUDENT, ANIM_NOD);
   Event_Wait(20);
   Actor_WalkTo(ACTOR_KICKING_STUDENT, 120, 200);
   Actor_WalkTo(ACTOR_JUMPING_STUDENT, 120, 248);
   Actor_WaitForMoveById(ACTOR_KICKING_STUDENT);
   Actor_FaceDirection(ACTOR_PUNCHING_STUDENT, FACING_WEST, 20);
-  Import_ActorSetAnimation(ACTOR_KICKING_STUDENT, ANIM_STUDENT_KICKS);
-  Import_ActorSetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_STUDENT_PUNCHES);
+  Actor_SetAnimation(ACTOR_KICKING_STUDENT, ANIM_STUDENT_KICKS);
+  Actor_SetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_STUDENT_PUNCHES);
   Actor_WaitForMoveById(ACTOR_JUMPING_STUDENT);
   Actor_SetScript(ACTOR_JUMPING_STUDENT, gFuchinTemple_JumpingStudentScript);
   Actor_SetSpeed(ACTOR_TREE_STUDENT, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -1609,9 +1609,9 @@ static UNUSED void FuchinTemple_HopLeaderByOffset(s32 offsetX, s32 offsetZ) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 5 * PIXELS(1) / 2, 5 * PIXELS(1) / 4);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, offsetX, offsetZ);
   Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAP);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAP);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
   Event_End();
 }
 
@@ -1630,7 +1630,7 @@ static void FuchinTemple_EnterWaterfallGrotto(void) {
   gFieldWork->transitionFrames = 60;
   Event_FinishScreenTransition();
   Sound_Play(SE_CAST);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -6);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
@@ -1661,7 +1661,7 @@ static void FuchinTemple_EnterTemple(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
   Event_Wait(16);
   Import_EventSetExitRequest(FUCHIN_TEMPLE_GROUNDS_TO_LACQUER_ROOMS_A);
@@ -1692,7 +1692,7 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
   Sound_Play(SE_JUMP);
   nyunpa = Actor_Get(ACTOR_NYUNPA);
   nyunpa->velocityY = PIXELS(8);
-  Import_ActorSetAnimation(ACTOR_NYUNPA, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_NYUNPA, ANIM_STAND);
   // Praise the completed test before answering the follow-up questions.
   Event_SetMessageId(MsgXianExcellentIsaac);
   Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
@@ -1769,7 +1769,7 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
   Event_Wait(20);
-  Import_ActorSetAnimation(ACTOR_NYUNPA, ANIM_NYUNPA_MEDITATE);
+  Actor_SetAnimation(ACTOR_NYUNPA, ANIM_NYUNPA_MEDITATE);
   GameFlag_Set(FLAG_NYUNPA_TAUGHT_FORCE);
   Event_End();
 }
@@ -1951,9 +1951,9 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_RunRepeatedMotion(ACTOR_HAMA, 2);
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
@@ -1992,9 +1992,9 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 20);
   Actor_FaceDirection(ACTOR_HAMA, FACING_NORTH, 20);
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH, 20);
@@ -2037,8 +2037,8 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_FaceActor(ACTOR_IVAN, ACTOR_GARET, 0);
   Actor_FaceActor(ACTOR_MIA, ACTOR_GARET, 0);
   Event_Wait(20);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(60);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -2075,9 +2075,9 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_HAMA, 1);
@@ -2170,11 +2170,11 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(2);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(1);
-  Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Event_Wait(5);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Actor_FaceActor(ACTOR_HAMA, ACTOR_PARTY_LEADER, 0);
@@ -2239,9 +2239,9 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
@@ -2318,7 +2318,7 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   }
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
   Actor_WalkTo(ACTOR_GARET, 448, 512);
@@ -2360,9 +2360,9 @@ s32 Scene_Initialize(void) {
     if (gMainRoutineWork.entrance ==
         LACQUER_ROOMS_A_FROM_FUCHIN_TEMPLE_GROUNDS) {
       if (GameFlag_Get(FLAG_NYUNPA_ENLIGHTENED)) {
-        Import_ActorSetAnimation(ACTOR_NYUNPA, ANIM_NYUNPA_WITHERED);
+        Actor_SetAnimation(ACTOR_NYUNPA, ANIM_NYUNPA_WITHERED);
       } else {
-        Import_ActorSetAnimation(ACTOR_NYUNPA, ANIM_NYUNPA_MEDITATE);
+        Actor_SetAnimation(ACTOR_NYUNPA, ANIM_NYUNPA_MEDITATE);
         if (GameFlag_Get(FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND) &&
             !GameFlag_Get(FLAG_NYUNPA_TAUGHT_FORCE) &&
             !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
@@ -2414,8 +2414,8 @@ s32 Scene_Initialize(void) {
       // XXX (no evidence): why it is there; nothing the player sees shows what
       // it was for.
       Actor_Prepare(PIXELS(304), PIXELS(24), PIXELS(224), SPRITE_CRATE);
-      Import_ActorSetAnimation(ACTOR_KICKING_STUDENT, ANIM_STUDENT_KICKS);
-      Import_ActorSetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_STUDENT_PUNCHES);
+      Actor_SetAnimation(ACTOR_KICKING_STUDENT, ANIM_STUDENT_KICKS);
+      Actor_SetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_STUDENT_PUNCHES);
     } else if (gMainRoutineWork.entrance ==
                LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE) {
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
@@ -2462,7 +2462,7 @@ static void FuchinTemple_StartMindReadDemonstration(s32 caster, s32 target) {
 
 /// Finishes the demonstration's Mind Read and lowers the caster's hands.
 static void FuchinTemple_FinishMindReadDemonstration(void) {
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_FINISH);
   FieldPsynergy_StopCasterUpdate();
 }

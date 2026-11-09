@@ -341,7 +341,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(235), 1);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(2));
   Sound_Play(SE_IMPACT);
   leader->velocityY = PIXELS(5);
@@ -355,7 +355,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
     wait(1);
   } while (leader->velocityY <= 0);
   Sound_Play(SE_RATTLE);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_COLLAPSE);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_COLLAPSE);
   Event_Wait(120);
   Task_Remove(KolimaForestTree_SpawnRejectionSpark);
   wait(40);
@@ -386,15 +386,15 @@ static void KolimaForestTree_RejectHermesWater(void) {
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(40);
   Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(20);
 }
 
 /// Gives all four companions the same nod, waiting on Ivan's animation.
 static __inline__ void KolimaForestTree_NodTogether(void) {
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
 }
 
@@ -560,7 +560,7 @@ static void KolimaForestTree_RestoreTret(void) {
     Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
-    Import_ActorSetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
+    Actor_SetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
     Event_ShowMessage(ACTOR_GARET, 0);
     if (includeMia != 0) {
       Actor_RunRepeatedMotion(ACTOR_MIA, 2);
@@ -812,8 +812,8 @@ s32 KolimaForestTree_Initialize(void) {
   laurelBlank->y.fixed = PIXELS(28);
   tretsWrathfulSide->motionFlags = 0;
   tretsWrathfulSide->y.fixed = PIXELS(28);
-  Import_ActorSetAnimation(ACTOR_LAUREL, LAUREL_FACE_CLOSED);
-  Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_CLOSED);
+  Actor_SetAnimation(ACTOR_LAUREL, LAUREL_FACE_CLOSED);
+  Actor_SetAnimation(ACTOR_TRET, TRET_FACE_CLOSED);
   Actor_Get(ACTOR_TRET)->collisionFlags |= ACTOR_NOT_TARGETED;
   Actor_Get(ACTOR_LAUREL)->collisionFlags |= ACTOR_NOT_TARGETED;
   Actor_Get(ACTOR_INVISIBLE_TRET)->collisionFlags |= ACTOR_NOT_TARGETED;
@@ -880,15 +880,15 @@ static void KolimaForestTree_UpdateHealingPalette(void) {
 /// Alternates two faces twice, ending on the first.
 static __inline__ void
 KolimaForestTree_AlternateFaces(s32 actorId, s32 firstFace, s32 secondFace) {
-  Import_ActorSetAnimation(actorId, firstFace);
+  Actor_SetAnimation(actorId, firstFace);
   wait(6);
-  Import_ActorSetAnimation(actorId, secondFace);
+  Actor_SetAnimation(actorId, secondFace);
   wait(6);
-  Import_ActorSetAnimation(actorId, firstFace);
+  Actor_SetAnimation(actorId, firstFace);
   wait(6);
-  Import_ActorSetAnimation(actorId, secondFace);
+  Actor_SetAnimation(actorId, secondFace);
   wait(6);
-  Import_ActorSetAnimation(actorId, firstFace);
+  Actor_SetAnimation(actorId, firstFace);
 }
 
 /// Plays one of Tret's or Laurel's face gestures, chosen by the blank
@@ -897,46 +897,46 @@ static void KolimaForestTree_PlayGesture(s32 blankActorId, s32 gesture) {
   if (blankActorId == ACTOR_INVISIBLE_TRET) {
     switch (gesture) {
     case FACE_GESTURE_CLOSE_EYES:
-      Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
+      Actor_SetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
       wait(6);
-      Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_CLOSED);
+      Actor_SetAnimation(ACTOR_TRET, TRET_FACE_CLOSED);
       break;
     case FACE_GESTURE_OPEN_EYES:
-      Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
+      Actor_SetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
       break;
     case FACE_GESTURE_LOOK_LEFT:
-      Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
+      Actor_SetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
       wait(6);
-      Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_LOOK_LEFT);
+      Actor_SetAnimation(ACTOR_TRET, TRET_FACE_LOOK_LEFT);
       break;
     case FACE_GESTURE_LOOK_RIGHT:
-      Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
+      Actor_SetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
       wait(6);
-      Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_LOOK_RIGHT);
+      Actor_SetAnimation(ACTOR_TRET, TRET_FACE_LOOK_RIGHT);
       break;
     case FACE_GESTURE_BLINK:
       KolimaForestTree_AlternateFaces(ACTOR_TRET, TRET_FACE_OPEN,
                                       TRET_FACE_CLOSED);
       break;
     case FACE_GESTURE_HALF_CLOSE_EYES:
-      Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
+      Actor_SetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
       wait(6);
-      Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_HALF_CLOSED);
+      Actor_SetAnimation(ACTOR_TRET, TRET_FACE_HALF_CLOSED);
       break;
     case FACE_GESTURE_WRATHFUL_CLOSE_EYES:
-      Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
+      Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
       wait(6);
-      Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
+      Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
       break;
     case FACE_GESTURE_WRATHFUL_LOOK_RIGHT:
-      Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
+      Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
       wait(6);
-      Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_LOOK_RIGHT);
+      Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_LOOK_RIGHT);
       break;
     case FACE_GESTURE_WRATHFUL_LOOK_LEFT:
-      Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
+      Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
       wait(6);
-      Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_LOOK_LEFT);
+      Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_LOOK_LEFT);
       break;
     case FACE_GESTURE_WRATHFUL_BLINK:
       KolimaForestTree_AlternateFaces(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN,
@@ -944,37 +944,37 @@ static void KolimaForestTree_PlayGesture(s32 blankActorId, s32 gesture) {
       break;
     case FACE_GESTURE_WRATHFUL_OPEN_EYES:
     case FACE_GESTURE_WRATHFUL_STARE:
-      Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
+      Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
       break;
     }
   } else {
     switch (gesture) {
     case FACE_GESTURE_CLOSE_EYES:
-      Import_ActorSetAnimation(ACTOR_LAUREL, LAUREL_FACE_OPEN);
+      Actor_SetAnimation(ACTOR_LAUREL, LAUREL_FACE_OPEN);
       wait(6);
-      Import_ActorSetAnimation(ACTOR_LAUREL, LAUREL_FACE_CLOSED);
+      Actor_SetAnimation(ACTOR_LAUREL, LAUREL_FACE_CLOSED);
       break;
     case FACE_GESTURE_OPEN_EYES:
-      Import_ActorSetAnimation(ACTOR_LAUREL, LAUREL_FACE_OPEN);
+      Actor_SetAnimation(ACTOR_LAUREL, LAUREL_FACE_OPEN);
       break;
     case FACE_GESTURE_LOOK_LEFT:
-      Import_ActorSetAnimation(ACTOR_LAUREL, LAUREL_FACE_OPEN);
+      Actor_SetAnimation(ACTOR_LAUREL, LAUREL_FACE_OPEN);
       wait(6);
-      Import_ActorSetAnimation(ACTOR_LAUREL, LAUREL_FACE_LOOK_LEFT);
+      Actor_SetAnimation(ACTOR_LAUREL, LAUREL_FACE_LOOK_LEFT);
       break;
     case FACE_GESTURE_LOOK_RIGHT:
-      Import_ActorSetAnimation(ACTOR_LAUREL, LAUREL_FACE_OPEN);
+      Actor_SetAnimation(ACTOR_LAUREL, LAUREL_FACE_OPEN);
       wait(6);
-      Import_ActorSetAnimation(ACTOR_LAUREL, LAUREL_FACE_LOOK_RIGHT);
+      Actor_SetAnimation(ACTOR_LAUREL, LAUREL_FACE_LOOK_RIGHT);
       break;
     case FACE_GESTURE_BLINK:
       KolimaForestTree_AlternateFaces(ACTOR_LAUREL, LAUREL_FACE_OPEN,
                                       LAUREL_FACE_CLOSED);
       break;
     case FACE_GESTURE_HALF_CLOSE_EYES:
-      Import_ActorSetAnimation(ACTOR_LAUREL, LAUREL_FACE_OPEN);
+      Actor_SetAnimation(ACTOR_LAUREL, LAUREL_FACE_OPEN);
       wait(6);
-      Import_ActorSetAnimation(ACTOR_LAUREL, LAUREL_FACE_HALF_CLOSED);
+      Actor_SetAnimation(ACTOR_LAUREL, LAUREL_FACE_HALF_CLOSED);
       break;
     }
   }

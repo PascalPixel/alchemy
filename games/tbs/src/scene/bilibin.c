@@ -575,7 +575,7 @@ static void Bilibin_JillGivesHardNut(void) {
   // first.
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   FieldCamera_MoveTo(PIXELS(263), -1, PIXELS(173), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   eastMember = Actor_Get(ACTOR_GANG_MEMBER_EAST);
   if (eastMember->x.fixed > leader->x.fixed) {
     Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_SOUTH + FACING_STEP, 20);
@@ -632,8 +632,8 @@ static void Bilibin_JillGivesHardNut(void) {
   // Show the named gift before adding it to the party's inventory.
   FieldMessage_Show(MsgBilibinJillGaveIsaacSpecialGift, 1);
   gFieldWork->message++;
-  ItemDisplay_ShowItem(ITEM_HARD_NUT, 3);
-  PartyInventory_GiveItem(ITEM_HARD_NUT, 0);
+  Item_ShowFound(ITEM_HARD_NUT, 3);
+  Party_GiveItem(ITEM_HARD_NUT, 0);
   Actor_SetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);

@@ -616,7 +616,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeedParameters(PIXELS(24) / 5, PIXELS(3) / 5);
   FieldCamera_MoveWithinMapBounds(PIXELS(304), PIXELS(32), PIXELS(158), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(20);
   VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_NORTH + FACING_STEP);
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 1);
@@ -2334,7 +2334,7 @@ static void VenusLighthouseAerie_DiscussSaturosAndMenardiDefeat(void) {
   Actor_SetDestination(ACTOR_SHEBA, 200, 204);
   FieldCamera_SetSpeed(PIXELS(16) / 5, PIXELS(2) / 5);
   FieldCamera_MoveTo(PIXELS(252), 0, PIXELS(190), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(40);
   Sound_Play(MUS_DANGER);
   Actor_SetAttachedEffect(ACTOR_FELIX,
@@ -2409,7 +2409,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   Event_Wait(10);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   FieldCamera_MoveTo(PIXELS(304), PIXELS(32), PIXELS(180), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   // Open the beacon beam before splitting the surrounding platform.
   Actor_Get(ACTOR_BEAM_BOTTOM)->scaleX = Q16_ONE / 10;
   Actor_Get(ACTOR_BEAM_LOWER)->scaleX = Q16_ONE / 10;
@@ -2675,7 +2675,7 @@ static void VenusLighthouseAerie_TryToPreventFall(void) {
   FieldCamera_SetSpeed(PIXELS(24) / 5, PIXELS(3) / 5);
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   FieldCamera_MoveTo(PIXELS(192), -PIXELS(64), PIXELS(238), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 1);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_FELIX, 0, 40);
@@ -2749,7 +2749,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Sound_Play(MUS_FELIX_LEAPS_AFTER_SHEBA);
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   FieldCamera_MoveTo(PIXELS(342), PIXELS(32), PIXELS(212), 1);
-  FieldCamera_WaitForArrival();
+  FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(40);

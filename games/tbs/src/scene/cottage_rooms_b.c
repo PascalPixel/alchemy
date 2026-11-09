@@ -354,14 +354,14 @@ static void CottageRoomsB_ScholarAsksAboutKraden(s32 speakerId) {
   s32 firstMessage = MsgValeFolksSeemKnow;
 
   Event_SetMessageId(firstMessage);
-  FieldMessage_ShowAtActor(speakerId, 0);
+  Event_OpenMessage(speakerId, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Event_Wait(10);
     Event_SetMessageId(firstMessage + 1);
   } else {
     Event_SetMessageId(firstMessage + 2);
   }
-  Event_ShowMessageAndWait(speakerId, 0);
+  Event_ShowMessage(speakerId, 0);
 }
 
 /// Chooses the events: Babi's scholars talk differently once the Colosso
@@ -396,7 +396,7 @@ static void CottageRoomsB_AskIsaacHisBusiness(void) {
   Event_Wait(30);
   Event_SetMessageId(MsgValeHeyBoy);
   Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_MASKED_MAN, 10);
-  FieldEvent_ShowMessageThenWait(ACTOR_MASKED_MAN, 0, 6);
+  Event_ShowMessageThenWait(ACTOR_MASKED_MAN, 0, 6);
   Actor_ShowEmote(ACTOR_MASKED_MAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_StartRepeatedMotion(ACTOR_MASKED_MAN, 1);
   Event_Wait(20);
@@ -408,7 +408,7 @@ static void CottageRoomsB_AskIsaacHisBusiness(void) {
   }
   Actor_StartRepeatedMotion(ACTOR_MASKED_MAN, 1);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_MASKED_MAN, 0, 4);
+  Event_ShowMessageThenWait(ACTOR_MASKED_MAN, 0, 4);
   Event_End();
 }
 
@@ -420,15 +420,15 @@ static void CottageRoomsB_AskWhetherMaskedManWasFelix(void) {
   struct FieldWork *work;
 
   Event_Start();
-  Actor_SetAngleToward(ACTOR_YOUNG_MAN_SAW_MASK, ACTOR_PARTY_LEADER, 10);
+  Actor_FaceActor(ACTOR_YOUNG_MAN_SAW_MASK, ACTOR_PARTY_LEADER, 10);
   Event_SetMessageId(MsgValeTheMaskedManWasFelix);
-  FieldMessage_ShowAtActor(ACTOR_YOUNG_MAN_SAW_MASK, 0);
+  Event_OpenMessage(ACTOR_YOUNG_MAN_SAW_MASK, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    Event_ShowMessageAndWait(ACTOR_YOUNG_MAN_SAW_MASK, 0);
+    Event_ShowMessage(ACTOR_YOUNG_MAN_SAW_MASK, 0);
   } else {
     work = gFieldWork;
     work->message = (work->message + 1);
-    Event_AskYesNoAndShowResponse(ACTOR_YOUNG_MAN_SAW_MASK, 0);
+    Event_AskYesNo(ACTOR_YOUNG_MAN_SAW_MASK, 0);
   }
   Event_End();
 }
@@ -548,18 +548,18 @@ s32 CottageRoomsB_Initialize(void) {
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   } else {
     if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
-      Import_ActorSetPosition(ACTOR_YOUNG_SMITH, 0, 0);
-      Import_ActorSetPosition(ACTOR_YOUNG_SMITHS_MOTHER, 0, 0);
-      Import_ActorSetPosition(ACTOR_INNKEEPER, 0, 0);
-      Import_ActorSetPosition(ACTOR_YOUNG_MAN_SAW_MASK, 0, 0);
-      Import_ActorSetPosition(ACTOR_INN_WORKER, 0, 0);
-      Import_ActorSetPosition(ACTOR_MASKED_MAN, 0, 0);
+      Actor_SetPosition(ACTOR_YOUNG_SMITH, 0, 0);
+      Actor_SetPosition(ACTOR_YOUNG_SMITHS_MOTHER, 0, 0);
+      Actor_SetPosition(ACTOR_INNKEEPER, 0, 0);
+      Actor_SetPosition(ACTOR_YOUNG_MAN_SAW_MASK, 0, 0);
+      Actor_SetPosition(ACTOR_INN_WORKER, 0, 0);
+      Actor_SetPosition(ACTOR_MASKED_MAN, 0, 0);
     } else {
       CottageRoomsB_RestoreRoomPatch();
     }
     Actor_SetSpritePriority(ACTOR_INNKEEPER, 1);
     if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
-      actor = Actor_GetById(ACTOR_INVISIBLE_AFTER_KALAY);
+      actor = Actor_Get(ACTOR_INVISIBLE_AFTER_KALAY);
       Actor_SetSpriteFlags(actor, 0);
       if (gMainRoutineWork.entrance == COTTAGE_ROOMS_B_FROM_VALE ||
           gMainRoutineWork.entrance ==
@@ -570,7 +570,7 @@ s32 CottageRoomsB_Initialize(void) {
           }
         } else {
           TilesetAnim_Resume(11);
-          actor = Actor_GetById(ACTOR_DORA);
+          actor = Actor_Get(ACTOR_DORA);
           Actor_SetSpriteFlags(actor, 0);
           Import_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_IN_BED);
         }
@@ -634,24 +634,24 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   work = *eventSlot;
   grid = *(struct MapGridScrollWork **)Ram_MapGridWork;
   viewCenter = work->camera;
-  sprite = Actor_GetById(ACTOR_TUNIC)->sprite;
+  sprite = Actor_Get(ACTOR_TUNIC)->sprite;
   // Present the bedside conversation before revealing the wider storm event.
   Event_Start();
-  Import_ActorSetPosition(ACTOR_YOUNG_SMITH, 0, 0);
-  Import_ActorSetPosition(ACTOR_YOUNG_SMITHS_MOTHER, 0, 0);
-  Import_ActorSetPosition(ACTOR_INNKEEPER, 0, 0);
-  Import_ActorSetPosition(ACTOR_YOUNG_MAN_SAW_MASK, 0, 0);
-  Import_ActorSetPosition(ACTOR_INN_WORKER, 0, 0);
-  Import_ActorSetPosition(ACTOR_MASKED_MAN, 0, 0);
+  Actor_SetPosition(ACTOR_YOUNG_SMITH, 0, 0);
+  Actor_SetPosition(ACTOR_YOUNG_SMITHS_MOTHER, 0, 0);
+  Actor_SetPosition(ACTOR_INNKEEPER, 0, 0);
+  Actor_SetPosition(ACTOR_YOUNG_MAN_SAW_MASK, 0, 0);
+  Actor_SetPosition(ACTOR_INN_WORKER, 0, 0);
+  Actor_SetPosition(ACTOR_MASKED_MAN, 0, 0);
   // Isaac lies asleep in bed; his tunic is set beside him.
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_PARTY_LEADER), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_ISAAC_ASLEEP);
   sprite->rotation = 1365;
-  Actor_GetById(ACTOR_TUNIC)->motionFlags = 0;
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_TUNIC), 0);
-  Import_ActorSetPosition(ACTOR_TUNIC, PIXELS(576), PIXELS(650));
+  Actor_Get(ACTOR_TUNIC)->motionFlags = 0;
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_TUNIC), 0);
+  Actor_SetPosition(ACTOR_TUNIC, PIXELS(576), PIXELS(650));
   TilesetAnim_Resume(7);
-  Import_ActorSetPosition(ACTOR_DORA, PIXELS(534), PIXELS(688));
+  Actor_SetPosition(ACTOR_DORA, PIXELS(534), PIXELS(688));
   ActorSystem_SuspendProjectionAndShowSprites();
   // On a dark screen, Dora's voice: "Isaac, wake up!" "Please, dear, wake up!"
   Message_SetVoiceFromActor(ACTOR_DORA);
@@ -709,7 +709,7 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 555, 680);
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH + FACING_STEP, 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_PARTY_LEADER), 1);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 1);
   Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 543, 674);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
@@ -724,30 +724,30 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   // "It's pouring outside! Don't go out without your tunic!" She steps up to
   // him and he puts it on, with a flash and SE_RECOVERY.
   Actor_StartRepeatedMotion(ACTOR_DORA, 2);
-  FieldEvent_ShowMessageThenWait(
+  Event_ShowMessageThenWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA, 0, 20);
-  Actor_GetById(ACTOR_DORA)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_Get(ACTOR_DORA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_DORA, 542, 680);
   Event_Wait(1);
-  Actor_GetById(ACTOR_DORA)->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_Get(ACTOR_DORA)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
-  Actor_RegisterSpriteMetadata(Actor_GetById(ACTOR_PARTY_LEADER), SPRITE_TUNIC);
+  Actor_RegisterSpriteMetadata(Actor_Get(ACTOR_PARTY_LEADER), SPRITE_TUNIC);
   GameFlag_Set(FLAG_ISAAC_WEARS_TUNIC);
   Sound_Play(SE_RECOVERY);
-  Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_WHITE);
+  Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_WHITE);
   Event_Wait(10);
-  Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
+  Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
   Event_Wait(20);
-  Actor_GetById(ACTOR_DORA)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_Get(ACTOR_DORA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_DORA, 534, 688);
   Event_Wait(1);
-  Actor_GetById(ACTOR_DORA)->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_Get(ACTOR_DORA)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_DORA, PIXELS(3) / 2, PIXELS(3) / 4);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
   FieldCamera_FollowActor(ACTOR_DORA, 1);
-  Actor_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+  Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetScript(ACTOR_DORA, gCottageRoomsB_LeaveHouseScript);
   Event_Wait(20);
   Actor_SetScript(ACTOR_PARTY_LEADER, gCottageRoomsB_LeaveHouseScript);
@@ -764,7 +764,7 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
     (*eventSlot)->message++;
   }
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0, 20);
+  Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0, 20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Event_Wait(20);
@@ -798,19 +798,19 @@ static void CottageRoomsB_HurryToThePlaza(void) {
   u32 i;
   volatile u16 *alpha;
 
-  actor = Actor_GetById(ACTOR_FLAME_AND_SMOKE);
+  actor = Actor_Get(ACTOR_FLAME_AND_SMOKE);
   sprite = actor->sprite;
   Event_Start();
   // The villagers stay out of sight; ACTOR_FLAME_AND_SMOKE starts shaking.
-  Import_ActorSetPosition(ACTOR_YOUNG_SMITH, 0, 0);
-  Import_ActorSetPosition(ACTOR_YOUNG_SMITHS_MOTHER, 0, 0);
-  Import_ActorSetPosition(ACTOR_INNKEEPER, 0, 0);
-  Import_ActorSetPosition(ACTOR_YOUNG_MAN_SAW_MASK, 0, 0);
-  Import_ActorSetPosition(ACTOR_INN_WORKER, 0, 0);
-  Import_ActorSetPosition(ACTOR_MASKED_MAN, 0, 0);
+  Actor_SetPosition(ACTOR_YOUNG_SMITH, 0, 0);
+  Actor_SetPosition(ACTOR_YOUNG_SMITHS_MOTHER, 0, 0);
+  Actor_SetPosition(ACTOR_INNKEEPER, 0, 0);
+  Actor_SetPosition(ACTOR_YOUNG_MAN_SAW_MASK, 0, 0);
+  Actor_SetPosition(ACTOR_INN_WORKER, 0, 0);
+  Actor_SetPosition(ACTOR_MASKED_MAN, 0, 0);
   Actor_SetPosition(ACTOR_DORA, PIXELS(431), PIXELS(391));
-  Import_ActorSetPosition(ACTOR_FLAME_AND_SMOKE, PIXELS(463), PIXELS(404));
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FLAME_AND_SMOKE), 0);
+  Actor_SetPosition(ACTOR_FLAME_AND_SMOKE, PIXELS(463), PIXELS(404));
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FLAME_AND_SMOKE), 0);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actor->motionFlags = 0;
   sprite->image.priority = 1;
@@ -851,7 +851,7 @@ static void CottageRoomsB_HurryToThePlaza(void) {
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   FieldCamera_MoveTo(PIXELS(414), -1, PIXELS(530), 1);
   Actor_SetPosition(ACTOR_KYLE, PIXELS(414), PIXELS(530));
-  Actor_SetPositionAndReset(ACTOR_KYLE, 427, 483);
+  Actor_WalkToAndWait(ACTOR_KYLE, 427, 483);
   FieldCamera_WaitForArrival();
   Event_SetMessageId(MsgValeDoraHurryBoulder);
   Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_KYLE, 0, 10);
@@ -864,7 +864,7 @@ static void CottageRoomsB_HurryToThePlaza(void) {
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_KYLE, ANIM_NOD);
-  Actor_ResetAndSetPositionInMode2(ACTOR_KYLE, 415, 589);
+  Actor_WalkTo(ACTOR_KYLE, 415, 589);
   Event_Wait(10);
   Actor_SetScript(ACTOR_DORA, gCottageRoomsB_DoraRunsBackScript);
   Actor_SetScript(ACTOR_PARTY_LEADER, gCottageRoomsB_IsaacRunsBackScript);
@@ -898,10 +898,10 @@ ramp:
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Actor_SetAttachedEffect(ACTOR_DORA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldEffect_SetAttached(ACTOR_PARTY_LEADER,
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(80);
-  Import_ActorSetPosition(ACTOR_KYLE, 0, 0);
+  Actor_SetPosition(ACTOR_KYLE, 0, 0);
   Actor_TurnToFaceEachOther(ACTOR_DORA, ACTOR_PARTY_LEADER, 20);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -926,7 +926,7 @@ ramp:
 static void CottageRoomsB_TalkToInnkeeper(void) {
   struct Actor *actor;
 
-  actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
   if ((u32)(actor->facing - FACING_SOUTHEAST) > TRIG_TURN * 9 / 16) {
     Inn_CheckIn(0, ACTOR_INNKEEPER);
   } else {
@@ -963,11 +963,11 @@ static void CottageRoomsB_TalkToInnkeeper(void) {
 /// FLAG_VALE_MAN_SAW_ISAAC_GROWN clear for Mind Read to play this once.
 static void CottageRoomsB_RemarkIsaacHasGrown(void) {
   Event_Start();
-  Actor_SetAngleToward(ACTOR_MAN_ISAAC_HAS_GROWN, ACTOR_PARTY_LEADER, 10);
+  Actor_FaceActor(ACTOR_MAN_ISAAC_HAS_GROWN, ACTOR_PARTY_LEADER, 10);
   Event_SetMessageId(MsgValeYouveGrownSoMuch);
-  Event_ShowMessageAndWait(ACTOR_MAN_ISAAC_HAS_GROWN, 0);
-  Actor_ArmCallback(ACTOR_MAN_ISAAC_HAS_GROWN, FACING_NORTHWEST + FACING_STEP,
-                    10);
+  Event_ShowMessage(ACTOR_MAN_ISAAC_HAS_GROWN, 0);
+  Actor_FaceDirection(ACTOR_MAN_ISAAC_HAS_GROWN, FACING_NORTHWEST + FACING_STEP,
+                      10);
   GameFlag_Set(FLAG_VALE_MAN_SAW_ISAAC_GROWN);
   Event_End();
 }
@@ -978,7 +978,7 @@ static void CottageRoomsB_RemarkIsaacHasGrown(void) {
 static void CottageRoomsB_ReadInnkeepersThoughts(void) {
   Event_Start();
   Event_SetMessageId(MsgValeDoraWouldntLetHimStay);
-  Event_ShowMessageAndWait(ACTOR_INNKEEPER, 0);
+  Event_ShowMessage(ACTOR_INNKEEPER, 0);
   GameFlag_Set(FLAG_READ_THOUGHTS_ABOUT_DORA);
   Event_End();
 }
@@ -989,7 +989,7 @@ static void CottageRoomsB_ReadInnkeepersThoughts(void) {
 static void CottageRoomsB_ReadThoughtsAboutDorasIllness(void) {
   Event_Start();
   Event_SetMessageId(MsgValeDoraWasStruckWithIllness);
-  Event_ShowMessageAndWait(ACTOR_MAN_ISAAC_HAS_GROWN, 0);
+  Event_ShowMessage(ACTOR_MAN_ISAAC_HAS_GROWN, 0);
   GameFlag_Set(FLAG_READ_THOUGHTS_ABOUT_DORA);
   Event_End();
 }
@@ -1017,7 +1017,7 @@ static void CottageRoomsB_VisitSickDora(void) {
   Event_Wait(80);
   Actor_SetSpeed(ACTOR_DORA, PIXELS(4) / 5, PIXELS(2) / 5);
   // Bring Dora out of bed before asking about her illness.
-  Actor_ResetAndSetPosition(ACTOR_DORA, 584, 406);
+  Actor_SetDestination(ACTOR_DORA, 584, 406);
   TilesetAnim_Pause(11);
   TilesetAnim_Resume(12);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_HEAD_BOWED);
@@ -1045,7 +1045,7 @@ static void CottageRoomsB_VisitSickDora(void) {
   // "You promised you wouldn't come back until your quest was complete,
   // right?" Either reply has its own answer; she is less surprised when Mind
   // Read has told Isaac of her illness.
-  FieldMessage_ShowAtActor(ACTOR_DORA, 0);
+  Event_OpenMessage(ACTOR_DORA, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
     gFieldWork->message += 1;
   }
@@ -1053,12 +1053,12 @@ static void CottageRoomsB_VisitSickDora(void) {
     Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   }
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_DORA, 0);
+  Event_ShowMessage(ACTOR_DORA, 0);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
   // Branch on Isaac's replies and whether Mind Read revealed her illness.
   firstMessage = MsgValeWhoToldIll;
   Event_SetMessageId(firstMessage);
-  FieldMessage_ShowAtActor(ACTOR_DORA, 0);
+  Event_OpenMessage(ACTOR_DORA, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
     gFieldWork->message += 1;
   }
@@ -1066,12 +1066,12 @@ static void CottageRoomsB_VisitSickDora(void) {
     Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   }
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_DORA, 0);
-  FieldEffect_SpawnAttached(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
+  Event_ShowMessage(ACTOR_DORA, 0);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
   // "You can't get out of your promises just because you're worried about
   // me." "I just caught a cold." "But I'm fine now. Look!"
   Event_SetMessageId(firstMessage + 3);
-  Event_ShowMessageAndWait(ACTOR_DORA, 0);
+  Event_ShowMessage(ACTOR_DORA, 0);
   Actor_RunRepeatedMotion(ACTOR_DORA, 1);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_DORA_HEAD_SWAYING);
@@ -1084,20 +1084,20 @@ static void CottageRoomsB_VisitSickDora(void) {
   Event_Wait(40);
   // Make room for Dora to walk and demonstrate that she feels well.
   // Isaac steps back as Dora gets up, turns about and jumps three times.
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   leader->facing = 0;
   wait(1);
-  Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetDestination(ACTOR_PARTY_LEADER, 558, 388);
   Actor_SetSpeed(ACTOR_DORA, PIXELS(6) / 5, PIXELS(3) / 5);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_STRAIGHTEN);
-  Actor_SetPositionAndCommit(ACTOR_DORA, 586, 400);
+  Actor_MoveToAndWait(ACTOR_DORA, 586, 400);
   Event_Wait(40);
   Actor_WalkToAndWait(ACTOR_DORA, 580, 382);
   Actor_FaceDirection(ACTOR_DORA, FACING_WEST, 40);
-  Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-  Actor_ArmCallback(ACTOR_DORA, FACING_NORTH, 8);
-  Actor_ArmCallback(ACTOR_DORA, FACING_EAST, 8);
+  Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 8);
+  Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 8);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 8);
   Actor_FaceDirection(ACTOR_DORA, FACING_WEST, 10);
   Actor_Jump(ACTOR_DORA, 4, 20);
@@ -1130,7 +1130,7 @@ static void CottageRoomsB_TalkToDora(void) {
                                gCottageRoomsB_DoraFacesIsaacScript);
     Event_Wait(20);
     Event_SetMessageId(MsgValeDontWorryBest);
-    Event_ShowMessageAndWait(ACTOR_DORA, 0);
+    Event_ShowMessage(ACTOR_DORA, 0);
   } else {
     Actor_RunRepeatedMotion(ACTOR_DORA, 2);
     Event_Wait(40);
@@ -1299,14 +1299,12 @@ static void CottageRoomsB_SpawnEffectPair(struct Actor *actor) {
 
 /// Cycles Dora's palette and gives off pairs of effects.
 UNUSED static void CottageRoomsB_CyclePaletteWithParticles(void) {
-  CottageRoomsB_CyclePaletteAndSpawnPair(
-      (struct Actor *)Actor_GetById(ACTOR_DORA));
+  CottageRoomsB_CyclePaletteAndSpawnPair((struct Actor *)Actor_Get(ACTOR_DORA));
 }
 
 /// Cycles the tunic's palette, with no effects.
 UNUSED static void CottageRoomsB_CyclePaletteWithoutParticles(void) {
-  CottageRoomsB_CyclePaletteOnOddFrames(
-      (struct Actor *)Actor_GetById(ACTOR_TUNIC));
+  CottageRoomsB_CyclePaletteOnOddFrames((struct Actor *)Actor_Get(ACTOR_TUNIC));
 }
 
 /// Catch plays from Dora on the tunic, then its actors are released.

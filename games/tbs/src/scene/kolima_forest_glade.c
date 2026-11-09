@@ -90,7 +90,7 @@ static void KolimaForestGlade_PushLog(void) {
 /// FLAG_KOLIMA_FOREST_NUT_CAUGHT): it vanishes and the party finds a Nut.
 static void KolimaForestGlade_CatchNut(void) {
   Event_Start();
-  Import_ActorSetPosition(ACTOR_NUT, 0, 0);
+  Actor_SetPosition(ACTOR_NUT, 0, 0);
   GameFlag_Set(FLAG_KOLIMA_FOREST_NUT_CAUGHT);
   ItemDisplay_ShowItem(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);

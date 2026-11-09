@@ -239,18 +239,18 @@ static void BabiLighthouse_LandWithParticles(void) {
   FieldCamera_MoveTo(-1, -1, -1, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed = PIXELS(130);
-  Actor_GetById(ACTOR_PARTY_LEADER)->gravity = PIXELS(1) / 2;
-  Actor_GetById(ACTOR_PARTY_LEADER)->bounce = 0;
-  Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
+  Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = PIXELS(130);
+  Actor_Get(ACTOR_PARTY_LEADER)->gravity = PIXELS(1) / 2;
+  Actor_Get(ACTOR_PARTY_LEADER)->bounce = 0;
+  Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(30);
   Sound_Play(SE_DUST_PUFF);
-  Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags =
+  Actor_Get(ACTOR_PARTY_LEADER)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Event_Wait(24);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   // Spread the landing particles around the leader before restoring bounce.
   options.palette = 7;
   options.update = (void (*)(struct Actor *))FieldEffect_AdvanceMotion;
@@ -268,14 +268,14 @@ static void BabiLighthouse_LandWithParticles(void) {
   Sound_Play(SE_THUMP);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  Actor_GetById(ACTOR_PARTY_LEADER)->gravity = PIXELS(1);
-  Actor_GetById(ACTOR_PARTY_LEADER)->bounce = PIXELS(1) / 4;
+  Actor_Get(ACTOR_PARTY_LEADER)->gravity = PIXELS(1);
+  Actor_Get(ACTOR_PARTY_LEADER)->bounce = PIXELS(1) / 4;
   Event_End();
 }
 
@@ -295,13 +295,13 @@ static void BabiLighthouse_FallToExit(s32 exit) {
   leader->gravity = PIXELS(1) / 4;
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   leader->bounce = 0;
-  Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
+  Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
   Sound_Play(SE_DUST_PUFF);
-  Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags =
+  Actor_Get(ACTOR_PARTY_LEADER)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   leader->velocityY = -PIXELS(5);
@@ -359,7 +359,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 static void BabiLighthouse_JumpFromLedge(void) {
   struct Actor *leader;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   Event_Start();
   if (((leader->x.fixed >> 20) == 6 || (leader->x.fixed >> 20) == 18) &&
       (leader->z.fixed >> 20) == 20) {
@@ -398,10 +398,10 @@ static void BabiLighthouse_PushLedgePillar(void) {
 /// below on the leader's side if it stands at the ledge's foot, and otherwise
 /// climbs down.
 static void BabiLighthouse_PushLedgePillarOrClimbDown(void) {
-  struct Actor *pillar = Actor_GetById(ACTOR_RIGHT_PILLAR);
+  struct Actor *pillar = Actor_Get(ACTOR_RIGHT_PILLAR);
 
-  if ((Actor_GetById(ACTOR_PARTY_LEADER)->x.fixed >> 20) <= 12) {
-    pillar = Actor_GetById(ACTOR_LEFT_PILLAR);
+  if ((Actor_Get(ACTOR_PARTY_LEADER)->x.fixed >> 20) <= 12) {
+    pillar = Actor_Get(ACTOR_LEFT_PILLAR);
     if ((pillar->x.fixed >> 20) == 6) {
       if ((pillar->z.fixed >> 20) == 20) {
         BabiLighthouse_PushLedgePillar();
@@ -474,7 +474,7 @@ static void BabiLighthouse_DropFromWestRoomNorthwestPit(void) {
 /// Searching the locked door in BabiLighthouseLuff. "It seems to be locked."
 static void BabiLighthouse_InspectLockedDoor(void) {
   Event_Start();
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldMessage_Show(MsgBabiSeemsLocked, 1);
   Event_End();
 }
@@ -484,8 +484,8 @@ static void BabiLighthouse_InspectLockedDoor(void) {
 static inline void BabiLighthouse_WalkBackToLeader(s32 actorId) {
   struct Actor *leader;
 
-  Import_ActorSetAnimation(actorId, ANIM_WALK);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  Actor_SetAnimation(actorId, ANIM_WALK);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetDestination(actorId, leader->x.part.pixel, leader->z.part.pixel);
   }
@@ -712,13 +712,13 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Event_Wait(10);
   Actor_TurnToFaceEachOther(ACTOR_DOUBTING_THE_DOOR, ACTOR_WORRIED_FOR_SHEBA,
                             50);
-  Import_ActorSetAnimation(ACTOR_DOUBTING_THE_DOOR, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_DOUBTING_THE_DOOR, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIM_NOD);
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_SOUTH, 0);
   Event_Wait(20);
-  Import_ActorSetAnimation(ACTOR_DOUBTING_THE_DOOR, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_DOUBTING_THE_DOOR, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIM_NOD);
   Event_Wait(30);
   Actor_SetSpeed(ACTOR_DOUBTING_THE_DOOR, PIXELS(1), PIXELS(1) / 2);
@@ -729,7 +729,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Actor_WalkByAndWait(ACTOR_WORRIED_FOR_SHEBA, 16, 0);
   Actor_WalkTo(ACTOR_WORRIED_FOR_SHEBA, 344, 312);
   Actor_WalkToAndWait(ACTOR_DOUBTING_THE_DOOR, 344, 336);
-  Import_ActorSetAnimation(ACTOR_WORRIED_FOR_SHEBA, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_WORRIED_FOR_SHEBA, ANIM_STAND);
   Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_WEST, 0);
   Event_Wait(10);
@@ -851,7 +851,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_NORTH, 0);
   Event_Wait(30);
-  Import_ActorSetAnimation(ACTOR_DOUBTING_THE_DOOR, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_DOUBTING_THE_DOOR, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIM_NOD);
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_WEST, 0);
@@ -1013,9 +1013,9 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
   Actor_TurnToFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
   Event_Wait(30);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(30);
   // The companions walk back into the leader.
@@ -1114,7 +1114,7 @@ static void BabiLighthouse_InspectTruthDoorSwitch(void) {
     }
   } else {
     Event_SetMessageId(MsgBabiTruthDoorOpenThoseSeeing);
-    Event_ShowMessageAndWait(-1, 0);
+    Event_ShowMessage(-1, 0);
   }
   Event_End();
 }
@@ -1151,7 +1151,7 @@ static void BabiLighthouse_LandCarriedPillarInDust(void) {
 /// After Move or Carry on the pillar on the Road to Babi Lighthouse: in its
 /// cell at (20, 12) it settles at a height of 48 pixels.
 static void BabiLighthouse_UpdateMovedPillar(void) {
-  struct Actor *pillar = Actor_GetById(ACTOR_ROAD_PILLAR);
+  struct Actor *pillar = Actor_Get(ACTOR_ROAD_PILLAR);
   s32 column = pillar->x.fixed >> 20;
 
   if (column == 20) {
@@ -1176,7 +1176,7 @@ static void BabiLighthouse_UpdateMovedPillar(void) {
 static void BabiLighthouse_PushRoadPillar(void) {
   // Trial: inverting the empty success arm changes two branch instructions
   // (three text bytes in tbs-en); retain the existing branch order.
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct Actor *ahead = BabiLighthouse_FindActorAhead(leader);
   s32 heightDifference;
 
@@ -1204,7 +1204,7 @@ static void BabiLighthouse_PushRoadPillar(void) {
 /// climbing or with no pillar ahead, and pushes the pillar
 /// (BabiLighthouse_PushRoadPillar) when he does not climb.
 static void BabiLighthouse_ClimbOrPushRoadPillar(void) {
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct Actor *ahead = BabiLighthouse_FindActorAhead(leader);
   s32 climbDirection = (leader->facing + TRIG_TURN / 8) & 0xc000;
   s32 climbResult = -1;
@@ -1251,7 +1251,7 @@ static void BabiLighthouse_OpenGrowthPassage(void) {
 /// Redraws the ledge cells of the Babi Lighthouse Entry, then blocks the cells
 /// under its two pillars.
 static void BabiLighthouse_RedrawLedgePillarCells(void) {
-  struct Actor *leftPillar = Actor_GetById(ACTOR_LEFT_PILLAR);
+  struct Actor *leftPillar = Actor_Get(ACTOR_LEFT_PILLAR);
 
   Actor_SetSpritePriority(ACTOR_LEFT_PILLAR, 1);
   Actor_SetSpritePriority(ACTOR_RIGHT_PILLAR, 1);
@@ -1263,7 +1263,7 @@ static void BabiLighthouse_RedrawLedgePillarCells(void) {
     MapGrid_CopyCellAttributes(3, 3, 1, 1, column, row);
   }
   {
-    struct Actor *rightPillar = Actor_GetById(ACTOR_RIGHT_PILLAR);
+    struct Actor *rightPillar = Actor_Get(ACTOR_RIGHT_PILLAR);
     s32 column = rightPillar->x.fixed >> 20, row = rightPillar->z.fixed >> 20;
 
     MapGrid_CopyCellAttributes(3, 3, 1, 1, column, row);
@@ -1279,27 +1279,26 @@ static void BabiLighthouse_MatchLeaderPriority(struct Actor *updated) {
   struct Actor *actor;
   s32 priority;
 
-  sprite = Actor_GetById(ACTOR_PARTY_LEADER)->sprite;
-  actor = Actor_GetById(ACTOR_LEFT_PILLAR);
-  if (actor->z.fixed < Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed) {
+  sprite = Actor_Get(ACTOR_PARTY_LEADER)->sprite;
+  actor = Actor_Get(ACTOR_LEFT_PILLAR);
+  if (actor->z.fixed < Actor_Get(ACTOR_PARTY_LEADER)->z.fixed) {
     Actor_SetSpritePriority(ACTOR_LEFT_PILLAR, sprite->image.priority);
   } else {
     priority = sprite->image.priority;
     if (priority != 1)
       priority--;
     Actor_SetSpritePriority(ACTOR_LEFT_PILLAR, priority);
-    Actor_GetById(ACTOR_LEFT_PILLAR)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+    Actor_Get(ACTOR_LEFT_PILLAR)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   }
-  actor = Actor_GetById(ACTOR_RIGHT_PILLAR);
-  if (actor->z.fixed < Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed) {
+  actor = Actor_Get(ACTOR_RIGHT_PILLAR);
+  if (actor->z.fixed < Actor_Get(ACTOR_PARTY_LEADER)->z.fixed) {
     Actor_SetSpritePriority(ACTOR_RIGHT_PILLAR, sprite->image.priority);
   } else {
     priority = sprite->image.priority;
     if (priority != 1)
       priority--;
     Actor_SetSpritePriority(ACTOR_RIGHT_PILLAR, priority);
-    Actor_GetById(ACTOR_RIGHT_PILLAR)->priorityFlags |=
-        ACTOR_PRIORITY_AUTOMATIC;
+    Actor_Get(ACTOR_RIGHT_PILLAR)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   }
 }
 #endif
@@ -1330,7 +1329,7 @@ s32 BabiLighthouse_SetupMap(void) {
   }
   // The road: the moved pillar's cell behavior where it stands.
   if (sceneId == (s32)&SceneId_RoadToBabiLighthouse) {
-    placedActor = Actor_GetById(ACTOR_ROAD_PILLAR);
+    placedActor = Actor_Get(ACTOR_ROAD_PILLAR);
     x = placedActor->x.fixed >> 20;
     if (x == 20) {
       z = placedActor->z.fixed >> 20;
@@ -1345,9 +1344,9 @@ s32 BabiLighthouse_SetupMap(void) {
     Actor_SetSpriteColorById(ACTOR_RIGHT_PILLAR, SPRITE_COLOR_GREY);
 #if TBS_PATCH_2
     // Through union ActorOrEffect: as struct Actor the stores move.
-    ((union ActorOrEffect *)Actor_GetById(ACTOR_LEFT_PILLAR))->actor.update =
+    ((union ActorOrEffect *)Actor_Get(ACTOR_LEFT_PILLAR))->actor.update =
         BabiLighthouse_MatchLeaderPriority;
-    ((union ActorOrEffect *)Actor_GetById(ACTOR_RIGHT_PILLAR))->actor.update =
+    ((union ActorOrEffect *)Actor_Get(ACTOR_RIGHT_PILLAR))->actor.update =
         BabiLighthouse_MatchLeaderPriority;
 #endif
     if (state->entrance ==
@@ -1356,16 +1355,16 @@ s32 BabiLighthouse_SetupMap(void) {
       Actor_SetPosition(ACTOR_RIGHT_PILLAR, PIXELS(312), PIXELS(328));
     }
     BabiLighthouse_RedrawLedgePillarCells();
-    actor = Actor_GetById(ACTOR_RIGHT_PILLAR);
-    actor->y.fixed = Actor_GetById(ACTOR_RIGHT_PILLAR)->groundHeight;
+    actor = Actor_Get(ACTOR_RIGHT_PILLAR);
+    actor->y.fixed = Actor_Get(ACTOR_RIGHT_PILLAR)->groundHeight;
     if (GameFlag_Get(FLAG_GROWTH_PASSAGE_OPEN) != 0) {
-      Import_ActorSetAnimation(ACTOR_PLANT, 4);
-      Actor_GetById(ACTOR_PLANT)->collisionFlags = 0xff & ~ACTOR_SOLID;
+      Actor_SetAnimation(ACTOR_PLANT, 4);
+      Actor_Get(ACTOR_PLANT)->collisionFlags = 0xff & ~ACTOR_SOLID;
       BabiLighthouse_OpenGrowthPassage();
     }
     // Their script waits stagger the first animations of the four lying on the
     // ground.
-    placedActor = Actor_GetById(ACTOR_FALLEN_SOLDIER_NO_MATCH);
+    placedActor = Actor_Get(ACTOR_FALLEN_SOLDIER_NO_MATCH);
     placedActor->collisionFlags = 0;
     placedActor->priorityFlags = 0;
     placedActor->wait = 0;
@@ -1373,31 +1372,31 @@ s32 BabiLighthouse_SetupMap(void) {
     zero = 0;
     placedActor->sprite->flags = zero;
     placedActor->sprite->rotation = TRIG_TURN * 3 / 4;
-    Import_ActorSetAnimation(ACTOR_FALLEN_SOLDIER_NO_MATCH, 0);
-    placedActor = Actor_GetById(ACTOR_FALLEN_STRONGMAN_ONLY_TWO);
+    Actor_SetAnimation(ACTOR_FALLEN_SOLDIER_NO_MATCH, 0);
+    placedActor = Actor_Get(ACTOR_FALLEN_STRONGMAN_ONLY_TWO);
     placedActor->collisionFlags = zero;
     placedActor->priorityFlags = zero;
     placedActor->wait = 30;
     placedActor->sprite->image.priority = 3;
     placedActor->sprite->flags = zero;
     placedActor->sprite->rotation = TRIG_TURN / 4;
-    Import_ActorSetAnimation(ACTOR_FALLEN_STRONGMAN_ONLY_TWO, 0);
-    placedActor = Actor_GetById(ACTOR_FALLEN_SOLDIER_KICKED_ASIDE);
+    Actor_SetAnimation(ACTOR_FALLEN_STRONGMAN_ONLY_TWO, 0);
+    placedActor = Actor_Get(ACTOR_FALLEN_SOLDIER_KICKED_ASIDE);
     placedActor->collisionFlags = zero;
     placedActor->priorityFlags = zero;
     placedActor->wait = 60;
     placedActor->sprite->image.priority = 3;
     placedActor->sprite->flags = zero;
     placedActor->sprite->rotation = TRIG_TURN / 2;
-    Import_ActorSetAnimation(ACTOR_FALLEN_SOLDIER_KICKED_ASIDE, 0);
-    placedActor = Actor_GetById(ACTOR_FALLEN_MAN_SCORCHED_GROUND);
+    Actor_SetAnimation(ACTOR_FALLEN_SOLDIER_KICKED_ASIDE, 0);
+    placedActor = Actor_Get(ACTOR_FALLEN_MAN_SCORCHED_GROUND);
     placedActor->collisionFlags = zero;
     placedActor->priorityFlags = zero;
     placedActor->wait = 90;
     placedActor->sprite->image.priority = 3;
     placedActor->sprite->flags = zero;
     placedActor->sprite->rotation = TRIG_TURN / 2;
-    Import_ActorSetAnimation(ACTOR_FALLEN_MAN_SCORCHED_GROUND, 0);
+    Actor_SetAnimation(ACTOR_FALLEN_MAN_SCORCHED_GROUND, 0);
   } else if (mapCopy == (s32)&SceneId_BabiLighthouseLuff) {
     // Match the arrival effect and fall to the entrance used in this
     // room.
@@ -1441,8 +1440,8 @@ s32 BabiLighthouse_SetupMap(void) {
   } else if (sceneId == (s32)&SceneId_BabiLighthouseStoneDoor) {
     // Restore the truth door and the onlookers' positions after each
     // discussion.
-    Actor_GetById(ACTOR_LEFT_DOOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
-    Actor_GetById(ACTOR_RIGHT_DOOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_LEFT_DOOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_RIGHT_DOOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_SetSpeed(ACTOR_LEFT_DOOR, PIXELS(1), PIXELS(1) / 2);
     Actor_SetSpeed(ACTOR_RIGHT_DOOR, PIXELS(1), PIXELS(1) / 2);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
@@ -1489,7 +1488,7 @@ s32 BabiLighthouse_SetupMap(void) {
       }
     }
   } else {
-    Import_ActorSetAnimation(ACTOR_ROAD_PILLAR, 2);
+    Actor_SetAnimation(ACTOR_ROAD_PILLAR, 2);
   }
   return 0;
 }

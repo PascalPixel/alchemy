@@ -197,7 +197,7 @@ static void FileScreen_LoadBackground(void) {
   {
     struct Actor *leader;
 
-    leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+    leader = Actor_Get(gMainRoutineWork.leaderActorId);
     leader->motionFlags = 0;
   }
 }

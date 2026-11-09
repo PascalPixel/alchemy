@@ -477,11 +477,11 @@ static void AltmillerCave_StartReveal(void) {
     REG_BLDALPHA = alpha;
   }
   if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveDraught) {
-    Actor_ConfigureSpriteColor(ACTOR_BLUE_ROCK, COLOR_BLUE);
-    Actor_ConfigureSpriteColor(ACTOR_GREEN_ROCK, COLOR_GREEN);
-    Actor_ConfigureSpriteColor(ACTOR_WHITE_ROCK, COLOR_WHITE);
-    Actor_ConfigureSpriteColor(ACTOR_YELLOW_ROCK, COLOR_YELLOW);
-    Actor_ConfigureSpriteColor(ACTOR_RED_ROCK, COLOR_RED);
+    Actor_SetSpriteColorById(ACTOR_BLUE_ROCK, COLOR_BLUE);
+    Actor_SetSpriteColorById(ACTOR_GREEN_ROCK, COLOR_GREEN);
+    Actor_SetSpriteColorById(ACTOR_WHITE_ROCK, COLOR_WHITE);
+    Actor_SetSpriteColorById(ACTOR_YELLOW_ROCK, COLOR_YELLOW);
+    Actor_SetSpriteColorById(ACTOR_RED_ROCK, COLOR_RED);
   }
 }
 
@@ -496,11 +496,11 @@ static void AltmillerCave_EndReveal(void) {
     effectWork->childOption = 1;
   }
   if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveDraught) {
-    Actor_ConfigureSpriteColor(ACTOR_BLUE_ROCK, COLOR_NONE);
-    Actor_ConfigureSpriteColor(ACTOR_GREEN_ROCK, COLOR_NONE);
-    Actor_ConfigureSpriteColor(ACTOR_WHITE_ROCK, COLOR_NONE);
-    Actor_ConfigureSpriteColor(ACTOR_YELLOW_ROCK, COLOR_NONE);
-    Actor_ConfigureSpriteColor(ACTOR_RED_ROCK, COLOR_NONE);
+    Actor_SetSpriteColorById(ACTOR_BLUE_ROCK, COLOR_NONE);
+    Actor_SetSpriteColorById(ACTOR_GREEN_ROCK, COLOR_NONE);
+    Actor_SetSpriteColorById(ACTOR_WHITE_ROCK, COLOR_NONE);
+    Actor_SetSpriteColorById(ACTOR_YELLOW_ROCK, COLOR_NONE);
+    Actor_SetSpriteColorById(ACTOR_RED_ROCK, COLOR_NONE);
   }
 }
 
@@ -513,7 +513,7 @@ static void AltmillerCave_StartRetreat(void) {
 
   effectWork = (struct FieldEffectWork *)gFieldEffectWork;
   original = effectWork->mainActor;
-  Actor_ArmCallback(effectWork->firstActorId, FACING_SOUTH, 0);
+  Actor_FaceDirection(effectWork->firstActorId, FACING_SOUTH, 0);
   Actor_SetSpriteColorMode(original, 0);
   Event_Wait(20);
   replacement = FieldActor_Create(0, original->x.fixed, original->y.fixed,
@@ -531,7 +531,7 @@ static void AltmillerCave_StartRetreat(void) {
 /// After Move on AltmillerCaveSquall's pillar: in its cell at (30, 20) it
 /// settles and opens the way beside it (remembered in TBS_PATCH_1 and later).
 static void AltmillerCave_UpdateMovedObstacle(void) {
-  struct Actor *actor = Actor_GetById(ACTOR_SQUALL_ROOM_PILLAR);
+  struct Actor *actor = Actor_Get(ACTOR_SQUALL_ROOM_PILLAR);
 
   if (actor->x.fixed >> 20 == 30 && actor->z.fixed >> 20 == 20) {
     actor->motionFlags = 2;
@@ -555,7 +555,7 @@ static void AltmillerCave_AdvanceObstacleAndCheckPassage(void) {
 static void AltmillerCave_CheckFrostTargetCollision(void) {
   struct FieldEffectWork *effectWork =
       (struct FieldEffectWork *)gFieldEffectWork;
-  struct Actor *target = Actor_GetById(ACTOR_SQUALL_ROOM_PUDDLE);
+  struct Actor *target = Actor_Get(ACTOR_SQUALL_ROOM_PUDDLE);
   struct FieldPosition position;
 
   position.x = target->x.fixed;
@@ -572,7 +572,7 @@ static void AltmillerCave_CheckFrostTargetCollision(void) {
 static void AltmillerCave_FreezePuddle(void) {
   struct FieldEffectWork *effectWork =
       (struct FieldEffectWork *)gFieldEffectWork;
-  struct Actor *puddle = Actor_GetById(ACTOR_SQUALL_ROOM_PUDDLE);
+  struct Actor *puddle = Actor_Get(ACTOR_SQUALL_ROOM_PUDDLE);
   s32 blocked;
 
   blocked = effectWork->childMode;
@@ -590,7 +590,7 @@ static void AltmillerCave_FreezePuddle(void) {
 /// Walking into AltmillerCaveSquall's puddle while it is not frozen: the leader
 /// hops 32 pixels over it, if the landing is clear.
 static void AltmillerCave_HopSelectedActor(void) {
-  struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 motionFlags = actor->motionFlags;
   union {
     struct FieldPosition position;
@@ -618,8 +618,8 @@ static void AltmillerCave_HopSelectedActor(void) {
     actor->velocityY = PIXELS(4);
     actor->motionFlags &= 126;
     Actor_SetSpriteFlags(actor, 0);
-    Actor_SetPositionAndCommit(ACTOR_PARTY_LEADER, components[0].part.pixel,
-                               components[2].part.pixel);
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, components[0].part.pixel,
+                        components[2].part.pixel);
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(actor, 1);
     actor->motionFlags = motionFlags;
@@ -656,7 +656,7 @@ static void AltmillerCave_PlaceLight(s32 actorId, s32 radius, s32 angle) {
   s32 centreX = PIXELS(504);
   s32 centreHeight = PIXELS(24);
   s32 depth = PIXELS(144);
-  struct Actor *light = Actor_GetById(actorId);
+  struct Actor *light = Actor_Get(actorId);
   s32 coordinates[3];
   s32 *position = coordinates;
 
@@ -711,7 +711,7 @@ static void AltmillerCave_SpinLights(void) {
       wheel->angle = chosenAngle + TRIG_TURN / 4;
       wheel->phase = WHEEL_STOPPED;
       wheel->speed = 0;
-      Actor_GetById(ACTOR_FIRST_LIGHT + chosenLight)->update =
+      Actor_Get(ACTOR_FIRST_LIGHT + chosenLight)->update =
           AltmillerCave_PulseLight;
     }
   } else if (phase == WHEEL_STOPPED) {
@@ -771,23 +771,23 @@ static void AltmillerCave_TurnRock(s32 rock) {
   if (state == PUZZLE_START) {
     if (rock == ACTOR_BLUE_ROCK) {
       state = PUZZLE_LEFT_ROCK_TURNED;
-      Event_PlaySound(SE_CHIME);
+      Sound_Play(SE_CHIME);
     } else {
-      Event_PlaySound(SE_MENU_ERROR);
+      Sound_Play(SE_MENU_ERROR);
     }
     gSceneLocalState[0] = 0;
   } else if (state == PUZZLE_LEFT_ROCK_TURNED) {
     if (rock == ACTOR_BLUE_ROCK) {
-      Event_PlaySound(SE_CHIME);
+      Sound_Play(SE_CHIME);
     } else if (rock == ACTOR_RED_ROCK) {
       // The lights grow in one by one, each with SE_LIGHT_APPEAR.
       state = PUZZLE_LIGHTS_SHOWN;
-      Event_PlaySound(SE_CHIME);
+      Sound_Play(SE_CHIME);
       wait(30);
       angle = gAltmillerCave_LightWheel->angle;
       for (i = 0; i < LIGHT_COUNT; i++) {
         AltmillerCave_PlaceLight(ACTOR_FIRST_LIGHT + i, PIXELS(24), angle);
-        Event_PlaySound(SE_LIGHT_APPEAR);
+        Sound_Play(SE_LIGHT_APPEAR);
         actor = Actor_Get(ACTOR_FIRST_LIGHT + i);
         actor->scaleX = 0;
         scale = 2 * Q16_ONE / 5;
@@ -802,18 +802,18 @@ static void AltmillerCave_TurnRock(s32 rock) {
       wait(30);
       correctRock = 1;
     } else {
-      Event_PlaySound(SE_MENU_ERROR);
+      Sound_Play(SE_MENU_ERROR);
       state = PUZZLE_START;
     }
   } else if (state == PUZZLE_LIGHTS_SHOWN) {
     if (rock != ACTOR_FIRST_ROCK + chosenLight) {
       // The wrong rock: the lights shrink away.
       state = PUZZLE_START;
-      Event_PlaySound(SE_MENU_ERROR);
+      Sound_Play(SE_MENU_ERROR);
       wait(30);
       for (i = 0; i < LIGHT_COUNT; i++) {
         actor = Actor_Get(ACTOR_FIRST_LIGHT + i);
-        Event_PlaySound(SE_LIGHT_APPEAR);
+        Sound_Play(SE_LIGHT_APPEAR);
         for (scale = actor->scaleX; actor->scaleX > 2 * Q16_ONE / 5;
              scale -= 3 * Q16_ONE / 64) {
           actor->scaleY = scale;
@@ -823,7 +823,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
         Actor_SetPosition(ACTOR_FIRST_LIGHT + i, 0, 0);
       }
     } else {
-      Event_PlaySound(SE_CHIME);
+      Sound_Play(SE_CHIME);
       correctRock = 1;
       wait(30);
     }
@@ -846,7 +846,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
         wait(1);
       }
       wait(10);
-      Event_PlaySound(SE_CHIME);
+      Sound_Play(SE_CHIME);
     } else {
       // The third light matched: the ground shakes, the ring spirals in to
       // nothing, and the wall bursts.
@@ -860,7 +860,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
       Event_Wait(20);
       MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
       gAltmillerCave_LightWheel->phase = WHEEL_STOPPED;
-      Event_PlaySound(SE_WARP);
+      Sound_Play(SE_WARP);
       radius = PIXELS(24);
       angle = gAltmillerCave_LightWheel->angle;
       do {
@@ -879,7 +879,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
         Actor_SetPosition(ACTOR_FIRST_LIGHT + i, 0, 0);
       }
       AltmillerCave_ReleaseWallBurst();
-      Event_PlaySound(MUS_PUZZLE_SOLVED);
+      Sound_Play(MUS_PUZZLE_SOLVED);
     }
     Task_Remove(AltmillerCave_SpinLights);
   }
@@ -949,7 +949,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_INVISIBLE_BABI, 2);
   Event_Wait(60);
-  Event_PlaySound(SOUND_FADE_OUT_BGM);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   actor->sprite->rotation = 0;
   Actor_Jump(ACTOR_INVISIBLE_BABI, 10, 70);
   // Flicker between sprite priorities before replacing invisible Babi.
@@ -970,7 +970,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     Actor_SetPosition(ACTOR_BABI, PIXELS(x), PIXELS(z));
   }
   actor->sprite->flags = 0;
-  Event_PlaySound(MUS_BABI);
+  Sound_Play(MUS_BABI);
   Actor_SetSpeed(ACTOR_BABI, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkByAndWait(ACTOR_BABI, 32, 32);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
@@ -987,10 +987,10 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_Get(ACTOR_GARET)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_Get(ACTOR_MIA)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_Get(ACTOR_IVAN)->steeringFlags |= ACTOR_FACES_MOTION;
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
-  Import_ActorSetAnimation(ACTOR_MIA, ANIM_STAND);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_STAND);
   wait(1);
   AltmillerCave_FacePartyNorth();
   Event_Wait(30);
@@ -1075,7 +1075,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(150);
   FieldPsynergy_RunHandler(2);
   FieldPsynergy_StopCasterUpdate();
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_STAND);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(40);
@@ -1205,7 +1205,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Event_Wait(30);
   Event_Wait(10);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(30);
   Event_OpenMessage(ACTOR_BABI, 0);
@@ -1368,9 +1368,9 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   AltmillerCave_FacePartyNorth();
   Event_Wait(30);
   Event_Wait(10);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(30);
   Event_Wait(10);
@@ -1388,7 +1388,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
-  Import_ActorSetAnimation(ACTOR_FIRST_SOLDIER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FIRST_SOLDIER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
@@ -1403,8 +1403,8 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_WalkBy(ACTOR_SECOND_SOLDIER, 0, 48);
   Actor_WalkByAndWait(ACTOR_BABI, -16, 0);
   Actor_WalkByAndWait(ACTOR_BABI, 0, 32);
-  Import_ActorSetAnimation(ACTOR_FIRST_SOLDIER, ANIM_STAND);
-  Import_ActorSetAnimation(ACTOR_SECOND_SOLDIER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_FIRST_SOLDIER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_SECOND_SOLDIER, ANIM_STAND);
   Actor_Stop(ACTOR_PARTY_LEADER);
   Actor_Stop(ACTOR_GARET);
   Actor_Stop(ACTOR_MIA);
@@ -1512,7 +1512,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(20);
-  Import_ActorSetAnimation(ACTOR_FIRST_SOLDIER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FIRST_SOLDIER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_NOD);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_EAST, 0);
@@ -1625,9 +1625,9 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     Event_Wait(30);
     Event_ShowMessage(ACTOR_IVAN, 0);
     Event_Wait(20);
-    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-    Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Event_Wait(30);
   } else {
@@ -1651,11 +1651,11 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     Event_Wait(30);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
   }
-  Event_PlaySound(SOUND_FADE_OUT_BGM);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
@@ -1663,7 +1663,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
@@ -1671,7 +1671,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
-  Import_ActorSetAnimation(ACTOR_MIA, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
@@ -1698,7 +1698,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Event_SetMessageId(MsgAltmillerSee);
   Actor_RunRepeatedMotion(ACTOR_INVISIBLE_BABI, 2);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_INVISIBLE_BABI, 0);
+  Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   FieldCamera_MoveTo(PIXELS(248), -1, PIXELS(184), 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -1714,45 +1714,45 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_MIA, 0);
+  Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Event_ShowMessageAndWait(ACTOR_INVISIBLE_BABI, 0);
+  Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_IVAN, 50);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Event_Wait(30);
-  Event_ShowMessageAndWait(ACTOR_GARET, 0);
+  Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_SetAttachedEffect(ACTOR_INVISIBLE_BABI,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_RunRepeatedMotion(ACTOR_INVISIBLE_BABI, 2);
   Event_Wait(30);
-  Event_ShowMessageAndWait(ACTOR_INVISIBLE_BABI, 0);
+  Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(20);
   Actor_TurnToFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Event_Wait(30);
-  Event_ShowMessageAndWait(ACTOR_IVAN, 0);
+  Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Event_ShowMessageAndWait(ACTOR_INVISIBLE_BABI, 0);
+  Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_MIA, 0);
+  Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  Event_ShowMessageAndWait(ACTOR_INVISIBLE_BABI, 0);
+  Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 30);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(ACTOR_GARET, 0);
-  Actor_ArmCallback(ACTOR_GARET, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_GARET, 0);
+  Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
@@ -1760,31 +1760,31 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_MIA, 0);
+  Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
-  Event_ShowMessageAndWait(ACTOR_INVISIBLE_BABI, 0);
+  Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  FieldEffect_SpawnAttached(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_Wait(60);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_IVAN, 0);
+  Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_INVISIBLE_BABI, 0);
+  Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Event_ShowMessageAndWait(ACTOR_GARET, 0);
+  Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_INVISIBLE_BABI, 2);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_MIA, 0);
+  Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_OpenMessage(ACTOR_INVISIBLE_BABI, 0);
@@ -1798,7 +1798,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
     Actor_WalkByAndWait(ACTOR_GARET, 0, -16);
     Event_Wait(10);
     Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 30);
-    Event_ShowMessageAndWait(ACTOR_GARET, 0);
+    Event_ShowMessage(ACTOR_GARET, 0);
   } else {
     Event_SetMessageId(MsgAltmillerDontTrustAnyone);
     Event_Wait(10);
@@ -1808,7 +1808,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
     Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 30);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     Event_Wait(20);
-    Event_ShowMessageAndWait(ACTOR_GARET, 0);
+    Event_ShowMessage(ACTOR_GARET, 0);
   }
 
   // Question Babi's condition before agreeing to find his draught.
@@ -1826,25 +1826,25 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Event_Wait(20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_MIA, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_MIA, 0);
-  Actor_SetAngleToward(ACTOR_IVAN, ACTOR_MIA, 0);
+  Actor_FaceActor(ACTOR_IVAN, ACTOR_MIA, 0);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_MIA, 0);
+  Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
-  Actor_CommitPositionAndActivate(ACTOR_GARET, 0, 16);
+  Actor_WalkByAndWait(ACTOR_GARET, 0, 16);
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   Event_Wait(30);
-  Actor_SetAngleToward(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
+  Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_GARET, 0);
+  Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(30);
   Actor_TurnToFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 30);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(30);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
-  Actor_CommitPositionAndActivate(ACTOR_IVAN, 0, 16);
+  Actor_WalkByAndWait(ACTOR_IVAN, 0, 16);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
@@ -1855,61 +1855,61 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Event_SetMessageId(line);
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Event_ShowMessageAndWait(ACTOR_INVISIBLE_BABI, 0);
+  Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(30);
-  Event_ShowMessageAndWait(ACTOR_IVAN, 0);
+  Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
-  Event_ShowMessageAndWait(ACTOR_INVISIBLE_BABI, 0);
+  Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(30);
-  Event_ShowMessageAndWait(ACTOR_INVISIBLE_BABI, 0);
+  Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(30);
-  Event_ShowMessageAndWait(ACTOR_INVISIBLE_BABI, 0);
+  Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Event_Wait(30);
-  Event_ShowMessageAndWait(ACTOR_INVISIBLE_BABI, 0);
+  Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Event_ShowMessageAndWait(ACTOR_MIA, 0);
+  Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(30);
-  Event_ShowMessageAndWait(ACTOR_INVISIBLE_BABI, 0);
+  Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Event_Wait(30);
-  Event_ShowMessageAndWait(ACTOR_INVISIBLE_BABI, 0);
+  Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_TurnToFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
-  Actor_ArmCallback(ACTOR_IVAN, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Event_Wait(30);
-  Event_ShowMessageAndWait(ACTOR_INVISIBLE_BABI, 0);
+  Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_GARET, 0);
+  Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(30);
-  Event_ShowMessageAndWait(ACTOR_INVISIBLE_BABI, 0);
+  Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_IVAN, 0);
+  Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
-  Event_ShowMessageAndWait(ACTOR_INVISIBLE_BABI, 0);
+  Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Event_ShowMessageAndWait(ACTOR_GARET, 0);
+  Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
@@ -1918,42 +1918,41 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_MIA, 0);
+  Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_MIA, 40);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(30);
   Actor_FaceActor(ACTOR_GARET, ACTOR_MIA, 0);
-  Actor_SetAngleToward(ACTOR_IVAN, ACTOR_MIA, 0);
+  Actor_FaceActor(ACTOR_IVAN, ACTOR_MIA, 0);
   Event_Wait(20);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(30);
   Sound_Play(SOUND_FADE_OUT_BGM);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    Actor_ResetAndSetPosition(ACTOR_GARET, leader->x.part.pixel,
-                              leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
+                         leader->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_WALK);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    Actor_ResetAndSetPosition(ACTOR_IVAN, leader->x.part.pixel,
-                              leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
+                         leader->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
-  Import_ActorSetAnimation(ACTOR_MIA, ANIM_WALK);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    Actor_ResetAndSetPosition(ACTOR_MIA, leader->x.part.pixel,
-                              leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_MIA);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
@@ -1970,15 +1969,15 @@ static void AltmillerCave_RepeatRockOrder(void) {
   Event_Start();
   question = MsgAltmillerForgetOrderRock;
   Event_SetMessageId(question);
-  FieldMessage_ShowAtActor(ACTOR_INVISIBLE_BABI, 0);
+  Event_OpenMessage(ACTOR_INVISIBLE_BABI, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(20);
     Event_SetMessageId(question + 1);
-    Event_ShowMessageAndWait(ACTOR_INVISIBLE_BABI, 0);
+    Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   } else {
     Event_Wait(20);
     Event_SetMessageId(question + 2);
-    Event_ShowMessageAndWait(ACTOR_INVISIBLE_BABI, 0);
+    Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   }
   Event_End();
 }
@@ -1995,13 +1994,13 @@ static void AltmillerCave_BabiCallsPartyBack(void) {
   GameFlag_Set(FLAG_BABI_CALLED_PARTY_BACK);
   Event_Start();
   Event_SetMessageId(MsgAltmillerWait);
-  Event_ShowMessageAndWait(ACTOR_INVISIBLE_BABI, 0);
+  Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(30);
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_INVISIBLE_BABI, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(30);
-  Event_ShowMessageAndWait(ACTOR_INVISIBLE_BABI, 0);
+  Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);
   Event_End();
@@ -2035,7 +2034,7 @@ static void AltmillerCave_MatchLeaderPriority(struct Actor *updated) {
   if (actor != NULL) {
     actor->priorityFlags = 0;
     actor->sprite->image.priority =
-        Actor_GetById(ACTOR_PARTY_LEADER)->sprite->image.priority;
+        Actor_Get(ACTOR_PARTY_LEADER)->sprite->image.priority;
   }
 }
 
@@ -2097,9 +2096,9 @@ s32 AltmillerCave_Initialize(void) {
   }
   if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveBabi) {
     if (GameFlag_Get(FLAG_BABI_SAVED)) {
-      Import_ActorSetPosition(ACTOR_INVISIBLE_BABI, 0, 0);
+      Actor_SetPosition(ACTOR_INVISIBLE_BABI, 0, 0);
     } else {
-      actor = Actor_GetById(ACTOR_INVISIBLE_BABI);
+      actor = Actor_Get(ACTOR_INVISIBLE_BABI);
       actor->sprite->image.priority = 1;
       actor->sprite->flags = 2;
       actor->sprite->rotation = TRIG_TURN / 4;
@@ -2110,14 +2109,13 @@ s32 AltmillerCave_Initialize(void) {
     GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
     AltmillerCave_RedrawObstacleFootprints();
     if (GameFlag_Get(FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN)) {
-      Import_ActorSetAnimation(ACTOR_SQUALL_ROOM_PUDDLE,
-                               PUDDLE_ANIMATION_FROZEN);
+      Actor_SetAnimation(ACTOR_SQUALL_ROOM_PUDDLE, PUDDLE_ANIMATION_FROZEN);
       MapGrid_CopyCellAttributes(76, 16, 1, 1, 73, 17);
     } else {
-      Actor_GetById(ACTOR_SQUALL_ROOM_PUDDLE)->priorityFlags |=
+      Actor_Get(ACTOR_SQUALL_ROOM_PUDDLE)->priorityFlags |=
           ACTOR_PRIORITY_UNDERFOOT;
     }
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_SQUALL_ROOM_PUDDLE), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_SQUALL_ROOM_PUDDLE), 0);
 #if TBS_PATCH_1
     if (GameFlag_Get(FLAG_ALTMILLER_CAVE_PILLAR_IN_PLACE)) {
       MapGrid_CopyCellAttributes(30, 20, 1, 1, 32, 20);
@@ -2132,18 +2130,17 @@ s32 AltmillerCave_Initialize(void) {
     // keeps the entrance read below the last store (as ->update, one store
     // moves: 1 of 403 instructions differ in tbs-en).
 #ifdef UBFIX
-    Actor_GetById(ACTOR_FIRST_OBSTACLE)->update =
+    Actor_Get(ACTOR_FIRST_OBSTACLE)->update = AltmillerCave_MatchLeaderPriority;
+    Actor_Get(ACTOR_FIRST_OBSTACLE + 1)->update =
         AltmillerCave_MatchLeaderPriority;
-    Actor_GetById(ACTOR_FIRST_OBSTACLE + 1)->update =
-        AltmillerCave_MatchLeaderPriority;
-    Actor_GetById(ACTOR_FIRST_OBSTACLE + 2)->update =
+    Actor_Get(ACTOR_FIRST_OBSTACLE + 2)->update =
         AltmillerCave_MatchLeaderPriority;
 #else
-    *(s32 *)&Actor_GetById(ACTOR_FIRST_OBSTACLE)->update =
+    *(s32 *)&Actor_Get(ACTOR_FIRST_OBSTACLE)->update =
         (s32)AltmillerCave_MatchLeaderPriority;
-    *(s32 *)&Actor_GetById(ACTOR_FIRST_OBSTACLE + 1)->update =
+    *(s32 *)&Actor_Get(ACTOR_FIRST_OBSTACLE + 1)->update =
         (s32)AltmillerCave_MatchLeaderPriority;
-    *(s32 *)&Actor_GetById(ACTOR_FIRST_OBSTACLE + 2)->update =
+    *(s32 *)&Actor_Get(ACTOR_FIRST_OBSTACLE + 2)->update =
         (s32)AltmillerCave_MatchLeaderPriority;
 #endif
     // Coming up to the rocks (ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE)
@@ -2168,30 +2165,30 @@ s32 AltmillerCave_Initialize(void) {
       AltmillerCave_PlaceLights((state[1] * Q16_ONE) / 5 + TRIG_TURN / 4);
     }
     for (i = 0; i < LIGHT_COUNT; i++) {
-      actor = Actor_GetById(ACTOR_FIRST_LIGHT + i);
+      actor = Actor_Get(ACTOR_FIRST_LIGHT + i);
       actor->motionFlags = 0;
       actor->collisionFlags = 0;
       actor->scaleX = Q16_ONE;
       actor->scaleY = Q16_ONE;
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_LIGHT + i), 0);
-      Import_ActorSetAnimation(ACTOR_FIRST_LIGHT + i, i + 1);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_LIGHT + i), 0);
+      Actor_SetAnimation(ACTOR_FIRST_LIGHT + i, i + 1);
     }
-    Actor_ConfigureSpriteColor(ACTOR_BLUE_LIGHT, COLOR_BLUE);
-    Actor_ConfigureSpriteColor(ACTOR_GREEN_LIGHT, COLOR_GREEN);
-    Actor_ConfigureSpriteColor(ACTOR_WHITE_LIGHT, COLOR_WHITE);
-    Actor_ConfigureSpriteColor(ACTOR_YELLOW_LIGHT, COLOR_YELLOW);
-    Actor_ConfigureSpriteColor(ACTOR_RED_LIGHT, COLOR_RED);
-    Actor_ConfigureSpriteColor(ACTOR_BLUE_ROCK, COLOR_NONE);
-    Actor_ConfigureSpriteColor(ACTOR_GREEN_ROCK, COLOR_NONE);
-    Actor_ConfigureSpriteColor(ACTOR_WHITE_ROCK, COLOR_NONE);
-    Actor_ConfigureSpriteColor(ACTOR_YELLOW_ROCK, COLOR_NONE);
-    Actor_ConfigureSpriteColor(ACTOR_RED_ROCK, COLOR_NONE);
-    Actor_GetById(ACTOR_BLUE_ROCK)->sprite->image.priority = 3;
-    Actor_GetById(ACTOR_RED_ROCK)->sprite->image.priority = 3;
-    Actor_GetById(ACTOR_BLUE_ROCK)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    Actor_GetById(ACTOR_RED_ROCK)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_BLUE_ROCK), 0);
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_RED_ROCK), 0);
+    Actor_SetSpriteColorById(ACTOR_BLUE_LIGHT, COLOR_BLUE);
+    Actor_SetSpriteColorById(ACTOR_GREEN_LIGHT, COLOR_GREEN);
+    Actor_SetSpriteColorById(ACTOR_WHITE_LIGHT, COLOR_WHITE);
+    Actor_SetSpriteColorById(ACTOR_YELLOW_LIGHT, COLOR_YELLOW);
+    Actor_SetSpriteColorById(ACTOR_RED_LIGHT, COLOR_RED);
+    Actor_SetSpriteColorById(ACTOR_BLUE_ROCK, COLOR_NONE);
+    Actor_SetSpriteColorById(ACTOR_GREEN_ROCK, COLOR_NONE);
+    Actor_SetSpriteColorById(ACTOR_WHITE_ROCK, COLOR_NONE);
+    Actor_SetSpriteColorById(ACTOR_YELLOW_ROCK, COLOR_NONE);
+    Actor_SetSpriteColorById(ACTOR_RED_ROCK, COLOR_NONE);
+    Actor_Get(ACTOR_BLUE_ROCK)->sprite->image.priority = 3;
+    Actor_Get(ACTOR_RED_ROCK)->sprite->image.priority = 3;
+    Actor_Get(ACTOR_BLUE_ROCK)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+    Actor_Get(ACTOR_RED_ROCK)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_BLUE_ROCK), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_RED_ROCK), 0);
   }
   if (GameFlag_Get(FLAG_ALTMILLER_CAVE_DARK)) {
     AltmillerCave_InitializeDarkness();

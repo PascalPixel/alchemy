@@ -514,7 +514,7 @@ static void ValePlaza_AskAboutMeditation(void) {
   Event_SetMessageId(MsgValeMeditateOnMtAlephDaily);
   Actor_TurnToFaceEachOther(ACTOR_MAN_ASKING_ABOUT_MEDITATION,
                             ACTOR_PARTY_LEADER, 2);
-  Event_AskYesNoAndShowResponse(ACTOR_MAN_ASKING_ABOUT_MEDITATION, 0);
+  Event_AskYesNo(ACTOR_MAN_ASKING_ABOUT_MEDITATION, 0);
   Event_End();
 }
 
@@ -527,7 +527,7 @@ static void ValePlaza_RecallThreeYearsAgo(void) {
   Event_Start();
   Event_SetMessageId(MsgValeADifficultTimeThreeYears);
   Actor_TurnToFaceEachOther(ACTOR_WOMAN_RECALLING_STORM, ACTOR_PARTY_LEADER, 2);
-  Event_AskYesNoAndShowResponse(ACTOR_WOMAN_RECALLING_STORM, 0);
+  Event_AskYesNo(ACTOR_WOMAN_RECALLING_STORM, 0);
   Event_End();
 }
 
@@ -540,7 +540,7 @@ static void ValePlaza_AskAboutTheTravelers(void) {
   Event_Start();
   Event_SetMessageId(MsgValeDidTheTravelersMeetThe);
   Actor_TurnToFaceEachOther(ACTOR_FIRST_CHILD, ACTOR_PARTY_LEADER, 2);
-  Event_AskYesNoAndShowResponse(ACTOR_FIRST_CHILD, 0);
+  Event_AskYesNo(ACTOR_FIRST_CHILD, 0);
   Event_End();
 }
 
@@ -570,19 +570,19 @@ static void ValePlaza_DemonstratePsynergy(void) {
     if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
       gFieldWork->message++;
     }
-    FieldMessage_ShowAtActor(ACTOR_STRONGMAN_SHOWING_PSYNERGY, 0);
+    Event_OpenMessage(ACTOR_STRONGMAN_SHOWING_PSYNERGY, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Event_SetMessageId(message + 3);
     } else {
       Event_SetMessageId(message + 4);
     }
-    Event_ShowMessageAndWait(ACTOR_STRONGMAN_SHOWING_PSYNERGY, 0);
+    Event_ShowMessage(ACTOR_STRONGMAN_SHOWING_PSYNERGY, 0);
   } else {
     origin = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
     Event_SetMessageId(MsgValeShownNewAbility);
     Actor_TurnToFaceEachOther(ACTOR_STRONGMAN_SHOWING_PSYNERGY,
                               ACTOR_PARTY_LEADER, 0);
-    Event_AskYesNoAndShowResponse(ACTOR_STRONGMAN_SHOWING_PSYNERGY, 0);
+    Event_AskYesNo(ACTOR_STRONGMAN_SHOWING_PSYNERGY, 0);
     Event_Wait(20);
     Actor_StartRepeatedMotion(ACTOR_STRONGMAN_SHOWING_PSYNERGY, 2);
     Event_Wait(15);
@@ -591,7 +591,7 @@ static void ValePlaza_DemonstratePsynergy(void) {
     shakes = 0;
     for (i = 0; i < 40; i++) {
       ValePlaza_FlashPsynergyPalette(
-          Actor_GetById(ACTOR_STRONGMAN_SHOWING_PSYNERGY));
+          Actor_Get(ACTOR_STRONGMAN_SHOWING_PSYNERGY));
       wait(1);
     }
     Task_AddFrame(ValePlaza_UpdateShowingStrongmanPsynergy, TASK_PASS_FRAME);
@@ -612,11 +612,11 @@ static void ValePlaza_DemonstratePsynergy(void) {
     Task_Remove(ValePlaza_UpdateShowingStrongmanPsynergy);
     wait(1);
     Scene_EndEventPsynergy();
-    Actor_ConfigureSpriteColor(ACTOR_STRONGMAN_SHOWING_PSYNERGY,
-                               SPRITE_COLOR_NORMAL);
+    Actor_SetSpriteColorById(ACTOR_STRONGMAN_SHOWING_PSYNERGY,
+                             SPRITE_COLOR_NORMAL);
     Event_Wait(40);
     Event_SetMessageId(MsgValeBeholdPowerPsynergy);
-    Event_ShowMessageAndWait(ACTOR_STRONGMAN_SHOWING_PSYNERGY, 0);
+    Event_ShowMessage(ACTOR_STRONGMAN_SHOWING_PSYNERGY, 0);
   }
   Event_End();
 }
@@ -633,21 +633,21 @@ static void ValePlaza_AskAboutJourney(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     Event_SetMessageId(MsgValeAnythingInterestingOnYourTrip);
-    FieldMessage_ShowAtActor(ACTOR_AFTER_KALAY_CURIOUS_OLD_MAN, 0);
+    Event_OpenMessage(ACTOR_AFTER_KALAY_CURIOUS_OLD_MAN, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
-      Event_ShowMessageAndWait(ACTOR_AFTER_KALAY_CURIOUS_OLD_MAN, 0);
+      Event_ShowMessage(ACTOR_AFTER_KALAY_CURIOUS_OLD_MAN, 0);
     } else {
       struct FieldWork *work = gFieldWork;
 
       work->message++;
-      Event_AskYesNoAndShowResponse(ACTOR_AFTER_KALAY_CURIOUS_OLD_MAN, 0);
+      Event_AskYesNo(ACTOR_AFTER_KALAY_CURIOUS_OLD_MAN, 0);
     }
   } else if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     Event_SetMessageId(MsgValeYouSawTheWiseOne);
-    Event_AskYesNoAndShowResponse(ACTOR_CURIOUS_OLD_MAN, 0);
+    Event_AskYesNo(ACTOR_CURIOUS_OLD_MAN, 0);
   } else {
     Event_SetMessageId(MsgValeCanIUsePsynergy);
-    Event_AskYesNoAndShowResponse(ACTOR_STORM_CURIOUS_OLD_MAN, 0);
+    Event_AskYesNo(ACTOR_STORM_CURIOUS_OLD_MAN, 0);
   }
   Event_End();
 }
@@ -662,9 +662,9 @@ static void ValePlaza_AskAboutJourney(void) {
 /// reach it.
 static void ValePlaza_TalkAboutFallenStone(void) {
   Event_Start();
-  Import_ActorSetAnimation(ACTOR_HUT_OWNER, ANIM_STAND);
-  Actor_SetAngleToward(ACTOR_HUT_OWNER, ACTOR_PARTY_LEADER, 20);
-  Actor_SetAngleToward(ACTOR_HUT_OWNER, ACTOR_FALLEN_STONE_SPOT, 40);
+  Actor_SetAnimation(ACTOR_HUT_OWNER, ANIM_STAND);
+  Actor_FaceActor(ACTOR_HUT_OWNER, ACTOR_PARTY_LEADER, 20);
+  Actor_FaceActor(ACTOR_HUT_OWNER, ACTOR_FALLEN_STONE_SPOT, 40);
   Event_SetMessageId(MsgValeTheStoneFellOnThe);
   ValePlaza_SayThenWait(ACTOR_HUT_OWNER, 20);
   FieldCamera_SetSpeedParameters(PIXELS(8) / 5, PIXELS(1) / 5);
@@ -672,7 +672,7 @@ static void ValePlaza_TalkAboutFallenStone(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_HUT_OWNER, 2);
   Event_Wait(20);
-  Actor_SetAngleToward(ACTOR_HUT_OWNER, ACTOR_PARTY_LEADER, 10);
+  Actor_FaceActor(ACTOR_HUT_OWNER, ACTOR_PARTY_LEADER, 10);
   ValePlaza_SayThenWait(ACTOR_HUT_OWNER, 40);
   Actor_SetMovementTypeById(ACTOR_HUT_OWNER, 2);
   Event_End();
@@ -703,7 +703,7 @@ static void ValePlaza_BoyLiftsSmallRock(void) {
   // Charge the caster's display, then start both palette updates.
   Scene_StartEventPsynergy();
   for (i = 0; i < 40; i++) {
-    ValePlaza_FlashPsynergyPalette(Actor_GetById(ACTOR_STORM_ROCK_LIFTING_BOY));
+    ValePlaza_FlashPsynergyPalette(Actor_Get(ACTOR_STORM_ROCK_LIFTING_BOY));
     wait(1);
   }
   Task_AddOrUpdateFrame(ValePlaza_UpdateRockLiftingBoyPsynergy,
@@ -711,7 +711,7 @@ static void ValePlaza_BoyLiftsSmallRock(void) {
   Task_AddFrame(ValePlaza_UpdateSmallRockPalette, TASK_PASS_FRAME);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 10);
   // Suspend ordinary movement while lifting the target a little each frame.
-  rock = Actor_GetById(ACTOR_STORM_SMALL_ROCK);
+  rock = Actor_Get(ACTOR_STORM_SMALL_ROCK);
   savedMotionFlags = rock->motionFlags;
   rock->motionFlags = 0;
   for (i = 0; i < 40; i++) {
@@ -722,7 +722,7 @@ static void ValePlaza_BoyLiftsSmallRock(void) {
   Task_Remove(ValePlaza_UpdateRockLiftingBoyPsynergy);
   Task_Remove(ValePlaza_UpdateSmallRockPalette);
   wait(1);
-  Event_PlaySound(SE_RATTLE);
+  Sound_Play(SE_RATTLE);
   Actor_SetSpriteColorById(ACTOR_STORM_ROCK_LIFTING_BOY, SPRITE_COLOR_NORMAL);
   Actor_SetSpriteColorById(ACTOR_STORM_SMALL_ROCK, SPRITE_COLOR_NORMAL);
   Event_Wait(40);
@@ -745,10 +745,10 @@ static void ValePlaza_TalkAboutHelping(void) {
                             10);
   if (GameFlag_Get(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) != 0) {
     Event_SetMessageId(MsgValeSureHelp);
-    Event_ShowMessageAndWait(ACTOR_STORM_GIRL_WHO_SAW_JENNA, 0);
+    Event_ShowMessage(ACTOR_STORM_GIRL_WHO_SAW_JENNA, 0);
   } else {
     Event_SetMessageId(MsgValeWentOffWay);
-    Event_ShowMessageAndWait(ACTOR_STORM_GIRL_WHO_SAW_JENNA, 0);
+    Event_ShowMessage(ACTOR_STORM_GIRL_WHO_SAW_JENNA, 0);
   }
   Event_End();
 }
@@ -778,23 +778,23 @@ static void ValePlaza_WelcomeIsaacHome(void) {
 /// Read on it until FLAG_VALE_PSYNERGY_STONE_GONE_TOLD is set; sets it and
 /// restarts the search.
 static void ValePlaza_PsynergyStoneIsGone(void) {
-  struct Actor *actor = Actor_GetById(ACTOR_AFTER_KALAY_HUT_OWNER);
+  struct Actor *actor = Actor_Get(ACTOR_AFTER_KALAY_HUT_OWNER);
   Event_Start();
   actor->targetX = ACTOR_NO_TARGET;
   actor->targetY = ACTOR_NO_TARGET;
   actor->targetZ = ACTOR_NO_TARGET;
-  Import_ActorSetAnimation(ACTOR_AFTER_KALAY_HUT_OWNER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_AFTER_KALAY_HUT_OWNER, ANIM_STAND);
   Actor_Stop(ACTOR_AFTER_KALAY_HUT_OWNER);
-  FieldEffect_SpawnAttached(ACTOR_AFTER_KALAY_HUT_OWNER,
-                            EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  Actor_ShowEmote(ACTOR_AFTER_KALAY_HUT_OWNER,
+                  EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   actor->facing = FACING_NORTHWEST + FACING_STEP;
   Event_Wait(20);
   Actor_StartRepeatedMotion(ACTOR_AFTER_KALAY_HUT_OWNER, 2);
   Event_SetMessageId(MsgValeThePsynergyStoneIsGone);
   Event_ShowMessageThenWait(ACTOR_AFTER_KALAY_HUT_OWNER, 0, 40);
-  Actor_SetAngleToward(ACTOR_AFTER_KALAY_HUT_OWNER, ACTOR_PARTY_LEADER, 20);
+  Actor_FaceActor(ACTOR_AFTER_KALAY_HUT_OWNER, ACTOR_PARTY_LEADER, 20);
   Actor_StartRepeatedMotion(ACTOR_AFTER_KALAY_HUT_OWNER, 2);
-  Event_ShowMessageAndWait(ACTOR_AFTER_KALAY_HUT_OWNER, 0);
+  Event_ShowMessage(ACTOR_AFTER_KALAY_HUT_OWNER, 0);
   GameFlag_Set(FLAG_VALE_PSYNERGY_STONE_GONE_TOLD);
   Actor_Stop(ACTOR_AFTER_KALAY_HUT_OWNER);
   wait(1);
@@ -808,7 +808,7 @@ static void ValePlaza_PsynergyStoneIsGone(void) {
 /// Opens a door's map grid cells and sends the leader through its threshold.
 static inline void ValePlaza_OpenDoorAndWalkThrough(s32 cellX, s32 cellZ, s32 x,
                                                     s32 z) {
-  Event_PlaySound(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValePlaza_DoorOpens, cellX, cellZ);
   Actor_WalkTo(ACTOR_PARTY_LEADER, x, z);
 }
@@ -831,7 +831,7 @@ static void ValePlaza_OpenNorthwestDoor(void) {
 /// Reached by walking north into cell behavior 2 after Kalay; the other
 /// tables have no such door.
 static void ValePlaza_OpenNortheastDoor(void) {
-  Event_PlaySound(SE_THUMP);
+  Sound_Play(SE_THUMP);
   MapGrid_CopyCellsTo(0, 63, 51, 8, 2, 2);
   wait(10);
   MapGrid_CopyCellsTo(2, 63, 51, 8, 2, 2);
@@ -942,13 +942,13 @@ s32 ValePlaza_Initialize(void) {
   s32 verticalScale;
 
   if (GameFlag_Get((FLAG_VALE_FIRST_IVY_BLOWN_AWAY)) != 0) {
-    Import_ActorSetPosition(ACTOR_FIRST_IVY, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_IVY, 0, 0);
   }
   if (GameFlag_Get((FLAG_VALE_SECOND_IVY_BLOWN_AWAY)) != 0) {
-    Import_ActorSetPosition(ACTOR_SECOND_IVY, 0, 0);
+    Actor_SetPosition(ACTOR_SECOND_IVY, 0, 0);
   }
   if (GameFlag_Get((FLAG_VALE_THIRD_IVY_BLOWN_AWAY)) != 0) {
-    Import_ActorSetPosition(ACTOR_THIRD_IVY, 0, 0);
+    Actor_SetPosition(ACTOR_THIRD_IVY, 0, 0);
   }
   switch (gMainRoutineWork.entrance) {
   case VALE_PLAZA_DEBUG_CHILDHOOD:
@@ -963,11 +963,11 @@ s32 ValePlaza_Initialize(void) {
     return 0;
   }
   verticalScale = 3 * Q16_ONE / 2;
-  actor = Actor_GetById(ACTOR_FIRST_IVY);
+  actor = Actor_Get(ACTOR_FIRST_IVY);
   actor->scaleY = verticalScale;
-  actor = Actor_GetById(ACTOR_SECOND_IVY);
+  actor = Actor_Get(ACTOR_SECOND_IVY);
   actor->scaleY = verticalScale;
-  actor = Actor_GetById(ACTOR_THIRD_IVY);
+  actor = Actor_Get(ACTOR_THIRD_IVY);
   actor->scaleY = verticalScale;
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     MapGrid_CopyCellsTo(97, 2, 80, 5, 2, 2);
@@ -981,8 +981,8 @@ s32 ValePlaza_Initialize(void) {
       MapGrid_CopyCellAttributes(21, 38, 1, 1, 18, 41);
       flag = GameFlag_Get(FLAG_VALE_STORM_SENT_TO_AID_ELDERS);
       if (flag != 0) {
-        Import_ActorSetPosition(ACTOR_STORM_FIRST_AIDE, 0, 0);
-        Import_ActorSetPosition(ACTOR_STORM_SECOND_AIDE, 0, 0);
+        Actor_SetPosition(ACTOR_STORM_FIRST_AIDE, 0, 0);
+        Actor_SetPosition(ACTOR_STORM_SECOND_AIDE, 0, 0);
         FieldActor_SetTargetAndCallback(ACTOR_STORM_GARETS_GRANDFATHER,
                                         ACTOR_WATCH_KEEP_MOTION |
                                             ACTOR_PARTY_LEADER,
@@ -1001,19 +1001,19 @@ s32 ValePlaza_Initialize(void) {
       ValePlaza_DepartForQuest();
     } else {
       if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
-        actor = Actor_GetById(ACTOR_STORM_SMALL_ROCK);
+        actor = Actor_Get(ACTOR_STORM_SMALL_ROCK);
         actor->scaleX = 3 * Q16_ONE / 10;
         actor->scaleY = 3 * Q16_ONE / 10;
-        actor = Actor_GetById(ACTOR_STORM_SMALL_ROCK);
+        actor = Actor_Get(ACTOR_STORM_SMALL_ROCK);
         Actor_SetSpriteFlags(actor, 0);
-        actor = Actor_GetById(ACTOR_STORM_SMALL_ROCK_SHADOW);
+        actor = Actor_Get(ACTOR_STORM_SMALL_ROCK_SHADOW);
         actor->scaleX = 3 * Q16_ONE / 5;
         actor->scaleY = 3 * Q16_ONE / 5;
-        Import_ActorSetAnimation(ACTOR_STORM_ROCK_DEFLECTING_YOUNG_MAN, 5);
+        Actor_SetAnimation(ACTOR_STORM_ROCK_DEFLECTING_YOUNG_MAN, 5);
       } else {
         if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
           Actor_SetPosition(ACTOR_FALLEN_STONE_SPOT, PIXELS(331), PIXELS(249));
-          actor = Actor_GetById(ACTOR_FALLEN_STONE_SPOT);
+          actor = Actor_Get(ACTOR_FALLEN_STONE_SPOT);
           Actor_SetSpriteFlags(actor, 0);
         }
       }
@@ -1027,8 +1027,8 @@ s32 ValePlaza_Initialize(void) {
 #else
       if (GameFlag_Get(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) != 0) {
 #endif
-        Import_ActorSetPosition(ACTOR_STORM_JENNA, 0, 0);
-        Import_ActorSetPosition(ACTOR_STORM_CHARGED_UP_STRONGMAN, 0, 0);
+        Actor_SetPosition(ACTOR_STORM_JENNA, 0, 0);
+        Actor_SetPosition(ACTOR_STORM_CHARGED_UP_STRONGMAN, 0, 0);
       }
       if (gMainRoutineWork.entrance == VALE_PLAZA_AFTER_TRAVELERS_BATTLE) {
         ValePlaza_TravelersLeaveAfterBattle();
@@ -1053,14 +1053,13 @@ s32 ValePlaza_Initialize(void) {
 static inline void ValePlaza_RejoinParty(s32 actorId) {
   struct Actor *leader;
 
-  Import_ActorSetAnimation(actorId, ANIM_WALK);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  Actor_SetAnimation(actorId, ANIM_WALK);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_ResetAndSetPosition(actorId, leader->x.part.pixel,
-                              leader->z.part.pixel);
+    Actor_SetDestination(actorId, leader->x.part.pixel, leader->z.part.pixel);
   }
   Actor_WaitForMoveById(actorId);
-  Import_ActorSetPosition(actorId, 0, 0);
+  Actor_SetPosition(actorId, 0, 0);
 }
 
 /// The mayor sends help to the elders and the boys back to the river. In Vale's
@@ -1094,18 +1093,17 @@ static void ValePlaza_SentToAidElders(void) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     Actor_SetSpeed(ACTOR_STORM_GARET, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 179, 789);
-    leader = Actor_GetById(ACTOR_PARTY_LEADER);
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      Import_ActorSetPosition(ACTOR_STORM_GARET, leader->x.fixed,
-                              leader->z.fixed);
+      Actor_SetPosition(ACTOR_STORM_GARET, leader->x.fixed, leader->z.fixed);
     }
     Actor_WalkToAndWait(ACTOR_STORM_GARET, 179, 804);
     Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_STORM_GARET, 40);
-    Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-    Actor_ArmCallback(ACTOR_STORM_GARET, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_STORM_GARET, FACING_EAST, 0);
     // The two aides will not let the Boulder destroy the village and go to
     // help; Garet's grandfather counts on them.
-    Import_ActorSetAnimation(ACTOR_STORM_FIRST_AIDE, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_STORM_FIRST_AIDE, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_STORM_SECOND_AIDE, ANIM_NOD);
     Actor_TurnToFaceEachOther(ACTOR_STORM_FIRST_AIDE, ACTOR_STORM_SECOND_AIDE,
                               0);
@@ -1113,9 +1111,9 @@ static void ValePlaza_SentToAidElders(void) {
     Actor_StartRepeatedMotion(ACTOR_STORM_FIRST_AIDE, 1);
     Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_STORM_FIRST_AIDE, 0,
                               10);
-    Import_ActorSetAnimation(ACTOR_STORM_SECOND_AIDE, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_STORM_SECOND_AIDE, ANIM_NOD);
     Event_ShowMessageThenWait(ACTOR_STORM_SECOND_AIDE, 0, 10);
-    Actor_ArmCallback(ACTOR_STORM_FIRST_AIDE, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_STORM_FIRST_AIDE, FACING_EAST, 0);
     Actor_FaceDirection(ACTOR_STORM_SECOND_AIDE, FACING_NORTHEAST + FACING_STEP,
                         10);
     Actor_SetAnimationAndWait(ACTOR_STORM_GARETS_GRANDFATHER, ANIM_NOD);
@@ -1130,7 +1128,7 @@ static void ValePlaza_SentToAidElders(void) {
     Actor_SetScript(ACTOR_STORM_FIRST_AIDE, gValePlaza_AideRunActions);
     Event_Wait(20);
 #if TBS_PATCH_4
-    Actor_GetById(ACTOR_STORM_SECOND_AIDE)->priorityFlags |= 1;
+    Actor_Get(ACTOR_STORM_SECOND_AIDE)->priorityFlags |= 1;
 #endif
     Actor_SetScript(ACTOR_STORM_SECOND_AIDE, gValePlaza_AideRunActions);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -1138,28 +1136,27 @@ static void ValePlaza_SentToAidElders(void) {
     Actor_SetScript(ACTOR_PARTY_LEADER, gValePlaza_LeaderStepActions);
     Actor_RunScriptAndWait(ACTOR_STORM_GARET, gValePlaza_StormGaretStepActions);
     Event_Wait(20);
-    Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-    Actor_ArmCallback(ACTOR_STORM_GARET, FACING_EAST, 10);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_STORM_GARET, FACING_EAST, 10);
     // Garet calls out to Grandpa and Jenna; Jenna asks whether they came to
     // help her.
-    Event_ShowMessageAndWait(ACTOR_STORM_GARET, 0);
+    Event_ShowMessage(ACTOR_STORM_GARET, 0);
     Actor_FaceDirection(ACTOR_STORM_GARETS_GRANDFATHER, FACING_WEST, 0);
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_JENNA, FACING_SOUTHWEST, 20);
     Actor_RunRepeatedMotion(ACTOR_STORM_JENNA, 2);
     ValePlaza_SayThenWait(ACTOR_STORM_JENNA, 10);
-    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_STORM_GARET, ANIM_NOD);
     Event_Wait(20);
     // Garet's grandfather asks whether Jenna told them about Felix. Yes: good
     // boys, Jenna could use a hand; no: help her regardless.
     Actor_RunRepeatedMotion(ACTOR_STORM_GARETS_GRANDFATHER, 2);
-    FieldMessage_ShowAtActor(
-        SPEAKER_WINDOW_ABOVE | ACTOR_STORM_GARETS_GRANDFATHER, 0);
+    Event_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_STORM_GARETS_GRANDFATHER, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
       skipReply = 1;
-      Import_ActorSetAnimation(ACTOR_STORM_GARETS_GRANDFATHER, ANIM_SHAKE_HEAD);
+      Actor_SetAnimation(ACTOR_STORM_GARETS_GRANDFATHER, ANIM_SHAKE_HEAD);
     } else {
-      Import_ActorSetAnimation(ACTOR_STORM_GARETS_GRANDFATHER, ANIM_NOD);
+      Actor_SetAnimation(ACTOR_STORM_GARETS_GRANDFATHER, ANIM_NOD);
       gFieldWork->message++;
     }
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_STORM_GARETS_GRANDFATHER, 0);
@@ -1170,7 +1167,7 @@ static void ValePlaza_SentToAidElders(void) {
     speechFlags = SPEAKER_WINDOW_ABOVE;
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_CHARGED_UP_STRONGMAN,
                                    FACING_SOUTH, 30);
-    Event_ShowMessageAndWait(ACTOR_STORM_CHARGED_UP_STRONGMAN, 0);
+    Event_ShowMessage(ACTOR_STORM_CHARGED_UP_STRONGMAN, 0);
     Actor_ShowEmote(ACTOR_STORM_GARETS_GRANDFATHER,
                     EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_ShowEmote(ACTOR_STORM_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1212,7 +1209,7 @@ static void ValePlaza_SentToAidElders(void) {
     Actor_RunRepeatedMotion(ACTOR_STORM_GARETS_GRANDFATHER, 2);
     ValePlaza_SayThenWait(speechFlags + ACTOR_STORM_GARETS_GRANDFATHER, 10);
     Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_STORM_GARET, 40);
-    Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_GARET, FACING_EAST, 20);
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_JENNA, FACING_WEST, 30);
     Actor_SetAnimationAndWait(ACTOR_STORM_JENNA, ANIM_NOD);
@@ -1257,12 +1254,12 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
   Event_StartScreenTransition();
   Sound_Play(SOUND_FADE_OUT_BGM);
   Weather_ResumeLightning();
-  Import_ActorSetPosition(ACTOR_FIRST_TRAVELER, PIXELS(105), PIXELS(267));
+  Actor_SetPosition(ACTOR_FIRST_TRAVELER, PIXELS(105), PIXELS(267));
   wait(1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, 93, 343);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 93, 343);
   Event_SetMessageId(MsgValeOnlyTwoSurvived);
-  Event_ShowMessageAndWait(ACTOR_FIRST_TRAVELER, 0);
+  Event_ShowMessage(ACTOR_FIRST_TRAVELER, 0);
   // The ominous music starts; the camera rises to the travelers and the second
   // traveler walks in.
   Sound_Play(MUS_OMINOUS);
@@ -1275,9 +1272,9 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
   Actor_SetSpeed(ACTOR_SECOND_TRAVELER, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkTo(ACTOR_SECOND_TRAVELER, 126, 258);
   Event_Wait(40);
-  Actor_ArmCallback(ACTOR_FIRST_TRAVELER, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_NORTH + FACING_STEP, 0);
   Actor_WaitForMoveById(ACTOR_SECOND_TRAVELER);
-  Import_ActorSetAnimation(ACTOR_SECOND_TRAVELER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_SECOND_TRAVELER, ANIM_STAND);
   ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER,
                                  FACING_SOUTHWEST + FACING_STEP, 10);
   Actor_SetAnimationAndWait(ACTOR_FIRST_TRAVELER, ANIM_NOD);
@@ -1292,13 +1289,13 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
   ValePlaza_SayThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SECOND_TRAVELER, 10);
   ValePlaza_FaceDirectionAndWait(ACTOR_FIRST_TRAVELER,
                                  FACING_NORTHWEST + FACING_STEP, 40);
-  Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_FIRST_TRAVELER, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_FIRST_TRAVELER, 0);
   Actor_SetAnimationAndWait(ACTOR_SECOND_TRAVELER, ANIM_SHAKE_HEAD);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SECOND_TRAVELER, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SECOND_TRAVELER, 0);
   ValePlaza_FaceDirectionAndWait(ACTOR_FIRST_TRAVELER,
                                  FACING_NORTHEAST + FACING_STEP, 10);
   Actor_RunRepeatedMotion(ACTOR_FIRST_TRAVELER, 2);
-  Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_FIRST_TRAVELER, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_FIRST_TRAVELER, 0);
   ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, FACING_SOUTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_SECOND_TRAVELER, ANIM_NOD);
   Event_Wait(20);
@@ -1323,8 +1320,8 @@ static void ValePlaza_FightTravelers(void) {
 
   // Garet, still out of sight, calls Isaac to wait; the travelers turn and
   // look down at Isaac.
-  Actor_ConfigureSpriteColor(ACTOR_STORM_GARET, SPRITE_COLOR_HIDDEN);
-  actor = Actor_GetById(ACTOR_STORM_GARET);
+  Actor_SetSpriteColorById(ACTOR_STORM_GARET, SPRITE_COLOR_HIDDEN);
+  actor = Actor_Get(ACTOR_STORM_GARET);
   Actor_SetSpriteFlags(actor, 0);
   Actor_SetPosition(ACTOR_STORM_GARET, 0, PIXELS(331));
   wait(1);
@@ -1332,7 +1329,7 @@ static void ValePlaza_FightTravelers(void) {
   Actor_ShowEmote(ACTOR_FIRST_TRAVELER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_SECOND_TRAVELER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                   40);
-  Import_ActorSetPosition(ACTOR_STORM_GARET, 0, 0);
+  Actor_SetPosition(ACTOR_STORM_GARET, 0, 0);
   Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_SOUTH + FACING_STEP, 0);
   southSouthwestFacing = FACING_SOUTH + FACING_STEP;
   ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, southSouthwestFacing,
@@ -1350,30 +1347,30 @@ static void ValePlaza_FightTravelers(void) {
   Actor_SetSpeed(ACTOR_SECOND_TRAVELER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkTo(ACTOR_FIRST_TRAVELER, 105, 329);
   Event_Wait(10);
-  Actor_ResetAndSetPositionInMode2(ACTOR_SECOND_TRAVELER, 124, 329);
+  Actor_WalkTo(ACTOR_SECOND_TRAVELER, 124, 329);
   Actor_WaitForMoveById(ACTOR_FIRST_TRAVELER);
-  Import_ActorSetAnimation(ACTOR_FIRST_TRAVELER, ANIM_STAND);
-  Actor_ArmCallback(ACTOR_FIRST_TRAVELER, southSouthwestFacing, 0);
+  Actor_SetAnimation(ACTOR_FIRST_TRAVELER, ANIM_STAND);
+  Actor_FaceDirection(ACTOR_FIRST_TRAVELER, southSouthwestFacing, 0);
   Actor_WaitForMoveById(ACTOR_SECOND_TRAVELER);
-  Import_ActorSetAnimation(ACTOR_SECOND_TRAVELER, ANIM_STAND);
-  Actor_ArmCallback(ACTOR_SECOND_TRAVELER, southSouthwestFacing, 0);
+  Actor_SetAnimation(ACTOR_SECOND_TRAVELER, ANIM_STAND);
+  Actor_FaceDirection(ACTOR_SECOND_TRAVELER, southSouthwestFacing, 0);
   // Garet runs in from the west. The first traveler asks whether Isaac was
   // eavesdropping; whatever he answers, Garet thinks they look scary.
-  Actor_ConfigureSpriteColor(ACTOR_STORM_GARET, SPRITE_COLOR_NORMAL);
-  actor = Actor_GetById(ACTOR_STORM_GARET);
+  Actor_SetSpriteColorById(ACTOR_STORM_GARET, SPRITE_COLOR_NORMAL);
+  actor = Actor_Get(ACTOR_STORM_GARET);
   Actor_SetSpriteFlags(actor, 1);
   Actor_SetPosition(ACTOR_STORM_GARET, 0, PIXELS(331));
   Actor_SetSpeed(ACTOR_STORM_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetPositionAndReset(ACTOR_STORM_GARET, 37, 339);
+  Actor_WalkToAndWait(ACTOR_STORM_GARET, 37, 339);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_FIRST_TRAVELER, ANIM_NOD);
-  FieldMessage_ShowAtActor(ACTOR_FIRST_TRAVELER, 0);
+  Event_OpenMessage(ACTOR_FIRST_TRAVELER, 0);
   Actor_ShowEmote(ACTOR_STORM_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   northNortheastFacing = FACING_NORTH + FACING_STEP;
   ValePlaza_FaceDirectionAndWait(ACTOR_PARTY_LEADER, northNortheastFacing, 10);
   Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0);
   Event_Wait(40);
-  Actor_ArmCallback(ACTOR_FIRST_TRAVELER, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_EAST, 0);
   westFacing = FACING_WEST;
   ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, westFacing, 20);
   Actor_RunRepeatedMotion(ACTOR_STORM_GARET, 2);
@@ -1385,16 +1382,16 @@ static void ValePlaza_FightTravelers(void) {
   ValePlaza_FaceDirectionAndWait(ACTOR_STORM_GARET, northNortheastFacing, 40);
   ValePlaza_SayThenWait(ACTOR_STORM_GARET, 20);
   Actor_Stop(ACTOR_PARTY_LEADER);
-  Actor_ArmCallback(ACTOR_FIRST_TRAVELER, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_EAST, 0);
   ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, westFacing, 15);
-  Import_ActorSetAnimation(ACTOR_FIRST_TRAVELER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FIRST_TRAVELER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_SECOND_TRAVELER, ANIM_NOD);
-  Actor_ArmCallback(ACTOR_FIRST_TRAVELER, southSouthwestFacing, 0);
+  Actor_FaceDirection(ACTOR_FIRST_TRAVELER, southSouthwestFacing, 0);
   ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, southSouthwestFacing,
                                  30);
   // The travelers: forget everything you heard; we'll help you forget.
   Actor_SetAnimationAndWait(ACTOR_SECOND_TRAVELER, ANIM_SHAKE_HEAD);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SECOND_TRAVELER, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SECOND_TRAVELER, 0);
   ValePlaza_FaceDirectionAndWait(ACTOR_PARTY_LEADER, northNortheastFacing, 30);
   ValePlaza_FaceDirectionAndWait(ACTOR_PARTY_LEADER, FACING_SOUTH, 40);
   Actor_RunRepeatedMotion(ACTOR_FIRST_TRAVELER, 2);
@@ -1402,7 +1399,7 @@ static void ValePlaza_FightTravelers(void) {
   ValePlaza_SayThenWait(ACTOR_FIRST_TRAVELER, 20);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldEffect_SetAttached(ACTOR_STORM_GARET,
+  Actor_SetAttachedEffect(ACTOR_STORM_GARET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(80);
   Actor_SetScript(ACTOR_SECOND_TRAVELER, gValePlaza_SecondTravelerLeapActions);
@@ -1452,15 +1449,15 @@ static void ValePlaza_TravelersLeaveAfterBattle(void) {
   Actor_SetPosition(ACTOR_SECOND_TRAVELER, PIXELS(112), PIXELS(360));
   Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SECOND_TRAVELER, FACING_WEST, 0);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
-  actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
   actor->scaleX = -Q16_ONE;
-  actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(actor, 0);
-  Import_ActorSetAnimation(ACTOR_STORM_GARET, 7);
-  actor = Actor_GetById(ACTOR_STORM_GARET);
+  Actor_SetAnimation(ACTOR_STORM_GARET, 7);
+  actor = Actor_Get(ACTOR_STORM_GARET);
   actor->sprite->rotation = TRIG_TURN / 12;
-  actor = Actor_GetById(ACTOR_STORM_GARET);
+  actor = Actor_Get(ACTOR_STORM_GARET);
   Actor_SetSpriteFlags(actor, 0);
   {
     struct FieldWork *work = gFieldWork;
@@ -1482,14 +1479,13 @@ static void ValePlaza_TravelersLeaveAfterBattle(void) {
   Actor_SetSpritePriority(ACTOR_STORM_GARET, 3);
   Actor_SetSpeed(ACTOR_FIRST_TRAVELER, PIXELS(12) / 5, PIXELS(6) / 5);
   gravityQ8 = 128;
-  actor = Actor_GetById(ACTOR_FIRST_TRAVELER);
+  actor = Actor_Get(ACTOR_FIRST_TRAVELER);
   actor->bounce = Q16_ONE / 100;
   actor->gravity = gravityQ8 << 8;
   Actor_SetScript(ACTOR_FIRST_TRAVELER, gValePlaza_FirstTravelerBounceActions);
   Event_Wait(24);
-  Actor_SetSpeedParameters(ACTOR_SECOND_TRAVELER, PIXELS(12) / 5,
-                           PIXELS(6) / 5);
-  actor = Actor_GetById(ACTOR_SECOND_TRAVELER);
+  Actor_SetSpeed(ACTOR_SECOND_TRAVELER, PIXELS(12) / 5, PIXELS(6) / 5);
+  actor = Actor_Get(ACTOR_SECOND_TRAVELER);
   actor->bounce = Q16_ONE / 100;
   actor->gravity = gravityQ8 << 8;
   Actor_RunScriptAndWait(ACTOR_SECOND_TRAVELER,
@@ -1537,17 +1533,17 @@ static void ValePlaza_DepartForQuest(void) {
   FieldCamera_MoveTo(PIXELS(180), PIXELS(16), PIXELS(618), 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  actor = Actor_GetById(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 2);
+  actor = Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 2);
   Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_GetById(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 3);
+  actor = Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 3);
   Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_GetById(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 4);
+  actor = Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 4);
   Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_GetById(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 5);
+  actor = Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 5);
   Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_GetById(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 6);
+  actor = Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 6);
   Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_GetById(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 9);
+  actor = Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 9);
   Actor_SetSpriteFlags(actor, 0);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
   Actor_SetSpritePriority(ACTOR_GARET, 1);
@@ -1588,17 +1584,17 @@ static void ValePlaza_DepartForQuest(void) {
   Actor_WalkToAndWait(ACTOR_FAREWELL_FIRST_CHILD, 168, 618);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
                                  FACING_NORTHEAST + FACING_STEP, 10);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_FIRST_CHILD, ANIM_SHAKE_HEAD);
+  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CHILD, ANIM_SHAKE_HEAD);
   ValePlaza_SayThenWait(ACTOR_FAREWELL_FIRST_CHILD, 20);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_SECOND_CHILD,
                                  FACING_SOUTHWEST + FACING_STEP, 10);
   Actor_RunRepeatedMotion(ACTOR_FAREWELL_SECOND_CHILD, 1);
-  Event_ShowMessageAndWait(ACTOR_FAREWELL_SECOND_CHILD, 0);
+  Event_ShowMessage(ACTOR_FAREWELL_SECOND_CHILD, 0);
   Event_Wait(10);
   Actor_SetSpeed(ACTOR_FAREWELL_DOG, PIXELS(12) / 5, PIXELS(6) / 5);
   Actor_SetPosition(ACTOR_FAREWELL_DOG, PIXELS(110), PIXELS(744));
   wait(2);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_DOG, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_DOG, ANIM_NOD);
   Actor_SetScript(ACTOR_FAREWELL_DOG, gValePlaza_FarewellDogActions);
   Event_Wait(40);
   faceActions = gValePlaza_FaceTargetActions;
@@ -1616,7 +1612,7 @@ static void ValePlaza_DepartForQuest(void) {
                   0);
   Actor_ShowEmote(ACTOR_FAREWELL_SECOND_CHILD, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                   120);
-  Actor_ArmCallback(ACTOR_FAREWELL_FIRST_CHILD, FACING_EAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FAREWELL_FIRST_CHILD, FACING_EAST + FACING_STEP, 0);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_SECOND_CHILD,
                                  FACING_SOUTHWEST + FACING_STEP, 80);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
@@ -1635,8 +1631,8 @@ static void ValePlaza_DepartForQuest(void) {
   // see him off.
   Actor_ShowEmote(ACTOR_FAREWELL_SECOND_CHILD, EMOTE_IN_FRONT | EMOTE_QUESTION,
                   80);
-  Actor_ArmCallback(ACTOR_FAREWELL_FIRST_CHILD, FACING_SOUTHEAST + FACING_STEP,
-                    0);
+  Actor_FaceDirection(ACTOR_FAREWELL_FIRST_CHILD,
+                      FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_WalkToAndWait(ACTOR_FAREWELL_SECOND_CHILD, 184, 630);
   Event_Wait(20);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_SECOND_CHILD,
@@ -1680,8 +1676,7 @@ static void ValePlaza_DepartForQuest(void) {
     struct Actor *actor = Actor_GetById(ACTOR_FAREWELL_DOG);
 
     if (actor != NULL) {
-      Import_ActorSetPosition(ACTOR_FAREWELL_CAT, actor->x.fixed,
-                              actor->z.fixed);
+      Actor_SetPosition(ACTOR_FAREWELL_CAT, actor->x.fixed, actor->z.fixed);
     }
   }
   priorityFlags = (u8)~ACTOR_PRIORITY_AUTOMATIC;
@@ -1691,11 +1686,11 @@ static void ValePlaza_DepartForQuest(void) {
   Actor_SetSpritePriority(ACTOR_FAREWELL_DOG, 2);
   Actor_SetSpritePriority(ACTOR_FAREWELL_CAT, 2);
   Actor_SetSpeed(ACTOR_FAREWELL_CAT, PIXELS(18) / 5, PIXELS(9) / 5);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_CAT, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_FAREWELL_CAT, ANIM_WALK);
   chaseActions = gValePlaza_FarewellChaseActions;
   Actor_SetScript(ACTOR_FAREWELL_CAT, chaseActions);
   Event_Wait(20);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_DOG, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_DOG, ANIM_NOD);
   Actor_SetSpeed(ACTOR_FAREWELL_DOG, PIXELS(24) / 5, PIXELS(12) / 5);
   Actor_RunScriptAndWait(ACTOR_FAREWELL_DOG, chaseActions);
   Event_Wait(60);
@@ -1711,7 +1706,7 @@ static void ValePlaza_DepartForQuest(void) {
                                  FACING_EAST + FACING_STEP, 10);
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_FIRST_CHILD, ANIM_NOD);
   ValePlaza_SayThenWait(ACTOR_FAREWELL_FIRST_CHILD, 20);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_SECOND_CHILD, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_SECOND_CHILD, ANIM_NOD);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_FIRST_CHILD, ANIM_NOD);
   Event_Wait(20);
@@ -1733,12 +1728,12 @@ static void ValePlaza_DepartForQuest(void) {
   Actor_RunRepeatedMotion(ACTOR_FAREWELL_GREAT_HEALER, 2);
   Event_Wait(20);
   ValePlaza_SayThenWait(ACTOR_FAREWELL_GREAT_HEALER, 20);
-  Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   ValePlaza_FaceDirectionAndWait(ACTOR_GARET, FACING_WEST + FACING_STEP, 20);
   ValePlaza_FaceDirectionAndWait(ACTOR_PARTY_LEADER, FACING_NORTH, 10);
   ValePlaza_FaceDirectionAndWait(ACTOR_GARET, FACING_NORTHWEST + FACING_STEP,
                                  10);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(40);
@@ -1761,7 +1756,7 @@ static void ValePlaza_DepartForQuest(void) {
   ValePlaza_SayThenWait(ACTOR_GARET, 10);
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_GARETS_BROTHER, ANIM_SHAKE_HEAD);
   ValePlaza_SayThenWait(ACTOR_FAREWELL_GARETS_BROTHER, 10);
-  Actor_ArmCallback(ACTOR_GARET, FACING_EAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_EAST + FACING_STEP, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   Actor_Jump(ACTOR_GARET, 4, 60);
   // Dora is very late, the bearded man in a long robe says. Everyone wonders;
@@ -1800,8 +1795,8 @@ static void ValePlaza_DepartForQuest(void) {
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   ValePlaza_FaceDirectionAndWait(ACTOR_GARET, FACING_WEST + FACING_STEP, 10);
   ValePlaza_SayThenWait(ACTOR_GARET, 10);
-  Actor_ArmCallback(ACTOR_FAREWELL_MAN_AWAITING_DORA,
-                    FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FAREWELL_MAN_AWAITING_DORA,
+                      FACING_SOUTHEAST + FACING_STEP, 0);
   ValePlaza_FaceDirectionAndWait(ACTOR_PARTY_LEADER, FACING_EAST, 10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_RunRepeatedMotion(ACTOR_FAREWELL_GARETS_SISTER, 1);
@@ -1814,31 +1809,31 @@ static void ValePlaza_DepartForQuest(void) {
   // Garet's mother knows how Dora feels: she does not want Isaac to go, but
   // knows he must. The crowd nods.
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_GARETS_MOTHER, ANIM_NOD);
-  Event_ShowMessageAndWait(ACTOR_FAREWELL_GARETS_MOTHER, 0);
-  Actor_ArmCallback(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_GARETS_MOTHER, ANIM_SHAKE_HEAD);
-  Event_ShowMessageAndWait(ACTOR_FAREWELL_GARETS_MOTHER, 0);
+  Event_ShowMessage(ACTOR_FAREWELL_GARETS_MOTHER, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
+  Actor_SetAnimation(ACTOR_FAREWELL_GARETS_MOTHER, ANIM_SHAKE_HEAD);
+  Event_ShowMessage(ACTOR_FAREWELL_GARETS_MOTHER, 0);
   Actor_StartRepeatedMotion(ACTOR_FAREWELL_GARETS_MOTHER, 3);
-  Event_ShowMessageAndWait(ACTOR_FAREWELL_GARETS_MOTHER, 0);
+  Event_ShowMessage(ACTOR_FAREWELL_GARETS_MOTHER, 0);
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_GARETS_SISTER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_GARETS_FATHER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_GARETS_BROTHER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_GARETS_FATHER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_GARETS_BROTHER, ANIM_NOD);
   Event_Wait(10);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 4, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_GARETS_MOTHER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 7, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 4, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_GARETS_MOTHER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 7, ANIM_NOD);
   Event_Wait(10);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 8, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 8, ANIM_NOD);
   Event_Wait(10);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 5, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 5, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 1, ANIM_NOD);
   // Garet's grandfather hops: they will never leave standing around like this,
   // so one final farewell.
   Actor_Jump(ACTOR_FAREWELL_GARETS_GRANDFATHER, 2, 10);
   Actor_Jump(ACTOR_FAREWELL_GARETS_GRANDFATHER, 4, 40);
   ValePlaza_SayThenWait(ACTOR_FAREWELL_GARETS_GRANDFATHER, 10);
-  Actor_ArmCallback(ACTOR_GARET, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST + FACING_STEP, 0);
   ValePlaza_FaceDirectionAndWait(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_GARETS_GRANDFATHER,
                                  FACING_NORTH + FACING_STEP, 10);
@@ -1848,26 +1843,26 @@ static void ValePlaza_DepartForQuest(void) {
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_GARETS_GRANDFATHER,
                                  FACING_SOUTH + FACING_STEP, 10);
   // The crowd nods in three waves, then all jump together: "Farewell!"
-  Import_ActorSetAnimation(ACTOR_FAREWELL_FIRST_CHILD, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_MAN_AWAITING_DORA, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_GARETS_BROTHER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 3, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 6, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 9, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CHILD, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_MAN_AWAITING_DORA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_GARETS_BROTHER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 3, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 6, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 9, ANIM_NOD);
   Event_Wait(10);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_SECOND_CHILD, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_GARETS_GRANDFATHER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_GARETS_MOTHER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 1, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 4, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 7, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_SECOND_CHILD, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_GARETS_GRANDFATHER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_GARETS_MOTHER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 1, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 4, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 7, ANIM_NOD);
   Event_Wait(10);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_GREAT_HEALER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_GARETS_SISTER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_GARETS_FATHER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 2, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 5, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_GREAT_HEALER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_GARETS_SISTER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_GARETS_FATHER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 2, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 5, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 8, ANIM_NOD);
   Event_Wait(80);
   Actor_Jump(ACTOR_FAREWELL_FIRST_CHILD, 4, 0);
@@ -1925,13 +1920,13 @@ static void ValePlaza_DepartForQuest(void) {
 }
 
 static void ValePlaza_SayThenWait(s32 speaker, s32 frames) {
-  Event_ShowMessageAndWait(speaker, 0);
+  Event_ShowMessage(speaker, 0);
   Event_Wait(frames);
 }
 
 static void ValePlaza_FaceDirectionAndWait(s32 actorId, s32 facing,
                                            s32 frames) {
-  Actor_ArmCallback(actorId, facing, 0);
+  Actor_FaceDirection(actorId, facing, 0);
   Event_Wait(frames);
 }
 
@@ -2031,7 +2026,7 @@ static void ValePlaza_SpawnEffectPair(struct Actor *parent) {
 /// A task ValePlaza_BoyLiftsSmallRock adds while the boy lifts.
 static void ValePlaza_UpdateRockLiftingBoyPsynergy(void) {
   ValePlaza_CyclePsynergyPaletteAndSpawnEffects(
-      Actor_GetById(ACTOR_STORM_ROCK_LIFTING_BOY));
+      Actor_Get(ACTOR_STORM_ROCK_LIFTING_BOY));
 }
 
 /// Updates the demonstrating strongman's Psynergy display.
@@ -2039,7 +2034,7 @@ static void ValePlaza_UpdateRockLiftingBoyPsynergy(void) {
 /// A task ValePlaza_DemonstratePsynergy adds while the ground shakes.
 static void ValePlaza_UpdateShowingStrongmanPsynergy(void) {
   ValePlaza_CyclePsynergyPaletteAndSpawnEffects(
-      Actor_GetById(ACTOR_STRONGMAN_SHOWING_PSYNERGY));
+      Actor_Get(ACTOR_STRONGMAN_SHOWING_PSYNERGY));
 }
 
 /// Updates the small rock's palette while it is lifted.
@@ -2047,7 +2042,7 @@ static void ValePlaza_UpdateShowingStrongmanPsynergy(void) {
 /// A task ValePlaza_BoyLiftsSmallRock adds while ACTOR_STORM_SMALL_ROCK
 /// rises.
 static void ValePlaza_UpdateSmallRockPalette(void) {
-  ValePlaza_CyclePsynergyPalette(Actor_GetById(ACTOR_STORM_SMALL_ROCK));
+  ValePlaza_CyclePsynergyPalette(Actor_Get(ACTOR_STORM_SMALL_ROCK));
 }
 
 /// Arriving by VALE_PLAZA_DEBUG_STORY_FLAGS: sets a preset of story flags,

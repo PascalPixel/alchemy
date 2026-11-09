@@ -283,7 +283,7 @@ static void SolSanctumEntrance_OpenDoorAndEnter(void) {
   // The door opens over three frames.
   width = 3;
   height = 2;
-  Event_PlaySound(SE_BOOM);
+  Sound_Play(SE_BOOM);
   MapGrid_CopyCellsTo(16, 28, 21, 3, width, height);
   wait(10);
   MapGrid_CopyCellsTo(16, 30, 21, 3, width, height);
@@ -293,7 +293,7 @@ static void SolSanctumEntrance_OpenDoorAndEnter(void) {
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 98);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
   Event_Wait(10);
   Event_FinishScreenTransition();
@@ -360,7 +360,7 @@ static void SolSanctumEntrance_SetFirstSmallJewel(void) {
       Field_EndBusyAndReveal();
       // The eye sparkles, then the wall opens.
       oneCell = 1;
-      Event_PlaySound(SE_GEM_SET);
+      Sound_Play(SE_GEM_SET);
       MapGrid_CopyCellsTo(0, 70, 30, 42, oneCell, oneCell);
       MapGrid_CenterOnFollowedPoint();
       Event_Wait(40);
@@ -368,7 +368,7 @@ static void SolSanctumEntrance_SetFirstSmallJewel(void) {
       FieldMessage_Show(message, 1);
       Event_Wait(20);
       reliefWidth = 3;
-      Event_PlaySound(SE_STONE_RUMBLE);
+      Sound_Play(SE_STONE_RUMBLE);
       MapGrid_CopyCellsTo(0, 29, 3, 1, reliefWidth, 2);
       MapGrid_CopyCellAttributes(0, 29, 3, 2, reliefWidth, oneCell);
       MapGrid_CopyCellsTo(1, 109, 4, 81, oneCell, oneCell);
@@ -460,7 +460,7 @@ static inline void SolSanctumEntrance_RecordStatueColumn(s32 column,
 /// saved: sets FLAG_SOL_SANCTUM_WEST_STATUE_AT_EAST or _AT_WEST, or clears both
 /// when it stands in neither column.
 static void SolSanctumEntrance_WestStatueMoved(void) {
-  struct Actor *statue = Actor_GetById(ACTOR_WEST_STATUE);
+  struct Actor *statue = Actor_Get(ACTOR_WEST_STATUE);
   s32 column;
 
   if (statue == NULL) {
@@ -475,7 +475,7 @@ static void SolSanctumEntrance_WestStatueMoved(void) {
 /// (ACTOR_EAST_STATUE), as the west one. Sets
 /// FLAG_SOL_SANCTUM_EAST_STATUE_AT_EAST or _AT_WEST, or clears both.
 static void SolSanctumEntrance_EastStatueMoved(void) {
-  struct Actor *statue = Actor_GetById(ACTOR_EAST_STATUE);
+  struct Actor *statue = Actor_Get(ACTOR_EAST_STATUE);
   s32 column;
 
   if (statue == NULL) {
@@ -496,7 +496,7 @@ static void SolSanctumEntrance_EastStatueMoved(void) {
 /// The column it stops in is saved and the cells under all six are set again.
 /// Sets FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_EAST or _AT_WEST, or clears both.
 static void SolSanctumEntrance_RowStatue1Moved(void) {
-  struct Actor *statue = Actor_GetById(ACTOR_ROW_STATUE_1);
+  struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_1);
   s32 column;
 
   if (statue == NULL) {
@@ -511,7 +511,7 @@ static void SolSanctumEntrance_RowStatue1Moved(void) {
 /// Sol Sanctum, the second relief room: as SolSanctumEntrance_RowStatue1Moved,
 /// for the row's second statue (ACTOR_ROW_STATUE_2).
 static void SolSanctumEntrance_RowStatue2Moved(void) {
-  struct Actor *statue = Actor_GetById(ACTOR_ROW_STATUE_2);
+  struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_2);
   s32 column;
 
   if (statue == NULL) {
@@ -526,7 +526,7 @@ static void SolSanctumEntrance_RowStatue2Moved(void) {
 /// Sol Sanctum, the second relief room: as SolSanctumEntrance_RowStatue1Moved,
 /// for the row's third statue (ACTOR_ROW_STATUE_3).
 static void SolSanctumEntrance_RowStatue3Moved(void) {
-  struct Actor *statue = Actor_GetById(ACTOR_ROW_STATUE_3);
+  struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_3);
   s32 column;
 
   if (statue == NULL) {
@@ -541,7 +541,7 @@ static void SolSanctumEntrance_RowStatue3Moved(void) {
 /// Sol Sanctum, the second relief room: as SolSanctumEntrance_RowStatue1Moved,
 /// for the row's fourth statue (ACTOR_ROW_STATUE_4).
 static void SolSanctumEntrance_RowStatue4Moved(void) {
-  struct Actor *statue = Actor_GetById(ACTOR_ROW_STATUE_4);
+  struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_4);
   s32 column;
 
   if (statue == NULL) {
@@ -556,7 +556,7 @@ static void SolSanctumEntrance_RowStatue4Moved(void) {
 /// Sol Sanctum, the second relief room: as SolSanctumEntrance_RowStatue1Moved,
 /// for the row's fifth statue (ACTOR_ROW_STATUE_5).
 static void SolSanctumEntrance_RowStatue5Moved(void) {
-  struct Actor *statue = Actor_GetById(ACTOR_ROW_STATUE_5);
+  struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_5);
   s32 column;
 
   if (statue == NULL) {
@@ -571,7 +571,7 @@ static void SolSanctumEntrance_RowStatue5Moved(void) {
 /// Sol Sanctum, the second relief room: as SolSanctumEntrance_RowStatue1Moved,
 /// for the row's sixth statue (ACTOR_ROW_STATUE_6).
 static void SolSanctumEntrance_RowStatue6Moved(void) {
-  struct Actor *statue = Actor_GetById(ACTOR_ROW_STATUE_6);
+  struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_6);
   s32 column;
 
   if (statue == NULL)
@@ -603,7 +603,7 @@ static void SolSanctumEntrance_PushStatue(void) {
   struct FieldPosition *destination;
 
   // Find the statue one map cell ahead in the leader's facing direction.
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   direction = leader->facing >> 12;
   statue = Actor_FindAtCell(
       (leader->x.part.pixel + (gSolSanctumPushSteps[direction] >> 16)) >> 4,
@@ -739,7 +739,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     break;
 
   case SOL_SANCTUM_RELIEFS_STATUE_NOOK_FROM_FIRST_RELIEF_ROOM:
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_STATUE), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_STATUE), 0);
     break;
 
   case SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE:
@@ -753,17 +753,17 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
   case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STATUE_NOOK:
   case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM:
     // Put back this room's statues after its introduction has played.
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_WEST_STATUE), 0);
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_EAST_STATUE), 0);
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIXED_STATUE), 0);
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIXED_STATUE + 1), 0);
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIXED_STATUE + 2), 0);
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIXED_STATUE + 3), 0);
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIXED_STATUE + 4), 0);
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIXED_STATUE + 5), 0);
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIXED_STATUE + 6), 0);
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIXED_STATUE + 7), 0);
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIXED_STATUE + 8), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_WEST_STATUE), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_EAST_STATUE), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_FIXED_STATUE), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_FIXED_STATUE + 1), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_FIXED_STATUE + 2), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_FIXED_STATUE + 3), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_FIXED_STATUE + 4), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_FIXED_STATUE + 5), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_FIXED_STATUE + 6), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_FIXED_STATUE + 7), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_FIXED_STATUE + 8), 0);
     if (GameFlag_Get(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE) == 0)
       SolSanctumEntrance_KradenSuspectsHiddenPassage();
     if (GameFlag_Get(FLAG_SOL_SANCTUM_WEST_STATUE_AT_WEST) != 0)
@@ -780,12 +780,12 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
   case SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_FROM_ROUND_PASSAGE:
   case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS:
     // Restore the row of statues and the second gem's doorway.
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_ROW_STATUE_1), 0);
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_ROW_STATUE_2), 0);
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_ROW_STATUE_3), 0);
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_ROW_STATUE_4), 0);
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_ROW_STATUE_5), 0);
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_ROW_STATUE_6), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_ROW_STATUE_1), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_ROW_STATUE_2), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_ROW_STATUE_3), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_ROW_STATUE_4), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_ROW_STATUE_5), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_ROW_STATUE_6), 0);
     if (GameFlag_Get(FLAG_SOL_SANCTUM_MORE_STATUES_SEEN) == 0)
       SolSanctumEntrance_KradenSeesStatuesOutOfReach();
     SolSanctumEntrance_RestoreRowStatueCells(1);
@@ -813,40 +813,40 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Event_Start();
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
   Event_Wait(4);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   // Gather the followers around the leader for Kraden's introduction.
   FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
   FieldCamera_MoveTo(PIXELS(1224), -1, PIXELS(136), 1);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetPosition(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
   }
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetPosition(ACTOR_JENNA, leader->x.fixed, leader->z.fixed);
   }
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_SetSpeed(ACTOR_JENNA, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(3) / 5, PIXELS(3) / 10);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
-  Import_ActorSetAnimation(ACTOR_JENNA, ANIM_WALK);
-  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_GARET, -16, 0);
   Actor_SetDestinationOffset(ACTOR_JENNA, 16, 0);
   Actor_SetDestinationOffset(ACTOR_KRADEN, 0, -32);
   Actor_WaitForMoveById(ACTOR_GARET);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_STILL);
-  Import_ActorSetAnimation(ACTOR_JENNA, ANIM_STILL);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_STILL);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_STILL);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_WaitForMoveById(ACTOR_KRADEN);
-  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_STAND);
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_Wait(20);
@@ -860,20 +860,20 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Event_AskYesNo(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
   Event_Wait(20);
   FieldCamera_MoveTo(PIXELS(1224), -1, PIXELS(148), 1);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
-  Import_ActorSetAnimation(ACTOR_JENNA, ANIM_WALK);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetDestination(ACTOR_JENNA, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
-  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetDestination(ACTOR_KRADEN, leader->x.part.pixel,
                          leader->z.part.pixel);
@@ -883,9 +883,9 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
-  Import_ActorSetAnimation(ACTOR_JENNA, ANIM_STAND);
-  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_STAND);
   GameFlag_Set(FLAG_SOL_SANCTUM_ENTERED);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -909,30 +909,30 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Event_WaitTransitionFrames();
 
   // Spread the party out while Kraden examines the room.
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    Import_ActorSetPosition(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+    Actor_SetPosition(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    Import_ActorSetPosition(ACTOR_JENNA, leader->x.fixed, leader->z.fixed);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+    Actor_SetPosition(ACTOR_JENNA, leader->x.fixed, leader->z.fixed);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    Import_ActorSetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+    Actor_SetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
 
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_SetSpeed(ACTOR_JENNA, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(3) / 5, PIXELS(3) / 10);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
-  Import_ActorSetAnimation(ACTOR_JENNA, ANIM_WALK);
-  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_GARET, -16, 0);
   Actor_SetDestinationOffset(ACTOR_JENNA, 16, 0);
   Actor_SetDestinationOffset(ACTOR_KRADEN, 0, -16);
   Actor_WaitForMoveById(ACTOR_KRADEN);
-  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_STILL);
-  Import_ActorSetAnimation(ACTOR_JENNA, ANIM_STILL);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_STILL);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_STILL);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 30);
@@ -950,20 +950,20 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 40);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_Wait(10);
-  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  Actor_OffsetPositionAndResetMotion(ACTOR_KRADEN, 0, -16);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
+  Actor_SetDestinationOffset(ACTOR_KRADEN, 0, -16);
   Actor_WaitForMoveById(ACTOR_KRADEN);
-  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_STAND);
   Event_Wait(6);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 40);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_Wait(20);
-  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  Actor_OffsetPositionAndResetMotion(ACTOR_KRADEN, 0, -32);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
+  Actor_SetDestinationOffset(ACTOR_KRADEN, 0, -32);
   Actor_WaitForMoveById(ACTOR_KRADEN);
-  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_STAND);
 
   // Survey both sides of the room before returning to Kraden.
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
@@ -975,7 +975,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   FieldCamera_WaitForArrival();
   FieldCamera_MoveTo(PIXELS(1718), -1, PIXELS(100), 1);
   FieldCamera_WaitForArrival();
-  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_STAND);
   FieldCamera_MoveTo(PIXELS(1752), -1, PIXELS(150), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(40);
@@ -990,12 +990,12 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   // Garet: "What's wrong, Kraden?"
   Event_SetMessageId(MsgSolSanctumWrongKraden);
-  FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_StartRepeatedMotion(ACTOR_KRADEN, 2);
   // Kraden: "Those two said there was a hidden passage leading deeper into
   // the sanctum."
-  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_StartRepeatedMotion(ACTOR_JENNA, 2);
@@ -1011,7 +1011,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   // Kraden: the sanctum always looked strange to him, not as he imagined.
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
-  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, 5, 0);
   Event_Wait(40);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
@@ -1021,12 +1021,12 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 20);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   // Jenna: "What do you mean?"
-  FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   // Kraden: a sanctum built in honour of the sun ought to show it somewhere.
-  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
-  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 40);
+  Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 20);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
   Event_Wait(10);
@@ -1038,12 +1038,12 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_Wait(10);
   // Kraden: "If there is a hidden passage, then maybe it leads to..."
-  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 20);
   Actor_Jump(ACTOR_KRADEN, 2, 20);
 
   // Kraden hops: "Let's see if we can find it!"
-  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 40);
+  Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 40);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 20);
   // Garet: "I think he's serious! Should we help him?"
   Event_OpenMessage(ACTOR_GARET, 0);
@@ -1057,7 +1057,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
     // help Kraden.
     Event_SetMessageId(MsgSolSanctumCantSeriouslyWant);
     Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 20);
-    FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
+    Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
     Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 60);
@@ -1075,44 +1075,44 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
 
   // Bring Kraden back and return the followers to the party.
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
-  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  Actor_OffsetPositionAndResetMotion(ACTOR_KRADEN, 0, 48);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
+  Actor_SetDestinationOffset(ACTOR_KRADEN, 0, 48);
   Actor_WaitForMoveById(ACTOR_KRADEN);
-  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_STAND);
   Event_Wait(6);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
-  Actor_ArmCallback(ACTOR_JENNA, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
   Actor_WaitForMoveById(ACTOR_KRADEN);
-  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_STAND);
   Event_Wait(20);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(6);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    Actor_ResetAndSetPosition(ACTOR_GARET, leader->x.part.pixel,
-                              leader->z.part.pixel);
-  Import_ActorSetAnimation(ACTOR_JENNA, ANIM_WALK);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
+                         leader->z.part.pixel);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    Actor_ResetAndSetPosition(ACTOR_JENNA, leader->x.part.pixel,
-                              leader->z.part.pixel);
-  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+    Actor_SetDestination(ACTOR_JENNA, leader->x.part.pixel,
+                         leader->z.part.pixel);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    Actor_ResetAndSetPosition(ACTOR_KRADEN, leader->x.part.pixel,
-                              leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_KRADEN, leader->x.part.pixel,
+                         leader->z.part.pixel);
 
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
-  Import_ActorSetAnimation(ACTOR_JENNA, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_STAND);
   GameFlag_Set(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   Event_End();
@@ -1132,15 +1132,15 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetPosition(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
   }
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
-  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_KRADEN, 24, -10);
   Actor_WaitForMoveById(ACTOR_KRADEN);
-  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_STAND);
   Event_Wait(6);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
@@ -1166,9 +1166,9 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 20);
   // Kraden: "Perhaps Psynergy is the key..."
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0, 10);
-  Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0, 10);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetDestination(ACTOR_KRADEN, leader->x.part.pixel,
                          leader->z.part.pixel);
@@ -1298,7 +1298,7 @@ static void SolSanctumEntrance_UpdateEruptionRumbles(void) {
   } else {
     randomValue = Import_RandomNext();
     if (((u32)(((randomValue << 4) - randomValue) << 3) >> 16) == 0) {
-      Event_PlaySound(SE_ITEM_BREAK);
+      Sound_Play(SE_ITEM_BREAK);
       MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
       *timer = 80;
     }

@@ -1022,29 +1022,29 @@ static void FuchinFallsCave_ArcticBladeRoom_MoveThirdLogWest(void) {
 /// Touching the first log's step trigger cell in Fuchin Falls Cave plays its
 /// two rolling animations.
 static void FuchinFallsCave_AnimateFirstLog(void) {
-  Import_ActorSetAnimation(ACTOR_FIRST_LOG, 1);
-  Import_ActorSetAnimation(ACTOR_FIRST_LOG, 2);
+  Actor_SetAnimation(ACTOR_FIRST_LOG, 1);
+  Actor_SetAnimation(ACTOR_FIRST_LOG, 2);
 }
 
 /// Touching the second log's step trigger cell in Fuchin Falls Cave plays its
 /// two rolling animations.
 static void FuchinFallsCave_AnimateSecondLog(void) {
-  Import_ActorSetAnimation(ACTOR_SECOND_LOG, 1);
-  Import_ActorSetAnimation(ACTOR_SECOND_LOG, 2);
+  Actor_SetAnimation(ACTOR_SECOND_LOG, 1);
+  Actor_SetAnimation(ACTOR_SECOND_LOG, 2);
 }
 
 /// Touching the third log's step trigger cell in Fuchin Falls Cave plays its
 /// two rolling animations.
 static void FuchinFallsCave_AnimateThirdLog(void) {
-  Import_ActorSetAnimation(ACTOR_THIRD_LOG, 1);
-  Import_ActorSetAnimation(ACTOR_THIRD_LOG, 2);
+  Actor_SetAnimation(ACTOR_THIRD_LOG, 1);
+  Actor_SetAnimation(ACTOR_THIRD_LOG, 2);
 }
 
 /// Touching the fourth log's step trigger cell in Fuchin Falls Cave (third
 /// room) plays its two rolling animations.
 static void FuchinFallsCave_AnimateFourthLog(void) {
-  Import_ActorSetAnimation(ACTOR_FOURTH_LOG, 1);
-  Import_ActorSetAnimation(ACTOR_FOURTH_LOG, 2);
+  Actor_SetAnimation(ACTOR_FOURTH_LOG, 1);
+  Actor_SetAnimation(ACTOR_FOURTH_LOG, 2);
 }
 
 /// Creates a stationary actor at sprite priority 1, drawn hidden
@@ -1097,7 +1097,7 @@ static void Imil_LeaveFallsCave(void) {
   struct Actor *leader;
 
   Event_Start();
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   leader->facing = FACING_SOUTH;
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
@@ -1111,7 +1111,7 @@ static void Imil_MoveAcrossIce(void) { Imil_SlideActorAcrossIce(); }
 
 /// Centers a log on its cell and gives it underfoot priority.
 static void FuchinFallsCave_PlaceLogAtCell(s32 id, s32 column, s32 row) {
-  struct Actor *actor = Actor_GetById(id);
+  struct Actor *actor = Actor_Get(id);
 
   if (actor != NULL) {
     Actor_SetSpritePriority(id, 3);
@@ -1466,7 +1466,7 @@ static void FuchinFallsCave_FollowLeaderWithLight(void) {
   if (gImilFuchinFalls_TrackLeader != 0) {
     struct FadeOverlayWork *work = *(gHeapSlots + 36);
 
-    work->actor = Actor_GetById(ACTOR_PARTY_LEADER);
+    work->actor = Actor_Get(ACTOR_PARTY_LEADER);
   }
 }
 
@@ -1500,7 +1500,7 @@ static void Imil_WalkTowardFever(void) {
   struct Actor *actor;
 
   Event_Start();
-  actor = Actor_GetById(ACTOR_FEVER);
+  actor = Actor_Get(ACTOR_FEVER);
   Actor_SetSpriteFlags(actor, 0);
   Event_StartScreenTransition();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1) / 10);
@@ -1631,11 +1631,11 @@ static void FuchinFallsCave_HopWest(void) { ImilFuchinFalls_HopBy(-32, 0); }
 static void ImilFuchinFalls_HopBy(s32 dx, s32 dz) {
   Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(5) / 2, PIXELS(5) / 4);
-  Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, dx, dz);
+  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, dx, dz);
   Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAP);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAP);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
   Event_End();
 }
 
@@ -1796,14 +1796,14 @@ static void FuchinFallsCave_LightDragonWithEye(void) {
   Field_EndBusyAndReveal();
 
   for (pass = 0; pass < 4; pass++) {
-    PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(24, 24, 16), PALETTES_BG);
+    PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(24, 24, 16), PALETTES_BG);
     PaletteFade_StartInterpolation(1);
     wait(2);
     if (pass == 0) {
       MapGrid_CopyCellsTo(30, 8, 12, 8, 8, 7);
       MapGrid_CopyCellsTo(30, 57, 19, 57, 1, 1);
     }
-    PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 12), PALETTES_BG);
+    PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 12), PALETTES_BG);
     PaletteFade_StartInterpolation(1);
     wait(2);
   }
@@ -1813,14 +1813,14 @@ static void FuchinFallsCave_LightDragonWithEye(void) {
   // Blow dust from the cave mouth while the room brightens.
   Task_AddFrame(ImilFuchinFalls_BlowCaveMouthDust, TASK_PASS_FRAME);
   wait(40);
-  PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(16, 4, 4), PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(16, 4, 4), PALETTES_BG);
   PaletteFade_StartInterpolation(40);
   wait(80);
   Task_Remove(ImilFuchinFalls_BlowCaveMouthDust);
   wait(20);
 
   // Settle the lighting, consume the eye and remember the revealed path.
-  PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(80);
 
   wait(80);
@@ -1889,8 +1889,8 @@ static void FuchinFallsCave_EndRevealLighting(void) {
     state->nextMode = 0;
     state->duration = 1;
     state->step = 1;
-    PaletteFade_SetSource(RGB(0, 0, 0), PALETTES_BG);
-    PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 12), PALETTES_BG);
+    PaletteFade_ApplySource(RGB(0, 0, 0), PALETTES_BG);
+    PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 12), PALETTES_BG);
     PaletteFade_StartInterpolation(16);
     wait(16);
   }

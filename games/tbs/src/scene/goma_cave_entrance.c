@@ -116,7 +116,7 @@ static void GomaCaveEntrance_GiveShamansRod(void);
 
 /// Shows the next message over the speaker, then pauses.
 static void GomaCaveEntrance_SayThenWait(s32 actorId, s32 frames) {
-  Event_ShowMessageAndWait(actorId, 0);
+  Event_ShowMessage(actorId, 0);
   Event_Wait(frames);
 }
 
@@ -139,7 +139,7 @@ static void GomaCaveEntrance_MoveWestPillar(void) {
   struct Actor *pillar;
   s32 column;
 
-  pillar = Actor_GetById(ACTOR_WEST_PILLAR);
+  pillar = Actor_Get(ACTOR_WEST_PILLAR);
   column = pillar->x.fixed / PIXELS(16);
   Event_ClearFlag(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP);
   Event_ClearFlag(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS);
@@ -160,13 +160,13 @@ static void GomaCaveEntrance_MoveEastPillar(void) {
   struct Actor *pillar;
   s32 column;
 
-  pillar = Actor_GetById(ACTOR_EAST_PILLAR);
+  pillar = Actor_Get(ACTOR_EAST_PILLAR);
   column = pillar->x.fixed / PIXELS(16);
   if (column == 23) {
     Event_Wait(10);
-    Actor_GetById(ACTOR_EAST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    Actor_GetById(ACTOR_EAST_PILLAR)->motionFlags = 0;
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_EAST_PILLAR), 0);
+    Actor_Get(ACTOR_EAST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+    Actor_Get(ACTOR_EAST_PILLAR)->motionFlags = 0;
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_EAST_PILLAR), 0);
     MapGrid_CopyCellAttributes(54, 17, 1, 1, column, 17);
     GameFlag_Set(FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE);
   }
@@ -185,7 +185,7 @@ static void GomaCaveEntrance_PushWestPillar(void) {
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   Actor_SetSpeed(ACTOR_WEST_PILLAR, PIXELS(1) / 5, PIXELS(1) / 10);
-  Event_PlaySound(SE_PUSH);
+  Sound_Play(SE_PUSH);
   // 16 pixels east from step trigger 5, west from step trigger 6.
   offsetX = (11 - (work->stepTrigger << 1)) << 4;
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, offsetX, 0);
@@ -225,16 +225,16 @@ s32 Scene_Initialize(void) {
   Event_Wait(10);
   Scene_QueueMusic(SE_AMBIENT_WATER);
   Import_ActorSetAnimation(ACTOR_SUNKEN_STUMP, STUMP_ANIMATION_SINK);
-  Actor_GetById(ACTOR_SUNKEN_STUMP)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+  Actor_Get(ACTOR_SUNKEN_STUMP)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   {
-    struct Actor *record = Actor_GetById(ACTOR_STUMP);
+    struct Actor *record = Actor_Get(ACTOR_STUMP);
 
     record->collisionFlags = ACTOR_NEAR_PSYNERGY | record->collisionFlags;
   }
   // The player never targets the stump's ivy; only Ivan's Whirlwind in
   // GomaCaveEntrance_IvanRejoins removes it.
   {
-    struct Actor *record = Actor_GetById(ACTOR_STUMP_IVY);
+    struct Actor *record = Actor_Get(ACTOR_STUMP_IVY);
 
     record->collisionFlags = ACTOR_NOT_TARGETED | record->collisionFlags;
   }
@@ -242,8 +242,8 @@ s32 Scene_Initialize(void) {
     MapGrid_CopyCellAttributes(74, 11, 1, 1, 73, 11);
   }
   if (GameFlag_Get(FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED) != 0) {
-    Import_ActorSetPosition(ACTOR_STUMP, PIXELS(136), PIXELS(196));
-    Actor_GetById(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    Actor_SetPosition(ACTOR_STUMP, PIXELS(136), PIXELS(196));
+    Actor_Get(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Import_ActorSetAnimation(ACTOR_STUMP, STUMP_ANIMATION_SINK);
     MapGrid_CopyCellAttributes(39, 12, 3, 1, 8, 12);
     MapGrid_CopyCellAttributes(43, 11, 3, 1, 12, 11);
@@ -258,10 +258,10 @@ s32 Scene_Initialize(void) {
     }
   }
   if (GameFlag_Get(FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE) != 0) {
-    Import_ActorSetPosition(ACTOR_EAST_PILLAR, PIXELS(376), PIXELS(280));
-    Actor_GetById(ACTOR_EAST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    Actor_GetById(ACTOR_EAST_PILLAR)->motionFlags = 0;
-    movedActor = Actor_GetById(ACTOR_EAST_PILLAR);
+    Actor_SetPosition(ACTOR_EAST_PILLAR, PIXELS(376), PIXELS(280));
+    Actor_Get(ACTOR_EAST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+    Actor_Get(ACTOR_EAST_PILLAR)->motionFlags = 0;
+    movedActor = Actor_Get(ACTOR_EAST_PILLAR);
     Actor_SetSpriteFlags(movedActor, 0);
     MapGrid_CopyCellAttributes(54, 17, 1, 1, 23, 17);
   }
@@ -285,7 +285,7 @@ static void GomaCaveEntrance_IvanRejoins(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
   Actor_SetSpeed(ACTOR_GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
@@ -294,13 +294,13 @@ static void GomaCaveEntrance_IvanRejoins(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     // Garet falls back into line.
     Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
-    leader = Actor_GetById(ACTOR_PARTY_LEADER);
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
       Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
                            leader->z.part.pixel);
@@ -317,7 +317,7 @@ static void GomaCaveEntrance_IvanRejoins(void) {
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 20);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     Event_Wait(20);
-    FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
+    Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
     Event_Wait(20);
@@ -336,12 +336,12 @@ static void GomaCaveEntrance_IvanRejoins(void) {
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 20);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
     Event_Wait(20);
-    FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
+    Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
-    FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 120);
+    Event_ShowMessageThenWait(ACTOR_IVAN, 0, 120);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
@@ -352,12 +352,12 @@ static void GomaCaveEntrance_IvanRejoins(void) {
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
     Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
     Event_Wait(30);
-    FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 30);
+    Event_ShowMessageThenWait(ACTOR_IVAN, 0, 30);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 20);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     Event_Wait(20);
-    FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
+    Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     Event_Wait(20);
@@ -488,10 +488,10 @@ static void GomaCaveEntrance_MoveStump(void) {
   struct Actor *stump;
 
   Event_Start();
-  column = Actor_GetById(ACTOR_STUMP)->x.fixed >> 20;
+  column = Actor_Get(ACTOR_STUMP)->x.fixed >> 20;
   if (column == 11) {
     GomaCaveEntrance_LeapStump(ACTOR_STUMP);
-    stump = Actor_GetById(ACTOR_STUMP);
+    stump = Actor_Get(ACTOR_STUMP);
     stump->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(39, 12, 3, 1, 8, 12);
     MapGrid_CopyCellAttributes(43, 11, 3, 1, 12, column);
@@ -539,7 +539,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   struct Actor *stump;
   u32 i;
 
-  stump = Actor_GetById(stumpId);
+  stump = Actor_Get(stumpId);
   stump->motionFlags = 0;
   for (i = 0; i <= 17; i++) {
     wait(1);
@@ -550,7 +550,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   }
   stump->update = GomaCaveEntrance_SpinStump;
   Actor_SetSpeed(stumpId, PIXELS(3), 3 * PIXELS(1) / 2);
-  Actor_ResetAndSetPosition(stumpId, 160, 192);
+  Actor_SetDestination(stumpId, 160, 192);
   stump->gravity = 4 * PIXELS(1) / 5;
   stump->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   stump->layer = 0;
@@ -568,7 +568,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
                       dir.y, dir.z, 0, NULL);
   }
   stump->velocityY = PIXELS(5);
-  Actor_ResetAndSetPosition(stumpId, 139, 196);
+  Actor_SetDestination(stumpId, 139, 196);
   Actor_WaitForMoveById(stumpId);
   Actor_WaitBelowHeight(stump, PIXELS(32));
   // UB: the native integer store aliases the update pointer. A typed clear

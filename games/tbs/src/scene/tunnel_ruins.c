@@ -261,7 +261,7 @@ static __inline__ s32 TunnelRuins_GetLandingPixel(s32 coordinate) {
 /// The leader hops over the cell ahead to the target, when that cell is no
 /// wall and the target is clear; returns 1 when there is no hop.
 static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
-  struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   u8 savedMotionFlags = actor->motionFlags;
   struct FieldPosition adjacentTile;
 
@@ -286,9 +286,9 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
     actor->motionFlags &= 0x7e;
 
     Actor_SetSpriteFlags(actor, 0);
-    Actor_SetPositionAndCommit(ACTOR_PARTY_LEADER,
-                               TunnelRuins_GetLandingPixel(target->x),
-                               TunnelRuins_GetLandingPixel(target->z));
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER,
+                        TunnelRuins_GetLandingPixel(target->x),
+                        TunnelRuins_GetLandingPixel(target->z));
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(actor, 1);
     wait(6);
@@ -305,7 +305,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
 /// TunnelRuinsGreatStatue and 29 in TunnelRuinsLadyStatues.
 static void TunnelRuins_HopSouth(void) {
   struct FieldPosition target;
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   target.x = leader->x.fixed;
   target.y = leader->y.fixed;
@@ -318,7 +318,7 @@ static void TunnelRuins_HopSouth(void) {
 /// TunnelRuinsGreatStatue and 29 in TunnelRuinsLadyStatues.
 static void TunnelRuins_HopNorth(void) {
   struct FieldPosition target;
-  struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
   target.x = actor->x.fixed;
   target.y = actor->y.fixed;
@@ -332,7 +332,7 @@ static void TunnelRuins_UpdateTrackedActor(void) {
   struct FadeOverlayWork *effectWork;
   s32 depthLimit;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   effectWork = gFadeOverlayWork;
   depthLimit = 0;
   // Each tracked entrance measures depth in eight-pixel steps.
@@ -415,13 +415,13 @@ static void TunnelRuins_FrostTargetFollowsPillar(struct Actor *updated) {
 static s32 TunnelRuins_FrostTargetFollowsPillar(struct Actor *updated) {
 #endif
   struct Actor *frostTarget = (struct Actor *)updated;
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   if (leader->y.fixed > -PIXELS(48) &&
-      (Actor_GetById(ACTOR_DOUSE_PILLAR)->z.fixed >> 20) == 10) {
-    frostTarget->x.fixed = Actor_GetById(ACTOR_DOUSE_PILLAR)->x.fixed;
+      (Actor_Get(ACTOR_DOUSE_PILLAR)->z.fixed >> 20) == 10) {
+    frostTarget->x.fixed = Actor_Get(ACTOR_DOUSE_PILLAR)->x.fixed;
     frostTarget->y.fixed = -PIXELS(32);
-    frostTarget->z.fixed = Actor_GetById(ACTOR_DOUSE_PILLAR)->z.fixed;
+    frostTarget->z.fixed = Actor_Get(ACTOR_DOUSE_PILLAR)->z.fixed;
   } else {
     frostTarget->x.fixed = 0;
     frostTarget->y.fixed = 0;
@@ -468,7 +468,7 @@ static void TunnelRuins_WaitForActorToLand(struct Actor *actor) {
 /// Reached by walking south into cell behavior 25 in TunnelRuinsGreatStatue
 /// and 27 in TunnelRuinsLadyStatues.
 static void TunnelRuins_HopDownStep(void) {
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct EffectOptions options;
   u32 i;
 
@@ -588,7 +588,7 @@ static void TunnelRuins_PushFirstPillars(void) {
 /// is frozen), 26 and 30 in TunnelRuinsLadyStatues.
 static void TunnelRuins_HopWest(void) {
   struct FieldPosition target;
-  struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
   target.x = actor->x.fixed - PIXELS(32);
   target.y = actor->y.fixed;
@@ -619,7 +619,7 @@ static void TunnelRuins_JumpDownLedge(void) {
 /// them is frozen, and 30 in TunnelRuinsLadyStatues.
 static void TunnelRuins_HopEast(void) {
   struct FieldPosition target;
-  struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
   target.x = actor->x.fixed + PIXELS(32);
   target.y = actor->y.fixed;
@@ -642,7 +642,7 @@ static void TunnelRuins_PushSmallPillars(void) {
 /// and pushes the small pillar in front otherwise. Reached by walking south
 /// into cell behavior 28 in TunnelRuinsGreatStatue.
 static void TunnelRuins_HopSouthOrPushSmallPillars(void) {
-  struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct FieldPosition target;
 
   target.x = actor->x.fixed;
@@ -663,11 +663,11 @@ static void TunnelRuins_BlowAwayIvyA(void) {
 
   GameFlag_Set(FLAG_SCENE_TEMP_00);
   if (GameFlag_Get(FLAG_SCENE_TEMP_01) != 0) {
-    Actor_GetById(ACTOR_SMALL_PILLAR_C)->riseCounter = 0;
-    Actor_GetById(ACTOR_SMALL_PILLAR_C)->collisionFlags &= ~ACTOR_NOT_TARGETED;
+    Actor_Get(ACTOR_SMALL_PILLAR_C)->riseCounter = 0;
+    Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags &= ~ACTOR_NOT_TARGETED;
   } else {
-    Actor_GetById(ACTOR_SMALL_PILLAR_C)->riseCounter = 1;
-    flags = &Actor_GetById(ACTOR_SMALL_PILLAR_C)->collisionFlags;
+    Actor_Get(ACTOR_SMALL_PILLAR_C)->riseCounter = 1;
+    flags = &Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags;
     value = 8;
     value |= *flags;
     *flags = value;
@@ -682,11 +682,11 @@ static void TunnelRuins_BlowAwayIvyB(void) {
 
   GameFlag_Set(FLAG_SCENE_TEMP_01);
   if (GameFlag_Get(FLAG_SCENE_TEMP_00) != 0) {
-    Actor_GetById(ACTOR_SMALL_PILLAR_C)->riseCounter = 0;
-    Actor_GetById(ACTOR_SMALL_PILLAR_C)->collisionFlags &= ~ACTOR_NOT_TARGETED;
+    Actor_Get(ACTOR_SMALL_PILLAR_C)->riseCounter = 0;
+    Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags &= ~ACTOR_NOT_TARGETED;
   } else {
-    Actor_GetById(ACTOR_SMALL_PILLAR_C)->riseCounter = 1;
-    flags = &Actor_GetById(ACTOR_SMALL_PILLAR_C)->collisionFlags;
+    Actor_Get(ACTOR_SMALL_PILLAR_C)->riseCounter = 1;
+    flags = &Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags;
     value = 8;
     value |= *flags;
     *flags = value;
@@ -703,7 +703,7 @@ static void TunnelRuins_BlowAwayIvyC(void) {
 /// Hops west as TunnelRuins_HopWest, except from cell (32, 50).
 /// Reached by walking west into cell behavior 50 in TunnelRuinsGreatStatue.
 static void TunnelRuins_HopWestBySmallPillars(void) {
-  struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
   if ((actor->x.fixed >> 20) != 32 || (actor->z.fixed >> 20) != 50) {
     TunnelRuins_HopWest();
@@ -714,7 +714,7 @@ static void TunnelRuins_HopWestBySmallPillars(void) {
 /// Reached by walking north into cell behavior 50 in
 /// TunnelRuinsGreatStatue.
 static void TunnelRuins_HopNorthBySmallPillars(void) {
-  struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
   if ((actor->x.fixed >> 20) != 30 || (actor->z.fixed >> 20) != 52) {
     TunnelRuins_HopNorth();
@@ -746,7 +746,7 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
   struct EffectOptions options;
 
   Event_Start();
-  actor = Actor_GetById(ACTOR_NORTHWEST_SINKING_PILLAR);
+  actor = Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR);
   if ((actor->x.fixed >> 20) == 46) {
     Event_Wait(30);
     overlay = Actor_Prepare(PIXELS(744), 0, PIXELS(184), SPRITE_CAPPED_PILLAR);
@@ -772,7 +772,7 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
     Event_Wait(30);
     Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->priorityFlags |=
         ACTOR_PRIORITY_UNDERFOOT;
-    Import_ActorSetAnimation(ACTOR_NORTHWEST_SINKING_PILLAR, 3);
+    Actor_SetAnimation(ACTOR_NORTHWEST_SINKING_PILLAR, 3);
     Actor_Release(overlay);
     MapGrid_CopyCellAttributes(45, 4, 1, 1, 46, 8);
     Actor_SetPosition(ACTOR_NORTHWEST_PILLAR_FROST_TARGET, PIXELS(744),
@@ -803,11 +803,11 @@ static void TunnelRuins_PushNorthwestSinkingPillar(void) {
 static void TunnelRuins_FreezeNorthwestPillarFrostTarget(void) {
   u8 *flags;
 
-  Import_ActorSetAnimation(ACTOR_NORTHWEST_PILLAR_FROST_TARGET, 1);
-  Actor_ConfigureSpriteColor(ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
-                             SPRITE_COLOR_NORMAL);
-  Import_ActorSetAnimation(ACTOR_NORTHWEST_PILLAR_FROST_TARGET, 2);
-  flags = &Actor_GetById(ACTOR_NORTHWEST_PILLAR_FROST_TARGET)->priorityFlags;
+  Actor_SetAnimation(ACTOR_NORTHWEST_PILLAR_FROST_TARGET, 1);
+  Actor_SetSpriteColorById(ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
+                           SPRITE_COLOR_NORMAL);
+  Actor_SetAnimation(ACTOR_NORTHWEST_PILLAR_FROST_TARGET, 2);
+  flags = &Actor_Get(ACTOR_NORTHWEST_PILLAR_FROST_TARGET)->priorityFlags;
   *flags &= ~ACTOR_PRIORITY_UNDERFOOT;
   GameFlag_Set(FLAG_SCENE_TEMP_00);
 }
@@ -829,7 +829,7 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
   struct EffectOptions options;
 
   Event_Start();
-  actor = Actor_GetById(ACTOR_SOUTHEAST_SINKING_PILLAR);
+  actor = Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR);
   if ((actor->x.fixed >> 20) == 48) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_02) != 0) {
       Event_Wait(30);
@@ -855,7 +855,7 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
       Event_Wait(30);
       Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->priorityFlags |=
           ACTOR_PRIORITY_UNDERFOOT;
-      Import_ActorSetAnimation(ACTOR_SOUTHEAST_SINKING_PILLAR, 3);
+      Actor_SetAnimation(ACTOR_SOUTHEAST_SINKING_PILLAR, 3);
       Actor_Release(overlay);
       MapGrid_CopyCellAttributes(45, 4, 1, 1, 48, 14);
       Actor_SetPosition(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET, PIXELS(776),
@@ -905,11 +905,11 @@ static void TunnelRuins_DouseSoutheastPillar(void) {
 static void TunnelRuins_FreezeSoutheastPillarFrostTarget(void) {
   u8 *flags;
 
-  Import_ActorSetAnimation(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET, 1);
-  Actor_ConfigureSpriteColor(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
-                             SPRITE_COLOR_NORMAL);
-  Import_ActorSetAnimation(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET, 2);
-  flags = &Actor_GetById(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET)->priorityFlags;
+  Actor_SetAnimation(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET, 1);
+  Actor_SetSpriteColorById(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
+                           SPRITE_COLOR_NORMAL);
+  Actor_SetAnimation(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET, 2);
+  flags = &Actor_Get(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET)->priorityFlags;
   *flags &= ~ACTOR_PRIORITY_UNDERFOOT;
   GameFlag_Set(FLAG_SCENE_TEMP_01);
 }
@@ -922,7 +922,7 @@ static void TunnelRuins_FreezeSoutheastPillarFrostTarget(void) {
 /// Reached by searching cell behavior 40 in TunnelRuinsGreatStatue.
 static void TunnelRuins_ReadFirstStatue(void) {
   Event_Start();
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH) != 0 ||
       GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH) != 0) {
     FieldMessage_Show(MSGNO(MsgTunnelRuinsStatueSpeaksAfterAnswer), 1);
@@ -959,7 +959,7 @@ static void TunnelRuins_DouseStartsOnPillar(void) {
 
   Actor_SetScript(ACTOR_DOUSE_PILLAR, gTunnelRuins_DouseSplashScript);
   GameFlag_Set(FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED);
-  frostTarget = Actor_GetById(ACTOR_DOUSE_PILLAR_FROST_TARGET);
+  frostTarget = Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET);
 #ifdef UBFIX
   frostTarget->update = TunnelRuins_FrostTargetFollowsPillar;
 #else
@@ -978,26 +978,26 @@ static void TunnelRuins_FreezeDousePillarFrostTarget(void) {
 
   Event_Start();
   Actor_SetSpritePriority(ACTOR_DOUSE_PILLAR_FROST_TARGET, 1);
-  Import_ActorSetAnimation(ACTOR_DOUSE_PILLAR_FROST_TARGET, 1);
-  Actor_ConfigureSpriteColor(ACTOR_DOUSE_PILLAR_FROST_TARGET,
-                             SPRITE_COLOR_NORMAL);
-  Import_ActorSetAnimation(ACTOR_DOUSE_PILLAR_FROST_TARGET, 2);
+  Actor_SetAnimation(ACTOR_DOUSE_PILLAR_FROST_TARGET, 1);
+  Actor_SetSpriteColorById(ACTOR_DOUSE_PILLAR_FROST_TARGET,
+                           SPRITE_COLOR_NORMAL);
+  Actor_SetAnimation(ACTOR_DOUSE_PILLAR_FROST_TARGET, 2);
 
   {
-    u8 *flag = &Actor_GetById(ACTOR_DOUSE_PILLAR_FROST_TARGET)->priorityFlags;
+    u8 *flag = &Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->priorityFlags;
     *flag &= ~ACTOR_PRIORITY_UNDERFOOT;
   }
 
   GameFlag_Set(FLAG_TUNNEL_RUINS_DOUSE_FROST_TARGET_FROZEN);
 
-  column = Actor_GetById(ACTOR_DOUSE_PILLAR_FROST_TARGET)->x.fixed;
-  row = Actor_GetById(ACTOR_DOUSE_PILLAR_FROST_TARGET)->z.fixed >> 20;
+  column = Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->x.fixed;
+  row = Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->z.fixed >> 20;
   MapGrid_CopyCellAttributes(26, 8, 1, 1, column >> 20, row);
 
-  actor = Actor_GetById(ACTOR_DOUSE_PILLAR_FROST_TARGET);
+  actor = Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET);
   actor->update = UPDATE_BY_RELATIVE_DEPTH;
 
-  actor = Actor_GetById(ACTOR_DOUSE_PILLAR);
+  actor = Actor_Get(ACTOR_DOUSE_PILLAR);
   actor->update = UPDATE_BY_RELATIVE_DEPTH;
 
   Event_End();
@@ -1014,7 +1014,7 @@ static s32 TunnelRuins_RideStoneBelow(struct Actor *updated) {
 #endif
   struct Actor *supportedActor = (struct Actor *)updated;
   s16 *supportingActorId = &supportedActor->timer;
-  struct Actor *supportingActor = Actor_GetById(*supportingActorId);
+  struct Actor *supportingActor = Actor_Get(*supportingActorId);
 
   supportedActor->y.fixed = supportingActor->y.fixed + PIXELS(16);
 #ifdef UBFIX
@@ -1036,30 +1036,28 @@ static void TunnelRuins_SettleBalance(s32 frames) {
     Sound_Play(SE_SETTLE);
   }
   FieldActor_SetMoveTarget(
-      Actor_GetById(ACTOR_BALANCE_WEST),
-      Actor_GetById(ACTOR_BALANCE_WEST)->x.fixed,
-      gTunnelRuins_BalanceHeights[Actor_GetById(ACTOR_BALANCE_WEST)->timer],
-      Actor_GetById(ACTOR_BALANCE_WEST)->z.fixed);
+      Actor_Get(ACTOR_BALANCE_WEST), Actor_Get(ACTOR_BALANCE_WEST)->x.fixed,
+      gTunnelRuins_BalanceHeights[Actor_Get(ACTOR_BALANCE_WEST)->timer],
+      Actor_Get(ACTOR_BALANCE_WEST)->z.fixed);
   FieldActor_SetMoveTarget(
-      Actor_GetById(ACTOR_BALANCE_EAST),
-      Actor_GetById(ACTOR_BALANCE_EAST)->x.fixed,
-      gTunnelRuins_BalanceHeights[Actor_GetById(ACTOR_BALANCE_EAST)->timer],
-      Actor_GetById(ACTOR_BALANCE_EAST)->z.fixed);
+      Actor_Get(ACTOR_BALANCE_EAST), Actor_Get(ACTOR_BALANCE_EAST)->x.fixed,
+      gTunnelRuins_BalanceHeights[Actor_Get(ACTOR_BALANCE_EAST)->timer],
+      Actor_Get(ACTOR_BALANCE_EAST)->z.fixed);
   Actor_WaitForMoveById(ACTOR_BALANCE_WEST);
   Actor_WaitForMoveById(ACTOR_BALANCE_EAST);
-  Actor_GetById(ACTOR_BALANCE_WEST)->y.fixed =
-      gTunnelRuins_BalanceHeights[Actor_GetById(ACTOR_BALANCE_WEST)->timer];
-  Actor_GetById(ACTOR_BALANCE_EAST)->y.fixed =
-      gTunnelRuins_BalanceHeights[Actor_GetById(ACTOR_BALANCE_EAST)->timer];
+  Actor_Get(ACTOR_BALANCE_WEST)->y.fixed =
+      gTunnelRuins_BalanceHeights[Actor_Get(ACTOR_BALANCE_WEST)->timer];
+  Actor_Get(ACTOR_BALANCE_EAST)->y.fixed =
+      gTunnelRuins_BalanceHeights[Actor_Get(ACTOR_BALANCE_EAST)->timer];
   if (frames != 0) {
     Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   }
   for (i = 0; i < 5; i++) {
-    if (Actor_GetById(i + ACTOR_BALANCE_WEST)->y.fixed / Q16_ONE < 0 &&
-        Actor_GetById(i + ACTOR_BALANCE_WEST)->y.fixed / Q16_ONE > -30) {
+    if (Actor_Get(i + ACTOR_BALANCE_WEST)->y.fixed / Q16_ONE < 0 &&
+        Actor_Get(i + ACTOR_BALANCE_WEST)->y.fixed / Q16_ONE > -30) {
       MapGrid_CopyCellAttributeRect(
-          4, 9, 1, 1, Actor_GetById(i + ACTOR_BALANCE_WEST)->x.fixed >> 20,
-          Actor_GetById(i + ACTOR_BALANCE_WEST)->z.fixed >> 20);
+          4, 9, 1, 1, Actor_Get(i + ACTOR_BALANCE_WEST)->x.fixed >> 20,
+          Actor_Get(i + ACTOR_BALANCE_WEST)->z.fixed >> 20);
     }
   }
   Event_Wait(frames);
@@ -1077,26 +1075,26 @@ static void TunnelRuins_DropStoneOnStack(s32 actorId) {
     if (candidateId == actorId)
       continue;
 
-    if ((Actor_GetById(candidateId)->x.fixed >> 20) !=
-        (Actor_GetById(actorId)->x.fixed >> 20))
+    if ((Actor_Get(candidateId)->x.fixed >> 20) !=
+        (Actor_Get(actorId)->x.fixed >> 20))
       continue;
-    if ((Actor_GetById(candidateId)->z.fixed >> 20) !=
-        (Actor_GetById(actorId)->z.fixed >> 20))
-      continue;
-
-    if (highestHeight > Actor_GetById(candidateId)->y.fixed + PIXELS(16))
+    if ((Actor_Get(candidateId)->z.fixed >> 20) !=
+        (Actor_Get(actorId)->z.fixed >> 20))
       continue;
 
-    highestHeight = Actor_GetById(candidateId)->y.fixed + PIXELS(16);
-    Actor_GetById(actorId)->timer = candidateId;
+    if (highestHeight > Actor_Get(candidateId)->y.fixed + PIXELS(16))
+      continue;
+
+    highestHeight = Actor_Get(candidateId)->y.fixed + PIXELS(16);
+    Actor_Get(actorId)->timer = candidateId;
   }
 
   Actor_SetSpeed(actorId, PIXELS(4), PIXELS(2));
 
   {
-    struct Actor *actor = Actor_GetById(actorId);
-    struct Actor *sourceActor = Actor_GetById(actorId);
-    s32 z = Actor_GetById(actorId)->z.fixed;
+    struct Actor *actor = Actor_Get(actorId);
+    struct Actor *sourceActor = Actor_Get(actorId);
+    s32 z = Actor_Get(actorId)->z.fixed;
 
     FieldActor_SetMoveTarget(actor, sourceActor->x.fixed, highestHeight, z);
   }
@@ -1120,38 +1118,37 @@ static void TunnelRuins_SetStoneOnBalance(void) {
 
   Event_Start();
   for (i = 0; i <= 2; i++) {
-    if (Actor_GetById(i + ACTOR_WEST_CARRY_STONE)->sprite->image.priority ==
-            3 &&
+    if (Actor_Get(i + ACTOR_WEST_CARRY_STONE)->sprite->image.priority == 3 &&
         Event_GetFlag(i + FLAG_SCENE_TEMP_00) == 0) {
       TunnelRuins_WaitForActorToLand(Actor_Get(i + ACTOR_WEST_CARRY_STONE));
       Actor_SetPosition(i + ACTOR_WEST_CARRY_STONE, 0, 0);
       GameFlag_Set(i + FLAG_SCENE_TEMP_00);
       break;
     }
-    if ((Actor_GetById(i + ACTOR_WEST_CARRY_STONE)->z.fixed >> 20) == 9 &&
+    if ((Actor_Get(i + ACTOR_WEST_CARRY_STONE)->z.fixed >> 20) == 9 &&
         GameFlag_Get(i + FLAG_SCENE_TEMP_00) == 0) {
-      Actor_GetById(i + ACTOR_WEST_CARRY_STONE)->groundHeight = 0;
-      Actor_GetById(i + ACTOR_WEST_CARRY_STONE)->velocityY = 0;
-      Actor_GetById(i + ACTOR_WEST_CARRY_STONE)->targetY = ACTOR_NO_TARGET;
+      Actor_Get(i + ACTOR_WEST_CARRY_STONE)->groundHeight = 0;
+      Actor_Get(i + ACTOR_WEST_CARRY_STONE)->velocityY = 0;
+      Actor_Get(i + ACTOR_WEST_CARRY_STONE)->targetY = ACTOR_NO_TARGET;
       Actor_Get(i + ACTOR_WEST_CARRY_STONE)->motionFlags = 0;
-      Actor_GetById(i + ACTOR_WEST_CARRY_STONE)->timer = 0;
+      Actor_Get(i + ACTOR_WEST_CARRY_STONE)->timer = 0;
       // The carved stone set down takes the place of the first carved stone not
       // yet set.
       settledIndex = i;
       for (j = 0; j < i; j++) {
         if (GameFlag_Get(FLAG_SCENE_TEMP_00 + j) == 0) {
           savedPosition.x.fixed =
-              Actor_GetById(i + ACTOR_WEST_CARRY_STONE)->x.fixed;
+              Actor_Get(i + ACTOR_WEST_CARRY_STONE)->x.fixed;
           savedPosition.y.fixed =
-              Actor_GetById(i + ACTOR_WEST_CARRY_STONE)->y.fixed;
+              Actor_Get(i + ACTOR_WEST_CARRY_STONE)->y.fixed;
           savedPosition.z.fixed =
-              Actor_GetById(i + ACTOR_WEST_CARRY_STONE)->z.fixed;
+              Actor_Get(i + ACTOR_WEST_CARRY_STONE)->z.fixed;
           Actor_Get(i + ACTOR_WEST_CARRY_STONE)->x.fixed =
-              Actor_GetById(j + ACTOR_WEST_CARRY_STONE)->x.fixed;
-          Actor_GetById(i + ACTOR_WEST_CARRY_STONE)->y.fixed =
-              Actor_GetById(j + ACTOR_WEST_CARRY_STONE)->y.fixed;
-          Actor_GetById(i + ACTOR_WEST_CARRY_STONE)->z.fixed =
-              Actor_GetById(j + ACTOR_WEST_CARRY_STONE)->z.fixed;
+              Actor_Get(j + ACTOR_WEST_CARRY_STONE)->x.fixed;
+          Actor_Get(i + ACTOR_WEST_CARRY_STONE)->y.fixed =
+              Actor_Get(j + ACTOR_WEST_CARRY_STONE)->y.fixed;
+          Actor_Get(i + ACTOR_WEST_CARRY_STONE)->z.fixed =
+              Actor_Get(j + ACTOR_WEST_CARRY_STONE)->z.fixed;
           Actor_Get(j + ACTOR_WEST_CARRY_STONE)->x.fixed =
               savedPosition.x.fixed;
           Actor_Get(j + ACTOR_WEST_CARRY_STONE)->y.fixed =
@@ -1162,12 +1159,12 @@ static void TunnelRuins_SetStoneOnBalance(void) {
           break;
         }
       }
-      Actor_GetById(settledIndex + ACTOR_WEST_CARRY_STONE)->groundHeight = 0;
+      Actor_Get(settledIndex + ACTOR_WEST_CARRY_STONE)->groundHeight = 0;
       Actor_Get(settledIndex + ACTOR_WEST_CARRY_STONE)->velocityY = 0;
-      Actor_GetById(settledIndex + ACTOR_WEST_CARRY_STONE)->targetY =
+      Actor_Get(settledIndex + ACTOR_WEST_CARRY_STONE)->targetY =
           ACTOR_NO_TARGET;
       Actor_Get(settledIndex + ACTOR_WEST_CARRY_STONE)->motionFlags = 0;
-      Actor_GetById(settledIndex + ACTOR_WEST_CARRY_STONE)->timer = 0;
+      Actor_Get(settledIndex + ACTOR_WEST_CARRY_STONE)->timer = 0;
       // The camera turns to the balance as the carved stone drops and the
       // platforms move.
       FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
@@ -1175,13 +1172,13 @@ static void TunnelRuins_SetStoneOnBalance(void) {
       FieldCamera_MoveTo(PIXELS(168), PIXELS(8), PIXELS(184), 1);
       FieldCamera_WaitForArrival();
       TunnelRuins_DropStoneOnStack(settledIndex + ACTOR_WEST_CARRY_STONE);
-      if ((Actor_GetById(settledIndex + ACTOR_WEST_CARRY_STONE)->x.fixed >>
-           20) == 8) {
-        Actor_GetById(ACTOR_BALANCE_WEST)->timer++;
-        (Actor_GetById(ACTOR_BALANCE_EAST)->timer)--;
+      if ((Actor_Get(settledIndex + ACTOR_WEST_CARRY_STONE)->x.fixed >> 20) ==
+          8) {
+        Actor_Get(ACTOR_BALANCE_WEST)->timer++;
+        (Actor_Get(ACTOR_BALANCE_EAST)->timer)--;
       } else {
-        (Actor_GetById(ACTOR_BALANCE_WEST)->timer)--;
-        Actor_GetById(ACTOR_BALANCE_EAST)->timer++;
+        (Actor_Get(ACTOR_BALANCE_WEST)->timer)--;
+        Actor_Get(ACTOR_BALANCE_EAST)->timer++;
       }
 #ifdef UBFIX
       Actor_Get(settledIndex + ACTOR_WEST_CARRY_STONE)->update =
@@ -1216,13 +1213,13 @@ static void TunnelRuins_PushActor(void) {
 static void TunnelRuins_MoveEastPillar(void) {
   Event_Start();
 
-  if ((Actor_GetById(ACTOR_EAST_PILLAR_A)->x.fixed >> 20) == 45) {
+  if ((Actor_Get(ACTOR_EAST_PILLAR_A)->x.fixed >> 20) == 45) {
     GameFlag_Set(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST);
   } else {
     GameFlag_Clear(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST);
   }
 
-  if ((Actor_GetById(ACTOR_EAST_PILLAR_B)->x.fixed >> 20) == 46) {
+  if ((Actor_Get(ACTOR_EAST_PILLAR_B)->x.fixed >> 20) == 46) {
     GameFlag_Set(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST);
   } else {
     GameFlag_Clear(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST);
@@ -1280,68 +1277,68 @@ static void TunnelRuins_MoveLadyStatue(void) {
   correctPositions = 0;
   Event_Start();
   MapGrid_CopyCellAttributes(83, 45, 11, 8, 19, 45);
-  actor = Actor_GetById(ACTOR_LADY_STATUE_NORTHWEST);
+  actor = Actor_Get(ACTOR_LADY_STATUE_NORTHWEST);
   column = actor->x.fixed;
-  row = Actor_GetById(ACTOR_LADY_STATUE_NORTHWEST)->z.fixed;
+  row = Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->z.fixed;
   row >>= 20;
   column >>= 20;
   MapGrid_CopyCellAttributes(20, 56, 1, 1, column, row);
-  actor = Actor_GetById(ACTOR_LADY_STATUE_NORTHEAST);
+  actor = Actor_Get(ACTOR_LADY_STATUE_NORTHEAST);
   column = actor->x.fixed;
-  row = Actor_GetById(ACTOR_LADY_STATUE_NORTHEAST)->z.fixed;
+  row = Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->z.fixed;
   row >>= 20;
   column >>= 20;
   MapGrid_CopyCellAttributes(20, 56, 1, 1, column, row);
-  actor = Actor_GetById(ACTOR_LADY_STATUE_SOUTHWEST);
+  actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST);
   column = actor->x.fixed;
-  row = Actor_GetById(ACTOR_LADY_STATUE_SOUTHWEST)->z.fixed;
+  row = Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->z.fixed;
   row >>= 20;
   column >>= 20;
   MapGrid_CopyCellAttributes(20, 56, 1, 1, column, row);
-  actor = Actor_GetById(ACTOR_LADY_STATUE_SOUTHEAST);
+  actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST);
   column = actor->x.fixed;
-  row = Actor_GetById(ACTOR_LADY_STATUE_SOUTHEAST)->z.fixed;
+  row = Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->z.fixed;
   row >>= 20;
   column >>= 20;
   MapGrid_CopyCellAttributes(20, 56, 1, 1, column, row);
-  actor = Actor_GetById(ACTOR_LADY_STATUE_SOUTH);
+  actor = Actor_Get(ACTOR_LADY_STATUE_SOUTH);
   column = actor->x.fixed;
-  row = Actor_GetById(ACTOR_LADY_STATUE_SOUTH)->z.fixed;
+  row = Actor_Get(ACTOR_LADY_STATUE_SOUTH)->z.fixed;
   row >>= 20;
   column >>= 20;
   MapGrid_CopyCellAttributes(20, 56, 1, 1, column, row);
   // Count the statues on their marks.
-  actor = Actor_GetById(ACTOR_LADY_STATUE_NORTHWEST);
+  actor = Actor_Get(ACTOR_LADY_STATUE_NORTHWEST);
   if ((actor->x.fixed >> 20) == 25) {
-    actor = Actor_GetById(ACTOR_LADY_STATUE_NORTHWEST);
+    actor = Actor_Get(ACTOR_LADY_STATUE_NORTHWEST);
     if ((actor->z.fixed >> 20) == 49) {
       correctPositions = 1;
     }
   }
-  actor = Actor_GetById(ACTOR_LADY_STATUE_NORTHEAST);
+  actor = Actor_Get(ACTOR_LADY_STATUE_NORTHEAST);
   if ((actor->x.fixed >> 20) == 23) {
-    actor = Actor_GetById(ACTOR_LADY_STATUE_NORTHEAST);
+    actor = Actor_Get(ACTOR_LADY_STATUE_NORTHEAST);
     if ((actor->z.fixed >> 20) == 49) {
       correctPositions = (correctPositions + 1);
     }
   }
-  actor = Actor_GetById(ACTOR_LADY_STATUE_SOUTHWEST);
+  actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST);
   if ((actor->x.fixed >> 20) == 25) {
-    actor = Actor_GetById(ACTOR_LADY_STATUE_SOUTHWEST);
+    actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST);
     if ((actor->z.fixed >> 20) == 47) {
       correctPositions = (correctPositions + 1);
     }
   }
-  actor = Actor_GetById(ACTOR_LADY_STATUE_SOUTHEAST);
+  actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST);
   if ((actor->x.fixed >> 20) == 23) {
-    actor = Actor_GetById(ACTOR_LADY_STATUE_SOUTHEAST);
+    actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST);
     if ((actor->z.fixed >> 20) == 47) {
       correctPositions = (correctPositions + 1);
     }
   }
-  actor = Actor_GetById(ACTOR_LADY_STATUE_SOUTH);
+  actor = Actor_Get(ACTOR_LADY_STATUE_SOUTH);
   if ((actor->x.fixed >> 20) == 24) {
-    actor = Actor_GetById(ACTOR_LADY_STATUE_SOUTH);
+    actor = Actor_Get(ACTOR_LADY_STATUE_SOUTH);
     if ((actor->z.fixed >> 20) == 48) {
       correctPositions = (correctPositions + 1);
     }
@@ -1397,7 +1394,7 @@ static void TunnelRuins_PushLadyStatue(void) {
 /// cell behavior 42 in TunnelRuinsLadyStatues.
 static void TunnelRuins_ReadSecondStatue(void) {
   Event_Start();
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldMessage_Show(MSGNO(MsgTunnelRuinsStatueSeemsSpeakYourSoul), 1);
   Event_End();
 }
@@ -1432,14 +1429,14 @@ static void TunnelRuins_UpdateFirstPillarCells(void) {
   Actor_SwapPositionsByDepth(ACTOR_FIRST_PILLAR_B, ACTOR_FIRST_PILLAR_A);
 
   {
-    s32 column = Actor_GetById(ACTOR_FIRST_PILLAR_A)->x.fixed >> 20;
-    row = Actor_GetById(ACTOR_FIRST_PILLAR_A)->z.fixed >> 20;
+    s32 column = Actor_Get(ACTOR_FIRST_PILLAR_A)->x.fixed >> 20;
+    row = Actor_Get(ACTOR_FIRST_PILLAR_A)->z.fixed >> 20;
     MapGrid_CopyCellAttributes(2, 36, 1, 1, column, row);
   }
 
   {
-    s32 column = Actor_GetById(ACTOR_FIRST_PILLAR_B)->x.fixed >> 20;
-    row = Actor_GetById(ACTOR_FIRST_PILLAR_B)->z.fixed >> 20;
+    s32 column = Actor_Get(ACTOR_FIRST_PILLAR_B)->x.fixed >> 20;
+    row = Actor_Get(ACTOR_FIRST_PILLAR_B)->z.fixed >> 20;
     MapGrid_CopyCellAttributes(2, 36, 1, 1, column, row);
   }
 }
@@ -1456,14 +1453,14 @@ static void TunnelRuins_UpdateSecondPillarCells(void) {
   Actor_SwapPositionsByDepth(ACTOR_SECOND_PILLAR_B, ACTOR_SECOND_PILLAR_A);
 
   {
-    s32 column = Actor_GetById(ACTOR_SECOND_PILLAR_A)->x.fixed >> 20;
-    row = Actor_GetById(ACTOR_SECOND_PILLAR_A)->z.fixed >> 20;
+    s32 column = Actor_Get(ACTOR_SECOND_PILLAR_A)->x.fixed >> 20;
+    row = Actor_Get(ACTOR_SECOND_PILLAR_A)->z.fixed >> 20;
     MapGrid_CopyCellAttributes(2, 36, 1, 1, column, row);
   }
 
   {
-    s32 column = Actor_GetById(ACTOR_SECOND_PILLAR_B)->x.fixed >> 20;
-    row = Actor_GetById(ACTOR_SECOND_PILLAR_B)->z.fixed >> 20;
+    s32 column = Actor_Get(ACTOR_SECOND_PILLAR_B)->x.fixed >> 20;
+    row = Actor_Get(ACTOR_SECOND_PILLAR_B)->z.fixed >> 20;
     MapGrid_CopyCellAttributes(2, 36, 1, 1, column, row);
   }
 }
@@ -1477,20 +1474,20 @@ static void TunnelRuins_UpdateSmallPillarCells(void) {
 
   MapGrid_CopyCellAttributes(89, 49, 3, 2, 25, 49);
   MapGrid_CopyCellAttributes(89, 51, 8, 5, 25, 51);
-  Actor_GetById(ACTOR_SMALL_PILLAR_C)->layer = 1;
-  actor = Actor_GetById(ACTOR_SMALL_PILLAR_A);
+  Actor_Get(ACTOR_SMALL_PILLAR_C)->layer = 1;
+  actor = Actor_Get(ACTOR_SMALL_PILLAR_A);
   column = actor->x.fixed;
-  actor = Actor_GetById(ACTOR_SMALL_PILLAR_A);
+  actor = Actor_Get(ACTOR_SMALL_PILLAR_A);
   column >>= 20;
   MapGrid_CopyCellAttributes(22, 52, 1, 1, column, (actor->z.fixed >> 20));
-  actor = Actor_GetById(ACTOR_SMALL_PILLAR_B);
+  actor = Actor_Get(ACTOR_SMALL_PILLAR_B);
   column = actor->x.fixed;
-  actor = Actor_GetById(ACTOR_SMALL_PILLAR_B);
+  actor = Actor_Get(ACTOR_SMALL_PILLAR_B);
   column >>= 20;
   MapGrid_CopyCellAttributes(22, 52, 1, 1, column, (actor->z.fixed >> 20));
-  actor = Actor_GetById(ACTOR_SMALL_PILLAR_C);
+  actor = Actor_Get(ACTOR_SMALL_PILLAR_C);
   column = actor->x.fixed;
-  actor = Actor_GetById(ACTOR_SMALL_PILLAR_C);
+  actor = Actor_Get(ACTOR_SMALL_PILLAR_C);
   column >>= 20;
   MapGrid_CopyCellAttributes(22, 52, 1, 1, column, (actor->z.fixed >> 20));
 }
@@ -1499,13 +1496,11 @@ static void TunnelRuins_UpdateSmallPillarCells(void) {
 static void TunnelRuins_MarkPushPillarCells(void) {
   MapGrid_CopyCellAttributes(108, 19, 4, 1, 44, 19);
   PushedActor_FillGridAttributeRectangle(
-      0, Actor_GetById(ACTOR_EAST_PILLAR_A)->x.fixed >> 20,
-      Actor_GetById(ACTOR_EAST_PILLAR_A)->z.fixed >> 20, 1, 1,
-      CELL_BEHAVIOR_WALL);
+      0, Actor_Get(ACTOR_EAST_PILLAR_A)->x.fixed >> 20,
+      Actor_Get(ACTOR_EAST_PILLAR_A)->z.fixed >> 20, 1, 1, CELL_BEHAVIOR_WALL);
   PushedActor_FillGridAttributeRectangle(
-      0, Actor_GetById(ACTOR_EAST_PILLAR_B)->x.fixed >> 20,
-      Actor_GetById(ACTOR_EAST_PILLAR_B)->z.fixed >> 20, 1, 1,
-      CELL_BEHAVIOR_WALL);
+      0, Actor_Get(ACTOR_EAST_PILLAR_B)->x.fixed >> 20,
+      Actor_Get(ACTOR_EAST_PILLAR_B)->z.fixed >> 20, 1, 1, CELL_BEHAVIOR_WALL);
 }
 
 /// On entering a room: the puzzle as it was left, and the path the statue in
@@ -1553,12 +1548,12 @@ s32 TunnelRuins_Initialize(void) {
     case TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_STATUE:
     case TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_COLUMNS_NORTH:
       TunnelRuins_UpdateFirstPillarCells();
-      Actor_GetById(ACTOR_FIRST_PILLAR_A)->motionFlags = 0;
-      Actor_GetById(ACTOR_FIRST_PILLAR_B)->motionFlags = 0;
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_PILLAR_A), 0);
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_PILLAR_B), 0);
-      Actor_GetById(ACTOR_FIRST_PILLAR_A)->update = UPDATE_BY_RELATIVE_DEPTH;
-      Actor_GetById(ACTOR_FIRST_PILLAR_B)->update = UPDATE_BY_RELATIVE_DEPTH;
+      Actor_Get(ACTOR_FIRST_PILLAR_A)->motionFlags = 0;
+      Actor_Get(ACTOR_FIRST_PILLAR_B)->motionFlags = 0;
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_PILLAR_A), 0);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_PILLAR_B), 0);
+      Actor_Get(ACTOR_FIRST_PILLAR_A)->update = UPDATE_BY_RELATIVE_DEPTH;
+      Actor_Get(ACTOR_FIRST_PILLAR_B)->update = UPDATE_BY_RELATIVE_DEPTH;
       Task_AddFrame(TunnelRuins_UpdateTrackedActor, TASK_PASS_FRAME);
       break;
     case TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_FIRST_PILLARS:
@@ -1572,81 +1567,79 @@ s32 TunnelRuins_Initialize(void) {
     case TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_FROM_COLUMNS_NORTH:
     case TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_FROM_WHIRLWIND_ROOM:
       TunnelRuins_UpdateSecondPillarCells();
-      Actor_GetById(ACTOR_SECOND_PILLAR_A)->motionFlags = 0;
-      Actor_GetById(ACTOR_SECOND_PILLAR_B)->motionFlags = 0;
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_SECOND_PILLAR_A), 0);
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_SECOND_PILLAR_B), 0);
-      Actor_GetById(ACTOR_SECOND_PILLAR_A)->update = UPDATE_BY_RELATIVE_DEPTH;
-      Actor_GetById(ACTOR_SECOND_PILLAR_B)->update = UPDATE_BY_RELATIVE_DEPTH;
+      Actor_Get(ACTOR_SECOND_PILLAR_A)->motionFlags = 0;
+      Actor_Get(ACTOR_SECOND_PILLAR_B)->motionFlags = 0;
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_PILLAR_A), 0);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_PILLAR_B), 0);
+      Actor_Get(ACTOR_SECOND_PILLAR_A)->update = UPDATE_BY_RELATIVE_DEPTH;
+      Actor_Get(ACTOR_SECOND_PILLAR_B)->update = UPDATE_BY_RELATIVE_DEPTH;
       Task_AddFrame(TunnelRuins_UpdateTrackedActor, TASK_PASS_FRAME);
       break;
     case TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_NORTH:
     case TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_SOUTH:
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_NORTHWEST_SINKING_PILLAR), 0);
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_SOUTHEAST_SINKING_PILLAR), 0);
-      Import_ActorSetAnimation(ACTOR_NORTHWEST_SINKING_PILLAR, 2);
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_NORTHWEST_PILLAR_FROST_TARGET),
-                           0);
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET),
-                           0);
-      Actor_ConfigureSpriteColor(ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
-                                 SPRITE_COLOR_HIDDEN);
-      Actor_ConfigureSpriteColor(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
-                                 SPRITE_COLOR_HIDDEN);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR), 0);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR), 0);
+      Actor_SetAnimation(ACTOR_NORTHWEST_SINKING_PILLAR, 2);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_NORTHWEST_PILLAR_FROST_TARGET), 0);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET), 0);
+      Actor_SetSpriteColorById(ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
+                               SPRITE_COLOR_HIDDEN);
+      Actor_SetSpriteColorById(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
+                               SPRITE_COLOR_HIDDEN);
       if (GameFlag_Get(FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR)) {
         MapGrid_CopyCellsTo(59, 8, 49, 8, 1, 3);
         MapGrid_CopyCellAttributes(51, 8, 1, 1, 49, 8);
-        Actor_GetById(ACTOR_NORTHWEST_SINKING_PILLAR)->priorityFlags |=
+        Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        Import_ActorSetAnimation(ACTOR_NORTHWEST_SINKING_PILLAR, 3);
+        Actor_SetAnimation(ACTOR_NORTHWEST_SINKING_PILLAR, 3);
         MapGrid_CopyCellAttributes(45, 4, 1, 1, 46, 8);
         Actor_SetPosition(ACTOR_NORTHWEST_SINKING_PILLAR, PIXELS(744),
                           PIXELS(136));
-        Actor_GetById(ACTOR_NORTHWEST_SINKING_PILLAR)->y.fixed = -PIXELS(16);
+        Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->y.fixed = -PIXELS(16);
         Actor_SetPosition(ACTOR_NORTHWEST_PILLAR_FROST_TARGET, PIXELS(744),
                           PIXELS(136));
       }
       if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
-        Actor_ConfigureSpriteColor(ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
-                                   SPRITE_COLOR_NORMAL);
-        Import_ActorSetAnimation(ACTOR_NORTHWEST_PILLAR_FROST_TARGET, 5);
+        Actor_SetSpriteColorById(ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
+                                 SPRITE_COLOR_NORMAL);
+        Actor_SetAnimation(ACTOR_NORTHWEST_PILLAR_FROST_TARGET, 5);
       }
       if (Event_GetFlag(FLAG_SCENE_TEMP_02))
-        Import_ActorSetAnimation(ACTOR_SOUTHEAST_SINKING_PILLAR, 2);
+        Actor_SetAnimation(ACTOR_SOUTHEAST_SINKING_PILLAR, 2);
       if (GameFlag_Get(FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR)) {
         MapGrid_CopyCellsTo(59, 8, 45, 14, 1, 3);
         MapGrid_CopyCellAttributes(51, 8, 1, 1, 45, 14);
-        Actor_GetById(ACTOR_SOUTHEAST_SINKING_PILLAR)->priorityFlags |=
+        Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        Import_ActorSetAnimation(ACTOR_SOUTHEAST_SINKING_PILLAR, 3);
+        Actor_SetAnimation(ACTOR_SOUTHEAST_SINKING_PILLAR, 3);
         MapGrid_CopyCellAttributes(45, 4, 1, 1, 48, 14);
         Actor_SetPosition(ACTOR_SOUTHEAST_SINKING_PILLAR, PIXELS(776),
                           PIXELS(232));
-        Actor_GetById(ACTOR_SOUTHEAST_SINKING_PILLAR)->y.fixed = -PIXELS(16);
-        Import_ActorSetPosition(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
-                                PIXELS(776), PIXELS(232));
+        Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->y.fixed = -PIXELS(16);
+        Actor_SetPosition(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET, PIXELS(776),
+                          PIXELS(232));
         GameFlag_Set(FLAG_SCENE_TEMP_02);
       }
       if (GameFlag_Get(FLAG_SCENE_TEMP_01)) {
-        Actor_ConfigureSpriteColor(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
-                                   SPRITE_COLOR_NORMAL);
-        Import_ActorSetAnimation(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET, 5);
+        Actor_SetSpriteColorById(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
+                                 SPRITE_COLOR_NORMAL);
+        Actor_SetAnimation(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET, 5);
       }
       break;
     case TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_FROM_SECOND_PILLARS:
     case TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_FROM_LONG_PASSAGE:
       TunnelRuins_UpdateSmallPillarCells();
-      Actor_GetById(ACTOR_SMALL_PILLAR_A)->motionFlags = 0;
-      Actor_GetById(ACTOR_SMALL_PILLAR_B)->motionFlags = 0;
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_IVY_A), 0);
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_IVY_B), 0);
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_IVY_C), 0);
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_SMALL_PILLAR_A), 0);
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_SMALL_PILLAR_B), 0);
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_SMALL_PILLAR_C), 0);
-      Actor_GetById(ACTOR_SMALL_PILLAR_A)->update = UPDATE_BY_RELATIVE_DEPTH;
-      Actor_GetById(ACTOR_SMALL_PILLAR_B)->update = UPDATE_BY_RELATIVE_DEPTH;
-      Actor_GetById(ACTOR_SMALL_PILLAR_C)->update = UPDATE_BY_RELATIVE_DEPTH;
+      Actor_Get(ACTOR_SMALL_PILLAR_A)->motionFlags = 0;
+      Actor_Get(ACTOR_SMALL_PILLAR_B)->motionFlags = 0;
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_IVY_A), 0);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_IVY_B), 0);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_IVY_C), 0);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_SMALL_PILLAR_A), 0);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_SMALL_PILLAR_B), 0);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_SMALL_PILLAR_C), 0);
+      Actor_Get(ACTOR_SMALL_PILLAR_A)->update = UPDATE_BY_RELATIVE_DEPTH;
+      Actor_Get(ACTOR_SMALL_PILLAR_B)->update = UPDATE_BY_RELATIVE_DEPTH;
+      Actor_Get(ACTOR_SMALL_PILLAR_C)->update = UPDATE_BY_RELATIVE_DEPTH;
       Task_AddFrame(TunnelRuins_UpdateTrackedActor, TASK_PASS_FRAME);
       break;
     }
@@ -1661,8 +1654,8 @@ s32 TunnelRuins_Initialize(void) {
           BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE;
       gMainRoutineWork.retreatScene = (s32)&SceneId_BabiLighthouseEntry;
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
-      Actor_ConfigureSpriteColor(ACTOR_EAST_PILLAR_A, SPRITE_COLOR_GREY);
-      Actor_ConfigureSpriteColor(ACTOR_EAST_PILLAR_B, SPRITE_COLOR_GREY);
+      Actor_SetSpriteColorById(ACTOR_EAST_PILLAR_A, SPRITE_COLOR_GREY);
+      Actor_SetSpriteColorById(ACTOR_EAST_PILLAR_B, SPRITE_COLOR_GREY);
       if (GameFlag_Get(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST))
         Actor_SetPosition(ACTOR_EAST_PILLAR_A, PIXELS(728), PIXELS(312));
       if (GameFlag_Get(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST))
@@ -1672,75 +1665,73 @@ s32 TunnelRuins_Initialize(void) {
     case TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHWEST:
     case TUNNEL_RUINS_LADY_STATUES_DOUSE_PILLAR_SOUTH:
       Actor_SetSpritePriority(ACTOR_DOUSE_PILLAR, 1);
-      Actor_GetById(ACTOR_DOUSE_PILLAR)->motionFlags = 0;
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_DOUSE_PILLAR), 0);
+      Actor_Get(ACTOR_DOUSE_PILLAR)->motionFlags = 0;
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_DOUSE_PILLAR), 0);
       Actor_SetSpritePriority(ACTOR_DOUSE_PILLAR_FROST_TARGET, 1);
-      Actor_ConfigureSpriteColor(ACTOR_DOUSE_PILLAR_FROST_TARGET,
-                                 SPRITE_COLOR_HIDDEN);
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_DOUSE_PILLAR_FROST_TARGET), 0);
-      Actor_GetById(ACTOR_DOUSE_PILLAR_FROST_TARGET)->motionFlags = 0;
+      Actor_SetSpriteColorById(ACTOR_DOUSE_PILLAR_FROST_TARGET,
+                               SPRITE_COLOR_HIDDEN);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET), 0);
+      Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->motionFlags = 0;
       if (!GameFlag_Get(FLAG_TUNNEL_RUINS_DOUSE_FROST_TARGET_FROZEN))
         break;
-      Actor_ConfigureSpriteColor(ACTOR_DOUSE_PILLAR_FROST_TARGET,
-                                 SPRITE_COLOR_NORMAL);
-      Import_ActorSetAnimation(ACTOR_DOUSE_PILLAR_FROST_TARGET, 5);
+      Actor_SetSpriteColorById(ACTOR_DOUSE_PILLAR_FROST_TARGET,
+                               SPRITE_COLOR_NORMAL);
+      Actor_SetAnimation(ACTOR_DOUSE_PILLAR_FROST_TARGET, 5);
       MapGrid_CopyCellAttributeRect(
           26, 8, 1, 1,
-          Actor_GetById(ACTOR_DOUSE_PILLAR_FROST_TARGET)->x.fixed >> 20,
-          Actor_GetById(ACTOR_DOUSE_PILLAR_FROST_TARGET)->z.fixed >> 20);
-      Actor_GetById(ACTOR_DOUSE_PILLAR_FROST_TARGET)->update =
+          Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->x.fixed >> 20,
+          Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->z.fixed >> 20);
+      Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->update =
           UPDATE_BY_RELATIVE_DEPTH;
-      Actor_GetById(ACTOR_DOUSE_PILLAR)->update = UPDATE_BY_RELATIVE_DEPTH;
+      Actor_Get(ACTOR_DOUSE_PILLAR)->update = UPDATE_BY_RELATIVE_DEPTH;
       break;
     case TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_NORTH:
     case TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH:
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-        Actor_GetById(ACTOR_BALANCE_WEST)->motionFlags = 0;
-        Actor_GetById(ACTOR_BALANCE_EAST)->motionFlags = 0;
-        Actor_GetById(ACTOR_BALANCE_WEST)->y.fixed = -PIXELS(48);
-        Actor_GetById(ACTOR_BALANCE_EAST)->y.fixed = -PIXELS(48);
-        Actor_GetById(ACTOR_BALANCE_WEST)->priorityFlags |=
+        Actor_Get(ACTOR_BALANCE_WEST)->motionFlags = 0;
+        Actor_Get(ACTOR_BALANCE_EAST)->motionFlags = 0;
+        Actor_Get(ACTOR_BALANCE_WEST)->y.fixed = -PIXELS(48);
+        Actor_Get(ACTOR_BALANCE_EAST)->y.fixed = -PIXELS(48);
+        Actor_Get(ACTOR_BALANCE_WEST)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        Actor_GetById(ACTOR_BALANCE_EAST)->priorityFlags |=
+        Actor_Get(ACTOR_BALANCE_EAST)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        Actor_GetById(ACTOR_BALANCE_WEST)->collisionFlags &= ~ACTOR_SOLID;
-        Actor_GetById(ACTOR_BALANCE_EAST)->collisionFlags &= ~ACTOR_SOLID;
-        Actor_GetById(ACTOR_BALANCE_WEST)->timer = 3;
-        Actor_GetById(ACTOR_BALANCE_EAST)->timer = 3;
+        Actor_Get(ACTOR_BALANCE_WEST)->collisionFlags &= ~ACTOR_SOLID;
+        Actor_Get(ACTOR_BALANCE_EAST)->collisionFlags &= ~ACTOR_SOLID;
+        Actor_Get(ACTOR_BALANCE_WEST)->timer = 3;
+        Actor_Get(ACTOR_BALANCE_EAST)->timer = 3;
         Actor_SetSpritePriority(ACTOR_BALANCE_WEST, 1);
         Actor_SetSpritePriority(ACTOR_BALANCE_EAST, 1);
-        Actor_GetById(ACTOR_WEST_CARRY_STONE)->motionFlags = 0;
-        Actor_GetById(ACTOR_MIDDLE_CARRY_STONE)->motionFlags = 0;
-        Actor_GetById(ACTOR_EAST_CARRY_STONE)->motionFlags = 0;
-        Actor_SetSpriteFlags(Actor_GetById(ACTOR_WEST_CARRY_STONE), 0);
-        Actor_SetSpriteFlags(Actor_GetById(ACTOR_MIDDLE_CARRY_STONE), 0);
-        Actor_SetSpriteFlags(Actor_GetById(ACTOR_EAST_CARRY_STONE), 0);
-        Actor_GetById(ACTOR_WEST_CARRY_STONE)->timer = 0;
-        Actor_GetById(ACTOR_MIDDLE_CARRY_STONE)->timer = 0;
-        Actor_GetById(ACTOR_EAST_CARRY_STONE)->timer = 0;
+        Actor_Get(ACTOR_WEST_CARRY_STONE)->motionFlags = 0;
+        Actor_Get(ACTOR_MIDDLE_CARRY_STONE)->motionFlags = 0;
+        Actor_Get(ACTOR_EAST_CARRY_STONE)->motionFlags = 0;
+        Actor_SetSpriteFlags(Actor_Get(ACTOR_WEST_CARRY_STONE), 0);
+        Actor_SetSpriteFlags(Actor_Get(ACTOR_MIDDLE_CARRY_STONE), 0);
+        Actor_SetSpriteFlags(Actor_Get(ACTOR_EAST_CARRY_STONE), 0);
+        Actor_Get(ACTOR_WEST_CARRY_STONE)->timer = 0;
+        Actor_Get(ACTOR_MIDDLE_CARRY_STONE)->timer = 0;
+        Actor_Get(ACTOR_EAST_CARRY_STONE)->timer = 0;
         if (gMainRoutineWork.entrance !=
             TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH)
           break;
-        Actor_GetById(ACTOR_BALANCE_WEST)->y.fixed = -PIXELS(32);
-        Actor_GetById(ACTOR_BALANCE_EAST)->y.fixed = -PIXELS(64);
-        Actor_GetById(ACTOR_BALANCE_WEST)->timer = 2;
-        Actor_GetById(ACTOR_BALANCE_EAST)->timer = 4;
+        Actor_Get(ACTOR_BALANCE_WEST)->y.fixed = -PIXELS(32);
+        Actor_Get(ACTOR_BALANCE_EAST)->y.fixed = -PIXELS(64);
+        Actor_Get(ACTOR_BALANCE_WEST)->timer = 2;
+        Actor_Get(ACTOR_BALANCE_EAST)->timer = 4;
         Actor_SetPosition(ACTOR_WEST_CARRY_STONE, PIXELS(200), PIXELS(152));
-        Actor_GetById(ACTOR_WEST_CARRY_STONE)->timer = ACTOR_BALANCE_EAST;
-        Actor_GetById(ACTOR_WEST_CARRY_STONE)->update = UPDATE_RIDE_STONE_BELOW;
-        Actor_GetById(ACTOR_WEST_CARRY_STONE)->priorityFlags |=
+        Actor_Get(ACTOR_WEST_CARRY_STONE)->timer = ACTOR_BALANCE_EAST;
+        Actor_Get(ACTOR_WEST_CARRY_STONE)->update = UPDATE_RIDE_STONE_BELOW;
+        Actor_Get(ACTOR_WEST_CARRY_STONE)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
         Actor_SetPosition(ACTOR_MIDDLE_CARRY_STONE, PIXELS(200), PIXELS(152));
-        Actor_GetById(ACTOR_MIDDLE_CARRY_STONE)->timer = ACTOR_WEST_CARRY_STONE;
-        Actor_GetById(ACTOR_MIDDLE_CARRY_STONE)->update =
-            UPDATE_RIDE_STONE_BELOW;
-        Actor_GetById(ACTOR_MIDDLE_CARRY_STONE)->priorityFlags |=
+        Actor_Get(ACTOR_MIDDLE_CARRY_STONE)->timer = ACTOR_WEST_CARRY_STONE;
+        Actor_Get(ACTOR_MIDDLE_CARRY_STONE)->update = UPDATE_RIDE_STONE_BELOW;
+        Actor_Get(ACTOR_MIDDLE_CARRY_STONE)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        Import_ActorSetPosition(ACTOR_EAST_CARRY_STONE, PIXELS(136),
-                                PIXELS(152));
-        Actor_GetById(ACTOR_EAST_CARRY_STONE)->timer = ACTOR_BALANCE_WEST;
-        Actor_GetById(ACTOR_EAST_CARRY_STONE)->update = UPDATE_RIDE_STONE_BELOW;
-        Actor_GetById(ACTOR_EAST_CARRY_STONE)->priorityFlags |=
+        Actor_SetPosition(ACTOR_EAST_CARRY_STONE, PIXELS(136), PIXELS(152));
+        Actor_Get(ACTOR_EAST_CARRY_STONE)->timer = ACTOR_BALANCE_WEST;
+        Actor_Get(ACTOR_EAST_CARRY_STONE)->update = UPDATE_RIDE_STONE_BELOW;
+        Actor_Get(ACTOR_EAST_CARRY_STONE)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
         Event_Wait(2);
         GameFlag_Set(FLAG_SCENE_TEMP_00);
@@ -1779,43 +1770,38 @@ s32 TunnelRuins_Initialize(void) {
                           PIXELS(760));
         Actor_SetPosition(ACTOR_LADY_STATUE_SOUTH, PIXELS(392), PIXELS(776));
       }
-      Actor_GetById(ACTOR_LADY_STATUE_NORTHWEST)->motionFlags &=
+      Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->motionFlags &=
           ~ACTOR_FOLLOWS_TERRAIN;
-      Actor_GetById(ACTOR_LADY_STATUE_NORTHEAST)->motionFlags &=
+      Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->motionFlags &=
           ~ACTOR_FOLLOWS_TERRAIN;
-      Actor_GetById(ACTOR_LADY_STATUE_SOUTHWEST)->motionFlags &=
+      Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->motionFlags &=
           ~ACTOR_FOLLOWS_TERRAIN;
-      Actor_GetById(ACTOR_LADY_STATUE_SOUTHEAST)->motionFlags &=
+      Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->motionFlags &=
           ~ACTOR_FOLLOWS_TERRAIN;
-      Actor_GetById(ACTOR_LADY_STATUE_SOUTH)->motionFlags &=
-          ~ACTOR_FOLLOWS_TERRAIN;
-      Actor_ConfigureSpriteColor(ACTOR_LADY_STATUE_NORTHWEST, SPRITE_COLOR_GBR);
-      Actor_ConfigureSpriteColor(ACTOR_LADY_STATUE_NORTHEAST, SPRITE_COLOR_GRB);
-      Actor_ConfigureSpriteColor(ACTOR_LADY_STATUE_SOUTHWEST, SPRITE_COLOR_GBR);
-      Actor_ConfigureSpriteColor(ACTOR_LADY_STATUE_SOUTHEAST,
-                                 SPRITE_COLOR_RED_TINT);
-      Actor_ConfigureSpriteColor(ACTOR_LADY_STATUE_SOUTH, SPRITE_COLOR_NORMAL);
-      Import_ActorSetAnimation(ACTOR_LADY_STATUE_NORTHWEST, 2);
-      Import_ActorSetAnimation(ACTOR_LADY_STATUE_SOUTH, 2);
+      Actor_Get(ACTOR_LADY_STATUE_SOUTH)->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
+      Actor_SetSpriteColorById(ACTOR_LADY_STATUE_NORTHWEST, SPRITE_COLOR_GBR);
+      Actor_SetSpriteColorById(ACTOR_LADY_STATUE_NORTHEAST, SPRITE_COLOR_GRB);
+      Actor_SetSpriteColorById(ACTOR_LADY_STATUE_SOUTHWEST, SPRITE_COLOR_GBR);
+      Actor_SetSpriteColorById(ACTOR_LADY_STATUE_SOUTHEAST,
+                               SPRITE_COLOR_RED_TINT);
+      Actor_SetSpriteColorById(ACTOR_LADY_STATUE_SOUTH, SPRITE_COLOR_NORMAL);
+      Actor_SetAnimation(ACTOR_LADY_STATUE_NORTHWEST, 2);
+      Actor_SetAnimation(ACTOR_LADY_STATUE_SOUTH, 2);
       MapGrid_CopyCellAttributeRect(
-          20, 56, 1, 1,
-          Actor_GetById(ACTOR_LADY_STATUE_NORTHWEST)->x.fixed >> 20,
-          Actor_GetById(ACTOR_LADY_STATUE_NORTHWEST)->z.fixed >> 20);
+          20, 56, 1, 1, Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->x.fixed >> 20,
+          Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->z.fixed >> 20);
       MapGrid_CopyCellAttributeRect(
-          20, 56, 1, 1,
-          Actor_GetById(ACTOR_LADY_STATUE_NORTHEAST)->x.fixed >> 20,
-          Actor_GetById(ACTOR_LADY_STATUE_NORTHEAST)->z.fixed >> 20);
+          20, 56, 1, 1, Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->x.fixed >> 20,
+          Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->z.fixed >> 20);
       MapGrid_CopyCellAttributeRect(
-          20, 56, 1, 1,
-          Actor_GetById(ACTOR_LADY_STATUE_SOUTHWEST)->x.fixed >> 20,
-          Actor_GetById(ACTOR_LADY_STATUE_SOUTHWEST)->z.fixed >> 20);
+          20, 56, 1, 1, Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->x.fixed >> 20,
+          Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->z.fixed >> 20);
       MapGrid_CopyCellAttributeRect(
-          20, 56, 1, 1,
-          Actor_GetById(ACTOR_LADY_STATUE_SOUTHEAST)->x.fixed >> 20,
-          Actor_GetById(ACTOR_LADY_STATUE_SOUTHEAST)->z.fixed >> 20);
+          20, 56, 1, 1, Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->x.fixed >> 20,
+          Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->z.fixed >> 20);
       MapGrid_CopyCellAttributeRect(
-          20, 56, 1, 1, Actor_GetById(ACTOR_LADY_STATUE_SOUTH)->x.fixed >> 20,
-          Actor_GetById(ACTOR_LADY_STATUE_SOUTH)->z.fixed >> 20);
+          20, 56, 1, 1, Actor_Get(ACTOR_LADY_STATUE_SOUTH)->x.fixed >> 20,
+          Actor_Get(ACTOR_LADY_STATUE_SOUTH)->z.fixed >> 20);
       break;
     case TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHEAST:
       MapGrid_CopyCellAttributes(49, 43, 1, 1, 49, 107);

@@ -389,7 +389,7 @@ static void Bilibin_ExamineTreeMan(void) {
 static void Bilibin_AskAboutEntranceTree(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinDidSeeTreeAtEntrance);
-  Event_AskYesNoAndShowResponse(ACTOR_VILLAGER_ASKS_ABOUT_TREE, 0);
+  Event_AskYesNo(ACTOR_VILLAGER_ASKS_ABOUT_TREE, 0);
   Event_End();
 }
 
@@ -399,7 +399,7 @@ static void Bilibin_AskAboutEntranceTree(void) {
 static void Bilibin_AskAboutSoutheastRoute(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinHaveTriedHeadingSoutheastFrom);
-  Event_AskYesNoAndShowResponse(ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST, 0);
+  Event_AskYesNo(ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST, 0);
   Event_End();
 }
 
@@ -409,7 +409,7 @@ static void Bilibin_AskAboutSoutheastRoute(void) {
 static void Bilibin_AskAboutBeingATree(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinWasTurnedIntoTreeFor);
-  Event_AskYesNoAndShowResponse(ACTOR_FORMER_TREE_MAN, 0);
+  Event_AskYesNo(ACTOR_FORMER_TREE_MAN, 0);
   Event_End();
 }
 
@@ -419,7 +419,7 @@ static void Bilibin_AskAboutBeingATree(void) {
 static void Bilibin_AskAboutCurseBreakers(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinCurseWasBrokenThanksEfforts);
-  Event_AskYesNoAndShowResponse(ACTOR_BOY_SCARED_OF_ENTRANCE, 0);
+  Event_AskYesNo(ACTOR_BOY_SCARED_OF_ENTRANCE, 0);
   Event_End();
 }
 
@@ -429,7 +429,7 @@ static void Bilibin_AskAboutCurseBreakers(void) {
 static void Bilibin_AskAboutImil(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinHaveEverBeenVillageImil);
-  Event_AskYesNoAndShowResponse(ACTOR_STRONGMAN_IMIL_TOWER, 0);
+  Event_AskYesNo(ACTOR_STRONGMAN_IMIL_TOWER, 0);
   Event_End();
 }
 
@@ -455,14 +455,14 @@ static void Bilibin_OpenDoorAndLeave(void) {
   // Freeze placed actors before the exit cells start animating.
   for (actorSlot = ACTOR_FIRST_PLACED; actorSlot < ACTOR_ID_COUNT;
        actorSlot++) {
-    actor = Actor_GetById(actorSlot);
+    actor = Actor_Get(actorSlot);
     if (actor != 0) {
       actor->motionFlags = 0;
     }
   }
   exitIndex = (((u16)work->stepTrigger - BILIBIN_TO_INN) << 16) >> 16;
   if (exitIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
-    Event_PlaySound(SE_THUMP);
+    Sound_Play(SE_THUMP);
   } else {
     Sound_Play(SE_DOOR_OPEN);
   }
@@ -474,10 +474,10 @@ static void Bilibin_OpenDoorAndLeave(void) {
   row = *(s16 *)(originBytes + rowOffset);
   MapGrid_PlayMapEdit(gBilibin_DoorSteps[exitIndex], column, row);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-  Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
+  Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (exitIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
-    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -4);
   } else {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
@@ -500,8 +500,8 @@ static void Bilibin_PullJillFromRiver(void) {
   struct Actor *leader;
   struct Actor *jillTree;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
-  jillTree = Actor_GetById(ACTOR_JILL_TREE);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
+  jillTree = Actor_Get(ACTOR_JILL_TREE);
   if ((jillTree->x.fixed >> 20) == 6) {
     Event_Start();
     Actor_SetSpritePriority(ACTOR_JILL_TREE, 1);
@@ -516,7 +516,7 @@ static void Bilibin_PullJillFromRiver(void) {
     leader->scaleX = -Q16_ONE;
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
     Actor_MoveToAndWait(ACTOR_JILL_TREE, 111, 196);
     leader->scaleX = Q16_ONE;
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 128, 185);
@@ -524,7 +524,7 @@ static void Bilibin_PullJillFromRiver(void) {
     leader->scaleX = -Q16_ONE;
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
     Actor_MoveToAndWait(ACTOR_JILL_TREE, 121, 190);
     leader->scaleX = Q16_ONE;
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 141, 189);
@@ -532,7 +532,7 @@ static void Bilibin_PullJillFromRiver(void) {
     leader->scaleX = -Q16_ONE;
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
     Actor_MoveToAndWait(ACTOR_JILL_TREE, 132, 186);
     leader->scaleX = Q16_ONE;
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
@@ -565,7 +565,7 @@ static void Bilibin_JillGivesHardNut(void) {
   struct Actor *leader;
   struct Actor *eastMember;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0 ||
       GameFlag_Get(FLAG_BILIBIN_JILL_RESCUED) == 0)
     return;
@@ -582,7 +582,7 @@ static void Bilibin_JillGivesHardNut(void) {
     Actor_ShowEmote(ACTOR_GANG_MEMBER_WEST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     20);
     Event_SetMessageId(MsgBilibinYoureGuy);
-    FieldEvent_ShowMessageThenWait(ACTOR_GANG_MEMBER_WEST, 0, 10);
+    Event_ShowMessageThenWait(ACTOR_GANG_MEMBER_WEST, 0, 10);
     Actor_ShowEmote(ACTOR_GANG_MEMBER_EAST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     0);
   } else {
@@ -591,7 +591,7 @@ static void Bilibin_JillGivesHardNut(void) {
     Actor_ShowEmote(ACTOR_GANG_MEMBER_EAST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     20);
     Event_SetMessageId(MsgBilibinYoureGuy);
-    FieldEvent_ShowMessageThenWait(ACTOR_GANG_MEMBER_EAST, 0, 10);
+    Event_ShowMessageThenWait(ACTOR_GANG_MEMBER_EAST, 0, 10);
     Actor_ShowEmote(ACTOR_GANG_MEMBER_WEST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     0);
   }
@@ -603,7 +603,7 @@ static void Bilibin_JillGivesHardNut(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 268, 184);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
   Actor_RunRepeatedMotion(ACTOR_GANG_MEMBER_WEST, 2);
-  FieldEvent_ShowMessageThenWait(ACTOR_GANG_MEMBER_WEST, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_GANG_MEMBER_WEST, 0, 10);
   Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JILL, FACING_SOUTHEAST + FACING_STEP, 20);
   Actor_FaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_WEST, 20);
@@ -616,29 +616,29 @@ static void Bilibin_JillGivesHardNut(void) {
   Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_SOUTHEAST + FACING_STEP,
                       10);
   Actor_RunRepeatedMotion(ACTOR_JILL, 1);
-  FieldEvent_ShowMessageThenWait(ACTOR_JILL, 0, 10);
-  Import_ActorSetAnimation(ACTOR_GANG_MEMBER_EAST, ANIM_NOD);
+  Event_ShowMessageThenWait(ACTOR_JILL, 0, 10);
+  Actor_SetAnimation(ACTOR_GANG_MEMBER_EAST, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GANG_MEMBER_WEST, ANIM_NOD);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_JILL, 0);
   Actor_SetSpeed(ACTOR_JILL, PIXELS(3) / 5, PIXELS(3) / 10);
-  Actor_GetById(ACTOR_JILL)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_Get(ACTOR_JILL)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_JILL, 266, 172);
   Event_Wait(1);
-  Actor_GetById(ACTOR_JILL)->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_Get(ACTOR_JILL)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
-  FieldEvent_ShowMessageThenWait(ACTOR_JILL, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_JILL, 0, 10);
   // Show the named gift before adding it to the party's inventory.
   FieldMessage_Show(MsgBilibinJillGaveIsaacSpecialGift, 1);
   gFieldWork->message++;
   ItemDisplay_ShowItem(ITEM_HARD_NUT, 3);
   PartyInventory_GiveItem(ITEM_HARD_NUT, 0);
   Actor_SetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_SetSpeed(ACTOR_JILL, PIXELS(1), PIXELS(1) / 2);
-  Actor_GetById(ACTOR_JILL)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_Get(ACTOR_JILL)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_JILL, 262, 156);
   Event_Wait(1);
   {
@@ -649,9 +649,9 @@ static void Bilibin_JillGivesHardNut(void) {
   }
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_GANG_MEMBER_EAST, 2);
-  FieldEvent_ShowMessageThenWait(ACTOR_GANG_MEMBER_EAST, 0, 10);
-  Import_ActorSetAnimation(ACTOR_GANG_MEMBER_EAST, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GANG_MEMBER_WEST, ANIM_NOD);
+  Event_ShowMessageThenWait(ACTOR_GANG_MEMBER_EAST, 0, 10);
+  Actor_SetAnimation(ACTOR_GANG_MEMBER_EAST, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GANG_MEMBER_WEST, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
   // From now on the three turn to face the leader wherever he goes.
   FieldActor_SetTargetAndCallback(ACTOR_GANG_MEMBER_EAST,
@@ -692,7 +692,7 @@ static void Bilibin_RestoreVillageActors(void) {
   s16 entrance;
 
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
-    Import_ActorSetPosition(ACTOR_TREE_MAN, 0, 0);
+    Actor_SetPosition(ACTOR_TREE_MAN, 0, 0);
     Actor_FaceDirection(ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST,
                         FACING_SOUTHEAST + FACING_STEP, 0);
     Actor_FaceDirection(ACTOR_OLD_WOMAN_ROAD_BLOCKED,
@@ -736,8 +736,8 @@ static void Bilibin_UpdateVillageStatueCells(void) {
   s32 statueX;
   s32 statueRow;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
-  statue = Actor_GetById(ACTOR_VILLAGE_STATUE);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
+  statue = Actor_Get(ACTOR_VILLAGE_STATUE);
   statueRow = statue->z.fixed >> 20;
   leaderColumn = (leader->x.fixed >> 20);
   leaderRow = (leader->z.fixed >> 20);
@@ -780,8 +780,8 @@ static void Bilibin_RestoreRiverActors(void) {
   struct Actor *actor;
   s32 crossingState;
 
-  fallenTree = Actor_GetById(ACTOR_MIDDLE_TREE);
-  jillTree = Actor_GetById(ACTOR_JILL_TREE);
+  fallenTree = Actor_Get(ACTOR_MIDDLE_TREE);
+  jillTree = Actor_Get(ACTOR_JILL_TREE);
   actor = Actor_Get(ACTOR_BARRICADE_CRATES);
   Actor_SetSpriteFlags(actor, 0);
   populationState = GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED);
@@ -794,7 +794,7 @@ static void Bilibin_RestoreRiverActors(void) {
     MapGrid_CopyCellAttributes(26, 15, 1, 3, 10, 15);
     if (GameFlag_Get(FLAG_BILIBIN_JILL_GIFT_RECEIVED) == 0) {
       if (GameFlag_Get(FLAG_BILIBIN_JILL_RESCUED) == 0) {
-        Import_ActorSetPosition(ACTOR_JILL, 0, 0);
+        Actor_SetPosition(ACTOR_JILL, 0, 0);
         Actor_FaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_NORTH + FACING_STEP,
                             0);
         Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST,
@@ -822,10 +822,10 @@ static void Bilibin_RestoreRiverActors(void) {
     // the water, or on the bank where she was pulled ashore.
     crossingState = GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY);
     if (crossingState != 0) {
-      Actor_GetById(ACTOR_BOTTOM_TREE)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
-      Actor_GetById(ACTOR_FALLEN_TREE_STAND_IN)->collisionFlags |=
+      Actor_Get(ACTOR_BOTTOM_TREE)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
+      Actor_Get(ACTOR_FALLEN_TREE_STAND_IN)->collisionFlags |=
           ACTOR_NEAR_PSYNERGY;
-      Actor_GetById(ACTOR_JILL_TREE)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
+      Actor_Get(ACTOR_JILL_TREE)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
       Actor_SetPosition(ACTOR_FALLEN_TREE_STAND_IN, PIXELS(142), PIXELS(156));
       actor = Actor_Get(ACTOR_FALLEN_TREE_STAND_IN);
       Actor_SetSpriteFlags(actor, 0);
@@ -856,7 +856,7 @@ static void Bilibin_UpdateCratesCells(void) {
   s32 cratesRow;
   u32 cellOffset;
 
-  actor = Actor_GetById(ACTOR_BARRICADE_CRATES);
+  actor = Actor_Get(ACTOR_BARRICADE_CRATES);
   cratesColumn = actor->x.fixed >> 20;
   cratesRow = actor->z.fixed >> 20;
 
@@ -882,7 +882,7 @@ static void Bilibin_SetUpTreasury(void) {
   if (gMainRoutineWork.entrance == BILIBIN_TREASURY_UPPER_FROM_LOWER ||
       gMainRoutineWork.entrance == BILIBIN_TREASURY_FROM_BILIBIN_NORTH) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-      leader = Actor_GetById(ACTOR_PARTY_LEADER);
+      leader = Actor_Get(ACTOR_PARTY_LEADER);
       Event_Start();
       leader->y.fixed = PIXELS(16);
       FieldCamera_MoveWithinMapBounds(leader->x.fixed, leader->y.fixed,
@@ -905,7 +905,7 @@ static void Bilibin_PushStatueOrCrates(void) {
   u32 direction;
   struct FieldPosition destination;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   direction = leader->facing >> 12;
   pushed = Actor_FindAtCell(
       (leader->x.part.pixel + (gBilibin_FacingCellSteps[direction] >> 16)) >> 4,
@@ -954,7 +954,7 @@ static void Bilibin_PushStatueOrCrates(void) {
 static void Bilibin_UpdateWadingRipples(void) {
   struct Actor *actor;
 
-  actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  actor = Actor_Get(gMainRoutineWork.leaderActorId);
   if (actor->x.fixed < PIXELS(142)) {
     if (actor->y.fixed < PIXELS(8)) {
       if (gBilibin_RippleTimer.frames == 0)

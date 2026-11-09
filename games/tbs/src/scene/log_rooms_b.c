@@ -175,7 +175,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 static void LogRoomsB_ShowStandingActorDialogue(s32 actorId) {
   Event_Start();
   Import_ActorSetAnimation(actorId, ANIM_STAND);
-  Event_ShowMessageAndWait(actorId, 0);
+  Event_ShowMessage(actorId, 0);
   Event_End();
 }
 
@@ -216,18 +216,18 @@ static void LogRoomsB_WelcomeIsaacBack(void) {
   Event_SetMessageId(MsgVaultIsaacYouveComeBackVault);
   Actor_TurnToFaceEachOther(ACTOR_MAYOR, ACTOR_PARTY_LEADER, 2);
   Import_ActorSetAnimation(ACTOR_MAYOR, ANIM_STAND);
-  FieldEvent_ShowMessageThenWait(ACTOR_MAYOR, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_MAYOR, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_MAYOR, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 20);
   Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_MAYOR, 0, 30);
+  Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 30);
   // The negative answer advances to the next message before continuing.
   Event_OpenMessage(ACTOR_MAYOR, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
     gFieldWork->message++;
   }
-  FieldEvent_ShowMessageThenWait(ACTOR_MAYOR, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 20);
   GameFlag_Set(FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK);
   GameFlag_Set(FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES);
   Event_End();
@@ -306,10 +306,10 @@ static void LogRoomsB_ReadMindAndWelcomeIsaacBack(void) {
   Event_End();
   // Keep the actor paused through the conversation, then resume
   // action 2.
-  paused = &Actor_GetById(ACTOR_MAYOR)->paused;
+  paused = &Actor_Get(ACTOR_MAYOR)->paused;
   *paused = 1;
   LogRoomsB_WelcomeIsaacBack();
-  paused = &Actor_GetById(ACTOR_MAYOR)->paused;
+  paused = &Actor_Get(ACTOR_MAYOR)->paused;
   *paused = unpaused;
   Actor_SetMovementTypeById(ACTOR_MAYOR, 2);
 }
@@ -322,14 +322,14 @@ static void LogRoomsB_ReadMindAndWelcomeIsaacBack(void) {
 static void LogRoomsB_TalkToWeaponMerchant(void) {
   u32 leaderFacing;
 
-  leaderFacing = Actor_GetById(ACTOR_PARTY_LEADER)->facing;
+  leaderFacing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
   Event_Start();
 
   if (FACING_IS_NORTH(leaderFacing)) {
     Shop_Run(VAULT_WEAPON_STOCK, ACTOR_VAULT_WEAPON_MERCHANT);
   } else {
     Event_SetMessageId(MsgVaultTheresRiverFireOnOther);
-    Event_ShowMessageAndWait(ACTOR_VAULT_WEAPON_MERCHANT, 0);
+    Event_ShowMessage(ACTOR_VAULT_WEAPON_MERCHANT, 0);
   }
 
   Event_End();
@@ -340,14 +340,14 @@ static void LogRoomsB_TalkToWeaponMerchant(void) {
 static void LogRoomsB_TalkToArmorMerchant(void) {
   u32 leaderFacing;
 
-  leaderFacing = Actor_GetById(ACTOR_PARTY_LEADER)->facing;
+  leaderFacing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
   Event_Start();
 
   if (FACING_IS_NORTH(leaderFacing)) {
     Shop_Run(VAULT_ARMOR_STOCK, ACTOR_VAULT_ARMOR_MERCHANT);
   } else {
     Event_SetMessageId(MsgVaultTheySayVolcanoOnMt);
-    Event_ShowMessageAndWait(ACTOR_VAULT_ARMOR_MERCHANT, 0);
+    Event_ShowMessage(ACTOR_VAULT_ARMOR_MERCHANT, 0);
   }
 
   Event_End();
@@ -358,14 +358,14 @@ static void LogRoomsB_TalkToArmorMerchant(void) {
 static void LogRoomsB_TalkToItemMerchant(void) {
   u32 leaderFacing;
 
-  leaderFacing = Actor_GetById(ACTOR_PARTY_LEADER)->facing;
+  leaderFacing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
   Event_Start();
 
   if (FACING_IS_NORTH(leaderFacing)) {
     Shop_Run(VAULT_ITEM_STOCK, ACTOR_VAULT_ITEM_MERCHANT);
   } else {
     Event_SetMessageId(MsgVaultWeHaventBeenGettingMany);
-    Event_ShowMessageAndWait(ACTOR_VAULT_ITEM_MERCHANT, 0);
+    Event_ShowMessage(ACTOR_VAULT_ITEM_MERCHANT, 0);
   }
 
   Event_End();
@@ -376,14 +376,14 @@ static void LogRoomsB_TalkToItemMerchant(void) {
 static void LogRoomsB_TalkToInnkeeper(void) {
   u32 leaderFacing;
 
-  leaderFacing = Actor_GetById(ACTOR_PARTY_LEADER)->facing;
+  leaderFacing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
   Event_Start();
 
   if (FACING_IS_NORTH(leaderFacing)) {
     Inn_CheckIn(VAULT_INN, ACTOR_VAULT_INNKEEPER);
   } else {
     Event_SetMessageId(MsgVaultMmmmNothingDoNothingDo);
-    Event_ShowMessageAndWait(ACTOR_VAULT_INNKEEPER, 0);
+    Event_ShowMessage(ACTOR_VAULT_INNKEEPER, 0);
   }
 
   Event_End();
@@ -398,7 +398,7 @@ static void LogRoomsB_ReadBoneGiverMind(void) {
   } else {
     Event_SetMessageId(MsgVaultHeReallyLikesBonesWonder);
   }
-  Event_ShowMessageAndWait(ACTOR_GIRL_AT_THE_INN, 0);
+  Event_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
   Event_End();
 }
 
@@ -425,9 +425,9 @@ s32 Scene_Initialize(void) {
     // floor.
     MapGrid_CopyCellsTo(0, 120, 8, 67, 4, 3);
     clearedState = 0;
-    Actor_GetById(ACTOR_GEM_OWNER)->motionFlags = clearedState;
-    Actor_GetById(ACTOR_GEM_OWNER)->y.fixed = clearedState;
-    Actor_GetById(ACTOR_GEM_OWNER)->groundHeight = clearedState;
+    Actor_Get(ACTOR_GEM_OWNER)->motionFlags = clearedState;
+    Actor_Get(ACTOR_GEM_OWNER)->y.fixed = clearedState;
+    Actor_Get(ACTOR_GEM_OWNER)->groundHeight = clearedState;
   } else if (entrance == LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHWEST ||
              entrance == LOG_ROOMS_B_INN_FROM_INN_UPSTAIRS) {
     // Show the Bone lying in the room, and track whether the leader stands

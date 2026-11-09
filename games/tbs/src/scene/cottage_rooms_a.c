@@ -249,7 +249,7 @@ static void CottageRoomsA_AskAboutKradensStudies(void) {
   Event_SetMessageId(MsgValeKradenCameToStudyMt);
   Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_MAN_ON_KRADENS_STUDIES,
                             6);
-  Event_AskYesNoAndShowResponse(ACTOR_MAN_ON_KRADENS_STUDIES, 0);
+  Event_AskYesNo(ACTOR_MAN_ON_KRADENS_STUDIES, 0);
   Event_End();
 }
 
@@ -263,7 +263,7 @@ static void CottageRoomsA_AskToScareVisitors(void) {
   Event_SetMessageId(MsgValeLetsScareKradensVisitors);
   Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER,
                             ACTOR_STRONGMAN_SCARING_VISITORS, 6);
-  Event_AskYesNoAndShowResponse(ACTOR_STRONGMAN_SCARING_VISITORS, 0);
+  Event_AskYesNo(ACTOR_STRONGMAN_SCARING_VISITORS, 0);
   Event_End();
 }
 
@@ -287,7 +287,7 @@ static void CottageRoomsA_GiveFarewellHerb(void) {
   } else {
     gift = MsgValeThisIsMyFarewellGift;
     Event_SetMessageId(gift);
-    FieldEvent_ShowMessageThenWait(ACTOR_ITEM_MERCHANT, 0, 20);
+    Event_ShowMessageThenWait(ACTOR_ITEM_MERCHANT, 0, 20);
     FieldMessage_Show((gift + 1), 1);
     PartyInventory_GiveItem(ITEM_HERB, 0);
     GameFlag_Set(FLAG_VALE_FAREWELL_HERB_RECEIVED);
@@ -303,7 +303,7 @@ static void CottageRoomsA_GiveFarewellHerb(void) {
 static void CottageRoomsA_AskAboutStrangePowers(void) {
   Event_Start();
   Event_SetMessageId(MsgValeTheCulpritsHadStrangePowers);
-  Event_AskYesNoAndShowResponse(ACTOR_WOMAN_ON_VISITORS_IN_TOWN, 0);
+  Event_AskYesNo(ACTOR_WOMAN_ON_VISITORS_IN_TOWN, 0);
   Event_End();
 }
 
@@ -314,7 +314,7 @@ static void CottageRoomsA_AskAboutStrangePowers(void) {
 static void CottageRoomsA_AskAboutDora(void) {
   Event_Start();
   Event_SetMessageId(MsgValeDidYouHearAboutDora);
-  Event_AskYesNoAndShowResponse(ACTOR_GARETS_FATHER, 0);
+  Event_AskYesNo(ACTOR_GARETS_FATHER, 0);
   Event_End();
 }
 
@@ -325,7 +325,7 @@ static void CottageRoomsA_AskAboutDora(void) {
 static void CottageRoomsA_WorryAboutTravelersHealth(void) {
   Event_Start();
   Event_SetMessageId(MsgValeHopeDidntGet);
-  Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_GARETS_MOTHER, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_GARETS_MOTHER, 0);
   Event_End();
 }
 
@@ -414,21 +414,21 @@ s32 CottageRoomsA_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   // On the stormy night every resident is out, and lightning flashes outside.
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
-    Import_ActorSetPosition(ACTOR_GARETS_GRANDFATHER, 0, 0);
-    Import_ActorSetPosition(ACTOR_GARETS_GRANDMOTHER, 0, 0);
-    Import_ActorSetPosition(ACTOR_GARETS_FATHER, 0, 0);
-    Import_ActorSetPosition(ACTOR_GARETS_MOTHER, 0, 0);
-    Import_ActorSetPosition(ACTOR_JENNAS_GRANDFATHER, 0, 0);
-    Import_ActorSetPosition(ACTOR_JENNAS_GRANDMOTHER, 0, 0);
-    Import_ActorSetPosition(ACTOR_WOMAN_ON_THE_SPITTING_IMAGE, 0, 0);
-    Import_ActorSetPosition(ACTOR_MAN_ON_KRADENS_STUDIES, 0, 0);
-    Import_ActorSetPosition(ACTOR_WOMAN_ON_VISITORS_IN_TOWN, 0, 0);
-    Import_ActorSetPosition(ACTOR_YOUNG_MAN_DREAMING_OF_LEAVING, 0, 0);
-    Import_ActorSetPosition(ACTOR_WOMAN_ON_PERMISSION_TO_LEAVE, 0, 0);
-    Import_ActorSetPosition(ACTOR_STRONGMAN_SCARING_VISITORS, 0, 0);
-    Import_ActorSetPosition(ACTOR_ITEM_MERCHANT, 0, 0);
-    Import_ActorSetPosition(ACTOR_WEAPON_MERCHANT, 0, 0);
-    Import_ActorSetPosition(ACTOR_ARMOR_MERCHANT, 0, 0);
+    Actor_SetPosition(ACTOR_GARETS_GRANDFATHER, 0, 0);
+    Actor_SetPosition(ACTOR_GARETS_GRANDMOTHER, 0, 0);
+    Actor_SetPosition(ACTOR_GARETS_FATHER, 0, 0);
+    Actor_SetPosition(ACTOR_GARETS_MOTHER, 0, 0);
+    Actor_SetPosition(ACTOR_JENNAS_GRANDFATHER, 0, 0);
+    Actor_SetPosition(ACTOR_JENNAS_GRANDMOTHER, 0, 0);
+    Actor_SetPosition(ACTOR_WOMAN_ON_THE_SPITTING_IMAGE, 0, 0);
+    Actor_SetPosition(ACTOR_MAN_ON_KRADENS_STUDIES, 0, 0);
+    Actor_SetPosition(ACTOR_WOMAN_ON_VISITORS_IN_TOWN, 0, 0);
+    Actor_SetPosition(ACTOR_YOUNG_MAN_DREAMING_OF_LEAVING, 0, 0);
+    Actor_SetPosition(ACTOR_WOMAN_ON_PERMISSION_TO_LEAVE, 0, 0);
+    Actor_SetPosition(ACTOR_STRONGMAN_SCARING_VISITORS, 0, 0);
+    Actor_SetPosition(ACTOR_ITEM_MERCHANT, 0, 0);
+    Actor_SetPosition(ACTOR_WEAPON_MERCHANT, 0, 0);
+    Actor_SetPosition(ACTOR_ARMOR_MERCHANT, 0, 0);
     Weather_StartLightning();
     (*(struct FieldBlendWork **)((u8 *)eventSlot + Ram_FieldBlendWorkOffset))
         ->loud = 1;
@@ -445,18 +445,15 @@ s32 CottageRoomsA_Initialize(void) {
         CottageRoomsA_GaretComesHome();
       }
     }
-    Actor_GetById(ACTOR_GARETS_FATHER)->collisionFlags |=
-        ACTOR_BLOCKED_BY_SOLID;
+    Actor_Get(ACTOR_GARETS_FATHER)->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
   }
   // Once Jenna is taken, her grandmother lies sick in bed.
   if (gMainRoutineWork.entrance == COTTAGE_ROOMS_A_FROM_VALE_NORTH) {
     if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
-      Import_ActorSetPosition(ACTOR_JENNAS_GRANDMOTHER, PIXELS(454),
-                              PIXELS(150));
-      actor = Actor_GetById(ACTOR_JENNAS_GRANDMOTHER);
+      Actor_SetPosition(ACTOR_JENNAS_GRANDMOTHER, PIXELS(454), PIXELS(150));
+      actor = Actor_Get(ACTOR_JENNAS_GRANDMOTHER);
       Actor_SetSpriteFlags(actor, 0);
-      Import_ActorSetAnimation(ACTOR_JENNAS_GRANDMOTHER,
-                               ANIM_GRANDMOTHER_IN_BED);
+      Actor_SetAnimation(ACTOR_JENNAS_GRANDMOTHER, ANIM_GRANDMOTHER_IN_BED);
       TilesetAnim_Resume(4);
     }
   }
@@ -472,7 +469,7 @@ s32 CottageRoomsA_Initialize(void) {
 static void CottageRoomsA_TalkToWeaponMerchant(void) {
   struct Actor *leader;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   if (FACING_IS_NORTH(leader->facing)) {
     Shop_Run(1, ACTOR_WEAPON_MERCHANT);
@@ -482,14 +479,14 @@ static void CottageRoomsA_TalkToWeaponMerchant(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     Event_SetMessageId(MsgValeYouCameBack);
-    Event_AskYesNoAndShowResponse(ACTOR_WEAPON_MERCHANT, 0);
+    Event_AskYesNo(ACTOR_WEAPON_MERCHANT, 0);
   } else {
     if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
       Event_SetMessageId(MsgValeValeFeelsEmpty);
     } else {
       Event_SetMessageId(MsgValeGoodWeaponsDrawOutStrength);
     }
-    Event_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
+    Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
   }
   Event_End();
 }
@@ -502,7 +499,7 @@ static void CottageRoomsA_TalkToWeaponMerchant(void) {
 static void CottageRoomsA_TalkToArmorMerchant(void) {
   struct Actor *actor;
 
-  actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (FACING_IS_NORTH(actor->facing)) {
     Shop_Run(2, ACTOR_ARMOR_MERCHANT);
   } else {
@@ -516,7 +513,7 @@ static void CottageRoomsA_TalkToArmorMerchant(void) {
         Event_SetMessageId(MsgValeGoodArmorDrawsOutStrength);
       }
     }
-    Event_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
+    Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
     Event_End();
   }
 }
@@ -530,14 +527,14 @@ static void CottageRoomsA_TalkToArmorMerchant(void) {
 static void CottageRoomsA_TalkToItemMerchant(void) {
   struct Actor *actor;
 
-  actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (FACING_IS_NORTH(actor->facing)) {
     Shop_Run(3, ACTOR_ITEM_MERCHANT);
   } else {
     if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
       Event_Start();
       Event_SetMessageId(MsgValeWhenDidYouComeBack);
-      Event_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0);
+      Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
       Event_End();
     } else {
       if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
@@ -545,7 +542,7 @@ static void CottageRoomsA_TalkToItemMerchant(void) {
       } else {
         Event_Start();
         Event_SetMessageId(MsgValeAWiseManFleesWhen);
-        Event_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0);
+        Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
         Event_End();
       }
     }
@@ -554,9 +551,9 @@ static void CottageRoomsA_TalkToItemMerchant(void) {
 
 /// Garet's grandparents and father nod.
 static inline void CottageRoomsA_FamilyNods(void) {
-  Import_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARETS_GRANDMOTHER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARETS_FATHER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARETS_GRANDMOTHER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARETS_FATHER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIM_NOD);
 }
 
@@ -594,7 +591,7 @@ static void CottageRoomsA_GaretComesHome(void) {
   Actor_SetSpeed(ACTOR_GARET, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(2) / 5, PIXELS(1) / 5);
-  Import_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER, ANIM_GRANDFATHER_ASLEEP);
+  Actor_SetAnimation(ACTOR_GARETS_GRANDFATHER, ANIM_GRANDFATHER_ASLEEP);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 808, 508);
   sleepZ = Actor_Get(ACTOR_FIRST_SLEEP_Z);
   Actor_SetSpriteFlags(sleepZ, 0);
@@ -603,9 +600,9 @@ static void CottageRoomsA_GaretComesHome(void) {
   sleepZ = Actor_Get(ACTOR_FIRST_SLEEP_Z + 2);
   Actor_SetSpriteFlags(sleepZ, 0);
   motionFlags = 0;
-  Actor_GetById(ACTOR_FIRST_SLEEP_Z)->motionFlags = motionFlags;
-  Actor_GetById(ACTOR_FIRST_SLEEP_Z + 1)->motionFlags = motionFlags;
-  Actor_GetById(ACTOR_FIRST_SLEEP_Z + 2)->motionFlags = motionFlags;
+  Actor_Get(ACTOR_FIRST_SLEEP_Z)->motionFlags = motionFlags;
+  Actor_Get(ACTOR_FIRST_SLEEP_Z + 1)->motionFlags = motionFlags;
+  Actor_Get(ACTOR_FIRST_SLEEP_Z + 2)->motionFlags = motionFlags;
   timedUpdate = CottageRoomsA_SpawnSleepZ;
   Task_AddFrame(timedUpdate, TASK_PASS_FRAME);
   wait(1);
@@ -613,7 +610,7 @@ static void CottageRoomsA_GaretComesHome(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
     Actor_SetPosition(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
@@ -629,8 +626,8 @@ static void CottageRoomsA_GaretComesHome(void) {
   Actor_WalkTo(ACTOR_GARET, 792, 512);
   Actor_WalkTo(ACTOR_IVAN, 824, 504);
   Actor_WalkToAndWait(ACTOR_MIA, 818, 524);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_STAND);
   Event_Wait(10);
   FieldActor_SetTargetAndCallback(ACTOR_PARTY_LEADER,
                                   ACTOR_WATCH_KEEP_MOTION | ACTOR_GARETS_FATHER,
@@ -689,10 +686,10 @@ static void CottageRoomsA_GaretComesHome(void) {
                                  0, 40);
   Actor_StartRepeatedMotion(ACTOR_GARETS_FATHER, 2);
   Actor_ShowEmote(ACTOR_GARETS_FATHER, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
-  Import_ActorSetAnimation(ACTOR_GARETS_FATHER, ANIM_SHAKE_HEAD);
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT |
-                                     ACTOR_GARETS_FATHER,
-                                 0, 10);
+  Actor_SetAnimation(ACTOR_GARETS_FATHER, ANIM_SHAKE_HEAD);
+  Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT |
+                                ACTOR_GARETS_FATHER,
+                            0, 10);
   CottageRoomsA_PlayRepeatedAnimationAndWait(ACTOR_GARETS_MOTHER, ANIM_NOD);
   Event_Wait(20);
   CottageRoomsA_PlayRepeatedAnimationAndWait(ACTOR_GARETS_FATHER,
@@ -712,7 +709,7 @@ static void CottageRoomsA_GaretComesHome(void) {
   Event_Wait(40);
   FieldEvent_ShowMessageThenWait(
       SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDMOTHER, 0, 40);
-  Import_ActorSetAnimation(ACTOR_GARETS_MOTHER, ANIM_STILL);
+  Actor_SetAnimation(ACTOR_GARETS_MOTHER, ANIM_STILL);
   Actor_RunRepeatedMotion(ACTOR_GARETS_MOTHER, 2);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER,
                                  0, 10);
@@ -723,13 +720,12 @@ static void CottageRoomsA_GaretComesHome(void) {
   Actor_ShowEmote(ACTOR_GARETS_FATHER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_FaceDirection(ACTOR_GARETS_FATHER, FACING_SOUTH + FACING_STEP, 40);
   Actor_SetAnimationAndWait(ACTOR_GARETS_FATHER, ANIM_NOD);
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_FATHER, 0,
-                                 10);
+  Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_FATHER, 0, 10);
   // No, it really is Garet: both parents turn and call his name together.
   Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
   Actor_FaceDirection(ACTOR_GARETS_GRANDMOTHER, FACING_NORTH + FACING_STEP, 10);
   Actor_Jump(ACTOR_GARETS_GRANDMOTHER, 2, 0);
-  Import_ActorSetAnimation(ACTOR_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
+  Actor_SetAnimation(ACTOR_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(
       SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDMOTHER, 0, 10);
   Actor_ShowEmote(ACTOR_GARETS_MOTHER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -746,7 +742,7 @@ static void CottageRoomsA_GaretComesHome(void) {
   FieldCamera_WaitForArrival();
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_GARET, 0, 20);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_GARET, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 2);
   // His grandfather wakes, and the sleep stops drifting.
   Task_Remove(timedUpdate);
@@ -816,19 +812,19 @@ static void CottageRoomsA_GaretComesHome(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST + FACING_STEP, 10);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Actor_FaceDirection(ACTOR_GARETS_GRANDMOTHER, FACING_EAST + FACING_STEP, 10);
-  Import_ActorSetAnimation(ACTOR_GARETS_MOTHER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARETS_FATHER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARETS_GRANDMOTHER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARETS_MOTHER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARETS_FATHER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARETS_GRANDMOTHER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
   Event_Wait(20);
   // Garet introduces his new friends.
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST + FACING_STEP, 20);
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0, 20);
+  Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 40);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 20);
@@ -841,10 +837,10 @@ static void CottageRoomsA_GaretComesHome(void) {
   Actor_WalkToAndWait(ACTOR_IVAN, 819, 489);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST + FACING_STEP, 40);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-  FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   CottageRoomsA_FamilyNods();
-  Actor_GetById(ACTOR_MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  Actor_Get(ACTOR_MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpritePriority(ACTOR_MIA, 1);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_MIA, 794, 520);
@@ -852,8 +848,8 @@ static void CottageRoomsA_GaretComesHome(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_WalkToAndWait(ACTOR_MIA, 784, 496);
   Actor_FaceDirection(ACTOR_MIA, FACING_WEST + FACING_STEP, 10);
-  Actor_GetById(ACTOR_MIA)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
+  Actor_Get(ACTOR_MIA)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+  Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   CottageRoomsA_FamilyNods();
   Event_Wait(20);
   FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(428), 1);
@@ -863,29 +859,29 @@ static void CottageRoomsA_GaretComesHome(void) {
   Actor_WalkToAndWait(ACTOR_GARETS_MOTHER, 835, 388);
   Actor_FaceDirection(ACTOR_GARETS_MOTHER, FACING_SOUTH + FACING_STEP, 0);
   Actor_ShowEmote(ACTOR_GARETS_MOTHER, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER,
-                                 0, 20);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0,
+                            20);
   FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST + FACING_STEP, 40);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH + FACING_STEP, 20);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
   // His father: enough chit-chat, relax and enjoy your stay.
   Actor_RunRepeatedMotion(ACTOR_GARETS_FATHER, 1);
   Event_Wait(20);
-  Import_ActorSetAnimation(ACTOR_GARETS_FATHER, ANIM_NOD);
-  FieldEvent_ShowMessageThenWait(ACTOR_GARETS_FATHER, 0, 20);
+  Actor_SetAnimation(ACTOR_GARETS_FATHER, ANIM_NOD);
+  Event_ShowMessageThenWait(ACTOR_GARETS_FATHER, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH + FACING_STEP, 40);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
@@ -924,13 +920,13 @@ static void CottageRoomsA_SpawnSleepZ(void) {
   default:
     return;
   }
-  actor = Actor_GetById(actorId);
+  actor = Actor_Get(actorId);
   if (actor == NULL) {
     return;
   }
-  origin = Actor_GetById(ACTOR_GARETS_GRANDFATHER);
+  origin = Actor_Get(ACTOR_GARETS_GRANDFATHER);
   if (origin != NULL) {
-    Import_ActorSetPosition(actorId, origin->x.fixed, origin->z.fixed);
+    Actor_SetPosition(actorId, origin->x.fixed, origin->z.fixed);
   }
   // Restart this sprite above the origin with a small scale and 8.8 motion.
   actor->scaleX = 2 * Q16_ONE / 5;

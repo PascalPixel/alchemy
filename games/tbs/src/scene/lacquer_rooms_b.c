@@ -156,7 +156,7 @@ const struct ActorPlacement *LacquerRoomsB_GetActorPlacements(void) {
 
 /// Reads the leader's facing before a conversation changes actor state.
 static inline u32 LacquerRoomsB_GetLeaderFacing(void) {
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   return leader->facing;
 }
 
@@ -175,7 +175,7 @@ static void LacquerRoomsB_TalkToWeaponMerchant(void) {
     } else {
       Event_SetMessageId(MsgXianHsusInjuryTaughtGoodLesson);
     }
-    Event_ShowMessageAndWait(ACTOR_XIAN_WEAPON_MERCHANT, 0);
+    Event_ShowMessage(ACTOR_XIAN_WEAPON_MERCHANT, 0);
   }
   Event_End();
 }
@@ -195,7 +195,7 @@ static void LacquerRoomsB_TalkToArmorMerchant(void) {
     } else {
       Event_SetMessageId(MsgXianKungFuMakesQuickDoes);
     }
-    Event_ShowMessageAndWait(ACTOR_XIAN_ARMOR_MERCHANT, 0);
+    Event_ShowMessage(ACTOR_XIAN_ARMOR_MERCHANT, 0);
   }
   Event_End();
 }
@@ -213,10 +213,10 @@ static void LacquerRoomsB_TalkToItemMerchant(void) {
     Shop_Run(XIAN_ITEM_STOCK, ACTOR_XIAN_ITEM_MERCHANT);
   } else if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
     Event_SetMessageId(MsgXianXiansSpecialArmorNotSuited);
-    Event_ShowMessageAndWait(ACTOR_XIAN_ITEM_MERCHANT, 0);
+    Event_ShowMessage(ACTOR_XIAN_ITEM_MERCHANT, 0);
   } else {
     Event_SetMessageId(MsgXianDoPlanCrossDesertWarrior);
-    Event_AskYesNoAndShowResponse(ACTOR_XIAN_ITEM_MERCHANT, 0);
+    Event_AskYesNo(ACTOR_XIAN_ITEM_MERCHANT, 0);
   }
   Event_End();
 }
@@ -236,7 +236,7 @@ static void LacquerRoomsB_TalkToInnkeeper(void) {
     } else {
       Event_SetMessageId(MsgXianWeHaveFewCustomersThese);
     }
-    Event_ShowMessageAndWait(ACTOR_XIAN_INNKEEPER, 0);
+    Event_ShowMessage(ACTOR_XIAN_INNKEEPER, 0);
   }
   Event_End();
 }
@@ -248,7 +248,7 @@ static void LacquerRoomsB_TalkToInnkeeper(void) {
 static void LacquerRoomsB_AskAboutSilkRoad(void) {
   Event_Start();
   Event_SetMessageId(MsgXianSomethingWrongOnSilkRoad);
-  Event_AskYesNoAndShowResponse(ACTOR_YOUNG_MAN_ON_SILK_ROAD, 0);
+  Event_AskYesNo(ACTOR_YOUNG_MAN_ON_SILK_ROAD, 0);
   Event_End();
 }
 
@@ -258,7 +258,7 @@ static void LacquerRoomsB_AskAboutSilkRoad(void) {
 static void LacquerRoomsB_AskAboutAltinMonsters(void) {
   Event_Start();
   Event_SetMessageId(MsgXianDidMonstersInAltinSpit);
-  Event_AskYesNoAndShowResponse(ACTOR_OLD_MAN_ON_THE_ALTIN_ROAD, 0);
+  Event_AskYesNo(ACTOR_OLD_MAN_ON_THE_ALTIN_ROAD, 0);
   Event_End();
 }
 
@@ -270,11 +270,11 @@ static void LacquerRoomsB_FeizhiThanksParty(void) {
   Event_Start();
   Event_SetMessageId(MsgXianWarriorWelcome);
   Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
-  Actor_SetAngleToward(ACTOR_FEIZHI, ACTOR_HSU, 0);
+  Actor_FaceActor(ACTOR_FEIZHI, ACTOR_HSU, 0);
   Event_Wait(60);
-  Actor_SetAngleToward(ACTOR_FEIZHI, ACTOR_PARTY_LEADER, 0);
+  Actor_FaceActor(ACTOR_FEIZHI, ACTOR_PARTY_LEADER, 0);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_FEIZHI, 0);
+  Event_ShowMessage(ACTOR_FEIZHI, 0);
   Event_End();
 }
 

@@ -289,7 +289,7 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 actorId) {
   s32 velocityX;
   s32 velocityZ;
 
-  actor = Actor_GetById(actorId);
+  actor = Actor_Get(actorId);
   options.update = FieldEffect_AdvanceMotion;
   for (angleStep = 0; angleStep <= 16; angleStep += 2) {
     angle = angleStep << 12;
@@ -344,7 +344,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
 static void CrossboneIsle_CatchNut(void) {
   Event_Start();
-  Import_ActorSetPosition(ACTOR_ISLE_NUT, 0, 0);
+  Actor_SetPosition(ACTOR_ISLE_NUT, 0, 0);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_NUT_CAUGHT);
   ItemDisplay_ShowItem(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
@@ -479,7 +479,7 @@ static void CrossboneIsle_RestoreSunkPillar(void) {
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(42, 10, 1, 1, 40, 10);
   } else {
-    Actor_GetById(ACTOR_SINKING_PILLAR)->motionFlags = cleared;
+    Actor_Get(ACTOR_SINKING_PILLAR)->motionFlags = cleared;
   }
 }
 
@@ -493,7 +493,7 @@ static void CrossboneIsle_MovePillar(void) {
   struct MainRoutineWork *state;
   s32 column;
 
-  pillar = Actor_GetById(ACTOR_SINKING_PILLAR);
+  pillar = Actor_Get(ACTOR_SINKING_PILLAR);
   column = pillar->x.fixed >> 20;
   if (column != 40) {
     return;
@@ -519,7 +519,7 @@ static void CrossboneIsle_MovePillar(void) {
   Sound_Play(SE_WHOOSH);
   Event_Wait(40);
 
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_SINKING_PILLAR), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_SINKING_PILLAR), 0);
   Actor_SetSpritePriority(ACTOR_SINKING_PILLAR, 3);
 
   pillar->motionFlags = 0;
@@ -637,12 +637,12 @@ static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
 static void CrossboneIsle_UnusedGrowFirstPlant(s32 actorId) {
   s32 fixedX = PIXELS(304);
   s32 fixedZ = PIXELS(368);
-  struct Actor *actor = Actor_GetById(ACTOR_FIRST_PLANT);
+  struct Actor *actor = Actor_Get(ACTOR_FIRST_PLANT);
 
   if (actor != 0) {
     actor->collisionFlags = 0;
   }
-  Actor_SetSpriteFlags(Actor_GetById(actorId), 0);
+  Actor_SetSpriteFlags(Actor_Get(actorId), 0);
   MapGrid_SetCellBehaviorAt(0, fixedX, fixedZ, CELL_BEHAVIOR_CLIMB);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN);
 }
@@ -651,12 +651,12 @@ static void CrossboneIsle_UnusedGrowFirstPlant(s32 actorId) {
 static void CrossboneIsle_GrowSecondPlant(s32 actorId) {
   s32 fixedX = PIXELS(80);
   s32 fixedZ = PIXELS(368);
-  struct Actor *actor = Actor_GetById(ACTOR_FIRST_PLANT + 1);
+  struct Actor *actor = Actor_Get(ACTOR_FIRST_PLANT + 1);
 
   if (actor != 0) {
     actor->collisionFlags = 0;
   }
-  Actor_SetSpriteFlags(Actor_GetById(actorId), 0);
+  Actor_SetSpriteFlags(Actor_Get(actorId), 0);
   MapGrid_SetCellBehaviorAt(0, fixedX, fixedZ, CELL_BEHAVIOR_CLIMB);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 1);
 }
@@ -665,12 +665,12 @@ static void CrossboneIsle_GrowSecondPlant(s32 actorId) {
 static void CrossboneIsle_GrowThirdPlant(s32 actorId) {
   s32 fixedX = PIXELS(96);
   s32 fixedZ = PIXELS(336);
-  struct Actor *actor = Actor_GetById(ACTOR_FIRST_PLANT + 2);
+  struct Actor *actor = Actor_Get(ACTOR_FIRST_PLANT + 2);
 
   if (actor != 0) {
     actor->collisionFlags = 0;
   }
-  Actor_SetSpriteFlags(Actor_GetById(actorId), 0);
+  Actor_SetSpriteFlags(Actor_Get(actorId), 0);
   MapGrid_SetCellBehaviorAt(0, fixedX, fixedZ, CELL_BEHAVIOR_CLIMB);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 2);
 }
@@ -681,12 +681,12 @@ static void CrossboneIsle_GrowFourthPlant(s32 actorId) {
   s32 fixedZ = PIXELS(320);
   s32 secondFixedX = PIXELS(752);
   s32 secondFixedZ = PIXELS(320);
-  struct Actor *actor = Actor_GetById(ACTOR_FIRST_PLANT + 3);
+  struct Actor *actor = Actor_Get(ACTOR_FIRST_PLANT + 3);
 
   if (actor != 0) {
     actor->collisionFlags = 0;
   }
-  Actor_SetSpriteFlags(Actor_GetById(actorId), 0);
+  Actor_SetSpriteFlags(Actor_Get(actorId), 0);
   MapGrid_SetCellBehaviorAt(0, fixedX, fixedZ, CELL_BEHAVIOR_CLIMB);
   MapGrid_SetCellBehaviorAt(0, secondFixedX, secondFixedZ, CELL_BEHAVIOR_CLIMB);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 3);
@@ -777,8 +777,8 @@ static void CrossboneIsle_MoveSelectedActorAndLog(s32 actorId, s32 xOffset,
   s32 fixedX;
   s32 fixedZ;
 
-  selectedActor = Actor_GetById(gMainRoutineWork.leaderActorId);
-  logActor = Actor_GetById(actorId);
+  selectedActor = Actor_Get(gMainRoutineWork.leaderActorId);
+  logActor = Actor_Get(actorId);
   Event_Start();
   {
     fixedX = ((selectedActor->x.fixed + (xOffset * PIXELS(1))) & 0xFFF00000) +
@@ -820,7 +820,7 @@ static void CrossboneIsle_DrawHorizontalLogFootprint(s32 actorId,
                                                      s32 sourceColumn,
                                                      s32 sourceRow,
                                                      s32 unused) {
-  struct Actor *actor = Actor_GetById(actorId);
+  struct Actor *actor = Actor_Get(actorId);
 
   if (actor != 0) {
     s32 priorityFlags;
@@ -842,7 +842,7 @@ static void CrossboneIsle_DrawHorizontalLogFootprint(s32 actorId,
 static void CrossboneIsle_DrawVerticalLogFootprint(s32 actorId,
                                                    s32 sourceColumn,
                                                    s32 sourceRow, s32 unused) {
-  struct Actor *actor = Actor_GetById(actorId);
+  struct Actor *actor = Actor_Get(actorId);
 
   if (actor != 0) {
     s32 priorityFlags;
@@ -862,8 +862,8 @@ static void CrossboneIsle_DrawVerticalLogFootprint(s32 actorId,
 
 /// Runs the two animation changes used when touching a puzzle log.
 static void CrossboneIsle_AnimateTouchedLog(int actorId) {
-  Import_ActorSetAnimation(actorId, 1);
-  Import_ActorSetAnimation(actorId, 2);
+  Actor_SetAnimation(actorId, 1);
+  Actor_SetAnimation(actorId, 2);
 }
 
 /// Draws all twelve log footprints in Crossbone Isle Cave
@@ -985,14 +985,14 @@ static s32 CrossboneIsle_TryHop(struct Actor *actor,
     *motionFlags = (u8)movingFlags;
     Actor_SetSpriteFlags(actor, 0);
 #if TBS_PATCH_1
-    Actor_SetPositionAndCommit(ACTOR_PARTY_LEADER, destination.x >> 16,
-                               destination.z >> 16);
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, destination.x >> 16,
+                        destination.z >> 16);
 #else
     {
       s16 *pixelCoordinates = (s16 *)requested;
 
-      Actor_SetPositionAndCommit(ACTOR_PARTY_LEADER, pixelCoordinates[1],
-                                 pixelCoordinates[5]);
+      Actor_MoveToAndWait(ACTOR_PARTY_LEADER, pixelCoordinates[1],
+                          pixelCoordinates[5]);
     }
 #endif
     Actor_SelectAnimation(actor, 6);
@@ -1006,7 +1006,7 @@ static s32 CrossboneIsle_TryHop(struct Actor *actor,
 
 /// Walking north against a log's edge.
 static s32 CrossboneIsle_HopNorth(void) {
-  struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct FieldPosition destination;
 
   destination.x = actor->x.fixed;
@@ -1017,7 +1017,7 @@ static s32 CrossboneIsle_HopNorth(void) {
 
 /// Walking south against a log's edge, or at the Pirate Ship's step trigger 20.
 static s32 CrossboneIsle_HopSouth(void) {
-  struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct FieldPosition destination;
 
   destination.x = actor->x.fixed;
@@ -1028,7 +1028,7 @@ static s32 CrossboneIsle_HopSouth(void) {
 
 /// Walking west against a log's edge.
 static s32 CrossboneIsle_HopWest(void) {
-  struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct FieldPosition destination;
 
   destination.x = actor->x.fixed + -PIXELS(32);
@@ -1039,7 +1039,7 @@ static s32 CrossboneIsle_HopWest(void) {
 
 /// Walking east against a log's edge.
 static s32 CrossboneIsle_HopEast(void) {
-  struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct FieldPosition destination;
 
   destination.x = actor->x.fixed + PIXELS(32);
@@ -1050,10 +1050,10 @@ static s32 CrossboneIsle_HopEast(void) {
 
 /// Walking north on the first log drifts it north.
 static void CrossboneIsle_SlideFirstLogNorth(void) {
-  s32 actorX = Actor_GetById(ACTOR_FIRST_LOG)->x.fixed >> 20;
-  s32 actorZ = Actor_GetById(ACTOR_FIRST_LOG)->z.fixed >> 20;
-  s32 fifthLogColumn = Actor_GetById(ACTOR_FIFTH_LOG)->x.fixed >> 20;
-  s32 eighthLogColumn = Actor_GetById(ACTOR_EIGHTH_LOG)->x.fixed >> 20;
+  s32 actorX = Actor_Get(ACTOR_FIRST_LOG)->x.fixed >> 20;
+  s32 actorZ = Actor_Get(ACTOR_FIRST_LOG)->z.fixed >> 20;
+  s32 fifthLogColumn = Actor_Get(ACTOR_FIFTH_LOG)->x.fixed >> 20;
+  s32 eighthLogColumn = Actor_Get(ACTOR_EIGHTH_LOG)->x.fixed >> 20;
 
   if (actorZ == 19) {
     if (fifthLogColumn == 24) {
@@ -1085,7 +1085,7 @@ static void CrossboneIsle_SlideFirstLogNorth(void) {
   }
   wait(2);
   {
-    s32 routeEndZ = Actor_GetById(ACTOR_FIRST_LOG)->z.fixed >> 20;
+    s32 routeEndZ = Actor_Get(ACTOR_FIRST_LOG)->z.fixed >> 20;
     s32 routeX = actorX - 1;
 
     MapGrid_CopyCellAttributes(routeX, actorZ, 3, 1, routeX, routeEndZ);
@@ -1099,7 +1099,7 @@ static inline void CrossboneIsle_RedrawHorizontalLogRoute(s32 actorId,
                                                           s32 column, s32 row) {
   wait(2);
   {
-    s32 destinationRow = Actor_GetById(actorId)->z.fixed >> 20;
+    s32 destinationRow = Actor_Get(actorId)->z.fixed >> 20;
     s32 footprintColumn = column - 1;
 
     MapGrid_CopyCellAttributes(footprintColumn, row, 3, 1, footprintColumn,
@@ -1114,7 +1114,7 @@ static inline void CrossboneIsle_RedrawVerticalLogRoute(s32 actorId, s32 column,
                                                         s32 row) {
   wait(2);
   {
-    s32 destinationColumn = Actor_GetById(actorId)->x.fixed >> 20;
+    s32 destinationColumn = Actor_Get(actorId)->x.fixed >> 20;
     s32 footprintRow = row - 1;
 
     MapGrid_CopyCellAttributes(column, footprintRow, 1, 3, destinationColumn,
@@ -1125,9 +1125,9 @@ static inline void CrossboneIsle_RedrawVerticalLogRoute(s32 actorId, s32 column,
 
 /// Walking south on the first log drifts it south.
 static void CrossboneIsle_SlideFirstLogSouth(void) {
-  s32 column = Actor_GetById(ACTOR_FIRST_LOG)->x.fixed >> 20;
-  s32 row = Actor_GetById(ACTOR_FIRST_LOG)->z.fixed >> 20;
-  s32 fifthLogColumn = Actor_GetById(ACTOR_FIFTH_LOG)->x.fixed >> 20;
+  s32 column = Actor_Get(ACTOR_FIRST_LOG)->x.fixed >> 20;
+  s32 row = Actor_Get(ACTOR_FIRST_LOG)->z.fixed >> 20;
+  s32 fifthLogColumn = Actor_Get(ACTOR_FIFTH_LOG)->x.fixed >> 20;
 
   if (row == 7) {
     if (fifthLogColumn == 24) {
@@ -1151,10 +1151,10 @@ static void CrossboneIsle_SlideFirstLogSouth(void) {
 
 /// Walking north on the third log drifts it north.
 static void CrossboneIsle_SlideThirdLogNorth(void) {
-  s32 column = Actor_GetById(ACTOR_THIRD_LOG)->x.fixed >> 20;
-  s32 row = Actor_GetById(ACTOR_THIRD_LOG)->z.fixed >> 20;
-  s32 sixthLogColumn = Actor_GetById(ACTOR_SIXTH_LOG)->x.fixed >> 20;
-  s32 eighthLogColumn = Actor_GetById(ACTOR_EIGHTH_LOG)->x.fixed >> 20;
+  s32 column = Actor_Get(ACTOR_THIRD_LOG)->x.fixed >> 20;
+  s32 row = Actor_Get(ACTOR_THIRD_LOG)->z.fixed >> 20;
+  s32 sixthLogColumn = Actor_Get(ACTOR_SIXTH_LOG)->x.fixed >> 20;
+  s32 eighthLogColumn = Actor_Get(ACTOR_EIGHTH_LOG)->x.fixed >> 20;
 
   if (row == 18) {
     if (eighthLogColumn >= 31 && eighthLogColumn <= 33) {
@@ -1181,8 +1181,8 @@ static void CrossboneIsle_SlideThirdLogNorth(void) {
 
 /// Walking south on the third log drifts it south.
 static void CrossboneIsle_SlideThirdLogSouth(void) {
-  s32 column = Actor_GetById(ACTOR_THIRD_LOG)->x.fixed >> 20;
-  s32 row = Actor_GetById(ACTOR_THIRD_LOG)->z.fixed >> 20;
+  s32 column = Actor_Get(ACTOR_THIRD_LOG)->x.fixed >> 20;
+  s32 row = Actor_Get(ACTOR_THIRD_LOG)->z.fixed >> 20;
 
   if (row != 18) {
     if (row == 10) {
@@ -1197,17 +1197,17 @@ static void CrossboneIsle_SlideThirdLogSouth(void) {
 
 /// Walking west on the fourth log drifts it west.
 static void CrossboneIsle_SlideFourthLogWest(void) {
-  s32 column = Actor_GetById(ACTOR_FOURTH_LOG)->x.fixed >> 20;
-  s32 row = Actor_GetById(ACTOR_FOURTH_LOG)->z.fixed >> 20;
+  s32 column = Actor_Get(ACTOR_FOURTH_LOG)->x.fixed >> 20;
+  s32 row = Actor_Get(ACTOR_FOURTH_LOG)->z.fixed >> 20;
 
   if (column != 30) {
     if (column == 34) {
-      if ((Actor_GetById(ACTOR_THIRD_LOG)->z.fixed >> 20) == 18) {
+      if ((Actor_Get(ACTOR_THIRD_LOG)->z.fixed >> 20) == 18) {
         return;
       }
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_FOURTH_LOG, -64, 0);
     } else if (column == 36) {
-      if ((Actor_GetById(ACTOR_THIRD_LOG)->z.fixed >> 20) == 18) {
+      if ((Actor_Get(ACTOR_THIRD_LOG)->z.fixed >> 20) == 18) {
         CrossboneIsle_MoveSelectedActorAndLog(ACTOR_FOURTH_LOG, -32, 0);
       } else {
         CrossboneIsle_MoveSelectedActorAndLog(ACTOR_FOURTH_LOG, -96, 0);
@@ -1219,12 +1219,12 @@ static void CrossboneIsle_SlideFourthLogWest(void) {
 
 /// Walking east on the fourth log drifts it east.
 static void CrossboneIsle_SlideFourthLogEast(void) {
-  s32 column = Actor_GetById(ACTOR_FOURTH_LOG)->x.fixed >> 20;
-  s32 row = Actor_GetById(ACTOR_FOURTH_LOG)->z.fixed >> 20;
+  s32 column = Actor_Get(ACTOR_FOURTH_LOG)->x.fixed >> 20;
+  s32 row = Actor_Get(ACTOR_FOURTH_LOG)->z.fixed >> 20;
 
   if (column != 36) {
     if (column == 30) {
-      if ((Actor_GetById(ACTOR_THIRD_LOG)->z.fixed >> 20) == 18) {
+      if ((Actor_Get(ACTOR_THIRD_LOG)->z.fixed >> 20) == 18) {
         return;
       }
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_FOURTH_LOG, 96, 0);
@@ -1237,8 +1237,8 @@ static void CrossboneIsle_SlideFourthLogEast(void) {
 
 /// Walking west on the fifth log drifts it west.
 static void CrossboneIsle_SlideFifthLogWest(void) {
-  s32 column = Actor_GetById(ACTOR_FIFTH_LOG)->x.fixed >> 20;
-  s32 row = Actor_GetById(ACTOR_FIFTH_LOG)->z.fixed >> 20;
+  s32 column = Actor_Get(ACTOR_FIFTH_LOG)->x.fixed >> 20;
+  s32 row = Actor_Get(ACTOR_FIFTH_LOG)->z.fixed >> 20;
 
   if (column == 36) {
     CrossboneIsle_MoveSelectedActorAndLog(ACTOR_FIFTH_LOG, -96, 0);
@@ -1254,8 +1254,8 @@ static void CrossboneIsle_SlideFifthLogWest(void) {
 
 /// Walking east on the fifth log drifts it east.
 static void CrossboneIsle_SlideFifthLogEast(void) {
-  s32 column = Actor_GetById(ACTOR_FIFTH_LOG)->x.fixed >> 20;
-  s32 row = Actor_GetById(ACTOR_FIFTH_LOG)->z.fixed >> 20;
+  s32 column = Actor_Get(ACTOR_FIFTH_LOG)->x.fixed >> 20;
+  s32 row = Actor_Get(ACTOR_FIFTH_LOG)->z.fixed >> 20;
 
   if (column == 24) {
     CrossboneIsle_MoveSelectedActorAndLog(ACTOR_FIFTH_LOG, 96, 0);
@@ -1270,10 +1270,10 @@ static void CrossboneIsle_SlideFifthLogEast(void) {
 
 /// Walking west on the sixth log drifts it west.
 static void CrossboneIsle_SlideSixthLogWest(void) {
-  s32 column = Actor_GetById(ACTOR_SIXTH_LOG)->x.fixed >> 20;
-  s32 row = Actor_GetById(ACTOR_SIXTH_LOG)->z.fixed >> 20;
-  s32 thirdLogRow = Actor_GetById(ACTOR_THIRD_LOG)->z.fixed >> 20;
-  s32 eighthLogColumn = Actor_GetById(ACTOR_EIGHTH_LOG)->x.fixed >> 20;
+  s32 column = Actor_Get(ACTOR_SIXTH_LOG)->x.fixed >> 20;
+  s32 row = Actor_Get(ACTOR_SIXTH_LOG)->z.fixed >> 20;
+  s32 thirdLogRow = Actor_Get(ACTOR_THIRD_LOG)->z.fixed >> 20;
+  s32 eighthLogColumn = Actor_Get(ACTOR_EIGHTH_LOG)->x.fixed >> 20;
 
   if (column == 36) {
     if (eighthLogColumn == 34) {
@@ -1320,10 +1320,10 @@ static void CrossboneIsle_SlideSixthLogWest(void) {
 
 /// Walking east on the sixth log drifts it east.
 static void CrossboneIsle_SlideSixthLogEast(void) {
-  s32 column = Actor_GetById(ACTOR_SIXTH_LOG)->x.fixed >> 20;
-  s32 row = Actor_GetById(ACTOR_SIXTH_LOG)->z.fixed >> 20;
+  s32 column = Actor_Get(ACTOR_SIXTH_LOG)->x.fixed >> 20;
+  s32 row = Actor_Get(ACTOR_SIXTH_LOG)->z.fixed >> 20;
 
-  Actor_GetById(ACTOR_EIGHTH_LOG);
+  Actor_Get(ACTOR_EIGHTH_LOG);
   if (column == 25) {
     CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SIXTH_LOG, 96, 0);
     CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SIXTH_LOG, 80, 0);
@@ -1341,10 +1341,10 @@ static void CrossboneIsle_SlideSixthLogEast(void) {
 
 /// Walking west on the eighth log drifts it west.
 static void CrossboneIsle_SlideEighthLogWest(void) {
-  s32 column = Actor_GetById(ACTOR_EIGHTH_LOG)->x.fixed >> 20;
-  s32 row = Actor_GetById(ACTOR_EIGHTH_LOG)->z.fixed >> 20;
-  s32 firstLogRow = Actor_GetById(ACTOR_FIRST_LOG)->z.fixed >> 20;
-  s32 thirdLogRow = Actor_GetById(ACTOR_THIRD_LOG)->z.fixed >> 20;
+  s32 column = Actor_Get(ACTOR_EIGHTH_LOG)->x.fixed >> 20;
+  s32 row = Actor_Get(ACTOR_EIGHTH_LOG)->z.fixed >> 20;
+  s32 firstLogRow = Actor_Get(ACTOR_FIRST_LOG)->z.fixed >> 20;
+  s32 thirdLogRow = Actor_Get(ACTOR_THIRD_LOG)->z.fixed >> 20;
 
   if (column == 35) {
     if (thirdLogRow == 7) {
@@ -1375,10 +1375,10 @@ static void CrossboneIsle_SlideEighthLogWest(void) {
 
 /// Walking east on the eighth log drifts it east.
 static void CrossboneIsle_SlideEighthLogEast(void) {
-  s32 column = Actor_GetById(ACTOR_EIGHTH_LOG)->x.fixed >> 20;
-  s32 row = Actor_GetById(ACTOR_EIGHTH_LOG)->z.fixed >> 20;
-  s32 thirdLogRow = Actor_GetById(ACTOR_THIRD_LOG)->z.fixed >> 20;
-  s32 sixthLogColumn = Actor_GetById(ACTOR_SIXTH_LOG)->x.fixed >> 20;
+  s32 column = Actor_Get(ACTOR_EIGHTH_LOG)->x.fixed >> 20;
+  s32 row = Actor_Get(ACTOR_EIGHTH_LOG)->z.fixed >> 20;
+  s32 thirdLogRow = Actor_Get(ACTOR_THIRD_LOG)->z.fixed >> 20;
+  s32 sixthLogColumn = Actor_Get(ACTOR_SIXTH_LOG)->x.fixed >> 20;
 
   if (column == 24) {
     if (thirdLogRow == 7 || sixthLogColumn == 31) {
@@ -1423,9 +1423,9 @@ static void CrossboneIsle_SlideEighthLogEast(void) {
 
 /// Walking north on the tenth log drifts it north.
 static void CrossboneIsle_SlideTenthLogNorth(void) {
-  s32 column = Actor_GetById(ACTOR_TENTH_LOG)->x.fixed >> 20;
-  s32 row = Actor_GetById(ACTOR_TENTH_LOG)->z.fixed >> 20;
-  s32 twelfthLogColumn = Actor_GetById(ACTOR_TWELFTH_LOG)->x.fixed >> 20;
+  s32 column = Actor_Get(ACTOR_TENTH_LOG)->x.fixed >> 20;
+  s32 row = Actor_Get(ACTOR_TENTH_LOG)->z.fixed >> 20;
+  s32 twelfthLogColumn = Actor_Get(ACTOR_TWELFTH_LOG)->x.fixed >> 20;
 
   if (row == 19) {
     if (twelfthLogColumn >= 3 && twelfthLogColumn <= 5) {
@@ -1446,8 +1446,8 @@ static void CrossboneIsle_SlideTenthLogNorth(void) {
 
 /// Walking south on the tenth log drifts it south.
 static void CrossboneIsle_SlideTenthLogSouth(void) {
-  s32 column = Actor_GetById(ACTOR_TENTH_LOG)->x.fixed >> 20;
-  s32 row = Actor_GetById(ACTOR_TENTH_LOG)->z.fixed >> 20;
+  s32 column = Actor_Get(ACTOR_TENTH_LOG)->x.fixed >> 20;
+  s32 row = Actor_Get(ACTOR_TENTH_LOG)->z.fixed >> 20;
 
   if (row == 15) {
     CrossboneIsle_MoveSelectedActorAndLog(ACTOR_TENTH_LOG, 0, 64);
@@ -1470,11 +1470,11 @@ static void CrossboneIsle_SlideEleventhLogNorth(void) {
   s32 seventhLogColumn;
   s32 ninthLogColumn;
 
-  column = Actor_GetById(ACTOR_ELEVENTH_LOG)->x.fixed >> 20;
-  row = Actor_GetById(ACTOR_ELEVENTH_LOG)->z.fixed >> 20;
-  twelfthLogColumn = Actor_GetById(ACTOR_TWELFTH_LOG)->x.fixed >> 20;
-  seventhLogColumn = Actor_GetById(ACTOR_SEVENTH_LOG)->x.fixed >> 20;
-  ninthLogColumn = Actor_GetById(ACTOR_NINTH_LOG)->x.fixed >> 20;
+  column = Actor_Get(ACTOR_ELEVENTH_LOG)->x.fixed >> 20;
+  row = Actor_Get(ACTOR_ELEVENTH_LOG)->z.fixed >> 20;
+  twelfthLogColumn = Actor_Get(ACTOR_TWELFTH_LOG)->x.fixed >> 20;
+  seventhLogColumn = Actor_Get(ACTOR_SEVENTH_LOG)->x.fixed >> 20;
+  ninthLogColumn = Actor_Get(ACTOR_NINTH_LOG)->x.fixed >> 20;
   if (row == 19) {
     if (IS_IN_LOG_CROSSING_COLUMNS(twelfthLogColumn)) {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_ELEVENTH_LOG, 0, -16);
@@ -1530,8 +1530,7 @@ static void CrossboneIsle_SlideEleventhLogNorth(void) {
   }
   wait(2);
   MapGrid_CopyCellAttributeRect(column - 1, row, 3, 1, column - 1,
-                                Actor_GetById(ACTOR_ELEVENTH_LOG)->z.fixed >>
-                                    20);
+                                Actor_Get(ACTOR_ELEVENTH_LOG)->z.fixed >> 20);
   MapGrid_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
 }
 
@@ -1544,10 +1543,10 @@ static void CrossboneIsle_SlideEleventhLogSouth(void) {
   s32 twelfthLogColumn;
   s32 seventhLogColumn;
 
-  column = Actor_GetById(ACTOR_ELEVENTH_LOG)->x.fixed >> 20;
-  row = Actor_GetById(ACTOR_ELEVENTH_LOG)->z.fixed >> 20;
-  twelfthLogColumn = Actor_GetById(ACTOR_TWELFTH_LOG)->x.fixed >> 20;
-  seventhLogColumn = Actor_GetById(ACTOR_SEVENTH_LOG)->x.fixed >> 20;
+  column = Actor_Get(ACTOR_ELEVENTH_LOG)->x.fixed >> 20;
+  row = Actor_Get(ACTOR_ELEVENTH_LOG)->z.fixed >> 20;
+  twelfthLogColumn = Actor_Get(ACTOR_TWELFTH_LOG)->x.fixed >> 20;
+  seventhLogColumn = Actor_Get(ACTOR_SEVENTH_LOG)->x.fixed >> 20;
 
   if (row == 9) {
     if ((u32)(seventhLogColumn - 6) <= 2) {
@@ -1589,8 +1588,7 @@ static void CrossboneIsle_SlideEleventhLogSouth(void) {
   wait(2);
 
   MapGrid_CopyCellAttributeRect(column - 1, row, 3, 1, column - 1,
-                                Actor_GetById(ACTOR_ELEVENTH_LOG)->z.fixed >>
-                                    20);
+                                Actor_Get(ACTOR_ELEVENTH_LOG)->z.fixed >> 20);
   MapGrid_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
 }
 
@@ -1605,11 +1603,11 @@ static void CrossboneIsle_SlideSecondLogNorth(void) {
   s32 seventhLogColumn;
   s32 ninthLogColumn;
 
-  column = Actor_GetById(ACTOR_SECOND_LOG)->x.fixed >> 20;
-  row = Actor_GetById(ACTOR_SECOND_LOG)->z.fixed >> 20;
-  twelfthLogColumn = Actor_GetById(ACTOR_TWELFTH_LOG)->x.fixed >> 20;
-  seventhLogColumn = Actor_GetById(ACTOR_SEVENTH_LOG)->x.fixed >> 20;
-  ninthLogColumn = Actor_GetById(ACTOR_NINTH_LOG)->x.fixed >> 20;
+  column = Actor_Get(ACTOR_SECOND_LOG)->x.fixed >> 20;
+  row = Actor_Get(ACTOR_SECOND_LOG)->z.fixed >> 20;
+  twelfthLogColumn = Actor_Get(ACTOR_TWELFTH_LOG)->x.fixed >> 20;
+  seventhLogColumn = Actor_Get(ACTOR_SEVENTH_LOG)->x.fixed >> 20;
+  ninthLogColumn = Actor_Get(ACTOR_NINTH_LOG)->x.fixed >> 20;
   if (row == 19) {
     if (IS_IN_LOG_CROSSING_COLUMNS(twelfthLogColumn)) {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SECOND_LOG, 0, -16);
@@ -1666,7 +1664,7 @@ static void CrossboneIsle_SlideSecondLogNorth(void) {
   }
   wait(2);
   MapGrid_CopyCellAttributeRect(column - 1, row, 3, 1, column - 1,
-                                Actor_GetById(ACTOR_SECOND_LOG)->z.fixed >> 20);
+                                Actor_Get(ACTOR_SECOND_LOG)->z.fixed >> 20);
   MapGrid_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
 }
 
@@ -1680,11 +1678,11 @@ static void CrossboneIsle_SlideSecondLogSouth(void) {
   s32 seventhLogColumn;
   s32 ninthLogColumn;
 
-  column = Actor_GetById(ACTOR_SECOND_LOG)->x.fixed >> 20;
-  row = Actor_GetById(ACTOR_SECOND_LOG)->z.fixed >> 20;
-  twelfthLogColumn = Actor_GetById(ACTOR_TWELFTH_LOG)->x.fixed >> 20;
-  seventhLogColumn = Actor_GetById(ACTOR_SEVENTH_LOG)->x.fixed >> 20;
-  ninthLogColumn = Actor_GetById(ACTOR_NINTH_LOG)->x.fixed >> 20;
+  column = Actor_Get(ACTOR_SECOND_LOG)->x.fixed >> 20;
+  row = Actor_Get(ACTOR_SECOND_LOG)->z.fixed >> 20;
+  twelfthLogColumn = Actor_Get(ACTOR_TWELFTH_LOG)->x.fixed >> 20;
+  seventhLogColumn = Actor_Get(ACTOR_SEVENTH_LOG)->x.fixed >> 20;
+  ninthLogColumn = Actor_Get(ACTOR_NINTH_LOG)->x.fixed >> 20;
 
   if (row == 8) {
     if ((u32)(ninthLogColumn - 9) <= 2) {
@@ -1730,7 +1728,7 @@ static void CrossboneIsle_SlideSecondLogSouth(void) {
   wait(2);
 
   MapGrid_CopyCellAttributeRect(column - 1, row, 3, 1, column - 1,
-                                Actor_GetById(ACTOR_SECOND_LOG)->z.fixed >> 20);
+                                Actor_Get(ACTOR_SECOND_LOG)->z.fixed >> 20);
   MapGrid_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
 }
 
@@ -1742,11 +1740,11 @@ static void CrossboneIsle_SlideTwelfthLogWest(void) {
   s32 eleventhLogRow;
   s32 secondLogRow;
 
-  column = Actor_GetById(ACTOR_TWELFTH_LOG)->x.fixed >> 20;
-  row = Actor_GetById(ACTOR_TWELFTH_LOG)->z.fixed >> 20;
-  tenthLogRow = Actor_GetById(ACTOR_TENTH_LOG)->z.fixed >> 20;
-  eleventhLogRow = Actor_GetById(ACTOR_ELEVENTH_LOG)->z.fixed >> 20;
-  secondLogRow = Actor_GetById(ACTOR_SECOND_LOG)->z.fixed >> 20;
+  column = Actor_Get(ACTOR_TWELFTH_LOG)->x.fixed >> 20;
+  row = Actor_Get(ACTOR_TWELFTH_LOG)->z.fixed >> 20;
+  tenthLogRow = Actor_Get(ACTOR_TENTH_LOG)->z.fixed >> 20;
+  eleventhLogRow = Actor_Get(ACTOR_ELEVENTH_LOG)->z.fixed >> 20;
+  secondLogRow = Actor_Get(ACTOR_SECOND_LOG)->z.fixed >> 20;
   if (column == 3) {
     return;
   }
@@ -1800,7 +1798,7 @@ static void CrossboneIsle_SlideTwelfthLogWest(void) {
   }
   wait(2);
   MapGrid_CopyCellAttributeRect(column, row - 1, 1, 3,
-                                Actor_GetById(ACTOR_TWELFTH_LOG)->x.fixed >> 20,
+                                Actor_Get(ACTOR_TWELFTH_LOG)->x.fixed >> 20,
                                 row - 1);
   MapGrid_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
 }
@@ -1812,10 +1810,10 @@ static void CrossboneIsle_SlideTwelfthLogEast(void) {
   s32 eleventhLogRow;
   s32 secondLogRow;
 
-  column = Actor_GetById(ACTOR_TWELFTH_LOG)->x.fixed >> 20;
-  row = Actor_GetById(ACTOR_TWELFTH_LOG)->z.fixed >> 20;
-  eleventhLogRow = Actor_GetById(ACTOR_ELEVENTH_LOG)->z.fixed >> 20;
-  secondLogRow = Actor_GetById(ACTOR_SECOND_LOG)->z.fixed >> 20;
+  column = Actor_Get(ACTOR_TWELFTH_LOG)->x.fixed >> 20;
+  row = Actor_Get(ACTOR_TWELFTH_LOG)->z.fixed >> 20;
+  eleventhLogRow = Actor_Get(ACTOR_ELEVENTH_LOG)->z.fixed >> 20;
+  secondLogRow = Actor_Get(ACTOR_SECOND_LOG)->z.fixed >> 20;
   if (column == 3) {
     if (eleventhLogRow == 15) {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_TWELFTH_LOG, 32, 0);
@@ -1852,7 +1850,7 @@ static void CrossboneIsle_SlideTwelfthLogEast(void) {
   }
   wait(2);
   MapGrid_CopyCellAttributeRect(column, row - 1, 1, 3,
-                                Actor_GetById(ACTOR_TWELFTH_LOG)->x.fixed >> 20,
+                                Actor_Get(ACTOR_TWELFTH_LOG)->x.fixed >> 20,
                                 row - 1);
   MapGrid_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
 }
@@ -1865,10 +1863,10 @@ static void CrossboneIsle_SlideSeventhLogWest(void) {
   s32 secondLogRow;
   s32 footprintRow;
 
-  column = Actor_GetById(ACTOR_SEVENTH_LOG)->x.fixed >> 20;
-  row = Actor_GetById(ACTOR_SEVENTH_LOG)->z.fixed >> 20;
-  eleventhLogRow = Actor_GetById(ACTOR_ELEVENTH_LOG)->z.fixed >> 20;
-  secondLogRow = Actor_GetById(ACTOR_SECOND_LOG)->z.fixed >> 20;
+  column = Actor_Get(ACTOR_SEVENTH_LOG)->x.fixed >> 20;
+  row = Actor_Get(ACTOR_SEVENTH_LOG)->z.fixed >> 20;
+  eleventhLogRow = Actor_Get(ACTOR_ELEVENTH_LOG)->z.fixed >> 20;
+  secondLogRow = Actor_Get(ACTOR_SECOND_LOG)->z.fixed >> 20;
 
   if (column == 13) {
     if ((u32)(secondLogRow - 12) <= 2) {
@@ -1905,7 +1903,7 @@ static void CrossboneIsle_SlideSeventhLogWest(void) {
 
   footprintRow = row - 1;
   MapGrid_CopyCellAttributeRect(column, footprintRow, 1, 3,
-                                Actor_GetById(ACTOR_SEVENTH_LOG)->x.fixed >> 20,
+                                Actor_Get(ACTOR_SEVENTH_LOG)->x.fixed >> 20,
                                 footprintRow);
   MapGrid_CopyCellAttributes(0, 0, 1, 3, column, footprintRow);
 }
@@ -1918,10 +1916,10 @@ static void CrossboneIsle_SlideSeventhLogEast(void) {
   s32 secondLogRow;
   s32 footprintRow;
 
-  column = Actor_GetById(ACTOR_SEVENTH_LOG)->x.fixed >> 20;
-  row = Actor_GetById(ACTOR_SEVENTH_LOG)->z.fixed >> 20;
-  eleventhLogRow = Actor_GetById(ACTOR_ELEVENTH_LOG)->z.fixed >> 20;
-  secondLogRow = Actor_GetById(ACTOR_SECOND_LOG)->z.fixed >> 20;
+  column = Actor_Get(ACTOR_SEVENTH_LOG)->x.fixed >> 20;
+  row = Actor_Get(ACTOR_SEVENTH_LOG)->z.fixed >> 20;
+  eleventhLogRow = Actor_Get(ACTOR_ELEVENTH_LOG)->z.fixed >> 20;
+  secondLogRow = Actor_Get(ACTOR_SECOND_LOG)->z.fixed >> 20;
 
   if (column == 6) {
     if ((u32)(secondLogRow - 12) <= 2) {
@@ -1951,7 +1949,7 @@ static void CrossboneIsle_SlideSeventhLogEast(void) {
 
   footprintRow = row - 1;
   MapGrid_CopyCellAttributeRect(column, footprintRow, 1, 3,
-                                Actor_GetById(ACTOR_SEVENTH_LOG)->x.fixed >> 20,
+                                Actor_Get(ACTOR_SEVENTH_LOG)->x.fixed >> 20,
                                 footprintRow);
   MapGrid_CopyCellAttributes(0, 0, 1, 3, column, footprintRow);
 }
@@ -1964,10 +1962,10 @@ static void CrossboneIsle_SlideNinthLogWest(void) {
   s32 secondLogRow;
   s32 footprintRow;
 
-  column = Actor_GetById(ACTOR_NINTH_LOG)->x.fixed >> 20;
-  row = Actor_GetById(ACTOR_NINTH_LOG)->z.fixed >> 20;
-  eleventhLogRow = Actor_GetById(ACTOR_ELEVENTH_LOG)->z.fixed >> 20;
-  secondLogRow = Actor_GetById(ACTOR_SECOND_LOG)->z.fixed >> 20;
+  column = Actor_Get(ACTOR_NINTH_LOG)->x.fixed >> 20;
+  row = Actor_Get(ACTOR_NINTH_LOG)->z.fixed >> 20;
+  eleventhLogRow = Actor_Get(ACTOR_ELEVENTH_LOG)->z.fixed >> 20;
+  secondLogRow = Actor_Get(ACTOR_SECOND_LOG)->z.fixed >> 20;
 
   if (column == 13) {
     if ((u32)(secondLogRow - 9) <= 2) {
@@ -2001,7 +1999,7 @@ static void CrossboneIsle_SlideNinthLogWest(void) {
 
   footprintRow = row - 1;
   MapGrid_CopyCellAttributeRect(column, footprintRow, 1, 3,
-                                Actor_GetById(ACTOR_NINTH_LOG)->x.fixed >> 20,
+                                Actor_Get(ACTOR_NINTH_LOG)->x.fixed >> 20,
                                 footprintRow);
   MapGrid_CopyCellAttributes(0, 0, 1, 3, column, footprintRow);
 }
@@ -2012,9 +2010,9 @@ static void CrossboneIsle_SlideNinthLogEast(void) {
   s32 row;
   s32 companionRow;
 
-  column = Actor_GetById(ACTOR_NINTH_LOG)->x.fixed >> 20;
-  row = Actor_GetById(ACTOR_NINTH_LOG)->z.fixed >> 20;
-  companionRow = Actor_GetById(ACTOR_SECOND_LOG)->z.fixed >> 20;
+  column = Actor_Get(ACTOR_NINTH_LOG)->x.fixed >> 20;
+  row = Actor_Get(ACTOR_NINTH_LOG)->z.fixed >> 20;
+  companionRow = Actor_Get(ACTOR_SECOND_LOG)->z.fixed >> 20;
 
   if (column == 6) {
     if ((u32)(companionRow - 9) <= 2) {
@@ -2038,7 +2036,7 @@ static void CrossboneIsle_SlideNinthLogEast(void) {
   wait(2);
 
   MapGrid_CopyCellAttributeRect(column, row - 1, 1, 3,
-                                Actor_GetById(ACTOR_NINTH_LOG)->x.fixed >> 20,
+                                Actor_Get(ACTOR_NINTH_LOG)->x.fixed >> 20,
                                 row - 1);
   MapGrid_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
 }

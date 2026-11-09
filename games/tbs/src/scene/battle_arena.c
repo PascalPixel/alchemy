@@ -412,7 +412,7 @@ static s32 BattleArena_PollPeerReady(void) {
   result = 1;
   // The leader is south of z 224 (16.16 pixels), towards the way out: the
   // party stops talking about the last battle.
-  if (Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed > PIXELS(224)) {
+  if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed > PIXELS(224)) {
     GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED);
   }
   // While LOBBY_EVENT_DISCONNECTED waits, skip the partner tracking.
@@ -503,7 +503,7 @@ static s32 BattleArena_PromptToParticipate(void) {
   }
   Event_Start();
   Event_SetMessageId(MsgLobbyWantParticipatePlease);
-  FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
+  Event_OpenMessage(ACTOR_ATTENDANT, 0);
   wait(5);
   GameFlag_Set(FLAG_BATTLE_ARENA_ATTENDANT_ASKED);
   Event_End();
@@ -526,7 +526,7 @@ static s32 BattleArena_ReportDisconnection(void) {
   Event_Start();
   work->raisedTrigger = LOBBY_EVENT_NONE;
   Event_SetMessageId(MsgLobbyLinkDisconnected);
-  FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
+  Event_OpenMessage(ACTOR_ATTENDANT, 0);
   GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED);
   Event_End();
 #ifdef UBFIX
@@ -982,28 +982,28 @@ static s32 BattleArena_EnterBattle(void) {
     wait(8);
     TilesetAnim_Pause(5);
     if (GameFlag_Get(FLAG_MONSTER_BATTLE)) {
-      Actor_SetAngleToward(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
+      Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
       Event_SetMessageId(MsgLobbyGoodLuck);
-      FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
+      Event_OpenMessage(ACTOR_ATTENDANT, 0);
       wait(45);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE, Q16_ONE / 2);
-      Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 184);
+      Actor_WalkTo(ACTOR_PARTY_LEADER, 216, 184);
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-      Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 168);
+      Actor_WalkTo(ACTOR_PARTY_LEADER, 216, 168);
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
     } else {
       // Speeds are 16.16 pixels a frame: one to (216, 200), a tenth while
       // the parties are exchanged, then a half.
       Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE, Q16_ONE / 2);
-      Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 200);
+      Actor_WalkTo(ACTOR_PARTY_LEADER, 216, 200);
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE / 10, Q16_ONE / 20);
-      Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 168);
+      Actor_WalkTo(ACTOR_PARTY_LEADER, 216, 168);
       // A failed exchange: walk back out and return to the Battle Arena,
       // reporting the link lost (LOBBY_EVENT_DISCONNECTED).
       if (BattleArena_ExchangePartyRecords() < 0) {
         Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE, Q16_ONE / 2);
-        Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 200);
+        Actor_WalkTo(ACTOR_PARTY_LEADER, 216, 200);
         TilesetAnim_Resume(5);
         wait(8);
         TilesetAnim_Pause(5);
@@ -1080,7 +1080,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
   // +6 asks the player to wait for an opponent.
   messageBase = MsgLobbyPleaseSpeakWhen;
   Event_Start();
-  Actor_SetAngleToward(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
   // Look for the partner's signature twice, a frame apart.
   if (BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) == 0) {
     wait(1);
@@ -1090,7 +1090,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
     BattleArena_InitializeSerial();
     if (!Event_GetFlag(FLAG_MONSTER_BATTLE)) {
       Event_SetMessageId(messageBase + 5);
-      FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
+      Event_OpenMessage(ACTOR_ATTENDANT, 0);
       answer = Event_AskYesNoWithActorAnimation(0, 0);
       // Yes starts a monster series: FLAG_AREA_TEMP_E8's byte and
       // LINK_TALLY_MONSTER_STREAK start at 0.
@@ -1118,7 +1118,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
     if (Event_GetFlag(FLAG_MONSTER_BATTLE)) {
       BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
       Event_SetMessageId(MsgLobbyOpponentArrived);
-      FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
+      Event_OpenMessage(ACTOR_ATTENDANT, 0);
       GameFlag_Clear(FLAG_BATTLE_ARENA_PLAYER_AGREED);
       GameFlag_Clear(FLAG_MONSTER_BATTLE);
     }
@@ -1132,11 +1132,11 @@ static s32 BattleArena_ChooseBattleMode(void) {
     message:
       Event_SetMessageId(messageId);
     open_message:
-      FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
+      Event_OpenMessage(ACTOR_ATTENDANT, 0);
     } else if (!GameFlag_Get(FLAG_BATTLE_ARENA_PARTNER_ASKED) &&
                !Event_GetFlag(FLAG_BATTLE_ARENA_ATTENDANT_EXPLAINED)) {
       Event_SetMessageId(messageBase);
-      FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
+      Event_OpenMessage(ACTOR_ATTENDANT, 0);
       GameFlag_Set(FLAG_BATTLE_ARENA_ATTENDANT_EXPLAINED);
     } else {
       GameFlag_Set(FLAG_BATTLE_ARENA_ATTENDANT_EXPLAINED);
@@ -1145,7 +1145,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
       } else {
         Event_SetMessageId(messageBase + 1);
       }
-      FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
+      Event_OpenMessage(ACTOR_ATTENDANT, 0);
       if (Event_AskYesNoWithActorAnimation(0, 0) == YES) {
         // Yes, and the partner is still there; else the link is lost.
         if (BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE)) {
@@ -1164,7 +1164,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
         }
       } else {
         Event_SetMessageId(messageBase);
-        FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
+        Event_OpenMessage(ACTOR_ATTENDANT, 0);
       }
     }
   }
@@ -1179,12 +1179,12 @@ static s32 BattleArena_ChooseBattleMode(void) {
 /// before the first, the line says it will tell them later. Like the original
 /// handler, it never ends its event (no Event_End) and returns nothing.
 static s32 BattleArena_ReportWinTallies(s32 actorId) {
-  u32 facing = Actor_GetById(ACTOR_PARTY_LEADER)->facing;
+  u32 facing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
   u16 *tally;
   s32 messageBase;
 
   Event_Start();
-  Actor_SetAngleToward(actorId, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActor(actorId, gMainRoutineWork.leaderActorId, 0);
   // FACING_IS_NORTH's test, written out: strictly between northwest and
   // northeast.
   if ((facing - 0xa001) <= 0x3ffe) {
@@ -1194,10 +1194,10 @@ static s32 BattleArena_ReportWinTallies(s32 actorId) {
       MessageArgument_ClearAll();
       MessageArgument_Push(*tally, MESSAGE_ARGUMENT_NUMBER);
       Event_SetMessageId(messageBase + 1);
-      Event_ShowMessageAndWait(actorId, 0);
+      Event_ShowMessage(actorId, 0);
     } else {
       Event_SetMessageId(MsgLobbyTellTotalWins);
-      Event_ShowMessageAndWait(actorId, 0);
+      Event_ShowMessage(actorId, 0);
     }
   } else {
     messageBase = MsgLobbyLooksLikeFirstTime;
@@ -1206,10 +1206,10 @@ static s32 BattleArena_ReportWinTallies(s32 actorId) {
       MessageArgument_ClearAll();
       MessageArgument_Push(*tally, MESSAGE_ARGUMENT_NUMBER);
       Event_SetMessageId(messageBase + 1);
-      Event_ShowMessageAndWait(actorId, 0);
+      Event_ShowMessage(actorId, 0);
     } else {
       Event_SetMessageId(MsgLobbyTellConsecutiveWins);
-      Event_ShowMessageAndWait(actorId, 0);
+      Event_ShowMessage(actorId, 0);
     }
   }
 #ifdef UBFIX
@@ -1228,9 +1228,9 @@ static s32 BattleArena_ChooseDebugParameterSet(s32 actorId) {
   s32 loadResult;
 
   Event_Start();
-  Actor_SetAngleToward(actorId, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActor(actorId, gMainRoutineWork.leaderActorId, 0);
   Event_SetMessageId(MsgLobbyChooseParameters);
-  Event_ShowMessageAndWait(actorId, 0);
+  Event_ShowMessage(actorId, 0);
   window = Window_Create(0, 0, 6, 4, WINDOW_FLAG_INSTANT);
   setIndex = 0;
   displayedSet = -1;
@@ -1264,13 +1264,13 @@ static s32 BattleArena_ChooseDebugParameterSet(s32 actorId) {
   }
   if (setIndex < 0) {
     Event_SetMessageId(MsgLobbyTease);
-    Event_ShowMessageAndWait(ACTOR_LINKED_WINS_TELLER, 0);
+    Event_ShowMessage(ACTOR_LINKED_WINS_TELLER, 0);
   } else if (loadResult != 0) {
     Event_SetMessageId(MsgLobbyNoParameterAsk);
-    Event_ShowMessageAndWait(ACTOR_LINKED_WINS_TELLER, 0);
+    Event_ShowMessage(ACTOR_LINKED_WINS_TELLER, 0);
   } else {
     Event_SetMessageId(MsgLobbySettingsMadeRest);
-    Event_ShowMessageAndWait(ACTOR_LINKED_WINS_TELLER, 0);
+    Event_ShowMessage(ACTOR_LINKED_WINS_TELLER, 0);
   }
   wait(10);
   Event_End();
@@ -1331,7 +1331,7 @@ static s32 BattleArena_TalkByProgress(s32 actorId) {
   s32 speakerPresent = BattleArena_PartyContains(actorId);
 
   Event_Start();
-  Actor_SetAngleToward(actorId, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActor(actorId, gMainRoutineWork.leaderActorId, 0);
   if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED)) {
 
     // Isaac's flag is tested and the result dropped; messageBase first holds
@@ -1356,7 +1356,7 @@ static s32 BattleArena_TalkByProgress(s32 actorId) {
     messageBase = MsgLobbyTryingGetAway;
   }
   Event_SetMessageId(messageBase + actorId - 1);
-  Event_ShowMessageAndWait(actorId, 0);
+  Event_ShowMessage(actorId, 0);
   Event_End();
 #ifdef UBFIX
   return 0;
@@ -1401,11 +1401,11 @@ static s32 BattleArena_TalkToVisitor(s32 actorId) {
     message = MsgLobbyBattleArenaOld;
     break;
   }
-  Actor_SetAngleToward(actorId, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActor(actorId, gMainRoutineWork.leaderActorId, 0);
   if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED))
     step = 2 - (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_BATTLE_WON) != 0);
   Event_SetMessageId(message + step);
-  FieldMessage_ShowAtActor(actorId, 0);
+  Event_OpenMessage(actorId, 0);
   Event_End();
 #ifdef UBFIX
   return 0;
@@ -1420,7 +1420,7 @@ static s32 BattleArena_ExplainPartyOrder(s32 actorId) {
   s32 message;
 
   Event_Start();
-  Actor_SetAngleToward(actorId, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActor(actorId, gMainRoutineWork.leaderActorId, 0);
   if (!Event_GetFlag(FLAG_BATTLE_ARENA_PARTY_ORDER_NEXT)) {
     if (Party_CountMembers() <= 3)
       message = MsgLobbyThreeAlliesFightLinkedFinals;
@@ -1432,7 +1432,7 @@ static s32 BattleArena_ExplainPartyOrder(s32 actorId) {
     GameFlag_Clear(FLAG_BATTLE_ARENA_PARTY_ORDER_NEXT);
   }
   Event_SetMessageId(message);
-  FieldMessage_ShowAtActor(actorId, 0);
+  Event_OpenMessage(actorId, 0);
   Event_End();
 #ifdef UBFIX
   return 0;
@@ -1446,7 +1446,7 @@ static s32 BattleArena_ReportMonsterRecord(s32 actorId) {
 
   Event_Start();
   state = &gMainRoutineWork;
-  Actor_SetAngleToward(actorId, state->leaderActorId, 0);
+  Actor_FaceActor(actorId, state->leaderActorId, 0);
   if (state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] != 0) {
     MessageArgument_Push(state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK],
                          MESSAGE_ARGUMENT_NUMBER);
@@ -1454,7 +1454,7 @@ static s32 BattleArena_ReportMonsterRecord(s32 actorId) {
   } else {
     Event_SetMessageId(MsgLobbyCantWaitSee);
   }
-  FieldMessage_ShowAtActor(actorId, 0);
+  Event_OpenMessage(actorId, 0);
   Event_End();
 #ifdef UBFIX
   return 0;
@@ -1519,7 +1519,7 @@ static s32 BattleArena_DrawThreeDigitValue(s32 value) {
   if (value > 999)
     value = 999;
   for (digit = 0; digit <= 2; digit++) {
-    MapGrid_CopyCellPictureIndicesRect(27, value % 10, 16 - digit, 8, 1, 1);
+    MapGrid_CopyCellsTo(27, value % 10, 16 - digit, 8, 1, 1);
     value = value / 10;
   }
   MapGrid_CenterOnFollowedPoint();
@@ -1598,9 +1598,9 @@ s32 BattleArena_RunRoundResult(void) {
     } else {
       FieldGameFlag_SetByte(FLAG_AREA_TEMP_E8, v + 1);
     }
-    Actor_SetAngleToward(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
+    Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
     Event_SetMessageId(MsgLobbyNotBadNextMonster + messageOffset);
-    FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
+    Event_OpenMessage(ACTOR_ATTENDANT, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == YES) {
       if (wins > 90) {
         wins = 90;
@@ -1618,11 +1618,11 @@ s32 BattleArena_RunRoundResult(void) {
         gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] =
             gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK];
         Event_SetMessageId(MsgLobbyWonNumberBattleBroke);
-        FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
+        Event_OpenMessage(ACTOR_ATTENDANT, 0);
         BattleArena_SaveMonsterBattleResults();
       } else {
         Event_SetMessageId(MsgLobbyWonNumberBattle);
-        FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
+        Event_OpenMessage(ACTOR_ATTENDANT, 0);
       }
       BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
     }
@@ -1635,7 +1635,7 @@ s32 BattleArena_RunRoundResult(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     BattleArena_WriteSlotValue(LOBBY_SLOT_ALONE);
-    Actor_SetAngleToward(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
+    Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
     MessageArgument_Push(
         gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK],
         MESSAGE_ARGUMENT_NUMBER);
@@ -1644,11 +1644,11 @@ s32 BattleArena_RunRoundResult(void) {
       gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] =
           gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK];
       Event_SetMessageId(MsgLobbyWonNumberBattleBroke);
-      FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
+      Event_OpenMessage(ACTOR_ATTENDANT, 0);
       BattleArena_SaveMonsterBattleResults();
     } else {
       Event_SetMessageId(MsgLobbyWonNumberBattleTold);
-      FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
+      Event_OpenMessage(ACTOR_ATTENDANT, 0);
     }
     gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK] = 0;
     GameFlag_Clear(FLAG_MONSTER_BATTLE);
@@ -1718,9 +1718,9 @@ s32 BattleArena_RunRoundResult(void) {
       Event_Start();
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
-      Actor_SetAngleToward(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
+      Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
       Event_SetMessageId(MsgLobbyNoteCantUse);
-      Event_ShowMessageAndWait(ACTOR_ATTENDANT, 0);
+      Event_ShowMessage(ACTOR_ATTENDANT, 0);
       Event_End();
     }
     gMainRoutineWork.idleSleepEnabled = 0;

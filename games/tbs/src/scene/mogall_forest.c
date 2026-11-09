@@ -315,7 +315,7 @@ static void MogallForest_StartDjinnBattle(void) {
 /// Jumps the leader to an unobstructed fixed-point position and restores
 /// motion.
 static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   u8 *motionFlags = &leader->motionFlags;
   s32 savedMotionFlags = *motionFlags;
 
@@ -336,9 +336,8 @@ static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
     jumpMotionFlags &= *motionFlags;
     *motionFlags = jumpMotionFlags;
     Actor_SetSpriteFlags(leader, 0);
-    Actor_SetPositionAndCommit(ACTOR_PARTY_LEADER,
-                               (s16)((u32)position->x >> 16),
-                               (s16)((u32)position->z >> 16));
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, (s16)((u32)position->x >> 16),
+                        (s16)((u32)position->z >> 16));
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
     *motionFlags = savedMotionFlags;
@@ -368,7 +367,7 @@ static void MogallForest_HopActorTo(s32 actorId, s32 targetX, s32 targetZ,
                                     s32 verticalSpeed) {
   struct Actor *actor;
 
-  actor = Actor_GetById(actorId);
+  actor = Actor_Get(actorId);
   Actor_SetSpritePriority(actorId, 1);
   Actor_SetSpeed(actorId, PIXELS(3), PIXELS(3) / 2);
   Sound_Play(SE_JUMP);
@@ -391,7 +390,7 @@ static void MogallForest_SpawnPuffRing(s32 id) {
   s32 x;
   s32 z;
 
-  actor = Actor_GetById(id);
+  actor = Actor_Get(id);
   Sound_Play(SE_THUMP);
   options.priority = 1;
   for (directionIndex = 0; directionIndex <= 16; directionIndex++) {
@@ -420,7 +419,7 @@ static void MogallForest_ApeComesOut(s32 actorId, s32 color) {
   FieldCamera_WaitForArrival();
   Event_Wait(30);
   MogallForest_SpawnPuffRing(actorId);
-  Actor_ConfigureSpriteColor(actorId, color);
+  Actor_SetSpriteColorById(actorId, color);
 }
 
 /// The ape turns to the leader, hops and gestures down the way to go.
@@ -429,7 +428,7 @@ static inline void MogallForest_ApePointsTheWay(s32 guideId) {
   Actor_TurnToFaceEachOther(guideId, ACTOR_PARTY_LEADER, 0);
   Event_Wait(20);
   Actor_StartRepeatedMotion(guideId, 2);
-  FieldEffect_SetAttached(guideId,
+  Actor_SetAttachedEffect(guideId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
 }
@@ -490,7 +489,7 @@ static void MogallForest_FirstArea_PushLog(void) {
                                MOGALL_FOREST_LOG_FALLING_IN);
       Sound_Play(SE_LOG_FALL);
       Actor_SetSpritePriority(ACTOR_FIRST_AREA_RIVER_LOG, 1);
-      Actor_GetById(ACTOR_FIRST_AREA_RIVER_LOG)->priorityFlags =
+      Actor_Get(ACTOR_FIRST_AREA_RIVER_LOG)->priorityFlags =
           ACTOR_PRIORITY_UNDERFOOT;
       MapGrid_CopyCellAttributes(38, 27, 4, 2, 31, 25);
     }
@@ -503,15 +502,15 @@ static void MogallForest_FirstArea_PushLog(void) {
 static void MogallForest_FirstArea_JumpNorth(void) {
   struct FieldPosition position;
 #if TBS_PATCH_1
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   position.x = (leader->x.fixed & 0xfff00000) + PIXELS(8);
   position.y = leader->y.fixed;
   position.z = (leader->z.fixed & 0xfff00000) - PIXELS(24);
 #else
-  position.x = Actor_GetById(ACTOR_PARTY_LEADER)->x.fixed;
-  position.y = Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed;
-  position.z = Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed - PIXELS(32);
+  position.x = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed;
+  position.y = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
+  position.z = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed - PIXELS(32);
 #endif
   MogallForest_TryJumpLeaderTo(&position);
 }
@@ -520,7 +519,7 @@ static void MogallForest_FirstArea_JumpNorth(void) {
 /// the leader onto the log, which bobs under the weight.
 static void MogallForest_FirstArea_JumpSouth(void) {
   struct FieldPosition position;
-  struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   u8 *motionFlags = &actor->motionFlags;
   s32 savedMotionFlags = *motionFlags;
 
@@ -529,9 +528,9 @@ static void MogallForest_FirstArea_JumpSouth(void) {
   position.y = actor->y.fixed;
   position.z = (actor->z.fixed & 0xfff00000) + PIXELS(40);
 #else
-  position.x = Actor_GetById(ACTOR_PARTY_LEADER)->x.fixed;
-  position.y = Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed;
-  position.z = Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed + PIXELS(32);
+  position.x = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed;
+  position.y = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
+  position.z = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed + PIXELS(32);
 #endif
   if (MogallForest_TryJumpLeaderTo(&position) != 0) {
     Event_Start();
@@ -568,7 +567,7 @@ static void MogallForest_ReadBrokenSign(void) {
 static void MogallForest_FirstArea_NorthApeShowsWay(void) {
   struct Actor *creature;
 
-  creature = Actor_GetById(ACTOR_FIRST_AREA_NORTH_APE);
+  creature = Actor_Get(ACTOR_FIRST_AREA_NORTH_APE);
 
   Event_Start();
 
@@ -582,20 +581,20 @@ static void MogallForest_FirstArea_NorthApeShowsWay(void) {
   MogallForest_ApePointsTheWay(ACTOR_FIRST_AREA_NORTH_APE);
 
   MogallForest_HopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 88, 152, PIXELS(3));
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_FIRST_AREA_NORTH_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_FIRST_AREA_NORTH_APE, 0);
   Event_Wait(10);
 
   MogallForest_HopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 120, 192, PIXELS(3));
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_FIRST_AREA_NORTH_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_FIRST_AREA_NORTH_APE, 0);
   Event_Wait(10);
 
   MogallForest_HopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 120, 240, PIXELS(3));
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_FIRST_AREA_NORTH_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_FIRST_AREA_NORTH_APE, 0);
   Event_Wait(10);
 
   GameFlag_Set(FLAG_MOGALL_FOREST_FIRST_AREA_NORTH_APE_OUT);
-  Import_ActorSetPosition(ACTOR_FIRST_AREA_NORTH_APE_STUMP, 0, 0);
-  Import_ActorSetPosition(ACTOR_FIRST_AREA_NORTH_APE, 0, 0);
+  Actor_SetPosition(ACTOR_FIRST_AREA_NORTH_APE_STUMP, 0, 0);
+  Actor_SetPosition(ACTOR_FIRST_AREA_NORTH_APE, 0, 0);
 
   Event_End();
 }
@@ -606,7 +605,7 @@ static void MogallForest_FirstArea_NorthApeShowsWay(void) {
 static void MogallForest_FirstArea_ApeAttacks(void) {
   struct Actor *creature;
 
-  creature = Actor_GetById(ACTOR_FIRST_AREA_ATTACKING_APE);
+  creature = Actor_Get(ACTOR_FIRST_AREA_ATTACKING_APE);
 
   Event_Start();
 
@@ -622,19 +621,19 @@ static void MogallForest_FirstArea_ApeAttacks(void) {
                             0);
   Event_Wait(30);
   Actor_StartRepeatedMotion(ACTOR_FIRST_AREA_ATTACKING_APE, 2);
-  FieldEffect_SpawnAttached(ACTOR_FIRST_AREA_ATTACKING_APE,
-                            EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  Actor_ShowEmote(ACTOR_FIRST_AREA_ATTACKING_APE,
+                  EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Sound_Play(SE_BEAST_CRY);
   Event_Wait(60);
 
   MogallForest_HopActorTo(ACTOR_FIRST_AREA_ATTACKING_APE,
-                          Actor_GetById(ACTOR_PARTY_LEADER)->x.part.pixel,
-                          Actor_GetById(ACTOR_PARTY_LEADER)->z.part.pixel,
+                          Actor_Get(ACTOR_PARTY_LEADER)->x.part.pixel,
+                          Actor_Get(ACTOR_PARTY_LEADER)->z.part.pixel,
                           PIXELS(4));
 
   Event_Wait(10);
   GameFlag_Set(FLAG_MOGALL_FOREST_FIRST_AREA_ATTACKING_APE_OUT);
-  Import_ActorSetPosition(ACTOR_FIRST_AREA_ATTACKING_APE_STUMP, 0, 0);
+  Actor_SetPosition(ACTOR_FIRST_AREA_ATTACKING_APE_STUMP, 0, 0);
 
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
 
@@ -649,7 +648,7 @@ static void MogallForest_FirstArea_ApeAttacks(void) {
 static void MogallForest_FirstArea_EastApeShowsWay(void) {
   struct Actor *creature;
 
-  creature = Actor_GetById(ACTOR_FIRST_AREA_EAST_APE);
+  creature = Actor_Get(ACTOR_FIRST_AREA_EAST_APE);
 
   Event_Start();
 
@@ -663,19 +662,19 @@ static void MogallForest_FirstArea_EastApeShowsWay(void) {
   MogallForest_ApePointsTheWay(ACTOR_FIRST_AREA_EAST_APE);
 
   MogallForest_HopActorTo(ACTOR_FIRST_AREA_EAST_APE, 584, 344, PIXELS(3));
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_FIRST_AREA_EAST_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_FIRST_AREA_EAST_APE, 0);
   Event_Wait(6);
 
   MogallForest_HopActorTo(ACTOR_FIRST_AREA_EAST_APE, 632, 344, PIXELS(3));
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_FIRST_AREA_EAST_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_FIRST_AREA_EAST_APE, 0);
   Event_Wait(6);
 
   MogallForest_HopActorTo(ACTOR_FIRST_AREA_EAST_APE, 680, 344, PIXELS(3));
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_FIRST_AREA_EAST_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_FIRST_AREA_EAST_APE, 0);
   Event_Wait(6);
 
   GameFlag_Set(FLAG_MOGALL_FOREST_FIRST_AREA_EAST_APE_OUT);
-  Import_ActorSetPosition(ACTOR_FIRST_AREA_EAST_APE_STUMP, 0, 0);
+  Actor_SetPosition(ACTOR_FIRST_AREA_EAST_APE_STUMP, 0, 0);
 
   Event_End();
 }
@@ -684,7 +683,7 @@ static void MogallForest_FirstArea_EastApeShowsWay(void) {
 /// brings it to the party. Sets FLAG_MOGALL_FOREST_NUT_CAUGHT.
 static void MogallForest_CatchNut(void) {
   Event_Start();
-  Import_ActorSetPosition(ACTOR_NUT, 0, 0);
+  Actor_SetPosition(ACTOR_NUT, 0, 0);
   GameFlag_Set(FLAG_MOGALL_FOREST_NUT_CAUGHT);
   ItemDisplay_ShowItem(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
@@ -725,7 +724,7 @@ static void MogallForest_SecondArea_PushLog(void) {
                                MOGALL_FOREST_LOG_FALLING_IN);
       Sound_Play(SE_LOG_FALL);
 
-      Actor_GetById(ACTOR_SECOND_AREA_RIVER_LOG)->priorityFlags =
+      Actor_Get(ACTOR_SECOND_AREA_RIVER_LOG)->priorityFlags =
           ACTOR_PRIORITY_UNDERFOOT;
 
       destinationColumn = 34;
@@ -763,13 +762,13 @@ static void MogallForest_SecondArea_UpdateRock(void) {
 
   Event_Start();
 
-  column = Actor_GetById(ACTOR_SECOND_AREA_ROCK)->x.fixed >> 20;
-  row = Actor_GetById(ACTOR_SECOND_AREA_ROCK)->z.fixed >> 20;
+  column = Actor_Get(ACTOR_SECOND_AREA_ROCK)->x.fixed >> 20;
+  row = Actor_Get(ACTOR_SECOND_AREA_ROCK)->z.fixed >> 20;
 
   MogallForest_UpdateRockFootprint(column, row);
 
   if (column == 36 && row == 24) {
-    struct Actor *rock = Actor_GetById(ACTOR_SECOND_AREA_ROCK);
+    struct Actor *rock = Actor_Get(ACTOR_SECOND_AREA_ROCK);
 
     rock->motionFlags = 0;
     rock->groundHeight = -PIXELS(2);
@@ -784,7 +783,7 @@ static void MogallForest_SecondArea_UpdateRock(void) {
 static void MogallForest_SecondArea_NorthApeShowsWay(void) {
   struct Actor *creature;
 
-  creature = Actor_GetById(ACTOR_SECOND_AREA_NORTH_APE);
+  creature = Actor_Get(ACTOR_SECOND_AREA_NORTH_APE);
   Event_Start();
   MogallForest_ApeComesOut(ACTOR_SECOND_AREA_NORTH_APE, SPRITE_COLOR_GRB);
   MogallForest_HopActorTo(ACTOR_SECOND_AREA_NORTH_APE, 392, 104, PIXELS(7));
@@ -794,20 +793,20 @@ static void MogallForest_SecondArea_NorthApeShowsWay(void) {
                     EFFECT_SCRIPT_MEDIUM, 0);
   MogallForest_ApePointsTheWay(ACTOR_SECOND_AREA_NORTH_APE);
   MogallForest_HopActorTo(ACTOR_SECOND_AREA_NORTH_APE, 424, 120, PIXELS(3));
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_NORTH_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_NORTH_APE, 0);
   Event_Wait(6);
   MogallForest_HopActorTo(ACTOR_SECOND_AREA_NORTH_APE, 424, 168, PIXELS(3));
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_NORTH_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_NORTH_APE, 0);
   Event_Wait(6);
   MogallForest_HopActorTo(ACTOR_SECOND_AREA_NORTH_APE, 424, 208, PIXELS(3));
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_NORTH_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_NORTH_APE, 0);
   Event_Wait(6);
   MogallForest_HopActorTo(ACTOR_SECOND_AREA_NORTH_APE, 424, 232, PIXELS(3));
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_NORTH_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_NORTH_APE, 0);
   Event_Wait(6);
-  Import_ActorSetPosition(ACTOR_SECOND_AREA_NORTH_APE, 0, 0);
+  Actor_SetPosition(ACTOR_SECOND_AREA_NORTH_APE, 0, 0);
   GameFlag_Set(FLAG_MOGALL_FOREST_SECOND_AREA_NORTH_APE_OUT);
-  Import_ActorSetPosition(ACTOR_SECOND_AREA_NORTH_APE_STUMP, 0, 0);
+  Actor_SetPosition(ACTOR_SECOND_AREA_NORTH_APE_STUMP, 0, 0);
   Event_End();
 }
 
@@ -816,7 +815,7 @@ static void MogallForest_SecondArea_NorthApeShowsWay(void) {
 static void MogallForest_SecondArea_EastApeShowsWay(void) {
   struct Actor *creature;
 
-  creature = Actor_GetById(ACTOR_SECOND_AREA_EAST_APE);
+  creature = Actor_Get(ACTOR_SECOND_AREA_EAST_APE);
 
   Event_Start();
 
@@ -831,24 +830,24 @@ static void MogallForest_SecondArea_EastApeShowsWay(void) {
   MogallForest_ApePointsTheWay(ACTOR_SECOND_AREA_EAST_APE);
 
   MogallForest_HopActorTo(ACTOR_SECOND_AREA_EAST_APE, 472, 136, PIXELS(3));
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_EAST_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_EAST_APE, 0);
   Event_Wait(6);
 
   MogallForest_HopActorTo(ACTOR_SECOND_AREA_EAST_APE, 504, 136, PIXELS(16) / 5);
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_EAST_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_EAST_APE, 0);
   Event_Wait(6);
 
   MogallForest_HopActorTo(ACTOR_SECOND_AREA_EAST_APE, 552, 136, PIXELS(7) / 2);
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_EAST_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_EAST_APE, 0);
   Event_Wait(6);
 
   MogallForest_HopActorTo(ACTOR_SECOND_AREA_EAST_APE, 584, 136, PIXELS(7) / 2);
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_EAST_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_EAST_APE, 0);
   Event_Wait(6);
 
-  Import_ActorSetPosition(ACTOR_SECOND_AREA_EAST_APE, 0, 0);
+  Actor_SetPosition(ACTOR_SECOND_AREA_EAST_APE, 0, 0);
   GameFlag_Set(FLAG_MOGALL_FOREST_SECOND_AREA_EAST_APE_OUT);
-  Import_ActorSetPosition(ACTOR_SECOND_AREA_EAST_APE_STUMP, 0, 0);
+  Actor_SetPosition(ACTOR_SECOND_AREA_EAST_APE_STUMP, 0, 0);
 
   Event_End();
 }
@@ -879,7 +878,7 @@ static void MogallForest_SecondArea_SouthApeHidesAgain(void) {
 static void MogallForest_SecondArea_SouthApeShowsWay(void) {
   struct Actor *creature;
 
-  creature = Actor_GetById(ACTOR_SECOND_AREA_SOUTH_APE);
+  creature = Actor_Get(ACTOR_SECOND_AREA_SOUTH_APE);
 
   Event_Start();
 
@@ -894,26 +893,26 @@ static void MogallForest_SecondArea_SouthApeShowsWay(void) {
   MogallForest_ApePointsTheWay(ACTOR_SECOND_AREA_SOUTH_APE);
 
   MogallForest_HopActorTo(ACTOR_SECOND_AREA_SOUTH_APE, 360, 528, PIXELS(3));
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_SOUTH_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_SOUTH_APE, 0);
   Event_Wait(6);
 
   MogallForest_HopActorTo(ACTOR_SECOND_AREA_SOUTH_APE, 328, 528, PIXELS(3));
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_SOUTH_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_SOUTH_APE, 0);
   Event_Wait(6);
 
   MogallForest_HopActorTo(ACTOR_SECOND_AREA_SOUTH_APE, 288, 528, PIXELS(3));
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_SOUTH_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_SOUTH_APE, 0);
   Event_Wait(6);
 
   MogallForest_HopActorTo(ACTOR_SECOND_AREA_SOUTH_APE, 256, 528, PIXELS(3));
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_SOUTH_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_SOUTH_APE, 0);
   Event_Wait(6);
 
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 1);
-  Import_ActorSetPosition(ACTOR_SECOND_AREA_SOUTH_APE, 0, 0);
+  Actor_SetPosition(ACTOR_SECOND_AREA_SOUTH_APE, 0, 0);
   Event_Wait(30);
   GameFlag_Set(FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_OUT);
-  Import_ActorSetPosition(ACTOR_SECOND_AREA_SOUTH_APE_STUMP, 0, 0);
+  Actor_SetPosition(ACTOR_SECOND_AREA_SOUTH_APE_STUMP, 0, 0);
 
   Event_End();
 }
@@ -973,13 +972,13 @@ static void MogallForest_ThirdArea_JumpWest(void) {
   u8 savedMotionFlags;
   struct FieldPosition position;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   motionFlags = &leader->motionFlags;
   savedMotionFlags = *motionFlags;
 
-  position.x = Actor_GetById(ACTOR_PARTY_LEADER)->x.fixed - PIXELS(32);
-  position.y = Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed;
-  position.z = Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed;
+  position.x = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed - PIXELS(32);
+  position.y = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
+  position.z = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed;
 
   if (MogallForest_TryJumpLeaderTo(&position) != 0) {
 
@@ -1017,13 +1016,13 @@ static void MogallForest_ThirdArea_UpdateNorthRock(void) {
 
   Event_Start();
 
-  column = Actor_GetById(ACTOR_THIRD_AREA_NORTH_ROCK)->x.fixed >> 20;
-  row = Actor_GetById(ACTOR_THIRD_AREA_NORTH_ROCK)->z.fixed >> 20;
+  column = Actor_Get(ACTOR_THIRD_AREA_NORTH_ROCK)->x.fixed >> 20;
+  row = Actor_Get(ACTOR_THIRD_AREA_NORTH_ROCK)->z.fixed >> 20;
 
   MogallForest_UpdateRockFootprint(column, row);
 
   if (column == 45 && row == 6) {
-    struct Actor *rock = Actor_GetById(ACTOR_THIRD_AREA_NORTH_ROCK);
+    struct Actor *rock = Actor_Get(ACTOR_THIRD_AREA_NORTH_ROCK);
 
     rock->motionFlags = 0;
     rock->groundHeight = -PIXELS(2);
@@ -1042,16 +1041,16 @@ static void MogallForest_ThirdArea_UpdateSouthRock(void) {
   struct Actor *rock;
 
   Event_Start();
-  rock = Actor_GetById(ACTOR_THIRD_AREA_SOUTH_ROCK);
+  rock = Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK);
   column = rock->x.fixed;
-  rock = Actor_GetById(ACTOR_THIRD_AREA_SOUTH_ROCK);
+  rock = Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK);
   row = rock->z.fixed;
   column >>= 20;
   row >>= 20;
   MogallForest_UpdateRockFootprint(column, row);
-  rock = Actor_GetById(ACTOR_THIRD_AREA_SOUTH_ROCK);
+  rock = Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK);
   if ((rock->z.fixed >> 20) == 27) {
-    rock = Actor_GetById(ACTOR_THIRD_AREA_SOUTH_ROCK);
+    rock = Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK);
     rock->motionFlags = 0;
     rock->groundHeight = -PIXELS(2);
     rock->y.fixed = -PIXELS(2);
@@ -1071,7 +1070,7 @@ static void MogallForest_ThirdArea_ApeAttacks(void) {
   s32 leaderX;
   struct Actor *leaderForZ;
 
-  creature = Actor_GetById(ACTOR_THIRD_AREA_ATTACKING_APE);
+  creature = Actor_Get(ACTOR_THIRD_AREA_ATTACKING_APE);
   jumpSpeed = PIXELS(8);
   Event_Start();
   MogallForest_ApeComesOut(ACTOR_THIRD_AREA_ATTACKING_APE, SPRITE_COLOR_NORMAL);
@@ -1085,13 +1084,13 @@ static void MogallForest_ThirdArea_ApeAttacks(void) {
                             0);
   Event_Wait(30);
   Actor_StartRepeatedMotion(ACTOR_THIRD_AREA_ATTACKING_APE, 2);
-  FieldEffect_SpawnAttached(ACTOR_THIRD_AREA_ATTACKING_APE,
-                            EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  Actor_ShowEmote(ACTOR_THIRD_AREA_ATTACKING_APE,
+                  EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Sound_Play(SE_BEAST_CRY);
   Event_Wait(60);
-  leaderForX = Actor_GetById(ACTOR_PARTY_LEADER);
+  leaderForX = Actor_Get(ACTOR_PARTY_LEADER);
   leaderX = leaderForX->x.part.pixel;
-  leaderForZ = Actor_GetById(ACTOR_PARTY_LEADER);
+  leaderForZ = Actor_Get(ACTOR_PARTY_LEADER);
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_ATTACKING_APE, leaderX,
                           leaderForZ->z.part.pixel, PIXELS(6));
   Event_Wait(10);
@@ -1107,7 +1106,7 @@ static void MogallForest_ThirdArea_ApeAttacks(void) {
 static void MogallForest_ThirdArea_MiddleApeShowsWay(void) {
   struct Actor *creature;
 
-  creature = Actor_GetById(ACTOR_THIRD_AREA_MIDDLE_APE);
+  creature = Actor_Get(ACTOR_THIRD_AREA_MIDDLE_APE);
 
   Event_Start();
 
@@ -1122,22 +1121,22 @@ static void MogallForest_ThirdArea_MiddleApeShowsWay(void) {
   MogallForest_ApePointsTheWay(ACTOR_THIRD_AREA_MIDDLE_APE);
 
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_MIDDLE_APE, 448, 192, PIXELS(3));
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_MIDDLE_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_MIDDLE_APE, 0);
   Event_Wait(6);
 
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_MIDDLE_APE, 424, 208, PIXELS(3));
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_MIDDLE_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_MIDDLE_APE, 0);
   Event_Wait(6);
 
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_MIDDLE_APE, 424, 224, PIXELS(3));
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_MIDDLE_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_MIDDLE_APE, 0);
   Event_Wait(6);
 
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 1);
-  Import_ActorSetPosition(ACTOR_THIRD_AREA_MIDDLE_APE, 0, 0);
+  Actor_SetPosition(ACTOR_THIRD_AREA_MIDDLE_APE, 0, 0);
   Event_Wait(30);
   GameFlag_Set(FLAG_MOGALL_FOREST_THIRD_AREA_MIDDLE_APE_OUT);
-  Import_ActorSetPosition(ACTOR_THIRD_AREA_MIDDLE_APE_STUMP, 0, 0);
+  Actor_SetPosition(ACTOR_THIRD_AREA_MIDDLE_APE_STUMP, 0, 0);
 
   Event_End();
 }
@@ -1147,7 +1146,7 @@ static void MogallForest_ThirdArea_MiddleApeShowsWay(void) {
 static void MogallForest_ThirdArea_WestApeShowsWay(void) {
   struct Actor *creature;
 
-  creature = Actor_GetById(ACTOR_THIRD_AREA_WEST_APE);
+  creature = Actor_Get(ACTOR_THIRD_AREA_WEST_APE);
 
   Event_Start();
 
@@ -1162,22 +1161,22 @@ static void MogallForest_ThirdArea_WestApeShowsWay(void) {
   MogallForest_ApePointsTheWay(ACTOR_THIRD_AREA_WEST_APE);
 
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_WEST_APE, 376, 152, PIXELS(6));
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_WEST_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_WEST_APE, 0);
   Event_Wait(10);
 
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_WEST_APE, 328, 160, PIXELS(3));
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_WEST_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_WEST_APE, 0);
   Event_Wait(6);
 
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_WEST_APE, 296, 160, PIXELS(3));
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_WEST_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_WEST_APE, 0);
   Event_Wait(6);
 
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 1);
-  Import_ActorSetPosition(ACTOR_THIRD_AREA_WEST_APE, 0, 0);
+  Actor_SetPosition(ACTOR_THIRD_AREA_WEST_APE, 0, 0);
   Event_Wait(30);
   GameFlag_Set(FLAG_MOGALL_FOREST_THIRD_AREA_WEST_APE_OUT);
-  Import_ActorSetPosition(ACTOR_THIRD_AREA_WEST_APE_STUMP, 0, 0);
+  Actor_SetPosition(ACTOR_THIRD_AREA_WEST_APE_STUMP, 0, 0);
 
   Event_End();
 }
@@ -1206,7 +1205,7 @@ static void MogallForest_ThirdArea_EastApeHidesAgain(void) {
 static void MogallForest_ThirdArea_EastApeShowsWay(void) {
   struct Actor *creature;
 
-  creature = Actor_GetById(ACTOR_THIRD_AREA_EAST_APE);
+  creature = Actor_Get(ACTOR_THIRD_AREA_EAST_APE);
 
   Event_Start();
 
@@ -1221,23 +1220,23 @@ static void MogallForest_ThirdArea_EastApeShowsWay(void) {
   MogallForest_ApePointsTheWay(ACTOR_THIRD_AREA_EAST_APE);
 
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 712, 568, PIXELS(6));
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_EAST_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_EAST_APE, 0);
   Event_Wait(10);
 
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 712, 600, PIXELS(3));
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_EAST_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_EAST_APE, 0);
   Event_Wait(6);
 
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 736, 640, PIXELS(3));
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_EAST_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_EAST_APE, 0);
   Event_Wait(6);
 
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 736, 704, PIXELS(3));
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_EAST_APE, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_EAST_APE, 0);
   Event_Wait(6);
 
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 1);
-  Import_ActorSetPosition(ACTOR_THIRD_AREA_EAST_APE, 0, 0);
+  Actor_SetPosition(ACTOR_THIRD_AREA_EAST_APE, 0, 0);
   Event_Wait(30);
   GameFlag_Set(FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT);
 
@@ -1250,7 +1249,7 @@ static void MogallForest_ThirdArea_EastApeShowsWay(void) {
 static void MogallForest_ApeLeadsToKillerApe(void) {
   struct Actor *creature;
 
-  creature = Actor_GetById(ACTOR_THIRD_AREA_EAST_APE);
+  creature = Actor_Get(ACTOR_THIRD_AREA_EAST_APE);
   Event_Start();
   Actor_SetPosition(ACTOR_THIRD_AREA_EAST_APE, PIXELS(136), PIXELS(360));
   MogallForest_ApeComesOut(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_GRB);
@@ -1292,11 +1291,11 @@ static void MogallForest_KillerApeAttacks(void) {
   s32 x;
   s32 z;
 
-  actor = Actor_GetById(ACTOR_THIRD_AREA_EAST_APE);
+  actor = Actor_Get(ACTOR_THIRD_AREA_EAST_APE);
   Event_Start();
   // Shake the hiding place twice before the creature appears.
-  Actor_ConfigureSpriteColor(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_THIRD_AREA_EAST_APE), 0);
+  Actor_SetSpriteColorById(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_THIRD_AREA_EAST_APE), 0);
   Actor_SetPosition(ACTOR_THIRD_AREA_EAST_APE, PIXELS(136), PIXELS(360));
   FieldCamera_SetSpeedParameters(PIXELS(1) / 2, PIXELS(1) / 16);
   FieldCamera_MoveTo(PIXELS(136), -1, PIXELS(392), 1);
@@ -1307,7 +1306,7 @@ static void MogallForest_KillerApeAttacks(void) {
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
-  Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Event_Wait(40);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   MogallForest_SpawnPuffRing(ACTOR_THIRD_AREA_EAST_APE);
@@ -1317,7 +1316,7 @@ static void MogallForest_KillerApeAttacks(void) {
   MogallForest_SpawnPuffRing(ACTOR_THIRD_AREA_EAST_APE);
   actor->scaleX = 6 * Q16_ONE / 5;
   actor->scaleY = 6 * Q16_ONE / 5;
-  Actor_ConfigureSpriteColor(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_BRG);
+  Actor_SetSpriteColorById(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_BRG);
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 136, 392, PIXELS(15));
   Event_Wait(15);
   // The larger reveal uses a wider, level ring of puffs.
@@ -1341,11 +1340,11 @@ static void MogallForest_KillerApeAttacks(void) {
   Event_Wait(20);
   // Jump toward the leader, then enter the final creature encounter.
   {
-    s32 leaderX = Actor_GetById(ACTOR_PARTY_LEADER)->x.part.pixel;
+    s32 leaderX = Actor_Get(ACTOR_PARTY_LEADER)->x.part.pixel;
 
-    MogallForest_HopActorTo(
-        ACTOR_THIRD_AREA_EAST_APE, leaderX,
-        Actor_GetById(ACTOR_PARTY_LEADER)->z.part.pixel - 16, PIXELS(8));
+    MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, leaderX,
+                            Actor_Get(ACTOR_PARTY_LEADER)->z.part.pixel - 16,
+                            PIXELS(8));
   }
   Event_Wait(10);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
@@ -1401,13 +1400,12 @@ s32 MogallForest_Initialize(void) {
       if (Event_GetFlag(FLAG_MOGALL_FOREST_FIRST_APE_SEEN) == 0) {
         Event_Start();
         wait(1);
-        Actor_ConfigureSpriteColor(ACTOR_FIRST_AREA_NORTH_APE,
-                                   SPRITE_COLOR_GRB);
+        Actor_SetSpriteColorById(ACTOR_FIRST_AREA_NORTH_APE, SPRITE_COLOR_GRB);
         Actor_SetPosition(ACTOR_FIRST_AREA_NORTH_APE, PIXELS(92), PIXELS(120));
         Actor_FaceDirection(ACTOR_FIRST_AREA_NORTH_APE,
                             FACING_NORTH + FACING_STEP, 0);
         Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
-        Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 136, 64);
+        Actor_WalkTo(ACTOR_PARTY_LEADER, 136, 64);
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
         Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
@@ -1419,9 +1417,9 @@ s32 MogallForest_Initialize(void) {
         MogallForest_HopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 136, 116,
                                 PIXELS(7));
         MogallForest_SpawnPuffRing(ACTOR_FIRST_AREA_NORTH_APE);
-        Actor_ConfigureSpriteColor(ACTOR_FIRST_AREA_NORTH_APE,
-                                   SPRITE_COLOR_HIDDEN);
-        Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_AREA_NORTH_APE), 0);
+        Actor_SetSpriteColorById(ACTOR_FIRST_AREA_NORTH_APE,
+                                 SPRITE_COLOR_HIDDEN);
+        Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_AREA_NORTH_APE), 0);
         GameFlag_Set(FLAG_MOGALL_FOREST_FIRST_APE_SEEN);
         Event_Wait(60);
         Event_End();
@@ -1432,35 +1430,33 @@ s32 MogallForest_Initialize(void) {
       if (GameFlag_Get(FLAG_MOGALL_FOREST_FIRST_AREA_NORTH_APE_OUT) != 0) {
         break;
       }
-      Actor_ConfigureSpriteColor(ACTOR_FIRST_AREA_NORTH_APE,
-                                 SPRITE_COLOR_HIDDEN);
+      Actor_SetSpriteColorById(ACTOR_FIRST_AREA_NORTH_APE, SPRITE_COLOR_HIDDEN);
       Actor_SetPosition(ACTOR_FIRST_AREA_NORTH_APE, PIXELS(136), PIXELS(116));
       break;
 
     case MOGALL_FOREST_SIGN_RIVER_FROM_SOUTHWEST_CLEARING:
     case MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_EAST:
     case MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_QUARTZ:
-      actor = Actor_GetById(ACTOR_PARTY_LEADER);
+      actor = Actor_Get(ACTOR_PARTY_LEADER);
       if (actor != 0) {
-        Import_ActorSetPosition(ACTOR_NUT, actor->x.fixed, actor->z.fixed);
+        Actor_SetPosition(ACTOR_NUT, actor->x.fixed, actor->z.fixed);
       }
-      actor = Actor_GetById(ACTOR_NUT);
+      actor = Actor_Get(ACTOR_NUT);
       actor->update = 0;
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
-        actor = Actor_GetById(ACTOR_NUT);
+        actor = Actor_Get(ACTOR_NUT);
         actor->y.fixed = PIXELS(32);
       }
       wait(1);
-      Import_ActorSetPosition(ACTOR_NUT, PIXELS(632), PIXELS(440));
+      Actor_SetPosition(ACTOR_NUT, PIXELS(632), PIXELS(440));
       if (GameFlag_Get(FLAG_MOGALL_FOREST_NUT_CAUGHT) == 0) {
         Scene_FloatNut(ACTOR_NUT);
       }
-      Actor_ConfigureSpriteColor(ACTOR_FIRST_AREA_ATTACKING_APE,
-                                 SPRITE_COLOR_HIDDEN);
-      Actor_ConfigureSpriteColor(ACTOR_FIRST_AREA_EAST_APE,
-                                 SPRITE_COLOR_HIDDEN);
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_AREA_ATTACKING_APE), 0);
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_AREA_EAST_APE), 0);
+      Actor_SetSpriteColorById(ACTOR_FIRST_AREA_ATTACKING_APE,
+                               SPRITE_COLOR_HIDDEN);
+      Actor_SetSpriteColorById(ACTOR_FIRST_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_AREA_ATTACKING_APE), 0);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_AREA_EAST_APE), 0);
       Scene_RedrawActorFootprint(ACTOR_FIRST_AREA_LOG);
       if (GameFlag_Get(FLAG_MOGALL_FOREST_FIRST_AREA_LOG_ROLLED) == 0) {
         Scene_RedrawActorFootprint(ACTOR_FIRST_AREA_RIVER_LOG);
@@ -1471,7 +1467,7 @@ s32 MogallForest_Initialize(void) {
       Import_ActorSetAnimation(ACTOR_FIRST_AREA_RIVER_LOG,
                                MOGALL_FOREST_LOG_IN_RIVER);
       MapGrid_CopyCellAttributes(38, 27, 4, 2, 31, 25);
-      Actor_GetById(ACTOR_FIRST_AREA_RIVER_LOG)->priorityFlags =
+      Actor_Get(ACTOR_FIRST_AREA_RIVER_LOG)->priorityFlags =
           ACTOR_PRIORITY_UNDERFOOT;
       break;
     }
@@ -1484,16 +1480,15 @@ s32 MogallForest_Initialize(void) {
     case MOGALL_FOREST_QUARTZ_STUMPS_FROM_POND:
     case MOGALL_FOREST_QUARTZ_STUMPS_FROM_NORTHEAST_CLEARING:
       if (GameFlag_Get(FLAG_MOGALL_FOREST_SECOND_AREA_NORTH_APE_OUT) == 0) {
-        Actor_ConfigureSpriteColor(ACTOR_SECOND_AREA_NORTH_APE,
-                                   SPRITE_COLOR_HIDDEN);
-        Actor_SetSpriteFlags(Actor_GetById(ACTOR_SECOND_AREA_NORTH_APE), 0);
+        Actor_SetSpriteColorById(ACTOR_SECOND_AREA_NORTH_APE,
+                                 SPRITE_COLOR_HIDDEN);
+        Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_AREA_NORTH_APE), 0);
       }
       if (GameFlag_Get(FLAG_MOGALL_FOREST_SECOND_AREA_EAST_APE_OUT) != 0) {
         break;
       }
-      Actor_ConfigureSpriteColor(ACTOR_SECOND_AREA_EAST_APE,
-                                 SPRITE_COLOR_HIDDEN);
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_SECOND_AREA_EAST_APE), 0);
+      Actor_SetSpriteColorById(ACTOR_SECOND_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_AREA_EAST_APE), 0);
       break;
 
     case MOGALL_FOREST_QUARTZ_RIVER_FROM_NORTHEAST_CLEARING:
@@ -1511,7 +1506,7 @@ s32 MogallForest_Initialize(void) {
                           PIXELS(510));
         Import_ActorSetAnimation(ACTOR_SECOND_AREA_RIVER_LOG,
                                  MOGALL_FOREST_LOG_IN_RIVER);
-        Actor_GetById(ACTOR_SECOND_AREA_RIVER_LOG)->priorityFlags =
+        Actor_Get(ACTOR_SECOND_AREA_RIVER_LOG)->priorityFlags =
             ACTOR_PRIORITY_UNDERFOOT;
         MapGrid_CopyCellAttributes(44, 30, 2, 4, 34, 30);
 #if TBS_PATCH_1
@@ -1520,21 +1515,20 @@ s32 MogallForest_Initialize(void) {
       }
       Scene_RedrawActorFootprint(ACTOR_SECOND_AREA_LOG);
       Scene_RedrawActorFootprint(ACTOR_SECOND_AREA_SOUTH_LOG);
-      column = Actor_GetById(ACTOR_SECOND_AREA_ROCK)->x.fixed;
-      fixedZ = Actor_GetById(ACTOR_SECOND_AREA_ROCK)->z.fixed;
+      column = Actor_Get(ACTOR_SECOND_AREA_ROCK)->x.fixed;
+      fixedZ = Actor_Get(ACTOR_SECOND_AREA_ROCK)->z.fixed;
       column >>= 20;
       PushedActor_FillGridAttributeRectangle(2, column, fixedZ >> 20, 1, 1,
                                              CELL_BEHAVIOR_WALL);
       wait(1);
-      Actor_ConfigureSpriteColor(ACTOR_SECOND_AREA_ROCK, SPRITE_COLOR_GREY);
-      Actor_GetById(ACTOR_SECOND_AREA_LOG)->collisionFlags |=
-          ACTOR_NOT_TARGETED;
+      Actor_SetSpriteColorById(ACTOR_SECOND_AREA_ROCK, SPRITE_COLOR_GREY);
+      Actor_Get(ACTOR_SECOND_AREA_LOG)->collisionFlags |= ACTOR_NOT_TARGETED;
       if (GameFlag_Get(FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_OUT) != 0) {
         break;
       }
-      Actor_ConfigureSpriteColor(ACTOR_SECOND_AREA_SOUTH_APE,
-                                 SPRITE_COLOR_HIDDEN);
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_SECOND_AREA_SOUTH_APE), 0);
+      Actor_SetSpriteColorById(ACTOR_SECOND_AREA_SOUTH_APE,
+                               SPRITE_COLOR_HIDDEN);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_AREA_SOUTH_APE), 0);
       if (GameFlag_Get(FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_MOVED) == 0) {
         break;
       }
@@ -1554,38 +1548,35 @@ s32 MogallForest_Initialize(void) {
     case MOGALL_FOREST_KILLER_APE_STUMPS_FROM_RIVER:
       wait(1);
       if (GameFlag_Get(FLAG_MOGALL_FOREST_THIRD_AREA_ATTACKING_APE_OUT) == 0) {
-        Actor_ConfigureSpriteColor(ACTOR_THIRD_AREA_ATTACKING_APE,
-                                   SPRITE_COLOR_HIDDEN);
-        Actor_SetSpriteFlags(Actor_GetById(ACTOR_THIRD_AREA_ATTACKING_APE), 0);
-        Actor_SetSpriteFlags(
-            Actor_GetById(ACTOR_THIRD_AREA_ATTACKING_APE_STUMP), 0);
+        Actor_SetSpriteColorById(ACTOR_THIRD_AREA_ATTACKING_APE,
+                                 SPRITE_COLOR_HIDDEN);
+        Actor_SetSpriteFlags(Actor_Get(ACTOR_THIRD_AREA_ATTACKING_APE), 0);
+        Actor_SetSpriteFlags(Actor_Get(ACTOR_THIRD_AREA_ATTACKING_APE_STUMP),
+                             0);
       }
       if (GameFlag_Get(FLAG_MOGALL_FOREST_THIRD_AREA_MIDDLE_APE_OUT) == 0) {
-        Actor_ConfigureSpriteColor(ACTOR_THIRD_AREA_MIDDLE_APE,
-                                   SPRITE_COLOR_HIDDEN);
-        Actor_SetSpriteFlags(Actor_GetById(ACTOR_THIRD_AREA_MIDDLE_APE), 0);
-        Actor_SetSpriteFlags(Actor_GetById(ACTOR_THIRD_AREA_MIDDLE_APE_STUMP),
-                             0);
+        Actor_SetSpriteColorById(ACTOR_THIRD_AREA_MIDDLE_APE,
+                                 SPRITE_COLOR_HIDDEN);
+        Actor_SetSpriteFlags(Actor_Get(ACTOR_THIRD_AREA_MIDDLE_APE), 0);
+        Actor_SetSpriteFlags(Actor_Get(ACTOR_THIRD_AREA_MIDDLE_APE_STUMP), 0);
       }
       if (GameFlag_Get(FLAG_MOGALL_FOREST_THIRD_AREA_WEST_APE_OUT) != 0) {
         break;
       }
-      Actor_ConfigureSpriteColor(ACTOR_THIRD_AREA_WEST_APE,
-                                 SPRITE_COLOR_HIDDEN);
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_THIRD_AREA_WEST_APE), 0);
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_THIRD_AREA_WEST_APE_STUMP), 0);
+      Actor_SetSpriteColorById(ACTOR_THIRD_AREA_WEST_APE, SPRITE_COLOR_HIDDEN);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_THIRD_AREA_WEST_APE), 0);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_THIRD_AREA_WEST_APE_STUMP), 0);
       break;
 
     case MOGALL_FOREST_KILLER_APE_CHEST_FROM_STUMPS:
-      column = Actor_GetById(ACTOR_THIRD_AREA_NORTH_ROCK)->x.fixed;
-      fixedZ = Actor_GetById(ACTOR_THIRD_AREA_NORTH_ROCK)->z.fixed;
+      column = Actor_Get(ACTOR_THIRD_AREA_NORTH_ROCK)->x.fixed;
+      fixedZ = Actor_Get(ACTOR_THIRD_AREA_NORTH_ROCK)->z.fixed;
       column >>= 20;
       PushedActor_FillGridAttributeRectangle(2, column, fixedZ >> 20, 1, 1,
                                              CELL_BEHAVIOR_WALL);
-      Actor_ConfigureSpriteColor(ACTOR_THIRD_AREA_NORTH_ROCK,
-                                 SPRITE_COLOR_GREY);
+      Actor_SetSpriteColorById(ACTOR_THIRD_AREA_NORTH_ROCK, SPRITE_COLOR_GREY);
       wait(1);
-      Actor_GetById(ACTOR_THIRD_AREA_LOG)->collisionFlags |= ACTOR_NOT_TARGETED;
+      Actor_Get(ACTOR_THIRD_AREA_LOG)->collisionFlags |= ACTOR_NOT_TARGETED;
       Scene_RedrawActorFootprint(ACTOR_THIRD_AREA_LOG);
       break;
 
@@ -1605,15 +1596,15 @@ s32 MogallForest_Initialize(void) {
         wait(1);
         Import_ActorSetAnimation(ACTOR_THIRD_AREA_NORTH_RIVER_LOG,
                                  MOGALL_FOREST_LOG_IN_RIVER);
-        Import_ActorSetPosition(ACTOR_THIRD_AREA_NORTH_RIVER_LOG, PIXELS(698),
-                                PIXELS(398));
-        Actor_GetById(ACTOR_THIRD_AREA_NORTH_RIVER_LOG)->priorityFlags |=
+        Actor_SetPosition(ACTOR_THIRD_AREA_NORTH_RIVER_LOG, PIXELS(698),
+                          PIXELS(398));
+        Actor_Get(ACTOR_THIRD_AREA_NORTH_RIVER_LOG)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
         MapGrid_CopyCellAttributes(26, 20, 2, 4, 42, 23);
         GameFlag_Set(FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED);
         Actor_SetPosition(ACTOR_THIRD_AREA_SOUTH_ROCK, PIXELS(632),
                           PIXELS(440));
-        Actor_SetSpriteFlags(Actor_GetById(ACTOR_THIRD_AREA_SOUTH_ROCK), 0);
+        Actor_SetSpriteFlags(Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK), 0);
       }
       if (GameFlag_Get(FLAG_MOGALL_FOREST_THIRD_AREA_SOUTH_LOG_ROLLED) == 0) {
         Scene_RedrawActorFootprint(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG);
@@ -1621,26 +1612,25 @@ s32 MogallForest_Initialize(void) {
         wait(1);
         Import_ActorSetAnimation(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG,
                                  MOGALL_FOREST_LOG_IN_RIVER);
-        Import_ActorSetPosition(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG, PIXELS(666),
-                                PIXELS(550));
-        Actor_GetById(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG)->priorityFlags =
+        Actor_SetPosition(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG, PIXELS(666),
+                          PIXELS(550));
+        Actor_Get(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG)->priorityFlags =
             ACTOR_PRIORITY_UNDERFOOT;
         MapGrid_CopyCellAttributes(26, 20, 2, 4, 40, 32);
       }
-      column = Actor_GetById(ACTOR_THIRD_AREA_SOUTH_ROCK)->x.fixed;
-      fixedZ = Actor_GetById(ACTOR_THIRD_AREA_SOUTH_ROCK)->z.fixed;
+      column = Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK)->x.fixed;
+      fixedZ = Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK)->z.fixed;
       column >>= 20;
       PushedActor_FillGridAttributeRectangle(2, column, fixedZ >> 20, 1, 1,
                                              CELL_BEHAVIOR_WALL);
-      Actor_ConfigureSpriteColor(ACTOR_THIRD_AREA_SOUTH_ROCK,
-                                 SPRITE_COLOR_GREY);
+      Actor_SetSpriteColorById(ACTOR_THIRD_AREA_SOUTH_ROCK, SPRITE_COLOR_GREY);
       wait(1);
-      Actor_GetById(ACTOR_THIRD_AREA_NORTH_RIVER_LOG)->collisionFlags |=
+      Actor_Get(ACTOR_THIRD_AREA_NORTH_RIVER_LOG)->collisionFlags |=
           ACTOR_NOT_TARGETED;
       if (GameFlag_Get(FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT) == 0) {
-        Actor_ConfigureSpriteColor(ACTOR_THIRD_AREA_EAST_APE,
-                                   SPRITE_COLOR_HIDDEN);
-        Actor_SetSpriteFlags(Actor_GetById(ACTOR_THIRD_AREA_EAST_APE), 0);
+        Actor_SetSpriteColorById(ACTOR_THIRD_AREA_EAST_APE,
+                                 SPRITE_COLOR_HIDDEN);
+        Actor_SetSpriteFlags(Actor_Get(ACTOR_THIRD_AREA_EAST_APE), 0);
         if (GameFlag_Get(FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_MOVED) != 0) {
           Actor_SetPosition(ACTOR_THIRD_AREA_EAST_APE_STUMP, PIXELS(744),
                             PIXELS(504));
@@ -1649,7 +1639,7 @@ s32 MogallForest_Initialize(void) {
         }
 #if TBS_PATCH_2
       } else {
-        Import_ActorSetPosition(ACTOR_THIRD_AREA_EAST_APE, 0, 0);
+        Actor_SetPosition(ACTOR_THIRD_AREA_EAST_APE, 0, 0);
 #endif
       }
       MogallForest_ThirdArea_UpdateSouthRock();

@@ -172,14 +172,14 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Event_Wait(20);
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Weather_LastLightning();
-  Event_PlaySound(SE_CRASH);
+  Sound_Play(SE_CRASH);
   Event_Wait(30);
   Weather_LastLightning();
-  Event_PlaySound(SE_CRASH);
+  Sound_Play(SE_CRASH);
   FieldCamera_WaitForArrival();
   MapGrid_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
   Weather_LastLightning();
-  Event_PlaySound(SE_CRASH);
+  Sound_Play(SE_CRASH);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
   Event_Wait(60);
@@ -224,7 +224,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Event_Wait(60);
   MapGrid_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
   Weather_LastLightning();
-  Event_PlaySound(SE_CRASH);
+  Sound_Play(SE_CRASH);
   Event_Wait(60);
   Actor_TurnToFaceEachOther(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
   Actor_TurnToFaceEachOther(ACTOR_DORA, ACTOR_GARETS_SISTER, 0);
@@ -446,7 +446,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_WalkToAndWait(ACTOR_GREAT_HEALER, 255, 445);
   Event_Wait(40);
   MapGrid_AnimateCells(gValeEruption_SanctumDoorOpens, 45, 11);
-  Event_PlaySound(SE_THUMP);
+  Sound_Play(SE_THUMP);
   Event_Wait(30);
   Actor_WalkTo(ACTOR_GREAT_HEALER, 255, 390);
   Event_Wait(20);
@@ -472,7 +472,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Event_Wait(40);
   MapGrid_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
   Weather_LastLightning();
-  Event_PlaySound(SE_CRASH);
+  Sound_Play(SE_CRASH);
   Event_Wait(30);
   work = gFieldWork;
   work->transition = 0;

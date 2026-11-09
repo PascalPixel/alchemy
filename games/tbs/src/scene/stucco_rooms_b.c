@@ -98,14 +98,14 @@ enum {
 /// for yes or the one after that for no.
 static inline void StuccoRoomsB_AskYesNo(s32 question, s32 speaker) {
   Event_SetMessageId(question);
-  FieldMessage_ShowAtActor(speaker, 0);
+  Event_OpenMessage(speaker, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Event_Wait(10);
     Event_SetMessageId(question + 1);
   } else {
     Event_SetMessageId(question + 2);
   }
-  Event_ShowMessageAndWait(speaker, 0);
+  Event_ShowMessage(speaker, 0);
 }
 
 const struct SceneEntrance *StuccoRoomsB_GetEntrances(void) {
@@ -170,7 +170,7 @@ static void StuccoRoomsB_EnterDoor(void) {
   // Stop the room's actors before animating the selected doorway.
   for (actorId = ACTOR_FIRST_PLACED; actorId < STUCCO_ROOMS_B_ACTOR_SLOT_END;
        actorId++) {
-    actor = Actor_GetById(actorId);
+    actor = Actor_Get(actorId);
     if (actor != 0) {
       actor->motionFlags = 0;
     }
@@ -181,8 +181,8 @@ static void StuccoRoomsB_EnterDoor(void) {
   MapGrid_AnimateCells(gStuccoRoomsBDoors[doorIndex].steps,
                        gStuccoRoomsBDoors[doorIndex].x,
                        gStuccoRoomsBDoors[doorIndex].y);
-  Actor_SetSpeedParameters(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-  Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Import_EventSetExitRequest(*trigger);
 }
@@ -275,24 +275,24 @@ static void StuccoRoomsB_WatchPassengersArgue(void) {
   Event_Wait(30);
   Actor_Jump(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 4, 13);
   Actor_Jump(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 4, 30);
-  Event_ShowMessageAndWait(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 0);
+  Event_ShowMessage(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 0);
   Event_Wait(10);
 
-  FieldEffect_SpawnAttached(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE,
-                            EMOTE_IN_FRONT | EMOTE_WINCE, 50);
+  Actor_ShowEmote(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE,
+                  EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE, ANIM_NOD);
   Event_Wait(30);
-  Event_ShowMessageAndWait(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE, 0);
+  Event_ShowMessage(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_THIRD_PASSENGER,
                             ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_STUCCO_ROOMS_B_THIRD_PASSENGER, 0);
+  Event_ShowMessage(ACTOR_STUCCO_ROOMS_B_THIRD_PASSENGER, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 2);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 0);
+  Event_ShowMessage(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE, ANIM_NOD);
   Event_Wait(30);
@@ -315,11 +315,11 @@ s32 StuccoRoomsB_ApplyEntryState(void) {
   if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
     // Restore the room's changed cells and the passengers' fixed draw priority.
     MapGrid_CopyCellAttributes(51, 47, 3, 1, 51, 45);
-    actor = Actor_GetById(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER);
+    actor = Actor_Get(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER);
     // Stored as a plain byte: the field store allocates the zero differently.
     *(u8 *)&actor->priorityFlags = clearedPriorityFlags = 0;
     actor->sprite->image.priority = 2;
-    actor = Actor_GetById(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE);
+    actor = Actor_Get(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE);
     actor->priorityFlags = clearedPriorityFlags;
     actor->sprite->image.priority = 2;
     if (Event_GetFlag(FLAG_STUCCO_ROOMS_B_MEDAL_HIDDEN) != 0) {
@@ -346,8 +346,8 @@ s32 StuccoRoomsB_ApplyEntryState(void) {
     }
     // Once the docks' confrontation (the refund) is seen, these two have left.
     if (GameFlag_Get(FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED) != 0) {
-      Import_ActorSetPosition(ACTOR_STUCCO_ROOMS_B_FELLOW_PASSENGER, 0, 0);
-      Import_ActorSetPosition(ACTOR_STUCCO_ROOMS_B_COLOSSO_FAN, 0, 0);
+      Actor_SetPosition(ACTOR_STUCCO_ROOMS_B_FELLOW_PASSENGER, 0, 0);
+      Actor_SetPosition(ACTOR_STUCCO_ROOMS_B_COLOSSO_FAN, 0, 0);
     }
   }
   return 0;
@@ -357,15 +357,15 @@ s32 StuccoRoomsB_ApplyEntryState(void) {
 /// west) opens STUCCO_ROOMS_B_ITEM_SHOP; from elsewhere talks about the
 /// finals.
 static void StuccoRoomsB_TalkToItemMerchant(s32 speaker) {
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_WEST) {
     Shop_Run(STUCCO_ROOMS_B_ITEM_SHOP, speaker);
   } else if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
     Event_SetMessageId(MsgTolbiRightOneWell);
-    Event_ShowMessageAndWait(speaker, 0);
+    Event_ShowMessage(speaker, 0);
   } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
     Event_SetMessageId(MsgTolbiRequireLotHealing);
-    Event_ShowMessageAndWait(speaker, 0);
+    Event_ShowMessage(speaker, 0);
   } else {
     StuccoRoomsB_AskYesNo(MsgTolbiFirstTimeTolbi, speaker);
   }
@@ -374,39 +374,39 @@ static void StuccoRoomsB_TalkToItemMerchant(s32 speaker) {
 /// In Tolbi, the weapon merchant: across the counter (the leader facing
 /// north) opens the shop; otherwise talks about Colosso.
 static void StuccoRoomsB_TalkToWeaponMerchant(s32 speaker) {
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
     Shop_Run(STUCCO_ROOMS_B_WEAPON_SHOP, speaker);
   } else if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
     StuccoRoomsB_AskYesNo(MsgTolbiComeWayKalay, speaker);
   } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
     Event_SetMessageId(MsgTolbiColossoFinalsFinally);
-    Event_ShowMessageAndWait(speaker, 0);
+    Event_ShowMessage(speaker, 0);
   } else {
     Event_SetMessageId(MsgTolbiLookStrongGo);
-    Event_ShowMessageAndWait(speaker, 0);
-    FieldEffect_SpawnAttached(speaker, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
+    Event_ShowMessage(speaker, 0);
+    Actor_ShowEmote(speaker, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
     Event_Wait(40);
-    Event_ShowMessageAndWait(speaker, 0);
+    Event_ShowMessage(speaker, 0);
   }
 }
 
 /// In Tolbi, the armor merchant: across the counter (the leader facing north)
 /// opens the shop; otherwise talks about the finals.
 static void StuccoRoomsB_TalkToArmorMerchant(s32 speaker) {
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
     Shop_Run(STUCCO_ROOMS_B_ARMOR_SHOP, speaker);
   } else {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       Event_SetMessageId(MsgTolbiWasntAbleWatch);
-      Event_ShowMessageAndWait(speaker, 0);
+      Event_ShowMessage(speaker, 0);
     } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
       Event_SetMessageId(MsgTolbiMaybeCloseShop);
-      Event_ShowMessageAndWait(speaker, 0);
+      Event_ShowMessage(speaker, 0);
     } else {
       Event_SetMessageId(MsgTolbiIfCanMakeNameFor);
-      Event_ShowMessageAndWait(speaker, 0);
+      Event_ShowMessage(speaker, 0);
     }
   }
 }
@@ -422,7 +422,7 @@ static void StuccoRoomsB_TalkToChef(s32 speaker) {
 static void StuccoRoomsB_TalkToWaitress(s32 speaker) {
   Event_Start();
   Event_SetMessageId(MsgTolbiGrrrChefInBadMood);
-  Event_ShowMessageAndWait(speaker, 0);
+  Event_ShowMessage(speaker, 0);
   Event_End();
 }
 
@@ -463,7 +463,7 @@ static void StuccoRoomsB_ReadMedalWomanMind(void) {
   } else {
     Event_SetMessageId(MsgTolbiThingFoundDefinitelySameAs);
   }
-  Event_ShowMessageAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
+  Event_ShowMessage(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
   Event_End();
 }
 
@@ -490,19 +490,19 @@ static void StuccoRoomsB_TalkToFellowPassenger(s32 speaker) {
 /// In Tolbi Sanctum, the healer: across the counter (the leader facing north)
 /// opens the sanctum; otherwise talks about the festival.
 static void StuccoRoomsB_TalkToHealer(s32 speaker) {
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
     Sanctum_Run(speaker);
   } else {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       Event_SetMessageId(MsgTolbiShipsArentGoing);
-      Event_ShowMessageAndWait(speaker, 0);
+      Event_ShowMessage(speaker, 0);
     } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
       Event_SetMessageId(MsgTolbiMissFinalsTolbis);
-      Event_ShowMessageAndWait(speaker, 0);
+      Event_ShowMessage(speaker, 0);
     } else {
       Event_SetMessageId(MsgTolbiWasteStuckHereWhenSuch);
-      Event_ShowMessageAndWait(speaker, 0);
+      Event_ShowMessage(speaker, 0);
     }
   }
 }

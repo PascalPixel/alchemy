@@ -82,9 +82,9 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
     Actor_SetPosition(ACTOR_FALLEN_STUMP, PIXELS(216), PIXELS(136));
     Import_ActorSetAnimation(ACTOR_FALLEN_STUMP, STUMP_ANIMATION_SINK);
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FALLEN_STUMP), 0);
-    Actor_GetById(ACTOR_FALLEN_STUMP)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    Actor_GetById(ACTOR_FALLEN_STUMP)->collisionFlags = 0;
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_FALLEN_STUMP), 0);
+    Actor_Get(ACTOR_FALLEN_STUMP)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+    Actor_Get(ACTOR_FALLEN_STUMP)->collisionFlags = 0;
     MapGrid_CopyCellAttributes(11, 36, 5, 5, 11, 6);
   }
   return 0;

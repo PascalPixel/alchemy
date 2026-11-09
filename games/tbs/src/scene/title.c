@@ -86,7 +86,7 @@ s32 Title_Run(void) {
   // After 120 frames, the logo waits up to 3600 frames (a minute) for a key
   // press.
   if (gMainRoutineWork.entrance == TITLE_FROM_WORLD_MAP) {
-    Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
+    Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 0;
     Sound_Play(MUS_ENDING_LOGO);
     Title_RevealScreen(0);
     wait(120);

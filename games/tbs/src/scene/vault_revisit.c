@@ -171,7 +171,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 static void VaultRevisit_ShowStandingActorMessage(s32 actorId) {
   Event_Start();
   Import_ActorSetAnimation(actorId, ANIM_STAND);
-  Event_ShowMessageAndWait(actorId, 0);
+  Event_ShowMessage(actorId, 0);
   Event_End();
 }
 
@@ -179,10 +179,10 @@ static void VaultRevisit_ShowStandingActorMessage(s32 actorId) {
 /// while back, aren't you? You've returned to Vault!"
 static void VaultRevisit_RecognizeThiefCatchers(void) {
   Event_Start();
-  Actor_SetAngleToward(ACTOR_WELCOMING_YOUNG_MAN, ACTOR_PARTY_LEADER, 2);
+  Actor_FaceActor(ACTOR_WELCOMING_YOUNG_MAN, ACTOR_PARTY_LEADER, 2);
   GameFlag_Set(FLAG_VAULT_REVISIT_YOUNG_MAN_RECOGNIZED_PARTY);
   Event_SetMessageId(MsgVaultWarriorsWhoCaptured);
-  Event_ShowMessageAndWait(ACTOR_WELCOMING_YOUNG_MAN, 0);
+  Event_ShowMessage(ACTOR_WELCOMING_YOUNG_MAN, 0);
   Event_End();
 }
 
@@ -202,11 +202,11 @@ static void VaultRevisit_TalkOfLunpaThieves(void) {
 static void VaultRevisit_PraisePartyStrength(void) {
 
   Event_Start();
-  Actor_SetAngleToward(ACTOR_MAYORS_VISITOR, ACTOR_PARTY_LEADER, 2);
+  Actor_FaceActor(ACTOR_MAYORS_VISITOR, ACTOR_PARTY_LEADER, 2);
   GameFlag_Set(FLAG_VAULT_REVISIT_PARTY_PRAISED);
   GameFlag_Set(FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES);
   Event_SetMessageId(MsgVaultTalkingMayorStrong);
-  Event_ShowMessageAndWait(ACTOR_MAYORS_VISITOR, 0);
+  Event_ShowMessage(ACTOR_MAYORS_VISITOR, 0);
   Event_End();
 }
 
@@ -239,12 +239,12 @@ static void VaultRevisit_GreetWarriorGuy(void) {
   if (Event_GetFlag(FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED) == 0) {
     Actor_ShowEmote(ACTOR_BOY_ROUND_THE_WELL,
                     EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-    FieldEvent_ShowMessageThenWait(ACTOR_BOY_ROUND_THE_WELL, 0, 10);
-    FieldEvent_ShowMessageThenWait(ACTOR_BOY_ROUND_THE_WELL, 0, 10);
+    Event_ShowMessageThenWait(ACTOR_BOY_ROUND_THE_WELL, 0, 10);
+    Event_ShowMessageThenWait(ACTOR_BOY_ROUND_THE_WELL, 0, 10);
     GameFlag_Set(FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED);
   }
   Event_SetMessageId(text + 2);
-  FieldEvent_ShowMessageThenWait(ACTOR_BOY_ROUND_THE_WELL, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_BOY_ROUND_THE_WELL, 0, 10);
   actor->facing = facing;
   wait(1);
   Event_End();
@@ -257,7 +257,7 @@ static void VaultRevisit_WishEldersWereBrave(void) {
   struct Actor *actor;
   s16 originalFacing;
 
-  actor = Actor_GetById(ACTOR_GIRL_ROUND_THE_WELL);
+  actor = Actor_Get(ACTOR_GIRL_ROUND_THE_WELL);
   originalFacing = actor->facing;
   actor->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
   Event_Start();
@@ -278,11 +278,11 @@ static void VaultRevisit_AskAboutJailbreak(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultGuysCheckJail);
   Actor_TurnToFaceEachOther(ACTOR_STRONGMAN_ON_WATCH, ACTOR_PARTY_LEADER, 2);
-  FieldMessage_ShowAtActor(ACTOR_STRONGMAN_ON_WATCH, 0);
+  Event_OpenMessage(ACTOR_STRONGMAN_ON_WATCH, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
     gFieldWork->message += 1;
   }
-  Event_ShowMessageAndWait(ACTOR_STRONGMAN_ON_WATCH, 0);
+  Event_ShowMessage(ACTOR_STRONGMAN_ON_WATCH, 0);
   GameFlag_Set(FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL);
   Event_End();
 }
@@ -293,7 +293,7 @@ static void VaultRevisit_ReadMindAndRecognizeThiefCatchers(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_WELCOMING_YOUNG_MAN, 1);
   Event_Wait(20);
-  Actor_SetAngleToward(ACTOR_WELCOMING_YOUNG_MAN, ACTOR_PARTY_LEADER, 20);
+  Actor_FaceActor(ACTOR_WELCOMING_YOUNG_MAN, ACTOR_PARTY_LEADER, 20);
   GameFlag_Set(FLAG_VAULT_REVISIT_YOUNG_MAN_RECOGNIZED_PARTY);
   Event_SetMessageId(MsgVaultWarriorsWhoCaptured);
   Event_ShowMessageThenWait(ACTOR_WELCOMING_YOUNG_MAN, 0, 20);
@@ -305,9 +305,9 @@ static void VaultRevisit_ReadMindAndRecognizeThiefCatchers(void) {
 /// they are so quiet.
 static void VaultRevisit_ReadMindOnDodonpa(void) {
   Event_SetMessageId(MsgVaultOnceDodonpaTook);
-  Actor_GetById(ACTOR_WOMAN_ON_LUNPAS_THIEVES)->paused = 1;
+  Actor_Get(ACTOR_WOMAN_ON_LUNPAS_THIEVES)->paused = 1;
   VaultRevisit_ShowStandingActorMessage(ACTOR_WOMAN_ON_LUNPAS_THIEVES);
-  Actor_GetById(ACTOR_WOMAN_ON_LUNPAS_THIEVES)->paused = 0;
+  Actor_Get(ACTOR_WOMAN_ON_LUNPAS_THIEVES)->paused = 0;
 }
 
 /// Mind Read before the old man has spoken: he turns and praises the party.
@@ -315,7 +315,7 @@ static void VaultRevisit_ReadMindAndPraisePartyStrength(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_MAYORS_VISITOR, 1);
   Event_Wait(20);
-  Actor_SetAngleToward(ACTOR_MAYORS_VISITOR, ACTOR_PARTY_LEADER, 20);
+  Actor_FaceActor(ACTOR_MAYORS_VISITOR, ACTOR_PARTY_LEADER, 20);
   GameFlag_Set(FLAG_VAULT_REVISIT_PARTY_PRAISED);
   GameFlag_Set(FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES);
   Event_SetMessageId(MsgVaultTalkingMayorStrong);
@@ -327,9 +327,9 @@ static void VaultRevisit_ReadMindAndPraisePartyStrength(void) {
 /// winter.
 static void VaultRevisit_ReadMindOnWinter(void) {
   Event_SetMessageId(MsgVaultGreatEverythingSolved);
-  Actor_GetById(ACTOR_OLD_WOMAN_ON_THE_VOLCANO)->paused = 1;
+  Actor_Get(ACTOR_OLD_WOMAN_ON_THE_VOLCANO)->paused = 1;
   VaultRevisit_ShowStandingActorMessage(ACTOR_OLD_WOMAN_ON_THE_VOLCANO);
-  Actor_GetById(ACTOR_OLD_WOMAN_ON_THE_VOLCANO)->paused = 0;
+  Actor_Get(ACTOR_OLD_WOMAN_ON_THE_VOLCANO)->paused = 0;
 }
 
 /// Mind Read on the boy round the well: watching the party makes one feel
@@ -351,7 +351,7 @@ static void VaultRevisit_ReadMindOnFeelingBrave(void) {
 /// Mind Read on the girl round the well: grown-ups always get so scared.
 static void VaultRevisit_ReadMindOnScaredGrownUps(void) {
   {
-    struct Actor *actor = Actor_GetById(ACTOR_GIRL_ROUND_THE_WELL);
+    struct Actor *actor = Actor_Get(ACTOR_GIRL_ROUND_THE_WELL);
     actor->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
   }
   Event_Start();
@@ -360,7 +360,7 @@ static void VaultRevisit_ReadMindOnScaredGrownUps(void) {
   Event_End();
   {
     s32 clear = 0;
-    struct Actor *actor = Actor_GetById(ACTOR_GIRL_ROUND_THE_WELL);
+    struct Actor *actor = Actor_Get(ACTOR_GIRL_ROUND_THE_WELL);
     actor->timer = clear;
   }
 }
@@ -402,15 +402,15 @@ static void VaultRevisit_ReadMindOnJailKey(void) {
 /// to settle.
 static void VaultRevisit_JumpActorToAndWait(int actorId, int x, int z,
                                             int velocityY) {
-  struct Actor *jumpingActor = Actor_GetById(actorId);
+  struct Actor *jumpingActor = Actor_Get(actorId);
   int frames;
-  Actor_SetSpeedParameters(actorId, PIXELS(3), PIXELS(3) / 2);
+  Actor_SetSpeed(actorId, PIXELS(3), PIXELS(3) / 2);
   jumpingActor->gravity = PIXELS(1) / 2;
   jumpingActor->bounce = 0;
   jumpingActor->velocityY = velocityY;
   Actor_SetSpriteFlags(jumpingActor, 0);
-  Actor_SetPositionAndCommit(actorId, x, z);
-  Import_ActorSetPosition(actorId, x << 16, z << 16);
+  Actor_MoveToAndWait(actorId, x, z);
+  Actor_SetPosition(actorId, x << 16, z << 16);
   for (frames = 60; frames != 0; --frames) {
     wait(1);
     if ((s16)((u32)jumpingActor->velocityY >> 16) == 0)
@@ -425,7 +425,7 @@ static void VaultRevisit_JumpActorToAndWait(int actorId, int x, int z,
 /// (408, 120), and sets FLAG_VAULT_SAP_CALLED_BY_BELL.
 static void VaultRevisit_RingBell(void) {
   Event_Start();
-  Event_PlaySound(SE_BELL);
+  Sound_Play(SE_BELL);
   Event_Wait(40);
   if (Event_GetFlag(FLAG_VAULT_SAP_CALLED_BY_BELL) == 0) {
     Actor_SetAttachedEffect(ACTOR_SAP,
@@ -487,7 +487,7 @@ static void VaultRevisit_EnterInn(void) {
 /// and the jail, and the cell behavior of the doorway, a column of three
 /// cells at (23, 12), is replaced so he can pass.
 static void VaultRevisit_EnterItemShop(void) {
-  struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
 
   Sound_Play(SE_DOOR_OPEN);
@@ -502,7 +502,7 @@ static void VaultRevisit_EnterItemShop(void) {
 /// It's VAULT_REVISIT_TO_LOG_ROOMS_B_NORTH, drawn like the item
 /// shop's.
 static void VaultRevisit_EnterWeaponAndArmorShop(void) {
-  struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
 
   Sound_Play(SE_DOOR_OPEN);
@@ -531,7 +531,7 @@ static void VaultRevisit_EnterMayorsHouse(void) {
 /// It's drawn behind the doorway as it goes in, to
 /// STONE_ROOMS_FROM_VAULT_REVISIT, where the lone prisoner sits.
 static void VaultRevisit_EnterJail(void) {
-  struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
 
   Sound_Play(SE_DOOR_OPEN);
@@ -605,7 +605,7 @@ static void VaultRevisit_TalkToDog(void) {
   Import_ActorSetAnimation(ACTOR_VAULT_DOG, 0);
   Actor_TurnToFaceEachOther(ACTOR_VAULT_DOG, ACTOR_PARTY_LEADER, 0);
   Event_Wait(2);
-  Event_ShowMessageAndWait(ACTOR_VAULT_DOG, 0);
+  Event_ShowMessage(ACTOR_VAULT_DOG, 0);
   Import_ActorSetAnimation(ACTOR_VAULT_DOG, ANIM_STAND);
 
   if (PartyInventory_FindMember(ITEM_BONE) != -1 &&
@@ -666,25 +666,25 @@ s32 Scene_Initialize(void) {
   MapGrid_CopyCellsTo(45, 41, 8, 45, 3, 3);
   wait(1);
   // Resume the two walking villagers' proximity reactions.
-  actor = Actor_GetById(ACTOR_BOY_ROUND_THE_WELL);
+  actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
 #ifdef UBFIX
   actor->update = Vault_UpdateWalkingVillager;
 #else
   actor->update = (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
 #endif
   {
-    struct Actor *actor = Actor_GetById(ACTOR_BOY_ROUND_THE_WELL);
+    struct Actor *actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
     s32 mode = 1;
     actor->timer = mode;
   }
   mode = 0;
-  actor = Actor_GetById(ACTOR_GIRL_ROUND_THE_WELL);
+  actor = Actor_Get(ACTOR_GIRL_ROUND_THE_WELL);
 #ifdef UBFIX
   actor->update = Vault_UpdateWalkingVillager;
 #else
   actor->update = (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
 #endif
-  Actor_GetById(ACTOR_GIRL_ROUND_THE_WELL)->timer = mode;
+  Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer = mode;
   // Restore the dog's clue position and the bell's current Djinni position.
   if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE))
     Actor_SetPosition(ACTOR_VAULT_DOG, PIXELS(216), PIXELS(392));

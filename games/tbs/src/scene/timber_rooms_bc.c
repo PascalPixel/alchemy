@@ -250,7 +250,7 @@ const struct ActorPlacement *TimberRoomsBC_GetActorPlacements(void) {
 /// south, west and north. Facing north, the leader is across the counter
 /// from a shopkeeper.
 static inline u16 TimberRoomsBC_LeaderGetSide(void) {
-  return (Actor_GetById(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & ~0x3fff;
+  return (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & ~0x3fff;
 }
 
 /// The weapon merchant sells weapons, or talks of Sheba and the sea. In
@@ -259,7 +259,7 @@ static inline u16 TimberRoomsBC_LeaderGetSide(void) {
 /// has heard that Sheba was taken hostage and Faran went after her, and after
 /// it tell of the rough sea.
 static void TimberRoomsBC_TalkToWeaponMerchant(s32 keeper) {
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   // TimberRoomsBC_LeaderGetSide's rounding, written with the mask 0xc000,
   // which loads from the literal pool where the helper's builds the mask.
   u16 side = (leader->facing + TRIG_TURN / 8) & 0xc000;
@@ -268,19 +268,19 @@ static void TimberRoomsBC_TalkToWeaponMerchant(s32 keeper) {
     Shop_Run(LALIVERO_WEAPON_STOCK, keeper);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     Event_SetMessageId(MsgLaliveroWentOceanLook);
-    Event_ShowMessageAndWait(keeper, 0);
+    Event_ShowMessage(keeper, 0);
   } else {
     s32 message = MsgLaliveroTakenHostageFaran;
 
     Event_SetMessageId(message);
-    FieldMessage_ShowAtActor(keeper, 0);
+    Event_OpenMessage(keeper, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Event_Wait(10);
       Event_SetMessageId(message + 1);
     } else {
       Event_SetMessageId(message + 2);
     }
-    Event_ShowMessageAndWait(keeper, 0);
+    Event_ShowMessage(keeper, 0);
   }
 }
 
@@ -291,10 +291,10 @@ static void TimberRoomsBC_TalkToArmorMerchant(s32 keeper) {
     Shop_Run(LALIVERO_ARMOR_STOCK, keeper);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     Event_SetMessageId(MsgLaliveroWantedSendShips);
-    Event_ShowMessageAndWait(keeper, 0);
+    Event_ShowMessage(keeper, 0);
   } else {
     Event_SetMessageId(MsgLaliveroWarriorRightPlease);
-    Event_ShowMessageAndWait(keeper, 0);
+    Event_ShowMessage(keeper, 0);
   }
 }
 
@@ -305,10 +305,10 @@ static void TimberRoomsBC_TalkToItemMerchant(s32 keeper) {
     Shop_Run(LALIVERO_ITEM_STOCK, keeper);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     Event_SetMessageId(MsgLaliveroImpossibleGoOcean);
-    Event_ShowMessageAndWait(keeper, 0);
+    Event_ShowMessage(keeper, 0);
   } else {
     Event_SetMessageId(MsgLaliveroGuessPeopleAngara);
-    Event_ShowMessageAndWait(keeper, 0);
+    Event_ShowMessage(keeper, 0);
   }
 }
 
@@ -319,10 +319,10 @@ static void TimberRoomsBC_TalkToHealer(s32 healer) {
     Sanctum_Run(healer);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     Event_SetMessageId(MsgLaliveroBabiLighthouseStruck);
-    Event_ShowMessageAndWait(healer, 0);
+    Event_ShowMessage(healer, 0);
   } else {
     Event_SetMessageId(MsgLaliveroBabiIsntBuilding);
-    Event_ShowMessageAndWait(healer, 0);
+    Event_ShowMessage(healer, 0);
   }
 }
 
@@ -333,10 +333,10 @@ static void TimberRoomsBC_TalkToInnkeeper(s32 innkeeper) {
     Inn_CheckIn(LALIVERO_INN, innkeeper);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     Event_SetMessageId(MsgLaliveroDidntKnowTime);
-    Event_ShowMessageAndWait(innkeeper, 0);
+    Event_ShowMessage(innkeeper, 0);
   } else {
     Event_SetMessageId(MsgLaliveroWantStayLet);
-    Event_ShowMessageAndWait(innkeeper, 0);
+    Event_ShowMessage(innkeeper, 0);
   }
 }
 
@@ -369,8 +369,8 @@ static void TimberRoomsBC_TalkToInnWorker(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_INN_WORKER, 0);
   if ((u16)side == FACING_WEST) {
-    Actor_CommitPositionAndActivate(ACTOR_PARTY_LEADER, 0, 16);
-    Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 16);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Event_Wait(20);
   }
   Actor_SetScript(ACTOR_INN_WORKER, gTimberRoomsBC_InnWorkerChores);
@@ -389,9 +389,9 @@ static void TimberRoomsBC_IodemCallsOut(void) {
   FieldCamera_WaitForArrival();
   Event_Wait(30);
   Event_SetMessageId(MsgLaliveroPleaseWaitForMeOutside);
-  Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(30);
@@ -404,7 +404,7 @@ static void TimberRoomsBC_TalkToIodem(void) {
 
   GameFlag_Set(FLAG_IODEM_ASKED_TO_MEET);
   Event_SetMessageId(MsgLaliveroPleaseWaitForMeOutside);
-  Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+  Event_ShowMessage(ACTOR_IODEM, 0);
 }
 
 /// Both scenes, a doorway out: take the touched step trigger's exit with the
@@ -453,7 +453,7 @@ static void TimberRoomsBC_ReportToFaran(void) {
   Event_Wait(10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
-  Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, 104, 136);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 104, 136);
   Event_Wait(10);
   FieldActor_LaunchFromLeader(ACTOR_GARET, -16, 16, FACING_NORTH);
   FieldActor_LaunchFromLeader(ACTOR_MIA, 0, 24, FACING_NORTH);
@@ -463,33 +463,33 @@ static void TimberRoomsBC_ReportToFaran(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_IVAN, 0);
+  Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   // Faran and Iodem tell of the search for Sheba.
   Actor_FaceDirection(ACTOR_FARAN, FACING_SOUTH, 0);
-  Actor_ArmCallback(ACTOR_IODEM, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 70);
-  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
-  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   // The party tells what became of Jenna and the others; the version that saw
   // the ship at Idejima knows Idejima was swept away with it.
   if (GameFlag_Get(FLAG_SAW_SHIP_AT_IDEJIMA) == 0) {
@@ -498,22 +498,22 @@ static void TimberRoomsBC_ReportToFaran(void) {
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
     Event_Wait(20);
-    Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+    Event_ShowMessage(ACTOR_FARAN, 0);
     Event_Wait(10);
     Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 50);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     Event_Wait(10);
-    Actor_ArmCallback(ACTOR_GARET, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
     Event_Wait(20);
-    Event_ShowMessageAndWait(ACTOR_GARET, 0);
+    Event_ShowMessage(ACTOR_GARET, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
     Event_Wait(20);
-    Event_ShowMessageAndWait(ACTOR_MIA, 0);
+    Event_ShowMessage(ACTOR_MIA, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     Event_Wait(20);
-    Event_ShowMessageAndWait(ACTOR_IVAN, 0);
+    Event_ShowMessage(ACTOR_IVAN, 0);
     Event_Wait(20);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     Event_OpenMessage(ACTOR_IODEM, 0);
@@ -521,22 +521,22 @@ static void TimberRoomsBC_ReportToFaran(void) {
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
     Event_Wait(20);
-    Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+    Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(30);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     Event_Wait(20);
-    Event_ShowMessageAndWait(ACTOR_GARET, 0);
+    Event_ShowMessage(ACTOR_GARET, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
     Event_Wait(20);
-    Event_ShowMessageAndWait(ACTOR_MIA, 0);
+    Event_ShowMessage(ACTOR_MIA, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Event_Wait(30);
-    Event_ShowMessageAndWait(ACTOR_IVAN, 0);
+    Event_ShowMessage(ACTOR_IVAN, 0);
     Event_Wait(10);
     Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 30);
     Event_OpenMessage(ACTOR_IVAN | SPEAKER_PORTRAIT_RIGHT, 0);
@@ -550,18 +550,18 @@ static void TimberRoomsBC_ReportToFaran(void) {
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
-    Actor_ArmCallback(ACTOR_IVAN, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
     Event_Wait(30);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
     Event_Wait(30);
-    Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+    Event_ShowMessage(ACTOR_FARAN, 0);
     (gFieldWork->message)++;
   } else {
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
-    Actor_ArmCallback(ACTOR_IVAN, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
     Event_Wait(30);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
@@ -572,7 +572,7 @@ static void TimberRoomsBC_ReportToFaran(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
   Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Actor_TurnToFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
@@ -580,7 +580,7 @@ static void TimberRoomsBC_ReportToFaran(void) {
   Event_Wait(10);
   // Faran believes Sheba lived; Iodem explains Adepts.
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
@@ -590,60 +590,60 @@ static void TimberRoomsBC_ReportToFaran(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
   Event_Wait(30);
-  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Event_ShowMessageAndWait(ACTOR_MIA, 0);
+  Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(20);
-  Actor_ArmCallback(ACTOR_FARAN, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_FARAN, FACING_EAST, 0);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_IVAN, 0);
+  Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_FARAN, FACING_SOUTH, 0);
   Event_Wait(30);
-  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-  Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 65);
-  Actor_ArmCallback(ACTOR_FARAN, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_FARAN, FACING_EAST, 0);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
   Event_Wait(40);
-  Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_FARAN, FACING_SOUTH, 0);
   Event_Wait(50);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
-  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
   Event_Wait(30);
-  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
@@ -651,15 +651,15 @@ static void TimberRoomsBC_ReportToFaran(void) {
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(30);
   Event_Wait(10);
-  Actor_ArmCallback(ACTOR_FARAN, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_FARAN, FACING_EAST, 0);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_Wait(10);
@@ -667,34 +667,34 @@ static void TimberRoomsBC_ReportToFaran(void) {
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_GARET, 0);
+  Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_GARET, 0);
+  Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_FARAN, FACING_SOUTH, 0);
   Event_Wait(40);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
-  Actor_ArmCallback(ACTOR_IVAN, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
-  Actor_ArmCallback(ACTOR_IVAN, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_IVAN, 0);
+  Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
   // Faran sends them off.
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -705,68 +705,67 @@ static void TimberRoomsBC_ReportToFaran(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
   Event_Wait(30);
-  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(20);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(30);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_GARET, 0);
+  Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
   Event_Wait(30);
-  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(30);
-  Event_ShowMessageAndWait(ACTOR_MIA, 0);
+  Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
-  Actor_ArmCallback(ACTOR_IVAN, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(10);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(30);
   // The others walk back into the leader.
   Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_ResetAndSetPosition(ACTOR_GARET, leader->x.part.pixel,
-                              leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
+                         leader->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
-  Import_ActorSetAnimation(ACTOR_MIA, ANIM_WALK);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_ResetAndSetPosition(ACTOR_MIA, leader->x.part.pixel,
-                              leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_MIA);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_WALK);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_ResetAndSetPosition(ACTOR_IVAN, leader->x.part.pixel,
-                              leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
+                         leader->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
-  Import_ActorSetPosition(ACTOR_IVAN, 0, 0);
+  Actor_SetPosition(ACTOR_IVAN, 0, 0);
   Event_Wait(10);
   Event_End();
 }
@@ -780,31 +779,30 @@ static void TimberRoomsBC_TellFaranAboutJenna(void) {
 
   Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_FARAN, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
 
-  Actor_SetAngleToward(ACTOR_GARET, ACTOR_PARTY_LEADER, 50);
-  FieldEffect_SpawnAttached(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
-                            60);
+  Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 50);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_Wait(10);
-  Actor_ArmCallback(ACTOR_GARET, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_GARET, 0);
+  Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
 
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_MIA, 0);
+  Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
 
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_IVAN, 0);
+  Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
 
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
 
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -813,26 +811,26 @@ static void TimberRoomsBC_TellFaranAboutJenna(void) {
 
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(30);
-  Event_ShowMessageAndWait(ACTOR_GARET, 0);
+  Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(30);
 
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_GARET, 0);
+  Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
 
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_MIA, 0);
+  Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
 
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(30);
-  Event_ShowMessageAndWait(ACTOR_IVAN, 0);
+  Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
 
-  Actor_SetAngleToward(ACTOR_IVAN, ACTOR_PARTY_LEADER, 30);
-  FieldMessage_ShowAtActor(ACTOR_IVAN | SPEAKER_PORTRAIT_RIGHT, 0);
+  Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 30);
+  Event_OpenMessage(ACTOR_IVAN | SPEAKER_PORTRAIT_RIGHT, 0);
 }
 
 /// Sets both scenes up as the party enters: shopkeepers and the innkeeper
@@ -854,19 +852,19 @@ s32 Scene_Initialize(void) {
     // Each shopkeeper is drawn under the counter's top, and counts as nearer
     // to talk to (ACTOR_NEAR_TALK) so that the leader reaches it across the
     // counter.
-    actor = Actor_GetById(ACTOR_ITEM_MERCHANT);
+    actor = Actor_Get(ACTOR_ITEM_MERCHANT);
     actor->priorityFlags = 0;
     actor->collisionFlags |= ACTOR_NEAR_TALK;
     actor->sprite->image.priority = 2;
-    actor = Actor_GetById(ACTOR_WEAPON_MERCHANT);
+    actor = Actor_Get(ACTOR_WEAPON_MERCHANT);
     actor->priorityFlags = 0;
     actor->collisionFlags |= ACTOR_NEAR_TALK;
     actor->sprite->image.priority = 2;
-    actor = Actor_GetById(ACTOR_ARMOR_MERCHANT);
+    actor = Actor_Get(ACTOR_ARMOR_MERCHANT);
     actor->collisionFlags |= ACTOR_NEAR_TALK;
     actor->priorityFlags = 0;
     actor->sprite->image.priority = 2;
-    Import_ActorSetAnimation(ACTOR_NAPPING_WORKER, ANIM_WORKER_LIE_ASLEEP);
+    Actor_SetAnimation(ACTOR_NAPPING_WORKER, ANIM_WORKER_LIE_ASLEEP);
     entrance = gMainRoutineWork.entrance;
     if (entrance == TIMBER_ROOMS_B_SANCTUM) {
       gMainRoutineWork.restartScene = sceneId;
@@ -874,7 +872,7 @@ s32 Scene_Initialize(void) {
     }
   }
   if (gMainRoutineWork.next == (s32)&SceneId_TimberRoomsC) {
-    actor = Actor_GetById(ACTOR_INNKEEPER);
+    actor = Actor_Get(ACTOR_INNKEEPER);
     actor->collisionFlags |= ACTOR_NEAR_TALK;
     actor->priorityFlags = 0;
     actor->sprite->image.priority = 2;
@@ -886,10 +884,8 @@ s32 Scene_Initialize(void) {
       TimberRoomsBC_ReportToFaran();
       // Iodem and Faran turn toward the leader, as their later actor
       // placements do.
-      Actor_SetMovementType(Actor_GetById(ACTOR_IODEM),
-                            MOVEMENT_TYPE_FACE_LEADER);
-      Actor_SetMovementType(Actor_GetById(ACTOR_FARAN),
-                            MOVEMENT_TYPE_FACE_LEADER);
+      Actor_SetMovementType(Actor_Get(ACTOR_IODEM), MOVEMENT_TYPE_FACE_LEADER);
+      Actor_SetMovementType(Actor_Get(ACTOR_FARAN), MOVEMENT_TYPE_FACE_LEADER);
       gMainRoutineWork.entrance = TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST;
     }
   }

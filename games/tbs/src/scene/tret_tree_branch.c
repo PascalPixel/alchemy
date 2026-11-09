@@ -106,7 +106,7 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
   s32 offsetZ = cellOffsetZ;
   s32 groundHeight;
 
-  actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  actor = Actor_Get(gMainRoutineWork.leaderActorId);
   // Multiplication keeps negative cell offsets defined; every caller is within
   // six cells, so the fixed-point result fits in s32.
   offsetX *= PIXELS(16);
@@ -177,7 +177,7 @@ static void TretTreeBranch_EnterTretTreeRooms(void) {
   struct FieldWork *state = gFieldWork;
   s16 *touchedExit;
 
-  Event_PlaySound(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   touchedExit = &state->stepTrigger;
   Import_EventSetExitRequest(*touchedExit);
 }

@@ -199,7 +199,7 @@ static void GomaCavePillar_SpawnFragment(s32 x, s32 y, s32 z, s32 firstRate,
   struct Sprite *sprite;
   u32 priority;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   table = gGomaCavePillar_FragmentScripts;
   fragment = FieldActor_Create(SPRITE_DUST_PUFF, x, y, z);
   if (fragment == 0)
@@ -251,7 +251,7 @@ static void GomaCavePillar_MoveWestPillar(void) {
   struct Actor *actor;
   s32 x;
 
-  actor = Actor_GetById(ACTOR_WEST_PILLAR);
+  actor = Actor_Get(ACTOR_WEST_PILLAR);
   x = actor->x.fixed;
   if (x < 0)
     x += PIXELS(16) - 1;
@@ -283,13 +283,13 @@ static void GomaCavePillar_SpawnStumpDust(void) {
 
   framePhase = gFrameCount & 7;
   if (framePhase == 0) {
-    firstXSource = Actor_GetById(ACTOR_STUMP);
+    firstXSource = Actor_Get(ACTOR_STUMP);
     firstRandomX = Import_RandomNext();
     fixedX = firstXSource->x.fixed;
     fixedX +=
         ((((u32)(((firstRandomX << 1) + firstRandomX) << 2)) >> 16) << 16);
     heightSource = Actor_GetById(ACTOR_STUMP);
-    firstZSource = Actor_GetById(ACTOR_STUMP);
+    firstZSource = Actor_Get(ACTOR_STUMP);
     fixedZ = firstZSource->z.fixed;
     fixedZ += PIXELS(6);
     firstRandomSpeed = Import_RandomNext();
@@ -307,13 +307,13 @@ static void GomaCavePillar_SpawnStumpDust(void) {
                                  firstFallingSpeed, firstStyle, framePhase);
     framePhase = gFrameCount & 15;
     if (framePhase == 0) {
-      secondXSource = Actor_GetById(ACTOR_STUMP);
+      secondXSource = Actor_Get(ACTOR_STUMP);
       secondRandomX = Import_RandomNext();
       fixedX = secondXSource->x.fixed;
       fixedX +=
           ((((u32)(((secondRandomX << 1) + secondRandomX) << 2)) >> 16) << 16);
       heightSource = Actor_GetById(ACTOR_STUMP);
-      secondZSource = Actor_GetById(ACTOR_STUMP);
+      secondZSource = Actor_Get(ACTOR_STUMP);
       fixedZ = secondZSource->z.fixed;
       fixedZ += PIXELS(6);
       secondRandomSpeed = Import_RandomNext();
@@ -355,51 +355,51 @@ static void GomaCavePillar_PushStumpOver(void) {
   s32 randomX, randomSpeed, style, speedBand, bandScaled, fallingSpeed;
   struct Actor *overlayActor;
 
-  stump = Actor_GetById(ACTOR_STUMP);
+  stump = Actor_Get(ACTOR_STUMP);
   column = stump->x.fixed / PIXELS(16);
   Event_Start();
   if (column == 25) {
-    overlayActor = Actor_GetById(ACTOR_MASK_FOR_STUMP);
+    overlayActor = Actor_Get(ACTOR_MASK_FOR_STUMP);
     zero = 0;
     overlayActor->layer = 1;
-    spriteActor = Actor_GetById(ACTOR_MASK_FOR_STUMP);
+    spriteActor = Actor_Get(ACTOR_MASK_FOR_STUMP);
     Actor_SetSpriteFlags(spriteActor, 0);
     // XXX (no evidence): why the mask is drawn black and translucent rather
     // than in SPRITE_COLOR_HIDDEN, which would hide the stump the same way.
-    Actor_ConfigureSpriteColor(ACTOR_MASK_FOR_STUMP, SPRITE_COLOR_BLACK);
-    blendActor = Actor_GetById(ACTOR_MASK_FOR_STUMP);
+    Actor_SetSpriteColorById(ACTOR_MASK_FOR_STUMP, SPRITE_COLOR_BLACK);
+    blendActor = Actor_Get(ACTOR_MASK_FOR_STUMP);
     Actor_SetBlendMode(blendActor, ACTOR_BLEND_TRANSLUCENT);
-    Import_ActorSetPosition(ACTOR_MASK_FOR_STUMP, PIXELS(414), PIXELS(240));
+    Actor_SetPosition(ACTOR_MASK_FOR_STUMP, PIXELS(414), PIXELS(240));
     Event_Wait(10);
     // Dust falls while the stump rocks on the edge.
     fragmentFunc = GomaCavePillar_SpawnStumpDust;
     Task_AddFrame(fragmentFunc, TASK_PASS_FRAME);
     Sound_Play(SE_RUMBLE);
-    Actor_OffsetPositionAndResetMotion(ACTOR_STUMP, 1, 0);
+    Actor_SetDestinationOffset(ACTOR_STUMP, 1, 0);
     Actor_WaitForMoveById(ACTOR_STUMP);
     Event_Wait(10);
-    Actor_OffsetPositionAndResetMotion(ACTOR_STUMP, 2, 0);
+    Actor_SetDestinationOffset(ACTOR_STUMP, 2, 0);
     Actor_WaitForMoveById(ACTOR_STUMP);
-    bounceActor = Actor_GetById(ACTOR_STUMP);
+    bounceActor = Actor_Get(ACTOR_STUMP);
     bounceActor->bounce = zero;
-    gravityActor = Actor_GetById(ACTOR_STUMP);
+    gravityActor = Actor_Get(ACTOR_STUMP);
     gravityActor->gravity = PIXELS(3) / 5;
     Event_Wait(3);
     // It tips over the edge.
-    Actor_SetSpeedParameters(ACTOR_STUMP, 5 * PIXELS(1) / 2, PIXELS(1) / 4);
+    Actor_SetSpeed(ACTOR_STUMP, 5 * PIXELS(1) / 2, PIXELS(1) / 4);
     Sound_Play(SE_STOP_ACTION_SE);
-    Actor_ResetAndSetPosition(ACTOR_STUMP, 416, 200);
-    movedActor = Actor_GetById(ACTOR_STUMP);
+    Actor_SetDestination(ACTOR_STUMP, 416, 200);
+    movedActor = Actor_Get(ACTOR_STUMP);
     Actor_SetSpriteFlags(movedActor, 0);
     Task_Remove(fragmentFunc);
     Event_Wait(12);
     Sound_Play(SE_STONE_GRIND);
-    xSource = Actor_GetById(ACTOR_STUMP);
+    xSource = Actor_Get(ACTOR_STUMP);
     randomX = Import_RandomNext();
     fixedX = xSource->x.fixed;
     fixedX += ((((u32)(((randomX << 1) + randomX) << 2)) >> 16) << 16);
-    heightSource = Actor_GetById(ACTOR_STUMP);
-    zSource = Actor_GetById(ACTOR_STUMP);
+    heightSource = Actor_Get(ACTOR_STUMP);
+    zSource = Actor_Get(ACTOR_STUMP);
     fixedZ = zSource->z.fixed;
     fixedZ += PIXELS(6);
     randomSpeed = Import_RandomNext();
@@ -420,8 +420,8 @@ static void GomaCavePillar_PushStumpOver(void) {
     MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
     MapGrid_WaitForShakeToSettle();
-    Import_ActorSetPosition(ACTOR_STUMP, 0, 0);
-    Import_ActorSetPosition(ACTOR_MASK_FOR_STUMP, 0, 0);
+    Actor_SetPosition(ACTOR_STUMP, 0, 0);
+    Actor_SetPosition(ACTOR_MASK_FOR_STUMP, 0, 0);
     GameFlag_Set(FLAG_GOMA_CAVE_STUMP_FELL);
     MapGrid_CopyCellAttributes(21, 45, 4, 2, 21, 11);
   }
@@ -434,36 +434,36 @@ static void GomaCavePillar_SettleEastPillar(void) {
   s32 x;
   s32 z;
 
-  x = Actor_GetById(ACTOR_EAST_PILLAR)->x.fixed / PIXELS(16);
-  z = Actor_GetById(ACTOR_EAST_PILLAR)->z.fixed / PIXELS(16);
+  x = Actor_Get(ACTOR_EAST_PILLAR)->x.fixed / PIXELS(16);
+  z = Actor_Get(ACTOR_EAST_PILLAR)->z.fixed / PIXELS(16);
   if (x == 38 && z == 14) {
-    Actor_GetById(ACTOR_EAST_PILLAR)->y.fixed = -PIXELS(2);
-    Actor_GetById(ACTOR_EAST_PILLAR)->targetY =
-        Actor_GetById(ACTOR_EAST_PILLAR)->y.fixed;
+    Actor_Get(ACTOR_EAST_PILLAR)->y.fixed = -PIXELS(2);
+    Actor_Get(ACTOR_EAST_PILLAR)->targetY =
+        Actor_Get(ACTOR_EAST_PILLAR)->y.fixed;
     Sound_Play(SE_THUMP);
-    GomaCavePillar_SpawnFragment(Actor_GetById(ACTOR_EAST_PILLAR)->x.fixed,
-                                 Actor_GetById(ACTOR_EAST_PILLAR)->y.fixed,
-                                 Actor_GetById(ACTOR_EAST_PILLAR)->z.fixed,
+    GomaCavePillar_SpawnFragment(Actor_Get(ACTOR_EAST_PILLAR)->x.fixed,
+                                 Actor_Get(ACTOR_EAST_PILLAR)->y.fixed,
+                                 Actor_Get(ACTOR_EAST_PILLAR)->z.fixed,
                                  PIXELS(1) / 2, 0, 0, PLANE_XZ);
-    GomaCavePillar_SpawnFragment(Actor_GetById(ACTOR_EAST_PILLAR)->x.fixed,
-                                 Actor_GetById(ACTOR_EAST_PILLAR)->y.fixed,
-                                 Actor_GetById(ACTOR_EAST_PILLAR)->z.fixed,
+    GomaCavePillar_SpawnFragment(Actor_Get(ACTOR_EAST_PILLAR)->x.fixed,
+                                 Actor_Get(ACTOR_EAST_PILLAR)->y.fixed,
+                                 Actor_Get(ACTOR_EAST_PILLAR)->z.fixed,
                                  PIXELS(2) / 5, PIXELS(2) / 5, 0, PLANE_XZ);
-    GomaCavePillar_SpawnFragment(Actor_GetById(ACTOR_EAST_PILLAR)->x.fixed,
-                                 Actor_GetById(ACTOR_EAST_PILLAR)->y.fixed,
-                                 Actor_GetById(ACTOR_EAST_PILLAR)->z.fixed,
+    GomaCavePillar_SpawnFragment(Actor_Get(ACTOR_EAST_PILLAR)->x.fixed,
+                                 Actor_Get(ACTOR_EAST_PILLAR)->y.fixed,
+                                 Actor_Get(ACTOR_EAST_PILLAR)->z.fixed,
                                  -PIXELS(2) / 5, PIXELS(2) / 5, 0, PLANE_XZ);
-    GomaCavePillar_SpawnFragment(Actor_GetById(ACTOR_EAST_PILLAR)->x.fixed,
-                                 Actor_GetById(ACTOR_EAST_PILLAR)->y.fixed,
-                                 Actor_GetById(ACTOR_EAST_PILLAR)->z.fixed,
+    GomaCavePillar_SpawnFragment(Actor_Get(ACTOR_EAST_PILLAR)->x.fixed,
+                                 Actor_Get(ACTOR_EAST_PILLAR)->y.fixed,
+                                 Actor_Get(ACTOR_EAST_PILLAR)->z.fixed,
                                  -PIXELS(1) / 2, 0, 0, PLANE_XZ);
-    GomaCavePillar_SpawnFragment(Actor_GetById(ACTOR_EAST_PILLAR)->x.fixed,
-                                 Actor_GetById(ACTOR_EAST_PILLAR)->y.fixed,
-                                 Actor_GetById(ACTOR_EAST_PILLAR)->z.fixed,
+    GomaCavePillar_SpawnFragment(Actor_Get(ACTOR_EAST_PILLAR)->x.fixed,
+                                 Actor_Get(ACTOR_EAST_PILLAR)->y.fixed,
+                                 Actor_Get(ACTOR_EAST_PILLAR)->z.fixed,
                                  PIXELS(2) / 5, -PIXELS(2) / 5, 0, PLANE_XZ);
-    GomaCavePillar_SpawnFragment(Actor_GetById(ACTOR_EAST_PILLAR)->x.fixed,
-                                 Actor_GetById(ACTOR_EAST_PILLAR)->y.fixed,
-                                 Actor_GetById(ACTOR_EAST_PILLAR)->z.fixed,
+    GomaCavePillar_SpawnFragment(Actor_Get(ACTOR_EAST_PILLAR)->x.fixed,
+                                 Actor_Get(ACTOR_EAST_PILLAR)->y.fixed,
+                                 Actor_Get(ACTOR_EAST_PILLAR)->z.fixed,
                                  -PIXELS(2) / 5, -PIXELS(2) / 5, 0, PLANE_XZ);
     GameFlag_Set(FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE);
   }
@@ -498,15 +498,15 @@ static void GomaCavePillar_JumpGapWest(void) {
   u8 *motionFlags;
   u8 savedMotionFlags;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   motionFlags = &leader->motionFlags;
   savedMotionFlags = *motionFlags;
-  target.x = Actor_GetById(ACTOR_PARTY_LEADER)->x.fixed - PIXELS(32);
+  target.x = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed - PIXELS(32);
   /* FAKEMATCH(temporary): destination holds &target; as target.y and &target,
    * 51 of 79 instructions differ in tbs-ja. */
   destination = &target;
-  destination->y = Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed;
-  destination->z = Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed;
+  destination->y = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
+  destination->z = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed;
   if (FieldActor_CheckMovementCollision(leader, destination) == 0) {
     Event_Start();
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
@@ -518,9 +518,8 @@ static void GomaCavePillar_JumpGapWest(void) {
     leader->velocityY = PIXELS(4);
     *motionFlags &= 0x7e;
     Actor_SetSpriteFlags(leader, 0);
-    Actor_SetPositionAndCommit(ACTOR_PARTY_LEADER,
-                               *(s16 *)((u8 *)destination + 2),
-                               *(s16 *)((u8 *)destination + 10));
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, *(s16 *)((u8 *)destination + 2),
+                        *(s16 *)((u8 *)destination + 10));
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(leader, 1);
     *motionFlags = savedMotionFlags;
@@ -545,7 +544,7 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
   switch (frame) {
   case 60:
     Actor_FaceDirection(ACTOR_WITNESS, FACING_SOUTHEAST, 0);
-    FieldEffect_SpawnAttached(ACTOR_WITNESS, EMOTE_WINCE, 0);
+    Actor_ShowEmote(ACTOR_WITNESS, EMOTE_WINCE, 0);
     break;
   case 180:
     Actor_StartRepeatedMotion(ACTOR_WITNESS, 3);
@@ -555,7 +554,7 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
     Actor_Jump(ACTOR_WITNESS, 4, 0);
     break;
   case 480:
-    Import_ActorSetAnimation(ACTOR_WITNESS, ANIM_SHAKE_HEAD);
+    Actor_SetAnimation(ACTOR_WITNESS, ANIM_SHAKE_HEAD);
     break;
   }
   if (gMainRoutineWork.pendingDjinni == 0)
@@ -575,13 +574,13 @@ static void GomaCavePillar_WitnessCheersForgeCaught(void) {
   Event_ShowMessage(ACTOR_WITNESS, 0);
   Actor_SetAnimationAndWait(ACTOR_WITNESS, ANIM_NOD);
   Event_Wait(30);
-  Actor_GetById(ACTOR_EAST_PILLAR)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
+  Actor_Get(ACTOR_EAST_PILLAR)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetSpeed(ACTOR_WITNESS, PIXELS(2), PIXELS(1));
   Actor_WalkToAndWait(ACTOR_WITNESS, 600, 216);
   Actor_WalkToAndWait(ACTOR_WITNESS, 600, 248);
   Actor_WalkToAndWait(ACTOR_WITNESS, 568, 296);
   Actor_SetPosition(ACTOR_WITNESS, PIXELS(0), PIXELS(0));
-  Actor_GetById(ACTOR_EAST_PILLAR)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  Actor_Get(ACTOR_EAST_PILLAR)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   GameFlag_Set(FLAG_GOMA_CAVE_WITNESS_LEFT);
   Event_End();
 }
@@ -597,7 +596,7 @@ s32 Scene_Initialize(void) {
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   work->transitionFrames = 24;
-  Actor_GetById(ACTOR_STUMP)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
+  Actor_Get(ACTOR_STUMP)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
   if (GameFlag_Get(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED) != 0) {
     Actor_SetPosition(ACTOR_WEST_PILLAR, PIXELS(344), PIXELS(104));
     GomaCavePillar_CopyWestPillarCells(24);
@@ -614,11 +613,10 @@ s32 Scene_Initialize(void) {
             GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_EAST ||
         gMainRoutineWork.entrance ==
             GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST) {
-      Actor_GetById(ACTOR_EAST_PILLAR)->layer = 2;
-      actor = Actor_GetById(ACTOR_EAST_PILLAR);
+      Actor_Get(ACTOR_EAST_PILLAR)->layer = 2;
+      actor = Actor_Get(ACTOR_EAST_PILLAR);
       actor->y.fixed--;
-      Actor_GetById(ACTOR_EAST_PILLAR)->priorityFlags |=
-          ACTOR_PRIORITY_UNDERFOOT;
+      Actor_Get(ACTOR_EAST_PILLAR)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       MapGrid_CopyCellAttributes(36, 48, 5, 1, 36, 14);
     }
   }
@@ -627,7 +625,7 @@ s32 Scene_Initialize(void) {
     Event_WaitTransitionFrames();
     Actor_SetPosition(ACTOR_STUMP, PIXELS(384), PIXELS(192));
     Event_Wait(60);
-    Actor_GetById(ACTOR_STUMP)->layer = 2;
+    Actor_Get(ACTOR_STUMP)->layer = 2;
     Actor_MoveToAndWait(ACTOR_STUMP, 408, 192);
     Event_Wait(60);
     GomaCavePillar_PushStumpOver();

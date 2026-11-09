@@ -251,7 +251,7 @@ static void FuchinTemple_FaceLeader(struct Actor *updated) {
 static s32 FuchinTemple_FaceLeader(struct Actor *updated) {
 #endif
   struct Actor *actor = (struct Actor *)updated;
-  struct Actor *player = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *player = Actor_Get(ACTOR_PARTY_LEADER);
   actor->facing = ArcTan2(player->z.fixed - actor->z.fixed,
                           player->x.fixed - actor->x.fixed);
 #ifndef UBFIX
@@ -336,19 +336,19 @@ static void FuchinTemple_BoyMonkSpeaksOfNyunpa(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_NYUNPA_ENLIGHTENED) != 0) {
     Event_SetMessageId(MsgXianNowHeTrulyBeyondWorlds);
-    Event_AskYesNoAndShowResponse(ACTOR_ADMIRING_BOY_MONK, 0);
+    Event_AskYesNo(ACTOR_ADMIRING_BOY_MONK, 0);
     Event_End();
   } else {
     Event_SetMessageId(MsgXianIsntNobleHimTrySave);
-    FieldMessage_ShowAtActor(ACTOR_ADMIRING_BOY_MONK, 0);
+    Event_OpenMessage(ACTOR_ADMIRING_BOY_MONK, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
       gFieldWork->message++;
-      FieldMessage_ShowAtActor(ACTOR_ADMIRING_BOY_MONK, 0);
+      Event_OpenMessage(ACTOR_ADMIRING_BOY_MONK, 0);
       if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
         gFieldWork->message++;
       }
     }
-    Event_ShowMessageAndWait(ACTOR_ADMIRING_BOY_MONK, 0);
+    Event_ShowMessage(ACTOR_ADMIRING_BOY_MONK, 0);
     Event_End();
   }
 }
@@ -363,24 +363,24 @@ static void FuchinTemple_MonkLetsPartyIntoGrotto(void) {
   struct Actor *movingMonk;
   struct EffectOptions options;
 
-  monk = Actor_GetById(ACTOR_FALLS_MONK);
+  monk = Actor_Get(ACTOR_FALLS_MONK);
   Event_Start();
   Event_SetMessageId(MsgXianAlreadyHeardTest);
   Event_ShowMessageThenWait(ACTOR_FALLS_MONK, 0, 20);
   // The monk leaps aside and lands in a puff of dust.
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 168, 392);
-  Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Sound_Play(SE_WATER);
-  movingMonk = Actor_GetById(ACTOR_FALLS_MONK);
+  movingMonk = Actor_Get(ACTOR_FALLS_MONK);
   movingMonk->velocityY = PIXELS(20);
-  movingMonk = Actor_GetById(ACTOR_FALLS_MONK);
+  movingMonk = Actor_Get(ACTOR_FALLS_MONK);
   movingMonk->gravity = PIXELS(4);
   Actor_SetSpeed(ACTOR_FALLS_MONK, PIXELS(3), 3 * PIXELS(1) / 2);
   Actor_SetDestination(ACTOR_FALLS_MONK, 152, 392);
   Actor_WaitForMoveById(ACTOR_FALLS_MONK);
-  movingMonk = Actor_GetById(ACTOR_FALLS_MONK);
+  movingMonk = Actor_Get(ACTOR_FALLS_MONK);
   movingMonk->gravity = PIXELS(1);
-  Actor_ArmCallback(ACTOR_FALLS_MONK, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_FALLS_MONK, FACING_EAST, 0);
   Sound_Play(SE_WATER);
   // Three white puffs, with only the colour option set.
   options.palette = SPRITE_COLOR_WHITE;
@@ -404,20 +404,20 @@ static void FuchinTemple_MonkLetsPartyIntoGrotto(void) {
 static void FuchinTemple_MonkAsksWhetherTestIsDone(void) {
   Event_Start();
   GameFlag_Set(FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST);
-  Actor_SetAngleToward(ACTOR_FALLS_MONK, ACTOR_PARTY_LEADER, 0);
+  Actor_FaceActor(ACTOR_FALLS_MONK, ACTOR_PARTY_LEADER, 0);
   Event_Wait(10);
   Event_SetMessageId(MsgXianYoungMasterDidCompleteTest);
   Actor_RunRepeatedMotion(ACTOR_FALLS_MONK, 2);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
-  Event_AskYesNoAndShowResponse(ACTOR_FALLS_MONK, 0);
+  Event_AskYesNo(ACTOR_FALLS_MONK, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_FALLS_MONK, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
   Actor_FaceDirection(ACTOR_FALLS_MONK, FACING_NORTH + FACING_STEP, 20);
   Actor_RunRepeatedMotion(ACTOR_FALLS_MONK, 2);
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_FALLS_MONK, 0, 20);
-  Actor_ArmCallback(ACTOR_FALLS_MONK, FACING_EAST, 20);
+  Actor_FaceDirection(ACTOR_FALLS_MONK, FACING_EAST, 20);
   Actor_SetAnimationAndWait(ACTOR_FALLS_MONK, ANIM_NOD);
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_FALLS_MONK, 0, 20);
@@ -443,8 +443,8 @@ static void FuchinTemple_NyunpaOffersTest(void) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 168, 504);
     Event_Wait(5);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
-    Actor_GetById(ACTOR_NYUNPA)->paused = 0;
-    Event_PlaySound(SE_JUMP);
+    Actor_Get(ACTOR_NYUNPA)->paused = 0;
+    Sound_Play(SE_JUMP);
     nyunpa = Actor_Get(ACTOR_NYUNPA);
     nyunpa->velocityY = PIXELS(8);
     Import_ActorSetAnimation(ACTOR_NYUNPA, ANIM_STAND);
@@ -460,8 +460,8 @@ static void FuchinTemple_NyunpaOffersTest(void) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 168, 504);
     Event_Wait(5);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
-    Event_PlaySound(SE_JUMP);
-    Actor_GetById(ACTOR_NYUNPA)->paused = alreadyDeclinedTrial;
+    Sound_Play(SE_JUMP);
+    Actor_Get(ACTOR_NYUNPA)->paused = alreadyDeclinedTrial;
     nyunpa = Actor_Get(ACTOR_NYUNPA);
     nyunpa->velocityY = PIXELS(8);
     Import_ActorSetAnimation(ACTOR_NYUNPA, ANIM_STAND);
@@ -519,7 +519,7 @@ static void FuchinTemple_NyunpaOffersTest(void) {
     Actor_WalkToAndWait(ACTOR_NYUNPA, 168, 464);
     Event_Wait(60);
     Actor_FaceDirection(ACTOR_NYUNPA, FACING_SOUTH, 40);
-    FieldEvent_ShowMessageThenWait(ACTOR_NYUNPA, 0, 10);
+    Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 10);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     Actor_WalkToAndWait(ACTOR_NYUNPA, 168, 472);
   }
@@ -553,7 +553,7 @@ static void FuchinTemple_NyunpaOffersTest(void) {
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(60);
-    FieldEvent_ShowMessageThenWait(ACTOR_NYUNPA, 0, 10);
+    Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 10);
     GameFlag_Set(FLAG_NYUNPA_TEST_ACCEPTED);
   }
   Import_ActorSetAnimation(ACTOR_NYUNPA, ANIM_NYUNPA_MEDITATE);
@@ -566,7 +566,7 @@ static void FuchinTemple_NyunpaOffersTest(void) {
 static void FuchinTemple_NyunpaFeelsMindRead(void) {
   Event_Start();
   Event_SetMessageId(MsgXianEnjoyReadingMindsOthersDo);
-  Event_AskYesNoAndShowResponse(ACTOR_NYUNPA, 0);
+  Event_AskYesNo(ACTOR_NYUNPA, 0);
   Event_End();
 }
 
@@ -576,7 +576,7 @@ static void FuchinTemple_NyunpaFeelsMindRead(void) {
 static void FuchinTemple_StudentWelcomesToSchool(void) {
   Event_Start();
   Event_SetMessageId(MsgXianMasterFehsSchoolCameWatch);
-  Event_AskYesNoAndShowResponse(ACTOR_WELCOMING_STUDENT, 0);
+  Event_AskYesNo(ACTOR_WELCOMING_STUDENT, 0);
   Event_End();
 }
 
@@ -585,21 +585,21 @@ static void FuchinTemple_StudentWelcomesToSchool(void) {
 static void FuchinTemple_TalkToJumpingStudent(void) {
   Event_Start();
 
-  Actor_GetById(ACTOR_JUMPING_STUDENT)->paused = 0;
+  Actor_Get(ACTOR_JUMPING_STUDENT)->paused = 0;
 
-  while (Actor_GetById(ACTOR_JUMPING_STUDENT)->y.fixed > 0) {
+  while (Actor_Get(ACTOR_JUMPING_STUDENT)->y.fixed > 0) {
     wait(1);
   }
 
-  Actor_GetById(ACTOR_JUMPING_STUDENT)->y.fixed = 0;
+  Actor_Get(ACTOR_JUMPING_STUDENT)->y.fixed = 0;
 
-  Actor_GetById(ACTOR_JUMPING_STUDENT)->targetY = ACTOR_NO_TARGET;
+  Actor_Get(ACTOR_JUMPING_STUDENT)->targetY = ACTOR_NO_TARGET;
 
-  Actor_GetById(ACTOR_JUMPING_STUDENT)->velocityY = 0;
+  Actor_Get(ACTOR_JUMPING_STUDENT)->velocityY = 0;
 
-  Actor_GetById(ACTOR_JUMPING_STUDENT)->paused = 1;
+  Actor_Get(ACTOR_JUMPING_STUDENT)->paused = 1;
 
-  Actor_SetAngleToward(ACTOR_JUMPING_STUDENT, ACTOR_PARTY_LEADER, 0);
+  Actor_FaceActor(ACTOR_JUMPING_STUDENT, ACTOR_PARTY_LEADER, 0);
 
   if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) != 0) {
     Event_SetMessageId(MsgXianHsuDidNotPracticeJumping);
@@ -609,11 +609,11 @@ static void FuchinTemple_TalkToJumpingStudent(void) {
     Event_SetMessageId(MsgXianFlexibilityJumpingVeryImportantIn);
   }
 
-  Event_ShowMessageAndWait(ACTOR_JUMPING_STUDENT, 0);
+  Event_ShowMessage(ACTOR_JUMPING_STUDENT, 0);
 
-  Actor_GetById(ACTOR_JUMPING_STUDENT)->facing = FACING_SOUTH;
+  Actor_Get(ACTOR_JUMPING_STUDENT)->facing = FACING_SOUTH;
 
-  Actor_GetById(ACTOR_JUMPING_STUDENT)->paused = 0;
+  Actor_Get(ACTOR_JUMPING_STUDENT)->paused = 0;
 
   Actor_SetScript(ACTOR_JUMPING_STUDENT, gFuchinTemple_JumpingStudentScript);
   Event_End();
@@ -626,13 +626,13 @@ static void FuchinTemple_TalkToJumpingStudent(void) {
 static void FuchinTemple_StudentAsksAboutFeh(void) {
   Event_Start();
   Event_SetMessageId(MsgXianMasterFehVeryBusyDo);
-  Event_AskYesNoAndShowResponse(ACTOR_TREE_STUDENT, 0);
+  Event_AskYesNo(ACTOR_TREE_STUDENT, 0);
   Event_End();
 }
 
 /// Rotates the training tree through its westward arc and scatters particles.
 static void FuchinTemple_ToppleTreeWest(void) {
-  struct Actor *tree = Actor_GetById(ACTOR_TRAINING_TREE);
+  struct Actor *tree = Actor_Get(ACTOR_TRAINING_TREE);
   u32 turnStep;
   s32 angle;
 
@@ -666,7 +666,7 @@ static void FuchinTemple_ToppleTreeEast(void) {
   u32 turnStep;
   s32 angle;
 
-  tree = Actor_GetById(ACTOR_TRAINING_TREE);
+  tree = Actor_Get(ACTOR_TRAINING_TREE);
   for (turnStep = 8; turnStep <= 12; turnStep++) {
     angle = turnStep << 12;
     tree->sprite->rotation = angle;
@@ -690,7 +690,7 @@ static void FuchinTemple_ToppleTreeEast(void) {
 
 /// Slides the training tree north in four steps, then scatters particles.
 static void FuchinTemple_ToppleTreeNorth(void) {
-  struct Actor *tree = Actor_GetById(ACTOR_TRAINING_TREE);
+  struct Actor *tree = Actor_Get(ACTOR_TRAINING_TREE);
   u32 stepIndex = 0;
   s32 delay = 8;
   u8 rotation;
@@ -723,7 +723,7 @@ static void FuchinTemple_ToppleTreeSouth(void) {
   s32 particleSpeed;
   s32 delay;
 
-  tree = Actor_GetById(ACTOR_TRAINING_TREE);
+  tree = Actor_Get(ACTOR_TRAINING_TREE);
   stepIndex = 0;
   delay = 8;
   do {
@@ -757,21 +757,21 @@ static void FuchinTemple_StudentWalksAroundTree(void) {
   u32 leaderFacing;
   u32 quadrantLimit;
 
-  leaderFacing = Actor_GetById(ACTOR_PARTY_LEADER)->facing;
+  leaderFacing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
   quadrantLimit = 0x3fff;
   if (((leaderFacing - FACING_SOUTHEAST) << 16) <= 0x3fff0000) {
-    Actor_SetPositionAndReset(ACTOR_TREE_STUDENT, 216, 168);
-    Actor_SetPositionAndReset(ACTOR_TREE_STUDENT, 224, 168);
+    Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 216, 168);
+    Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 224, 168);
     Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTHEAST, 20);
   } else if ((u16)(leaderFacing - FACING_SOUTHWEST) <= quadrantLimit) {
-    Actor_SetPositionAndReset(ACTOR_TREE_STUDENT, 232, 160);
+    Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 232, 160);
     Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTH + FACING_STEP, 20);
   } else if ((u16)(leaderFacing - FACING_NORTHWEST) <= quadrantLimit) {
-    Actor_SetPositionAndReset(ACTOR_TREE_STUDENT, 216, 168);
-    Actor_SetPositionAndReset(ACTOR_TREE_STUDENT, 224, 172);
+    Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 216, 168);
+    Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 224, 172);
     Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_NORTHEAST, 20);
   } else {
-    Actor_SetPositionAndReset(ACTOR_TREE_STUDENT, 232, 160);
+    Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 232, 160);
     Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTHEAST, 20);
   }
 }
@@ -818,14 +818,14 @@ static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
   FuchinTemple_StudentWalksAroundTree();
   Actor_RunRepeatedMotion(ACTOR_TREE_STUDENT, 3);
   Actor_SetPosition(ACTOR_TRAINING_TREE, PIXELS(232), PIXELS(168));
-  Import_ActorSetPosition(ACTOR_TRAINING_TREE_TARGET, PIXELS(232), PIXELS(168));
-  Actor_GetById(ACTOR_TRAINING_TREE)->y.fixed = PIXELS(12);
-  Actor_GetById(ACTOR_TRAINING_TREE)->targetY = ACTOR_NO_TARGET;
-  Actor_GetById(ACTOR_TRAINING_TREE)->scaleX = 4 * Q16_ONE / 5;
-  Actor_GetById(ACTOR_TRAINING_TREE)->sprite->rotation = TRIG_TURN / 2;
+  Actor_SetPosition(ACTOR_TRAINING_TREE_TARGET, PIXELS(232), PIXELS(168));
+  Actor_Get(ACTOR_TRAINING_TREE)->y.fixed = PIXELS(12);
+  Actor_Get(ACTOR_TRAINING_TREE)->targetY = ACTOR_NO_TARGET;
+  Actor_Get(ACTOR_TRAINING_TREE)->scaleX = 4 * Q16_ONE / 5;
+  Actor_Get(ACTOR_TRAINING_TREE)->sprite->rotation = TRIG_TURN / 2;
   Sound_Play(SE_CHEST_OPEN);
   Event_Wait(40);
-  Actor_SetPositionAndReset(ACTOR_TREE_STUDENT, 216, 152);
+  Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 216, 152);
   Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTHEAST, 30);
 }
 
@@ -834,11 +834,11 @@ static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
 static void FuchinTemple_StudentsSeeTreeFall(void) {
   struct Actor *tree;
 
-  Actor_SetAngleToward(ACTOR_PROUD_STUDENT, ACTOR_TRAINING_TREE, 0);
-  Actor_SetAngleToward(ACTOR_WATCHING_STUDENT, ACTOR_TRAINING_TREE, 0);
-  Actor_SetAngleToward(ACTOR_TREE_STUDENT, ACTOR_TRAINING_TREE, 0);
-  Actor_SetAngleToward(ACTOR_MESSENGER_STUDENT, ACTOR_TRAINING_TREE, 0);
-  Actor_SetAngleToward(ACTOR_FEH, ACTOR_TRAINING_TREE, 0);
+  Actor_FaceActor(ACTOR_PROUD_STUDENT, ACTOR_TRAINING_TREE, 0);
+  Actor_FaceActor(ACTOR_WATCHING_STUDENT, ACTOR_TRAINING_TREE, 0);
+  Actor_FaceActor(ACTOR_TREE_STUDENT, ACTOR_TRAINING_TREE, 0);
+  Actor_FaceActor(ACTOR_MESSENGER_STUDENT, ACTOR_TRAINING_TREE, 0);
+  Actor_FaceActor(ACTOR_FEH, ACTOR_TRAINING_TREE, 0);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_TREE_STUDENT, 2);
   Event_Wait(20);
@@ -864,14 +864,14 @@ static void FuchinTemple_StudentsSeeTreeFall(void) {
   FuchinTemple_StudentWalksAroundTree();
   Actor_RunRepeatedMotion(ACTOR_TREE_STUDENT, 3);
   Actor_SetPosition(ACTOR_TRAINING_TREE, PIXELS(232), PIXELS(168));
-  Import_ActorSetPosition(ACTOR_TRAINING_TREE_TARGET, PIXELS(232), PIXELS(168));
-  tree = Actor_GetById(ACTOR_TRAINING_TREE);
+  Actor_SetPosition(ACTOR_TRAINING_TREE_TARGET, PIXELS(232), PIXELS(168));
+  tree = Actor_Get(ACTOR_TRAINING_TREE);
   tree->y.fixed = PIXELS(12);
-  tree = Actor_GetById(ACTOR_TRAINING_TREE);
+  tree = Actor_Get(ACTOR_TRAINING_TREE);
   tree->targetY = ACTOR_NO_TARGET;
-  tree = Actor_GetById(ACTOR_TRAINING_TREE);
+  tree = Actor_Get(ACTOR_TRAINING_TREE);
   tree->scaleX = 4 * Q16_ONE / 5;
-  tree = Actor_GetById(ACTOR_TRAINING_TREE);
+  tree = Actor_Get(ACTOR_TRAINING_TREE);
   {
     struct Sprite *sprite = tree->sprite;
     s32 rotation = TRIG_TURN / 2;
@@ -880,7 +880,7 @@ static void FuchinTemple_StudentsSeeTreeFall(void) {
   }
   Sound_Play(SE_CHEST_OPEN);
   Event_Wait(40);
-  Actor_SetPositionAndReset(ACTOR_TREE_STUDENT, 216, 152);
+  Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 216, 152);
   Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTH, 30);
   GameFlag_Set(FLAG_FUCHIN_TEMPLE_FEH_SCHOOL_SAW_TREE_FALL);
 }
@@ -890,8 +890,8 @@ static void FuchinTemple_StudentsSeeTreeFall(void) {
 static void FuchinTemple_MoveTree(void) {
   Event_Start();
 
-  if (Actor_GetById(ACTOR_PARTY_LEADER)->facing > FACING_SOUTH &&
-      Actor_GetById(ACTOR_PARTY_LEADER)->facing < FACING_NORTH) {
+  if (Actor_Get(ACTOR_PARTY_LEADER)->facing > FACING_SOUTH &&
+      Actor_Get(ACTOR_PARTY_LEADER)->facing < FACING_NORTH) {
     FuchinTemple_ToppleTreeWest();
   } else {
     FuchinTemple_ToppleTreeEast();
@@ -909,7 +909,7 @@ static void FuchinTemple_MoveTree(void) {
 /// Walking into the training tree in Master Feh's school in Xian: Isaac pushes
 /// it over by hand. "You cannot push it with your hands. Attack it with Chi."
 static void FuchinTemple_PushTreeByHand(void) {
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   u16 facing;
 
   Event_Start();
@@ -938,7 +938,7 @@ static void FuchinTemple_PushTreeByHand(void) {
 /// from the line, the students call Feh out the first time, and later Feh
 /// himself sees it.
 static void FuchinTemple_ForceTree(void) {
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   u16 facing;
 
   Event_Start();
@@ -998,11 +998,11 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
                   0);
   Event_Wait(60);
   Event_SetMessageId(MsgXianDidDoWarrior);
-  FieldEvent_ShowMessageThenWait(ACTOR_PROUD_STUDENT, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_PROUD_STUDENT, 0, 20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_PROUD_STUDENT, 0);
   Actor_RunRepeatedMotion(ACTOR_TREE_STUDENT, 1);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_TREE_STUDENT, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_TREE_STUDENT, 0, 20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_TREE_STUDENT, 0);
   Actor_RunRepeatedMotion(ACTOR_MESSENGER_STUDENT, 2);
   Event_Wait(20);
@@ -1016,19 +1016,19 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Actor_WalkToAndWait(ACTOR_MESSENGER_STUDENT, 308, 248);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_MESSENGER_STUDENT, FACING_NORTH, 20);
-  Event_PlaySound(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gFuchinTemple_FehsDoorOpens, 78, 13);
   Actor_RunRepeatedMotion(ACTOR_MESSENGER_STUDENT, 2);
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_MESSENGER_STUDENT, 3 * PIXELS(1) / 2, 3 * PIXELS(1) / 4);
-  actor = Actor_GetById(ACTOR_MESSENGER_STUDENT);
+  actor = Actor_Get(ACTOR_MESSENGER_STUDENT);
   actor->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_MESSENGER_STUDENT, 308, 272);
   Event_Wait(1);
   actor = Actor_Get(ACTOR_MESSENGER_STUDENT);
 
   actor->steeringFlags = ACTOR_FACES_MOTION | actor->steeringFlags;
-  FieldEvent_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 50);
+  Event_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 50);
   Actor_SetPosition(ACTOR_FEIZHI, PIXELS(304), PIXELS(216));
   Actor_WalkToAndWait(ACTOR_FEIZHI, 304, 248);
   Actor_FaceActor(ACTOR_WELCOMING_STUDENT, ACTOR_FEIZHI, 0);
@@ -1056,9 +1056,9 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Actor_WaitForMoveById(ACTOR_FEH);
   Actor_FaceDirection(ACTOR_FEH, FACING_SOUTH + FACING_STEP, 0);
   Actor_WaitForMoveById(ACTOR_FEIZHI);
-  Event_PlaySound(SE_DOOR_CLOSE);
+  Sound_Play(SE_DOOR_CLOSE);
   MapGrid_AnimateCells(gFuchinTemple_FehsDoorCloses, 78, 13);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_FaceActor(ACTOR_WELCOMING_STUDENT, ACTOR_FEIZHI, 0);
   Actor_FaceActor(ACTOR_KICKING_STUDENT, ACTOR_FEIZHI, 0);
   Actor_FaceActor(ACTOR_PUNCHING_STUDENT, ACTOR_FEIZHI, 0);
@@ -1073,70 +1073,70 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEIZHI, ANIM_NOD);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_FEH, 1);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH + FACING_STEP, 20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_ShowEmote(ACTOR_FEH, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEIZHI, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEIZHI, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_FEIZHI, 2);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_FEIZHI, FACING_EAST, 20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_FaceDirection(ACTOR_MESSENGER_STUDENT, FACING_WEST, 20);
   Actor_SetAnimationAndWait(ACTOR_MESSENGER_STUDENT, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_FEIZHI, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_MESSENGER_STUDENT, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
   Actor_FaceDirection(ACTOR_FEIZHI, FACING_WEST, 20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_WELCOMING_STUDENT, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_WELCOMING_STUDENT, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_WELCOMING_STUDENT, 0, 20);
   Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH + FACING_STEP, 20);
   Actor_RunRepeatedMotion(ACTOR_FEIZHI, 1);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_ShowEmote(ACTOR_FEH, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_ShowEmote(ACTOR_FEH, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEIZHI, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_FEH, 2);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_FEIZHI, 2);
   Event_Wait(10);
   Actor_WalkToAndWait(ACTOR_FEIZHI, 256, 280);
@@ -1146,24 +1146,24 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_WELCOMING_STUDENT, 2);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_WELCOMING_STUDENT, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_WELCOMING_STUDENT, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_TREE_STUDENT, 2);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_TREE_STUDENT, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_TREE_STUDENT, 0, 20);
   Actor_FaceActor(ACTOR_MESSENGER_STUDENT, ACTOR_FEH, 0);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_MESSENGER_STUDENT, 2);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
   Actor_FaceActor(ACTOR_FEH, ACTOR_MESSENGER_STUDENT, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_SetSpeed(ACTOR_FEH, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_FEH, 256, 248);
   Actor_FaceDirection(ACTOR_FEH, FACING_NORTH, 20);
@@ -1188,14 +1188,14 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
 
     sprite->rotation = rotation;
   }
-  Event_PlaySound(SE_CHEST_OPEN);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+  Sound_Play(SE_CHEST_OPEN);
+  Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Actor_WalkToAndWait(ACTOR_MESSENGER_STUDENT, 256, 240);
   Actor_FaceDirection(ACTOR_MESSENGER_STUDENT, FACING_NORTHWEST + FACING_STEP,
                       20);
   Actor_RunRepeatedMotion(ACTOR_MESSENGER_STUDENT, 1);
-  FieldEvent_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
   Actor_FaceActor(ACTOR_WELCOMING_STUDENT, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_KICKING_STUDENT, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_PUNCHING_STUDENT, ACTOR_PARTY_LEADER, 0);
@@ -1213,7 +1213,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Actor_RunRepeatedMotion(ACTOR_MESSENGER_STUDENT, 1);
     Event_Wait(20);
-    FieldEvent_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
+    Event_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
     GameFlag_Set(FLAG_FEH_WAITS_TO_SEE_CHI);
   } else {
     Event_SkipMessages(1);
@@ -1227,14 +1227,14 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
       Actor_SetAnimationAndWait(ACTOR_MESSENGER_STUDENT, ANIM_NOD);
       Event_Wait(20);
       Actor_FaceDirection(ACTOR_FEH, FACING_NORTHWEST + FACING_STEP, 20);
-      FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+      Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
       GameFlag_Set(FLAG_FEH_WAITS_TO_SEE_CHI);
     } else {
       Event_SkipMessages(1);
       Event_Wait(20);
       Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_SHAKE_HEAD);
       Event_Wait(20);
-      FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+      Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
       Event_SetFlag(FLAG_FEH_CHI_DEMONSTRATION_DECLINED);
     }
   }
@@ -1252,7 +1252,7 @@ static void FuchinTemple_FehAsksToSeeChi(void) {
 
   Event_Start();
   Event_SetMessageId(MsgXianWarriorWillShowMeYour);
-  FieldMessage_ShowAtActor(ACTOR_FEH, 0);
+  Event_OpenMessage(ACTOR_FEH, 0);
 
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Event_Wait(20);
@@ -1276,11 +1276,11 @@ static void FuchinTemple_FehSeesChi(void) {
   // tree.
   actor = Actor_Get(ACTOR_FEH);
   actor->update = 0;
-  actor = Actor_GetById(ACTOR_PROUD_STUDENT);
+  actor = Actor_Get(ACTOR_PROUD_STUDENT);
   actor->update = 0;
-  actor = Actor_GetById(ACTOR_WATCHING_STUDENT);
+  actor = Actor_Get(ACTOR_WATCHING_STUDENT);
   actor->update = 0;
-  actor = Actor_GetById(ACTOR_TREE_STUDENT);
+  actor = Actor_Get(ACTOR_TREE_STUDENT);
   actor->update = 0;
   actor = Actor_Get(ACTOR_MESSENGER_STUDENT);
   actor->update = 0;
@@ -1311,7 +1311,7 @@ static void FuchinTemple_FehSeesChi(void) {
   Actor_FaceActor(ACTOR_KICKING_STUDENT, ACTOR_TRAINING_TREE, 0);
   Actor_RunRepeatedMotion(ACTOR_FEH, 2);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 40);
+  Event_ShowMessageThenWait(ACTOR_FEH, 0, 40);
   Actor_FaceActor(ACTOR_WELCOMING_STUDENT, ACTOR_FEH, 0);
   Actor_FaceActor(ACTOR_KICKING_STUDENT, ACTOR_FEH, 0);
   Actor_FaceDirection(ACTOR_PUNCHING_STUDENT, FACING_SOUTHEAST + FACING_STEP,
@@ -1322,26 +1322,26 @@ static void FuchinTemple_FehSeesChi(void) {
   Actor_FaceActor(ACTOR_TREE_STUDENT, ACTOR_FEH, 0);
   Actor_FaceActor(ACTOR_MESSENGER_STUDENT, ACTOR_FEH, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_MESSENGER_STUDENT, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
   Actor_ShowEmote(ACTOR_FEH, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_ShowEmote(ACTOR_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_ShowEmote(ACTOR_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_ShowEmote(ACTOR_TREE_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_SetSpeed(ACTOR_TREE_STUDENT, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 216, 176);
   Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTHEAST + FACING_STEP, 20);
-  FieldEvent_ShowMessageThenWait(ACTOR_TREE_STUDENT, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_TREE_STUDENT, 0, 20);
   Actor_FaceDirection(ACTOR_FEH, FACING_NORTHWEST + FACING_STEP, 20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_StartRepeatedMotion(ACTOR_WELCOMING_STUDENT, 2);
   Actor_StartRepeatedMotion(ACTOR_KICKING_STUDENT, 2);
   Actor_StartRepeatedMotion(ACTOR_PUNCHING_STUDENT, 2);
@@ -1352,10 +1352,10 @@ static void FuchinTemple_FehSeesChi(void) {
   Actor_StartRepeatedMotion(ACTOR_MESSENGER_STUDENT, 2);
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_PROUD_STUDENT, 2);
-  FieldEvent_ShowMessageThenWait(ACTOR_PROUD_STUDENT, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_PROUD_STUDENT, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
   Actor_FaceDirection(ACTOR_FEH, FACING_SOUTH + FACING_STEP, 20);
   Event_AskYesNo(ACTOR_FEH, 0);
@@ -1376,17 +1376,17 @@ static void FuchinTemple_FehSeesChi(void) {
   Actor_ShowEmote(ACTOR_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_Wait(60);
   Actor_RunRepeatedMotion(ACTOR_MESSENGER_STUDENT, 2);
-  FieldEvent_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_ShowEmote(ACTOR_TREE_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_TREE_STUDENT, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_TREE_STUDENT, 0, 20);
   Actor_FaceActor(ACTOR_FEH, ACTOR_TREE_STUDENT, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 40);
+  Event_ShowMessageThenWait(ACTOR_FEH, 0, 40);
   Actor_TurnToFaceEachOther(ACTOR_PUNCHING_STUDENT, ACTOR_KICKING_STUDENT, 0);
   Actor_TurnToFaceEachOther(ACTOR_JUMPING_STUDENT, ACTOR_WATCHING_STUDENT, 0);
   Actor_TurnToFaceEachOther(ACTOR_PROUD_STUDENT, ACTOR_TREE_STUDENT, 0);
@@ -1398,7 +1398,7 @@ static void FuchinTemple_FehSeesChi(void) {
   Actor_FaceActor(ACTOR_WATCHING_STUDENT, ACTOR_FEH, 0);
   Actor_FaceActor(ACTOR_TREE_STUDENT, ACTOR_FEH, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_FEH, 2);
   Event_Wait(20);
   Import_ActorSetAnimation(ACTOR_WELCOMING_STUDENT, ANIM_NOD);
@@ -1414,7 +1414,7 @@ static void FuchinTemple_FehSeesChi(void) {
   Event_AskYesNo(ACTOR_FEH, 0);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_WELCOMING_STUDENT, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_KICKING_STUDENT, ANIM_NOD);
@@ -1427,15 +1427,15 @@ static void FuchinTemple_FehSeesChi(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_FEH, 2);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_FEH, FACING_WEST, 20);
   Actor_RunRepeatedMotion(ACTOR_FEH, 2);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Import_ActorSetAnimation(ACTOR_WELCOMING_STUDENT, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_KICKING_STUDENT, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_NOD);
@@ -1470,7 +1470,7 @@ static void FuchinTemple_FehSeesChi(void) {
 
     sprite->rotation = rotation;
   }
-  Event_PlaySound(SE_CHEST_OPEN);
+  Sound_Play(SE_CHEST_OPEN);
   Event_Wait(40);
   Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 216, 152);
   Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTH, 30);
@@ -1484,7 +1484,7 @@ static void FuchinTemple_FehSeesChi(void) {
 static void FuchinTemple_StudentAsksAboutAltin(void) {
   Event_Start();
   Event_SetMessageId(MsgXianWaterMonstersFloodedAltinDid);
-  Event_AskYesNoAndShowResponse(ACTOR_PUNCHING_STUDENT, 0);
+  Event_AskYesNo(ACTOR_PUNCHING_STUDENT, 0);
   Event_End();
 }
 
@@ -1499,7 +1499,7 @@ static void FuchinTemple_OpenLockedDoor(void) {
     FieldMessage_Show(MsgXianItIsLocked, 1);
     Event_End();
   } else {
-    Event_PlaySound(SE_DOOR_OPEN);
+    Sound_Play(SE_DOOR_OPEN);
     MapGrid_AnimateCells(gFuchinTemple_FehsDoorOpens, 78, 13);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 306, 248);
@@ -1517,7 +1517,7 @@ static void FuchinTemple_TalkToHealer(void) {
   struct Actor *leader;
   u32 facing;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   facing = leader->facing;
   Event_Start();
 
@@ -1525,7 +1525,7 @@ static void FuchinTemple_TalkToHealer(void) {
     Sanctum_Run(ACTOR_HEALER);
   } else {
     Event_SetMessageId(MsgXianImTravelingAroundWorldSpread);
-    Event_ShowMessageAndWait(ACTOR_HEALER, 0);
+    Event_ShowMessage(ACTOR_HEALER, 0);
   }
 
   Event_End();
@@ -1538,7 +1538,7 @@ static void FuchinTemple_ReadNyunpasLastWish(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_NYUNPA, 2);
   Event_SetMessageId(MsgXianIsaacAmCountingOnBring);
-  Event_ShowMessageAndWait(ACTOR_NYUNPA, 0);
+  Event_ShowMessage(ACTOR_NYUNPA, 0);
   Event_End();
 }
 
@@ -1564,7 +1564,7 @@ static void FuchinTemple_SpawnGrottoEntryParticle(void) {
   s32 paletteDraw;
   s32 fallSpeed;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   options.palette = SPRITE_COLOR_WHITE;
   paletteDraw = (u32)(Import_RandomNext() * 7) >> 16;
@@ -1582,9 +1582,9 @@ static void FuchinTemple_SpawnGrottoEntryParticle(void) {
                     &options);
 
   if ((gFrameCount & 1) != 0)
-    Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
+    Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   else
-    Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_GRB);
+    Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_GRB);
 }
 
 /// Unused: hops the leader one map cell north; nothing calls it.
@@ -1607,7 +1607,7 @@ static UNUSED void FuchinTemple_HopLeaderWest(void) {
 static UNUSED void FuchinTemple_HopLeaderByOffset(s32 offsetX, s32 offsetZ) {
   Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 5 * PIXELS(1) / 2, 5 * PIXELS(1) / 4);
-  Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, offsetX, offsetZ);
+  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, offsetX, offsetZ);
   Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAP);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
@@ -1626,15 +1626,15 @@ static void FuchinTemple_EnterWaterfallGrotto(void) {
   // Keep the entry effect alive until the leader has moved into the fade.
   particleTask = FuchinTemple_SpawnGrottoEntryParticle;
   Task_AddFrame(particleTask, TASK_PASS_FRAME);
-  Actor_SetSpeedParameters(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   gFieldWork->transitionFrames = 60;
   Event_FinishScreenTransition();
   Sound_Play(SE_CAST);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0, -6);
+  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -6);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-  Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(leader, 0);
   Task_Remove(particleTask);
   Event_WaitTransitionFrames();
@@ -1656,9 +1656,9 @@ static void FuchinTemple_LeaveTemple(void) {
 /// step trigger 2): it opens, and Isaac walks inside, where Nyunpa meditates.
 static void FuchinTemple_EnterTemple(void) {
   Event_Start();
-  Event_PlaySound(SE_THUMP);
+  Sound_Play(SE_THUMP);
   MapGrid_AnimateCells(gFuchinTemple_TempleDoorOpens, 77, 8);
-  Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
+  Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
@@ -1688,42 +1688,42 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
   Actor_SetAttachedEffect(ACTOR_NYUNPA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
-  Actor_GetById(ACTOR_NYUNPA)->paused = 0;
-  Event_PlaySound(SE_JUMP);
+  Actor_Get(ACTOR_NYUNPA)->paused = 0;
+  Sound_Play(SE_JUMP);
   nyunpa = Actor_Get(ACTOR_NYUNPA);
   nyunpa->velocityY = PIXELS(8);
   Import_ActorSetAnimation(ACTOR_NYUNPA, ANIM_STAND);
   // Praise the completed test before answering the follow-up questions.
   Event_SetMessageId(MsgXianExcellentIsaac);
-  FieldEvent_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
-  FieldEvent_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_OpenMessage(ACTOR_NYUNPA, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
     Event_Wait(20);
-    FieldEvent_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
+    Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
     gFieldWork->message += 2;
   } else {
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_NYUNPA, 2);
     Event_Wait(20);
     gFieldWork->message++;
-    FieldEvent_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
+    Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
     Actor_SetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
     Event_Wait(20);
-    FieldEvent_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
+    Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
   }
-  FieldEvent_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_NYUNPA, 2);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_OpenMessage(ACTOR_NYUNPA, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
@@ -1751,20 +1751,20 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(20);
-    FieldEvent_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
+    Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
     gFieldWork->message++;
   } else {
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_NYUNPA, 2);
     gFieldWork->message++;
-    FieldEvent_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
+    Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
   }
   Actor_SetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_NYUNPA, 2);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
@@ -1794,14 +1794,14 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_RunRepeatedMotion(ACTOR_HAMAS_BOY_MONK, 2);
   Event_Wait(20);
   Event_SetMessageId(MsgXianMasterHamaMeditatingPleaseExtremely);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMAS_BOY_MONK, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMAS_BOY_MONK, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH, 30);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Event_Wait(20);
@@ -1843,18 +1843,18 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 20);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTHEAST + FACING_STEP, 20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
@@ -1866,59 +1866,59 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_IVAN, 50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 30);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH + FACING_STEP, 20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 20);
-  FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Actor_FaceActor(ACTOR_HAMA, ACTOR_IVAN, 0);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_IVAN, 0);
   Actor_FaceActor(ACTOR_MIA, ACTOR_IVAN, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(20);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_FaceActor(ACTOR_HAMA, ACTOR_GARET, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_FaceActor(ACTOR_HAMA, ACTOR_GARET, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
@@ -1926,20 +1926,20 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH + FACING_STEP, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
@@ -1947,33 +1947,33 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_HAMA, 2);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(60);
-  FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_StartRepeatedMotion(ACTOR_HAMA, 1);
   Event_Wait(60);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
@@ -1981,24 +1981,24 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 20);
   Event_AskYesNo(ACTOR_GARET, 0);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 20);
   Actor_FaceDirection(ACTOR_HAMA, FACING_NORTH, 20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH, 20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
@@ -2006,13 +2006,13 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_GARET,
@@ -2022,17 +2022,17 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_SetAttachedEffect(ACTOR_MIA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
-  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH + FACING_STEP, 20);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_GARET, 0);
   Actor_FaceActor(ACTOR_MIA, ACTOR_GARET, 0);
@@ -2055,26 +2055,26 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Event_AskYesNo(ACTOR_GARET, 0);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 20);
-  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 30);
   Actor_FaceDirection(ACTOR_HAMA, FACING_EAST, 20);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_FaceDirection(ACTOR_HAMA, FACING_NORTH, 20);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
@@ -2082,7 +2082,7 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_HAMA, 1);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
@@ -2096,10 +2096,10 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   // Interrupt the discussion with the arrival from the southern path.
   Actor_SetPosition(ACTOR_FEIZHI_IN_LAMA_TEMPLE, PIXELS(472), PIXELS(608));
-  FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -2116,7 +2116,7 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_SetSpeed(ACTOR_FEIZHI_IN_LAMA_TEMPLE, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 472, 536);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 40);
   Actor_WalkToAndWait(ACTOR_IVAN, 488, 512);
   Event_Wait(10);
@@ -2127,22 +2127,22 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 20);
   Actor_RunRepeatedMotion(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 2);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_StartRepeatedMotion(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 2);
   Actor_SetAttachedEffect(ACTOR_FEIZHI_IN_LAMA_TEMPLE,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_FEIZHI_IN_LAMA_TEMPLE,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
   Actor_StartRepeatedMotion(ACTOR_HAMA, 1);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
@@ -2150,12 +2150,12 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   // BUG: ACTOR_FEIZHI is Feizhi's number in the school's table. Hama's room
   // places no actor at that number, so Feizhi does not bounce before she
   // speaks.
@@ -2165,11 +2165,11 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_StartRepeatedMotion(ACTOR_FEIZHI, 1);
 #endif
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(2);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
@@ -2179,13 +2179,13 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Actor_FaceActor(ACTOR_HAMA, ACTOR_PARTY_LEADER, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_SetSpeed(ACTOR_FEIZHI_IN_LAMA_TEMPLE, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 472, 504);
   Event_Wait(20);
   Actor_StartRepeatedMotion(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 1);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
   Actor_FaceActor(ACTOR_HAMA, ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0);
   Actor_SetSpeed(ACTOR_HAMA, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
@@ -2196,18 +2196,18 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_WalkTo(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 472, 568);
   Actor_WalkToAndWait(ACTOR_HAMA, 472, 536);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Actor_WaitForMoveById(ACTOR_FEIZHI_IN_LAMA_TEMPLE);
-  FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_StartRepeatedMotion(ACTOR_HAMA, 2);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_FaceDirection(ACTOR_FEIZHI_IN_LAMA_TEMPLE, FACING_NORTH + FACING_STEP,
                       0);
   Actor_FaceDirection(ACTOR_HAMA, FACING_NORTH + FACING_STEP, 20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
@@ -2219,10 +2219,10 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_FaceDirection(ACTOR_HAMAS_BOY_MONK, FACING_NORTH + FACING_STEP, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(20);
-  Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 448, 512);
   Event_Wait(1);
   {
@@ -2238,7 +2238,7 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   // Let Hama and her monk leave, then gather the party into the leader.
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
@@ -2254,13 +2254,13 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_RunRepeatedMotion(ACTOR_HAMA, 2);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_HAMA, FACING_NORTH + FACING_STEP, 20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_SetSpeed(ACTOR_HAMA, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkToAndWait(ACTOR_HAMA, 480, 540);
-  FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_SetSpeed(ACTOR_HAMA, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_HAMAS_BOY_MONK, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkTo(ACTOR_HAMA, 472, 608);
@@ -2278,12 +2278,12 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 20);
-  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 20);
@@ -2294,12 +2294,12 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
-  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Event_OpenMessage(ACTOR_MIA, 0);
@@ -2307,17 +2307,17 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     Event_Wait(20);
-    FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
+    Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
     gFieldWork->message++;
   } else {
     Event_Wait(20);
     gFieldWork->message++;
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
     Event_Wait(20);
-    FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
+    Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   }
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-  FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
@@ -2330,7 +2330,7 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 20);
   Event_Wait(30);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 20);
-  FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
   Actor_SetAttachedEffect(ACTOR_IVAN,
@@ -2338,7 +2338,7 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Event_Wait(60);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_WalkToAndWait(ACTOR_IVAN, 448, 512);
   Actor_SetPosition(ACTOR_IVAN, PIXELS(0), PIXELS(0));
   Event_End();
@@ -2376,7 +2376,7 @@ s32 Scene_Initialize(void) {
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
       heardHsuTrapped = GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED);
       if (heardHsuTrapped == 0) {
-        trainingTree = Actor_GetById(ACTOR_TRAINING_TREE);
+        trainingTree = Actor_Get(ACTOR_TRAINING_TREE);
         trainingTree->motionFlags = heardHsuTrapped;
         trainingTree->y.fixed = PIXELS(12);
         trainingTree->targetY = PIXELS(12);
@@ -2384,22 +2384,20 @@ s32 Scene_Initialize(void) {
         trainingTree->scaleY = Q16_ONE / 2;
         trainingTree->sprite->rotation = TRIG_TURN / 2;
         if (GameFlag_Get(FLAG_FEIZHI_WENT_TO_HSU)) {
-          Import_ActorSetPosition(ACTOR_FEH, PIXELS(248), PIXELS(208));
+          Actor_SetPosition(ACTOR_FEH, PIXELS(248), PIXELS(208));
           if (!GameFlag_Get(FLAG_FEH_SAW_KI)) {
-            Import_ActorSetPosition(ACTOR_MESSENGER_STUDENT, PIXELS(256),
-                                    PIXELS(240));
-            Actor_GetById(ACTOR_FEH)->update = FuchinTemple_FaceLeader;
-            Actor_GetById(ACTOR_PROUD_STUDENT)->update =
-                FuchinTemple_FaceLeader;
-            Actor_GetById(ACTOR_WATCHING_STUDENT)->update =
-                FuchinTemple_FaceLeader;
-            Actor_GetById(ACTOR_TREE_STUDENT)->update = FuchinTemple_FaceLeader;
-            Actor_GetById(ACTOR_MESSENGER_STUDENT)->update =
+            Actor_SetPosition(ACTOR_MESSENGER_STUDENT, PIXELS(256),
+                              PIXELS(240));
+            Actor_Get(ACTOR_FEH)->update = FuchinTemple_FaceLeader;
+            Actor_Get(ACTOR_PROUD_STUDENT)->update = FuchinTemple_FaceLeader;
+            Actor_Get(ACTOR_WATCHING_STUDENT)->update = FuchinTemple_FaceLeader;
+            Actor_Get(ACTOR_TREE_STUDENT)->update = FuchinTemple_FaceLeader;
+            Actor_Get(ACTOR_MESSENGER_STUDENT)->update =
                 FuchinTemple_FaceLeader;
           }
         }
       } else {
-        trainingTree = Actor_GetById(ACTOR_TRAINING_TREE);
+        trainingTree = Actor_Get(ACTOR_TRAINING_TREE);
         trainingTree->motionFlags = 0;
         trainingTree->y.fixed = PIXELS(12);
         trainingTree->targetY = PIXELS(12);
@@ -2424,13 +2422,13 @@ s32 Scene_Initialize(void) {
       if (!GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED)) {
         FuchinTemple_RunHamasRevealLesson();
       } else if (!GameFlag_Get(FLAG_HSU_RESCUED)) {
-        Import_ActorSetPosition(ACTOR_HAMA, 0, 0);
-        Import_ActorSetPosition(ACTOR_HAMAS_BOY_MONK, 0, 0);
+        Actor_SetPosition(ACTOR_HAMA, 0, 0);
+        Actor_SetPosition(ACTOR_HAMAS_BOY_MONK, 0, 0);
       }
     }
   } else {
     Scene_QueueMusic(SE_AMBIENT_WATER);
-    Actor_GetById(ACTOR_FALLS_MONK)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
+    Actor_Get(ACTOR_FALLS_MONK)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
     if (gMainRoutineWork.entrance ==
             FUCHIN_TEMPLE_GROUNDS_FROM_FUCHIN_FALLS_CAVE_ENTRANCE &&
         GameFlag_Get(FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND) &&
@@ -2439,7 +2437,7 @@ s32 Scene_Initialize(void) {
     }
     if (GameFlag_Get(FLAG_FUCHIN_FALLS_GROTTO_OPENED)) {
       Actor_SetPosition(ACTOR_FALLS_MONK, PIXELS(152), PIXELS(392));
-      Actor_ArmCallback(ACTOR_FALLS_MONK, FACING_EAST, 0);
+      Actor_FaceDirection(ACTOR_FALLS_MONK, FACING_EAST, 0);
       MapGrid_CopyCellAttributes(10, 26, 1, 1, 10, 22);
     }
   }
@@ -2475,7 +2473,7 @@ static void FuchinTemple_SpawnNyunpasParticles(void) {
   struct Actor *nyunpa;
   u32 shotIndex;
 
-  nyunpa = Actor_GetById(ACTOR_NYUNPA);
+  nyunpa = Actor_Get(ACTOR_NYUNPA);
   options.priority = 1;
   options.type = SPRITE_CRESCENT;
   options.script = gFuchinTemple_ShotScript;
@@ -2517,16 +2515,16 @@ static void FuchinTemple_AnimateRevealLesson(void) {
   s32 riseSpeed;
 
   Sound_Play(SE_PSYNERGY_SPARKLE);
-  Actor_GetById(ACTOR_HAMA)->update = FuchinTemple_AlternateLessonChildEffect;
+  Actor_Get(ACTOR_HAMA)->update = FuchinTemple_AlternateLessonChildEffect;
   Event_Wait(40);
-  PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
-  PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(20, 2, 23), PALETTES_BG);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(20, 2, 23), PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   Event_Wait(40);
   Sound_Play(SE_PSYNERGY_SPARKLE);
-  Actor_GetById(ACTOR_IVAN)->update = FuchinTemple_AlternateLessonChildEffect;
+  Actor_Get(ACTOR_IVAN)->update = FuchinTemple_AlternateLessonChildEffect;
   Event_Wait(120);
-  hama = Actor_GetById(ACTOR_HAMA);
+  hama = Actor_Get(ACTOR_HAMA);
   // Emit the lesson particles while both temporary child effects run.
   options.priority = 1;
   options.palette = SPRITE_COLOR_RBG;
@@ -2549,13 +2547,13 @@ static void FuchinTemple_AnimateRevealLesson(void) {
   Sound_Play(SE_SHIMMER);
   Event_Wait(30);
   // Fade back and remove both update routines before the conversation resumes.
-  PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   Event_Wait(40);
-  Actor_GetById(ACTOR_HAMA)->update = NULL;
-  Actor_GetById(ACTOR_IVAN)->update = NULL;
-  Actor_ConfigureSpriteColor(ACTOR_HAMA, SPRITE_COLOR_NORMAL);
-  Actor_ConfigureSpriteColor(ACTOR_IVAN, SPRITE_COLOR_NORMAL);
+  Actor_Get(ACTOR_HAMA)->update = NULL;
+  Actor_Get(ACTOR_IVAN)->update = NULL;
+  Actor_SetSpriteColorById(ACTOR_HAMA, SPRITE_COLOR_NORMAL);
+  Actor_SetSpriteColorById(ACTOR_IVAN, SPRITE_COLOR_NORMAL);
 }
 
 s32 gFieldEffect_ShortScript[] = {

@@ -207,14 +207,14 @@ static void Lalivero_TalkToVillagerTheyTookSheba(s32 actorId) {
 static void Lalivero_WomanAsksIfLeaving(s32 actorId) {
   s32 message = MsgLaliveroLeavingLalivero;
   Event_SetMessageId(message);
-  FieldMessage_ShowAtActor(actorId, 0);
+  Event_OpenMessage(actorId, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(10);
     Event_SetMessageId(message + 1);
   } else {
     Event_SetMessageId(message + 2);
   }
-  Event_ShowMessageAndWait(actorId, 0);
+  Event_ShowMessage(actorId, 0);
 }
 
 /// Lalivero, after Venus Lighthouse: the guard at the wharf's door ("I was
@@ -224,10 +224,10 @@ static void Lalivero_WharfGuardLetsPartyThrough(void) {
 
   GameFlag_Set(FLAG_LALIVERO_WHARF_OPEN);
   Event_SetMessageId(MsgLaliveroWasToldLetInIf);
-  Event_ShowMessageAndWait(ACTOR_WHARF_GUARD, 0);
+  Event_ShowMessage(ACTOR_WHARF_GUARD, 0);
   Actor_SetSpeed(ACTOR_WHARF_GUARD, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_WHARF_GUARD, -16, 0);
-  Actor_ArmCallback(ACTOR_WHARF_GUARD, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_WHARF_GUARD, FACING_EAST, 0);
   Event_Wait(10);
 }
 
@@ -239,7 +239,7 @@ static void Lalivero_EnterDoor(void) {
   s32 x = gLaliveroDoorCells[door][0];
   s32 y = gLaliveroDoorCells[door][1];
 
-  Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = ACTOR_FALLS;
+  Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = ACTOR_FALLS;
   Sound_Play(SE_DOOR_OPEN);
   if (door == CELL_BEHAVIOR_LALIVERO_SANCTUM_GATE) {
     MapGrid_AnimateCells(gLaliveroGateOpenSteps, (u16)x, (u16)y);
@@ -279,8 +279,8 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   // The party walks in from the south; the two soldiers lie on the ground.
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(248), PIXELS(424));
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Import_ActorSetAnimation(ACTOR_WEST_SOLDIER, 0);
-  Import_ActorSetAnimation(ACTOR_EAST_SOLDIER, 0);
+  Actor_SetAnimation(ACTOR_WEST_SOLDIER, 0);
+  Actor_SetAnimation(ACTOR_EAST_SOLDIER, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
@@ -314,7 +314,7 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
-  Import_ActorSetAnimation(ACTOR_WEST_SOLDIER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_WEST_SOLDIER, ANIM_STAND);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_WEST_SOLDIER, 2);
   Event_Wait(30);
@@ -330,7 +330,7 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Event_Wait(10);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_EAST_SOLDIER, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_EAST_SOLDIER, 30);
-  Import_ActorSetAnimation(ACTOR_EAST_SOLDIER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_EAST_SOLDIER, ANIM_STAND);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
@@ -450,7 +450,7 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Event_Wait(30);
   // Iodem walks back into the leader.
   Actor_SetSpeed(ACTOR_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
-  Import_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
@@ -505,10 +505,10 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(40);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(30);
   // The party lines up facing Iodem's door.
@@ -516,8 +516,8 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Actor_WalkBy(ACTOR_IVAN, 0, -16);
   Actor_WalkBy(ACTOR_MIA, 0, -8);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
-  Import_ActorSetAnimation(ACTOR_MIA, ANIM_STAND);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_STAND);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
@@ -527,14 +527,14 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   // Iodem comes out: the door opens (cells 34, 0 drawn at 4, 18) and closes
   // behind him (cells 32, 0).
   Actor_SetSpeed(ACTOR_IODEM, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_GetById(ACTOR_IODEM)->motionFlags = ACTOR_FALLS;
+  Actor_Get(ACTOR_IODEM)->motionFlags = ACTOR_FALLS;
   Actor_SetSpritePriority(ACTOR_IODEM, 2);
   MapGrid_CopyCellsLayered(34, 0, 1, 2, 4, 18);
-  Event_PlaySound(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   Event_Wait(20);
   Actor_SetPosition(ACTOR_IODEM, PIXELS(72), PIXELS(312));
 #if TBS_PATCH_2
-  Actor_GetById(ACTOR_IODEM)->targetZ = ACTOR_NO_TARGET;
+  Actor_Get(ACTOR_IODEM)->targetZ = ACTOR_NO_TARGET;
   Actor_SetPosition(ACTOR_IODEM, PIXELS(72), PIXELS(312));
 #endif
   Event_Wait(20);
@@ -544,14 +544,14 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Actor_WalkByAndWait(ACTOR_IODEM, 0, 16);
 #endif
   // The door shuts.
-  MapGrid_CopyCellIndexRect(32, 0, 1, 2, 4, 18);
-  Event_PlaySound(SE_DOOR_CLOSE);
+  MapGrid_CopyCellsLayered(32, 0, 1, 2, 4, 18);
+  Sound_Play(SE_DOOR_CLOSE);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(40);
   Actor_WalkByAndWait(ACTOR_IODEM, 16, 0);
@@ -690,9 +690,9 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Event_Wait(30);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(50);
   Event_Wait(10);
@@ -703,14 +703,14 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
   Event_Wait(20);
   MapGrid_CopyCellsLayered(34, 0, 1, 2, 4, 18);
-  Event_PlaySound(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   Event_Wait(10);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, -16);
   Actor_SetPosition(ACTOR_IODEM, 0, 0);
   Event_Wait(10);
   // The door shuts.
-  MapGrid_CopyCellIndexRect(32, 0, 1, 2, 4, 18);
-  Event_PlaySound(SE_DOOR_CLOSE);
+  MapGrid_CopyCellsLayered(32, 0, 1, 2, 4, 18);
+  Sound_Play(SE_DOOR_CLOSE);
   Event_Wait(50);
   // The others are eager to sail, then walk back into the leader.
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
@@ -727,32 +727,32 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Event_Wait(30);
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(40);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(30);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
-  Import_ActorSetAnimation(ACTOR_MIA, ANIM_WALK);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_MIA);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_WALK);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
                          leader->z.part.pixel);
@@ -844,13 +844,13 @@ s32 Lalivero_Initialize(void) {
   gFieldWork->transitionFrames = 24;
 
   // The three plants stand in animation 3 and block nothing.
-  Import_ActorSetAnimation(ACTOR_FIRST_PLANT, 3);
+  Actor_SetAnimation(ACTOR_FIRST_PLANT, 3);
   Actor_Get(ACTOR_FIRST_PLANT)->collisionFlags = 0;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_PLANT), 0);
-  Import_ActorSetAnimation(ACTOR_FIRST_PLANT + 1, 3);
+  Actor_SetAnimation(ACTOR_FIRST_PLANT + 1, 3);
   Actor_Get(ACTOR_FIRST_PLANT + 1)->collisionFlags = 0;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_PLANT + 1), 0);
-  Import_ActorSetAnimation(ACTOR_FIRST_PLANT + 2, 3);
+  Actor_SetAnimation(ACTOR_FIRST_PLANT + 2, 3);
   Actor_Get(ACTOR_FIRST_PLANT + 2)->collisionFlags = 0;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_PLANT + 2), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BLACK_ORB), 0);

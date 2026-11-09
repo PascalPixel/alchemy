@@ -189,14 +189,14 @@ const struct ActorPlacement *LogRoomsC_GetActorPlacements(void) {
 /// (facing north), the shop opens; from any other side, the seller says Fuchin
 /// Temple is on the other side of the river.
 static void LogRoomsC_TalkToWeaponMerchant(void) {
-  u32 facing = Actor_GetById(ACTOR_PARTY_LEADER)->facing;
+  u32 facing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
 
   Event_Start();
   if (FACING_IS_NORTH(facing)) {
     Shop_Run(KOLIMA_WEAPON_SHOP, ACTOR_WEAPON_MERCHANT);
   } else {
     Event_SetMessageId(MsgKolimaFuchinTempleOnOtherSide);
-    Event_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
+    Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
   }
   Event_End();
 }
@@ -205,14 +205,14 @@ static void LogRoomsC_TalkToWeaponMerchant(void) {
 /// opens; otherwise the seller calls the grand bridge across the river the
 /// pride of Kolima.
 static void LogRoomsC_TalkToArmorMerchant(void) {
-  u32 facing = Actor_GetById(ACTOR_PARTY_LEADER)->facing;
+  u32 facing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
 
   Event_Start();
   if (FACING_IS_NORTH(facing)) {
     Shop_Run(KOLIMA_ARMOR_SHOP, ACTOR_ARMOR_MERCHANT);
   } else {
     Event_SetMessageId(MsgKolimaGrandBridgeAcrossRiverPride);
-    Event_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
+    Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
   }
   Event_End();
 }
@@ -220,14 +220,14 @@ static void LogRoomsC_TalkToArmorMerchant(void) {
 /// Kolima's item shop, once the curse is lifted: across the counter the shop
 /// opens; otherwise, "When I was a tree, I learned to appreciate the sun."
 static void LogRoomsC_TalkToItemMerchant(void) {
-  u32 facing = Actor_GetById(ACTOR_PARTY_LEADER)->facing;
+  u32 facing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
 
   Event_Start();
   if (FACING_IS_NORTH(facing)) {
     Shop_Run(KOLIMA_ITEM_SHOP, ACTOR_ITEM_MERCHANT);
   } else {
     Event_SetMessageId(MsgKolimaWhenWasTreeLearnedAppreciate);
-    Event_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0);
+    Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
   }
   Event_End();
 }
@@ -236,7 +236,7 @@ static void LogRoomsC_TalkToItemMerchant(void) {
 /// otherwise the innkeeper says McCoy has halted the palace's construction, so
 /// the lumberjacks who came for the work will leave.
 static void LogRoomsC_TalkToInnkeeper(void) {
-  u32 facing = Actor_GetById(ACTOR_PARTY_LEADER)->facing;
+  u32 facing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
 
   Event_Start();
 
@@ -244,7 +244,7 @@ static void LogRoomsC_TalkToInnkeeper(void) {
     Inn_CheckIn(KOLIMA_INN, ACTOR_INNKEEPER);
   } else {
     Event_SetMessageId(MsgKolimaTheySayMccoyHaltedConstruction);
-    Event_ShowMessageAndWait(ACTOR_INNKEEPER, 0);
+    Event_ShowMessage(ACTOR_INNKEEPER, 0);
   }
 
   Event_End();
@@ -271,7 +271,7 @@ s32 LogRoomsC_Initialize(void) {
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     actorId = ACTOR_FIRST_VILLAGER;
     do {
-      struct Actor *actor = Actor_GetById(actorId);
+      struct Actor *actor = Actor_Get(actorId);
 
       actorId++;
       Actor_SetSpriteFlags(actor, 0);
@@ -301,9 +301,9 @@ s32 LogRoomsC_Initialize(void) {
     MapGrid_CopyCellsTo(34, 43, 19, 23, width, height);
     MapGrid_CopyCellsTo(34, 94, 19, 83, width, height);
     MapGrid_CopyCellsTo(94, 34, 79, 23, width, height);
-    Import_ActorSetPosition(ACTOR_FATHER_WITH_A_SECRET, 0, 0);
-    Import_ActorSetPosition(ACTOR_WIFE_KEPT_FROM_THE_SECRET, 0, 0);
-    Import_ActorSetPosition(ACTOR_CHILD_TOLD_THE_SECRET, 0, 0);
+    Actor_SetPosition(ACTOR_FATHER_WITH_A_SECRET, 0, 0);
+    Actor_SetPosition(ACTOR_WIFE_KEPT_FROM_THE_SECRET, 0, 0);
+    Actor_SetPosition(ACTOR_CHILD_TOLD_THE_SECRET, 0, 0);
   }
   return 0;
 }

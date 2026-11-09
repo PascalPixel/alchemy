@@ -181,7 +181,7 @@ static s32 Vault_UpdateRoofComplainerProximity(struct Actor *updated) {
     return 0;
 #endif
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (*(s16 *)(workspace + 376) != 0 || work->mindRead != 0) {
     selector = 26;
     flag = 1;
@@ -250,7 +250,7 @@ static void Vault_IvanStaysBehind(void) {
   Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
   Event_Wait(20);
   Event_SetMessageId(MsgVaultLeavingImStillWorriedAbout);
-  FieldEvent_ShowMessageThenWait(
+  Event_ShowMessageThenWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   // Return any Djinn before removing Ivan from the party.
@@ -285,13 +285,13 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Asks the current question and selects its ordinary or alternate reply.
 static inline void Vault_AskYesNoAndShowReply(s32 speaker) {
-  FieldMessage_ShowAtActor(speaker, 0);
+  Event_OpenMessage(speaker, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
     struct FieldWork *work = gFieldWork;
 
     ++work->message;
   }
-  Event_ShowMessageAndWait(speaker, 0);
+  Event_ShowMessage(speaker, 0);
 }
 
 /// In Vault while the rod is missing, a townsperson asks about the eruption.
@@ -374,14 +374,14 @@ static void Vault_TalkToDog(void) {
   Event_SetMessageId(MsgVaultRuffRrruff);
   Import_ActorSetAnimation(ACTOR_VAULT_DOG, 0);
   Vault_FaceActorAndWait(ACTOR_VAULT_DOG, ACTOR_PARTY_LEADER, 2);
-  Event_ShowMessageAndWait(ACTOR_VAULT_DOG, 0);
+  Event_ShowMessage(ACTOR_VAULT_DOG, 0);
   Event_End();
 }
 
 /// In Vault while the rod is missing, the boy round the well stops: poor Ivan
 /// was left at the mayor's to look for the stolen rod.
 static void Vault_PityIvan(void) {
-  struct Actor *actor = Actor_GetById(ACTOR_BOY_ROUND_THE_WELL);
+  struct Actor *actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
   s16 savedFacing = actor->facing;
 
   actor->timer |= 2;
@@ -399,7 +399,7 @@ static void Vault_PityIvan(void) {
 /// In Vault while the rod is missing, the girl round the well stops: Hammet's
 /// caravan left as soon as the eruption stopped.
 static void Vault_TalkOfHammetsCaravan(void) {
-  struct Actor *actor = Actor_GetById(ACTOR_GIRL_ROUND_THE_WELL);
+  struct Actor *actor = Actor_Get(ACTOR_GIRL_ROUND_THE_WELL);
   s16 savedFacing = actor->facing;
 
   actor->timer |= 2;
@@ -422,10 +422,10 @@ static void Vault_LookForRoofer(void) {
   Event_SetMessageId(MsgVaultFixingRoofCant);
   Vault_FaceActorAndWait(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED, ACTOR_PARTY_LEADER,
                          2);
-  FieldEffect_SpawnAttached(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED,
-                            EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  Actor_ShowEmote(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED,
+                  EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Event_Wait(30);
-  FieldMessage_ShowAtActor(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED, 0);
+  Event_OpenMessage(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED, 0);
   Event_End();
 }
 
@@ -434,7 +434,7 @@ static void Vault_ShowStandingActorMessage(s32 actorId) {
   Event_Start();
   Import_ActorSetAnimation(actorId, ANIM_STAND);
   Vault_FaceActorAndWait(actorId, ACTOR_PARTY_LEADER, 2);
-  Event_ShowMessageAndWait(actorId, 0);
+  Event_ShowMessage(actorId, 0);
   Event_End();
 }
 
@@ -488,7 +488,7 @@ static void Vault_TalkOfDamagedRoads(void) {
 /// After the thieves are jailed, he hopes Ivan didn't go to Lunpa alone, or,
 /// with Ivan in the party, asks when he joined up with Isaac.
 static void Vault_AskWhetherIvanWentToLunpa(void) {
-  struct Actor *actor = Actor_GetById(ACTOR_BOY_ROUND_THE_WELL);
+  struct Actor *actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
   s16 savedFacing = actor->facing;
 
   actor->timer |= 2;
@@ -508,7 +508,7 @@ static void Vault_AskWhetherIvanWentToLunpa(void) {
 /// In Vault after the thieves are jailed, the girl round the well: everyone is
 /// grateful the party captured the thieves.
 static void Vault_ThankForCapturingThieves(void) {
-  struct Actor *actor = Actor_GetById(ACTOR_GIRL_ROUND_THE_WELL);
+  struct Actor *actor = Actor_Get(ACTOR_GIRL_ROUND_THE_WELL);
   s16 savedFacing = actor->facing;
 
   actor->timer |= 2;
@@ -554,7 +554,7 @@ static void Vault_TalkToDogAfterCapture(void) {
   Event_SetMessageId(MsgVaultRuffRrruff2);
   Import_ActorSetAnimation(ACTOR_VAULT_DOG, 0);
   Vault_FaceActorAndWait(ACTOR_VAULT_DOG, ACTOR_PARTY_LEADER, 2);
-  Event_ShowMessageAndWait(ACTOR_VAULT_DOG, 0);
+  Event_ShowMessage(ACTOR_VAULT_DOG, 0);
   Import_ActorSetAnimation(ACTOR_VAULT_DOG, ANIM_STAND);
   if (PartyInventory_FindMember(ITEM_BONE) != -1 &&
       GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
@@ -577,7 +577,7 @@ static void Vault_ThankBeforeDeparture(void) {
                          2);
   Actor_SetAnimationAndWait(ACTOR_YOUNG_MAN_FIXING_THE_ROOF, ANIM_NOD);
   Event_Wait(20);
-  Event_ShowMessageAndWait(ACTOR_YOUNG_MAN_FIXING_THE_ROOF, 0);
+  Event_ShowMessage(ACTOR_YOUNG_MAN_FIXING_THE_ROOF, 0);
   Event_End();
 }
 
@@ -611,7 +611,7 @@ static void Vault_ReadMindOnTravelers(void) {
 /// stole the rod, or where did Ivan go (when did they join him, with Ivan in
 /// the party)?
 static void Vault_ReadMindOnIvan(void) {
-  Actor_GetById(ACTOR_BOY_ROUND_THE_WELL)->timer |= 2;
+  Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer |= 2;
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     Event_SetMessageId(MsgVaultBetWasThoseThreeCreeps);
@@ -622,13 +622,13 @@ static void Vault_ReadMindOnIvan(void) {
   }
   Vault_ShowThought(ACTOR_BOY_ROUND_THE_WELL);
   Event_End();
-  Actor_GetById(ACTOR_BOY_ROUND_THE_WELL)->timer &= 1;
+  Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer &= 1;
 }
 
 /// In Vault, Mind Read on the girl round the well: riches can't save you from a
 /// volcano, or the party must be stronger than they look.
 static void Vault_ReadMindOnWealth(void) {
-  Actor_GetById(ACTOR_GIRL_ROUND_THE_WELL)->timer |= 2;
+  Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer |= 2;
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0)
     Event_SetMessageId(MsgVaultSupposeDoesntMatterHowRich);
@@ -636,7 +636,7 @@ static void Vault_ReadMindOnWealth(void) {
     Event_SetMessageId(MsgVaultMustStrongerThanLookHave);
   Vault_ShowThought(ACTOR_GIRL_ROUND_THE_WELL);
   Event_End();
-  Actor_GetById(ACTOR_GIRL_ROUND_THE_WELL)->timer &= 1;
+  Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer &= 1;
 }
 
 /// In Vault, Mind Read on the strongman on watch: everyone knows the three at
@@ -655,7 +655,7 @@ static void Vault_ReadMindOnSuspects(void) {
 /// the thieves are jailed, bring a bone for something useful, and once fed, a
 /// careful search will reveal a passage leading underground.
 static void Vault_ReadDogMind(void) {
-  struct Actor *actor = Actor_GetById(ACTOR_VAULT_DOG);
+  struct Actor *actor = Actor_Get(ACTOR_VAULT_DOG);
   actor->paused = 1;
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -667,7 +667,7 @@ static void Vault_ReadDogMind(void) {
   } else {
     Event_SetMessageId(MsgVaultIfBringMeBoneIll);
   }
-  Event_ShowMessageAndWait(ACTOR_VAULT_DOG, 0);
+  Event_ShowMessage(ACTOR_VAULT_DOG, 0);
   Event_End();
   actor->paused = 0;
 }
@@ -722,7 +722,7 @@ static void Vault_EnterInn(void) {
 /// an old couple's home too; the leader walks in behind the doorway's
 /// foreground tiles.
 static void Vault_EnterItemShop(void) {
-  struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
 
   Sound_Play(SE_DOOR_OPEN);
@@ -736,7 +736,7 @@ static void Vault_EnterItemShop(void) {
 /// The weapon and armor shop's door opens and the party walks in.
 /// It's VAULT_TO_LOG_ROOMS_A_NORTH_NORTHEAST, entered as the item shop is.
 static void Vault_EnterWeaponAndArmorShop(void) {
-  struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
 
   Sound_Play(SE_DOOR_OPEN);
@@ -760,7 +760,7 @@ static void Vault_EnterMayorsHouse(void) {
 /// In Vault, the jail door opens and the party walks in, drawn behind the
 /// doorway (VAULT_TO_STONE_ROOMS, the jail's STONE_ROOMS_FROM_VAULT).
 static void Vault_EnterJail(void) {
-  struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
 
   Sound_Play(SE_DOOR_OPEN);
@@ -782,15 +782,15 @@ static void Vault_EnterPassage(void) {
 /// settle.
 static void Vault_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
                                      s32 verticalSpeed) {
-  struct Actor *actor = Actor_GetById(actorId);
+  struct Actor *actor = Actor_Get(actorId);
   int frames;
-  Actor_SetSpeedParameters(actorId, PIXELS(3), PIXELS(3) / 2);
+  Actor_SetSpeed(actorId, PIXELS(3), PIXELS(3) / 2);
   actor->gravity = PIXELS(1) / 2;
   actor->bounce = 0;
   actor->velocityY = verticalSpeed;
   Actor_SetSpriteFlags(actor, 0);
-  Actor_SetPositionAndCommit(actorId, x, z);
-  Import_ActorSetPosition(actorId, x << 16, z << 16);
+  Actor_MoveToAndWait(actorId, x, z);
+  Actor_SetPosition(actorId, x << 16, z << 16);
   for (frames = 60; frames != 0; --frames) {
     wait(1);
     if ((actor->velocityY >> 16) == 0)
@@ -806,7 +806,7 @@ static void Vault_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
 /// it; it joins in the town's later scene (vault_revisit.c).
 static void Vault_RingBell(void) {
   Event_Start();
-  Event_PlaySound(SE_BELL);
+  Sound_Play(SE_BELL);
   Event_Wait(40);
   if (Event_GetFlag(FLAG_VAULT_SAP_CALLED_BY_BELL) == 0) {
     Actor_SetAttachedEffect(ACTOR_SAP,
@@ -874,14 +874,14 @@ s32 Scene_Initialize(void) {
   Actor_CreateConfigured(PIXELS(128), 0, PIXELS(420), SPRITE_CRATE);
   lowBit = 1;
   zero = 0;
-  actor = Actor_GetById(ACTOR_BOY_ROUND_THE_WELL);
+  actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
   actor->timer = lowBit;
 #ifdef UBFIX
   actor->update = Vault_UpdateWalkingVillager;
 #else
   actor->update = (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
 #endif
-  actor = Actor_GetById(ACTOR_GIRL_ROUND_THE_WELL);
+  actor = Actor_Get(ACTOR_GIRL_ROUND_THE_WELL);
   actor->timer = zero;
 #ifdef UBFIX
   actor->update = Vault_UpdateWalkingVillager;
@@ -894,7 +894,7 @@ s32 Scene_Initialize(void) {
   suspectsMindRead = GameFlag_Get(FLAG_VAULT_SUSPECTS_MIND_READ);
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     if ((lowBit & suspectsMindRead) != 0) {
-      actor = Actor_GetById(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED);
+      actor = Actor_Get(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED);
 #ifdef UBFIX
       actor->update = Vault_UpdateRoofComplainerProximity;
 #else
@@ -911,9 +911,9 @@ s32 Scene_Initialize(void) {
       if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
         if (GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
           Event_Start();
-          actor = Actor_GetById(ACTOR_PARTY_LEADER);
+          actor = Actor_Get(ACTOR_PARTY_LEADER);
           if (actor != 0) {
-            Import_ActorSetPosition(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
+            Actor_SetPosition(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
           }
           if (gMainRoutineWork.entrance == VAULT_FROM_WORLD_MAP_SOUTH) {
             Actor_SetPosition(ACTOR_IVAN, PIXELS(400), PIXELS(448));
@@ -930,13 +930,13 @@ s32 Scene_Initialize(void) {
           Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
           Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
           Import_ActorSetAnimation(ACTOR_IVAN, ANIM_WALK);
-          actor = Actor_GetById(ACTOR_PARTY_LEADER);
+          actor = Actor_Get(ACTOR_PARTY_LEADER);
           if (actor != 0) {
-            Actor_ResetAndSetPosition(ACTOR_IVAN, actor->x.part.pixel,
-                                      actor->z.part.pixel);
+            Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel,
+                                 actor->z.part.pixel);
           }
           Actor_WaitForMoveById(ACTOR_IVAN);
-          Import_ActorSetPosition(ACTOR_IVAN, 0, 0);
+          Actor_SetPosition(ACTOR_IVAN, 0, 0);
           Event_PrepareActorAndApplyValue(IVAN, 0);
           Event_End();
         }
@@ -963,13 +963,13 @@ s32 Scene_Initialize(void) {
           Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
           Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
           Import_ActorSetAnimation(ACTOR_IVAN, ANIM_WALK);
-          actor = Actor_GetById(ACTOR_PARTY_LEADER);
+          actor = Actor_Get(ACTOR_PARTY_LEADER);
           if (actor != 0) {
-            Actor_ResetAndSetPosition(ACTOR_IVAN, actor->x.part.pixel,
-                                      actor->z.part.pixel);
+            Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel,
+                                 actor->z.part.pixel);
           }
           Actor_WaitForMoveById(ACTOR_IVAN);
-          Import_ActorSetPosition(ACTOR_IVAN, 0, 0);
+          Actor_SetPosition(ACTOR_IVAN, 0, 0);
           Event_PrepareActorAndApplyValue(IVAN, 0);
           Event_End();
         }
@@ -979,7 +979,7 @@ s32 Scene_Initialize(void) {
   } else {
     if (gMainRoutineWork.entrance == VAULT_FROM_LOG_ROOMS_A_WEST) {
       if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
-        Import_ActorSetPosition(ACTOR_YOUNG_MAN_FIXING_THE_ROOF, 0, 0);
+        Actor_SetPosition(ACTOR_YOUNG_MAN_FIXING_THE_ROOF, 0, 0);
       }
     }
   }
@@ -990,7 +990,7 @@ s32 Scene_Initialize(void) {
 #include "shared/vault_range.h"
 
 static void Vault_ShowMessageAndWait(s32 actorId, s32 delay) {
-  Event_ShowMessageAndWait(actorId, 0);
+  Event_ShowMessage(actorId, 0);
   Event_Wait(delay);
 }
 
@@ -1035,7 +1035,7 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   s32 z;
   u8 zero;
 
-  anchor = Actor_GetById(ACTOR_VAULT_DOG);
+  anchor = Actor_Get(ACTOR_VAULT_DOG);
   if (anchor == NULL)
     return;
   // Pick a small offset around the anchor and create the drifting sprite there.

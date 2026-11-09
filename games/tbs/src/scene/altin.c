@@ -360,13 +360,13 @@ static void Altin_AskAboutFirstVisit(void) {
   Event_Start();
   Event_SetMessageId(MsgAltinYourFirstTimeVisitAltin);
 
-  FieldMessage_ShowAtActor(ACTOR_GREETING_STRONGMAN, 0);
+  Event_OpenMessage(ACTOR_GREETING_STRONGMAN, 0);
 
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
-    Event_ShowMessageAndWait(ACTOR_GREETING_STRONGMAN, 0);
+    Event_ShowMessage(ACTOR_GREETING_STRONGMAN, 0);
   } else {
     Event_SkipMessages(1);
-    Event_AskYesNoAndShowResponse(ACTOR_GREETING_STRONGMAN, 0);
+    Event_AskYesNo(ACTOR_GREETING_STRONGMAN, 0);
   }
 
   Event_End();
@@ -377,7 +377,7 @@ static void Altin_AskAboutFirstVisit(void) {
 static void Altin_AskAboutHydros(void) {
   Event_Start();
   Event_SetMessageId(MsgAltinDidSeeWaterGushingOut);
-  Event_AskYesNoAndShowResponse(ACTOR_CURIOUS_STRONGMAN, 0);
+  Event_AskYesNo(ACTOR_CURIOUS_STRONGMAN, 0);
   Event_End();
 }
 
@@ -397,9 +397,9 @@ static void Altin_TalkToThirstyOldWoman(void) {
   } else {
     Import_ActorSetAnimation(ACTOR_THIRSTY_OLD_WOMAN, ANIM_SHAKE_HEAD);
     Event_SetMessageId(MsgAltinWeCantDrinkWaterMonsters);
-    FieldEvent_ShowMessageThenWait(ACTOR_THIRSTY_OLD_WOMAN, 0, 10);
+    Event_ShowMessageThenWait(ACTOR_THIRSTY_OLD_WOMAN, 0, 10);
     if (GameFlag_Get(FLAG_ALTIN_WATER_BEAST_LEFT) == 0) {
-      beast = Actor_GetById(ACTOR_WATER_BEAST);
+      beast = Actor_Get(ACTOR_WATER_BEAST);
 
       FieldCamera_GetActor()->motionFlags = 0;
       FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
@@ -415,7 +415,7 @@ static void Altin_TalkToThirstyOldWoman(void) {
                           0);
       FieldCamera_WaitForArrival();
       Event_Wait(120);
-      leader = Actor_GetById(ACTOR_PARTY_LEADER);
+      leader = Actor_Get(ACTOR_PARTY_LEADER);
       FieldCamera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
       FieldCamera_WaitForArrival();
     }
@@ -430,7 +430,7 @@ static void Altin_AskAboutRuins(void) {
 
   Event_Start();
   Event_SetMessageId(MsgAltinTrueFoundAncientRuinsIn);
-  Event_AskYesNoAndShowResponse(ACTOR_OLD_MAN_ROCK_FLUSHED_OUT, 0);
+  Event_AskYesNo(ACTOR_OLD_MAN_ROCK_FLUSHED_OUT, 0);
   Event_End();
 }
 
@@ -441,7 +441,7 @@ static void CottageRoomsD_AskAboutXianGirl(void) {
 
   Event_Start();
   Event_SetMessageId(MsgAltinGirlFromXianWasAsking);
-  Event_AskYesNoAndShowResponse(ACTOR_ROOM_ONE_SECOND_GUEST, 0);
+  Event_AskYesNo(ACTOR_ROOM_ONE_SECOND_GUEST, 0);
   Event_End();
 }
 
@@ -452,7 +452,7 @@ static void CottageRoomsD_AskAboutWayWest(void) {
 
   Event_Start();
   Event_SetMessageId(MsgAltinTryingFindYourWayWest);
-  Event_AskYesNoAndShowResponse(ACTOR_ROOM_TWO_GUEST, 0);
+  Event_AskYesNo(ACTOR_ROOM_TWO_GUEST, 0);
   Event_End();
 }
 
@@ -463,7 +463,7 @@ static void CottageRoomsD_AskAboutMonsters(void) {
 
   Event_Start();
   Event_SetMessageId(MsgAltinDefeatedThoseMonstersDidnt);
-  Event_AskYesNoAndShowResponse(ACTOR_KISSING_GIRL, 0);
+  Event_AskYesNo(ACTOR_KISSING_GIRL, 0);
   Event_End();
 }
 
@@ -473,14 +473,14 @@ static void CottageRoomsD_AskAboutMineBeasts(void) {
 
   Event_Start();
   Event_SetMessageId(MsgAltinThereFewBeastsInMine);
-  Event_AskYesNoAndShowResponse(ACTOR_MAN_WAITING_TO_GO_HOME, 0);
+  Event_AskYesNo(ACTOR_MAN_WAITING_TO_GO_HOME, 0);
   Event_End();
 }
 
 /// Returns whether the party leader faces north, toward a shop counter: its
 /// facing lies strictly between northwest and northeast, measured in 16 bits.
 static s32 Altin_LeaderFacesCounter(void) {
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   if (ALTIN_FACES_COUNTER(leader->facing)) {
     return 1;
@@ -497,7 +497,7 @@ static void CottageRoomsD_TalkToWeaponMerchant(void) {
     Event_Start();
     Event_SetMessageId(MsgAltinDoWantWeapons);
 
-    Event_AskYesNoAndShowResponse(ACTOR_WEAPON_MERCHANT, 0);
+    Event_AskYesNo(ACTOR_WEAPON_MERCHANT, 0);
     Event_End();
     return;
   }
@@ -512,7 +512,7 @@ static void CottageRoomsD_TalkToWeaponMerchant(void) {
   if (GameFlag_Get(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
     Event_SetMessageId(MsgAltinYoullHaveFindPassageIn);
   }
-  Event_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
+  Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
   Event_End();
 }
 
@@ -524,7 +524,7 @@ static void Altin_TalkToArmorMerchant(void) {
   if (GameFlag_Get(FLAG_ALTIN_WATER_DROPPED_TWICE) == 0) {
     Event_Start();
     Event_SetMessageId(MsgAltinMyStoreSubmergedWantSell);
-    Event_ShowMessageAndWait(ACTOR_FLOODED_ARMOR_MERCHANT, 0);
+    Event_ShowMessage(ACTOR_FLOODED_ARMOR_MERCHANT, 0);
     Event_End();
     return;
   }
@@ -539,7 +539,7 @@ static void Altin_TalkToArmorMerchant(void) {
   if (GameFlag_Get(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
     Event_SetMessageId(MsgAltinHowAboutArentImpressedBy);
   }
-  Event_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
+  Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
   Event_End();
 }
 
@@ -548,7 +548,7 @@ static void Altin_TalkToItemMerchant(void) {
   if (GameFlag_Get(FLAG_ALTIN_WATER_DROPPED_ONCE) == 0) {
     Event_Start();
     Event_SetMessageId(MsgAltinWillDoIfMyMerchandise);
-    Event_ShowMessageAndWait(ACTOR_FLOODED_ITEM_MERCHANT, 0);
+    Event_ShowMessage(ACTOR_FLOODED_ITEM_MERCHANT, 0);
     Event_End();
     return;
   }
@@ -563,7 +563,7 @@ static void Altin_TalkToItemMerchant(void) {
   if (GameFlag_Get(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
     Event_SetMessageId(MsgAltinGirlFromXianBoughtLot);
   }
-  Event_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0);
+  Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
   Event_End();
 }
 
@@ -573,7 +573,7 @@ static void Altin_TalkToItemMerchant(void) {
 static void CottageRoomsD_TalkToInnkeeper(void) {
   struct Actor *leader;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   if (ALTIN_FACES_COUNTER(leader->facing)) {
     Inn_CheckIn(ALTIN_INN, ACTOR_INNKEEPER);
@@ -584,10 +584,10 @@ static void CottageRoomsD_TalkToInnkeeper(void) {
 
   if (GameFlag_Get(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
     Event_SetMessageId(MsgAltinThereSmallTempleWestAltin);
-    Event_ShowMessageAndWait(ACTOR_INNKEEPER, 0);
+    Event_ShowMessage(ACTOR_INNKEEPER, 0);
   } else {
     Event_SetMessageId(MsgAltinWeGotLittleDampBut);
-    Event_AskYesNoAndShowResponse(ACTOR_INNKEEPER, 0);
+    Event_AskYesNo(ACTOR_INNKEEPER, 0);
   }
 
   Event_End();
@@ -611,7 +611,7 @@ static void Altin_EnterDoor(void) {
   work = gFieldWork;
   Event_Start();
   for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_ID; actorId++) {
-    actor = Actor_GetById(actorId);
+    actor = Actor_Get(actorId);
     if (actor != 0) {
       actor->motionFlags = 0;
     }
@@ -629,7 +629,7 @@ static void Altin_EnterDoor(void) {
   row = *(s16 *)(doorBytes + coordinatesByteOffset + 2);
   if (doorIndex == DOOR_SANCTUM) {
     // The Sanctum's door slides open with SE_THUMP, as Bilibin's does.
-    Event_PlaySound(SE_THUMP);
+    Sound_Play(SE_THUMP);
     MapGrid_CopyCellsTo(42, 33, column, row, 2, 2);
     rightColumn = column + 2;
     MapGrid_CopyCellsTo(42, 35, rightColumn, row, 2, 2);
@@ -638,7 +638,7 @@ static void Altin_EnterDoor(void) {
     MapGrid_CopyCellsTo(40, 35, rightColumn, row, 2, 2);
     Event_Wait(4);
   } else {
-    Event_PlaySound(SE_DOOR_OPEN);
+    Sound_Play(SE_DOOR_OPEN);
     // The north door's row in gAltin_Doors plays its opening at
     // (39, 17), outside the village's camera box; its house stands at
     // (8, 17), above where the party comes back out
@@ -654,7 +654,7 @@ static void Altin_EnterDoor(void) {
   // Walk the leader through.
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
+  Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   if (doorIndex == DOOR_STRAIGHT_IN) {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, 0);
@@ -680,8 +680,8 @@ static void Altin_WalkThroughDoorway(void) {
 
   work = gFieldWork;
   Event_Start();
-  Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Event_PlaySound(SE_MAP_EXIT);
+  Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
+  Sound_Play(SE_MAP_EXIT);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
   Import_EventSetExitRequest(work->stepTrigger);
   Event_FinishScreenTransition();
@@ -709,7 +709,7 @@ static void Altin_BeastHop(struct Actor *actor) {
     beast->y.fixed += -PIXELS(3) / 2;
     if (beast->y.fixed < beast->groundHeight) {
       if (((struct FieldEffect *)actor)->countdown != 0) {
-        Event_PlaySound(SE_SPLASH);
+        Sound_Play(SE_SPLASH);
         ((struct FieldEffect *)actor)->countdown = 0;
         beast->userValue = 4;
         MapGrid_SetShake(0, PIXELS(1), Q16_ONE);
@@ -721,7 +721,7 @@ static void Altin_BeastHop(struct Actor *actor) {
     beast->paused = 0;
   }
   if (beast->timer == 0) {
-    Event_PlaySound(SE_JUMP);
+    Sound_Play(SE_JUMP);
     ((struct FieldEffect *)actor)->countdown = 1;
     Actor_SelectAnimation(beast, 2);
     beast->velocityY = PIXELS(3);
@@ -734,7 +734,7 @@ static void Altin_BeastHop(struct Actor *actor) {
 static void Altin_BeastHopAway(void) {
   struct Actor *beast;
 
-  beast = Actor_GetById(ACTOR_WATER_BEAST);
+  beast = Actor_Get(ACTOR_WATER_BEAST);
   beast->timer = 0;
   beast->userValue = 0;
   beast->gravity = PIXELS(2) / 5;
@@ -742,7 +742,7 @@ static void Altin_BeastHopAway(void) {
   Actor_SetSpeed(ACTOR_WATER_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_MoveToAndWait(ACTOR_WATER_BEAST, 28, 460);
   Actor_MoveToAndWait(ACTOR_WATER_BEAST, 24, 448);
-  Event_PlaySound(SE_SPLASH);
+  Sound_Play(SE_SPLASH);
   Actor_ReleaseById(ACTOR_WATER_BEAST);
   MapGrid_SetShake(0, PIXELS(1), Q16_ONE);
   Event_Wait(4);
@@ -754,7 +754,7 @@ static void Altin_BeastHopAway(void) {
 /// After Move: remembers whether the pillar now stands in map column 22, the
 /// spot it is pushed to.
 static void Altin_CheckPillarMoved(void) {
-  struct Actor *pillar = Actor_GetById(ACTOR_STONE_STATUE);
+  struct Actor *pillar = Actor_Get(ACTOR_STONE_STATUE);
 
   if ((pillar->x.fixed >> 20) == 22) {
     GameFlag_Set(FLAG_ALTIN_PILLAR_MOVED);
@@ -799,7 +799,7 @@ s32 Scene_Initialize(void) {
 static void Altin_ApplyWaterLevel(void) {
   struct Actor *leader;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   // Select the water-level layout area and remove villagers whose areas are
   // flooded.
   if (GameFlag_Get(FLAG_ALTIN_WATER_DRAINED) != 0) {
@@ -807,7 +807,7 @@ static void Altin_ApplyWaterLevel(void) {
     MapGrid_CopyCellAttributes(64, 32, 32, 32, 0, 0);
     Actor_ReleaseById(ACTOR_FLOODED_ARMOR_MERCHANT);
     Actor_ReleaseById(ACTOR_FLOODED_ITEM_MERCHANT);
-  } else if (Event_GetFlag(FLAG_ALTIN_WATER_DROPPED_TWICE) != 0) {
+  } else if (GameFlag_Get(FLAG_ALTIN_WATER_DROPPED_TWICE) != 0) {
     MapGrid_CopyCellsTo(64, 0, 0, 32, 32, 32);
     MapGrid_CopyCellAttributes(64, 0, 32, 32, 0, 0);
     Actor_ReleaseById(ACTOR_OLD_MAN_ROCK_FLUSHED_OUT);
@@ -842,18 +842,18 @@ static void Altin_ApplyWaterLevel(void) {
   if (GameFlag_Get(FLAG_ALTIN_PILLAR_MOVED) != 0) {
     Actor_SetPosition(ACTOR_STONE_STATUE, PIXELS(360), PIXELS(168));
   }
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_STONE_STATUE), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_STONE_STATUE), 0);
   // Hide the three crates, which stay solid, and draw them under the
   // actors.
   Actor_SetSpriteColorById(ACTOR_FIRST_CRATE, SPRITE_COLOR_HIDDEN);
-  Actor_ConfigureSpriteColor(ACTOR_SECOND_CRATE, SPRITE_COLOR_HIDDEN);
+  Actor_SetSpriteColorById(ACTOR_SECOND_CRATE, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteColorById(ACTOR_THIRD_CRATE, SPRITE_COLOR_HIDDEN);
-  Actor_GetById(ACTOR_FIRST_CRATE)->collisionFlags |= ACTOR_NOT_TARGETED;
-  Actor_GetById(ACTOR_SECOND_CRATE)->collisionFlags |= ACTOR_NOT_TARGETED;
-  Actor_GetById(ACTOR_THIRD_CRATE)->collisionFlags |= ACTOR_NOT_TARGETED;
-  Actor_GetById(ACTOR_FIRST_CRATE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  Actor_GetById(ACTOR_SECOND_CRATE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  Actor_GetById(ACTOR_THIRD_CRATE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  Actor_Get(ACTOR_FIRST_CRATE)->collisionFlags |= ACTOR_NOT_TARGETED;
+  Actor_Get(ACTOR_SECOND_CRATE)->collisionFlags |= ACTOR_NOT_TARGETED;
+  Actor_Get(ACTOR_THIRD_CRATE)->collisionFlags |= ACTOR_NOT_TARGETED;
+  Actor_Get(ACTOR_FIRST_CRATE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  Actor_Get(ACTOR_SECOND_CRATE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  Actor_Get(ACTOR_THIRD_CRATE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetSpritePriority(ACTOR_FIRST_CRATE, 1);
   Actor_SetSpritePriority(ACTOR_SECOND_CRATE, 1);
   Actor_SetSpritePriority(ACTOR_THIRD_CRATE, 1);
@@ -874,27 +874,26 @@ static void CottageRoomsD_PlaceSheltering(void) {
 
   if (GameFlag_Get(FLAG_ALTIN_WATER_DROPPED_ONCE) == 0) {
     Actor_SetPosition(ACTOR_ROOM_ONE_GUEST, PIXELS(808), PIXELS(727));
-    Actor_GetById(ACTOR_ROOM_ONE_GUEST)->facing = FACING_SOUTH - FACING_STEP;
+    Actor_Get(ACTOR_ROOM_ONE_GUEST)->facing = FACING_SOUTH - FACING_STEP;
     Actor_SetPosition(ACTOR_ROOM_ONE_SECOND_GUEST, PIXELS(794), PIXELS(825));
   }
   if (GameFlag_Get(FLAG_ALTIN_WATER_DROPPED_TWICE) == 0) {
     Actor_SetPosition(ACTOR_ROOM_TWO_GUEST, PIXELS(560), PIXELS(710));
-    Actor_GetById(ACTOR_ROOM_TWO_GUEST)->facing = FACING_EAST + FACING_STEP;
+    Actor_Get(ACTOR_ROOM_TWO_GUEST)->facing = FACING_EAST + FACING_STEP;
     Actor_SetPosition(ACTOR_ROOM_TWO_SECOND_GUEST, PIXELS(576), PIXELS(710));
   }
   if (GameFlag_Get(FLAG_ALTIN_WATER_DRAINED) == 0) {
     Actor_SetPosition(ACTOR_WEAPON_MERCHANT, PIXELS(295), PIXELS(744));
-    Actor_GetById(ACTOR_WEAPON_MERCHANT)->facing =
-        FACING_NORTHWEST + FACING_STEP;
+    Actor_Get(ACTOR_WEAPON_MERCHANT)->facing = FACING_NORTHWEST + FACING_STEP;
   } else {
-    actor = Actor_GetById(ACTOR_WEAPON_MERCHANT);
+    actor = Actor_Get(ACTOR_WEAPON_MERCHANT);
     actor->collisionFlags |= ACTOR_NEAR_TALK;
   }
-  actor = Actor_GetById(ACTOR_ARMOR_MERCHANT);
+  actor = Actor_Get(ACTOR_ARMOR_MERCHANT);
   if (actor != 0) {
     actor->collisionFlags |= ACTOR_NEAR_TALK;
   }
-  actor = Actor_GetById(ACTOR_ITEM_MERCHANT);
+  actor = Actor_Get(ACTOR_ITEM_MERCHANT);
   if (actor != 0) {
     actor->collisionFlags |= ACTOR_NEAR_TALK;
   }
@@ -976,7 +975,7 @@ static void Altin_ScareOffBeast(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_WATER_BEAST, FACING_EAST, 20);
   Actor_FaceDirection(ACTOR_WATER_BEAST, FACING_NORTH + FACING_STEP, 40);
-  Event_PlaySound(SE_BEAST_CRY);
+  Sound_Play(SE_BEAST_CRY);
   Actor_RunRepeatedMotion(ACTOR_WATER_BEAST, 2);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_WATER_BEAST, FACING_NORTHWEST + FACING_STEP, 40);

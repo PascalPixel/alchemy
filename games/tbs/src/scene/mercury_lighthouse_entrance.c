@@ -182,13 +182,13 @@ static void MercuryLighthouseEntrance_MiaWatchesLeader(struct Actor *updated) {
 static s32 MercuryLighthouseEntrance_MiaWatchesLeader(struct Actor *updated) {
 #endif
   struct Actor *actor = (struct Actor *)updated;
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   if ((leader->z.fixed >> 19) <= 22) {
     actor->facing = ArcTan2(leader->z.fixed - actor->z.fixed,
                             leader->x.fixed - actor->x.fixed);
   } else if (actor->facing != FACING_NORTH) {
-    Actor_ArmCallback(ACTOR_MIA, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   }
 #ifndef UBFIX
   return 0;
@@ -302,8 +302,8 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
   struct EffectOptions *effectData;
   struct EffectOptions options;
 
-  leaderColumn = Actor_GetById(ACTOR_PARTY_LEADER)->x.fixed / PIXELS(16);
-  leaderRow = Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed / PIXELS(16);
+  leaderColumn = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed / PIXELS(16);
+  leaderRow = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed / PIXELS(16);
   if (leaderColumn == 12 && leaderRow == 32) {
     Event_Start();
     // Fade the event before releasing fifteen sparks above the pool.
@@ -377,7 +377,7 @@ static void MercuryLighthouseEntrance_LizardManBlocksLeader(void) {
   s32 leaderX;
   s32 leaderColumn;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   leaderX = leader->x.fixed;
   leaderColumn = leaderX / PIXELS(16);
   GameFlag_Set(FLAG_LIZARD_MAN_STEPPED_ASIDE);
@@ -589,11 +589,11 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
   struct Actor *actor;
 
   Event_Start();
-  actor = Actor_GetById(ACTOR_FIRST_EAST_STATUE);
+  actor = Actor_Get(ACTOR_FIRST_EAST_STATUE);
   actor->scaleX = -Q16_ONE;
-  actor = Actor_GetById(ACTOR_FIRST_EAST_STATUE + 1);
+  actor = Actor_Get(ACTOR_FIRST_EAST_STATUE + 1);
   actor->scaleX = -Q16_ONE;
-  actor = Actor_GetById(ACTOR_FIRST_EAST_STATUE + 2);
+  actor = Actor_Get(ACTOR_FIRST_EAST_STATUE + 2);
   actor->scaleX = -Q16_ONE;
   Actor_SetPosition(ACTOR_MIA, PIXELS(136), PIXELS(184));
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(136), PIXELS(296));
@@ -606,46 +606,46 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
-  Actor_GetById(ACTOR_LIZARD_MAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_Get(ACTOR_LIZARD_MAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Event_Wait(20);
   // Twice she tries the east side and then the west.
   for (paceCycle = 0; paceCycle < 2; paceCycle++) {
-    Actor_ResetAndSetPositionInMode2(ACTOR_MIA, 152, 168);
+    Actor_WalkTo(ACTOR_MIA, 152, 168);
     Event_Wait(10);
     Actor_SetScript(ACTOR_LIZARD_MAN,
                     gMercuryLighthouseEntrance_LizardManStepEast);
     Actor_WaitForMoveById(ACTOR_MIA);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 30);
     Actor_RunRepeatedMotion(ACTOR_MIA, 1);
-    mia = Actor_GetById(ACTOR_MIA);
+    mia = Actor_Get(ACTOR_MIA);
     mia->steeringFlags &= ~ACTOR_FACES_MOTION;
-    Actor_ResetAndSetPositionInMode2(ACTOR_MIA, 136, 184);
+    Actor_WalkTo(ACTOR_MIA, 136, 184);
     Event_Wait(10);
     Actor_SetScript(ACTOR_LIZARD_MAN,
                     gMercuryLighthouseEntrance_LizardManStepCentre);
     Actor_WaitForMoveById(ACTOR_MIA);
-    Actor_GetById(ACTOR_MIA)->steeringFlags |= ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_MIA)->steeringFlags |= ACTOR_FACES_MOTION;
     Event_Wait(30);
-    Actor_ResetAndSetPositionInMode2(ACTOR_MIA, 120, 168);
+    Actor_WalkTo(ACTOR_MIA, 120, 168);
     Event_Wait(5);
     Actor_SetScript(ACTOR_LIZARD_MAN,
                     gMercuryLighthouseEntrance_LizardManStepWest);
     Actor_WaitForMoveById(ACTOR_MIA);
-    Actor_ArmCallback(ACTOR_MIA, FACING_NORTH, 30);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 30);
     Actor_RunRepeatedMotion(ACTOR_MIA, 1);
     Event_Wait(15);
-    Actor_GetById(ACTOR_MIA)->steeringFlags &= ~ACTOR_FACES_MOTION;
-    Actor_ResetAndSetPositionInMode2(ACTOR_MIA, 136, 184);
+    Actor_Get(ACTOR_MIA)->steeringFlags &= ~ACTOR_FACES_MOTION;
+    Actor_WalkTo(ACTOR_MIA, 136, 184);
     Event_Wait(15);
     Actor_SetScript(ACTOR_LIZARD_MAN,
                     gMercuryLighthouseEntrance_LizardManStepCentre);
     Actor_WaitForMoveById(ACTOR_MIA);
     Actor_RunRepeatedMotion(ACTOR_MIA, 1);
-    Actor_GetById(ACTOR_MIA)->steeringFlags |= ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_MIA)->steeringFlags |= ACTOR_FACES_MOTION;
   }
   Event_Wait(20);
-  FieldEffect_SpawnAttached(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  actor = Actor_GetById(ACTOR_MIA);
+  Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  actor = Actor_Get(ACTOR_MIA);
 #ifdef UBFIX
   actor->update = MercuryLighthouseEntrance_MiaWatchesLeader;
 #else
@@ -674,7 +674,7 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
     Event_Start();
     actor = Actor_Get(ACTOR_FIRST_EAST_STATUE);
     actor->scaleX = -Q16_ONE;
-    actor = Actor_GetById(ACTOR_FIRST_EAST_STATUE + 1);
+    actor = Actor_Get(ACTOR_FIRST_EAST_STATUE + 1);
     actor->scaleX = -Q16_ONE;
     actor = Actor_Get(ACTOR_FIRST_EAST_STATUE + 2);
     actor->scaleX = -Q16_ONE;

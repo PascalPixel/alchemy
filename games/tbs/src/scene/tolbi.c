@@ -114,7 +114,7 @@ static s32 Tolbi_KidStopForTarget(struct Actor *kid, struct Actor *target,
       Actor_SelectAnimation(kid, ANIM_STAND);
       stopped = 1;
     }
-    if (target == Actor_GetById(ACTOR_PARTY_LEADER) &&
+    if (target == Actor_Get(ACTOR_PARTY_LEADER) &&
         (farRight == facing || farLeft == facing)) {
       kid->paused = 1;
       Actor_SelectAnimation(kid, ANIM_STAND);
@@ -151,9 +151,9 @@ static s32 Tolbi_UpdateKid(struct Actor *updated) {
   struct Actor *leader;
 
   if ((*kidFlags & KID_CHASES_YOUNGER) != 0) {
-    other = Actor_GetById(ACTOR_TOLBI_YOUNGER_SISTER);
+    other = Actor_Get(ACTOR_TOLBI_YOUNGER_SISTER);
   } else {
-    other = Actor_GetById(ACTOR_TOLBI_OLDER_BROTHER);
+    other = Actor_Get(ACTOR_TOLBI_OLDER_BROTHER);
   }
   if (Tolbi_KidStopForTarget(self, other, 32, 0) != 0) {
 #ifdef UBFIX
@@ -163,7 +163,7 @@ static s32 Tolbi_UpdateKid(struct Actor *updated) {
 #endif
   }
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   if ((s16)work->talk != 0 || ui->mindRead != 0) {
     range = 26;
@@ -195,11 +195,11 @@ const struct ActorPlacement *Tolbi_GetActorPlacements(void) {
 static void Tolbi_GrowSprout(void) {
   struct Actor *sprout;
 
-  sprout = Actor_GetById(ACTOR_TOLBI_SPROUT);
+  sprout = Actor_Get(ACTOR_TOLBI_SPROUT);
   if ((s32)sprout != 0) {
     sprout->collisionFlags = 0;
   }
-  sprout = Actor_GetById(ACTOR_TOLBI_SPROUT);
+  sprout = Actor_Get(ACTOR_TOLBI_SPROUT);
   Actor_SetSpriteFlags(sprout, 0);
   Field_SetCellBehaviorAt(0, PIXELS(544), PIXELS(288), CELL_BEHAVIOR_CLIMB);
   GameFlag_Set(FLAG_TOLBI_SPROUT_GROWN);
@@ -223,13 +223,13 @@ static void Tolbi_HideRevealedChest(void) {
 /// The first sign at Tolbi Spring: face away and toss a coin in.
 static void Tolbi_ReadSpringSign(void) {
   Event_SetMessageId(MsgTolbiFaceAwayTolbi);
-  Event_ShowMessageAndWait(-1, 0);
+  Event_ShowMessage(-1, 0);
 }
 
 /// The second sign at Tolbi Spring: a Lucky Medal wins better prizes.
 static void Tolbi_ReadLuckyMedalSign(void) {
   Event_SetMessageId(MsgTolbiTossLuckyMedal);
-  Event_ShowMessageAndWait(-1, 0);
+  Event_ShowMessage(-1, 0);
 }
 
 /// Talking to the older brother, or reading his mind. He stops running while
@@ -240,7 +240,7 @@ static void Tolbi_TalkToOlderBrother(void) {
   s16 facing;
   s32 msg;
 
-  kid = Actor_GetById(ACTOR_TOLBI_OLDER_BROTHER);
+  kid = Actor_Get(ACTOR_TOLBI_OLDER_BROTHER);
   facing = kid->facing;
   Event_Start();
   kid->timer |= KID_TALKING;
@@ -262,7 +262,7 @@ static void Tolbi_TalkToOlderBrother(void) {
     }
   }
   Event_SetMessageId(msg);
-  Import_ActorSetAnimation(ACTOR_TOLBI_OLDER_BROTHER, 0);
+  Actor_SetAnimation(ACTOR_TOLBI_OLDER_BROTHER, 0);
   Actor_TurnToFaceEachOther(ACTOR_TOLBI_OLDER_BROTHER, ACTOR_PARTY_LEADER, 2);
   Event_ShowMessageThenWait(ACTOR_TOLBI_OLDER_BROTHER, 0, 10);
   kid->facing = facing;
@@ -278,7 +278,7 @@ static void Tolbi_TalkToYoungerSister(void) {
   s16 facing;
   s32 msg;
 
-  kid = Actor_GetById(ACTOR_TOLBI_YOUNGER_SISTER);
+  kid = Actor_Get(ACTOR_TOLBI_YOUNGER_SISTER);
   facing = kid->facing;
   Event_Start();
   kid->timer |= KID_TALKING;
@@ -300,7 +300,7 @@ static void Tolbi_TalkToYoungerSister(void) {
     }
   }
   Event_SetMessageId(msg);
-  Import_ActorSetAnimation(ACTOR_TOLBI_YOUNGER_SISTER, 0);
+  Actor_SetAnimation(ACTOR_TOLBI_YOUNGER_SISTER, 0);
   Actor_TurnToFaceEachOther(ACTOR_TOLBI_YOUNGER_SISTER, ACTOR_PARTY_LEADER, 2);
   Event_ShowMessageThenWait(ACTOR_TOLBI_YOUNGER_SISTER, 0, 10);
   kid->facing = facing;
@@ -327,7 +327,7 @@ const struct Trigger *Tolbi_SelectTriggers(void) {
 static void Tolbi_AskAboutLivingPastHundred(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiSomeoneLiveMore);
-  Event_AskYesNoAndShowResponse(ACTOR_TOLBI_SUSPICIOUS_OLD_WOMAN, 0);
+  Event_AskYesNo(ACTOR_TOLBI_SUSPICIOUS_OLD_WOMAN, 0);
   Event_End();
 }
 
@@ -336,7 +336,7 @@ static void Tolbi_AskAboutLivingPastHundred(void) {
 static void Tolbi_TalkToFather(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiChildrenLoveSouvenirs);
-  Event_AskYesNoAndShowResponse(ACTOR_TOLBI_FATHER, 0);
+  Event_AskYesNo(ACTOR_TOLBI_FATHER, 0);
   Event_End();
 }
 
@@ -346,9 +346,9 @@ static void Tolbi_TalkToMother(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiPatientLittleGuy);
   Actor_FaceDirection(ACTOR_TOLBI_MOTHER, FACING_NORTH, 0);
-  Event_ShowMessageAndWait(ACTOR_TOLBI_MOTHER, 0);
+  Event_ShowMessage(ACTOR_TOLBI_MOTHER, 0);
   Actor_FaceDirection(ACTOR_TOLBI_MOTHER, FACING_WEST, 0);
-  Event_ShowMessageAndWait(ACTOR_TOLBI_MOTHER, 0);
+  Event_ShowMessage(ACTOR_TOLBI_MOTHER, 0);
   Event_End();
 }
 
@@ -358,7 +358,7 @@ static void Tolbi_TalkToCryingBoy(void) {
   Actor_FaceDirection(ACTOR_TOLBI_CRYING_BOY, FACING_SOUTH, 0);
   Actor_StartRepeatedMotion(ACTOR_TOLBI_CRYING_BOY, 2);
   Event_SetMessageId(MsgTolbiWaahBuySweets);
-  Event_ShowMessageAndWait(ACTOR_TOLBI_CRYING_BOY, 0);
+  Event_ShowMessage(ACTOR_TOLBI_CRYING_BOY, 0);
   Event_End();
 }
 
@@ -367,7 +367,7 @@ static void Tolbi_TalkToCryingBoy(void) {
 static void Tolbi_TalkToSleepingScalper(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiInnsFullStaying);
-  Event_ShowMessageAndWait(ACTOR_TOLBI_SCALPER, 0);
+  Event_ShowMessage(ACTOR_TOLBI_SCALPER, 0);
   Event_End();
 }
 
@@ -376,7 +376,7 @@ static void Tolbi_TalkToSleepingScalper(void) {
 static void Tolbi_AskWhetherPartyWasInFinals(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiFinalsWerent);
-  Event_AskYesNoAndShowResponse(ACTOR_TOLBI_FATHER, 0);
+  Event_AskYesNo(ACTOR_TOLBI_FATHER, 0);
   Event_End();
 }
 
@@ -386,14 +386,14 @@ static void Tolbi_TalkToSnackVendor(void) {
   if (Event_GetFlag(FLAG_TOLBI_CORN_GIVEN) == 0) {
     GameFlag_Set(FLAG_TOLBI_CORN_GIVEN);
     Event_SetMessageId(MsgTolbiLeftovers);
-    Event_ShowMessageAndWait(ACTOR_TOLBI_SNACK_VENDOR, 0);
+    Event_ShowMessage(ACTOR_TOLBI_SNACK_VENDOR, 0);
     ItemDisplay_ShowItem(ITEM_CORN, 3);
-    Event_ShowMessageAndWait(ACTOR_TOLBI_SNACK_VENDOR, 0);
-    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+    Event_ShowMessage(ACTOR_TOLBI_SNACK_VENDOR, 0);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
     PartyInventory_GiveItem(ITEM_CORN, 0);
   } else {
     Event_SetMessageId(MsgTolbiFestivalLongerUsual);
-    Event_ShowMessageAndWait(ACTOR_TOLBI_SNACK_VENDOR, 0);
+    Event_ShowMessage(ACTOR_TOLBI_SNACK_VENDOR, 0);
   }
   Event_End();
 }
@@ -408,7 +408,7 @@ static void Tolbi_EnterDoor(void) {
 
   Event_Start();
   for (actorId = ACTOR_FIRST_PLACED; actorId <= 65; actorId++) {
-    struct Actor *actor = Actor_GetById(actorId);
+    struct Actor *actor = Actor_Get(actorId);
     if (actor != NULL) {
       actor->motionFlags = 0;
     }
@@ -418,8 +418,8 @@ static void Tolbi_EnterDoor(void) {
   MapGrid_AnimateCells(gTolbiDoors[door].steps, gTolbiDoors[door].x,
                        gTolbiDoors[door].y);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-  Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   if (door != TOLBI_TO_WEAPON_AND_ARMOR_SHOP - 1) {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -8);
     Event_Wait(10);
@@ -437,7 +437,7 @@ static void Tolbi_CopyLeaderPriority(struct Actor *updated) {
   s32 priority;
 
   if (updated != NULL) {
-    priority = Actor_GetById(ACTOR_PARTY_LEADER)->sprite->image.priority;
+    priority = Actor_Get(ACTOR_PARTY_LEADER)->sprite->image.priority;
     updated->priorityFlags = 0;
     updated->sprite->image.priority = priority;
     updated->sprite->shadow.priority = priority;
@@ -456,7 +456,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   // The two children run their loop south-east of the fountain.
   Actor_SetPosition(ACTOR_TOLBI_OLDER_BROTHER, PIXELS(352), PIXELS(352));
   Actor_SetScript(ACTOR_TOLBI_OLDER_BROTHER, gTolbiOlderBrotherRun);
-  actor = Actor_GetById(ACTOR_TOLBI_OLDER_BROTHER);
+  actor = Actor_Get(ACTOR_TOLBI_OLDER_BROTHER);
 #ifdef UBFIX
   kidUpdate = Tolbi_UpdateKid;
 #else
@@ -465,12 +465,12 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   actor->timer = KID_CHASES_YOUNGER;
   actor->update = kidUpdate;
   clearFlags = 0;
-  Import_ActorSetPosition(ACTOR_TOLBI_YOUNGER_SISTER, PIXELS(368), PIXELS(320));
+  Actor_SetPosition(ACTOR_TOLBI_YOUNGER_SISTER, PIXELS(368), PIXELS(320));
   Actor_SetScript(ACTOR_TOLBI_YOUNGER_SISTER, gTolbiYoungerSisterRun);
-  actor = Actor_GetById(ACTOR_TOLBI_YOUNGER_SISTER);
+  actor = Actor_Get(ACTOR_TOLBI_YOUNGER_SISTER);
   actor->timer = clearFlags;
   actor->update = kidUpdate;
-  actor = Actor_GetById(ACTOR_TOLBI_OLD_MAN);
+  actor = Actor_Get(ACTOR_TOLBI_OLD_MAN);
   actor->update = Tolbi_CopyLeaderPriority;
 
   // What the party has already done here.
@@ -484,7 +484,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   // The sprout has grown.
   if (GameFlag_Get(FLAG_TOLBI_SPROUT_GROWN) != 0) {
     Tolbi_GrowSprout();
-    Import_ActorSetAnimation(ACTOR_TOLBI_SPROUT, 4);
+    Actor_SetAnimation(ACTOR_TOLBI_SPROUT, 4);
   }
 
   // After Colosso the crowd has gone home and is moved off the map. On finals
@@ -501,7 +501,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
     if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
       Actor_SetPosition(ACTOR_TOLBI_SCALPER, PIXELS(280), PIXELS(80));
       Actor_FaceDirection(ACTOR_TOLBI_SCALPER, FACING_SOUTHEAST, 0);
-      Import_ActorSetAnimation(ACTOR_TOLBI_SCALPER, ANIM_STAND);
+      Actor_SetAnimation(ACTOR_TOLBI_SCALPER, ANIM_STAND);
     }
   }
   return 0;
@@ -513,21 +513,21 @@ static void Tolbi_TalkToSpringVisitor(void) {
   Event_Start();
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 304, 312);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Actor_ArmCallback(ACTOR_TOLBI_SPRING_VISITOR, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_TOLBI_SPRING_VISITOR, FACING_SOUTH, 0);
   Event_Wait(20);
   Event_SetMessageId(MsgTolbiWantTestLuck);
   Event_OpenMessage(ACTOR_TOLBI_SPRING_VISITOR, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     // Yes: "I'll give you the chance to go first."
     gFieldWork->message++;
-    Event_ShowMessageAndWait(ACTOR_TOLBI_SPRING_VISITOR, 0);
+    Event_ShowMessage(ACTOR_TOLBI_SPRING_VISITOR, 0);
     Actor_SetSpeed(ACTOR_TOLBI_SPRING_VISITOR, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkToAndWait(ACTOR_TOLBI_SPRING_VISITOR, 320, 304);
     Actor_WalkToAndWait(ACTOR_TOLBI_SPRING_VISITOR, 316, 328);
-    Actor_ArmCallback(ACTOR_TOLBI_SPRING_VISITOR, FACING_NORTHWEST, 0);
+    Actor_FaceDirection(ACTOR_TOLBI_SPRING_VISITOR, FACING_NORTHWEST, 0);
     GameFlag_Set(FLAG_TOLBI_SPRING_OPENED);
   } else {
-    Event_ShowMessageAndWait(ACTOR_TOLBI_SPRING_VISITOR, 0);
+    Event_ShowMessage(ACTOR_TOLBI_SPRING_VISITOR, 0);
   }
   Event_End();
 }
@@ -557,27 +557,27 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   Event_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_A, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeedParameters(ACTOR_TOLBI_SOLDIER_B, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_B, PIXELS(1), PIXELS(1) / 2);
   firstMsg = MsgTolbiSeenAnyoneWho;
   Event_SetMessageId(firstMsg);
 
   // The soldiers come up to the party; the poster waits off to the side.
   Actor_SetPosition(ACTOR_TOLBI_SOLDIER_A, PIXELS(72), PIXELS(208));
   Actor_SetPosition(ACTOR_TOLBI_SOLDIER_B, PIXELS(56), PIXELS(208));
-  Actor_ConfigureSpriteColor(ACTOR_TOLBI_MISSING_PERSON_POSTER,
-                             SPRITE_COLOR_HIDDEN);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_TOLBI_MISSING_PERSON_POSTER), 0);
+  Actor_SetSpriteColorById(ACTOR_TOLBI_MISSING_PERSON_POSTER,
+                           SPRITE_COLOR_HIDDEN);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_TOLBI_MISSING_PERSON_POSTER), 0);
   Actor_SetPosition(ACTOR_TOLBI_MISSING_PERSON_POSTER, PIXELS(95), PIXELS(40));
-  Actor_ResetAndSetPositionInMode2(ACTOR_TOLBI_SOLDIER_A, 72, 248);
-  Actor_ResetAndSetPositionInMode2(ACTOR_TOLBI_SOLDIER_B, 56, 248);
+  Actor_WalkTo(ACTOR_TOLBI_SOLDIER_A, 72, 248);
+  Actor_WalkTo(ACTOR_TOLBI_SOLDIER_B, 56, 248);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 64, 264);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_WaitForMoveById(ACTOR_TOLBI_SOLDIER_A);
-  Import_ActorSetAnimation(ACTOR_TOLBI_SOLDIER_A, ANIM_STAND);
-  Import_ActorSetAnimation(ACTOR_TOLBI_SOLDIER_B, ANIM_STAND);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  Actor_SetAngleToward(ACTOR_TOLBI_SOLDIER_A, ACTOR_PARTY_LEADER, 0);
-  Actor_SetAngleToward(ACTOR_TOLBI_SOLDIER_B, ACTOR_PARTY_LEADER, 0);
+  Actor_SetAnimation(ACTOR_TOLBI_SOLDIER_A, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_TOLBI_SOLDIER_B, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_FaceActor(ACTOR_TOLBI_SOLDIER_A, ACTOR_PARTY_LEADER, 0);
+  Actor_FaceActor(ACTOR_TOLBI_SOLDIER_B, ACTOR_PARTY_LEADER, 0);
   Event_Wait(20);
   Actor_SetAttachedEffect(ACTOR_TOLBI_SOLDIER_A,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -600,19 +600,19 @@ static void Tolbi_MeetSearchingSoldiers(void) {
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_TOLBI_SOLDIER_B, 2);
     Event_Wait(30);
-    Actor_ArmCallback(ACTOR_TOLBI_SOLDIER_B, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_TOLBI_SOLDIER_B, FACING_EAST, 0);
     Event_Wait(30);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_TOLBI_SOLDIER_A, ANIM_NOD);
     Event_Wait(20);
-    Actor_ArmCallback(ACTOR_TOLBI_SOLDIER_A, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_TOLBI_SOLDIER_A, FACING_EAST, 0);
     Event_Wait(30);
-    Event_ShowMessageAndWait(ACTOR_TOLBI_SOLDIER_A, 0);
+    Event_ShowMessage(ACTOR_TOLBI_SOLDIER_A, 0);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_TOLBI_SOLDIER_A, FACING_SOUTH, 0);
-    Actor_ArmCallback(ACTOR_TOLBI_SOLDIER_B, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_TOLBI_SOLDIER_B, FACING_SOUTH, 0);
     Event_Wait(30);
-    Import_ActorSetAnimation(ACTOR_TOLBI_SOLDIER_A, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_TOLBI_SOLDIER_A, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_TOLBI_SOLDIER_B, ANIM_NOD);
     Event_Wait(20);
     Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_A, PIXELS(9) / 5, PIXELS(9) / 10);
@@ -621,38 +621,38 @@ static void Tolbi_MeetSearchingSoldiers(void) {
     Event_Wait(2);
     Actor_WalkTo(ACTOR_TOLBI_SOLDIER_B, 232, 248);
     Actor_WaitForMoveById(ACTOR_TOLBI_SOLDIER_A);
-    Actor_ResetAndSetPositionInMode2(ACTOR_TOLBI_SOLDIER_A, 248, 248);
-    Actor_SetPositionAndReset(ACTOR_TOLBI_SOLDIER_B, 248, 248);
+    Actor_WalkTo(ACTOR_TOLBI_SOLDIER_A, 248, 248);
+    Actor_WalkToAndWait(ACTOR_TOLBI_SOLDIER_B, 248, 248);
   } else {
     // No: "He doesn't seem to be here. Let's look over there." They shake
     // their heads and go back north.
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_TOLBI_SOLDIER_B, 2);
     Event_Wait(30);
-    Actor_ArmCallback(ACTOR_TOLBI_SOLDIER_B, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_TOLBI_SOLDIER_B, FACING_EAST, 0);
     Event_Wait(30);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_TOLBI_SOLDIER_A, ANIM_SHAKE_HEAD);
     Event_Wait(20);
-    Actor_ArmCallback(ACTOR_TOLBI_SOLDIER_A, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_TOLBI_SOLDIER_A, FACING_EAST, 0);
     Event_Wait(30);
     gFieldWork->message += 1;
-    Event_ShowMessageAndWait(ACTOR_TOLBI_SOLDIER_A, 0);
+    Event_ShowMessage(ACTOR_TOLBI_SOLDIER_A, 0);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_TOLBI_SOLDIER_A, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_TOLBI_SOLDIER_B, FACING_SOUTH, 0);
     Event_Wait(30);
-    Import_ActorSetAnimation(ACTOR_TOLBI_SOLDIER_A, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_TOLBI_SOLDIER_A, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_TOLBI_SOLDIER_B, ANIM_NOD);
     Event_Wait(20);
     Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_A, PIXELS(8) / 5, PIXELS(4) / 5);
     Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_B, PIXELS(8) / 5, PIXELS(4) / 5);
-    Actor_ResetAndSetPositionInMode2(ACTOR_TOLBI_SOLDIER_A, 72, 184);
-    Actor_SetPositionAndReset(ACTOR_TOLBI_SOLDIER_B, 56, 184);
+    Actor_WalkTo(ACTOR_TOLBI_SOLDIER_A, 72, 184);
+    Actor_WalkToAndWait(ACTOR_TOLBI_SOLDIER_B, 56, 184);
   }
-  Import_ActorSetPosition(ACTOR_TOLBI_SOLDIER_A, 0, 0);
-  Import_ActorSetPosition(ACTOR_TOLBI_SOLDIER_B, 0, 0);
-  Import_ActorSetPosition(ACTOR_TOLBI_MISSING_PERSON_POSTER, 0, 0);
+  Actor_SetPosition(ACTOR_TOLBI_SOLDIER_A, 0, 0);
+  Actor_SetPosition(ACTOR_TOLBI_SOLDIER_B, 0, 0);
+  Actor_SetPosition(ACTOR_TOLBI_MISSING_PERSON_POSTER, 0, 0);
   GameFlag_Set(FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI);
   Event_End();
 }
@@ -660,13 +660,13 @@ static void Tolbi_MeetSearchingSoldiers(void) {
 /// Frost on the puddle: the frozen pillar is drawn underfoot and stops
 /// following the terrain, and its map cell becomes solid.
 static void Tolbi_FreezePuddle(void) {
-  struct Actor *puddle = Actor_GetById(ACTOR_TOLBI_PUDDLE);
+  struct Actor *puddle = Actor_Get(ACTOR_TOLBI_PUDDLE);
   if (puddle != 0) {
     Actor_SetSpriteFlags(puddle, 0);
     puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     puddle->motionFlags = 0;
   }
-  Import_ActorSetAnimation(ACTOR_TOLBI_PUDDLE, 5);
+  Actor_SetAnimation(ACTOR_TOLBI_PUDDLE, 5);
   {
     MapGrid_CopyCellAttributes(36, 16, 1, 1, 34, 16);
   }

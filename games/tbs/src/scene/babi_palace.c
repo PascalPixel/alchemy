@@ -297,8 +297,7 @@ static inline void BabiPalace_WalkIntoLeader(s32 member) {
   Actor_SetAnimation(member, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_ResetAndSetPosition(member, leader->x.part.pixel,
-                              leader->z.part.pixel);
+    Actor_SetDestination(member, leader->x.part.pixel, leader->z.part.pixel);
   }
   Actor_WaitForMoveById(member);
   Actor_SetPosition(member, 0, 0);
@@ -364,12 +363,12 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Asks a yes or no question; the answers are the two messages after it.
 static inline void BabiPalace_ShowQuestionAnswer(s32 actorId, s32 question) {
   Event_SetMessageId(question);
-  FieldMessage_ShowAtActor(actorId, 0);
+  Event_OpenMessage(actorId, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0)
     Event_SetMessageId(question + 1);
   else
     Event_SetMessageId(question + 2);
-  Event_ShowMessageAndWait(actorId, 0);
+  Event_ShowMessage(actorId, 0);
 }
 
 /// An old man with a cane asks whether the party ran into Babi's soldiers. He's
@@ -485,17 +484,17 @@ static void BabiPalace_AskAboutColosso(s32 actorId) {
   s32 question = MsgTolbiPlanningEnterColosso;
 
   Event_SetMessageId(question);
-  FieldMessage_ShowAtActor(actorId, 0);
+  Event_OpenMessage(actorId, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(10);
-    FieldEffect_SpawnAttached(actorId, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+    Actor_ShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     Event_SetMessageId(question + 1);
   } else {
     Event_Wait(10);
-    FieldEffect_SpawnAttached(actorId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+    Actor_ShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
     Event_SetMessageId(question + 2);
   }
-  Event_ShowMessageAndWait(actorId, 0);
+  Event_ShowMessage(actorId, 0);
 }
 
 /// A warrior with indigestion gives up on entering Colosso. The warrior is in
@@ -581,27 +580,27 @@ static void BabiPalace_OfferCloakBall(void) {
   Field_EndBusyAndReveal();
   msg = MsgTolbiFoundCloakBall;
   Event_SetMessageId(msg);
-  Event_ShowMessageAndWait(-1, 0);
+  Event_ShowMessage(-1, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
   Event_Wait(30);
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_BABI, 30);
-  FieldMessage_ShowAtActor(ACTOR_BABI, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_BABI, 30);
+  Event_OpenMessage(ACTOR_BABI, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
     Event_SetMessageId(msg + 2);
-    Event_ShowMessageAndWait(ACTOR_BABI, 0);
+    Event_ShowMessage(ACTOR_BABI, 0);
   } else {
     Event_Wait(20);
     Event_SetMessageId(msg + 3);
-    Event_ShowMessageAndWait(ACTOR_BABI, 0);
+    Event_ShowMessage(ACTOR_BABI, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(30);
-    Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Event_Wait(30);
-    Import_ActorSetPosition(ACTOR_CLOAK_BALL, 0, 0);
+    Actor_SetPosition(ACTOR_CLOAK_BALL, 0, 0);
     ItemDisplay_ShowItem(ITEM_CLOAK_BALL, 3);
-    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
     PartyInventory_GiveItem(ITEM_CLOAK_BALL, 0);
     GameFlag_Set(FLAG_BABI_PALACE_CLOAK_BALL);
   }
@@ -1407,7 +1406,7 @@ static void BabiPalace_WakeAfterFinals(void) {
 /// Learning that the party is bound for Venus Lighthouse, he sends Iodem
 /// with it, to meet at Gondowan Passage.
 static void BabiPalace_MeetBabiAfterColosso(void) {
-  Event_PlaySound(MUS_BABI);
+  Sound_Play(MUS_BABI);
   Event_Start();
   Event_SetMessageId(MsgTolbiWaitingCompanions);
   Event_StartScreenTransition();
@@ -2298,7 +2297,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(30);
-  Event_PlaySound(SOUND_FADE_OUT_BGM);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -2320,7 +2319,7 @@ static void BabiPalace_LeaveThroughDoor(void) {
 
   work = gFieldWork;
   Event_Start();
-  Event_PlaySound(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   if (work->stepTrigger == BABI_PALACE_CARPET_ROOM_TO_MEETING_ROOM) {
@@ -2349,7 +2348,7 @@ static void BabiPalace_LeaveThroughDoor(void) {
 static void BabiPalace_LeaveThroughAnimatedDoor(void) {
   Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-  Event_PlaySound(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gBabiPalace_DoorCells, 36, 10);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
   Event_Wait(16);
@@ -2425,13 +2424,13 @@ static void BabiPalace_AskAboutRemainingWarriors(s32 actorId) {
   s32 question = MsgTolbiWarriorsWhoStayed;
 
   Event_SetMessageId(question);
-  FieldMessage_ShowAtActor(actorId, 0);
+  Event_OpenMessage(actorId, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_SetMessageId(question + 1);
-    Event_ShowMessageAndWait(actorId, 0);
+    Event_ShowMessage(actorId, 0);
   } else {
     Event_SetMessageId(question + 2);
-    Event_ShowMessageAndWait(actorId, 0);
+    Event_ShowMessage(actorId, 0);
   }
 }
 

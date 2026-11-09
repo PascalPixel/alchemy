@@ -228,12 +228,12 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
       Event_GetFlag(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
     Event_Start();
     // Bring Iodem out of the party before opening his question.
-    Actor_SetSpeedParameters(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
       Actor_SetPosition(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
     }
-    Actor_OffsetPositionAndResetMotion(ACTOR_IODEM, -8, 16);
+    Actor_SetDestinationOffset(ACTOR_IODEM, -8, 16);
     Actor_WaitForMoveById(ACTOR_IODEM);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH + FACING_STEP, 0);
     Event_Wait(10);
@@ -265,7 +265,7 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
       Actor_SetPosition(ACTOR_IODEM, PIXELS(0), PIXELS(0));
       Event_Wait(30);
       Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-      Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0, 16);
+      Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
       Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
     }
@@ -279,23 +279,23 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
 /// Babi Lighthouse soon.`
 static void GondowanCave_IodemRejoins(void) {
   Event_Start();
-  Actor_SetAngleToward(ACTOR_IODEM, ACTOR_PARTY_LEADER, 0);
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
+  Actor_FaceActor(ACTOR_IODEM, ACTOR_PARTY_LEADER, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(10);
   Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
   Event_SetMessageId(MsgKaragolIveBeenWaitingForIsaac);
-  Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   Import_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
   {
-    struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+    struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
     if (leader != 0)
-      Actor_ResetAndSetPosition(ACTOR_IODEM, leader->x.part.pixel,
-                                leader->z.part.pixel);
+      Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
+                           leader->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_IODEM);
-  Import_ActorSetPosition(ACTOR_IODEM, 0, 0);
+  Actor_SetPosition(ACTOR_IODEM, 0, 0);
   Event_Wait(20);
   GameFlag_Set(FLAG_IODEM_FOLLOWING_PARTY);
   Event_End();
@@ -312,7 +312,7 @@ static void GondowanCave_SoldierAsksAboutCrossing(void) {
 
   firstMessage = MsgKaragolDoYouWishCrossInto;
   Event_SetMessageId(firstMessage);
-  FieldMessage_ShowAtActor(ACTOR_FIRST_SOLDIER, 0);
+  Event_OpenMessage(ACTOR_FIRST_SOLDIER, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) == 0) {
@@ -320,10 +320,10 @@ static void GondowanCave_SoldierAsksAboutCrossing(void) {
         Event_SetMessageId(firstMessage + 8);
       }
     }
-    Event_ShowMessageAndWait(ACTOR_FIRST_SOLDIER, 0);
+    Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   } else {
     gFieldWork->message++;
-    Event_ShowMessageAndWait(ACTOR_FIRST_SOLDIER, 0);
+    Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   }
 }
 
@@ -337,7 +337,7 @@ static void GondowanCave_ReadSoldierMind(void) {
     Event_SetMessageId(MsgKaragolWeMissedColossoBecauseWe);
   else
     Event_SetMessageId(MsgKaragolWarriorsHaveBeenFightingWhile);
-  Event_ShowMessageAndWait(ACTOR_SECOND_SOLDIER, 0);
+  Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
 }
 
 /// Leaving GondowanCave by GONDOWAN_CAVE_TO_WORLD_MAP_EAST (exit 1),
@@ -373,10 +373,10 @@ static void GondowanCave_JumpAcross(void) { Field_TryJumpForward(); }
 /// Move on the stump in GondowanCave, until it has leapt: from column 30 or
 /// less it spins and leaps into the water, freeing the cell where it stood.
 static void GondowanCave_MoveStump(void) {
-  Actor_GetById(ACTOR_STUMP);
+  Actor_Get(ACTOR_STUMP);
   Event_Start();
   {
-    struct Actor *actor = Actor_GetById(ACTOR_STUMP);
+    struct Actor *actor = Actor_Get(ACTOR_STUMP);
 
     if ((actor->x.fixed >> 20) <= 30) {
       GondowanCave_RunSpinningLeap(ACTOR_STUMP);
@@ -406,7 +406,7 @@ static inline void GondowanCave_PlaceDroppedPillar(s32 animation) {
 /// drops into the water with a splash, for good.
 static void GondowanCave_MovePillar(void) {
   Event_Start();
-  if ((Actor_GetById(ACTOR_PILLAR)->x.fixed >> 20) > 42) {
+  if ((Actor_Get(ACTOR_PILLAR)->x.fixed >> 20) > 42) {
     s32 destinationCellX = 107;
     s32 destinationCellZ = 17;
 
@@ -414,7 +414,7 @@ static void GondowanCave_MovePillar(void) {
                                destinationCellZ);
     Event_Wait(8);
     GondowanCave_PlaceDroppedPillar(STUMP_ANIMATION_SPLASH);
-    Event_PlaySound(SE_CAST);
+    Sound_Play(SE_CAST);
     GameFlag_Set(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
   }
   Event_End();
@@ -450,7 +450,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   struct Vector3 particleVelocity;
   s32 angle;
 
-  actor = Actor_GetById(actorId);
+  actor = Actor_Get(actorId);
   // Wind up the spin while horizontal motion is disabled.
   actor->motionFlags = 0;
   for (stepIndex = 0; stepIndex < 9; stepIndex++) {
@@ -502,7 +502,7 @@ static UNUSED void GondowanCave_UnusedNoOpB(void) {}
 /// Lift on the boulder in GondowanCave also takes away the
 /// invisible actor beside it.
 static void GondowanCave_LiftBoulder(void) {
-  Import_ActorSetPosition(ACTOR_BOULDER_GAP, 0, 0);
+  Actor_SetPosition(ACTOR_BOULDER_GAP, 0, 0);
 }
 
 /// Sets up the scene as the party enters. Gondowan Passage blocks Retreat and

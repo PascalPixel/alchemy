@@ -154,23 +154,23 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// shops.
 static void TimberRoomsA_TalkToMerchant(s32 actorId) {
   u16 facing =
-      (Actor_GetById(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & ~0x3fff;
+      (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & ~0x3fff;
   if (facing == FACING_NORTH) {
     Shop_Run(SHOP_SUHALLA, actorId);
   } else if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
     s32 question = MsgSuhallaArentSurprisedFind;
     Event_SetMessageId(question);
-    FieldMessage_ShowAtActor(actorId, 0);
+    Event_OpenMessage(actorId, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Event_Wait(10);
       Event_SetMessageId(question + 1);
     } else {
       Event_SetMessageId(question + 2);
     }
-    Event_ShowMessageAndWait(actorId, 0);
+    Event_ShowMessage(actorId, 0);
   } else {
     Event_SetMessageId(MsgSuhallaOursOnlyStore);
-    Event_ShowMessageAndWait(actorId, 0);
+    Event_ShowMessage(actorId, 0);
   }
 }
 
@@ -179,15 +179,15 @@ static void TimberRoomsA_TalkToMerchant(s32 actorId) {
 /// ends, or, after Babi's audience, has been busy since the sandstorms began.
 static void TimberRoomsA_TalkToInnkeeper(s32 actorId) {
   u16 facing =
-      (Actor_GetById(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & ~0x3fff;
+      (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & ~0x3fff;
   if (facing == FACING_NORTH) {
     Inn_CheckIn(INN_SUHALLA, actorId);
   } else if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
     Event_SetMessageId(MsgSuhallaBusyEverSince);
-    Event_ShowMessageAndWait(actorId, 0);
+    Event_ShowMessage(actorId, 0);
   } else {
     Event_SetMessageId(MsgSuhallaSighNothinMaybe);
-    Event_ShowMessageAndWait(actorId, 0);
+    Event_ShowMessage(actorId, 0);
   }
 }
 
@@ -197,15 +197,15 @@ static void TimberRoomsA_TalkToInnkeeper(s32 actorId) {
 /// sandstorms.
 static void TimberRoomsA_TalkToHealer(s32 actorId) {
   u16 facing =
-      (Actor_GetById(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & ~0x3fff;
+      (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & ~0x3fff;
   if (facing == FACING_NORTH) {
     Sanctum_Run(actorId);
   } else if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
     Event_SetMessageId(MsgSuhallaWonderWhySandstorms);
-    Event_ShowMessageAndWait(actorId, 0);
+    Event_ShowMessage(actorId, 0);
   } else {
     Event_SetMessageId(MsgSuhallaGetSickThinkingAboutLalivero);
-    Event_ShowMessageAndWait(actorId, 0);
+    Event_ShowMessage(actorId, 0);
   }
 }
 
@@ -217,14 +217,14 @@ static void TimberRoomsA_TalkToHealer(s32 actorId) {
 static void TimberRoomsA_AskIfBlownHere(s32 actorId) {
   s32 question = MsgSuhallaSupposeFolkBlown;
   Event_SetMessageId(question);
-  FieldMessage_ShowAtActor(actorId, 0);
+  Event_OpenMessage(actorId, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(10);
     Event_SetMessageId(question + 1);
   } else {
     Event_SetMessageId(question + 2);
   }
-  Event_ShowMessageAndWait(actorId, 0);
+  Event_ShowMessage(actorId, 0);
 }
 
 /// The doors of Suhalla and Suhalla Sanctum, and the doors between the inn and
@@ -250,7 +250,7 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
   struct Actor *leader;
   GameFlag_Set(FLAG_IODEM_MET_WOUNDED_SOLDIERS);
   if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) == 0) {
-    Event_PlaySound(MUS_BABI);
+    Sound_Play(MUS_BABI);
     Event_Start();
     // Frame the speakers and bring the leader over before the dialogue.
     FieldCamera_MoveTo(PIXELS(368), -1, PIXELS(104), 1);
@@ -496,7 +496,7 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     Event_Wait(30);
-    Event_PlaySound(MUS_BABI);
+    Sound_Play(MUS_BABI);
     Actor_SetSpeed(ACTOR_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
     Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
     // Iodem walks into the leader and is hidden: he travels in the party.
@@ -535,14 +535,14 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   gFieldWork->transitionFrames = 24;
   // Nearer to talk to, across their counters.
-  Actor_GetById(ACTOR_MERCHANT)->collisionFlags |= ACTOR_NEAR_TALK;
-  Actor_GetById(ACTOR_INNKEEPER)->collisionFlags |= ACTOR_NEAR_TALK;
+  Actor_Get(ACTOR_MERCHANT)->collisionFlags |= ACTOR_NEAR_TALK;
+  Actor_Get(ACTOR_INNKEEPER)->collisionFlags |= ACTOR_NEAR_TALK;
   // Each soldier lies a quarter turn over, with no shadow.
-  actor = Actor_GetById(ACTOR_SOLDIER_SOUTH);
+  actor = Actor_Get(ACTOR_SOLDIER_SOUTH);
   actor->sprite->flags = 0;
   actor->sprite->rotation = TRIG_TURN / 4;
   actor->sprite->image.priority = 1;
-  actor = Actor_GetById(ACTOR_SOLDIER_NORTH);
+  actor = Actor_Get(ACTOR_SOLDIER_NORTH);
   actor->sprite->flags = 0;
   actor->sprite->rotation = TRIG_TURN / 4;
   actor->motionFlags = ACTOR_FALLS;

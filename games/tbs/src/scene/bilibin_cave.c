@@ -298,7 +298,7 @@ static void BilibinCave_HideRevealedPath(void) {
 /// out: it goes out for good.
 static void BilibinCave_DouseRapierRoomFire(void) {
   Event_Start();
-  Import_ActorSetPosition(ACTOR_RAPIER_ROOM_FIRE, 0, 0);
+  Actor_SetPosition(ACTOR_RAPIER_ROOM_FIRE, 0, 0);
   GameFlag_Set(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED);
   Event_End();
 }
@@ -325,7 +325,7 @@ static void BilibinCave_DouseIceRoomFire(void) {
 /// back into a puddle.
 static inline void BilibinCave_MeltFrostBack(s32 actorId) {
   Event_Start();
-  Actor_ConfigureSpriteColor(actorId, SPRITE_COLOR_NORMAL);
+  Actor_SetSpriteColorById(actorId, SPRITE_COLOR_NORMAL);
   Event_Wait(40);
   Sound_Play(SE_HIDDEN_PASSAGE_OPEN);
   Actor_SetAnimationAndWait(actorId, PUDDLE_ANIMATION_MELT);
@@ -363,7 +363,7 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
 
   // Track each movable actor independently before changing the Frost
   // target.
-  firstActor = Actor_GetById(ACTOR_THIRD_TORCH);
+  firstActor = Actor_Get(ACTOR_THIRD_TORCH);
   secondActor = Actor_Get(ACTOR_FOURTH_TORCH);
   if ((firstActor->x.fixed >> 20) == 35 && (firstActor->z.fixed >> 20) == 23) {
     GameFlag_Set(FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR);
@@ -381,7 +381,7 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
     if (Event_GetFlag(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) == 0) {
       Event_Start();
       Event_Wait(40);
-      Event_PlaySound(SE_HIDDEN_PASSAGE_OPEN);
+      Sound_Play(SE_HIDDEN_PASSAGE_OPEN);
       destinationCellX = 36;
       Actor_SetAnimationAndWait(ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_MELT);
       MapGrid_CopyCellAttributes(0, 1, 1, 1, destinationCellX, 22);
@@ -393,7 +393,7 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
     if (Event_GetFlag(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) != 0) {
       Event_Start();
       Event_Wait(40);
-      Event_PlaySound(SE_SHIMMER);
+      Sound_Play(SE_SHIMMER);
       destinationCellX = 36;
       Actor_SetAnimationAndWait(ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_FREEZE);
       MapGrid_CopyCellAttributes(1, 1, 1, 1, destinationCellX, 22);
@@ -462,9 +462,9 @@ static void BilibinCave_RestoreRapierRoom(void) {
   Import_ActorSetAnimation(ACTOR_RAPIER_ROOM_EAST_TORCH, TORCH_ANIMATION_LIT);
 
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED) != 0) {
-    Import_ActorSetPosition(ACTOR_RAPIER_ROOM_FIRE, 0, 0);
+    Actor_SetPosition(ACTOR_RAPIER_ROOM_FIRE, 0, 0);
   } else {
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_RAPIER_ROOM_FIRE), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_RAPIER_ROOM_FIRE), 0);
   }
 }
 
@@ -576,7 +576,7 @@ static void BilibinCave_PushTorch(void) {
   s32 nextCellZ;
   struct FieldPosition destination;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   heading = leader->facing >> 12;
 
   nextCellX =

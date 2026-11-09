@@ -176,7 +176,7 @@ UNUSED static void KolimaForestTree_ExitTouchedRegion(void) {
 
   work = gFieldWork;
   Event_Start();
-  Actor_CommitPositionAndActivate(ACTOR_PARTY_LEADER, 0, 0);
+  Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 0);
   Import_EventSetExitRequest(work->stepTrigger);
   Event_End();
 }
@@ -198,10 +198,10 @@ static void KolimaForestTree_TalkToLaurel(void) {
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_OPEN_EYES);
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Event_SetMessageId(MsgKolimaForestKolimaAlive);
-    Event_ShowMessageAndWait(ACTOR_LAUREL, 0);
+    Event_ShowMessage(ACTOR_LAUREL, 0);
   } else if (Event_GetFlag(FLAG_MET_LAUREL) != 0) {
     Event_SetMessageId(MsgKolimaLeaveBeforeForest);
-    Event_ShowMessageAndWait(ACTOR_LAUREL, 0);
+    Event_ShowMessage(ACTOR_LAUREL, 0);
   } else {
     Event_SetMessageId(MsgKolimaWho);
     Event_ShowMessageThenWait(ACTOR_LAUREL, 0, 20);
@@ -213,7 +213,7 @@ static void KolimaForestTree_TalkToLaurel(void) {
     Event_ShowMessageThenWait(ACTOR_LAUREL, 0, 10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(40);
-    Event_ShowMessageAndWait(ACTOR_LAUREL, 0);
+    Event_ShowMessage(ACTOR_LAUREL, 0);
     KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_LAUREL,
                                  FACE_GESTURE_CLOSE_EYES);
     Event_Wait(80);
@@ -287,7 +287,7 @@ static void KolimaForestTree_ReadLaurelThoughts(void) {
   } else {
     Event_SetMessageId(MsgKolimaHealingWatersMercuryLighthouseMight);
   }
-  Event_ShowMessageAndWait(ACTOR_LAUREL, 0);
+  Event_ShowMessage(ACTOR_LAUREL, 0);
   Event_End();
 }
 
@@ -301,7 +301,7 @@ static void KolimaForestTree_ReadTretThoughts(void) {
   } else {
     Event_SetMessageId(MsgKolimaPeopleKolimaForgiveMe);
   }
-  Event_ShowMessageAndWait(ACTOR_TRET, 0);
+  Event_ShowMessage(ACTOR_TRET, 0);
   Event_End();
 }
 
@@ -329,21 +329,21 @@ static void KolimaForestTree_RejectHermesWater(void) {
 
   // The wrathful side throws the leader back before the water can heal Tret.
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   wait(40);
-  Event_PlaySound(SOUND_FADE_OUT_BGM);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   gKolimaForestTreePlaySparkSound = 1;
   Task_AddFrame(KolimaForestTree_SpawnRejectionSpark, TASK_PASS_FRAME);
   wait(30);
   gKolimaForestTreePlaySparkSound = 0;
   FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(235), 1);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
-  Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(2));
-  Event_PlaySound(SE_IMPACT);
+  Sound_Play(SE_IMPACT);
   leader->velocityY = PIXELS(5);
   leader->gravity = PIXELS(1) / 4;
   leader->bounce = 5 * Q16_ONE / 8;
@@ -354,7 +354,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   do {
     wait(1);
   } while (leader->velocityY <= 0);
-  Event_PlaySound(SE_RATTLE);
+  Sound_Play(SE_RATTLE);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_COLLAPSE);
   Event_Wait(120);
   Task_Remove(KolimaForestTree_SpawnRejectionSpark);
@@ -428,7 +428,7 @@ static void KolimaForestTree_RestoreTret(void) {
   includeMia = GameFlag_Get(FLAG_IN_PARTY(MIA));
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 212);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
-  Event_PlaySound(SOUND_FADE_OUT_BGM);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   FieldMessage_Show(MsgKolimaWaterHermesSeepedIntoTret, 1);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
@@ -464,18 +464,18 @@ static void KolimaForestTree_RestoreTret(void) {
   FieldCamera_SetSpeed(PIXELS(16) / 5, PIXELS(2) / 5);
   FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(254), 1);
   FieldCamera_WaitForArrival();
-  Event_PlaySound(SE_GLITTER);
+  Sound_Play(SE_GLITTER);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHEAST, 20);
   FieldCamera_MoveTo(PIXELS(413), -1, PIXELS(261), 1);
   FieldCamera_WaitForArrival();
-  Event_PlaySound(SE_GLITTER);
+  Sound_Play(SE_GLITTER);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 20);
   FieldCamera_MoveTo(PIXELS(326), -1, PIXELS(384), 1);
   FieldCamera_WaitForArrival();
-  Event_PlaySound(SE_GLITTER);
+  Sound_Play(SE_GLITTER);
   if (*paletteFrame != 24) {
     do {
       wait(1);
@@ -502,7 +502,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Event_Wait(40);
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_TRET, FACE_GESTURE_OPEN_EYES);
   Event_Wait(40);
-  Event_PlaySound(MUS_COLOSSO_INTRO);
+  Sound_Play(MUS_COLOSSO_INTRO);
   // Tret and Laurel discover that their powers have returned.
   Event_SetMessageId(MsgKolimaFeelGreatPowerSpreadingThrough);
   Event_ShowMessage(ACTOR_TRET, 0);
@@ -609,7 +609,7 @@ static void KolimaForestTree_RestoreTret(void) {
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0);
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0, 10);
+  Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 10);
@@ -658,7 +658,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Event_Wait(40);
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_TRET, FACE_GESTURE_LOOK_LEFT);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_TRET, 0, 20);
+  Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_TRET, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 10);
   Event_ShowMessage(ACTOR_GARET, 0);
@@ -669,7 +669,7 @@ static void KolimaForestTree_RestoreTret(void) {
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 10);
-  FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_TRET, FACE_GESTURE_OPEN_EYES);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0, 10);
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_TRET, FACE_GESTURE_LOOK_LEFT);
@@ -704,7 +704,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 10);
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_IVAN, 0, 10);
+  Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_IVAN, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 20);
@@ -751,7 +751,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 10);
   KolimaForestTree_NodTogether();
-  Event_PlaySound(SOUND_FADE_OUT_BGM);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   // Rejoin the party and exchange the used water for its empty bottle.
   finalActions = gKolimaForestTree_RejoinPartyActions;
   Actor_SetScript(ACTOR_GARET, finalActions);
@@ -767,10 +767,10 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_BLINK);
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_BLINK);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 10);
+  Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   GameFlag_Set(FLAG_KOLIMA_CURSE_LIFTED);
-  Event_PlaySound(MUS_TOWN);
+  Sound_Play(MUS_TOWN);
   KolimaForestTree_ReplaceInventoryItem(ITEM_HERMES_WATER, ITEM_EMPTY_BOTTLE);
 }
 
@@ -783,26 +783,26 @@ s32 KolimaForestTree_Initialize(void) {
   struct Actor *tretsWrathfulSide;
   struct Actor *laurelBlank;
 
-  tretBlank = Actor_GetById(ACTOR_INVISIBLE_TRET);
-  tretsWrathfulSide = Actor_GetById(ACTOR_TRETS_WRATHFUL_SIDE);
-  laurelBlank = Actor_GetById(ACTOR_INVISIBLE_LAUREL);
+  tretBlank = Actor_Get(ACTOR_INVISIBLE_TRET);
+  tretsWrathfulSide = Actor_Get(ACTOR_TRETS_WRATHFUL_SIDE);
+  laurelBlank = Actor_Get(ACTOR_INVISIBLE_LAUREL);
   wait(1);
-  Actor_ConfigureSpriteColor(ACTOR_TRETS_WRATHFUL_SIDE, SPRITE_COLOR_HIDDEN);
+  Actor_SetSpriteColorById(ACTOR_TRETS_WRATHFUL_SIDE, SPRITE_COLOR_HIDDEN);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   gMainRoutineWork.retreatScene = (s32)&SceneId_KolimaForestEntrance;
   gMainRoutineWork.retreatEntrance = KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP;
   if (!GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED))
     KolimaPalette_Curse(3);
-  Actor_GetById(ACTOR_TRET)->radius = 6;
-  Actor_GetById(ACTOR_LAUREL)->radius = 6;
-  Actor_GetById(ACTOR_TRET_STAND_IN)->radius = 6;
-  Actor_GetById(ACTOR_LAUREL_STAND_IN)->radius = 6;
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_TRETS_WRATHFUL_SIDE), 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_INVISIBLE_TRET), 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_INVISIBLE_LAUREL), 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_TRET), 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LAUREL), 0);
+  Actor_Get(ACTOR_TRET)->radius = 6;
+  Actor_Get(ACTOR_LAUREL)->radius = 6;
+  Actor_Get(ACTOR_TRET_STAND_IN)->radius = 6;
+  Actor_Get(ACTOR_LAUREL_STAND_IN)->radius = 6;
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_TRETS_WRATHFUL_SIDE), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_INVISIBLE_TRET), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_INVISIBLE_LAUREL), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_TRET), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_LAUREL), 0);
   Actor_SetSpritePriority(ACTOR_TRET, 2);
   Actor_SetSpritePriority(ACTOR_TRETS_WRATHFUL_SIDE, 2);
   Actor_SetSpritePriority(ACTOR_LAUREL, 2);
@@ -814,12 +814,11 @@ s32 KolimaForestTree_Initialize(void) {
   tretsWrathfulSide->y.fixed = PIXELS(28);
   Import_ActorSetAnimation(ACTOR_LAUREL, LAUREL_FACE_CLOSED);
   Import_ActorSetAnimation(ACTOR_TRET, TRET_FACE_CLOSED);
-  Actor_GetById(ACTOR_TRET)->collisionFlags |= ACTOR_NOT_TARGETED;
-  Actor_GetById(ACTOR_LAUREL)->collisionFlags |= ACTOR_NOT_TARGETED;
-  Actor_GetById(ACTOR_INVISIBLE_TRET)->collisionFlags |= ACTOR_NOT_TARGETED;
-  Actor_GetById(ACTOR_INVISIBLE_LAUREL)->collisionFlags |= ACTOR_NOT_TARGETED;
-  Actor_GetById(ACTOR_TRETS_WRATHFUL_SIDE)->collisionFlags |=
-      ACTOR_NOT_TARGETED;
+  Actor_Get(ACTOR_TRET)->collisionFlags |= ACTOR_NOT_TARGETED;
+  Actor_Get(ACTOR_LAUREL)->collisionFlags |= ACTOR_NOT_TARGETED;
+  Actor_Get(ACTOR_INVISIBLE_TRET)->collisionFlags |= ACTOR_NOT_TARGETED;
+  Actor_Get(ACTOR_INVISIBLE_LAUREL)->collisionFlags |= ACTOR_NOT_TARGETED;
+  Actor_Get(ACTOR_TRETS_WRATHFUL_SIDE)->collisionFlags |= ACTOR_NOT_TARGETED;
   return 0;
 }
 

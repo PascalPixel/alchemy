@@ -119,7 +119,7 @@ const struct Trigger *Scene_GetTriggers(void) { return gCaveTriggers; }
 static void WestLunpaCave_UnusedFreezePuddle(void) {
   struct Actor *puddle;
 
-  puddle = Actor_GetById(ACTOR_UNUSED_PUDDLE);
+  puddle = Actor_Get(ACTOR_UNUSED_PUDDLE);
   if (puddle != NULL) {
     Actor_SetSpriteFlags(puddle, 0);
   }
@@ -177,9 +177,9 @@ static void WestLunpaCave_FreezeGatePuddle(void) {
     pillar->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
   if (Event_GetFlag(FLAG_WEST_LUNPA_CAVE_GATE_RAISED) == 0) {
-    Event_PlaySound(SE_GATE_MOVE);
+    Sound_Play(SE_GATE_MOVE);
     WestLunpaCave_GateDrawPropped();
-    Event_PlaySound(MUS_PUZZLE_SOLVED);
+    Sound_Play(MUS_PUZZLE_SOLVED);
     GameFlag_Set(FLAG_WEST_LUNPA_CAVE_GATE_RAISED);
   }
 }
@@ -222,7 +222,7 @@ static void WestLunpaCave_FlipLoweringSwitch(void) {
   if (Event_GetFlag(FLAG_WEST_LUNPA_CAVE_GATE_LOWERED) == 0) {
     if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN) == 0) {
       FieldMessage_Show(MsgFieldFlippedSwitch, 1);
-      Event_PlaySound(SE_GATE_MOVE);
+      Sound_Play(SE_GATE_MOVE);
       WestLunpaCave_GateLower();
       GameFlag_Set(FLAG_WEST_LUNPA_CAVE_GATE_LOWERED);
       GameFlag_Clear(FLAG_WEST_LUNPA_CAVE_GATE_RAISED);
@@ -252,7 +252,7 @@ static void WestLunpaCave_FlipRaisingSwitch(void) {
   if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN) == 0) {
     if (Event_GetFlag(FLAG_WEST_LUNPA_CAVE_GATE_RAISED) == 0) {
       FieldMessage_Show(MsgFieldFlippedSwitch, 1);
-      Event_PlaySound(SE_GATE_MOVE);
+      Sound_Play(SE_GATE_MOVE);
       WestLunpaCave_GateRaise();
       GameFlag_Set(FLAG_WEST_LUNPA_CAVE_GATE_RAISED);
       GameFlag_Clear(FLAG_WEST_LUNPA_CAVE_GATE_LOWERED);
@@ -707,14 +707,14 @@ static void WagonChoice_Run(void) {
 
   wagon = MsgLunpaLetsTakeWagon;
   Event_SetMessageId(wagon + WAGON_BUNZA_LEADS_THE_WAY);
-  Event_ShowMessageAndWait(ACTOR_BUNZA, 0);
-  Actor_SetAngleToward(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
+  Event_ShowMessage(ACTOR_BUNZA, 0);
+  Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Event_SetMessageId(wagon + WAGON_GARET_ASKS_TO_RIDE);
-  FieldMessage_ShowAtActor(ACTOR_GARET, 0);
-  Actor_SetAngleToward(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
-  Actor_SetAngleToward(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
-  Actor_SetAngleToward(ACTOR_HAMMET, ACTOR_PARTY_LEADER, 0);
-  Actor_SetAngleToward(ACTOR_BUNZA, ACTOR_PARTY_LEADER, 0);
+  Event_OpenMessage(ACTOR_GARET, 0);
+  Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
+  Actor_FaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
+  Actor_FaceActor(ACTOR_HAMMET, ACTOR_PARTY_LEADER, 0);
+  Actor_FaceActor(ACTOR_BUNZA, ACTOR_PARTY_LEADER, 0);
 
 ask_to_ride:
   if (WestLunpaCave_LeaderAnswersYes()) {
@@ -748,9 +748,9 @@ ask_to_ride:
     }
     confusion = MsgLunpaTotallyConfusedChanged;
     Event_SetMessageId(confusion + CONFUSION_IVAN_IS_CONFUSED);
-    Event_ShowMessageAndWait(ACTOR_IVAN, 0);
+    Event_ShowMessage(ACTOR_IVAN, 0);
     Event_SetMessageId(confusion + CONFUSION_GARET_ASKS_AGAIN);
-    FieldMessage_ShowAtActor(ACTOR_GARET, 0);
+    Event_OpenMessage(ACTOR_GARET, 0);
     goto ask_to_ride;
   ride:
     Party_RidesWagon();
@@ -769,14 +769,14 @@ static u8 WestLunpaCave_LeaderAnswersYes(void) {
 /// Asks whether the party really intends to refuse the ride.
 static u8 WestLunpaCave_GaretAsksIfNotRiding(void) {
   Event_SetMessageId(MsgLunpaGaretAsksIfNotRiding);
-  FieldMessage_ShowAtActor(ACTOR_GARET, 0);
+  Event_OpenMessage(ACTOR_GARET, 0);
   return Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
 /// Asks whether unfinished business explains the refusal to ride.
 static u8 WestLunpaCave_GaretAsksAboutUnfinishedBusiness(void) {
   Event_SetMessageId(MsgLunpaGaretAsksAboutUnfinishedBusiness);
-  FieldMessage_ShowAtActor(ACTOR_GARET, 0);
+  Event_OpenMessage(ACTOR_GARET, 0);
   return Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
@@ -786,21 +786,21 @@ static u8 Party_ConfirmsStaying(void) { return TRUE; }
 /// Lets Bunza check whether the party has unfinished business before leaving.
 static u8 WestLunpaCave_BunzaAsksAboutUnfinishedBusiness(void) {
   Event_SetMessageId(MsgLunpaBunzaAsksAboutUnfinishedBusiness);
-  FieldMessage_ShowAtActor(ACTOR_BUNZA, 0);
+  Event_OpenMessage(ACTOR_BUNZA, 0);
   return Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
 /// Opens Garet's confirmation prompt; WagonChoice_Run collects the answer.
 static u8 WestLunpaCave_GaretChecksNothingLeftToDo(void) {
   Event_SetMessageId(MsgLunpaGaretChecksNothingLeft);
-  FieldMessage_ShowAtActor(ACTOR_GARET, 0);
+  Event_OpenMessage(ACTOR_GARET, 0);
   return TRUE;
 }
 
 /// Asks whether the party has changed its mind about taking the wagon.
 static u8 WestLunpaCave_MiaAsksIfRidingAfterAll(void) {
   Event_SetMessageId(MsgLunpaMiaAsksIfRidingAfter);
-  FieldMessage_ShowAtActor(ACTOR_MIA, 0);
+  Event_OpenMessage(ACTOR_MIA, 0);
   return Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
@@ -827,7 +827,7 @@ static u8 WestLunpaCave_BunzaCannotWait(void) {
 /// Asks the leader to confirm that something still needs doing here.
 static u8 WestLunpaCave_GaretAsksAboutThingsToDo(void) {
   Event_SetMessageId(MsgLunpaGaretAsksAboutThingsTo);
-  FieldMessage_ShowAtActor(ACTOR_GARET, 0);
+  Event_OpenMessage(ACTOR_GARET, 0);
   return Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
@@ -1039,11 +1039,11 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gMainRoutineWork.next == (s32)&SceneId_WestLunpaCave) {
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_UNUSED_PUDDLE), 0);
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_SOUTH_PUDDLE), 0);
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_GATE_PUDDLE), 0);
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_NORTH_PUDDLE), 0);
-    Actor_GetById(ACTOR_NORTH_PUDDLE)->scaleY = 19 * Q16_ONE / 20;
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_UNUSED_PUDDLE), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_SOUTH_PUDDLE), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_GATE_PUDDLE), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_NORTH_PUDDLE), 0);
+    Actor_Get(ACTOR_NORTH_PUDDLE)->scaleY = 19 * Q16_ONE / 20;
     if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_GATE_LOWERED) != 0) {
       WestLunpaCave_GateLower();
     }

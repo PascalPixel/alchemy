@@ -216,8 +216,8 @@ static __inline__ void MapLocalState_StoreStep(s16 *field, s32 step) {
 /// Lifts the first pillar and clears the terrain beneath its column.
 static __inline__ void LiftPillar(s32 column, u8 motionFlags) {
   MapGrid_CopyCellAttributes(61, 36, 1, 1, column, 42);
-  Actor_GetById(ACTOR_FIRST_PILLAR)->motionFlags = motionFlags;
-  Actor_GetById(ACTOR_FIRST_PILLAR)->y.fixed = PIXELS(32);
+  Actor_Get(ACTOR_FIRST_PILLAR)->motionFlags = motionFlags;
+  Actor_Get(ACTOR_FIRST_PILLAR)->y.fixed = PIXELS(32);
 }
 
 #include "shared/staged_actor.h"
@@ -278,7 +278,7 @@ static void CrossboneIsleKeys_FaceBaneTowardLeader(struct Actor *updated) {
 static s32 CrossboneIsleKeys_FaceBaneTowardLeader(struct Actor *updated) {
 #endif
   struct Actor *actor = updated;
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   actor->facing = ArcTan2(leader->z.fixed - actor->z.fixed,
                           leader->x.fixed - actor->x.fixed);
@@ -306,8 +306,8 @@ static void CrossboneIsleKeys_BaneFirstEscape(void) {
     Actor_RunRepeatedMotion(ACTOR_BANE, 2);
     Event_Wait(20);
     Actor_SetSpeed(ACTOR_BANE, PIXELS(1), PIXELS(1) / 2);
-    Event_PlaySound(SE_JUMP);
-    djinni = Actor_GetById(ACTOR_BANE);
+    Sound_Play(SE_JUMP);
+    djinni = Actor_Get(ACTOR_BANE);
     djinni->velocityY = PIXELS(8);
     Actor_WalkToAndWait(ACTOR_BANE, 584, 680);
     Actor_FaceDirection(ACTOR_BANE, FACING_SOUTH, 20);
@@ -339,8 +339,8 @@ static void CrossboneIsleKeys_BaneSecondEscape(void) {
       Actor_RunRepeatedMotion(ACTOR_BANE, 2);
       Event_Wait(20);
       Actor_SetSpeed(ACTOR_BANE, PIXELS(1), PIXELS(1) / 2);
-      Event_PlaySound(SE_JUMP);
-      jumpingDjinni = Actor_GetById(ACTOR_BANE);
+      Sound_Play(SE_JUMP);
+      jumpingDjinni = Actor_Get(ACTOR_BANE);
       jumpingDjinni->velocityY = PIXELS(10);
       Actor_WalkToAndWait(ACTOR_BANE, 584, 664);
       Actor_FaceDirection(ACTOR_BANE, FACING_SOUTH, 20);
@@ -354,7 +354,7 @@ static void CrossboneIsleKeys_BaneSecondEscape(void) {
       Actor_WalkToAndWait(ACTOR_BANE, 744, 664);
       Actor_WalkToAndWait(ACTOR_BANE, 824, 664);
       Event_Wait(10);
-      Event_PlaySound(SE_BANE_ESCAPE);
+      Sound_Play(SE_BANE_ESCAPE);
       MapGrid_SetShake(PIXELS(4), PIXELS(2), Q16_ONE);
       Event_Wait(20);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -362,7 +362,7 @@ static void CrossboneIsleKeys_BaneSecondEscape(void) {
 
       // Leave the Djinni tilted while its scale animation continues.
       Actor_SetPosition(ACTOR_BANE, PIXELS(888), PIXELS(664));
-      spinningDjinni = Actor_GetById(ACTOR_BANE);
+      spinningDjinni = Actor_Get(ACTOR_BANE);
       spinningDjinni->sprite->rotation = TRIG_TURN * 31 / 32;
       spinningDjinni->facing = 0;
       Actor_SetAnimationSpeed(spinningDjinni, 0);
@@ -384,11 +384,11 @@ static void CrossboneIsleKeys_BaneLastEscape(void) {
     Event_Start();
 
     // Restore the sprite before the last jump and winding escape path.
-    djinni = Actor_GetById(ACTOR_BANE);
+    djinni = Actor_Get(ACTOR_BANE);
     djinni->sprite->rotation = 0;
     Actor_SetAnimationSpeed(djinni, 16);
-    Event_PlaySound(SE_JUMP);
-    djinni = Actor_GetById(ACTOR_BANE);
+    Sound_Play(SE_JUMP);
+    djinni = Actor_Get(ACTOR_BANE);
     djinni->velocityY = PIXELS(8);
     Actor_FaceDirection(ACTOR_BANE, FACING_WEST, 30);
     Actor_SetAttachedEffect(ACTOR_BANE,
@@ -396,8 +396,8 @@ static void CrossboneIsleKeys_BaneLastEscape(void) {
     Actor_RunRepeatedMotion(ACTOR_BANE, 2);
     Event_Wait(20);
     Actor_SetSpeed(ACTOR_BANE, PIXELS(1), PIXELS(1) / 2);
-    Event_PlaySound(SE_JUMP);
-    djinni = Actor_GetById(ACTOR_BANE);
+    Sound_Play(SE_JUMP);
+    djinni = Actor_Get(ACTOR_BANE);
     djinni->velocityY = PIXELS(4);
     Actor_WalkToAndWait(ACTOR_BANE, 880, 680);
     Event_Wait(10);
@@ -418,7 +418,7 @@ static void CrossboneIsleKeys_BaneLastEscape(void) {
     Actor_FaceDirection(ACTOR_BANE, FACING_NORTH, 20);
     Actor_SetAttachedEffect(ACTOR_BANE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-    djinni = Actor_GetById(ACTOR_BANE);
+    djinni = Actor_Get(ACTOR_BANE);
 #ifdef UBFIX
     djinni->update = CrossboneIsleKeys_FaceBaneTowardLeader;
 #else
@@ -444,20 +444,19 @@ static void CrossboneIsleKeys_BaneKeepsAway(void) {
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
     if (gMainRoutineWork.haltedActor != ACTOR_BANE) {
       targetByteOffset = work->stepTrigger;
-      djinni = Actor_GetById(ACTOR_BANE);
-      leader = Actor_GetById(ACTOR_PARTY_LEADER);
+      djinni = Actor_Get(ACTOR_BANE);
+      leader = Actor_Get(ACTOR_PARTY_LEADER);
       djinni->speedLimit = leader->speedLimit;
-      djinni = Actor_GetById(ACTOR_BANE);
-      leader = Actor_GetById(ACTOR_PARTY_LEADER);
+      djinni = Actor_Get(ACTOR_BANE);
+      leader = Actor_Get(ACTOR_PARTY_LEADER);
       djinni->acceleration = leader->speedLimit;
       targetByteOffset -= 30;
       targets = (const u8 *)gCrossboneIsleKeys_BaneWalkTargets;
       // The table stores consecutive signed X/Z pixel pairs.
       targetByteOffset *= 2 * sizeof(s32);
       zByteOffset = targetByteOffset + sizeof(s32);
-      Actor_ResetAndSetPositionInMode2(
-          ACTOR_BANE, *(const s32 *)(targets + targetByteOffset),
-          *(const s32 *)(targets + zByteOffset));
+      Actor_WalkTo(ACTOR_BANE, *(const s32 *)(targets + targetByteOffset),
+                   *(const s32 *)(targets + zByteOffset));
     }
   }
 }
@@ -465,7 +464,7 @@ static void CrossboneIsleKeys_BaneKeepsAway(void) {
 /// Halt on Bane in CrossboneIsleBane: it freezes in place.
 static void CrossboneIsleKeys_HaltBane(void) {
   Event_Start();
-  Import_ActorSetAnimation(ACTOR_BANE, 0);
+  Actor_SetAnimation(ACTOR_BANE, 0);
   Event_End();
 }
 
@@ -517,7 +516,7 @@ static void CrossboneIsleKeys_OpenBlueDoor(s32 passageInfo) {
 /// Opens the red door, playing its opening when asked.
 static void CrossboneIsleKeys_OpenRedDoor(s32 passageInfo) {
   if ((passageInfo & PASSAGE_PLAY_OPENING) != 0) {
-    Event_PlaySound(SE_GATE_MOVE);
+    Sound_Play(SE_GATE_MOVE);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
     MapGrid_CopyCells(84, 29, 1, 3, 70, 49);
@@ -533,7 +532,7 @@ static void CrossboneIsleKeys_OpenRedDoor(s32 passageInfo) {
 static void CrossboneIsleKeys_UseRedKey(void) {
   struct Actor *leader;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader->facing == FACING_NORTH) {
     if (Event_GetFlag(FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN) == 0) {
       if (PartyInventory_FindMember(ITEM_RED_KEY) != -1) {
@@ -548,7 +547,7 @@ static void CrossboneIsleKeys_UseRedKey(void) {
 /// Facing a blue door with a Blue Key: the door rumbles open, and the key is
 /// used up.
 static void CrossboneIsleKeys_UseBlueKey(s32 doorIndex) {
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 flag;
 
   if (leader->facing != FACING_NORTH) {
@@ -585,7 +584,7 @@ static void CrossboneIsleKeys_OpenThirdBlueDoor(void) {
   s32 resetSteps;
 
   CrossboneIsleKeys_UseBlueKey(2);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader->facing == FACING_SOUTH) {
     blockedSteps = &gFieldWork->blockedSteps;
     if (*blockedSteps > 12) {
@@ -605,7 +604,7 @@ static void CrossboneIsleKeys_OpenFourthBlueDoor(void) {
   s32 resetSteps;
 
   CrossboneIsleKeys_UseBlueKey(3);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader->facing == FACING_SOUTH) {
     blockedSteps = &gFieldWork->blockedSteps;
     if (*blockedSteps > 12) {
@@ -625,7 +624,7 @@ static void CrossboneIsleKeys_ShowRedKey(void) {
 
   MapGrid_CopyCells(25, 45, 1, 2, 25, 48);
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_RED_KEY) == 0)
-    Import_ActorSetPosition(keyActorId, x, z);
+    Actor_SetPosition(keyActorId, x, z);
   Event_Wait(1);
 }
 
@@ -641,9 +640,9 @@ static void CrossboneIsleKeys_HideRedKey(void) {
 static inline void CrossboneIsleKeys_CollectKey(s32 actorId, s32 itemId,
                                                 s32 collectedFlag) {
   ItemDisplay_ShowItem(itemId, 3);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   PartyInventory_GiveItem(itemId, 0);
-  Import_ActorSetPosition(actorId, 0, 0);
+  Actor_SetPosition(actorId, 0, 0);
   GameFlag_Set(collectedFlag);
 }
 
@@ -679,7 +678,7 @@ static void CrossboneIsleKeys_CatchRedKey(void) {
 
 /// Starts the first chase when an uncloaked leader enters its area.
 static void CrossboneIsleKeys_CheckFirstPursuerTrigger(void) {
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 column = leader->x.fixed / PIXELS(16);
   s32 row = leader->z.fixed / PIXELS(16);
   struct FieldWork *work = gFieldWork;
@@ -701,8 +700,8 @@ static void CrossboneIsleKeys_DodgeFirstPursuer(void) {
   Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(19) / 10, PIXELS(19) / 20);
   Actor_SetSpeed(ACTOR_FIRST_STATUE, PIXELS(19) / 10, PIXELS(19) / 20);
-  Event_PlaySound(SE_THUMP);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  Sound_Play(SE_THUMP);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetDestination(ACTOR_FIRST_STATUE, leader->x.part.pixel,
                          leader->z.part.pixel);
@@ -710,7 +709,7 @@ static void CrossboneIsleKeys_DodgeFirstPursuer(void) {
   Actor_WaitForMoveById(ACTOR_FIRST_STATUE);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
   Event_Wait(4);
-  Event_PlaySound(SE_THUMP);
+  Sound_Play(SE_THUMP);
   Actor_SetDestinationOffset(ACTOR_FIRST_STATUE, 0, CROSSBONE_PURSUER_STEP_Z);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetDestination(ACTOR_FIRST_STATUE, 360, 152);
@@ -721,7 +720,7 @@ static void CrossboneIsleKeys_DodgeFirstPursuer(void) {
 
 /// Starts the second chase when the leader enters column ten.
 static void CrossboneIsleKeys_CheckSecondPursuerTrigger(void) {
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 column = leader->x.fixed / PIXELS(16);
   s32 row = leader->z.fixed / PIXELS(16);
   struct FieldWork *work = gFieldWork;
@@ -743,15 +742,15 @@ static void CrossboneIsleKeys_DodgeSecondPursuer(void) {
   Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
   Actor_SetSpeed(ACTOR_SECOND_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
-  Event_PlaySound(SE_THUMP);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  Sound_Play(SE_THUMP);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetDestination(ACTOR_SECOND_STATUE, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_SECOND_STATUE);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
-  Event_PlaySound(SE_THUMP);
+  Sound_Play(SE_THUMP);
   Event_Wait(4);
   Actor_SetDestinationOffset(ACTOR_SECOND_STATUE, 0, 16);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
@@ -764,7 +763,7 @@ static void CrossboneIsleKeys_DodgeSecondPursuer(void) {
 /// Moves a pursuer to the leader column and remembers its last column.
 static void CrossboneIsleKeys_TrackPursuerColumn(s32 pursuerIndex) {
 
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 column = leader->x.fixed / PIXELS(16);
   s32 row = leader->z.fixed / PIXELS(16);
   s32 pursuerId = pursuerIndex + ACTOR_THIRD_STATUE;
@@ -774,14 +773,14 @@ static void CrossboneIsleKeys_TrackPursuerColumn(s32 pursuerIndex) {
   if (column == gCrossboneIsleKeys_SlotColumns[pursuerIndex])
     return;
 
-  Actor_SetSpeedParameters(pursuerId, PIXELS(9) / 2, PIXELS(9) / 4);
+  Actor_SetSpeed(pursuerId, PIXELS(9) / 2, PIXELS(9) / 4);
   Sound_Play(SE_THUMP);
-  Actor_ResetAndSetPosition(pursuerId, (column << 4) + 8, 360);
+  Actor_SetDestination(pursuerId, (column << 4) + 8, 360);
 
   gCrossboneIsleKeys_SlotColumns[pursuerIndex] = column;
 
   if (row <= 22) {
-    Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0, 8);
+    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 8);
   }
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
 }
@@ -812,8 +811,8 @@ static void CrossboneIsleKeys_DodgeThirdPursuer(void) {
     Event_Start();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
     Actor_SetSpeed(ACTOR_THIRD_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
-    Event_PlaySound(SE_THUMP);
-    leader = Actor_GetById(ACTOR_PARTY_LEADER);
+    Sound_Play(SE_THUMP);
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
       Actor_SetDestination(ACTOR_THIRD_STATUE, leader->x.part.pixel,
                            leader->z.part.pixel);
@@ -821,7 +820,7 @@ static void CrossboneIsleKeys_DodgeThirdPursuer(void) {
     Actor_WaitForMoveById(ACTOR_THIRD_STATUE);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
     Event_Wait(4);
-    Event_PlaySound(SE_THUMP);
+    Sound_Play(SE_THUMP);
     Actor_SetDestinationOffset(ACTOR_THIRD_STATUE, 0, 16);
     Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
     Actor_SetDestination(ACTOR_THIRD_STATUE, 264, 360);
@@ -840,33 +839,29 @@ static void CrossboneIsleKeys_DodgeFourthPursuer(void) {
   if (gMainRoutineWork.haltedActor != ACTOR_FOURTH_STATUE) {
     Event_Start();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
-    Actor_SetSpeedParameters(ACTOR_FOURTH_STATUE, PIXELS(17) / 10,
-                             PIXELS(17) / 20);
+    Actor_SetSpeed(ACTOR_FOURTH_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
     Sound_Play(SE_THUMP);
-    leaderColumn = Actor_GetById(ACTOR_PARTY_LEADER)->x.fixed / PIXELS(16);
-    if (leaderColumn >
-        Actor_GetById(ACTOR_FOURTH_STATUE)->x.fixed / PIXELS(16)) {
-      Actor_OffsetPositionAndResetMotion(ACTOR_FOURTH_STATUE, 8, 0);
+    leaderColumn = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed / PIXELS(16);
+    if (leaderColumn > Actor_Get(ACTOR_FOURTH_STATUE)->x.fixed / PIXELS(16)) {
+      Actor_SetDestinationOffset(ACTOR_FOURTH_STATUE, 8, 0);
     }
-    leaderColumn = Actor_GetById(ACTOR_PARTY_LEADER)->x.fixed / PIXELS(16);
-    if (leaderColumn <
-        Actor_GetById(ACTOR_FOURTH_STATUE)->x.fixed / PIXELS(16)) {
+    leaderColumn = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed / PIXELS(16);
+    if (leaderColumn < Actor_Get(ACTOR_FOURTH_STATUE)->x.fixed / PIXELS(16)) {
       FieldActor_SetDestinationOffset(ACTOR_FOURTH_STATUE, -8, 0);
     }
     Actor_WaitForMoveById(ACTOR_FOURTH_STATUE);
-    leader = Actor_GetById(ACTOR_PARTY_LEADER);
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
-      Actor_ResetAndSetPosition(ACTOR_FOURTH_STATUE, leader->x.part.pixel,
-                                leader->z.part.pixel);
+      Actor_SetDestination(ACTOR_FOURTH_STATUE, leader->x.part.pixel,
+                           leader->z.part.pixel);
     }
     Actor_WaitForMoveById(ACTOR_FOURTH_STATUE);
-    Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0,
-                                       CROSSBONE_LEADER_STEP_Z);
+    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
     Event_Wait(4);
     Sound_Play(SE_THUMP);
-    Actor_OffsetPositionAndResetMotion(ACTOR_FOURTH_STATUE, 0, 16);
+    Actor_SetDestinationOffset(ACTOR_FOURTH_STATUE, 0, 16);
     Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-    Actor_ResetAndSetPosition(ACTOR_FOURTH_STATUE, 344, 360);
+    Actor_SetDestination(ACTOR_FOURTH_STATUE, 344, 360);
     Actor_WaitForMoveById(ACTOR_FOURTH_STATUE);
     Event_Wait(10);
     Event_End();
@@ -875,7 +870,7 @@ static void CrossboneIsleKeys_DodgeFourthPursuer(void) {
 
 /// Starts the fifth chase when the leader enters column nineteen.
 static void CrossboneIsleKeys_CheckFifthPursuerTrigger(void) {
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 column = leader->x.fixed / PIXELS(16);
   s32 row = leader->z.fixed / PIXELS(16);
   struct FieldWork *work = gFieldWork;
@@ -897,15 +892,15 @@ static void CrossboneIsleKeys_DodgeFifthPursuer(void) {
   Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
   Actor_SetSpeed(ACTOR_FIFTH_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
-  Event_PlaySound(SE_THUMP);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  Sound_Play(SE_THUMP);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetDestination(ACTOR_FIFTH_STATUE, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_FIFTH_STATUE);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
-  Event_PlaySound(SE_THUMP);
+  Sound_Play(SE_THUMP);
   Actor_SetDestinationOffset(ACTOR_FIFTH_STATUE, 0, 16);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetDestination(ACTOR_FIFTH_STATUE, 312, 232);
@@ -935,7 +930,7 @@ static void CrossboneIsleKeys_RevealEndsInStatueRoom(void) {
 /// climb up or down, look ahead to the east, or push the first pillar from the
 /// floor to the west.
 static void CrossboneIsleKeys_UseLadder(void) {
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   u16 facing = leader->facing;
 
   if (facing == FACING_NORTH) {
@@ -977,11 +972,11 @@ UNUSED static void CrossboneIsleKeys_UnusedNoOpB(void) {}
 /// Frost on CrossboneIsleBane's puddle: it freezes into a pillar of
 /// ice the party can stand on.
 static void CrossboneIsleKeys_FreezePuddle(void) {
-  struct Actor *puddle = Actor_GetById(ACTOR_PUDDLE);
+  struct Actor *puddle = Actor_Get(ACTOR_PUDDLE);
 
   MapGrid_CopyCellAttributes(40, 54, 1, 1, 40, 55);
   if (puddle != 0) {
-    u8 *motionFlags = &Actor_GetById(ACTOR_PUDDLE)->motionFlags;
+    u8 *motionFlags = &Actor_Get(ACTOR_PUDDLE)->motionFlags;
     u8 *priorityFlags = &puddle->priorityFlags;
 
     *motionFlags = 0;
@@ -993,7 +988,7 @@ static void CrossboneIsleKeys_FreezePuddle(void) {
 /// Walking into CrossboneIsleBane's first pillar from the ladder side
 /// (step trigger 70): facing east, look ahead; otherwise push the pillar.
 static void CrossboneIsleKeys_LookAheadOrPushFirstPillar(void) {
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   if (leader->facing == 0) {
     Field_TryJumpForward();
@@ -1009,45 +1004,45 @@ static void CrossboneIsleKeys_RestoreFirstPillarTerrain(void) {
   MapGrid_CopyCellAttributes(58, 42, 1, 1, 42, 42);
   MapGrid_CopyCellAttributes(62, 37, 3, 1, 37, 42);
 
-  Actor_GetById(ACTOR_FIRST_PILLAR)->motionFlags = ACTOR_FOLLOWS_TERRAIN;
+  Actor_Get(ACTOR_FIRST_PILLAR)->motionFlags = ACTOR_FOLLOWS_TERRAIN;
 }
 
 /// Restores support under the first pillar at the eastern cell.
 static void CrossboneIsleKeys_RestoreEastUnderfootCell(void) {
 
   MapGrid_CopyCellAttributes(58, 41, 1, 1, 42, 42);
-  Actor_GetById(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+  Actor_Get(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
 
 /// Restores support under the first pillar at the middle cell.
 static void CrossboneIsleKeys_RestoreMiddleUnderfootCell(void) {
 
   MapGrid_CopyCellAttributes(44, 42, 1, 1, 41, 42);
-  Actor_GetById(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+  Actor_Get(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
 
 /// Restores support under the first pillar at the western cell.
 static void CrossboneIsleKeys_RestoreWestUnderfootCell(void) {
 
   MapGrid_CopyCellAttributes(39, 42, 1, 1, 40, 42);
-  Actor_GetById(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+  Actor_Get(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
 
 /// Move on CrossboneIsleBane's first pillar: its support cells are
 /// rebuilt from its height and column.
 static void CrossboneIsleKeys_MoveFirstPillar(void) {
-  struct Actor *actor = Actor_GetById(ACTOR_FIRST_PILLAR);
+  struct Actor *actor = Actor_Get(ACTOR_FIRST_PILLAR);
   s32 x = actor->x.fixed;
   s32 height = actor->y.fixed;
   s32 column = x / PIXELS(16);
   u8 lowered;
 
   if (height == 0) {
-    Actor_GetById(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+    Actor_Get(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
   CrossboneIsleKeys_RestoreFirstPillarTerrain();
   lowered = 0;
-  Actor_GetById(ACTOR_FIRST_PILLAR)->motionFlags =
+  Actor_Get(ACTOR_FIRST_PILLAR)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   if (column == 40) {
     CrossboneIsleKeys_RestoreWestUnderfootCell();
@@ -1067,8 +1062,8 @@ static void CrossboneIsleKeys_MoveFirstPillar(void) {
 /// Pushing CrossboneIsleBane's first pillar (step trigger 51); standing at
 /// the ladder in column 38, the leader climbs instead.
 static void CrossboneIsleKeys_PushFirstPillar(void) {
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
-  struct Actor *pillar = Actor_GetById(ACTOR_FIRST_PILLAR);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
+  struct Actor *pillar = Actor_Get(ACTOR_FIRST_PILLAR);
   s32 leaderColumn = leader->x.fixed / PIXELS(16);
   s32 pillarColumn = pillar->x.fixed / PIXELS(16);
 
@@ -1108,7 +1103,7 @@ static void CrossboneIsleKeys_ReleaseSecondPillarChest(void) {
 /// Move on CrossboneIsleBane's second pillar: the chest on top of it stays
 /// at the ladder cell once the pillar reaches it.
 static void CrossboneIsleKeys_MoveSecondPillar(void) {
-  struct Actor *pillar = Actor_GetById(ACTOR_SECOND_PILLAR);
+  struct Actor *pillar = Actor_Get(ACTOR_SECOND_PILLAR);
   s32 column = pillar->x.fixed / PIXELS(16);
   s32 row = pillar->z.fixed / PIXELS(16);
 
@@ -1135,20 +1130,20 @@ static void CrossboneIsleKeys_RestoreThirdPillarTerrain(void) {
 static void CrossboneIsleKeys_RestoreThirdPillarWestCell(void) {
 
   MapGrid_CopyCellAttributes(40, 54, 1, 1, 38, 55);
-  Actor_GetById(ACTOR_THIRD_PILLAR)->motionFlags = 0;
+  Actor_Get(ACTOR_THIRD_PILLAR)->motionFlags = 0;
 }
 
 /// Restores the third pillar support at the eastern end.
 static void CrossboneIsleKeys_RestoreThirdPillarEastCell(void) {
 
   MapGrid_CopyCellAttributes(40, 54, 1, 1, 42, 55);
-  Actor_GetById(ACTOR_THIRD_PILLAR)->motionFlags = 0;
+  Actor_Get(ACTOR_THIRD_PILLAR)->motionFlags = 0;
 }
 
 /// Move on CrossboneIsleBane's third pillar: its support is rebuilt
 /// from its height and destination.
 static void CrossboneIsleKeys_MoveThirdPillar(void) {
-  struct Actor *pillar = Actor_GetById(ACTOR_THIRD_PILLAR);
+  struct Actor *pillar = Actor_Get(ACTOR_THIRD_PILLAR);
   s32 heightCells = pillar->y.fixed / PIXELS(16);
   s32 column = pillar->x.fixed / PIXELS(16);
   s32 row = pillar->z.fixed / PIXELS(16);
@@ -1180,7 +1175,7 @@ static void CrossboneIsleKeys_PushThirdPillar(void) {
 /// Walking into CrossboneIsleBane's third pillar (step trigger 54): facing
 /// south, the leader jumps down past it; otherwise the pillar is pushed.
 static void CrossboneIsleKeys_TouchThirdPillar(void) {
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   if (leader->facing == FACING_SOUTH) {
     FieldActor_JumpDownLedge(ACTOR_PARTY_LEADER, 6, 0);
@@ -1205,10 +1200,10 @@ static void CrossboneIsleKeys_RepaintFourthAndFifthPillarCells(void) {
 
   CrossboneIsleKeys_RestoreFourthAndFifthPillarTerrain();
 
-  pillar = Actor_GetById(ACTOR_FOURTH_PILLAR);
+  pillar = Actor_Get(ACTOR_FOURTH_PILLAR);
   column = pillar->x.fixed / PIXELS(16);
   MapGrid_CopyCellAttributes(53, 55, 1, 1, column, 55);
-  pillar = Actor_GetById(ACTOR_FIFTH_PILLAR);
+  pillar = Actor_Get(ACTOR_FIFTH_PILLAR);
   column = pillar->x.fixed / PIXELS(16);
   MapGrid_CopyCellAttributes(53, 55, 1, 1, column, 55);
 }
@@ -1242,8 +1237,8 @@ UNUSED static void CrossboneIsleKeys_PushFifthPillar(void) {
 
 /// Keeps the chest on top of the second pillar as the pillar moves.
 static void CrossboneIsleKeys_FollowSecondPillar(void) {
-  struct Actor *target = Actor_GetById(ACTOR_SECOND_PILLAR_CHEST);
-  struct Actor *source = Actor_GetById(ACTOR_SECOND_PILLAR);
+  struct Actor *target = Actor_Get(ACTOR_SECOND_PILLAR_CHEST);
+  struct Actor *source = Actor_Get(ACTOR_SECOND_PILLAR);
 
   target->y.fixed = PIXELS(32);
   target->x.fixed = source->x.fixed;
@@ -1252,7 +1247,7 @@ static void CrossboneIsleKeys_FollowSecondPillar(void) {
 
 /// Puts the chest's examine trigger 107 where the second pillar stands.
 static void CrossboneIsleKeys_PositionSecondPillarMarker(void) {
-  struct Actor *frame = Actor_GetById(ACTOR_SECOND_PILLAR);
+  struct Actor *frame = Actor_Get(ACTOR_SECOND_PILLAR);
 
   TreasureSpot_SetActorPosition(107, frame->x.fixed,
                                 frame->z.fixed + PIXELS(1));
@@ -1260,28 +1255,27 @@ static void CrossboneIsleKeys_PositionSecondPillarMarker(void) {
 
 /// Chooses pillar drawing priorities from the leader height and row.
 static void CrossboneIsleKeys_UpdatePillarPriorities(void) {
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   u8 priority;
 
   if (leader->y.fixed > PIXELS(16)) {
     priority = ACTOR_PRIORITY_UNDERFOOT;
-    Actor_GetById(ACTOR_FIRST_PILLAR)->priorityFlags = priority;
-    if (Actor_GetById(ACTOR_THIRD_PILLAR)->y.fixed == 0)
-      Actor_GetById(ACTOR_THIRD_PILLAR)->priorityFlags = priority;
-    Actor_GetById(ACTOR_FOURTH_PILLAR)->priorityFlags = priority;
+    Actor_Get(ACTOR_FIRST_PILLAR)->priorityFlags = priority;
+    if (Actor_Get(ACTOR_THIRD_PILLAR)->y.fixed == 0)
+      Actor_Get(ACTOR_THIRD_PILLAR)->priorityFlags = priority;
+    Actor_Get(ACTOR_FOURTH_PILLAR)->priorityFlags = priority;
   } else {
-    if (Actor_GetById(ACTOR_THIRD_PILLAR)->y.fixed == 0 &&
-        Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed / PIXELS(16) > 56) {
+    if (Actor_Get(ACTOR_THIRD_PILLAR)->y.fixed == 0 &&
+        Actor_Get(ACTOR_PARTY_LEADER)->z.fixed / PIXELS(16) > 56) {
       Actor_SetSpritePriority(ACTOR_THIRD_PILLAR, 3);
     } else {
       Actor_SetSpritePriority(ACTOR_THIRD_PILLAR, 1);
-      Actor_GetById(ACTOR_THIRD_PILLAR)->priorityFlags =
-          ACTOR_PRIORITY_AUTOMATIC;
+      Actor_Get(ACTOR_THIRD_PILLAR)->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
     }
     priority = 0;
-    Actor_GetById(ACTOR_FOURTH_PILLAR)->priorityFlags = priority;
+    Actor_Get(ACTOR_FOURTH_PILLAR)->priorityFlags = priority;
   }
-  Actor_GetById(ACTOR_FIFTH_PILLAR)->priorityFlags = priority;
+  Actor_Get(ACTOR_FIFTH_PILLAR)->priorityFlags = priority;
 }
 
 /// Sets up whichever of the three rooms the party enters: the keys and doors
@@ -1386,15 +1380,15 @@ static void CrossboneIsleKeys_InitializeKeys(void) {
 
 /// Configures the pursuers, their chase triggers and blending.
 static void CrossboneIsleKeys_InitializeStatues(void) {
-  Actor_GetById(ACTOR_FIRST_STATUE)->collisionFlags = ACTOR_SOLID;
-  Actor_GetById(ACTOR_SECOND_STATUE)->collisionFlags = ACTOR_SOLID;
-  Actor_GetById(ACTOR_THIRD_STATUE)->collisionFlags = ACTOR_SOLID;
-  Actor_GetById(ACTOR_FOURTH_STATUE)->collisionFlags = ACTOR_SOLID;
-  Actor_GetById(ACTOR_FIRST_STATUE)->scaleX = 7 * Q16_ONE / 10;
-  Actor_GetById(ACTOR_SECOND_STATUE)->scaleX = 7 * Q16_ONE / 10;
-  Actor_GetById(ACTOR_THIRD_STATUE)->scaleX = 7 * Q16_ONE / 10;
-  Actor_GetById(ACTOR_FOURTH_STATUE)->scaleX = 7 * Q16_ONE / 10;
-  Actor_GetById(ACTOR_FIFTH_STATUE)->scaleX = 7 * Q16_ONE / 10;
+  Actor_Get(ACTOR_FIRST_STATUE)->collisionFlags = ACTOR_SOLID;
+  Actor_Get(ACTOR_SECOND_STATUE)->collisionFlags = ACTOR_SOLID;
+  Actor_Get(ACTOR_THIRD_STATUE)->collisionFlags = ACTOR_SOLID;
+  Actor_Get(ACTOR_FOURTH_STATUE)->collisionFlags = ACTOR_SOLID;
+  Actor_Get(ACTOR_FIRST_STATUE)->scaleX = 7 * Q16_ONE / 10;
+  Actor_Get(ACTOR_SECOND_STATUE)->scaleX = 7 * Q16_ONE / 10;
+  Actor_Get(ACTOR_THIRD_STATUE)->scaleX = 7 * Q16_ONE / 10;
+  Actor_Get(ACTOR_FOURTH_STATUE)->scaleX = 7 * Q16_ONE / 10;
+  Actor_Get(ACTOR_FIFTH_STATUE)->scaleX = 7 * Q16_ONE / 10;
   Task_AddOrUpdateFrame(CrossboneIsleKeys_CheckFifthPursuerTrigger,
                         TASK_PASS_FRAME);
   Task_AddOrUpdateFrame(CrossboneIsleKeys_CheckSecondPursuerTrigger,
@@ -1411,12 +1405,12 @@ static void CrossboneIsleKeys_InitializeBane(void) {
 
   // Put the chest back on the second pillar and rebuild all pillar support
   // cells.
-  Actor_GetById(ACTOR_SECOND_PILLAR_CHEST)->motionFlags = 0;
+  Actor_Get(ACTOR_SECOND_PILLAR_CHEST)->motionFlags = 0;
   Task_AddOrUpdateFrame(CrossboneIsleKeys_FollowSecondPillar, TASK_PASS_FRAME);
   Task_AddFrame(CrossboneIsleKeys_UpdatePillarPriorities, TASK_PASS_FRAME);
   TreasureSpot_SetPosition(107, 0, 0);
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_DEMON_AXE) != 0) {
-    Import_ActorSetAnimation(ACTOR_SECOND_PILLAR_CHEST, 2);
+    Actor_SetAnimation(ACTOR_SECOND_PILLAR_CHEST, 2);
   }
   CrossboneIsleKeys_MoveFirstPillar();
   CrossboneIsleKeys_MoveSecondPillar();
@@ -1426,19 +1420,19 @@ static void CrossboneIsleKeys_InitializeBane(void) {
 #if TBS_PATCH_1
   Actor_SetSpritePriority(ACTOR_FIRST_PILLAR, 3);
 #endif
-  Actor_GetById(ACTOR_FOURTH_PILLAR)->motionFlags = 0;
-  Actor_GetById(ACTOR_FIFTH_PILLAR)->motionFlags = 0;
+  Actor_Get(ACTOR_FOURTH_PILLAR)->motionFlags = 0;
+  Actor_Get(ACTOR_FIFTH_PILLAR)->motionFlags = 0;
   CrossboneIsleKeys_RepaintFourthAndFifthPillarCells();
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_PUDDLE_FROZEN) != 0) {
     CrossboneIsleKeys_FreezePuddle();
-    Import_ActorSetAnimation(ACTOR_PUDDLE, 5);
+    Actor_SetAnimation(ACTOR_PUDDLE, 5);
   }
 
   // Restore the surviving Djinni at the last completed escape stage.
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
       Actor_SetPosition(ACTOR_BANE, PIXELS(856), PIXELS(824));
-      djinni = Actor_GetById(ACTOR_BANE);
+      djinni = Actor_Get(ACTOR_BANE);
 #ifdef UBFIX
       djinni->update = CrossboneIsleKeys_FaceBaneTowardLeader;
 #else
@@ -1447,7 +1441,7 @@ static void CrossboneIsleKeys_InitializeBane(void) {
 #endif
     } else if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) != 0) {
       Actor_SetPosition(ACTOR_BANE, PIXELS(888), PIXELS(664));
-      djinni = Actor_GetById(ACTOR_BANE);
+      djinni = Actor_Get(ACTOR_BANE);
       djinni->sprite->rotation = 0;
       Actor_SetAnimationSpeed(djinni, 16);
     } else if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) != 0) {

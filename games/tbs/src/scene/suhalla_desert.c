@@ -284,7 +284,7 @@ static void SuhallaDesert_UpdateCaptureTimer(void) {
   struct FieldWork *requests;
   s32 remainingFrames;
 
-  selectedActor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  selectedActor = Actor_Get(gMainRoutineWork.leaderActorId);
   requests = gFieldWork;
   selectedActor->facing = (gFrameCount << 12);
 
@@ -314,7 +314,7 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
   // lifted.
   leaderActorId = gMainRoutineWork.leaderActorId;
   stormIdCopy = stormId;
-  selectedActor = Actor_GetById(leaderActorId);
+  selectedActor = Actor_Get(leaderActorId);
   Actor_Get(stormIdCopy);
   captureActive = Event_GetFlag(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM);
   if (captureActive == 0) {
@@ -322,14 +322,14 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
     Actor_SetAttachedEffect(leaderActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
     Import_ActorSetAnimation(leaderActorId, ANIM_LEADER_LOOK_AROUND);
-    storm = Actor_GetById(stormIdCopy);
+    storm = Actor_Get(stormIdCopy);
     if (storm != 0) {
       Actor_SetDestination(leaderActorId, storm->x.part.pixel,
                            storm->z.part.pixel);
     }
     Actor_WaitForMoveById(leaderActorId);
     // Start the capture countdown once the approach finishes.
-    Event_PlaySound(SE_SANDSTORM);
+    Sound_Play(SE_SANDSTORM);
     Task_AddFrame(SuhallaDesert_UpdateCaptureTimer, TASK_PASS_FRAME);
     selectedActor->motionFlags = captureActive;
     FieldActor_SetMoveTarget(selectedActor, selectedActor->x.fixed,
@@ -399,8 +399,8 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
   struct Actor *leader;
 
   stormIdCopy = stormId;
-  selectedActor = Actor_GetById(gMainRoutineWork.leaderActorId);
-  storm = Actor_GetById(stormIdCopy);
+  selectedActor = Actor_Get(gMainRoutineWork.leaderActorId);
+  storm = Actor_Get(stormIdCopy);
   appearanceRestored = GameFlag_Get(FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN);
   leaderX = selectedActor->x.part.pixel;
   leaderZ = selectedActor->z.part.pixel;
@@ -431,9 +431,9 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     GameFlag_Set(FLAG_SUHALLA_DESERT_IODEM_WARNED);
     Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
-    leader = Actor_GetById(ACTOR_PARTY_LEADER);
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
     if ((s32)leader != 0) {
-      Import_ActorSetPosition(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
+      Actor_SetPosition(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
     }
 #ifdef BUGFIX
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
@@ -441,38 +441,37 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     // BUG: a heading where Actor_FaceActor takes an actor id.
     Actor_FaceActor(ACTOR_IODEM, FACING_SOUTH, 0);
 #endif
-    Actor_GetById(ACTOR_IODEM)->steeringFlags &= ~ACTOR_FACES_MOTION;
-    Actor_ResetAndSetPositionInMode2(ACTOR_IODEM, leaderX, (leaderZ - 16));
-    Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-    Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, (leaderX + 8),
-                              (leaderZ - 40));
+    Actor_Get(ACTOR_IODEM)->steeringFlags &= ~ACTOR_FACES_MOTION;
+    Actor_WalkTo(ACTOR_IODEM, leaderX, (leaderZ - 16));
+    Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, (leaderX + 8), (leaderZ - 40));
     Event_Wait(1);
-    Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
     Import_ActorSetAnimation(ACTOR_IODEM, ANIM_STAND);
-    Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Event_SetMessageId(MsgSuhallaSandstorm);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
-    Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+    Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-    Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+    Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-    Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+    Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 30);
     Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
-    Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+    Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
-    Event_ShowMessageAndWait(ACTOR_IODEM, 0);
+    Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
     Import_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
-    leader = Actor_GetById(ACTOR_PARTY_LEADER);
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
     if ((s32)leader != 0) {
-      Actor_ResetAndSetPosition(ACTOR_IODEM, leader->x.part.pixel,
-                                leader->z.part.pixel);
+      Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
+                           leader->z.part.pixel);
     }
     Actor_WaitForMoveById(ACTOR_IODEM);
-    Import_ActorSetPosition(ACTOR_IODEM, 0, 0);
+    Actor_SetPosition(ACTOR_IODEM, 0, 0);
   }
   Event_End();
 }
@@ -584,7 +583,7 @@ static s32 SuhallaDesert_ChaseLeader(struct Actor *interpreter) {
   s32 dz;
   s32 sparkFrame;
 
-  selectedActor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  selectedActor = Actor_Get(gMainRoutineWork.leaderActorId);
   actor->acceleration = PIXELS(1) / 4;
   actor->speedLimit = PIXELS(3) / 2;
   actor->motionFlags = 0;
@@ -684,11 +683,11 @@ static void SuhallaDesert_DouseStorm(s32 unused, s32 stormId) {
       if (stormId == ACTOR_CHASING_SANDSTORM) {
         Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 6);
         Actor_Stop(ACTOR_CHASING_SANDSTORM);
-        Import_ActorSetPosition(ACTOR_CHASING_SANDSTORM, 0, 0);
+        Actor_SetPosition(ACTOR_CHASING_SANDSTORM, 0, 0);
       }
     }
   }
-  Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags =
+  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 }
 
@@ -704,8 +703,8 @@ static void SuhallaDesert_StormCarriesPartyAway(void) {
   s32 frame;
 
   stormId = FieldGameFlag_GetByte(FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM);
-  selectedActor = Actor_GetById(gMainRoutineWork.leaderActorId);
-  storm = Actor_GetById(stormId);
+  selectedActor = Actor_Get(gMainRoutineWork.leaderActorId);
+  storm = Actor_Get(stormId);
   Event_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Sound_Play(SE_GUSH);
@@ -766,9 +765,8 @@ static s32 SuhallaDesert_RevealEnds(void) {
   s32 removalResult;
 #endif
   if (gMainRoutineWork.next == (s32)&SceneId_SuhallaDesertSouth) {
-    Actor_GetById(ACTOR_REVEALED_PILLAR)->priorityFlags =
-        ACTOR_PRIORITY_UNDERFOOT;
-    Actor_GetById(ACTOR_REVEALED_PILLAR)->motionFlags =
+    Actor_Get(ACTOR_REVEALED_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+    Actor_Get(ACTOR_REVEALED_PILLAR)->motionFlags =
         ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     Actor_SetPosition(ACTOR_REVEALED_PILLAR, 0, 0);
     MapGrid_CopyCellAttributes(16, 44, 1, 1, 15, 44);
@@ -799,9 +797,8 @@ static void SuhallaDesert_RevealStarts(void) {
 static s32 SuhallaDesert_RevealStarts(void) {
 #endif
   if (gMainRoutineWork.next == (s32)&SceneId_SuhallaDesertSouth) {
-    Actor_GetById(ACTOR_REVEALED_PILLAR)->priorityFlags =
-        ACTOR_PRIORITY_UNDERFOOT;
-    Actor_GetById(ACTOR_REVEALED_PILLAR)->motionFlags = 0;
+    Actor_Get(ACTOR_REVEALED_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+    Actor_Get(ACTOR_REVEALED_PILLAR)->motionFlags = 0;
     Actor_SetPosition(ACTOR_REVEALED_PILLAR, PIXELS(248), PIXELS(712));
     MapGrid_CopyCellAttributes(31, 95, 1, 1, 15, 44);
     TreasureSpot_SetPosition(TREASURE_SPOT_PSYNERGY_STONE, -1, -1);
@@ -881,7 +878,7 @@ static void SuhallaDesert_SetUpFirstMapStorms(void) {
   }
   for (stormId = ACTOR_FIRST_SANDSTORM; stormId <= ACTOR_LAST_SANDSTORM;
        stormId++) {
-    actor = Actor_GetById(stormId);
+    actor = Actor_Get(stormId);
     if (actor != 0) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         actor->scaleX = Q16_ONE / 32;
@@ -923,7 +920,7 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
   }
   for (stormId = ACTOR_FIRST_SANDSTORM; stormId < ACTOR_FOURTH_SANDSTORM;
        stormId++) {
-    actor = Actor_GetById(stormId);
+    actor = Actor_Get(stormId);
     if (actor != 0) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         actor->scaleX = Q16_ONE / 32;
@@ -933,7 +930,7 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
       sprite->flags = 0;
     }
   }
-  actor = Actor_GetById(ACTOR_FOURTH_SANDSTORM);
+  actor = Actor_Get(ACTOR_FOURTH_SANDSTORM);
   if (actor != 0) {
     struct SpriteAnimation *part;
 

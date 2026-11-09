@@ -269,7 +269,7 @@ const struct Trigger *StuccoRoomsA_GetTriggers(void) {
 static void StuccoRoomsA_TalkToTourGuide(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayPleaseFinishEatingIfTaking);
-  Event_ShowMessageAndWait(ACTOR_TOUR_GUIDE, 0);
+  Event_ShowMessage(ACTOR_TOUR_GUIDE, 0);
   GameFlag_Set(FLAG_KALAY_HEARD_OF_COLOSSO_TOUR);
   Event_End();
 }
@@ -279,7 +279,7 @@ static void StuccoRoomsA_TalkToTourGuide(void) {
 static void StuccoRoomsA_AskAboutSouthernContinent(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayDoKnowAboutContinentSouth);
-  Event_AskYesNoAndShowResponse(ACTOR_YOUNG_MAN_ASKING_ABOUT_THE_SOUTH, 0);
+  Event_AskYesNo(ACTOR_YOUNG_MAN_ASKING_ABOUT_THE_SOUTH, 0);
   Event_End();
 }
 
@@ -288,7 +288,7 @@ static void StuccoRoomsA_AskAboutSouthernContinent(void) {
 /// going to Tolbi too, or, once the tour has left, says how empty the inn
 /// feels.
 static void StuccoRoomsA_TalkToInnkeeper(void) {
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   if ((u16)(leader->facing - 0x6001) <= 0x3FFE) {
     Inn_CheckIn(KALAY_INN, ACTOR_INNKEEPER);
@@ -297,10 +297,10 @@ static void StuccoRoomsA_TalkToInnkeeper(void) {
 
     if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
       Event_SetMessageId(MsgKalayOurInnFeelsEmptyNow);
-      Event_ShowMessageAndWait(ACTOR_INNKEEPER, 0);
+      Event_ShowMessage(ACTOR_INNKEEPER, 0);
     } else {
       Event_SetMessageId(MsgKalayGoingTolbiAlso);
-      Event_AskYesNoAndShowResponse(ACTOR_INNKEEPER, 0);
+      Event_AskYesNo(ACTOR_INNKEEPER, 0);
       GameFlag_Set(FLAG_KALAY_HEARD_OF_COLOSSO_TOUR);
     }
 
@@ -312,7 +312,7 @@ static void StuccoRoomsA_TalkToInnkeeper(void) {
 /// so when spoken to across the counter with the leader facing north; from
 /// elsewhere he says Kalay is a peaceful place.
 static void StuccoRoomsA_TalkToHealer(void) {
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   // FACING_IS_NORTH removes the native EN halfword shift and changes its
   // comparison constant. Keep the original unsigned-halfword arithmetic.
@@ -321,7 +321,7 @@ static void StuccoRoomsA_TalkToHealer(void) {
   } else {
     Event_Start();
     Event_SetMessageId(MsgKalayCanLiveInPeaceIn);
-    Event_ShowMessageAndWait(ACTOR_HEALER, 0);
+    Event_ShowMessage(ACTOR_HEALER, 0);
     Event_End();
   }
 }
@@ -339,7 +339,7 @@ static void StuccoRoomsA_OpenDoorAndExit(void) {
 
   // Prevent idle movement while the doorway cells are animated.
   for (slot = ACTOR_FIRST_PLACED; slot <= ACTOR_LAST_ID; slot++) {
-    struct Actor *actor = Actor_GetById(slot);
+    struct Actor *actor = Actor_Get(slot);
 
     if (actor != 0) {
       actor->motionFlags = 0;
@@ -372,13 +372,13 @@ static void StuccoRoomsA_OpenDoorAndExit(void) {
     MapGrid_AnimateCells(gStuccoRoomsA_DoorCells[doorIndex].steps, x, y);
   }
 
-  Actor_SetSpeedParameters(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   leader->motionFlags = 0;
 
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  Actor_CenterOnColumn(ACTOR_PARTY_LEADER, 3, -8);
+  Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -8);
   Event_Wait(10);
 
   Import_EventSetExitRequest(work->stepTrigger);
@@ -432,7 +432,7 @@ static void StuccoRoomsA_ApplyRoomState(void) {
       Actor_ReleaseById(ACTOR_SEAN);
       Actor_ReleaseById(ACTOR_FOURTH_TOURIST);
     } else {
-      Actor_ConfigureSpriteColor(ACTOR_SECOND_TOUR_GUIDE, SPRITE_COLOR_RBG);
+      Actor_SetSpriteColorById(ACTOR_SECOND_TOUR_GUIDE, SPRITE_COLOR_RBG);
     }
     return;
   default:

@@ -261,25 +261,25 @@ const struct ActorPlacement *ColosseumAzartMatch_GetActorPlacements(void) {
 static void ColosseumAzartMatch_UpdateBrokenBridge(void) {
   switch ((u32)gColosseumAzartMatch_Countdown) {
   case 66:
-    MapGrid_CopyCellIndexRect(92, 31, 2, 2, 50, 38);
-    MapGrid_CopyCellIndexRect(92, 31, 2, 2, 54, 38);
-    Import_ActorSetAnimation(ACTOR_BRIDGE_OPERATOR, 10);
+    MapGrid_CopyCellsLayered(92, 31, 2, 2, 50, 38);
+    MapGrid_CopyCellsLayered(92, 31, 2, 2, 54, 38);
+    Actor_SetAnimation(ACTOR_BRIDGE_OPERATOR, 10);
     break;
   case 60:
-    MapGrid_CopyCellIndexRect(92, 33, 2, 2, 50, 38);
-    MapGrid_CopyCellIndexRect(92, 33, 2, 2, 54, 38);
+    MapGrid_CopyCellsLayered(92, 33, 2, 2, 50, 38);
+    MapGrid_CopyCellsLayered(92, 33, 2, 2, 54, 38);
     MapGrid_CopyCellAttributes(50, 25, 6, 1, 50, 12);
-    Import_ActorSetAnimation(ACTOR_BRIDGE_OPERATOR, 11);
+    Actor_SetAnimation(ACTOR_BRIDGE_OPERATOR, 11);
     break;
   case 6:
-    MapGrid_CopyCellIndexRect(92, 31, 2, 2, 50, 38);
-    MapGrid_CopyCellIndexRect(92, 31, 2, 2, 54, 38);
-    Import_ActorSetAnimation(ACTOR_BRIDGE_OPERATOR, 10);
+    MapGrid_CopyCellsLayered(92, 31, 2, 2, 50, 38);
+    MapGrid_CopyCellsLayered(92, 31, 2, 2, 54, 38);
+    Actor_SetAnimation(ACTOR_BRIDGE_OPERATOR, 10);
     break;
   case 0:
-    MapGrid_CopyCellIndexRect(92, 29, 2, 2, 50, 38);
-    MapGrid_CopyCellIndexRect(92, 29, 2, 2, 54, 38);
-    Import_ActorSetAnimation(ACTOR_BRIDGE_OPERATOR, 12);
+    MapGrid_CopyCellsLayered(92, 29, 2, 2, 50, 38);
+    MapGrid_CopyCellsLayered(92, 29, 2, 2, 54, 38);
+    Actor_SetAnimation(ACTOR_BRIDGE_OPERATOR, 12);
     MapGrid_CopyCellAttributes(50, 24, 6, 1, 50, 12);
     gColosseumAzartMatch_Countdown = 120;
     break;
@@ -329,7 +329,7 @@ static void ColosseumAzartMatch_SettleRocks(void) {
   s32 blocked;
 
   MapGrid_CopyCellAttributes(27, 13, 3, 1, 23, 12);
-  actor = Actor_GetById(ACTOR_ROCK_A);
+  actor = Actor_Get(ACTOR_ROCK_A);
   blocked = MapGrid_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
   if (actor->y.fixed == 0 && blocked == 0) {
     actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -341,7 +341,7 @@ static void ColosseumAzartMatch_SettleRocks(void) {
       MapGrid_CopyCellAttributes(14, 13, 1, 1, x, y);
     }
   }
-  actor = Actor_GetById(ACTOR_ROCK_B);
+  actor = Actor_Get(ACTOR_ROCK_B);
   {
     s32 x = actor->x.fixed >> 20;
 
@@ -379,7 +379,7 @@ static void ColosseumAzartMatch_DousePipe(void) {
   s32 none;
 
   GameFlag_Set(FLAG_PIPES_MOVED);
-  actor = Actor_GetById(ACTOR_PIPE_WEST);
+  actor = Actor_Get(ACTOR_PIPE_WEST);
   Event_Start();
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   FieldCamera_MoveTo(PIXELS(600), -1, PIXELS(200), 1);
@@ -409,8 +409,8 @@ static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
   s32 x;
   s32 z;
 
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  actor = Actor_GetById(actorId);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  actor = Actor_Get(actorId);
   Event_Start();
   {
     x = ((leader->x.fixed + (dx << 16)) & 0xFFF00000) + PIXELS(8);
@@ -449,7 +449,7 @@ static void ColosseumAzartMatch_RollLogNorthSouth(void) {
   s32 row;
   s32 offset;
 
-  actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  actor = Actor_Get(gMainRoutineWork.leaderActorId);
   row = actor->z.fixed >> 20;
   offset = -48;
   if (row <= 8) {
@@ -457,7 +457,7 @@ static void ColosseumAzartMatch_RollLogNorthSouth(void) {
   }
   MapGrid_CopyCellAttributes(67, 8, 3, 1, 64, row);
   ColosseumAzartMatch_MoveActorPairByOffset(ACTOR_LOG_NORTH_SOUTH, 0, offset);
-  actor = Actor_GetById(ACTOR_LOG_NORTH_SOUTH);
+  actor = Actor_Get(ACTOR_LOG_NORTH_SOUTH);
   row = actor->z.fixed >> 20;
   MapGrid_CopyCellAttributes(64, 24, 3, 1, 64, row);
 }
@@ -471,7 +471,7 @@ static void ColosseumAzartMatch_RollLogEastWest(void) {
   s32 offset;
   s32 direction;
 
-  actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  actor = Actor_Get(gMainRoutineWork.leaderActorId);
   column = actor->x.fixed >> 20;
   if ((gKeysHeld & KEY_LEFT) != 0) {
     direction = -1;
@@ -479,7 +479,7 @@ static void ColosseumAzartMatch_RollLogEastWest(void) {
   if ((gKeysHeld & KEY_RIGHT) != 0) {
     direction = 1;
   }
-  actor = Actor_GetById(ACTOR_LOG_NORTH_SOUTH);
+  actor = Actor_Get(ACTOR_LOG_NORTH_SOUTH);
   offset = actor->z.fixed >> 20;
   if (column == 63) {
     if (offset == 11) {
@@ -501,7 +501,7 @@ static void ColosseumAzartMatch_RollLogEastWest(void) {
   }
   MapGrid_CopyCellAttributes(72, 9, 1, 3, column, 9);
   ColosseumAzartMatch_MoveActorPairByOffset(ACTOR_LOG_EAST_WEST, offset, 0);
-  actor = Actor_GetById(ACTOR_LOG_EAST_WEST);
+  actor = Actor_Get(ACTOR_LOG_EAST_WEST);
   column = actor->x.fixed >> 20;
   MapGrid_CopyCellAttributes(63, 25, 1, 3, column, 9);
 }
@@ -529,20 +529,20 @@ static void ColosseumAzartMatch_PushPipeworksPillar(void) {
   s32 none;
 
   leaderId = gMainRoutineWork.leaderActorId;
-  leader = Actor_GetById(leaderId);
-  actor = Actor_GetById(ACTOR_PIPEWORKS_PIPE);
+  leader = Actor_Get(leaderId);
+  actor = Actor_Get(ACTOR_PIPEWORKS_PIPE);
   GameFlag_Set(FLAG_PIPEWORKS_PIPE_PUSHED);
   Event_Start();
-  Import_ActorSetAnimation(leaderId, ANIM_PUSH);
+  Actor_SetAnimation(leaderId, ANIM_PUSH);
   Event_Wait(6);
   actor->speedLimit = PIXELS(1) / 2;
   actor->acceleration = PIXELS(1) / 5;
-  Event_PlaySound(SE_HEAVY_MOVE);
+  Sound_Play(SE_HEAVY_MOVE);
   Actor_SelectAnimation(actor, 2);
   FieldActor_SetMoveTarget(actor, actor->x.fixed - PIXELS(48), 0,
                            actor->z.fixed);
   Event_Wait(6);
-  Import_ActorSetAnimation(leaderId, ANIM_WALK);
+  Actor_SetAnimation(leaderId, ANIM_WALK);
   Actor_StartCamera(((struct FieldWork *)HeapSlot_AllocEwram(
                          HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
                         ->camera,
@@ -551,11 +551,11 @@ static void ColosseumAzartMatch_PushPipeworksPillar(void) {
   FieldActor_SetMoveTarget(leader, leader->x.fixed - PIXELS(24), 0,
                            leader->z.fixed);
   Actor_WaitForMoveById(leaderId);
-  Import_ActorSetAnimation(leaderId, ANIM_STAND);
+  Actor_SetAnimation(leaderId, ANIM_STAND);
   Actor_WaitForMove(actor);
   Actor_SelectAnimation(actor, 1);
-  Event_PlaySound(SE_STOP_ACTION_SE);
-  Event_PlaySound(SE_HEAVY_STOP);
+  Sound_Play(SE_STOP_ACTION_SE);
+  Sound_Play(SE_HEAVY_STOP);
   Event_Wait(15);
   Event_End();
   MapGrid_CopyCellAttributes(37, 7, 1, 4, 34, 7);
@@ -576,14 +576,14 @@ static void ColosseumAzartMatch_PushPipeworksPillar(void) {
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   FieldCamera_MoveTo(PIXELS(600), -1, PIXELS(200), 1);
   FieldCamera_WaitForArrival();
-  actor = Actor_GetById(ACTOR_PIPE_WEST);
+  actor = Actor_Get(ACTOR_PIPE_WEST);
   actor->motionFlags = none;
   actor->acceleration = PIXELS(2) / 5;
   actor->speedLimit = PIXELS(4) / 5;
   FieldActor_SetMoveTarget(actor, actor->x.fixed, PIXELS(8), actor->z.fixed);
   Actor_SelectAnimation(actor, 3);
   ColosseumAzartMatch_AnimatePipeworksWater();
-  actor = Actor_GetById(ACTOR_PIPE_EAST);
+  actor = Actor_Get(ACTOR_PIPE_EAST);
   actor->motionFlags = none;
   actor->acceleration = PIXELS(2) / 5;
   actor->speedLimit = PIXELS(4) / 5;
@@ -626,18 +626,18 @@ static void ColosseumAzartMatch_ReachArena(void) {
   Actor_WalkTo(ACTOR_OPPONENT, 1320, 192);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1288, 192);
-  Import_ActorSetAnimation(ACTOR_OPPONENT, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_OPPONENT, ANIM_STAND);
   Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 0);
   Event_Wait(10);
-  Import_ActorSetAnimation(ACTOR_OPPONENT, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_OPPONENT, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
   Actor_SetSpeed(ACTOR_OPPONENT, PIXELS(2), PIXELS(1));
   Actor_WalkTo(ACTOR_PARTY_LEADER, 1296, 192);
   Actor_WalkToAndWait(ACTOR_OPPONENT, 1312, 192);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
-  Import_ActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
+  Actor_SetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
   Event_Wait(10);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
                                         base - approach + 1);
@@ -685,11 +685,11 @@ static void ColosseumAzartMatch_RestoreMatchResult(s32 result) {
   Actor_FaceActor(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
 #endif
   if (result < 0) {
-    Import_ActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_ARMS_RAISED);
-    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CROUCH);
+    Actor_SetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_ARMS_RAISED);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CROUCH);
   } else {
-    Import_ActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_DEFEATED);
-    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
+    Actor_SetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_DEFEATED);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
   }
   wait(1);
   FieldCamera_MoveTo(PIXELS(1304), 0, PIXELS(128), 0);
@@ -703,7 +703,7 @@ static void ColosseumAzartMatch_MarkFinishTerrain(s32 actorId) {
   s32 column;
   s32 row;
 
-  target = Actor_GetById(actorId);
+  target = Actor_Get(actorId);
   if (target != 0) {
     column = target->x.fixed >> 19;
     row = target->z.fixed >> 19;
@@ -728,7 +728,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_FADE, 0);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
-  actor = Actor_GetById(ACTOR_ROCK_A);
+  actor = Actor_Get(ACTOR_ROCK_A);
   hit = MapGrid_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
   if (actor->y.fixed == 0 && hit == 0) {
     actor->priorityFlags = 2;
@@ -740,13 +740,13 @@ s32 ColosseumAzartMatch_Initialize(void) {
   if (x == 0) {
     x = 25;
   }
-  actor = Actor_GetById(ACTOR_ROCK_B);
+  actor = Actor_Get(ACTOR_ROCK_B);
   actor->x.fixed = (x << 20) + PIXELS(8);
   actor->motionFlags = 0;
   actor->priorityFlags = 2;
   MapGrid_CopyCellAttributes(14, 13, 1, 1, x, 12);
   Task_AddFrame(ColosseumAzartMatch_UpdateBrokenBridge, TASK_PASS_FRAME);
-  actor = Actor_GetById(ACTOR_GROWTH_PLANT);
+  actor = Actor_Get(ACTOR_GROWTH_PLANT);
   actor->layer = 1;
   zero = 0;
   if (GameFlag_Get(FLAG_PLANT_GROWN)) {
@@ -756,12 +756,12 @@ s32 ColosseumAzartMatch_Initialize(void) {
     actor->priorityFlags = 3;
     MapGrid_CopyCellAttributes(47, 24, 1, 1, 47, 12);
   }
-  actor = Actor_GetById(ACTOR_LOG_NORTH_SOUTH);
+  actor = Actor_Get(ACTOR_LOG_NORTH_SOUTH);
   col = actor->z.fixed >> 20;
   actor->motionFlags = zero;
   actor->priorityFlags = 2;
   MapGrid_CopyCellAttributes(64, 24, 3, 1, 64, col);
-  actor = Actor_GetById(ACTOR_LOG_EAST_WEST);
+  actor = Actor_Get(ACTOR_LOG_EAST_WEST);
   col = actor->x.fixed >> 20;
   actor->motionFlags = zero;
   actor->priorityFlags = 2;
@@ -771,7 +771,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
     MapGrid_CopyCellAttributes(36, 7, 1, 4, 37, 7);
     MapGrid_CopyCells(100, 29, 1, 3, 34, 38);
   }
-  actor = Actor_GetById(ACTOR_PIPE_WEST);
+  actor = Actor_Get(ACTOR_PIPE_WEST);
   if (GameFlag_Get(FLAG_PIPES_MOVED)) {
     MapGrid_CopyCellAttributes(43, 12, 1, 1, 41, 12);
     actor->motionFlags = zero;
@@ -782,7 +782,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
   } else {
     Actor_SelectAnimation(actor, 2);
   }
-  Actor_GetById(ACTOR_PIPE_EAST)->priorityFlags = 2;
+  Actor_Get(ACTOR_PIPE_EAST)->priorityFlags = 2;
   Colosso_ShowItemIcon(ACTOR_PRIZE_A, ITEM_IRON_SHIELD);
   Colosso_ShowItemIcon(ACTOR_PRIZE_B, ITEM_PADDED_GLOVES);
   // Select competition, support, explanation, or post-battle arrival.
@@ -847,7 +847,7 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   s32 x;
   s32 z;
 
-  actor = Actor_GetById(guide);
+  actor = Actor_Get(guide);
   x = actor->x.part.pixel;
   z = actor->z.part.pixel;
   Event_Start();
@@ -856,13 +856,13 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
-  Import_ActorSetPosition(ACTOR_PARTY_LEADER, x << 16, (z << 16) - PIXELS(48));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, x << 16, (z << 16) - PIXELS(48));
   Actor_SetPosition(ACTOR_GARET, (x << 16) - PIXELS(16),
                     (z << 16) - PIXELS(40));
   Actor_SetPosition(ACTOR_IVAN, (x << 16) + PIXELS(16), (z << 16) - PIXELS(40));
   Actor_SetPosition(ACTOR_MIA, x << 16, (z << 16) - PIXELS(32));
   Actor_SetPosition(guide, x << 16, (z << 16) - PIXELS(80));
-  actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
   actor->facing = FACING_NORTH;
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
   Event_StartScreenTransition();
@@ -888,11 +888,11 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   if (Event_AskYesNo(guide, 0) == 0) {
     do {
       Event_SetMessageId(MsgColossoWarriorsEnterFinalsWithoutAny);
-      Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+      Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
       Event_Wait(2);
-      Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+      Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
       Event_Wait(2);
-      Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
+      Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
       Event_Wait(1);
       Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
       Actor_SetAnimationAndWait(guide, ANIM_NOD);
@@ -942,26 +942,26 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_ShowMessage(ACTOR_MIA, 0);
-  Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Event_Wait(1);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Event_Wait(2);
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(1);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(6);
-  Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
-  actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
-  Import_ActorSetAnimation(ACTOR_IVAN, ANIM_WALK);
-  actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
   }
-  Import_ActorSetAnimation(ACTOR_MIA, ANIM_WALK);
-  actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
   }
@@ -993,13 +993,13 @@ static void ColosseumAzartMatch_TalkToRockAttendant(s32 actorId) {
       FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(168), 1);
       FieldCamera_WaitForArrival();
-      Event_ShowMessageAndWait(actorId, 0);
+      Event_ShowMessage(actorId, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 280, 200);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 360, 200);
       Event_Wait(30);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-      Event_ShowMessageAndWait(actorId, 0);
+      Event_ShowMessage(actorId, 0);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 312, 200);
       Event_Wait(30);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 10);
@@ -1016,22 +1016,22 @@ static void ColosseumAzartMatch_TalkToRockAttendant(s32 actorId) {
       Actor_ResetMotionFields(ACTOR_PARTY_LEADER);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 304, 184);
-      Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, 296, 192);
-      Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, 296, 200);
-      Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_EAST, 15);
+      Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 192);
+      Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 200);
+      Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 15);
       ColosseumAzartMatch_PushActorAhead();
       Actor_ResetMotionFields(ACTOR_PARTY_LEADER);
       ColosseumAzartMatch_PushActorAhead();
       Actor_ResetMotionFields(ACTOR_PARTY_LEADER);
-      Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-      Event_ShowMessageAndWait(actorId, 0);
+      Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+      Event_ShowMessage(actorId, 0);
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
       Actor_SetPosition(ACTOR_ROCK_A, PIXELS(312), PIXELS(168));
       Colosso_RepeatStageNumber(actorId, 1);
     } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
       Event_SetMessageId(MsgColossoObjectiveStageClear);
-      Event_ShowMessageAndWait(actorId, 0);
+      Event_ShowMessage(actorId, 0);
     }
     Colosso_OfferCheeringSpot(path, actorId, 1);
     Event_End();
@@ -1070,41 +1070,41 @@ static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
       FieldCamera_SetSpeedParameters(PIXELS(3) / 2, PIXELS(3) / 16);
       FieldCamera_MoveWithinMapBounds(PIXELS(608), -1, PIXELS(216), 1);
       FieldCamera_WaitForArrival();
-      Event_ShowMessageAndWait(attendant, 0);
+      Event_ShowMessage(attendant, 0);
       Colosso_ShowPointer(56, 64, 0);
       Event_Wait(60);
       Colosso_MovePointer(160, 96, 10);
       Event_Wait(70);
-      Event_ShowMessageAndWait(attendant, 0);
+      Event_ShowMessage(attendant, 0);
       Colosso_HidePointer();
       wait(2);
-      first = Actor_GetById(ACTOR_PIPE_WEST);
+      first = Actor_Get(ACTOR_PIPE_WEST);
       ColosseumAzartMatch_SetPipeHeight(first, PIXELS(8));
-      second = Actor_GetById(ACTOR_PIPE_EAST);
+      second = Actor_Get(ACTOR_PIPE_EAST);
       ColosseumAzartMatch_SetPipeHeight(second, PIXELS(32));
       Actor_WaitForMove(second);
       Event_Wait(45);
-      first = Actor_GetById(ACTOR_PIPE_WEST);
+      first = Actor_Get(ACTOR_PIPE_WEST);
       ColosseumAzartMatch_SetPipeHeight(first, PIXELS(24));
       second = Actor_Get(ACTOR_PIPE_EAST);
       ColosseumAzartMatch_SetPipeHeight(second, 0);
       Actor_WaitForMove(second);
       Event_Wait(15);
-      Event_ShowMessageAndWait(attendant, 0);
+      Event_ShowMessage(attendant, 0);
       Colosso_ShowPointer(56, 64, 0);
       Event_Wait(30);
       Colosso_MovePointer(160, 96, 10);
       Event_Wait(40);
       Colosso_MovePointer(56, 64, 10);
       Event_Wait(70);
-      Event_ShowMessageAndWait(attendant, 0);
+      Event_ShowMessage(attendant, 0);
       Colosso_HidePointer();
       wait(2);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(attendant, 2);
     } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
       Event_SetMessageId(MsgColossoObjectiveMakeGood);
-      Event_ShowMessageAndWait(attendant, 0);
+      Event_ShowMessage(attendant, 0);
     }
     Colosso_OfferCheeringSpot(path, attendant, 2);
     Event_End();
@@ -1186,7 +1186,7 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
     Event_Wait(15);
     COLOSSEUM_AZART_MATCH_PLACE_STAGED_PAIR(ACTOR_LOG_EAST_WEST, 160, 0);
     FieldCamera_MoveTo(PIXELS(1088), -1, PIXELS(168), 1);
-    Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
     Event_Wait(10);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1192, 168);
@@ -1208,12 +1208,12 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
 
 /// Sets the leader's movement speed for the shared Colosso dialogue.
 static inline void InitializeActorZero(void) {
-  Actor_SetSpeedParameters(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
 }
 
 /// Sets an attendant's movement speed for the shared Colosso dialogue.
 static inline void InitializeSelectedActor(s32 actorId) {
-  Actor_SetSpeedParameters(actorId, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(actorId, PIXELS(1), PIXELS(1) / 2);
 }
 
 /// Advances to the next message in the current explanation.
@@ -1336,7 +1336,7 @@ static void ColosseumAzartMatch_ShowMatchResult(s32 result) {
     Event_Wait(result * 60 + 60);
     loser = ACTOR_OPPONENT;
   }
-  FieldEffect_SpawnAttached(loser, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(loser, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   while (Sound_GetBgmRestoreDelay() != 0) {
     wait(1);
   }
@@ -1423,7 +1423,7 @@ static void ColosseumAzartMatch_SpawnRandomEffect(struct Actor *updated) {
 static s32
 ColosseumAzartMatch_PlaceFinishItemAboveActor(struct Actor *interpreter) {
   struct Actor *collector = interpreter;
-  struct Actor *itemActor = Actor_GetById(collector->timer);
+  struct Actor *itemActor = Actor_Get(collector->timer);
 
   FieldActor_SetMoveTarget(itemActor, collector->x.fixed,
                            collector->y.fixed + PIXELS(36), collector->z.fixed);
@@ -1448,7 +1448,7 @@ static s32 ColosseumAzartMatch_CollectFinishItem(s32 firstItem,
 
   flag = GameFlag_Get(FLAG_ARENA_REACHED);
 
-  actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  actor = Actor_Get(gMainRoutineWork.leaderActorId);
 
   if (gauge->finishX < actor->x.fixed) {
     x = gauge->finishX + PIXELS(12);
@@ -1510,7 +1510,7 @@ static void ColosseumAzartMatch_PushActorAhead(void) {
   s32 actorId;
 
   actorId = gMainRoutineWork.leaderActorId;
-  subject = Actor_GetById(actorId);
+  subject = Actor_Get(actorId);
 
   direction = subject->facing >> 12;
 

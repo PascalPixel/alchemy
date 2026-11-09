@@ -195,7 +195,7 @@ s32 Scene_Initialize(void) {
   sceneId = gMainRoutineWork.next;
   if (sceneId == (s32)&SceneId_SuhallaGateCheckpoint) {
     if (GameFlag_Get(FLAG_SUHALLA_GATE_SOLDIER_VANISHED))
-      Import_ActorSetPosition(ACTOR_VANISHING_SOLDIER, 0, 0);
+      Actor_SetPosition(ACTOR_VANISHING_SOLDIER, 0, 0);
 #if TBS_PATCH_3
     else if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO))
       MapGrid_CopyCellAttributes(0, 0, 2, 1, 29, 18);
@@ -241,7 +241,7 @@ s32 Scene_Initialize(void) {
     // as the scene loads from each of its entrances); the store goes to
     // the BIOS, which ignores it.
 #ifndef UBFIX
-    Actor_GetById(15)->scaleY = 8 * Q16_ONE / 5;
+    Actor_Get(15)->scaleY = 8 * Q16_ONE / 5;
 #endif
     MapGrid_CopyCellAttributes(108, 38, 1, 1, 102, 56);
   }
@@ -258,7 +258,7 @@ static void SuhallaGate_EnterHouse(void) {
   exitTrigger = gFieldWork->stepTrigger;
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   cellSize = 2;
-  Event_PlaySound(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(66, 36, 71, 8, cellSize, cellSize);
   wait(4);
   MapGrid_CopyCellsTo(68, 36, 71, 8, cellSize, cellSize);
@@ -334,32 +334,32 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 20);
   Actor_StartRepeatedMotion(ACTOR_IODEM, 2);
   Event_SetMessageId(MsgSuhallaMeaning);
-  FieldEvent_ShowMessageThenWait(ACTOR_IODEM, 0, 40);
+  Event_ShowMessageThenWait(ACTOR_IODEM, 0, 40);
   // The guards describe the attack before Iodem asks who was responsible.
   Actor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_RunRepeatedMotion(ACTOR_WEST_GUARD, 2);
-  FieldEvent_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
   Actor_WalkToAndWait(ACTOR_IODEM, 132, 420);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Actor_WalkToAndWait(ACTOR_IODEM, 138, 416);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTHWEST + FACING_STEP, 10);
   Actor_StartRepeatedMotion(ACTOR_IODEM, 2);
-  FieldEvent_ShowMessageThenWait(ACTOR_IODEM, 0, 40);
+  Event_ShowMessageThenWait(ACTOR_IODEM, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_WEST_GUARD, 2);
-  FieldEvent_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 40);
+  Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 40);
   Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_RunRepeatedMotion(ACTOR_EAST_GUARD, 2);
-  FieldEvent_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_WalkToAndWait(ACTOR_IODEM, 144, 420);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_EAST_GUARD, 2);
-  FieldEvent_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 20);
   Actor_SetAttachedEffect(ACTOR_EAST_GUARD,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_StartRepeatedMotion(ACTOR_EAST_GUARD, 3);
-  FieldEvent_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 20);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH + FACING_STEP, 20);
   // Iodem: "It must have been Felix!", and the party answers yes or no. Once he
   // has heard the wounded soldiers in Suhalla he adds that they must find
@@ -370,37 +370,37 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
     Actor_SetAttachedEffect(ACTOR_IODEM,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
-    FieldEvent_ShowMessageThenWait(ACTOR_IODEM, 0, 10);
+    Event_ShowMessageThenWait(ACTOR_IODEM, 0, 10);
   } else {
     gFieldWork->message += 1;
   }
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH + FACING_STEP, 10);
-  FieldEvent_ShowMessageThenWait(ACTOR_IODEM, 0, 40);
+  Event_ShowMessageThenWait(ACTOR_IODEM, 0, 40);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTHWEST + FACING_STEP, 10);
-  FieldEvent_ShowMessageThenWait(ACTOR_IODEM, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_IODEM, 0, 10);
   Actor_WalkToAndWait(ACTOR_IODEM, 138, 416);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTHWEST + FACING_STEP, 20);
   Actor_StartRepeatedMotion(ACTOR_WEST_GUARD, 2);
-  FieldEvent_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
   Actor_SetAttachedEffect(ACTOR_IODEM,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 1);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_IODEM, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_IODEM, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_EAST_GUARD, 2);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 10);
   Actor_RunRepeatedMotion(ACTOR_EAST_GUARD, 1);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_WEST_GUARD, 2);
-  FieldEvent_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 1);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_IODEM, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_IODEM, 0, 20);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH + FACING_STEP, 10);
-  FieldEvent_ShowMessageThenWait(ACTOR_IODEM, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_IODEM, 0, 10);
   Import_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
@@ -432,23 +432,23 @@ static void SuhallaGate_TalkToEastGuard(void) {
 
   if (GameFlag_Get(FLAG_SUHALLA_GATE_ATTACK_SEEN) != 0) {
     Event_SetMessageId(MsgSuhallaPityColossoVictor);
-    Event_ShowMessageAndWait(ACTOR_EAST_GUARD, 0);
+    Event_ShowMessage(ACTOR_EAST_GUARD, 0);
   } else {
     Event_SetMessageId(MsgSuhallaWantGoBabi);
     {
       s32 mode = 0;
       s32 no = ACTOR_EAST_GUARD;
 
-      FieldMessage_ShowAtActor(no, mode);
+      Event_OpenMessage(no, mode);
     }
 
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-      Event_ShowMessageAndWait(ACTOR_EAST_GUARD, 0);
+      Event_ShowMessage(ACTOR_EAST_GUARD, 0);
       Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_SHAKE_HEAD);
-      Event_ShowMessageAndWait(ACTOR_EAST_GUARD, 0);
+      Event_ShowMessage(ACTOR_EAST_GUARD, 0);
     } else {
       gFieldWork->message += 2;
-      Event_ShowMessageAndWait(ACTOR_EAST_GUARD, 0);
+      Event_ShowMessage(ACTOR_EAST_GUARD, 0);
     }
   }
 
@@ -466,7 +466,7 @@ static void SuhallaGate_SoldierVanishes(void) {
   Event_Start();
 
   Event_SetMessageId(MsgFieldVenusLighthouseWasAttackedBy);
-  FieldEvent_ShowMessageThenWait(ACTOR_VANISHING_SOLDIER, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_VANISHING_SOLDIER, 0, 10);
 
   beat = 0;
   // Six slow blinks are followed by twelve fast ones.

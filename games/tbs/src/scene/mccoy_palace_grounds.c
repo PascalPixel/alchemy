@@ -150,7 +150,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// it to the party.
 static void McCoyPalaceGrounds_CatchFloatingNut(void) {
   Event_Start();
-  Import_ActorSetPosition(ACTOR_FLOATING_NUT, 0, 0);
+  Actor_SetPosition(ACTOR_FLOATING_NUT, 0, 0);
   GameFlag_Set(FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT);
   ItemDisplay_ShowItem(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
@@ -178,7 +178,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 static void McCoyPalaceGrounds_TalkToNorthWorker(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinHaveYouSeenBarricadeWe);
-  Event_AskYesNoAndShowResponse(ACTOR_NORTH_WORKER, 0);
+  Event_AskYesNo(ACTOR_NORTH_WORKER, 0);
   Event_End();
 }
 
@@ -189,7 +189,7 @@ static void McCoyPalaceGrounds_TalkToNorthWorker(void) {
 static void McCoyPalaceGrounds_TalkToLadyMcCoy(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinTellingMeImResponsibleFor);
-  Event_AskYesNoAndShowResponse(ACTOR_LADY_MCCOY, 0);
+  Event_AskYesNo(ACTOR_LADY_MCCOY, 0);
   Event_End();
 }
 
@@ -198,7 +198,7 @@ static void McCoyPalaceGrounds_TalkToLadyMcCoy(void) {
 static void McCoyPalaceGrounds_TalkToWestGuard(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinDoThinkCanBecomeAs);
-  Event_AskYesNoAndShowResponse(ACTOR_WEST_GUARD, 0);
+  Event_AskYesNo(ACTOR_WEST_GUARD, 0);
   Event_End();
 }
 
@@ -225,20 +225,20 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
         GameFlag_Set(FLAG_GUARD_SCOLDED);
       }
       Event_SetMessageId(MsgBilibinMasterQuiteCranky);
-      Event_ShowMessageAndWait(ACTOR_EAST_GUARD, 0);
+      Event_ShowMessage(ACTOR_EAST_GUARD, 0);
     } else {
       Event_SetMessageId(MsgBilibinLordMccoyDifficult);
-      Event_ShowMessageAndWait(ACTOR_EAST_GUARD, 0);
+      Event_ShowMessage(ACTOR_EAST_GUARD, 0);
       goto guard;
     }
   } else {
     // On the first visit, the guards confer before opening the gate.
     Event_SetMessageId(MsgBilibinLordOnlyMeet);
-    FieldMessage_ShowAtActor(ACTOR_EAST_GUARD, 0);
+    Event_OpenMessage(ACTOR_EAST_GUARD, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       gFieldWork->message++;
       Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 10);
-      if (Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed < PIXELS(270)) {
+      if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed < PIXELS(270)) {
         Actor_SetSpeed(ACTOR_EAST_GUARD, PIXELS(4) / 5, PIXELS(2) / 5);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 346, 274);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 282);
@@ -252,18 +252,18 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
       Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
       Actor_StartRepeatedMotion(ACTOR_EAST_GUARD, 1);
       Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 20);
-      Import_ActorSetAnimation(ACTOR_WEST_GUARD, ANIM_NOD);
+      Actor_SetAnimation(ACTOR_WEST_GUARD, ANIM_NOD);
       Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_NOD);
       Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
       Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 10);
       Actor_StartRepeatedMotion(ACTOR_WEST_GUARD, 1);
       Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 20);
       Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_NORTHEAST + FACING_STEP, 0);
-      Actor_SetSpeedParameters(ACTOR_EAST_GUARD, PIXELS(1), PIXELS(1) / 2);
-      Actor_GetById(ACTOR_EAST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
+      Actor_SetSpeed(ACTOR_EAST_GUARD, PIXELS(1), PIXELS(1) / 2);
+      Actor_Get(ACTOR_EAST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
       Actor_WalkToAndWait(ACTOR_EAST_GUARD, 346, 263);
       Event_Wait(1);
-      Actor_GetById(ACTOR_EAST_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
+      Actor_Get(ACTOR_EAST_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
       Actor_SetSpeed(ACTOR_WEST_GUARD, PIXELS(3) / 5, PIXELS(3) / 10);
       Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 263);
       Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 252);
@@ -281,7 +281,7 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
           ACTOR_EAST_GUARD, ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
           gGuardWatchesParty);
     } else {
-      Event_ShowMessageAndWait(ACTOR_EAST_GUARD, 0);
+      Event_ShowMessage(ACTOR_EAST_GUARD, 0);
       Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTHEAST + FACING_STEP, 10);
     }
   }
@@ -297,7 +297,7 @@ static void McCoyPalaceGrounds_EnterPalace(void) {
   }
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
   Event_Wait(16);
   Import_EventSetExitRequest(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE);
@@ -312,7 +312,7 @@ s32 Scene_Initialize(void) {
 
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
-  actor = Actor_GetById(ACTOR_WEST_WORKER);
+  actor = Actor_Get(ACTOR_WEST_WORKER);
   actor->priorityFlags = 0;
   actor->sprite->image.priority = 1;
 
@@ -335,10 +335,10 @@ static void McCoyPalaceGrounds_RestoreStory(void) {
   }
   if (GameFlag_Get(FLAG_MCCOY_PALACE_ADMITTED) != 0) {
     Actor_SetPosition(ACTOR_WEST_GUARD, PIXELS(308), PIXELS(263));
-    Import_ActorSetPosition(ACTOR_EAST_GUARD, PIXELS(346), PIXELS(263));
+    Actor_SetPosition(ACTOR_EAST_GUARD, PIXELS(346), PIXELS(263));
     if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
       if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-        Import_ActorSetPosition(ACTOR_WEST_GUARD, 0, 0);
+        Actor_SetPosition(ACTOR_WEST_GUARD, 0, 0);
         FieldActor_SetTargetAndCallback(
             ACTOR_EAST_GUARD, ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
             gGuardWatchesParty);
@@ -349,7 +349,7 @@ static void McCoyPalaceGrounds_RestoreStory(void) {
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Actor_SetPosition(ACTOR_LADY_MCCOY, PIXELS(224), PIXELS(292));
     Actor_FaceDirection(ACTOR_LADY_MCCOY, FACING_SOUTH, 0);
-    Actor_ArmCallback(ACTOR_WEST_WORKER, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_WEST_WORKER, FACING_EAST, 0);
     if (GameFlag_Get(FLAG_MCCOY_PALACE_PARTY_REWARDED) == 0) {
       McCoyPalaceGrounds_GuardsArrestParty();
     }
@@ -389,21 +389,20 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
   Actor_RunRepeatedMotion(ACTOR_WEST_GUARD, 1);
   Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_EAST_GUARD, 1);
-  FieldMessage_ShowAtActor(ACTOR_EAST_GUARD, 0);
+  Event_OpenMessage(ACTOR_EAST_GUARD, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   // Refusals repeat the accusation until the player acknowledges it.
   while (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
-    FieldEffect_SpawnAttached(ACTOR_EAST_GUARD,
-                              EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+    Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     Event_SetMessageId(MsgBilibinNotTrueWitnesses);
     Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 10);
     Actor_StartRepeatedMotion(ACTOR_EAST_GUARD, 2);
-    FieldMessage_ShowAtActor(ACTOR_EAST_GUARD, 0);
+    Event_OpenMessage(ACTOR_EAST_GUARD, 0);
   }
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 20);
-  Import_ActorSetAnimation(ACTOR_WEST_GUARD, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_WEST_GUARD, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_NOD);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_WEST_GUARD, 1);
@@ -417,12 +416,12 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
   if (GameFlag_Get(FLAG_MCCOY_PALACE_ADMITTED) == 0) {
-    Actor_SetSpeedParameters(ACTOR_EAST_GUARD, PIXELS(1), PIXELS(1) / 2);
-    Actor_GetById(ACTOR_EAST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
-    Actor_SetPositionAndReset(ACTOR_EAST_GUARD, 346, 263);
+    Actor_SetSpeed(ACTOR_EAST_GUARD, PIXELS(1), PIXELS(1) / 2);
+    Actor_Get(ACTOR_EAST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
+    Actor_WalkToAndWait(ACTOR_EAST_GUARD, 346, 263);
     Event_Wait(1);
     {
-      struct Actor *guard = Actor_GetById(ACTOR_EAST_GUARD);
+      struct Actor *guard = Actor_Get(ACTOR_EAST_GUARD);
 
       guard->steeringFlags = ACTOR_FACES_MOTION | guard->steeringFlags;
     }
@@ -432,14 +431,14 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkTo(ACTOR_WEST_GUARD, 328, 262);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 278);
-  Import_ActorSetAnimation(ACTOR_WEST_GUARD, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_WEST_GUARD, ANIM_STAND);
   McCoyPalaceGrounds_OpenGate();
   Event_Wait(40);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 328, 242);
   Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 242);
-  Import_ActorSetPosition(ACTOR_WEST_GUARD, 0, 0);
+  Actor_SetPosition(ACTOR_WEST_GUARD, 0, 0);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-  Import_ActorSetPosition(ACTOR_PARTY_LEADER, 0, 0);
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

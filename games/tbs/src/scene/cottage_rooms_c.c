@@ -192,7 +192,7 @@ const struct ActorPlacement *CottageRoomsC_GetActorPlacements(void) {
 static void CottageRoomsC_TalkToWeaponMerchant(void) {
   u32 leaderFacing;
 
-  leaderFacing = Actor_GetById(ACTOR_PARTY_LEADER)->facing;
+  leaderFacing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
   Event_Start();
 
   if (FACING_IS_NORTH(leaderFacing)) {
@@ -203,7 +203,7 @@ static void CottageRoomsC_TalkToWeaponMerchant(void) {
     } else {
       Event_SetMessageId(MsgBilibinOurWeaponsBestCanFind);
     }
-    Event_ShowMessageAndWait(ACTOR_BILIBIN_WEAPON_MERCHANT, 0);
+    Event_ShowMessage(ACTOR_BILIBIN_WEAPON_MERCHANT, 0);
   }
 
   Event_End();
@@ -215,7 +215,7 @@ static void CottageRoomsC_TalkToWeaponMerchant(void) {
 static void CottageRoomsC_TalkToItemMerchant(void) {
   u32 leaderFacing;
 
-  leaderFacing = Actor_GetById(ACTOR_PARTY_LEADER)->facing;
+  leaderFacing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
   Event_Start();
 
   if (FACING_IS_NORTH(leaderFacing)) {
@@ -226,7 +226,7 @@ static void CottageRoomsC_TalkToItemMerchant(void) {
     } else {
       Event_SetMessageId(MsgBilibinTurnedOutWarriorsHiredBy);
     }
-    Event_ShowMessageAndWait(ACTOR_BILIBIN_ITEM_MERCHANT, 0);
+    Event_ShowMessage(ACTOR_BILIBIN_ITEM_MERCHANT, 0);
   }
 
   Event_End();
@@ -244,7 +244,7 @@ const struct Trigger *CottageRoomsC_GetTriggers(void) {
 static void CottageRoomsC_TalkToArmorMerchant(void) {
   u32 leaderFacing;
 
-  leaderFacing = Actor_GetById(ACTOR_PARTY_LEADER)->facing;
+  leaderFacing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
   Event_Start();
   if (FACING_IS_NORTH(leaderFacing)) {
     Shop_Run(SHOP_BILIBIN_ARMOR, ACTOR_BILIBIN_ARMOR_MERCHANT);
@@ -280,7 +280,7 @@ static void CottageRoomsC_TalkToWorriedChef(void) {
 static void CottageRoomsC_TalkToHungryDiner(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinGrrr);
-  FieldEvent_ShowMessageThenWait(ACTOR_BILIBIN_HUNGRY_DINER, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_BILIBIN_HUNGRY_DINER, 0, 20);
   Actor_FaceActor(ACTOR_BILIBIN_HUNGRY_DINER, ACTOR_PARTY_LEADER, 0);
   Event_Wait(10);
   Event_OpenMessage(ACTOR_BILIBIN_HUNGRY_DINER, 0);
@@ -314,7 +314,7 @@ static void CottageRoomsC_AskAboutTreeSpirit(void) {
 static void CottageRoomsC_AskAboutHolyTree(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinDoKnowIfHolyTree);
-  Event_AskYesNoAndShowResponse(ACTOR_BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN, 0);
+  Event_AskYesNo(ACTOR_BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN, 0);
   Event_End();
 }
 
@@ -324,7 +324,7 @@ static void CottageRoomsC_AskAboutHolyTree(void) {
 static void CottageRoomsC_AskAboutSilk(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinDoKnowSilk);
-  Event_AskYesNoAndShowResponse(ACTOR_BILIBIN_GIRL_SILK, 0);
+  Event_AskYesNo(ACTOR_BILIBIN_GIRL_SILK, 0);
   Event_End();
 }
 
@@ -334,17 +334,17 @@ static void CottageRoomsC_AskAboutSilk(void) {
 static void CottageRoomsC_TalkToInnkeeper(void) {
   u32 leaderFacing;
 
-  leaderFacing = Actor_GetById(ACTOR_PARTY_LEADER)->facing;
+  leaderFacing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
   Event_Start();
 
   if (FACING_IS_NORTH(leaderFacing)) {
     Inn_CheckIn(BILIBIN_INN, ACTOR_BILIBIN_INNKEEPER);
   } else if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Event_SetMessageId(MsgBilibinWasntCurseInKolimaHorrifying);
-    Event_AskYesNoAndShowResponse(ACTOR_BILIBIN_INNKEEPER, 0);
+    Event_AskYesNo(ACTOR_BILIBIN_INNKEEPER, 0);
   } else {
     Event_SetMessageId(MsgBilibinCurseOnKolimaScaryDevelopment);
-    Event_ShowMessageAndWait(ACTOR_BILIBIN_INNKEEPER, 0);
+    Event_ShowMessage(ACTOR_BILIBIN_INNKEEPER, 0);
   }
 
   Event_End();
@@ -385,10 +385,10 @@ static void CottageRoomsC_TalkToBusyChef(void) {
 static void CottageRoomsC_TalkToKitchenWorker(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinReallyThinkHeadChefHas);
-  Event_ShowMessageAndWait(ACTOR_BILIBIN_KITCHEN_WORKER, 0);
-  Actor_SetAngleToward(ACTOR_BILIBIN_KITCHEN_WORKER, ACTOR_PARTY_LEADER, 0);
-  Event_ShowMessageAndWait(ACTOR_BILIBIN_KITCHEN_WORKER, 0);
-  Actor_ArmCallback(ACTOR_BILIBIN_KITCHEN_WORKER, FACING_EAST, 10);
+  Event_ShowMessage(ACTOR_BILIBIN_KITCHEN_WORKER, 0);
+  Actor_FaceActor(ACTOR_BILIBIN_KITCHEN_WORKER, ACTOR_PARTY_LEADER, 0);
+  Event_ShowMessage(ACTOR_BILIBIN_KITCHEN_WORKER, 0);
+  Actor_FaceDirection(ACTOR_BILIBIN_KITCHEN_WORKER, FACING_EAST, 10);
   Event_End();
 }
 
@@ -409,7 +409,7 @@ static void CottageRoomsC_TalkToWaitress(void) {
 static void CottageRoomsC_TalkAboutMeal(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinWasSomeMealDontJust);
-  Event_AskYesNoAndShowResponse(ACTOR_BILIBIN_DINER, 0);
+  Event_AskYesNo(ACTOR_BILIBIN_DINER, 0);
   Event_End();
 }
 
@@ -424,7 +424,7 @@ static void CottageRoomsC_ReadMiaAdmirersMind(void) {
   } else {
     Event_SetMessageId(MsgBilibinWhenSpringComesWantGo);
   }
-  Event_ShowMessageAndWait(ACTOR_BILIBIN_MIA_ADMIRER, 0);
+  Event_ShowMessage(ACTOR_BILIBIN_MIA_ADMIRER, 0);
   Event_End();
 }
 
@@ -436,7 +436,7 @@ s32 CottageRoomsC_Initialize(void) {
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  actor = Actor_GetById(ACTOR_BILIBIN_DINER);
+  actor = Actor_Get(ACTOR_BILIBIN_DINER);
   actor->priorityFlags = 0;
   actor->sprite->image.priority = 2;
   return 0;

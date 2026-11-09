@@ -138,14 +138,14 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 static void Suhalla_AskIfGoingToLalivero(s32 actorId) {
   s32 firstMessage = MsgSuhallaTryingGetLalivero;
   Event_SetMessageId(firstMessage);
-  FieldMessage_ShowAtActor(actorId, 0);
+  Event_OpenMessage(actorId, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(10);
     Event_SetMessageId(firstMessage + 1);
   } else {
     Event_SetMessageId(firstMessage + 2);
   }
-  Event_ShowMessageAndWait(actorId, 0);
+  Event_ShowMessage(actorId, 0);
 }
 
 /// An old woman asks whether the sandstorm brought the party to Suhalla. She's
@@ -155,14 +155,14 @@ static void Suhalla_AskIfGoingToLalivero(s32 actorId) {
 static void Suhalla_AskIfBroughtBySandstorm(s32 actorId) {
   s32 firstMessage = MsgSuhallaBroughtSuhallaSandstorm;
   Event_SetMessageId(firstMessage);
-  FieldMessage_ShowAtActor(actorId, 0);
+  Event_OpenMessage(actorId, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(10);
     Event_SetMessageId(firstMessage + 1);
   } else {
     Event_SetMessageId(firstMessage + 2);
   }
-  Event_ShowMessageAndWait(actorId, 0);
+  Event_ShowMessage(actorId, 0);
 }
 
 /// Growth on Suhalla's sprout: the plant grows, and its cell takes the cell
@@ -183,7 +183,7 @@ static void Suhalla_EnterDoor(void) {
   u16 cellX = gSuhallaDoorCells[exitTrigger][0];
   u16 cellZ = gSuhallaDoorCells[exitTrigger][1];
 
-  Event_PlaySound(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gSuhallaDoorOpenSteps, cellX, cellZ);
   // Walk through the opening while the exit transition counts down.
   Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -16);
@@ -198,7 +198,7 @@ static void Suhalla_EnterWideDoor(void) {
   u16 cellX = gSuhallaDoorCells[exitTrigger][0];
   u16 cellZ = gSuhallaDoorCells[exitTrigger][1];
 
-  Event_PlaySound(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gSuhallaWideDoorOpenSteps, cellX, cellZ);
   Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -16);
   gFieldWork->transitionFrames = 16;

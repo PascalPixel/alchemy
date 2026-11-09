@@ -178,7 +178,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Lunpa: Catch on the Nut floating over the town gives it to the party.
 static void Lunpa_CatchFloatingNut(void) {
   Event_Start();
-  Import_ActorSetPosition(ACTOR_FLOATING_NUT, 0, 0);
+  Actor_SetPosition(ACTOR_FLOATING_NUT, 0, 0);
   GameFlag_Set(FLAG_LUNPA_NUT_CAUGHT);
   ItemDisplay_ShowItem(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
@@ -212,12 +212,10 @@ static void Lunpa_FreezeHiddenPuddle(void) {
 /// Every frame while the pillar stands: draw it under the leader once the
 /// leader is on top.
 static void Lunpa_UpdateIcePillarDrawOrder(void) {
-  if (Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed >= PILLAR_TOP_HEIGHT) {
-    Actor_GetById(ACTOR_HIDDEN_PUDDLE)->priorityFlags |=
-        ACTOR_PRIORITY_UNDERFOOT;
+  if (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed >= PILLAR_TOP_HEIGHT) {
+    Actor_Get(ACTOR_HIDDEN_PUDDLE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   } else {
-    Actor_GetById(ACTOR_HIDDEN_PUDDLE)->priorityFlags =
-        ACTOR_PRIORITY_AUTOMATIC;
+    Actor_Get(ACTOR_HIDDEN_PUDDLE)->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
 }
 
@@ -328,9 +326,9 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// the party wants to enter Lunpa, and turns them away either way.
 static void Lunpa_TalkToWestGuard(void) {
   Event_Start();
-  FieldEffect_SpawnAttached(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  Actor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Event_SetMessageId(MsgLunpaWestGuardAsksAboutEntering);
-  Event_AskYesNoAndShowResponse(ACTOR_WEST_GUARD, 0);
+  Event_AskYesNo(ACTOR_WEST_GUARD, 0);
   Event_End();
 }
 
@@ -341,18 +339,18 @@ static void Lunpa_TalkToEastGuard(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
     Event_SetMessageId(MsgLunpaEastGuardDemandsAuthorization);
-    Event_ShowMessageAndWait(ACTOR_EAST_GUARD, 0);
+    Event_ShowMessage(ACTOR_EAST_GUARD, 0);
   } else {
     Event_SetMessageId(MsgLunpaEastGuardAsksIfFrom);
-    FieldMessage_ShowAtActor(ACTOR_EAST_GUARD, 0);
+    Event_OpenMessage(ACTOR_EAST_GUARD, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       gFieldWork->message++;
-      FieldMessage_ShowAtActor(ACTOR_EAST_GUARD, 0);
+      Event_OpenMessage(ACTOR_EAST_GUARD, 0);
       if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
         gFieldWork->message++;
       }
     }
-    Event_ShowMessageAndWait(ACTOR_EAST_GUARD, 0);
+    Event_ShowMessage(ACTOR_EAST_GUARD, 0);
   }
   Event_End();
 }
@@ -372,10 +370,10 @@ static void Lunpa_ReadEastGuardsThoughts(void) {
       thoughts = MsgLunpaEastGuardTrustsCaveGate;
     }
     Event_SetMessageId(thoughts);
-    Event_ShowMessageAndWait(ACTOR_EAST_GUARD, 0);
+    Event_ShowMessage(ACTOR_EAST_GUARD, 0);
   } else {
     Event_SetMessageId(MsgLunpaEastGuardThinksMerchantHarmless);
-    Event_ShowMessageAndWait(ACTOR_EAST_GUARD, 0);
+    Event_ShowMessage(ACTOR_EAST_GUARD, 0);
   }
 }
 
@@ -384,7 +382,7 @@ static void Lunpa_ReadEastGuardsThoughts(void) {
 static void Lunpa_AskAboutLengthOfStay(void) {
   Event_Start();
   Event_SetMessageId(MsgLunpaVillagerAAsksHowLong);
-  Event_AskYesNoAndShowResponse(ACTOR_MAN_ASKING_HOW_LONG_IN_LUNPA, 0);
+  Event_AskYesNo(ACTOR_MAN_ASKING_HOW_LONG_IN_LUNPA, 0);
   Event_End();
 }
 
@@ -393,7 +391,7 @@ static void Lunpa_AskAboutLengthOfStay(void) {
 static void Lunpa_AskAboutHammetsKidnapping(void) {
   Event_Start();
   Event_SetMessageId(MsgLunpaVillagerCAsksAboutKidnapping);
-  Event_AskYesNoAndShowResponse(ACTOR_MAN_ON_HAMMETS_KIDNAPPING, 0);
+  Event_AskYesNo(ACTOR_MAN_ON_HAMMETS_KIDNAPPING, 0);
   Event_End();
 }
 
@@ -402,7 +400,7 @@ static void Lunpa_AskAboutHammetsKidnapping(void) {
 static void Lunpa_AskAboutSeeingDonpa(void) {
   Event_Start();
   Event_SetMessageId(MsgLunpaVillagerGAsksAboutDonpa);
-  Event_AskYesNoAndShowResponse(ACTOR_BOY_ASKING_TO_SEE_DONPA, 0);
+  Event_AskYesNo(ACTOR_BOY_ASKING_TO_SEE_DONPA, 0);
   Event_End();
 }
 
@@ -412,7 +410,7 @@ static void Lunpa_ComplainAboutCold(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_WOMAN_WITH_NO_FREEDOM, 3);
   Event_SetMessageId(MsgLunpaVillagerBShivers);
-  Event_ShowMessageAndWait(ACTOR_WOMAN_WITH_NO_FREEDOM, 0);
+  Event_ShowMessage(ACTOR_WOMAN_WITH_NO_FREEDOM, 0);
   Event_End();
 }
 
@@ -421,7 +419,7 @@ static void Lunpa_ComplainAboutCold(void) {
 static void Lunpa_AskAboutFortressCommotion(void) {
   Event_Start();
   Event_SetMessageId(MsgLunpaVillagerDAsksAboutCommotion);
-  Event_AskYesNoAndShowResponse(ACTOR_WOMAN_SAYING_DONPA_IS_TOO_OLD, 0);
+  Event_AskYesNo(ACTOR_WOMAN_SAYING_DONPA_IS_TOO_OLD, 0);
   Event_End();
 }
 
@@ -435,18 +433,17 @@ static void Lunpa_TalkToLeftGuard(void) {
     Event_SetMessageId(MsgLunpaLeftGuardHearsSomeone);
   } else if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0 &&
              GameFlag_Get(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
-    FieldEffect_SpawnAttached(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_QUESTION,
-                              60);
+    Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     recognitionMessageBase = MsgLunpaLeftGuardRecognizesHammet;
     Event_SetMessageId(recognitionMessageBase + RECOGNITION_SEEN_THAT_MAN);
-    Event_ShowMessageAndWait(ACTOR_LEFT_GUARD, 0);
+    Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
     Actor_StartRepeatedMotion(ACTOR_LEFT_GUARD, 1);
     Event_SetMessageId(recognitionMessageBase + RECOGNITION_IMPOSSIBLE);
     GameFlag_Set(FLAG_LUNPA_GATE_GUARD_SAW_HAMMET);
   } else {
     Event_SetMessageId(MsgLunpaLeftGuardResentsDodonpa);
   }
-  Event_ShowMessageAndWait(ACTOR_LEFT_GUARD, 0);
+  Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
 }
 
 /// Lunpa Fortress Gates: the right guard boasts, finds the place creepy while
@@ -460,7 +457,7 @@ static void Lunpa_TalkToRightGuard(void) {
   } else {
     Event_SetMessageId(MsgLunpaRightGuardBoasts);
   }
-  Event_ShowMessageAndWait(ACTOR_RIGHT_GUARD, 0);
+  Event_ShowMessage(ACTOR_RIGHT_GUARD, 0);
 }
 
 /// Lunpa Fortress Gates: Mind Read on the left guard. After Donpa's judgment
@@ -500,7 +497,7 @@ static void Lunpa_ReadRightGuardsThoughts(void) {
   } else {
     Event_SetMessageId(MsgLunpaYoudShadowSneak);
   }
-  Event_ShowMessageAndWait(ACTOR_RIGHT_GUARD, 0);
+  Event_ShowMessage(ACTOR_RIGHT_GUARD, 0);
 }
 
 /// Every frame at the Lunpa Fortress Gates after Donpa's judgment: stepping up
@@ -552,7 +549,7 @@ static void Lunpa_EnterDoor(void) {
       placedActor->motionFlags = 0;
     }
   }
-  Event_PlaySound(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   doorIndex = work->stepTrigger - CELL_BEHAVIOR_LUNPA_FIRST_HOME_DOOR;
   MapGrid_AnimateCells(gLunpaDoors[doorIndex].steps, gLunpaDoors[doorIndex].x,
                        gLunpaDoors[doorIndex].y);
@@ -593,7 +590,7 @@ static void Lunpa_EnterFortress(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -8);
-  Event_PlaySound(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_CopyCells(53, 4, 2, 2, 41, 4);
   Event_Wait(10);
   MapGrid_CopyCells(53, 6, 2, 2, 41, 4);
@@ -626,7 +623,7 @@ static void Lunpa_PressHiddenSwitch(void) {
   }
   // Open the passage over five map pictures, then remember its final state.
   Actor_SetPosition(ACTOR_SWITCH_SPARKLE, 0, 0);
-  Event_PlaySound(SE_HIDDEN_PASSAGE_OPEN);
+  Sound_Play(SE_HIDDEN_PASSAGE_OPEN);
   wait(1);
   Lunpa_DrawHiddenPassagePicture(32, 45);
   wait(10);
@@ -758,7 +755,7 @@ static void Lunpa_CloakFades(void) {
 #endif
   GameFlag_Clear(FLAG_LUNPA_FORTRESS_GATES_CLOAK_CAST);
   GameFlag_Clear(FLAG_LUNPA_FORTRESS_GATES_GUARDS_AT_DOOR);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader->x.fixed > PIXELS(104) && leader->x.fixed < PIXELS(240) &&
       leader->z.fixed > PIXELS(160) && leader->z.fixed < PIXELS(248)) {
     Task_Remove(Lunpa_WatchForUncloakedParty);
@@ -779,7 +776,7 @@ static void Lunpa_WatchForUncloakedParty(void) {
   struct Actor *leader;
 
   work = gFieldWork;
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (gMainRoutineWork.cloaked == 0 &&
       (u32)(leader->x.fixed - PIXELS(144)) <= PIXELS(32) &&
       leader->z.fixed >= PIXELS(168) && leader->z.fixed < PIXELS(176)) {
@@ -794,7 +791,7 @@ static void Lunpa_KickUpLeaderDust(void) {
   s32 dustAngle;
   s32 dustVelocity[3];
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if ((gFrameCount & 15) == 0) {
     dustAngle = (((u32)Import_RandomNext() * 52) >> 16) * 64 + 230;
     SET_VECTOR(dustVelocity, Trig_Cos(dustAngle) / 4, 0,
@@ -834,16 +831,16 @@ static void Lunpa_GuardsThrowIsaacOut(void) {
   Actor_SetDestination(ACTOR_PARTY_LEADER, 160, 296);
   Task_AddFrame(Lunpa_KickUpLeaderDust, TASK_PASS_FRAME);
   Event_Wait(1);
-  Event_PlaySound(SE_SCUFFLE);
+  Sound_Play(SE_SCUFFLE);
   Event_Wait(20);
   Actor_SetSpritePriority(ACTOR_LEFT_GUARD, 3);
   Actor_SetSpritePriority(ACTOR_RIGHT_GUARD, 3);
-  Event_PlaySound(SE_SCUFFLE);
+  Sound_Play(SE_SCUFFLE);
   Event_Wait(30);
   Actor_Get(ACTOR_LEFT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_Get(ACTOR_RIGHT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
-  Event_PlaySound(SE_SCUFFLE);
+  Sound_Play(SE_SCUFFLE);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Import_ActorSetAnimation(ACTOR_LEFT_GUARD, ANIM_STAND);
   Import_ActorSetAnimation(ACTOR_RIGHT_GUARD, ANIM_STAND);
@@ -858,7 +855,7 @@ static void Lunpa_GuardsThrowIsaacOut(void) {
   }
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SPRAWLED);
-  Event_PlaySound(SE_LANDING_THUD);
+  Sound_Play(SE_LANDING_THUD);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Task_AddFrame(Lunpa_KickUpLeaderDust, TASK_PASS_FRAME);
@@ -935,7 +932,7 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_LUNPA_NUT_CAUGHT) == 0) {
       Scene_FloatNut(ACTOR_FLOATING_NUT);
     }
-    puddle = Actor_GetById(ACTOR_HIDDEN_PUDDLE);
+    puddle = Actor_Get(ACTOR_HIDDEN_PUDDLE);
     if (puddle != NULL) {
       Actor_SetSpriteFlags(puddle, 0);
     }

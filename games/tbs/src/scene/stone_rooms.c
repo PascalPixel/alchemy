@@ -138,15 +138,15 @@ const struct Trigger *Scene_GetTriggers(void) {
 static void StoneRooms_LeaderSilencesThieves(void) {
   Event_Start();
 
-  Actor_SetAngleToward(ACTOR_THIEF_LEADER, ACTOR_LEFT_THIEF, 0);
+  Actor_FaceActor(ACTOR_THIEF_LEADER, ACTOR_LEFT_THIEF, 0);
   Event_Wait(40);
 
-  Actor_SetAngleToward(ACTOR_THIEF_LEADER, ACTOR_RIGHT_THIEF, 0);
+  Actor_FaceActor(ACTOR_THIEF_LEADER, ACTOR_RIGHT_THIEF, 0);
   Event_Wait(40);
 
   // "Shut yer yaps!"; the two thieves start.
   Event_SetMessageId(MsgVaultThiefLeaderSilencesThieves);
-  Event_ShowMessageAndWait(ACTOR_THIEF_LEADER, 0);
+  Event_ShowMessage(ACTOR_THIEF_LEADER, 0);
 
   Actor_StartRepeatedMotion(ACTOR_LEFT_THIEF, 2);
   Actor_RunRepeatedMotion(ACTOR_RIGHT_THIEF, 2);
@@ -159,7 +159,7 @@ static void StoneRooms_LeaderSilencesThieves(void) {
   Actor_RunRepeatedMotion(ACTOR_THIEF_LEADER, 1);
   Event_Wait(20);
 
-  Event_ShowMessageAndWait(ACTOR_THIEF_LEADER, 0);
+  Event_ShowMessage(ACTOR_THIEF_LEADER, 0);
 
   Event_End();
 }
@@ -174,7 +174,7 @@ static void StoneRooms_LeftThiefRegretsEscape(void) {
   Actor_RunRepeatedMotion(ACTOR_LEFT_THIEF, 2);
   Event_Wait(20);
   Event_SetMessageId(MsgVaultLeftThiefRegretsEscape);
-  Event_ShowMessageAndWait(ACTOR_LEFT_THIEF, 0);
+  Event_ShowMessage(ACTOR_LEFT_THIEF, 0);
   Event_End();
 }
 
@@ -188,7 +188,7 @@ static void StoneRooms_RightThiefRegretsStaying(void) {
   Actor_SetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Event_SetMessageId(MsgVaultRightThiefRegretsStaying);
-  Event_ShowMessageAndWait(ACTOR_RIGHT_THIEF, 0);
+  Event_ShowMessage(ACTOR_RIGHT_THIEF, 0);
   Event_End();
 }
 
@@ -201,7 +201,7 @@ static void StoneRooms_RightThiefRegretsStaying(void) {
 static void StoneRooms_ReadLeaderMind(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultThiefLeaderThoughts);
-  Event_ShowMessageAndWait(ACTOR_THIEF_LEADER, 0);
+  Event_ShowMessage(ACTOR_THIEF_LEADER, 0);
   Event_End();
 }
 
@@ -209,7 +209,7 @@ static void StoneRooms_ReadLeaderMind(void) {
 static void StoneRooms_ReadLeftThiefMind(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultLeftThiefThoughts);
-  Event_ShowMessageAndWait(ACTOR_LEFT_THIEF, 0);
+  Event_ShowMessage(ACTOR_LEFT_THIEF, 0);
   Event_End();
 }
 
@@ -218,7 +218,7 @@ static void StoneRooms_ReadLeftThiefMind(void) {
 static void StoneRooms_ReadRightThiefMind(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultRightThiefThoughts);
-  Event_ShowMessageAndWait(ACTOR_RIGHT_THIEF, 0);
+  Event_ShowMessage(ACTOR_RIGHT_THIEF, 0);
   Event_End();
 }
 
@@ -252,11 +252,11 @@ s32 Scene_Initialize(void) {
     // entrance.
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   } else if (entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
-    Actor_GetById(ACTOR_PRISONER)->collisionFlags |= JAIL_REACH_ACROSS_BARS;
+    Actor_Get(ACTOR_PRISONER)->collisionFlags |= JAIL_REACH_ACROSS_BARS;
   } else {
-    Actor_GetById(ACTOR_THIEF_LEADER)->collisionFlags |= JAIL_REACH_ACROSS_BARS;
-    Actor_GetById(ACTOR_LEFT_THIEF)->collisionFlags |= JAIL_REACH_ACROSS_BARS;
-    Actor_GetById(ACTOR_RIGHT_THIEF)->collisionFlags |= JAIL_REACH_ACROSS_BARS;
+    Actor_Get(ACTOR_THIEF_LEADER)->collisionFlags |= JAIL_REACH_ACROSS_BARS;
+    Actor_Get(ACTOR_LEFT_THIEF)->collisionFlags |= JAIL_REACH_ACROSS_BARS;
+    Actor_Get(ACTOR_RIGHT_THIEF)->collisionFlags |= JAIL_REACH_ACROSS_BARS;
   }
 
   return 0;

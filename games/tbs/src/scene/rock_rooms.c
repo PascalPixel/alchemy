@@ -306,7 +306,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 static void RockRooms_TalkToInnkeeper(void) {
   struct Actor *leader;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (FACING_IS_NORTH(leader->facing)) {
     if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
       Inn_CheckIn(LUNPA_INN, ACTOR_INNKEEPER);
@@ -316,10 +316,10 @@ static void RockRooms_TalkToInnkeeper(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     Event_SetMessageId(MsgLunpaInnkeeperOffersRoom);
-    Event_AskYesNoAndShowResponse(ACTOR_INNKEEPER, 0);
+    Event_AskYesNo(ACTOR_INNKEEPER, 0);
   } else {
     Event_SetMessageId(MsgLunpaInnkeeperOffersOwnHome);
-    Event_AskYesNoAndShowResponse(ACTOR_INNKEEPER, 0);
+    Event_AskYesNo(ACTOR_INNKEEPER, 0);
   }
   Event_End();
 }
@@ -330,7 +330,7 @@ static void RockRooms_TalkToInnkeeper(void) {
 static void RockRooms_TalkToChef(void) {
   Event_Start();
   Event_SetMessageId(MsgLunpaChefOffersStory);
-  Event_AskYesNoAndShowResponse(ACTOR_CHEF, 0);
+  Event_AskYesNo(ACTOR_CHEF, 0);
   GameFlag_Set(FLAG_LUNPA_HEARD_OF_PRISONER);
   Event_End();
 }
@@ -340,7 +340,7 @@ static void RockRooms_TalkToChef(void) {
 static void RockRooms_ReadChefsThoughts(void) {
   Event_Start();
   Event_SetMessageId(MsgLunpaChefThinksOfPrisoner);
-  Event_ShowMessageAndWait(ACTOR_CHEF, 0);
+  Event_ShowMessage(ACTOR_CHEF, 0);
   GameFlag_Set(FLAG_LUNPA_HEARD_OF_PRISONER);
   Event_End();
 }
@@ -350,7 +350,7 @@ static void RockRooms_ReadChefsThoughts(void) {
 static void RockRooms_AskWhetherDonpasGuest(void) {
   Event_Start();
   Event_SetMessageId(MsgLunpaInnClerkAsksAboutGuest);
-  Event_AskYesNoAndShowResponse(ACTOR_WOMAN_ASKING_FOR_DONPAS_GUEST, 0);
+  Event_AskYesNo(ACTOR_WOMAN_ASKING_FOR_DONPAS_GUEST, 0);
   Event_End();
 }
 
@@ -359,18 +359,18 @@ static void RockRooms_AskWhetherDonpasGuest(void) {
 static void RockRooms_TalkToHealer(void) {
   struct Actor *leader;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (FACING_IS_NORTH(leader->facing)) {
     Sanctum_Run(ACTOR_HEALER);
   } else if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     Event_Start();
     Event_SetMessageId(MsgLunpaTemplePriestReopened);
-    Event_ShowMessageAndWait(ACTOR_HEALER, 0);
+    Event_ShowMessage(ACTOR_HEALER, 0);
     Event_End();
   } else {
     Event_Start();
     Event_SetMessageId(MsgLunpaTemplePriestSealed);
-    Event_ShowMessageAndWait(ACTOR_HEALER, 0);
+    Event_ShowMessage(ACTOR_HEALER, 0);
     Event_End();
   }
 }
@@ -380,12 +380,12 @@ static void RockRooms_ReadItemMerchantsThoughts(void) {
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     Event_Start();
     Event_SetMessageId(MsgLunpaIsntWeaponsVendors);
-    Event_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0);
+    Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
     Event_End();
   } else {
     Event_Start();
     Event_SetMessageId(MsgLunpaItemMerchantSealedThoughts);
-    Event_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0);
+    Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
     Event_End();
   }
 }
@@ -394,18 +394,18 @@ static void RockRooms_ReadItemMerchantsThoughts(void) {
 static void RockRooms_TalkToItemMerchant(void) {
   struct Actor *leader;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (FACING_IS_NORTH(leader->facing)) {
     Shop_Run(SHOP_LUNPA_ITEMS, ACTOR_ITEM_MERCHANT);
   } else if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     Event_Start();
     Event_SetMessageId(MsgLunpaItemMerchantReopened);
-    Event_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0);
+    Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
     Event_End();
   } else {
     Event_Start();
     Event_SetMessageId(MsgLunpaItemMerchantSealed);
-    Event_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0);
+    Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
     Event_End();
   }
 }
@@ -414,10 +414,10 @@ static void RockRooms_TalkToItemMerchant(void) {
 static void RockRooms_ReadWeaponMerchantsThoughts(void) {
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     Event_SetMessageId(MsgLunpaWeaponMerchantReopenedThoughts);
-    Event_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
+    Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
   } else {
     Event_SetMessageId(MsgLunpaWeaponMerchantSealedThoughts);
-    Event_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
+    Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
   }
 }
 
@@ -427,7 +427,7 @@ static void RockRooms_TalkToWeaponMerchant(void) {
   struct Actor *leader;
   s32 facing;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   facing = leader->facing;
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     if (FACING_IS_NORTH(facing)) {
@@ -435,12 +435,12 @@ static void RockRooms_TalkToWeaponMerchant(void) {
     } else {
       Event_Start();
       Event_SetMessageId(MsgLunpaWeaponMerchantReopened);
-      Event_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
+      Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
       Event_End();
     }
   } else {
     Event_SetMessageId(MsgLunpaWeaponMerchantSealed);
-    Event_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
+    Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
   }
 }
 
@@ -448,10 +448,10 @@ static void RockRooms_TalkToWeaponMerchant(void) {
 static void RockRooms_ReadArmorMerchantsThoughts(void) {
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     Event_SetMessageId(MsgLunpaArmorMerchantReopenedThoughts);
-    Event_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
+    Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
   } else {
     Event_SetMessageId(MsgLunpaArmorMerchantSealedThoughts);
-    Event_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
+    Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
   }
 }
 
@@ -461,7 +461,7 @@ static void RockRooms_TalkToArmorMerchant(void) {
   struct Actor *leader;
   s32 facing;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   facing = leader->facing;
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     if (FACING_IS_NORTH(facing)) {
@@ -469,12 +469,12 @@ static void RockRooms_TalkToArmorMerchant(void) {
     } else {
       Event_Start();
       Event_SetMessageId(MsgLunpaArmorMerchantReopened);
-      Event_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
+      Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
       Event_End();
     }
   } else {
     Event_SetMessageId(MsgLunpaArmorMerchantSealed);
-    Event_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
+    Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
   }
 }
 
@@ -491,9 +491,9 @@ s32 Scene_Initialize(void) {
     gMainRoutineWork.restartScene = (s32)&SceneId_RockRooms;
     gMainRoutineWork.restartEntrance = entrance;
   }
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_WEAPON_COUNTER), 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_ARMOR_COUNTER), 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_ITEM_COUNTER), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_WEAPON_COUNTER), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_ARMOR_COUNTER), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_ITEM_COUNTER), 0);
   return 0;
 }
 
@@ -502,7 +502,7 @@ s32 Scene_Initialize(void) {
 static void RockRooms_TalkToTravelingHealer(void) {
   struct Actor *leader;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (FACING_IS_NORTH(leader->facing)) {
     // BUG: the temple's Healer, not the traveling one. The Sanctum only takes
     // its keeper's portrait from the actor (Sanctum_Run), and both
@@ -515,6 +515,6 @@ static void RockRooms_TalkToTravelingHealer(void) {
 #endif
   } else {
     Event_SetMessageId(MsgLunpaTravelingPriest);
-    Event_ShowMessageAndWait(ACTOR_TRAVELING_HEALER, 0);
+    Event_ShowMessage(ACTOR_TRAVELING_HEALER, 0);
   }
 }

@@ -291,7 +291,7 @@ static void LamakanDesert_LeaveForTheWorldMap(void) {
       GameFlag_Set(FLAG_HSU_RESCUED);
     }
   }
-  Event_PlaySound(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   Import_EventSetExitRequest(LAMAKAN_DESERT_CAVE_TO_WORLD_MAP);
   Event_End();
 }
@@ -345,9 +345,9 @@ static s32 Reveal_HideSecrets(void) {
     MapGrid_CopyCells(70, 68, 4, 2, 27, 55);
     MapGrid_CopyCells(70, 68, 4, 2, 43, 56);
   } else if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertManticore) {
-    MapGrid_CopyCellIndexRect(69, 99, 4, 2, 8, 16);
-    MapGrid_CopyCellIndexRect(69, 99, 4, 2, 6, 20);
-    MapGrid_CopyCellIndexRect(69, 99, 4, 2, 10, 23);
+    MapGrid_CopyCellsLayered(69, 99, 4, 2, 8, 16);
+    MapGrid_CopyCellsLayered(69, 99, 4, 2, 6, 20);
+    MapGrid_CopyCellsLayered(69, 99, 4, 2, 10, 23);
     MapGrid_CopyCellAttributes(69, 99, 4, 2, 8, 14);
     MapGrid_CopyCellAttributes(69, 99, 4, 2, 6, 18);
     MapGrid_CopyCellAttributes(69, 99, 4, 1, 6, 20);
@@ -358,12 +358,12 @@ static s32 Reveal_HideSecrets(void) {
     MapGrid_CopyCells(9, 120, 3, 1, 44, 5);
     MapGrid_CopyCellAttributes(9, 0, 3, 3, 9, 6);
   }
-  Import_ActorSetPosition(ACTOR_MANTICORE, 0, 0);
-  Import_ActorSetPosition(ACTOR_FIRST_PIT, 0, 0);
-  Import_ActorSetPosition(ACTOR_FIRST_PIT + 1, 0, 0);
-  Import_ActorSetPosition(ACTOR_FIRST_PIT + 2, 0, 0);
-  Import_ActorSetPosition(ACTOR_LAST_PIT, 0, 0);
-  Import_ActorSetPosition(ACTOR_SMOG, 0, 0);
+  Actor_SetPosition(ACTOR_MANTICORE, 0, 0);
+  Actor_SetPosition(ACTOR_FIRST_PIT, 0, 0);
+  Actor_SetPosition(ACTOR_FIRST_PIT + 1, 0, 0);
+  Actor_SetPosition(ACTOR_FIRST_PIT + 2, 0, 0);
+  Actor_SetPosition(ACTOR_LAST_PIT, 0, 0);
+  Actor_SetPosition(ACTOR_SMOG, 0, 0);
   // Hide the treasure spots independently of the actor placements.
   markerId = 100;
   do {
@@ -493,7 +493,7 @@ static void LamakanDesert_ComplainAboutHeat(s32 mark) {
   // it.
   Event_SetMessageId((((quarter << 1) + quarter) + member) +
                      MSGNO(MsgFuchinTempleIDoNotThinkMasterHama));
-  Event_ShowMessageAndWait((member + 1), 0);
+  Event_ShowMessage((member + 1), 0);
   Event_End();
 }
 
@@ -639,10 +639,10 @@ static void LamakanDesert_BatheInOasis(void) {
     FieldActor_SetMoveTarget(actor, spot->x, 0, spot->z);
   }
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = PIXELS(6);
-  Event_PlaySound(SE_JUMP);
+  Sound_Play(SE_JUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_WaitBelowHeight(leader, Actor_Get(ACTOR_PARTY_LEADER)->y.fixed);
-  Event_PlaySound(SE_WATER_MOVE);
+  Sound_Play(SE_WATER_MOVE);
   {
     struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -691,8 +691,8 @@ static void LamakanDesert_BatheInOasis(void) {
         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
         &puff);
   }
-  Event_PlaySound(SE_STOP_ACTION_SE);
-  Event_PlaySound(SE_JUMP);
+  Sound_Play(SE_STOP_ACTION_SE);
+  Sound_Play(SE_JUMP);
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = PIXELS(6);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(10);
@@ -710,7 +710,7 @@ static void HeatGauge_CountStep(void) {
   s32 dx;
   s32 z;
   s32 phase;
-  actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  actor = Actor_Get(gMainRoutineWork.leaderActorId);
   work = gFieldWork;
   if (actor->targetX == ACTOR_NO_TARGET) {
     return;
@@ -795,10 +795,10 @@ static void LamakanDesert_FallIntoPit(void) {
       }
     }
   }
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   // Face the pit, then reverse the walking direction while being pulled in.
-  Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, best, 0);
+  Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_FaceActor(ACTOR_PARTY_LEADER, best, 0);
   Event_Wait(20);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -807,12 +807,12 @@ static void LamakanDesert_FallIntoPit(void) {
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  record = Actor_GetById(ACTOR_PARTY_LEADER);
+  record = Actor_Get(ACTOR_PARTY_LEADER);
   actor->facing = (record->facing + TRIG_TURN / 2) & -0x1000;
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_RUN);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_RUN);
   Actor_SetAnimationSpeedById(ACTOR_PARTY_LEADER, 24);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 10, PIXELS(1) / 20);
-  record = Actor_GetById(ACTOR_PARTY_LEADER);
+  record = Actor_Get(ACTOR_PARTY_LEADER);
 #ifdef UBFIX
   record->update = LamakanDesert_LeaderSpraySand;
 #else
@@ -820,16 +820,16 @@ static void LamakanDesert_FallIntoPit(void) {
 #endif
   record = Actor_Get(best);
   if (record != 0) {
-    Actor_ResetAndSetPosition(ACTOR_PARTY_LEADER, record->x.part.pixel,
-                              record->z.part.pixel);
+    Actor_SetDestination(ACTOR_PARTY_LEADER, record->x.part.pixel,
+                         record->z.part.pixel);
   }
   Event_Wait(60);
   Actor_ShowEmote(best, EMOTE_IN_FRONT | EMOTE_HEART, 0);
   Event_Wait(60);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-  record = Actor_GetById(ACTOR_PARTY_LEADER);
+  Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
+  record = Actor_Get(ACTOR_PARTY_LEADER);
   record->update = NULL;
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 4);
@@ -855,7 +855,7 @@ static void LamakanDesert_SlideDownDune(void) {
     id = gMainRoutineWork.leaderActorId;
     center = work->camera;
   }
-  actor = Actor_GetById(id);
+  actor = Actor_Get(id);
   // First check for a ledge immediately below the sliding actor.
   probePosition.x = actor->x.fixed;
   probePosition.y = actor->y.fixed;
@@ -937,22 +937,22 @@ static void LamakanDesert_MeetManticore(void) {
       revealFrames = (u16 *)&((struct FieldWork *)eventBytes)->revealFrames;
       holdFrames = 600;
       *revealFrames = holdFrames;
-      record = Actor_GetById(ACTOR_PARTY_LEADER);
+      record = Actor_Get(ACTOR_PARTY_LEADER);
       record->velocityX = paused;
-      record = Actor_GetById(ACTOR_PARTY_LEADER);
+      record = Actor_Get(ACTOR_PARTY_LEADER);
       record->velocityZ = paused;
       record = Actor_Get(ACTOR_PARTY_LEADER);
       record->targetX = ACTOR_NO_TARGET;
       record = Actor_Get(ACTOR_PARTY_LEADER);
       record->targetZ = ACTOR_NO_TARGET;
-      Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+      Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
       Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_MANTICORE, 0);
       Event_Wait(40);
       Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
       Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Event_Wait(40);
-      Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+      Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
       backwardOffset.x = paused;
       // Step backward without turning away from the emerging Manticore.
       backwardOffset.y = paused;
@@ -960,15 +960,15 @@ static void LamakanDesert_MeetManticore(void) {
       record = Actor_Get(ACTOR_PARTY_LEADER);
       FieldVector_AddPolarOffset(-PIXELS(16), record->facing, &backwardOffset);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
-      Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+      Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
       Actor_SetDestinationOffset(ACTOR_PARTY_LEADER,
                                  backwardOffset.x / PIXELS(1),
                                  backwardOffset.z / PIXELS(1));
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
       Event_Wait(2);
-      Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
+      Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
       Event_Wait(30);
-      Event_PlaySound(SE_BOSS_ROAR);
+      Sound_Play(SE_BOSS_ROAR);
       Actor_RunRepeatedMotion(ACTOR_MANTICORE, 2);
       Event_Wait(20);
       Actor_SetSpeed(ACTOR_MANTICORE, PIXELS(5) / 2, PIXELS(5) / 4);
@@ -1034,9 +1034,9 @@ s32 LamakanDesert_Initialize(void) {
 /// back, then plays its one-shot animation 2. Nothing calls it.
 static UNUSED void LamakanDesert_UnusedWalkManticore(void) {
   Actor_SetSpeed(ACTOR_MANTICORE, PIXELS(1) / 2, PIXELS(1) / 4);
-  Import_ActorSetAnimation(ACTOR_MANTICORE, 1);
+  Actor_SetAnimation(ACTOR_MANTICORE, 1);
   Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 96);
-  Import_ActorSetAnimation(ACTOR_MANTICORE, 2);
+  Actor_SetAnimation(ACTOR_MANTICORE, 2);
 }
 
 /// Every frame: draws the heat gauge down the screen's left edge, 8 pixels

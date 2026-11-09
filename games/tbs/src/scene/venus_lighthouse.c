@@ -563,7 +563,7 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   s32 moveRate;
   s32 transitionBusy;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   directionIndex = leader->facing >> 12;
   // Look ahead for a pillar before testing its destination and overhead space.
   packedStep = gPushedActor_DirectionSteps[directionIndex];
@@ -804,7 +804,7 @@ static void VenusLighthouse_EnterSparklingPassage(void) {
   struct FieldWork *work;
 
   work = gFieldWork;
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   Event_Start();
   Sound_Play(SE_SPARKLING_PASSAGE);
 #ifdef UBFIX
@@ -814,11 +814,11 @@ static void VenusLighthouse_EnterSparklingPassage(void) {
       (void (*)(struct Actor *))VenusLighthouse_EmitPassageSparkTrail;
 #endif
   leader->speedLimit = PIXELS(1) / 5;
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0, -6);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -6);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-  Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_PARTY_LEADER), 0);
+  Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   leader->update = 0;
   Event_Wait(30);
   Event_FinishScreenTransition();
@@ -842,7 +842,7 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Event_PlaySound(SE_SPARKLING_PASSAGE);
+    Sound_Play(SE_SPARKLING_PASSAGE);
 #ifdef UBFIX
     leader->update = VenusLighthouse_EmitPassageSparkTrail;
 #else
@@ -869,7 +869,7 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
 /// again (VenusLighthouse_LeaveCappedPillarRows), and walking into a pillar
 /// from either pushes it (VenusLighthouse_PushCappedPillar).
 static void VenusLighthouse_EnterCappedPillarRows(void) {
-  gFadeOverlayWork->actor = Actor_GetById(ACTOR_PARTY_LEADER);
+  gFadeOverlayWork->actor = Actor_Get(ACTOR_PARTY_LEADER);
 }
 
 /// Stepping onto cell behavior 31 of VenusLighthouseFirstFloor, in the rows
@@ -900,7 +900,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(30);
-  Event_PlaySound(SE_DUST_PUFF);
+  Sound_Play(SE_DUST_PUFF);
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Event_Wait(24);
   options.palette = 7;
@@ -920,10 +920,10 @@ static void VenusLighthouse_LandWithRadialDust(void) {
                           EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM,
                       &options);
   }
-  Event_PlaySound(SE_THUMP);
+  Sound_Play(SE_THUMP);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
@@ -1041,7 +1041,7 @@ static s32 VenusLighthouse_JumpAcrossGap(void) {
   u32 step;
 #endif
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   motionFlags = &leader->motionFlags;
   // Check the intervening cell before looking for a clear landing two cells
   // ahead.
@@ -1087,8 +1087,7 @@ static s32 VenusLighthouse_JumpAcrossGap(void) {
       leader->velocityY = PIXELS(4);
       *motionFlags &= 0x7e;
       Actor_SetSpriteFlags(leader, 0);
-      Actor_SetPositionAndCommit(ACTOR_PARTY_LEADER, landing.x >> 16,
-                                 landing.z >> 16);
+      Actor_MoveToAndWait(ACTOR_PARTY_LEADER, landing.x >> 16, landing.z >> 16);
       Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
       Actor_SetSpriteFlags(leader, 1);
       *motionFlags = savedMotionFlags;
@@ -1190,11 +1189,11 @@ static void VenusLighthouse_HearOfTheAttack(void) {
   flickerDelay = 8;
   Event_ShowMessageThenWait(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK, 0, 20);
   do {
-    Actor_ConfigureSpriteColor(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK,
-                               SPRITE_COLOR_HIDDEN);
+    Actor_SetSpriteColorById(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK,
+                             SPRITE_COLOR_HIDDEN);
     wait(2);
-    Actor_ConfigureSpriteColor(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK,
-                               SPRITE_COLOR_NORMAL);
+    Actor_SetSpriteColorById(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK,
+                             SPRITE_COLOR_NORMAL);
     wait(flickerDelay);
     if (flickerDelay > 3) {
       flickerDelay--;
@@ -1202,7 +1201,7 @@ static void VenusLighthouse_HearOfTheAttack(void) {
     flickersLeft--;
   } while (flickersLeft != 0);
   GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD);
-  Import_ActorSetPosition(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK, 0, 0);
+  Actor_SetPosition(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK, 0, 0);
   MapGrid_CopyCellAttributes(7, 17, 2, 1, 7, 16);
   Event_End();
 }
@@ -1215,7 +1214,7 @@ static void VenusLighthouse_TalkToWaitingScholar(void) {
   Event_SetMessageId(MsgVenusIveWaitedLongSeeIts);
   Event_ShowMessageThenWait(ACTOR_WAITING_SCHOLAR, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_WAITING_SCHOLAR, 2);
-  Event_ShowMessageAndWait(ACTOR_WAITING_SCHOLAR, 0);
+  Event_ShowMessage(ACTOR_WAITING_SCHOLAR, 0);
   Event_End();
 }
 
@@ -1225,7 +1224,7 @@ static void VenusLighthouse_TalkToWaitingScholar(void) {
 static void VenusLighthouse_CarryPillarPastWall(void) {
   struct Actor *pillar;
 
-  pillar = Actor_GetById(ACTOR_WALL_PILLAR);
+  pillar = Actor_Get(ACTOR_WALL_PILLAR);
   Event_Start();
   if (pillar->x.fixed >> 20 == 54 || pillar->z.fixed >> 20 == 6) {
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PILLAR_CARRIED);
@@ -1248,7 +1247,7 @@ static void VenusLighthouse_ReadRelief(void) {
   struct FieldWork *work = gFieldWork;
 #endif
   Event_Start();
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 #if TBS_PATCH_1 && !TBS_PATCH_2
   message = (s32)MSGNO(MsgVenusThereWordsCarvedIntoRelief);
 #else
@@ -1390,13 +1389,13 @@ static void VenusLighthouse_SearchStatue(void) {
   work->revealFrames = 0;
   work->busy = 1;
   Event_Start();
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldMessage_Show(MsgVenusStatueSpeaksIsaacSoulYe, 1);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_ALL);
   PaletteFade_StartInterpolation(120);
   Event_Wait(100);
-  Event_PlaySound(SE_SWIRL);
+  Sound_Play(SE_SWIRL);
   Event_Wait(30);
   PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(60);
@@ -1454,44 +1453,44 @@ static void VenusLighthouse_MovePillarTowardWall(void) {
   emote = EMOTE_IN_FRONT | EMOTE_EXCLAMATION;
   garetX = 824;
   Event_Start();
-  actor = Actor_GetById(ACTOR_WALL_PILLAR);
+  actor = Actor_Get(ACTOR_WALL_PILLAR);
   if (actor->x.fixed >> 20 == 53) {
     if (GameFlag_Get(conversationFlag) == 0) {
       // Record the one-time conversation before bringing Garet out to inspect
       // the pillar.
       GameFlag_Set(conversationFlag);
-      actor = Actor_GetById(ACTOR_PARTY_LEADER);
+      actor = Actor_Get(ACTOR_PARTY_LEADER);
       if (actor != 0) {
-        Import_ActorSetPosition(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
+        Actor_SetPosition(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
       }
-      Actor_SetSpeedParameters(ACTOR_GARET, walkSpeed, walkAcceleration);
-      Actor_SetPositionAndReset(ACTOR_GARET, garetX, 88);
-      Actor_SetPositionAndReset(ACTOR_GARET, garetX, 104);
+      Actor_SetSpeed(ACTOR_GARET, walkSpeed, walkAcceleration);
+      Actor_WalkToAndWait(ACTOR_GARET, garetX, 88);
+      Actor_WalkToAndWait(ACTOR_GARET, garetX, 104);
       Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
       Event_Wait(20);
       Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
       Event_Wait(20);
       Event_SetMessageId(MsgVenusHmmmWeCantPushBlock);
       Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
-      Actor_ArmCallback(ACTOR_GARET, FACING_EAST, 10);
-      FieldEffect_SpawnAttached(ACTOR_GARET, emote, 60);
-      Actor_SetAngleToward(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
+      Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 10);
+      Actor_ShowEmote(ACTOR_GARET, emote, 60);
+      Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
       Event_Wait(20);
       Actor_RunRepeatedMotion(ACTOR_GARET, 2);
       Event_Wait(20);
       Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
-      Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+      Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
       Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
       Event_Wait(30);
-      Actor_SetPositionAndReset(ACTOR_GARET, garetX, 88);
-      Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
-      leader = Actor_GetById(ACTOR_PARTY_LEADER);
+      Actor_WalkToAndWait(ACTOR_GARET, garetX, 88);
+      Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
+      leader = Actor_Get(ACTOR_PARTY_LEADER);
       if (leader != 0) {
-        Actor_ResetAndSetPosition(ACTOR_GARET, leader->x.part.pixel,
-                                  leader->z.part.pixel);
+        Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
+                             leader->z.part.pixel);
       }
       Actor_WaitForMoveById(ACTOR_GARET);
-      Import_ActorSetPosition(ACTOR_GARET, 0, 0);
+      Actor_SetPosition(ACTOR_GARET, 0, 0);
       Event_End();
     }
   }
@@ -1514,7 +1513,7 @@ static void VenusLighthouse_MovePillarOntoSwitch(void) {
   struct Actor *pillar;
   s32 switchHeight;
 
-  pillar = Actor_GetById(ACTOR_FLOOR_SWITCH_STATUE);
+  pillar = Actor_Get(ACTOR_FLOOR_SWITCH_STATUE);
   Event_Start();
   if (pillar->x.fixed >> 20 == 42) {
     Event_Wait(30);
@@ -1532,7 +1531,7 @@ static void VenusLighthouse_MovePillarOntoSwitch(void) {
 /// In VenusLighthouseGroundFloor, standing on the floor switch presses it
 /// (FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH); stepping off releases it.
 static void VenusLighthouse_StepOnFloorSwitch(void) {
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 x = leader->x.part.pixel;
   s32 z = leader->z.part.pixel;
 
@@ -1570,7 +1569,7 @@ static void VenusLighthouse_TalkToScholarByDoor(void) {
   Event_SetMessageId(MsgVenusThoughtIdExploreAfterDoor);
   Actor_FaceActor(ACTOR_DOOR_SCHOLAR, ACTOR_PARTY_LEADER, 0);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(ACTOR_DOOR_SCHOLAR, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_DOOR_SCHOLAR, 0, 20);
   Actor_FaceDirection(ACTOR_DOOR_SCHOLAR, FACING_NORTHEAST, 0);
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(448), -1, PIXELS(432), 1);
@@ -1593,7 +1592,7 @@ static void VenusLighthouse_FallThroughFloor(void) {
 #if !TBS_PATCH_3
   zero = 0;
 #endif
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   Event_Start();
 #if TBS_PATCH_3
   motionFlags = (u8 *)&leader->motionFlags;
@@ -1601,7 +1600,7 @@ static void VenusLighthouse_FallThroughFloor(void) {
   *motionFlags = zero;
 #endif
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  leaderActor = Actor_GetById(ACTOR_PARTY_LEADER);
+  leaderActor = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(leaderActor, 0);
   {
     u16 facing = FACING_SOUTH;
@@ -1609,9 +1608,9 @@ static void VenusLighthouse_FallThroughFloor(void) {
     leader->facing = facing;
   }
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3), PIXELS(3) / 2);
-  Actor_SetPositionAndCommit(ACTOR_PARTY_LEADER, leader->x.part.pixel, 552);
+  Actor_MoveToAndWait(ACTOR_PARTY_LEADER, leader->x.part.pixel, 552);
   Event_Wait(10);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
   Event_Wait(30);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1623,7 +1622,7 @@ static void VenusLighthouse_FallThroughFloor(void) {
     leader->facing = facing;
   }
   // The run cycle: his legs kick in the air as he falls.
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_RUN);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_RUN);
   Actor_SetAnimationSpeedById(ACTOR_PARTY_LEADER, ANIM_STEPS_FAST);
   Event_Wait(40);
   // Start the fall only after the approach and descent animation have finished.
@@ -1650,7 +1649,7 @@ static void VenusLighthouse_FallThroughFloor(void) {
 #else
   Actor_WaitUntilIdle(0);
 #endif
-  Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
+  Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Import_EventSetExitRequest(
       VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_LOWER_ROOM_HOLE);
   Event_FinishScreenTransition();
@@ -1669,7 +1668,7 @@ static void VenusLighthouse_MoveCappedPillar(void) {
   s32 column;
   s32 row;
 
-  Actor_GetById(ACTOR_FIRST_CAPPED_PILLAR);
+  Actor_Get(ACTOR_FIRST_CAPPED_PILLAR);
   Event_Start();
   destinationColumn = 12;
   destinationRow = 44;
@@ -1679,7 +1678,7 @@ static void VenusLighthouse_MoveCappedPillar(void) {
   MapGrid_CopyCellAttributes(17, 51, 2, 2, destinationColumn, destinationRow);
   pillarIndex = 0;
   do {
-    pillar = Actor_GetById(pillarIndex + ACTOR_FIRST_CAPPED_PILLAR);
+    pillar = Actor_Get(pillarIndex + ACTOR_FIRST_CAPPED_PILLAR);
     column = pillar->x.fixed >> 20;
     row = pillar->z.fixed >> 20;
     MapGrid_CopyCellAttributes(12, 50, 1, 1, column, row);
@@ -1708,7 +1707,7 @@ static void VenusLighthouse_LiftCarryPillar(void) {
 
   pillarIndex = 0;
   do {
-    pillar = Actor_GetById(pillarIndex + ACTOR_FIRST_CARRY_PILLAR);
+    pillar = Actor_Get(pillarIndex + ACTOR_FIRST_CARRY_PILLAR);
     pillarIndex++;
     MapGrid_SetCellBehaviorAt(0, pillar->x.fixed, pillar->z.fixed, 45);
   } while (pillarIndex <= 1);
@@ -1722,7 +1721,7 @@ static void VenusLighthouse_MoveCarryPillar(void) {
 
   pillarIndex = 0;
   do {
-    pillar = Actor_GetById(pillarIndex + ACTOR_FIRST_CARRY_PILLAR);
+    pillar = Actor_Get(pillarIndex + ACTOR_FIRST_CARRY_PILLAR);
     if (pillar->y.fixed > -PIXELS(16)) {
       MapGrid_SetCellBehaviorAt(0, pillar->x.fixed, pillar->z.fixed,
                                 CELL_BEHAVIOR_WALL);
@@ -1786,14 +1785,14 @@ static void VenusLighthouse_CarryPillarAcrossGap(void) {
   struct Actor *pillar;
 
   Event_Start();
-  pillar = Actor_GetById(ACTOR_FIRST_CARRY_PILLAR);
+  pillar = Actor_Get(ACTOR_FIRST_CARRY_PILLAR);
   if (pillar->x.fixed >> 20 == 8) {
     Actor_WaitUntilIdle(pillar);
     VenusLighthouse_FixPillarAtDestination(pillar);
   } else {
     VenusLighthouse_ReleaseFallenCarryPillar(pillar);
   }
-  pillar = Actor_GetById(ACTOR_FIRST_CARRY_PILLAR + 1);
+  pillar = Actor_Get(ACTOR_FIRST_CARRY_PILLAR + 1);
   if (pillar->x.fixed >> 20 == 7) {
     Actor_WaitUntilIdle(pillar);
     VenusLighthouse_FixPillarAtDestination(pillar);
@@ -1821,7 +1820,7 @@ static void VenusLighthouse_StepOnWallSwitch(void) {
   s32 dustX;
 
   layer = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   column = leader->x.part.pixel;
   leaderZ = leader->z.part.pixel;
   leader->y.fixed = 0;
@@ -1901,8 +1900,8 @@ static void VenusLighthouse_MoveGatePillar(void) {
   struct Actor *occlusionEffect;
 
   occlusionEffect = 0;
-  pillar = Actor_GetById(ACTOR_GATE_PILLAR);
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  pillar = Actor_Get(ACTOR_GATE_PILLAR);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   Event_Start();
   MapGrid_CopyCellAttributes(109, 43, 7, 5, 45, 43);
   flags = &pillar->priorityFlags;
@@ -1928,7 +1927,7 @@ static void VenusLighthouse_MoveGatePillar(void) {
               PIXELS(744), 0, PIXELS(704), SPRITE_CHEST);
           Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
         }
-        pillarActor = Actor_GetById(ACTOR_GATE_PILLAR);
+        pillarActor = Actor_Get(ACTOR_GATE_PILLAR);
         Actor_SetSpriteFlags(pillarActor, 0);
         pillar->layer = gateOpened;
         pillar->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -1946,15 +1945,15 @@ static void VenusLighthouse_MoveGatePillar(void) {
           *flags = two;
         }
         MapGrid_CopyCellAttributes(45, 45, 1, 1, column, row);
-        Actor_GetById(ACTOR_PARTY_LEADER)->priorityFlags |=
+        Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |=
             ACTOR_PRIORITY_AUTOMATIC;
         Actor_Release(occlusionEffect);
         pillar->collisionFlags = gateOpened;
         *flags |= 2;
-        Actor_GetById(ACTOR_GATE_SPARKLE)->collisionFlags = gateOpened;
-        Actor_GetById(ACTOR_GATE_SPARKLE)->priorityFlags |=
+        Actor_Get(ACTOR_GATE_SPARKLE)->collisionFlags = gateOpened;
+        Actor_Get(ACTOR_GATE_SPARKLE)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        Import_ActorSetPosition(ACTOR_GATE_SPARKLE, PIXELS(808), PIXELS(728));
+        Actor_SetPosition(ACTOR_GATE_SPARKLE, PIXELS(808), PIXELS(728));
         Actor_SetScript(ACTOR_GATE_SPARKLE, gVenusSecondFloorLightToGate);
         Actor_RefreshSelectorById(ACTOR_GATE_SPARKLE);
         Event_Wait(30);
@@ -1986,7 +1985,7 @@ static void VenusLighthouse_JumpOrPushGatePillar(void) {
 /// (FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN).
 static void VenusLighthouse_MoveSwitchPillar(void) {
   struct Actor *occlusionEffect = 0;
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct Actor *pillar;
   struct Actor *other;
   struct Actor *firstGateEffect;
@@ -2003,7 +2002,7 @@ static void VenusLighthouse_MoveSwitchPillar(void) {
   // motion.
   for (pillarId = ACTOR_FIRST_SWITCH_PILLAR;
        pillarId <= ACTOR_FIRST_SWITCH_PILLAR + 2; pillarId++) {
-    pillar = Actor_GetById(pillarId);
+    pillar = Actor_Get(pillarId);
     flags = &pillar->priorityFlags;
     if (*flags != 2) {
       MapGrid_CopyCellAttributes(47, 39, 1, 1, pillar->x.fixed >> 20,
@@ -2026,7 +2025,7 @@ static void VenusLighthouse_MoveSwitchPillar(void) {
     }
     for (candidateIndex = ACTOR_FIRST_SWITCH_PILLAR;
          candidateIndex <= ACTOR_FIRST_SWITCH_PILLAR + 2; candidateIndex++) {
-      other = Actor_GetById(candidateIndex);
+      other = Actor_Get(candidateIndex);
       if (pillarId != candidateIndex &&
           pillar->x.fixed >> 20 == other->x.fixed >> 20 &&
           pillar->z.fixed >> 20 == other->z.fixed >> 20) {
@@ -2046,7 +2045,7 @@ static void VenusLighthouse_MoveSwitchPillar(void) {
           SPRITE_CHEST);
       Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
     }
-    Actor_SetSpriteFlags(Actor_GetById(pillarId), 0);
+    Actor_SetSpriteFlags(Actor_Get(pillarId), 0);
     pillar->layer = 0;
     pillar->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     pillar->bounce = 0;
@@ -2069,8 +2068,7 @@ static void VenusLighthouse_MoveSwitchPillar(void) {
                                gVenusThirdFloorSockets[switchIndex].x,
                                gVenusThirdFloorSockets[switchIndex].z);
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, savedPriority);
-    Actor_GetById(ACTOR_PARTY_LEADER)->priorityFlags |=
-        ACTOR_PRIORITY_AUTOMATIC;
+    Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
     if (occlusionEffect != 0) {
       Actor_Release(occlusionEffect);
     }
@@ -2078,10 +2076,9 @@ static void VenusLighthouse_MoveSwitchPillar(void) {
       Event_End();
       return;
     }
-    if ((Actor_GetById(ACTOR_FIRST_SWITCH_PILLAR)->priorityFlags &
-         Actor_GetById(ACTOR_FIRST_SWITCH_PILLAR + 1)->priorityFlags &
-         Actor_GetById(ACTOR_FIRST_SWITCH_PILLAR + 2)->priorityFlags & 2) ==
-        0) {
+    if ((Actor_Get(ACTOR_FIRST_SWITCH_PILLAR)->priorityFlags &
+         Actor_Get(ACTOR_FIRST_SWITCH_PILLAR + 1)->priorityFlags &
+         Actor_Get(ACTOR_FIRST_SWITCH_PILLAR + 2)->priorityFlags & 2) == 0) {
       continue;
     }
     // Once all three pillars settle, run the paired scripts that open the gate.
@@ -2098,9 +2095,9 @@ static void VenusLighthouse_MoveSwitchPillar(void) {
         Sound_Play(SE_DOOR_OPEN);
         MapGrid_PlayMapEdit(gVenusThirdFloorGateCells, 109, 37);
         MapGrid_CopyCellAttributes(45, 37, 1, 1, 45, 38);
-        if (Actor_GetById(ACTOR_FIRST_SWITCH_PILLAR)->x.fixed >> 20 ==
+        if (Actor_Get(ACTOR_FIRST_SWITCH_PILLAR)->x.fixed >> 20 ==
                 gVenusThirdFloorSockets[0].x &&
-            Actor_GetById(ACTOR_FIRST_SWITCH_PILLAR)->z.fixed >> 20 ==
+            Actor_Get(ACTOR_FIRST_SWITCH_PILLAR)->z.fixed >> 20 ==
                 gVenusThirdFloorSockets[0].z) {
           GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_SOUTHEAST_SOCKET_EMPTY);
         } else {
@@ -2140,7 +2137,7 @@ static s32 VenusLighthouse_FollowSupportingPillarHeight(struct Actor *updated) {
   struct Actor *pillar = (struct Actor *)updated;
   struct Actor *support;
 
-  support = Actor_GetById(pillar->timer);
+  support = Actor_Get(pillar->timer);
   pillar->y.fixed = support->y.fixed + PIXELS(16);
 #ifdef UBFIX
   return;
@@ -2151,12 +2148,12 @@ static s32 VenusLighthouse_FollowSupportingPillarHeight(struct Actor *updated) {
 
 /// Moves the floating supports to the heights selected by their timers.
 static void VenusLighthouse_LowerFloatingPillars(s32 waitFrames) {
-  struct Actor *westSupport = Actor_GetById(ACTOR_BALANCE_WEST);
-  struct Actor *eastSupport = Actor_GetById(ACTOR_BALANCE_EAST);
+  struct Actor *westSupport = Actor_Get(ACTOR_BALANCE_WEST);
+  struct Actor *eastSupport = Actor_Get(ACTOR_BALANCE_EAST);
   u32 pillarIndex;
 
   Actor_SetSpeed(ACTOR_BALANCE_WEST, PIXELS(1) / 2, PIXELS(1) / 4);
-  Actor_SetSpeedParameters(ACTOR_BALANCE_EAST, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_BALANCE_EAST, PIXELS(1) / 2, PIXELS(1) / 4);
   if (waitFrames != 0) {
     Sound_Play(SE_SETTLE);
   }
@@ -2174,7 +2171,7 @@ static void VenusLighthouse_LowerFloatingPillars(s32 waitFrames) {
     Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   }
   for (pillarIndex = 0; pillarIndex < 5; pillarIndex++) {
-    struct Actor *actor = Actor_GetById(pillarIndex + ACTOR_BALANCE_WEST);
+    struct Actor *actor = Actor_Get(pillarIndex + ACTOR_BALANCE_WEST);
 
     if (actor->y.fixed / PIXELS(1) < 0 && actor->y.fixed / PIXELS(1) > -30) {
       MapGrid_CopyCellAttributes(4, 19, 1, 1, actor->x.fixed >> 20,
@@ -2200,8 +2197,8 @@ static void VenusLighthouse_StackFloatingPillar(s32 pillarId) {
       continue;
     }
 
-    candidate = Actor_GetById(candidateId);
-    pillar = Actor_GetById(pillarId);
+    candidate = Actor_Get(candidateId);
+    pillar = Actor_Get(pillarId);
 
     if ((candidate->x.fixed >> 20) != (pillar->x.fixed >> 20) ||
         (candidate->z.fixed >> 20) != (pillar->z.fixed >> 20)) {
@@ -2215,7 +2212,7 @@ static void VenusLighthouse_StackFloatingPillar(s32 pillarId) {
     }
   }
 
-  Actor_SetSpeedParameters(pillarId, PIXELS(4), PIXELS(2));
+  Actor_SetSpeed(pillarId, PIXELS(4), PIXELS(2));
   FieldActor_SetMoveTarget(pillar, pillar->x.fixed, supportHeight,
                            pillar->z.fixed);
   Actor_WaitForMoveById(pillarId);
@@ -2261,7 +2258,7 @@ static void VenusLighthouse_CarryFloatingPillar(void) {
   // Handle completed destinations and fallen pillars before reordering a new
   // stack.
   for (pillarIndex = 0; pillarIndex < 4; pillarIndex++) {
-    pillar = Actor_GetById(pillarIndex + ACTOR_FIRST_FLOATING_PILLAR);
+    pillar = Actor_Get(pillarIndex + ACTOR_FIRST_FLOATING_PILLAR);
     column = pillar->x.fixed >> 20;
     if (column == 13 && (row = pillar->z.fixed >> 20) == 7 &&
         !GameFlag_Get(FLAG_SCENE_TEMP_00 + pillarIndex)) {
@@ -2286,7 +2283,7 @@ static void VenusLighthouse_CarryFloatingPillar(void) {
             pillar->x.fixed, 0, PIXELS(240), SPRITE_CAPPED_PILLAR);
       }
       Actor_WaitUntilIdle(pillar);
-      Import_ActorSetPosition(pillarIndex + ACTOR_FIRST_FLOATING_PILLAR, 0, 0);
+      Actor_SetPosition(pillarIndex + ACTOR_FIRST_FLOATING_PILLAR, 0, 0);
       Actor_Release(firstPassageEffect);
       Actor_Release(secondPassageEffect);
       GameFlag_Set(FLAG_SCENE_TEMP_00 + pillarIndex);
@@ -2300,7 +2297,7 @@ static void VenusLighthouse_CarryFloatingPillar(void) {
       settledIndex = pillarIndex;
       for (earlierIndex = 0; earlierIndex < pillarIndex; earlierIndex++) {
         if (!GameFlag_Get(FLAG_SCENE_TEMP_00 + earlierIndex)) {
-          other = Actor_GetById(earlierIndex + ACTOR_FIRST_FLOATING_PILLAR);
+          other = Actor_Get(earlierIndex + ACTOR_FIRST_FLOATING_PILLAR);
           Actor_CopyPosition(&savedPosition, pillar);
           Actor_CopyPosition(pillar, other);
           Actor_CopyPosition(other, &savedPosition);
@@ -2308,7 +2305,7 @@ static void VenusLighthouse_CarryFloatingPillar(void) {
           break;
         }
       }
-      other = Actor_GetById(settledIndex + ACTOR_FIRST_FLOATING_PILLAR);
+      other = Actor_Get(settledIndex + ACTOR_FIRST_FLOATING_PILLAR);
       FloatingPillar_Settle(other, 0);
       FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_GetActor()->motionFlags = 0;
@@ -2318,26 +2315,25 @@ static void VenusLighthouse_CarryFloatingPillar(void) {
       // follower.
       VenusLighthouse_StackFloatingPillar(settledIndex +
                                           ACTOR_FIRST_FLOATING_PILLAR);
-      if (Actor_GetById(settledIndex + ACTOR_FIRST_FLOATING_PILLAR)->x.fixed >>
+      if (Actor_Get(settledIndex + ACTOR_FIRST_FLOATING_PILLAR)->x.fixed >>
               20 ==
           6) {
-        Actor_GetById(ACTOR_BALANCE_WEST)->timer++;
-        Actor_GetById(ACTOR_BALANCE_EAST)->timer--;
+        Actor_Get(ACTOR_BALANCE_WEST)->timer++;
+        Actor_Get(ACTOR_BALANCE_EAST)->timer--;
       } else {
-        Actor_GetById(ACTOR_BALANCE_WEST)->timer--;
-        Actor_GetById(ACTOR_BALANCE_EAST)->timer++;
+        Actor_Get(ACTOR_BALANCE_WEST)->timer--;
+        Actor_Get(ACTOR_BALANCE_EAST)->timer++;
       }
 #ifdef UBFIX
-      Actor_GetById(settledIndex + ACTOR_FIRST_FLOATING_PILLAR)->update =
+      Actor_Get(settledIndex + ACTOR_FIRST_FLOATING_PILLAR)->update =
           VenusLighthouse_FollowSupportingPillarHeight;
 #else
-      Actor_GetById(settledIndex + ACTOR_FIRST_FLOATING_PILLAR)->update =
-          (void (*)(
-              struct Actor *))VenusLighthouse_FollowSupportingPillarHeight;
+      Actor_Get(settledIndex + ACTOR_FIRST_FLOATING_PILLAR)->update = (void (*)(
+          struct Actor *))VenusLighthouse_FollowSupportingPillarHeight;
 #endif
       VenusLighthouse_LowerFloatingPillars(40);
-      Actor_GetById(settledIndex + ACTOR_FIRST_FLOATING_PILLAR)
-          ->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+      Actor_Get(settledIndex + ACTOR_FIRST_FLOATING_PILLAR)->priorityFlags |=
+          ACTOR_PRIORITY_UNDERFOOT;
       GameFlag_Set(FLAG_SCENE_TEMP_00 + settledIndex);
       break;
     }
@@ -2372,7 +2368,7 @@ static void VenusLighthouse_StepOnWestWallSwitch(void) {
   s32 dustX;
 
   layer = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   column = leader->x.part.pixel;
   leaderZ = leader->z.part.pixel;
   leader->y.fixed = 0;
@@ -2448,7 +2444,7 @@ static void VenusLighthouse_StepOnEastWallSwitch(void) {
   s32 dustX;
 
   layer = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   column = leader->x.part.pixel;
   leaderZ = leader->z.part.pixel;
   leader->y.fixed = 0;
@@ -2535,7 +2531,7 @@ static void VenusLighthouse_MoveSocketPillar(void) {
   // Find a pillar on a clear pillar socket and preserve overlapping draw order.
   for (pillarId = ACTOR_FIRST_SOCKET_PILLAR;
        pillarId <= ACTOR_FIRST_SOCKET_PILLAR + 3; pillarId++) {
-    pillar = Actor_GetById(pillarId);
+    pillar = Actor_Get(pillarId);
     flags = &pillar->priorityFlags;
     if (*flags != 2)
       MapGrid_CopyCellAttributes(72, 48, 1, 1, pillar->x.fixed >> 20,
@@ -2559,7 +2555,7 @@ static void VenusLighthouse_MoveSocketPillar(void) {
       continue;
     for (candidateIndex = ACTOR_FIRST_SOCKET_PILLAR;
          candidateIndex <= ACTOR_FIRST_SOCKET_PILLAR + 3; candidateIndex++) {
-      otherPillar = Actor_GetById(candidateIndex);
+      otherPillar = Actor_Get(candidateIndex);
       if (pillarId != candidateIndex &&
           (pillar->x.fixed >> 20) == (otherPillar->x.fixed >> 20) &&
           (pillar->z.fixed >> 20) == (otherPillar->z.fixed >> 20)) {
@@ -2579,13 +2575,13 @@ static void VenusLighthouse_MoveSocketPillar(void) {
     }
     for (candidateIndex = ACTOR_FIRST_SOCKET_PILLAR;
          candidateIndex <= ACTOR_FIRST_SOCKET_PILLAR + 3; candidateIndex++) {
-      otherPillar = Actor_GetById(candidateIndex);
+      otherPillar = Actor_Get(candidateIndex);
       if (pillarId != candidateIndex &&
           (pillar->x.fixed >> 20) == (otherPillar->x.fixed >> 20) &&
           (pillar->z.fixed >> 20) - 1 == (otherPillar->z.fixed >> 20))
         Actor_SetSpritePriority(candidateIndex, 3);
     }
-    Actor_SetSpriteFlags(Actor_GetById(pillarId), 0);
+    Actor_SetSpriteFlags(Actor_Get(pillarId), 0);
     pillar->layer = 0;
     motionFlags = &pillar->motionFlags;
     *motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -2595,7 +2591,7 @@ static void VenusLighthouse_MoveSocketPillar(void) {
                                gVenusFourthFloorSockets[switchIndex].x,
                                gVenusFourthFloorSockets[switchIndex].z);
     Actor_WaitUntilIdle(pillar);
-    Event_PlaySound(SE_THUMP);
+    Sound_Play(SE_THUMP);
     pillar->collisionFlags = 0;
     *motionFlags = 0;
     pillar->y.fixed = -PIXELS(16);
@@ -2605,17 +2601,15 @@ static void VenusLighthouse_MoveSocketPillar(void) {
                                gVenusFourthFloorSockets[switchIndex].x,
                                gVenusFourthFloorSockets[switchIndex].z);
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, savedPriority);
-    Actor_GetById(ACTOR_PARTY_LEADER)->priorityFlags |=
-        ACTOR_PRIORITY_AUTOMATIC;
+    Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
     for (candidateIndex = ACTOR_FIRST_SOCKET_PILLAR;
          candidateIndex <= ACTOR_FIRST_SOCKET_PILLAR + 3; candidateIndex++) {
-      otherPillar = Actor_GetById(candidateIndex);
+      otherPillar = Actor_Get(candidateIndex);
       if (pillarId != candidateIndex &&
           (pillar->x.fixed >> 20) == (otherPillar->x.fixed >> 20) &&
           (pillar->z.fixed >> 20) - 1 == (otherPillar->z.fixed >> 20)) {
         Actor_SetSpritePriority(candidateIndex, 1);
-        Actor_GetById(candidateIndex)->priorityFlags |=
-            ACTOR_PRIORITY_AUTOMATIC;
+        Actor_Get(candidateIndex)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       }
     }
     Actor_Release(occlusionEffect);
@@ -2627,7 +2621,7 @@ static void VenusLighthouse_MoveSocketPillar(void) {
     firstPillar = Actor_Get(ACTOR_FIRST_SOCKET_PILLAR);
     secondPillar = Actor_Get(ACTOR_FIRST_SOCKET_PILLAR + 1);
     thirdPillar = Actor_Get(ACTOR_FIRST_SOCKET_PILLAR + 2);
-    fourthPillar = Actor_GetById(ACTOR_FIRST_SOCKET_PILLAR + 3);
+    fourthPillar = Actor_Get(ACTOR_FIRST_SOCKET_PILLAR + 3);
     if ((firstPillar->priorityFlags & secondPillar->priorityFlags &
          thirdPillar->priorityFlags & fourthPillar->priorityFlags) &
         2) {
@@ -2733,7 +2727,7 @@ static void VenusLighthouse_LayDownHurtActor(s32 actorId) {
   struct Actor *actor;
   s32 collisionFlags;
 
-  actor = Actor_GetById(actorId);
+  actor = Actor_Get(actorId);
   actor->motionFlags = 0;
   collisionFlags = 252;
   collisionFlags &= actor->collisionFlags;
@@ -2754,7 +2748,7 @@ static void VenusLighthouse_VisitPillarActors(void) {
 
   actorId = ACTOR_FIRST_SOCKET_PILLAR;
   do {
-    Actor_GetById(actorId);
+    Actor_Get(actorId);
     actorId++;
   } while (actorId <= ACTOR_FIRST_SOCKET_PILLAR + 3);
 }
@@ -2840,7 +2834,7 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_FROM_STATUE_ROW_WEST:
       if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PILLAR_CARRIED)) {
         Actor_SetPosition(ACTOR_WALL_PILLAR, PIXELS(872), PIXELS(88));
-        actor = Actor_GetById(ACTOR_WALL_PILLAR);
+        actor = Actor_Get(ACTOR_WALL_PILLAR);
         actor->y.fixed = -PIXELS(24);
         actor->targetY = ACTOR_NO_TARGET;
       }
@@ -2862,11 +2856,11 @@ s32 VenusLighthouse_Initialize(void) {
       break;
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_FROM_DRIFTING_FLOOR:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_FROM_LADDERS:
-      actor = Actor_GetById(ACTOR_FIRST_CARRY_PILLAR);
+      actor = Actor_Get(ACTOR_FIRST_CARRY_PILLAR);
       VenusLighthouse_MoveCarryPillar();
       if (actor->x.fixed >> 20 == 8)
         VenusLighthouse_FixPillarAtDestination(actor);
-      actor = Actor_GetById(ACTOR_FIRST_CARRY_PILLAR + 1);
+      actor = Actor_Get(ACTOR_FIRST_CARRY_PILLAR + 1);
       if (actor->x.fixed >> 20 == 7)
         VenusLighthouse_FixPillarAtDestination(actor);
       VenusLighthouse_CreateBlendedPassageEffect(PIXELS(206), 0, PIXELS(449),
@@ -2878,13 +2872,13 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_WEST:
       FieldEffect_StartFadeOverlay(0);
       wait(2);
-      actor = Actor_GetById(ACTOR_FIRST_CAPPED_PILLAR);
+      actor = Actor_Get(ACTOR_FIRST_CAPPED_PILLAR);
       actor->motionFlags = 0;
       actor->update = Actor_SetFlagBitByRelativeDepth;
-      actor = Actor_GetById(ACTOR_FIRST_CAPPED_PILLAR + 1);
+      actor = Actor_Get(ACTOR_FIRST_CAPPED_PILLAR + 1);
       actor->motionFlags = 0;
       actor->update = Actor_SetFlagBitByRelativeDepth;
-      actor = Actor_GetById(ACTOR_FIRST_CAPPED_PILLAR + 2);
+      actor = Actor_Get(ACTOR_FIRST_CAPPED_PILLAR + 2);
       actor->motionFlags = 0;
       actor->update = Actor_SetFlagBitByRelativeDepth;
       VenusLighthouse_MoveCappedPillar();
@@ -2927,10 +2921,10 @@ s32 VenusLighthouse_Initialize(void) {
       break;
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_FROM_WALL_SWITCH:
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_FROM_PILLAR_PIT:
-      actor = Actor_GetById(ACTOR_GATE_STATUE);
+      actor = Actor_Get(ACTOR_GATE_STATUE);
       actor->motionFlags = 0;
       actor->y.fixed = 0;
-      actor = Actor_GetById(ACTOR_GATE_PILLAR);
+      actor = Actor_Get(ACTOR_GATE_PILLAR);
       actor->motionFlags = 0;
       actor->collisionFlags = 0;
       if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_GATE_OPEN)) {
@@ -2943,10 +2937,9 @@ s32 VenusLighthouse_Initialize(void) {
         Actor_SetSpritePriority(ACTOR_GATE_PILLAR, 3);
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         MapGrid_CopyCellAttributes(45, 45, 1, 1, 46, 45);
-        Import_ActorSetAnimation(ACTOR_GATE_SPARKLE,
-                                 PARTICLE_ANIMATION_FLICKER);
+        Actor_SetAnimation(ACTOR_GATE_SPARKLE, PARTICLE_ANIMATION_FLICKER);
         Actor_SetSpritePriority(ACTOR_GATE_SPARKLE, 1);
-        actor = Actor_GetById(ACTOR_GATE_SPARKLE);
+        actor = Actor_Get(ACTOR_GATE_SPARKLE);
         actor->collisionFlags = 0;
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         Actor_SetPosition(ACTOR_GATE_SPARKLE, PIXELS(743), PIXELS(696));
@@ -2960,7 +2953,7 @@ s32 VenusLighthouse_Initialize(void) {
       break;
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_SOUTH:
       gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
-      Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed = -PIXELS(2);
+      Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = -PIXELS(2);
       // These entrances share the tile-wave setup.
       // fall through
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_WEST:
@@ -3030,12 +3023,12 @@ s32 VenusLighthouse_Initialize(void) {
       break;
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_FROM_DRIFTING_FLOOR:
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_FROM_WEST_ROOM:
-      actor = Actor_GetById(ACTOR_SWITCH_STATUE);
+      actor = Actor_Get(ACTOR_SWITCH_STATUE);
       actor->motionFlags = 0;
       actor->y.fixed = 0;
-      Actor_GetById(ACTOR_FIRST_SWITCH_PILLAR)->motionFlags = 0;
-      Actor_GetById(ACTOR_FIRST_SWITCH_PILLAR + 1)->motionFlags = 0;
-      Actor_GetById(ACTOR_FIRST_SWITCH_PILLAR + 2)->motionFlags = 0;
+      Actor_Get(ACTOR_FIRST_SWITCH_PILLAR)->motionFlags = 0;
+      Actor_Get(ACTOR_FIRST_SWITCH_PILLAR + 1)->motionFlags = 0;
+      Actor_Get(ACTOR_FIRST_SWITCH_PILLAR + 2)->motionFlags = 0;
       if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN)) {
         wait(1);
         MapGrid_CopyCellsTo(111, 59, 109, 37, 1, 2);
@@ -3056,22 +3049,22 @@ s32 VenusLighthouse_Initialize(void) {
                             PIXELS(696));
         }
         Actor_SetSpritePriority(ACTOR_FIRST_SWITCH_PILLAR, 3);
-        actor = Actor_GetById(ACTOR_FIRST_SWITCH_PILLAR);
+        actor = Actor_Get(ACTOR_FIRST_SWITCH_PILLAR);
         actor->y.fixed = -PIXELS(16);
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         Actor_SetSpritePriority(ACTOR_FIRST_SWITCH_PILLAR + 1, 3);
-        actor = Actor_GetById(ACTOR_FIRST_SWITCH_PILLAR + 1);
+        actor = Actor_Get(ACTOR_FIRST_SWITCH_PILLAR + 1);
         actor->y.fixed = -PIXELS(16);
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         Actor_SetSpritePriority(ACTOR_FIRST_SWITCH_PILLAR + 2, 3);
-        actor = Actor_GetById(ACTOR_FIRST_SWITCH_PILLAR + 2);
+        actor = Actor_Get(ACTOR_FIRST_SWITCH_PILLAR + 2);
         actor->y.fixed = -PIXELS(16);
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-        Import_ActorSetAnimation(ACTOR_SWITCH_GATE_SPARKLE,
-                                 PARTICLE_ANIMATION_FLICKER);
-        Actor_SetSpriteFlags(Actor_GetById(ACTOR_SWITCH_GATE_SPARKLE), 0);
+        Actor_SetAnimation(ACTOR_SWITCH_GATE_SPARKLE,
+                           PARTICLE_ANIMATION_FLICKER);
+        Actor_SetSpriteFlags(Actor_Get(ACTOR_SWITCH_GATE_SPARKLE), 0);
         Actor_SetSpritePriority(ACTOR_SWITCH_GATE_SPARKLE, 1);
-        actor = Actor_GetById(ACTOR_SWITCH_GATE_SPARKLE);
+        actor = Actor_Get(ACTOR_SWITCH_GATE_SPARKLE);
         actor->collisionFlags = 0;
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         Actor_SetPosition(ACTOR_SWITCH_GATE_SPARKLE, PIXELS(727), PIXELS(632));
@@ -3095,9 +3088,9 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLARS_FROM_WALL_SWITCHES:
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         VenusLighthouse_LowerFloatingPillars(0);
-        Actor_WaitUntilIdle(Actor_GetById(ACTOR_PARTY_LEADER));
+        Actor_WaitUntilIdle(Actor_Get(ACTOR_PARTY_LEADER));
         for (pillarIndex = 0; pillarIndex <= 3; pillarIndex++) {
-          actor = Actor_GetById(pillarIndex + ACTOR_FIRST_FLOATING_PILLAR);
+          actor = Actor_Get(pillarIndex + ACTOR_FIRST_FLOATING_PILLAR);
           column = actor->x.fixed >> 20;
           if (column == 13) {
             row = actor->z.fixed >> 20;
@@ -3111,36 +3104,36 @@ s32 VenusLighthouse_Initialize(void) {
           }
         }
       } else {
-        actor = Actor_GetById(ACTOR_BALANCE_WEST);
+        actor = Actor_Get(ACTOR_BALANCE_WEST);
         actor->motionFlags = 0;
         actor->y.fixed = -PIXELS(48);
         actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
         actor->collisionFlags &= ~ACTOR_SOLID;
         actor->timer = 3;
         Actor_SetSpritePriority(ACTOR_BALANCE_WEST, 1);
-        actor = Actor_GetById(ACTOR_BALANCE_EAST);
+        actor = Actor_Get(ACTOR_BALANCE_EAST);
         actor->motionFlags = 0;
         actor->y.fixed = -PIXELS(48);
         actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
         actor->collisionFlags &= ~ACTOR_SOLID;
         actor->timer = 3;
         Actor_SetSpritePriority(ACTOR_BALANCE_EAST, 1);
-        actor = Actor_GetById(ACTOR_FIRST_FLOATING_PILLAR);
+        actor = Actor_Get(ACTOR_FIRST_FLOATING_PILLAR);
         actor->motionFlags = 0;
         actor->timer = 0;
-        Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FLOATING_PILLAR), 0);
-        actor = Actor_GetById(ACTOR_FIRST_FLOATING_PILLAR + 1);
+        Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_FLOATING_PILLAR), 0);
+        actor = Actor_Get(ACTOR_FIRST_FLOATING_PILLAR + 1);
         actor->motionFlags = 0;
         actor->timer = 0;
-        Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FLOATING_PILLAR + 1), 0);
-        actor = Actor_GetById(ACTOR_FIRST_FLOATING_PILLAR + 2);
+        Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_FLOATING_PILLAR + 1), 0);
+        actor = Actor_Get(ACTOR_FIRST_FLOATING_PILLAR + 2);
         actor->motionFlags = 0;
         actor->timer = 0;
-        Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FLOATING_PILLAR + 2), 0);
-        actor = Actor_GetById(ACTOR_FIRST_FLOATING_PILLAR + 3);
+        Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_FLOATING_PILLAR + 2), 0);
+        actor = Actor_Get(ACTOR_FIRST_FLOATING_PILLAR + 3);
         actor->motionFlags = 0;
         actor->timer = 0;
-        Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FLOATING_PILLAR + 3), 0);
+        Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_FLOATING_PILLAR + 3), 0);
       }
       break;
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_FROM_WALL_SWITCHES_WEST:
@@ -3150,7 +3143,7 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_EAST_NORTHEAST:
       gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
-      Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed = -PIXELS(2);
+      Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = -PIXELS(2);
       // Restore the same spray and passage state.
       // fall through
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PILLARS:
@@ -3164,10 +3157,10 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_GAIA_BLADE_EAST:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PILLAR_SOCKETS_SOUTH:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PSYNERGY_STONE_RISING:
-      Actor_GetById(ACTOR_RISING_PLATFORM)->motionFlags = ACTOR_FLOATS;
-      Actor_GetById(ACTOR_RISING_PLATFORM)->priorityFlags |=
+      Actor_Get(ACTOR_RISING_PLATFORM)->motionFlags = ACTOR_FLOATS;
+      Actor_Get(ACTOR_RISING_PLATFORM)->priorityFlags |=
           ACTOR_PRIORITY_UNDERFOOT;
-      Actor_GetById(ACTOR_RISING_PLATFORM)->y.fixed = -(PIXELS(33) / 2);
+      Actor_Get(ACTOR_RISING_PLATFORM)->y.fixed = -(PIXELS(33) / 2);
       BlendScript_Suspend();
       Io_Write16(0, &REG_BLDCNT);
       if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
@@ -3203,46 +3196,45 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_FROM_WALL_SWITCHES_EAST:
       wait(1);
       Task_AddFrame(VenusLighthouse_VisitPillarActors, TASK_PASS_FRAME);
-      actor = Actor_GetById(ACTOR_SOCKET_STATUE);
+      actor = Actor_Get(ACTOR_SOCKET_STATUE);
       actor->motionFlags = 0;
       actor->y.fixed = 0;
-      Actor_GetById(ACTOR_FIRST_SOCKET_PILLAR)->motionFlags = 0;
-      Actor_GetById(ACTOR_FIRST_SOCKET_PILLAR + 1)->motionFlags = 0;
-      Actor_GetById(ACTOR_FIRST_SOCKET_PILLAR + 2)->motionFlags = 0;
-      Actor_GetById(ACTOR_FIRST_SOCKET_PILLAR + 3)->motionFlags = 0;
+      Actor_Get(ACTOR_FIRST_SOCKET_PILLAR)->motionFlags = 0;
+      Actor_Get(ACTOR_FIRST_SOCKET_PILLAR + 1)->motionFlags = 0;
+      Actor_Get(ACTOR_FIRST_SOCKET_PILLAR + 2)->motionFlags = 0;
+      Actor_Get(ACTOR_FIRST_SOCKET_PILLAR + 3)->motionFlags = 0;
       if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN)) {
         wait(1);
         MapGrid_CopyCellsTo(95, 56, 77, 35, 1, 2);
         MapGrid_CopyCellAttributes(13, 35, 1, 1, 13, 36);
-        Import_ActorSetPosition(ACTOR_FIRST_SOCKET_PILLAR, PIXELS(264),
-                                PIXELS(744));
-        actor = Actor_GetById(ACTOR_FIRST_SOCKET_PILLAR);
+        Actor_SetPosition(ACTOR_FIRST_SOCKET_PILLAR, PIXELS(264), PIXELS(744));
+        actor = Actor_Get(ACTOR_FIRST_SOCKET_PILLAR);
         actor->y.fixed = -PIXELS(16);
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         Actor_SetSpritePriority(ACTOR_FIRST_SOCKET_PILLAR, 3);
         Actor_SetPosition(ACTOR_FIRST_SOCKET_PILLAR + 1, PIXELS(184),
                           PIXELS(632));
-        actor = Actor_GetById(ACTOR_FIRST_SOCKET_PILLAR + 1);
+        actor = Actor_Get(ACTOR_FIRST_SOCKET_PILLAR + 1);
         actor->y.fixed = -PIXELS(16);
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         Actor_SetSpritePriority(ACTOR_FIRST_SOCKET_PILLAR + 1, 3);
-        Import_ActorSetPosition(ACTOR_FIRST_SOCKET_PILLAR + 2, PIXELS(232),
-                                PIXELS(696));
-        actor = Actor_GetById(ACTOR_FIRST_SOCKET_PILLAR + 2);
+        Actor_SetPosition(ACTOR_FIRST_SOCKET_PILLAR + 2, PIXELS(232),
+                          PIXELS(696));
+        actor = Actor_Get(ACTOR_FIRST_SOCKET_PILLAR + 2);
         actor->y.fixed = -PIXELS(16);
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         Actor_SetSpritePriority(ACTOR_FIRST_SOCKET_PILLAR + 2, 3);
-        Import_ActorSetPosition(ACTOR_FIRST_SOCKET_PILLAR + 3, PIXELS(184),
-                                PIXELS(664));
-        actor = Actor_GetById(ACTOR_FIRST_SOCKET_PILLAR + 3);
+        Actor_SetPosition(ACTOR_FIRST_SOCKET_PILLAR + 3, PIXELS(184),
+                          PIXELS(664));
+        actor = Actor_Get(ACTOR_FIRST_SOCKET_PILLAR + 3);
         actor->y.fixed = -PIXELS(16);
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         Actor_SetSpritePriority(ACTOR_FIRST_SOCKET_PILLAR + 3, 3);
-        Import_ActorSetAnimation(ACTOR_SOCKET_GATE_SPARKLE,
-                                 PARTICLE_ANIMATION_FLICKER);
-        Actor_SetSpriteFlags(Actor_GetById(ACTOR_SOCKET_GATE_SPARKLE), 0);
+        Actor_SetAnimation(ACTOR_SOCKET_GATE_SPARKLE,
+                           PARTICLE_ANIMATION_FLICKER);
+        Actor_SetSpriteFlags(Actor_Get(ACTOR_SOCKET_GATE_SPARKLE), 0);
         Actor_SetSpritePriority(ACTOR_SOCKET_GATE_SPARKLE, 1);
-        actor = Actor_GetById(ACTOR_SOCKET_GATE_SPARKLE);
+        actor = Actor_Get(ACTOR_SOCKET_GATE_SPARKLE);
         actor->collisionFlags = 0;
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         Actor_SetPosition(ACTOR_SOCKET_GATE_SPARKLE, PIXELS(215), PIXELS(600));
@@ -3320,7 +3312,7 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
     actorId = gMainRoutineWork.leaderActorId;
     viewCenter = work->camera;
   }
-  actor = Actor_GetById(actorId);
+  actor = Actor_Get(actorId);
   nextPosition.x =
       actor->x.fixed + VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->x * 3, 15);
   nextPosition.y = actor->y.fixed;
@@ -3345,7 +3337,7 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
   }
   // A drop uses the fall animation; solid terrain instead constrains each step.
   if (collision < 0) {
-    FieldEffect_SetAttached(actorId,
+    Actor_SetAttachedEffect(actorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     FieldActor_SetMoveTarget(actor, actor->x.fixed, actor->y.fixed,
                              actor->z.fixed + PIXELS(8));
@@ -3418,8 +3410,8 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Event_Start();
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_PARTY_LEADER), 0);
-  Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
+  Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Scene_QueueMusic(SE_AMBIENT_WATER);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -3513,8 +3505,8 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Event_Start();
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_PARTY_LEADER), 0);
-  Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
+  Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Scene_QueueMusic(SE_AMBIENT_WATER);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -3581,8 +3573,8 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Event_Start();
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_PARTY_LEADER), 0);
-  Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
+  Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Scene_QueueMusic(SE_AMBIENT_WATER);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -3678,8 +3670,8 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   struct Actor *leader;
   struct Actor *platform;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
-  platform = Actor_GetById(ACTOR_RISING_PLATFORM);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
+  platform = Actor_Get(ACTOR_RISING_PLATFORM);
   Event_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   MapGrid_CenterOnFollowedPoint();
@@ -3692,13 +3684,13 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   leader->motionFlags = 0;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Event_PlaySound(SE_DUST_PUFF);
+  Sound_Play(SE_DUST_PUFF);
   Event_Wait(30);
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Event_Wait(24);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
   leader->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
   platform->y.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(-3, 16);
   leader->y.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(-3, 16);
@@ -3723,7 +3715,7 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   platform->motionFlags = 0;
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(40);
 #ifdef UBFIX
   leader->update = VenusLighthouse_UpdateRisingSpray;
@@ -3733,8 +3725,8 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   Event_Wait(60);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
   Actor_SetSpritePriority(ACTOR_RISING_PLATFORM, 1);
-  Event_PlaySound(SOUND_FADE_OUT_BGM);
-  Event_PlaySound(SE_MATERIALIZE);
+  Sound_Play(SOUND_FADE_OUT_BGM);
+  Sound_Play(SE_MATERIALIZE);
   GameFlag_Set(FLAG_SKIP_SCENE_CHANGE_SOUND);
   // Raise the leader, ground height and platform by the same pixel each
   // frame.

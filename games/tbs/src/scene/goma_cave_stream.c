@@ -102,13 +102,13 @@ static void GomaCaveStream_MoveStump(void) {
   struct Actor *landed;
   s32 column;
 
-  stump = Actor_GetById(ACTOR_STUMP);
+  stump = Actor_Get(ACTOR_STUMP);
   column = stump->x.fixed / PIXELS(16);
   if (column == 24) {
     GomaCaveStream_LeapStump(ACTOR_STUMP);
-    Actor_GetById(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    Actor_Get(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(19, 74, 9, 3, 19, 17);
-    landed = Actor_GetById(ACTOR_STUMP);
+    landed = Actor_Get(ACTOR_STUMP);
     Actor_SetSpriteFlags(landed, 0);
     GameFlag_Set(FLAG_GOMA_CAVE_STREAM_STUMP_MOVED);
   }
@@ -136,12 +136,12 @@ s32 Scene_Initialize(void) {
         GOMA_CAVE_STREAM_CHEST_CAVE_FROM_VALE_PLAZA) {
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     } else {
-      Actor_GetById(ACTOR_STUMP)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
+      Actor_Get(ACTOR_STUMP)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
       if (GameFlag_Get(FLAG_GOMA_CAVE_STREAM_STUMP_MOVED) != 0) {
-        Import_ActorSetPosition(ACTOR_STUMP, PIXELS(346), PIXELS(292));
-        stump = Actor_GetById(ACTOR_STUMP);
+        Actor_SetPosition(ACTOR_STUMP, PIXELS(346), PIXELS(292));
+        stump = Actor_Get(ACTOR_STUMP);
         Actor_SetSpriteFlags(stump, 0);
-        Actor_GetById(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+        Actor_Get(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
         Import_ActorSetAnimation(ACTOR_STUMP, STUMP_ANIMATION_SINK);
         MapGrid_CopyCellAttributes(19, 74, 9, 3, 19, 17);
       }
@@ -169,7 +169,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
   struct Vector3 dir;
   struct EffectOptions options;
 
-  stump = Actor_GetById(stumpId);
+  stump = Actor_Get(stumpId);
   stump->motionFlags = 0;
   for (i = 0; i < 18; i++) {
     wait(1);

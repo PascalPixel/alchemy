@@ -271,7 +271,7 @@ static void ValeCave_FaceActorTowardLeader(struct Actor *updated) {
 static s32 ValeCave_FaceActorTowardLeader(struct Actor *updated) {
 #endif
   struct Actor *actor = (struct Actor *)updated;
-  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 distanceZ = leader->z.fixed - actor->z.fixed;
   s32 distanceX = leader->x.fixed - actor->x.fixed;
 
@@ -359,7 +359,7 @@ ValeCave_SinkActorWithParticles(s32 actorId, s32 baseX, s32 baseZ,
     FieldEffect_Spawn(particleX, 0, particleZ, 0, 0, 0,
                       EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
                       particleOptions);
-    Actor_GetById(actorId)->y.fixed -= PIXELS(1) / 2;
+    Actor_Get(actorId)->y.fixed -= PIXELS(1) / 2;
     Event_Wait(1);
   }
 }
@@ -377,18 +377,18 @@ static void ValeCave_MoveWestCratesIntoWater(void) {
   struct Actor *rightEffect;
 
   Event_Start();
-  if (Actor_GetById(ACTOR_WEST_CRATES)->x.fixed >> 20 == 23) {
+  if (Actor_Get(ACTOR_WEST_CRATES)->x.fixed >> 20 == 23) {
     // Move the leader aside before the crates start sinking.
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 360, 664);
-    Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 10);
-    Actor_GetById(ACTOR_WEST_CRATES)->x.fixed += PIXELS(2);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 10);
+    Actor_Get(ACTOR_WEST_CRATES)->x.fixed += PIXELS(2);
     leftEffect = Actor_Prepare(
-        Actor_GetById(ACTOR_WEST_CRATES)->x.fixed, 0,
-        Actor_GetById(ACTOR_WEST_CRATES)->z.fixed + PIXELS(52), SPRITE_CRATES);
+        Actor_Get(ACTOR_WEST_CRATES)->x.fixed, 0,
+        Actor_Get(ACTOR_WEST_CRATES)->z.fixed + PIXELS(52), SPRITE_CRATES);
     rightEffect = Actor_Prepare(
-        Actor_GetById(ACTOR_WEST_CRATES)->x.fixed + PIXELS(16), 0,
-        Actor_GetById(ACTOR_WEST_CRATES)->z.fixed + PIXELS(52), SPRITE_CRATES);
-    Actor_GetById(ACTOR_WEST_CRATES)->motionFlags = 0;
+        Actor_Get(ACTOR_WEST_CRATES)->x.fixed + PIXELS(16), 0,
+        Actor_Get(ACTOR_WEST_CRATES)->z.fixed + PIXELS(52), SPRITE_CRATES);
+    Actor_Get(ACTOR_WEST_CRATES)->motionFlags = 0;
     // Surround the sinking crates with one particle per frame.
     options.startScaleX = 3 * Q16_ONE / 5;
     options.startScaleY = 3 * Q16_ONE / 5;
@@ -397,9 +397,9 @@ static void ValeCave_MoveWestCratesIntoWater(void) {
     ValeCave_SinkActorWithParticles(ACTOR_WEST_CRATES, PIXELS(368), PIXELS(624),
                                     &options);
     MapGrid_CopyCellAttributes(23, 41, 1, 1, 23, 39);
-    Actor_GetById(ACTOR_WEST_CRATES)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    Actor_Get(ACTOR_WEST_CRATES)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     GameFlag_Set(FLAG_VALE_CAVE_WEST_CRATES_SUNK);
-    Actor_GetById(ACTOR_WEST_CRATES)->y.fixed = -PIXELS(8);
+    Actor_Get(ACTOR_WEST_CRATES)->y.fixed = -PIXELS(8);
     Import_ActorSetAnimation(ACTOR_WEST_CRATES, 2);
     Actor_Release(leftEffect);
     Actor_Release(rightEffect);
@@ -421,18 +421,18 @@ static void ValeCave_MoveEastCratesIntoWater(void) {
   struct Actor *rightEffect;
 
   Event_Start();
-  if (Actor_GetById(ACTOR_EAST_CRATES)->x.fixed >> 20 == 27) {
+  if (Actor_Get(ACTOR_EAST_CRATES)->x.fixed >> 20 == 27) {
     leftEffect = Actor_Prepare(
-        Actor_GetById(ACTOR_EAST_CRATES)->x.fixed - PIXELS(8), 0,
-        Actor_GetById(ACTOR_EAST_CRATES)->z.fixed + PIXELS(52), SPRITE_CRATES);
+        Actor_Get(ACTOR_EAST_CRATES)->x.fixed - PIXELS(8), 0,
+        Actor_Get(ACTOR_EAST_CRATES)->z.fixed + PIXELS(52), SPRITE_CRATES);
     rightEffect = Actor_Prepare(
-        Actor_GetById(ACTOR_EAST_CRATES)->x.fixed + PIXELS(8), 0,
-        Actor_GetById(ACTOR_EAST_CRATES)->z.fixed + PIXELS(52), SPRITE_CRATES);
+        Actor_Get(ACTOR_EAST_CRATES)->x.fixed + PIXELS(8), 0,
+        Actor_Get(ACTOR_EAST_CRATES)->z.fixed + PIXELS(52), SPRITE_CRATES);
     // This clears the western crates' motion flags, not these crates', where
     // ValeCave_MoveWestCratesIntoWater clears its own. These sink all the
     // same, since the sinking writes their height directly and nothing pulls
     // them back up, as the recording of this event shows.
-    Actor_GetById(ACTOR_WEST_CRATES)->motionFlags = 0;
+    Actor_Get(ACTOR_WEST_CRATES)->motionFlags = 0;
     // Surround the sinking crates with one particle per frame.
     options.startScaleX = 3 * Q16_ONE / 5;
     options.startScaleY = 3 * Q16_ONE / 5;
@@ -441,9 +441,9 @@ static void ValeCave_MoveEastCratesIntoWater(void) {
     ValeCave_SinkActorWithParticles(ACTOR_EAST_CRATES, PIXELS(432), PIXELS(656),
                                     &options);
     MapGrid_CopyCellAttributes(31, 39, 2, 1, 27, 41);
-    Actor_GetById(ACTOR_EAST_CRATES)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    Actor_Get(ACTOR_EAST_CRATES)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     GameFlag_Set(FLAG_VALE_CAVE_EAST_CRATES_SUNK);
-    Actor_GetById(ACTOR_EAST_CRATES)->y.fixed = -PIXELS(8);
+    Actor_Get(ACTOR_EAST_CRATES)->y.fixed = -PIXELS(8);
     Import_ActorSetAnimation(ACTOR_EAST_CRATES, 2);
     Actor_Release(leftEffect);
     Actor_Release(rightEffect);
@@ -476,7 +476,7 @@ static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
   u8 *motionFlags;
   s32 savedMotionFlags;
 
-  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
   motionFlags = &leader->motionFlags;
   savedMotionFlags = *motionFlags;
 #if TBS_PATCH_1
@@ -501,9 +501,8 @@ static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
     leader->velocityY = PIXELS(4);
     *motionFlags &= 126;
     Actor_SetSpriteFlags(leader, 0);
-    Actor_SetPositionAndCommit(ACTOR_PARTY_LEADER,
-                               landingPosition[0].part.pixel,
-                               landingPosition[2].part.pixel);
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, landingPosition[0].part.pixel,
+                        landingPosition[2].part.pixel);
     Actor_SelectAnimation(leader, 6);
     Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
     *motionFlags = savedMotionFlags;
@@ -599,11 +598,11 @@ static void ValeCave_KiteKeepsAway(void) {
     if (gMainRoutineWork.haltedActor != ACTOR_KITE) {
       // Preserve the speed reads before resolving this route point.
       routeIndex = work->stepTrigger;
-      djinni = Actor_GetById(ACTOR_KITE);
-      leader = Actor_GetById(ACTOR_PARTY_LEADER);
+      djinni = Actor_Get(ACTOR_KITE);
+      leader = Actor_Get(ACTOR_PARTY_LEADER);
       djinni->speedLimit = leader->speedLimit;
-      djinni = Actor_GetById(ACTOR_KITE);
-      leader = Actor_GetById(ACTOR_PARTY_LEADER);
+      djinni = Actor_Get(ACTOR_KITE);
+      leader = Actor_Get(ACTOR_PARTY_LEADER);
       djinni->acceleration = leader->acceleration;
       routeIndex -= CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE;
       // X/Z pairs occupy eight bytes. Plain pair indexing changes six
@@ -611,9 +610,8 @@ static void ValeCave_KiteKeepsAway(void) {
       walkTargetBytes = (const u8 *)gValeCave_WalkTargets;
       routeIndex <<= 3;
       targetZOffset = routeIndex + sizeof(s32);
-      Actor_ResetAndSetPositionInMode2(
-          ACTOR_KITE, *(const s32 *)(walkTargetBytes + routeIndex),
-          *(const s32 *)(walkTargetBytes + targetZOffset));
+      Actor_WalkTo(ACTOR_KITE, *(const s32 *)(walkTargetBytes + routeIndex),
+                   *(const s32 *)(walkTargetBytes + targetZOffset));
     }
   }
 }
@@ -647,20 +645,20 @@ static void ValeCave_PushLogOverEdge(void) {
     if ((probe.position.x >> 20) == 17) {
       Import_ActorSetAnimation(probe.actorSlot, 3);
       stationaryMotion = 0;
-      Actor_GetById(probe.actorSlot)->motionFlags = stationaryMotion;
-      movedLog = Actor_GetById(probe.actorSlot);
+      Actor_Get(probe.actorSlot)->motionFlags = stationaryMotion;
+      movedLog = Actor_Get(probe.actorSlot);
       movedLog->bounce = stationaryMotion;
-      Actor_OffsetPositionAndResetMotion(probe.actorSlot, -12, 0);
+      Actor_SetDestinationOffset(probe.actorSlot, -12, 0);
       Actor_WaitForMoveById(probe.actorSlot);
       Import_ActorSetAnimation(probe.actorSlot, 3);
       Actor_SetSpritePriority(ACTOR_EAST_LOG, 3);
-      Actor_GetById(probe.actorSlot)->motionFlags =
+      Actor_Get(probe.actorSlot)->motionFlags =
           ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-      Actor_OffsetPositionAndResetMotion(probe.actorSlot, -6, 0);
-      ValeCave_WaitForActorLanding(Actor_GetById(probe.actorSlot));
+      Actor_SetDestinationOffset(probe.actorSlot, -6, 0);
+      ValeCave_WaitForActorLanding(Actor_Get(probe.actorSlot));
       Import_ActorSetAnimation(probe.actorSlot, 8);
       {
-        struct Actor *movedLog = Actor_GetById(probe.actorSlot);
+        struct Actor *movedLog = Actor_Get(probe.actorSlot);
 
         movedLog->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       }
@@ -697,34 +695,33 @@ static void ValeCave_PushLogOffLedge(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 10);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(15);
-  Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 8, 0);
+  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 8, 0);
   Event_Wait(4);
   Event_PlaySound(SE_STOP_ACTION_SE);
-  Event_PlaySound(SE_HEAVY_MOVE);
+  Sound_Play(SE_HEAVY_MOVE);
   Actor_SetSpeed(ACTOR_WEST_LOG, PIXELS(1) / 2, PIXELS(1) / 10);
   Import_ActorSetAnimation(ACTOR_WEST_LOG, 2);
   stationaryMotion = 0;
-  Actor_GetById(ACTOR_WEST_LOG)->motionFlags = stationaryMotion;
+  Actor_Get(ACTOR_WEST_LOG)->motionFlags = stationaryMotion;
   pushedLog = Actor_Get(ACTOR_WEST_LOG);
   pushedLog->bounce = stationaryMotion;
-  Actor_OffsetPositionAndResetMotion(ACTOR_WEST_LOG, 12, 0);
+  Actor_SetDestinationOffset(ACTOR_WEST_LOG, 12, 0);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_WaitForMoveById(ACTOR_WEST_LOG);
-  Event_PlaySound(SE_STOP_ACTION_SE);
-  Event_PlaySound(SE_HEAVY_STOP);
+  Sound_Play(SE_STOP_ACTION_SE);
+  Sound_Play(SE_HEAVY_STOP);
   Import_ActorSetAnimation(ACTOR_WEST_LOG, 3);
-  Actor_GetById(ACTOR_WEST_LOG)->motionFlags =
-      ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  Actor_OffsetPositionAndResetMotion(ACTOR_WEST_LOG, 6, 0);
+  Actor_Get(ACTOR_WEST_LOG)->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+  Actor_SetDestinationOffset(ACTOR_WEST_LOG, 6, 0);
   ValeCave_WaitForActorLanding(Actor_Get(ACTOR_WEST_LOG));
   Import_ActorSetAnimation(ACTOR_WEST_LOG, 8);
   Actor_SetSpritePriority(ACTOR_WEST_LOG, 3);
-  Actor_GetById(ACTOR_WEST_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+  Actor_Get(ACTOR_WEST_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   PushedActor_FillGridAttributeRectangle(0, 12, 16, 1, 4, CELL_BEHAVIOR_NORMAL);
   PushedActor_FillGridAttributeRectangle(0, 13, 16, 1, 4, CELL_BEHAVIOR_NORMAL);
   GameFlag_Set(FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE);
-  Event_PlaySound(SE_LOG_FALL);
+  Sound_Play(SE_LOG_FALL);
   Event_End();
 }
 
@@ -743,12 +740,12 @@ static void ValeCave_PushLogNorth(void) {
     // Slide into the new cell before replacing the cell behavior footprint.
     Import_ActorSetAnimation(ACTOR_SOUTH_LOG, 3);
     Actor_SetSpeed(ACTOR_SOUTH_LOG, PIXELS(1) / 4, PIXELS(1) / 2);
-    Actor_OffsetPositionAndResetMotion(ACTOR_SOUTH_LOG, 0, -16);
+    Actor_SetDestinationOffset(ACTOR_SOUTH_LOG, 0, -16);
     Event_Wait(45);
     Sound_Play(SE_LOG_FALL);
     Import_ActorSetAnimation(ACTOR_SOUTH_LOG, 8);
     {
-      struct Actor *slidingLog = Actor_GetById(ACTOR_SOUTH_LOG);
+      struct Actor *slidingLog = Actor_Get(ACTOR_SOUTH_LOG);
       s32 clearedRows = 2;
       s32 emptyAttributes = 0;
 
@@ -871,7 +868,7 @@ static void ValeCave_RideLogWest(void) {
 
 /// Centers an actor on a map cell and gives it underfoot priority.
 static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row) {
-  struct Actor *actor = Actor_GetById(actorId);
+  struct Actor *actor = Actor_Get(actorId);
 
   if (actor != 0) {
     Actor_SetSpritePriority(actorId, 3);
@@ -927,7 +924,7 @@ static void ValeCave_ApplyEntryState(void) {
       }
       // Kite waits behind the ledge, watching the leader.
       Actor_SetPosition(ACTOR_KITE, PIXELS(792), PIXELS(280));
-      Actor_GetById(ACTOR_KITE)->update = VALE_CAVE_FACE_LEADER_CALLBACK;
+      Actor_Get(ACTOR_KITE)->update = VALE_CAVE_FACE_LEADER_CALLBACK;
       break;
     case VALE_CAVE_KITE_SOUTH_FROM_WEST:
     case VALE_CAVE_KITE_SOUTH_FROM_EAST:

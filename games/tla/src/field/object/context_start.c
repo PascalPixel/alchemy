@@ -45,8 +45,8 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
   effect = ResourceMetadata_RegisterFar(context, 267);
   zero = 0;
   context->flags = zero;
-  /* FAKEMATCH: the one-pass block stores the cleared flags before the kind is
-   * loaded (differ 6 without it). */
+  // An empty once-only loop keeps the cleared flags' store before the kind's
+  // load; without it, 8 of 47 instructions differ in tla-en.
   do {
   } while (0);
   param = 15;

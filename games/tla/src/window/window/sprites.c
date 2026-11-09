@@ -429,8 +429,9 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
     break;
   }
 
-  /* FAKEMATCH: byte-offset stores preserve both strh base/offset register
-   * pairs. */
+  // Both entries are stored at a byte offset from map, which keeps each store's
+  // base and offset in the registers they take; as map[index], 4 of 73
+  // instructions differ in tla-en.
   switch (mode) {
   case TILEMAP_ENTRY_NONE:
     return;

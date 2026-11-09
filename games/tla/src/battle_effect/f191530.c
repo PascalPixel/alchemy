@@ -16,31 +16,6 @@ union QueueWord {
   u32 word;
 };
 
-// IO_WRITE_QUEUE_PUSH with the value stored in a one-pass block before the
-// count.
-#define SWIRL_PUSH_STORED_FIRST(address, value, control)                       \
-  {                                                                            \
-    struct IoWriteQueue *q = &gIoWriteQueue;                                   \
-    u32 saved;                                                                 \
-    s32 count;                                                                 \
-    u16 *count_ = &q->count;                                                   \
-                                                                               \
-    IRQ_LOCK(saved);                                                           \
-    count = *count_;                                                           \
-    if (count <= 31) {                                                         \
-      u32 *entry = q->entries[count];                                          \
-                                                                               \
-      do {                                                                     \
-        count++;                                                               \
-        *entry++ = (value);                                                    \
-        *count_ = count;                                                       \
-      } while (0);                                                             \
-      *entry++ = (address);                                                    \
-      *entry = (control);                                                      \
-    }                                                                          \
-    IRQ_UNLOCK(saved);                                                         \
-  }
-
 // IO_WRITE_QUEUE_PUSH through union QueueWord, with an empty asm that claims
 // r3 between the value and the address.
 #define SWIRL_PUSH_CLAIMING_R3(address, value, control)                        \
@@ -197,16 +172,10 @@ void Func_08191530(struct BattleEffectArgument *effect) {
     // (about half size), about the screen's centre (120, 72).
     sine = Trig_Sin(frame << 6) / 532;
     cosine = Trig_Cos(frame << 6) / 532;
-    /* FAKEMATCH(one-pass): the value stored in a one-pass block before the
-     * count; as IO_WRITE_QUEUE_PUSH, 6 of 468 instructions differ in tla-en. */
-    SWIRL_PUSH_STORED_FIRST((u32)&REG_BG2PA, cosine, 0x20000);
-    /* FAKEMATCH(one-pass): the value stored in a one-pass block before the
-     * count; as IO_WRITE_QUEUE_PUSH, 8 of 468 instructions differ in tla-en. */
-    SWIRL_PUSH_STORED_FIRST((u32)&REG_BG2PB, sine, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, cosine, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PB, sine, 0x20000);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PC, -sine, 0x20000);
-    /* FAKEMATCH(one-pass): the value stored in a one-pass block before the
-     * count; as IO_WRITE_QUEUE_PUSH, 8 of 468 instructions differ in tla-en. */
-    SWIRL_PUSH_STORED_FIRST((u32)&REG_BG2PD, cosine, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PD, cosine, 0x20000);
     /* FAKEMATCH(barrier): an empty asm claiming r3 after the value store; as
      * IO_WRITE_QUEUE_PUSH, 6 of 468 instructions differ in tla-en. */
     SWIRL_PUSH_CLAIMING_R3((u32)&REG_BG2X,

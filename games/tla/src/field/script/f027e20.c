@@ -172,9 +172,9 @@ s32 Func_08027e20(struct Actor *interpreter) {
   angleOffsets[headingCount++] = direction - 0x2000;
   angleOffsets[headingCount++] = direction + 0x3000;
   angleOffsets[headingCount++] = direction - 0x3000;
-  /* FAKEMATCH(one-pass): the empty block keeps the last store before the
-   * counter and places the first loop's exit block after this loop; as no
-   * block, 243 of 827 instructions differ in tla-en. */
+  // An empty once-only loop keeps the last store before the counter and
+  // places the first loop's exit block after this loop; without it, 243 of
+  // 827 instructions differ in tla-en.
   do {
   } while (0);
   for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {

@@ -21,14 +21,13 @@ void BattleLink_ResetTransferState(void) {
 
   state = &gSerialTransfer;
   ime = &REG_IME;
-  /* FAKEMATCH: the one-pass block keeps the IME exchange before the zero and
-   * status constants. */
+  // The IME exchange in a once-only block keeps it before the zero and the
+  // status store; as plain statements, 10 of 19 instructions differ in tla-en.
   do {
     saved = *ime;
     *ime = (u16)ime;
   } while (0);
   zero = 0;
-  state = &gSerialTransfer;
   state->status = 0x80;
   *(u8 *)&state->peerFlags = zero;
   gSerialSendSource = zero;

@@ -87,10 +87,9 @@ void Func_08126e00(void) {
       } else {
         scale = Iwram_RatioMulQ14(dist, 0x10000);
         spark->life--;
-        /* FAKEMATCH(temporary): the multiply called through a local pointer
-         * to its fixed entry, set before the spiral, so its address is
-         * loaded before the cursor and the axis count; as plain
-         * Iwram_MulQ16 calls, 12 of 267 instructions differ in tla-en. */
+        // The multiply's entry held in a local keeps its address ahead of the
+        // cursor and the axis count; called directly, 2 of 267 instructions
+        // differ in tla-en.
         mul = Iwram_MulQ16;
         pos = spark->pos;
         for (k = 2; k >= 0; k--) {

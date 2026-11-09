@@ -339,13 +339,14 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   t = Iwram_Sqrt(dot(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8));
   scale = divide(num, t) >> 15;
   scale = -scale;
-  dx = mul(dx, scale);
-  dy = mul(dy, scale);
-  dz = mul(dz, scale);
-  uz = -dx;
-  /* FAKEMATCH(one-pass): an empty one-pass loop after the store; without it, 2
-     of 228 instructions differ in tla-en. */
+  // The normalization in a once-only block, so the axis is negated before the
+  // third product spills; as plain statements, 2 of 228 instructions differ in
+  // tla-en.
   do {
+    dx = mul(dx, scale);
+    dy = mul(dy, scale);
+    dz = mul(dz, scale);
+    uz = -dx;
   } while (0);
 
   // Normalize the horizontal axis u = (dz, 0, -dx).
@@ -432,10 +433,9 @@ struct ProjectedPoint {
 };
 
 // The Broken Seal's typed Iwram_TransformVector inline from iwram_call.h, the
-// layer every call goes through there.
+// layer every call goes through there; as a direct call to the fixed entry, 4
+// of 82 instructions of Render_ProjectPoint differ in tla-en.
 static inline void Render_TransformVector(const void *vector, s32 *result) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to the
-   * fixed entry, 4 of 82 instructions differ in tla-en. */
   Iwram_TransformVectorEntry(vector, result);
 }
 

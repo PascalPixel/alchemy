@@ -385,10 +385,9 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
       for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
         s32 col;
 
+        // The add of 0x452 stays apart from the store it addresses; as a plain
+        // store, 11 of 1119 instructions differ in tla-en.
         for (col = 0; col <= 2; col++)
-          /* FAKEMATCH(volatile): the add of 0x452 stays apart from the store it
-           * addresses; as a plain store, 11 of 1119 instructions differ in
-           * tla-en. */
           *(volatile u16 *)(work->tilemap + (entryIndex + 17) * 32 + panel * 3 +
                             5 + (col & 3)) = 0xf07f;
       }

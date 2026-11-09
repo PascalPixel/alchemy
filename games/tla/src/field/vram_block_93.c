@@ -81,10 +81,13 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id) {
       }
     }
     if (found != NULL) {
-      /* FAKEMATCH: instruction order only: read as a word, the pictures load
-       * does not wait on the animId store, so the zero for pos and param loads first
-       * as native; the typed read swaps the two (differ 2). */
+      // UB: the word view aliases a pointer field. It keeps the zero load
+      // ahead of pictures as native; reading the pointer swaps those loads.
+#ifdef UBFIX
+      pictures = metadata->pictures;
+#else
       pictures = (void **)*(s32 *)&metadata->pictures;
+#endif
       object = found;
       object->animId = id;
       if (pictures == 0)

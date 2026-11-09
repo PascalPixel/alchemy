@@ -27,9 +27,6 @@ void Func_080e28d4(s32 sprite, s32 x, s32 z) {
   Actor_SetSingleChildFlagsFar(object, 0);
   object->gravity = 0x5999;
   object->velocityY = 0x50000;
-  /* FAKEMATCH(one-pass): the 0.4 scale's stores in a block that runs
-   * once, whose loop note keeps the spin step's pool load after them; as
-   * the plain stores, 2 of 178 instructions differ in tla-en. */
   object->scaleY = object->scaleX = 0x6666;
   do {
     wait(1);

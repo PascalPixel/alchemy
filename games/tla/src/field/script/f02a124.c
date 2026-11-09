@@ -106,8 +106,8 @@ s32 Func_0802a124(struct Actor *object) {
       /* FAKEMATCH(temporary): y read into its own local; read in the block,
        * 2 of 470 instructions differ in tla-en. */
       y = object->y;
-      /* FAKEMATCH(one-pass): the right probe's y stored in a once-only block;
-       * as a plain store, 50 of 470 instructions differ in tla-en. */
+      // The right probe's y stored in a once-only block; as the plain store,
+      // 50 of 470 instructions differ in tla-en.
       do {
         rightPosition.y = y;
       } while (0);

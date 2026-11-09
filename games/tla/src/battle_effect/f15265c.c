@@ -385,11 +385,9 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
         break;
       }
-      if (palette != NULL)
-      /* FAKEMATCH(temporary): the routine's address named first, so its pool
-         load leads the arguments; as a direct call, 2 of 2239 instructions
-         differ in tla-en. */
-      {
+      if (palette != NULL) {
+        // The entry held in a local loads before the arguments; as a plain
+        // Iwram_CopyWords call, 2 of 2239 instructions differ in tla-en.
         __typeof__(Iwram_CopyWords) routine = Iwram_CopyWords;
         routine((void *)BG_PLTT, palette, 128);
       }

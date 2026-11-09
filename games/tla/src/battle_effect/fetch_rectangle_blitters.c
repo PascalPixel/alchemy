@@ -9,10 +9,8 @@ void BattleEffect_LoadBlitter(s32 slot, s32 flags);
 /// each slot's heap offset and the blitter flags.
 // The Broken Seal's BattleEffect_FetchRectangleBlitters.
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out) {
-  /* FAKEMATCH: never read: the native stack frame keeps 4 bytes below the saved
-   * registers, which this 3-byte local explains (without it the frame
-   * shrinks). */
-  u8 unused[3];
+  // Unused: gives the stack frame its 4 bytes.
+  UNUSED u8 unused[4];
 
   if (flip == 0) {
     u32 heap = 0xc0;

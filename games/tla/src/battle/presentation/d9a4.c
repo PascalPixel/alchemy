@@ -108,8 +108,8 @@ void Func_0811d914(struct ActionTargets *targets) {
     targets->stateD[i] = 1;
   }
   {
-    /* FAKEMATCH: a named zero takes r3 and leaves r2 to the two constants; as a
-     * literal the registers trade places (18 differ) */
+    // The zero in a local of its own takes r3 and leaves r2 to the two
+    // constants; as a plain 0, 18 of 69 instructions differ in tla-en.
     s32 zero = 0;
 
     targets->message = 298;

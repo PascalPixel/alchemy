@@ -244,9 +244,10 @@ s32 Func_080ed2a4(s32 mode) {
         if (mode != 0) {
           routine->unk2be = 0xffff;
           {
+            // The -1 in a local of its own; as choice->flag = -1, 40 of 548
+            // instructions differ in tla-en.
             s32 none = -1;
-            /* FAKEMATCH(temporary): the form kept; as choice->flag = -1,
-             * 40 of 548 instructions differ in tla-en. */
+
             choice->flag = none;
           }
         }

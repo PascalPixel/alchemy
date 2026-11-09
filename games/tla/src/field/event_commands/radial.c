@@ -96,11 +96,8 @@ void BattleEffect_CircleAnchor(struct OrbitEffect *effect) {
   dx = Iwram_MulQ16(radius, Trig_Cos(angle));
   dz = Iwram_MulQ16(radius, Trig_Sin(angle));
   effect->x = anchor->x + dx;
-  /* FAKEMATCH(volatile): the z store and the angle's read and write as
-   * volatile accesses, so the angle loads before the step's 0x800 starts; as
-   * plain accesses, 2 of 69 instructions differ in tla-en. */
-  *(volatile s32 *)&effect->z = anchor->z + dz;
-  *(volatile u16 *)&effect->angle += 0x800;
+  effect->z = anchor->z + dz;
+  effect->angle += 0x800;
   if (++effect->timer == 121) {
     effect->update = BattleEffect_WanderAroundAnchor;
     effect->timer = 0;

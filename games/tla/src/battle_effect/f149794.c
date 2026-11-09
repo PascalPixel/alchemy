@@ -93,10 +93,8 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWords;
 
-    /* FAKEMATCH(temporary): the routine's address named once the palette's
-     * source is fetched, so its pool load leads the destination's shift; as
-     * Iwram_CopyWords((void *)BG_PLTT, palette, 128), 2 of 457 instructions
-     * differ in tla-en. */
+    // The entry held in a local loads ahead of the destination's shift; as a
+    // plain Iwram_CopyWords call, 2 of 457 instructions differ in tla-en.
     copy((void *)BG_PLTT, palette, 128);
   }
 

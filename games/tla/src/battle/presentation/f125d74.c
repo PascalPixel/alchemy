@@ -67,9 +67,8 @@ void Func_08125d74(s32 arg, s32 kind) {
       __asm__("" : "=r"(v) : "0"(v));
       Iwram_FillWords((void *)0x06005000, 32, v);
     }
-    /* FAKEMATCH(one-pass): a once-only block from `Iwram_FillWords((void
-     * *)0x06005100, 32, 0);`, which ends the scheduler's region there; as plain
-     * statements, 6 of 490 instructions differ in tla-en. */
+    // The clear fill in a once-only block loads its address ahead of its size
+    // and value; as the plain call, 6 of 490 instructions differ in tla-en.
     do {
       Iwram_FillWords((void *)0x06005100, 32, 0);
     } while (0);

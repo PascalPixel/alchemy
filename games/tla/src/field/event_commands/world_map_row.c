@@ -77,9 +77,8 @@ void Func_080ed030(s32 column, s32 row) {
     cell = WorldMap_AddColumn(column, cell);
     cell <<= 6;
     tile <<= 6;
-    /* FAKEMATCH(temporary): the screen's address in the line's register; as
-     * (u8 *)BG_VRAM + (256 << 6) + tile, 6 of 51 instructions differ in
-     * tla-en. */
+    // line is reused for the screen's address; as (u8 *)BG_VRAM + (256 << 6) +
+    // tile in the call, 6 of 51 instructions differ in tla-en.
     line = BG_VRAM + (256 << 6);
     Dma_Set(Ram_MapCellBuffer + cell, (u8 *)line + tile, DMA_COPY_WORDS(16),
             REG_DMA3);

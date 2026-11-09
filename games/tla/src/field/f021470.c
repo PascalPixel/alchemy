@@ -132,8 +132,7 @@ void Func_08021470(struct Vector3 *eye, struct Vector3 *target,
   } else {
     for (scanline = 159; scanline >= 0; scanline--) {
       if (gFrameCount & 1) {
-        /* FAKEMATCH(temporary): one variable holds the x sum and then u; as
-         * two plain expressions, 6 of 156 instructions differ in tla-en. */
+        // sampleOffset is reused for u; two plain expressions differ.
         s32 sampleOffset;
 
         sampleOffset = ((originX + line->dx) >> 8) + line->v / 4 + line->u / 2;

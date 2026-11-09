@@ -76,9 +76,9 @@ void BattleEffect_RunTriangleStrike(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   graphics = Ram_HeapSlots->unk64[0];
   camera = Ram_HeapSlots->cameraWork;
-  /* FAKEMATCH(temporary): a pointer to the heap slots held from here for the
-   * second blitter's read, which reload rebuilds from the 0x03000000 base; as
-   * Ram_HeapSlots at that read, 32 of 428 instructions differ in tla-en. */
+  // heap holds the heap slots from here for the second blitter's read, so the
+  // 0x03000000 base is built again there; as Ram_HeapSlots at that read, 32
+  // of 428 instructions differ in tla-en.
   heap = Ram_HeapSlots;
 
   // Set up: the rune picture with its palette, the dots, the flares, and a

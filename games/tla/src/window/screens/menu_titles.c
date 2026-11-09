@@ -3,6 +3,7 @@
 // Part of screens.c.
 
 #include "../screens_internal.h"
+#include "system/io_write.h"
 
 #define Resource_DecodeByteLzInRam                                             \
   ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
@@ -477,12 +478,12 @@ void Func_080456f8(u8 *base, s32 index, u32 value) {
   Text_LoadRemappedGlyph((struct GlyphPalette *)base, value, index * 16);
   store_offset = offset + 0x11C;
   *(u32 *)(base + store_offset) = value;
-  /* FAKEMATCH(one-pass): the constant stored in a once-only block, after
-   * the value; as a plain store, 4 of 47 instructions differ in tla-en. */
+  // The sprite's shape and its cleared attributes 2 and 3 in a once-only
+  // block; as plain stores, 4 of 47 instructions differ in tla-en.
   do {
     *(u32 *)(entry + 4) = 0x80002000;
+    *(u32 *)(entry + 8) = 0;
   } while (0);
-  *(u32 *)(entry + 8) = 0;
   load_offset = offset + 0x110;
   ((CharacterCell *)(entry + 8))->code =
       Resource_LoadIndexedIntoBuffer(*(u16 *)(base + load_offset), value);
@@ -508,16 +509,8 @@ void Func_08045780(void) {
 }
 
 void Func_08045794(void) {
-  /* FAKEMATCH: a named zero is built with movs; as a literal the halfword store
-   * loads it from the pool (differ 13). */
-  u32 zero = 0;
-
-  REG_BG0VOFS = zero;
-  /* FAKEMATCH: a one-pass block loads the handler before the interrupt number
-   * is built; called straight the two rows trade places (differ 2). */
-  do {
-    Irq_SetHandler(2, 136, Func_08045780);
-  } while (0);
+  Io_Write16(0, &REG_BG0VOFS);
+  Irq_SetHandler(2, 136, Func_08045780);
 }
 
 #undef Resource_DecodeByteLzInRam

@@ -187,9 +187,8 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
 
   for (index = 0; index < 4; index++) {
     s32 y;
-    /* FAKEMATCH(temporary): the attribute zero and the window's y in one local,
-     * so the zero has no equivalence note and loads first; as the plain macro,
-     * 2 of 984 instructions differ in tla-en. */
+    // t holds the attribute zero, then is reused for the window's y; as plain
+    // stores, 2 of 984 instructions differ in tla-en.
     u32 t = 0;
 
     y = index * 2;
@@ -212,8 +211,9 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
   }
 
   count = Summon_ListLearnedFar(learnedSummons);
-  /* FAKEMATCH(one-pass): the first scan in a block that runs once, as in The
-   * Broken Seal. */
+  // The first scan's exit inside a block that runs once leaves the outer loop's
+  // select block in place; as a plain block, 226 of 984 instructions differ in
+  // tla-en.
   do {
     s32 i;
 
@@ -282,8 +282,9 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
       }
 
       if (firstEntry != drawnFirstEntry) {
-        /* FAKEMATCH(one-pass): the saved window's redraw in a block that runs
-         * once; as a plain call, 2 of 984 instructions differ in tla-en. */
+        // The redraw in a once-only block keeps the element loop's zero ahead
+        // of the loads after the call; as a plain call, 2 of 984 instructions
+        // differ in tla-en.
         do {
           WindowSprite_RedrawSavedRect(window);
         } while (0);

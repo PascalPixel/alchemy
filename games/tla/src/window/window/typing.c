@@ -97,6 +97,7 @@ void Sound_PlayFar(s32 cue);
 
 s32 Message_StepScript(struct UiChannelSlot *channel) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  // DEAD: the ROM reads the held keys here once and never uses the value.
   u32 keys = *(volatile u32 *)&gInput.held;
   s32 glyphsLeft = gText_SpeedSteps[TEXT_SPEED];
   s32 frameVBlanks;
@@ -117,13 +118,12 @@ s32 Message_StepScript(struct UiChannelSlot *channel) {
   s32 glyphWidth;
   s32 glyphAdvance;
 
-  /* FAKEMATCH(volatile): the form kept; as a plain read of gInput.held, 31 of
-   * 697 instructions differ in tla-en. */
   (void)keys;
 
   if (work->menuState != 0) {
-    /* FAKEMATCH(volatile): the form kept; as a plain read of gLastFrameVBlanks,
-     * 25 of 697 instructions differ in tla-en. */
+    // The VBlank count read through a volatile view, a load apart from the
+    // test's register; as a plain read, 25 of 697 instructions differ in
+    // tla-en.
     frameVBlanks = *(volatile u16 *)&gLastFrameVBlanks;
     if (frameVBlanks < 0)
       frameVBlanks = 0;

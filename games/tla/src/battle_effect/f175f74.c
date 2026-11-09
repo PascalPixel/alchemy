@@ -1403,13 +1403,13 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   wait(1);
   scene->unk867 = 0;
   BattleBackground_LoadFar(1, scene->unk670, 24);
-  /* FAKEMATCH(one-pass): a one-pass block before the canvas fill; as no block
-   * before it, 10 of 4354 instructions differ in tla-en. */
+  // An empty once-only loop before the canvas fill, so its entry loads before
+  // the size; without it, 2 of 4354 instructions differ in tla-en.
   do {
   } while (0);
   CpuFill(canvas, 0x4000, 0);
-  /* FAKEMATCH(one-pass): a one-pass block before the BG fill; as no block
-   * before it, 2 of 4354 instructions differ in tla-en. */
+  // An empty once-only loop before the BG fill, so its address loads before
+  // the size; without it, 10 of 4354 instructions differ in tla-en.
   do {
   } while (0);
   CpuFill((void *)0x06004000, 0x4000, 0);

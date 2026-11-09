@@ -60,9 +60,9 @@ s32 SummonSlot_RegisterActorSprites(s32 unit) {
     if (slot == 6)
       break;
 
-    /* FAKEMATCH(temporary): the buffers' address taken before the flag's
-     * call, which builds the first result in r3; as the address inside the
-     * sum, 6 of 134 instructions differ in tla-en. */
+    // The buffers' address held in a local, taken before the palette's call,
+    // leaves r3 to the first result; inside the sum, 6 of 134 instructions
+    // differ in tla-en.
     slotBuffers = (s32)Data_02018000;
     {
       s32 flag = BattleClass_GetPalette(actor->enemyId);

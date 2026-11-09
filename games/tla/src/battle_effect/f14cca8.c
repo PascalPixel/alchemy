@@ -17,9 +17,8 @@ void wait(s32 frames);
 void Sound_PlayFar(s32 cue);
 
 static __inline__ void FillWords_(void *destination, s32 size, u32 value) {
-  /* FAKEMATCH(one-pass): the call kept in a one-pass block, so the entry
-   * loads before the size starts; as Iwram_FillWords(destination, size,
-   * value) alone, 6 of 59 instructions differ in tla-en. */
+  // The call in a once-only block, so the entry loads before the size; as
+  // the plain call, 6 of 59 instructions of Func_0814cca8 differ in tla-en.
   do {
     Iwram_FillWords(destination, size, value);
   } while (0);

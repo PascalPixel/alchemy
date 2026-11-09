@@ -145,8 +145,8 @@ void Func_0804cda8(void) {
     edge <<= 8;
     line = &window->lines[136].span;
     for (i = 136; i <= 159; i++) {
-      /* FAKEMATCH(temporary): the mask through start; as (*line & 0xff), 194 of
-       * 386 instructions differ in tla-en. */
+      // start is reused for the mask; as (*line & 0xff), 194 of 386
+      // instructions differ in tla-en.
       start = 0xff;
       *line = (*line & start) | edge;
       line += 2;

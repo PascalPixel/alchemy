@@ -65,21 +65,22 @@ s32 Func_0811ca54(struct BattleActionRecord *action) {
     for (j = 0; j != animation->count - 1; j++)
       work.params[i][j] = animation->entries[j]->param;
   }
-  /* FAKEMATCH(one-pass): the set-up in a once-only block; as plain statements,
-   * 103 of 180 instructions differ in tla-en. */
+  work.kind = 0;
+  work.variant = 0;
+  Func_08138020(&work);
+  work.kind = 1;
+  Func_08138020(&work);
+  work.kind = 2;
+  Func_08138020(&work);
+  work.kind = 3;
+  Func_08138020(&work);
+  work.kind = 0;
+  Func_08138018(&work);
+  Actor_SetMode(object, 1);
+  // An empty once-only loop ends CSE's knowledge of work's address, so the
+  // return loop's exit test addresses work afresh; without it, 103 of 180
+  // instructions differ in tla-en.
   do {
-    work.kind = 0;
-    work.variant = 0;
-    Func_08138020(&work);
-    work.kind = 1;
-    Func_08138020(&work);
-    work.kind = 2;
-    Func_08138020(&work);
-    work.kind = 3;
-    Func_08138020(&work);
-    work.kind = 0;
-    Func_08138018(&work);
-    Actor_SetMode(object, 1);
   } while (0);
   for (i = 0; i != work.count; i++)
     ObjMotRst(work.actors[i]);

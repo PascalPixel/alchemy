@@ -343,8 +343,8 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
     PUT(src[1]);
   }
   src += 2;
-  /* FAKEMATCH(one-pass): keeps the step before the size's load; without it, 2
-   * of 597 instructions differ in tla-en. */
+  // An empty once-only loop keeps the step before the size's load; without
+  // it, 2 of 597 instructions differ in tla-en.
   do {
   } while (0);
 

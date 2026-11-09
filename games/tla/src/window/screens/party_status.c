@@ -86,9 +86,9 @@ void Func_080426e0(struct Window *window, u32 flags) {
     first = 0;
   }
   {
-    /* FAKEMATCH(temporary): the table's address passes through a block-local
-     * copy set before i; as table = gWindow_PartyColumnOffsets after
-     * i = first, 41 of 137 instructions differ in tla-en. */
+    // columns holds the table's address before i is set; as
+    // table = gWindow_PartyColumnOffsets after i = first, 41 of 137
+    // instructions differ in tla-en.
     const s8 *columns = gWindow_PartyColumnOffsets;
 
     i = first;

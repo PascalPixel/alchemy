@@ -16,6 +16,7 @@
 #include "io_reg.h"
 #include "ram_buffer.h"
 #include "serial.h"
+#include "irq_lock.h"
 
 s32 Serial_StartSend(void *source, s32 size);
 s32 Serial_GetActiveTransfers(void);
@@ -140,26 +141,13 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
 
   if (battle->linkPaused == 0) {
     if (battle->linkSide == 0) {
-      volatile u16 *ime;
       u32 saved;
 
       state->count = count;
       state->check = Battle_RandomFar();
-      /* FAKEMATCH(one-pass): a once-only block from `ime = &REG_IME;`, which
-       * ends the scheduler's region there; as plain statements, 86 of 384
-       * instructions differ in tla-en. */
-      do {
-        ime = &REG_IME;
-        saved = *ime;
-        *ime = (u32)ime;
-      } while (0);
+      IRQ_LOCK(saved);
       gBattleRandomSeed = state->seed = gRandomState;
-      /* FAKEMATCH(one-pass): a once-only block from `*ime = saved;`, which ends
-       * the scheduler's region there; as plain statements, 4 of 384
-       * instructions differ in tla-en. */
-      do {
-        *ime = saved;
-      } while (0);
+      IRQ_UNLOCK(saved);
       if (BattleLink_SendActions() < 0 || BattleLink_ReceiveActions() < 0)
         goto fail;
       result = state->count;

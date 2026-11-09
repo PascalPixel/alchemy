@@ -139,20 +139,16 @@ s32 LinkBattle_SendParty(void) {
   size = LINK_PARTY_OFFER_BYTES;
   Heap_Release(buffer);
   buffer = (u8 *)Heap_AllocEwram(size);
-  /* FAKEMATCH: a one-pass loop is a sched2 barrier, so the list pointer's copy
-   * is emitted before the count's address as in the reference (differ 4 without
-   * it), as The Broken Seal's LinkBattle_SendParty. */
+  // The copy in a one-pass loop, a scheduling barrier that keeps the list
+  // pointer's copy ahead of the count's load; as the plain call, 2 of 153
+  // instructions differ in tla-en.
   do {
     Iwram_CopyWords(buffer, Djinn_GetRecoveryTableFar(0), size);
   } while (0);
   list = &((struct LinkOfferTable *)buffer)->list;
   for (j = 0; j < list->count;) {
     list->entries[j].unitId = work->ownerSlots[list->entries[j].unitId];
-    /* FAKEMATCH: the empty one-pass block ends the scheduling region after the
-     * step, so the entry pointer advances before the count is reloaded as in
-     * the reference (differ 2 without it). */
     j++;
-    
   }
   if (Serial_StartSend(buffer, LINK_PARTY_OFFER_BYTES) != -1) {
     Serial_WaitForSend();

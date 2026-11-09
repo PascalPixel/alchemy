@@ -285,8 +285,8 @@ s32 Sound_GetBgmRestoreDelayFar(void);
 s32 Message_CheckCancelByInput(struct UiChannelSlot *ch) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 cancel = 0;
-  /* FAKEMATCH: the native keeps the address of the held keys and reads them
-   * twice; a plain read is shared. */
+  // The held keys read through a volatile pointer, so each test loads them
+  // again; as a plain pointer, 13 of 40 instructions differ in tla-en.
   volatile u32 *held;
 
   if (work->busy != 0 && Sound_GetBgmRestoreDelayFar() == 0)
@@ -606,7 +606,8 @@ void Message_Find(struct TextReader *reader, s32 message) {
   void (*routine)(struct TextReader *, s32);
   u32 size;
 
-  /* FAKEMATCH: the wrapper keeps the size load after the parameter copies. */
+  // The size's load in a once-only block keeps it after the parameters are
+  // copied; as a plain assignment, 4 of 31 instructions differ in tla-en.
   do {
     size = (u32)Text_LookupSymbolCodeSize;
   } while (0);

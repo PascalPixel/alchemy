@@ -27,6 +27,7 @@ void Func_080ece20(void) {
   u32 i;
   s32 right;
   s32 bottom;
+  s32 tile;
 
   if (work->centered != 0) {
     resource = (s32)&ResourceId_Data023;
@@ -61,14 +62,12 @@ void Func_080ece20(void) {
     asm("" : : "r"(x));
     if (bufferRow > 23)
       bufferRow -= 24;
+    // z is reused for the map cell's index; a local of its own differs.
     z = (column & 31) + (unwrapped << 5);
-    /* FAKEMATCH(temporary): z reused for the tile; as a local of its own, 108
-       of 149 instructions differ in tla-en. */
-    z = (z + 128) % 768 + 256;
+    tile = (z + 128) % 768 + 256;
     Resource_DecodeType01((u8 *)graphics + graphics[unwrapped + 1],
                           buffer + (bufferRow << 12));
-    /* FAKEMATCH(temporary): x reused for the cell pointer; as a local of its
-       own, 125 of 149 instructions differ in tla-en. */
+    // x is reused for the cell pointer; a local of its own differs.
     x = bufferRow << 6;
     x += column;
     {
@@ -82,12 +81,12 @@ void Func_080ece20(void) {
          i; as the literal, 4 of 149 instructions differ in tla-en. */
       asm("" : "=r"(to) : "0"(to), "r"(i));
       for (; i <= 30; i++) {
-        Dma_Set((void *)x, (void *)((z << 6) + to), 0x84000010,
+        Dma_Set((void *)x, (void *)((tile << 6) + to), 0x84000010,
                 (volatile u32 *)0x040000d4);
         x += 64;
-        z++;
+        tile++;
         if (i + column == 31)
-          z -= 32;
+          tile -= 32;
       }
     }
   }

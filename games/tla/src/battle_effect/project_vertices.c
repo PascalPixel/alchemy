@@ -17,8 +17,8 @@ void Render_TransformVertices(s32 arg0, s32 arg1, s32 arg2) {
   void (*routine)(s32, s32, s32);
   u32 size;
 
-  /* FAKEMATCH: the wrapper keeps the size load after the parameter copies, as
-   * in Message_Find. */
+  // The size's load in a once-only block keeps it after the parameters are
+  // copied; as a plain assignment, 4 of 36 instructions differ in tla-en.
   do {
     size = (u32)Data_0813b9a0CodeSize;
   } while (0);

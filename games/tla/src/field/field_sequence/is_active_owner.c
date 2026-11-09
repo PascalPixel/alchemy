@@ -73,7 +73,6 @@ void BattleEffect_SelectBattleCue(s32 zone, s32 slot) {
   const s16 *table = Data_080efd1c;
   u16 music;
   u16 value;
-  struct MainRoutineWork *party;
 
   if (GameFlag_Test(0x16c)) {
     music = 79;
@@ -89,12 +88,7 @@ void BattleEffect_SelectBattleCue(s32 zone, s32 slot) {
     }
   }
   if (music == 0) {
-    party = &gMainRoutineWork;
-    /* FAKEMATCH(one-pass block): loads gMainRoutineWork's address before
-     * ownerOverride's offset; as plain statements, 2 of 92 instructions differ
-     * in tla-en. */
-    
-    if (party->ownerOverride != 0 && !GameFlag_Test(0x8df))
+    if (gMainRoutineWork.ownerOverride != 0 && !GameFlag_Test(0x8df))
       music = 56;
     else if (Func_080ca5a0(4))
       music = 50;
@@ -105,9 +99,5 @@ void BattleEffect_SelectBattleCue(s32 zone, s32 slot) {
     else
       music = 50;
   }
-  party = &gMainRoutineWork;
-  /* FAKEMATCH(one-pass block): loads gMainRoutineWork's address before sceneCue's
-   * offset; as plain statements, 2 of 92 instructions differ in tla-en. */
-  
-  party->sceneCue = music;
+  gMainRoutineWork.sceneCue = music;
 }

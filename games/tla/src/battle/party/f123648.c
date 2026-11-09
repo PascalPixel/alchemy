@@ -223,13 +223,13 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
   if (actor->hp == 0)
     return -2;
 
-  /* FAKEMATCH(volatile): the held keys read afresh at each test; as plain
-   * gInput.held, 12 of 1827 instructions differ in tla-en. */
-  if (gDebugMode && GameFlag_Test(365) && (KEYS_HELD & 0x100)) {
+  if (gDebugMode && GameFlag_Test(365) && (gInput.held & 0x100)) {
     s32 enemy = 1;
     s32 index;
     s32 id;
 
+    // The held keys reread through a volatile pointer, a load apart from the R
+    // test's; as gInput.held, 12 of 1601 instructions differ in tla-en.
     if (KEYS_HELD & 4)
       enemy = 0;
     for (index = 0;; index++) {
@@ -607,8 +607,9 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
     }
     MessageArgument_PushFar(request->unitId, 1);
     Message_ShowAndWaitCoreFar((s32)&MsgActorAttacks);
-    /* FAKEMATCH(one-pass): the checks in a once-only block left by break; as a
-     * plain if, 119 of 1827 instructions differ in tla-en. */
+    // The rolls in a one-pass block left by break, which places them ahead of
+    // the five tests; as an if on the negated tests, 119 of 1601 instructions
+    // differ in tla-en.
     do {
       if (target->hp == 0 || target->sleep != 0 || target->stun != 0 ||
           target->immobile != 0 || target->charm != 0)

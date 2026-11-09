@@ -472,9 +472,9 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
               index = 0;
               do {
                 if (spark[index].variant > 0) {
-                  /* FAKEMATCH(one-pass): the block ends CSE's block before the
-                   * transform; as a plain statement, 6 of 1493 instructions
-                   * differ in tla-en. */
+                  // The transform in a once-only block, which ends CSE's block
+                  // before it; as a plain block, 6 of 1493 instructions differ
+                  // in tla-en.
                   do {
                     void (*transform)(const void *, s32 *) =
                         Iwram_TransformVector;

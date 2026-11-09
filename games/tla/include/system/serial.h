@@ -144,9 +144,8 @@ extern u8 gSerialPeerPayloads[4][24];
 extern volatile u8 gSerialBlockNumber;
 extern u8 gLinkExchangeState;
 /// Link status, updated by the VBlank exchange handler.
-/* FAKEMATCH: volatile makes every access to this cell a load or store of its
- * own; without it, in tbs-en, SaveMenu_Run: differ 221, 923 instructions for
- * 920, and Serial_WaitForStatusMask: differ 18, 21 for 23. */
+// volatile: the VBlank handler writes it while Serial_WaitForStatusMask and the
+// link screens poll it, so it is no device.
 extern volatile u16 gLinkStatus;
 
 static inline s32 Serial_AddErrorFlag(s32 status) {

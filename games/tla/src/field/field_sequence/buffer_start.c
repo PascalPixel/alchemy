@@ -24,9 +24,8 @@ void BattleEffect_LoadBufferPalette(const u16 *colours) {
   struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
 
   if (buffers != NULL) {
-    /* FAKEMATCH: the entry held in a local loads its address after the size is
-     * started, as the native does; called directly the address loads first
-     * (differ 2). */
+    // The routine's entry in a local loads after the size; as a direct call,
+    // 2 of 23 instructions differ in tla-en.
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWords;
 

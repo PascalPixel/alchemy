@@ -14,9 +14,8 @@ s32 Func_0810a6b8(s32 rowNo, s16 *output) {
     dst = output;
     src = gData_0810c3f4[rowNo];
     do {
-      /* FAKEMATCH(volatile): the row's halfword read through a volatile
-       * pointer, so the loop's end test reads the next one afresh; as
-       * *dst = *src, 41 of 28 instructions differ in tla-en. */
+      // The row's halfword read through a volatile pointer, a load apart from
+      // the end test's; as *src, 41 of 28 instructions differ in tla-en.
       *dst = *(const volatile s16 *)src;
       count++;
       src++;

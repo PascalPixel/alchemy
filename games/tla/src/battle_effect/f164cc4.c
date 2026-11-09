@@ -252,8 +252,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
 
   // BG1 shows the ground: the map cell buffer filled with colour 1.
   FillWords_(Ram_MapCellBuffer, 0x8000, 0x01010101);
-  /* FAKEMATCH(one-pass): the copy's block; as a plain statement, 2 of 1681
-   * instructions differ in tla-en. */
+  // The copy in a once-only block, so its entry loads before the size; as
+  // the plain call, 2 of 1591 instructions differ in tla-en.
   do {
     CopyWords_((void *)0x06008000, Ram_MapCellBuffer, 0x7800);
   } while (0);
@@ -271,8 +271,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
 
     ((u16 *)0x05000100)[i] = (blue << 10) | (green << 5) | red;
   }
-  /* FAKEMATCH(one-pass): the clear's block; as a plain statement, 4 of 1681
-   * instructions differ in tla-en. */
+  // The clear in a once-only block, so its entry and the canvas load before
+  // the size's shift; as the plain call, 4 of 1591 instructions differ in
+  // tla-en.
   do {
     FillWords_(canvas, 0x4000, 0);
   } while (0);

@@ -54,8 +54,7 @@ void Func_080d1f20(s32 heading) {
   REG_DISPCNT ^= 0x100;
   left = 120;
   right = 120;
-  /* FAKEMATCH(temporary): column also counts the window's frames; with a
-   * frame local of its own, 26 of 143 instructions differ in tla-en. */
+  // column is reused for the window's frames; a local of its own differs.
   for (column = 0; column <= 23; column++) {
     left -= 5;
     right += 5;

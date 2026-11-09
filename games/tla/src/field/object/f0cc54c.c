@@ -42,18 +42,13 @@ s32 Func_080cc54c(void) {
   workBytes = Ram_HeapSlots->eventWork;
   mapBytes = (u8 *)Ram_HeapSlots->mapWork;
   if (leader != 0) {
-    /* FAKEMATCH(temporary): the probe distance in a local set before the
-     * copies; as the constant in the call, 36 of 138 instructions differ in
-     * tla-en. */
-    s32 distance = 0x100000;
-
     probePosition.vector.x = leader->pos.x;
     probePosition.vector.y = leader->pos.y;
     probePosition.vector.z = leader->pos.z;
     {
       s32 *position = probePosition.coordinates;
 
-      Vector_AddPolarOffset(distance, leader->angle, position);
+      Vector_AddPolarOffset(0x100000, leader->angle, position);
     }
     if ((s8)workBytes[0x18a] == 3) {
       s32 x, z;

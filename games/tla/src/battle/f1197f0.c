@@ -172,9 +172,9 @@ s32 Func_081197f0(s32 enemyGroup) {
   GameFlag_SetBit(0x169);
   Render_ResetTransformState();
 
-  /* FAKEMATCH(one-pass): a once-only block from `Iwram_FillWords(camera,
-   * sizeof(struct BattleCamera), 0);`, which ends the scheduler's region there;
-   * as plain statements, 12 of 885 instructions differ in tla-en. */
+  // The camera's fill in a once-only block keeps its entry's load after the
+  // transform reset; as the plain call, 12 of 885 instructions differ in
+  // tla-en.
   do {
     Iwram_FillWords(camera, sizeof(struct BattleCamera), 0);
   } while (0);
@@ -182,10 +182,8 @@ s32 Func_081197f0(s32 enemyGroup) {
   battle->promptSlot = -1;
   battle->enemyGroup = enemyGroup;
   HeapSlot_AllocEwram(148, 12);
-  /* FAKEMATCH(one-pass): a once-only block from
-   * `Iwram_FillWords(Ram_HeapSlots->unk84[4], 12, 0);`, which ends the
-   * scheduler's region there; as plain statements, 6 of 885 instructions differ
-   * in tla-en. */
+  // The slot's fill in a once-only block keeps its address after the
+  // allocation; as the plain call, 6 of 885 instructions differ in tla-en.
   do {
     Iwram_FillWords(Ram_HeapSlots->unk84[4], 12, 0);
   } while (0);
@@ -210,9 +208,8 @@ s32 Func_081197f0(s32 enemyGroup) {
     gMainRoutineWork.battleStart = 4;
   }
   if (battle->twoSided != 0) {
-    /* FAKEMATCH(one-pass): a once-only block from `gBattleRandomSeed = 0;`,
-     * which ends the scheduler's region there; as plain statements, 4 of 885
-     * instructions differ in tla-en. */
+    // The seed's store in a once-only block keeps it ahead of the wait loop's
+    // setup; as the plain store, 4 of 885 instructions differ in tla-en.
     do {
       gBattleRandomSeed = 0;
     } while (0);

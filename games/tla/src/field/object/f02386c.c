@@ -97,10 +97,10 @@ void Func_0802386c(void) {
   viewZ = view[1] & 0xffff0000;
   system = Ram_HeapSlots->objectSystem;
   originY = map->origin[1];
-  /* FAKEMATCH(one-pass): the decoder's copy in a once-only block, which keeps
-   * the first call's arguments after the followed point's height, as in
-   * ObjectSystem_UpdateCameraFixed; as a plain call, 16 of 606 instructions
-   * differ in tla-en. */
+  // The decoder's copy in a once-only block, as in
+  // ObjectSystem_UpdateCameraFixed, keeps the first call's arguments after the
+  // followed point's height; as a plain call, 6 of 606 instructions differ in
+  // tla-en.
   do {
     Dma_Set(Render_DecodePictureCode,
             HeapSlot_Alloc(80, (s32)Render_DecodePictureBlockSize),

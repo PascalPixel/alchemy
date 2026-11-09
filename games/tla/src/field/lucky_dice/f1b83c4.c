@@ -246,9 +246,6 @@ void wait(s32 frames);
   }
 
 void Func_081b83c4(void) {
-  /* FAKEMATCH(volatile): the sprite words of struct DiceOam volatile, as The
-   * Broken Seal's twin has them; as plain u32 members, 901 of 3555 instructions
-   * differ in tla-en. */
   u16 bgPalette[256];
   s32 spinRate[4];
   s32 spriteDepth[8];
@@ -256,9 +253,8 @@ void Func_081b83c4(void) {
   s32 groundPoint[3];
   s32 screen[3];
   s32 drawOrder[4];
-  /* FAKEMATCH(volatile): the four affine halfwords stored to sp+138..132 and
-   * reloaded with ldrh; as plain u16 locals, 1094 of 3555 instructions differ
-   * in tla-en. */
+  // volatile: four halfwords stored to sp+138..132 and each reloaded with ldrh;
+  // as plain u16 locals, 1094 of 3555 instructions differ in tla-en.
   volatile u16 affineA;
   volatile u16 affineB;
   volatile u16 affineC;
@@ -266,6 +262,9 @@ void Func_081b83c4(void) {
   u16 *spritePalette;
   u8 *cellBuffer;
   struct DiceWork *dice;
+  // The OAM shadow it builds is struct DiceOam, whose words are volatile as
+  // The Broken Seal's struct OamWords; as plain u32 members, 901 of 3555
+  // instructions differ in tla-en.
   struct DiceSprites *sprites;
   struct DiceCamera *camera;
   u8 *resourceAddress;
@@ -307,8 +306,6 @@ void Func_081b83c4(void) {
     index = 0;
     for (tileY = 0; tileY != 20; tileY++) {
       for (tileX = 0; tileX != 32; tileX++) {
-        /* FAKEMATCH(volatile): the map write through a volatile cast; as a
-         * plain u16 *, 76 of 3555 instructions differ in tla-en. */
         *(volatile u16 *)(0x06003000 + index) = tileX + tileY * 30;
         index += 2;
       }

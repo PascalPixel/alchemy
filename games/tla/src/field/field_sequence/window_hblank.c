@@ -14,7 +14,6 @@ void BattleEffect_StartWindowHBlankDma(void) {
   volatile u16 *channel;
   s32 in;
   s32 out;
-  s32 value;
   s32 other;
   s32 dispHigh;
 
@@ -40,9 +39,8 @@ void BattleEffect_StartWindowHBlankDma(void) {
   // REG_DISPCNT
   dispHigh <<= 19;
   *(volatile u16 *)dispHigh |= DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
-  /* FAKEMATCH(one-pass): the value loaded before the register address is
-   * started; as a plain assignment, 2 of 68 instructions differ in
-   * tla-en. */
+  // The load in a once-only block comes before the register address is
+  // built; as the plain load, 2 of 68 instructions differ in tla-en.
   do {
     in = *src;
   } while (0);
@@ -51,21 +49,16 @@ void BattleEffect_StartWindowHBlankDma(void) {
   out = *src;
   REG_WINOUT = out;
   src++;
-  /* FAKEMATCH(one-pass): the value loaded before the register address is
-   * started; as a plain assignment, 2 of 68 instructions differ in
-   * tla-en. */
-  value = *src;
-  REG_WIN0H = value;
+  REG_WIN0H = *src;
   src++;
-  /* FAKEMATCH(one-pass): the value loaded before the register address is
-   * started; as a plain assignment, 2 of 68 instructions differ in
+  /* FAKEMATCH(temporary): WIN1H's value read into other before the register
+   * address is built; as REG_WIN1H = *src, 8 of 68 instructions differ in
    * tla-en. */
   other = *src;
   REG_WIN1H = other;
   src++;
-  /* FAKEMATCH(temporary): both vertical ranges (0 to 160) stored from the
-   * register that held the last value; as WIN_RANGE(0, 160) at each store,
-   * 7 of 68 instructions differ in tla-en. */
+  // other is reused for both vertical ranges; WIN_RANGE(0, 160) at each
+  // store differs.
   other = WIN_RANGE(0, 160);
   REG_WIN0V = other;
   REG_WIN1V = other;

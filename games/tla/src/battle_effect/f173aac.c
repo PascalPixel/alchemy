@@ -170,6 +170,8 @@ void Heap_Release(void *buffer);
     Func_080151e4(0x8000, 0x10000, 0x10000);                                   \
     Func_080150e4((p)->z);                                                     \
   } while (0)
+// DEAD: each test reads the count twice and drops the first read; both loads
+// are in the ROM.
 #define WAIT_TRANSFER(work)                                                    \
   while (*(volatile u32 *)&(work)->vblanksSinceTransfer,                       \
          *(volatile u32 *)&(work)->vblanksSinceTransfer <= 1)
@@ -1400,8 +1402,6 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
     gCameraSceneParameters[3] = 120;
     gCameraSceneParameters[4] = 120;
     BattleEffect_CountDownBattlerTints();
-    /* FAKEMATCH(volatile): the count read twice by a discarded read; read once
-     * by a volatile cast, 7 of 4138 instructions differ in tla-en. */
     if (mode == 1)
       WAIT_TRANSFER(work) {}
     work->transferPending = 1;

@@ -13,9 +13,8 @@ void Func_080e7fec(s32 x, s32 y) {
   s32 sy;
   s32 (*fill)(void *, s32, u32);
 
-  /* FAKEMATCH(one-pass): the opening in a once-only block, which loads the
-   * fill routine's entry before the size; as plain statements, 6 of 66
-   * instructions differ in tla-en. */
+  // The opening in a once-only block loads the fill routine's entry before
+  // the size; as plain statements, 4 of 66 instructions differ in tla-en.
   do {
     x /= 8;
     y /= 8;

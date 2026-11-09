@@ -84,7 +84,6 @@ again:
     entry = Ram_HeapSlots->scriptObjects;
     for (i = 0; i < 64; i++, entry++) {
       s32 bound = 0x7ffff;
-      s32 half;
       s32 delta;
       s32 dy;
 
@@ -96,16 +95,12 @@ again:
         continue;
       if (entry == leader)
         continue;
-      /* FAKEMATCH(temporary): half holds the tile's half and then the height;
-       * as two locals, 54 of 463 instructions differ in tla-en. */
-      half = 0x80000;
-      if ((position[0] - entry->x + half) >> 20 != 0)
+      if ((position[0] - entry->x + 0x80000) >> 20 != 0)
         continue;
-      if ((position[2] - entry->z + half) >> 20 != 0)
+      if ((position[2] - entry->z + 0x80000) >> 20 != 0)
         continue;
-      half = -0x100000;
       delta = position[1] - entry->y;
-      dy = delta + half;
+      dy = delta - 0x100000;
       if (dy >= 0) {
         if (dy <= bound)
           goto hit;

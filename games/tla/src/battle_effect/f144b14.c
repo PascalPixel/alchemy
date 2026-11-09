@@ -84,10 +84,9 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  /* FAKEMATCH(temporary): a pointer to the heap slots held from here, used
-   * only for the second blitter's read, so that reload rebuilds the
-   * 0x03000000 base there (see BattleEffect_RunTriangleStrike); as
-   * Ram_HeapSlots->unkb8[1], 108 of 652 instructions differ in tla-en. */
+  // heap holds the heap slots from here for the second blitter's read, so the
+  // 0x03000000 base is built again there; as Ram_HeapSlots at that read, 102
+  // of 652 instructions differ in tla-en.
   heap = Ram_HeapSlots;
 
   // Set up: the canvas for the Djinn when there is a prelude, then the beam,

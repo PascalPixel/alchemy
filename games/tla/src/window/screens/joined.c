@@ -47,8 +47,6 @@ void Func_08044a58(s32 member, s32 element, s32 djinn) {
   u32 zero;
   s32 *p;
 
-  /* FAKEMATCH(dead): window set to NULL, which Window_Create's result replaces
-   * at once; without that store, 77 of 124 instructions differ in tla-en. */
   window = NULL;
   zero = 0;
   name = gDjinn_ElementSprites[element & 3];
@@ -88,14 +86,11 @@ void Func_08044a58(s32 member, s32 element, s32 djinn) {
     Sound_PlayFar(81);
 
     do {
-      // UB: Oam_AddSpriteAtDepth returns nothing; UBFIX calls it through its
-      // declared type.
+      // UB: Oam_AddSpriteAtDepth returns nothing but is called as an s32
+      // function; UBFIX calls it through its declared type.
 #ifdef UBFIX
       Oam_AddSpriteAtDepth(entry, 250);
 #else
-      /* FAKEMATCH(wrapper): called through a cast to the s32 function the
-       * bytes show, which sets r1 to 250 before moving the entry to r0; as a
-       * call by its void prototype, 2 of 124 instructions differ in tla-en. */
       ((s32 (*)(void *, s32))Oam_AddSpriteAtDepth)(entry, 250);
 #endif
       wait(1);
@@ -120,10 +115,6 @@ void Sound_PlayFar(s32 cue);
 
 void Func_08044b98(s32 member) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
-  /* FAKEMATCH(dead): window initialized to NULL, which Window_Create's result
-   * replaces at once, so the zero the later stores share is built after that
-   * call; as an uninitialized declaration, 39 of 95 instructions differ in
-   * tla-en. */
   struct Window *window = NULL;
   s32 sprite[3];
   s32 *entry = sprite;
@@ -154,14 +145,11 @@ void Func_08044b98(s32 member) {
 #endif
     Sound_PlayFar(81);
     do {
-      // UB: Oam_AddSpriteAtDepth returns nothing; UBFIX calls it through its
-      // declared type.
+      // UB: Oam_AddSpriteAtDepth returns nothing but is called as an s32
+      // function; UBFIX calls it through its declared type.
 #ifdef UBFIX
       Oam_AddSpriteAtDepth(entry, 250);
 #else
-      /* FAKEMATCH(wrapper): called through a cast to the s32 function the
-       * bytes show, which sets r1 to 250 before moving the entry to r0; as a
-       * call by its void prototype, 2 of 95 instructions differ in tla-en. */
       ((s32 (*)(void *, s32))Oam_AddSpriteAtDepth)(entry, 250);
 #endif
       wait(1);
@@ -189,8 +177,6 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
   s32 handle1, palette, handle2;
   s32 *p;
 
-  /* FAKEMATCH(dead): window set to NULL, which Window_Create's result replaces
-   * at once; without that store, 27 of 135 instructions differ in tla-en. */
   window = NULL;
   entry1 = sprite1;
   window = Window_Create(1, 1, 28, 5, 0);
@@ -235,16 +221,12 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     Sound_PlayFar(81);
 
     do {
-      // UB: Oam_AddSpriteAtDepth returns nothing; UBFIX calls it through its
-      // declared type.
+      // UB: Oam_AddSpriteAtDepth returns nothing but is called as an s32
+      // function; UBFIX calls it through its declared type.
 #ifdef UBFIX
       Oam_AddSpriteAtDepth(entry1, 250);
       Oam_AddSpriteAtDepth(entry2, 250);
 #else
-      /* FAKEMATCH(wrapper): both pushes called through a cast to the s32
-       * function the bytes show, which sets r1 to 250 before moving each entry
-       * to r0; as calls by its void prototype, 4 of 135 instructions differ in
-       * tla-en. */
       ((s32 (*)(void *, s32))Oam_AddSpriteAtDepth)(entry1, 250);
       ((s32 (*)(void *, s32))Oam_AddSpriteAtDepth)(entry2, 250);
 #endif
@@ -289,17 +271,13 @@ void Func_08044dc8(s32 summon) {
   struct Window *window;
   s32 entries;
   u32 resource;
-  /* FAKEMATCH(dead): counts holds 11 words where four are used, which gives
-   * the native's 52-byte stack frame; as counts[4], 4 of 162 instructions
-   * differ in tla-en. */
-  s32 counts[11];
+  // Unused: gives the stack frame its 28 bytes.
+  UNUSED s32 unused[7];
+  s32 counts[4];
   const u8 *djinn;
   s32 i;
   s32 n;
 
-  /* FAKEMATCH(dead): window set to NULL, which Window_Create's result
-   * replaces at once; without that store, 33 of 162 instructions differ in
-   * tla-en. */
   window = NULL;
   window = Window_Create(4, 1, 22, 5, 0);
   if (window == NULL)

@@ -18,14 +18,8 @@ void *Unit_Get(s32 owner) {
   struct BattleUnit *unit;
 
   if ((u32)owner < 8) {
-    /* FAKEMATCH: the record size as a forced temporary and a one-pass block
-     * load the table before the size is scaled; indexed straight, 2
-     * instructions differ in tla-en. */
-    s32 offset = sizeof(struct BattleUnit);
-
     states = gOwnerStates;
-    offset *= owner;
-    unit = (struct BattleUnit *)((u8 *)states + offset);
+    unit = &states[owner];
     return unit;
   }
   if ((u32)owner - 0x80 < 6 && (states = Ram_HeapSlots->unkd0[2]) != NULL) {

@@ -678,9 +678,6 @@ void Func_0803e7c8(struct SelectionScreen *state, s32 index) {
 
   state->records[index].kind = 0;
   if (index != 0) {
-    /* FAKEMATCH(temporary): the tile pointer in a local, loaded early into r5;
-     * as gData_0805c5c4 where right is read, 56 of 140 instructions differ in
-     * tla-en. */
     u8 *right = gData_0805c5c4;
 
     count = state->count;
@@ -1017,9 +1014,8 @@ void Menu_StepLeft(struct StepMenu *state) {
     } else {
       node = state->nodes;
       i = 64;
-      /* FAKEMATCH(temporary): the 0 through kind, which carries the head's id
-       * at the end, so it keeps r0 across the loop; as a plain 0 and a direct
-       * argument, 28 of 206 instructions differ in tla-en. */
+      // kind is reused for the 0; as a plain 0, 20 of 206 instructions differ
+      // in tla-en.
       kind = 0;
       state->moreBelow = kind;
       while (node->next != NULL) {

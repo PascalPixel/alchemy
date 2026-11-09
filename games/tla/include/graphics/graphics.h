@@ -10,18 +10,14 @@
 struct Window;
 
 extern u8 gBlendBrighten;
-/* FAKEMATCH: volatile makes every access to this cell a load or store of its
- * own; without it five functions of tbs's system.c differ in tbs-en:
- * Fade_Start (31), Fade_FromBlack (19),
- * Fade_FromWhite, Fade_ToWhite and
- * Fade_ToBlack (7 each). */
+// volatile: Fade_Update, which the VBlank handler runs, clears it at the fade's
+// end while Fade_Wait waits on it, so it is no device.
 extern volatile u8 gBlendDuration;
 extern u8 gBlendVBlanksLeft;
 extern u16 gBlendLayers;
 extern u8 gBlendStartLevel;
-/* FAKEMATCH: volatile makes every access to this cell a load or store of its
- * own; without it Fade_Update: differ 29 in tbs-en, 45 instructions
- * for 46. */
+// volatile: Fade_Start sets it for Fade_Update, which the VBlank handler runs,
+// so it is no device.
 extern volatile u8 gBlendTargetLevel;
 extern u8 gRomShiftedTilePair[];
 extern const u32 RelocatedQ16DotProduct[];

@@ -146,11 +146,8 @@ void Func_08108aa8(struct ShopCursor *cursor, s32 x, s32 y) {
     struct ShopCursorSprite3 *sprite;
 
     cursor->targetY = y;
-    /* FAKEMATCH: the volatile store of y and reload of the anchor keep the
-     * reload after the store, as native; plain, the reload is scheduled ahead
-     * of it (one reordered pair, differ 2). */
-    *(volatile u16 *)&cursor->y = y;
-    sprite = *(struct ShopCursorSprite3 *volatile *)&cursor->anchor;
+    cursor->y = y;
+    sprite = (struct ShopCursorSprite3 *)cursor->anchor;
     sprite->oam.y = sprite->y = y;
   }
 }

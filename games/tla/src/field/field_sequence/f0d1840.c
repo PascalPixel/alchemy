@@ -53,10 +53,7 @@ void Func_080d1840(void) {
   z = actor->z;
   x = actor->x;
   terrainFloor = actor->floor;
-  /* FAKEMATCH(volatile): the terrain layer read through a volatile pointer,
-   * a plain byte load that waits after the floor's spill store; as
-   * actor->terrainId, 8 of 200 instructions differ in tla-en. */
-  terrainLayer = *(volatile u8 *)&actor->terrainId;
+  terrainLayer = actor->terrainId;
   tile = gResourceTableEntries[94].offset >> 5;
   x -= 0x80000;
   height = Map_GetTerrainHeightFar(terrainLayer, x, z + 0x100000) >> 16;

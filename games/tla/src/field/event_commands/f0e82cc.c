@@ -119,18 +119,18 @@ void Func_080e82cc(void) {
     {
       s32 (*fill)(void *, s32, u32);
 
-      /* FAKEMATCH(one-pass): an empty block before the fill's entry is read, so the
-         entry loads ahead of the size's constant; as a direct
-         Iwram_FillWords call, 2 of 563 instructions differ in tla-en. */
+      // An empty once-only loop, and the fill routine's entry in a local, load
+      // the entry ahead of the size's constant; as a direct Iwram_FillWords
+      // call, 10 of 563 instructions differ in tla-en.
       do {
       } while (0);
       fill = Iwram_FillWords;
       fill((void *)0x06002000, 0x800, 0);
     }
 
-    /* FAKEMATCH(one-pass): a once-only block round the picture's release and
-       allocation, which ends scheduling at both sides; without it, 8 of 563
-       instructions differ in tla-en. */
+    // The picture's release and allocation in a once-only block, which ends
+    // scheduling at both sides; without it, 8 of 563 instructions differ in
+    // tla-en.
     do {
       HeapSlot_Release(96);
       picture = HeapSlot_AllocEwram(96, 0x2000);

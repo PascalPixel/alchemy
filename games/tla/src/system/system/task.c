@@ -88,6 +88,7 @@ s32 Task_Add(TaskFunc func, s32 order) {
   s32 i;
 
   task = gTasks;
+  // DEAD: nothing uses the status read here; its load is in the ROM.
   (void)gTasksRunning;
   index = -1;
   IRQ_LOCK(saved_interrupt_state);
@@ -297,9 +298,10 @@ void Task_RunPass(s32 pass) {
 }
 
 s32 Task_CountInPass(s32 pass) {
-  /* FAKEMATCH: plain typed scans use bottom-tested loops. The native
-   * preincrement countdown uses an unsigned cursor so no before-array C pointer
-   * is formed. */
+  // The loop is written with goto: as for (i = 0; i < 24; i++, task++), the
+  // compiler tests it at the bottom and 24 instructions differ from the 22 in
+  // tla-en. The cursor is a u32, so it can start one task before gTasks
+  // without forming that pointer.
   u32 cursor;
   struct Task *task;
   s32 count;

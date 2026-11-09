@@ -457,8 +457,8 @@ s32 DebugWarp_Run(s32 index) {
       moved = 1;
       Sound_PlayFar(111);
     }
-    /* FAKEMATCH(temporary): the Down mask kept in a variable; as
-     * gInput.repeat & KEY_DOWN, 32 of 115 instructions differ in tla-en. */
+    // down holds the Down mask; as gInput.repeat & KEY_DOWN, 32 of 115
+    // instructions differ in tla-en.
     down = KEY_DOWN;
     if (gInput.repeat & down) {
       index++;
@@ -544,9 +544,6 @@ void Func_08108048(void *cursor, s32 x, s32 y);
 void Func_08108040(void *cursor, s32 x, s32 y, s32 mode);
 s32 Party_FindOwnerWithActionFar(s32 action);
 
-/// The pressed keys, read again at each test.
-#define KEYS_PRESSED (((volatile struct InputState *)&gInput)->pressed)
-
 /// The debug ability grid, drawn by Func_0804128c: the cursor moves over four
 /// columns of nine abilities (gData_080aa170); A, L and R give the chosen
 /// ability, packed with its owner, to slot 0, 1 or 2 and set units 4 to 7 to
@@ -565,13 +562,10 @@ s32 Func_08041350(void) {
   s32 x;
   s32 y;
   s32 pp;
-  /* FAKEMATCH: the column count as a variable makes the wrap a __modsi3 call,
-   * as the native has it; a constant 4 is reduced to shifts (differ 84). */
+  // columns holds 4, so the wrap divides with __modsi3; as a constant 4, which
+  // the compiler reduces to shifts, 84 of 261 instructions differ in tla-en.
   s32 columns = 4;
 
-  /* FAKEMATCH: KEYS_PRESSED reads the pressed keys through a volatile view,
-   * so that each test loads them again; read plainly they are loaded once
-   * (differ 33). */
   Func_0804121c();
   work = Ram_HeapSlots->unkd0[0];
   wait(1);
@@ -595,22 +589,22 @@ s32 Func_08041350(void) {
       result = 0;
     }
     wait(1);
-    if (KEYS_PRESSED & 2) {
+    if (gInput.pressed & 2) {
       Sound_PlayFar(113);
       result = -1;
       goto done;
     }
-    if (KEYS_PRESSED & 1) {
+    if (gInput.pressed & 1) {
       Sound_PlayFar(112);
       result = 0;
       goto done;
     }
-    if (KEYS_PRESSED & 0x200) {
+    if (gInput.pressed & 0x200) {
       Sound_PlayFar(112);
       result = 1;
       goto done;
     }
-    if (KEYS_PRESSED & 0x100) {
+    if (gInput.pressed & 0x100) {
       Sound_PlayFar(112);
       result = 2;
       goto done;
@@ -680,4 +674,3 @@ done:
 }
 
 #undef WORD_AT
-#undef KEYS_PRESSED

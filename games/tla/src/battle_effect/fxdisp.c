@@ -44,8 +44,7 @@ void BattleEffect_ProbeKeysForExtendedActor(void) {
   work = (struct BattleFxWorkTail *)Ram_HeapSlots->battleFxWork[0];
   effect = work->effect;
 
-  /* FAKEMATCH: the listing reads the held keys and drops them; InputState
-   * declares only repeat volatile, as waitmode.c measured for the same read. */
+  // DEAD: nothing uses the held keys read here; their load is in the ROM.
   if (effect->actors[0] > 0x7f)
     (void)((volatile struct InputState *)&gInput)->held;
 }

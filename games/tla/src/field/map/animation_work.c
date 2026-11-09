@@ -26,22 +26,14 @@ void Func_0802386c(void);
 void Func_080230e0(s32 mode) {
   struct MapAnimationWork *work;
   void *buffer;
-  /* FAKEMATCH: one volatile zero word serves both fills, as the native shares
-     one stack word; dma.h's Dma_Fill32 twice gives each fill its own (differ
-     52). */
+  // The fill word Dma_Fill32Cell reads its zero from, one for both fills.
   volatile u32 zero;
 
   work = HeapSlot_AllocEwram(24, sizeof(*work));
   buffer = HeapSlot_AllocEwram(20, 0x2000);
   ObjectSystem_Configure(mode);
-  zero = 0;
-  Dma_Set((const void *)&zero, buffer,
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (0x2000 / 4),
-          REG_DMA3);
-  zero = 0;
-  Dma_Set((const void *)&zero, work,
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (sizeof(*work) / 4),
-          REG_DMA3);
+  Dma_Fill32Cell(zero, 0, buffer, 0x2000);
+  Dma_Fill32Cell(zero, 0, work, sizeof(*work));
   if (mode == 4) {
     Task_Add(Func_0802493c, TASK_PASS_VBLANK + 10);
   } else {

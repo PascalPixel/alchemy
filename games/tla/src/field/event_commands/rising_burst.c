@@ -36,9 +36,8 @@ void UpdateRisingParticleBurst(void *object) {
     child = Actor_Spawn(673, src->x, src->y, src->z);
     if (child != 0) {
       s32 speed;
-      /* FAKEMATCH: a block-local 1.0, set before the block's calls, keeps
-       * 0x10000 in one register that loop.c hoists for both uses, as in ☀️'s
-       * UpdateRisingParticleBurst. */
+      // One 1.0 for both uses, set before the block's calls; a literal at
+      // each use differs.
       s32 unit = 0x10000;
 
       Actor_StartScriptFar((struct ActorView *)child,

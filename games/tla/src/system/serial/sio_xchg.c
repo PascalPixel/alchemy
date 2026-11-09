@@ -48,7 +48,9 @@ void Serial_PrepareSendPacket(void *payload) {
     cur = sr->currentMask;
     recv = sr->receivedMask;
     sum = 0;
-    /* FAKEMATCH: ⚓️ clears the checksum only after reading both masks */
+    // The checksum's zero stored through a volatile cast, so it comes after
+    // both masks are read; as a plain store, 2 of 50 instructions differ in
+    // tla-en.
     *(volatile u16 *)(pkt + 2) = sum;
     pkt[1] = recv ^ cur;
     Dma_Set(payload, pkt + 4, DMA_COPY_WORDS(6), REG_DMA3);

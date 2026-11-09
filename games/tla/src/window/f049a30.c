@@ -181,9 +181,8 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
 
   for (i = 0; i < 5; i++) {
     s32 y;
-    /* FAKEMATCH(temporary): the attribute zero and the window's y in one local,
-     * so the zero has no equivalence note and loads first; as the plain macro,
-     * 2 of 790 instructions differ in tla-en. */
+    // t holds the attribute zero, then is reused for the window's y; as plain
+    // stores, 2 of 790 instructions differ in tla-en.
     u32 t = 0;
 
     y = i * 2;

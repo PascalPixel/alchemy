@@ -102,14 +102,8 @@ void BattleEffect_RunEffect16(void) {
   s32 slot;
   s32 count;
   s32 phase;
-  s32 zero;
 
   scene = Ram_HeapSlots->effectWork;
-  /* FAKEMATCH: forced temporary, as The Broken Seal's twin: the zero the two
-   * counters take lives in r6 from here; the one-pass block keeps its set
-   * before the object load (one reordered row without it). */
-  zero = 0;
-
   object = scene->mainObject;
   group = object->records;
   entry = group->entries[0];
@@ -132,8 +126,8 @@ void BattleEffect_RunEffect16(void) {
     gMainRoutineWork.avoidByItem = GameFlag_Test(0x145);
     Animation_ApplyChildValuesFar(object, 0);
     object->callback = BattleEffect_UpdatePairedArcSpawner;
-    object->phase = zero;
-    object->step = zero;
+    object->phase = 0;
+    object->step = 0;
   }
   Sound_PlayFar(140);
   wait(15);

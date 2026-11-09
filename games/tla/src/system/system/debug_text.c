@@ -138,12 +138,7 @@ void Window_LoadGraphics(void) {
           (void *)0x06000000, 0x84000800, REG_DMA3);
   Dma_Set((const void *)gWindow_Palette, (void *)&BG_PLTT_COLOR(15, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
-  /* FAKEMATCH: the do-while keeps the backdrop store's value before its
-   * address. */
-  do {
-    s32 black = 0;
-    PLTT_BACKDROP = black;
-  } while (0);
+  Io_Write16(0, &PLTT_BACKDROP);
   {
     volatile u16 *pal;
     s32 color;

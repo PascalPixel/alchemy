@@ -58,12 +58,8 @@ void Func_080415a0(u16 *entry, u16 *mirror, s32 pattern, u8 *remap) {
       u32 value = work->tileCursor;
       u32 following = (value + 1) % 128;
 
-      /* FAKEMATCH(one-pass): the cursor's store in a block that runs once,
-       * between the two shifts of slot's zero-extension; as slot = (u8)value
-       * before the store, 4 of 144 instructions differ in tla-en. */
-      value <<= 24;
+      slot = (u8)value;
       work->tileCursor = following;
-      slot = value >> 24;
       if (work->tileAttributes[slot] == 0)
         break;
       n++;
@@ -111,9 +107,8 @@ static inline s32 Text_FillWords(void *destination, s32 size, u32 value) {
 }
 
 s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
-  /* FAKEMATCH(dead): an unused array for the stack frame's 32 extra bytes; as
-   * no array, 4 of 428 instructions differ in tla-en. */
-  u32 reserve[8];
+  // Unused: gives the stack frame its 32 extra bytes.
+  UNUSED u32 reserve[8];
   u8 pens[16];
   struct WindowWork *work;
   u8 *canvas;

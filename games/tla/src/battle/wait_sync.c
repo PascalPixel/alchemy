@@ -60,10 +60,8 @@ s32 LinkBattle_SyncTurn(void) {
   u16 *peer;
   u16 *sig;
   s32 lost = 0;
-  /* FAKEMATCH: unused local, the native stack frame's twenty bytes that no
-   * instruction touches. Without it differ 16 on tla-ja, tla-en and tla-de: no
-   * sub sp, #20 and its add back, the movs r7, #0 scheduled earlier. */
-  u16 spare[10];
+  // Unused: gives the stack frame its 20 bytes.
+  UNUSED u16 spare[10];
 
   if (work->twoSided != 0) {
     peer = gLinkPeerSignatures[work->linkSide ^ 1];

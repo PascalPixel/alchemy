@@ -49,9 +49,6 @@ s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 void Func_080140d8(void *entry, s32 priority);
 
 void FieldEffect_UpdateSparkles(void) {
-  /* FAKEMATCH(temporary): the frame count read as an unsigned long keeps the
-   * size and flip stores together; as gFrameCount, 29 of 232 instructions
-   * differ in tla-en. */
   struct SparkleWork *work;
   u32 spawned;
   u32 i;
@@ -102,7 +99,15 @@ void FieldEffect_UpdateSparkles(void) {
         sparkle->x = sx;
         sparkle->shape = 0;
         sparkle->size = 1;
+#ifdef UBFIX
+        frames = gFrameCount;
+#else
+        // UB: this reads a u32 as unsigned long. The unsigned long alias
+        // combines the size and flip stores; as gFrameCount or a u32 alias,
+        // 29 of 232 instructions differ in tla-en. UBFIX reads the declared
+        // type.
         frames = *(unsigned long *)&gFrameCount;
+#endif
         sparkle->y = sy;
         sparkle->matrix = ((frames >> 1) & 1) << 3;
         Func_080140d8(sparkle, 240);

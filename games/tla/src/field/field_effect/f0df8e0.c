@@ -32,7 +32,6 @@ void Func_080df8e0(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   struct FieldEffect *effect;
   struct LayeredSprite *sprite;
   const s32 *script;
-  u32 oldPriority;
 
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
     effect = Func_080200c0(options->type, x, y, z);
@@ -62,9 +61,6 @@ void Func_080df8e0(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     Actor_SetPartAttribute((struct FieldActor *)effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
     effect->priorityFlags &= ~1;
-    /* FAKEMATCH(dead): the sprite's priority read and discarded before it is
-     * set; without the read, 2 of 218 instructions differ in tla-en. */
-    oldPriority = sprite->priority;
     sprite->priority = options->priority;
   }
   if ((flags & EFFECT_USE_START_SCALE) != 0) {

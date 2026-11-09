@@ -67,8 +67,7 @@ void FieldMotes_Start(void) {
   size = sizeof(struct MoteWork);
   work = HeapSlot_AllocEwram(116, size);
   mote = work->motes;
-  /* FAKEMATCH: reusing the allocation size for the cleared word keeps it in
-   * r1 (differ 8 without it). */
+  // size is reused for the fill's zero; a zero of its own differs.
   size = 0;
   zero = size;
   Dma_Set((void *)&zero, work,

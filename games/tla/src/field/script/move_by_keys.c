@@ -24,8 +24,9 @@ s32 Func_0802d45c(s32 terrainId, s32 x, s32 z);
 void Actor_SelectAnimation(struct Actor *object, s32 argument);
 s32 Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 
-/* FAKEMATCH: the held keys are read through a volatile pointer, again for each
- * test; as a plain field one read serves several (differ 43). */
+/// The held keys, read again at each use through a volatile pointer, as The
+/// Broken Seal's gKeysHeld is declared; as gInput.held, 45 of 241 instructions
+/// of Actor_MoveByKeys differ in tla-en.
 #define INPUT_HELD (((volatile struct InputState *)&gInput)->held)
 
 /// The script command 0x1b: moves an object 8 pixels at a time by the

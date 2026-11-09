@@ -58,8 +58,7 @@ void FieldEffect_InitializeSparkles(void) {
   volatile u32 zero;
   struct HeapSlots *slots;
 
-  /* FAKEMATCH: needed to match: reusing the allocation size for the fill word
-   * keeps zero in r1; a separate helper value differs by four instructions. */
+  // size is reused for the fill's zero; a zero of its own differs.
   size = 0;
   zero = size;
   Dma_Set(&zero, work,

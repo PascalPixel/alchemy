@@ -37,16 +37,10 @@ s32 Func_08029838(s32 arg) {
 
   if (work == NULL)
     return 0;
-  {
-    struct MainRoutineWork *party = &gMainRoutineWork;
-    /* FAKEMATCH: the pressed keys are read again for each of the three tests;
-     * through a plain pointer one read serves all three (differ 38). */
-    volatile struct InputState *input = (volatile struct InputState *)&gInput;
-
-    if ((input->pressed & party->keys234) ||
-        (input->pressed & party->keys230) || (input->pressed & party->keys236))
-      pressed = 1;
-  }
+  if ((gInput.pressed & gMainRoutineWork.keys234) ||
+      (gInput.pressed & gMainRoutineWork.keys230) ||
+      (gInput.pressed & gMainRoutineWork.keys236))
+    pressed = 1;
   if (pressed) {
     if (Func_080c8828(arg)) {
       Sound_PlayFar(113);

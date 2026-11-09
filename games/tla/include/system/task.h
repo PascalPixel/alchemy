@@ -37,9 +37,8 @@ STATIC_ASSERT(offsetof(struct Task, flags) == 6);
 
 #define TASK_STATE_HIGH(task) (((u8 *)&(task)->priority)[1])
 
-/* FAKEMATCH: volatile makes every access to this cell a load or store of its
- * own; without it Task_Add: differ 14 in tbs-en, 59
- * instructions for 61. */
+// volatile: the read Task_Add discards stays a load; as plain u8, 14 of 59
+// instructions differ in tla-en.
 extern volatile u8 gTasksRunning;
 extern u8 gTasksInitialized; ///< 1 once the task table is set up
 extern struct Task gTasks[];

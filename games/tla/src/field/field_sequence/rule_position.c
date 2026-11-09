@@ -31,22 +31,16 @@ void Func_080ca368(s32 scene, s32 entrance) {
 /// the rule's position to the party's saved position.
 void Func_080ca3f4(s32 scene, s32 entrance) {
   const s16 *rule = gParty_PairResolveRules;
-  struct MainRoutineWork *party;
 
   if (GameFlag_Test(0x8de) == 0)
     return;
-  party = &gMainRoutineWork;
-  /* FAKEMATCH(one-pass block): the empty block loads gMainRoutineWork's address
-   * before ownerOverride's offset, as native; as plain statements, 2 of 73
-   * instructions differ in tla-en. */
-
-  party->ownerOverride = 0;
+  gMainRoutineWork.ownerOverride = 0;
   while (rule[0] != -1) {
     if (rule[2] == scene &&
         (rule[3] == -1 || entrance == -1 || rule[3] == entrance)) {
-      party->savedX = rule[4] << 16;
-      party->savedZ = rule[5] << 16;
-      party->unk280 = rule[6];
+      gMainRoutineWork.savedX = rule[4] << 16;
+      gMainRoutineWork.savedZ = rule[5] << 16;
+      gMainRoutineWork.unk280 = rule[6];
       return;
     }
     rule += 8;

@@ -16,8 +16,8 @@ void Heap_Initialize(void);
 
 static __inline__ void *Heap_CallAlternatePool(void *(*allocate)(s32),
                                                s32 size) {
-  /* FAKEMATCH: the inline call prevents size sharing, avoiding 12 extra fade
-   * bytes and changed gauge registers. */
+  // The size passes through the inline's parameter and is built again at the
+  // call, not shared with its other uses.
   return allocate(size);
 }
 

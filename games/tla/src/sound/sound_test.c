@@ -43,8 +43,9 @@ void Func_081c1014(void) {
   cues = *initial;
   row = 0;
   preset = 3;
-  /* FAKEMATCH(one-pass): keeps the store's address load after the preset;
-   * as a plain store, 10 of 145 instructions differ in tla-en. */
+  // The store in a once-only block, after preset's setup and before the
+  // VBlank state's; as the plain store, 10 of 145 instructions differ in
+  // tla-en.
   do {
     gIwramHi_Data1 = 0;
   } while (0);

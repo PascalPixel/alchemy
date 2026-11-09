@@ -16,8 +16,8 @@ void RamCode_RunKernel0(s32 arg0, s32 arg1) {
   void (*routine)(s32, s32);
   u32 size;
 
-  /* FAKEMATCH: the wrapper keeps the size load after the parameter copies, as
-   * in Message_Find. */
+  // The size's load in a once-only block keeps it after the parameters are
+  // copied; as a plain assignment, 4 of 31 instructions differ in tla-en.
   do {
     size = (u32)Data_081380acCodeSize;
   } while (0);

@@ -59,10 +59,9 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
   }
   case 4: {
     struct ScreenTransitionState *state = Func_080d019c();
+    // One zero for both branches' stores; a literal 0 at each store differs.
     s32 zero = 0;
 
-    /* FAKEMATCH(temporary): one zero both branches store, kept in r7; as the
-     * constant 0 in each store, 126 of 208 instructions differ in tla-en. */
     ((u8 *)state)[0x53f] = 1;
     if (variant == 0) {
       Task_Add(ScreenTransition_Update, TASK_PASS_VBLANK);

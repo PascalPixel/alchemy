@@ -21,9 +21,9 @@ static inline void BattleAction_Swap(struct BattleActionRecord *a,
                                      struct BattleActionRecord *b) {
   struct BattleActionRecord temporary;
 
-  /* FAKEMATCH: the swap as an inline takes the temporary's address again at
-   * each copy (mov r0, sp), as the native does; written in the loop's body the
-   * address is kept in a register and the list pointer spills (differ 45). */
+  // The swap as an inline takes the temporary's address afresh at each copy;
+  // written in the sort's loop, 44 of 110 instructions of
+  // BattleQueue_SortByPriority differ in tla-en.
   Iwram_CopyWords(&temporary, a, sizeof(struct BattleActionRecord));
   Iwram_CopyWords(a, b, sizeof(struct BattleActionRecord));
   Iwram_CopyWords(b, &temporary, sizeof(struct BattleActionRecord));

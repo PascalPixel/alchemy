@@ -80,9 +80,8 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
     palette = (s32)&ResourceId_MarsDjinnSheet;
   else
     palette = (s32)&ResourceId_MercuryDjinnSheet;
-  /* FAKEMATCH(temporary): the routine's address named first, so its pool load
-   * leads the arguments; as a direct call, 2 of 511 instructions differ in
-   * tla-en. */
+  // The entry held in a local loads before the arguments; as a plain
+  // Iwram_CopyWords call, 2 of 511 instructions differ in tla-en.
   {
     const void *source_ = Resource_GetTableEntry(palette);
     __typeof__(Iwram_CopyWords) routine = Iwram_CopyWords;

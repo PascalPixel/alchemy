@@ -3,6 +3,7 @@
 // Part of screens.c.
 
 #include "../screens_internal.h"
+#include "system/io_write.h"
 
 s32 Func_080cc67c(s32);
 s32 Func_080cc7c4(void);
@@ -104,7 +105,6 @@ s32 Func_08042f10(s32 partId, void *buffer) {
   volatile u32 ime;
   volatile u32 ie;
   s32 result;
-  u32 zero;
 
   /* FAKEMATCH(temporary): IRQ_LOCK written out with the saved copy's address
    * taken first; as IRQ_LOCK(ime), 4 of 102 instructions differ in tla-en. */
@@ -116,14 +116,7 @@ s32 Func_08042f10(s32 partId, void *buffer) {
     *imeReg = (u16)(u32)imeReg;
   } while (0);
   ie = REG_IE;
-  /* FAKEMATCH(temporary): the zero in a word register; as REG_IE = 0 (a
-   * pooled halfword constant, and no barrier), 9 of 102 instructions differ
-   * in tla-en. */
-  zero = 0;
-  /* FAKEMATCH(barrier): the zero set after IE's register is copied; without
-   * it, 2 of 102 instructions differ in tla-en. */
-  asm("");
-  REG_IE = zero;
+  Io_Write16(0, &REG_IE);
   DMA_STOP(0);
   DMA_STOP(1);
   DMA_STOP(2);
@@ -148,7 +141,6 @@ s32 Func_08042ff0(s32 partId) {
   volatile u32 ime;
   volatile u32 ie;
   s32 result;
-  u32 zero;
 
   /* FAKEMATCH(temporary): IRQ_LOCK written out with the saved copy's address
    * taken first; as IRQ_LOCK(ime), 4 of 97 instructions differ in tla-en. */
@@ -160,14 +152,7 @@ s32 Func_08042ff0(s32 partId) {
     *imeReg = (u16)(u32)imeReg;
   } while (0);
   ie = REG_IE;
-  /* FAKEMATCH(temporary): the zero in a word register; as REG_IE = 0 (a
-   * pooled halfword constant, and no barrier), 9 of 97 instructions differ
-   * in tla-en. */
-  zero = 0;
-  /* FAKEMATCH(barrier): the zero set after IE's register is copied; without
-   * it, 2 of 97 instructions differ in tla-en. */
-  asm("");
-  REG_IE = zero;
+  Io_Write16(0, &REG_IE);
   DMA_STOP(0);
   DMA_STOP(1);
   DMA_STOP(2);
@@ -784,20 +769,8 @@ void PaletteGlow_UpdateSine(void) {
       r += 22;
       g += 16;
       col += 20;
-      /* FAKEMATCH: one-pass block; its loop notes hold the blue shift after the
-       * three adds; as a plain shift, 6 instructions differ in tla-ja. */
-      do {
-        col <<= 10;
-      } while (0);
-      g <<= 5;
-      col |= g;
-      col |= r;
+      Io_Write16(RGB(r, g, col), pal++);
     }
-    /* FAKEMATCH: one-pass block; it keeps the store ahead of the loop counter
-     * increment; as a plain store, 2 instructions differ in tla-ja. */
-    do {
-      *pal++ = col;
-    } while (0);
   } while (++i <= 3);
 }
 

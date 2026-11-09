@@ -376,10 +376,8 @@ s32 Message_OpenDecoded(s32 window, s32 argument) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 entry;
   s32 result = 0;
-  /* FAKEMATCH: never read: the native stack frame keeps 8 bytes above the two
-   * outgoing arguments, exactly these four slots; without them the stack frame is 8
-   * bytes, not 16 (differ 4). */
-  u16 entries[4];
+  // Unused: gives the stack frame its 8 bytes above the outgoing arguments.
+  UNUSED u16 frameReserve[4];
 
   work->speakerVoiceSound = 0;
   work->speakerVoiceCountdown = 0;

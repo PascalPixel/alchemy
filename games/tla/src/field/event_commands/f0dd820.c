@@ -64,9 +64,9 @@ void Func_080dd820(void) {
                                  scene->secondObjectId);
   // Leave the centre (in pixels) and the time in the event work, and put
   // up the markers nearby.
-  /* FAKEMATCH(one-pass): the cue and the active flag in a once-only block,
-   * so active is stored before the centre is reloaded; as plain statements,
-   * 4 of 137 instructions differ in tla-en. */
+  // The cue and the active flag in a once-only block keep active's store
+  // before the centre's reload; as plain statements, 4 of 137 instructions
+  // differ in tla-en.
   do {
     Sound_PlayFar(SE_REVEAL);
     event->active = 1;

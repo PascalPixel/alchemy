@@ -149,8 +149,9 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
         Func_0815e22c(&midpoint);
       if (frame == 0) {
         Sound_PlayFar(144);
-        /* FAKEMATCH(one-pass): an empty one-pass loop after the call; without
-           it, 2 of 513 instructions differ in tla-en. */
+        // An empty once-only loop after the call, so work reloads before the
+        // shake count's offset is built; without it, 2 of 513 instructions
+        // differ in tla-en.
         do {
         } while (0);
         work->shakeFrames = 16;

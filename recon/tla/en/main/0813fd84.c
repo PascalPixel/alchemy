@@ -1,5 +1,24 @@
-// Draft, differ 16 of 2579 (tla-en, 2026-11-09); 16 in every edition (de, es
+// Draft, differ 12 of 2579 (tla-en, 2026-11-09); 12 in every edition (de, es
 // and fr by --symbol BattleEffect_RunCruelRuin)
+// 2026-11-09 (round 14), 16 to 12, no device: the mask's byte is read into an
+// s32 local first, s32 b = ((u8 *)obj)[9]; u8 x = b & -13; the and's -13
+// operand is then a QImode register and the byte a SUBREG of an SImode one,
+// so combine's canonical swap (a SUBREG of a register goes after a plain
+// register) leaves the byte as operand 1 and the output ties to it, as in the
+// listing. With both operands QImode SUBREGs (the old form) combine swaps them
+// on every simplification. Left: the blasts (8) and the object loop (4).
+// Object loop: last as its own pointer, for (j = 0, last = &objects[8]; ...;
+// j++, last += 9), steps row before last as the listing does, but sets last
+// up before the movable's ldr r5, [sp, #40] where the listing sets it up
+// after row's init (12, the same: 4 moved from the steps to the init); its
+// init after the scroll update, or for (last = ..., j = 0) also 12; before
+// req 210; row as its own induction variable 582; j * 9 in the else arm 195,
+// in the particles read 609. The listing's inits (row, then last) say both
+// are reduced givs with row's parent found after *last's address giv.
+// Second blit: a local DrawRectangle f = ALT_BLITTER puts movs r1, #192 first
+// but the stores fall behind the load through f (14); the barrier moved
+// before the second BattleEffect_LoadBlitter call moves movs r0, #188 instead
+// (12); the second LOAD_BLITTER without its barrier 444.
 // 2026-11-09 (round 8), unchanged at 16, about 10 attempts. The object loop
 // from the loop dump: row's giv (insn 4674) absorbs the Apply call's j * 9
 // (4889), which is used once and so never a parent; reduced increments are
@@ -816,7 +835,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
     for (; i != 8; i++) {
       obj = Func_0815b290(32, 32, 0x80000000, 0xf000);
       work->objects[q * 9 + i] = obj;
-      {u8 x = ((s8 *)obj)[9] & -13; x |= 4; ((u8 *)obj)[9] = x;}
+      {s32 b = ((u8 *)obj)[9]; u8 x = b & -13; x |= 4; ((u8 *)obj)[9] = x;}
       CopyWords_((void *)OBJ_TILES(obj), src, 512);
       src += 512;
     }

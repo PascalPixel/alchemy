@@ -1,4 +1,20 @@
 // Draft, differ 4 of 4580 (tla-en, 2026-11-09). Measure 081843fc,081848ec together.
+// In the other five editions measure --symbol BattleEffect_RunCatastrophe (4580
+// instructions, 4 in each); the address pair there takes a longer extent.
+// Last-four round (9 November), still 4, stopped early. The sparks' y in the
+// sched2 trace: after top's reload the table load (15505) and n's restore
+// (13695) are both priority 104, class 3, 4 dependents, so luid decides; the
+// restore is inserted just before the ldrb, the first insn naming r4, and the
+// table's set comes before that. The listing's order fits a table pseudo with
+// no register, rematerialized as the ldrb's input reload (emitted after the
+// restore) and inherited by the r8 copy after it, as 0811843c's PP base is.
+// Tried: y split with a dead test between the halves (on y, r, top, i or x,
+// storing to angle: 681, global.c reorders the high registers); asms between
+// the halves, "+l"(n) 78, "l"(n) input only 522, "+l"(y) : "l"(n) 68 (n moves
+// to r6); a copy of n 4; a copy pinned to r4 (register s32 m asm("r4") = n) 4,
+// as the copy is gone before caller-save places the restore; a function-level
+// heights pointer for y alone 463, for y and the draw 500; a block-local
+// pointer set after y for the draw 500. The tornado row not reached.
 // Round 8 (9 November), still 4: the sparks' height indexed by i & 3 in y 4;
 // through a block-local heights pointer 500; n declared after the angle 70.
 // Near7 round (9 November), still 4. The sparks' y as y = top + (the cosine

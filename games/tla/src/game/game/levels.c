@@ -6,12 +6,12 @@
 
 s32 Unit_KnowsAction(s32 owner, s32 value);
 
-struct ActionDefinition *BattleAction_GetDirect(s32 actionId) {
+struct AbilityDefinition *BattleAction_GetDirect(s32 actionId) {
   u32 entryIndex = actionId & 0x3fff;
 
   if (entryIndex > 0x2de)
     entryIndex = 0;
-  return &gBattleAction_DefinitionTable[entryIndex];
+  return (struct AbilityDefinition *)&gBattleAction_DefinitionTable[entryIndex];
 }
 
 s32 Party_FindOwnerWithAction(s32 action) {
@@ -45,12 +45,6 @@ s32 Unit_KnowsAction(s32 owner, s32 value) {
   } while (index <= 31);
   return 0;
 }
-
-struct ClassAbility {
-  u16 ability;
-  u8 level;
-  u8 unk03;
-};
 
 struct ClassAbilities {
   u8 unk00[0x10];

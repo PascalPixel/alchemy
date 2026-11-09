@@ -10,23 +10,47 @@
 #include "battle_unit.h"
 #include "item.h"
 #include "character_ids.h"
+#include "character.h"
 #include "battle_type.h"
 
 struct ItemDefinition;
 struct SummonDefinition;
 
-extern struct ItemDefinition gItem_DefinitionTable[];
+/// An ability's definition, a row of gBattleAction_DefinitionTable: its
+/// targeting, kind, element, effect, icon, range, PP cost and power, as The
+/// Broken Seal's first twelve bytes.
+struct AbilityDefinition {
+  u8 targetMode; ///< whom it can be aimed at
+  /// bits: 7 usable in battle | 6 usable in the field | 3..0 ability kind.
+  u8 flags;
+  u8 element;              ///< enum Element
+  u8 effect;               ///< enum AbilityEffect
+  u8 icon;                 ///< the icon the menus draw
+  u8 reservedAfterIcon[3]; ///< 0 in every row
+  u8 range;  ///< the aimed unit and range - 1 either side, or 255 for all
+  u8 ppCost; ///< PP the ability costs
+  u16 power; ///< what the ability's kind applies
+};
+
+STATIC_ASSERT(sizeof(struct AbilityDefinition) == 12);
+
+/// The elemental power and resistance of one element level, in Data_080c6644.
+struct ElementLevelBonus {
+  u16 power; ///< base power, before the tenths of a level
+  u16 res;   ///< base resistance, likewise
+};
+
+extern const struct ItemDefinition gItem_DefinitionTable[];
 extern const struct SummonDefinition gSummon_DefinitionTable[];
 s32 Djinn_IsReady(s32 owner, s32 index, s32 bit);
 
-struct ActionDefinition;
 struct BattleElementStats;
 
 extern const u16 gBattle_Effect90Classes[47];
 extern const u16 gBattle_Effect91Classes[29];
-extern struct ActionDefinition gBattleAction_DefinitionTable[];
-extern const u16 gDjinn_Definitions[][6];
-extern const u8 gEnemy_DefinitionTable[];
+extern const struct AbilityDefinition gBattleAction_DefinitionTable[];
+extern const struct DjinnDefinition gDjinn_Definitions[];
+extern const struct EnemyDefinition gEnemy_DefinitionTable[];
 extern u8 gGameFlagBytes[];
 void DjinnRecovery_CountDownTwentyFar(void);
 s32 Djinn_AddToOwnerFar(s32, s32, s32);

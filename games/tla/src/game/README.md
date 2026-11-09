@@ -7,13 +7,15 @@ explains them for The Broken Seal.
 
 ## What differs from The Broken Seal
 
-- The tables sit with the family that reads them: `item/items.tsv`,
-  `inventory/actions.tsv`, `djinn/djinn.tsv`, and the characters, classes,
-  enemies, summons and experience tables under `character/`. Each is still
-  TSV, packed by the build into a `.table` file that a `.s` beside it
-  includes, where The Broken Seal's are C arrays
-  ([item_table.c](../../../tbs/src/game/item_table.c),
-  [class_table.c](../../../tbs/src/game/class_table.c)).
+- The tables are C arrays under The Broken Seal's file and struct names
+  (`item_table.c`, `ability_table.c`, `class_table.c` and the rest), in the
+  order the ROM keeps them. Their globals keep this game's names for now
+  (`gOwner_GrowthRecords` for The Broken Seal's
+  `gCharacter_DefinitionTable`), and a few readers still view a row through
+  a struct of their own (`EnemyRecord`, `OwnerGrowthRecord`).
+- An enemy's definition lacks the ten bytes The Broken Seal's keeps before
+  its items and ends in two bytes of padding, and a class's abilities are
+  held in a halfword, since this game has more than 255.
 - `game.c` is The Broken Seal's game object, written as parts under `game/`
   cut where The Broken Seal's are, each function in the part holding its
   twin, and one of them, `flags.c`, missing: the game flags are read through
@@ -22,4 +24,3 @@ explains them for The Broken Seal.
 - `classes.c` ends with `Unit_RefreshPsynergy`, which here only calls
   `Unit_UpdateClass`; The Broken Seal's function of that name rebuilds the
   Psynergy list, as `Owner_UpdateClassActions` in `levels.c` does here.
-- Some data files are still named by address (`character/d00c6604.s`).

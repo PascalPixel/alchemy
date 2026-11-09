@@ -58,14 +58,31 @@ struct TradeOfferState {
   u32 count; ///< offers in use
 };
 
-struct ClassDefinition {
-  s32 series;     ///< the series Class_Determine picks a class from
-  u8 required[4]; ///< each element's level the class needs, in tens
-  u8 unk08[0x48];
-  u8 weakEffects[4];
+/// An ability a class teaches, and the level it is learned at; The Broken
+/// Seal's holds the ability in one byte.
+struct ClassAbility {
+  u16 ability; ///< the action taught, 0 for none
+  u8 level;    ///< the level it is taught at
+  u8 padding;  ///< padding
 };
 
-extern struct ClassDefinition gClass_DefinitionTable[];
+/// A class: its series, the element levels it needs, its stat multipliers and
+/// the abilities it teaches.
+struct ClassDefinition {
+  s32 series;                        ///< the series Class_Determine picks from
+  u8 required[4];                    ///< each element's level needed, in tens
+  u8 hp;                             ///< tenths of the base stat
+  u8 pp;                             ///< tenths of the base stat
+  u8 atk;                            ///< tenths of the base stat
+  u8 def;                            ///< tenths of the base stat
+  u8 agi;                            ///< tenths of the base stat
+  u8 luck;                           ///< tenths of the base stat
+  u8 padding[2];                     ///< padding
+  struct ClassAbility abilities[16]; ///< the Psynergy the class teaches
+  u8 weakEffects[4]; ///< the ability effects the class is weak to
+};
+
+extern const struct ClassDefinition gClass_DefinitionTable[];
 
 STATIC_ASSERT(sizeof(struct ClassDefinition) == 0x54);
 STATIC_ASSERT(offsetof(struct OwnerDjinnState, flags.banks.owned) == 0xf8);

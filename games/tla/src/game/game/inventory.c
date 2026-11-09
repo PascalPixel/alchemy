@@ -7,7 +7,7 @@
 /// Returns the item's definition.
 /// item: item ID; the inventory's equipment and quantity bits are ignored.
 struct ItemDefinition *Item_GetDirect(s32 item) {
-  return gItem_DefinitionTable + (item & ITEM_ID_MASK);
+  return (struct ItemDefinition *)gItem_DefinitionTable + (item & ITEM_ID_MASK);
 }
 
 /// Returns whether a character can equip the item: bit classId of its

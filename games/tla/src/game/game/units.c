@@ -42,7 +42,7 @@ const u8 *Enemy_GetDefinition(s32 selector) {
   recordIndex = selector - 8;
   if (recordIndex > 999U)
     recordIndex = 0;
-  return &gEnemy_DefinitionTable[recordIndex * 76];
+  return (const u8 *)&gEnemy_DefinitionTable[recordIndex];
 }
 
 void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
@@ -119,16 +119,6 @@ struct OwnerStats {
   s8 agilityLevel;
   u8 unk148[2];
   u16 id;
-};
-
-struct DjinnDefinition {
-  u8 unk00[4];
-  s8 hp;
-  s8 pp;
-  s8 atk;
-  s8 def;
-  s8 agi;
-  s8 luck;
 };
 
 struct ClassRecord {

@@ -47,7 +47,7 @@ s32 GameFlag_SetBit(s32 flag);
 void Func_080ae358(void);
 s16 Unit_AddPp(s32 owner, s32 delta);
 s32 PartyInventory_Remove(s32 item_id);
-struct ActionDefinition *BattleAction_GetDirect(s32 actionId);
+struct AbilityDefinition *BattleAction_GetDirect(s32 actionId);
 
 /// Keeps occupied slots in order and clears the unused inventory tail, for
 /// Func_080af0e4 and Inventory_Remove (inventory.c) and Func_080b1088

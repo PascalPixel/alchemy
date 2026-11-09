@@ -32,7 +32,6 @@ struct EnemyRecord {
   u8 unk2a[34];
 };
 
-extern const u8 gEnemy_DefinitionTable[];
 extern u8 MsgEnemyName[];
 
 void Message_DecodeRawFar(s32 message, u16 *buffer, s32 length);
@@ -65,7 +64,7 @@ s32 Func_080afbec(s32 unitId, s32 enemyId, s32 suffix) {
   }
   if (index >= 380)
     index = 0;
-  enemy = (const struct EnemyRecord *)&gEnemy_DefinitionTable[index * 76];
+  enemy = (const struct EnemyRecord *)&gEnemy_DefinitionTable[index];
   unit->level = enemy->level;
   unit->baseHp = enemy->hp;
   unit->hp = enemy->hp;

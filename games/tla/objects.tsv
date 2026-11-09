@@ -480,18 +480,16 @@ main	rom_main_03	games/tla/src/gamepak/far_call/party_inventory
 main	rom_main_03	games/tla/src/gamepak/far_call/table_24
 main	rom_main_03	games/tla/src/gamepak/far_call/owner_2
 main	rom_main_03	games/tla/src/game/game	.text
-main	rom_main_03	games/tla/src/game/character/experience_table	.rodata
-main	rom_main_03	games/tla/src/game/inventory/cntidx	.rodata
-main	rom_main_03	games/tla/src/game/item/item_table	.rodata
-main	rom_main_03	games/tla/src/game/inventory/actions	.rodata
-main	rom_main_03	games/tla/src/game/character/enemy_table	.rodata
-main	rom_main_03	games/tla/src/game/character/character_table	.rodata
-main	rom_main_03	games/tla/src/game/character/summon_table	.rodata
-main	rom_main_03	games/tla/src/game/character/class_table	.rodata
-main	rom_main_03	games/tla/src/game/character/d00c6604	.rodata
-main	rom_main_03	games/tla/src/game/character/d00c6644	.rodata
-main	rom_main_03	games/tla/src/game/character/elempre	.rodata
-main	rom_main_03	games/tla/src/game/djinn/djinn_table	.rodata
+main	rom_main_03	games/tla/src/game/experience_table	.rodata
+main	rom_main_03	games/tla/src/game/artifact_slots	.rodata
+main	rom_main_03	games/tla/src/game/item_table	.rodata
+main	rom_main_03	games/tla/src/game/ability_table	.rodata
+main	rom_main_03	games/tla/src/game/enemy_table	.rodata
+main	rom_main_03	games/tla/src/game/character_table	.rodata
+main	rom_main_03	games/tla/src/game/summon_table	.rodata
+main	rom_main_03	games/tla/src/game/class_table	.rodata
+main	rom_main_03	games/tla/src/game/element_table	.rodata
+main	rom_main_03	games/tla/src/game/djinn_table	.rodata
 main	rom_main_04	games/tla/src/gamepak/far_call/field_sequence
 main	rom_main_04	games/tla/src/gamepak/far_call/event
 main	rom_main_04	games/tla/src/gamepak/far_call/object_motion

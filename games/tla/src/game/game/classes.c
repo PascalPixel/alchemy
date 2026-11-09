@@ -84,11 +84,6 @@ s32 Enemy_GetAttackElement(void *state) {
   return *(u32 *)((u8 *)table + offset);
 }
 
-struct ElementLevelBonus {
-  u16 power;
-  u16 res;
-};
-
 extern const struct ElementPreset gData_080c6684[];
 extern struct ElementLevelBonus Data_080c6644[16];
 
@@ -214,7 +209,7 @@ s32 Class_Determine(s32 character, u32 *djinn, s32 item) {
 }
 
 struct ClassDefinition *Class_GetDefinition(s32 classId) {
-  return &gClass_DefinitionTable[classId];
+  return (struct ClassDefinition *)&gClass_DefinitionTable[classId];
 }
 
 void Unit_UpdateClass(s32 ownerId) {

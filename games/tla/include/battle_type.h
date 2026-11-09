@@ -35,11 +35,6 @@ struct BattlePlan {
   u32 hauntDamage;
 };
 
-struct ActionDefinition {
-  u8 unk00[12];
-};
-
-STATIC_ASSERT(sizeof(struct ActionDefinition) == 12);
 STATIC_ASSERT(sizeof(struct BattlePlan) == BATTLE_PLAN_SIZE);
 STATIC_ASSERT(offsetof(struct BattlePlan, actorId2) == 0x02);
 STATIC_ASSERT(offsetof(struct BattlePlan, targetIds) == 0x03);

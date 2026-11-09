@@ -86,7 +86,7 @@ enum GomaCaveEntranceActorId {
   ACTOR_SUNKEN_STUMP,
   /// Unused: two Move hands and a third stump, placed at the map's origin
   /// outside the camera's bounds. Nothing in the overlay addresses them, and
-  /// Move spawns its own hand (FieldEffect_StartItemBreak), so the player never
+  /// Move spawns its own hand (FieldEffect_SpawnMoveHand), so the player never
   /// sees them.
   /// ★ Named from what the player sees: a large open hand, spr_215.png (its
   /// render)
@@ -454,7 +454,7 @@ static void GomaCaveEntrance_IvanRejoins(void) {
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     Event_Wait(20);
     // "Please, allow me to join your quest.": Ivan rejoins with his rod.
-    Event_PrepareActorAndApplyValue(IVAN, 1);
+    Event_AddPartyMember(IVAN, 1);
     Event_Wait(60);
     GomaCaveEntrance_GiveShamansRod();
     Actor_RunRepeatedMotion(ACTOR_IVAN, 1);

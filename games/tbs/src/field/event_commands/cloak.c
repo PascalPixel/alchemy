@@ -88,7 +88,7 @@ void FieldPsynergy_CheckCloakTile(void) {
 /// first five blinks, its outline (sprite flag bit 1) on and off; the last
 /// five alternate white and its own colours (param 0). Each half is 2
 /// frames. The leader ends with its shadow back.
-/// Event_RunFieldPsynergy runs it when the CLOAK_END request is handled.
+/// FieldPsynergy_RunExtraHandler runs it when the CLOAK_END request is handled.
 void FieldPsynergy_EndCloak(void) {
   struct Actor *actor;
   struct Sprite *animation;

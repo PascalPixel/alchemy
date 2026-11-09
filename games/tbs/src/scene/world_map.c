@@ -1087,7 +1087,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
 
   actor = Actor_Get(ACTOR_FALLING_ROCK);
   Event_Start();
-  FieldEffect_ScheduleRatioTransition(5 * Q16_ONE / 4, 1);
+  WorldMap_StartZoom(5 * Q16_ONE / 4, 1);
   wait(4);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1340,7 +1340,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
-  Actor_RefreshSelectorById(ACTOR_CARAVAN_FIRST_WAGON + 3);
+  Actor_WaitForScriptEndById(ACTOR_CARAVAN_FIRST_WAGON + 3);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   FieldCamera_MoveTo(PIXELS(5880), -1, PIXELS(1608), 1);
@@ -1587,7 +1587,7 @@ static void WorldMap_SailIntoTolbi(void) {
 /// and _PART_B to choose the menu's two lessons.
 static void WorldMap_ShowDjinnTutorial(void) {
   WorldMap_Unfreeze();
-  FieldEffect_ScheduleRatioTransition(Q16_ONE, 6);
+  WorldMap_StartZoom(Q16_ONE, 6);
   Event_WaitForZoomTransition();
   WorldMap_Freeze();
   Actor_RunRepeatedMotion(ACTOR_VENUS_DJINNI, 2);
@@ -1650,7 +1650,7 @@ static void WorldMap_MeetFlint(void) {
     // "Oh!"
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     WorldMap_Unfreeze();
-    FieldEffect_ScheduleRatioTransition(6 * Q16_ONE / 5, 6);
+    WorldMap_StartZoom(6 * Q16_ONE / 5, 6);
     Event_WaitForZoomTransition();
     WorldMap_Freeze();
     djinni->motionFlags = ACTOR_FALLS;
@@ -1931,7 +1931,7 @@ static void WorldMap_RunBlackOrbEvent(void) {
   Event_ShowMessageThenWait(gWorldMapIodem | SPEAKER_PORTRAIT_LEFT, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   WorldMap_Unfreeze();
-  FieldEffect_ScheduleRatioTransition(7 * Q16_ONE / 5, 10);
+  WorldMap_StartZoom(7 * Q16_ONE / 5, 10);
   FieldCamera_SetSpeedParameters(PIXELS(8), PIXELS(1));
   FieldCamera_MoveWithinMapBounds(PIXELS(6024), -1, PIXELS(3432), 1);
   FieldCamera_WaitForMove();
@@ -1980,7 +1980,7 @@ static void WorldMap_RunBlackOrbEvent(void) {
   Event_ShowMessageThenWait(gWorldMapIodem, 0, 10);
   Actor_FaceDirection(gWorldMapIodem, FACING_SOUTH_SOUTHEAST, 0);
   WorldMap_Unfreeze();
-  FieldEffect_ScheduleRatioTransition(Q16_ONE, 10);
+  WorldMap_StartZoom(Q16_ONE, 10);
   Event_Wait(20);
   GameFlag_Set(FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER);
   GameFlag_Set(FLAG_SAW_SHIP_AT_IDEJIMA);
@@ -2106,7 +2106,7 @@ static void WorldMap_UseBlackOrb(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Event_Start();
   WorldMap_Unfreeze();
-  FieldEffect_ScheduleRatioTransition(7 * Q16_ONE / 5, 6);
+  WorldMap_StartZoom(7 * Q16_ONE / 5, 6);
   FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   FieldCamera_MoveTo(PIXELS(6024), -1, PIXELS(3432), 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -2227,7 +2227,7 @@ static void WorldMap_UseBlackOrb(void) {
   Actor_WaitForMoveById(gWorldMapIodem);
   Actor_SetPosition(gWorldMapIodem, 0, 0);
   WorldMap_Unfreeze();
-  FieldEffect_ScheduleRatioTransition(Q16_ONE, 6);
+  WorldMap_StartZoom(Q16_ONE, 6);
   Event_Wait(20);
   WorldMap_RestoreGatewayCaveExit();
   Actor_ReleaseById(gWorldMapIodem);
@@ -2261,13 +2261,13 @@ static void WorldMap_ShowEndingEvent(void) {
   WindowColor_Apply(gMainRoutineWork.windowColor[0],
                     gMainRoutineWork.windowColor[1]);
   Event_Start();
-  FieldEffect_ScheduleRatioTransition(Q16_ONE, 300);
+  WorldMap_StartZoom(Q16_ONE, 300);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_JENNA_LIE);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_KRADEN_LIE);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   wait(1);
-  FieldEffect_ScheduleRatioTransition(3 * Q16_ONE / 2, 16);
+  WorldMap_StartZoom(3 * Q16_ONE / 2, 16);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   gFieldWork->transitionFrames = 16;
@@ -2493,7 +2493,7 @@ static void WorldMap_SailTolbiShipToIsland(void) {
     actor->facing = value;
   }
   wait(1);
-  FieldEffect_ScheduleRatioTransition(6 * Q16_ONE / 5, 1);
+  WorldMap_StartZoom(6 * Q16_ONE / 5, 1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   FieldCamera_FollowActor(ACTOR_CROSSING_SHIP, 1);
   wait(1);
@@ -2604,7 +2604,7 @@ static void WorldMap_ShowIslandDrifting(void) {
   actor = Actor_Get(ACTOR_DRIFTING_ISLAND);
   Event_Wait(60);
   Event_Start();
-  FieldEffect_ScheduleRatioTransition(3 * Q16_ONE / 5, 1);
+  WorldMap_StartZoom(3 * Q16_ONE / 5, 1);
   actor->scaleX = 6 * Q16_ONE / 5;
   actor->scaleY = 6 * Q16_ONE / 5;
   FieldCamera_FollowActor(ACTOR_DRIFTING_ISLAND, 1);
@@ -2623,7 +2623,7 @@ static void WorldMap_ShowIslandDrifting(void) {
   gFieldWork->transitionFrames = 32;
   Event_StartScreenTransition();
   Event_Wait(120);
-  FieldEffect_ScheduleRatioTransition(7 * Q16_ONE / 5, 300);
+  WorldMap_StartZoom(7 * Q16_ONE / 5, 300);
   Event_Wait(270);
   gFieldWork->transitionFrames = 16;
   PLTT_BACKDROP = RGB(31, 31, 31);

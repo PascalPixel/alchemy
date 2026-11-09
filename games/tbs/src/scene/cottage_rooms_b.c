@@ -759,7 +759,7 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   Actor_SetScript(ACTOR_DORA, gCottageRoomsB_LeaveHouseScript);
   Event_Wait(20);
   Actor_SetScript(ACTOR_PARTY_LEADER, gCottageRoomsB_LeaveHouseScript);
-  Actor_RefreshSelectorById(ACTOR_DORA);
+  Actor_WaitForScriptEndById(ACTOR_DORA);
   Actor_WalkToAndWait(ACTOR_DORA, 419, 661);
   Actor_WalkToAndWait(ACTOR_DORA, 408, 661);
   Actor_SetAnimation(ACTOR_DORA, ANIM_STAND);
@@ -849,7 +849,7 @@ static void CottageRoomsB_HurryToThePlaza(void) {
   Actor_SetScript(ACTOR_PARTY_LEADER, gCottageRoomsB_IsaacRunsAheadScript);
   Actor_SetScript(ACTOR_DORA, gCottageRoomsB_DoraRunsAheadScript);
   Event_StartScreenTransition();
-  Actor_RefreshSelectorById(ACTOR_DORA);
+  Actor_WaitForScriptEndById(ACTOR_DORA);
   Sound_Play(SE_DOOR_OPEN);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
@@ -898,7 +898,7 @@ ramp:
     wait(1);
   }
   // Dora and Isaac look back, startled, then nod to each other.
-  Actor_RefreshSelectorById(ACTOR_PARTY_LEADER);
+  Actor_WaitForScriptEndById(ACTOR_PARTY_LEADER);
   Actor_SetAnimation(ACTOR_DORA, ANIM_STAND);
   Actor_StartRepeatedMotion(ACTOR_DORA, 2);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -1150,9 +1150,9 @@ static void CottageRoomsB_TalkToDora(void) {
 
   Event_Start();
   if (GameFlag_Get(FLAG_VALE_DORA_OUT_OF_BED) != 0) {
-    Actor_SetTargetAndCallback(ACTOR_DORA,
-                               ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
-                               gCottageRoomsB_DoraFacesIsaacScript);
+    Actor_WatchAndStartScript(ACTOR_DORA,
+                              ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                              gCottageRoomsB_DoraFacesIsaacScript);
     Event_Wait(20);
     Event_SetMessageId(MsgValeDontWorryBest);
     // "Don't you worry about me. Just do your best to complete your..."

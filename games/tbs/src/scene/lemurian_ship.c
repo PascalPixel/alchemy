@@ -532,7 +532,7 @@ static void LemurianShip_SetSail(void) {
   Actor_SetScript(ACTOR_GARET, gGaretBoardsShip);
   Event_Wait(50);
   Actor_SetScript(ACTOR_IVAN, gIvanBoardsShip);
-  Actor_RefreshSelectorById(2);
+  Actor_WaitForScriptEndById(2);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
@@ -544,7 +544,7 @@ static void LemurianShip_SetSail(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 0);
   Event_Wait(20);
   Actor_SetScript(ACTOR_MIA, gMiaBoardsShip);
-  Actor_RefreshSelectorById(3);
+  Actor_WaitForScriptEndById(3);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Event_Wait(20);
   // On deck, all four turn west together and nod.

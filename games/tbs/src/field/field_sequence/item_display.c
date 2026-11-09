@@ -79,7 +79,7 @@ static inline void Actor_InitializeSparkle(struct Actor *actor) {
 
 /// Each frame of a found item's picture: one time in ten, a sparkle appears
 /// within 16 pixels of it. Installed as the picture's update routine by
-/// FieldEffect_StartRandomParticleEmitter, ItemDisplay_ShowPicture
+/// ItemDisplay_ShowItemInFront, ItemDisplay_ShowPicture
 /// and ItemDisplay_ShowItem.
 void ItemDisplay_EmitSparkles(struct Actor *actor) {
   struct Actor *emitter = (struct Actor *)actor;
@@ -118,7 +118,7 @@ void ItemDisplay_EmitSparkles(struct Actor *actor) {
 /// loaded into VRAM. The caller owns the picture: Field_ExamineCell releases it
 /// once the find is told. Called by Field_ExamineCell for coins and items
 /// found, and by FieldEffect_PlayCueAndStartEmitterOnTarget.
-struct Actor *FieldEffect_StartRandomParticleEmitter(s32 actorId, s32 item) {
+struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
   struct Actor *picture;
 
   s32 work = (s32)gFieldWork;
@@ -311,7 +311,7 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
 /// While Reveal is active, releases all its sparkles, leaving its marks. Called
 /// by the field menu (FieldMenu_Run, window/selection.c) each time
 /// FieldMenu_SelectCommand returns, a cancel included, while Reveal is active.
-void FieldEffect_ClearRandomParticles(void) {
+void FieldEffect_ReleaseRevealSparkles(void) {
   if (gFieldWork->revealActive != 0) {
     struct Actor *effect = EFFECT_OBJECT_POOL;
     s32 remainingActors = EFFECT_OBJECT_COUNT - 1;
@@ -331,7 +331,7 @@ void FieldEffect_ClearRandomParticles(void) {
 
 /// Each frame of a Reveal marker: one time in ten, a sparkle appears within 16
 /// pixels of it. Installed as the marker's update routine by
-/// FieldEffect_SpawnNearbyMarkers.
+/// FieldEffect_SpawnRevealMarkers.
 void Reveal_EmitSparkles(struct Actor *actor) {
   const struct Actor *source = (const struct Actor *)actor;
   union PolarOffsetPosition position;
@@ -377,7 +377,7 @@ s32 Field_IsRevealActive(struct Actor *interpreter) {
 /// a Psynergy Stone or a mimic and whose flag is not yet set. Each mark is an
 /// actor of SPRITE_BLANK running gFieldEffect_MarkerParticleScript. Called by
 /// Reveal (event_commands/reveal.c).
-void FieldEffect_SpawnNearbyMarkers(void) {
+void FieldEffect_SpawnRevealMarkers(void) {
   u8 *markerData;
   struct Actor *actor;
   const struct Trigger *entry;

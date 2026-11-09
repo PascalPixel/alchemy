@@ -409,7 +409,7 @@ static void Sanctum_ReconsiderQuest(void) {
 static void Sanctum_AskAboutNewAdepts(void) {
   Event_Start();
 #if TBS_PATCH_1
-  Event_CallWithLastActiveActorId(gSanctum_IvanActorPlacement);
+  Event_AppendActorPlacements(gSanctum_IvanActorPlacement);
   wait(1);
 #endif
   Event_SetMessageId(MsgSanctumIsaacYourNewFriendsAdepts);
@@ -500,7 +500,7 @@ s32 Sanctum_Initialize(void) {
 static void Sanctum_WarnBeforeLeaving(void) {
   Event_Start();
   FieldCamera_SetSpeedParameters(PIXELS(1), PIXELS(1) / 8);
-  Actor_PlaceCurrentWithinCameraBounds(ACTOR_GARET, 1);
+  FieldCamera_MoveToActorById(ACTOR_GARET, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_FaceActor(ACTOR_HEALER, ACTOR_PARTY_LEADER, 0);
@@ -1928,8 +1928,8 @@ static void Sanctum_ReenactSolSanctum(void) {
   // Repeat the synchronized eight-point paths around the room.
   Actor_SetScript(ACTOR_PARTY_LEADER, gSanctum_LeaderCircleScript);
   Actor_SetScript(ACTOR_GARET, gSanctum_GaretCircleScript);
-  Actor_RefreshSelectorById(ACTOR_PARTY_LEADER);
-  Actor_RefreshSelectorById(ACTOR_GARET);
+  Actor_WaitForScriptEndById(ACTOR_PARTY_LEADER);
+  Actor_WaitForScriptEndById(ACTOR_GARET);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(3) / 2, PIXELS(3) / 4);
   Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);

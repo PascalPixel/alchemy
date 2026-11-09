@@ -116,7 +116,7 @@ void FieldPsynergy_Reveal(void) {
   work->revealCenterY = state->centreY / Q16_ONE;
   work->revealFrames = 600;
   work->effectTimerRunning = 1;
-  FieldEffect_SpawnNearbyMarkers();
+  FieldEffect_SpawnRevealMarkers();
   frame = 0;
   do {
     wait(1);
@@ -130,7 +130,7 @@ void FieldPsynergy_Reveal(void) {
 /// from black over 30 frames and runs the scene's PSYNERGY_PHASE_FADES
 /// event. Unless an event set childOption, the window transition is then
 /// reset at once (no next mode, one frame). Called as Reveal ends
-/// (Event_RunFieldPsynergy) and before Mind Read starts its own colours.
+/// (FieldPsynergy_RunExtraHandler) and before Mind Read starts its own colours.
 void FieldPsynergy_EndReveal(void) {
 #ifdef UBFIX
   struct FieldEffectWork *effectWork = gFieldEffectWork;

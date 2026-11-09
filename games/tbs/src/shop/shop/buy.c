@@ -134,7 +134,7 @@ next_page:
   partyWindow = Window_CreateFar(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
   shop->mode = 12;
-  PsynergyMenu_InitializeEntryActorsFar(partyWindow, 2, 0, 8, 0);
+  Menu_CreatePartyFiguresFar(partyWindow, 2, 0, 8, 0);
   itemWindow = Window_CreateFar(16, 11, 14, 9, WINDOW_FLAG_INSTANT);
   redraw = 1;
 
@@ -193,7 +193,7 @@ next_page:
       if (quantity == -1)
         continue;
       Shop_BuyDone(unitId, shop->selectedItem, quantity);
-      Shop_BuySpecialItem(partyWindow, itemWindow);
+      Shop_GiveGameTicket(partyWindow, itemWindow);
       selectionResult = 0;
       break;
     }
@@ -215,7 +215,7 @@ next_page:
     wait(1);
   }
 
-  Menu_ReleaseEntryActorsFar();
+  Menu_ReleasePartyFiguresFar();
   Window_CloseFar(itemWindow, 2);
   Window_CloseFar(partyWindow, 2);
   wait(1);

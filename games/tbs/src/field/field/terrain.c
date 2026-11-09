@@ -18,13 +18,13 @@
 /// is flat: the first sample everywhere.
 /// Each is reached only through that table, by the cell's enum TerrainKind:
 /// this one is TERRAIN_FLAT, and the rest follow in order.
-s32 Terrain_GetFirstSampleA(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+s32 Terrain_GetFlatHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   return CURVE_HEIGHT_FIXED(samples[0]);
 }
 
 /// A slope along x: from sample 0 at x = 0 towards sample 1 at x = 16.
-s32 Terrain_LerpTwoSamples(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+s32 Terrain_GetSlopeXHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 startHeight;
   s32 heightDelta;
@@ -39,7 +39,7 @@ s32 Terrain_LerpTwoSamples(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 }
 
 /// A slope along y: from sample 0 at y = 0 towards sample 1 at y = 16.
-s32 Terrain_LerpTwoSamplesB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+s32 Terrain_GetSlopeYHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 startHeight;
   s32 heightDelta;
@@ -55,7 +55,7 @@ s32 Terrain_LerpTwoSamplesB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 
 /// A step across the diagonal x + y = 15: sample 0 before it, sample 1 after
 /// it and the higher of the two on it.
-s32 Terrain_StepAtSummedPosition(const u8 *heightBytes, s32 x, s32 y) {
+s32 Terrain_GetStepSumDiagonalHeight(const u8 *heightBytes, s32 x, s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 firstHeight;
   s32 secondHeight;
@@ -81,7 +81,8 @@ s32 Terrain_StepAtSummedPosition(const u8 *heightBytes, s32 x, s32 y) {
 
 /// A step across the diagonal x = y: sample 0 where y < x, sample 1 where
 /// y > x and the higher of the two on it.
-s32 Terrain_StepAtDifferencePosition(const u8 *heightBytes, s32 x, s32 y) {
+s32 Terrain_GetStepDifferenceDiagonalHeight(const u8 *heightBytes, s32 x,
+                                            s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 firstHeight;
   s32 secondHeight;
@@ -110,7 +111,7 @@ s32 Terrain_StepAtDifferencePosition(const u8 *heightBytes, s32 x, s32 y) {
 
 /// A slope that bends on the diagonal x + y = 15: from sample 0 at the top
 /// left corner to sample 1 on the diagonal to sample 2 at the bottom right.
-s32 Terrain_LerpThreeSamplesByRatio(const u8 *heightBytes, s32 x, s32 y) {
+s32 Terrain_GetBendSumDiagonalHeight(const u8 *heightBytes, s32 x, s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 firstHeight;
   s32 middleHeight;
@@ -142,7 +143,8 @@ s32 Terrain_LerpThreeSamplesByRatio(const u8 *heightBytes, s32 x, s32 y) {
 /// It divides by 16 with a shift where TERRAIN_BEND_SUM_DIAGONAL divides by
 /// 15, so its
 /// slopes are 15/16 as steep and it never reaches sample 2 exactly.
-s32 Terrain_LerpThreeSamplesAtDifference(const u8 *heightBytes, s32 x, s32 y) {
+s32 Terrain_GetBendDifferenceDiagonalHeight(const u8 *heightBytes, s32 x,
+                                            s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 firstHeight;
   s32 middleHeight;
@@ -180,7 +182,7 @@ s32 Terrain_LerpThreeSamplesAtDifference(const u8 *heightBytes, s32 x, s32 y) {
 
 /// A raised or sunken rounded square: sample 1 where gTerrain_LerpWeightTable
 /// is 1, sample 0 in the corners.
-s32 Terrain_LerpTwoSamplesByTable(const u8 *heightBytes, s32 x, s32 y) {
+s32 Terrain_GetRoundedSquareHeight(const u8 *heightBytes, s32 x, s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 startHeight;
 
@@ -192,7 +194,7 @@ s32 Terrain_LerpTwoSamplesByTable(const u8 *heightBytes, s32 x, s32 y) {
 }
 
 /// A step along x: sample 0 for x < 8, sample 1 from x = 8.
-s32 Terrain_StepAtHalf(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+s32 Terrain_GetStepXHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 heightSample;
   if ((u32)pixelX < CURVE_HALF_STEPS)
@@ -203,7 +205,7 @@ s32 Terrain_StepAtHalf(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 }
 
 /// A step along y: sample 0 for y < 8, sample 1 from y = 8.
-s32 Terrain_StepAtHalfB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+s32 Terrain_GetStepYHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 heightSample;
   if ((u32)pixelY < CURVE_HALF_STEPS)
@@ -215,8 +217,7 @@ s32 Terrain_StepAtHalfB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 
 /// A slope along x that bends at the middle: sample 0 at x = 0, sample 1 at
 /// x = 8, towards sample 2 at x = 16.
-s32 Terrain_LerpThreeSamplesAtHalf(const u8 *heightBytes, s32 pixelX,
-                                   s32 pixelY) {
+s32 Terrain_GetBendXHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   u32 cellX = pixelX;
   s32 endpointHeight;
@@ -253,8 +254,7 @@ s32 Terrain_LerpThreeSamplesAtHalf(const u8 *heightBytes, s32 pixelX,
 /// A slope along y that bends at the middle, as TERRAIN_BEND_X does along x.
 /// Its samples are read unsigned: 128 to 255 are heights, where the
 /// other kinds read them as -128 to -1.
-s32 Terrain_LerpThreeSamplesAtHalfB(const u8 *heightBytes, s32 pixelX,
-                                    s32 pixelY) {
+s32 Terrain_GetBendYHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const u8 *samples = heightBytes;
   u32 cellY = pixelY;
   s32 endpointHeight;
@@ -286,7 +286,8 @@ s32 Terrain_LerpThreeSamplesAtHalfB(const u8 *heightBytes, s32 pixelX,
 }
 
 /// The sample gTerrain_SampleIndexTable picks for (x, y).
-s32 Terrain_LookupSampleByTable(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+s32 Terrain_GetSampleTableHeight(const u8 *heightBytes, s32 pixelX,
+                                 s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   // The table holds a byte per pixel of the cell, row by row.
   return CURVE_HEIGHT_FIXED(
@@ -294,8 +295,8 @@ s32 Terrain_LookupSampleByTable(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 }
 
 /// The same, with the table mirrored left to right.
-s32 Terrain_LookupSampleByTableReversed(const u8 *heightBytes, s32 pixelX,
-                                        s32 pixelY) {
+s32 Terrain_GetSampleTableMirroredHeight(const u8 *heightBytes, s32 pixelX,
+                                         s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   // Row y read from its right end: (y << 4) + 15 - x.
   return CURVE_HEIGHT_FIXED(
@@ -303,14 +304,14 @@ s32 Terrain_LookupSampleByTableReversed(const u8 *heightBytes, s32 pixelX,
                                         CURVE_FULL_STEPS - 1]]);
 }
 
-/// Flat, as Terrain_GetFirstSampleA.
-s32 Terrain_GetFirstSampleB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+/// Flat, as Terrain_GetFlatHeight.
+s32 Terrain_GetFlatBHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   return CURVE_HEIGHT_FIXED(samples[0]);
 }
 
-/// Flat, as Terrain_GetFirstSampleA.
-s32 Terrain_GetFirstSampleC(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+/// Flat, as Terrain_GetFlatHeight.
+s32 Terrain_GetFlatCHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   return CURVE_HEIGHT_FIXED(samples[0]);
 }

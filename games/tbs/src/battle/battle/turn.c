@@ -183,7 +183,7 @@ s32 BattleFlee_CheckSuccess(void) {
 /// (COMMAND_NONE); the others choose theirs (Battle_CollectPartyCommandsFar).
 /// Returns how many actions there are, or -1 if the menu gave up. Called by
 /// Battle_GatherActions. Fills entries.
-s32 Battle_BuildUnitActions(struct BattleAction *entries) {
+s32 Battle_BuildPartyActions(struct BattleAction *entries) {
   // Two lists, freed before the return; the allocator rounds them up to 20
   // and 12 bytes: up to eight choosers and the up to four party members with
   // their end mark.
@@ -241,7 +241,7 @@ s32 Battle_BuildUnitActions(struct BattleAction *entries) {
 /// by surprise, only two to five enemies act, once each. Returns how many
 /// actions there are. Called by Battle_GatherActions outside a
 /// link battle. Fills entries.
-s32 Battle_BuildOpponentActions(struct BattleAction *entries) {
+s32 Battle_BuildEnemyActions(struct BattleAction *entries) {
   u16 unitIds[14];
   s32 entryCount = 0;
   struct BattleWork *battle = gBattleWork;
@@ -655,7 +655,7 @@ s32 Battle_GatherActions(struct BattleAction *actions) {
 
   // The party's commands (none when the enemies strike first).
   if (*firstStrike != FIRST_STRIKE_ENEMIES) {
-    count = Battle_BuildUnitActions(actions);
+    count = Battle_BuildPartyActions(actions);
     if (count < 0)
       goto finish;
     // A failed attempt to flee makes the turn one the enemies began.
@@ -680,7 +680,7 @@ s32 Battle_GatherActions(struct BattleAction *actions) {
       goto finish;
     }
   } else {
-    count += Battle_BuildOpponentActions(actions + count);
+    count += Battle_BuildEnemyActions(actions + count);
   }
 
   // Sort by priority, and raise the guards of Defend and Total Defense at
@@ -715,7 +715,7 @@ finish:
 /// for a command's target.
 /// @param taggedPlace the place in the low four bits; 0x80 set for the
 /// enemies' list
-s32 Battle_GetTaggedSlotValue(s32 taggedPlace) {
+s32 Battle_GetUnitAtPlace(s32 taggedPlace) {
   struct BattleWork *battle = gBattleWork;
 
   if ((taggedPlace & 0x80) != 0)
@@ -727,7 +727,7 @@ s32 Battle_GetTaggedSlotValue(s32 taggedPlace) {
 /// party's as PLACE_PARTY | place, the enemies' as PLACE_ENEMY | place. Called
 /// by the enemies' command choice (enemy_ai.c) to aim at a unit.
 /// @param unitId 0 to 7 the party, any other an enemy
-s32 Battle_FindTaggedSlotByValue(u32 unitId) {
+s32 Battle_FindUnitPlace(u32 unitId) {
   struct BattleWork *battle = gBattleWork;
   s32 placeIndex;
   s16 listedUnit;

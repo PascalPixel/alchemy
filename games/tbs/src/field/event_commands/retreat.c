@@ -23,7 +23,7 @@ void FieldEffect_UpdateSpinAngle(struct Actor *updated) {
 /// pixel a frame; once its scale falls below Q16_ONE * 3 / 16 (84 frames from
 /// full size) its sprites are hidden (spriteStorageKind 0), but it is not
 /// released. Retreat gives it to the caster.
-void FieldEffect_UpdateDescendingActor(struct Actor *updated) {
+void FieldEffect_UpdateRetreatCaster(struct Actor *updated) {
   struct Actor *actor = (struct Actor *)updated;
   u32 scale;
 
@@ -101,7 +101,7 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
 ///
 /// The caster turns south, plays ANIM_LEADER_ARMS_RAISED with its colours
 /// cycling, spins up for 70 frames (FieldEffect_UpdateSpinAngle), then rises
-/// and shrinks out of sight (FieldEffect_UpdateDescendingActor) as the
+/// and shrinks out of sight (FieldEffect_UpdateRetreatCaster) as the
 /// particles fly. It is hidden, not released, and the Psynergy opens an event
 /// (Event_Start) it does not end: the Retreat exit raised before it
 /// (EXIT_KEEP_DESTINATION, by Field_UsePsynergy or Field_UseItem) then leaves
@@ -118,7 +118,7 @@ void FieldPsynergy_Retreat(void) {
   FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
   FieldPsynergy_FadeToCastColor();
   wait(10);
-  Actor_ArmCallback(effectWork->firstActorId, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(effectWork->firstActorId, FACING_SOUTH, 0);
   wait(30);
   actor->update = Actor_CycleSpriteColors;
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);
@@ -136,7 +136,7 @@ void FieldPsynergy_Retreat(void) {
   // Start shrinking, and send particles from where it is on screen.
   Actor_SetSpriteFlagsFar(actor, 0);
   actor->motionFlags = 0;
-  actor->update = FieldEffect_UpdateDescendingActor;
+  actor->update = FieldEffect_UpdateRetreatCaster;
   actor->targetX = ACTOR_NO_TARGET;
   pos.x = actor->x.fixed;
   pos.y = actor->y.fixed;
@@ -278,7 +278,7 @@ struct DescendingArcSprite {
 /// it, at 0.4 of full size, drawn with the tiles in effectWork->arcTileSlot.
 /// The upside-down arc draws in front of everything (priority 0), the other at
 /// the caster's priority, as FieldEffect_SpawnScaledArcActors does. Called by
-/// FieldEffect_UpdatePairedArcSpawner, so arc is Avoid's caster.
+/// FieldEffect_UpdateAvoidCaster, so arc is Avoid's caster.
 void FieldEffect_SpawnDescendingArcParticles(struct Actor *arc) {
   struct Actor *source = arc;
   struct FieldEffectWork *effectWork = gFieldEffectWork;

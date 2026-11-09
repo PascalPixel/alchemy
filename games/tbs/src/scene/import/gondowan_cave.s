@@ -23,19 +23,19 @@
 	.set import.Event_AskYesNoWithActorAnimation, 1
 	.set import.Actor_GetById, 1
 	.set import.Actor_SetSpeedParameters, 1
-	.set import.Actor_ResetAndSetPosition, 1
-	.set import.Actor_ResetAndSetPositionInMode2, 1
-	.set import.Actor_OffsetPositionAndResetMotion, 1
+	.set import.Actor_SetDestinationById, 1
+	.set import.Actor_WalkToById, 1
+	.set import.Actor_SetDestinationOffsetById, 1
 	.set import.Actor_WaitForMoveById, 1
 	.set import.Import_ActorSetPosition, 1
 	.set import.Import_ActorSetAnimation, 1
-	.set import.Actor_SetAngleToward, 1
+	.set import.Actor_FaceActorById, 1
 	.set import.Actor_TurnToFaceEachOther, 1
 	.set import.Actor_SetSpriteColor, 1
 	.set import.Event_SetMessageId, 1
 	.set import.FieldMessage_ShowAtActor, 1
 	.set import.Event_ShowMessageAndWait, 1
-	.set import.Actor_ArmCallback, 1
+	.set import.Actor_FaceDirectionById, 1
 	.set import.Import_EventSetExitRequest, 1
 	.set import.Field_TryJumpForward, 1
 	.set import.Event_FinishScreenTransition, 1

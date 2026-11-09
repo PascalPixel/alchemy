@@ -44,7 +44,7 @@ enum BattleType {
   /// The battles an event starts. Here and in a link battle the command menu
   /// itself refuses to run, with MsgNoTimeToRun ("This is no time to be
   /// running away!"), as it does once the party is challenged
-  /// (Message_ShowLocalizedAndWait, window/screens/link_timer.c).
+  /// (Battle_RefuseFlee, window/screens/link_timer.c).
   BATTLE_TYPE_SCRIPTED = 3,
   BATTLE_TYPE_LINK = 4, ///< a link battle (Battle_Run, scene/battle_arena.c)
   /// The debug battle menu's mark (DebugBattle_RunMenu), which no code tests
@@ -119,7 +119,7 @@ struct MainRoutineWork {
   /// after a defeat, before the restart point.
   s16 defeatScene;
   s16 defeatEntrance;       ///< its entrance; -1 for none
-  s16 special;              ///< the battle background chosen for the scene or
+  s16 battleBackground;     ///< the battle background chosen for the scene or
                             ///< battle environment
   u8 unusedAfterSpecial[2]; ///< no code names it
   /// The scene's map (Scene.mapIndex); the World Map's is MAP_INDEX_WORLD.
@@ -223,7 +223,7 @@ STATIC_ASSERT(offsetof(struct MainRoutineWork, area) == 0x1cc);
 STATIC_ASSERT(offsetof(struct MainRoutineWork, dashKeys) == 0x21c);
 STATIC_ASSERT(offsetof(struct MainRoutineWork, avoidDistance) == 0x244);
 STATIC_ASSERT(offsetof(struct MainRoutineWork, entrance) == 0x1c2);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, special) == 0x1d6);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, battleBackground) == 0x1d6);
 STATIC_ASSERT(offsetof(struct MainRoutineWork, x) == 0x1dc);
 STATIC_ASSERT(offsetof(struct MainRoutineWork, movementMode) == 0x1f2);
 STATIC_ASSERT(offsetof(struct MainRoutineWork, leaderActorId) == 0x1f4);

@@ -334,7 +334,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     }
     Actor_SetScript(ACTOR_MIA, gKolimaForestEntrance_MiaAction);
   }
-  Actor_RefreshSelectorById(2);
+  Actor_WaitForScriptEndById(2);
   KolimaForestEntrance_FaceActorAndWait(ACTOR_IVAN, FACING_SOUTHEAST, 40);
   KolimaForestEntrance_FaceActorAndWait(ACTOR_IVAN, FACING_WEST, 20);
   KolimaForestEntrance_FaceActorAndWait(ACTOR_IVAN, FACING_SOUTH, 40);

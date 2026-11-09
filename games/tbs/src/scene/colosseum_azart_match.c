@@ -119,14 +119,15 @@
 // UB: each of these calls a void function through an s32 function type, the
 // call the bytes show; UBFIX calls it as declared.
 #ifdef UBFIX
-#define COLOSSEUM_AZART_MATCH_FACE_DIRECTION Actor_ArmCallback
+#define COLOSSEUM_AZART_MATCH_FACE_DIRECTION Actor_FaceDirectionById
 #define COLOSSEUM_AZART_MATCH_PLACE_STAGED_PAIR                                \
   ColosseumAzartMatch_MoveActorPairByOffset
 #define COLOSSEUM_AZART_MATCH_SELECT_MODE_BLOCK                                \
   ColosseumAzartMatch_SelectPresentationScript
 #define COLOSSEUM_AZART_MATCH_APPLY_MATCHING_SLOT_VALUES Scene_GiveAndEquipItem
 #else
-#define COLOSSEUM_AZART_MATCH_FACE_DIRECTION ((s32 (*)())Actor_ArmCallback)
+#define COLOSSEUM_AZART_MATCH_FACE_DIRECTION                                   \
+  ((s32 (*)())Actor_FaceDirectionById)
 #define COLOSSEUM_AZART_MATCH_PLACE_STAGED_PAIR                                \
   ((s32 (*)())ColosseumAzartMatch_MoveActorPairByOffset)
 #define COLOSSEUM_AZART_MATCH_SELECT_MODE_BLOCK                                \
@@ -619,7 +620,7 @@ static void ColosseumAzartMatch_ReachArena(void) {
   ColosseumAzartMatch_WaitForStageReady();
   n = 9;
   do {
-    Actor_RefreshSelectorById(ACTOR_OPPONENT);
+    Actor_WaitForScriptEndById(ACTOR_OPPONENT);
     n = n - 1;
   } while (n >= 0);
   Actor_SetSpeed(ACTOR_OPPONENT, PIXELS(1), PIXELS(1) / 2);

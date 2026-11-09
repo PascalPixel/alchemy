@@ -43,9 +43,9 @@
 	.set import.FieldMessage_ShowAtActor, 1
 	.set import.Event_ShowMessageAndWait, 1
 	.set import.Event_ShowMessageThenWait, 1
-	.set import.Actor_ArmCallback, 1
+	.set import.Actor_FaceDirectionById, 1
 	.set import.Actor_SetSpritePriority, 1
-	.set import.FieldEffect_SpawnAttached, 1
+	.set import.Actor_ShowEmoteById, 1
 	.set import.FieldEffect_SetAttached, 1
 	.set import.FieldCamera_SetSpeedParameters, 1
 	.set import.FieldCamera_MoveWithinMapBounds, 1

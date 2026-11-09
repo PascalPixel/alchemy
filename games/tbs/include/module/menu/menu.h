@@ -48,12 +48,12 @@ void Text_DrawStatComparison(const struct Unit *after,
 s32 Icon_CreateWithResource(struct Window *window, s32 unused, s32 x, s32 y);
 s32 Icon_CreateWithResourceVariant(struct Window *window, s32 x, s32 y);
 void Icon_PrepareActor(struct WindowSprite *object);
-void PsynergyMenu_CallIconRoutineWithValue(const void *unused, s32 unit);
+void Menu_ReloadMemberPortrait(const void *unused, s32 unit);
 struct Window *MenuCursor_Create(void *source);
-void PsynergyMenu_InitializeEntryActors(void *source, s32 originX, s32 originY,
-                                        s32 spacing, s32 unused);
-void Menu_ReleaseEntryActors(void);
-void Menu_UpdateEntryActorTransforms(void);
+void Menu_CreatePartyFigures(void *source, s32 originX, s32 originY,
+                             s32 spacing, s32 unused);
+void Menu_ReleasePartyFigures(void);
+void Menu_PlacePartyFigures(void);
 void MenuCursor_Position(s32 xOffset, s32 yOffset);
 void MenuCursor_Slide(s32 x, s32 y);
 void PsynergyMenu_ReservedNoOp(void);
@@ -77,15 +77,15 @@ void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
 void Palette_LoadIconsIntoHighlight(void);
 void Menu_SetPageIcons(s32 pageSize, s32 first, struct Window *window, s32 x,
                        s32 y);
-void Text_DrawWorkValueWithLabel(struct Window *window);
+void Menu_DrawCoins(struct Window *window);
 void Window_SetBounds(struct Window *window, s32 x, s32 y, s32 width,
                       s32 height);
 void Window_HoldTilemapUpload(void);
 void Window_ReleaseTilemapUpload(void);
 s32 Sound_PlayReturnOne(s32 sound);
-void Menu_UpdateCancelSound(void);
-void Menu_CancelSoundReset(void);
-void Menu_EnsureCancelSound(void);
+void Menu_WatchStart(void);
+void Menu_StartWatchingStart(void);
+void Menu_StopWatchingStart(void);
 void WindowPalette_SetNormalTextColor(void);
 void WindowPalette_SetNoHpTextColor(void);
 void WindowPalette_SetLowHpTextColor(void);
@@ -108,7 +108,7 @@ void ItemMenu_OpenCategory(s32 memberId);
 s32 ItemMenu_SelectTarget(s32 mode);
 void EquipmentMenu_UpdateCompatibilityIndicators(void);
 void EquipmentMenu_StopCompatibilityIndicators(void);
-s32 ItemMenu_IsSpecial(s32 itemId);
+s32 ItemMenu_IsStatRaisingItem(s32 itemId);
 void ItemMenu_DrawMessage(s32 unused, s32 message);
 void Menu_HideEmptyEntryIcons(const u16 *items);
 s32 ItemMenu_CountItems(s32 memberId);
@@ -184,8 +184,8 @@ s32 DjinnMenu_ShowCurrentList(void);
 s32 PartyMemberChooser_RunRearrange(void);
 s32 PsynergyMenu_ChooseMember(void);
 s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction);
-void Menu_InitializeSelectorCursorAndEntries(s32 unused0, s32 unused1,
-                                             s32 unused2, s32 unused3);
+void StatusScreen_Initialize(s32 unused0, s32 unused1, s32 unused2,
+                             s32 unused3);
 void StatusScreen_ShowMemberStatus(s32 member, s32 frame);
 s32 StatusScreen_SelectCommand(void);
 void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
@@ -228,7 +228,7 @@ void Menu_PlaceEntryActorInGrid(struct WindowSprite *icon, s32 index,
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items);
 void ItemMenu_PositionCategory(void);
 s32 Menu_CreateEightEntryActors(struct Window *window);
-void ItemMenu_ApplyFlags(const u8 *flags);
+void StatusScreen_ShowStatusIcons(const u8 *flags);
 void ItemMenu_ResetCategory(void);
 s32 StatusScreen_UpdateSelectionIcons(const u8 *enabled);
 
@@ -285,9 +285,9 @@ void Menu_StartPartyFiguresWalking(void);
 
 s32 PsynergyList_RunCompareLoop(u32 mode);
 s32 DjinnMenu_ShowMemberStatus(void);
-s32 Djinn_MarkBalancedEntries(s8 *requiresTrade, s32 sourceMemberColumn);
-s32 Djinn_CheckTurnBalance(s32 sourceMemberColumn, s32 targetMemberColumn);
-void Djinn_CountTurns(u8 *ownedCounts);
+s32 Djinn_MarkTradeOnlyRecipients(s8 *requiresTrade, s32 sourceMemberColumn);
+s32 Djinn_CheckGiveBalance(s32 sourceMemberColumn, s32 targetMemberColumn);
+void Djinn_CountOwned(u8 *ownedCounts);
 void Resource_LoadPairedBlocksIfAvailable(void);
 void IconMenu_ReleaseArrows(void);
 s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot);

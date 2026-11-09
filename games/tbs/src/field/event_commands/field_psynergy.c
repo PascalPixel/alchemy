@@ -20,7 +20,7 @@ void FieldPsynergy_RunHandler(s32 kind) {
   else if (kind == FIELD_PSYNERGY_HANDLER_FINISH)
     FieldPsynergy_FinishMindRead();
   else if (kind == FIELD_PSYNERGY_HANDLER_EXTRA)
-    Event_RunFieldPsynergy();
+    FieldPsynergy_RunExtraHandler();
 }
 
 void _call_via_r3(s32, s32);
@@ -206,7 +206,7 @@ void FieldPsynergy_FinishMindRead(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
 
   if (effectWork->fieldPsynergy == FIELD_PSYNERGY_MIND_READ) {
-    FieldPsynergy_FinishWaveAndReleaseHeapBlock();
+    FieldPsynergy_StopMindReadWave();
     if (gMainRoutineWork.haltedActor != effectWork->secondActorId) {
       ((struct Actor *)effectWork->child)->paused = 0;
     }
@@ -216,7 +216,7 @@ void FieldPsynergy_FinishMindRead(void) {
 /// The extra handler of Reveal, Cloak and Avoid: what each does when it ends.
 /// Called by Field_RunPsynergyEndEvents, which ends a Psynergy that runs out by
 /// itself, and by FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_EXTRA).
-void Event_RunFieldPsynergy(void) {
+void FieldPsynergy_RunExtraHandler(void) {
   u32 kind;
 
   kind = ((struct FieldEffectWork *)gFieldEffectWork)->fieldPsynergy;
@@ -228,7 +228,7 @@ void Event_RunFieldPsynergy(void) {
     FieldPsynergy_EndCloak();
     return;
   case FIELD_PSYNERGY_AVOID:
-    Event_ShowStatusMessage();
+    FieldPsynergy_ShowAvoidWoreOff();
     return;
   }
 }

@@ -13,10 +13,10 @@ s32 Input_GetDpadAngle(u32 unused) {
   return gFieldEffect_CyclePatternWords[(gKeysHeld >> 4) & 15];
 }
 
-/// Per-frame update of Move's hand (FieldEffect_StartItemBreak): turns it
+/// Per-frame update of Move's hand (FieldEffect_SpawnMoveHand): turns it
 /// toward the actor it watches, at most 1/16 turn a frame, and sheds a
 /// particle (SPRITE_SPARKLE) round it.
-void FieldEffect_UpdateItemBreakFragment(struct Actor *actor) {
+void FieldEffect_UpdateMoveHand(struct Actor *actor) {
   struct Actor *source = (struct Actor *)actor;
   struct Actor *target;
   struct Vector3 position;
@@ -94,7 +94,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   FieldPsynergy_FadeToCastColor();
   user->watchedActor = target;
   Actor_StartScriptFar(user, gFieldEffect_SourceHoldScript);
-  pusher = FieldEffect_StartItemBreak(user);
+  pusher = FieldEffect_SpawnMoveHand(user);
   if (pusher == NULL) {
     FieldPsynergy_FadeFromCastColor();
     return;
@@ -249,7 +249,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
 /// where it started, comes back and is freed. It goes out straight at up to 4
 /// pixels a frame and comes back turning at most 1/64 turn a frame, so it
 /// curves home.
-void FieldEffect_UpdateOrbitAndReturn(struct FieldParticle *effect) {
+void FieldEffect_UpdateOutAndBack(struct FieldParticle *effect) {
   // Forward OUT_AND_BACK_FLYING_OUT fallthrough keeps the callback extent but
   // changes native instructions; retain the immediate retry until a plain form
   // matches.
@@ -313,7 +313,7 @@ void FieldPsynergy_Move(void) {
   do {
   } while (0);
   FieldPsynergy_FadeToCastColor();
-  object = FieldEffect_StartItemBreak(object);
+  object = FieldEffect_SpawnMoveHand(object);
   FieldEffect_SnapScaleToFull(object);
   if (object != 0) {
     Actor_SelectAnimationFar(object, 4);
@@ -327,7 +327,7 @@ void FieldPsynergy_Move(void) {
 /// and moves it 16 pixels the way object faces (to the nearest quarter
 /// turn), with 8 particles round it. Returns the hand, or 0 when it cannot be
 /// spawned (Actor_Spawn); the caller releases it (UpdateRisingParticleBurst).
-void *FieldEffect_StartItemBreak(void *object) {
+void *FieldEffect_SpawnMoveHand(void *object) {
   struct Actor *source = object;
   struct Actor *parent;
   struct Actor *child;
@@ -346,7 +346,7 @@ void *FieldEffect_StartItemBreak(void *object) {
     return 0;
   parent->scaleY = Q16_ONE / 4;
   parent->scaleX = Q16_ONE / 4;
-  parent->update = FieldEffect_UpdateItemBreakFragment;
+  parent->update = FieldEffect_UpdateMoveHand;
   parent->speedLimit = 2 << 16;
   parent->acceleration = 2 << 16;
   parent->motionFlags = 0;

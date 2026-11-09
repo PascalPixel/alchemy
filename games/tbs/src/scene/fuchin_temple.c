@@ -550,7 +550,7 @@ static void FuchinTemple_NyunpaOffersTest(void) {
     Actor_SetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
     Event_Wait(20);
     FieldCamera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
-    Actor_PlaceCurrentWithinCameraBounds(ACTOR_NYUNPA, 1);
+    FieldCamera_MoveToActorById(ACTOR_NYUNPA, 1);
     PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
     PaletteFade_StartInterpolation(30);
@@ -985,7 +985,7 @@ static void FuchinTemple_ForceTree(void) {
   }
 
   FieldCamera_SetSpeedParameters(PIXELS(1), PIXELS(1) / 8);
-  Actor_PlaceCurrentWithinCameraBounds(ACTOR_TRAINING_TREE_TARGET, 1);
+  FieldCamera_MoveToActorById(ACTOR_TRAINING_TREE_TARGET, 1);
   FieldCamera_WaitForArrival();
 
   if (leader->z.part.pixel <= 209) {

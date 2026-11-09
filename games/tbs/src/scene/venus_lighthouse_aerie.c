@@ -2725,7 +2725,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Actor_SetAttachedEffect(ACTOR_FELIX,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_StartRepeatedMotion(ACTOR_FELIX, 3);
-  Actor_RefreshSelectorById(ACTOR_SHEBA);
+  Actor_WaitForScriptEndById(ACTOR_SHEBA);
   Event_Wait(160);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 1);
   Event_Wait(20);

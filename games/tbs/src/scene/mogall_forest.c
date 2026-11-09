@@ -415,7 +415,7 @@ static void MogallForest_ApeComesOut(s32 actorId, s32 color) {
   s32 cameraAcceleration = PIXELS(1) / 4;
 
   FieldCamera_SetSpeedParameters(cameraSpeed, cameraAcceleration);
-  Actor_PlaceCurrentWithinCameraBounds(actorId, 1);
+  FieldCamera_MoveToActorById(actorId, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(30);
   MogallForest_SpawnPuffRing(actorId);
@@ -482,7 +482,7 @@ static void MogallForest_FirstArea_PushLog(void) {
       GameFlag_Set(FLAG_MOGALL_FOREST_FIRST_AREA_LOG_ROLLED);
       Actor_SetAnimation(ACTOR_FIRST_AREA_RIVER_LOG, MOGALL_FOREST_LOG_ROLLING);
       Actor_SetSpeed(ACTOR_FIRST_AREA_RIVER_LOG, PIXELS(1) / 4, PIXELS(1) / 2);
-      Actor_OffsetPositionAndResetMotion(ACTOR_FIRST_AREA_RIVER_LOG, 0, -16);
+      Actor_SetDestinationOffsetById(ACTOR_FIRST_AREA_RIVER_LOG, 0, -16);
       Event_Wait(45);
       Actor_SetAnimation(ACTOR_FIRST_AREA_RIVER_LOG,
                          MOGALL_FOREST_LOG_FALLING_IN);
@@ -717,7 +717,7 @@ static void MogallForest_SecondArea_PushLog(void) {
       GameFlag_Set(FLAG_MOGALL_FOREST_SECOND_AREA_LOG_ROLLED);
       Actor_SetAnimation(ACTOR_SECOND_AREA_RIVER_LOG,
                          MOGALL_FOREST_LOG_ROLLING);
-      Actor_OffsetPositionAndResetMotion(ACTOR_SECOND_AREA_RIVER_LOG, -16, 6);
+      Actor_SetDestinationOffsetById(ACTOR_SECOND_AREA_RIVER_LOG, -16, 6);
       Event_Wait(30);
       Actor_SetAnimation(ACTOR_SECOND_AREA_RIVER_LOG,
                          MOGALL_FOREST_LOG_FALLING_IN);
@@ -950,7 +950,7 @@ static void MogallForest_ThirdArea_PushLog(void) {
         return;
       }
       Actor_SetAnimation(probe.actorSlot, MOGALL_FOREST_LOG_ROLLING);
-      Actor_OffsetPositionAndResetMotion(probe.actorSlot, 18, 6);
+      Actor_SetDestinationOffsetById(probe.actorSlot, 18, 6);
       Event_Wait(30);
       Actor_SetAnimation(probe.actorSlot, MOGALL_FOREST_LOG_FALLING_IN);
       Sound_Play(SE_LOG_FALL);

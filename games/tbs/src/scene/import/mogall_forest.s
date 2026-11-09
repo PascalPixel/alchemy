@@ -29,27 +29,27 @@
 	.set import.Actor_GetById, 1
 	.set import.Actor_SetSpeedParameters, 1
 	.set import.Actor_SetMovementTypeById, 1
-	.set import.Actor_SetPositionAndCommit, 1
-	.set import.Actor_ResetAndSetPositionInMode2, 1
-	.set import.Actor_OffsetPositionAndResetMotion, 1
+	.set import.Actor_MoveToAndWaitById, 1
+	.set import.Actor_WalkToById, 1
+	.set import.Actor_SetDestinationOffsetById, 1
 	.set import.Actor_WaitForMoveById, 1
 	.set import.Import_ActorSetPosition, 1
 	.set import.Import_ActorSetAnimation, 1
 	.set import.Actor_StartRepeatedMotion, 1
 	.set import.Actor_RunRepeatedMotion, 1
-	.set import.Actor_SetAngleToward, 1
+	.set import.Actor_FaceActorById, 1
 	.set import.Actor_TurnToFaceEachOther, 1
 	.set import.Actor_ConfigureSpriteColor, 1
 	.set import.Actor_SetSpriteColor, 1
-	.set import.Actor_ArmCallback, 1
+	.set import.Actor_FaceDirectionById, 1
 	.set import.Actor_SetSpritePriority, 1
-	.set import.FieldEffect_SpawnAttached, 1
+	.set import.Actor_ShowEmoteById, 1
 	.set import.FieldEffect_SetAttached, 1
 	.set import.FieldCamera_FollowActor, 1
 	.set import.FieldCamera_SetSpeedParameters, 1
 	.set import.FieldCamera_MoveWithinMapBounds, 1
 	.set import.FieldCamera_WaitForArrival, 1
-	.set import.Actor_PlaceCurrentWithinCameraBounds, 1
+	.set import.FieldCamera_MoveToActorById, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.Field_RequestDjinnBattle, 1
 	.set import.Event_SetAfterBattleDestination, 1

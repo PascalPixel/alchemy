@@ -575,7 +575,7 @@ s32 Field_ExamineCell(s32 tile) {
               // Coins.
               void *object;
 
-              object = FieldEffect_StartRandomParticleEmitter(
+              object = ItemDisplay_ShowItemInFront(
                   gMainRoutineWork.leaderActorId, 0);
               wait(30);
               if ((trigger->kind & EXAMINE_TRIGGER_MASK) ==
@@ -597,7 +597,7 @@ s32 Field_ExamineCell(s32 tile) {
               void *object;
               s32 recipient;
 
-              object = FieldEffect_StartRandomParticleEmitter(
+              object = ItemDisplay_ShowItemInFront(
                   gMainRoutineWork.leaderActorId, trigger->value & 0xfff);
               wait(30);
               recipient = PartyInventory_AddFar((u16)trigger->value);

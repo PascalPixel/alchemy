@@ -121,7 +121,7 @@ void Colosso_ControlCharacterAlone(s32 id) {
   if ((u16)t == 0 && unit->pp != 0) {
     unit->ppGauge = 1;
   }
-  Event_ClearInvalidPackedValues();
+  Party_ClearUnusableShortcuts();
 }
 
 /// A task while a friend looks around the stages alone (the visit to
@@ -286,10 +286,10 @@ static void Colosso_AskReadyToRace(s32 actorId) {
     if (Event_AskYesNoAndShowResponse(actorId, 0) == 0) {
       InitializeActorZero();
       InitializeSelectedActor(actorId);
-      Actor_ResetAndSetPositionInMode2(actorId, x, z + 64);
+      Actor_WalkToById(actorId, x, z + 64);
       Event_Wait(15);
-      Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, x, z);
-      Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, x, z + 32);
+      Actor_WalkToAndWaitById(ACTOR_PARTY_LEADER, x, z);
+      Actor_WalkToAndWaitById(ACTOR_PARTY_LEADER, x, z + 32);
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();
       Import_EventSetExitRequest(COLOSSO_SOLO_TO_COLOSSEUM);
@@ -464,13 +464,13 @@ L_main:
   frontZ = guideZ + 16;
   Actor_WalkToAndWait(friendId, guideX, frontZ);
   besideX = guideX + 16;
-  Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, besideX, frontZ);
+  Actor_WalkToAndWaitById(ACTOR_PARTY_LEADER, besideX, frontZ);
   Actor_TurnToFaceEachOther(friendId, ACTOR_PARTY_LEADER, 30);
   Import_ActorSetAnimation(friendId, ANIM_NOD);
   behindZ = frontZ - 32;
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_WalkToAndWait(guide, guideX, behindZ);
-  Actor_ResetAndSetPositionInMode2(guide, besideX, behindZ);
+  Actor_WalkToById(guide, besideX, behindZ);
   Actor_WatchAndSetScript(ACTOR_PARTY_LEADER, friendId);
   Actor_WalkToAndWait(friendId, guideX, behindZ);
   Import_ActorSetAnimation(guide, 1);

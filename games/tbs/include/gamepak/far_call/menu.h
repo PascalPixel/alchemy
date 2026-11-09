@@ -15,12 +15,11 @@ s32 StatusScreen_RunFar(void);
 s32 PartyMemberChooser_OpenFar(void);
 /// Sets out a walking figure for each active party member under a window's
 /// corner; the shops reach it here.
-void PsynergyMenu_InitializeEntryActorsFar(void *source, s32 originX,
-                                           s32 originY, s32 spacing,
-                                           s32 unused);
+void Menu_CreatePartyFiguresFar(void *source, s32 originX, s32 originY,
+                                s32 spacing, s32 unused);
 /// Releases the party figures set out for a menu and stops their placement
 /// task.
-void Menu_ReleaseEntryActorsFar(void);
+void Menu_ReleasePartyFiguresFar(void);
 /// Shows a menu icon at its stored position, unrotated and unscaled.
 void Icon_PrepareActorFar(struct WindowSprite *object);
 /// Runs the Djinn screen and the Djinn tutorial. Returns 1, which makes the

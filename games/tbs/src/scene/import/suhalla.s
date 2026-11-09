@@ -10,6 +10,6 @@
 	.set import.FieldMessage_ShowAtActor, 1
 	.set import.Event_ShowMessageAndWait, 1
 	.set import.Import_EventSetExitRequest, 1
-	.set import.Actor_OffsetPositionAndReset, 1
+	.set import.Actor_WalkByById, 1
 	.set import.Sound_Play, 1
 	.include "games/tbs/src/system/overlay/imports.inc"

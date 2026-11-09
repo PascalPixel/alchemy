@@ -62,7 +62,7 @@ s32 Sanctum_CountMembersInNeed(void) {
 /// `messageId` stands among the revive service's lines. Each service's lines
 /// are a run in the same order, from MsgReviveService, MsgCurePoisonService,
 /// MsgExorcismService and MsgRemoveCurseService.
-s32 Shop_MessageByMode(s32 messageId) {
+s32 Sanctum_GetServiceMessage(s32 messageId) {
   s8 serviceKind = ((struct ShopWork *)gMenuWork)->action;
 
   if (serviceKind == SANCTUM_SERVICE_CURE_POISON) {
@@ -78,15 +78,15 @@ s32 Shop_MessageByMode(s32 messageId) {
 }
 
 /// Shows the keeper's line `messageId`, moved to the current service's
-/// (Shop_MessageByMode), and waits for its window, one more frame included: the
-/// sanctum's Shop_ShowKeeperMessage.
+/// (Sanctum_GetServiceMessage), and waits for its window, one more frame
+/// included: the sanctum's Shop_ShowKeeperMessage.
 void Sanctum_ShowKeeperMessage(s32 messageId) {
   s32 portraitResource;
 
   portraitResource =
       Speaker_GetVoiceFar(((struct ShopWork *)gMenuWork)->keeperGraphics);
   Message_CloseFinishedWindowsFar();
-  messageId = Shop_MessageByMode(messageId);
+  messageId = Sanctum_GetServiceMessage(messageId);
   Message_OpenWindowFar(messageId, 5, 0, (portraitResource << 16) | 0x22);
   while (Message_AllTypedFar() == 0) {
     wait(1U);
@@ -107,7 +107,7 @@ void Sanctum_ShowKeeperMessageHidingCursor(s32 messageId) {
   cursorSlot = &shop->cursor.anchor;
   savedCursorMode = (*cursorSlot)->motion;
   portraitResource = Speaker_GetVoiceFar(shop->keeperGraphics);
-  messageId = Shop_MessageByMode(messageId);
+  messageId = Sanctum_GetServiceMessage(messageId);
   (*cursorSlot)->motion = 13;
   Message_CloseFinishedWindowsFar();
   Message_OpenWindowFar(messageId, 5, 0, (portraitResource << 16) | 0x22);
@@ -215,7 +215,7 @@ s32 Sanctum_RunPartyService(void) {
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
   // redraw is 1 here: the hand's first move to a party member takes one frame
   shop->mode = redraw;
-  PsynergyMenu_InitializeEntryActorsFar(listWindow, 2, 0, 8, 0);
+  Menu_CreatePartyFiguresFar(listWindow, 2, 0, 8, 0);
   priceWindow =
       Window_CreateFar(SANCTUM_PRICE_WINDOW_X, 16, SANCTUM_PRICE_WINDOW_WIDTH,
                        3, WINDOW_FLAG_INSTANT);
@@ -253,7 +253,7 @@ s32 Sanctum_RunPartyService(void) {
       MenuCursor_Place(listWindow, memberIndex * 24 - 12, 0);
       shop->mode = 3;
       Sanctum_HighlightMembers(listWindow, memberIndex);
-      Shop_DrawSelectMessage(priceWindow, unitId);
+      Sanctum_DrawFee(priceWindow, unitId);
     }
 
     if ((gKeysPressed & KEY_A) != 0) {
@@ -282,7 +282,7 @@ s32 Sanctum_RunPartyService(void) {
       Sanctum_ShowKeeperMessage(messageBase + 3);
       Message_CloseFinishedWindowsFar();
       // Apply the cure and animation before collecting the donation.
-      BattleUnit_ResetStateByMode(unitId, serviceKind);
+      Sanctum_ApplyService(unitId, serviceKind);
       Sanctum_RunMemberIconBurst(memberIndex);
       Party_AdjustCoinsFar(-donation);
       Shop_DrawMoney();
@@ -312,7 +312,7 @@ s32 Sanctum_RunPartyService(void) {
     continue;
   }
 
-  Menu_ReleaseEntryActorsFar();
+  Menu_ReleasePartyFiguresFar();
   Window_CloseFar(priceWindow, 2);
   Window_CloseFar(listWindow, 2);
   wait(1);
@@ -324,7 +324,7 @@ s32 Sanctum_RunPartyService(void) {
 /// (Unit_Calculate then rebuilds the curse bits from what is still equipped).
 /// With no cursed item equipped, removing a curse changes nothing, whatever
 /// curse bits Sanctum_NeedsService saw. Called by Sanctum_RunPartyService.
-void BattleUnit_ResetStateByMode(s32 unitId, s32 serviceKind) {
+void Sanctum_ApplyService(s32 unitId, s32 serviceKind) {
   struct Unit *unit;
 
   unit = Unit_GetFar(unitId);
@@ -374,7 +374,7 @@ void Sanctum_HighlightMembers(struct Window *window, s32 selected) {
 /// Draws in `target` the party member's fee for the current service (its cost
 /// line with the donation filled in), or the line that the party member needs
 /// no treatment. Called by Sanctum_RunPartyService each time the cursor moves.
-void Shop_DrawSelectMessage(struct Window *target, s32 unitId) {
+void Sanctum_DrawFee(struct Window *target, s32 unitId) {
   s32 serviceOrMessage;
   s32 donation;
 
@@ -387,7 +387,7 @@ void Shop_DrawSelectMessage(struct Window *target, s32 unitId) {
     } else {
       serviceOrMessage = MsgNoHealingNeeded;
     }
-    serviceOrMessage = Shop_MessageByMode(serviceOrMessage);
+    serviceOrMessage = Sanctum_GetServiceMessage(serviceOrMessage);
     MessageArgument_PushFar(donation, MESSAGE_ARGUMENT_NUMBER);
     Text_DrawMessageFar(serviceOrMessage, target, 0, 0);
   }
@@ -438,7 +438,7 @@ void Sanctum_UpdateBurstSparkle(struct FieldParticle *effect) {
 /// the tune ends (while burstMember is not -1), gives the party member's icon a
 /// random colour mode each frame: SpriteColorMode 0 to 6, normal, the channel
 /// swaps or grey.
-void Shop_ResetEffects(void) {
+void Sanctum_UpdateBurst(void) {
   struct ShopWork *shop = gMenuWork;
   struct FieldParticle *effect = shop->effects;
   s32 remainingEffects = 23;
@@ -490,7 +490,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   Sprite_SetAnimationSpeedFar(shop->partyMemberIcons[member], 0);
   wait(20);
   priority = TASK_PASS_FRAME;
-  Task_Add(Shop_ResetEffects, priority);
+  Task_Add(Sanctum_UpdateBurst, priority);
 
   // The burst's centre, in 16.16 pixels: 12 above the party member's icon
   position.x = shop->partyMemberX[member] << 16;
@@ -550,7 +550,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
     }
   }
 
-  Task_Remove(Shop_ResetEffects);
+  Task_Remove(Sanctum_UpdateBurst);
   Sprite_SetAnimationSpeedFar(shop->partyMemberIcons[member], 16);
   Shop_RestoreFieldPalette();
   wait(30);

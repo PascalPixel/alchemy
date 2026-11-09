@@ -65,7 +65,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   } while (remainingParticles >= 0);
 
   wait(60);
-  Actor_ArmCallback(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   wait(20);
   Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId),
                            ANIM_LEADER_ARMS_RAISED);
@@ -73,13 +73,13 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   Sound_PlayFar(SE_SCATTER);
   wait(100);
   Shop_RestoreFieldPaletteFar();
-  FieldEffect_ClearActiveSlotsAndScheduleUpdates();
+  FieldEffect_ReleaseSlots();
 }
 
 /// Per-frame update: makes an actor pulse, switching its scale between the
 /// two values of gFieldEffect_PulseScales every 4 frames. The Mars Djinni's
 /// joining sets it on the leader, and clears it to end the pulse.
-void FieldEffect_SetActorAlternatingWords(struct Actor *actor) {
+void FieldEffect_PulseActorScale(struct Actor *actor) {
   u8 *object = (u8 *)actor;
   u32 *table = gFieldEffect_PulseScales;
   u32 index = ((u32)gVBlankCount >> 2) & 1;
@@ -113,7 +113,7 @@ DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkActorAndDestroySlow, -448)
 /// turn) from its origin at up to 5 pixels a frame and starts over, until it
 /// stops where it arrives, hidden; 40 frames later it swarms to points within 4
 /// pixels of one 20 pixels over the leader, until it is freed once it arrives.
-void FieldEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect) {
+void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
   struct Actor *owner;
   struct Vector3 position;
   s32 state;

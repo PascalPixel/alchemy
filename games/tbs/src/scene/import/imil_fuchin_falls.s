@@ -32,8 +32,8 @@
 	.set import.PartyInventory_GiveItem, 1
 	.set import.Actor_GetById, 1
 	.set import.Actor_SetSpeedParameters, 1
-	.set import.Actor_SetPositionAndCommit, 1
-	.set import.Actor_OffsetPositionAndResetMotion, 1
+	.set import.Actor_MoveToAndWaitById, 1
+	.set import.Actor_SetDestinationOffsetById, 1
 	.set import.Actor_WaitForMoveById, 1
 	.set import.Import_ActorSetAnimation, 1
 	.set import.Actor_Jump, 1

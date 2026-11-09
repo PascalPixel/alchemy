@@ -215,11 +215,11 @@
 	import Event_Wait, Event_WaitFar
 	import Event_Start, Event_StartFar
 	import Event_End, Event_EndFar
-	import Event_CallWithLastActiveActorId, Event_CallWithLastActiveActorIdFar
+	import Event_AppendActorPlacements, Event_AppendActorPlacementsFar
 	import Scene_AssignViewFlags, Scene_AssignViewFlagsFar
 	import Event_SetTriggers, Event_SetTriggersFar
-	import Event_PrepareActorAndApplyValue, Event_PrepareActorAndApplyValueFar
-	import Event_PrepareTwoActorsAndApply, Event_PrepareTwoActorsAndApplyFar
+	import Event_AddPartyMember, Event_AddPartyMemberFar
+	import Event_AddPartyMemberPair, Event_AddPartyMemberPairFar
 	import Party_RemoveMemberRestored, Party_RemoveMemberRestoredFar
 	import PartyInventory_GiveItem, PartyInventory_GiveItemFar
 	import Event_AskYesNoWithActorAnimation, Event_AskYesNoWithActorAnimationFar
@@ -228,18 +228,18 @@
 	import Actor_ReleaseById, Actor_ReleaseByIdFar
 	import Actor_SetSpeedParameters, Actor_SetSpeedParametersFar
 	import Actor_SetMovementTypeById, Actor_SetMovementTypeByIdFar
-	import Actor_RefreshSelectorById, Actor_RefreshSelectorByIdFar
+	import Actor_WaitForScriptEndById, Actor_WaitForScriptEndByIdFar
 	import Actor_Stop, Actor_StopFar
 	import Actor_SetMovementTypeAndWaitById, Actor_SetMovementTypeAndWaitByIdFar
-	import Actor_ResetAndSetPosition, Actor_ResetAndSetPositionFar
-	import Actor_SetPositionAndCommit, Actor_SetPositionAndCommitFar
-	import Actor_ResetAndSetPositionInMode2, Actor_ResetAndSetPositionInMode2Far
-	import Actor_SetPositionAndReset, Actor_SetPositionAndResetFar
+	import Actor_SetDestinationById, Actor_SetDestinationByIdFar
+	import Actor_MoveToAndWaitById, Actor_MoveToAndWaitByIdFar
+	import Actor_WalkToById, Actor_WalkToByIdFar
+	import Actor_WalkToAndWaitById, Actor_WalkToAndWaitByIdFar
 	import Actor_CenterOnColumn, Actor_CenterOnColumnFar
-	import Actor_OffsetPositionAndResetMotion, Actor_OffsetPositionAndResetMotionFar
+	import Actor_SetDestinationOffsetById, Actor_SetDestinationOffsetByIdFar
 	import Actor_WaitForMoveById, Actor_WaitForMoveByIdFar
 	import Import_ActorSetPosition, Actor_SetHorizontalPositionWithTerrainFar
-	import Import_ActorSetAnimation, Actor_SetModeByIdFar
+	import Import_ActorSetAnimation, Actor_SetAnimationByIdFar
 	import Actor_SetAnimationSpeedById, Actor_SetAnimationSpeedByIdFar
 	import Actor_SetAnimationAndWait, Actor_SetAnimationAndWaitFar
 	import Actor_WaitForAnimationChange, Actor_WaitForAnimationChangeFar
@@ -247,28 +247,28 @@
 	import Actor_StartRepeatedMotion, Actor_StartRepeatedMotionFar
 	import Actor_RunRepeatedMotion, Actor_RunRepeatedMotionFar
 	import Actor_JumpDownLedge, Actor_JumpDownLedgeFar
-	import Actor_SetAngleToward, Actor_SetAngleTowardFar
+	import Actor_FaceActorById, Actor_FaceActorByIdFar
 	import Actor_TurnToFaceEachOther, Actor_TurnToFaceEachOtherFar
 	import Actor_ConfigureSpriteColor, Actor_ConfigureSpriteColorFar
 	import Actor_SetSpriteColor, Actor_SetSpriteColorFar
-	import Actor_SetTargetAndCallback, Actor_SetTargetAndCallbackFar
+	import Actor_WatchAndStartScript, Actor_WatchAndStartScriptFar
 	import Event_SetMessageId, Event_SetMessageIdFar
 	import FieldMessage_ShowAtActor, FieldMessage_ShowAtActorFar
 	import Event_ShowMessageAndWait, Event_ShowMessageAndWaitFar
 	import Event_ShowMessageThenWait, Event_ShowMessageThenWaitFar
 	import Event_AskYesNoAndShowResponse, Event_AskYesNoAndShowResponseFar
-	import Actor_ArmCallback, Actor_ArmCallbackFar
+	import Actor_FaceDirectionById, Actor_FaceDirectionByIdFar
 	import Import_EventShowTwoMessagesAndWait, Event_ShowTwoMessagesAndWaitFar
 	import Message_SetVoiceFromActor, Message_SetVoiceFromActorFar
 	import Actor_SetSpritePriority, Actor_SetSpritePriorityFar
-	import FieldEffect_SpawnAttached, FieldEffect_SpawnAttachedFar
+	import Actor_ShowEmoteById, Actor_ShowEmoteByIdFar
 	import FieldEffect_SetAttached, FieldEffect_SetAttachedFar
 	import Actor_CopyGraphics, Actor_CopyGraphicsFar
 	import FieldCamera_FollowActor, FieldCamera_FollowActorFar
 	import FieldCamera_SetSpeedParameters, FieldCamera_SetSpeedParametersFar
 	import FieldCamera_MoveWithinMapBounds, FieldCamera_MoveWithinMapBoundsFar
 	import FieldCamera_WaitForArrival, FieldCamera_WaitForArrivalFar
-	import Actor_PlaceCurrentWithinCameraBounds, Actor_PlaceCurrentWithinCameraBoundsFar
+	import FieldCamera_MoveToActorById, FieldCamera_MoveToActorByIdFar
 	import FieldCamera_GetActor, FieldCamera_GetActorFar
 	import MapGrid_SetCameraBounds, MapGrid_SetCameraBoundsFar
 	import Event_SetDestination, Event_SetDestinationFar
@@ -315,7 +315,7 @@
 	import FieldPsynergy_StartCast, FieldPsynergy_StartCastFar
 	import Field_EndBusyAndReveal, Field_EndBusyAndRevealFar
 	import FieldPsynergy_StartMindReadWave, FieldPsynergy_StartMindReadWaveFar
-	import FieldPsynergy_FinishWaveAndReleaseHeapBlock, FieldPsynergy_FinishWaveAndReleaseHeapBlockFar
+	import FieldPsynergy_StopMindReadWave, FieldPsynergy_StopMindReadWaveFar
 	import FieldPsynergy_RestoreMindReadPalette, FieldPsynergy_RestoreMindReadPaletteFar
 	import Sprite_ShareVramCacheEntry, Sprite_ShareVramCacheEntryFar
 	import Party_AddPp, Party_AddPpFar
@@ -328,17 +328,17 @@
 	import FieldParticle_Initialize, FieldParticle_InitializeFar
 	import FieldEffect_ClearOwnedSlot, FieldEffect_ClearOwnedSlotFar
 	import Camera_WorldToScreen, Camera_WorldToScreenFar
-	import Event_ClearInvalidPackedValues, Event_ClearInvalidPackedValuesFar
+	import Party_ClearUnusableShortcuts, Party_ClearUnusableShortcutsFar
 	import FieldEffect_InitializeSlots, FieldEffect_InitializeSlotsFar
-	import FieldEffect_ClearActiveSlotsAndScheduleUpdates, FieldEffect_ClearActiveSlotsAndScheduleUpdatesFar
+	import FieldEffect_ReleaseSlots, FieldEffect_ReleaseSlotsFar
 	import Actor_LaunchFromLeader, Actor_LaunchFromLeaderFar
-	import Actor_OffsetPositionAndReset, Actor_OffsetPositionAndResetFar
-	import Actor_CommitPositionAndActivate, Actor_CommitPositionAndActivateFar
+	import Actor_WalkByById, Actor_WalkByByIdFar
+	import Actor_WalkByAndWaitById, Actor_WalkByAndWaitByIdFar
 	import Actor_WatchAndSetScript, Actor_WatchAndSetScriptFar
 	import FieldPsynergy_HaltActor, FieldPsynergy_HaltActorFar
 	import Actor_Snapshot, Save_CaptureActorsFar
 	import Actor_Restore, Actor_RestoreFar
-	import FieldEffect_ScheduleRatioTransition, FieldEffect_ScheduleRatioTransitionFar
+	import WorldMap_StartZoom, WorldMap_StartZoomFar
 	import Event_WaitForZoomTransition, Event_WaitForZoomTransitionFar
 	import Actor_SetMovementType, Actor_SetMovementTypeFar
 	import Scene_QueueMusic, Scene_QueueMusicFar

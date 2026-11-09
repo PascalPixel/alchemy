@@ -425,7 +425,7 @@ enum SoundId {
   SE_DJINNI_SET,
   /// A Djinni spinning up as it joins or is caught, before it leaps or shrinks
   /// away (Djinn_RunJupiterJoinEffect, Djinn_RunMarsJoinEffect,
-  /// FieldEffect_RunVenusDjinnCapture); also Avoid's arcs on the field, the
+  /// Djinn_RunVenusJoinEffect); also Avoid's arcs on the field, the
   /// Lemurian ship rising, and the Thor and Procne summons.
   SE_SPIN,
   /// A rumble, mostly as the screen shakes (MapGrid_SetShake): Sol Sanctum's

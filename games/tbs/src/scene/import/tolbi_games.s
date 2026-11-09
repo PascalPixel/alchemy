@@ -29,14 +29,14 @@
 	.set import.PartyInventory_GiveItem, 1
 	.set import.Event_AskYesNoWithActorAnimation, 1
 	.set import.Actor_GetById, 1
-	.set import.Actor_SetPositionAndReset, 1
+	.set import.Actor_WalkToAndWaitById, 1
 	.set import.Import_ActorSetPosition, 1
 	.set import.Import_ActorSetAnimation, 1
 	.set import.Actor_ConfigureSpriteColor, 1
 	.set import.Event_SetMessageId, 1
 	.set import.FieldMessage_ShowAtActor, 1
 	.set import.Event_ShowMessageAndWait, 1
-	.set import.Actor_ArmCallback, 1
+	.set import.Actor_FaceDirectionById, 1
 	.set import.Event_SetAfterBattleDestination, 1
 	.set import.Event_LeaveFor, 1
 	.set import.Event_StartScreenTransition, 1

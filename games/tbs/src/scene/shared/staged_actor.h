@@ -473,8 +473,8 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
       if (verticalDelta < 0)
         verticalDelta += PIXELS(2) - 1;
       verticalDelta >>= 17;
-      Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, horizontalDelta,
-                                         verticalDelta);
+      Actor_SetDestinationOffsetById(ACTOR_PARTY_LEADER, horizontalDelta,
+                                     verticalDelta);
     }
   }
 
@@ -499,8 +499,8 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
 
   {
     s32 packedOrientation = gPushedActor_DirectionSteps[direction];
-    Actor_OffsetPositionAndResetMotion(0, ((s16)(packedOrientation >> 16)) / 2,
-                                       ((s16)packedOrientation) / 2);
+    Actor_SetDestinationOffsetById(0, ((s16)(packedOrientation >> 16)) / 2,
+                                   ((s16)packedOrientation) / 2);
   }
   if (probe.callback != 0)
     probe.callback();

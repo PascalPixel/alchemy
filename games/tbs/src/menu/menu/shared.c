@@ -504,7 +504,7 @@ void Icon_PrepareActor(struct WindowSprite *object) {
 
 /// Loads the graphics of character unit into menu entry slot 0. The calling
 /// menu argument is not used.
-void PsynergyMenu_CallIconRoutineWithValue(const void *unused, s32 unit) {
+void Menu_ReloadMemberPortrait(const void *unused, s32 unit) {
   Portrait_ReloadFar(0, unit, 0);
 }
 
@@ -512,8 +512,8 @@ void PsynergyMenu_CallIconRoutineWithValue(const void *unused, s32 unit) {
 /// in it, hidden for now, as sideIcon[0]. Selects no tab yet (the s8
 /// tabIndex[0] = 255 reads as -1). Returns the window, which
 /// ItemMenu_Initialize (the Item, Psynergy and Djinn screens) and
-/// Menu_InitializeSelectorCursorAndEntries (the Status screen and the party
-/// member chooser) pass on to PsynergyMenu_InitializeEntryActors for the party
+/// StatusScreen_Initialize (the Status screen and the party
+/// member chooser) pass on to Menu_CreatePartyFigures for the party
 /// figures.
 struct Window *MenuCursor_Create(void *source) {
   struct PsynergyMenuWork *menu = source;
@@ -548,10 +548,10 @@ struct Window *MenuCursor_Create(void *source) {
 /// corner, each figure 16 + spacing pixels after the last, at full scale.
 /// Clears the unused figure slots and starts the task that places them
 /// every frame. Every screen of the field menu calls it as it opens, and the
-/// shops through PsynergyMenu_InitializeEntryActorsFar;
-/// Menu_ReleaseEntryActors releases the figures.
-void PsynergyMenu_InitializeEntryActors(void *source, s32 originX, s32 originY,
-                                        s32 spacing, s32 unused) {
+/// shops through Menu_CreatePartyFiguresFar;
+/// Menu_ReleasePartyFigures releases the figures.
+void Menu_CreatePartyFigures(void *source, s32 originX, s32 originY,
+                             s32 spacing, s32 unused) {
   u16 memberIds[14];
   struct PsynergyMenuWork *menu = gMenuWork;
   struct Window *window = source;
@@ -562,7 +562,7 @@ void PsynergyMenu_InitializeEntryActors(void *source, s32 originX, s32 originY,
   // Create and position the figures before scheduling their updates.
   for (i = 0; i < memberCount; i++) {
     struct Sprite *figure =
-        Sprite_CreateFar(Party_RemapCharacterIdByFlagsFar(memberIds[i]));
+        Sprite_CreateFar(Party_GetCharacterSpriteFar(memberIds[i]));
     if (figure != 0) {
       s32 offsetX;
       s32 windowX;
@@ -590,13 +590,13 @@ void PsynergyMenu_InitializeEntryActors(void *source, s32 originX, s32 originY,
   {
     s32 priority = 200;
     priority <<= 4;
-    Task_Add(Menu_UpdateEntryActorTransforms, priority);
+    Task_Add(Menu_PlacePartyFigures, priority);
   }
 }
 
-/// Releases the party figures PsynergyMenu_InitializeEntryActors created and
+/// Releases the party figures Menu_CreatePartyFigures created and
 /// stops their placement task.
-void Menu_ReleaseEntryActors(void) {
+void Menu_ReleasePartyFigures(void) {
   u16 memberIds[14];
   struct PsynergyMenuWork *menu = gMenuWork;
   s32 count;
@@ -615,13 +615,13 @@ void Menu_ReleaseEntryActors(void) {
       }
     } while (--i != 0);
   }
-  Task_Remove(Menu_UpdateEntryActorTransforms);
+  Task_Remove(Menu_PlacePartyFigures);
 }
 
 /// Task: each frame, places every party member sprite created by
-/// PsynergyMenu_InitializeEntryActors at its menu position and scale, through
+/// Menu_CreatePartyFigures at its menu position and scale, through
 /// the field's projected placement.
-void Menu_UpdateEntryActorTransforms(void) {
+void Menu_PlacePartyFigures(void) {
   struct PsynergyMenuWork *menu = gMenuWork;
   struct SpriteScale scale;
   struct SpritePlacement position;
@@ -1231,7 +1231,7 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, struct Window *window, s32 x,
 
 /// Writes the party's coins and the "Coins" label into window: the info
 /// window of the Item and Psynergy screens' party member choice.
-void Text_DrawWorkValueWithLabel(struct Window *window) {
+void Menu_DrawCoins(struct Window *window) {
   Text_DrawNumberAtOffsetFar(gMainRoutineWork.coins, 7, window, 8, 0);
   Text_DrawMessageAsTilesFar(MsgCoinsLabel, window, 64, 0);
   // Only the Japanese editions draw a vertical divider at tile column 12.
@@ -1273,29 +1273,29 @@ s32 Sound_PlayReturnOne(s32 sound) {
 
 /// Task while a menu runs: on Start, plays the cancel sound,
 /// sets FLAG_MENU_START_PRESSED and removes itself.
-void Menu_UpdateCancelSound(void) {
+void Menu_WatchStart(void) {
   if (gKeysPressed & KEY_START) {
     Sound_PlayFar(SE_MENU_CANCEL);
     // XXX (no evidence): why this is a game flag rather than a variable;
     // nothing outside the menu's own code sets or tests it.
     GameFlag_SetFar(FLAG_MENU_START_PRESSED);
-    Task_Remove(Menu_UpdateCancelSound);
+    Task_Remove(Menu_WatchStart);
   }
 }
 
 /// Starts watching for Start: clears FLAG_MENU_START_PRESSED and adds
-/// Menu_UpdateCancelSound. ItemMenu_Run, PsynergyMenu_Run and StatusScreen_Run
-/// call it before their command loops and Menu_EnsureCancelSound after them.
-void Menu_CancelSoundReset(void) {
+/// Menu_WatchStart. ItemMenu_Run, PsynergyMenu_Run and StatusScreen_Run
+/// call it before their command loops and Menu_StopWatchingStart after them.
+void Menu_StartWatchingStart(void) {
   GameFlag_ClearFar(FLAG_MENU_START_PRESSED);
   // TASK_PASS_FRAME: once a frame, in the frame pass.
-  Task_Add(Menu_UpdateCancelSound, TASK_PASS_FRAME);
+  Task_Add(Menu_WatchStart, TASK_PASS_FRAME);
 }
 
 /// Stops watching for Start, if Start has not removed the watch already.
-void Menu_EnsureCancelSound(void) {
+void Menu_StopWatchingStart(void) {
   if (GameFlag_GetFar(FLAG_MENU_START_PRESSED) == 0) {
-    Task_Remove(Menu_UpdateCancelSound);
+    Task_Remove(Menu_WatchStart);
   }
 }
 

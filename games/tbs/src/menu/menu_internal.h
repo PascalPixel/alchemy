@@ -79,8 +79,8 @@ s32 _call_via_r3(void *, void *, s32, void *);
 #define ABILITY_USABLE_IN_BATTLE 0x80
 
 /// Game flags of the menus. Start was pressed: every menu screen unwinds and
-/// the whole menu closes. Menu_CancelSoundReset clears it and
-/// Menu_UpdateCancelSound sets it.
+/// the whole menu closes. Menu_StartWatchingStart clears it and
+/// Menu_WatchStart sets it.
 #define FLAG_MENU_START_PRESSED 0x150
 /// The info window holds a message the next selection must not draw over.
 /// ItemMenu_ShowMessage sets it; the next chooser that would draw

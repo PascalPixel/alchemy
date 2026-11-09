@@ -461,7 +461,7 @@ const struct SparklePicture gFieldEffect_SparklePictures[32] = {
 };
 
 /// Two scales that alternate ((gVBlankCount >> 2) & 1): full size and 0.97 of
-/// it (FieldEffect_SetActorAlternatingWords, jupiter.c); nothing reads the
+/// it (FieldEffect_PulseActorScale, jupiter.c); nothing reads the
 /// third word.
 const u32 gFieldEffect_PulseScales[3] = {Q16_ONE, Q16_ONE * 97 / 100, 16};
 

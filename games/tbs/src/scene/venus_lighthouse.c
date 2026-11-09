@@ -1313,7 +1313,7 @@ static void VenusLighthouse_JumpDown(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Event_Start();
   Actor_SetScript(ACTOR_PARTY_LEADER, gVenusLeaderDazedScript);
-  Actor_RefreshSelectorById(ACTOR_PARTY_LEADER);
+  Actor_WaitForScriptEndById(ACTOR_PARTY_LEADER);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_GREY);
   leader->velocityY = PIXELS(4);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4), PIXELS(2));
@@ -1962,7 +1962,7 @@ static void VenusLighthouse_MoveGatePillar(void) {
             ACTOR_PRIORITY_UNDERFOOT;
         Actor_SetPosition(ACTOR_GATE_SPARKLE, PIXELS(808), PIXELS(728));
         Actor_SetScript(ACTOR_GATE_SPARKLE, gVenusSecondFloorLightToGate);
-        Actor_RefreshSelectorById(ACTOR_GATE_SPARKLE);
+        Actor_WaitForScriptEndById(ACTOR_GATE_SPARKLE);
         Event_Wait(30);
         Sound_Play(SE_DOOR_OPEN);
         MapGrid_PlayMapEdit(gVenusSecondFloorGateCells, 110, 41);
@@ -2636,7 +2636,7 @@ static void VenusLighthouse_MoveSocketPillar(void) {
       struct Actor *secondGateEffect;
 
       FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
-      Actor_PlaceCurrentWithinCameraBounds(ACTOR_SOCKET_STATUE, 1);
+      FieldCamera_MoveToActorById(ACTOR_SOCKET_STATUE, 1);
       FieldCamera_WaitForMove();
       firstGateEffect = VenusLighthouse_CreateLight(
           136, 776, gVenusFourthFloorLightFromStatue);

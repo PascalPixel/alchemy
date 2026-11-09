@@ -153,7 +153,7 @@ void FieldEffect_FlickerActorAndSpawnArcs(struct Actor *updated) {
 /// every 2 frames, and spawns the swelling arcs on it every 16.
 /// FieldPsynergy_StartCast gives it to the caster in place of the flicker
 /// while FLAG_PLAY_PSYNERGY_CAST is set.
-void FieldEffect_CycleActorValueByCounter(struct Actor *updated) {
+void FieldEffect_CycleActorAndSpawnArcs(struct Actor *updated) {
   struct Actor *actor = (struct Actor *)updated;
   if ((gFrameCount & 1) != 0) {
     s32 colorIndex = (gFrameCount >> 1) % 6;

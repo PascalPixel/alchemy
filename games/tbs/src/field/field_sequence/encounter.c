@@ -45,7 +45,7 @@ typedef struct WorldMapEncounterRule {
 /// random battle starts or a new area is entered) and chooses the battle
 /// background. Called by FieldSequence_Run on scene load, with useRules 0 on
 /// the World Map and 1 in a scene; writes work->encounterZones, encounterBias
-/// and encounterThreshold, and gMainRoutineWork.special.
+/// and encounterThreshold, and gMainRoutineWork.battleBackground.
 void Encounter_SelectMapZones(s32 useRules) {
   struct FieldWork *work;
   s32 sceneId;
@@ -97,8 +97,8 @@ void Encounter_SelectMapZones(s32 useRules) {
 
 /// Returns the World Map encounter zone for the ground at pos (0 for none), and
 /// chooses the battle background for its battle environment
-/// (gMainRoutineWork.special). Called by Encounter_RollWorldMap on each
-/// step, and by Field_RequestBattleFromEncounterTable and
+/// (gMainRoutineWork.battleBackground). Called by Encounter_RollWorldMap on
+/// each step, and by Field_RequestBattleFromEncounterTable and
 /// Field_RequestDjinnBattle on the World Map, which use only the battle
 /// background.
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
@@ -393,15 +393,17 @@ void Scene_SetRestartPoint(void) {
 }
 
 /// Returns the battle background chosen for the current scene. The battle setup
-/// (battle/run.c) reads it through Event_GetSpecialValueFar as the
+/// (battle/run.c) reads it through BattleBackground_GetSelectedFar as the
 /// battle's background.
-s16 Event_GetSpecialValue(void) { return gMainRoutineWork.special; }
+s16 BattleBackground_GetSelected(void) {
+  return gMainRoutineWork.battleBackground;
+}
 
 /// Chooses the battle background for the current scene.
 /// gScene_BattleBackgroundRules lists each battle background (a word with bit
 /// 31 set) followed by the scenes that use it, ended by 0; a scene takes the
 /// one listed last before it, and a scene not listed takes the last one. Called
-/// by Encounter_SelectMapZones; sets gMainRoutineWork.special.
+/// by Encounter_SelectMapZones; sets gMainRoutineWork.battleBackground.
 void BattleBackground_SelectForMap(void) {
   s32 target = gMainRoutineWork.next;
   s32 *table = gScene_BattleBackgroundRules;
@@ -419,12 +421,12 @@ void BattleBackground_SelectForMap(void) {
       entry = *table++;
     } while (entry != 0 && entry != target);
   }
-  gMainRoutineWork.special = backdrop;
+  gMainRoutineWork.battleBackground = backdrop;
 }
 
 /// Chooses the battle background for a World Map battle environment (enum
 /// BattleEnvironment; any other gives Sol Sanctum's) and sets
-/// gMainRoutineWork.special. Called by
+/// gMainRoutineWork.battleBackground. Called by
 /// Encounter_ResolveWorldMapZoneAndBackdrop.
 void BattleBackground_SelectForEnvironment(s32 behavior) {
   u16 backdrop;
@@ -451,7 +453,7 @@ void BattleBackground_SelectForEnvironment(s32 behavior) {
     backdrop = (u32)&ResourceId_SolSanctumBackdrop;
     break;
   }
-  gMainRoutineWork.special = backdrop;
+  gMainRoutineWork.battleBackground = backdrop;
 }
 
 /// Chooses the battle music for slot of zone (gMainRoutineWork.battleMusic).

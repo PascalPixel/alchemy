@@ -200,14 +200,14 @@ enum BattleCastKind {
 #define TARGET_PICK_NONE -1
 
 /// The list place codes the target pickers return (targeting.c,
-/// Battle_FindTaggedSlotByValue): a place in the party's list or the enemies',
+/// Battle_FindUnitPlace): a place in the party's list or the enemies',
 /// or'd with the side's tag.
 #define PLACE_PARTY 0x100
 #define PLACE_ENEMY 0x180
 
 /// BattleAction.target of a held unit's lost action (COMMAND_NONE, from
-/// Battle_BuildOpponentActions and
-/// Battle_BuildUnitActions): as a place code, place 0 of the other
+/// Battle_BuildEnemyActions and
+/// Battle_BuildPartyActions): as a place code, place 0 of the other
 /// side, the party's for an enemy and the enemies' for a party member.
 #define TARGET_NONE_ENEMY PLACE_PARTY
 #define TARGET_NONE_PARTY PLACE_ENEMY

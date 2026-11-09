@@ -6,7 +6,7 @@
 
 /// Per-frame update Frost leaves on its target: sprite param 2 for 2 frames in
 /// every 8, otherwise 0, so the target glints.
-void FieldEffect_UpdateOrbitingParticleMain(struct Actor *actor) {
+void FieldEffect_UpdateFrostGlint(struct Actor *actor) {
   struct Actor *particle = (struct Actor *)actor;
   s32 frame = gFrameCount & 7;
   if (frame == 0) {
@@ -102,7 +102,7 @@ void FieldPsynergy_FrostOnTarget(s32 unused) {
 /// The target's part runs only when a trigger named the target
 /// (FieldPsynergy_Dispatch clears enabled) and no event set
 /// childMode: it flashes, takes animation 2 with SE_SHIMMER unless childOption
-/// is set, keeps glinting (FieldEffect_UpdateOrbitingParticleMain) and runs
+/// is set, keeps glinting (FieldEffect_UpdateFrostGlint) and runs
 /// the scene's Frost event. Called by FieldPsynergy_Run and
 /// FieldPsynergy_FrostOnTarget.
 void FieldPsynergy_Frost(void) {
@@ -179,7 +179,7 @@ void FieldPsynergy_Frost(void) {
       Actor_SelectAnimationFar(target, 2);
     }
 
-    target->update = FieldEffect_UpdateOrbitingParticleMain;
+    target->update = FieldEffect_UpdateFrostGlint;
     event = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
                                       FIELD_PSYNERGY_FROST, &eventTarget);
     if (event != NULL) {

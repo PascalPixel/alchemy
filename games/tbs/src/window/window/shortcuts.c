@@ -8,7 +8,7 @@
 /// Menu_FindShortcutEntries searches whole.
 #define SHORTCUT_LIST_ENTRIES 448
 /// A shortcut (gMainRoutineWork.firstShortcut and secondShortcut) is
-/// member << SHORTCUT_MEMBER_SHIFT | action, as Debug_SelectAbilityPair stores
+/// member << SHORTCUT_MEMBER_SHIFT | action, as Debug_SelectShortcuts stores
 /// it.
 #define SHORTCUT_MEMBER_SHIFT 10
 #define SHORTCUT_ABILITY_MASK 0x3ff
@@ -112,7 +112,7 @@ struct AbilityListEntry {
 /// gMainRoutineWork.firstShortcut and secondShortcut
 /// (member << SHORTCUT_MEMBER_SHIFT | Psynergy). This debug path seeds extra
 /// Psynergy before enumerating the party's shortcuts.
-void Debug_SelectAbilityPair(void) {
+void Debug_SelectShortcuts(void) {
   struct AbilityListEntry *list;
   struct Window *win;
   struct Window *title;
@@ -324,7 +324,7 @@ void Menu_FindShortcutEntries(u32 *firstIndex, u32 *secondIndex,
 
 /// Runs the Psynergy shortcut picker. Reached only through a bare entry of the
 /// window far-call table.
-void Menu_RunSelectionHook(void) { Debug_SelectAbilityPair(); }
+void Menu_RunSelectionHook(void) { Debug_SelectShortcuts(); }
 
 /// The work block of HEAP_SLOT_SELECTION_WORKSPACE (gSelectionWorkspace): two
 /// VRAM cache entries with their flags and a window, among fields nothing here

@@ -1298,7 +1298,7 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
           MercuryLighthouse_StopStatueSpray();
 #endif
           MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);
-          Actor_RefreshSelectorById(ACTOR_SLIDING_STATUE);
+          Actor_WaitForScriptEndById(ACTOR_SLIDING_STATUE);
           Actor_Prepare(x, 0, PIXELS(786), SPRITE_CRATE);
           Actor_Prepare(x, 0, PIXELS(818), SPRITE_CRATE);
           Actor_SetDestination(ACTOR_SLIDING_STATUE, 840, 744);
@@ -2815,7 +2815,7 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   Event_Wait(20);
   // "However, I sense something special about you. I feel that I..."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
-  Event_PrepareActorAndApplyValue(MIA, 1);
+  Event_AddPartyMember(MIA, 1);
   // "The Adept Mia joined your party!" Fizz, a Mercury Djinni, comes with
   // her and is set; her stats are worked out again.
   GameFlag_Set(FLAG_DJINNI(DJINNI_FIZZ));

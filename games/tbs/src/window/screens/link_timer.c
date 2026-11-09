@@ -140,7 +140,7 @@ void UpdateLinkSessionCountdown(void) {
 /// time to be running away!" until A or B is pressed or the link battle's
 /// time runs out, and returns 1; else returns 0. The Flee command asks it
 /// (Battle_CollectPartyCommands).
-s32 Message_ShowLocalizedAndWait(void) {
+s32 Battle_RefuseFlee(void) {
   s16 buffer[64];
   struct Window *window;
   s32 result;

@@ -6,7 +6,7 @@
 
 /// The HEAP_SLOT_MIND_READ heap slot (gMindReadWork), 664 bytes. It lives
 /// from FieldPsynergy_StartMindReadWave to
-/// FieldPsynergy_FinishWaveAndReleaseHeapBlock, after the conversation Mind
+/// FieldPsynergy_StopMindReadWave, after the conversation Mind
 /// Read reads.
 struct MindReadWork {
   /// Each scanline's BG0 horizontal scroll in pixels, two pages written in
@@ -54,7 +54,7 @@ void FieldPsynergy_StartMindReadWave(s32 x, s32 y) {
 
 /// Stops the wave effect: restores the caster's colours and the palettes and
 /// releases the Psynergy's work.
-void FieldPsynergy_FinishWaveAndReleaseHeapBlock(void) {
+void FieldPsynergy_StopMindReadWave(void) {
   void *work;
 
   work = *(void **)((u32)&gMindReadWork);
@@ -129,7 +129,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
         particle->speedLimit = Q16_ONE * 16 / 25; // 0.64 pixels a frame
         particle->acceleration = Q16_ONE * 16 / 25;
         particle->facing = ArcTan2(from.z - to.z, from.x - to.x);
-        particle->update = FieldEffect_SetCallbackWhenTargetUnset;
+        particle->update = FieldEffect_ReleaseOnArrival;
         // No shadow or outline, sprite priority 1.
         sprite->flags = 0;
         sprite->priority = 1;
@@ -238,7 +238,7 @@ s32 FixedPoint_Remainder(s32 value, s32 divisor) {
 /// Per-frame update: once the actor has arrived (no destination left on any
 /// axis), releases it: gFieldEffect_UntargetedActorScript is a lone SC_RELEASE.
 /// Mind Read's particles end this way at the caster.
-void FieldEffect_SetCallbackWhenTargetUnset(struct Actor *actor) {
+void FieldEffect_ReleaseOnArrival(struct Actor *actor) {
   struct Actor *object = (struct Actor *)actor;
   s32 targetY;
   s32 targetX;

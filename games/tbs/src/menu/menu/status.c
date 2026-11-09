@@ -108,7 +108,7 @@ s32 PartyMemberChooser_Open(void) {
   Window_InitializeWork(0);
 
   menu->partyCount = Party_ListMembersFar(menu->memberIds);
-  Menu_InitializeSelectorCursorAndEntries(0, 3, 0, 7);
+  StatusScreen_Initialize(0, 3, 0, 7);
   menu->selectorWindow = Window_CreateFar(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
   for (index = 0; index < MEMBER_CHOOSER_MEMBER_COUNT; index++)
     menu->memberY[index] = 30;
@@ -167,7 +167,7 @@ s32 StatusScreen_Run(void) {
   Window_InitializeWork(0);
   menu->page = STATUS_SCREEN_PAGE_STATUS;
   menu->partyCount = Party_ListMembersFar(menu->memberIds);
-  Menu_InitializeSelectorCursorAndEntries(0, 3, 0, 7);
+  StatusScreen_Initialize(0, 3, 0, 7);
   Iwram_CopyWords(palette, (void *)BG_PLTT, 64);
 #if !TBS_PATCH_1
   Iwram_CopyWords(tiles, BG_CHAR_BLOCK(1), STATUS_SAVED_TILE_BYTES);
@@ -204,13 +204,13 @@ s32 StatusScreen_Run(void) {
   }
   Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
   // Run the pages.
-  Menu_CancelSoundReset();
+  Menu_StartWatchingStart();
   menu->page = STATUS_SCREEN_PAGE_STATUS;
 
   result = StatusScreen_RunPages();
 
   // Close, and put the palettes and tiles back.
-  Menu_EnsureCancelSound();
+  Menu_StopWatchingStart();
   WindowSprite_ClearListFar(menu->statusWindow);
   DjinnFigures_ReleaseTopRow();
   Menu_ResumeFieldTasks();
@@ -479,7 +479,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
       Unit_GetFar(menu->memberIds[memberIndex]);
       page = (page + 3) % 3;
       StatusScreen_ShowMemberStatus(menu->memberIds[memberIndex], page);
-      PsynergyMenu_CallIconRoutineWithValue(menu, menu->memberIds[memberIndex]);
+      Menu_ReloadMemberPortrait(menu, menu->memberIds[memberIndex]);
       StatusScreen_SetSelectedMemberRow(menu, memberIndex);
     }
     MenuCursor_Position(memberIndex * 24 - 10, 16);
@@ -499,8 +499,8 @@ s32 PartyMemberChooser_RunRearrange(void) {
       if (PartyMemberChooser_MoveEntry(memberIndex, 1)) {
         Sound_PlayFar(SE_MENU_CONFIRM);
         memberIndex++;
-        Menu_ReleaseEntryActors();
-        PsynergyMenu_InitializeEntryActors(menu->memberWindow, 2, 2, 8, 0);
+        Menu_ReleasePartyFigures();
+        Menu_CreatePartyFigures(menu->memberWindow, 2, 2, 8, 0);
         StatusScreen_SetSelectedMemberRow(menu, memberIndex);
       } else {
         Sound_PlayFar(SE_MENU_ERROR);
@@ -510,8 +510,8 @@ s32 PartyMemberChooser_RunRearrange(void) {
       if (PartyMemberChooser_MoveEntry(memberIndex, 0)) {
         Sound_PlayFar(SE_MENU_CONFIRM);
         memberIndex--;
-        Menu_ReleaseEntryActors();
-        PsynergyMenu_InitializeEntryActors(menu->memberWindow, 2, 2, 8, 0);
+        Menu_ReleasePartyFigures();
+        Menu_CreatePartyFigures(menu->memberWindow, 2, 2, 8, 0);
         StatusScreen_SetSelectedMemberRow(menu, memberIndex);
       } else {
         Sound_PlayFar(SE_MENU_ERROR);
@@ -568,8 +568,7 @@ s32 PsynergyMenu_ChooseMember(void) {
       Unit_GetFar(menu->memberTable[memberIndex]);
       page = (page + 3) % 3;
       StatusScreen_ShowMemberStatus(menu->memberTable[memberIndex], page);
-      PsynergyMenu_CallIconRoutineWithValue(menu,
-                                            menu->memberTable[memberIndex]);
+      Menu_ReloadMemberPortrait(menu, menu->memberTable[memberIndex]);
       for (rowIndex = 0; rowIndex < MENU_ROW_COUNT; rowIndex++)
         menu->rowPositions[rowIndex] = 30;
       menu->rowPositions[memberIndex] = 26;
@@ -683,12 +682,12 @@ s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
 /// Sets up the Status menu's first screen: the cursor window with the party's
 /// figures, no other windows yet, and an 8 by 2 cursor grid. The parameters are
 /// not used.
-void Menu_InitializeSelectorCursorAndEntries(s32 unused0, s32 unused1,
-                                             s32 unused2, s32 unused3) {
+void StatusScreen_Initialize(s32 unused0, s32 unused1, s32 unused2,
+                             s32 unused3) {
   struct StatusScreenWork *menu;
 
   menu = gMenuWork;
-  PsynergyMenu_InitializeEntryActors(MenuCursor_Create(menu), 2, 2, 8, 0);
+  Menu_CreatePartyFigures(MenuCursor_Create(menu), 2, 2, 8, 0);
   menu->unopenedWindow = 0;
   menu->statusWindow = 0;
   menu->helpWindow = 0;
@@ -766,7 +765,7 @@ s32 StatusScreen_SelectCommand(void) {
   // emptied every frame); the four Djinn figures go up from y 128 to 104
   // until the page closes.
   Window_UpdateOrCreate(&menu->helpWindow, 0, 0, 30, 5, 2);
-  Task_Remove(Menu_UpdateEntryActorTransforms);
+  Task_Remove(Menu_PlacePartyFigures);
   for (i = 3; i >= 0; i--)
     menu->rowY[i] = 104;
   done = 0;
@@ -875,7 +874,7 @@ s32 StatusScreen_SelectCommand(void) {
         menu->selectedMember = menu->memberIds[member];
         menu->selectedIds[0] = menu->memberIds[member];
         menu->memberIndex[0] = member;
-        PsynergyMenu_CallIconRoutineWithValue(menu, menu->memberIds[member]);
+        Menu_ReloadMemberPortrait(menu, menu->memberIds[member]);
         break;
       }
     }
@@ -883,7 +882,7 @@ s32 StatusScreen_SelectCommand(void) {
   WindowSprite_ClearListFar(menu->helpWindow);
   WindowSprite_RedrawSavedRectFar(menu->helpWindow);
   Window_ClearInteriorTilesFar(menu->statusWindow, 64, 56, 224, 96);
-  Task_Add(Menu_UpdateEntryActorTransforms, TASK_PASS_FRAME);
+  Task_Add(Menu_PlacePartyFigures, TASK_PASS_FRAME);
   for (i = 3; i >= 0; i--)
     menu->rowY[i] = 128;
   ItemMenu_ResetCategory();
@@ -1069,7 +1068,7 @@ void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
   if (ailmentIndex == 0)
     Text_DrawMessageAsTilesFar(MsgNormalLabel, window, 0, 40);
   StatusScreen_UpdateSelectionIcons(ailments);
-  ItemMenu_ApplyFlags(ailments);
+  StatusScreen_ShowStatusIcons(ailments);
   if (menu->page == 3)
     return;
   if (keepDrawn == 0) {
@@ -1545,7 +1544,7 @@ s32 PsynergyMenu_SelectAction(void) {
         icon->sentinel = priority;
     }
   }
-  Task_Remove(Menu_UpdateEntryActorTransforms);
+  Task_Remove(Menu_PlacePartyFigures);
   Menu_SpawnIconEntries((struct ItemMenuWork *)menu, menu->messageWindow);
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp, menu->statusWindow,
                              SWITCH_HELP_X, -24);
@@ -1598,7 +1597,7 @@ s32 PsynergyMenu_SelectAction(void) {
         Sound_PlayFar(SE_MENU_CANCEL);
         result = -1;
         done = 1;
-        Task_Add(Menu_UpdateEntryActorTransforms, TASK_PASS_FRAME);
+        Task_Add(Menu_PlacePartyFigures, TASK_PASS_FRAME);
         break;
       }
       if ((gKeysRepeat & KEY_R) || (gKeysRepeat & KEY_L)) {
@@ -1614,8 +1613,7 @@ s32 PsynergyMenu_SelectAction(void) {
         menu->selectedMember = menu->memberTable[memberIndex];
         menu->memberIds[0] = menu->memberTable[memberIndex];
         menu->tabIndex[0] = memberIndex;
-        PsynergyMenu_CallIconRoutineWithValue(menu,
-                                              menu->memberTable[memberIndex]);
+        Menu_ReloadMemberPortrait(menu, menu->memberTable[memberIndex]);
         break;
       }
     }
@@ -1828,7 +1826,7 @@ s32 ItemMenu_SelectItem(void) {
       icon->sentinel = 240;
   }
 
-  Task_Remove(Menu_UpdateEntryActorTransforms);
+  Task_Remove(Menu_PlacePartyFigures);
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp, menu->statusWindow, 64,
                              -24);
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp + 3, menu->statusWindow, 0,
@@ -1908,8 +1906,7 @@ s32 ItemMenu_SelectItem(void) {
         menu->selectedMember = menu->memberIds[memberIndex];
         menu->sideMember[0] = menu->memberIds[memberIndex];
         menu->sideIndex[0] = memberIndex;
-        PsynergyMenu_CallIconRoutineWithValue(menu,
-                                              menu->memberIds[memberIndex]);
+        Menu_ReloadMemberPortrait(menu, menu->memberIds[memberIndex]);
         break;
       }
     }
@@ -1920,7 +1917,7 @@ s32 ItemMenu_SelectItem(void) {
   WindowSprite_ClearListFar(menu->questionWindow);
   ItemMenu_HideAllIcons();
   WindowSprite_RedrawSavedRectFar(menu->statusWindow);
-  Task_Add(Menu_UpdateEntryActorTransforms, TASK_PASS_FRAME);
+  Task_Add(Menu_PlacePartyFigures, TASK_PASS_FRAME);
   return result;
 }
 
@@ -2176,7 +2173,7 @@ s32 Menu_CreateEightEntryActors(struct Window *window) {
 /// Shows the icon of each status that flags marks
 /// (StatusScreen_BuildAvailability) down the left edge from y 88, 16 pixels
 /// apart, beside the status labels of StatusScreen_DrawStatusAilments.
-void ItemMenu_ApplyFlags(const u8 *flags) {
+void StatusScreen_ShowStatusIcons(const u8 *flags) {
   struct ItemMenuWork *menu;
   struct WindowSprite **slot;
   struct WindowSprite *entry;

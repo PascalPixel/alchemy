@@ -14,7 +14,7 @@ struct Spark {
 /// The star field's work: its sprite sheet, 16 sparks and 3 rings. It lives
 /// in the HEAP_SLOT_BATTLE_EFFECT heap slot from
 /// ElementGlow_InitializeStarField to
-/// ElementGlow_ReleaseVramAndHeapBlocks, the 45 frames of a cast's glow
+/// ElementGlow_End, the 45 frames of a cast's glow
 /// (ElementGlow_Play, GLOW_STAR_FIELD). ElementGlow_UpdateStarField draws from
 /// it, ElementGlow_UploadStarField reads its ready flag, and ElementGlow_Play
 /// writes its canvas origin.
@@ -203,7 +203,7 @@ u32 ElementGlow_UploadStarField(void) {
 /// RAM, sets BG2's affine parameters to no zoom, loads both blitters and adds
 /// ElementGlow_UpdateStarField and ElementGlow_UploadStarField. Also sets
 /// BattleBackgroundWork.mode to BATTLE_BACKGROUND_FIXED. Called by
-/// ElementGlow_Play; ElementGlow_ReleaseVramAndHeapBlocks
+/// ElementGlow_Play; ElementGlow_End
 /// undoes it. Returns the upload task's task index (-1 when the task table
 /// is full), which the caller does not read.
 s32 ElementGlow_InitializeStarField(s32 element) {
@@ -298,7 +298,7 @@ s32 ElementGlow_InitializeStarField(s32 element) {
 /// Called by ElementGlow_Play once the field has played.
 /// Returns Task_Remove's result, which the caller does not
 /// read.
-s32 ElementGlow_ReleaseVramAndHeapBlocks(s32 unused) {
+s32 ElementGlow_End(s32 unused) {
   Iwram_ClearWords(BG_CHAR_BLOCK(1), BG_CHAR_SIZE);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
@@ -419,7 +419,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
       work->canvasOrigin.queued = 1;
       wait(1);
     }
-    ElementGlow_ReleaseVramAndHeapBlocks(element);
+    ElementGlow_End(element);
   } else if (mode == GLOW_STREAKS) {
     // The streaks for 40 frames, their canvas centred on the unit likewise.
     struct BattleEffectWork *effectWork;

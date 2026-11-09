@@ -42,7 +42,7 @@ enum FieldRaisedTrigger {
   /// R on the world map: the picture of the whole world (WorldPicture_Show).
   FIELD_RAISED_TRIGGER_WORLD_PICTURE = -888,
   /// L on the world map: the view zooms out while L is held
-  /// (FieldEffect_RunVisibilityTransition).
+  /// (WorldMap_ZoomOutWhileLHeld).
   FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM = -889
 };
 

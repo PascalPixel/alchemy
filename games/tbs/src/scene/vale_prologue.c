@@ -1320,7 +1320,7 @@ static void ValePrologue_GaretLeavesHisChest(void) {
   }
   Actor_WaitForMoveById(ACTOR_GARET_CHILD);
   Actor_SetPosition(ACTOR_GARET_CHILD, 0, 0);
-  Event_PrepareActorAndApplyValue(GARET, 1);
+  Event_AddPartyMember(GARET, 1);
   GameFlag_Set(FLAG_VALE_STORM_GARET_JOINED);
 }
 
@@ -1387,7 +1387,7 @@ static void ValePrologue_UnusedGaretJoinsIsaac(void) {
     }
     Actor_WaitForMoveById(ACTOR_GARET_CHILD);
     Actor_SetPosition(ACTOR_GARET_CHILD, 0, 0);
-    Event_PrepareActorAndApplyValue(GARET, 1);
+    Event_AddPartyMember(GARET, 1);
     Actor_SetAnimation(ACTOR_GARETS_CHEST, ANIM_NOD);
     GameFlag_Set(FLAG_VALE_STORM_GARET_JOINED);
     Event_End();
@@ -1490,7 +1490,7 @@ static void ValePrologue_WatchBoulderFall(void) {
 
   if (GameFlag_Get(FLAG_VALE_BOULDER_FELL) == 0) {
     Event_Start();
-    Event_CallWithLastActiveActorId(gValePrologue_BoulderWatchers);
+    Event_AppendActorPlacements(gValePrologue_BoulderWatchers);
     Scene_StartEventPsynergy();
     wait(1);
     Sound_Play(SE_RUMBLE);
@@ -1508,7 +1508,7 @@ static void ValePrologue_WatchBoulderFall(void) {
     Actor_SetScript(ACTOR_PARTY_LEADER, gValePrologue_BoulderFallLeaderPath);
     Actor_RunScriptAndWait(ACTOR_GARET_CHILD,
                            gValePrologue_BoulderFallGaretPath);
-    Actor_RefreshSelectorById(ACTOR_PARTY_LEADER);
+    Actor_WaitForScriptEndById(ACTOR_PARTY_LEADER);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_ShowEmote(ACTOR_GARET_CHILD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
@@ -2010,7 +2010,7 @@ static void ValePrologue_DoraGoesForHelp(void) {
   Actor_SetScript(ACTOR_KYLE, script);
   Actor_SetScript(ACTOR_JENNAS_FATHER, script);
   Actor_SetScript(ACTOR_JENNAS_MOTHER, script);
-  Actor_RefreshSelectorById(ACTOR_JENNA_CHILD);
+  Actor_WaitForScriptEndById(ACTOR_JENNA_CHILD);
   Event_Wait(10);
   Sound_Play(SE_DOOR_CLOSE);
   MapGrid_AnimateCells(gValePrologue_GrandparentsDoorCloses, 38, 72);
@@ -2028,7 +2028,7 @@ static void ValePrologue_DoraGoesForHelp(void) {
   Event_Wait(40);
   Sound_Play(SE_DOOR_CLOSE);
   MapGrid_AnimateCells(gValePrologue_IsaacsDoorCloses, 35, 73);
-  Actor_RefreshSelectorById(ACTOR_JENNA_CHILD);
+  Actor_WaitForScriptEndById(ACTOR_JENNA_CHILD);
   Scene_PlayQueuedMusic();
   Event_Wait(40);
   northMessage = MsgValeGoLookNorth;
@@ -2046,7 +2046,7 @@ static void ValePrologue_DoraGoesForHelp(void) {
   Event_Wait(40);
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   FieldCamera_MoveTo(PIXELS(105), -1, PIXELS(1086), 1);
-  Actor_RefreshSelectorById(ACTOR_DORA);
+  Actor_WaitForScriptEndById(ACTOR_DORA);
   Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 0);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   // "Isaac!"
@@ -2351,7 +2351,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   FieldCamera_MoveTo(PIXELS(153), -1, PIXELS(1325), 1);
   Actor_WalkToAndWait(ACTOR_DORA, 158, 1272);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST, 0);
-  Actor_RefreshSelectorById(ACTOR_EXHAUSTED_STRONGMAN);
+  Actor_WaitForScriptEndById(ACTOR_EXHAUSTED_STRONGMAN);
   Actor_SetScript(ACTOR_EXHAUSTED_STRONGMAN,
                   gValePrologue_ExhaustedStrongmanGatherPath);
   Actor_SetScript(ACTOR_JENNA_CHILD, gValePrologue_JennaGatherPath);

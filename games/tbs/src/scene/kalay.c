@@ -684,7 +684,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_KALAY_HEARD_OF_COLOSSO_TOUR) != 0 &&
       GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) == 0) {
-    Event_CallWithLastActiveActorId(gKalay_TourGroupActorPlacements);
+    Event_AppendActorPlacements(gKalay_TourGroupActorPlacements);
     Actor_SetPosition(ACTOR_HEAD_GUIDE, PIXELS(252), PIXELS(272));
     Actor_SetPosition(ACTOR_FIRST_TOURIST, PIXELS(284), PIXELS(264));
     Actor_SetPosition(ACTOR_FIRST_TOURIST + 1, PIXELS(284), PIXELS(280));
@@ -732,7 +732,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     last->timer = 0;
     Actor_SetScript(ACTOR_SECOND_GUIDE, gKalay_TourGroupWalkScript);
     FieldCamera_MoveTo(PIXELS(186), -1, PIXELS(272), 1);
-    Actor_RefreshSelectorById(ACTOR_HEAD_GUIDE);
+    Actor_WaitForScriptEndById(ACTOR_HEAD_GUIDE);
     Actor_FaceDirection(ACTOR_HEAD_GUIDE, FACING_EAST, 0);
     do {
       wait(1);

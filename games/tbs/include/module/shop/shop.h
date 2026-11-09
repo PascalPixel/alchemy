@@ -67,7 +67,7 @@ s32 Shop_RepairPrice(s32 inventoryEntry);
 s32 Shop_RunRepairMemberChoice(void);
 s32 Shop_SelectRepair(s32 unitId);
 void Shop_RepairItem(s32 unitId, s32 slot);
-void Shop_BuySpecialItem(struct Window *window, struct Window *itemWindow);
+void Shop_GiveGameTicket(struct Window *window, struct Window *itemWindow);
 
 s32 ShopStock_GetRowCount(void);
 void ShopStock_AddArtifacts(s32 stockRow);
@@ -77,16 +77,16 @@ s32 ShopStock_GetType(s32 stockRow);
 s32 Sanctum_ServicePrice(s32 unitId, s32 serviceKind);
 s32 Sanctum_NeedsService(s32 unitId, s32 serviceKind);
 s32 Sanctum_CountMembersInNeed(void);
-s32 Shop_MessageByMode(s32 messageId);
+s32 Sanctum_GetServiceMessage(s32 messageId);
 void Sanctum_ShowKeeperMessage(s32 messageId);
 void Sanctum_ShowKeeperMessageHidingCursor(s32 messageId);
 s32 Sanctum_Run(s32 unitId);
 s32 Sanctum_RunPartyService(void);
-void BattleUnit_ResetStateByMode(s32 unitId, s32 serviceKind);
+void Sanctum_ApplyService(s32 unitId, s32 serviceKind);
 void Sanctum_HighlightMembers(struct Window *window, s32 selected);
-void Shop_DrawSelectMessage(struct Window *target, s32 unitId);
+void Sanctum_DrawFee(struct Window *target, s32 unitId);
 void Sanctum_UpdateBurstSparkle(struct FieldParticle *effect);
-void Shop_ResetEffects(void);
+void Sanctum_UpdateBurst(void);
 void Sanctum_RunMemberIconBurst(s32 member);
 
 s32 Inn_RoomPrice(s32 innId);
@@ -94,7 +94,7 @@ s32 Inn_CheckIn(s32 innId, s32 actorId);
 void Inn_PlaySleep(s32 roomPrice);
 
 s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot);
-s32 Shop_SelectUse(s32 unitId);
-void Shop_DrawUseItem(struct Window *window, s32 unitId, s32 slot);
+s32 ItemPicker_SelectItem(s32 unitId);
+void ItemPicker_DrawItem(struct Window *window, s32 unitId, s32 slot);
 
 #endif

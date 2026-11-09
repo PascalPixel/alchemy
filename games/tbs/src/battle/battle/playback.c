@@ -203,7 +203,7 @@ void BattlePlayback_Run(void) {
 
             events->unitId = events->queue.operands[eventIndex];
             BattleEnemy_RecordDefeat(events->unitId, events->flags);
-            BattleObject_ResetRuntimeFields(events->unitId);
+            BattleUnit_ClearStatuses(events->unitId);
             unit = Unit_GetFar(events->unitId);
             for (recordIndex = 0; (record = GetMotionRecord(
                                        BattleObject_Get(events->unitId)->actor,

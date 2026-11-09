@@ -25,7 +25,7 @@ struct AbilityDefinition *Ability_GetDirect(s32 abilityId) {
 
 /// Returns 1 when `abilityId` is in the unit's Psynergy list. Called by the
 /// events that check whether a party member knows a Psynergy
-/// (Event_ValidatePackedId).
+/// (Party_CheckShortcut).
 s32 Unit_KnowsPsynergy(s32 unitId, s32 abilityId) {
   struct Unit *unit = Unit_Get(unitId);
   struct PsynergyEntry *entry;

@@ -19,7 +19,7 @@ void Event_StartFar(void);
 void Event_EndFar(void);
 /// Spawns the actors of an actor placement table after the last
 /// actor in use, so a ship scene can bring people in mid-event.
-void Event_CallWithLastActiveActorIdFar(struct ActorPlacement *table);
+void Event_AppendActorPlacementsFar(struct ActorPlacement *table);
 /// Gives each unconditional actor placement a condition that shows it
 /// only while it lies inside the map's view bounds.
 void Scene_AssignViewFlagsFar(struct ActorPlacement *entry);
@@ -28,10 +28,10 @@ void Scene_AssignViewFlagsFar(struct ActorPlacement *entry);
 void Event_SetTriggersFar(const struct Trigger *triggers);
 /// Adds a character to the party; a nonzero value also shows
 /// `<name> joined your party.`
-void Event_PrepareActorAndApplyValueFar(s32 event_id, s32 value);
+void Event_AddPartyMemberFar(s32 event_id, s32 value);
 /// Adds two characters to the party and announces them in one message, as
 /// Vale's event does.
-void Event_PrepareTwoActorsAndApplyFar(s32 first, s32 second);
+void Event_AddPartyMemberPairFar(s32 first, s32 second);
 /// Takes a character out of the party with HP and PP restored and poison
 /// cured; if nobody left standing has HP, the leader keeps 1.
 void Party_RemoveMemberRestoredFar(s32 owner);
@@ -59,7 +59,7 @@ void Actor_SetSpeedParametersFar(u32 actorId, s32 speedLimit, s32 acceleration);
 void Actor_SetMovementTypeByIdFar(u32 actorId, s32 action);
 /// Waits, for at most 300 frames, until an actor's script reaches its
 /// end.
-void Actor_RefreshSelectorByIdFar(u32 actorId);
+void Actor_WaitForScriptEndByIdFar(u32 actorId);
 /// Stops an actor's movement type and puts it back on the idle script under
 /// script control.
 void Actor_StopFar(u32 actorId);
@@ -68,21 +68,20 @@ void Actor_StopFar(u32 actorId);
 void Actor_SetMovementTypeAndWaitByIdFar(u32 actorId, s32 action);
 /// Sends an actor toward (x, z), in pixels, keeping its current
 /// animation and unpausing it.
-void Actor_ResetAndSetPositionFar(u32 actorId, s32 x, s32 z);
+void Actor_SetDestinationByIdFar(u32 actorId, s32 x, s32 z);
 /// Sends an actor toward (x, z) and waits, at most 600 frames, for it to
 /// get there.
-void Actor_SetPositionAndCommitFar(u32 actorId, s32 x, s32 z);
+void Actor_MoveToAndWaitByIdFar(u32 actorId, s32 x, s32 z);
 /// Walks an actor toward (x, z), in pixels, in its walking animation.
-void Actor_ResetAndSetPositionInMode2Far(u32 actorId, s32 x, s32 z);
+void Actor_WalkToByIdFar(u32 actorId, s32 x, s32 z);
 /// Walks an actor to (x, z), waits for it to arrive and stands it still.
-void Actor_SetPositionAndResetFar(u32 actorId, s32 x, s32 z);
+void Actor_WalkToAndWaitByIdFar(u32 actorId, s32 x, s32 z);
 /// Steps an actor sideways to the middle of its 16-pixel column, fixes
 /// its sprite priority, then sends it z_offset pixels along z. Kalay's
 /// interiors use it.
 void Actor_CenterOnColumnFar(u32 actorId, s32 action, s32 z_offset);
 /// Sends an actor toward a point offset in pixels from where it stands.
-void Actor_OffsetPositionAndResetMotionFar(u32 actorId, s32 x_offset,
-                                           s32 z_offset);
+void Actor_SetDestinationOffsetByIdFar(u32 actorId, s32 x_offset, s32 z_offset);
 /// Waits, at most 600 frames, for an actor to reach its destination,
 /// then stands it still.
 void Actor_WaitForMoveByIdFar(u32 actorId);
@@ -91,7 +90,7 @@ void Actor_WaitForMoveByIdFar(u32 actorId);
 void Actor_SetHorizontalPositionWithTerrainFar(u32 actorId, s32 x, s32 z);
 /// Sets an actor's animation: 1 stands, 2 walks, 3 nods, 4 shakes the
 /// head.
-void Actor_SetModeByIdFar(u32 actorId, s32 action);
+void Actor_SetAnimationByIdFar(u32 actorId, s32 action);
 /// Sets the animation timer steps of each of an actor's sprites, as the
 /// Tolbi ship and Lamakan Desert scenes do.
 void Actor_SetAnimationSpeedByIdFar(u32 actorId, s32 action);
@@ -114,7 +113,7 @@ void Actor_RunRepeatedMotionFar(u32 actorId, s32 variant);
 void Actor_JumpDownLedgeFar(s32 actorId, s32 pose, s32 param);
 /// Turns the first actor at once to face the second, then waits the given
 /// number of frames.
-void Actor_SetAngleTowardFar(s32 firstId, s32 second_id, s32 frames);
+void Actor_FaceActorByIdFar(s32 firstId, s32 second_id, s32 frames);
 /// Turns two actors toward each other, then waits the given number of frames;
 /// talking to someone turns the leader and them this way.
 void Actor_TurnToFaceEachOtherFar(s32 firstId, s32 secondId, s32 frames);
@@ -127,8 +126,8 @@ void Actor_SetSpriteColorFar(struct Actor *actor, s32 value);
 /// Makes an actor watch a target and starts a script on it; unless
 /// ACTOR_WATCH_KEEP_MOTION is set it trails 40 pixels behind, fast enough to
 /// keep up and unable to block the target.
-void Actor_SetTargetAndCallbackFar(u32 actorId, s32 targetId,
-                                   const void *callback);
+void Actor_WatchAndStartScriptFar(u32 actorId, s32 targetId,
+                                  const void *callback);
 /// Sets the number of the event's next message.
 void Event_SetMessageIdFar(s32 value);
 /// Opens the event's current message in a speech window beside the speaker,
@@ -145,7 +144,7 @@ void Event_ShowMessageThenWaitFar(s32 first, s32 second, s32 value);
 s32 Event_AskYesNoAndShowResponseFar(s32 actorId, s32 flags);
 /// Turns an actor toward an angle, 65536 to a full turn, then waits the given
 /// number of frames.
-void Actor_ArmCallbackFar(s32 actorId, s32 angle, s32 frames);
+void Actor_FaceDirectionByIdFar(s32 actorId, s32 angle, s32 frames);
 /// Two actors speak at once, each message and portrait at its own tile
 /// position; waits for A, B, L or R, then closes both.
 void Event_ShowTwoMessagesAndWaitFar(s32 first, s32 first_x, s32 first_y,
@@ -160,7 +159,7 @@ void Message_SetVoiceFromActorFar(s32 actorId);
 void Actor_SetSpritePriorityFar(s32 actorId, s32 priority);
 /// Shows an emote bubble over an actor, then waits the given number of frames;
 /// the bubble rides the actor and pops after 46 frames however long it waits.
-void FieldEffect_SpawnAttachedFar(s32 id, s32 mode, s32 frames);
+void Actor_ShowEmoteByIdFar(s32 id, s32 mode, s32 frames);
 /// Attaches, removes or briefly shows an attached effect on an actor, by
 /// enum AttachedEffectFlag; the leader's walking update uses it on hazard
 /// ground.
@@ -180,7 +179,7 @@ void FieldCamera_MoveWithinMapBoundsFar(s32 requested_x, s32 requested_y,
 /// Waits, at most 600 frames, for the camera to arrive, then 2 frames more.
 void FieldCamera_WaitForArrivalFar(void);
 /// Moves the camera to an actor's position, kept inside the map.
-void Actor_PlaceCurrentWithinCameraBoundsFar(s32 actorId, s32 glide);
+void FieldCamera_MoveToActorByIdFar(s32 actorId, s32 glide);
 /// Returns the camera actor, the event's view centre.
 struct Actor *FieldCamera_GetActorFar(void);
 /// Sets the map rectangle the camera keeps the screen inside.
@@ -214,7 +213,7 @@ s32 Actor_GetScreenPositionFar(s32 actorId, s32 *position);
 s32 Actor_GetTriggerCellAheadOfCurrentFar(void);
 /// Returns the sprite a character is drawn with, which depends on
 /// FLAG_CHILDHOOD and FLAG_ISAAC_WEARS_TUNIC.
-s32 Party_RemapCharacterIdByFlagsFar(s32 character);
+s32 Party_GetCharacterSpriteFar(s32 character);
 /// Jumps the leader two cells forward when the map allows, chaining jumps.
 /// Returns 0 after a jump, -1 when it can't.
 s32 Field_TryJumpForwardFar(void);
@@ -318,7 +317,7 @@ void Field_EndBusyAndRevealFar(void);
 /// target.
 void FieldPsynergy_StartMindReadWaveFar(s32 x, s32 y);
 /// Ends Mind Read's wave, restoring the caster's colours and the palettes.
-void FieldPsynergy_FinishWaveAndReleaseHeapBlockFar(void);
+void FieldPsynergy_StopMindReadWaveFar(void);
 /// Stops BG0's line scroll and restores BG palette 15.
 void FieldPsynergy_RestoreMindReadPaletteFar(void);
 /// Returns whether the scene has a Psynergy trigger of this group for what the
@@ -334,7 +333,7 @@ struct Sprite *Sprite_ShareVramCacheEntryFar(struct Sprite *sourceSprite,
                                              struct Sprite *sharedSprite);
 /// Returns the battle background chosen for the current scene, which the
 /// battle setup reads.
-s16 Event_GetSpecialValueFar(void);
+s16 BattleBackground_GetSelectedFar(void);
 /// Gives each party member PP; 999 restores it all, as a Psynergy Stone does.
 void Party_AddPpFar(s32 amount, s32 unused);
 /// Asks yes or no at the top of the screen, or the bottom when value is set.
@@ -372,22 +371,21 @@ void Camera_WorldToScreenFar(struct Vector3 *position);
 /// with the Speech option off.
 s32 Speaker_GetVoiceFar(u32 id);
 /// Clears each button shortcut whose Psynergy the party can no longer cast.
-void Event_ClearInvalidPackedValuesFar(void);
+void Party_ClearUnusableShortcutsFar(void);
 /// Allocates and clears the field effect sprites and starts their update; the
 /// Djinn joining effects and Altmiller Cave use them.
 void FieldEffect_InitializeSlotsFar(void);
 /// Frees every field effect sprite and its work, then waits a frame.
-void FieldEffect_ClearActiveSlotsAndScheduleUpdatesFar(void);
+void FieldEffect_ReleaseSlotsFar(void);
 /// Places an actor on the leader and walks it out to an offset, then
 /// gives it a movement type.
 void Actor_LaunchFromLeaderFar(u32 actorId, s32 xOffset, s32 zOffset,
                                s32 action);
 /// Walks an actor a given offset in pixels from where it stands.
-void Actor_OffsetPositionAndResetFar(u32 actorId, s32 x_offset, s32 z_offset);
+void Actor_WalkByByIdFar(u32 actorId, s32 x_offset, s32 z_offset);
 /// Walks an actor an offset in pixels, waits for it to arrive and stands
 /// it still.
-void Actor_CommitPositionAndActivateFar(u32 actorId, s32 x_offset,
-                                        s32 z_offset);
+void Actor_WalkByAndWaitByIdFar(u32 actorId, s32 x_offset, s32 z_offset);
 /// Makes an actor follow another through the watched actor script.
 void Actor_WatchAndSetScriptFar(u32 actorId, u32 watchedActorId);
 /// Pauses an actor, keeping its update and pose in gMainRoutineWork for
@@ -400,7 +398,7 @@ void Save_CaptureActorsFar(void);
 /// to the leader's height.
 void Actor_RestoreFar(void);
 /// Starts a zoom to a 16.16 factor over the given frames, on the World Map.
-void FieldEffect_ScheduleRatioTransitionFar(s32 zoom, s32 frames);
+void WorldMap_StartZoomFar(s32 zoom, s32 frames);
 /// Waits, at most 300 frames, for the World Map's zoom to end.
 void Event_WaitForZoomTransitionFar(void);
 /// Returns the area name of a scene and entrance, an offset from
@@ -420,5 +418,5 @@ s32 Party_RemapCharacterIdIfEnabledFar(s32 character, s32 childhood);
 #if TBS_PATCH_2
 /// While Reveal is active, releases its sparkles and leaves its marks; the
 /// field menu calls it after each choice.
-void FieldEffect_ClearRandomParticlesFar(void);
+void FieldEffect_ReleaseRevealSparklesFar(void);
 #endif

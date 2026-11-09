@@ -68,7 +68,7 @@ void Event_Wait(s32 frames) {
 /// or the climbing pose (12) while the leader is on a climbable wall. Called by
 /// Event_Start, by FieldSequence_Run before it handles several requests,
 /// by Field_UsePsynergy, Scene_TalkToActor, Field_CheckExitRegions and
-/// the World Map's zoom (FieldEffect_RunVisibilityTransition).
+/// the World Map's zoom (WorldMap_ZoomOutWhileLHeld).
 void Leader_StopMoving(void) {
   struct Actor *actor;
 
@@ -147,7 +147,7 @@ void Event_RunActorUpdateAndWait(struct ActorPlacement *table) {
 /// Spawns the actors of an actor placement table after the last
 /// actor in use. Called by the Kolima, Kalay and Tolbi ship events
 /// to bring actors in during an event.
-void Event_CallWithLastActiveActorId(struct ActorPlacement *table) {
+void Event_AppendActorPlacements(struct ActorPlacement *table) {
   Event_SpawnActorPlacements(table, Actor_FindLastActiveId());
 }
 
@@ -163,7 +163,7 @@ void Event_SetTriggers(const struct Trigger *triggers) {
 /// `<name> joined your party.` (Party_ShowJoinedMessage, which receives
 /// announce too). Called by six events as a character joins (Vale,
 /// the Vault, Goma Cave and Mercury Lighthouse among them).
-void Event_PrepareActorAndApplyValue(s32 unit, s32 announce) {
+void Event_AddPartyMember(s32 unit, s32 announce) {
   Unit_GetFar(unit);
   Party_AddMemberFar(unit);
   if (announce != 0) {
@@ -173,7 +173,7 @@ void Event_PrepareActorAndApplyValue(s32 unit, s32 announce) {
 
 /// Adds two units to the party and announces them together. Vale's
 /// event calls it twice.
-void Event_PrepareTwoActorsAndApply(s32 first, s32 second) {
+void Event_AddPartyMemberPair(s32 first, s32 second) {
   Party_AddMemberFar(first);
   Party_AddMemberFar(second);
   Party_ShowPairJoinedMessageFar(first, second);
@@ -183,8 +183,8 @@ void Event_PrepareTwoActorsAndApply(s32 first, s32 second) {
 /// 13 and the Psynergy in bits 0 to 9. Returns 0 if it can still be cast, -1
 /// for no such party member, -2 when that member is not in the party and -3
 /// when the party member no longer knows the Psynergy. Only
-/// Event_ClearInvalidPackedValues calls it.
-s32 Event_ValidatePackedId(u32 shortcut) {
+/// Party_ClearUnusableShortcuts calls it.
+s32 Party_CheckShortcut(u32 shortcut) {
   s32 member = (shortcut >> 10) & 0xf;
   s32 ability = shortcut & 0x3ff;
 
@@ -202,10 +202,10 @@ s32 Event_ValidatePackedId(u32 shortcut) {
 /// gMainRoutineWork.firstShortcut or secondShortcut. Called whenever the
 /// party or what it knows may have changed: by Party_RemoveMemberRestored,
 /// Inventory_Discard, and the field menu's item, Psynergy and Djinn screens.
-void Event_ClearInvalidPackedValues(void) {
-  if (Event_ValidatePackedId(gMainRoutineWork.firstShortcut) != 0)
+void Party_ClearUnusableShortcuts(void) {
+  if (Party_CheckShortcut(gMainRoutineWork.firstShortcut) != 0)
     gMainRoutineWork.firstShortcut = 0;
-  if (Event_ValidatePackedId(gMainRoutineWork.secondShortcut) != 0)
+  if (Party_CheckShortcut(gMainRoutineWork.secondShortcut) != 0)
     gMainRoutineWork.secondShortcut = 0;
 }
 
@@ -220,7 +220,7 @@ void Party_RemoveMemberRestored(s32 unit) {
   s32 survivingMembers;
 
   Party_RemoveMemberFar(unit);
-  Event_ClearInvalidPackedValues();
+  Party_ClearUnusableShortcuts();
   vitals = Unit_GetFar(unit);
   vitals->hp = vitals->hpMax;
   vitals->pp = vitals->ppMax;
@@ -453,12 +453,12 @@ s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 forceBottom) {
   answer =
       YesNoMenu_RunFar(useBottom, work->choiceMessage, work->choiceWidth, 0);
   if (answer != 0) {
-    Actor_SetModeById(actorId, 4);
+    Actor_SetAnimationById(actorId, 4);
     Portrait_CloseWindowFar(sprite);
     Message_CloseFinishedWindowsFar();
     Actor_WaitForAnimationEnd(actorId, 4);
   } else {
-    Actor_SetModeById(actorId, 3);
+    Actor_SetAnimationById(actorId, 3);
     Portrait_CloseWindowFar(sprite);
     Message_CloseFinishedWindowsFar();
     Actor_WaitForAnimationEnd(actorId, 3);

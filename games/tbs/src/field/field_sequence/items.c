@@ -278,7 +278,7 @@ s32 Field_RunPsynergyEndEvents(s32 packed) {
   FieldPsynergy_LoadResources(abilityId, 0);
   FieldPsynergy_SetupActorPair(gMainRoutineWork.leaderActorId, target);
   Field_RunPsynergyEvent(beforeEvent, userId, target);
-  Event_RunFieldPsynergy();
+  FieldPsynergy_RunExtraHandler();
   FieldPsynergy_StopCasterUpdate();
   Field_RunPsynergyEvent(afterEvent, userId, target);
   FieldPsynergy_End();

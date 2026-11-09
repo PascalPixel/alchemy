@@ -8,11 +8,11 @@ FarCall_OverworldTable:
 	export Event_StartFar, Event_Start
 	export Event_EndFar, Event_End
 	overlay_veneer Event_RunActorUpdateAndWait
-	export Event_CallWithLastActiveActorIdFar, Event_CallWithLastActiveActorId
+	export Event_AppendActorPlacementsFar, Event_AppendActorPlacements
 	export Scene_AssignViewFlagsFar, Scene_AssignViewFlags
 	export Event_SetTriggersFar, Event_SetTriggers
-	export Event_PrepareActorAndApplyValueFar, Event_PrepareActorAndApplyValue
-	export Event_PrepareTwoActorsAndApplyFar, Event_PrepareTwoActorsAndApply
+	export Event_AddPartyMemberFar, Event_AddPartyMember
+	export Event_AddPartyMemberPairFar, Event_AddPartyMemberPair
 	export Party_RemoveMemberRestoredFar, Party_RemoveMemberRestored
 	export PartyInventory_GiveItemFar, PartyInventory_GiveItem
 	overlay_veneer Inventory_TryAddAndReturnMember
@@ -22,19 +22,19 @@ FarCall_OverworldTable:
 	export Actor_ReleaseByIdFar, Actor_ReleaseById
 	export Actor_SetSpeedParametersFar, Actor_SetSpeedParameters
 	export Actor_SetMovementTypeByIdFar, Actor_SetMovementTypeById
-	export Actor_RefreshSelectorByIdFar, Actor_RefreshSelectorById
+	export Actor_WaitForScriptEndByIdFar, Actor_WaitForScriptEndById
 	export Actor_StopFar, Actor_Stop
 	export Actor_SetMovementTypeAndWaitByIdFar, Actor_SetMovementTypeAndWaitById
-	export Actor_ResetAndSetPositionFar, Actor_ResetAndSetPosition
-	export Actor_SetPositionAndCommitFar, Actor_SetPositionAndCommit
-	export Actor_ResetAndSetPositionInMode2Far, Actor_ResetAndSetPositionInMode2
-	export Actor_SetPositionAndResetFar, Actor_SetPositionAndReset
+	export Actor_SetDestinationByIdFar, Actor_SetDestinationById
+	export Actor_MoveToAndWaitByIdFar, Actor_MoveToAndWaitById
+	export Actor_WalkToByIdFar, Actor_WalkToById
+	export Actor_WalkToAndWaitByIdFar, Actor_WalkToAndWaitById
 	export Actor_CenterOnColumnFar, Actor_CenterOnColumn
-	export Actor_OffsetPositionAndResetMotionFar, Actor_OffsetPositionAndResetMotion
+	export Actor_SetDestinationOffsetByIdFar, Actor_SetDestinationOffsetById
 	export Actor_WaitForMoveByIdFar, Actor_WaitForMoveById
 	export Actor_SetHorizontalPositionWithTerrainFar, Actor_SetHorizontalPositionWithTerrain
 	overlay_veneer Actor_SetPositionWithTerrain
-	export Actor_SetModeByIdFar, Actor_SetModeById
+	export Actor_SetAnimationByIdFar, Actor_SetAnimationById
 	export Actor_SetAnimationSpeedByIdFar, Actor_SetAnimationSpeedById
 	export Actor_SetAnimationAndWaitFar, Actor_SetAnimationAndWait
 	export Actor_WaitForAnimationChangeFar, Actor_WaitForAnimationChange
@@ -43,11 +43,11 @@ FarCall_OverworldTable:
 	export Actor_StartRepeatedMotionFar, Actor_StartRepeatedMotion
 	export Actor_RunRepeatedMotionFar, Actor_RunRepeatedMotion
 	export Actor_JumpDownLedgeFar, Actor_JumpDownLedge
-	export Actor_SetAngleTowardFar, Actor_SetAngleToward
+	export Actor_FaceActorByIdFar, Actor_FaceActorById
 	export Actor_TurnToFaceEachOtherFar, Actor_TurnToFaceEachOther
 	export Actor_ConfigureSpriteColorFar, Actor_ConfigureSpriteColor
 	export Actor_SetSpriteColorFar, Actor_SetSpriteColor
-	export Actor_SetTargetAndCallbackFar, Actor_SetTargetAndCallback
+	export Actor_WatchAndStartScriptFar, Actor_WatchAndStartScript
 	export Event_SetMessageIdFar, Event_SetMessageId
 	export FieldMessage_ShowAtActorFar, FieldMessage_ShowAtActor
 	export Event_ShowMessageAndWaitFar, Event_ShowMessageAndWait
@@ -57,20 +57,20 @@ FarCall_OverworldTable:
 	overlay_veneer Event_ShowSpeakerMessage
 	overlay_veneer Event_ForwardShowMessageAtPosition
 	overlay_veneer Event_ShowMessageAtPosition
-	export Actor_ArmCallbackFar, Actor_ArmCallback
+	export Actor_FaceDirectionByIdFar, Actor_FaceDirectionById
 	overlay_veneer Actor_ResetTargetAndSetMode1
-	overlay_veneer Actor_RunIfActive
+	overlay_veneer Actor_ClosePortrait
 	export Event_ShowTwoMessagesAndWaitFar, Event_ShowTwoMessagesAndWait
 	export Message_SetVoiceFromActorFar, Message_SetVoiceFromActor
 	export Actor_SetSpritePriorityFar, Actor_SetSpritePriority
-	export FieldEffect_SpawnAttachedFar, FieldEffect_SpawnAttached
+	export Actor_ShowEmoteByIdFar, Actor_ShowEmoteById
 	export FieldEffect_SetAttachedFar, FieldEffect_SetAttached
 	export Actor_CopyGraphicsFar, Actor_CopyGraphics
 	export FieldCamera_FollowActorFar, FieldCamera_FollowActor
 	export FieldCamera_SetSpeedParametersFar, FieldCamera_SetSpeedParameters
 	export FieldCamera_MoveWithinMapBoundsFar, FieldCamera_MoveWithinMapBounds
 	export FieldCamera_WaitForArrivalFar, FieldCamera_WaitForArrival
-	export Actor_PlaceCurrentWithinCameraBoundsFar, Actor_PlaceCurrentWithinCameraBounds
+	export FieldCamera_MoveToActorByIdFar, FieldCamera_MoveToActorById
 	export FieldCamera_GetActorFar, FieldCamera_GetActor
 	export MapGrid_SetCameraBoundsFar, MapGrid_SetCameraBounds
 	export Event_SetDestinationFar, Event_SetDestination
@@ -83,7 +83,7 @@ FarCall_OverworldTable:
 	export Event_LeaveForFar, Event_LeaveFor
 	export Actor_GetScreenPositionFar, Actor_GetScreenPosition
 	export Actor_GetTriggerCellAheadOfCurrentFar, Actor_GetTriggerCellAheadOfCurrent
-	export Party_RemapCharacterIdByFlagsFar, Party_RemapCharacterIdByFlags
+	export Party_GetCharacterSpriteFar, Party_GetCharacterSprite
 	overlay_veneer FieldPsynergy_SteerPushedTarget
 	overlay_veneer FieldPsynergy_StartCloak
 	export Field_TryJumpForwardFar, Field_TryJumpForward
@@ -144,14 +144,14 @@ FarCall_OverworldTable:
 	overlay_veneer FieldPsynergy_FadeFromCastColor
 	export Field_EndBusyAndRevealFar, Field_EndBusyAndReveal
 	export FieldPsynergy_StartMindReadWaveFar, FieldPsynergy_StartMindReadWave
-	export FieldPsynergy_FinishWaveAndReleaseHeapBlockFar, FieldPsynergy_FinishWaveAndReleaseHeapBlock
+	export FieldPsynergy_StopMindReadWaveFar, FieldPsynergy_StopMindReadWave
 	overlay_veneer FieldPsynergy_GreyMindReadPalette
 	export FieldPsynergy_RestoreMindReadPaletteFar, FieldPsynergy_RestoreMindReadPalette
 	export Scene_HasFieldPsynergyTriggerFar, Scene_HasFieldPsynergyTrigger
 	export Scene_HasPsynergyTriggerFar, Scene_HasPsynergyTrigger
 	export Sprite_ShareVramCacheEntryFar, Sprite_ShareVramCacheEntry
-	export Event_GetSpecialValueFar, Event_GetSpecialValue
-	overlay_veneer FieldEffect_StartItemBreak
+	export BattleBackground_GetSelectedFar, BattleBackground_GetSelected
+	overlay_veneer FieldEffect_SpawnMoveHand
 	overlay_veneer FieldEffect_SnapScaleToFull
 	overlay_veneer UpdateRisingParticleBurst
 	export Party_AddPpFar, Party_AddPp
@@ -171,22 +171,22 @@ FarCall_OverworldTable:
 	export FieldEffect_ClearOwnedSlotFar, FieldEffect_ClearOwnedSlot
 	export Camera_WorldToScreenFar, Camera_WorldToScreen
 	export Speaker_GetVoiceFar, Speaker_GetVoice
-	export Event_ClearInvalidPackedValuesFar, Event_ClearInvalidPackedValues
+	export Party_ClearUnusableShortcutsFar, Party_ClearUnusableShortcuts
 	export FieldEffect_InitializeSlotsFar, FieldEffect_InitializeSlots
-	export FieldEffect_ClearActiveSlotsAndScheduleUpdatesFar, FieldEffect_ClearActiveSlotsAndScheduleUpdates
+	export FieldEffect_ReleaseSlotsFar, FieldEffect_ReleaseSlots
 	overlay_veneer Actor_ClearOutOfBounds
 	overlay_veneer Actor_Respawn
 	export Actor_LaunchFromLeaderFar, Actor_LaunchFromLeader
-	export Actor_OffsetPositionAndResetFar, Actor_OffsetPositionAndReset
-	export Actor_CommitPositionAndActivateFar, Actor_CommitPositionAndActivate
+	export Actor_WalkByByIdFar, Actor_WalkByById
+	export Actor_WalkByAndWaitByIdFar, Actor_WalkByAndWaitById
 	export Actor_WatchAndSetScriptFar, Actor_WatchAndSetScript
 	export FieldPsynergy_HaltActorFar, FieldPsynergy_HaltActor
 	overlay_veneer FieldPsynergy_ResumeHaltedActor
-	overlay_veneer Actor_FindActiveByValue
-	overlay_veneer Actor_ReadActiveValue
+	overlay_veneer Actor_FindBySprite
+	overlay_veneer Actor_GetSpriteById
 	export Save_CaptureActorsFar, Actor_Snapshot
 	export Actor_RestoreFar, Actor_Restore
-	export FieldEffect_ScheduleRatioTransitionFar, FieldEffect_ScheduleRatioTransition
+	export WorldMap_StartZoomFar, WorldMap_StartZoom
 	export Event_WaitForZoomTransitionFar, Event_WaitForZoomTransition
 	export Area_GetNameIndexFar, Area_GetNameIndex
 	export Actor_SetMovementTypeFar, Actor_SetMovementType
@@ -194,5 +194,5 @@ FarCall_OverworldTable:
 	export Scene_PlayQueuedMusicFar, Scene_PlayQueuedMusic
 	export Party_RemapCharacterIdIfEnabledFar, Party_RemapCharacterIdIfEnabled
 #if TBS_PATCH_2
-	export FieldEffect_ClearRandomParticlesFar, FieldEffect_ClearRandomParticles
+	export FieldEffect_ReleaseRevealSparklesFar, FieldEffect_ReleaseRevealSparkles
 #endif

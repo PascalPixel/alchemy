@@ -21,7 +21,7 @@ struct BattleAIState {
 /// choice that cannot be made (too little PP, sealed, a forbidden flight, no
 /// worthwhile target) picks again; after 18 tries the enemy defends.
 /// Called with retry 0 for each enemy as the turn is built
-/// (Battle_BuildOpponentActions), and with retry 1 when it acts
+/// (Battle_BuildEnemyActions), and with retry 1 when it acts
 /// (BattleStaging_DispatchAction). Writes request's command, parameter,
 /// target and range; ACTION_STRATEGY_RANDOM_START and
 /// ACTION_STRATEGY_IN_ORDER advance the place remembered in
@@ -201,15 +201,15 @@ select_again:
     switch (effect) {
     case ABILITY_EFFECT_DEFEND:
       request->command = COMMAND_DEFEND;
-      request->target = Battle_FindTaggedSlotByValue(request->unitId);
+      request->target = Battle_FindUnitPlace(request->unitId);
       break;
     case ABILITY_EFFECT_TOTAL_DEFENSE:
       request->command = COMMAND_TOTAL_DEFENSE;
-      request->target = Battle_FindTaggedSlotByValue(request->unitId);
+      request->target = Battle_FindUnitPlace(request->unitId);
       break;
     case ABILITY_EFFECT_FLEE:
       request->command = COMMAND_FLEE;
-      request->target = Battle_FindTaggedSlotByValue(request->unitId);
+      request->target = Battle_FindUnitPlace(request->unitId);
       break;
     }
 
@@ -288,10 +288,10 @@ select_again:
       }
       break;
     case 3:
-      request->target = Battle_FindTaggedSlotByValue(request->unitId);
+      request->target = Battle_FindUnitPlace(request->unitId);
       break;
     default:
-      opponentTarget = Battle_FindTaggedSlotByValue(request->unitId);
+      opponentTarget = Battle_FindUnitPlace(request->unitId);
       request->target = opponentTarget;
       needsChoice = 0;
       break;

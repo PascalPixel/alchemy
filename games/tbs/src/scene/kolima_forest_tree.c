@@ -460,7 +460,7 @@ static void KolimaForestTree_RestoreTret(void) {
     }
     Actor_SetScript(ACTOR_MIA, gKolimaForestTree_MiaApproachActions);
   }
-  Actor_RefreshSelectorById(ACTOR_IVAN);
+  Actor_WaitForScriptEndById(ACTOR_IVAN);
   Event_Wait(40);
   KolimaPalette_Restore(0);
   PaletteFade_StartInterpolation(32);

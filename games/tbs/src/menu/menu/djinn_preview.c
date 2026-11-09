@@ -534,7 +534,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   // figures grow in again from phase 0.
   DjinnFigures_SetSlotPhase(0, 0);
   DjinnFigures_SetSlotPhase(1, 0);
-  Task_Add(Menu_UpdateEntryActorTransforms, TASK_PASS_FRAME);
+  Task_Add(Menu_PlacePartyFigures, TASK_PASS_FRAME);
 
   ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 1;
   Window_CloseIfOpen(&menu->helpWindow, 1);
@@ -696,7 +696,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     }
     wait(1);
   }
-  Task_Add(Menu_UpdateEntryActorTransforms, TASK_PASS_FRAME);
+  Task_Add(Menu_PlacePartyFigures, TASK_PASS_FRAME);
   ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 1;
   Window_CloseIfOpen(&menu->helpWindow, 1);
   wait(1);
@@ -720,9 +720,9 @@ s32 DjinnMenu_ShowMemberStatus(void) {
 ///
 /// requiresTrade[i] becomes 1 for each other party member i who cannot take one
 /// of sourceMemberColumn's Djinn without two party members' totals differing by
-/// more than one (Djinn_CheckTurnBalance), else 0. The second Djinn chooser
+/// more than one (Djinn_CheckGiveBalance), else 0. The second Djinn chooser
 /// offers such a party member only Trade.
-s32 Djinn_MarkBalancedEntries(s8 *requiresTrade, s32 sourceMemberColumn) {
+s32 Djinn_MarkTradeOnlyRecipients(s8 *requiresTrade, s32 sourceMemberColumn) {
   s32 tradeCount;
   s32 memberColumn;
   s8 *entry;
@@ -736,7 +736,7 @@ s32 Djinn_MarkBalancedEntries(s8 *requiresTrade, s32 sourceMemberColumn) {
     do {
       *entry = 0;
       if (memberColumn != sourceMemberColumn) {
-        if (Djinn_CheckTurnBalance(sourceMemberColumn, memberColumn) == 0) {
+        if (Djinn_CheckGiveBalance(sourceMemberColumn, memberColumn) == 0) {
           *entry = 1;
           tradeCount += 1;
         }
@@ -750,9 +750,9 @@ s32 Djinn_MarkBalancedEntries(s8 *requiresTrade, s32 sourceMemberColumn) {
 
 /// Tests whether a hypothetical give leaves every pair of party members within
 /// one Djinn. Returns 1 when, with one Djinni moved from sourceMemberColumn to
-/// targetMemberColumn, no two party members' totals (Djinn_CountTurns) differ
+/// targetMemberColumn, no two party members' totals (Djinn_CountOwned) differ
 /// by more than one; 0 otherwise.
-s32 Djinn_CheckTurnBalance(s32 sourceMemberColumn, s32 targetMemberColumn) {
+s32 Djinn_CheckGiveBalance(s32 sourceMemberColumn, s32 targetMemberColumn) {
   struct DjinnMenuWork *menu;
   s8 ownedCounts[16];
   u8 firstMember;
@@ -761,7 +761,7 @@ s32 Djinn_CheckTurnBalance(s32 sourceMemberColumn, s32 targetMemberColumn) {
   s32 balanced;
 
   menu = gMenuWork;
-  Djinn_CountTurns((u8 *)ownedCounts);
+  Djinn_CountOwned((u8 *)ownedCounts);
   ownedCounts[sourceMemberColumn] -= 1;
   ownedCounts[targetMemberColumn] += 1;
   balanced = 1;
@@ -786,7 +786,7 @@ s32 Djinn_CheckTurnBalance(s32 sourceMemberColumn, s32 targetMemberColumn) {
 /// Counts each party member's Djinn across its set and available bitmasks:
 /// writes every party member's total, set or not, into ownedCounts by list
 /// column.
-void Djinn_CountTurns(u8 *ownedCounts) {
+void Djinn_CountOwned(u8 *ownedCounts) {
   struct DjinnMenuWork *menu;
   struct Unit *unit;
   s32 memberIndex;

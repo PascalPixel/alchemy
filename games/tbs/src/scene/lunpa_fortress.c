@@ -1864,7 +1864,7 @@ static void LunpaFortress_ActivateLeverTrap(void) {
 /// The camera finds Toadonpa, the monster Dodonpa has freed; it lumbers
 /// forward.
 static void LunpaFortress_RevealMonster(void) {
-  Actor_PlaceCurrentWithinCameraBounds(ACTOR_TOADONPA_BOSS, 1);
+  FieldCamera_MoveToActorById(ACTOR_TOADONPA_BOSS, 1);
   FieldCamera_WaitForMove();
   Event_Wait(60);
   Event_SetMessageId(MsgLunpaPrepareBecomeMonster);
@@ -2062,7 +2062,7 @@ static void LunpaFortress_FindHammet(void) {
     Event_Wait(30);
     Sound_Play(MUS_OMINOUS);
     FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
-    Actor_PlaceCurrentWithinCameraBounds(ACTOR_TOADONPA_DODONPA, 1);
+    FieldCamera_MoveToActorById(ACTOR_TOADONPA_DODONPA, 1);
     FieldCamera_WaitForMove();
     Actor_SetSpeed(ACTOR_TOADONPA_DODONPA, PIXELS(4) / 5, PIXELS(2) / 5);
     Actor_WalkTo(ACTOR_TOADONPA_DODONPA, 456, 304);
@@ -3078,10 +3078,10 @@ static void LunpaFortress_TalkToAttendant(void) {
       // "Shhh! Please don't wake Donpa!"
       Event_ShowMessage(ACTOR_UPPER_FLOOR_ATTENDANT, 0);
       Actor_FaceActor(ACTOR_UPPER_FLOOR_ATTENDANT, ACTOR_UPPER_FLOOR_DONPA, 0);
-      Actor_PlaceCurrentWithinCameraBounds(ACTOR_UPPER_FLOOR_DONPA, 1);
+      FieldCamera_MoveToActorById(ACTOR_UPPER_FLOOR_DONPA, 1);
       FieldCamera_WaitForMove();
       Event_Wait(60);
-      Actor_PlaceCurrentWithinCameraBounds(ACTOR_PARTY_LEADER, 1);
+      FieldCamera_MoveToActorById(ACTOR_PARTY_LEADER, 1);
       Event_Wait(20);
       Actor_ShowEmote(ACTOR_UPPER_FLOOR_ATTENDANT,
                       EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
@@ -3288,7 +3288,7 @@ static void LunpaFortress_TalkToStartledOldMan(void) {
     if (GameFlag_Get(FLAG_LUNPA_FORTRESS_OLD_MAN_STARTLED) == 0) {
       Actor_Jump(ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN, 4, 0);
       Actor_Stop(ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN);
-      Actor_RefreshSelectorById(ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN);
+      Actor_WaitForScriptEndById(ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN);
       Event_Wait(20);
       frightMessage = MsgLunpaWhWhWho;
       Event_SetMessageId(frightMessage);
@@ -3340,7 +3340,7 @@ static void LunpaFortress_ReadStartledResidentsThoughts(void) {
     s16 *psynergyRequest = &gFieldWork->psynergy;
 
     *psynergyRequest = 0;
-    FieldPsynergy_FinishWaveAndReleaseHeapBlock();
+    FieldPsynergy_StopMindReadWave();
     LunpaFortress_TalkToStartledOldMan();
   }
 }

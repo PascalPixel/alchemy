@@ -941,7 +941,7 @@ static void Party_StaysBehind(void) {
   Actor_WaitForMoveById(ACTOR_MIA);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
   Event_Wait(30);
-  Actor_PlaceCurrentWithinCameraBounds(ACTOR_PARTY_LEADER, 1);
+  FieldCamera_MoveToActorById(ACTOR_PARTY_LEADER, 1);
   FieldCamera_WaitForArrival();
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
   GameFlag_Set(FLAG_BUNZAS_WAGON_LEFT);
@@ -1033,7 +1033,7 @@ static void Party_RidesWagon(void) {
   Event_Wait(30);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, -16, 0);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-  Actor_PlaceCurrentWithinCameraBounds(ACTOR_PARTY_LEADER, 1);
+  FieldCamera_MoveToActorById(ACTOR_PARTY_LEADER, 1);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 168, 640);
   Event_Wait(60);
   Event_FinishScreenTransition();

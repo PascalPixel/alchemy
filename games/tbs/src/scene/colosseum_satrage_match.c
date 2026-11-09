@@ -914,7 +914,7 @@ static void ColosseumSatrageMatch_ReachArena(void) {
   ColosseumSatrageMatch_WaitForOpponentFinish();
   refreshCount = 9;
   do {
-    Actor_RefreshSelectorById(ACTOR_OPPONENT);
+    Actor_WaitForScriptEndById(ACTOR_OPPONENT);
     refreshCount = (refreshCount - 1);
   } while (refreshCount >= 0);
   // Bring the warriors together before selecting the battle's result bias.

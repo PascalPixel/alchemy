@@ -10,7 +10,7 @@
 /// arrival. Set on the 16 particles of FieldPsynergy_Halt. They fly out
 /// straight at up to 4 pixels a frame and come back turning at most 1/16 turn a
 /// frame.
-void FieldEffect_UpdateRadialCamera(struct FieldParticle *effect) {
+void FieldEffect_UpdateHaltParticle(struct FieldParticle *effect) {
   // A for/continue retry grows the native English callback 256 -> 260 bytes.
   // Retain the immediate OUT_AND_BACK_FLYING_OUT to OUT_AND_BACK_AIM_BACK
   // transition on arrival.
@@ -145,7 +145,7 @@ void FieldPsynergy_Halt(void) {
     Camera_WorldToScreen((struct Vector3 *)&pos.x);
     Vector_AddPolarOffset(4 << 16, Random16(), &pos.x);
     FieldParticle_Initialize(effect, SPRITE_SPARKLE, pos.x, pos.z);
-    FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialCamera);
+    FieldParticle_SetCallback(effect, FieldEffect_UpdateHaltParticle);
     Sprite_SetAnimationColorModesFar(effect->actor, SPRITE_COLOR_WHITE);
     effect++;
   }

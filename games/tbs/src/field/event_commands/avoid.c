@@ -33,7 +33,7 @@ void FieldEffect_BlinkAvoidCaster(void) {
 /// FieldPsynergy_Avoid makes it the caster's update routine; it counts the
 /// caster's step and turns its angle. The arcs draw with the tiles
 /// FieldPsynergy_Avoid loads into effectWork->arcTileSlot.
-void FieldEffect_UpdatePairedArcSpawner(struct Actor *actor) {
+void FieldEffect_UpdateAvoidCaster(struct Actor *actor) {
   struct Actor *caster = (struct Actor *)actor;
   s16 phase;
   s32 elapsedFrames;
@@ -56,9 +56,9 @@ void FieldEffect_UpdatePairedArcSpawner(struct Actor *actor) {
 /// "Avoid's effects wore off." (or "Sacred Feather's ...").
 ///
 /// Clears gMainRoutineWork.avoidDistance. Reached through
-/// Event_RunFieldPsynergy when the Psynergy request the leader's walking raises
-/// as Avoid runs out (field_sequence/walking.c) is handled.
-void Event_ShowStatusMessage(void) {
+/// FieldPsynergy_RunExtraHandler when the Psynergy request the leader's walking
+/// raises as Avoid runs out (field_sequence/walking.c) is handled.
+void FieldPsynergy_ShowAvoidWoreOff(void) {
   gMainRoutineWork.avoidDistance = 0;
   if (gMainRoutineWork.avoidByItem == 0) {
     MessageArgument_PushFar(ABILITY_AVOID, MESSAGE_ARGUMENT_ABILITY);
@@ -112,7 +112,7 @@ void FieldPsynergy_Avoid(void) {
     gMainRoutineWork.avoidDistance = PIXELS(2400);
     gMainRoutineWork.avoidByItem = GameFlag_GetFar(FLAG_ITEM_USE);
     Actor_SetSpriteColorModeFar(actor, zero);
-    actor->update = FieldEffect_UpdatePairedArcSpawner;
+    actor->update = FieldEffect_UpdateAvoidCaster;
     actor->arcPhase = zero;
     actor->arcFrames = zero;
   }

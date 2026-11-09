@@ -170,7 +170,7 @@ enum HeapSlot {
   /// field Psynergy holds it from FieldPsynergy_LoadResources to
   /// FieldPsynergy_End, a Djinni's joining from
   /// FieldEffect_InitializeSlots to
-  /// FieldEffect_ClearActiveSlotsAndScheduleUpdates.
+  /// FieldEffect_ReleaseSlots.
   HEAP_SLOT_FIELD_EFFECT = 56,
   /// The battle command menus' work (struct BattleMenuWork).
   HEAP_SLOT_BATTLE_MENU = 57,

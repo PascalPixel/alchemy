@@ -232,7 +232,7 @@ void FieldPsynergy_StartCast(void) {
   }
   if (GameFlag_GetFar(FLAG_PLAY_PSYNERGY_CAST) != 0) {
     if (effectWork->visible != 0) {
-      caster->update = FieldEffect_CycleActorValueByCounter;
+      caster->update = FieldEffect_CycleActorAndSpawnArcs;
     }
     Actor_SelectAnimationFar(caster, 21);
   } else {

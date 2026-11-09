@@ -86,7 +86,7 @@ FarCall_WindowTable:
 	export DebugSceneSelect_RunFar, DebugSceneSelect_Run
 	export DebugFlagEditor_RunFar, DebugFlagEditor_Run
 	export Resource_LoadByModeIntoSlotFar, Resource_LoadByModeIntoSlot
-	overlay_veneer Debug_SelectAbilityPair
+	overlay_veneer Debug_SelectShortcuts
 	export Window_MarkVisibleTextTilesFar, Window_MarkVisibleTextTiles
 	overlay_veneer ItemIcon_Compose
 	export PartyStatus_HighlightMembersFar, PartyStatus_HighlightMembers

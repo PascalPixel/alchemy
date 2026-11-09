@@ -32,7 +32,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = cursorAnchor;
   shop->mode = 12;
-  PsynergyMenu_InitializeEntryActorsFar(partyWindow, 2, 0, 8, result);
+  Menu_CreatePartyFiguresFar(partyWindow, 2, 0, 8, result);
 
   while (1) {
     if (redraw != 0) {
@@ -54,7 +54,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
       }
 
       Sound_PlayFar(SE_MENU_CONFIRM);
-      itemSlot = Shop_SelectUse(unitId);
+      itemSlot = ItemPicker_SelectItem(unitId);
       if (itemSlot == -1) {
         shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
         shop->mode = 12;
@@ -87,7 +87,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
     }
   }
 
-  Menu_ReleaseEntryActorsFar();
+  Menu_ReleasePartyFiguresFar();
   Window_CloseFar(partyWindow, 2);
   Window_CloseFar(shop->itemWindow, 2);
   wait(1);
@@ -129,7 +129,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
 /// cancel sound (the game's bug; BUGFIX shows its message, see
 /// SHOP_CANNOT_REMOVE_STATUS). Returns the slot, or -1 when cancelled. Called
 /// by ItemPicker_Run.
-s32 Shop_SelectUse(s32 unitId) {
+s32 ItemPicker_SelectItem(s32 unitId) {
   struct ShopWork *shop = gMenuWork;
 
   struct Window *descriptionWindow;
@@ -170,7 +170,7 @@ s32 Shop_SelectUse(s32 unitId) {
       y = (slot / SHOP_INVENTORY_COLUMNS << 4) + 8;
       MenuCursor_Place(window, x, y);
       shop->mode = 3;
-      Shop_DrawUseItem(priceWindow, unitId, slot);
+      ItemPicker_DrawItem(priceWindow, unitId, slot);
       Shop_DrawMessage(descriptionWindow, itemId + MsgItemPlainName);
     }
 
@@ -242,9 +242,9 @@ s32 Shop_SelectUse(s32 unitId) {
 }
 
 /// Draws the slot's item name and, below it, why it cannot be dropped or what
-/// the whole stack would sell for. Called by Shop_SelectUse each time the
-/// cursor moves.
-void Shop_DrawUseItem(struct Window *window, s32 unitId, s32 slot) {
+/// the whole stack would sell for. Called by ItemPicker_SelectItem each time
+/// the cursor moves.
+void ItemPicker_DrawItem(struct Window *window, s32 unitId, s32 slot) {
   struct Unit *unit = Unit_GetFar(unitId);
   s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   u32 inventoryEntry = unit->inventory[slot];

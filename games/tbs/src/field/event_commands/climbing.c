@@ -74,7 +74,7 @@ again:
     leader->velocityY = PIXELS(4);
     *flags &= 0x7e;
     Actor_SetSpriteFlagsFar(leader, spriteFlags & 0xfe);
-    Actor_SetPositionAndCommit(
+    Actor_MoveToAndWaitById(
         gMainRoutineWork.leaderActorId,
         ((union FieldCoordinate *)&position->x)->part.pixel,
         ((union FieldCoordinate *)&position->z)->part.pixel);
@@ -159,10 +159,10 @@ s32 Field_ClimbDown(void) {
 
       // Step to the middle of the cell, face north and climb down a cell at
       // 1 pixel a frame, in free flight (no motion flags) with no shadow.
-      Actor_SetPositionAndCommit(gMainRoutineWork.leaderActorId, gridX, gridZ);
+      Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, gridX, gridZ);
       actor->speedLimit = Q16_ONE;
-      Actor_ArmCallback(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
-      Actor_RefreshSelectorById(gMainRoutineWork.leaderActorId);
+      Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
+      Actor_WaitForScriptEndById(gMainRoutineWork.leaderActorId);
       actor->steeringFlags = ACTOR_FACES_MOTION;
       actor->motionFlags = 0;
       Actor_SetSpriteFlagsFar(actor, 0);
@@ -239,7 +239,7 @@ s32 Field_ClimbUp(void) {
 
       // Step to the middle of the cell, crouch, jump and grab the wall.
       actor->steeringFlags = 0;
-      Actor_SetPositionAndCommit(gMainRoutineWork.leaderActorId, gridX, gridZ);
+      Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, gridX, gridZ);
       Actor_SelectAnimationFar(actor, 6);
       wait(4);
       Actor_SelectAnimationFar(actor, 7);

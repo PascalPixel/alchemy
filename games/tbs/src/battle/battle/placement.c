@@ -218,7 +218,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   actor->anchorZ = fixedZ;
   actor->palette = palette;
   actor->resource = sprite;
-  weaponSprite = BattleUnit_LookupWeaponValueByClass(unitId);
+  weaponSprite = BattleUnit_GetWeaponSprite(unitId);
   actor->animation = 0;
   actor->animationEntry = 0;
   actor->shadowEntry = 0;

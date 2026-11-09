@@ -14,7 +14,7 @@
 ///   Shops           run.c: Shop_Run; buy.c: Shop_SelectBuy; sell.c:
 ///                   Shop_SelectSell; repair.c: Shop_SelectRepair
 ///   Stock           stock.c: ShopStock_AddArtifacts,
-///                   Shop_BuySpecialItem
+///                   Shop_GiveGameTicket
 ///   Sanctum         sanctum.c: Sanctum_RunPartyService
 ///   Inn             inn.c: Inn_CheckIn
 ///   Item picker     item_picker.c: ItemPicker_Run

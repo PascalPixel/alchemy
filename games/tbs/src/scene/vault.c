@@ -940,7 +940,7 @@ s32 Scene_Initialize(void) {
           }
           Actor_WaitForMoveById(ACTOR_IVAN);
           Actor_SetPosition(ACTOR_IVAN, 0, 0);
-          Event_PrepareActorAndApplyValue(IVAN, 0);
+          Event_AddPartyMember(IVAN, 0);
           Event_End();
         }
       }
@@ -974,7 +974,7 @@ s32 Scene_Initialize(void) {
           }
           Actor_WaitForMoveById(ACTOR_IVAN);
           Actor_SetPosition(ACTOR_IVAN, 0, 0);
-          Event_PrepareActorAndApplyValue(IVAN, 0);
+          Event_AddPartyMember(IVAN, 0);
           Event_End();
         }
       }

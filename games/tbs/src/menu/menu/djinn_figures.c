@@ -61,7 +61,7 @@ FOUR_OBJECT_MOTION_DEFINE_RELEASE(DjinnFigures_ReleaseTopRow,
 
 /// Full size, 1.0 in 16.16, and the height the figures are placed from: 482
 /// pixels, in 16.16. As for the party figures
-/// (Menu_UpdateEntryActorTransforms), the height is 482 less the origin and
+/// (Menu_PlacePartyFigures), the height is 482 less the origin and
 /// the ground lies that far below the row, so the image stands at its row.
 #define FOUR_OBJECT_MOTION_FULL_SCALE ((u32)Q16_ONE)
 #define FOUR_OBJECT_MOTION_ORIGIN_Y (482u << 16)

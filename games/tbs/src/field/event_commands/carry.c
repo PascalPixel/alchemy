@@ -75,10 +75,10 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
 
   // The hands appear 32 pixels to either side and move to 16 pixels.
   SET_POSITION(&pos, effectWork->x, effectWork->y + (16 << 16), effectWork->z);
-  actor = FieldEffect_SpawnItemBreakMode1(pos.x + (32 << 16), pos.y, pos.z,
-                                          FACING_WEST);
+  actor =
+      FieldEffect_SpawnCarryHand(pos.x + (32 << 16), pos.y, pos.z, FACING_WEST);
   hands[0] = actor;
-  right = FieldEffect_SpawnItemBreakMode1(pos.x - (32 << 16), pos.y, pos.z, 0);
+  right = FieldEffect_SpawnCarryHand(pos.x - (32 << 16), pos.y, pos.z, 0);
   hands[1] = right;
   if (hands[0] == NULL || right == NULL) {
     FieldPsynergy_FadeFromCastColor();
@@ -268,14 +268,14 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
 /// scatter into shards.
 ///
 /// Abilities: Carry (FIELD_PSYNERGY_CARRY).
-DEFINE_ITEM_BREAK_EFFECT(FieldPsynergy_Carry, FieldEffect_SpawnItemBreakMode1)
+DEFINE_ITEM_BREAK_EFFECT(FieldPsynergy_Carry, FieldEffect_SpawnCarryHand)
 
 /// Spawns a hand (SPRITE_MOVE_HAND) with the item break sound, in animation 1,
 /// and grows it, spinning 1/8 turn a frame, from a quarter to full size over 24
 /// frames; angle is the way it faces once grown. Returns the hand, or NULL
 /// when it cannot be spawned (Actor_Spawn); Carry and its no-target cast
 /// release it.
-struct Actor *FieldEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle) {
+struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle) {
   struct Actor *fragment;
   s32 scale;
 

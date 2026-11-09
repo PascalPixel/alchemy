@@ -20,7 +20,7 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 exit) {
 #endif
   v->speedLimit = PIXELS(1) / 5;
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0, -6);
+  Actor_SetDestinationOffsetById(ACTOR_PARTY_LEADER, 0, -6);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_PARTY_LEADER), 0);
@@ -45,7 +45,7 @@ static void UNUSED MercuryLighthouse_DropLeaderToColumn(s32 column) {
   Sound_Play(SE_SPARKLING_PASSAGE);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
-  Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0, -8);
+  Actor_SetDestinationOffsetById(ACTOR_PARTY_LEADER, 0, -8);
   record = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(record, 0);
   Event_Wait(8);

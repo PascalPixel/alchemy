@@ -55,7 +55,7 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   Import_ActorSetPosition(id, x << 16, z << 16);
   // BUG: FACING_SOUTH is passed where an actor id belongs; no actor has
   // it, so the leader does not turn.
-  Actor_SetAngleToward(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+  Actor_FaceActorById(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
                       BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 |
                           BLDCNT_TGT2_BG3,

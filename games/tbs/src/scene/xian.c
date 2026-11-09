@@ -594,7 +594,7 @@ static void Xian_TalkToKungFuStudent(void) {
     reboundVelocity = -PIXELS(1) / 2;
     FieldEffect_Spawn(PIXELS(144), 0, PIXELS(312), reboundVelocity, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-    Actor_RefreshSelectorById(ACTOR_TRAINING_TREE);
+    Actor_WaitForScriptEndById(ACTOR_TRAINING_TREE);
     Sound_Play(SE_CHEST_OPEN);
     FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
@@ -741,7 +741,7 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   Actor_SetScript(ACTOR_TRAINING_TREE, gXian_TrainingTreeJump);
   rotationFunc = Xian_RotateTrainingTree;
   Task_AddFrame(rotationFunc, TASK_PASS_FRAME);
-  Actor_RefreshSelectorById(ACTOR_TRAINING_TREE);
+  Actor_WaitForScriptEndById(ACTOR_TRAINING_TREE);
   Sound_Play(SE_CHEST_OPEN);
   FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0,
                     EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);

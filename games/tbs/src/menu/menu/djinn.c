@@ -139,7 +139,7 @@ s32 DjinnMenu_Run(void) {
   Window_EraseBorderRectFar(0, 0, 30, 20);
   Heap_Release(menu->backdrop);
   HeapSlot_Release(HEAP_SLOT_MENU);
-  Event_ClearInvalidPackedValuesFar();
+  Party_ClearUnusableShortcutsFar();
   gMainRoutineWork.messageSpeed = savedMessageSpeed;
   return 1;
 }
@@ -866,7 +866,7 @@ s32 DjinnMenu_ShowHelp(void) {
     WindowSprite_PrepareForRedrawFar(menu->statusWindow);
     ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 0;
   }
-  Task_Add(Menu_UpdateEntryActorTransforms, TASK_PASS_FRAME);
+  Task_Add(Menu_PlacePartyFigures, TASK_PASS_FRAME);
   return result;
 }
 
@@ -948,7 +948,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       }
     }
   } else {
-    Djinn_MarkBalancedEntries((s8 *)requiresTrade, menu->selectedColumn[0]);
+    Djinn_MarkTradeOnlyRecipients((s8 *)requiresTrade, menu->selectedColumn[0]);
     for (i = 0; i < menu->memberCount; i++) {
       if (i == menu->selectedColumn[0]) {
         columnFlags[i] = DJINN_COLUMN_EMPTY | DJINN_COLUMN_HEADER_CHOOSABLE |

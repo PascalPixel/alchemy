@@ -44,7 +44,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   Actor_RunRepeatedMotion(djinniId, 1);
   back = dir + TRIG_TURN / 2;
   wait(20);
-  Actor_ArmCallback(djinniId, back, 0);
+  Actor_FaceDirectionById(djinniId, back, 0);
   wait(10);
   // Sprite priority 0, over every background, until the end. With
   // ACTOR_FACES_MOTION off it keeps facing the leader as it hops away, and
@@ -158,9 +158,9 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
         Actor_ClearOutOfBounds();
 
       if (element == 0) // Venus
-        FieldEffect_RunVenusDjinnCapture(slot);
+        Djinn_RunVenusJoinEffect(slot);
       else if (element == 1) // Mercury
-        FieldEffect_RunMercuryDjinnCapture(slot);
+        Djinn_RunMercuryJoinEffect(slot);
       else if (element == 2) // Mars
         Djinn_RunMarsJoinEffect(slot);
       else if (element == 3) // Jupiter
@@ -186,7 +186,7 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
 /// rebuilds the scene, only while an event is still pending after
 /// Djinn_ResolvePending's first call, that is after a won battle; the second
 /// call then makes this actor join the party.
-void Actor_PlaceMapActors(void) {
+void Djinn_RestoreActorAfterBattle(void) {
   s32 flags = gMainRoutineWork.pendingDjinni & DJINN_PENDING_KIND_MASK;
   u32 event = gMainRoutineWork.pendingDjinni & DJINN_PENDING_EVENT_MASK;
   s32 id;
@@ -303,7 +303,7 @@ void FieldEffect_UpdateAllSlots(void) { FieldEffect_UpdateEffectSlots(); }
 /// gFieldEffectWork, the slot a field Psynergy also takes. Called by
 /// the Djinn joining effects (jupiter.c, mars.c, venus.c and mercury.c) and
 /// Altmiller Cave's event; each ends with
-/// FieldEffect_ClearActiveSlotsAndScheduleUpdates.
+/// FieldEffect_ReleaseSlots.
 void FieldEffect_InitializeSlots(void) {
   void *work;
 
@@ -316,7 +316,7 @@ void FieldEffect_InitializeSlots(void) {
 /// Stops the field effect sprites: removes their task, frees every slot
 /// still in use and releases their heap block, gFieldEffectWork with it. Then
 /// waits a frame. Pairs with FieldEffect_InitializeSlots.
-void FieldEffect_ClearActiveSlotsAndScheduleUpdates(void) {
+void FieldEffect_ReleaseSlots(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct FieldParticle *effect;
   s32 i;

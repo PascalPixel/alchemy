@@ -300,12 +300,12 @@ restart:
         wait(1);
       }
       // A fights: Down still held makes it a link battle. The battle's
-      // background comes from gMainRoutineWork.special
-      // (Event_GetSpecialValueFar in Battle_Run).
+      // background comes from gMainRoutineWork.battleBackground
+      // (BattleBackground_GetSelectedFar in Battle_Run).
       if (gKeysHeld & KEY_DOWN)
         GameFlag_SetFar(FLAG_LINK_BATTLE);
       Unit_CalculateFar(ISAAC);
-      gMainRoutineWork.special = (s32)&ResourceId_SuhallaGateBackdrop;
+      gMainRoutineWork.battleBackground = (s32)&ResourceId_SuhallaGateBackdrop;
       if (encounter == DJINN_TUTORIAL_ENCOUNTER)
         GameFlag_SetFar(FLAG_DJINN_LESSON);
       GameFlag_SetFar(FLAG_DEBUG_BATTLE);

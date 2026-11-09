@@ -494,7 +494,7 @@ static void Lunpa_ReadLeftGuardsThoughts(void) {
     recognizedHammet = Event_GetFlag(FLAG_LUNPA_GATE_GUARD_SAW_HAMMET);
     if (recognizedHammet == 0) {
       gFieldWork->psynergy = recognizedHammet;
-      FieldPsynergy_FinishWaveAndReleaseHeapBlock();
+      FieldPsynergy_StopMindReadWave();
       Actor_FaceActor(ACTOR_LEFT_GUARD, ACTOR_PARTY_LEADER, 0);
       Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
       Event_SetMessageId(MsgLunpaLeftGuardRecognizesHammet);

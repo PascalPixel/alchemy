@@ -13,22 +13,24 @@
 /// arguments it needs. Read by MapGrid_GetTerrainHeight and
 /// MapGrid_CheckCollision (terrain.c).
 const TerrainHeightFn gMapGrid_TerrainHeightFunctions[TERRAIN_KIND_COUNT] = {
-    [TERRAIN_FLAT] = Terrain_GetFirstSampleA,
-    [TERRAIN_SLOPE_X] = Terrain_LerpTwoSamples,
-    [TERRAIN_SLOPE_Y] = Terrain_LerpTwoSamplesB,
-    [TERRAIN_STEP_SUM_DIAGONAL] = Terrain_StepAtSummedPosition,
-    [TERRAIN_STEP_DIFFERENCE_DIAGONAL] = Terrain_StepAtDifferencePosition,
-    [TERRAIN_BEND_SUM_DIAGONAL] = Terrain_LerpThreeSamplesByRatio,
-    [TERRAIN_BEND_DIFFERENCE_DIAGONAL] = Terrain_LerpThreeSamplesAtDifference,
-    [TERRAIN_ROUNDED_SQUARE] = Terrain_LerpTwoSamplesByTable,
-    [TERRAIN_STEP_X] = Terrain_StepAtHalf,
-    [TERRAIN_STEP_Y] = Terrain_StepAtHalfB,
-    [TERRAIN_BEND_X] = Terrain_LerpThreeSamplesAtHalf,
-    [TERRAIN_BEND_Y] = Terrain_LerpThreeSamplesAtHalfB,
-    [TERRAIN_SAMPLE_TABLE] = Terrain_LookupSampleByTable,
-    [TERRAIN_SAMPLE_TABLE_MIRRORED] = Terrain_LookupSampleByTableReversed,
-    [TERRAIN_FLAT_B] = Terrain_GetFirstSampleB,
-    [TERRAIN_FLAT_C] = Terrain_GetFirstSampleC,
+    [TERRAIN_FLAT] = Terrain_GetFlatHeight,
+    [TERRAIN_SLOPE_X] = Terrain_GetSlopeXHeight,
+    [TERRAIN_SLOPE_Y] = Terrain_GetSlopeYHeight,
+    [TERRAIN_STEP_SUM_DIAGONAL] = Terrain_GetStepSumDiagonalHeight,
+    [TERRAIN_STEP_DIFFERENCE_DIAGONAL] =
+        Terrain_GetStepDifferenceDiagonalHeight,
+    [TERRAIN_BEND_SUM_DIAGONAL] = Terrain_GetBendSumDiagonalHeight,
+    [TERRAIN_BEND_DIFFERENCE_DIAGONAL] =
+        Terrain_GetBendDifferenceDiagonalHeight,
+    [TERRAIN_ROUNDED_SQUARE] = Terrain_GetRoundedSquareHeight,
+    [TERRAIN_STEP_X] = Terrain_GetStepXHeight,
+    [TERRAIN_STEP_Y] = Terrain_GetStepYHeight,
+    [TERRAIN_BEND_X] = Terrain_GetBendXHeight,
+    [TERRAIN_BEND_Y] = Terrain_GetBendYHeight,
+    [TERRAIN_SAMPLE_TABLE] = Terrain_GetSampleTableHeight,
+    [TERRAIN_SAMPLE_TABLE_MIRRORED] = Terrain_GetSampleTableMirroredHeight,
+    [TERRAIN_FLAT_B] = Terrain_GetFlatBHeight,
+    [TERRAIN_FLAT_C] = Terrain_GetFlatCHeight,
 };
 
 /// World map battle environments (enum BattleEnvironment), indexed by the

@@ -8,11 +8,11 @@
 /// the World Map the encounter region and battle environment under the leader
 /// pick the battle background. Sets the field work's battle request, which
 /// the field sequence then handles, and the battle music;
-/// ENCOUNTER_ZONE_SCRIPTED's first slot also sets gMainRoutineWork.special
-/// to the Aerie's storm battle background. About 35 scenes reach it through
-/// Field_RequestBattleFromEncounterTableFar, and the Battle Arena calls it
-/// directly. The battle starts only once the event that asked for it has
-/// returned.
+/// ENCOUNTER_ZONE_SCRIPTED's first slot also sets
+/// gMainRoutineWork.battleBackground to the Aerie's storm battle background.
+/// About 35 scenes reach it through Field_RequestBattleFromEncounterTableFar,
+/// and the Battle Arena calls it directly. The battle starts only once the
+/// event that asked for it has returned.
 void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
   s32 zone = zoneNo;
   s32 slot = slotNo;
@@ -20,7 +20,7 @@ void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
 
   work->encounter = Encounter_GetFormationAtSlot(zone, slot);
   if (zone == ENCOUNTER_ZONE_SCRIPTED && slot == 0)
-    gMainRoutineWork.special =
+    gMainRoutineWork.battleBackground =
         (s32)&ResourceId_VenusLighthouseAerieStormBackdrop;
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
@@ -50,7 +50,7 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
     Djinn_RunBattleStartHop(flag);
 
   state = &gMainRoutineWork;
-  // DJINN_NO_HOP rides along: it tells Actor_PlaceMapActors to put
+  // DJINN_NO_HOP rides along: it tells Djinn_RestoreActorAfterBattle to put
   // the Djinni back 32 pixels north of the leader, not at its placement's
   // position.
   state->pendingDjinni = (no + DJINNI_BATTLE_EVENT_FIRST) | skipHop;

@@ -369,8 +369,8 @@ void MercuryLighthouse_HopAcrossPool(void) {
   actor->velocityY = PIXELS(4);
   *flags &= 0x7e;
   Actor_SetSpriteFlags(actor, 0);
-  Actor_SetPositionAndCommit(ACTOR_PARTY_LEADER, pos[0].part.pixel,
-                             pos[2].part.pixel);
+  Actor_MoveToAndWaitById(ACTOR_PARTY_LEADER, pos[0].part.pixel,
+                          pos[2].part.pixel);
   Actor_SelectAnimation(actor, 6);
   wait(2);
   if (to->behavior != state->poolBehavior)

@@ -945,7 +945,7 @@ void SelectionMenu_HighlightIcon(struct SelectionMenuWork *state,
 /// with mode 0); Menu_ConfirmSelection calls it as an entry is chosen. It
 /// passes a unit list with one place an icon, of which only the end marker
 /// (BATTLE_UNIT_LIST_END) is written; mode 0 never reads the list.
-void Menu_SendNodeCountList(struct SelectionMenuWork *screen) {
+void Menu_ClearBattleHighlight(struct SelectionMenuWork *screen) {
   u16 data[6];
   struct SelectionNode *node = screen->head;
   s32 count = 0;
@@ -1205,7 +1205,7 @@ u32 Menu_ConfirmSelection(struct SelectionMenuWork *screen) {
   struct SelectionSprite *sprite;
 
   chosenIndex = screen->top + screen->cursorIndex;
-  Menu_SendNodeCountList(screen);
+  Menu_ClearBattleHighlight(screen);
   SelectionMenu_RedrawIcon(screen, screen->cursorIndex);
   screen->status = NODE_STATUS_SCROLLING;
   wait(1);
@@ -1414,7 +1414,7 @@ s32 FieldMenu_Run(void) {
 #if defined(HAS_LOCALIZED_MENU_GUARD)
     state[0xcca] = 1;
     if (((struct FieldWork *)state)->revealActive != 0) {
-      FieldEffect_ClearRandomParticlesFar();
+      FieldEffect_ReleaseRevealSparklesFar();
       wait(1);
     }
 #endif

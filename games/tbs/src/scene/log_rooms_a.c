@@ -747,7 +747,7 @@ static void LogRoomsA_SuspectedLeaderDodges(void) {
     nextRoute = 5;
     *(u16 *)routeState = nextRoute;
   }
-  Actor_RefreshSelectorById(ACTOR_SUSPECTED_LEADER);
+  Actor_WaitForScriptEndById(ACTOR_SUSPECTED_LEADER);
   Event_End();
 }
 
@@ -810,7 +810,7 @@ static void LogRoomsA_SuspectedThiefDodges(void) {
     break;
   }
   actor->timer &= 3;
-  Actor_RefreshSelectorById(ACTOR_SUSPECTED_THIEF);
+  Actor_WaitForScriptEndById(ACTOR_SUSPECTED_THIEF);
   Event_End();
 }
 
@@ -1294,7 +1294,7 @@ static void LogRoomsA_IvanJoinsRodSearch(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   LogRoomsA_PlayAnimationAndWait(ACTOR_GARET, ANIM_NOD, 20);
   // "Ivan joined your party!", then he will read the townspeople's minds.
-  Event_PrepareActorAndApplyValue(IVAN, 1);
+  Event_AddPartyMember(IVAN, 1);
   Event_SetMessageId(message + 22);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   // "Let me read the minds of the townspeople to find the rod."
@@ -1402,7 +1402,7 @@ static void LogRoomsA_FreeRooferAndConfrontThieves(void) {
   Actor_SetScript(ACTOR_FIRST_THIEF, gLogRoomsA_FirstThiefEntryScript);
   Event_Wait(40);
   Actor_SetScript(ACTOR_SECOND_THIEF, gLogRoomsA_SecondThiefEntryScript);
-  Actor_RefreshSelectorById(ACTOR_SECOND_THIEF);
+  Actor_WaitForScriptEndById(ACTOR_SECOND_THIEF);
   Actor_FaceDirection(ACTOR_FIRST_THIEF, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_SECOND_THIEF, FACING_SOUTHEAST, 0);
   Event_Wait(40);
@@ -1609,7 +1609,7 @@ static void LogRoomsA_ApproachSuspects(void) {
   Actor_SetSpeed(ACTOR_SUSPECTED_THIEF, PIXELS(7) / 2, PIXELS(7) / 4);
   Actor_SetScript(ACTOR_SUSPECTED_THIEF, gLogRoomsA_SuspectToSouthWestCorner);
   Actor_SetScript(ACTOR_SUSPECTED_LEADER, gLogRoomsA_SuspectRoundToWestBedHead);
-  Actor_RefreshSelectorById(ACTOR_SUSPECTED_LEADER);
+  Actor_WaitForScriptEndById(ACTOR_SUSPECTED_LEADER);
   MapGrid_CopyCellAttributes(14, 45, 3, 1, 14, 44);
   GameFlag_Set(FLAG_VAULT_SUSPECTS_APPROACHED);
   GameFlag_Set(FLAG_SUSPECTS_FLEEING);
@@ -1753,7 +1753,7 @@ static void LogRoomsA_ResetSuspectRoutes(void) {
   Actor_SetSpeed(ACTOR_SUSPECTED_THIEF, PIXELS(7) / 2, PIXELS(7) / 4);
   Actor_SetScript(ACTOR_SUSPECTED_THIEF, gLogRoomsA_SuspectToSouthWestCorner);
   Actor_SetScript(ACTOR_SUSPECTED_LEADER, gLogRoomsA_SuspectRoundToWestBedHead);
-  Actor_RefreshSelectorById(ACTOR_SUSPECTED_LEADER);
+  Actor_WaitForScriptEndById(ACTOR_SUSPECTED_LEADER);
   {
     struct Actor *suspect = Actor_Get(ACTOR_SUSPECTED_LEADER);
     u16 routeIndex = 1;
@@ -2963,7 +2963,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 0);
   Actor_WaitForMoveById(ACTOR_IVAN);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH_NORTHEAST, 0);
-  Actor_RefreshSelectorById(ACTOR_LOFT_MAYOR);
+  Actor_WaitForScriptEndById(ACTOR_LOFT_MAYOR);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_LOFT_MAYOR, 0);
   temporaryActor = Actor_Get(ACTOR_STRONGMAN_OPENING_THE_CHESTS);
   {

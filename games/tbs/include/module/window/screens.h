@@ -83,11 +83,11 @@ void Window_SetTextTileRect(const struct Window *window, s32 x, s32 y,
 void NameEntry_LoadPointingHandTiles(s32 slot);
 void NameEntry_LoadCaretTiles(s32 slot);
 s32 Text_SetString(const u8 *str);
-void Text_DrawPaddedLabel(struct Window *window, u8 *name);
+void NameEntry_DrawName(struct Window *window, u8 *name);
 s32 NameEntry_EditMemberName(s32 member);
 s32 ColossoMenu_Choose(s32 unused);
 void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn);
-s32 Party_LookupCharacterValueByFlag32(u32 index);
+s32 Party_GetMemberPortraitSprite(u32 index);
 void Party_ShowJoinedMessage(s32 member);
 void Party_ShowPairJoinedMessage(s32 first, s32 second);
 void MenuTitle_Load(s32 picture, s32 slot);
@@ -126,8 +126,10 @@ s32 WindowSprite_GetPointerTiles(s32 no);
 void Icon_Decompress(GlyphTransfer *work);
 struct Window *Link_CreateCountdownLabelWindow(void);
 s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon);
-void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile);
-void Text_DrawCharacter(struct BattleCommandRowWork *work, s32 index, u32 kind);
+void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
+                                    s32 tile);
+void BattleCommandRow_LoadIcon(struct BattleCommandRowWork *work, s32 index,
+                               u32 kind);
 void CommandRow_PutBg1Behind(void);
 void CommandRow_PutBg1InFront(void);
 void Graphics_InstallBg1VCountHandler(void);
@@ -162,7 +164,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count);
 s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count);
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind);
 void UpdateLinkSessionCountdown(void);
-s32 Message_ShowLocalizedAndWait(void);
+s32 Battle_RefuseFlee(void);
 s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act);
 s32 Battle_CollectPartyCommands(struct BattleAction *out, u16 *in, s32 count);
 

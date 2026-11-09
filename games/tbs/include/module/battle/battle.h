@@ -91,12 +91,12 @@ s32 BattleObject_GetPalette(s32 unitId);
 s32 Enemy_HasSpriteRoom(s32 classId);
 s32 EnemySprite_LoadIntoSlots(s32 unitId);
 #ifdef UBFIX
-void BattleObject_ReleaseSlotByValue(s32 unitId);
+void BattleObject_ReleaseSpriteSlots(s32 unitId);
 #else
-s32 BattleObject_ReleaseSlotByValue(s32 unitId);
+s32 BattleObject_ReleaseSpriteSlots(s32 unitId);
 #endif
 s32 BattleUnit_GetWeaponKind(s32 itemId);
-s32 BattleUnit_LookupWeaponValueByClass(s32 unitId);
+s32 BattleUnit_GetWeaponSprite(s32 unitId);
 void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y);
 void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y);
 void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
@@ -180,14 +180,14 @@ void Palette_UpdatePulseBrightness(void);
 void BattleCamera_SetCommandView(s32 verticalOffset);
 void BattleUnit_ResetGuardLevels(void);
 s32 BattleFlee_CheckSuccess(void);
-s32 Battle_BuildUnitActions(struct BattleAction *entries);
-s32 Battle_BuildOpponentActions(struct BattleAction *entries);
+s32 Battle_BuildPartyActions(struct BattleAction *entries);
+s32 Battle_BuildEnemyActions(struct BattleAction *entries);
 void BattleActionOrder_Sort(struct BattleAction *entries, s32 count);
 s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count);
 void Palette_CopyWithBrightnessOffset(s32 offset);
 s32 Battle_GatherActions(struct BattleAction *actions);
-s32 Battle_GetTaggedSlotValue(s32 taggedPlace);
-s32 Battle_FindTaggedSlotByValue(u32 unitId);
+s32 Battle_GetUnitAtPlace(s32 taggedPlace);
+s32 Battle_FindUnitPlace(u32 unitId);
 void Battle_TurnStartNoOp(void);
 
 s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay);
@@ -222,9 +222,9 @@ void BattleMotion_ShowDowned(s32 unitId);
 s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit);
 s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action);
 #ifdef UBFIX
-void BattleObject_ResetRuntimeFields(s32 unitId);
+void BattleUnit_ClearStatuses(s32 unitId);
 #else
-s32 BattleObject_ResetRuntimeFields(s32 unitId);
+s32 BattleUnit_ClearStatuses(s32 unitId);
 #endif
 #ifdef UBFIX
 void BattleMessage_WaitForAdvance(void);
@@ -280,7 +280,7 @@ s32 BattleActionRun_Build(struct BattleAction *request,
 s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias);
 s32 BattleUnit_CountDownAttackStage(s32 unitId);
 s32 BattleUnit_CountDownConfusion(s32 unitId);
-s32 Battle_AdvanceCounterAndCheckChance(s32 unitId);
+s32 BattleUnit_CountDownPsynergySeal(s32 unitId);
 s32 BattleUnit_CountDownRegenerate(s32 unitId);
 s32 BattleUnit_CountDownReflect(s32 unitId);
 s32 BattleUnit_CountDownAgilityStage(s32 unitId);
@@ -345,7 +345,7 @@ void ElementGlow_UploadStarField(void);
 u32 ElementGlow_UploadStarField(void);
 #endif
 s32 ElementGlow_InitializeStarField(s32 mode);
-s32 ElementGlow_ReleaseVramAndHeapBlocks(s32 unused);
+s32 ElementGlow_End(s32 unused);
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
                                 s32 count);
 // The native implicit-int declaration disagrees with the later void definition.

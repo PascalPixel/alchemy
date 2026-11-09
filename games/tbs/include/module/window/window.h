@@ -549,7 +549,7 @@ void SelectionMenu_StepRight(struct SelectionMenuWork *state);
 void SelectionMenu_StepLeft(struct SelectionMenuWork *state);
 void SelectionMenu_RedrawIcon(struct SelectionMenuWork *state, u32 index);
 void SelectionMenu_HighlightIcon(struct SelectionMenuWork *state, u32 index);
-void Menu_SendNodeCountList(struct SelectionMenuWork *screen);
+void Menu_ClearBattleHighlight(struct SelectionMenuWork *screen);
 void SelectionMenu_Scroll(struct SelectionMenuWork *screen, s32 forward);
 s32 Resource_LoadByMode(s32 mode, s32 value);
 s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option);
@@ -583,7 +583,7 @@ void AreaNameWindow_Hide(void);
 s32 Item_RemoveFromInventory(s32 unused, s32 itemId);
 s32 Item_ReturnTrue(void);
 void SettingsMenu_StepWindowHue(s32 keys);
-void Debug_SelectAbilityPair(void);
+void Debug_SelectShortcuts(void);
 s32 Party_ListPsynergy(struct AbilityListEntry *output);
 void Menu_FindShortcutEntries(u32 *first_index, u32 *second_index,
                               const struct AbilityListEntry *entries);

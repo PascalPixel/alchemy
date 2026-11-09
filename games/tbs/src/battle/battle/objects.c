@@ -150,7 +150,7 @@ void BattleObject_UpdateSpritePriorities(void) {
 /// object's activeStatuses, which BattleStatusIcon_Cycle shows. Called
 /// wherever a unit's statuses may have changed: BattlePlayback_RunAll,
 /// BattlePlayback_Run, Battle_ProcessTurnEnd,
-/// BattleObject_ResetRuntimeFields and BattleObject_SpawnObjectsForList.
+/// BattleUnit_ClearStatuses and BattleObject_SpawnObjectsForList.
 #ifdef UBFIX
 void BattleUnit_BuildStatusFlags(s32 unitId,
                                  struct BattleObject *battleObject) {
@@ -552,7 +552,7 @@ void ResetBattleObjectRecordGroups(struct Actor *actor) {
 /// BattleObject_DestroyTemporaryObject and the auto battle.
 s32 BattleObject_MarkForRelease(s32 unitId) {
   struct BattleObject *battleObject;
-  BattleObject_ReleaseSlotByValue(unitId);
+  BattleObject_ReleaseSpriteSlots(unitId);
   battleObject = BattleObject_Get(unitId);
   battleObject->active = 1;
   return 0;

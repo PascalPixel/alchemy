@@ -842,12 +842,12 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   ValeKradensCottage_WalkTowardLeader(ACTOR_JENNA);
   Actor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
-  FieldActor_SetTargetAndCallback(ACTOR_SATUROS,
-                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
-                                  gValeKradensCottage_FaceTargetActions);
-  FieldActor_SetTargetAndCallback(ACTOR_MENARDI,
-                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
-                                  gValeKradensCottage_FaceTargetActions);
+  FieldActor_WatchAndStartScript(ACTOR_SATUROS,
+                                 ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                 gValeKradensCottage_FaceTargetActions);
+  FieldActor_WatchAndStartScript(ACTOR_MENARDI,
+                                 ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                 gValeKradensCottage_FaceTargetActions);
   Scene_PlayMusic();
   Event_End();
 }
@@ -1029,10 +1029,10 @@ s32 ValeKradensCottage_Initialize(void) {
       if (GameFlag_Get(FLAG_MET_SATUROS_AND_MENARDI) != 0) {
         Actor_SetPosition(ACTOR_SATUROS, PIXELS(392), PIXELS(376));
         Actor_SetPosition(ACTOR_MENARDI, PIXELS(376), PIXELS(376));
-        FieldActor_SetTargetAndCallback(
+        FieldActor_WatchAndStartScript(
             ACTOR_SATUROS, ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
             gValeKradensCottage_FaceTargetActions);
-        FieldActor_SetTargetAndCallback(
+        FieldActor_WatchAndStartScript(
             ACTOR_MENARDI, ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
             gValeKradensCottage_FaceTargetActions);
       }
@@ -1123,11 +1123,11 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
         Event_ShowMessageThenWait(ACTOR_ROCKSLIDE_SURVIVOR, 0, 10);
         Actor_SetAnimationAndWait(ACTOR_ROCKSLIDE_SURVIVOR, ANIM_NOD);
         // Follow his escape until the party can see that he is unharmed.
-        FieldActor_SetTargetAndCallback(ACTOR_PARTY_LEADER,
-                                        ACTOR_WATCH_KEEP_MOTION |
-                                            ACTOR_ROCKSLIDE_SURVIVOR,
-                                        gValeKradensCottage_FaceTargetActions);
-        FieldActor_SetTargetAndCallback(
+        FieldActor_WatchAndStartScript(ACTOR_PARTY_LEADER,
+                                       ACTOR_WATCH_KEEP_MOTION |
+                                           ACTOR_ROCKSLIDE_SURVIVOR,
+                                       gValeKradensCottage_FaceTargetActions);
+        FieldActor_WatchAndStartScript(
             ACTOR_GARET, ACTOR_WATCH_KEEP_MOTION | ACTOR_ROCKSLIDE_SURVIVOR,
             gValeKradensCottage_FaceTargetActions);
         Actor_RunScriptAndWait(

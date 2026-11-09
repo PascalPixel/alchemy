@@ -286,9 +286,9 @@ static void CottageRoomsA_GiveFarewellHerb(void) {
     Event_SetMessageId(MsgValeYouMustSaveJenna);
     // "You must save Jenna! You must, Isaac!"
     Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
-    FieldActor_SetTargetAndCallback(
-        ACTOR_ITEM_MERCHANT, ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
-        gCottageRoomsA_FaceTargetScript);
+    FieldActor_WatchAndStartScript(ACTOR_ITEM_MERCHANT,
+                                   ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                   gCottageRoomsA_FaceTargetScript);
   } else {
     gift = MsgValeThisIsMyFarewellGift;
     Event_SetMessageId(gift);
@@ -647,18 +647,18 @@ static void CottageRoomsA_GaretComesHome(void) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_STAND);
   Event_Wait(10);
-  FieldActor_SetTargetAndCallback(ACTOR_PARTY_LEADER,
-                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_GARETS_FATHER,
-                                  gCottageRoomsA_FaceTargetScript);
-  FieldActor_SetTargetAndCallback(ACTOR_GARET,
-                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_GARETS_FATHER,
-                                  gCottageRoomsA_FaceTargetScript);
-  FieldActor_SetTargetAndCallback(ACTOR_IVAN,
-                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_GARETS_FATHER,
-                                  gCottageRoomsA_FaceTargetScript);
-  FieldActor_SetTargetAndCallback(ACTOR_MIA,
-                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_GARETS_FATHER,
-                                  gCottageRoomsA_FaceTargetScript);
+  FieldActor_WatchAndStartScript(ACTOR_PARTY_LEADER,
+                                 ACTOR_WATCH_KEEP_MOTION | ACTOR_GARETS_FATHER,
+                                 gCottageRoomsA_FaceTargetScript);
+  FieldActor_WatchAndStartScript(ACTOR_GARET,
+                                 ACTOR_WATCH_KEEP_MOTION | ACTOR_GARETS_FATHER,
+                                 gCottageRoomsA_FaceTargetScript);
+  FieldActor_WatchAndStartScript(ACTOR_IVAN,
+                                 ACTOR_WATCH_KEEP_MOTION | ACTOR_GARETS_FATHER,
+                                 gCottageRoomsA_FaceTargetScript);
+  FieldActor_WatchAndStartScript(ACTOR_MIA,
+                                 ACTOR_WATCH_KEEP_MOTION | ACTOR_GARETS_FATHER,
+                                 gCottageRoomsA_FaceTargetScript);
   Event_Wait(300);
   FieldCamera_GetActor()->motionFlags = motionFlags;
   // The camera pans slowly up to Garet's parents. His father, pacing, asks

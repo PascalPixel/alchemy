@@ -372,7 +372,7 @@ static void BabiLighthouse_JumpFromLedge(void) {
       u16 facing = leader->facing;
       if ((u16)(facing + 0x4fff) <= 0x1fff ||
           (u16)(facing - 0x3001) <= 0x1fff) {
-        Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 16, 0);
+        Actor_SetDestinationOffsetById(ACTOR_PARTY_LEADER, 16, 0);
         Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
       } else {

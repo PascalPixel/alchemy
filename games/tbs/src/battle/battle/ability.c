@@ -44,7 +44,7 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
 
 /// Unit.psySeal: Bind's seal counts its seven turns in the low three
 /// bits, and may end sooner; Luff's counts down 8 a turn, two turns that never
-/// end early (Battle_AdvanceCounterAndCheckChance).
+/// end early (BattleUnit_CountDownPsynergySeal).
 #define PSY_SEAL_BIND 7
 #define PSY_SEAL_LUFF 16
 

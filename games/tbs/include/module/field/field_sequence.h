@@ -105,7 +105,7 @@ s16 Encounter_GetDjinnFormation(s32 djinni);
 void Scene_ChooseMusic(void);
 s32 Area_GetNameIndex(s32 sceneId, s32 entrance);
 void Scene_SetRestartPoint(void);
-s16 Event_GetSpecialValue(void);
+s16 BattleBackground_GetSelected(void);
 void BattleBackground_SelectForMap(void);
 void BattleBackground_SelectForEnvironment(s32 behavior);
 // Matching builds call Encounter_SelectBattleMusic without a prototype, as in
@@ -175,7 +175,7 @@ struct TriggerView {
 //--------------------------------------------------------------------------
 #define TREASURE_SPOT_MAX 10
 
-s32 Party_RemapCharacterIdByFlags(s32 character);
+s32 Party_GetCharacterSprite(s32 character);
 s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood);
 void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot);
 void Actor_ReleaseAtIndex(s32 actorIndex);
@@ -245,15 +245,15 @@ void TreasureSpot_SetActorPosition(s32 id, s32 x, s32 z);
 
 void TreasureSpot_MoveLeaderAway(void);
 void ItemDisplay_EmitSparkles(struct Actor *actor);
-struct Actor *FieldEffect_StartRandomParticleEmitter(s32 actorId, s32 item);
+struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item);
 void Actor_ReleaseIfPresent(void *object);
 void ItemDisplay_RaiseAboveLeader(struct Actor *actor);
 void ItemDisplay_ShowPicture(void *object, s32 flags);
 void ItemDisplay_ShowItem(s32 item, s32 flags);
-void FieldEffect_ClearRandomParticles(void);
+void FieldEffect_ReleaseRevealSparkles(void);
 void Reveal_EmitSparkles(struct Actor *actor);
 s32 Field_IsRevealActive(struct Actor *interpreter);
-void FieldEffect_SpawnNearbyMarkers(void);
+void FieldEffect_SpawnRevealMarkers(void);
 
 void FieldEffect_StartWindowHBlankDma(void);
 void ScreenTransition_UpdateScanlineTable(void);
@@ -296,7 +296,7 @@ void FieldEffect_StartFadeOverlay(void *object);
 void FadeOverlay_Suspend(void);
 void FadeOverlay_Resume(void);
 struct SpeakerDefinition *Speaker_FindDefinition(u32 id);
-s32 FieldEffect_GetAnimationValue(s32 id);
+s32 Speaker_GetActorSprite(s32 id);
 s32 Speaker_GetVoice(u32 id);
 s32 Speaker_GetIdleFlags(s32 id);
 

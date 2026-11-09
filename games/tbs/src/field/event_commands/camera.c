@@ -116,7 +116,7 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
 
 /// The event command "camera move to actor":
 /// FieldCamera_MoveWithinMapBounds to the actor's x and z.
-void Actor_PlaceCurrentWithinCameraBounds(s32 actorId, s32 glide) {
+void FieldCamera_MoveToActorById(s32 actorId, s32 glide) {
   struct Actor *subject;
 
   subject = Actor_Lookup(actorId);

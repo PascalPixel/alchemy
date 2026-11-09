@@ -71,7 +71,7 @@ struct CursorSprite {
 
 /// Sets sprite shape (attr0/attr1) and clears the remaining fields.
 // A statement macro (4 sites), the shape every use matches through; as plain
-// stores, 4 of 49 instructions differ in tbs-en (Text_DrawCharacter).
+// stores, 4 of 49 instructions differ in tbs-en (BattleCommandRow_LoadIcon).
 #define MenuSprite_Initialize(sprite, shape)                                   \
   do {                                                                         \
     (sprite).oam.word.attr01 = (shape);                                        \

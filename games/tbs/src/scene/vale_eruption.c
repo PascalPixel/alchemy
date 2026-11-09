@@ -313,7 +313,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_FaceDirection(ACTOR_GUARD, FACING_NORTHWEST, 0);
   // The camera flies to Dora: "Isaac!" The Great Healer: "You're safe!"
   FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
-  Actor_PlaceCurrentWithinCameraBounds(ACTOR_DORA, 1);
+  FieldCamera_MoveToActorById(ACTOR_DORA, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(50);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
@@ -335,11 +335,11 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   FieldCamera_WaitForArrival();
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
-  Actor_RefreshSelectorById(ACTOR_GARET);
+  Actor_WaitForScriptEndById(ACTOR_GARET);
   Event_Wait(50);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
-  Actor_RefreshSelectorById(ACTOR_GARET);
+  Actor_WaitForScriptEndById(ACTOR_GARET);
   Event_Wait(60);
 
   // "Come over here, both of you!" The two walk down to the villagers.
@@ -350,7 +350,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_SetScript(ACTOR_PARTY_LEADER, gValeEruption_LeaderWalksDown);
   Event_Wait(30);
   Actor_SetScript(ACTOR_GARET, gValeEruption_GaretWalksDown);
-  Actor_RefreshSelectorById(ACTOR_GARET);
+  Actor_WaitForScriptEndById(ACTOR_GARET);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
   FieldCamera_WaitForArrival();
@@ -483,7 +483,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_SetScript(ACTOR_PARTY_LEADER, actionScript);
   Event_Wait(40);
   Actor_SetScript(ACTOR_GARET, actionScript);
-  Actor_RefreshSelectorById(ACTOR_GARET);
+  Actor_WaitForScriptEndById(ACTOR_GARET);
   Actor_ShowEmote(ACTOR_GARETS_SISTER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_GARETS_BROTHER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(40);

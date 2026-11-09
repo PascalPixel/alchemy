@@ -298,7 +298,7 @@ static void CrossboneIsleKeys_BaneFirstEscape(void) {
     GameFlag_Set(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE);
     Event_Start();
     FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
-    Actor_PlaceCurrentWithinCameraBounds(ACTOR_BANE, 1);
+    FieldCamera_MoveToActorById(ACTOR_BANE, 1);
     FieldCamera_WaitForMove();
     Actor_FaceDirection(ACTOR_BANE, FACING_EAST, 20);
     Actor_SetAttachedEffect(ACTOR_BANE,
@@ -331,7 +331,7 @@ static void CrossboneIsleKeys_BaneSecondEscape(void) {
 
       // Focus on the Djinni before its next jump away.
       FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
-      Actor_PlaceCurrentWithinCameraBounds(ACTOR_BANE, 1);
+      FieldCamera_MoveToActorById(ACTOR_BANE, 1);
       FieldCamera_WaitForMove();
       Actor_FaceDirection(ACTOR_BANE, FACING_SOUTH, 20);
       Actor_SetAttachedEffect(ACTOR_BANE,

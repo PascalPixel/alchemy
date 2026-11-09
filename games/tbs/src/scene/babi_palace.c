@@ -794,7 +794,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     Event_Wait(10);
     FieldActor_LaunchFromLeader(ACTOR_GARET, 16, 0, FACING_WEST);
-    Actor_RefreshSelectorById(ACTOR_GARET);
+    Actor_WaitForScriptEndById(ACTOR_GARET);
     Event_Wait(10);
     // "Ohh, I'm so tired..."
     Event_ShowMessage(ACTOR_GARET, 0);
@@ -809,7 +809,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
     Event_Wait(20);
     FieldActor_LaunchFromLeader(ACTOR_IVAN, -16, 0, FACING_EAST);
-    Actor_RefreshSelectorById(ACTOR_IVAN);
+    Actor_WaitForScriptEndById(ACTOR_IVAN);
     Event_Wait(10);
     // "I didn't think we'd ever find a place to stay. What a relief!"
     Event_ShowMessage(ACTOR_IVAN, 0);
@@ -824,7 +824,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     Event_Wait(20);
     FieldActor_LaunchFromLeader(ACTOR_MIA, 16, 0, FACING_WEST);
-    Actor_RefreshSelectorById(ACTOR_MIA);
+    Actor_WaitForScriptEndById(ACTOR_MIA);
     Event_Wait(10);
     // "Let's rest up for tomorrow."
     Event_ShowMessage(ACTOR_MIA, 0);

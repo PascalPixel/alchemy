@@ -914,10 +914,10 @@ static void Vale_WarnAgainstSneakingUpMtAleph(void) {
   Actor_ShowEmote(ACTOR_MAN_GUARDING_MT_ALEPH,
                   EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Actor_SetScript(ACTOR_MAN_GUARDING_MT_ALEPH, gVale_FirstWarningGuardPath);
-  Actor_RefreshSelectorById(ACTOR_PARTY_LEADER);
+  Actor_WaitForScriptEndById(ACTOR_PARTY_LEADER);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 256, 474);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Actor_RefreshSelectorById(ACTOR_MAN_GUARDING_MT_ALEPH);
+  Actor_WaitForScriptEndById(ACTOR_MAN_GUARDING_MT_ALEPH);
   Actor_WalkToAndWait(ACTOR_MAN_GUARDING_MT_ALEPH, 256, 456);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_FaceDirection(ACTOR_MAN_GUARDING_MT_ALEPH, FACING_SOUTH, 20);
@@ -971,7 +971,7 @@ static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
   Actor_ShowEmote(ACTOR_MAN_GUARDING_MT_ALEPH,
                   EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Actor_RunScriptAndWait(ACTOR_MAN_GUARDING_MT_ALEPH, replyActions);
-  Actor_RefreshSelectorById(ACTOR_PARTY_LEADER);
+  Actor_WaitForScriptEndById(ACTOR_PARTY_LEADER);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_MAN_GUARDING_MT_ALEPH, 2);
   guard->scaleX = Q16_ONE;
@@ -1568,7 +1568,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_WalkToAndWait(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
-  Event_PrepareTwoActorsAndApply(GARET, JENNA);
+  Event_AddPartyMemberPair(GARET, JENNA);
   FieldCamera_MoveTo(PIXELS(377), PIXELS(160), PIXELS(887), 1);
   Vale_MoveActorAlongHigherZPath(ACTOR_PARTY_LEADER,
                                  ANIM_LEADER_CLIMB_DOWN_FROM_TOP,
@@ -3008,7 +3008,7 @@ static void Vale_RoofMended(void) {
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_WalkToAndWait(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
-  Event_PrepareTwoActorsAndApply(GARET, JENNA);
+  Event_AddPartyMemberPair(GARET, JENNA);
   FieldCamera_MoveTo(PIXELS(377), PIXELS(160), PIXELS(887), 1);
   Vale_MoveActorAlongHigherZPath(ACTOR_PARTY_LEADER,
                                  ANIM_LEADER_CLIMB_DOWN_FROM_TOP,

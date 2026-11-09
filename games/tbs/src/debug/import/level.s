@@ -44,7 +44,7 @@
 	.set import.Event_ShowMessageAndWait, 1
 	.endif
 	.ifndef TBS_EDITION_JA
-	.set import.FieldEffect_SpawnAttached, 1
+	.set import.Actor_ShowEmoteById, 1
 	.endif
 	.set import.Import_EventSetExitRequest, 1
 	.set import.ItemMenu_DrawItemDetails, 1

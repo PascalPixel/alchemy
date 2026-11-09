@@ -1092,19 +1092,19 @@ accepted:
   Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST_SOUTHEAST, 10);
   Actor_SetAnimationAndWait(ACTOR_CAPTAIN, ANIM_NOD);
   Event_Wait(20);
-  FieldActor_SetTargetAndCallback(ACTOR_PARTY_LEADER,
-                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
-                                  gPalace_FacingActions);
+  FieldActor_WatchAndStartScript(ACTOR_PARTY_LEADER,
+                                 ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
+                                 gPalace_FacingActions);
   // Keep the party looking at the captain while he leaves the audience.
-  FieldActor_SetTargetAndCallback(ACTOR_GARET,
-                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
-                                  gPalace_FacingActions);
-  FieldActor_SetTargetAndCallback(ACTOR_IVAN,
-                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
-                                  gPalace_FacingActions);
-  FieldActor_SetTargetAndCallback(ACTOR_MIA,
-                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
-                                  gPalace_FacingActions);
+  FieldActor_WatchAndStartScript(ACTOR_GARET,
+                                 ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
+                                 gPalace_FacingActions);
+  FieldActor_WatchAndStartScript(ACTOR_IVAN,
+                                 ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
+                                 gPalace_FacingActions);
+  FieldActor_WatchAndStartScript(ACTOR_MIA,
+                                 ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
+                                 gPalace_FacingActions);
   Actor_SetSpeed(ACTOR_CAPTAIN, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 852, 646);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 852, 666);
@@ -1121,9 +1121,9 @@ accepted:
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-  FieldActor_SetTargetAndCallback(ACTOR_CAPTAIN,
-                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
-                                  gPalace_FacingActions);
+  FieldActor_WatchAndStartScript(ACTOR_CAPTAIN,
+                                 ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                 gPalace_FacingActions);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != 0) {
@@ -1323,7 +1323,7 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_WaitForMoveById(ACTOR_MIA);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
-  Actor_RefreshSelectorById(ACTOR_CAPTAIN);
+  Actor_WaitForScriptEndById(ACTOR_CAPTAIN);
   Event_Wait(20);
 
   advanceAlternateReply = 1;
@@ -1499,9 +1499,9 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Actor_SetPosition(ACTOR_MIA, 0, 0);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHWEST, 0);
-  FieldActor_SetTargetAndCallback(ACTOR_PARTY_LEADER,
-                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
-                                  gPalace_FacingActions);
+  FieldActor_WatchAndStartScript(ACTOR_PARTY_LEADER,
+                                 ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
+                                 gPalace_FacingActions);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 852, 646);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 852, 666);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 864, 672);

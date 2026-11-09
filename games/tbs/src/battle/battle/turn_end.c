@@ -139,7 +139,7 @@ DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownSleep, sleep, 50)
 /// them (PSY_SEAL_LUFF, PSY_SEAL_BIND); only Bind's, once Luff's is gone, may
 /// end early (bias 30), which clears psySeal. Called by
 /// Battle_ProcessTurnEnd, which then shows `MsgCureSeal`.
-s32 Battle_AdvanceCounterAndCheckChance(s32 unitId) {
+s32 BattleUnit_CountDownPsynergySeal(s32 unitId) {
   s32 decremented;
   u8 remaining;
   s32 turns;
@@ -500,7 +500,7 @@ s32 Battle_ProcessTurnEnd(void) {
           BattleMessage_ShowAndWaitFar(MsgWakes);
           BattleMessage_WaitForAdvance();
         }
-        if (Battle_AdvanceCounterAndCheckChance(unitId) != 0) {
+        if (BattleUnit_CountDownPsynergySeal(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(MsgCureSeal);

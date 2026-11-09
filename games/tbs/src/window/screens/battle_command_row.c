@@ -97,8 +97,8 @@ s32 BattleCommandRow_Run(s32 mode) {
     selectionUi->entries[entryIndex].resource = iconSlot;
     if (selectionUi->commandKinds[entryIndex] == -1)
       break;
-    Text_DrawCharacter(selectionUi, entryIndex,
-                       selectionUi->commandKinds[entryIndex]);
+    BattleCommandRow_LoadIcon(selectionUi, entryIndex,
+                              selectionUi->commandKinds[entryIndex]);
   }
   selectionUi->iconCount = entryIndex;
   selectionUi->affine.scaleX = 320;
@@ -205,8 +205,9 @@ s32 BattleCommandRow_Run(s32 mode) {
               MsgCommandName,
           selectionUi->window, 0, 0);
       selectionUi->drawnIndex = selectionUi->selectedIndex;
-      Text_DrawCharacter(selectionUi, selectionUi->selectedIndex,
-                         selectionUi->commandKinds[selectionUi->selectedIndex]);
+      BattleCommandRow_LoadIcon(
+          selectionUi, selectionUi->selectedIndex,
+          selectionUi->commandKinds[selectionUi->selectedIndex]);
     }
     selectionUi->affineIndex =
         OamMatrix_AllocFromTransform(&selectionUi->affine);

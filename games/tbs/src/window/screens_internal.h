@@ -190,8 +190,8 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #endif
 
 /// BG1's tile number of the command row's first icon tile. BG1 has 256-colour
-/// tiles of 8x8 bytes from character block 0, and Text_DrawCharacter loads the
-/// icons into character block 1, 16 tiles each.
+/// tiles of 8x8 bytes from character block 0, and BattleCommandRow_LoadIcon
+/// loads the icons into character block 1, 16 tiles each.
 #define COMMAND_ROW_ICON_TILE (BG_CHAR_SIZE / (8 * 8))
 
 // The chosen item's window.
@@ -378,7 +378,7 @@ struct BattleCommandRowIcon {
 /// return.
 struct BattleCommandRowWork {
   /// BG palette slots for the icons' 256-colour pixels, filled as each icon
-  /// is loaded (Text_LoadRemappedGlyph).
+  /// is loaded (BattleCommandRow_LoadIconTiles).
   struct GlyphPalette palette;
   struct BattleCommandRowIcon entries[6];
   struct Window *window; ///< shows the selected command's name

@@ -73,7 +73,7 @@ void Actor_WatchAndSetScript(u32 actorId, u32 watchedActorId) {
 /// Waits, at most 300 frames, for an actor's script to reach its end
 /// (SC_END). Called by Actor_RunRepeatedMotion, the climbing
 /// events and about 28 others.
-void Actor_RefreshSelectorById(u32 actorId) {
+void Actor_WaitForScriptEndById(u32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL)
@@ -101,7 +101,7 @@ void Actor_SetMovementTypeAndWaitById(u32 actorId, s32 action) {
 /// movementState, so a paused actor moves again, as the other move
 /// commands here do. Events reach it
 /// (Actor_SetDestination).
-void Actor_ResetAndSetPosition(u32 actorId, s32 x, s32 z) {
+void Actor_SetDestinationById(u32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
@@ -112,10 +112,10 @@ void Actor_ResetAndSetPosition(u32 actorId, s32 x, s32 z) {
 }
 
 /// The event command "move actor and wait": as
-/// Actor_ResetAndSetPosition, then waits (at most 600 frames) for the
+/// Actor_SetDestinationById, then waits (at most 600 frames) for the
 /// actor to arrive. Events reach it (Actor_MoveToAndWait);
 /// the climbing events call it too.
-void Actor_SetPositionAndCommit(u32 actorId, s32 x, s32 z) {
+void Actor_MoveToAndWaitById(u32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
@@ -129,7 +129,7 @@ void Actor_SetPositionAndCommit(u32 actorId, s32 x, s32 z) {
 /// The event command "walk actor to": the actor walks (animation
 /// 2) toward (x, z), in pixels. Events reach it (ACTOR_WALK,
 /// Actor_WalkTo); the Battle Arena calls it too.
-void Actor_ResetAndSetPositionInMode2(u32 actorId, s32 x, s32 z) {
+void Actor_WalkToById(u32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
@@ -144,7 +144,7 @@ void Actor_ResetAndSetPositionInMode2(u32 actorId, s32 x, s32 z) {
 /// to (x, z), in pixels, waits for it to arrive and stands it still (animation
 /// 1). Events reach it
 /// (Actor_WalkToAndWait).
-void Actor_SetPositionAndReset(u32 actorId, s32 x, s32 z) {
+void Actor_WalkToAndWaitById(u32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
@@ -196,7 +196,7 @@ void Actor_CenterOnColumn(u32 actorId, s32 priority, s32 zOffset) {
 /// heads (xOffset, zOffset) pixels from where it stands. Events reach it
 /// (Actor_SetDestinationOffset); Actor_LaunchFromLeader
 /// calls it too.
-void Actor_OffsetPositionAndResetMotion(u32 actorId, s32 xOffset, s32 zOffset) {
+void Actor_SetDestinationOffsetById(u32 actorId, s32 xOffset, s32 zOffset) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
@@ -209,8 +209,8 @@ void Actor_OffsetPositionAndResetMotion(u32 actorId, s32 xOffset, s32 zOffset) {
 
 /// Walks the actor (animation 2) (xOffset, zOffset) pixels from where it
 /// stands. Events reach it
-/// (Actor_WalkBy); Actor_CommitPositionAndActivate calls it too.
-void Actor_OffsetPositionAndReset(u32 actorId, s32 xOffset, s32 zOffset) {
+/// (Actor_WalkBy); Actor_WalkByAndWaitById calls it too.
+void Actor_WalkByById(u32 actorId, s32 xOffset, s32 zOffset) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
@@ -225,10 +225,10 @@ void Actor_OffsetPositionAndReset(u32 actorId, s32 xOffset, s32 zOffset) {
 /// Walks the actor (xOffset, zOffset) pixels, waits for it to arrive and
 /// stands it still. Events reach it (Actor_WalkByAndWait); the
 /// Lemurian ship calls it by name.
-void Actor_CommitPositionAndActivate(u32 actorId, s32 xOffset, s32 zOffset) {
+void Actor_WalkByAndWaitById(u32 actorId, s32 xOffset, s32 zOffset) {
   struct Actor *actor = Actor_Lookup(actorId);
 
-  Actor_OffsetPositionAndReset(actorId, xOffset, zOffset);
+  Actor_WalkByById(actorId, xOffset, zOffset);
   if (actor != NULL) {
     Actor_WaitForMoveFar(actor);
     Actor_SelectAnimationFar(actor, 1);
@@ -252,7 +252,7 @@ void Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 action) {
                                              leader->z.fixed);
     actor->paused = 0;
     Actor_SelectAnimationFar(actor, 2);
-    Actor_OffsetPositionAndResetMotion(actorId, xOffset, zOffset);
+    Actor_SetDestinationOffsetById(actorId, xOffset, zOffset);
     Actor_StartScriptFar(actor, (const s32 *)&gActor_LaunchScript);
     actor->timer = action;
   }
@@ -361,7 +361,7 @@ void Actor_SetPositionWithTerrain(u32 actorId, s32 x, s32 y, s32 z) {
 /// Import_ActorSetAnimation (ACTOR_ANIMATION, Actor_SetAnimation);
 /// Event_AskYesNoWithActorAnimation and
 /// Actor_SetAnimationAndWait call it too.
-void Actor_SetModeById(u32 actorId, s32 animation) {
+void Actor_SetAnimationById(u32 actorId, s32 animation) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL)
@@ -408,7 +408,7 @@ void Actor_WaitForAnimationChange(u32 actorId) {
 /// animation and waits for it to end. Events reach it
 /// (Actor_SetAnimationAndWait).
 void Actor_SetAnimationAndWait(u32 actorId, s32 animation) {
-  Actor_SetModeById(actorId, animation);
+  Actor_SetAnimationById(actorId, animation);
   Actor_WaitForAnimationChange(actorId);
 }
 
@@ -468,14 +468,14 @@ void Actor_StartRepeatedMotion(u32 actorId, s32 count) {
 /// the events of Djinn joining the party call it too.
 void Actor_RunRepeatedMotion(u32 actorId, s32 count) {
   Actor_StartRepeatedMotion(actorId, count);
-  Actor_RefreshSelectorById(actorId);
+  Actor_WaitForScriptEndById(actorId);
 }
 
-/// Moves a dust puff of FieldEffect_SpawnBurstParticle: it drifts with its x
+/// Moves a dust puff of FieldEffect_SpawnDustPuff: it drifts with its x
 /// and z velocity (kept in speed and acceleration), which drag slows by 1/18
 /// and 1/16 each frame, and rises 1/64 pixel a frame. Runs each frame as the
 /// puff's update routine.
-void FieldEffect_UpdateParticleLinearMotion(struct Actor *actor) {
+void FieldEffect_UpdateDustPuff(struct Actor *actor) {
   struct Actor *particle = (struct Actor *)actor;
   s32 velocityX;
   s32 x;
@@ -507,7 +507,7 @@ void FieldEffect_UpdateParticleLinearMotion(struct Actor *actor) {
 /// toward the back at 0.5 to 1.4 pixels a frame and sideways at up to 1.4, with
 /// one of two animations. A nonzero param is given to its sprite parts
 /// (Actor_SetSpriteColor). Only Actor_JumpDownLedge calls it.
-void FieldEffect_SpawnBurstParticle(struct Actor *source, s32 param) {
+void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
   struct Actor *actor;
   struct Sprite *child;
   s32 speed;
@@ -542,7 +542,7 @@ void FieldEffect_SpawnBurstParticle(struct Actor *source, s32 param) {
     speed <<= 1;
     actor->speedLimit = Q16_ONE / 10 * speed;
     actor->timer = 0;
-    actor->update = FieldEffect_UpdateParticleLinearMotion;
+    actor->update = FieldEffect_UpdateDustPuff;
     child->flags = 0;
     child->image.priority = source->sprite->image.priority;
   }
@@ -588,7 +588,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
     Sound_PlayFar(SE_FLOOR_SWITCH);
     // From here pose counts frames.
     pose = 0;
-    Actor_ArmCallback(actorId, FACING_SOUTH_SOUTHWEST, 0);
+    Actor_FaceDirectionById(actorId, FACING_SOUTH_SOUTHWEST, 0);
     *objectFlags = 0;
     do {
       nextY = actor->y.fixed - PIXELS(2);
@@ -596,7 +596,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
       actor->targetY = nextY;
       wait(1);
       if ((param != -1) && (pose & 1)) {
-        FieldEffect_SpawnBurstParticle(actor, param);
+        FieldEffect_SpawnDustPuff(actor, param);
       }
       pose++;
     } while ((u32)pose <= 13);
@@ -621,7 +621,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
 /// actor at once to face the second, then waits the given number of frames.
 /// Writes the first actor's angle. Events reach it (Actor_FaceActor); the
 /// Battle Arena calls it too.
-void Actor_SetAngleToward(s32 firstId, s32 secondId, s32 frames) {
+void Actor_FaceActorById(s32 firstId, s32 secondId, s32 frames) {
   struct Actor *first;
   struct Actor *second;
 
@@ -774,7 +774,7 @@ void Actor_UpdateBlink(struct Actor *actor) {
 /// Sets the param byte of every animated part of an actor's sprite. Events
 /// set 0 or 15, and alternate the two to make an actor flash.
 /// Marks the sprite dirty. Called by Actor_ConfigureSpriteColor,
-/// FieldEffect_SpawnBurstParticle and about 40 event sites.
+/// FieldEffect_SpawnDustPuff and about 40 event sites.
 void Actor_SetSpriteColor(struct Actor *actor, s32 param) {
   struct Actor *object = actor;
 
@@ -804,7 +804,7 @@ void Actor_SetSpriteColor(struct Actor *actor, s32 param) {
 /// acceleration, to keep up with it, and no collision flags, so it cannot block
 /// the target. Called by Vale's, Bilibin's, Imil's, Kolima's and McCoy's palace
 /// events, among others.
-void Actor_SetTargetAndCallback(u32 actorId, s32 targetId, const void *script) {
+void Actor_WatchAndStartScript(u32 actorId, s32 targetId, const void *script) {
   struct Actor *follower = Actor_Lookup(actorId);
   struct Actor *target = Actor_Lookup(targetId & 0xff);
 
@@ -863,7 +863,7 @@ void Actor_ResetTargetAndSetMode1(u32 actorId) {
 /// waits the given number of frames. Writes the angle to the actor's timer.
 /// Events reach it (ACTOR_DIR, Actor_FaceDirection); the Djinni, Retreat and
 /// climbing events and Actor_JumpDownLedge call it too.
-void Actor_ArmCallback(s32 actorId, s32 angle, s32 frames) {
+void Actor_FaceDirectionById(s32 actorId, s32 angle, s32 frames) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
@@ -920,7 +920,7 @@ void Event_SetMessageId(s32 message) { gFieldWork->message = message; }
 /// 12 bits of actorId, or -1 if there is no such animated actor. The
 /// message commands (messages.c) call it to find the speaker's portrait and
 /// voice.
-s32 Actor_ReadActiveValue(s32 actorId) {
+s32 Actor_GetSpriteById(s32 actorId) {
 #ifdef UBFIX
   struct FieldWork *state = gFieldWork;
   s32 sprite = -1;
@@ -946,7 +946,7 @@ s32 Actor_ReadActiveValue(s32 actorId) {
 /// Returns the first of the scene's actors (8 to 65) showing sprite, or
 /// -1. Reached only through an unnamed veneer in the field sequence bank's
 /// far-call table; nothing in ☀️ names it.
-s32 Actor_FindActiveByValue(s32 sprite) {
+s32 Actor_FindBySprite(s32 sprite) {
   struct FieldWork *state = gFieldWork;
   s32 result = -1;
   s32 index;

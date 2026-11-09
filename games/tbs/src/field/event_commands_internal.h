@@ -244,8 +244,8 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
 #define ABOVE (16 << 16) ///< 16 pixels up
 
 /// The states of a particle that flies out and back: Halt's,
-/// Force's and Move's (FieldEffect_UpdateRadialCamera,
-/// FieldEffect_UpdateRadialBurst, FieldEffect_UpdateOrbitAndReturn).
+/// Force's and Move's (FieldEffect_UpdateHaltParticle,
+/// FieldEffect_UpdateRadialBurst, FieldEffect_UpdateOutAndBack).
 /// FieldParticle_SetCallback starts it at the first; each takes the next.
 enum OutAndBackState {
   OUT_AND_BACK_AIM_OUT = 0,    ///< picks the point it flies out to
@@ -255,7 +255,7 @@ enum OutAndBackState {
 };
 
 /// The states of a Venus Djinni's rising particle
-/// (FieldEffect_UpdateRadialSpread), which FieldEffect_RunVenusDjinnCapture
+/// (FieldEffect_UpdateRadialSpread), which Djinn_RunVenusJoinEffect
 /// moves on to VENUS_PARTICLE_LAST_RISE.
 enum VenusParticleState {
   VENUS_PARTICLE_AIM = 0,      ///< starts round the leader, aimed up the screen
@@ -265,7 +265,7 @@ enum VenusParticleState {
 
 /// The states of a Mercury Djinni's droplet
 /// (FieldEffect_UpdateRandomTargetParticle), which
-/// FieldEffect_RunMercuryDjinnCapture moves on to MERCURY_DROPLET_LAST_FALL.
+/// Djinn_RunMercuryJoinEffect moves on to MERCURY_DROPLET_LAST_FALL.
 enum MercuryDropletState {
   MERCURY_DROPLET_AIM = 0, ///< placed above the leader, aimed at a spot by it
   /// Splashes where it lands, then falls again (MERCURY_DROPLET_AIM).
@@ -276,7 +276,7 @@ enum MercuryDropletState {
 };
 
 /// The states of a Mars Djinni's spark
-/// (FieldEffect_UpdatePhasedRadialParticle), which Djinn_RunMarsJoinEffect
+/// (FieldEffect_UpdateMarsSpark), which Djinn_RunMarsJoinEffect
 /// moves on to MARS_SPARK_STOPPING and then MARS_SPARK_LEAVING.
 enum MarsSparkState {
   MARS_SPARK_AIM = 0,    ///< aimed 120 pixels up the screen from its origin

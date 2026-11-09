@@ -12,7 +12,7 @@
 /// leader. Called by Djinn_JoinParty for a Venus Djinni, which then clears the
 /// Djinni's actor slot. Uses all 24 field effect sprites, tints the
 /// field palette green and fades it back at the end.
-void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
+void Djinn_RunVenusJoinEffect(s32 djinniId) {
   struct Actor *leader;
   struct Actor *djinni;
   struct FieldEffectWork *effectWork;
@@ -50,7 +50,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   Actor_SelectAnimationFar(djinni, 3);
   // The leader turns to face the camera (FACING_SOUTH).
   wait(90);
-  Actor_ArmCallback(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   wait(20);
   Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId),
                            ANIM_LEADER_ARMS_RAISED);
@@ -150,14 +150,14 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
 
   wait(15);
   Shop_RestoreFieldPaletteFar();
-  FieldEffect_ClearActiveSlotsAndScheduleUpdates();
+  FieldEffect_ReleaseSlots();
 }
 
 /// Field effect sprite callback of a Mercury Djinni's droplets: each falls from
 /// 100 pixels above (on screen) to a random point 2 to 8 pixels round a spot 15
 /// to 20 pixels over the leader, at 3 to 6 pixels a frame, and where it lands
 /// splashes 12 pixels in a random direction, at half size, with SE_CRACK. It
-/// then falls again 6 frames later, until FieldEffect_RunMercuryDjinnCapture
+/// then falls again 6 frames later, until Djinn_RunMercuryJoinEffect
 /// sets MERCURY_DROPLET_LAST_FALL: its next splash is its last (enum
 /// MercuryDropletState).
 void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
@@ -217,7 +217,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
 
 /// Per-frame update of an afterimage: closes half the distance to the actor
 /// it watches. Set on the Mercury Djinni's afterimages by
-/// FieldEffect_RunMercuryDjinnCapture.
+/// Djinn_RunMercuryJoinEffect.
 void FieldEffect_HalveDistanceToTarget(struct Actor *actor) {
   FieldEffect_MoveAfterimageHalfway(actor);
 }

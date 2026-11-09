@@ -110,13 +110,14 @@
 // UB: each of these calls a void function through an s32 function type, the
 // call the bytes show; UBFIX calls it as declared.
 #ifdef UBFIX
-#define COLOSSEUM_NAVAMPA_MATCH_FACE_DIRECTION Actor_ArmCallback
+#define COLOSSEUM_NAVAMPA_MATCH_FACE_DIRECTION Actor_FaceDirectionById
 #define COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK                           \
   ColosseumNavampaMatch_StartLetteringAnimation
 #define COLOSSEUM_NAVAMPA_MATCH_APPLY_MATCHING_SLOT_VALUES                     \
   Scene_GiveAndEquipItem
 #else
-#define COLOSSEUM_NAVAMPA_MATCH_FACE_DIRECTION ((s32 (*)())Actor_ArmCallback)
+#define COLOSSEUM_NAVAMPA_MATCH_FACE_DIRECTION                                 \
+  ((s32 (*)())Actor_FaceDirectionById)
 #define COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK                           \
   ((s32 (*)())ColosseumNavampaMatch_StartLetteringAnimation)
 #define COLOSSEUM_NAVAMPA_MATCH_APPLY_MATCHING_SLOT_VALUES                     \
@@ -961,7 +962,7 @@ static void ColosseumNavampaMatch_ReachArena(void) {
                                                        ITEM_HUNTERS_SWORD);
   ColosseumNavampaMatch_WaitForOpponentToFinish();
   for (i = 0; i < 10; i++) {
-    Actor_RefreshSelectorById(ACTOR_OPPONENT);
+    Actor_WaitForScriptEndById(ACTOR_OPPONENT);
   }
   Actor_SetSpeed(ACTOR_OPPONENT, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkTo(ACTOR_OPPONENT, 1528, 192);

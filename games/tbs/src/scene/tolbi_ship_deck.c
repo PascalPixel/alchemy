@@ -149,7 +149,7 @@ static void TolbiShipDeck_PlaceLeaderOnDeck(void);
 /// Who is who on deck, numbering each actor placement table's rows from
 /// ACTOR_FIRST_PLACED. Every table starts with the same twelve rows of oars,
 /// and the events add their actors after a table's last row
-/// (Event_CallWithLastActiveActorId), so each stage of the voyage has
+/// (Event_AppendActorPlacements), so each stage of the voyage has
 /// its own names, which carry its prefix. At Kalay
 /// (gTolbiShipDeckActorPlacementsWaiting) the captain talks the delay over
 /// with Kaja, the deck's fighter, and a crewman, who asks Kaja how the oarsmen
@@ -1435,7 +1435,7 @@ static void TolbiShipDeck_SetUpUnderSail(void) {
   u8 bits;
 
   Event_Start();
-  Event_CallWithLastActiveActorId(
+  Event_AppendActorPlacements(
       (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
   wait(1);
   Actor_SetPosition(ACTOR_SEA_KAJA, 0, 0);
@@ -1471,7 +1471,7 @@ static void TolbiShipDeck_SetUpAfterKraken(void) {
   struct Actor *record;
 
   Event_Start();
-  Event_CallWithLastActiveActorId(
+  Event_AppendActorPlacements(
       (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
   wait(1);
   Actor_SetPosition(ACTOR_SEA_KAJA, 0, 0);
@@ -1501,7 +1501,7 @@ static void TolbiShipDeck_SetUpAtAnchor(void) {
 
   ((struct MapGridScrollWork *)gMapGridWork[0])->minX = PIXELS(65);
   Event_Start();
-  Event_CallWithLastActiveActorId(
+  Event_AppendActorPlacements(
       (struct ActorPlacement *)gTolbiShipDeck_KrakenActorPlacements);
   wait(1);
   Actor_ReleaseById(ACTOR_SEA_KRAKEN);
@@ -1565,7 +1565,7 @@ static void TolbiShipDeck_DepartWithParty(void) {
   struct Actor *record;
 
   Event_Start();
-  Event_CallWithLastActiveActorId(
+  Event_AppendActorPlacements(
       (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(232), PIXELS(636));
@@ -1628,7 +1628,7 @@ static void TolbiShipDeck_AnnouncePreparationsReady(s32 messenger,
 /// sighted. "Aye, Captain! Sea monsters!"
 static void TolbiShipDeck_SightSeaMonsters(void) {
   Event_Start();
-  Event_CallWithLastActiveActorId(
+  Event_AppendActorPlacements(
       (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
   wait(1);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
@@ -1660,10 +1660,10 @@ static void TolbiShipDeck_MonstersBoard(void) {
   const s32 *shared;
 
   Event_Start();
-  Event_CallWithLastActiveActorId(
+  Event_AppendActorPlacements(
       (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
   wait(1);
-  Event_CallWithLastActiveActorId(
+  Event_AppendActorPlacements(
       (struct ActorPlacement *)gTolbiShipDeck_MonstersBoardActorPlacements);
   wait(1);
   Actor_SetPosition(ACTOR_SEA_OURANOS, PIXELS(248), PIXELS(728));
@@ -1715,7 +1715,7 @@ static void TolbiShipDeck_MonstersBoard(void) {
   do {
     Actor_WalkTo(ACTOR_SEA_OURANOS, 196, 612);
   } while (0);
-  Actor_RefreshSelectorById(ACTOR_SEA_FIRST_ATTACK_MONSTER);
+  Actor_WaitForScriptEndById(ACTOR_SEA_FIRST_ATTACK_MONSTER);
   Event_Wait(10);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1734,10 +1734,10 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   Event_Start();
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
-  Event_CallWithLastActiveActorId(
+  Event_AppendActorPlacements(
       (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
   wait(1);
-  Event_CallWithLastActiveActorId(
+  Event_AppendActorPlacements(
       (struct ActorPlacement *)gTolbiShipDeck_SecondAttackActorPlacements);
   wait(1);
   Actor_SetAnimation(ACTOR_SEA_SPLASH, 0);
@@ -1843,10 +1843,10 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   record = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(record, 0);
-  Event_CallWithLastActiveActorId(
+  Event_AppendActorPlacements(
       (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
   wait(1);
-  Event_CallWithLastActiveActorId(
+  Event_AppendActorPlacements(
       (struct ActorPlacement *)gTolbiShipDeck_ThirdAttackActorPlacements);
   wait(1);
   Actor_SetPosition(ACTOR_SEA_SEAN, PIXELS(176), PIXELS(696));
@@ -1970,7 +1970,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   struct Actor *actor;
 
   Event_Start();
-  Event_CallWithLastActiveActorId(
+  Event_AppendActorPlacements(
       (struct ActorPlacement *)gTolbiShipDeck_KrakenActorPlacements);
   wait(1);
   FieldCamera_FollowActor(ACTOR_INVISIBLE_SEA_CAMERA_TARGET, 1);
@@ -2086,7 +2086,7 @@ static void TolbiShipDeck_ThankForKraken(void) {
   struct Actor *record;
 
   Event_Start();
-  Event_CallWithLastActiveActorId(
+  Event_AppendActorPlacements(
       (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
   wait(1);
   Actor_SetPosition(ACTOR_SEA_KAJA, PIXELS(182), PIXELS(618));
@@ -2144,7 +2144,7 @@ static void TolbiShipDeck_SightLand(void) {
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   record = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(record, 0);
-  Event_CallWithLastActiveActorId(
+  Event_AppendActorPlacements(
       (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
   wait(1);
   Actor_SetPosition(ACTOR_SEA_KAJA, PIXELS(196), PIXELS(502));
@@ -2375,7 +2375,7 @@ static void TolbiShipDeck_RowersDisembark(void) {
     Actor_SetScript(actorId, gTolbiShipDeck_RowerLeavesActions);
   }
 
-  Actor_RefreshSelectorById(actorId);
+  Actor_WaitForScriptEndById(actorId);
   Event_Wait(40);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 216 << 16, 146 << 18);
   wait(1);
@@ -2785,7 +2785,7 @@ static void TolbiShipDeck_SightIsland(void) {
   Event_Start();
   sSeaScroll[0] = PIXELS(4);
   sSeaSpeed[0] = -PIXELS(1) / 2;
-  Event_CallWithLastActiveActorId(
+  Event_AppendActorPlacements(
       (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
   wait(1);
   Actor_SetPosition(ACTOR_SEA_OURANOS, PIXELS(182), PIXELS(618));
@@ -2960,7 +2960,7 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
 /// thoroughly?"
 static void TolbiShipDeck_ReturnFromIsland(void) {
   Event_Start();
-  Event_CallWithLastActiveActorId(
+  Event_AppendActorPlacements(
       (struct ActorPlacement *)gTolbiShipDeck_TourGuideActorPlacements);
   wait(1);
   Event_StartScreenTransition();

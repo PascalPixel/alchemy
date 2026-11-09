@@ -26,13 +26,13 @@
 	.set import.Actor_GetById, 1
 	.set import.Actor_SetSpeedParameters, 1
 	.set import.Actor_SetMovementTypeById, 1
-	.set import.Actor_RefreshSelectorById, 1
+	.set import.Actor_WaitForScriptEndById, 1
 	.set import.Actor_Stop, 1
-	.set import.Actor_ResetAndSetPosition, 1
-	.set import.Actor_ResetAndSetPositionInMode2, 1
-	.set import.Actor_SetPositionAndReset, 1
+	.set import.Actor_SetDestinationById, 1
+	.set import.Actor_WalkToById, 1
+	.set import.Actor_WalkToAndWaitById, 1
 	.set import.Actor_CenterOnColumn, 1
-	.set import.Actor_OffsetPositionAndResetMotion, 1
+	.set import.Actor_SetDestinationOffsetById, 1
 	.set import.Actor_WaitForMoveById, 1
 	.set import.Import_ActorSetPosition, 1
 	.set import.Import_ActorSetAnimation, 1
@@ -40,13 +40,13 @@
 	.set import.Actor_Jump, 1
 	.set import.Actor_StartRepeatedMotion, 1
 	.set import.Actor_RunRepeatedMotion, 1
-	.set import.Actor_SetAngleToward, 1
+	.set import.Actor_FaceActorById, 1
 	.set import.Actor_TurnToFaceEachOther, 1
 	.set import.Event_SetMessageId, 1
 	.set import.FieldMessage_ShowAtActor, 1
 	.set import.Event_ShowMessageAndWait, 1
-	.set import.Actor_ArmCallback, 1
-	.set import.FieldEffect_SpawnAttached, 1
+	.set import.Actor_FaceDirectionById, 1
+	.set import.Actor_ShowEmoteById, 1
 	.set import.FieldEffect_SetAttached, 1
 	.set import.FieldCamera_FollowActor, 1
 	.set import.FieldCamera_MoveWithinMapBounds, 1
@@ -57,11 +57,11 @@
 	.set import.Event_WaitTransitionFrames, 1
 	.set import.ItemDisplay_ShowItem, 1
 	.set import.Field_EndBusyAndReveal, 1
-	.set import.FieldPsynergy_FinishWaveAndReleaseHeapBlock, 1
+	.set import.FieldPsynergy_StopMindReadWave, 1
 	.set import.Scene_PlayMusic, 1
 	.set import.Actor_LaunchFromLeader, 1
-	.set import.Actor_OffsetPositionAndReset, 1
-	.set import.Actor_CommitPositionAndActivate, 1
+	.set import.Actor_WalkByById, 1
+	.set import.Actor_WalkByAndWaitById, 1
 	.set import.Actor_WatchAndSetScript, 1
 	.set import.Inn_PlaySleep, 1
 	.set import.Sound_Play, 1

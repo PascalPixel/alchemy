@@ -130,9 +130,9 @@ s32 ItemMenu_Run(void) {
 #endif
 
   // Let the player choose.
-  Menu_CancelSoundReset();
+  Menu_StartWatchingStart();
   result = ItemMenu_RunCommands(&member, &target, &item);
-  Menu_EnsureCancelSound();
+  Menu_StopWatchingStart();
   if (result == 1) {
     struct FieldWork *selection =
         cache[HEAP_SLOT_FIELD - HEAP_SLOT_ACTOR_SYSTEM];
@@ -162,7 +162,7 @@ s32 ItemMenu_Run(void) {
   wait(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
   ((struct WindowWork *)*process)->holdTilemapUpload = 0;
-  Event_ClearInvalidPackedValuesFar();
+  Party_ClearUnusableShortcutsFar();
   return result;
 }
 
@@ -248,7 +248,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_DrawMessage(0, MsgWhoseItem);
 #if TBS_PATCH_1
       WindowSprite_RedrawSavedRectFar(menu->descriptionWindow);
-      Text_DrawWorkValueWithLabel(menu->descriptionWindow);
+      Menu_DrawCoins(menu->descriptionWindow);
       command = ItemMenu_SelectMember(0);
       if (command == -1) {
         /* FAKEMATCH(dead): command cleared with selection though the menu
@@ -259,7 +259,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
         done = 1;
       }
 #else
-      Text_DrawWorkValueWithLabel(menu->descriptionWindow);
+      Menu_DrawCoins(menu->descriptionWindow);
       member = ItemMenu_SelectMember(0);
       if (member == -1) {
         chosen = selection = member = 0;
@@ -380,8 +380,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       if (chosen != -1) {
 #endif
         command = 0;
-        if (ItemMenu_IsSpecial(menu->selectedItems[0] &
-                               INVENTORY_ITEM_ID_MASK) != 0) {
+        if (ItemMenu_IsStatRaisingItem(menu->selectedItems[0] &
+                                       INVENTORY_ITEM_ID_MASK) != 0) {
           command = STATUS_PANEL_STATS;
         }
         result = ItemMenu_Use();
@@ -492,7 +492,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       }
       Unit_CalculateFar(menu->sideMember[0]);
       menu->selectedItemIcon->motion = ICON_HIDDEN;
-      Event_ClearInvalidPackedValuesFar();
+      Party_ClearUnusableShortcutsFar();
       break;
 
     // Give the item, or some of a stack, to the chosen party member. A full
@@ -604,7 +604,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
           }
         }
       }
-      Event_ClearInvalidPackedValuesFar();
+      Party_ClearUnusableShortcutsFar();
       state = ITEM_STEP_MEMBER;
       break;
 
@@ -744,7 +744,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       }
       Heap_Release(targetCopy);
       Heap_Release(sourceCopy);
-      Event_ClearInvalidPackedValuesFar();
+      Party_ClearUnusableShortcutsFar();
       state = ITEM_STEP_MEMBER;
       break;
 
@@ -804,7 +804,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       menu->equipPreview = 0;
       WindowSprite_ClearListFar(menu->descriptionWindow);
       ItemMenu_ShowMessage(MsgRemoved, ITEM_MODAL_REMOVED_X, 8);
-      Event_ClearInvalidPackedValuesFar();
+      Party_ClearUnusableShortcutsFar();
       state = ITEM_STEP_ITEM;
       break;
 
@@ -883,7 +883,7 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
   struct ItemMenuWork *menu = gMenuWork;
   s32 memberIndex;
 
-  PsynergyMenu_InitializeEntryActors(MenuCursor_Create(menu), 2, 2, 8, 0);
+  Menu_CreatePartyFigures(MenuCursor_Create(menu), 2, 2, 8, 0);
   // The four figures stand at screen y 30; the screens raise the party member
   // chosen to 26.
   for (memberIndex = 3; memberIndex >= 0; memberIndex--)
@@ -990,7 +990,7 @@ void ItemMenu_Close(void) {
   struct WindowSprite *cursor;
 
   menu = gMenuWork;
-  Menu_ReleaseEntryActors();
+  Menu_ReleasePartyFigures();
   ItemMenu_HideAllIcons();
   wait(1);
   cursor = menu->cursor;
@@ -1246,7 +1246,8 @@ s32 ItemMenu_SelectTarget(s32 mode) {
       }
       // Using: the party member's status, and the item's name once.
       if (mode == ITEM_TARGET_USE) {
-        if (ItemMenu_IsSpecial(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK))
+        if (ItemMenu_IsStatRaisingItem(menu->selectedItems[0] &
+                                       INVENTORY_ITEM_ID_MASK))
           StatusPanel_Draw(menu->statusWindow, menu->memberIds[memberIndex],
                            menu->selectedSlots[0], STATUS_PANEL_STATS);
         else
@@ -1353,7 +1354,7 @@ void EquipmentMenu_StopCompatibilityIndicators(void) {
 
 /// Returns 1 for the items that raise a stat for good (Apple, Hard Nut, Mint
 /// and Lucky Pepper), whose use shows the stats panel instead of HP and PP.
-s32 ItemMenu_IsSpecial(s32 itemId) {
+s32 ItemMenu_IsStatRaisingItem(s32 itemId) {
   switch (itemId) {
   case ITEM_APPLE:
   case ITEM_HARD_NUT:
@@ -2070,7 +2071,7 @@ s32 ItemMenu_ShowDetails(s32 value) {
   // Hide the party figures (without their placement task they are not
   // drawn) and the status panel's portrait (the work's cursor), which the
   // window covers, meanwhile.
-  Task_Remove(Menu_UpdateEntryActorTransforms);
+  Task_Remove(Menu_PlacePartyFigures);
 
   {
     struct WindowSprite *cursor = menu->cursor;
@@ -2113,11 +2114,11 @@ s32 ItemMenu_ShowDetails(s32 value) {
   Window_CloseFar((void *)window, 1);
   WindowSprite_RedrawSavedRectFar(menu->mainWindow);
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
-  // As PsynergyMenu_InitializeEntryActors schedules it.
+  // As Menu_CreatePartyFigures schedules it.
   {
     s32 priority = TASK_PASS_FRAME;
 
-    Task_Add(Menu_UpdateEntryActorTransforms, priority);
+    Task_Add(Menu_PlacePartyFigures, priority);
   }
 
   // The Japanese window, 13 tiles wide, leaves the command grid at tile 13

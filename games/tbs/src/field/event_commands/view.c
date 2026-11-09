@@ -25,9 +25,9 @@ void MapGrid_SetCameraBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
 // The task runner calls void(void). Plain void changes the native return from
 // pop {r1}; bx r1 to pop {r0}; bx r0 (two instructions in tbs-en).
 #ifdef UBFIX
-void FieldEffect_StepRatioTransition(void) {
+void WorldMap_StepZoom(void) {
 #else
-s32 FieldEffect_StepRatioTransition(void) {
+s32 WorldMap_StepZoom(void) {
 #endif
   struct WorldMapView *perspective = gMapGridWork[0];
   s32 *from; // the zoom the transition starts from
@@ -50,18 +50,18 @@ s32 FieldEffect_StepRatioTransition(void) {
   if (perspective->zoomTransitionStep == perspective->zoomTransitionFrames) {
     perspective->zoomTransitionFrames = 0;
 #ifdef UBFIX
-    Task_Remove(FieldEffect_StepRatioTransition);
+    Task_Remove(WorldMap_StepZoom);
 #else
-    Task_Remove((TaskFunc)FieldEffect_StepRatioTransition);
+    Task_Remove((TaskFunc)WorldMap_StepZoom);
 #endif
   }
 }
 
 /// Starts a zoom to zoom (16.16) over frames frames, on the World Map only. The
 /// perspective work keeps the inverse, which scales the view's distance
-/// (farPlane times it, FieldEffect_StepRatioTransition): a zoom of 2 halves the
+/// (farPlane times it, WorldMap_StepZoom): a zoom of 2 halves the
 /// distance. Event_WaitForZoomTransition waits for it.
-void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
+void WorldMap_StartZoom(s32 zoom, s32 frames) {
   struct WorldMapView *perspective = gMapGridWork[0];
   s32 inverse;
 
@@ -77,9 +77,9 @@ void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
   perspective->zoomTransitionFrames = frames;
   perspective->zoomTransitionStep = 0;
 #ifdef UBFIX
-  Task_Add(FieldEffect_StepRatioTransition, TASK_PASS_FRAME + 20);
+  Task_Add(WorldMap_StepZoom, TASK_PASS_FRAME + 20);
 #else
-  Task_Add((TaskFunc)FieldEffect_StepRatioTransition, TASK_PASS_FRAME + 20);
+  Task_Add((TaskFunc)WorldMap_StepZoom, TASK_PASS_FRAME + 20);
 #endif
 }
 
@@ -142,7 +142,7 @@ s32 FieldEffect_CopyWatchedActorPosition(struct Actor *updated) {
 /// actor's. The bubble rides the actor and releases itself after 46 frames
 /// (gFieldEffect_WatchedActorScript: 16 frames of squash and stretch, then 30),
 /// however long the event waits.
-void FieldEffect_SpawnAttached(s32 actorId, s32 emote, s32 frames) {
+void Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames) {
   struct Actor *target;
 
   if ((emote & 0xff) == EMOTE_LIGHT_BULB) {

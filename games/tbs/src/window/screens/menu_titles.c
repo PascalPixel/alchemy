@@ -485,7 +485,8 @@ s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
 /// entries every new index takes entry 64, whose colour is not set here.
 /// HEAP_SLOT_GLYPH_TRANSFER holds the decoded icon and a 1 KB Heap_Alloc block
 /// the remapped pixels; both are freed before it returns.
-void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile) {
+void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
+                                    s32 tile) {
   GlyphTransfer *decoded;
   u8 *font;
   u8 *remapped;
@@ -518,15 +519,15 @@ void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile) {
 }
 
 /// Loads the command row's icon `index` as command icon `icon`: as BG1 tiles
-/// from tile index * 16 (Text_LoadRemappedGlyph), and into the row's
+/// from tile index * 16 (BattleCommandRow_LoadIconTiles), and into the row's
 /// shared VRAM cache entry for its 32x32 sprite, which BattleCommandRow_Run
 /// shows only for the selected icon. The icon number is also its command
 /// (BattleCommandRowIcon.kind), which names its label.
-void Text_DrawCharacter(struct BattleCommandRowWork *work, s32 index,
-                        u32 icon) {
+void BattleCommandRow_LoadIcon(struct BattleCommandRowWork *work, s32 index,
+                               u32 icon) {
   struct BattleCommandRowIcon *entry = &work->entries[index];
 
-  Text_LoadRemappedGlyph(&work->palette, icon, index * 16);
+  BattleCommandRow_LoadIconTiles(&work->palette, icon, index * 16);
   work->entries[index].kind = icon;
   MenuSprite_Initialize(entry->sprite, 0x80002000);
   entry->sprite.oam.f.tile =

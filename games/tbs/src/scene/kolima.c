@@ -494,9 +494,9 @@ static void Kolima_LowerBridge(void) {
   Event_Wait(20);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   // From now on the villager turns to keep facing the leader.
-  FieldActor_SetTargetAndCallback(ACTOR_BRIDGE_VILLAGER,
-                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
-                                  gKolima_FaceLeaderScript);
+  FieldActor_WatchAndStartScript(ACTOR_BRIDGE_VILLAGER,
+                                 ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                 gKolima_FaceLeaderScript);
   Event_Wait(60);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   GameFlag_Set(FLAG_KOLIMA_BRIDGE_LOWERED);
@@ -566,7 +566,7 @@ s32 Kolima_Initialize(void) {
     Actor_ReleaseById(ACTOR_IVAN_PSYNERGY_FIELD);
     Actor_ReleaseById(ACTOR_MIA_PSYNERGY_FIELD);
     Actor_ReleaseById(ACTOR_GARET_PSYNERGY_FIELD);
-    Event_CallWithLastActiveActorId(gKolima_EntryScript);
+    Event_AppendActorPlacements(gKolima_EntryScript);
   }
 
   return 0;
@@ -690,7 +690,7 @@ static void Kolima_WitnessForestCurse(void) {
     }
     Actor_SetScript(ACTOR_MIA, gKolima_MiaWalksIn);
   }
-  Actor_RefreshSelectorById(ACTOR_IVAN);
+  Actor_WaitForScriptEndById(ACTOR_IVAN);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 20);

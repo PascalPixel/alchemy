@@ -71,9 +71,9 @@ s32 PsynergyMenu_Run(void) {
   Text_UseExtraTilesFar(1);
 #endif
   // Let the player choose.
-  Menu_CancelSoundReset();
+  Menu_StartWatchingStart();
   result = PsynergyMenu_RunSteps(&member, &unused, &psynergy);
-  Menu_EnsureCancelSound();
+  Menu_StopWatchingStart();
   if (result == 1) {
     struct FieldWork *target = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
     u16 request;
@@ -105,7 +105,7 @@ s32 PsynergyMenu_Run(void) {
   Window_EraseBorderRectFar(0, 0, 30, 20);
   ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->holdTilemapUpload =
       0;
-  Event_ClearInvalidPackedValuesFar();
+  Party_ClearUnusableShortcutsFar();
   return result;
 }
 
@@ -409,7 +409,7 @@ s32 PsynergyMenu_SelectMember(u16 *memberIds, u16 *unused) {
       StatusPanel_Draw(window, memberIds[selection], 0,
                        STATUS_PANEL_EXPERIENCE);
       PsynergyMenu_DrawShortcuts(menu->shortcutWindow, memberIds[selection]);
-      PsynergyMenu_CallIconRoutineWithValue(menu, memberIds[selection]);
+      Menu_ReloadMemberPortrait(menu, memberIds[selection]);
       for (i = 3; i >= 0; i--)
         menu->rowPositions[i] = 30;
       // Raise the chosen party member.
@@ -419,7 +419,7 @@ s32 PsynergyMenu_SelectMember(u16 *memberIds, u16 *unused) {
 #if TBS_PATCH_1
         WindowSprite_RedrawSavedRectFar((void *)menu->infoWindow);
 #endif
-        Text_DrawWorkValueWithLabel(menu->infoWindow);
+        Menu_DrawCoins(menu->infoWindow);
         shown = 1;
       } else {
         GameFlag_ClearFar(FLAG_MENU_INFO_KEPT);
@@ -540,8 +540,7 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
       if (targetMode == 0) {
         StatusPanel_Draw(menu->statusWindow, menu->memberTable[selection], 0,
                          STATUS_PANEL_EXPERIENCE);
-        PsynergyMenu_CallIconRoutineWithValue(menu,
-                                              menu->memberTable[selection]);
+        Menu_ReloadMemberPortrait(menu, menu->memberTable[selection]);
         if (!GameFlag_GetFar(FLAG_MENU_INFO_KEPT) && !shown) {
           MENU_RESET_DESCRIPTION_WINDOW((void *)menu->infoWindow);
           MENU_DRAW_DESCRIPTION((menu->sideAction[0] & PSYNERGY_ABILITY_MASK) +
@@ -769,7 +768,7 @@ void PsynergyMenu_CreateEntryGrid(void) {
 
   menu = gMenuWork;
   window = MenuCursor_Create(menu);
-  PsynergyMenu_InitializeEntryActors((void *)window, 2, 2, 8, 0);
+  Menu_CreatePartyFigures((void *)window, 2, 2, 8, 0);
 
   window = Window_CreateFar(0, 5, 30, 15, WINDOW_FLAG_INSTANT);
   menu->psynergyWindow = window;
@@ -812,7 +811,7 @@ void PsynergyMenu_CloseWindows(void) {
   struct PsynergyMenuWork *menu;
 
   menu = gMenuWork;
-  Menu_ReleaseEntryActors();
+  Menu_ReleasePartyFigures();
   Window_CloseFar((void *)menu->auxiliaryWindow, 1);
   Window_CloseFar((void *)menu->psynergyWindow, 1);
   Window_CloseFar((void *)menu->messageWindow, 1);
@@ -1243,7 +1242,7 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
         menu->rowPositions[member] = 26;
         StatusPanel_Draw(menu->statusWindow, menu->memberTable[member], 0,
                          STATUS_PANEL_EXPERIENCE);
-        PsynergyMenu_CallIconRoutineWithValue(menu, menu->memberTable[member]);
+        Menu_ReloadMemberPortrait(menu, menu->memberTable[member]);
         break;
       }
 

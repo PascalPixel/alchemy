@@ -436,25 +436,25 @@ void PaletteCycle_Stop(void);
 void PaletteCycle_Start(void);
 void PaletteCycle_Step(void);
 
-s32 Terrain_GetFirstSampleA(const u8 *heightBytes, s32 pixelX, s32 pixelY);
-s32 Terrain_LerpTwoSamples(const u8 *heightBytes, s32 pixelX, s32 pixelY);
-s32 Terrain_LerpTwoSamplesB(const u8 *heightBytes, s32 pixelX, s32 pixelY);
-s32 Terrain_StepAtSummedPosition(const u8 *heightBytes, s32 x, s32 y);
-s32 Terrain_StepAtDifferencePosition(const u8 *heightBytes, s32 x, s32 y);
-s32 Terrain_LerpThreeSamplesByRatio(const u8 *heightBytes, s32 x, s32 y);
-s32 Terrain_LerpThreeSamplesAtDifference(const u8 *heightBytes, s32 x, s32 y);
-s32 Terrain_LerpTwoSamplesByTable(const u8 *heightBytes, s32 x, s32 y);
-s32 Terrain_StepAtHalf(const u8 *heightBytes, s32 pixelX, s32 pixelY);
-s32 Terrain_StepAtHalfB(const u8 *heightBytes, s32 pixelX, s32 pixelY);
-s32 Terrain_LerpThreeSamplesAtHalf(const u8 *heightBytes, s32 pixelX,
-                                   s32 pixelY);
-s32 Terrain_LerpThreeSamplesAtHalfB(const u8 *heightBytes, s32 pixelX,
-                                    s32 pixelY);
-s32 Terrain_LookupSampleByTable(const u8 *heightBytes, s32 pixelX, s32 pixelY);
-s32 Terrain_LookupSampleByTableReversed(const u8 *heightBytes, s32 pixelX,
-                                        s32 pixelY);
-s32 Terrain_GetFirstSampleB(const u8 *heightBytes, s32 pixelX, s32 pixelY);
-s32 Terrain_GetFirstSampleC(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Terrain_GetFlatHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Terrain_GetSlopeXHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Terrain_GetSlopeYHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Terrain_GetStepSumDiagonalHeight(const u8 *heightBytes, s32 x, s32 y);
+s32 Terrain_GetStepDifferenceDiagonalHeight(const u8 *heightBytes, s32 x,
+                                            s32 y);
+s32 Terrain_GetBendSumDiagonalHeight(const u8 *heightBytes, s32 x, s32 y);
+s32 Terrain_GetBendDifferenceDiagonalHeight(const u8 *heightBytes, s32 x,
+                                            s32 y);
+s32 Terrain_GetRoundedSquareHeight(const u8 *heightBytes, s32 x, s32 y);
+s32 Terrain_GetStepXHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Terrain_GetStepYHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Terrain_GetBendXHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Terrain_GetBendYHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Terrain_GetSampleTableHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Terrain_GetSampleTableMirroredHeight(const u8 *heightBytes, s32 pixelX,
+                                         s32 pixelY);
+s32 Terrain_GetFlatBHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Terrain_GetFlatCHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
 
 s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y);
 s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y);

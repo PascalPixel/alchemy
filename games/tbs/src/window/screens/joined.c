@@ -175,7 +175,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
 /// Returns the portrait character of party member `member` (0-8): from
 /// gCharacter_ChildSpriteTable during the prologue, from
 /// gCharacter_SpriteTable otherwise; 0 for any other party member.
-s32 Party_LookupCharacterValueByFlag32(u32 index) {
+s32 Party_GetMemberPortraitSprite(u32 index) {
   if (index > 8) {
     return 0;
   }
@@ -202,7 +202,7 @@ void Party_ShowJoinedMessage(s32 member) {
     Window_DrawDividerLine(window, 4, 0, 4, 4);
     work->dirty = 1;
     Icon_LoadWithPalette(
-        Portrait_GetForSpeaker(Party_LookupCharacterValueByFlag32(member)), 0,
+        Portrait_GetForSpeaker(Party_GetMemberPortraitSprite(member)), 0,
         &handle, &palette, PORTRAIT_PALETTE, 0);
     // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
     // a link word, attributes 0 and 1 (32x32 at y 12) and attribute 2.
@@ -259,7 +259,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     ((struct WindowWork *)work)->dirty = 1;
 
     Icon_LoadWithPalette(
-        Portrait_GetForSpeaker(Party_LookupCharacterValueByFlag32(first)), 0,
+        Portrait_GetForSpeaker(Party_GetMemberPortraitSprite(first)), 0,
         &firstHandle, &palette, PORTRAIT_PALETTE, zero);
     // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
     // a link word, attributes 0 and 1 (32x32 at y 12) and attribute 2.
@@ -270,7 +270,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
 
     secondEntry = secondOam;
     Icon_LoadWithPalette(
-        Portrait_GetForSpeaker(Party_LookupCharacterValueByFlag32(second)), 0,
+        Portrait_GetForSpeaker(Party_GetMemberPortraitSprite(second)), 0,
         &secondHandle, &palette, PORTRAIT_PALETTE + 1, zero);
     p = secondEntry;
     *p++ = zero;

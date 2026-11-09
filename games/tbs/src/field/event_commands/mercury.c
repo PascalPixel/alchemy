@@ -14,7 +14,7 @@
 /// by Djinn_JoinParty for a Mercury Djinni, which then clears the Djinni's
 /// actor slot; the Djinni's actor and its afterimages are released
 /// here. Uses all 24 field effect sprites (FieldEffect_InitializeSlots).
-void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
+void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   struct Actor *djinni;
   struct Actor *copy;
   struct Actor *previous;
@@ -101,7 +101,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   if (resourceId != 96)
     VramCache_FreeEntry(resourceId);
   wait(10);
-  Actor_ArmCallback(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   wait(20);
   Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId),
                            ANIM_LEADER_ARMS_RAISED);
@@ -149,7 +149,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   // Restore the colours.
   wait(50);
   Shop_RestoreFieldPaletteFar();
-  FieldEffect_ClearActiveSlotsAndScheduleUpdates();
+  FieldEffect_ReleaseSlots();
 }
 
 #undef MERCURY_PARTICLE_MAX

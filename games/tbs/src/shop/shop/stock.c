@@ -34,7 +34,7 @@ const s16 gShop_GiftItemIds[21] = {
 /// shops) reaches the next ticket's cost, and lets the player choose who
 /// takes it. Spends the credit and counts the gift, not coins. Called by
 /// Shop_SelectBuy after each purchase.
-void Shop_BuySpecialItem(struct Window *window, struct Window *itemWindow) {
+void Shop_GiveGameTicket(struct Window *window, struct Window *itemWindow) {
   struct ShopWork *shop = gMenuWork;
   s32 creditCost;
   u32 savedSelectedItem;

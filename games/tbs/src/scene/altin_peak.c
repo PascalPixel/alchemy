@@ -1415,9 +1415,9 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   FieldCamera_MoveWithinMapBounds(leader->x.fixed, leader->y.fixed,
                                   leader->z.fixed, 1);
   FieldCamera_WaitForMove();
-  FieldActor_SetTargetAndCallback(ACTOR_FIRST_WATER_BEAST,
-                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
-                                  gAltinPeak_FaceLeaderScript);
+  FieldActor_WatchAndStartScript(ACTOR_FIRST_WATER_BEAST,
+                                 ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                 gAltinPeak_FaceLeaderScript);
   GameFlag_Set(FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN);
   Event_End();
 }
@@ -1596,9 +1596,9 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
     actor->y.fixed = PIXELS(32);
     MapGrid_CopyCellAttributes(2, 0, 1, 1, 18, 13);
     Actor_SetPosition(ACTOR_FIRST_WATER_BEAST, PIXELS(260), PIXELS(215));
-    FieldActor_SetTargetAndCallback(
-        10, ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
-        gAltinPeak_FaceLeaderScript);
+    FieldActor_WatchAndStartScript(10,
+                                   ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                   gAltinPeak_FaceLeaderScript);
   } else {
     grid = gMapGridWork[0];
     Actor_SetPosition(ACTOR_FIRST_WATER_BEAST, 0, 0);

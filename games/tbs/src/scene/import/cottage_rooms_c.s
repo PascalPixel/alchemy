@@ -8,13 +8,13 @@
 	.set import.Event_AskYesNoWithActorAnimation, 1
 	.set import.Actor_GetById, 1
 	.set import.Actor_StartRepeatedMotion, 1
-	.set import.Actor_SetAngleToward, 1
+	.set import.Actor_FaceActorById, 1
 	.set import.Event_SetMessageId, 1
 	.set import.FieldMessage_ShowAtActor, 1
 	.set import.Event_ShowMessageAndWait, 1
 	.set import.Event_ShowMessageThenWait, 1
 	.set import.Event_AskYesNoAndShowResponse, 1
-	.set import.Actor_ArmCallback, 1
+	.set import.Actor_FaceDirectionById, 1
 	.set import.FieldEffect_SetAttached, 1
 	.set import.Shop_Run, 1
 	.set import.Inn_CheckIn, 1

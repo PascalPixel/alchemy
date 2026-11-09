@@ -167,7 +167,7 @@ void Import_EventSetExitRequest();
 /// (Actor_SetHorizontalPositionWithTerrain).
 void Import_ActorSetPosition();
 /// Switches an actor's sprite to an ActorAnimation
-/// (Actor_SetModeById).
+/// (Actor_SetAnimationById).
 void Import_ActorSetAnimation();
 /// Switches an actor to an ActorAnimation, such as ANIM_NOD.
 static inline void Actor_SetAnimation(s32 actorId, s32 animation) {
@@ -259,42 +259,42 @@ static inline void Actor_SetSpeed(s32 actorId, s32 speed, s32 acceleration) {
 /// Moves an actor to a point in the pose it has, without walking; the
 /// event carries on meanwhile.
 static inline void Actor_SetDestination(s32 actorId, s32 x, s32 z) {
-  Actor_ResetAndSetPosition(actorId, x, z);
+  Actor_SetDestinationById(actorId, x, z);
 }
 
 #ifndef FIELD_STAGED_ACTOR_IMPORTS
 /// Moves an actor some distance from where it stands, without waiting
 /// for it.
 static inline void Actor_SetDestinationOffset(s32 actorId, s32 dx, s32 dz) {
-  Actor_OffsetPositionAndResetMotion(actorId, dx, dz);
+  Actor_SetDestinationOffsetById(actorId, dx, dz);
 }
 #endif
 
 /// Walks an actor to a point; the event goes on while it walks.
 static inline void Actor_WalkTo(s32 actorId, s32 x, s32 z) {
-  Actor_ResetAndSetPositionInMode2(actorId, x, z);
+  Actor_WalkToById(actorId, x, z);
 }
 
 /// Walks an actor some distance from where it stands, without waiting
 /// for it to get there.
 static inline void Actor_WalkBy(s32 actorId, s32 dx, s32 dz) {
-  Actor_OffsetPositionAndReset(actorId, dx, dz);
+  Actor_WalkByById(actorId, dx, dz);
 }
 
 /// Turns an actor to a direction and holds the event for a few frames.
 static inline void Actor_FaceDirection(s32 actorId, s32 facing, s32 frames) {
-  Actor_ArmCallback(actorId, facing, frames);
+  Actor_FaceDirectionById(actorId, facing, frames);
 }
 
 /// Has one actor look at another at once, then pauses the event.
 static inline void Actor_FaceActor(s32 actorId, s32 target, s32 frames) {
-  Actor_SetAngleToward(actorId, target, frames);
+  Actor_FaceActorById(actorId, target, frames);
 }
 
 /// Pops an emote bubble up over an actor, then lets frames pass before
 /// the event goes on.
 static inline void Actor_ShowEmote(s32 actorId, s32 emote, s32 frames) {
-  FieldEffect_SpawnAttached(actorId, emote, frames);
+  Actor_ShowEmoteById(actorId, emote, frames);
 }
 
 /// Attaches a field effect to an actor, takes it off, or plays one
@@ -411,7 +411,7 @@ static inline void Actor_CenterAndWalk(s32 actorId, s32 priority, s32 dz) {
 
 /// Walks an actor some distance and waits until it is there.
 static inline void Actor_WalkByAndWait(s32 actorId, s32 dx, s32 dz) {
-  Actor_CommitPositionAndActivate(actorId, dx, dz);
+  Actor_WalkByAndWaitById(actorId, dx, dz);
 }
 
 /// Shows a line of dialogue, then pauses before the event goes on.
@@ -459,12 +459,12 @@ static inline void PaletteFade_ApplyTarget(s32 value, s32 mode) {
 
 /// Moves an actor to a point in the pose it has and waits for it.
 static inline void Actor_MoveToAndWait(s32 actorId, s32 x, s32 z) {
-  Actor_SetPositionAndCommit(actorId, x, z);
+  Actor_MoveToAndWaitById(actorId, x, z);
 }
 
 /// Walks an actor to a point and waits for it, then stands it still.
 static inline void Actor_WalkToAndWait(s32 actorId, s32 x, s32 z) {
-  Actor_SetPositionAndReset(actorId, x, z);
+  Actor_WalkToAndWaitById(actorId, x, z);
 }
 
 /// Has two actors speak at once, each window placed by the event.

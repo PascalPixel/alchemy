@@ -61,7 +61,7 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
 #endif
   handle = 0;
   portrait = 0;
-  sprite = Actor_ReadActiveValue(actorId);
+  sprite = Actor_GetSpriteById(actorId);
   extra = 0;
   portraitTop = 0;
   margin = 4;
@@ -271,7 +271,7 @@ void Event_ShowMessageAndWait(s32 actorId, s32 flags) {
   wait(1);
   // A party member the scene does not place has its portrait under its
   // character id, as FieldMessage_ShowAtActor opened it.
-  sprite = Actor_ReadActiveValue(actorId);
+  sprite = Actor_GetSpriteById(actorId);
   if (actorId <= 7) {
     member = actorId & 0x0fff;
 
@@ -444,10 +444,10 @@ void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
 }
 
 /// Closes the portrait of an actor's sprite, if it has one.
-void Actor_RunIfActive(s32 actorId) {
+void Actor_ClosePortrait(s32 actorId) {
   s32 sprite;
 
-  sprite = Actor_ReadActiveValue(actorId);
+  sprite = Actor_GetSpriteById(actorId);
   if (sprite != -1)
     Portrait_CloseWindowFar(sprite);
 }
@@ -460,8 +460,8 @@ void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
                                   s32 second, s32 secondX, s32 secondY,
                                   s32 secondPortraitX, s32 secondPortraitY) {
   struct FieldWork *work = gFieldWork;
-  s32 firstSprite = Actor_ReadActiveValue(first);
-  s32 secondSprite = Actor_ReadActiveValue(second);
+  s32 firstSprite = Actor_GetSpriteById(first);
+  s32 secondSprite = Actor_GetSpriteById(second);
   s32 firstWindow;
   s32 secondWindow;
 
@@ -508,7 +508,7 @@ void Message_SetVoiceFromActor(s32 actorId) {
     *(s16 *)&state->voiceSound = (rate = 0);
     *(s16 *)&state->voiceCountdown = rate;
   } else {
-    voice = Speaker_GetVoice(Actor_ReadActiveValue(actorId));
+    voice = Speaker_GetVoice(Actor_GetSpriteById(actorId));
     rate = gMessageSpeed_VoiceRates[gMainRoutineWork.messageSpeed];
     *(s16 *)&state->voiceSound = voice;
     *(s16 *)&state->voiceCountdown = rate;

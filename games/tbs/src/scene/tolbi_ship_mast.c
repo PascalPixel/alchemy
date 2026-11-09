@@ -474,7 +474,7 @@ static void TolbiShipMast_RunAvastEvent(void) {
   void (*update)(struct Actor *);
 
   Event_Start();
-  Event_CallWithLastActiveActorId(gTolbiShipMast_FirstAttackActorPlacements);
+  Event_AppendActorPlacements(gTolbiShipMast_FirstAttackActorPlacements);
   wait(1);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
@@ -606,7 +606,7 @@ static void TolbiShipMast_ShowMonsters(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(leader, 0);
   wait(1);
-  Event_CallWithLastActiveActorId(gTolbiShipMast_BirdActorPlacements);
+  Event_AppendActorPlacements(gTolbiShipMast_BirdActorPlacements);
   wait(1);
   TolbiShipMast_InitializeDriftingGroup();
   Actor_SetScript(ACTOR_LOOKOUT, gTolbiShipMast_LookoutActions);
@@ -720,9 +720,9 @@ static void TolbiShipMast_RunMonsterLanding(void) {
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   wait(1);
-  Event_CallWithLastActiveActorId(gTolbiShipMast_BirdActorPlacements);
+  Event_AppendActorPlacements(gTolbiShipMast_BirdActorPlacements);
   wait(1);
-  Event_CallWithLastActiveActorId(gTolbiShipMast_LandingActorPlacements);
+  Event_AppendActorPlacements(gTolbiShipMast_LandingActorPlacements);
   wait(1);
   TolbiShipMast_InitializeDriftingGroup();
   Actor_SetScript(ACTOR_LOOKOUT, gTolbiShipMast_LookoutActions);
@@ -824,7 +824,7 @@ static void TolbiShipMast_AnnounceLand(void) {
   Event_Start();
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
-  Event_CallWithLastActiveActorId(gTolbiShipMast_BirdActorPlacements);
+  Event_AppendActorPlacements(gTolbiShipMast_BirdActorPlacements);
   wait(1);
   TolbiShipMast_InitializeDriftingGroup();
   Actor_SetScript(ACTOR_LOOKOUT, gTolbiShipMast_LookoutActions);

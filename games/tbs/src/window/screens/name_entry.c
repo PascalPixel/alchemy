@@ -185,7 +185,7 @@ s32 Text_SetString(const u8 *str) {
 /// followed in TEXT_COLOR_RED by an underscore for each of the
 /// NAME_MAX_LETTERS places still free: the loop fills the text to 7 bytes,
 /// the name and the two-byte colour code before the underscores.
-void Text_DrawPaddedLabel(struct Window *window, u8 *name) {
+void NameEntry_DrawName(struct Window *window, u8 *name) {
   u8 text[20];
   s32 length = 0;
 
@@ -292,7 +292,7 @@ s32 NameEntry_EditMemberName(s32 member) {
     }
   }
   editedName[NAME_MAX_BYTES] = 0;
-  Text_DrawPaddedLabel(nameWindow, originalName);
+  NameEntry_DrawName(nameWindow, originalName);
   vramSlot = VramCache_FindFreeEntry();
   // The cursor starts on End. 95 is the last of the VRAM_CACHE_ENTRY_COUNT
   // slots; without a free one a sprite is not made, though the loop below
@@ -428,7 +428,7 @@ s32 NameEntry_EditMemberName(s32 member) {
         letterCount--;
         *--end = 0;
         WindowSprite_PrepareForRedraw(nameWindow);
-        Text_DrawPaddedLabel(nameWindow, editedName);
+        NameEntry_DrawName(nameWindow, editedName);
         textDirty = 1;
         continue;
       }
@@ -448,7 +448,7 @@ s32 NameEntry_EditMemberName(s32 member) {
         if (letterCount == 0) {
           nameCaret.sprite->motion = 13;
           WindowSprite_PrepareForRedraw(nameWindow);
-          Text_DrawPaddedLabel(nameWindow, originalName);
+          NameEntry_DrawName(nameWindow, originalName);
           wait(10);
         } else {
           u8 *dst = originalName;
@@ -499,7 +499,7 @@ s32 NameEntry_EditMemberName(s32 member) {
         cursorDirty = 1;
       }
       WindowSprite_PrepareForRedraw(nameWindow);
-      Text_DrawPaddedLabel(nameWindow, editedName);
+      NameEntry_DrawName(nameWindow, editedName);
       textDirty = 1;
     }
   }

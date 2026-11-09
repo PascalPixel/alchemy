@@ -65,9 +65,7 @@ static inline s32 Party_GiveItem(s32 item, s32 flags) {
 }
 
 /// Ends an event's wave effect and restores the colours it changed.
-static inline void Psynergy_Cancel(void) {
-  FieldPsynergy_FinishWaveAndReleaseHeapBlock();
-}
+static inline void Psynergy_Cancel(void) { FieldPsynergy_StopMindReadWave(); }
 
 /// Loads a scene's sprite picture into VRAM; returns its first tile number, 0
 /// when there's no room.
@@ -78,7 +76,7 @@ static inline s32 Vram_Load(s32 block, s32 size, const void *data) {
 /// Actor_SetDestinationOffset, by a second inline over the same routine.
 static inline void FieldActor_SetDestinationOffset(s32 actorId, s32 xOffset,
                                                    s32 zOffset) {
-  Actor_OffsetPositionAndResetMotion(actorId, xOffset, zOffset);
+  Actor_SetDestinationOffsetById(actorId, xOffset, zOffset);
 }
 
 /// Task_AddFrame (system_call.h) under a second name.
@@ -108,10 +106,10 @@ static inline void FieldActor_LaunchFromLeader(s32 actorId, s32 dx, s32 dz,
 }
 
 /// Makes an actor follow another and starts a script on it
-/// (Actor_SetTargetAndCallback).
-static inline void FieldActor_SetTargetAndCallback(s32 object, s32 target,
-                                                   const s32 *actions) {
-  Actor_SetTargetAndCallback(object, target, actions);
+/// (Actor_WatchAndStartScript).
+static inline void FieldActor_WatchAndStartScript(s32 object, s32 target,
+                                                  const s32 *actions) {
+  Actor_WatchAndStartScript(object, target, actions);
 }
 
 /// Moves a point radius along a heading on the ground plane

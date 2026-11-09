@@ -1275,9 +1275,9 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(3);
   Actor_WalkByAndWait(ACTOR_SECOND_SOLDIER, -16, 0);
   Actor_SetScript(ACTOR_SECOND_SOLDIER, gAltmillerCave_GuardsArrivePath);
-  Actor_RefreshSelectorById(ACTOR_FIRST_SOLDIER);
+  Actor_WaitForScriptEndById(ACTOR_FIRST_SOLDIER);
   Actor_WalkByAndWait(ACTOR_FIRST_SOLDIER, 0, -16);
-  Actor_RefreshSelectorById(ACTOR_SECOND_SOLDIER);
+  Actor_WaitForScriptEndById(ACTOR_SECOND_SOLDIER);
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SECOND_SOLDIER, FACING_EAST, 0);
   Actor_Stop(ACTOR_PARTY_LEADER);
@@ -1468,7 +1468,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
-  Actor_RefreshSelectorById(ACTOR_BABI);
+  Actor_WaitForScriptEndById(ACTOR_BABI);
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1567,7 +1567,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   wait(1);
   Io_Write16(ALTMILLER_CAVE_DARKNESS_BLEND, &REG_BLDCNT);
   Io_Write16(ALTMILLER_CAVE_DARK_ALPHA, &REG_BLDALPHA);
-  Actor_PlaceCurrentWithinCameraBounds(ACTOR_PARTY_LEADER, 1);
+  FieldCamera_MoveToActorById(ACTOR_PARTY_LEADER, 1);
   FieldCamera_WaitForMove();
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
@@ -2363,7 +2363,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
   }
   MapGrid_WaitForShakeToSettle();
   Shop_RestoreFieldPalette();
-  FieldEffect_ClearActiveSlotsAndScheduleUpdates();
+  FieldEffect_ReleaseSlots();
 }
 
 /// Pixel step by direction: X in the upper halfword, Z in the lower.

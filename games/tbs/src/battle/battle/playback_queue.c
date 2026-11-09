@@ -15,9 +15,9 @@
 /// recomputes its stats, and BattleUnit_BuildStatusFlags its battle object's
 /// status flags.
 #ifdef UBFIX
-void BattleObject_ResetRuntimeFields(s32 unitId) {
+void BattleUnit_ClearStatuses(s32 unitId) {
 #else
-s32 BattleObject_ResetRuntimeFields(s32 unitId) {
+s32 BattleUnit_ClearStatuses(s32 unitId) {
 #endif
   struct Unit *unit;
   s32 element;
@@ -286,7 +286,7 @@ u32 BattlePlayback_RunAll(void) {
         break;
       case PLAYBACK_DEFEAT:
         BattleEnemy_RecordDefeat(queue->operands[eventIndex], runtime->flags);
-        BattleObject_ResetRuntimeFields(queue->operands[eventIndex]);
+        BattleUnit_ClearStatuses(queue->operands[eventIndex]);
         BattleMotion_ShowDowned(queue->operands[eventIndex]);
         break;
       case PLAYBACK_DRAW_STATUS:

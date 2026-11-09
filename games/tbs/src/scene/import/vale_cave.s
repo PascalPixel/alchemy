@@ -22,16 +22,16 @@
 	.set import.Event_End, 1
 	.set import.Actor_GetById, 1
 	.set import.Actor_SetSpeedParameters, 1
-	.set import.Actor_SetPositionAndCommit, 1
-	.set import.Actor_ResetAndSetPositionInMode2, 1
-	.set import.Actor_SetPositionAndReset, 1
-	.set import.Actor_OffsetPositionAndResetMotion, 1
+	.set import.Actor_MoveToAndWaitById, 1
+	.set import.Actor_WalkToById, 1
+	.set import.Actor_WalkToAndWaitById, 1
+	.set import.Actor_SetDestinationOffsetById, 1
 	.set import.Actor_WaitForMoveById, 1
 	.set import.Import_ActorSetPosition, 1
 	.set import.Import_ActorSetAnimation, 1
 	.set import.Actor_RunRepeatedMotion, 1
 	.set import.Actor_SetSpriteColor, 1
-	.set import.Actor_ArmCallback, 1
+	.set import.Actor_FaceDirectionById, 1
 	.set import.Actor_SetSpritePriority, 1
 	.set import.FieldEffect_SetAttached, 1
 	.set import.FieldCamera_FollowActor, 1

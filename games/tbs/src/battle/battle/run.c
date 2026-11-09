@@ -93,7 +93,7 @@ s32 Battle_Run(s32 enemyGroup) {
   display = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_MESSAGE,
                                 sizeof(struct BattleMessageWork));
   Dma_Fill32Cell(fill, 0, display, sizeof(struct BattleMessageWork));
-  battle->background = Event_GetSpecialValueFar();
+  battle->background = BattleBackground_GetSelectedFar();
   HeapSlot_AllocEwram(HEAP_SLOT_SPRITES, 3584);
   HeapSlot_AllocEwram(HEAP_SLOT_SPRITE_ANIMATIONS, 1536);
   ActorSystem_InitializeFar(ACTOR_SYSTEM_BATTLE);

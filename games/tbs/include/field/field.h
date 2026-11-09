@@ -75,7 +75,7 @@ struct SwitchCell {
 extern s16 gAltinPeak_PaletteHold;
 /// The next byte of gAltinPeak_PaletteScript; 0 again at its -1.
 extern s16 gAltinPeak_PaletteStep;
-/// One of a ledge jump's dust puffs (FieldEffect_SpawnBurstParticle):
+/// One of a ledge jump's dust puffs (FieldEffect_SpawnDustPuff):
 /// SC_WAIT(1) looped 38 times, then SC_RELEASE.
 extern const u8 gFieldEffect_BurstParticleScriptA[];
 /// The other dust puff: the same, looped 18 times.
@@ -253,7 +253,7 @@ extern s8 gFieldEffect_RandomChildValues[];
 /// FieldPsynergy_Avoid loads it.
 extern const u8 gFieldEffect_ArcSparkTiles[];
 extern const s32 gFieldEffect_BurstParticleActorScript[];
-/// The emote bubble's script (FieldEffect_SpawnAttached): eight 2-frame steps
+/// The emote bubble's script (Actor_ShowEmoteById): eight 2-frame steps
 /// of squash and stretch (SC_ADD to SW_SCALE_X and SW_SCALE_Y), 30 frames
 /// still, then SC_RELEASE.
 extern const s32 gFieldEffect_WatchedActorScript[];
@@ -264,7 +264,7 @@ extern u32 gFieldEffect_PulseScales[];
 extern const s32 gFieldEffect_SourceHoldScript[];
 extern s16 gFieldEffect_TargetRangeByMode[];
 /// A lone SC_RELEASE: an actor that has arrived releases itself
-/// (FieldEffect_SetCallbackWhenTargetUnset).
+/// (FieldEffect_ReleaseOnArrival).
 extern const s32 gFieldEffect_UntargetedActorScript[];
 /// The 32 by 16 spark a field Psynergy's particles draw (spark.png), 4
 /// bits a pixel; FieldPsynergy_LoadResources loads it.

@@ -50,7 +50,7 @@ struct FieldEffectDouseView {
 /// Per-frame update of a falling drop: on reaching altitude it is released 2
 /// frames later and scatters three half-size splashes, which hop toward
 /// points 32 pixels away and are released after 6 frames.
-void FieldEffect_SpawnRandomAngleTriplet(struct Actor *actor) {
+void FieldEffect_UpdateDouseDrop(struct Actor *actor) {
   struct ActorDouseView *particle = (struct ActorDouseView *)actor;
   s32 i;
   struct ActorDouseView *p;
@@ -205,7 +205,7 @@ void FieldPsynergy_Douse(void) {
                                                       pos.y, pos.z);
       if (particle != 0) {
         particle->altitude = pos.y - (32 << 16);
-        particle->callback = FieldEffect_SpawnRandomAngleTriplet;
+        particle->callback = FieldEffect_UpdateDouseDrop;
         particle->flag = 2;
       }
       Sound_PlayFar(SE_WATER);

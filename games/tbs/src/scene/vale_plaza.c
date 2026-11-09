@@ -1004,10 +1004,10 @@ s32 ValePlaza_Initialize(void) {
       if (flag != 0) {
         Actor_SetPosition(ACTOR_STORM_FIRST_AIDE, 0, 0);
         Actor_SetPosition(ACTOR_STORM_SECOND_AIDE, 0, 0);
-        FieldActor_SetTargetAndCallback(ACTOR_STORM_GARETS_GRANDFATHER,
-                                        ACTOR_WATCH_KEEP_MOTION |
-                                            ACTOR_PARTY_LEADER,
-                                        gValePlaza_FaceTargetActions);
+        FieldActor_WatchAndStartScript(ACTOR_STORM_GARETS_GRANDFATHER,
+                                       ACTOR_WATCH_KEEP_MOTION |
+                                           ACTOR_PARTY_LEADER,
+                                       gValePlaza_FaceTargetActions);
       }
     } else {
       if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
@@ -1212,7 +1212,7 @@ static void ValePlaza_SentToAidElders(void) {
     // Felix, thanks to the Psynergy Stone.
     Actor_SetScript(ACTOR_STORM_CHARGED_UP_STRONGMAN,
                     gValePlaza_ChargedUpStrongmanActions);
-    Actor_RefreshSelectorById(ACTOR_STORM_CHARGED_UP_STRONGMAN);
+    Actor_WaitForScriptEndById(ACTOR_STORM_CHARGED_UP_STRONGMAN);
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_CHARGED_UP_STRONGMAN,
                                    FACING_SOUTHEAST, 60);
     Actor_RunRepeatedMotion(ACTOR_STORM_GARETS_GRANDFATHER, 2);
@@ -1246,10 +1246,9 @@ static void ValePlaza_SentToAidElders(void) {
     ValePlaza_RejoinParty(ACTOR_STORM_GARET);
     ValePlaza_RejoinParty(ACTOR_STORM_JENNA);
     ValePlaza_RejoinParty(ACTOR_STORM_CHARGED_UP_STRONGMAN);
-    FieldActor_SetTargetAndCallback(ACTOR_STORM_GARETS_GRANDFATHER,
-                                    ACTOR_WATCH_KEEP_MOTION |
-                                        ACTOR_PARTY_LEADER,
-                                    gValePlaza_FaceTargetActions);
+    FieldActor_WatchAndStartScript(ACTOR_STORM_GARETS_GRANDFATHER,
+                                   ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                   gValePlaza_FaceTargetActions);
     GameFlag_Set(FLAG_VALE_STORM_SENT_TO_AID_ELDERS);
     Event_End();
   }
@@ -1274,7 +1273,7 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
   FieldCamera_MoveWithinMapBounds(PIXELS(64), PIXELS(144), PIXELS(350), 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  Event_PrepareActorAndApplyValue(GARET, 0);
+  Event_AddPartyMember(GARET, 0);
   Event_StartScreenTransition();
   Sound_Play(SOUND_FADE_OUT_BGM);
   Weather_ResumeLightning();
@@ -1400,9 +1399,9 @@ static void ValePlaza_FightTravelers(void) {
   ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, westFacing, 20);
   Actor_RunRepeatedMotion(ACTOR_STORM_GARET, 2);
   ValePlaza_SayThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_STORM_GARET, 10);
-  FieldActor_SetTargetAndCallback(ACTOR_PARTY_LEADER,
-                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_STORM_GARET,
-                                  gValePlaza_FaceTargetActions);
+  FieldActor_WatchAndStartScript(ACTOR_PARTY_LEADER,
+                                 ACTOR_WATCH_KEEP_MOTION | ACTOR_STORM_GARET,
+                                 gValePlaza_FaceTargetActions);
   Actor_WalkToAndWait(ACTOR_STORM_GARET, 93, 361);
   ValePlaza_FaceDirectionAndWait(ACTOR_STORM_GARET, northNortheastFacing, 40);
   ValePlaza_SayThenWait(ACTOR_STORM_GARET, 20);
@@ -1623,13 +1622,13 @@ static void ValePlaza_DepartForQuest(void) {
   Actor_SetScript(ACTOR_FAREWELL_DOG, gValePlaza_FarewellDogActions);
   Event_Wait(40);
   faceActions = gValePlaza_FaceTargetActions;
-  FieldActor_SetTargetAndCallback(ACTOR_FAREWELL_FIRST_CHILD,
-                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_FAREWELL_DOG,
-                                  faceActions);
-  FieldActor_SetTargetAndCallback(ACTOR_FAREWELL_SECOND_CHILD,
-                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_FAREWELL_DOG,
-                                  faceActions);
-  Actor_RefreshSelectorById(ACTOR_FAREWELL_DOG);
+  FieldActor_WatchAndStartScript(ACTOR_FAREWELL_FIRST_CHILD,
+                                 ACTOR_WATCH_KEEP_MOTION | ACTOR_FAREWELL_DOG,
+                                 faceActions);
+  FieldActor_WatchAndStartScript(ACTOR_FAREWELL_SECOND_CHILD,
+                                 ACTOR_WATCH_KEEP_MOTION | ACTOR_FAREWELL_DOG,
+                                 faceActions);
+  Actor_WaitForScriptEndById(ACTOR_FAREWELL_DOG);
   Actor_Stop(ACTOR_FAREWELL_FIRST_CHILD);
   Actor_Stop(ACTOR_FAREWELL_SECOND_CHILD);
   Event_Wait(60);
@@ -1745,7 +1744,7 @@ static void ValePlaza_DepartForQuest(void) {
   Event_Wait(10);
   Actor_SetScript(ACTOR_FAREWELL_SECOND_CHILD,
                   gValePlaza_FarewellSecondChildActions);
-  Actor_RefreshSelectorById(ACTOR_FAREWELL_SECOND_CHILD);
+  Actor_WaitForScriptEndById(ACTOR_FAREWELL_SECOND_CHILD);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_SECOND_CHILD,
                                  FACING_SOUTH_SOUTHEAST, 120);
   // The Great Healer counts on Isaac, and on Garet too; the two nod.

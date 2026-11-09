@@ -13,7 +13,7 @@
 	.set import.Scene_AssignViewFlags, 1
 	.set import.Actor_GetById, 1
 	.set import.Import_ActorSetAnimation, 1
-	.set import.Actor_SetAngleToward, 1
+	.set import.Actor_FaceActorById, 1
 	.set import.Actor_SetSpriteColor, 1
 	.set import.Event_SetMessageId, 1
 	.set import.Event_ShowMessageAndWait, 1

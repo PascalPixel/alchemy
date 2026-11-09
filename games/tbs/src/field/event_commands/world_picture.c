@@ -85,7 +85,7 @@ STATIC_ASSERT(WORLD_MAP_MARKER_CAPACITY ==
 /// Sets up the World Map screen: the marker tiles and their OAM entries, the
 /// cursor where the leader is on the map (or mid-screen when the area is
 /// not on it), and the name window.
-void FieldEffect_SetupResourcesAndWindow(void) {
+void WorldPicture_Initialize(void) {
 #ifdef UBFIX
   union WorldPictureMarkerPart *marker;
 #else
@@ -189,7 +189,7 @@ void FieldEffect_SetupResourcesAndWindow(void) {
 
 /// Closes the World Map screen: returns its VRAM blocks and removes the
 /// name window.
-void FieldEffect_CleanupResourcesAndWindow(void) {
+void WorldPicture_Release(void) {
   struct WorldPictureWork *work = (struct WorldPictureWork *)gMapGridCellBuffer;
 
   VramCache_FreeEntry(work->markerVramBlock);
@@ -489,7 +489,7 @@ void WorldPicture_Show(s32 picture) {
   Io_Write16(DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
                  DISPCNT_OBJ_1D_MAP,
              &REG_DISPCNT);
-  FieldEffect_SetupResourcesAndWindow();
+  WorldPicture_Initialize();
   Task_Add(WorldPicture_UpdateMarkers, TASK_PASS_FRAME);
   if (GameFlag_GetFar(FLAG_WORLD_MAP_LEFT))
     FieldMessage_ShowFar(MsgNotOnMap, FIELD_MESSAGE_ZOOM);
@@ -497,7 +497,7 @@ void WorldPicture_Show(s32 picture) {
     wait(1);
   } while ((gKeysRepeat & (KEY_A | KEY_B)) == 0);
   Task_Remove(WorldPicture_UpdateMarkers);
-  FieldEffect_CleanupResourcesAndWindow();
+  WorldPicture_Release();
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
   WorldMap_LoadAreaGraphicsFar();
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, (u16)blend, IO_WRITE_16);
@@ -556,9 +556,9 @@ void Field_UpdateActorVisibilityBounds(void) {
 
 /// On the World Map, zooms the view out to Q16_ONE * 8 / 13 while L is held,
 /// then back. Each zoom takes 6 frames; eight thirteenths sets the view 1.6
-/// times as far (FieldEffect_ScheduleRatioTransition). FieldSequence_Run runs
+/// times as far (WorldMap_StartZoom). FieldSequence_Run runs
 /// it for event -889; the overlay tasks are suspended meanwhile.
-void FieldEffect_RunVisibilityTransition(void) {
+void WorldMap_ZoomOutWhileLHeld(void) {
   struct FieldWork *work =
       HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
 
@@ -566,13 +566,13 @@ void FieldEffect_RunVisibilityTransition(void) {
     Task_SuspendOverlayTasks();
     Field_UpdateActorVisibilityBounds();
     Leader_StopMoving();
-    FieldEffect_ScheduleRatioTransition(Q16_ONE * 8 / 13, 6);
+    WorldMap_StartZoom(Q16_ONE * 8 / 13, 6);
     if (gKeysHeld & KEY_L) {
       do {
         wait(1);
       } while (gKeysHeld & KEY_L);
     }
-    FieldEffect_ScheduleRatioTransition(Q16_ONE, 6);
+    WorldMap_StartZoom(Q16_ONE, 6);
     Task_ResumeOverlayTasks();
   }
 }

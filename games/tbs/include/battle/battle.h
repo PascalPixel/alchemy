@@ -102,7 +102,7 @@ extern const u8 gBattleTransition_CurtainTiles[];
 /// Eight curtain tiles, 32 bytes each, of which the transition copies one at a
 /// time into the curtain's first tile.
 extern const u8 gBattleTransition_CurtainVariants[];
-/// Garet's weapon sprite by weapon kind (BattleUnit_LookupWeaponValueByClass).
+/// Garet's weapon sprite by weapon kind (BattleUnit_GetWeaponSprite).
 extern u16 gBattleUnit_WeaponAnimationsGaret[];
 /// Ivan's weapon sprite by weapon kind.
 extern u16 gBattleUnit_WeaponAnimationsIvan[];
@@ -165,7 +165,7 @@ extern const u8 gActor_FaceWatchedScript[];
 /// return scene, return entrance} rows, ended by scene -1
 /// (Scene_SetRestartPoint).
 extern const s16 gScene_RestartRules[];
-/// Isaac's weapon sprite by weapon kind (BattleUnit_LookupWeaponValueByClass).
+/// Isaac's weapon sprite by weapon kind (BattleUnit_GetWeaponSprite).
 extern u16 gBattleUnit_WeaponAnimationsIsaac[];
 /// Battle backgrounds by scene: a background word (bit 31 set, resource id
 /// below) and then its scenes, ended by 0; a scene not listed takes the last

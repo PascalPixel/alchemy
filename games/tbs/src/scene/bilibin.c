@@ -560,7 +560,7 @@ static void Bilibin_PullJillFromRiver(void) {
     Event_SetMessageId(MsgBilibinThankSavedMeFromBeing);
     // "Thank you! You saved me from being washed downstream!"
     Event_ShowMessage(ACTOR_JILL_TREE, 0);
-    FieldPsynergy_FinishWaveAndReleaseHeapBlock();
+    FieldPsynergy_StopMindReadWave();
     wait(10);
     GameFlag_Set(FLAG_BILIBIN_JILL_RESCUED);
     Event_End();
@@ -673,15 +673,15 @@ static void Bilibin_JillGivesHardNut(void) {
   Actor_SetAnimation(ACTOR_GANG_MEMBER_WEST, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
   // From now on the three turn to face the leader wherever he goes.
-  FieldActor_SetTargetAndCallback(ACTOR_GANG_MEMBER_EAST,
-                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
-                                  gBilibin_FaceLeaderScript);
-  FieldActor_SetTargetAndCallback(ACTOR_GANG_MEMBER_WEST,
-                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
-                                  gBilibin_FaceLeaderScript);
-  FieldActor_SetTargetAndCallback(ACTOR_JILL,
-                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
-                                  gBilibin_FaceLeaderScript);
+  FieldActor_WatchAndStartScript(ACTOR_GANG_MEMBER_EAST,
+                                 ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                 gBilibin_FaceLeaderScript);
+  FieldActor_WatchAndStartScript(ACTOR_GANG_MEMBER_WEST,
+                                 ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                 gBilibin_FaceLeaderScript);
+  FieldActor_WatchAndStartScript(ACTOR_JILL,
+                                 ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                 gBilibin_FaceLeaderScript);
   GameFlag_Set(FLAG_BILIBIN_JILL_GIFT_RECEIVED);
   Event_End();
 }

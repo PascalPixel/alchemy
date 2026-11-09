@@ -70,7 +70,7 @@ s32 FieldSequence_Run(s32 entrance) {
   if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) != 0)
     Actor_Restore();
   if (gMainRoutineWork.pendingDjinni != 0)
-    Actor_PlaceMapActors();
+    Djinn_RestoreActorAfterBattle();
   if (mode == ACTOR_SYSTEM_WORLD_MAP) {
     WorldMap_UpdateCurrentTileBlockFar();
     WorldMap_LoadGraphicsFar(gMainRoutineWork.x, gMainRoutineWork.z);
@@ -213,7 +213,7 @@ s32 FieldSequence_Run(s32 entrance) {
           } else if (work->raisedTrigger ==
                      FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM) {
             Leader_StopMoving();
-            FieldEffect_RunVisibilityTransition();
+            WorldMap_ZoomOutWhileLHeld();
           } else {
             Scene_RunRaisedTrigger(work->raisedTrigger);
           }

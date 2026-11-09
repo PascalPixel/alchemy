@@ -980,12 +980,12 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_WalkTo(ACTOR_GARET, 150, 234);
   Actor_WalkToAndWait(ACTOR_IVAN, 134, 234);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
-  FieldActor_SetTargetAndCallback(ACTOR_PARTY_LEADER,
-                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_MIA,
-                                  gImil_FaceTargetScript);
-  FieldActor_SetTargetAndCallback(
+  FieldActor_WatchAndStartScript(ACTOR_PARTY_LEADER,
+                                 ACTOR_WATCH_KEEP_MOTION | ACTOR_MIA,
+                                 gImil_FaceTargetScript);
+  FieldActor_WatchAndStartScript(
       ACTOR_GARET, ACTOR_WATCH_KEEP_MOTION | ACTOR_MIA, gImil_FaceTargetScript);
-  FieldActor_SetTargetAndCallback(
+  FieldActor_WatchAndStartScript(
       ACTOR_IVAN, ACTOR_WATCH_KEEP_MOTION | ACTOR_MIA, gImil_FaceTargetScript);
   FieldCamera_WaitForMove();
   table = gImil_BobScript;
@@ -1048,7 +1048,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
     wait(1);
   }
   FieldCamera_MoveTo(PIXELS(140), -1, PIXELS(198), 1);
-  Actor_RefreshSelectorById(ACTOR_MIA);
+  Actor_WaitForScriptEndById(ACTOR_MIA);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
@@ -1104,7 +1104,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_SetDestination(ACTOR_PARTY_LEADER, 132, 206);
   Actor_SetDestination(ACTOR_GARET, 136, 221);
   Actor_SetDestination(ACTOR_IVAN, 122, 238);
-  Actor_RefreshSelectorById(ACTOR_MIA);
+  Actor_WaitForScriptEndById(ACTOR_MIA);
   Event_Wait(80);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_Get(ACTOR_GARET)->steeringFlags |= ACTOR_FACES_MOTION;

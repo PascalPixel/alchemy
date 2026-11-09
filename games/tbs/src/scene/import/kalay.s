@@ -29,20 +29,20 @@
 	.set import.Event_Wait, 1
 	.set import.Event_Start, 1
 	.set import.Event_End, 1
-	.set import.Event_CallWithLastActiveActorId, 1
+	.set import.Event_AppendActorPlacements, 1
 	.set import.PartyInventory_GiveItem, 1
 	.set import.Event_AskYesNoWithActorAnimation, 1
 	.set import.Actor_GetById, 1
 	.set import.Actor_ReleaseById, 1
 	.set import.Actor_SetSpeedParameters, 1
 	.set import.Actor_SetMovementTypeById, 1
-	.set import.Actor_RefreshSelectorById, 1
+	.set import.Actor_WaitForScriptEndById, 1
 	.set import.Actor_Stop, 1
 	.set import.Actor_SetMovementTypeAndWaitById, 1
-	.set import.Actor_ResetAndSetPositionInMode2, 1
-	.set import.Actor_SetPositionAndReset, 1
+	.set import.Actor_WalkToById, 1
+	.set import.Actor_WalkToAndWaitById, 1
 	.set import.Actor_CenterOnColumn, 1
-	.set import.Actor_OffsetPositionAndResetMotion, 1
+	.set import.Actor_SetDestinationOffsetById, 1
 	.set import.Import_ActorSetPosition, 1
 	.set import.Import_ActorSetAnimation, 1
 	.set import.Actor_SetAnimationAndWait, 1
@@ -57,10 +57,10 @@
 	.set import.Event_ShowMessageAndWait, 1
 	.set import.Event_ShowMessageThenWait, 1
 	.set import.Event_AskYesNoAndShowResponse, 1
-	.set import.Actor_ArmCallback, 1
+	.set import.Actor_FaceDirectionById, 1
 	.set import.Message_SetVoiceFromActor, 1
 	.set import.Actor_SetSpritePriority, 1
-	.set import.FieldEffect_SpawnAttached, 1
+	.set import.Actor_ShowEmoteById, 1
 	.set import.FieldEffect_SetAttached, 1
 	.set import.FieldCamera_SetSpeedParameters, 1
 	.set import.FieldCamera_MoveWithinMapBounds, 1

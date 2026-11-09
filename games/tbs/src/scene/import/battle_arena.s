@@ -44,9 +44,9 @@
 	.set import.Event_AskYesNoWithActorAnimation, 1
 	.set import.Actor_GetById, 1
 	.set import.Actor_SetSpeedParameters, 1
-	.set import.Actor_ResetAndSetPositionInMode2, 1
+	.set import.Actor_WalkToById, 1
 	.set import.Actor_WaitForMoveById, 1
-	.set import.Actor_SetAngleToward, 1
+	.set import.Actor_FaceActorById, 1
 	.set import.Event_SetMessageId, 1
 	.set import.FieldMessage_ShowAtActor, 1
 	.set import.Event_ShowMessageAndWait, 1

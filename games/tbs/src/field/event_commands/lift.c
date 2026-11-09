@@ -42,9 +42,9 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
   pos[1] = y;
   z = effectWork->z;
   pos[2] = z;
-  pair[0] = FieldEffect_SpawnItemBreakMode3(x + PIXELS(32), y, z, FACING_WEST);
-  pair[1] = FieldEffect_SpawnItemBreakMode3(pos[0] - PIXELS(32), pos[1], pos[2],
-                                            FACING_EAST);
+  pair[0] = FieldEffect_SpawnLiftHand(x + PIXELS(32), y, z, FACING_WEST);
+  pair[1] = FieldEffect_SpawnLiftHand(pos[0] - PIXELS(32), pos[1], pos[2],
+                                      FACING_EAST);
 
   // Each hand faces the target (FACING_WEST on the right, FACING_EAST on the
   // left) and moves 14 pixels that way.
@@ -83,15 +83,15 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
 /// Abilities: Lift (FIELD_PSYNERGY_LIFT).
 ///
 /// This is Lift cast with no target, which FieldPsynergy_Run calls.
-DEFINE_ITEM_BREAK_EFFECT(FieldPsynergy_Lift, FieldEffect_SpawnItemBreakMode3)
+DEFINE_ITEM_BREAK_EFFECT(FieldPsynergy_Lift, FieldEffect_SpawnLiftHand)
 
 /// Spawns a hand (SPRITE_MOVE_HAND) and grows it, spinning, from a quarter to
 /// full size over 24 frames; angle is the way it faces once grown. Makes Lift's
 /// two hands, for FieldPsynergy_LiftOnTarget and FieldPsynergy_Lift; returns
 /// NULL when no actor could be spawned. Unlike Carry's
-/// (FieldEffect_SpawnItemBreakMode1) it takes animation 3, not 1, and keeps
+/// (FieldEffect_SpawnCarryHand) it takes animation 3, not 1, and keeps
 /// autoFaceMotion as created; both are at sprite priority 0 (Actor_Spawn).
-struct Actor *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle) {
+struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
   struct Actor *fragment;
   s32 scale;
 

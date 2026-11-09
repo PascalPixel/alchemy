@@ -654,7 +654,7 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
 #endif
   // The leader walks up behind her; the cells before the doorway become
   // walkable.
-  Actor_PlaceCurrentWithinCameraBounds(ACTOR_PARTY_LEADER, 1);
+  FieldCamera_MoveToActorById(ACTOR_PARTY_LEADER, 1);
   Event_Wait(30);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 136, 264);
   FieldCamera_WaitForArrival();

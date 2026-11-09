@@ -642,11 +642,11 @@ static void AlpineCrossing_FeizhiArrives(void) {
     Actor_SetScript(ACTOR_FEIZHI, gAlpineCrossing_FeizhiPath);
     FieldCamera_MoveTo(PIXELS(296), -1, PIXELS(344), 1);
     GameFlag_Set(FLAG_FEIZHI_SAW_ROCKSLIDE);
-    Actor_RefreshSelectorById(ACTOR_FEIZHI);
+    Actor_WaitForScriptEndById(ACTOR_FEIZHI);
     FieldCamera_WaitForArrival();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     Actor_SetScript(ACTOR_PARTY_LEADER, gAlpineCrossing_LeaderPath);
-    Actor_RefreshSelectorById(ACTOR_PARTY_LEADER);
+    Actor_WaitForScriptEndById(ACTOR_PARTY_LEADER);
     Event_Wait(10);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     leader->update = NULL;
@@ -697,7 +697,7 @@ static void AlpineCrossing_HamaReachesHsu(void) {
   Event_WaitTransitionFrames();
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-  Actor_PlaceCurrentWithinCameraBounds(ACTOR_HSU, 1);
+  FieldCamera_MoveToActorById(ACTOR_HSU, 1);
   FieldCamera_WaitForArrival();
   Actor_RunRepeatedMotion(ACTOR_HAMA, 2);
   Event_Wait(20);

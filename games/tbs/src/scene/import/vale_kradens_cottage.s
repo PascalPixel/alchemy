@@ -14,9 +14,9 @@
 	.set import.Actor_SetMovementTypeById, 1
 	.set import.Actor_Stop, 1
 	.set import.Actor_SetMovementTypeAndWaitById, 1
-	.set import.Actor_ResetAndSetPosition, 1
-	.set import.Actor_ResetAndSetPositionInMode2, 1
-	.set import.Actor_SetPositionAndReset, 1
+	.set import.Actor_SetDestinationById, 1
+	.set import.Actor_WalkToById, 1
+	.set import.Actor_WalkToAndWaitById, 1
 	.set import.Actor_WaitForMoveById, 1
 	.set import.Import_ActorSetPosition, 1
 	.set import.Import_ActorSetAnimation, 1
@@ -24,16 +24,16 @@
 	.set import.Actor_Jump, 1
 	.set import.Actor_StartRepeatedMotion, 1
 	.set import.Actor_RunRepeatedMotion, 1
-	.set import.Actor_SetAngleToward, 1
+	.set import.Actor_FaceActorById, 1
 	.set import.Actor_TurnToFaceEachOther, 1
-	.set import.Actor_SetTargetAndCallback, 1
+	.set import.Actor_WatchAndStartScript, 1
 	.set import.Event_SetMessageId, 1
 	.set import.FieldMessage_ShowAtActor, 1
 	.set import.Event_ShowMessageAndWait, 1
 	.set import.Event_ShowMessageThenWait, 1
 	.set import.Event_AskYesNoAndShowResponse, 1
-	.set import.Actor_ArmCallback, 1
-	.set import.FieldEffect_SpawnAttached, 1
+	.set import.Actor_FaceDirectionById, 1
+	.set import.Actor_ShowEmoteById, 1
 	.set import.FieldEffect_SetAttached, 1
 	.set import.FieldCamera_FollowActor, 1
 	.set import.FieldCamera_SetSpeedParameters, 1

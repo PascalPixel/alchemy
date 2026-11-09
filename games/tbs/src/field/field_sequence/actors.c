@@ -16,9 +16,9 @@ enum {
 /// SPRITE_ISAAC_TUNIC.
 ///
 /// Called by Event_SpawnActorPlacements for every actor
-/// placement, and by PsynergyMenu_InitializeEntryActors (through
-/// Party_RemapCharacterIdByFlagsFar) for the party's figures.
-s32 Party_RemapCharacterIdByFlags(s32 character) {
+/// placement, and by Menu_CreatePartyFigures (through
+/// Party_GetCharacterSpriteFar) for the party's figures.
+s32 Party_GetCharacterSprite(s32 character) {
   s32 sprite;
 
   sprite = character;
@@ -38,7 +38,7 @@ s32 Party_RemapCharacterIdByFlags(s32 character) {
   return sprite;
 }
 
-/// Returns the sprite of character as Party_RemapCharacterIdByFlags would with
+/// Returns the sprite of character as Party_GetCharacterSprite would with
 /// FLAG_CHILDHOOD set to childhood (as recorded in a save file's summary).
 ///
 /// Called by FileList_ShowPartySprites through
@@ -76,7 +76,7 @@ extern const struct ActorPlacement gField_DefaultActorPlacements[2];
 /// tables do).
 ///
 /// Called by Actor_ResetForLeader (the leader, then the scene's table),
-/// Actor_Respawn and Event_CallWithLastActiveActorId. Records
+/// Actor_Respawn and Event_AppendActorPlacements. Records
 /// the table in work->tables and each actor in work->actors.
 void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
   struct FieldWork *work;
@@ -120,7 +120,7 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
         work->mode != ACTOR_SYSTEM_WORLD_MAP &&
         !GameFlag_IsConditionActive(condition + ACTOR_DJINNI_FLAG_COUNT))
       continue;
-    spriteId = Party_RemapCharacterIdByFlags(entry->sprite);
+    spriteId = Party_GetCharacterSprite(entry->sprite);
     object = Actor_Lookup(actorIndex);
     if (object == 0) {
       object = Actor_CreateFar(spriteId, entry->x, entry->y, entry->z);
@@ -314,7 +314,7 @@ void Actor_ResetForLeader(struct ActorPlacement *table) {
 /// or -1 when the last slot is occupied. Earlier holes are not reused by this
 /// append scan.
 ///
-/// Called by Actor_Respawn and Event_CallWithLastActiveActorId
+/// Called by Actor_Respawn and Event_AppendActorPlacements
 /// to choose where Event_SpawnActorPlacements starts.
 s32 Actor_FindLastActiveId(void) {
   struct FieldWork *work = gFieldWork;

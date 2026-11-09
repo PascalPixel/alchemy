@@ -52,7 +52,7 @@ s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act) {
 /// ("VSST" in the link signature), publish "EDVS" when done, and wait for
 /// the partner to finish ("Waiting for opponent's input."). Its work,
 /// BattleMenuWork (gBattleMenuWork), lives in HEAP_SLOT_BATTLE_MENU
-/// until it returns. Battle_BuildUnitActions calls it
+/// until it returns. Battle_BuildPartyActions calls it
 /// (battle/battle/turn.c).
 s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                                 s32 commandCount) {
@@ -205,7 +205,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     // Flee, unless the battle forbids it: one COMMAND_FLEE for the party,
     // first in the turn (priority 0x7ffe).
     if (mode == COMMAND_ICON_FLEE) {
-      if (Message_ShowLocalizedAndWait() != 0) {
+      if (Battle_RefuseFlee() != 0) {
         continue;
       }
       commandCount = 1;

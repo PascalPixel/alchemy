@@ -1763,7 +1763,7 @@ static void ShipRooms_WatchWarriorsStormOff(void) {
     Actor_SetScript(ACTOR_HOLD_SECOND_GUIDE, action);
     Event_Wait(40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-    Actor_RefreshSelectorById(ACTOR_HOLD_SECOND_GUIDE);
+    Actor_WaitForScriptEndById(ACTOR_HOLD_SECOND_GUIDE);
     GameFlag_Set(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN);
     Event_End();
   }
@@ -3541,16 +3541,16 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
     }
     break;
   case SHIP_PLACE_FOLLOWERS_AND_MONSTERS:
-    Event_CallWithLastActiveActorId(gShipRooms_PartyFollowerActorPlacements);
+    Event_AppendActorPlacements(gShipRooms_PartyFollowerActorPlacements);
     wait(1);
     if (arg == 1) {
-      Event_CallWithLastActiveActorId(gShipRooms_FirstAttackMonsters);
+      Event_AppendActorPlacements(gShipRooms_FirstAttackMonsters);
       wait(1);
     } else if (arg == 2) {
-      Event_CallWithLastActiveActorId(gShipRooms_SecondAttackMonsters);
+      Event_AppendActorPlacements(gShipRooms_SecondAttackMonsters);
       wait(1);
     } else if (arg == 3) {
-      Event_CallWithLastActiveActorId(gShipRooms_ThirdAttackMonsters);
+      Event_AppendActorPlacements(gShipRooms_ThirdAttackMonsters);
       wait(1);
     }
     break;

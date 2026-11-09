@@ -214,7 +214,7 @@ s32 BattleActionRun_Build(struct BattleAction *request,
   //----------------------------------------------------------------------
   // A fresh action run, and the debug defeat
   //----------------------------------------------------------------------
-  selectedTargetId = Battle_GetTaggedSlotValue(request->target);
+  selectedTargetId = Battle_GetUnitAtPlace(request->target);
   BattlePlayback_Reset();
   plan->hauntDamage = 0;
   plan->unitId = request->unitId;

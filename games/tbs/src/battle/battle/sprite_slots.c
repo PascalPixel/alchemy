@@ -63,7 +63,7 @@ s32 Enemy_HasSpriteRoom(s32 classId) {
 /// slots (one for a small enemy, two side by side for a large one) and
 /// marks them as the unit's. Two sprites, the Kraken's and the Fusion
 /// Dragon's, take a second part, loaded the same way into further slots.
-/// The slots stay the unit's until BattleObject_ReleaseSlotByValue
+/// The slots stay the unit's until BattleObject_ReleaseSpriteSlots
 /// frees them as it leaves the battle. Returns the first slot and the
 /// sprite as (slot << 12) | sprite, or 0 for a party member's unit or when
 /// a load fails. Called by BattleObject_Make. Writes gBattleWork->spriteSlots
@@ -141,9 +141,9 @@ s32 EnemySprite_LoadIntoSlots(s32 unitId) {
 /// Called by BattleObject_MarkForRelease. Clears those
 /// gBattleWork->spriteSlots.
 #ifdef UBFIX
-void BattleObject_ReleaseSlotByValue(s32 unitId) {
+void BattleObject_ReleaseSpriteSlots(s32 unitId) {
 #else
-s32 BattleObject_ReleaseSlotByValue(s32 unitId) {
+s32 BattleObject_ReleaseSpriteSlots(s32 unitId) {
 #endif
   struct BattleWork *battle = gBattleWork;
   s32 spriteSlot;
@@ -177,7 +177,7 @@ enum BattleWeaponKind {
 
 /// Returns the kind (enum BattleWeaponKind) of the weapon whose item id is
 /// itemId, which picks a party member's weapon sprite. Called by
-/// BattleUnit_LookupWeaponValueByClass.
+/// BattleUnit_GetWeaponSprite.
 s32 BattleUnit_GetWeaponKind(s32 itemId) {
   s32 assignmentIndex;
   u32 assignment;
@@ -203,7 +203,7 @@ s32 BattleUnit_GetWeaponKind(s32 itemId) {
 /// weapon, for Felix, or for a unit that is no party member. Called by
 /// BattleObject_Make, which keeps it in BattleObject.overlay for
 /// BattleObject_SpawnObjectsForList to add as a layer of the body sprite.
-s32 BattleUnit_LookupWeaponValueByClass(s32 unitId) {
+s32 BattleUnit_GetWeaponSprite(s32 unitId) {
   struct Unit *unit;
   s32 slot;
   s32 weaponSprite;

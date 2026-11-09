@@ -142,6 +142,10 @@ s32 Func_0810abf0(void) {
   // Round 8 (9 November), still 8. On the 25 form: the three later zeros in
   // other orders 24 or 25 (unitId's reload still finds no zero to inherit),
   // unitId = memberIndex 40, both from priceWindow 25.
+  // Round 9 (9 November), still 8, on this form: the later zeros chained or
+  // reordered (8 to 17); either memberIndex store through a volatile cast (8)
+  // or through a pointer to it (8, 10). Without firstMessage, the
+  // pointer-read serviceKind and priceWindow (NULL passed directly), 46.
   firstMessage = (s32)MsgWhoShallIRevive;
 #endif
   // DEAD: memberIndex is set again after the price window before any read.

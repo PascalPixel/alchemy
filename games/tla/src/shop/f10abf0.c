@@ -109,6 +109,16 @@ s32 Func_0810abf0(void) {
   // 9 November: the later zero made by an empty asm (as an output tied to 0,
   // "+r" on a zero local, or on priceWindow) gives the zero a stack slot and
   // keeps the first in r5: 63.
+  // Near5 round (9 November), still 8. The listing's r5 is a zero set after
+  // the windows, stored to memberIndex and copied to unitId, and priceWindow
+  // is the constant 0 at its uses; here cse2 takes the oldest register known
+  // to hold 0, the top store's (addressof's pseudo), for the later store.
+  // Tried: an asm "+r" on priceWindow with memberIndex and unitId from it or
+  // from 0 (60 to 232: priceWindow goes to the stack); the zero in a local
+  // pinned to r5, at function level or in a block (180 to 227: r5 is then
+  // avoided around it); firstMessage set to 0 at the top so cse2 forgets that
+  // zero (42 and 70: the later store is then dropped as redundant); the zeros
+  // reordered or copied from priceWindow (8, 17).
   firstMessage = (s32)MsgWhoShallIRevive;
 #endif
   // DEAD: memberIndex is set again after the price window before any read.

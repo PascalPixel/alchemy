@@ -1,4 +1,13 @@
 // Draft, differ 2 of 1146 (tla-en, 2026-11-09; the same 2 in ja, de, es, fr, it)
+// Near5 round (9 November), still 2. The sched2 table for the lights' first
+// build (block 93): the [sp] store 4 dependents, movs r1, #7 and movs r2, #7
+// 3, movs r0, #104 2, the ldr of flags 4, all priority 67. After the store the
+// ldr is class 2 (its link is the r3 anti dependence, cost 0); it would be
+// class 3, and win on its 4, only with a true memory dependence on the store
+// (a stack load after a stack store costs 1), which sp+0 against sp+48 never
+// gets, or with an emitted-nothing insn of priority 67 and 4 dependents
+// scheduled between them, independent of both. Permute 10 minutes, seed 6064
+// (34,000 candidates): nothing below 2.
 // Seventh round, 9 November, 22 to 2, both pins gone. Traced with a scratch
 // cc1 that prints reload's choices and PRE's buckets (analysis only):
 // - The prelude is read into a local before its test and passed as the first

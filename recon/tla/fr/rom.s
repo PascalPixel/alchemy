@@ -6,12 +6,6 @@
 	.incbin "baserom.gba", 0x0002279e, 0x00000002
 	.section .rom.000233a6, "ax"
 	.incbin "baserom.gba", 0x000233a6, 0x00000002
-	.section .rom.00023f9c, "ax"
-	.global Func_08023f9c
-	.type Func_08023f9c, %function
-	.thumb_func
-Func_08023f9c:
-	.incbin "baserom.gba", 0x00023f9c, 0x0000071c
 	.section .rom.00025c8a, "ax"
 	.incbin "baserom.gba", 0x00025c8a, 0x00000002
 	.section .rom.0002b998, "ax"
@@ -303,12 +297,6 @@ BattleEffect_RunCatastrophe:
 	.thumb_func
 BattleEffect_RunTrident:
 	.incbin "baserom.gba", 0x0018cb74, 0x00000a1c
-	.section .rom.0018fefc, "ax"
-	.global BattleEffect_RunMegiddo
-	.type BattleEffect_RunMegiddo, %function
-	.thumb_func
-BattleEffect_RunMegiddo:
-	.incbin "baserom.gba", 0x0018fefc, 0x00000c78
 	.section .rom.001b8272, "ax"
 	.incbin "baserom.gba", 0x001b8272, 0x00000002
 	.section .rom.0085a3ef, "ax"

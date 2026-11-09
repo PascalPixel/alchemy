@@ -1,4 +1,14 @@
 // Draft, differ 4 of 4580 (tla-en, 2026-11-09). Measure 081843fc,081848ec together.
+// Near5 round (9 November), still 4. The sparks' y in the sched2 dump: after
+// top's reload, the height table's pool load (reload of the base kept in r8)
+// and n's caller-save restore tie at priority 104, class 3 and 4 dependents
+// each, so RTL order decides, and the table's set precedes the first use of n
+// that places the restore. For x the listing keeps that order; for y it has
+// the restore first, so y's first use of n comes before the table's set
+// there. Tried for it: y's terms reordered (6 to 151), the height halved as
+// / 2 (4, the same rows), indexed by i & 3, (u32)n or n + 0 (4), by n & 3
+// (416) or (u8)n (500). Permute 10 minutes, seed 6063 (4,400 candidates):
+// nothing below 4.
 // Near4 round (9 November), still 4. The tornado, from the loop dumps: the
 // listing's order needs 0x1b5a moved out of the i loop in loop.c's second pass.
 // With dst before src, its set is the j loop's first movable and is moved in

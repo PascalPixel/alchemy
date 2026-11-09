@@ -1,58 +1,3 @@
-// Draft, differ 4 of 875 (tla-en, 2026-11-08)
-// Near4 round (9 November), still 4. sched2 after the first product: the
-// store (class 1), the copy (class 2) and the r6 rematerialisation (class 3,
-// no dependence) all rank 69; the listing's order follows if that load is
-// class 2, an anti dependence on the call, which is what a pool read of a
-// linked symbol gets. The second and third products through the linked
-// IwramMulQ16 (long_call) give exactly that order, but the symbol takes a
-// pool word of its own where the listing's ldr r6 reads the same word as ldr
-// r4 (0x638 in the listing object), and ratio and the pointer swap r5 and r6
-// (222; only the second through it 59; through a block-local mulQ16 pointer
-// 222). An asm reading and writing *object after the first store: 4.
-// 9 November, still 4. The products called through the linked IwramMulQ16
-// (a pool read, which sched2 ties to the call before it) in place of the
-// fixed address: in the slope slowdown 85 (two) and 116 (three), elsewhere 6
-// to 296; the pointer is then held and reused, not reloaded.
-// Devices pass (2026-11-09), none below 4: after the first product, an asm
-// on ratio or on the product, clobbering r6 or reading the stored velocityX
-// (6 each: the order stays and the asm's 4 bytes move the next pool).
-// All six editions differ by the same 4. Left: one swap in the slope
-// slowdown; every other instruction and register agrees. After the first
-// Iwram_MulQ16 product the native runs `adds r1, r5` (the next argument),
-// `str r0, [r7, #36]` (velocityX), then `ldr r6, =Iwram_MulQ16` (reload's
-// rematerialised pointer for the second and third products); the draft puts
-// the ldr first.
-// Why no source form closes it (sched2 -fsched-verbose dump, 2026-11-08):
-// that reload is `(set r6 (const_int))`, and sched2 gives a constant load no
-// dependence at all (r6 is call-saved). After the call it ties the store and
-// the copy on priority (69 each) and wins rank_for_schedule's class test:
-// independent beats the copy's anti-dependence on the call and the store's
-// data dependence on it. The native order is exactly what sched2 gives when
-// that load depends on the call, the copy or the store, as if the compiler
-// read a pool constant as memory after the call's memory flush. Nothing in C
-// gives a constant load a dependence: a local pointer pinned to r6 and set
-// after the store is still hoisted (20); storing through a velocity pointer
-// regroups the block (163); a full barrier after the store holds the copy
-// below the store (4) and one anywhere else orders the copy after the store;
-// a global register variable would add the dependence but takes r6 from the
-// whole function. This is a compiler question (K3), not a source one.
-// Tried before without gain: a block-local ratio or function pointer, a
-// once-only block, nested tests, reversed copies, the products through dx,
-// dy or dz (47 to 49), a once-only block after or around the first store (80,
-// 82), the ratio in speed or reducedSpeed (127, 113), the tests as == 0 (4),
-// and 32 permuter minutes in all (best 49 when randomising the slowdown).
-// 2026-11-07: two of 2026-11-01's three swaps are gone with no source change.
-// Written from The Broken Seal's Actor_UpdateAllThumb
-// (games/tbs/src/field/field/actor_motion.c), which runs each object's hook
-// and script and moves it toward its target each frame (Func_080230e0 adds it
-// at 0x48b). This game's changes: a paused object records no motion and is
-// skipped; ground following lets an object (priorityFlags bit 6) stand on
-// another (bit 7) 16 pixels below in the cell it moves into, remembering it at
-// 0x7c and keeping its speed there; a fall lands at the ground height less the
-// rebound; each object records the distance it moved this frame at 0x70; the
-// arrival axes are numbered 16 to 18. Also tried without gain: the order of
-// the velocity sums and of standing and standingOn, operand order, a != 0
-// test, pos's order, a velocityX temporary in the slowdown.
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
@@ -113,6 +58,7 @@ extern const MotionCommand gData_0802f204[];
 extern const s32 gData_0802ebc8[];
 
 s32 FixedSqrt(s32 value);
+s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));
 s32 ScriptObject_CheckOverlap(struct MotionObject *object, s32 *values);
 s32 Func_0802d45c(s32 terrainId, s32 x, s32 z);
 s16 ArcTan2(s32 y, s32 x);
@@ -326,20 +272,23 @@ void Func_08023f9c(void) {
           if (velocityY > maximumChange)
             velocityY = maximumChange;
           velocityY *= 3;
+          // This slowdown and the landing bounce below call IwramMulQ16 by its
+          // linked name, so each call reads the routine's address from the
+          // literal pool after the call before it.
           if (velocityY != 0 && !(object->motionFlags & 16) && !standing) {
             dx = object->velocityX;
             dy = object->velocityY;
             dz = object->velocityZ;
-            speed = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) +
-                              Iwram_MulQ16(dz, dz));
+            speed = FixedSqrt(IwramMulQ16(dx, dx) + IwramMulQ16(dy, dy) +
+                              IwramMulQ16(dz, dz));
             if (speed != 0) {
               reducedSpeed = speed - velocityY;
               if (reducedSpeed < 0)
                 reducedSpeed = 0;
               ratio = Iwram_RatioMulQ14(speed, reducedSpeed);
-              object->velocityX = Iwram_MulQ16(dx, ratio);
-              object->velocityY = Iwram_MulQ16(dy, ratio);
-              object->velocityZ = Iwram_MulQ16(dz, ratio);
+              object->velocityX = IwramMulQ16(dx, ratio);
+              object->velocityY = IwramMulQ16(dy, ratio);
+              object->velocityZ = IwramMulQ16(dz, ratio);
             }
           }
           object->groundHeight = ground;
@@ -352,7 +301,7 @@ void Func_08023f9c(void) {
             object->velocityY -= object->gravity;
           if (y + object->velocityY <= ground) {
             if (object->velocityY < 0) {
-              s32 rebound = -Iwram_MulQ16(object->velocityY, object->bounce);
+              s32 rebound = -IwramMulQ16(object->velocityY, object->bounce);
 
               object->velocityY = rebound;
               y = ground - rebound;

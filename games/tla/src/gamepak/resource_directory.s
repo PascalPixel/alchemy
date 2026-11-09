@@ -269,7 +269,7 @@ Resource_DirectoryTable:
 	resource AxeSheet, BattleEffect_AxeSheet
 	resource Data101, Resource_Data101
 	resource Data102, Resource_Data102
-	resource , Resource_Data103
+	resource Data103, Resource_Data103
 	resource , Resource_Data104
 	resource CloudPuffSheet, BattleEffect_CloudPuffSheet
 	resource TileAnimationMask, BattleEffect_TileAnimationMask

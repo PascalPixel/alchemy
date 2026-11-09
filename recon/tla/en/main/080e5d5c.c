@@ -1,4 +1,19 @@
 // Draft, differ 4 of 639 (tla-en, 2026-11-08)
+// Near5 round (9 November), still 4. Traced with the scratch cc1 (reload
+// picks): the listing's else-if registers (scene's y store in r4, 0x200000 in
+// r0) follow when the round-robin stands at index 3 before it; the plain test
+// leaves it at 1. A block-local at = &scene->x with an empty asm "+r" on it,
+// set after the x, y or z store, gives exactly that rotation and the whole
+// else-if branch, but scene's last reload is then at's (r2, which the add
+// changes), so the facing load cannot reuse r1 and picks r3: mov r3, r9 /
+// ldrh r1, [r3] for the listing's ldrh r1, [r1] (9, one instruction more).
+// At set before the stores, or facing read into a local first, keeps r1 but
+// loses the pick (14, 20). Input asms on scene ("l") before or after any store
+// 71 to 81. A function-level mask local, wherever set, also shared with
+// Func_080dbe80's 4: local-alloc moves its single-use set beside the test, or
+// cprop folds the call's, so the trace is the plain form's (12). The flag read
+// as ((u8 *)child)[85], >> 2 & 1 or a u16 at 84: 12. Permute 10 minutes, seed
+// 6061 (50,000 candidates): nothing below 4.
 // Near4 round (9 November), still 4: an empty asm reading and writing scene
 // memory ("+m" on *scene, scene->x or scene->z, in the NULL branch or the
 // else-if, with the kept or the plain test) to force one more reload of scene:

@@ -1,4 +1,16 @@
 // Draft, differ 4 of 2278 (tla-en, 2026-11-08)
+// Near5 round (9 November), still 4. The sched2 numbers at the turned flash's
+// first draw (after the 0x198a's shift, all priority 138 or 137): mov r4, sl 4
+// dependents (one the release's loop-note barrier), adds r1, r2, r1 and adds
+// r3, #138 3 each, ldr r2, [r7] 6 (the two stack argument stores, which may
+// alias r7). The listing's order follows with mov r4, sl at 3 and ldr r2,
+// [r7] at 4 or fewer: both the barrier and the alias must go. The alias stays
+// while r7's base is unknown: the flash loop's base as the linked
+// gMapCellBuffer (its pool word, 0x1238 in the listing, has no other user)
+// gives the loop a stack slot of its own (646); the whole function on the
+// symbol 1229; flash->x and flash->y read through a const pointer change
+// nothing (this compiler marks only static read-only objects unchanging).
+// Permute 10 minutes, seed 6062 (12,000 candidates): nothing below 4.
 // Near4 round (9 November), still 4: permute 10 minutes, seed 5151 (about
 // 22,000 candidates), nothing below 4. In the sched2 dump every row of that
 // draw carries an anti dependence on the blitter load's call; mov r4, sl is

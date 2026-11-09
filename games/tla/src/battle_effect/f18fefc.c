@@ -1,95 +1,3 @@
-// Draft, differ 2 of 1361 (tla-en, 2026-11-09, near4 round)
-// Cause 2 closed (4 to 2) by three empty asms that read and write *t after
-// model->scrollV (tagged barriers): each is one more dependent of t's setter,
-// 8 against the copy's 7, so sched2 takes add r6, sp, #108 first; the asms
-// reference t, so t passes half in local-alloc and takes r5, which an asm on
-// half puts back (barrier). Two asms are not enough (4); placed right after t
-// the textureBytes[1] store moves (4). Left: cause 1, req[0] stored through
-// r2. The address of *(s32 *)req is its own pseudo at expand time, which cse1
-// merges into pair's; the listing's direct [sp, #116] is what reload writes
-// for a spilled address pseudo equivalent to the frame address, so it wants
-// a second address pseudo that CSE does not merge. Tried at 2 or worse: a
-// once-only block round the req[0] store (also with req a volatile struct
-// x, y); v set before pair; req as volatile s32[2], a volatile DImode struct
-// or a volatile x, y struct with no pair (the stores then come in the
-// listing's order but req[0] still goes through r2); a struct with a
-// zero-length tail (BLKmode); req as a DImode struct (exact rows, but its
-// slot is assigned at purge_addressof, below the texture: 6) or a DImode
-// union (6); req and the texture both DImode (527, 537).
-// Before (4):
-// 9 November, later, still 4: its RAM buffers as FIXED_ADDRESS constants
-// (the ring's cells, transformed, strip, sheet2, the 0xC2 load, the camera
-// parameters), alone and up to three together, change nothing. For cause 2,
-// t's setter needs 8 dependents against the model copy's 7 (LUID favours the
-// copy) without its priority passing 4708's 175: no lo register holds a live
-// value here for an asm operand to carry.
-// 2026-11-09, 8 to 4: cause 3 below is closed by a tagged barrier, an empty
-// asm on frame * 2 that claims to clobber r3, so local-alloc gives the
-// temporary r2 (the gcse table then has 1111 insns, still in the good range
-// below). Left: causes 1 and 2. Tried for them this round, none below 4: an
-// asm on pair after `pair = (s32 *)req` (98) or after pair[1] (6: pair[1]
-// then goes to [sp, #120] and req[0] through r2); for the model copy, an asm
-// writing model right after the allocation or t (4: the copy then loses to
-// movs r3, #6), after model->kind (4: the kind store then passes movs r2, #0),
-// after any later store (8, 10), or also reading t (6 to 10); one writing t
-// (142). The counts (sched2, base form): the copy 7 dependents, t 5,
-// movs r3, #6 and movs r2, #0 4 each, all priority 174 or 173.
-// Before (2026-11-08, differ 8): BattleEffect_RunMegiddo. All six editions
-// measured 8 (tla-ja's copy is at 0818ff00: pass that address). Left, three
-// causes:
-// 1. req's first word (2 rows): the listing stores it as [sp, #116], the draft
-// through r2 (the call's argument). The direct store needs req as a DImode
-// struct: struct { s32 v[2]; } req; req.v[0] = req.v[1] = scale * 2; gives the
-// listing's exact rows, as f175f74's scale160 does (purge_addressof writes
-// (mem (plus sfp -104)) itself), but its slot is then assigned at addressof,
-// below textureBytes (req at 108, the texture at 116: 4 rows). Putting the
-// texture in a DImode struct or union too, so it is placed after req, costs
-// 531 and more: CSE turns the offset-0 store through t into an ADDRESSOF,
-// purge gives it a second sfp-112 pseudo, loop matches the two invariants
-// (savings 2) and hoists &texture out of the frame loop. A whole-life
-// pointer to req set at the top: 555.
-// 2. The first model's copy, adds r7, r0, before add r6, sp, #108 (2 rows):
-// sched2 ties them at priority 177 and haifa prefers the insn with more
-// dependents (model 7, t 5). All 5040 orders of the seven stores (none below
-// 8), chained stores, t before the call (541): no better.
-// 3. frame * 2 - 144 takes its temporary in r3, the listing r2 (4 rows): the
-// only local in the frame 64..71 block, so local-alloc gives it r3; what
-// takes r3 there in the listing is not known. (frame - 64) * 2 - 16,
-// 2 * (frame - 72), frame + frame: no change. Permuter, six minutes here:
-// nothing below 8.
-// How 38 became 8 (2026-11-08):
-// - gcse's expression table has ((insns at addressof + 2) / 2) | 1 buckets,
-// a frame address hashing to (13926 + offset) mod buckets. &texture2 (sfp-120)
-// must come before &pos (sfp-12) or their reaching registers swap slots 20
-// and 24 (18 rows): good at 531..551 and 557..575 buckets, so at 1101 insns
-// or fewer, or 1110 to 1149. This draft has 1110 (557 buckets); the four 0
-// defaults (scroll, angle, tilt, v) supply the last four. Without them 1106
-// insns, 555 buckets, differ 28.
-// - The closing background id is read as a word and narrowed: an int load, so
-// the transition store (int) must stay before it, as in the listing; read as
-// u16 the store sinks below the ldrh (4 rows). It adds 3 insns at addressof.
-// A union read did the same with none, but nothing suggests a union there.
-// - The first texture's sizes are char stores into textureBytes. As bitfields
-// through t they take ModelTexture's alias set, which holds the pixels
-// pointer, so they wait for model->vertices (2 rows).
-// - Vertices are written through struct ModelVertex, whose alias set is not
-// char's, so m's reload may pass the z store, as in the listing (4 rows).
-// - The mesh loop's height: y = (c * 16) >> 16 before r, + 24 at the store
-// (2 rows).
-// - The once-only block holds only the pixels store; half is set in a plain
-// block after model->mesh, so 0x8000 is built between the strip load and the
-// mesh store (the old macro's loop notes were a sched2 barrier there; 6 rows).
-// - texture2's sizes before its pixels, as the listing stores them (12 rows;
-// these two insns are what first pushed the table to 553 buckets).
-// Older notes still true: f and twice are still needed (159 and 99 without,
-// tagged). Plain finds: side's if/else order sets x before the test; the
-// ring's z and place use zero (spilled, reloaded) but the first model's shade
-// and scrollV are literal; strip and sheet2 are one-constant locals the
-// listing reloads; tint overlaps the 3 so -24 lands in r2; the half local is
-// needed (131 without). blit is two words: slot 76 is its unused half. req is
-// a byte array so its slot comes before the first texture's (see 1). The
-// ResourceId_Data names are placeholders for ids with no symbol yet.
-
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -218,14 +126,14 @@ extern const s16 Data_08199f0a[];
 extern const s8 Data_08199f1a[];
 extern const s8 Data_08199f22[];
 extern s32 gCameraSceneParameters[];
-extern char ResourceId_Data072;
+extern char ResourceId_RedHazeBackdrop;
 extern char ResourceId_Data0C2;
 extern char ResourceId_Data0C9;
-extern char ResourceId_Data0CD;
+extern char ResourceId_DustBlobSheet;
 extern char ResourceId_Data0E9;
 extern char ResourceId_Data103;
 extern char ResourceId_Data134;
-extern char ResourceId_Data148;
+extern char ResourceId_OrangePaletteB;
 
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames,
                                     s32 speed);
@@ -358,7 +266,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
                                  0, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_Data103, work->sheet + 0x1000,
                                  1, 1);
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0CD, work->sheet + 0x2400,
+      Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet, work->sheet + 0x2400,
                                  1, 0);
       Graphics_LoadGreyRamp();
       REG_BLDALPHA = 0x1010;
@@ -395,7 +303,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       list[0] = effect->actor;
       list[1] = 255;
       BattleActor_SpawnObjectsForListFar(list, 0);
-      BattleBackground_LoadFar(1, (s32)&ResourceId_Data072, 0);
+      BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
       BattleEffect_BuildRepeatingTilemap();
       Func_08164abc(8, 2, 2);
       BattleEffect_SpawnObjects(1, 0x299, 2);
@@ -468,7 +376,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
     }
     if ((u32)(frame - 42) <= 37) {
       z += 0x20000;
-      Func_0815f0a0((s32)&ResourceId_Data148);
+      Func_0815f0a0((s32)&ResourceId_OrangePaletteB);
     }
     if ((u32)(frame - 84) <= 58) {
       if (!effect->side) {
@@ -495,7 +403,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       work->transferMode = 2;
       work->transferValue = 50;
       Iwram_CopyWords((void *)BG_PLTT,
-                      Resource_GetTableEntry((s32)&ResourceId_Data148), 128);
+                      Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
     }
     if (frame > 154) {
       s32 d = 16 - (frame - 155) / 2;
@@ -562,6 +470,10 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         }
       }
       pair = (s32 *)req;
+      /* FAKEMATCH(barrier): an empty asm on pair, which hides from CSE that
+       * pair holds req's address, so req's first word is stored at its own
+       * frame address; as no asm, 2 of 1361 instructions differ in tla-en. */
+      asm("" : "+r"(pair));
       v = scale * 2;
       pair[1] = v;
       *(s32 *)req = v;
@@ -573,7 +485,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       obj[23] = 32;
       obj[22] = zero;
       if ((u32)(place[2] + 0x340000) <= 0xfbffff) {
-        Render_ApplyProjectedPlacementFar(obj, place, (s32 *)req, 0);
+        Render_ApplyProjectedPlacementFar(obj, place, pair, 0);
       }
     }
     if (f > 1) {

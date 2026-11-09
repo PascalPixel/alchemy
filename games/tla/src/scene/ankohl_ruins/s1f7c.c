@@ -1,6 +1,5 @@
 #include "ankohl_ruins.h"
 
-void Task_RemoveFar(void (*func)(void));
 
 /// Each frame, moves the raft (object 9) down by 0xcccc and carries the leader
 /// and the event work's unk1cc object with it while the leader stands on it;
@@ -42,19 +41,19 @@ void Func_02001f7c(void) {
   row = raft->z >> 20;
   if ((u16)(row - 31) <= 4 && !AnkohlRuins_FlagCheck(0x146)) {
     AnkohlRuins_Call2dfc(35, 83, 5, 4, 12, 96);
-    GameFlag_SetBit(0x146);
+    Event_SetFlag(0x146);
   }
   if (row == 37 && AnkohlRuins_FlagCheck(0x146)) {
     AnkohlRuins_Call2dfc(40, 83, 5, 4, 12, 96);
-    GameFlag_ClearBit(0x146);
+    Event_ClearFlag(0x146);
   }
   if (row > 41) {
-    Task_RemoveFar(Func_02001f7c);
+    FieldTask_Remove(Func_02001f7c);
     AnkohlRuins_Call2e24(-1, -1, 0xe666);
     AnkohlRuins_Call2dfc(41, 48, 3, 2, 13, 41);
-    GameFlag_SetBit(0x201);
-    GameFlag_ClearBit(0x17d);
-    GameFlag_ClearBit(0x161);
-    Sound_Play(208);
+    Event_SetFlag(0x201);
+    Event_ClearFlag(0x17d);
+    Event_ClearFlag(0x161);
+    Event_PlaySound(208);
   }
 }

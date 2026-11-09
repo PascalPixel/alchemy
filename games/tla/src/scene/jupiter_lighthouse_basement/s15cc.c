@@ -35,21 +35,21 @@ void Func_02001d3c(s32 id);
 #define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
 
 void Func_020015cc(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = leader->x;
   s32 z = leader->z;
 
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x40000, 0x20000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x40000, 0x20000);
 
   x >>= 20;
   z >>= 20;
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, (x << 4) + 8,
                              (z << 4) + 8);
-  wait(1);
-  Actor_SetPositionAndResetMotion(leader, (x << 20) + PIXELS(8), leader->y,
+  System_Wait(1);
+  FieldActor_SetPositionAndResetMotion(leader, (x << 20) + PIXELS(8), leader->y,
                                   (z << 20) + PIXELS(8));
-  Event_Wait(4);
-  Func_080d4568()->y -= 0x80000;
+  FieldEvent_Wait(4);
+  FieldCamera_GetActor()->y -= 0x80000;
 }
 
 /// Map_CopyCellsRect through this overlay's import.
@@ -60,7 +60,7 @@ struct CellTargetEntry;
 /// row's 64 bit; Func_020019f4 calls it the first time the leader steps on
 /// one of the table's cells.
 void Func_02001654(struct CellTarget *table, struct CellTargetEntry *entry) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s16 sourceX;
   s32 leaderX = leader->x;
   s16 sourceZBit;
@@ -79,7 +79,7 @@ void Func_02001654(struct CellTarget *table, struct CellTargetEntry *entry) {
   sourceZBit = table->z & 64;
   z = (leader->z >> 20) | sourceZBit;
   Func_020015cc();
-  Sound_Play(161);
-  Map_CopyCellsRect(table->x, table->z + 1, 1, 1, x, z);
-  Event_Wait(12);
+  Event_PlaySound(161);
+  MapGrid_CopyCells(table->x, table->z + 1, 1, 1, x, z);
+  FieldEvent_Wait(12);
 }

@@ -14,7 +14,7 @@ extern u8 gData_02003e4c[];
 
 void Func_02001da8(void) {
   Func_02003bc8();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   Func_02003ca8((s32)gData_02003e4c);
   Func_02003bd0();
 }

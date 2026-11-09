@@ -1,6 +1,5 @@
 #include "local.h"
 
-s32 Math_Sine(s32 angle);
 u32 Random16Far(void);
 
 /// Moves the object around its orbit's centre (words 14 and 15) and steps the
@@ -9,7 +8,7 @@ u32 Random16Far(void);
 s32 Func_020007fc(s32 *p) {
   s16 *q = (s16 *)p[20];
   s32 a, b;
-  s32 d = Math_Sine(p[12]) * 2;
+  s32 d = Math_Sin(p[12]) * 2;
 
   if (d > 0)
     d = -d;

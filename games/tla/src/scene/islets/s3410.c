@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "heap_release.h"
 #include "palette_snapshots.h"
 

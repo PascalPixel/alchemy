@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 struct JupiterLighthouseRoom8Puzzle {
   s16 unk00;
@@ -17,17 +18,15 @@ struct JupiterLighthouseRoom8EventWork {
 
 extern struct JupiterLighthouseRoom8Puzzle gData_02004cf4;
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_GetByte(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);
 void Func_020041fc(void);
 void Func_02003e04(void);
 
 void Func_0200404c(s32 x, s32 z, s32 effect) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct JupiterLighthouseRoom8EventWork *work = Ram_HeapSlots->eventWork;
-  s32 dx = GameFlag_GetByte(gData_02004cf4.flag);
-  s32 dz = GameFlag_GetByte(gData_02004cf4.flag + 8);
+  s32 dx = FieldGameFlag_GetByte(gData_02004cf4.flag);
+  s32 dz = FieldGameFlag_GetByte(gData_02004cf4.flag + 8);
 
   if (dx != 0 || dz != 0) {
     struct Actor *marker;

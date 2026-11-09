@@ -48,14 +48,14 @@ void Func_02000060(s32 arg) {
   asm("");
   countdown = arg;
   party->ownerOverride = 0;
-  GameFlag_ClearBit(0x960);
-  Sound_Play(123);
+  Event_ClearFlag(0x960);
+  Event_PlaySound(123);
   party->currentOwner = 8;
   ((struct EventWorkRoute *)Ram_HeapSlots->eventWork)->route = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   party->currentOwner = 4;
-  Import_EventSetExitRequest(countdown);
+  FieldEvent_SetExitRequest(countdown);
 }
 
 void Func_020000b0(s32 arg) {
@@ -67,17 +67,17 @@ void Func_020000b0(s32 arg) {
   asm("");
   countdown = arg;
   party->ownerOverride = 0;
-  GameFlag_SetBit(0x960);
-  Sound_Play(123);
+  Event_SetFlag(0x960);
+  Event_PlaySound(123);
   party->currentOwner = 8;
   ((struct EventWorkRoute *)Ram_HeapSlots->eventWork)->route = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   party->currentOwner = 4;
-  Import_EventSetExitRequest(countdown);
+  FieldEvent_SetExitRequest(countdown);
 }
 
 void Func_02000100(void) {
-  GameFlag_SetBit(0x909);
-  Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
+  Event_SetFlag(0x909);
+  Actor_SetPosition(19, 0, 0);
 }

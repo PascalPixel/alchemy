@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 
 s32 Func_02002068(u8 *src, s32 length, u8 *dst) {
   u8 saved[260];

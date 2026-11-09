@@ -21,7 +21,7 @@ void Func_02002594(void) {
 
   x = ((Random16Far() * 40) >> 16) << 16;
   z = ((Random16Far() * 30) >> 16) << 16;
-  obj = ((struct Actor *)Import_ActorCreate(285, x + 0x7b80000, 0,
+  obj = (FieldActor_Create(285, x + 0x7b80000, 0,
                                             z + 0x1c5c0000));
   if (obj != NULL) {
     sprite = obj->animation;

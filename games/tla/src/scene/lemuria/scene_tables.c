@@ -70,9 +70,9 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void Func_020001bc(void) {
-  Actor_SetHorizontalPositionWithTerrain(12, PIXELS(488), PIXELS(1256));
-  Animation_SetIndexAndInitializeObjects(Actor_GetById(12), 157);
-  Actor_SetModeById(12, 3);
+  Actor_SetPosition(12, PIXELS(488), PIXELS(1256));
+  Animation_SetIndexAndInitializeObjects(Actor_Get(12), 157);
+  Actor_SetAnimation(12, 3);
   Actor_ArmCallback_(12, FACING_WEST, 0);
 }
 
@@ -80,19 +80,19 @@ void Func_020001f0(const struct WarpTarget *warp, s32 door, s32 mode) {
   s32 id;
 
   Func_02001bcc();
-  Event_ResolvePendingActions(0);
-  Sound_Play(158);
-  Map_PlayMapEdit(warp->scene, warp->x, warp->z);
-  Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+  FieldEvent_ResolvePendingActions(0);
+  Event_PlaySound(158);
+  MapGrid_AnimateCells(warp->scene, warp->x, warp->z);
+  Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 2;
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   id = gMainRoutineWork.currentOwner;
   if (mode == 0)
     Actor_CenterOnColumn_(id, 2, -8);
   else
     Actor_OffsetPositionAndResetMotion_(id, 0, -8);
-  Event_Wait(10);
-  Import_EventSetExitRequest(door);
+  FieldEvent_Wait(10);
+  FieldEvent_SetExitRequest(door);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_02001bd4();
@@ -102,9 +102,9 @@ void Func_02000278(s32 door) {
   const struct WarpTarget *warp = &gData_020021bc;
   s32 mode = 0;
 
-  if (door == 3 && GameFlag_Test(0x96a)) {
-    Event_SetMessageId((s32)&MsgTheDoorIs);
-    Event_ShowMessageAndWait(-1, 0);
+  if (door == 3 && Event_GetFlag(0x96a)) {
+    FieldEvent_SetMessageId((s32)&MsgTheDoorIs);
+    Event_ShowMessage(-1, 0);
     return;
   }
   if (door == 1) {

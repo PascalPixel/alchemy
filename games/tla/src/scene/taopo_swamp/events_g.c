@@ -15,7 +15,7 @@ s32 Func_02001228(struct Actor *object) {
       Actor_SetSingleChildFlags(spark, 0);
       Func_020027f8(spark, 2);
     }
-    Sound_Play(106);
+    Event_PlaySound(106);
     object->y = object->terrainHeight;
     object->velocityY = 0;
     return 0;

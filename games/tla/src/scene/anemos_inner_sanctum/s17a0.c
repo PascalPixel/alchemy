@@ -14,6 +14,6 @@ void Func_020017a0(void) {
 
   t0 = Func_020030e0();
   if (t0 != 0) {
-    Import_EventSetExitRequest(0xc);
+    FieldEvent_SetExitRequest(0xc);
   }
 }

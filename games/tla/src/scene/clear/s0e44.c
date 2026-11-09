@@ -413,7 +413,7 @@ s32 Func_02000e44(void) {
                                        0);
             Sound_Play(112);
           wait_accepted:
-            wait(1);
+            System_Wait(1);
             if (!(gInput.pressed & 1))
               goto wait_accepted;
             Sound_Play(112);
@@ -434,7 +434,7 @@ s32 Func_02000e44(void) {
             Window_Close(window, 2);
             Func_0803f9c0(party->paletteGlow[0], party->paletteGlow[1]);
             Sound_Play(74);
-            wait(6);
+            System_Wait(6);
             Func_020022f8(0);
             Func_020023e8();
             Iwram_CopyWords(Data_02012f94 + 0xac, gGameFlagBytes, 0xf40);
@@ -443,7 +443,7 @@ s32 Func_02000e44(void) {
           Sound_Play(113);
           Text_DrawCharacterAtOffset(MSGNO(MsgFieldInvalidPassword), box, 0, 0);
         wait_rejected:
-          wait(1);
+          System_Wait(1);
           if (!(gInput.pressed & 1) && !(gInput.pressed & 2))
             goto wait_rejected;
           Window_Close(box, 2);
@@ -526,6 +526,6 @@ s32 Func_02000e44(void) {
         Iwram_ClearWords(work->cells[i], 128);
       }
     }
-    wait(1);
+    System_Wait(1);
   }
 }

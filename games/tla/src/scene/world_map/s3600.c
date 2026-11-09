@@ -27,14 +27,14 @@ void Func_02003600(s32 slot, s32 before, s32 after) {
      * call; as plain before, 4 of 33 instructions differ in tla-en. */
     register s32 thenValue asm("r7") = before;
 
-    owner = Actor_GetById(gMainRoutineWork.currentOwner);
+    owner = Actor_Get(gMainRoutineWork.currentOwner);
     work = Ram_HeapSlots->eventWork;
     if (owner->x < target->x)
       work->countdown = thenValue;
     else
       work->countdown = elseValue;
   }
-  Sound_Play(123);
+  Event_PlaySound(123);
 }
 
 /// The same on z.
@@ -55,12 +55,12 @@ void Func_02003654(s32 slot, s32 before, s32 after) {
      * call; as plain before, 4 of 33 instructions differ in tla-en. */
     register s32 thenValue asm("r7") = before;
 
-    owner = Actor_GetById(gMainRoutineWork.currentOwner);
+    owner = Actor_Get(gMainRoutineWork.currentOwner);
     work = Ram_HeapSlots->eventWork;
     if (owner->z < target->z)
       work->countdown = thenValue;
     else
       work->countdown = elseValue;
   }
-  Sound_Play(123);
+  Event_PlaySound(123);
 }

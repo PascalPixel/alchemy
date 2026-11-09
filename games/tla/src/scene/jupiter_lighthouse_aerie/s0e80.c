@@ -21,25 +21,25 @@ struct PositionedActor {
 void Animation_ApplyChildValues(struct PositionedActor *object, s32 value);
 
 void Func_02000e80(void) {
-  struct PositionedActor *actor9 = ((struct PositionedActor *)Actor_GetById(9));
+  struct PositionedActor *actor9 = ((struct PositionedActor *)Actor_Get(9));
   struct PositionedActor *actor10 =
-      ((struct PositionedActor *)Actor_GetById(10));
+      ((struct PositionedActor *)Actor_Get(10));
   struct PositionedActor *actor23 =
-      ((struct PositionedActor *)Actor_GetById(23));
+      ((struct PositionedActor *)Actor_Get(23));
   struct FieldSprite *sprite = actor23->animation;
 
   Actor_SetPosition(24, 0x2000000, 0xf80000);
   Actor_SetPosition(23, 0x2000000, 0xf80000);
   Actor_SetPosition(9, 0x1d80000, 0x1000000);
   Actor_SetPosition(10, 0x2280000, 0x1000000);
-  ((struct PositionedActor *)Actor_GetById(24))->scaleX = 0;
+  ((struct PositionedActor *)Actor_Get(24))->scaleX = 0;
   actor23->motionFlags = 0;
   actor23->y.fixed = actor23->terrainHeight;
   actor9->motionFlags = 0;
   actor9->y.fixed = actor9->terrainHeight;
   actor10->motionFlags = 0;
   actor10->y.fixed = actor10->terrainHeight;
-  if (GameFlag_Test(0xa0a)) {
+  if (Event_GetFlag(0xa0a)) {
     actor9->y.fixed += 0x66640;
     {
       s32 step = 0x1eb80;
@@ -48,8 +48,8 @@ void Func_02000e80(void) {
     }
     actor23->x.fixed -= 0x28f40;
     sprite->rotation += 0x800;
-    Animation_ApplyChildValues(((struct PositionedActor *)Actor_GetById(9)), 4);
-    Animation_ApplyChildValues(((struct PositionedActor *)Actor_GetById(11)),
+    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(9)), 4);
+    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(11)),
                                4);
   }
   if (Event_GetFlag(0xa0b)) {
@@ -61,12 +61,12 @@ void Func_02000e80(void) {
     }
     actor23->x.fixed += 0x28f40;
     sprite->rotation -= 0x800;
-    Animation_ApplyChildValues(((struct PositionedActor *)Actor_GetById(10)),
+    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(10)),
                                4);
-    Animation_ApplyChildValues(((struct PositionedActor *)Actor_GetById(12)),
+    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(12)),
                                4);
   }
-  if (GameFlag_Test(0xa0a) && GameFlag_Test(0xa0b)) {
+  if (Event_GetFlag(0xa0a) && Event_GetFlag(0xa0b)) {
     actor9->y.fixed += 0x199900;
     actor10->y.fixed += 0x199900;
     {

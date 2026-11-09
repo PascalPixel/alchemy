@@ -35,48 +35,48 @@ static __inline__ struct Actor *Create(s32 type, s32 x, s32 y, s32 z) {
 /// 0x207.
 void Func_02001398(void) {
   struct AnemosInnerSanctumEventWork *work = Ram_HeapSlots->eventWork;
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *object;
   s32 all;
   s32 i;
   s32 id;
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room4)
-    Map_CopyCellPictureIndicesRect(17, 71, leader->x >> 20, (leader->z >> 20) + 64, 1, 1);
+    MapGrid_CopyCellsTo(17, 71, leader->x >> 20, (leader->z >> 20) + 64, 1, 1);
   else
-    Map_CopyCellPictureIndicesRect(54, 87, leader->x >> 20, (leader->z >> 20) + 64, 1, 1);
-  Sound_Play(106);
+    MapGrid_CopyCellsTo(54, 87, leader->x >> 20, (leader->z >> 20) + 64, 1, 1);
+  Event_PlaySound(106);
   object = Create(0x15d, ((leader->x >> 20) << 20) + 0x80000, 0,
                   ((leader->z >> 20) << 20) + 0x80000);
   object->priorityFlags |= 2;
   object->motionFlags = 0;
-  Actor_SetPartAttribute(object, 4);
+  Actor_SetSpriteColor(object, 4);
   object->scaleY = 0x16000;
   object->scaleX = 0x16000;
   Scene_SetActorSpritePriority(object, 2);
   Func_020032e0(object, 3);
   Actor_SetSingleChildFlags(object, 0);
   Func_020032e8(object, gData_02003574);
-  GameFlag_SetBit(work->unk154 + 0x1ce);
-  all = GameFlag_Test(0x200);
+  Event_SetFlag(work->unk154 + 0x1ce);
+  all = Event_GetFlag(0x200);
   for (i = 1; i != 7; i++)
-    all &= GameFlag_Test(0x200 + i);
+    all &= Event_GetFlag(0x200 + i);
   if (all) {
     Func_02003398();
-    Event_ResolvePendingActions(0);
-    Event_Wait(10);
-    Camera_SetSpeedParameters(0xcccc, 0x1999);
+    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_Wait(10);
+    FieldCamera_SetSpeed(0xcccc, 0x1999);
     id = 9;
     if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room4)
       id = 8;
     Func_02003438(id, 1);
     Func_02003430();
-    Event_Wait(10);
-    Sound_Play(0x246);
-    Actor_SetModeById(id, 2);
-    GameFlag_SetBit(0x207);
-    Actor_GetById(id)->motionFlags = 4;
-    Event_Wait(80);
+    FieldEvent_Wait(10);
+    Event_PlaySound(0x246);
+    Actor_SetAnimation(id, 2);
+    Event_SetFlag(0x207);
+    Actor_Get(id)->motionFlags = 4;
+    FieldEvent_Wait(80);
     Func_020033a0();
   }
 }

@@ -54,7 +54,7 @@ extern s32 Data_02006a28;
 
 void Func_0200430c(struct Object6a5 *object) {
   struct EventWork6a5 *work = Ram_HeapSlots->eventWork;
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct Vector3 position;
   s32 distance;
   s32 near;
@@ -70,7 +70,7 @@ void Func_0200430c(struct Object6a5 *object) {
   timer = object->unk64 + 1;
   object->unk64 = timer;
   if ((timer & 31) == 31)
-    Sound_Play(231);
+    Event_PlaySound(231);
   {
     s8 *from = leader->animation;
     s8 *to = object->sprite;
@@ -91,7 +91,7 @@ void Func_0200430c(struct Object6a5 *object) {
         near = 0;
         if (Func_020042e0(&leader->x, &object->x) <= 12 && distance < 0xc0000)
           near = 1;
-        if (near != 0 && GameFlag_Test(0x104) == 0) {
+        if (near != 0 && Event_GetFlag(0x104) == 0) {
           leader->watchedObject = (struct Actor *)object;
           leader->angle = object->angle;
           flags = &leader->priorityFlags;
@@ -103,7 +103,7 @@ void Func_0200430c(struct Object6a5 *object) {
         }
       }
       object->x += IwramMulQ16(Math_Cosine(object->angle), object->speed);
-      object->z += IwramMulQ16(Math_Sine(object->angle), object->speed);
+      object->z += IwramMulQ16(Math_Sin(object->angle), object->speed);
       return;
       }
     }
@@ -111,6 +111,6 @@ void Func_0200430c(struct Object6a5 *object) {
   object->unk63 = 0;
   object->update = 0;
   Func_02005764(object, gData_020069fc);
-  Sound_Play(228);
+  Event_PlaySound(228);
   Data_02006a28 = 0;
 }

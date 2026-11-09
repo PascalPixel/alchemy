@@ -1,8 +1,5 @@
 #include "../../../../../games/tla/src/scene/settlements/local.h"
 
-void Actor_SetModeById(u32 id, s32 mode);
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Camera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
 void Func_0200156c(s32 id);
 
 static __inline__ void Speed(s32 id, s32 speed, s32 acceleration) {
@@ -33,40 +30,40 @@ void Func_02000fd0(void) {
       goto sink;
     Func_0200156c(10);
     FieldEvent_Wait(20);
-    Camera_MoveWithinMapBounds(0xc00000, -1, 0xe00000, 1);
+    FieldCamera_MoveTo(0xc00000, -1, 0xe00000, 1);
     Speed(10, 0xcccc, 0x6666);
-    Actor_OffsetPositionAndResetMotion(10, 0, 8);
-    Actor_WaitForMoveById(10);
+    Actor_SetDestinationOffset(10, 0, 8);
+    FieldActor_WaitForMoveById(10);
     FieldEvent_Wait(10);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x4000, 0);
+    Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x4000, 0);
     Speed(10, 0x26666, 0x13333);
-    Actor_OffsetPositionAndResetMotion(10, 0, 80);
-    Actor_WaitForMoveById(10);
+    Actor_SetDestinationOffset(10, 0, 80);
+    FieldActor_WaitForMoveById(10);
     Func_0200156c(10);
-    if (!GameFlag_Test(0x204)) {
+    if (!Event_GetFlag(0x204)) {
       FieldEvent_Wait(10);
       Speed(10, 0xcccc, 0x6666);
-      Actor_OffsetPositionAndResetMotion(10, 0, 80);
-      Actor_WaitForMoveById(10);
+      Actor_SetDestinationOffset(10, 0, 80);
+      FieldActor_WaitForMoveById(10);
       Speed(10, 0x28000, 0x14000);
-      Actor_OffsetPositionAndResetMotion(10, 0, 80);
+      Actor_SetDestinationOffset(10, 0, 80);
       FieldEvent_Wait(5);
-      Func_020020c0(10, 0, 0);
-      GameFlag_SetBit(0x206);
+      Actor_SetPosition(10, 0, 0);
+      Event_SetFlag(0x206);
     } else {
-      Func_02002018(12, 32, 11, 15, 1, 1);
-      Func_02002018(77, 15, 75, 15, 1, 1);
-      Actor_OffsetPositionAndResetMotion(10, 0, 12);
-      Actor_WaitForMoveById(10);
+      MapGrid_CopyCellsTo(12, 32, 11, 15, 1, 1);
+      MapGrid_CopyCellsTo(77, 15, 75, 15, 1, 1);
+      Actor_SetDestinationOffset(10, 0, 12);
+      FieldActor_WaitForMoveById(10);
       FieldEvent_Wait(20);
-      Func_02002030(9, 11, 1, 1, 11, 11);
-      Actor_SetModeById(10, 2);
+      MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 11);
+      Actor_SetAnimation(10, 2);
       FieldEvent_Wait(30);
-      GameFlag_SetBit(0x205);
+      Event_SetFlag(0x205);
     }
     Func_02002070();
   } else if (!Flag_Test(0x207) && column == 16 && row == 12) {
-    Func_02002030(17, 12, 1, 1, column, row);
+    MapGrid_CopyCellAttributes(17, 12, 1, 1, column, row);
     flags = &object->motionFlags;
     *flags = 3;
     FieldEvent_Wait(30);

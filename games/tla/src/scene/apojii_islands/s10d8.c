@@ -13,7 +13,7 @@ void Func_020010d8(struct Actor *object) {
   struct FieldSprite *parent;
   struct FieldSprite *sprite;
 
-  child = ((struct Actor *)Import_ActorCreate(14, object->x, object->y + 0x40000,
+  child = (FieldActor_Create(14, object->x, object->y + 0x40000,
                               object->z + 0x40000));
   parent = object->animation;
   if (child != NULL) {

@@ -20,11 +20,7 @@ extern u32 gFrameCount;
 void Func_0200015c(s32 x, s32 y, s32 z, s32 unused, s32 speed, s32 phase,
                    s32 life, struct AnkohlRuinsEffectParams *params);
 void Func_02000b30(s32 id, s32 cue);
-void Map_CopyCellsRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
-void Import_EventSetExitRequest(s32 a);
 void Func_02002ee4(void);
-void Sound_Play(s32 a);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -33,15 +29,15 @@ static __inline__ void Map_CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
 }
 
 void Func_02002260(void) {
-  struct Actor *object = Actor_GetById(9);
+  struct Actor *object = Actor_Get(9);
 
   if (object->x >> 20 == 26 && object->z >> 20 == 35) {
-    GameFlag_SetBit(0x9db);
-    Sound_Play(204);
+    Event_SetFlag(0x9db);
+    Event_PlaySound(204);
     Func_02000b30(9, 0);
-    Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
+    Actor_SetPosition(9, 0, 0);
     Func_02002ee4();
-    Import_EventSetExitRequest(20);
+    FieldEvent_SetExitRequest(20);
   }
 #if !TLA_PATCH_1 /* The Japanese edition copies cells here. */
   Map_CopyCells(40, 98, 3, 5, 25, 98);
@@ -50,18 +46,18 @@ void Func_02002260(void) {
 
 void Func_020022a8(void) {
 #if TLA_PATCH_1 /* The Japanese edition does not touch flag 0x205. */
-  GameFlag_SetBit(0x205);
+  Event_SetFlag(0x205);
 #endif
-  Map_CopyCellsRect(35, 34, 3, 5, 25, 34);
-  Map_CopyCellsRect(35, 98, 3, 3, 25, 98);
+  MapGrid_CopyCells(35, 34, 3, 5, 25, 34);
+  MapGrid_CopyCells(35, 98, 3, 3, 25, 98);
 }
 
 void Func_020022e0(void) {
 #if TLA_PATCH_1
-  GameFlag_ClearBit(0x205);
+  Event_ClearFlag(0x205);
 #endif
-  Map_CopyCellsRect(40, 34, 3, 5, 25, 34);
-  Map_CopyCellsRect(40, 98, 3, 3, 25, 98);
+  MapGrid_CopyCells(40, 34, 3, 5, 25, 34);
+  MapGrid_CopyCells(40, 98, 3, 3, 25, 98);
 }
 
 void Func_02002318(void) { GameFlag_SetBit(0x205); }

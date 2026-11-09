@@ -18,12 +18,12 @@ void Func_02000070(void) {
   s32 i;
 
 
-  Sound_Play(216);
+  Event_PlaySound(216);
   layer = (s32 *)(map + 0x178);
   i = 15;
 next:
   layer[3] -= 0x10000;
-  wait(4);
+  System_Wait(4);
   i--;
   if (i >= 0)
     goto next;
@@ -32,7 +32,7 @@ next2:
   RegSet(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
          (s32)&REG_BLDCNT);
   RegSet(gData_02001678[i], (s32)&REG_BLDALPHA);
-  wait(8);
+  System_Wait(8);
   i++;
   if (i <= 7)
     goto next2;

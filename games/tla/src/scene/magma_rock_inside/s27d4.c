@@ -1,12 +1,9 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(u32 id);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
 s32 Func_02000658(s32 kind, s32 x, s32 z);
 void Func_0200257c(void);
 void Func_020026a4(s32 x, s32 y);
@@ -20,7 +17,7 @@ void Func_020027d4(void) {
   struct Actor *leader;
   s32 cell, row = 54;
 
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.currentOwner);
   cell = Func_02000658(2, leader->x >> 20, leader->z >> 20);
   work += 0x16a;
   // From 54 in two steps: as one expression the constants fold into
@@ -30,10 +27,10 @@ void Func_020027d4(void) {
   if (cell != 1 && cell != 7) {
     Func_0200257c();
     Func_020026a4(0x108, row * 8 + 10);
-    if (!Value1((s32 (*)())GameFlag_Test, 0x200))
-      GameFlag_SetBit(0x200);
-    GameFlag_SetBit(*(s16 *)work + 312);
-  } else if (GameFlag_Test(0x200)) {
+    if (!Event_GetFlag(0x200))
+      Event_SetFlag(0x200);
+    Event_SetFlag(*(s16 *)work + 312);
+  } else if (Event_GetFlag(0x200)) {
     Func_020026a4(0x108, row * 8 + 10);
   }
 }

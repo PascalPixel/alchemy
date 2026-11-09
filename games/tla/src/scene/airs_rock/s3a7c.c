@@ -6,7 +6,6 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
 s32 Func_02002b88();
 extern u8 gMainRoutineWork[];
 extern u8 MsgCurePoison2[];

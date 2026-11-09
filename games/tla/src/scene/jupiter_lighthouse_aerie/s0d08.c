@@ -40,12 +40,12 @@ struct GustObject *Func_02000d08(struct GustObject *source) {
   struct EffectOptions options;
   struct GustObject *object;
 
-  Sound_Play(222);
+  Event_PlaySound(222);
   position.x = source->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
                                   Math_Cosine(source->angle));
   position.z = source->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                  Math_Sine(source->angle));
-  object = ((struct GustObject *)Import_ActorCreate(280, position.x, source->y,
+                                  Math_Sin(source->angle));
+  object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                     position.z));
   Func_020029f0(object, 2);
   Actor_SetSingleChildFlags(object, 0);

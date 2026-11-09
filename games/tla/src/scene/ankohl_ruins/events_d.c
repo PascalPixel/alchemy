@@ -1,28 +1,28 @@
 #include "ankohl_ruins.h"
 
 void Func_020011c0(void) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
 
   Func_02002e44();
-  Event_ResolvePendingActions(0);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 0);
-  Func_080d489c(gMainRoutineWork.currentOwner, 258);
+  FieldEvent_ResolvePendingActions(0);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 0);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 258);
   object->motionFlags = 0;
   object->actionFlags = 0;
   {
     s32 zero;
 
     zero = 0;
-    Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, zero,
+    Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, zero,
                                               8);
   }
-  Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
+  FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
   /* FAKEMATCH: called as value-returning, the call sets its constants before
    * the owner as the native does (differ 2 as the void call). */
   ((s32 (*)(s32, s32, s32))Func_080d47b4)(gMainRoutineWork.currentOwner, 256, 0);
-  Event_Wait(10);
+  FieldEvent_Wait(10);
   AnkohlRuins_CamBounds(-1, -1, -1, 0);
-  Sound_Play(204);
+  Event_PlaySound(204);
   Func_02000b30(gMainRoutineWork.currentOwner, 188);
   object->actionFlags = 1;
   Func_02002e4c();

@@ -3,10 +3,9 @@
 
 extern const u32 gData_02005b68[];
 extern const u32 gData_02005bac[];
-s32 Math_Sine(s32 angle);
 
 void Func_0200055c(s32 id) {
-  struct Actor *origin = Actor_GetById(id);
+  struct Actor *origin = Actor_Get(id);
   s32 i;
 
   for (i = 11; i >= 0; i--) {
@@ -15,7 +14,7 @@ void Func_0200055c(s32 id) {
     s32 b = Random16Far();
     s32 c = Random16Far();
     struct Actor *object =
-        Func_02005498(0x149, x, (b << 3) + origin->y, (c << 4) + origin->z);
+        FieldActor_Create(0x149, x, (b << 3) + origin->y, (c << 4) + origin->z);
 
     if (object != NULL) {
       s32 angle = (Random16Far() >> 2) + 0xe000;
@@ -34,7 +33,7 @@ void Func_0200055c(s32 id) {
       object->velocityY = (angle << 2) + 0x20000;
       object->velocityZ = Iwram_MulQ16(speed, Math_Cosine(angle));
       {
-        s32 vx = Iwram_MulQ16(speed, Math_Sine(angle));
+        s32 vx = Iwram_MulQ16(speed, Math_Sin(angle));
 
         object->acceleration = 0;
         object->scaleX = scale;

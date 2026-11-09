@@ -1,4 +1,5 @@
 #include "tundaria_tower.h"
+#include "call.h"
 
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Actor_SetModeById(u32 id, s32 mode);

@@ -1,9 +1,8 @@
 #include "types.h"
 #include "field_event.h"
+#include "event_inline.h"
 
-struct FieldActor *Actor_GetById();
 void Actor_SetSingleChildFlags();
-s32 GameFlag_Test();
 void Func_02004bc0();
 void Func_020001f8();
 
@@ -17,12 +16,12 @@ void Func_020002bc(u16 *table) {
     return;
   row = table;
 loop:
-  object = Actor_GetById(row[0]);
+  object = (struct FieldActor *)Actor_Get(row[0]);
   animation = row[1];
   flag = row[2];
 
   Actor_SetSingleChildFlags(object, 0);
-  Func_02004bc0(object, (u16)animation + GameFlag_Test((u16)flag));
+  Func_02004bc0(object, (u16)animation + Event_GetFlag((u16)flag));
   object->motionFlags = 0;
   /* FAKEMATCH(barrier): the collision byte's address is built after the
    * motion store, as in the native; as plain statements, 2 of 56

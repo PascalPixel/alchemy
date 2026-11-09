@@ -7,19 +7,19 @@ void Func_020011d4(s32 unused, s32 id) {
 
 
   layer = (s32 *)(map + 0x140);
-  Actor_SetPartAttribute(Actor_GetById(id), 5);
+  Actor_SetSpriteColor(Actor_Get(id), 5);
   Func_02001e78(id);
-  Actor_SetModeById(id, 3);
+  Actor_SetAnimation(id, 3);
   layer[3] -= 0x200000;
   Func_02003d54();
   Func_02003cdc();
   Func_02003d7c();
-  Event_ResolvePendingActions(0);
-  Sound_Play(0x22c);
+  FieldEvent_ResolvePendingActions(0);
+  Event_PlaySound(0x22c);
   for (i = 31; i >= 0; i--) {
     layer[3] += 0x10000;
-    wait(4);
+    System_Wait(4);
   }
   Func_02003d84();
-  GameFlag_SetBit(0x24b);
+  Event_SetFlag(0x24b);
 }

@@ -25,18 +25,18 @@ void Func_02000080(const void *warp, s32 door, s32 mode) {
   s32 id;
 
   Func_02002a44();
-  Event_ResolvePendingActions(0);
-  Sound_Play(158);
-  ((struct FieldActor *)Actor_GetById(gMainRoutineWork.currentOwner))->motionFlags = 2;
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+  FieldEvent_ResolvePendingActions(0);
+  Event_PlaySound(158);
+  ((struct FieldActor *)Actor_Get(gMainRoutineWork.currentOwner))->motionFlags = 2;
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   id = gMainRoutineWork.currentOwner;
   if (mode == 0)
     Actor_CenterOnColumn_(id, 2, -8);
   else
     Actor_OffsetPositionAndResetMotion_(id, 0, -8);
-  Event_Wait(10);
-  Import_EventSetExitRequest(door);
+  FieldEvent_Wait(10);
+  FieldEvent_SetExitRequest(door);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_02002a4c();
@@ -50,7 +50,7 @@ void Func_020000fc(s32 door) {
   s32 *table = gData_020031fc;
 
   if ((u32)(door - 1) <= 1)
-    *(void **)((u8 *)((struct FieldActor *)Actor_GetById(gMainRoutineWork.currentOwner)) + 108) =
+    *(void **)((u8 *)((struct FieldActor *)Actor_Get(gMainRoutineWork.currentOwner)) + 108) =
         Func_0200006c;
   if (door == 7) {
     Func_020029f4(8);

@@ -12,16 +12,16 @@ void Func_020004bc(s32 unused, s32 id) {
   s32 objectId = id;
 
   layer = (s32 *)(map + 0x140);
-  Actor_SetPartAttribute(Actor_GetById(objectId), 0);
+  Actor_SetSpriteColor(Actor_Get(objectId), 0);
   Func_02001e78(objectId);
-  Actor_SetModeById(objectId, 3);
+  Actor_SetAnimation(objectId, 3);
   layer[3] -= 0x200000;
   Func_02003d54();
   Func_02003cdc();
-  column = (Actor_GetById(12)->x >> 20) - 42;
+  column = (Actor_Get(12)->x >> 20) - 42;
   Func_02003d7c();
-  Event_ResolvePendingActions(0);
-  Sound_Play(0x22c);
+  FieldEvent_ResolvePendingActions(0);
+  Event_PlaySound(0x22c);
   for (i = 0; i <= 31; i++) {
     Func_02003460(i << 16);
     {
@@ -32,10 +32,10 @@ void Func_020004bc(s32 unused, s32 id) {
       Func_0200349c(column, height);
     }
     layer[3] += 0x10000;
-    wait(4);
+    System_Wait(4);
   }
-  if (GameFlag_Test(0x250))
+  if (Event_GetFlag(0x250))
     Func_02003d1c_(41, 42, 1, 1, 43, 44);
   Func_02003d84();
-  GameFlag_SetBit(0x230);
+  Event_SetFlag(0x230);
 }

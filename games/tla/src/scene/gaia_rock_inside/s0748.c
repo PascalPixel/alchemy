@@ -14,7 +14,7 @@ extern u8 gData_02005610[];
 s32 Func_02000748(void) {
   s32 t0;
 
-  t0 = ((s32)Actor_GetById(9));
+  t0 = ((s32)Actor_Get(9));
   Func_02004dac(t0, (s32)gData_02005610);
   Actor_SetAnimationSpeed(t0, 0);
   Actor_SetAttachedEffect(0xa, 0x102);

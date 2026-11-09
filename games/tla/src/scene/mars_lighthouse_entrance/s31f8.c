@@ -1,11 +1,11 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
+#include "event_inline.h"
 
 extern u32 gInput;
 extern const s16 gData_02005758[];
 
-s32 GameFlag_Test(s32 flag);
 void Actor_SetAnimationSpeed(struct Actor *object,
                                          s32 value);
 void Func_02004bc0(struct Actor *object, s32 mode);
@@ -19,7 +19,7 @@ void Func_020031f8(struct Actor *object) {
     return;
   }
   *(u8 *)((u8 *)object + 0x5a) = 0;
-  if (GameFlag_Test(0x106))
+  if (Event_GetFlag(0x106))
     angle = -1;
   else
     angle = gData_02005758[(gInput >> 4) & 15];

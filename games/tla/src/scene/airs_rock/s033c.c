@@ -6,7 +6,6 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
 s32 Actor_SetSingleChildFlags();
 
 s32 Func_0200033c(s32 a0) {

@@ -1,6 +1,5 @@
 #include "ankohl_ruins.h"
 #include "map.h"
-#include "call.h"
 
 struct AnkohlRuinsFloatWork {
   s16 unk00;
@@ -23,10 +22,9 @@ extern struct AnkohlRuinsFloatWork Data_02004030;
 extern struct AnkohlRuinsWaterRow gData_02002ff0[];
 
 void Func_020015ac(void);
-void Func_0802b450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 void Func_020019a0(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapWork;
   struct AnkohlRuinsFloatWork *work = &Data_02004030;
   s32 level;
@@ -36,19 +34,19 @@ void Func_020019a0(void) {
   s16 m;
   s16 n;
 
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 0);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 0);
   level = work->level >> 19;
   leader->motionFlags = 0;
   AnkohlRuins_Call2e24(0x50000, 0x50000, 0x10000);
-  Event_Wait(30);
-  Sound_Play(0x22c);
+  FieldEvent_Wait(30);
+  Event_PlaySound(0x22c);
   AnkohlRuins_Call2df4(22, 66, 3, 1, 7, 84);
   AnkohlRuins_Call2df4(22, 1, 3, 5, 7, 19);
   for (i = 0; i <= 15; i++) {
     struct MapCell *cells;
 
     for (j = 0; j < gData_02003780; j++)
-      Event_Wait(1);
+      FieldEvent_Wait(1);
     work->level += gData_02003788;
     cells = map->layers[2].cells;
     cells += leader->x / 0x100000 + ((leader->z / 0x100000) << 7);
@@ -56,25 +54,25 @@ void Func_020019a0(void) {
       leader->y += gData_02003788;
       leader->terrainHeight = leader->y;
     }
-    Event_Wait(1);
+    FieldEvent_Wait(1);
     if (level == 2 && i == 0) {
       AnkohlRuins_Call2df4(11, 70, 1, 1, 11, 69);
-      Call6((void (*)())Func_0802b450, 10, 68, 1, 1, 4, 86);
+      MapGrid_CopyCellsLayered(10, 68, 1, 1, 4, 86);
       AnkohlRuins_Call2dfc(4, 24, 1, 1, 4, 23);
     }
     if (level == 1 && i == 15)
-      Call6((void (*)())Func_0802b450, 18, 73, 1, 1, 4, 86);
+      MapGrid_CopyCellsLayered(18, 73, 1, 1, 4, 86);
   }
   AnkohlRuins_Call2e24(-1, -1, 0xe666);
-  Event_Wait(5);
+  FieldEvent_Wait(5);
   leader->motionFlags = 3;
   if (work->level < 0x200000) {
     gData_02003782 = 0;
-    Call2((void (*)())Task_Add, (s32)Func_020015ac, 0x480);
+    Task_AddFrame(Func_020015ac, 0x480);
   } else {
-    Call6((void (*)())Func_0802b450, 69, 24, 1, 4, 68, 23);
-    GameFlag_SetBit(0x204);
-    GameFlag_ClearBit(0x17d);
+    MapGrid_CopyCellsLayered(69, 24, 1, 4, 68, 23);
+    Event_SetFlag(0x204);
+    Event_ClearFlag(0x17d);
   }
   AnkohlRuins_Call2df4(18, 66, 3, 1, 7, 84);
   AnkohlRuins_Call2df4(18, 1, 3, 5, 7, 19);

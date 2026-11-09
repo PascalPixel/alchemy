@@ -1,7 +1,6 @@
 #include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 #include "event_inline.h"
 #include "version.h"
-#include "flag_call.h"
 
 void Func_020053b8(const void *data);
 void Func_02005028(void);
@@ -29,7 +28,7 @@ void Func_02002a84(void) {
   object->scaleY = 0xb333;
   object->collisionFlags = 0;
   Func_02005338(0);
-  if (Flag_IsSet(0x92d)) {
+  if (Event_GetFlag(0x92d)) {
     {
       s32 e = 1;
       s32 f = 4;
@@ -43,7 +42,7 @@ void Func_02002a84(void) {
   if (GameFlag_Test(0x109) == 0) {
     if (gMainRoutineWork.entrance == 2) {
       Actor_GetById(gMainRoutineWork.currentOwner)->y = 0x400000;
-    } else if (gMainRoutineWork.entrance == 3 && Flag_IsSet(0x92d) == 0) {
+    } else if (gMainRoutineWork.entrance == 3 && Event_GetFlag(0x92d) == 0) {
       Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(13, 0, 0);

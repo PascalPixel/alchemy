@@ -134,7 +134,7 @@ void Func_080d3b28(s32 actorId, s32 item);
 void Func_0802372c(struct Actor *actor, s32 item);
 void Func_0802bdd0(s32 x, s32 y, s32 px, s32 py);
 s32 Func_080d452c(s32 actorId, s32 pan);
-s32 Func_080d3928(s32 actorId, s32 angle);
+void Func_080d3928(s32 actorId, s32 angle);
 s32 Func_080dbdd4(s32 x, s32 z, s32 layer, s32 behavior);
 
 /// Shows the event's next line of dialogue and waits for the player to read
@@ -209,6 +209,11 @@ static inline void Actor_FaceActor(s32 actorId, s32 target, s32 frames) {
 /// the event goes on.
 static inline s32 Actor_ShowEmote(s32 actorId, s32 emote, s32 frames) {
   return Func_080d47b4(actorId, emote, frames);
+}
+
+/// Actor_ShowEmote, for an event that leaves its result unread.
+static inline void FieldActor_ShowEmote(s32 actorId, s32 emote, s32 frames) {
+  Func_080d47b4(actorId, emote, frames);
 }
 
 /// Attaches a field effect to an actor, takes it off, or plays one

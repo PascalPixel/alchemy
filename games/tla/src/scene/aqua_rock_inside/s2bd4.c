@@ -1,7 +1,7 @@
 #include "../../../../games/tla/src/scene/aqua_rock_inside/local.h"
 
 void Func_02002bd4(struct Actor *object) {
-  struct Actor *child = Import_ActorCreate(
+  struct Actor *child = FieldActor_Create(
       14, object->x, object->y + 0x40000, object->z + 0x40000);
   struct FieldSprite *source = object->animation;
 

@@ -1,8 +1,7 @@
 #include "../../../../games/tla/src/scene/mars_lighthouse_room_m/mars_lighthouse_room_m.h"
-#include "flag_call.h"
+#include "event_inline.h"
 
 s32 Func_02002368(s32 a, s32 b);
-void Func_02003218(s32 a, s32 b);
 void Func_02003240(s32 a, s32 b);
 s32 Func_02003168(s32 layer, s32 x, s32 z);
 void Func_020024bc(struct Actor *object);
@@ -52,7 +51,7 @@ s32 Func_02002708(void) {
     Func_02003240(event->field1ac, event->field1b4);
     event->started = 1;
   }
-  Flag_Clear(0x106);
+  Event_ClearFlag(0x106);
   event->field166 = 0;
   event->field15a = 0;
   event->field15e = 0;
@@ -61,13 +60,13 @@ s32 Func_02002708(void) {
   /* FAKEMATCH(signature): Func_02002368 declared returning s32, which it
    * never sets; as void, 2 of 138 instructions differ in tla-en. */
   Func_02002368(-10, 0);
-  Func_02003218(0x70000, 0xe000);
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  FieldCamera_SetSpeed(0x70000, 0xe000);
+  leader = Actor_Get(gMainRoutineWork.currentOwner);
   ride = (struct RideState *)(gData_020023c4 + 0x188);
-  Flag_Set(0x106);
+  Event_SetFlag(0x106);
   Func_020031e0();
-  Func_02003280(0);
-  Flag_Clear(0x106);
+  FieldEvent_ResolvePendingActions(0);
+  Event_ClearFlag(0x106);
   leader->update = (void (*)(void))Func_020024bc;
   leader->angle = 0x4000;
   Func_02003118(leader, 49);
@@ -84,7 +83,7 @@ s32 Func_02002708(void) {
         leader->z = (leader->z & 0xfff00000) + 0x80000;
     }
     ride->active = 0;
-    wait(1);
+    System_Wait(1);
   }
   FieldEvent_Wait(30);
   leader->update = 0;

@@ -51,7 +51,7 @@ void Func_02000a60(struct Actor *object) {
   if ((gData_02005ee4 & 31) == 0) {
     object->scaleX = 0x10000;
     Func_02004dac(object, gData_02005e28);
-    Sound_Play(106);
+    Event_PlaySound(106);
   }
   gData_02005ee4++;
 }
@@ -65,13 +65,13 @@ void Func_02000aac(struct Actor *object) {
   if ((gData_02005ee4 & 31) == 0) {
     object->scaleY = 0x10000;
     Func_02004dac(object, gData_02005d6c);
-    Sound_Play(106);
+    Event_PlaySound(106);
   }
   gData_02005ee4++;
 }
 
 void Func_02000af8(s32 unused, u32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
   u32 direction;
   s32 *state;
 
@@ -84,7 +84,7 @@ void Func_02000af8(s32 unused, u32 id) {
   else
     object->update = (void (*)(void))Func_02000a60;
   object->collisionFlags = 1;
-  GameFlag_SetBit(*state + 0xa50);
-  GameFlag_SetBit(0x200);
-  wait(20);
+  Event_SetFlag(*state + 0xa50);
+  Event_SetFlag(0x200);
+  System_Wait(20);
 }

@@ -21,7 +21,7 @@ void Func_02000ad4(void) {
 
   if (gData_02005af0 == 0)
     return;
-  actor = Actor_GetById(Party_GetLeaderActor());
+  actor = Actor_Get(FieldParty_GetLeaderActor());
   speed = gData_02005af0 << 15;
   platform = Func_020005b4(actor, 360);
   if (platform != 0) {
@@ -72,9 +72,9 @@ void Func_02000ad4(void) {
     return;
   if (x == 28) {
     Func_02000a20(actor);
-    Import_EventSetExitRequest(5);
+    FieldEvent_SetExitRequest(5);
   } else if (x == 30) {
     Func_02000a20(actor);
-    Import_EventSetExitRequest(6);
+    FieldEvent_SetExitRequest(6);
   }
 }

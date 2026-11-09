@@ -15,14 +15,14 @@ extern u8 MsgProx62[];
 
 void Func_02000ad8(void) {
   Func_02004464();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(0x4cccc, 0x9999);
   FieldCamera_MoveTo(PIXELS(160), -1, PIXELS(160), 1);
   Func_0200457c();
-  Event_Wait(40);
+  FieldEvent_Wait(40);
   Actor_RunRepeatedMotion(0xa, 1);
   Actor_FaceDirectionAndWait(10, 0xb000);
-  Event_SetMessageId((s32)MsgProx62);
+  FieldEvent_SetMessageId((s32)MsgProx62);
   Event_ShowMessage(10, 0);
   Actor_SetAttachedEffect(0xc, 0x102);
   Actor_SetAttachedEffect(0xd, 0x102);
@@ -30,7 +30,7 @@ void Func_02000ad8(void) {
   Actor_SetAttachedEffect(0xf, 0x102);
   Actor_SetAttachedEffect(0x10, 0x102);
   Actor_SetAttachedEffect(0x11, 0x102);
-  Event_Wait(20);
+  FieldEvent_Wait(20);
   Actor_FaceDirectionAndWait(10, 0x5000);
   Event_ShowMessage(10, 0);
   Event_ShowMessage(10, 0);
@@ -40,7 +40,7 @@ void Func_02000ad8(void) {
   Actor_SetAttachedEffect(0xf, 0x102);
   Actor_SetAttachedEffect(0x10, 0x102);
   Actor_SetAttachedEffect(0x11, 0x102);
-  Event_Wait(20);
+  FieldEvent_Wait(20);
   Actor_SetAnimation(12, 4);
   Event_ShowMessage(12, 0);
   Actor_FaceDirection(10, 0x3000, 0);
@@ -52,28 +52,28 @@ void Func_02000ad8(void) {
     __asm__ volatile("" : "+l"(anim));
     /* FAKEMATCH: the second forced temporary of the same call, as above. */
     __asm__ volatile("" : "+l"(zero));
-    Func_080d47b4(10, anim << 1, zero);
+    Actor_ShowEmote(10, anim << 1, zero);
   }
   Actor_SetAnimationAndWait(13, 4);
   Event_ShowMessage(13, 0);
   FieldActor_Jump(15, 4, 10);
   Event_ShowMessage(15, 0);
   Actor_FaceDirection(10, 0x5000, 0);
-  Func_080d47b4(10, 0x105, 40);
+  Actor_ShowEmote(10, 0x105, 40);
   Event_ShowMessage(10, 0);
-  Func_080d47b4(16, 0x107, 20);
+  Actor_ShowEmote(16, 0x107, 20);
   Event_ShowMessage(16, 0);
   FieldActor_Jump(14, 2, 0);
   Actor_SetAnimation(14, 3);
   Event_ShowMessage(14, 0);
   Event_ShowMessage(11, 0);
   Actor_FaceDirectionAndWait(10, FACING_WEST);
-  Func_080d47b4(10, 0x108, 40);
+  Actor_ShowEmote(10, 0x108, 40);
   Actor_FaceDirectionAndWait(10, 0x5000);
   Event_ShowMessage(10, 0);
   Actor_FaceDirectionAndWait(11, 0);
   Event_ShowMessage(11, 0);
-  Func_080d47b4(10, 0x100, 20);
+  Actor_ShowEmote(10, 0x100, 20);
   Actor_FaceDirectionAndWait(10, FACING_WEST);
   Actor_SetAnimation(11, 4);
   Event_ShowMessage(11, 0);
@@ -91,11 +91,11 @@ void Func_02000ad8(void) {
   Actor_FaceDirection(16, 0xd000, 0);
   Actor_FaceDirection(17, 0xd000, 20);
   Event_ShowMessage(10, 0);
-  Func_080d47b4(11, 0x109, 40);
+  Actor_ShowEmote(11, 0x109, 40);
   Event_ShowMessage(11, 0);
   Actor_FaceDirection(10, 0xb000, 80);
   Actor_SetAnimationAndWait(10, 4);
-  Event_ShowMessageAndWait(10, 0);
-  GameFlag_SetBit(0x9c1);
+  Event_ShowMessage(10, 0);
+  Event_SetFlag(0x9c1);
   Func_0200446c();
 }

@@ -67,19 +67,19 @@ void Func_020007a4(s32 unused, s32 id) {
     if (Func_02000290() != 2 || !Event_GetFlag(2582))
       return;
     object = Actor_GetById(17);
-    GameFlag_ClearBit(2582);
+    Event_ClearFlag(2582);
     Event_Wait(10);
     Func_02002b6c();
-    Event_ResolvePendingActions(0);
-    Camera_MoveWithinMapBounds(166 << 18, -1, PIXELS(136), 1);
+    FieldEvent_ResolvePendingActions(0);
+    FieldCamera_MoveTo(166 << 18, -1, PIXELS(136), 1);
     Func_02002bd4();
     Event_Wait(20);
-    Sound_Play(151);
+    Event_PlaySound(151);
     Func_02002ad4(object, 3);
     object->priorityFlags &= ~2;
-    Func_080dbdd4(object->x, object->z, object->terrainId, 255);
+    MapGrid_SetCellBehavior(object->x, object->z, object->terrainId, 255);
     Event_Wait(30);
-    Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
+    FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
     Func_02002bd4();
     Func_02002b74();
     return;
@@ -90,20 +90,20 @@ void Func_020007a4(s32 unused, s32 id) {
    * reloads it with the other; as object->z, 6 of 230 instructions differ in
    * tla-en. */
   if (object->x >> 20 == 8 && *(volatile s32 *)&object->z >> 20 == 12) {
-    GameFlag_SetBit(2586);
+    Event_SetFlag(2586);
     Actor_SetSingleChildFlags(Actor_GetById(20), 0);
     Event_Wait(30);
-    Sound_Play(167);
+    Event_PlaySound(167);
     Func_020005e8(1);
     if (!Event_GetFlag(2583))
       return;
     object = Actor_GetById(9);
-    GameFlag_ClearBit(2583);
+    Event_ClearFlag(2583);
     Event_Wait(20);
-    Sound_Play(151);
+    Event_PlaySound(151);
     Func_02002ad4(object, 3);
     object->priorityFlags &= ~2;
-    Func_080dbdd4(object->x, object->z, object->terrainId, 255);
+    MapGrid_SetCellBehavior(object->x, object->z, object->terrainId, 255);
   } else {
     Func_02002b54(object->x, object->z, 0, 8);
     Func_02002c4c(object->x, object->z, 0, 128);

@@ -1,7 +1,6 @@
 #include "types.h"
+#include "event_inline.h"
 
-void Actor_SetPartAttribute(void *object, s32 value);
-void Import_SoundPlay(s32 cue);
 s32 Random16Far(void);
 
 extern u32 gFrameCount;

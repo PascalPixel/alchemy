@@ -25,16 +25,16 @@ static __inline__ void Func_020057ac_(s32 a, s32 b, s32 c) {
 }
 
 void Func_0200539c(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct EffectOptions options;
   struct Vector3 velocity;
   u32 i;
 
   Func_02005814();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   Camera_SetBounds(-1, -1, -1, 0);
   Func_0200577c();
-  wait(1);
+  System_Wait(1);
   leader->y = 0x820000;
   leader->gravity = 0x8000;
   leader->bounce = 0;
@@ -42,9 +42,9 @@ void Func_0200539c(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Sound_Play(204);
+  Event_PlaySound(204);
   leader->motionFlags = 3;
-  Event_Wait(24);
+  FieldEvent_Wait(24);
   options.palette = 7;
   options.update = Effect_AdvanceMotion;
   options.startScaleX = 0xa3d7;
@@ -54,23 +54,23 @@ void Func_0200539c(void) {
 
     velocity.x = Math_Cosine(angle);
     velocity.y = 0;
-    velocity.z = Math_Sine(angle);
+    velocity.z = Math_Sin(angle);
     velocity.x += velocity.x >> 1;
     velocity.x += ((u32)(Random16Far() * 3 << 14) >> 16) - 0x6000;
     velocity.z += ((u32)(Random16Far() * 3 << 13) >> 16) - 0x3000;
     Func_02004bd4(leader->x, leader->y, leader->z, velocity.x, velocity.y,
                   velocity.z, 0x1090001, &options);
   }
-  Sound_Play(188);
-  Func_080d489c(gMainRoutineWork.currentOwner, 0x101);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
+  Event_PlaySound(188);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
   Func_020057ac_(0x50000, 0x50000, 0x10000);
   Func_020057ac_(-1, -1, 0xe666);
-  Map_WaitForShakeToSettle();
-  Func_080d489c(gMainRoutineWork.currentOwner, 0x100);
+  MapGrid_WaitForShakeToSettle();
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
-  Event_Wait(10);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
+  FieldEvent_Wait(10);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   Func_0200581c();
 }

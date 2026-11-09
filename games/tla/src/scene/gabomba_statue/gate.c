@@ -14,10 +14,10 @@ void Func_02005428(const u8 *data, s32 a, s32 b);
 
 void Func_02001928(void) {
   Func_020018ec(1);
-  GameFlag_SetBit(512);
+  Event_SetFlag(512);
 }
 
 void Func_0200193c(void) {
   Func_020018ec(0);
-  GameFlag_ClearBit(512);
+  Event_ClearFlag(512);
 }

@@ -1,18 +1,19 @@
 #include "garoh.h"
+#include "event_inline.h"
 
 extern u8 gData_02005450[];
 void Func_02000a68(void);
 
 void Func_02000e00(void) {
-  Task_Add(Func_02000a68, 1152);
+  FieldTask_AddFrame(Func_02000a68, 1152);
   if (Flag_IsSet(0x310)) {
     if (Flag_IsSet(0x318))
-      BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
+      PaletteFade_ApplyTarget(0x10003, 1);
     else
-      BattleEffect_ApplyColorToTargetBuffer(0x10007, 1);
+      PaletteFade_ApplyTarget(0x10007, 1);
   }
   Func_0200536c(gData_02005450);
-  BattleEffect_StartBufferInterpolation(1);
+  PaletteFade_Interpolate(1);
   Event_WaitTransitionFrames();
 }
 

@@ -1,6 +1,7 @@
 #include "../../../../games/tla/src/scene/garoh/garoh.h"
 #include "palette_buffers.h"
 #include "system/io_reg.h"
+#include "event_inline.h"
 
 extern const u16 gData_020054ee[];
 extern const u16 gData_020054b8[];

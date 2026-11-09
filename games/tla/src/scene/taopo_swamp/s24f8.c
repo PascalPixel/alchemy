@@ -10,7 +10,7 @@ void Func_020024f8(struct Actor *object, s32 priority) {
   Actor_SetSingleChildFlags(object, 0);
   Func_020027f8(object, 2);
   Func_02002800(object, gData_02002af4);
-  Actor_SetPartAttribute(object, 10);
+  Actor_SetSpriteColor(object, 10);
   object->action = 0;
   object->speedLimit = 0;
   object->acceleration = 0;

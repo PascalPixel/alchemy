@@ -23,33 +23,33 @@ void Func_02001a94(void) {
   s32 target[3];
 
   if (gMainRoutineWork.entrance == 1) {
-    object = Actor_GetById(8);
-    GameFlag_SetBit(0x301);
+    object = Actor_Get(8);
+    Event_SetFlag(0x301);
     column = 11;
   } else if (gMainRoutineWork.entrance == 3) {
-    object = Actor_GetById(9);
-    GameFlag_SetBit(0x302);
+    object = Actor_Get(9);
+    Event_SetFlag(0x302);
     column = 26;
   } else {
-    object = Actor_GetById(10);
-    GameFlag_SetBit(0x303);
+    object = Actor_Get(10);
+    Event_SetFlag(0x303);
     column = 53;
   }
   Func_02003398();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   target[0] = (object->x & 0xfff00000) + 0x80000;
   target[2] = (object->z & 0xfff00000) + 0x80000;
   object->acceleration = 0x10000;
   object->speedLimit = 0x10000;
   Func_02003398();
-  Event_ResolvePendingActions(0);
-  Actor_SetMoveTarget(object, target[0], 0, target[2]);
-  Script_WaitForEventTimeout(object);
-  Sound_Play(188);
+  FieldEvent_ResolvePendingActions(0);
+  FieldActor_SetMoveTarget(object, target[0], 0, target[2]);
+  Actor_WaitForMove(object);
+  Event_PlaySound(188);
   Func_02003328_(18, 4, column, 4, 1, 2);
-  wait(5);
-  Map_CopyCellPictureIndicesRect(18, 7, column, 4, 1, 2);
-  wait(5);
+  System_Wait(5);
+  MapGrid_CopyCellsTo(18, 7, column, 4, 1, 2);
+  System_Wait(5);
   Func_02003380(column << 20, 0x580000, 0, 0);
   Func_020033a0();
 }

@@ -5,14 +5,14 @@
 void Func_02000590(s32 actor) {
   s32 msg = (s32)&MsgChampa11;
 
-  Event_SetMessageId(msg);
-  FieldMessage_ShowAtActor(actor, 0);
-  if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
-    Event_Wait(10);
-    Event_SetMessageId(msg + 1);
+  FieldEvent_SetMessageId(msg);
+  Event_OpenMessage(actor, 0);
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
+    FieldEvent_Wait(10);
+    FieldEvent_SetMessageId(msg + 1);
   } else {
-    Event_Wait(20);
-    Event_SetMessageId(msg + 2);
+    FieldEvent_Wait(20);
+    FieldEvent_SetMessageId(msg + 2);
   }
-  Event_ShowMessageAndWait(actor, 0);
+  Event_ShowMessage(actor, 0);
 }

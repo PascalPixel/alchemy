@@ -1,7 +1,6 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "actor.h"
-#include "flag_call.h"
 #include "event_inline.h"
 
 void Actor_SetSingleChildFlags(struct Actor *object,
@@ -9,9 +8,9 @@ void Actor_SetSingleChildFlags(struct Actor *object,
 s32 Func_02003b50(void);
 
 void Func_02002c24(s32 height) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
 
-  if (!Flag_IsSet(0x109)) {
+  if (!Event_GetFlag(0x109)) {
     object->motionFlags = 0;
     Actor_SetSingleChildFlags(object, 0);
     object->y += height;
@@ -19,8 +18,8 @@ void Func_02002c24(s32 height) {
     object->velocityY = 0;
     gMainRoutineWork.renderMode = 2;
     object->actionFlags = 1;
-    Camera_FollowActor(gMainRoutineWork.currentOwner, 0);
+    FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
     Func_02003b50();
-    wait(1);
+    System_Wait(1);
   }
 }

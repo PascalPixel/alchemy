@@ -14,7 +14,7 @@ void Func_02003ec4(void);
 void Func_020040c0(void) {
   struct EasternAlhafraSparkWork *work = Ram_HeapSlots->menuRuntime;
 
-  Task_RemoveFar(Func_02003ec4);
+  FieldTask_Remove(Func_02003ec4);
   Resource_ResetEntry(work->resource);
   HeapSlot_Release(220);
 }

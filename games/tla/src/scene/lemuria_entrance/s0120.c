@@ -39,9 +39,9 @@ void Func_02000564(void);
 void Func_02000310(s32 kind, s32 frames);
 
 void Func_02000120(void) {
-  if (GameFlag_Test(0x800) != 0) {
+  if (Event_GetFlag(0x800) != 0) {
     Func_0200055c();
-    Event_ResolvePendingActions(0);
+    FieldEvent_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     {
@@ -51,7 +51,7 @@ void Func_02000120(void) {
       state->renderMode = 6;
       state->ownerOverride = 1;
     }
-    Actor_SetModeById(8, 7);
+    Actor_SetAnimation(8, 7);
     Func_02000564();
   } else {
     struct MainRoutineWork *party = &gMainRoutineWork;

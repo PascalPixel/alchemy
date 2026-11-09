@@ -38,7 +38,7 @@ void Func_02000074(void) { Func_02001d1c_(64, 0, 4, 3, 89, 28, 1); }
 
 void Func_02000094(void) {
   Func_02001d1c_(64, 0, 4, 3, 89, 28, 1);
-  if (!GameFlag_Test(0x9b8)) {
+  if (!Event_GetFlag(0x9b8)) {
     Func_02001d44_(249, 424, 488);
     ((struct MainRoutineWork254 *)&gMainRoutineWork)->value = 0x19b8;
     gMainRoutineWork.battleRule24b = 2;
@@ -67,7 +67,7 @@ void Func_0200015c(struct Actor *object) {
     SET_VECTOR(position, 200 << 16, -32 << 16, 164 << 16);
     radius = Random16Far();
     angle = Random16Far();
-    Vector_AddPolarOffsetFar((radius << 5) + 0x80000, angle, position);
+    FieldVector_AddPolarOffset((radius << 5) + 0x80000, angle, position);
     SET_POSITION(object, position[0], position[1], position[2]);
   }
   object->unk66 = object->action;

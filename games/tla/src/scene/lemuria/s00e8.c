@@ -18,7 +18,7 @@ s32 Func_020000e8(struct Actor *self) {
   s8 *effect;
   struct Actor *other;
 
-  Func_02001ba4(self, Func_02001d54(Actor_GetById(gMainRoutineWork.currentOwner)));
+  Func_02001ba4(self, Func_02001d54(Actor_Get(gMainRoutineWork.currentOwner)));
   mode = 0x3ff & *(u16 *)(event + 0x166);
   state = &self->movementState;
   if (mode == 141) {
@@ -31,12 +31,12 @@ s32 Func_020000e8(struct Actor *self) {
   }
   if (self->action == 1)
     goto near;
-  other = Actor_GetById(gMainRoutineWork.currentOwner);
+  other = Actor_Get(gMainRoutineWork.currentOwner);
   if (Func_02000038(&self->x, &other->x) <= 11)
     goto far;
   if (Func_02000070(self, self->watchedObject, 18) != 0)
     goto near;
-  if (Func_02000070(self, Actor_GetById(gMainRoutineWork.currentOwner), 26) != 0)
+  if (Func_02000070(self, Actor_Get(gMainRoutineWork.currentOwner), 26) != 0)
     goto near;
 far:
   *state = 0;

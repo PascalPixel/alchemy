@@ -7,6 +7,7 @@
 #include "ram_buffer.h"
 #include "vector3.h"
 #include "fixed_math.h"
+#include "event_inline.h"
 
 struct Work020023c4 {
   u8 unk00[4];
@@ -17,15 +18,12 @@ struct Work020023c4 {
 };
 
 void Func_02002368();
-struct Actor *Actor_GetById(s32 id);
 void Func_020031e0(void);
-void Func_02003280(s32 a);
 void Func_02003118(struct Actor *actor, s32 a);
 s32 Func_02003168(s32 terrain, s32 x, s32 z);
 s32 Func_02003180(struct Actor *actor, struct Vector3 *position);
 void Func_02003200();
 s32 Func_020031b0(s32 *from, s32 radius, struct Vector3 *to, s32 radius2);
-void wait(s32 frames);
 void Animation_ApplyChildValues(struct Actor *actor, s32 a);
 void Func_020024bc(void);
 extern u8 gData_020023c4[];
@@ -44,10 +42,10 @@ void Func_020024e4(void) {
     // UB: Func_02002368 takes no arguments and returns nothing.
     ((s32 (*)())Func_02002368)(-10, 0);
 #endif
-    actor = Actor_GetById(main->currentOwner);
+    actor = Actor_Get(main->currentOwner);
     work = (struct Work020023c4 *)(gData_020023c4 + 0x188);
     Func_020031e0();
-    Func_02003280(0);
+    FieldEvent_ResolvePendingActions(0);
     actor->update = Func_020024bc;
     actor->angle = TRIG_TURN / 4;
     Func_02003118(actor, 49);
@@ -82,7 +80,7 @@ void Func_020024e4(void) {
             actor->velocityZ = 0;
             break;
           }
-          wait(1);
+          System_Wait(1);
         }
         break;
       } else {
@@ -128,7 +126,7 @@ void Func_020024e4(void) {
           if (other->script != 0 && (*flags & 1) && other != actor &&
               Value4((s32 (*)())Func_020031b0, (s32)&other->x, radius,
                      (s32)&position, other->radius - 2) >= 0) {
-            wait(1);
+            System_Wait(1);
             goto done;
           }
         }
@@ -164,7 +162,7 @@ void Func_020024e4(void) {
           off = 0xffff0000;
         actor->z = z - off;
         work->unk04 = 0;
-        wait(1);
+        System_Wait(1);
       }
     }
 #if TLA_PATCH_1

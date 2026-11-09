@@ -8,6 +8,7 @@
 #include "scene_tables.h"
 #include "scene_ids.h"
 #include "field_sprite.h"
+#include "event_inline.h"
 
 /// The overlay's view of the event work heap slot.
 struct AnkohlRuinsEventWork {
@@ -20,12 +21,6 @@ struct AnkohlRuinsEventWork {
   struct Actor *unk1cc;
 };
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void wait(s32 frames);
-struct Actor *Actor_GetById(s32 id);
-void Actor_SetSpritePriority(u32 id, s32 variant);
 s32 Random16Far(void);
 
 extern s16 gData_02003780;
@@ -34,25 +29,13 @@ extern s16 gData_02003784;
 extern s32 gData_02003788;
 extern s32 gData_0200378c;
 
-s32 Task_Add(void (*func)(void), s32 priority);
-void Event_Wait(s32 frames);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Actor_OffsetPositionAndResetMotion(s32 actor, s32 x, s32 z);
-void Actor_WaitForMoveById(s32 actor);
 void Func_02000b30(s32 id, s32 cue);
 void Func_0200160c(void);
 void Func_020019a0(void);
 void Func_02001f7c(void);
 s32 Func_02002dcc(void (*callback)(void));
-void Map_CopyCellsRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Map_SetScreenShake(s32 a, s32 b, s32 c);
 void Func_02002e44(void);
 void Func_02002e4c(void);
-void Func_080d47b4(s32 actor, s32 a, s32 b);
-void Func_080d489c(s32 actor, s32 a);
-void Event_ResolvePendingActions(s32 skip);
-void Sound_Play(s32 cue);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -80,9 +63,7 @@ static inline void AnkohlRuins_Call2dfc(s32 a, s32 b, s32 c, s32 d, s32 e,
 
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Camera_FollowActor(s32 actor, s32 target);
 void Func_02002e34(struct Actor *object, s32 a);
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
 void Func_02002eb4(void);
 
 #endif

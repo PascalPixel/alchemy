@@ -1,6 +1,5 @@
 #include "types.h"
 #include "actor.h"
-#include "flag_call.h"
 #include "event_inline.h"
 
 s32 Func_020003e8(s32 x, s32 y, s32 z, s32 rotation, s32 timer);

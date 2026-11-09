@@ -8,32 +8,32 @@ void Func_020056bc(void);
 
 void Func_02001728(struct Actor *actor) {
   Func_020056b4(actor);
-  Event_ResolvePendingActions(0);
-  Sound_Play(581);
+  FieldEvent_ResolvePendingActions(0);
+  Event_PlaySound(581);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0x19999);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 152, 424);
   Func_020056bc();
 }
 
 void Func_0200176c(void) {
-  struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   s32 speed;
 
   Func_020056b4(actor);
-  Event_ResolvePendingActions(0);
-  Sound_Play(581);
+  FieldEvent_ResolvePendingActions(0);
+  Event_PlaySound(581);
   actor->motionFlags = 0;
   speed = 0x19999;
   /* FAKEMATCH: the native loads the speed before the owner, whose base is
    * already in a register here; the plain call loads the owner first (one
    * reordered pair, differ 2) */
   asm volatile("" : "+l"(speed));
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, speed, 0x19999);
-  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 152, 488);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, speed, 0x19999);
+  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 152, 488);
   actor->motionFlags = 3;
-  Event_Wait(8);
-  Sound_Play(161);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
-  Event_Wait(20);
+  FieldEvent_Wait(8);
+  Event_PlaySound(161);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
+  FieldEvent_Wait(20);
   Func_020056bc();
 }

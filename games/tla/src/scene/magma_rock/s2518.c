@@ -76,7 +76,7 @@ next:
 }
 
 void Func_02002518(u16 id) {
-  if (Actor_GetById(id)->update != Func_020015e4)
+  if (Actor_Get(id)->update != Func_020015e4)
     return;
-  BuildParts(Actor_GetById(id)->watchedObject);
+  BuildParts(Actor_Get(id)->watchedObject);
 }

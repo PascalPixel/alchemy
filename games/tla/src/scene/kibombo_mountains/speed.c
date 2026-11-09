@@ -9,7 +9,7 @@ void Func_02000da8(s32 value);
 void Func_02000e28(s32 value);
 
 void Func_02000ad4(s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
 
   Func_0200103c(object, 1);
   object->acceleration = 0x4000;

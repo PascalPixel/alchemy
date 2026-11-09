@@ -16,7 +16,7 @@ void Func_02000cc8(s32 trigger) {
   s32 result;
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov67cRoom5) {
-    s32 column = Actor_GetById(8)->x >> 20;
+    s32 column = Actor_Get(8)->x >> 20;
 
     if (trigger == 77 && column == 17)
       clear = 0;
@@ -24,16 +24,16 @@ void Func_02000cc8(s32 trigger) {
       clear = 0;
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov67cRoom6) {
-    if (trigger == 77 && Actor_GetById(10)->x >> 20 == 9)
+    if (trigger == 77 && Actor_Get(10)->x >> 20 == 9)
       clear = 0;
-    if (trigger == 78 && Actor_GetById(11)->x >> 20 == 13)
+    if (trigger == 78 && Actor_Get(11)->x >> 20 == 13)
       clear = 0;
   }
   if (clear == 0)
     return;
-  object = Actor_GetById(gMainRoutineWork.currentOwner);
+  object = Actor_Get(gMainRoutineWork.currentOwner);
   Func_02003d7c();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   goto test;
 step:
   if (result < 0) {
@@ -61,7 +61,7 @@ step:
     object->x = x - offset;
   }
   object->angle += 0x1000;
-  wait(1);
+  System_Wait(1);
 test:
   target.x = object->x;
   target.y = object->y;

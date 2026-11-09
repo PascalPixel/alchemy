@@ -29,7 +29,7 @@ check:
   id = *table++;
   if (code != *table++)
     goto next;
-  work->target = Actor_GetById(id);
+  work->target = Actor_Get(id);
   result = *table;
 done:
   return result;

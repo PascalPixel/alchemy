@@ -19,8 +19,8 @@ void Func_02000940(void) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room1) {
-    Map_CopyCellAttributeRect(98, 18, 4, 3, 78, 21);
-    Map_CopyCellAttributeRect(98, 24, 4, 3, 78, 24);
+    MapGrid_CopyCellAttributes(98, 18, 4, 3, 78, 21);
+    MapGrid_CopyCellAttributes(98, 24, 4, 3, 78, 24);
     Func_02003c14(gData_02003d98);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
     if (gMainRoutineWork.entrance <= 3) {

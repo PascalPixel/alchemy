@@ -17,7 +17,7 @@ void Func_0200120c(void);
 void Func_02001214(void);
 
 void Func_02000660(void) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   struct {
     s32 x, y, z;
   } position;
@@ -31,10 +31,10 @@ void Func_02000660(void) {
     FIELD_AT(Ram_HeapSlots->eventWork, u16, 346) = 1;
   } else {
     Func_0200120c();
-    Event_ResolvePendingActions(0);
-    Actor_TurnToFaceEachOther(16, gMainRoutineWork.currentOwner, 0);
-    Event_SetMessageId((s32)MsgRrruffRrruff2);
-    Event_ShowMessageAndWait(16, 0);
+    FieldEvent_ResolvePendingActions(0);
+    Actor_FaceEachOther(16, gMainRoutineWork.currentOwner, 0);
+    FieldEvent_SetMessageId((s32)MsgRrruffRrruff2);
+    Event_ShowMessage(16, 0);
     Actor_FaceDirection(16, FACING_WEST, 0);
     Func_02001214();
   }

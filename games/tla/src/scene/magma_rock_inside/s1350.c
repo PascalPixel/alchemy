@@ -4,6 +4,7 @@
 #include "main_routine_work.h"
 #include "field_effect.h"
 #include "map.h"
+#include "event_inline.h"
 
 extern char SceneId_Ov692Room2;
 extern char SceneId_Ov692Room3;
@@ -11,14 +12,7 @@ extern char SceneId_Ov692Room4;
 extern const s32 gData_02005050[];
 extern const s32 gData_0200502c[];
 
-s32 GameFlag_Test(s32 flag);
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
-void Func_02004f30(s32 sound);
-void Func_02004d10(s32 a, s32 b, s32 c);
-void Func_02004d18(void);
 void Func_02004cc0(void);
-void Func_02004cd8(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 u32 Random16Far(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -29,15 +23,15 @@ void Func_02003548(void);
 
 static __inline__ void Func_02004d10_(s32 a, s32 b, s32 c) {
   /* FAKEMATCH(wrapper): Func_02004d10_ forwarded inline; as direct calls to
-   * Func_02004d10, 110 of 537 instructions differ in tla-en. */
-  Func_02004d10(a, b, c);
+   * Map_SetScreenShake, 110 of 537 instructions differ in tla-en. */
+  Map_SetScreenShake(a, b, c);
 }
 
 static __inline__ void Func_02004cd8_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
   /* FAKEMATCH(wrapper): Func_02004cd8_ forwarded inline; as direct calls to
-   * Func_02004cd8, 20 of 537 instructions differ in tla-en. */
-  Func_02004cd8(a, b, c, d, e, f);
+   * Map_CopyCellPictureIndicesRect, 20 of 537 instructions differ in tla-en. */
+  Map_CopyCellPictureIndicesRect(a, b, c, d, e, f);
 }
 
 void Func_02001350(void) {
@@ -116,16 +110,16 @@ burst:
   asm("" : : : "sfp");
   burstPosition = position;
   burstPosition[0] = baseX + ((burstRandom & mask) << 16);
-  Func_02004f30(145);
+  Sound_Play(145);
   Func_0200015c(burstPosition[0], burstPosition[1], burstPosition[2], 0,
                 (Random16Far() & mask) << 12, 0, 0x3a0001, effectOptions);
   Func_02004d10_(0x50000, 0x50000, 0x10000);
   Func_02004d10_(-1, -1, 0xe666);
   i++;
-  FieldEvent_Wait(8);
+  Event_Wait(8);
   if (i != 16)
     goto burst;
-  Func_02004f30(148);
+  Sound_Play(148);
   effectOptions->priority = 1;
   effectOptions->startScaleX = 0x20000;
   effectOptions->startScaleY = 0x20000;
@@ -145,19 +139,19 @@ rise:
   Func_02004cd8_(68, 70, srcX, srcZ, 3, 6);
   Func_02004d10_(0x50000, 0x70000, 0x10000);
   Func_02004d10_(-1, -1, 0xe666);
-  FieldEvent_Wait(30);
-  Func_02004cd8(71, 70, srcX, srcZ, 3, 6);
+  Event_Wait(30);
+  Map_CopyCellPictureIndicesRect(71, 70, srcX, srcZ, 3, 6);
   effectOptions->type = 403;
   effectOptions->priority = 1;
   effectOptions->palette = 10;
   effectOptions->script = gData_0200502c;
   if (t != 0) {
-    Func_02004cd8(68, 70, srcX, srcZ, 3, 6);
-    FieldEvent_Wait(30);
+    Map_CopyCellPictureIndicesRect(68, 70, srcX, srcZ, 3, 6);
+    Event_Wait(30);
     burstPosition[2] -= 0x280000;
   } else {
     Func_02004d10_(0x20000, 0x10000, 0x10000);
-    Func_02004f30(107);
+    Sound_Play(107);
     row = 0;
   row:
     i = 0;
@@ -173,11 +167,11 @@ rise:
     if (i != 6)
       goto column;
     wait(3);
-    Func_02004cd8(74, 70, srcX, srcZ, 3, (row >> 2) + 6);
+    Map_CopyCellPictureIndicesRect(74, 70, srcX, srcZ, 3, (row >> 2) + 6);
     row++;
     if (row != 12)
       goto row;
-    Func_02004cd8(74, 70, srcX, srcZ, 3, 8);
+    Map_CopyCellPictureIndicesRect(74, 70, srcX, srcZ, 3, 8);
     t = 0;
   frame:
     if ((t & 3) == 0) {
@@ -201,7 +195,7 @@ rise:
     if (t == 0) {
       *(s32 *)&layer->unk08[4] -= 0x200000;
       Func_02004cc0();
-      FieldEvent_Wait(1);
+      Event_Wait(1);
     } else if (t <= 63) {
       REG_BLDALPHA = ((16 - (t >> 2)) << 8) | (t >> 2);
       REG_BLDCNT = 0x3f44;
@@ -222,10 +216,10 @@ rise:
     wait(1);
     if (t != 160)
       goto frame;
-    Func_02004d18();
+    MapGrid_WaitForShakeToSettle();
   }
-  Func_02004f30(288);
-  Func_02004f30(136);
+  Sound_Play(288);
+  Sound_Play(136);
   lastOptions = &options;
   lastOptions->startScaleY = 0x1cccc;
   lastOptions->startScaleX = 0x1cccc;
@@ -244,11 +238,11 @@ last:
                 0, 0, 0, 0x3b0000, lastOptions);
   if (i != 6)
     goto last;
-  Func_02004d10(0x50000, 0x70000, 0x10000);
+  MapGrid_SetShake(0x50000, 0x70000, 0x10000);
   Func_02004d10_(-1, -1, 0xe666);
-  Func_02004cd8(68, 64, srcX, srcZ, 3, 6);
-  Func_02004d18();
-  FieldEvent_Wait(30);
+  Map_CopyCellPictureIndicesRect(68, 64, srcX, srcZ, 3, 6);
+  MapGrid_WaitForShakeToSettle();
+  Event_Wait(30);
   work = &gMainRoutineWork;
   *(s32 *)&layer->unk08[4] = 0;
   closing = work->scene;

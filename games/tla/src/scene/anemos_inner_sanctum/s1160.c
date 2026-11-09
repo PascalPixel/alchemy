@@ -72,26 +72,26 @@ void Func_02001160(void) {
     if (x == 7 && z == 53)
       GameFlag_SetBit(0xa82);
     if (x == 67 && z == 45) {
-      Map_CopyCellPictureIndicesRect(50, 22, 33, 22, 1, 1);
-      Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
-      Sound_Play(0x248);
-      Event_Wait(30);
-      Sound_Play(188);
-      Map_CopyCellPictureIndicesRect(50, 20, 31, 20, 1, 2);
-      Event_Wait(5);
-      Map_CopyCellPictureIndicesRect(51, 20, 31, 20, 1, 2);
-      Event_Wait(5);
+      MapGrid_CopyCellsTo(50, 22, 33, 22, 1, 1);
+      Actor_SetPosition(14, 0, 0);
+      Event_PlaySound(0x248);
+      FieldEvent_Wait(30);
+      Event_PlaySound(188);
+      MapGrid_CopyCellsTo(50, 20, 31, 20, 1, 2);
+      FieldEvent_Wait(5);
+      MapGrid_CopyCellsTo(51, 20, 31, 20, 1, 2);
+      FieldEvent_Wait(5);
       Func_02003380(0x1f00000, 0x1500000, 0, 0);
       GameFlag_SetBit(0xa83);
     }
     if (x == 93 && z == 57)
       GameFlag_SetBit(0xa84);
     if (x == 91 && z == 59) {
-      if (!GameFlag_Test(0xa84)) {
-        s32 fromX = (Actor_GetById(12)->x >> 16) << 16;
+      if (!Event_GetFlag(0xa84)) {
+        s32 fromX = (Actor_Get(12)->x >> 16) << 16;
 
-        Actor_SetHorizontalPositionWithTerrain(
-            13, fromX, (Actor_GetById(12)->z >> 16) << 16);
+        Actor_SetPosition(
+            13, fromX, (Actor_Get(12)->z >> 16) << 16);
         MoveObject(12, PIXELS(728), PIXELS(472));
       }
       GameFlag_SetBit(0xa85);

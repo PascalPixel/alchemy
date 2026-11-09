@@ -29,7 +29,7 @@ void Func_02000510(void) {
   i = 0;
 loop:
   BLEND_SET_ALPHA(((16 - i) << 8) | i);
-  wait(4);
+  System_Wait(4);
   i++;
   if (i < 16)
     goto loop;
@@ -48,7 +48,7 @@ void Func_02000550(void) {
   i = 0;
 loop:
   BLEND_SET_ALPHA((i << 8) | (16 - i));
-  wait(3);
+  System_Wait(3);
   i++;
   if (i < 16)
     goto loop;

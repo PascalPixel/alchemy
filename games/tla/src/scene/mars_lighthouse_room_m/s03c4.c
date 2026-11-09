@@ -1,9 +1,8 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "io_write_queue.h"
-#include "flag_call.h"
+#include "event_inline.h"
 
 struct Overlay6acEventWork {
   u8 unk000[0x166];
@@ -44,13 +43,13 @@ void Func_020003c4(void) {
     Data_02003a1c[i + 20] = Data_020039dc[(base + i) % 6 + 20];
     Data_02003a1c[i + 26] = Data_020039dc[(base + i) % 6 + 26];
   }
-  if (!Flag_IsSet(0xa32))
+  if (!Event_GetFlag(0xa32))
     Iwram_CopyWords(&Data_02003a1c[10], Data_0200ba70, 12);
-  if (!Flag_IsSet(0xa33))
+  if (!Event_GetFlag(0xa33))
     Iwram_CopyWords(&Data_02003a1c[20], Data_0200ba70, 12);
-  if (!Flag_IsSet(0xa34))
+  if (!Event_GetFlag(0xa34))
     Iwram_CopyWords(&Data_02003a1c[26], Data_0200ba70, 12);
-  if (!Flag_IsSet(0xa35))
+  if (!Event_GetFlag(0xa35))
     Iwram_CopyWords(&Data_02003a1c[4], Data_0200ba70, 12);
   IO_WRITE_QUEUE_PUSH(0x05000100, (u32)Data_02003a1c, 0x84000010);
   gData_02003704++;

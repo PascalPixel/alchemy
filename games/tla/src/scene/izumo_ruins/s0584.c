@@ -23,28 +23,28 @@ void Func_02000584(u16 *list) {
   Func_020014a8(8, gMainRoutineWork.currentOwner);
   Func_020014a8(9, gMainRoutineWork.currentOwner);
   Func_020014a8(10, gMainRoutineWork.currentOwner);
-  wait(1);
+  System_Wait(1);
   Func_0200056c(8);
   Func_0200056c(9);
   Func_0200056c(10);
-  Actor_SetModeById(9, 0);
-  wait(1);
-  Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
-  wait(1);
+  Actor_SetAnimation(9, 0);
+  System_Wait(1);
+  Actor_SetPosition(8, 0, 0);
+  Actor_SetPosition(9, 0, 0);
+  Actor_SetPosition(10, 0, 0);
+  System_Wait(1);
   grid = gMapShapeGrid;
   while (list[0] != 0xffff) {
     u32 id = list[0];
-    struct Actor *actor = Actor_GetById(id);
+    struct Actor *actor = Actor_Get(id);
     s32 flag = list[1];
     s32 next = flag + 1;
     struct MapCell *cells = map->layers[actor->terrainId].cells;
     u8 *shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
 
     actor->unk5c[0] = 3;
-    if (GameFlag_Test(next)) {
-      Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
+    if (Event_GetFlag(next)) {
+      Actor_SetPosition(id, 0, 0);
     } else {
       s32 index = Func_02001508(actor);
       struct MapCell *cell = cells + index;
@@ -59,10 +59,10 @@ void Func_02000584(u16 *list) {
       // Read through the actor, not actor->terrainId: the native reloads it
       // after the cell store.
       *shape = Func_02001528(actor->terrainId, kind, (ground >> 19) + 4);
-      if (GameFlag_Test(flag))
+      if (Event_GetFlag(flag))
         ObjectVisual_CopyAttributes(id, 9);
     }
     list += 2;
   }
-  wait(10);
+  System_Wait(10);
 }

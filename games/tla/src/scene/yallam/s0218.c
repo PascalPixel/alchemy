@@ -24,9 +24,9 @@ void Func_02000270(void) {
   s32 index;
 
   Func_02002488();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   for (i = 8; i <= 63; i++) {
-    u8 *actor = (u8 *)Actor_GetById(i);
+    u8 *actor = (u8 *)Actor_Get(i);
 
     if (actor != NULL) {
       u8 *flags = &actor[85];
@@ -43,7 +43,7 @@ void Func_02000270(void) {
    * decrement after it, as in overlay 66d's Func_02000368 (differ 2 without the
    * first). */
   asm("");
-  Sound_Play(158);
+  Event_PlaySound(158);
   asm("");
   index--;
   MapGrid_AnimateCells(gData_02002ce4[index].a, gData_02002ce4[index].b,
@@ -52,8 +52,8 @@ void Func_02000270(void) {
    * calls (r4 is call-used), so sched2 takes the table address first as the
    * native does (differ 2). */
   asm("");
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   {
     s32 owner = gMainRoutineWork.currentOwner;
 
@@ -62,8 +62,8 @@ void Func_02000270(void) {
     else
       Actor_CenterAndWalk(owner, 2, -4);
   }
-  Event_Wait(10);
-  Import_EventSetExitRequest(*(s16 *)(event + 340));
+  FieldEvent_Wait(10);
+  FieldEvent_SetExitRequest(*(s16 *)(event + 340));
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_02002490();

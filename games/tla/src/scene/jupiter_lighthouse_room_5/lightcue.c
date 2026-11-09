@@ -7,7 +7,7 @@ extern struct FieldActor *gData_02003448[];
 extern s16 gData_0200354a;
 
 void Func_02001bcc(s32 id, s32 value) {
-  struct FieldActor *object = ((struct FieldActor *)Actor_GetById(id));
+  struct FieldActor *object = ((struct FieldActor *)Actor_Get(id));
 
   if (object != NULL) {
     s16 *count;

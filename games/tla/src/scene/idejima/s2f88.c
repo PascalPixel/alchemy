@@ -11,9 +11,9 @@ struct ActorSprite {
 };
 
 void Func_02002f88(s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
 
-  Actor_SetSingleChildFlags(Actor_GetById(id), 0);
+  Actor_SetSingleChildFlags(Actor_Get(id), 0);
   object->angle = FACING_SOUTH;
   object->motionFlags = 0;
   object->x += 0xc0000;

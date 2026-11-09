@@ -1,4 +1,5 @@
 #include "jupiter_lighthouse_aerie.h"
+#include "event_inline.h"
 
 void Func_02001010(struct Actor *object) {
   u8 *fill = &gDecodeFillByte;

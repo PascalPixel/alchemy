@@ -20,14 +20,14 @@ struct EventWork {
 
 void Func_02000598(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *linked = actor->watchedObject;
   struct Actor *shadow;
   s32 facing;
   s32 i;
 
   Func_02002378();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   i = 0;
   work->valueD46 = 0;
   actor->motionFlags = 4;
@@ -40,7 +40,7 @@ void Func_02000598(void) {
       i += 0x1999;
     actor->angle = (u8)gFrameCount << 12;
     actor->priorityFlags ^= 2 << (gFrameCount & 1);
-    wait(1);
+    System_Wait(1);
   }
   work->valueD44 = 1;
   work->valueD46 = 1;
@@ -52,26 +52,26 @@ void Func_02000598(void) {
   actor->motionFlags = 3;
   Actor_SetSingleChildFlags(actor, 1);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  shadow = Func_080d4568();
+  shadow = FieldCamera_GetActor();
   shadow->speedLimit = 0x80000;
   shadow->acceleration = 0x10000;
   shadow->motionFlags = 0;
-  Actor_SetMoveTarget(shadow, actor->x,
+  FieldActor_SetMoveTarget(shadow, actor->x,
                       Map_GetTerrainHeight(0, actor->x, actor->z), actor->z);
   i = 0;
   while (i <= 59 && actor->y > actor->terrainHeight + 0x100000) {
     i++;
-    wait(1);
+    System_Wait(1);
   }
-  Sound_Play(127);
+  Event_PlaySound(127);
   i = 0;
   while (i <= 59 && actor->velocityY != 0) {
     i++;
-    wait(1);
+    System_Wait(1);
   }
-  Script_WaitForEventTimeout(shadow);
-  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
-  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  Actor_WaitForMove(shadow);
+  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
+  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->valueD46 = 1;
   work->value154 = 0;
   Func_02002380();

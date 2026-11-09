@@ -7,7 +7,7 @@
 void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
 
 void Func_02004a5c(s32 id, s32 x, s32 y, s32 z) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
   struct MapCell *cell = Ram_HeapSlots->mapWork->layers[2].cells;
   s32 column = x / 0x100000;
   s32 row = (z - y + 0x7fff) / 0x100000;

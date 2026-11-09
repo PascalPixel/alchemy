@@ -35,14 +35,14 @@ void Func_020006d0(s32 unused, s32 id) {
   __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room5) {
     if (id == 8) {
-      Map_CopyCellAttributeRect(17, 85, 1, 1, 17, 83);
+      MapGrid_CopyCellAttributes(17, 85, 1, 1, 17, 83);
       AnkohlRuins_Call2dfc(19, 84, 1, 1, 18, 82);
-      Map_CopyCellAttributeRect(19, 84, 1, 1, 19, 83);
+      MapGrid_CopyCellAttributes(19, 84, 1, 1, 19, 83);
     }
 #if !TLA_PATCH_1
     if (id == 9)
 #else
-    if (id == 9 && GameFlag_Test(0x205))
+    if (id == 9 && Event_GetFlag(0x205))
 #endif
       AnkohlRuins_Call2df4(35, 98, 3, 5, 25, 98);
   }

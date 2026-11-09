@@ -1,27 +1,21 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 s32 Func_02004e38(void);
 struct Actor *Func_02004ef8(s32 *position, s32 mode);
 void Func_02004d40(void);
 void Func_02004d48(void);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void Func_02004f30(s32 sound);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void wait(s32 frames);
 void Func_02004c98(struct Actor *object, s32 mode);
 void Func_020046e8(s32 value);
-void Func_02004d10(s32 a, s32 b, s32 c);
 void Func_020049c0(s32 offset, s32 layer);
 void Func_0200481c(void);
 
 static __inline__ void Shake(s32 a, s32 b, s32 c) {
   /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 28 of 158
    * instructions differ in tla-en. */
-  Func_02004d10(a, b, c);
+  Map_SetScreenShake(a, b, c);
 }
 
 void Func_0200406c(const u16 *table) {
@@ -52,7 +46,7 @@ next:
     flag = table[1];
     Func_02004d40();
     if (!GameFlag_Test(flag)) {
-      Func_02004f30(125);
+      Sound_Play(125);
       Actor_SetPartAttribute(Actor_GetById(id), 7);
       wait(2);
       Func_02004c98(trap, 0);
@@ -67,7 +61,7 @@ next:
       second = flag + 1;
       if (!GameFlag_Test(second)) {
         leader->motionFlags = 0;
-        Func_02004f30(185);
+        Sound_Play(185);
         Shake(0x10000, 0x40000, 0x10000);
         Func_020046e8(0);
         wait(8);
@@ -83,7 +77,7 @@ next:
         wait(5);
         Actor_SetPositionAndResetMotion(trap, 0, 0, 0);
         wait(2);
-        Func_02004f30(188);
+        Sound_Play(188);
         Func_0200481c();
         wait(20);
         GameFlag_SetBit(second);

@@ -3,6 +3,7 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 struct EventWorkRoute {
   u8 unk000[0x1ac];
@@ -28,15 +29,6 @@ struct AnimationRecord26 {
 extern u8 MsgFieldAddressCompanion;
 extern const u8 gData_020005e4[];
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void wait(s32 frames);
-struct Actor *Actor_GetById(s32 id);
-void Event_Wait(s32 frames);
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_SetMovementTypeById(s32 id, const void *script);
-void Actor_RefreshSelectorById(u32 id);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -49,11 +41,6 @@ void Message_CloseFinishedWindows(void);
 s32 Func_0200053c(s32 a, s32 b, s32 c, s32 d);
 void Func_0200055c(void);
 void Func_02000564(void);
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
-void Event_SetMessageId(s32 message);
-void Import_EventSetExitRequest(s32 countdown);
-void Event_ResolvePendingActions(s32 skip);
-void Sound_Play(s32 cue);
 void Func_02000310(s32 kind, s32 frames);
 
 static __inline__ s32 Flag_Test(s32 flag) {
@@ -110,8 +97,8 @@ void Func_02000310(s32 kind, s32 frames) {
         (resource << 16) | 2);
   x = Func_0200053c(id, 0, x, 5);
   while (Message_AllTyped() == 0)
-    wait(1);
-  Event_Wait(frames);
+    System_Wait(1);
+  FieldEvent_Wait(frames);
   Window_Close(x, 2);
   Message_CloseFinishedWindows();
 }

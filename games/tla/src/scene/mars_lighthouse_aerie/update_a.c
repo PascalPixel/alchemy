@@ -13,9 +13,9 @@ void Func_02000038(struct Actor *object) {
 
 void Func_02000068(struct Actor *object) {
   if ((gFrameCount >> 1) & 1)
-    Actor_SetPartAttribute(object, 15);
+    Actor_SetSpriteColor(object, 15);
   else
-    Actor_SetPartAttribute(object, 0);
+    Actor_SetSpriteColor(object, 0);
 }
 
 /// Shrinks the object toward its normal size, and when its timer runs out
@@ -71,7 +71,7 @@ void Func_020000e4(struct Actor *object) {
     along = a->x + cosine * (radius + 6);
   }
   object->x = along;
-  sine = Math_Sine(angle);
+  sine = Math_Sin(angle);
   across = anchor->z + sine * (*counter + 4);
   object->z = across;
   object->targetX = object->x;

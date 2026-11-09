@@ -10,11 +10,11 @@ void Func_02003bb8(struct Actor *object, s32 mode) {
   if (mode == 0) {
     object->update = 0;
     Animation_ApplyChildValues(object, 0);
-    Sound_Play(390);
+    Event_PlaySound(390);
   } else if (mode == 1) {
     object->update = (void (*)(void))Func_02003b38;
   } else {
     object->update = (void (*)(void))Func_02003b70;
-    Sound_Play(291);
+    Event_PlaySound(291);
   }
 }

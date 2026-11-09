@@ -27,7 +27,7 @@ void Func_020028cc(void) {
 
   if ((gFrameCount & 15) != 0)
     return;
-  leader = Actor_GetById(8);
+  leader = Actor_Get(8);
   obj = Func_02004b30_(285, leader->x - PIXELS(32), leader->y,
                        leader->z - PIXELS(16));
   if (obj == NULL)
@@ -50,7 +50,7 @@ void Func_020028cc(void) {
   spr->priority = ((struct FieldSprite *)leader->animation)->priority;
   obj->priorityFlags |= 2;
   obj->motionFlags = leader->motionFlags;
-  Actor_SetPartAttribute(obj, 9);
+  Actor_SetSpriteColor(obj, 9);
   Func_02004b18(obj, 2);
   Func_02004b20(obj, gData_02004f10);
 }

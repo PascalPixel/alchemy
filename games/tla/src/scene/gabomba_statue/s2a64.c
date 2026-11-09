@@ -54,7 +54,7 @@ void Func_02002a64(void) {
   s32 cue;
 
   Func_020056b4();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   {
     /* FAKEMATCH(temporary): the leader's id read into a local before the speed
@@ -75,39 +75,39 @@ void Func_02002a64(void) {
   }
   Actor_SetPositionAndFacing(6, 224 << 17, 156 << 17, speed);
   Actor_SetPositionAndFacing(5, 234 << 17, 156 << 17, speed);
-  wait(1);
+  System_Wait(1);
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x201;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Event_Wait(40);
+  FieldEvent_Wait(40);
   Func_0200578c_ArgsFirst(23, 256, 20);
-  Event_SetMessageId(MsgGabombaUnderstandsChannel);
-  Event_ShowMessageAndWait(23, 0);
-  Func_080d4568()->motionFlags = 0;
-  Camera_SetSpeedParameters(0xcccc, 0x1999);
+  FieldEvent_SetMessageId(MsgGabombaUnderstandsChannel);
+  Event_ShowMessage(23, 0);
+  FieldCamera_GetActor()->motionFlags = 0;
+  FieldCamera_SetSpeed(0xcccc, 0x1999);
   /* FAKEMATCH(temporary): the else branch's 0x6007 set here in a local, which
    * gives the event work counter r3 and r2 as the native has them; as
-   * Event_ShowMessageAndWait(0x6007, 0), 20 of 521 instructions differ in
+   * Event_ShowMessage(0x6007, 0), 20 of 521 instructions differ in
    * tla-en. */
   cue = 0x6007;
-  Camera_MoveWithinMapBounds(196 << 17, -1, 146 << 17, 1);
+  FieldCamera_MoveTo(196 << 17, -1, 146 << 17, 1);
   Func_020057b4();
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0, 0);
   Actor_FaceDirection(5, 0x8000, 0);
-  Actor_ArmCallback(7, 0, 0);
+  Actor_FaceDirection(7, 0, 0);
   Actor_FaceDirectionAndWait(6, 0x8000);
-  Actor_SetModeById(6, 3);
-  Event_ShowMessageAndWait(0x4006, 0);
-  ((void *)FieldMessage_ShowAtActor(0x6005, 0));
-  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+  Actor_SetAnimation(6, 3);
+  Event_ShowMessage(0x4006, 0);
+  ((void *)Event_OpenMessage(0x6005, 0));
+  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Func_0200578c_ArgsFirst(7, 256, 20);
     Actor_SetSpeed(7, 0x20000, 0x10000);
     Actor_WalkToAndWait(7, 340, 296);
     Actor_WalkToAndWait(7, 354, 296);
     Actor_WalkToAndWait(7, 364, 308);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xe000, 0);
+    Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xe000, 0);
     Actor_FaceDirectionAndWait(7, 0x6000);
-    Event_ShowMessageAndWait(0x6007, 0);
+    Event_ShowMessage(0x6007, 0);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
   } else {
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
@@ -117,76 +117,76 @@ void Func_02002a64(void) {
     Actor_WalkToAndWait(7, 364, 308);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xe000, 0);
     Actor_FaceDirectionAndWait(7, 0x6000);
-    Actor_SetModeById(7, 3);
-    Event_ShowMessageAndWait(cue, 0);
+    Actor_SetAnimation(7, 3);
+    Event_ShowMessage(cue, 0);
   }
   Actor_FaceDirectionAndWait(23, 0x8000);
-  Motion_SetModeAndWaitAnimation(23, 4);
+  Actor_SetAnimationAndWait(23, 4);
   Event_ShowMessage(0x6017, 0);
-  Actor_ArmCallback(7, 0, 0);
+  Actor_FaceDirection(7, 0, 0);
   Func_0200578c_ArgsFirst(7, 257, 40);
   Event_ShowMessage(0x6017, 0);
-  Motion_SetModeAndWaitAnimation(7, 3);
+  Actor_SetAnimationAndWait(7, 3);
   Func_0200578c_ArgsFirst(23, 265, 20);
-  Event_ShowMessageAndWait(0x6017, 0);
+  Event_ShowMessage(0x6017, 0);
   Event_ShowMessage(0x4007, 0);
   Func_0200578c_ArgsFirst(7, 256, 40);
   Event_ShowMessage(0x4007, 0);
-  Actor_SetModeById(23, 3);
-  Event_ShowMessageAndWait(0x4017, 0);
+  Actor_SetAnimation(23, 3);
+  Event_ShowMessage(0x4017, 0);
   Func_0200578c_ArgsFirst(7, 265, 10);
   Event_ShowMessage(0x4007, 0);
   Actor_SetSpeed(6, 0xcccc, 0x6666);
   Actor_WalkToAndWait(6, 440, 296);
   Actor_FaceDirectionAndWait(6, 0x8000);
-  Motion_SetModeAndWaitAnimation(6, 3);
-  Event_ShowMessageAndWait(0x4006, 0);
+  Actor_SetAnimationAndWait(6, 3);
+  Event_ShowMessage(0x4006, 0);
   Actor_FaceDirection(7, 0xe000, 0);
   Func_0200578c_ArgsFirst(7, 261, 0);
   Actor_FaceDirection(6, 0x2000, 0);
   Actor_FaceDirection(5, 0xa000, 0);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 80);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0, 80);
   Func_0200578c_ArgsFirst(7, 261, 40);
-  Actor_ArmCallbackAndRefresh(7, 0);
-  Event_ShowMessageAndWait(0x4007, 0);
+  Actor_FaceDirectionAndWait(7, 0);
+  Event_ShowMessage(0x4007, 0);
   Actor_FaceDirection(5, 0x8000, 0);
   Actor_FaceDirectionAndWait(6, 0x8000);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
-  Actor_SetModeById(23, 3);
-  Actor_SetModeById(5, 3);
-  Motion_SetModeAndWaitAnimation(6, 3);
-  Motion_SetModeAndWaitAnimation(7, 3);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimation(23, 3);
+  Actor_SetAnimation(5, 3);
+  Actor_SetAnimationAndWait(6, 3);
+  Actor_SetAnimationAndWait(7, 3);
   Actor_FaceDirectionAndWait(23, 0xb000);
-  Event_ShowMessageAndWait(23, 0);
+  Event_ShowMessage(23, 0);
   Func_0200578c_ArgsFirst(23, 257, 0);
   Actor_FaceDirection(23, 0xd000, 20);
   Actor_FaceDirectionAndWait(23, 0xb000);
-  Event_ShowMessageAndWait(23, 0);
-  Camera_SetSpeedParameters(0x4cccc, 0x9999);
+  Event_ShowMessage(23, 0);
+  FieldCamera_SetSpeed(0x4cccc, 0x9999);
   FieldCamera_MoveTo(196 << 17, -1, 176 << 16, 1);
   Func_020057b4();
-  Event_ShowMessageAndWait(23, 0);
-  Event_ShowMessageAndWait(6, 0);
-  Event_ShowMessageAndWait(23, 0);
-  Event_ShowMessageAndWait(7, 0);
-  Event_ShowMessageAndWait(0x2005, 0);
-  Camera_MoveWithinMapBounds(196 << 17, -1, 146 << 17, 1);
+  Event_ShowMessage(23, 0);
+  Event_ShowMessage(6, 0);
+  Event_ShowMessage(23, 0);
+  Event_ShowMessage(7, 0);
+  Event_ShowMessage(0x2005, 0);
+  FieldCamera_MoveTo(196 << 17, -1, 146 << 17, 1);
   Func_020057b4();
-  Actor_SetModeById(23, 3);
-  Event_ShowMessageAndWait(23, 0);
+  Actor_SetAnimation(23, 3);
+  Event_ShowMessage(23, 0);
   Actor_FaceDirectionAndWait(23, 0x8000);
-  Event_ShowMessageAndWait(23, 0);
+  Event_ShowMessage(23, 0);
   Actor_SetSpeed(5, 0x19999, 0xcccc);
   Actor_SetSpeed(6, 0x19999, 0xcccc);
   Actor_SetSpeed(23, 0x19999, 0xcccc);
   Actor_SetSpeed(7, 0xcccc, 0x6666);
-  Actor_SetMovementTypeById(7, gData_02005c40);
-  Actor_SetMovementTypeById(23, gData_02005c40);
-  Actor_SetMovementTypeById(6, gData_02005c40);
-  Actor_SetMovementTypeAndWaitById(5, gData_02005c40);
-  GameFlag_SetBit(0x8f6);
+  Actor_SetScript(7, gData_02005c40);
+  Actor_SetScript(23, gData_02005c40);
+  Actor_SetScript(6, gData_02005c40);
+  Actor_RunScriptAndWait(5, gData_02005c40);
+  Event_SetFlag(0x8f6);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_0200581c();
-  Import_EventSetExitRequest(13);
+  FieldEvent_SetExitRequest(13);
 }

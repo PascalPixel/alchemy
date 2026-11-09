@@ -4,7 +4,7 @@
 /// lifts it one pixel and sets its flag; object 10 also redraws two blocks of
 /// row 12.
 void Func_0200042c(s32 unused, s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
 
   if (id == 10) {
     s32 row = object->z >> 20;
@@ -16,9 +16,9 @@ void Func_0200042c(s32 unused, s32 id) {
 
         object->y += step;
       }
-      GameFlag_SetBit(0x95a);
-      Map_CopyCellAttributeRect(0, 12, 1, 1, 9, row);
-      Map_CopyCellAttributeRect(0, 12, 1, 1, 13, row);
+      Event_SetFlag(0x95a);
+      MapGrid_CopyCellAttributes(0, 12, 1, 1, 9, row);
+      MapGrid_CopyCellAttributes(0, 12, 1, 1, 13, row);
     }
   } else if (id == 11) {
     if (object->x >> 20 == 51) {
@@ -28,7 +28,7 @@ void Func_0200042c(s32 unused, s32 id) {
 
         object->y += step;
       }
-      GameFlag_SetBit(0x95b);
+      Event_SetFlag(0x95b);
     }
   }
 }

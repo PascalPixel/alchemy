@@ -21,8 +21,8 @@ void Func_0200013c(void) {
 
   /* FAKEMATCH: ⚓️ builds the flag again for the second call */
   asm("" : "+l"(flag));
-  if (!GameFlag_Test(flag)) {
-    GameFlag_SetBit(514);
+  if (!Event_GetFlag(flag)) {
+    Event_SetFlag(514);
     Func_02000060(1);
   }
 }
@@ -32,14 +32,14 @@ void Func_02000160(void) {
 
   /* FAKEMATCH: ⚓️ builds the flag again for the second call */
   asm("" : "+l"(flag));
-  if (GameFlag_Test(flag) == 1) {
-    GameFlag_ClearBit(514);
+  if (Event_GetFlag(flag) == 1) {
+    Event_ClearFlag(514);
     Func_020000b4();
   }
   Func_02000100();
 }
 
 void Func_02000184(void) {
-  wait(10);
+  System_Wait(10);
   Func_02000100();
 }

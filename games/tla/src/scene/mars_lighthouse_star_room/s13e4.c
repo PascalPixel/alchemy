@@ -1,5 +1,6 @@
 #include "types.h"
 #include "actor.h"
+#include "event_inline.h"
 
 struct RiseTimer {
   u8 unk00[0x68];
@@ -19,7 +20,7 @@ void Func_020013e4(struct Actor *object) {
   object->scaleY += growth;
   timer->frames--;
   if (timer->frames == 1)
-    Actor_SetPositionAndResetMotion(object, 0, 0, 0);
+    FieldActor_SetPositionAndResetMotion(object, 0, 0, 0);
   else if (timer->frames == 0)
     Func_020041ec(object);
 }

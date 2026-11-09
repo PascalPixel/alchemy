@@ -21,7 +21,7 @@ void Func_02001c9c(void) {
 
       velocity[0] = Math_Cosine(angle);
       velocity[1] = 0;
-      velocity[2] = Math_Sine(angle);
+      velocity[2] = Math_Sin(angle);
       velocity[0] += velocity[0] / 3;
       Func_0200015c(0x1d00000, -0x200000, 0x1480000, velocity[0], velocity[1],
                     velocity[2], EFFECT_USE_UPDATE | 1, &options);

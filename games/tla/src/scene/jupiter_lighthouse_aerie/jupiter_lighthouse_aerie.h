@@ -39,14 +39,6 @@ extern u16 gData_02003340[];
 extern u8 gData_02003488[];
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-struct Actor *Actor_GetById(s32 id);
-void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void Actor_SetPositionAndCommit(s32 actor, s32 x, s32 z);
-void wait(s32 frames);
-void Event_Wait(s32 frames);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-s32 GameFlag_GetByte(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);
 u32 Random16Far(void);
 void Func_02000858(s32 mode);
@@ -61,9 +53,6 @@ void Func_020024a8(struct JupiterLighthouseAerieWork *work,
                    struct JupiterLighthouseAerieEntry *entry);
 void Func_02002640(void);
 void Func_02002a18(void);
-void Map_CopyCellsRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-struct Actor *Func_080d4568(void);
 void Func_02002b28(s32 id, s32 a);
-void Sound_Play(s32 cue);
 
 #endif

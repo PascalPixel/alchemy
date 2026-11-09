@@ -1,54 +1,32 @@
 #include "garoh.h"
 #include "main_routine_work.h"
 #include "event_work.h"
-#include "call.h"
+#include "event_inline.h"
 void Func_020013b0(s32 id);
 #define ACTOR_MODE_THEN_WAIT(id, mode, frames)                                 \
   do {                                                                         \
-    Call2((void (*)())Actor_SetModeById, id, mode);                            \
-    Call1((void (*)())Event_Wait, frames);                                     \
+    Actor_SetAnimation(id, mode);                            \
+    FieldEvent_Wait(frames);                                     \
   } while (0)
 #define FOLLOW_LEADER(id)                                                      \
   {                                                                            \
     struct Actor *leader_;                                                     \
                                                                                \
-    Call3((void (*)())Actor_SetSpeedParameters, id, 0x13333, 0x9999);          \
-    Actor_SetModeById(id, 2);                                                  \
-    leader_ = Actor_GetById(gMainRoutineWork.currentOwner);                    \
+    Actor_SetSpeed(id, 0x13333, 0x9999);          \
+    Actor_SetAnimation(id, 2);                                                  \
+    leader_ = Actor_Get(gMainRoutineWork.currentOwner);                    \
     if (leader_ != NULL)                                                       \
-      Actor_ResetAndSetPosition(id, *(s16 *)((u8 *)leader_ + 10),              \
+      Actor_SetDestination(id, *(s16 *)((u8 *)leader_ + 10),              \
                                 *(s16 *)((u8 *)leader_ + 18));                 \
-    Actor_WaitForMoveById(id);                                                 \
-    Actor_SetHorizontalPositionWithTerrain(id, 0, 0);                          \
+    FieldActor_WaitForMoveById(id);                                                 \
+    Actor_SetPosition(id, 0, 0);                          \
   }
 
 extern u8 MsgGaroh01[];
 extern const u8 gData_0200545c[];
 
-void GameFlag_SetBit(s32 flag);
-s32 GameFlag_Test(s32 flag);
-s32 Math_Sine(s32 angle);
 u32 Random16Far(void);
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
-void Actor_ArmCallbackAndRefresh(s32 a, s32 b);
-void Func_080d47b4(s32 id, s32 animation, s32 frames);
-void Func_080d489c(s32 id, s32 animation);
 void Func_020052b4(void);
-void Func_080d3070(s32 id, s32 x, s32 z, s32 angle);
-void Event_ResolvePendingActions(s32 a);
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
-void Actor_ResetAndSetPosition(s32 id, s32 x, s32 z);
-void Actor_CommitPositionAndActivate(s32 id, s32 x, s32 z);
-void Actor_WaitForMoveById(s32 id);
-void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
-void Actor_StartRepeatedMotion(s32 id, s32 value);
-void Actor_Jump(s32 id, s32 height, s32 frames);
-void Actor_SetMovementTypeById(s32 id, const void *callback);
-void Actor_Stop(s32 id);
-void Motion_SetVarCbAndRefresh(s32 id, s32 value);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Camera_FollowActor(s32 id, s32 mode);
 
 static inline s32 Garoh_PathStep(s32 from, s32 to, s32 i) {
   return from + ((to - from) * i) / 8;
@@ -62,85 +40,84 @@ void Func_02001490(void) {
   s32 x, z;
   s32 toX, toZ;
 
-  Call1((void (*)())GameFlag_SetBit, 0x91c);
+  Event_SetFlag(0x91c);
   Func_020051ac();
-  Call1((void (*)())Event_ResolvePendingActions, 0);
-  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 8, 0x600000,
-        0x80000);
-  Event_SetMessageId((s32)MsgGaroh01);
-  Call3((void (*)())Event_ShowMessageThenWait, 8, 0, 0);
-  Value3((s32 (*)())Func_080d47b4, 4, 0x100, 40);
-  Call3((void (*)())Actor_SetSpeedParameters, 4, 0xcccc, 0x6666);
-  Call3((void (*)())Actor_SetPositionAndReset, 4, 152, 304);
-  Call4((void (*)())Func_080d3070, 9, 32, -16, 0xb000);
-  Call4((void (*)())Func_080d3070, 5, 0, 0, 0xc000);
-  Call4((void (*)())Func_080d3070, 6, 16, 0, 0xb000);
-  if (GameFlag_Test(7))
-    Call4((void (*)())Func_080d3070, 7, 8, 16, 0xc000);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 4, -16, -16);
-  Call3((void (*)())Actor_ArmCallback, 4, 0xc000, 0);
-  Call1((void (*)())Actor_WaitForMoveById, 9);
-  Call1((void (*)())Event_Wait, 20);
-  Call3((void (*)())Event_ShowMessageThenWait, 8, 0, 0);
-  Call3((void (*)())Actor_ArmCallback, 4, 0, 0);
-  Call3((void (*)())Actor_ArmCallback, 5, 0, 0);
-  Call3((void (*)())Actor_ArmCallback, 6, 0x8000, 0);
-  Call3((void (*)())Actor_ArmCallback, 9, 0x8000, 0);
-  Call1((void (*)())Event_Wait, 25);
-  Call3((void (*)())Event_ShowMessageThenWait, 5, 0, 0);
-  Value3((s32 (*)())Func_080d47b4, 6, 0x101, 0);
-  Value3((s32 (*)())Func_080d47b4, 9, 0x101, 0);
-  if (GameFlag_Test(7))
-    Value3((s32 (*)())Func_080d47b4, 7, 0x101, 0);
-  Value3((s32 (*)())Func_080d47b4, 4, 0x101, 50);
-  Call3((void (*)())Event_ShowMessageThenWait, 8, 0, 0);
-  if (GameFlag_Test(7))
-    Call2((void (*)())Actor_StartRepeatedMotion, 7, 2);
-  Call2((void (*)())Actor_StartRepeatedMotion, 6, 2);
-  Call2((void (*)())Actor_StartRepeatedMotion, 9, 2);
-  Call2((void (*)())Actor_StartRepeatedMotion, 4, 2);
-  Call2((void (*)())Motion_SetVarCbAndRefresh, 5, 2);
-  Call1((void (*)())Event_Wait, 20);
-  Call3((void (*)())Actor_ArmCallback, 4, 0xc000, 0);
-  Call3((void (*)())Actor_ArmCallback, 5, 0xc000, 0);
-  Call3((void (*)())Actor_ArmCallback, 6, 0xc000, 0);
-  Call3((void (*)())Actor_ArmCallback, 9, 0xb000, 0);
-  Call1((void (*)())Event_Wait, 20);
-  Call4((void (*)())Camera_MoveWithinMapBounds, 0x900000, -1, 0x800000, 1);
+  FieldEvent_ResolvePendingActions(0);
+  Actor_SetPosition(8, 0x600000, 0x80000);
+  FieldEvent_SetMessageId((s32)MsgGaroh01);
+  FieldEvent_ShowMessageThenWait(8, 0, 0);
+  Actor_ShowEmote(4, 0x100, 40);
+  Actor_SetSpeed(4, 0xcccc, 0x6666);
+  Actor_WalkToAndWait(4, 152, 304);
+  FieldActor_LaunchFromLeader(9, 32, -16, 0xb000);
+  FieldActor_LaunchFromLeader(5, 0, 0, 0xc000);
+  FieldActor_LaunchFromLeader(6, 16, 0, 0xb000);
+  if (Event_GetFlag(7))
+    FieldActor_LaunchFromLeader(7, 8, 16, 0xc000);
+  Actor_WalkByAndWait(4, -16, -16);
+  Actor_FaceDirection(4, 0xc000, 0);
+  FieldActor_WaitForMoveById(9);
+  FieldEvent_Wait(20);
+  FieldEvent_ShowMessageThenWait(8, 0, 0);
+  Actor_FaceDirection(4, 0, 0);
+  Actor_FaceDirection(5, 0, 0);
+  Actor_FaceDirection(6, 0x8000, 0);
+  Actor_FaceDirection(9, 0x8000, 0);
+  FieldEvent_Wait(25);
+  FieldEvent_ShowMessageThenWait(5, 0, 0);
+  Actor_ShowEmote(6, 0x101, 0);
+  Actor_ShowEmote(9, 0x101, 0);
+  if (Event_GetFlag(7))
+    Actor_ShowEmote(7, 0x101, 0);
+  Actor_ShowEmote(4, 0x101, 50);
+  FieldEvent_ShowMessageThenWait(8, 0, 0);
+  if (Event_GetFlag(7))
+    FieldActor_StartRepeatedMotion(7, 2);
+  FieldActor_StartRepeatedMotion(6, 2);
+  FieldActor_StartRepeatedMotion(9, 2);
+  FieldActor_StartRepeatedMotion(4, 2);
+  Actor_RunRepeatedMotion(5, 2);
+  FieldEvent_Wait(20);
+  Actor_FaceDirection(4, 0xc000, 0);
+  Actor_FaceDirection(5, 0xc000, 0);
+  Actor_FaceDirection(6, 0xc000, 0);
+  Actor_FaceDirection(9, 0xb000, 0);
+  FieldEvent_Wait(20);
+  FieldCamera_MoveTo(0x900000, -1, 0x800000, 1);
   Func_020052b4();
-  bird = Actor_GetById(8);
-  Call2((void (*)())Actor_SetModeById, 8, 2);
+  bird = Actor_Get(8);
+  Actor_SetAnimation(8, 2);
   i = 0;
 loop1:
   {
     s32 r;
     s32 wave;
 
-    wave = Math_Sine(i << 13);
+    wave = Math_Sin(i << 13);
     pos = position;
     pos[0] = Garoh_PathStep(0x680000, 0x580000, i) - wave * 12;
-    wave = Math_Sine(i << 13);
+    wave = Math_Sin(i << 13);
     position[2] = Garoh_PathStep(0x200000, 0x780000, i) - wave * 7;
     position[1] = 0;
     r = ((Random16Far() * 10) >> 16) + 4;
-    Call3((void (*)())Actor_SetSpeedParameters, 8, r * 0x1999, r * 0xccc);
-    Actor_SetPositionAndReset(8, position[0] / 0x10000, position[2] / 0x10000);
+    Actor_SetSpeed(8, r * 0x1999, r * 0xccc);
+    Actor_WalkToAndWait(8, position[0] / 0x10000, position[2] / 0x10000);
     i++;
     if (i <= 7)
       goto loop1;
   }
-  Call2((void (*)())Actor_SetModeById, 8, 1);
-  Call1((void (*)())Event_Wait, 10);
-  Call2((void (*)())Motion_SetVarCbAndRefresh, 8, 2);
-  Actor_SetMovementTypeById(8, gData_0200545c);
+  Actor_SetAnimation(8, 1);
+  FieldEvent_Wait(10);
+  Actor_RunRepeatedMotion(8, 2);
+  Actor_SetScript(8, gData_0200545c);
   (*(s16 *)&((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)--;
-  Call3((void (*)())Event_ShowMessageThenWait, 8, 0, 0);
-  Call1((void (*)())Actor_Stop, 8);
-  Call1((void (*)())Event_Wait, 20);
-  Call3((void (*)())Actor_ArmCallback, 8, 0x2000, 0);
-  Call1((void (*)())Event_Wait, 20);
-  Call2((void (*)())Camera_FollowActor, 8, 1);
-  Call2((void (*)())Actor_SetModeById, 8, 2);
+  FieldEvent_ShowMessageThenWait(8, 0, 0);
+  FieldActor_Stop(8);
+  FieldEvent_Wait(20);
+  Actor_FaceDirection(8, 0x2000, 0);
+  FieldEvent_Wait(20);
+  FieldCamera_FollowActor(8, 1);
+  Actor_SetAnimation(8, 2);
   x = bird->x;
   z = bird->z;
   toX = 0x800000;
@@ -151,261 +128,261 @@ loop2:
     s32 r;
     s32 wave;
 
-    wave = Math_Sine(i << 13);
+    wave = Math_Sin(i << 13);
     position[0] = Garoh_PathStep(x, toX, i) - wave * 4;
     position[2] = Garoh_PathStep(z, toZ, i);
     position[1] = 0;
     r = ((Random16Far() * 10) >> 16) + 4;
-    Call3((void (*)())Actor_SetSpeedParameters, 8, r * 0x1999, r * 0xccc);
-    Actor_SetPositionAndReset(8, position[0] / 0x10000, position[2] / 0x10000);
+    Actor_SetSpeed(8, r * 0x1999, r * 0xccc);
+    Actor_WalkToAndWait(8, position[0] / 0x10000, position[2] / 0x10000);
     i++;
     if (i <= 7)
       goto loop2;
   }
-  Call2((void (*)())Actor_SetModeById, 8, 1);
-  Call3((void (*)())Actor_ArmCallback, 8, 0x3000, 0);
-  Call1((void (*)())Event_Wait, 20);
-  Call3((void (*)())Actor_ArmCallback, 8, 0, 0);
-  Call1((void (*)())Event_Wait, 30);
-  Call3((void (*)())Event_ShowMessageThenWait, 8, 0, 0);
-  Call3((void (*)())Event_ShowMessageThenWait, 6, 0, 0);
-  Call2((void (*)())Motion_SetVarCbAndRefresh, 8, 2);
-  Call1((void (*)())Event_Wait, 10);
-  Call3((void (*)())Actor_ArmCallback, 8, 0x3000, 0);
-  Call1((void (*)())Event_Wait, 30);
-  Value3((s32 (*)())Func_080d47b4, 8, 0x102, 50);
-  Call3((void (*)())Actor_SetSpeedParameters, 8, 0x9999, 0x4ccc);
-  Actor_GetById(8)->actionFlags &= 254;
-  Call3((void (*)())Actor_SetPositionAndReset, 8, 128, 148);
-  Call1((void (*)())Event_Wait, 1);
-  Actor_GetById(8)->actionFlags |= 1;
-  Call3((void (*)())Actor_SetSpeedParameters, 8, 0x28000, 0x14000);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 8, 0, 4);
-  Call1((void (*)())Event_Wait, 20);
-  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
-  Call3((void (*)())Actor_ArmCallback, 8, 0xc000, 0);
-  Call1((void (*)())Event_Wait, 20);
-  Call2((void (*)())Actor_StartRepeatedMotion, 8, 3);
-  Call2((void (*)())Func_080d489c, 8, 0x102);
-  Call1((void (*)())Event_Wait, 40);
-  Call3((void (*)())Actor_ArmCallback, 8, 0x8000, 0);
-  Call1((void (*)())Event_Wait, 10);
-  Call3((void (*)())Actor_SetSpeedParameters, 8, 0x26666, 0x13333);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 8, -24, -8);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 8, -8, -100);
-  Call1((void (*)())Event_Wait, 30);
-  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 8, 0, 0);
-  Call4((void (*)())Camera_MoveWithinMapBounds, 0xa80000, -1, 0x1180000, 1);
+  Actor_SetAnimation(8, 1);
+  Actor_FaceDirection(8, 0x3000, 0);
+  FieldEvent_Wait(20);
+  Actor_FaceDirection(8, 0, 0);
+  FieldEvent_Wait(30);
+  FieldEvent_ShowMessageThenWait(8, 0, 0);
+  FieldEvent_ShowMessageThenWait(6, 0, 0);
+  Actor_RunRepeatedMotion(8, 2);
+  FieldEvent_Wait(10);
+  Actor_FaceDirection(8, 0x3000, 0);
+  FieldEvent_Wait(30);
+  Actor_ShowEmote(8, 0x102, 50);
+  Actor_SetSpeed(8, 0x9999, 0x4ccc);
+  Actor_Get(8)->actionFlags &= 254;
+  Actor_WalkToAndWait(8, 128, 148);
+  FieldEvent_Wait(1);
+  Actor_Get(8)->actionFlags |= 1;
+  Actor_SetSpeed(8, 0x28000, 0x14000);
+  Actor_WalkByAndWait(8, 0, 4);
+  FieldEvent_Wait(20);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
+  Actor_FaceDirection(8, 0xc000, 0);
+  FieldEvent_Wait(20);
+  FieldActor_StartRepeatedMotion(8, 3);
+  Actor_SetAttachedEffect(8, 0x102);
+  FieldEvent_Wait(40);
+  Actor_FaceDirection(8, 0x8000, 0);
+  FieldEvent_Wait(10);
+  Actor_SetSpeed(8, 0x26666, 0x13333);
+  Actor_WalkByAndWait(8, -24, -8);
+  Actor_WalkByAndWait(8, -8, -100);
+  FieldEvent_Wait(30);
+  Actor_SetPosition(8, 0, 0);
+  FieldCamera_MoveTo(0xa80000, -1, 0x1180000, 1);
   Func_020052b4();
-  Call1((void (*)())Event_Wait, 10);
-  Value3((s32 (*)())Func_080d47b4, 4, 0x102, 0);
-  Value3((s32 (*)())Func_080d47b4, 5, 0x102, 0);
-  if (GameFlag_Test(7))
-    Value3((s32 (*)())Func_080d47b4, 7, 0x102, 0);
-  Value3((s32 (*)())Func_080d47b4, 6, 0x102, 40);
-  Call3((void (*)())Actor_Jump, 9, 6, 15);
-  Call3((void (*)())Actor_Jump, 9, 6, 23);
+  FieldEvent_Wait(10);
+  Actor_ShowEmote(4, 0x102, 0);
+  Actor_ShowEmote(5, 0x102, 0);
+  if (Event_GetFlag(7))
+    Actor_ShowEmote(7, 0x102, 0);
+  Actor_ShowEmote(6, 0x102, 40);
+  FieldActor_Jump(9, 6, 15);
+  FieldActor_Jump(9, 6, 23);
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
-  Call1((void (*)())Event_Wait, 10);
-  Call3((void (*)())Event_ShowMessageThenWait, 9, 0, 0);
-  Call3((void (*)())Actor_ArmCallback, 5, 0xe000, 0);
-  Call3((void (*)())Actor_ArmCallback, 6, 0xe000, 0);
-  Call3((void (*)())Actor_ArmCallback, 4, 0, 0);
-  if (GameFlag_Test(7))
-    Call3((void (*)())Actor_ArmCallback, 7, 0xd000, 0);
-  Call1((void (*)())Event_Wait, 25);
-  Call2((void (*)())Motion_SetVarCbAndRefresh, 5, 2);
-  Call1((void (*)())Event_Wait, 10);
-  Call3((void (*)())Event_ShowMessageThenWait, 5, 0, 0);
-  Call3((void (*)())Actor_ArmCallback, 9, 0x5000, 0);
-  Call1((void (*)())Event_Wait, 25);
-  Call3((void (*)())Event_ShowMessageThenWait, 9, 0, 0);
-  Call2((void (*)())Motion_SetVarCbAndRefresh, 6, 2);
-  Call1((void (*)())Event_Wait, 10);
-  Call3((void (*)())Event_ShowMessageThenWait, 0x2006, 0, 0);
-  Value3((s32 (*)())Func_080d47b4, 9, 0x108, 30);
-  Call3((void (*)())Event_ShowMessageThenWait, 9, 0, 0);
-  if (GameFlag_Test(7))
-    Value3((s32 (*)())Func_080d47b4, 7, 0x101, 0);
-  Value3((s32 (*)())Func_080d47b4, 6, 0x101, 0);
-  Value3((s32 (*)())Func_080d47b4, 5, 0x101, 0);
-  Value3((s32 (*)())Func_080d47b4, 4, 0x101, 50);
-  Call2((void (*)())Motion_SetVarCbAndRefresh, 5, 2);
-  Call1((void (*)())Event_Wait, 10);
-  Call3((void (*)())Event_ShowMessageThenWait, 5, 0, 0);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(9, 0, 0);
+  Actor_FaceDirection(5, 0xe000, 0);
+  Actor_FaceDirection(6, 0xe000, 0);
+  Actor_FaceDirection(4, 0, 0);
+  if (Event_GetFlag(7))
+    Actor_FaceDirection(7, 0xd000, 0);
+  FieldEvent_Wait(25);
+  Actor_RunRepeatedMotion(5, 2);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(5, 0, 0);
+  Actor_FaceDirection(9, 0x5000, 0);
+  FieldEvent_Wait(25);
+  FieldEvent_ShowMessageThenWait(9, 0, 0);
+  Actor_RunRepeatedMotion(6, 2);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(0x2006, 0, 0);
+  Actor_ShowEmote(9, 0x108, 30);
+  FieldEvent_ShowMessageThenWait(9, 0, 0);
+  if (Event_GetFlag(7))
+    Actor_ShowEmote(7, 0x101, 0);
+  Actor_ShowEmote(6, 0x101, 0);
+  Actor_ShowEmote(5, 0x101, 0);
+  Actor_ShowEmote(4, 0x101, 50);
+  Actor_RunRepeatedMotion(5, 2);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(5, 0, 0);
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
-  Call1((void (*)())Event_Wait, 10);
-  Call3((void (*)())Event_ShowMessageThenWait, 9, 0, 0);
-  Call2((void (*)())Motion_SetVarCbAndRefresh, 6, 2);
-  Call1((void (*)())Event_Wait, 10);
-  Call3((void (*)())Event_ShowMessageThenWait, 0x2006, 0, 0);
-  Value3((s32 (*)())Func_080d47b4, 9, 0x100, 30);
-  Call3((void (*)())Event_ShowMessageThenWait, 9, 0, 0);
-  Value3((s32 (*)())Func_080d47b4, 6, 0x101, 50);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(9, 0, 0);
+  Actor_RunRepeatedMotion(6, 2);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(0x2006, 0, 0);
+  Actor_ShowEmote(9, 0x100, 30);
+  FieldEvent_ShowMessageThenWait(9, 0, 0);
+  Actor_ShowEmote(6, 0x101, 50);
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
-  Call1((void (*)())Event_Wait, 10);
-  Call3((void (*)())Event_ShowMessageThenWait, 9, 0, 0);
-  Call2((void (*)())Motion_SetVarCbAndRefresh, 9, 2);
-  Call1((void (*)())Event_Wait, 10);
-  Call3((void (*)())Event_ShowMessageThenWait, 9, 0, 0);
-  Call2((void (*)())Actor_SetModeById, 5, 3);
-  Call2((void (*)())Actor_SetModeById, 6, 3);
-  if (GameFlag_Test(7))
-    Call2((void (*)())Actor_SetModeById, 7, 3);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(9, 0, 0);
+  Actor_RunRepeatedMotion(9, 2);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(9, 0, 0);
+  Actor_SetAnimation(5, 3);
+  Actor_SetAnimation(6, 3);
+  if (Event_GetFlag(7))
+    Actor_SetAnimation(7, 3);
   ACTOR_MODE_THEN_WAIT(4, 3, 20);
-  Call1((void (*)())Event_Wait, 30);
-  Value3((s32 (*)())Func_080d47b4, 9, 0x109, 30);
-  Call3((void (*)())Event_ShowMessageThenWait, 9, 0, 0);
+  FieldEvent_Wait(30);
+  Actor_ShowEmote(9, 0x109, 30);
+  FieldEvent_ShowMessageThenWait(9, 0, 0);
   ACTOR_MODE_THEN_WAIT(9, 4, 33);
-  Call3((void (*)())Event_ShowMessageThenWait, 9, 0, 0);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 9, -8, -8);
-  Call3((void (*)())Actor_ArmCallback, 6, 0xc000, 0);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 9, -10, -6);
-  Call3((void (*)())Actor_ArmCallback, 5, 0xc000, 0);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 9, -14, -4);
-  Call3((void (*)())Actor_ArmCallback, 4, 0xe000, 0);
-  Call3((void (*)())Actor_ArmCallback, 6, 0xa000, 0);
-  if (GameFlag_Test(7))
-    Call3((void (*)())Actor_ArmCallback, 7, 0xc000, 0);
-  Call1((void (*)())Event_Wait, 30);
-  Call3((void (*)())Actor_ArmCallback, 9, 0xc000, 0);
-  Call1((void (*)())Event_Wait, 20);
+  FieldEvent_ShowMessageThenWait(9, 0, 0);
+  Actor_WalkByAndWait(9, -8, -8);
+  Actor_FaceDirection(6, 0xc000, 0);
+  Actor_WalkByAndWait(9, -10, -6);
+  Actor_FaceDirection(5, 0xc000, 0);
+  Actor_WalkByAndWait(9, -14, -4);
+  Actor_FaceDirection(4, 0xe000, 0);
+  Actor_FaceDirection(6, 0xa000, 0);
+  if (Event_GetFlag(7))
+    Actor_FaceDirection(7, 0xc000, 0);
+  FieldEvent_Wait(30);
+  Actor_FaceDirection(9, 0xc000, 0);
+  FieldEvent_Wait(20);
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
-  Call1((void (*)())Event_Wait, 10);
-  Call3((void (*)())Event_ShowMessageThenWait, 0x2009, 0, 0);
-  Call3((void (*)())Actor_ArmCallback, 5, 0xa000, 0);
-  if (GameFlag_Test(7))
-    Call3((void (*)())Actor_ArmCallback, 7, 0xb000, 0);
-  Call1((void (*)())Event_Wait, 20);
-  Value2((s32 (*)())FieldMessage_ShowAtActor, 0x2005, 0);
-  Call3((void (*)())Actor_ArmCallback, 4, 0x2000, 0);
-  if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
-    Call1((void (*)())Event_Wait, 30);
-    Call2((void (*)())Motion_SetVarCbAndRefresh, 9, 2);
-    Call1((void (*)())Event_Wait, 20);
-    Call3((void (*)())Actor_ArmCallback, 9, 0x5000, 0);
-    Call1((void (*)())Event_Wait, 20);
-    if (GameFlag_Test(7))
-      Call3((void (*)())Actor_ArmCallback, 7, 0xc000, 0);
-    Call3((void (*)())Event_ShowMessageThenWait, 0x2009, 0, 0);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(0x2009, 0, 0);
+  Actor_FaceDirection(5, 0xa000, 0);
+  if (Event_GetFlag(7))
+    Actor_FaceDirection(7, 0xb000, 0);
+  FieldEvent_Wait(20);
+  Event_OpenMessage(0x2005, 0);
+  Actor_FaceDirection(4, 0x2000, 0);
+  if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
+    FieldEvent_Wait(30);
+    Actor_RunRepeatedMotion(9, 2);
+    FieldEvent_Wait(20);
+    Actor_FaceDirection(9, 0x5000, 0);
+    FieldEvent_Wait(20);
+    if (Event_GetFlag(7))
+      Actor_FaceDirection(7, 0xc000, 0);
+    FieldEvent_ShowMessageThenWait(0x2009, 0, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
   } else {
-    Call1((void (*)())Event_Wait, 40);
-    Call2((void (*)())Motion_SetVarCbAndRefresh, 9, 2);
-    Call1((void (*)())Event_Wait, 20);
-    Call3((void (*)())Actor_ArmCallback, 9, 0x5000, 0);
-    Call1((void (*)())Event_Wait, 20);
-    if (GameFlag_Test(7))
-      Call3((void (*)())Actor_ArmCallback, 7, 0xc000, 0);
+    FieldEvent_Wait(40);
+    Actor_RunRepeatedMotion(9, 2);
+    FieldEvent_Wait(20);
+    Actor_FaceDirection(9, 0x5000, 0);
+    FieldEvent_Wait(20);
+    if (Event_GetFlag(7))
+      Actor_FaceDirection(7, 0xc000, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
-    Call3((void (*)())Event_ShowMessageThenWait, 0x2009, 0, 0);
+    FieldEvent_ShowMessageThenWait(0x2009, 0, 0);
   }
-  Call3((void (*)())Actor_Jump, 9, 6, 15);
-  Call3((void (*)())Actor_Jump, 9, 6, 23);
-  Call3((void (*)())Event_ShowMessageThenWait, 0x2009, 0, 0);
-  Call2((void (*)())Motion_SetVarCbAndRefresh, 5, 2);
-  Call1((void (*)())Event_Wait, 10);
-  Call3((void (*)())Actor_ArmCallback, 5, 0xc000, 0);
-  Call1((void (*)())Event_Wait, 15);
-  Call3((void (*)())Event_ShowMessageThenWait, 5, 0, 0);
-  Call3((void (*)())Actor_ArmCallback, 4, 0xe000, 0);
-  Call1((void (*)())Event_Wait, 25);
+  FieldActor_Jump(9, 6, 15);
+  FieldActor_Jump(9, 6, 23);
+  FieldEvent_ShowMessageThenWait(0x2009, 0, 0);
+  Actor_RunRepeatedMotion(5, 2);
+  FieldEvent_Wait(10);
+  Actor_FaceDirection(5, 0xc000, 0);
+  FieldEvent_Wait(15);
+  FieldEvent_ShowMessageThenWait(5, 0, 0);
+  Actor_FaceDirection(4, 0xe000, 0);
+  FieldEvent_Wait(25);
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
-  Call1((void (*)())Event_Wait, 8);
+  FieldEvent_Wait(8);
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
-  Call1((void (*)())Event_Wait, 8);
+  FieldEvent_Wait(8);
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
-  Call1((void (*)())Event_Wait, 20);
-  Value3((s32 (*)())Func_080d47b4, 6, 0x101, 30);
-  Call3((void (*)())Event_ShowMessageThenWait, 0x2006, 0, 0);
-  Call2((void (*)())Actor_StartRepeatedMotion, 9, 3);
-  Call2((void (*)())Func_080d489c, 9, 0x102);
-  Call1((void (*)())Event_Wait, 40);
-  Call3((void (*)())Event_ShowMessageThenWait, 0x2009, 0, 0);
-  Call1((void (*)())Func_020013b0, 6);
-  Call1((void (*)())Event_Wait, 20);
-  Call3((void (*)())Event_ShowMessageThenWait, 0x2006, 0, 0);
-  Call2((void (*)())Motion_SetVarCbAndRefresh, 9, 2);
-  Call1((void (*)())Event_Wait, 10);
-  Call3((void (*)())Actor_SetSpeedParameters, 9, 0x6666, 0x3333);
-  Actor_GetById(9)->actionFlags &= 254;
-  Call3((void (*)())Actor_CommitPositionAndActivate, 9, 0, -16);
-  Call1((void (*)())Event_Wait, 1);
-  Actor_GetById(9)->actionFlags |= 1;
-  Call1((void (*)())Event_Wait, 20);
-  Call2((void (*)())Func_080d489c, 9, 0x102);
-  Call1((void (*)())Event_Wait, 40);
-  Call3((void (*)())Event_ShowMessageThenWait, 0x2009, 0, 0);
-  Call3((void (*)())Actor_ArmCallback, 5, 0xa000, 0);
-  Call1((void (*)())Event_Wait, 20);
-  Call3((void (*)())Event_ShowMessageThenWait, 5, 0, 0);
-  Call3((void (*)())Actor_ArmCallback, 6, 0x6000, 0);
-  Call3((void (*)())Actor_ArmCallback, 4, 0x2000, 0);
-  if (GameFlag_Test(7))
-    Call3((void (*)())Actor_ArmCallback, 7, 0xb000, 0);
-  Call1((void (*)())Event_Wait, 20);
-  Call2((void (*)())Actor_SetModeById, 6, 3);
-  if (GameFlag_Test(7))
-    Call2((void (*)())Actor_SetModeById, 7, 3);
+  FieldEvent_Wait(20);
+  Actor_ShowEmote(6, 0x101, 30);
+  FieldEvent_ShowMessageThenWait(0x2006, 0, 0);
+  FieldActor_StartRepeatedMotion(9, 3);
+  Actor_SetAttachedEffect(9, 0x102);
+  FieldEvent_Wait(40);
+  FieldEvent_ShowMessageThenWait(0x2009, 0, 0);
+  Func_020013b0(6);
+  FieldEvent_Wait(20);
+  FieldEvent_ShowMessageThenWait(0x2006, 0, 0);
+  Actor_RunRepeatedMotion(9, 2);
+  FieldEvent_Wait(10);
+  Actor_SetSpeed(9, 0x6666, 0x3333);
+  Actor_Get(9)->actionFlags &= 254;
+  Actor_WalkByAndWait(9, 0, -16);
+  FieldEvent_Wait(1);
+  Actor_Get(9)->actionFlags |= 1;
+  FieldEvent_Wait(20);
+  Actor_SetAttachedEffect(9, 0x102);
+  FieldEvent_Wait(40);
+  FieldEvent_ShowMessageThenWait(0x2009, 0, 0);
+  Actor_FaceDirection(5, 0xa000, 0);
+  FieldEvent_Wait(20);
+  FieldEvent_ShowMessageThenWait(5, 0, 0);
+  Actor_FaceDirection(6, 0x6000, 0);
+  Actor_FaceDirection(4, 0x2000, 0);
+  if (Event_GetFlag(7))
+    Actor_FaceDirection(7, 0xb000, 0);
+  FieldEvent_Wait(20);
+  Actor_SetAnimation(6, 3);
+  if (Event_GetFlag(7))
+    Actor_SetAnimation(7, 3);
   ACTOR_MODE_THEN_WAIT(4, 3, 20);
-  Call1((void (*)())Event_Wait, 35);
-  if (GameFlag_Test(7))
-    Call3((void (*)())Actor_ArmCallback, 7, 0xc000, 0);
-  Call3((void (*)())Actor_ArmCallback, 5, 0xc000, 0);
-  Call3((void (*)())Actor_ArmCallback, 6, 0xa000, 0);
-  Call3((void (*)())Actor_ArmCallback, 4, 0xe000, 0);
-  Call1((void (*)())Event_Wait, 25);
-  Value3((s32 (*)())Func_080d47b4, 9, 0x109, 30);
-  Call1((void (*)())Event_Wait, 20);
-  Call3((void (*)())Actor_SetSpeedParameters, 9, 0x10000, 0x8000);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 9, 0, 16);
-  Call1((void (*)())Event_Wait, 20);
-  Value3((s32 (*)())Func_080d47b4, 9, 0x103, 30);
-  Call3((void (*)())Event_ShowMessageThenWait, 0x2009, 0, 0);
-  Value3((s32 (*)())Func_080d47b4, 4, 0x100, 0);
-  Value3((s32 (*)())Func_080d47b4, 5, 0x100, 0);
-  if (GameFlag_Test(7))
-    Value3((s32 (*)())Func_080d47b4, 7, 0x100, 0);
-  Value3((s32 (*)())Func_080d47b4, 6, 0x100, 50);
-  Call2((void (*)())Motion_SetVarCbAndRefresh, 9, 2);
-  Call1((void (*)())Event_Wait, 10);
-  Call3((void (*)())Event_ShowMessageThenWait, 0x2009, 0, 0);
-  Call3((void (*)())Actor_SetSpeedParameters, 9, 0x20000, 0x10000);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 9, -16, 0);
-  Call3((void (*)())Actor_ArmCallback, 5, 0xa000, 0);
-  Call3((void (*)())Actor_ArmCallback, 6, 0xa000, 0);
-  Call3((void (*)())Actor_ArmCallback, 4, 0xc000, 0);
-  Call3((void (*)())Actor_ArmCallback, 9, 0x4000, 0);
-  if (GameFlag_Test(7))
-    Call3((void (*)())Actor_ArmCallback, 7, 0xa000, 0);
-  Call1((void (*)())Event_Wait, 20);
-  Value3((s32 (*)())Func_080d47b4, 4, 0x102, 40);
+  FieldEvent_Wait(35);
+  if (Event_GetFlag(7))
+    Actor_FaceDirection(7, 0xc000, 0);
+  Actor_FaceDirection(5, 0xc000, 0);
+  Actor_FaceDirection(6, 0xa000, 0);
+  Actor_FaceDirection(4, 0xe000, 0);
+  FieldEvent_Wait(25);
+  Actor_ShowEmote(9, 0x109, 30);
+  FieldEvent_Wait(20);
+  Actor_SetSpeed(9, 0x10000, 0x8000);
+  Actor_WalkByAndWait(9, 0, 16);
+  FieldEvent_Wait(20);
+  Actor_ShowEmote(9, 0x103, 30);
+  FieldEvent_ShowMessageThenWait(0x2009, 0, 0);
+  Actor_ShowEmote(4, 0x100, 0);
+  Actor_ShowEmote(5, 0x100, 0);
+  if (Event_GetFlag(7))
+    Actor_ShowEmote(7, 0x100, 0);
+  Actor_ShowEmote(6, 0x100, 50);
+  Actor_RunRepeatedMotion(9, 2);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(0x2009, 0, 0);
+  Actor_SetSpeed(9, 0x20000, 0x10000);
+  Actor_WalkByAndWait(9, -16, 0);
+  Actor_FaceDirection(5, 0xa000, 0);
+  Actor_FaceDirection(6, 0xa000, 0);
+  Actor_FaceDirection(4, 0xc000, 0);
+  Actor_FaceDirection(9, 0x4000, 0);
+  if (Event_GetFlag(7))
+    Actor_FaceDirection(7, 0xa000, 0);
+  FieldEvent_Wait(20);
+  Actor_ShowEmote(4, 0x102, 40);
   ACTOR_MODE_THEN_WAIT(9, 4, 33);
-  Call3((void (*)())Event_ShowMessageThenWait, 0x2009, 0, 0);
+  FieldEvent_ShowMessageThenWait(0x2009, 0, 0);
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
-  Call3((void (*)())Event_ShowMessageThenWait, 0x2009, 0, 0);
-  Call3((void (*)())Actor_Jump, 9, 6, 15);
-  Call3((void (*)())Actor_Jump, 9, 6, 23);
-  if (GameFlag_Test(7))
-    Value3((s32 (*)())Func_080d47b4, 7, 0x102, 0);
-  Value3((s32 (*)())Func_080d47b4, 6, 0x102, 0);
-  Value3((s32 (*)())Func_080d47b4, 4, 0x102, 0);
-  Value3((s32 (*)())Func_080d47b4, 5, 0x102, 50);
-  Call1((void (*)())Event_Wait, 40);
-  Call2((void (*)())Actor_ArmCallbackAndRefresh, 4, 0x2000);
-  Call1((void (*)())Event_Wait, 20);
-  Call2((void (*)())Actor_SetModeById, 6, 3);
-  Call2((void (*)())Actor_SetModeById, 4, 3);
-  if (GameFlag_Test(7))
-    Call2((void (*)())Actor_SetModeById, 7, 3);
+  FieldEvent_ShowMessageThenWait(0x2009, 0, 0);
+  FieldActor_Jump(9, 6, 15);
+  FieldActor_Jump(9, 6, 23);
+  if (Event_GetFlag(7))
+    Actor_ShowEmote(7, 0x102, 0);
+  Actor_ShowEmote(6, 0x102, 0);
+  Actor_ShowEmote(4, 0x102, 0);
+  Actor_ShowEmote(5, 0x102, 50);
+  FieldEvent_Wait(40);
+  Actor_FaceDirectionAndWait(4, 0x2000);
+  FieldEvent_Wait(20);
+  Actor_SetAnimation(6, 3);
+  Actor_SetAnimation(4, 3);
+  if (Event_GetFlag(7))
+    Actor_SetAnimation(7, 3);
   ACTOR_MODE_THEN_WAIT(5, 3, 20);
-  Call1((void (*)())Event_Wait, 30);
+  FieldEvent_Wait(30);
   FOLLOW_LEADER(9);
   FOLLOW_LEADER(5);
   FOLLOW_LEADER(6);
-  if (GameFlag_Test(7)) {
+  if (Event_GetFlag(7)) {
     FOLLOW_LEADER(7);
   }
-  Call2((void (*)())Camera_FollowActor, gMainRoutineWork.currentOwner, 1);
+  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_020051b4();
 }

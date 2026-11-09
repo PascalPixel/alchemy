@@ -4,7 +4,7 @@
 #include "event_inline.h"
 
 void Func_02002b04(u32 id, s8 mode) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
 
   object->motionFlags = 0;
   object->priorityFlags |= 0x80;
@@ -13,5 +13,5 @@ void Func_02002b04(u32 id, s8 mode) {
   object->y = PIXELS(16);
   object->action = object->x >> 16;
   object->unk66 = object->z >> 16;
-  Actor_SetModeById(id, mode);
+  Actor_SetAnimation(id, mode);
 }

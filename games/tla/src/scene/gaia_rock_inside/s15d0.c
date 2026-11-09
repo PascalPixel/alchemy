@@ -49,7 +49,7 @@ void Func_020015d0(s32 idA, s32 idB) {
 
   Sound_Play(78);
   Event_Wait(30);
-  Camera_SetSpeedParameters(0x8000, 0x1000);
+  FieldCamera_SetSpeed(0x8000, 0x1000);
   Camera_MoveWithinMapBounds(((s16 *)&a->x)[1] << 16, ((s16 *)&a->y)[1] << 16,
                              ((s16 *)&a->z)[1] << 16, 1);
   Sound_Play(141);
@@ -171,7 +171,7 @@ third:
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
   BattleEffect_StartBufferInterpolation(8);
   wait(16);
-  Map_SetScreenShake(0, 0, 0);
+  MapGrid_SetShake(0, 0, 0);
   Actor_ConfigureSpriteColor(idA, 0);
   Actor_ConfigureSpriteColor(idB, 0);
   Sound_Play(574);

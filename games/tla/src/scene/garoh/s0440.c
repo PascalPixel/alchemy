@@ -1,5 +1,6 @@
 #include "garoh.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 extern char SceneId_Ov65FRoom1;
 extern char SceneId_Ov65FRoom2;
@@ -23,12 +24,7 @@ struct GarohPicture {
 
 extern const struct GarohPicture gData_02005de0[];
 
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
-void Actor_CenterOnColumn(s32 id, s32 column, s32 dz);
 void Event_FinishScreenTransition(void);
-void Map_PlayMapEdit(const void *data, s32 a, s32 b);
-void Import_EventSetExitRequest(s32 value);
 
 /// Return the table for the current room.
 const void *Func_02000440(void) {
@@ -78,13 +74,13 @@ void Func_020004cc(void) {
   s32 i;
 
   Func_020051ac();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   // A goto loop: the bytes rebuild the zero on every pass, which a for
   // loop hoists (differ 12).
   i = 8;
 loop:
   {
-    struct Actor *object = Actor_GetById(i);
+    struct Actor *object = Actor_Get(i);
 
     if (object != NULL)
       object->motionFlags = 0;
@@ -93,12 +89,12 @@ loop:
   if ((u32)i <= 63)
     goto loop;
   index = *(s16 *)(work + 0x154);
-  Sound_Play(158);
+  Event_PlaySound(158);
   index--;
   Func_0200517c_(gData_02005de0[index].data, gData_02005de0[index].a,
                  gData_02005de0[index].b);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   {
     s32 owner = gMainRoutineWork.currentOwner;
 
@@ -107,8 +103,8 @@ loop:
     else
       CenterOnColumn_(owner, 2, -4);
   }
-  Event_Wait(6);
-  Import_EventSetExitRequest(*(s16 *)(work + 0x154));
+  FieldEvent_Wait(6);
+  FieldEvent_SetExitRequest(*(s16 *)(work + 0x154));
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_020051b4();

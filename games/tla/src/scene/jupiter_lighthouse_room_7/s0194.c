@@ -11,9 +11,9 @@
 s32 Func_02000194(void) {
   s32 t1, t2, t3, t5, t7, t9, t11, t13, v5, v6, v7, v8;
 
-  t1 = ((s32)Actor_GetById(18));
+  t1 = ((s32)Actor_Get(18));
   v5 = t1;
-  t2 = ((s32)Actor_GetById(19));
+  t2 = ((s32)Actor_Get(19));
   v7 = 1;
   v6 = (FIELD_AT(v5, s32, 8) >> 20);
   v8 = t2;
@@ -23,30 +23,30 @@ s32 Func_02000194(void) {
     goto L_020081d6;
   if (v5 != 15)
     goto L_020081d6;
-  t3 = GameFlag_Test(0xa11);
+  t3 = Event_GetFlag(0xa11);
   if (t3 != 0)
     goto L_020081d6;
-  GameFlag_SetBit(0xa10);
+  Event_SetFlag(0xa10);
   v7 = 0;
 L_020081d6:
   if (v6 != 31)
     goto L_020081f8;
   if (v5 != 16)
     goto L_020081f8;
-  t5 = GameFlag_Test(0xa13);
+  t5 = Event_GetFlag(0xa13);
   if (t5 != 0)
     goto L_020081f8;
-  GameFlag_SetBit(0xa12);
+  Event_SetFlag(0xa12);
   v7 = 2;
 L_020081f8:
   if (v6 != 33)
     goto L_0200821a;
   if (v5 != 10)
     goto L_0200821a;
-  t7 = GameFlag_Test(0xa15);
+  t7 = Event_GetFlag(0xa15);
   if (t7 != 0)
     goto L_0200821a;
-  GameFlag_SetBit(0xa14);
+  Event_SetFlag(0xa14);
   v7 = 4;
 L_0200821a:
   v6 = (FIELD_AT(v8, s32, 8) >> 20);
@@ -55,30 +55,30 @@ L_0200821a:
     goto L_02008244;
   if (v5 != 15)
     goto L_02008244;
-  t9 = GameFlag_Test(0xa10);
+  t9 = Event_GetFlag(0xa10);
   if (t9 != 0)
     goto L_02008244;
-  GameFlag_SetBit(0xa11);
+  Event_SetFlag(0xa11);
   v7 = 1;
 L_02008244:
   if (v6 != 31)
     goto L_02008266;
   if (v5 != 16)
     goto L_02008266;
-  t11 = GameFlag_Test(0xa12);
+  t11 = Event_GetFlag(0xa12);
   if (t11 != 0)
     goto L_02008266;
-  GameFlag_SetBit(0xa13);
+  Event_SetFlag(0xa13);
   v7 = 3;
 L_02008266:
   if (v6 != 33)
     goto L_02008288;
   if (v5 != 10)
     goto L_02008288;
-  t13 = GameFlag_Test(0xa14);
+  t13 = Event_GetFlag(0xa14);
   if (t13 != 0)
     goto L_02008288;
-  GameFlag_SetBit(0xa15);
+  Event_SetFlag(0xa15);
   v7 = 5;
 L_02008288:
   return v7;

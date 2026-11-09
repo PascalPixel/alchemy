@@ -21,7 +21,7 @@ void Func_02000e20(s32 mode) {
   s32 scene;
 
   table = gData_02005500;
-  Func_02004e90(0);
+  FieldEvent_ResolvePendingActions(0);
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov692Room2) {
   } else if (scene == (s32)&SceneId_Ov692Room3) {

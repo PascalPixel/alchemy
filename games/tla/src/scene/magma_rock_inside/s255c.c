@@ -6,7 +6,7 @@ void Func_0200255c(void) {
 
   gData_02006710 = none;
   priority = 0x480;
-  Task_Add(Func_020024ac, priority);
+  FieldTask_AddFrame(Func_020024ac, priority);
 }
 
 // The cell stampers keep their last cell and the block they copy.
@@ -15,20 +15,17 @@ extern s32 Data_020067f0;
 extern s32 Data_020067f4;
 extern s32 Data_020067f8;
 
-s32 Func_02004f00(void);
-void Func_02004cf0(s32 srcX, s32 srcZ, s32 width, s32 height, s32 destX,
-                   s32 destZ);
 
 static inline void CopyCells(s32 srcX, s32 srcZ, s32 width, s32 height,
                              s32 destX, s32 destZ) {
-  Func_02004cf0(srcX, srcZ, width, height, destX, destZ);
+  Func_0802b450(srcX, srcZ, width, height, destX, destZ);
 }
 
 /// Saves the 1 by 2 cells 64 columns across from the controlled object at
 /// (73, 72) and stamps the cells kept at (70, 72) in their place, once per
 /// cell; Func_02003d40 of Air's Rock is the same with another source.
 void Func_0200257c(void) {
-  struct Actor *object = Actor_GetById(Func_02004f00());
+  struct Actor *object = Actor_Get(FieldParty_GetLeaderActor());
   s32 x = object->x >> 20;
   s32 y = object->y >> 20;
   s32 z = object->z >> 20;
@@ -52,7 +49,7 @@ void Func_0200257c(void) {
 
 /// As Func_0200257c, stamping the cells kept at (71, 72).
 void Func_02002610(void) {
-  struct Actor *object = Actor_GetById(Func_02004f00());
+  struct Actor *object = Actor_Get(FieldParty_GetLeaderActor());
   s32 x = object->x >> 20;
   s32 y = object->y >> 20;
   s32 z = object->z >> 20;

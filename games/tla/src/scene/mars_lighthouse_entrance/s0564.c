@@ -1,6 +1,5 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "scene_call.h"
 
 struct EventWork {
   u8 unk000[0x15a];

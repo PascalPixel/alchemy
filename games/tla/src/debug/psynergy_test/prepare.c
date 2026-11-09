@@ -25,22 +25,22 @@ void Func_02000924(void) {
 
 void Func_0200092c(s32 mode, s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
   if (mode == 1)
-    Map_CopyCellsRect(a, b, c, d, e, f);
+    MapGrid_CopyCells(a, b, c, d, e, f);
 }
 
 void Func_02000950(s32 mode, s32 id, s32 x, s32 z) {
   struct Actor *object;
   s32 scale;
 
-  object = Actor_GetById(id);
+  object = Actor_Get(id);
   if (mode == 1) {
-    Actor_SetHorizontalPositionWithTerrain(id, x << 16, z << 16);
+    Actor_SetPosition(id, x << 16, z << 16);
     object->scaleX = 0;
     object->scaleY = 0;
   }
   if (mode == 2) {
     while (object->scaleX < Q16_ONE) {
-      wait(1);
+      System_Wait(1);
       scale = object->scaleX;
       scale += 0x51e;
       object->scaleX = scale;
@@ -54,14 +54,14 @@ void Func_02000950(s32 mode, s32 id, s32 x, s32 z) {
 void Func_020009c0(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
   struct Actor *object0;
 
-  object0 = Actor_GetById(arg1);
+  object0 = Actor_Get(arg1);
   if (arg0 != 2)
     goto L_02008a06;
-  Actor_SetHorizontalPositionWithTerrain(arg1, (arg2 << 16), (arg3 << 16));
+  Actor_SetPosition(arg1, (arg2 << 16), (arg3 << 16));
   object0->y = 0x200000;
   object0->motionFlags = 3;
   object0->gravity = 0x170a;
-  wait(50);
+  System_Wait(50);
 L_02008a06:
   return;
 }

@@ -4,6 +4,7 @@
 #include "ram_buffer.h"
 #include "scene_tables.h"
 #include "system/main_routine_work.h"
+#include "event_inline.h"
 
 /// A point on the map: 16.16 fixed-point pixels.
 struct Position {
@@ -14,14 +15,9 @@ struct Position {
 
 void Func_02002d90(void);
 void Func_020041cc(struct Actor *actor, s32 mode);
-void Func_02004204(struct Actor *actor, s32 x, s32 y, s32 z);
-void Func_0200420c(struct Actor *actor);
-s32 Func_02004224(u8 layer, s32 x, s32 z);
 s32 Func_0200428c(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
 s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
 void Actor_SetAnimationSpeed(struct Actor *actor, s32 speed);
-void Vector_AddPolarOffsetFar(s32 length, s32 angle, struct Position *position);
-void wait(s32 frames);
 void Func_02002d04(void);
 
 void Func_02003390(void) {
@@ -71,9 +67,9 @@ top:
   position->z = startZ = (actor->z & 0xfff00000) + i;
   x = startX;
   z = startZ;
-  startBehavior = Func_02004224(*(layer = &actor->terrainId), startX, startZ);
-  Vector_AddPolarOffsetFar(PIXELS(16), heading, position);
-  nextBehavior = Func_02004224(*layer, position->x, position->z);
+  startBehavior = MapGrid_GetCellBehaviorAt(*(layer = &actor->terrainId), startX, startZ);
+  FieldVector_AddPolarOffset(PIXELS(16), heading, position);
+  nextBehavior = MapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
   if (nextBehavior == 255 ||
       Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y > i) {
     actor->angle = heading;
@@ -120,8 +116,8 @@ body:
   z = next->z;
   actor->speedLimit = PIXELS(2);
   actor->acceleration = 0x1999;
-  Func_02004204(actor, next->x, next->y, next->z);
-  Func_0200420c(actor);
+  FieldActor_SetMoveTarget(actor, next->x, next->y, next->z);
+  Actor_WaitForMove(actor);
   if (nextBehavior != startBehavior) {
     goto blocked;
   }
@@ -131,26 +127,26 @@ test:
    * of 246 instructions differ in tla-en. */
   asm("" : "=r"(angle) : "0"(heading) : "r4");
   step = &probe;
-  Vector_AddPolarOffsetFar(PIXELS(16), angle, step);
+  FieldVector_AddPolarOffset(PIXELS(16), angle, step);
   /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the address, so
    * next rebuilds it; as &probe in the call, 97 of 246 instructions differ in
    * tla-en. */
   step = NULL;
   next = &probe;
-  nextBehavior = Func_02004224(*layer, next->x, next->z);
+  nextBehavior = MapGrid_GetCellBehaviorAt(*layer, next->x, next->z);
   if (nextBehavior != 255) {
     goto body;
   }
 stop:
   actor->speedLimit = PIXELS(2);
   actor->acceleration = PIXELS(1);
-  Func_02004204(actor, x, actor->y, z);
-  Func_0200420c(actor);
-  wait(2);
+  FieldActor_SetMoveTarget(actor, x, actor->y, z);
+  Actor_WaitForMove(actor);
+  System_Wait(2);
   goto top;
 
 blocked:
-  wait(10);
+  System_Wait(10);
 done:
   actor->update = NULL;
   actor->actionFlags |= 1;

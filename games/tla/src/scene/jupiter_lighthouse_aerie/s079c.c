@@ -2,6 +2,7 @@
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "event_inline.h"
 
 void Func_0200079c(void) {
   u16 colors[16];

@@ -26,32 +26,32 @@ void Event_WaitTransitionFrames(void);
 #include "io_write.h"
 
 void Func_020014dc(struct CellTarget *table, struct CellTargetEntry *entry) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = (leader->x >> 20) | (s16)(table->x & 64);
   s32 z = (leader->z >> 20) | (s16)(table->z & 64);
 
   Func_020013e4();
-  Sound_Play(229);
-  Map_CopyCellsRect(table->x, table->z + 2, 1, 1, x, z);
-  Event_Wait(12);
+  Event_PlaySound(229);
+  MapGrid_CopyCells(table->x, table->z + 2, 1, 1, x, z);
+  FieldEvent_Wait(12);
   leader->angle = 0x4000;
   leader->motionFlags = 0;
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner),
                                      0);
   Io_Write16(0xf1f, &REG_WINOUT);
   REG_DISPCNT |= 0x8000;
   table->shown = 1;
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
-  Event_Wait(16);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
+  FieldEvent_Wait(16);
   for (x = 0; x < 40; x++) {
     if (x == 5)
-      Sound_Play(204);
+      Event_PlaySound(204);
     leader->scaleX += -0x400;
     leader->scaleY += -0x300;
     leader->y += -0x9999;
-    wait(1);
+    System_Wait(1);
   }
-  Actor_GetById(gMainRoutineWork.currentOwner)->animationKind = 0;
+  Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
   do {
     /* FAKEMATCH(one-pass): the flag cleared behind a loop-end note, so the
      * table is copied out of r8 after the actor's byte store, as in the

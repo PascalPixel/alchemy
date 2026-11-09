@@ -15,7 +15,7 @@ void Func_0200343c(struct Actor *parent) {
     s32 x = parent->x;
     s32 y = parent->y;
     s32 z = parent->z;
-    struct Actor *object = ((struct Actor *)Import_ActorCreate(673, x, y, z));
+    struct Actor *object = (FieldActor_Create(673, x, y, z));
 
     if (object != NULL) {
       Func_02004b20(object, gData_02004f70);

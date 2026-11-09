@@ -12,7 +12,7 @@ void Func_02000740(void) {
   if (step != 0) {
     s32 turn = step * 1092;
     s32 delta = -turn;
-    struct Actor *leader = Actor_GetById(Party_GetLeaderActor());
+    struct Actor *leader = Actor_Get(FieldParty_GetLeaderActor());
     struct Actor *near = Func_020005b4(leader, 358);
 
     if (near != NULL) {

@@ -21,29 +21,29 @@ void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   s32 cell;
 
   Func_02004464();
-  Event_ResolvePendingActions(0);
-  if (!GameFlag_Test(0x200)) {
+  FieldEvent_ResolvePendingActions(0);
+  if (!Event_GetFlag(0x200)) {
     if (mode == 2)
-      Sound_Play(188);
+      Event_PlaySound(188);
     else
-      Sound_Play(158);
-    Map_CopyCellPictureIndicesRect(a, b, c, d, mode, f);
-    Event_Wait(20);
+      Event_PlaySound(158);
+    MapGrid_CopyCellsTo(a, b, c, d, mode, f);
+    FieldEvent_Wait(20);
   }
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   if (mode == 1) {
-    object = Actor_GetById(gMainRoutineWork.currentOwner);
+    object = Actor_Get(gMainRoutineWork.currentOwner);
     cell = object->x >> 16;
-    Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,
+    FieldActor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,
                   object->z);
-    Script_WaitForEventTimeout(object);
+    Actor_WaitForMove(object);
     object->angle = 0xc000;
   }
-  Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
+  Actor_SetScript(gMainRoutineWork.currentOwner,
                                           gData_020046f8);
-  wait(12);
-  Sound_Play(123);
+  System_Wait(12);
+  Event_PlaySound(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(work->returnEntrance);
+  FieldEvent_SetExitRequest(work->returnEntrance);
 }

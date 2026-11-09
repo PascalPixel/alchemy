@@ -5,7 +5,7 @@
 extern s32 gData_02004698;
 
 void Func_02002b88(void) {
-  struct Actor *actor = Actor_GetById(Party_GetLeaderActor());
+  struct Actor *actor = Actor_Get(FieldParty_GetLeaderActor());
   s32 level;
 
   actor->priorityFlags |= 32;

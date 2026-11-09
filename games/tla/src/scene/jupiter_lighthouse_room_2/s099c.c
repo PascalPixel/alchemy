@@ -6,22 +6,15 @@
 #include "io_reg.h"
 #include "io_write.h"
 #include "call.h"
+#include "event_inline.h"
 
 extern const u8 gData_02002b60[];
 
-s32 GameFlag_Test(s32 flag);
-struct Actor *Actor_GetById(s32 id);
 void Func_02000054(void);
 void Func_020007d0(void);
 void Func_02000b28(s32 id);
 void Func_02001498(void);
 void Func_020015a0(s32 id, s32 value);
-void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
-                               s32 destX, s32 destY);
-void Func_0802b450(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                   s32 destY);
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
-void Func_080dbdd4(s32 x, s32 z, s32 a2, s32 a3);
 void Func_02002314(s32 a);
 void Func_02002324(const void *script, s32 a, s32 b, s32 c);
 s32 Scene_SetArrivalFlags();
@@ -34,35 +27,35 @@ s32 Func_02000854(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   work->screenEffect = 0x204;
-  Actor_SetSpritePriority(13, 3);
-  Actor_SetSpritePriority(14, 3);
+  FieldActor_SetSpritePriority(13, 3);
+  FieldActor_SetSpritePriority(14, 3);
   Io_Write16(0x3f06, &REG_BLDCNT);
   Io_Write16(0x1000, &REG_BLDALPHA);
   Func_02002314(0);
   Call4((void (*)())Func_02002324, (s32)gData_02002b60, 0, 0, 0x80000000);
   Func_02000054();
   Func_020007d0();
-  if (GameFlag_Test(0xa02)) {
-    Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
-    Map_CopyCellAttributeRect(28, 39, 1, 1, 20, 39);
-    Func_0802b450(28, 39, 1, 1, 20, 39);
-    Func_0802b450(92, 39, 2, 3, 84, 39);
-    Func_080dbdd4(168 << 17, 164 << 18, 2, 236);
+  if (Event_GetFlag(0xa02)) {
+    Actor_SetPosition(17, 0, 0);
+    MapGrid_CopyCellAttributes(28, 39, 1, 1, 20, 39);
+    MapGrid_CopyCellsLayered(28, 39, 1, 1, 20, 39);
+    MapGrid_CopyCellsLayered(92, 39, 2, 3, 84, 39);
+    MapGrid_SetCellBehavior(168 << 17, 164 << 18, 2, 236);
   } else {
     Func_02001498();
     Func_020015a0(17, 0);
   }
   if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 6 ||
       gMainRoutineWork.entrance == 7)
-    Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
-  if (GameFlag_Test(0xa00)) {
+    Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
+  if (Event_GetFlag(0xa00)) {
     Func_02000b28(8);
     Func_02000b28(9);
     Func_02000b28(10);
     Func_02000b28(11);
   }
-  if (GameFlag_Test(0xa03)) {
-    Actor_SetHorizontalPositionWithTerrain(12, 148 << 17, 208 << 15);
+  if (Event_GetFlag(0xa03)) {
+    Actor_SetPosition(12, 148 << 17, 208 << 15);
     Func_02000b28(12);
   }
   return 0;

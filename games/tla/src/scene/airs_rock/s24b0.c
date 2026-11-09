@@ -23,7 +23,7 @@ void Func_020024b0(void) {
   for (i = 0; i != 160; i++) {
     *line =
         (scroll[0] >> 16) +
-        (Math_Sine((i + (u8)*Ram_FrameCount + (scroll[1] >> 16)) << 9) >> 13);
+        (Math_Sin((i + (u8)*Ram_FrameCount + (scroll[1] >> 16)) << 9) >> 13);
     line++;
   }
   line = gData_020046a0;

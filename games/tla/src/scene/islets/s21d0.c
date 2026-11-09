@@ -8,8 +8,8 @@ void Func_02003e64(void);
 void Func_02003e6c(void);
 
 void Func_020021d0(void) {
-  struct Actor *first = Actor_GetById(12);
-  struct Actor *second = Actor_GetById(13);
+  struct Actor *first = Actor_Get(12);
+  struct Actor *second = Actor_Get(13);
   s32 firstX = first->x >> 20;
   s32 firstZ = first->z >> 20;
   s32 secondX = second->x >> 20;
@@ -40,49 +40,49 @@ void Func_020021d0(void) {
   }
   Func_020020ec(first->x, first->z, 3, 255);
   Func_020020ec(second->x, second->z, 3, 255);
-  if (!GameFlag_Test(0x210) && firstX == 12 && firstZ == 26) {
+  if (!Event_GetFlag(0x210) && firstX == 12 && firstZ == 26) {
     both = 0;
     Func_02003e64();
-    Event_ResolvePendingActions(0);
+    FieldEvent_ResolvePendingActions(0);
     if (secondX == 12 && secondZ == 26) {
-      Map_CopyCellAttributeRect(7, 2, 1, 1, firstX, firstZ);
+      MapGrid_CopyCellAttributes(7, 2, 1, 1, firstX, firstZ);
       both = 1;
     }
     first->motionFlags = 3;
-    wait(10);
-    Sound_Play(161);
-    wait(10);
+    System_Wait(10);
+    Event_PlaySound(161);
+    System_Wait(10);
     first->motionFlags = 0;
-    GameFlag_SetBit(0x210);
+    Event_SetFlag(0x210);
     if (both) {
       Func_020020ec(first->x, first->z, 3, 0);
       Func_020020ec(second->x, second->z, 3, 0);
       MapGrid_CopyCellAttributes(7, 3, 1, 1, 12, 26);
-      GameFlag_SetBit(0x212);
+      Event_SetFlag(0x212);
       ((u8 *)first)[0x62] = 1;
       ((u8 *)second)[0x62] = 1;
     }
     Func_02003e6c();
   }
-  if (!GameFlag_Test(0x211) && secondX == 7 && secondZ == 29) {
+  if (!Event_GetFlag(0x211) && secondX == 7 && secondZ == 29) {
     both = 0;
     Func_02003e64();
-    Event_ResolvePendingActions(0);
+    FieldEvent_ResolvePendingActions(0);
     if (firstX == 7 && firstZ == 29) {
-      Map_CopyCellAttributeRect(7, 2, 1, 1, firstX, firstZ);
+      MapGrid_CopyCellAttributes(7, 2, 1, 1, firstX, firstZ);
       both = 1;
     }
     second->motionFlags = 3;
-    wait(10);
-    Sound_Play(161);
-    wait(10);
+    System_Wait(10);
+    Event_PlaySound(161);
+    System_Wait(10);
     second->motionFlags = 0;
-    GameFlag_SetBit(0x211);
+    Event_SetFlag(0x211);
     if (both) {
       Func_020020ec(first->x, first->z, 3, 0);
       Func_020020ec(second->x, second->z, 3, 0);
       MapGrid_CopyCellAttributes(7, 3, 1, 1, 7, 29);
-      GameFlag_SetBit(0x212);
+      Event_SetFlag(0x212);
       ((u8 *)first)[0x62] = 1;
       ((u8 *)second)[0x62] = 1;
     }

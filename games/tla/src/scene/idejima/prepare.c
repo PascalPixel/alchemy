@@ -20,8 +20,8 @@ s32 Func_02002ec8(void) {
   s32 entrance;
 
   Func_0200153c();
-  Task_Add(Func_02001558, TASK_PASS_FRAME);
-  Task_Add(Func_020015a0, TASK_PASS_VBLANK);
+  Task_AddFrame(Func_02001558, TASK_PASS_FRAME);
+  Task_AddFrame(Func_020015a0, TASK_PASS_VBLANK);
   {
     /* FAKEMATCH: the party address pinned to r3 for the switch's read, apart
      * from case 4's; unpinned, gcse merges the two into r1 and 8 instructions
@@ -32,7 +32,7 @@ s32 Func_02002ec8(void) {
   }
   switch (entrance) {
   case 2:
-    if (GameFlag_Test(0x109) == 0)
+    if (Event_GetFlag(0x109) == 0)
       Func_020031a8(1);
   case 4: {
     struct MainRoutineWork *party = &gMainRoutineWork;

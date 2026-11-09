@@ -31,14 +31,14 @@ s32 Func_020006f8(struct Mover *mover) {
   // Read through a pointer of its own type, an access alchemy-gcc keeps apart
   // from the s32 stores before it: as mover->angle, the angle loads before
   // the radius (2 of 73 instructions differ).
-  Vector_AddPolarOffsetFar(mover->radius, *(s16 *)&mover->angle, &mover->x);
+  FieldVector_AddPolarOffset(mover->radius, *(s16 *)&mover->angle, &mover->x);
   Func_020006a4(mover);
   mover->radius -= mover->step >> 1;
   mover->angle += mover->spin >> 1;
   mover->x = mover->originX;
   mover->y = mover->height;
   mover->z = mover->originZ;
-  Vector_AddPolarOffsetFar(mover->radius, mover->angle, &mover->x);
+  FieldVector_AddPolarOffset(mover->radius, mover->angle, &mover->x);
   Func_020006a4(mover);
   mover->radius -= mover->step >> 1;
   mover->height -= mover->fall;

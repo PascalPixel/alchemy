@@ -3,7 +3,6 @@
 #include "main_routine_work.h"
 #include "actor.h"
 #include "event_work.h"
-#include "flag_call.h"
 #include "event_inline.h"
 
 extern char MsgIVeHeard[];
@@ -49,7 +48,7 @@ s32 Func_02000dc4(void) {
   work->screenEffect = 0x400;
   work->delay = 16;
   wait(1);
-  Camera_SetSpeedParameters(0x80000, 0x10000);
+  FieldCamera_SetSpeed(0x80000, 0x10000);
   GameFlag_ClearBit(0x12f);
   Func_02003960();
   /* FAKEMATCH(wrapper): the three Map_SetWindowCellTile calls forwarded through
@@ -84,7 +83,7 @@ s32 Func_02000dc4(void) {
     /* FAKEMATCH(wrapper): the flag test here and case 98's four sets forwarded
      * through flag_call.h's Flag_IsSet and Flag_Set; as direct GameFlag_Test
      * and GameFlag_SetBit calls, 75 of 270 instructions differ in tla-en. */
-    if (!Flag_IsSet(0x90a) && GameFlag_Test(0xa5f) != 0) {
+    if (!Event_GetFlag(0x90a) && GameFlag_Test(0xa5f) != 0) {
       GameFlag_SetBit(0x90a);
       Func_02001c5c();
     }
@@ -100,7 +99,7 @@ s32 Func_02000dc4(void) {
     break;
   case 2:
     if (GameFlag_Test(55) == 0) {
-      Actor_SetMovementTypeById(9, gData_0200632c);
+      Actor_SetScript(9, gData_0200632c);
       Func_02001e34();
     }
     break;
@@ -115,23 +114,23 @@ s32 Func_02000dc4(void) {
     break;
   case 72:
     Func_02003d44(2);
-    Actor_SetPartAttribute(Actor_GetById(7), 15);
-    Actor_SetHorizontalPositionWithTerrain(7, 0x1c6d0000, 0x1c840000);
+    Actor_SetSpriteColor(Actor_GetById(7), 15);
+    Actor_SetPosition(7, 0x1c6d0000, 0x1c840000);
     wait(1);
-    Event_SetMessageId((s32)MsgIVeHeard);
-    Event_ShowMessageAndWait(7, 0);
-    Event_Wait(20);
-    Event_ShowMessageAndWait(7, 0);
+    FieldEvent_SetMessageId((s32)MsgIVeHeard);
+    Event_ShowMessage(7, 0);
+    FieldEvent_Wait(20);
+    Event_ShowMessage(7, 0);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Func_02004d38((s32)&SceneId_Ov6a5, 9);
     break;
   case 98:
     gMainRoutineWork.ownerOverride = 1;
-    Flag_Set(0x8de);
-    Flag_Set(0x8df);
-    Flag_Set(0x163);
-    Flag_Set(0x11d);
+    Event_SetFlag(0x8de);
+    Event_SetFlag(0x8df);
+    Event_SetFlag(0x163);
+    Event_SetFlag(0x11d);
     Func_02004d38((s32)&SceneId_WorldMap, 61);
     break;
   case 99:

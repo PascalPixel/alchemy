@@ -2,6 +2,7 @@
 #include "iwram_call.h"
 #include "actor.h"
 #include "field_effect.h"
+#include "event_inline.h"
 
 struct GustObject {
   u8 unk00[6];
@@ -23,10 +24,7 @@ struct GustObject {
   void (*update)(struct GustObject *object);
 };
 
-void Func_020056c0(s32 sound);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
-struct GustObject *Func_02005498(s32 type, s32 x, s32 y, s32 z);
 void Func_02005480(struct GustObject *object, s32 mode);
 void Actor_SetSingleChildFlags(struct GustObject *object, u32 flags);
 void Func_02001894(struct GustObject *object);
@@ -44,10 +42,10 @@ struct GustObject *Func_02001a54(struct GustObject *source) {
   struct EffectOptions options;
   struct GustObject *object;
 
-  Func_020056c0(222);
+  Event_PlaySound(222);
   position.x = source->x + MulQ16(0x80000, Math_Cosine(source->angle));
-  position.z = source->z + Iwram_MulQ16(0x80000, Math_Sine(source->angle));
-  object = Func_02005498(280, position.x, source->y, position.z);
+  position.z = source->z + Iwram_MulQ16(0x80000, Math_Sin(source->angle));
+  object = (struct GustObject *)FieldActor_Create(280, position.x, source->y, position.z);
   Func_02005480(object, 2);
   Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;

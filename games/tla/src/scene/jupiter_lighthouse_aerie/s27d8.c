@@ -1,7 +1,8 @@
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
+#include "event_inline.h"
 
 s32 Func_020027d8(void) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   struct JupiterLighthouseAerieWork *work = (struct JupiterLighthouseAerieWork *)gData_02003488;
@@ -10,9 +11,9 @@ s32 Func_020027d8(void) {
 
   for (i = 0; i < work->count; i++, entry++) {
     if (entry->x == x && entry->z == z) {
-      if (GameFlag_Test(entry->flag) == 0) {
+      if (Event_GetFlag(entry->flag) == 0) {
         Func_02002438(work, entry);
-        GameFlag_SetBit(entry->flag);
+        Event_SetFlag(entry->flag);
         work->current = i;
         break;
       }

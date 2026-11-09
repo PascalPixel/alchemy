@@ -14,7 +14,7 @@ s32 Func_020002e0(void) {
   struct MainRoutineWork *party;
   s32 mode;
 
-  if (GameFlag_Test(324) == 0)
+  if (Event_GetFlag(324) == 0)
     return 0;
   party = &gMainRoutineWork;
 

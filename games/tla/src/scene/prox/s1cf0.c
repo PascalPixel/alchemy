@@ -25,10 +25,10 @@ void Func_02001cf0(void) {
   s32 angle3000;
 
   Func_02004464();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Actor_Stop(0x14);
-  wait(1);
+  FieldActor_Stop(0x14);
+  System_Wait(1);
   Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(184), PIXELS(484));
   /* FAKEMATCH: the three facings are locals set before their first placement;
    * as constants each placement rebuilds them and the later turns cannot share
@@ -41,15 +41,15 @@ void Func_02001cf0(void) {
   Actor_SetPositionAndFacing(17, PIXELS(138), PIXELS(412), angle3000);
   Actor_SetPositionAndFacing(20, PIXELS(220), PIXELS(600), angleB000);
   Actor_SetPosition(5, PIXELS(184), PIXELS(684));
-  wait(1);
+  System_Wait(1);
   EVENT_WORK->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldCamera_SetSpeed(0xcccc, 0x1999);
-  Camera_MoveWithinMapBounds(PIXELS(184), -1, PIXELS(448), 1);
+  FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(448), 1);
   Func_0200457c();
-  Event_Wait(20);
-  Event_SetMessageId((s32)MsgProx80);
+  FieldEvent_Wait(20);
+  FieldEvent_SetMessageId((s32)MsgProx80);
   Event_ShowMessage(26, 0);
   Actor_SetAnimation(0, 3);
   Actor_SetAnimation(27, 3);
@@ -65,7 +65,7 @@ void Func_02001cf0(void) {
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
   Event_ShowMessage(0, 0);
   Actor_SetAttachedEffect(0x19, 0x102);
-  Event_Wait(20);
+  FieldEvent_Wait(20);
   Event_ShowMessage(25, 0);
   Actor_SetAnimation(27, 4);
   Event_ShowMessage(27, 0);
@@ -85,44 +85,44 @@ void Func_02001cf0(void) {
   Event_ShowMessage(26, 0);
   Event_ShowMessage(0, 0);
   Actor_SetAttachedEffect(0x13, 0x102);
-  Event_Wait(20);
+  FieldEvent_Wait(20);
   Event_ShowMessage(0x4013, 0);
   Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
   Actor_SetAnimationAndWait(0, 3);
   Event_ShowMessage(0, 0);
   Actor_FaceDirection(26, 0x5000, 0);
-  Func_080d489c(0x1a, 0x102);
-  Event_Wait(20);
+  Actor_SetAttachedEffect(0x1a, 0x102);
+  FieldEvent_Wait(20);
   Event_ShowMessage(26, 0);
-  Func_080d47b4(27, 0x109, 20);
+  Actor_ShowEmote(27, 0x109, 20);
   Event_ShowMessage(27, 0);
   Actor_FaceDirection(25, 0x3000, 0);
-  Func_080d47b4(25, 0x103, 20);
+  Actor_ShowEmote(25, 0x103, 20);
   Event_ShowMessage(25, 0);
-  Func_080d47b4(27, 0x100, 20);
+  Actor_ShowEmote(27, 0x100, 20);
   Event_ShowMessage(27, 0);
   Actor_FaceDirection(26, 0x3000, 0);
   Event_ShowMessage(26, 0);
   Actor_FaceDirection(0, FACING_NORTH, 0);
   Event_ShowMessage(0, 0);
   Actor_FaceDirection(25, 0x5000, 0);
-  Func_080d47b4(25, 0x105, 20);
+  Actor_ShowEmote(25, 0x105, 20);
   Event_ShowMessage(25, 0);
   Actor_SetAnimation(26, 4);
   FieldEvent_ShowMessageThenWait(0x1a, 0, 0x14);
   Actor_FaceDirectionAndWait(0, 0);
-  Func_080d47b4(0, 0x108, 0);
-  FieldMessage_ShowAtActor(0x4000, 0);
+  Actor_ShowEmote(0, 0x108, 0);
+  Event_OpenMessage(0x4000, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
-  t83 = Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
+  t83 = FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   if (t83 == 0) {
     Actor_SetAnimationAndWait(26, 3);
-    Event_ShowMessageAndWait(26, 0);
+    Event_ShowMessage(26, 0);
     EVENT_WORK->messageId++;
   } else {
     EVENT_WORK->messageId++;
     Actor_SetAnimationAndWait(26, 4);
-    Event_ShowMessageAndWait(26, 0);
+    Event_ShowMessage(26, 0);
   }
   Actor_FaceDirectionAndWait(27, FACING_WEST);
   Actor_SetAnimation(27, 4);
@@ -140,7 +140,7 @@ void Func_02001cf0(void) {
   Actor_SetAnimationAndWait(0, 3);
   Event_ShowMessage(0x4000, 0);
   Actor_SetAttachedEffect(0x1a, 0x102);
-  Event_Wait(20);
+  FieldEvent_Wait(20);
   Event_ShowMessage(26, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_FaceDirection(0, FACING_NORTH, 0);
@@ -159,7 +159,7 @@ void Func_02001cf0(void) {
   Prox_Jump(gMainRoutineWork.currentOwner, 0x101, 0);
   Prox_Jump(0, 0x101, 0);
   Prox_Jump(26, 0x101, 0);
-  Func_080d47b4(25, 0x101, 40);
+  Actor_ShowEmote(25, 0x101, 40);
   Actor_SetAnimationAndWait(27, 3);
   Event_ShowMessage(27, 0);
   Actor_SetAnimation(0, 3);
@@ -167,9 +167,9 @@ void Func_02001cf0(void) {
   Actor_SetAnimation(26, 3);
   Actor_SetAnimation(25, 3);
   Actor_FaceDirection(27, FACING_WEST, 0);
-  Func_080d47b4(27, 0x108, 20);
+  Actor_ShowEmote(27, 0x108, 20);
   Event_ShowMessage(27, 0);
-  Func_080d47b4(26, 0x109, 20);
+  Actor_ShowEmote(26, 0x109, 20);
   FieldEvent_ShowMessageThenWait(0x1a, 0, 0x14);
   Event_ShowMessage(5, 0);
   Actor_SetAttachedEffect(0x1b, 0x102);
@@ -180,7 +180,7 @@ void Func_02001cf0(void) {
   Actor_FaceDirectionAndWait(0, 0);
   Prox_MessageOpen(0x4000, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
-  t144 = Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
+  t144 = FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   if (t144 == 0) {
     FieldCamera_SetSpeed(0x26666, 0x4ccc);
     FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(512), 1);
@@ -188,7 +188,7 @@ void Func_02001cf0(void) {
     Actor_SetSpeed(0, 0x19999, 0xcccc);
     Actor_WalkToAndWait(0, 168, 520);
     Event_ShowMessage(0x4000, 0);
-    Event_ShowMessageAndWait(0x2005, 0);
+    Event_ShowMessage(0x2005, 0);
     EVENT_WORK->messageId += 2;
   } else {
     EVENT_WORK->messageId += 2;
@@ -198,9 +198,9 @@ void Func_02001cf0(void) {
     Actor_SetSpeed(0, 0x19999, 0xcccc);
     Actor_WalkToAndWait(0, 168, 520);
     Event_ShowMessage(0x4000, 0);
-    Event_ShowMessageAndWait(0x2005, 0);
+    Event_ShowMessage(0x2005, 0);
   }
-  t159 = ((s32)Func_080d4568());
+  t159 = ((s32)FieldCamera_GetActor());
   FIELD_AT((t159 + 0x55), u8, 0) = 0;
   FieldCamera_MoveTo(PIXELS(158), -1, PIXELS(432), 1);
   Func_0200457c();
@@ -216,12 +216,12 @@ void Func_02001cf0(void) {
   Actor_WalkToAndWait(17, 150, 540);
   Actor_WalkToAndWait(17, 160, 560);
   Actor_WalkToAndWait(17, 190, 640);
-  Actor_Stop(0);
-  Actor_Stop(gMainRoutineWork.currentOwner);
-  Actor_Stop(0x1b);
-  wait(1);
-  Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
-  Event_Wait(10);
+  FieldActor_Stop(0);
+  FieldActor_Stop(gMainRoutineWork.currentOwner);
+  FieldActor_Stop(0x1b);
+  System_Wait(1);
+  Actor_SetPosition(17, 0, 0);
+  FieldEvent_Wait(10);
   FieldCamera_SetSpeed(0x26666, 0x4ccc);
   FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(448), 1);
   Actor_WalkToAndWait(0, 168, 484);
@@ -243,21 +243,21 @@ void Func_02001cf0(void) {
   Actor_SetAnimationAndWait(27, 3);
   Actor_SetSpeed(0, 0x19999, 0xcccc);
   Actor_SetSpeed(27, 0x19999, 0xcccc);
-  Actor_SetModeById(0, 2);
-  t202 = ((s32)Actor_GetById(gMainRoutineWork.currentOwner));
+  Actor_SetAnimation(0, 2);
+  t202 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
   if (t202 != 0) {
-    Actor_ResetAndSetPosition(0, FIELD_AT(t202, s16, 10),
+    Actor_SetDestination(0, FIELD_AT(t202, s16, 10),
                               FIELD_AT(t202, s16, 18));
   }
-  Actor_WaitForMoveById(0);
+  FieldActor_WaitForMoveById(0);
   Actor_SetPosition(0, 0, 0);
-  Actor_SetModeById(27, 2);
-  t207 = ((s32)Actor_GetById(gMainRoutineWork.currentOwner));
+  Actor_SetAnimation(27, 2);
+  t207 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
   if (t207 != 0) {
-    Actor_ResetAndSetPosition(27, FIELD_AT(t207, s16, 10),
+    Actor_SetDestination(27, FIELD_AT(t207, s16, 10),
                               FIELD_AT(t207, s16, 18));
   }
-  Actor_WaitForMoveById(27);
+  FieldActor_WaitForMoveById(27);
   Actor_SetPosition(27, 0, 0);
   {
     struct EventWork *work = EVENT_WORK;
@@ -265,7 +265,7 @@ void Func_02001cf0(void) {
     work->screenEffect = 0x209;
     work->delay = 0x10;
   }
-  GameFlag_ClearBit(0x12f);
-  GameFlag_SetBit(0x9c5);
+  Event_ClearFlag(0x12f);
+  Event_SetFlag(0x9c5);
   Func_0200446c();
 }

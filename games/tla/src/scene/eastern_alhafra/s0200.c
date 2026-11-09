@@ -58,7 +58,7 @@ void Func_02000200(s32 mode, s32 id) {
   s32 hit;
   s32 i;
 
-  object = Actor_GetById(id);
+  object = Actor_Get(id);
   x = object->x >> 20;
   hit = 0;
   z = object->z >> 20;
@@ -67,51 +67,51 @@ void Func_02000200(s32 mode, s32 id) {
     MapGrid_SetCellBehavior(0x2000000, 0x2000000, 2, 0);
   }
   if (x == 31 && z == 32) {
-    GameFlag_SetBit(0x8a0);
+    Event_SetFlag(0x8a0);
     hit = 1;
   }
   if (x == 25 && z == 33) {
-    GameFlag_SetBit(0x8a1);
+    Event_SetFlag(0x8a1);
     hit = 1;
   }
   if (x == 21 && z == 33) {
-    GameFlag_SetBit(0x8a4);
+    Event_SetFlag(0x8a4);
     hit = 1;
   }
   if (x == 27 && z == 33) {
-    GameFlag_SetBit(0x8a5);
+    Event_SetFlag(0x8a5);
     hit = 1;
   }
   if (hit) {
     if (id != 10)
-      Sound_Play(310);
+      Event_PlaySound(310);
     object->gravity = 0x170a;
     object->motionFlags = 3;
-    Actor_SetSingleChildFlags(Actor_GetById(id), 1);
-    wait(5);
+    Actor_SetSingleChildFlags(Actor_Get(id), 1);
+    System_Wait(5);
     for (i = 0; i < 60 && object->y > 0; i++)
-      wait(1);
-    Sound_Play(298);
-    wait(1);
-    Sound_Play(240);
+      System_Wait(1);
+    Event_PlaySound(298);
+    System_Wait(1);
+    Event_PlaySound(240);
     object->collisionFlags = 0;
     object->priorityFlags |= 2;
     Func_02004a0c(object, 4);
     i = 0;
   create:
-    spark = ((struct Actor *)Import_ActorCreate(276, object->x, object->y, object->z));
+    spark = (FieldActor_Create(276, object->x, object->y, object->z));
     sparks[i] = spark;
     spark->scaleX = 0xa666;
     Func_02004a0c(spark, 1);
     Actor_SetSingleChildFlags(spark, 0);
-    Sound_Play(154);
-    wait(5);
+    Event_PlaySound(154);
+    System_Wait(5);
     i++;
     if (i <= 2)
       goto create;
     Func_02000fa4();
-    Actor_Stop(gMainRoutineWork.currentOwner);
-    wait(30);
+    FieldActor_Stop(gMainRoutineWork.currentOwner);
+    System_Wait(30);
     for (i = 0; i <= 2; i++)
       Func_02004a24(sparks[i]);
   }

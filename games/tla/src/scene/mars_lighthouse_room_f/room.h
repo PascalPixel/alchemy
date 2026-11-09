@@ -6,6 +6,7 @@
 #include "main_routine_work.h"
 #include "actor.h"
 #include "flag_call.h"
+#include "event_inline.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define S16_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
@@ -38,15 +39,9 @@ struct Box {
 
 #define SCENE_WORK ((struct SceneWork *)Ram_HeapSlots->eventWork)
 
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-void Actor_SetModeById(u32 id, s32 mode);
-void Vector_AddPolarOffsetFar(s32 length, s32 angle, s32 *position);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 use_setter);
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -57,29 +52,18 @@ s32 Func_020027dc(s32 index);
 s32 Func_02004a8c(struct Box *box);
 void Func_02004d10(struct Box box);
 void Func_02005490(struct Actor *object, const void *script);
-struct Actor *Func_02005498(s32 kind, s32 x, s32 y, s32 z);
-void Func_020054e0(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
-void Func_020054e8(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
-void Func_020054f0(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 void Func_02005560(void);
 void Func_02005568(void);
-void Func_02005598(s32 id, s32 x, s32 z);
-void Func_020055d0(s32 a0, s32 a1);
 void Func_020055e0(void);
-void Func_020055f0(s32 a0);
 s32 Func_020055f8(s32 id);
 void Func_02005600(void);
 void Func_02005608(void);
-void Func_02005648(s32 a0);
 void Func_02005660(void);
 struct Actor *Func_02005680(s32 *position, s32 mode);
 void Func_02005688(void);
-void Func_020056c0(s32 cue);
 void Func_02005480(struct Actor *object, s32 a1);
-void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 void Animation_SetStateFlags(struct Actor *object, s32 flags);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 
 void Func_020001f4(s32 unused, s32 id);
 void Func_0200215c(struct Actor *object, s32 part);
@@ -92,26 +76,26 @@ void Func_02001448(void);
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void Func_020054e0_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
                                   s32 a5) {
-  Func_020054e0(a0, a1, a2, a3, a4, a5);
+  Map_CopyCellsRect(a0, a1, a2, a3, a4, a5);
 }
 
 static inline void Func_020054e8_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
                                   s32 a5) {
-  Func_020054e8(a0, a1, a2, a3, a4, a5);
+  Map_CopyCellAttributeRect(a0, a1, a2, a3, a4, a5);
 }
 
 static inline void Func_020054f0_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
                                   s32 a5) {
-  Func_020054f0(a0, a1, a2, a3, a4, a5);
+  Func_0802b450(a0, a1, a2, a3, a4, a5);
 }
 
 static inline void Func_02005598_(s32 id, s32 x, s32 z) {
-  Func_02005598(id, x, z);
+  Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 
 static inline struct Actor *Func_02005498_(s32 kind, s32 x, s32 y,
                                                    s32 z) {
-  return Func_02005498(kind, x, y, z);
+  return Import_ActorCreate(kind, x, y, z);
 }
 
 static inline void Vector_AddPolar(s32 length, s32 angle, s32 *position) {

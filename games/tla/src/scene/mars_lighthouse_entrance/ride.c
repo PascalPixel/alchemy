@@ -1,4 +1,5 @@
 #include "ride.h"
+#include "event_inline.h"
 
 void Func_02004be0(void *handle);
 

@@ -32,7 +32,7 @@ void Func_02001b54(struct Actor *object) {
       *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0)
     return;
   if (object->action == 240) {
-    if (!GameFlag_Test(0x250))
+    if (!Event_GetFlag(0x250))
       Func_02003cd0(object, 202);
     if (object->angle == 0xc000) {
       position.x = object->x;
@@ -44,9 +44,9 @@ void Func_02001b54(struct Actor *object) {
       position.x = object->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
                                       Math_Cosine(object->angle));
       position.z = object->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                      Math_Sine(object->angle));
+                                      Math_Sin(object->angle));
     }
-    shot = (struct Actor *)Import_ActorCreate(280, position.x,
+    shot = FieldActor_Create(280, position.x,
                                                        object->y, position.z);
     Func_02003b28(shot, 2);
     Actor_SetSingleChildFlags(shot, 0);

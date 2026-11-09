@@ -7,7 +7,7 @@ void Func_02001950(s32 show, s32 first, u32 count) {
   u32 i;
 
   for (i = 0; i < count; i++) {
-    struct Actor *actor = Actor_GetById(first + i);
+    struct Actor *actor = Actor_Get(first + i);
 
     if (show)
       actor->priorityFlags &= ~0x10;

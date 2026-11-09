@@ -6,17 +6,17 @@ void Func_020022ac(void) {
   struct SpriteWork *sprite;
 
   if (state->mode != 2) {
-    object = Actor_GetById(Party_GetLeaderActor());
+    object = Actor_Get(FieldParty_GetLeaderActor());
     sprite = object->animation;
     Func_02002898();
-    Event_ResolvePendingActions(0);
+    FieldEvent_ResolvePendingActions(0);
     Func_02002818_(object, (object->x & 0xfff00000) + 0x80000, object->y,
                    (object->z & 0xfff00000) + 0x80000);
-    Script_WaitForEventTimeout(object);
+    Actor_WaitForMove(object);
     while (sprite->level != 0) {
       sprite->level--;
       sprite->dirty = 1;
-      wait(1);
+      System_Wait(1);
     }
     Func_020028a0();
     sprite->mode |= 8;
@@ -32,7 +32,7 @@ void Func_02002334(void) {
 
   Func_0200237c();
   if (state->mode != 0) {
-    sprite = Actor_GetById(Party_GetLeaderActor())->animation;
+    sprite = Actor_Get(FieldParty_GetLeaderActor())->animation;
     if (sprite->child)
       sprite->child[6] = 9;
     sprite->mode = (sprite->mode & 0xf7) | 1;
@@ -45,7 +45,7 @@ void Func_02002334(void) {
 
 void Func_0200237c(void) {
   struct SceneState *state = &gSceneState;
-  struct Actor *object = Actor_GetById(Party_GetLeaderActor());
+  struct Actor *object = Actor_Get(FieldParty_GetLeaderActor());
 
   state->x = (object->x & 0xfff00000) + 0x80000;
   state->z = (object->z & 0xfff00000) + 0x80000;

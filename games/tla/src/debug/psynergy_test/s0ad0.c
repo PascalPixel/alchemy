@@ -46,7 +46,7 @@ void Func_02000ad0(struct Actor *object) {
         object, (u8)((u32)((struct CounterBits *)count)->rest % 6));
   if (((u8 *)object)[98] == 0) {
     if ((*count & 15) == 0) {
-      Sound_Play(0x256);
+      Event_PlaySound(0x256);
       work->unka0[work->unka6] = 0;
       work->unka6 ^= 1;
     }
@@ -60,7 +60,7 @@ void Func_02000ad0(struct Actor *object) {
   }
   (*count)++;
   for (i = 0; i < 2; i++) {
-    sine = Math_Sine(work->unka0[i] << 10);
+    sine = Math_Sin(work->unka0[i] << 10);
     if (work->unka0[i] >= 0) {
       if (work->unka0[i] <= 31) {
         struct Vector3 *p = &position;

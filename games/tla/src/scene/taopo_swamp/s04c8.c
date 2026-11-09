@@ -43,9 +43,9 @@ void Func_020004c8(s32 hole) {
     found = Func_02002708(hole - 10);
   if (found == 0)
     return;
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.currentOwner);
   Func_02002898();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   goto test;
 sink:
   if (result < 0) {
@@ -68,7 +68,7 @@ sink:
   }
   leader->x -= slip;
   leader->angle += 0x1000;
-  wait(1);
+  System_Wait(1);
 test:
   position.x = leader->x;
   position.y = leader->y;

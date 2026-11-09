@@ -31,15 +31,15 @@ static __inline__ void AddPolar(s32 length, s32 angle, s32 *position) {
 /// the cell kind under it is 52 or 51, setting the event work's unk16a to 201
 /// or 200. unk4c and acceleration hold the leader's last x and z.
 void Func_020017b4(struct Actor *self) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 next[2];
   s32 ahead[3];
   struct Actor *dust;
   s32 kind;
 
-  if (Actor_GetById(gMainRoutineWork.currentOwner)->z >> 16 > 248) {
+  if (Actor_Get(gMainRoutineWork.currentOwner)->z >> 16 > 248) {
     self->update = 0;
-    GameFlag_ClearBit(0x200);
+    Event_ClearFlag(0x200);
     self->x = (self->x & 0xfff00000) + 0x80000;
     self->z = (self->z & 0xfff00000) + 0x80000;
     return;
@@ -48,11 +48,11 @@ void Func_020017b4(struct Actor *self) {
   ahead[1] = leader->y;
   ahead[2] = next[1] = self->z + (leader->z - self->acceleration);
   if (self->unk4c != leader->x || self->acceleration != leader->z) {
-    dust = ((struct Actor *)Import_ActorCreate(0x2a0, self->x, self->y, self->z));
+    dust = (FieldActor_Create(0x2a0, self->x, self->y, self->z));
     dust->x += ((Random16Far() & 15) - 8) << 16;
     dust->y += ((Random16Far() & 31) - 4) << 16;
     dust->motionFlags = 0;
-    Actor_SetPartAttribute(dust, ((u8 *)self)[0x62]);
+    Actor_SetSpriteColor(dust, ((u8 *)self)[0x62]);
     Scene_SetActorSpritePriority(dust, 2);
     Func_020032e0(dust, 1);
     Actor_SetSingleChildFlags(dust, 0);
@@ -60,19 +60,19 @@ void Func_020017b4(struct Actor *self) {
     self->unk4c = leader->x;
     self->acceleration = leader->z;
     if ((gFrameCount & 3) == 0)
-      Sound_Play(106);
+      Event_PlaySound(106);
   }
   if (ahead[2] >> 16 > 248)
     return;
   AddPolar(0x70000, 0x8000 - leader->angle, ahead);
-  if (GetMapCellCollision(self->terrainId, ahead[0], ahead[2]) == 255)
+  if (MapGrid_GetCellBehaviorAt(self->terrainId, ahead[0], ahead[2]) == 255)
     return;
   {
     s32 x = next[0];
 
     self->x = x;
     self->z = next[1];
-    kind = GetMapCellCollision(self->terrainId, x, next[1]);
+    kind = MapGrid_GetCellBehaviorAt(self->terrainId, x, next[1]);
   }
   if (kind == 52) {
     ((struct AnemosInnerSanctumEventWork *)Ram_HeapSlots->eventWork)->unk16a =

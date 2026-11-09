@@ -29,7 +29,7 @@ void Func_020003f8(s32 unk0, s32 id) {
     actor->motionFlags = 0;
     actor->collisionFlags = 0;
     for (i = 0; i <= 17; i++) {
-      wait(1);
+      System_Wait(1);
       sprite = actor->animation;
       sprite->rotation -= 256;
       actor->x -=
@@ -42,11 +42,11 @@ void Func_020003f8(s32 unk0, s32 id) {
     actor->gravity = 0xcccc;
     actor->motionFlags = 3;
     actor->terrainId = 0;
-    Actor_WaitForMoveById(id);
+    FieldActor_WaitForMoveById(id);
     Func_020003dc(actor, 0);
-    Sound_Play(188);
+    Event_PlaySound(188);
     MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-    Sound_Play(141);
+    Event_PlaySound(141);
     MapGrid_SetShake(-1, -1, 0xe666);
     ((struct FieldSprite *)actor->animation)->rotation = 0x1000;
     // Cleared through a word: as a function pointer the store sinks below the
@@ -61,11 +61,11 @@ void Func_020003f8(s32 unk0, s32 id) {
                   EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                       EFFECT_SCALE_TO_TARGET,
                   &options);
-    Sound_Play(154);
-    Actor_SetModeById(id, 3);
-    Map_WaitForShakeToSettle();
+    Event_PlaySound(154);
+    Actor_SetAnimation(id, 3);
+    MapGrid_WaitForShakeToSettle();
     Actor_GetById(15)->priorityFlags |= 2;
-    GameFlag_SetBit(0x884);
+    Event_SetFlag(0x884);
   }
   Func_02001214();
 }

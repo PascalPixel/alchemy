@@ -1,5 +1,4 @@
 #include "types.h"
-#include "flag_call.h"
 #include "event_inline.h"
 
 extern u8 MsgLemuriaInteriors06[];

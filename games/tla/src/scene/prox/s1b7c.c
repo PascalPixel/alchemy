@@ -17,26 +17,26 @@ void Event_WaitTransitionFrames(void);
 void Func_02001b7c(void) {
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
   s32 entrance = work->returnEntrance;
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 cell;
   s32 id;
 
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   cell = object->x >> 16;
-  Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,
+  FieldActor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,
                 object->z - 0x40000);
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
   object->angle = 0xc000;
-  Sound_Play(128);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+  Event_PlaySound(128);
+  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner),
                                      0);
   id = gMainRoutineWork.currentOwner;
   if (entrance == 6)
-    Actor_SetModeById(id, 25);
+    Actor_SetAnimation(id, 25);
   else
-    Actor_SetModeById(id, 26);
-  wait(4);
+    Actor_SetAnimation(id, 26);
+  System_Wait(4);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(entrance);
+  FieldEvent_SetExitRequest(entrance);
 }

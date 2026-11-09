@@ -36,7 +36,7 @@ void Func_020043ec(s32 mode) {
   if (mode != 1)
     return;
   state = &gSceneState;
-  object = Actor_GetById(*(s16 *)((u8 *)Ram_HeapSlots->effectWork + 26));
+  object = Actor_Get(*(s16 *)((u8 *)Ram_HeapSlots->effectWork + 26));
   x = (object->x >> 20) - state->originX;
   z = (object->z >> 20) - state->originZ;
   {

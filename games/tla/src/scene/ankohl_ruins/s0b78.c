@@ -42,7 +42,7 @@ void Func_02000b78(s32 rows, s32 frames, s32 x, s32 y, s32 startZ, s32 count) {
       Func_0200015c(((x + left * 16) << 16) + ((dx - 8) << 16), (y + dy) << 16, z << 16, 0, 0,
                     0x100, 0x80001, &params);
     }
-    Event_Wait(frames);
+    FieldEvent_Wait(frames);
     z += 2;
     row++;
     if (row < rows)

@@ -5,9 +5,7 @@ extern u16 gData_020068a2;
 void *Heap_Alloc(s32 size);
 void Heap_Release(void *buffer);
 s32 Resource_FindFreeEntry(void);
-s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Func_02000d18(void);
-s32 Task_Add(void (*func)(void), s32 priority);
 
 /// Fills 0x100 bytes with colour 1, loads them into a VRAM block of their own
 /// and starts Func_02000d18.
@@ -28,7 +26,7 @@ fill:
    * overlay 67c's Func_02003278 does; without the barrier the size's first half
    * comes first. */
   __asm__("");
-  VramCache_Load(gData_020068a2, 0x100, buffer);
+  Vram_Load(gData_020068a2, 0x100, buffer);
   Heap_Release(buffer);
-  Task_Add(Func_02000d18, TASK_PASS_VBLANK);
+  Task_AddFrame(Func_02000d18, TASK_PASS_VBLANK);
 }

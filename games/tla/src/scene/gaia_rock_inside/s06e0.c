@@ -11,6 +11,6 @@ s32 Func_02004dac();
 extern u8 gData_02005544[];
 
 s32 Func_020006e0(void) {
-  Func_02004dac(((s32)Actor_GetById(9)), (s32)gData_02005544);
+  Func_02004dac(((s32)Actor_Get(9)), (s32)gData_02005544);
   return 0;
 }

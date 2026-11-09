@@ -1,9 +1,8 @@
 #include "types.h"
 #include "actor.h"
-#include "call.h"
+#include "event_inline.h"
 
 void Func_020041cc(struct Actor *object, s32 mode);
-struct Actor *Func_020041e4();
 void Func_020015ec(void);
 
 void Func_02001928(struct Actor *object, s32 priority);
@@ -39,8 +38,7 @@ void Func_02001928(struct Actor *object, s32 part) {
 }
 
 void Func_0200196c(s32 *position, s32 speed, s32 flag) {
-  struct Actor *object = (struct Actor *)Value4(
-      (s32 (*)())Func_020041e4, 366, position[0], position[1], position[2]);
+  struct Actor *object = FieldActor_Create(366, position[0], position[1], position[2]);
 
   if (object != NULL) {
     object->bounce = 0;

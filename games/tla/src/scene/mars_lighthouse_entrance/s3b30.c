@@ -1,29 +1,27 @@
 #include "types.h"
 #include "field_effect.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 extern const s32 *gData_0200686c[];
 
-struct FieldActor *Actor_GetById(s32 id);
-struct FieldEffect *Func_02004bd8(s32 type, s32 x, s32 y, s32 z);
 void Func_02004bc0(struct FieldEffect *effect, s32 mode);
 void Func_02004bd0(struct FieldEffect *effect, const s32 *script);
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Actor_SetSpritePriorityB(struct FieldEffect *effect, s32 priority);
-void Actor_SetPartAttribute(struct FieldEffect *effect, s32 value);
 
 void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {
-  struct FieldActor *party = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct FieldActor *party = (struct FieldActor *)Actor_GetById(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
 
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-    effect = Func_02004bd8(options->type, x, y, z);
+    effect = (struct FieldEffect *)Import_ActorCreate(options->type, x, y, z);
   else
-    effect = Func_02004bd8(285, x, y, z);
+    effect = (struct FieldEffect *)Import_ActorCreate(285, x, y, z);
   if (effect == 0)
     return;
 
@@ -44,7 +42,7 @@ void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & 0xffff0000) == 0 || options == 0)
     return;
   if ((flags & EFFECT_USE_PALETTE) != 0)
-    Actor_SetPartAttribute(effect, options->palette);
+    Actor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
     effect->priorityFlags &= ~1;
     Actor_SetSpritePriorityB(effect, options->priority);

@@ -46,10 +46,10 @@ void Func_020020f8(s32 mode, s32 cue) {
                   16);
     target = work->target;
     SET_POSITION(target, 0, 0, 0);
-    Map_CopyCellAttributeRect(0, 32, 5, 8, 42, 17);
-    Map_CopyCellAttributeRect(0, 96, 5, 8, 42, 81);
-    Map_CopyCellPictureIndicesRect(0, 32, 42, 17, 5, last);
-    Map_CopyCellPictureIndicesRect(0, 96, 42, 81, 5, last);
+    MapGrid_CopyCellAttributes(0, 32, 5, 8, 42, 17);
+    MapGrid_CopyCellAttributes(0, 96, 5, 8, 42, 81);
+    MapGrid_CopyCellsTo(0, 32, 42, 17, 5, last);
+    MapGrid_CopyCellsTo(0, 96, 42, 81, 5, last);
   }
   if (cue == 0x3e7)
     Func_02003998();

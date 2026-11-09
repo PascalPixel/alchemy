@@ -7,7 +7,6 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "flag_call.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -70,7 +69,7 @@ s32 Func_0200145c(void) {
   struct LobbyEventWork *work;
   void *func;
 
-  Flag_Set(0x17e);
+  Event_SetFlag(0x17e);
   gMainRoutineWork.packedEvents[0] = 0;
   gMainRoutineWork.packedEvents[1] = 0;
   gData_020022bc = 0;
@@ -93,9 +92,9 @@ s32 Func_0200145c(void) {
   for (i = 0; i < 8; i++) {
     s32 flag = 0x2f0 + i;
 
-    Flag_Clear(flag);
+    Event_ClearFlag(flag);
     if (Func_02000f6c(i))
-      Flag_Set(flag);
+      Event_SetFlag(flag);
   }
   if (gMainRoutineWork.entrance == 8) {
     s32 msg;
@@ -128,7 +127,7 @@ s32 Func_0200145c(void) {
         wins = 90;
       GameFlag_SetByte(0x3f8, wins);
     } else {
-      Flag_Clear(0x173);
+      Event_ClearFlag(0x173);
       GameFlag_SetByte(0x3f8, -1);
       /* FAKEMATCH(temporary): one scalar holds the row address, then its score;
        * as the row read directly in entrances 8 and 9, 36 of 438 instructions
@@ -172,7 +171,7 @@ s32 Func_0200145c(void) {
       FieldMessage_ShowAtActor(8, 0);
     }
     gMainRoutineWork.linkTallies[3] = 0;
-    Flag_Clear(0x173);
+    Event_ClearFlag(0x173);
     GameFlag_SetByte(0x3f8, -1);
     LinkLobby_WriteSlotValue(0);
     Func_02001a1c();
@@ -185,11 +184,11 @@ s32 Func_0200145c(void) {
     Event_WaitTransitionFrames();
     LinkLobby_WriteSlotValue(0);
     LinkLobby_WriteSlotValue(4);
-    if (Flag_IsSet(1000)) {
+    if (Event_GetFlag(1000)) {
       work = Ram_HeapSlots->eventWork;
-      Flag_Clear(1000);
+      Event_ClearFlag(1000);
       work->raisedTrigger = 2;
-      Flag_Clear(0x304);
+      Event_ClearFlag(0x304);
       wait(20);
       Func_02000044();
       LinkLobby_WriteSlotValue(0);
@@ -205,8 +204,8 @@ s32 Func_0200145c(void) {
         *(u16 *)score = v;
       Func_02001414(*(u16 *)score);
       Func_020013ec();
-      Flag_Set(0x304);
-      Flag_Set(0x305);
+      Event_SetFlag(0x304);
+      Event_SetFlag(0x305);
     }
     Func_02001a1c();
   } else if (gMainRoutineWork.entrance == 11) {
@@ -218,17 +217,17 @@ s32 Func_0200145c(void) {
     Event_WaitTransitionFrames();
     LinkLobby_WriteSlotValue(0);
     LinkLobby_WriteSlotValue(4);
-    if ((v = Flag_IsSet(0x173)) == 0) {
+    if ((v = Event_GetFlag(0x173)) == 0) {
       gMainRoutineWork.linkTallies[5]++;
       gMainRoutineWork.linkTallies[7] = v;
       Func_020013ec();
     }
-    Flag_Set(0x304);
-    Flag_Clear(0x305);
+    Event_SetFlag(0x304);
+    Event_ClearFlag(0x305);
     Func_02001a1c();
   } else {
     Func_02001914();
-    Flag_Clear(0x172);
+    Event_ClearFlag(0x172);
     GameFlag_SetByte(0x3f8, -1);
     if (gMainRoutineWork.unk244[6] != 0) {
       Func_02001a14();
@@ -248,7 +247,7 @@ s32 Func_0200145c(void) {
   func = Func_02000134;
   Task_Add(func, 0x480);
   Func_02001944(func, 1);
-  if (gMainRoutineWork.entrance != 8 || !Flag_IsSet(0x173)) {
+  if (gMainRoutineWork.entrance != 8 || !Event_GetFlag(0x173)) {
     Func_02001a04(1);
     DjinnRecovery_CountDownTwenty();
   }

@@ -68,7 +68,7 @@ void Func_02001fd0(void);
 
 void Func_020023a4(s32 id) {
   struct GlowWork *work = HeapSlot_AllocFar(220, 0x860);
-  struct Actor *actor = Actor_GetById(id);
+  struct Actor *actor = Actor_Get(id);
   struct Actor *effect;
   struct GlowSprite *sprite;
   struct GlowState *state;
@@ -82,7 +82,7 @@ void Func_020023a4(s32 id) {
   work->z = actor->z + 0x20000;
   Func_02002824(gField_Tiles64D, work);
   resource = Resource_FindFreeEntry();
-  tile = VramCache_Load(resource, 0x800, work);
+  tile = Vram_Load(resource, 0x800, work);
   work->tile = tile;
   work->tileTop = tile + 32;
   state = work->states;
@@ -99,7 +99,7 @@ void Func_020023a4(s32 id) {
     state++;
   }
   effect =
-      ((struct Actor *)Import_ActorCreate(290, actor->x, actor->y, actor->z));
+      (FieldActor_Create(290, actor->x, actor->y, actor->z));
   work->effect = effect;
   Func_0200285c(effect, 1);
   Actor_SetSingleChildFlags(effect, 0);
@@ -112,15 +112,15 @@ void Func_020023a4(s32 id) {
   work->timer = 0;
   work->height = 0;
   work->follow = 1;
-  Sound_Play(221);
-  Task_Add(Func_02001fd0, 0x480);
+  Event_PlaySound(221);
+  Task_AddFrame(Func_02001fd0, 0x480);
   if (work->stage != 999) {
   wait:
-    wait(1);
+    System_Wait(1);
     if (work->stage != 999)
       goto wait;
   }
-  Task_RemoveFar(Func_02001fd0);
+  FieldTask_Remove(Func_02001fd0);
   Func_02002874(effect);
   Resource_ResetEntry(resource);
   HeapSlot_Release(220);

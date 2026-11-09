@@ -17,11 +17,11 @@ s32 Func_02005844(struct Actor *object);
 void Func_02005624(struct Actor *object, s32 mode);
 
 void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
   u8 *cell = ((struct MapLayers *)Ram_HeapSlots->mapWork)->layers[layer].cells;
 
   cell += Func_02005844(object) * 4;
-  if (GameFlag_Test(flag)) {
+  if (Event_GetFlag(flag)) {
     /* FAKEMATCH: the flags are read before the cell store and ORed into the
      * register that holds 2, as the native does; as one |= the 0 for the cell
      * is built before the read */

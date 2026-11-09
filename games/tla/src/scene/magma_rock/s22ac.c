@@ -35,17 +35,17 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    struct MagmaRockEffectOptions *options);
 
 void Func_020022ac(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct MagmaRockEffectOptions options;
   u32 i;
   s32 angle;
   s32 velocity[3];
 
   Func_02003aec();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Func_02003a7c();
-  wait(1);
+  System_Wait(1);
   leader->y += 0x820000;
   leader->gravity = 0x8000;
   leader->bounce = 0;
@@ -53,9 +53,9 @@ void Func_020022ac(void) {
   ((struct MagmaRockEventWork *)Ram_HeapSlots->eventWork)->field1ac = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Sound_Play(204);
+  Event_PlaySound(204);
   leader->motionFlags = 3;
-  Event_Wait(24);
+  FieldEvent_Wait(24);
   options.palette = 7;
   options.update = Effect_AdvanceMotion;
   options.scaleX = 0xcccc;
@@ -65,7 +65,7 @@ loop:
   angle = i << 12;
   velocity[0] = Math_Cosine(angle);
   velocity[1] = 0;
-  velocity[2] = Math_Sine(angle);
+  velocity[2] = Math_Sin(angle);
   velocity[0] += velocity[0] >> 1;
   velocity[0] += ((Random16Far() * 3) << 14 >> 16) - 0x6000;
   velocity[2] += ((Random16Far() * 3) << 13 >> 16) - 0x3000;
@@ -74,13 +74,13 @@ loop:
   i++;
   if (i <= 16)
     goto loop;
-  Sound_Play(188);
-  Func_080d489c(gMainRoutineWork.currentOwner, 0x101);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
+  Event_PlaySound(188);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  Map_WaitForShakeToSettle();
-  Func_080d489c(gMainRoutineWork.currentOwner, 0x100);
+  MapGrid_WaitForShakeToSettle();
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
   ((struct MagmaRockEventWork *)Ram_HeapSlots->eventWork)->field1ac = 0x204;

@@ -32,16 +32,16 @@ void Func_02001400(s32 mode) {
   /* FAKEMATCH(temporary): the blend level is read into level, a u32 local,
    * before each QueueIoWriteDelay2 call; as QueueIoWriteDelay2(0x04000052,
    * gData_02003fc0), 4 of 593 instructions differ in tla-en. */
-  wait(1);
-  GameFlag_ClearBit(0x109);
+  System_Wait(1);
+  Event_ClearFlag(0x109);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
-  Actor_GetById(gMainRoutineWork.currentOwner)->animationKind = 0;
+  Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->delay = 16;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   if (mode == 2) {
-    Map_SetScreenShake(0x20000, 0x30000, 0x10000);
-    Sound_Play(141);
+    MapGrid_SetShake(0x20000, 0x30000, 0x10000);
+    Event_PlaySound(141);
   }
   Func_02002074();
   buffer = Heap_AllocEwram(0x4000);
@@ -66,79 +66,79 @@ void Func_02001400(s32 mode) {
     }
     IRQ_UNLOCK(saved);
   }
-  Task_Add(Func_0200130c, 0x480);
+  Task_AddFrame(Func_0200130c, 0x480);
   Func_02002024();
-  Event_ResolvePendingActions(0);
-  Sound_Play(246);
+  FieldEvent_ResolvePendingActions(0);
+  Event_PlaySound(246);
   gData_02003fc0 = 0xe00;
   PUSH_PICTURE(0x3480);
-  Event_Wait(2);
+  FieldEvent_Wait(2);
   gData_02003fc0 = 0xd00;
   PUSH_PICTURE(0x2e80);
-  Event_Wait(2);
+  FieldEvent_Wait(2);
   gData_02003fc0 = 0xc00;
   PUSH_PICTURE(0x2880);
-  Event_Wait(2);
+  FieldEvent_Wait(2);
   gData_02003fc0 = 0xb00;
   PUSH_PICTURE(0x2280);
-  Event_Wait(2);
+  FieldEvent_Wait(2);
   gData_02003fc0 = 0xa00;
   PUSH_PICTURE(0x1c80);
-  Event_Wait(2);
+  FieldEvent_Wait(2);
   gData_02003fc0 = 0x900;
   PUSH_PICTURE(0x1680);
-  Event_Wait(2);
+  FieldEvent_Wait(2);
   gData_02003fc0 = 0x800;
   PUSH_PICTURE(0x1080);
-  Event_Wait(140);
+  FieldEvent_Wait(140);
   PUSH_PICTURE(0x1680);
-  Event_Wait(4);
+  FieldEvent_Wait(4);
   PUSH_PICTURE(0x1c80);
-  Event_Wait(4);
+  FieldEvent_Wait(4);
   PUSH_PICTURE(0x2280);
-  Event_Wait(4);
+  FieldEvent_Wait(4);
   gData_02003fc0 = 0x900;
   PUSH_PICTURE(0x2880);
-  Event_Wait(4);
+  FieldEvent_Wait(4);
   gData_02003fc0 = 0xa00;
   PUSH_PICTURE(0x2e80);
-  Event_Wait(4);
+  FieldEvent_Wait(4);
   gData_02003fc0 = 0xb00;
   PUSH_PICTURE(0x3480);
-  Event_Wait(4);
+  FieldEvent_Wait(4);
   gData_02003fc0 = 0xc00;
   PUSH_PICTURE(0x3a80);
   if (mode == 1) {
     MapGrid_SetShake(0x20000, 0x20000, 0x10000);
-    Sound_Play(141);
+    Event_PlaySound(141);
     gData_02003fc0 = 0xd00;
-    Event_Wait(4);
+    FieldEvent_Wait(4);
     gData_02003fc0 = 0xe00;
-    Event_Wait(4);
+    FieldEvent_Wait(4);
     gData_02003fc0 = 0xf00;
-    Event_Wait(4);
+    FieldEvent_Wait(4);
     gData_02003fc0 = 0x1000;
-    Event_Wait(45);
-    Task_RemoveFar(Func_0200130c);
+    FieldEvent_Wait(45);
+    FieldTask_Remove(Func_0200130c);
     Func_02001f74();
     level = gData_02003fc0;
     QueueIoWriteDelay2(0x04000052, level);
     QueueIoWriteDelay2(0x04000050, 0);
   } else {
     gData_02003fc0 = 0xd00;
-    Event_Wait(4);
+    FieldEvent_Wait(4);
     gData_02003fc0 = 0xe00;
-    Event_Wait(4);
+    FieldEvent_Wait(4);
     gData_02003fc0 = 0xf00;
-    Event_Wait(4);
+    FieldEvent_Wait(4);
     gData_02003fc0 = 0x1000;
-    Event_Wait(45);
-    Task_RemoveFar(Func_0200130c);
+    FieldEvent_Wait(45);
+    FieldTask_Remove(Func_0200130c);
     Func_02001f74();
     level = gData_02003fc0;
     QueueIoWriteDelay2(0x04000052, level);
     QueueIoWriteDelay2(0x04000050, 0);
   }
   Heap_Release(buffer);
-  GameFlag_SetBit(0x101);
+  Event_SetFlag(0x101);
 }

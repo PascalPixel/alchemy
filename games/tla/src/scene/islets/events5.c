@@ -17,18 +17,18 @@ void Func_02003620(void) {
   struct Actor *object0;
 
   Func_02003e64();
-  Event_ResolvePendingActions(0);
-  Sound_Play(0x226);
+  FieldEvent_ResolvePendingActions(0);
+  Event_PlaySound(0x226);
   v5 = &gMainRoutineWork;
   v5 = (v5 + 0x214);
-  object0 = Actor_GetById(*(s32 *)((u8 *)v5 + 0));
+  object0 = Actor_Get(*(s32 *)((u8 *)v5 + 0));
   Actor_SetSingleChildFlags((s32)object0, 0);
-  Actor_SetModeById(*(s32 *)((u8 *)v5 + 0), 18);
-  Event_Wait(40);
+  Actor_SetAnimation(*(s32 *)((u8 *)v5 + 0), 18);
+  FieldEvent_Wait(40);
   *(s32 *)((u8 *)((s32)Ram_HeapSlots->eventWork + 0x1ac) + 0) = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(3);
+  FieldEvent_SetExitRequest(3);
   return;
 }
 

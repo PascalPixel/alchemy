@@ -13,15 +13,15 @@ extern u8 MsgSummonInheritedEarthDarkness[];
 
 void Func_02001b88(void) {
   Func_02003398();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   PaletteFade_ApplySource(0x10000, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
-  BattleEffect_StartBufferInterpolation(0x3c);
-  Event_Wait(60);
+  PaletteFade_ApplyTarget(0x10003, 1);
+  PaletteFade_Interpolate(0x3c);
+  FieldEvent_Wait(60);
   FieldMessage_ShowCentered((s32)MsgSummonInheritedEarthDarkness, 0, 6);
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(0x3c);
-  Event_Wait(60);
-  GameFlag_SetBit(0xa8c);
+  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_Interpolate(0x3c);
+  FieldEvent_Wait(60);
+  Event_SetFlag(0xa8c);
   Func_020033a0();
 }

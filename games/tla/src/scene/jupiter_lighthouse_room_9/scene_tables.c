@@ -28,7 +28,7 @@ struct Actor *Func_02000910();
 
 void Func_02000054(void) {
   if (gMainRoutineWork.renderMode == 10)
-    Func_080dbdd4(0x2200000, 0x1100000, 0, 255);
+    MapGrid_SetCellBehavior(0x2200000, 0x1100000, 0, 255);
 }
 
 void Func_0200007c(void) { Func_080dbdd4(0x2200000, 0x1100000, 0, 6); }
@@ -37,7 +37,7 @@ void Func_02000090(s32 id) {
   struct Actor *object;
 
   if (gData_02002618 == 0) {
-    object = Actor_GetById(8);
+    object = Actor_Get(8);
     if (id == 30) {
       Actor_SetPosition(8, PIXELS(296), PIXELS(600));
       object->y = 0;
@@ -57,8 +57,8 @@ void Func_020000e8(s32 id) {
   struct Actor *motion;
 
   if (gData_02002618 == 0 &&
-      Actor_GetById(gMainRoutineWork.currentOwner)->y > 0) {
-    object = Actor_GetById(8);
+      Actor_Get(gMainRoutineWork.currentOwner)->y > 0) {
+    object = Actor_Get(8);
     if (id == 50) {
       Actor_SetPosition(8, PIXELS(488), PIXELS(280));
       object->y = PIXELS(32);
@@ -84,9 +84,9 @@ void Func_020000e8(s32 id) {
 }
 
 void Func_0200018c(s32 arg) {
-  if (Actor_GetById(gMainRoutineWork.currentOwner)->y == 0 &&
+  if (Actor_Get(gMainRoutineWork.currentOwner)->y == 0 &&
       Func_02001978(arg) != 0)
-    Import_EventSetExitRequest(13);
+    FieldEvent_SetExitRequest(13);
 }
 
 void Func_020001bc(s32 arg) {
@@ -94,16 +94,16 @@ void Func_020001bc(s32 arg) {
   s32 x;
   s32 z;
 
-  if (Actor_GetById(gMainRoutineWork.currentOwner)->y == 0) {
-    leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  if (Actor_Get(gMainRoutineWork.currentOwner)->y == 0) {
+    leader = Actor_Get(gMainRoutineWork.currentOwner);
     x = leader->x >> 20;
     z = leader->z >> 20;
     if (x == 18 && z == 34)
-      Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
+      FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
     if (x == 8 && z == 39)
-      Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
+      FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
     if (Func_02001978(arg) != 0)
-      Import_EventSetExitRequest(14);
+      FieldEvent_SetExitRequest(14);
   }
 }
 
@@ -112,7 +112,7 @@ void Func_02000228(s32 arg) {
   s32 x;
   s32 z;
 
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader->y <= 0) {
     Func_0200018c(arg);
   } else {

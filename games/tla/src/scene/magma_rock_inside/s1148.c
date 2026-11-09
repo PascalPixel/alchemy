@@ -17,20 +17,19 @@ void Func_02004bd4(void);
 void Func_02004c98(struct Actor *object, s32 a);
 void Func_02004d40(void);
 void Func_02004d48(void);
-void Func_02004e90(s32 value);
 
 void Func_02001148(void) {
   struct MagmaRockInsideWork *work = Ram_HeapSlots->effectWork;
   struct Actor *object;
 
   Func_02004d40();
-  Func_02004e90(0);
+  FieldEvent_ResolvePendingActions(0);
   FieldEvent_Wait(10);
   object = work->target;
   object->update = NULL;
-  Actor_SetPartAttribute(object, 7);
+  Actor_SetSpriteColor(object, 7);
   FieldEvent_Wait(3);
-  Actor_SetPartAttribute(work->target, 0);
+  Actor_SetSpriteColor(work->target, 0);
   FieldEvent_Wait(1);
   Func_02000ed0(work->target);
   Func_02004d48();

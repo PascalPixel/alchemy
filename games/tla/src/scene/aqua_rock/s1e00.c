@@ -6,12 +6,6 @@ struct EventWork1cc {
   struct Actor *object;
 };
 
-void Func_080d489c(s32 id, s32 effect);
-
-static inline void Actor_SetAttachedEffect(s32 actorId, s32 effect) {
-  Func_080d489c(actorId, effect);
-}
-
 void Func_02001e00(void) {
   struct Actor *anchor;
   s32 owner;

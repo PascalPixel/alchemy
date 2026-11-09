@@ -1,5 +1,6 @@
 #include "garoh.h"
 #include "field_sprite.h"
+#include "event_inline.h"
 
 struct SpawnObject {
   u8 unk00[0x50];
@@ -14,7 +15,6 @@ extern u8 gData_02006330[];
 
 void Func_02005164(struct SpawnObject *object, s32 mode);
 void Func_0200516c(struct SpawnObject *object, const void *script);
-struct SpawnObject *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 
 void Func_0200132c(void) {
   s32 b = 10;
@@ -38,7 +38,7 @@ void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer) {
   struct SpawnObject *object;
   struct FieldSprite *sprite;
 
-  object = Import_ActorCreate(0x1e8, x, y, z);
+  object = (struct SpawnObject *)FieldActor_Create(0x1e8, x, y, z);
   if (object != 0) {
     sprite = object->sprite;
     Func_02005164(object, 1);

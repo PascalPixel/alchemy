@@ -11,7 +11,7 @@ s32 Func_02004dac();
 extern u8 gData_0200559c[];
 
 s32 Func_020006f8(void) {
-  Func_02004dac(((s32)Actor_GetById(9)), (s32)gData_0200559c);
+  Func_02004dac(((s32)Actor_Get(9)), (s32)gData_0200559c);
   Actor_SetAttachedEffect(0xa, 0x102);
   return 0;
 }

@@ -39,7 +39,7 @@ void Func_020020f0(s32 value);
   ((a) - (b) >= 0 ? (a) - (b) <= (limit) : (b) - (a) <= (limit))
 
 void Func_02000550(void) {
-  struct Orbiter *actor = ((struct Orbiter *)Actor_GetById(9));
+  struct Orbiter *actor = ((struct Orbiter *)Actor_Get(9));
   u16 zero = 0;
   s32 direction;
   s32 i;
@@ -51,14 +51,14 @@ void Func_02000550(void) {
   if (Func_02005834(0) == 1) {
     direction = gData_02005af0;
     Func_020020f0(0);
-    GameFlag_SetBit(515);
+    Event_SetFlag(515);
     /* FAKEMATCH: a u16 local stores its 0 from a register (movs, strh); the
      * constant would load from the pool (differ 11). */
     *(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x166) = zero;
     i = 0;
   loop:
     actor->phase += gData_02006b38[i] * direction;
-    wait(1);
+    System_Wait(1);
     if (++i <= 24)
       goto loop;
   }
@@ -68,7 +68,7 @@ struct Orbiter *Func_020005b4(struct Orbiter *origin, s32 id) {
   s32 i;
 
   for (i = 8; i < 64; i++) {
-    struct Orbiter *object = ((struct Orbiter *)Actor_GetById(i));
+    struct Orbiter *object = ((struct Orbiter *)Actor_Get(i));
 
     if (object != NULL && object->kind == 1 && object->animation[10] != NULL &&
         *(s16 *)object->animation[10] == id) {
@@ -92,9 +92,9 @@ struct Orbiter *Func_02000624(struct Orbiter *origin, s32 id) {
   /* FAKEMATCH(temporary): the facing read into a local before the call; as
    * origin->facing in the call, 9 of 63 instructions differ in tla-en. */
   facing = origin->facing;
-  Vector_AddPolarOffsetFar(0x100000, facing, position);
+  FieldVector_AddPolarOffset(0x100000, facing, position);
   for (i = 8; i < 64; i++) {
-    struct Orbiter *object = ((struct Orbiter *)Actor_GetById(i));
+    struct Orbiter *object = ((struct Orbiter *)Actor_Get(i));
 
     if (object != NULL && object->kind == 1 && object->animation[10] != NULL &&
         *(s16 *)object->animation[10] == id) {

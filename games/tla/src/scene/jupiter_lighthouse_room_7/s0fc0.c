@@ -26,28 +26,28 @@ s32 Func_02000fc0(void) {
     Actor_SetPosition(14, PIXELS(136), PIXELS(328));
     Actor_SetPosition(15, PIXELS(168), PIXELS(328));
   }
-  if (!GameFlag_Test(0x109) && Func_02000290() != 2) {
-    GameFlag_ClearBit(0xa10);
-    GameFlag_ClearBit(0xa12);
-    GameFlag_ClearBit(0xa14);
-    GameFlag_ClearBit(0xa11);
-    GameFlag_ClearBit(0xa13);
-    GameFlag_ClearBit(0xa15);
+  if (!Event_GetFlag(0x109) && Func_02000290() != 2) {
+    Event_ClearFlag(0xa10);
+    Event_ClearFlag(0xa12);
+    Event_ClearFlag(0xa14);
+    Event_ClearFlag(0xa11);
+    Event_ClearFlag(0xa13);
+    Event_ClearFlag(0xa15);
   }
   if (Func_02000290() == 2)
-    GameFlag_ClearBit(0xa16);
+    Event_ClearFlag(0xa16);
   else
-    GameFlag_SetBit(0xa16);
-  if (GameFlag_Test(0xa17))
-    GameFlag_ClearBit(0xa1a);
+    Event_SetFlag(0xa16);
+  if (Event_GetFlag(0xa17))
+    Event_ClearFlag(0xa1a);
   else
-    GameFlag_SetBit(0xa1a);
-  Actor_GetById(18)->motionFlags = 0;
-  Actor_GetById(19)->motionFlags = 0;
-  Actor_GetById(20)->motionFlags = 0;
+    Event_SetFlag(0xa1a);
+  Actor_Get(18)->motionFlags = 0;
+  Actor_Get(19)->motionFlags = 0;
+  Actor_Get(20)->motionFlags = 0;
   Func_020002f0();
-  if (!GameFlag_Test(0xa1a)) {
-    object = Actor_GetById(20);
+  if (!Event_GetFlag(0xa1a)) {
+    object = Actor_Get(20);
     value = Func_02002b5c(object->x, object->z, 0);
     Func_02002b54(object->x, object->z, 0, value + 2);
     Func_02002c4c(object->x, object->z, 0, 0x80);

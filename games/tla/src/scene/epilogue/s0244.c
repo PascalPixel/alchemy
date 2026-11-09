@@ -8,7 +8,6 @@
 // struct (the stores then stay, but through a base register: 75 differ).
 
 #include "types.h"
-#include "call.h"
 
 extern s32 gData_02000a28;
 

@@ -9,7 +9,7 @@ void Func_0200561c(void *animation, s32 a);
 void Func_02005624(struct Actor *object, s32 mode);
 
 void Func_020020b0(s32 id, s32 direction, s32 value) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
   void *animation = object->animation;
 
   Func_02005624(object, gData_02005940[(direction + 1) & 3]);

@@ -24,7 +24,7 @@ void Func_020009b8(s32 x, s32 y, s16 part, s16 a3) {
 
   for (i = 0; i != 16;) {
     struct Actor *object =
-        ((struct Actor *)Import_ActorCreate(0x2a0, x, y, 0x980000));
+        (FieldActor_Create(0x2a0, x, y, 0x980000));
     s32 angle = i << 12;
 
     Vector_AddPolarOffsetFar_(0x200000, angle, &object->x);
@@ -37,7 +37,7 @@ void Func_020009b8(s32 x, s32 y, s16 part, s16 a3) {
     object->gravity = y;
     object->motionFlags = 0;
     Animation_SetStateFlags(object, 1);
-    Actor_SetPartAttribute(object, (u16)part);
+    Actor_SetSpriteColor(object, (u16)part);
     Scene_SetActorSpritePriority(object, 2);
     Func_020032e0(object, 7);
     Actor_SetSingleChildFlags(object, 0);

@@ -5,7 +5,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 void Func_02001eb8(void) {
   s32 frame = -1;
 
-  if (GameFlag_Test(0x348)) {
+  if (Event_GetFlag(0x348)) {
     frame = 62;
   } else {
     switch (gData_020035f0) {

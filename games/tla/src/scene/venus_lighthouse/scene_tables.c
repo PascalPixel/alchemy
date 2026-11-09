@@ -11,11 +11,12 @@
 #include "scene_tables.h"
 #include "field_event.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 #define Actor_SetSingleChildFlags                                     \
   ((void (*)(void *, s32))Actor_SetSingleChildFlags)
 
-#define Actor_SetPartAttribute ((void (*)(void *, s32))Actor_SetPartAttribute)
+#define Actor_SetSpriteColor ((void (*)(void *, s32))Actor_SetPartAttribute)
 
 enum { ENTRANCE_ALTERNATE_PLACEMENTS = 99 };
 
@@ -26,7 +27,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 s32 SceneActor_ApplyCounterLowBitsAsMode(struct FieldActor *actor) {
-  Actor_SetPartAttribute(actor, actor->timer & 15);
+  Actor_SetSpriteColor(actor, actor->timer & 15);
   return 0;
 }
 

@@ -4,6 +4,7 @@
 #include "iwram_call.h"
 #include "io_write_queue.h"
 #include "system/io_reg.h"
+#include "event_inline.h"
 
 extern s32 gData_020024c8;
 extern u16 Data_020029d8[], Data_020029f8[], Data_02002a18[], Data_02002a38[];

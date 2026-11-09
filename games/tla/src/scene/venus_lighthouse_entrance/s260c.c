@@ -48,11 +48,11 @@ void Func_0200260c(struct Actor *source, s32 x, s32 y, s32 z) {
   state->x = x;
   state->y = y;
   state->z = z;
-  Vector_AddPolarOffsetFar(Random16Far() * 2 + 0x20000, angle, &state->x);
+  FieldVector_AddPolarOffset(Random16Far() * 2 + 0x20000, angle, &state->x);
   state->velocityX = 0;
   state->velocityY = (Random16Far() >> 1) + 0xc000;
   state->velocityZ = 0;
-  Vector_AddPolarOffsetFar(Random16Far() >> 2, angle, &state->velocityX);
+  FieldVector_AddPolarOffset(Random16Far() >> 2, angle, &state->velocityX);
   *next = *next + 1;
   *next = *next % 96;
 }

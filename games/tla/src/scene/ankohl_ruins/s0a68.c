@@ -2,33 +2,33 @@
 
 void Func_02000a68(s32 unused, s32 objectId) {
   register s32 id asm("r5") = objectId;
-  register struct Actor *object asm("r6") = Actor_GetById(id);
+  register struct Actor *object asm("r6") = Actor_Get(id);
   s16 frames = 60;
 
   if (object->z >> 20 == 31) {
     object->motionFlags = 3;
     Func_02002e34(object, 3);
-    Sound_Play(204);
+    Event_PlaySound(204);
     while (frames != 0) {
-      wait(1);
+      System_Wait(1);
       if (object->velocityY == 0)
         break;
       frames--;
     }
-    Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
+    Actor_SetPosition(id, 0, 0);
     if (id == 10)
-      GameFlag_SetBit(0x9d2);
+      Event_SetFlag(0x9d2);
     if (id == 11)
-      GameFlag_SetBit(0x9d3);
+      Event_SetFlag(0x9d3);
     if (id == 12)
-      GameFlag_SetBit(0x9d4);
+      Event_SetFlag(0x9d4);
     if (id == 13)
-      GameFlag_SetBit(0x9d5);
+      Event_SetFlag(0x9d5);
     if (id == 14)
-      GameFlag_SetBit(0x9d6);
+      Event_SetFlag(0x9d6);
     if (id == 15)
-      GameFlag_SetBit(0x9d7);
+      Event_SetFlag(0x9d7);
     if (id == 16)
-      GameFlag_SetBit(0x9d8);
+      Event_SetFlag(0x9d8);
   }
 }

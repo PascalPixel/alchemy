@@ -183,7 +183,7 @@ void Func_020006f4(void) {
       }
     }
   } else {
-    if (GameFlag_Test(0xaa3))
+    if (Event_GetFlag(0xaa3))
       Event_SetMessageId(MsgYupANice);
     else
       Event_SetMessageId(MsgIVeBeenFeeling);

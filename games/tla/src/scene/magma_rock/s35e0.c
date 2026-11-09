@@ -23,14 +23,14 @@ void Func_020035e0(void) {
   s32 angle;
   u8 zero;
 
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader == 0)
     return;
   // Default: without it loop.c lifts the set of zero out of the loop.
   zero = 0;
   state = 0;
   for (i = 0; i <= 16; i++) {
-    effect = (struct FieldEffect *)Import_ActorCreate(285, leader->x, leader->y,
+    effect = (struct FieldEffect *)FieldActor_Create(285, leader->x, leader->y,
                                                       leader->z);
     if (effect != 0) {
       state = Func_02003bd4(effect->sprite, state);
@@ -43,7 +43,7 @@ void Func_020035e0(void) {
       angle = i << 12;
       effect->velocity.x = Math_Cosine(angle);
       effect->velocity.y = zero;
-      effect->velocity.z = Math_Sine(angle);
+      effect->velocity.z = Math_Sin(angle);
       effect->velocity.x += effect->velocity.x >> 1;
       effect->velocity.x += (Random16Far() * 0xc000 >> 16) - 0x6000;
       effect->velocity.z += (Random16Far() * 0x6000 >> 16) - 0x3000;

@@ -12,18 +12,18 @@ void Func_020005cc();
 
 s32 Func_02000078(void) {
   Func_020005c4();
-  Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgMikasallaInteriors18);
-  Event_ShowMessageAndWait(8, 0);
+  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_SetMessageId((s32)MsgMikasallaInteriors18);
+  Event_ShowMessage(8, 0);
   Func_020005cc();
   return 0;
 }
 
 s32 Func_020000a0(void) {
   Func_020005c4();
-  Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgMikasallaInteriors32);
-  Event_ShowMessageAndWait(9, 0);
+  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_SetMessageId((s32)MsgMikasallaInteriors32);
+  Event_ShowMessage(9, 0);
   Func_020005cc();
   return 0;
 }

@@ -18,9 +18,9 @@ s32 Func_02000290(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   work->screenEffect = 0x204;
-  Actor_SetSpritePriority(64, 3);
+  FieldActor_SetSpritePriority(64, 3);
   gData_02002618 = 0;
-  Actor_GetById(8)->motionFlags = 0;
+  Actor_Get(8)->motionFlags = 0;
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
     Func_0200130c(33, 0x280, 0x380, 48, 1);
     Func_02001a28(0, 0, 0x204);

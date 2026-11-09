@@ -1,6 +1,7 @@
 #include "types.h"
 #include "io_reg.h"
 #include "actor.h"
+#include "event_inline.h"
 
 /// One object the beam reaches, as Func_02001df0 records it.
 struct MarsLighthouseBeamTarget {
@@ -24,10 +25,7 @@ struct MarsLighthouseBeam {
 
 extern u8 gData_020023c4[];
 
-s32 GameFlag_Test(s32 flag);
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-s32 Task_Add(void (*func)(void), s32 priority);
 void Func_02001bf8(void);
 
 void Func_02001df0(u16 *targets, u16 *stops, s32 a2, s32 a3) {
@@ -37,7 +35,7 @@ void Func_02001df0(u16 *targets, u16 *stops, s32 a2, s32 a3) {
   s32 id;
   s32 i;
 
-  if (GameFlag_Test(0x109) == 0) {
+  if (Event_GetFlag(0x109) == 0) {
     i = 0;
     id = *targets++;
     {
@@ -58,7 +56,7 @@ void Func_02001df0(u16 *targets, u16 *stops, s32 a2, s32 a3) {
         s32 one;
 
         flags &= 0xf0;
-        object = Actor_GetById(id);
+        object = Actor_Get(id);
         targets++;
         if (object != NULL) {
           Actor_SetSingleChildFlags(object, 0);
@@ -67,7 +65,7 @@ void Func_02001df0(u16 *targets, u16 *stops, s32 a2, s32 a3) {
             object->collisionFlags = 0;
           target->active = one;
           target->flags = flags;
-          target->object = Actor_GetById(id);
+          target->object = Actor_Get(id);
           target->height = height << 16;
           target->index = i;
           target++;
@@ -128,5 +126,5 @@ void Func_02001df0(u16 *targets, u16 *stops, s32 a2, s32 a3) {
       REG_BLDCNT = control;
     }
   }
-  Task_Add(Func_02001bf8, 0x480);
+  Task_AddFrame(Func_02001bf8, 0x480);
 }

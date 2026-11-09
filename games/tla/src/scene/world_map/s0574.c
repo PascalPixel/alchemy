@@ -24,25 +24,25 @@ void Func_02000574(void) {
   if (GameFlag_Test(0x8de) == 0)
     return;
   kind = Func_02004d68(gMainRoutineWork.currentOwner);
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  ship = Actor_GetById(8);
+  leader = Actor_Get(gMainRoutineWork.currentOwner);
+  ship = Actor_Get(8);
   dx = (leader->x - ship->x) >> 16;
   dz = (leader->z - ship->z) >> 16;
   distance = dx * dx + dz * dz;
   if (kind != 8 && distance > 255)
     return;
   Func_02004c20();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   gMainRoutineWork.renderMode = 7;
   gMainRoutineWork.ownerOverride = 1;
-  GameFlag_SetBit(0x176);
+  Event_SetFlag(0x176);
   gMainRoutineWork.savedX = ship->x;
   gMainRoutineWork.savedZ = ship->z;
   gMainRoutineWork.unk280 = ship->angle;
-  Sound_Play(78);
+  Event_PlaySound(78);
   Func_02004b18(leader, 6);
-  wait(6);
-  Sound_Play(152);
+  System_Wait(6);
+  Event_PlaySound(152);
   Actor_SetSingleChildFlags(leader, 0);
   Func_02004b18(leader, 7);
   leader->speedLimit = 0x30000;
@@ -50,12 +50,12 @@ void Func_02000574(void) {
   leader->velocityY = 0x40000;
   leader->terrainHeight = 0x40000;
   Func_02004b48(leader);
-  Actor_SetMoveTarget(leader, ship->x, 0, ship->z);
-  Script_WaitForEventTimeout(leader);
+  FieldActor_SetMoveTarget(leader, ship->x, 0, ship->z);
+  Actor_WaitForMove(leader);
   Func_02004b18(leader, 6);
-  wait(6);
+  System_Wait(6);
   leader->terrainHeight = 0;
-  Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner, 0, 0);
+  Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
   Func_02004dc8();
   Func_02004dc0();
   Func_02004c28();
@@ -63,5 +63,5 @@ void Func_02000574(void) {
 #if TLA_PATCH_1
   work->exit = 0;
 #endif
-  Func_080d46a4(0x10000, 30);
+  FieldEffect_ScheduleRatioTransition(0x10000, 30);
 }

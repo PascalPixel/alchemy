@@ -4,24 +4,21 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "field_sprite.h"
+#include "event_inline.h"
 
 extern const s32 gData_02007044[];
 extern s32 Data_02007064;
 
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
-void Func_020056c0(s32 sound);
 s32 Func_020056a0(s32 x, s32 z, s32 layer);
 void Func_02005658(s32 *position);
 s32 Func_02001868(s32 *from, s32 *to);
-s32 GameFlag_Test(s32 flag);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 void Func_02005490(struct Actor *object, const s32 *script);
 
 void Func_02001894(struct Actor *self) {
   u8 *work = Ram_HeapSlots->eventWork;
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 position[3];
   s32 distance;
   s32 near;
@@ -33,7 +30,7 @@ void Func_02001894(struct Actor *self) {
   }
   Actor_SetAnimationSpeed(self, 16);
   if ((++*(u16 *)&self->action & 31) == 31)
-    Func_020056c0(231);
+    Event_PlaySound(231);
   {
     s8 *to = self->animation;
     s8 *from = leader->animation;
@@ -58,7 +55,7 @@ void Func_02001894(struct Actor *self) {
         near = 0;
         if (Func_02001868(&leader->x, &self->x) <= 12 && distance < 0xc0000)
           near = 1;
-        if (near && !GameFlag_Test(260)) {
+        if (near && !Event_GetFlag(260)) {
           leader->angle = self->angle;
           leader->watchedObject = self;
           leader->priorityFlags &= ~1;
@@ -83,7 +80,7 @@ void Func_02001894(struct Actor *self) {
         } while (0);
         self->x += multiply(cosine, speed);
       }
-      self->z += Iwram_MulQ16(Math_Sine(self->angle), self->speedLimit);
+      self->z += Iwram_MulQ16(Math_Sin(self->angle), self->speedLimit);
       return;
     }
   }
@@ -93,7 +90,7 @@ stop:
     *((u8 *)self + 0x63) = zero;
     self->update = zero;
     Func_02005490(self, gData_02007044);
-    Func_020056c0(228);
+    Event_PlaySound(228);
     Data_02007064 = zero;
   }
 }

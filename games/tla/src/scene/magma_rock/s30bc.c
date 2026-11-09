@@ -38,28 +38,28 @@ void Func_020030bc(u16 *list) {
   Func_02003b14(8, gMainRoutineWork.currentOwner);
   Func_02003b14(9, gMainRoutineWork.currentOwner);
   Func_02003b14(10, gMainRoutineWork.currentOwner);
-  wait(1);
+  System_Wait(1);
   Func_020030a4(8);
   Func_020030a4(9);
   Func_020030a4(10);
-  Actor_SetModeById(9, 0);
-  wait(1);
-  Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
-  wait(1);
+  Actor_SetAnimation(9, 0);
+  System_Wait(1);
+  Actor_SetPosition(8, 0, 0);
+  Actor_SetPosition(9, 0, 0);
+  Actor_SetPosition(10, 0, 0);
+  System_Wait(1);
   if (*list == 0xffff)
     goto done;
 next:
   id = list[0];
-  object = Actor_GetById(id);
+  object = Actor_Get(id);
   flag = list[1];
   nextFlag = flag + 1;
   cells = map->layers[object->terrainId].cells;
   shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
   object->unk5c[0] = 3;
-  if (GameFlag_Test(nextFlag)) {
-    Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
+  if (Event_GetFlag(nextFlag)) {
+    Actor_SetPosition(id, 0, 0);
   } else {
     s32 shape;
     u8 *slot;
@@ -73,12 +73,12 @@ next:
     Func_02003b3c(id);
     cell->attributeB = 128;
     *slot = Func_02003c24(object->terrainId, shape, (height >> 19) + 4);
-    if (GameFlag_Test(flag))
+    if (Event_GetFlag(flag))
       ObjectVisual_CopyAttributes(id, 9);
   }
   list += 2;
   if (*list != 0xffff)
     goto next;
 done:
-  wait(10);
+  System_Wait(10);
 }

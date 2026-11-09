@@ -22,11 +22,7 @@ struct WarpWork {
 
 extern struct WarpWork gData_020070a8;
 
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
-s32 GameFlag_GetByte(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);
-struct Actor *Func_020055e8(void);
 void Func_020054b0(void);
 void Func_02003af0(void);
 void Func_02003b78(struct WarpWork *work, struct WarpEntry *entry);
@@ -34,11 +30,11 @@ void Func_02003be8(struct WarpWork *work, struct WarpEntry *entry);
 void Func_02003d80(void);
 
 void Func_02003fc8(s32 dx, s32 dz, s32 value) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   u8 *event = Ram_HeapSlots->eventWork;
   struct WarpWork *work = &gData_020070a8;
-  s32 x = GameFlag_GetByte(work->positionFlag);
-  s32 z = GameFlag_GetByte(work->positionFlag + 8);
+  s32 x = FieldGameFlag_GetByte(work->positionFlag);
+  s32 z = FieldGameFlag_GetByte(work->positionFlag + 8);
 
   if (x != 0 || z != 0) {
     struct Actor *other;

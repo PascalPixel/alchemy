@@ -322,9 +322,9 @@ void Func_0200020c(s32 stage) {
     }
     wait(1);
   }
-  Task_RemoveFar(Func_0200005c);
+  FieldTask_Remove(Func_0200005c);
   if (stage != 4) {
-    Camera_SetSpeedParameters(0x60000, 0xc000);
+    FieldCamera_SetSpeed(0x60000, 0xc000);
     Func_0200207c();
     Camera_MoveWithinMapBounds_(gData_02003d48[stage][0] << 16,
                                 gData_02003d48[stage][1] << 16, 1);
@@ -347,5 +347,5 @@ void Func_0200020c(s32 stage) {
   Func_02001f74();
   QueueIoWriteDelay2(0x04000052, gData_02003dbc);
   QueueIoWriteDelay2(0x04000050, 0);
-  GameFlag_SetBit(0x101);
+  Event_SetFlag(0x101);
 }

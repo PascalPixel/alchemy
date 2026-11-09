@@ -24,29 +24,29 @@ void Func_02000d30(void) {
   Task_AddFrame(Func_02000a68, 0x480);
   Func_0200535c();
   Func_02005364(0, 10, 11);
-  t4 = GameFlag_Test(0x310);
+  t4 = Event_GetFlag(0x310);
   if (t4 == 0)
     goto L_02008da6;
   if (FIELD_AT(&gMainRoutineWork, s16, 482) != 12)
     goto L_02008d72;
-  BattleEffect_ApplyColorToTargetBuffer(0x2048c9, 1);
+  PaletteFade_ApplyTarget(0x2048c9, 1);
   goto L_02008d7e;
 L_02008d72:
-  BattleEffect_ApplyColorToTargetBuffer(0x10007, 1);
+  PaletteFade_ApplyTarget(0x10007, 1);
 L_02008d7e:
-  BattleEffect_StartBufferInterpolation(1);
+  PaletteFade_Interpolate(1);
   Event_WaitTransitionFrames();
   Func_0200538c();
   Func_020003d8();
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
-  Task_Add((s32)Func_020002a4, 0xc80);
+  PaletteFade_ApplyTarget(0x10000, 1);
+  Task_AddFrame((s32)Func_020002a4, 0xc80);
   goto L_02008dea;
 L_02008da6:
-  Map_CopyCellPictureIndicesRect(20, 7, 9, 7, 5, 5);
-  Map_CopyCellPictureIndicesRect(20, 71, 9, 71, 5, 5);
-  Map_CopyCellPictureIndicesRect(84, 7, 73, 7, 5, 5);
+  MapGrid_CopyCellsTo(20, 7, 9, 7, 5, 5);
+  MapGrid_CopyCellsTo(20, 71, 9, 71, 5, 5);
+  MapGrid_CopyCellsTo(84, 7, 73, 7, 5, 5);
   Func_02000390();
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
+  PaletteFade_ApplyTarget(0x10000, 1);
   Func_02000280();
 L_02008dea:
 }

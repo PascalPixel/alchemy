@@ -1,6 +1,5 @@
 #include "types.h"
 #include "actor.h"
-#include "flag_call.h"
 #include "scene_tables.h"
 #include "event_inline.h"
 
@@ -33,10 +32,10 @@ static __inline__ void ObjCall2bf8(s32 id, s32 a) {
 }
 
 void Func_0200051c(void) {
-  if (Flag_IsSet(0x910)) {
+  if (Event_GetFlag(0x910)) {
     Sound_Play(123);
     Import_EventSetExitRequest(16);
-  } else if (!Flag_IsSet(0x280)) {
+  } else if (!Event_GetFlag(0x280)) {
     Func_02002b28();
     Event_ResolvePendingActions(0);
     PLACE(26, PIXELS(744), PIXELS(257), FACING_SOUTH);
@@ -45,14 +44,14 @@ void Func_0200051c(void) {
     ObjSetPos(4, 720, 244);
     ObjCall2bf8(4, FACING_SOUTHEAST);
     PLACE(4, PIXELS(720), PIXELS(244), FACING_SOUTHEAST);
-    Flag_Set(0x280);
+    Event_SetFlag(0x280);
     Func_02000404();
     Func_02002b30();
   }
 }
 
 void Func_020005b8(void) {
-  if (!Flag_IsSet(0x280)) {
+  if (!Event_GetFlag(0x280)) {
     Func_02002b28();
     Event_ResolvePendingActions(0);
     PLACE(26, PIXELS(744), PIXELS(256), FACING_SOUTH);
@@ -61,7 +60,7 @@ void Func_020005b8(void) {
     ObjSetPos(4, 720, 244);
     ObjCall2bf8(4, FACING_SOUTHEAST);
     PLACE(4, PIXELS(720), PIXELS(244), FACING_SOUTHEAST);
-    Flag_Set(0x280);
+    Event_SetFlag(0x280);
     Func_02000490();
     Func_02002b30();
   }

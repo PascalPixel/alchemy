@@ -60,18 +60,18 @@ void Func_02000468(void) { Func_02001d44_(52, 69, 1, 1, 53, 69, 2); }
 void Func_02000488(void) { Func_02001d44_(53, 64, 1, 1, 52, 64, 2); }
 
 void Func_020004a8(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
 
   Func_02001d44_(59, 64, 4, 3, 49, 71, 2);
-  if (GameFlag_Test(0xfbb) == 0) {
+  if (Event_GetFlag(0xfbb) == 0) {
     Func_02001c2c_(69, PIXELS(808), PIXELS(1176));
     if (leader->x >> 20 == 50 && leader->z >> 20 == 73) {
       Func_02001bcc();
-      Event_ResolvePendingActions(0);
-      Func_080d489c(gMainRoutineWork.currentOwner, 0x102);
-      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
+      FieldEvent_ResolvePendingActions(0);
+      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
+      Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);
       leader->velocityY = PIXELS(6);
-      Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
+      FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Func_02001bd4();
     }
   }

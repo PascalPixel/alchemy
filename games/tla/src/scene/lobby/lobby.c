@@ -10,7 +10,6 @@
 #include "serial.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
-#include "flag_call.h"
 #include "actor.h"
 #include "event_inline.h"
 
@@ -51,13 +50,13 @@ s32 Func_02000134(void) {
   z = Actor_GetById(4)->z;
 
   if (z > 0xe00000)
-    Flag_Clear(0x304);
+    Event_ClearFlag(0x304);
   if (work->raisedTrigger != 2) {
     Func_0200006c(0);
     /* FAKEMATCH: the wait counter's address taken once before the test, where
      * the native loads it for both branches; written in each branch it is
      * loaded in each (differ 11). */
-    set = Flag_IsSet(0x303);
+    set = Event_GetFlag(0x303);
     waitCounter = &gData_020022b8;
     if (!set) {
       if (++*waitCounter > 25) {
@@ -81,27 +80,27 @@ s32 Func_02000134(void) {
     }
     if (gData_020022b8 == 0) {
       if (Func_0200006c(0) && (Func_0200006c(1) || Func_0200006c(2))) {
-        Flag_Set(0x201);
-        if (Flag_IsSet(0x202))
+        Event_SetFlag(0x201);
+        if (Event_GetFlag(0x202))
           work->raisedTrigger = 1;
         result = 1;
       } else {
-        Flag_Clear(0x201);
+        Event_ClearFlag(0x201);
         result = 0;
       }
     }
-    if (Flag_IsSet(0x201) && Flag_IsSet(0x202) && !Flag_IsSet(0x200))
+    if (Event_GetFlag(0x201) && Event_GetFlag(0x202) && !Event_GetFlag(0x200))
       work->raisedTrigger = 1;
   }
-  if ((Flag_IsSet(0x201) || Flag_IsSet(0x202)) && !Flag_IsSet(0x173) &&
+  if ((Event_GetFlag(0x201) || Event_GetFlag(0x202)) && !Event_GetFlag(0x173) &&
       !Func_0200006c(0) && gData_020022b8 > 24) {
     work->raisedTrigger = 2;
-    Flag_Set(0x205);
-    Flag_Clear(0x201);
-    Flag_Clear(0x202);
+    Event_SetFlag(0x205);
+    Event_ClearFlag(0x201);
+    Event_ClearFlag(0x202);
     LinkLobby_WriteSlotValue(4);
   }
-  if (Flag_IsSet(0x205))
+  if (Event_GetFlag(0x205))
     work->raisedTrigger = 2;
   return result;
 }

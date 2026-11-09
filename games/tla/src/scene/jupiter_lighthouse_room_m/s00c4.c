@@ -2,6 +2,7 @@
 #include "io_reg.h"
 #include "dma.h"
 #include "io_write.h"
+#include "event_inline.h"
 
 extern u8 gCpuLoadDisplayEnabled;
 extern char ResourceId_LightningTiles;
@@ -12,18 +13,8 @@ void *Heap_Alloc(s32 size);
 void Heap_Release(void *block);
 void *Resource_GetTableEntry(s32 id);
 void Func_0200468c(void *resource, void *destination);
-void BattleEffect_ApplyColorToSourceBuffer(s32 a, s32 b);
-void BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
-void BattleEffect_StartBufferInterpolation(s32 frames);
-void Sound_Play(s32 sound);
-void Map_SetScreenShake(s32 a, s32 b, s32 c);
-void Actor_Jump(s32 id, s32 mode, s32 value);
-void Actor_OffsetPositionAndReset(s32 id, s32 dx, s32 dz);
-void Func_0802b450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-s32 Func_080dbdd4(s32 x, s32 z, s32 a, s32 b);
 void Func_020046b4(void);
 void Func_020046a4(void);
-void Func_0803f9c0(s32 hue, s32 brightness);
 void Func_0200354c(void);
 
 static __inline__ void Func_0200474c_(s32 a, s32 b, s32 c, s32 d, s32 e,
@@ -85,43 +76,43 @@ void Func_020000c4(void) {
   REG_BLDCNT = 0x3f41;
   gBgScroll[0] = -104;
   gBgScroll[1] = 16;
-  wait(30);
+  System_Wait(30);
   Func_02004924_(0x10003, 0);
   Func_0200491c_(0x7fff, 0);
-  BattleEffect_StartBufferInterpolation(1);
-  wait(1);
+  PaletteFade_Interpolate(1);
+  System_Wait(1);
   Func_02004924_(0x7fff, 0);
   Func_0200491c_(0x10003, 0);
-  BattleEffect_StartBufferInterpolation(8);
+  PaletteFade_Interpolate(8);
   REG_DISPCNT |= 0x100;
-  Sound_Play(144);
+  Event_PlaySound(144);
   Func_0200475c_(0x50000, 0x70000, 0x10000);
   Func_0200475c_(-1, -1, 0xe666);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
-  Actor_Jump(4, 6, 0);
-  Actor_GetById(4)->actionFlags &= ~1;
-  Actor_OffsetPositionAndReset(4, -16, 0);
-  Actor_GetById(20)->update = Func_0200354c;
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
+  FieldActor_Jump(4, 6, 0);
+  Actor_Get(4)->actionFlags &= ~1;
+  Actor_WalkBy(4, -16, 0);
+  Actor_Get(20)->update = Func_0200354c;
   for (i = 0; i != 32; i++) {
     REG_BLDALPHA = (16 - (i >> 1)) | 0x1000;
-    wait(1);
+    System_Wait(1);
   }
   Func_0200474c_(104, 42, 5, 11, 61, 42);
   Func_0200474c_(106, 52, 1, 1, 63, 84);
-  Func_080dbdd4(130 << 19, 160 << 16, 2, 236);
+  MapGrid_SetCellBehavior(130 << 19, 160 << 16, 2, 236);
   Func_02004924_(0x10003, 0);
   Func_0200491c_(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(60);
+  PaletteFade_Interpolate(60);
   Func_020046b4();
   Func_020046a4();
-  Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
+  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                 gMainRoutineWork.paletteGlow[1]);
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;
   REG_DISPCNT |= 0x100;
   gBgScroll[0] = 0;
   gBgScroll[1] = 0;
-  wait(1);
+  System_Wait(1);
   gCpuLoadDisplayEnabled = 1;
   Func_0200475c_(0, 0, 0);
 }

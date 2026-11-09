@@ -2,6 +2,7 @@
 /// Room entry for the five Gaia Rock rooms, chosen by scene, then by entrance
 /// in the first room.
 #include "version.h"
+#include "event_inline.h"
 
 #if TLA_PATCH_1
 
@@ -12,7 +13,7 @@
 #include "ram_buffer.h"
 #include "io_reg.h"
 
-#define Test(flag) Value1((s32 (*)())GameFlag_Test, flag)
+#define Test(flag) Event_GetFlag(flag)
 #define C1(f, a) Call1((void (*)())f, a)
 #define C2(f, a, b) Call2((void (*)())f, a, b)
 #define C3(f, a, b, c) Call3((void (*)())f, a, b, c)
@@ -45,11 +46,6 @@ extern u8 gData_020053d8[];
 extern u8 gData_0200578c[];
 extern u8 gData_02005e28[];
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-s32 GameFlag_GetByte(s32 flag);
-s32 PartyInventory_FindOwner(s32 item);
-struct Actor *Import_ActorCreate(s32 id, s32 x, s32 y, s32 z);
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 kind);
 s32 __modsi3(s32 numerator, s32 denominator);
 void Func_02002d30(void);
@@ -64,54 +60,21 @@ void Func_02004dac();
 void Func_02004dbc();
 void Func_02004dd4(void);
 void Func_02004ddc(void);
-void Map_CopyCellsRect();
-void Map_CopyCellAttributeRect();
-void Func_0802b450();
-void Map_SetScreenShake();
 void Func_02004e3c();
 void Func_02004e5c(void);
 void Func_02004e64(void);
-void Actor_SetHorizontalPositionWithTerrain();
-void Event_SetMessageId();
-void Event_ShowMessageAndWait();
-void Func_080d47b4();
-void Func_080d489c();
 void Func_02004f54(void);
 void Func_02004f5c();
 void Func_02004f64();
-void Import_EventSetExitRequest();
-void BattleEffect_ApplyColorToTargetBuffer();
-void BattleEffect_StartBufferInterpolation();
 void Func_02004fc4();
-void Event_ResolvePendingActions();
 void Func_02004fec();
 void Func_02005004();
-void Sound_Play();
-void Actor_ArmCallback();
-void Actor_Jump();
-void Actor_RefreshSelectorById();
-void Actor_ResetAndSetPosition();
-void Actor_ResetAndSetPositionInMode2();
-void Actor_SetAngleToward();
 void Actor_SetAnimationSpeed();
-void Actor_SetModeById();
-void Actor_SetMovementTypeById();
 void Actor_SetSingleChildFlags();
-void Actor_SetSpritePriority();
-void Actor_StartRepeatedMotion();
-void Actor_Stop();
-void Actor_WaitForMoveById();
 void Animation_ApplyChildValues();
-void Camera_FollowActor();
-void Camera_MoveWithinMapBounds();
 void Event_FinishScreenTransition(void);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Event_Wait();
-void GameFlag_ClearBit();
-void GameFlag_SetBit();
-void Motion_SetModeAndWaitAnimation();
-void wait();
 
 s32 Func_02002f30(void) {
   s32 message;
@@ -199,7 +162,7 @@ s32 Func_02002f30(void) {
       if (Test(0x927))
         goto end;
       C1(Sound_Play, 53);
-      found = Value1((s32 (*)())PartyInventory_FindOwner, 451);
+      found = FieldPartyInventory_FindOwner(451);
       none = -1;
       if (found != none) {
         s32 flag;
@@ -314,8 +277,7 @@ s32 Func_02002f30(void) {
         C2(Actor_SetAnimationSpeed, partner, 0);
         C1(Event_Wait, 15);
         C1(Sound_Play, 215);
-        object = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 285,
-                                        0x1e80000, -0x100000, 0x1590000);
+        object = FieldActor_Create(285, 0x1e80000, -0x100000, 0x1590000);
         C2(Actor_SetSingleChildFlags, object, 0);
         C2(Func_02004dac, object, gData_0200539c);
         C2(Func_02004d9c, object, 1);
@@ -326,8 +288,7 @@ s32 Func_02002f30(void) {
         C1(Event_Wait, 55);
         C1(Event_Wait, 5);
         C1(Sound_Play, 136);
-        object = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 412,
-                                        0x1e80000, -0x100000, 0x1590000);
+        object = FieldActor_Create(412, 0x1e80000, -0x100000, 0x1590000);
         C2(Actor_SetSingleChildFlags, object, 0);
         C2(Func_02004dac, object, gData_02005360);
         ((struct GaiaRockAnimation *)object->animation)->angle = 0x2000;
@@ -352,7 +313,7 @@ s32 Func_02002f30(void) {
           dz = -8;
           if ((i & 1) == 0)
             dz = 8;
-          shards[i] = Import_ActorCreate(403, 0x1c80000 + (dx << 16), -0x200000,
+          shards[i] = (struct Actor *)Import_ActorCreate(403, 0x1c80000 + (dx << 16), -0x200000,
                                          0x1660000 + (dz << 16));
           C2(Func_02004d9c, shards[i], 2);
           C2(Actor_SetSingleChildFlags, shards[i], 0);
@@ -426,7 +387,7 @@ s32 Func_02002f30(void) {
       C2(Event_ShowMessageAndWait, 11, 0);
       C1(Sound_Play, 530);
       C2(Event_ShowMessageAndWait, 10, 0);
-      Value3((s32 (*)())Func_080d47b4, *owner, 256, 0);
+      Actor_ShowEmote(*owner, 256, 0);
       C3(Func_080d47b4, 11, 256, 0);
       C1(Event_Wait, 15);
       C3(Actor_ArmCallback, *owner, 0x4000, 0);
@@ -617,11 +578,11 @@ s32 Func_02002f30(void) {
     s32 mask = 32;
     s32 low;
     s32 high;
-    struct Actor *object = (struct Actor *)Value1((s32 (*)())Actor_GetById, 8);
+    struct Actor *object = Actor_Get(8);
 
     object->priorityFlags |= mask;
     C2(Func_02004e3c, object, 3);
-    object = (struct Actor *)Value1((s32 (*)())Actor_GetById, 9);
+    object = Actor_Get(9);
     object->priorityFlags |= mask;
     C2(Func_02004e3c, object, 3);
     C2(Func_02002ac8, 8, 12);
@@ -635,8 +596,8 @@ s32 Func_02002f30(void) {
       C6(Map_CopyCellsRect, 88, 40, 1, 2, 89, height);
       C6(Map_CopyCellsRect, 99, 40, 1, 2, 100, height);
     }
-    low = Value1((s32 (*)())GameFlag_GetByte, 0x210) & 15;
-    high = (u8)(Value1((s32 (*)())GameFlag_GetByte, 0x210) >> 4);
+    low = FieldGameFlag_GetByte(0x210) & 15;
+    high = (u8)(FieldGameFlag_GetByte(0x210) >> 4);
     if (low != 0)
       C3(Actor_SetHorizontalPositionWithTerrain, 10,
          gData_0200530c[low][0] << 19, gData_0200530c[low][1] << 19);
@@ -695,8 +656,7 @@ s32 Func_02002f30(void) {
       C3(Actor_SetHorizontalPositionWithTerrain, 11, 0x2a00000, 0x1800000);
       C2(Actor_SetSingleChildFlags, Actor_GetById(11), 0);
       object = Actor_GetById(11);
-      other = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 324,
-                                     object->x, object->y, object->z);
+      other = FieldActor_Create(324, object->x, object->y, object->z);
       if (other != NULL) {
         C2(Actor_SetSingleChildFlags, other, 0);
         C2(Func_02004dac, other, gData_020053d8);
@@ -771,7 +731,7 @@ end:
 #include "ram_buffer.h"
 #include "io_reg.h"
 
-#define Test(flag) Value1((s32 (*)())GameFlag_Test, flag)
+#define Test(flag) Event_GetFlag(flag)
 #define C1(f, a) Call1((void (*)())f, a)
 #define C2(f, a, b) Call2((void (*)())f, a, b)
 #define C3(f, a, b, c) Call3((void (*)())f, a, b, c)
@@ -804,11 +764,6 @@ extern u8 gData_020053d8[];
 extern u8 gData_0200578c[];
 extern u8 gData_02005e28[];
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-s32 GameFlag_GetByte(s32 flag);
-s32 PartyInventory_FindOwner(s32 item);
-struct Actor *Import_ActorCreate(s32 id, s32 x, s32 y, s32 z);
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 kind);
 s32 __modsi3(s32 numerator, s32 denominator);
 void Func_02002d30(void);
@@ -822,54 +777,21 @@ void Func_02004dac();
 void Func_02004dbc();
 void Func_02004dd4(void);
 void Func_02004ddc(void);
-void Map_CopyCellsRect();
-void Map_CopyCellAttributeRect();
-void Func_0802b450();
-void Map_SetScreenShake();
 void Func_02004e3c();
 void Func_02004e5c(void);
 void Func_02004e64(void);
-void Actor_SetHorizontalPositionWithTerrain();
-void Event_SetMessageId();
-void Event_ShowMessageAndWait();
-void Func_080d47b4();
-void Func_080d489c();
 void Func_02004f54(void);
 void Func_02004f5c();
 void Func_02004f64();
-void Import_EventSetExitRequest();
-void BattleEffect_ApplyColorToTargetBuffer();
-void BattleEffect_StartBufferInterpolation();
 void Func_02004fc4();
-void Event_ResolvePendingActions();
 void Func_02004fec();
 void Func_02005004();
-void Sound_Play();
-void Actor_ArmCallback();
-void Actor_Jump();
-void Actor_RefreshSelectorById();
-void Actor_ResetAndSetPosition();
-void Actor_ResetAndSetPositionInMode2();
-void Actor_SetAngleToward();
 void Actor_SetAnimationSpeed();
-void Actor_SetModeById();
-void Actor_SetMovementTypeById();
 void Actor_SetSingleChildFlags();
-void Actor_SetSpritePriority();
-void Actor_StartRepeatedMotion();
-void Actor_Stop();
-void Actor_WaitForMoveById();
 void Animation_ApplyChildValues();
-void Camera_FollowActor();
-void Camera_MoveWithinMapBounds();
 void Event_FinishScreenTransition(void);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Event_Wait();
-void GameFlag_ClearBit();
-void GameFlag_SetBit();
-void Motion_SetModeAndWaitAnimation();
-void wait();
 
 s32 Func_02002f30(void) {
   struct MainRoutineWork *room;
@@ -954,7 +876,7 @@ s32 Func_02002f30(void) {
       if (Test(0x927))
         goto end;
       C1(Sound_Play, 53);
-      found = Value1((s32 (*)())PartyInventory_FindOwner, 451);
+      found = FieldPartyInventory_FindOwner(451);
       none = -1;
       if (found != none) {
         s32 flag;
@@ -1069,8 +991,7 @@ s32 Func_02002f30(void) {
         C2(Actor_SetAnimationSpeed, partner, 0);
         C1(Event_Wait, 15);
         C1(Sound_Play, 215);
-        object = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 285,
-                                        0x1e80000, -0x100000, 0x1590000);
+        object = FieldActor_Create(285, 0x1e80000, -0x100000, 0x1590000);
         C2(Actor_SetSingleChildFlags, object, 0);
         C2(Func_02004dac, object, gData_0200539c);
         C2(Func_02004d9c, object, 1);
@@ -1081,8 +1002,7 @@ s32 Func_02002f30(void) {
         C1(Event_Wait, 55);
         C1(Event_Wait, 5);
         C1(Sound_Play, 136);
-        object = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 412,
-                                        0x1e80000, -0x100000, 0x1590000);
+        object = FieldActor_Create(412, 0x1e80000, -0x100000, 0x1590000);
         C2(Actor_SetSingleChildFlags, object, 0);
         C2(Func_02004dac, object, gData_02005360);
         ((struct GaiaRockAnimation *)object->animation)->angle = 0x2000;
@@ -1107,7 +1027,7 @@ s32 Func_02002f30(void) {
           dz = -8;
           if ((i & 1) == 0)
             dz = 8;
-          shards[i] = Import_ActorCreate(403, 0x1c80000 + (dx << 16), -0x200000,
+          shards[i] = (struct Actor *)Import_ActorCreate(403, 0x1c80000 + (dx << 16), -0x200000,
                                          0x1660000 + (dz << 16));
           C2(Func_02004d9c, shards[i], 2);
           C2(Actor_SetSingleChildFlags, shards[i], 0);
@@ -1181,7 +1101,7 @@ s32 Func_02002f30(void) {
       C2(Event_ShowMessageAndWait, 11, 0);
       C1(Sound_Play, 530);
       C2(Event_ShowMessageAndWait, 10, 0);
-      Value3((s32 (*)())Func_080d47b4, *owner, 256, 0);
+      Actor_ShowEmote(*owner, 256, 0);
       C3(Func_080d47b4, 11, 256, 0);
       C1(Event_Wait, 15);
       C3(Actor_ArmCallback, *owner, 0x4000, 0);
@@ -1373,11 +1293,11 @@ s32 Func_02002f30(void) {
     s32 mask = 32;
     s32 low;
     s32 high;
-    struct Actor *object = (struct Actor *)Value1((s32 (*)())Actor_GetById, 8);
+    struct Actor *object = Actor_Get(8);
 
     object->priorityFlags |= mask;
     C2(Func_02004e3c, object, 3);
-    object = (struct Actor *)Value1((s32 (*)())Actor_GetById, 9);
+    object = Actor_Get(9);
     object->priorityFlags |= mask;
     C2(Func_02004e3c, object, 3);
     C2(Func_02002ac8, 8, 12);
@@ -1391,8 +1311,8 @@ s32 Func_02002f30(void) {
       C6(Map_CopyCellsRect, 88, 40, 1, 2, 89, height);
       C6(Map_CopyCellsRect, 99, 40, 1, 2, 100, height);
     }
-    low = Value1((s32 (*)())GameFlag_GetByte, 0x210) & 15;
-    high = (u8)(Value1((s32 (*)())GameFlag_GetByte, 0x210) >> 4);
+    low = FieldGameFlag_GetByte(0x210) & 15;
+    high = (u8)(FieldGameFlag_GetByte(0x210) >> 4);
     if (low != 0)
       C3(Actor_SetHorizontalPositionWithTerrain, 10,
          gData_0200530c[low][0] << 19, gData_0200530c[low][1] << 19);
@@ -1451,8 +1371,7 @@ s32 Func_02002f30(void) {
       C3(Actor_SetHorizontalPositionWithTerrain, 11, 0x2a00000, 0x1800000);
       C2(Actor_SetSingleChildFlags, Actor_GetById(11), 0);
       object = Actor_GetById(11);
-      other = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 324,
-                                     object->x, object->y, object->z);
+      other = FieldActor_Create(324, object->x, object->y, object->z);
       if (other != NULL) {
         C2(Actor_SetSingleChildFlags, other, 0);
         C2(Func_02004dac, other, gData_020053d8);

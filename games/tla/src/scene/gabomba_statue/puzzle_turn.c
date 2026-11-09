@@ -38,7 +38,7 @@ u8 Func_02004380(s32 x, s32 z, s32 direction) {
 }
 
 void Func_020043a4(s32 value, s32 row) {
-  struct Actor *object = Actor_GetById(15);
+  struct Actor *object = Actor_Get(15);
 
   if (row <= 7)
     object->scaleY += -0x1f00;

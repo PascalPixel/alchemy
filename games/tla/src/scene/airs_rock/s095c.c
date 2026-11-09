@@ -217,7 +217,7 @@ void Func_0200095c(void) {
       Func_02003b50();
     }
     Sound_Play(298);
-    GameFlag_SetBit(flag + 0x850);
+    Event_SetFlag(flag + 0x850);
   }
   gust->acceleration = 0;
   gust->speedLimit = 0;

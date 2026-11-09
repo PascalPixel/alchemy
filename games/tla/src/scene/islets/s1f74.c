@@ -1,37 +1,37 @@
 #include "islets.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 void Func_02001f74(void) {
-  struct Actor *object = Actor_GetById(10);
+  struct Actor *object = Actor_Get(10);
 
   Func_02003e64();
-  Event_ResolvePendingActions(0);
-  Actor_Stop(10);
-  wait(1);
+  FieldEvent_ResolvePendingActions(0);
+  FieldActor_Stop(10);
+  System_Wait(1);
   object->motionFlags = 0;
-  Call3((void (*)())Actor_SetSpeedParameters, 10, 0x19999, 0xcccc);
-  Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)object, PIXELS(268),
-        PIXELS(64), PIXELS(390));
-  wait(1);
+  Actor_SetSpeed(10, 0x19999, 0xcccc);
+  FieldActor_SetPositionAndResetMotion(object, PIXELS(268), PIXELS(64), PIXELS(390));
+  System_Wait(1);
   object->terrainHeight = PIXELS(128);
-  wait(1);
+  System_Wait(1);
   object->y = PIXELS(160);
-  wait(1);
-  Task_Add(Func_02001f58, 0x480);
-  Actor_SetMoveTarget(object, PIXELS(132), PIXELS(128), PIXELS(320));
-  Script_WaitForEventTimeout(object);
-  Task_RemoveFar(Func_02001f58);
-  Actor_SetModeById(10, 5);
+  System_Wait(1);
+  FieldTask_AddFrame(Func_02001f58, 0x480);
+  FieldActor_SetMoveTarget(object, PIXELS(132), PIXELS(128), PIXELS(320));
+  Actor_WaitForMove(object);
+  FieldTask_Remove(Func_02001f58);
+  Actor_SetAnimation(10, 5);
   object->motionFlags = 3;
-  Actor_SetSpritePriority(10, 2);
-  Actor_SetAngleToward(10, gMainRoutineWork.currentOwner, 0);
-  Event_Wait(10);
-  Actor_Jump(10, 4, 0);
-  Actor_SetPositionAndCommit(10, 120, 312);
-  Actor_SetModeById(10, 5);
+  FieldActor_SetSpritePriority(10, 2);
+  Actor_FaceActor(10, gMainRoutineWork.currentOwner, 0);
+  FieldEvent_Wait(10);
+  FieldActor_Jump(10, 4, 0);
+  Actor_MoveToAndWait(10, 120, 312);
+  Actor_SetAnimation(10, 5);
   object->motionFlags = 0;
-  Actor_ArmCallbackAndRefresh(10, FACING_EAST);
-  GameFlag_SetBit(0x215);
-  wait(1);
+  Actor_FaceDirectionAndWait(10, FACING_EAST);
+  Event_SetFlag(0x215);
+  System_Wait(1);
   Func_02003e6c();
 }

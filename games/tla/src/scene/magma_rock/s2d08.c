@@ -33,13 +33,13 @@ void Func_02002d08(const u16 *table) {
     goto done;
 next:
   id = table[0];
-  object = Actor_GetById(id);
+  object = Actor_Get(id);
   flag = table[1];
   nextFlag = flag + 1;
   cells = map->layers[object->terrainId].cells;
   shapes = gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
-  if (GameFlag_Test(nextFlag)) {
-    Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
+  if (Event_GetFlag(nextFlag)) {
+    Actor_SetPosition(id, 0, 0);
   } else {
     s32 shape;
     u8 *slot;
@@ -53,14 +53,14 @@ next:
     Func_02003b3c(id);
     cell->attributeB = 128;
     *slot = Func_02003c24(object->terrainId, shape, (height >> 19) + 4);
-    if (GameFlag_Test(flag))
+    if (Event_GetFlag(flag))
       Func_02003a54(object, 0);
   }
   table += 2;
   if (*table != 0xffff)
     goto next;
 done:
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.currentOwner);
   ground = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
   if (leader->y < ground) {
     leader->terrainHeight = ground;

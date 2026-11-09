@@ -25,14 +25,14 @@ void Func_02002b8c(void) {
   u16 *pending = &state->pending;
   u16 *frame = &state->frame;
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  s32 stopped = GameFlag_Test(0x106);
+  s32 stopped = Event_GetFlag(0x106);
   s32 id;
 
   if (work->unk166 != 0)
     stopped |= 1;
   id = 8;
   do {
-    Actor_GetById(id++)->movementState = stopped;
+    Actor_Get(id++)->movementState = stopped;
   } while (id <= 16);
   if (stopped != 0)
     return;

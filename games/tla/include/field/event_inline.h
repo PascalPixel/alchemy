@@ -26,6 +26,18 @@ static inline void Actor_SetAnimation(s32 actorId, s32 animation) {
   Actor_SetModeById(actorId, animation);
 }
 
+/// Actor_SetAnimation as the events that take Actor_SetModeById for a routine
+/// returning int make the call.
+static inline void FieldActor_SetAnimation(s32 actorId, s32 animation) {
+#ifdef UBFIX
+  Actor_SetModeById(actorId, animation);
+#else
+  // UB: Actor_SetModeById returns nothing, but these calls are made as to a
+  // routine returning int, which moves their argument registers.
+  ((s32 (*)(u32, s32))Actor_SetModeById)(actorId, animation);
+#endif
+}
+
 /// Runs an event's palette fade, from the source colours to the target ones,
 /// over frames.
 static inline void PaletteFade_Interpolate(s32 frames) {
@@ -103,6 +115,18 @@ static inline void Actor_SetPositionAndFacing(s32 actorId, s32 fixed_x,
 /// (Motion_SetModeAndWaitAnimation).
 static inline void Actor_SetAnimationAndWait(s32 actorId, s32 animation) {
   Motion_SetModeAndWaitAnimation(actorId, animation);
+}
+
+/// Actor_SetAnimationAndWait as the events that take
+/// Motion_SetModeAndWaitAnimation for a routine returning int make the call.
+static inline void FieldActor_SetAnimationAndWait(s32 actorId, s32 animation) {
+#ifdef UBFIX
+  Motion_SetModeAndWaitAnimation(actorId, animation);
+#else
+  // UB: Motion_SetModeAndWaitAnimation returns nothing, but these calls are
+  // made as to a routine returning int, which moves their argument registers.
+  ((s32 (*)(u32, s32))Motion_SetModeAndWaitAnimation)(actorId, animation);
+#endif
 }
 
 /// Actor_Jump, from an event.
@@ -295,8 +319,8 @@ static inline s32 FieldCamera_MoveToActor(s32 actorId, s32 pan) {
 }
 
 /// Rotates an actor's sprite (Func_080d3928).
-static inline s32 Actor_SetSpriteRotationById(s32 actorId, s32 angle) {
-  return Func_080d3928(actorId, angle);
+static inline void Actor_SetSpriteRotationById(s32 actorId, s32 angle) {
+  Func_080d3928(actorId, angle);
 }
 
 /// Sets the cell behavior of a cell (Func_080dbdd4).

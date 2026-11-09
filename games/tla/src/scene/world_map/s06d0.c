@@ -60,13 +60,13 @@ void Func_020006d0(void) {
     }
   }
   if (blocked == 0) {
-    Sound_Play(78);
+    Event_PlaySound(78);
     Func_02004c20();
-    Event_ResolvePendingActions(0);
-    Func_080d46a4(0x10000, 10);
+    FieldEvent_ResolvePendingActions(0);
+    FieldEffect_ScheduleRatioTransition(0x10000, 10);
     gMainRoutineWork.renderMode = 1;
     gMainRoutineWork.ownerOverride = 0;
-    GameFlag_ClearBit(0x176);
+    Event_ClearFlag(0x176);
     gMainRoutineWork.savedX = ship->x;
     gMainRoutineWork.savedZ = ship->z;
     gMainRoutineWork.unk280 = ship->angle;
@@ -77,18 +77,18 @@ void Func_020006d0(void) {
     leader->motionFlags = 0;
     Actor_SetSingleChildFlags(leader, 0);
     Func_02004b18(leader, 6);
-    wait(6);
-    Sound_Play(152);
+    System_Wait(6);
+    Event_PlaySound(152);
     Func_02004b18(leader, 7);
     leader->speedLimit = 0x30000;
     leader->acceleration = 0x20000;
     leader->velocityY = 0x40000;
     leader->motionFlags = flags;
     Func_02004b48(leader);
-    Actor_SetMoveTarget(leader, position[0], 0, position[2]);
-    Script_WaitForEventTimeout(leader);
+    FieldActor_SetMoveTarget(leader, position[0], 0, position[2]);
+    Actor_WaitForMove(leader);
     Func_02004b18(leader, 6);
-    wait(6);
+    System_Wait(6);
     Func_02004c28();
     Func_02004dc8();
     Func_02004dc0();

@@ -6,7 +6,6 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
 s32 ObjectTable_ReadActiveValue();
 s32 Window_CloseMatchingId();
 

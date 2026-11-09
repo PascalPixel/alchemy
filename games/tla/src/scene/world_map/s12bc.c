@@ -164,7 +164,7 @@ void Func_020012bc(s32 entrance) {
     FieldCamera_MoveTo(-1, -1, -1, 0);
     Func_02004d48(102, 3);
   } else if (entrance == 74) {
-    GameFlag_ClearBit(0xa76);
+    Event_ClearFlag(0xa76);
     east74 = 0x4000;
     Actor_SetPositionAndFacing(20, 0x27b80000, 0x25900000, east74);
     Actor_SetPositionAndFacing(21, 0x27a80000, 0x25900000, east74);
@@ -175,10 +175,10 @@ void Func_020012bc(s32 entrance) {
       Actor_SetPositionAndFacing(23, 0x27a80000, 0x25c00000, a3);
     }
     Actor_SetPositionAndFacing(4, 0x27b80000, 0x25b00000, 0xa000);
-    Camera_FollowActor(4, 0);
+    FieldCamera_FollowActor(4, 0);
     Func_080d46a4(0x18ccc, 1);
     Actor_SetAnimation(4, 19);
-    Actor_SetSingleChildFlags(Actor_GetById(4), 0);
+    Actor_SetSingleChildFlags(Actor_Get(4), 0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Func_02004da8();
@@ -217,7 +217,7 @@ void Func_020012bc(s32 entrance) {
                   ((struct SavedDestination *)&gMainRoutineWork)->entrance);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
   } else {
-    GameFlag_ClearBit(0xa76);
+    Event_ClearFlag(0xa76);
     eastB = 0x4000;
     Actor_SetPositionAndFacing(20, 0x27b80000, 0x25a00000, eastB);
     westB = 0xc000;
@@ -225,7 +225,7 @@ void Func_020012bc(s32 entrance) {
     Actor_SetPositionAndFacing(22, 0x27c80000, 0x25a00000, eastB);
     Actor_SetPositionAndFacing(23, 0x27b00000, 0x25d00000, westB);
     Actor_SetPositionAndFacing(4, 0x27c00000, 0x25d00000, westB);
-    Camera_FollowActor(4, 0);
+    FieldCamera_FollowActor(4, 0);
     Func_080d46a4(0x18000, 1);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -276,7 +276,7 @@ void Func_020012bc(s32 entrance) {
     Actor_FaceDirectionAndWait(20, eastB);
     Event_Wait(20);
     Event_OpenMessage(20, 0);
-    if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
+    if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
       Actor_ShowEmote(20, 0x109, 30);
       FieldEvent_ShowMessageThenWait(20, 0, 5);
       (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
@@ -342,10 +342,10 @@ void Func_020012bc(s32 entrance) {
     Actor_SetSpeed(23, 0x13333, 0x9999);
     Actor_SetAnimation(23, 2);
     {
-      struct Actor *object = Actor_GetById(4);
+      struct Actor *object = Actor_Get(4);
 
       if (object != NULL)
-        Actor_ResetAndSetPosition(23, *(s16 *)((u8 *)object + 10),
+        Actor_SetDestination(23, *(s16 *)((u8 *)object + 10),
                                   *(s16 *)((u8 *)object + 18));
     }
     Actor_WaitForMoveById(23);

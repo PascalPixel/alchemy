@@ -6,7 +6,6 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
 s32 Func_02001d3c();
 
 void Func_02000a98(void) { Func_02001d3c(); }

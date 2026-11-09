@@ -25,20 +25,20 @@ s32 Func_020003bc(struct Actor *actor) {
   s32 flag = 0;
   struct Actor *target;
 
-  target = Actor_GetById(gMainRoutineWork.currentOwner);
+  target = Actor_Get(gMainRoutineWork.currentOwner);
   if (SceneActor_CalculateFixedPointDistance(&target->x, &actor->x) <= 11) {
     actor->movementState = flag;
     Func_020043c4(actor, 2);
     return 0;
   }
   if (actor->action == 0)
-    target = Actor_GetById(18);
+    target = Actor_Get(18);
   else if (actor->action == 1)
-    target = Actor_GetById(16);
+    target = Actor_Get(16);
   else
-    target = Actor_GetById(17);
+    target = Actor_Get(17);
   if (Func_020002d8(actor, target, 24, 0) == 0) {
-    target = Actor_GetById(gMainRoutineWork.currentOwner);
+    target = Actor_Get(gMainRoutineWork.currentOwner);
     if ((*(s16 *)(work + 352) != 0 || tiles[4] != 0) && (actor->action & 2))
       flag = 1;
     Func_020002d8(actor, target, 32, flag);
@@ -59,13 +59,13 @@ s32 Func_020003bc(struct Actor *actor) {
   struct Actor *target;
 
   if (*action == 0)
-    target = Actor_GetById(18);
+    target = Actor_Get(18);
   else if (*action == 1)
-    target = Actor_GetById(16);
+    target = Actor_Get(16);
   else
-    target = Actor_GetById(17);
+    target = Actor_Get(17);
   if (Func_020002d8(actor, target, 24, 0) == 0) {
-    target = Actor_GetById(gMainRoutineWork.currentOwner);
+    target = Actor_Get(gMainRoutineWork.currentOwner);
     if ((*(s16 *)(work + 352) != 0 || tiles[4] != 0) && (*action & 2))
       flag = 1;
     Func_020002d8(actor, target, 32, flag);

@@ -1,7 +1,6 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
-#include "scene_call.h"
 #include "text/msg_ids.h"
 #include "daila.h"
 

@@ -42,7 +42,7 @@ void Func_02000298(void) {
 
   i = 0;
   do {
-    object = ((struct Actor *)Import_ActorCreate(0x2a0, 0, 0, 0));
+    object = (FieldActor_Create(0x2a0, 0, 0, 0));
 
     object->motionFlags = 0;
     object->priorityFlags = 0;
@@ -51,7 +51,7 @@ void Func_02000298(void) {
     object->update = (void (*)(void))Func_020001d8;
     OBJECT_BYTE(object, 99) = i << 3;
     Actor_SetSingleChildFlags(object, 0);
-    Actor_SetPartAttribute(object, 2);
+    Actor_SetSpriteColor(object, 2);
     ((struct FieldSprite *)object->animation)->priority = 1;
     Animation_SetStateFlags(object, 1);
     action = &object->action;

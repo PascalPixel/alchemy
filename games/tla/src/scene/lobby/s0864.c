@@ -7,7 +7,6 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "flag_call.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "serial.h"
@@ -55,26 +54,26 @@ s32 Func_02000864(void) {
   window = 0;
   work = Ram_HeapSlots->eventWork;
   cnt = 0;
-  if (Flag_IsSet(0x173)) {
+  if (Event_GetFlag(0x173)) {
     Func_02001a14();
     Event_ResolvePendingActions(0);
   } else {
-    if (!Flag_IsSet(0x200))
+    if (!Event_GetFlag(0x200))
       return;
-    if (Flag_IsSet(0x205))
+    if (Event_GetFlag(0x205))
       return;
     Func_02001a14();
     Event_ResolvePendingActions(0);
-    Flag_Set(0x203);
+    Event_SetFlag(0x203);
     LinkLobby_WriteSlotValue(2);
     if (!Func_0200006c(2))
       window = Message_OpenWindow(MsgAwaitingYourOpponent, 5, 4, 1);
     while (!Func_0200006c(2)) {
       wait(1);
       stop = 0;
-      if (!Flag_IsSet(0x201))
+      if (!Event_GetFlag(0x201))
         stop = 1;
-      if (Flag_IsSet(0x205))
+      if (Event_GetFlag(0x205))
         stop = 1;
       if (!Func_0200006c(2) && !Func_0200006c(1)) {
         if (++cnt > 25)
@@ -84,12 +83,12 @@ s32 Func_02000864(void) {
       }
       if (stop) {
         work->raisedTrigger = 2;
-        Flag_Set(0x205);
-        Flag_Clear(0x201);
-        Flag_Clear(0x202);
+        Event_SetFlag(0x205);
+        Event_ClearFlag(0x201);
+        Event_ClearFlag(0x202);
         LinkLobby_WriteSlotValue(4);
         failed = 1;
-        Flag_Clear(0x200);
+        Event_ClearFlag(0x200);
         break;
       }
     }
@@ -103,7 +102,7 @@ s32 Func_02000864(void) {
     Func_0200198c(5);
     wait(8);
     Func_02001994(5);
-    if (Flag_IsSet(0x173)) {
+    if (Event_GetFlag(0x173)) {
       Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
       Event_SetMessageId((s32)MsgGoodLuck2);
       FieldMessage_ShowAtActor(8, 0);
@@ -131,11 +130,11 @@ s32 Func_02000864(void) {
         LinkLobby_WriteSlotValue(4);
         Task_Add((TaskFunc)Func_02000134, TASK_PASS_VBLANK);
         Func_02001944(Func_02000134, 1);
-        Flag_Clear(0x201);
-        Flag_Clear(0x202);
-        Flag_Clear(0x303);
-        Flag_Clear(0x203);
-        Flag_Clear(0x200);
+        Event_ClearFlag(0x201);
+        Event_ClearFlag(0x202);
+        Event_ClearFlag(0x303);
+        Event_ClearFlag(0x203);
+        Event_ClearFlag(0x200);
         work->raisedTrigger = 2;
         Func_02001a1c();
         return;
@@ -144,9 +143,9 @@ s32 Func_02000864(void) {
       Actor_WaitForMoveById(4);
     }
     /* FAKEMATCH(temporary): the flag test's result kept while the scene
-     * symbol is loaded once for both branches; as if (Flag_IsSet(0x173)), 2 of
+     * symbol is loaded once for both branches; as if (Event_GetFlag(0x173)), 2 of
      * 329 instructions differ in tla-en. */
-    set = Flag_IsSet(0x173);
+    set = Event_GetFlag(0x173);
     scene = (s32)&SceneId_Ov6b5;
     if (set) {
       Party_SetFields1eeAnd1f0(scene, 8);

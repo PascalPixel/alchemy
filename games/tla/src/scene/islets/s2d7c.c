@@ -47,7 +47,7 @@ void Func_02002d7c(void) {
     switch (*step) {
     case 0:
       for (i = 11; i <= 18; i++)
-        Actor_SetModeById(i, 2);
+        Actor_SetAnimation(i, 2);
       Func_02002d48(11, 0, 1);
       Func_02002d48(12, 0, -1);
       Func_02002d48(13, 0, 1);
@@ -60,11 +60,11 @@ void Func_02002d7c(void) {
     case 100:
     case 220:
       for (i = 11; i <= 18; i++)
-        Actor_SetModeById(i, 1);
+        Actor_SetAnimation(i, 1);
       break;
     case 130:
       for (i = 11; i <= 18; i++) {
-        Actor_SetModeById(i, 2);
+        Actor_SetAnimation(i, 2);
         Func_02002d48(i, 0, 0);
       }
       break;

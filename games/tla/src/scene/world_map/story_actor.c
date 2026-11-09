@@ -42,24 +42,24 @@ void WorldMap_UpdateBobbingMarker(struct BobbingMarker *marker) {
   if (marker->stopped == 0) {
     angle = &marker->angle;
     marker->x.fixed = 0x27880000;
-    y = MulQ16(Math_Sine(*angle << 3), 0x40000);
+    y = MulQ16(Math_Sin(*angle << 3), 0x40000);
     z = 0x20a40000;
 
     rise = 0x100000;
     marker->y.fixed = y + rise;
     marker->z.fixed = z;
     radius = rise;
-    Vector_AddPolarOffsetFar(radius, *angle, &marker->x);
+    FieldVector_AddPolarOffset(radius, *angle, &marker->x);
     marker->facing = *angle + 0x4000;
     *angle += 0x400;
   }
 }
 
 s32 StoryActor_Initialize(struct Actor *actor) {
-  if (GameFlag_Test(0x37) != 0) {
+  if (Event_GetFlag(0x37) != 0) {
     return 0;
   }
-  if (GameFlag_Test(0x16E) != 0) {
+  if (Event_GetFlag(0x16E) != 0) {
     return 0;
   }
   actor->update = (void (*)(void))WorldMap_UpdateBobbingMarker;

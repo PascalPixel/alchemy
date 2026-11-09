@@ -29,7 +29,7 @@ void Func_0200156c(s32 id) {
    * above the spawn record, where Func_02001620 holds its velocity. */
   struct SettlementsVector velocity;
   struct SettlementsSpawn spawn;
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
 
   spawn.kind = 0x115;
   spawn.scaleX = 0xcccc;
@@ -37,6 +37,6 @@ void Func_0200156c(s32 id) {
   spawn.speed = 0x10000;
   spawn.acceleration = 0x10000;
   spawn.script = gData_02002310;
-  Func_020021b0(154);
+  Event_PlaySound(154);
   Func_020000b8(object->x, object->y, object->z, 0, 0, 0, 0x1c0000, &spawn);
 }

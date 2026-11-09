@@ -1,7 +1,8 @@
 #include "ride.h"
+#include "event_inline.h"
 
 void Func_02001234(s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
 
   if (object != NULL) {
     Actor_SetSingleChildFlags(object, 0);

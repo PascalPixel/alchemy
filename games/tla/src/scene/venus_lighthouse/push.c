@@ -1,6 +1,7 @@
 #include "types.h"
 #include "field_event.h"
 #include "text/msg_ids.h"
+#include "event_inline.h"
 
 void SceneState_RunActor13AtColumn42Setup(void) {
   struct FieldActor *obj;
@@ -8,36 +9,36 @@ void SceneState_RunActor13AtColumn42Setup(void) {
   s32 a;
   s32 b;
 
-  obj = Import_ActorGet(10);
+  obj = Actor_Get(10);
   Import_EventStart();
-  Import_EventResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   if (obj->x >> 20 == 42) {
-    Import_EventWait(30);
-    Import_SoundPlay(188);
+    FieldEvent_Wait(30);
+    Event_PlaySound(188);
     obj->motionFlags = 0;
     val = 0xfffe0000;
     obj->terrainHeight = val;
     obj->y = val;
-    Import_GameFlagSet(0x200);
+    Event_SetFlag(0x200);
     a = 3;
     b = 5;
-    Import_MapCopyCellPictureIndicesRect(44, 117, 41, 117, a, b);
+    MapGrid_CopyCellsTo(44, 117, 41, 117, a, b);
   }
   Import_EventEnd();
 }
 
 void VenusLighthouse_ReadRelief(void) {
   Import_EventStart();
-  Import_EventResolvePendingActions(0);
-  Import_ActorSetAnimation(Import_PartyGetLeaderActor(), 1);
-  Import_FieldMessageShow((s32)MsgVenusLighthouseReliefWords, 1);
+  FieldEvent_ResolvePendingActions(0);
+  Actor_SetAnimation(FieldParty_GetLeaderActor(), 1);
+  Message_ShowCentered((s32)MsgVenusLighthouseReliefWords, 1);
   Import_EventEnd();
 }
 
 void VenusLighthouse_ReadTrueHeart(void) {
   Import_EventStart();
-  Import_EventResolvePendingActions(0);
-  Import_ActorSetAnimation(Import_PartyGetLeaderActor(), 1);
-  Import_FieldMessageShow((s32)MsgVenusLighthouseTrueHeart, 1);
+  FieldEvent_ResolvePendingActions(0);
+  Actor_SetAnimation(FieldParty_GetLeaderActor(), 1);
+  Message_ShowCentered((s32)MsgVenusLighthouseTrueHeart, 1);
   Import_EventEnd();
 }

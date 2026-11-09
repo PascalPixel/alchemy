@@ -2,7 +2,6 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
-#include "call.h"
 #include "event_inline.h"
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
@@ -84,14 +83,14 @@ void Func_02001944(void) {
   Actor_RunScriptAndWait(9, gData_02002a04);
   Actor_WalkToAndWait(11, 344, 890);
   Actor_FaceDirectionAndWait(11, 0xc000);
-  Call1(Func_02001904, 8);
-  Call1(Func_02001904, 10);
-  Call1(Func_02001904, 9);
-  Call1(Func_02001904, 11);
-  Call1(Func_02001904, gMainRoutineWork.currentOwner);
+  Func_02001904(8);
+  Func_02001904(10);
+  Func_02001904(9);
+  Func_02001904(11);
+  Func_02001904(gMainRoutineWork.currentOwner);
   {
     s32 priority = 0x480;
-    Task_Add(Func_02001688, priority);
+    Task_AddFrame(Func_02001688, priority);
   }
   Event_ShowMessage(8, 0);
   actor->unk66 = 1;

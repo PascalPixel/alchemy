@@ -12,31 +12,31 @@ struct TalkActor {
 
 void Func_02000544(void) {
   Func_02002488();
-  Event_ResolvePendingActions(0);
-  Event_SetMessageId(MsgDoYouWant);
-  FieldMessage_ShowAtActor(8, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0)
+  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_SetMessageId(MsgDoYouWant);
+  Event_OpenMessage(8, 0);
+  if (FieldEvent_AskYesNoWithActorAnimation(0, 0) == 0)
     Func_02001944();
   else
-    Event_ShowMessageAndWait(8, 0);
+    Event_ShowMessage(8, 0);
   Func_02002490();
 }
 
 void Func_02000584(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct TalkActor *object = (struct TalkActor *)Actor_GetById(9);
+  struct TalkActor *object = (struct TalkActor *)Actor_Get(9);
   s16 angle = object->angle;
 
   Func_02002488();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   object->unk63 = 1;
   if (work->unk166 == 0) {
-    Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
-    Event_SetMessageId(MsgRunningAroundIn);
+    Actor_FaceActor(9, gMainRoutineWork.currentOwner, 0);
+    FieldEvent_SetMessageId(MsgRunningAroundIn);
   } else {
-    Event_SetMessageId(MsgThereSALot);
+    FieldEvent_SetMessageId(MsgThereSALot);
   }
-  Event_ShowMessageAndWait(9, 0);
+  Event_ShowMessage(9, 0);
   if (work->unk166 == 0)
     object->angle = angle;
   object->unk63 = 0;
@@ -45,19 +45,19 @@ void Func_02000584(void) {
 
 void Func_02000614(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct TalkActor *object = (struct TalkActor *)Actor_GetById(10);
+  struct TalkActor *object = (struct TalkActor *)Actor_Get(10);
   s16 angle = object->angle;
 
   Func_02002488();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   object->unk63 = 1;
   if (work->unk166 == 0) {
-    Actor_SetAngleToward(10, gMainRoutineWork.currentOwner, 0);
-    Event_SetMessageId(MsgThereSAGame);
+    Actor_FaceActor(10, gMainRoutineWork.currentOwner, 0);
+    FieldEvent_SetMessageId(MsgThereSAGame);
   } else {
-    Event_SetMessageId(MsgIOnceHeard);
+    FieldEvent_SetMessageId(MsgIOnceHeard);
   }
-  Event_ShowMessageAndWait(10, 0);
+  Event_ShowMessage(10, 0);
   if (work->unk166 == 0)
     object->angle = angle;
   object->unk63 = 0;

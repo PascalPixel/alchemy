@@ -61,7 +61,7 @@ s32 Func_02000988(void) {
       Func_02001304(0, 8, 9);
     }
     if (GameFlag_Test(0x885))
-      Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
+      Actor_SetPosition(14, 0, 0);
     else
       Actor_GetById(14)->scaleY = 0x14000;
     if (GameFlag_Test(0x201))
@@ -79,18 +79,18 @@ s32 Func_02000988(void) {
       actor->terrainHeight = height;
     }
   } while (0);
-  Actor_SetModeById(16, 4);
+  Actor_SetAnimation(16, 4);
   if (GameFlag_Test(0x884)) {
     MapGrid_CopyCellAttributes(74, 31, 1, 1, 74, 33);
-    Actor_SetHorizontalPositionWithTerrain(15, PIXELS(1193), PIXELS(530));
+    Actor_SetPosition(15, PIXELS(1193), PIXELS(530));
     Actor_GetById(15)->priorityFlags |= 2;
     Actor_GetById(15)->collisionFlags = 0;
-    Actor_SetModeById(15, 2);
+    Actor_SetAnimation(15, 2);
   } else {
     Actor_GetById(15)->collisionFlags |= 16;
   }
   Iwram_CopyWords(gData_02001ae0, (void *)&BG_PLTT_COLOR(0, 12), 8);
-  Task_Add(Func_02000738, 0x480);
+  Task_AddFrame(Func_02000738, 0x480);
   ((struct MapLayerBits *)Ram_HeapSlots->mapWork)->priority = 1;
 done:
   return 0;

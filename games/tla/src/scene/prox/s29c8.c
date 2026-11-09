@@ -16,9 +16,9 @@ void Func_020029c8(void) {
   s32 t2;
 
   Func_020045dc(0);
-  Task_Add((s32)Func_020029a4, 0x480);
+  Task_AddFrame((s32)Func_020029a4, 0x480);
   if (FIELD_AT(gMainRoutineWork, s16, 482) == 0x14) {
-    t2 = GameFlag_Test(0x9c5);
+    t2 = Event_GetFlag(0x9c5);
     if (t2 == 0) {
       Func_02001cf0();
     }

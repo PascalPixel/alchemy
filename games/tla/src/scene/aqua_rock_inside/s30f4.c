@@ -3,7 +3,6 @@
 /// stands above its base, a column sprite as tall as its height.
 
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "vram_tab.h"

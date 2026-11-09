@@ -15,15 +15,15 @@ void Func_0200045c(void) {
   s32 t0;
   s32 t2;
 
-  t0 = GameFlag_Test(0xa23);
+  t0 = Event_GetFlag(0xa23);
   if (t0 != 0) {
-    GameFlag_SetBit(0x200);
-    t2 = GameFlag_Test(0xa21);
+    Event_SetFlag(0x200);
+    t2 = Event_GetFlag(0xa21);
     if (t2 == 0) {
       Func_02005814();
-      Event_ResolvePendingActions(0);
-      Event_SetMessageId((s32)MsgYouReLate);
-      Func_080d47b4(0x1c, 0x103, 0x1e);
+      FieldEvent_ResolvePendingActions(0);
+      FieldEvent_SetMessageId((s32)MsgYouReLate);
+      Actor_ShowEmote(0x1c, 0x103, 0x1e);
       Event_ShowMessage(0x1c, 0);
       Actor_SetAnimation(27, 3);
       /* FAKEMATCH: the one-pass block ends the scheduling block after the mode
@@ -31,7 +31,7 @@ void Func_0200045c(void) {
        * set first (differ 2). */
       do {
       } while (0);
-      Event_Wait(20);
+      FieldEvent_Wait(20);
       Event_ShowMessage(0x1b, 0);
       Func_0200581c();
     }

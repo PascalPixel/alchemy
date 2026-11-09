@@ -94,9 +94,9 @@ void Func_02001908(struct Actor *shot) {
   }
   if (shot->angle == 0xc000) {
     shot->x += Iwram_MulQ16(Math_Cosine(shot->angle), speed);
-    shot->y -= Iwram_MulQ16(Math_Sine(shot->angle), speed);
+    shot->y -= Iwram_MulQ16(Math_Sin(shot->angle), speed);
   } else {
     shot->x += Iwram_MulQ16(Math_Cosine(shot->angle), speed);
-    shot->z += Iwram_MulQ16(Math_Sine(shot->angle), speed);
+    shot->z += Iwram_MulQ16(Math_Sin(shot->angle), speed);
   }
 }

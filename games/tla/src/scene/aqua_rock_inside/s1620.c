@@ -38,7 +38,7 @@ void Func_02001620(s32 firstId, s32 secondId) {
   script = gData_02004058;
   Sound_Play(78);
   Event_Wait(30);
-  Camera_SetSpeedParameters(0x8000, 0x1000);
+  FieldCamera_SetSpeed(0x8000, 0x1000);
   Camera_MoveWithinMapBounds((first->x >> 16) << 16, (first->y >> 16) << 16,
                              (first->z >> 16) << 16, 1);
   Sound_Play(141);
@@ -159,7 +159,7 @@ column:
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
   BattleEffect_StartBufferInterpolation(8);
   wait(16);
-  Map_SetScreenShake(0, 0, 0);
+  MapGrid_SetShake(0, 0, 0);
   Actor_ConfigureSpriteColor(firstId, 0);
   Actor_ConfigureSpriteColor(secondId, 0);
   Sound_Play(574);

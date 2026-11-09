@@ -7,7 +7,6 @@
 #include "ram_buffer.h"
 #include "map.h"
 #include "input.h"
-#include "call.h"
 #include "iwram_call.h"
 #include "text/msg_ids.h"
 
@@ -55,20 +54,11 @@ extern char SceneId_Ov6ACRoom4;
 extern char SceneId_Ov6ACRoom5;
 extern char SceneId_Ov6ACRoom6;
 
-void wait(s32 frames);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void FieldEvent_Wait(s32 frames);
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void Task_Add(void (*func)(void), s32 priority);
 
 void Func_02003118(struct Actor *object, s32 value);
 void Func_02003120(struct Actor *object, const void *script);
-struct Actor *Func_02003128(s32 kind, s32 x, s32 y, s32 z);
 
 void Func_02001988(void);
 void Func_02001aec(struct Actor *object);
@@ -104,14 +94,7 @@ void Func_020012a4(s32 x, s32 z, s32 kind);
 void Func_02002ad4(void);
 void Func_020031e0(void);
 void Func_020031e8(void);
-void Func_02003280(s32 value);
-void Func_02003250(s32 color, s32 mode);
-void Func_02003248(s32 color, s32 mode);
-void Func_02003258(s32 frames);
-void Func_020031c0(s32 message, s32 a, s32 b);
-void Func_020032b8(s32 cue);
 void Func_020032a0(void);
-void Func_02003148(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 void Animation_SetStateFlags(struct Actor *object, s32 flags);

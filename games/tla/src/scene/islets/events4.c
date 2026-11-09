@@ -14,6 +14,6 @@ void Func_020034d8(void) {
 }
 
 void Func_020034ec(void) {
-  Task_RemoveFar(Func_020034fc);
+  FieldTask_Remove(Func_020034fc);
   return;
 }

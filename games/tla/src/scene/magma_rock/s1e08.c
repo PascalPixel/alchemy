@@ -12,7 +12,7 @@ void Func_020003b4(void);
 void Func_020006cc(s16 *ids);
 
 void Func_02001e08(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 position[3];
   s32 *cell = position;
   struct Actor *object;
@@ -43,5 +43,5 @@ void Func_02001e08(void) {
   cell[0] = object->x >> 20;
   cell[2] = object->z >> 20;
   if (cell[0] == 16 && cell[2] == 36)
-    GameFlag_SetBit(0x8d9);
+    Event_SetFlag(0x8d9);
 }

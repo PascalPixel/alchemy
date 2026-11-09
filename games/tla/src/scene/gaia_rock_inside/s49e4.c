@@ -9,7 +9,7 @@ void Func_020049e4(void) {
   if (gMainRoutineWork.renderMode == 2) {
     u8 *event = Ram_HeapSlots->eventWork;
     struct MapWork *map = Ram_HeapSlots->mapWork;
-    struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+    struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
     s32 x = object->x / 0x100000;
     s32 z = (object->z - object->y + 0x7fff) / 0x100000;
     struct MapCell *cells = map->layers[2].cells;

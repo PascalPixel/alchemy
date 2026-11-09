@@ -2,7 +2,6 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
-#include "flag_call.h"
 #include "text/msg_ids.h"
 #include "input.h"
 #include "scene_ids.h"
@@ -38,7 +37,7 @@ void Func_02002e00(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
-  Camera_SetSpeedParameters(0x40000, 0x8000);
+  FieldCamera_SetSpeed(0x40000, 0x8000);
   {
     /* FAKEMATCH: pinned, the mode starts right after the 1 negated for y,
      * before x loads; as a plain constant, 2 instructions differ in tla-en. */
@@ -58,11 +57,11 @@ void Func_02002e00(void) {
 
 void Func_02002e78(void) {
   s32 scale;
-  s32 seen = Flag_IsSet(0x8de);
+  s32 seen = Event_GetFlag(0x8de);
 
   if (seen == 0) {
     Func_02004c20();
-    Event_ResolvePendingActions(0);
+    FieldEvent_ResolvePendingActions(0);
     scale = Actor_GetById(gMainRoutineWork.currentOwner)->scaleX;
     Actor_GetById(gMainRoutineWork.currentOwner)->scaleX = 0;
     Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
@@ -70,62 +69,62 @@ void Func_02002e78(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Func_02004da8();
-    Event_SetMessageId((s32)MsgTakeTheTiller);
+    FieldEvent_SetMessageId((s32)MsgTakeTheTiller);
     Event_Wait(40);
-    Event_ShowMessageThenWait(7, 0, 10);
-    Func_080d47b4(8, 256, 30);
-    Event_ShowMessageThenWait(4, 0, 10);
-    Event_ShowMessageThenWait(7, 0, 10);
-    Func_080d47b4(8, 257, 30);
-    Event_ShowMessageThenWait(6, 0, 10);
-    Event_ShowMessageThenWait(9, 0, 10);
-    Func_080d47b4(8, 264, 30);
-    Event_ShowMessageThenWait(5, 0, 10);
+    FieldEvent_ShowMessageThenWait(7, 0, 10);
+    Actor_ShowEmote(8, 256, 30);
+    FieldEvent_ShowMessageThenWait(4, 0, 10);
+    FieldEvent_ShowMessageThenWait(7, 0, 10);
+    Actor_ShowEmote(8, 257, 30);
+    FieldEvent_ShowMessageThenWait(6, 0, 10);
+    FieldEvent_ShowMessageThenWait(9, 0, 10);
+    Actor_ShowEmote(8, 264, 30);
+    FieldEvent_ShowMessageThenWait(5, 0, 10);
     /* FAKEMATCH: called as returning a value, which the native's argument order
      * shows (r1 before r0). */
     ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(7, 0);
-    if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
-      Func_080d47b4(8, 265, 30);
-      Event_ShowMessageThenWait(9, 0, 10);
+    if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
+      Actor_ShowEmote(8, 265, 30);
+      FieldEvent_ShowMessageThenWait(9, 0, 10);
       ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
     } else {
-      Func_080d47b4(8, 265, 30);
+      Actor_ShowEmote(8, 265, 30);
       ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
-      Event_ShowMessageThenWait(9, 0, 10);
+      FieldEvent_ShowMessageThenWait(9, 0, 10);
     }
     Func_02004d08_(8, 256, 30);
-    Event_ShowMessageThenWait(7, 0, 10);
-    Event_ShowMessageThenWait(9, 0, 10);
+    FieldEvent_ShowMessageThenWait(7, 0, 10);
+    FieldEvent_ShowMessageThenWait(9, 0, 10);
     Func_02004d08_(8, 257, 30);
-    Event_ShowMessageThenWait(6, 0, 10);
-    Event_ShowMessageThenWait(9, 0, 10);
-    Func_080d47b4(8, 256, 30);
-    Event_ShowMessageThenWait(5, 0, 10);
-    Event_ShowMessageThenWait(9, 0, 10);
-    Event_ShowMessageThenWait(6, 0, 10);
+    FieldEvent_ShowMessageThenWait(6, 0, 10);
+    FieldEvent_ShowMessageThenWait(9, 0, 10);
+    Actor_ShowEmote(8, 256, 30);
+    FieldEvent_ShowMessageThenWait(5, 0, 10);
+    FieldEvent_ShowMessageThenWait(9, 0, 10);
+    FieldEvent_ShowMessageThenWait(6, 0, 10);
     Func_02004d08_(8, 264, 30);
-    Event_ShowMessageThenWait(5, 0, 10);
-    Func_080d47b4(8, 258, 30);
-    Event_ShowMessageThenWait(6, 0, 10);
-    Event_ShowMessageThenWait(5, 0, 10);
-    Event_ShowMessageThenWait(9, 0, 10);
-    Func_080d47b4(8, 257, 30);
-    Event_ShowMessageThenWait(7, 0, 10);
-    Func_080d47b4(8, 264, 30);
-    Event_ShowMessageThenWait(9, 0, 10);
-    Event_ShowMessageThenWait(6, 0, 10);
-    Event_ShowMessageThenWait(5, 0, 10);
-    Event_ShowMessageThenWait(7, 0, 10);
-    Event_ShowMessageThenWait(9, 0, 10);
-    Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner, 0, 0);
+    FieldEvent_ShowMessageThenWait(5, 0, 10);
+    Actor_ShowEmote(8, 258, 30);
+    FieldEvent_ShowMessageThenWait(6, 0, 10);
+    FieldEvent_ShowMessageThenWait(5, 0, 10);
+    FieldEvent_ShowMessageThenWait(9, 0, 10);
+    Actor_ShowEmote(8, 257, 30);
+    FieldEvent_ShowMessageThenWait(7, 0, 10);
+    Actor_ShowEmote(8, 264, 30);
+    FieldEvent_ShowMessageThenWait(9, 0, 10);
+    FieldEvent_ShowMessageThenWait(6, 0, 10);
+    FieldEvent_ShowMessageThenWait(5, 0, 10);
+    FieldEvent_ShowMessageThenWait(7, 0, 10);
+    FieldEvent_ShowMessageThenWait(9, 0, 10);
+    Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
     gMainRoutineWork.renderMode = 7;
     gMainRoutineWork.ownerOverride = 1;
     Func_02004db0();
-    Flag_Set(0x8de);
-    Actor_SetHorizontalPositionWithTerrain(7, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(6, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(5, 0, 0);
+    Event_SetFlag(0x8de);
+    Actor_SetPosition(7, 0, 0);
+    Actor_SetPosition(6, 0, 0);
+    Actor_SetPosition(9, 0, 0);
+    Actor_SetPosition(5, 0, 0);
     Actor_GetById(gMainRoutineWork.currentOwner)->scaleX = scale;
     Func_02004c28();
   }

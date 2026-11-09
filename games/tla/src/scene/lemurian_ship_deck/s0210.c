@@ -1,20 +1,18 @@
 #include "types.h"
+#include "event_inline.h"
 
 void Func_02001f5c(void);
 void Func_02001f64(void);
-void Func_020020ac(s32 a);
 void Func_02001f34(s32 a);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void FieldEvent_Wait(s32 frames);
-void Task_Add(void (*func)(void), s32 priority);
 void Func_020001cc(void);
 
 void Func_02000210(void) {
   Func_02001f5c();
-  Func_020020ac(0);
+  FieldEvent_ResolvePendingActions(0);
   Event_StartScreenTransition();
-  Task_Add(Func_020001cc, 0x480);
+  FieldTask_AddFrame(Func_020001cc, 0x480);
   Event_WaitTransitionFrames();
   FieldEvent_Wait(60);
   Func_02001f34(13);

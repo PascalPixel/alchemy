@@ -17,13 +17,13 @@ void Func_0200014c(struct YallamActor *actor);
 /// Hands objects 9 and 10 to Func_0200014c's update, object 9 with its timer
 /// at 1 and object 10 at 0.
 void Func_020023c8(void) {
-  struct YallamActor *actor = ((struct YallamActor *)Actor_GetById(9));
+  struct YallamActor *actor = ((struct YallamActor *)Actor_Get(9));
   struct YallamActor *other;
 
   actor->timer = 1;
   actor->kind = 0;
   actor->update = Func_0200014c;
-  other = ((struct YallamActor *)Actor_GetById(10));
+  other = ((struct YallamActor *)Actor_Get(10));
   other->timer = 0;
   other->kind = 0;
   other->update = Func_0200014c;

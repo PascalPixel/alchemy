@@ -41,7 +41,7 @@ s32 Func_02005020(s32 time) {
     *ringing = 1;
   } else if (*ringing) {
     if (clock->timer != 0)
-      Sound_Play(236);
+      Event_PlaySound(236);
     *ringing = second;
   }
   if (second <= 19) {

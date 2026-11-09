@@ -1,4 +1,5 @@
 #include "ride.h"
+#include "event_inline.h"
 
 struct MapLayer {
   u8 unk00[0x30];

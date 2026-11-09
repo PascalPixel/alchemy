@@ -10,7 +10,7 @@
 s32 Actor_SetSingleChildFlags();
 
 s32 Func_02000038(s32 a0) {
-  Sound_Play(0x98);
+  Event_PlaySound(0x98);
   Actor_SetSingleChildFlags(a0, 0);
   return 0;
 }

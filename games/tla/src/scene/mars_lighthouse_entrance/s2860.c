@@ -1,12 +1,10 @@
 #include "../../../../games/tla/src/scene/mars_lighthouse_entrance/room.h"
 
 s32 Func_020024c0(s32 a, s32 b);
-void Func_02004d10(s32 a, s32 b);
 void Func_02004d50(s32 a, s32 b);
 s32 Func_02004c18(s32 layer, s32 x, s32 z);
 void Func_02002614(void);
 void Func_02004ca8(void);
-void Func_02004da0(s32 value);
 void Func_02004bc0(struct Actor *object, s32 value);
 extern u8 gData_020023c4[];
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
@@ -67,12 +65,12 @@ int Func_02002860(void) {
    * returns nothing, so the -10 call sets r1 before negating r0; as void, 2 of
    * 138 instructions differ in tla-en. */
   Func_020024c0(-10, 0);
-  Func_02004d10(0x70000, 0xe000);
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  FieldCamera_SetSpeed(0x70000, 0xe000);
+  leader = Actor_Get(gMainRoutineWork.currentOwner);
   ride = (struct RideState *)(gData_020023c4 + 0x188);
   Flag_Set(0x106);
   Func_02004ca8();
-  Func_02004da0(0);
+  FieldEvent_ResolvePendingActions(0);
   Flag_Clear(0x106);
   leader->update = Func_02002614;
   leader->angle = 0x4000;
@@ -88,7 +86,7 @@ int Func_02002860(void) {
         leader->z = (leader->z & 0xfff00000) + 0x80000;
     }
     ride->active = 0;
-    wait(1);
+    System_Wait(1);
   }
   FieldEvent_Wait(30);
   leader->update = 0;

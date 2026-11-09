@@ -9,6 +9,6 @@ void Func_0200173c(void) {
     Flag_Set(0x106);
     Func_02002118();
     Func_02002148();
-    GameFlag_ClearBit(0x106);
+    Event_ClearFlag(0x106);
   }
 }

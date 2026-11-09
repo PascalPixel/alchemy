@@ -32,7 +32,7 @@ void Animation_ApplyChildArgument(void *sprite, s32 argument);
 
 void Func_02002144(void) {
   struct SceneState *state = &gSceneState;
-  struct Actor *actor = Actor_GetById(Party_GetLeaderActor());
+  struct Actor *actor = Actor_Get(FieldParty_GetLeaderActor());
   struct SpriteWork *sprite = actor->animation;
   struct Actor *spark;
   struct FieldSprite *sparkSprite;
@@ -58,10 +58,10 @@ void Func_02002144(void) {
   if (state->timer < 0x1400)
     return;
   Func_02002898();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   actor->animationKind = 0;
   for (i = 1; i >= 0; i--) {
-    spark = ((struct Actor *)Import_ActorCreate(269, actor->x, actor->y, actor->z));
+    spark = (FieldActor_Create(269, actor->x, actor->y, actor->z));
     if (spark != 0) {
       sparkSprite = spark->animation;
       Func_02002800(spark, gData_02002ae8);
@@ -73,9 +73,9 @@ void Func_02002144(void) {
         sparkSprite->priority = 2;
       }
     }
-    wait(15);
+    System_Wait(15);
   }
-  Event_Wait(30);
+  FieldEvent_Wait(30);
   actor->animationKind = 1;
   sprite->level = 0;
   sprite->mode = 0;

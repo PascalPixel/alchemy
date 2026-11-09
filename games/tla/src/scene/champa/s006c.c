@@ -6,7 +6,6 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
 
 void Func_0200006c(s32 a0) {
   FIELD_AT(a0, s32, 24) = (FIELD_AT(a0, s32, 24) + -1536);

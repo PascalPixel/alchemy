@@ -14,7 +14,7 @@ void Func_0200379c(void);
 void Func_02003998(void) {
   struct MagmaRockSparkWork *work = Ram_HeapSlots->menuRuntime;
 
-  Task_RemoveFar(Func_0200379c);
+  FieldTask_Remove(Func_0200379c);
   Resource_ResetEntry(work->resource);
   HeapSlot_Release(220);
 }

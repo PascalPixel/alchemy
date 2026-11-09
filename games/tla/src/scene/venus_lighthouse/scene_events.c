@@ -15,6 +15,7 @@
 #include "tla_edition.h"
 #include "scene_ids.h"
 #include "version.h"
+#include "event_inline.h"
 
 #define Actor_SetPartAttribute                                                \
   ((void (*)(struct FieldActor *, s32))Actor_SetPartAttribute)
@@ -35,7 +36,7 @@ void VenusLighthouse_RunSetupStep(void) {
   Func_02001c84(4, 10);
   ((struct SetupWork *)Ram_HeapSlots->effectWork)->idle = VenusLighthouse_Idle;
   Func_02001c9c();
-  Import_EventWait(10);
+  FieldEvent_Wait(10);
   Field_DispatchTypeHandler(1);
   Func_02001c8c();
   Func_02001c94();
@@ -53,21 +54,21 @@ s32 VenusLighthouse_Start(void) {
   ((struct AerieEventWork *)Ram_HeapSlots->eventWork)->mode = 0x204;
   if (gMainRoutineWork.entrance == ENTRANCE_OPENING) {
     Import_EventStart();
-    Import_EventResolvePendingActions(0);
+    FieldEvent_ResolvePendingActions(0);
     Func_02000b2c();
     Func_02000d30();
     Import_EventEnd();
   } else {
-    Actor_SetPartAttribute(Import_ActorGet(10), 6);
-    Actor_SetPartAttribute(Import_ActorGet(17), 6);
-    Actor_SetPartAttribute(Import_ActorGet(18), 6);
-    Actor_SetPartAttribute(Import_ActorGet(19), 6);
-    Actor_SetPartAttribute(Import_ActorGet(20), 6);
-    Actor_SetPartAttribute(Import_ActorGet(21), 6);
-    Actor_SetPartAttribute(Import_ActorGet(22), 6);
-    Actor_SetPartAttribute(Import_ActorGet(23), 6);
-    Actor_SetPartAttribute(Import_ActorGet(24), 6);
-    Actor_SetPartAttribute(Import_ActorGet(25), 6);
+    Actor_SetSpriteColor(Actor_Get(10), 6);
+    Actor_SetSpriteColor(Actor_Get(17), 6);
+    Actor_SetSpriteColor(Actor_Get(18), 6);
+    Actor_SetSpriteColor(Actor_Get(19), 6);
+    Actor_SetSpriteColor(Actor_Get(20), 6);
+    Actor_SetSpriteColor(Actor_Get(21), 6);
+    Actor_SetSpriteColor(Actor_Get(22), 6);
+    Actor_SetSpriteColor(Actor_Get(23), 6);
+    Actor_SetSpriteColor(Actor_Get(24), 6);
+    Actor_SetSpriteColor(Actor_Get(25), 6);
   }
   return 0;
 }

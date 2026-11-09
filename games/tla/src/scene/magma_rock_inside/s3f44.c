@@ -1,17 +1,14 @@
 /// @file
 /// On entering, sets each listed pillar from its two flags, then lifts the leader onto the ground under it.
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 extern u8 gMapShapeGrid[];
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-void Func_02004da0(s32 id, s32 a, s32 b);
 s32 Func_02004ed0(struct Actor *object);
 s32 Func_02004d20(s32 layer, s32 x, s32 z);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
@@ -36,13 +33,13 @@ void Func_02003f44(const u16 *table) {
     goto done;
 next:
   id = table[0];
-  object = Actor_GetById(id);
+  object = Actor_Get(id);
   flag = table[1];
   nextFlag = flag + 1;
   cells = map->layers[object->terrainId].cells;
   shapes = gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
-  if (GameFlag_Test(nextFlag)) {
-    Func_02004da0(id, 0, 0);
+  if (Event_GetFlag(nextFlag)) {
+    Actor_SetPosition(id, 0, 0);
   } else {
     s32 shape;
     u8 *slot;
@@ -56,14 +53,14 @@ next:
     Func_02004df8(id);
     cell->attributeB = 128;
     *slot = Func_02004ef0(object->terrainId, shape, (height >> 19) + 4);
-    if (GameFlag_Test(flag))
+    if (Event_GetFlag(flag))
       Func_02004c98(object, 0);
   }
   table += 2;
   if (*table != 0xffff)
     goto next;
 done:
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.currentOwner);
   ground = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
   if (leader->y < ground) {
     leader->terrainHeight = ground;

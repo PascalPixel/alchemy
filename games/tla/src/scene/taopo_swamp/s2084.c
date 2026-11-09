@@ -12,18 +12,18 @@ void Func_02002084(s32 fade) {
      * register address; without it, 2 instructions differ in tla-en. */
     do {
     } while (0);
-    wait(10);
+    System_Wait(10);
     Blend_SetAlpha(0xd04);
-    wait(10);
+    System_Wait(10);
     Blend_SetAlpha(0xd02);
-    wait(10);
+    System_Wait(10);
     Blend_SetAlpha(0xc01);
-    wait(10);
+    System_Wait(10);
     Blend_SetAlpha(0xc00);
-    wait(10);
+    System_Wait(10);
   }
   Func_02001ff0(100, 50);
   Blend_SetAlpha(0xc07);
   if (gMainRoutineWork.entrance == 6)
-    Task_Add(Func_02001eb8, 0x480);
+    FieldTask_AddFrame(Func_02001eb8, 0x480);
 }

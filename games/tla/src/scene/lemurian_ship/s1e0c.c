@@ -1,6 +1,5 @@
 #include "lemurian_ship.h"
 #include "event_inline.h"
-#include "flag_call.h"
 #include "scene_tables.h"
 
 void Func_020013f0(void);
@@ -124,24 +123,24 @@ void Func_02001e0c(void) {
   }
   Func_02002db8(gData_0200301e);
   Task_Add(Func_020013f0, 0x480);
-  if (Flag_IsSet(0x222)) {
+  if (Event_GetFlag(0x222)) {
     Func_02001944(9, 15);
-    Flag_Clear(0x222);
-  } else if (Flag_IsSet(0x223)) {
+    Event_ClearFlag(0x222);
+  } else if (Event_GetFlag(0x223)) {
     Func_02001944(10, 16);
-    Flag_Clear(0x223);
-  } else if (Flag_IsSet(0x224)) {
+    Event_ClearFlag(0x223);
+  } else if (Event_GetFlag(0x224)) {
     Func_02001944(11, 17);
-    Flag_Clear(0x224);
-  } else if (Flag_IsSet(0x225)) {
+    Event_ClearFlag(0x224);
+  } else if (Event_GetFlag(0x225)) {
     Func_02001944(12, 18);
-    Flag_Clear(0x225);
-  } else if (Flag_IsSet(0x226)) {
+    Event_ClearFlag(0x225);
+  } else if (Event_GetFlag(0x226)) {
     Func_02001944(13, 19);
-    Flag_Clear(0x226);
-  } else if (Flag_IsSet(0x227)) {
+    Event_ClearFlag(0x226);
+  } else if (Event_GetFlag(0x227)) {
     Func_02001944(14, 20);
-    Flag_Clear(0x227);
+    Event_ClearFlag(0x227);
   }
   if (gMainRoutineWork.entrance == 26 && !GameFlag_Test(0x109))
     Func_020019ac();

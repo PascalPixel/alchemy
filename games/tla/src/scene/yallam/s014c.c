@@ -12,7 +12,7 @@ s32 Func_0200014c(struct Actor *object) {
   struct Actor *leader;
   s32 force = 0;
 
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.currentOwner);
 
   if (SceneActor_CalculateFixedPointDistance(&leader->x, &object->x) <= 11) {
     u8 *state = &object->movementState;
@@ -31,11 +31,11 @@ s32 Func_0200014c(struct Actor *object) {
     u16 *flags = (u16 *)&object->action;
 
     if (*flags & 1)
-      target = Actor_GetById(10);
+      target = Actor_Get(10);
     else
-      target = Actor_GetById(9);
+      target = Actor_Get(9);
     if (Func_02000088(object, target, 24, 0) == 0) {
-      leader = Actor_GetById(gMainRoutineWork.currentOwner);
+      leader = Actor_Get(gMainRoutineWork.currentOwner);
       if ((*(s16 *)(event + 352) != 0 || tiles[4] != 0) && (*flags & 2))
         force = 1;
       Func_02000088(object, leader, 24, force);
@@ -52,11 +52,11 @@ s32 Func_0200014c(struct Actor *object) {
   u16 *flags = (u16 *)&object->action;
 
   if (*flags & 1)
-    target = Actor_GetById(10);
+    target = Actor_Get(10);
   else
-    target = Actor_GetById(9);
+    target = Actor_Get(9);
   if (Func_02000088(object, target, 24, 0) == 0) {
-    struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+    struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
 
     if ((*(s16 *)(event + 352) != 0 || tiles[4] != 0) && (*flags & 2))
       force = 1;

@@ -2,7 +2,6 @@
 #include "scene_tables.h"
 #include "actor.h"
 #include "main_routine_work.h"
-#include "flag_call.h"
 #include "event_inline.h"
 
 void Actor_SetSingleChildFlags(struct Actor *object,
@@ -34,11 +33,11 @@ void Func_02000110(void) {
   s32 i;
 
   MapCopy(7, 13, 1, 1, 5, 13, 0);
-  if (Flag_IsSet(0x96c))
+  if (Event_GetFlag(0x96c))
     return;
   object = Actor_GetById(12);
-  Flag_Set(0x96c);
-  Flag_Set(0x96e);
+  Event_SetFlag(0x96c);
+  Event_SetFlag(0x96e);
   Actor_SetSingleChildFlags(Actor_GetById(12), 0);
   Actor_SetPosition(12, 176 << 15, 216 << 16);
   Actor_Jump(12, 9, 0);

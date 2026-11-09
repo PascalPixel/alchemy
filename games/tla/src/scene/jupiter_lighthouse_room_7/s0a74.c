@@ -21,9 +21,9 @@ void Func_02000a74(void) {
           Event_GetFlag(2577) + Event_GetFlag(2579) + Event_GetFlag(2581) ==
       0)
     return;
-  Camera_MoveWithinMapBounds(148 << 18, -1, PIXELS(248), 1);
+  FieldCamera_MoveTo(148 << 18, -1, PIXELS(248), 1);
   Func_02002bd4();
-  Event_Wait(10);
+  FieldEvent_Wait(10);
   if (Event_GetFlag(2576))
     Func_020009f8(18, 35, 15, -16, 0);
   if (Event_GetFlag(2577))
@@ -36,37 +36,37 @@ void Func_02000a74(void) {
     Func_020009f8(18, 33, 10, -16, 0);
   if (Event_GetFlag(2581))
     Func_020009f8(19, 33, 10, -16, 0);
-  GameFlag_ClearBit(2576);
-  GameFlag_ClearBit(2577);
-  GameFlag_ClearBit(2578);
-  GameFlag_ClearBit(2579);
-  GameFlag_ClearBit(2580);
-  GameFlag_ClearBit(2581);
+  Event_ClearFlag(2576);
+  Event_ClearFlag(2577);
+  Event_ClearFlag(2578);
+  Event_ClearFlag(2579);
+  Event_ClearFlag(2580);
+  Event_ClearFlag(2581);
   Func_020002f0();
-  wait(2);
-  object = Actor_GetById(18);
+  System_Wait(2);
+  object = Actor_Get(18);
   i = 0;
   if (object->y > object->terrainHeight || object->velocityY != 0) {
     do {
-      wait(1);
+      System_Wait(1);
       i++;
       if (i > 29)
         break;
     } while (object->y > object->terrainHeight || object->velocityY != 0);
   }
   object->motionFlags = 0;
-  object = Actor_GetById(19);
+  object = Actor_Get(19);
   i = 0;
   if (object->y > object->terrainHeight || object->velocityY != 0) {
     do {
-      wait(1);
+      System_Wait(1);
       i++;
       if (i > 29)
         break;
     } while (object->y > object->terrainHeight || object->velocityY != 0);
   }
   object->motionFlags = 0;
-  Event_Wait(30);
-  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  FieldEvent_Wait(30);
+  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02002bd4();
 }

@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "system/io_reg.h"
 #include "system/main_routine_work.h"
@@ -122,12 +121,12 @@ void Func_02000ac8(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   FieldCamera_SetSpeed(0xcccc, 0x1999);
-  Actor_ResetAndSetPositionInMode2(gMainRoutineWork.currentOwner, x, z);
+  Actor_WalkTo(gMainRoutineWork.currentOwner, x, z);
   FieldCamera_MoveTo(x << 16, -1, z << 16, 1);
-  Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
+  FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x4000);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
-  actor = ((struct Actor *)Import_ActorCreate((u16)type, leader->x,
+  actor = (FieldActor_Create((u16)type, leader->x,
                                               leader->y + 0x80000, leader->z));
   actor->motionFlags = 0;
   actor->scaleY = 0x1999;
@@ -234,7 +233,7 @@ void Func_02000ac8(void) {
     PaletteFade_ApplyTarget(0x10000, 0);
     PaletteFade_Interpolate(32);
     Event_PlaySound(0x23e);
-    Call3((void (*)())Func_02000a78, targetX, targetZ, part);
+    Func_02000a78(targetX, targetZ, part);
     FieldEvent_Wait(80);
     if (GameFlag_Test(0xa87) && GameFlag_Test(0xa88) && GameFlag_Test(0xa89) &&
         GameFlag_Test(0xa8a)) {

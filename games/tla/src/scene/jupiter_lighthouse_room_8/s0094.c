@@ -8,15 +8,15 @@ void Func_020022c0(s32 x, s32 z, s32 a, s32 b);
 /// On cell (6, 14), sets flag 0xa18, waits until the object finishes falling
 /// and stops (at most 30 frames), then releases it.
 void Func_02000094(s32 unused, s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
   s32 i;
   s32 y;
   s32 floor;
 
   if (object->x >> 20 == 6 && object->z >> 20 == 14) {
-    GameFlag_SetBit(0xa18);
-    wait(10);
-    Sound_Play(134);
+    Event_SetFlag(0xa18);
+    System_Wait(10);
+    Event_PlaySound(134);
     y = object->y;
     floor = object->terrainHeight;
     /* FAKEMATCH(barrier): the height and the floor are read before the counter
@@ -26,7 +26,7 @@ void Func_02000094(s32 unused, s32 id) {
     i = 0;
     goto test;
     do {
-      wait(1);
+      System_Wait(1);
       if (++i > 29)
         break;
       y = object->y;

@@ -7,6 +7,7 @@
 /// with no footprint. The twin of overlay 668's Func_020040ec.
 
 #include "islets.h"
+#include "event_inline.h"
 
 extern s8 gData_0200407c[][4];
 void Func_02003790(s32 layer, s32 x, s32 z, u32 width, u32 height, s32 value);

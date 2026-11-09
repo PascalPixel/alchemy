@@ -13,41 +13,41 @@ s32 Func_02000f28(void) {
   struct Actor *object;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
-  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
+  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
   Func_02001158(17);
   Func_02001158(18);
-  Actor_SetSpritePriority(10, 2);
-  Actor_GetById(12)->collisionFlags |= 4;
-  Actor_SetSpritePriority(16, 2);
-  Actor_GetById(16)->collisionFlags |= 4;
+  FieldActor_SetSpritePriority(10, 2);
+  Actor_Get(12)->collisionFlags |= 4;
+  FieldActor_SetSpritePriority(16, 2);
+  Actor_Get(16)->collisionFlags |= 4;
 
-  object = Actor_GetById(18);
+  object = Actor_Get(18);
   object->motionFlags = 0;
   object->y = -0x40000;
   object->terrainHeight = -0x40000;
-  Actor_GetById(18)->priorityFlags |= 0x20;
-  Actor_SetSpritePriority(18, 1);
-  Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
+  Actor_Get(18)->priorityFlags |= 0x20;
+  FieldActor_SetSpritePriority(18, 1);
+  Actor_SetPosition(18, 0, 0);
 
-  object = Actor_GetById(19);
+  object = Actor_Get(19);
   object->motionFlags = 0;
   object->y = 0xc0000;
   object->terrainHeight = 0xc0000;
-  Actor_GetById(19)->priorityFlags |= 0x20;
-  Actor_SetSpritePriority(19, 1);
-  Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
+  Actor_Get(19)->priorityFlags |= 0x20;
+  FieldActor_SetSpritePriority(19, 1);
+  Actor_SetPosition(19, 0, 0);
 
-  object = Actor_GetById(20);
+  object = Actor_Get(20);
   object->motionFlags = 0;
   object->y = 0xc0000;
   object->terrainHeight = 0xc0000;
-  Actor_GetById(20)->priorityFlags |= 0x20;
-  Actor_SetSpritePriority(20, 1);
-  Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
+  Actor_Get(20)->priorityFlags |= 0x20;
+  FieldActor_SetSpritePriority(20, 1);
+  Actor_SetPosition(20, 0, 0);
 
-  Actor_SetSingleChildFlags(Actor_GetById(19), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(20), 0);
-  Actor_SetPartAttribute(Actor_GetById(20), 4);
+  Actor_SetSingleChildFlags(Actor_Get(19), 0);
+  Actor_SetSingleChildFlags(Actor_Get(20), 0);
+  Actor_SetSpriteColor(Actor_Get(20), 4);
   return 0;
 }
 

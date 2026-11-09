@@ -42,7 +42,7 @@ void Func_0200088c(struct Vector3 *from, struct Vector3 *to, s16 part) {
   struct Work *actor;
   s32 x, z, distance;
 
-  actor = ((struct Work *)Import_ActorCreate(0x2a0, from->x, from->y, from->z));
+  actor = ((struct Work *)FieldActor_Create(0x2a0, from->x, from->y, from->z));
   x = (from->x - to->x) >> 16;
   z = (from->z - to->z) >> 16;
   actor->unk64 = ArcTan2(from->z - to->z, from->x - to->x);
@@ -57,11 +57,11 @@ void Func_0200088c(struct Vector3 *from, struct Vector3 *to, s16 part) {
   actor->unk34 = from->y;
   actor->unk14 = (from->y - to->y) / 16;
   Animation_SetStateFlags(actor, 1);
-  Actor_SetPartAttribute(actor, (u16)part);
+  Actor_SetSpriteColor(actor, (u16)part);
   Scene_SetActorSpritePriority(actor, 2);
   Func_020032e0(actor, 7);
   Actor_SetSingleChildFlags(actor, 0);
-  Vector_AddPolarOffsetFar(actor->unk4c, actor->unk64, &actor->position);
+  FieldVector_AddPolarOffset(actor->unk4c, actor->unk64, &actor->position);
   Func_020032e8(actor, gData_02003684);
   Func_020006f8(actor);
 }

@@ -4,22 +4,20 @@
 #include "main_routine_work.h"
 #include "field_sprite.h"
 #include "field_effect.h"
+#include "event_inline.h"
 
 extern const s32 gData_02005638[];
 
-struct Actor *Actor_GetById(s32 id);
-struct FieldActor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 u32 Random16Far(void);
 u32 Func_02004e98(struct FieldSprite *sprite, u32 frame);
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Func_02004c98(struct FieldEffect *effect, s32 mode);
 void Func_02004ca0(struct FieldEffect *effect, const s32 *script);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
 
 void Func_020046e8(s32 spread) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
   u32 frame = 0;
   u32 i = 0;
@@ -30,7 +28,7 @@ void Func_020046e8(s32 spread) {
        * one expression, 14 of 122 instructions differ in tla-en. */
       s32 y = leader->y - (((Random16Far() * 14) >> 16) << 16);
 
-      effect = (struct FieldEffect *)Import_ActorCreate(
+      effect = (struct FieldEffect *)FieldActor_Create(
           285, (i << 17) + leader->x - 0x80000, y - 0x20000, leader->z);
     }
     if (effect != 0) {
@@ -44,7 +42,7 @@ void Func_020046e8(s32 spread) {
       effect->sprite->priority = 1;
       if (spread != 0) {
         effect->velocity.x = Iwram_MulQ16(Math_Cosine(i << 13), 0x13333);
-        effect->velocity.z = Math_Sine(i << 13);
+        effect->velocity.z = Math_Sin(i << 13);
       } else {
         effect->velocity.x = spread;
         effect->velocity.z = spread;

@@ -1,8 +1,8 @@
 #include "types.h"
 #include "actor.h"
 #include "ram_buffer.h"
-#include "call.h"
 #include "iwram_call.h"
+#include "event_inline.h"
 
 struct MarsLighthouseEntranceAnimation {
   u8 unk00[9];
@@ -26,9 +26,7 @@ struct MarsLighthouseEntranceRideHead {
 
 extern u8 gData_020023c4[];
 
-s32 GameFlag_Test(s32 flag);
 void Func_02004bc0(struct Actor *object, s32 value);
-struct Actor *Func_02004bd8(s32 kind, s32 x, s32 y, s32 z);
 
 void Func_02002270(void) {
   struct MarsLighthouseEntranceRideHead *work =
@@ -36,9 +34,9 @@ void Func_02002270(void) {
   struct Actor *object;
   struct MarsLighthouseEntranceAnimation *animation;
 
-  if (!GameFlag_Test(0x109))
+  if (!Event_GetFlag(0x109))
     Iwram_ClearWords(work, 116);
-  object = (struct Actor *)Func_02004bd8(365, 1, 0, 0);
+  object = (struct Actor *)FieldActor_Create(365, 1, 0, 0);
   object->unk5c[0] = 2;
   Func_02004bc0(object, 1);
   animation = object->animation;

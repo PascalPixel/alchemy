@@ -7,22 +7,18 @@
 #include "iwram_call.h"
 #include "input.h"
 #include "call.h"
+#include "event_inline.h"
 
 extern volatile s16 gData_020074c8;
 extern s16 gData_02005f38[];
 void Func_02004080(struct Actor *object);
 void Func_0200410c(void);
-s32 Func_020054d0(s32 layer, s32 x, s32 z);
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 ArcTan2(s32 y, s32 x);
-void Func_020054b8(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02005480(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-void Func_020054c0(struct Actor *object);
 s32 Func_02005530(struct Actor *object);
 s32 Func_02005538(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
-void wait(s32 frames);
 
 void Func_020043ec(void) {
   struct Actor *object;
@@ -64,7 +60,7 @@ retry:
   targetZ = z;
   targetX = x;
   layer = &object->terrainId;
-  startCell = Func_020054d0(*layer, targetX, targetZ);
+  startCell = GetMapCellCollision(*layer, targetX, targetZ);
   dz = targetZ - object->z;
   dx = targetX - object->x;
   if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
@@ -82,8 +78,8 @@ retry:
   }
   /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 2
    * of 347 instructions differ in tla-en. */
-  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
-  cell = Func_020054d0(*layer, p[0], p[2]);
+  FieldVector_AddPolarOffset(0x100000, angle, position);
+  cell = GetMapCellCollision(*layer, p[0], p[2]);
   if (cell == 255 ||
       Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
     object->angle = angle;
@@ -98,16 +94,16 @@ retry:
   object->speedLimit = 0x20000;
   object->acceleration = 0x1999;
   object->action = 0;
-  Func_020054b8(object, x, object->y, z);
+  Actor_SetMoveTarget(object, x, object->y, z);
   Func_02005480(object, 2);
   Actor_SetAnimationSpeed(object, 48);
 #if !TLA_PATCH_1
-  Func_020054c0(object);
+  Actor_WaitForMove(object);
 #else
   for (i = 0; i <= 179 && Func_02005530(object) == 0; i++) {
     if (gData_020074c8 != 0)
       goto end;
-    wait(1);
+    System_Wait(1);
   }
 #endif
   object->update = (void (*)(void))Func_02004080;
@@ -142,11 +138,11 @@ overlap:
   targetZ = q[2];
   object->speedLimit = 0x20000;
   object->acceleration = 0x1999;
-  Func_020054b8(object, q[0], q[1], q[2]);
+  Actor_SetMoveTarget(object, q[0], q[1], q[2]);
   i = 0;
   goto test;
 next:
-  wait(1);
+  System_Wait(1);
   i++;
 test:
   if (i <= 179 && Func_02005530(object) == 0 && gData_020074c8 == 0)
@@ -161,20 +157,20 @@ walk:
   __asm__("" : : : "sfp");
   /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 6
    * of 347 instructions differ in tla-en. */
-  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
+  FieldVector_AddPolarOffset(0x100000, angle, position);
   q = position;
-  cell = Func_020054d0(*layer, q[0], q[2]);
+  cell = GetMapCellCollision(*layer, q[0], q[2]);
   if (cell != 255)
     goto walkNext;
 blocked:
   object->speedLimit = 0x20000;
   object->acceleration = 0x10000;
-  Func_020054b8(object, targetX, object->y, targetZ);
-  Func_020054c0(object);
-  wait(2);
+  Actor_SetMoveTarget(object, targetX, object->y, targetZ);
+  Actor_WaitForMove(object);
+  System_Wait(2);
   goto retry;
 changed:
-  wait(10);
+  System_Wait(10);
 end:
   object->update = NULL;
   object->actionFlags |= 1;

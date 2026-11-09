@@ -1,17 +1,13 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "frame.h"
 #include "field_effect.h"
-#include "flag_call.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
-void wait(s32 frames);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02004c98(struct Actor *object, s32 mode);
-void Func_02004e90(s32 value);
 s32 Math_Cosine(s32 angle);
 
 extern const s32 gData_0200502c[];
@@ -20,13 +16,8 @@ s32 Func_02000658(s32 layer, s32 x, s32 z);
 s32 Func_020005b0(s32 *from, s32 *to);
 void Func_02004d40(void);
 void Func_02004d48(void);
-void Func_02004cc8(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_02004cd0(struct Actor *object);
 void Func_02004cb0(struct Actor *object);
-void Func_02004e10(s32 a, s32 b);
 void Func_02004e20(void);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Camera_FollowActor(s32 id, s32 flag);
 u32 Random16Far(void);
 void Func_02000d1c(struct Actor *object);
 void Func_02000ea4(struct Actor *object);
@@ -43,7 +34,7 @@ struct ActorTable {
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Func_02004e10_(s32 a, s32 b) { Func_02004e10(a, b); }
+static __inline__ void Func_02004e10_(s32 a, s32 b) { Camera_SetSpeedParameters(a, b); }
 
 static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
                                                     s32 z) {
@@ -65,7 +56,7 @@ void Func_02000ed0(struct Actor *source) {
   Func_02004c98(flame, 1);
   Actor_SetSingleChildFlags(flame, 0);
   Func_02004d40();
-  Func_02004e90(0);
+  FieldEvent_ResolvePendingActions(0);
   position[0] = flame->x;
   position[1] = flame->y;
   position[2] = flame->z;
@@ -100,10 +91,10 @@ end:
   flame->acceleration = 0x20000;
   flame->speedLimit = 0x20000;
   flame->update = (void (*)(void))Func_02000d1c;
-  Func_02004cc8(flame, position[0], position[1], position[2]);
+  FieldActor_SetMoveTarget(flame, position[0], position[1], position[2]);
   Func_02004e10_(0x20000, 0x4000);
-  Camera_MoveWithinMapBounds(position[0], position[1], position[2], 1);
-  Func_02004cd0(flame);
+  FieldCamera_MoveTo(position[0], position[1], position[2], 1);
+  Actor_WaitForMove(flame);
   flame->update = 0;
   Func_02004cb0(flame);
   /* FAKEMATCH(temporary): id is reused as the spark count; with its own local,
@@ -121,36 +112,36 @@ spark:
                   ((Random16Far() & 31) - 16) << 13,
                   ((Random16Far() & 31) - 16) << 13, bit, 0x1320000, &options);
   }
-  wait(1);
+  System_Wait(1);
   id++;
   if (id != 16)
     goto spark;
-  wait(24);
+  System_Wait(24);
   if (cell == 222) {
     Func_02001350();
     Func_02004d48();
     return;
   }
-  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02004e20();
-  wait(10);
+  System_Wait(10);
   Func_02004d48();
   return;
 hit:
   flame->acceleration = 0x20000;
   flame->speedLimit = 0x20000;
   flame->update = (void (*)(void))Func_02000d1c;
-  Func_02004cc8(flame, position[0], position[1], position[2]);
+  FieldActor_SetMoveTarget(flame, position[0], position[1], position[2]);
   Func_02004e10_(0x20000, 0x4000);
-  Camera_MoveWithinMapBounds(position[0], position[1], position[2], 1);
-  Func_02004cd0(flame);
+  FieldCamera_MoveTo(position[0], position[1], position[2], 1);
+  Actor_WaitForMove(flame);
   flame->update = 0;
   Func_02004cb0(flame);
-  Flag_Set(0x2f0);
+  Event_SetFlag(0x2f0);
   Func_02000ce4((u16)id);
-  Flag_Clear(0x2f0);
-  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  Event_ClearFlag(0x2f0);
+  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02004e20();
-  wait(10);
+  System_Wait(10);
   Func_02004d48();
 }

@@ -43,11 +43,9 @@ struct OrbitObject {
 };
 
 void Func_02002180(s32 a, s32 b, s32 c, s32 d);
-void Func_02002058(s32 item);
 void Func_02002170(void);
 u8 *HeapSlot_AllocFar(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
-s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Func_020007d8(void);
 s32 Func_020007fc(s32 *p);
 
@@ -67,16 +65,16 @@ void Func_02000860(void) {
   {
     s32 priority = 0x480;
 
-    Task_Add(Func_020007d8, priority);
+    FieldTask_AddFrame(Func_020007d8, priority);
   }
   Func_02002170();
   Func_02002170();
   Settlements_Func_02002180(1, 0x203, 8, 9);
-  if (GameFlag_Test(0xf5d)) {
-    Func_020020c0(11, 0, 0);
+  if (Event_GetFlag(0xf5d)) {
+    Actor_SetPosition(11, 0, 0);
     return;
   }
-  actor = (struct OrbitObject *)Actor_GetById(11);
+  actor = (struct OrbitObject *)Actor_Get(11);
   sprite = actor->sprite;
   sprite->flags09Mode = 1;
   sprite->flags05Bit5 = 0;
@@ -85,14 +83,14 @@ void Func_02000860(void) {
   Actor_SetSingleChildFlags((struct Actor *)actor, 0);
   actor->active = 0;
   actor->mode = 0;
-  if (GameFlag_Test(0x109) == 0)
+  if (Event_GetFlag(0x109) == 0)
     actor->y += 0x100000;
   actor->flags23 &= 0xfe;
   actor->visible = 1;
   transfer = HeapSlot_AllocFar(68, 0x608);
-  Func_02002058(193);
+  Item_LoadIcon(193);
   transfer += 0x400;
-  VramCache_Load(sprite->palette, 128, transfer);
+  Vram_Load(sprite->palette, 128, transfer);
   HeapSlot_Release(68);
   actor->orbitCenterX = actor->x;
   actor->orbitAngle = 0;

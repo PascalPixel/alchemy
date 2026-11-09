@@ -2,12 +2,11 @@
 /// For each id of a list ended by 0xffff: clears the object's mark and, on a cell with
 /// attribute bit 6, blocks the cells ahead of and behind it and sets the mark.
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "actor.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 s32 Func_02000658(u32 layer, s32 x, s32 z);
 
 void Func_020006dc(u16 *ids) {
@@ -19,7 +18,7 @@ void Func_020006dc(u16 *ids) {
   s32 x, z;
 
   while (*ids != 0xffff) {
-  object = Actor_GetById(*ids);
+  object = Actor_Get(*ids);
   blocked = (u8 *)object + 0x63;
   *blocked = 0;
   if (Func_02000658(0, object->x >> 20, object->z >> 20) & 0x40) {

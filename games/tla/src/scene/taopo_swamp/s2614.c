@@ -27,7 +27,7 @@ void Func_02002614(u16 *points, u16 *values, s32 arg) {
   struct SwingWork *work = (struct SwingWork *)(gData_020023c4 + 0x188);
   struct SwingPoint *point = work->points;
 
-  if (!GameFlag_Test(0x109)) {
+  if (!Event_GetFlag(0x109)) {
     s32 x;
     s32 i;
 
@@ -76,5 +76,5 @@ void Func_02002614(u16 *points, u16 *values, s32 arg) {
       REG_BLDCNT = cnt;
     }
   }
-  Task_Add(Func_020025d4, 0x480);
+  Task_AddFrame(Func_020025d4, 0x480);
 }

@@ -7,9 +7,9 @@ s32 Func_02001564(struct Actor *object) {
   s32 scale;
 
   if (object->y + object->velocityY < object->terrainHeight) {
-    flag = GameFlag_Test(0x221);
+    flag = Event_GetFlag(0x221);
     if (flag) {
-      Sound_Play(106);
+      Event_PlaySound(106);
       return 0;
     }
     spark = Func_02002808_(0x10d, object->x, object->y, object->z);
@@ -21,10 +21,10 @@ s32 Func_02001564(struct Actor *object) {
       Actor_SetSingleChildFlags(spark, 0);
       Func_020027f8(spark, 2);
     }
-    Sound_Play(106);
+    Event_PlaySound(106);
     object->y = object->terrainHeight;
     object->velocityY = 0;
-    if (GameFlag_Test(0x104) == 0) {
+    if (Event_GetFlag(0x104) == 0) {
       count = GameFlag_GetByte_(0x230);
       if (count <= 3) {
         count++;
@@ -32,7 +32,7 @@ s32 Func_02001564(struct Actor *object) {
       }
       if (count != 0)
         Func_02000920(0, 10);
-      object = Actor_GetById(10);
+      object = Actor_Get(10);
       object->scaleX = count << 14;
       object->scaleY = count << 14;
     }

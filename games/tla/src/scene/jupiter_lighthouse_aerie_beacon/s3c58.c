@@ -26,11 +26,11 @@ void Func_02003c58(s32 mode) {
   s32 *ids = gData_02005a20;
 
   for (i = 0; i <= 4 && ids[i] != 64; i++) {
-    Actor_GetById(ids[i])->motionFlags = 0;
+    Actor_Get(ids[i])->motionFlags = 0;
     count++;
   }
   if (mode != 0) {
-    Sound_Play(223);
+    Event_PlaySound(223);
     i = 0;
     work->height += 0x18000;
     while (work->height < Data_02006a1c) {
@@ -39,17 +39,17 @@ void Func_02003c58(s32 mode) {
       for (j = 0; j < count; j++) {
         struct Actor *actor;
 
-        Actor_GetById(ids[j])->z -= speed;
-        actor = Actor_GetById(ids[j]);
-        actor->targetZ = Actor_GetById(ids[j])->z;
+        Actor_Get(ids[j])->z -= speed;
+        actor = Actor_Get(ids[j]);
+        actor->targetZ = Actor_Get(ids[j])->z;
       }
       if ((i & 3) == 3 && Data_02006a1c < speed * 15 * 2 + work->height)
         speed = speed * 15 / 16;
       if (speed <= 0xccb)
         speed = 0xccc;
       if (mode == 1 && i == 40)
-        Camera_MoveWithinMapBounds(0x1200000, 0x680000, 0x1700000, 1);
-      wait(1);
+        FieldCamera_MoveTo(0x1200000, 0x680000, 0x1700000, 1);
+      System_Wait(1);
       i++;
       if (i > 119)
         break;
@@ -58,5 +58,5 @@ void Func_02003c58(s32 mode) {
   }
   work->height = Data_02006a1c;
   Func_0200577c();
-  wait(2);
+  System_Wait(2);
 }

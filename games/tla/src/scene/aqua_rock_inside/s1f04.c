@@ -1,16 +1,15 @@
 #include "local.h"
 
-void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
 
 void Func_02001f04(void) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   u8 *flags = &object->motionFlags;
   s32 saved = *flags;
   s32 speed;
   s32 i;
 
   Func_02003d7c();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Animation_ApplyChildValues(object, 9);
   *flags = 0;
@@ -28,16 +27,16 @@ fall:
   object->angle += 0x2000;
   speed += -0xccc;
   Actor_SetSingleChildFlags(object, 0);
-  wait(1);
+  System_Wait(1);
   i--;
   if (i >= 0)
     goto fall;
   Func_02002bd4(object);
   Animation_ApplyChildValues(object, 0);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
   *flags = saved;
   object->velocityY = 0x80000;
-  Sound_Play(215);
-  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 168, 200);
+  Event_PlaySound(215);
+  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 168, 200);
   Func_02003d84();
 }

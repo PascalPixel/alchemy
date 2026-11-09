@@ -20,13 +20,13 @@ void Func_020020ac(s32 value);
 s32 Func_02000b64(void) {
   struct EventWork *work;
 
-  GameFlag_SetBit(0x144);
+  Event_SetFlag(0x144);
   work = Ram_HeapSlots->eventWork;
   work->screenEffect = 0;
   work->delay = 16;
-  wait(1);
-  Camera_SetSpeedParameters(0x80000, 0x10000);
-  GameFlag_ClearBit(0x12f);
+  System_Wait(1);
+  FieldCamera_SetSpeed(0x80000, 0x10000);
+  Event_ClearFlag(0x12f);
   Func_0200101c();
   switch (gMainRoutineWork.entrance) {
   case 0:

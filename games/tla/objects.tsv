@@ -70,12 +70,6 @@ main	rom_main_00	games/tla/src/system/flags/set_byte	.text
 main	rom_main_00	games/tla/src/system/flags/get_nibble	.text
 main	rom_main_00	games/tla/src/system/flags/f016dd0	.text
 main	rom_main_00	games/tla/src/system/bios
-main	rom_main_00	recon/tla/it/rom	.rom.00016e2e	it
-main	rom_main_00	recon/tla/fr/rom	.rom.00016e2e	fr
-main	rom_main_00	recon/tla/es/rom	.rom.00016e2e	es
-main	rom_main_00	recon/tla/de/rom	.rom.00016e2e	de
-main	rom_main_00	recon/tla/raw/08016e02		en
-main	rom_main_00	recon/tla/ja/rom	.rom.00016e02	ja
 main	rom_main_00	games/tla/src/system/bios_sound_bias_on
 main	rom_main_00	games/tla/src/gamepak/flash/flash	.text
 main	rom_main_00	games/tla/src/gamepak/flash/sst	.text
@@ -1220,12 +1214,6 @@ main	rom_main_05	games/tla/src/field/event_commands/FIELD_ENCOUNTERS	.rodata
 main	rom_main_05	games/tla/src/field/event_commands/encounter_rules	.rodata
 main	rom_main_05	games/tla/src/field/event_commands/cue_rules	.rodata
 main	rom_main_05	games/tla/src/field/event_commands/area_name_rules	.rodata
-main	rom_main_05	recon/tla/it/rom	.rom.000ef810	it
-main	rom_main_05	recon/tla/fr/rom	.rom.000f4810	fr
-main	rom_main_05	recon/tla/es/rom	.rom.000f8810	es
-main	rom_main_05	recon/tla/de/rom	.rom.000fc81c	de
-main	rom_main_05	recon/tla/raw/080ef81c	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000ef728	ja
 main	rom_main_05	games/tla/src/field/event_commands/pair_rules	.rodata
 main	rom_main_05	games/tla/src/graphics/palette_editor/swatch	.rodata
 main	rom_main_05	games/tla/src/field/event_commands/descent	.rodata
@@ -1777,17 +1765,11 @@ main	rom_main_09	games/tla/src/battle_effect/f154f84	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f15537c	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f15585c	.text
 main	rom_main_09	games/tla/src/battle_effect/projectile_volley	.text
-main	rom_main_09	recon/tla/it/rom	.rom.0015613e	it
 main	rom_main_09	recon/tla/it/rom	.rom.00156140	it
-main	rom_main_09	recon/tla/fr/rom	.rom.0015613e	fr
 main	rom_main_09	recon/tla/fr/rom	.rom.00156140	fr
-main	rom_main_09	recon/tla/es/rom	.rom.0015613e	es
 main	rom_main_09	recon/tla/es/rom	.rom.00156140	es
-main	rom_main_09	recon/tla/de/rom	.rom.0015613e	de
 main	rom_main_09	recon/tla/de/rom	.rom.00156140	de
-main	rom_main_09	recon/tla/raw/0815613e	.text	en
 main	rom_main_09	recon/tla/raw/08156140	.text	en
-main	rom_main_09	recon/tla/ja/rom	.rom.0015613e	ja
 main	rom_main_09	recon/tla/ja/rom	.rom.00156140	ja
 main	rom_main_09	games/tla/src/battle_effect/rise	.text
 main	rom_main_09	games/tla/src/battle_effect/transpose_copy	.text

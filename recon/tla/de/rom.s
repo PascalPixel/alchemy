@@ -1,5 +1,3 @@
-	.section .rom.00016e2e, "ax"
-	.incbin "baserom.gba", 0x00016e2e, 0x00000002
 	.section .rom.000422c8, "ax"
 	.balign 4
 	.global Text_DrawPrefixedNumberAtOffset
@@ -13,8 +11,6 @@ Text_DrawPrefixedNumberAtOffset:
 	.thumb_func
 Func_08046b08:
 	.incbin "baserom.gba", 0x00046b7c, 0x00001c38
-	.section .rom.000fc81c, "ax"
-	.incbin "baserom.gba", 0x000fc81c, 0x00000008
 	.section .rom.0011843c, "ax"
 	.balign 4
 	.global Func_0811843c
@@ -28,9 +24,8 @@ Func_0811843c:
 	.thumb_func
 BattleEffect_RunCruelRuin:
 	.incbin "baserom.gba", 0x0013fd84, 0x000017b8
-	.section .rom.0015613e, "ax"
-	.incbin "baserom.gba", 0x0015613e, 0x00000002
 	.section .rom.00156140, "ax"
+	.balign 4
 	.global BattleEffect_RunProjectileVolley
 	.type BattleEffect_RunProjectileVolley, %function
 	.thumb_func

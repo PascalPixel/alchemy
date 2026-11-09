@@ -11,3 +11,6 @@ Bios_SoundBiasOff:
 	movs	r0, #0
 	svc	25
 	bx	lr
+
+	.section .padding,"a",%progbits
+	.balign 4

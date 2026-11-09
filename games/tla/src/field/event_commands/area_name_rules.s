@@ -121,3 +121,4 @@ gScene_AreaNameRules:
 	group_name 95, -1, 96
 	group_name 96, -1, 97
 	.2byte 0xffff, 0xffff, 0xffff, 0xffff	@ End.
+	.2byte 0, 0, 0, 0	@ Unused: eight zero bytes after the end, which no lookup reaches.

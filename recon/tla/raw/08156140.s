@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global BattleEffect_RunProjectileVolley
 	.thumb_func
 BattleEffect_RunProjectileVolley:

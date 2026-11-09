@@ -239,10 +239,10 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void) {
 
   work = (struct WorkspaceWork *)Ram_HeapSlots->unkd0[0];
   win = Window_Create(OPTION_WINDOW_X, 5, OPTION_WINDOW_WIDTH, 14, 2);
-  Window_DrawDividerLine(win, 0, 2, OPTION_DIVIDER_END, 2);
-  Window_DrawDividerLine(win, 0, 4, OPTION_DIVIDER_END, 4);
-  Window_DrawDividerLine(win, 0, 7, OPTION_DIVIDER_END, 7);
-  Window_DrawDividerLine(win, 0, 10, OPTION_DIVIDER_END, 10);
+  Window_DrawDividerLine((struct Window *)win, 0, 2, OPTION_DIVIDER_END, 2);
+  Window_DrawDividerLine((struct Window *)win, 0, 4, OPTION_DIVIDER_END, 4);
+  Window_DrawDividerLine((struct Window *)win, 0, 7, OPTION_DIVIDER_END, 7);
+  Window_DrawDividerLine((struct Window *)win, 0, 10, OPTION_DIVIDER_END, 10);
   msg = (s32)&MsgWindowColorLabel;
   Text_DrawCharacterAtOffset(msg, win, 8, 0);
   msg++;
@@ -478,14 +478,16 @@ s32 Func_080400e8(void) {
       Func_08108040(work->marker[1], x, y, 1);
 
       x = work->option[2] + (s32)MsgKey113b;
-      Window_ClearInteriorTiles(settingsWindow, CHOICE_X, 40,
-                                FIRST_CHOICE_RIGHT, 48);
+      Window_ClearInteriorTiles((const struct Window *)settingsWindow, CHOICE_X,
+                                40, FIRST_CHOICE_RIGHT, 48);
       Text_DrawCharacterAtOffset(x, settingsWindow, CHOICE_X, 40);
       x = work->option[3] + (s32)MsgKey1141;
-      Window_ClearInteriorTiles(settingsWindow, CHOICE_X, 64, CHOICE_RIGHT, 72);
+      Window_ClearInteriorTiles((const struct Window *)settingsWindow, CHOICE_X,
+                                64, CHOICE_RIGHT, 72);
       Text_DrawCharacterAtOffset(x, settingsWindow, CHOICE_X, 64);
       x = work->option[4] + (s32)MsgKey1144;
-      Window_ClearInteriorTiles(settingsWindow, CHOICE_X, 88, CHOICE_RIGHT, 96);
+      Window_ClearInteriorTiles((const struct Window *)settingsWindow, CHOICE_X,
+                                88, CHOICE_RIGHT, 96);
       Text_DrawCharacterAtOffset(x, settingsWindow, CHOICE_X, 88);
       Func_0803f9c0(*hue, *brightness);
 
@@ -499,7 +501,7 @@ s32 Func_080400e8(void) {
         y += 8;
       Func_08108040(work->cursor, x, y, 3);
       WindowSprite_ClearList(helpWindow);
-      Text_DrawMessage(selectedOption + (s32)MsgKey1146, helpWindow, 0, 0);
+      Text_DrawMessage(selectedOption + (s32)MsgKey1146, (s32)helpWindow, 0, 0);
     }
     Func_08045018(pair);
     wait(1);
@@ -546,8 +548,8 @@ s32 Func_080400e8(void) {
     }
   }
 
-  Window_Close(helpWindow, 2);
-  Window_Close(settingsWindow, 2);
+  Window_Close((struct Window *)helpWindow, 2);
+  Window_Close((struct Window *)settingsWindow, 2);
   if (result == 0) {
     if (gMainRoutineWork.unk244[6] == 0 && work->option[4] == 1)
       FieldMessage_Show((s32)MsgKey1161, 1);
@@ -642,25 +644,25 @@ struct RenderInput *Func_08040628(void) {
   }
   win = Window_Create(5, top, 20, height, 2);
   for (i = 1; i < rows; i++)
-    Window_DrawDividerLine(win, 0, i * 3, 19, i * 3);
+    Window_DrawDividerLine((struct Window *)win, 0, i * 3, 19, i * 3);
   y = 4;
   if (settingsOnly == 0) {
     msg = (s32)MsgSaveYourQuest;
-    Text_DrawMessage(msg, win, 48, 4);
+    Text_DrawMessage(msg, (s32)win, 48, 4);
     msg++;
-    Text_DrawMessage(msg, win, 48, 28);
+    Text_DrawMessage(msg, (s32)win, 48, 28);
     y = 52;
   }
-  Text_DrawMessage((s32)MsgChangeSettings, win, 48, y);
+  Text_DrawMessage((s32)MsgChangeSettings, (s32)win, 48, y);
   y += 24;
   if (gDebugMode != 0) {
     msg = (s32)MsgRoughMenu;
-    Text_DrawMessage(msg, win, 48, y);
+    Text_DrawMessage(msg, (s32)win, 48, y);
     y += 24;
-    Text_DrawMessage(msg + 1, win, 48, y);
+    Text_DrawMessage(msg + 1, (s32)win, 48, y);
     y += 24;
     msg += 2;
-    Text_DrawMessage(msg, win, 48, y);
+    Text_DrawMessage(msg, (s32)win, 48, y);
   }
   work->cursor = WindowSprite_Create(Resource_LoadFixedBlockBIntoFreeSlot(),
                                      0x40000000, win, 0, 0);
@@ -810,7 +812,7 @@ s32 Func_08040798(s32 initial) {
       }
     }
   }
-  Window_Close(window, 2);
+  Window_Close((struct Window *)window, 2);
   Func_08040614();
   wait(1);
   if (result >= 0)

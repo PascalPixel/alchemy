@@ -41,7 +41,7 @@ void UiTimedNotice_Create(void) {
   y = (10 - height) >> 1;
   window = Window_Create(x, y, width, height, 2);
   work->window = window;
-  Text_DrawMessage(resource, window, 0, 0);
+  Text_DrawMessage(resource, (s32)window, 0, 0);
   work->countdown = 90;
   Task_Add(UiTimedNotice_Update, TASK_PASS_VBLANK);
 }

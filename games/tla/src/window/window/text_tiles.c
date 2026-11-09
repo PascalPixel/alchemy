@@ -676,7 +676,7 @@ void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y) {
   x >>= 3;
   *output = 0;
   y >>= 3;
-  Text_RenderWideStringInWindow(buffer, arg1, x, y);
+  Text_RenderWideStringInWindow((s16 *)buffer, (struct Window *)arg1, x, y);
   Heap_Release(buffer);
 }
 

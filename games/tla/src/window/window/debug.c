@@ -97,15 +97,15 @@ s32 Func_08040a48(void) {
       redraw = 0;
       cursor = (cursor + rows) % rows;
       test.values[3] = (test.values[3] + 5) % 5;
-      WindowSprite_RedrawSavedRect(window);
+      WindowSprite_RedrawSavedRect((struct Window *)window);
       for (i = 0, y = 2; i < 3; i++, y += 2)
-        Window_DrawDividerLine(window, 0, y, 14, y);
+        Window_DrawDividerLine((struct Window *)window, 0, y, 14, y);
       for (i = 0, value = test.values; i < 4; i++)
-        Text_DrawNumberInWindow(*value++, 0, window, 72, i * 16);
-      Text_DrawStringInWindow(SoundTest_MusicString, window, 8, 0);
-      Text_DrawStringInWindow(SoundTest_JingleString, window, 8, 16);
-      Text_DrawStringInWindow(SoundTest_SeString, window, 8, 32);
-      Text_DrawStringInWindow(SoundTest_FxString, window, 8, 48);
+        Text_DrawNumberInWindow(*value++, 0, (s32)window, 72, i * 16);
+      Text_DrawStringInWindow((u8 *)SoundTest_MusicString, (s32)window, 8, 0);
+      Text_DrawStringInWindow((u8 *)SoundTest_JingleString, (s32)window, 8, 16);
+      Text_DrawStringInWindow((u8 *)SoundTest_SeString, (s32)window, 8, 32);
+      Text_DrawStringInWindow((u8 *)SoundTest_FxString, (s32)window, 8, 48);
       Func_08108040(work + 0x5a4, ((s16)window->x << 3) - 4,
                     ((s16)window->y << 3) + (cursor << 4) + 12, 3);
     }
@@ -147,7 +147,7 @@ s32 Func_08040a48(void) {
       redraw = 1;
     }
   } while (1);
-  Window_Close(window, 2);
+  Window_Close((struct Window *)window, 2);
   Func_080409dc();
   wait(1);
   return 0;
@@ -184,13 +184,14 @@ struct Window *Func_08040cc4(void) {
 
   for (i = 0; i < 4; i++)
     Window_DrawDividerLine(window, 0, i * 3 + 3, 17, i * 3 + 3);
-  Text_DrawMessage((s32)MsgFullPpAndMoney, window, 8, 4);
-  Text_DrawMessage((s32)MsgFullPpAndMoney + 1, window, 8, 28);
-  Text_DrawMessage((s32)MsgFullPpAndMoney + 2, window, 8, 52);
-  Text_DrawMessage((s32)MsgFullPpAndMoney + 3, window, 8, 76);
-  Text_DrawMessage((s32)MsgFullPpAndMoney + 4, window, 8, 100);
+  Text_DrawMessage((s32)MsgFullPpAndMoney, (s32)window, 8, 4);
+  Text_DrawMessage((s32)MsgFullPpAndMoney + 1, (s32)window, 8, 28);
+  Text_DrawMessage((s32)MsgFullPpAndMoney + 2, (s32)window, 8, 52);
+  Text_DrawMessage((s32)MsgFullPpAndMoney + 3, (s32)window, 8, 76);
+  Text_DrawMessage((s32)MsgFullPpAndMoney + 4, (s32)window, 8, 100);
   WORD_AT(work, 1444) = WindowSprite_Create(
-      Resource_LoadFixedBlockBIntoFreeSlot(), OUTPUT_SIZE_16X16, window, 0, 0);
+      Resource_LoadFixedBlockBIntoFreeSlot(), OUTPUT_SIZE_16X16,
+      (struct RenderInput *)window, 0, 0);
   return window;
 }
 
@@ -393,12 +394,12 @@ struct RenderInput *Func_08041068(void) {
   row = 2;
   line = gDebugWarp_Presets;
   for (;;) {
-    Text_DrawStringInWindow(line->name, window, 8, y);
+    Text_DrawStringInWindow((u8 *)line->name, (s32)window, 8, y);
     y += 16;
     line++;
     if (i == 8)
       break;
-    Window_DrawDividerLine(window, 0, row, 29, row);
+    Window_DrawDividerLine((struct Window *)window, 0, row, 29, row);
     row += 2;
     i++;
   }
@@ -500,10 +501,10 @@ extern const u8 gData_0805eb50[];
 /// Draws the ability's name; ability 0 draws a dash placeholder.
 void Func_08041268(s32 ability, s32 arg1, s32 arg2, s32 arg3) {
   if (ability != 0)
-    Text_DrawCharacterAtOffset(ability + (s32)MsgAbilityNothing, arg1, arg2,
-                                 arg3);
+    Text_DrawCharacterAtOffset(ability + (s32)MsgAbilityNothing,
+                               (struct RenderInput *)arg1, arg2, arg3);
   else
-    Text_DrawStringInWindow(gData_0805eb50, arg1, arg2, arg3);
+    Text_DrawStringInWindow((u8 *)gData_0805eb50, arg1, arg2, arg3);
 }
 
 extern const s16 gData_080aa170[4][9];
@@ -530,7 +531,8 @@ struct Window *Func_0804128c(void) {
     Func_08041268(gData_080aa170[3][i], (s32)window, 176, y);
   }
   WORD_AT(work, 1444) = WindowSprite_Create(
-      Resource_LoadFixedBlockBIntoFreeSlot(), OUTPUT_SIZE_16X16, window, 0, 0);
+      Resource_LoadFixedBlockBIntoFreeSlot(), OUTPUT_SIZE_16X16,
+      (struct RenderInput *)window, 0, 0);
   return window;
 }
 
@@ -635,7 +637,7 @@ s32 Func_08041350(void) {
     }
   } while (1);
 done:
-  Window_Close(window, 2);
+  Window_Close((struct Window *)window, 2);
   Func_08041254();
   wait(1);
   if (result != -1) {

@@ -4,7 +4,6 @@
 #include "main_routine_work.h"
 #include "task.h"
 #include "call.h"
-#include "flag_call.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "text/msg_ids.h"
@@ -52,9 +51,9 @@ void Func_0200128c(void) {
   void (*func)(void);
   struct Actor *object;
 
-  if (Flag_IsSet(0x985) != 0)
+  if (Event_GetFlag(0x985) != 0)
     return;
-  if (Flag_IsSet(7) == 0)
+  if (Event_GetFlag(7) == 0)
     return;
   Func_02001f5c();
   FieldEvent_ResolvePendingActions(0);
@@ -94,7 +93,7 @@ void Func_0200128c(void) {
   PaletteFade_Interpolate(20);
   FieldEvent_Wait(20);
   MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);
-  Flag_Set(0x201);
+  Event_SetFlag(0x201);
   FieldTask_Remove(func);
   if (handle != 0)
     Call1((void (*)())Func_02001f14, handle);
@@ -112,7 +111,7 @@ void Func_0200128c(void) {
     Actor_SetDestination(7, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
   FieldActor_WaitForMoveById(7);
   Actor_SetPosition(7, 0, 0);
-  Flag_Set(0x985);
+  Event_SetFlag(0x985);
   Func_02001f64();
 }
 
@@ -122,9 +121,9 @@ extern const u8 gData_020020e4[];
 /// over the ship, the leader answers two prompts, and everyone leaves by
 /// script gData_020020e4; it sets flag 0x981.
 void Func_020014c0(void) {
-  if (Flag_IsSet(0x8ff) == 0)
+  if (Event_GetFlag(0x8ff) == 0)
     return;
-  if (Flag_IsSet(0x989) != 0)
+  if (Event_GetFlag(0x989) != 0)
     return;
   Func_02001f5c();
   FieldEvent_ResolvePendingActions(0);

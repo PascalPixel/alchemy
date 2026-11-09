@@ -1,6 +1,5 @@
 #include "types.h"
 #include "field_event.h"
-#include "flag_call.h"
 #include "event_inline.h"
 
 s32 Math_Cosine(u32 angle);

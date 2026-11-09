@@ -1,7 +1,6 @@
 #include "types.h"
 #include "actor.h"
 #include "field_sprite.h"
-#include "flag_call.h"
 #include "event_inline.h"
 
 extern u32 gFrameCount;
@@ -26,10 +25,10 @@ void Func_020004c8(void) {
   struct FieldSprite *sprite;
   s32 angle;
 
-  if (Flag_IsSet(0x201) == 0 && gFrameCount % 3 != 0)
+  if (Event_GetFlag(0x201) == 0 && gFrameCount % 3 != 0)
     return;
   center = Actor_Get(31);
-  if (Flag_IsSet(0x201) != 0) {
+  if (Event_GetFlag(0x201) != 0) {
     u32 random;
 
     random = Random16Far();

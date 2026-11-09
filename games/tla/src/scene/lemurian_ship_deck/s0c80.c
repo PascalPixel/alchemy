@@ -4,7 +4,6 @@
 #include "event_work.h"
 #include "actor.h"
 #include "scene_ids.h"
-#include "flag_call.h"
 #include "text/msg_ids.h"
 #include "scene_tables.h"
 #include "event_inline.h"
@@ -36,8 +35,8 @@ void Func_02000ce0(void) {
   s32 answer;
   s32 owner;
 
-  if (Flag_IsSet(0x8ff) != 0) {
-    Flag_Set(0x980);
+  if (Event_GetFlag(0x8ff) != 0) {
+    Event_SetFlag(0x980);
     return;
   }
   Func_02001f5c();
@@ -134,5 +133,5 @@ void Func_02000ce0(void) {
   Actor_SetPosition(5, 0, 0);
   Actor_SetPosition(9, 0, 0);
   Func_02001f64();
-  Flag_Set(0x980);
+  Event_SetFlag(0x980);
 }

@@ -6,7 +6,6 @@
 
 extern const u8 MsgWellThereS[];
 
-#include "flag_call.h"
 void Func_02001f5c(void);
 void Func_02001f64(void);
 void Func_02001fd4(s32 id, s32 target);
@@ -28,12 +27,12 @@ static __inline__ void SetPosition(s32 id, s32 x, s32 z) {
 void Func_02001074(void) {
   struct Actor *object;
 
-  if (Flag_IsSet(0x212))
+  if (Event_GetFlag(0x212))
     return;
-  if (Flag_IsSet(0x988))
+  if (Event_GetFlag(0x988))
     return;
-  Flag_Set(0x212);
-  if (Flag_IsSet(0x211)) {
+  Event_SetFlag(0x212);
+  if (Event_GetFlag(0x211)) {
     Func_02001f5c();
     FieldEvent_ResolvePendingActions(0);
     Func_02001fd4(9, gMainRoutineWork.currentOwner);
@@ -51,11 +50,11 @@ void Func_02001074(void) {
                                 *(s16 *)((u8 *)object + 18));
     FieldActor_WaitForMoveById(9);
     Actor_SetPosition(9, 0, 0);
-    Flag_Set(0x988);
+    Event_SetFlag(0x988);
     Func_02001f64();
-  } else if (Flag_IsSet(0x210)) {
-    Flag_Set(0x211);
+  } else if (Event_GetFlag(0x210)) {
+    Event_SetFlag(0x211);
   } else {
-    Flag_Set(0x210);
+    Event_SetFlag(0x210);
   }
 }

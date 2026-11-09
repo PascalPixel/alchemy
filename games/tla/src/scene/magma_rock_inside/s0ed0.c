@@ -4,7 +4,6 @@
 #include "main_routine_work.h"
 #include "frame.h"
 #include "field_effect.h"
-#include "flag_call.h"
 #include "event_inline.h"
 
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
@@ -138,9 +137,9 @@ hit:
   Actor_WaitForMove(flame);
   flame->update = 0;
   Func_02004cb0(flame);
-  Flag_Set(0x2f0);
+  Event_SetFlag(0x2f0);
   Func_02000ce4((u16)id);
-  Flag_Clear(0x2f0);
+  Event_ClearFlag(0x2f0);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02004e20();
   System_Wait(10);

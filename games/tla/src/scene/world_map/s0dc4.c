@@ -3,7 +3,6 @@
 #include "main_routine_work.h"
 #include "actor.h"
 #include "event_work.h"
-#include "flag_call.h"
 #include "event_inline.h"
 
 extern char MsgIVeHeard[];
@@ -84,7 +83,7 @@ s32 Func_02000dc4(void) {
     /* FAKEMATCH(wrapper): the flag test here and case 98's four sets forwarded
      * through flag_call.h's Flag_IsSet and Flag_Set; as direct GameFlag_Test
      * and GameFlag_SetBit calls, 75 of 270 instructions differ in tla-en. */
-    if (!Flag_IsSet(0x90a) && GameFlag_Test(0xa5f) != 0) {
+    if (!Event_GetFlag(0x90a) && GameFlag_Test(0xa5f) != 0) {
       GameFlag_SetBit(0x90a);
       Func_02001c5c();
     }
@@ -128,10 +127,10 @@ s32 Func_02000dc4(void) {
     break;
   case 98:
     gMainRoutineWork.ownerOverride = 1;
-    Flag_Set(0x8de);
-    Flag_Set(0x8df);
-    Flag_Set(0x163);
-    Flag_Set(0x11d);
+    Event_SetFlag(0x8de);
+    Event_SetFlag(0x8df);
+    Event_SetFlag(0x163);
+    Event_SetFlag(0x11d);
     Func_02004d38((s32)&SceneId_WorldMap, 61);
     break;
   case 99:

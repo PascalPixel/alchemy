@@ -2,7 +2,6 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
-#include "flag_call.h"
 #include "text/msg_ids.h"
 #include "input.h"
 #include "scene_ids.h"
@@ -58,7 +57,7 @@ void Func_02002e00(void) {
 
 void Func_02002e78(void) {
   s32 scale;
-  s32 seen = Flag_IsSet(0x8de);
+  s32 seen = Event_GetFlag(0x8de);
 
   if (seen == 0) {
     Func_02004c20();
@@ -121,7 +120,7 @@ void Func_02002e78(void) {
     gMainRoutineWork.renderMode = 7;
     gMainRoutineWork.ownerOverride = 1;
     Func_02004db0();
-    Flag_Set(0x8de);
+    Event_SetFlag(0x8de);
     Actor_SetPosition(7, 0, 0);
     Actor_SetPosition(6, 0, 0);
     Actor_SetPosition(9, 0, 0);

@@ -1,7 +1,6 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "actor.h"
-#include "flag_call.h"
 #include "event_inline.h"
 
 void Actor_SetSingleChildFlags(struct Actor *object,
@@ -11,7 +10,7 @@ s32 Func_02003a7c(void);
 void Func_0200244c(s32 height) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
 
-  if (!Flag_IsSet(0x109)) {
+  if (!Event_GetFlag(0x109)) {
     object->motionFlags = 0;
     Actor_SetSingleChildFlags(object, 0);
     object->y += height;

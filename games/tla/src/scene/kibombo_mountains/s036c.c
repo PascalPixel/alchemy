@@ -1,6 +1,5 @@
 #include "types.h"
 #include "actor.h"
-#include "flag_call.h"
 #include "scene_tables.h"
 #include "event_inline.h"
 
@@ -18,14 +17,14 @@ void Func_0200036c(void) {
   Actor_Get(17)->velocityY = PIXELS(4);
   FieldActor_WaitForMoveById(17);
   Actor_Get(17)->priorityFlags |= 2;
-  if (!Flag_IsSet(0x8ff) && !Flag_IsSet(0x201)) {
+  if (!Event_GetFlag(0x8ff) && !Event_GetFlag(0x201)) {
     FieldActor_Stop(10);
     Actor_MoveToAndWait(10, 764, 388);
     Actor_SetDestination(17, 764, 376);
     Actor_WalkToAndWait(10, 764, 380);
     Actor_SetAnimation(10, 4);
     Actor_SetAttachedEffect(10, 257);
-    Flag_Set(0x202);
+    Event_SetFlag(0x202);
   }
   Func_0200108c();
 }

@@ -1,6 +1,5 @@
 #include "types.h"
 #include "field_event.h"
-#include "flag_call.h"
 #include "event_inline.h"
 
 void Func_02000060(s32 animate) {
@@ -30,22 +29,22 @@ void Func_020000ec(void) {
 void Func_02000178(void) {
   struct FieldActor *object = ((struct FieldActor *)Actor_Get(10));
 
-  if (!Flag_IsSet(0xa01) && object->x >> 20 == 17 && object->z >> 20 == 33) {
-    Flag_Set(0xa01);
+  if (!Event_GetFlag(0xa01) && object->x >> 20 == 17 && object->z >> 20 == 33) {
+    Event_SetFlag(0xa01);
     Func_02000060(1);
   }
 }
 
 void Func_020001b4(void) {
-  if (!Flag_IsSet(0x200)) {
-    Flag_Set(0x200);
+  if (!Event_GetFlag(0x200)) {
+    Event_SetFlag(0x200);
     Func_02000060(1);
   }
 }
 
 void Func_020001d4(void) {
-  if (Flag_IsSet(0x200) == 1) {
-    Flag_Clear(0x200);
+  if (Event_GetFlag(0x200) == 1) {
+    Event_ClearFlag(0x200);
     Func_020000ec();
   }
   Func_02000178();

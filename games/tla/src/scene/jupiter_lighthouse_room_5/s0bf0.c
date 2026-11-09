@@ -1,7 +1,6 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "actor.h"
-#include "flag_call.h"
 #include "scene_tables.h"
 #include "event_inline.h"
 
@@ -15,9 +14,9 @@ s32 Func_02000bf0(void) {
   Scene_SetArrivalFlags(0);
   Func_02000d80(0);
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x40;
-  if (Flag_IsSet(0xa00))
+  if (Event_GetFlag(0xa00))
     MapGrid_SetCellBehavior(0xd00000, 0x2a00000, 2, 236);
-  if (Flag_IsSet(0xa00)) {
+  if (Event_GetFlag(0xa00)) {
     Func_02000e04(10);
     Func_02000e04(12);
     Func_02000e04(13);
@@ -25,7 +24,7 @@ s32 Func_02000bf0(void) {
     Func_02000e04(15);
     Func_02000e04(16);
   }
-  if (Flag_IsSet(0xa09)) {
+  if (Event_GetFlag(0xa09)) {
     Actor_SetPosition(11, PIXELS(216), PIXELS(552));
     Func_02000e04(11);
   }

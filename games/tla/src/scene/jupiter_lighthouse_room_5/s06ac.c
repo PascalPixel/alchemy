@@ -1,6 +1,5 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "flag_call.h"
 #include "event_inline.h"
 
 struct SparkActor {
@@ -41,8 +40,8 @@ void Actor_SetSingleChildFlags(struct SparkActor *object, s32 flags);
 u32 Random16Far(void);
 
 void Func_020006ac(void) {
-  if (!Flag_IsSet(0xa0e)) {
-    Flag_Set(0xa0e);
+  if (!Event_GetFlag(0xa0e)) {
+    Event_SetFlag(0xa0e);
     Func_020028b0();
     FieldEvent_ResolvePendingActions(0);
     PaletteFade_ApplySource(0x10000, 0);

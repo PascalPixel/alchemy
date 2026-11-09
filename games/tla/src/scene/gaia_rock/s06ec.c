@@ -1,7 +1,6 @@
 #include "version.h"
 #include "iwram_call.h"
 #include "call.h"
-#include "flag_call.h"
 #include "actor.h"
 #include "field/event_work.h"
 #include "main_routine_work.h"
@@ -78,7 +77,7 @@ s32 Func_020006ec(void) {
       Map_CopyCellAttributeRect(53, 52, 1, 1, 49, 49);
       Map_CopyCellAttributeRect(53, 52, 1, 1, 50, 49);
       Actor_SetModeById(20, 5);
-      if (!Flag_IsSet(0xa61)) {
+      if (!Event_GetFlag(0xa61)) {
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
         FieldActor_StartRepeatedMotion(20, 3);

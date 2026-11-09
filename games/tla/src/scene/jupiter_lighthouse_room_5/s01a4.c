@@ -1,6 +1,5 @@
 #include "types.h"
 #include "field_event.h"
-#include "flag_call.h"
 #include "event_inline.h"
 
 struct OrbitEffect {
@@ -44,10 +43,10 @@ void Func_020001a4(void) {
   struct FieldSprite *sprite;
   s32 angle;
 
-  if (Flag_IsSet(0x201) == 0 && gFrameCount % 3 != 0)
+  if (Event_GetFlag(0x201) == 0 && gFrameCount % 3 != 0)
     return;
   center = ((struct FieldActor *)Actor_Get(23));
-  if (Flag_IsSet(0x201) != 0) {
+  if (Event_GetFlag(0x201) != 0) {
     u32 random;
 
     random = Random16Far();

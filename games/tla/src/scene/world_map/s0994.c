@@ -2,7 +2,6 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
-#include "flag_call.h"
 #include "text/msg_ids.h"
 #include "scene_tables.h"
 #include "event_inline.h"
@@ -38,7 +37,7 @@ void Func_02000994(void) {
   s32 southwest = FACING_SOUTHWEST;
   s32 west = FACING_WEST;
 
-  if (Flag_IsSet(0xa21) && !Flag_IsSet(0x9d0)) {
+  if (Event_GetFlag(0xa21) && !Event_GetFlag(0x9d0)) {
     object = Actor_Get(gMainRoutineWork.currentOwner);
     x = object->x;
     z = object->z;
@@ -46,7 +45,7 @@ void Func_02000994(void) {
     z >>= 20;
     Func_02004c20();
     FieldEvent_ResolvePendingActions(0);
-    if (Flag_IsSet(0x9b3)) {
+    if (Event_GetFlag(0x9b3)) {
       FieldEffect_ScheduleRatioTransition(0x16666, 6);
       Func_02004c98(5, gMainRoutineWork.currentOwner);
       System_Wait(1);
@@ -93,7 +92,7 @@ void Func_02000994(void) {
       Actor_JoinLeader(5);
       System_Wait(1);
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 7312, 8192);
-      Flag_Set(0x9b3);
+      Event_SetFlag(0x9b3);
       FieldEffect_ScheduleRatioTransition(0x10000, 6);
     }
     System_Wait(8);

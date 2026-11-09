@@ -1,7 +1,6 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "actor.h"
-#include "flag_call.h"
 #include "scene_tables.h"
 #include "event_inline.h"
 
@@ -14,7 +13,7 @@ void Func_020024c8(void) {
    * alchemy permute). */
   u32 zero = 0;
 
-  if (Flag_IsSet(0x109)) {
+  if (Event_GetFlag(0x109)) {
     s32 height;
 
     System_Wait(1);

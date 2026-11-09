@@ -1,6 +1,5 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "flag_call.h"
 #include "text/msg_ids.h"
 #include "scene_tables.h"
 #include "event_inline.h"
@@ -26,13 +25,13 @@ void Actor_SetSingleChildFlags(void *object, s32 flags);
 void Func_020008a4(void) {
   s32 angle;
 
-  if (!Flag_IsSet(0xa24))
+  if (!Event_GetFlag(0xa24))
     return;
-  if (Flag_IsSet(0xa23))
+  if (Event_GetFlag(0xa23))
     return;
-  if (Flag_IsSet(0xa22))
+  if (Event_GetFlag(0xa22))
     return;
-  Flag_Set(0xa22);
+  Event_SetFlag(0xa22);
   Func_020028b0();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(MsgFieldWaitingForCompanion);
@@ -86,8 +85,8 @@ void Func_020008a4(void) {
   Actor_SetAnimationAndWait(22, 3);
   FieldEvent_Wait(30);
   FieldEvent_ShowMessageThenWait(22, 0, 5);
-  Flag_Set(0xa25);
-  Flag_Set(0x161);
-  Flag_Set(0x144);
+  Event_SetFlag(0xa25);
+  Event_SetFlag(0x161);
+  Event_SetFlag(0x144);
   Func_020028b8();
 }

@@ -1,6 +1,5 @@
 #include "types.h"
 #include "actor.h"
-#include "flag_call.h"
 #include "event_inline.h"
 
 void Func_02000058(s32 unused, s32 id) {

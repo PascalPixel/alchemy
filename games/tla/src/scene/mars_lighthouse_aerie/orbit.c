@@ -1,6 +1,5 @@
 #include "types.h"
 #include "field_event.h"
-#include "flag_call.h"
 #include "event_inline.h"
 
 void Func_02003210(struct FieldActor *self);

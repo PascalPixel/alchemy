@@ -1,5 +1,4 @@
 #include "../../../../games/tla/src/scene/mars_lighthouse_room_m/mars_lighthouse_room_m.h"
-#include "flag_call.h"
 #include "event_inline.h"
 
 s32 Func_02002368(s32 a, s32 b);
@@ -52,7 +51,7 @@ s32 Func_02002708(void) {
     Func_02003240(event->field1ac, event->field1b4);
     event->started = 1;
   }
-  Flag_Clear(0x106);
+  Event_ClearFlag(0x106);
   event->field166 = 0;
   event->field15a = 0;
   event->field15e = 0;
@@ -64,10 +63,10 @@ s32 Func_02002708(void) {
   FieldCamera_SetSpeed(0x70000, 0xe000);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   ride = (struct RideState *)(gData_020023c4 + 0x188);
-  Flag_Set(0x106);
+  Event_SetFlag(0x106);
   Func_020031e0();
   FieldEvent_ResolvePendingActions(0);
-  Flag_Clear(0x106);
+  Event_ClearFlag(0x106);
   leader->update = (void (*)(void))Func_020024bc;
   leader->angle = 0x4000;
   Func_02003118(leader, 49);

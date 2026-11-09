@@ -3,7 +3,6 @@
 #include "main_routine_work.h"
 #include "actor.h"
 
-#include "flag_call.h"
 #include "scene_tables.h"
 #include "event_inline.h"
 void Func_02001f5c(void);
@@ -20,7 +19,7 @@ static __inline__ void Func_02001f2c_(s32 a, s32 b, s32 c, s32 d, s32 e,
 }
 
 void Func_02000078(void) {
-  if (Flag_IsSet(0x985)) {
+  if (Event_GetFlag(0x985)) {
     u8 *work = Ram_HeapSlots->eventWork;
     u32 i;
 
@@ -42,7 +41,7 @@ void Func_02000078(void) {
     i++;
     if (i <= 63)
       goto loop;
-    if (!Flag_IsSet(0x201)) {
+    if (!Event_GetFlag(0x201)) {
       Event_PlaySound(158);
       Func_02001f2c_(51, 38, 70, 22, 1, 2);
     }

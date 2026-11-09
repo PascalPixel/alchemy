@@ -1,7 +1,6 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "actor.h"
-#include "flag_call.h"
 #include "event_inline.h"
 
 extern u32 gInput;
@@ -54,7 +53,7 @@ void Func_02004e28(void);
    (s32)(base))
 
 /// A tutorial message: the second set while flag 0x175 is set.
-#define TUTORIAL_MESSAGE(base) TUTORIAL_SET_MESSAGE(Flag_IsSet(0x175), base)
+#define TUTORIAL_MESSAGE(base) TUTORIAL_SET_MESSAGE(Event_GetFlag(0x175), base)
 
 void Func_02001e34(void) {
   struct Actor *djinni;
@@ -75,13 +74,13 @@ void Func_02001e34(void) {
   /* FAKEMATCH(temporary): flag holds the id 0x16e, then the test's result,
    * then flag 0x175's result for MsgHey2, so the test's known zero dies before
    * the stores of 0 to velocityY and terrainHeight; as
-   * `if (Flag_IsSet(0x16e) == 0)` with TUTORIAL_MESSAGE(MsgHey2), 53 of 714
+   * `if (Event_GetFlag(0x16e) == 0)` with TUTORIAL_MESSAGE(MsgHey2), 53 of 714
    * instructions differ in tla-en. */
   flag = 0x16e;
   flag = GameFlag_Test(flag);
   if (flag == 0) {
     if (gInput & 64)
-      Flag_Set(0x175);
+      Event_SetFlag(0x175);
     Func_02004c20();
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
@@ -99,7 +98,7 @@ void Func_02001e34(void) {
     Party_AddActiveOwner(6);
     owner = gMainRoutineWork.currentOwner;
     Func_02004bf8(1);
-    Flag_Set(0x16e);
+    Event_SetFlag(0x16e);
     Func_02004c20();
     Event_ResolvePendingActions(0);
     Djinn_AddToOwner(owner, 0, 7);
@@ -114,7 +113,7 @@ void Func_02001e34(void) {
     }
     Actor_SetAngleToward(9, owner, 0);
     wait(16);
-    flag = Flag_IsSet(0x175);
+    flag = Event_GetFlag(0x175);
     Event_SetMessageId(TUTORIAL_SET_MESSAGE(flag, MsgHey2));
     i = 15;
     Event_ShowMessageAndWait(9, 0);
@@ -238,7 +237,7 @@ void Func_02001e34(void) {
     FieldMessage_ShowAtActor(9, 0);
     if (Event_AskYesNoWithActorAnimation(owner, 0) == 1)
       goto refused;
-    if (Flag_IsSet(0x175))
+    if (Event_GetFlag(0x175))
       Sound_Play(17);
     else
       Sound_Play(35);
@@ -264,8 +263,8 @@ void Func_02001e34(void) {
   Event_ShowMessageAndWait(9, 0);
   Sound_Play(111);
   Menu_AnimateSelectionToEntry(0, 2);
-  Flag_Set(0x16f);
-  Flag_Clear(0x171);
+  Event_SetFlag(0x16f);
+  Event_ClearFlag(0x171);
   Func_02004e28();
   Event_SetMessageId(TUTORIAL_MESSAGE(MsgSoWeGo));
   SetMoveTarget(djinni, 0x27880000, 0, 0x20a40000);
@@ -296,8 +295,8 @@ refused:
   Event_ShowMessageAndWait(9, 0);
   Func_080d47b4(9, 0x100, 30);
   Event_ShowMessageAndWait(9, 0);
-  Flag_Set(0x16f);
-  Flag_Set(0x171);
+  Event_SetFlag(0x16f);
+  Event_SetFlag(0x171);
   Func_02004e28();
   Actor_Jump(9, 2, 20);
   Event_ShowMessageAndWait(9, 0);
@@ -308,7 +307,7 @@ refused:
   Djinn_JoinParty(9, zero, 7);
   Func_02004dc0();
   Func_02004c28();
-  Flag_Clear(0x16e);
-  Flag_Clear(0x16f);
-  Flag_Clear(0x171);
+  Event_ClearFlag(0x16e);
+  Event_ClearFlag(0x16f);
+  Event_ClearFlag(0x171);
 }

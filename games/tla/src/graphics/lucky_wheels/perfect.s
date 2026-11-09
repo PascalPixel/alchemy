@@ -38,11 +38,15 @@ Slots_PerfectBanner:
 	.ifdef TLA_EDITION_DE
 	.balign 4, 0xff	@ PACKER: 0xff fill, not an earlier stream's bytes
 	.else
+	.ifdef TLA_EDITION_ES
+	.byte 0x05, 0x08	@ PACKER: unused post-stream residue; Resource_DecodeType01 uses decoded RAM and output length; writer unknown
+	.else
 	.ifdef TLA_EDITION_FR
 	.byte 0x02	@ PACKER: left in the buffer by Resource_Data087+0x7ab
 	.else
 	.ifdef TLA_EDITION_IT
 	.byte 0xe2, 0x3c, 0x30	@ PACKER: left in the buffer by Slots_GreenDigits+0x64d
+	.endif
 	.endif
 	.endif
 	.endif

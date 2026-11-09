@@ -38,8 +38,12 @@ Slots_CashOutBanner:
 	.ifdef TLA_EDITION_DE
 	.byte 0x80, 0x4e	@ PACKER: left in the buffer by Slots_DoubleUpBanner+0x3a2
 	.else
+	.ifdef TLA_EDITION_ES
+	.byte 0x01, 0x00, 0x00	@ PACKER: unused post-stream residue; Resource_DecodeType01 uses decoded RAM and output length; writer unknown
+	.else
 	.ifdef TLA_EDITION_IT
 	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
+	.endif
 	.endif
 	.endif
 	.endif

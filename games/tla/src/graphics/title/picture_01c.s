@@ -6,8 +6,8 @@
 @ colours.
 @ Streams are rounded to four bytes; PACKER rows name the buffer's last writer.
 @ After 01D, French and Italian end with zero fill no earlier stream left;
-@ Spanish's bytes are neither its last writer's nor zeros, and stay on its
-@ scaffold.
+@ Spanish's bytes are neither its last writer's nor zeros: residue whose
+@ writer is unknown.
 	.ifeq EDITION_INTERNATIONAL
 
 	.global Resource_Data01C
@@ -77,10 +77,14 @@ Resource_Data01D:
 	.endif
 	.endif
 	.endif
+	.ifdef TLA_EDITION_ES
+	.byte 0x00, 0xe0	@ PACKER: unused post-stream residue; Resource_DecodeType01 uses decoded RAM and output length; writer unknown
+	.else
 	.ifdef TLA_EDITION_FR
 	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
 	.else
 	.ifdef TLA_EDITION_IT
 	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
+	.endif
 	.endif
 	.endif

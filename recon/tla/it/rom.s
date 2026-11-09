@@ -71,33 +71,3 @@ BattleEffect_RunCatastrophe:
 	.thumb_func
 BattleEffect_RunTrident:
 	.incbin "baserom.gba", 0x0018cb74, 0x00000a1c
-	.section .rom.0088fec5, "ax"
-	.incbin "baserom.gba", 0x0088fec5, 0x00000003
-	.section .rom.008ab681, "ax"
-	.incbin "baserom.gba", 0x008ab681, 0x00000003
-	.section .rom.0093bf95, "ax"
-	.incbin "baserom.gba", 0x0093bf95, 0x00000003
-	.section .rom.00949abe, "ax"
-	.incbin "baserom.gba", 0x00949abe, 0x00000002
-	.section .rom.00969741, "ax"
-	.incbin "baserom.gba", 0x00969741, 0x00000003
-	.section .rom.00969916, "ax"
-	.incbin "baserom.gba", 0x00969916, 0x00000002
-	.section .rom.00969dff, "ax"
-	.incbin "baserom.gba", 0x00969dff, 0x00000001
-	.section .rom.00a3ea5e, "ax"
-	.incbin "baserom.gba", 0x00a3ea5e, 0x00000002
-	.section .rom.00b40ece, "ax"
-	.incbin "baserom.gba", 0x00b40ece, 0x00000002
-	.section .rom.00bacfce, "ax"
-	.incbin "baserom.gba", 0x00bacfce, 0x00000002
-	.section .rom.00c2dd2d, "ax"
-	.incbin "baserom.gba", 0x00c2dd2d, 0x00000003
-	.section .rom.00d3f4cf, "ax"
-	.incbin "baserom.gba", 0x00d3f4cf, 0x00000001
-	.section .rom.00d5784a, "ax"
-	.incbin "baserom.gba", 0x00d5784a, 0x00000002
-	.section .rom.00e0d9a9, "ax"
-	.incbin "baserom.gba", 0x00e0d9a9, 0x00000003
-	.section .rom.00eb9d69, "ax"
-	.incbin "baserom.gba", 0x00eb9d69, 0x00000003

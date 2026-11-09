@@ -32,6 +32,9 @@ Slots_LowerBanner:
 	.ifdef TLA_EDITION_JA
 	.byte 0x13	@ PACKER: left in the buffer by Slots_HigherBanner+0x23b
 	.else
+	.ifdef TLA_EDITION_DE
+	.byte 0x12, 0x40	@ PACKER: unused post-stream residue; Resource_DecodeType01 uses decoded RAM and output length; writer unknown
+	.else
 	.ifdef TLA_EDITION_ES
 	.byte 0x90, 0xb8, 0x94	@ PACKER: left in the buffer by Slots_HigherBanner+0x2bd
 	.else
@@ -40,6 +43,7 @@ Slots_LowerBanner:
 	.else
 	.ifdef TLA_EDITION_IT
 	.byte 0x3a	@ PACKER: left in the buffer by Slots_HigherBanner+0x257
+	.endif
 	.endif
 	.endif
 	.endif

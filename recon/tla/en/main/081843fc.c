@@ -1,4 +1,6 @@
 // Draft, differ 4 of 4580 (tla-en, 2026-11-09). Measure 081843fc,081848ec together.
+// Round 8 (9 November), still 4: the sparks' height indexed by i & 3 in y 4;
+// through a block-local heights pointer 500; n declared after the angle 70.
 // Near7 round (9 November), still 4. The sparks' y as y = top + (the cosine
 // term), then y -= the height >> 1: 4; the cosine term alone first: 521. A
 // dead test on n between the cosine and the height read (to put n's

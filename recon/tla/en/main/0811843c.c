@@ -1,4 +1,13 @@
 // Draft, differ 4 of 183 (tla-en, 2026-11-09); 4 in every edition
+// Round 8 (9 November), still 4, about 14 attempts. A base local set from
+// the symbol, with the dead test between it and the add, is a pseudo of its
+// own with a REG_EQUIV note (global, in r3): 4 in four orders. Reload would
+// rematerialize it as the listing's r0 only if some find_reg during its life
+// picked its register, but at the test's reload r0 and r1 are free (cost 0),
+// so nothing spills it. Set before the HP clamp (a block pointer or base),
+// global allocation gives it r0, the spill set shrinks to r2 and r3 and the
+// prologue's reloads move (128 to 134). The HP value through a local (s32 or
+// u16) moves the sl copy out of the clamp's first block (149 to 168).
 // 2026-11-09 (round 7), 8 to 4, no new device: the copies are a struct
 // (SnapshotCopy, 25 bytes padded to 28). Their stores then carry that struct's
 // alias set, which is disjoint from the unit's (the loads carry

@@ -139,6 +139,9 @@ s32 Func_0810abf0(void) {
   // takes r3 (25). price = 0 as that zero (a default) doubles price's live
   // length (its REG_EQUAL) and gives r5 to shop (160); memberIndex = unitId
   // after the zeros 10 (the store takes chooseAgain's r7).
+  // Round 8 (9 November), still 8. On the 25 form: the three later zeros in
+  // other orders 24 or 25 (unitId's reload still finds no zero to inherit),
+  // unitId = memberIndex 40, both from priceWindow 25.
   firstMessage = (s32)MsgWhoShallIRevive;
 #endif
   // DEAD: memberIndex is set again after the price window before any read.

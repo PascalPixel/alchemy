@@ -1,4 +1,8 @@
 // Draft, differ 4 of 2278 (tla-en, 2026-11-09)
+// Round 8 (9 November), still 4: the turned flash's x and y as -table + x,
+// with (s32) casts on the table reads, the whole x term cast, the size
+// arguments cast: 4; the y read as *(table + step) 188; flash->x through a
+// block local before the draw 20.
 // Near7 round (9 November), still 4. Before sched2 the rows run adds r1, r2,
 // r1 < adds r3, #138 < adds r1, r1, r3 < mov r4, sl < ldr r2, [r7] in RTL
 // order, so with mov r4, sl at three dependents the first two win on luid and

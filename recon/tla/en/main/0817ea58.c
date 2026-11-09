@@ -1,5 +1,24 @@
 // Draft, differ 8 of 3921 (tla-en, 2026-11-09); 8 in every edition (tla-ja
 // at 0817ea5c).
+// Thirteenth round, 9 November, still 8, about 35 attempts.
+// - The map loop's k as j * step, step a local holding 16 (plain C): loop.c
+//   reduces k and its zero then follows the hoisted 6 and 32, as listed, but
+//   k * 2 inherits k's benefit (simplify_giv_expr adds a source giv's benefit
+//   unconditionally, 18 + 2) and is reduced in k's place (16; step at function
+//   level 1770; k given a second use by a dead test 83 to 2168). Dead tests
+//   before and after k's set stop k deriving k * 2 (computed from k, and with
+//   step at function level the increment is the listing's adds #16), but their
+//   labels set maybe_never, so the 6 and the 32 stay in the outer loop (116 to
+//   141). map[k * 2 + i] in place of mp 22 (57 on the biv form); w = 32 before
+//   the loops 16 (the 6 stays a movable after k).
+// - z as i * step (step = -0x100), with and without the two dead tests: 48 to
+//   89 (z is reduced, but step takes r9 and the zero sl).
+// - The copy's empty asm before the 42 + i loop: 12 without it (the loop's
+//   hoisted constants rise above the call; the tag's 28 was stale), a memory
+//   clobber in its place 8, at the priority store 22, after the sprite store
+//   16, an empty once-only loop after or around the copy 12 and 14; that
+//   loop's copy alone linked 14 (a second pool word), the 0x100 copy alone 38,
+//   both 117 (the pool's order moves).
 // Twelfth round, 9 November, 16 to 8. Read from a scratch cc1 that prints each
 // sched2 ready list with priority, class and dependants (analysis only):
 // - The spawn call (6) and the orange palette copy: both reach Iwram_CopyWords
@@ -580,7 +599,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       Iwram_Copy((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
                  DECODE_BUFFER, 0x100);
       /* FAKEMATCH(barrier): an empty asm keeps the call before the loop's hoisted
-       * constants; as no asm, 28 of 3921 instructions differ in tla-en. */
+       * constants; as no asm, 12 of 3921 instructions differ in tla-en. */
       __asm__("");
       for (i = 0; i != 15; i++) {
         work->sprites[42 + i] = Func_0815b3b0(16, 8, 0x4000, 0xf000);

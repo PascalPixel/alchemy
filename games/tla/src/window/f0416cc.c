@@ -16,13 +16,14 @@
 #define TEXT_CODE_3_WIDTH gFont_GlyphWidths[0]
 #endif
 
-// The French, Spanish and Italian fonts: tile 0xF005 advances three pixels,
-// as 0xF01E does in every font.
+// A label's end tile advances three pixels: the HP label's in every font, and
+// the PP label's own in the French, Spanish and Italian fonts.
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
-#define TEXT_IS_NARROW_TILE(code) ((code) == 0xF01E || (code) == 0xF005)
+#define TEXT_IS_NARROW_TILE(code)                                              \
+  ((code) == WINDOW_TILE_HP_LABEL_END || (code) == WINDOW_TILE_PP_LABEL_END)
 #else
-#define TEXT_IS_NARROW_TILE(code) ((code) == 0xF01E)
+#define TEXT_IS_NARROW_TILE(code) ((code) == WINDOW_TILE_HP_LABEL_END)
 #endif
 
 extern char ResourceId_WindowTiles;
@@ -142,7 +143,7 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
           }
           dst += 248;
         }
-        if (code == 0xF01D || code == 0xF01F)
+        if (code == WINDOW_TILE_HP_LABEL || code == WINDOW_TILE_PP_LABEL)
           x += 8;
         else if (TEXT_IS_NARROW_TILE(code))
           x += 3;

@@ -51,14 +51,6 @@
 #define PSYNERGY_MENU_ICON_X 48
 #endif
 
-// The second of the two text tiles before a Psynergy's PP cost.
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
-    (LANGUAGE == LANGUAGE_ITALIAN)
-#define PP_LABEL_SECOND_TILE 0xf005
-#else
-#define PP_LABEL_SECOND_TILE 0xf01e
-#endif
-
 extern u8 MsgAbilityNothing[];
 extern u8 MsgCommandName[];
 extern u8 MsgDjinnName[];
@@ -597,8 +589,9 @@ s32 Func_0804bc08(struct BattleAction *commands, u16 *actors,
         Text_DrawNumberAtOffset(ability->ppCost, 2, commandWindow, 104, 0);
         work->level = 15;
         Func_08041f70(15);
-        Window_SetTilemapEntry(commandWindow, 0xf01f, 11, 0, 0);
-        Window_SetTilemapEntry(commandWindow, PP_LABEL_SECOND_TILE, 12, 0, 0);
+        Window_SetTilemapEntry(commandWindow, WINDOW_TILE_PP_LABEL, 11, 0, 0);
+        Window_SetTilemapEntry(commandWindow, WINDOW_TILE_PP_LABEL_END, 12, 0,
+                               0);
         if (ability->element != 4)
           Window_SetTilemapEntry(commandWindow, ability->element + 0x5001, 15,
                                  0, 0);

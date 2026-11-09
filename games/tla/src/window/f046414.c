@@ -30,14 +30,6 @@
 #define PSYNERGY_PROMPT_X 24
 #endif
 
-// The tile drawn beside each row of the second list.
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
-    (LANGUAGE == LANGUAGE_ITALIAN)
-#define ROW_MARK_TILE 0xf005
-#else
-#define ROW_MARK_TILE 0xf01e
-#endif
-
 extern u8 MsgAbilityNothing[];
 extern u8 MsgClassName[];
 extern u8 MsgKey0d0d[];
@@ -276,8 +268,10 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
       Text_DrawCharacterAtOffset((changedAbilities[i] & 0x3fff) +
                                      (s32)MsgAbilityNothing,
                                  window, 16, visibleRow * 16);
-      Window_SetTilemapEntry(window, 0xf01f, 11, visibleRow * 2, 0);
-      Window_SetTilemapEntry(window, ROW_MARK_TILE, 12, visibleRow * 2, 0);
+      Window_SetTilemapEntry(window, WINDOW_TILE_PP_LABEL, 11, visibleRow * 2,
+                             0);
+      Window_SetTilemapEntry(window, WINDOW_TILE_PP_LABEL_END, 12,
+                             visibleRow * 2, 0);
       Text_DrawNumberInWindow(BattleAction_Get(changedAbilities[i])->ppCost, 2,
                               window, 104, visibleRow * 16);
     }

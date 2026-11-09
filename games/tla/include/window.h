@@ -5,6 +5,7 @@
 #include "output.h"
 #include "uiflow.h"
 #include "static_assert.h"
+#include "window_tile.h"
 
 enum { UI_WINDOW_COUNT = 12, UI_OUTPUT_COUNT = 64 };
 
@@ -22,10 +23,10 @@ struct WindowWork {
   u8 alt;         ///< 1 lets text use the second range of tiles
   /// The tilemap's 4-row bands to upload: bit 0 for all, bit n + 1 for band n.
   u8 dirty;
-  u8 mode;      ///< nonzero widens a message window by 2
-  u8 menuState; ///< 1 from the work's setup
-  u8 menuBusy;  ///< while set, the tilemap is not uploaded
-  u8 level;     ///< text tiles' palette; 15 by default
+  u8 mode;             ///< nonzero widens a message window by 2
+  u8 menuState;        ///< 1 from the work's setup
+  u8 menuBusy;         ///< while set, the tilemap is not uploaded
+  u8 level;            ///< text tiles' palette; 15 by default
   u16 tilemap[20][32]; ///< the windows' BG tilemap
   struct Window windows[UI_WINDOW_COUNT];
   struct UiChannelSlot channels[3];
@@ -44,13 +45,13 @@ struct WindowWork {
   u16 glyphTiles;        ///< first sprite tile of the glyph sheet (picture 95)
   u8 unknownBeforeValues[2]; ///< not named by ⚓️ code
   u32 values[8];             ///< message argument values
-  u16 names[8]; ///< the kind of each value; 0 for a free slot
-  u16 resourceIds[2]; ///< picture shown in each portrait slot; 999 when free
-  u16 outputIds[2];   ///< VRAM cache slot of each portrait slot's picture
-  u16 speakerVoiceSound;     ///< first of four voice blip sounds; 0 for none
+  u16 names[8];              ///< the kind of each value; 0 for a free slot
+  u16 resourceIds[2];    ///< picture shown in each portrait slot; 999 when free
+  u16 outputIds[2];      ///< VRAM cache slot of each portrait slot's picture
+  u16 speakerVoiceSound; ///< first of four voice blip sounds; 0 for none
   u16 speakerVoiceCountdown; ///< characters until the next voice blip
-  u8 unk1388; ///< 1 while the next-page arrow is shown (☀️'s pageArrowShown)
-  u8 busy;    ///< set while a message waits on its sound
+  u8 unk1388;    ///< 1 while the next-page arrow is shown (☀️'s pageArrowShown)
+  u8 busy;       ///< set while a message waits on its sound
   u8 unk138a[2]; ///< cleared together, as ☀️'s spacingBefore and spacingAfter
   /// Nonzero lets a tall message fit in 32 pixels, its channel then placing
   /// glyphs by y / 320 (UiChannelSlot.unk26).
@@ -87,9 +88,6 @@ STATIC_ASSERT(sizeof(struct WindowWork) == 0x1190);
 
 /// WindowWork.glyphResource while the page arrow has no VRAM cache slot.
 #define NO_GLYPH_RESOURCE 99
-
-/// A window tilemap entry: the tile in palette 15, the text tiles' palette.
-#define WINDOW_TILE(tile) (0xf000 | (tile))
 
 /// The last character code the window's text tiles cover, as ☀️'s.
 #define TEXT_LAST_FONT_CODE 255

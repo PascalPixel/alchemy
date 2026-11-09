@@ -7,8 +7,11 @@
 
 u8 *String_FormatNumber(u8 *output, s32 value, s32 width);
 
+/// Draws a four-digit number after a two-tile label as tiles in window work at
+/// pixel (offsetX, offsetY): the HP label for variant 0, the party status
+/// window's HP; the PP label for variant 1, its PP.
 void Text_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work,
-                                       s32 offsetX, s32 offsetY, s32 variant) {
+                                     s32 offsetX, s32 offsetY, s32 variant) {
   u8 formatted[16];
   u16 output[8];
   u8 *text;
@@ -25,22 +28,27 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work,
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
   if (variant == 0) {
-    output[0] = 0xf01d;
-    output[1] = 0xf01e;
+    output[0] = WINDOW_TILE_HP_LABEL;
+    output[1] = WINDOW_TILE_HP_LABEL_END;
   } else {
-    output[0] = 0xf01f;
-    output[1] = 0xf005;
+    output[0] = WINDOW_TILE_PP_LABEL;
+    output[1] = WINDOW_TILE_PP_LABEL_END;
   }
 #else
   if (variant == 0) {
-    output[0] = 0xf01d;
+    output[0] = WINDOW_TILE_HP_LABEL;
   } else {
-    output[0] = 0xf01f;
+    output[0] = WINDOW_TILE_PP_LABEL;
   }
+  // XXX: English, German and Japanese link this function from their listings:
+  // their ROM loads the end tile from the literal pool 90 bytes away, which no
+  // other constant in the game's C does; a C form that pools exactly that word
+  // would settle it (recon/tla/en/main/08042274.c lists the forms tried).
   // A once-only block: its end keeps the loop's set-up after this store.
   do {
-    // Held in a u16 local, 0xf01e is loaded; stored directly, it is built.
-    u16 second = 0xf01e;
+    // Held in a u16 local, the end tile is loaded; stored directly, it is
+    // built.
+    u16 second = WINDOW_TILE_HP_LABEL_END;
 
     output[1] = second;
   } while (0);

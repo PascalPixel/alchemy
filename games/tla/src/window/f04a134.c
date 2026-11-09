@@ -1,5 +1,6 @@
 #include "types.h"
 #include "edition.h"
+#include "window_tile.h"
 #include "ram_buffer.h"
 #include "input.h"
 #include "frame.h"
@@ -122,12 +123,6 @@ struct PsynergyMenuOam {
 #define COST_COLUMN 11
 #define COST_X 104
 #define RANGE_COLUMN 15
-#endif
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
-    (LANGUAGE == LANGUAGE_ITALIAN)
-#define ROW_MARK_TILE 0xf005
-#else
-#define ROW_MARK_TILE 0xf01e
 #endif
 
 // Sets a menu sprite's attribute words, as The Broken Seal's
@@ -285,9 +280,10 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
           if (encodedAction == 0)
             break;
           action = BattleAction_Get(encodedAction);
-          Window_SetTilemapEntry(window, 0xf01f, COST_COLUMN, i * 2, 0);
-          Window_SetTilemapEntry(window, ROW_MARK_TILE, COST_COLUMN + 1, i * 2,
-                                 0);
+          Window_SetTilemapEntry(window, WINDOW_TILE_PP_LABEL, COST_COLUMN,
+                                 i * 2, 0);
+          Window_SetTilemapEntry(window, WINDOW_TILE_PP_LABEL_END,
+                                 COST_COLUMN + 1, i * 2, 0);
           Ability_LoadGlyph(encodedAction & 0x3fff, 0, &iconSlots[i], &glyph,
                             1);
           sprites[i].oam.f.tile = glyph;

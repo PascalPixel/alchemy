@@ -9,7 +9,7 @@ Alchemy rebuilds Golden Sun: **The Broken Seal** (☀️, build `tbs`) and **The
 ## Goal
 
 - **DONE** is pret's 100%, never stricter: all six editions of a game build byte-identical from source, verifiable from `rom.sha1`; DONE code and data are both 100% (C2); no function is matched by an assembly body or inline asm beyond the proven `CAMELOT_ASM` helpers; nothing in the build reads a ROM, confirmed by an independent audit (O4); the C compiles with a current GCC (`make modern`); every fake match is tagged and counted (S2). ☀️ has reached it; ⚓️ is still being matched.
-- **Finished** means more: every asset ported (A1), `recon/<game>` gone, no FAKEMATCH device left, a limited set of stock compilers (K1 to K3), and every mechanism and scene humanized (H4).
+- **Finished** means more: every asset ported (A1), `recon/<game>` gone, no FAKEMATCH device left, a limited set of stock compilers (K1 to K3), every mechanism and scene humanized (H4), and each game linked from one linker script run through the C preprocessor, its editions told apart by the same `LANGUAGE` and patch-level tests as the C, in place of `objects.tsv` and `ags-objects` (Pascal, 9 November 2026).
 - **Humanized** means a reader learns how the game works from its source: each mechanism, scene and event says what it is and why, under the name the game gives it, with its data read through types, and the docs are written from that source (H1).
 
 ## Where things are

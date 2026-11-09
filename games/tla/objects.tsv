@@ -55,17 +55,6 @@ main	rom_main_00	games/tla/src/system/resource/patch_thumb_branch
 main	rom_main_00	games/tla/src/system/heap_slot_release
 main	rom_main_00	games/tla/src/system/heap_release
 main	rom_main_00	games/tla/src/system/system	.text
-main	rom_main_00	games/tla/src/system/resource/allocate_blocks	.text
-main	rom_main_00	games/tla/src/system/resource/clear_slot_references	.text
-main	rom_main_00	games/tla/src/system/resource/activate_entry	.text
-main	rom_main_00	games/tla/src/system/resource/initialize	.text
-main	rom_main_00	games/tla/src/system/resource/resource_cache	.text
-main	rom_main_00	games/tla/src/system/task/task	.text
-main	rom_main_00	games/tla/src/system/task/resume_and_run	.text
-main	rom_main_00	games/tla/src/system/math	.text
-main	rom_main_00	games/tla/src/system/debug_text	.text
-main	rom_main_00	games/tla/src/system/debug_number	.text
-main	rom_main_00	games/tla/src/system/memory	.text
 main	rom_main_00	games/tla/src/system/render	.text
 main	rom_main_00	games/tla/src/system/look_at	.text
 main	rom_main_00	games/tla/src/system/transfer	.text

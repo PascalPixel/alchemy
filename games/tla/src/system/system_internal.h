@@ -38,6 +38,12 @@
 #include "rom_header.h"
 #include "serial.h"
 #include "sound_driver.h"
+#include "string.h"
 #include "task.h"
+#include "vram_tab.h"
+
+/// Cleared at power-up (start_up.c) and read by the debug text writers
+/// (debug_text.c), which write only while it is set.
+extern u8 gData_03001110;
 
 #endif

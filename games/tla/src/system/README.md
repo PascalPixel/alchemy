@@ -2,10 +2,11 @@
 
 The Lost Age's System code: power-on and the entry, the RAM layout, the
 resident IWRAM code, the interrupt table, the heap, the
-[task](../../../tbs/glossary.md#task) table (`task/`), the resource loader
-(`resource/`), the save format (`save/`), the link cable (`serial/`), the game
-flags (`flags/`), the maths, the [overlay](../../../tbs/glossary.md#overlay)
-streams (`overlay/`) and the [main routine](../../../tbs/glossary.md#main-routine).
+[task](../../../tbs/glossary.md#task) table, the two routines copied to RAM
+to run (`resource/`), the save format (`save/`), the link cable
+(`serial/`), the game flags (`flags/`), the maths, the
+[overlay](../../../tbs/glossary.md#overlay) streams (`overlay/`) and the
+[main routine](../../../tbs/glossary.md#main-routine).
 [System code](../../../tbs/src/system/README.md) and
 [The Game Pak](../../../tbs/src/gamepak/README.md) explain, for The Broken
 Seal, how a [frame](../../../tbs/glossary.md#frame) runs and why the image is
@@ -15,13 +16,13 @@ are in [The Lost Age: Game Pak](../gamepak/README.md).
 
 ## What differs from The Broken Seal
 
-- The code from power-on to the sprites' depth slots is one object,
-  `system.c`, written as parts under `system/` and cut where The Broken
-  Seal's parts are: power-on (`Entry` in `entry.s`, then `Func_0801319c` in
-  `system/start_up.c`, which enters the main routine), `wait()` and
-  `Irq_SetHandler` (`system/frame.c`). The interrupt table (`irq_table.s`),
-  the task table, the link cable and saving are each their own files, beside
-  the resident code they call.
+- The code from power-on to the heap is one object, `system.c`, written as
+  parts under `system/` and cut where The Broken Seal's parts are: power-on
+  (`Entry` in `entry.s`, then `Func_0801319c` in `system/start_up.c`, which
+  enters the main routine), `wait()` and `Irq_SetHandler` (`system/frame.c`),
+  the task table (`system/task.c`). The interrupt table (`irq_table.s`), the
+  link cable and saving are each their own files, beside the resident code
+  they call.
 - The main routine, `MainRoutine_Run` (`main_routine.c`), sits here with the
   run of files around it in the ROM (`take_exit.c`, `return_from_sequence.c`,
   `data_get_resource_group.c`, `data_load_resource_group.c`,

@@ -1,14 +1,16 @@
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "types.h"
-#include "iwram_call.h"
-#include "fixed_math.h"
+/// @file
+/// Random numbers, angles and square roots.
+// Part of system.c.
+
+#include "../system_internal.h"
+
+u32 Random16(void) {
+  u32 value;
+
+  value = gRandomState * 0x41c64e6dU + 0x3039U;
+  gRandomState = value;
+  return (value << 8) >> 16;
+}
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position) {
   *position++ += Iwram_MulQ16(radius, Trig_Sin(angle + 0x4000));

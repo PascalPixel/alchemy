@@ -1,77 +1,8 @@
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "types.h"
-#include "ram_buffer.h"
-#include "iwram_call.h"
-#include "heap_release.h"
-#include "dma.h"
-#include "io_reg.h"
-#include "io_write.h"
-#include "resource.h"
+/// @file
+/// The heap: its two bump allocators and heap slots.
+// Part of system.c.
 
-extern char ResourceId_WindowTiles;
-extern u16 *gData_030011c4;
-
-/// Blanks the debug text screen (screen block 4), homes the debug text cursor
-/// and points BG0 at the screen.
-// As ☀️'s DebugText_Clear.
-void Func_08014b70(void) {
-  Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 32 * 20 * 2);
-  gData_030011c4 = (u16 *)BG_SCREEN_BLOCK(4);
-  Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
-}
-
-void Window_LoadGraphics(void) {
-  Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles),
-          (void *)0x06000000, 0x84000800, REG_DMA3);
-  Dma_Set((const void *)gWindow_Palette, (void *)&BG_PLTT_COLOR(15, 0),
-          DMA_COPY_HALFWORDS(16), REG_DMA3);
-  /* FAKEMATCH: the do-while keeps the backdrop store's value before its
-   * address. */
-  do {
-    s32 black = 0;
-    PLTT_BACKDROP = black;
-  } while (0);
-  {
-    volatile u16 *pal;
-    s32 color;
-
-    color = 0x4180;
-    pal = (volatile u16 *)0x050001e8;
-    *pal = color;
-    color = 0x3960;
-    pal++;
-    *pal = color;
-    color = 0x3140;
-    pal++;
-    *pal = color;
-    color = 0x2920;
-    pal++;
-    *pal = color;
-    color = 0x49a0;
-    pal++;
-    *pal = color;
-    color = 0x51c0;
-    pal++;
-    *pal = color;
-    color = 0x59e0;
-    pal++;
-    *pal = color;
-  }
-  Dma_Set((const void *)gSystem_BasicColorPalette, (void *)OBJ_PLTT,
-          DMA_COPY_HALFWORDS(224), REG_DMA3);
-}
-
-void Palette_LoadBasicObjColors(void) {
-  Dma_Set((const void *)gSystem_BasicColorPalette, (void *)OBJ_PLTT,
-          DMA_COPY_HALFWORDS(224), REG_DMA3);
-}
+#include "../system_internal.h"
 
 void Heap_Initialize(void) {
   struct HeapSlots *work = Ram_HeapSlots;

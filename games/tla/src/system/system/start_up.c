@@ -4,7 +4,6 @@
 
 #include "../system_internal.h"
 
-extern u8 gData_03001110[];
 void Func_080132d0(void);
 void Window_LoadGraphics(void);
 void Func_08014b70(void);
@@ -28,7 +27,7 @@ void Func_0801319c(void) {
   Heap_Initialize();
   System_InstallIwramAndIrqs();
   *(u32 *)&gIoWriteQueue.count = 0;
-  gData_03001110[0] = 0;
+  gData_03001110 = 0;
   gDebugMode = 0;
   gCpuLoadDisplayEnabled = 0;
   Func_080132d0();

@@ -13437,11 +13437,11 @@ msgctxt "MsgSetDjinni"
 msgid "03342"
 msgstr "セットします"
 
-msgctxt "message"
+msgctxt "MsgKey0d0d"
 msgid "03343"
 msgstr "R:エナジーのへんか"
 
-msgctxt "message"
+msgctxt "MsgKey0d0e"
 msgid "03344"
 msgstr "HP"
 
@@ -17476,11 +17476,11 @@ msgctxt "MsgDjinnStatusHelp"
 msgid "04303"
 msgstr "R:ステータス"
 
-msgctxt "message"
+msgctxt "MsgKey10d3"
 msgid "04304"
 msgstr "*くわわるエナジー"
 
-msgctxt "message"
+msgctxt "MsgKey10d4"
 msgid "04305"
 msgstr "*なくなるエナジー"
 
@@ -17500,7 +17500,7 @@ msgctxt "MsgDjinnCompareTrade"
 msgid "04309"
 msgstr "こうかんします"
 
-msgctxt "message"
+msgctxt "MsgKey10d9"
 msgid "04310"
 msgstr "*エナジーはへんかしません"
 

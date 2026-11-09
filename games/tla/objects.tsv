@@ -825,6 +825,8 @@ main	rom_main_02	recon/tla/raw/08046b08	.text	en
 main	rom_main_02	games/tla/src/window/f04868c	.text	en
 main	rom_main_02	games/tla/src/window/f049154	.text	en
 main	rom_main_02	recon/tla/ja/rom	.rom.00046612	ja
+main	rom_main_02	games/tla/src/window/f046414	.text	ja
+main	rom_main_02	recon/tla/ja/rom	.rom.00046d04	ja
 main	rom_main_02	games/tla/src/window/f04868c	.text	ja
 main	rom_main_02	games/tla/src/window/f049154	.text	ja
 main	rom_main_02	games/tla/src/window/classify_use_ability	.text

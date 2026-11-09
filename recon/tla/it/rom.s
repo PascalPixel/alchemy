@@ -8,10 +8,6 @@ Func_08046b08:
 	.incbin "baserom.gba", 0x00046b6c, 0x00001c24
 	.section .rom.000ef810, "ax"
 	.incbin "baserom.gba", 0x000ef810, 0x00000008
-	.section .rom.000f3978, "ax"
-	.global Data_080f3984
-Data_080f3984:
-	.incbin "baserom.gba", 0x000f3978, 0x00000040
 	.section .rom.0010abf4, "ax"
 	.global Func_0810abf0
 	.type Func_0810abf0, %function

@@ -1254,12 +1254,7 @@ main	rom_main_05	games/tla/src/field/object/d00f2e9c	.rodata
 main	rom_main_05	games/tla/src/field/object/scripts	.rodata
 main	rom_main_05	games/tla/src/field/field_effect/particles	.rodata
 main	rom_main_05	games/tla/src/field/field_effect/fxdata	.rodata
-main	rom_main_05	recon/tla/it/rom	.rom.000f3978	it
-main	rom_main_05	recon/tla/fr/rom	.rom.000f8978	fr
-main	rom_main_05	recon/tla/es/rom	.rom.000fc978	es
-main	rom_main_05	recon/tla/de/rom	.rom.00100984	de
-main	rom_main_05	games/tla/src/field/event_commands/glow_spark	.rodata	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000f3890	ja
+main	rom_main_05	games/tla/src/field/event_commands/glow_spark	.rodata
 main	rom_main_05	games/tla/src/field/event_commands/fademap	.rodata
 main	rom_main_06	games/tla/src/gamepak/far_call/table_38
 main	rom_main_06	games/tla/src/gamepak/far_call/uiicon_2

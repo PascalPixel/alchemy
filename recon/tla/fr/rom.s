@@ -325,12 +325,6 @@ BattleEffect_RunMegiddo:
 	.incbin "baserom.gba", 0x0018fefc, 0x00000c78
 	.section .rom.001b8272, "ax"
 	.incbin "baserom.gba", 0x001b8272, 0x00000002
-	.section .rom.001c075a, "ax"
-	.global Func_081c075a
-	.type Func_081c075a, %function
-	.thumb_func
-Func_081c075a:
-	.incbin "baserom.gba", 0x001c075a, 0x00000018
 	.section .rom.0085a3ef, "ax"
 	.incbin "baserom.gba", 0x0085a3ef, 0x00000001
 	.section .rom.00890411, "ax"

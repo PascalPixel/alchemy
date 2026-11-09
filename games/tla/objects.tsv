@@ -1930,7 +1930,7 @@ main	rom_main_05	recon/tla/it/rom	.rom.000f3978	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000f8978	fr
 main	rom_main_05	recon/tla/es/rom	.rom.000fc978	es
 main	rom_main_05	recon/tla/de/rom	.rom.00100984	de
-main	rom_main_05	recon/tla/unidentified	.unidentified.080f3984	en
+main	rom_main_05	games/tla/src/field/event_commands/glow_spark	.rodata	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000f3890	ja
 main	rom_main_05	games/tla/src/field/event_commands/fademap	.rodata
 main	rom_main_06	games/tla/src/gamepak/far_call/table_38
@@ -3112,12 +3112,6 @@ main	rom_main_15	games/tla/src/sound/sound_work_copy
 main	rom_main_15	games/tla/src/sound/driver/midi_key_to_frequency
 main	rom_main_15	games/tla/src/sound/driver/midi_key_frequency_tables
 main	rom_main_15	games/tla/src/sound/driver/channel_unlink
-main	rom_main_15	recon/tla/it/rom	.rom.001c075a	it
-main	rom_main_15	recon/tla/fr/rom	.rom.001c075a	fr
-main	rom_main_15	recon/tla/es/rom	.rom.001c075a	es
-main	rom_main_15	recon/tla/de/rom	.rom.001c075a	de
-main	rom_main_15	recon/tla/raw/081c075a		en
-main	rom_main_15	recon/tla/ja/rom	.rom.001c075a	ja
 main	rom_main_15	games/tla/src/sound/driver/handle_note
 main	rom_main_15	games/tla/src/sound/driver/mplay_main
 main	rom_main_15	games/tla/src/sound/sound_stub	.text
@@ -3709,7 +3703,6 @@ main	rom_tail_02	games/tla/src/graphics/lucky_wheels/small_double_up	.rodata
 main	rom_tail_02	recon/tla/fr/rom	.rom.0085a3ef	fr
 main	rom_tail_02	games/tla/src/graphics/lucky_wheels/one_pair	.rodata
 main	rom_tail_02	games/tla/src/graphics/lucky_wheels/two_pair	.rodata
-main	rom_tail_02	recon/tla/unidentified	.unidentified.0885af9d	en
 main	rom_tail_02	games/tla/src/graphics/lucky_wheels/triple	.rodata
 main	rom_tail_02	games/tla/src/graphics/lucky_wheels/perfect	.rodata
 main	rom_tail_02	recon/tla/es/rom	.rom.0085be62	es
@@ -3782,7 +3775,6 @@ main	rom_tail_02	recon/tla/it/rom	.rom.0088fec5	it
 main	rom_tail_02	recon/tla/fr/rom	.rom.00890411	fr
 main	rom_tail_02	recon/tla/es/rom	.rom.0089070d	es
 main	rom_tail_02	recon/tla/de/rom	.rom.00890481	de
-main	rom_tail_02	recon/tla/unidentified	.unidentified.088902a1	en
 main	rom_tail_02	recon/tla/ja/rom	.rom.00890301	ja
 main	rom_tail_02	games/tla/src/graphics/battle_effects/sheet_0d8	.rodata
 main	rom_tail_02	games/tla/src/graphics/battle_effects/imp_face	.rodata
@@ -3834,7 +3826,6 @@ main	rom_tail_02	recon/tla/it/rom	.rom.008ab681	it
 main	rom_tail_02	recon/tla/fr/rom	.rom.008abbcd	fr
 main	rom_tail_02	recon/tla/es/rom	.rom.008abec9	es
 main	rom_tail_02	recon/tla/de/rom	.rom.008abc3d	de
-main	rom_tail_02	recon/tla/unidentified	.unidentified.088aba5d	en
 main	rom_tail_02	recon/tla/ja/rom	.rom.008ababd	ja
 main	rom_tail_02	games/tla/src/graphics/battle_effects/tile_mask	.rodata
 main	rom_tail_02	games/tla/src/graphics/battle_effects/cyan_spark	.rodata
@@ -3987,7 +3978,6 @@ main	rom_tail_02	recon/tla/it/rom	.rom.0093bf95	it
 main	rom_tail_02	recon/tla/fr/rom	.rom.0093c4e1	fr
 main	rom_tail_02	recon/tla/es/rom	.rom.0093c7dd	es
 main	rom_tail_02	recon/tla/de/rom	.rom.0093c551	de
-main	rom_tail_02	recon/tla/unidentified	.unidentified.0893c371	en
 main	rom_tail_02	recon/tla/ja/rom	.rom.0093c3d1	ja
 main	rom_tail_02	games/tla/src/map/default/table_199	.rodata
 main	rom_tail_02	games/tla/src/graphics/world_map/palette_a	.rodata
@@ -4014,7 +4004,6 @@ main	rom_tail_02	recon/tla/it/rom	.rom.00949abe	it
 main	rom_tail_02	recon/tla/fr/rom	.rom.0094a00a	fr
 main	rom_tail_02	recon/tla/es/rom	.rom.0094a306	es
 main	rom_tail_02	recon/tla/de/rom	.rom.0094a07a	de
-main	rom_tail_02	recon/tla/unidentified	.unidentified.08949e9a	en
 main	rom_tail_02	recon/tla/ja/rom	.rom.00949efa	ja
 main	rom_tail_02	games/tla/src/graphics/world_map/attr_c	.rodata
 main	rom_tail_02	games/tla/src/graphics/world_map/tiles_c1	.rodata
@@ -4075,13 +4064,11 @@ main	rom_tail_02	recon/tla/it/rom	.rom.00969741	it
 main	rom_tail_02	recon/tla/fr/rom	.rom.00969dc9	fr
 main	rom_tail_02	recon/tla/es/rom	.rom.0096a179	es
 main	rom_tail_02	recon/tla/de/rom	.rom.00969e81	de
-main	rom_tail_02	recon/tla/unidentified	.unidentified.08969da9	en
 main	rom_tail_02	games/tla/src/graphics/field_effects/white_puff	.rodata
 main	rom_tail_02	recon/tla/it/rom	.rom.00969916	it
 main	rom_tail_02	recon/tla/fr/rom	.rom.00969f9e	fr
 main	rom_tail_02	recon/tla/es/rom	.rom.0096a34e	es
 main	rom_tail_02	recon/tla/de/rom	.rom.0096a056	de
-main	rom_tail_02	recon/tla/unidentified	.unidentified.08969f7e	en
 main	rom_tail_02	games/tla/src/graphics/field_effects/r1ed	.rodata
 main	rom_tail_02	games/tla/src/graphics/field_effects/r1ee	.rodata
 main	rom_tail_02	games/tla/src/graphics/field_effects/coloured_orbs	.rodata
@@ -4092,7 +4079,6 @@ main	rom_tail_02	recon/tla/it/rom	.rom.00969dff	it
 main	rom_tail_02	recon/tla/fr/rom	.rom.0096a487	fr
 main	rom_tail_02	recon/tla/es/rom	.rom.0096a837	es
 main	rom_tail_02	recon/tla/de/rom	.rom.0096a53f	de
-main	rom_tail_02	recon/tla/unidentified	.unidentified.0896a467	en
 main	rom_tail_02	recon/tla/ja/rom	.rom.0096a4c7	ja
 main	rom_tail_02	games/tla/src/graphics/field_effects/white_sparkle	.rodata
 main	rom_tail_02	games/tla/src/graphics/field_effects/runes	.rodata
@@ -4191,7 +4177,6 @@ main	rom_tail_02	recon/tla/it/rom	.rom.00a3ea5e	it
 main	rom_tail_02	recon/tla/fr/rom	.rom.00a3f0e6	fr
 main	rom_tail_02	recon/tla/es/rom	.rom.00a3f496	es
 main	rom_tail_02	recon/tla/de/rom	.rom.00a3f19e	de
-main	rom_tail_02	recon/tla/unidentified	.unidentified.08a3f0c6	en
 main	rom_tail_02	games/tla/src/graphics/monster/winged_dragon	.rodata
 main	rom_tail_02	games/tla/src/graphics/monster/blue_mage	.rodata
 main	rom_tail_02	games/tla/src/graphics/monster/skeleton	.rodata
@@ -4381,7 +4366,6 @@ main	rom_tail_02	recon/tla/it/rom	.rom.00b40ece	it
 main	rom_tail_02	recon/tla/fr/rom	.rom.00b41556	fr
 main	rom_tail_02	recon/tla/es/rom	.rom.00b41906	es
 main	rom_tail_02	recon/tla/de/rom	.rom.00b4160e	de
-main	rom_tail_02	recon/tla/unidentified	.unidentified.08b41536	en
 main	rom_tail_02	games/tla/src/graphics/tileset/set_24/tiles_d	.rodata
 main	rom_tail_02	games/tla/src/map/map_042/map	.rodata
 main	rom_tail_02	games/tla/src/graphics/tileset/set_25/palette	.rodata
@@ -4482,7 +4466,6 @@ main	rom_tail_02	recon/tla/it/rom	.rom.00bacfce	it
 main	rom_tail_02	recon/tla/fr/rom	.rom.00bad656	fr
 main	rom_tail_02	recon/tla/es/rom	.rom.00bada06	es
 main	rom_tail_02	recon/tla/de/rom	.rom.00bad70e	de
-main	rom_tail_02	recon/tla/unidentified	.unidentified.08bad636	en
 main	rom_tail_02	recon/tla/ja/rom	.rom.00bad68e	ja
 main	rom_tail_02	games/tla/src/map/map_073/map	.rodata
 main	rom_tail_02	games/tla/src/graphics/tileset/set_37/palette	.rodata
@@ -4584,7 +4567,6 @@ main	rom_tail_02	recon/tla/it/rom	.rom.00c2dd2d	it
 main	rom_tail_02	recon/tla/fr/rom	.rom.00c2e3b5	fr
 main	rom_tail_02	recon/tla/es/rom	.rom.00c2e765	es
 main	rom_tail_02	recon/tla/de/rom	.rom.00c2e46d	de
-main	rom_tail_02	recon/tla/unidentified	.unidentified.08c2e395	en
 main	rom_tail_02	recon/tla/ja/rom	.rom.00c2e3bd	ja
 main	rom_tail_02	games/tla/src/graphics/tileset/set_51/tiles_b	.rodata
 main	rom_tail_02	games/tla/src/graphics/tileset/set_51/tiles_c	.rodata
@@ -4832,7 +4814,6 @@ main	rom_tail_02	recon/tla/it/rom	.rom.00d3f4cf	it
 main	rom_tail_02	recon/tla/fr/rom	.rom.00d3fb57	fr
 main	rom_tail_02	recon/tla/es/rom	.rom.00d3ff07	es
 main	rom_tail_02	recon/tla/de/rom	.rom.00d3fc0f	de
-main	rom_tail_02	recon/tla/unidentified	.unidentified.08d3fb37	en
 main	rom_tail_02	games/tla/src/graphics/tileset/set_81/tiles_b	.rodata
 main	rom_tail_02	games/tla/src/graphics/tileset/set_81/tiles_c	.rodata
 main	rom_tail_02	games/tla/src/graphics/tileset/set_81/tiles_d	.rodata
@@ -4854,7 +4835,6 @@ main	rom_tail_02	recon/tla/it/rom	.rom.00d5784a	it
 main	rom_tail_02	recon/tla/fr/rom	.rom.00d57ed2	fr
 main	rom_tail_02	recon/tla/es/rom	.rom.00d58282	es
 main	rom_tail_02	recon/tla/de/rom	.rom.00d57f8a	de
-main	rom_tail_02	recon/tla/unidentified	.unidentified.08d57eb2	en
 main	rom_tail_02	recon/tla/ja/rom	.rom.00d57dea	ja
 main	rom_tail_02	games/tla/src/graphics/tileset/palettes/pal_36	.rodata
 main	rom_tail_02	games/tla/src/map/map_188/map	.rodata
@@ -5013,7 +4993,6 @@ main	rom_tail_02	recon/tla/it/rom	.rom.00e0d9a9	it
 main	rom_tail_02	recon/tla/fr/rom	.rom.00e0e031	fr
 main	rom_tail_02	recon/tla/es/rom	.rom.00e0e3e1	es
 main	rom_tail_02	recon/tla/de/rom	.rom.00e0e0e9	de
-main	rom_tail_02	recon/tla/unidentified	.unidentified.08e0e011	en
 main	rom_tail_02	recon/tla/ja/rom	.rom.00e0df49	ja
 main	rom_tail_02	games/tla/src/graphics/tileset/set_101/tiles_d	.rodata
 main	rom_tail_02	games/tla/src/map/map_236/map	.rodata
@@ -5187,7 +5166,6 @@ main	rom_tail_02	recon/tla/it/rom	.rom.00eb9d69	it
 main	rom_tail_02	recon/tla/fr/rom	.rom.00eba3f1	fr
 main	rom_tail_02	recon/tla/es/rom	.rom.00eba7a1	es
 main	rom_tail_02	recon/tla/de/rom	.rom.00eba4a9	de
-main	rom_tail_02	recon/tla/unidentified	.unidentified.08eba3d1	en
 main	rom_tail_02	recon/tla/ja/rom	.rom.00eba2e5	ja
 main	rom_tail_02	games/tla/src/graphics/tileset/set_121/tiles_b	.rodata
 main	rom_tail_02	games/tla/src/graphics/tileset/set_121/tiles_c	.rodata

@@ -5,3 +5,6 @@ FieldEffect_StarSparkleFade:
 	.ifdef TLA_EDITION_JA
 	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
 	.endif
+	.ifdef TLA_EDITION_EN
+	.byte 0x01, 0x00, 0x00	@ PACKER: unused post-stream residue; Resource_DecodeType01 uses decoded RAM and output length; writer unknown
+	.endif

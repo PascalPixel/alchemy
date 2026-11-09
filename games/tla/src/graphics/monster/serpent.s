@@ -6,3 +6,6 @@ Monster_SerpentSprites:
 	.ifdef TLA_EDITION_JA
 	.byte 0x0c, 0xb5	@ PACKER: left in the buffer by Monster_SirenSprites+0x2712
 	.endif
+	.ifdef TLA_EDITION_EN
+	.byte 0x05, 0x08	@ PACKER: unused post-stream residue; Resource_DecodeType01 uses decoded RAM and output length; writer unknown
+	.endif

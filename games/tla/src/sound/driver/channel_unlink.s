@@ -23,3 +23,20 @@ SoundChannel_Unlink:
 	bx	lr
 .L_081c0758:
 	bx	lr
+@ ply_note's own copy of clear_modM (clear_modulation.s), its compare placed first.
+	.global clear_modM_note
+	.thumb_func
+clear_modM_note:
+	movs	r2, #0
+	strb	r2, [r1, #22]
+	strb	r2, [r1, #26]
+	ldrb	r3, [r1, #24]
+	movs	r2, #3
+	cmp	r3, #0
+	bne.n	.Lclear_mod_note_flags
+	movs	r2, #12
+.Lclear_mod_note_flags:
+	ldrb	r3, [r1, #0]
+	orrs	r3, r2
+	strb	r3, [r1, #0]
+	bx	lr

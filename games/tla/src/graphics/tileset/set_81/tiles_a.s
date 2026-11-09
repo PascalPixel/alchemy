@@ -5,3 +5,6 @@ Tileset_Set81TilesA:
 	.ifdef TLA_EDITION_JA
 	.byte 0x30	@ PACKER: left in the buffer by Tileset_Set79TilesB+0x20bb
 	.endif
+	.ifdef TLA_EDITION_EN
+	.byte 0x40	@ PACKER: unused post-stream residue; Resource_DecodeType2 uses decoded RAM and output length; writer unknown
+	.endif

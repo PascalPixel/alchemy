@@ -5,3 +5,6 @@ FieldEffect_WhitePuff:
 	.ifdef TLA_EDITION_JA
 	.byte 0x00, 0x0b	@ PACKER: left in the buffer by FieldEffect_Explosion+0x1d2
 	.endif
+	.ifdef TLA_EDITION_EN
+	.byte 0x12, 0x40	@ PACKER: unused post-stream residue; Resource_DecodeType01 uses decoded RAM and output length; writer unknown
+	.endif

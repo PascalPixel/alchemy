@@ -269,7 +269,7 @@ Func_081c08a4:
 	cmp	r0, r1
 	beq.n	.L_081c0938
 	adds	r1, r5, #0
-	bl	Func_081c075a
+	bl	clear_modM_note
 .L_081c0938:
 	ldr	r0, [sp, #0]
 	adds	r1, r5, #0

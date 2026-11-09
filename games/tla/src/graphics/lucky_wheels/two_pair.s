@@ -40,6 +40,10 @@ Slots_TwoPairBanner:
 	.else
 	.ifdef TLA_EDITION_IT
 	.byte 0x04	@ PACKER: left in the buffer by Slots_GreenDigits+0x5e3
+	.else
+	.ifdef TLA_EDITION_EN
+	.byte 0x03, 0x00, 0x00	@ PACKER: unused post-stream residue; Resource_DecodeType01 uses decoded RAM and output length; writer unknown
+	.endif
 	.endif
 	.endif
 	.endif

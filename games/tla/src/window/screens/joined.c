@@ -21,13 +21,13 @@ extern const s16 gDjinn_ElementSprites[];
 extern u8 MsgFoundVenusDjinni[];
 
 s32 Message_DecodeMode1(s32 message);
-// UB: Message_Start is called with five of its six arguments, so the mode it
-// reads is whatever the stack word after the fifth holds (the 0 left there as
+// UB: Message_Start is called with five of its six arguments, so the flags it
+// reads are whatever the stack word after the fifth holds (the 0 left there as
 // UiGlyph_LoadEntryWithPalette's last argument); UBFIX declares it whole and
 // passes 0.
 #ifdef UBFIX
-s32 Message_Start(struct Window *window, s32 entry, s32 x, s32 y, u16 *bounds,
-                  s32 mode);
+struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
+                                    s32 y, u16 *spacing, s32 flags);
 #else
 s32 Message_Start();
 #endif
@@ -287,7 +287,13 @@ void Func_08044dc8(s32 summon) {
   work->speakerVoiceCountdown = 0;
   MessageArgument_Push(Data_0805f676[summon & 31], 4);
   entries = Message_DecodeMode1((s32)MsgCanNowSummon);
+  // UB: five of Message_Start's six arguments, as above; the flags are the
+  // stack word resource takes, which nothing sets. UBFIX passes 0.
+#ifdef UBFIX
+  Message_Start(window, entries, 0, 2, NULL, 0);
+#else
   Message_Start(window, entries, 0, 2, 0);
+#endif
   Sound_PlayFar(81);
   do
     wait(1);
@@ -319,7 +325,11 @@ void Func_08044dc8(s32 summon) {
     counts[best] = 0;
   }
   Func_0803cf6c((s32)MsgSummonVenus + 4);
+#ifdef UBFIX
+  Message_Start(window, entries, 4, 2, NULL, 0);
+#else
   Message_Start(window, entries, 4, 2, 0);
+#endif
   do
     wait(1);
   while ((gInput.pressed & 0x303) == 0);

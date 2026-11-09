@@ -1,10 +1,11 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "scene_call.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
 #include "daila.h"
+
+s32 GameFlag_Test(s32 flag);
 
 void Func_02000d9c(void);
 void Func_02000ca4(s32 mode);

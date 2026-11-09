@@ -24,12 +24,10 @@ are in [The Lost Age: Game Pak](../gamepak/README.md).
   saving (`system/save.c`). The rest of the link cable (`serial/`) and the
   game flags (`flags/`) follow it as objects of their own, and the interrupt
   table (`irq_table.s`) is assembly beside the resident code it calls.
-- The main routine, `MainRoutine_Run` (`main_routine.c`), sits here with the
-  run of files around it in the ROM (`take_exit.c`, `return_from_sequence.c`,
-  `data_get_resource_group.c`, `data_load_resource_group.c`,
-  `reset_flags_on_enter.c`, `play_saved_music.c`), as The Broken Seal's
-  `main_routine.c` does. It adds four debug starts and keeps background
-  palettes 14 and 15 across three of its sequences.
+- The main routine, `MainRoutine_Run`, and the scene changes around it in the
+  ROM, from `Scene_TakeExit` to `Party_PlaySavedMusic`, are one object,
+  `main_routine.c`, as in The Broken Seal. It adds four debug starts and keeps
+  background palettes 14 and 15 across three of its sequences.
 - The game flags are read by five functions here (`flags/`), where The Broken
   Seal keeps them with the game rules.
 - The trigonometry (`trig.s`, `sine_table.s`), the tangent table the

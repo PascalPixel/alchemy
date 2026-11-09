@@ -1008,13 +1008,7 @@ main	rom_main_04	games/tla/src/field/field_sequence/integrate_vectors
 main	rom_main_04	games/tla/src/field/field_sequence/tables2	.rodata
 main	rom_main_04	games/tla/src/field/field_sequence/decode_picture
 main	rom_main_04	games/tla/src/field/field_sequence/decode_picture_data
-main	rom_main_04	games/tla/src/system/take_exit	.text
-main	rom_main_04	games/tla/src/system/return_from_sequence	.text
-main	rom_main_04	games/tla/src/system/data_get_resource_group	.text
 main	rom_main_04	games/tla/src/system/main_routine	.text
-main	rom_main_04	games/tla/src/system/data_load_resource_group	.text
-main	rom_main_04	games/tla/src/system/reset_flags_on_enter	.text
-main	rom_main_04	games/tla/src/system/play_saved_music	.text
 main	rom_main_04	games/tla/src/field/field_sequence/find_entry_value	.text
 main	rom_main_04	games/tla/src/field/field_sequence/f0c9e48	.text
 main	rom_main_04	games/tla/src/field/field_sequence/world_map_zone	.text

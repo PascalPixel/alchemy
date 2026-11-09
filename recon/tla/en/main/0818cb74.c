@@ -1,4 +1,15 @@
 // Draft, differ 18 of 1122 (tla-en, 2026-11-09), no device; 18 in every edition
+// 2026-11-09 (round 8), unchanged at 18, about 12 attempts. cells set after
+// offset = 0x2400 (or after the FlashBurst load) keeps offset's first value:
+// the base is then a register live across the 0xF8 call (ldr r7 before the
+// bl, as the listing), but sched2 takes it first of the arguments (three
+// dependants: offset = 0x2400's output, the add, the call's anti, to their
+// two) and the pool words swap: 22. The tridents in the listing's order with
+// a dead test (x == 300 or i == 300, scale = 0) after x, after shade or after
+// pixels: 104, 104, 57 (204 plain). The spark loop's table is a pool MEM that
+// the calls kill for gcse, so loop.c hoists it, after the for's init: a dead
+// store of the table before the loop leaves 18; drawn as &Data_02012964[i] in
+// the body puts the table first but reduces drawn to an offset giv (40).
 // Near7 round (9 November), still 18. The FlashBurst base: every read that
 // follows a call in RTL keeps an anti dependence on it, so the listing's ldr
 // r7 before the 0xF8 call's bl is a register live across that call, not the

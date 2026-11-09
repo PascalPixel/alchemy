@@ -1,4 +1,16 @@
-// Draft, differ 16 of 828 (tla-en, 2026-11-09); 16 in every edition, the same rows.
+// Matches: differ 0 of 828 (tla-en, 2026-11-09); 0 in ja, en, de, es, fr and it.
+// 9 November (round 8), 16 to 0: the preheader's order. PRE inserts its
+// hoisted copies at the end of the preheader, after any set already there, so
+// pos = &screen in the init always came first. Two tagged dead stores before
+// the loop make the preheader compute camera->pos and &texture itself, before
+// pos; gcse then copies the loop's occurrences from there and combine folds
+// each into its reaching register, which keeps its late slot. &texture is
+// computed as (s32)&center - 8 (or &head less 20), because taking texture's own
+// address first makes the bolts' logWidth and logHeight stores bytes (94);
+// &screen - 32 shares pos's computation and swaps pos and shade's slots (26).
+// frame = 0 goes first, so its reload takes r4 as in the listing (74 inside
+// the for, 18 after the stores). The store target does not matter (pos,
+// vertices, model, ring, fall, bolt, glow, flash: 0; circles 23).
 // 9 November (round 7), unchanged at 16. Raw gcse hashes (scratch cc1 printing
 // them, analysis only): &texture 13882, &screen 13914, frame << 8 13956,
 // camera->pos 13957, table 347 (buckets 2, 34, 76, 77). The preheader's order
@@ -266,7 +278,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
   s32 i;
   /* FAKEMATCH(dead): seven unused locals that raise camera's register
    * number, so gcse's hash puts camera->pos after frame << 8 and their
-   * slots come out as the listing's; as no locals, 32 of 828 instructions
+   * slots come out as the listing's; as no locals, 8 of 828 instructions
    * differ in tla-en. */
   s32 unused1;
   s32 unused2;
@@ -333,7 +345,20 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
     size += 2;
   }
 
-  for (frame = 0, pos = &screen; frame != LIGHT_SURGE_FRAMES; frame++) {
+  frame = 0;
+  /* FAKEMATCH(dead): pos first takes the camera's look-at point, a store the
+   * loop's pos = &screen overwrites: gcse then copies camera->pos from here
+   * instead of inserting it after pos, as the listing orders the preheader; as
+   * the function without it, 16 of 828 instructions differ in tla-en. */
+  pos = (struct EffectPosition *)camera->pos;
+  /* FAKEMATCH(dead): the texture's address, computed as center's address
+   * less 8 so that texture's own address is still first taken by the bolts
+   * (whose bit-field stores then stay one word), stored where vertices is set
+   * again before any read: gcse copies it from here, before pos, as the
+   * listing orders the preheader; as the function without it, 8 of 828
+   * instructions differ in tla-en. */
+  vertices = (s16 *)((s32)&center - 8);
+  for (pos = &screen; frame != LIGHT_SURGE_FRAMES; frame++) {
     if (frame == 64) {
       Func_081180e8(134);
     }
@@ -531,7 +556,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
 
         /* FAKEMATCH(dead): a store both arms below overwrite; its test builds
          * 300 in a reload register, the one pick before frame's reload that
-         * sends it to r1; without it, 26 of 828 instructions differ in
+         * sends it to r1; without it, 10 of 828 instructions differ in
          * tla-en. */
         if (i == 300)
           growth = 0;
@@ -559,7 +584,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
     Heap_Release(model);
     Heap_Release(vertices);
     /* FAKEMATCH(dead): a read of shade the compiler folds to nothing, which
-     * spills shade to the listing's slot; as a plain 4, 297 of 828 instructions
+     * spills shade to the listing's slot; as a plain 4, 283 of 828 instructions
      * differ in tla-en. */
     Func_08158ce0(4 + ((shade & 255) >> 8), 4);
     BattleEffect_CountDownBattlerTints();

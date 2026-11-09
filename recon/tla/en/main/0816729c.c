@@ -1,4 +1,15 @@
 // Draft, differ 24 of 2680 (tla-en, 2026-11-09; the same 24 in ja, de, es, fr, it)
+// 2026-11-09, round 8, unchanged at 24, about 12 attempts on queue loop 1, with
+// the push written out locally. The value store through a one-member union
+// (alias set 0) puts the count store first (an output dependence), but the
+// objects load then waits three cycles on the value store (arm_adjust_cost
+// gives a load after a store cost 1 only from sp, fp or the pool) and the
+// 0x06010000 pool load fills the gap: 24, rows moved. Objects read as void **
+// leave the value store no memory dependant, so it falls to priority 9 behind
+// the tile chain (32); the count store as q->count (struct set) with u32 or
+// void ** objects, or with the union store: 24 to 32. The listing needs the
+// objects load straight after the value store with no stall while the value
+// store still outranks the pool load.
 // 2026-11-09, round 7, unchanged at 24. Queue loop 1, read from a scratch cc1
 // printing sched2's ready lists (analysis only): the value store's 21 is its
 // true dependence into the objects load (u32 read, int set, as the store); the

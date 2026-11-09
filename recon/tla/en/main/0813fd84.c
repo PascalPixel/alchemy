@@ -1,5 +1,14 @@
 // Draft, differ 16 of 2579 (tla-en, 2026-11-09); 16 in every edition (de, es
 // and fr by --symbol BattleEffect_RunCruelRuin)
+// 2026-11-09 (round 8), unchanged at 16, about 10 attempts. The object loop
+// from the loop dump: row's giv (insn 4674) absorbs the Apply call's j * 9
+// (4889), which is used once and so never a parent; reduced increments are
+// emitted in giv-list order, latest found first, so *last's address giv (4744)
+// steps before row. A second use of the Apply's j * 9 (a dead if (i == 200)
+// u = j * 9; after the call, or through a local) makes 4889 the parent and row
+// then steps first, but the i loop's Apply pointer ([sp, #20]) goes and every
+// slot moves: 569. A dead read of last at the j or i level 16 to 206; last
+// before row 16; Apply indexed by row 1066.
 // 2026-11-09 (round 13), 32 to 16: a tagged dead test (if (i == 300) u = 0;)
 // after the place stores makes the one extra reload pick, so the else arm's
 // reloads take r1, r2, r0 as in the listing. Left: the blasts (8, sched2), the

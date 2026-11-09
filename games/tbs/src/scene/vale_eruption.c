@@ -190,7 +190,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_ShowEmote(ACTOR_GREAT_HEALER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(60);
   Event_ShowMessage(ACTOR_GREAT_HEALER, 0);
-  Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(30);
   // The mayor: "Oooh, my grandson!"
   Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
@@ -199,8 +199,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   // climb.
   Actor_SetAnimationAndWait(ACTOR_GARETS_SISTER, ANIM_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_GARETS_SISTER, 0);
-  Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTHEAST + FACING_STEP,
-                      0);
+  Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceActor(ACTOR_GARETS_BROTHER, ACTOR_GARETS_SISTER, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_GARETS_BROTHER, ANIM_SHAKE_HEAD);
@@ -254,7 +253,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   FieldCamera_WaitForArrival();
   Event_Wait(30);
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Event_Wait(50);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(3) / 2, PIXELS(3) / 4);
@@ -285,7 +284,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
     Event_Wait(50);
-    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 0);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 120, 340);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -318,8 +317,8 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
   Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   Event_Wait(40);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 0);
   FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(320), 1);
   FieldCamera_WaitForArrival();
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -374,7 +373,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   // Dora notices who is missing.
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(50);
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(10);
 
   // "Weren't Jenna and Kraden with you?" Yes: "They were taken away? By
@@ -426,8 +425,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Event_Wait(20);
   // The mayor agrees with a nod; the Great Healer sends them inside.
   Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
-  Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_NORTHWEST + FACING_STEP,
-                      0);
+  Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
   Event_Wait(50);

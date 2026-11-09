@@ -283,7 +283,7 @@ static void WestLunpaCave_HammetFindsBunza(void) {
     Actor_WalkTo(ACTOR_BUNZA, 184, 400);
     Actor_WaitForMoveById(ACTOR_BUNZA);
     Actor_SetAnimation(ACTOR_BUNZA, ANIM_STAND);
-    Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHEAST, 0);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Event_Wait(30);
     FieldCamera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
@@ -443,9 +443,9 @@ static void Reunion_Converse(void) {
   Actor_FaceActor(ACTOR_IVAN, ACTOR_GARET, 0);
   Event_SetMessageId(reunion + REUNION_IVAN_CREDITS_EVERYONE);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0);
-  Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH - FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(60);
-  Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(60);
   Event_SetMessageId(reunion + REUNION_HAMMET_THANKS_PARTY);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_HAMMET, 0);
@@ -454,7 +454,7 @@ static void Reunion_Converse(void) {
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Event_Wait(120);
-  Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH - FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_HAMMET, EMOTE_IN_FRONT | EMOTE_SMILE, 80);
   Event_SetMessageId(reunion + REUNION_HAMMET_THANKS_IVAN);
@@ -530,7 +530,7 @@ static void Reunion_Converse(void) {
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
   Event_SetMessageId(reunion + REUNION_GARET_ASKS_ABOUT_ENTRY);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
-  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHEAST, 0);
   Actor_SetAnimationAndWait(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
   Event_SetMessageId(reunion + REUNION_BUNZA_WAS_REFUSED);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
@@ -588,11 +588,11 @@ static void Reunion_Converse(void) {
   Actor_WalkTo(ACTOR_BUNZA, 168, 560);
   Actor_WaitForMoveById(ACTOR_BUNZA);
   Event_Wait(60);
-  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(40);
-  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(40);
-  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(40);
   Actor_WalkTo(ACTOR_BUNZA, 144, 528);
   Actor_WaitForMoveById(ACTOR_BUNZA);
@@ -600,7 +600,7 @@ static void Reunion_Converse(void) {
   Event_SetMessageId(reunion + REUNION_IVAN_ASKS_WHY);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0);
   Actor_WaitForMoveById(ACTOR_BUNZA);
-  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHEAST, 0);
   Actor_SetAnimation(ACTOR_BUNZA, ANIM_STAND);
   Actor_SetAnimationAndWait(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
@@ -632,7 +632,7 @@ static void Reunion_Converse(void) {
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
   }
 
-  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_BUNZA, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_BUNZA, 0);
   Actor_FaceActor(ACTOR_MIA, ACTOR_BUNZA, 0);
@@ -652,7 +652,7 @@ static void Reunion_Converse(void) {
   Actor_FaceActor(ACTOR_BUNZA, ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
-  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHEAST, 0);
   Event_SetMessageId(messageBase + PLAN_BUNZA_OFFERS_RIDE);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_BUNZA, 0);
@@ -813,7 +813,7 @@ static u8 WestLunpaCave_BunzaCannotWait(void) {
   warning = MsgLunpaMeaningWontRide;
   Event_SetMessageId(warning + WARNING_IVAN_ASKS_IF_STAYING);
   Event_ShowMessage(ACTOR_IVAN, 0);
-  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
   Event_SetMessageId(warning + WARNING_BUNZA_CANNOT_WAIT);
@@ -855,7 +855,7 @@ static void Party_StaysBehind(void) {
   Actor_SetAnimationAndWait(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
   Event_SetMessageId(farewell + FAREWELL_BUNZA_SAYS_GOODBYE);
   Event_ShowMessage(ACTOR_BUNZA, 0);
-  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -868,7 +868,7 @@ static void Party_StaysBehind(void) {
   Actor_SetAnimation(ACTOR_HAMMET, ANIM_STAND);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
-  Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(30);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
@@ -881,10 +881,10 @@ static void Party_StaysBehind(void) {
   Actor_WalkTo(ACTOR_BUNZA, 168, 640);
   Actor_WaitForMoveById(ACTOR_HAMMET);
   Actor_WalkTo(ACTOR_HAMMET, 168, 640);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
@@ -946,7 +946,7 @@ static void Party_RidesWagon(void) {
   struct Actor *leader;
   s32 departure;
 
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 0);
   departure = MsgLunpaDontUnfinishedBusiness;
   Event_SetMessageId(departure + DEPARTURE_GARET_HEADS_FOR_KALAY);
   Event_ShowMessage(ACTOR_GARET, 0);
@@ -958,7 +958,7 @@ static void Party_RidesWagon(void) {
   Event_Wait(20);
   Event_SetMessageId(departure + DEPARTURE_HAMMET_LONGS_FOR_LAYANA);
   Event_ShowMessage(ACTOR_HAMMET, 0);
-  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHEAST, 0);
   Actor_SetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
   Event_Wait(30);
   Event_SetMessageId(departure + DEPARTURE_BUNZA_SETS_OFF);
@@ -975,7 +975,7 @@ static void Party_RidesWagon(void) {
   Actor_SetAnimation(ACTOR_HAMMET, ANIM_STAND);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
-  Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(30);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
@@ -988,10 +988,10 @@ static void Party_RidesWagon(void) {
   Actor_WalkTo(ACTOR_BUNZA, 168, 640);
   Actor_WaitForMoveById(ACTOR_HAMMET);
   Actor_WalkTo(ACTOR_HAMMET, 168, 640);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);

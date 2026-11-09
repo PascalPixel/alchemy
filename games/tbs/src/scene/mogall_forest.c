@@ -1401,8 +1401,8 @@ s32 MogallForest_Initialize(void) {
         wait(1);
         Actor_SetSpriteColorById(ACTOR_FIRST_AREA_NORTH_APE, SPRITE_COLOR_GRB);
         Actor_SetPosition(ACTOR_FIRST_AREA_NORTH_APE, PIXELS(92), PIXELS(120));
-        Actor_FaceDirection(ACTOR_FIRST_AREA_NORTH_APE,
-                            FACING_NORTH + FACING_STEP, 0);
+        Actor_FaceDirection(ACTOR_FIRST_AREA_NORTH_APE, FACING_NORTH_NORTHEAST,
+                            0);
         Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
         Actor_WalkTo(ACTOR_PARTY_LEADER, 136, 64);
         Event_StartScreenTransition();

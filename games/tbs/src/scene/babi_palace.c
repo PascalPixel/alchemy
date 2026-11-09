@@ -2364,8 +2364,8 @@ static void BabiPalace_PassOnBabisWord(void) {
   GameFlag_Set(FLAG_BABI_PALACE_GUARD_GAVE_WORD);
   Event_Start();
   Field_EndBusyAndReveal();
-  Actor_FaceDirection(ACTOR_FIRST_GUARD, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_SECOND_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FIRST_GUARD, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_SECOND_GUARD, FACING_SOUTH_SOUTHEAST, 0);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 200, 272);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Event_Wait(20);
@@ -2382,7 +2382,7 @@ static void BabiPalace_PassOnBabisWord(void) {
     Event_ShowMessage(ACTOR_FIRST_GUARD, 0);
     Event_Wait(20);
     Actor_FaceEachOther(ACTOR_FIRST_GUARD, ACTOR_SECOND_GUARD, 60);
-    Actor_FaceDirection(ACTOR_SECOND_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_SECOND_GUARD, FACING_SOUTH_SOUTHEAST, 0);
     Event_Wait(40);
     Actor_RunRepeatedMotion(ACTOR_SECOND_GUARD, 2);
     Event_Wait(30);
@@ -2390,8 +2390,8 @@ static void BabiPalace_PassOnBabisWord(void) {
     Actor_SetAnimationAndWait(ACTOR_SECOND_GUARD, ANIM_NOD);
     Event_Wait(30);
     Actor_ShowEmote(ACTOR_FIRST_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-    Actor_FaceDirection(ACTOR_FIRST_GUARD, FACING_SOUTH + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_SECOND_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_FIRST_GUARD, FACING_SOUTH_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_SECOND_GUARD, FACING_SOUTH_SOUTHEAST, 0);
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_FIRST_GUARD, ANIM_SHAKE_HEAD);
     Event_Wait(20);
@@ -2542,8 +2542,7 @@ s32 BabiPalace_ApplyEntryState(void) {
       GameFlag_Set(FLAG_BABI_PALACE_FINALS_REST_OFFERED);
       GameFlag_Set(FLAG_BABI_PALACE_FINALS_BEDS_OPEN);
       Actor_SetPosition(ACTOR_FINALS_ATTENDANT, PIXELS(56), PIXELS(120));
-      Actor_FaceDirection(ACTOR_FINALS_ATTENDANT,
-                          FACING_NORTHEAST + FACING_STEP, 0);
+      Actor_FaceDirection(ACTOR_FINALS_ATTENDANT, FACING_EAST_NORTHEAST, 0);
       BabiPalace_WakeFromFinalsDream();
       gMainRoutineWork.entrance = BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_WEST;
     }
@@ -2708,7 +2707,7 @@ struct ActorPlacement gBabiPalace_ActorPlacementsBabiMissing[] = {
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(984), 0, PIXELS(440), FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(984), 0, PIXELS(312), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(984), 0, PIXELS(312), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(944), 0, PIXELS(384), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

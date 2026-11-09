@@ -282,27 +282,27 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
     Event_Wait(4);
     // Jenna sees something is bothering Kraden; he hedges.
-    Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 20);
+    Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHWEST, 0);
+    Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 20);
     Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
     Event_Wait(10);
     Event_ShowMessageThenWait(ACTOR_JENNA, 0, 20);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
     Event_Wait(10);
-    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 10);
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
     // Garet names Saturos and Menardi; Kraden finds them persistent.
-    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 40);
+    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 40);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
-    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 10);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 10);
     Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 8);
     // Jenna asks whether they wanted something from him; it seems so.
-    Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST + FACING_STEP, 20);
+    Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH_SOUTHEAST, 20);
     Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
-    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 10);
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Event_Wait(10);
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 6);
@@ -310,8 +310,8 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-    Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST + FACING_STEP, 20);
+    Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHWEST, 20);
     Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
     Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
     // Kraden: they spoke of Mt. Aleph and Sol Sanctum as if they had seen
@@ -322,13 +322,13 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
     Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 20);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-    Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHWEST, 0);
     // Kraden looks from one to another and asks whether that is not strange.
-    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 20);
-    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 40);
-    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 40);
-    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 20);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 20);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 40);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 40);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 20);
     Event_OpenMessage(ACTOR_KRADEN, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
       Event_SetMessageId(MsgValeYouCannotEnterMtAleph);
@@ -377,9 +377,9 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 6);
     // Jenna asks what to do; Kraden means to go and confirm it.
-    Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST + FACING_STEP, 10);
+    Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHWEST, 10);
     Event_ShowMessageThenWait(ACTOR_JENNA, 0, 6);
-    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 10);
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Event_Wait(6);
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
@@ -389,18 +389,18 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Actor_Jump(ACTOR_GARET, 2, 0);
     Actor_Jump(ACTOR_JENNA, 2, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 20);
+    Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 20);
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 6);
-    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 10);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 10);
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Event_Wait(16);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JENNA, 40);
     Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
-    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 10);
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 6);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST + FACING_STEP, 30);
+    Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHWEST, 30);
     // Kraden asks whether the ban on climbing Mt. Aleph should stop them;
     // either way, they will only look.
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
@@ -449,8 +449,8 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Event_Wait(10);
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST + FACING_STEP, 10);
+    Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHWEST, 10);
     ValeKradensCottage_NodTogether();
     Event_Wait(10);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
@@ -481,8 +481,8 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Actor_Jump(ACTOR_KRADEN, 4, 40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST + FACING_STEP, 20);
-    Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 10);
+    Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHWEST, 20);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 10);
     // Kraden opens his door and goes in to prepare; the screen closes and the
     // party follows him through
     // VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG.
@@ -541,7 +541,7 @@ static void ValeKradensCottage_KradenSetsOff(void) {
   Event_SetMessageId(MsgValeKradenOurBestBet);
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 10);
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   // Isaac nods to Garet, then to Jenna.
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
@@ -689,10 +689,10 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   FieldCamera_MoveTo(PIXELS(393), -1, PIXELS(339), 1);
   Actor_WalkTo(ACTOR_SATUROS, 392, 360);
   Actor_WalkToAndWait(ACTOR_MENARDI, 376, 360);
-  Actor_SetAnimation(ACTOR_SATUROS, 0);
-  Actor_SetAnimation(ACTOR_MENARDI, 0);
-  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH + FACING_STEP, 30);
+  Actor_SetAnimation(ACTOR_SATUROS, ANIM_STILL);
+  Actor_SetAnimation(ACTOR_MENARDI, ANIM_STILL);
+  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH_NORTHEAST, 30);
   // Saturos demands what they are doing; Garet throws it back; Menardi asks
   // whether they were eavesdropping.
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 2);
@@ -719,8 +719,8 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   Event_SetMessageId(accusationMessage);
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_FaceEachOther(ACTOR_SATUROS, ACTOR_MENARDI, 40);
-  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH_NORTHEAST, 20);
   Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 60);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
   Event_Wait(10);
@@ -772,8 +772,8 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 2);
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH_NORTHEAST, 20);
   Actor_SetSpeed(ACTOR_MENARDI, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_SetSpeed(ACTOR_SATUROS, PIXELS(1) / 2, PIXELS(1) / 4);
 
@@ -792,8 +792,8 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   actor = Actor_Get(ACTOR_MENARDI);
   actor->steeringFlags = ACTOR_FACES_MOTION | actor->steeringFlags;
 
-  Actor_SetAnimation(ACTOR_SATUROS, 0);
-  Actor_SetAnimation(ACTOR_MENARDI, 0);
+  Actor_SetAnimation(ACTOR_SATUROS, ANIM_STILL);
+  Actor_SetAnimation(ACTOR_MENARDI, ANIM_STILL);
   Event_Wait(20);
   // Garet: let's go. The village music returns and Garet and Jenna walk back
   // into Isaac; the strangers keep turning to watch him.
@@ -853,9 +853,9 @@ static void ValeKradensCottage_OverhearKraden(void) {
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
     Actor_SetAnimation(ACTOR_JENNA, ANIM_STILL);
     Actor_SetAnimation(ACTOR_GARET, ANIM_STILL);
-    Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHWEST, 0);
+    Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHWEST, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHWEST, 0);
     // The camera goes up to the door. Pacing, Kraden says they know more of
     // Sol Sanctum than Vale's elders.
     FieldCamera_MoveWithinMapBounds(PIXELS(232), -1, PIXELS(240), 1);
@@ -1266,11 +1266,11 @@ struct ActorPlacement gValeKradensCottage_ActorPlacements[] = {
     { ACTOR_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(1608), 0, PIXELS(1608), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SATUROS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(232), 0, PIXELS(344), FACING_SOUTH + FACING_STEP, 3, 0 },
+        PIXELS(232), 0, PIXELS(344), FACING_SOUTH_SOUTHWEST, 3, 0 },
     { SPRITE_MENARDI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(200), 0, PIXELS(344), FACING_SOUTHEAST + FACING_STEP, 3, 0 },
+        PIXELS(200), 0, PIXELS(344), FACING_SOUTH_SOUTHEAST, 3, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        0, 0, 0, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SCENE_TABLE_END },
 };
 

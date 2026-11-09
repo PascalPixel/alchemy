@@ -279,8 +279,8 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   // The party walks in from the south; the two soldiers lie on the ground.
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(248), PIXELS(424));
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Actor_SetAnimation(ACTOR_WEST_SOLDIER, 0);
-  Actor_SetAnimation(ACTOR_EAST_SOLDIER, 0);
+  Actor_SetAnimation(ACTOR_WEST_SOLDIER, ANIM_STILL);
+  Actor_SetAnimation(ACTOR_EAST_SOLDIER, ANIM_STILL);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);

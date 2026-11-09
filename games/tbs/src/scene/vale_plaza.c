@@ -783,7 +783,7 @@ static void ValePlaza_PsynergyStoneIsGone(void) {
   Actor_Stop(ACTOR_AFTER_KALAY_HUT_OWNER);
   Actor_ShowEmote(ACTOR_AFTER_KALAY_HUT_OWNER,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  actor->facing = FACING_NORTHWEST + FACING_STEP;
+  actor->facing = FACING_NORTH_NORTHWEST;
   Event_Wait(20);
   Actor_StartRepeatedMotion(ACTOR_AFTER_KALAY_HUT_OWNER, 2);
   Event_SetMessageId(MsgValeThePsynergyStoneIsGone);
@@ -1109,8 +1109,7 @@ static void ValePlaza_SentToAidElders(void) {
     Actor_SetAnimation(ACTOR_STORM_SECOND_AIDE, ANIM_NOD);
     Event_ShowMessageThenWait(ACTOR_STORM_SECOND_AIDE, 0, 10);
     Actor_FaceDirection(ACTOR_STORM_FIRST_AIDE, FACING_EAST, 0);
-    Actor_FaceDirection(ACTOR_STORM_SECOND_AIDE, FACING_NORTHEAST + FACING_STEP,
-                        10);
+    Actor_FaceDirection(ACTOR_STORM_SECOND_AIDE, FACING_EAST_NORTHEAST, 10);
     Actor_SetAnimationAndWait(ACTOR_STORM_GARETS_GRANDFATHER, ANIM_NOD);
     FieldEvent_ShowMessageThenWait(
         SPEAKER_WINDOW_ABOVE | ACTOR_STORM_GARETS_GRANDFATHER, 0, 10);
@@ -1267,11 +1266,11 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
   Actor_SetSpeed(ACTOR_SECOND_TRAVELER, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkTo(ACTOR_SECOND_TRAVELER, 126, 258);
   Event_Wait(40);
-  Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_NORTH_NORTHEAST, 0);
   Actor_WaitForMoveById(ACTOR_SECOND_TRAVELER);
   Actor_SetAnimation(ACTOR_SECOND_TRAVELER, ANIM_STAND);
-  ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER,
-                                 FACING_SOUTHWEST + FACING_STEP, 10);
+  ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, FACING_WEST_SOUTHWEST,
+                                 10);
   Actor_SetAnimationAndWait(ACTOR_FIRST_TRAVELER, ANIM_NOD);
   // They talk of Sol Sanctum's fury and its trap switch, of the power of
   // Alchemy, and of their next attempt on the sanctum.
@@ -1279,16 +1278,16 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SECOND_TRAVELER, 0);
   Actor_RunRepeatedMotion(ACTOR_FIRST_TRAVELER, 2);
   ValePlaza_SayThenWait(SPEAKER_WINDOW_BELOW | ACTOR_FIRST_TRAVELER, 30);
-  ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER,
-                                 FACING_NORTHWEST + FACING_STEP, 20);
+  ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, FACING_NORTH_NORTHWEST,
+                                 20);
   ValePlaza_SayThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SECOND_TRAVELER, 10);
-  ValePlaza_FaceDirectionAndWait(ACTOR_FIRST_TRAVELER,
-                                 FACING_NORTHWEST + FACING_STEP, 40);
+  ValePlaza_FaceDirectionAndWait(ACTOR_FIRST_TRAVELER, FACING_NORTH_NORTHWEST,
+                                 40);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_FIRST_TRAVELER, 0);
   Actor_SetAnimationAndWait(ACTOR_SECOND_TRAVELER, ANIM_SHAKE_HEAD);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SECOND_TRAVELER, 0);
-  ValePlaza_FaceDirectionAndWait(ACTOR_FIRST_TRAVELER,
-                                 FACING_NORTHEAST + FACING_STEP, 10);
+  ValePlaza_FaceDirectionAndWait(ACTOR_FIRST_TRAVELER, FACING_EAST_NORTHEAST,
+                                 10);
   Actor_RunRepeatedMotion(ACTOR_FIRST_TRAVELER, 2);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_FIRST_TRAVELER, 0);
   ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, FACING_SOUTHWEST, 20);
@@ -1325,8 +1324,8 @@ static void ValePlaza_FightTravelers(void) {
   Actor_ShowEmote(ACTOR_SECOND_TRAVELER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                   40);
   Actor_SetPosition(ACTOR_STORM_GARET, 0, 0);
-  Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_SOUTH + FACING_STEP, 0);
-  southSouthwestFacing = FACING_SOUTH + FACING_STEP;
+  Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_SOUTH_SOUTHWEST, 0);
+  southSouthwestFacing = FACING_SOUTH_SOUTHWEST;
   ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, southSouthwestFacing,
                                  40);
   FieldCamera_SetSpeedParameters(PIXELS(3) / 2, PIXELS(3) / 16);
@@ -1334,8 +1333,8 @@ static void ValePlaza_FightTravelers(void) {
   FieldCamera_WaitForMove();
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_NORTHEAST, 0);
-  ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER,
-                                 FACING_SOUTHWEST + FACING_STEP, 40);
+  ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, FACING_WEST_SOUTHWEST,
+                                 40);
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveWithinMapBounds(PIXELS(100), PIXELS(144), PIXELS(333), 1);
   Actor_SetSpeed(ACTOR_FIRST_TRAVELER, PIXELS(1), PIXELS(1) / 2);
@@ -1361,7 +1360,7 @@ static void ValePlaza_FightTravelers(void) {
   Actor_SetAnimationAndWait(ACTOR_FIRST_TRAVELER, ANIM_NOD);
   Event_OpenMessage(ACTOR_FIRST_TRAVELER, 0);
   Actor_ShowEmote(ACTOR_STORM_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  northNortheastFacing = FACING_NORTH + FACING_STEP;
+  northNortheastFacing = FACING_NORTH_NORTHEAST;
   ValePlaza_FaceDirectionAndWait(ACTOR_PARTY_LEADER, northNortheastFacing, 10);
   Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0);
   Event_Wait(40);
@@ -1463,7 +1462,7 @@ static void ValePlaza_TravelersLeaveAfterBattle(void) {
   Weather_ResumeLightning();
   Event_WaitTransitionFrames();
   Event_Wait(80);
-  Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_SECOND_TRAVELER, FACING_NORTH, 40);
   Actor_SetAnimationAndWait(ACTOR_FIRST_TRAVELER, ANIM_NOD);
   Event_Wait(20);
@@ -1554,12 +1553,12 @@ static void ValePlaza_DepartForQuest(void) {
   Actor_ShowEmote(ACTOR_FAREWELL_SECOND_CHILD, EMOTE_IN_FRONT | EMOTE_QUESTION,
                   40);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_SECOND_CHILD,
-                                 FACING_SOUTHWEST + FACING_STEP, 20);
+                                 FACING_WEST_SOUTHWEST, 20);
   Event_SetMessageId(MSGNO(MsgValeWhysEveryoneHanging));
   ValePlaza_SayThenWait(ACTOR_FAREWELL_SECOND_CHILD, 10);
   Actor_ShowEmote(ACTOR_FAREWELL_FIRST_CHILD, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
-                                 FACING_EAST + FACING_STEP, 10);
+                                 FACING_EAST_SOUTHEAST, 10);
   ValePlaza_SayThenWait(ACTOR_FAREWELL_FIRST_CHILD, 10);
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_SECOND_CHILD, ANIM_NOD);
   Event_Wait(10);
@@ -1573,16 +1572,16 @@ static void ValePlaza_DepartForQuest(void) {
   Actor_SetSpeed(ACTOR_FAREWELL_SECOND_CHILD, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_FAREWELL_SECOND_CHILD, 184, 618);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_SECOND_CHILD,
-                                 FACING_SOUTHEAST + FACING_STEP, 60);
+                                 FACING_SOUTH_SOUTHEAST, 60);
   ValePlaza_SayThenWait(ACTOR_FAREWELL_SECOND_CHILD, 20);
   Actor_SetSpeed(ACTOR_FAREWELL_FIRST_CHILD, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_FAREWELL_FIRST_CHILD, 168, 618);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
-                                 FACING_NORTHEAST + FACING_STEP, 10);
+                                 FACING_EAST_NORTHEAST, 10);
   Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CHILD, ANIM_SHAKE_HEAD);
   ValePlaza_SayThenWait(ACTOR_FAREWELL_FIRST_CHILD, 20);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_SECOND_CHILD,
-                                 FACING_SOUTHWEST + FACING_STEP, 10);
+                                 FACING_WEST_SOUTHWEST, 10);
   Actor_RunRepeatedMotion(ACTOR_FAREWELL_SECOND_CHILD, 1);
   Event_ShowMessage(ACTOR_FAREWELL_SECOND_CHILD, 0);
   Event_Wait(10);
@@ -1607,35 +1606,34 @@ static void ValePlaza_DepartForQuest(void) {
                   0);
   Actor_ShowEmote(ACTOR_FAREWELL_SECOND_CHILD, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                   120);
-  Actor_FaceDirection(ACTOR_FAREWELL_FIRST_CHILD, FACING_EAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FAREWELL_FIRST_CHILD, FACING_EAST_SOUTHEAST, 0);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_SECOND_CHILD,
-                                 FACING_SOUTHWEST + FACING_STEP, 80);
+                                 FACING_WEST_SOUTHWEST, 80);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
-                                 FACING_SOUTH + FACING_STEP, 40);
+                                 FACING_SOUTH_SOUTHWEST, 40);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
-                                 FACING_EAST + FACING_STEP, 20);
+                                 FACING_EAST_SOUTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_FIRST_CHILD, ANIM_NOD);
   Event_Wait(20);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_SECOND_CHILD,
-                                 FACING_SOUTH + FACING_STEP, 60);
+                                 FACING_SOUTH_SOUTHWEST, 60);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_SECOND_CHILD,
-                                 FACING_SOUTHEAST + FACING_STEP, 40);
+                                 FACING_SOUTH_SOUTHEAST, 40);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_SECOND_CHILD,
-                                 FACING_SOUTH + FACING_STEP, 60);
+                                 FACING_SOUTH_SOUTHWEST, 60);
   // They step down to look over the crowd: Isaac's mother is not there to
   // see him off.
   Actor_ShowEmote(ACTOR_FAREWELL_SECOND_CHILD, EMOTE_IN_FRONT | EMOTE_QUESTION,
                   80);
-  Actor_FaceDirection(ACTOR_FAREWELL_FIRST_CHILD,
-                      FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FAREWELL_FIRST_CHILD, FACING_SOUTH_SOUTHEAST, 0);
   Actor_WalkToAndWait(ACTOR_FAREWELL_SECOND_CHILD, 184, 630);
   Event_Wait(20);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_SECOND_CHILD,
-                                 FACING_SOUTHEAST + FACING_STEP, 20);
+                                 FACING_SOUTH_SOUTHEAST, 20);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_SECOND_CHILD,
-                                 FACING_SOUTH + FACING_STEP, 20);
+                                 FACING_SOUTH_SOUTHWEST, 20);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_SECOND_CHILD,
-                                 FACING_SOUTHEAST + FACING_STEP, 20);
+                                 FACING_SOUTH_SOUTHEAST, 20);
   Actor_ShowEmote(ACTOR_FAREWELL_SECOND_CHILD, EMOTE_IN_FRONT | EMOTE_QUESTION,
                   40);
   Actor_ShowEmote(ACTOR_FAREWELL_FIRST_CHILD, EMOTE_IN_FRONT | EMOTE_QUESTION,
@@ -1643,28 +1641,28 @@ static void ValePlaza_DepartForQuest(void) {
   Actor_WalkToAndWait(ACTOR_FAREWELL_FIRST_CHILD, 168, 630);
   Event_Wait(20);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
-                                 FACING_SOUTHEAST + FACING_STEP, 40);
+                                 FACING_SOUTH_SOUTHEAST, 40);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
-                                 FACING_SOUTH + FACING_STEP, 40);
+                                 FACING_SOUTH_SOUTHWEST, 40);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
-                                 FACING_SOUTHEAST + FACING_STEP, 40);
+                                 FACING_SOUTH_SOUTHEAST, 40);
   Actor_ShowEmote(ACTOR_FAREWELL_FIRST_CHILD, EMOTE_IN_FRONT | EMOTE_QUESTION,
                   40);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
-                                 FACING_EAST + FACING_STEP, 10);
+                                 FACING_EAST_SOUTHEAST, 10);
   ValePlaza_SayThenWait(ACTOR_FAREWELL_FIRST_CHILD, 20);
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_SECOND_CHILD, ANIM_NOD);
   ValePlaza_SayThenWait(ACTOR_FAREWELL_SECOND_CHILD, 10);
   Actor_ShowEmote(ACTOR_FAREWELL_FIRST_CHILD,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
-                                 FACING_SOUTH + FACING_STEP, 20);
+                                 FACING_SOUTH_SOUTHWEST, 20);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
-                                 FACING_SOUTHEAST + FACING_STEP, 20);
+                                 FACING_SOUTH_SOUTHEAST, 20);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
-                                 FACING_SOUTH + FACING_STEP, 20);
+                                 FACING_SOUTH_SOUTHWEST, 20);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
-                                 FACING_SOUTH + FACING_STEP, 60);
+                                 FACING_SOUTH_SOUTHWEST, 60);
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_FIRST_CHILD, ANIM_NOD);
   ValePlaza_SayThenWait(ACTOR_FAREWELL_FIRST_CHILD, 10);
   {
@@ -1693,12 +1691,12 @@ static void ValePlaza_DepartForQuest(void) {
   // follows them to the gate.
   Actor_RunRepeatedMotion(ACTOR_FAREWELL_SECOND_CHILD, 2);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_SECOND_CHILD,
-                                 FACING_SOUTHWEST + FACING_STEP, 10);
+                                 FACING_WEST_SOUTHWEST, 10);
   ValePlaza_SayThenWait(ACTOR_FAREWELL_SECOND_CHILD, 10);
   Actor_RunRepeatedMotion(ACTOR_FAREWELL_FIRST_CHILD, 1);
   Event_Wait(20);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
-                                 FACING_EAST + FACING_STEP, 10);
+                                 FACING_EAST_SOUTHEAST, 10);
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_FIRST_CHILD, ANIM_NOD);
   ValePlaza_SayThenWait(ACTOR_FAREWELL_FIRST_CHILD, 20);
   Actor_SetAnimation(ACTOR_FAREWELL_SECOND_CHILD, ANIM_NOD);
@@ -1718,16 +1716,15 @@ static void ValePlaza_DepartForQuest(void) {
                   gValePlaza_FarewellSecondChildActions);
   Actor_RefreshSelectorById(ACTOR_FAREWELL_SECOND_CHILD);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_SECOND_CHILD,
-                                 FACING_SOUTHEAST + FACING_STEP, 120);
+                                 FACING_SOUTH_SOUTHEAST, 120);
   // The Great Healer counts on Isaac, and on Garet too; the two nod.
   Actor_RunRepeatedMotion(ACTOR_FAREWELL_GREAT_HEALER, 2);
   Event_Wait(20);
   ValePlaza_SayThenWait(ACTOR_FAREWELL_GREAT_HEALER, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-  ValePlaza_FaceDirectionAndWait(ACTOR_GARET, FACING_WEST + FACING_STEP, 20);
+  ValePlaza_FaceDirectionAndWait(ACTOR_GARET, FACING_WEST_NORTHWEST, 20);
   ValePlaza_FaceDirectionAndWait(ACTOR_PARTY_LEADER, FACING_NORTH, 10);
-  ValePlaza_FaceDirectionAndWait(ACTOR_GARET, FACING_NORTHWEST + FACING_STEP,
-                                 10);
+  ValePlaza_FaceDirectionAndWait(ACTOR_GARET, FACING_NORTH_NORTHWEST, 10);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
@@ -1746,12 +1743,11 @@ static void ValePlaza_DepartForQuest(void) {
   // Garet protests he knows that, Sis; his brother says he will eat anything,
   // and Garet jumps.
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  ValePlaza_FaceDirectionAndWait(ACTOR_GARET, FACING_NORTHEAST + FACING_STEP,
-                                 10);
+  ValePlaza_FaceDirectionAndWait(ACTOR_GARET, FACING_EAST_NORTHEAST, 10);
   ValePlaza_SayThenWait(ACTOR_GARET, 10);
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_GARETS_BROTHER, ANIM_SHAKE_HEAD);
   ValePlaza_SayThenWait(ACTOR_FAREWELL_GARETS_BROTHER, 10);
-  Actor_FaceDirection(ACTOR_GARET, FACING_EAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_EAST_SOUTHEAST, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   Actor_Jump(ACTOR_GARET, 4, 60);
   // Dora is very late, the bearded man in a long robe says. Everyone wonders;
@@ -1759,7 +1755,7 @@ static void ValePlaza_DepartForQuest(void) {
   Actor_RunRepeatedMotion(ACTOR_FAREWELL_MAN_AWAITING_DORA, 2);
   Event_Wait(20);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_MAN_AWAITING_DORA,
-                                 FACING_NORTH + FACING_STEP, 10);
+                                 FACING_NORTH_NORTHEAST, 10);
   ValePlaza_SayThenWait(ACTOR_FAREWELL_MAN_AWAITING_DORA, 60);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_FAREWELL_GARETS_SISTER, EMOTE_IN_FRONT | EMOTE_WINCE,
@@ -1788,16 +1784,15 @@ static void ValePlaza_DepartForQuest(void) {
   // Garet thinks they are all set; his sister says think again, it must be hard
   // for Dora.
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  ValePlaza_FaceDirectionAndWait(ACTOR_GARET, FACING_WEST + FACING_STEP, 10);
+  ValePlaza_FaceDirectionAndWait(ACTOR_GARET, FACING_WEST_NORTHWEST, 10);
   ValePlaza_SayThenWait(ACTOR_GARET, 10);
-  Actor_FaceDirection(ACTOR_FAREWELL_MAN_AWAITING_DORA,
-                      FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FAREWELL_MAN_AWAITING_DORA, FACING_SOUTH_SOUTHEAST,
+                      0);
   ValePlaza_FaceDirectionAndWait(ACTOR_PARTY_LEADER, FACING_EAST, 10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_RunRepeatedMotion(ACTOR_FAREWELL_GARETS_SISTER, 1);
   ValePlaza_SayThenWait(ACTOR_FAREWELL_GARETS_SISTER, 10);
-  ValePlaza_FaceDirectionAndWait(ACTOR_GARET, FACING_NORTHEAST + FACING_STEP,
-                                 10);
+  ValePlaza_FaceDirectionAndWait(ACTOR_GARET, FACING_EAST_NORTHEAST, 10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_GARETS_SISTER, ANIM_SHAKE_HEAD);
   ValePlaza_SayThenWait(ACTOR_FAREWELL_GARETS_SISTER, 10);
@@ -1805,7 +1800,7 @@ static void ValePlaza_DepartForQuest(void) {
   // knows he must. The crowd nods.
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_GARETS_MOTHER, ANIM_NOD);
   Event_ShowMessage(ACTOR_FAREWELL_GARETS_MOTHER, 0);
-  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 0);
   Actor_SetAnimation(ACTOR_FAREWELL_GARETS_MOTHER, ANIM_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_FAREWELL_GARETS_MOTHER, 0);
   Actor_StartRepeatedMotion(ACTOR_FAREWELL_GARETS_MOTHER, 3);
@@ -1828,15 +1823,15 @@ static void ValePlaza_DepartForQuest(void) {
   Actor_Jump(ACTOR_FAREWELL_GARETS_GRANDFATHER, 2, 10);
   Actor_Jump(ACTOR_FAREWELL_GARETS_GRANDFATHER, 4, 40);
   ValePlaza_SayThenWait(ACTOR_FAREWELL_GARETS_GRANDFATHER, 10);
-  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHWEST, 0);
   ValePlaza_FaceDirectionAndWait(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_GARETS_GRANDFATHER,
-                                 FACING_NORTH + FACING_STEP, 10);
+                                 FACING_NORTH_NORTHEAST, 10);
   ValePlaza_SayThenWait(ACTOR_FAREWELL_GARETS_GRANDFATHER, 10);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_GARETS_GRANDFATHER,
-                                 FACING_WEST + FACING_STEP, 20);
+                                 FACING_WEST_NORTHWEST, 20);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_GARETS_GRANDFATHER,
-                                 FACING_SOUTH + FACING_STEP, 10);
+                                 FACING_SOUTH_SOUTHWEST, 10);
   // The crowd nods in three waves, then all jump together: "Farewell!"
   Actor_SetAnimation(ACTOR_FAREWELL_FIRST_CHILD, ANIM_NOD);
   Actor_SetAnimation(ACTOR_FAREWELL_MAN_AWAITING_DORA, ANIM_NOD);
@@ -1892,7 +1887,7 @@ static void ValePlaza_DepartForQuest(void) {
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   ValePlaza_FaceDirectionAndWait(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
-  ValePlaza_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 20);
+  ValePlaza_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 20);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   departureActions = gValePlaza_PartyDepartureActions;
   Actor_SetScript(ACTOR_PARTY_LEADER, departureActions);
@@ -2429,13 +2424,13 @@ struct ActorPlacement gValePlaza_ActorPlacements[] = {
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(56), 0, PIXELS(616), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(104), 0, PIXELS(760), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(104), 0, PIXELS(760), FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(88), 0, PIXELS(744), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(88), 0, PIXELS(744), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(168), 0, PIXELS(600), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(184), 0, PIXELS(600), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(184), 0, PIXELS(600), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(312), 0, PIXELS(824), FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2449,9 +2444,9 @@ struct ActorPlacement gValePlaza_ActorPlacements[] = {
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(240), 0, PIXELS(760), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(240), 0, PIXELS(760), FACING_NORTH_NORTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(328), 0, PIXELS(680), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(328), 0, PIXELS(680), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(1608), 0, PIXELS(1608), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
@@ -2486,10 +2481,10 @@ struct ActorPlacement gValePlaza_StormActorPlacements[] = {
         PIXELS(213), 0, PIXELS(771), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
 #if TBS_PATCH_4
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(198), 0, PIXELS(779), FACING_NORTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(198), 0, PIXELS(779), FACING_EAST_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
 #else
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(204), 0, PIXELS(783), FACING_NORTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(204), 0, PIXELS(783), FACING_EAST_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
 #endif
     { SPRITE_OLD_MAN_WITH_WHITE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(250), 0, PIXELS(773), FACING_SOUTHWEST, 3, 0 },
@@ -2518,49 +2513,49 @@ struct ActorPlacement gValePlaza_DepartureActorPlacements[] = {
     { SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(408), 0, PIXELS(560), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(225), 0, PIXELS(814), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(225), 0, PIXELS(814), FACING_NORTH_NORTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(168), 0, PIXELS(607), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(168), 0, PIXELS(607), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(184), 0, PIXELS(607), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(184), 0, PIXELS(607), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(199), 0, PIXELS(781), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(199), 0, PIXELS(781), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(180), 0, PIXELS(790), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(180), 0, PIXELS(790), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_WHITE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(216), 0, PIXELS(778), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(216), 0, PIXELS(778), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_ORANGE_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(262), 0, PIXELS(799), FACING_SOUTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(262), 0, PIXELS(799), FACING_WEST_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(270), 0, PIXELS(814), FACING_SOUTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(270), 0, PIXELS(814), FACING_WEST_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_HEADSCARF, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(252), 0, PIXELS(787), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(252), 0, PIXELS(787), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_TEAL_SHIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(234), 0, PIXELS(781), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(234), 0, PIXELS(781), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(268), 0, PIXELS(742), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(268), 0, PIXELS(742), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(286), 0, PIXELS(761), FACING_SOUTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(286), 0, PIXELS(761), FACING_WEST_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(271), 0, PIXELS(778), FACING_SOUTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(271), 0, PIXELS(778), FACING_WEST_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(246), 0, PIXELS(762), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(246), 0, PIXELS(762), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(227), 0, PIXELS(760), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(227), 0, PIXELS(760), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(209), 0, PIXELS(760), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(209), 0, PIXELS(760), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(288), 0, PIXELS(795), FACING_SOUTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(288), 0, PIXELS(795), FACING_WEST_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(161), 0, PIXELS(790), FACING_EAST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(161), 0, PIXELS(790), FACING_EAST_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(171), 0, PIXELS(815), FACING_EAST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(171), 0, PIXELS(815), FACING_EAST_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_STOUT_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(191), 0, PIXELS(758), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(191), 0, PIXELS(758), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_DOG, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        0, 0, 0, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_CAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_WEST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        0, 0, 0, FACING_WEST_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 
@@ -2576,19 +2571,19 @@ struct ActorPlacement gValePlaza_ActorPlacementsAfterKalay[] = {
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(107), 0, PIXELS(765), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(267), 0, PIXELS(744), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(267), 0, PIXELS(744), FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(328), 0, PIXELS(681), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(328), 0, PIXELS(681), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, 3,
         PIXELS(391), 0, PIXELS(716), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(56), 0, PIXELS(617), FACING_NORTH + FACING_STEP, 3, 0 },
+        PIXELS(56), 0, PIXELS(617), FACING_NORTH_NORTHEAST, 3, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(166), 0, PIXELS(603), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(176), 0, PIXELS(568), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(176), 0, PIXELS(568), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(315), 0, PIXELS(823), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(315), 0, PIXELS(823), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(287), 0, PIXELS(571), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,

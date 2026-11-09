@@ -316,7 +316,7 @@ static void LamaTemple_EnterHamasRoom(void) {
 static void LamaTemple_RunHamasFarewell(void) {
   Event_Start();
   Actor_SetPosition(ACTOR_TEMPLE_HAMA, PIXELS(136), PIXELS(168));
-  Actor_FaceDirection(ACTOR_TEMPLE_HAMA, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_TEMPLE_HAMA, FACING_SOUTH_SOUTHWEST, 0);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(144), PIXELS(200));
   Actor_SetPosition(ACTOR_GARET, PIXELS(160), PIXELS(192));
   Actor_SetPosition(ACTOR_IVAN, PIXELS(128), PIXELS(200));
@@ -351,7 +351,7 @@ static void LamaTemple_RunHamasFarewell(void) {
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_TEMPLE_HAMA, 2);
-  Actor_FaceDirection(ACTOR_TEMPLE_HAMA, FACING_SOUTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_TEMPLE_HAMA, FACING_SOUTH_SOUTHWEST, 20);
   Event_ShowMessageThenWait(ACTOR_TEMPLE_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Event_Wait(120);
@@ -396,7 +396,7 @@ static void LamaTemple_RunHamasFarewell(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 0);
   Event_Wait(20);
-  Actor_FaceDirection(ACTOR_TEMPLE_HAMA, FACING_SOUTH - FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_TEMPLE_HAMA, FACING_SOUTH_SOUTHEAST, 20);
   Event_ShowMessageThenWait(ACTOR_TEMPLE_HAMA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
@@ -457,7 +457,7 @@ static void LamaTemple_RunHamasFarewell(void) {
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
-  Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH_NORTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
@@ -613,7 +613,7 @@ static void AlpineCrossing_FeizhiArrives(void) {
     // She cannot hear Hsu's voice.
     Actor_RunRepeatedMotion(ACTOR_FEIZHI, 2);
     Event_Wait(20);
-    Actor_FaceDirection(ACTOR_FEIZHI, FACING_SOUTH + FACING_STEP, 120);
+    Actor_FaceDirection(ACTOR_FEIZHI, FACING_SOUTH_SOUTHWEST, 120);
     Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     Actor_SetAnimationAndWait(ACTOR_FEIZHI, ANIM_SHAKE_HEAD);
@@ -665,7 +665,7 @@ static void AlpineCrossing_HamaReachesHsu(void) {
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
-  Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH_NORTHEAST, 20);
   Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(60);
@@ -677,7 +677,7 @@ static void AlpineCrossing_HamaReachesHsu(void) {
   Actor_SetAttachedEffect(ACTOR_FEIZHI,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
-  Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTHWEST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH_NORTHWEST, 20);
   Actor_SetAnimation(ACTOR_HSU, ANIM_HSU_STRUGGLE);
   Event_End();
   GameFlag_Set(FLAG_HAMA_REACHED_HSU);
@@ -705,7 +705,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   Actor_RunRepeatedMotion(ACTOR_HAMA, 1);
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
-  Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH_NORTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_FEIZHI, ANIM_NOD);
   Event_Wait(20);
 
@@ -713,8 +713,8 @@ static void AlpineCrossing_LiftBoulder(void) {
   Actor_WalkTo(ACTOR_HAMA, 178, 276);
   Actor_WalkToAndWait(ACTOR_FEIZHI, 172, 284);
   Actor_WaitForMoveById(ACTOR_HAMA);
-  Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_HAMA, 2);
   Event_Wait(20);
@@ -779,7 +779,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   Actor_SetAnimation(ACTOR_FEIZHI, ANIM_STAND);
   Actor_Jump(ACTOR_FEIZHI, 2, 0);
   Event_Wait(20);
-  Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH_NORTHEAST, 20);
   Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
@@ -790,7 +790,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   Actor_Get(ACTOR_FEIZHI)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_SetSpeed(ACTOR_FEIZHI, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_FEIZHI, 168, 296);
-  Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH_NORTHEAST, 20);
   Actor_SetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_CROUCH);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
@@ -991,8 +991,8 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_HAMA, PIXELS(192), PIXELS(264));
       Actor_SetPosition(ACTOR_HSU, PIXELS(164), PIXELS(280));
       Actor_SetPosition(ACTOR_FEIZHI, PIXELS(184), PIXELS(304));
-      Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH + FACING_STEP, 0);
-      Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTHWEST + FACING_STEP, 0);
+      Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH_SOUTHWEST, 0);
+      Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH_NORTHWEST, 0);
       Actor_SetScript(ACTOR_HSU, gAlpineCrossing_HsuStruggle);
       Actor_Get(ACTOR_HSU)->scaleX = -Q16_ONE;
     }

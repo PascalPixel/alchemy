@@ -618,21 +618,21 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   FieldCamera_MoveWithinMapBounds(PIXELS(304), PIXELS(32), PIXELS(158), 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
-  VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_NORTH + FACING_STEP);
+  VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_NORTH_NORTHEAST);
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 1);
   Sound_Play(MUS_OMINOUS);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
   Actor_SetAnimation(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_MENARDI);
-  VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP);
+  VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_NORTH_NORTHWEST);
   Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
   Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH_SOUTHWEST, 20);
   FieldCamera_SetSpeedParameters(PIXELS(8) / 5, PIXELS(1) / 5);
   FieldCamera_MoveTo(PIXELS(294), -1, PIXELS(194), 1);
   Event_Wait(20);
@@ -657,12 +657,12 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
-  Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH_NORTHWEST, 40);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 1);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
-  Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH + FACING_STEP, 0);
-  VenusLighthouseAerie_FaceActor(ACTOR_MENARDI, FACING_SOUTH + FACING_STEP);
+  Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH_SOUTHWEST, 0);
+  VenusLighthouseAerie_FaceActor(ACTOR_MENARDI, FACING_SOUTH_SOUTHWEST);
   Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
@@ -672,7 +672,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS, 0, 40);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_ShowMessageThenWait(ACTOR_FELIX, 0, 20);
-  Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH_SOUTHWEST, 20);
   Actor_StartRepeatedMotion(ACTOR_FELIX, 2);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
   Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
@@ -690,12 +690,12 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Event_ShowMessageThenWait(ACTOR_FELIX, 0, 20);
   Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS, 0, 20);
-  VenusLighthouseAerie_FaceActor(ACTOR_FELIX, FACING_NORTHWEST + FACING_STEP);
+  VenusLighthouseAerie_FaceActor(ACTOR_FELIX, FACING_NORTH_NORTHWEST);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
-  VenusLighthouseAerie_FaceActor(ACTOR_SHEBA, FACING_SOUTHEAST + FACING_STEP);
+  VenusLighthouseAerie_FaceActor(ACTOR_SHEBA, FACING_SOUTH_SOUTHEAST);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
   Event_Wait(20);
-  VenusLighthouseAerie_FaceActor(ACTOR_FELIX, FACING_NORTH + FACING_STEP);
+  VenusLighthouseAerie_FaceActor(ACTOR_FELIX, FACING_NORTH_NORTHEAST);
   Actor_SetAnimationAndWait(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
@@ -883,7 +883,7 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
   Actor_StartRepeatedMotion(ACTOR_FELIX, 2);
   Event_ShowMessageThenWait(ACTOR_FELIX, 0, 20);
-  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH_NORTHEAST, 40);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_FaceActor(ACTOR_FELIX, FACING_EAST);
@@ -907,10 +907,10 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
-  VenusLighthouseAerie_FaceActor(ACTOR_MENARDI, FACING_SOUTHEAST + FACING_STEP);
+  VenusLighthouseAerie_FaceActor(ACTOR_MENARDI, FACING_SOUTH_SOUTHEAST);
   Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   VenusLighthouseAerie_ShowMessage(ACTOR_MENARDI);
-  VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP);
+  VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_NORTH_NORTHWEST);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_WEST, 20);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
@@ -932,10 +932,10 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
   Actor_SetSpeed(ACTOR_SHEBA, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_SHEBA, 260, 186);
-  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH_SOUTHEAST, 0);
   Actor_WalkToAndWait(ACTOR_SHEBA, 276, 192);
   actor = Actor_Get(ACTOR_MENARDI);
-  actor->facing = FACING_SOUTH + FACING_STEP;
+  actor->facing = FACING_SOUTH_SOUTHWEST;
   wait(1);
   Actor_StartRepeatedMotion(ACTOR_MENARDI, 2);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
@@ -1008,8 +1008,8 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   VenusLighthouseAerie_ShowMessage(ACTOR_SHEBA);
-  Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH_NORTHWEST, 20);
   Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_SetAnimation(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
@@ -1076,10 +1076,10 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  VenusLighthouseAerie_FaceActor(ACTOR_MENARDI, FACING_SOUTHEAST + FACING_STEP);
+  VenusLighthouseAerie_FaceActor(ACTOR_MENARDI, FACING_SOUTH_SOUTHEAST);
   Actor_SetAnimation(ACTOR_MENARDI, ANIM_NOD);
   VenusLighthouseAerie_ShowMessage(ACTOR_MENARDI);
-  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH_NORTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
   Event_Wait(40);
   VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_WEST);
@@ -1124,42 +1124,42 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetSpeed(ACTOR_SHEBA, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_SHEBA, 260, 186);
-  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH_SOUTHEAST, 0);
   Actor_WalkToAndWait(ACTOR_SHEBA, 276, 192);
   Sound_Play(MUS_SILENCE);
   actor = Actor_Get(ACTOR_MENARDI);
-  actor->facing = FACING_SOUTH + FACING_STEP;
+  actor->facing = FACING_SOUTH_SOUTHWEST;
   wait(1);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
   VenusLighthouseAerie_ShowMessage(ACTOR_MENARDI);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
-  Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH_NORTHEAST, 20);
   Actor_Jump(ACTOR_MIA, 2, 20);
   VenusLighthouseAerie_FaceActor(ACTOR_MIA, FACING_NORTHWEST);
   VenusLighthouseAerie_ShowMessage(ACTOR_MIA);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
-  Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 80);
+  Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH_NORTHWEST, 80);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_EAST, 40);
   Sound_Play(MUS_CONFRONTATION);
   VenusLighthouseAerie_ShowMessage(ACTOR_SATUROS);
-  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH_NORTHWEST, 20);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
   VenusLighthouseAerie_ShowMessage(ACTOR_IVAN);
-  VenusLighthouseAerie_FaceActor(ACTOR_MENARDI, FACING_SOUTHEAST + FACING_STEP);
+  VenusLighthouseAerie_FaceActor(ACTOR_MENARDI, FACING_SOUTH_SOUTHEAST);
   Actor_SetAnimationAndWait(ACTOR_MENARDI, ANIM_NOD);
   VenusLighthouseAerie_ShowMessage(ACTOR_MENARDI);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
-  VenusLighthouseAerie_FaceActor(ACTOR_SHEBA, FACING_NORTH + FACING_STEP);
+  VenusLighthouseAerie_FaceActor(ACTOR_SHEBA, FACING_NORTH_NORTHEAST);
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   VenusLighthouseAerie_ShowMessage(ACTOR_MIA);
   Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH_SOUTHEAST, 20);
   VenusLighthouseAerie_ShowMessage(ACTOR_SATUROS);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
@@ -1174,11 +1174,11 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_EAST);
   Actor_SetAnimation(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(ACTOR_SATUROS);
-  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH_NORTHEAST, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
-  VenusLighthouseAerie_FaceActor(ACTOR_MENARDI, FACING_SOUTHEAST + FACING_STEP);
+  VenusLighthouseAerie_FaceActor(ACTOR_MENARDI, FACING_SOUTH_SOUTHEAST);
   Actor_SetAnimation(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(ACTOR_MENARDI);
   Actor_SetAttachedEffect(ACTOR_IVAN,
@@ -1381,13 +1381,13 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_SetPosition(ACTOR_IVAN, PIXELS(340), PIXELS(196));
   Actor_Get(ACTOR_MIA)->facing = FACING_WEST;
   Actor_SetPosition(ACTOR_MIA, PIXELS(326), PIXELS(204));
-  Actor_Get(ACTOR_SHEBA)->facing = FACING_SOUTHEAST + FACING_STEP;
+  Actor_Get(ACTOR_SHEBA)->facing = FACING_SOUTH_SOUTHEAST;
   Actor_SetPosition(ACTOR_SHEBA, PIXELS(268), PIXELS(154));
-  Actor_Get(ACTOR_FELIX)->facing = FACING_SOUTHEAST + FACING_STEP;
+  Actor_Get(ACTOR_FELIX)->facing = FACING_SOUTH_SOUTHEAST;
   Actor_SetPosition(ACTOR_FELIX, PIXELS(268), PIXELS(164));
   actor = Actor_Get(ACTOR_SATUROS);
   actor->timer = 10;
-  actor->facing = FACING_NORTH + FACING_STEP;
+  actor->facing = FACING_NORTH_NORTHEAST;
   Actor_SetPosition(ACTOR_SATUROS, PIXELS(294), PIXELS(212));
   Actor_SetAnimation(ACTOR_SATUROS, SATUROS_ANIMATION_LIE);
   Actor_SetScript(ACTOR_SATUROS, gVenusLighthouseAerie_ScaleStepAction);
@@ -1438,7 +1438,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_SetAnimation(ACTOR_MIA, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(ACTOR_MIA);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  VenusLighthouseAerie_FaceActor(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP);
+  VenusLighthouseAerie_FaceActor(ACTOR_FELIX, FACING_SOUTH_SOUTHEAST);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
   Actor_Jump(ACTOR_IVAN, 2, 20);
   VenusLighthouseAerie_ShowMessage(ACTOR_IVAN);
@@ -1479,7 +1479,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   actor->scaleY = Q16_ONE;
   wait(1);
   VenusLighthouseAerie_ShowMessage(ACTOR_SATUROS);
-  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
@@ -1528,18 +1528,18 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 20);
 
   actor = Actor_Get(ACTOR_SATUROS);
-  actor->facing = FACING_SOUTHEAST + FACING_STEP;
+  actor->facing = FACING_SOUTH_SOUTHEAST;
   actor->scaleX = Q16_ONE;
   Actor_SetAnimation(ACTOR_SATUROS, ANIM_STAND);
   Event_Wait(10);
-  VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_NORTH + FACING_STEP);
+  VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_NORTH_NORTHEAST);
   Actor_Jump(ACTOR_SATUROS, 6, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   star = (struct Actor *)FieldActor_Create(
       SPRITE_BLANK, actor->x.fixed, actor->y.fixed + PIXELS(8), actor->z.fixed);
@@ -1613,12 +1613,12 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 1);
   Event_Wait(20);
   VenusLighthouseAerie_ShowMessage(ACTOR_SATUROS);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 0);
-  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST + FACING_STEP, 0);
-  VenusLighthouseAerie_FaceActor(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH_SOUTHEAST, 0);
+  VenusLighthouseAerie_FaceActor(ACTOR_FELIX, FACING_SOUTH_SOUTHEAST);
   VenusLighthouseAerie_ShowGroupEmote(EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   VenusLighthouseAerie_ShowMessage(ACTOR_SATUROS);
@@ -1661,7 +1661,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_SetScript(ACTOR_BEAM_BOTTOM, gVenusLighthouseAerie_BeamOpenAction);
   Actor_SetScript(ACTOR_BEAM_LOWER, gVenusLighthouseAerie_BeamOpenAction);
@@ -1702,8 +1702,8 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 0);
-  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH_SOUTHEAST, 20);
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 1);
   VenusLighthouseAerie_ShowMessage(ACTOR_SATUROS);
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
@@ -1718,12 +1718,12 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   VenusLighthouseAerie_FaceActor(ACTOR_GARET, FACING_SOUTHWEST);
   VenusLighthouseAerie_ShowMessage(ACTOR_GARET);
-  VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_NORTH + FACING_STEP);
+  VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_NORTH_NORTHEAST);
   Actor_SetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
   Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
   VenusLighthouseAerie_ShowMessage(ACTOR_GARET);
-  Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTHWEST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH_NORTHWEST, 20);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
@@ -1746,29 +1746,29 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 20);
-  VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP);
+  VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_NORTH_NORTHWEST);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
-  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHWEST + FACING_STEP, 60);
-  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH_NORTHWEST, 60);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH_SOUTHEAST, 40);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 40);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
-  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH + FACING_STEP, 40);
-  VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP);
+  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH_NORTHEAST, 40);
+  VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_NORTH_NORTHWEST);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
-  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 40);
-  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH_SOUTHEAST, 40);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH_SOUTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 40);
-  Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTHWEST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH_NORTHWEST, 20);
   Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
-  VenusLighthouseAerie_FaceActor(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP);
+  VenusLighthouseAerie_FaceActor(ACTOR_FELIX, FACING_SOUTH_SOUTHEAST);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
-  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH_NORTHWEST, 20);
   Actor_SetAnimation(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 80);
@@ -1795,10 +1795,10 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 20);
-  Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTH_SOUTHEAST, 20);
   Actor_SetAnimation(ACTOR_MENARDI, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
-  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHWEST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH_NORTHWEST, 20);
   VenusLighthouseAerie_ShowMessage(SPEAKER_WINDOW_BELOW |
                                    SPEAKER_PORTRAIT_RIGHT | ACTOR_FELIX);
   Actor_SetSpeed(ACTOR_SHEBA, PIXELS(1), PIXELS(1) / 2);
@@ -1813,7 +1813,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   // Flash Saturos and Menardi and release their matching radial bursts.
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(13, 8, 9), PALETTES_BG);
   PaletteFade_Interpolate(40);
-  VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_NORTH + FACING_STEP);
+  VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_NORTH_NORTHEAST);
   VenusLighthouseAerie_ShowMessage(ACTOR_SATUROS);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
@@ -2176,13 +2176,13 @@ static void VenusLighthouseAerie_ShowSaturosAndMenardiFall(void) {
   Actor_SetPosition(ACTOR_IVAN, PIXELS(340), PIXELS(196));
   Actor_Get(ACTOR_MIA)->facing = FACING_NORTHWEST;
   Actor_SetPosition(ACTOR_MIA, PIXELS(326), PIXELS(204));
-  Actor_Get(ACTOR_FELIX)->facing = FACING_NORTH + FACING_STEP;
+  Actor_Get(ACTOR_FELIX)->facing = FACING_NORTH_NORTHEAST;
   Actor_SetPosition(ACTOR_FELIX, PIXELS(200), PIXELS(216));
-  Actor_Get(ACTOR_SHEBA)->facing = FACING_NORTH + FACING_STEP;
+  Actor_Get(ACTOR_SHEBA)->facing = FACING_NORTH_NORTHEAST;
   Actor_SetPosition(ACTOR_SHEBA, PIXELS(200), PIXELS(216));
-  Actor_Get(ACTOR_SATUROS)->facing = FACING_SOUTHEAST + FACING_STEP;
+  Actor_Get(ACTOR_SATUROS)->facing = FACING_SOUTH_SOUTHEAST;
   Actor_SetPosition(ACTOR_SATUROS, PIXELS(310), PIXELS(158));
-  Actor_Get(ACTOR_MENARDI)->facing = FACING_SOUTHEAST + FACING_STEP;
+  Actor_Get(ACTOR_MENARDI)->facing = FACING_SOUTH_SOUTHEAST;
   Actor_SetPosition(ACTOR_MENARDI, PIXELS(292), PIXELS(158));
 
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BEAM_BOTTOM), 0);
@@ -2345,7 +2345,7 @@ static void VenusLighthouseAerie_DiscussSaturosAndMenardiDefeat(void) {
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
-  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH_SOUTHEAST, 20);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
   Actor_SetAttachedEffect(ACTOR_SHEBA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -2374,7 +2374,7 @@ static void VenusLighthouseAerie_DiscussSaturosAndMenardiDefeat(void) {
   VenusLighthouseAerie_ShowMessage(ACTOR_GARET);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
-  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH_SOUTHWEST, 20);
   Actor_Jump(ACTOR_MIA, 4, 20);
   Event_ShowMessageThenWait(miaSpeaker, 0, 20);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
@@ -2403,8 +2403,8 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH_NORTHEAST, 0);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   Event_Wait(10);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
@@ -2725,8 +2725,8 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Event_Wait(160);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 1);
   Event_Wait(20);
-  Actor_Get(ACTOR_FELIX)->facing = FACING_SOUTH + FACING_STEP;
-  Actor_SetAnimation(ACTOR_FELIX, 0);
+  Actor_Get(ACTOR_FELIX)->facing = FACING_SOUTH_SOUTHWEST;
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_STILL);
   Event_Wait(80);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_SHAKE_HEAD);
   Event_Wait(40);
@@ -2734,7 +2734,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Actor_SetAnimation(ACTOR_FELIX, FELIX_ANIMATION_KNEEL);
   Event_Wait(10);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_FELIX), 0);
-  Actor_SetAnimation(ACTOR_FELIX, 0);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_STILL);
   Actor_Jump(ACTOR_FELIX, 6, 0);
   Actor_SetSpeed(ACTOR_FELIX, PIXELS(3), PIXELS(3) / 2);
   Actor_Get(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -3393,11 +3393,11 @@ s32 gVenusLighthouseAerie_PartyHeadingAction[] = {
 };
 
 struct SceneEntrance gVenusLighthouseAerieEntrances[] = {
-    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 304, 0, 216,
-     FACING_SOUTHEAST + FACING_STEP, 0, 0, 0, 600, 420, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 304, 0, 216, FACING_SOUTH_SOUTHEAST, 0,
+     0, 0, 600, 420, 0},
     {VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR,
-     CONDITION_ALWAYS, 504, 0, 168, FACING_SOUTHEAST + FACING_STEP, 0, 0, 0,
-     600, 420, 0},
+     CONDITION_ALWAYS, 504, 0, 168, FACING_SOUTH_SOUTHEAST, 0, 0, 0, 600, 420,
+     0},
     {VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE, CONDITION_ALWAYS, 340, 0, 184,
      FACING_WEST, 0, 0, 0, 600, 420, 0},
     {VENUS_LIGHTHOUSE_AERIE_AFTER_SECOND_BATTLE, CONDITION_ALWAYS, 340, 0, 184,
@@ -3449,13 +3449,13 @@ struct ActorPlacement gVenusLighthouseAerieActorPlacements[] = {
     { ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(504), 0, PIXELS(148), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_MENARDI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(280), 0, PIXELS(164), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(280), 0, PIXELS(164), FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_SATUROS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(296), 0, PIXELS(180), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(296), 0, PIXELS(180), FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0 },
     { ACTOR_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(248), 0, PIXELS(172), FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_FELIX, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(264), 0, PIXELS(252), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(264), 0, PIXELS(252), FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLUE_ORB, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

@@ -850,9 +850,9 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_Wait(20);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 40);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 40);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 40);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 40);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 20);
   Actor_Jump(ACTOR_KRADEN, 4, 20);
   // Kraden: "This is your first time here, right?" Yes: "Take a good look at
   // it." No: "I doubt that..."
@@ -1025,7 +1025,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   // Kraden: a sanctum built in honour of the sun ought to show it somewhere.
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 10);
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 20);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
@@ -1142,7 +1142,7 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_STAND);
   Event_Wait(6);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   // Pan across the statues, then return to the party's position.
@@ -1164,7 +1164,7 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0, 10);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 20);
   // Kraden: "Perhaps Psynergy is the key..."
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0, 10);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
@@ -1504,7 +1504,7 @@ struct ActorPlacement gSolSanctumReliefs_SecondReliefRoomActorPlacements[] = {
 
 struct ActorPlacement gSolEntrance_ActorPlacements[] = {
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 

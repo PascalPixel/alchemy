@@ -550,7 +550,7 @@ void FieldEffect_SpawnBurstParticle(struct Actor *source, s32 param) {
 
 /// Makes an actor jump down off a ledge in front of it (the field runs
 /// it for the leader when the player presses down at a ledge): it shows pose
-/// for 10 frames, hops 12 pixels south, turns toward FACING_SOUTH + FACING_STEP
+/// for 10 frames, hops 12 pixels south, turns toward FACING_SOUTH_SOUTHWEST
 /// (1/16 turn past FACING_SOUTH) while sinking 28 pixels with a dust puff every
 /// other frame (none when param is -1), then jumps on to 16 pixels south of
 /// where it started and lands. The landing plays the queued sound
@@ -588,7 +588,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
     Sound_PlayFar(SE_FLOOR_SWITCH);
     // From here pose counts frames.
     pose = 0;
-    Actor_ArmCallback(actorId, FACING_SOUTH + FACING_STEP, 0);
+    Actor_ArmCallback(actorId, FACING_SOUTH_SOUTHWEST, 0);
     *objectFlags = 0;
     do {
       nextY = actor->y.fixed - PIXELS(2);

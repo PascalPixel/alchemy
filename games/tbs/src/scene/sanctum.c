@@ -370,12 +370,12 @@ static void Sanctum_ReconsiderQuest(void) {
           Actor_WalkTo(ACTOR_PARTY_LEADER, 192, 168);
           Event_Wait(20);
           Actor_WalkToAndWait(ACTOR_HEALER, 168, 120);
-          Actor_FaceDirection(ACTOR_HEALER, FACING_SOUTHEAST + FACING_STEP, 0);
+          Actor_FaceDirection(ACTOR_HEALER, FACING_SOUTH_SOUTHEAST, 0);
           Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
         } else {
           Actor_WalkTo(ACTOR_PARTY_LEADER, 192, 168);
           Event_Wait(20);
-          Actor_FaceDirection(ACTOR_HEALER, FACING_SOUTHEAST + FACING_STEP, 0);
+          Actor_FaceDirection(ACTOR_HEALER, FACING_SOUTH_SOUTHEAST, 0);
           Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
         }
         Sanctum_ReceiveWiseOnesMission();
@@ -742,8 +742,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_Wait(10);
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_Wait(20);
-    Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTH + FACING_STEP,
-                        0);
+    Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTH_SOUTHWEST, 0);
     Event_Wait(60);
     Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_HEALER, 0);
     Event_Wait(20);
@@ -753,12 +752,11 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_HEALER, 3);
     Event_Wait(20);
-    Actor_FaceDirection(ACTOR_HEALER, FACING_SOUTHEAST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_HEALER, FACING_SOUTH_SOUTHEAST, 0);
     Event_Wait(10);
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_Wait(20);
-    Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTH + FACING_STEP,
-                        0);
+    Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTH_SOUTHWEST, 0);
     Event_Wait(60);
     Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_HEALER, 0);
     Event_Wait(50);
@@ -1095,7 +1093,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
     Actor_FaceActor(ACTOR_GARET, ACTOR_HEALER, 0);
     Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_HEALER, 0);
-    Actor_FaceDirection(ACTOR_HEALER, FACING_NORTH + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_HEALER, FACING_NORTH_NORTHEAST, 0);
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_HEALER, 4);
     Event_Wait(20);
@@ -1218,7 +1216,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_HEALER, 3);
   Event_Wait(20);
-  Actor_FaceDirection(ACTOR_HEALER, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_HEALER, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_HEALER, 3);
   Event_Wait(30);
@@ -1421,9 +1419,9 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Actor_FaceDirection(ACTOR_EAST_HEALER, FACING_WEST, 0);
   Actor_WalkTo(ACTOR_HEALER, 200, 272);
   Event_Wait(40);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_WEST_HEALER, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_EAST_HEALER, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_WEST_HEALER, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_EAST_HEALER, FACING_SOUTH_SOUTHWEST, 0);
   Actor_WaitForMoveById(ACTOR_HEALER);
   Actor_SetPosition(ACTOR_HEALER, 0, 0);
   Event_Wait(60);
@@ -1441,7 +1439,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_WEST_HEALER, 2);
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_WEST_HEALER, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_WEST_HEALER, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_WEST_HEALER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(80);
@@ -1450,7 +1448,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_WEST_HEALER, 0);
   Event_Wait(20);
-  Actor_FaceDirection(ACTOR_EAST_HEALER, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_EAST_HEALER, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_EAST_HEALER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_Wait(60);
@@ -1460,7 +1458,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_EAST_HEALER, 2);
   Event_Wait(30);
-  Actor_FaceDirection(ACTOR_EAST_HEALER, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_EAST_HEALER, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_EAST_HEALER, 0);
   Event_Wait(20);
@@ -1782,26 +1780,26 @@ static void Sanctum_ReenactSolSanctum(void) {
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
   Event_Wait(10);
   Actor_Jump(ACTOR_GARET, 4, 0);
-  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(15);
-  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(30);
   Actor_Jump(ACTOR_GARET, 4, 0);
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(15);
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
@@ -1839,7 +1837,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(15);
   Actor_Get(ACTOR_GARETS_GRANDFATHER)->update = NULL;
   Actor_Get(ACTOR_HEALER)->update = NULL;
@@ -1916,17 +1914,17 @@ static void Sanctum_ReenactSolSanctum(void) {
   Actor_WalkToAndWait(ACTOR_GARET, 208, 168);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_GARETS_GRANDFATHER, 0);
@@ -2318,9 +2316,9 @@ struct ActorPlacement gSanctum_ValeActorPlacements[] = {
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(200), 0, PIXELS(130), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(152), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(152), 0, PIXELS(152), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(248), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(248), 0, PIXELS(152), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 
@@ -2334,9 +2332,9 @@ struct ActorPlacement gSanctum_IvanActorPlacement[] = {
 
 struct ActorPlacement gSanctum_VaultBilibinActorPlacements[] = {
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(200), 0, PIXELS(130), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(200), 0, PIXELS(130), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(200), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(200), 0, PIXELS(200), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0 },
     {SPRITE_SANCTUM_GOLD_STATUE, CONDITION_ALWAYS, 7,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
@@ -2344,21 +2342,21 @@ struct ActorPlacement gSanctum_VaultBilibinActorPlacements[] = {
 
 struct ActorPlacement gSanctum_QuestActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(208), 0, PIXELS(168), FACING_NORTH + FACING_STEP, 3, 0 },
+        PIXELS(208), 0, PIXELS(168), FACING_NORTH_NORTHEAST, 3, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(168), 0, PIXELS(120), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(168), 0, PIXELS(120), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(224), 0, PIXELS(216), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(224), 0, PIXELS(216), FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(246), 0, PIXELS(198), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(246), 0, PIXELS(198), FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(168), 0, PIXELS(208), FACING_NORTH + FACING_STEP, 3, 0 },
+        PIXELS(168), 0, PIXELS(208), FACING_NORTH_NORTHEAST, 3, 0 },
     { SPRITE_OLD_MAN_WITH_WHITE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(232), 0, PIXELS(120), FACING_SOUTH + FACING_STEP, 3, 0 },
+        PIXELS(232), 0, PIXELS(120), FACING_SOUTH_SOUTHWEST, 3, 0 },
     {SPRITE_WISE_ONE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(8), 0, PIXELS(8), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(8), 0, PIXELS(8), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 

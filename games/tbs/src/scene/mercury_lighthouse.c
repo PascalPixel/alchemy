@@ -1579,8 +1579,8 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_MIA, 2);
     Event_Wait(20);
-    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH + FACING_STEP, 10);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH_SOUTHWEST, 10);
     Event_SetMessageId(MsgMercuryDidThat);
     Event_OpenMessage(ACTOR_MIA, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
@@ -1606,7 +1606,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Actor_SetPosition(ACTOR_IVAN, PIXELS(872), PIXELS(600));
     Actor_WalkTo(ACTOR_IVAN, 888, 632);
     Actor_WalkToAndWait(ACTOR_GARET, 880, 616);
-    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 0);
     Actor_WaitForMoveById(ACTOR_IVAN);
     Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
     Actor_RunRepeatedMotion(ACTOR_GARET, 1);
@@ -1614,12 +1614,12 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
     Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
-    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST + FACING_STEP, 20);
+    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH_NORTHWEST, 20);
     Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Event_Wait(30);
-    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
     Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
@@ -1627,13 +1627,13 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
     Actor_WalkTo(ACTOR_MIA, 840, 656);
     Event_Wait(5);
-    Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH_SOUTHWEST, 0);
     Event_Wait(10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Actor_WaitForMoveById(ACTOR_MIA);
     Event_Wait(10);
     Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
-    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH + FACING_STEP, 20);
+    Actor_FaceDirection(ACTOR_MIA, FACING_NORTH_NORTHEAST, 20);
     Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
     Actor_RunRepeatedMotion(ACTOR_GARET, 1);
     Event_Wait(20);
@@ -1656,8 +1656,8 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Event_Wait(20);
     Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
     Actor_WalkToAndWait(ACTOR_MIA, 840, 632);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
     Event_Wait(30);
     // Mia casts Ply on the door: a flash, the light turns white and the door
@@ -1696,7 +1696,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
-    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH_NORTHWEST, 0);
     Event_Wait(10);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
@@ -3343,7 +3343,7 @@ struct ActorPlacement gMercuryLighthouseExteriorActorPlacements[] = {
     { SPRITE_OLD_MAN_WITH_CANE, IF_FLAG_SET(FLAG_SATUROS_BEATEN_AT_MERCURY), MOVEMENT_TYPE_WANDER,
         PIXELS(920), 0, PIXELS(744), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, IF_FLAG_SET(FLAG_SATUROS_BEATEN_AT_MERCURY), MOVEMENT_TYPE_STAND,
-        PIXELS(856), 0, PIXELS(792), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(856), 0, PIXELS(792), FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 

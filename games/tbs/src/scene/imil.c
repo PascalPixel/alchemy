@@ -410,7 +410,7 @@ static void Imil_TalkToStrongmanKeepingInShape(void) {
     Actor_FaceActor(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, ACTOR_PARTY_LEADER, 20);
     Event_AskYesNo(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
     Actor_FaceDirection(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
-                        FACING_SOUTHEAST + FACING_STEP, 10);
+                        FACING_SOUTH_SOUTHEAST, 10);
     Actor_SetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, IMIL_ANIMATION_SQUATS);
   } else {
     Event_SetMessageId(MSGNO(MsgImilOneTwoThreeFour));
@@ -423,7 +423,7 @@ static void Imil_TalkToStrongmanKeepingInShape(void) {
     Actor_FaceActor(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, ACTOR_PARTY_LEADER, 20);
     Event_ShowMessage(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
     Actor_FaceDirection(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
-                        FACING_SOUTHEAST + FACING_STEP, 10);
+                        FACING_SOUTH_SOUTHEAST, 10);
     Actor_SetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, IMIL_ANIMATION_SQUATS);
   }
 
@@ -465,7 +465,7 @@ static void Imil_TalkToOldMan(void) {
       Event_ShowMessage(ACTOR_OLD_MAN, 0);
       Actor_Stop(ACTOR_OLD_WOMAN);
       Actor_ShowEmote(ACTOR_OLD_WOMAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-      Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_NORTH + FACING_STEP, 10);
+      Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_NORTH_NORTHEAST, 10);
       Actor_StartRepeatedMotion(ACTOR_OLD_WOMAN, 2);
       Event_ShowMessageThenWait(ACTOR_OLD_WOMAN, 0, 20);
       Actor_SetScript(ACTOR_PARTY_LEADER, gImil_LeaderStepAsideScript);
@@ -478,7 +478,7 @@ static void Imil_TalkToOldMan(void) {
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Event_Wait(60);
       Event_ShowMessageThenWait(ACTOR_OLD_WOMAN, 0, 10);
-      Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_SOUTHEAST + FACING_STEP, 20);
+      Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_SOUTH_SOUTHEAST, 20);
       Actor_StartRepeatedMotion(ACTOR_OLD_WOMAN, 2);
       Event_ShowMessage(ACTOR_OLD_WOMAN, 0);
       oldWoman = Actor_Get(ACTOR_OLD_WOMAN);
@@ -546,7 +546,7 @@ static void Imil_TalkToOldWoman(void) {
   Event_Start();
   Event_SetMessageId(MSGNO(MsgImilHappenedInLighthouseNortheast));
   Event_ShowMessage(ACTOR_OLD_WOMAN, 0);
-  Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_SOUTHEAST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_SOUTH_SOUTHEAST, 10);
   Event_End();
 }
 
@@ -740,8 +740,8 @@ static void Imil_TalkToItemMerchant(void) {
       Actor_FaceActor(ACTOR_ITEM_MERCHANTS_DAUGHTER, ACTOR_PARTY_LEADER, 10);
       Event_SetMessageId(MsgMercuryDadLumberjack);
       Event_ShowMessage(ACTOR_ITEM_MERCHANTS_DAUGHTER, 0);
-      Actor_FaceDirection(ACTOR_ITEM_MERCHANTS_DAUGHTER,
-                          FACING_SOUTH + FACING_STEP, 10);
+      Actor_FaceDirection(ACTOR_ITEM_MERCHANTS_DAUGHTER, FACING_SOUTH_SOUTHWEST,
+                          10);
     }
   }
 }
@@ -765,7 +765,7 @@ static void Imil_TalkToInnkeeper(void) {
       Event_SetMessageId(MSGNO(MsgImilWhyHaveTwoGroupsTravelers));
       Event_ShowMessage(ACTOR_INNKEEPER, 0);
     }
-    Actor_FaceDirection(ACTOR_INNKEEPER, FACING_SOUTHEAST + FACING_STEP, 10);
+    Actor_FaceDirection(ACTOR_INNKEEPER, FACING_SOUTH_SOUTHEAST, 10);
     Event_End();
   }
 }
@@ -797,7 +797,7 @@ static void Imil_TalkToJustin(void) {
     } else {
       Event_SetMessageId(MSGNO(MsgImilLookingForMia));
       (void)Event_AskYesNo(ACTOR_JUSTIN, 0);
-      Actor_FaceDirection(ACTOR_JUSTIN, FACING_SOUTHEAST + FACING_STEP, 10);
+      Actor_FaceDirection(ACTOR_JUSTIN, FACING_SOUTH_SOUTHEAST, 10);
     }
     Event_End();
   }
@@ -854,7 +854,7 @@ s32 Imil_Initialize(void) {
         Actor_SetSpriteFlags(Actor_Get(ACTOR_OLD_MAN), 0);
         Actor_SetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_LIE_IN_BED);
         Actor_SetPosition(ACTOR_OLD_WOMAN, PIXELS(168), PIXELS(152));
-        Actor_Get(ACTOR_OLD_WOMAN)->facing = FACING_SOUTHEAST + FACING_STEP;
+        Actor_Get(ACTOR_OLD_WOMAN)->facing = FACING_SOUTH_SOUTHEAST;
         if (!GameFlag_Get(FLAG_IMIL_MET_MIA)) {
           Imil_MeetMiaAtOldCouplesHouse();
         }
@@ -902,7 +902,7 @@ s32 Imil_Initialize(void) {
         Actor_SetPosition(ACTOR_ITEM_MERCHANTS_DAUGHTER, PIXELS(408),
                           PIXELS(264));
         Actor_Get(ACTOR_ITEM_MERCHANTS_DAUGHTER)->facing =
-            FACING_EAST + FACING_STEP;
+            FACING_EAST_SOUTHEAST;
         MapGrid_CopyCellsTo(12, 125, 26, 70, 3, 3);
       } else {
         Actor_SetPosition(ACTOR_ITEM_MERCHANTS_DAUGHTER, PIXELS(460),
@@ -915,7 +915,7 @@ s32 Imil_Initialize(void) {
       }
     } else if (entrance == ICE_ROOMS_FROM_IMIL_EAST_NORTHEAST) {
       if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
-        Actor_Get(ACTOR_MEGAN)->facing = FACING_SOUTHEAST + FACING_STEP;
+        Actor_Get(ACTOR_MEGAN)->facing = FACING_SOUTH_SOUTHEAST;
         if (!GameFlag_Get(FLAG_IMIL_MIA_SAID_FAREWELL)) {
           Actor_SetPosition(ACTOR_MEGAN, PIXELS(650), PIXELS(161));
           Imil_MiaSaysFarewellToApprentices();
@@ -950,7 +950,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_SetSpeed(ACTOR_GARET, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 142, 221);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 0);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
@@ -989,7 +989,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
-  Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_SOUTH_SOUTHEAST, 20);
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 10);
   Actor_SetScript(ACTOR_OLD_MAN, table);
 
@@ -1412,7 +1412,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_JUSTIN, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_MIA, FACING_EAST_NORTHEAST, 10);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 40);
@@ -1433,10 +1433,10 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 20);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 80);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 20);
-  Actor_FaceDirection(ACTOR_MEGAN, FACING_NORTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_JUSTIN, FACING_SOUTHWEST + FACING_STEP, 40);
-  Actor_FaceDirection(ACTOR_JUSTIN, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_MEGAN, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_MEGAN, FACING_EAST_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JUSTIN, FACING_WEST_SOUTHWEST, 40);
+  Actor_FaceDirection(ACTOR_JUSTIN, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_MEGAN, FACING_SOUTH_SOUTHEAST, 20);
   Actor_SetSpeed(ACTOR_MEGAN, PIXELS(1), PIXELS(1) / 2);
   // Let the student approach Mia before she rejoins the party.
   Actor_Get(ACTOR_MEGAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -1824,25 +1824,25 @@ u32 gImil_Exits[] = {
 
 struct ActorPlacement gImil_TownActorPlacements[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, (s32)gImil_FreezingYoungManScript,
-        PIXELS(99), 0, PIXELS(234), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(99), 0, PIXELS(234), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(376), 0, PIXELS(408), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(376), 0, PIXELS(408), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(408), 0, PIXELS(248), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(408), 0, PIXELS(248), FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_SNOWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(262), 0, PIXELS(124), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(262), 0, PIXELS(124), FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ActorPlacement gImil_TownActorPlacementsCured[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(99), 0, PIXELS(234), FACING_NORTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(99), 0, PIXELS(234), FACING_EAST_NORTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(376), 0, PIXELS(408), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(376), 0, PIXELS(408), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(408), 0, PIXELS(248), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(408), 0, PIXELS(248), FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_SNOWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(262), 0, PIXELS(124), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(262), 0, PIXELS(124), FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
 };
 
@@ -1860,7 +1860,7 @@ struct ActorPlacement gImil_InteriorActorPlacements[] = {
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         PIXELS(478), 0, PIXELS(468), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(460), 0, PIXELS(266), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(460), 0, PIXELS(266), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         PIXELS(436), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_MAN_WITH_DARK_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
@@ -1872,7 +1872,7 @@ struct ActorPlacement gImil_InteriorActorPlacements[] = {
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         PIXELS(686), 0, PIXELS(148), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(717), 0, PIXELS(229), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(717), 0, PIXELS(229), FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0 },
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

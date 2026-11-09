@@ -1040,7 +1040,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   if (GameFlag_Get(FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS) != 0) {
     Actor_SetPosition(ACTOR_GARET, PIXELS(878), PIXELS(528));
     actor = Actor_Get(ACTOR_GARET);
-    actor->facing = FACING_SOUTH + FACING_STEP;
+    actor->facing = FACING_SOUTH_SOUTHWEST;
   }
   FieldCamera_SetSpeed(PIXELS(5) / 4, PIXELS(5) / 32);
   FieldCamera_MoveTo(PIXELS(786), -1, PIXELS(556), 1);
@@ -1328,15 +1328,13 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Event_Wait(40);
-  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_NORTHWEST + FACING_STEP,
-                      20);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_NORTH_NORTHWEST, 20);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_WEST, 40);
   // Demonstrate Frost between the hopping sections.
   AltinPeak_BeastFreezesSecondPuddle();
   Event_Wait(40);
-  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH + FACING_STEP, 20);
-  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTHEAST + FACING_STEP,
-                      40);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH_SOUTHWEST, 20);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH_SOUTHEAST, 40);
   FieldCamera_MoveTo(PIXELS(334), -1, PIXELS(244), 1);
   ((struct FieldEffect *)beast)->countdown = 0;
   beast->timer = 0;
@@ -1350,9 +1348,8 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Event_Wait(20);
-  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_NORTHEAST + FACING_STEP,
-                      20);
-  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_NORTH + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_EAST_NORTHEAST, 20);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_NORTH_NORTHEAST, 40);
   Sound_Play(SE_HIGH_JUMP);
   actor = Actor_Get(ACTOR_FIRST_WATER_BEAST);
   actor->velocityY = PIXELS(4);
@@ -1363,8 +1360,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Event_Wait(6);
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
   Event_Wait(40);
-  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_NORTHWEST + FACING_STEP,
-                      20);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_NORTH_NORTHWEST, 20);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_WEST, 40);
   FieldCamera_MoveTo(PIXELS(304), -1, PIXELS(215), 1);
   ((struct FieldEffect *)beast)->countdown = 0;
@@ -1405,9 +1401,8 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Event_Wait(40);
-  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH + FACING_STEP, 20);
-  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTHEAST + FACING_STEP,
-                      20);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH_SOUTHWEST, 20);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH_SOUTHEAST, 20);
   Sound_Play(SE_BEAST_CRY);
   Actor_RunRepeatedMotion(ACTOR_FIRST_WATER_BEAST, 2);
   Event_Wait(40);
@@ -1442,9 +1437,8 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   Sound_Play(SE_BEAST_CRY);
   Actor_RunRepeatedMotion(ACTOR_FIRST_WATER_BEAST, 2);
   Event_Wait(40);
-  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTHEAST + FACING_STEP,
-                      20);
-  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH_SOUTHEAST, 20);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH_SOUTHWEST, 20);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_WEST, 40);
   FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveTo(PIXELS(128), PIXELS(64), PIXELS(202), 1);
@@ -1462,7 +1456,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Event_Wait(20);
-  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH_SOUTHWEST, 40);
   Actor_Get(ACTOR_FIRST_WATER_BEAST)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetSpeed(ACTOR_FIRST_WATER_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
   movingActor = Actor_Get(ACTOR_FIRST_WATER_BEAST);
@@ -1479,8 +1473,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   AltinPeak_PlayLandingShake(PIXELS(2), 8);
   Event_Wait(40);
   Actor_Get(ACTOR_FIRST_WATER_BEAST)->steeringFlags |= ACTOR_FACES_MOTION;
-  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTHEAST + FACING_STEP,
-                      20);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH_SOUTHEAST, 20);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, 0, 40);
   ((struct FieldEffect *)actor)->countdown = 0;
   actor->timer = 0;

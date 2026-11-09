@@ -875,9 +875,8 @@ static void Vale_WarnAgainstSneakingUpMtAleph(void) {
   Actor_WalkToAndWait(ACTOR_MAN_GUARDING_MT_ALEPH, 202, 395);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_MAN_GUARDING_MT_ALEPH,
-                      FACING_SOUTHEAST + FACING_STEP, 24);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_MAN_GUARDING_MT_ALEPH, FACING_SOUTH_SOUTHEAST, 24);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(20);
@@ -1039,7 +1038,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_SetMovementTypeById(ACTOR_PARTY_LEADER, MOVEMENT_TYPE_STAND);
   leader->scaleX = Q16_ONE;
   leader->scaleY = Q16_ONE;
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHWEST, 40);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 10, PIXELS(3) / 20);
@@ -1102,9 +1101,9 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 360, 855);
-  Actor_FaceDirection(ACTOR_DORA, FACING_NORTHWEST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_DORA, FACING_NORTH_NORTHWEST, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 30);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 20);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_RBG);
   Actor_SetSpriteColorById(ACTOR_SECOND_BOARD, SPRITE_COLOR_RBG);
   Actor_SetSpeed(ACTOR_SECOND_BOARD, PIXELS(3) / 10, PIXELS(3) / 20);
@@ -1146,7 +1145,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 30);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHWEST, 30);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
@@ -1164,18 +1163,18 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Event_SetMessageId(MsgValeWorkingYourselvesBone);
   Actor_WalkToAndWait(ACTOR_DORA, 386, 841);
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_DORA, FACING_NORTH + FACING_STEP, 60);
+  Actor_FaceDirection(ACTOR_DORA, FACING_NORTH_NORTHEAST, 60);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 30);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHWEST, 30);
   Event_OpenMessage(ACTOR_DORA, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
     gFieldWork->message++;
   }
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
-  Actor_FaceDirection(ACTOR_DORA, FACING_NORTH + FACING_STEP, 60);
+  Actor_FaceDirection(ACTOR_DORA, FACING_NORTH_NORTHEAST, 60);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Event_Wait(20);
   Event_SetMessageId(MsgValeDevastatedWhenKyle);
@@ -1185,10 +1184,10 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Event_Wait(60);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 60);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHWEST, 10);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_WalkToAndWait(ACTOR_DORA, 372, 832);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHWEST, 20);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
@@ -1217,13 +1216,13 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_STEP, 30);
   Actor_Jump(ACTOR_JENNA, 4, 0);
   Actor_WalkToAndWait(ACTOR_JENNA, 392, 843);
-  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 40);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
@@ -1251,21 +1250,21 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(30);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 30);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHWEST, 30);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 0);
   Actor_Jump(ACTOR_PARTY_LEADER, 2, 30);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHEAST, 40);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 30);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHWEST, 30);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 40);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(100);
@@ -1304,8 +1303,8 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
   FieldCamera_MoveTo(PIXELS(373), PIXELS(160), PIXELS(837), 1);
   Actor_WalkToAndWait(ACTOR_DORA, 364, 816);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 30);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHEAST, 30);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_FaceEachOther(ACTOR_JENNA, ACTOR_GARET, 30);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
@@ -1313,7 +1312,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 30);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 30);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHWEST, 30);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 30);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
@@ -1352,7 +1351,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_Jump(ACTOR_GARET, 6, 0);
   Actor_WalkToAndWait(ACTOR_GARET, 374, 827);
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHWEST, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_StartRepeatedMotion(ACTOR_JENNA, 2);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
@@ -1361,7 +1360,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   MapGrid_SetShake(0, PIXELS(4), Q16_ONE);
   MapGrid_CopyCellsTo(1, 102, 83, 41, 1, 1);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), 0);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 10);
   Actor_StartRepeatedMotion(ACTOR_GARET, 3);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
@@ -1375,7 +1374,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   }
   Event_Wait(60);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 30);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 30);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Event_Wait(60);
@@ -1401,7 +1400,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_SetAttachedEffect(ACTOR_DORA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(80);
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 30);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 30);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
@@ -1422,7 +1421,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 20);
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 1);
   Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 20);
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_SetAnimation(ACTOR_GARET, ANIM_GARET_STARTLED);
@@ -1450,7 +1449,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
-  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 60);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 60);
@@ -1484,7 +1483,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_RunRepeatedMotion(ACTOR_GARET, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 0);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_RunRepeatedMotion(ACTOR_DORA, 3);
   Event_Wait(30);
@@ -1514,7 +1513,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_WalkToAndWait(ACTOR_GARET, actor->x.part.pixel + 16,
                       actor->z.part.pixel - 16);
   Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 30);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 30);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1696,17 +1695,17 @@ static void Vale_GaretMeetsHisSister(void) {
   Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 420, 608);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(ACTOR_GARETS_SISTER_AFTER_KALAY,
-                      FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARETS_SISTER_AFTER_KALAY, FACING_SOUTH_SOUTHEAST,
+                      0);
   record = Actor_Get(ACTOR_PARTY_LEADER);
   if (record != 0) {
     Actor_SetPosition(ACTOR_GARET, record->x.fixed, record->z.fixed);
   }
   Actor_WalkToAndWait(ACTOR_GARET, 402, 608);
-  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 20);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_GARET, 0);
-  Actor_FaceDirection(ACTOR_GARETS_SISTER_AFTER_KALAY,
-                      FACING_SOUTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_GARETS_SISTER_AFTER_KALAY, FACING_SOUTH_SOUTHWEST,
+                      20);
   Actor_SetAnimationAndWait(ACTOR_GARETS_SISTER_AFTER_KALAY, ANIM_NOD);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_SISTER_AFTER_KALAY, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1729,8 +1728,8 @@ static void Vale_GaretMeetsHisSister(void) {
   Event_Wait(40);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_GARET, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_GARETS_SISTER_AFTER_KALAY, 1);
-  Actor_FaceDirection(ACTOR_GARETS_SISTER_AFTER_KALAY,
-                      FACING_NORTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_GARETS_SISTER_AFTER_KALAY, FACING_NORTH_NORTHEAST,
+                      20);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_SISTER_AFTER_KALAY, 0);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_GARET, 0, 120);
@@ -1743,8 +1742,8 @@ static void Vale_GaretMeetsHisSister(void) {
       SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_SISTER_AFTER_KALAY, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(40);
-  Actor_FaceDirection(ACTOR_GARETS_SISTER_AFTER_KALAY,
-                      FACING_SOUTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_GARETS_SISTER_AFTER_KALAY, FACING_SOUTH_SOUTHWEST,
+                      20);
   Event_ShowMessageThenWait(
       SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_SISTER_AFTER_KALAY, 0, 10);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1779,24 +1778,24 @@ static void Vale_GaretAsksToProtectFamily(void) {
     Actor_SetPosition(ACTOR_GARET, record->x.fixed, record->z.fixed);
   }
   Actor_WalkToAndWait(ACTOR_GARET, 346, 745);
-  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 20);
   Event_SetMessageId(MsgValeHowHaveYouBeen);
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_RunRepeatedMotion(ACTOR_GARETS_BROTHER_AFTER_KALAY, 2);
   Actor_ShowEmote(ACTOR_GARETS_BROTHER_AFTER_KALAY,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_FaceDirection(ACTOR_GARETS_BROTHER_AFTER_KALAY,
-                      FACING_SOUTHEAST + FACING_STEP, 10);
-  Actor_FaceDirection(ACTOR_GARETS_BROTHER_AFTER_KALAY,
-                      FACING_SOUTH + FACING_STEP, 10);
-  Actor_FaceDirection(ACTOR_GARETS_BROTHER_AFTER_KALAY,
-                      FACING_SOUTHEAST + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_GARETS_BROTHER_AFTER_KALAY, FACING_SOUTH_SOUTHEAST,
+                      10);
+  Actor_FaceDirection(ACTOR_GARETS_BROTHER_AFTER_KALAY, FACING_SOUTH_SOUTHWEST,
+                      10);
+  Actor_FaceDirection(ACTOR_GARETS_BROTHER_AFTER_KALAY, FACING_SOUTH_SOUTHEAST,
+                      40);
   Event_ShowMessageThenWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Actor_RunRepeatedMotion(ACTOR_GARETS_BROTHER_AFTER_KALAY, 1);
-  Actor_FaceDirection(ACTOR_GARETS_BROTHER_AFTER_KALAY,
-                      FACING_SOUTH + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_GARETS_BROTHER_AFTER_KALAY, FACING_SOUTH_SOUTHWEST,
+                      10);
   Event_ShowMessageThenWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
@@ -1804,11 +1803,11 @@ static void Vale_GaretAsksToProtectFamily(void) {
   Actor_SetAnimationAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, ANIM_NOD);
   Event_ShowMessageThenWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-  Actor_FaceDirection(ACTOR_GARET, FACING_EAST + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_GARET, FACING_EAST_SOUTHEAST, 40);
   Actor_SetAnimationAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, ANIM_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
@@ -1819,7 +1818,7 @@ static void Vale_GaretAsksToProtectFamily(void) {
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_GARETS_BROTHER_AFTER_KALAY, 2);
   Event_ShowMessageThenWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
-  Actor_FaceDirection(ACTOR_GARET, FACING_EAST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_GARET, FACING_EAST_SOUTHEAST, 20);
   Event_OpenMessage(ACTOR_GARET, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
@@ -1827,14 +1826,14 @@ static void Vale_GaretAsksToProtectFamily(void) {
     gFieldWork->message++;
   }
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
-  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 10);
   Event_SetMessageId(MsgValeEverProtectFamily);
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_SetAnimationAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, ANIM_NOD);
   Event_ShowMessageThenWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(20);
-  Actor_FaceDirection(ACTOR_GARET, FACING_EAST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_GARET, FACING_EAST_SOUTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
@@ -1884,8 +1883,8 @@ UNUSED static void Vale_UnusedWaterBurstsByTheRiver(void) {
   Actor_ShowEmote(ACTOR_STRONGMAN_REMEMBERING_FELIX,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_RunRepeatedMotion(ACTOR_STRONGMAN_REMEMBERING_FELIX, 2);
-  Actor_FaceDirection(ACTOR_STRONGMAN_REMEMBERING_FELIX,
-                      FACING_NORTH + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_STRONGMAN_REMEMBERING_FELIX, FACING_NORTH_NORTHEAST,
+                      10);
   Event_SetMessageId(MsgValeIUsedToPlayHere);
   Event_ShowMessageThenWait(ACTOR_STRONGMAN_REMEMBERING_FELIX, 0, 40);
   Actor_FaceActor(ACTOR_STRONGMAN_REMEMBERING_FELIX, ACTOR_PARTY_LEADER, 20);
@@ -2085,7 +2084,7 @@ static void Vale_MendingTheRoof(void) {
   Actor_WalkToAndWait(ACTOR_JENNA, 299, 924);
   FieldCamera_WaitForMove();
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST + FACING_STEP, 30);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST_NORTHEAST, 30);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Event_Wait(20);
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
@@ -2112,7 +2111,7 @@ static void Vale_MendingTheRoof(void) {
   FieldCamera_WaitForMove();
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
-  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHEAST, 10);
   Actor_WalkToAndWait(ACTOR_JENNA, 312, 759);
   Actor_WalkToAndWait(ACTOR_JENNA, 361, 760);
   Event_Wait(20);
@@ -2177,7 +2176,7 @@ static void Vale_MendingTheRoof(void) {
   wait(1);
   Actor_SetSpriteColorById(ACTOR_GARET, SPRITE_COLOR_NORMAL);
   Actor_SetSpriteColorById(ACTOR_OPENING_PILLAR, SPRITE_COLOR_NORMAL);
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 0);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   Vale_VanishMoveHand(moveHand);
   Scene_EndEventPsynergy();
@@ -2244,14 +2243,14 @@ static void Vale_MendingTheRoof(void) {
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0, 10);
-  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST_SOUTHEAST, 40);
   Actor_FaceActor(ACTOR_JENNA, ACTOR_GARET, 40);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(10);
   Actor_WalkToAndWait(ACTOR_JENNA, 380, 620);
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0, 10);
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 30);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 30);
   Actor_SetAttachedEffect(ACTOR_GARET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(80);
@@ -2266,7 +2265,7 @@ static void Vale_MendingTheRoof(void) {
   Event_Wait(10);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_GARET, 412, 604);
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 20);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 1);
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0, 20);
@@ -2286,16 +2285,16 @@ static void Vale_MendingTheRoof(void) {
   Actor_SetSpeed(ACTOR_JENNA, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkTo(ACTOR_JENNA, 428, 628);
   Event_Wait(20);
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 0);
   Actor_WaitForMoveById(ACTOR_JENNA);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_LEFT | ACTOR_GARET,
                     0);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_STAND);
   Event_Wait(60);
-  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST + FACING_STEP, 30);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHWEST, 30);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Actor_WalkToAndWait(ACTOR_JENNA, 428, 628);
-  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHWEST, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 3);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
@@ -2396,7 +2395,7 @@ static void Vale_RoofMended(void) {
   Actor_SetMovementTypeById(ACTOR_PARTY_LEADER, MOVEMENT_TYPE_STAND);
   leader->scaleX = Q16_ONE;
   leader->scaleY = Q16_ONE;
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHWEST, 40);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 10, PIXELS(3) / 20);
@@ -2492,9 +2491,9 @@ static void Vale_RoofMended(void) {
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 360, 855);
-  Actor_FaceDirection(ACTOR_DORA, FACING_NORTHWEST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_DORA, FACING_NORTH_NORTHWEST, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 30);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_CAST_PSYNERGY);
   Task_AddFrame(Vale_PlayStepSound, TASK_PASS_FRAME);
   for (i = 0; i < 40; i++) {
@@ -2536,7 +2535,7 @@ static void Vale_RoofMended(void) {
   Actor_Jump(ACTOR_DORA, 2, 20);
   Event_SetMessageId(MsgValeGoodJob);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST_SOUTHEAST, 10);
   Vale_MoveActorAlongLowerZPath(ACTOR_DORA, 5, 6, 0);
   Actor_SetSpeed(ACTOR_DORA, PIXELS(3) / 10, PIXELS(3) / 20);
   Actor_WalkToAndWait(ACTOR_DORA, 397, 832);
@@ -2553,7 +2552,7 @@ static void Vale_RoofMended(void) {
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -2570,16 +2569,16 @@ static void Vale_RoofMended(void) {
   Event_SetMessageId(MsgValeWorkingYourselvesBone);
   Actor_WalkToAndWait(ACTOR_DORA, 386, 841);
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_DORA, FACING_NORTH + FACING_STEP, 60);
+  Actor_FaceDirection(ACTOR_DORA, FACING_NORTH_NORTHEAST, 60);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 30);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHWEST, 30);
   Event_OpenMessage(ACTOR_DORA, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
     gFieldWork->message++;
   }
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
-  Actor_FaceDirection(ACTOR_DORA, FACING_NORTH + FACING_STEP, 60);
+  Actor_FaceDirection(ACTOR_DORA, FACING_NORTH_NORTHEAST, 60);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Event_SetMessageId(MsgValeDevastatedWhenKyle);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
@@ -2588,10 +2587,10 @@ static void Vale_RoofMended(void) {
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Event_Wait(60);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 60);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHWEST, 10);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_WalkToAndWait(ACTOR_DORA, 372, 832);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHWEST, 10);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
@@ -2616,13 +2615,13 @@ static void Vale_RoofMended(void) {
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST_SOUTHEAST, 20);
   Actor_Jump(ACTOR_JENNA, 4, 0);
   Actor_WalkToAndWait(ACTOR_JENNA, 392, 843);
-  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
@@ -2651,21 +2650,21 @@ static void Vale_RoofMended(void) {
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(20);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHWEST, 20);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 0);
   Actor_Jump(ACTOR_PARTY_LEADER, 2, 30);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHEAST, 40);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 30);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHWEST, 30);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 20);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(80);
@@ -2700,8 +2699,8 @@ static void Vale_RoofMended(void) {
   FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
   FieldCamera_MoveTo(PIXELS(373), PIXELS(160), PIXELS(837), 1);
   Actor_WalkToAndWait(ACTOR_DORA, 364, 816);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHEAST, 10);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_FaceEachOther(ACTOR_JENNA, ACTOR_GARET, 30);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
@@ -2709,7 +2708,7 @@ static void Vale_RoofMended(void) {
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 20);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHWEST, 20);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
@@ -2750,7 +2749,7 @@ static void Vale_RoofMended(void) {
   Actor_SetPosition(ACTOR_GARET, PIXELS(374), PIXELS(VALE_GARET_REUNION_Z));
 #endif
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHWEST, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_StartRepeatedMotion(ACTOR_JENNA, 2);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
@@ -2760,7 +2759,7 @@ static void Vale_RoofMended(void) {
   MapGrid_SetShake(0, PIXELS(4), Q16_ONE);
   MapGrid_CopyCellsTo(1, 102, 83, 41, 1, 1);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), 0);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 10);
   Actor_StartRepeatedMotion(ACTOR_GARET, 3);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
@@ -2774,7 +2773,7 @@ static void Vale_RoofMended(void) {
   }
   Event_Wait(60);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 30);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 30);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Event_Wait(60);
@@ -2798,7 +2797,7 @@ static void Vale_RoofMended(void) {
   Actor_SetAttachedEffect(ACTOR_DORA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(80);
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 40);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
@@ -2818,7 +2817,7 @@ static void Vale_RoofMended(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 20);
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 1);
   Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 20);
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_SetAnimation(ACTOR_GARET, ANIM_GARET_STARTLED);
@@ -2847,7 +2846,7 @@ static void Vale_RoofMended(void) {
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
-  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 60);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 60);
@@ -2881,7 +2880,7 @@ static void Vale_RoofMended(void) {
   Actor_RunRepeatedMotion(ACTOR_GARET, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 0);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_RunRepeatedMotion(ACTOR_DORA, 3);
   Event_Wait(30);
@@ -2911,7 +2910,7 @@ static void Vale_RoofMended(void) {
   Actor_WalkToAndWait(ACTOR_GARET, actor->x.part.pixel + 16,
                       actor->z.part.pixel - 16);
   Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 30);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 30);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -3437,7 +3436,7 @@ s32 gVale_GaretWalksToTheHouse[] = {
     SC_MOVE(PIXELS(300), 0, PIXELS(904)),
     SC_SYNC,
     SC_ANIMATION(1),
-    SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_END,
 };
 
@@ -3448,7 +3447,7 @@ s32 gVale_JennaWalksToTheHouse[] = {
     SC_MOVE(PIXELS(321), 0, PIXELS(904)),
     SC_SYNC,
     SC_ANIMATION(1),
-    SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_END,
 };
 
@@ -3612,9 +3611,9 @@ struct ActorPlacement gVale_ActorPlacementsAfterKalay[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_ORANGE_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(412), 0, PIXELS(586), FACING_NORTH + FACING_STEP, 3, 0 },
+        PIXELS(412), 0, PIXELS(586), FACING_NORTH_NORTHEAST, 3, 0 },
     { SPRITE_BOY_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(356), 0, PIXELS(727), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(356), 0, PIXELS(727), FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(164), 0, PIXELS(1236), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

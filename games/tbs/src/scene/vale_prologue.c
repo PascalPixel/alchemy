@@ -1728,7 +1728,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
     Actor_SetScript(ACTOR_JENNAS_MOTHER, pulseScript);
   }
   Actor_SetPosition(ACTOR_JENNA_CHILD, PIXELS(227), PIXELS(1189));
-  Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_SOUTH_SOUTHEAST, 0);
   Actor_SetPosition(ACTOR_FELIX_CHILD, PIXELS(243), PIXELS(1277));
   Actor_FaceDirection(ACTOR_FELIX_CHILD, FACING_NORTH, 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_FELIX_CHILD), 0);
@@ -1759,7 +1759,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
   Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 10);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHEAST, 10);
   FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(1253), 1);
   FieldCamera_WaitForMove();
@@ -1875,7 +1875,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 10);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_FaceDirection(ACTOR_KYLE, FACING_NORTH, 0);
-  Actor_FaceDirection(ACTOR_JENNAS_MOTHER, FACING_WEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_JENNAS_MOTHER, FACING_WEST_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNAS_FATHER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_WEST, 10);
   Actor_RunRepeatedMotion(ACTOR_KYLE, 1);
@@ -1900,7 +1900,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
   Actor_RunRepeatedMotion(ACTOR_KYLE, 1);
   Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_KYLE, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
-  Actor_FaceDirection(ACTOR_JENNAS_FATHER, FACING_NORTH + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_JENNAS_FATHER, FACING_NORTH_NORTHEAST, 10);
   Actor_StartRepeatedMotion(ACTOR_JENNAS_FATHER, 1);
   Event_ShowMessageThenWait(ACTOR_JENNAS_FATHER, 0, 10);
   Actor_FaceDirection(ACTOR_KYLE, FACING_EAST, 0);
@@ -1937,11 +1937,11 @@ static void ValePrologue_DoraGoesForHelp(void) {
   s32 helpMessage;
   struct Actor *leader;
 
-  Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_JENNAS_FATHER, FACING_NORTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_JENNAS_MOTHER, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_KYLE, FACING_NORTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNAS_FATHER, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNAS_MOTHER, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KYLE, FACING_NORTH_NORTHEAST, 20);
   Actor_SetAnimation(ACTOR_JENNA_CHILD, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNAS_FATHER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNAS_MOTHER, ANIM_NOD);
@@ -1961,9 +1961,9 @@ static void ValePrologue_DoraGoesForHelp(void) {
   Actor_SetPosition(ACTOR_DORA, 0, 0);
   Actor_WalkToAndWait(ACTOR_JENNAS_MOTHER, 250, 1214);
   Scene_PlayQueuedMusic();
-  Actor_FaceDirection(ACTOR_KYLE, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_JENNAS_FATHER, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_JENNAS_MOTHER, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_KYLE, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNAS_FATHER, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNAS_MOTHER, FACING_SOUTH_SOUTHEAST, 0);
   Actor_SetAnimation(ACTOR_KYLE, ANIM_KYLE_REACH_OUT);
   Actor_SetAnimation(ACTOR_JENNAS_FATHER, ANIM_PARENT_REACH_OUT);
   Actor_SetAnimation(ACTOR_JENNAS_MOTHER, ANIM_PARENT_REACH_OUT);
@@ -2138,13 +2138,13 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
         Actor_SetPosition(ACTOR_GARET_CHILD, actor->x.fixed, actor->z.fixed);
       }
       Actor_WalkToAndWait(ACTOR_GARET_CHILD, 235, 1367);
-      Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_NORTHWEST + FACING_STEP, 0);
+      Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_NORTH_NORTHWEST, 0);
       actor = Actor_Get(ACTOR_PARTY_LEADER);
       if (actor != 0) {
         Actor_SetPosition(ACTOR_JENNA_CHILD, actor->x.fixed, actor->z.fixed);
       }
       Actor_WalkToAndWait(ACTOR_JENNA_CHILD, 199, 1367);
-      Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_NORTH + FACING_STEP, 0);
+      Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_NORTH_NORTHEAST, 0);
       Actor_SetPosition(ACTOR_JENNAS_MOTHER, PIXELS(247), PIXELS(1210));
       Actor_FaceDirection(ACTOR_JENNAS_MOTHER, FACING_SOUTHWEST, 0);
       actor = Actor_Get(ACTOR_EXHAUSTED_STRONGMAN);
@@ -2161,8 +2161,8 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
                           actor->z.fixed);
       }
       Actor_WalkToAndWait(ACTOR_EXHAUSTED_STRONGMAN, 221, 1385);
-      Actor_FaceDirection(ACTOR_EXHAUSTED_STRONGMAN,
-                          FACING_NORTHWEST + FACING_STEP, 60);
+      Actor_FaceDirection(ACTOR_EXHAUSTED_STRONGMAN, FACING_NORTH_NORTHWEST,
+                          60);
       Actor_RunRepeatedMotion(ACTOR_JENNA_CHILD, 2);
       Event_SetMessageId(MsgValeMomDadBack);
       Event_ShowMessageThenWait(ACTOR_JENNA_CHILD, 0, 40);
@@ -2187,8 +2187,7 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
       FieldCamera_MoveTo(PIXELS(221), -1, PIXELS(1385), 1);
       Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_EXHAUSTED_STRONGMAN, 0);
       Actor_FaceActor(ACTOR_GARET_CHILD, ACTOR_EXHAUSTED_STRONGMAN, 0);
-      Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_SOUTHEAST + FACING_STEP,
-                          80);
+      Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_SOUTH_SOUTHEAST, 80);
       FieldCamera_MoveWithinMapBounds(PIXELS(182), -1, PIXELS(1360), 1);
       Actor_WalkToAndWait(ACTOR_EXHAUSTED_STRONGMAN, 182, 1384);
       Actor_FaceActor(ACTOR_EXHAUSTED_STRONGMAN, ACTOR_DORA, 0);
@@ -2203,7 +2202,7 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
       Actor_RunRepeatedMotion(ACTOR_JENNA_CHILD, 2);
       Event_ShowMessageThenWait(ACTOR_JENNA_CHILD, 0, 10);
       Actor_FaceDirection(ACTOR_DORA, FACING_NORTHEAST, 40);
-      Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 20);
+      Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHEAST, 20);
       Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
       Event_ShowMessage(ACTOR_DORA, 0);
       Actor_FaceEachOther(ACTOR_JENNA_CHILD, ACTOR_EXHAUSTED_STRONGMAN, 0);
@@ -2483,7 +2482,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   boulderShadow->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   boulderShadow->scaleX = Q16_ONE;
   boulderShadow->scaleY = Q16_ONE;
-  boulderShadow->facing = FACING_NORTH + FACING_STEP;
+  boulderShadow->facing = FACING_NORTH_NORTHEAST;
   boulderShadowSprite->image.priority = 0;
   Actor_SetAnimation(ACTOR_KYLE, ANIM_STILL);
   boulderShadow = Actor_Get(ACTOR_JENNAS_FATHER);
@@ -2491,7 +2490,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   boulderShadow->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   boulderShadow->scaleX = Q16_ONE;
   boulderShadow->scaleY = Q16_ONE;
-  boulderShadow->facing = FACING_NORTHWEST + FACING_STEP;
+  boulderShadow->facing = FACING_NORTH_NORTHWEST;
   boulderShadowSprite->image.priority = 0;
   Actor_SetAnimation(ACTOR_JENNAS_FATHER, ANIM_PARENT_RECOIL);
   boulderShadow = Actor_Get(ACTOR_JENNAS_MOTHER);
@@ -2499,7 +2498,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   boulderShadow->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   boulderShadow->scaleX = Q16_ONE;
   boulderShadow->scaleY = Q16_ONE;
-  boulderShadow->facing = FACING_NORTHWEST + FACING_STEP;
+  boulderShadow->facing = FACING_NORTH_NORTHWEST;
   boulderShadowSprite->image.priority = 0;
   Actor_SetAnimation(ACTOR_JENNAS_MOTHER, ANIM_PARENT_RECOIL);
   boulderShadow = Actor_Get(ACTOR_BOULDER_SHADOW);
@@ -2742,8 +2741,7 @@ static void ValePrologue_StrongmanTriesToGoForHelp(void) {
     Actor_Stop(ACTOR_EXHAUSTED_STRONGMAN);
     villager->scaleX = Q16_ONE;
     villager->scaleY = Q16_ONE;
-    Actor_FaceDirection(ACTOR_EXHAUSTED_STRONGMAN, FACING_EAST + FACING_STEP,
-                        0);
+    Actor_FaceDirection(ACTOR_EXHAUSTED_STRONGMAN, FACING_EAST_SOUTHEAST, 0);
     if ((s16)leader->facing >= 0) {
       Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN, ANIM_STRONGMAN_PROPPED_UP);
     } else {
@@ -2790,7 +2788,7 @@ static void ValePrologue_GaretFollowsIsaac(void) {
   Task_Remove(ValePrologue_CopyLeaderSpritePriority);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 480, 1392);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_SOUTH_SOUTHEAST, 20);
   Actor_Get(ACTOR_GARET_CHILD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetPosition(ACTOR_GARET_CHILD, PIXELS(249), PIXELS(1240));
   wait(1);
@@ -2808,7 +2806,7 @@ static void ValePrologue_GaretFollowsIsaac(void) {
   Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_NORTH, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET_CHILD, 2);
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_GARET_CHILD, 0, 10);
-  Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_EAST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_EAST_SOUTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_GARET_CHILD, ANIM_NOD);
   Actor_SetSpeed(ACTOR_GARET_CHILD, PIXELS(2), PIXELS(1));
   Actor_WalkToAndWait(ACTOR_GARET_CHILD, 165, 1300);
@@ -3195,11 +3193,8 @@ s32 gValePrologue_ToRiverbankPath[] = {
 // Where each one stops on the bank to hear the Boulder coming.
 
 s32 gValePrologue_ExhaustedStrongmanGatherPath[] = {
-    SC_MOVE(PIXELS(184), 0, PIXELS(1309)),
-    SC_SYNC,
-    SC_ANIMATION(1),
-    SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
-    SC_END,
+    SC_MOVE(PIXELS(184), 0, PIXELS(1309)),     SC_SYNC, SC_ANIMATION(1),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHWEST), SC_END,
 };
 
 s32 gValePrologue_JennaGatherPath[] = {
@@ -3213,11 +3208,8 @@ s32 gValePrologue_LeaderGatherPath[] = {
 };
 
 s32 gValePrologue_GaretGatherPath[] = {
-    SC_MOVE(PIXELS(166), 0, PIXELS(1325)),
-    SC_SYNC,
-    SC_ANIMATION(1),
-    SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
-    SC_END,
+    SC_MOVE(PIXELS(166), 0, PIXELS(1325)),     SC_SYNC, SC_ANIMATION(1),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHWEST), SC_END,
 };
 
 /// Everyone on the bank looks about (ValePrologue_RerollHeadingOnCountdown).
@@ -3399,17 +3391,17 @@ struct ActorPlacement gValePrologue_ActorPlacements[] = {
 
 struct ActorPlacement gValePrologue_BoulderWatchers[] = {
     { SPRITE_BLANK, CONDITION_ALWAYS, 7,
-        PIXELS(124), 0, PIXELS(375), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(124), 0, PIXELS(375), FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(85), 0, PIXELS(361), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(85), 0, PIXELS(361), FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(135), 0, PIXELS(363), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(135), 0, PIXELS(363), FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, 7,
-        PIXELS(100), 0, PIXELS(375), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(100), 0, PIXELS(375), FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(124), 0, PIXELS(375), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(124), 0, PIXELS(375), FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(100), 0, PIXELS(375), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(100), 0, PIXELS(375), FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
 };
 // clang-format on

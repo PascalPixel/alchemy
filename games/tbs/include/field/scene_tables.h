@@ -13,17 +13,27 @@
 #include "field_work.h"
 #include "fixed_math.h"
 
-/// The eight compass headings in 1/65536 turns, from east through south: a
-/// quarter turn is TRIG_TURN / 4, and the screen's y axis points south.
+/// The sixteen compass headings in 1/65536 turns, from east through south: a
+/// quarter turn is TRIG_TURN / 4, and the screen's y axis points south. The
+/// eight between the main ones (east-southeast and so on) turn an actor a
+/// little past a main heading, which picks the side its sprite leans to.
 enum Facing {
   FACING_EAST = 0,
+  FACING_EAST_SOUTHEAST = TRIG_TURN / 16,
   FACING_SOUTHEAST = TRIG_TURN / 8,
+  FACING_SOUTH_SOUTHEAST = TRIG_TURN * 3 / 16,
   FACING_SOUTH = TRIG_TURN / 4,
+  FACING_SOUTH_SOUTHWEST = TRIG_TURN * 5 / 16,
   FACING_SOUTHWEST = TRIG_TURN * 3 / 8,
+  FACING_WEST_SOUTHWEST = TRIG_TURN * 7 / 16,
   FACING_WEST = TRIG_TURN / 2,
+  FACING_WEST_NORTHWEST = TRIG_TURN * 9 / 16,
   FACING_NORTHWEST = TRIG_TURN * 5 / 8,
+  FACING_NORTH_NORTHWEST = TRIG_TURN * 11 / 16,
   FACING_NORTH = TRIG_TURN * 3 / 4,
-  FACING_NORTHEAST = TRIG_TURN * 7 / 8
+  FACING_NORTH_NORTHEAST = TRIG_TURN * 13 / 16,
+  FACING_NORTHEAST = TRIG_TURN * 7 / 8,
+  FACING_EAST_NORTHEAST = TRIG_TURN * 15 / 16
 };
 
 /// A sixteenth of a turn, half the step between two headings.

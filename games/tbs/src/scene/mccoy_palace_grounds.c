@@ -244,8 +244,8 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 282);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
       }
-      Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_EAST + FACING_STEP, 0);
-      Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTHWEST + FACING_STEP, 20);
+      Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_EAST_SOUTHEAST, 0);
+      Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_WEST_SOUTHWEST, 20);
       Actor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
       Actor_StartRepeatedMotion(ACTOR_WEST_GUARD, 1);
       Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
@@ -254,11 +254,11 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
       Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 20);
       Actor_SetAnimation(ACTOR_WEST_GUARD, ANIM_NOD);
       Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_NOD);
-      Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
-      Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 10);
+      Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTH_SOUTHEAST, 0);
+      Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH_SOUTHWEST, 10);
       Actor_StartRepeatedMotion(ACTOR_WEST_GUARD, 1);
       Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 20);
-      Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_NORTHEAST + FACING_STEP, 0);
+      Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_EAST_NORTHEAST, 0);
       Actor_SetSpeed(ACTOR_EAST_GUARD, PIXELS(1), PIXELS(1) / 2);
       Actor_Get(ACTOR_EAST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
       Actor_WalkToAndWait(ACTOR_EAST_GUARD, 346, 263);
@@ -282,7 +282,7 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
           gGuardWatchesParty);
     } else {
       Event_ShowMessage(ACTOR_EAST_GUARD, 0);
-      Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTHEAST + FACING_STEP, 10);
+      Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH_SOUTHEAST, 10);
     }
   }
   Event_End();
@@ -373,19 +373,19 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
   FieldCamera_MoveWithinMapBounds(PIXELS(320), -1, PIXELS(290), 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 320, 310);
-  Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTH_SOUTHEAST, 10);
   Actor_StartRepeatedMotion(ACTOR_WEST_GUARD, 2);
   Actor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Event_SetMessageId(MsgBilibinOhItS);
   Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
-  Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH_SOUTHWEST, 10);
   Actor_StartRepeatedMotion(ACTOR_EAST_GUARD, 2);
   Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 20);
-  Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_EAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTHWEST + FACING_STEP, 40);
-  Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_EAST_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_WEST_SOUTHWEST, 40);
+  Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH_SOUTHWEST, 10);
   Actor_RunRepeatedMotion(ACTOR_WEST_GUARD, 1);
   Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_EAST_GUARD, 1);
@@ -400,8 +400,8 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
     Event_OpenMessage(ACTOR_EAST_GUARD, 0);
   }
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH_SOUTHWEST, 20);
   Actor_SetAnimation(ACTOR_WEST_GUARD, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_NOD);
   Event_Wait(20);
@@ -495,9 +495,9 @@ struct ActorPlacement gMcCoyPalaceGroundsActorPlacements[] = {
     { SPRITE_WOMAN_WITH_PURPLE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(128), 0, PIXELS(327), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(320), 0, PIXELS(263), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(320), 0, PIXELS(263), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(334), 0, PIXELS(263), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(334), 0, PIXELS(263), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_BLANK, FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(216), 0, PIXELS(344), FACING_SOUTH, TALK_FACING_KEEP, 0 },
 #if TBS_PATCH_3

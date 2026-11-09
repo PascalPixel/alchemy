@@ -726,12 +726,11 @@ static void Kalay_WatchTourGroupDeparture(void) {
     } while (last->timer == 0);
     Event_Wait(40);
     Actor_RunRepeatedMotion(ACTOR_FIRST_TOURIST, 2);
-    Actor_FaceDirection(ACTOR_FIRST_TOURIST, FACING_SOUTH + FACING_STEP, 20);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST, FACING_SOUTH_SOUTHWEST, 20);
     Event_SetMessageId(MsgKalayWhyWeStoppingAtPlace);
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST, 0, 10);
     Actor_RunRepeatedMotion(ACTOR_FIRST_TOURIST + 1, 2);
-    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 1, FACING_NORTHWEST + FACING_STEP,
-                        10);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 1, FACING_NORTH_NORTHWEST, 10);
     Actor_SetAnimation(ACTOR_FIRST_TOURIST + 1, ANIM_NOD);
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 1, 0, 10);
     Actor_SetAttachedEffect(ACTOR_FIRST_TOURIST + 5,
@@ -740,17 +739,14 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 5, 0, 10);
     Actor_ShowEmote(ACTOR_FIRST_TOURIST + 4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     40);
-    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_NORTHWEST + FACING_STEP,
-                        10);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_NORTH_NORTHWEST, 10);
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 4, 0, 10);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_WEST, 10);
     Actor_RunRepeatedMotion(ACTOR_FIRST_TOURIST + 4, 2);
     Actor_SetAnimation(ACTOR_FIRST_TOURIST + 4, ANIM_SHAKE_HEAD);
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 4, 0, 10);
-    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_NORTHWEST + FACING_STEP,
-                        0);
-    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 5, FACING_SOUTH + FACING_STEP,
-                        20);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_NORTH_NORTHWEST, 0);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 5, FACING_SOUTH_SOUTHWEST, 20);
     Actor_SetAnimation(ACTOR_FIRST_TOURIST + 4, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_FIRST_TOURIST + 5, ANIM_NOD);
     Actor_RunRepeatedMotion(ACTOR_HEAD_GUIDE, 2);
@@ -812,9 +808,9 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_FaceDirection(ACTOR_SECOND_GUIDE, FACING_NORTH, 40);
     Actor_StartRepeatedMotion(ACTOR_SECOND_GUIDE, 2);
     Actor_ShowEmote(ACTOR_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-    Actor_FaceDirection(ACTOR_HEAD_GUIDE, FACING_SOUTHEAST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_HEAD_GUIDE, FACING_SOUTH_SOUTHEAST, 0);
     Actor_WalkToAndWait(ACTOR_SECOND_GUIDE, 184, 286);
-    Actor_FaceDirection(ACTOR_SECOND_GUIDE, FACING_NORTHWEST + FACING_STEP, 10);
+    Actor_FaceDirection(ACTOR_SECOND_GUIDE, FACING_NORTH_NORTHWEST, 10);
     Actor_SetAttachedEffect(ACTOR_SECOND_GUIDE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
@@ -824,8 +820,8 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_RunRepeatedMotion(ACTOR_HEAD_GUIDE, 2);
     Actor_FaceDirection(ACTOR_HEAD_GUIDE, FACING_EAST, 0);
     Actor_FaceDirection(ACTOR_SECOND_GUIDE, FACING_EAST, 60);
-    Actor_FaceDirection(ACTOR_HEAD_GUIDE, FACING_SOUTHEAST + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_SECOND_GUIDE, FACING_NORTHWEST + FACING_STEP, 10);
+    Actor_FaceDirection(ACTOR_HEAD_GUIDE, FACING_SOUTH_SOUTHEAST, 0);
+    Actor_FaceDirection(ACTOR_SECOND_GUIDE, FACING_NORTH_NORTHWEST, 10);
     Actor_SetAnimationAndWait(ACTOR_HEAD_GUIDE, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_SECOND_GUIDE, ANIM_NOD);
     Actor_FaceDirection(ACTOR_SECOND_GUIDE, FACING_EAST, 0);
@@ -837,8 +833,8 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_FaceDirection(ACTOR_HEAD_GUIDE, FACING_NORTH, 40);
     Actor_WalkToAndWait(ACTOR_HEAD_GUIDE, 192, 296);
     Actor_FaceDirection(ACTOR_HEAD_GUIDE, FACING_NORTH, 40);
-    Actor_FaceDirection(ACTOR_HEAD_GUIDE, FACING_NORTHWEST + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_SECOND_GUIDE, FACING_SOUTHEAST + FACING_STEP, 10);
+    Actor_FaceDirection(ACTOR_HEAD_GUIDE, FACING_NORTH_NORTHWEST, 0);
+    Actor_FaceDirection(ACTOR_SECOND_GUIDE, FACING_SOUTH_SOUTHEAST, 10);
     Actor_SetAttachedEffect(ACTOR_HEAD_GUIDE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(60);
@@ -860,16 +856,14 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Event_Wait(80);
     Actor_Stop(ACTOR_FIRST_TOURIST + 1);
     wait(1);
-    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 1, FACING_NORTH + FACING_STEP,
-                        20);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 1, FACING_NORTH_NORTHEAST, 20);
     Actor_RunRepeatedMotion(ACTOR_FIRST_TOURIST + 1, 2);
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 1, 0, 10);
     Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 1);
     Event_Wait(160);
     Actor_Stop(ACTOR_FIRST_TOURIST + 5);
     wait(1);
-    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 5, FACING_SOUTH + FACING_STEP,
-                        10);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 5, FACING_SOUTH_SOUTHWEST, 10);
     Actor_ShowEmote(ACTOR_FIRST_TOURIST + 5, EMOTE_IN_FRONT | EMOTE_QUESTION,
                     60);
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 5, 0, 10);
@@ -877,8 +871,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Event_Wait(80);
     Actor_Stop(ACTOR_FIRST_TOURIST + 3);
     wait(1);
-    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 3, FACING_NORTHWEST + FACING_STEP,
-                        10);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 3, FACING_NORTH_NORTHWEST, 10);
     Actor_RunRepeatedMotion(ACTOR_FIRST_TOURIST + 3, 1);
     Event_SetMessageId(message + 6);
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 3, 0, 10);
@@ -896,8 +889,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_SetScript(ACTOR_SECOND_GUIDE, gKalay_SecondGuideStopScript);
     Actor_Stop(ACTOR_FIRST_TOURIST + 2);
     wait(1);
-    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 2, FACING_SOUTH + FACING_STEP,
-                        10);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 2, FACING_SOUTH_SOUTHWEST, 10);
     message += 5;
     Actor_RunRepeatedMotion(ACTOR_FIRST_TOURIST + 2, 2);
     Event_SetMessageId(message);
@@ -912,8 +904,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_SetScript(ACTOR_SECOND_GUIDE, gKalay_SecondGuideReturnScript);
     Actor_Stop(ACTOR_FIRST_TOURIST + 4);
     wait(1);
-    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_SOUTH + FACING_STEP,
-                        10);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_SOUTH_SOUTHWEST, 10);
     Actor_RunRepeatedMotion(ACTOR_FIRST_TOURIST + 4, 1);
     Actor_SetAnimationAndWait(ACTOR_FIRST_TOURIST + 4, ANIM_SHAKE_HEAD);
     message = MsgKalayDecideEnteringColosso;
@@ -926,9 +917,8 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_ShowEmote(ACTOR_OURANOS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
     Actor_ShowEmote(ACTOR_FIRST_TOURIST + 6, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                     60);
-    Actor_FaceDirection(ACTOR_OURANOS, FACING_NORTHWEST + FACING_STEP, 10);
-    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 6, FACING_SOUTH + FACING_STEP,
-                        10);
+    Actor_FaceDirection(ACTOR_OURANOS, FACING_NORTH_NORTHWEST, 10);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 6, FACING_SOUTH_SOUTHWEST, 10);
     message += 3;
     Actor_SetAnimationAndWait(ACTOR_OURANOS, ANIM_SHAKE_HEAD);
     Event_SetMessageId(message);
@@ -988,17 +978,14 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Event_ShowMessageThenWait(ACTOR_SECOND_GUIDE, 0, 20);
     Actor_SetAnimationAndWait(ACTOR_HEAD_GUIDE, ANIM_NOD);
     Event_ShowMessageThenWait(ACTOR_HEAD_GUIDE, 0, 10);
-    Actor_FaceDirection(ACTOR_FIRST_TOURIST, FACING_SOUTH + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 1, FACING_NORTHWEST + FACING_STEP,
-                        4);
-    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 2, FACING_SOUTH + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 3, FACING_NORTHWEST + FACING_STEP,
-                        4);
-    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 5, FACING_SOUTH + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_NORTHWEST + FACING_STEP,
-                        4);
-    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 6, FACING_SOUTH + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_OURANOS, FACING_NORTHWEST + FACING_STEP, 4);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST, FACING_SOUTH_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 1, FACING_NORTH_NORTHWEST, 4);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 2, FACING_SOUTH_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 3, FACING_NORTH_NORTHWEST, 4);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 5, FACING_SOUTH_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_NORTH_NORTHWEST, 4);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 6, FACING_SOUTH_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_OURANOS, FACING_NORTH_NORTHWEST, 4);
     Actor_SetAnimation(ACTOR_FIRST_TOURIST, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_FIRST_TOURIST + 1, ANIM_NOD);
     Actor_SetAnimation(ACTOR_FIRST_TOURIST + 2, ANIM_NOD);
@@ -1073,7 +1060,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_FaceDirection(ACTOR_LATE_TOURIST, FACING_EAST, 40);
     Actor_FaceDirection(ACTOR_LATE_TOURIST, FACING_WEST, 40);
     Actor_FaceDirection(ACTOR_LATE_TOURIST, FACING_NORTH, 40);
-    Actor_FaceDirection(ACTOR_LATE_TOURIST, FACING_SOUTH + FACING_STEP, 40);
+    Actor_FaceDirection(ACTOR_LATE_TOURIST, FACING_SOUTH_SOUTHWEST, 40);
     Actor_ShowEmote(ACTOR_LATE_TOURIST, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     Event_ShowMessageThenWait(ACTOR_LATE_TOURIST, 0, 10);
     Actor_FaceDirection(ACTOR_LATE_TOURIST, FACING_EAST, 40);
@@ -1095,13 +1082,13 @@ static void Kalay_WatchTourGroupDeparture(void) {
     } while (Actor_Get(ACTOR_LATE_TOURIST)->timer != 1);
     Actor_SetPosition(ACTOR_LATE_TOURIST, PIXELS(359), PIXELS(314));
     late = Actor_Get(ACTOR_LATE_TOURIST);
-    late->facing = FACING_NORTH + FACING_STEP;
+    late->facing = FACING_NORTH_NORTHEAST;
     Actor_SetPosition(ACTOR_HEAD_GUIDE, PIXELS(455), PIXELS(434));
     headEnd = Actor_Get(ACTOR_HEAD_GUIDE);
-    headEnd->facing = FACING_NORTH + FACING_STEP;
+    headEnd->facing = FACING_NORTH_NORTHEAST;
     Actor_SetPosition(ACTOR_SECOND_GUIDE, PIXELS(464), PIXELS(416));
     lastEnd = Actor_Get(ACTOR_SECOND_GUIDE);
-    lastEnd->facing = FACING_SOUTH + FACING_STEP;
+    lastEnd->facing = FACING_SOUTH_SOUTHWEST;
     Actor_ReleaseById(ACTOR_FIRST_TOURIST);
     Actor_ReleaseById(ACTOR_FIRST_TOURIST + 1);
     Actor_ReleaseById(ACTOR_FIRST_TOURIST + 2);
@@ -1429,7 +1416,7 @@ static void Kalay_PrepareTunnel(void) {
     Actor_SetPosition(ACTOR_WAITING_MAN, PIXELS(426), PIXELS(730));
     actor = Actor_Get(ACTOR_WAITING_MAN);
     {
-      u16 shown = FACING_SOUTH + FACING_STEP;
+      u16 shown = FACING_SOUTH_SOUTHWEST;
 
       actor->facing = shown;
     }
@@ -1602,9 +1589,9 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Actor_SetSpeed(ACTOR_PALACE_GUARD, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_SECOND_PALACE_GUARD, PIXELS(1), PIXELS(1) / 2);
   actor = Actor_Get(ACTOR_PALACE_GUARD);
-  actor->facing = FACING_SOUTHEAST + FACING_STEP;
+  actor->facing = FACING_SOUTH_SOUTHEAST;
   actor = Actor_Get(ACTOR_SECOND_PALACE_GUARD);
-  actor->facing = FACING_SOUTH + FACING_STEP;
+  actor->facing = FACING_SOUTH_SOUTHWEST;
   wait(1);
   Actor_Get(ACTOR_PALACE_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_Get(ACTOR_SECOND_PALACE_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -1618,8 +1605,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Actor_SetAnimationAndWait(ACTOR_PALACE_GUARD, ANIM_SHAKE_HEAD);
   Event_SetMessageId(MsgKalayLordHammetsPalaceLordAway);
   Event_ShowMessageThenWait(ACTOR_PALACE_GUARD, 0, 10);
-  Actor_FaceDirection(ACTOR_SECOND_PALACE_GUARD, FACING_SOUTH + FACING_STEP,
-                      10);
+  Actor_FaceDirection(ACTOR_SECOND_PALACE_GUARD, FACING_SOUTH_SOUTHWEST, 10);
   Actor_SetAnimationAndWait(ACTOR_SECOND_PALACE_GUARD, ANIM_NOD);
   Event_ShowMessageThenWait(ACTOR_SECOND_PALACE_GUARD, 0, 10);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
@@ -1645,9 +1631,8 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
                   40);
   Actor_FaceDirection(ACTOR_PALACE_GUARD, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SECOND_PALACE_GUARD, FACING_WEST, 40);
-  Actor_FaceDirection(ACTOR_PALACE_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_SECOND_PALACE_GUARD, FACING_SOUTHEAST + FACING_STEP,
-                      20);
+  Actor_FaceDirection(ACTOR_PALACE_GUARD, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_SECOND_PALACE_GUARD, FACING_SOUTH_SOUTHEAST, 20);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 10);
@@ -1677,9 +1662,8 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 10);
   Actor_FaceDirection(ACTOR_PALACE_GUARD, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SECOND_PALACE_GUARD, FACING_WEST, 40);
-  Actor_FaceDirection(ACTOR_PALACE_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_SECOND_PALACE_GUARD, FACING_SOUTHEAST + FACING_STEP,
-                      10);
+  Actor_FaceDirection(ACTOR_PALACE_GUARD, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_SECOND_PALACE_GUARD, FACING_SOUTH_SOUTHEAST, 10);
   Actor_RunRepeatedMotion(ACTOR_PALACE_GUARD, 1);
   Event_OpenMessage(ACTOR_PALACE_GUARD, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
@@ -1716,10 +1700,9 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Event_ShowMessageThenWait(ACTOR_SECOND_PALACE_GUARD, 0, 10);
   Actor_FaceDirection(ACTOR_PALACE_GUARD, FACING_EAST, 10);
   Actor_SetAnimationAndWait(ACTOR_PALACE_GUARD, ANIM_NOD);
-  Actor_FaceDirection(ACTOR_PALACE_GUARD, FACING_SOUTHEAST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_PALACE_GUARD, FACING_SOUTH_SOUTHEAST, 10);
   Event_ShowMessage(ACTOR_PALACE_GUARD, 0);
-  Actor_FaceDirection(ACTOR_SECOND_PALACE_GUARD, FACING_SOUTHEAST + FACING_STEP,
-                      10);
+  Actor_FaceDirection(ACTOR_SECOND_PALACE_GUARD, FACING_SOUTH_SOUTHEAST, 10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 10);
   Event_AskYesNo(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0);
@@ -1816,7 +1799,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_WalkToAndWait(ACTOR_BUNZA, 439, 312);
   Actor_WalkToAndWait(ACTOR_BUNZA, 416, 312);
   Actor_WalkToAndWait(ACTOR_BUNZA, 400, 256);
-  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTHEAST + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHEAST, 40);
   FieldCamera_MoveTo(PIXELS(410), -1, PIXELS(280), 1);
   Actor_SetSpeed(ACTOR_HAMMET, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_SetPosition(ACTOR_HAMMET, PIXELS(439), PIXELS(306));
@@ -1824,8 +1807,8 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_WalkToAndWait(ACTOR_HAMMET, 439, 312);
   Actor_WalkToAndWait(ACTOR_HAMMET, 416, 312);
   Actor_WalkToAndWait(ACTOR_HAMMET, 388, 270);
-  Actor_FaceDirection(ACTOR_HAMMET, FACING_NORTH + FACING_STEP, 10);
-  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_HAMMET, FACING_NORTH_NORTHEAST, 10);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHWEST, 10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(439), PIXELS(306));
   Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
@@ -1887,7 +1870,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 2, 0, 10);
   Actor_ShowEmote(ACTOR_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH_SOUTHEAST, 20);
   Event_ShowMessageThenWait(ACTOR_HAMMET, 0, 10);
   Actor_Stop(ACTOR_PARTY_LEADER);
   Actor_Stop(ACTOR_GARET);
@@ -1907,7 +1890,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Event_ShowMessageThenWait(ACTOR_HAMMET, 0, 10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
-  Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH_SOUTHWEST, 0);
   Actor_RunRepeatedMotion(ACTOR_BUNZA, 2);
   Event_ShowMessageThenWait(ACTOR_BUNZA, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
@@ -1923,7 +1906,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 10);
-  Actor_FaceDirection(ACTOR_HAMMET, FACING_NORTH + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_HAMMET, FACING_NORTH_NORTHEAST, 10);
   Actor_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
   Event_ShowMessageThenWait(ACTOR_HAMMET, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
@@ -1932,18 +1915,18 @@ static void Kalay_HammetReturnsToPalace(void) {
   Event_Wait(40);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 2, 0, 10);
-  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTHEAST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHEAST, 10);
   Actor_SetAnimation(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
   Event_ShowMessageThenWait(ACTOR_BUNZA, 0, 10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 10);
-  Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTHEAST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH_SOUTHEAST, 10);
   Actor_ShowEmote(ACTOR_HAMMET, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Event_ShowMessageThenWait(ACTOR_HAMMET, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
-  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH_SOUTHWEST, 10);
   Actor_SetAnimation(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
   Event_ShowMessageThenWait(ACTOR_BUNZA, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
@@ -1958,7 +1941,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTHEAST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH_SOUTHEAST, 10);
   Actor_SetAnimation(ACTOR_HAMMET, ANIM_NOD);
   Event_OpenMessage(ACTOR_HAMMET, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
@@ -1983,7 +1966,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
-  Actor_FaceDirection(ACTOR_TUNNEL_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_TUNNEL_GUARD, FACING_SOUTH_SOUTHEAST, 0);
   Actor_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(200), 1);
@@ -2760,9 +2743,9 @@ struct ActorPlacement gKalay_NoActorPlacements[] = {
 // clang-format off
 struct ActorPlacement gKalay_TownActorPlacements[] = {
     { SPRITE_SOLDIER_IN_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(188), 0, PIXELS(476), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(188), 0, PIXELS(476), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER_IN_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(260), 0, PIXELS(476), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(260), 0, PIXELS(476), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(222), 0, PIXELS(382), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2770,9 +2753,9 @@ struct ActorPlacement gKalay_TownActorPlacements[] = {
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(115), 0, PIXELS(453), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(484), 0, PIXELS(258), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(484), 0, PIXELS(258), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(359), 0, PIXELS(314), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(359), 0, PIXELS(314), FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(404), 0, PIXELS(268), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2782,15 +2765,15 @@ struct ActorPlacement gKalay_TownActorPlacements[] = {
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(199), 0, PIXELS(233), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(46), 0, PIXELS(217), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(46), 0, PIXELS(217), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(468), 0, PIXELS(434), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(468), 0, PIXELS(434), FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(464), 0, PIXELS(416), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(464), 0, PIXELS(416), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BALD_MAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(280), 0, PIXELS(408), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(280), 0, PIXELS(408), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(168), 0, PIXELS(232), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(168), 0, PIXELS(232), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(278), 0, PIXELS(318), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2824,9 +2807,9 @@ struct ActorPlacement gKalay_HammetPalaceActorPlacements[] = {
     { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SOLDIER_IN_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(168), 0, PIXELS(232), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(168), 0, PIXELS(232), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER_IN_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(212), 0, PIXELS(232), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(212), 0, PIXELS(232), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SCENE_TABLE_END },
 };
 
@@ -2838,7 +2821,7 @@ struct ActorPlacement gKalay_TunnelEntranceActorPlacements[] = {
     { ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SOLDIER_IN_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(246), 0, PIXELS(198), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(246), 0, PIXELS(198), FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_LARGE_WAGON, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_HAMMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

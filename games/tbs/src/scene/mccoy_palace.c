@@ -275,7 +275,7 @@ static void McCoyPalace_TalkToWomanInMiladysNightgown(void) {
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN, 0, 10);
   Actor_FaceDirection(ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN,
-                      FACING_NORTHWEST + FACING_STEP, 10);
+                      FACING_NORTH_NORTHWEST, 10);
   Event_End();
 }
 
@@ -499,14 +499,14 @@ static void McCoyPalace_CaptainAsksPartyToChoose(void) {
     if (GameFlag_Get(FLAG_REWARD_OFFERED) != 0) {
       Event_Start();
       Actor_ShowEmote(ACTOR_CAPTAIN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-      Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTHWEST + FACING_STEP, 10);
+      Actor_FaceDirection(ACTOR_CAPTAIN, FACING_WEST_SOUTHWEST, 10);
       Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 2);
       Event_Wait(20);
       Event_SetMessageId(MsgBilibinPleaseTakeYourRewardBefore);
       Event_ShowMessage(ACTOR_CAPTAIN, 0);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 616, 762);
-      Actor_FaceDirection(ACTOR_CAPTAIN, FACING_NORTH + FACING_STEP, 10);
+      Actor_FaceDirection(ACTOR_CAPTAIN, FACING_NORTH_NORTHEAST, 10);
       Event_End();
     }
   }
@@ -521,13 +521,13 @@ static void McCoyPalace_CaptainSeesPartyOff(void) {
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_CAPTAIN, 0);
     Actor_SetSpeed(ACTOR_CAPTAIN, PIXELS(3) / 5, PIXELS(3) / 10);
     Actor_WalkToAndWait(ACTOR_CAPTAIN, 622, 764);
-    Actor_FaceDirection(ACTOR_CAPTAIN, FACING_NORTHEAST + FACING_STEP, 20);
-    Actor_SetAnimationAndWait(ACTOR_CAPTAIN, 3);
+    Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST_NORTHEAST, 20);
+    Actor_SetAnimationAndWait(ACTOR_CAPTAIN, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_SOLDIER_SHOWING_THE_REWARD, 3);
     Event_Wait(20);
     Actor_FaceActor(ACTOR_CAPTAIN, ACTOR_PARTY_LEADER, 0);
     Event_Wait(20);
-    Actor_SetAnimationAndWait(ACTOR_CAPTAIN, 3);
+    Actor_SetAnimationAndWait(ACTOR_CAPTAIN, ANIM_NOD);
     Event_SetMessageId(MsgBilibinAlwaysWelcomeInPalaceLord);
     Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
     Actor_SetSpeed(ACTOR_CAPTAIN, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -664,7 +664,7 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
   if (Event_GetFlag(FLAG_MCCOY_PALACE_JOB_REFUSED) != 0) {
     FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(698), 0);
     Actor_SetPosition(ACTOR_CAPTAIN, PIXELS(876), PIXELS(634));
-    Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTHEAST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTH_SOUTHEAST, 0);
     Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(894), PIXELS(798));
   }
   MapGrid_CenterOnFollowedPoint();
@@ -685,11 +685,11 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     Actor_WaitForMoveById(ACTOR_CAPTAIN);
     Actor_WalkToAndWait(ACTOR_CAPTAIN, 842, 696);
     Actor_WalkToAndWait(ACTOR_CAPTAIN, 842, 636);
-    Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHWEST + FACING_STEP, 20);
+    Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_WEST_SOUTHWEST, 20);
     Actor_WalkToAndWait(ACTOR_CAPTAIN, 876, 634);
-    Actor_SetAnimationAndWait(ACTOR_CAPTAIN, 3);
+    Actor_SetAnimationAndWait(ACTOR_CAPTAIN, ANIM_NOD);
     Event_Wait(20);
-    Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
+    Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_NOD);
     Event_Wait(10);
     // The captain announces the warriors before they enter the audience.
     Event_SetMessageId(MsgBilibinMatter);
@@ -700,7 +700,7 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     Actor_RunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                    10);
-    Actor_SetAnimationAndWait(ACTOR_CAPTAIN, 3);
+    Actor_SetAnimationAndWait(ACTOR_CAPTAIN, ANIM_NOD);
     Event_Wait(40);
     Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
@@ -710,8 +710,8 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     Actor_SetAttachedEffect(ACTOR_CAPTAIN,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(60);
-    Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTHEAST + FACING_STEP, 10);
-    Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 10);
+    Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTH_SOUTHEAST, 10);
+    Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHWEST, 10);
     FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(698), 1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(894), PIXELS(798));
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
@@ -752,20 +752,20 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 20);
     Actor_Jump(ACTOR_LORD_MCCOY, 2, 20);
-    Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHWEST + FACING_STEP, 10);
+    Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_WEST_SOUTHWEST, 10);
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                    10);
-    Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST + FACING_STEP, 10);
-    Actor_SetAnimationAndWait(ACTOR_CAPTAIN, 3);
-    Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 40);
-    Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHWEST + FACING_STEP, 10);
-    Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, 4);
+    Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST_SOUTHEAST, 10);
+    Actor_SetAnimationAndWait(ACTOR_CAPTAIN, ANIM_NOD);
+    Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHWEST, 40);
+    Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_WEST_SOUTHWEST, 10);
+    Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_SHAKE_HEAD);
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                    10);
     Actor_SetAttachedEffect(ACTOR_CAPTAIN,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
-    Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 20);
+    Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHWEST, 20);
     Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
     // Let the party accept the assignment or leave after McCoy refuses them.
     Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
@@ -779,8 +779,8 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     Event_SetMessageId(MsgBilibinTooYoungForTheJob);
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                    10);
-    Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTHEAST + FACING_STEP, 0);
-    Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, 4);
+    Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTH_SOUTHEAST, 0);
+    Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_SHAKE_HEAD);
     Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
@@ -895,7 +895,7 @@ accepted:
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, 4);
+  Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_SHAKE_HEAD);
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 10);
@@ -925,7 +925,7 @@ accepted:
   Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 20);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHEAST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHEAST, 10);
   Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 20);
@@ -961,8 +961,8 @@ accepted:
   Event_SetMessageId(MsgBilibinWellSGoing);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
-  Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 10);
-  Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, 4);
+  Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHWEST, 10);
+  Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
@@ -975,19 +975,19 @@ accepted:
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(40);
   Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
-  Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST_SOUTHEAST, 10);
   Actor_SetAttachedEffect(ACTOR_CAPTAIN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
   Event_Wait(40);
-  Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHWEST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_WEST_SOUTHWEST, 20);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
-  Actor_SetAnimationAndWait(ACTOR_CAPTAIN, 3);
+  Actor_SetAnimationAndWait(ACTOR_CAPTAIN, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, 4);
+  Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_SHAKE_HEAD);
   Actor_SetAnimation(ACTOR_LORD_MCCOY, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
@@ -1011,41 +1011,41 @@ accepted:
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 2);
   Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
+  Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_NOD);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  20);
-  Actor_SetAnimationAndWait(ACTOR_CAPTAIN, 3);
+  Actor_SetAnimationAndWait(ACTOR_CAPTAIN, ANIM_NOD);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0, 10);
-  Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHEAST + FACING_STEP, 10);
-  Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, 4);
+  Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHEAST, 10);
+  Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0, 10);
-  Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHWEST, 10);
   Actor_SetAnimation(ACTOR_LORD_MCCOY, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_SHAKE_HEAD);
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0, 10);
-  Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHEAST + FACING_STEP, 10);
-  Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
+  Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHEAST, 10);
+  Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_NOD);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
-  Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHWEST + FACING_STEP, 10);
-  Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
+  Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_WEST_SOUTHWEST, 10);
+  Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_NOD);
   Event_Wait(10);
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 2);
-  Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST + FACING_STEP, 10);
-  Actor_SetAnimationAndWait(ACTOR_CAPTAIN, 3);
+  Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST_SOUTHEAST, 10);
+  Actor_SetAnimationAndWait(ACTOR_CAPTAIN, ANIM_NOD);
   Event_Wait(20);
   FieldActor_SetTargetAndCallback(ACTOR_PARTY_LEADER,
                                   ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
@@ -1064,7 +1064,7 @@ accepted:
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 852, 646);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 852, 666);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 864, 672);
-  Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST_SOUTHEAST, 10);
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_CAPTAIN, 0, 20);
   Actor_Stop(ACTOR_PARTY_LEADER);
   Actor_Stop(ACTOR_GARET);
@@ -1118,7 +1118,7 @@ static void McCoyPalace_CaptainHintsAtBarricade(void) {
   Event_Start();
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 256, 660);
   Event_Wait(20);
@@ -1141,10 +1141,10 @@ static void McCoyPalace_CaptainHintsAtBarricade(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 264, 660);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 248, 660);
-  Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST + FACING_STEP, 40);
-  Actor_SetAnimationAndWait(ACTOR_CAPTAIN, 4);
+  Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST_SOUTHEAST, 40);
+  Actor_SetAnimationAndWait(ACTOR_CAPTAIN, ANIM_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_CAPTAIN, 0);
-  Actor_SetAnimationAndWait(ACTOR_CAPTAIN, 3);
+  Actor_SetAnimationAndWait(ACTOR_CAPTAIN, ANIM_NOD);
   Event_AskYesNo(ACTOR_CAPTAIN, 0);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 2);
   Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
@@ -1154,7 +1154,7 @@ static void McCoyPalace_CaptainHintsAtBarricade(void) {
   Event_Wait(60);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 1);
   Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_CAPTAIN, 3);
+  Actor_SetAnimationAndWait(ACTOR_CAPTAIN, ANIM_NOD);
   Event_ShowMessage(ACTOR_CAPTAIN, 0);
   Actor_SetSpeed(ACTOR_CAPTAIN, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 248, 772);
@@ -1313,7 +1313,7 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 10);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_MIA, 0, 20);
-  Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
+  Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_NOD);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  20);
@@ -1322,7 +1322,7 @@ static void McCoyPalace_McCoyRewardsParty(void) {
 
   if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0) {
     Actor_RunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
-    Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, 4);
+    Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_SHAKE_HEAD);
     Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
     McCoyPalace_FaceCompanionsForDiscussion();
     advanceAlternateReply = 1;
@@ -1330,7 +1330,7 @@ static void McCoyPalace_McCoyRewardsParty(void) {
       gFieldWork->message++;
       advanceAlternateReply = 0;
     }
-    Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHWEST, 0);
     McCoyPalace_FaceCompanionsForAudience();
     Event_Wait(10);
     Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
@@ -1375,16 +1375,16 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
+  Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_NOD);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
   Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
-  Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHEAST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHEAST, 10);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
-  Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
+  Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_NOD);
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
 
   McCoyPalace_FaceCompanionsForDiscussion();
@@ -1400,19 +1400,19 @@ static void McCoyPalace_McCoyRewardsParty(void) {
     gFieldWork->message++;
   }
 
-  Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHWEST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_WEST_SOUTHWEST, 10);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 1);
-  Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST + FACING_STEP, 20);
-  Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
+  Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST_SOUTHEAST, 20);
+  Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_CAPTAIN, 3);
+  Actor_SetAnimationAndWait(ACTOR_CAPTAIN, ANIM_NOD);
   Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
-  Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTHEAST + FACING_STEP, 10);
-  Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTH_SOUTHEAST, 10);
+  Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHEAST, 20);
   Actor_RunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
-  Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
+  Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_NOD);
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
@@ -1442,14 +1442,14 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Actor_WaitForMoveById(ACTOR_MIA);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
   Event_Wait(20);
-  Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHWEST, 0);
   FieldActor_SetTargetAndCallback(ACTOR_PARTY_LEADER,
                                   ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
                                   gPalace_FacingActions);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 852, 646);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 852, 666);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 864, 672);
-  Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST_SOUTHEAST, 10);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 1);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
@@ -1484,8 +1484,7 @@ static void McCoyPalace_PresentRewardChests(void) {
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(577), PIXELS(760));
   Actor_Get(ACTOR_CAPTAIN)->facing = 0;
   Actor_SetPosition(ACTOR_CAPTAIN, PIXELS(592), PIXELS(760));
-  Actor_Get(ACTOR_SOLDIER_SHOWING_THE_REWARD)->facing =
-      FACING_WEST + FACING_STEP;
+  Actor_Get(ACTOR_SOLDIER_SHOWING_THE_REWARD)->facing = FACING_WEST_NORTHWEST;
   Actor_SetPosition(ACTOR_SOLDIER_SHOWING_THE_REWARD, PIXELS(662), PIXELS(764));
   McCoyPalace_PositionRewardChests();
   Actor_SetSpriteFlags(Actor_Get(ACTOR_VIAL_CHEST), 0);
@@ -1542,7 +1541,7 @@ s32 gPalace_PacingActions[] = {
     SC_MOVE(PIXELS(876), 0, PIXELS(634)),
     SC_SYNC,
     SC_ANIMATION(1),
-    SC_SET(SW_FACING, FACING_SOUTHEAST + FACING_STEP),
+    SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
     SC_WAIT(1),
     SC_END,
 };
@@ -1683,29 +1682,29 @@ struct ActorPlacement gMcCoyPalaceNoActorPlacements[] = {
 // clang-format off
 struct ActorPlacement gMcCoyPalaceActorPlacements[] = {
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(265), 0, PIXELS(702), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(265), 0, PIXELS(702), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(342), 0, PIXELS(632), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(342), 0, PIXELS(632), FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(360), 0, PIXELS(632), FACING_EAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(360), 0, PIXELS(632), FACING_EAST_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_WANDER,
-        PIXELS(166), 0, PIXELS(728), FACING_EAST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(166), 0, PIXELS(728), FACING_EAST_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(326), 0, PIXELS(378), FACING_SOUTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(326), 0, PIXELS(378), FACING_WEST_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_WANDER,
-        PIXELS(362), 0, PIXELS(142), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(362), 0, PIXELS(142), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(296), 0, PIXELS(87), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(296), 0, PIXELS(87), FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(952), 0, PIXELS(289), FACING_EAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(952), 0, PIXELS(289), FACING_EAST_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(951), 0, PIXELS(438), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(951), 0, PIXELS(438), FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0 },
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(616), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(616), 0, PIXELS(728), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_MCCOY, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(894), 0, PIXELS(634), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(894), 0, PIXELS(634), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_KEY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

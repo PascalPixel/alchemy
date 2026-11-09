@@ -574,9 +574,9 @@ static void ColosseumEntrance_TalkToSatrage(void) {
   Actor_TurnToFaceEachOther(ACTOR_SATRAGE, ACTOR_PARTY_LEADER, 20);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_SATRAGE);
   Actor_SetAnimationAndWait(ACTOR_SATRAGE, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_SATRAGE, 0);
+  Actor_SetAnimation(ACTOR_SATRAGE, ANIM_STILL);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_SATRAGE);
-  ColosseumEntrance_FaceDirection(ACTOR_SATRAGE, FACING_SOUTH + FACING_STEP);
+  ColosseumEntrance_FaceDirection(ACTOR_SATRAGE, FACING_SOUTH_SOUTHWEST);
   Event_End();
 }
 
@@ -598,7 +598,7 @@ static void ColosseumEntrance_TalkToDekka(void) {
     ColosseumEntrance_ShowMessageAndPause(ACTOR_NAVAMPA);
     Actor_ShowEmote(ACTOR_NAVAMPA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_NAVAMPA);
-    ColosseumEntrance_FaceDirection(ACTOR_NAVAMPA, FACING_SOUTH + FACING_STEP);
+    ColosseumEntrance_FaceDirection(ACTOR_NAVAMPA, FACING_SOUTH_SOUTHWEST);
     GameFlag_Set(FLAG_NAVAMPA_SPOKE_FOR_DEKKA);
   }
   Event_End();
@@ -616,7 +616,7 @@ static void ColosseumEntrance_TalkToNavampa(void) {
   ColosseumEntrance_ShowMessageAndPause(ACTOR_NAVAMPA);
   Actor_RunRepeatedMotion(ACTOR_NAVAMPA, 1);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_NAVAMPA);
-  ColosseumEntrance_FaceDirection(ACTOR_NAVAMPA, FACING_SOUTH + FACING_STEP);
+  ColosseumEntrance_FaceDirection(ACTOR_NAVAMPA, FACING_SOUTH_SOUTHWEST);
   Event_End();
 }
 
@@ -627,14 +627,14 @@ static void ColosseumEntrance_TalkToBuford(void) {
   Actor_TurnToFaceEachOther(ACTOR_BUFORD, ACTOR_PARTY_LEADER, 20);
   Event_SetMessageId(MsgColosseumImBufordSeventhSeed);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_BUFORD);
-  Actor_FaceDirection(ACTOR_BUFORD, FACING_NORTH + FACING_STEP, 20);
-  Actor_FaceDirection(ACTOR_BUFORD, FACING_NORTHWEST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_BUFORD, FACING_NORTH_NORTHEAST, 20);
+  Actor_FaceDirection(ACTOR_BUFORD, FACING_NORTH_NORTHWEST, 20);
   Actor_FaceDirection(ACTOR_BUFORD, FACING_WEST, 40);
   Actor_TurnToFaceEachOther(ACTOR_BUFORD, ACTOR_PARTY_LEADER, 20);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_BUFORD);
   Actor_SetAnimationAndWait(ACTOR_BUFORD, ANIM_NOD);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_BUFORD);
-  ColosseumEntrance_FaceDirection(ACTOR_BUFORD, FACING_SOUTH + FACING_STEP);
+  ColosseumEntrance_FaceDirection(ACTOR_BUFORD, FACING_SOUTH_SOUTHWEST);
   Event_End();
 }
 
@@ -667,22 +667,18 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
 
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_FIRST_GATE_SOLDIER, 1);
-  Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER, FACING_SOUTHEAST + FACING_STEP,
-                      20);
+  Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER, FACING_SOUTH_SOUTHEAST, 20);
   Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER, FACING_EAST, 60);
   Actor_ShowEmote(ACTOR_FIRST_GATE_SOLDIER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                   40);
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_GATE_SOLDIER,
-                                  FACING_SOUTHEAST + FACING_STEP);
+                                  FACING_SOUTH_SOUTHEAST);
   Event_SetMessageId(MsgColosseumHeyYouRe);
   Actor_StartRepeatedMotion(ACTOR_FIRST_GATE_SOLDIER, 2);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER);
-  Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 1,
-                      FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 2,
-                      FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 3,
-                      FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 1, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 2, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 3, FACING_SOUTH_SOUTHEAST, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeedParameters(PIXELS(8) / 5, PIXELS(1) / 5);
   FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(172), 1);
@@ -705,8 +701,7 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
   Event_ShowMessageThenWait(ACTOR_FIRST_GATE_SOLDIER + 3, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_FIRST_GATE_SOLDIER, 1);
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER, FACING_NORTHWEST + FACING_STEP,
-                      20);
+  Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER, FACING_NORTH_NORTHWEST, 20);
   Event_ShowMessageThenWait(ACTOR_FIRST_GATE_SOLDIER, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_FIRST_GATE_SOLDIER + 1, 1);
   Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER + 1, ANIM_SHAKE_HEAD);
@@ -726,14 +721,11 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
   Actor_SetAnimation(ACTOR_FIRST_GATE_SOLDIER + 1, ANIM_NOD);
   Actor_SetAnimation(ACTOR_FIRST_GATE_SOLDIER + 2, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER + 3, ANIM_NOD);
-  Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER, FACING_SOUTHEAST + FACING_STEP,
-                      0);
-  Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 1,
-                      FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 2,
-                      FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 1, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 2, FACING_SOUTH_SOUTHEAST, 0);
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 3,
-                                  FACING_SOUTHEAST + FACING_STEP);
+                                  FACING_SOUTH_SOUTHEAST);
   Actor_SetSpeed(ACTOR_FIRST_GATE_SOLDIER, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_WalkToAndWait(ACTOR_FIRST_GATE_SOLDIER, 258, 172);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -812,16 +804,14 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
     ColosseumEntrance_ShowMessageAndPause(ACTOR_IVAN);
     Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_MIA);
-    Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER,
-                        FACING_NORTHWEST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER, FACING_NORTH_NORTHWEST, 0);
     Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 2, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 3, FACING_EAST, 60);
-    Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER,
-                        FACING_SOUTHEAST + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 2,
-                        FACING_SOUTHEAST + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 3,
-                        FACING_SOUTHEAST + FACING_STEP, 20);
+    Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER, FACING_SOUTH_SOUTHEAST, 0);
+    Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 2, FACING_SOUTH_SOUTHEAST,
+                        0);
+    Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 3, FACING_SOUTH_SOUTHEAST,
+                        20);
     Actor_SetAnimation(ACTOR_FIRST_GATE_SOLDIER, ANIM_NOD);
     Actor_SetAnimation(ACTOR_FIRST_GATE_SOLDIER + 1, ANIM_NOD);
     Actor_SetAnimation(ACTOR_FIRST_GATE_SOLDIER + 2, ANIM_NOD);
@@ -911,14 +901,13 @@ static void ColosseumEntrance_FinalsStart(void) {
     FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
     FieldCamera_MoveTo(PIXELS(816), -1, PIXELS(112), 1);
     FieldCamera_WaitForArrival();
-    Actor_FaceDirection(ACTOR_FINALS_SOLDIER, FACING_SOUTHEAST + FACING_STEP,
-                        20);
+    Actor_FaceDirection(ACTOR_FINALS_SOLDIER, FACING_SOUTH_SOUTHEAST, 20);
     Actor_RunRepeatedMotion(ACTOR_FINALS_SOLDIER, 1);
     Event_SetMessageId(MsgColosseumYouReadyForFinals);
     Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_FINALS_SOLDIER, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
       Event_Wait(20);
-      ColosseumEntrance_FaceDirection(ACTOR_MORGAN, FACING_NORTH + FACING_STEP);
+      ColosseumEntrance_FaceDirection(ACTOR_MORGAN, FACING_NORTH_NORTHEAST);
       Actor_RunRepeatedMotion(ACTOR_MORGAN, 1);
       Event_SetMessageId(MsgColosseumDayTiredWaiting);
       ColosseumEntrance_ShowMessageAndPause(SPEAKER_WINDOW_ABOVE |
@@ -928,7 +917,7 @@ static void ColosseumEntrance_FinalsStart(void) {
       Actor_SetAnimationAndWait(ACTOR_NAVAMPA, ANIM_NOD);
       Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
       Actor_SetAnimation(ACTOR_SATRAGE, ANIM_STAND);
-      Actor_FaceDirection(ACTOR_SATRAGE, FACING_NORTH + FACING_STEP, 20);
+      Actor_FaceDirection(ACTOR_SATRAGE, FACING_NORTH_NORTHEAST, 20);
       Actor_RunRepeatedMotion(ACTOR_SATRAGE, 1);
       ColosseumEntrance_ShowMessageAndPause(ACTOR_SATRAGE);
       ColosseumEntrance_FaceDirection(ACTOR_DEKKA, FACING_WEST);
@@ -937,13 +926,12 @@ static void ColosseumEntrance_FinalsStart(void) {
       ColosseumEntrance_FaceDirection(ACTOR_NAVAMPA, FACING_NORTHWEST);
       ColosseumEntrance_ShowMessageAndPause(SPEAKER_WINDOW_ABOVE |
                                             ACTOR_NAVAMPA);
-      ColosseumEntrance_FaceDirection(ACTOR_BUFORD,
-                                      FACING_NORTHWEST + FACING_STEP);
+      ColosseumEntrance_FaceDirection(ACTOR_BUFORD, FACING_NORTH_NORTHWEST);
       Actor_StartRepeatedMotion(ACTOR_BUFORD, 2);
       ColosseumEntrance_ShowMessageAndPause(SPEAKER_WINDOW_ABOVE |
                                             ACTOR_BUFORD);
       ColosseumEntrance_FaceDirection(ACTOR_GONG_SOLDIER,
-                                      FACING_SOUTHEAST + FACING_STEP);
+                                      FACING_SOUTH_SOUTHEAST);
       Actor_SetAttachedEffect(ACTOR_GONG_SOLDIER,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Event_Wait(60);
@@ -958,7 +946,7 @@ static void ColosseumEntrance_FinalsStart(void) {
       Event_Wait(20);
       Actor_FaceDirection(ACTOR_AZART, FACING_EAST, 0);
       Actor_FaceDirection(ACTOR_GALAHAD, FACING_WEST, 0);
-      Actor_FaceDirection(ACTOR_DEKKA, FACING_NORTHWEST + FACING_STEP, 40);
+      Actor_FaceDirection(ACTOR_DEKKA, FACING_NORTH_NORTHWEST, 40);
       Actor_SetAnimation(ACTOR_AZART, ANIM_NOD);
       Actor_SetAnimation(ACTOR_GALAHAD, ANIM_NOD);
       Actor_SetAnimationAndWait(ACTOR_DEKKA, ANIM_NOD);
@@ -970,11 +958,11 @@ static void ColosseumEntrance_FinalsStart(void) {
       Actor_SetScript(ACTOR_DEKKA,
                       gColosseumEntrance_JoinFinalsFromSouthScript);
       Event_Wait(20);
-      Actor_FaceDirection(ACTOR_SATRAGE, FACING_NORTH + FACING_STEP, 0);
-      Actor_FaceDirection(ACTOR_NAVAMPA, FACING_NORTHWEST + FACING_STEP, 0);
+      Actor_FaceDirection(ACTOR_SATRAGE, FACING_NORTH_NORTHEAST, 0);
+      Actor_FaceDirection(ACTOR_NAVAMPA, FACING_NORTH_NORTHWEST, 0);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-      Actor_FaceDirection(ACTOR_MORGAN, FACING_NORTH + FACING_STEP, 0);
-      Actor_FaceDirection(ACTOR_BUFORD, FACING_NORTHWEST + FACING_STEP, 0);
+      Actor_FaceDirection(ACTOR_MORGAN, FACING_NORTH_NORTHEAST, 0);
+      Actor_FaceDirection(ACTOR_BUFORD, FACING_NORTH_NORTHWEST, 0);
       Actor_RunScriptAndWait(ACTOR_GALAHAD,
                              gColosseumEntrance_JoinFinalsFromEastScript);
       Event_Wait(20);
@@ -1052,8 +1040,7 @@ static void ColosseumEntrance_TalkToTrialAttendant(void) {
     Actor_TurnToFaceEachOther(ACTOR_TRIAL_ATTENDANT, ACTOR_PARTY_LEADER, 40);
     Event_SetMessageId(MsgColosseumHavePerfectTechniquesLikeThose);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_TRIAL_ATTENDANT);
-    Actor_FaceDirection(ACTOR_TRIAL_ATTENDANT, FACING_SOUTHEAST + FACING_STEP,
-                        20);
+    Actor_FaceDirection(ACTOR_TRIAL_ATTENDANT, FACING_SOUTH_SOUTHEAST, 20);
   } else {
     Actor_StartRepeatedMotion(ACTOR_TRIAL_ATTENDANT, 2);
     Event_SetMessageId(MsgColosseumSilence);
@@ -1092,10 +1079,10 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 3, ANIM_WALK);
   Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 4, ANIM_WALK);
   Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 5, ANIM_WALK);
-  Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR, 0);
+  Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR, ANIM_STILL);
   Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR + 1, 0);
-  Actor_SetAnimation(ACTOR_FAILING_WARRIOR, 0);
-  Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, 0);
+  Actor_SetAnimation(ACTOR_FAILING_WARRIOR, ANIM_STILL);
+  Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, ANIM_STILL);
   Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR + 4, 0);
   actor = Actor_Get(ACTOR_TRIAL_PILLAR);
   Actor_SetSpriteFlags(actor, 0);
@@ -1137,9 +1124,8 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   Actor_SetAttachedEffect(ACTOR_FAILING_WARRIOR,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
-  Actor_FaceDirection(ACTOR_FIRST_TRIAL_WARRIOR, FACING_NORTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_FIRST_TRIAL_WARRIOR + 1, FACING_SOUTH + FACING_STEP,
-                      0);
+  Actor_FaceDirection(ACTOR_FIRST_TRIAL_WARRIOR, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_FIRST_TRIAL_WARRIOR + 1, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_CLEARING_WARRIOR, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_FIRST_TRIAL_WARRIOR + 4, FACING_WEST, 20);
   Actor_SetAttachedEffect(ACTOR_FIRST_TRIAL_WARRIOR,
@@ -1151,21 +1137,18 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   Actor_SetAttachedEffect(ACTOR_FIRST_TRIAL_WARRIOR + 4,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
-  Actor_FaceDirection(ACTOR_FIRST_TRIAL_WARRIOR, FACING_SOUTHEAST + FACING_STEP,
-                      0);
-  Actor_FaceDirection(ACTOR_FIRST_TRIAL_WARRIOR + 1,
-                      FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_CLEARING_WARRIOR, FACING_SOUTHEAST + FACING_STEP,
-                      0);
-  facing = FACING_SOUTHEAST + FACING_STEP;
+  Actor_FaceDirection(ACTOR_FIRST_TRIAL_WARRIOR, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_FIRST_TRIAL_WARRIOR + 1, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_CLEARING_WARRIOR, FACING_SOUTH_SOUTHEAST, 0);
+  facing = FACING_SOUTH_SOUTHEAST;
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_TRIAL_WARRIOR + 4, facing);
   Actor_Stop(ACTOR_FAILING_WARRIOR);
   actor = Actor_Get(ACTOR_FAILING_WARRIOR);
-  actor->facing = FACING_NORTH + FACING_STEP;
+  actor->facing = FACING_NORTH_NORTHEAST;
   actor->scaleX = Q16_ONE;
   actor->scaleY = Q16_ONE;
   Event_Wait(20);
-  Actor_SetAnimation(ACTOR_FAILING_WARRIOR, 0);
+  Actor_SetAnimation(ACTOR_FAILING_WARRIOR, ANIM_STILL);
   Event_Wait(40);
   Actor_SetAnimation(ACTOR_FIRST_FLAG_BEARER, FLAG_BEARER_ANIMATION_RED_FLAG);
   Actor_SetAnimation(ACTOR_FIRST_FLAG_BEARER + 1,
@@ -1210,7 +1193,7 @@ static void ColosseumEntrance_ExplainTrial(void) {
 
   Event_Wait(20);
   ColosseumEntrance_FaceDirection(ACTOR_TRIAL_ATTENDANT,
-                                  FACING_SOUTH + FACING_STEP);
+                                  FACING_SOUTH_SOUTHWEST);
   Event_SetMessageId(MsgColosseumHaveMakeThroughCountlessMatches);
 
   if (GameFlag_Get(FLAG_COLOSSO_CLEARED_TRIAL_SEEN) != 0) {
@@ -1219,7 +1202,7 @@ static void ColosseumEntrance_ExplainTrial(void) {
 
   ColosseumEntrance_ShowMessageAndPause(ACTOR_TRIAL_ATTENDANT);
   ColosseumEntrance_FaceDirection(ACTOR_TRIAL_ATTENDANT,
-                                  FACING_SOUTHEAST + FACING_STEP);
+                                  FACING_SOUTH_SOUTHEAST);
   GameFlag_Set(FLAG_COLOSSO_FAILED_TRIAL_SEEN);
 
   Event_End();
@@ -1243,10 +1226,10 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 3, ANIM_WALK);
   Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 4, ANIM_WALK);
   Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 5, ANIM_WALK);
-  Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR, 0);
+  Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR, ANIM_STILL);
   Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR + 1, 0);
   Actor_SetPosition(ACTOR_FAILING_WARRIOR, 0, 0);
-  Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, 0);
+  Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, ANIM_STILL);
   Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR + 4, 0);
   actor = Actor_Get(ACTOR_TRIAL_PILLAR);
   Actor_SetSpriteFlags(actor, 0);
@@ -1288,9 +1271,8 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Actor_SetAttachedEffect(ACTOR_CLEARING_WARRIOR,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
-  Actor_FaceDirection(ACTOR_FIRST_TRIAL_WARRIOR, FACING_NORTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_FIRST_TRIAL_WARRIOR + 1, FACING_SOUTH + FACING_STEP,
-                      0);
+  Actor_FaceDirection(ACTOR_FIRST_TRIAL_WARRIOR, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_FIRST_TRIAL_WARRIOR + 1, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_FIRST_TRIAL_WARRIOR + 4, FACING_WEST, 20);
   Actor_SetAttachedEffect(ACTOR_FIRST_TRIAL_WARRIOR,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1301,12 +1283,10 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Actor_SetAttachedEffect(ACTOR_FIRST_TRIAL_WARRIOR + 4,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
-  Actor_FaceDirection(ACTOR_FIRST_TRIAL_WARRIOR, FACING_SOUTHEAST + FACING_STEP,
-                      0);
-  Actor_FaceDirection(ACTOR_FIRST_TRIAL_WARRIOR + 1,
-                      FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FIRST_TRIAL_WARRIOR, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_FIRST_TRIAL_WARRIOR + 1, FACING_SOUTH_SOUTHEAST, 0);
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_TRIAL_WARRIOR + 4,
-                                  FACING_SOUTHEAST + FACING_STEP);
+                                  FACING_SOUTH_SOUTHEAST);
   Actor_SetAttachedEffect(ACTOR_CLEARING_WARRIOR,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   // The object rises a little with every heave.
@@ -1327,7 +1307,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Actor_Stop(ACTOR_CLEARING_WARRIOR);
   Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, ANIM_STAND);
   actor = Actor_Get(ACTOR_CLEARING_WARRIOR);
-  actor->facing = FACING_NORTH + FACING_STEP;
+  actor->facing = FACING_NORTH_NORTHEAST;
   trialEffect->motionFlags = 3;
   trialEffect->scaleX = Q16_ONE;
   trialEffect->scaleY = Q16_ONE;
@@ -1341,8 +1321,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Actor_SetSpeed(ACTOR_CLEARING_WARRIOR, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkToAndWait(ACTOR_CLEARING_WARRIOR, 208, 928);
   Sound_Play(MUS_JINGLE_MEDIUM);
-  Actor_FaceDirection(ACTOR_CLEARING_WARRIOR, FACING_SOUTHEAST + FACING_STEP,
-                      20);
+  Actor_FaceDirection(ACTOR_CLEARING_WARRIOR, FACING_SOUTH_SOUTHEAST, 20);
   Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, 9);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, 10);
@@ -1517,8 +1496,7 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(40);
-  ColosseumEntrance_FaceDirection(ACTOR_FIRST_SOLDIER,
-                                  FACING_SOUTHEAST + FACING_STEP);
+  ColosseumEntrance_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_SOUTH_SOUTHEAST);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
   Event_Wait(20);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
@@ -1536,9 +1514,9 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   ColosseumEntrance_ShowMessageAndPause(ACTOR_MIA);
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER + 1, FACING_EAST, 40);
-  Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_SOUTH_SOUTHWEST, 0);
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_SOLDIER + 1,
-                                  FACING_SOUTHEAST + FACING_STEP);
+                                  FACING_SOUTH_SOUTHEAST);
   Actor_ShowEmote(ACTOR_FIRST_SOLDIER + 1, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 1);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
@@ -1582,8 +1560,7 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 20);
-  ColosseumEntrance_FaceDirection(ACTOR_FIRST_SOLDIER,
-                                  FACING_SOUTHEAST + FACING_STEP);
+  ColosseumEntrance_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_SOUTH_SOUTHEAST);
   Actor_SetAnimationAndWait(ACTOR_FIRST_SOLDIER, ANIM_NOD);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1637,17 +1614,14 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   }
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER + 1, FACING_EAST, 0);
-  Actor_FaceDirection(ACTOR_FIRST_SOLDIER + 2, FACING_SOUTHEAST + FACING_STEP,
-                      0);
-  Actor_FaceDirection(ACTOR_ESCORTING_SOLDIER, FACING_NORTHWEST + FACING_STEP,
-                      20);
+  Actor_FaceDirection(ACTOR_FIRST_SOLDIER + 2, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_ESCORTING_SOLDIER, FACING_NORTH_NORTHWEST, 20);
   Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_FIRST_SOLDIER + 1, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_FIRST_SOLDIER + 2, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_ESCORTING_SOLDIER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 1);
-  ColosseumEntrance_FaceDirection(ACTOR_FIRST_SOLDIER,
-                                  FACING_SOUTHEAST + FACING_STEP);
+  ColosseumEntrance_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_SOUTH_SOUTHEAST);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
@@ -1655,11 +1629,11 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 20);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER + 1, 1);
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_SOLDIER + 1,
-                                  FACING_SOUTHEAST + FACING_STEP);
+                                  FACING_SOUTH_SOUTHEAST);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 1);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER + 2, 1);
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_SOLDIER + 2,
-                                  FACING_SOUTH + FACING_STEP);
+                                  FACING_SOUTH_SOUTHWEST);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 2);
   ColosseumEntrance_FaceDirection(ACTOR_ESCORTING_SOLDIER, FACING_WEST);
   Actor_SetAnimationAndWait(ACTOR_ESCORTING_SOLDIER, ANIM_NOD);
@@ -1752,13 +1726,13 @@ static void ColosseumEntrance_AnnounceFinals(void) {
   wait(1);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Actor_SetAnimation(ACTOR_AZART, ANIM_STAND);
-  Actor_FaceDirection(ACTOR_MORGAN, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_MORGAN, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_AZART, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GALAHAD, FACING_WEST, 0);
-  Actor_FaceDirection(ACTOR_SATRAGE, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_SATRAGE, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_DEKKA, FACING_WEST, 0);
-  Actor_FaceDirection(ACTOR_NAVAMPA, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_BUFORD, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_NAVAMPA, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_BUFORD, FACING_NORTH_NORTHWEST, 0);
   Event_SetMessageId(MsgColosseumPrepareYourselvesContestantsFinalsWill);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FINALS_SOLDIER);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1776,12 +1750,12 @@ static void ColosseumEntrance_AnnounceFinals(void) {
     *work = value;
   }
   Actor_SetMovementTypeById(ACTOR_AZART, MOVEMENT_TYPE_WANDER);
-  Actor_FaceDirection(ACTOR_MORGAN, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_GALAHAD, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_SATRAGE, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_MORGAN, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_GALAHAD, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_SATRAGE, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_DEKKA, FACING_EAST, 0);
-  Actor_FaceDirection(ACTOR_NAVAMPA, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_BUFORD, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_NAVAMPA, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_BUFORD, FACING_SOUTH_SOUTHWEST, 0);
   Event_End();
 }
 
@@ -1974,7 +1948,7 @@ static void ColosseumEntrance_InitializeContestants(void) {
   Actor_SetSpriteColorById(ACTOR_BUFORD, SPRITE_COLOR_GREY);
   Actor_SetAnimationSpeedById(ACTOR_AZART, 10);
   Actor_SetAnimationSpeedById(ACTOR_GALAHAD, 20);
-  Actor_SetAnimation(ACTOR_SATRAGE, 0);
+  Actor_SetAnimation(ACTOR_SATRAGE, ANIM_STILL);
   Actor_SetAnimationSpeedById(ACTOR_DEKKA, 40);
   Actor_SetAnimationSpeedById(ACTOR_NAVAMPA, 50);
   Actor_SetAnimationSpeedById(ACTOR_BUFORD, 60);
@@ -2015,8 +1989,8 @@ s32 gColosseumEntrance_EnterGatesScript[] = {
 };
 
 s32 gColosseumEntrance_ApproachFinalsGroupScript[] = {
-    SC_ANIMATION(2), SC_MOVE(PIXELS(776), 0, PIXELS(120)),          SC_SYNC,
-    SC_ANIMATION(1), SC_SET(SW_FACING, FACING_NORTH + FACING_STEP), SC_WAIT(20),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(776), 0, PIXELS(120)),      SC_SYNC,
+    SC_ANIMATION(1), SC_SET(SW_FACING, FACING_NORTH_NORTHEAST), SC_WAIT(20),
     SC_END,
 };
 
@@ -2031,7 +2005,7 @@ s32 gColosseumEntrance_JoinFinalsFromEastScript[] = {
     SC_MOVE(PIXELS(792), 0, PIXELS(152)),
     SC_SYNC,
     SC_ANIMATION(1),
-    SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_WAIT(20),
     SC_END,
 };
@@ -2043,7 +2017,7 @@ s32 gColosseumEntrance_JoinFinalsFromSouthScript[] = {
     SC_MOVE(PIXELS(824), 0, PIXELS(152)),
     SC_SYNC,
     SC_ANIMATION(1),
-    SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
     SC_WAIT(20),
     SC_END,
 };
@@ -2211,7 +2185,7 @@ struct ActorPlacement gColosseumStandsActorPlacements[] = {
     { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(360), 0, PIXELS(152), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_IODEM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(528), 0, PIXELS(88), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(528), 0, PIXELS(88), FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(376), 0, PIXELS(184), FACING_SOUTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2267,19 +2241,19 @@ struct ActorPlacement gColosseumTrialGroundsActorPlacements[] = {
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(121), 0, PIXELS(846), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(96), 0, PIXELS(900), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(96), 0, PIXELS(900), FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(114), 0, PIXELS(884), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(114), 0, PIXELS(884), FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(872), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(132), 0, PIXELS(872), FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(148), 0, PIXELS(864), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(148), 0, PIXELS(864), FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(164), 0, PIXELS(860), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(164), 0, PIXELS(860), FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(212), 0, PIXELS(872), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(212), 0, PIXELS(872), FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(264), 0, PIXELS(888), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(264), 0, PIXELS(888), FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_CAPPED_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(184), 0, PIXELS(902), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
@@ -2303,11 +2277,11 @@ struct ActorPlacement gColosseumSoldiersActorPlacements[] = {
     { ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(808), 0, PIXELS(88), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(808), 0, PIXELS(88), FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(782), 0, PIXELS(96), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(782), 0, PIXELS(96), FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(832), 0, PIXELS(96), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(832), 0, PIXELS(96), FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(856), 0, PIXELS(120), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
@@ -2315,27 +2289,27 @@ struct ActorPlacement gColosseumSoldiersActorPlacements[] = {
 
 struct ActorPlacement gColosseumActorPlacementsFromColosseumAzartMatchWest[] = {
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(808), 0, PIXELS(72), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(808), 0, PIXELS(72), FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(808), 0, PIXELS(234), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(808), 0, PIXELS(234), FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(778), 0, PIXELS(72), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(778), 0, PIXELS(72), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(840), 0, PIXELS(72), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(840), 0, PIXELS(72), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(760), 0, PIXELS(152), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(760), 0, PIXELS(152), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(720), 0, PIXELS(112), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(720), 0, PIXELS(112), FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(872), 0, PIXELS(88), FACING_NORTHWEST + FACING_STEP, 3, 0 },
+        PIXELS(872), 0, PIXELS(88), FACING_NORTH_NORTHWEST, 3, 0 },
     { SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(808), 0, PIXELS(120), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(808), 0, PIXELS(120), FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0 },
     { SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(920), 0, PIXELS(134), FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(840), 0, PIXELS(120), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(840), 0, PIXELS(120), FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0 },
     { SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(856), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(856), 0, PIXELS(152), FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
 };
 
@@ -2357,37 +2331,37 @@ struct ActorPlacement gColosseumActorPlacementsFromColosseumNavampaMatch[] = {
 
 struct ActorPlacement gColosseumEntranceActorPlacements[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(264), 0, PIXELS(168), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(264), 0, PIXELS(168), FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(360), 0, PIXELS(198), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(360), 0, PIXELS(198), FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(266), 0, PIXELS(144), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(266), 0, PIXELS(144), FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(278), 0, PIXELS(152), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(278), 0, PIXELS(152), FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(74), 0, PIXELS(196), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(74), 0, PIXELS(196), FACING_NORTH_NORTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(80), 0, PIXELS(238), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(80), 0, PIXELS(238), FACING_NORTH_NORTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(104), 0, PIXELS(198), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(104), 0, PIXELS(198), FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(104), 0, PIXELS(180), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(104), 0, PIXELS(180), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(180), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(152), 0, PIXELS(180), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_STOUT_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(280), 0, PIXELS(48), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(280), 0, PIXELS(48), FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_STOUT_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(264), 0, PIXELS(88), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
+        PIXELS(264), 0, PIXELS(88), FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(280), 0, PIXELS(80), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(280), 0, PIXELS(80), FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(264), 0, PIXELS(56), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
+        PIXELS(264), 0, PIXELS(56), FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_WOMAN_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(280), 0, PIXELS(140), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(280), 0, PIXELS(140), FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_WOMAN_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(280), 0, PIXELS(64), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
+        PIXELS(280), 0, PIXELS(64), FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_GIRL_IN_PINK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(264), 0, PIXELS(72), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(264), 0, PIXELS(72), FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
 };
 
@@ -2401,21 +2375,21 @@ struct ActorPlacement gColosseumEntranceActorPlacementsFinalsDay[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(312), 0, PIXELS(182), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(294), 0, PIXELS(178), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(294), 0, PIXELS(178), FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(228), 0, PIXELS(192), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(228), 0, PIXELS(192), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(104), 0, PIXELS(198), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(104), 0, PIXELS(198), FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(74), 0, PIXELS(196), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(74), 0, PIXELS(196), FACING_NORTH_NORTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(438), 0, PIXELS(186), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(424), 0, PIXELS(186), FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(104), 0, PIXELS(180), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(104), 0, PIXELS(180), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(180), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(152), 0, PIXELS(180), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(258), 0, PIXELS(161), FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2425,27 +2399,27 @@ struct ActorPlacement gColosseumEntranceActorPlacementsFinalsDay[] = {
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(216), 0, PIXELS(168), FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_STOUT_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(278), 0, PIXELS(52), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(278), 0, PIXELS(52), FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_STOUT_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(278), 0, PIXELS(70), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
+        PIXELS(278), 0, PIXELS(70), FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(278), 0, PIXELS(88), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(278), 0, PIXELS(88), FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(278), 0, PIXELS(106), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
+        PIXELS(278), 0, PIXELS(106), FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_WOMAN_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(278), 0, PIXELS(124), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(278), 0, PIXELS(124), FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_WOMAN_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(278), 0, PIXELS(142), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
+        PIXELS(278), 0, PIXELS(142), FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_GIRL_IN_PINK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(280), 0, PIXELS(160), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(280), 0, PIXELS(160), FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ActorPlacement gColosseumEntranceActorPlacementsAfterColosso[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(80), 0, PIXELS(238), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(80), 0, PIXELS(238), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(286), 0, PIXELS(164), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(286), 0, PIXELS(164), FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 

@@ -408,8 +408,8 @@ static void SolSanctumLunaSolRooms_KradenFindsHeartOfSanctum(void) {
     Actor_WalkTo(ACTOR_GARET, 280, 248);
     Actor_WalkToAndWait(ACTOR_JENNA, 296, 248);
     Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
-    Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST + FACING_STEP, 30);
+    Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHWEST, 30);
     FieldCamera_SetSpeedParameters(PIXELS(3) / 5, PIXELS(3) / 40);
     FieldCamera_MoveWithinMapBounds(PIXELS(288), -1, PIXELS(213), 1);
     Actor_SetSpeed(ACTOR_KRADEN, PIXELS(2) / 5, PIXELS(1) / 5);
@@ -428,11 +428,11 @@ static void SolSanctumLunaSolRooms_KradenFindsHeartOfSanctum(void) {
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
-    Actor_FaceDirection(ACTOR_JENNA, FACING_WEST + FACING_STEP, 10);
+    Actor_FaceDirection(ACTOR_JENNA, FACING_WEST_NORTHWEST, 10);
     // Jenna: then they must have been... Garet: "They were thieves!"
     SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_JENNA, 10);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-    Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST + FACING_STEP, 10);
+    Actor_FaceDirection(ACTOR_GARET, FACING_EAST_NORTHEAST, 10);
     SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_GARET, 6);
     Actor_SetAttachedEffect(ACTOR_JENNA,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -447,7 +447,7 @@ static void SolSanctumLunaSolRooms_KradenFindsHeartOfSanctum(void) {
     Actor_SetAttachedEffect(ACTOR_KRADEN,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(20);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH + FACING_STEP, 40);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH_SOUTHWEST, 40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
     Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 40);
@@ -477,8 +477,8 @@ static void SolSanctumLunaSolRooms_KradenFindsHeartOfSanctum(void) {
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
     SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 6);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-    Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_JENNA, FACING_WEST + FACING_STEP, 60);
+    Actor_FaceDirection(ACTOR_GARET, FACING_EAST_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_JENNA, FACING_WEST_NORTHWEST, 60);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 10);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 3);
     Event_Wait(6);
@@ -584,12 +584,12 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
   FieldCamera_MoveTo(PIXELS(492), -1, PIXELS(168), 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 20);
   SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN,
                                             6);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 60);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 10);
   // Kraden: "These rooms must be connected somehow, don't you think?"
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
@@ -607,7 +607,7 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 40);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 10);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
@@ -1249,8 +1249,8 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 312, 136);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
     Actor_SetAnimation(ACTOR_KRADEN, ANIM_STAND);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH + FACING_STEP, 20);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHWEST, 0);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 20);
     if (Event_GetFlag(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) == 0) {
       Sound_Play(SE_SHIMMER);
     }
@@ -1617,10 +1617,10 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   Event_Wait(60);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 40);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST + FACING_STEP, 40);
-  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 80);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST_NORTHWEST, 40);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 80);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 10);
-  Actor_FaceDirection(ACTOR_GARET, FACING_EAST + FACING_STEP, 60);
+  Actor_FaceDirection(ACTOR_GARET, FACING_EAST_SOUTHEAST, 60);
   MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
@@ -1752,21 +1752,21 @@ u32 gSolSanctumLunaSolRoomsExits[] = {
 // clang-format off
 struct ActorPlacement gSolSanctumLunaSolRoomsActorPlacements[] = {
     { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(360), 0, PIXELS(152), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(360), 0, PIXELS(152), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(360), 0, PIXELS(200), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(360), 0, PIXELS(200), FACING_NORTH_NORTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(216), 0, PIXELS(200), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(216), 0, PIXELS(200), FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(216), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(216), 0, PIXELS(152), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(648), 0, PIXELS(152), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(648), 0, PIXELS(152), FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(648), 0, PIXELS(200), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(648), 0, PIXELS(200), FACING_NORTH_NORTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(504), 0, PIXELS(200), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(504), 0, PIXELS(200), FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(504), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(504), 0, PIXELS(152), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(1608), 0, PIXELS(1608), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { ACTOR_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

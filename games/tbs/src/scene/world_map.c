@@ -922,7 +922,7 @@ s32 WorldMap_Initialize(void) {
             GameFlag_Get(FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER) != 0) {
           gWorldMapIodem = ACTOR_IODEM;
           Actor_SetPosition(ACTOR_IODEM, PIXELS(6036), PIXELS(3400));
-          Actor_Get(gWorldMapIodem)->facing = FACING_SOUTHEAST + FACING_STEP;
+          Actor_Get(gWorldMapIodem)->facing = FACING_SOUTH_SOUTHEAST;
           WorldMap_BlockGatewayCaveExit(gWorldMapIodem);
         }
       } else if (GameFlag_Get(FLAG_BLACK_ORB_RETURNED) == 0 &&
@@ -1027,8 +1027,8 @@ static void WorldMap_BoardBunzasWagon(void) {
   Actor_SetPosition(ACTOR_HAMMET, PIXELS(5856), PIXELS(1180));
   Actor_SetDestinationOffset(ACTOR_HAMMET, 12, 24);
   Event_Wait(30);
-  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_HAMMET, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_HAMMET, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(60);
   Actor_SetAnimation(ACTOR_BUNZA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_HAMMET, ANIM_NOD);
@@ -1185,13 +1185,13 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_StartRepeatedMotion(ACTOR_CARAVAN_HAMMET, 2);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CARAVAN_HAMMET,
                                  0, 10);
-  Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_SOUTHEAST + FACING_STEP, 60);
+  Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_SOUTH_SOUTHEAST, 60);
   Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_WEST, 10);
   Actor_SetAttachedEffect(ACTOR_CARAVAN_HAMMET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
-  Actor_FaceDirection(ACTOR_CARAVAN_MAN, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_SOUTHEAST + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_CARAVAN_MAN, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_SOUTH_SOUTHEAST, 40);
   Actor_SetAttachedEffect(ACTOR_CARAVAN_HAMMET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
@@ -1221,8 +1221,8 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_ShowEmote(ACTOR_CARAVAN_MAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_CARAVAN_MAN, FACING_EAST, 40);
-  Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_CARAVAN_MAN, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_CARAVAN_MAN, FACING_NORTH_NORTHWEST, 0);
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(5608), -1, PIXELS(1736), 1);
   FieldCamera_WaitForMove();
@@ -1921,7 +1921,7 @@ static void WorldMap_RunBlackOrbEvent(void) {
       gWorldMapIodem | SPEAKER_PORTRAIT_LEFT | SPEAKER_PORTRAIT_RIGHT, 0, 40);
   Actor_WalkToAndWait(gWorldMapIodem, 5992, 3400);
   Actor_WalkToAndWait(gWorldMapIodem, 6036, 3400);
-  Actor_FaceDirection(gWorldMapIodem, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_FaceDirection(gWorldMapIodem, FACING_SOUTH_SOUTHEAST, 20);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetScript(ACTOR_PARTY_LEADER, gBlackOrbLeaderScript);
   Event_Wait(20);
@@ -1951,7 +1951,7 @@ static void WorldMap_RunBlackOrbEvent(void) {
   Actor_RunRepeatedMotion(gWorldMapIodem, 1);
   Event_SetMessageId(MsgWorldMapNowUseOnShip);
   Event_ShowMessageThenWait(gWorldMapIodem, 0, 10);
-  Actor_FaceDirection(gWorldMapIodem, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(gWorldMapIodem, FACING_SOUTH_SOUTHEAST, 0);
   WorldMap_Unfreeze();
   FieldEffect_ScheduleRatioTransition(Q16_ONE, 10);
   Event_Wait(20);
@@ -1987,7 +1987,7 @@ static void WorldMap_BlockGatewayCaveExit(s32 actorId) {
     if (gWorldMapActorPlacements[i].sprite == SPRITE_IODEM) {
       gWorldMapActorPlacements[i].x = PIXELS(6036);
       gWorldMapActorPlacements[i].z = PIXELS(3400);
-      gWorldMapActorPlacements[i].facing = FACING_SOUTHEAST + FACING_STEP;
+      gWorldMapActorPlacements[i].facing = FACING_SOUTH_SOUTHEAST;
       return;
     }
   }
@@ -2020,7 +2020,7 @@ static void WorldMap_TalkAboutBlackOrb(void) {
   Actor_FaceActor(ACTOR_IODEM, ACTOR_PARTY_LEADER, 0);
   Event_SetMessageId(MsgWorldMapNowUseOnShip);
   Event_ShowMessage(gWorldMapIodem, 0);
-  Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH_SOUTHEAST, 0);
   Event_End();
 }
 
@@ -2130,7 +2130,7 @@ static void WorldMap_UseBlackOrb(void) {
     orb->update = WorldMap_PulseOrbAndSpawnSparks;
     Event_Wait(80);
   }
-  Actor_Get(gWorldMapIodem)->facing = FACING_SOUTHEAST + FACING_STEP;
+  Actor_Get(gWorldMapIodem)->facing = FACING_SOUTH_SOUTHEAST;
   Actor_ShowEmote(gWorldMapIodem, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_RunRepeatedMotion(gWorldMapIodem, 2);
   message = MsgWorldMapMatter;
@@ -2144,13 +2144,13 @@ static void WorldMap_UseBlackOrb(void) {
   Actor_Jump(gWorldMapIodem, 6, 40);
   Event_ShowMessageThenWait(gWorldMapIodem, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(gWorldMapIodem, FACING_NORTH + FACING_STEP, 20);
+  Actor_FaceDirection(gWorldMapIodem, FACING_NORTH_NORTHEAST, 20);
   Event_ShowMessageThenWait(
       gWorldMapIodem | SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT, 0, 40);
   Actor_SetAnimationAndWait(gWorldMapIodem, ANIM_SHAKE_HEAD);
   Event_ShowMessageThenWait(
       gWorldMapIodem | SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT, 0, 20);
-  Actor_FaceDirection(gWorldMapIodem, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_FaceDirection(gWorldMapIodem, FACING_SOUTH_SOUTHEAST, 20);
   Event_ShowMessageThenWait(gWorldMapIodem, 0, 10);
   Actor_SetSpeed(gWorldMapIodem, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetAnimation(gWorldMapIodem, ANIM_WALK);
@@ -2160,7 +2160,7 @@ static void WorldMap_UseBlackOrb(void) {
   FieldActor_SetMoveTarget(iodem, PIXELS(6001), 0, PIXELS(3416));
   Actor_WaitForMove(iodem);
   Actor_SetAnimation(ACTOR_IODEM, ANIM_STAND);
-  Actor_FaceDirection(gWorldMapIodem, FACING_SOUTH + FACING_STEP, 10);
+  Actor_FaceDirection(gWorldMapIodem, FACING_SOUTH_SOUTHWEST, 10);
   Actor_RunRepeatedMotion(gWorldMapIodem, 1);
   Event_ShowMessageThenWait(gWorldMapIodem | SPEAKER_PORTRAIT_LEFT, 0, 20);
   Actor_SetSpeed(gWorldMapIodem, PIXELS(1), PIXELS(1) / 2);
@@ -2291,8 +2291,8 @@ static void WorldMap_ShowEndingEvent(void) {
   Actor_Jump(ACTOR_KRADEN, 4, 40);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_STAND);
   Actor_Jump(ACTOR_JENNA, 4, 60);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHWEST, 40);
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_SetSpeed(ACTOR_JENNA, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_SetScript(ACTOR_KRADEN, gEndingKradenWalk);
@@ -2319,7 +2319,7 @@ static void WorldMap_ShowEndingEvent(void) {
   WorldMap_LoadDefaultCellsAndUpdateBlock();
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(7768), -1, PIXELS(3528), 1);
-  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST, 0);
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_SetSpeed(ACTOR_JENNA, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkTo(ACTOR_KRADEN, 7804, 3512);
@@ -3080,7 +3080,7 @@ s32 gEndingAlexWalk[] = {
     SC_MOVE(PIXELS(7752), 0, PIXELS(3496)),
     SC_SYNC,
     SC_ANIMATION(ANIM_STAND),
-    SC_SET(SW_FACING, FACING_SOUTHEAST + FACING_STEP),
+    SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
     SC_WAIT(1),
     SC_END,
 };
@@ -3664,15 +3664,15 @@ struct ActorPlacement gWorldMapActorPlacementsFromKalayTunnelEntranceSouth[] = {
 
 struct ActorPlacement gWorldMapActorPlacementsJennaAndKradenAdrift[] = {
     { ACTOR_JENNA, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(7560), 0, PIXELS(3512), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(7560), 0, PIXELS(3512), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { ACTOR_SHEBA, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(7816), 0, PIXELS(3528), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_KRADEN, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(7544), 0, PIXELS(3496), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(7544), 0, PIXELS(3496), FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_ALEX, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(7708), 0, PIXELS(3456), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(7708), 0, PIXELS(3456), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_FELIX, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(7800), 0, PIXELS(3544), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+        PIXELS(7800), 0, PIXELS(3544), FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SHIPWRECK, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(7604), 0, PIXELS(3522), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },

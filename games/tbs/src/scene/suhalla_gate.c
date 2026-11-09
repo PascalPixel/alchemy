@@ -324,11 +324,11 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
   wait(1);
   Actor_SetSpeed(ACTOR_IODEM, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkToAndWait(ACTOR_IODEM, 108, 431);
-  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH_NORTHEAST, 10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH_NORTHEAST, 20);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 40);
-  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH_NORTHEAST, 40);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 20);
   Actor_StartRepeatedMotion(ACTOR_IODEM, 2);
   Event_SetMessageId(MsgSuhallaMeaning);
@@ -338,10 +338,10 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
   Actor_RunRepeatedMotion(ACTOR_WEST_GUARD, 2);
   Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
   Actor_WalkToAndWait(ACTOR_IODEM, 132, 420);
-  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Actor_WalkToAndWait(ACTOR_IODEM, 138, 416);
-  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTHWEST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH_NORTHWEST, 10);
   Actor_StartRepeatedMotion(ACTOR_IODEM, 2);
   Event_ShowMessageThenWait(ACTOR_IODEM, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_WEST_GUARD, 2);
@@ -358,13 +358,13 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_StartRepeatedMotion(ACTOR_EAST_GUARD, 3);
   Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 20);
-  Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH_SOUTHWEST, 20);
   // Iodem: "It must have been Felix!", and the party answers yes or no. Once he
   // has heard the wounded soldiers in Suhalla he adds that they must find
   // Sheba, then track down the monsters that did this.
   Event_AskYesNo(ACTOR_IODEM, 0);
   if (GameFlag_Get(FLAG_IODEM_MET_WOUNDED_SOLDIERS) != 0) {
-    Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH + FACING_STEP, 40);
+    Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH_NORTHEAST, 40);
     Actor_SetAttachedEffect(ACTOR_IODEM,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
@@ -372,13 +372,13 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
   } else {
     gFieldWork->message += 1;
   }
-  Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH_SOUTHWEST, 10);
   Event_ShowMessageThenWait(ACTOR_IODEM, 0, 40);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTHWEST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH_NORTHWEST, 10);
   Event_ShowMessageThenWait(ACTOR_IODEM, 0, 10);
   Actor_WalkToAndWait(ACTOR_IODEM, 138, 416);
-  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTHWEST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH_NORTHWEST, 20);
   Actor_StartRepeatedMotion(ACTOR_WEST_GUARD, 2);
   Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
   Actor_SetAttachedEffect(ACTOR_IODEM,
@@ -397,7 +397,7 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
   Actor_RunRepeatedMotion(ACTOR_IODEM, 1);
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_IODEM, 0, 20);
-  Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH_SOUTHWEST, 10);
   Event_ShowMessageThenWait(ACTOR_IODEM, 0, 10);
   Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -612,15 +612,15 @@ struct ActorPlacement gSuhallaGateActorPlacementsOther[] = {
 // clang-format off
 struct ActorPlacement gSuhallaGateDewActorPlacements[] = {
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(264), 0, PIXELS(400), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(264), 0, PIXELS(400), FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(280), 0, PIXELS(368), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(280), 0, PIXELS(368), FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(472), 0, PIXELS(912), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(472), 0, PIXELS(912), FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(536), 0, PIXELS(912), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(536), 0, PIXELS(912), FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(552), 0, PIXELS(880), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(552), 0, PIXELS(880), FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0 },
     { SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_DEW), MOVEMENT_TYPE_STAND,
         PIXELS(264), 0, PIXELS(888), FACING_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },

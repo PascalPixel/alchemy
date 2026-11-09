@@ -706,7 +706,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Event_Wait(35);
   Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
   Event_Wait(30);
-  Actor_FaceDirection(ACTOR_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FARAN, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(40);
   Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
@@ -779,7 +779,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   FieldCamera_WaitForMove();
   Event_Wait(10);
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
@@ -793,12 +793,10 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
                   0);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_WITNESS, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_NORTHWEST + FACING_STEP,
-                      0);
-  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_NORTHWEST + FACING_STEP,
-                      0);
+  Actor_FaceDirection(ACTOR_FARAN, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_WITNESS, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
   Event_Wait(20);
@@ -869,12 +867,10 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_WITNESS, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_NORTHWEST + FACING_STEP,
-                      0);
-  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_NORTHWEST + FACING_STEP,
-                      0);
+  Actor_FaceDirection(ACTOR_FARAN, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_WITNESS, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
@@ -907,7 +903,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 0);
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
@@ -924,7 +920,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Actor_FaceDirection(ACTOR_WITNESS, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_WEST, 0);
-  Actor_FaceDirection(ACTOR_IVAN, FACING_EAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_EAST_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(30);
@@ -962,7 +958,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Event_Wait(20);
   Event_OpenMessage(ACTOR_FARAN, 0);
   Event_Wait(40);
-  Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
@@ -999,7 +995,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Event_Wait(30);
   Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
-  Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(25);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
@@ -1026,13 +1022,11 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   BabiLighthouse_WalkBackToLeader(ACTOR_MIA);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_WITNESS, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_NORTHWEST + FACING_STEP,
-                      0);
-  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_NORTHWEST + FACING_STEP,
-                      0);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_FARAN, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_WITNESS, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(30);
   Event_End();
 }
@@ -1464,13 +1458,11 @@ s32 BabiLighthouse_SetupMap(void) {
       Event_Wait(5);
     } else if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN) != 0) {
       Actor_SetPosition(ACTOR_IODEM, PIXELS(312), PIXELS(312));
-      Actor_FaceDirection(ACTOR_IODEM, FACING_NORTHWEST + FACING_STEP, 0);
-      Actor_FaceDirection(ACTOR_WITNESS, FACING_NORTHWEST + FACING_STEP, 0);
-      Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR,
-                          FACING_NORTHWEST + FACING_STEP, 0);
-      Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA,
-                          FACING_NORTHWEST + FACING_STEP, 0);
-      Actor_FaceDirection(ACTOR_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
+      Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH_NORTHWEST, 0);
+      Actor_FaceDirection(ACTOR_WITNESS, FACING_NORTH_NORTHWEST, 0);
+      Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_NORTH_NORTHWEST, 0);
+      Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_NORTH_NORTHWEST, 0);
+      Actor_FaceDirection(ACTOR_FARAN, FACING_NORTH_NORTHWEST, 0);
       Event_Wait(5);
     }
     if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) != 0) {

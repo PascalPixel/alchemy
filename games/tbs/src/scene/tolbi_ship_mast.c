@@ -201,11 +201,11 @@ static s32 TolbiShipMast_RandomizeLookoutFacing(struct Actor *interpreter) {
   u32 sample = (u32)(Import_RandomNext() << 6) >> 16;
 
   if (sample == 6) {
-    s32 value = FACING_NORTH + FACING_STEP;
+    s32 value = FACING_NORTH_NORTHEAST;
 
     actor->facing = value;
   } else if (sample == 9) {
-    s32 value = FACING_NORTHWEST + FACING_STEP;
+    s32 value = FACING_NORTH_NORTHWEST;
 
     actor->facing = value;
   }
@@ -447,10 +447,10 @@ static void TolbiShipMast_AnnounceClearCourse(void) {
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_LOOKOUT, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_LOOKOUT, 164, 321);
-  Actor_FaceDirection(ACTOR_LOOKOUT, FACING_NORTH + FACING_STEP, 40);
-  Actor_FaceDirection(ACTOR_LOOKOUT, FACING_NORTHWEST + FACING_STEP, 40);
-  Actor_FaceDirection(ACTOR_LOOKOUT, FACING_NORTH + FACING_STEP, 40);
-  Actor_FaceDirection(ACTOR_LOOKOUT, FACING_SOUTHEAST + FACING_STEP, 10);
+  Actor_FaceDirection(ACTOR_LOOKOUT, FACING_NORTH_NORTHEAST, 40);
+  Actor_FaceDirection(ACTOR_LOOKOUT, FACING_NORTH_NORTHWEST, 40);
+  Actor_FaceDirection(ACTOR_LOOKOUT, FACING_NORTH_NORTHEAST, 40);
+  Actor_FaceDirection(ACTOR_LOOKOUT, FACING_SOUTH_SOUTHEAST, 10);
   Actor_WalkToAndWait(ACTOR_LOOKOUT, 164, 334);
   Actor_Jump(ACTOR_LOOKOUT, 4, 40);
   Actor_StartRepeatedMotion(ACTOR_LOOKOUT, 2);
@@ -500,7 +500,7 @@ static void TolbiShipMast_RunAvastEvent(void) {
   Actor_Stop(ACTOR_LOOKOUT);
   wait(1);
   Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_FaceDirection(ACTOR_LOOKOUT, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_LOOKOUT, FACING_NORTH_NORTHWEST, 0);
   Event_SetMessageId(MsgTolbiShipAvast);
   Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
   // The three monsters appear where the sparkle turned.
@@ -758,7 +758,7 @@ static void TolbiShipMast_RunMonsterLanding(void) {
   Actor_Stop(ACTOR_LOOKOUT);
   wait(1);
   Actor_RunRepeatedMotion(ACTOR_LOOKOUT, 1);
-  Actor_FaceDirection(ACTOR_LOOKOUT, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_LOOKOUT, FACING_SOUTH_SOUTHEAST, 0);
   Sound_Play(MUS_CONFRONTATION);
   GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   // ACTOR_LANDING_MONSTER_SHADOW grows for 32 frames before
@@ -803,7 +803,7 @@ static void TolbiShipMast_RunMonsterLanding(void) {
   actor = Actor_Get(ACTOR_LOOKOUT);
   actor->scaleX = Q16_ONE;
   actor->scaleY = Q16_ONE;
-  actor->facing = FACING_SOUTH + FACING_STEP;
+  actor->facing = FACING_SOUTH_SOUTHWEST;
   Event_Wait(40);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
@@ -1058,7 +1058,7 @@ u32 gTolbiShipMast_Exits[] = {
 
 struct ActorPlacement gTolbiShipMast_ActorPlacements[] = {
     { SPRITE_MAN_IN_BLUE_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        0, 0, 0, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 

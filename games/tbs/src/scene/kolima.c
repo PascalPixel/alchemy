@@ -433,7 +433,7 @@ static void Kolima_LowerBridge(void) {
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_BRIDGE_VILLAGER, ANIM_NOD);
   Event_ShowMessage(ACTOR_BRIDGE_VILLAGER, 0);
-  Actor_FaceDirection(ACTOR_BRIDGE_VILLAGER, FACING_WEST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_BRIDGE_VILLAGER, FACING_WEST_NORTHWEST, 20);
   Actor_RunRepeatedMotion(ACTOR_BRIDGE_VILLAGER, 1);
   Event_Wait(20);
   Actor_Get(ACTOR_BRIDGE_VILLAGER)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -1910,7 +1910,7 @@ struct ActorPlacement gKolima_EntryScript[] = {
 /// Kolima_RestoreBridgeState puts one of them out of sight.
 struct ActorPlacement gKolimaBridgeActorPlacements[] = {
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(234), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, 3, 0 },
+        PIXELS(234), 0, PIXELS(200), FACING_SOUTH_SOUTHWEST, 3, 0 },
     { SPRITE_TREE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(234), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },

@@ -578,7 +578,7 @@ static void Bilibin_JillGivesHardNut(void) {
   FieldCamera_WaitForMove();
   eastMember = Actor_Get(ACTOR_GANG_MEMBER_EAST);
   if (eastMember->x.fixed > leader->x.fixed) {
-    Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_SOUTH + FACING_STEP, 20);
+    Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_SOUTH_SOUTHWEST, 20);
     Actor_ShowEmote(ACTOR_GANG_MEMBER_WEST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     20);
     Event_SetMessageId(MsgBilibinYoureGuy);
@@ -586,8 +586,7 @@ static void Bilibin_JillGivesHardNut(void) {
     Actor_ShowEmote(ACTOR_GANG_MEMBER_EAST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     0);
   } else {
-    Actor_FaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_SOUTHEAST + FACING_STEP,
-                        20);
+    Actor_FaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_SOUTH_SOUTHEAST, 20);
     Actor_ShowEmote(ACTOR_GANG_MEMBER_EAST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     20);
     Event_SetMessageId(MsgBilibinYoureGuy);
@@ -596,25 +595,23 @@ static void Bilibin_JillGivesHardNut(void) {
                     0);
   }
   Actor_ShowEmote(ACTOR_JILL, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_FaceDirection(ACTOR_JILL, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_SOUTHEAST + FACING_STEP,
-                      0);
+  Actor_FaceDirection(ACTOR_JILL, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_SOUTH_SOUTHEAST, 0);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 268, 184);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
   Actor_RunRepeatedMotion(ACTOR_GANG_MEMBER_WEST, 2);
   Event_ShowMessageThenWait(ACTOR_GANG_MEMBER_WEST, 0, 10);
   Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_EAST, 0);
-  Actor_FaceDirection(ACTOR_JILL, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_JILL, FACING_SOUTH_SOUTHEAST, 20);
   Actor_FaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_WEST, 20);
   Actor_SetAnimationAndWait(ACTOR_GANG_MEMBER_EAST, ANIM_NOD);
   Actor_SetAttachedEffect(ACTOR_JILL,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
-  Actor_FaceDirection(ACTOR_JILL, FACING_SOUTHEAST + FACING_STEP, 10);
-  Actor_FaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_SOUTHEAST + FACING_STEP,
-                      10);
+  Actor_FaceDirection(ACTOR_JILL, FACING_SOUTH_SOUTHEAST, 10);
+  Actor_FaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_SOUTH_SOUTHEAST, 10);
   Actor_RunRepeatedMotion(ACTOR_JILL, 1);
   Event_ShowMessageThenWait(ACTOR_JILL, 0, 10);
   Actor_SetAnimation(ACTOR_GANG_MEMBER_EAST, ANIM_NOD);
@@ -694,9 +691,9 @@ static void Bilibin_RestoreVillageActors(void) {
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Actor_SetPosition(ACTOR_TREE_MAN, 0, 0);
     Actor_FaceDirection(ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST,
-                        FACING_SOUTHEAST + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_OLD_WOMAN_ROAD_BLOCKED,
-                        FACING_SOUTH + FACING_STEP, 0);
+                        FACING_SOUTH_SOUTHEAST, 0);
+    Actor_FaceDirection(ACTOR_OLD_WOMAN_ROAD_BLOCKED, FACING_SOUTH_SOUTHWEST,
+                        0);
   } else {
     actor = Actor_Get(ACTOR_TREE_MAN);
     Actor_SetSpriteFlags(actor, 0);
@@ -795,16 +792,12 @@ static void Bilibin_RestoreRiverActors(void) {
     if (GameFlag_Get(FLAG_BILIBIN_JILL_GIFT_RECEIVED) == 0) {
       if (GameFlag_Get(FLAG_BILIBIN_JILL_RESCUED) == 0) {
         Actor_SetPosition(ACTOR_JILL, 0, 0);
-        Actor_FaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_NORTH + FACING_STEP,
-                            0);
-        Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST,
-                            FACING_NORTHWEST + FACING_STEP, 0);
+        Actor_FaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_NORTH_NORTHEAST, 0);
+        Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_NORTH_NORTHWEST, 0);
       }
     } else {
-      Actor_FaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_NORTH + FACING_STEP,
-                          0);
-      Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST,
-                          FACING_NORTHWEST + FACING_STEP, 0);
+      Actor_FaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_NORTH_NORTHEAST, 0);
+      Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_NORTH_NORTHWEST, 0);
     }
   } else {
     Actor_SetPosition(ACTOR_GANG_MEMBER_EAST, 0, 0);
@@ -1145,17 +1138,17 @@ struct ActorPlacement gBilibinBarricadeActorPlacements[] = {
     { SPRITE_CRATES, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(136), 0, PIXELS(300), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_TREE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(272), 0, PIXELS(154), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(272), 0, PIXELS(154), FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_TREE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(272), 0, PIXELS(154), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(272), 0, PIXELS(154), FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_TREE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(272), 0, PIXELS(154), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
+        PIXELS(272), 0, PIXELS(154), FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(282), 0, PIXELS(170), FACING_WEST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(282), 0, PIXELS(170), FACING_WEST_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(246), 0, PIXELS(170), FACING_SOUTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(246), 0, PIXELS(170), FACING_WEST_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(262), 0, PIXELS(156), FACING_WEST + FACING_STEP, TALK_FACING_PARTY, 0 },
+        PIXELS(262), 0, PIXELS(156), FACING_WEST_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_BLANK_32, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,

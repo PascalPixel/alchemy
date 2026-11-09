@@ -8,6 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "field_event.h"
+#include "event.h"
 
 void DriftScene_SpawnObject(s32 x, s32 y, s32 z, s16 value) {
   struct FieldActor *object;
@@ -16,7 +17,7 @@ void DriftScene_SpawnObject(s32 x, s32 y, s32 z, s16 value) {
   object = Import_ActorCreate(0x1e8, x, y, z);
   if (object != 0) {
     sprite = object->sprite;
-    Import_SoundPlay(0x97);
+    Sound_Play(0x97);
     Import_ActorSetMode(object, 1);
     Import_ActorSetScript(object, gDriftScene_SpawnScript);
     object->motionFlags = 0;

@@ -10,13 +10,13 @@ GameFlag_Test:
 	.thumb_func
 GameFlag_SetBit:
 	overlay_veneer GameFlag_SetBitFar
-	.global Func_020002a8
+	.global Map_CopyCellAttributeRect
 	.thumb_func
-Func_020002a8:
+Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global FieldEvent_Wait
+	.global Event_Wait
 	.thumb_func
-FieldEvent_Wait:
+Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
 	.global Func_020002b8
 	.thumb_func
@@ -54,29 +54,29 @@ Motion_SetModeAndWaitAnimation:
 	.thumb_func
 Motion_SetVarCbAndRefresh:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
-	.global Func_02000300
+	.global Event_SetMessageId
 	.thumb_func
-Func_02000300:
+Event_SetMessageId:
 	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
 	overlay_veneer FieldMessage_ShowAtActorFar
-	.global Func_02000310
+	.global Event_ShowMessageThenWait
 	.thumb_func
-Func_02000310:
+Event_ShowMessageThenWait:
 	overlay_veneer Func_080c8198
-	.global Func_02000318
+	.global Event_ShowMessageAndWait
 	.thumb_func
-Func_02000318:
+Event_ShowMessageAndWait:
 	overlay_veneer Event_ShowMessageAndWaitFar
 	.global Actor_ArmCallback
 	.thumb_func
 Actor_ArmCallback:
 	overlay_veneer Actor_ArmCallbackFar
-	.global Func_02000328
+	.global Camera_SetSpeedParameters
 	.thumb_func
-Func_02000328:
+Camera_SetSpeedParameters:
 	overlay_veneer Camera_SetSpeedParametersFar
 	.global Camera_MoveWithinMapBounds
 	.thumb_func
@@ -86,7 +86,7 @@ Camera_MoveWithinMapBounds:
 	.thumb_func
 Func_02000338:
 	overlay_veneer Func_080c8240
-	.global Func_02000340
+	.global Event_ResolvePendingActions
 	.thumb_func
-Func_02000340:
+Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar

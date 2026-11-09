@@ -7,6 +7,7 @@
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 #include "field_sprite.h"
+#include "event_inline.h"
 
 struct GabombaStatueChamberObject {
   u8 unk00[6];
@@ -61,95 +62,23 @@ struct GabombaStatueChamberEventWork {
 extern s32 gFrameCount;
 
 u32 Random16Far(void);
-void wait(s32 frames);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void FieldEvent_Wait(s32 frames);
-struct GabombaStatueChamberObject *Actor_GetById(s32 id);
-void Actor_SetPositionAndResetMotion(struct GabombaStatueChamberObject *object,
-                                      s32 x, s32 y, s32 z);
-void Actor_SetPartAttribute(struct GabombaStatueChamberObject *object,
-                             s32 value);
-void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
-void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
-void Actor_SetSpritePriority(s32 actor, s32 variant);
 
-void Func_02001d58(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02001d68(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02001da0(void);
 void Func_02001da8(void);
-void Func_02001e48(s32 message);
-void Func_02001e58(s32 actor, s32 a, s32 b);
-void Func_02001e60(s32 speaker, s32 flags);
-void Func_02001e70(s32 actor, s32 angle);
 void Func_02001e80(s32 actor);
-void Func_02001ee8(s32 skip);
-void Func_02001f10(s32 cue);
-void Func_02001e10(s32 actor, s32 x, s32 z);
-struct GabombaStatueChamberObject *Func_02001d28(s32 type, s32 x, s32 y, s32 z);
 void Func_02001d30(struct GabombaStatueChamberObject *object);
 void Actor_SetSingleChildFlags(
     struct GabombaStatueChamberObject *object, u32 value);
 void Animation_SetStateFlags(struct GabombaStatueChamberObject *object,
                              s32 flags);
-void Actor_SetModeById(s32 actor, s32 mode);
-void Task_Add(void (*func)(void), s32 priority);
-void Task_RemoveFar(void (*func)(void));
 void Field_DispatchTypeHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02001ea8(void);
-void Func_02001eb0(s32 countdown);
 
-void Func_02001d48(struct GabombaStatueChamberObject *object, s32 x, s32 y,
-                   s32 z);
-void Func_02001d50(struct GabombaStatueChamberObject *object);
 void Event_StartScreenTransition(void);
 
-static inline void GabombaStatueChamber_ObjTurn(s32 actor, s32 angle) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001e70(actor, angle);
-}
-
-static inline void GabombaStatueChamber_BlendStart(s32 a, s32 b, s32 c, s32 d,
-                                                   s32 e, s32 f) {
-  /* FAKEMATCH: the blend start reaches the main image through one inline layer. */
-  Func_02001d68(a, b, c, d, e, f);
-}
-
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Func_02001e98(s32 speed, s32 acceleration);
-void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void Func_02001e20(s32 actor, s32 target);
-void Actor_SetMovementTypeById(s32 actor, const void *callback);
-void Actor_SetMovementTypeAndWaitById(s32 actor, const void *callback);
-s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
-s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
-void Func_02001e88(s32 actor, s32 emote, s32 frames);
-void Func_02001e90(s32 actor, s32 emote);
-void Actor_Jump(s32 actor, s32 speed, s32 frames);
-void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
-void Actor_WaitForMoveById(s32 actor);
-void Event_PrepareObjectAndApplyValue(s32 actor, s32 value);
-
-static inline void GabombaStatueChamber_ObjPosSet(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001e10(actor, x, z);
-}
-
-static inline void GabombaStatueChamber_MapCopy(s32 a, s32 b, s32 c, s32 d,
-                                                s32 e, s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001d58(a, b, c, d, e, f);
-}
-
-static inline void GabombaStatueChamber_ObjEmoteWait(s32 actor, s32 emote) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001e90(actor, emote);
-}
 
 // ---- this overlay
 

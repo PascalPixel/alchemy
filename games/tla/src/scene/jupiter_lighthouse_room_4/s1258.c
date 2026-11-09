@@ -3,31 +3,30 @@
 #include "field_sprite.h"
 #include "field_effect.h"
 #include "fixed_math.h"
+#include "event_inline.h"
 
 extern const s32 *gData_0200270c[];
 
-extern struct FieldEffect *Actor_GetById(s32 id);
-extern struct FieldActor *Func_02001dc0(s32 type, s32 x, s32 y, s32 z);
 extern void Func_02001da8(struct FieldEffect *effect, s32 mode);
 extern void Func_02001db8(struct FieldEffect *effect, const s32 *script);
 extern void Actor_SetSingleChildFlags(struct FieldEffect *effect, u32 flags);
 extern void Scene_SetActorSpritePriority(struct FieldEffect *effect,
                                          s32 priority);
-extern void Actor_SetPartAttribute(struct FieldEffect *effect, s32 attribute);
 
 void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {
-  struct FieldEffect *party = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct FieldEffect *party =
+      ((struct FieldEffect *)Actor_GetById(gMainRoutineWork.currentOwner));
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
   u32 start;
 
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-    effect = (struct FieldEffect *)Func_02001dc0(options->type, x, y, z);
+    effect = (struct FieldEffect *)Import_ActorCreate(options->type, x, y, z);
   else
-    effect = (struct FieldEffect *)Func_02001dc0(285, x, y, z);
+    effect = (struct FieldEffect *)Import_ActorCreate(285, x, y, z);
   if (effect == 0)
     return;
 

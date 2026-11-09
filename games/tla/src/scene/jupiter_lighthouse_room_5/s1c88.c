@@ -2,16 +2,14 @@
 #include "field_effect.h"
 #include "field_sprite.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 extern const s32 *gData_020033f4[];
 
-struct FieldActor *Actor_GetById(s32 id);
-struct FieldEffect *Func_02002828(s32 type, s32 x, s32 y, s32 z);
 void Func_02002810(struct FieldEffect *effect, s32 mode);
 void Func_02002820(struct FieldEffect *effect, const s32 *script);
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Scene_SetActorSpritePriority(struct FieldEffect *effect, s32 priority);
-void Actor_SetPartAttribute(struct FieldEffect *effect, s32 value);
 
 enum {
   EFFECT_DEFAULT_TYPE = 285,
@@ -23,7 +21,8 @@ enum {
 void Func_02001c88(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {
-  struct FieldActor *party = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct FieldActor *party =
+      ((struct FieldActor *)Actor_GetById(gMainRoutineWork.currentOwner));
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
@@ -31,9 +30,10 @@ void Func_02001c88(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   s32 count;
 
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-    effect = Func_02002828(options->type, x, y, z);
+    effect = ((struct FieldEffect *)Import_ActorCreate(options->type, x, y, z));
   else
-    effect = Func_02002828(EFFECT_DEFAULT_TYPE, x, y, z);
+    effect = ((struct FieldEffect *)Import_ActorCreate(EFFECT_DEFAULT_TYPE, x,
+                                                       y, z));
   if (effect == 0)
     return;
 

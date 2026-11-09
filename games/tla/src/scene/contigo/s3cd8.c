@@ -2,9 +2,9 @@
 /// The sparkle's update: raises two pairs of sprites over the object, each pair
 /// starting when its counter is cleared, until both counters pass 31.
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "system/vector3.h"
+#include "event_inline.h"
 
 struct SparkleSprite {
   u8 unk00[12];
@@ -32,11 +32,9 @@ struct CounterBits {
 
 void Animation_ApplyChildValues(struct Actor *, u32);
 s32 Resource_ResetEntry(u32 entry);
-s32 Math_Sine(s32);
 void Func_0200421c(struct Vector3 *v);
 void Func_0200424c(struct SparkleSprite *sprite);
 s32 Func_0200425c(struct Actor *object);
-void Func_020042b4(s32 sound);
 
 void Func_02003cd8(struct Actor *object) {
   struct Vector3 position;
@@ -51,7 +49,7 @@ void Func_02003cd8(struct Actor *object) {
         object, (u8)((u32)((struct CounterBits *)count)->rest % 6));
   if (((u8 *)object)[98] == 0) {
     if ((*count & 15) == 0) {
-      Func_020042b4(0x256);
+      Sound_Play(0x256);
       work->unka0[work->unka6] = 0;
       work->unka6 ^= 1;
     }

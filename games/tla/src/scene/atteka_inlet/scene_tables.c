@@ -8,12 +8,10 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
-
-void Func_02001110(s32 a, s32 b, s32 c);
-void GameFlag_ClearBit(s32 flag);
+#include "event_inline.h"
 
 void Func_02000038(void) {
-  Func_02001110(14, 0, 15);
+  Func_080d7788(14, 0, 15);
   GameFlag_ClearBit(0x300);
 }
 

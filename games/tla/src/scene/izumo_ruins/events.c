@@ -5,9 +5,9 @@
 #include "event_work.h"
 #include "call.h"
 #include "text/msg_ids.h"
+#include "event_inline.h"
 
 void Func_02000eac();
-struct Actor *Actor_GetById();
 
 void Func_02001184(void) {
   struct Actor *object0;

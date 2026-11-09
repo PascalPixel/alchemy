@@ -14,9 +14,9 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global FieldEvent_Wait
+	.global Event_Wait
 	.thumb_func
-FieldEvent_Wait:
+Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
 	.global Func_020005c4
 	.thumb_func
@@ -34,9 +34,9 @@ Event_AskYesNoWithActorAnimation:
 	.thumb_func
 Actor_GetById:
 	overlay_veneer Actor_GetByIdFar
-	.global Func_020005e4
+	.global Actor_SetHorizontalPositionWithTerrain
 	.thumb_func
-Func_020005e4:
+Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -50,33 +50,33 @@ Actor_SetAngleToward:
 	.thumb_func
 Actor_SetPartAttribute:
 	overlay_veneer Actor_SetPartAttributeFar
-	.global Func_02000604
+	.global Event_SetMessageId
 	.thumb_func
-Func_02000604:
+Event_SetMessageId:
 	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
 	overlay_veneer FieldMessage_ShowAtActorFar
-	.global Func_02000614
+	.global Event_ShowMessageAndWait
 	.thumb_func
-Func_02000614:
+Event_ShowMessageAndWait:
 	overlay_veneer Event_ShowMessageAndWaitFar
 	.global Actor_SetSpritePriority
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_02000624
+	.global Func_080d47b4
 	.thumb_func
-Func_02000624:
+Func_080d47b4:
 	overlay_veneer Func_080c8210
-	.global Func_0200062c
+	.global Event_ResolvePendingActions
 	.thumb_func
-Func_0200062c:
+Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02000634
+	.global Party_GetLeaderActor
 	.thumb_func
-Func_02000634:
+Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
 	.global Func_0200063c
 	.thumb_func

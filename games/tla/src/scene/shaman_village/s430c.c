@@ -3,7 +3,8 @@
 void Func_020042c8(struct ShamanVillageObject *object);
 
 void Func_0200430c(s32 x, s32 y, s32 z) {
-  struct ShamanVillageObject *object = Import_ActorCreate(285, x, y, z);
+  struct ShamanVillageObject *object =
+      ((struct ShamanVillageObject *)Import_ActorCreate(285, x, y, z));
 
   if (object != NULL) {
     object->field5c = 2;

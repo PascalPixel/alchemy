@@ -3,12 +3,10 @@
 #include "main_routine_work.h"
 #include "heap_release.h"
 #include "resource.h"
+#include "event_inline.h"
 
 extern u8 gSceneState[];
 extern const u8 gField_CachedTilesA[];
-struct Actor *Actor_GetById(s32 id);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
 void Func_020055cc(const u8 *data, void *buffer);
 
 void Func_02003868(void) {

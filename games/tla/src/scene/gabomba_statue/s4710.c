@@ -2,6 +2,7 @@
 #include "actor.h"
 #include "ram_buffer.h"
 #include "graphics/vram_tab.h"
+#include "event_inline.h"
 
 struct Effect {
   u32 x : 16;
@@ -39,7 +40,6 @@ struct SceneState {
 };
 
 extern struct SceneState gSceneState;
-struct Actor *Actor_GetById(u32 id);
 s32 AffineMatrix_BuildForEffect(struct Effect *effect);
 void Func_020055ec(struct Sprite *oam, s32 depth);
 

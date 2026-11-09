@@ -1,8 +1,9 @@
 #include "local.h"
+#include "event_inline.h"
 
 void Func_02000400(void) {
   Func_0200054c();
-  Func_020005c4(0);
+  Event_ResolvePendingActions(0);
   GameFlag_SetBit(0x201);
   Func_02000554();
 }
@@ -16,13 +17,13 @@ void Func_0200041c(void) {
 }
 
 void Func_02000448(void) {
-  Func_02000574(27, 0, 0);
-  Func_020005bc_(65, 0x680000, 0x680000);
+  Actor_SetHorizontalPositionWithTerrain(27, 0, 0);
+  TreasureSpot_SetPosition(65, 0x680000, 0x680000);
 }
 
 void Func_02000464(void) {
-  Func_020005bc(65, 0, 0);
-  Func_02000574_(27, PIXELS(104), PIXELS(104));
+  ObjectEvent_PlaceOnGround(65, 0, 0);
+  Actor_SetPosition(27, PIXELS(104), PIXELS(104));
 }
 
 s32 Func_02000480(void) {
@@ -35,7 +36,7 @@ s32 Func_02000480(void) {
   Actor_GetById(27)->scaleY = 0x8000;
   Func_02000464();
   if (GameFlag_Test(0x201))
-    Func_02000574(23, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
   Func_020005cc();
   Func_020005d4(0, 0x202, 24, 25);
   Actor_SetSingleChildFlags(Actor_GetById(24), 0);

@@ -1,6 +1,6 @@
 #include "types.h"
-#include "call.h"
 #include "system/io_reg.h"
+#include "event_inline.h"
 
 /// The 14 colours of BG palette 3 (entries 1 to 14) that the fade returns to,
 /// copied from palette RAM by Func_02001cdc and rotated by Func_02001650 in
@@ -12,12 +12,7 @@ struct SavedColors {
 void Func_02000c50(void);
 extern u32 gData_020022cc;
 extern struct SavedColors gData_020026c0;
-void Task_RemoveFar(void (*func)(void));
 void Func_02001fac();
-void Func_02002044();
-void Func_02002054();
-void wait();
-void GameFlag_ClearBit();
 s32 Func_02001fb4();
 
 s32 Func_02000da0(void) {
@@ -29,8 +24,8 @@ s32 Func_02000da0(void) {
 
   Task_RemoveFar(Func_02000c50);
   Func_02001fac();
-  Func_02002044(0);
-  Func_02002054(0x22c);
+  Event_ResolvePendingActions(0);
+  Sound_Play(0x22c);
   gData_020022cc = 1;
   // Each of the 14 colours steps one unit per channel toward its saved colour
   // every 10 frames, until none changes.

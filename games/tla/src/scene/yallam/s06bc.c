@@ -1,4 +1,5 @@
 #include "types.h"
+#include "event_inline.h"
 
 // The layout Func_02001904 (yallam/s1904.c) reads: state and timer sit where
 // struct Actor has its callback and action.
@@ -13,29 +14,14 @@ struct YallamActor {
   s16 timer;
 };
 
-struct YallamActor *Actor_GetById(s32 id);
-void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
-void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Func_02002448(struct YallamActor *object, s32 mode);
-void Func_02002450(struct YallamActor *object, s32 x, s32 y, s32 z);
 s32 Func_020006a4(struct YallamActor *object);
-
-static __inline__ void Actor_SetDestination(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): forwarded inline, so the id moves before the constants;
-   * as a direct call, 320 of 1163 instructions differ in tla-en. */
-  Actor_ResetAndSetPosition(actor, x, z);
-}
-
-static __inline__ void Actor_SetSpeed(s32 actor, s32 speed, s32 acceleration) {
-  /* FAKEMATCH(wrapper): forwarded inline, as Actor_SetDestination; as a direct
-   * call, 214 of 1163 instructions differ in tla-en. */
-  Actor_SetSpeedParameters(actor, speed, acceleration);
-}
 
 void Func_020006bc(s32 actor) {
   /* FAKEMATCH(pin): the object in r5, as the native keeps it; as a plain local,
    * 372 of 1163 instructions differ in tla-en. */
-  register struct YallamActor *object asm("r5") = Actor_GetById(actor);
+  register struct YallamActor *object asm("r5") =
+      ((struct YallamActor *)Actor_GetById(actor));
   u8 *state = &object->state;
   u8 s = *state;
   s16 *timer;
@@ -52,7 +38,7 @@ void Func_020006bc(s32 actor) {
   case 3:
     Func_02002448(object, 1);
   case 2:
-    Func_02002450(object, object->x, object->y, object->z);
+    Actor_SetMoveTarget(object, object->x, object->y, object->z);
     *timer &= ~1;
     *state = 1;
     return;

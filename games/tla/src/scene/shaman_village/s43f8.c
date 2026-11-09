@@ -2,12 +2,12 @@
 #include "input.h"
 #include "io_reg.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 void Func_020048ac(s32 mode);
 void Func_02002878(void);
 void Func_020043c8(void);
 void Func_02004394(void);
-void Actor_SetPositionAndCommit(s32 actor, s32 x, s32 z);
 
 struct IoReg16 {
   u16 value;
@@ -16,23 +16,23 @@ struct IoReg16 {
 void Func_020043f8(void) {
   if (!GameFlag_Test(0x109)) {
     if (GameFlag_Test(0x9fe)) {
-      ShamanVillage_ObjPlace(16, PIXELS(104), PIXELS(200));
-      ShamanVillage_ObjPlace(17, PIXELS(136), PIXELS(200));
+      Actor_SetPosition(16, PIXELS(104), PIXELS(200));
+      Actor_SetPosition(17, PIXELS(136), PIXELS(200));
     } else if (GameFlag_Test(0x94f) && !GameFlag_Test(0x9e1)) {
-      ShamanVillage_ObjPlace(15, PIXELS(120), PIXELS(208));
-      ShamanVillage_ObjPlace(16, PIXELS(104), PIXELS(212));
-      Func_02004934(17, PIXELS(136), PIXELS(212));
+      Actor_SetPosition(15, PIXELS(120), PIXELS(208));
+      Actor_SetPosition(16, PIXELS(104), PIXELS(212));
+      Actor_SetHorizontalPositionWithTerrain(17, PIXELS(136), PIXELS(212));
       wait(1);
     }
   }
   if (GameFlag_Test(0x202))
-    ShamanVillage_MapCopy(43, 40, 7, 6, 1, 2);
+    MapGrid_CopyCellsTo(43, 40, 7, 6, 1, 2);
   if (GameFlag_Test(0x94d)) {
     s32 width = 1;
     s32 height = 2;
 
-    Func_02004844(48, 40, 77, 21, width, height);
-    Func_02004844(48, 40, 81, 25, width, height);
+    Map_CopyCellPictureIndicesRect(48, 40, 77, 21, width, height);
+    Map_CopyCellPictureIndicesRect(48, 40, 81, 25, width, height);
   }
   Func_02004a44();
   Func_02004a4c(0, 0x204, 19, 20);
@@ -68,32 +68,32 @@ void Func_02004534(void) {
 
   ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->screenEffect =
       521;
-  Actor_GetById(12)->collisionFlags = 8;
+  ((struct ShamanVillageObject *)Actor_GetById(12))->collisionFlags = 8;
   if (GameFlag_Test(0x9fe)) {
     /* FAKEMATCH: the local starts the facing before the other arguments, as the
      * native has; as a plain argument it is started third (one reordered row).
      */
     s32 angle = 0x3000;
 
-    ShamanVillage_ObjPut(8, PIXELS(88), PIXELS(92), angle);
-    ShamanVillage_ObjPlace(11, PIXELS(156), PIXELS(72));
+    Actor_SetPositionAndFacing(8, PIXELS(88), PIXELS(92), angle);
+    Actor_SetPosition(11, PIXELS(156), PIXELS(72));
   } else {
-    Func_02004934(17, 0, 0);
-    Func_02004934(18, 0, 0);
-    Func_02004934(19, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
   }
   if ((gMainRoutineWork.entrance == 30 || gMainRoutineWork.entrance == 31) &&
       !GameFlag_Test(0x109)) {
     Func_020048ac(1);
     Func_020048c4();
-    Func_02004a24(0);
+    Event_ResolvePendingActions(0);
     Actor_SetModeById(gMainRoutineWork.currentOwner, 41);
-    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+    Actor_SetSingleChildFlags(((struct ShamanVillageObject *)Actor_GetById(gMainRoutineWork.currentOwner)),
                                        0);
     wait(1);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    FieldEvent_Wait(20);
+    Event_Wait(20);
     i = 0;
     goto test_stand;
   next_stand:
@@ -105,7 +105,7 @@ void Func_02004534(void) {
         goto next_stand;
     }
     Actor_SetModeById(gMainRoutineWork.currentOwner, 42);
-    FieldEvent_Wait(10);
+    Event_Wait(10);
     i = 0;
     goto test_turn;
   next_turn:
@@ -120,7 +120,7 @@ void Func_02004534(void) {
     Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
     Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
     Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 813, 120);
-    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+    Actor_SetSingleChildFlags(((struct ShamanVillageObject *)Actor_GetById(gMainRoutineWork.currentOwner)),
                                        1);
     Func_020048cc();
     if (gMainRoutineWork.entrance == 30) {

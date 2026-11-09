@@ -4,21 +4,14 @@
 #include "scene_ids.h"
 #include "ram_buffer.h"
 #include "actor.h"
+#include "event_inline.h"
 
 extern s16 gData_02000d80[];
 
-void Func_02000c48();
 void Func_02000d18(void);
 void Func_02000d50(s16 *data);
 void Func_02000d68(s32 a, s32 b);
 void Actor_SetWideSprite(s32 actor, s32 flag);
-
-static inline void MapCopyAttr(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  /* FAKEMATCH: as in the scene layer of The Broken Seal, the inline parameters
-   * keep the native registers (direct: the second stack constant reuses r3
-   * after the first store) */
-  Func_02000c48(a, b, c, d, e, f);
-}
 
 void Func_02000d58(s16 *data);
 
@@ -41,27 +34,27 @@ s32 Func_02000ac8(void) {
     Func_02000d68(12, 0);
   else if (gMainRoutineWork.scene == (s32)&SceneId_Daila2)
     Func_02000d50(gData_02000d80);
-  Import_ActorSetSpritePriority(21, 1);
+  Actor_SetSpritePriority(21, 1);
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila2 &&
-      Import_GameFlagIsSet(0x300) == 0)
+      GameFlag_Test(0x300) == 0)
     Actor_SetWideSprite(66, 0);
   return 0;
 }
 
 s32 Func_02000b44(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila2) {
-    if (Import_GameFlagIsSet(0x210))
-      MapCopyAttr(10, 19, 1, 1, 11, 19);
-    if (Import_GameFlagIsSet(0x211))
-      MapCopyAttr(25, 20, 1, 1, 26, 20);
-    if (Import_GameFlagIsSet(0x212))
-      MapCopyAttr(28, 23, 1, 1, 29, 23);
-    if (Import_GameFlagIsSet(0x213))
-      MapCopyAttr(17, 11, 1, 1, 18, 11);
-    if (Import_GameFlagIsSet(0x214))
-      MapCopyAttr(30, 17, 1, 1, 31, 17);
-    if (Import_GameFlagIsSet(0x215))
-      MapCopyAttr(16, 23, 1, 1, 17, 23);
+    if (GameFlag_Test(0x210))
+      MapGrid_CopyCellAttributes(10, 19, 1, 1, 11, 19);
+    if (GameFlag_Test(0x211))
+      MapGrid_CopyCellAttributes(25, 20, 1, 1, 26, 20);
+    if (GameFlag_Test(0x212))
+      MapGrid_CopyCellAttributes(28, 23, 1, 1, 29, 23);
+    if (GameFlag_Test(0x213))
+      MapGrid_CopyCellAttributes(17, 11, 1, 1, 18, 11);
+    if (GameFlag_Test(0x214))
+      MapGrid_CopyCellAttributes(30, 17, 1, 1, 31, 17);
+    if (GameFlag_Test(0x215))
+      MapGrid_CopyCellAttributes(16, 23, 1, 1, 17, 23);
   }
   return 0;
 }

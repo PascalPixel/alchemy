@@ -1,7 +1,7 @@
 #include "types.h"
 #include "main_routine_work.h"
-#include "call.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -13,15 +13,8 @@ void Func_02000bac();
 void Func_02002ec4();
 void Func_0200306c();
 void Func_020032c8();
-void Func_02005230();
 void Func_02005338();
 void Func_020053b8();
-void GameFlag_ClearBit();
-s32 GameFlag_Test();
-void Actor_SetSpritePriority();
-s32 Actor_GetById();
-void Actor_SetPositionAndResetMotion();
-void Task_Add();
 void Func_02000bf4();
 void Func_02000c34();
 void Func_02000f60();
@@ -42,21 +35,20 @@ void Func_02002c1c(void) {
   t1 = GameFlag_Test(0x109);
   if (t1 == 0)
     goto L_0200acd2;
-  t2 = Actor_GetById(9);
-  Call4((void (*)())Actor_SetPositionAndResetMotion, t2, PIXELS(216), 0,
-        PIXELS(216));
-  Func_02005230(11, 0, 0);
-  Func_02005230(13, 0, 0);
-  Func_02005230(14, 0, 0);
-  Func_02005230(15, 0, 0);
-  Func_02005230(16, 0, 0);
-  t9 = Actor_GetById(10);
+  t2 = ((s32)Actor_GetById(9));
+  FieldActor_SetPositionAndResetMotion(t2, PIXELS(216), 0, PIXELS(216));
+  Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
+  t9 = ((s32)Actor_GetById(10));
   Actor_SetPositionAndResetMotion(t9, PIXELS(376), 0, PIXELS(248));
-  Func_02005230(12, 0, 0);
-  Func_02005230(17, 0, 0);
-  Func_02005230(18, 0, 0);
-  Func_02005230(19, 0, 0);
-  Func_02005230(20, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
   GameFlag_ClearBit(0x20e);
   GameFlag_ClearBit(0x20c);
   GameFlag_ClearBit(0x20d);
@@ -64,20 +56,20 @@ L_0200acd2:
   t19 = GameFlag_Test(0x300);
   if (t19 == 0)
     goto L_0200acee;
-  Call3((void (*)())Func_02005230, 8, PIXELS(216), PIXELS(216));
+  Actor_SetPosition(8, PIXELS(216), PIXELS(216));
   goto L_0200ad0a;
 L_0200acee:
   t21 = GameFlag_Test(0x301);
   if (t21 == 0)
     goto L_0200ad0a;
-  Call3((void (*)())Func_02005230, 8, PIXELS(376), PIXELS(248));
+  Actor_SetPosition(8, PIXELS(376), PIXELS(248));
 L_0200ad0a:
   (*(s16 *)0x4000052) = 0xc08;
   (*(s16 *)0x4000050) = 0x3f10;
   FIELD_AT(gData_02006298, s32, 0) = 0;
   FIELD_AT(gData_0200629c, s32, 0) = 0;
-  Value2((s32 (*)())Task_Add, (s32)Func_02000bf4, 0x480);
-  Value2((s32 (*)())Task_Add, (s32)Func_02000c34, 0x480);
+  Task_AddFrame(Func_02000bf4, 0x480);
+  Task_AddFrame(Func_02000c34, 0x480);
   Task_Add((s32)Func_02001cc4, 0x480);
   Func_02000b78(9);
   Func_02000b78(10);
@@ -110,7 +102,7 @@ L_0200adda:
   FIELD_AT(gData_020062a4, s32, 0) = 0xfa0;
   FIELD_AT(gData_020062a8, s16, 0) = 0;
   FIELD_AT(gData_020062aa, s16, 0) = 0;
-  Value2((s32 (*)())Task_Add, (s32)Func_02000f60, 0x480);
+  Task_AddFrame(Func_02000f60, 0x480);
   Task_Add((s32)Func_020012c4, 0x480);
   t44 = GameFlag_Test(0x109);
   if (t44 != 0)
@@ -119,7 +111,7 @@ L_0200adda:
     goto L_0200ae24;
   Func_02002ec4();
 L_0200ae24:
-  Value2((s32 (*)())Task_Add, (s32)Func_020019d4, 0x480);
+  Task_AddFrame(Func_020019d4, 0x480);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   Func_02005338(0);
 }

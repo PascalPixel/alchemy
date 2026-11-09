@@ -1,14 +1,13 @@
 #include "contigo.h"
-
-void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
+#include "event_inline.h"
 
 void Func_020014d4(void) {
   if (!GameFlag_Test(62)) {
     struct EventWork *work = Ram_HeapSlots->eventWork;
 
     Func_0200406c();
-    Func_02004204(1);
-    Func_020040d4(16, 664 << 16, 952 << 16);
+    Event_ResolvePendingActions(1);
+    Actor_SetHorizontalPositionWithTerrain(16, 664 << 16, 952 << 16);
     wait(1);
     Actor_SetAngleToward(16, gMainRoutineWork.currentOwner, 0);
     work->unk16a = 200;

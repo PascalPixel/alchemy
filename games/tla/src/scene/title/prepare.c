@@ -9,6 +9,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
+#include "event_inline.h"
 
 struct TitleSprite {
   u32 attr[3];
@@ -23,16 +24,12 @@ extern s16 gData_020006dc;
 extern struct TitleSprite gData_020006f0[];
 extern u32 gFrameCount;
 
-struct Actor *Actor_GetById(s32 id);
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
 void Fade_ToBlack(s32 vblanks);
 void Fade_Wait(void);
 void Func_0200031c(s32 unused);
 void Func_020005ac(struct TitleSprite *sprite, s32 priority);
 void Func_020005bc(s32 resource);
 s32 Func_020005d4(void);
-void Func_020005dc(s32 a, s32 b);
 void Func_020005e4(void);
 void Func_020005ec(void);
 void Func_02000604(s32 scene, s32 entrance);
@@ -41,7 +38,6 @@ s32 Func_02000624(s32 value);
 void Func_0200062c(s32 value);
 void Func_02000634(s32 value);
 void Func_0200063c(s32 value);
-void Func_02000644(s32 cue);
 
 /// Runs the title by entrance: at entrance 10 the title is revealed and waits
 /// up to 3600 frames for a key before the title scene starts again at
@@ -53,7 +49,7 @@ s32 Func_0200005c(void) {
 
   if (gMainRoutineWork.entrance == 10) {
     Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
-    Func_02000644(75);
+    Sound_Play(75);
     Func_0200031c(0);
     wait(120);
     // Goto loops: the native reloads gInput's address on every pass,
@@ -78,27 +74,27 @@ s32 Func_0200005c(void) {
     return 0;
   }
   if (gMainRoutineWork.entrance == 8) {
-    Func_02000644(68);
+    Sound_Play(68);
     Func_0200061c(1);
-    Func_02000644(78);
+    Sound_Play(78);
     Fade_ToBlack(60);
     Fade_Wait();
-    FieldEvent_Wait(240);
-    Func_02000644(0);
+    Event_Wait(240);
+    Sound_Play(0);
     Func_02000604((s32)&SceneId_Title, 2);
     return 0;
   }
   Func_020005bc((s32)&ResourceId_FarCall00B);
   if (gMainRoutineWork.entrance == 1) {
     for (;;) {
-      Func_02000644(0);
+      Sound_Play(0);
       Func_0200062c(0);
       Func_02000634(0);
       if (Func_020005d4() > 0) {
-        Func_02000644(40);
+        Sound_Play(40);
         Func_0200063c(1);
         if (Func_02000624(1) == 0) {
-          Func_02000644(78);
+          Sound_Play(78);
           Fade_ToBlack(30);
           Fade_Wait();
           /* FAKEMATCH: an empty asm keeps the counter's zero after the wait
@@ -123,9 +119,9 @@ s32 Func_0200005c(void) {
     Func_02000604((s32)&SceneId_Ov64a, 1);
   } else {
     if (gMainRoutineWork.entrance == 2) {
-      Func_02000644(40);
+      Sound_Play(40);
       Func_0200063c(0);
-      Func_020005dc(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
+      Func_0803f9c0(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
       Func_020005e4();
       Func_02000604((s32)&SceneId_VenusLighthouse, 99);
     }
@@ -134,18 +130,18 @@ s32 Func_0200005c(void) {
      * tla-en. */
     __asm__ volatile("" : : : "memory");
     if (gMainRoutineWork.entrance == 3) {
-      Func_02000644(75);
+      Sound_Play(75);
       Func_02000624(0);
-      Func_020005dc(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
+      Func_0803f9c0(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
       Func_020005ec();
       Func_02000604((s32)&SceneId_Ov650, 13);
     }
   }
-  Func_02000644(78);
+  Sound_Play(78);
   Fade_ToBlack(30);
   Fade_Wait();
-  FieldEvent_Wait(60);
-  Func_02000644(0);
+  Event_Wait(60);
+  Sound_Play(0);
   return 0;
 }
 

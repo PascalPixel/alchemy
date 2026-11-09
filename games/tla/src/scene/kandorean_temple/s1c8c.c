@@ -34,26 +34,26 @@ void Func_02001cc4(void) {
 
 void Func_02001d00(void) {
   Func_020051c0();
-  Func_02005370(0);
+  Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)&MsgKandoreanTemple10, 1);
   Func_020051c8();
 }
 
 void Func_02001d20(void) {
   Func_020051c0();
-  Func_02005370(0);
+  Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)&MsgKandoreanTemple01, 1);
   Func_020051c8();
 }
 
 void Func_02001d40(void) {
   Func_020051c0();
-  Func_02005370(0);
+  Event_ResolvePendingActions(0);
   Actor_Stop(9);
   wait(1);
   Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
-  Func_02005280((s32)&MsgKandoreanTemple02);
-  Func_020052a0(9, 0);
+  Event_SetMessageId((s32)&MsgKandoreanTemple02);
+  Event_AskYesNoAndShowResponse(9, 0);
   Actor_GetById(9)->angle = FACING_SOUTHEAST + FACING_STEP;
   wait(1);
   Actor_SetMovementTypeById(9, gData_02005514);
@@ -64,10 +64,10 @@ void Func_02001d40(void) {
 
 void Func_02001db4(void) {
   Func_020051c0();
-  Func_02005370(0);
+  Event_ResolvePendingActions(0);
   Actor_SetAngleToward(10, gMainRoutineWork.currentOwner, 0);
-  Func_02005280((s32)&MsgKandoreanTemple03);
-  Func_02005298(10, 0);
+  Event_SetMessageId((s32)&MsgKandoreanTemple03);
+  Event_ShowMessageAndWait(10, 0);
   Actor_GetById(10)->angle = FACING_SOUTH + FACING_STEP;
   wait(1);
   Func_020051c8();
@@ -76,19 +76,19 @@ void Func_02001db4(void) {
 
 void Func_02001e0c(void) {
   Func_020051c0();
-  Func_02005370(0);
-  Func_02005280((s32)&MsgKandoreanTemple09);
-  Func_020052a0(13, 0);
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)&MsgKandoreanTemple09);
+  Event_AskYesNoAndShowResponse(13, 0);
   Func_020051c8();
 }
 
 void Func_02001e30(void) {
-  Func_020052c8(9, 0x100, 0);
+  Func_080d47b4(9, 0x100, 0);
   Func_02001d40();
 }
 
 void Func_02001e44(void) {
-  Func_020052c8(10, 0x100, 0);
+  Func_080d47b4(10, 0x100, 0);
   Func_02001db4();
 }
 
@@ -109,7 +109,7 @@ void Func_02001e58(void) {
     return;
   }
   Func_020051c0();
-  Func_02005370(0);
+  Event_ResolvePendingActions(0);
   /* FAKEMATCH: the flags address, the zero and gMainRoutineWork's address are
    * taken before an empty asm, which holds the byte store below the address
    * load as the native has it; the plain store goes first (differ 2). */
@@ -120,14 +120,14 @@ void Func_02001e58(void) {
   *flags = zero;
   Actor_SetSpeedParameters(party->currentOwner, 0x10000, 0x8000);
   Actor_SetPositionAndReset(party->currentOwner, 168, 80);
-  Func_020052b0(party->currentOwner, FACING_NORTH);
+  Actor_ArmCallbackAndRefresh(party->currentOwner, FACING_NORTH);
   Actor_SetSingleChildFlags(Actor_GetById(party->currentOwner), 0);
   Actor_SetModeById(party->currentOwner, 13);
-  Func_02005160(leader, PIXELS(168), PIXELS(-12), PIXELS(80));
-  Func_02005168(leader);
+  Actor_SetMoveTarget(leader, PIXELS(168), PIXELS(-12), PIXELS(80));
+  Script_WaitForEventTimeout(leader);
   Actor_SetModeById(party->currentOwner, 10);
-  Func_020053d8(123);
+  Sound_Play(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_020052f8(8);
+  Import_EventSetExitRequest(8);
 }

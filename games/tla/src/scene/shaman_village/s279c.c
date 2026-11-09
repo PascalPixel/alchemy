@@ -1,38 +1,39 @@
 #include "shaman_village.h"
+#include "event_inline.h"
 #include "scene_tables.h"
 
 void Func_0200279c(void) {
   Func_020048c4();
-  Func_02004a24(0);
-  Func_0200498c((s32)MsgShamanShowMeSomething);
-  Func_020049a4(15, 0);
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)MsgShamanShowMeSomething);
+  Event_ShowMessageAndWait(15, 0);
   Func_020048cc();
 }
 
 void Func_020027c0(void) {
   Func_020048c4();
-  Func_02004a24(0);
-  Func_0200498c((s32)MsgShamanCannotBuyGift);
-  Func_020049a4(16, 0);
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)MsgShamanCannotBuyGift);
+  Event_ShowMessageAndWait(16, 0);
   Func_020048cc();
 }
 
 void Func_020027e4(void) {
   Func_020048c4();
-  Func_02004a24(0);
-  Func_0200498c((s32)MsgShamanShowItToMoapa);
-  Func_020049a4(17, 0);
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)MsgShamanShowItToMoapa);
+  Event_ShowMessageAndWait(17, 0);
   Func_020048cc();
 }
 
 void Func_02002808(void) {
   if (GameFlag_Test(0x9fe)) {
-    Import_SoundPlay(0);
+    Sound_Play(0);
     Func_020048c4();
-    Func_02004a24(0);
-    Func_0200498c((s32)MsgShamanFortuneGreeting);
+    Event_ResolvePendingActions(0);
+    Event_SetMessageId((s32)MsgShamanFortuneGreeting);
     Actor_SetModeById(17, 5);
-    Func_020049a4(17, 0);
+    Event_ShowMessageAndWait(17, 0);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 20);
     Func_020011f8();
     Actor_SetModeById(17, 1);
@@ -42,17 +43,17 @@ void Func_02002808(void) {
 }
 
 void Func_02002878(void) {
-  ShamanVillage_BlendStart(0, 0, 1, 2, 2, 17);
+  MapGrid_CopyCellAttributes(0, 0, 1, 2, 2, 17);
   GameFlag_SetBit(0x205);
 }
 
 void Func_0200289c(void) {
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  ShamanVillage_ObjWalk(gMainRoutineWork.currentOwner, 168, 304);
-  ShamanVillage_ObjArm(16, FACING_SOUTH, 0);
-  ShamanVillage_ObjArm(17, FACING_SOUTH, 0);
-  ShamanVillage_ObjArm(15, FACING_SOUTH, 0);
-  ShamanVillage_ObjWalk(gMainRoutineWork.currentOwner, 168, 368);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 168, 304);
+  Actor_FaceDirection(16, FACING_SOUTH, 0);
+  Actor_FaceDirection(17, FACING_SOUTH, 0);
+  Actor_FaceDirection(15, FACING_SOUTH, 0);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 168, 368);
   GameFlag_ClearBit(0x201);
 }

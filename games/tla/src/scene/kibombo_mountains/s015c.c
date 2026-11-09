@@ -1,8 +1,6 @@
 #include "types.h"
 #include "actor.h"
-
-struct Actor *Actor_GetById(s32 id);
-void wait(s32 frames);
+#include "event_inline.h"
 
 void Func_0200015c(s32 id) {
   s32 n = 60;

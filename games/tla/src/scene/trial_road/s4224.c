@@ -1,5 +1,6 @@
 #include "types.h"
 #include "actor.h"
+#include "event_inline.h"
 
 /// One rising platform and what rides it.
 struct RideEntry {
@@ -27,10 +28,7 @@ struct RideWork {
 
 extern u8 gData_020023c4[];
 
-s32 GameFlag_Test(s32 flag);
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-struct Actor *Func_020057d8(s32 kind, s32 x, s32 y, s32 z);
 
 struct RideEntry *Func_02004224(s32 slot, s32 id, s32 timer, s32 low,
                                 s32 high) {
@@ -64,7 +62,8 @@ struct RideEntry *Func_02004224(s32 slot, s32 id, s32 timer, s32 low,
     entry->unk14 = 0;
     object->priorityFlags |= 2;
   }
-  rider = Func_020057d8(0x8000, object->x, object->y, object->z);
+  rider = ((struct Actor *)Import_ActorCreate(0x8000, object->x, object->y,
+                                              object->z));
   rider->collisionFlags = 0;
   rider->motionFlags = 0;
   rider->priorityFlags |= 128;

@@ -1,4 +1,5 @@
 #include "izumo_ruins.h"
+#include "event_inline.h"
 
 s32 Func_020012dc(void) {
   struct IzumoRuinsEventWork *work = Ram_HeapSlots->eventWork;
@@ -18,8 +19,8 @@ s32 Func_020012dc(void) {
     Func_02001510(gData_02001658);
     Func_0200100c((u16 *)gData_02001688);
     if (GameFlag_Test(0x941)) {
-      Call6((void (*)())Func_02001460, 7, 2, 8, 7, 7, 12);
-      Call6((void (*)())Func_02001450, 7, 66, 7, 76, 8, 9);
+      MapGrid_CopyCellAttributes(7, 2, 8, 7, 7, 12);
+      MapGrid_CopyCellsTo(7, 66, 7, 76, 8, 9);
       Func_02001448();
       wait(1);
       if (GameFlag_Test(0x109)) {

@@ -34,7 +34,8 @@ s32 Func_02002d50(s32 angle) {
 }
 
 void Func_02002d78(s32 id, s32 x, s32 z, s32 angle) {
-  Func_020058e8(id, Func_02002d08(x) << 16, z << 16, (u16)Func_02002d50(angle));
+  Actor_SetHorizontalPositionAndAngleWithTerrain(
+      id, Func_02002d08(x) << 16, z << 16, (u16)Func_02002d50(angle));
 }
 
 void Func_02002db0(void) {}

@@ -1,12 +1,11 @@
 #include "types.h"
 #include "text/msg_ids.h"
 #include "version.h"
+#include "event_inline.h"
 
-void FieldMessage_Show(s32 message, s32 position);
 s32 Djinn_AddToLeastLoadedOwner(s32 element, s32 djinn);
 void Func_02000dc0(void);
 
-void GameFlag_SetBit(s32 flag);
 void Djinn_AddToOwner(s32 owner, s32 element, s32 djinn);
 void Djinn_Activate(s32 owner, s32 element, s32 djinn);
 

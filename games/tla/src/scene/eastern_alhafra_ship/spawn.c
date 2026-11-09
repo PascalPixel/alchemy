@@ -1,4 +1,5 @@
 #include "types.h"
+#include "event_inline.h"
 
 struct Sprite020003e8 {
   u8 unk00[18];
@@ -18,7 +19,6 @@ struct Actor020003e8 {
 
 extern const u8 gData_02003720[];
 
-struct Actor020003e8 *Func_02003110(s32 type, s32 x, s32 y, s32 z);
 void Func_02003100(struct Actor020003e8 *object, s32 mode);
 void Func_02003108(struct Actor020003e8 *object, const void *script);
 
@@ -26,7 +26,7 @@ void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
   struct Actor020003e8 *object;
   struct Sprite020003e8 *sprite;
 
-  object = Func_02003110(0x1e8, x, y, z);
+  object = ((struct Actor020003e8 *)Import_ActorCreate(0x1e8, x, y, z));
   if (object != 0) {
     sprite = object->sprite;
     Func_02003100(object, 1);

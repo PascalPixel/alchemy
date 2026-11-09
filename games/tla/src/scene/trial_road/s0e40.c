@@ -1,5 +1,6 @@
 #include "trial_road.h"
 #include "vector3.h"
+#include "event_inline.h"
 
 struct EventWork184 {
   u8 unk000[388];
@@ -8,13 +9,7 @@ struct EventWork184 {
 
 void Func_02005880(void);
 void Func_02005888(void);
-void Func_020059e8(s32 value);
-void Func_020057f8(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_02005800(struct Actor *object);
 s32 Func_02000df8(s32 x, s32 z);
-void FieldEvent_Wait(s32 frames);
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
 void Func_02000d70(void);
 
 void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
@@ -60,34 +55,35 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
   if (fromX == toX && fromZ == toZ)
     return;
   Func_02005880();
-  Func_020059e8(0);
+  Event_ResolvePendingActions(0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 8);
-  FieldEvent_Wait(6);
+  Event_Wait(6);
   object->speedLimit = 0x8000;
   object->acceleration = 0x3333;
-  Func_02005a68(239);
+  Sound_Play(239);
   if (dx < 0 || dz < 0)
     mode = 3;
   Func_020057c8(object, mode);
-  Func_020057f8(object, (toX << 20) + 0x80000, 0, z = (toZ << 20) + 0x80000);
-  FieldEvent_Wait(6);
+  Actor_SetMoveTarget(object, (toX << 20) + 0x80000, 0,
+                      z = (toZ << 20) + 0x80000);
+  Event_Wait(6);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x4ccc, 0x3333);
   Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, dx << 3,
                                      dz << 3);
-  FieldEvent_Wait(24);
+  Event_Wait(24);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
-  Func_02005800(object);
+  Script_WaitForEventTimeout(object);
   if (toX <= 17) {
     Func_020057c8(object, 1);
-    Func_02005a68(298);
-    Func_02005a68(213);
+    Sound_Play(298);
+    Sound_Play(213);
   } else {
     Func_020057c8(object, 3);
-    Func_020057f8(object, 312 << 16, 0, z);
-    FieldEvent_Wait(30);
+    Actor_SetMoveTarget(object, 312 << 16, 0, z);
+    Event_Wait(30);
     Func_020057c8(object, 8);
-    Func_02005800(object);
+    Script_WaitForEventTimeout(object);
     {
       /* FAKEMATCH(pin): the 2 held in r2 while the address takes r3; as
        * object->priorityFlags = 2, 8 of 240 instructions differ in tla-en. */
@@ -96,11 +92,11 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
 
       *flags = value;
     }
-    Func_02005a68(298);
-    Func_02005a68(240);
+    Sound_Play(298);
+    Sound_Play(240);
     GameFlag_SetBit(id + 579);
   }
-  FieldEvent_Wait(15);
+  Event_Wait(15);
   Func_02005888();
   Func_02000d70();
 }

@@ -2,8 +2,8 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "input.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 void Func_020011bc(s32 x, s32 z);
 
 void Func_02001284(void) {

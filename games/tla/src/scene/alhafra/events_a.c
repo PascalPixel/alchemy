@@ -1,7 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
-#include "call.h"
+#include "event_inline.h"
 
 struct DoorStep {
   s32 script;
@@ -9,19 +9,10 @@ struct DoorStep {
   u16 z;
 };
 
-s32 GameFlag_Test(s32 flag);
-struct Actor *Actor_GetById(s32 id);
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_CenterOnColumn(s32 id, s32 column, s32 offset);
-void FieldEvent_Wait(s32 frames);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_02001bc4(s32 script, s32 x, s32 z);
 void Func_02001be4(void);
 void Func_02001bec(void);
-void Func_02001cd4(s32 countdown);
-void Func_02001cfc(s32 a);
-void Func_02001d4c(s32 a);
 
 extern const u8 gData_02001e48[];
 extern const u8 gData_02002100[];
@@ -42,16 +33,15 @@ const u8 *Func_0200004c(void) {
 
 void Func_02000098(struct DoorStep *step, s32 countdown, s32 unused) {
   Func_02001be4();
-  Func_02001cfc(0);
-  Func_02001d4c(158);
-  Func_02001bc4(step->script, step->x, step->z);
+  Event_ResolvePendingActions(0);
+  Sound_Play(158);
+  Map_PlayMapEdit(step->script, step->x, step->z);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
-  Call3((void (*)())Actor_CenterOnColumn, gMainRoutineWork.currentOwner, 2,
-        -8);
-  FieldEvent_Wait(10);
-  Func_02001cd4(countdown);
+  Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
+  Event_Wait(10);
+  Import_EventSetExitRequest(countdown);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_02001bec();

@@ -1,8 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "flag_call.h"
-
-struct Actor *Actor_GetById(s32 id);
+#include "event_inline.h"
 
 void Func_02000058(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);

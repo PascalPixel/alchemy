@@ -4,6 +4,7 @@
 #include "iwram_call.h"
 #include "frame.h"
 #include "map.h"
+#include "event_inline.h"
 
 struct ResourceTableEntry {
   u16 unk0;
@@ -28,7 +29,6 @@ struct TrialRoadMovers {
 
 extern struct ResourceTableEntry gResourceTableEntries[];
 
-s32 Math_Sine(s32 angle);
 void Func_02005790(void *entry, s32 priority);
 
 void Func_02003f68(void) {

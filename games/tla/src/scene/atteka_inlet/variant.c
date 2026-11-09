@@ -10,11 +10,12 @@
 #include "main_routine_work.h"
 #include "field_event.h"
 #include "field_sprite.h"
-
-struct FieldActor *Actor_GetById(s32 id);
+#include "event_inline.h"
 
 void Func_02000bb8(void) {
-  s32 variant = Actor_GetById(gMainRoutineWork.currentOwner)->sprite->priority;
+  s32 variant =
+      ((struct FieldActor *)Actor_GetById(gMainRoutineWork.currentOwner))
+          ->sprite->priority;
 
   Actor_SetSpritePriority(16, variant);
   Actor_SetSpritePriority(8, variant);
@@ -23,5 +24,6 @@ void Func_02000bb8(void) {
 
 void Func_02000bf0(void) {
   Actor_SetSpritePriority(
-      13, Actor_GetById(gMainRoutineWork.currentOwner)->sprite->priority);
+      13, ((struct FieldActor *)Actor_GetById(gMainRoutineWork.currentOwner))
+              ->sprite->priority);
 }

@@ -7,6 +7,7 @@
 #include "main_routine_work.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
+#include "event_inline.h"
 
 #define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
 
@@ -35,11 +36,6 @@ extern u8 gData_020023c4[];
 
 #define gTrialRoadState ((struct TrialRoadState *)(gData_020023c4 + 0x88))
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void wait(s32 frames);
-struct Actor *Actor_GetById(s32 id);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
 void Func_0200062c(s32 id);
@@ -55,11 +51,7 @@ void Func_02004418(const void *data);
 void Func_020045ac(const void *data, s32 a);
 void Func_020057c8(struct Actor *object, s32 a);
 void Func_020057d0(struct Actor *object, const void *script);
-struct Actor *Func_020057d8(s32 type, s32 x, s32 y, s32 z);
-void Func_02005818(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02005820(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02005918(s32 id, s32 a, s32 b);
-void Func_020059a0(s32 a, s32 b);
 s32 Func_020059b8(s32 id);
 void Func_020059c0(void);
 void Func_020059c8(void);
@@ -71,40 +63,16 @@ struct MainRoutineWork254 {
   u16 value;
 };
 
-void Task_Add(void (*func)(void), s32 priority);
-void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
-void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
-void Actor_SetModeById(u32 id, s32 mode);
 void Func_020006b4(s32 id);
 void Func_020007b4(void);
-void Func_02005810(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_020058e0(s32 id, s32 x, s32 z);
-void Func_020058e8(s32 id, s32 x, s32 z, s32 angle);
 void Func_02005998(s32 a, s32 b);
 void Func_02005a50(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Func_02005a60(s32 a, s32 b, s32 c);
-void Func_02005a68(s32 a);
 
 static __inline__ struct Actor *Actor_Create(s32 type, s32 x, s32 y,
                                                       s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return Func_020057d8(type, x, y, z);
-}
-
-static __inline__ void Map_CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02005818(a, b, c, d, e, f);
-}
-
-static __inline__ void Map_Stamp(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02005820(a, b, c, d, e, f);
-}
-
-static __inline__ void Func_02005810_(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                      s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02005810(a, b, c, d, e, f);
+  return ((struct Actor *)Import_ActorCreate(type, x, y, z));
 }
 
 static __inline__ void Func_02005a50_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,

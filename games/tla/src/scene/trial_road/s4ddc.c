@@ -2,6 +2,7 @@
 /// The Trial Road rival's per-frame update.
 
 #include "../../../../games/tla/src/scene/trial_road/trial_road.h"
+#include "event_inline.h"
 
 struct TrialRoadReplay {
   s16 mode;
@@ -28,10 +29,8 @@ extern u8 gLinkPeerSignatures[][24];
 extern volatile u16 gLinkStatus;
 
 s32 ArcTan2(s32 dz, s32 dx);
-s32 GameFlag_GetByte(s32 flag);
 void *Resource_GetTableEntry(s32 id);
 void Func_02005770(const void *source, void *destination);
-void Func_020057f8(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_020057f0(struct Actor *object);
 
 /// Updates the Trial Road rival by the scene state's mode: 4 follows the
@@ -81,7 +80,7 @@ void Func_02004ddc(void) {
     s32 angle, link, ok, partner;
     s16 st;
 
-    player = GameFlag_GetByte(760) ^ 1;
+    player = ((s32)GameFlag_GetByte(760)) ^ 1;
     signature = (s16 *)gLinkPeerSignatures[player];
     if (((gLinkStatus >> player) & 1) == 0)
       return;
@@ -107,7 +106,7 @@ void Func_02004ddc(void) {
       }
       rival->acceleration = 0x4000;
       rival->speedLimit = 0x10000;
-      Func_020057f8(rival, x, 0, z);
+      Actor_SetMoveTarget(rival, x, 0, z);
       Func_020057f0(rival);
     } else {
       x <<= 16;

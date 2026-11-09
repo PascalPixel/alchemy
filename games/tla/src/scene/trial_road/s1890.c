@@ -24,7 +24,7 @@ void Func_02001904(void) {
   if (!GameFlag_Test(0x307))
     OBJECT_BYTE(Actor_GetById(17), 98) = 1;
   else
-    Func_020058e0(20, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
   Func_020006b4(15);
   Func_020006b4(16);
   Func_020006b4(17);
@@ -82,11 +82,11 @@ void Func_02001a70(void) {
   if (!GameFlag_Test(0x327))
     OBJECT_BYTE(Actor_GetById(15), 98) = 1;
   else
-    Func_020058e0(20, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
   if (!GameFlag_Test(0x328))
     OBJECT_BYTE(Actor_GetById(16), 98) = 1;
   else
-    Func_020058e0(21, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(21, 0, 0);
   Func_020006b4(15);
   Func_020006b4(16);
   Func_020006b4(17);

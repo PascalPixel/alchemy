@@ -1,5 +1,6 @@
 #include "types.h"
 #include "iwram_call.h"
+#include "event_inline.h"
 
 struct OrbitEffect {
   u8 unk00[6];
@@ -14,7 +15,6 @@ struct OrbitEffect {
 
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 void Func_02003ff4(struct OrbitEffect *effect);
 
 void Func_020009d0(struct OrbitEffect *effect) {

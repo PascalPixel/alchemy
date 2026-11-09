@@ -6,12 +6,8 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
+#include "event_inline.h"
 void Func_020009b0(void);
-void Func_02000a50(s32 a);
-s32 GameFlag_Test(s32 a);
-void Func_02000a18(s32 a);
-void Func_02000a28(s32 a, s32 b);
 void Func_020009b8(void);
 extern u8 MsgYallamInteriors36[];
 extern u8 MsgYallamInteriors32[];
@@ -20,14 +16,14 @@ s32 Func_0200014c(void) {
   s32 t2;
 
   Func_020009b0();
-  Func_02000a50(0);
+  Event_ResolvePendingActions(0);
   t2 = GameFlag_Test(0x301);
   if (t2 != 0) {
-    Func_02000a18((s32)MsgYallamInteriors36);
+    Event_SetMessageId((s32)MsgYallamInteriors36);
   } else {
-    Func_02000a18((s32)MsgYallamInteriors32);
+    Event_SetMessageId((s32)MsgYallamInteriors32);
   }
-  Func_02000a28(16, 0);
+  Event_ShowMessageAndWait(16, 0);
   Func_020009b8();
   return 0;
 }

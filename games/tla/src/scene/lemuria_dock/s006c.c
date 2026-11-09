@@ -1,4 +1,5 @@
 #include "room.h"
+#include "event_inline.h"
 #include "scene_tables.h"
 
 void Func_0200006c(void) {
@@ -6,27 +7,27 @@ void Func_0200006c(void) {
 
   if (party->entrance == 2) {
     Func_0200046c();
-    Func_02000524(0);
+    Event_ResolvePendingActions(0);
     if (Actor_GetById(8)->x == 0) {
-      Actor_CommitPositionAndActivate_(4, 0, -16);
-      Func_0200052c_(8, 0, -16, FACING_SOUTHEAST + FACING_STEP);
+      Actor_WalkByAndWait(4, 0, -16);
+      FieldActor_LaunchFromLeader(8, 0, -16, FACING_SOUTHEAST + FACING_STEP);
       Actor_WaitForMoveById(8);
-      Actor_SetSpeedParameters_(8, 0x13333, 0x9999);
-      Actor_SetPositionAndReset_(8, 472, 392);
-      Func_020004f4_(8, FACING_SOUTH + FACING_STEP);
+      Actor_SetSpeed(8, 0x13333, 0x9999);
+      Actor_WalkToAndWait(8, 472, 392);
+      Actor_FaceDirectionAndWait(8, FACING_SOUTH + FACING_STEP);
     } else {
       struct Actor *leader;
 
       Actor_CommitPositionAndActivate(4, 0, 16);
-      Actor_SetSpeedParameters_(8, 0x20000, 0x10000);
-      Actor_SetPositionAndReset_(8, 440, 440);
-      Actor_SetSpeedParameters_(8, 0x13333, 0x9999);
+      Actor_SetSpeed(8, 0x20000, 0x10000);
+      Actor_WalkToAndWait(8, 440, 440);
+      Actor_SetSpeed(8, 0x13333, 0x9999);
       Actor_SetModeById(8, 2);
       leader = Actor_GetById(party->currentOwner);
       if (leader != NULL)
         Actor_ResetAndSetPosition(8, S16_AT(leader, 10), S16_AT(leader, 18));
       Actor_WaitForMoveById(8);
-      Func_020004bc(8, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
     }
     Func_02000474();
   }
@@ -40,17 +41,17 @@ void Func_02000158(void) {
 
   if (SCENE_WORK->unk166 != 0) {
     Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
-    Func_02000504_(8, 0x100, 30);
+    Actor_ShowEmote(8, 0x100, 30);
   }
-  Func_020004dc((s32)MsgAreWeSetting);
+  Event_SetMessageId((s32)MsgAreWeSetting);
   FieldMessage_ShowAtActor(8, 0);
-  if (Event_AskYesNoWithActorAnimation(Func_0200053c(), 0) == 0) {
-    FieldEvent_Wait(15);
-    Func_020004ec(8, 0);
-    FieldEvent_Wait(5);
+  if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
+    Event_Wait(15);
+    Event_ShowMessageAndWait(8, 0);
+    Event_Wait(5);
     Actor_Jump(8, 4, 0);
-    Func_020004f4(8, FACING_EAST);
-    FieldEvent_Wait(5);
+    Actor_ArmCallbackAndRefresh(8, FACING_EAST);
+    Event_Wait(5);
     party = &gMainRoutineWork;
     z = Actor_GetById(party->currentOwner)->z;
     limit = 0x1880000;
@@ -60,15 +61,15 @@ void Func_02000158(void) {
     else
       Actor_SetPositionAndReset(id, 472, 408);
     id = 4;
-    Func_020004f4(id, FACING_EAST);
-    FieldEvent_Wait(10);
+    Actor_ArmCallbackAndRefresh(id, FACING_EAST);
+    Event_Wait(10);
 
     gMainRoutineWork.ownerOverride = 1;
-    Func_0200050c(1);
+    Import_EventSetExitRequest(1);
   } else {
-    FieldEvent_Wait(20);
+    Event_Wait(20);
     SCENE_WORK->unk1c4++;
-    Func_020004ec(8, 0);
+    Event_ShowMessageAndWait(8, 0);
   }
 }
 
@@ -76,19 +77,19 @@ void Func_02000254(const struct WarpTarget *warp, s32 door, s32 mode) {
   s32 id;
 
   Func_0200046c();
-  Func_02000524(0);
-  Func_02000544(158);
-  Func_02000454(warp->scene, warp->x, warp->z);
+  Event_ResolvePendingActions(0);
+  Sound_Play(158);
+  Map_PlayMapEdit(warp->scene, warp->x, warp->z);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   id = gMainRoutineWork.currentOwner;
   if (mode == 0)
-    Actor_CenterOnColumn_(id, 2, -8);
+    Actor_CenterAndWalk(id, 2, -8);
   else
-    Actor_OffsetPositionAndResetMotion_(id, 0, -8);
-  FieldEvent_Wait(10);
-  Func_0200050c(door);
+    Actor_SetDestinationOffset(id, 0, -8);
+  Event_Wait(10);
+  Import_EventSetExitRequest(door);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_02000474();

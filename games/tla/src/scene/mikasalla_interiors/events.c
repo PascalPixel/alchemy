@@ -3,30 +3,27 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "call.h"
 #include "text/msg_ids.h"
 #include "scene_ids.h"
+#include "event_inline.h"
 
 void Func_020005c4();
 void Func_020005cc();
-void Func_02000604();
-void Func_02000614();
-void Func_0200062c();
 
 s32 Func_02000078(void) {
   Func_020005c4();
-  Func_0200062c(0);
-  Func_02000604((s32)MsgMikasallaInteriors18);
-  Func_02000614(8, 0);
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)MsgMikasallaInteriors18);
+  Event_ShowMessageAndWait(8, 0);
   Func_020005cc();
   return 0;
 }
 
 s32 Func_020000a0(void) {
   Func_020005c4();
-  Func_0200062c(0);
-  Func_02000604((s32)MsgMikasallaInteriors32);
-  Func_02000614(9, 0);
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)MsgMikasallaInteriors32);
+  Event_ShowMessageAndWait(9, 0);
   Func_020005cc();
   return 0;
 }

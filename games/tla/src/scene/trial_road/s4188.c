@@ -1,6 +1,7 @@
 #include "trial_road.h"
 
 #include "iwram_call.h"
+#include "event_inline.h"
 
 struct TrialRoadGauge {
   u16 handle;
@@ -13,12 +14,10 @@ extern const u8 gField_Tiles64D[];
 
 void *Heap_AllocEwram(s32 size);
 s32 Resource_FindFreeEntry(void);
-void VramCache_Load(s32 handle, s32 size, void *source);
 void Heap_Release(void *block);
 void Func_02003da0(void);
 void Func_02003f68(void);
 void Func_02005770(const void *source, void *destination);
-s32 Func_02005a40(void);
 
 static __inline__ void *Pool_Alloc(s32 size) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
@@ -46,5 +45,5 @@ void Func_02004188(s32 a, s32 b) {
   gauge->field02 = b;
   Task_Add(Func_02003da0, 0x48d);
   Task_Add(Func_02003f68, 0x480);
-  Actor_GetById(Func_02005a40())->priorityFlags |= 0x40;
+  Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 0x40;
 }

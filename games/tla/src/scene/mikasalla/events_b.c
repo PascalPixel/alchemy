@@ -1,45 +1,46 @@
 #include "local.h"
+#include "event_inline.h"
 #include "scene_ids.h"
 
 void Func_02000188(void) {
   s32 msg;
 
   Func_02000648();
-  Func_020006d0(0);
+  Event_ResolvePendingActions(0);
   msg = (s32)&MsgFieldAreYouLookingForSomeone;
-  Func_02000698(msg);
+  Event_SetMessageId(msg);
   FieldMessage_ShowAtActor(9, 0);
-  if (Event_AskYesNoWithActorAnimation(Func_020006e8(), 0) == 0) {
-    FieldEvent_Wait(10);
-    Func_02000698(msg + 1);
+  if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
+    Event_Wait(10);
+    Event_SetMessageId(msg + 1);
   } else {
-    FieldEvent_Wait(20);
-    Func_02000698(msg + 2);
+    Event_Wait(20);
+    Event_SetMessageId(msg + 2);
   }
-  Func_020006a8(9, 0);
+  Event_ShowMessageAndWait(9, 0);
   Func_02000650();
 }
 
 void Func_020001e0(void) {
-  Func_02000618(5, 49, 5, 41, 1, 1);
-  Func_02000630_(4, 48, 3, 2, 4, 40);
+  Map_CopyCellPictureIndicesRect(5, 49, 5, 41, 1, 1);
+  MapGrid_CopyCellAttributes(4, 48, 3, 2, 4, 40);
   GameFlag_SetBit(0x85b);
 }
 
 void Func_02000218(void) {
-  if (GameFlag_Test_(0x200) == 0) {
+  if (Event_GetFlag(0x200) == 0) {
     Func_02000620(0);
     Func_02000620(1);
     Func_02000620(2);
-    Func_02000618(56, 46, 30, 46, 16, 16);
-    Func_02000618(56, 174, 30, 174, 16, 16);
-    Func_02000628_(28, 23, 16, 16, 15, 23);
-    Func_02000628_(28, 90, 2, 2, 21, 88);
-    Func_02000628(28, 90, 4, 4, 17, 89);
-    Func_02000628(28, 90, 2, 1, 17, 91);
-    Func_02000628(28, 90, 2, 2, 19, 91);
-    Func_02000628(28, 92, 2, 2, 15, 92);
-    Func_02000628(30, 92, 2, 2, 17, 92);
+    Map_CopyCellPictureIndicesRect(56, 46, 30, 46, 16, 16);
+    Map_CopyCellPictureIndicesRect(56, 174, 30, 174, 16, 16);
+    MapGrid_CopyCells(28, 23, 16, 16, 15, 23);
+    MapGrid_CopyCells(28, 90, 2, 2, 21, 88);
+    Map_CopyCellsRect(28, 90, 4, 4, 17, 89);
+    Map_CopyCellsRect(28, 90, 2, 1, 17, 91);
+    Map_CopyCellsRect(28, 90, 2, 2, 19, 91);
+    Map_CopyCellsRect(28, 92, 2, 2, 15, 92);
+    Map_CopyCellsRect(30, 92, 2, 2, 17, 92);
     GameFlag_SetBit(0x200);
   }
 }
@@ -68,15 +69,15 @@ s32 Func_0200030c(void) {
       Func_02000620(0);
       Func_02000620(1);
       Func_02000620(2);
-      Func_02000618(56, 46, 30, 46, 16, 16);
-      Func_02000618(56, 174, 30, 174, 16, 16);
-      Func_02000628(28, 23, 16, 16, 15, 23);
-      Func_02000628_(28, 90, 2, 2, 21, 88);
-      Func_02000628(28, 90, 4, 4, 17, 89);
-      Func_02000628(28, 90, 2, 1, 17, 91);
-      Func_02000628(28, 90, 2, 2, 19, 91);
-      Func_02000628_(28, 92, 2, 2, 15, 92);
-      Func_02000628(30, 92, 2, 2, 17, 92);
+      Map_CopyCellPictureIndicesRect(56, 46, 30, 46, 16, 16);
+      Map_CopyCellPictureIndicesRect(56, 174, 30, 174, 16, 16);
+      Map_CopyCellsRect(28, 23, 16, 16, 15, 23);
+      MapGrid_CopyCells(28, 90, 2, 2, 21, 88);
+      Map_CopyCellsRect(28, 90, 4, 4, 17, 89);
+      Map_CopyCellsRect(28, 90, 2, 1, 17, 91);
+      Map_CopyCellsRect(28, 90, 2, 2, 19, 91);
+      MapGrid_CopyCells(28, 92, 2, 2, 15, 92);
+      Map_CopyCellsRect(30, 92, 2, 2, 17, 92);
     }
   } else if (GameFlag_Test(0x85b)) {
     Func_020001e0();

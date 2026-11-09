@@ -5,18 +5,12 @@
 #include "map.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
-#include "call.h"
+#include "event_inline.h"
 
 extern u8 gMapShapeGrid[];
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void wait(s32 frames);
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
-struct Actor *Actor_GetById(s32 id);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void ObjectVisual_CopyAttributes(s32 id, s32 value);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);

@@ -1,10 +1,8 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
+#include "event_inline.h"
 
 extern s32 gData_02005af0;
-struct Actor *Actor_GetById(s32 id);
-s32 Func_0200584c(void);
 struct Actor *Func_020005b4(struct Actor *origin, s32 id);
 void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 velocity);
 
@@ -16,7 +14,7 @@ void Func_02000978(void) {
   s32 *speed = &gData_02005af0;
 
   if (*speed != 0) {
-    struct Actor *actor = Actor_GetById(Func_0200584c());
+    struct Actor *actor = Actor_GetById(Party_GetLeaderActor());
     struct Actor *found = Func_020005b4(actor, 359);
     s32 dx = *speed << 15;
 

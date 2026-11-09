@@ -1,13 +1,14 @@
 #include "sea_of_time.h"
+#include "event_inline.h"
 
 void Func_02001068(void) {
   Func_02001fac();
-  Func_02002044(0);
-  if (!SeaOfTime_FlagCheck(0x8dd)) {
-    Func_02002004(4);
+  Event_ResolvePendingActions(0);
+  if (!Event_GetFlag(0x8dd)) {
+    Import_EventSetExitRequest(4);
     GameFlag_SetBit(0x8dd);
   } else {
-    Func_02002004(1);
+    Import_EventSetExitRequest(1);
   }
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

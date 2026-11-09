@@ -38,35 +38,35 @@ Actor_Jump:
 	.thumb_func
 Actor_SetAngleToward:
 	overlay_veneer Actor_SetAngleTowardFar
-	.global Func_020001e4
+	.global Event_SetMessageId
 	.thumb_func
-Func_020001e4:
+Event_SetMessageId:
 	overlay_veneer Event_SetMessageIdFar
-	.global Func_020001ec
+	.global Event_ShowMessageAndWait
 	.thumb_func
-Func_020001ec:
+Event_ShowMessageAndWait:
 	overlay_veneer Event_ShowMessageAndWaitFar
-	.global Func_020001f4
+	.global Func_080d489c
 	.thumb_func
-Func_020001f4:
+Func_080d489c:
 	overlay_veneer Func_080c8218
 	.global Camera_FollowActor
 	.thumb_func
 Camera_FollowActor:
 	overlay_veneer Camera_FollowActorFar
-	.global Func_02000204
+	.global Camera_SetSpeedParameters
 	.thumb_func
-Func_02000204:
+Camera_SetSpeedParameters:
 	overlay_veneer Camera_SetSpeedParametersFar
 	.global Func_0200020c
 	.thumb_func
 Func_0200020c:
 	overlay_veneer Func_080c8240
-	.global Func_02000214
+	.global Event_ResolvePendingActions
 	.thumb_func
-Func_02000214:
+Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_0200021c
+	.global Party_GetLeaderActor
 	.thumb_func
-Func_0200021c:
+Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar

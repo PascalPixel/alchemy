@@ -1,6 +1,7 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "actor.h"
+#include "event_inline.h"
 
 struct LightTile {
   s16 x;
@@ -23,9 +24,6 @@ struct LightPuzzle {
 
 extern struct LightPuzzle gData_02002864;
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
 void GameFlag_SetByte(s32 index, s32 value);
 void Func_02001818(struct LightPuzzle *puzzle, struct LightTile *tile);
 void Func_02001888(struct LightPuzzle *puzzle, struct LightTile *tile);

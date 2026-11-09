@@ -3,6 +3,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "iwram_call.h"
+#include "event_inline.h"
 
 struct CellTargetEntry {
   s16 x;
@@ -52,16 +53,9 @@ struct CellMapWork {
 
 extern struct CellTarget Data_0200354c;
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void Func_02002858(s32 srcX, s32 srcZ, s32 width, s32 height, s32 dstX,
-                   s32 dstZ);
 void *Heap_Alloc(s32 size);
 void Heap_Release(void *buffer);
 s32 Resource_FindFreeEntry(void);
-s32 VramCache_Load(u32 slot, u32 size, const void *source);
-s32 Task_Add(void (*func)(void), s32 priority);
 void Func_02001e50(void);
 
 s32 Func_02001f7c(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
@@ -122,8 +116,9 @@ s32 Func_02001f7c(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
             if (event == last)
               GameFlag_SetBit(entry->flag);
           } else if (GameFlag_Test(entry->flag)) {
-            Func_02002858(table->x, table->z + 1, 1, 1,
-                          cx | (s16)(table->x & 64), cz | (s16)(table->z & 64));
+            Map_CopyCellsRect(table->x, table->z + 1, 1, 1,
+                              cx | (s16)(table->x & 64),
+                              cz | (s16)(table->z & 64));
           }
           entry++;
           table->count++;

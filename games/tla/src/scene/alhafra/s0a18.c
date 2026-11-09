@@ -1,8 +1,6 @@
 #include "types.h"
-#include "call.h"
+#include "event_inline.h"
 
-s32 GameFlag_Test(s32 flag);
-void Func_02001bcc();
 
 s32 Func_02000a18(void) {
   if (GameFlag_Test(0x8ab)) {
@@ -28,9 +26,9 @@ s32 Func_02000a18(void) {
         *(u16 *)0x50000fc = last;
       }
     } while (0);
-    Call6(Func_02001bcc, 37, 18, 2, 2, 37, 33);
-    Call6(Func_02001bcc, 37, 18, 2, 3, 39, 31);
-    Call6(Func_02001bcc, 50, 80, 7, 5, 35, 95);
+    MapGrid_CopyCellAttributes(37, 18, 2, 2, 37, 33);
+    MapGrid_CopyCellAttributes(37, 18, 2, 3, 39, 31);
+    MapGrid_CopyCellAttributes(50, 80, 7, 5, 35, 95);
   }
   return 0;
 }

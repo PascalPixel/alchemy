@@ -1,30 +1,20 @@
 #include "types.h"
 #include "actor.h"
-
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-s32 Func_0200129c(s32 id, s32 x, s32 z);
-s32 Func_02001234(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-
-static __inline__ void Func_02001234_(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                      s32 f) {
-  /* FAKEMATCH: as in ☀️'s scene layer, forwarding through the inline evaluates
-   * both stack arguments before either is stored; a direct call stores the
-   * first before it loads the second (differ 8). */
-  Func_02001234(a, b, c, d, e, f);
-}
+#include "event_inline.h"
 
 /// Readies object id: when the flag is set, places it at (x, z) in cells;
-/// marks it, then calls Func_02001234 with the cell to the left of it.
+/// marks it, then calls Map_CopyCellAttributeRect with the cell to the left of
+/// it.
 void Func_020007dc(s32 id, s32 a, s32 b, s32 x, s32 z, s32 unused, s32 flag) {
   struct Actor *object = Actor_GetById(id);
 
   if (object != NULL) {
     if (GameFlag_Test(flag))
-      Func_0200129c(id, x << 16, z << 16);
+      Actor_SetHorizontalPositionWithTerrain(id, x << 16, z << 16);
     Actor_SetSpritePriority(id, 3);
     object->priorityFlags |= 2;
-    Func_02001234_(a, b, 3, 1, (object->x >> 20) - 1, object->z >> 20);
+    MapGrid_CopyCellAttributes(a, b, 3, 1, (object->x >> 20) - 1,
+                               object->z >> 20);
   }
 }
 
@@ -36,9 +26,10 @@ void Func_02000848(s32 id, s32 a, s32 bArg, s32 x, s32 z, s32 unused,
   if (Actor_GetById(id) != 0) {
     Actor_SetSpritePriority(id, 3);
     if (GameFlag_Test(flag))
-      Func_0200129c(id, x << 16, z << 16);
+      Actor_SetHorizontalPositionWithTerrain(id, x << 16, z << 16);
     object = Actor_GetById(id);
     object->priorityFlags |= 2;
-    Func_02001234_(a, bArg, 1, 3, object->x >> 20, (object->z >> 20) - 1);
+    MapGrid_CopyCellAttributes(a, bArg, 1, 3, object->x >> 20,
+                               (object->z >> 20) - 1);
   }
 }

@@ -1,7 +1,7 @@
 #include "contigo.h"
 #include "scene_tables.h"
-#include "call.h"
 #include "edition.h"
+#include "event_inline.h"
 
 // The lines the prize counter speaks: the Spanish text numbers them
 // differently.
@@ -34,7 +34,6 @@ void Func_02001c44(s32 id);
 s32 Func_02001a60(s32 topic);
 void Func_0200403c(s32 value, s32 digits);
 void Func_020041fc(s32 item, s32 count);
-s32 PartyInventory_GiveItem(s32 item, s32 mode);
 void Sound_WaitForJingle(void);
 
 void Func_02003a8c(void) {
@@ -49,96 +48,96 @@ void Func_02003a8c(void) {
   Func_02001c44(17);
   Func_02001c44(19);
   Func_02001c44(20);
-  Actor_SetPartAttribute(Actor_GetById(14), 1);
-  Actor_SetPartAttribute(Actor_GetById(15), 2);
-  Actor_SetPartAttribute(Actor_GetById(8), 0);
-  Actor_SetPartAttribute(Actor_GetById(9), 3);
-  if (!Value1((s32 (*)())GameFlag_Test, 0x9e5))
+  Actor_SetPartAttribute(((struct ContigoObject *)Actor_GetById(14)), 1);
+  Actor_SetPartAttribute(((struct ContigoObject *)Actor_GetById(15)), 2);
+  Actor_SetPartAttribute(((struct ContigoObject *)Actor_GetById(8)), 0);
+  Actor_SetPartAttribute(((struct ContigoObject *)Actor_GetById(9)), 3);
+  if (!Event_GetFlag(0x9e5))
     return;
   GameFlag_ClearBit(0x9e5);
   if (gMainRoutineWork.entrance == 18) {
     diff = gMainRoutineWork.coins - *(s32 *)gSceneState;
     Func_0200406c();
-    Func_02004204(0);
+    Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     if (diff > 0) {
       if (diff > 19999)
-        Func_020042b4(93);
+        Sound_Play(93);
       else if (diff > 4999)
-        Func_020042b4(92);
+        Sound_Play(92);
       else
-        Func_020042b4(91);
-      FieldEvent_Wait(20);
-      Func_0200412c(MSG_COINS_WON);
+        Sound_Play(91);
+      Event_Wait(20);
+      Event_SetMessageId(MSG_COINS_WON);
       Func_0200403c(diff, 5);
-      Func_02004144(14, 0);
+      Event_ShowMessageAndWait(14, 0);
       Sound_WaitForJingle();
     } else if (diff < 0) {
-      Func_0200412c(MSG_COINS_LOST);
+      Event_SetMessageId(MSG_COINS_LOST);
       Func_0200403c(-diff, 5);
-      Func_02004144(14, 0);
+      Event_ShowMessageAndWait(14, 0);
     }
     Func_02004074();
   } else if (gMainRoutineWork.entrance == 19) {
     diff = gMainRoutineWork.coins - *(s32 *)gSceneState;
     Func_0200406c();
-    Func_02004204(0);
+    Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     if (diff > 0) {
       if (diff > 19999)
-        Func_020042b4(93);
+        Sound_Play(93);
       else if (diff > 4999)
-        Func_020042b4(92);
+        Sound_Play(92);
       else
-        Func_020042b4(91);
-      FieldEvent_Wait(20);
-      Func_0200412c(MSG_COINS_WON);
+        Sound_Play(91);
+      Event_Wait(20);
+      Event_SetMessageId(MSG_COINS_WON);
       Func_0200403c(diff, 5);
-      Func_02004144(14, 0);
+      Event_ShowMessageAndWait(14, 0);
       Sound_WaitForJingle();
     } else if (diff < 0) {
-      Func_0200412c(MSG_COINS_LOST);
+      Event_SetMessageId(MSG_COINS_LOST);
       Func_0200403c(-diff, 5);
-      Func_02004144(14, 0);
+      Event_ShowMessageAndWait(14, 0);
     }
     Func_02004074();
   } else if (gMainRoutineWork.entrance == 20) {
     list = ((struct ContigoPrizes *)&gMainRoutineWork)->list;
     Func_0200406c();
-    Func_02004204(0);
+    Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    FieldEvent_Wait(20);
+    Event_Wait(20);
     if (list[0] == -1) {
       Func_02001938(1);
     } else if (list[0] == -2) {
-      Func_0200412c(MSG_READ_SIGN);
-      Func_02004144(18, 0);
+      Event_SetMessageId(MSG_READ_SIGN);
+      Event_ShowMessageAndWait(18, 0);
     } else {
-      Func_0200412c(MSG_CONGRATULATIONS);
-      Func_02004144(18, 0);
+      Event_SetMessageId(MSG_CONGRATULATIONS);
+      Event_ShowMessageAndWait(18, 0);
       if (list[0] != -1) {
         prize = list;
       next:
         if (prize == list)
-          Func_0200412c(MSG_FIRST_PRIZE);
+          Event_SetMessageId(MSG_FIRST_PRIZE);
         else
-          Func_0200412c(MSG_NEXT_PRIZE);
+          Event_SetMessageId(MSG_NEXT_PRIZE);
         item = Func_02001a60(*prize);
         Func_0200403c(item, 2);
-        Func_02004144(18, 0);
+        Event_ShowMessageAndWait(18, 0);
         Func_020041fc(item, 3);
         PartyInventory_GiveItem(item, 0);
-        Call2((void (*)())Func_0200415c, 0, FACING_NORTH);
+        Actor_FaceDirectionAndWait(0, FACING_NORTH);
         prize++;
         if (*prize != -1)
           goto next;
       }
       ((struct ContigoPrizes *)&gMainRoutineWork)->list[0] = -2;
-      Func_0200412c(MSG_COME_AGAIN);
-      Func_02004144(18, 0);
+      Event_SetMessageId(MSG_COME_AGAIN);
+      Event_ShowMessageAndWait(18, 0);
     }
     Func_02004074();
   }

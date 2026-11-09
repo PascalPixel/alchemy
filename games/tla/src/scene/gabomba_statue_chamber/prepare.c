@@ -1,8 +1,8 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "gabomba_statue_chamber.h"
+#include "event_inline.h"
 
-s32 Func_02001f00(void);
 void Func_02000f00(void);
 void Func_02001010(void);
 void Func_02001064(void);
@@ -18,7 +18,8 @@ s32 Func_02001aa4(void) {
 
   work = Ram_HeapSlots->eventWork;
   work->screenEffect = 521;
-  Actor_GetById(Func_02001f00())->priorityFlags |= 0x20;
+  ((struct GabombaStatueChamberObject *)Actor_GetById(Party_GetLeaderActor()))
+      ->priorityFlags |= 0x20;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov672Room1)
     Func_02001b14();
@@ -39,7 +40,7 @@ void Func_02001b14(void) {
   if (GameFlag_Test(0x8fd)) {
     Func_02001010();
     Func_02001064();
-    GabombaStatueChamber_ObjPosSet(8, PIXELS(424), PIXELS(152));
+    Actor_SetPosition(8, PIXELS(424), PIXELS(152));
     wait(1);
     Func_02000f00();
   } else {

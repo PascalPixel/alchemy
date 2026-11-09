@@ -12,6 +12,6 @@ void Func_02001250(void) {
   
   gMainRoutineWork.unk2c2 = 2;
   Func_020041ac((s32)&SceneId_Ov6B0Room1, 99);
-  FieldEvent_Wait(40);
+  Event_Wait(40);
   Func_02000158();
 }

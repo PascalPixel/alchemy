@@ -1,6 +1,6 @@
 #include "types.h"
+#include "event_inline.h"
 
-void GameFlag_SetBit(s32 flag);
 void Func_020001a0(s32 a, s32 b, s32 c);
 
 void Func_02000054(void) {

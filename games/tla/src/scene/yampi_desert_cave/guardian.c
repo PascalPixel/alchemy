@@ -1,5 +1,5 @@
 #include "types.h"
-#include "call.h"
+#include "event_inline.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -13,15 +13,6 @@ extern u8 gMainRoutineWork[];
 extern char SceneId_Ov664Room4;
 
 s32 Func_02001870();
-s32 Func_02001930();
-s32 Actor_StartRepeatedMotion();
-s32 FieldEvent_Wait();
-s32 Func_020018f8();
-s32 Func_020018f0();
-s32 Func_02001900();
-s32 Func_02001860();
-s32 Actor_GetById();
-s32 Actor_ResetAndSetPosition();
 void Func_020018e0(s32 a, s32 b);
 
 /// The guardian speaks, then the party leaves for overlay 664's fourth room.
@@ -30,22 +21,22 @@ void Func_0200130c(void) {
   s32 leader;
 
   Func_02001870();
-  Func_02001930(0);
+  Event_ResolvePendingActions(0);
   Actor_StartRepeatedMotion(9, 2);
-  FieldEvent_Wait(20);
-  Call2(Func_020018f8, 0x10000, 0);
-  Func_020018f0(0x10003, 1);
-  Func_02001900(60);
-  FieldEvent_Wait(60);
-  Call3(Func_02001860, (s32)MsgIAmThe, 0, 6);
-  Func_020018f0(0x10000, 0);
-  Func_02001900(60);
-  FieldEvent_Wait(60);
-  leader = Actor_GetById(FIELD_AT(gMainRoutineWork, s32, 0x214));
+  Event_Wait(20);
+  PaletteFade_ApplySource(0x10000, 0);
+  BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
+  BattleEffect_StartBufferInterpolation(60);
+  Event_Wait(60);
+  FieldMessage_ShowCentered((s32)MsgIAmThe, 0, 6);
+  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  BattleEffect_StartBufferInterpolation(60);
+  Event_Wait(60);
+  leader = ((s32)Actor_GetById(FIELD_AT(gMainRoutineWork, s32, 0x214)));
   if (leader != 0)
     Actor_ResetAndSetPosition(9, FIELD_AT(leader, s16, 10),
                               FIELD_AT(leader, s16, 18));
-  FieldEvent_Wait(20);
+  Event_Wait(20);
   /* FAKEMATCH: a one-pass block around the first two stores keeps the call's
    * first argument ahead of the scene store's address (alchemy permute);
    * without it the argument follows the store (differ 4). */

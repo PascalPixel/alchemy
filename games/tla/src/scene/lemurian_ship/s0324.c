@@ -1,4 +1,5 @@
 #include "lemurian_ship.h"
+#include "event_inline.h"
 
 struct LemurianShipWarp {
   u16 exit;
@@ -9,9 +10,6 @@ struct LemurianShipWarp {
 
 extern struct LemurianShipWarp gData_02003904[];
 extern struct LemurianShipWarp gData_0200397c[];
-void Func_02002c28(s32 value, s32 x, s32 z);
-void Actor_OffsetPositionAndResetMotion(s32 actor, s32 a, s32 b);
-void Actor_CenterOnColumn(s32 actor, s32 a, s32 b);
 
 void Func_02000324(void) {
   struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
@@ -22,11 +20,11 @@ void Func_02000324(void) {
   u32 i;
 
   Func_02002c68();
-  Func_02002da8(0);
+  Event_ResolvePendingActions(0);
   found = 0;
   i = 8;
 next:
-  object = Actor_GetById(i);
+  object = ((struct LemurianShipObject *)Actor_GetById(i));
   if (object != NULL)
     object->motionFlags = 0;
   i++;
@@ -44,15 +42,15 @@ next2:
     goto next2;
   if (found < 2 && GameFlag_Test(0x93f) && GameFlag_Test(0x9e4) == 0)
     found += 4;
-  Func_02002de0(158);
+  Sound_Play(158);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
-  LemurianShip_MapCopy(0, 0, gData_0200397c[found].x, gData_0200397c[found].z,
-                       1, 2);
-  Func_02002c28(gData_0200397c[found].value, gData_0200397c[found].x,
-                gData_0200397c[found].z + 60);
+  MapGrid_CopyCellsTo(0, 0, gData_0200397c[found].x, gData_0200397c[found].z, 1,
+                      2);
+  Map_PlayMapEdit(gData_0200397c[found].value, gData_0200397c[found].x,
+                  gData_0200397c[found].z + 60);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_CenterOnColumn(gMainRoutineWork.currentOwner, 2, -4);
-  FieldEvent_Wait(4);
-  Func_02002d70(work->exit);
+  Event_Wait(4);
+  Import_EventSetExitRequest(work->exit);
 }

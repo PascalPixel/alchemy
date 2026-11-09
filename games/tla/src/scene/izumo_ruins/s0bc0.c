@@ -2,10 +2,10 @@
 #include "actor.h"
 #include "map.h"
 #include "system/ram_buffer.h"
+#include "event_inline.h"
 
 extern u8 gMapShapeGrid[];
 
-struct Actor *Actor_GetById(s32 id);
 s32 Func_02001478(s32 terrainId, s32 x, s32 z);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Func_02001528(s32 terrainId, s32 value, s32 height);

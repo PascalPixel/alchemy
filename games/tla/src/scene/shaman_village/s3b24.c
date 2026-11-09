@@ -2,11 +2,11 @@
 
 void Func_02003b24(void) {
   Actor_SetSpritePriority(6, 1);
-  Import_SoundPlay(131);
+  Sound_Play(131);
   Func_02004a54();
-  Func_02004a6c(Actor_GetById(6), 2);
-  FieldEvent_Wait(40);
-  Func_02004a6c(Actor_GetById(6), 0);
+  Func_02004a6c(((struct ShamanVillageObject *)Actor_GetById(6)), 2);
+  Event_Wait(40);
+  Func_02004a6c(((struct ShamanVillageObject *)Actor_GetById(6)), 0);
   Func_02004a64();
   Func_02004a5c();
   Func_0200057c();
@@ -19,29 +19,29 @@ void Func_02003b6c(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   s32 cell;
 
   Func_020048c4();
-  Func_02004a24(0);
+  Event_ResolvePendingActions(0);
   if (mode == 2)
-    Import_SoundPlay(188);
+    Sound_Play(188);
   else
-    Import_SoundPlay(158);
-  Func_02004844(a, b, c, d, mode, f);
-  FieldEvent_Wait(20);
+    Sound_Play(158);
+  Map_CopyCellPictureIndicesRect(a, b, c, d, mode, f);
+  Event_Wait(20);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   if (mode == 1) {
-    object = Actor_GetById(gMainRoutineWork.currentOwner);
+    object = ((struct ShamanVillageObject *)Actor_GetById(gMainRoutineWork.currentOwner));
     cell = object->x >> 16;
-    Func_02004834(object, ((8 - cell % 16) << 16) + object->x, object->y,
+    Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,
                   object->z);
-    Func_0200483c(object);
+    Script_WaitForEventTimeout(object);
     object->facing = 0xc000;
   }
   Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
                                           gData_02004c08);
   wait(12);
-  Import_SoundPlay(123);
+  Sound_Play(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02004a04(work->exit);
+  Import_EventSetExitRequest(work->exit);
 }
 
 void Func_02003c58(void) { Func_02003b6c(43, 40, 8, 22, 1, 2); }

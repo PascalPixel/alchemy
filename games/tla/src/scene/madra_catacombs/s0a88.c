@@ -3,6 +3,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -25,33 +26,14 @@ extern const u8 gData_020013c4[];
 extern const u8 gData_020013ca[];
 extern const u8 gData_0200121c[];
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void wait(s32 frames);
-void FieldMessage_Show(s32 message, s32 mode);
-void FieldEvent_Wait(s32 frames);
-void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_SetMovementTypeById(s32 id, const void *script);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_0200110c(void);
-void Func_020011ac(s32 skip);
 void Func_02001114(void);
-void Func_02001214(s32 cue);
-void Func_020010bc(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_020010c4(struct Actor *object);
-void Func_020010cc(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_020010dc(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02001134(s32 id, s32 x, s32 z);
 void Func_0200113c(s32 id, s32 value);
 void Func_0200115c(s32 id);
-void Func_0200117c(s32 entrance);
 s32 Func_02001184(s32 owner);
 void Func_020011b4(void);
 void Func_020011bc(s32 a, s32 b, s32 c, s32 d);
@@ -68,11 +50,6 @@ void Func_02000a28(void);
 void Func_02000c94(void);
 void Func_02000cf4(void);
 
-static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Camera_MoveWithinMapBounds(a, b, c, d);
-}
-
 void Func_02000a88(void) {
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
@@ -82,19 +59,19 @@ void Func_02000a88(void) {
 
   object = Actor_GetById(party->currentOwner);
   Func_0200110c();
-  Func_020011ac(0);
-  Camera_SetBounds(-1, -1, -1, 0);
+  Event_ResolvePendingActions(0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Actor_SetModeById(party->currentOwner, 2);
   Actor_SetSpeedParameters(party->currentOwner, 0x8000, 0x4000);
   cell = object->x >> 16;
-  Func_020010bc(object, ((8 - cell % 16) << 16) + object->x, object->y,
+  Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,
                 object->z);
-  Func_020010c4(object);
+  Script_WaitForEventTimeout(object);
   object->angle = FACING_NORTH;
   Actor_SetMovementTypeById(party->currentOwner, gData_0200121c);
   wait(12);
-  Func_02001214(123);
+  Sound_Play(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_0200117c(work->returnEntrance);
+  Import_EventSetExitRequest(work->returnEntrance);
 }

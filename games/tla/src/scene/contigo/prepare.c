@@ -3,6 +3,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
+#include "event_inline.h"
 
 struct SpriteAttributes {
   u8 unk00[9];
@@ -10,7 +11,6 @@ struct SpriteAttributes {
   u8 priority : 2;
 };
 
-struct Actor *Actor_GetById(s32 id);
 void Func_02003720(void);
 void Func_02003880(void);
 void Func_020039d4(void);

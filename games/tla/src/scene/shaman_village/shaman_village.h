@@ -7,6 +7,7 @@
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 #include "field_sprite.h"
+#include "event_inline.h"
 
 struct ShamanVillageObject {
   u8 unk00[6];
@@ -62,159 +63,34 @@ struct ShamanVillageEventWork {
 extern s32 gFrameCount;
 
 u32 Random16Far(void);
-void wait(s32 frames);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void FieldEvent_Wait(s32 frames);
-struct ShamanVillageObject *Actor_GetById(s32 id);
-void Actor_SetPositionAndResetMotion(struct ShamanVillageObject *object, s32 x,
-                                      s32 y, s32 z);
-void Actor_SetPartAttribute(struct ShamanVillageObject *object, s32 value);
-void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
-void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
-void Actor_SetSpritePriority(s32 actor, s32 variant);
 
-void Func_02004844(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_0200484c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_020048c4(void);
 void Func_020048cc(void);
-void Func_0200498c(s32 message);
-void Func_0200499c(s32 actor, s32 a, s32 b);
-void Func_020049a4(s32 speaker, s32 flags);
-s32 Func_020049ac(s32 speaker, s32 flags);
-void Func_020049bc(s32 actor, s32 angle);
-void Func_02004a24(s32 skip);
 void Func_02004a74(s32 shop, s32 keeper);
 void Func_02004a7c(s32 keeper);
 void Func_02004a84(s32 shop, s32 keeper);
-void Import_SoundPlay(s32 cue);
-void Func_02004934(s32 actor, s32 x, s32 z);
-struct ShamanVillageObject *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Import_ActorSetMode(struct ShamanVillageObject *object, s32 mode);
 void Func_0200481c(struct ShamanVillageObject *object);
 void Actor_SetSingleChildFlags(struct ShamanVillageObject *object,
                                         u32 value);
 void Animation_SetStateFlags(struct ShamanVillageObject *object, s32 flags);
-void Actor_SetModeById(s32 actor, s32 mode);
-void Task_Add(void (*func)(void), s32 priority);
-void Task_RemoveFar(void (*func)(void));
 void Field_DispatchTypeHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_020049f4(void);
-void Func_02004a04(s32 countdown);
 
 void Func_02004a44(void);
 void Func_02004a4c(s32 a, s32 b, s32 c, s32 d);
-void Func_02004834(struct ShamanVillageObject *object, s32 x, s32 y, s32 z);
-void Func_0200483c(struct ShamanVillageObject *object);
 void Event_StartScreenTransition(void);
 
-static inline void ShamanVillage_ObjTurn(s32 actor, s32 angle) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_020049bc(actor, angle);
-}
-
-static inline void ShamanVillage_BlendStart(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                            s32 f) {
-  /* FAKEMATCH: the blend start reaches the main image through one inline layer. */
-  Func_0200484c(a, b, c, d, e, f);
-}
-
-static inline s32 ShamanVillage_FlagCheck(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
-
-static inline void ShamanVillage_ObjArm(s32 actor, s32 angle, s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_ArmCallback(actor, angle, frames);
-}
-
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-struct ShamanVillageObject *Func_020049fc(void);
-void Func_020049e4(s32 speed, s32 acceleration);
-void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void Func_02004944(s32 actor, s32 target);
-void Actor_SetMovementTypeById(s32 actor, const void *callback);
-void Actor_SetMovementTypeAndWaitById(s32 actor, const void *callback);
-s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
-s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
-void Func_020049cc(s32 actor, s32 emote, s32 frames);
-void Func_020049d4(s32 actor, s32 emote);
-void Actor_Jump(s32 actor, s32 speed, s32 frames);
-void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
-void Actor_WaitForMoveById(s32 actor);
-void Event_PrepareObjectAndApplyValue(s32 actor, s32 value);
 
-static inline void ShamanVillage_CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Camera_MoveWithinMapBounds(x, y, z, mode);
-}
-
-static inline void ShamanVillage_ObjSpeed(s32 actor, s32 speed,
-                                          s32 acceleration) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetSpeedParameters(actor, speed, acceleration);
-}
-
-static inline void ShamanVillage_ObjWalk(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetPositionAndReset(actor, x, z);
-}
-
-static inline void ShamanVillage_MapCopy(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                         s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02004844(a, b, c, d, e, f);
-}
-
-static inline void ShamanVillage_ObjEmoteWait(s32 actor, s32 emote) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_020049d4(actor, emote);
-}
-
-static inline void ShamanVillage_MessagePut(s32 speaker, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_020049a4(speaker, flags);
-}
-
-static inline void ShamanVillage_MessageOpen(s32 speaker, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldMessage_ShowAtActor(speaker, flags);
-}
-
-void FieldMessage_Show(s32 message, s32 position);
-void Actor_Stop(s32 actor);
-void Camera_FollowActor(s32 actor, s32 value);
-void Func_02004a34(s32 a, s32 b, s32 c);
 void Func_02004a54(void);
 void Func_02004a5c(void);
 void Func_02004a64(void);
 void Func_02004a6c(struct ShamanVillageObject *object, s32 value);
 void Func_02004a2c(void);
 void Func_020048b4(void);
-void Motion_SetVarCbAndRefresh(s32 actor, s32 value);
-void Actor_StartRepeatedMotion(s32 actor, s32 value);
-void Actor_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
-
-static inline void ShamanVillage_CamSpeed(s32 speed, s32 acceleration) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_020049e4(speed, acceleration);
-}
-
-static inline void ShamanVillage_ObjWalk2(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_ResetAndSetPositionInMode2(actor, x, z);
-}
-
-static inline void ShamanVillage_ObjPlace(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02004934(actor, x, z);
-}
 
 #define SHAMAN_VILLAGE_EMOTE(actor, emote, frames)                             \
   {                                                                            \
@@ -234,20 +110,9 @@ static inline void ShamanVillage_ObjPlace(s32 actor, s32 x, s32 z) {
     register s32 emote_ __asm__("r1") = (emote);                               \
     /* FAKEMATCH: the frames, pinned with the emote above. */                  \
     register s32 frames_ __asm__("r2") = (frames);                             \
-    Func_020049cc((actor), emote_, frames_);                                   \
+    Func_080d47b4((actor), emote_, frames_);                                   \
   }
 
-void Func_0200493c(s32 actor, s32 x, s32 z, s32 angle);
-
-static inline void ShamanVillage_ObjPut(s32 actor, s32 x, s32 z, s32 angle) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_0200493c(actor, x, z, angle);
-}
-
-static inline void ShamanVillage_MessageWait(s32 speaker, s32 a, s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_0200499c(speaker, a, frames);
-}
 
 // ---- this overlay
 

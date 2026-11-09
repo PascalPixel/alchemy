@@ -1,9 +1,7 @@
 #include "trial_road.h"
+#include "event_inline.h"
 
 extern const u8 gData_02005b44[];
-
-void Func_020057f8(struct Actor *object, s32 x, s32 y, s32 z);
-void Actor_SetMovementTypeById(s32 id, const void *script);
 
 void Func_02001dd4(void) {
   struct Actor *partner = Actor_GetById(8);
@@ -23,11 +21,12 @@ void Func_02001dd4(void) {
   dz = (leader->z >> 16) - 248;
   far = dx * dx + dz * dz;
   if (far <= 6400 || near <= 2304)
-    Func_020057f8(partner, (296 - dx) << 16, partner->y, (248 - dz) << 16);
+    Actor_SetMoveTarget(partner, (296 - dx) << 16, partner->y,
+                        (248 - dz) << 16);
   if (far > 15)
     return;
-  Func_02005a68(146);
-  Func_02005a68(122);
+  Sound_Play(146);
+  Sound_Play(122);
   partner->speedLimit = 0x20000;
   partner->acceleration = 0x20000;
   partner->motionFlags = 2;
@@ -36,6 +35,6 @@ void Func_02001dd4(void) {
   partner->velocityY = 0xa0000;
   Actor_SetMovementTypeById(8, gData_02005b44);
   y = partner->y;
-  Func_020057f8(partner, 344 << 16, y, 264 << 16);
+  Actor_SetMoveTarget(partner, 344 << 16, y, 264 << 16);
   GameFlag_SetBit(648);
 }

@@ -1,16 +1,11 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "actor.h"
+#include "event_inline.h"
 
 extern char SceneId_VenusLighthouseEntrance;
 extern char SceneId_SuhallaGate3;
 
-struct Actor *Actor_GetById(s32 id);
-void FieldEvent_Wait(s32 frames);
-void Actor_Jump(s32 actor, s32 speed, s32 frames);
-void Actor_ResetAndSetPosition(s32 id, s32 x, s32 z);
-void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
-void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
 void Func_02000990(void);
 void Func_02000a40(s32 a, s32 b);
 
@@ -22,7 +17,7 @@ void Func_020005e8(void) {
   if (owner != NULL)
     Actor_ResetAndSetPosition(8, *(s16 *)((u8 *)owner + 10),
                                      *(s16 *)((u8 *)owner + 18));
-  FieldEvent_Wait(20);
+  Event_Wait(20);
   Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate3, 99);
   Party_SetFields1f2And1f4((s32)&SceneId_VenusLighthouseEntrance, 98);
   gMainRoutineWork.battleRule24b = 2;

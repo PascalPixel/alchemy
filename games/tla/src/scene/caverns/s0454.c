@@ -1,15 +1,15 @@
 #include "../../../../games/tla/src/scene/caverns/caverns.h"
+#include "event_inline.h"
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Camera_FollowActor(s32 actor, s32 target);
 void Func_020010cc(s32 x, s32 z, s32 layer, s32 height);
 s32 Func_020003b4(u32 layer, s32 x, s32 y);
 s32 Func_020003f0(u32 layer, s32 x, s32 y, s32 value);
 
 void Func_02000454(const u8 *data) {
   const u16 *ids = (const u16 *)data;
-  struct Actor *leader =
-      (struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = (struct Actor *)((struct FieldActor *)Actor_GetById(
+      gMainRoutineWork.currentOwner));
   struct Actor *object;
   s32 height;
   s32 cell;
@@ -17,7 +17,7 @@ void Func_02000454(const u8 *data) {
   if (*ids == 0xffff)
     goto done;
 loop:
-  object = (struct Actor *)Actor_GetById(*ids);
+  object = (struct Actor *)((struct FieldActor *)Actor_GetById(*ids));
   object->motionFlags = 0;
   object->collisionFlags = 0;
   object->bounce = 0;

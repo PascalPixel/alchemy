@@ -22,9 +22,9 @@ Func_02003100:
 	.thumb_func
 Func_02003108:
 	overlay_veneer Actor_StartScriptFar
-	.global Func_02003110
+	.global Import_ActorCreate
 	.thumb_func
-Func_02003110:
+Import_ActorCreate:
 	overlay_veneer Func_080200c0
 	.global Actor_SetPositionAndResetMotion
 	.thumb_func
@@ -34,9 +34,9 @@ Actor_SetPositionAndResetMotion:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global FieldEvent_Wait
+	.global Event_Wait
 	.thumb_func
-FieldEvent_Wait:
+Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
 	.global Func_02003130
 	.thumb_func
@@ -90,9 +90,9 @@ Actor_SetPositionAndReset:
 	.thumb_func
 Actor_WaitForMoveById:
 	overlay_veneer Actor_WaitForMoveByIdFar
-	.global Func_02003198
+	.global Actor_SetHorizontalPositionWithTerrain
 	.thumb_func
-Func_02003198:
+Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -114,37 +114,37 @@ Actor_StartRepeatedMotion:
 	.thumb_func
 Motion_SetVarCbAndRefresh:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
-	.global Func_020031c8
+	.global Event_SetMessageId
 	.thumb_func
-Func_020031c8:
+Event_SetMessageId:
 	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
 	overlay_veneer FieldMessage_ShowAtActorFar
-	.global Func_020031d8
+	.global Event_ShowMessageThenWait
 	.thumb_func
-Func_020031d8:
+Event_ShowMessageThenWait:
 	overlay_veneer Func_080c8198
-	.global Func_020031e0
+	.global Event_ShowMessageAndWait
 	.thumb_func
-Func_020031e0:
+Event_ShowMessageAndWait:
 	overlay_veneer Event_ShowMessageAndWaitFar
 	.global Actor_ArmCallback
 	.thumb_func
 Actor_ArmCallback:
 	overlay_veneer Actor_ArmCallbackFar
-	.global Func_020031f0
+	.global Battle_ShowPairedUnitWorkAndWait
 	.thumb_func
-Func_020031f0:
+Battle_ShowPairedUnitWorkAndWait:
 	overlay_veneer Battle_ShowPairedUnitWorkAndWaitFar
-	.global Func_020031f8
+	.global Func_080d47b4
 	.thumb_func
-Func_020031f8:
+Func_080d47b4:
 	overlay_veneer Func_080c8210
-	.global Func_02003200
+	.global Func_080d489c
 	.thumb_func
-Func_02003200:
+Func_080d489c:
 	overlay_veneer Func_080c8218
 	.global Camera_FollowActor
 	.thumb_func
@@ -174,13 +174,13 @@ Event_StartScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_02003240
+	.global Event_ResolvePendingActions
 	.thumb_func
-Func_02003240:
+Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02003248
+	.global Func_080d3070
 	.thumb_func
-Func_02003248:
+Func_080d3070:
 	overlay_veneer Motion_LaunchFromFocusedObjectFar
 	.global Actor_OffsetPositionAndReset
 	.thumb_func
@@ -190,9 +190,9 @@ Actor_OffsetPositionAndReset:
 	.thumb_func
 Actor_CommitPositionAndActivate:
 	overlay_veneer Actor_CommitPositionAndActivateFar
-	.global Func_02003260
+	.global Func_080d3928
 	.thumb_func
-Func_02003260:
+Func_080d3928:
 	overlay_veneer Func_080c87a8
 	.global Func_02003268
 	.thumb_func
@@ -218,15 +218,15 @@ Func_02003288:
 	.thumb_func
 Func_02003290:
 	overlay_veneer BattleEffect_SetObjectUpdateModeFar
-	.global Func_02003298
+	.global Func_080d3b28
 	.thumb_func
-Func_02003298:
+Func_080d3b28:
 	overlay_veneer Func_080c8860
 	.global Func_020032a0
 	.thumb_func
 Func_020032a0:
 	overlay_veneer Func_080c8930
-	.global Func_020032a8
+	.global Sound_Play
 	.thumb_func
-Func_020032a8:
+Sound_Play:
 	overlay_veneer Sound_PlayFar

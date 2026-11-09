@@ -1,6 +1,6 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
+#include "event_inline.h"
 
 struct MapLayer {
   u8 unk00[4];
@@ -15,7 +15,6 @@ struct MapWork {
   struct MapLayer layer;
 };
 
-s32 Math_Sine(s32 angle);
 
 extern s32 gData_02003c10;
 extern s16 gData_02003c14;

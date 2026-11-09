@@ -2,10 +2,10 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-struct Actor *Actor_GetById(s32 id);
 s32 Func_02000620(s32 *a, s32 *b);
 s32 Func_02000658(struct Actor *object, struct Actor *other,
                   s32 range);

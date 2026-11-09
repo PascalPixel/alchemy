@@ -1,14 +1,14 @@
 #include "gabomba_statue_chamber.h"
+#include "event_inline.h"
 
 extern struct GabombaStatueChamberObject *gData_02002058;
 void *HeapSlot_AllocFar(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
-void VramCache_Load(s32 entry, s32 size, void *source);
-void Func_02001d90(s32 item);
 void Func_02000ef0();
 
 void Func_02000f00(void) {
-  struct GabombaStatueChamberObject *leader = Actor_GetById(8);
+  struct GabombaStatueChamberObject *leader =
+      ((struct GabombaStatueChamberObject *)Actor_GetById(8));
   s32 x = leader->x;
   s32 z = leader->z;
   /* FAKEMATCH: one zero for the three byte stores, set before the null test,
@@ -16,7 +16,9 @@ void Func_02000f00(void) {
   s32 zero = 0;
   struct GabombaStatueChamberObject *object;
 
-  if ((gData_02002058 = object = Func_02001d28(489, x, 0x120000, z)) != NULL) {
+  if ((gData_02002058 = object =
+           ((struct GabombaStatueChamberObject *)Import_ActorCreate(
+               489, x, 0x120000, z))) != NULL) {
     struct FieldSprite *sprite = object->sprite;
     u8 *block;
 
@@ -29,14 +31,15 @@ void Func_02000f00(void) {
     sprite->nextFrame = zero;
     sprite->unk1b[0] = zero;
     block = HeapSlot_AllocFar(68, 0x608);
-    Func_02001d90(230);
+    Icon_DrawItem(230);
     VramCache_Load(sprite->vramBlock, 128, block + 0x400);
     HeapSlot_Release(68);
   }
 }
 
 void Func_02000f88(void) {
-  struct GabombaStatueChamberObject *leader = Actor_GetById(8);
+  struct GabombaStatueChamberObject *leader =
+      ((struct GabombaStatueChamberObject *)Actor_GetById(8));
   s32 x = leader->x;
   s32 z = leader->z;
   /* FAKEMATCH: one zero for the three byte stores, set before the null test,
@@ -44,7 +47,9 @@ void Func_02000f88(void) {
   s32 zero = 0;
   struct GabombaStatueChamberObject *object;
 
-  if ((gData_02002058 = object = Func_02001d28(489, x, 0x120000, z)) != NULL) {
+  if ((gData_02002058 = object =
+           ((struct GabombaStatueChamberObject *)Import_ActorCreate(
+               489, x, 0x120000, z))) != NULL) {
     struct FieldSprite *sprite = object->sprite;
     u8 *block;
 
@@ -57,7 +62,7 @@ void Func_02000f88(void) {
     sprite->nextFrame = zero;
     sprite->unk1b[0] = zero;
     block = HeapSlot_AllocFar(68, 0x608);
-    Func_02001d90(242);
+    Icon_DrawItem(242);
     VramCache_Load(sprite->vramBlock, 128, block + 0x400);
     HeapSlot_Release(68);
   }

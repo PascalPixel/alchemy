@@ -4,6 +4,7 @@
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "event_inline.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
@@ -14,8 +15,6 @@ extern u16 gData_020023e8[];
 extern u16 gData_02002408[];
 extern u16 gData_0200240c[];
 
-s32 GameFlag_Test();
-void Task_Add();
 void Func_020002e8(void);
 
 void Func_020003a4(s32 mode) {

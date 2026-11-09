@@ -2,8 +2,7 @@
 #include "scene_tables.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-
-void GameFlag_ClearBit(s32 flag);
+#include "event_inline.h"
 
 s32 Scene_PrepareMap(void) { return 0; }
 

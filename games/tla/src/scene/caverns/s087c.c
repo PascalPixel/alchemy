@@ -3,6 +3,7 @@
 #include "ram_buffer.h"
 #include "field_effect.h"
 #include "fixed_math.h"
+#include "event_inline.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -20,18 +21,13 @@ s32 Func_020003b4(u32 layer, s32 x, s32 y);
 s32 Func_020003f0(u32 layer, s32 x, s32 y, s32 value);
 void Func_0200053c(s32 offset);
 void Func_0200108c(struct Actor *object);
-s32 Func_020010a4(s32 layer, s32 x, s32 z);
 void Func_020010cc(s32 x, s32 z, s32 layer, s32 height);
 struct Actor *Func_0200115c(s32 *position, s32 mode);
-void Func_02001164(s32 cue);
-void GameFlag_SetBit(s32 flag);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
 void OverlayObject_WaitUntilIdle(struct Actor *object);
 u32 Random16Far(void);
-void wait(s32 frames);
 void Func_020007ec(struct Actor *object);
 void Func_02000848(struct FieldActor *object);
 
@@ -65,7 +61,7 @@ void Func_0200087c(void) {
     object->motionFlags = 3;
     object->bounce = 0;
     wait(1);
-    kind = Func_020010a4(2, object->x, object->z);
+    kind = GetMapCellCollision(2, object->x, object->z);
     if (kind != 0) {
       object->priorityFlags |= 2;
       *(u16 *)0x4000052 = 0x1000;
@@ -74,7 +70,7 @@ void Func_0200087c(void) {
       sum = kind + 2;
       spawned = OverlayObject_PrepareObject(object->x, 0,
                                             object->z + (sum << 20), 312);
-      Func_02001164(204);
+      Sound_Play(204);
       OverlayObject_WaitUntilIdle(object);
       OverlayObject_WaitUntilIdle(object);
       object->x = object->y = object->z = 0;
@@ -84,7 +80,7 @@ void Func_0200087c(void) {
     } else {
       OverlayObject_WaitUntilIdle(object);
       OverlayObject_WaitUntilIdle(object);
-      Func_02001164(188);
+      Sound_Play(188);
       options.palette = 7;
       options.priority = 2;
       options.update = (void (*)(union FieldObject *))Func_020007ec;

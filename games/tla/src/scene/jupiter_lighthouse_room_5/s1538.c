@@ -1,6 +1,6 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
+#include "event_inline.h"
 
 struct Spark {
   u8 unk00[0x0c];
@@ -26,7 +26,6 @@ struct SparkWork {
   s16 next;
 };
 
-s32 Math_Sine(s32 angle);
 void Func_020029b0(s32 *position);
 void Func_020029e8(struct SparkSprite *sprite);
 
@@ -43,13 +42,12 @@ void Func_02001538(void) {
     if (spark->age < 0 || spark->age > duration)
       continue;
     {
-      s32 sine =
-          Value1((s32 (*)())Math_Sine, (s32)((spark->age << 15) / duration));
+      s32 sine = Math_Sin((s32)((spark->age << 15) / duration));
       s32 *p = position;
       p[0] = work->from[0] +
              (work->to[0] - work->from[0]) * spark->age / duration +
              sine * spark->dx;
-      sine = Value1((s32 (*)())Math_Sine, (s32)((spark->age << 15) / duration));
+      sine = Math_Sin((s32)((spark->age << 15) / duration));
       p[1] = work->from[1] +
              (work->to[1] - work->from[1]) * spark->age / duration +
              sine * spark->dy;

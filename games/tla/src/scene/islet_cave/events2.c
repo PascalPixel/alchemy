@@ -3,20 +3,18 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "call.h"
 #include "text/msg_ids.h"
+#include "event_inline.h"
 
 void Actor_SetSingleChildFlags();
 
-void Func_020012dc();
-
 void Func_020003b0(void) {
-  Func_020012dc(15, 12);
+  Func_080d2b4c(15, 12);
   return;
 }
 
 void Func_020003bc(void) {
-  Func_020012dc(9, 37);
+  Func_080d2b4c(9, 37);
   return;
 }
 

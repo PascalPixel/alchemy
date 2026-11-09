@@ -1,16 +1,13 @@
 #include "shaman_village.h"
 #include "game/item.h"
+#include "event_inline.h"
 
 #define EVENT_WORK ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)
 
-s32 PartyInventory_FindOwner(s32 item);
 u8 *Unit_Get(s32 owner);
 struct ItemDefinition *Func_02004894(s32 item);
-void Actor_WatchAndSetScript(s32 actor, s32 target);
 
 // Forwards to Party_ListActiveOwners; tagged where it is used.
-static inline s32 ListOwners(s16 *list) { return Party_ListActiveOwners(list); }
-
 void Func_0200290c(void) {
   s16 owners[10];
   s32 count;
@@ -20,13 +17,13 @@ void Func_0200290c(void) {
   u16 *items;
   s16 *owner;
 
-  Func_0200498c((s32)MsgShamanMissingShamanRod);
+  Event_SetMessageId((s32)MsgShamanMissingShamanRod);
   if (PartyInventory_FindOwner(65) == -1)
     goto refuse;
   /* FAKEMATCH(wrapper): the count read through ListOwners; as a direct
    * Party_ListActiveOwners call with owner = owners before it, 4 of 119
    * instructions differ in tla-en. */
-  count = ListOwners(owners);
+  count = FieldParty_ListMembers(owners);
   owner = owners;
   remaining = 8;
   for (i = 0; i < count; i++) {
@@ -50,13 +47,13 @@ void Func_0200290c(void) {
   refuse:
     /* FAKEMATCH(pin): the emote and the frames pinned to r1 and r2 by
      * SHAMAN_VILLAGE_EMOTE, so they load before the actor; as a plain
-     * Func_020049cc(15, 257, 20), 2 of 119 instructions differ in tla-en. */
+     * Func_080d47b4(15, 257, 20), 2 of 119 instructions differ in tla-en. */
     SHAMAN_VILLAGE_EMOTE(15, 257, 20)
-    Func_020049a4(0x200f, 0);
+    Event_ShowMessageAndWait(0x200f, 0);
     Func_0200289c();
   } else {
     EVENT_WORK->field1c4++;
-    Func_020049a4(0x200f, 0);
+    Event_ShowMessageAndWait(0x200f, 0);
     Actor_WatchAndSetScript(16, gMainRoutineWork.currentOwner);
     Actor_WatchAndSetScript(17, gMainRoutineWork.currentOwner);
     Actor_WatchAndSetScript(15, gMainRoutineWork.currentOwner);

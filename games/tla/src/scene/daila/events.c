@@ -1,66 +1,57 @@
 #include "types.h"
 #include "field_event.h"
-
-void Func_02000c48();
-void Func_02000ca8(s32 actor, s32 x, s32 z);
-
-static inline void MapCopyAttr(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  /* FAKEMATCH: as in the scene layer of The Broken Seal, the inline parameters
-   * keep the native registers (direct: the second stack constant reuses r3
-   * after the first store) */
-  Func_02000c48(a, b, c, d, e, f);
-}
+#include "event_inline.h"
 
 void Func_02000924(void) {
   Import_EventStart();
-  Import_EventResolvePendingActions(0);
-  MapCopyAttr(10, 19, 1, 1, 11, 19);
-  Func_02000ca8(22, 0, 0);
-  Import_GameFlagSet(0x210);
+  Event_ResolvePendingActions(0);
+  MapGrid_CopyCellAttributes(10, 19, 1, 1, 11, 19);
+  Actor_SetHorizontalPositionWithTerrain(22, 0, 0);
+  GameFlag_SetBit(0x210);
   Import_EventEnd();
 }
 
 void Func_02000960(void) {
   Import_EventStart();
-  Import_EventResolvePendingActions(0);
-  MapCopyAttr(25, 20, 1, 1, 26, 20);
-  Func_02000ca8(23, 0, 0);
-  Import_GameFlagSet(0x211);
+  Event_ResolvePendingActions(0);
+  MapGrid_CopyCellAttributes(25, 20, 1, 1, 26, 20);
+  Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
+  GameFlag_SetBit(0x211);
   Import_EventEnd();
 }
 
 void Func_020009a0(void) {
   Import_EventStart();
-  Import_EventResolvePendingActions(0);
-  MapCopyAttr(28, 23, 1, 1, 29, 23);
-  Func_02000ca8(24, 0, 0);
-  Import_GameFlagSet(0x212);
+  Event_ResolvePendingActions(0);
+  MapGrid_CopyCellAttributes(28, 23, 1, 1, 29, 23);
+  Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
+  GameFlag_SetBit(0x212);
   Import_EventEnd();
 }
 
 void Func_020009e0(void) {
   Import_EventStart();
-  Import_EventResolvePendingActions(0);
-  MapCopyAttr(17, 11, 1, 1, 18, 11);
-  Func_02000ca8(25, 0, 0);
-  Import_GameFlagSet(0x213);
+  Event_ResolvePendingActions(0);
+  MapGrid_CopyCellAttributes(17, 11, 1, 1, 18, 11);
+  Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
+  GameFlag_SetBit(0x213);
   Import_EventEnd();
 }
 
 void Func_02000a20(void) {
   Import_EventStart();
-  Import_EventResolvePendingActions(0);
-  MapCopyAttr(30, 17, 1, 1, 31, 17);
-  Func_02000ca8(26, 0, 0);
-  Import_GameFlagSet(0x214);
+  Event_ResolvePendingActions(0);
+  MapGrid_CopyCellAttributes(30, 17, 1, 1, 31, 17);
+  Actor_SetHorizontalPositionWithTerrain(26, 0, 0);
+  GameFlag_SetBit(0x214);
   Import_EventEnd();
 }
 
 void Func_02000a5c(void) {
   Import_EventStart();
-  Import_EventResolvePendingActions(0);
-  MapCopyAttr(16, 23, 1, 1, 17, 23);
-  Func_02000ca8(31, 0, 0);
-  Import_GameFlagSet(0x215);
+  Event_ResolvePendingActions(0);
+  MapGrid_CopyCellAttributes(16, 23, 1, 1, 17, 23);
+  Actor_SetHorizontalPositionWithTerrain(31, 0, 0);
+  GameFlag_SetBit(0x215);
   Import_EventEnd();
 }

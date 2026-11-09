@@ -1,7 +1,7 @@
 #include "types.h"
-#include "call.h"
 #include "field_event.h"
 #include "flag_call.h"
+#include "event_inline.h"
 
 struct OrbitEffect {
   u8 unk00[8];
@@ -24,11 +24,7 @@ struct OrbitEffect {
 extern u32 gFrameCount;
 extern u32 gData_02003214[];
 
-struct FieldActor *Actor_GetById(s32 id);
 u32 Random16Far(void);
-s32 Math_Sine(u32 angle);
-void Actor_SetPartAttribute(struct OrbitEffect *object, s32 value);
-struct OrbitEffect *Func_02002828(s32 type, s32 x, s32 y, s32 z);
 void Func_02002820(struct OrbitEffect *object, const void *script);
 void Func_02000148(struct FieldActor *self);
 
@@ -36,8 +32,8 @@ static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
                                                     s32 z) {
   /* FAKEMATCH(wrapper): the effect created through an inline, which
    * evaluates the position before the type; as a direct call of
-   * Func_02002828, 4 of 94 instructions differ in tla-en. */
-  return Func_02002828(type, x, y, z);
+   * Import_ActorCreate, 4 of 94 instructions differ in tla-en. */
+  return ((struct OrbitEffect *)Import_ActorCreate(type, x, y, z));
 }
 
 /// Every third frame, or every frame once flag 0x201 is set, starts a particle
@@ -50,7 +46,7 @@ void Func_020001a4(void) {
 
   if (Flag_IsSet(0x201) == 0 && gFrameCount % 3 != 0)
     return;
-  center = Actor_GetById(23);
+  center = ((struct FieldActor *)Actor_GetById(23));
   if (Flag_IsSet(0x201) != 0) {
     u32 random;
 

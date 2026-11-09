@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "flag_call.h"
+#include "event_inline.h"
 
 struct SparkActor {
   u8 unk00[8];
@@ -28,47 +29,31 @@ struct SparkWork {
 extern s32 gData_020033dc;
 extern u8 MsgFieldShowAnemosPower[];
 
-void Task_RemoveFar(void (*func)(void));
 void Resource_ResetEntry(s32 entry);
 void HeapSlot_Release(s32 slot);
 void Event_WaitTransitionFrames(void);
-void FieldEvent_Wait(s32 frames);
-s32 Actor_SetModeById(u32 id, s32 mode);
 void Func_02001538(void);
-void Func_02002898(s32 message, s32 a1, s32 a2);
 void Func_020028b0(void);
 void Func_020028b8(void);
-void Func_02002978(s32 a0, s32 a1);
-void Func_02002980(s32 a0, s32 a1);
-void Func_02002988(s32 frames);
-void Func_02002918(s32 actor, s32 value);
-void Func_02002a40(s32 cue);
 void Func_02001c88(s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 a5, s32 a6,
                    struct EffectParams *params);
-struct SparkActor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct SparkActor *object, s32 flags);
 u32 Random16Far(void);
-void Func_020029a8(s32 a0);
-
-static inline void Func_02002980_(s32 a0, s32 a1) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002980(a0, a1);
-}
 
 void Func_020006ac(void) {
   if (!Flag_IsSet(0xa0e)) {
     Flag_Set(0xa0e);
     Func_020028b0();
-    Func_020029a8(0);
-    Func_02002980_(0x10000, 0);
-    Func_02002978(0x10003, 1);
-    Func_02002988(30);
+    Event_ResolvePendingActions(0);
+    PaletteFade_ApplySource(0x10000, 0);
+    BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
+    BattleEffect_StartBufferInterpolation(30);
     Event_WaitTransitionFrames();
     Actor_SetModeById(0, 1);
-    FieldEvent_Wait(30);
-    Func_02002898((s32)MsgFieldShowAnemosPower, 0, -2);
-    Func_02002978(0x10000, 0);
-    Func_02002988(30);
+    Event_Wait(30);
+    Func_0803ce64((s32)MsgFieldShowAnemosPower, 0, -2);
+    BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+    BattleEffect_StartBufferInterpolation(30);
     Func_020028b8();
   }
 }
@@ -90,9 +75,9 @@ void Func_02000734(void) {
   u32 random2;
   u32 scaled;
 
-  actor = Actor_GetById(22);
-  Func_02002a40(190);
-  Actor_SetSingleChildFlags(Actor_GetById(22), 0);
+  actor = ((struct SparkActor *)Actor_GetById(22));
+  Sound_Play(190);
+  Actor_SetSingleChildFlags(((struct SparkActor *)Actor_GetById(22)), 0);
   p = &params;
   p->count = 1;
   p->kind = 5;
@@ -100,7 +85,7 @@ void Func_02000734(void) {
   p->spread = 0x6666;
   p->rise = 0x30000;
   for (i = 0; i <= 31; i++) {
-    FieldEvent_Wait(1);
+    Event_Wait(1);
     if (!(i & 1)) {
       random = Random16Far();
       /* FAKEMATCH: random * 24 written in steps with two barriers: ⚓️ loads x
@@ -122,8 +107,8 @@ void Func_02000734(void) {
                     0, -0x40000, 0, 0x1b0000, p);
     }
     if (i == 20)
-      Func_02002918(22, 0x100);
+      Actor_ConfigureSpriteColor(22, 0x100);
   }
-  Func_02002918(22, 0);
-  Actor_SetSingleChildFlags(Actor_GetById(22), 1);
+  Actor_ConfigureSpriteColor(22, 0);
+  Actor_SetSingleChildFlags(((struct SparkActor *)Actor_GetById(22)), 1);
 }

@@ -5,7 +5,7 @@ void Func_02001148(void) {
   struct Actor *object;
 
   Func_02001488();
-  Func_020014e8(0);
+  Event_ResolvePendingActions(0);
   Func_02001500(gData_02001696);
   object = work->objectCbc;
   object->priorityFlags |= 1;

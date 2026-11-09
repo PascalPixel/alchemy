@@ -1,20 +1,13 @@
 #include "types.h"
 #include "owner_state.h"
+#include "event_inline.h"
 
 extern const u8 MsgTheBodyIs[];
 
-void FieldMessage_Show(const u8 *message, s32 mode);
-s32 Unit_AddHp(s32 owner, s32 amount);
 void Unit_AddPp(s32 owner, s32 amount);
 void Inventory_Break(s32 owner, s32 slot);
 u8 *Func_02000d48(s32 item);
 void Func_02000dc0(void);
-
-static __inline__ void AddHp(s32 owner, s32 amount) {
-  /* FAKEMATCH: as in ☀️'s scene layer, forwarding through the inline keeps each
-   * call's own constant; direct calls share -100 in one register. */
-  Unit_AddHp(owner, amount);
-}
 
 void Func_02000520(void) {
   u8 *unit;
@@ -22,9 +15,9 @@ void Func_02000520(void) {
   s32 i;
 
   FieldMessage_Show(MsgTheBodyIs, 1);
-  AddHp(4, -100);
-  AddHp(5, -100);
-  AddHp(6, -33);
+  FieldUnit_AddHp(4, -100);
+  FieldUnit_AddHp(5, -100);
+  FieldUnit_AddHp(6, -33);
   Unit_AddPp(4, -50);
   Unit_AddPp(5, -40);
   Unit_AddPp(6, -35);

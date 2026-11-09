@@ -1,4 +1,5 @@
 #include "trial_road.h"
+#include "event_inline.h"
 
 void Func_02002dec(void);
 void Func_0200322c(void);
@@ -20,34 +21,34 @@ void Func_020015d8(void) {
 s32 Func_02001638(void) { return 1; }
 
 void Func_0200163c(void) {
-  Func_02005810_(33, 30, 1, 1, 10, 11);
-  Func_02005810(33, 30, 1, 1, 18, 7);
-  Func_02005810(33, 30, 1, 1, 18, 15);
-  Func_02005810(35, 30, 1, 1, 74, 11);
-  Func_02005810(35, 30, 1, 1, 82, 7);
-  Func_02005810(35, 30, 1, 1, 82, 15);
+  MapGrid_CopyCells(33, 30, 1, 1, 10, 11);
+  Map_CopyCellsRect(33, 30, 1, 1, 18, 7);
+  Map_CopyCellsRect(33, 30, 1, 1, 18, 15);
+  Map_CopyCellsRect(35, 30, 1, 1, 74, 11);
+  Map_CopyCellsRect(35, 30, 1, 1, 82, 7);
+  Map_CopyCellsRect(35, 30, 1, 1, 82, 15);
 }
 
 void Func_020016c8(void) {
-  Func_02005810_(34, 30, 1, 1, 10, 11);
-  Func_02005810(34, 30, 1, 1, 18, 7);
-  Func_02005810(34, 30, 1, 1, 18, 15);
-  Func_02005810(36, 30, 1, 1, 74, 11);
-  Func_02005810(36, 30, 1, 1, 82, 7);
-  Func_02005810(36, 30, 1, 1, 82, 15);
+  MapGrid_CopyCells(34, 30, 1, 1, 10, 11);
+  Map_CopyCellsRect(34, 30, 1, 1, 18, 7);
+  Map_CopyCellsRect(34, 30, 1, 1, 18, 15);
+  Map_CopyCellsRect(36, 30, 1, 1, 74, 11);
+  Map_CopyCellsRect(36, 30, 1, 1, 82, 7);
+  Map_CopyCellsRect(36, 30, 1, 1, 82, 15);
 }
 
 void Func_02001754(s32 sound) {
   if (GameFlag_Test(0x9ff)) {
     if (gTrialRoadState->mirrored == 0) {
-      Map_Stamp(26, 79, 1, 2, 13, 79);
-      Map_CopyCells(78, 18, 1, 1, 77, 18);
+      MapGrid_CopyCellsLayered(26, 79, 1, 2, 13, 79);
+      MapGrid_CopyCellAttributes(78, 18, 1, 1, 77, 18);
     } else {
-      Func_02005820(26, 79, 1, 2, 18, 79);
-      Func_02005818(81, 18, 1, 1, 82, 18);
+      Func_0802b450(26, 79, 1, 2, 18, 79);
+      Map_CopyCellAttributeRect(81, 18, 1, 1, 82, 18);
     }
     if (sound)
-      Func_02005a68(138);
+      Sound_Play(138);
   }
   GameFlag_SetBit(0x283);
 }

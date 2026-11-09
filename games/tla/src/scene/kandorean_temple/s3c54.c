@@ -1,10 +1,11 @@
 #include "local.h"
+#include "event_inline.h"
 #include "version.h"
 #include "task.h"
 
 void Func_02003c54(void) {
-  if (GameFlag_Test_(0x210) == 0) {
-    GameFlag_SetBit_(0x210);
+  if (Event_GetFlag(0x210) == 0) {
+    Event_SetFlag(0x210);
     Func_020053a8_(1, 0x210, 10, 11);
   }
   {
@@ -12,7 +13,7 @@ void Func_02003c54(void) {
      * (three reordered rows as a plain argument). */
     s32 angle = 0x3000;
 
-    Func_02005238_(12, PIXELS(392), PIXELS(360), angle);
+    Actor_SetPositionAndFacing(12, PIXELS(392), PIXELS(360), angle);
   }
 }
 
@@ -28,7 +29,7 @@ void Func_02003c8c(void) {
   Func_02005390();
   Func_020053a8_(0, 527, 8, 9);
   Func_020053a8(1, 528, 10, 11);
-  if (GameFlag_Test_(0x849) == 0) {
+  if (Event_GetFlag(0x849) == 0) {
     Actor_SetModeById(13, 5);
     Actor_SetModeById(15, 5);
   }
@@ -41,7 +42,7 @@ void Func_02003c8c(void) {
        * (one reordered row as a plain argument). */
       s32 angle = 0x5000;
 
-      Func_02005238_(12, PIXELS(432), PIXELS(394), angle);
+      Actor_SetPositionAndFacing(12, PIXELS(432), PIXELS(394), angle);
     } else {
       Func_02004fb4();
       if (GameFlag_Test(0x849))
@@ -61,12 +62,12 @@ void Func_02003c8c(void) {
        * of the other arguments, as above. */
       s32 angle;
 
-      Func_02005230(12, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
       angle = 0xb000;
-      Func_02005238_(15, PIXELS(408), PIXELS(664), angle);
+      Actor_SetPositionAndFacing(15, PIXELS(408), PIXELS(664), angle);
     } else if (GameFlag_Test(0x848)) {
-      Func_02005230(12, 0, 0);
-      Func_02005230(15, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
     } else {
       Func_02003e8c();
     }

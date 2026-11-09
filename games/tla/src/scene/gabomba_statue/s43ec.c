@@ -1,7 +1,7 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "ram_buffer.h"
+#include "event_inline.h"
 
 struct PuzzleCell {
   u8 kind;
@@ -24,8 +24,6 @@ struct SceneState {
 };
 
 extern struct SceneState gSceneState;
-struct Actor *Actor_GetById(u32 id);
-void Func_0200566c(s32 a, s32 kind, s32 b, s32 c, s32 x, s32 z);
 
 void Func_020043ec(s32 mode) {
   struct SceneState *state;
@@ -46,8 +44,7 @@ void Func_020043ec(s32 mode) {
 
     cell = &state->cells[z * 11 + x];
     cell->occupied = mode;
-    Call6((void (*)())Func_0200566c, 1, kind, 1, 1, state->originX + x,
-          state->originZ + z);
+    MapGrid_CopyCells(1, kind, 1, 1, state->originX + x, state->originZ + z);
   }
   object->x = 0;
   object->z = 0;

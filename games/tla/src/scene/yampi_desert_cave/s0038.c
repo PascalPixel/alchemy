@@ -1,15 +1,13 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "actor.h"
 #include "macros.h"
+#include "event_inline.h"
 
 extern u16 gData_02001968[];
 extern s8 gData_02001974[][4];
 
-struct Actor *Actor_GetById(s32 id);
-void Func_02001848(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, u32 width, u32 height,
                            s32 value);
 
@@ -54,14 +52,14 @@ s32 Func_02000038(s32 id) {
    * as direct arguments, 36 of 160 instructions differ in tla-en. */
   layer1X = (u16)i + x;
   layer1Z = (u16)az + z;
-  Func_02001848(x, z, w, h, layer1X, layer1Z);
+  Map_CopyCellAttributeRect(x, z, w, h, layer1X, layer1Z);
   /* FAKEMATCH(temporary): the second call's arguments held in locals; as direct
    * arguments, 10 of 160 instructions differ in tla-en. */
   fromX = (u16)(bx >> 20) + x;
   fromZ = (u16)(bz >> 20) + z;
   toX = x + 64;
   toZ = z + 64;
-  Func_02001848(fromX, fromZ, w, h, toX, toZ);
+  Map_CopyCellAttributeRect(fromX, fromZ, w, h, toX, toZ);
   Map_FillCellRectByte2(0, x, z, w, h, 255);
   Map_FillCellRectByte2(2, x, z, w, h, 255);
   return 1;

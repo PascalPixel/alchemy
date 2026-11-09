@@ -1,19 +1,14 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "map.h"
+#include "event_inline.h"
 
 extern u8 gMapShapeGrid[];
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-void wait(s32 frames);
 void Func_020014a8(s32 id, s32 target);
 void Func_0200056c(s32 id);
-void Actor_SetModeById(u32 id, s32 mode);
-void Func_020014a0(s32 id, s32 x, s32 z);
 s32 Func_02001508(struct Actor *actor);
 s32 Func_02001478(s32 layer, s32 x, s32 z);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
@@ -34,9 +29,9 @@ void Func_02000584(u16 *list) {
   Func_0200056c(10);
   Actor_SetModeById(9, 0);
   wait(1);
-  Func_020014a0(8, 0, 0);
-  Func_020014a0(9, 0, 0);
-  Func_020014a0(10, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
   wait(1);
   grid = gMapShapeGrid;
   while (list[0] != 0xffff) {
@@ -49,7 +44,7 @@ void Func_02000584(u16 *list) {
 
     actor->unk5c[0] = 3;
     if (GameFlag_Test(next)) {
-      Func_020014a0(id, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
     } else {
       s32 index = Func_02001508(actor);
       struct MapCell *cell = cells + index;

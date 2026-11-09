@@ -1,7 +1,8 @@
 #include "caverns.h"
 
 void Func_02000848(struct FieldActor *object) {
-  struct FieldActor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct FieldActor *leader =
+      ((struct FieldActor *)Actor_GetById(gMainRoutineWork.currentOwner));
   s32 leaderZ = leader->z;
   s32 z = object->z;
   u8 *flags = &leader->priorityFlags;

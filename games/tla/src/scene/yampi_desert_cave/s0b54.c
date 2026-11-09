@@ -1,7 +1,7 @@
 #include "yampi_desert_cave.h"
 #include "actor.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Func_02000c44(s32 id, u32 column, s32 row, s32 layer);

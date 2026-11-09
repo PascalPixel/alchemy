@@ -41,7 +41,7 @@ void Func_0200223c(void) {
         Actor_GetById(8)->terrainHeight = 0;
         Actor_GetById(8)->y = 0;
       } else {
-        Func_020058e0(8, 0, 0);
+        Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
       }
       state->timer = 0;
     }
@@ -62,7 +62,7 @@ void Func_0200223c(void) {
     switch (state->timer) {
     case 1:
     case 601:
-      Func_02005a68(124);
+      Sound_Play(124);
       if (state->mirrored != 0) {
         Actor_SetModeById(9, 6);
         if (state->timer > 600)
@@ -74,7 +74,7 @@ void Func_0200223c(void) {
       }
       break;
     case 655:
-      Func_02005a68(125);
+      Sound_Play(125);
       if (state->mirrored != 0)
         Actor_SetModeById(10, 5);
       else
@@ -86,7 +86,7 @@ void Func_0200223c(void) {
       break;
     case 50:
     case 710:
-      Func_02005a68(125);
+      Sound_Play(125);
       if (state->mirrored != 0)
         Actor_SetModeById(9, 5);
       else
@@ -95,7 +95,7 @@ void Func_0200223c(void) {
     case 70:
     case 730:
       Func_020002a4(state->mirrored, state->stage);
-      Func_02005a68(138);
+      Sound_Play(138);
       break;
     }
   }

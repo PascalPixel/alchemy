@@ -1,18 +1,14 @@
 #include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 #include "field_effect.h"
 #include "event_work.h"
-#include "call.h"
+#include "event_inline.h"
 
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 void Effect_AdvanceMotion(union FieldObject *object);
 void Func_02005158(void);
-void Func_02005198(s32 a, s32 b, s32 c);
-void Func_020051a0(void);
-void Func_020053d8(s32 cue);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 
 void Func_02002ec4(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -20,8 +16,8 @@ void Func_02002ec4(void) {
   u32 i;
 
   Func_020051c0();
-  Func_02005370(0);
-  Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
+  Event_ResolvePendingActions(0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Func_02005158();
   wait(1);
   leader->y = 0x820000;
@@ -31,9 +27,9 @@ void Func_02002ec4(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Func_020053d8(204);
+  Sound_Play(204);
   leader->motionFlags = 3;
-  FieldEvent_Wait(24);
+  Event_Wait(24);
   options.palette = 7;
   options.update = Effect_AdvanceMotion;
   options.startScaleX = 0xcccc;
@@ -51,16 +47,16 @@ void Func_02002ec4(void) {
     Func_020000b8(leader->x, leader->y, leader->z, velocity[0], velocity[1],
                   velocity[2], 0x01090001, &options);
   }
-  Func_020053d8(188);
-  Func_020052d0(gMainRoutineWork.currentOwner, 0x101);
+  Sound_Play(188);
+  Func_080d489c(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
-  Call3((void (*)())Func_02005198, 0x50000, 0x50000, 0x10000);
-  Call3((void (*)())Func_02005198, -1, -1, 0xe666);
-  Func_020051a0();
-  Func_020052d0(gMainRoutineWork.currentOwner, 0x100);
+  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
+  MapGrid_SetShake(-1, -1, 0xe666);
+  Map_WaitForShakeToSettle();
+  Func_080d489c(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
-  FieldEvent_Wait(10);
+  Event_Wait(10);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Func_020051c8();

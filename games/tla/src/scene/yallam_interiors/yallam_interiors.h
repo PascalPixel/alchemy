@@ -7,6 +7,7 @@
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 #include "field_sprite.h"
+#include "event_inline.h"
 
 struct YallamInteriorsObject {
   u8 unk00[6];
@@ -61,92 +62,21 @@ struct YallamInteriorsEventWork {
 extern s32 gFrameCount;
 
 u32 Random16Far(void);
-void wait(s32 frames);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void FieldEvent_Wait(s32 frames);
-struct YallamInteriorsObject *Actor_GetById(s32 id);
-void Actor_SetPositionAndResetMotion(struct YallamInteriorsObject *object,
-                                      s32 x, s32 y, s32 z);
-void Actor_SetPartAttribute(struct YallamInteriorsObject *object, s32 value);
-void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
-void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
-void Actor_SetSpritePriority(s32 actor, s32 variant);
 
 void Func_020009b0(void);
 void Func_020009b8(void);
-void Func_02000a18(s32 message);
-void Func_02000a28(s32 speaker, s32 flags);
-void Func_02000a50(s32 skip);
 void Func_02000a68(s32 shop, s32 keeper);
 void Func_02000a70(s32 keeper);
 void Func_02000a78(s32 shop, s32 keeper);
-void Func_020009f8(s32 actor, s32 x, s32 z);
 void Actor_SetSingleChildFlags(struct YallamInteriorsObject *object,
                                         u32 value);
 void Animation_SetStateFlags(struct YallamInteriorsObject *object, s32 flags);
-void Actor_SetModeById(s32 actor, s32 mode);
-void Task_Add(void (*func)(void), s32 priority);
-void Task_RemoveFar(void (*func)(void));
 void Field_DispatchTypeHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
 void Func_02000a48(s32 a);
 void Event_StartScreenTransition(void);
-
-static inline s32 YallamInteriors_FlagCheck(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
-
-static inline void YallamInteriors_FlagSet(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
-static inline void YallamInteriors_ObjArm(s32 actor, s32 angle, s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_ArmCallback(actor, angle, frames);
-}
-
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void Actor_SetMovementTypeById(s32 actor, const void *callback);
-void Actor_SetMovementTypeAndWaitById(s32 actor, const void *callback);
-s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
-s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
-void Actor_Jump(s32 actor, s32 speed, s32 frames);
-void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
-void Actor_WaitForMoveById(s32 actor);
-void Event_PrepareObjectAndApplyValue(s32 actor, s32 value);
-
-static inline void YallamInteriors_ObjSpeed(s32 actor, s32 speed,
-                                            s32 acceleration) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetSpeedParameters(actor, speed, acceleration);
-}
-
-static inline void YallamInteriors_Wait(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_Wait(frames);
-}
-
-static inline void YallamInteriors_MessagePut(s32 speaker, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02000a28(speaker, flags);
-}
-
-static inline void YallamInteriors_MessageOpen(s32 speaker, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldMessage_ShowAtActor(speaker, flags);
-}
-
-s32 Func_02000a58(void);
-void Actor_StartRepeatedMotion(s32 actor, s32 value);
 
 // ---- this overlay
 

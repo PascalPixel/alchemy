@@ -2,13 +2,11 @@
 #include "actor.h"
 #include "iwram_call.h"
 #include "system/vector3.h"
+#include "event_inline.h"
 
 extern s32 gData_02005af0;
-s32 Func_0200584c(void);
-struct Actor *Actor_GetById(u32 id);
 struct Actor *Func_020005b4(struct Actor *object, s32 kind);
 s32 Func_02005684(struct Actor *object, struct Vector3 *position);
-s32 Math_Sine(s32 angle);
 s32 Math_Cosine(s32 angle);
 
 void Func_02000784(void) {
@@ -21,7 +19,7 @@ void Func_02000784(void) {
 
   if (gData_02005af0 == 0)
     return;
-  actor = Actor_GetById(Func_0200584c());
+  actor = Actor_GetById(Party_GetLeaderActor());
   table = Func_020005b4(actor, 357);
   turn = gData_02005af0 * step;
   if (table != 0) {

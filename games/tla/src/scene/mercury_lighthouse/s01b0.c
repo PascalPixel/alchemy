@@ -2,44 +2,28 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "call.h"
 #include "task.h"
 #include "scene_tables.h"
 #include "io_reg.h"
+#include "event_inline.h"
 
 extern u32 gData_020007e4;
 extern u8 MsgImilVoicesDisbeliefReply[];
 
-struct Actor *Actor_GetById(s32 id);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
-void GameFlag_SetBit(s32 flag);
 u32 Random16Far(void);
-s32 Task_Add(void (*func)(void), s32 order);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Event_FinishScreenTransition(void);
-void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
-void Actor_Jump(s32 actor, s32 height, s32 frames);
 void Func_02000060(struct Actor *object);
 void Func_020000f4(void);
 void Func_02000568(void);
-void Func_02000598(const u8 *message);
-void Func_020005a0(s32 a, s32 b);
-void Func_020005b0(s32 actor, s32 value);
-void Func_020005c0(s32 actor, s32 a, s32 b);
-void Func_020005c8(s32 a);
-void Func_020005f8(s32 skip);
-void Func_02000600(s32 a, s32 b);
 void Func_02000608(void);
 
 void Func_020001b0(void) {
   struct Actor *actor;
 
   Func_02000568();
-  Func_020005f8(0);
+  Event_ResolvePendingActions(0);
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   wait(1);
   gData_020007e4 = 0;
@@ -49,30 +33,30 @@ void Func_020001b0(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 436) = 40;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_Wait(40);
-  Func_02000600(13, 14);
-  Func_02000598(MsgImilVoicesDisbeliefReply);
-  Func_020005a0(3, 0);
+  Event_Wait(40);
+  Func_080dc978(13, 14);
+  Event_SetMessageId(MsgImilVoicesDisbeliefReply);
+  Event_ShowMessageAndWait(3, 0);
   Func_02000608();
-  Value3((s32 (*)())Func_020005c0, 8, 256, 0);
-  Value3((s32 (*)())Func_020005c0, 8, 256, 20);
-  Call3((void (*)())Actor_ArmCallback, 8, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_ShowEmote(8, 256, 0);
+  Actor_ShowEmote(8, 256, 20);
+  Actor_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_Jump(8, 4, 10);
-  Call2((void (*)())Func_020005a0, 0x8008, 0);
-  Value3((s32 (*)())Func_020005c0, 11, 257, 0);
-  Value3((s32 (*)())Func_020005c0, 12, 257, 40);
-  Call3((void (*)())Actor_ArmCallback, 11, FACING_NORTH + FACING_STEP, 0);
-  Call3((void (*)())Actor_ArmCallback, 12, FACING_NORTHWEST + FACING_STEP, 0);
-  Func_02000600(13, 14);
-  Func_020005a0(3, 0);
+  Event_ShowMessage(0x8008, 0);
+  Actor_ShowEmote(11, 257, 0);
+  Actor_ShowEmote(12, 257, 40);
+  Actor_FaceDirection(11, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(12, FACING_NORTHWEST + FACING_STEP, 0);
+  Func_080dc978(13, 14);
+  Event_ShowMessageAndWait(3, 0);
   Func_02000608();
   Actor_SetModeById(9, 3);
-  Call2((void (*)())Func_020005a0, 0x8009, 0);
-  Func_020005b0(12, FACING_EAST);
-  Func_020005a0(0x800c, 0);
-  Call2((void (*)())Func_020005b0, 11, FACING_WEST);
+  Event_ShowMessage(0x8009, 0);
+  Actor_ArmCallbackAndRefresh(12, FACING_EAST);
+  Event_ShowMessageAndWait(0x800c, 0);
+  Actor_FaceDirectionAndWait(11, FACING_WEST);
   Actor_SetModeById(11, 4);
-  Func_020005a0(0x400b, 0);
+  Event_ShowMessageAndWait(0x400b, 0);
   actor = Actor_GetById(11);
   *((u8 *)actor + 98) = ((Random16Far() * 80) >> 16) + 40;
   *((u8 *)actor + 99) = 0;
@@ -87,43 +71,43 @@ void Func_020001b0(void) {
   }
   *((u8 *)actor + 99) = 2;
   actor->update = (void (*)(void))Func_02000060;
-  Func_02000600(13, 14);
-  Func_020005a0(3, 0);
+  Func_080dc978(13, 14);
+  Event_ShowMessageAndWait(3, 0);
   Func_02000608();
   Actor_SetModeById(8, 4);
-  Call2((void (*)())Func_020005a0, 0x8008, 0);
-  Func_02000600(13, 14);
-  Func_020005a0(3, 0);
+  Event_ShowMessage(0x8008, 0);
+  Func_080dc978(13, 14);
+  Event_ShowMessageAndWait(3, 0);
   Func_02000608();
-  Call2((void (*)())Func_020005a0, 0x8009, 0);
-  Func_02000600(13, 14);
-  Func_020005a0(3, 0);
+  Event_ShowMessage(0x8009, 0);
+  Func_080dc978(13, 14);
+  Event_ShowMessageAndWait(3, 0);
   Func_02000608();
-  Call2((void (*)())Func_020005a0, 0x8008, 0);
-  Func_02000600(13, 14);
-  Func_020005a0(3, 0);
+  Event_ShowMessage(0x8008, 0);
+  Func_080dc978(13, 14);
+  Event_ShowMessageAndWait(3, 0);
   Func_02000608();
-  Call2((void (*)())Func_020005a0, 0x8009, 0);
-  Func_02000600(13, 14);
-  Func_020005a0(3, 0);
+  Event_ShowMessage(0x8009, 0);
+  Func_080dc978(13, 14);
+  Event_ShowMessageAndWait(3, 0);
   Func_02000608();
   Motion_SetModeAndWaitAnimation(8, 3);
-  Call2((void (*)())Func_020005a0, 0x8008, 0);
-  Func_02000600(13, 14);
-  Func_020005a0(1, 0);
+  Event_ShowMessage(0x8008, 0);
+  Func_080dc978(13, 14);
+  Event_ShowMessageAndWait(1, 0);
   Func_02000608();
   Actor_Jump(9, 2, 0);
-  Func_020005c0(9, 263, 20);
-  Func_020005a0(0x8009, 0);
-  Func_02000600(13, 14);
-  Func_020005a0(3, 0);
+  Func_080d47b4(9, 263, 20);
+  Event_ShowMessageAndWait(0x8009, 0);
+  Func_080dc978(13, 14);
+  Event_ShowMessageAndWait(3, 0);
   Func_02000608();
   Motion_SetModeAndWaitAnimation(8, 3);
-  Func_020005a0(0x8008, 0);
-  Func_02000600(13, 14);
-  Func_020005a0(6, 0);
+  Event_ShowMessageAndWait(0x8008, 0);
+  Func_080dc978(13, 14);
+  Event_ShowMessageAndWait(6, 0);
   Func_02000608();
-  FieldEvent_Wait(20);
+  Event_Wait(20);
   *(u16 *)BG_PLTT = 0;
   wait(1);
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 436) = 16;
@@ -131,5 +115,5 @@ void Func_020001b0(void) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   GameFlag_SetBit(0xa3c);
-  Func_020005c8(3);
+  Import_EventSetExitRequest(3);
 }

@@ -1,29 +1,16 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
-#include "call.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 extern u8 MsgHereTheIntruder[];
 
-struct Actor *Actor_GetById(s32 id);
-void FieldEvent_Wait(s32 frames);
-void GameFlag_SetBit(s32 flag);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void Actor_WatchAndSetScript(s32 actor, s32 target);
-void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
-void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void Actor_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
 void Func_02000ad4(s32 actor);
 void Func_02001084(void);
 void Func_0200108c(void);
-void Func_020010d4(s32 actor, s32 x, s32 z);
-void Func_02001104(const u8 *message);
-void Func_0200110c(s32 actor, s32 flags);
-void Func_0200111c(s32 actor, s32 a, s32 b);
-void Func_02001164(s32 value);
 
 void Func_02000af0(void) {
   s32 owner = gMainRoutineWork.currentOwner;
@@ -32,13 +19,13 @@ void Func_02000af0(void) {
    * constants again in the native's argument order; as direct calls, 126
    * instructions differ in tla-en. */
   Func_02001084();
-  Func_02001164(0);
-  Call3((void (*)())Func_020010d4, 23, PIXELS(248), PIXELS(472));
-  Call3((void (*)())Func_020010d4, 24, PIXELS(264), PIXELS(472));
-  Call3((void (*)())Func_020010d4, 25, PIXELS(235), PIXELS(483));
-  Call3((void (*)())Func_020010d4, 26, PIXELS(232), PIXELS(496));
-  Call3((void (*)())Func_020010d4, 27, PIXELS(277), PIXELS(483));
-  Func_020010d4(28, PIXELS(280), PIXELS(496));
+  Event_ResolvePendingActions(0);
+  Actor_SetPosition(23, PIXELS(248), PIXELS(472));
+  Actor_SetPosition(24, PIXELS(264), PIXELS(472));
+  Actor_SetPosition(25, PIXELS(235), PIXELS(483));
+  Actor_SetPosition(26, PIXELS(232), PIXELS(496));
+  Actor_SetPosition(27, PIXELS(277), PIXELS(483));
+  Actor_SetHorizontalPositionWithTerrain(28, PIXELS(280), PIXELS(496));
   Func_02000ad4(owner);
   Func_02000ad4(23);
   Func_02000ad4(24);
@@ -48,55 +35,55 @@ void Func_02000af0(void) {
   Func_02000ad4(28);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02001104(MsgHereTheIntruder);
-  Func_0200111c(27, 259, 30);
-  Func_0200110c(27, 0);
+  Event_SetMessageId(MsgHereTheIntruder);
+  Func_080d47b4(27, 259, 30);
+  Event_ShowMessageAndWait(27, 0);
   Actor_SetAngleToward(27, 25, 0);
-  FieldEvent_Wait(10);
+  Event_Wait(10);
   Motion_SetModeAndWaitAnimation(25, 3);
   Actor_SetAngleToward(27, owner, 0);
-  FieldEvent_Wait(10);
-  Func_0200111c(27, 263, 30);
-  Func_0200110c(27, 0);
+  Event_Wait(10);
+  Func_080d47b4(27, 263, 30);
+  Event_ShowMessageAndWait(27, 0);
   Motion_SetModeAndWaitAnimation(27, 3);
-  Func_0200110c(27, 0);
+  Event_ShowMessageAndWait(27, 0);
   Actor_SetAngleToward(25, 23, 0);
-  Value3((s32 (*)())Func_0200111c, 25, 256, 30);
-  Func_0200110c(25, 0);
-  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 23, 248, 536);
-  FieldEvent_Wait(1);
-  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 24, 264, 536);
+  Actor_ShowEmote(25, 256, 30);
+  Event_ShowMessageAndWait(25, 0);
+  Actor_WalkTo(23, 248, 536);
+  Event_Wait(1);
+  Actor_WalkTo(24, 264, 536);
   Actor_WatchAndSetScript(25, owner);
   Actor_WatchAndSetScript(26, owner);
   Actor_WatchAndSetScript(27, owner);
   Actor_WatchAndSetScript(28, owner);
-  FieldEvent_Wait(2);
+  Event_Wait(2);
   Actor_GetById(owner)->actionFlags &= ~1;
   Actor_SetPositionAndReset(owner, 256, 552);
-  FieldEvent_Wait(1);
+  Event_Wait(1);
   Actor_GetById(owner)->actionFlags |= 1;
   Actor_SetModeById(23, 1);
   Actor_SetModeById(24, 1);
-  FieldEvent_Wait(20);
+  Event_Wait(20);
   Actor_SetModeById(23, 4);
-  FieldEvent_Wait(3);
+  Event_Wait(3);
   Motion_SetModeAndWaitAnimation(24, 4);
-  FieldEvent_Wait(20);
-  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 23, 248, 488);
-  FieldEvent_Wait(2);
-  Call3((void (*)())Actor_SetPositionAndReset, 24, 264, 488);
-  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 23, 248, 440);
-  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 24, 264, 440);
-  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 25, 232, 456);
-  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 26, 232, 472);
-  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 27, 280, 456);
-  Call3((void (*)())Actor_SetPositionAndReset, 28, 280, 472);
-  Func_020010d4(23, 0, 0);
-  Func_020010d4(24, 0, 0);
-  Func_020010d4(25, 0, 0);
-  Func_020010d4(26, 0, 0);
-  Func_020010d4(27, 0, 0);
-  Func_020010d4(28, 0, 0);
+  Event_Wait(20);
+  Actor_WalkTo(23, 248, 488);
+  Event_Wait(2);
+  Actor_WalkToAndWait(24, 264, 488);
+  Actor_WalkTo(23, 248, 440);
+  Actor_WalkTo(24, 264, 440);
+  Actor_WalkTo(25, 232, 456);
+  Actor_WalkTo(26, 232, 472);
+  Actor_WalkTo(27, 280, 456);
+  Actor_WalkToAndWait(28, 280, 472);
+  Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(26, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(27, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(28, 0, 0);
   Func_0200108c();
   GameFlag_SetBit(0x300);
 }

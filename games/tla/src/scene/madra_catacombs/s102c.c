@@ -1,9 +1,8 @@
 #include "types.h"
 #include "actor.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
 void Func_02000958(void);
 
 /// Mirrors actors 8 and 9 and puts them on the ground; once flag 0x8c9 is set,

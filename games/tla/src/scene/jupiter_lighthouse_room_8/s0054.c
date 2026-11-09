@@ -1,17 +1,17 @@
 #include "types.h"
+#include "event_inline.h"
 
 struct Probe {
   s32 unk00[6];
 };
 
 s32 Func_02001f60(void);
-void Func_02002270(s32 value);
 s32 Func_02000c44(struct Probe *probe);
 void Func_02000ec8(struct Probe probe);
 
 void Func_02000054(void) {
   if (Func_02001f60())
-    Func_02002270(13);
+    Import_EventSetExitRequest(13);
 }
 
 void Func_02000068(void) {

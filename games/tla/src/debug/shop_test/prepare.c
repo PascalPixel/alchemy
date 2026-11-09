@@ -3,8 +3,8 @@
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "event_work.h"
+#include "event_inline.h"
 
-void Actor_SetModeById(s32 id, s32 mode);
 void Func_02000db0(void);
 
 /// The scene's first entry: sets screen effect 256 and event mode 2, puts

@@ -7,6 +7,7 @@
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 #include "field_sprite.h"
+#include "event_inline.h"
 
 struct LemurianShipObject {
   u8 unk00[6];
@@ -64,113 +65,22 @@ struct LemurianShipEventWork {
 extern s32 gFrameCount;
 
 u32 Random16Far(void);
-void wait(s32 frames);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void FieldEvent_Wait(s32 frames);
-struct LemurianShipObject *Actor_GetById(s32 id);
-void Actor_SetPositionAndResetMotion(struct LemurianShipObject *object, s32 x,
-                                      s32 y, s32 z);
-void Actor_SetPartAttribute(struct LemurianShipObject *object, s32 value);
-void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
-void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
-void Actor_SetSpritePriority(s32 actor, s32 variant);
 
-void Func_02002c30(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02002c38(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02002c68(void);
 void Func_02002c70(void);
-void Func_02002d18(s32 message);
-void Func_02002d20(s32 speaker, s32 flags);
-void Func_02002d30(s32 actor, s32 angle);
-void Func_02002da8(s32 skip);
 void Func_02002dc0(const void *script);
-void Func_02002de0(s32 cue);
-void Func_02002cd0(s32 actor, s32 x, s32 z);
-struct LemurianShipObject *Func_02002c00(s32 type, s32 x, s32 y, s32 z);
 void Func_02002bf0(struct LemurianShipObject *object, s32 mode);
 void Actor_SetSingleChildFlags(struct LemurianShipObject *object,
                                         u32 value);
 void Animation_SetStateFlags(struct LemurianShipObject *object, s32 flags);
-void Actor_SetModeById(s32 actor, s32 mode);
-void Task_Add(void (*func)(void), s32 priority);
-void Task_RemoveFar(void (*func)(void));
 void Field_DispatchTypeHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_02002d70(s32 countdown);
 
 void Func_02002db8(const void *script);
-void Func_02002c18(struct LemurianShipObject *object, s32 x, s32 y, s32 z);
-void Func_02002c20(struct LemurianShipObject *object);
 void Event_StartScreenTransition(void);
 
-static inline void LemurianShip_ObjTurn(s32 actor, s32 angle) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002d30(actor, angle);
-}
-
-static inline void LemurianShip_BlendStart(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                           s32 f) {
-  /* FAKEMATCH: the blend start reaches the main image through one inline layer. */
-  Func_02002c38(a, b, c, d, e, f);
-}
-
-static inline s32 LemurianShip_FlagCheck(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
-
-static inline void LemurianShip_ObjArm(s32 actor, s32 angle, s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_ArmCallback(actor, angle, frames);
-}
-
-static inline void LemurianShip_ObjSetPos(struct LemurianShipObject *object,
-                                          s32 x, s32 y, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetPositionAndResetMotion(object, x, y, z);
-}
-
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Func_02002d58(s32 speed, s32 acceleration);
-void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void Func_02002cd8(s32 actor, s32 target);
-void Actor_SetMovementTypeById(s32 actor, const void *callback);
-void Actor_SetMovementTypeAndWaitById(s32 actor, const void *callback);
-s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
-s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
-void Func_02002d40(s32 actor, s32 emote, s32 frames);
-void Func_02002d48(s32 actor, s32 emote);
-void Actor_Jump(s32 actor, s32 speed, s32 frames);
-void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
-void Actor_WaitForMoveById(s32 actor);
-void Event_PrepareObjectAndApplyValue(s32 actor, s32 value);
-
-static inline void LemurianShip_CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Camera_MoveWithinMapBounds(x, y, z, mode);
-}
-
-static inline void LemurianShip_ObjSpeed(s32 actor, s32 speed,
-                                         s32 acceleration) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetSpeedParameters(actor, speed, acceleration);
-}
-
-static inline void LemurianShip_ObjWalk(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetPositionAndReset(actor, x, z);
-}
-
-static inline void LemurianShip_MapCopy(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                        s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002c30(a, b, c, d, e, f);
-}
 
 #define LEMURIAN_SHIP_TASK_ADD(func, priority)                             \
   {                                                                            \
@@ -180,50 +90,15 @@ static inline void LemurianShip_MapCopy(s32 a, s32 b, s32 c, s32 d, s32 e,
     Task_Add((func), priority_);                      \
   }
 
-static inline void LemurianShip_ObjEmoteWait(s32 actor, s32 emote) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002d48(actor, emote);
-}
-
 static inline void LemurianShip_TaskAdd(void (*func)(void), s32 priority) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Task_Add(func, priority);
 }
 
-void FieldMessage_Show(s32 message, s32 position);
-void Actor_Stop(s32 actor);
-void Camera_FollowActor(s32 actor, s32 value);
-void Motion_SetVarCbAndRefresh(s32 actor, s32 value);
-void Actor_StartRepeatedMotion(s32 actor, s32 value);
-void Actor_SetPositionAndCommit(s32 actor, s32 x, s32 z);
-void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
 void Func_02002c10(void);
-void Func_02002c48(s32 a, s32 b, s32 c);
-void Func_02002d68(s32 a, s32 b, s32 c, s32 d);
 void Func_02002d78(s32 a, s32 b);
-void Func_02002d88(s32 a, s32 b);
 void Func_02002dd0(const void *script);
 void Func_02002dd8(void);
-
-static inline void LemurianShip_ObjCommit(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetPositionAndCommit(actor, x, z);
-}
-
-static inline void LemurianShip_CamSpeed(s32 speed, s32 acceleration) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002d58(speed, acceleration);
-}
-
-static inline void LemurianShip_ObjPlace(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002cd0(actor, x, z);
-}
-
-static inline void LemurianShip_CamSet(s32 a, s32 b, s32 c, s32 d) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002d68(a, b, c, d);
-}
 
 // ---- this overlay
 
@@ -245,7 +120,6 @@ void Func_02001a04(void);
 void Func_02001650(void);
 void Func_02002bf8(struct LemurianShipObject *object, const void *script);
 void Func_02002dc8(const void *script);
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 extern const u8 gData_02003ef8[];
 
 #endif

@@ -5,6 +5,7 @@
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "dma.h"
+#include "event_inline.h"
 
 struct SeaOfTimeSprite {
   u8 unk00[0x1a];
@@ -65,31 +66,16 @@ extern u32 gData_020022cc;
 extern u32 gSceneState[];
 extern u8 gMapCellBuffer[];
 
-struct SeaOfTimeObject *Actor_GetById(s32 id);
-struct SeaOfTimeObject *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Scene_SetActorSpritePriority(struct SeaOfTimeObject *object, s32 priority);
 void Actor_SetSingleChildFlags(struct SeaOfTimeObject *object,
                                         s32 value);
-void Actor_SetPartAttribute(struct SeaOfTimeObject *object, s32 value);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
 u32 Random16Far(void);
-s32 Math_Sine(s32 angle);
 s32 Math_Cosine(s32 angle);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void FieldEvent_Wait(s32 frames);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_02001f8c(s32 a, s32 b, s32 c);
 void Func_02001fac(void);
 void Func_02001fb4(void);
-void Func_02001fdc(s32 actor, s32 x, s32 z);
-void Func_02001fec(s32 speed, s32 acceleration);
 void Func_02001ffc(void);
-void Func_02002004(s32 countdown);
-void Func_02002024(s32 a, s32 b);
-void Func_02002044(s32 skip);
-void Func_02002054(s32 cue);
 
 void Func_0200015c(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 d,
                    struct SeaOfTimeSpark *spark);
@@ -98,21 +84,6 @@ s32 Func_02000388(u32 layer, s32 x, s32 y, s32 value);
 s32 Func_020003d0(s32 *a, s32 *b);
 void Func_0200141c(s32 x, s32 z, s32 actor);
 void Func_020018a8(s32 x, s32 z, s32 actor);
-
-static inline s32 SeaOfTime_FlagCheck(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
-
-static inline void SeaOfTime_CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Camera_MoveWithinMapBounds(x, y, z, mode);
-}
-
-static inline void SeaOfTime_Tint(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001f8c(a, b, c);
-}
 
 static inline s32 SeaOfTime_Cos(s32 angle) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */

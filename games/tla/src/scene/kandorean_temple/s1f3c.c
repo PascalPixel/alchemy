@@ -1,31 +1,32 @@
 #include "local.h"
+#include "event_inline.h"
 
 void Func_02001f3c(void) {
-  Func_02005170(39, 39, 24, 38, 2, 2);
+  Map_CopyCellPictureIndicesRect(39, 39, 24, 38, 2, 2);
   wait(10);
-  Func_02005170(39, 41, 24, 38, 2, 2);
+  Map_CopyCellPictureIndicesRect(39, 41, 24, 38, 2, 2);
   wait(20);
   GameFlag_SetBit(0x212);
 }
 
 void Func_02001f7c(void) {
   Func_020051c0();
-  Func_02005370(0);
-  Actor_SetSpeedParameters_(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
-  Actor_SetPositionAndReset_(gMainRoutineWork.currentOwner, 400, 648);
-  Func_020052b0(gMainRoutineWork.currentOwner, FACING_NORTH);
+  Event_ResolvePendingActions(0);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 400, 648);
+  Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, FACING_NORTH);
   if (GameFlag_Test(0x212) == 0) {
-    Func_020053d8(188);
+    Sound_Play(188);
     Func_02001f3c();
   }
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
   Actor_ResetAndSetPositionInMode2(gMainRoutineWork.currentOwner, 400, 640);
-  Func_020053d8(123);
+  Sound_Play(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_020052f8(9);
+  Import_EventSetExitRequest(9);
 }
 
 void Func_02002014(void) {
@@ -33,7 +34,7 @@ void Func_02002014(void) {
   u32 i;
 
   Func_020051c0();
-  Func_02005370(0);
+  Event_ResolvePendingActions(0);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 416, 288);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 10);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
@@ -51,7 +52,7 @@ void Func_02002014(void) {
   }
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_020052f8(4);
+  Import_EventSetExitRequest(4);
 }
 
 void Func_020020c8(void) { Func_020053c0(gData_020054dc); }
@@ -65,7 +66,7 @@ void Func_020020d8(void) {
   else
     GameFlag_ClearBit(0x211);
   if (x != 39)
-    Func_02005178_(39, 0, 1, 1, 39, 10);
+    MapGrid_CopyCellAttributes(39, 0, 1, 1, 39, 10);
 }
 
 void Func_02002120(void) {
@@ -106,11 +107,11 @@ void Func_020021dc(void) {
   if (x == 19) {
     GameFlag_SetBit(0x302);
     GameFlag_SetBit(0x304);
-    Func_02005178(0, 0, 3, 3, x, 28);
+    Map_CopyCellAttributeRect(0, 0, 3, 3, x, 28);
   } else if (x == 21) {
     GameFlag_SetBit(0x303);
     GameFlag_SetBit(0x304);
-    Func_02005178_(0, 4, 3, 3, 19, 28);
+    MapGrid_CopyCellAttributes(0, 4, 3, 3, 19, 28);
   }
 }
 
@@ -118,9 +119,9 @@ void Func_02002248(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_020051c0();
-  Func_02005370(0);
-  Func_020052c8(gMainRoutineWork.currentOwner, 0x100, 20);
-  Func_020053d8(132);
+  Event_ResolvePendingActions(0);
+  Func_080d47b4(gMainRoutineWork.currentOwner, 0x100, 20);
+  Sound_Play(132);
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 10);
   leader->velocityY = PIXELS(6);
   wait(20);
@@ -132,10 +133,10 @@ void Func_02002248(void) {
 
 void Func_020022c0(void) {
   Func_020051c0();
-  Func_02005370(0);
-  Func_020053d8(188);
-  Func_02005170(77, 33, 77, 24, 2, 2);
-  Func_02005178_(32, 30, 2, 1, 17, 25);
+  Event_ResolvePendingActions(0);
+  Sound_Play(188);
+  Map_CopyCellPictureIndicesRect(77, 33, 77, 24, 2, 2);
+  MapGrid_CopyCellAttributes(32, 30, 2, 1, 17, 25);
   wait(10);
   GameFlag_SetBit(0x212);
   Func_020051c8();
@@ -144,28 +145,28 @@ void Func_020022c0(void) {
 void Func_02002314(void) {
   struct Actor *object;
 
-  Func_02005178_(0, 0, 1, 1, 5, 13);
+  MapGrid_CopyCellAttributes(0, 0, 1, 1, 5, 13);
   GameFlag_SetBit(0x842);
   Func_020051c0();
-  Func_02005370(0);
+  Event_ResolvePendingActions(0);
   Actor_SetPositionAndReset(4, 89, 237);
-  Actor_ArmCallback_(4, FACING_SOUTHEAST, 0);
-  Func_02005378(14, 16, 16, FACING_NORTHWEST);
+  Actor_FaceDirection(4, FACING_SOUTHEAST, 0);
+  Func_080d3070(14, 16, 16, FACING_NORTHWEST);
   Actor_WaitForMoveById(14);
-  FieldEvent_Wait(20);
-  Func_02005280((s32)&MsgKandoreanTemple12);
-  Func_02005298(14, 0);
-  FieldEvent_Wait(30);
+  Event_Wait(20);
+  Event_SetMessageId((s32)&MsgKandoreanTemple12);
+  Event_ShowMessageAndWait(14, 0);
+  Event_Wait(30);
   Actor_SetModeById(14, 3);
   Motion_SetModeAndWaitAnimation(4, 3);
-  FieldEvent_Wait(20);
-  Actor_SetSpeedParameters_(14, 0x13333, 0x9999);
+  Event_Wait(20);
+  Actor_SetSpeed(14, 0x13333, 0x9999);
   Actor_SetModeById(14, 2);
   object = Actor_GetById(4);
   if (object)
     Actor_ResetAndSetPosition(14, *(s16 *)((u8 *)object + 10),
                               *(s16 *)((u8 *)object + 18));
   Actor_WaitForMoveById(14);
-  Func_02005230(14, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
   Func_020051c8();
 }

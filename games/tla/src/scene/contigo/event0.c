@@ -1,10 +1,10 @@
 #include "contigo.h"
 #include "iwram_call.h"
 
-void Func_020005f8(void) { Func_02004214(16, 0, 14); }
+void Func_020005f8(void) { Func_080d7788(16, 0, 14); }
 
 void Func_02000608(void) {
-  Func_02004214(17, 2, 15);
+  Func_080d7788(17, 2, 15);
   GameFlag_SetBit(2534);
 }
 

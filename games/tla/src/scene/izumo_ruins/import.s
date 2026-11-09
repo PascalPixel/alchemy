@@ -38,9 +38,9 @@ Func_02001428:
 	.thumb_func
 Func_02001430:
 	overlay_veneer Actor_StartScriptFar
-	.global Func_02001438
+	.global Import_ActorCreate
 	.thumb_func
-Func_02001438:
+Import_ActorCreate:
 	overlay_veneer Func_080200c0
 	.global Actor_SetPositionAndResetMotion
 	.thumb_func
@@ -50,25 +50,25 @@ Actor_SetPositionAndResetMotion:
 	.thumb_func
 Func_02001448:
 	overlay_veneer Map_CenterOnFollowedPointFar
-	.global Func_02001450
+	.global Map_CopyCellPictureIndicesRect
 	.thumb_func
-Func_02001450:
+Map_CopyCellPictureIndicesRect:
 	overlay_veneer Map_CopyCellPictureIndicesRectFar
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
 	overlay_veneer Map_GetTerrainHeightFar
-	.global Func_02001460
+	.global Map_CopyCellAttributeRect
 	.thumb_func
-Func_02001460:
+Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Func_02001470
+	.global Map_SetScreenShake
 	.thumb_func
-Func_02001470:
+Map_SetScreenShake:
 	overlay_veneer Map_SetScreenShakeFar
 	.global Func_02001478
 	.thumb_func
@@ -90,9 +90,9 @@ Func_02001490:
 	.thumb_func
 Actor_GetById:
 	overlay_veneer Actor_GetByIdFar
-	.global Func_020014a0
+	.global Actor_SetHorizontalPositionWithTerrain
 	.thumb_func
-Func_020014a0:
+Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
 	.global Func_020014a8
 	.thumb_func
@@ -126,9 +126,9 @@ Func_020014d8:
 	.thumb_func
 Func_020014e0:
 	overlay_veneer Func_080c8480
-	.global Func_020014e8
+	.global Event_ResolvePendingActions
 	.thumb_func
-Func_020014e8:
+Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_020014f0
 	.thumb_func
@@ -166,7 +166,7 @@ Func_02001528:
 	.thumb_func
 Func_02001530:
 	overlay_veneer Func_080c8738
-	.global Func_02001538
+	.global Sound_Play
 	.thumb_func
-Func_02001538:
+Sound_Play:
 	overlay_veneer Sound_PlayFar

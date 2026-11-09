@@ -3,14 +3,13 @@
 #include "sea_of_time.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
+#include "event_inline.h"
 
 extern u16 gData_020026c0[];
 
-void Task_Add(void (*func)(void), s32 priority);
 void Func_02000c50(void);
 void Func_02001650(void);
 void Func_02001a14(void);
-void Func_0200201c(s32 a, s32 b);
 
 s32 Func_02001cdc(void) {
   ((struct SeaOfTimeEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 256;
@@ -58,7 +57,7 @@ s32 Func_02001cdc(void) {
           Dma_Set((const void *)0x05000000, block, 0x84000070,
                   (volatile u32 *)0x040000d4);
         }
-        Func_0200201c(0x10000, 0);
+        BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
       }
       if (gMainRoutineWork.entrance == 4 && !GameFlag_Test(265))
         Func_02001a14();

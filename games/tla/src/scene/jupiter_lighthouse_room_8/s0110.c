@@ -2,14 +2,13 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 struct JupiterLighthouseRoom8EventWork {
   u8 unk000[0x1ac];
   s32 screenEffect;
 };
 
-struct Actor *Actor_GetById(s32 id);
-void Actor_SetSpritePriority(u32 id, s32 variant);
 void Func_02002248(s32 id);
 void Func_02000af0(s32 id);
 void Func_020018f4(s32 a, s32 b, s32 c, s32 d, s32 e);

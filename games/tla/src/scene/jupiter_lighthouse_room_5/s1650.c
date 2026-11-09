@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
+#include "event_inline.h"
 
 struct Spark {
   u8 unk00[0x0c];
@@ -19,7 +20,6 @@ struct SparkWork {
 
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 
 /// Adds count sparks to the spark ring's 96 entries in heap slot 220, each
 /// with a random angle from 0x6000 across three quarters of a turn, the

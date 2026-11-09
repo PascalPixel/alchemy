@@ -6,7 +6,6 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
-s32 Actor_SetSpritePriority();
+#include "event_inline.h"
 
-void Func_02000254(void) { Call2(Actor_SetSpritePriority, 25, 2); }
+void Func_02000254(void) { FieldActor_SetSpritePriority(25, 2); }

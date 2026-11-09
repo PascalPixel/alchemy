@@ -1,14 +1,10 @@
 #include "garoh_interiors.h"
+#include "event_inline.h"
 
-void GameFlag_ClearBit(s32 flag);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void Actor_SetMovementTypeById(s32 id, s32 action);
 void Func_02000710(void);
 void Func_020007dc(s32 value);
-void Func_0200081c(s32 id, s32 x, s32 z);
-void Func_02000824(s32 id, s32 x, s32 z, s32 angle);
 void Func_0200087c(s32 value);
-void Func_02000894(s32 id, s32 angle);
 
 s32 Func_02000580(void) {
   s32 turn;
@@ -18,8 +14,8 @@ s32 Func_02000580(void) {
   Func_0200087c(0);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov660Room1) {
     if (GameFlag_Test(0x91b) || gMainRoutineWork.entrance == 99) {
-      Func_0200081c(19, 0, 0);
-      Func_0200081c(20, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
       Actor_SetMovementTypeById(18, 3);
     } else {
       {
@@ -35,13 +31,13 @@ s32 Func_02000580(void) {
         asm volatile("" : "+l"(id));
         x <<= 17;
         z = 335 << 16;
-        Func_02000824(id, x, z, turn);
+        Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, turn);
       }
       {
         s32 angle = 0x6000;
         s32 z = 336 << 16;
 
-        Func_02000824(18, 345 << 16, z, angle);
+        Actor_SetHorizontalPositionAndAngleWithTerrain(18, 345 << 16, z, angle);
       }
       Actor_SetSingleChildFlags(Actor_GetById(19), 0);
       Actor_SetSingleChildFlags(Actor_GetById(20), 0);
@@ -53,9 +49,9 @@ s32 Func_02000580(void) {
       Actor_GetById(19)->y = 0;
       Actor_GetById(20)->motionFlags = 0;
       Actor_GetById(20)->y = 0;
-      Func_02000894(17, 0xe000);
+      Func_080d3928(17, 0xe000);
       Actor_SetSingleChildFlags(Actor_GetById(17), 0);
-      Func_02000894(18, turn);
+      Func_080d3928(18, turn);
       Actor_SetSingleChildFlags(Actor_GetById(18), 0);
     }
     if (gMainRoutineWork.entrance == 99 && !GameFlag_Test(0x91b))

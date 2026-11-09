@@ -1,4 +1,5 @@
 #include "local.h"
+#include "event_inline.h"
 #include "macros.h"
 
 void Func_02000b5c(void) {
@@ -121,7 +122,7 @@ void Func_02000d64(void) {
     Func_02000c90(16);
   }
   gData_02006298 = 1;
-  GameFlag_SetBit_(0x20c);
+  Event_SetFlag(0x20c);
 }
 
 void Func_02000e60(void) {
@@ -152,5 +153,5 @@ void Func_02000e60(void) {
     Func_02000cb4(20);
   }
   gData_0200629c = 1;
-  GameFlag_SetBit_(0x20d);
+  Event_SetFlag(0x20d);
 }

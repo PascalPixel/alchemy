@@ -3,8 +3,7 @@
 #include "main_routine_work.h"
 #include "frame.h"
 #include "field_effect.h"
-
-struct Actor *Actor_GetById(s32 id);
+#include "event_inline.h"
 
 u32 Random16Far(void);
 void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);

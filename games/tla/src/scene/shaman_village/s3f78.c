@@ -10,19 +10,19 @@ void Func_020046ec(void);
 
 void Func_02003f78(void) {
   Func_020048c4();
-  Func_02004a24(0);
-  Func_0200498c((s32)MsgShamanMoapaAdvisesLeaving);
-  Actor_GetById(15)->facing = 0x8000;
-  Actor_GetById(16)->facing = 0x8000;
-  Actor_GetById(17)->facing = 0x8000;
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)MsgShamanMoapaAdvisesLeaving);
+  ((struct ShamanVillageObject *)Actor_GetById(15))->facing = 0x8000;
+  ((struct ShamanVillageObject *)Actor_GetById(16))->facing = 0x8000;
+  ((struct ShamanVillageObject *)Actor_GetById(17))->facing = 0x8000;
   Camera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(280), 0);
   wait(1);
   Func_0200482c();
   wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_Wait(20);
-  Func_020049a4(0x200f, 0);
+  Event_Wait(20);
+  Event_ShowMessageAndWait(0x200f, 0);
   Func_0200289c();
   GameFlag_ClearBit(0x12f);
   Func_020048cc();

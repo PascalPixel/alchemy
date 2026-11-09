@@ -4,18 +4,16 @@
 #include "main_routine_work.h"
 #include "field_sprite.h"
 #include "field_effect.h"
+#include "event_inline.h"
 
 extern const s32 gData_02001540[];
 
-struct Actor *Actor_GetById(s32 id);
-struct FieldActor *Func_02001438(s32 type, s32 x, s32 y, s32 z);
 u32 Random16Far(void);
 u32 Func_020014f0(struct FieldSprite *sprite, u32 frame);
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Func_02001428(struct FieldEffect *effect, s32 mode);
 void Func_02001430(struct FieldEffect *effect, const s32 *script);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
 
 void Func_02000974(s32 spread) {
@@ -30,7 +28,7 @@ void Func_02000974(s32 spread) {
        * one expression, 14 of 122 instructions differ in tla-en. */
       s32 y = leader->y - (((Random16Far() * 14) >> 16) << 16);
 
-      effect = (struct FieldEffect *)Func_02001438(
+      effect = (struct FieldEffect *)Import_ActorCreate(
           285, (i << 17) + leader->x - 0x80000, y - 0x20000, leader->z);
     }
     if (effect != 0) {

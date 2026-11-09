@@ -1,4 +1,5 @@
 #include "lemurian_ship.h"
+#include "event_inline.h"
 #include "scene_tables.h"
 
 /// When actor 8 or 9 stands on its switch cell (column 35 or 29, row 9), lowers
@@ -14,18 +15,19 @@ void Func_02000e2c(void) {
 
   done = GameFlag_Test(0x202);
   if (!done && GameFlag_Test(0x204)) {
-    object = Actor_GetById(8);
+    object = ((struct LemurianShipObject *)Actor_GetById(8));
     column = object->x >> 20;
     if (column == 35) {
       row = object->z >> 20;
       if (row == 9) {
-        leader = Actor_GetById(gMainRoutineWork.currentOwner);
+        leader = ((struct LemurianShipObject *)Actor_GetById(
+            gMainRoutineWork.currentOwner));
         Func_02002c68();
-        Func_02002da8(0);
-        FieldEvent_Wait(20);
-        Func_02002de0(183);
-        Func_02002c30(35, 68, 35, 69, 1, 1);
-        Func_02002c38(35, 0, 1, 1, column, row);
+        Event_ResolvePendingActions(0);
+        Event_Wait(20);
+        Sound_Play(183);
+        Map_CopyCellPictureIndicesRect(35, 68, 35, 69, 1, 1);
+        Map_CopyCellAttributeRect(35, 0, 1, 1, column, row);
         object->motionFlags = done;
         Actor_SetSpritePriority(8, 3);
         if (object->z > leader->z)
@@ -35,12 +37,14 @@ void Func_02000e2c(void) {
           wait(1);
         }
         Actor_SetModeById(8, 3);
-        Func_02002cd0(10, PIXELS(568), PIXELS(152));
-        FieldEvent_Wait(20);
+        Actor_SetHorizontalPositionWithTerrain(10, PIXELS(568), PIXELS(152));
+        Event_Wait(20);
         GameFlag_SetBit(0x202);
         if (object->z > leader->z) {
           Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
-          Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
+          ((struct LemurianShipObject *)Actor_GetById(
+               gMainRoutineWork.currentOwner))
+              ->priorityFlags |= 1;
         }
         Func_02002c70();
       }
@@ -48,18 +52,19 @@ void Func_02000e2c(void) {
   }
   done = GameFlag_Test(0x203);
   if (!done && GameFlag_Test(0x205)) {
-    object = Actor_GetById(9);
+    object = ((struct LemurianShipObject *)Actor_GetById(9));
     column = object->x >> 20;
     if (column == 29) {
       row = object->z >> 20;
       if (row == 9) {
-        leader = Actor_GetById(gMainRoutineWork.currentOwner);
+        leader = ((struct LemurianShipObject *)Actor_GetById(
+            gMainRoutineWork.currentOwner));
         Func_02002c68();
-        Func_02002da8(0);
-        FieldEvent_Wait(20);
-        Func_02002de0(183);
-        Func_02002c30(29, 68, 29, 69, 1, 1);
-        Func_02002c38(35, 0, 1, 1, column, row);
+        Event_ResolvePendingActions(0);
+        Event_Wait(20);
+        Sound_Play(183);
+        Map_CopyCellPictureIndicesRect(29, 68, 29, 69, 1, 1);
+        Map_CopyCellAttributeRect(35, 0, 1, 1, column, row);
         object->motionFlags = done;
         Actor_SetSpritePriority(9, 3);
         if (object->z > leader->z)
@@ -69,12 +74,14 @@ void Func_02000e2c(void) {
           wait(1);
         }
         Actor_SetModeById(9, 3);
-        Func_02002cd0(11, PIXELS(472), PIXELS(152));
-        FieldEvent_Wait(20);
+        Actor_SetHorizontalPositionWithTerrain(11, PIXELS(472), PIXELS(152));
+        Event_Wait(20);
         GameFlag_SetBit(0x203);
         if (object->z > leader->z) {
           Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
-          Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
+          ((struct LemurianShipObject *)Actor_GetById(
+               gMainRoutineWork.currentOwner))
+              ->priorityFlags |= 1;
         }
         Func_02002c70();
       }
@@ -82,10 +89,10 @@ void Func_02000e2c(void) {
   }
   if (GameFlag_Test(0x202) && GameFlag_Test(0x203)) {
     Func_02002c68();
-    Func_02002da8(0);
-    Func_02002de0(188);
-    LemurianShip_MapCopy(4, 124, 31, 64, 3, 2);
-    FieldEvent_Wait(20);
+    Event_ResolvePendingActions(0);
+    Sound_Play(188);
+    MapGrid_CopyCellsTo(4, 124, 31, 64, 3, 2);
+    Event_Wait(20);
     GameFlag_SetBit(0x982);
     Func_02002c70();
   }

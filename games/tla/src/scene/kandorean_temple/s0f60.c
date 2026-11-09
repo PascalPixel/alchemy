@@ -1,17 +1,14 @@
 #include "local.h"
-#include "call.h"
+#include "event_inline.h"
 
 extern s32 gData_020062a0;
 extern u16 gData_020062a8;
 extern s32 gData_02006298;
 
-void Func_02005178(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02000cd8(s32 id, s32 offset, s32 limit);
 void Func_02000cf8(s32 id, s32 offset, s32 limit);
 s32 Func_02000d18(void);
 void Func_02000d64(void);
-void Task_RemoveFar(void (*func)(void));
-s32 Math_Sine(s32 angle);
 
 void Func_02000f60(void) {
   s32 *timer = &gData_020062a0;
@@ -29,8 +26,8 @@ void Func_02000f60(void) {
     goto count;
   }
   if (*timer == 300) {
-    Call6((void (*)())Func_02005178, 15, 15, 1, 1, 13, 13);
-    Call6((void (*)())Func_02005178, 65, 15, 1, 1, 63, 13);
+    MapGrid_CopyCellAttributes(15, 15, 1, 1, 13, 13);
+    MapGrid_CopyCellAttributes(65, 15, 1, 1, 63, 13);
     Func_02000d64();
     goto count;
   }
@@ -50,7 +47,7 @@ void Func_02000f60(void) {
         Func_02000cd8(16, 0, limit);
       } else if (t < 600) {
         if (GameFlag_Test(0x208) && *timer == 400) {
-          Call6((void (*)())Func_02005178, 22, 0, 1, 1, 13, 13);
+          MapGrid_CopyCellAttributes(22, 0, 1, 1, 13, 13);
           Task_RemoveFar(Func_02000f60);
         }
         phase = &gData_020062a8;
@@ -115,16 +112,16 @@ void Func_02000f60(void) {
     goto count;
   }
   if (*timer == 3000) {
-    Call6((void (*)())Func_02005178, 8, 0, 1, 1, 13, 13);
-    Call6((void (*)())Func_02005178, 58, 0, 1, 1, 63, 13);
-    Func_02005230(11, 0, 0);
-    Func_02005230(13, 0, 0);
-    Func_02005230(14, 0, 0);
-    Func_02005230(15, 0, 0);
-    Func_02005230(16, 0, 0);
+    MapGrid_CopyCellAttributes(8, 0, 1, 1, 13, 13);
+    MapGrid_CopyCellAttributes(58, 0, 1, 1, 63, 13);
+    Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
     Actor_SetModeById(9, 1);
-    Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)Actor_GetById(9),
-          0xd80000, 0, 0xd80000);
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(9), 0xd80000, 0,
+                                         0xd80000);
     Actor_GetById(9)->priorityFlags |= 2;
     Actor_SetSpritePriority(9, 3);
     if (GameFlag_Test(0x208)) {

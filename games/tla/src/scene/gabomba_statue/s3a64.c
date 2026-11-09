@@ -1,5 +1,6 @@
 #include "types.h"
 #include "iwram_call.h"
+#include "event_inline.h"
 
 struct PuzzleCell {
   u8 piece;
@@ -24,8 +25,6 @@ struct SceneState {
 extern struct SceneState gSceneState;
 extern s32 gRandomState;
 u32 Random16Far(void);
-void Func_0200566c(s32 marked, s32 piece, s32 width, s32 height, s32 col,
-                   s32 row);
 s32 Func_02003fc0(s32 x0, s32 z0, s32 x1, s32 z1, s32 a, s32 b, s32 c, s32 d);
 void Func_02004270(s32 col, s32 row, s32 a, s32 b);
 s32 Func_02003934(s32 col, s32 row);
@@ -80,7 +79,7 @@ draw_col:
     s32 drawn = state->cells[row * 11 + col].piece;
     s32 drawZ, drawX = state->originX;
     drawZ = state->originZ + row;
-    Func_0200566c(0, drawn, 1, 1, drawX + col, drawZ);
+    Map_CopyCellsRect(0, drawn, 1, 1, drawX + col, drawZ);
   }
 draw_next:
   if (++col <= 10)
@@ -256,7 +255,7 @@ turn_col:
   {
     s32 drawZ, drawX = state->originX;
     drawZ = state->originZ + row;
-    Func_0200566c(shape, piece, 1, 1, drawX + col, drawZ);
+    Map_CopyCellsRect(shape, piece, 1, 1, drawX + col, drawZ);
   }
 turn_next:
   if (++col <= 10)

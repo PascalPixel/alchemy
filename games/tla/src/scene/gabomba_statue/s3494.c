@@ -2,9 +2,7 @@
 
 #include "main_routine_work.h"
 #include "scene_ids.h"
-
-s32 GameFlag_Test(s32 flag);
-void GameFlag_ClearBit(s32 flag);
+#include "event_inline.h"
 
 s32 Func_02003494(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov671Room7 &&

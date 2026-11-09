@@ -1,6 +1,7 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
+#include "event_inline.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -8,8 +9,6 @@
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-
-s32 GameFlag_Test(s32 flag);
 
 s32 Func_020002e0(void) {
   struct MainRoutineWork *party;

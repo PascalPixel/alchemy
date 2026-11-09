@@ -1,7 +1,6 @@
 #include "types.h"
 #include "actor.h"
-
-struct Actor *Actor_GetById(s32 id);
+#include "event_inline.h"
 
 s32 Func_02000038(void) {
   struct Actor *object = Actor_GetById(10);

@@ -128,9 +128,9 @@ Menu_SelectSaveSlotAction:
 	.thumb_func
 Func_020022b0:
 	overlay_veneer Func_080381f8
-	.global Func_020022b8
+	.global Func_0803ce64
 	.thumb_func
-Func_020022b8:
+Func_0803ce64:
 	overlay_veneer Func_08038210
 	.global WindowSprite_RedrawSavedRect
 	.thumb_func
@@ -172,9 +172,9 @@ Func_02002300:
 	.thumb_func
 Func_02002308:
 	overlay_veneer Resource_CopyFixedBlockAFar
-	.global Func_02002310
+	.global Func_0803f9c0
 	.thumb_func
-Func_02002310:
+Func_0803f9c0:
 	overlay_veneer Func_08038348
 	.global Menu_RunConfirmSelection
 	.thumb_func
@@ -250,9 +250,9 @@ Func_02002398:
 	.thumb_func
 Func_020023a0:
 	overlay_veneer Func_080ad330
-	.global FieldEvent_Wait
+	.global Event_Wait
 	.thumb_func
-FieldEvent_Wait:
+Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
 	.global Actor_GetById
 	.thumb_func
@@ -274,9 +274,9 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_020023d8
+	.global Func_080d295c
 	.thumb_func
-Func_020023d8:
+Func_080d295c:
 	overlay_veneer Func_080c8558
 	.global Func_020023e0
 	.thumb_func
@@ -298,7 +298,7 @@ Func_020023f8:
 	.thumb_func
 Func_02002400:
 	overlay_veneer Func_08108048
-	.global Func_02002408
+	.global Sound_Play
 	.thumb_func
-Func_02002408:
+Sound_Play:
 	overlay_veneer Sound_PlayFar

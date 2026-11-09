@@ -12,13 +12,13 @@ struct TalkActor {
 
 void Func_02000544(void) {
   Func_02002488();
-  Func_02002590(0);
-  Func_02002520(MsgDoYouWant);
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId(MsgDoYouWant);
   FieldMessage_ShowAtActor(8, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0)
     Func_02001944();
   else
-    Func_02002538(8, 0);
+    Event_ShowMessageAndWait(8, 0);
   Func_02002490();
 }
 
@@ -28,15 +28,15 @@ void Func_02000584(void) {
   s16 angle = object->angle;
 
   Func_02002488();
-  Func_02002590(0);
+  Event_ResolvePendingActions(0);
   object->unk63 = 1;
   if (work->unk166 == 0) {
     Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
-    Func_02002520(MsgRunningAroundIn);
+    Event_SetMessageId(MsgRunningAroundIn);
   } else {
-    Func_02002520(MsgThereSALot);
+    Event_SetMessageId(MsgThereSALot);
   }
-  Func_02002538(9, 0);
+  Event_ShowMessageAndWait(9, 0);
   if (work->unk166 == 0)
     object->angle = angle;
   object->unk63 = 0;
@@ -49,15 +49,15 @@ void Func_02000614(void) {
   s16 angle = object->angle;
 
   Func_02002488();
-  Func_02002590(0);
+  Event_ResolvePendingActions(0);
   object->unk63 = 1;
   if (work->unk166 == 0) {
     Actor_SetAngleToward(10, gMainRoutineWork.currentOwner, 0);
-    Func_02002520(MsgThereSAGame);
+    Event_SetMessageId(MsgThereSAGame);
   } else {
-    Func_02002520(MsgIOnceHeard);
+    Event_SetMessageId(MsgIOnceHeard);
   }
-  Func_02002538(10, 0);
+  Event_ShowMessageAndWait(10, 0);
   if (work->unk166 == 0)
     object->angle = angle;
   object->unk63 = 0;

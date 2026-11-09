@@ -1,6 +1,6 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
+#include "event_inline.h"
 
 struct PuzzleCell {
   u8 kind;
@@ -26,8 +26,6 @@ struct SceneState {
 
 extern struct SceneState gSceneState;
 
-struct Actor *Actor_GetById(s32 id);
-void Func_0200566c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 // Shows or hides the statues: gives each occupied cell's actor, numbered from
 // id, its world position and draws its tile, or clears the actor and restores
@@ -63,7 +61,7 @@ nextColumn: {
          * in tla-en. */
         x += column;
         z += row;
-        Func_0200566c(0, 11, 1, 1, x, z);
+        Map_CopyCellsRect(0, 11, 1, 1, x, z);
       }
       cell->occupied = 2;
     } else {
@@ -79,7 +77,7 @@ nextColumn: {
       mapZ = state->originZ;
       mapX += column;
       mapZ += row;
-      Func_0200566c(1, kind, 1, 1, mapX, mapZ);
+      Map_CopyCellsRect(1, kind, 1, 1, mapX, mapZ);
     }
     id++;
   }

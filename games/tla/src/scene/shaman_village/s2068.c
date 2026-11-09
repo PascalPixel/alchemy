@@ -1,9 +1,9 @@
 #include "shaman_village.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 struct ShamanVillageObject *Func_02001fec(void);
 void DriftScene_SpawnObject(s32 x, s32 y, s32 z, u16 value);
-void Actor_WatchAndSetScript(s32 actor, s32 target);
 
 extern const u8 gData_02004cfc[];
 extern const u8 gData_02004d40[];
@@ -20,40 +20,41 @@ void Func_02002068(void) {
   s32 angle;
 
   Func_020048c4();
-  Func_02004a24(0);
-  Import_SoundPlay(78);
+  Event_ResolvePendingActions(0);
+  Sound_Play(78);
   angle = 0xc000;
-  Actor_GetById(gMainRoutineWork.currentOwner)->facing = angle;
+  ((struct ShamanVillageObject *)Actor_GetById(gMainRoutineWork.currentOwner))
+      ->facing = angle;
   wait(1);
-  ShamanVillage_CamSpeed(0xcccc, 0x1999);
-  Func_020049fc()->motionFlags = 0;
+  FieldCamera_SetSpeed(0xcccc, 0x1999);
+  ((struct ShamanVillageObject *)Func_080d4568())->motionFlags = 0;
   Camera_MoveWithinMapBounds(PIXELS(120), 0x280000, PIXELS(246), 1);
-  ShamanVillage_ObjSpeed(gMainRoutineWork.currentOwner, 0x13333, 0x9999);
-  ShamanVillage_ObjWalk(gMainRoutineWork.currentOwner, 120, 264);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x13333, 0x9999);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 120, 264);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
   rod = Func_02001fec();
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
   SHAMAN_VILLAGE_EMOTE(15, 256, 20)
-  ShamanVillage_ObjSpeed(15, 0x26666, 0x13333);
+  Actor_SetSpeed(15, 0x26666, 0x13333);
   Actor_SetPositionAndReset(15, 120, 242);
-  Import_SoundPlay(29);
-  Func_0200498c((s32)MsgShamanRecognizeShamanRod);
-  Func_020049a4(15, 0);
-  FieldEvent_Wait(20);
+  Sound_Play(29);
+  Event_SetMessageId((s32)MsgShamanRecognizeShamanRod);
+  Event_ShowMessageAndWait(15, 0);
+  Event_Wait(20);
   if (rod != NULL)
     Func_0200481c(rod);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
-  Func_020049bc(gMainRoutineWork.currentOwner, angle);
+  Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, angle);
   Func_02004944(18, gMainRoutineWork.currentOwner);
   Func_02004944(7, gMainRoutineWork.currentOwner);
   Func_02004944(5, gMainRoutineWork.currentOwner);
   Func_02004944(6, gMainRoutineWork.currentOwner);
   wait(1);
-  ShamanVillage_ObjSpeed(18, 0x19999, 0xcccc);
-  ShamanVillage_ObjSpeed(7, 0x19999, 0xcccc);
-  ShamanVillage_ObjSpeed(5, 0x19999, 0xcccc);
-  ShamanVillage_ObjSpeed(6, 0x19999, 0xcccc);
+  Actor_SetSpeed(18, 0x19999, 0xcccc);
+  Actor_SetSpeed(7, 0x19999, 0xcccc);
+  Actor_SetSpeed(5, 0x19999, 0xcccc);
+  Actor_SetSpeed(6, 0x19999, 0xcccc);
   Actor_SetMovementTypeById(18, gData_02004cfc);
   Actor_SetMovementTypeById(7, gData_02004d40);
   Actor_SetMovementTypeById(5, gData_02004d84);
@@ -61,148 +62,148 @@ void Func_02002068(void) {
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
   SHAMAN_VILLAGE_EMOTE(17, 256, 0)
-  ShamanVillage_ObjSpeed(17, 0x13333, 0x9999);
+  Actor_SetSpeed(17, 0x13333, 0x9999);
   Actor_SetPositionAndReset(17, 136, 232);
-  Func_020049a4(17, 0);
-  ShamanVillage_ObjSpeed(16, 0x13333, 0x9999);
+  Event_ShowMessageAndWait(17, 0);
+  Actor_SetSpeed(16, 0x13333, 0x9999);
   Actor_SetPositionAndReset(16, 104, 232);
-  Func_020049a4(16, 0);
+  Event_ShowMessageAndWait(16, 0);
   Motion_SetModeAndWaitAnimation(15, 3);
-  Func_020049a4(15, 0);
+  Event_ShowMessageAndWait(15, 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
   SHAMAN_VILLAGE_EMOTE(15, 257, 20)
-  Func_020049a4(15, 0);
-  ShamanVillage_ObjEmoteWait(18, 258);
-  FieldEvent_Wait(20);
-  Func_020049a4(18, 0);
-  ShamanVillage_ObjSpeed(15, 0xcccc, 0x6666);
+  Event_ShowMessageAndWait(15, 0);
+  Actor_SetAttachedEffect(18, 258);
+  Event_Wait(20);
+  Event_ShowMessageAndWait(18, 0);
+  Actor_SetSpeed(15, 0xcccc, 0x6666);
   Actor_SetPositionAndReset(15, 120, 252);
-  FieldEvent_Wait(40);
+  Event_Wait(40);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
   SHAMAN_VILLAGE_EMOTE(15, 257, 20)
   Actor_SetPositionAndReset(15, 136, 252);
-  ShamanVillage_ObjArm(15, FACING_SOUTH, 20);
+  Actor_FaceDirection(15, FACING_SOUTH, 20);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
   SHAMAN_VILLAGE_EMOTE(15, 257, 40)
   Actor_SetPositionAndReset(15, 104, 252);
-  ShamanVillage_ObjArm(15, FACING_SOUTH, 20);
+  Actor_FaceDirection(15, FACING_SOUTH, 20);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
   SHAMAN_VILLAGE_EMOTE(15, 257, 20)
   Actor_SetPositionAndReset(15, 152, 252);
-  ShamanVillage_ObjArm(15, FACING_SOUTH, 20);
+  Actor_FaceDirection(15, FACING_SOUTH, 20);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
   SHAMAN_VILLAGE_EMOTE(15, 257, 40)
   Actor_SetPositionAndReset(15, 88, 252);
-  ShamanVillage_ObjArm(15, FACING_SOUTH, 40);
+  Actor_FaceDirection(15, FACING_SOUTH, 40);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
   SHAMAN_VILLAGE_EMOTE(15, 257, 80)
   Actor_SetPositionAndReset(15, 120, 252);
   Actor_SetPositionAndReset(15, 120, 242);
-  ShamanVillage_ObjTurn(15, FACING_SOUTH);
+  Actor_FaceDirectionAndWait(15, FACING_SOUTH);
   Actor_SetModeById(15, 4);
-  Func_020049a4(15, 0);
+  Event_ShowMessageAndWait(15, 0);
   Actor_ArmCallback(6, 0, 0);
-  ShamanVillage_ObjArm(5, FACING_WEST, 0);
+  Actor_FaceDirection(5, FACING_WEST, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
-  ShamanVillage_ObjArm(7, FACING_WEST, 0);
+  Actor_FaceDirection(7, FACING_WEST, 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
   SHAMAN_VILLAGE_EMOTE(18, 256, 20)
   Actor_Jump(18, 4, 0);
-  Func_020049a4(18, 0);
-  ShamanVillage_ObjArm(15, FACING_SOUTHEAST, 0);
+  Event_ShowMessageAndWait(18, 0);
+  Actor_FaceDirection(15, FACING_SOUTHEAST, 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
   SHAMAN_VILLAGE_EMOTE(15, 265, 20)
-  Func_020049a4(15, 0);
+  Event_ShowMessageAndWait(15, 0);
   Actor_ArmCallback(6, FACING_NORTH, 0);
   Actor_ArmCallback(5, FACING_NORTH, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_ArmCallback(7, FACING_NORTH, 0);
-  ShamanVillage_ObjTurn(15, FACING_SOUTH);
+  Actor_FaceDirectionAndWait(15, FACING_SOUTH);
   Motion_SetModeAndWaitAnimation(15, 4);
-  Func_020049a4(15, 0);
+  Event_ShowMessageAndWait(15, 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
   SHAMAN_VILLAGE_EMOTE(6, 259, 0)
-  Func_020049a4(6, 0);
-  ShamanVillage_ObjArm(15, FACING_SOUTHWEST, 0);
+  Event_ShowMessageAndWait(6, 0);
+  Actor_FaceDirection(15, FACING_SOUTHWEST, 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
   SHAMAN_VILLAGE_EMOTE(5, 257, 0)
-  Func_020049a4(5, 0);
+  Event_ShowMessageAndWait(5, 0);
   Motion_SetModeAndWaitAnimation(15, 3);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
   SHAMAN_VILLAGE_EMOTE(7, 265, 20)
-  Func_020049a4(7, 0);
-  ShamanVillage_ObjArm(15, FACING_SOUTHEAST, 0);
-  ShamanVillage_ObjEmoteWait(18, 258);
-  Func_020049a4(18, 0);
+  Event_ShowMessageAndWait(7, 0);
+  Actor_FaceDirection(15, FACING_SOUTHEAST, 0);
+  Actor_SetAttachedEffect(18, 258);
+  Event_ShowMessageAndWait(18, 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
   SHAMAN_VILLAGE_EMOTE(15, 265, 40)
-  Func_020049a4(15, 0);
+  Event_ShowMessageAndWait(15, 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
   SHAMAN_VILLAGE_EMOTE(17, 262, 20)
-  ShamanVillage_ObjTurn(17, FACING_SOUTHWEST);
-  Func_020049a4(17, 0);
+  Actor_FaceDirectionAndWait(17, FACING_SOUTHWEST);
+  Event_ShowMessageAndWait(17, 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
   SHAMAN_VILLAGE_EMOTE(15, 257, 0)
-  ShamanVillage_ObjArm(15, FACING_NORTHEAST, 20);
+  Actor_FaceDirection(15, FACING_NORTHEAST, 20);
   Actor_SetModeById(17, 3);
-  Func_020049a4(17, 0);
+  Event_ShowMessageAndWait(17, 0);
   {
     s32 y = 0x500000;
     s32 z = 0xf20000;
 
     DriftScene_SpawnObject(0x740000, y, z, 0xe000);
-    FieldEvent_Wait(10);
+    Event_Wait(10);
     DriftScene_SpawnObject(0x7c0000, y, z, 0x2000);
-    FieldEvent_Wait(30);
+    Event_Wait(30);
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see
      * SHAMAN_VILLAGE_EMOTE. */
     SHAMAN_VILLAGE_EMOTE(16, 262, 20)
-    Func_020049bc(16, 0);
-    Func_020049a4(16, 0);
-    ShamanVillage_ObjTurn(17, FACING_WEST);
+    Actor_ArmCallbackAndRefresh(16, 0);
+    Event_ShowMessageAndWait(16, 0);
+    Actor_FaceDirectionAndWait(17, FACING_WEST);
     Motion_SetModeAndWaitAnimation(17, 3);
     /* FAKEMATCH: the emote and the frames are loaded before the actor; see
      * SHAMAN_VILLAGE_EMOTE. */
     SHAMAN_VILLAGE_EMOTE(15, 264, 40)
     Motion_SetModeAndWaitAnimation(15, 3);
-    ShamanVillage_ObjArm(17, FACING_SOUTH, 0);
-    ShamanVillage_ObjArm(16, FACING_SOUTH, 0);
-    ShamanVillage_ObjTurn(15, FACING_SOUTH);
-    Func_020049a4(15, 0);
+    Actor_FaceDirection(17, FACING_SOUTH, 0);
+    Actor_FaceDirection(16, FACING_SOUTH, 0);
+    Actor_FaceDirectionAndWait(15, FACING_SOUTH);
+    Event_ShowMessageAndWait(15, 0);
     Actor_SetModeById(15, 3);
-    Func_020049a4(15, 0);
-    Func_020049e4(0x6666, 0xccc);
+    Event_ShowMessageAndWait(15, 0);
+    Camera_SetSpeedParameters(0x6666, 0xccc);
     Camera_MoveWithinMapBounds(PIXELS(180), 0x200000, z, 1);
   }
-  object = Actor_GetById(16);
+  object = ((struct ShamanVillageObject *)Actor_GetById(16));
   object->unk63 = 0;
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 15);
   Actor_WatchAndSetScript(5, 15);
   Actor_WatchAndSetScript(6, 15);
   Actor_WatchAndSetScript(7, 15);
   Actor_WatchAndSetScript(18, 15);
-  ShamanVillage_ObjSpeed(15, 0x19999, 0xcccc);
-  ShamanVillage_ObjSpeed(16, 0x19999, 0xcccc);
-  ShamanVillage_ObjSpeed(17, 0x19999, 0xcccc);
+  Actor_SetSpeed(15, 0x19999, 0xcccc);
+  Actor_SetSpeed(16, 0x19999, 0xcccc);
+  Actor_SetSpeed(17, 0x19999, 0xcccc);
   Actor_SetMovementTypeById(15, gData_02004e0c);
-  FieldEvent_Wait(20);
+  Event_Wait(20);
   Actor_SetMovementTypeById(17, gData_02004e5c);
   Actor_SetMovementTypeById(16, gData_02004eac);
-  Import_SoundPlay(78);
+  Sound_Play(78);
   do {
     wait(1);
   } while (object->unk63 == 0);
@@ -213,32 +214,32 @@ void Func_02002068(void) {
   Actor_Stop(6);
   wait(1);
   Func_02004a2c();
-  Func_020049e4(0x33333, 0x6666);
+  Camera_SetSpeedParameters(0x33333, 0x6666);
   Camera_MoveWithinMapBounds(PIXELS(120), -1, PIXELS(260), 1);
   Func_020049f4();
-  Func_02004934(15, 0, 0);
-  Func_02004934(17, 0, 0);
-  Func_02004934(16, 0, 0);
-  Func_020049bc(6, 0);
-  Func_020049a4(6, 0);
-  ShamanVillage_ObjTurn(5, FACING_WEST);
-  Func_020049a4(0x2005, 0);
-  Func_020049a4(18, 0);
-  ShamanVillage_ObjTurn(18, FACING_WEST);
-  Func_020049a4(18, 0);
+  Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
+  Actor_ArmCallbackAndRefresh(6, 0);
+  Event_ShowMessageAndWait(6, 0);
+  Actor_FaceDirectionAndWait(5, FACING_WEST);
+  Event_ShowMessageAndWait(0x2005, 0);
+  Event_ShowMessageAndWait(18, 0);
+  Actor_FaceDirectionAndWait(18, FACING_WEST);
+  Event_ShowMessageAndWait(18, 0);
   Actor_ArmCallback(7, 0, 0);
   Actor_ArmCallback(5, 0, 0);
-  Func_020049bc(gMainRoutineWork.currentOwner, 0);
+  Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, 0);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
-  ShamanVillage_ObjSpeed(6, 0x10000, 0x8000);
-  ShamanVillage_ObjSpeed(5, 0x10000, 0x8000);
-  ShamanVillage_ObjSpeed(7, 0x10000, 0x8000);
-  ShamanVillage_ObjSpeed(18, 0x10000, 0x8000);
+  Actor_SetSpeed(6, 0x10000, 0x8000);
+  Actor_SetSpeed(5, 0x10000, 0x8000);
+  Actor_SetSpeed(7, 0x10000, 0x8000);
+  Actor_SetSpeed(18, 0x10000, 0x8000);
   Actor_SetMovementTypeById(6, gData_02004f08);
   Actor_SetMovementTypeById(5, gData_02004f08);
   Actor_SetMovementTypeById(7, gData_02004f08);
   Actor_SetMovementTypeAndWaitById(18, gData_02004f08);
-  FieldEvent_Wait(20);
+  Event_Wait(20);
   GameFlag_SetBit(514);
   GameFlag_SetBit(0x9e1);
   Func_020048cc();

@@ -97,44 +97,31 @@ void BattleEffect_RunEffect16(void) {
   struct ArcEffectObject *object;
   struct ArcGroup *group;
   struct ArcEntry *entry;
+  const u8 *tiles;
   u32 angle;
   s32 flags;
   s32 slot;
   s32 count;
   s32 phase;
-  s32 zero;
 
   scene = Ram_HeapSlots->effectWork;
-  /* FAKEMATCH: forced temporary, as The Broken Seal's twin: the zero the two
-   * counters take lives in r6 from here; the one-pass block keeps its set
-   * before the object load (one reordered row without it). */
-  zero = 0;
-
   object = scene->mainObject;
   group = object->records;
   entry = group->entries[0];
   angle = object->angle;
   flags = group->flags;
   slot = Resource_FindFreeEntry();
-  {
-    /* FAKEMATCH: forced temporaries and a one-pass block reload the scene
-     * before 0x710 and load the tiles between the slot's two shifts; without
-     * them, one row each is reordered in tla-en. */
-    struct ArcScene *work = scene;
-    const u8 *tiles;
-    s32 id;
-
-    work->arcTileSlot = slot;
-    id = slot << 16;
-    tiles = gData_080ed90c;
-    VramCache_Load(id >> 16, 0x100, tiles);
-    gMainRoutineWork.avoidDistance = 0x09600000;
-    gMainRoutineWork.avoidByItem = GameFlag_Test(0x145);
-    Animation_ApplyChildValuesFar(object, 0);
-    object->callback = BattleEffect_UpdatePairedArcSpawner;
-    object->phase = zero;
-    object->step = zero;
-  }
+  scene->arcTileSlot = slot;
+  // tiles holds the picture's address, loaded between the slot's two shifts;
+  // as the address in the call, 2 of 156 instructions differ in tla-en.
+  tiles = gData_080ed90c;
+  VramCache_Load((s16)slot, 0x100, tiles);
+  gMainRoutineWork.avoidDistance = 0x09600000;
+  gMainRoutineWork.avoidByItem = GameFlag_Test(0x145);
+  Animation_ApplyChildValuesFar(object, 0);
+  object->callback = BattleEffect_UpdatePairedArcSpawner;
+  object->phase = 0;
+  object->step = 0;
   Sound_PlayFar(140);
   wait(15);
   object->phase = 1;
@@ -167,15 +154,17 @@ void BattleEffect_RunEffect16(void) {
     wait(1);
   }
   {
-    /* FAKEMATCH: the flags restored through a pointer and one-pass blocks
-     * around the wait keep the native's order of the r11 copy, the param
-     * store and the scene reload; without them, one row each is reordered. */
+    /* FAKEMATCH(temporary): the flags restored through a pointer of their
+     * own, which sets the param's 0 after the flags' copy; as group->flags =
+     * flags, 2 of 156 instructions differ in tla-en. */
     u8 *restore = &group->flags;
 
     *restore = flags;
   }
   group->dirty = 1;
   entry->param = 0;
+  // An empty once-only loop keeps the wait's argument after the param store;
+  // without it, 2 of 156 instructions differ in tla-en.
   do {
   } while (0);
   wait(1);

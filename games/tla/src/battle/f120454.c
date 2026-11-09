@@ -884,8 +884,8 @@ power_end:
       u16 *pt;
 
       /* FAKEMATCH(temporary): a pointer walked down from hp to maxHp reads each
-       * stat twice, unsigned and signed, as the ROM does; as plain field reads,
-       * 94 of 3451 instructions differ in tla-en. */
+       * stat twice, unsigned and signed; as reads of target->hp and
+       * target->maxHp, 94 of 3451 instructions differ in tla-en. */
       pt = (u16 *)&target->hp;
       old = *pt--;
       heal = *(s16 *)(pt + 1);
@@ -904,9 +904,9 @@ power_end:
       } else if (action->effect == 70) {
         maxu = (u16)target->maxHp;
         heal += (s16)maxu / 2;
-        /* FAKEMATCH(barrier): an empty asm on maxu, so gcse does not share maxu
-         * << 16 between this halving and the clamp; as no asm, 45 of 3451
-         * instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): an empty asm on maxu, so the clamp shifts maxu
+         * left by 16 again instead of sharing this halving's shift; without
+         * it, 45 of 3451 instructions differ in tla-en. */
         asm("" : "+r"(maxu));
       } else {
         pt--;
@@ -946,8 +946,8 @@ power_end:
       u16 *pt;
 
       /* FAKEMATCH(temporary): a pointer walked down from pp to maxPp reads each
-       * stat twice, signed and unsigned, as the ROM does; as plain field reads,
-       * 255 of 3451 instructions differ in tla-en. */
+       * stat twice, unsigned and signed; as reads of target->pp and
+       * target->maxPp, 255 of 3451 instructions differ in tla-en. */
       pt = (u16 *)&target->pp;
       old = *pt--;
       heal = *(s16 *)(pt + 1);
@@ -1221,8 +1221,9 @@ power_end:
     case 60:
       ap = dealt;
       dmg = actor->hp;
-      /* FAKEMATCH(barrier): dmg held through an empty asm; as no asm, 2 of
-       * 3451 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm on dmg, so its copy comes before
+       * dealt is reloaded from the stack; without it, 2 of 3451 instructions
+       * differ in tla-en. */
       __asm__("" : "=r"(dmg) : "0"(dmg));
       if (action->effect == 60)
         ap /= 2;

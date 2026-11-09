@@ -146,10 +146,9 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
 
       n = frame / 2 % 4; // a pillar picture every 2 frames
       BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
-      /* FAKEMATCH(one-pass): the left half's pillar draw and glow index
-       * in a one-pass block, which ends CSE's block so the mirrored half
-       * works out both pictures again; as plain statements, 247 of 456
-       * instructions differ in tla-en. */
+      // The left half's pillar draw and glow index in a once-only block,
+      // which ends CSE's block so the mirrored half works out both pictures
+      // again; as plain statements, 235 of 456 instructions differ in tla-en.
       do {
         draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
         draw[1](canvas, work->sheet + n * 1088, 47, ground.y - 64, 17, 64);

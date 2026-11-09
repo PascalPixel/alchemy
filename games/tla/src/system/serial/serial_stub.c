@@ -17,9 +17,10 @@ void SerialTest_Run(void) {
   s32 value;
   s32 n;
   s32 delay;
-  /* FAKEMATCH: each key test loads the held keys into the register it masks, as
-   * ☀️'s volatile gKeysHeld does; read plainly, regmove copies the mask instead
-   * (differ 16) */
+  // The held keys read through a volatile pointer, so each key test loads them
+  // afresh into the register it masks, as The Broken Seal reads its volatile
+  // gKeysHeld; as gInput.held read plainly, 16 of 74 instructions differ in
+  // tla-en.
   volatile u32 *held;
 
   Sound_PlayFar(3);

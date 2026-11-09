@@ -119,8 +119,9 @@ extern const s8 Data_08196e9c[];   // the hexagon's corners (z, y)
 #define BEAM_SEGMENTS 10
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 2 of 743 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the palette copy through this inline; as a direct
+   * call to Iwram_CopyWords, 2 of 743 instructions of
+   * BattleEffect_RunVoidBeam differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 

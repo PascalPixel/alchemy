@@ -31,9 +31,6 @@ void Func_080d9d40(void) {
   if (!GameFlag_Test(260) && event->counter > 12) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    /* FAKEMATCH: loads gMainRoutineWork's address before the render mode's offset
-     * is built; without it the offset comes first (differ 2). */
-    asm volatile("" : "+l"(party));
     if (party->renderMode == 0) {
       s32 target = Field_FindNearbyTalkTarget(party->currentOwner);
 

@@ -27,18 +27,12 @@ s32 Func_080cdc74(void) {
   s32 id;
   s32 terrain;
   s32 result;
-  /* FAKEMATCH(pin): the half cell (128 << 11) started in r2, as the native
-   * does; as an ordinary local, 19 of 122 instructions differ in tla-en. */
-  register s32 half asm("r2");
+  s32 half;
   s32 angle = owner->angle >> 12;
 
   angle = ((angle + 2) & 12) << 12;
   position[0] = owner->x;
   half = 128;
-  /* FAKEMATCH(barrier): the half cell started before the owner's height is
-   * loaded, as the native does; without the barrier, 2 of 122 instructions
-   * differ in tla-en (as plain `owner->y + 0x40000`, also 2). */
-  __asm__ volatile("" : "+r"(half));
   position[1] = (owner->y + (half << 11)) & 0xfff80000;
   position[2] = owner->z;
   Vector_AddPolarOffset(0x100000, angle, position);

@@ -58,10 +58,6 @@ s32 Shop_CountUnits(void) {
   s32 memberIndex;
 
   shop = Ram_HeapSlots->menuRuntime;
-  /* FAKEMATCH(barrier): the work loaded before the service kind's offset is
-   * built in r1, as native; the clobber keeps that build below the load. As
-   * plain C, 2 of 56 instructions differ in tla-en. */
-  asm("" : "+l"(shop) : : "r1");
   eligibleCount = 0;
   serviceKind = shop->partyAction;
   for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {

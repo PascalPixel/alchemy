@@ -13,9 +13,8 @@ struct ReelWork {
 
 s32 Func_081b8180(s32 sprite, s32 x, s32 y, s32 value, s32 palette,
                   s32 digits) {
-  /* FAKEMATCH(volatile): the sprite words volatile, as The Broken Seal's
-   * twin has them; as plain u32 members, 84 of 119 instructions differ in
-   * tla-en. */
+  // The sprite words are volatile, as The Broken Seal's struct OamWords; as
+  // plain u32 members, 84 of 119 instructions differ in tla-en.
   struct ReelWork *work;
   s32 started;
   s32 digit;

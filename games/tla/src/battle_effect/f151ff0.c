@@ -63,9 +63,7 @@ extern u16 Data_081983ba[];   // gEruption_PuffSizes
 void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
-  /* FAKEMATCH(dead): the blitter as a pair of which only the first is used,
-   * as in The Broken Seal's twin, for four bytes of the stack frame; as one
-   * DrawRectangle, 20 of 464 instructions differ in tla-en. */
+  // Unused: draw[1] gives the stack frame its 4 bytes.
   DrawRectangle draw[2];
   s32 variant;
   struct EffectPosition screen;

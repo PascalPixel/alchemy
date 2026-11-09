@@ -50,21 +50,11 @@ s32 VramCache_AllocateBlocks(u32 slot, u32 size) {
 }
 
 s32 VramCache_GetLongestFreeRun(void) {
+  s32 run = 0;
   u8 *marker = gResourceBlockOwners;
-  s32 run;
-  s32 longest;
-  /* FAKEMATCH: the count takes r2 and the run r1; unpinned, the barrier below
-   * swaps them (differ 18), and without the barrier the pin alone schedules the
-   * count's first half ahead of the table load (differ 2) */
-  register s32 remaining asm("r2");
+  s32 longest = 0;
+  s32 remaining = VRAM_BLOCK_COUNT;
 
-  /* FAKEMATCH: ⚓️ loads the table address before it starts the count of 512;
-   * without the barrier the count's first half is scheduled ahead of the load
-   * (differ 2) */
-  asm volatile("");
-  run = 0;
-  longest = 0;
-  remaining = VRAM_BLOCK_COUNT;
   do {
     if (*marker++ != VRAM_BLOCK_OWNER_FREE) {
       run = 0;
@@ -83,10 +73,6 @@ s32 Func_08014220(void) {
   s32 freeCount;
   s32 remaining;
 
-  /* FAKEMATCH: ⚓️ loads the table address before it starts the count of 512;
-   * without the barrier the count's first half is scheduled ahead of the load
-   * (differ 2) */
-  asm volatile("");
   freeCount = 0;
   remaining = 0x200;
   do {
@@ -107,19 +93,15 @@ s32 VramCache_FreeBlocks(s32 resourceId) {
   if ((u32)resourceId >= VRAM_CACHE_ENTRY_COUNT)
     return -1;
   marker = gResourceBlockOwners;
-  /* FAKEMATCH: the plain order sets up the count before the marker. */
-  __asm__("" : "+r"(marker));
   emptyMarker = VRAM_BLOCK_OWNER_FREE;
-  /* FAKEMATCH: the plain order sets up the count before the marker. */
-  __asm__("" : "+r"(marker));
   remaining = VRAM_BLOCK_COUNT;
   do {
     if (*marker == resourceId) {
       *marker = emptyMarker;
       clearedCount++;
     }
-    marker++;
     remaining--;
+    marker++;
   } while (remaining != 0);
   if (clearedCount != 0)
     return -1;
@@ -164,17 +146,7 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
   s32 offset;
   void *dst;
 
-  {
-    struct VramBlockCacheEntry *table = gResourceTableEntries;
-
-    /* FAKEMATCH: two empty asms reading the address give its load two more
-     * dependents, so it comes before the copy of no to r5; plainly, 2
-     * instructions differ in tla-en. */
-    asm("" : "+r"(src) : "l"(table));
-    /* FAKEMATCH: the second of the pair above. */
-    asm("" : "+l"(no) : "l"(table));
-    entry = &table[no];
-  }
+  entry = &gResourceTableEntries[no];
   if (no >= VRAM_CACHE_ENTRY_COUNT)
     return 0;
   if (size > 8192)
@@ -208,14 +180,9 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
 /// Frees every VRAM block and every cache entry.
 void VramCache_Reset(void) {
   u32 count;
-  /* FAKEMATCH: the split limit 511 pinned to r0 and held by a barrier, so the
-   * block owners' address loads between its two instructions; as a plain
-   * constant, 2 instructions differ in tla-en. */
-  register u32 limit asm("r0") = 128;
+  u32 limit = 128;
   u8 *marker = gResourceBlockOwners;
 
-  /* FAKEMATCH: the barrier of the pin above. */
-  asm volatile("" : "+l"(limit));
   count = 0;
   limit = (limit << 1) + 255;
   for (; count <= limit; count++)

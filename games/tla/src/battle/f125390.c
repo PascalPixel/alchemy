@@ -23,8 +23,7 @@ extern char MsgDjinnOnStandby;
 
 void BattleEvent_Push(u32 opcode, u32 operand);
 
-void Battle_ApplyActionExtras(s32 unitIdArg, s32 all, s32 announce) {
-  s32 unitId;
+void Battle_ApplyActionExtras(s32 unitId, s32 all, s32 announce) {
   u8 elements[10];
   u8 indices[10];
   s32 shown;
@@ -39,10 +38,6 @@ void Battle_ApplyActionExtras(s32 unitIdArg, s32 all, s32 announce) {
   struct PlacementList *pending;
 
   shown = 0;
-  /* FAKEMATCH(dead): the parameter overwritten after its copy, a store that
-     does nothing; as the copy alone, 2 of 305 instructions differ in tla-en. */
-  unitId = unitIdArg;
-  unitIdArg = 0;
 again:
   {
     count = 0;

@@ -22,9 +22,6 @@ s32 Func_0811c710(struct BattleActionRecord *action) {
   struct MotionObject *actorRecord;
   u32 index;
 
-  /* FAKEMATCH(barrier): an empty asm between the parameter's spill store and
-   * the first statement; as no asm, 4 of 276 instructions differ in tla-en. */
-  asm("");
   livingCount = 0;
   actorId = action->unitId;
   if (BattleObject_IsValidId(actorId) < 0)
@@ -47,13 +44,8 @@ s32 Func_0811c710(struct BattleActionRecord *action) {
     sideCount = BattleParty_ListLivingUnits(2, visibleUnits);
     sideStart = 0x80;
   } else {
-    /* FAKEMATCH(temporary): the count held until sideStart is stored, so the
-     * spill store comes before sideCount's copy; as sideCount =
-     * BattleParty_ListLivingUnits(1, visibleUnits), 2 of 276 instructions
-     * differ in tla-en. */
-    u32 count = BattleParty_ListLivingUnits(1, visibleUnits);
+    sideCount = BattleParty_ListLivingUnits(1, visibleUnits);
     sideStart = 0;
-    sideCount = count;
   }
 
   for (index = 0; index != sideCount; index++) {

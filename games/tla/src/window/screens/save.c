@@ -3,6 +3,7 @@
 // Part of screens.c.
 
 #include "../screens_internal.h"
+#include "system/io_write.h"
 
 s32 Func_080cc67c(s32);
 s32 Func_080cc7c4(void);
@@ -104,10 +105,10 @@ s32 Func_08042f10(s32 partId, void *buffer) {
   volatile u32 ime;
   volatile u32 ie;
   s32 result;
-  u32 zero;
 
-  /* FAKEMATCH(temporary): IRQ_LOCK written out with the saved copy's address
-   * taken first; as IRQ_LOCK(ime), 4 of 102 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): IRQ_LOCK written out with a pointer to ime, which
+   * starts ime's address before REG_IME's load; as IRQ_LOCK(ime), 4 of 102
+   * instructions differ in tla-en. */
   do {
     volatile u32 *saved = &ime;
     volatile u16 *imeReg = &REG_IME;
@@ -116,14 +117,7 @@ s32 Func_08042f10(s32 partId, void *buffer) {
     *imeReg = (u16)(u32)imeReg;
   } while (0);
   ie = REG_IE;
-  /* FAKEMATCH(temporary): the zero in a word register; as REG_IE = 0 (a
-   * pooled halfword constant, and no barrier), 9 of 102 instructions differ
-   * in tla-en. */
-  zero = 0;
-  /* FAKEMATCH(barrier): the zero set after IE's register is copied; without
-   * it, 2 of 102 instructions differ in tla-en. */
-  asm("");
-  REG_IE = zero;
+  Io_Write16(0, &REG_IE);
   DMA_STOP(0);
   DMA_STOP(1);
   DMA_STOP(2);
@@ -148,10 +142,10 @@ s32 Func_08042ff0(s32 partId) {
   volatile u32 ime;
   volatile u32 ie;
   s32 result;
-  u32 zero;
 
-  /* FAKEMATCH(temporary): IRQ_LOCK written out with the saved copy's address
-   * taken first; as IRQ_LOCK(ime), 4 of 97 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): IRQ_LOCK written out with a pointer to ime, which
+   * starts ime's address before REG_IME's load; as IRQ_LOCK(ime), 4 of 97
+   * instructions differ in tla-en. */
   do {
     volatile u32 *saved = &ime;
     volatile u16 *imeReg = &REG_IME;
@@ -160,14 +154,7 @@ s32 Func_08042ff0(s32 partId) {
     *imeReg = (u16)(u32)imeReg;
   } while (0);
   ie = REG_IE;
-  /* FAKEMATCH(temporary): the zero in a word register; as REG_IE = 0 (a
-   * pooled halfword constant, and no barrier), 9 of 97 instructions differ
-   * in tla-en. */
-  zero = 0;
-  /* FAKEMATCH(barrier): the zero set after IE's register is copied; without
-   * it, 2 of 97 instructions differ in tla-en. */
-  asm("");
-  REG_IE = zero;
+  Io_Write16(0, &REG_IE);
   DMA_STOP(0);
   DMA_STOP(1);
   DMA_STOP(2);
@@ -216,17 +203,9 @@ u8 *Func_080430c4(u32 frames, u8 *out) {
   digitsCursor = String_FormatNumber(digits, hours, 3);
   *out = *digitsCursor;
   digitsCursor++;
-  /* FAKEMATCH(barrier): the hours' first store comes before the cursor's
-   * step; as plain statements, the six barriers of this function make 20 of
-   * 106 instructions differ in tla-en. */
-  __asm__ volatile("");
   textCursor = out + 1;
-  /* FAKEMATCH(barrier): the load waits for the cursor's step. */
-  __asm__("" : "+l"(digitsCursor) : "l"(textCursor));
   *textCursor = *digitsCursor;
   textCursor++;
-  /* FAKEMATCH(barrier): as above. */
-  __asm__("" : "+l"(digitsCursor) : "l"(textCursor));
   *textCursor = digitsCursor[1];
   textCursor++;
   *textCursor = ':';
@@ -235,8 +214,6 @@ u8 *Func_080430c4(u32 frames, u8 *out) {
   textCursor++;
   *textCursor = digitsCursor[0];
   textCursor++;
-  /* FAKEMATCH(barrier): as above. */
-  __asm__("" : "+l"(digitsCursor) : "l"(textCursor));
   *textCursor = digitsCursor[1];
   textCursor++;
   *textCursor = ':';
@@ -245,8 +222,6 @@ u8 *Func_080430c4(u32 frames, u8 *out) {
   textCursor++;
   *textCursor = digitsCursor[0];
   textCursor++;
-  /* FAKEMATCH(barrier): as above. */
-  __asm__("" : "+l"(digitsCursor) : "l"(textCursor));
   *textCursor = digitsCursor[1];
   textCursor++;
   *textCursor = ':';
@@ -255,8 +230,6 @@ u8 *Func_080430c4(u32 frames, u8 *out) {
   textCursor++;
   *textCursor = digitsCursor[0];
   textCursor++;
-  /* FAKEMATCH(barrier): as above. */
-  __asm__("" : "+l"(digitsCursor) : "l"(textCursor));
   *textCursor = digitsCursor[1];
   textCursor[1] = 0;
 
@@ -283,17 +256,9 @@ void *Text_FormatPlayTime(s32 frames, u8 *out) {
   digitsCursor = String_FormatNumber(digits, hours, 3);
   *out = *digitsCursor;
   digitsCursor++;
-  /* FAKEMATCH(barrier): the hours' first store comes before the cursor's
-   * step; as plain statements, the four barriers of this function make 12 of
-   * 58 instructions differ in tla-en. */
-  __asm__("" : "+l"(out) : "m"(*out));
   textCursor = out + 1;
-  /* FAKEMATCH(barrier): the load waits for the cursor's step. */
-  __asm__("" : "+l"(digitsCursor) : "l"(textCursor));
   *textCursor = *digitsCursor;
   textCursor++;
-  /* FAKEMATCH(barrier): as above. */
-  __asm__("" : "+l"(digitsCursor) : "l"(textCursor));
   *textCursor = digitsCursor[1];
   minutes += 100;
   textCursor++;
@@ -303,8 +268,6 @@ void *Text_FormatPlayTime(s32 frames, u8 *out) {
   textCursor++;
   *textCursor = digitsCursor[0];
   textCursor++;
-  /* FAKEMATCH(barrier): as above. */
-  __asm__("" : "+l"(digitsCursor) : "l"(textCursor));
   *textCursor = digitsCursor[1];
   textCursor[1] = 0;
 
@@ -316,9 +279,6 @@ u32 Save_FindFreeFile(void) {
   struct SaveSummary *p;
   u32 i;
 
-  /* FAKEMATCH: the native issues the workspace load before the summary offset.
-   */
-  __asm__("");
   p = work->summary;
   for (i = 0; i < 3; i++, p++) {
     if (p->level == 0)
@@ -343,9 +303,6 @@ s32 Save_CountFilesExcludingSent(s32 flag) {
     cnt = Save_LoadFileSummaries();
     if (flag != 0) {
       work = Ram_HeapSlots->serialWork;
-      /* FAKEMATCH: Without it the summary offset starts before the workspace
-       * loads (differ 2). */
-      __asm__("" : : "r"(work));
       summary = work->summary;
       for (i = 0; i < 3; i++) {
         if (summary[i].sendFlag != 0)
@@ -465,8 +422,7 @@ s32 Save_BuildFileSummary(void) {
     frames = SAVE_GAME_WORDS->buildStamp;
     word = (u32 *)gGameFlagBytes;
     /* FAKEMATCH(barrier): an empty asm reading frames and word, so both load
-     * before the bound; as the same statements without it, 10 of 179
-     * instructions differ in tla-en. */
+     * before the bound; without it, 4 of 179 instructions differ in tla-en. */
     __asm__("" : : "r"(frames), "r"(word));
     n = 242;
     i = 0;
@@ -808,20 +764,8 @@ void PaletteGlow_UpdateSine(void) {
       r += 22;
       g += 16;
       col += 20;
-      /* FAKEMATCH: one-pass block; its loop notes hold the blue shift after the
-       * three adds; as a plain shift, 6 instructions differ in tla-ja. */
-      do {
-        col <<= 10;
-      } while (0);
-      g <<= 5;
-      col |= g;
-      col |= r;
+      Io_Write16(RGB(r, g, col), pal++);
     }
-    /* FAKEMATCH: one-pass block; it keeps the store ahead of the loop counter
-     * increment; as a plain store, 2 instructions differ in tla-ja. */
-    do {
-      *pal++ = col;
-    } while (0);
   } while (++i <= 3);
 }
 

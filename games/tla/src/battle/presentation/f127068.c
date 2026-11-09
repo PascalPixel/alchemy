@@ -146,9 +146,9 @@ s32 Func_08127068(s32 mode) {
   Io_Write16(0, &REG_BG2PB);
   Io_Write16(0, &REG_BG2PC);
   Io_Write16(0x100, &REG_BG2PD);
-  /* FAKEMATCH(dead): a never-taken five-argument call reserves the frame's
-   * outgoing argument word below mode; as no call, 10 of 255 instructions
-   * differ in tla-en (6 with an unused u8[4] in its place). */
+  /* FAKEMATCH(dead): a never-taken five-argument call, which reserves the
+   * frame's outgoing argument word below mode; as no call, 10 of 255
+   * instructions differ in tla-en (6 with an unused u8[4] in its place). */
   if (0)
     BattleEffect_BuildBlitterFar(104, 7, 7, 3, 3);
   Func_08138048(104, 0x03);

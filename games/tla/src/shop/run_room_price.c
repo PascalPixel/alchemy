@@ -46,8 +46,6 @@ s32 Func_0810b3ec(s32 value) {
 
   Func_08108148();
   work = Ram_HeapSlots->menuRuntime;
-  /* FAKEMATCH: ⚓️ loads the menu work before it builds the flag offset */
-  asm volatile("");
   work->busy = 1;
   value = Inn_RoomPrice(value);
   Func_0810824c();

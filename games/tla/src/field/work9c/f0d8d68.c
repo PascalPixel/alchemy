@@ -22,8 +22,9 @@ void Func_080d8d68(s32 index, s32 id, s32 other) {
     slot->value = other;
     *(s16 *)slot->unk06 = priority;
     lift = 128;
-    /* FAKEMATCH(barrier): the lift built before the stack arguments load;
-     * as plain statements, 10 of 75 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on lift keeps its 128 built after the
+     * priority's store and ahead of the coordinates' loads; without it, 10
+     * of 75 instructions differ in tla-en. */
     asm volatile("" : "+l"(lift));
     lift <<= 12;
     Func_080d8e08(index, first->x, first->y + lift, first->z, second->x,

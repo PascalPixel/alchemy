@@ -168,20 +168,19 @@ extern char ResourceId_LuckyDiceBoard;
 extern char ResourceId_LuckyDiceSprites;
 
 void LuckyDice_Run(void) {
-  /* FAKEMATCH(volatile): the sprite words volatile members, as the ROM rereads
-   * them; as plain u32 members, 1595 of 2055 instructions differ in tla-en. */
-  /* FAKEMATCH(volatile): the map writes through a volatile cast, as the ROM
-   * orders them; as a plain cast, 186 of 2055 instructions differ in tla-en. */
   u16 bgPalette[256];
   s32 spriteDepth[4];
   s32 numbers[4];
   s32 groundPoint[3];
   s32 screen[3];
   s32 unused[8];
-  u16 affineA;
-  u16 affineB;
-  u16 affineC;
-  u16 affineD;
+  // volatile: four halfwords stored to sp+166..160 and each reloaded with ldrh,
+  // the form the bytes prove; as plain u16 locals, 888 of 2055 instructions
+  // differ in tla-en.
+  volatile u16 affineA;
+  volatile u16 affineB;
+  volatile u16 affineC;
+  volatile u16 affineD;
   s32 spinRate[2];
   s32 flashTimer[2];
   s32 luckyNumbers[2];
@@ -189,6 +188,9 @@ void LuckyDice_Run(void) {
   s32 matchedNumbers[2];
   u16 *spritePalette;
   struct DiceWork *diceWork;
+  // The OAM shadow it builds is struct DiceOam, whose words are volatile as
+  // The Broken Seal's struct OamWords; as plain u32 members, 1595 of 2055
+  // instructions differ in tla-en.
   struct LuckyDiceSprites *sprites;
   struct DiceCamera *camera;
   s32 frame;
@@ -225,14 +227,6 @@ void LuckyDice_Run(void) {
   s32 pairCount;
   s16 affineScale;
 
-  /* FAKEMATCH(dead): the four affine halfwords' addresses taken, so each is
-   * stored to sp+166..160 and reloaded with ldrh, as The Broken Seal's
-   * LuckyDice_Run keeps them; as plain u16 locals, 894 of 2055 instructions
-   * differ in tla-en. */
-  (void)&affineA;
-  (void)&affineB;
-  (void)&affineC;
-  (void)&affineD;
   HeapSlot_Alloc(100, 0x60e);
   spritePalette = HeapSlot_Alloc(96, 0x200);
   diceWork = HeapSlot_AllocEwram(92, 0x7b7c);
@@ -476,9 +470,9 @@ void LuckyDice_Run(void) {
     } else if (state == 0 && frame > 17) {
       (void)gInput.repeat;
       (void)gInput.repeat;
-      /* FAKEMATCH(volatile): held read afresh after the two discarded repeat
-       * reads, as The Broken Seal's gKeysHeld is declared; as plain
-       * gInput.held, 76 of 2055 instructions differ in tla-en. */
+      // The held keys read through a volatile pointer, as The Broken Seal's
+      // gKeysHeld is declared; as gInput.held, 10 of 2055 instructions differ
+      // in tla-en.
       if (*(volatile u32 *)&gInput.held & 0x40) {
         diceWork->particles[0].y += 0x40000;
         diceWork->particles[1].y += 0x40000;

@@ -186,14 +186,16 @@ void Heap_Release(void *buffer);
   (0x06010000 + gResourceTableEntries[(obj)->resource].tile)
 
 static inline s32 ClearWords(void *destination, s32 size) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_ClearWords, 16 of 2583 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the VRAM clear through this inline; as a direct call
+   * to Iwram_ClearWords, 16 of 2583 instructions of BattleEffect_RunFlora
+   * differ in tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 
 static inline u8 *SheetOf(struct BattleEffectWork *owner) {
-  /* FAKEMATCH(wrapper): the address through this inline; as work->sheet at the
-   * call, 56 of 2583 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the sheet's address through this inline; as
+   * work->sheet at the call, 56 of 2583 instructions of BattleEffect_RunFlora
+   * differ in tla-en. */
   return owner->sheet;
 }
 
@@ -867,8 +869,8 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   REG_BG2PA = 0x80;
   {
-    /* FAKEMATCH(pin): e in r6; as a plain u8 *, 61 of 2583 instructions differ
-     * in tla-en. */
+    /* FAKEMATCH(pin): e kept in r6; as a plain u8 *, 61 of 2583 instructions
+     * differ in tla-en. */
     register u8 *e asm("r6") =
         Resource_GetTableEntry((s32)&ResourceId_PinkPetalsTiles);
     s32 row;
@@ -880,8 +882,8 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     s32 t;
     u8 *sheet;
     s32 hi;
-    /* FAKEMATCH(pin): c in r1; as a plain u32, 641 of 2583 instructions differ
-     * in tla-en. */
+    /* FAKEMATCH(pin): c kept in r1; as a plain u32, 641 of 2583 instructions
+     * differ in tla-en. */
     register u32 c asm("r1");
 
     Iwram_CopyWords((void *)BG_PLTT, e, 32);

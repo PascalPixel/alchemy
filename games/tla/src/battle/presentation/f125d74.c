@@ -61,15 +61,14 @@ void Func_08125d74(s32 arg, s32 kind) {
     REG_DISPCNT = 1;
     {
       u32 v = 0x33333333;
-      /* FAKEMATCH(barrier): an empty asm through v, which hides its value from
-       * the compiler's constant and copy folding; as plain statements, 2 of 490
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm on v, so the fill's value loads after
+       * its size; as Iwram_FillWords((void *)0x06005000, 32, 0x33333333), 2
+       * of 490 instructions differ in tla-en. */
       __asm__("" : "=r"(v) : "0"(v));
       Iwram_FillWords((void *)0x06005000, 32, v);
     }
-    /* FAKEMATCH(one-pass): a once-only block from `Iwram_FillWords((void
-     * *)0x06005100, 32, 0);`, which ends the scheduler's region there; as plain
-     * statements, 6 of 490 instructions differ in tla-en. */
+    // The clear fill in a once-only block loads its address ahead of its size
+    // and value; as the plain call, 6 of 490 instructions differ in tla-en.
     do {
       Iwram_FillWords((void *)0x06005100, 32, 0);
     } while (0);

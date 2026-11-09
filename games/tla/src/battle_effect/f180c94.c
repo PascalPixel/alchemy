@@ -284,9 +284,9 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
        * as discX passed directly, 10 of 575 instructions differ in tla-en. */
       i = discX;
       size = 128;
-      /* FAKEMATCH(temporary): the cell-buffer local set before each call; as
-       * gMapCellBuffer passed directly, 56 of 575 instructions differ in
-       * tla-en. */
+      // cells holds the cell buffer, set again before each call; as
+      // gMapCellBuffer passed directly, 56 of 575 instructions differ in
+      // tla-en.
       if (grow <= 64) {
         size = grow * 2;
         cells = gMapCellBuffer;

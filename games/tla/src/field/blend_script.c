@@ -72,15 +72,9 @@ void DisplayBlend_StartScript(u16 *script) {
   Dma_Set((const void *)&zero, state,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 3, REG_DMA3);
   first = *script;
-  /* FAKEMATCH: the plain order builds 0xffff before loading the first command.
-   */
-  __asm__("");
   if (first != 0xffff) {
     state->script = script;
     state->cursor = script;
-    /* FAKEMATCH: the ARM9 scheduling would clear the delay and pause before
-     * storing the pointers. */
-    __asm__("");
     state->delay = 0;
     state->paused = 0;
     started = 1;

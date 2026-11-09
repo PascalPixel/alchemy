@@ -44,8 +44,9 @@ void BattleObject_Reset(struct TlaBattleObj *actor, s32 keep) {
     object = Func_080200c0(0xf000, 0, 0, 0);
   else
     object = actor->object;
-  /* FAKEMATCH(temporary): one zero, set before the keep test and stored on
-   * both paths; as plain 0 stores, 38 of 63 instructions differ in tla-en. */
+  // The zero in a local of its own, set before the keep test, serves the 0
+  // stores on both paths; as plain 0 stores, 36 of 63 instructions differ in
+  // tla-en.
   zero = 0;
   actor->scale = 0xe666;
   actor->object = object;

@@ -34,8 +34,8 @@ void Func_080dc6d8(void) {
   s8 sound;
 
   Actor_SetMode(object, 20);
-  // Once-only block: it ends the stores before the sound test (8 of 109
-  // instructions differ as a plain block).
+  // The stores in a once-only block keep them all ahead of the sound's read;
+  // as plain statements, 8 of 109 instructions differ in tla-en.
   do {
     object->targetX = object->x;
     object->velocityX = 0;
@@ -45,8 +45,9 @@ void Func_080dc6d8(void) {
     object->velocityZ = 0;
   } while (0);
   sound = work->sound;
-  /* FAKEMATCH(barrier): the zero set through an empty asm after the sound
-   * byte read; as `zero = 0;`, 4 of 109 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): the zero set through an empty asm after the sound's
+   * read, so its copy to r8 comes after that read; as zero = 0, 4 of 109
+   * instructions differ in tla-en. */
   asm("" : "=r"(zero) : "0"(0));
   if (sound != 0) {
     Sound_PlayFar(212);

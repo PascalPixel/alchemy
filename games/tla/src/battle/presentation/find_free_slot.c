@@ -39,18 +39,12 @@ s32 BattleUnit_GetWeaponKind(s32 key) {
 
   for (index = 0;; index++) {
     entry = gResource_SlotAssignments[index];
-    /* FAKEMATCH: the plain order builds the 0x1ff mask before the load. */
-    __asm__("");
     if (key == (entry & 0x1ff)) {
-#ifdef MODERN
+      /* FAKEMATCH(barrier): an empty asm clobbering memory, so the entry is
+       * read again for the result; without it, 22 of 24 instructions differ in
+       * tla-en. */
+      asm("" : : : "memory");
       value = gResource_SlotAssignments[index];
-#else
-      /* FAKEMATCH: rereads the entry as [table, index]; cse otherwise swaps the
-       * operands */
-      asm("ldrh %0, [%1, %2]"
-          : "=r"(value)
-          : "r"(gResource_SlotAssignments), "r"(index * 2));
-#endif
       result = value >> 9;
       goto done;
     }
@@ -80,14 +74,9 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 owner) {
   s32 result = 0;
 
   if (slot >= 0) {
-    /* FAKEMATCH: the item pinned to r3 loads before the id mask 0x1ff starts,
-     * as the native does; plainly, 2 instructions differ in tla-en. */
-    register u32 item __asm__("r3") = unit->inventory[slot];
     s32 index;
 
-    /* FAKEMATCH: the barrier of the pin above. */
-    __asm__ volatile("");
-    index = BattleUnit_GetWeaponKind(item & 0x1ff);
+    index = BattleUnit_GetWeaponKind(unit->inventory[slot] & 0x1ff);
     switch (unit->classId) {
     case ISAAC:
       result = gData_081287d4[index];

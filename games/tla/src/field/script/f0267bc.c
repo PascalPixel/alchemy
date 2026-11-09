@@ -110,15 +110,15 @@ s32 Func_080267bc(struct Actor *object) {
       goto counted;
     }
   }
-  /* FAKEMATCH(dead): the test that sets onObject to 1 when it is nonzero kept
-     (nothing reads onObject after it, and it is unset when priorityFlags bit 6
-     is clear); as no test, 12 of 713 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): a test that sets onObject to 1 when it is nonzero, which
+   * nothing reads after; as no test, 12 of 713 instructions differ in
+   * tla-en. */
   if (onObject)
     onObject = 1;
   if (gDebugMode != 0 && (gInput.held & 0x200)) {
     /* FAKEMATCH(dead): a store of the 0 collision already holds, which
-       cross-jumping folds into clear; as goto clear, 36 of 713 instructions
-       differ in tla-en. */
+     * cross-jumping folds into clear's; as goto clear, 36 of 713 instructions
+     * differ in tla-en. */
     collision = 0;
     goto counted;
   }
@@ -159,8 +159,8 @@ s32 Func_080267bc(struct Actor *object) {
     angleOffsets[headingCount++] = angle - 0x2000;
     angleOffsets[headingCount++] = angle + 0x3000;
     angleOffsets[headingCount++] = angle - 0x3000;
-    /* FAKEMATCH(dead): the never-true test of headingCount kept; as no test,
-       183 of 713 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): a test of headingCount that is never true; as no test,
+     * 183 of 713 instructions differ in tla-en. */
     if (headingCount == 0)
       goto clear;
     for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {

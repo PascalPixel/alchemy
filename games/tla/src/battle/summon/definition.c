@@ -36,34 +36,21 @@ s32 BattleClass_IsSmall(s32 index) {
 }
 
 u32 BattleClass_GetAttackEffect(u32 index) {
-  /* FAKEMATCH: the result selection preserves the separate extract and
-   * return-move order. */
-  u32 value;
-  u32 result;
+  u16 value;
 
   if (index > 386)
     return 1;
   value = gSummon_EntryTable[index].spriteBits1;
-  if (value != 0)
-    result = value;
-  else
-    result = 1;
-  return result;
+  return value ? value : 1;
 }
 
 u32 BattleClass_GetAttackHop(u32 index) {
-  /* FAKEMATCH: zero-result selection preserves the compare and return move. */
-  u32 value;
-  u32 result;
+  u16 value;
 
   if (index > 386)
     return 0;
   value = gSummon_EntryTable[index].spriteBits5;
-  if (value != 0)
-    result = value;
-  else
-    result = 0;
-  return result;
+  return value ? value : 0;
 }
 
 s32 Summon_IsEntrySecondaryFlagged(s32 index) {
@@ -79,8 +66,6 @@ u32 BattleClass_GetEffectHeight(u32 index) {
   if (index > 386)
     return 0;
   table = (u8 *)gSummon_EntryTable;
-  /* FAKEMATCH: ⚓️ loads the table before scaling the index */
-  asm volatile("");
   offset = index * 8;
   offset += 4;
   return table[offset];

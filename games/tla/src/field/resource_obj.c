@@ -125,14 +125,7 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
   // Part 0: 256 colors, priority 2.
   // Part 1: 16x8, 256 colors, tiles from VRAM cache 93, priority 2.
   attribute = (u32 *)freeSprite;
-  /* FAKEMATCH(barrier): the empty asm that has ⚓️ copy the sprite pointer
-   * before it builds the first word's zero; as no barrier here, 2 of 154
-   * instructions differ in tla-en. */
-  asm volatile("");
   *attribute++ = 0;
-  /* FAKEMATCH(barrier): the empty asm that builds 0x2000 after the first
-   * store; as no barrier here, 4 of 154 instructions differ in tla-en. */
-  asm volatile("");
   *attribute++ = shape | 0x2000;
   *attribute = tile | 0x800;
   attribute = freeSprite->shadowAttributes;
@@ -140,9 +133,9 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
   *attribute++ = 0x6000;
   *attribute = (gResourceTableEntries[93].offset >> 5) | 0x800;
   if (ResourceMetadata_Register(sprite, id) == -1) {
-    /* FAKEMATCH(dead): a same-byte store that keeps the native's unused -1
-     * after Register (movs, negs) as ☀️'s twin does; as the plain call, 20
-     * of 154 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): a store of the byte it reloads keeps the -1 built after
+     * the call and never used; with the call alone, 20 of 154 instructions
+     * differ in tla-en. */
     freeSprite->dirty = freeSprite->dirty;
   }
   return (struct ResourceObject *)freeSprite;

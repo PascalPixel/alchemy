@@ -16,10 +16,6 @@ void BattleEffect_ArmPaletteHBlankDma(void) {
   channel[5] &= 0xc5ff;
     channel[5] &= 0x7fff;
   palette = 0xa0;
-  /* FAKEMATCH: the empty asm starts the palette address before the control
-   * word is read and shifts it after; as a plain constant, 2 instructions
-   * differ in tla-en. */
-  __asm__("" : "+l"(palette));
   (void)channel[5];
   Dma_Set(work + 0x7640, (void *)(palette << 19), DMA_HBLANK_HALFWORD_PER_LINE,
           (volatile u32 *)channel);

@@ -256,14 +256,14 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
 
         Dma_Set(Data_08021824, outline, 0x84000000 | (codeSize >> 2), REG_DMA3);
         {
-          /* FAKEMATCH(temporary): the width read into a local ahead of the other
-           * arguments; as a plain argument, 2 of 578 instructions differ in
-           * tla-en. */
+          /* FAKEMATCH(temporary): the width read into a local before the
+           * asm below; as obj->width in the call, 2 of 578 instructions
+           * differ in tla-en. */
           u32 outlineWidth = obj->width;
 
-          /* FAKEMATCH(barrier): an empty asm after the width, which loads before
-           * the system pointer; without it, 4 of 578 instructions differ in
-           * tla-en. */
+          /* FAKEMATCH(barrier): an empty asm after the width, which keeps
+           * its load ahead of the system pointer and the height ahead of the
+           * edge; without it, 4 of 578 instructions differ in tla-en. */
           asm("");
           outlineHeight = obj->height;
           outline(outlineWidth, outlineHeight, pixels, system->edge, system->fill);

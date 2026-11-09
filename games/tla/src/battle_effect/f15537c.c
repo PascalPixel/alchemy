@@ -72,9 +72,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
   void *canvas;
   s32 i;
   s32 frame;
-  /* FAKEMATCH(dead): a pair, as the twin has, of which only draw[0] is used:
-   * the unused second word fills four bytes of the native stack frame; as one
-   * blitter, 82 of 552 instructions differ in tla-en. */
+  // Unused: draw[1] gives the stack frame its 4 bytes.
   DrawRectangle draw[2];
   u8 *sprites;
   struct EffectPosition pos;
@@ -169,9 +167,9 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
           x -= gData_08197492[kind] >> 1;
           flip = Random16();
 
-          /* FAKEMATCH(one-pass): the block ends cse1's block, so the two reads
-           * of each size table's address stay apart until loop.c has run; as
-           * plain C, 174 of 552 instructions differ in tla-en. */
+          // An empty once-only loop ends CSE's block, so the two reads of each
+          // size table's address stay apart; without it, 172 of 552
+          // instructions differ in tla-en.
           do {
           } while (0);
           Func_08196404(188, 7, 7,

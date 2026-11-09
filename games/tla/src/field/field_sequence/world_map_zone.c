@@ -28,10 +28,6 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
   s32 zone;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-  /* FAKEMATCH(empty asm): the barrier clobbering r1 loads gMainRoutineWork before
-   * renderMode's offset is built in r1; as a plain declaration, 2 of 74
-   * instructions differ in tla-en. */
-  asm("" : "+l"(party) : : "r1");
   if (party->renderMode == 8)
     return 0;
   if (party->renderMode == 7)

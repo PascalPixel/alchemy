@@ -19,8 +19,9 @@ void MapAnimation_PresentPicture(void) {
   control = 0x682;
   REG_BG1CNT = control;
   dma = REG_DMA3;
-  /* FAKEMATCH: ⚓️ addresses the DMA channel before loading the transfer
-   * operands */
+  /* FAKEMATCH(barrier): an empty asm on dma, which loads the DMA channel's
+   * address before the transfer's operands; without it, 2 of 24 instructions
+   * differ in tla-en. */
   __asm__ volatile("" : "+l"(dma));
   Dma_Set(Ram_MapCellBuffer, (void *)0x06006000, DMA_COPY_WORDS(0xa000 / 4),
           dma);
@@ -75,8 +76,9 @@ void Map_ShowBg1FromBuffer(void) {
   control = 0x501;
   REG_BG1CNT = control;
   dma = REG_DMA3;
-  /* FAKEMATCH: ⚓️ addresses the DMA channel before loading the transfer
-   * operands */
+  /* FAKEMATCH(barrier): an empty asm on dma, which loads the DMA channel's
+   * address before the transfer's operands; without it, 2 of 24 instructions
+   * differ in tla-en. */
   __asm__ volatile("" : "+l"(dma));
   Dma_Set(gData_02038000, (void *)0x06008000, DMA_COPY_WORDS(0x8000 / 4), dma);
 }

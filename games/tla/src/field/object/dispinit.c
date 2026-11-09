@@ -30,10 +30,6 @@ void Func_08023524(struct ActorView *object) {
   const s32 *script;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-  /* FAKEMATCH: ⚓️ loads gMainRoutineWork's address before it builds the field
-   * offset 0x212 in r2; the empty asm holds r2 until the address is loaded.
-   * Plainly the offset is started first (differ 2). */
-  asm("" : "+l"(party) : : "r2");
   switch (party->renderMode) {
   case 0:
     script = gData_0802f140;

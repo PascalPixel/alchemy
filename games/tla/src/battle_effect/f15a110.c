@@ -378,9 +378,9 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
                   gData_08197498[cel] / 2;
           u32 flip = Random16();
 
-          /* FAKEMATCH(one-pass): the block ends cse1's block, so the two reads
-           * of each table's address stay apart until loop.c has run; as plain
-           * C, 397 of 989 instructions differ in tla-en. */
+          // An empty once-only loop ends CSE's block, so the two reads of each
+          // size table's address stay apart; without it, 397 of 989
+          // instructions differ in tla-en.
           do {
           } while (0);
           Func_08196404(HEAP_BLITTER_ALTERNATE, 7, 7,

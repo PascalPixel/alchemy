@@ -10,9 +10,9 @@ s32 Curve_LerpTwoSamplesByTable(const s8 *samples, s32 position, s32 row) {
   start = samples[0];
   end = samples[1];
   table = gCurve_LerpWeightTable;
-  // Without it the table address loads after the row is scaled and the first
-  // sample is shifted before the weight loads (differ 4).
-  /* FAKEMATCH: keeps the table address load first */
+  /* FAKEMATCH(barrier): an empty asm reading the table's address keeps its
+   * load after both samples' and before the row's scaling; without it, 15 of
+   * 15 instructions differ in tla-en. */
   __asm__("" : : "r"(table));
   position += row * CURVE_FULL_STEPS;
   weight = table[position];

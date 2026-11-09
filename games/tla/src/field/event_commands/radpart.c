@@ -112,15 +112,8 @@ void BattleEffect_SetObjectAlternatingWords(u8 *object) {
   u32 index;
   u32 value;
 
-  asm volatile(
-      ""
-      : "+l"(vblankCount)); /* FAKEMATCH: load the count's address before the table. */
   table = gData_080f0bfc;
-  /* FAKEMATCH: keep the count's extraction in its own block; without this
-   * boundary the table address loads after the count (two reordered rows). */
-  do {
-    index = (*vblankCount >> 2) & 1;
-  } while (0);
+  index = (*vblankCount >> 2) & 1;
   value = index[table];
   ((struct MotionObject *)object)->scaleX = value;
   ((struct MotionObject *)object)->scaleY = value;
@@ -141,22 +134,15 @@ void BattleEffect_SpinUpAngle(void *obj) {
 /// Spins an object 1/8 turn and shrinks it by 0x1c0 a frame, destroying it once
 /// its scale falls below 0x3000.
 void BattleEffect_ShrinkObjectAndDestroySlow(void *obj) {
-  /* FAKEMATCH: the step is pinned to r1 and used by an empty asm before the
-   * scales load, so its literal loads first; without the pin, 18 instructions
-   * differ in tla-en. */
-  register s32 step asm("r1") = 0xFFFFFE40;
+  s32 step = 0xFFFFFE40;
   s32 scaleY;
   s32 scale;
   s32 angle;
 
-  asm("" : : "l"(step));
   scaleY = ((struct MotionObject *)obj)->scaleY + step;
   scale = ((struct MotionObject *)obj)->scaleX;
   ((struct MotionObject *)obj)->scaleY = scaleY;
   angle = ((struct MotionObject *)obj)->angle;
-  /* FAKEMATCH: the barrier keeps the angle's load ahead of the second
-   * scale's add (differ 4 without it). */
-  asm volatile("" : "+l"(angle));
   scale += step;
   ((struct MotionObject *)obj)->angle = angle + 0x2000;
   ((struct MotionObject *)obj)->scaleX = scale;

@@ -76,20 +76,9 @@ void BattleTransition_DrawRows(void) {
       aligned = frame;
     else
       aligned = frame + 7;
-    {
-      /* FAKEMATCH: both values pinned and held by the barrier load the
-       * tilemap's address after the 13 and before the row is subtracted; as
-       * plain C, 2 instructions differ in tla-en. */
-      register s32 start asm("r2") = 13;
-      /* FAKEMATCH: the second pin of the barrier above. */
-      register u32 base asm("r5") = 0x06006000;
-
-      /* FAKEMATCH: the barrier of the two pins above. */
-      __asm__("" : "+l"(start), "+l"(base));
-      row = start - (aligned >> 3);
-      i = 0;
-      tiles = (u16 *)((row << 6) + base);
-    }
+    row = 13 - (aligned >> 3);
+    i = 0;
+    tiles = (u16 *)((row << 6) + 0x06006000);
     do {
       i++;
       *tiles = tile;

@@ -347,8 +347,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         s32 twice = frame * 2;
 
         /* FAKEMATCH(barrier): an empty asm on twice that claims to clobber r3,
-         * so local-alloc gives twice r2 as the listing has it; as
-         * d = frame * 2 - 144, 4 of 1361 instructions differ in tla-en. */
+         * so local-alloc gives twice r2; without it, 4 of 1361 instructions
+         * differ in tla-en. */
         asm("" : "+l"(twice) : : "r3");
         d = twice - 144;
       } else if ((u32)(frame - 72) <= 11) {
@@ -449,7 +449,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       work->transferMode = 1;
       work->transferValue = 0x10101010;
     }
-    /* FAKEMATCH(temporary): f, a copy of frame tested below; as frame > 1, 159
+    /* FAKEMATCH(temporary): f, a copy of frame tested below; as frame > 1, 131
      * of 1361 instructions differ in tla-en. */
     f = frame;
     if (frame > 174) {
@@ -503,15 +503,15 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       model->texture = t;
       model->shade = 0;
       model->scrollV = 0;
-      /* FAKEMATCH(barrier): an empty asm that reads and writes *t, one of three
-       * that each add a dependent to t's setter, so sched2 takes add r6, sp,
-       * #108 before the model's copy; as two of them, 4 of 1361 instructions
+      /* FAKEMATCH(barrier): an empty asm that reads and writes *t, the first of
+       * three that each add a dependent to t's setter, so sched2 takes add r6,
+       * sp, #108 before the model's copy; without it, 2 of 1361 instructions
        * differ in tla-en. */
       asm("" : "+m"(*t));
-      /* FAKEMATCH(barrier): the second asm on *t; as two of them, 4 of 1361
+      /* FAKEMATCH(barrier): the second asm on *t; without it, 2 of 1361
        * instructions differ in tla-en. */
       asm("" : "+m"(*t));
-      /* FAKEMATCH(barrier): the third asm on *t; as two of them, 4 of 1361
+      /* FAKEMATCH(barrier): the third asm on *t; without it, 2 of 1361
        * instructions differ in tla-en. */
       asm("" : "+m"(*t));
       // A once-only block: it ends CSE's block after the % 5.
@@ -523,7 +523,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         s32 half = 0x8000;
 
         /* FAKEMATCH(barrier): an empty asm on half, whose references keep it
-         * ahead of t for r5 once the asms on *t add theirs; as no asm, 26 of
+         * ahead of t for r5 once the asms on *t add theirs; without it, 24 of
          * 1361 instructions differ in tla-en. */
         asm("" : "+r"(half));
         Render_ResetTransformState();
@@ -556,8 +556,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
           n = 32;
         }
         i = 0;
-        /* FAKEMATCH(temporary): twice, frame * 2 kept apart; as scroll = frame
-         * * 3, 99 of 1361 instructions differ in tla-en. */
+        /* FAKEMATCH(temporary): twice, frame * 2 kept apart; as scroll =
+         * frame * 3, 91 of 1361 instructions differ in tla-en. */
         twice = frame * 2;
         angle = -0x4000;
         tilt = n * 384;

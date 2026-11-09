@@ -15,8 +15,9 @@ void Func_081263c4(void) {
   void *block = HeapSlot_AllocEwram(40, 0x2a0);
   struct BattlePresentationTransition *work = Ram_HeapSlots->transitionWork;
 
-  /* FAKEMATCH: a one-pass block after the work load copies the size after the
-   * entry address is loaded; without it the size is copied first (differ 4). */
+  // An empty once-only loop after the work's load keeps the fill's entry
+  // ahead of the size's copy; without it, 4 of 18 instructions differ in
+  // tla-en.
   do {
   } while (0);
   Iwram_FillWords(block, 0x2a0, 0);

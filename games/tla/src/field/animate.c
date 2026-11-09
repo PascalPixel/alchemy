@@ -26,14 +26,14 @@ void Animation_InitializeWorkFromMetadata(struct AnimationEntry *work) {
       z = 0;
       work->kind = info->drawKind;
       work->script = (u8 *)z;
-      /* FAKEMATCH: ⚓️ clears the script before storing the lists. */
+      /* FAKEMATCH(barrier): an empty asm keeps the kind's store and the
+       * script's clear ahead of the lists' stores; without it, 6 of 30
+       * instructions differ in tla-en. */
       asm("");
       animation = info->animation;
       work->pictures = (void **)value;
       work->scripts = (u8 **)animation;
       work->pos = z;
-      /* FAKEMATCH: then the codec and the picture. */
-      asm("");
       work->mode = info->pictureCodec;
       work->picture = 0xff;
     }

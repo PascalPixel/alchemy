@@ -85,10 +85,7 @@ s32 Battle_BuildOpponentActions(struct BattleActionRecord *entries) {
 
       entryCount++;
 
-      /* FAKEMATCH(volatile): the encounter mode reread through a volatile
-       * pointer, a whole load that waits for entryCount's store; as
-       * battle->encounterMode, 2 of 193 instructions differ in tla-en. */
-      if (*(volatile u8 *)&battle->encounterMode == 2)
+      if (battle->encounterMode == 2)
         break;
     }
   }

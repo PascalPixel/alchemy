@@ -30,9 +30,6 @@ s32 Event_FindFacingTrigger(s32 source) {
   s32 collision;
 
   source &= 0x1ff;
-  /* FAKEMATCH(signature): Func_080cb09c declared returning s32, so its byte
-   * result is not narrowed; as u8 Func_080cb09c(void), 2 of 115 instructions
-   * differ in tla-en. */
   collision = Func_080cb09c();
 
   while (trigger->control != -1) {

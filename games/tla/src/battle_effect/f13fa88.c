@@ -44,7 +44,8 @@ void wait(s32 frames);
 
 static inline s32 ClearWords(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_ClearWords, 14 of 280 instructions differ in tla-en. */
+   * Iwram_ClearWords, 14 of 280 instructions of Func_0813fa88 differ in
+   * tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 
@@ -52,8 +53,6 @@ static inline s32 ClearWords(void *destination, s32 size) {
 // ember, violet or dust).
 
 void Func_0813fa88(s32 kind) {
-  /* FAKEMATCH(volatile): the map writes through a volatile cast, as the ROM
-   * orders them; as a plain cast, 97 of 280 instructions differ in tla-en. */
   struct StreakSceneWork *work;
   void *canvas;
   struct BattleWork *battle;
@@ -95,6 +94,9 @@ void Func_0813fa88(s32 kind) {
       s32 entry;
 
       entry = (s16)(((k * 16 + j * 2 + 1) << 8) | ((k * 8 + j) * 2));
+      // The map written through a volatile pointer, which keeps the ROM's
+      // order of stores; as a plain pointer, 97 of 280 instructions differ in
+      // tla-en.
       *(volatile u16 *)(0x06003800 + i) = *(u16 *)&entry;
     }
   }

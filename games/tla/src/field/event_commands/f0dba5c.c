@@ -54,9 +54,8 @@ void Func_080dba5c(void) {
   if (scene->mode == 0xc000) {
     scene->active = 1;
     buffer = Heap_Alloc(0x200);
-    /* FAKEMATCH(one-pass): an empty once-only block, so the frame's zero is
-     * not the active flag's; as plain statements, 12 of 103 instructions
-     * differ in tla-en. */
+    // An empty once-only loop keeps the zero kept in sl after the fill's
+    // arguments; without it, 12 of 103 instructions differ in tla-en.
     do {
     } while (0);
     Iwram_FillWords(buffer, 0x200, 0);

@@ -80,9 +80,8 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
     palette = (s32)&ResourceId_MarsDjinnSheet;
   else
     palette = (s32)&ResourceId_MercuryDjinnSheet;
-  /* FAKEMATCH(temporary): the routine's address named first, so its pool load
-   * leads the arguments; as a direct call, 2 of 511 instructions differ in
-   * tla-en. */
+  // The entry held in a local loads before the arguments; as a plain
+  // Iwram_CopyWords call, 2 of 511 instructions differ in tla-en.
   {
     const void *source_ = Resource_GetTableEntry(palette);
     __typeof__(Iwram_CopyWords) routine = Iwram_CopyWords;
@@ -138,8 +137,9 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
 
     // BG1 sways line by line, by up to 16 pixels at the effect's midpoint.
     // A negative scroll wraps into the halfword one short of 0x10000.
-    /* FAKEMATCH(barrier): the empty asm parts the scheduler's rows; as no asm,
-     * 2 of 511 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm after the look-at call keeps its
+     * arguments loaded in order, r0 before r1; without it, 2 of 511
+     * instructions differ in tla-en. */
     __asm__("");
     row = work->bg2xLines;
     sway = Trig_Sin((frame << 15) /
@@ -197,12 +197,16 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
               // target is, on the target's side.
               targetDistance = target->x < 0 ? -target->x : target->x;
               moteDistance = x;
-              /* FAKEMATCH(barrier): the empty asm keeps the copy apart from x,
-               * so the sign test reads the copy; as x < 0 ? -x : x, 4 of 511
-               * instructions differ in tla-en. */
+              /* FAKEMATCH(barrier): an empty asm through moteDistance keeps it
+               * a copy apart from x, so the sign test and the negation read the
+               * copy; as x < 0 ? -x : x, 4 of 511 instructions differ in
+               * tla-en. */
               __asm__("" : "=r"(moteDistance) : "0"(moteDistance));
               if (moteDistance < 0)
                 moteDistance = -moteDistance;
+              /* FAKEMATCH(dead): each arm stores its test in crossed, never
+               * read; as the tests without the stores, 81 of 511 instructions
+               * differ in tla-en. */
               if (targetDistance <= moteDistance &&
                   ((x < 0 && (crossed = target->x < 0)) ||
                    (x >= 0 && (crossed = target->x >= 0)))) {

@@ -5,10 +5,8 @@ struct DjinnSlot {
   u16 state;
 };
 
-void Func_08046284(struct DjinnSlot *oldGrid, struct DjinnSlot *newGrid,
-                   u16 *out, s32 *gained, s32 *lost) {
-  /* FAKEMATCH(signature): declared void, the count left in r0; as s32
-     returning count, 3 of 158 instructions differ in tla-en. */
+s32 Func_08046284(struct DjinnSlot *oldGrid, struct DjinnSlot *newGrid,
+                  u16 *out, s32 *gained, s32 *lost) {
   s32 i;
   s32 j;
   s32 count;
@@ -46,14 +44,6 @@ void Func_08046284(struct DjinnSlot *oldGrid, struct DjinnSlot *newGrid,
     }
   }
   *gained = added;
-  {
-    /* FAKEMATCH(pin): the count pinned to r0; as a plain local, 1 of 158
-       instructions differ in tla-en. */
-    register s32 result asm("r0") = count;
-
-    /* FAKEMATCH(barrier): an empty asm reading the pinned count; without it,
-       27 of 158 instructions differ in tla-en. */
-    asm("" : : "r"(result));
-  }
   *lost = removed;
+  return count;
 }

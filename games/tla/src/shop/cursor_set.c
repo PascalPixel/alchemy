@@ -62,7 +62,6 @@ void Func_081089e4(struct ShopCursor *cursor) {
   struct ShopCursorSprite3 *sprite;
   s32 delta;
   s32 step;
-  u32 mask;
 
   sprite = (struct ShopCursorSprite3 *)cursor->anchor;
   if (sprite != NULL) {
@@ -75,28 +74,15 @@ void Func_081089e4(struct ShopCursor *cursor) {
         sprite->x = sprite->x - step;
       else
         sprite->x = sprite->x - 1;
+      sprite->oam.x = sprite->x;
     } else if (delta < 0) {
       if (step != 0)
         sprite->x = sprite->x + step;
       else
         sprite->x = sprite->x + 1;
-    } else {
-      // Neither move: skip the shared sprite update.
-      goto y_axis;
-    }
-    {
-      /* FAKEMATCH: the barrier reloads x before the 0x1ff mask is built, and x
-       * pinned to r3 leaves the mask r2, as native; plain, as The Broken Seal
-       * writes it in each branch, 2 instructions differ in tla-en. */
-      register u32 x asm("r3") = sprite->x;
-
-      asm volatile("");
-      mask = 0x1ff;
-      mask &= x;
-      sprite->oam.x = mask;
+      sprite->oam.x = sprite->x;
     }
 
-  y_axis:
     delta = sprite->y - cursor->targetY;
     step = delta / 4;
     if (step < 0)
@@ -147,11 +133,8 @@ void Func_08108aa8(struct ShopCursor *cursor, s32 x, s32 y) {
     struct ShopCursorSprite3 *sprite;
 
     cursor->targetY = y;
-    /* FAKEMATCH: the volatile store of y and reload of the anchor keep the
-     * reload after the store, as native; plain, the reload is scheduled ahead
-     * of it (one reordered pair, differ 2). */
-    *(volatile u16 *)&cursor->y = y;
-    sprite = *(struct ShopCursorSprite3 *volatile *)&cursor->anchor;
+    cursor->y = y;
+    sprite = (struct ShopCursorSprite3 *)cursor->anchor;
     sprite->oam.y = sprite->y = y;
   }
 }

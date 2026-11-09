@@ -318,8 +318,10 @@ again:
         BattleEffect_DrawCanvasBlock(Data_080eda0c + (motion->delay & 1) * 64,
                                      x, (s16)(motion->y >> 16), 8, 8);
         BattleEffect_IntegrateVector2(&motion->x, 60, 0);
-/* FAKEMATCH(barrier): an empty asm after `BattleEffect_IntegrateVector2(&motion->x, 60, 0);`; as plain statements, 2 of 923 instructions differ in tla-en. */
-asm("");
+        /* FAKEMATCH(barrier): an empty asm after the step, which keeps the
+         * picture's address add after the y's load for the draw; without it,
+         * 2 of 923 instructions differ in tla-en. */
+        asm("");
       }
       motion->delay++;
       if (work->sparksRepeat == 1 && motion->delay == 10)

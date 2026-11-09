@@ -41,9 +41,6 @@ void Script_SetOrCompareUnsignedHalfword(struct ScriptOperands *state,
   } else {
     u32 current = state->unsignedHalfword;
 
-    /* FAKEMATCH: ⚓️ loads the halfword before it starts truncating the value;
-     * without the barrier the shift is scheduled first (differ 2) */
-    asm volatile("");
     result = 0;
     if (current == (u16)value)
       result = 1;

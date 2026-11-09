@@ -20,20 +20,12 @@ void Func_080eb6a0(void) {
       Func_080eaf98(&work->sprite, 32, 32, OAM_SQUARE_64X64, work->tile);
       work->sprite.oam.palette256 = 0;
       work->sprite.oam.palette = 14;
-      /* FAKEMATCH(one-pass): an empty once-only block, so the priority is
-       * read after the palette store; as plain statements, 2 of 188
-       * instructions differ in tla-en. */
-      do {
-      } while (0);
       work->sprite.oam.priority = work->priority;
       work->sprite.depth = work->depth;
       work->sprite.x = x;
       work->sprite.y = y;
       work->sprite.scaleX = scaleX;
       work->sprite.scaleY = scaleY;
-      /* FAKEMATCH(barrier): the angle is read after the scale stores; as
-       * plain statements, 6 of 188 instructions differ in tla-en. */
-      asm("");
       work->sprite.angle = work->angle;
       Func_080eb01c(&work->sprite);
     }
@@ -41,18 +33,12 @@ void Func_080eb6a0(void) {
       Func_080eaf98(&work->sprite, 32, 32, OAM_SQUARE_64X64, work->tile);
       work->sprite.oam.palette256 = 1;
       work->sprite.oam.palette = 0;
-      /* FAKEMATCH(barrier): the priority is read after the palette store; as
-       * plain statements, 2 of 188 instructions differ in tla-en. */
-      asm("");
       work->sprite.oam.priority = work->priority;
       work->sprite.depth = work->depth;
       work->sprite.x = x;
       work->sprite.y = y;
       work->sprite.scaleX = scaleX;
       work->sprite.scaleY = scaleY;
-      /* FAKEMATCH(barrier): the angle is read after the scale stores; as
-       * plain statements, 6 of 188 instructions differ in tla-en. */
-      asm("");
       work->sprite.angle = work->angle;
       Func_080eb01c(&work->sprite);
     }
@@ -63,9 +49,6 @@ void Func_080eb6a0(void) {
       work->sprite.y = y;
       work->sprite.scaleX = scaleX;
       work->sprite.scaleY = scaleY;
-      /* FAKEMATCH(barrier): the angle is read after the scale stores; as
-       * plain statements, 4 of 188 instructions differ in tla-en. */
-      asm("");
       work->sprite.angle = work->angle;
       Func_080eb01c(&work->sprite);
     }

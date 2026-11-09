@@ -34,9 +34,8 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
 
   horizon = 0x800;
   wrap = 0;
-  /* FAKEMATCH(temporary): Q16_ONE held in ratio for the scale test and the
-     Iwram_RatioMulQ14 call; as the constant in both, 4 of 199 instructions
-     differ in tla-en. */
+  // ratio is reused for Q16_ONE, the scale test's and the call's; as the
+  // constant in both, 2 of 199 instructions differ in tla-en.
   ratio = Q16_ONE;
   if (scale >= ratio) {
     wrap = 0x2000;

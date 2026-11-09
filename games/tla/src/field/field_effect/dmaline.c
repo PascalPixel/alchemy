@@ -37,10 +37,6 @@ void Func_080d5ff8(void) {
     dma[5] = control & 0xc5ff; // Clear start timing and repeat.
     dma[5] &= 0x7fff;          // Stop.
     target = dest;
-    /* FAKEMATCH: the barrier copies the transfer destination before the last
-     * control read, as the native does; plain, the copy follows the first line
-     * word (one reordered pair, differ 2). */
-    asm volatile("" : "+l"(target));
     (void)dma[5];
   }
   *dest = *line++;

@@ -18,10 +18,7 @@ void Func_0811ddd8(struct BattlePlan *plan,
   flags = plan->presentationFlags;
   effect->kind = flags & 0xfff;
   effect->variant = (flags & 0x3000) >> 12;
-  /* FAKEMATCH(volatile): the actor read through a volatile pointer, a plain
-   * byte load that waits after the variant's store; as plan->actorId, 4 of
-   * 78 instructions differ in tla-en. */
-  effect->actor = *(volatile u8 *)&plan->actorId;
+  effect->actor = plan->actorId;
   targetIndex = 0;
   if (targetIndex < plan->targetCount) {
     inputTarget = plan->targetIds;

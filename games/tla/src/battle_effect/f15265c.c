@@ -51,14 +51,16 @@
 
 static __inline__ s32 CopyWords_(void *destination, const void *source,
                                  s32 size) {
-  /* FAKEMATCH(wrapper): the copy forwarded through this inline; as a direct
-   * call, 2 of 2239 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_CopyWords, 2 of 2239 instructions of
+   * BattleEffect_RunProjectileVolleyB differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 
 static __inline__ s32 ClearWords_(void *destination, s32 size) {
-  /* FAKEMATCH(wrapper): the clear forwarded through this inline; as a direct
-   * call, 14 of 2239 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_ClearWords, 14 of 2239 instructions of
+   * BattleEffect_RunProjectileVolleyB differ in tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 
@@ -385,11 +387,9 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
         break;
       }
-      if (palette != NULL)
-      /* FAKEMATCH(temporary): the routine's address named first, so its pool
-         load leads the arguments; as a direct call, 2 of 2239 instructions
-         differ in tla-en. */
-      {
+      if (palette != NULL) {
+        // The entry held in a local loads before the arguments; as a plain
+        // Iwram_CopyWords call, 2 of 2239 instructions differ in tla-en.
         __typeof__(Iwram_CopyWords) routine = Iwram_CopyWords;
         routine((void *)BG_PLTT, palette, 128);
       }
@@ -795,12 +795,12 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
               dx = object->x - mote->x;
               dy = object->y + half - mote->y;
               dz = object->z - mote->z;
-              /* FAKEMATCH(barrier): dy's empty asm adds the references that
-               * rank it above dz and dx; as plain locals, 16 of 2239
+              /* FAKEMATCH(barrier): an empty asm through dy adds the references
+               * that rank it above dz and dx; without it, 18 of 2239
                * instructions differ in tla-en. */
               __asm__("" : "=r"(dy) : "0"(dy));
-              /* FAKEMATCH(barrier): dz's empty asm ranks it above dx, which
-               * takes the register after it; with dy's alone, 16 of 2239
+              /* FAKEMATCH(barrier): an empty asm through dz ranks it above dx,
+               * which takes the register after it; without it, 16 of 2239
                * instructions differ in tla-en. */
               __asm__("" : "=r"(dz) : "0"(dz));
               mote->velocityX += dx >> 7;

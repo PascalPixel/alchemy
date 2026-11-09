@@ -283,19 +283,19 @@ void BattleEvent_Playback(void) {
       QueueIoWriteDelay6(0x0400004a, 16);
       ((u32 *)prompt)[1] = 0xa000;
       ((u32 *)prompt)[2] = x;
-      /* FAKEMATCH(barrier): an empty asm between `((u32 *)prompt)[2] = x;` and
-       * `prompt->tile = VramCache_Reload(events->arrowResource,
-       * pictureTiles);`, which keeps their instructions apart; as plain
-       * statements, 4 of 870 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm after x is stored, so prompt's copy
+       * (mov r1, r9) comes before x's (mov r2, r8); without it, 4 of 844
+       * instructions differ in tla-en. */
       asm("");
       prompt->tile = VramCache_Reload(events->arrowResource, pictureTiles);
       x = window->x * 8 + (offset->x >> 8) + 4;
       prompt->x = x;
       prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +
                   (offset->y >> 8) + 6;
-      /* FAKEMATCH(volatile): the held keys read afresh at each test; as plain
-       * gInput.held, 16 of 870 instructions differ in tla-en. */
-      if ((KEYS_HELD & 2) || (gInput.pendingPressed & 0x303) ||
+      // The held keys reread through a volatile pointer for the last test, a
+      // load apart from the B test's; as gInput.held, 16 of 844 instructions
+      // differ in tla-en.
+      if ((gInput.held & 2) || (gInput.pendingPressed & 0x303) ||
           ((u32)(gVBlankCount - events->timer) > 10 && (KEYS_HELD & 0x303))) {
         Sound_PlayFar(111);
         events->phase = BATTLE_PLAYBACK_DISPATCH;

@@ -270,7 +270,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
               userX = -userX;
             // Gone once it has passed the user on the user's side of x = 0.
             /* FAKEMATCH(dead): each arm stores its test in sameSide, never
-             * read; as user->x < 0 ? mote->x < 0 : mote->x >= 0, 41 of 589
+             * read; as user->x < 0 ? mote->x < 0 : mote->x >= 0, 37 of 589
              * instructions differ in tla-en. */
             if (moteX >= userX && (user->x < 0 ? (sameSide = mote->x < 0)
                                                : (sameSide = mote->x >= 0)))

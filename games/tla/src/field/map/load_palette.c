@@ -11,17 +11,11 @@ extern char ResourceId_Map000;
 /// and copies its 224 colors to destination, keeping the current backdrop
 /// color in the first entry.
 void Func_0802a650(s32 map, void *destination) {
-  /* FAKEMATCH: the table address, a word local passed through an empty asm,
-   * loads before the row is scaled, as in Map_GetHeaderSize; without the asm,
-   * 2 instructions differ in tla-en. */
-  u32 table = (u32)gData_0802f380;
   const u16 *entry;
   u16 *buffer;
   s16 backdrop;
 
-  /* FAKEMATCH: the barrier of the table load above. */
-  asm("" : "+l"(table), "+l"(map));
-  entry = (const u16 *)(map * 12 + table);
+  entry = gData_0802f380[map];
   buffer = Heap_Alloc(0x200);
   backdrop = *(s16 *)0x05000000;
   Resource_DecodeType01(

@@ -12,9 +12,6 @@ void Tile_ClearLeftPixels(s32 x, s32 y, u32 corner) {
     u32 value = *cell;
     u32 mask;
 
-    /* FAKEMATCH: ⚓️ reads the cell before it builds the mask; the plain
-     * statement starts the mask first (one pair of instructions swapped). */
-    __asm__ volatile("");
     mask = 0xfff0;
     mask &= value;
     *cell = mask;

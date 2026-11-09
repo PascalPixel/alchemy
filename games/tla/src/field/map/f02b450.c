@@ -10,10 +10,6 @@ struct TilePos {
 
 void Func_0802b450(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
                    s32 dstY) {
-  /* FAKEMATCH(temporary): cellPictureId set to 0xfff before its and, and the
-   * screen and picture addresses built in parts through address locals; as
-   * `cellPictureId = cell & 0xfff` and one expression for each address, 162
-   * of 148 instructions differ in tla-en. */
   s32 y;
   u32 *src = (u32 *)gMapCellBuffer + (srcY * 128 + srcX);
   u32 *dst = &((u32 *)gMapCellBuffer)[dstY * 128 + dstX];
@@ -41,13 +37,14 @@ void Func_0802b450(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
         u32 scaled;
         u32 mask;
 
+        // cellPictureId holds its mask before the masked cell; as cell & 0xfff,
+        // 110 of 148 instructions differ in tla-en.
         cellPictureId = 0xfff;
         mask = 0x7ff;
         /* FAKEMATCH(barrier): an empty asm on mask once it holds 0x7ff, which
-         * gives mask's quantity the references that rank it above the
-         * destination word in local allocation, so mask keeps r3, the word r2
-         * and 0xfffff800 r1; as no asm, 49 of 148 instructions differ in
-         * tla-en. */
+         * ranks mask above the destination word in local allocation, so mask
+         * keeps r3, the word r2 and 0xfffff800 r1; without it, 49 of 148
+         * instructions differ in tla-en. */
         __asm__("" : "+r"(mask));
         cellPictureId = cell & cellPictureId;
         mask &= cell;
@@ -60,6 +57,8 @@ void Func_0802b450(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
         row = y & 15;
         n = row << 5;
         n += column;
+        /* FAKEMATCH(temporary): the offset copied from scaled; as offset =
+         * n * 4, 150 of 148 instructions differ in tla-en. */
         scaled = n * 4;
         offset = scaled;
         for (; i < 3; i += 1) {
@@ -86,8 +85,7 @@ void Func_0802b450(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
             *(u32 *)screenTile = *(u32 *)pictureRows;
             break;
           }
-          n = 2048;
-          offset += n;
+          offset += 2048;
           view++;
         }
       }

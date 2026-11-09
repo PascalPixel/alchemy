@@ -32,7 +32,10 @@ void BattleParty_InsertUnitCentered(u16 *list, s32 unit) {
 
         if (distance < 0)
           distance = divider - i;
-        /* FAKEMATCH: the native compares the distances in this order. */
+        /* FAKEMATCH(barrier): an empty asm that, with the one below, keeps
+         * side's 1 and counts' address inside the loop instead of hoisted
+         * into r8 and ip; without it, 32 of 67 instructions differ in
+         * tla-en. */
         __asm__("");
         if (slot - divider >= 0) {
           if (distance >= slot - divider)
@@ -42,7 +45,9 @@ void BattleParty_InsertUnitCentered(u16 *list, s32 unit) {
         }
       }
       slot = i;
-      /* FAKEMATCH: the native branches to the loop step from here. */
+      /* FAKEMATCH(barrier): the second empty asm keeping the loop's 1 and
+       * counts' address inside it; without it, 32 of 67 instructions differ
+       * in tla-en. */
       __asm__("");
     next:;
     } else {

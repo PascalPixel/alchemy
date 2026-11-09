@@ -6,9 +6,9 @@
 void Fade_ToBlack(s32 arg0);
 
 s32 Func_08125aa0(void) {
-  /* FAKEMATCH(volatile): the four saved BG control words volatile, so each
-   * keeps its stack slot; as plain u16 locals, 65 of 94 instructions differ
-   * in tla-en. */
+  // volatile: the four saved BGxCNT values kept on the stack, each stored and
+  // loaded again as in the ROM; without volatile, 65 of 94 instructions differ
+  // in tla-en.
   volatile u16 bg0cnt;
   volatile u16 bg1cnt;
   volatile u16 bg2cnt;

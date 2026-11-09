@@ -71,8 +71,6 @@ void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
     return;
   }
   current = state->halfword20;
-  /* FAKEMATCH: ⚓️ loads the halfword before extending the value */
-  asm volatile("" : "+l"(current));
   result = 0;
   if (current == (u32)(s16)value)
     result = 1;

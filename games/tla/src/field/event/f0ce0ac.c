@@ -73,9 +73,6 @@ s32 Func_080ce0ac(s32 arg, s32 slot) {
   result = -1;
   // The mask is assigned first, as games/tbs/src/MATCHING.md describes.
   itemId = 0x3ff;
-  /* FAKEMATCH(temporary): the actor field's mask held in a local, loaded
-   * before the item id's and; as actor = (arg >> 10) & 0xf, 12 of 266
-   * instructions differ in tla-en. */
   actorMask = 0xf;
   itemId &= arg;
   actor = (arg >> 10) & actorMask;

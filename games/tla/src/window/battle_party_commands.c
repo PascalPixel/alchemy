@@ -433,10 +433,12 @@ s32 Func_0804bc08(struct BattleAction *commands, u16 *actors,
       }
       command = &commandsOut[commandIndex];
       actorId = actors[commandIndex];
-      /* FAKEMATCH(wrapper): called as returning a doubleword, which sets r1,
-       * so sched2 loads commandsOut first; as Unit_Get(actorId), 2 of 1949
-       * instructions differ in tla-en. */
+      // UB: Unit_Get returns a pointer, not the cast's doubleword result.
+#ifdef UBFIX
+      unit = Unit_Get(actorId);
+#else
       unit = (struct BattleUnit *)(s32)((s64 (*)(s32))Unit_Get)(actorId);
+#endif
       {
         struct BattleMenuWork *navigation = NAVIGATION;
         struct MenuSprite *iconSprite;
@@ -573,7 +575,7 @@ s32 Func_0804bc08(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = (s16)commandWindow->y * 8 + 4;
         /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
-         * where the native has it (constant 40); without it, 18 of 1949
+         * after mov r1, r10 (constant 40); without it, 18 of 1907
          * instructions differ in tla-en. */
         __asm__ volatile("");
         iconSprite->oam.f.tile =
@@ -648,7 +650,7 @@ s32 Func_0804bc08(struct BattleAction *commands, u16 *actors,
         ((u32 *)&iconSprite->oam)[0] = 0x40000400;
         ((u32 *)&iconSprite->oam)[1] = 0;
         /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
-         * where the native has it (constant 56); without it, 22 of 1949
+         * after mov r1, r11 (constant 56); without it, 22 of 1907
          * instructions differ in tla-en. */
         __asm__ volatile("");
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
@@ -824,7 +826,7 @@ s32 Func_0804bc08(struct BattleAction *commands, u16 *actors,
         COMMAND_ICON_X(state) = 48;
         iconSprite->oam.word.attr01 = 0x40000400;
         /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
-         * where the native has it (constant 48); without it, 12 of 1949
+         * after strb r3, [r5, #4] (constant 48); without it, 12 of 1907
          * instructions differ in tla-en. */
         __asm__ volatile("");
         iconSprite->oam.word.attr23 = 0;

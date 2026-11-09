@@ -128,8 +128,6 @@ extern char MsgSlotsControls[];
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
 
 void LuckyWheels_Run(void) {
-  /* FAKEMATCH(volatile): the map writes through a volatile cast, as the ROM
-   * orders them; as a plain cast, 210 of 1016 instructions differ in tla-en. */
   s32 picks[8];
   s32 litLines[7];
   DrawRectangle draw[2];

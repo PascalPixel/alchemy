@@ -57,27 +57,28 @@ void wait(s32 frames);
 
 static inline s32 ClearWords(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_ClearWords, 14 of 376 instructions differ in tla-en. */
+   * Iwram_ClearWords, 14 of 376 instructions of Func_0813e7e0 differ in
+   * tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 
 static inline s32 FillWords(void *destination, s32 size, u32 value) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_FillWords, 2 of 376 instructions differ in tla-en. */
+   * Iwram_FillWords, 2 of 376 instructions of Func_0813e7e0 differ in
+   * tla-en. */
   return Iwram_FillWords(destination, size, value);
 }
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 27 of 376 instructions differ in tla-en. */
+   * Iwram_CopyWords, 27 of 376 instructions of Func_0813e7e0 differ in
+   * tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 
 // Shows the battle background fading in, until A (unused).
 
 void Func_0813e7e0(struct BattleEffectArgument *effect) {
-  /* FAKEMATCH(volatile): the map writes through a volatile cast, as the ROM
-   * orders them; as a plain cast, 185 of 376 instructions differ in tla-en. */
   struct BattleEffectWork *work;
   void *canvas;
   struct BattleWork *battle;
@@ -122,6 +123,9 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
       s32 entry;
 
       entry = (s16)(((k * 16 + j * 2 + 1) << 8) | ((k * 8 + j) * 2));
+      // The map written through a volatile pointer, which keeps the ROM's
+      // order of stores; as a plain pointer, 185 of 376 instructions differ in
+      // tla-en.
       *(volatile u16 *)(0x06003800 + i) = *(u16 *)&entry;
     }
   }
@@ -149,9 +153,9 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
 
   // Fade the colours up a shade every two frames; B starts again, A ends.
   for (frame = 0; frame != 32096; frame++) {
-    /* FAKEMATCH(volatile): the held keys are read afresh for each test, as
-     * the native reads them; as gInput.held, 10 of 376 instructions differ in
-     * tla-en. */
+    // The A test reads the held keys through a volatile pointer, a load apart
+    // from the B test's; as gInput.held, 10 of 376 instructions differ in
+    // tla-en.
     if (gInput.held & 2)
       frame = 0;
     if (*(volatile u32 *)&gInput.held & 1)

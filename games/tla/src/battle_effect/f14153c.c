@@ -228,12 +228,12 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   struct EffectStep *p;
   struct EclipseObject *obj;
 
-  /* FAKEMATCH(wrapper): every fill forwarded through FillWords_, so a
-     constant size reaches the call's register at each call; as direct
-     Iwram_FillWords calls, 501 of 2159 instructions differ in tla-en. */
-  /* FAKEMATCH(wrapper): every copy forwarded through CopyWords_, so a
-     constant size reaches the call's register at each call; as direct
-     Iwram_CopyWords calls, 133 of 2159 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): every fill through FillWords_, which sets a constant
+   * size in the call's register at each call; as direct Iwram_FillWords calls,
+   * 501 of 2159 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): every copy through CopyWords_, which sets a constant
+   * size in the call's register at each call; as direct Iwram_CopyWords calls,
+   * 133 of 2159 instructions differ in tla-en. */
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   savedScroll = gBgScroll[1].x;
@@ -428,8 +428,8 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         }
         {
           /* FAKEMATCH(temporary): the variant copied into size in a block of
-             its own; as Func_0818caa8(..., work->particles[16].variant * 2), 50
-             of 2159 instructions differ in tla-en. */
+           * its own; as Func_0818caa8(..., work->particles[16].variant * 2), 50
+           * of 2159 instructions differ in tla-en. */
           s32 size = work->particles[16].variant;
 
           Func_0818caa8(work->sheet, cx >> 16, cy >> 16, size * 2);

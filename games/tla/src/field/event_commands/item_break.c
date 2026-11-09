@@ -18,7 +18,7 @@ struct BattleFxScene {
 };
 
 void FieldEffect_RunMove(void) {
-  /* FAKEMATCH: an unused 12-byte local explains the native 12-byte stack frame. */
+  // Unused: gives the stack frame its 12 bytes.
   s32 work[3];
   struct BattleFxScene *scene;
   void *object;

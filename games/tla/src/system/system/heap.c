@@ -74,8 +74,6 @@ void *HeapSlot_AllocEwram(s32 kind, s32 size) {
   if (cached_address == 0) {
     aligned_size = (u32)size + 3;
     address = allocator_state[0];
-    /* FAKEMATCH: load the heap head before shifting the alignment value. */
-    __asm__("" : : "r"(address), "r"(aligned_size));
     aligned_size = (aligned_size >> 2) * 4;
     next = address + aligned_size;
     if (next >= 0x02040000U) {
@@ -112,19 +110,11 @@ void *Heap_Alloc(s32 size) {
   u32 address;
   u32 words;
   u32 limit;
-  /* FAKEMATCH: the bound captured in r4 keeps the heap and head registers;
-   * as plain C, 6 instructions differ in tla-en. */
-  register u32 held asm("r4");
 
   words = (u32)size + 3;
   address = state[1];
-  /* FAKEMATCH: keep the unshifted value and incoming size live through the
-   * heap-head load. */
-  __asm__("" : : "r"(address), "r"(words), "r"(size));
   words >>= 2;
-  /* FAKEMATCH: capture the bound before the final alignment shift. */
-  __asm__("" : "=r"(held), "+r"(words) : "0"((u32)(Ram_IwramHeapEnd - 1)));
-  limit = held;
+  limit = (u32)(Ram_IwramHeapEnd - 1);
   size = (s32)(words << 2);
   next = address + (u32)size;
   if (next > limit) {

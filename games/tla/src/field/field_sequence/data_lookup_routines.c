@@ -34,8 +34,6 @@ u16 Encounter_GetEnemyGroupAtSlot(s32 zone, s32 slot) {
 
   byteOffset = zone * 14;
   table = gEncounter_EnemyGroupTable;
-  /* FAKEMATCH: ⚓️ loads the table between scaling the zone and adding the slot. */
-  asm volatile("" : "+l"(table), "+l"(byteOffset));
   byteOffset += slot;
   byteOffset <<= 1;
   byteOffset += 4;

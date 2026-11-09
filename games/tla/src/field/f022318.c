@@ -57,12 +57,10 @@ void Func_08022318(struct PlacedObject *object, s32 *pos, s32 *scale, s32 mode,
   s32 y;
   struct AnimationSpritePart *part;
 
-  /* FAKEMATCH(temporary): the shadow's half size and the anchor's offset share
-   * extentX and extentY; as locals of their own, 74 of 262 instructions differ
-   * in tla-en. */
   halfWidth = object->width >> 1;
-  /* FAKEMATCH(wrapper): the height read through an inline; as object->height,
-   * 4 of 262 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the height read through the inline
+   * PlacedObject_Height; as object->height, 4 of 262 instructions differ in
+   * tla-en. */
   halfHeight = PlacedObject_Height(object) >> 1;
   extentX = 8;
   extentY = 4;
@@ -113,9 +111,12 @@ void Func_08022318(struct PlacedObject *object, s32 *pos, s32 *scale, s32 mode,
     s32 sin = Trig_Sin(object->rotation);
     s32 cos = Trig_Cos(object->rotation);
 
+    // extentX and extentY are reused for the anchor's offset; locals of their
+    // own differ.
     extentX = object->offsetX * scaleX;
-    /* FAKEMATCH(wrapper): the height read through an inline; as object->height,
-     * 2 of 262 instructions differ in tla-en. */
+    /* FAKEMATCH(wrapper): the height read through the inline
+     * PlacedObject_Height; as object->height, 2 of 262 instructions differ in
+     * tla-en. */
     extentY = ((PlacedObject_Height(object) >> 1) - object->offsetY) * scaleY;
 
     anchorX = Iwram_MulQ16(cos, extentX) + Iwram_MulQ16(sin, extentY);

@@ -266,6 +266,9 @@ void Heap_Release(void *buffer);
 #define FADE_PLTT ((u16 *)(PLTT + 0xc0))
 
 static inline void Iris_FillWords(void *d, s32 n, u32 v) {
+  /* FAKEMATCH(wrapper): every FILL_WORDS forwarded through this inline; as
+   * FILL_WORDS calling Iwram_FillWords directly, 42 of 4851 instructions of
+   * BattleEffect_RunIris differ in tla-en. */
   Iwram_FillWords(d, n, v);
 }
 #define FILL_WORDS(dest, size, value)                                          \
@@ -325,13 +328,14 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
       else if (t <= 23)
         offset = 98;
       /* FAKEMATCH(dead): t * 4 / 3 into dead, which flow deletes once PRE has
-       * copied t * 4 into the join ahead of ring and blit; as this arm without
-       * it, 700 of 5364 instructions differ in tla-en. */
+       * copied t * 4 into the join ahead of ring and blit; without it, 700 of
+       * 4851 instructions of BattleEffect_RunIris differ in tla-en. */
       dead = t * 4;
       dead /= 3;
       ring = sprites + offset;
       /* FAKEMATCH(temporary): draw copied into blit for the ring's draws; as
-       * draw called directly, 1114 of 5364 instructions differ in tla-en. */
+       * draw called directly, 1126 of 4851 instructions of
+       * BattleEffect_RunIris differ in tla-en. */
       blit = draw;
       for (spoke = 0; spoke != 8; spoke++) {
         s32 px;
@@ -358,13 +362,15 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         offset = 394;
       else if (t <= 23)
         offset = 344;
-      /* FAKEMATCH(dead): t * 4 / 3 into dead, as in the small arm; as this arm
-       * without it, 698 of 5364 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): t * 4 / 3 into dead, as in the large splash's arm;
+       * without it, 698 of 4851 instructions of BattleEffect_RunIris differ in
+       * tla-en. */
       dead = t * 4;
       dead /= 3;
       ring = sprites + offset;
       /* FAKEMATCH(temporary): draw copied into blit for the ring's draws; as
-       * draw called directly, 1108 of 5364 instructions differ in tla-en. */
+       * draw called directly, 1120 of 4851 instructions of
+       * BattleEffect_RunIris differ in tla-en. */
       blit = draw;
       for (spoke = 0; spoke != 8; spoke++) {
         s32 px;
@@ -605,9 +611,10 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   s32 off;
   u8 *dst;
   u8 *tiles;
-  // Unused: gives the stack frame its layout. These 284 locals (275 to 294
-  // match) number the later pseudos as the native's, which orders PRE's
-  // spilled registers in the frame (without them, 34 of 5364 differ).
+  /* FAKEMATCH(dead): 284 locals nothing uses (any count from 275 to 294
+   * does), which number the later pseudos so PRE's spilled registers take
+   * their frame slots in order; as no locals, 34 of 4851 instructions differ
+   * in tla-en. */
   UNUSED s32 z0, z1, z2, z3, z4, z5, z6, z7, z8, z9, z10, z11, z12, z13, z14,
       z15, z16, z17, z18, z19, z20, z21, z22, z23, z24, z25, z26, z27, z28, z29,
       z30, z31, z32, z33, z34, z35, z36, z37, z38, z39, z40, z41, z42, z43, z44,
@@ -631,9 +638,6 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       z260, z261, z262, z263, z264, z265, z266, z267, z268, z269, z270, z271,
       z272, z273, z274, z275, z276, z277, z278, z279, z280, z281, z282, z283;
 
-  /* FAKEMATCH(wrapper): every FILL_WORDS forwarded through Iris_FillWords; as
-   * FILL_WORDS calling Iwram_FillWords directly, 42 of 5364 instructions
-   * differ in tla-en. */
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0x2000);
   Func_0813ba50();
@@ -829,7 +833,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
                 b++;
               {
                 /* FAKEMATCH(temporary): the colour copied into a u16 before its
-                 * store; as *fade++ = b << 10 | g << 5 | r, 171 of 5364
+                 * store; as *fade++ = b << 10 | g << 5 | r, 171 of 4851
                  * instructions differ in tla-en. */
                 u16 v = b << 10 | g << 5 | r;
 
@@ -1149,7 +1153,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     }
     if ((u32)(frame - 414) <= 7) {
       /* FAKEMATCH(temporary): the blend level copied into alpha; as
-       * REG_BLDALPHA = (frame - 406) | 0x1000, 14 of 5364 instructions
+       * REG_BLDALPHA = (frame - 406) | 0x1000, 14 of 4851 instructions
        * differ in tla-en. */
       s32 alpha = frame - 406;
       REG_BLDALPHA = alpha | 0x1000;
@@ -1218,18 +1222,18 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       top = 120;
       first = top - step * 8;
       /* FAKEMATCH(dead): off set to 0, which nothing reads before the loop sets
-       * it; as no store, 168 of 5364 instructions differ in tla-en. */
+       * it; without it, 168 of 4851 instructions differ in tla-en. */
       off = 0;
       /* FAKEMATCH(temporary): the band's first row passed to i through first;
-       * as i = top - step * 8, 6 of 5364 instructions differ in tla-en. */
+       * as i = top - step * 8, 168 of 4851 instructions differ in tla-en. */
       i = first;
       top = i;
       for (; i != top + 40 && (v = (i - top) * 2, i <= 127); i++) {
         if (i >= 0) {
           /* FAKEMATCH(dead): i / 3 into dead, which flow deletes; its call puts
            * the band's loop over loop.c's threshold, which then keeps
-           * (i - top) * 2 as the listing does; as none, 29 of 5364 instructions
-           * differ in tla-en. */
+           * (i - top) * 2; without it, 191 of 4851 instructions differ in
+           * tla-en. */
           dead = i / 3;
           if (v > 63)
             v = 63;
@@ -1694,7 +1698,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
             b++;
           {
             /* FAKEMATCH(temporary): the colour copied into a u16 before its
-             * store; as *fade++ = b << 10 | g << 5 | r, 171 of 5364
+             * store; as *fade++ = b << 10 | g << 5 | r, 171 of 4851
              * instructions differ in tla-en. */
             u16 v = b << 10 | g << 5 | r;
 

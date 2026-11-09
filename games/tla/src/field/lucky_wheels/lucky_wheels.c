@@ -49,9 +49,6 @@ void Func_081b3294(void) {
         p->velocityY = 0x60000;
         p->variant = 0;
       }
-      /* FAKEMATCH(barrier): the y reload issued before the limit's constant;
-       * as plain C, 2 of 106 instructions differ in tla-en. */
-      asm("");
       if (p->y > 0x400000) {
         p->y = 0x400000;
         if (p->variant <= 1)
@@ -62,18 +59,8 @@ void Func_081b3294(void) {
   }
 
   dma = REG_DMA0;
-  {
-    /* FAKEMATCH(temporary): the control read before the mask's constant,
-     * with the barrier; as dma[5] &= ~DMA_START_TIMING_DRQ_REPEAT, 2 of 106
-     * instructions differ in tla-en. */
-    u16 control = dma[5];
-    asm("");
-    dma[5] = control & ~DMA_START_TIMING_DRQ_REPEAT;
-  }
+  dma[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
   dma[5] &= ~DMA_ENABLE;
-  /* FAKEMATCH(barrier): the masked store issued before the transfer's
-   * constants; as plain C, 2 of 106 instructions differ in tla-en. */
-  asm("");
   (void)dma[5];
   // One halfword at each HBlank (repeating, destination reloaded).
   Dma_Set(work->scanlineOffsets, (void *)&REG_BLDY,

@@ -33,8 +33,7 @@ s32 Func_080ce31c(s32 kind) {
   s32 focused = Func_080cb09c();
   s32 special = Func_080cb144();
   s32 best = 9999;
-  /* FAKEMATCH(dead): result's -1 default, which every path below overwrites;
-   * as s32 result; with no default, 20 of 146 instructions differ in tla-en. */
+  // Default: -1, though every path below sets it.
   s32 result = -1;
   s32 selected = -1;
   s32 nearby = -1;

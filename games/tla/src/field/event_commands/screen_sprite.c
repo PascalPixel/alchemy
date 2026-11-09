@@ -20,8 +20,6 @@ void EffectSprite_DrawAtWorldPosition(struct ScreenSprite *sprite, s32 *position
 
     p[0] = position[0];
     arg = p;
-    /* FAKEMATCH: ⚓️ sets the argument before it copies the second word */
-    asm("" : "+r"(arg) : : "memory");
     p[1] = position[1];
     p[2] = position[2];
     Camera_WorldToScreen(arg);

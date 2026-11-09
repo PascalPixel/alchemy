@@ -111,10 +111,9 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
   BattleEffect_InitializeSharedScene();
   source->linked = target;
   Actor_StartScriptFar((struct ActorView *)source, (u32)gData_080f0e60);
-  /* FAKEMATCH(temporary): the position reached through p everywhere but the
-     steering loop's first part, which keeps p in r10 and gives the loop its
-     own copy; as position itself throughout, 22 of 551 instructions differ in
-     tla-en. */
+  /* FAKEMATCH(temporary): p holds &position everywhere but the steering
+     loop's first part, which gives the shards loop's 19 r8 and its 0x20000
+     r9; as position used directly, 10 of 551 instructions differ in tla-en. */
   p = &position;
   p->x = work->x;
   p->y = work->y + 0x100000;

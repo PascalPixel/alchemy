@@ -185,11 +185,6 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
                     Data_08198322[i * 2],
                     Data_08198322[i * 2 + 1] - (height = Data_08198378[cel]),
                     32, height);
-            /* FAKEMATCH(dead): a store flow deletes once the blocks are made,
-             * so this block ends in its call with no no-op after it and jump2
-             * shares the call with the MAX draw, as the native does; as plain
-             * C, 68 of 753 instructions differ in tla-en. */
-            height = 0;
           }
         }
       }

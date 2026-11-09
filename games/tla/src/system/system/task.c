@@ -88,6 +88,7 @@ s32 Task_Add(TaskFunc func, s32 order) {
   s32 i;
 
   task = gTasks;
+  // DEAD: nothing uses the status read here; its load is in the ROM.
   (void)gTasksRunning;
   index = -1;
   IRQ_LOCK(saved_interrupt_state);
@@ -177,8 +178,9 @@ s32 Task_SuspendAll(TaskFunc func) {
         continue;
     }
     TASK_STATE_HIGH(task) |= 1;
-    /* FAKEMATCH: the result copy follows the priority's high byte store, as in
-     * Task_SuspendOverlayTasks. */
+    /* FAKEMATCH(barrier): an empty asm after the priority's high byte store,
+     * so the result's copy follows it; without it, 2 of 27 instructions differ
+     * in tla-en. */
     __asm__ volatile("");
     result = i;
   }
@@ -198,8 +200,9 @@ s32 Task_SuspendOverlayTasks(void) {
   for (i = 0; i <= 23; i++, task++) {
     if ((task->func >> 24) == 2 && (task->flags & 1) == 0) {
       TASK_STATE_HIGH(task) |= 1;
-      /* FAKEMATCH: under the ARM9TDMI load schedule the result copy fills the
-       * priority byte's load delay; native stores the byte first. */
+      /* FAKEMATCH(barrier): an empty asm after the priority's high byte
+       * store, so the result's copy follows it; without it, 2 of 31
+       * instructions differ in tla-en. */
       __asm__ volatile("");
       result = i;
     }
@@ -220,8 +223,6 @@ s32 Task_SetFlags(TaskFunc func, u32 mask) {
   s32 i;
 
   task = gTasks;
-  /* FAKEMATCH: ⚓️ loads the task table before it builds the -1 result */
-  __asm__ volatile("" : "+l"(task));
   result = -1;
   IRQ_LOCK(saved_interrupt_master);
   for (i = 0; i <= 23; i++, task++) {
@@ -299,9 +300,10 @@ void Task_RunPass(s32 pass) {
 }
 
 s32 Task_CountInPass(s32 pass) {
-  /* FAKEMATCH: plain typed scans use bottom-tested loops. The native
-   * preincrement countdown uses an unsigned cursor so no before-array C pointer
-   * is formed. */
+  // The loop is written with goto: as for (i = 0; i < 24; i++, task++), the
+  // compiler tests it at the bottom and 24 instructions differ from the 22 in
+  // tla-en. The cursor is a u32, so it can start one task before gTasks
+  // without forming that pointer.
   u32 cursor;
   struct Task *task;
   s32 count;

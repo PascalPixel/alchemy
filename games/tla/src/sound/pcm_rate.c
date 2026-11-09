@@ -28,27 +28,30 @@ void Sound_SetFixedSampleFreq(u32 mode) {
   samples = 528;
   work->pcmSamplesPerVBlank = samples;
   work->rateStep = 266;
-  /* FAKEMATCH: control holds both timer 0 control values, so 0 is built after
-   * the last work store into r2 and 0x80 by movs rather than as halfword pool
-   * constants (written directly, differ 22 with 0x80 and 2 with 0). */
+  // control holds both of timer 0's control values, each built in a register;
+  // as the constants written directly, 22 of 58 instructions differ in tla-en.
   control = 0;
-  /* FAKEMATCH: one-pass blocks around the timer stores and the second DMA
-   * source keep each store where the native has it among its neighbours' loads
-   * and constants (differ 8, 6 and 6 without each). */
+  // The timer's stop in a once-only block keeps its register's address after
+  // the work's stores; as the plain store, 8 of 58 instructions differ in
+  // tla-en.
   do {
     REG_TM0CNT_H = control;
   } while (0);
+  // The reload's store in a once-only block keeps it ahead of the buffer's
+  // address; as the plain store, 6 of 58 instructions differ in tla-en.
   do {
     REG_TM0CNT_L = __divsi3(-140448, samples);
   } while (0);
   buffer = gData_02003a90;
-  /* FAKEMATCH: the clear goes through the inline wrapper Sound_ClearWords, as
-   * ☀️'s IWRAM call layer, so the entry's pool load comes after the size's shift
-   * (differ 2 called directly). */
+  /* FAKEMATCH(wrapper): the clear forwarded through Sound_ClearWords, so the
+   * entry's address loads after the size's shift; as Iwram_ClearWords(buffer,
+   * 0x18c0), 2 of 58 instructions differ in tla-en. */
   Sound_ClearWords(buffer, 0x18c0);
   m4aSoundVSyncOn();
   REG_DMA1SAD = (u32)buffer;
   buffer += 0xc60;
+  // The second source's store in a once-only block keeps it ahead of VCOUNT's
+  // address; as the plain store, 4 of 58 instructions differ in tla-en.
   do {
     REG_DMA2SAD = (u32)buffer;
   } while (0);

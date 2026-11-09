@@ -76,11 +76,11 @@ void Func_080caa4c(s32 table) {
   } else if (gMainRoutineWork.ownerOverride != 0) {
     gMainRoutineWork.renderMode = 6;
   } else {
-    // Stored through a byte pointer, which may alias the terrain layer's load
-    // after it; as a plain field store that load moves above it (differ 26).
-    *(u8 *)&gMainRoutineWork.renderMode = 0;
-/* FAKEMATCH(barrier): an empty asm after `*(u8 *)&gMainRoutineWork.renderMode = 0;`; as plain statements, 2 of 292 instructions differ in tla-en. */
-asm("");
+    gMainRoutineWork.renderMode = 0;
+    /* FAKEMATCH(barrier): an empty asm after the store keeps the terrain id's
+     * load and the heap slots' address after it; without it, 6 of 292
+     * instructions differ in tla-en. */
+    asm("");
     cell = Ram_HeapSlots->mapWork->layers[object->terrainId].cells +
            ((object->x / 0x100000) + ((object->z / 0x100000) << 7));
     above = cell - 128;

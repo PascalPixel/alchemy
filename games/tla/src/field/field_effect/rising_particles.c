@@ -119,9 +119,8 @@ void Func_080d6b90(void) {
   struct RisingParticleWork *work = HeapSlot_AllocEwram(116, 0x814);
   struct RisingParticle *particle = work->particles;
   volatile u32 fill;
-  /* FAKEMATCH: the register variable builds the fill word's zero in r2,
-   * after the DMA address is started (differ 8 without it: the zero
-   * takes r3 first). */
+  /* FAKEMATCH(pin): the fill's zero held in r2, built after the copy of
+   * work; as a plain local, 8 of 85 instructions differ in tla-en. */
   register u32 zero asm("r2");
   s32 priority;
   u8 *tiles;
@@ -151,8 +150,5 @@ void Func_080d6b90(void) {
     particle->timer = i * 2;
   }
   priority = 0x480;
-  /* FAKEMATCH: the barrier builds the priority before the task function's pool
-   * load, as the native does (differ 2 without it). */
-  asm volatile("");
   Task_Add(Func_080d69f4, priority);
 }

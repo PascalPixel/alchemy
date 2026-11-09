@@ -17,20 +17,18 @@ struct AnimationGroup {
 void Actor_WaitForAnimationChange(u32 objectId) {
   struct Actor *object = ObjectTable_Get(objectId);
   struct AnimationGroup *group;
-  u32 saved;
-  /* FAKEMATCH(pin): the saved number stored and read again through a pointer
-   * held in r6, as the native's str and ldr through r6 show; as a plain
-   * pointer, 12 of 37 instructions differ in tla-en. */
-  register u32 *savedNo asm("r6");
+  // volatile: saved lives in a 4-byte stack frame, stored once and loaded again
+  // for each compare, as the bytes have it; as a plain u32, 29 of 37
+  // instructions differ in tla-en.
+  volatile u32 saved;
   s32 elapsedFrames;
 
   if (object != NULL && object->animationKind == 1) {
     group = object->animation;
-    savedNo = &saved;
-    *savedNo = group->lastNo;
+    saved = group->lastNo;
     for (elapsedFrames = 0; elapsedFrames <= 89; elapsedFrames++) {
       wait(1);
-      if (*savedNo != group->lastNo)
+      if (saved != group->lastNo)
         break;
       if (group->entries[0] != NULL && group->entries[0]->script != NULL &&
           group->entries[0]->script[group->entries[0]->pos] == 241)

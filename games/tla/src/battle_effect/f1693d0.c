@@ -66,8 +66,9 @@ struct ScaledSprite;
 #undef Iwram_CopyWords
 static inline s32 Iwram_CopyWords(volatile void *destination,
                                   const volatile void *source, s32 size) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to the
-   * fixed entry, 219 of 1632 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_CopyWordsEntry, 219 of 1632 instructions of BattleEffect_RunNeptune
+   * differ in tla-en. */
   return Iwram_CopyWordsEntry((void *)destination, (const void *)source, size);
 }
 

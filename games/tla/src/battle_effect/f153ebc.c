@@ -171,9 +171,9 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   // The giant: eleven sprite objects with their tiles.
   ((u8 *)Ram_HeapSlots->battleWork)[0x867] = 1;
   picture = Resource_GetTableEntry((s32)&ResourceId_LeafWarriorTiles);
-  /* FAKEMATCH(wrapper): the copy through an inline forwarder, whose parameter
-   * leaves 512 a constant set in argument order; as a direct call, 2 of 1115
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the copy through CopyWords_, whose parameter sets 512
+   * in argument order; as a direct Iwram_CopyWords call, 4 of 1115 instructions
+   * differ in tla-en. */
   CopyWords_(OBJ_PLTT, picture, 512);
   // Two steps: one `+= 512` reuses the size's constant across the call.
   picture += 256;

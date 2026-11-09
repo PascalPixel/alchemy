@@ -80,9 +80,10 @@ void Func_080e807c(void) {
     red = 28;
   cycle:
     {
+      /* FAKEMATCH(pin): green pinned to r5, so the call's result is shifted
+       * straight into it; as a plain local, 17 of 272 instructions differ in
+       * tla-en. */
       register s32 green asm("r5") = Trig_Sin(((*phase >> 1) + i) << 11) * 8;
-      /* FAKEMATCH(pin): green kept in r5; as a plain local, 17 of 272
-       * instructions differ in tla-en. */
       s32 blue;
       s32 color;
 
@@ -90,9 +91,10 @@ void Func_080e807c(void) {
       green = (green >> 16) + 23;
       blue = ((blue >> 16) + 12) << 10;
       green <<= 5;
-      /* FAKEMATCH(barrier): an empty asm before the colour is assembled;
-       * without it, 2 of 272 instructions differ in tla-en. */
-      asm("");
+      // An empty once-only loop keeps red's 28 after green's or; without it, 2
+      // of 272 instructions differ in tla-en.
+      do {
+      } while (0);
       color = blue | green | red;
 
       ((u16 *)0x050001e0)[i] = color;

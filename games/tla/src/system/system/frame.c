@@ -6,24 +6,11 @@
 
 void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler) {
   if (irq <= 13) {
-    volatile u16 *ime_reg = &REG_IME;
     u32 ime;
     u32 bit;
     u32 ie;
 
-    ime = *ime_reg;
-    /* FAKEMATCH: the empty do-while keeps the saved IME copy ahead of
-       the IME store; without it the store comes first (2 differ). */
-    do {
-    } while (0);
-    /* FAKEMATCH: writing the IME register address keeps its disabled
-       low bit while emitting the measured register store; literal zero
-       scored 340 and an ordinary word zero temporary scored 260. */
-    *ime_reg = (u32)ime_reg;
-    /* FAKEMATCH: the empty do-while keeps the IE address load after
-       the IME store; without it three instructions reorder (180). */
-    do {
-    } while (0);
+    IRQ_LOCK(ime);
     bit = 1 << irq;
     ie = REG_IE & ~bit;
     if (handler != 0)
@@ -47,7 +34,7 @@ void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler) {
       gIrqHandlers[irq] = handler;
     else
       gIrqHandlers[irq] = Irq_Ignore;
-    REG_IME = ime;
+    IRQ_UNLOCK(ime);
   }
 }
 
@@ -58,6 +45,8 @@ struct SoundVBlankState {
   u8 unk03;
 };
 extern volatile struct SoundVBlankState gData_03001138;
+// volatile: the VBlank handler sets it while System_WaitForFrameInterrupt
+// waits on it, so it is no device.
 extern volatile u16 gData_0300121c;
 extern u32 gVBlankCount;
 extern u8 *gData_03007ff0;
@@ -68,9 +57,6 @@ void IwramSoundRenderVBlank(s32) __attribute__((long_call));
 void System_WaitForFrameInterrupt(void) {
   u32 saved;
   u8 *sound;
-
-  /* FAKEMATCH(volatile): gData_0300121c read as volatile; as a plain u16, 61
-     of 73 instructions differ in tla-en. */
 
   if (gData_03001138.unk02) {
     gData_0300121c &= ~1;
@@ -104,8 +90,8 @@ void System_WaitForFrameInterrupt(void) {
 #define RGB_WHITE 0x7fff
 
 static __inline__ void System_Reset(void) {
-  /* FAKEMATCH: the ordinary indirect call uses r5/r6 and returns through LR;
-   * this register carries the native ARM restart target in r4. */
+  /* FAKEMATCH(pin): entry held in r4, where the restart's bx takes it; as a
+   * plain local, 83 of 326 instructions of wait differ in tla-en. */
   register u32 entry __asm__("r4");
   gCartridgeResetMarker = 0x19670704;
   m4aSoundVSyncOffFar();
@@ -218,10 +204,13 @@ void wait(s32 frames) {
         {
           u32 high;
 
-          /* FAKEMATCH(barrier): the wake mask's first instruction before
-           * REG_KEYCNT's address loads; as plain C, 3 of 326 instructions
-           * differ in tla-en. */
+          // The wake mask written as its high byte shifted up plus its low
+          // byte is built in a register; as the constant, it loads from the
+          // pool.
           high = KEYCNT_SLEEP_WAKE >> 8;
+          /* FAKEMATCH(barrier): an empty asm on high, so the mask's first
+           * instruction comes before REG_KEYCNT's address loads; without it,
+           * 2 of 326 instructions differ in tla-en. */
           asm volatile("" : "+l"(high));
           REG_KEYCNT = (high << 8) + (KEYCNT_SLEEP_WAKE & 255);
         }
@@ -269,8 +258,8 @@ void Input_UpdateKeyRepeatAndDirection(void) {
   s32 delay;
 
   held = gInput.held;
-  /* FAKEMATCH(barrier): the form kept; as the plain read, 2 of 113
-   * instructions differ in tla-en (the timer is loaded before held). */
+  /* FAKEMATCH(barrier): an empty asm after held is read, so it loads before
+   * the repeat timer; without it, 2 of 113 instructions differ in tla-en. */
   asm("");
   delay = gInput.repeatTimer;
   if (delay <= 0) {
@@ -301,11 +290,6 @@ void Input_UpdateKeyRepeatAndDirection(void) {
     switch (directionCount) {
     default:
       gInput.previousDirection = KEYS_HORIZONTAL;
-      /* FAKEMATCH(one-pass): the form kept; as plain C with no block, 2 of 113
-       * instructions differ in tla-en (the direction is loaded before the
-       * mask). */
-      do {
-      } while (0);
       mask = 0xffff & ~KEYS_DPAD;
       gInput.direction &= mask;
       break;
@@ -335,8 +319,9 @@ void Input_UpdateKeyRepeatAndDirection(void) {
   }
 
   gInput.pressed = held & ~gInput.previousHeld;
-  /* FAKEMATCH(barrier): the form kept; as plain C, 2 of 113 instructions
-   * differ in tla-en (previousHeld is stored before pressed). */
+  /* FAKEMATCH(barrier): an empty asm after pressed is stored, so
+   * previousHeld is stored after it; without it, 2 of 113 instructions
+   * differ in tla-en. */
   asm("");
   gInput.previousHeld = held;
 }
@@ -400,7 +385,9 @@ void Func_0801399c(void) {
 
   keys = REG_KEYINPUT ^ 0x3ff;
   {
-    /* FAKEMATCH(volatile): the input record read through a volatile pointer; as gInput read plainly, 31 of 152 instructions differ in tla-en. */
+    // The input state reached through a volatile pointer, so each access is a
+    // load or store of its own; as gInput used plainly, 31 of 152
+    // instructions differ in tla-en.
     volatile struct InputState *input = (void *)&gInput;
     u32 pressed = keys & ~input->held;
 
@@ -418,13 +405,15 @@ void Func_0801399c(void) {
     }
   }
   {
-    /* FAKEMATCH(volatile): the VBlank count read through a volatile pointer; as a plain pointer, 33 of 152 instructions differ in tla-en. */
+    // The VBlank count read and written through a volatile pointer; as a
+    // plain pointer, 33 of 152 instructions differ in tla-en.
     volatile u32 *count;
-    /* FAKEMATCH(volatile): the sound state volatile; as plain, 25 of 152 instructions differ in tla-en. */
     volatile struct SoundVBlankState *sound;
 
     count = &gVBlankCount;
-    /* FAKEMATCH(volatile): this store through a volatile view; as a plain store, 2 of 152 instructions differ in tla-en. */
+    // The store through a volatile cast, so it comes before the sound state's
+    // address is loaded; as a plain store, 2 of 152 instructions differ in
+    // tla-en.
     ((volatile struct InputState *)&gInput)->previousVblankHeld = keys;
     sound = &gData_03001138;
     vblankCount = *count;
@@ -440,7 +429,9 @@ void Func_0801399c(void) {
     }
     *count = vblankCount + 1;
   }
-  /* FAKEMATCH(one-pass): the frame count's step in a block that runs once; as a plain step, 2 of 152 instructions differ in tla-en. */
+  // The frame count's step in a once-only block, so its address is loaded
+  // after the VBlank count's store; as a plain step, 2 of 152 instructions
+  // differ in tla-en.
   do {
     gFrameVBlanks++;
   } while (0);
@@ -459,21 +450,9 @@ void Func_08013b38(void) {}
 
 void Func_08013b3c(void) {}
 
-static inline void Reg_Write16(u32 value, volatile u16 *reg) {
-  /* FAKEMATCH: through the inline the value stays a word, built by movs, lsls,
-   * adds as the native builds 0xc3ff; a halfword constant store loads it from
-   * the pool (three rows). */
-  *reg = value;
-}
-
 void Input_HandleKeyInterrupt(void) {
   if (gSleepActive == 0) {
-    volatile u16 *keycnt = &REG_KEYCNT;
-
-    /* FAKEMATCH: the native loads the register address before it builds the
-     * value (one reordered row). */
-    __asm__ volatile("" : "+l"(keycnt));
-    Reg_Write16(0xc3ff, keycnt);
+    Io_Write16(0xc3ff, &REG_KEYCNT);
     gResetRequested = 1;
   }
 }

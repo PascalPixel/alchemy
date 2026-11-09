@@ -29,10 +29,7 @@ s32 BattleEscape_CheckSuccess(void) {
     escaped = 1;
   } else {
     levelTotal = 0;
-    /* FAKEMATCH(volatile): the failed attempts read through a volatile byte;
-       as escapeState->failedAttempts, 4 of 126 instructions differ in
-       tla-en. */
-    chance = 0x1388 + (*(volatile u8 *)&escapeState->failedAttempts * 0x7D0);
+    chance = 0x1388 + (escapeState->failedAttempts * 0x7D0);
     livingCount = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, livingUnits);
     for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
       levelTotal += ((u8 *)Unit_Get((s32)livingUnits[unitIndex]))[0x0f];

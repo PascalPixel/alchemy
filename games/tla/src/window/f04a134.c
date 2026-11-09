@@ -230,14 +230,13 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
 
   for (i = 0; i < 5; i++) {
     s32 y;
-    /* FAKEMATCH(temporary): the attribute zero and the window's y in one local,
-     * so the zero has no equivalence note and loads first; as the plain macro,
-     * 2 of 817 instructions differ in tla-en. */
+    // t holds the attribute zero, then is reused for the window's y; as plain
+    // stores, 2 of 817 instructions differ in tla-en.
     u32 t = 0;
 
     y = i * 2;
     /* FAKEMATCH(barrier): an empty asm after the row, which keeps it and the
-     * zero ahead of the stores; without it, 12 of 817 instructions differ in
+     * zero ahead of the stores; without it, 10 of 817 instructions differ in
      * tla-en. */
     asm("");
     iconSprite = &sprites[i];
@@ -257,6 +256,8 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
   Func_08049a04(0xf019, 0x211);
 
   for (;;) {
+    /* FAKEMATCH(temporary): iconSprite holds &cursor; as cursor used directly,
+     * 304 of 817 instructions differ in tla-en. */
     iconSprite = &cursor;
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;

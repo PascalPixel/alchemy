@@ -29,8 +29,8 @@ void Graphics_BuildSequentialTileTable(s32 *dst) {
     v += 0x04040404;
   } while (n >= 0 && n <= 55);
 
-  /* FAKEMATCH: called through a local pointer to its fixed entry; as a plain
-   * call through the header, all six ⚓️ editions differ. */
+  // The fill's entry held in a local loads its address before the size's
+  // shift; called directly, 2 of 25 instructions differ in tla-en.
   fill = Iwram_FillWordsEntry;
   fill(dst, 544, -1);
 }

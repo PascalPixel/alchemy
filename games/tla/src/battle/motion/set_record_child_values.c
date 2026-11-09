@@ -24,22 +24,14 @@ void BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value) {
   struct ChildRecord *record;
   struct RecordChild *child;
   struct RecordChild **children;
-  /* FAKEMATCH: as in The Broken Seal, the mask and the first frame in locals
-   * keep 255 in a register across the call; as child->frame |= 0xff, 18
-   * instructions differ in tla-en. */
   u8 mask = 0xff;
   u8 frame;
-  /* FAKEMATCH: the count read through a pointer taken first loads it before the
-   * mask is copied for the or, as the native; read directly it loads after (one
-   * reordered row, differ 2). */
-  u8 *countp;
 
   while ((record = GetMotionRecord(object, index)) != NULL) {
-    countp = &record->count;
     children = &record->entries[1];
     child = record->entries[0];
     frame = child->frame;
-    count = *countp;
+    count = record->count;
     child->param = value;
     child->frame = frame | mask;
     for (child_index = 1; child_index < count; child_index++) {

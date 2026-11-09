@@ -234,7 +234,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
                 s32 mode = BLIT_MAX;
                 s32 flags = chip->velocityY;
                 /* FAKEMATCH(barrier): an empty asm after the mode and the flags
-                 * are read; as a plain call, 2 of 571 instructions differ in
+                 * are set; without it, 2 of 571 instructions differ in
                  * tla-en. */
                 __asm__("");
                 Func_08196404(HEAP_BLITTER_ALTERNATE, 7, 7, flags, mode);

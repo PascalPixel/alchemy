@@ -57,19 +57,13 @@ void Func_0802254c(struct LayeredSprite *sprite, s32 *point, s32 *scale,
       z = Iwram_MulQ16(z, sprite->scale);
       flip = Func_08021a84(sprite, facing);
       z >>= 10;
-      /* FAKEMATCH(one-pass): the scales rounded, multiplied and clamped in a
-       * once-only block, whose loop note keeps flip's spill between z >> 10
-       * and the + 1; as plain statements, 2 of 279 instructions differ in
-       * tla-en. */
-      do {
-        rounded = ((z + 1) >> 1) << 11;
-        scaleX = Iwram_MulQ16(rounded, scale[0]);
-        scaleY = Iwram_MulQ16(rounded, scale[1]);
-        if (scaleX > 0x1f800)
-          scaleX = 0x1f800;
-        if (scaleY > 0x1f800)
-          scaleY = 0x1f800;
-      } while (0);
+      rounded = ((z + 1) >> 1) << 11;
+      scaleX = Iwram_MulQ16(rounded, scale[0]);
+      scaleY = Iwram_MulQ16(rounded, scale[1]);
+      if (scaleX > 0x1f800)
+        scaleX = 0x1f800;
+      if (scaleY > 0x1f800)
+        scaleY = 0x1f800;
       halfHeight = sprite->height >> 1;
       offsetY = Iwram_MulQ16(sprite->offsetY - halfHeight, scaleY);
       halfWidth = sprite->width >> 1;

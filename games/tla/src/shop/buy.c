@@ -71,10 +71,6 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   s32 replaced;
   void *window;
 
-  /* FAKEMATCH: the barrier keeps the slot halfword load ahead of the 0x1ff
-   * mask; without it the mask is started first (one reordered pair, differ 2).
-   */
-  asm volatile("");
   itemId = 0x1ff;
   itemId &= raw;
   info = Item_Get(itemId);
@@ -111,9 +107,10 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
       s32 y = 4;
       s32 flags = 2;
 
-      /* FAKEMATCH: the native loads the three small arguments before the
-       * message; the plain call loads the message first (one instruction moved,
-       * differ 2). */
+      /* FAKEMATCH(barrier): an empty asm on x, y and flags, so the three are
+       * set before the message loads; as Message_OpenWindowFar(
+       * (s32)MsgBecameCursed, 8, 4, 2), 2 of 106 instructions differ in
+       * tla-en. */
       asm volatile("" : "+l"(x), "+l"(y), "+l"(flags));
       Message_OpenWindowFar((s32)MsgBecameCursed, x, y, flags);
     }
@@ -138,10 +135,6 @@ s32 Shop_SellOld(s32 unitId, s32 slot) {
     return 0;
   itemOffset = slot * 2 + 216;
   raw = *(u16 *)(unit + itemOffset);
-  /* FAKEMATCH: the barrier keeps the slot halfword load ahead of the 0x1ff
-   * mask; without it the mask is started first (one reordered pair, differ 2).
-   */
-  asm volatile("");
   itemId = 0x1ff;
   itemId &= raw;
   if (Item_Get(itemId)->type == 6)

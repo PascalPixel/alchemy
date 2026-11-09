@@ -234,9 +234,6 @@ void MessageArgument_ClearAll(void) {
   struct WindowWork *work;
 
   work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
-  /* FAKEMATCH: the barrier keeps the work-pointer load before the table
-   * offsets. */
-  __asm__("");
   no = 0;
 
   do {
@@ -288,14 +285,10 @@ s32 Sound_GetBgmRestoreDelayFar(void);
 s32 Message_CheckCancelByInput(struct UiChannelSlot *ch) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 cancel = 0;
-  /* FAKEMATCH: the native keeps the address of the held keys and reads them
-   * twice; a plain read is shared. */
+  // The held keys read through a volatile pointer, so each test loads them
+  // again; as a plain pointer, 13 of 40 instructions differ in tla-en.
   volatile u32 *held;
 
-  /* FAKEMATCH: the empty asm holds r2 until the render work is loaded, then
-   * starts the busy flag's offset 0x1389; as plain C, 2 instructions differ in
-   * tla-en. */
-  asm("" : "+l"(work) : : "r2");
   if (work->busy != 0 && Sound_GetBgmRestoreDelayFar() == 0)
     cancel = 1;
   held = &gInput.held;
@@ -314,17 +307,11 @@ s32 Message_CheckCancelByInput(struct UiChannelSlot *ch) {
 /// (the pending presses in a window mode); while B is held the wait ends only
 /// at countdown 1, and otherwise the countdown is set to 2.
 s32 Message_CheckCancelByModeInput(struct UiChannelSlot *ch) {
-  /* FAKEMATCH: the work is pinned to the r6 the native keeps it in; with the
-   * barrier below and no pin it takes r5 and the channel r6 (differ 14). */
-  register struct WindowWork *work asm("r6") =
+  struct WindowWork *work =
       (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 cancel = 0;
   u32 keys;
 
-  /* FAKEMATCH: ⚓️ loads the render work before it starts the busy flag's offset
-   * 0x1389 in r2; the empty asm holds r2 until the work is loaded. Plainly the
-   * offset is started first (differ 2). */
-  asm("" : "+l"(work) : : "r2");
   if (work->busy != 0 && Sound_GetBgmRestoreDelayFar() == 0)
     cancel = 1;
   keys = gInput.pressed;
@@ -619,7 +606,8 @@ void Message_Find(struct TextReader *reader, s32 message) {
   void (*routine)(struct TextReader *, s32);
   u32 size;
 
-  /* FAKEMATCH: the wrapper keeps the size load after the parameter copies. */
+  // The size's load in a once-only block keeps it after the parameters are
+  // copied; as a plain assignment, 4 of 31 instructions differ in tla-en.
   do {
     size = (u32)Text_LookupSymbolCodeSize;
   } while (0);

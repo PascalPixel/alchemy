@@ -35,9 +35,9 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
   s32 sum;
   s32 pick;
   s32 i;
-  /* FAKEMATCH(barrier): an empty asm reading the pick before it is set, which
-   * gives it its registers across the function; without it, 42 of 180
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm reading pick before it is set, which
+   * makes it live from the entry and keeps a register for it across the whole
+   * function; without it, 42 of 180 instructions differ in tla-en. */
   asm("" : : "l"(pick));
 
   work = Ram_HeapSlots->eventWork;

@@ -278,16 +278,16 @@ void Task_Remove(void *);
 void BattleEffect_EndCanvasLayer(void);
 
 static __inline__ s32 CpuCopy(void *destination, const void *source, s32 size) {
-  /* FAKEMATCH(wrapper): copies go through this inline and the next; as direct
-   * calls to Iwram_CopyWords and Iwram_FillWords, 277 of 4354 instructions
+  /* FAKEMATCH(wrapper): every copy goes through this inline; as direct calls
+   * to Iwram_CopyWords, 196 of 4354 instructions of BattleEffect_RunCharon
    * differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 
 static __inline__ s32 CpuFill(void *destination, s32 size, u32 value) {
-  /* FAKEMATCH(wrapper): fills go through this inline and the one above; as
-   * direct calls to Iwram_CopyWords and Iwram_FillWords, 277 of 4354
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): every fill goes through this inline; as direct calls
+   * to Iwram_FillWords, 204 of 4354 instructions of BattleEffect_RunCharon
+   * differ in tla-en. */
   return Iwram_FillWords(destination, size, value);
 }
 
@@ -486,12 +486,12 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       REG_BLDALPHA = 0x1010;
       {
         u32 hidden;
+        /* FAKEMATCH(temporary): the mask held in a halfword struct set in the
+         * for clause; as a literal 0xf000, 4 of 4354 instructions differ in
+         * tla-en. */
         struct {
           u16 value;
         } mask;
-        /* FAKEMATCH(temporary): the mask is a halfword struct set in the for
-         * clause; as a literal 0xf000 and hidden written inline, 4 of 4354
-         * instructions differ in tla-en. */
         s32 *timer;
         u32 *b;
         u32 *a;
@@ -914,10 +914,9 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         if (frame < 260) {
           u8 *low = (u8 *)0x02014000;
           u8 *high = (u8 *)0x02014001;
+          /* FAKEMATCH(temporary): orderCopy, a copy of order set again in the
+           * loop; as order itself, 20 of 4354 instructions differ in tla-en. */
           u8 *orderCopy = order;
-
-          /* FAKEMATCH(temporary): orderCopy is set again in the loop; as order
-           * itself, 20 of 4354 instructions differ in tla-en. */
 
           for (i = 0; i != 64; i++) {
             s32 column = (orderCopy = order)[0x1000] * 2;
@@ -1193,11 +1192,6 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       for (i = 0, h = 8; i != 256; i++) {
         x = (Trig_Sin(i << 8) * radius * 2) >> 16;
         cosine = Trig_Cos(i << 8);
-        /* FAKEMATCH(one-pass): a one-pass block after the cosine; as both
-         * coordinates in one statement each with no block, 2 of 4354
-         * instructions differ in tla-en. */
-        do {
-        } while (0);
         y = ((cosine * radius) >> 16) + 68;
         x += 66;
         routine[0](canvas, glyphs + row * 32, x - w / 2, y, w, h);
@@ -1366,8 +1360,9 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         SceneTransform_ApplyYaw(frame << 10);
         Render_TransformVertices(gData_08199210, texture, 4);
         Render_DrawModelList(model);
-        /* FAKEMATCH(dead): a test whose body flow deletes; as no test, 290 of
-         * 4354 instructions differ in tla-en. */
+        /* FAKEMATCH(dead): twice raised to frame though nothing reads it again;
+         * flow deletes the store and its test; as no test, 290 of 4354
+         * instructions differ in tla-en. */
         if (frame > twice) {
           twice = frame;
         }
@@ -1408,13 +1403,13 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   wait(1);
   scene->unk867 = 0;
   BattleBackground_LoadFar(1, scene->unk670, 24);
-  /* FAKEMATCH(one-pass): a one-pass block before the canvas fill; as no block
-   * before it, 10 of 4354 instructions differ in tla-en. */
+  // An empty once-only loop before the canvas fill, so its entry loads before
+  // the size; without it, 2 of 4354 instructions differ in tla-en.
   do {
   } while (0);
   CpuFill(canvas, 0x4000, 0);
-  /* FAKEMATCH(one-pass): a one-pass block before the BG fill; as no block
-   * before it, 2 of 4354 instructions differ in tla-en. */
+  // An empty once-only loop before the BG fill, so its address loads before
+  // the size; without it, 10 of 4354 instructions differ in tla-en.
   do {
   } while (0);
   CpuFill((void *)0x06004000, 0x4000, 0);
@@ -1715,8 +1710,9 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         if (member->timer == 2 || member->timer == 7) {
           Func_0814cd48(arg->actors[i], 7, 5, i, 32);
         }
-        /* FAKEMATCH(dead): a test whose body flow deletes; as no test, 402 of
-         * 4354 instructions differ in tla-en. */
+        /* FAKEMATCH(dead): landed set to 2 though nothing reads it again; flow
+         * deletes the store and its test; as no test, 402 of 4354 instructions
+         * differ in tla-en. */
         if (actor == 0) {
           landed = 2;
         }

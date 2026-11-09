@@ -89,9 +89,10 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
   s32 lift = 20 << 16;
 
   heap = Ram_HeapSlots;
-  /* FAKEMATCH(barrier): an empty asm through heap, which hides its value from
-   * the compiler's constant and copy folding; as plain statements, 16 of 580
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm through heap hides that it holds the
+   * heap slots' fixed address, so later reads go through its register, not
+   * the address built again; without it, 16 of 580 instructions differ in
+   * tla-en. */
   __asm__("" : "=r"(heap) : "0"(heap));
   work = (struct BattleEffectWork *)heap->battleFxWork[0];
   canvas = heap->battleFxWork[1];
@@ -187,10 +188,8 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
         }
         if (frame >= k * 32) {
           for (j = 0; j != streaks; j++) {
-            /* FAKEMATCH(temporary): the streak's start frame kept in lift's
-             * local, dead by now, which gives the native's registers and its
-             * 88-byte frame; as a local of its own or as the twin's expression,
-             * 351 of 580 instructions differ in tla-en. */
+            // lift is reused for the streak's start frame; a local of its own
+            // differs.
             lift = k * 32 + j * 6;
             if (frame >= lift) {
               struct EffectStep *streak = &work->particles[k * streaks + j];

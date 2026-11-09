@@ -97,10 +97,13 @@ s32 Func_080292fc(struct Actor *object) {
     node = chain->nodes;
     best = NULL;
     bestDistance = 0x10000000;
-    /* FAKEMATCH(wrapper): the null test reads chain through __builtin_expect;
-     * as chain == NULL, 21 of 300 instructions differ in tla-en. */
-    if (!__builtin_expect((s32)chain, 0)) {
+    if (chain == NULL) {
       collisionFlags = 1;
+      /* FAKEMATCH(dead): the event work slot copied onto itself, a second
+       * store in the null branch that keeps the loop count from being lifted
+       * above the null test; without it, 21 of 300 instructions differ in
+       * tla-en. */
+      Ram_HeapSlots->eventWork = Ram_HeapSlots->eventWork;
       goto done;
     }
     for (count = 0; count < 128; count++, node++) {

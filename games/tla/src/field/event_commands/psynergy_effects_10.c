@@ -62,8 +62,6 @@ s32 Trig_Sin(s32 angle);
 void BattleEffect_SinkAndShrinkObject(void) {
   struct RiseWork *work = Ram_HeapSlots->battleFxWork[0];
 
-  /* FAKEMATCH: ⚓️ loads the effect work before it builds the flag offset */
-  asm volatile("");
   if (work->done == 0) {
     struct Actor *object = work->object;
 

@@ -60,9 +60,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  /* FAKEMATCH(dead): a blitter pair, as the twin has, of which only draw[0] is
-   * used, the second word filling four bytes of the native frame; as one
-   * DrawRectangle, 50 of 410 instructions differ in tla-en. */
+  // Unused: draw[1] gives the stack frame its 4 bytes.
   DrawRectangle draw[2];
   s32 i;
   u8 *graphics;

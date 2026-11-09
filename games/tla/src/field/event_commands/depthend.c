@@ -24,8 +24,6 @@ void BattleEffect_DrawSceneSprite(void);
 void Func_080dbb40(void) {
   struct DepthScene *scene = Ram_HeapSlots->effectWork;
 
-  /* FAKEMATCH: ⚓️ loads the scene before it builds the flag offset */
-  asm volatile("");
   if (scene->active != 0) {
     scene->active = 0;
     Task_Remove(BattleEffect_DrawSceneSprite);

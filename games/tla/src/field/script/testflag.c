@@ -8,8 +8,6 @@ s32 Script_TestFlag(struct ScriptInterpreter *interpreter) {
   interpreter->conditionResult =
       GameFlag_Test(interpreter->script[interpreter->cursor + 1]);
   done = 1;
-  /* FAKEMATCH: ⚓️ sets the result before the cursor update */
-  asm volatile("" : "+l"(done));
   interpreter->cursor = (u16)interpreter->cursor + 2;
   return done;
 }

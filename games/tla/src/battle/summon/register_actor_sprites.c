@@ -29,8 +29,8 @@ s32 SummonSlot_RegisterActorSprites(s32 unit) {
   struct BattleUnit *actor = Unit_Get(unit);
   s32 singleSlot = BattleClass_IsSmall(actor->enemyId);
   /* FAKEMATCH(temporary): result cleared a halfword at a time, which keeps
-   * pass a copy of its register (mov r4, r10), as in The Broken Seal; as an
-   * s32 set to 0, 2 of 134 instructions differ in tla-en. */
+   * pass a copy of its register (mov r4, r10); as an s32 set to 0, 2 of 134
+   * instructions differ in tla-en. */
   union {
     s32 value;
     u16 halves[2];
@@ -60,9 +60,9 @@ s32 SummonSlot_RegisterActorSprites(s32 unit) {
     if (slot == 6)
       break;
 
-    /* FAKEMATCH(temporary): the buffers' address taken before the flag's
-     * call, which builds the first result in r3; as the address inside the
-     * sum, 6 of 134 instructions differ in tla-en. */
+    // The buffers' address held in a local, taken before the palette's call,
+    // leaves r3 to the first result; inside the sum, 6 of 134 instructions
+    // differ in tla-en.
     slotBuffers = (s32)Data_02018000;
     {
       s32 flag = BattleClass_GetPalette(actor->enemyId);

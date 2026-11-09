@@ -60,20 +60,24 @@ void Func_080e5a64(void) {
   if (work->state == 1) {
     i = 0;
     /* FAKEMATCH(temporary): the phase read through a pointer kept across the
-     * loop; as blend->phase, 4 of 302 instructions differ in tla-en. */
+     * loop, whose address is built ahead of the loop's constants; as
+     * blend->phase, 4 of 302 instructions differ in tla-en. */
     phase = &blend->phase;
-    /* FAKEMATCH(temporary): the phase offset built in two steps, so it stays
-     * in a register across the loop; as base = 0x90000, 48 of 302
-     * instructions differ in tla-en. */
+    // The phase offset built in two steps stays in a register across the loop;
+    // as base = 0x90000, 48 of 302 instructions differ in tla-en.
     base = 9;
     base <<= 16;
     blue = 0x7c00;
+    // The loop is written with goto: as for (; i < 32; i++), 60 of 302
+    // instructions differ in tla-en.
   palette:
     red = Trig_Sin(((((*phase >> 1) + i) << 16) + base) >> 5) * 12;
     green = Trig_Sin(((((*phase >> 1) + i) << 16) + base) >> 5) * 12;
     red = (red >> 16) + 16;
     green = (green >> 16) + 16;
-    // A once-only block around the palette store.
+    // The colour in a once-only block, so red and green are finished before it
+    // is put together; as plain statements, 10 of 302 instructions differ in
+    // tla-en.
     do {
       color = (green << 5) | blue | red;
       *(u16 *)(0x050003c0 + i * 2) = color;

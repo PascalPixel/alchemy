@@ -581,8 +581,6 @@ struct ScreenPageWork {
 void Func_080405ac(void) {
   struct ScreenPageWork *work = Ram_HeapSlots->unkd0[0];
 
-  /* FAKEMATCH: ⚓️ loads the screen work before it builds the panel offset */
-  asm volatile("" : "+l"(work));
   Func_08108030((union OptionCursor *)work->panel);
   Func_080450fc((void *)work->values[work->page]);
 }

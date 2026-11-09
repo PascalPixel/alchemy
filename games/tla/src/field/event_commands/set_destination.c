@@ -15,8 +15,6 @@ void Func_080d2c64(s32 cue) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 state;
 
-  /* FAKEMATCH: loads the event work before it builds the field offset. */
-  __asm__("");
   state = cue;
   event->cueState = state;
   if ((s16)state == -1)

@@ -79,8 +79,9 @@ s32 Func_08025160(struct Actor *interpreter) {
       cameraObject->z = z;
     } else {
       dx = (x - cameraObject->x) / 0x10000;
-      /* FAKEMATCH(dead): this dy, overwritten below, as in ☀️'s twin; as plain
-       * code, 129 of 345 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): this dy, overwritten below, as in The Broken Seal's
+       * FieldCamera_FollowLeaderInBounds, which steers register allocation;
+       * without it, 129 of 345 instructions differ in tla-en. */
       dy = (y - cameraObject->y) / 0x10000;
       dz = (z - cameraObject->z) / 0x10000;
       distance = Iwram_Sqrt(dx * dx + dz * dz) << 16;

@@ -31,9 +31,6 @@ void ViewMove_SaveNearbySprites(void) {
 
   group->count = 0;
   objects = work->objects;
-  /* FAKEMATCH: the empty asm barrier keeps the walk pointer's spill ahead of
-   * the counter's zero; without it, 2 instructions differ in tla-en. */
-  asm("");
   for (i = 0; i < 80; i++) {
     obj = *objects++;
     if (obj == NULL || obj->script == NULL || obj == scene->mainObject)

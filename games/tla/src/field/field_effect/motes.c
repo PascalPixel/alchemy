@@ -59,16 +59,15 @@ void FieldMotes_Start(void) {
   volatile u32 zero;
   volatile u16 *reg;
   struct HeapSlots *slots;
-  /* FAKEMATCH: the register variable keeps the cleared word's zero inside
-   * the loop, set on every pass, and in r6 for the last blend register
-   * after it (differ 4 without it: loop.c hoists the zero). */
+  /* FAKEMATCH(pin): clear held in r6, which keeps its zero set inside the
+   * loop on every pass and ready for the last blend register; as a plain
+   * local, 4 of 92 instructions differ in tla-en. */
   register s32 clear asm("r6");
 
   size = sizeof(struct MoteWork);
   work = HeapSlot_AllocEwram(116, size);
   mote = work->motes;
-  /* FAKEMATCH: reusing the allocation size for the cleared word keeps it in
-   * r1 (differ 8 without it). */
+  // size is reused for the fill's zero; a zero of its own differs.
   size = 0;
   zero = size;
   Dma_Set((void *)&zero, work,
@@ -83,21 +82,16 @@ void FieldMotes_Start(void) {
   for (; i < 64; i++) {
     struct MapWork *view = slots->mapWork;
     s32 *pos;
-    /* FAKEMATCH: reusing the integer field cursor for the height's x argument
-     * keeps the stores in r1 (a word pointer with x of its own differs 18). */
+    /* FAKEMATCH(temporary): one integer cursor for the attribute stores and
+     * the height's x keeps the stores in r1; as an s32 * cursor and an x of
+     * its own, 18 of 92 instructions differ in tla-en. */
     u32 p;
     s32 z;
 
-    /* FAKEMATCH: keeps the map work load before the cursor copy (differ 4
-     * without it). */
-    __asm__("" : : "r"(view));
     p = (u32)mote;
     clear = 0;
     *(s32 *)p = clear;
     p += sizeof(s32);
-    /* FAKEMATCH: keeps the first store before the origin load (differ 8
-     * without it). */
-    __asm__("" : : "r"(view));
     pos = view->origin;
     *(s32 *)p = 0x40000400;
     p += sizeof(s32);
@@ -110,9 +104,14 @@ void FieldMotes_Start(void) {
     mote->timer = (i & 15) + 1;
     mote++;
   }
-  /* FAKEMATCH: the one-pass block and the stepped register pointer write the
-   * three blend registers as the native does (plain writes differ 33). */
+  // The blend writes in a once-only block keep the task routine's address
+  // ahead of the call's other argument; as a plain block, 4 of 92 instructions
+  // differ in tla-en.
   do {
+    /* FAKEMATCH(temporary): the values through v and the registers through
+     * one stepped pointer, which builds each value from a small constant and
+     * steps the address by 2; as REG_BLDCNT, REG_BLDALPHA and REG_BLDY
+     * written directly, 31 of 92 instructions differ in tla-en. */
     s32 v;
     v = 0x3f00;
     reg = &REG_BLDCNT;

@@ -10,8 +10,9 @@
 // before the routine's address.
 #undef Iwram_FillWords
 static inline s32 Iwram_FillWords(void *destination, s32 size, u32 value) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_FillWordsEntry, 4 of 303 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the fills through this inline; as direct calls to
+   * Iwram_FillWordsEntry, 4 of 303 instructions of Func_0818c7b8 differ in
+   * tla-en. */
   return Iwram_FillWordsEntry(destination, size, value);
 }
 
@@ -65,8 +66,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
   u8 *canvas = Ram_HeapSlots->battleFxWork[1];
   u8 *cells = Ram_MapCellBuffer;
   // The blitter pair, as a two-word array one DImode pseudo: it takes r6 and
-  // r7, the second unused, which is why the native pushes r7 and spills
-  // effect.
+  // r7, the second unused, which is why r7 is saved and effect spilled.
   DrawRectangle draw[2];
   s32 flags;
   s32 frame;
@@ -86,8 +86,8 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
   }
   /* FAKEMATCH(signature): Nothing() typed s32 though it returns nothing; its
    * return-register clobber issues in the mode store's second cycle, so the
-   * flags move is picked before r1 and r2; without the call, 2 of 303
-   * instructions differ in tla-en. */
+   * flags move is picked before r1 and r2; as a void function, or without the
+   * call, 2 of 303 instructions differ in tla-en. */
   Nothing();
   Func_08196404(HEAP_SLOT_BLITTER, 7, 7, flags, BLIT_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];

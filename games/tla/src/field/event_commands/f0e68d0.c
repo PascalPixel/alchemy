@@ -346,8 +346,10 @@ void Func_080e68d0(void) {
       if (frame == 50)
         stage = 2;
       {
-        /* FAKEMATCH(barrier): the form kept; as Field_RunPsynergyEvent(pending,
-         * stage, frame), 2 of 938 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): frame copied through an empty asm, so its move
+         * to r2 comes before pending's to r0; as
+         * Field_RunPsynergyEvent(pending, stage, frame), 2 of 938 instructions
+         * differ in tla-en. */
         s32 frameCopy;
 
         asm("" : "=r"(frameCopy) : "0"(frame));

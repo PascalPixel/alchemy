@@ -101,13 +101,8 @@ s32 Func_0812824c(s32 unitId, s32 djinnBonus) {
   slot = spoils->lastSlot = (spoils->lastSlot + 1) % 2;
   spoils->lastEnemyIds[slot] = unit->enemyId;
   spoils->lastDigits[slot] = Func_08128228((u8 *)unit);
-  /* FAKEMATCH(one-pass): the count test in a once-only block, which loads
-   * the count unsigned for its increment before the signed load for the
-   * test; as the plain if, 2 of 300 instructions differ in tla-en. */
-  do {
-    if (spoils->lastCount <= 1)
-      spoils->lastCount++;
-  } while (0);
+  if (spoils->lastCount <= 1)
+    spoils->lastCount++;
   classSlot = 0;
   classIndex = 0;
   if (battle->enemyClasses[0] != unit->enemyId) {

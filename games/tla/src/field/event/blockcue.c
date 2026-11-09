@@ -39,9 +39,12 @@ void Func_080e42d4(void) {
     x = object->x & 0xfff00000;
     z = object->z & 0xfff00000;
     back = -0x80000;
-    /* FAKEMATCH: ⚓️ loads the back offset before it builds the forward one */
+    /* FAKEMATCH(barrier): back through an empty asm, so its -0x80000 loads
+     * before the forward offset is built; without it, 10 of 93 instructions
+     * differ in tla-en. */
     asm("" : "+l"(back));
-    /* FAKEMATCH: and builds the forward offset only after that load */
+    /* FAKEMATCH(barrier): an empty asm that keeps the forward offset's add
+     * after that load; without it, 4 of 93 instructions differ in tla-en. */
     asm volatile("");
     if (Func_080dbd48(x + 0x80000, z + back, 2) == 0)
       reason = 4;

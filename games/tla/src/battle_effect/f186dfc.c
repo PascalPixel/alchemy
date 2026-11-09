@@ -192,8 +192,9 @@ void Heap_Release(void *buffer);
 #define HALF_HI(v) (((s16 *)&(v))[1])
 
 static inline s32 ClearWords(void *destination, s32 size) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_ClearWords, 4 of 2667 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the buffer clears through this inline; as direct
+   * calls to Iwram_ClearWords, 4 of 2667 instructions of
+   * BattleEffect_RunHaures differ in tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 static __inline__ void PLACE(s32 x, s32 y) {
@@ -833,11 +834,11 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         model->vertices = verts;
         model->shade = (s32)shades;
         {
-          /* FAKEMATCH(dead): if (scroll > 255) i = 0; as nothing, 2 of 2667
-           * instructions differ in tla-en. */
-          // A never-true test: combine folds it after CSE, so its label ends
-          // post-reload CSE's run (the fill pointer reloads its pool word,
-          // not r0's copy) and flow2 merges the blocks before sched2.
+          /* FAKEMATCH(dead): a never-true test of the byte scroll, which
+           * combine folds after CSE, so its label ends post-reload CSE's run
+           * (the fill pointer reloads its pool word, not r0's copy) and flow2
+           * merges the blocks before sched2; without it, 2 of 2667 instructions
+           * differ in tla-en. */
           s32 scroll = model->scrollU;
 
           if (scroll > 255) {

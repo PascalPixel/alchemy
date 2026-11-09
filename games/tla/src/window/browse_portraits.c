@@ -37,24 +37,23 @@ s32 Func_0804e3f4(void) {
   s32 slot;
   s32 cancel;
   u32 slotOffset;
+  s32 palette;
 
   work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   redraw = 1;
   portrait = Func_0803d3c0(0, 0, 10, 5);
   window = Window_Create(10, 10, 14, 3, 2);
   index = 0;
+  palette = 15;
   for (i = 0; gPortrait_CharacterMap[i * 2] != -1; i++) {
   }
   count = i;
   for (i = 0; gPortrait_SpriteMap[i * 2] != -1; i++) {
   }
   total = count + i;
-  /* FAKEMATCH(dead): a zero from the count in the cancel mask, as in The
-   * Broken Seal's twin; as cancel = 2, 30 of 180 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(dead): a zero from the count keeps the mask in r9 and work in
+   * fp; as cancel = 2, 30 of 180 instructions differ in tla-en. */
   cancel = ((u32)(u16)count >> 16) | 2;
-  /* FAKEMATCH(temporary): the slot's offset defined before the loop; as the
-   * offset written at its load, 10 of 180 instructions differ in tla-en. */
   slotOffset = offsetof(struct WindowWork, outputIds[1]);
   while (1) {
     if (gInput.repeat & 0x20) {
@@ -85,16 +84,8 @@ s32 Func_0804e3f4(void) {
         glyph = gPortrait_CharacterMap[index * 2 + 1];
       else
         glyph = gPortrait_SpriteMap[(index - count) * 2 + 1] + 128;
-      {
-        /* FAKEMATCH(temporary): a word temporary for the slot and the
-         * palette in a variable; as the slot assigned directly and 15
-         * passed, 8 of 180 instructions differ in tla-en. */
-        s32 pal;
-        s32 loaded = *(u16 *)((u8 *)work + slotOffset);
-        pal = 15;
-        slot = loaded;
-        UiGlyph_LoadEntryWithPalette(glyph, 0, &slot, &tile, pal, 1);
-      }
+      slot = *(u16 *)((u8 *)work + slotOffset);
+      UiGlyph_LoadEntryWithPalette(glyph, 0, &slot, &tile, palette, 1);
       Text_DrawNumberInWindow(index, 2, window, 0, 0);
       Text_DrawCharacterAtOffset(index + (s32)MsgTestName, window, 24, 0);
     }

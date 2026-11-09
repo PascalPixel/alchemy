@@ -15,12 +15,6 @@ extern s16 WAVE_SCROLL_LINES[];
 s32 Math_Sine(s32 angle);
 u32 Random16Far(void);
 
-static inline s32 WaveScroll_LowestLineOffset(void) {
-  /* FAKEMATCH: the bound returned by an inline is built inside the loop as the
-   * listing builds it; as a constant loop.c hoists -64 into r8 (differ 21) */
-  return -64;
-}
-
 void WAVE_SCROLL(void) {
   s16 *line = WAVE_SCROLL_LINES;
   s32 i;
@@ -38,7 +32,7 @@ void WAVE_SCROLL(void) {
     *line += Random16Far() % (range * 2) - range;
     if (*line > 56)
       *line -= 56;
-    else if (*line < WaveScroll_LowestLineOffset())
+    else if (*line < -64)
       *line += 64;
   }
   line = WAVE_SCROLL_LINES;
@@ -49,9 +43,6 @@ void WAVE_SCROLL(void) {
   dma[5] &= 0x7fff; // stop the channel
   source = line + 1;
   (void)dma[5];
-  /* FAKEMATCH: line, reused for the destination, keeps the source step before
-   * the last control read; plain, combine folds the step into Dma_Set's r0 copy
-   * after the read (differ 2), and an asm barrier on the source also matches */
-  line = (s16 *)scroll;
-  Dma_Set(source, line, DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)dma);
+  Dma_Set(source, (void *)scroll, DMA_HBLANK_HALFWORD_PER_LINE,
+          (volatile u32 *)dma);
 }

@@ -145,9 +145,9 @@ s32 Func_0810b9c0(s32 unitId) {
       details = Window_CreateFar(0, 9, DETAILS_WINDOW_WIDTH, 10, 2);
       ItemMenu_DrawItemDetailsFar(details, item);
       shop->detailsHidden = 0;
-      /* FAKEMATCH(barrier): an empty asm between `shop->detailsHidden = 0;` and
-       * `while (gInput.held & 4)`, which keeps their instructions apart; as
-       * plain statements, 4 of 321 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm after the detailsHidden store, so the
+       * input's address is reloaded from the stack after it; without it, 4
+       * of 321 instructions differ in tla-en. */
       asm("");
       while (gInput.held & 4)
         wait(1);

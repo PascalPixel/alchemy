@@ -94,8 +94,6 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
   secondSlot = BattleObject_Get(secondId);
 
   x1 = first->targetX;
-  /* FAKEMATCH: ⚓️ loads the first target before it builds the unset marker */
-  __asm__ volatile("" : "+l"(x1));
   second = secondSlot->object;
   if (x1 == (s32)0x80000000) {
     x1 = first->x;
@@ -162,8 +160,8 @@ s32 Func_0811c2b4(s32 slot, s32 *screen) {
   struct MotionObject *object = BattleObject_Get(slot)->object;
   struct SlotMotionRecord *record = GetMotionRecord(object, 0);
   s32 scale;
-  /* FAKEMATCH: an unused vector the size of the native stack frame. */
-  s32 unused[3];
+  // Unused: gives the stack frame its 12 bytes.
+  UNUSED s32 unused[3];
 
   Camera_ApplyTransformByFlag();
   scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), record->height);

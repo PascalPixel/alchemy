@@ -112,7 +112,7 @@ s32 Func_08109ad8(void) {
   }
   /* FAKEMATCH(barrier): an empty asm clobbering r8 at the loop exit, which
    * keeps listWindow (live here) out of r8 and leaves it to unitId (dead
-   * here); as no asm, 24 of 205 instructions differ in tla-en. */
+   * here); without it, 24 of 205 instructions differ in tla-en. */
   __asm__("" : : : "r8");
   Func_0810bea8(0);
   Menu_ReleaseEntryObjectsFar();

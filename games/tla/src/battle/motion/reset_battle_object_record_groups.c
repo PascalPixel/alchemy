@@ -88,16 +88,11 @@ void BattleMotion_DestroyAllSlotObjects(void) {
 /// Writes a battle object's anchor to out, at height 0.
 s32 Battle_GetWorkEntryPair(s32 no, struct FixedPointPosition *out) {
   struct BattleWork *state = Ram_HeapSlots->battleWork;
-  /* FAKEMATCH: the return value, pinned to r0, is set between the two stores
-   * and the last load, which a memory barrier holds back; as plain C, 2
-   * instructions differ in tla-en. */
-  register s32 result asm("r0");
+  s32 result;
 
   out->x = state->slots[no].anchorX;
   out->y = 0;
   result = 0;
-  /* FAKEMATCH: the barrier of the pin above. */
-  __asm__("" : "+l"(result) : : "memory");
   out->z = state->slots[no].anchorZ;
   return result;
 }

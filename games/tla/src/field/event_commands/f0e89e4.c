@@ -69,11 +69,16 @@ void Func_080e89e4(s32 direction) {
     }
   }
 
-  /* FAKEMATCH(barrier): three empty asms before the bounds are fetched, which
-   * lengthen viewX's and viewZ's lives so the allocator ranks them below the
-   * bounds; as no asm, 14 of 169 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm before the bounds are fetched, the first
+   * of three that lengthen viewX's and viewZ's lives so the allocator ranks
+   * them below the bounds; without it, 33 of 157 instructions differ in
+   * tla-ja. */
   __asm__("");
+  /* FAKEMATCH(barrier): the second; without it, 33 of 157 instructions differ
+   * in tla-ja. */
   __asm__("");
+  /* FAKEMATCH(barrier): the third; without it, 33 of 157 instructions differ
+   * in tla-ja. */
   __asm__("");
   Func_08020328(gMainRoutineWork.map, &bounds);
   minX = bounds.minX;

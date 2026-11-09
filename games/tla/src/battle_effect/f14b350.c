@@ -258,9 +258,8 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
                 view.depth = 314;
               if (view.depth > 634)
                 view.depth = 634;
-              /* FAKEMATCH(dead): the size by depth series A draws its sparks
-               * at, a store nothing reads, as in The Broken Seal; as no store,
-               * 448 of 744 instructions differ in tla-en. */
+              // DEAD: BattleEffect_RunHealingMotes' size by depth, copied with
+              // its code; the next line sets cel for real.
               cel = 3 - (view.depth - 314) / 128;
               cel = (i * 4 + frame) % 9;
               {

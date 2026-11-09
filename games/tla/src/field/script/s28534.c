@@ -104,10 +104,6 @@ s32 Func_08028534(struct Actor *object) {
   collision = 0;
   object->speedLimit = 0x14000;
   object->acceleration = 0x8000;
-  /* FAKEMATCH(barrier): the input and the heading table load after the
-   * acceleration store; as plain statements, 4 of 636 instructions differ in
-   * tla-en. */
-  asm("");
   angle = gData_0802ec5c[(gInput.held >> 4) & 15];
   direction = angle;
   if (direction == 0xffff) {
@@ -151,10 +147,6 @@ s32 Func_08028534(struct Actor *object) {
       angleOffsets[count++] = direction - 0x2000;
       angleOffsets[count++] = direction + 0x3000;
       angleOffsets[count++] = direction - 0x3000;
-      /* FAKEMATCH(barrier): the retry count is spilled before the first index
-       * is set; as plain statements, 8 of 636 instructions differ in tla-en.
-       */
-      asm("");
       for (angleIndex = 0; angleIndex < count; angleIndex++) {
         direction = angleOffsets[angleIndex];
         position.x = object->x;

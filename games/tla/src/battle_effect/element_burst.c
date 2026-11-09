@@ -120,9 +120,8 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
     break;
   }
   {
-    /* FAKEMATCH(temporary): called through a local pointer to its fixed entry,
-     * which the native loads before the palette address; as a plain
-     * Iwram_CopyWords call, 2 of 380 instructions differ in tla-en. */
+    // The entry held in a local loads before the palette's address; as a
+    // plain Iwram_CopyWords call, 2 of 380 instructions differ in tla-en.
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
     copy((void *)BG_PLTT, palette, 128);
@@ -169,9 +168,8 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
     // The corner sparks, each with its own flips.
     if (frame >= 0 && frame <= 14) {
       s32 picture = frame / 3 % 5;
-      /* FAKEMATCH(temporary): the mode set once before the loop, which the
-       * native keeps in r6; as BLIT_MAX in the call, 38 of 380 instructions
-       * differ in tla-en. */
+      // mode holds BLIT_MAX in r6 across the loop; as BLIT_MAX in the call,
+      // 38 of 380 instructions differ in tla-en.
       s32 mode;
 
       for (i = 0, mode = BLIT_MAX; i != 4; i++) {

@@ -276,7 +276,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       v[1] = y;
       c = (Trig_Cos(j << 13) * r) >> 16;
       j++;
-      // Once-only block: j's reload follows the multiply, as in the native.
+      // A once-only block keeps j's reload after the multiply.
       do {
         v[2] = c;
       } while (0);
@@ -606,8 +606,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       p = (struct EffectStep *)gMapCellBuffer;
       i = 0;
       half = (hx / 2) << 16;
-      /* FAKEMATCH(dead): hx's cancelling updates end the shard's halving here,
-       * so GCSE does not carry its sign on to the hoop's hx / 2; as the setup
+      /* FAKEMATCH(dead): updates of hx that cancel out end the shard's halving
+       * here, so GCSE does not carry its sign on to the hoop's hx / 2;
        * without them, 392 of 1556 instructions differ in tla-en. */
       hx++;
       hx--;
@@ -615,10 +615,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
         s32 r;
         s32 a;
 
-        /* FAKEMATCH(dead): count, the shard count, also used as the radius's
-         * base, with cancelling updates that keep GCSE from folding 256 into
-         * the radius add; as a literal 256 for both and no count, 8 of 1556
-         * instructions differ in tla-en. */
+        /* FAKEMATCH(dead): updates of count, the shard count and the radius's
+         * base, that cancel out and keep GCSE from folding 256 into the radius
+         * add; without them, 74 of 1556 instructions differ in tla-en. */
         count++;
         count--;
         r = (Random16() & 511) + count;

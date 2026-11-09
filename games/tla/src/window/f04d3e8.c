@@ -16,10 +16,6 @@ void Menu_CenterResourceEntries(s32 row, s32 width, s32 resourceBase) {
   menu->width = width;
   menu->resourceBase = resourceBase;
   menu->row = row;
-  /* FAKEMATCH(barrier): an empty asm tying width's register and the row
-   * field after the row store; as the plain stores, 2 of 75 instructions
-   * differ in tla-en. */
-  asm("" : "+r"(width), "+m"(menu->row));
   count = menu->count;
   x = 15 - (count * 3 + menu->width * 2 / 3) / 2;
   for (i = 0; i < menu->count; i++) {

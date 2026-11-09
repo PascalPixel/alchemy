@@ -384,9 +384,8 @@ struct SoundWork {
   u32 lock; ///< SOUND_LOCK when free; raised while the driver changes it.
   /// VBlanks until the DMA restart, which reloads it from
   /// transferPeriod; also picks which VBlank's part of the buffers is mixed.
-  /* FAKEMATCH: volatile steers library C only: without it
-   * m4aSoundVSyncOn: differ 9 in tbs-en, 22 instructions for 23.
-   */
+  // volatile, as pret's pcmDmaCounter is: m4aSoundVSyncOn clears it while the
+  // VBlank handler's SoundDriver_VSyncRefresh reads it, so it is no device.
   volatile u8 transferCountdown;
   u8 reverb;       ///< 0 to 127 (mode bits 6..0); 0 skips the reverb pass.
   u8 pcmNoteCount; ///< PCM notes in use, 8 at start (mode bits 11..8).

@@ -19,9 +19,9 @@ struct MapLayerFlags {
   u16 flags;
 };
 
-/* FAKEMATCH: read as a volatile halfword the flags stay the AND's second
- * operand, so the mask is built in the result register as in ⚓️; a plain
- * temporary swaps the two registers (differ 24). */
+/// The layer flags read through a volatile pointer, which keeps them the AND's
+/// second operand and builds the mask in the result register; as map->flags,
+/// 24 of 31 instructions of Map_ClearLayerFlags differ in tla-en.
 #define MAP_LAYER_FLAGS(map) (*(volatile u16 *)&(map)->flags)
 
 /// Clears the flag of each map layer whose argument is nonzero.
@@ -34,20 +34,14 @@ void Map_ClearLayerFlags(s32 layer0, s32 layer1, s32 layer2) {
     return;
   if (layer2) {
     flags = MAP_LAYER_FLAGS(map);
-    /* FAKEMATCH: ⚓️ reads the flags before it starts the mask; written as
-     * map->flags &= ~0x200 the mask's first half is scheduled ahead of the read
-     * (differ 2) */
-    asm volatile("");
     map->flags = flags & ~0x200;
   }
   if (layer1) {
     flags = MAP_LAYER_FLAGS(map);
-    asm volatile(""); /* FAKEMATCH: as above, for ~0x400 (differ 2) */
     map->flags = flags & ~0x400;
   }
   if (layer0) {
     flags = MAP_LAYER_FLAGS(map);
-    asm volatile(""); /* FAKEMATCH: as above, for ~0x800 (differ 2) */
     map->flags = flags & ~0x800;
   }
 }
@@ -134,20 +128,11 @@ void ScreenTransition_UpdateFromCentre(void) {
   }
 }
 
-/* FAKEMATCH: the one-pass block reads the display control before the mask is
-   built; written as REG_DISPCNT &= 0xFFF8 the mask's first half is scheduled
-   ahead of the read (one reordered row at each of the four uses, differ 8). */
-#define READ_DISPCNT(dispcnt)                                                  \
-  do {                                                                         \
-    dispcnt = REG_DISPCNT;                                                     \
-  } while (0)
-
 /// The VCount interrupt: switches the display to mode 2 at the window's first
 /// line and back to mode 0 at its second.
 void ScreenTransition_UpdateScanline(void) {
   u32 line;
   struct MapViewWork *state;
-  u16 dispcnt;
 
   line = REG_VCOUNT;
   state = (struct MapViewWork *)Ram_HeapSlots->mapWork;
@@ -156,28 +141,24 @@ again:
   switch (state->irqPhase) {
   case 3:
     if (line >= state->irqFirstLine) {
-      READ_DISPCNT(dispcnt);
-      REG_DISPCNT = (dispcnt & 0xFFF8) | 2;
+      REG_DISPCNT = (REG_DISPCNT & 0xFFF8) | 2;
       state->irqPhase = 9;
     }
     break;
   case 2:
     if (line >= state->irqSecondLine) {
-      READ_DISPCNT(dispcnt);
-      REG_DISPCNT = dispcnt & 0xFFF8;
+      REG_DISPCNT &= 0xFFF8;
       state->irqPhase = 9;
     }
     break;
   case 1:
     if (line >= state->irqFirstLine) {
-      READ_DISPCNT(dispcnt);
-      REG_DISPCNT = (dispcnt & 0xFFF8) | 2;
+      REG_DISPCNT = (REG_DISPCNT & 0xFFF8) | 2;
       state->irqPhase++;
       goto again;
     }
     if (line >= state->irqSecondLine) {
-      READ_DISPCNT(dispcnt);
-      REG_DISPCNT = dispcnt & 0xFFF8;
+      REG_DISPCNT &= 0xFFF8;
       state->irqPhase = 3;
       goto again;
     }

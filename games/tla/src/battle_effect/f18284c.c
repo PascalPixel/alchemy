@@ -11,17 +11,7 @@ void Func_0818284c(s32 arg) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
 
   BattleEffect_StartCanvasLayer(0);
-  {
-    /* FAKEMATCH: the blend word pinned to r3 as a halfword loads from the pool
-     * before the register address, as native; as a plain store, 2
-     * instructions differ in tla-en. */
-    register u16 blend __asm__("r3") = 0x3f44;
-
-    /* FAKEMATCH: the barrier of the pin above: it holds r2 until the value is
-     * loaded. */
-    __asm__("" : "+l"(blend) : : "r2");
-    REG_BLDCNT = blend;
-  }
+  REG_BLDCNT = 0x3f44;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   *(s32 *)(work + 0x77b4) = 24;
   *(s32 *)(work + 0x77b8) = 0;

@@ -13,20 +13,13 @@ void Func_0810be3c(void) {
 
 void Func_0810be70(s32 index, s32 x, s32 y) {
   struct IconWork *work = Ram_HeapSlots->menuRuntime;
-  /* FAKEMATCH: the offset as its own value adds the row and the field offset
-   * before the work pointer, as the native does (three reordered rows). */
-  s32 offset = index * sizeof(struct IconSprite) + 0xc18;
-  struct IconAttr *attr = (struct IconAttr *)((u8 *)work + offset);
 
-  attr->x = x;
-  attr->y = y;
+  work->sprites[index].attr.x = x;
+  work->sprites[index].attr.y = y;
 }
 
 void Func_0810bea8(s32 active) {
   struct IconWork *work = Ram_HeapSlots->menuRuntime;
 
-  /* FAKEMATCH: the native loads the menu work before it builds the field offset
-   * (one reordered row). */
-  __asm__ volatile("" : "+l"(work));
   work->active = active;
 }

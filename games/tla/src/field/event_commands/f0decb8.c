@@ -68,9 +68,8 @@ void Func_080decb8(void) {
     wait(2);
   }
 
-  /* FAKEMATCH(temporary): the task priority through a local set before the
-   * stores, which gives the flicker count r5 and the 2 r6; as a literal
-   * TASK_PASS_VBLANK in the call, 18 of 91 instructions differ in tla-en. */
+  // The task priority is set before the stores; as TASK_PASS_VBLANK in the
+  // call, 18 of 91 instructions differ in tla-en.
   order = TASK_PASS_VBLANK;
   sprite->blend = 2;
   entry->param = 0;

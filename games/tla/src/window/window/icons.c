@@ -77,30 +77,7 @@ void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
     overlay = 1;
   }
 
-  // Plainly, work->encoded = gItemIcons[glyph] differs in 2 of
-  // 83 instructions in tla-en: ⚓️ loads the table's address between the two
-  // instructions of encoded's split offset 0x604, where agscc finishes the
-  // shift first.
-  {
-    u32 offset = 192;
-    u8 **table = gItemIcons;
-    /* FAKEMATCH(pin): the field's address held in r1, as the native keeps it;
-     * as a plain local, 12 of 83 instructions differ in tla-en. */
-    register u8 **field asm("r1");
-
-    /* FAKEMATCH(barrier): an empty asm reading the table with the offset's
-     * first part, which loads the table before the shift; as no barrier, 11 of
-     * 83 instructions differ in tla-en. */
-    asm volatile("" : "+l"(offset) : "l"(table));
-    offset = (offset << 3) + 4;
-    field = (u8 **)((u8 *)work + offset);
-    /* FAKEMATCH(barrier): an empty asm on the field's address, which keeps the
-     * + 4 out of the store; as no barrier, 9 of 83 instructions differ in
-     * tla-en. */
-    asm volatile("" : "+l"(field));
-    // Indexed as an integer sum: table[glyph] reads [index, table] (differ 2).
-    *field = *(u8 **)((u32)table + (glyph << 2));
-  }
+  work->encoded = gItemIcons[glyph];
   work->width = 2;
   work->height = 2;
   UiGlyph_DecodeWithHeapRoutines(work, overlay);
@@ -276,30 +253,7 @@ void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
     overlay = 1;
   }
 
-  // Plainly, work->encoded = gPsynergyIcons[glyph] differs in 2
-  // of 83 instructions in tla-en, as in Icon_BuildItemIconTiles: ⚓️ loads
-  // the table's address between the two instructions of encoded's split
-  // offset 0x604, where agscc finishes the shift first.
-  {
-    u32 offset = 192;
-    u8 **table = gPsynergyIcons;
-    /* FAKEMATCH(pin): the field's address held in r1, as the native keeps it;
-     * as a plain local, 12 of 83 instructions differ in tla-en. */
-    register u8 **field asm("r1");
-
-    /* FAKEMATCH(barrier): an empty asm reading the table with the offset's
-     * first part, which loads the table before the shift; as no barrier, 11 of
-     * 83 instructions differ in tla-en. */
-    asm volatile("" : "+l"(offset) : "l"(table));
-    offset = (offset << 3) + 4;
-    field = (u8 **)((u8 *)work + offset);
-    /* FAKEMATCH(barrier): an empty asm on the field's address, which keeps the
-     * + 4 out of the store; as no barrier, 9 of 83 instructions differ in
-     * tla-en. */
-    asm volatile("" : "+l"(field));
-    // Indexed as an integer sum: table[glyph] reads [index, table] (differ 2).
-    *field = *(u8 **)((u32)table + (glyph << 2));
-  }
+  work->encoded = gPsynergyIcons[glyph];
   work->width = 2;
   work->height = 2;
   UiGlyph_DecodeWithHeapRoutines(work, overlay);
@@ -365,7 +319,8 @@ void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined) {
   {
     u32 size;
 
-    /* FAKEMATCH: retain the size load after saving both arguments. */
+    // The size's load in a once-only block keeps it after both arguments are
+    // saved; as a plain assignment, 4 of 82 instructions differ in tla-en.
     do {
       size = (u32)Tile_Decompress4bppCodeSize;
     } while (0);

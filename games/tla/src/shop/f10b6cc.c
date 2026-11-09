@@ -39,8 +39,8 @@ s32 Func_0810b6cc(s32 unitId, s32 slot) {
   u32 raw = unit->inventory[slot];
   s32 item;
   s32 chance;
-  /* FAKEMATCH(pin): the result in r8, as the native keeps it; as a plain
-   * local, 16 of 78 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): result held in r8; as a plain local, 16 of 78
+   * instructions differ in tla-en. */
   register s32 result asm("r8");
 
   item = 0x1ff;

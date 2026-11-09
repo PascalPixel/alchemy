@@ -139,8 +139,8 @@ s32 Func_0803a8fc(s32 code, u32 *out) {
       Iwram_ExpandBitRuns(glyph, dst + 50, shadowColour);
       Iwram_ExpandBitRuns(glyph, dst + 32, colour);
       Iwram_ExpandBitRuns(glyph, dst + 33, colour);
-      /* FAKEMATCH: the signed halfword width grows through its shifted form;
-       * as (s16)(secondWidth + 1), 26 of 203 instructions differ in tla-en. */
+      // The signed halfword width grows through its shifted form; as
+      // (s16)(secondWidth + 1), 26 of 203 instructions differ in tla-en.
       secondWidth = (s32)(((u32)secondWidth << 16) + 0x10000) >> 16;
     } else {
       u8 *dst = pixels + width;
@@ -169,10 +169,6 @@ s32 Func_0803a8fc(s32 code, u32 *out) {
         } while (pixelsLeft >= 0);
         line++;
         pixel += 24;
-        /* FAKEMATCH(barrier): the empty asm reading line and pixel puts
-         * pixel += 24 between the stmia and the copy of out; as no asm, 2 of
-         * 203 instructions differ in tla-en. */
-        __asm__("" : "+r"(pixel) : "r"(line));
         *out++ = tileLine;
       } while (line <= 7);
       tileRow++;
@@ -246,20 +242,9 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
   c = 0;
   start = x;
   if (text == NULL) {
-    /* FAKEMATCH(temporary): the entries' address named before the entry's
-     * store, so its offset is live while the count's address is built and
-     * that takes r3; as text = work->entries after the store, 8 of 126
-     * instructions differ in tla-en. */
-    u16 *entries = work->entries;
-
+    text = work->entries;
     work->entries[work->count] = c;
-    text = entries;
-    /* FAKEMATCH(one-pass): the count update in a one-pass block, which keeps
-     * the count's reread after text = entries; as a plain statement, 2 of 126
-     * instructions differ in tla-en. */
-    do {
-      work->count = (work->count + 1) & (UI_TEXT_ENTRY_COUNT - 1);
-    } while (0);
+    work->count = (work->count + 1) & (UI_TEXT_ENTRY_COUNT - 1);
   }
   for (;;) {
     c = *text++;
@@ -368,20 +353,7 @@ void Text_DrawGlyphTileAtWorkOffset(u16 *buffer,
   if (buffer == NULL) {
     buffer = canvas->entries;
     canvas->entries[canvas->count] = 0;
-    {
-      // ⚓️ loads the mask 0x1ff from the pool before it rereads the count.
-      /* FAKEMATCH(pin): the mask pinned to the r2 it takes, so it loads from
-       * the pool; as a plain u16 local, 14 of 50 instructions differ in
-       * tla-en. */
-      register u16 mask asm("r2") = UI_TEXT_ENTRY_COUNT - 1;
-
-      /* FAKEMATCH(one-pass): the count update in a one-pass block, which
-       * keeps the reread after the mask's load; as a plain statement, 2 of 50
-       * instructions differ in tla-en. */
-      do {
-        canvas->count = (canvas->count + 1) & mask;
-      } while (0);
-    }
+    canvas->count = (canvas->count + 1) & (UI_TEXT_ENTRY_COUNT - 1);
   }
 
   cell = (((s16)work->y + offsetY + 1) << 5) + ((s16)work->x + offsetX) + 1;
@@ -411,20 +383,7 @@ void Text_RenderWideStringInWindow(s16 *text, struct Window *window, s32 x,
   if (text == NULL) {
     text = work->entries;
     work->entries[work->count] = 0;
-    {
-      /* FAKEMATCH(pin): the mask pinned to the r2 it takes, so it loads from
-       * the pool before the count is reread; as a plain constant, 2 of 97
-       * instructions differ in tla-en. */
-      register u16 mask asm("r2") = UI_TEXT_ENTRY_COUNT - 1;
-
-      /* FAKEMATCH(one-pass): the count update in a one-pass block, which keeps
-       * the reread after the mask's load without the pool estimate an empty
-       * asm adds; as a plain statement, 2 of 97 instructions differ in tla-en.
-       */
-      do {
-        work->count = (work->count + 1) & mask;
-      } while (0);
-    }
+    work->count = (work->count + 1) & (UI_TEXT_ENTRY_COUNT - 1);
   }
   c = *text++;
   if (c != 0)

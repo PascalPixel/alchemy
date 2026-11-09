@@ -31,26 +31,17 @@ s32 Func_080c8828(s32 arg);
 /// flag 0x146 is clear.
 s32 Func_08029838(s32 arg) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  /* FAKEMATCH: the flag lives in r0, where the native also returns the early
-   * zero; as a free local it takes r6 and the argument r0 (differ 14). */
+  /* FAKEMATCH(pin): pressed held in r0, the register the early zero is
+   * returned in, so the argument moves to r6; as a plain local, which takes r6
+   * itself, 14 of 61 instructions differ in tla-en. */
   register s32 pressed asm("r0") = 0;
 
   if (work == NULL)
     return 0;
-  {
-    struct MainRoutineWork *party = &gMainRoutineWork;
-    /* FAKEMATCH: the pressed keys are read again for each of the three tests;
-     * through a plain pointer one read serves all three (differ 38). */
-    volatile struct InputState *input = (volatile struct InputState *)&gInput;
-
-    /* FAKEMATCH: the native loads both addresses before it builds the first
-     * key offset; without the barrier the input's load comes after (differ
-     * 2). */
-    asm volatile("" : "+l"(party), "+l"(input));
-    if ((input->pressed & party->keys234) ||
-        (input->pressed & party->keys230) || (input->pressed & party->keys236))
-      pressed = 1;
-  }
+  if ((gInput.pressed & gMainRoutineWork.keys234) ||
+      (gInput.pressed & gMainRoutineWork.keys230) ||
+      (gInput.pressed & gMainRoutineWork.keys236))
+    pressed = 1;
   if (pressed) {
     if (Func_080c8828(arg)) {
       Sound_PlayFar(113);

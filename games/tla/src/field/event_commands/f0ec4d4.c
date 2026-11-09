@@ -367,7 +367,8 @@ void Func_080ec4d4(void) {
         Text_DrawMessageFar(nearestName, work->window, cursorX, cursorY);
         {
           /* FAKEMATCH(temporary): one local carries width, then height, into
-             the name box; as plain stores, 20 of 1044 instructions differ in
+             the name box, which keeps the box's address in r3 for all four
+             stores; as plain stores, 20 of 1044 instructions differ in
              tla-en. */
           s32 value = width;
           NAME_BOX_WIDTH = value;
@@ -399,7 +400,7 @@ void Func_080ec4d4(void) {
     width = cursorX - NAME_BOX_X;
     /* FAKEMATCH(temporary): the name box's y read through a pointer to a
        struct with an s32 member standing in for its own address, so its
-       load may alias the width just stored and stays after it; as
+       load may alias width's store to the stack and stays after it; as
        NAME_BOX_Y, 10 of 1044 instructions differ in tla-en. */
     height = cursorY - ((struct WorldMapAliasedHalfword *)&NAME_BOX_Y)->value;
     Func_080ec484(work->window, width, height);

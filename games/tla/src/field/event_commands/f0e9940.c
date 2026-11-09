@@ -79,9 +79,9 @@ void Func_080e9940(void) {
   // Cycle the glow's colours; the last takes the 15th's level.
   palette = OBJ_PALETTE_14;
   for (i = 0; i < 16; i++) {
-    /* FAKEMATCH(one-pass): a once-only block from `*palette++ =`, which ends
-     * the scheduler's region there; as plain statements, 2 of 194 instructions
-     * differ in tla-en. */
+    // The colour's store in a once-only block, which ends the scheduler's
+    // region there; as the plain store, 2 of 194 instructions differ in
+    // tla-en.
     do {
       *palette++ = Func_080e989c((((s16)work->phase >> 2) + i / 2) % 24,
                                  i == 15 ? 14 : i);

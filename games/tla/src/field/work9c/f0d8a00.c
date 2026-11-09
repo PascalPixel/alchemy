@@ -49,9 +49,6 @@ void Func_080140d8(void *entry, s32 slot);
 /// pair and given the slot's priority, culled to the screen and sorted into the
 /// OAM buckets by depth; the chain's first node takes the last angle.
 void Func_080d8a00(void) {
-  /* FAKEMATCH(temporary): prevY reused for the midpoint's height and then the
-     depth key; as a height of its own, 137 of 246 instructions differ in
-     tla-en. */
   struct ChainWork *work = Ram_HeapSlots->unk84[6];
   struct ChainSlot *slot = work->slots;
   s32 i;
@@ -86,6 +83,8 @@ void Func_080d8a00(void) {
         angle = ((u16)ArcTan2(prevX - x, (z - prevZ) + (prevY - y)) + 0x4000) &
                 0xffff;
         screenX = (prevX + x) / 2 - viewX;
+        // prevY is reused for the midpoint's height, then its depth key; a
+        // local of its own differs.
         prevY = (prevY + y) / 2 - originY;
         depth = (prevZ + z) / 2 - viewZ - originY;
         screenY = depth - prevY;

@@ -13,8 +13,9 @@ s32 Window_IsClosedFar(s32 window);
 void Message_CloseFinishedWindowsFar(void);
 void Func_080d4330(s32 key);
 
-/* FAKEMATCH: each test reads the held keys again, as a volatile read; plain
- * reads are combined into one test of 0x305 (differ 52). */
+/// The held keys, read again at each test through a volatile pointer; as
+/// plain reads, combined into one test of 0x305, 62 of 82 instructions of
+/// Func_080d3fb0 differ in tla-en.
 #define HELD (*(volatile u32 *)&gInput.held)
 
 /// Opens the message at the object and waits for its window; after ten

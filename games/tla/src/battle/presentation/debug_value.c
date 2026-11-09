@@ -48,8 +48,8 @@ s32 Func_081269f8(s32 value) {
   }
   if (gInput.held & 4)
     value = DEBUG_VALUE_SELECT;
-  /* FAKEMATCH(volatile): the held buttons read again for the R test; as
-   * gInput.held, 11 of 114 instructions differ in tla-en. */
+  // The held keys reread through a volatile pointer, a load apart from the
+  // Select test's; as gInput.held, 11 of 114 instructions differ in tla-en.
   if (*(volatile u32 *)&gInput.held & 0x100)
     value = 399;
   return value;

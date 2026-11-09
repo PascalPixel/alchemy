@@ -22,9 +22,6 @@ u8 Serial_CollectReceivedPayloads(void *payload) {
   *(u32 *)gSerialWork.channelFlags = 0;
   Io_Write16(1, &REG_IME);
   gSerialWork.currentMask = 0;
-  /* FAKEMATCH(barrier): an empty asm holds the currentMask store ahead of the
-   * loop setup; as plain statements, 2 of 106 instructions differ in tla-en. */
-  asm volatile("");
   for (i = 0; i <= 1; i++) {
     packet = gSerialWork.pendingBuffer[i];
     sum = 0;

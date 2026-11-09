@@ -31,21 +31,17 @@ static const struct SoundTestCues sSoundTestCues = {{0, 80, 100}};
 /// the commands 0, 78 and 390.
 // As ☀️'s SoundTest_Run (games/tbs/src/sound/sound.c).
 void Func_081c1014(void) {
-  /* FAKEMATCH(temporary): the cues' address loaded before sp is copied for
-   * the array, through an empty asm on it (barrier); as s32 cues[3] = {0,
-   * 80, 100}, 2 of 145 instructions differ in tla-en. */
-  const struct SoundTestCues *initial = &sSoundTestCues;
   struct SoundTestCues cues;
   s32 preset;
   s32 row;
   s32 timer;
 
-  __asm__ __volatile__("" : "+r"(initial));
-  cues = *initial;
+  cues = sSoundTestCues;
   row = 0;
   preset = 3;
-  /* FAKEMATCH(one-pass): keeps the store's address load after the preset;
-   * as a plain store, 10 of 145 instructions differ in tla-en. */
+  // The store in a once-only block, after preset's setup and before the
+  // VBlank state's; as the plain store, 10 of 145 instructions differ in
+  // tla-en.
   do {
     gIwramHi_Data1 = 0;
   } while (0);
@@ -57,11 +53,7 @@ void Func_081c1014(void) {
       timer--;
 
     if (Data_03000ee4 != 0) {
-      /* FAKEMATCH(one-pass): keeps the flag's clear before the timer's
-       * store; as a plain store, 2 of 145 instructions differ in tla-en. */
-      do {
-        Data_03000ee4 = 0;
-      } while (0);
+      Data_03000ee4 = 0;
       timer = 2;
     }
 

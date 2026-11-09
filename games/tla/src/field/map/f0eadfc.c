@@ -65,7 +65,7 @@ void Func_080eadfc(void) {
     shapes = &grid[index];
     key = Func_080202f0(target->terrainId, target->x, target->z);
     /* FAKEMATCH(wrapper): x read through ActorX for the height call; as
-     * target->x, 14 of 84 instructions differ in tla-en. */
+     * target->x, 12 of 84 instructions differ in tla-en. */
     level =
         Map_GetTerrainHeightFar(target->terrainId, ActorX(target), target->z);
     slot = Func_080eab70(target);

@@ -69,12 +69,8 @@ void Func_08044348(struct Window *window, const void *resource) {
       s16 tile = *source;
 
       col++;
-      /* FAKEMATCH(one-pass): the two stores in a block run once; as the two
-       * stores alone, 2 of 66 instructions differ in tla-en. */
-      do {
-        *vram = tile;
-        *map = tile;
-      } while (0);
+      *vram = tile;
+      *map = tile;
       source++;
       vram++;
       map++;
@@ -158,15 +154,8 @@ s32 Text_SetString(const u8 *str) {
     do {
       *dst = *str;
       str++;
-      /* FAKEMATCH: the ARM9TDMI load schedule moves the count step after the
-       * next character's load and the entry step; native counts right after the
-       * store. */
-      __asm__ volatile("");
-      count++;
-      /* FAKEMATCH: this boundary keeps the next character's load ahead of the
-       * entry step, as native. */
-      __asm__ volatile("");
       dst++;
+      count++;
     } while (*str != 0);
   }
   work->entries[count] = 0;

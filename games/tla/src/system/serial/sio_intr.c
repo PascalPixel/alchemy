@@ -32,10 +32,6 @@ void Serial_HandleTransferInterrupt(void) {
     u8 transferError = (*sioControl << 25) >> 31;
 
     index = sendState->sendIndex;
-    /* FAKEMATCH(barrier): an empty asm after the send index's read, so it
-     * loads before the transferError store; as plain statements, 2 of 121
-     * instructions differ in tla-en. */
-    asm volatile("");
     sendState->transferError = transferError;
     if (index == -1) {
       u32 idleWord = 0xfefe;
@@ -86,17 +82,8 @@ receive_loop:
     goto receive_loop;
 
   if (tailState->mode == 8) {
-    volatile u16 *sio = &REG_SIOCNT16;
-    /* FAKEMATCH(pin): the 0x80 a halfword pinned to r2 behind a barrier, so
-     * SIOCNT's address loads before the timer store and the 0x80 before
-     * SIOCNT is read; as REG_SIOCNT16 |= 0x80 after an empty asm, 2 of 121
-     * instructions differ in tla-en. */
-    register u16 start asm("r2");
-
     REG_TM3CNT_H = 0;
-    start = 0x80;
-    asm volatile("" : "+r"(start));
-    *sio |= start;
+    REG_SIOCNT16 |= 0x80;
     REG_TM3CNT_H = TIMER_INTR_ENABLE | TIMER_ENABLE;
   }
 }

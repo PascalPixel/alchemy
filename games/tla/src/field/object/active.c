@@ -19,9 +19,8 @@ void Func_080d3b28(u32 id, s32 resource) {
   struct Actor *object = Actor_GetById(id);
   struct FieldSprite *sprite;
   u8 *buffer;
-  /* FAKEMATCH(temporary): the zero set between the allocation and its 0x400
-   * offset, which builds it in r3 and the offset in r2 as the native does; as
-   * plain zeros, 14 of 86 instructions differ in tla-en. */
+  // One zero for the fill and the stores, set between the allocation and its
+  // 0x400 offset; a literal 0 at each use differs.
   s32 zero;
   s32 tile;
   u8 kind;

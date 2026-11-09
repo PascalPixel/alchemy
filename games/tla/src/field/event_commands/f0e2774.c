@@ -70,8 +70,9 @@ void Func_080e2774(s32 x, s32 z, s16 layerIndex, s16 width, s16 height, s32 toX,
   lift = -(owner->terrainHeight >> 20);
 
   /* FAKEMATCH(signature): gData_02001000 typed as 1491 TouchCells before the
-   * copies, which it does not hold; as u8 unk0000[0x174c], 2 of 169
-   * instructions differ in tla-en. */
+   * copies, which it does not hold, so the cell's z is read after the last
+   * copy's address is built; as u8 unk0000[0x174c], 2 of 169 instructions
+   * differ in tla-en. */
   for (i = 0; cell[i].x != -1; i++) {
     s32 cz, cx, cellX, cellZ;
 

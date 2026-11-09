@@ -35,9 +35,10 @@ void BattleStaging_ProcessPendingTileTransfer(void) {
     switch (work->transferMode) {
     case 1: // Send it, then fill it with transferValue.
       Dma_Set(buf, (void *)0x06003500, DMA_COPY_WORDS(0x8000 / 4), REG_DMA3);
-      /* FAKEMATCH: the fill goes through the inline wrapper
-       * BattleStaging_FillWords, as ☀️'s IWRAM call layer; called directly, 4
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(wrapper): the fill called through the inline
+       * BattleStaging_FillWords, which loads the routine's address before the
+       * size; as Iwram_FillWords called directly, 4 of 79 instructions differ
+       * in tla-en. */
       BattleStaging_FillWords(buf, 0x8000, work->transferValue);
       break;
     case 2: // Afterimage: nonzero colour numbers drop to 1/2 or 3/4.

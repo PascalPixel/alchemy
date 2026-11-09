@@ -97,10 +97,10 @@ void Func_0802386c(void) {
   viewZ = view[1] & 0xffff0000;
   system = Ram_HeapSlots->objectSystem;
   originY = map->origin[1];
-  /* FAKEMATCH(one-pass): the decoder's copy in a once-only block, which keeps
-   * the first call's arguments after the followed point's height, as in
-   * ObjectSystem_UpdateCameraFixed; as a plain call, 16 of 606 instructions
-   * differ in tla-en. */
+  // The decoder's copy in a once-only block, as in
+  // ObjectSystem_UpdateCameraFixed, keeps the first call's arguments after the
+  // followed point's height; as a plain call, 6 of 606 instructions differ in
+  // tla-en.
   do {
     Dma_Set(Render_DecodePictureCode,
             HeapSlot_Alloc(80, (s32)Render_DecodePictureBlockSize),
@@ -150,10 +150,10 @@ void Func_0802386c(void) {
           leftPriority = 0;
           middlePriority = 0;
           if (!(*priorityFlags & 32)) {
-            /* FAKEMATCH(temporary): the base priority's address in a
-             * function-scope pointer, whose earlier pseudo takes the stack
-             * slot above the animation kind's address; as priority =
-             * BASE_PRIORITY(map), 22 of 606 instructions differ in tla-en. */
+            /* FAKEMATCH(temporary): the base priority read through a
+             * function-scope pointer, which gives the two spills at sp+12 and
+             * sp+16 their order; as priority = BASE_PRIORITY(map), 8 of 606
+             * instructions differ in tla-en. */
             basePriority = &BASE_PRIORITY(map);
             priority = *basePriority;
             if (Func_0802d45c(layer, probeX, feetZ) == object->terrainHeight) {

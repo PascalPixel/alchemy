@@ -47,9 +47,9 @@ struct TileEffectWork *Func_080da9a8(s32 kind) {
     Resource_DecodeType01(Data_080f0cb8, pictures + 2 * PICTURE_SIZE);
     Resource_DecodeType01(Data_080f0d07, pictures + 3 * PICTURE_SIZE);
     VramCache_Load(work->vramEntry, size, pictures);
-    /* FAKEMATCH(barrier): the empty asm closes the branch, so each decode
-     * sets its destination before loading its source; as plain statements, 4
-     * of 95 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm closing the arm keeps each decode's
+     * destination set before its source loads; without it, 4 of 95
+     * instructions differ in tla-en. */
     asm("");
   } else {
     Resource_DecodeType01(Data_080f0d5e, pictures);
@@ -57,9 +57,9 @@ struct TileEffectWork *Func_080da9a8(s32 kind) {
     Resource_DecodeType01(Data_080f0dbb, pictures + 2 * PICTURE_SIZE);
     Resource_DecodeType01(Data_080f0e00, pictures + 3 * PICTURE_SIZE);
     VramCache_Load(work->vramEntry, size, pictures);
-    /* FAKEMATCH(barrier): the empty asm closes the branch, so each decode
-     * sets its destination before loading its source; as plain statements, 4
-     * of 95 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm closing the arm keeps each decode's
+     * destination set before its source loads; without it, 4 of 95
+     * instructions differ in tla-en. */
     asm("");
   }
   {

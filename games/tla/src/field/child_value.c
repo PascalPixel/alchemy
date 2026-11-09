@@ -24,8 +24,6 @@ s32 Func_08022b80(struct ChildGroup *group, s32 value) {
 
     if (child != NULL && child->active != 0) {
       child->value = value << 4;
-      /* FAKEMATCH: ⚓️ stores the value before it reloads the count */
-      asm volatile("");
     }
   }
   return 0;

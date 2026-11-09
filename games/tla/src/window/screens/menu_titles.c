@@ -3,6 +3,7 @@
 // Part of screens.c.
 
 #include "../screens_internal.h"
+#include "system/io_write.h"
 
 #define Resource_DecodeByteLzInRam                                             \
   ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
@@ -56,10 +57,6 @@ void Func_08045018(struct BobPairObject *object) {
 
   value = object->baseY + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
   object->y = value;
-  /* FAKEMATCH: tying the object to an empty asm loads the next object before
-   * the second count is shifted, as native; plainly, 2 instructions differ in
-   * tla-en. */
-  asm("" : "+r"(object));
   object = object->next;
   value = object->baseY + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
   object->y = value;
@@ -427,8 +424,6 @@ void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
   u8 *dst;
   s32 i;
   u32 index;
-  u32 vram;
-  s32 offset;
 
   decoded = (GlyphTransfer *)HeapSlot_Alloc(68, sizeof(*decoded));
   font = Resource_GetTableEntry((u32)&ResourceId_CommandIcons);
@@ -448,19 +443,8 @@ void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
     }
     *dst++ = palette->slot[index];
   }
-  // The native copies the tile index down, loads the VRAM base and only then
-  // shifts the index; plain C shifts before the load (differ 2). Three barriers
-  // keep that order: one barrier on the base alone swaps r1 and r2 (differ 6),
-  // and the offset as its own barrier-held value puts them back.
-  /* FAKEMATCH: keeps the index copy first (differ 2 without) */
-  __asm__("" : : "l"(tile));
-  vram = 0x06004000;
-  /* FAKEMATCH: keeps the base load before the shift (differ 2 without) */
-  __asm__("" : : "r"(vram));
-  offset = tile * 64;
-  /* FAKEMATCH: keeps the offset in r1 and the base in r2 (differ 6 without) */
-  __asm__("" : : "r"(offset));
-  Dma_Set(remapped, (void *)(offset + vram), DMA_COPY_WORDS(256), REG_DMA3);
+  Dma_Set(remapped, BG_CHAR_BLOCK(1) + tile * 64, DMA_COPY_WORDS(256),
+          REG_DMA3);
   Heap_Release(remapped);
   HeapSlot_Release(68);
 }
@@ -481,12 +465,12 @@ void Func_080456f8(u8 *base, s32 index, u32 value) {
   Text_LoadRemappedGlyph((struct GlyphPalette *)base, value, index * 16);
   store_offset = offset + 0x11C;
   *(u32 *)(base + store_offset) = value;
-  /* FAKEMATCH(one-pass): the constant stored in a once-only block, after
-   * the value; as a plain store, 4 of 47 instructions differ in tla-en. */
+  // The sprite's shape and its cleared attributes 2 and 3 in a once-only
+  // block; as plain stores, 4 of 47 instructions differ in tla-en.
   do {
     *(u32 *)(entry + 4) = 0x80002000;
+    *(u32 *)(entry + 8) = 0;
   } while (0);
-  *(u32 *)(entry + 8) = 0;
   load_offset = offset + 0x110;
   ((CharacterCell *)(entry + 8))->code =
       Resource_LoadIndexedIntoBuffer(*(u16 *)(base + load_offset), value);
@@ -512,16 +496,8 @@ void Func_08045780(void) {
 }
 
 void Func_08045794(void) {
-  /* FAKEMATCH: a named zero is built with movs; as a literal the halfword store
-   * loads it from the pool (differ 13). */
-  u32 zero = 0;
-
-  REG_BG0VOFS = zero;
-  /* FAKEMATCH: a one-pass block loads the handler before the interrupt number
-   * is built; called straight the two rows trade places (differ 2). */
-  do {
-    Irq_SetHandler(2, 136, Func_08045780);
-  } while (0);
+  Io_Write16(0, &REG_BG0VOFS);
+  Irq_SetHandler(2, 136, Func_08045780);
 }
 
 #undef Resource_DecodeByteLzInRam

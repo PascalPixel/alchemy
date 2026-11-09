@@ -44,14 +44,13 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work,
   // their ROM loads the end tile from the literal pool 90 bytes away, which no
   // other constant in the game's C does; a C form that pools exactly that word
   // would settle it (recon/tla/en/main/08042274.c lists the forms tried).
-  // A once-only block: its end keeps the loop's set-up after this store.
-  do {
+  {
     // Held in a u16 local, the end tile is loaded; stored directly, it is
     // built.
     u16 second = WINDOW_TILE_HP_LABEL_END;
 
     output[1] = second;
-  } while (0);
+  }
 #endif
   for (index = 0; index <= 4; index++) {
     output[index + 2] = text[index];

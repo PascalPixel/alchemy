@@ -64,9 +64,8 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
 
   if (event->unkcb6 == 0) {
     work = HeapSlot_Alloc(HEAP_SLOT_FX, sizeof(*work));
-    /* FAKEMATCH(one-pass): an empty once-only block, so the work's copy is
-     * made at once after the allocation; as plain statements, 4 of 239
-     * instructions differ in tla-en. */
+    // An empty once-only loop keeps the work's copy at once after the
+    // allocation; without it, 4 of 239 instructions differ in tla-en.
     do {
     } while (0);
     Iwram_FillWords(work, sizeof(*work), 0);

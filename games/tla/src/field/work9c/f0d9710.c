@@ -17,28 +17,15 @@ void Func_080d9710(s32 index, s32 fromId, s32 toId) {
   struct ChainWork *work;
   struct Actor *from;
   struct Actor *to;
-  s32 slot;
 
-  /* FAKEMATCH(one-pass): the work's load, the index's copy and the first call
-   * in a block that runs once, so the third argument's spill stays ahead of
-   * 0x0300009c; as plain statements, 2 of 57 instructions differ in tla-en. */
-  do {
-    work = Ram_HeapSlots->unk84[6];
-    /* FAKEMATCH(temporary): the index copied to slot inside the block, so its
-     * move to r10 follows the constant; as index throughout, 2 of 57
-     * instructions differ in tla-en. */
-    slot = index;
-    /* FAKEMATCH(dead): a dead store to index, so GCSE keeps slot; as no
-     * store, 2 of 57 instructions differ in tla-en. */
-    index = 0;
-    from = ObjectTable_Get(fromId);
-  } while (0);
+  work = Ram_HeapSlots->unk84[6];
+  from = ObjectTable_Get(fromId);
   to = ObjectTable_Get(toId);
 
   if (from != NULL && to != NULL) {
     work->from = from;
     work->to = to;
-    Func_080d9790(slot, from->x, from->y + 0x80000, from->z, to->x,
+    Func_080d9790(index, from->x, from->y + 0x80000, from->z, to->x,
                   to->y + 0x80000, to->z, Trig_Sin(gData_080f3940) * 4);
     gData_080f3940 += 0x1000;
   }

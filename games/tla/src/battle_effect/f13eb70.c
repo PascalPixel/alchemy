@@ -81,19 +81,22 @@ void wait(s32 frames);
 
 static inline s32 ClearWords(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_ClearWords, 14 of 1102 instructions differ in tla-en. */
+   * Iwram_ClearWords, 14 of 1102 instructions of Func_0813eb70 differ in
+   * tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 
 static inline s32 FillWords(void *destination, s32 size, u32 value) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_FillWords, 4 of 1102 instructions differ in tla-en. */
+   * Iwram_FillWords, 4 of 1102 instructions of Func_0813eb70 differ in
+   * tla-en. */
   return Iwram_FillWords(destination, size, value);
 }
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 47 of 1102 instructions differ in tla-en. */
+   * Iwram_CopyWords, 47 of 1102 instructions of Func_0813eb70 differ in
+   * tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 
@@ -108,8 +111,6 @@ static inline s32 CopyWords(void *destination, const void *source, s32 size) {
 // frames. At the end the background and the display are put back.
 
 void Func_0813eb70(struct BattleEffectArgument *effect) {
-  /* FAKEMATCH(volatile): the map writes through a volatile cast, as the ROM
-   * orders them; as a plain cast, 295 of 1102 instructions differ in tla-en. */
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -168,6 +169,9 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
       s16 entry;
 
       entry = ((k * 16 + j * 2 + 1) << 8) | ((k * 8 + j) * 2);
+      // The map written through a volatile pointer, which keeps the ROM's
+      // order of stores; as a plain pointer, 295 of 1102 instructions differ
+      // in tla-en.
       *(volatile s16 *)(0x06003800 + i) = entry;
     }
   }

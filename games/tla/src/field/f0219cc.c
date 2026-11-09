@@ -34,18 +34,8 @@ void Func_080219cc(struct ScriptPlayer *player) {
     if (channel == 0 || channel->script == 0)
       continue;
     for (;;) {
-      u32 position = channel->position;
-      u8 *script;
-
-      channel->position = position + 1;
-      script = channel->script;
-      /* FAKEMATCH(barrier): a volatile empty asm on the old position, after
-       * the advanced one is stored and the script read, so the narrowing to
-       * a byte follows the store; as channel->script[channel->position++],
-       * 2 of 56 instructions differ in tla-en. */
-      asm volatile("" : "+r"(position));
-      command = script[(u8)position];
-      argument = script[channel->position++];
+      command = channel->script[channel->position++];
+      argument = channel->script[channel->position++];
       switch (command) {
       case 0xf0:
         channel->unk04 = argument;

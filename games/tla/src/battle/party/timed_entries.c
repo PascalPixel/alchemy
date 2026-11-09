@@ -54,9 +54,9 @@ s32 sub_08124af8(s32 id) {
         {
           u32 opcode = 1;
 
-          /* FAKEMATCH: the barrier builds the opcode before the gain is copied
-           * to its argument register, as the native does; plain, the copy comes
-           * first (one reordered pair, differ 2). */
+          /* FAKEMATCH(barrier): an empty asm on opcode, so its 1 is set
+           * before gain is copied to r1; as BattleEvent_Push(1, gain), 2 of 74
+           * instructions differ in tla-en. */
           asm volatile("" : "+l"(opcode));
           BattleEvent_Push(opcode, gain);
         }

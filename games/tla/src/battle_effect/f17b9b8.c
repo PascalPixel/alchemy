@@ -66,9 +66,7 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
   struct EffectPosition caster;
   struct EffectPosition target;
   s32 frame;
-  /* FAKEMATCH(dead): the blitter as a pair of which only the first is used,
-   * its spill slot taking the frame's sp+16 and unused sp+20; as one blitter,
-   * 54 of 436 instructions differ in tla-en. */
+  // Unused: draw[1] gives the stack frame its 4 bytes.
   DrawRectangle draw[2];
   struct MotionObject *targetObject;
   struct MotionObject *casterObject;
@@ -118,9 +116,7 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
 
     // The smoke rises through its six 24x48 cels, slowing; the caster
     // starts 160 percent of the way out to the target.
-    /* FAKEMATCH(dead): an always-true test keeping the smoke loop and the
-     * caster's placing in one block; as no test, 27 of 436 instructions differ
-     * in tla-en. */
+    // DEAD: always true, as frame counts up from 0; the ROM keeps the test.
     if (frame >= 0) {
       struct EffectStep *puff;
 
@@ -198,7 +194,7 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
   }
 
   {
-    // A local for the 0: the listing builds the address first, in r2.
+    // A local for the 0, so the address is built first, in r2.
     s32 cleared = 0;
 
     battle[0x866] = cleared;

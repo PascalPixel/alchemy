@@ -248,16 +248,17 @@ void Heap_Release(void *buffer);
   } while (0)
 
 static inline void CopyWords(void *destination, const void *source, s32 size) {
-  /* FAKEMATCH(wrapper): the copy through this inline, so its size stays out of
-   * CSE; as direct calls to Iwram_CopyWords, 528 of 2781 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(wrapper): the copies through this inline, so their sizes stay
+   * out of CSE; as direct calls to Iwram_CopyWords, 528 of 2781 instructions
+   * of BattleEffect_RunCoatlicue differ in tla-en. */
   Iwram_CopyWords(destination, source, size);
 }
 
 static inline void FillWords(void *destination, s32 size, s32 value) {
-  /* FAKEMATCH(wrapper): the fill through this inline, so the function address
-   * loads before the value; as direct calls to Iwram_FillWords, 8 of 2781
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the last two fills through this inline, so the
+   * routine's address loads before the value; as direct calls to
+   * Iwram_FillWords, 8 of 2781 instructions of BattleEffect_RunCoatlicue
+   * differ in tla-en. */
   Iwram_FillWords(destination, size, value);
 }
 

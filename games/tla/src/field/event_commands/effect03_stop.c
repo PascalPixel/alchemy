@@ -76,9 +76,9 @@ void FieldEffect_RunPly(void) {
   wait(12);
   if (target != 0) {
     for (i = 0; i < 30; i++) {
-      /* FAKEMATCH: the native keeps object as a second register copy of the
-       * centre object (r5 beside r6); this redundant reassignment stops gcse
-       * copy-propagating object = target away, as in ☀️'s FieldEffect_RunPly. */
+      /* FAKEMATCH(temporary): a redundant copy keeps object as a second
+       * register copy of the centre object (r5 beside r6); without it, 123 of
+       * 188 instructions differ in tla-en. */
       target = object;
       if (i & 3)
         Animation_ApplyChildValuesFar(object, 9);

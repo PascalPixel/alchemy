@@ -83,7 +83,8 @@ extern u32 gCameraSceneParameters[];
 
 static inline s32 ClearWords(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_ClearWords, 2 of 491 instructions differ in tla-en. */
+   * Iwram_ClearWords, 2 of 491 instructions of BattleEffect_RunCrystal differ
+   * in tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 
@@ -98,9 +99,7 @@ static inline s32 ClearWords(void *destination, s32 size) {
 void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
-  /* FAKEMATCH(dead): a blitter pair, as the twin has, of which only draw[0] is
-   * used, the second word filling four bytes of the native frame; as one
-   * DrawRectangle, 165 of 491 instructions differ in tla-en. */
+  // Unused: draw[1] gives the stack frame its 4 bytes.
   DrawRectangle draw[2];
   u16 *discOffsets;
   s32 center[3];

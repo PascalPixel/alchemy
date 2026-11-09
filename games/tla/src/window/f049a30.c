@@ -181,14 +181,13 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
 
   for (i = 0; i < 5; i++) {
     s32 y;
-    /* FAKEMATCH(temporary): the attribute zero and the window's y in one local,
-     * so the zero has no equivalence note and loads first; as the plain macro,
-     * 2 of 790 instructions differ in tla-en. */
+    // t holds the attribute zero, then is reused for the window's y; as plain
+    // stores, 2 of 790 instructions differ in tla-en.
     u32 t = 0;
 
     y = i * 2;
     /* FAKEMATCH(barrier): an empty asm after the row, which keeps it and the
-     * zero ahead of the stores; without it, 12 of 790 instructions differ in
+     * zero ahead of the stores; without it, 56 of 790 instructions differ in
      * tla-en. */
     asm("");
     iconSprite = &sprites[i];
@@ -208,6 +207,10 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
   Func_08049a04(0xf019, 0x211);
 
   for (;;) {
+    /* FAKEMATCH(temporary): sprite holds &cursorStorage; as cursorStorage used
+     * directly, 219 of 790 instructions differ in tla-en. */
+    sprite = &cursorStorage;
+
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
       Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
@@ -221,7 +224,6 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
           MENU_TEXT_COPY((entries[firstEntry + selectedRow] & 0x1ff) +
                              (s32)MsgItemPlainName,
                          messageText, CURSOR_TEXT_LENGTH);
-        sprite = &cursorStorage;
       } else {
         MENU_TEXT_COPY((s32)MsgKey0d46, messageText, CURSOR_TEXT_LENGTH);
       }
@@ -288,6 +290,8 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
 
     cursorPosition.x = window->x * 8 - 2;
     cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
+    /* FAKEMATCH(dead): sprite set again to the &cursorStorage it holds; without
+     * it, 44 of 790 instructions differ in tla-en. */
     sprite = &cursorStorage;
     ((u32 *)sprite)[1] = 0x40000000;
     ((u32 *)sprite)[2] = 0;

@@ -29,11 +29,7 @@ void SoundFlag_Set(s32 sound) {
 
   mask = 1 << (7 & sound);
   bits = 0x300;
-  /* FAKEMATCH: ⚓️ loads the flag bytes between the halves of the 0x3ff mask */
-  asm("" : "+l"(bits));
   bytes = gSoundFlags;
-  /* FAKEMATCH: and adds the low half of the mask only after that load */
-  asm volatile("");
   sound = (sound & (bits + 0xff)) >> 3;
   bytes[sound] = (u8)(bytes[sound] | mask);
 }
@@ -45,11 +41,7 @@ void SoundFlag_Clear(s32 sound) {
 
   mask = 1 << (7 & sound);
   bits = 0x300;
-  /* FAKEMATCH: ⚓️ loads the flag bytes between the halves of the 0x3ff mask */
-  asm("" : "+l"(bits));
   bytes = gSoundFlags;
-  /* FAKEMATCH: and adds the low half of the mask only after that load */
-  asm volatile("");
   sound = (sound & (bits + 0xff)) >> 3;
   bytes[sound] = (u8)(bytes[sound] & ~mask);
 }

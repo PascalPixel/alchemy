@@ -3,6 +3,7 @@
 // Part of system.c.
 
 #include "../system_internal.h"
+#include "ram_code.h"
 
 void Func_080132d0(void);
 void Window_LoadGraphics(void);
@@ -167,17 +168,11 @@ void Code_ResolveLongBranches(u16 *entries, s32 byteLength) {
 void Resource_LoadCode(u32 index, void *destination) {
   void (*routine)(void *, s32);
   s32 end;
-  u32 size;
 
   end = Resource_DecodeType01((const void *)Resource_GetTableEntry(index),
                               destination);
-  /* FAKEMATCH: the wrapper keeps the size load after the decode. */
-  do {
-    size = (u32)Resource_PatchThumbBranchCodeSize;
-  } while (0);
-  routine = (void (*)(void *, s32))Heap_Alloc(size);
-  Dma_Set(Resource_PatchThumbBranchCode, routine, DMA_COPY_WORDS(size >> 2),
-          REG_DMA3);
+  RamCode_Load(routine, Resource_PatchThumbBranchCode,
+               Resource_PatchThumbBranchCodeSize);
   routine(destination, end);
   Heap_Release(routine);
 }

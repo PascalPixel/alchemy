@@ -65,9 +65,8 @@ void BattleMessage_WaitForAdvance(void) {
   while (!Message_AllTypedFar())
     wait(1);
   prompt = &promptStorage;
-  /* FAKEMATCH(temporary): the arrow sheet's address held in a local, so the
-   * native's stack frame offset is added after the window loads; as
-   * (s32)Data_0812996c at its use, 36 of 146 instructions differ in tla-en. */
+  // The arrow sheet's address held in a local is added after the window's
+  // loads; at its use, 36 of 146 instructions differ in tla-en.
   sheet = (s32)Data_0812996c;
   tileSlot = VramCache_AllocEntry(128);
   for (frame = 0;; frame++) {
@@ -88,9 +87,9 @@ void BattleMessage_WaitForAdvance(void) {
     Oam_AddSpriteAtDepth(prompt, 240);
     // A held advance key counts only after 16 frames, so one still held from
     // the previous message does not skip this one.
-    /* FAKEMATCH(volatile): held read afresh for the third test, as the
-     * native reloads it; as plain gInput.held, 14 of 146 instructions differ
-     * in tla-en. */
+    // The held keys reread through a volatile pointer for the last test, a
+    // load apart from the B test's; as gInput.held, 14 of 146 instructions
+    // differ in tla-en.
     if ((gInput.held & 2) || (gInput.pressed & 0x303) ||
         (frame > 15 && (*(volatile u32 *)&gInput.held & 0x303)))
       break;

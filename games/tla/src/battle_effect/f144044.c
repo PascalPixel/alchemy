@@ -101,9 +101,9 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
 
       // Each target's skulls turn about a point 20 pixels above it.
       Render_ResetTransformState();
-      /* FAKEMATCH(one-pass): the block ends CSE's block and parts the
-       * scheduler's rows; as a plain statement, 2 of 355 instructions differ in
-       * tla-en. */
+      // The look-at call in a once-only block, so the eye loads before the
+      // point it looks at; as the plain call, 2 of 355 instructions differ in
+      // tla-en.
       do {
         Transform_SetLookAt(camera, camera + 3);
       } while (0);

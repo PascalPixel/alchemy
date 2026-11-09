@@ -33,17 +33,11 @@ void wait(s32 frames);
 /// Shows the service message, its wording for the shop's mode, with the
 /// keeper's portrait, and waits until it has been read.
 // The Broken Seal's Sanctum_ShowKeeperMessage.
-void Func_0810a9ac(s32 value) {
+void Func_0810a9ac(s32 message) {
   u8 *shop;
   s32 portrait;
-  /* FAKEMATCH: the barrier loads the shop work before the keeper's offset, and
-   * the message pinned to r6 is copied below it; without both, 2 instructions
-   * differ in tla-en. */
-  register s32 message asm("r6");
 
   shop = Ram_HeapSlots->menuRuntime;
-  asm volatile("");
-  message = value;
   portrait = BattleEffect_GetResourceIdFar(*(u16 *)(shop + 0x4fa));
   Message_CloseFinishedWindowsFar();
   message = Shop_MsgByMode(message);

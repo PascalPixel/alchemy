@@ -172,8 +172,9 @@ void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
       struct EffectPosition *at = &hit;
       struct EffectStep *chip;
 
-      /* FAKEMATCH(one-pass): the form kept; as a plain assignment, 2 of 671
-       * instructions differ in tla-en. */
+      // The store in a once-only block, so the buffer's address loads before
+      // at is passed; as the plain store, 2 of 671 instructions differ in
+      // tla-en.
       do {
         chip = (struct EffectStep *)gMapCellBuffer;
       } while (0);

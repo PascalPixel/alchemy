@@ -299,8 +299,8 @@ extern const u32 Math_DotProductQ16Code[];
 typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
 
 void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
-  /* FAKEMATCH(pin): dot fixed to r10; as a plain local, 175 of 228 instructions
-     differ in tla-en. */
+  /* FAKEMATCH(pin): dot held in r10; as a plain local, 175 of 228
+   * instructions differ in tla-en. */
   register Dot3Fn dot asm("r10");
   u32 code[8];
   s32 dx, dy, dz;
@@ -315,11 +315,11 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   s32 t;
   s32 w;
   u32 num = 0x80000000; // Dividend 2^31 for calculating the reciprocal.
-  /* FAKEMATCH(pin): divide fixed to r9; as a plain local, 141 of 228
-     instructions differ in tla-en. */
+  /* FAKEMATCH(pin): divide held in r9; as a plain local, 141 of 228
+   * instructions differ in tla-en. */
   register u32 (*divide)(u32 dividend, u32 divisor) asm("r9");
-  /* FAKEMATCH(pin): mul fixed to r11; as a plain local, 209 of 228 instructions
-     differ in tla-en. */
+  /* FAKEMATCH(pin): mul held in r11; as a plain local, 209 of 228
+   * instructions differ in tla-en. */
   register s32 (*mul)(s32 a, s32 b) asm("r11");
 
   // Copy the dot-product routine to the stack and call it there.
@@ -339,13 +339,14 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   t = Iwram_Sqrt(dot(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8));
   scale = divide(num, t) >> 15;
   scale = -scale;
-  dx = mul(dx, scale);
-  dy = mul(dy, scale);
-  dz = mul(dz, scale);
-  uz = -dx;
-  /* FAKEMATCH(one-pass): an empty one-pass loop after the store; without it, 2
-     of 228 instructions differ in tla-en. */
+  // The normalization in a once-only block, so the axis is negated before the
+  // third product spills; as plain statements, 2 of 228 instructions differ in
+  // tla-en.
   do {
+    dx = mul(dx, scale);
+    dy = mul(dy, scale);
+    dz = mul(dz, scale);
+    uz = -dx;
   } while (0);
 
   // Normalize the horizontal axis u = (dz, 0, -dx).
@@ -432,10 +433,9 @@ struct ProjectedPoint {
 };
 
 // The Broken Seal's typed Iwram_TransformVector inline from iwram_call.h, the
-// layer every call goes through there.
+// layer every call goes through there; as a direct call to the fixed entry, 4
+// of 82 instructions of Render_ProjectPoint differ in tla-en.
 static inline void Render_TransformVector(const void *vector, s32 *result) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to the
-   * fixed entry, 4 of 82 instructions differ in tla-en. */
   Iwram_TransformVectorEntry(vector, result);
 }
 

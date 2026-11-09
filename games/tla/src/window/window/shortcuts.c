@@ -26,14 +26,8 @@ void UiTimedNotice_Create(void) {
 
   work = TIMED_NOTICE_WORK;
   state = &gMainRoutineWork;
-  /* FAKEMATCH: Without it gMainRoutineWork's address loads after the 8 (differ
-   * 2); keep the load before it. */
-  __asm__("" : : "r"(state));
   x = 8;
   y = 8;
-  /* FAKEMATCH: Without it the scene's offset is built before the two stores of
-   * 8 (differ 4); keep it after them. */
-  __asm__("" : : "r"(state));
   resource = Scene_GetAreaNameIndexFar(state->scene, state->entrance) +
              (s32)&MsgDebugAreaName;
   Text_GetMessageSize(resource, &x, &y, &width, &height);
@@ -54,9 +48,6 @@ void UiTimedNotice_Update(void) {
   work = TIMED_NOTICE_WORK;
   countdown = &work->countdown;
   count = *countdown;
-  /* FAKEMATCH: Without it the 0xffff starts before the countdown loads (differ
-   * 2); keep the load first. */
-  __asm__("" : : "r"(count));
   count += 0xffff;
   *countdown = count;
   if ((count << 16) == 0) {

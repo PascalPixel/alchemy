@@ -52,10 +52,6 @@ void Func_080dda30(s32 unused) {
     Actor_SetMode(target, 2);
     Actor_SetSingleChildFlagsFar(target, 0);
     target->collisionFlags = 0;
-    /* FAKEMATCH(barrier): an empty asm after the collision store, which the
-     * priority address is copied after; as plain statements, 2 of 113
-     * instructions differ in tla-en. */
-    asm("");
     target->priorityFlags |= 2;
     wait(10);
     Sound_PlayFar(126);

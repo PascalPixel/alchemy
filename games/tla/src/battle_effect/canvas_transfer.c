@@ -68,8 +68,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
                            0x4000);
       break;
     }
-    /* FAKEMATCH: the native reads the counter before it stores 1, a load
-     * nothing uses; as a plain store, 38 instructions differ in tla-en. */
+    // DEAD: nothing uses the counter read here; its load is in the ROM.
     (void)*(volatile s32 *)&work->vblanksSinceTransfer;
     work->vblanksSinceTransfer = 1;
   } else {
@@ -127,8 +126,7 @@ void BattleEffect_FlushPendingGraphicsTransfer(void) {
                          0x7800);
       break;
     }
-    /* FAKEMATCH: the dead read before the counter is set to 1, as in
-     * BattleEffect_ProcessPendingGraphicsTransfer. */
+    // DEAD: nothing uses the counter read here; its load is in the ROM.
     (void)*(volatile s32 *)&work->vblanksSinceTransfer;
     work->vblanksSinceTransfer = 1;
   } else {
@@ -167,8 +165,7 @@ void BattleEffect_ProcessPendingBlock2Transfer(void) {
                          0x3c00);
       break;
     }
-    /* FAKEMATCH: the dead read before the counter is set to 1, as in
-     * BattleEffect_ProcessPendingGraphicsTransfer. */
+    // DEAD: nothing uses the counter read here; its load is in the ROM.
     (void)*(volatile s32 *)&work->vblanksSinceTransfer;
     work->vblanksSinceTransfer = 1;
   } else {

@@ -54,10 +54,6 @@ s32 Func_0812786c(s32 owner, s32 levels) {
   if (value > 16383)
     value = 16383;
   stats->maxHp = value;
-  /* FAKEMATCH(barrier): an empty asm after the HP store, which the next
-   * stat's level term is built after; as plain statements, 2 of 190
-   * instructions differ in tla-en. */
-  __asm__ volatile("");
 
   value = state->stats.maxPp;
   value += __divsi3(levels * 15, 10);
@@ -97,10 +93,6 @@ s32 Func_0812786c(s32 owner, s32 levels) {
   if (value > 999)
     value = 999;
   state->stats.agi = value;
-  /* FAKEMATCH(barrier): an empty asm after the Agility store, which the
-   * element loop's offset is built after; as plain statements, 2 of 190
-   * instructions differ in tla-en. */
-  __asm__ volatile("");
 
   for (i = 0; i < 4; i++) {
     value = state->stats.element[i].power + levels * 15;

@@ -66,13 +66,15 @@ s32 Trig_Cos(s32 angle);
 // that form keeps a constant from being carried across the call.
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 2 of 1676 instructions differ in tla-en. */
+   * Iwram_CopyWords, 2 of 1676 instructions of BattleEffect_RunThor differ in
+   * tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 
 static inline s32 RatioMulQ14(s32 divisor, s32 value) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_RatioMulQ14, 10 of 1676 instructions differ in tla-en. */
+   * Iwram_RatioMulQ14, 10 of 1676 instructions of BattleEffect_RunThor differ
+   * in tla-en. */
   return Iwram_RatioMulQ14(divisor, value);
 }
 
@@ -378,8 +380,9 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       BLITTER_ALTERNATE(canvas, work->sheet, 32, (frame - 151) * 20 - 12, 32,
                         96);
       HeapSlot_Release(188);
-      /* FAKEMATCH(dead): if (never || neverToo) beamHeight = 0; as nothing, 249
-       * of 1676 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): a never-true test of never and neverToo, both 0, that
+       * clears beamHeight; without it, 249 of 1676 instructions differ in
+       * tla-en. */
       if (never || neverToo) {
         beamHeight = 0;
       }
@@ -615,8 +618,9 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
           x = ((Trig_Sin(angle) * 8) >> 16) + formationScreenX -
               (gData_08197492[cell] >> 1);
           y = ((Trig_Cos(angle) * 40) >> 16) - (gData_08197498[cell] >> 1);
-          /* FAKEMATCH(dead): if (never || neverToo) y = 0; as nothing, 248 of
-           * 1676 instructions differ in tla-en. */
+          /* FAKEMATCH(dead): a never-true test of never and neverToo, both 0,
+           * that clears y; without it, 248 of 1676 instructions differ in
+           * tla-en. */
           if (never || neverToo) {
             y = 0;
           }

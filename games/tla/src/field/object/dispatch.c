@@ -5,20 +5,11 @@
 void Actor_StartScript(struct ActorView *object,
                                const s32 *script) {
   if (object != 0) {
-    /* FAKEMATCH(pin): the byte stores' halfword zero held in r3,
-     * which the native loads from the pool before the first store's zero; as
-     * plain zero stores, 2 of 16 instructions differ in tla-en. */
-    register u16 zero asm("r3") = 0;
-
-    /* FAKEMATCH(barrier): the empty asm that keeps the pinned zero's pool
-     * load ahead of the first store; as the pin alone, 2 of 16 instructions
-     * differ in tla-en. */
-    asm volatile("" : "+l"(zero));
     object->value04 = 0;
     object->value00 = (u32)script;
-    object->value5b = zero;
-    object->value5d = zero;
-    object->value57 = zero;
+    object->value5b = 0;
+    object->value5d = 0;
+    object->value57 = 0;
   }
 }
 

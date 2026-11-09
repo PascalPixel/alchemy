@@ -40,10 +40,6 @@ void Func_081084f4(s32 first) {
   s32 value;
   s8 mode;
 
-  /* FAKEMATCH: the native loads the shop work before it builds the keeper
-   * offset, and saves the message after; the barrier and the copy after it give
-   * that order (differ 2 without them). */
-  asm volatile("");
   message = first;
   value = BattleEffect_GetResourceIdFar(state->keeperResource);
   Message_CloseFinishedWindowsFar();

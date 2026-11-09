@@ -108,17 +108,18 @@ void Func_080e4730(void) {
 
     sprite = 0x400;
     {
-      /* FAKEMATCH(pin): the copy's size pinned to r2; as Func_080e43a4(source,
-       * work, sprite) with no size local, 2 of 332 instructions differ in
-       * tla-en. */
+      /* FAKEMATCH(pin): the copy's size pinned to r2, so it is set before
+       * work's copy to r1; as Func_080e43a4(source, work, sprite), 2 of 332
+       * instructions differ in tla-en. */
       register s32 size asm("r2") = sprite;
 
       Func_080e43a4(source, work, size);
     }
   }
   Animation_ApplyChildValueToFirstFar(owner->animation, 15);
-  /* FAKEMATCH(barrier): an empty asm reading party keeps it in r6 to here;
-   * as no asm, 79 of 332 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm reading party, which nothing reads after
+   * the animation's set, keeps it live in r6 to here; without it, 79 of 332
+   * instructions differ in tla-en. */
   asm("" : : "r"(party));
   pictureEntry = Resource_FindFreeEntry();
   sprite = VramCache_Load(pictureEntry, sprite, NULL);

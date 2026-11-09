@@ -205,17 +205,7 @@ void SelectionScreen_BuildEntries(u32 unused) {
   }
 
   // Icons are 16 pixels apart: the row is centred on x 100, at y 140.
-  {
-    s32 offset = rowPosition * 8;
-    /* FAKEMATCH(pin): the 100 a halfword pinned to r3 behind a barrier, so it
-     * loads from the pool before the offset of baseX is built; as
-     * screen->baseX = 100 - rowPosition * 8, 2 of 130 instructions differ in
-     * tla-en. */
-    register u16 left asm("r3") = 100;
-
-    asm volatile("" : "+r"(left));
-    screen->baseX = left - offset;
-  }
+  screen->baseX = 100 - rowPosition * 8;
   screen->baseY = 140;
   // The count is reused as a pixel offset while the row is placed.
   for (previous = screen->head, rowPosition = 0; previous != 0;
@@ -679,9 +669,6 @@ void Func_0803e7c8(struct SelectionScreen *state, s32 index) {
 
   state->records[index].kind = 0;
   if (index != 0) {
-    /* FAKEMATCH(temporary): the tile pointer in a local, loaded early into r5;
-     * as gData_0805c5c4 where right is read, 56 of 140 instructions differ in
-     * tla-en. */
     u8 *right = gData_0805c5c4;
 
     count = state->count;
@@ -1018,9 +1005,8 @@ void Menu_StepLeft(struct StepMenu *state) {
     } else {
       node = state->nodes;
       i = 64;
-      /* FAKEMATCH(temporary): the 0 through kind, which carries the head's id
-       * at the end, so it keeps r0 across the loop; as a plain 0 and a direct
-       * argument, 28 of 206 instructions differ in tla-en. */
+      // kind is reused for the 0; as a plain 0, 20 of 206 instructions differ
+      // in tla-en.
       kind = 0;
       state->moreBelow = kind;
       while (node->next != NULL) {
@@ -1359,12 +1345,7 @@ void MenuSelection_SetupEntry(u32 kind, s32 base, struct ListNode *node,
   node->field22 = 0x100;
   node->field26 = 0x100;
 
-  /* FAKEMATCH(one-pass): the object pointer formed in a once-only block,
-   * which ends the scheduling region before its field stores; as
-   * obj = &node->obj, 2 of 103 instructions differ in tla-en. */
-  do {
-    obj = &node->obj;
-  } while (0);
+  obj = &node->obj;
   obj->field52 = 0;
   obj->field55 = 0;
   obj->field54 = 0;
@@ -1535,7 +1516,9 @@ void UiTextResource_SetPosition(struct TextResourcePosition *obj, s32 arg1,
                                 s32 arg2) {
   obj->index = arg1;
   obj->kind = arg2;
-  /* FAKEMATCH: the native stores the index before it loads the slot kind. */
+  /* FAKEMATCH(barrier): an empty asm keeps the index's store ahead of the
+   * depth argument (mov r1, #252); without it, 2 of 13 instructions differ in
+   * tla-en. */
   __asm__("");
   Oam_AddSpriteAtDepth((s32 *)obj, 0xFC);
 }
@@ -1675,8 +1658,6 @@ u32 Menu_RunSelectionForValue(u32 value) {
   struct SelectionScreen *state = Ram_HeapSlots->menuWork;
   u32 result;
 
-  /* FAKEMATCH: ⚓️ loads the menu work before it builds the field offset */
-  asm volatile("" : "+l"(state));
   state->cursorIndex = value;
   state->locked = 1;
   SelectionScreen_BuildEntries(value);

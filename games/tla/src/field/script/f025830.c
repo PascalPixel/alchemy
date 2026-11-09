@@ -22,8 +22,6 @@ s32 Func_0802d87c(struct Actor *object, struct FieldPosition *position);
 void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 s32 ArcTan2(s32 y, s32 x);
 
-static inline s32 PassThrough(s32 value) { return value; }
-
 /// Moves the object to a random spot within its home radius, as The Broken
 /// Seal's ActorScript_WanderNearHome does: up to seven tries at a point a
 /// random distance away in a random turn of its heading, each refused if
@@ -40,7 +38,7 @@ s32 Func_08025830(struct ActorScriptView *object) {
   s32 homeRadiusSquared;
   s32 travelDistance;
   u16 heading;
-  s16 angle;
+  u16 angle;
   s32 attempts;
   s32 dx;
   s32 dz;
@@ -49,8 +47,6 @@ s32 Func_08025830(struct ActorScriptView *object) {
   minimumDistance = *operands++;
   distanceRange = *operands++;
   homeRadiusSquared = *operands / 0x10000;
-  // The angle is an s16 widened to u16 in a separate turn: as one u16
-  // expression the inner widening folds away.
   angle = object->scriptValue;
   homeRadiusSquared *= homeRadiusSquared;
   attempts = 0;
@@ -62,14 +58,7 @@ s32 Func_08025830(struct ActorScriptView *object) {
     if (attempts <= 7) {
       travelDistance =
           minimumDistance + Iwram_MulQ16(Random16(), distanceRange);
-      {
-        /* FAKEMATCH(wrapper): the first draw passed through PassThrough; as
-         * (Random16() >> 2), 4 of 370 instructions differ in tla-en. */
-        s32 turn =
-            (u16)angle + PassThrough(Random16() >> 2) - (Random16() >> 2);
-
-        heading = turn;
-      }
+      heading = angle + (Random16() >> 2) - (Random16() >> 2);
       candidatePosition.x = object->x;
       candidatePosition.y = object->y;
       candidatePosition.z = object->z;
@@ -130,11 +119,7 @@ back:
   attempts++;
   if (attempts <= 7) {
     travelDistance = minimumDistance + Iwram_MulQ16(Random16(), distanceRange);
-    {
-      s32 turn = (u16)angle + (Random16() >> 2) - (Random16() >> 2);
-
-      heading = turn;
-    }
+    heading = angle + (Random16() >> 2) - (Random16() >> 2);
     candidatePosition.x = object->x;
     candidatePosition.y = object->y;
     candidatePosition.z = object->z;

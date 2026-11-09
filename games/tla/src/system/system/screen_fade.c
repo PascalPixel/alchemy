@@ -27,12 +27,7 @@ void Fade_Update(void) {
         control = gBlendLayers | BLDCNT_EFFECT_DARKEN;
         blendControl = &REG_BLDCNT;
       }
-      /* FAKEMATCH(one-pass): the BLDCNT store in a once-only block, so the
-       * VBlanks left's address is loaded after it; as the plain store, 2 of 48
-       * instructions differ in tla-en. */
-      do {
-        *blendControl = control;
-      } while (0);
+      *blendControl = control;
     }
     {
       u8 *remaining = &gBlendVBlanksLeft;
@@ -42,23 +37,23 @@ void Fade_Update(void) {
 
       // level = target + (start - target) * remaining / duration: BLDY moves
       // in a straight line and reaches the target as remaining reaches 0
-      /* FAKEMATCH(one-pass): the decrement in a once-only block, so the
-       * target level's address is loaded after its store; as the plain
-       * decrement, 6 of 48 instructions differ in tla-en. */
+      // The decrement in a once-only block, so the target level's address is
+      // loaded after its store; as the plain decrement, 6 of 48 instructions
+      // differ in tla-en.
       do {
         (*remaining)--;
       } while (0);
       level = gBlendTargetLevel;
       delta = gBlendStartLevel - gBlendTargetLevel;
       step = *remaining;
-      /* FAKEMATCH(wrapper): the division as a call to __divsi3, which clobbers
-       * memory, so the zero test reloads *remaining; as delta * step /
-       * gBlendDuration, 21 of 48 instructions differ in tla-en. */
+      // The division written as a call to __divsi3, which clobbers memory, so
+      // the zero test reloads *remaining; as delta * step / gBlendDuration, 21
+      // of 48 instructions differ in tla-en.
       level += __divsi3(delta * step, gBlendDuration);
       REG_BLDY = level;
-      /* FAKEMATCH(one-pass): the end test in a once-only block, so BLDY's
-       * address is finished after the quotient is added; as the plain test,
-       * 2 of 48 instructions differ in tla-en. */
+      // The end test in a once-only block, so BLDY's address is finished after
+      // the quotient is added; as the plain test, 2 of 48 instructions differ
+      // in tla-en.
       do {
         if (*remaining == 0)
           gBlendDuration = 0;

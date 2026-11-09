@@ -18,15 +18,13 @@ void BattleMotion_SetupEscapeObject(s32);
 void BattleCamera_AdjustByShoulderKeys(void) {
   struct BattleCamera *cam = Ram_HeapSlots->cameraWork;
   struct BattlePresentationTransition *trans = Ram_HeapSlots->transitionWork;
-  /* FAKEMATCH(volatile): the keys read through a volatile pointer, so each
-   * test reads them afresh; as a plain u32 pointer, 18 of 41 instructions
-   * differ in tla-en. */
-  volatile u32 *keys = (volatile u32 *)((u32)&gInput);
 
-  if ((*keys & 512) != 0) {
+  if ((gInput.held & 512) != 0) {
     cam->yaw += 512;
   }
-  if ((*keys & 256) != 0) {
+  // The held keys reread through a volatile pointer, a load apart from the L
+  // test's; as gInput.held, 18 of 41 instructions differ in tla-en.
+  if ((*(volatile u32 *)&gInput.held & 256) != 0) {
     cam->yaw -= 512;
   }
   if (trans->flag == 0) {

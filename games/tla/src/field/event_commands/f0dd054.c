@@ -71,8 +71,9 @@ void Func_080dd054(void) {
   angle = (u16)scene->angle + TRIG_TURN / 2;
   moved = 0;
   /* FAKEMATCH(temporary): a byte pointer standing in for target->terrainId at
-   * the save and the restore; as target->terrainId, 18 of 444 instructions
-   * differ in tla-en. */
+   * the save and the restore, whose stack slot then comes after pushed's and
+   * event's; as target->terrainId, 18 of 444 instructions differ in tla-en.
+   */
   layer = &target->terrainId;
   savedLayer = *layer;
   pushed = 0;
@@ -103,12 +104,13 @@ void Func_080dd054(void) {
   target->speedLimit = 0x6666;
   target->acceleration = 0x3333;
   target->actionFlags = moved;
-  // Through the struct rather than *layer, as the listing's store order needs.
+  // Through target rather than layer, which keeps moved's load after the
+  // acceleration's value is built; through layer, 2 of 444 instructions differ
+  // in tla-en.
   target->terrainId = 2;
   while (1) {
     wait(1);
-    /* FAKEMATCH(signature): the u8 mode read as s8 (an ldrsb); as
-     * scene->mode == 0, 29 of 444 instructions differ in tla-en. */
+    // The mode read as a signed byte, which the test against 0 does not change.
     if ((s8)scene->mode == 0 && (gInput.pressed & 0x303))
       break;
 
@@ -230,8 +232,9 @@ void Func_080dd054(void) {
   BattleEffect_StopMainActor();
   if (moved == 1) {
     /* FAKEMATCH(temporary): a byte pointer standing in for the actor's
-     * actionFlags; as Actor_GetById(...)->actionFlags |= 1, 4 of 444
-     * instructions differ in tla-en. */
+     * actionFlags, which loads them into r3 and the 1 into r2; as
+     * Actor_GetById(...)->actionFlags |= 1, 4 of 444 instructions differ in
+     * tla-en. */
     userFlags = &Actor_GetById(scene->firstObjectId)->actionFlags;
     *userFlags |= 1;
   }

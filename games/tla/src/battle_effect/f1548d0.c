@@ -191,8 +191,9 @@ void Func_081548d0(struct BattleEffectArgument *effect, s32 mode) {
                 {
                   u8 *cell;
                   u32 width;
-                  /* FAKEMATCH(temporary): side = 1; side &= i; as side = 1 & i,
-                   * 195 of 514 instructions differ in tla-en. */
+                  // side is set to 1 and then masked with i, which builds the 1
+                  // in its register first; as side = i & 1, 195 of 514
+                  // instructions differ in tla-en.
                   side = 1;
                   side &= i;
                   cell = work->sheet + Data_081983da[shape];
@@ -209,8 +210,9 @@ void Func_081548d0(struct BattleEffectArgument *effect, s32 mode) {
                 {
                   u8 *cell;
                   u32 width;
-                  /* FAKEMATCH(temporary): side = 1; side &= i; as side = 1 & i,
-                   * 195 of 514 instructions differ in tla-en. */
+                  // side is set to 1 and then masked with i, which builds the 1
+                  // in its register first; as side = i & 1, 195 of 514
+                  // instructions differ in tla-en.
                   side = 1;
                   side &= i;
                   cell = work->sheet + Data_081983e4[shape];

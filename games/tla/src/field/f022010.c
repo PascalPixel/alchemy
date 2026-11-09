@@ -37,8 +37,9 @@ void Func_08022010(struct LayeredSprite *sprite, s32 screenX, s32 height,
   s32 y;
   struct AnimationSpritePart *shadow;
 
-  /* FAKEMATCH(temporary): the height read through HEIGHT_COPY, a u8 copy;
-     as sprite->height, 3 of 107 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the height read through HEIGHT_COPY, a u8 copy, at
+     both uses; as sprite->height at both, 3 of 107 instructions differ in
+     tla-en. */
   if (scaleX > 0x10000 || scaleY > 0x10000) {
     affine = 3;
     halfWidth <<= 1;

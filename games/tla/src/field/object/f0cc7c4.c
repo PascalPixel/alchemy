@@ -49,9 +49,9 @@ s32 Func_080cc7c4(void) {
       return 0;
     }
     if (*(s8 *)cursor == entrance) {
-      /* FAKEMATCH(barrier): an empty asm reading work, which keeps it live
-         across the loop and entrance out of its register; as no asm, 14 of 211
-         instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm reading work keeps it live across the
+       * loop in r6, so entrance takes r7; without it, 14 of 211 instructions
+       * differ in tla-en. */
       asm("" : : "r"(work));
       cursor++;
       x = Stream_ReadS16(&cursor);

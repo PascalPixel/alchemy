@@ -31,8 +31,8 @@ void Func_080cf554(void) {
   s32 originX = origin[0] & 0xffff0000;
   s32 originZ = origin[1] & 0xffff0000;
   s32 result[3];
-  /* FAKEMATCH(volatile): the form kept; as s32 headerWord, 86 of 193
-   * instructions differ in tla-en. */
+  // volatile: headerWord lives at sp+4, stored once; as a plain s32, 86 of
+  // 193 instructions differ in tla-en.
   volatile s32 headerWord;
   struct Actor *object;
   s16 type;
@@ -45,6 +45,8 @@ void Func_080cf554(void) {
   s32 dx;
   s32 dz;
 
+  // DEAD: the map header's second word is never read; the ROM keeps its load
+  // and store.
   headerWord = (*(s32 **)map)[1];
   if (entry == NULL)
     return;
@@ -73,8 +75,8 @@ void Func_080cf554(void) {
       y = object->y;
       z = object->z;
     }
-    /* FAKEMATCH(temporary): the form kept; as dx = (x - originX) >> 16 and dz
-     * likewise, 2 of 193 instructions differ in tla-en. */
+    // Both differences are taken before either is shifted; shifted as each is
+    // taken, 2 of 193 instructions differ in tla-en.
     dx = x - originX;
     dz = z - originZ - y;
     dx >>= 16;

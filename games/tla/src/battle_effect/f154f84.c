@@ -68,10 +68,10 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
   // Set up: the canvas layer at full alpha, the thorn sheet, and the canvas
   // moved 112 pixels right for the other side.
   heap = (u32 *)Ram_HeapSlots;
-  /* FAKEMATCH(barrier): the heap slot base kept in r5 until the flipped
-   * blitter, whose slot is read as base + 188 (gcse otherwise propagates the
-   * constant into that read and rebuilds the base); as plain reads with no
-   * barrier, 29 of 453 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm through heap hides that it holds the heap
+   * slots' fixed address, so the base stays in r5 until the flipped blitter's
+   * slot is read from it; without it, 23 of 453 instructions differ in
+   * tla-en. */
   __asm__("" : "+r"(heap));
   work = (struct BattleEffectWork *)heap[23];
   canvas = (void *)heap[24];

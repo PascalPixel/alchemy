@@ -67,8 +67,8 @@ restart:
           break;
         if (input->repeat & 8)
           Func_08118954();
-        /* FAKEMATCH(dead): the || startModeSet test kept; as if (input->repeat
-         * & 2), 47 of 158 instructions differ in tla-en. */
+        // DEAD: once startModeSet is set, setting it again changes nothing;
+        // the ROM keeps the test.
         if ((input->repeat & 2) || startModeSet)
           startModeSet = 1;
         wait(1);

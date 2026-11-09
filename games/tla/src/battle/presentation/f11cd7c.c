@@ -39,7 +39,6 @@ void Camera_ConfigureScene(s32 pos) {
   local.z = state->distance;
   Iwram_TransformVector(&local, (s32 *)state);
   one = 1;
-  __asm__ volatile("" : "+l"(one));
 
   result = Iwram_RatioMulQ14(0x03c90000, 192 << 8);
   Projection_Set(0, result, 0x07920000);

@@ -29,8 +29,9 @@ s32 Func_08026dd0(u32 value) {
   if (GameFlag_Test(0x107) != 0) {
     event->result = 250;
   } else if (event->mode == 3) {
-    /* FAKEMATCH: the native code reads the held keys again for the second test.
-     */
+    // The held keys, read again for the second test through a volatile
+    // pointer; through a plain pointer, 14 of 69 instructions differ in
+    // tla-en.
     volatile u32 *held = &gInput.held;
 
     if (*held & 0x100)
@@ -62,44 +63,29 @@ s32 Field_CheckConfiguredKeys(void) {
   if (work == NULL)
     return 0;
   if (work->pendingSecond != 0) {
-    struct MainRoutineWork *party = &gMainRoutineWork;
-    /* FAKEMATCH: the pressed keys are read again for each test; through a
-     * plain pointer one read serves all, in both branches (differ 141). */
-    volatile struct InputState *input = (volatile struct InputState *)&gInput;
-
-    /* FAKEMATCH: the native loads gMainRoutineWork before the input; without
-     * the barrier the input comes first (differ 2). */
-    asm volatile("" : "+l"(party));
-    if ((input->pressed & party->keys234) ||
-        (input->pressed & party->keys230) ||
-        (input->pressed & party->keys236) ||
-        (input->pressed & party->keys238) ||
-        (input->pressed & party->keys23a)) {
+    if ((gInput.pressed & gMainRoutineWork.keys234) ||
+        (gInput.pressed & gMainRoutineWork.keys230) ||
+        (gInput.pressed & gMainRoutineWork.keys236) ||
+        (gInput.pressed & gMainRoutineWork.keys238) ||
+        (gInput.pressed & gMainRoutineWork.keys23a)) {
       work->choice[0] = 0x209b;
       return 1;
     }
     return 0;
   } else {
-    struct MainRoutineWork *party = &gMainRoutineWork;
-    /* FAKEMATCH: the pressed keys are read again for each test, as above. */
-    volatile struct InputState *input = (volatile struct InputState *)&gInput;
-
-    /* FAKEMATCH: the barrier of gMainRoutineWork's load, as above (differ 2
-     * without it). */
-    asm volatile("" : "+l"(party));
-    if (input->pressed & party->keys234) {
+    if (gInput.pressed & gMainRoutineWork.keys234) {
       work->menu = 1;
       result = 1;
-    } else if (input->pressed & party->keys230) {
+    } else if (gInput.pressed & gMainRoutineWork.keys230) {
       work->examine = 1;
       result = 1;
-    } else if (input->pressed & party->keys236) {
+    } else if (gInput.pressed & gMainRoutineWork.keys236) {
       work->start = 1;
       result = 1;
-    } else if (input->pressed & party->keys238) {
-      result = Func_08026dd0(party->packedEvents[0]);
-    } else if (input->pressed & party->keys23a) {
-      result = Func_08026dd0(party->packedEvents[1]);
+    } else if (gInput.pressed & gMainRoutineWork.keys238) {
+      result = Func_08026dd0(gMainRoutineWork.packedEvents[0]);
+    } else if (gInput.pressed & gMainRoutineWork.keys23a) {
+      result = Func_08026dd0(gMainRoutineWork.packedEvents[1]);
     }
   }
   return result;

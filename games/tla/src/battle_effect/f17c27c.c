@@ -62,9 +62,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
   struct EffectPosition caster;
   s32 frame;
   struct EffectStep *spark;
-  /* FAKEMATCH(dead): the blitter as a pair of which only the first is used,
-   * for the unused sp+16 of the stack frame; as one DrawRectangle, 281 of 464
-   * instructions differ in tla-en. */
+  // Unused: draw[1] gives the stack frame its 4 bytes.
   DrawRectangle draw[2];
   u8 *sparkCels;
   s32 i;

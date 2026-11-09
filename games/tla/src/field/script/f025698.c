@@ -35,8 +35,8 @@ s32 Func_08025698(struct ActorScriptView *object) {
   base = *args++;
   range = *args++;
   limit = *args / 0x10000;
-  /* FAKEMATCH: the retry label and one-pass distance block preserve the 32-byte
-   * frame and division/load registers, as in The Broken Seal's twin. */
+  // The tries are a loop written with goto: as while (++tries <= 7) with
+  // continue, 116 of 188 instructions differ in tla-en.
   tries = 0;
   limit = limit * limit;
 retry:
@@ -70,6 +70,8 @@ retry:
     Vector_AddPolarOffset(radius, heading - 0x2000, &probe);
     if (Func_0802d87c((struct Actor *)object, &probe) != 0)
       goto retry;
+    // The offsets in a once-only block keep the division on the loaded x; as
+    // plain statements, 16 of 188 instructions differ in tla-en.
     do {
       dx = pos.x / 0x10000 - object->homeX;
       dz = pos.z / 0x10000 - object->homeZ;
@@ -83,12 +85,13 @@ retry:
   return 0;
 found:
   {
-    /* FAKEMATCH(pin): the object in r0 ahead of the target's words; as a plain
-     * argument, 2 of 188 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the object moved to r0 before the target's words load;
+     * as a plain local, 2 of 188 instructions differ in tla-en. */
     register struct Actor *moved asm("r0") = (struct Actor *)object;
 
-    /* FAKEMATCH(barrier): an empty asm after the pin, which holds it ahead; without
-     * it, 2 of 188 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): the empty asm holding the pin above, which keeps the
+     * move ahead of the loads; without it, 2 of 188 instructions differ in
+     * tla-en. */
     asm("");
     Actor_SetMoveTarget(moved, pos.x, pos.y, pos.z);
   }

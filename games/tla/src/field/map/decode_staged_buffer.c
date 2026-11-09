@@ -61,9 +61,10 @@ extern u8 Render_ConvertMapCode[];
 extern u8 Render_ConvertMapCodeSize[];
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
-  /* FAKEMATCH: through an inline, as ☀️'s IWRAM call layer, the map cell
-   * buffer's address is loaded again for the conversion; called directly its
-   * constant is kept in a saved register (differ 20). */
+  /* FAKEMATCH(wrapper): the copy called through this inline, so the map cell
+   * buffer's address is loaded again for the conversion; as Iwram_CopyWords
+   * called directly, which keeps the address in a saved register, 20 of 40
+   * instructions of Tilemap_ConvertBuffer differ in tla-en. */
   return Iwram_CopyWordsEntry(destination, source, size);
 }
 

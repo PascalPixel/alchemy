@@ -64,8 +64,10 @@ typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
 
 static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size,
                                 u32 value) {
-  /* FAKEMATCH: a direct call loads the fill value before the routine and
-   * reverses pool order, as in ☀️'s Japanese build. */
+  /* FAKEMATCH(wrapper): the fill called through this inline, whose entry
+   * comes in as a parameter, so the call loads it before the fill value; as a
+   * direct call, 2 of 38 instructions of WindowSystem_InitField differ in
+   * tla-en. */
   return fill(dst, size, value);
 }
 
@@ -195,8 +197,9 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
 }
 
 static inline void Window_FillWords(void *destination, s32 size, u32 value) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to the
-   * fixed entry, 10 of 68 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the call through this inline; as direct calls to the
+   * fixed entry, 10 of 68 instructions of Window_DrawOpened differ in tla-en.
+   */
   Iwram_FillWordsEntry(destination, size, value);
 }
 
@@ -441,11 +444,17 @@ void WindowSprite_UpdateListTail(struct WindowSpriteList *list) {
 
 void WindowSprite_AppendToList(struct WindowSpriteList *list,
                                struct WindowSprite *node) {
-  /* FAKEMATCH: the first-word tail pointer access preserves the two-store
-   * order. */
   if (list != NULL) {
     *list->tailLink = node;
+    // UB: the new tail is stored as node (next is its first member) through
+    // a WindowSprite * view of tailLink, which keeps both stores in one alias
+    // set and in this order.
+#ifdef UBFIX
+    // Store the address of next through the tail link's actual pointer type.
+    list->tailLink = &node->next;
+#else
     *(struct WindowSprite **)&list->tailLink = node;
+#endif
   }
 }
 
@@ -558,10 +567,6 @@ struct UiChannelSlot *BattleMessage_Continue(struct Window *window,
     selected->outline = zero;
     selected->line = zero;
     selected->ended = zero;
-    /* FAKEMATCH(barrier): the line spacing held behind an empty asm, so it is
-     * built after the entry store and stored after the cleared fields; as a
-     * plain store, 6 of 81 instructions differ in tla-en. */
-    asm volatile("" : "+l"(lineSpacing));
     selected->lineSpacing = lineSpacing;
     index = 0;
     spacing = selected->spacing;

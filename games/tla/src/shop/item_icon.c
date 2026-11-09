@@ -3,9 +3,6 @@
 void Func_0810bdb0(void) {
   struct IconWork *work = Ram_HeapSlots->menuRuntime;
 
-  /* FAKEMATCH: the native loads the menu work before it builds the field offset
-   * (one reordered row). */
-  __asm__ volatile("" : "+l"(work));
   if (work->active) {
     struct IconSprite *sprite = work->sprites;
     u16 *resource = work->resources;

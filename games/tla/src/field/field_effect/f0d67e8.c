@@ -32,10 +32,6 @@ void Func_080d67e8(void) {
       u32 b = Random16();
       u32 draw = a * 24;
       u32 jitter = b * 100;
-      /* FAKEMATCH(barrier): a * 24 and b * 100 held through an empty asm; as
-       * ((a * 400) >> 16) - ((b * 100) >> 16) + 150, 4 of 110 instructions
-       * differ in tla-en. */
-      asm("" : "+l"(draw), "+l"(jitter));
       work->timer = (((draw + a) << 4) >> 16) - (jitter >> 16) + 150;
       if (work->loud != 0)
         Sound_PlayFar(172);

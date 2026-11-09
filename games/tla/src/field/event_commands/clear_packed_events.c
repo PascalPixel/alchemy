@@ -53,7 +53,8 @@ void Party_RemoveOwnerRestored(s32 owner) {
   Party_RemoveActiveOwnerFar(owner);
   Event_ClearValidPackedIds();
   vitals = Unit_Get(owner);
-  /* FAKEMATCH: the do-while keeps both vital copies ahead of the ratio */
+  // The two copies in a once-only block keep both ahead of the ratio; as the
+  // plain stores, 2 of 148 instructions differ in tla-en.
   do {
     vitals->hp = vitals->maxHp;
     vitals->pp = vitals->maxPp;

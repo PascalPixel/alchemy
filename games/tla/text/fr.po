@@ -20839,7 +20839,7 @@ msgctxt "MsgPriceHeading"
 msgid "05126"
 msgstr "Prix"
 
-msgctxt "message"
+msgctxt "MsgShopCannotEquip"
 msgid "05127"
 msgstr "Non utilisable"
 
@@ -20879,7 +20879,7 @@ msgctxt "MsgCannotRemoveIt"
 msgid "05136"
 msgstr "Vous ne pouvez pas l'enlever!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShopStatLabel"
 msgid "05137"
 msgstr "ATT."
 
@@ -21145,7 +21145,7 @@ msgstr ""
 "Voulez-vous réparer\n"
 "autre chose?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgLetMeGiveYouThis"
 msgid "05184"
 msgstr ""
 "Laissez-moi vous donner:\n"
@@ -21158,7 +21158,7 @@ msgstr ""
 "Qui va prendre:\n"
 "{argument_item_name:1}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDontWantIt"
 msgid "05186"
 msgstr "Vous n'en voulez pas???{page_break}"
 

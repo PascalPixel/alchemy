@@ -46,12 +46,6 @@ Func_0802b998:
 	.incbin "baserom.gba", 0x0003ef9e, 0x00000002
 	.section .rom.0003f22a, "ax"
 	.incbin "baserom.gba", 0x0003f22a, 0x00000002
-	.section .rom.0003fd80, "ax"
-	.global Menu_OpenWorkspaceOptions
-	.type Menu_OpenWorkspaceOptions, %function
-	.thumb_func
-Menu_OpenWorkspaceOptions:
-	.incbin "baserom.gba", 0x0003fd80, 0x000003c0
 	.section .rom.00040a9e, "ax"
 	.incbin "baserom.gba", 0x00040a9e, 0x00000002
 	.section .rom.00041722, "ax"
@@ -69,12 +63,6 @@ Text_DrawPrefixedNumberAtOffset:
 	.incbin "baserom.gba", 0x000422d8, 0x000000a0
 	.section .rom.000425de, "ax"
 	.incbin "baserom.gba", 0x000425de, 0x00000002
-	.section .rom.00043d3c, "ax"
-	.global Func_08043cd8
-	.type Func_08043cd8, %function
-	.thumb_func
-Func_08043cd8:
-	.incbin "baserom.gba", 0x00043d3c, 0x0000066c
 	.section .rom.0004531e, "ax"
 	.incbin "baserom.gba", 0x0004531e, 0x00000002
 	.section .rom.0004558a, "ax"
@@ -215,12 +203,6 @@ Func_080f9644:
 	.incbin "baserom.gba", 0x000fe98e, 0x00000002
 	.section .rom.000ff2ee, "ax"
 	.incbin "baserom.gba", 0x000ff2ee, 0x00000002
-	.section .rom.000ffdd0, "ax"
-	.global Func_080ffcd4
-	.type Func_080ffcd4, %function
-	.thumb_func
-Func_080ffcd4:
-	.incbin "baserom.gba", 0x000ffdd0, 0x00000230
 	.section .rom.00100e5a, "ax"
 	.incbin "baserom.gba", 0x00100e5a, 0x00000002
 	.section .rom.0010332a, "ax"
@@ -288,12 +270,6 @@ Func_0811843c:
 	.incbin "baserom.gba", 0x0012695a, 0x00000002
 	.section .rom.001269c2, "ax"
 	.incbin "baserom.gba", 0x001269c2, 0x00000002
-	.section .rom.00126be4, "ax"
-	.global Graphics_AdvancePaletteCycle
-	.type Graphics_AdvancePaletteCycle, %function
-	.thumb_func
-Graphics_AdvancePaletteCycle:
-	.incbin "baserom.gba", 0x00126be4, 0x00000130
 	.section .rom.0013fd84, "ax"
 	.global BattleEffect_RunCruelRuin
 	.type BattleEffect_RunCruelRuin, %function

@@ -101,6 +101,11 @@ s32 Func_0810abf0(void) {
   // zero stored to memberIndex takes r5 for r0 here and r3 for r5 after the
   // windows. Its FAKEMATCH(temporary), firstMessage, carries the prompt's
   // message into the first call; as the plain message, 26 differ.
+  // XXX: what keeps the later zero apart; cse2 (not cse1) turns
+  // priceWindow = NULL into a copy of this zero's pseudo, which addressof made
+  // for memberIndex, so the zero lives in r5 across the windows (diff 8 of
+  // 282 instructions; the zeros reordered, chained, in once-only blocks or
+  // through NULL, chooseAgain, unitId or priceWindow: 8 to 173).
   firstMessage = (s32)MsgWhoShallIRevive;
 #endif
   // DEAD: memberIndex is set again after the price window before any read.

@@ -1,4 +1,12 @@
-// Draft, differ 8 of 4580 (tla-en, 2026-11-08). Measure 081843fc,081848ec together.
+// Draft, differ 4 of 4580 (tla-en, 2026-11-09). Measure 081843fc,081848ec together.
+// 9 November, 8 to 4: the wave closed. Its row offset is off = j * rowStep, a
+// function-level local holding 8 (plain C): a product by a register costs a
+// multiply, so loop.c finds the giv worth reducing (as j * 8 it was not: 0 vs
+// 31), and reload puts the 8 back into the increment. Reduced, off's zero is a
+// giv init after the frame giv's copy and its restore no longer trails j++,
+// as in the listing. Tried for the sparks' y: an asm on n before the table
+// read, split from the cosine or inside the index (68 to 3106); for the
+// tornado, the cell buffer as the linked gMapCellBuffer (28, 74).
 // Round 8 (2026-11-08), 22 to 8:
 // - Camelot's fixed EWRAM buffers as FIXED_ADDRESS constants, not linked symbols.
 //   A symbol's address loads from the pool as a memory read, which sched2 keeps
@@ -20,7 +28,8 @@
 //   colour in a once-only block before the call gets 10 (the x site's mov sl then
 //   trails its subs); an empty block after the call 10; no block at all 542;
 //   the colour block after Random16 3136, x, y and the colour in one block 18.
-// What is left (rows of --show at 8), all RTL-order ties in sched2:
+// What is left (rows of --show at 8; the wave is closed since), all RTL-order
+// ties in sched2:
 // - The tornado (row 2725): the hoisted 0x1b5a's copy to ip comes before the
 //   i * 45 giv's zero. loop.c moves movables before it emits giv inits, so this
 //   order needs the constant hoisted in the second loop pass. dst respelled
@@ -451,6 +460,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   s32 zero;
   u8 *cellBuffer = Ram_MapCellBuffer;
   s32 span = 0x80000;
+  s32 rowStep = 8;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -1796,10 +1806,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         j = 0;
         z = 0;
         y = 0;
-        off = 0;
-        for (; j != 12; j++, off += 8) {
+        for (; j != 12; j++) {
           struct MeshVertex *v;
           s32 x;
+
+          off = j * rowStep;
 
           for (i = 0, x = 0, v = (struct MeshVertex *)(off + (s32)cellBuffer);
                i != 2; i++, x += 10, v++) {

@@ -1,79 +1,3 @@
-// Draft, differ 2 of 1022 (tla-en, 2026-11-08)
-// Devices pass (2026-11-09), none below 2: the fourth quarter's function
-// pointer through a statement expression with an identity asm, with or
-// without an "m" input on the slot (175, 177), or through a block-local
-// pointer (154, 175 with the asm); size through an asm before the call (49).
-// An asm placed before the stores cannot give str r7 a dependent, and one
-// after the call follows the call's memory flush.
-// Left: one pair in the glow arm's (mode 0) fourth quarter: ldr r5, =cells
-// issues between str r0, [sp] and str r7, [sp, #4]; the listing has both
-// stores first. tla-de, -es, -fr and -it: the same 2; tla-ja the same 2 at
-// 0x0818f624 (diff ... 0818f624 --edition tla-ja).
-// Round 4 (2026-11-08), from the sched2 dump with -fsched-verbose: after
-// str r0 the pool load (reload of cells into r5, free once the ldrsh has read
-// the disc pointer) and str r7 tie on every rank_for_schedule key: priority 6
-// each (load 3 + add 3; store 3 + blitter pointer load 3), class 3 each, three
-// dependents each (the add or the pointer load, the draw call, the closing
-// HeapSlot_Release). So LUID decides, and reload puts the pool load before the
-// add, which expand_call always emits before the stack stores; combine will
-// not move the add into the r1 move, since the r0 move precedes it. Nothing
-// the listing shows can give str r7 a fourth dependent or the pool load a
-// lower priority, so this order is out of reach of this RTL with this
-// compiler: a scheduler-model question (K2, K3), not a source one. Tried, all
-// 2 unless noted: q4's source as cells + discs[index] (6, operand order),
-// (u8 *)cells + discs[index] (6), &((u8 *)cells)[...] (6), *(discs + index),
-// gMapCellBuffer in q4 (117) or in every quarter (76); DrawDisc as a macro
-// (66), with a disc pointer parameter (84), returning s32 (66), index first or
-// before size, const s16 *discs; a volatile blitter pointer read; a volatile
-// disc read (156); register cells, const cells (96), cells assigned as a
-// statement. No device fits: a volatile asm after the fourth draw is a full
-// barrier that adds a dependent to both (the tie stays); a non-volatile asm
-// writing size is deleted as dead; anything put in an argument lands before
-// the stores.
-// Rounds 1 and 2 (2026-11-08), the same pair. Tried: the ball steps after the
-// call (92), index after x and y (18), y before x in mode 0 (67); index
-// declaration orders, (size - 2) / 2, quarter 2 with cells first (6), a
-// once-only block before its LoadBlitter (12, 18); permute 9 min: nothing
-// below 2. (They read the pool load as outranking str r7 on priority; round 4
-// found the two tied, decided by LUID.)
-// Round 3 (2026-11-08): cells as gMapCellBuffer at either call, u32 cells, u8 *
-// canvas, unsigned index, *(discs + index), cells first (6), size / 2 (119), a
-// half local (53), a draw local (154), once-only blocks at the last quarter (6
-// to 24), y before x or the steps swapped (18), joined clamps; permute 6 min:
-// nothing below 2.
-// Measured 2026-11-05 (tla-en): differ 2 of 1022. The Iwram calls written as
-// static inline wrappers take this from 20 to 2: the DrawDisc stores and both
-// clears come right, so these calls were inline functions in the source. Left:
-// one pair, the pool load ahead of str r7 at the second DrawDisc.
-// Draft, differ 50 of 1022, skeleton gap 20 (tla-en, 2026-11-01)
-// The body of the canvas burst family (BattleEffect_RunCanvasMode0,
-// BattleEffect_RunCanvasModeByCount and BattleEffect_RunCanvasMode3WithAction
-// in canvas_modes.c). Every call, table, branch, stack slot and register now
-// agrees; what is left is scheduling, in three places:
-// - 32 of the 50: DrawDisc's stack arguments. The native issues the stores of
-//   half and size (with the mov from r8 in the first arm) ahead of the split
-//   0x030000bc chain and the argument movs; here they follow them. In sched2
-//   the chain's head ranks one above the stores (load + 3 against load + 2)
-//   and the native needs the stores at least level with it. No spelling moves
-//   that: a set-once slot pointer, a volatile slot and a literal address
-//   change nothing; a half local, an inner Blit inline, Call6 and empty asms
-//   in four places go backwards. It matches the "split-constant chain outranks
-//   stores" strand in the K2 notes, so it may be the -mthumb-slow-loads model,
-//   which is a compiler question and out of scope here.
-// - 4: the two palette copies, ldr of the entry before the lsls of BG_PLTT.
-// - 14: the two 0x3c00 clears. The native rebuilds the constant for each and
-//   keeps the entry in r5; here the constant is shared in r5 and the entry
-//   sits in r6.
-// The last two close through call.h: Call3((void (*)())Iwram_CopyWords, ...)
-// for the copies and Value2((s32 (*)())Iwram_ClearWords, ...) for the clears
-// give differ 32, skeleton gap 15, leaving only the stores. Those are wrapper
-// devices, so they stay out until the stores close; add them, tagged, then.
-// What closed the rest: draw is DrawRectangle draw[2] (the untouched sp+40 is
-// its second word); cells is one set-once integer local, rematerialized by
-// reload, with the operands written offset first; the giv loops index
-// particles inside the loop; the disc index is set before x and y in the ball
-// arm; in the rays width is set first and half later than height, so that
-// loop.c hoists the 8 and the 2 and the 4 stays in the body.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -84,11 +8,17 @@
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #undef Iwram_CopyWords
-static inline s32 Iwram_CopyWords(void *d, const void *s, s32 n) { return Iwram_CopyWordsEntry(d, s, n); }
+static inline s32 Iwram_CopyWords(void *d, const void *s, s32 n) {
+  return Iwram_CopyWordsEntry(d, s, n);
+}
 #undef Iwram_FillWords
-static inline s32 Iwram_FillWords(void *d, s32 n, s32 v) { return Iwram_FillWordsEntry(d, n, v); }
+static inline s32 Iwram_FillWords(void *d, s32 n, s32 v) {
+  return Iwram_FillWordsEntry(d, n, v);
+}
 #undef Iwram_ClearWords
-static inline s32 Iwram_ClearWords(void *d, s32 n) { return Iwram_ClearWordsEntry(d, n); }
+static inline s32 Iwram_ClearWords(void *d, s32 n) {
+  return Iwram_ClearWordsEntry(d, n);
+}
 
 // The ball is the last particle, never a local: the native rereads its address.
 #define ball (&work->particles[63])
@@ -99,7 +29,6 @@ extern char ResourceId_Data134;
 extern char ResourceId_BlueFlameSheet;
 extern char ResourceId_OrangePaletteB;
 extern char ResourceId_FlashBurstSheet;
-extern u8 gMapCellBuffer[];
 extern u16 gData_08197410[];
 extern const u8 Data_08199ec5[];
 
@@ -139,20 +68,20 @@ static inline void DrawDisc(void *canvas, s16 *discs, s32 cells, s32 x, s32 y,
                             s32 size, s32 index) {
   BattleEffect_LoadBlitter(188, 1 << 4 | 3);
   ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, (u8 *)(discs[index] + cells),
-                                           x - (size >> 1), y - size,
-                                           size >> 1, size);
+                                           x - (size >> 1), y - size, size >> 1,
+                                           size);
   HeapSlot_Release(188);
   BattleEffect_LoadBlitter(188, 1 << 4 | 7);
-  ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, (u8 *)(discs[index] + cells), x,
-                                           y - size, size >> 1, size);
+  ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, (u8 *)(discs[index] + cells),
+                                           x, y - size, size >> 1, size);
   HeapSlot_Release(188);
   BattleEffect_LoadBlitter(188, 1 << 4 | 11);
   ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, (u8 *)(discs[index] + cells),
                                            x - (size >> 1), y, size >> 1, size);
   HeapSlot_Release(188);
   BattleEffect_LoadBlitter(188, 1 << 4 | 15);
-  ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, (u8 *)(discs[index] + cells), x, y,
-                                           size >> 1, size);
+  ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, (u8 *)(discs[index] + cells),
+                                           x, y, size >> 1, size);
   HeapSlot_Release(188);
 }
 
@@ -185,7 +114,7 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
   s32 offset;
   s32 i;
   s32 j;
-  s32 cells = (s32)gMapCellBuffer;
+  s32 cells = (s32)Ram_MapCellBuffer;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -314,7 +243,7 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
               s32 y = to.y + ((Trig_Cos(step->z) * radius) >> 16);
 
               draw[0](canvas, graphics + gData_08197410[size - 1], x - half,
-                   y - 32 - size, width, height);
+                      y - 32 - size, width, height);
             }
           }
         }
@@ -392,9 +321,9 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
           BattleEffectKernels_IntegrateVector2(flame, 60, 0);
           if ((u32)flame->variant <= 17)
             draw[0](canvas,
-                 work->sheet + 0x800 +
-                     (Data_08199ec5[flame->variant / 3] << 11),
-                 x - 16, y - 32, 32, 64);
+                    work->sheet + 0x800 +
+                        (Data_08199ec5[flame->variant / 3] << 11),
+                    x - 16, y - 32, 32, 64);
           if (flame->variant > 0)
             flame->variant = flame->variant - 1;
           else
@@ -410,7 +339,7 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
           s32 size = (spark->variant >> 2) + 1;
 
           draw[0](canvas, graphics + gData_08197410[size - 1],
-               HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
+                  HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
           BattleEffectKernels_IntegrateVector2(spark, 60, 0);
           spark->variant--;
         }

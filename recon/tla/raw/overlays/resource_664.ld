@@ -70,7 +70,6 @@ SECTIONS
         "*/games/tla/src/scene/airs_rock_inside/s4f3c.o"(.text)
         "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
         "*/games/tla/src/scene/airs_rock_inside/s505c.o"(.text)
-        "*/resource_664_overlay.o"(.text.x0200d1f8)
         "*/games/tla/src/scene/airs_rock_inside/s51f8.o"(.text)
         "*/games/tla/src/scene/airs_rock_inside/s5cb8.o"(.text)
         "*/games/tla/src/scene/airs_rock_inside/import.o"(.text)

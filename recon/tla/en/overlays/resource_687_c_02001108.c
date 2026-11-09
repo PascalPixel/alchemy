@@ -1,4 +1,14 @@
 // Draft, differ 2 of 350 (tla-en, 2026-11-08)
+// 9 November, still 2. The loop dump says why the offset waits for the second
+// pass: in the first, the offset giv (i - 1) * 2 is "not worth while, 68 vs
+// 102" (lifetime 1 times threshold 17 times benefit 4 against 102 insns), and
+// table + offset is no address giv yet, its base being the r/o register
+// load_mems makes in that pass. Reduced in the first pass, before the
+// palette, it would give the listing's order (inits offset first, the
+// palette's increment placed after its store). Tried: the index through a
+// function-level constant local (i - one: 2; (i - 1) * one 75), a byte offset
+// times a constant local entrySize (144 to 147), k = i - 1 set before the
+// palette read (2), the table read first (130).
 // Devices pass (2026-11-09), none below 2: the palette base set inside the
 // loop body, as a block local or through palette (29), the table through a
 // block-local pointer (158). Both giv inits have no dependent in the

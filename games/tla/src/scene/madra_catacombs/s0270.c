@@ -1,33 +1,3 @@
-// Draft, differ 11 of 76 (tla-en, 2026-11-08)
-// 2026-11-08 (devices pass), unchanged at 11: the shape store through a one-byte struct view lifts the read above it (11: the read then takes r1 and the write reuses it, where the native reloads r3 then r1); with it, an empty asm or an asm use of shapes, cells, layer, level or index at six points, 13 to 74. An asm on shapes or cells before the store, 25 to 71.
-// Under -Os and -mtune=gba; ja, de, es, fr and it measure the same 11.
-// Overlay 655's Func_02000e9c (resource_655_c_02000e9c.c) instruction for
-// instruction, with this overlay's own import stubs; written out here so this
-// draft no longer moves when 655's does. Raises the cells under the held actor
-// again.
-// Left: the first cell's reload registers. The native copies the shape pointer
-// to r1, the cell pointer to r3 for the read and to r1 again for the write;
-// here the shape store takes r3, the read r1 and the write reuses that r1.
-// Reload hands out r1, r2, r3 in turn (reload1.c, last_spill_reg), so the
-// native's registers follow from this draft's own order (shape store first)
-// when the turn already stands on r3 before the region: one more allocated
-// reload than here between the 0xfdff0000 reload and the shape store. The
-// likeliest is gMapShapeGrid loaded by reload at its add, `ldr r3` either way,
-// instead of local-alloc's pseudo 59. A shape store through a one-byte struct
-// view has its own alias set, which lets sched2 lift the read above the store
-// as the native has it; a throwaway extra read before the region moved the
-// turn, and the read, the 512 and the second cell then took the native's
-// registers. No source form found yet makes the grid a reload: a grid local
-// assigned at the top, before the cell load or at the add (35, 45, 11);
-// &gMapShapeGrid[i], an int offset, a u32 sum or the grid assigned first and
-// added to (11, 11, 11, 29).
-// Also tried 8 November: the read held in a local before the shape store (u8,
-// u16, s16, u32, s32, const, cast at the or, a constant local: 28 to 35;
-// regmove ties the or's result to the read, not to 192); the or'ed value held
-// across the store (33: the later shape store drops shapes below cells in
-// local-alloc priority and swaps r8 and sl); the store in a statement
-// expression inside the |= (31); the view stored after the |= (33). Six
-// permuter minutes from the view found only a wrong-shift candidate (9).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -47,8 +17,7 @@ s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void ObjectVisual_CopyAttributes(s32 id, s32 value);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_0200056c(s32 id);
@@ -90,6 +59,12 @@ struct EffectView {
   void (*update)(struct Actor *object);
 };
 
+// One-field view: the shape store is memory of its own to sched2, which sinks
+// it past the cell read; a plain store keeps its order.
+struct ShapeCell {
+  u8 shape;
+};
+
 #define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
 
 void Func_02000270(void) {
@@ -106,7 +81,7 @@ void Func_02000270(void) {
     return;
   layer = &held->terrainId;
   cells = (u8 *)Ram_HeapSlots->mapWork->layers[*layer].cells;
-  shapes = gMapShapeGrid +
+  shapes = FIXED_ADDRESS((u8 *), 0x02024000, gMapShapeGrid) +
            (((struct MapCell *)cells) - (struct MapCell *)Ram_MapCellBuffer);
   shape = Func_020010ec(*layer, held->x, held->z);
   level = Map_GetTerrainHeight(*layer, held->x, held->z);
@@ -116,7 +91,10 @@ void Func_02000270(void) {
   newShape = Func_020011f4(*layer, shape, level);
   shapes += index;
   index <<= 2;
-  *shapes = newShape;
+  /* FAKEMATCH(signature): the grid byte stored through a one-field struct
+   * view (struct ShapeCell), whose alias set lets sched2 sink it past the
+   * cell read; as *shapes = newShape, 6 of 76 instructions differ in tla-en. */
+  ((struct ShapeCell *)shapes)->shape = newShape;
   cells += index;
   ((struct MapCell *)cells)->attributeB |= 192;
   cells += 0x200;

@@ -1,5 +1,19 @@
 // Draft, differ 2 of 1150 (tla-en, 2026-11-08); no device left. Every edition
 // differs by the same 2.
+// 9 November: the preheader comes right, the tail then swaps. With a
+// function-level local rowSize = 16, line = k * rowSize from a second counter k
+// stepped after j (for (j = 0, k = 0; j != 10; j++, k++)) is a reduced giv (a
+// product by a register is worth reducing) of a biv processed first: line's
+// zero and register (r4) and j * 7's (r0) match, but each giv's increment
+// goes before its own biv's, so adds r0, #7 precedes adds r4, #16 (2). Stepped
+// k++ first, the increments come right and the inits and registers swap (8);
+// line = j * rowSize with one counter, the same (8). The listing's order is
+// one biv whose line giv is processed before j * 7: that needs line found after
+// the hoisted j * 7 (inside the motes loop it reduces line * 2 instead: 187), or
+// j * 7 reduced only in loop.c's second pass. Also 2 or worse: the rings'
+// texture as FIXED_ADDRESS 0x02014000 (2), line set in the for step (28 to 703),
+// j * 7 as a local at the body's top (697). Permute 10 minutes from each of
+// the draft and the two-counter form: nothing below 2.
 // Devices pass (2026-11-09), none below 2. sched2 (verbose) after j's zero:
 // the 6's copy to ip and line's zero tie on priority (1), class and
 // dependents (0 each), so LUID decides. Tried: line = j * 16 as a giv behind

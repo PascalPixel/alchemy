@@ -1,4 +1,8 @@
 // Draft, differ 4 of 875 (tla-en, 2026-11-08)
+// 9 November, still 4. The products called through the linked IwramMulQ16
+// (a pool read, which sched2 ties to the call before it) in place of the
+// fixed address: in the slope slowdown 85 (two) and 116 (three), elsewhere 6
+// to 296; the pointer is then held and reused, not reloaded.
 // Devices pass (2026-11-09), none below 4: after the first product, an asm
 // on ratio or on the product, clobbering r6 or reading the stored velocityX
 // (6 each: the order stays and the asm's 4 bytes move the next pool).

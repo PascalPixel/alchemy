@@ -1,4 +1,15 @@
 // Draft, differ 4 of 639 (tla-en, 2026-11-08)
+// 9 November, still 4. The else-if branch's registers follow once the NULL
+// branch's &scene->x goes through a local, with the plain test (no inReach
+// device): a block-local at = &scene->x set after the z store gives the
+// else-if exactly but reloads scene into r3 for scene->facing where the
+// listing reuses r1 (9); carried through shine, (s32 *)(shine = (void *)
+// &scene->x), every row matches but the add, built as movs r2, #4 / add r2, r9
+// where the listing has mov r2, r9 / adds r2, #4: shine sits in fp, so reload
+// takes the commuted alternative (4, the same count as the kept form). Through
+// starEntry or glowEntry the store to its slot stays (7); through sprite,
+// pending, particle, glow, object, canvas or the other locals 11 to 451; at at
+// function scope 9; facing read first 12.
 // Devices pass (2026-11-09), none below 4: the mask or the flags held in each
 // other local (glowEntry, starEntry, starTile 4; glowTile, spot 18; j 11;
 // rise, frame, angle, speed, size 34 to 180), as `flags & (v = 4)`,

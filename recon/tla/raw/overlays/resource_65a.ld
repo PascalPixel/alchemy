@@ -5,7 +5,7 @@ SECTIONS
         "*/games/tla/src/scene/madra_catacombs/entry.o"(.text)
         "*/games/tla/src/scene/madra_catacombs/s0038.o"(.text)
         "*/games/tla/src/scene/madra_catacombs/s014c.o"(.text)
-        "*/resource_65a_overlay.o"(.text.x02008270)
+        "*/games/tla/src/scene/madra_catacombs/s0270.o"(.text)
         "*/games/tla/src/scene/madra_catacombs/s0318.o"(.text)
         "*/games/tla/src/scene/madra_catacombs/scene_tables.o"(.text)
         "*/games/tla/src/scene/madra_catacombs/s0388.o"(.text)

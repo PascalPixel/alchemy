@@ -1,4 +1,10 @@
 // Draft, differ 4 of 1361 (tla-en, 2026-11-09)
+// 9 November, later, still 4: its RAM buffers as FIXED_ADDRESS constants
+// (the ring's cells, transformed, strip, sheet2, the 0xC2 load, the camera
+// parameters), alone and up to three together, change nothing. For cause 2,
+// t's setter needs 8 dependents against the model copy's 7 (LUID favours the
+// copy) without its priority passing 4708's 175: no lo register holds a live
+// value here for an asm operand to carry.
 // 2026-11-09, 8 to 4: cause 3 below is closed by a tagged barrier, an empty
 // asm on frame * 2 that claims to clobber r3, so local-alloc gives the
 // temporary r2 (the gcse table then has 1111 insns, still in the good range

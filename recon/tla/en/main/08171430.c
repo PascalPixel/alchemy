@@ -1,4 +1,5 @@
 // Draft, differ 26 of 828 (tla-en, 2026-11-08); 26 in every edition, the same rows.
+// 9 November: cells as the fixed Ram_MapCellBuffer in place of gMapCellBuffer, 26.
 // 2026-11-08 (devices pass), unchanged at 26: an empty asm before, after or between the frame loop's inits (26 to 30), or pos set through an asm before the loop (265, 279), does not reorder the preheader.
 // Left: the frame loop's preheader order (16 rows: the listing computes
 // camera->pos, &texture, then pos = &screen; here pos comes first) and frame in r4

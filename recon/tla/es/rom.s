@@ -321,13 +321,7 @@ BattleEffect_RunCatastrophe:
 	.thumb_func
 BattleEffect_RunTrident:
 	.incbin "baserom.gba", 0x0018cb74, 0x00000a1c
-	.section .rom.0018f620, "ax"
-	.balign 4
-	.global Func_0818f620
-	.type Func_0818f620, %function
-	.thumb_func
-Func_0818f620:
-	.incbin "baserom.gba", 0x0018f620, 0x000008dc
+	.section .rom.0018fefc, "ax"
 	.global BattleEffect_RunMegiddo
 	.type BattleEffect_RunMegiddo, %function
 	.thumb_func

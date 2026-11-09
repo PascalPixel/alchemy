@@ -67,9 +67,6 @@ s32 Field_CheckConfiguredKeys(void) {
      * plain pointer one read serves all, in both branches (differ 141). */
     volatile struct InputState *input = (volatile struct InputState *)&gInput;
 
-    /* FAKEMATCH: the native loads gMainRoutineWork before the input; without
-     * the barrier the input comes first (differ 2). */
-    asm volatile("" : "+l"(party));
     if ((input->pressed & party->keys234) ||
         (input->pressed & party->keys230) ||
         (input->pressed & party->keys236) ||
@@ -84,9 +81,6 @@ s32 Field_CheckConfiguredKeys(void) {
     /* FAKEMATCH: the pressed keys are read again for each test, as above. */
     volatile struct InputState *input = (volatile struct InputState *)&gInput;
 
-    /* FAKEMATCH: the barrier of gMainRoutineWork's load, as above (differ 2
-     * without it). */
-    asm volatile("" : "+l"(party));
     if (input->pressed & party->keys234) {
       work->menu = 1;
       result = 1;

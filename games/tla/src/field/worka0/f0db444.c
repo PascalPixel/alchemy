@@ -17,10 +17,6 @@ void Func_080db444(s32 id, s32 force) {
       zero = 0;
       object->z += 0xfff00000;
       y = object->y;
-      /* FAKEMATCH: ⚓️ loads y before it builds the 64-pixel step and sets the
-       * call's zero argument first; without the barrier, differ 2 (movs r2,
-       * #128 issues before ldr r3, [r0, #12]). */
-      asm("" : : "r"(y), "r"(zero));
       object->y = y + 0x400000;
       Func_080daecc(id, zero);
     } else if (force) {

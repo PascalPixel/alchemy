@@ -43,10 +43,6 @@ void BattleEffect_ClearChildValueOnMismatch(void) {
 
     BattleEffect_FinishSceneAndReleaseHeapBlock();
     party = (struct PartyPauseView *)&gMainRoutineWork;
-    /* FAKEMATCH: ⚓️ loads gMainRoutineWork's address before it builds the field
-     * offset; read as a plain field the offset's first half is scheduled ahead
-     * of the load (differ 2) */
-    asm volatile("");
     if (party->pausedObject != scene->secondObjectId)
       ((struct Actor *)scene->child)->movementState = 0;
   }

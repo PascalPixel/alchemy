@@ -166,13 +166,7 @@ void BattleEffect_Run(void) {
     struct MainRoutineWork *party = &gMainRoutineWork;
     s32 paused;
 
-    /* FAKEMATCH: ⚓️ loads gMainRoutineWork before it builds the field offset
-     * (differ 4 without the barrier). */
-    asm volatile("");
     paused = party->pausedObject;
-    /* FAKEMATCH: ⚓️ loads the paused id between the two halves of the -1
-     * it compares with (differ 2 without the barrier). */
-    asm volatile("");
     if (paused != -1) {
       BattleEffect_ResumeObject(paused);
       party->pausedObject = -1;
@@ -266,9 +260,6 @@ void BattleEffect_DispatchRequestKind(void) {
     if (*(s8 *)(event + 0xca4) != 0)
       Func_080dd950();
     party = &gMainRoutineWork;
-    /* FAKEMATCH: ⚓️ loads gMainRoutineWork before it builds the field offset
-     * (differ 2 without the barrier). */
-    asm volatile("");
     if (party->pausedObject != scene->secondObjectId)
       ((struct Actor *)scene->child)->movementState = 1;
     Func_080dc978(scene->firstObjectId, targetId);
@@ -276,9 +267,6 @@ void BattleEffect_DispatchRequestKind(void) {
     // Let the object stopped last time go, then stop the target.
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    /* FAKEMATCH: ⚓️ loads gMainRoutineWork before it builds the field offset
-     * (differ 4 without the barrier). */
-    asm volatile("");
     if (party->pausedObject != -1) {
       BattleEffect_ResumeObject(party->pausedObject);
       party->pausedObject = -1;

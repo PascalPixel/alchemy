@@ -40,9 +40,6 @@ void Actor_ApplyIndexedChildValue(struct Actor *object) {
       part = list->parts[i];
       if (part != 0 && part->graphics != 0) {
         part->attribute = attribute;
-        /* FAKEMATCH: the ARM9 scheduling would reload the part count before
-         * this store. */
-        __asm__("");
       }
     }
     list->dirty = 1;
@@ -60,9 +57,6 @@ void Actor_SetPartAttribute(struct Actor *object, s32 attribute) {
       part = list->parts[i];
       if (part != 0 && part->graphics != 0) {
         part->attribute = attribute;
-        /* FAKEMATCH: the ARM9 scheduling would reload the part count before
-         * this store. */
-        __asm__("");
       }
     }
     list->dirty = 1;
@@ -85,17 +79,9 @@ void Actor_SetTargetAndCallback(u32 objectId, s32 targetId,
   if (follower != NULL && target != NULL) {
     follower->watchedObject = target;
     if (!(targetId & 0x10000)) {
-      /* FAKEMATCH(pin): the collision flags' zero held in r1, which the
-       * native loads from the pool between the action's store and the
-       * target's acceleration; as follower->collisionFlags = 0, 2 of 36
-       * instructions differ in tla-en. */
-      register u16 none asm("r1") = 0;
+      u16 none = 0;
 
       follower->action = 40;
-      /* FAKEMATCH(barrier): an empty asm holding the pinned zero and the
-       * target's acceleration puts the zero's pool load between the action's
-       * store and that load; as the pin alone, 2 of 36 differ in tla-en. */
-      asm("" : "+l"(none), "+m"(target->acceleration));
       follower->acceleration = target->acceleration * 2;
       follower->speedLimit = target->speedLimit;
       follower->collisionFlags = none;

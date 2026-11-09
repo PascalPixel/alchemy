@@ -19,8 +19,6 @@ void Func_0802a650(s32 map, void *destination) {
   u16 *buffer;
   s16 backdrop;
 
-  /* FAKEMATCH: the barrier of the table load above. */
-  asm("" : "+l"(table), "+l"(map));
   entry = (const u16 *)(map * 12 + table);
   buffer = Heap_Alloc(0x200);
   backdrop = *(s16 *)0x05000000;

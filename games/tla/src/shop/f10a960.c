@@ -42,7 +42,6 @@ void Func_0810a9ac(s32 value) {
   register s32 message asm("r6");
 
   shop = Ram_HeapSlots->menuRuntime;
-  asm volatile("");
   message = value;
   portrait = BattleEffect_GetResourceIdFar(*(u16 *)(shop + 0x4fa));
   Message_CloseFinishedWindowsFar();

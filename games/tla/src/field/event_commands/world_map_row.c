@@ -74,10 +74,6 @@ void Func_080ed030(s32 column, s32 row) {
       cell = line - 24;
     tile = ((column & 31) + (line << 5) + 128) % 768;
     cell <<= 6;
-    /* FAKEMATCH(barrier): an empty asm on the counter and the row's offset
-     * loads the cell buffer's address before the column is added; without
-     * it, 2 of 51 instructions differ in tla-en. */
-    asm("" : "+l"(i) : "l"(cell));
     cell = WorldMap_AddColumn(column, cell);
     cell <<= 6;
     tile <<= 6;

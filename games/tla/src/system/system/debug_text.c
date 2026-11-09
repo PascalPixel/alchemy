@@ -79,8 +79,6 @@ void DebugText_Print(const u8 *src) {
       u32 mask;
 
       addr = 0x06002500;
-      /* FAKEMATCH: loads the screen end before it builds the tile mask. */
-      __asm__("");
       mask = 0xf000;
       do {
         *dst++ = c | mask;

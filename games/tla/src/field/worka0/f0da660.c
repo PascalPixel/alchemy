@@ -13,11 +13,6 @@ void Func_080da660(s32 arg, s32 firstId, s32 secondId) {
   struct Actor *second;
   s32 index;
 
-  /* FAKEMATCH(one-pass): the empty block stops the scheduler moving the heap
-   * slot address above the third argument's spill; as straight-line code, 2
-   * of 57 instructions differ in tla-en. */
-  do {
-  } while (0);
   work = (struct Actor **)WORK_A0;
   /* FAKEMATCH(temporary): arg copied into index after the block, so its copy
    * to r10 follows the slot address; as arg passed directly, 2 of 57

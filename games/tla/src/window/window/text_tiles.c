@@ -62,9 +62,7 @@ void Func_080415a0(u16 *entry, u16 *mirror, s32 pattern, u8 *remap) {
        * between the two shifts of slot's zero-extension; as slot = (u8)value
        * before the store, 4 of 144 instructions differ in tla-en. */
       value <<= 24;
-      do {
-        work->tileCursor = following;
-      } while (0);
+      work->tileCursor = following;
       slot = value >> 24;
       if (work->tileAttributes[slot] == 0)
         break;
@@ -133,12 +131,7 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
 
   work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   canvas = Heap_Alloc(0x800);
-  /* FAKEMATCH(one-pass): the sheet's fetch in a once-only block, which stores
-   * it before the work's copy; as a plain statement, 2 of 428 instructions
-   * differ in tla-en. */
-  do {
-    glyphs = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
-  } while (0);
+  glyphs = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
   attr = work->level << 12;
   /* FAKEMATCH(wrapper): the clear forwarded through ClearWords, which keeps
    * its own constants; as Iwram_ClearWords called directly, 69 of 428
@@ -545,10 +538,6 @@ void Func_08041f70(s32 param) {
 void Func_08041f90(s32 value) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
 
-  /* FAKEMATCH: ⚓️ loads the window work before it builds the field offset;
-   * without the barrier the offset's first half is scheduled ahead of the load
-   * (differ 2) */
-  asm volatile("");
   work->outline = value;
 }
 
@@ -562,12 +551,7 @@ void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
 
   *counter = zero;
   Message_Decode(arg0, 1);
-  /* FAKEMATCH(one-pass): the closing 0's store in a one-pass block, whose
-   * end keeps the count's reread after the mask's load; as a plain
-   * statement, 4 of 49 instructions differ in tla-en. */
-  do {
-    canvas->entries[*counter] = zero;
-  } while (0);
+  canvas->entries[*counter] = zero;
   {
     /* FAKEMATCH(pin): the mask pinned to the r2 it takes, so it loads from
      * the pool before the count is reread; as a plain constant, 4 of 49
@@ -618,8 +602,6 @@ void Text_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3) {
     *output = *text;
     text++;
     output++;
-    /* FAKEMATCH: ⚓️ steps the output before it reads the next byte. */
-    __asm__("");
   }
   *output = 0;
   Text_DrawWideStringAtOffset(buffer, (struct Window *)arg1, arg2, arg3);
@@ -670,8 +652,6 @@ void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y) {
     *output = *text;
     text++;
     output++;
-    /* FAKEMATCH: ⚓️ steps the output before it reads the next byte. */
-    __asm__("");
   }
   x >>= 3;
   *output = 0;

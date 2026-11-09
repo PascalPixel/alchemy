@@ -9,9 +9,6 @@ s32 Func_080eab98(s32 unused, s32 key, s32 value) {
   s8 tagValue;
   s32 i = 0;
 
-  /* FAKEMATCH(barrier): the value's narrowing kept after the table's address;
-   * as an s8 parameter, 2 of 25 instructions differ in tla-en. */
-  asm("" : "+l"(value) : "l"(entry));
   tagValue = value;
   while (1) {
     if (entry[0] == key) {

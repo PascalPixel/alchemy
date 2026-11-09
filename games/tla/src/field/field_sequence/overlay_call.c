@@ -43,17 +43,11 @@ s32 Func_080cce84(void) { return ((s32 (*)(void))gOverlayArea[1])(); }
 /// Finds the talk event of object id; when the party has stopped that object,
 /// an event of kind 7 comes first.
 void *Func_080cce94(s32 id) {
-  /* FAKEMATCH: the search's result waits in r0 and is copied after the
-     stopped object's load; held in a plain local it is copied right after
-     the call (differ 2) */
-  register void *found asm("r0") = Func_080ccd78(0, id);
+  void *found = Func_080ccd78(0, id);
   struct MainRoutineWork *party = &gMainRoutineWork;
   void *event;
   s32 stopped;
 
-  /* FAKEMATCH: the barrier loads gMainRoutineWork's address before the
-     field offset is built (differ 2 without it) */
-  asm volatile("");
   stopped = party->pausedObject;
   event = found;
   if (stopped == id) {

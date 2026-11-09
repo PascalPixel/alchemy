@@ -44,16 +44,9 @@ void BattleEffect_ArmBg2AffineHBlankDma(void) {
   u16 control = channel[5];
   u32 io;
 
-  /* FAKEMATCH: ⚓️ reads the control word before it starts the mask; written as
-   * channel[5] &= 0xc5ff the mask is started first (differ 2) */
-  asm volatile("");
   channel[5] = control & 0xc5ff;
   channel[5] &= 0x7fff;
   io = 0x80;
-  /* FAKEMATCH: the barrier starts the I/O base (0x80 << 19) before the dummy
-   * read and finishes the address after it; as the plain constant 0x04000028,
-   * 2 instructions differ in tla-en. */
-  asm volatile("" : "+l"(io));
   (void)channel[5];
   Dma_Set(work->bg2xLines, (void *)((io << 19) + 0x28),
           DMA_HBLANK_WORD_PER_LINE, (volatile u32 *)channel);
@@ -67,15 +60,9 @@ void BattleEffect_ArmBg1HBlankDma(void) {
   u16 control = channel[5];
   u32 io;
 
-  /* FAKEMATCH: ⚓️ reads the control word before it starts the mask, as in
-   * BattleEffect_ArmBg2AffineHBlankDma (differ 2 without) */
-  asm volatile("");
   channel[5] = control & 0xc5ff;
   channel[5] &= 0x7fff;
   io = 0x80;
-  /* FAKEMATCH: ⚓️ starts the I/O base before the dummy read, as in
-   * BattleEffect_ArmBg2AffineHBlankDma (differ 2 without) */
-  asm volatile("" : "+l"(io));
   (void)channel[5];
   Dma_Set(work->bg2xLines, (void *)((io << 19) + 0x14),
           DMA_HBLANK_WORD_PER_LINE, (volatile u32 *)channel);

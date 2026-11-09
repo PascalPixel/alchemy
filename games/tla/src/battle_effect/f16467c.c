@@ -45,9 +45,6 @@ void Func_0816467c(s32 formation, s32 x, s32 y) {
 
   work = (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  /* FAKEMATCH(barrier): the empty asm spills the canvas before x's copy; as
-   * no asm, 2 of 430 instructions differ in tla-en. */
-  __asm__("");
   sheet = Ram_HeapSlots->unk64[0];
   orgX = x;
   x += 40 << 16;

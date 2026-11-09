@@ -27,9 +27,6 @@ void UpdateRisingParticleBurst(void *object) {
   Sound_PlayFar(154);
   for (i = 30; i >= 0; i--) {
     src->y += 1 << 16;
-    /* FAKEMATCH: ⚓️ loads the angle before it builds the 1/8 turn; without
-     * the barrier, differ 2. */
-    asm volatile("");
     src->angle += 0x2000; // 1/8 turn
     src->scaleX += shrink;
     src->scaleY += shrink;

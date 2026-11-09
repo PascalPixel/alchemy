@@ -51,9 +51,6 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count) {
           action->effect == 88 || action->effect == 53) {
         u32 priority = entry->priority;
 
-        /* FAKEMATCH: the barrier keeps the priority's load ahead of its bonus;
-         * added plainly the bonus is started first (differ 2). */
-        __asm__("");
         entry->priority = priority + 10000;
       }
     }

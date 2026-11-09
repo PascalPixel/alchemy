@@ -88,16 +88,10 @@ void FieldMotes_Start(void) {
     u32 p;
     s32 z;
 
-    /* FAKEMATCH: keeps the map work load before the cursor copy (differ 4
-     * without it). */
-    __asm__("" : : "r"(view));
     p = (u32)mote;
     clear = 0;
     *(s32 *)p = clear;
     p += sizeof(s32);
-    /* FAKEMATCH: keeps the first store before the origin load (differ 8
-     * without it). */
-    __asm__("" : : "r"(view));
     pos = view->origin;
     *(s32 *)p = 0x40000400;
     p += sizeof(s32);

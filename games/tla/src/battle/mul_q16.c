@@ -8,9 +8,6 @@ void Func_081269ac(void) {
    * in tla-en. */
   register u16 blend __asm__("r3") = 0xbf;
 
-  /* FAKEMATCH: the barrier of the pin above: it holds r2 until the value is
-   * loaded. */
-  __asm__("" : "+l"(blend) : : "r2");
   REG_BLDCNT = blend;
 }
 

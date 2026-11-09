@@ -40,10 +40,6 @@ s32 BattleEnemy_ClaimNameLetter(s32 no, s32 n) {
     }
     for (; retry <= 31; retry++) {
       w->channels[i] = (w->channels[i] + 1) % CH_CNT;
-      /* FAKEMATCH(barrier): an empty asm after the store keeps the mask's
-       * address from issuing before it; as the plain loop, 2 of 96
-       * instructions differ in tla-en. */
-      asm("");
       if ((w->usedMasks[i] & (1 << w->channels[i])) == 0)
         break;
     }

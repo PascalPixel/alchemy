@@ -18,8 +18,6 @@ void Func_0810b168(void) {
   s32 i;
   s32 selected;
 
-  /* FAKEMATCH: ⚓️ loads the work before it builds the slot offset */
-  asm volatile("" : : : "memory");
   for (i = 0; i < 24; i++)
     FieldParticle_UpdateFar(work->slots[i]);
   selected = work->selected;

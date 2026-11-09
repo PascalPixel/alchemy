@@ -55,9 +55,6 @@ void Event_Start(void) {
   GameFlag_ClearBit(0x132);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
-    /* FAKEMATCH: the pointer handoff keeps its load before the destination
-     * offset. */
-    __asm__ volatile("" : "+r"(party));
     state->currentOwner = party->currentOwner;
     state->objectStatus = 0;
   }
@@ -67,9 +64,6 @@ void Event_End(void) {
   Task_Remove((u32)Event_UpdateDebugSkip);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
-    /* FAKEMATCH: the pointer handoff keeps its load before the override offset.
-     */
-    __asm__ volatile("" : "+r"(party));
     if (party->ownerOverride == 0)
       Camera_FollowActor(party->currentOwner, 1);
     else

@@ -41,15 +41,7 @@ void Func_080eb594(void) {
       s32 (*fill)(void *, s32, u32);
 
       fill = Iwram_FillWords;
-      /* FAKEMATCH(barrier): the size's first half (128) and IwramFillWords'
-       * entry are loaded before the canvas is copied; as Iwram_FillWords(
-       * canvas, CANVAS_SIZE, 0), 2 of 98 instructions differ in tla-en. */
-      asm volatile("" : "+l"(size), "+l"(fill));
       buffer = canvas;
-      /* FAKEMATCH(barrier): the size's shift comes after the canvas's copy;
-       * as Iwram_FillWords(canvas, CANVAS_SIZE, 0), 2 of 98 instructions
-       * differ in tla-en. */
-      asm("" : "+l"(size) : "l"(fill), "l"(buffer));
       fill(buffer, size << 5, 0);
     }
     break;

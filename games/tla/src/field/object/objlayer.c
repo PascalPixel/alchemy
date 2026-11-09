@@ -64,9 +64,6 @@ void Func_0802372c(struct IconOwner *owner, s32 id) {
   sprite->unk17 = 4;
   sprite->scale = Q16_ONE;
   sprite->oam.index = tile;
-  /* FAKEMATCH(barrier): the tile index stored before the palette byte is read;
-   * as plain C, 2 of 68 instructions differ in tla-en. */
-  asm("");
   sprite->oam.palette256 = 0;
   sprite->oam.palette = 0;
 }
@@ -98,9 +95,6 @@ void Graphics_EnableObjLayerAndCallbacks(void) {
   BattleEffect_StartBufferInterpolationFar(1);
   wait(1);
   dispcnt = REG_DISPCNT;
-  /* FAKEMATCH: ⚓️ reads DISPCNT before it builds the layer mask; the plain
-   * statement starts the mask first (one pair of instructions swapped). */
-  asm volatile("");
   REG_DISPCNT = (dispcnt & 0xf1ff) | DISPCNT_OBJ_ON;
 }
 
@@ -110,9 +104,6 @@ void ActorSystem_ResumeProjectionAndHideLayers(void) {
   Task_ResumeAll(Func_0802386c);
   Task_ResumeAll(ObjectSystem_UpdateCameraFixed);
   dispcnt = REG_DISPCNT;
-  /* FAKEMATCH: ⚓️ reads DISPCNT before it builds the layer mask; the plain
-   * statement starts the mask first (one pair of instructions swapped). */
-  asm volatile("");
   REG_DISPCNT = dispcnt & 0xe1ff;
 }
 

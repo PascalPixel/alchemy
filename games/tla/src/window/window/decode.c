@@ -60,9 +60,6 @@ u32 Func_0803aed8(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no, s32 plural,
     entry[pos] = 0x0a;
     pos = (pos + 1) & 0x1ff;
     entry[pos] = 0x0a;
-    /* FAKEMATCH(barrier): the last code is stored before pos steps; as plain
-     * statements, 2 of 203 instructions differ in tla-en. */
-    asm("");
     pos = (pos + 1) & 0x1ff;
   }
   if (no == 1 || (no == 3 && plural == 0)) {
@@ -115,9 +112,6 @@ u32 Func_0803aed8(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no, s32 plural,
     entry[pos] = 0x08;
     pos = (pos + 1) & 0x1ff;
     entry[pos] = ' ';
-    /* FAKEMATCH(barrier): the last code is stored before pos steps; as plain
-     * statements, 2 of 203 instructions differ in tla-en. */
-    asm("");
     pos = (pos + 1) & 0x1ff;
   }
   return pos;

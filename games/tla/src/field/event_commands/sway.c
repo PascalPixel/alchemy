@@ -45,10 +45,7 @@ void BattleEffect_UpdateShrinkingOrbitObject(struct Actor *object) {
   s16 life;
   s32 count;
   s32 radius;
-  /* FAKEMATCH: the lift's first byte is pinned to the r0 the native builds it
-   * in; as a free temporary local-alloc gives it r2 and moves life to r4
-   * (differ 18). */
-  register s32 lift asm("r0");
+  s32 lift;
 
   if (object != NULL) {
     count = (u16)object->action - 1;
@@ -57,10 +54,6 @@ void BattleEffect_UpdateShrinkingOrbitObject(struct Actor *object) {
     if (life != 0) {
       pos.x = scene->x;
       lift = 160;
-      /* FAKEMATCH: the native starts the 10-pixel lift (160 << 12) between the
-       * x store and the y load, and shifts it after the load; as one constant
-       * both halves come after the load (differ 2). */
-      asm volatile("" : "+l"(lift));
       pos.y = scene->y + (lift << 12);
       radius = life << 16;
       

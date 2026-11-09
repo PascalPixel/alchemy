@@ -24,10 +24,6 @@ void Shop_DrawSelectMsg(s32 window, s32 unitId) {
   struct ShopRuntime *shop;
 
   shop = Ram_HeapSlots->menuRuntime;
-  /* FAKEMATCH(barrier): the work loaded before the service kind's offset is
-   * built in r2, as native; the clobber keeps that build below the load. As
-   * plain C, 2 of 45 instructions differ in tla-en. */
-  asm("" : "+l"(shop) : : "r2");
   kindOrMessage = shop->partyAction;
   price = Shop_ServicePrice(unitId, kindOrMessage);
   if (window != 0) {

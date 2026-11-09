@@ -39,10 +39,7 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
   s32 mode;
 
   party = &gMainRoutineWork;
-  /* FAKEMATCH: the empty asm takes gMainRoutineWork's address before the
-   * argument is copied to r8 (differ 2 without it: the native loads the
-   * address first). */
-  asm("" : "=r"(mode) : "0"(animation), "r"(party));
+  mode = animation;
   object = ObjectTable_Get(party->currentOwner);
   context = object->animation;
   effect = ResourceMetadata_RegisterFar(context, 267);

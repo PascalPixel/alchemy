@@ -69,12 +69,8 @@ void Func_08044348(struct Window *window, const void *resource) {
       s16 tile = *source;
 
       col++;
-      /* FAKEMATCH(one-pass): the two stores in a block run once; as the two
-       * stores alone, 2 of 66 instructions differ in tla-en. */
-      do {
-        *vram = tile;
-        *map = tile;
-      } while (0);
+      *vram = tile;
+      *map = tile;
       source++;
       vram++;
       map++;

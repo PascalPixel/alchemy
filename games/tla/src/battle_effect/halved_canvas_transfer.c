@@ -27,9 +27,6 @@ void BattleEffect_TransferHalvedCanvas(void) {
     {
       void *destination = (void *)0x06004000;
 
-      /* FAKEMATCH: the native loads the destination before it starts the size
-       * (differ 2 without the barrier). */
-      __asm__ volatile("" : "+r"(destination));
       ColorBuffer_Halve(buffer, destination, 0x4000);
     }
   } else {

@@ -558,10 +558,6 @@ struct UiChannelSlot *BattleMessage_Continue(struct Window *window,
     selected->outline = zero;
     selected->line = zero;
     selected->ended = zero;
-    /* FAKEMATCH(barrier): the line spacing held behind an empty asm, so it is
-     * built after the entry store and stored after the cleared fields; as a
-     * plain store, 6 of 81 instructions differ in tla-en. */
-    asm volatile("" : "+l"(lineSpacing));
     selected->lineSpacing = lineSpacing;
     index = 0;
     spacing = selected->spacing;

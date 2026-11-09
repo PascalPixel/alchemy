@@ -18,9 +18,6 @@ void Effect_CircleAndBlink(struct FieldActor *object) {
   s32 radius = object->y;
   s32 step = WORD_AT(object, 48);
 
-  /* FAKEMATCH: the barrier keeps both loads ahead of the radius; plainly the
-   * radius's 0xc0000 is built before the step is loaded (differ 2). */
-  __asm__("");
   radius >>= 2;
   radius += 0xc0000;
   object->x = WORD_AT(object, 68) +

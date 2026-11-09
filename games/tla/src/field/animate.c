@@ -32,8 +32,6 @@ void Animation_InitializeWorkFromMetadata(struct AnimationEntry *work) {
       work->pictures = (void **)value;
       work->scripts = (u8 **)animation;
       work->pos = z;
-      /* FAKEMATCH: then the codec and the picture. */
-      asm("");
       work->mode = info->pictureCodec;
       work->picture = 0xff;
     }

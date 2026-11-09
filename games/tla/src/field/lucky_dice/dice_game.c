@@ -26,9 +26,6 @@ s32 Func_081b834c(s32 *dice) {
       for (j = i + 1; j != 4; j++) {
         if (dice[i] == dice[j]) {
           matches[pairs] = dice[i];
-          /* FAKEMATCH(barrier): the store issued before the pointer step's
-           * constant; as plain C, 2 of 60 instructions differ in tla-en. */
-          asm("");
           pairs++;
         }
       }

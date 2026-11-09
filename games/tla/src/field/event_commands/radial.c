@@ -49,9 +49,6 @@ void BattleEffect_SpawnRadialParticleRing(struct MotionObject *origin) {
     velocity[1] = 0;
     sine = Trig_Sin(angle);
     velocity[2] = sine;
-    /* FAKEMATCH: the native stores the sine before it reloads the origin
-     * (differ 2 without the barrier). */
-    __asm__("");
     Func_080df8e0(origin->x, origin->y, origin->z, velocity[0], velocity[1],
                   sine, 0x01090001, &options);
     i++;
@@ -71,10 +68,6 @@ void BattleEffect_WanderAroundAnchor(struct OrbitEffect *effect) {
   effect->x += dx;
   effect->z += dz;
   effect->angle += 0xfff0;
-  /* FAKEMATCH: the empty one-pass block forms the pause address after the angle
-   * store (differ 2 without it). */
-  do {
-  } while (0);
   if (effect->pause != 0) {
     effect->pause--;
     effect->angle += 0x800;

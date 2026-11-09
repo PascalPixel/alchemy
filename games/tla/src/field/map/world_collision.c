@@ -78,10 +78,6 @@ s32 Func_0802db88(void *object, struct WorldPosition *position) {
     u8 *work = Ram_HeapSlots->eventWork;
     s32 mode;
 
-    /* FAKEMATCH: the native loads the event work before it builds the mode
-     * offset; the plain read builds the offset first (one reordered pair,
-     * differ 2). */
-    asm volatile("");
     mode = *(s8 *)(work + 0xd3a);
     if (mode == 0) {
       if ((u32)(collision - 1) <= 3 || collision == 6)
@@ -109,9 +105,6 @@ s32 Func_0802dbd0(struct WorldMover *mover, struct WorldPosition *position) {
 
     s32 height = mover->height;
 
-    /* FAKEMATCH: the native loads the height before it builds the limit; the
-     * plain test builds the limit first (one reordered pair, differ 2). */
-    asm volatile("");
     if (height < 0x40000) {
       if ((u32)(collision - 1) > 3 && collision != 6)
         return -1;

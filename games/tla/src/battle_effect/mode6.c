@@ -8,9 +8,6 @@ void Graphics_ResetBg2Pa(void) {
    * instructions differ in tla-en. */
   register u16 value __asm__("r3") = Q_8_8(1);
 
-  /* FAKEMATCH: the barrier of the pin above: it holds r2 until the value is
-   * loaded. */
-  __asm__("" : "+l"(value) : : "r2");
   REG_BG2PA = value;
 }
 
@@ -21,7 +18,5 @@ void Graphics_SetBg2AffineScaleHalf(void) {
    */
   register u16 value __asm__("r3") = Q_8_8(0.5);
 
-  /* FAKEMATCH: the barrier of the pin above. */
-  __asm__("" : "+l"(value) : : "r2");
   REG_BG2PA = value;
 }

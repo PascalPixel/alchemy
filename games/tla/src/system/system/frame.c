@@ -301,11 +301,6 @@ void Input_UpdateKeyRepeatAndDirection(void) {
     switch (directionCount) {
     default:
       gInput.previousDirection = KEYS_HORIZONTAL;
-      /* FAKEMATCH(one-pass): the form kept; as plain C with no block, 2 of 113
-       * instructions differ in tla-en (the direction is loaded before the
-       * mask). */
-      do {
-      } while (0);
       mask = 0xffff & ~KEYS_DPAD;
       gInput.direction &= mask;
       break;

@@ -18,9 +18,6 @@ void Graphics_ApplyWindowBlendRegisters(void) {
   register struct BattleFxWork *work asm("r2") =
       (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
 
-  /* FAKEMATCH(barrier): the work pointer loads before the first offset
-   * starts; as plain C, 2 of 55 instructions differ in tla-en. */
-  __asm__ volatile("");
   {
     u32 value = work->win0h;
 
@@ -30,31 +27,13 @@ void Graphics_ApplyWindowBlendRegisters(void) {
     __asm__ volatile("" : "+l"(value));
     REG_WIN0H = value;
   }
-  /* FAKEMATCH(barrier): each step of the shared offset (adds r0, #2) stays
-   * after the store before it; as plain C, the eight barriers of this
-   * function make 14 of 55 instructions differ in tla-en. */
-  __asm__ volatile("");
   REG_WIN0V = work->win0v;
-  /* FAKEMATCH(barrier): source order, as above. */
-  __asm__ volatile("");
   REG_WIN1H = work->win1h;
-  /* FAKEMATCH(barrier): source order, as above. */
-  __asm__ volatile("");
   REG_WIN1V = work->win1v;
-  /* FAKEMATCH(barrier): source order, as above. */
-  __asm__ volatile("");
   REG_WININ = work->winin;
-  /* FAKEMATCH(barrier): source order, as above. */
-  __asm__ volatile("");
   REG_WINOUT = work->winout;
-  /* FAKEMATCH(barrier): source order, as above. */
-  __asm__ volatile("");
   REG_DISPCNT = work->dispcnt;
-  /* FAKEMATCH(barrier): source order, as above. */
-  __asm__ volatile("");
   REG_BLDCNT = work->bldcnt;
-  /* FAKEMATCH(barrier): source order, as above. */
-  __asm__ volatile("");
   REG_BLDALPHA = work->bldalpha;
 }
 
@@ -66,9 +45,6 @@ void Display_ApplyBg2Affine(void) {
   register struct BattleFxWork *work asm("r2") =
       (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
 
-  /* FAKEMATCH(barrier): the work pointer loads before the first offset
-   * starts; as plain C, 2 of 30 instructions differ in tla-en. */
-  __asm__ volatile("");
   {
     u32 value = work->bg2pa;
 
@@ -78,9 +54,6 @@ void Display_ApplyBg2Affine(void) {
     __asm__ volatile("" : "+l"(value));
     REG_BG2PA = value;
   }
-  /* FAKEMATCH(barrier): the offset's step (adds r0, #2) stays after the
-   * store before it; as plain C, 2 of 30 instructions differ in tla-en. */
-  __asm__ volatile("");
   REG_BG2PD = work->bg2pd;
   /* FAKEMATCH(barrier): the offset's step (subs r0, #10) stays after the
    * store before it; as plain C, 2 of 30 instructions differ in tla-en. */

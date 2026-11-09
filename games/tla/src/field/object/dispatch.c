@@ -10,10 +10,6 @@ void Actor_StartScript(struct ActorView *object,
      * plain zero stores, 2 of 16 instructions differ in tla-en. */
     register u16 zero asm("r3") = 0;
 
-    /* FAKEMATCH(barrier): the empty asm that keeps the pinned zero's pool
-     * load ahead of the first store; as the pin alone, 2 of 16 instructions
-     * differ in tla-en. */
-    asm volatile("" : "+l"(zero));
     object->value04 = 0;
     object->value00 = (u32)script;
     object->value5b = zero;

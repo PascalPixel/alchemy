@@ -100,10 +100,6 @@ void Func_08039f94(struct Window *window, s32 save_position) {
       Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
   {
     s32 part = stage * window->height;
-    /* FAKEMATCH(barrier): an empty asm on the multiply's result, which issues
-     * the width's shift first; as the plain store, 2 of 92 instructions differ
-     * in tla-en. */
-    asm("" : "=r"(part) : "0"(part));
     width = scratch.result >> 15;
     scratch.scaledPart = part << 16;
   }
@@ -340,10 +336,6 @@ void Message_Show(s32 message) {
     u16 present;
 
     work->menuState = 1;
-    /* FAKEMATCH(barrier): an empty asm, so the menu state is stored before
-     * the entry is addressed; as plain statements, 4 of 69 instructions
-     * differ in tla-en. */
-    __asm__ volatile("");
     present = work->entries[decoded];
     result = 0;
     entry = decoded;
@@ -389,10 +381,6 @@ s32 Message_OpenDecoded(s32 window, s32 argument) {
    * bytes, not 16 (differ 4). */
   u16 entries[4];
 
-  /* FAKEMATCH: the empty asm holds r2 until the render work is loaded, as
-   * ⚓️ does before it starts the result offset 0x1384; plainly, 2
-   * instructions differ in tla-en. */
-  asm("" : "+l"(work) : : "r2");
   work->speakerVoiceSound = 0;
   work->speakerVoiceCountdown = 0;
   entry = Message_Decode(argument, 1);

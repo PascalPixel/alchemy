@@ -87,11 +87,6 @@ void Func_080ebf94(void) {
   work->speed = 0x10000;
   cursorAttributes = 0x40000000;
   *oam++ = 0;
-  /* FAKEMATCH(barrier): an empty asm reading the moved OAM pointer and the
-     held 0x40000000 between the cursor's two words; as plain
-     `*oam++ = 0; *oam++ = 0x40000000;`, 2 of 192 instructions differ in
-     tla-en. */
-  asm("" : "+r"(oam) : "r"(cursorAttributes));
   *oam++ = cursorAttributes;
   cursorAttributes = 0x400;
   cursorAttributes |= tile >> 5;

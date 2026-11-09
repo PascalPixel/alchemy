@@ -56,10 +56,6 @@ void Func_08045018(struct BobPairObject *object) {
 
   value = object->baseY + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
   object->y = value;
-  /* FAKEMATCH: tying the object to an empty asm loads the next object before
-   * the second count is shifted, as native; plainly, 2 instructions differ in
-   * tla-en. */
-  asm("" : "+r"(object));
   object = object->next;
   value = object->baseY + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
   object->y = value;

@@ -92,13 +92,8 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
     void *p = &position;
     s32 y;
 
-    /* FAKEMATCH: the barriers place the position's address, the y load and
-     * the spark count where the native has them; without them the count
-     * comes after the call (differ 4). */
-    asm volatile("" : "+l"(p));
     y = djinni->y;
     remaining = 23;
-    asm volatile("" : "+l"(remaining));
     position.y = y;
     position.z = djinni->z;
     Camera_WorldToScreen(p);
@@ -176,21 +171,15 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 /// Spins an object 1/8 turn and shrinks it by 0x400 a frame, destroying it once
 /// its scale falls below 0x3000.
 void BattleEffect_ShrinkObjectAndDestroyFast(void *obj) {
-  /* FAKEMATCH: the step pinned to r1 and used by an empty asm loads its literal
-   * before the scales; as a plain local, 18 instructions differ in tla-en. */
-  register s32 step asm("r1") = 0xFFFFFC00;
+  s32 step = 0xFFFFFC00;
   s32 scaleY;
   s32 scale;
   s32 angle;
 
-  asm("" : : "l"(step));
   scaleY = ((struct MotionObject *)obj)->scaleY + step;
   scale = ((struct MotionObject *)obj)->scaleX;
   ((struct MotionObject *)obj)->scaleY = scaleY;
   angle = ((struct MotionObject *)obj)->angle;
-  /* FAKEMATCH: the barrier keeps the angle's load ahead of the second
-   * scale's add (differ 4 without it). */
-  asm volatile("" : "+l"(angle));
   scale += step;
   ((struct MotionObject *)obj)->angle = angle + 0x2000;
   ((struct MotionObject *)obj)->scaleX = scale;

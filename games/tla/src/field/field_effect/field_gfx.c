@@ -85,15 +85,9 @@ loop:
     u32 attr;
     s32 z;
 
-    /* FAKEMATCH: keeps the map work load before the cursor copy (differ 2
-     * without) */
-    __asm__("" : : "r"(view));
     attr = (u32)p;
     *(u32 *)attr = clear;
     attr += sizeof(union DustWord);
-    /* FAKEMATCH: keeps the first store before the leader load (differ 4
-     * without) */
-    __asm__("" : : "r"(view));
     leader = view->origin;
     *(u32 *)attr = 0x40000400;
     attr += sizeof(union DustWord);

@@ -90,7 +90,6 @@ void Func_081089e4(struct ShopCursor *cursor) {
        * writes it in each branch, 2 instructions differ in tla-en. */
       register u32 x asm("r3") = sprite->x;
 
-      asm volatile("");
       mask = 0x1ff;
       mask &= x;
       sprite->oam.x = mask;

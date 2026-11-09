@@ -25,10 +25,6 @@ void Actor_CenterOnColumn(u32 objectId, s32 action, s32 zOffset) {
     Actor_SetMode(object, 2);
     x = object->x;
     eight = 8;
-    /* FAKEMATCH: under the ARM9TDMI load schedule the column offset's 8 is
-     * built before the x load; the barrier loads x first with neither value
-     * changed. */
-    __asm__("" : "+r"(eight) : "r"(x));
     Actor_SetTargetPosition(object, x + ((eight - angleRemainder) << 16), object->y,
                        object->z);
     Actor_CommitPosition(object);

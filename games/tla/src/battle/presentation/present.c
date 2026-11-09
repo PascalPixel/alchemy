@@ -39,10 +39,6 @@ void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
   case 1: {
     record = object->records;
     record->part[0].objectMode = mode;
-    /* FAKEMATCH: the barrier stores the first part before the second part's
-     * address, here and in the loop, as native; plainly, 4 instructions differ
-     * in tla-en. */
-    __asm__ volatile("");
     record->part[1].objectMode = mode;
     break;
   }
@@ -54,8 +50,6 @@ void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
       if (record == 0)
         break;
       record->part[0].objectMode = mode;
-      /* FAKEMATCH: the barrier of the store above. */
-      __asm__ volatile("");
       record->part[1].objectMode = mode;
       i++;
     } while (i <= 3);

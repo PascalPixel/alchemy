@@ -39,11 +39,6 @@ void Func_0810a108(s32 unitIdArg, s32 slot, s32 countArg) {
   s32 unitId;
   s32 count;
 
-  /* FAKEMATCH(one-pass): an empty one-pass block keeps the slot's spill
-   * ahead of the heap slots' address, as the native stores it; as the
-   * function without it, 2 of 167 instructions differ in tla-en. */
-  do {
-  } while (0);
   shop = Ram_HeapSlots->menuRuntime;
   /* FAKEMATCH(temporary): unitId and count copied from the arguments after
    * the block, so that their moves to r8 and r7 fall among the address's; as

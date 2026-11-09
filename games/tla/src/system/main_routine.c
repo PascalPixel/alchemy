@@ -163,10 +163,6 @@ void Scene_ReturnFromSequence(s32 result) {
         gMainRoutineWork.entrance = gMainRoutineWork.secondary;
     } else {
       gMainRoutineWork.scene = gMainRoutineWork.savedScene;
-      /* FAKEMATCH(barrier): the scene's store ends its block, so the
-       * default's load comes before the shared entrance offset; as plain C,
-       * 2 of 202 instructions differ in tla-en. */
-      asm("");
       gMainRoutineWork.entrance = gMainRoutineWork.savedEntrance;
     }
     Func_080ca3f4(gMainRoutineWork.scene, gMainRoutineWork.entrance);
@@ -184,10 +180,6 @@ void Scene_ReturnFromSequence(s32 result) {
         gMainRoutineWork.entrance = gMainRoutineWork.secondary;
     } else {
       gMainRoutineWork.scene = gMainRoutineWork.primary;
-      /* FAKEMATCH(barrier): the scene's store ends its block, so the win's
-       * default load comes before the shared entrance offset; as plain C,
-       * 2 of 202 instructions differ in tla-en. */
-      asm("");
       gMainRoutineWork.entrance = gMainRoutineWork.secondary;
       GameFlag_SetBit(0x109);
     }
@@ -367,9 +359,6 @@ void Func_080c9c38(s32 unused, s32 keep) {
     gMainRoutineWork.returnCue = -1;
   }
   gMainRoutineWork.sceneGroup = group;
-  /* FAKEMATCH(barrier): the scene group is stored before the scene's offset
-   * is built; as plain C, 4 of 174 instructions differ in tla-en. */
-  asm("");
   Func_080c9de0(gMainRoutineWork.scene, gMainRoutineWork.entrance);
   gMainRoutineWork.sceneVariant = SCENE_RECORD(gMainRoutineWork.scene)->variant;
   if (gMainRoutineWork.sceneVariant == 2)

@@ -23,9 +23,7 @@ void *Unit_Get(s32 owner) {
      * instructions differ in tla-en. */
     s32 offset = sizeof(struct BattleUnit);
 
-    do {
-      states = gOwnerStates;
-    } while (0);
+    states = gOwnerStates;
     offset *= owner;
     unit = (struct BattleUnit *)((u8 *)states + offset);
     return unit;
@@ -54,9 +52,6 @@ s32 GameFlag_SetBit(s32 flag) {
 
   bit = flag & 7;
   bytes = gGameFlagBytes;
-  /* FAKEMATCH: Both ordinary forms load the flag base after mask setup; keep
-   * that load first. */
-  __asm__("" : : "r"(bit), "r"(bytes));
   mask = 1 << bit;
   flag = ((u32)flag << 20) >> 23;
   bytes[flag] |= mask;
@@ -70,9 +65,6 @@ void GameFlag_ClearBit(s32 flag) {
 
   bit = flag & 7;
   bytes = gGameFlagBytes;
-  /* FAKEMATCH: Both ordinary forms load the flag base after mask setup; keep
-   * that load first. */
-  __asm__("" : : "r"(bit), "r"(bytes));
   mask = 1 << bit;
   flag = ((u32)flag << 20) >> 23;
   bytes[flag] &= ~mask;

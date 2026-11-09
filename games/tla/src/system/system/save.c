@@ -342,10 +342,6 @@ s32 Save_LoadFileSummaries(void) {
   s32 count;
   u32 group;
 
-  /* FAKEMATCH: the empty asm holds r2 until the workspace is loaded, as ⚓️
-   * does before it starts the summary offset 0x303c; plainly, 2 instructions
-   * differ in tla-en. */
-  asm("" : "+l"(work) : : "r2");
   summary = work->summary;
   count = 0;
   for (group = 0; group <= 2; group++) {

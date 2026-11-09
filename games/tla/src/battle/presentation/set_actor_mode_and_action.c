@@ -68,11 +68,7 @@ void BattleStatusIcon_Cycle(struct BattleObj *slot) {
       }
 
       if (prev != anim || slot->animationEntry == 0) {
-        /* FAKEMATCH: the one-pass block stores the condition before changed is
-         * set; as plain statements, 2 instructions differ in tla-en. */
-        do {
-          slot->selectedCondition = anim;
-        } while (0);
+        slot->selectedCondition = anim;
         changed = 1;
       }
       slot->cycleTimer = 80;

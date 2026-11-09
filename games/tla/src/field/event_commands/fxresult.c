@@ -33,9 +33,6 @@ void Func_080e0978(s32 value) {
      * the value. */
     __asm__("");
     state->valueD33 = first;
-    /* FAKEMATCH: and would step the offset back before loading the second
-     * result. */
-    __asm__("");
     state->valueD31 = second;
   }
   Func_080e09c0();

@@ -32,10 +32,7 @@ s32 Func_081b83c4_Start(void) {
 void Camera_ResetSceneDefaultsB(void) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
   struct FixedPointPosition local;
-  /* FAKEMATCH: the result pointer pinned to r1 is copied from the camera where
-   * it is set, ahead of the distance load; as a plain local, 2 instructions
-   * differ in tla-en. */
-  register s32 *result asm("r1");
+  s32 *result;
   u32 ratio;
   u32 param;
 

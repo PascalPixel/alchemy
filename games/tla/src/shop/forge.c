@@ -95,8 +95,6 @@ s32 Forge_GetItem(void) {
   u32 item = gMainRoutineWork.forgeItem;
   u32 mask;
 
-  /* FAKEMATCH: ⚓️ loads the item before it builds the mask */
-  __asm__ volatile("" : "+l"(item));
   mask = 0x1ff;
   mask &= item;
   return mask;

@@ -45,12 +45,7 @@ void ObjectEffect_EndContextEffect(s32 mode) {
      * differ in tla-en. */
     register struct ContextSprite *pinnedCtx asm("r1") = ctx;
 
-    /* FAKEMATCH(one-pass): the flags set in a block of their own, stored
-     * before the zero is reloaded; as a plain statement, 2 of 69
-     * instructions differ in tla-en. */
-    do {
-      pinnedCtx->flags = 1;
-    } while (0);
+    pinnedCtx->flags = 1;
     pinnedCtx->entries[1] = (void *)zero;
   }
   obj->acceleration = 0x10000;

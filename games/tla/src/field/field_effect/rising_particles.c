@@ -151,8 +151,5 @@ void Func_080d6b90(void) {
     particle->timer = i * 2;
   }
   priority = 0x480;
-  /* FAKEMATCH: the barrier builds the priority before the task function's pool
-   * load, as the native does (differ 2 without it). */
-  asm volatile("");
   Task_Add(Func_080d69f4, priority);
 }

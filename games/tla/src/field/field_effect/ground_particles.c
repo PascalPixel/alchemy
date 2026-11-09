@@ -64,11 +64,6 @@ void Func_080d690c(void) {
 
     words = (u32 *)particle;
     *words++ = 0;
-    /* FAKEMATCH: the one-pass block stores the first attribute word before the
-     * second is loaded from the pool and the terrain call's layer 0 is set (two
-     * reordered rows, differ 4 without it). */
-    do {
-    } while (0);
     *words++ = 0x40000400;
     *words = 0xd400;
     x = leader[0];

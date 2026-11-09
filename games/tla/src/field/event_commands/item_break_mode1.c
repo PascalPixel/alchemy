@@ -25,10 +25,6 @@ struct Actor *BattleEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
     object->actionFlags = 0;
     Actor_SetMode(object, 1);
     scale = object->scaleX;
-    /* FAKEMATCH: the barrier loads the scale before the 0x10000 limit is
-     * started; without it the limit is started first (one reordered pair,
-     * differ 2). */
-    asm volatile("");
     if (scale < Q16_ONE) {
       do {
         scale += 0x800;

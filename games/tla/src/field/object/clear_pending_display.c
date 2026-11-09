@@ -27,9 +27,6 @@ void *Func_080cb8e8(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   void **event;
 
-  /* FAKEMATCH: gMainRoutineWork's address is loaded first; without the barrier the
-   * two constants beside it are begun before it (2 differ) */
-  asm volatile("" : "+l"(party));
   event = Ram_HeapSlots->eventWork;
   if (party->ownerOverride == 0) {
     s32 offset = party->currentOwner * 4;

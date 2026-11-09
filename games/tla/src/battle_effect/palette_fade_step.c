@@ -10,9 +10,6 @@ void Palette_StepFadeTransfer(void) {
   s32 *framesLeft;
   u8 *battle;
 
-  /* FAKEMATCH: the native loads the work pointer before it starts the 0x77b4
-   * offset (differ 2 without the barrier). */
-  __asm__ volatile("" : "+r"(work));
   framesLeft = (s32 *)(work + 0x77b4);
   battle = (u8 *)Ram_HeapSlots->battleWork;
 

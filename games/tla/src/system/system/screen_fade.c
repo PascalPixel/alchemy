@@ -27,12 +27,7 @@ void Fade_Update(void) {
         control = gBlendLayers | BLDCNT_EFFECT_DARKEN;
         blendControl = &REG_BLDCNT;
       }
-      /* FAKEMATCH(one-pass): the BLDCNT store in a once-only block, so the
-       * VBlanks left's address is loaded after it; as the plain store, 2 of 48
-       * instructions differ in tla-en. */
-      do {
-        *blendControl = control;
-      } while (0);
+      *blendControl = control;
     }
     {
       u8 *remaining = &gBlendVBlanksLeft;

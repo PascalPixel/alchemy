@@ -57,11 +57,6 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
   struct EffectStep *puff;
   struct EffectStep *p;
 
-  /* FAKEMATCH(one-pass): an empty one-pass block keeps the argument's spill
-   * ahead of the RAM base, as the native stores it; as the function without
-   * it, 2 of 274 instructions differ in tla-en. */
-  do {
-  } while (0);
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(0);

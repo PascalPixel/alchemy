@@ -51,10 +51,6 @@ void Func_080d3378(struct Actor *source, s32 param) {
     speed <<= 1;
     object->speedLimit = 0x1999 * speed;
     object->action = 0;
-    /* FAKEMATCH(barrier): an empty asm that reads the cleared action and
-     * rewrites object, so the priority flags' address is copied after the
-     * store; as plain statements, 2 of 94 instructions differ in tla-en. */
-    asm("" : "+r"(object) : "X"(object->action));
     object->priorityFlags |= 2;
     ((u8 *)object)[0x61] = 1;
     object->update = (void (*)(void))FieldEffect_UpdateParticleLinearMotion;

@@ -50,8 +50,6 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object) {
   if (*((s8 *)Ram_HeapSlots->eventWork + 394) == 3) {
     point[0] = object->x;
     out = screen;
-    /* FAKEMATCH: ⚓️ addresses the screen point before it copies y */
-    asm("" : "+l"(out), "+l"(object));
     point[1] = object->y;
     point[2] = object->z;
     Render_ProjectPoint(point, out);

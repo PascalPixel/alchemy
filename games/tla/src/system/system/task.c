@@ -220,8 +220,6 @@ s32 Task_SetFlags(TaskFunc func, u32 mask) {
   s32 i;
 
   task = gTasks;
-  /* FAKEMATCH: ⚓️ loads the task table before it builds the -1 result */
-  __asm__ volatile("" : "+l"(task));
   result = -1;
   IRQ_LOCK(saved_interrupt_master);
   for (i = 0; i <= 23; i++, task++) {

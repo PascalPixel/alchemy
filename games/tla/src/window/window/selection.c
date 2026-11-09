@@ -213,7 +213,6 @@ void SelectionScreen_BuildEntries(u32 unused) {
      * tla-en. */
     register u16 left asm("r3") = 100;
 
-    asm volatile("" : "+r"(left));
     screen->baseX = left - offset;
   }
   screen->baseY = 140;
@@ -1359,12 +1358,7 @@ void MenuSelection_SetupEntry(u32 kind, s32 base, struct ListNode *node,
   node->field22 = 0x100;
   node->field26 = 0x100;
 
-  /* FAKEMATCH(one-pass): the object pointer formed in a once-only block,
-   * which ends the scheduling region before its field stores; as
-   * obj = &node->obj, 2 of 103 instructions differ in tla-en. */
-  do {
-    obj = &node->obj;
-  } while (0);
+  obj = &node->obj;
   obj->field52 = 0;
   obj->field55 = 0;
   obj->field54 = 0;
@@ -1675,8 +1669,6 @@ u32 Menu_RunSelectionForValue(u32 value) {
   struct SelectionScreen *state = Ram_HeapSlots->menuWork;
   u32 result;
 
-  /* FAKEMATCH: ⚓️ loads the menu work before it builds the field offset */
-  asm volatile("" : "+l"(state));
   state->cursorIndex = value;
   state->locked = 1;
   SelectionScreen_BuildEntries(value);

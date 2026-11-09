@@ -29,18 +29,10 @@ void BattleEffect_StartWindowHBlankDma(void) {
      * their own, after the page load as the native does; as
      * `REG_DISPCNT |= ...`, 2 of 68 instructions differ in tla-en. */
     dispHigh = 128;
-    /* FAKEMATCH(barrier): the asm on dispHigh raises its start to the slot
-     * after the page load; without it, 2 of 68 instructions differ in
-     * tla-en. */
-    __asm__("" : "+r"(dispHigh));
     /* FAKEMATCH(temporary): DMA 0's control read into its own variable for
      * the barrier below; as `channel[5] &= ~DMA_START_TIMING_DRQ_REPEAT`, 2
      * of 68 instructions differ in tla-en. */
     control = channel[5];
-    /* FAKEMATCH(barrier): the control read before the first mask is
-     * started, as the native does; without the barrier, 2 of 68
-     * instructions differ in tla-en. */
-    __asm__ volatile("");
     channel[5] = control & ~DMA_START_TIMING_DRQ_REPEAT;
   }
   channel[5] &= ~DMA_ENABLE;

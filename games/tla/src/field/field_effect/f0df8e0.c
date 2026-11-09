@@ -61,11 +61,7 @@ void Func_080df8e0(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_PALETTE) != 0)
     Actor_SetPartAttribute((struct FieldActor *)effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    /* FAKEMATCH(one-pass): the flag cleared in a once-only block; as a plain
-     * statement, 2 of 218 instructions differ in tla-en. */
-    do {
-      effect->priorityFlags &= ~1;
-    } while (0);
+    effect->priorityFlags &= ~1;
     /* FAKEMATCH(dead): the sprite's priority read and discarded before it is
      * set; without the read, 2 of 218 instructions differ in tla-en. */
     oldPriority = sprite->priority;

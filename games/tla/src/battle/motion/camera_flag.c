@@ -60,8 +60,6 @@ s32 BattleMotion_ProjectPosition(s32 id, s32 *projected) {
 
     pos[0] = object->x;
     out = projected;
-    /* FAKEMATCH: the barrier of the pin above. */
-    __asm__ volatile("" : : "l"(out), "l"(pos));
     pos[1] = object->y;
     pos[2] = object->z;
     scaled = Render_ProjectPoint(pos, out);

@@ -40,7 +40,6 @@ void Func_081c1014(void) {
   s32 row;
   s32 timer;
 
-  __asm__ __volatile__("" : "+r"(initial));
   cues = *initial;
   row = 0;
   preset = 3;
@@ -57,11 +56,7 @@ void Func_081c1014(void) {
       timer--;
 
     if (Data_03000ee4 != 0) {
-      /* FAKEMATCH(one-pass): keeps the flag's clear before the timer's
-       * store; as a plain store, 2 of 145 instructions differ in tla-en. */
-      do {
-        Data_03000ee4 = 0;
-      } while (0);
+      Data_03000ee4 = 0;
       timer = 2;
     }
 

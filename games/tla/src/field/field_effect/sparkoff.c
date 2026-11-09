@@ -75,16 +75,10 @@ void Func_080d6f34(s32 withCue) {
     u32 p;
     s32 z;
 
-    /* FAKEMATCH: keeps the map work load before the cursor copy (differ 4
-     * without it). */
-    asm("" : : "r"(view));
     p = (u32)particle;
     clear = 0;
     *(s32 *)p = clear;
     p += sizeof(s32);
-    /* FAKEMATCH: keeps the first store before the focus load (differ 8
-     * without it). */
-    asm("" : : "r"(view));
     focus = view->origin;
     *(s32 *)p = 0x40000400;
     p += sizeof(s32);

@@ -95,10 +95,6 @@ s32 Scene_RunTouchOrExit(s32 value) {
          * 2 of 87 instructions differ in tla-en. */
         s32 destination = event->u.result;
 
-        /* FAKEMATCH(barrier): the destination's load kept ahead of the exit
-         * field's offset, as the native orders them; without the barrier, 2
-         * of 87 instructions differ in tla-en. */
-        __asm__ volatile("");
         work->exit = destination;
       }
       handled = 0;

@@ -53,10 +53,6 @@ s32 Func_080cc54c(void) {
     {
       s32 *position = probePosition.coordinates;
 
-      /* FAKEMATCH(barrier): the probe position passed through an empty asm;
-       * as probePosition.coordinates, 2 of 138 instructions differ in
-       * tla-en. */
-      asm("" : "+r"(position));
       Vector_AddPolarOffset(distance, leader->angle, position);
     }
     if ((s8)workBytes[0x18a] == 3) {

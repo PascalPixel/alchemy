@@ -1193,11 +1193,6 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       for (i = 0, h = 8; i != 256; i++) {
         x = (Trig_Sin(i << 8) * radius * 2) >> 16;
         cosine = Trig_Cos(i << 8);
-        /* FAKEMATCH(one-pass): a one-pass block after the cosine; as both
-         * coordinates in one statement each with no block, 2 of 4354
-         * instructions differ in tla-en. */
-        do {
-        } while (0);
         y = ((cosine * radius) >> 16) + 68;
         x += 66;
         routine[0](canvas, glyphs + row * 32, x - w / 2, y, w, h);

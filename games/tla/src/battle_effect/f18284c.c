@@ -17,9 +17,6 @@ void Func_0818284c(s32 arg) {
      * instructions differ in tla-en. */
     register u16 blend __asm__("r3") = 0x3f44;
 
-    /* FAKEMATCH: the barrier of the pin above: it holds r2 until the value is
-     * loaded. */
-    __asm__("" : "+l"(blend) : : "r2");
     REG_BLDCNT = blend;
   }
   REG_BLDALPHA = BLEND_ALPHA(16, 16);

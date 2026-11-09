@@ -169,10 +169,6 @@ s32 Func_0803a8fc(s32 code, u32 *out) {
         } while (pixelsLeft >= 0);
         line++;
         pixel += 24;
-        /* FAKEMATCH(barrier): the empty asm reading line and pixel puts
-         * pixel += 24 between the stmia and the copy of out; as no asm, 2 of
-         * 203 instructions differ in tla-en. */
-        __asm__("" : "+r"(pixel) : "r"(line));
         *out++ = tileLine;
       } while (line <= 7);
       tileRow++;
@@ -254,12 +250,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 
     work->entries[work->count] = c;
     text = entries;
-    /* FAKEMATCH(one-pass): the count update in a one-pass block, which keeps
-     * the count's reread after text = entries; as a plain statement, 2 of 126
-     * instructions differ in tla-en. */
-    do {
-      work->count = (work->count + 1) & (UI_TEXT_ENTRY_COUNT - 1);
-    } while (0);
+    work->count = (work->count + 1) & (UI_TEXT_ENTRY_COUNT - 1);
   }
   for (;;) {
     c = *text++;
@@ -375,12 +366,7 @@ void Text_DrawGlyphTileAtWorkOffset(u16 *buffer,
        * tla-en. */
       register u16 mask asm("r2") = UI_TEXT_ENTRY_COUNT - 1;
 
-      /* FAKEMATCH(one-pass): the count update in a one-pass block, which
-       * keeps the reread after the mask's load; as a plain statement, 2 of 50
-       * instructions differ in tla-en. */
-      do {
-        canvas->count = (canvas->count + 1) & mask;
-      } while (0);
+      canvas->count = (canvas->count + 1) & mask;
     }
   }
 
@@ -417,13 +403,7 @@ void Text_RenderWideStringInWindow(s16 *text, struct Window *window, s32 x,
        * instructions differ in tla-en. */
       register u16 mask asm("r2") = UI_TEXT_ENTRY_COUNT - 1;
 
-      /* FAKEMATCH(one-pass): the count update in a one-pass block, which keeps
-       * the reread after the mask's load without the pool estimate an empty
-       * asm adds; as a plain statement, 2 of 97 instructions differ in tla-en.
-       */
-      do {
-        work->count = (work->count + 1) & mask;
-      } while (0);
+      work->count = (work->count + 1) & mask;
     }
   }
   c = *text++;

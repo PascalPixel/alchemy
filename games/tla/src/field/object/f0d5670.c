@@ -17,12 +17,7 @@ struct Work9cItem *Func_080d5670(s32 *position) {
   s32 best;
   s32 i;
 
-  /* FAKEMATCH(one-pass): the empty result stored in a once-only block, whose
-   * loop note keeps the store ahead of the workspace address; as a plain
-   * statement, 2 of 85 instructions differ in tla-en. */
-  do {
-    found = NULL;
-  } while (0);
+  found = NULL;
   work = WORK_9C;
   /* FAKEMATCH(dead): the position copied into from and then cleared, a dead
    * store that keeps the copy after the loop note above (a bare copy is

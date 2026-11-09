@@ -38,10 +38,6 @@ s32 Func_080d5aa0(void) {
       Func_08020210(leader, position))
     return 0;
   leader->angle = angle;
-  /* FAKEMATCH(barrier): an empty asm between the angle's store and the
-     priority flag; as the plain statements, 2 of 145 instructions differ in
-     tla-en. */
-  asm("");
   leader->priorityFlags |= 1;
   leader->motionFlags = leader->action;
   sprite->nextFrame = leader->unk66;

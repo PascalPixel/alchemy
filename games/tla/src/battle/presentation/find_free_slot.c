@@ -39,8 +39,6 @@ s32 BattleUnit_GetWeaponKind(s32 key) {
 
   for (index = 0;; index++) {
     entry = gResource_SlotAssignments[index];
-    /* FAKEMATCH: the plain order builds the 0x1ff mask before the load. */
-    __asm__("");
     if (key == (entry & 0x1ff)) {
 #ifdef MODERN
       value = gResource_SlotAssignments[index];
@@ -85,8 +83,6 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 owner) {
     register u32 item __asm__("r3") = unit->inventory[slot];
     s32 index;
 
-    /* FAKEMATCH: the barrier of the pin above. */
-    __asm__ volatile("");
     index = BattleUnit_GetWeaponKind(item & 0x1ff);
     switch (unit->classId) {
     case ISAAC:

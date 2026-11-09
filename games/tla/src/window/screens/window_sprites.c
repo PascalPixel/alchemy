@@ -107,10 +107,6 @@ struct WindowSprite *CreateSideObject(s32 objectKind, s32 position, s32 side,
     u32 current;
 
     current = state->resourceIds[1];
-    /* FAKEMATCH: the barrier loads the second side's id before 999 is
-       built and the side is set; plain, both come first (one reordered
-       row, differ 2). */
-    asm("");
     side = 1;
     if (current != 999) {
       side = 0;
@@ -159,10 +155,6 @@ void Portrait_Reload(u32 slot, s32 key, s32 unused) {
   offset = offsetof(struct WindowWork, outputIds);
   palette = slot;
   cached = *(u16 *)((u8 *)work + (slot * 2 + offset));
-  /* FAKEMATCH(barrier): the palette's copy of the slot and the offset's
-   * shift wait for the cache entry's load; as entry = work->outputIds[slot],
-   * 2 of 48 instructions differ in tla-en. */
-  __asm__("" : "+l"(palette) : "l"(cached), "l"(offset));
   entry = cached;
   UiGlyph_LoadEntryWithPalette(id, unused, &entry, &tile, palette + 14, 1);
 }

@@ -94,8 +94,6 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
   secondSlot = BattleObject_Get(secondId);
 
   x1 = first->targetX;
-  /* FAKEMATCH: ⚓️ loads the first target before it builds the unset marker */
-  __asm__ volatile("" : "+l"(x1));
   second = secondSlot->object;
   if (x1 == (s32)0x80000000) {
     x1 = first->x;

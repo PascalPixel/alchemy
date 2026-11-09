@@ -73,9 +73,6 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
   s32 angle;
   s32 *line;
 
-  /* FAKEMATCH(barrier): the empty asm stores the argument before the RAM base
-   * is started; as plain statements, 2 of 354 instructions differ in tla-en. */
-  __asm__("");
   work = Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
 

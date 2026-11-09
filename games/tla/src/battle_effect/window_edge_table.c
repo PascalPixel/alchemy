@@ -53,11 +53,7 @@ void BattleEffect_RunSceneEffect(s32 *arg) {
   HeapSlot_Alloc(100, 0x302);
   HeapSlot_Alloc(92, 0x7b7c);
   HeapSlot_Alloc(96, 0x4000);
-  /* FAKEMATCH: the one-pass block loads the work pointer before the 0x78f0
-   * offset is started, as in BattleEffect_RunTableEffect (differ 2 without it). */
-  do {
-    work = (struct FxRunWork *)Ram_HeapSlots->battleFxWork[0];
-  } while (0);
+  work = (struct FxRunWork *)Ram_HeapSlots->battleFxWork[0];
   work->script = arg;
   work->active = 1;
   if (*arg == 0) {
@@ -201,9 +197,6 @@ void BattleEffect_BuildWindowEdgeTable(void) {
     control = channel[5];
     channel[5] = control & 0xc5ff;
     channel[5] &= 0x7fff;
-    /* FAKEMATCH: the native stores the control word before it starts the window
-     * address (differ 2 without the barrier). */
-    __asm__("");
     (void)channel[5];
     Dma_Set(gMapCellBuffer + 0x82, (void *)&REG_WIN0H,
             DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)channel);

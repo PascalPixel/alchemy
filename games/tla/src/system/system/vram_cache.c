@@ -58,10 +58,6 @@ s32 VramCache_GetLongestFreeRun(void) {
    * count's first half ahead of the table load (differ 2) */
   register s32 remaining asm("r2");
 
-  /* FAKEMATCH: ⚓️ loads the table address before it starts the count of 512;
-   * without the barrier the count's first half is scheduled ahead of the load
-   * (differ 2) */
-  asm volatile("");
   run = 0;
   longest = 0;
   remaining = VRAM_BLOCK_COUNT;
@@ -83,10 +79,6 @@ s32 Func_08014220(void) {
   s32 freeCount;
   s32 remaining;
 
-  /* FAKEMATCH: ⚓️ loads the table address before it starts the count of 512;
-   * without the barrier the count's first half is scheduled ahead of the load
-   * (differ 2) */
-  asm volatile("");
   freeCount = 0;
   remaining = 0x200;
   do {
@@ -167,11 +159,8 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
   {
     struct VramBlockCacheEntry *table = gResourceTableEntries;
 
-    /* FAKEMATCH: two empty asms reading the address give its load two more
-     * dependents, so it comes before the copy of no to r5; plainly, 2
-     * instructions differ in tla-en. */
-    asm("" : "+r"(src) : "l"(table));
-    /* FAKEMATCH: the second of the pair above. */
+    /* FAKEMATCH: the empty asm reading the address gives its load another
+     * dependent, so it comes before the copy of no to r5. */
     asm("" : "+l"(no) : "l"(table));
     entry = &table[no];
   }
@@ -208,14 +197,9 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
 /// Frees every VRAM block and every cache entry.
 void VramCache_Reset(void) {
   u32 count;
-  /* FAKEMATCH: the split limit 511 pinned to r0 and held by a barrier, so the
-   * block owners' address loads between its two instructions; as a plain
-   * constant, 2 instructions differ in tla-en. */
-  register u32 limit asm("r0") = 128;
+  u32 limit = 128;
   u8 *marker = gResourceBlockOwners;
 
-  /* FAKEMATCH: the barrier of the pin above. */
-  asm volatile("" : "+l"(limit));
   count = 0;
   limit = (limit << 1) + 255;
   for (; count <= limit; count++)

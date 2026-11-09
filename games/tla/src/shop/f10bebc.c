@@ -13,10 +13,6 @@ void Func_0810bebc(u16 *items, s32 count, s32 mode) {
     if (work->resources[i] != ICON_NONE) {
       Resource_ResetEntry(work->resources[i]);
       work->resources[i] = ICON_NONE;
-      /* FAKEMATCH(barrier): keeps the store ahead of the reload of the
-       * caller-saved counter; as plain statements, 4 of 98 instructions
-       * differ in tla-en (with the second barrier). */
-      __asm__ volatile("");
     }
   }
   sprite = work->sprites;
@@ -31,10 +27,6 @@ void Func_0810bebc(u16 *items, s32 count, s32 mode) {
         *attr++ = 0x40000000;
         *attr = 0;
         sprite->attr.tile = gResourceTableEntries[entry].offset >> 5;
-        /* FAKEMATCH(barrier): keeps the tile store ahead of the reload of
-         * the caller-saved counter; as plain statements, 4 of 98
-         * instructions differ in tla-en (with the first barrier). */
-        __asm__ volatile("");
       }
       work->resources[i] = entry;
     }

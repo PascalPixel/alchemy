@@ -121,10 +121,6 @@ s32 Func_080e989c(s32 counter, s32 level) {
   asm("" : "+l"(step) : "l"(wave));
   phase = step * 4;
   redLevel = wave[(s16)(phase % 96)];
-  /* FAKEMATCH(barrier): an empty asm taking the red level and the level reads
-   * the red byte before the bias; as red = wave[...] + bias, 2 of 76
-   * instructions differ in tla-en. */
-  asm("" : "+l"(level) : "l"(redLevel));
   bias = level - 7;
   red = redLevel + bias;
   green = wave[(phase + 32) % 96] + bias;

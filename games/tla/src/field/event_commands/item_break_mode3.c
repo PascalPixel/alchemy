@@ -21,15 +21,9 @@ struct Actor *BattleEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
   if (object != NULL) {
     object->scaleX = object->scaleY = 0x4000;
     object->acceleration = object->speedLimit = 0x30000;
-    /* FAKEMATCH: ⚓️ stores both speeds before it loads the sprite; without the
-     * barrier the load is scheduled between them. */
-    asm volatile("");
     ((struct FieldSprite *)object->animation)->priority = 0;
     Actor_SetMode(object, 3);
     scale = object->scaleX;
-    /* FAKEMATCH: ⚓️ loads the scale before it builds the limit; the plain test
-     * starts the constant first (one pair of instructions swapped). */
-    asm volatile("");
     if (scale < Q16_ONE) {
       do {
         scale += 0x800;

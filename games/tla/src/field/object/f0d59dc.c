@@ -45,11 +45,6 @@ s32 Func_080d59dc(void) {
   leader->action = leader->motionFlags;
   leader->unk66 = sprite->nextFrame;
   ((struct GrabSave *)leader)->priority = sprite->priority;
-  /* FAKEMATCH(barrier): an empty asm after the saved priority's store that
-   * rewrites the main routine work's pointer and clobbers r0 and r3, so the
-   * flags' address is copied after the store; as plain statements, 2 of 87
-   * instructions differ in tla-en. */
-  asm("" : "+r"(work) : : "r0", "r3");
   flags = &leader->priorityFlags;
   leader->priorityFlags = *flags & ~1;
   sprite->nextFrame = 0;

@@ -225,8 +225,6 @@ u8 *Func_080430c4(u32 frames, u8 *out) {
   __asm__("" : "+l"(digitsCursor) : "l"(textCursor));
   *textCursor = *digitsCursor;
   textCursor++;
-  /* FAKEMATCH(barrier): as above. */
-  __asm__("" : "+l"(digitsCursor) : "l"(textCursor));
   *textCursor = digitsCursor[1];
   textCursor++;
   *textCursor = ':';
@@ -235,8 +233,6 @@ u8 *Func_080430c4(u32 frames, u8 *out) {
   textCursor++;
   *textCursor = digitsCursor[0];
   textCursor++;
-  /* FAKEMATCH(barrier): as above. */
-  __asm__("" : "+l"(digitsCursor) : "l"(textCursor));
   *textCursor = digitsCursor[1];
   textCursor++;
   *textCursor = ':';
@@ -245,8 +241,6 @@ u8 *Func_080430c4(u32 frames, u8 *out) {
   textCursor++;
   *textCursor = digitsCursor[0];
   textCursor++;
-  /* FAKEMATCH(barrier): as above. */
-  __asm__("" : "+l"(digitsCursor) : "l"(textCursor));
   *textCursor = digitsCursor[1];
   textCursor++;
   *textCursor = ':';
@@ -255,8 +249,6 @@ u8 *Func_080430c4(u32 frames, u8 *out) {
   textCursor++;
   *textCursor = digitsCursor[0];
   textCursor++;
-  /* FAKEMATCH(barrier): as above. */
-  __asm__("" : "+l"(digitsCursor) : "l"(textCursor));
   *textCursor = digitsCursor[1];
   textCursor[1] = 0;
 
@@ -283,17 +275,9 @@ void *Text_FormatPlayTime(s32 frames, u8 *out) {
   digitsCursor = String_FormatNumber(digits, hours, 3);
   *out = *digitsCursor;
   digitsCursor++;
-  /* FAKEMATCH(barrier): the hours' first store comes before the cursor's
-   * step; as plain statements, the four barriers of this function make 12 of
-   * 58 instructions differ in tla-en. */
-  __asm__("" : "+l"(out) : "m"(*out));
   textCursor = out + 1;
-  /* FAKEMATCH(barrier): the load waits for the cursor's step. */
-  __asm__("" : "+l"(digitsCursor) : "l"(textCursor));
   *textCursor = *digitsCursor;
   textCursor++;
-  /* FAKEMATCH(barrier): as above. */
-  __asm__("" : "+l"(digitsCursor) : "l"(textCursor));
   *textCursor = digitsCursor[1];
   minutes += 100;
   textCursor++;
@@ -303,8 +287,6 @@ void *Text_FormatPlayTime(s32 frames, u8 *out) {
   textCursor++;
   *textCursor = digitsCursor[0];
   textCursor++;
-  /* FAKEMATCH(barrier): as above. */
-  __asm__("" : "+l"(digitsCursor) : "l"(textCursor));
   *textCursor = digitsCursor[1];
   textCursor[1] = 0;
 
@@ -316,9 +298,6 @@ u32 Save_FindFreeFile(void) {
   struct SaveSummary *p;
   u32 i;
 
-  /* FAKEMATCH: the native issues the workspace load before the summary offset.
-   */
-  __asm__("");
   p = work->summary;
   for (i = 0; i < 3; i++, p++) {
     if (p->level == 0)
@@ -343,9 +322,6 @@ s32 Save_CountFilesExcludingSent(s32 flag) {
     cnt = Save_LoadFileSummaries();
     if (flag != 0) {
       work = Ram_HeapSlots->serialWork;
-      /* FAKEMATCH: Without it the summary offset starts before the workspace
-       * loads (differ 2). */
-      __asm__("" : : "r"(work));
       summary = work->summary;
       for (i = 0; i < 3; i++) {
         if (summary[i].sendFlag != 0)

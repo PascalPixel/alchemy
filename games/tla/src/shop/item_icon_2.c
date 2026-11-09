@@ -25,8 +25,5 @@ void Func_0810be70(s32 index, s32 x, s32 y) {
 void Func_0810bea8(s32 active) {
   struct IconWork *work = Ram_HeapSlots->menuRuntime;
 
-  /* FAKEMATCH: the native loads the menu work before it builds the field offset
-   * (one reordered row). */
-  __asm__ volatile("" : "+l"(work));
   work->active = active;
 }

@@ -125,14 +125,7 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
   // Part 0: 256 colors, priority 2.
   // Part 1: 16x8, 256 colors, tiles from VRAM cache 93, priority 2.
   attribute = (u32 *)freeSprite;
-  /* FAKEMATCH(barrier): the empty asm that has ⚓️ copy the sprite pointer
-   * before it builds the first word's zero; as no barrier here, 2 of 154
-   * instructions differ in tla-en. */
-  asm volatile("");
   *attribute++ = 0;
-  /* FAKEMATCH(barrier): the empty asm that builds 0x2000 after the first
-   * store; as no barrier here, 4 of 154 instructions differ in tla-en. */
-  asm volatile("");
   *attribute++ = shape | 0x2000;
   *attribute = tile | 0x800;
   attribute = freeSprite->shadowAttributes;

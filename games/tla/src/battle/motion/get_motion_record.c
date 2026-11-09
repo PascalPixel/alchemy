@@ -48,9 +48,6 @@ void Camera_InitializeDefaultTransform(void) {
   transfer.y = 0;
   {
     struct BattleCamera *result = state;
-    /* FAKEMATCH: pass the camera before loading the distance; removing the
-     * constraint swaps two rows. */
-    asm volatile("" : "+l"(result));
     transfer.z = state->distance;
     Iwram_TransformVector(&transfer, (s32 *)result);
     /* FAKEMATCH: canceling XORs keep the state pointer live across the call;

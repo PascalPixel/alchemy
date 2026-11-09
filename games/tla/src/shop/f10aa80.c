@@ -66,10 +66,6 @@ s32 Shop_ConfirmAct(s32 unitId) {
 
   Func_08108148();
   shop = Ram_HeapSlots->menuRuntime;
-  /* FAKEMATCH(barrier): an empty asm on the work pointer with an r2 clobber,
-   * so its load comes before the action offset's first move; as the plain
-   * load, 4 of 153 instructions differ in tla-en. */
-  asm("" : "+l"(shop) : : "r2");
   shop->partyAction = listWindow;
 
   shop->keeperResource =

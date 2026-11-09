@@ -25,18 +25,11 @@ void Func_080cf350(struct Actor *object) {
     return;
 
   {
-    /* FAKEMATCH(pin): the owner kept in r0, where the call returns it, until
-     * after the motion byte's store; as an ordinary local, 2 of 40
-     * instructions differ in tla-en. */
-    register struct Actor *found asm("r0") =
+    struct Actor *found =
         ObjectTable_Get(Party_GetLeaderActor());
     object->acceleration = Q16_ONE;
     object->speedLimit = 0x20000;
     object->motionFlags = 0;
-    /* FAKEMATCH(barrier): the owner's copy out of r0 held after the stores,
-     * as the native copies it; without the barrier, 2 of 40 instructions
-     * differ in tla-en. */
-    __asm__ volatile("" : "+r"(found));
     owner = found;
   }
   Actor_SetTargetPosition(object, owner->x, owner->y + 0x240000, owner->z);

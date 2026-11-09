@@ -78,10 +78,6 @@ void Func_080e6400(void) {
     }
     phase = &work->phase;
     if (*phase == 2) {
-      /* FAKEMATCH(barrier): an empty asm on phase, which issues in the tile
-       * load's stall so the vram base's pool load wins its tie with the timer
-       * offset; as no asm, 2 of 596 instructions differ in tla-en. */
-      asm("" : "+r"(phase));
       picture = work->picture;
       vram = (u8 *)OBJ_VRAM0 + work->pictureTile * TILE_SIZE_4BPP;
       Func_080e62f4(work->tiles, picture, work->timer + 14);

@@ -14,8 +14,6 @@ s32 ResourceTable_CountFreeBlocks(void) {
   s32 freeCount;
   s32 remaining;
 
-  /* FAKEMATCH: ⚓️ loads the owner table before counting */
-  asm volatile("");
   freeCount = 0;
   remaining = 0x200;
   do {

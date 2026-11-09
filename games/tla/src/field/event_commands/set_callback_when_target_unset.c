@@ -16,8 +16,6 @@ void BattleEffect_SetCallbackWhenTargetUnset(struct Actor *target) {
   s32 ty;
 
   tx = target->targetX;
-  /* FAKEMATCH: ⚓️ loads x before it builds the unset marker. */
-  __asm__("");
   if (tx == 0x80000000) {
     ty = target->targetY;
     if ((ty == tx) && (target->targetZ == ty)) {

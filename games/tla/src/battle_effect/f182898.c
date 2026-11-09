@@ -75,7 +75,6 @@ void Func_08182898(struct BattleEffectArgument *effect) {
     register void (*func)(void) __asm__("r0") =
         BattleEffect_ProcessPendingGraphicsTransfer;
 
-    __asm__("" : "+l"(func) : : "r1");
     work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
     Task_Add(func, TASK_PASS_FRAME);
   }

@@ -43,10 +43,6 @@ s32 Func_08029838(s32 arg) {
      * through a plain pointer one read serves all three (differ 38). */
     volatile struct InputState *input = (volatile struct InputState *)&gInput;
 
-    /* FAKEMATCH: the native loads both addresses before it builds the first
-     * key offset; without the barrier the input's load comes after (differ
-     * 2). */
-    asm volatile("" : "+l"(party), "+l"(input));
     if ((input->pressed & party->keys234) ||
         (input->pressed & party->keys230) || (input->pressed & party->keys236))
       pressed = 1;

@@ -31,11 +31,7 @@ u32 BattleEvent_DispatchQueued(void) {
   struct BattleEventQueue *queue;
   s32 i;
 
-  /* FAKEMATCH: the one-pass block loads the battle work before the events
-   * offset is built (differ 2 without it), as in BattlePlayback_Reset. */
-  do {
-    work = Ram_HeapSlots->battleWork;
-  } while (0);
+  work = Ram_HeapSlots->battleWork;
   runtime = &work->events;
   queue = &runtime->queue;
 

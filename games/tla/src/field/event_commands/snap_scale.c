@@ -12,10 +12,6 @@ void BattleEffect_SnapScaleToFull(struct Actor *object) {
   if (object != NULL) {
     limit = 0xff;
     scale = object->scaleX;
-    /* FAKEMATCH: the native starts the 0xffff limit, loads the scale, then
-     * finishes the limit; as a constant the load comes after its shift (differ
-     * 2). */
-    asm volatile("" : "+l"(limit));
     limit = (limit << 8) + 0xff;
     if (scale <= limit) {
       /* FAKEMATCH: the native copies the limit to ip for the loop; as a free

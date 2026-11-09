@@ -34,20 +34,14 @@ void Map_ClearLayerFlags(s32 layer0, s32 layer1, s32 layer2) {
     return;
   if (layer2) {
     flags = MAP_LAYER_FLAGS(map);
-    /* FAKEMATCH: ⚓️ reads the flags before it starts the mask; written as
-     * map->flags &= ~0x200 the mask's first half is scheduled ahead of the read
-     * (differ 2) */
-    asm volatile("");
     map->flags = flags & ~0x200;
   }
   if (layer1) {
     flags = MAP_LAYER_FLAGS(map);
-    asm volatile(""); /* FAKEMATCH: as above, for ~0x400 (differ 2) */
     map->flags = flags & ~0x400;
   }
   if (layer0) {
     flags = MAP_LAYER_FLAGS(map);
-    asm volatile(""); /* FAKEMATCH: as above, for ~0x800 (differ 2) */
     map->flags = flags & ~0x800;
   }
 }

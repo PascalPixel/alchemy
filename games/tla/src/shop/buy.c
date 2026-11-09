@@ -71,10 +71,6 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   s32 replaced;
   void *window;
 
-  /* FAKEMATCH: the barrier keeps the slot halfword load ahead of the 0x1ff
-   * mask; without it the mask is started first (one reordered pair, differ 2).
-   */
-  asm volatile("");
   itemId = 0x1ff;
   itemId &= raw;
   info = Item_Get(itemId);
@@ -138,10 +134,6 @@ s32 Shop_SellOld(s32 unitId, s32 slot) {
     return 0;
   itemOffset = slot * 2 + 216;
   raw = *(u16 *)(unit + itemOffset);
-  /* FAKEMATCH: the barrier keeps the slot halfword load ahead of the 0x1ff
-   * mask; without it the mask is started first (one reordered pair, differ 2).
-   */
-  asm volatile("");
   itemId = 0x1ff;
   itemId &= raw;
   if (Item_Get(itemId)->type == 6)

@@ -79,8 +79,6 @@ u32 BattleClass_GetEffectHeight(u32 index) {
   if (index > 386)
     return 0;
   table = (u8 *)gSummon_EntryTable;
-  /* FAKEMATCH: ⚓️ loads the table before scaling the index */
-  asm volatile("");
   offset = index * 8;
   offset += 4;
   return table[offset];

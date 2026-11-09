@@ -58,9 +58,6 @@ s32 Actor_MoveByKeys(struct Actor *object) {
   {
     const u16 *table = gData_0802ec5c;
 
-    /* FAKEMATCH: the native loads the table's address right after the keys;
-     * without the barrier it loads just before the read (differ 2). */
-    asm("" : "+l"(table) : "l"(keys));
     angle = *(const u16 *)((const u8 *)table + (((keys >> 4) & 15) << 1));
   }
   if (angle == 0xffff) {

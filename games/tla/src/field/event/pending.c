@@ -30,8 +30,6 @@ s32 Party_GetLeaderActor(void) {
   struct MainRoutineWork *state = &gMainRoutineWork;
   s32 actor;
 
-  /* FAKEMATCH: load gMainRoutineWork's address before the default owner. */
-  asm("");
   actor = 8;
   if (state->ownerOverride == 0)
     actor = state->currentOwner;

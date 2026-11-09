@@ -39,8 +39,6 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
     object->motionFlags = 4;
     object->priorityFlags = 4;
     mask = ~0xc;
-    /* FAKEMATCH: ⚓️ builds the priority mask before loading the animation */
-    asm volatile("" : "+l"(mask) : : "memory");
     part = object->animation;
     part[9] &= mask;
     Actor_SetSingleChildFlagsFar(object, 0);

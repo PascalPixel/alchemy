@@ -88,10 +88,6 @@ void Graphics_ConvertBackgroundToBlueRamp(void) {
   {
     u8 *buffer = PIXEL_BUFFER;
 
-    /* FAKEMATCH: the native loads the buffer's address before it starts the
-     * 0x7800 count; without the barrier the count's two instructions come first
-     * (differ 2). */
-    __asm__ volatile("");
     i = 0;
     do {
       *buffer++ += 64;

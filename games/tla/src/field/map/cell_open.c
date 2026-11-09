@@ -28,10 +28,6 @@ s32 Func_0802d71c(s32 px, s32 pz, s32 layer, s32 base) {
   else
     shapes = gMapShapeGrid;
   code = Ram_MapCollision + shapes[x / 16 + ((z / 16) << 7)] * 4;
-  /* FAKEMATCH(barrier): an empty asm, which keeps the shape kind's load
-   * ahead of the 15 mask as in the twins below, where the mask register is
-   * not free; as the plain call, 2 of 66 instructions differ in tla-en. */
-  __asm__ volatile("");
   return gMap_TerrainHeightHandlers[*code++ & 15](code, x & 15, z & 15) - base;
 }
 

@@ -100,13 +100,8 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
       }
 
       if (lowestIndex >= 0) {
-        /* FAKEMATCH(one-pass): the candidate's two stores in a one-pass block,
-         * which keeps the count's 1 after them; as the plain stores, 2 of 238
-         * instructions differ in tla-en. */
-        do {
-          pool[lowestIndex].score = score;
-          pool[lowestIndex].recordId = candidateOrUnitIndex;
-        } while (0);
+        pool[lowestIndex].score = score;
+        pool[lowestIndex].recordId = candidateOrUnitIndex;
         matchCount++;
       }
     }

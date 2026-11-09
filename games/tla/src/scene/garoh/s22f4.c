@@ -14,84 +14,84 @@ void Func_020022f4(void) {
   s32 t3;
   s32 b1;
 
-  GameFlag_SetBit(0x91d);
+  Event_SetFlag(0x91d);
   Func_020051ac();
-  Event_ResolvePendingActions(0);
-  Event_SetMessageId(((s32)MsgGaroh13));
+  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_SetMessageId(((s32)MsgGaroh13));
   Actor_SetPosition(8, PIXELS(144), PIXELS(752));
   Actor_WalkToAndWait(4, 280, 776);
   Actor_FaceDirection(4, FACING_NORTH, 0);
-  Event_Wait(10);
+  FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(8, 0, 0);
   FieldActor_LaunchFromLeader(9, 16, 0, FACING_NORTHWEST + FACING_STEP);
-  Actor_WaitForMoveById(9);
-  Event_Wait(20);
+  FieldActor_WaitForMoveById(9);
+  FieldEvent_Wait(20);
   Actor_FaceDirection(9, FACING_WEST, 0);
-  Actor_ArmCallback(4, FACING_EAST, 0);
-  Event_Wait(20);
+  Actor_FaceDirection(4, FACING_EAST, 0);
+  FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(9, 3);
   Actor_SetAttachedEffect(9, 0x102);
   FieldActor_StartRepeatedMotion(4, 3);
   Actor_SetAttachedEffect(4, 0x102);
-  Event_Wait(45);
+  FieldEvent_Wait(45);
   FieldEvent_ShowMessageThenWait(8, 0, 0);
   Actor_FaceDirection(9, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_ArmCallback(4, FACING_NORTH, 0);
-  Event_Wait(20);
-  Camera_MoveWithinMapBounds(PIXELS(280), -1, PIXELS(752), 1);
+  Actor_FaceDirection(4, FACING_NORTH, 0);
+  FieldEvent_Wait(20);
+  FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(752), 1);
   Func_020052b4();
-  Event_Wait(20);
+  FieldEvent_Wait(20);
   Actor_SetPosition(8, PIXELS(144), PIXELS(720));
   Actor_SetSpeed(8, 0xcccc, 0x6666);
   Actor_WalkToAndWait(8, 168, 720);
-  Event_Wait(10);
+  FieldEvent_Wait(10);
   Actor_SetSpeed(8, 0x20000, 0x10000);
   FieldActor_Jump(8, 6, 0);
   Actor_WalkToAndWait(8, 200, 720);
-  Event_Wait(10);
+  FieldEvent_Wait(10);
   Actor_SetSpeed(8, 0xcccc, 0x6666);
   Actor_WalkToAndWait(8, 216, 712);
   Actor_WalkToAndWait(8, 320, 712);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
-  Motion_SetVarCbAndRefresh(8, 2);
-  Event_Wait(10);
+  Actor_RunRepeatedMotion(8, 2);
+  FieldEvent_Wait(10);
   Actor_SetSpeed(8, 0x9999, 0x4ccc);
-  t1 = ((s32)Actor_GetById(8));
+  t1 = ((s32)Actor_Get(8));
   *(u8 *)((t1 + 90)) = (254 & *(u8 *)((t1 + 90)));
   Actor_WalkToAndWait(8, 296, 712);
-  Event_Wait(1);
-  t2 = ((s32)Actor_GetById(8));
+  FieldEvent_Wait(1);
+  t2 = ((s32)Actor_Get(8));
   /* FAKEMATCH: the value is ORed into the register that holds the constant, as
    * the native does; as one |= the constant is built second. */
   b1 = 1;
   b1 |= *(u8 *)((t2 + 90));
   *(u8 *)((t2 + 90)) = b1;
-  Event_Wait(15);
+  FieldEvent_Wait(15);
   Actor_FaceDirection(8, FACING_WEST + FACING_STEP, 0);
-  Event_Wait(25);
-  Actor_ArmCallback(8, FACING_NORTHEAST + FACING_STEP, 0);
-  Event_Wait(25);
-  Actor_ArmCallback(8, FACING_WEST + FACING_STEP, 0);
-  Event_Wait(25);
-  Actor_ArmCallback(8, FACING_SOUTH, 0);
-  Event_Wait(25);
+  FieldEvent_Wait(25);
+  Actor_FaceDirection(8, FACING_NORTHEAST + FACING_STEP, 0);
+  FieldEvent_Wait(25);
+  Actor_FaceDirection(8, FACING_WEST + FACING_STEP, 0);
+  FieldEvent_Wait(25);
+  Actor_FaceDirection(8, FACING_SOUTH, 0);
+  FieldEvent_Wait(25);
   {
     s32 a1 = 0x102;
     s32 a2 = 45;
     /* FAKEMATCH: the native loads the later arguments before the first; the
      * plain call loads the first earlier. */
     asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_080d47b4(8, a1, a2);
+    Actor_ShowEmote(8, a1, a2);
   }
   FieldActor_Jump(8, 6, 15);
   FieldActor_Jump(8, 6, 23);
   Actor_SetSpeed(8, 0x26666, 0x13333);
   Actor_WalkToAndWait(8, 200, 712);
-  Event_Wait(3);
+  FieldEvent_Wait(3);
   Actor_SetSpeed(8, 0x20000, 0x10000);
   FieldActor_Jump(8, 6, 0);
   Actor_WalkToAndWait(8, 168, 712);
-  Event_Wait(3);
+  FieldEvent_Wait(3);
   Actor_SetSpeed(8, 0x26666, 0x13333);
   Actor_WalkToAndWait(8, 144, 712);
   {
@@ -100,9 +100,9 @@ void Func_020022f4(void) {
      * that follows, the plain call loads the second first (one reordered pair,
      * differ 2). */
     asm volatile("" : "+l"(a2));
-    Actor_SetHorizontalPositionWithTerrain(8, 0, a2);
+    Actor_SetPosition(8, 0, a2);
   }
-  Event_Wait(30);
+  FieldEvent_Wait(30);
   v5 = ((s32)&gMainRoutineWork);
   v5 = (v5 + 0x214);
   {
@@ -110,19 +110,19 @@ void Func_020022f4(void) {
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Camera_FollowActor(a0, 1);
+    FieldCamera_FollowActor(a0, 1);
   }
   Func_020052b4();
-  Event_Wait(20);
-  Func_080d47b4(9, 0x102, 30);
+  FieldEvent_Wait(20);
+  Actor_ShowEmote(9, 0x102, 30);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
-  Motion_SetVarCbAndRefresh(9, 2);
-  Event_Wait(10);
-  Actor_ArmCallback(9, FACING_WEST, 0);
-  Event_Wait(20);
+  Actor_RunRepeatedMotion(9, 2);
+  FieldEvent_Wait(10);
+  Actor_FaceDirection(9, FACING_WEST, 0);
+  FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
-  Actor_ArmCallback(4, FACING_EAST, 0);
-  Event_Wait(20);
+  Actor_FaceDirection(4, FACING_EAST, 0);
+  FieldEvent_Wait(20);
   FieldActor_Jump(9, 6, 15);
   FieldActor_Jump(9, 6, 23);
   {
@@ -130,24 +130,24 @@ void Func_020022f4(void) {
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
+    Actor_SetAnimation(a0, 3);
   }
-  Event_Wait(20);
-  Event_Wait(10);
+  FieldEvent_Wait(20);
+  FieldEvent_Wait(10);
   Actor_SetSpeed(9, 0x13333, 0x9999);
-  Actor_SetModeById(9, 2);
-  t3 = ((s32)Actor_GetById(*(s32 *)(v5)));
+  Actor_SetAnimation(9, 2);
+  t3 = ((s32)Actor_Get(*(s32 *)(v5)));
   if (t3 == 0)
     goto L_0200a66c;
-  Actor_ResetAndSetPosition(9, *(s16 *)(t3 + 10), *(s16 *)(t3 + 18));
+  Actor_SetDestination(9, *(s16 *)(t3 + 10), *(s16 *)(t3 + 18));
 L_0200a66c:;
-  Actor_WaitForMoveById(9);
+  FieldActor_WaitForMoveById(9);
   {
     s32 a0 = 9;
     /* FAKEMATCH: the native loads the first argument before the others; the
      * plain call loads it last. */
     asm volatile("" : "+l"(a0));
-    Actor_SetHorizontalPositionWithTerrain(a0, 0, 0);
+    Actor_SetPosition(a0, 0, 0);
   }
   Func_020051b4();
 }

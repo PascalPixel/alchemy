@@ -12,32 +12,32 @@ void Func_02003c98(void);
 /// over 14 frames with cue 217 while turned to angle 0x5000, then lands 16
 /// pixels on and plays cue 390 again.
 void Func_02000700(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 z = leader->z;
   u32 i;
 
-  Sound_Play(390);
+  Event_PlaySound(390);
   Func_02003b28(leader, 6);
-  wait(10);
+  System_Wait(10);
   Func_02003b28(leader, 1);
   Actor_SetSingleChildFlags(leader, 0);
   leader->motionFlags |= 2;
   leader->velocityY = 0x40000;
-  Actor_SetMoveTarget(leader, leader->x, leader->y, z + 0xc0000);
-  wait(6);
-  Sound_Play(217);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x5000, 0);
+  FieldActor_SetMoveTarget(leader, leader->x, leader->y, z + 0xc0000);
+  System_Wait(6);
+  Event_PlaySound(217);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x5000, 0);
   leader->motionFlags = 0;
   for (i = 0; i < 14; i++) {
     leader->y += -0x20000;
     leader->targetY = leader->y;
-    wait(1);
+    System_Wait(1);
   }
   leader->motionFlags = 3;
   leader->velocityY = 0x30000;
-  Actor_SetMoveTarget(leader, leader->x, leader->y, z + 0x100000);
-  Script_WaitForEventTimeout(leader);
+  FieldActor_SetMoveTarget(leader, leader->x, leader->y, z + 0x100000);
+  Actor_WaitForMove(leader);
   Actor_SetSingleChildFlags(leader, 1);
-  Sound_Play(390);
+  Event_PlaySound(390);
   Func_02003c98();
 }

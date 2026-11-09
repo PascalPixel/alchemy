@@ -3,11 +3,10 @@
 
 extern const u8 gData_02004474[];
 
-s32 Math_Sine(s32 angle);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 
 void Func_02000080(s32 id) {
-  struct Actor *source = Actor_GetById(id);
+  struct Actor *source = Actor_Get(id);
   s32 i;
 
   i = 5;
@@ -33,7 +32,7 @@ next:
       asm("");
       object->velocityY = angle * 4 + 0x20000;
       object->velocityZ = Iwram_MulQ16(radius * 8, Math_Cosine(angle));
-      object->velocityX = Iwram_MulQ16(radius * 8, Math_Sine(angle));
+      object->velocityX = Iwram_MulQ16(radius * 8, Math_Sin(angle));
       object->acceleration = 0;
       object->gravity = 0x547a;
       object->scaleX = scale;

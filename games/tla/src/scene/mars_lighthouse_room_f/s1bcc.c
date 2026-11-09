@@ -20,7 +20,7 @@ struct PositionedActor {
 
 struct PositionedActor *Actor_GetById(s32 id);
 void Animation_ApplyChildValues(struct PositionedActor *object, s32 value);
-void Func_02005598(s32 id, s32 a1, s32 a2);
+void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a1, s32 a2);
 s32 GameFlag_Test(s32 flag);
 
 void Func_02001bcc(void) {
@@ -29,10 +29,10 @@ void Func_02001bcc(void) {
   struct PositionedActor *actor23 = Actor_GetById(23);
   struct FieldSprite *sprite = actor23->animation;
 
-  Call3((void (*)())Func_02005598, 24, 0x2000000, 0xf80000);
-  Call3((void (*)())Func_02005598, 23, 0x2000000, 0xf80000);
-  Call3((void (*)())Func_02005598, 9, 0x1d80000, 0x1000000);
-  Call3((void (*)())Func_02005598, 10, 0x2280000, 0x1000000);
+  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 24, 0x2000000, 0xf80000);
+  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 23, 0x2000000, 0xf80000);
+  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 9, 0x1d80000, 0x1000000);
+  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 10, 0x2280000, 0x1000000);
   Actor_GetById(24)->scaleX = 0;
   actor23->motionFlags = 0;
   actor23->y.fixed = actor23->terrainHeight;

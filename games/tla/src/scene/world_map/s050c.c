@@ -24,7 +24,7 @@ void Func_0200050c(void) {
   gMainRoutineWork.renderMode = 7;
   Func_02003c3c();
   Func_02004a1c();
-  Actor_SetSingleChildFlags(Actor_GetById(8), 0);
+  Actor_SetSingleChildFlags(Actor_Get(8), 0);
   count = Party_CountActiveOwners();
   pp = 0;
   i = 0;

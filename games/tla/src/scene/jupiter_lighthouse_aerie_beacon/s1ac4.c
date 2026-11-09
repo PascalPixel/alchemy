@@ -16,12 +16,12 @@ s32 Func_020059cc();
 
 void Func_02001ac4(s32 a0, s32 a1) {
   Func_020059c4();
-  Func_020059dc(((s32)Actor_GetById(a0)), 2);
-  Sound_Play(0xc9);
-  Event_Wait(60);
-  Func_020059dc(((s32)Actor_GetById(a0)), 0);
+  Func_020059dc(((s32)Actor_Get(a0)), 2);
+  Event_PlaySound(0xc9);
+  FieldEvent_Wait(60);
+  Func_020059dc(((s32)Actor_Get(a0)), 0);
   Func_020059d4();
   Func_020059cc();
-  Actor_SetModeById(a1, 1);
+  Actor_SetAnimation(a1, 1);
 }
 

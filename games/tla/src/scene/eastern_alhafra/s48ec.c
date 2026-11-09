@@ -8,11 +8,11 @@ void Func_02004a0c(struct FieldActor *object, s32 mode);
 #include "map.h"
 
 void Func_020048ec(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct FieldActor *object = ((struct FieldActor *)Actor_GetById(id));
+  struct FieldActor *object = ((struct FieldActor *)Actor_Get(id));
   struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
 
   cell += Func_02004c34(object);
-  if (GameFlag_Test(flag)) {
+  if (Event_GetFlag(flag)) {
     /* FAKEMATCH: the flags are read before the cell store and ORed into the
      * register that holds 2, as the native does; as one |= the 0 for the cell
      * is built before the read */

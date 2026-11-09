@@ -5,30 +5,30 @@
 
 void Func_02000060(s32 animate) {
   if (animate == 1) {
-    Sound_Play(133);
-    Func_0802b450(81, 20, 2, 3, 79, 29);
-    Func_0802b450(81, 20, 2, 3, 79, 37);
-    wait(6);
+    Event_PlaySound(133);
+    MapGrid_CopyCellsLayered(81, 20, 2, 3, 79, 29);
+    MapGrid_CopyCellsLayered(81, 20, 2, 3, 79, 37);
+    System_Wait(6);
   }
-  Func_0802b450(84, 20, 2, 3, 79, 29);
-  Func_0802b450(84, 20, 2, 3, 79, 37);
-  Map_CopyCellAttributeRect(20, 22, 2, 1, 15, 31);
-  Map_CopyCellAttributeRect(20, 22, 2, 1, 15, 39);
+  MapGrid_CopyCellsLayered(84, 20, 2, 3, 79, 29);
+  MapGrid_CopyCellsLayered(84, 20, 2, 3, 79, 37);
+  MapGrid_CopyCellAttributes(20, 22, 2, 1, 15, 31);
+  MapGrid_CopyCellAttributes(20, 22, 2, 1, 15, 39);
 }
 
 void Func_020000ec(void) {
-  Sound_Play(134);
-  Func_0802b450(81, 20, 2, 3, 79, 29);
-  Func_0802b450(81, 20, 2, 3, 79, 37);
-  wait(6);
-  Func_0802b450(87, 20, 2, 3, 79, 29);
-  Func_0802b450(87, 20, 2, 3, 79, 37);
-  Map_CopyCellAttributeRect(23, 22, 2, 1, 15, 31);
-  Map_CopyCellAttributeRect(23, 22, 2, 1, 15, 39);
+  Event_PlaySound(134);
+  MapGrid_CopyCellsLayered(81, 20, 2, 3, 79, 29);
+  MapGrid_CopyCellsLayered(81, 20, 2, 3, 79, 37);
+  System_Wait(6);
+  MapGrid_CopyCellsLayered(87, 20, 2, 3, 79, 29);
+  MapGrid_CopyCellsLayered(87, 20, 2, 3, 79, 37);
+  MapGrid_CopyCellAttributes(23, 22, 2, 1, 15, 31);
+  MapGrid_CopyCellAttributes(23, 22, 2, 1, 15, 39);
 }
 
 void Func_02000178(void) {
-  struct FieldActor *object = ((struct FieldActor *)Actor_GetById(10));
+  struct FieldActor *object = ((struct FieldActor *)Actor_Get(10));
 
   if (!Flag_IsSet(0xa01) && object->x >> 20 == 17 && object->z >> 20 == 33) {
     Flag_Set(0xa01);

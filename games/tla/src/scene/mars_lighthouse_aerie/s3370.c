@@ -1,7 +1,7 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "frame.h"
+#include "event_inline.h"
 
 struct MarsLighthouseAerieSprite {
   u8 unk00[9];
@@ -17,25 +17,15 @@ extern u32 Data_02006b68;
 extern const u8 gData_02005b54[];
 extern const u8 gData_02006180[];
 
-struct Actor *Actor_GetById(s32 id);
 u32 Random16Far(void);
-s32 Math_Sine(s32 angle);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void Actor_SetMovementTypeById(s32 id, const void *script);
 void SceneActor_ParkRecord(struct Actor *object);
-void Task_RemoveFar(void (*func)(void));
-struct Actor *Func_02005574(s32 type, s32 x, s32 y, s32 z);
 void Func_0200556c(struct Actor *object, const u8 *script);
-void Func_020055c4(s32 a, s32 b, s32 c);
-void Func_0200575c(s32 a, s32 b);
-void Func_0200576c(s32 a);
-void Func_020057dc(s32 sound);
 void Func_020000e4(void);
 
 static __inline__ void SetScale(s32 a, s32 b, s32 c) {
   /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 41 of 207
    * instructions differ in tla-en. */
-  Func_020055c4(a, b, c);
+  Map_SetScreenShake(a, b, c);
 }
 
 void Func_02003370(void) {
@@ -46,14 +36,14 @@ void Func_02003370(void) {
 
   switch (Data_02006ccc) {
   case 0:
-    Func_020057dc(220);
+    Event_PlaySound(220);
     SetScale(0x60000, 0x60000, 0x10000);
-    Func_0200575c(0x2063ff, 1);
-    Func_0200576c(8);
+    PaletteFade_ApplyTarget(0x2063ff, 1);
+    PaletteFade_Interpolate(8);
     break;
   case 8:
-    Func_0200575c(0x10000, 1);
-    Func_0200576c(8);
+    PaletteFade_ApplyTarget(0x10000, 1);
+    PaletteFade_Interpolate(8);
     break;
   case 16:
     SetScale(0x10000, 0x10000, 0x10000);
@@ -65,17 +55,17 @@ void Func_02003370(void) {
     anchor->scaleX = 0x10000;
     anchor->scaleY = 0x10000;
     SceneActor_ParkRecord(anchor);
-    Actor_SetMovementTypeById(8, gData_02005b54);
+    Actor_SetScript(8, gData_02005b54);
     break;
   case 25:
     Data_02006ccc--;
     if (anchor->y > 0) {
-      Func_0200575c(0x203210, 0);
-      Func_0200576c(16);
+      PaletteFade_ApplyTarget(0x203210, 0);
+      PaletteFade_Interpolate(16);
       Data_02006ccc++;
     } else {
       if ((gFrameCount & 7) == 0)
-        Func_020057dc(246);
+        Event_PlaySound(246);
       spawn = 1;
       anchor->y += 0x24000;
     }
@@ -84,10 +74,10 @@ void Func_02003370(void) {
     Data_02006ccc--;
     if (anchor->y > 0x140000) {
       Data_02006ccc = 999;
-      Task_RemoveFar(Func_02003370);
+      FieldTask_Remove(Func_02003370);
     } else {
       if ((gFrameCount & 7) == 0)
-        Func_020057dc(246);
+        Event_PlaySound(246);
       anchor->y += 0x24000;
       spawn = 1;
     }
@@ -96,16 +86,14 @@ void Func_02003370(void) {
   if (spawn) {
     /* FAKEMATCH(wrapper): the spawn forwarded through Value4; as a direct call,
      * 2 of 207 instructions differ in tla-en. */
-    object = (struct Actor *)Value4(
-        (s32 (*)())Func_02005574, 0x2a0, anchor->x,
-        anchor->y - ((Random16Far() * 80 >> 16) << 16) - 0x80000, anchor->z);
+    object = FieldActor_Create(0x2a0, anchor->x, anchor->y - ((Random16Far() * 80 >> 16) << 16) - 0x80000, anchor->z);
     if (object != NULL) {
       u8 zero;
       s32 mask;
 
       sprite = object->animation;
       Func_0200556c(object, gData_02006180);
-      Actor_SetPartAttribute(object, 1);
+      Actor_SetSpriteColor(object, 1);
       object->motionFlags = 0;
       {
         /* FAKEMATCH(temporary): the masked value held in a local; as
@@ -125,7 +113,7 @@ void Func_02003370(void) {
         ((u8 *)object)[98] = phase;
       }
       object->update = Func_020000e4;
-      object->speedLimit = Math_Sine(Random16Far() * 0xffff >> 20) * 24;
+      object->speedLimit = Math_Sin(Random16Far() * 0xffff >> 20) * 24;
       object->speedLimit = anchor->speedLimit >> 16;
       sprite->unk1a = zero;
       mask = -13;
@@ -133,5 +121,5 @@ void Func_02003370(void) {
     }
   }
   if (++Data_02006ccc > Data_02006b68)
-    Task_RemoveFar(Func_02003370);
+    FieldTask_Remove(Func_02003370);
 }

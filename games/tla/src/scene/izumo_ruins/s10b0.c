@@ -24,5 +24,5 @@ void Func_020010f0(s32 aArg, s32 b) {
   else
     Func_020000a4(gData_02001688, aArg, b);
   if (aArg == 1)
-    Func_02000f30(Actor_GetById(work->objectId));
+    Func_02000f30(Actor_Get(work->objectId));
 }

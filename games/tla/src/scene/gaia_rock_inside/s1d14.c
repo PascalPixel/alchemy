@@ -25,50 +25,50 @@ void Func_02001d14(void) {
 
   if (GameFlag_Test(0x9ee) || GameFlag_Test(0x9ba))
     return;
-  person = Actor_GetById(12);
+  person = Actor_Get(12);
   level = REG_BLDALPHA;
   Func_02004e5c();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   /* FAKEMATCH(wrapper): the form kept; as a direct call, 13 of 173
    * instructions differ in tla-en. */
   MapGrid_SetShake(Q16_ONE * 10, Q16_ONE * 10, Q16_ONE);
-  Sound_Play(107);
+  Event_PlaySound(107);
   Func_02004ddc();
   level &= 0xff;
   while (level != 0) {
     REG_BLDALPHA = level | 0x1000;
     level--;
-    wait(1);
+    System_Wait(1);
   }
   REG_DISPCNT &= ~0x200;
-  Event_Wait(30);
+  FieldEvent_Wait(30);
   object =
       OverlayObject_PrepareObject(232 << 17, -Q16_ONE * 32, 174 << 17, 323);
-  Actor_SetHorizontalPositionWithTerrain(12, 232 << 17, 174 << 17);
+  Actor_SetPosition(12, 232 << 17, 174 << 17);
   Func_02001c9c();
   for (i = 0; i <= 19; i++) {
     if (i == 10)
       Func_02001c9c();
     person->z -= Q16_ONE;
-    Event_Wait(2);
+    FieldEvent_Wait(2);
   }
-  GameFlag_SetBit(0x9ee);
+  Event_SetFlag(0x9ee);
   /* FAKEMATCH(wrapper): the form kept; as a direct call, 25 of 173
    * instructions differ in tla-en. */
   MapGrid_SetShake(-1, -1, 0xe666);
   object->x = 0;
   object->z = 0;
-  Event_Wait(1);
+  FieldEvent_Wait(1);
   Func_02004dbc(object);
-  Sound_Play(390);
-  Event_Wait(30);
+  Event_PlaySound(390);
+  FieldEvent_Wait(30);
   REG_DISPCNT |= 0xf00;
   REG_BLDALPHA = level | 0x1000;
   REG_BLDCNT = 0x3f42;
   while (level != 8) {
     REG_BLDALPHA = level | 0x1000;
     level++;
-    wait(1);
+    System_Wait(1);
   }
   Func_02004dd4();
   Func_02004e64();

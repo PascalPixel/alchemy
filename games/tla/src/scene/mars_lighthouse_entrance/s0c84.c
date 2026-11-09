@@ -22,9 +22,6 @@ void Func_02000798(void);
 void Func_020019c4(void);
 void Func_020046b4(void);
 void Func_02004718(void);
-void Func_02004bf8(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_02004d58(s32 a0, s32 a1);
-void Func_02004d60(s32 frames);
 void Func_02004dc8(void);
 void Func_02004dd0(void);
 void BattleEffect_PrepareBufferInterpolation(void);
@@ -38,7 +35,7 @@ void Func_02000c84(void) {
 
     party[0x2c2] = 2;
   }
-  Func_02004d30(12);
+  FieldEvent_SetExitRequest(12);
   FieldEvent_Wait(40);
   Func_02004718();
 }
@@ -52,14 +49,14 @@ void Func_02000cb4(void) {
 
     party[0x2c2] = 2;
   }
-  Func_02004d30(13);
+  FieldEvent_SetExitRequest(13);
   FieldEvent_Wait(40);
   Func_02004718();
 }
 
 void Func_02000ce4(s32 unused, s32 id) {
   if (id == 8) {
-    struct Actor *object = Actor_GetById(8);
+    struct Actor *object = Actor_Get(8);
 
     if (object->x >> 20 == 5) {
       FieldEvent_Wait(5);

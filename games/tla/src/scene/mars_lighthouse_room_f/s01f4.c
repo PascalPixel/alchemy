@@ -5,34 +5,34 @@
 extern s16 gData_02005b5c[];
 
 void Func_020001f4(s32 unused, s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
 
   if (object->x >> 20 == 50) {
-    GameFlag_SetBit(0xa38);
+    Event_SetFlag(0xa38);
     object->motionFlags = 3;
   }
 }
 
 void Func_0200021c(void) {
-  struct Actor *object = Actor_GetById(16);
+  struct Actor *object = Actor_Get(16);
 
   Func_02005688();
   if (object->x >> 20 == 50) {
-    GameFlag_SetBit(0xa38);
+    Event_SetFlag(0xa38);
     object->motionFlags = 3;
   }
 }
 
 void Func_02000248(s32 unused, s32 id) {
   if (id == 10)
-    Actor_GetById(10)->motionFlags = 0;
+    Actor_Get(10)->motionFlags = 0;
 }
 
 void Func_0200025c(s32 unused, s32 id) {
   if (id == 16) {
     Func_020001f4(unused, 16);
   } else if (id == 10) {
-    Actor_GetById(10)->motionFlags = 3;
+    Actor_Get(10)->motionFlags = 3;
 #if TLA_PATCH_1 /* From patch 1. */
     Func_020002ec();
 #endif
@@ -40,16 +40,16 @@ void Func_0200025c(s32 unused, s32 id) {
 }
 
 void Func_02000280(s32 unused, s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
   s32 kind;
 
   kind = gData_02005b5c[id - 18];
-  Func_02005598(kind, S16_AT(object, 100) << 16,
+  Actor_SetPosition(kind, S16_AT(object, 100) << 16,
                 (S16_AT(object, 102) << 16) - PIXELS(8));
 }
 
 void Func_020002b8(s32 unused, s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
   const s16 *table;
   s32 offset;
   s32 x;
@@ -60,7 +60,7 @@ void Func_020002b8(s32 unused, s32 id) {
   offset = (id - 18) * 2;
   kind = *(s16 *)((u8 *)table + offset);
   if (x >> 20 == object->action >> 4)
-    Func_02005598(kind, 0, 0);
+    Actor_SetPosition(kind, 0, 0);
 }
 
 #if TLA_PATCH_1 /* From patch 1. */
@@ -70,27 +70,27 @@ void Func_020002ec(void) {
   s32 x;
   s32 z;
 
-  Func_020054e8(53, 72, 1, 1, 38, 72);
-  Func_020054e8(53, 72, 1, 1, 43, 72);
+  MapGrid_CopyCellAttributes(53, 72, 1, 1, 38, 72);
+  MapGrid_CopyCellAttributes(53, 72, 1, 1, 43, 72);
   Func_020054e8_(53, 8, 1, 1, 47, 8);
   for (id = 10; id <= 12; id++) {
-    object = Actor_GetById(id);
+    object = Actor_Get(id);
     x = object->x >> 20;
     z = object->z >> 20;
     if (x == 38 && z == 8)
-      Func_020054e8(54, 72, 1, 1, 38, 72);
+      MapGrid_CopyCellAttributes(54, 72, 1, 1, 38, 72);
   }
   for (id = 10; id <= 12; id++) {
-    object = Actor_GetById(id);
+    object = Actor_Get(id);
     x = object->x >> 20;
     z = object->z >> 20;
     if (x == 43 && z == 8)
-      Func_020054e8(54, 72, 1, 1, 43, 72);
+      MapGrid_CopyCellAttributes(54, 72, 1, 1, 43, 72);
   }
-  object = Actor_GetById(10);
+  object = Actor_Get(10);
   x = object->x >> 20;
   z = object->z >> 20;
   if (x == 47 && z == 8)
-    Func_020054e8(54, 8, 1, 1, 47, 8);
+    MapGrid_CopyCellAttributes(54, 8, 1, 1, 47, 8);
 }
 #endif

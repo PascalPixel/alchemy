@@ -2,14 +2,13 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "map.h"
+#include "event_inline.h"
 
 #define LAYER_WORD(layer, offset) (*(s32 *)((u8 *)(layer) + (offset)))
 
 extern s32 gData_020024b4;
 extern s32 gData_020024b0;
 
-s32 Math_Sine(s32 angle);
-struct Actor *Func_02002074(void);
 
 void Func_02000258(void) {
   s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x108);
@@ -22,12 +21,12 @@ void Func_02000258(void) {
     gData_020024b4 = 0;
 }
 
-/// Bobs the object returned by Func_02002074 and the first map layer's word 12
+/// Bobs the object returned by Func_080d4568 and the first map layer's word 12
 /// together on a sine wave, its phase advancing 0x200 a frame.
 void Func_02000288(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[0];
-  struct Actor *object = Func_02002074();
-  s32 offset = Math_Sine(gData_020024b0) >> 2;
+  struct Actor *object = FieldCamera_GetActor();
+  s32 offset = Math_Sin(gData_020024b0) >> 2;
 
   object->y += offset;
   LAYER_WORD(layer, 12) += offset;

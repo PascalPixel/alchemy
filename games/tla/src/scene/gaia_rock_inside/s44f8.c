@@ -256,6 +256,6 @@ restart:
   steps[1].unk_2 = 250;
   path->unk_0 = 1;
   Heap_Release(grid);
-  GameFlag_SetBit(0x3f0);
+  Event_SetFlag(0x3f0);
   gRandomState = saved;
 }

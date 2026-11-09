@@ -46,11 +46,8 @@ extern u8 gData_020023c4[];
 
 #define RIDE_WORK ((struct RideWork *)(gData_020023c4 + 0x188))
 
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
 
 #endif

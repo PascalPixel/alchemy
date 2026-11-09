@@ -528,7 +528,7 @@ void Func_020006bc(s32 actor) {
       (*timer)++;
   case 224:
   case 240:
-    Actor_ResetAndSetPosition(actor, 248, 872);
+    Actor_SetDestination(actor, 248, 872);
     {
       /* FAKEMATCH(pin): the timer's address rebuilt in r2 from the object; as
        * object->timer++, 190 of 1163 instructions differ in tla-en. */

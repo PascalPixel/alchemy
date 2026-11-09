@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "actor.h"
+#include "event_inline.h"
 
 struct JupiterLighthouseAerieWork {
   u8 unk00[2];
@@ -23,10 +24,6 @@ struct JupiterLighthouseAerieEntry {
 
 extern u8 gData_02004cf4[];
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-s32 GameFlag_GetByte(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02003bfc(struct JupiterLighthouseAerieWork *work,
                    struct JupiterLighthouseAerieEntry *entry);
@@ -34,7 +31,7 @@ void Func_02003c6c(struct JupiterLighthouseAerieWork *work,
                    struct JupiterLighthouseAerieEntry *entry);
 
 s32 Func_02003f9c(void) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   struct JupiterLighthouseAerieWork *work = (struct JupiterLighthouseAerieWork *)gData_02004cf4;
@@ -43,9 +40,9 @@ s32 Func_02003f9c(void) {
 
   for (i = 0; i < work->count; i++, entry++) {
     if (entry->x == x && entry->z == z) {
-      if (GameFlag_Test(entry->flag) == 0) {
+      if (Event_GetFlag(entry->flag) == 0) {
         Func_02003bfc(work, entry);
-        GameFlag_SetBit(entry->flag);
+        Event_SetFlag(entry->flag);
         work->current = i;
         break;
       }

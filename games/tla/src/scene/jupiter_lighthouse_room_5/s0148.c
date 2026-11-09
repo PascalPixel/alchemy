@@ -8,14 +8,14 @@ s32 Math_Cosine(u32 angle);
 /// Circles the object around actor 23, as overlay 6a5's Func_02000090 circles
 /// actor 31.
 void Func_02000148(struct FieldActor *self) {
-  struct FieldActor *centre = ((struct FieldActor *)Actor_GetById(23));
+  struct FieldActor *centre = ((struct FieldActor *)Actor_Get(23));
   u16 angle = self->timer;
   s32 sine;
   s32 x;
   s32 z;
 
   self->x = centre->x + Math_Cosine(angle) * (self->speed + 3);
-  sine = Math_Sine(angle);
+  sine = Math_Sin(angle);
   z = centre->z;
   x = self->x;
   /* FAKEMATCH: both positions are read before the sine is doubled; without it

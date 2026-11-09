@@ -21,7 +21,7 @@ s32 Func_02000618(void) {
 
   ((struct SceneWork *)Ram_HeapSlots->eventWork)->unk1ac = 256;
   state = &gMainRoutineWork;
-  Actor_GetById(state->currentOwner)->priorityFlags |= 32;
+  Actor_Get(state->currentOwner)->priorityFlags |= 32;
   if (state->entrance == 90) {
     Event_SetFlag(0x90a);
     state->ownerOverride = 1;

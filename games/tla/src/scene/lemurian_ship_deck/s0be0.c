@@ -3,11 +3,10 @@
 #include "main_routine_work.h"
 #include "actor.h"
 #include "scene_ids.h"
+#include "event_inline.h"
 
 extern const u8 gData_020020dc[];
 
-struct Actor *Actor_GetById(s32 id);
-void Task_Add(void (*func)(void), s32 priority);
 void Func_020020c4(const void *data);
 void Func_02000188(void);
 void Func_020001cc(void);
@@ -49,8 +48,8 @@ s32 Func_02000be0(void) {
      * without it, tla-en differs. */
     do {
     } while (0);
-    Actor_GetById(party->currentOwner)->priorityFlags |= 0x20;
-    Actor_SetModeById(8, 1);
+    Actor_Get(party->currentOwner)->priorityFlags |= 0x20;
+    Actor_SetAnimation(8, 1);
     Func_020020c4(gData_020020dc);
     AddTask(Func_02000188, 0x480);
     if (party->entrance == 99)

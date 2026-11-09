@@ -27,7 +27,7 @@ void Func_02000244(struct Actor *object) {
     Func_02001da8(object, 2);
   if (object->y > 0)
     object->unk66 = 0xffff;
-  if (Math_Sine(angle) < 0)
+  if (Math_Sin(angle) < 0)
     ((struct FieldSprite *)object->animation)->priority = 1;
   else
     ((struct FieldSprite *)object->animation)->priority = 3;

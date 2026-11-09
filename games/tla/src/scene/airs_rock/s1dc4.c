@@ -26,7 +26,7 @@ void Func_02001dc4(s32 x, s32 z) {
   s32 shakeA = -1;
   s32 shakeC = 0xe666;
 
-  first = (struct Actor *)Import_ActorCreate(255, x, 0, z);
+  first = FieldActor_Create(255, x, 0, z);
   options.priority = 1;
   options.startScaleX = 0x20000;
   options.startScaleY = 0x20000;
@@ -44,7 +44,7 @@ void Func_02001dc4(s32 x, s32 z) {
   for (i = 0; i != 6; i++) {
     rock = first;
     if (i != 0) {
-      rock = (struct Actor *)Import_ActorCreate(255, x, 0, z);
+      rock = FieldActor_Create(255, x, 0, z);
       Func_02003c90(rock->animation, first->animation);
     }
     Actor_SetSingleChildFlags(rock, 0);
@@ -58,11 +58,11 @@ void Func_02001dc4(s32 x, s32 z) {
     rock->speedLimit = 0xcccc;
     scatter.y = Random16Far() & 7;
     scatter.x = Iwram_MulQ16(Math_Cosine(scatter.y << 12), radius);
-    scatter.z = Iwram_MulQ16(Math_Sine(scatter.y << 12), radius);
+    scatter.z = Iwram_MulQ16(Math_Sin(scatter.y << 12), radius);
     ((struct FieldSprite *)rock->animation)->priority = 1;
-    Actor_SetMoveTarget(rock, rock->x + scatter.x, rock->y,
+    FieldActor_SetMoveTarget(rock, rock->x + scatter.x, rock->y,
                         rock->z + scatter.z);
   }
-  Map_SetScreenShake(0x50000, 0x70000, 0x10000);
-  Map_SetScreenShake(shakeA, shakeA, shakeC);
+  MapGrid_SetShake(0x50000, 0x70000, 0x10000);
+  MapGrid_SetShake(shakeA, shakeA, shakeC);
 }

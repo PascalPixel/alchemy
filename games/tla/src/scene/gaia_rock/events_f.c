@@ -1,9 +1,9 @@
 #include "types.h"
 #include "task.h"
+#include "event_inline.h"
 
-s32 Task_Add(void (*func)(void), s32 priority);
 void Func_02000ab4(void);
 
 void Func_02000dd0(void) {
-  Task_Add(Func_02000ab4, TASK_PASS_VBLANK);
+  Task_AddFrame(Func_02000ab4, TASK_PASS_VBLANK);
 }

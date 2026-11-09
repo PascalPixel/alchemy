@@ -25,7 +25,7 @@ void Func_020011a0();
     register s32 emote_ __asm__("r1") = (emote);                               \
     /* FAKEMATCH: the frames, pinned with the emote above. */                  \
     register s32 frames_ __asm__("r2") = (frames);                             \
-    Func_080d47b4((actor), emote_, frames_);                                   \
+    Actor_ShowEmote((actor), emote_, frames_);                                   \
   }
 
 void Func_02000430(void) {
@@ -36,25 +36,25 @@ void Func_02000430(void) {
   if (Event_GetFlag(0) == 0)
     return;
   Func_02001080();
-  Event_ResolvePendingActions(0);
-  GameFlag_SetBit(0xa70);
-  Event_SetMessageId((s32)MsgIFound2);
-  Actor_SetModeById(4, 1);
-  Event_ShowMessageThenWait(19, 0, 1);
-  Actor_SetPositionAndReset(4, 200, 221);
-  Motion_SetVarCbAndRefresh(4, 2);
-  Event_Wait(5);
+  FieldEvent_ResolvePendingActions(0);
+  Event_SetFlag(0xa70);
+  FieldEvent_SetMessageId((s32)MsgIFound2);
+  Actor_SetAnimation(4, 1);
+  FieldEvent_ShowMessageThenWait(19, 0, 1);
+  Actor_WalkToAndWait(4, 200, 221);
+  Actor_RunRepeatedMotion(4, 2);
+  FieldEvent_Wait(5);
   Actor_WalkBy(4, -16, 8);
   FieldActor_LaunchFromLeader(0, 0, 0, 0xc000);
   FieldActor_LaunchFromLeader(18, 8, 16, 0xc000);
-  Actor_WaitForMoveById(0);
-  Actor_WaitForMoveById(18);
+  FieldActor_WaitForMoveById(0);
+  FieldActor_WaitForMoveById(18);
   Actor_FaceDirection(0, FACING_SOUTH, 0);
-  Event_Wait(20);
+  FieldEvent_Wait(20);
   Actor_FaceDirection(0, FACING_NORTH, 0);
   Actor_FaceDirection(4, FACING_NORTH, 0);
-  Actor_ArmCallback(18, FACING_NORTH, 0);
-  Event_Wait(10);
+  Actor_FaceDirection(18, FACING_NORTH, 0);
+  FieldEvent_Wait(10);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(0, 256, 0)
@@ -68,70 +68,70 @@ void Func_02000430(void) {
   Func_02001180();
   angle = 0x4000;
   Actor_SetPositionAndFacing(19, PIXELS(199), PIXELS(130), angle);
-  Actor_ResetAndSetPositionInMode2(19, 231, 199);
-  Event_Wait(20);
+  Actor_WalkTo(19, 231, 199);
+  FieldEvent_Wait(20);
   Actor_SetPositionAndFacing(20, PIXELS(199), PIXELS(130), angle);
-  Actor_ResetAndSetPositionInMode2(20, 220, 191);
-  Event_Wait(20);
+  Actor_WalkTo(20, 220, 191);
+  FieldEvent_Wait(20);
   Actor_SetPositionAndFacing(21, PIXELS(199), PIXELS(130), angle);
-  Actor_ResetAndSetPositionInMode2(21, 204, 191);
-  Camera_MoveWithinMapBounds(PIXELS(199), -1, PIXELS(225), 1);
+  Actor_WalkTo(21, 204, 191);
+  FieldCamera_MoveTo(PIXELS(199), -1, PIXELS(225), 1);
   Func_02001180();
-  Actor_WaitForMoveById(19);
+  FieldActor_WaitForMoveById(19);
   Actor_FaceDirection(19, 0x5000, 0);
-  Actor_WaitForMoveById(20);
+  FieldActor_WaitForMoveById(20);
   Actor_FaceDirection(20, 0x5000, 0);
-  Actor_WaitForMoveById(21);
+  FieldActor_WaitForMoveById(21);
   Actor_FaceDirectionAndWait(21, 0x5000);
-  Motion_SetVarCbAndRefresh(21, 2);
-  Event_ShowMessageThenWait(21, 0, 5);
+  Actor_RunRepeatedMotion(21, 2);
+  FieldEvent_ShowMessageThenWait(21, 0, 5);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(18, 258, 30)
-  Event_ShowMessageThenWait(18, 0, 5);
+  FieldEvent_ShowMessageThenWait(18, 0, 5);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(19, 264, 30)
-  Event_ShowMessageThenWait(19, 0, 5);
-  Motion_SetVarCbAndRefresh(20, 2);
-  Event_Wait(5);
-  Event_ShowMessageThenWait(20, 0, 5);
+  FieldEvent_ShowMessageThenWait(19, 0, 5);
+  Actor_RunRepeatedMotion(20, 2);
+  FieldEvent_Wait(5);
+  FieldEvent_ShowMessageThenWait(20, 0, 5);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(21, 263, 30)
-  Event_ShowMessageThenWait(21, 0, 5);
+  FieldEvent_ShowMessageThenWait(21, 0, 5);
   Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
-  Motion_SetModeAndWaitAnimation(0, 3);
-  Event_Wait(10);
-  Event_ShowMessageThenWait(0, 0, 5);
-  Motion_SetVarCbAndRefresh(19, 2);
-  Event_Wait(5);
-  Event_ShowMessageThenWait(19, 0, 5);
-  Actor_TurnToFaceEachOther(18, 4, 0);
-  Event_Wait(10);
+  Actor_SetAnimationAndWait(0, 3);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(0, 0, 5);
+  Actor_RunRepeatedMotion(19, 2);
+  FieldEvent_Wait(5);
+  FieldEvent_ShowMessageThenWait(19, 0, 5);
+  Actor_FaceEachOther(18, 4, 0);
+  FieldEvent_Wait(10);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(0, 257, 30)
-  Event_ShowMessageThenWait(0, 0, 5);
+  FieldEvent_ShowMessageThenWait(0, 0, 5);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(20, 263, 30)
-  Event_ShowMessageThenWait(20, 0, 5);
+  FieldEvent_ShowMessageThenWait(20, 0, 5);
   Actor_FaceDirection(4, FACING_NORTHEAST, 0);
   Actor_FaceDirectionAndWait(18, FACING_NORTHEAST);
-  Actor_SetModeById(18, 3);
-  Motion_SetModeAndWaitAnimation(4, 3);
-  Event_Wait(10);
-  Motion_SetModeAndWaitAnimation(21, 4);
-  Event_ShowMessageThenWait(21, 0, 5);
+  Actor_SetAnimation(18, 3);
+  Actor_SetAnimationAndWait(4, 3);
+  FieldEvent_Wait(10);
+  Actor_SetAnimationAndWait(21, 4);
+  FieldEvent_ShowMessageThenWait(21, 0, 5);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(18, 265, 30)
-  Event_ShowMessageThenWait(18, 0, 5);
-  Actor_SetModeById(21, 4);
-  Actor_SetModeById(19, 4);
-  Motion_SetModeAndWaitAnimation(20, 4);
-  Event_ShowMessageThenWait(19, 0, 5);
+  FieldEvent_ShowMessageThenWait(18, 0, 5);
+  Actor_SetAnimation(21, 4);
+  Actor_SetAnimation(19, 4);
+  Actor_SetAnimationAndWait(20, 4);
+  FieldEvent_ShowMessageThenWait(19, 0, 5);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(4, 256, 0)
@@ -141,31 +141,31 @@ void Func_02000430(void) {
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(0, 258, 30)
-  Event_ShowMessageThenWait(0, 0, 5);
-  Actor_TurnToFaceEachOther(20, 21, 0);
-  Event_Wait(10);
+  FieldEvent_ShowMessageThenWait(0, 0, 5);
+  Actor_FaceEachOther(20, 21, 0);
+  FieldEvent_Wait(10);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(20, 263, 30)
-  Event_ShowMessageThenWait(20, 0, 5);
+  FieldEvent_ShowMessageThenWait(20, 0, 5);
   Actor_FaceDirection(20, 0x5000, 0);
   Actor_FaceDirection(21, 0x5000, 0);
-  Actor_ArmCallbackAndRefresh(18, FACING_NORTHEAST);
-  Event_Wait(10);
-  Motion_SetModeAndWaitAnimation(18, 4);
-  Event_ShowMessageThenWait(18, 0, 5);
-  Motion_SetModeAndWaitAnimation(21, 4);
-  Event_ShowMessageThenWait(21, 0, 5);
+  Actor_FaceDirectionAndWait(18, FACING_NORTHEAST);
+  FieldEvent_Wait(10);
+  Actor_SetAnimationAndWait(18, 4);
+  FieldEvent_ShowMessageThenWait(18, 0, 5);
+  Actor_SetAnimationAndWait(21, 4);
+  FieldEvent_ShowMessageThenWait(21, 0, 5);
   Actor_SetDestinationOffset(20, -16, 24);
   Actor_SetDestinationOffset(21, -16, 24);
-  Actor_OffsetPositionAndResetMotion(19, -16, 24);
-  Actor_WaitForMoveById(19);
+  Actor_SetDestinationOffset(19, -16, 24);
+  FieldActor_WaitForMoveById(19);
   /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
    * built (one reordered row). */
   do {
     gMainRoutineWork.battleRule24b = 2;
   } while (0);
-  Party_SetFields1eeAnd1f0((s32)&SceneId_Ov695, 20);
-  Party_SetFields1f2And1f4((s32)&SceneId_Ov695, 21);
+  Event_SetAfterBattleDestination((s32)&SceneId_Ov695, 20);
+  Event_SetDefeatDestination((s32)&SceneId_Ov695, 21);
   Func_020011a0(102, 2);
 }

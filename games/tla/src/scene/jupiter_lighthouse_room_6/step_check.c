@@ -16,11 +16,11 @@ void Scene_SetArrivalFlags(s32 value);
 void Func_020003a4(s32 value);
 
 void Func_02000054(s32 value) {
-  if (Actor_GetById(gMainRoutineWork.currentOwner)->y == 0 && Func_020018bc(value))
-    Import_EventSetExitRequest(13);
+  if (Actor_Get(gMainRoutineWork.currentOwner)->y == 0 && Func_020018bc(value))
+    FieldEvent_SetExitRequest(13);
 }
 
 void Func_02000084(s32 value) {
-  if (Actor_GetById(gMainRoutineWork.currentOwner)->y == 0 && Func_020018bc(value))
-    Import_EventSetExitRequest(14);
+  if (Actor_Get(gMainRoutineWork.currentOwner)->y == 0 && Func_020018bc(value))
+    FieldEvent_SetExitRequest(14);
 }

@@ -16,7 +16,7 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
 
 /// Shakes the camera diagonally by one pixel every three frames.
 void Func_02001364(void) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = *(s16 *)((u8 *)object + 10);
   s32 z = *(s16 *)((u8 *)object + 18);
 

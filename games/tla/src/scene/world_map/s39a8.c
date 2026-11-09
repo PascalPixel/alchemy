@@ -10,7 +10,7 @@ s32 Func_020039a8(struct Actor *object) {
 
   if (step > 31)
     return 0;
-  scale = Iwram_MulQ16(Math_Sine(step << 10), 0x14000);
+  scale = Iwram_MulQ16(Math_Sin(step << 10), 0x14000);
   object->scaleX = scale;
   object->scaleY = scale;
   object->x = parent->x;

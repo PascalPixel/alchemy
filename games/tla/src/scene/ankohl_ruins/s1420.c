@@ -38,7 +38,7 @@ void Func_02001420(void) {
   struct AnkohlRuinsFloatSprite *sprite = work->sprites;
   s32 i;
 
-  if (GameFlag_Test(0x109) == 0)
+  if (Event_GetFlag(0x109) == 0)
     Iwram_ClearWords(work, 240);
   i = 31;
 fill:
@@ -48,7 +48,7 @@ fill:
     goto fill;
   // Spelled through a pointer: a member store shares its zero mask.
   *(s16 *)&work->tile = Resource_FindFreeEntry();
-  VramCache_Load(work->tile, 128, tiles);
+  Vram_Load(work->tile, 128, tiles);
   Heap_Release(tiles);
   work->unk08 = ((s32 *)layer->unk08)[0];
   work->unk0c = ((s32 *)layer->unk08)[1];
@@ -60,7 +60,7 @@ fill:
     REG_WINOUT = winout;
   } while (0);
   REG_DISPCNT |= 0x8000;
-  Task_Add(Func_020012c4, 0x480);
+  Task_AddFrame(Func_020012c4, 0x480);
   if (gMainRoutineWork.entrance == 1 || gMainRoutineWork.entrance == 2) {
     sprite->x = 0x280000;
     sprite->kind = 1;

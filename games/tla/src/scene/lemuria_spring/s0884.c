@@ -9,7 +9,7 @@ struct Half {
 };
 
 void Func_02000884(s32 id, s32 *pos, s32 dir, s32 palette, s32 value) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
   u8 *sprite;
   u8 **list;
   s32 i;

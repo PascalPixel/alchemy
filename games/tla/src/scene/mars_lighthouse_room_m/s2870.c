@@ -1,8 +1,8 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "iwram_call.h"
 #include "fixed_math.h"
+#include "event_inline.h"
 
 struct Sprite {
   u8 unk00[4];
@@ -39,10 +39,8 @@ struct Work {
 
 extern u8 gData_020023c4[];
 extern u8 gData_02003304[];
-struct Actor *Func_02003128(s32 kind, s32 x, s32 y, s32 z);
 void Func_02003120(struct Actor *object, const void *script);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 s32 Random16Far(void);
 void ResourceMetadata_ClearRecord(void *record);
@@ -71,7 +69,7 @@ void Func_02002870(struct Actor *actor) {
     e = Random16Far();
     z = actor->z + d * 16 - e * 16;
     y = c * 8 + actor->y + Q16_ONE * 4;
-    object = Func_02003128(489, x, y, z);
+    object = (struct Actor *)Import_ActorCreate(489, x, y, z);
     if (object != NULL) {
       s32 angle, radius;
       u32 sum;

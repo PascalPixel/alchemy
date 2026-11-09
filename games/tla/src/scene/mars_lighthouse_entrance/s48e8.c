@@ -2,25 +2,23 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 struct MarsLighthouseEntranceEventWork {
   u8 unk000[0x1ac];
   s32 value1ac;
 };
 
-void wait(s32 frames);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02004718(void);
 void Func_02004738(void);
-void Func_02004d58(s32 a, s32 b);
-void Func_02004d60(s32 a);
 void Func_02004dc8(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02004d58_(s32 a, s32 b) {
-  Func_02004d58(a, b);
+  BattleEffect_ApplyColorToTargetBuffer(a, b);
 }
 
 void Func_020048e8(void) {
@@ -29,18 +27,18 @@ void Func_020048e8(void) {
 
   
   saved = work->value1ac;
-  Func_02004d58(0x202108, 1);
+  PaletteFade_ApplyTarget(0x202108, 1);
   Func_02004d58_(0x10000, 2);
   ((struct MarsLighthouseEntranceEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_02004738();
   Func_02004dc8();
-  wait(40);
+  System_Wait(40);
   Func_02004718();
-  Func_02004d58(0x10000, 1);
-  Func_02004d60(16);
-  wait(16);
+  PaletteFade_ApplyTarget(0x10000, 1);
+  PaletteFade_Interpolate(16);
+  System_Wait(16);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 

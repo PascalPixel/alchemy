@@ -9,6 +9,6 @@ void Func_02003b3c(s32 id);
 void Func_020036f8(s32 a, s32 b, s32 owner);
 
 void Func_020030a4(s32 id) {
-  Actor_GetById(id)->unk5c[0] = 3;
+  Actor_Get(id)->unk5c[0] = 3;
   Func_02003b3c(id);
 }

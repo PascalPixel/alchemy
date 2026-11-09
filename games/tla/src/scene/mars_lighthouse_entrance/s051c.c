@@ -21,9 +21,6 @@ void Func_02000798(void);
 void Func_020019c4(void);
 void Func_020046b4(void);
 void Func_02004718(void);
-void Func_02004bf8(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_02004d58(s32 a0, s32 a1);
-void Func_02004d60(s32 frames);
 void Func_02004dc8(void);
 void Func_02004dd0(void);
 void BattleEffect_PrepareBufferInterpolation(void);
@@ -32,7 +29,7 @@ void Func_0200051c(void) {
   s32 x;
   s32 count;
 
-  Func_02004de0(0x23c);
+  Event_PlaySound(0x23c);
   x = 32;
   count = 6;
   /* FAKEMATCH: a goto loop, which GCC does not treat as a loop: ⚓️ builds the
@@ -41,10 +38,10 @@ step:
   Func_02004c30_(x, 125, 3, 3, 39, 85);
   Func_02000414(10);
   count--;
-  wait(10);
+  System_Wait(10);
   x += 3;
   if (count >= 0)
     goto step;
   Func_02004db0();
-  Func_02004d30(20);
+  FieldEvent_SetExitRequest(20);
 }

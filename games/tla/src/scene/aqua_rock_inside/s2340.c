@@ -15,6 +15,7 @@
 #include "system/io_reg.h"
 #include "text/msg_ids.h"
 #include "types.h"
+#include "event_inline.h"
 
 struct MapBits {
   u8 unk00[23];
@@ -36,13 +37,8 @@ struct MapBits {
 
 void Func_02003278(void);
 void Func_020032d4(u32 first, s32 level, s32 baseLevel);
-struct Actor *Actor_GetById(s32 id);
 void Func_02003cc4(struct Actor *actor, s32 mode);
-s32 GameFlag_Test(s32 flag);
-void Func_0802b450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_0200349c(u32 index, s32 height);
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Func_02003ea4();
 void Actor_SetSingleChildFlags();
 void Func_02003628(void);
@@ -52,7 +48,6 @@ void Func_020007a8(void);
 void Func_02003420(s32 id, s32 kind, s32 height);
 void Func_02000b84(void);
 s32 Func_02000b24(s32 id, s32 value);
-void GameFlag_SetBit(s32 flag);
 void Func_02000ad8(void);
 void Func_02003edc();
 void Func_02003ee4();
@@ -87,10 +82,10 @@ s32 Func_02002340(void) {
       actor->y = i1;
       i2 = GameFlag_Test(0x230);
       if (i2 == 0) {
-        Call6((void (*)())Func_0802b450, 104, 80, 16, 10, 104, 40);
-        Call6((void (*)())Func_0802b450, 110, 116, 18, 12, 39, 105);
+        MapGrid_CopyCellsLayered(104, 80, 16, 10, 104, 40);
+        MapGrid_CopyCellsLayered(110, 116, 18, 12, 39, 105);
         // i2 is the flag test's 0.
-        Call6((void (*)())Map_CopyCellAttributeRect, 64, 32, 64, 32, i2, 32);
+        MapGrid_CopyCellAttributes(64, 32, 64, 32, i2, 32);
         Func_020032d4(33, 0, 0);
       } else {
         Call3((void (*)())Func_020032d4, 33, 4, 0);
@@ -98,31 +93,29 @@ s32 Func_02002340(void) {
         Call2((void (*)())Func_0200349c, (actor->x >> 20) - 42, 0);
       }
       if (GameFlag_Test(0x250)) {
-        Call6((void (*)())Map_CopyCellAttributeRect, 41, 42, 1, 1, 43, 44);
+        MapGrid_CopyCellAttributes(41, 42, 1, 1, 43, 44);
       }
     } else if ((u32)(entrance - 9) <= 1) {
       a = GameFlag_Test(0x231);
       if (a == 0) {
         i3 = 32;
-        Call6((void (*)())Func_0802b450, 77, 80, 23, 20, 77, i3);
-        Call6((void (*)())Func_0802b450, 112, 96, 16, 20, 12, 98);
+        MapGrid_CopyCellsLayered(77, 80, 23, 20, 77, i3);
+        MapGrid_CopyCellsLayered(112, 96, 16, 20, 12, 98);
         // a is the flag test's 0.
-        Call6((void (*)())Map_CopyCellAttributeRect, 64, 32, 64, 32, a, i3);
+        MapGrid_CopyCellAttributes(64, 32, 64, 32, a, i3);
         Func_020032d4(33, 0, 0);
       } else {
         Func_020032d4(33, 4, 0);
       }
     }
     if (GameFlag_Test(0x95a)) {
-      Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 10, PIXELS(184),
-            PIXELS(200));
+      Actor_SetPosition(10, PIXELS(184), PIXELS(200));
       i4 = 12;
-      Call6((void (*)())Map_CopyCellAttributeRect, 0, 12, 1, 1, 9, i4);
-      Call6((void (*)())Map_CopyCellAttributeRect, 0, 12, 1, 1, 13, i4);
+      MapGrid_CopyCellAttributes(0, 12, 1, 1, 9, i4);
+      MapGrid_CopyCellAttributes(0, 12, 1, 1, 13, i4);
     }
     if (GameFlag_Test(0x95b)) {
-      Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 11, PIXELS(824),
-            PIXELS(216));
+      Actor_SetPosition(11, PIXELS(824), PIXELS(216));
     }
   } else if (scene == (s32)&SceneId_Ov67cRoom2) {
     if ((u32)(entrance - 1) <= 1) {
@@ -146,15 +139,15 @@ s32 Func_02002340(void) {
         Func_020036b8(33, 55);
     }
     if (GameFlag_Test(0x95d)) {
-      Call6((void (*)())Func_0802b450, 75, 96, 7, 13, 80, 27);
+      MapGrid_CopyCellsLayered(75, 96, 7, 13, 80, 27);
       i6 = 16;
       b = 31;
-      Call6((void (*)())Func_0802b450, 91, 96, 7, 10, i6, b);
-      Call6((void (*)())Func_0802b450, 99, 96, 7, 14, i6, 91);
-      Call6((void (*)())Map_CopyCellAttributeRect, 43, 0, 5, 9, 17, b);
+      MapGrid_CopyCellsLayered(91, 96, 7, 10, i6, b);
+      MapGrid_CopyCellsLayered(99, 96, 7, 14, i6, 91);
+      MapGrid_CopyCellAttributes(43, 0, 5, 9, 17, b);
       Func_020007a8();
     } else {
-      Call6((void (*)())Map_CopyCellAttributeRect, 17, 32, 5, 1, 17, 31);
+      MapGrid_CopyCellAttributes(17, 32, 5, 1, 17, 31);
     }
   } else if (scene == (s32)&SceneId_Ov67cRoom4) {
     Call1((void (*)())Func_02003ea4, 0);
@@ -168,26 +161,25 @@ s32 Func_02002340(void) {
       Value3((s32 (*)())Func_02003420, 13, 3, 4);
       Value3((s32 (*)())Func_02003420, 14, 4, 4);
       Func_020032d4(40, 4, 4);
-      if (!GameFlag_Test(0x249) && !Value1((s32 (*)())GameFlag_Test, 0xa64)) {
+      if (!GameFlag_Test(0x249) && !Event_GetFlag(0xa64)) {
         map = (u8 *)Ram_HeapSlots->mapWork;
         i7 = 39;
-        Call6((void (*)())Func_0802b450, 64, 64, 16, 13, 71, i7);
-        Call6((void (*)())Map_CopyCellAttributeRect, 71, 39, 16, 15, 7, i7);
+        MapGrid_CopyCellsLayered(64, 64, 16, 13, 71, i7);
+        MapGrid_CopyCellAttributes(71, 39, 16, 15, 7, i7);
         Func_02000b84();
         map[262] = 1;
         BG1_SET_PRIORITY_1();
-      } else if (Value1((s32 (*)())GameFlag_Test, 0xa64) ||
+      } else if (Event_GetFlag(0xa64) ||
                  GameFlag_Test(0x248)) {
-        if (Value1((s32 (*)())GameFlag_Test, 0xa64)) {
-          Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 12,
-                PIXELS(280), PIXELS(712));
+        if (Event_GetFlag(0xa64)) {
+          Actor_SetPosition(12, PIXELS(280), PIXELS(712));
         }
         Func_02000b24(12, 38);
         Func_02003628();
         Value4((s32 (*)())Func_02003688, 12, 2, 45, 1);
         for (i8 = 0; i8 < 8; i8++)
           Func_020036b8(33, 55);
-        Call1((void (*)())GameFlag_SetBit, 0x249);
+        Event_SetFlag(0x249);
       }
       i9 = 12;
       do {
@@ -233,15 +225,14 @@ s32 Func_02002340(void) {
       } while (i11 <= 15);
       goto done;
     } else {
-      Call6((void (*)())Func_0802b450, 114, 39, 1, 2, 113, 39);
+      MapGrid_CopyCellsLayered(114, 39, 1, 2, 113, 39);
       i12 = 41;
-      Call6((void (*)())Map_CopyCellAttributeRect, 105, 41, 12, 13, i12, i12);
-      Call6((void (*)())Func_0802b450, 105, 105, 12, 13, 105, i12);
+      MapGrid_CopyCellAttributes(105, 41, 12, 13, i12, i12);
+      MapGrid_CopyCellsLayered(105, 105, 12, 13, 105, i12);
       for (i13 = 13; i13 <= 15; i13++) {
         actor = Actor_GetById(i13);
         if (GameFlag_Test(i13 + 580)) {
-          Call6((void (*)())Map_CopyCellAttributeRect, 47, 45, 1, 1,
-                actor->x >> 20, actor->z >> 20);
+          MapGrid_CopyCellAttributes(47, 45, 1, 1, actor->x >> 20, actor->z >> 20);
         }
       }
     }
@@ -265,23 +256,20 @@ s32 Func_02002340(void) {
       Value3((s32 (*)())Func_02003420, 17, 3, 4);
       Value3((s32 (*)())Func_02003420, 18, 6, 4);
       Func_020032d4(40, 4, 4);
-      if (!GameFlag_Test(0x24b) && !Value1((s32 (*)())GameFlag_Test, 0xa65)) {
+      if (!GameFlag_Test(0x24b) && !Event_GetFlag(0xa65)) {
         map = (u8 *)Ram_HeapSlots->mapWork;
         i14 = 13;
-        Call6((void (*)())Func_0802b450, 64, 64, 19, 17, 100, i14);
-        Call6((void (*)())Func_0802b450, 35, 105, 23, 24, 35, 73);
-        Call6((void (*)())Map_CopyCellAttributeRect, 100, 13, 19, 19, 36, i14);
+        MapGrid_CopyCellsLayered(64, 64, 19, 17, 100, i14);
+        MapGrid_CopyCellsLayered(35, 105, 23, 24, 35, 73);
+        MapGrid_CopyCellAttributes(100, 13, 19, 19, 36, i14);
         map[262] = 1;
         BG1_SET_PRIORITY_1();
-      } else if (Value1((s32 (*)())GameFlag_Test, 0xa65) ||
+      } else if (Event_GetFlag(0xa65) ||
                  GameFlag_Test(0x24a)) {
-        if (Value1((s32 (*)())GameFlag_Test, 0xa65)) {
-          Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 12,
-                PIXELS(808), PIXELS(296));
-          Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 13,
-                PIXELS(680), PIXELS(360));
-          Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 15,
-                PIXELS(744), PIXELS(424));
+        if (Event_GetFlag(0xa65)) {
+          Actor_SetPosition(12, PIXELS(808), PIXELS(296));
+          Actor_SetPosition(13, PIXELS(680), PIXELS(360));
+          Actor_SetPosition(15, PIXELS(744), PIXELS(424));
         }
         Call2((void (*)())Func_02000b24, 12, 38);
         Call2((void (*)())Func_02000b24, 13, 39);
@@ -290,7 +278,7 @@ s32 Func_02002340(void) {
         Value4((s32 (*)())Func_02003688, 38, 2, 19, 1);
         for (i15 = 0; i15 < 8; i15++)
           Func_020036b8(33, 55);
-        Call1((void (*)())GameFlag_SetBit, 0x24b);
+        Event_SetFlag(0x24b);
       }
     }
     i16 = 10;
@@ -303,22 +291,21 @@ s32 Func_02002340(void) {
     if (i16 <= 20)
       goto clear_pillars;
     actor = Actor_GetById(19);
-    Call6((void (*)())Map_CopyCellAttributeRect, 23, 39, 1, 1, actor->x >> 20,
-          39);
+    MapGrid_CopyCellAttributes(23, 39, 1, 1, actor->x >> 20, 39);
     if ((u32)(entrance - 1) <= 1) {
       Call1((void (*)())Func_02003ea4, 0);
     }
   } else if (scene == (s32)&SceneId_Ov67cRoom10) {
     Call1((void (*)())Func_02003ea4, 0);
     Func_020032d4(33, 0, -2);
-    Call1((void (*)())GameFlag_SetBit, 0x144);
+    Event_SetFlag(0x144);
     if (GameFlag_Test(0x349)) {
-      Call6((void (*)())Map_CopyCellAttributeRect, 38, 9, 7, 6, 13, 9);
+      MapGrid_CopyCellAttributes(38, 9, 7, 6, 13, 9);
     } else {
       i17 = 8;
-      Call6((void (*)())Func_0802b450, 77, 8, 7, 6, 50, i17);
-      Call6((void (*)())Func_0802b450, 70, 8, 7, 6, 77, i17);
-      Call6((void (*)())Map_CopyCellAttributeRect, 38, 17, 7, 6, 13, 9);
+      MapGrid_CopyCellsLayered(77, 8, 7, 6, 50, i17);
+      MapGrid_CopyCellsLayered(70, 8, 7, 6, 77, i17);
+      MapGrid_CopyCellAttributes(38, 17, 7, 6, 13, 9);
     }
   }
 done:

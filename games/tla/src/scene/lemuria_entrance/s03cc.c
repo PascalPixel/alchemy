@@ -27,11 +27,11 @@ void Func_020003cc(void) {
   saved = gMainRoutineWork.eventMode;
   gMainRoutineWork.eventMode = 2;
   Func_0200055c();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   Actor_SetSpeedParameters_(8, 0x451e, 0x228f);
-  Actor_SetMovementTypeById(8, gData_020005e4);
-  Event_Wait(80);
-  Event_SetMessageId((s32)&MsgFieldAddressCompanion);
+  Actor_SetScript(8, gData_020005e4);
+  FieldEvent_Wait(80);
+  FieldEvent_SetMessageId((s32)&MsgFieldAddressCompanion);
   Func_02000310(6, 90);
   Func_02000310(7, 90);
   Func_02000310(6, 180);
@@ -53,14 +53,14 @@ void Func_020003cc(void) {
   Func_02000310(7, 250);
   Func_02000310(4, 90);
   Func_02000310(7, 250);
-  Actor_RefreshSelectorById(8);
-  Event_Wait(10);
+  FieldActor_RefreshSelectorById(8);
+  FieldEvent_Wait(10);
   work = Ram_HeapSlots->eventWork;
   work->delay = 30;
   work->screenEffect = 0x204;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(1);
+  FieldEvent_SetExitRequest(1);
   gMainRoutineWork.eventMode = saved;
   Func_02000564();
 }

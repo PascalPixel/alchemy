@@ -1,4 +1,5 @@
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
+#include "event_inline.h"
 
 s32 Func_02000de0(struct Actor *object) {
   struct JupiterLighthouseAerieSpark spark;

@@ -1,7 +1,7 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "system/vector3.h"
+#include "event_inline.h"
 
 struct SparkleSprite {
   u8 unk00[12];
@@ -29,11 +29,9 @@ struct CounterBits {
 
 void Animation_ApplyChildValues(struct Actor *, u32);
 s32 Resource_ResetEntry(u32 entry);
-s32 Math_Sine(s32);
 void Func_0200579c(struct Vector3 *v);
 void Func_020057ac(struct SparkleSprite *sprite);
 s32 Func_020057bc(struct Actor *object);
-void Func_020057dc(s32 sound);
 
 void Func_02005268(struct Actor *object) {
   struct Vector3 position;
@@ -48,7 +46,7 @@ void Func_02005268(struct Actor *object) {
         object, (u8)((u32)((struct CounterBits *)count)->rest % 6));
   if (((u8 *)object)[98] == 0) {
     if ((*count & 15) == 0) {
-      Func_020057dc(0x256);
+      Event_PlaySound(0x256);
       work->unka0[work->unka6] = 0;
       work->unka6 ^= 1;
     }
@@ -62,7 +60,7 @@ void Func_02005268(struct Actor *object) {
   }
   (*count)++;
   for (i = 0; i < 2; i++) {
-    sine = Math_Sine(work->unka0[i] << 10);
+    sine = Math_Sin(work->unka0[i] << 10);
     if (work->unka0[i] >= 0) {
       if (work->unka0[i] <= 31) {
         struct Vector3 *p = &position;

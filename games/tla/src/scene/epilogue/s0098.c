@@ -2,6 +2,7 @@
 #include "call.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "event_inline.h"
 
 struct EpilogueSprite {
   u8 unk00[5];
@@ -27,8 +28,6 @@ void Heap_Release(void *block);
 void *Resource_GetTableEntry(s32 id);
 extern char ResourceId_GreenPanel;
 s32 Resource_FindFreeEntry(void);
-s32 VramCache_Load(s32 entry, s32 size, void *data);
-void Task_Add(void (*func)(void), s32 priority);
 void Func_020007ac(void *resource, void *destination);
 void Func_02000834(struct EpilogueSprite *sprite, s32 a, s32 b, u32 c,
                    s32 tile);
@@ -59,7 +58,7 @@ void Func_02000098(void) {
   value = Resource_FindFreeEntry();
   *slot = value;
   tileSlot = &Data_02000a30;
-  value = VramCache_Load(value, 0x800, buffer);
+  value = Vram_Load(value, 0x800, buffer);
   *tileSlot = value;
   Set(sprite, 0, 0, 0xc0000000, value);
   sprite->unk1e = 240;
@@ -70,5 +69,5 @@ void Func_02000098(void) {
   zero = 0;
   gData_02000a34 = zero;
   priority = 0x480;
-  Task_Add(Func_0200005c, priority);
+  FieldTask_AddFrame(Func_0200005c, priority);
 }

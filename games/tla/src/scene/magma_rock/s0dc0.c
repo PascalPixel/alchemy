@@ -23,8 +23,8 @@ void Func_02000dc0(struct Actor *object) {
   struct Actor *leader;
 
   step = Math_Cosine(object->angle);
-  partner = Actor_GetById(HALF_AT(object, 102) + BYTE_AT(object, 98));
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  partner = Actor_Get(HALF_AT(object, 102) + BYTE_AT(object, 98));
+  leader = Actor_Get(gMainRoutineWork.currentOwner);
   object->x += step * 2;
   Func_02000d40(object);
   if (leader->x - 0x80000 < object->x + 0x60000 &&

@@ -34,16 +34,16 @@ void Message_CloseFinishedWindows();
     register s32 emote_ __asm__("r1") = (emote);                               \
     /* FAKEMATCH: the frames, pinned with the emote above. */                  \
     register s32 frames_ __asm__("r2") = (frames);                             \
-    Func_080d47b4((actor), emote_, frames_);                                   \
+    Actor_ShowEmote((actor), emote_, frames_);                                   \
   }
 
 void Func_0200087c(void) {
   s32 angle = 0xa000;
 
   Func_02001080();
-  Event_ResolvePendingActions(0);
-  Camera_MoveWithinMapBounds(PIXELS(199), -1, PIXELS(273), 0);
-  Event_SetMessageId((s32)MsgHeyTheseGuys);
+  FieldEvent_ResolvePendingActions(0);
+  FieldCamera_MoveTo(PIXELS(199), -1, PIXELS(273), 0);
+  FieldEvent_SetMessageId((s32)MsgHeyTheseGuys);
   Actor_SetPositionAndFacing(4, PIXELS(184), PIXELS(229), angle);
   Actor_SetPositionAndFacing(0, PIXELS(200), PIXELS(221), angle);
   {
@@ -53,41 +53,41 @@ void Func_0200087c(void) {
 
     Actor_SetPositionAndFacing(18, PIXELS(218), PIXELS(320), turn);
   }
-  Actor_SetModeById(4, 19);
-  Actor_SetModeById(0, 39);
+  Actor_SetAnimation(4, 19);
+  Actor_SetAnimation(0, 39);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Motion_SetVarCbAndRefresh(21, 2);
-  Event_Wait(5);
+  Actor_RunRepeatedMotion(21, 2);
+  FieldEvent_Wait(5);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(21, 263, 30)
-  Event_ShowMessageThenWait(21, 0, 5);
+  FieldEvent_ShowMessageThenWait(21, 0, 5);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(19, 263, 30)
-  FieldMessage_ShowAtActor(19, 0);
+  Event_OpenMessage(19, 0);
   if (FieldYesNo_Ask(1) == 0) {
     Message_CloseFinishedWindows();
-    Event_ShowMessageThenWait(20, 0, 5);
+    FieldEvent_ShowMessageThenWait(20, 0, 5);
     EVENT_MESSAGE++;
   } else {
     Message_CloseFinishedWindows();
     EVENT_MESSAGE++;
-    Event_ShowMessageThenWait(20, 0, 5);
+    FieldEvent_ShowMessageThenWait(20, 0, 5);
   }
-  Motion_SetModeAndWaitAnimation(21, 4);
-  Event_ShowMessageThenWait(21, 0, 5);
-  Motion_SetModeAndWaitAnimation(19, 3);
-  Event_Wait(10);
-  Event_ShowMessageThenWait(19, 0, 5);
-  Camera_SetSpeedParameters(0x8000, 0x1000);
-  Camera_MoveWithinMapBounds(PIXELS(199), -1, PIXELS(373), 1);
-  Event_Wait(100);
+  Actor_SetAnimationAndWait(21, 4);
+  FieldEvent_ShowMessageThenWait(21, 0, 5);
+  Actor_SetAnimationAndWait(19, 3);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(19, 0, 5);
+  FieldCamera_SetSpeed(0x8000, 0x1000);
+  FieldCamera_MoveTo(PIXELS(199), -1, PIXELS(373), 1);
+  FieldEvent_Wait(100);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(18, 261, 1)
-  Event_Wait(20);
+  FieldEvent_Wait(20);
   Func_02001190((s16)gMainRoutineWork.savedScene,
                 (s16)gMainRoutineWork.savedEntrance);
 #if TLA_PATCH_1

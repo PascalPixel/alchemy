@@ -23,7 +23,7 @@ s32 Func_02000ba0(s32 limit, s32 group, s32 *out) {
           goto next;
       }
       flag = group * 20 + i + 48;
-      if (GameFlag_Test(flag) == 0) {
+      if (Event_GetFlag(flag) == 0) {
         *cursor++ = flag;
         count++;
       }

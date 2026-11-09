@@ -1,6 +1,7 @@
 #include "garoh.h"
 #include "main_routine_work.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 extern struct MainRoutineWork gMainRoutineWork;
 
@@ -17,14 +18,14 @@ void Func_02000e78(s32 id, struct Actor *object) {
   saved = id;
   for (i = 16; i > 0; i--) {
     object->y -= PIXELS(2);
-    Event_Wait(1);
+    FieldEvent_Wait(1);
   }
-  Sound_Play(136);
+  Event_PlaySound(136);
   Func_020012a8(saved);
 }
 
 void Func_02000eb0(void) {
-  struct Actor *object = Actor_GetById(8);
+  struct Actor *object = Actor_Get(8);
   s32 x = object->x >> 20;
   s32 raw;
   s32 z;
@@ -45,7 +46,7 @@ void Func_02000eb0(void) {
 }
 
 void Func_02000eec(void) {
-  struct Actor *object = Actor_GetById(9);
+  struct Actor *object = Actor_Get(9);
   s32 x = object->x >> 20;
   s32 raw;
   s32 z;
@@ -66,12 +67,12 @@ void Func_02000eec(void) {
 }
 
 void Func_02000f28(void) {
-  Actor_GetById(10);
+  Actor_Get(10);
   Flag_IsSet(0x203);
 }
 
 void Func_02000f3c(void) {
-  struct Actor *object = Actor_GetById(11);
+  struct Actor *object = Actor_Get(11);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
 
@@ -130,8 +131,8 @@ void Func_02000fec(void) {
 }
 
 void Func_0200101c(void) {
-  Map_CopyCellPictureIndicesRect(44, 5, 19, 5, 3, 3);
-  Map_CopyCellPictureIndicesRect(108, 5, 83, 5, 3, 2);
+  MapGrid_CopyCellsTo(44, 5, 19, 5, 3, 3);
+  MapGrid_CopyCellsTo(108, 5, 83, 5, 3, 2);
   BlendRect(44, 5, 3, 3, 19, 5);
 }
 
@@ -145,10 +146,10 @@ s32 Func_0200108c(void) { return Flag_IsSet(0x310); }
 void Func_02001098(void) {
   if (Flag_IsSet(0x310)) {
     if (Flag_IsSet(0x318))
-      BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
+      PaletteFade_ApplyTarget(0x10003, 1);
     else
-      BattleEffect_ApplyColorToTargetBuffer(0x10007, 1);
-    BattleEffect_StartBufferInterpolation(16);
+      PaletteFade_ApplyTarget(0x10007, 1);
+    PaletteFade_Interpolate(16);
   }
 }
 
@@ -158,8 +159,8 @@ void Func_020010d4(void) {
 }
 
 void Func_02001104(void) {
-  Map_CopyCellPictureIndicesRect(39, 5, 19, 5, 3, 3);
-  Map_CopyCellPictureIndicesRect(103, 5, 83, 5, 3, 2);
+  MapGrid_CopyCellsTo(39, 5, 19, 5, 3, 3);
+  MapGrid_CopyCellsTo(103, 5, 83, 5, 3, 2);
   BlendRect(39, 5, 3, 3, 19, 5);
 }
 
@@ -169,17 +170,17 @@ void Func_02001144(void) {
   if (!Flag_IsSet(0x91b)) {
     Flag_Set(0x210);
     if (gMainRoutineWork.entrance == 1) {
-      BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
+      PaletteFade_ApplyTarget(0x10003, 1);
       Flag_Set(0x310);
       Flag_Set(0x318);
     } else {
-      BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
+      PaletteFade_ApplyTarget(0x10000, 1);
       Flag_Clear(0x310);
       Flag_Clear(0x318);
     }
     work = Ram_HeapSlots->eventWork;
     if (work->fadeLock == 0)
-      BattleEffect_StartBufferInterpolation(120);
+      PaletteFade_Interpolate(120);
   }
 }
 
@@ -189,16 +190,16 @@ void Func_020011c8(void) {
   if (!Flag_IsSet(0x91b)) {
     Flag_Set(0x211);
     if (gMainRoutineWork.entrance == 2) {
-      BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
+      PaletteFade_ApplyTarget(0x10003, 1);
       Flag_Set(0x310);
       Flag_Set(0x318);
     } else {
-      BattleEffect_ApplyColorToTargetBuffer(0x10007, 1);
+      PaletteFade_ApplyTarget(0x10007, 1);
       Flag_Set(0x310);
       Flag_Clear(0x318);
     }
     work = Ram_HeapSlots->eventWork;
     if (work->fadeLock == 0)
-      BattleEffect_StartBufferInterpolation(120);
+      PaletteFade_Interpolate(120);
   }
 }

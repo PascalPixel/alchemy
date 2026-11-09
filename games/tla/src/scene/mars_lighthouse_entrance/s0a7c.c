@@ -22,9 +22,6 @@ void Func_02000798(void);
 void Func_020019c4(void);
 void Func_020046b4(void);
 void Func_02004718(void);
-void Func_02004bf8(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_02004d58(s32 a0, s32 a1);
-void Func_02004d60(s32 frames);
 void Func_02004dc8(void);
 void Func_02004dd0(void);
 void BattleEffect_PrepareBufferInterpolation(void);
@@ -34,12 +31,12 @@ void Func_02000a7c(void) {
   Flag_Clear(0x106);
   Flag_Clear(0x104);
   Func_02004ca8();
-  Func_02004da0(0);
-  Func_02004d10(0x10000, 0x2000);
+  FieldEvent_ResolvePendingActions(0);
+  FieldCamera_SetSpeed(0x10000, 0x2000);
   Camera_SetBounds(PIXELS(872), -1, PIXELS(168), 1);
   Func_02004d20();
   FieldEvent_Wait(40);
-  Camera_MoveWithinMapBounds(PIXELS(872), -1, PIXELS(264), 1);
+  FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(264), 1);
   Func_02004d20();
   FieldEvent_Wait(120);
   Func_02004cb0();
@@ -54,42 +51,42 @@ void Func_02000af4(void) {
 
     party[0x2c2] = 2;
   }
-  Func_02004d30(14);
+  FieldEvent_SetExitRequest(14);
   FieldEvent_Wait(40);
   Func_02004718();
 }
 
 void Func_02000b24(void) {
-  Func_02004c20(53, 30, 4, 3, 53, 48);
-  Func_02004c30(117, 30, 4, 3, 117, 48);
+  MapGrid_CopyCells(53, 30, 4, 3, 53, 48);
+  MapGrid_CopyCellsLayered(117, 30, 4, 3, 117, 48);
 }
 
 void Func_02000b54(void) {
-  Func_02004c20(53, 40, 4, 3, 53, 48);
-  Func_02004c30(117, 45, 4, 3, 117, 48);
+  MapGrid_CopyCells(53, 40, 4, 3, 53, 48);
+  MapGrid_CopyCellsLayered(117, 45, 4, 3, 117, 48);
 }
 
 void Func_02000b84(s32 state, s32 frame) {
   if (state == 1) {
-    Func_02004de0(0x23e);
-    Func_02004d58(0x10000, 0);
-    Func_02004d60(60);
-    Func_02004c30(12, 95, 8, 6, 12, 101);
-    Func_02004c28(76, 40, 8, 5, 12, 40);
-    Func_02004cd8(12, 0, 0);
+    Event_PlaySound(0x23e);
+    PaletteFade_ApplyTarget(0x10000, 0);
+    PaletteFade_Interpolate(60);
+    MapGrid_CopyCellsLayered(12, 95, 8, 6, 12, 101);
+    MapGrid_CopyCellAttributes(76, 40, 8, 5, 12, 40);
+    Actor_SetPosition(12, 0, 0);
     Flag_Set(0xa4d);
   }
   if (frame > 96 && frame < 272 && frame % 30 == 0)
     Func_02000414(12);
   if (frame == 276) {
-    Func_02004d58(0x7fff, 0);
-    Func_02004d60(20);
+    PaletteFade_ApplyTarget(0x7fff, 0);
+    PaletteFade_Interpolate(20);
   }
 }
 
 void Func_02000c1c(void) {
-  Func_02004c28(35, 11, 3, 6, 53, 11);
-  Func_02004c30(35, 75, 3, 6, 117, 11);
-  Func_02004c30(35, 75, 3, 6, 53, 75);
+  MapGrid_CopyCellAttributes(35, 11, 3, 6, 53, 11);
+  MapGrid_CopyCellsLayered(35, 75, 3, 6, 117, 11);
+  MapGrid_CopyCellsLayered(35, 75, 3, 6, 53, 75);
   Flag_Set(0xa49);
 }

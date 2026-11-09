@@ -17,13 +17,13 @@ void Func_02002254(void);
 
 void Func_020000d0(s32 kind) {
   s32 owner = gMainRoutineWork.currentOwner;
-  struct Actor *leader = Actor_GetById(owner);
+  struct Actor *leader = Actor_Get(owner);
   struct Actor *effect;
   s32 i;
   s32 *target;
 
   Func_0200224c();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   target = gData_02002b88;
   if (kind == 32) {
     target[0] = 136 << 16;
@@ -37,12 +37,12 @@ void Func_020000d0(s32 kind) {
   {
     s32 priority = 0x480;
 
-    Task_Add(Func_020000b4, priority);
+    Task_AddFrame(Func_020000b4, priority);
   }
-  Camera_FollowActor(owner, 1);
+  FieldCamera_FollowActor(owner, 1);
   for (i = 35; i >= 0; i--) {
     leader->y += -0x10000;
-    wait(1);
+    System_Wait(1);
   }
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;
@@ -57,21 +57,21 @@ void Func_020000d0(s32 kind) {
     effect->x = leader->x;
     effect->y = leader->y + -0x60000;
     effect->z = leader->z;
-    wait(1);
+    System_Wait(1);
   }
   Func_020021b4(effect, 6);
   i = 14;
   do {
     leader->angle += 0x2000;
-    wait(1);
+    System_Wait(1);
     i--;
   } while (i >= 0);
   Func_020021d4(effect);
-  Actor_SetSingleChildFlags(Actor_GetById(owner), 1);
+  Actor_SetSingleChildFlags(Actor_Get(owner), 1);
   leader->angle = 0x4000;
   leader->terrainId = 0;
   leader->motionFlags = 3;
-  Task_RemoveFar(Func_020000b4);
+  FieldTask_Remove(Func_020000b4);
   Func_02000054();
   Func_02002254();
 }

@@ -35,7 +35,7 @@ void Func_020001f4(void) {
         } while (0);
         if (gData_02002410[gData_020024fa] == 0) {
           gData_020024f6 = 1;
-          Sound_Play(110);
+          Event_PlaySound(110);
         }
       } else {
         gData_020024fa = 0;
@@ -60,7 +60,7 @@ void Func_020001f4(void) {
         } while (0);
         if (gData_02002418[gData_020024fc] == 0) {
           gData_020024f8 = 1;
-          Sound_Play(110);
+          Event_PlaySound(110);
         }
       } else {
         gData_020024fc = 0;

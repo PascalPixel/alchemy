@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "event_inline.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -75,7 +74,7 @@ L_0200820c:
   FieldEvent_ShowMessageThenWait(0x2007, 0, 5);
 L_020082ea:
   FieldEvent_SetMessageId((v_r10 + 1));
-  FieldMessage_ShowAtActor(11, 0);
+  Event_OpenMessage(11, 0);
   t31 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (t31 == 0)
     goto L_0200832c;
@@ -129,7 +128,7 @@ L_020083da:
   to[0] = 0x1900000;
   to[1] = 0;
   to[2] = 0x500000;
-  Call3((void (*)())Func_020006b0, (s32)from, (s32)to, (s32)Func_02000064);
+  Func_020006b0((s32)from, to, Func_02000064);
   FieldEvent_Wait(20);
   Actor_SetPosition(10, 0, 0);
   Actor_SetPosition(9, 0, 0);

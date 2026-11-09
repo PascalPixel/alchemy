@@ -1,6 +1,7 @@
 #include "islets.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "event_inline.h"
 
 extern u8 gData_02004f04;
 extern s16 gData_02004f10[2][160];

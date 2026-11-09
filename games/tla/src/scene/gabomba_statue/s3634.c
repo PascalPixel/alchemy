@@ -31,65 +31,65 @@ void Func_02003634(void) {
       t30, t42, t43, t46, t50, t53, t59, t60, p_r3, v_r5;
   const u8 *table;
 
-  t1 = ((s32)Actor_GetById(10));
-  Actor_SetPartAttribute(t1, 3);
-  Task_Add((s32)Func_02002074, 0x480);
-  t4 = ((s32)Actor_GetById(11));
-  Actor_SetPartAttribute(t4, 11);
-  t6 = ((s32)Actor_GetById(12));
-  Actor_SetPartAttribute(t6, 11);
-  t8 = ((s32)Actor_GetById(13));
-  Actor_SetPartAttribute(t8, 10);
-  t10 = ((s32)Actor_GetById(14));
-  Actor_SetPartAttribute(t10, 10);
-  t12 = ((s32)Actor_GetById(16));
+  t1 = ((s32)Actor_Get(10));
+  Actor_SetSpriteColor(t1, 3);
+  Task_AddFrame((s32)Func_02002074, 0x480);
+  t4 = ((s32)Actor_Get(11));
+  Actor_SetSpriteColor(t4, 11);
+  t6 = ((s32)Actor_Get(12));
+  Actor_SetSpriteColor(t6, 11);
+  t8 = ((s32)Actor_Get(13));
+  Actor_SetSpriteColor(t8, 10);
+  t10 = ((s32)Actor_Get(14));
+  Actor_SetSpriteColor(t10, 10);
+  t12 = ((s32)Actor_Get(16));
   Actor_SetSingleChildFlags(t12, 0);
-  t14 = ((s32)Actor_GetById(17));
+  t14 = ((s32)Actor_Get(17));
   Actor_SetSingleChildFlags(t14, 0);
-  t16 = ((s32)Actor_GetById(18));
+  t16 = ((s32)Actor_Get(18));
   Actor_SetSingleChildFlags(t16, 0);
-  t18 = ((s32)Actor_GetById(19));
+  t18 = ((s32)Actor_Get(19));
   Actor_SetSingleChildFlags(t18, 0);
-  t20 = ((s32)Actor_GetById(20));
+  t20 = ((s32)Actor_Get(20));
   Actor_SetSingleChildFlags(t20, 0);
-  t22 = ((s32)Actor_GetById(21));
+  t22 = ((s32)Actor_Get(21));
   Actor_SetSingleChildFlags(t22, 0);
-  t24 = ((s32)Actor_GetById(22));
+  t24 = ((s32)Actor_Get(22));
   Actor_SetSingleChildFlags(t24, 0);
-  t26 = GameFlag_Test(0x8fb);
+  t26 = Event_GetFlag(0x8fb);
   if (t26 == 0)
     goto L_0200b6f2;
-  t27 = GameFlag_Test(0x8fd);
+  t27 = Event_GetFlag(0x8fd);
   if (t27 != 0)
     goto L_0200b6f2;
   Func_02002f70();
   goto L_0200b856;
 L_0200b6f2:
-  t29 = GameFlag_Test(0x8fc);
+  t29 = Event_GetFlag(0x8fc);
   if (t29 == 0)
     goto L_0200b762;
-  t30 = ((s32)Actor_GetById(gMainRoutineWork.currentOwner));
+  t30 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
   v_r5 = t30;
-  Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
+  Actor_SetPosition(11, 0, 0);
+  Actor_SetPosition(12, 0, 0);
+  Actor_SetPosition(13, 0, 0);
+  Actor_SetPosition(14, 0, 0);
   Func_020053ac();
   Func_020056b4();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(FIELD_AT(v_r5, s32, 8), -1, FIELD_AT(v_r5, s32, 16), 0);
   Func_0200564c();
-  wait(1);
+  System_Wait(1);
   Func_020056bc();
 L_0200b762:
-  t42 = GameFlag_Test(0x8f6);
+  t42 = Event_GetFlag(0x8f6);
   if (t42 == 0)
     goto L_0200b78e;
-  t43 = GameFlag_Test(0x8fd);
+  t43 = Event_GetFlag(0x8fd);
   if (t43 != 0)
     goto L_0200b78e;
   Func_020052a4(0);
-  Task_Add((s32)Func_02001ac0, 0x480);
+  Task_AddFrame((s32)Func_02001ac0, 0x480);
 L_0200b78e:
   t46 = Func_02003604();
   /* FAKEMATCH(temporary): the table's address in a local set after the call,
@@ -97,13 +97,13 @@ L_0200b78e:
    * added in place, 2 of 211 instructions differ in tla-en. */
   table = gData_02005d8c;
   Func_020048a4(19, 11, *(s32 *)(table + (t46 << 2)), 16);
-  Actor_SetModeById(15, 5);
+  Actor_SetAnimation(15, 5);
   if (FIELD_AT(&gMainRoutineWork, s16, 482) != 2)
     goto L_0200b7c0;
   Func_020027cc();
   goto L_0200b856;
 L_0200b7c0:
-  t50 = GameFlag_Test(0x8f6);
+  t50 = Event_GetFlag(0x8f6);
   if (t50 != 0)
     goto L_0200b7e4;
   if (FIELD_AT(&gMainRoutineWork, s16, 482) != 1) {
@@ -121,21 +121,21 @@ L_0200b7e4:
   if (t53 == 0)
     goto L_0200b856;
   Func_020056b4();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x201;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x209;
-  GameFlag_ClearBit(0x8fc);
-  t59 = GameFlag_Test(0x9eb);
+  Event_ClearFlag(0x8fc);
+  t59 = Event_GetFlag(0x9eb);
   if (t59 == 0)
     goto L_0200b84a;
-  t60 = GameFlag_Test(0x9ec);
+  t60 = Event_GetFlag(0x9ec);
   if (t60 != 0)
     goto L_0200b84a;
   Func_02003338();
 L_0200b84a:
-  GameFlag_ClearBit(0x12f);
+  Event_ClearFlag(0x12f);
   Func_020056bc();
 L_0200b856:
 }

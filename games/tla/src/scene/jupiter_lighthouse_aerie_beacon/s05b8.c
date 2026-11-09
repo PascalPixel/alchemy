@@ -26,9 +26,9 @@ s32 Random16Far(void);
 
 /// While the view's z is at most 177 pixels, sets object 36 at y 0x6f8000 and
 /// full size on odd frames, or at y 0x688000 and 1.3 times the size on even
-/// ones; beyond it, calls Actor_SetHorizontalPositionWithTerrain(36, 0, 0).
+/// ones; beyond it, calls Actor_SetPosition(36, 0, 0).
 void Func_020005b8(void) {
-  struct Actor *object = Actor_GetById(36);
+  struct Actor *object = Actor_Get(36);
   struct MapWork *map = Ram_HeapSlots->mapWork;
 
   Random16Far();
@@ -38,21 +38,21 @@ void Func_020005b8(void) {
     return;
 #endif
   if (((struct FixedHalves *)&map->viewZ)->whole <= 177) {
-    ((struct SpriteRecord *)((struct FieldSprite *)Actor_GetById(36)->animation)
+    ((struct SpriteRecord *)((struct FieldSprite *)Actor_Get(36)->animation)
          ->record)
         ->unk05 = 1;
     if (gFrameCount & 1) {
-      Actor_SetHorizontalPositionWithTerrain(36, PIXELS(512), PIXELS(264));
-      Actor_GetById(36)->y = 0x6f8000;
-      Actor_GetById(36)->scaleX = 0x10000;
-      Actor_GetById(36)->scaleY = 0x10000;
+      Actor_SetPosition(36, PIXELS(512), PIXELS(264));
+      Actor_Get(36)->y = 0x6f8000;
+      Actor_Get(36)->scaleX = 0x10000;
+      Actor_Get(36)->scaleY = 0x10000;
     } else {
-      Actor_SetHorizontalPositionWithTerrain(36, PIXELS(512), PIXELS(264));
-      Actor_GetById(36)->y = 0x688000;
-      Actor_GetById(36)->scaleX = 0x14ccc;
-      Actor_GetById(36)->scaleY = 0x14ccc;
+      Actor_SetPosition(36, PIXELS(512), PIXELS(264));
+      Actor_Get(36)->y = 0x688000;
+      Actor_Get(36)->scaleX = 0x14ccc;
+      Actor_Get(36)->scaleY = 0x14ccc;
     }
   } else {
-    Actor_SetHorizontalPositionWithTerrain(36, 0, 0);
+    Actor_SetPosition(36, 0, 0);
   }
 }

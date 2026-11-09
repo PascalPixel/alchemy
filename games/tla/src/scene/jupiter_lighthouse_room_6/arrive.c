@@ -18,7 +18,7 @@ void Func_020003a4(s32 value);
 s32 Func_02000288(void) {
   Scene_SetArrivalFlags(0);
   Func_020003a4(0);
-  if (!GameFlag_Test(265))
-    GameFlag_ClearBit(0xa19);
+  if (!Event_GetFlag(265))
+    Event_ClearFlag(0xa19);
   return 0;
 }

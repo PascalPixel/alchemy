@@ -6,7 +6,7 @@ void Func_0200063c(struct Actor *object) {
 
   count = 60;
   while (count != 0) {
-    wait(1);
+    System_Wait(1);
     busy = object->velocityY;
     count--;
     if (busy == 0) {

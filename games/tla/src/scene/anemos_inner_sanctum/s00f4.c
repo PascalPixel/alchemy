@@ -1,5 +1,6 @@
 #include "types.h"
 #include "task.h"
+#include "event_inline.h"
 
 extern u16 gData_02004434;
 extern u16 gData_0200443c;
@@ -17,5 +18,5 @@ void Func_020000f4(void) {
   gData_02004440 = 15;
   gData_0200443c = 16;
   gData_02004434 = 1;
-  Task_Add(Func_020001f8, TASK_PASS_VBLANK);
+  Task_AddFrame(Func_020001f8, TASK_PASS_VBLANK);
 }

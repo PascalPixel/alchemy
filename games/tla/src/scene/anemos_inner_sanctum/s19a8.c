@@ -29,18 +29,18 @@ void Func_020019a8(void) {
   s32 position[3];
 
   if (gMainRoutineWork.entrance == 1)
-    object = Actor_GetById(8);
+    object = Actor_Get(8);
   else if (gMainRoutineWork.entrance == 3)
-    object = Actor_GetById(9);
+    object = Actor_Get(9);
   else
-    object = Actor_GetById(10);
+    object = Actor_Get(10);
   position[0] = (object->x & 0xfff00000) + 0x80000;
   position[2] = (object->z & 0xfff00000) + 0x80000;
   object->acceleration = 0x10000;
   object->speedLimit = 0x10000;
   Func_02003398();
-  Event_ResolvePendingActions(0);
-  Actor_SetMoveTarget(object, position[0], 0, position[2]);
+  FieldEvent_ResolvePendingActions(0);
+  FieldActor_SetMoveTarget(object, position[0], 0, position[2]);
   effect =
       OverlayObject_PrepareObject(object->x, 0, position[2] + 0x3b0000, 286);
   effect->scaleX = 0x18000;
@@ -54,13 +54,13 @@ void Func_020019a8(void) {
   REG_WINOUT = WINOUT_WIN01_ALL | WINOUT_WINOBJ_BG0 | WINOUT_WINOBJ_BG1 |
                WINOUT_WINOBJ_BG2 | WINOUT_WINOBJ_BG3 | WINOUT_WINOBJ_CLR;
   REG_DISPCNT |= DISPCNT_OBJWIN_ON;
-  Sound_Play(204);
+  Event_PlaySound(204);
   object->motionFlags = 3;
   OverlayObject_WaitUntilIdle(object);
   object->x = 0;
   object->y = 0;
   object->z = 0;
-  Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
+  Actor_SetPosition(8, 0, 0);
   Func_020032f8(effect);
   Func_020033a0();
 }

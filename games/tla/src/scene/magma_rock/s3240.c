@@ -76,7 +76,7 @@ body:
         *flags = 0;
         Sound_Play(185);
         /* FAKEMATCH(wrapper): forwarded through Call3, which builds each
-         * 0x10000 apart; as Map_SetScreenShake(0x10000, 0x40000, 0x10000), 21
+         * 0x10000 apart; as MapGrid_SetShake(0x10000, 0x40000, 0x10000), 21
          * of 191 instructions differ in tla-en. */
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Func_020034ac(0);
@@ -88,7 +88,7 @@ body:
         Func_02003784(-2, target->terrainId);
         wait(4);
         /* FAKEMATCH(wrapper): forwarded through Call3, which builds each -1
-         * apart; as Map_SetScreenShake(-1, -1, 0xe666), 23 of 191 instructions
+         * apart; as MapGrid_SetShake(-1, -1, 0xe666), 23 of 191 instructions
          * differ in tla-en. */
         MapGrid_SetShake(-1, -1, 0xe666);
         wait(8);

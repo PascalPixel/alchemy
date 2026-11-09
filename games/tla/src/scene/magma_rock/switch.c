@@ -12,25 +12,25 @@ void Func_02003af4(void);
 void Func_02001a8c(s32 mode, s32 cue) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
 
-  work->target = Actor_GetById(17);
+  work->target = Actor_Get(17);
   Func_020014bc(mode, cue);
-  GameFlag_SetBit(0x202);
+  Event_SetFlag(0x202);
 }
 
 void Func_02001ac0(s32 mode, s32 cue) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
 
-  work->target = Actor_GetById(18);
+  work->target = Actor_Get(18);
   Func_020014bc(mode, cue);
-  GameFlag_SetBit(0x203);
+  Event_SetFlag(0x203);
 }
 
 void Func_02001af4(s32 mode, s32 cue) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
 
-  work->target = Actor_GetById(11);
+  work->target = Actor_Get(11);
   Func_020014bc(mode, cue);
-  GameFlag_SetBit(0x204);
+  Event_SetFlag(0x204);
 }
 
 void Func_02001b24(void) {
@@ -38,7 +38,7 @@ void Func_02001b24(void) {
 
 
   if (party->renderMode != 2)
-    GameFlag_ClearBit(0x2f8);
+    Event_ClearFlag(0x2f8);
 }
 
 void Func_02001b44(void) {
@@ -47,13 +47,13 @@ void Func_02001b44(void) {
 
   if (party->renderMode != 2) {
     Func_02003aec();
-    Event_ResolvePendingActions(0);
-    Actor_GetById(party->currentOwner)->motionFlags = 0;
-    Actor_ResetAndSetPositionInMode2(party->currentOwner, 264, 440);
-    Event_Wait(5);
-    Sound_Play(123);
-    Import_EventSetExitRequest(2);
+    FieldEvent_ResolvePendingActions(0);
+    Actor_Get(party->currentOwner)->motionFlags = 0;
+    Actor_WalkTo(party->currentOwner, 264, 440);
+    FieldEvent_Wait(5);
+    Event_PlaySound(123);
+    FieldEvent_SetExitRequest(2);
     Func_02003af4();
   }
-  GameFlag_SetBit(0x2f8);
+  Event_SetFlag(0x2f8);
 }

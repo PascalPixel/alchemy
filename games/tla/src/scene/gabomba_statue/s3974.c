@@ -32,7 +32,7 @@ void Func_02003974(void) {
       struct PuzzleCell *cell = &state->cells[row * 11 + col];
       s32 occupied = cell->occupied;
 
-      if (GameFlag_Test(0x8fb) && cell->occupied == 2) {
+      if (Event_GetFlag(0x8fb) && cell->occupied == 2) {
         cell->occupied = 1;
         occupied = 1;
       }

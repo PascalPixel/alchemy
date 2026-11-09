@@ -33,8 +33,8 @@ struct HeapSlotWords {
 
 void Func_02000ec8(struct PushTarget target) {
   u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  struct Actor *object = Actor_GetById(target.id);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(target.id);
   s32 cell[3];
   s32 from[3];
   s32 footprint;
@@ -61,42 +61,42 @@ void Func_02000ec8(struct PushTarget target) {
             ABS(gData_020022dc[footprint * 4 + 3])) >>
            4;
   Map_FillCellRectByte2(0, cell[0], cell[2], width, height, 0);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x1999);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 8);
-  wait(15);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x1999);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 8);
+  System_Wait(15);
   {
     s32 deltaX = (target.x - from[0]) >> 17;
     s32 deltaZ = (target.z - from[2]) >> 17;
 
-    Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, deltaX,
+    Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, deltaX,
                                        deltaZ);
   }
-  Actor_GetById(gMainRoutineWork.currentOwner)->update = Func_02001178;
-  wait(4);
+  Actor_Get(gMainRoutineWork.currentOwner)->update = Func_02001178;
+  System_Wait(4);
   if ((u32)(direction - 6) <= 7)
     Func_02002160(object, 3);
   else
     Func_02002160(object, 2);
-  Sound_Play(239);
+  Event_PlaySound(239);
   Actor_SetSpeed(target.id, 0x8000, 0x1999);
-  Actor_SetMoveTarget(object, target.x, target.y, target.z);
-  Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x4ccc, 0x1999);
-  Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner,
+  FieldActor_SetMoveTarget(object, target.x, target.y, target.z);
+  FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x4ccc, 0x1999);
+  Actor_SetDestinationOffset(gMainRoutineWork.currentOwner,
                                      (gData_020022f4[direction] << 16) >> 31,
                                      (gData_020022f4[direction] << 16) >> 17);
   if (target.callback != 0)
     target.callback();
-  Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
+  FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   leader->update = 0;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
-  Script_WaitForEventTimeout(object);
-  Sound_Play(298);
-  Sound_Play(213);
-  Actor_SetPositionAndResetMotion(object, target.x, object->y, target.z);
+  Actor_WaitForMove(object);
+  Event_PlaySound(298);
+  Event_PlaySound(213);
+  FieldActor_SetPositionAndResetMotion(object, target.x, object->y, target.z);
   Func_02002160(object, 1);
   target.x = target.x + (gData_020022dc[footprint * 4] << 16);
   target.z = target.z + (gData_020022dc[footprint * 4 + 1] << 16);
@@ -112,7 +112,7 @@ void Func_02000ec8(struct PushTarget target) {
   cell[2] = (from[2] + (gData_020022dc[footprint * 4 + 1] << 16)) >> 20;
   originX += cell[0];
   originZ += cell[2];
-  Map_CopyCellAttributeRect(originX, originZ, width, height, cell[0], cell[2]);
+  MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);
   Map_FillCellRectByte2(2, cell[0], cell[2], width, height, 0);
   Func_020022a0();
 }

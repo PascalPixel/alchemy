@@ -16,7 +16,7 @@ s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
 
 void Func_02000aa8(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
   u32 frame;
   u32 i;
@@ -26,7 +26,7 @@ void Func_02000aa8(void) {
   frame = 0;
   i = 0;
   do {
-    effect = (struct FieldEffect *)Import_ActorCreate(285, leader->x, leader->y,
+    effect = (struct FieldEffect *)FieldActor_Create(285, leader->x, leader->y,
                                                       leader->z);
     if (effect != 0) {
       frame = Func_020014f0(effect->sprite, frame);
@@ -37,7 +37,7 @@ void Func_02000aa8(void) {
       Func_02001430(effect, gData_02001570);
       effect->velocity.x = Math_Cosine(i << 12);
       effect->velocity.y = 0;
-      effect->velocity.z = Math_Sine(i << 12);
+      effect->velocity.z = Math_Sin(i << 12);
       effect->velocity.x += effect->velocity.x >> 1;
       effect->velocity.x += ((Random16Far() * 3) << 14 >> 16) - 0x6000;
       effect->velocity.z += ((Random16Far() * 3) << 13 >> 16) - 0x3000;

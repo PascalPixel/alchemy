@@ -45,7 +45,7 @@ void Func_020012c4(void) {
   struct AnkohlRuinsSprite *sprite = work->sprites;
   s32 i;
 
-  if (GameFlag_Test(0x205) == 0 && work->level < 0x200000) {
+  if (Event_GetFlag(0x205) == 0 && work->level < 0x200000) {
     for (i = 0; i <= 7; i++) {
       u32 kind = sprite->kind;
       s32 x = sprite->x;

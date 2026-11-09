@@ -10,5 +10,5 @@ void Func_0200060c(void) {
    * native has (one reordered row as a plain argument). */
   angle = 0xc000;
   Actor_SetPositionAndFacing(31, PIXELS(312), PIXELS(593), angle);
-  GameFlag_SetBit(0xa74);
+  Event_SetFlag(0xa74);
 }

@@ -1,4 +1,5 @@
 #include "islets.h"
+#include "event_inline.h"
 
 void Func_020020ec(s32 x, s32 z, s32 layers, s32 value) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -26,12 +27,12 @@ void Func_02002144(void) {
   s32 x1;
   s32 z1;
 
-  object = Actor_GetById(12);
+  object = Actor_Get(12);
   x0 = &gData_0200519c;
   z0 = &gData_02005194;
   *x0 = object->x;
   *z0 = object->z;
-  object = Actor_GetById(13);
+  object = Actor_Get(13);
   gData_02005198 = x1 = object->x;
   {
     /* FAKEMATCH(pin): object 13's z in r2, as the native keeps it for its

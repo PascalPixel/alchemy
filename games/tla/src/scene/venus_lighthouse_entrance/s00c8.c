@@ -8,7 +8,7 @@ void VenusLighthouseEntrance_UpdateSparkTrail(void);
 
 /// The spark trail while the actor steps 96 out and 96 back.
 void Func_020000c8(s32 actor) {
-  struct Actor *object = Actor_GetById(actor);
+  struct Actor *object = Actor_Get(actor);
 
   Func_020026f4();
   object->update = VenusLighthouseEntrance_UpdateSparkTrail;
@@ -31,6 +31,6 @@ void Func_020000c8(s32 actor) {
   }
   object->update = 0;
   object->priorityFlags = 1;
-  Event_Wait(30);
+  FieldEvent_Wait(30);
   VenusLighthouseEntrance_StopSparks();
 }

@@ -2,6 +2,7 @@
 #include "main_routine_work.h"
 #include "field_sprite.h"
 #include "field_effect.h"
+#include "event_inline.h"
 
 extern void Func_02001b2c(struct FieldEffect *effect, s32 mode);
 extern void Func_02001b34(struct FieldEffect *effect, const s32 *script);
@@ -9,13 +10,12 @@ extern const s32 *gData_02001dcc[];
 extern void Actor_SetSingleChildFlags(struct FieldEffect *effect,
                                                u32 flags);
 extern void Scene_SetActorSpritePriority(struct FieldEffect *effect, s32 priority);
-extern void Actor_SetPartAttribute(struct FieldEffect *effect, s32 attribute);
 
 void Func_02000150(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {
   struct FieldEffect *party =
-      (struct FieldEffect *)Import_ActorGet(gMainRoutineWork.currentOwner);
+      (struct FieldEffect *)Actor_GetById(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
@@ -45,7 +45,7 @@ void Func_02000150(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & 0xffff0000) == 0 || options == 0)
     return;
   if ((flags & EFFECT_USE_PALETTE) != 0)
-    Actor_SetPartAttribute(effect, options->palette);
+    Actor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
     effect->priorityFlags &= ~1;
     Scene_SetActorSpritePriority(effect, options->priority);

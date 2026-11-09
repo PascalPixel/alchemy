@@ -77,7 +77,7 @@ void Func_02000e38(void) {
         FieldActor_SetPositionAndResetMotion(item, 0x1180000, 0, 0x3480000);
         STEP(gMainRoutineWork.currentOwner, 296, 840);
         leader->update = 0;
-        Actor_Stop(gMainRoutineWork.currentOwner);
+        FieldActor_Stop(gMainRoutineWork.currentOwner);
         System_Wait(1);
         trader->update = hook2;
         STEP(11, 292, 844);
@@ -91,7 +91,7 @@ void Func_02000e38(void) {
         FieldActor_SetPositionAndResetMotion(item, 0x1180000, 0, 0x3480000);
         STEP(gMainRoutineWork.currentOwner, 264, 840);
         leader->update = 0;
-        Actor_Stop(gMainRoutineWork.currentOwner);
+        FieldActor_Stop(gMainRoutineWork.currentOwner);
         System_Wait(1);
         trader->update = hook2;
         STEP(11, 268, 844);
@@ -105,7 +105,7 @@ void Func_02000e38(void) {
     Func_02003fc4();
     Message_ShowCentered((s32)MsgTradedHisMilk, 1);
     PartyInventory_Remove(454);
-    PartyInventory_GiveItem(giftItem, 0);
+    Party_GiveItem(giftItem, 0);
     Func_02003fbc();
     Actor_GetById(gMainRoutineWork.currentOwner)->angle = 0x4000;
     if (gift != 0) {

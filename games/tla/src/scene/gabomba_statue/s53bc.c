@@ -17,7 +17,7 @@ void Func_020053bc(const u16 *entry) {
 
   while ((value = *entry) != 0xffff) {
     u16 id = *entry++;
-    struct Actor *object = Actor_GetById(id);
+    struct Actor *object = Actor_Get(id);
     s16 mode = entry[0];
     s16 flag = entry[1];
 

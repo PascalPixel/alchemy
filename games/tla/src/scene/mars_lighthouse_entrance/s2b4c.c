@@ -4,7 +4,6 @@
 extern const u8 gData_02005714[];
 
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
@@ -21,7 +20,7 @@ void Func_02002b4c(s32 x, s32 y, s32 z, s32 speed) {
   i = 1;
 next:
   {
-    struct Actor *object = Func_02004bd8(325, x, y, z);
+    struct Actor *object = FieldActor_Create(325, x, y, z);
 
     if (object != NULL) {
       s32 angle;
@@ -42,7 +41,7 @@ next:
       scale = (size >> 1) + 0x4000;
       object->velocityY = rise + 0x14000;
       object->velocityZ = Iwram_MulQ16(radius, Math_Cosine(angle));
-      object->velocityX = Iwram_MulQ16(radius, Math_Sine(angle));
+      object->velocityX = Iwram_MulQ16(radius, Math_Sin(angle));
       object->acceleration = 0;
       object->gravity = 0x547a;
       object->scaleX = scale;

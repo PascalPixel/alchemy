@@ -12,10 +12,10 @@ struct Walker {
 void Func_020003bc(void);
 
 void Func_0200279c(s32 actor, s32 x, s32 z, s32 frames) {
-  struct Walker *object = ((struct Walker *)Actor_GetById(actor));
+  struct Walker *object = ((struct Walker *)Actor_Get(actor));
 
   object->frames = frames;
   object->arrived = 0;
   object->update = Func_020003bc;
-  Actor_SetHorizontalPositionWithTerrain(actor, x << 16, z << 16);
+  Actor_SetPosition(actor, x << 16, z << 16);
 }

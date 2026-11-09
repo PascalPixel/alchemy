@@ -16,20 +16,20 @@ void Func_020027e4(void) {
   s32 t0;
   s32 t1;
 
-  t0 = GameFlag_Test(0xa3d);
+  t0 = Event_GetFlag(0xa3d);
   if (t0 != 0) {
-    t1 = GameFlag_Test(0x109);
+    t1 = Event_GetFlag(0x109);
     if (t1 == 0) {
       Func_0200279c(0x10, 0x218, 0x168, 0);
       Func_0200279c(0x11, 0x218, 0x1a8, 1);
       Func_0200279c(0x12, 0x244, 0x1a4, 2);
-      wait(1);
-      Actor_SetMovementTypeById(16, (s32)gData_020047ac);
-      Actor_SetMovementTypeById(17, (s32)gData_02004848);
-      Actor_SetMovementTypeById(18, (s32)gData_020048e4);
-      wait(1);
+      System_Wait(1);
+      Actor_SetScript(16, (s32)gData_020047ac);
+      Actor_SetScript(17, (s32)gData_02004848);
+      Actor_SetScript(18, (s32)gData_020048e4);
+      System_Wait(1);
     }
   }
-  Actor_SetSpritePriority(20, 1);
-  Actor_SetPartAttribute(((s32)Actor_GetById(20)), 0xf);
+  FieldActor_SetSpritePriority(20, 1);
+  Actor_SetSpriteColor(((s32)Actor_Get(20)), 0xf);
 }

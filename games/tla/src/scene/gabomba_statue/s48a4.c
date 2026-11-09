@@ -29,11 +29,11 @@ s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id) {
   struct SceneState *state = &gSceneState;
   s32 count;
 
-  if (GameFlag_Test(0x109)) {
+  if (Event_GetFlag(0x109)) {
     Func_020038ac();
     Func_02003974();
     count = state->count;
-    Task_Add(Func_02004710, TASK_PASS_VBLANK);
+    Task_AddFrame(Func_02004710, TASK_PASS_VBLANK);
   } else {
     Iwram_ClearWords(state, sizeof(struct SceneState));
     state->originX = x;
@@ -41,8 +41,8 @@ s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id) {
     Func_020038ac();
     count = Func_02003a64(value);
     Func_02004288(id, 0);
-    Task_Add(Func_02004710, TASK_PASS_VBLANK);
+    Task_AddFrame(Func_02004710, TASK_PASS_VBLANK);
   }
-  Actor_GetById(id)->unk5c[0] = 2;
+  Actor_Get(id)->unk5c[0] = 2;
   return count;
 }

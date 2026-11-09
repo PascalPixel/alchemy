@@ -1,11 +1,12 @@
 #include "../jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
+#include "event_inline.h"
 
 extern u8 gData_02002ce0[];
 void Func_02001c1c();
 void Func_02001c8c();
 
 s32 Func_02001fbc(void) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   struct JupiterLighthouseAerieWork *work =
@@ -16,9 +17,9 @@ s32 Func_02001fbc(void) {
 
   for (i = 0; i < work->count; i++, entry++) {
     if (entry->x == x && entry->z == z) {
-      if (GameFlag_Test(entry->flag) == 0) {
+      if (Event_GetFlag(entry->flag) == 0) {
         Func_02001c1c(work, entry);
-        GameFlag_SetBit(entry->flag);
+        Event_SetFlag(entry->flag);
         work->current = i;
         break;
       }

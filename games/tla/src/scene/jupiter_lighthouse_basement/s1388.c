@@ -105,16 +105,16 @@ s32 Func_02001388(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
           entry->z = cz;
           entry->flag = flag;
           flag++;
-          if (!GameFlag_Test(0x109)) {
+          if (!Event_GetFlag(0x109)) {
             if (event == last)
-              GameFlag_SetBit(entry->flag);
-          } else if (GameFlag_Test(entry->flag)) {
+              Event_SetFlag(entry->flag);
+          } else if (Event_GetFlag(entry->flag)) {
             s32 sourceX = table->x;
             s32 sourceZ = table->z;
 
             cx |= (s16)(table->x & 64);
             cz |= (s16)(table->z & 64);
-            Map_CopyCellsRect(sourceX, sourceZ + 1, 1, 1, cx, cz);
+            MapGrid_CopyCells(sourceX, sourceZ + 1, 1, 1, cx, cz);
           }
           entry++;
           table->count++;
@@ -149,8 +149,8 @@ s32 Func_02001388(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
     if (j < height)
       goto row;
   }
-  if (GameFlag_Test(0x109)) {
-    struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  if (Event_GetFlag(0x109)) {
+    struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
     s32 leaderX = leader->x >> 20;
     s32 leaderZ = leader->z >> 20;
     s32 k;
@@ -181,8 +181,8 @@ s32 Func_02001388(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
       goto fill;
   }
   table->tile = Resource_FindFreeEntry();
-  VramCache_Load(table->tile, 0x100, buffer);
+  Vram_Load(table->tile, 0x100, buffer);
   Heap_Release(buffer);
-  Task_Add(Func_0200125c, 0x480);
+  Task_AddFrame(Func_0200125c, 0x480);
   return table->count;
 }

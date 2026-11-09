@@ -17,45 +17,45 @@ extern u8 MsgAreThereOther;
 /// actor's angle is restored after.
 void Func_02000308(void) {
   u8 *work = Ram_HeapSlots->eventWork;
-  struct Actor *object = Actor_GetById(18);
+  struct Actor *object = Actor_Get(18);
   s16 angle = object->angle;
 
   object->action = 1;
   Func_02001bcc();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   if (*(s16 *)(work + 0x166) == 0) {
-    Event_SetMessageId((s32)&MsgItHasBeen);
-    Actor_TurnToFaceEachOther(18, gMainRoutineWork.currentOwner, 2);
+    FieldEvent_SetMessageId((s32)&MsgItHasBeen);
+    Actor_FaceEachOther(18, gMainRoutineWork.currentOwner, 2);
   } else {
-    Event_SetMessageId((s32)&MsgEveryoneSpoilsMe);
+    FieldEvent_SetMessageId((s32)&MsgEveryoneSpoilsMe);
   }
-  Actor_SetModeById(18, 0);
-  Event_ShowMessageThenWait(18, 0, 10);
+  Actor_SetAnimation(18, 0);
+  FieldEvent_ShowMessageThenWait(18, 0, 10);
   Func_02001bd4();
   object->action = 0;
   object->angle = angle;
-  wait(1);
+  System_Wait(1);
 }
 
 /// The same for actor 19.
 void Func_02000398(void) {
   u8 *work = Ram_HeapSlots->eventWork;
-  struct Actor *object = Actor_GetById(19);
+  struct Actor *object = Actor_Get(19);
   s16 angle = object->angle;
 
   object->action = 1;
   Func_02001bcc();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   if (*(s16 *)(work + 0x166) == 0) {
-    Event_SetMessageId((s32)&MsgWeAreThe);
-    Actor_TurnToFaceEachOther(19, gMainRoutineWork.currentOwner, 2);
+    FieldEvent_SetMessageId((s32)&MsgWeAreThe);
+    Actor_FaceEachOther(19, gMainRoutineWork.currentOwner, 2);
   } else {
-    Event_SetMessageId((s32)&MsgAreThereOther);
+    FieldEvent_SetMessageId((s32)&MsgAreThereOther);
   }
-  Actor_SetModeById(19, 0);
-  Event_ShowMessageThenWait(19, 0, 10);
+  Actor_SetAnimation(19, 0);
+  FieldEvent_ShowMessageThenWait(19, 0, 10);
   Func_02001bd4();
   object->action = 0;
   object->angle = angle;
-  wait(1);
+  System_Wait(1);
 }

@@ -40,7 +40,7 @@ void Func_02000a98(void) {
   for (i = 0; i != 160; i++) {
     *line++ =
         (layer->y >> 16) +
-        (Math_Sine(((u8)gFrameCount - i - (layer->y >> 16) + 160) << 9) >> 15);
+        (Math_Sin(((u8)gFrameCount - i - (layer->y >> 16) + 160) << 9) >> 15);
   }
   gData_020054f0[0] ^= 1;
 }

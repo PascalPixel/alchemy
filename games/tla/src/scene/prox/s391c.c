@@ -65,7 +65,7 @@ top:
   x = startX;
   z = startZ;
   layer = &actor->terrainId;
-  startBehavior = GetMapCellCollision(*layer, x, z);
+  startBehavior = MapGrid_GetCellBehaviorAt(*layer, x, z);
   dz = z - actor->z;
   dx = x - actor->x;
   distance = Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz);
@@ -79,7 +79,7 @@ top:
     heading = (s16)((heading + 0x2000) & -0x4000);
   }
   FieldVector_AddPolarOffset(PIXELS(16), heading, &probe);
-  nextBehavior = GetMapCellCollision(*layer, position->x, position->z);
+  nextBehavior = MapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
   if (nextBehavior == 255 ||
       Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y >
           PIXELS(8)) {
@@ -95,10 +95,10 @@ top:
   actor->speedLimit = PIXELS(2);
   actor->acceleration = 0x1999;
   actor->action = 0;
-  Actor_SetMoveTarget(actor, startX, actor->y, startZ);
+  FieldActor_SetMoveTarget(actor, startX, actor->y, startZ);
   Func_020043c4(actor, 2);
   Actor_SetAnimationSpeed(actor, 48);
-  Script_WaitForEventTimeout(actor);
+  Actor_WaitForMove(actor);
   actor->update = Func_0200385c;
   goto test;
 body:
@@ -126,8 +126,8 @@ body:
   z = next->z;
   actor->speedLimit = PIXELS(2);
   actor->acceleration = 0x1999;
-  Actor_SetMoveTarget(actor, next->x, next->y, next->z);
-  Script_WaitForEventTimeout(actor);
+  FieldActor_SetMoveTarget(actor, next->x, next->y, next->z);
+  Actor_WaitForMove(actor);
   if (nextBehavior != startBehavior) {
     goto blocked;
   }
@@ -136,27 +136,27 @@ test:
     struct Position *step;
 
     step = &probe;
-    Vector_AddPolarOffsetFar(PIXELS(16), heading, step);
+    FieldVector_AddPolarOffset(PIXELS(16), heading, step);
     /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the address, so
      * next rebuilds it; as no store, 59 of 304 instructions differ in tla-en.
      */
     step = NULL;
   }
   next = &probe;
-  nextBehavior = GetMapCellCollision(*layer, next->x, next->z);
+  nextBehavior = MapGrid_GetCellBehaviorAt(*layer, next->x, next->z);
   if (nextBehavior != 255) {
     goto body;
   }
 stop:
   actor->speedLimit = PIXELS(2);
   actor->acceleration = PIXELS(1);
-  Actor_SetMoveTarget(actor, x, actor->y, z);
-  Script_WaitForEventTimeout(actor);
-  wait(2);
+  FieldActor_SetMoveTarget(actor, x, actor->y, z);
+  Actor_WaitForMove(actor);
+  System_Wait(2);
   goto top;
 
 blocked:
-  wait(10);
+  System_Wait(10);
 done:
   actor->update = NULL;
   actor->actionFlags |= 1;

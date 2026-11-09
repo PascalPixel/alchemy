@@ -68,9 +68,9 @@ top:
   x = startX;
   z = startZ;
   startBehavior =
-      GetMapCellCollision(*(layer = &actor->terrainId), startX, startZ);
-  Vector_AddPolarOffsetFar(PIXELS(16), heading, position);
-  nextBehavior = GetMapCellCollision(*layer, position->x, position->z);
+      MapGrid_GetCellBehaviorAt(*(layer = &actor->terrainId), startX, startZ);
+  FieldVector_AddPolarOffset(PIXELS(16), heading, position);
+  nextBehavior = MapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
   if (nextBehavior == 255 ||
       Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y > i) {
     actor->angle = heading;
@@ -117,8 +117,8 @@ body:
   z = next->z;
   actor->speedLimit = PIXELS(2);
   actor->acceleration = 0x1999;
-  Actor_SetMoveTarget(actor, next->x, next->y, next->z);
-  Script_WaitForEventTimeout(actor);
+  FieldActor_SetMoveTarget(actor, next->x, next->y, next->z);
+  Actor_WaitForMove(actor);
   if (nextBehavior != startBehavior) {
     goto blocked;
   }
@@ -128,26 +128,26 @@ test:
    * of 246 instructions differ in tla-en. */
   asm("" : "=r"(angle) : "0"(heading) : "r4");
   step = &probe;
-  Vector_AddPolarOffsetFar(PIXELS(16), angle, step);
+  FieldVector_AddPolarOffset(PIXELS(16), angle, step);
   /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the address, so
    * next rebuilds it; as &probe in the call, 97 of 246 instructions differ in
    * tla-en. */
   step = NULL;
   next = &probe;
-  nextBehavior = GetMapCellCollision(*layer, next->x, next->z);
+  nextBehavior = MapGrid_GetCellBehaviorAt(*layer, next->x, next->z);
   if (nextBehavior != 255) {
     goto body;
   }
 stop:
   actor->speedLimit = PIXELS(2);
   actor->acceleration = PIXELS(1);
-  Actor_SetMoveTarget(actor, x, actor->y, z);
-  Script_WaitForEventTimeout(actor);
-  wait(2);
+  FieldActor_SetMoveTarget(actor, x, actor->y, z);
+  Actor_WaitForMove(actor);
+  System_Wait(2);
   goto top;
 
 blocked:
-  wait(10);
+  System_Wait(10);
 done:
   actor->update = NULL;
   actor->actionFlags |= 1;

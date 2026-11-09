@@ -1,5 +1,6 @@
 #include "ride.h"
 #include "macros.h"
+#include "event_inline.h"
 
 void Func_02002fc4(struct Actor *object);
 

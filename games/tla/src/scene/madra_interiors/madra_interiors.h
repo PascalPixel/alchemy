@@ -7,6 +7,7 @@
 #include "ram_buffer.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
+#include "event_inline.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -25,32 +26,13 @@ extern const u8 gData_02002c9c[];
 extern const u8 gData_02002da4[];
 extern const u8 gData_0200308c[];
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void Event_Wait(s32 frames);
 void Func_02001d50(void);
 void Func_02001d58(void);
-void Event_ResolvePendingActions(s32 skip);
-void Event_SetMessageId(s32 message);
-void Event_ShowMessageAndWait(s32 speaker, s32 flags);
-void Func_080d47b4(s32 actor, s32 animation, s32 frames);
-s32 Party_GetLeaderActor(void);
 void Func_02001f00(s32 actor);
 void Func_02001f08(s32 slot, s32 actor);
-void Func_0802372c(struct Actor *object, s32 value);
-void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
-void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z, s32 angle);
 void Func_020007dc(void);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
-void Actor_Jump(s32 actor, s32 speed, s32 frames);
-void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
-void Actor_CommitPositionAndActivate(s32 actor, s32 x, s32 z);
-void Motion_SetVarCbAndRefresh(s32 actor, s32 variant);
-void FieldMessage_ShowAtActor(s32 speaker, s32 flags);
-s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

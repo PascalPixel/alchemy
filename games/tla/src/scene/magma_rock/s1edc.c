@@ -12,7 +12,7 @@ void Func_020003b4(void);
 void Func_020006cc(s16 *ids);
 
 void Func_02001edc(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 position[3];
   struct Actor *object;
   u8 *terrainId;
@@ -42,5 +42,5 @@ void Func_02001edc(void) {
   position[0] = object->x >> 20;
   position[2] = object->z >> 20;
   if (position[0] == 35 && position[2] == 38)
-    GameFlag_SetBit(0x8db);
+    Event_SetFlag(0x8db);
 }

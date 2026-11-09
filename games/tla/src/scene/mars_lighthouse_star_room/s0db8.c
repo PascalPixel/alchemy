@@ -1,27 +1,23 @@
 #include "mars_lighthouse_star_room.h"
 #include "scene_tables.h"
 
-void Actor_SetSpritePriority(u32 id, s32 variant);
-void Actor_SetModeById(u32 id, s32 mode);
-void Func_0200432c(s32 id, s32 x, s32 z);
-void Func_0200423c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_0200432c_(s32 id, s32 x, s32 z) {
-  Func_0200432c(id, x, z);
+  Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 
 static __inline__ void Func_0200423c_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  Func_0200423c(a, b, c, d, e, f);
+  Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
 void Func_02000db8(s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
 
-  Actor_SetSingleChildFlags(Actor_GetById(id), 0);
-  Actor_SetSpritePriority(id, 3);
+  Actor_SetSingleChildFlags(Actor_Get(id), 0);
+  FieldActor_SetSpritePriority(id, 3);
   object->motionFlags = 0;
   /* FAKEMATCH: keeps the flag store before the next address is formed (differ 2
    * without) */
@@ -30,11 +26,11 @@ void Func_02000db8(s32 id) {
   object->collisionFlags = 0;
   if (id == 13) {
     Func_0200432c_(13, 175 << 18, PIXELS(224));
-    Actor_SetModeById(13, 10);
-    Func_0200423c(39, 22, 2, 1, 43, id);
+    Actor_SetAnimation(13, 10);
+    MapGrid_CopyCellAttributes(39, 22, 2, 1, 43, id);
   } else {
     Func_0200432c_(14, 165 << 18, PIXELS(216));
-    Actor_SetModeById(14, 9);
+    Actor_SetAnimation(14, 9);
     Func_0200423c_(31, 21, 2, 2, 40, 12);
   }
 }

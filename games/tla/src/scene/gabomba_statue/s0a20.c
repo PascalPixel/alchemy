@@ -15,18 +15,18 @@ void Func_02000a20(struct Actor *object) {
   struct MainRoutineWork *party;
 
   Func_020056b4(object);
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->y = PIXELS(6);
   object->z = 0xf741cf;
   object->angle = FACING_SOUTH;
   party = &gMainRoutineWork;
-  Func_080d489c(party->currentOwner, 258);
-  Actor_SetModeById(party->currentOwner, 27);
-  Event_Wait(30);
-  Actor_SetModeById(party->currentOwner, 28);
-  Event_Wait(10);
+  Actor_SetAttachedEffect(party->currentOwner, 258);
+  Actor_SetAnimation(party->currentOwner, 27);
+  FieldEvent_Wait(30);
+  Actor_SetAnimation(party->currentOwner, 28);
+  FieldEvent_Wait(10);
   for (i = 0; i <= 19; i++) {
     /* FAKEMATCH: one variable set twice in the loop keeps both constants inside
      * it, as the native loads them on every pass; as plain constants loop.c
@@ -36,9 +36,9 @@ void Func_02000a20(struct Actor *object) {
     object->scaleY += delta;
     delta = -0x18000;
     object->y += delta;
-    wait(1);
+    System_Wait(1);
     if (i == 10)
-      Sound_Play(204);
+      Event_PlaySound(204);
     if (i == 20) {
       *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 521;
       Event_FinishScreenTransition();

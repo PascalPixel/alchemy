@@ -8,6 +8,7 @@
 #include "scene_tables.h"
 #include "iwram_call.h"
 #include "dma.h"
+#include "event_inline.h"
 
 extern const struct SceneEntrance gSceneEntrances[];
 extern const u32 gSceneExits[];
@@ -23,28 +24,15 @@ struct PushedBlock {
   s32 f;
 };
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void wait(s32 frames);
-void Event_Wait(s32 frames);
-struct Actor *Actor_GetById(s32 id);
-void Actor_SetModeById(u32 id, s32 mode);
-void Actor_SetSpritePriority(u32 id, s32 variant);
 void Scene_SetArrivalFlags(s32 a);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Task_Add(void (*func)(void), s32 priority);
 void Func_02002360(struct Actor *object, s32 a);
 void Func_02002368();
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Func_020023d0(s32 id);
-void Import_EventSetExitRequest(s32 id);
 void Func_02002400(void);
 void Func_02002440(s32 id, s32 a);
-void Func_080dbdd4(s32 x, s32 z, s32 a, s32 b);
 void Func_02002460(s32 x, s32 z, s32 a, s32 b);
 void Func_02002468(s32 id);
-void Sound_Play(s32 cue);
 void Func_02000054(struct Actor *object);
 void Func_02000404(void);
 void Func_02000c78(s32 id);

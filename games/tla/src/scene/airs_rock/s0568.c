@@ -16,20 +16,20 @@ extern u8 gMainRoutineWork[];
 
 void Func_02000568(void) {
   Func_02003bc8();
-  Event_ResolvePendingActions(0);
-  Sound_Play(0x9e);
+  FieldEvent_ResolvePendingActions(0);
+  Event_PlaySound(0x9e);
   MapGrid_CopyCellsTo(64, 64, 83, 35, 1, 2);
   Func_02003b70(0);
-  Event_Wait(45);
-  Actor_SetSpeedParameters(FIELD_AT(gMainRoutineWork, s32, 532), 0x8000,
+  FieldEvent_Wait(45);
+  Actor_SetSpeed(FIELD_AT(gMainRoutineWork, s32, 532), 0x8000,
                            0x4000);
-  Actor_ResetAndSetPositionInMode2(FIELD_AT(gMainRoutineWork, s32, 532), 312,
+  Actor_WalkTo(FIELD_AT(gMainRoutineWork, s32, 532), 312,
                                    680);
-  Event_Wait(5);
+  FieldEvent_Wait(5);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_WaitForMoveById(FIELD_AT(gMainRoutineWork, s32, 532));
-  Sound_Play(0x7b);
-  Import_EventSetExitRequest(4);
+  FieldActor_WaitForMoveById(FIELD_AT(gMainRoutineWork, s32, 532));
+  Event_PlaySound(0x7b);
+  FieldEvent_SetExitRequest(4);
   Func_02003bd0();
 }

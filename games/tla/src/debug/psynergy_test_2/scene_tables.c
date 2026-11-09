@@ -30,7 +30,7 @@ void Func_02000054(void) { Actor_SetHorizontalPositionWithTerrain(8, 0, 0); }
 
 void Func_02000064(s32 mode) {
   if (mode == 1)
-    Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
+    Actor_SetPosition(8, 0, 0);
 }
 
 void Func_02000078(void) {}
@@ -39,23 +39,23 @@ void Func_0200007c(void) { Actor_SetModeById(9, 3); }
 
 void Func_02000088(s32 mode) {
   if (mode == 1) {
-    Func_0802b450(49, 1, 1, 2, 34, mode);
-    Map_CopyCellAttributeRect(49, 1, 1, 2, 34, 3);
+    MapGrid_CopyCellsLayered(49, 1, 1, 2, 34, mode);
+    MapGrid_CopyCellAttributes(49, 1, 1, 2, 34, 3);
   }
 }
 
 void Func_020000b8(void) {
   if (!Event_GetFlag(0x220)) {
-    GameFlag_SetBit(0x220);
+    Event_SetFlag(0x220);
     Func_020005d8(14, 0);
   }
 }
 
 void Func_020000d8(s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
 
   Func_0200029c();
   Func_020001e0(object->x, object->y, object->z, 20);
-  wait(20);
+  System_Wait(20);
   Func_02000358();
 }

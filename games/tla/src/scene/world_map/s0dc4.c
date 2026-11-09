@@ -49,7 +49,7 @@ s32 Func_02000dc4(void) {
   work->screenEffect = 0x400;
   work->delay = 16;
   wait(1);
-  Camera_SetSpeedParameters(0x80000, 0x10000);
+  FieldCamera_SetSpeed(0x80000, 0x10000);
   GameFlag_ClearBit(0x12f);
   Func_02003960();
   /* FAKEMATCH(wrapper): the three Map_SetWindowCellTile calls forwarded through
@@ -100,7 +100,7 @@ s32 Func_02000dc4(void) {
     break;
   case 2:
     if (GameFlag_Test(55) == 0) {
-      Actor_SetMovementTypeById(9, gData_0200632c);
+      Actor_SetScript(9, gData_0200632c);
       Func_02001e34();
     }
     break;
@@ -115,13 +115,13 @@ s32 Func_02000dc4(void) {
     break;
   case 72:
     Func_02003d44(2);
-    Actor_SetPartAttribute(Actor_GetById(7), 15);
-    Actor_SetHorizontalPositionWithTerrain(7, 0x1c6d0000, 0x1c840000);
+    Actor_SetSpriteColor(Actor_GetById(7), 15);
+    Actor_SetPosition(7, 0x1c6d0000, 0x1c840000);
     wait(1);
-    Event_SetMessageId((s32)MsgIVeHeard);
-    Event_ShowMessageAndWait(7, 0);
-    Event_Wait(20);
-    Event_ShowMessageAndWait(7, 0);
+    FieldEvent_SetMessageId((s32)MsgIVeHeard);
+    Event_ShowMessage(7, 0);
+    FieldEvent_Wait(20);
+    Event_ShowMessage(7, 0);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Func_02004d38((s32)&SceneId_Ov6a5, 9);

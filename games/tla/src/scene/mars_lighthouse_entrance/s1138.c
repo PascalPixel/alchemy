@@ -32,9 +32,6 @@ extern u8 gMapCellBuffer[];
 void *Heap_Alloc(s32 size);
 void Heap_Release(void *block);
 s32 Resource_FindFreeEntry(void);
-void VramCache_Load(s32 entry, s32 size, void *source);
-void Task_Add(void (*func)(void), s32 priority);
-void Actor_SetMovementTypeById(s32 id, const void *script);
 void Func_02000d18(void);
 void Func_02000fe0(u8 *cell);
 void Func_020012e4(struct Actor *object);
@@ -52,7 +49,7 @@ void Func_02001138(void) {
   u8 *cell;
 
 
-  object = Actor_GetById(party->currentOwner);
+  object = Actor_Get(party->currentOwner);
   x = object->x >> 20;
   z = object->z >> 20;
   cell = gMapCellBuffer;

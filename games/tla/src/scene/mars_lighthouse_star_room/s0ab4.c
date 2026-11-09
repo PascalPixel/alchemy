@@ -1,6 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 struct SpriteBits {
   u8 unk0 : 2;
@@ -12,10 +13,9 @@ struct SpriteAttributes {
   struct SpriteBits bits;
 };
 
-struct Actor *Actor_GetById(s32 id);
 
 void Func_02000ab4(struct Actor *object) {
-  struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *owner = Actor_Get(gMainRoutineWork.currentOwner);
   struct SpriteAttributes *to = (struct SpriteAttributes *)object->animation;
   struct SpriteAttributes *from = (struct SpriteAttributes *)owner->animation;
   struct SpriteBits source = from->bits;

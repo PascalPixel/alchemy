@@ -173,7 +173,7 @@ void Func_02001fd0(void) {
       state->z = work->z;
       state->frame++;
       state->y += Value2((s32 (*)())Iwram_MulQ16, 0xfffe0000,
-                         Math_Sine(state->frame << 12)) +
+                         Math_Sin(state->frame << 12)) +
                   0xfffe0000;
       sprite = &work->sprites[i];
       sprite->tile = work->tile + ((state->frame >> 2) & 3) * 8;

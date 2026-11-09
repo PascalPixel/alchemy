@@ -24,7 +24,7 @@ void Func_02000840(struct FieldActor *object) {
               Iwram_MulQ16(Math_Cosine((step & 255) << 11), radius);
   object->z =
       WORD_AT(object, 76) +
-      Iwram_MulQ16(Math_Sine((WORD_AT(object, 48) & 255) << 11), radius) / 3;
+      Iwram_MulQ16(Math_Sin((WORD_AT(object, 48) & 255) << 11), radius) / 3;
   object->y += WORD_AT(object, 72);
   WORD_AT(object, 48)++;
 }
@@ -44,8 +44,8 @@ void Func_020008ac(struct FieldActor *object) {
               Iwram_MulQ16(Math_Cosine((step & 255) << 11), radius) * 2;
   object->z =
       WORD_AT(object, 76) +
-      Iwram_MulQ16(Math_Sine((WORD_AT(object, 48) & 255) << 11), radius);
+      Iwram_MulQ16(Math_Sin((WORD_AT(object, 48) & 255) << 11), radius);
   object->y += WORD_AT(object, 72);
   WORD_AT(object, 48)++;
-  Actor_SetPartAttribute(object, ((gFrameCount & 2) >> 1) * 9);
+  Actor_SetSpriteColor(object, ((gFrameCount & 2) >> 1) * 9);
 }

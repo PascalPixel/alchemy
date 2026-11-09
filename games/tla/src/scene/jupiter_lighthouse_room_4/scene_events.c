@@ -29,20 +29,20 @@ static inline void SetCollisionCode(s32 x, s32 z, s32 layer, s32 value) {
 
 void Func_02000054(void) {
   MapGrid_CopyCellsLayered(17, 10, 1, 4, 19, 10);
-  Map_CopyCellAttributeRect(17, 10, 1, 1, 19, 10);
+  MapGrid_CopyCellAttributes(17, 10, 1, 1, 19, 10);
   SetCollisionCode(0x1300000, 0xa00000, 0, 254);
-  Actor_SetHorizontalPositionWithTerrain(14, PIXELS(504), PIXELS(168));
-  if (GameFlag_Test(0xa00)) {
+  Actor_SetPosition(14, PIXELS(504), PIXELS(168));
+  if (Event_GetFlag(0xa00)) {
     Func_02000724(14);
-    ((u8)Func_080dbdd4(0x1f00000, 0xa00000, 0, 254));
+    ((u8)MapGrid_SetCellBehavior(0x1f00000, 0xa00000, 0, 254));
   }
 }
 
 void Func_020000c0(void) {
-  Func_0802b450(16, 10, 1, 4, 19, 10);
-  Map_CopyCellAttributeRect(16, 10, 1, 1, 19, 10);
-  Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
-  Map_CopyCellAttributeRect(30, 10, 1, 1, 31, 10);
+  MapGrid_CopyCellsLayered(16, 10, 1, 4, 19, 10);
+  MapGrid_CopyCellAttributes(16, 10, 1, 1, 19, 10);
+  Actor_SetPosition(14, 0, 0);
+  MapGrid_CopyCellAttributes(30, 10, 1, 1, 31, 10);
 }
 
 void Func_02000108(s32 unused, s32 id) { Actor_SetSpritePriority(id, 2); }
@@ -51,15 +51,15 @@ void Func_02000114(s32 unused, s32 id) {
   struct FieldActor *object;
   s32 i;
 
-  object = ((struct FieldActor *)Actor_GetById(id));
+  object = ((struct FieldActor *)Actor_Get(id));
   if (object->x >> 20 == 10 && object->z >> 20 == 32) {
     object->motionFlags = 0;
     for (i = 15; i >= 0; i--) {
       object->y += 0x20000;
-      wait(1);
+      System_Wait(1);
     }
     Func_02000724(id);
-    GameFlag_SetBit(0xa06);
+    Event_SetFlag(0xa06);
   }
 }
 
@@ -78,22 +78,22 @@ void Func_020001ac(void) {
 }
 
 void Func_020001dc(s32 item) {
-  GameFlag_SetBit(0xa07);
-  Sound_Play(134);
+  Event_SetFlag(0xa07);
+  Event_PlaySound(134);
   Func_0200017c();
   PartyInventory_Remove(item);
 }
 
 void Func_020001fc(s32 item) {
-  GameFlag_SetBit(0xa08);
-  Sound_Play(134);
+  Event_SetFlag(0xa08);
+  Event_PlaySound(134);
   Func_020001ac();
   PartyInventory_Remove(item);
 }
 
 void Func_0200021c(void) {
   ((struct EventWorkLock *)Ram_HeapSlots->eventWork)->locked = 1;
-  FieldMessage_Show(MsgFieldDoorLocked, 1);
+  Message_ShowCentered(MsgFieldDoorLocked, 1);
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }

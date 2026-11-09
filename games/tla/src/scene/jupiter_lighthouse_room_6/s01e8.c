@@ -23,11 +23,11 @@ s32 Func_020001e8(void) {
   struct JupiterLighthouseRoom6EventWork *work = Ram_HeapSlots->eventWork;
 
   work->screenEffect = 0x204;
-  if (GameFlag_Test(0xa19)) {
-    Actor_SetHorizontalPositionWithTerrain(12, PIXELS(72), PIXELS(600));
+  if (Event_GetFlag(0xa19)) {
+    Actor_SetPosition(12, PIXELS(72), PIXELS(600));
     Func_020000b4(0);
   }
-  if (GameFlag_Test(0x200))
+  if (Event_GetFlag(0x200))
     Func_020000b4(0);
   if ((u16)(gMainRoutineWork.entrance - 5) <= 1) {
     Func_02001250(33, 0x280, 0x380, 20, 31);

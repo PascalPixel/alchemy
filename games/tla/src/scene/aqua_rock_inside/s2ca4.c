@@ -1,6 +1,5 @@
 #include "local.h"
 #include "scene_ids.h"
-#include "call.h"
 #include "system/frame.h"
 
 struct SlideWork {
@@ -10,10 +9,7 @@ struct SlideWork {
 
 s32 Func_02003d2c(struct Actor *object, s32 *position);
 void Func_02002bd4(struct Actor *object);
-void Func_080d489c(s32 id, s32 effect);
-void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02003cc4(struct Actor *object, s32 animation);
-void Script_WaitForEventTimeout(struct Actor *object);
 
 void Func_02002ca4(void) {
   struct Actor *center;
@@ -28,7 +24,7 @@ void Func_02002ca4(void) {
     id = gMainRoutineWork.currentOwner;
     center = work->camera;
   }
-  actor = Actor_GetById(id);
+  actor = Actor_Get(id);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov67bRoom1 &&
       actor->terrainHeight == 0)
     return;
@@ -41,16 +37,16 @@ void Func_02002ca4(void) {
   if (hit < 0) {
     /* FAKEMATCH(wrapper): Call2 kept; as a direct call, 2 of 151 instructions
      * differ in tla-en. */
-    Call2(Func_080d489c, id, 258);
-    Actor_SetMoveTarget(actor, actor->x, actor->y, actor->z + 0x80000);
+    Actor_SetAttachedEffect(id, 258);
+    FieldActor_SetMoveTarget(actor, actor->x, actor->y, actor->z + 0x80000);
     Func_02003cc4(actor, 49);
-    Script_WaitForEventTimeout(actor);
+    Actor_WaitForMove(actor);
     do {
-      wait(1);
+      System_Wait(1);
     } while (actor->y != actor->terrainHeight);
     Func_02002bd4(actor);
     Func_02003cc4(actor, 49);
-    wait(3);
+    System_Wait(3);
     return;
   }
   position[0] = actor->x;

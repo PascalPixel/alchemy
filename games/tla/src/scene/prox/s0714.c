@@ -23,12 +23,12 @@ void Func_02000714(void) {
     Func_0200462c(8);
   } else {
     Func_02004464();
-    Event_ResolvePendingActions(0);
-    t4 = GameFlag_Test(0xa3d);
+    FieldEvent_ResolvePendingActions(0);
+    t4 = Event_GetFlag(0xa3d);
     if (t4 != 0) {
-      Event_SetMessageId((s32)MsgProx139);
+      FieldEvent_SetMessageId((s32)MsgProx139);
     } else {
-      Event_SetMessageId((s32)MsgProx60);
+      FieldEvent_SetMessageId((s32)MsgProx60);
     }
     Event_ShowMessage(8, 0);
     Func_0200446c();

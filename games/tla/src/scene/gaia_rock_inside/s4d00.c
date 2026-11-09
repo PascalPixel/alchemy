@@ -11,5 +11,5 @@
 extern u8 Func_020049e4[];
 
 void Func_02004d00(void) {
-  Task_Add((s32)Func_020049e4, TASK_PASS_VBLANK);
+  Task_AddFrame((s32)Func_020049e4, TASK_PASS_VBLANK);
 }

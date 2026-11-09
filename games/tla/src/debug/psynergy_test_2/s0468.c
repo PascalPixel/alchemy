@@ -23,7 +23,7 @@ void Func_02000468(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
     }
   }
   if (mode == 2) {
-    object = ((struct Actor *)Import_ActorCreate(252, x << 16, 0, z << 16));
+    object = (FieldActor_Create(252, x << 16, 0, z << 16));
     if (object != NULL) {
       s32 scale;
 
@@ -32,7 +32,7 @@ void Func_02000468(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       object->scaleX = 0x6666;
       object->scaleY = 0x6666;
       while (object->scaleX < Q16_ONE) {
-        wait(1);
+        System_Wait(1);
         scale = object->scaleX + 0x51e;
         {
           /* FAKEMATCH(temporary): the turn is added as a word, so its step
@@ -48,7 +48,7 @@ void Func_02000468(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       }
       object->scaleX = Q16_ONE;
       object->scaleY = Q16_ONE;
-      object->angle = Actor_GetById(gMainRoutineWork.currentOwner)->angle + 0x8000;
+      object->angle = Actor_Get(gMainRoutineWork.currentOwner)->angle + 0x8000;
       Func_020005d8(scene, entrance);
     }
   }

@@ -19,7 +19,7 @@ void Func_020011d4(void) {
 
 void Func_02001228(void) {
   Func_02001488();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   Func_02001520();
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov67FRoom2)
     Func_02000ee8(2, 50, 13, Func_02000eac(2, 50, 13) & 255);
@@ -30,7 +30,7 @@ void Func_02001270(void) {
   Func_02001488();
   MapGrid_CopyCellAttributes(7, 2, 8, 7, 7, 12);
   MapGrid_CopyCellsTo(7, 66, 7, 76, 8, 9);
-  GameFlag_SetBit(0x941);
+  Event_SetFlag(0x941);
   Func_02001490();
 }
 

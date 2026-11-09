@@ -1,5 +1,6 @@
 #include "types.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 union FieldCoordinate {
   s32 fixed;
@@ -40,16 +41,11 @@ struct StagedActor {
 
 extern s32 gData_02004fec[];
 
-struct StagedActor *Actor_GetById(s32 actor);
 struct StagedActor *Actor_FindInCell(struct FieldPosition *position,
                                      struct StagedActor *self);
 void Func_02004c98(struct StagedActor *object, s32 mode);
-void Func_02004cc8(struct StagedActor *object, s32 x, s32 y, s32 z);
-void Func_02004cd0(struct StagedActor *object);
 s32 Func_02004cf8(struct StagedActor *object, struct FieldPosition *position);
 void Func_02004eb8(void);
-void wait(s32 frames);
-void Func_02004f30(s32 cue);
 
 void Func_020003b4(void) {
   struct FieldPosition dst;
@@ -60,7 +56,7 @@ void Func_020003b4(void) {
   u32 step;
   s32 rate;
 
-  lead = Actor_GetById(gMainRoutineWork.currentOwner);
+  lead = (struct StagedActor *)Actor_GetById(gMainRoutineWork.currentOwner);
   dir = lead->facing >> 12;
   step = gData_02004fec[dir];
   dst.x = lead->x.fixed + (step & 0xffff0000);
@@ -101,15 +97,15 @@ void Func_020003b4(void) {
 
   Func_02004c98(lead, 8);
   rate = 0x3333;
-  wait(15);
-  Func_02004f30(185);
+  System_Wait(15);
+  Event_PlaySound(185);
   next->moveRateX = rate;
   next->moveRateZ = rate;
-  Func_02004cc8(next, dst.x, dst.y, dst.z);
+  FieldActor_SetMoveTarget(next, dst.x, dst.y, dst.z);
   lead->moveRateX = rate;
   lead->moveRateZ = rate;
-  Func_02004cc8(lead, dst.x, dst.y, dst.z);
-  Func_02004cd0(next);
+  FieldActor_SetMoveTarget(lead, dst.x, dst.y, dst.z);
+  Actor_WaitForMove(next);
   Func_02004eb8();
   next->x.fixed = dst.x;
   {

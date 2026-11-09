@@ -21,14 +21,14 @@ void Func_020001d0(u16 *list) {
 
   while (list[0] != 0xffff) {
     u32 id = list[0];
-    struct Actor *object = Actor_GetById(id);
+    struct Actor *object = Actor_Get(id);
     s32 flag = list[1];
     s32 next = flag + 1;
     struct MapCell *cells = map->layers[object->terrainId].cells;
     u8 *shapes = gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
 
-    if (GameFlag_Test(next)) {
-      Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
+    if (Event_GetFlag(next)) {
+      Actor_SetPosition(id, 0, 0);
     } else {
       s32 index = Func_02001508(object);
       struct MapCell *cell;
@@ -43,12 +43,12 @@ void Func_020001d0(u16 *list) {
       Func_020014c0(id);
       cell->attributeB = 128;
       *slot = Func_02001528(object->terrainId, shape, (ground >> 19) + 4);
-      if (GameFlag_Test(flag))
+      if (Event_GetFlag(flag))
         Func_02001428(object, 0);
     }
     list += 2;
   }
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.currentOwner);
   height = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
   if (leader->y < height) {
     leader->terrainHeight = height;

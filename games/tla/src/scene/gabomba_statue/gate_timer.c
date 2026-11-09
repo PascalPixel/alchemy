@@ -14,6 +14,6 @@ void Func_02005428(const u8 *data, s32 a, s32 b);
 
 void Func_02001990(s32 a, s32 b) {
   Func_02005428(gData_02005d7c, a, b);
-  if (GameFlag_Test(0x8ce) && GameFlag_Test(0x8cf))
+  if (Event_GetFlag(0x8ce) && Event_GetFlag(0x8cf))
     ((struct GateEventWork *)Ram_HeapSlots->eventWork)->gateTimer = 200;
 }

@@ -28,7 +28,7 @@ void Func_020004c8(void) {
 
   if (Flag_IsSet(0x201) == 0 && gFrameCount % 3 != 0)
     return;
-  center = Actor_GetById(31);
+  center = Actor_Get(31);
   if (Flag_IsSet(0x201) != 0) {
     u32 random;
 
@@ -49,14 +49,14 @@ void Func_020004c8(void) {
   if (effect != 0) {
     sprite = effect->animation;
     Func_02005764(effect, gData_020068b0);
-    Actor_SetPartAttribute(effect, 1);
+    Actor_SetSpriteColor(effect, 1);
     effect->motionFlags = 0;
     angle = Random16Far() & 0xffff000;
     effect->action = angle;
     effect->unk66 = 0;
     effect->update = Func_02000090;
     effect->speedLimit =
-        Math_Sine((u32)(Random16Far() * 0xffff) >> 20) * 24 >> 16;
+        Math_Sin((u32)(Random16Far() * 0xffff) >> 20) * 24 >> 16;
     sprite->nextFrame = 0;
     sprite->priority = 1;
   }

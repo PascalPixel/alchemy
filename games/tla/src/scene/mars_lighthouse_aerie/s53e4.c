@@ -1,6 +1,6 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
+#include "event_inline.h"
 
 struct ResourceTableEntry {
   u16 unk0;
@@ -33,7 +33,6 @@ extern const u8 gData_020057e4[];
 extern struct ResourceTableEntry gResourceTableEntries[];
 
 s32 Resource_FindFreeEntry(void);
-s32 VramCache_Load(s32 entry, s32 size, const void *data);
 void Func_020057a4(struct SparkleSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 s32 Func_020057b4(struct Actor *object);
@@ -47,7 +46,7 @@ void Func_020053e4(struct Actor *object, struct SparkleWork *work) {
   s32 offset;
 
   work->vramEntry = Resource_FindFreeEntry();
-  VramCache_Load(work->vramEntry, 256, gData_020057e4);
+  Vram_Load(work->vramEntry, 256, gData_020057e4);
   work->unka6 = 0;
   work->unka0 = 999;
   work->unka2 = 999;

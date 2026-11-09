@@ -1,28 +1,17 @@
 #include "jupiter_lighthouse_room_m.h"
 #include "scene_ids.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 extern const u8 MsgIMSorry[];
 
 void Func_020047d4(void);
-void Event_ResolvePendingActions(s32 a);
-void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
-                                                    s32 angle);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Event_SetMessageId(const u8 *message);
-void Event_ShowMessageThenWait(s32 actor, s32 a, s32 b);
-struct Actor *Func_080d47b4(s32 actor, s32 emote, s32 frames);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 d);
 void Func_020048f4(void);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void Actor_ArmCallbackAndRefresh(s32 actor, s32 a);
-void Actor_OffsetPositionAndReset(u32 objectId, s32 x_offset, s32 z_offset);
-void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
-void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
 void Party_RemoveActiveOwner(s32 owner);
 s32 Party_AddActiveOwner(s32 owner);
-s32 Unit_AddHp(s32 owner, s32 delta);
 void Unit_Calculate(s32 owner);
 s32 Unit_AddPp(s32 owner, s32 delta);
 void Func_02004904(s32 a, s32 b);
@@ -65,40 +54,40 @@ static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle) {
 /// with owners 2 and 0, whose first values and PP drop by 10000. "I'm sorry"
 void Func_02001c7c(void) {
   Func_020047d4();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   PLACE(0, 776, 202, FACING_WEST);
   PLACE(2, 731, 232, FACING_NORTHWEST);
   PLACE(27, 731, 213, FACING_SOUTH);
   PLACE(26, 737, 202, FACING_EAST);
-  Actor_SetModeById(0, 1);
-  Actor_SetModeById(2, 1);
-  Actor_SetModeById(26, 1);
-  Actor_SetModeById(27, 1);
+  Actor_SetAnimation(0, 1);
+  Actor_SetAnimation(2, 1);
+  Actor_SetAnimation(26, 1);
+  Actor_SetAnimation(27, 1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Event_SetMessageId(MsgIMSorry);
-  Event_ShowMessageThenWait(2, 0, 5);
-  Func_080d47b4(4, 0x100, 30);
-  Camera_MoveWithinMapBounds(PIXELS(705), 0, PIXELS(177), 1);
+  FieldEvent_SetMessageId(MsgIMSorry);
+  FieldEvent_ShowMessageThenWait(2, 0, 5);
+  (struct Actor *)Actor_ShowEmote(4, 0x100, 30);
+  FieldCamera_MoveTo(PIXELS(705), 0, PIXELS(177), 1);
   Func_020048f4();
-  Event_Wait(30);
-  Actor_SetSingleChildFlags(Actor_GetById(2), 0);
-  Actor_SetModeById(2, 32);
-  Event_Wait(10);
+  FieldEvent_Wait(30);
+  Actor_SetSingleChildFlags(Actor_Get(2), 0);
+  Actor_SetAnimation(2, 32);
+  FieldEvent_Wait(10);
   JupiterLighthouseRoomM_Func_020048b4(0, FACING_SOUTHWEST);
-  Event_ShowMessageThenWait(0, 0, 5);
-  Func_080d47b4(26, 0x107, 30);
-  Event_ShowMessageThenWait(26, 0, 5);
-  Actor_OffsetPositionAndReset(26, 24, 0);
-  Event_Wait(20);
+  FieldEvent_ShowMessageThenWait(0, 0, 5);
+  (struct Actor *)Actor_ShowEmote(26, 0x107, 30);
+  FieldEvent_ShowMessageThenWait(26, 0, 5);
+  Actor_WalkBy(26, 24, 0);
+  FieldEvent_Wait(20);
   do {
     /* FAKEMATCH: the one-pass block ends CSE's block, so the byte store's dead
      * zero is not kept in r8 for the store of the owner below (without: differ
      * 31 of 160). */
     gMainRoutineWork.battleRule24b = 6;
   } while (0);
-  Party_SetFields1eeAnd1f0((s32)&SceneId_Ov6a3, 77);
-  Party_SetFields1f2And1f4((s32)&SceneId_Ov6a3, 77);
+  Event_SetAfterBattleDestination((s32)&SceneId_Ov6a3, 77);
+  Event_SetDefeatDestination((s32)&SceneId_Ov6a3, 77);
   Party_RemoveActiveOwner(4);
   Party_RemoveActiveOwner(7);
   Party_RemoveActiveOwner(5);
@@ -113,7 +102,7 @@ void Func_02001c7c(void) {
   JupiterLighthouseRoomM_AddHp(0, -10000);
   Unit_Calculate(0);
   Unit_Calculate(2);
-  Unit_AddHp(0, 173);
+  FieldUnit_AddHp(0, 173);
   JupiterLighthouseRoomM_AddPp(2, -10000);
   Unit_AddPp(0, -10000);
   gMainRoutineWork.currentOwner = 0;

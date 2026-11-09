@@ -18,7 +18,7 @@ void Event_WaitTransitionFrames(void);
 
 /// Jumps down the hole.
 void Func_02001630(void) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   struct Actor *leader;
@@ -29,21 +29,21 @@ void Func_02001630(void) {
   if (x == 29 && z == 10 && !(gInput.held & 0x40))
     return;
   work = Ram_HeapSlots->eventWork;
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.currentOwner);
   Func_020056b4(leader);
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   leader->motionFlags = 0;
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 472, 144);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-  Actor_RefreshSelectorById(gMainRoutineWork.currentOwner);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 13);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 472, 144);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+  FieldActor_RefreshSelectorById(gMainRoutineWork.currentOwner);
+  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 13);
   FieldActor_SetMoveTarget(leader, PIXELS(472), 0, PIXELS(156));
-  Script_WaitForEventTimeout(leader);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 10);
-  Sound_Play(123);
+  Actor_WaitForMove(leader);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 10);
+  Event_PlaySound(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(work->exit);
+  FieldEvent_SetExitRequest(work->exit);
 }

@@ -1,5 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "event_inline.h"
 
 /// One falling rock: where it is, how it moves and how long it has fallen.
 struct Rock {
@@ -33,7 +34,6 @@ struct RockWork {
 };
 
 s32 Random16Far(void);
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 
 /// Spawns count rocks around (x, y, z), each pushed out at a random angle and
 /// thrown up and out along it.
@@ -59,12 +59,12 @@ void Func_02004a5c(s32 x, s32 y, s32 z, s32 count) {
       rock->position[0] = x;
       rock->position[1] = y;
       rock->position[2] = z;
-      Vector_AddPolarOffsetFar((Random16Far() << 3) + 0x80000, angle,
+      FieldVector_AddPolarOffset((Random16Far() << 3) + 0x80000, angle,
                                rock->position);
       rock->velocity[0] = 0;
       rock->velocity[1] = 0x50000;
       rock->velocity[2] = 0;
-      Vector_AddPolarOffsetFar((Random16Far() << 1) + 0x20000, angle,
+      FieldVector_AddPolarOffset((Random16Far() << 1) + 0x20000, angle,
                                rock->velocity);
       work->next++;
       work->next &= 63;

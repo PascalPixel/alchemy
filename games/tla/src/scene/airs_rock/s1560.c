@@ -111,9 +111,9 @@ void Func_02001560(void) {
     *motion = 2;
     leader->priorityFlags = 1;
     leader->terrainId = ((u8 *)rider)[98];
-    Actor_SetMoveTarget(leader, leader->x + dx, leader->y, leader->z + dz);
+    FieldActor_SetMoveTarget(leader, leader->x + dx, leader->y, leader->z + dz);
     OverlayObject_WaitUntilIdle(leader);
-    Script_WaitForEventTimeout(leader);
+    Actor_WaitForMove(leader);
     Actor_SetSingleChildFlags(leader, 1);
     *motion = 3;
   } else {
@@ -126,19 +126,19 @@ void Func_02001560(void) {
     leader->priorityFlags = 1;
     *motion = 3;
     FieldCamera_MoveTo(-1, -1, -1, 0);
-    dust = Func_080d4568();
+    dust = FieldCamera_GetActor();
     dust->speedLimit = 0x80000;
     dust->acceleration = 0x10000;
     dust->motionFlags = still;
-    Actor_SetMoveTarget(dust, leader->x,
+    FieldActor_SetMoveTarget(dust, leader->x,
                   Map_GetTerrainHeight(0, leader->x, leader->z), leader->z);
     OverlayObject_WaitUntilIdle(leader);
-    Script_WaitForEventTimeout(dust);
+    Actor_WaitForMove(dust);
   }
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
-  GameFlag_ClearBit(0x250);
-  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  Event_ClearFlag(0x250);
+  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02003c30();
   wait(10);
   Func_02003bd0();

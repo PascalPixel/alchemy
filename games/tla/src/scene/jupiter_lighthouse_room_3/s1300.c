@@ -2,7 +2,6 @@
 
 extern const u16 gData_02002478[];
 
-void Vector_AddPolarOffsetFar(s32 distance, s32 angle, s32 *position);
 struct Actor *Func_02002438(s32 *position, s32 mode);
 s32 Func_02002338(struct Actor *object, s32 *position);
 
@@ -21,7 +20,7 @@ void Func_02001300(struct Actor *object) {
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
-  Vector_AddPolarOffsetFar(0x100000, angle, position);
+  FieldVector_AddPolarOffset(0x100000, angle, position);
   other = Func_02002438(position, 1);
   if (other != NULL) {
     i = 0;
@@ -37,11 +36,11 @@ void Func_02001300(struct Actor *object) {
     i++;
     if (i < 6)
       goto next;
-    Actor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
+    FieldActor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
   }
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
   if (Func_02002338(object, position) > 0)
-    Actor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
+    FieldActor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
 }

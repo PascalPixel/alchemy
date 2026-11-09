@@ -3,13 +3,9 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "call.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
 s32 Item_AdjustCounter(s32 item, s32 delta);
-void Map_CopyCellsRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_0802372c(struct Actor *object, s32 value);
-void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
 void Func_02000ed4(s32 actor, s32 angle);
 void Func_02000edc(s32 actor, s32 angle, s32 frames);
 void Func_02000f04(s32 actor);
@@ -39,20 +35,18 @@ s32 Func_0200079c(void) {
   Item_AdjustCounter(140, 1);
   Item_AdjustCounter(151, 1);
   gMainRoutineWork.eventMode = 2;
-  Actor_SetModeById(15, 2);
-  Actor_SetModeById(16, 2);
+  Actor_SetAnimation(15, 2);
+  Actor_SetAnimation(16, 2);
   Call3((void (*)())Func_02000edc, 9, 0x8000, 0);
   Call2((void (*)())Func_02000ed4, 10, 0x8000);
   Func_02000ed4(12, 0);
-  if (GameFlag_Test(0x300))
-    Map_CopyCellsRect(36, 28, 1, 1, 10, 10);
-  if (GameFlag_Test(0x301))
-    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 18, 184 << 16,
-          184 << 16);
-  if (GameFlag_Test(0x302) && !GameFlag_Test(0x310))
-    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 19, 200 << 16,
-          200 << 16);
-  Func_0802372c(Actor_GetById(19), 50);
+  if (Event_GetFlag(0x300))
+    MapGrid_CopyCells(36, 28, 1, 1, 10, 10);
+  if (Event_GetFlag(0x301))
+    Actor_SetPosition(18, 184 << 16, 184 << 16);
+  if (Event_GetFlag(0x302) && !Event_GetFlag(0x310))
+    Actor_SetPosition(19, 200 << 16, 200 << 16);
+  Actor_SetItemIcon(Actor_Get(19), 50);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 

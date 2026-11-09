@@ -35,7 +35,7 @@ void Func_02000d40(struct Actor *object) {
     config.id = 403;
     config.kind = 2;
     config.data = gData_02003d50;
-    if ((frame & 15) == 0 && !GameFlag_Test(608))
+    if ((frame & 15) == 0 && !Event_GetFlag(608))
       Func_02003c4c(object, 136);
     dz = ((Random16Far() & 15) - 8) << 15;
     velocityZ = ((Random16Far() & 31) - 16) << 12;

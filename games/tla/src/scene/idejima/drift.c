@@ -21,7 +21,7 @@ struct FadePalette {
 };
 
 /// Copies colours 128 to 191 of heap block 32 over colours 0 to 63, clears
-/// colour 0 and calls BattleEffect_ApplyColorToTargetBuffer(0x10000, 0).
+/// colour 0 and calls PaletteFade_ApplyTarget(0x10000, 0).
 void Func_0200161c(void) {
   /* FAKEMATCH: the palette pinned to r0, where ⚓️ keeps it and the counter in
    * r4; unpinned the two registers swap (differ 14). */
@@ -33,7 +33,7 @@ void Func_0200161c(void) {
   for (i = 0; i < 64; i++)
     *to++ = *from++;
   palette->colors[0] = 0;
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  PaletteFade_ApplyTarget(0x10000, 0);
 }
 
 void DriftScene_Prepare(void) {
@@ -41,6 +41,6 @@ void DriftScene_Prepare(void) {
 
   layer->unk18 = 0x4000;
   layer->unk1c = 0x2000;
-  Map_CopyCellPictureIndicesRect(72, 10, 75, 8, 1, 1);
-  Actor_SetModeById(9, 2);
+  MapGrid_CopyCellsTo(72, 10, 75, 8, 1, 1);
+  Actor_SetAnimation(9, 2);
 }

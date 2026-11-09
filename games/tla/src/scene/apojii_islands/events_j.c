@@ -2,7 +2,7 @@
 
 void Func_02001ba0(s32 id) {
   u8 *work = Ram_HeapSlots->unk70[1];
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
   s32 *slot = (s32 *)(work + 0x808);
 
   *slot = 0;

@@ -61,37 +61,15 @@ struct AlhafraInteriorsEventWork {
 extern s32 gFrameCount;
 
 u32 Random16Far(void);
-void wait(s32 frames);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void Event_Wait(s32 frames);
-struct AlhafraInteriorsObject *Actor_GetById(s32 id);
-void Actor_SetPositionAndResetMotion(struct AlhafraInteriorsObject *object,
-                                      s32 x, s32 y, s32 z);
-void Actor_SetPartAttribute(struct AlhafraInteriorsObject *object, s32 value);
-void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
-void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
-void Actor_SetSpritePriority(s32 actor, s32 variant);
 
 void Func_02000a94(void);
 void Func_02000a9c(void);
-void Event_SetMessageId(s32 message);
-void Event_ShowMessageThenWait(s32 actor, s32 a, s32 b);
-void Event_ShowMessageAndWait(s32 speaker, s32 flags);
-void Actor_ArmCallbackAndRefresh(s32 actor, s32 angle);
-void Event_ResolvePendingActions(s32 skip);
 void Func_02000bc4(s32 shop, s32 keeper);
 void Func_02000bcc(s32 keeper);
 void Func_02000bd4(s32 shop, s32 keeper);
-void Sound_Play(s32 cue);
-void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
 void Actor_SetSingleChildFlags(struct AlhafraInteriorsObject *object,
                                         u32 value);
 void Animation_SetStateFlags(struct AlhafraInteriorsObject *object, s32 flags);
-void Actor_SetModeById(s32 actor, s32 mode);
-void Task_Add(void (*func)(void), s32 priority);
-void Task_RemoveFar(void (*func)(void));
 void Field_DispatchTypeHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -99,22 +77,7 @@ void Func_02000b7c(void);
 
 void Event_StartScreenTransition(void);
 
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void Actor_SetMovementTypeById(s32 actor, const void *callback);
-void Actor_SetMovementTypeAndWaitById(s32 actor, const void *callback);
-s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
-s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
-void Func_080d47b4(s32 actor, s32 emote, s32 frames);
-void Func_080d489c(s32 actor, s32 emote);
-void Actor_Jump(s32 actor, s32 speed, s32 frames);
-void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
-void Actor_WaitForMoveById(s32 actor);
-void Event_PrepareObjectAndApplyValue(s32 actor, s32 value);
 
-s32 Party_GetLeaderActor(void);
 
 // ---- this overlay
 

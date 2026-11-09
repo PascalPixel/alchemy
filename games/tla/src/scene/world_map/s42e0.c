@@ -45,31 +45,31 @@ void Func_020042e0(void) {
     scrollY = -y / 128 + 352;
     gBgScroll[0].x = scrollX;
     gBgScroll[0].y = scrollY;
-    wait(1);
+    System_Wait(1);
     y += 352;
     x += 17;
   }
-  Sound_Play(164);
-  wait(120);
+  Event_PlaySound(164);
+  System_Wait(120);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   // mode holds one 0 for the rest of the function; the closing scroll reset
   // stores it again.
   mode = 0;
-  BattleEffect_ApplyColorToTargetBuffer(0x7fff, mode);
-  BattleEffect_StartBufferInterpolation(1);
+  PaletteFade_ApplyTarget(0x7fff, mode);
+  PaletteFade_Interpolate(1);
   QueueIoWriteDelay2(0x04000052, 0x1000);
-  wait(1);
-  BattleEffect_ApplyColorToTargetBuffer(0, 0);
-  BattleEffect_StartBufferInterpolation(60);
-  Sound_Play(78);
-  wait(60);
-  Sound_Play(390);
-  wait(120);
+  System_Wait(1);
+  PaletteFade_ApplyTarget(0, 0);
+  PaletteFade_Interpolate(60);
+  Event_PlaySound(78);
+  System_Wait(60);
+  Event_PlaySound(390);
+  System_Wait(120);
   Ram_HeapSlots->objectSystem->suspended = 1;
-  wait(1);
+  System_Wait(1);
   Func_02004ad8();
   Func_02004ac8();
-  Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
+  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                 gMainRoutineWork.paletteGlow[1]);
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;

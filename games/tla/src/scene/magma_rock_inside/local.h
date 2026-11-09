@@ -9,6 +9,7 @@
 #include "iwram_call.h"
 #include "scene_ids.h"
 #include "frame.h"
+#include "event_inline.h"
 
 struct MapLayer {
   u8 unk00[0x30];
@@ -32,20 +33,10 @@ extern char SceneId_Ov692Room6;
 extern char SceneId_Ov692Room7;
 extern char SceneId_Ov692Room8;
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
-struct Actor *Actor_GetById(s32 id);
-struct Actor *Import_ActorCreate(s32 kind, s32 x, s32 y, s32 z);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
-void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Animation_SetStateFlags(struct Actor *object, s32 flags);
-void Task_Add(void (*func)(void), s32 priority);
-void Task_RemoveFar(void (*func)(void));
 
 extern const u8 gData_02005534[];
 
@@ -53,9 +44,6 @@ extern s32 gData_02006710;
 
 void Func_02001190(s32 a, s32 b);
 void Func_020024ac(void);
-void Func_02004e30(s32 a, s32 b);
-void Func_02004e90(s32 a);
-void Func_02004ea8(s32 a, s32 b, s32 c);
 void Func_02004934(s32 a, s32 b, s32 owner);
 void Func_02004c98(struct Actor *object, s32 a);
 void Func_02004ca0(struct Actor *object, const void *data);
@@ -67,7 +55,6 @@ static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
   return Import_ActorCreate(kind, x, y, z);
 }
 
-void Actor_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
 
 static __inline__ void Actor_ResetAndSetPositionInMode2_(s32 id, s32 x,
                                                                 s32 z) {

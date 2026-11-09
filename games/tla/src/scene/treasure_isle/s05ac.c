@@ -21,7 +21,7 @@ void Func_020005ac(void) {
 
   if (!Flag_IsSet(0x303)) {
     Func_02000fcc();
-    Event_ResolvePendingActions(0);
+    FieldEvent_ResolvePendingActions(0);
     Func_0200043c(gData_0200117c, 0);
     Flag_Set(0x303);
     count = 1;
@@ -29,7 +29,7 @@ void Func_020005ac(void) {
   if (!Flag_IsSet(0x304)) {
     if (count == 0)
       Func_02000fcc();
-    Event_ResolvePendingActions(0);
+    FieldEvent_ResolvePendingActions(0);
     Func_0200043c(gData_0200117c, 1);
     Flag_Set(0x304);
     count++;
@@ -37,7 +37,7 @@ void Func_020005ac(void) {
   if (!Flag_IsSet(0x305)) {
     if (count == 0)
       Func_02000fcc();
-    Event_ResolvePendingActions(0);
+    FieldEvent_ResolvePendingActions(0);
     Func_0200043c(gData_0200117c, 2);
     Flag_Set(0x305);
     count++;
@@ -45,7 +45,7 @@ void Func_020005ac(void) {
   if (!Flag_IsSet(0x306)) {
     if (count == 0)
       Func_02000fcc();
-    Event_ResolvePendingActions(0);
+    FieldEvent_ResolvePendingActions(0);
     Func_0200043c(gData_0200117c, 3);
     Flag_Set(0x306);
     count++;
@@ -62,7 +62,7 @@ void Func_02000684(void) {
 
   if (!Flag_IsSet(0x30a)) {
     Func_02000fcc();
-    Event_ResolvePendingActions(0);
+    FieldEvent_ResolvePendingActions(0);
     Func_0200043c(gData_020011cc, 0);
     Flag_Set(0x30a);
     count = 1;
@@ -70,7 +70,7 @@ void Func_02000684(void) {
   if (!Flag_IsSet(0x30b)) {
     if (count == 0)
       Func_02000fcc();
-    Event_ResolvePendingActions(0);
+    FieldEvent_ResolvePendingActions(0);
     Func_0200043c(gData_020011cc, 1);
     Flag_Set(0x30b);
     count++;
@@ -78,7 +78,7 @@ void Func_02000684(void) {
   if (!Flag_IsSet(0x30c)) {
     if (count == 0)
       Func_02000fcc();
-    Event_ResolvePendingActions(0);
+    FieldEvent_ResolvePendingActions(0);
     Func_0200043c(gData_020011cc, 2);
     Flag_Set(0x30c);
     count++;
@@ -90,7 +90,7 @@ void Func_02000684(void) {
 void Func_02000728(void) {
   if (!Flag_IsSet(0x307)) {
     Func_02000fcc();
-    Event_ResolvePendingActions(0);
+    FieldEvent_ResolvePendingActions(0);
     Func_0200043c(gData_0200117c, 4);
     Flag_Set(0x307);
     Func_02000fd4();
@@ -101,15 +101,15 @@ void Func_02000728(void) {
 /// four rooms, sets a flag when object 8 to 11 is at a given x; object 11 at
 /// a given x and z in the second room runs Func_02000728 instead.
 void Func_02000760(s32 unused, s32 id) {
-  struct FieldActor *object = ((struct FieldActor *)Actor_GetById(id));
+  struct FieldActor *object = ((struct FieldActor *)Actor_Get(id));
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom1) {
     if (id == 8 && object->x >> 20 == 16)
-      GameFlag_SetBit(0x300);
+      Event_SetFlag(0x300);
     if (id == 9 && object->x >> 20 == 20)
-      GameFlag_SetBit(0x301);
+      Event_SetFlag(0x301);
     if (id == 10 && object->x >> 20 == 27)
-      GameFlag_SetBit(0x302);
+      Event_SetFlag(0x302);
   }
   /* FAKEMATCH: the memory barriers before the second, third and fourth room
    * tests make each reload gMainRoutineWork, as the native does; with any two
@@ -117,18 +117,18 @@ void Func_02000760(s32 unused, s32 id) {
   __asm__ volatile("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom2) {
     if (id == 10 && object->x >> 19 == 33)
-      GameFlag_SetBit(0x308);
+      Event_SetFlag(0x308);
     if (id == 11 && object->x >> 19 == 85 && object->z >> 19 == 83)
       Func_02000728();
   }
   __asm__ volatile("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom3) {
     if (id == 10 && object->x >> 19 == 83)
-      GameFlag_SetBit(0x309);
+      Event_SetFlag(0x309);
   }
   __asm__ volatile("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom4) {
     if (id == 8 && object->x >> 19 == 87)
-      GameFlag_SetBit(0x30d);
+      Event_SetFlag(0x30d);
   }
 }

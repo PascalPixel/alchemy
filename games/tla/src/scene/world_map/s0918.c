@@ -23,10 +23,10 @@ void Func_0200050c(void);
 /// Back to the map: actor 8's position is kept in gMainRoutineWork.
 void Func_02000918(void) {
   struct EventDestination *work = Ram_HeapSlots->eventWork;
-  struct Actor *leader = Actor_GetById(8);
+  struct Actor *leader = Actor_Get(8);
 
   Func_02004c20();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   if (gMainRoutineWork.renderMode == 8)
     Func_0200050c();
   Event_FinishScreenTransition();
@@ -35,7 +35,7 @@ void Func_02000918(void) {
   gMainRoutineWork.savedZ = leader->z;
   gMainRoutineWork.unk280 = 0;
   gMainRoutineWork.ownerOverride = 0;
-  GameFlag_ClearBit(0x176);
-  Sound_Play(123);
-  Import_EventSetExitRequest(work->scene);
+  Event_ClearFlag(0x176);
+  Event_PlaySound(123);
+  FieldEvent_SetExitRequest(work->scene);
 }

@@ -7,7 +7,7 @@ extern s32 gData_0200b410[];
 extern u32 gFrameCount;
 
 const s32 *Func_02000a60(void) {
-  if (GameFlag_Test(0x97f))
+  if (Event_GetFlag(0x97f))
     return gData_0200b410;
   return gData_0200320c;
 }

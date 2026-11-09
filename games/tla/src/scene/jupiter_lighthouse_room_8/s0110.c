@@ -17,10 +17,10 @@ void Func_02002010(s32 x, s32 z, s32 a);
 s32 Func_02000110(void) {
   ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)->screenEffect =
       0x204;
-  Actor_GetById(8)->scaleX = 0xc000;
-  Actor_GetById(8)->scaleY = 0xc000;
-  Actor_SetSpritePriority(12, 3);
-  Actor_SetSpritePriority(14, 3);
+  Actor_Get(8)->scaleX = 0xc000;
+  Actor_Get(8)->scaleY = 0xc000;
+  FieldActor_SetSpritePriority(12, 3);
+  FieldActor_SetSpritePriority(14, 3);
   Func_02002248(11);
   Func_02002248(12);
   Func_02002248(13);

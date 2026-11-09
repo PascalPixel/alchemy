@@ -79,7 +79,7 @@ void Func_02000640(void) {
 
 void Func_02000664(void) {
   if (!Event_GetFlag(0x200)) {
-    Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 152, 756);
     Event_SetFlag(0x200);
   }
@@ -98,7 +98,7 @@ void Func_020006a8(void) {
     Event_ShowMessage(8, 0);
     Actor_SetPosition(5, 0, 0);
     Actor_SetPosition(6, 0, 0);
-    Camera_SetSpeedParameters(0x9999, 0x1333);
+    FieldCamera_SetSpeed(0x9999, 0x1333);
     FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(721), 1);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
     MapGrid_CopyCellAttributes(38, 31, 2, 1, 25, 42);
@@ -148,7 +148,7 @@ void Func_020006a8(void) {
     FieldEvent_SetMessageId((s32)MsgIdejimaCantBelieveYouTwo);
     Event_ShowMessage(5, 0);
     Actor_SetPosition(6, 0, 0);
-    Camera_SetSpeedParameters(0x9999, 0x1333);
+    FieldCamera_SetSpeed(0x9999, 0x1333);
     FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(721), 1);
     Actor_SetSpeed(8, 0x19999, 0xcccc);
     Actor_SetScript(8, gData_02003734);
@@ -198,14 +198,14 @@ void Func_020006a8(void) {
     Event_ResolvePendingActions(0);
     Func_02000664();
     Actor_SetHorizontalPositionWithTerrain(6, PIXELS(312), PIXELS(666));
-    wait(1);
+    System_Wait(1);
     Event_SetMessageId((s32)MsgIdejimaWaitForMe);
     Event_ShowMessageAndWait(6, 0);
-    Camera_SetSpeedParameters(0x9999, 0x1333);
-    Camera_MoveWithinMapBounds(PIXELS(168), -1, PIXELS(721), 1);
+    FieldCamera_SetSpeed(0x9999, 0x1333);
+    FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(721), 1);
     Actor_SetSpeed(8, 0x19999, 0xcccc);
-    Actor_SetMovementTypeById(8, (s32)gData_02003734);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
+    Actor_SetScript(8, (s32)gData_02003734);
+    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
     MapGrid_CopyCellAttributes(38, 31, 2, 1, 14, 40);
     Actor_GetById(6)->motionFlags = 3;
     Actor_Jump(6, 4, 0);
@@ -216,9 +216,9 @@ void Func_020006a8(void) {
     Actor_WalkToAndWait(6, 212, 680);
     Actor_WalkToAndWait(6, 192, 712);
     Actor_FaceDirection(6, FACING_SOUTHWEST, 0);
-    Actor_RefreshSelectorById(6);
+    FieldActor_RefreshSelectorById(6);
     Event_ShowMessageAndWait(6, 0);
-    Func_080d489c(gMainRoutineWork.currentOwner, 258);
+    Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 258);
     Func_080d47b4(6, 263, 20);
     Event_ShowMessageAndWait(6, 0);
     Event_ShowMessageThenWait(8, 0, 40);
@@ -244,10 +244,10 @@ void Func_020006a8(void) {
     Event_ShowMessageAndWait(6, 0);
     Actor_SetModeById(8, 3);
     Motion_SetModeAndWaitAnimation(8, 3);
-    Actor_SetMovementTypeById(8, (s32)gData_02003790);
-    Actor_SetMovementTypeAndWaitById(6, (s32)gData_02003790);
+    Actor_SetScript(8, (s32)gData_02003790);
+    Actor_RunScriptAndWait(6, (s32)gData_02003790);
     Event_PrepareObjectAndApplyValue(6, 1);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 20);
+    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 20);
     GameFlag_SetBit(0x865);
     Import_EventEnd();
   }

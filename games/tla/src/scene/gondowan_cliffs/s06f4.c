@@ -7,8 +7,8 @@ extern const u8 gData_020019c0[];
 extern const u8 gData_020019f0[];
 
 void Func_020006f4(s32 unused, s32 id) {
-  Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
-  GameFlag_SetBit(0x8e6);
+  Actor_SetPosition(id, 0, 0);
+  Event_SetFlag(0x8e6);
 }
 
 const u8 *Func_0200070c(void) {

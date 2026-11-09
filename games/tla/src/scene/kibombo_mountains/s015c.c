@@ -4,15 +4,15 @@
 
 void Func_0200015c(s32 id) {
   s32 n = 60;
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
 
   object->motionFlags = 3;
   while (n != 0) {
-    wait(1);
+    System_Wait(1);
     if (object->velocityY == 0)
       break;
     n--;
   }
-  wait(10);
+  System_Wait(10);
   object->motionFlags = 0;
 }

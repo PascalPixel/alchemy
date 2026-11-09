@@ -1,4 +1,5 @@
 #include "version.h"
+#include "event_inline.h"
 
 #if TLA_PATCH_1
 
@@ -29,26 +30,10 @@ extern struct AnkohlRuinsFloatWork Data_02004030;
 void Func_020010f4(void);
 void Func_020023d0(void);
 void Func_02002ed4();
-s32 GameFlag_Test(s32 flag);
-void Actor_SetHorizontalPositionWithTerrain();
-void Map_CopyCellAttributeRect();
-struct Actor *Actor_GetById(u32 id);
-void Map_CopyCellsRect();
-void Sound_Play();
-void Actor_SetModeById();
 void Func_02000418(void);
 void Func_02002e44(void);
-void Event_ResolvePendingActions();
-void Camera_MoveWithinMapBounds();
 void Event_StartScreenTransition(void);
-void Event_Wait();
-void wait();
-void GameFlag_SetBit();
-void GameFlag_ClearBit();
-void Import_EventSetExitRequest();
-s32 Task_Add();
 void Func_02001420(s32 a0);
-void Func_0802b450();
 void Func_02002dec(void);
 
 s32 Func_02002438(s32 a0) {
@@ -335,24 +320,9 @@ extern struct AnkohlRuinsFloatWork Data_02004030;
 void Func_020010f4(void);
 void Func_020023d0(void);
 void Func_02002ed4();
-s32 GameFlag_Test(s32 flag);
-void Actor_SetHorizontalPositionWithTerrain();
-void Map_CopyCellAttributeRect();
-struct Actor *Actor_GetById(u32 id);
-void Map_CopyCellsRect();
-void Sound_Play();
-void Actor_SetModeById();
 void Func_02002e44(void);
-void Event_ResolvePendingActions();
-void Camera_MoveWithinMapBounds();
 void Event_StartScreenTransition(void);
-void Event_Wait();
-void wait();
-void GameFlag_SetBit();
-void Import_EventSetExitRequest();
-s32 Task_Add();
 void Func_02001420(s32 a0);
-void Func_0802b450();
 void Func_02002dec(void);
 
 s32 Func_02002438(s32 a0) {

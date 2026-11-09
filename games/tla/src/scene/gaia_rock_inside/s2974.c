@@ -19,12 +19,12 @@ extern const s16 gData_0200530c[][2];
 s32 GameFlag_SetByte(s32 flag, s32 value);
 
 s32 Func_02002974(void) {
-  struct Actor *first = Actor_GetById(10);
+  struct Actor *first = Actor_Get(10);
   s8 firstIndex = 0;
   s32 firstX = first->x >> 19;
   s8 secondIndex = 0;
   s32 firstZ = first->z >> 19;
-  struct Actor *second = Actor_GetById(11);
+  struct Actor *second = Actor_Get(11);
   s32 secondX = second->x >> 19;
   s32 secondZ = second->z >> 19;
   s8 i;

@@ -5,14 +5,14 @@
 s32 Math_Cosine();
 
 void Func_02000090(struct FieldActor *self) {
-  struct FieldActor *centre = ((struct FieldActor *)Actor_GetById(31));
+  struct FieldActor *centre = ((struct FieldActor *)Actor_Get(31));
   u16 angle = self->timer;
   s32 sine;
   s32 x;
   s32 z;
 
   self->x = centre->x + Math_Cosine(angle) * (self->speed + 3);
-  sine = Math_Sine(angle);
+  sine = Math_Sin(angle);
   z = centre->z;
   x = self->x;
   /* FAKEMATCH: both positions are read before the sine is doubled; without it
@@ -34,7 +34,7 @@ void Func_02000090(struct FieldActor *self) {
 /// byte at 98.
 // As ☀️'s SceneEffect_UpdateCounterDrivenOrbit does.
 void Func_020000ec(struct FieldActor *self) {
-  struct FieldActor *centre = ((struct FieldActor *)Actor_GetById(36));
+  struct FieldActor *centre = ((struct FieldActor *)Actor_Get(36));
   u16 angle = self->timer;
   s32 cosine = Math_Cosine(angle);
   s32 radius = self->speed + BYTE_AT(self, 98);
@@ -44,7 +44,7 @@ void Func_020000ec(struct FieldActor *self) {
 
   asm volatile("" : "+r"(anchor));
   self->x = anchor->x + cosine * (radius + 6);
-  self->z = centre->z + Math_Sine(angle) * (BYTE_AT(self, 98) + 4);
+  self->z = centre->z + Math_Sin(angle) * (BYTE_AT(self, 98) + 4);
   self->targetX = self->x;
   self->targetZ = self->z;
   *(s16 *)&self->timer += -0x800;

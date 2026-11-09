@@ -16,7 +16,7 @@ void Func_02000054(struct Actor *object) {
 }
 
 void Func_02000070(void) {
-  struct Actor *object = Actor_GetById(10);
+  struct Actor *object = Actor_Get(10);
   struct PushedBlock block;
   s32 i;
   s32 x;
@@ -26,15 +26,15 @@ void Func_02000070(void) {
     Func_02001050(block);
   if (object->x >> 20 == 16 && object->z >> 20 == 12 &&
       GameFlag_Test_(0x200) == 0) {
-    GameFlag_SetBit(0x200);
-    Actor_SetSpritePriority(10, 3);
+    Event_SetFlag(0x200);
+    FieldActor_SetSpritePriority(10, 3);
     object->motionFlags = 3;
-    wait(5);
-    Sound_Play(134);
+    System_Wait(5);
+    Event_PlaySound(134);
     object->motionFlags = 2;
     for (i = 0, x = 0xb00000; i <= 3; i++, x += 0x100000) {
       Lift_(0x1000000, x, 0, 0);
-      Func_080dbdd4(0x1000000, x, 0, 0);
+      MapGrid_SetCellBehavior(0x1000000, x, 0, 0);
       if (i <= 1)
         Func_02002460(0x1000000, x, 0, 128);
     }

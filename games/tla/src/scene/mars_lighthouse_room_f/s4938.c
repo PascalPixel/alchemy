@@ -1,21 +1,19 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "field_sprite.h"
+#include "event_inline.h"
 
 extern const u16 gData_02005f58[];
 extern const s8 gData_02005f64[][4];
 
-struct Actor *Actor_GetById(s32 id);
-void Func_020054e8(s32 x, s32 z, s32 width, s32 height, s32 toX, s32 toZ);
 void Func_02004a44(s32 layer, s32 x, s32 z, s32 width, s32 height, s32 value);
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 s32 Func_02004938(s32 id) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
   s16 shape = *(s16 *)((struct FieldSprite *)object->animation)->record;
   s16 i = 0;
   u32 j;
@@ -47,7 +45,7 @@ s32 Func_02004938(s32 id) {
   mapZ = *(s32 *)(map + 332) >> 20;
   toX = x + (u16)i;
   toZ = z + (u16)mapZ;
-  Func_020054e8(x, z, width, height, toX, toZ);
+  MapGrid_CopyCellAttributes(x, z, width, height, toX, toZ);
   Func_02004a44(0, x, z, width, height, 255);
   Func_02004a44(2, x, z, width, height, 255);
   return 1;

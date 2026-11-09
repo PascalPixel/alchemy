@@ -67,11 +67,11 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
   s32 i;
   s32 age;
 
-  work->first = Actor_GetById(a);
-  work->second = Actor_GetById(b);
+  work->first = Actor_Get(a);
+  work->second = Actor_Get(b);
   Func_020029a0(Resource_GetTableEntry((s32)&ResourceId_StarSparkleFade), work);
   smallEntry = Resource_FindFreeEntry();
-  smallTile = VramCache_Load(smallEntry, 256, work);
+  smallTile = Vram_Load(smallEntry, 256, work);
   work->smallTile = smallTile;
   spark = work->sparks;
   age = 0;
@@ -91,7 +91,7 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
     /* FAKEMATCH(temporary): sprite also holds the size; as a plain argument, 7
      * of 316 instructions differ in tla-en. */
     sprite = (struct EffectSprite *)512;
-    largeTile = VramCache_Load(largeEntry, (s32)sprite, work);
+    largeTile = Vram_Load(largeEntry, (s32)sprite, work);
   }
   work->largeTile = largeTile;
   large = &work->large;
@@ -123,19 +123,19 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
   carrier->speedLimit = 0x8000;
   carrier->acceleration = 0x8000;
   Func_02002a20(carrier);
-  Actor_SetMoveTarget(carrier, work->start[0], work->start[1], work->start[2]);
-  Sound_Play(142);
+  FieldActor_SetMoveTarget(carrier, work->start[0], work->start[1], work->start[2]);
+  Event_PlaySound(142);
   Func_0200105c(work->first);
-  Event_Wait(40);
+  FieldEvent_Wait(40);
   work->side = side;
   work->step = 0;
   work->unkb02 = 0;
   work->unkb09 = 1;
   work->unkb0a = 0;
-  Task_Add(Func_02001080, 0x480);
+  Task_AddFrame(Func_02001080, 0x480);
   while (work->step != 999)
-    wait(1);
-  Task_RemoveFar(Func_02001080);
+    System_Wait(1);
+  FieldTask_Remove(Func_02001080);
   Resource_ResetEntry(largeEntry);
   Resource_ResetEntry(smallEntry);
   HeapSlot_Release(220);

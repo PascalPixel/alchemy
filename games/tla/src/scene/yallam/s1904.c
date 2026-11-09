@@ -13,10 +13,10 @@ struct YallamActor {
 
 
 void Func_02001904(s32 id) {
-  struct YallamActor *actor = ((struct YallamActor *)Actor_GetById(id));
+  struct YallamActor *actor = ((struct YallamActor *)Actor_Get(id));
 
   Actor_SetSpeed(id, 0x13333, 0x13333);
-  Actor_SetModeById(id, 2);
+  Actor_SetAnimation(id, 2);
   actor->timer = 0;
   actor->count = 0;
   actor->state = 1;

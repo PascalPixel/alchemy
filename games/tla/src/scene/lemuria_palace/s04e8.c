@@ -8,7 +8,7 @@ void Resource_ResetEntry(s32 entry);
 void Func_020002b4(void);
 
 void Func_020004e8(void) {
-  Task_RemoveFar(Func_020002b4);
+  FieldTask_Remove(Func_020002b4);
   Resource_ResetEntry(gData_02003020);
   Resource_ResetEntry(gData_02003094);
 }

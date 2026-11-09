@@ -15,7 +15,7 @@ void Func_02000bc0(s32 a, s32 b, s32 c);
 
 void Func_0200048c(const void *data, s32 id) {
   const struct TrapEntry *entry = data;
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
   s32 flag;
 
   while (entry->actor != 0xffff) {
@@ -26,24 +26,24 @@ void Func_0200048c(const void *data, s32 id) {
     {
       flag = entry->flag;
       Func_02001488();
-      if (!GameFlag_Test(flag + 1)) {
-        Sound_Play(185);
+      if (!Event_GetFlag(flag + 1)) {
+        Event_PlaySound(185);
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Func_02000974(0);
-        wait(8);
+        System_Wait(8);
         Func_02001428(object, 2);
         Func_02000bc0(-4, OBJECT_BYTE(object, 34), id);
         Func_02000974(1);
-        wait(16);
+        System_Wait(16);
         MapGrid_SetShake(-1, -1, 0xe666);
-        wait(8);
-        Actor_SetPositionAndResetMotion(object, 0, 0, 0);
-        wait(2);
-        Sound_Play(188);
+        System_Wait(8);
+        FieldActor_SetPositionAndResetMotion(object, 0, 0, 0);
+        System_Wait(2);
+        Event_PlaySound(188);
         Func_02000aa8();
-        wait(20);
-        GameFlag_SetBit(flag);
-        GameFlag_SetBit(flag + 1);
+        System_Wait(20);
+        Event_SetFlag(flag);
+        Event_SetFlag(flag + 1);
       }
       Func_02001490();
       break;

@@ -46,7 +46,7 @@ void Func_02001650(s32 count) {
      * in tla-en. */
     cosine = Math_Cosine(angle);
     spark->dx = Iwram_MulQ16(cosine, radius) >> 16;
-    spark->dy = -Iwram_MulQ16(Math_Sine(angle), radius) >> 16;
+    spark->dy = -Iwram_MulQ16(Math_Sin(angle), radius) >> 16;
     spark->speed = speed;
     spark->age = 0;
     work->next++;

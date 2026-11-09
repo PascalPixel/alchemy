@@ -61,8 +61,8 @@ void Func_020001a0(s32 unused, s32 id) {
       if (dx >= 0 ? dx < 0x80000 : other->x - block->x < 0x80000) {
         other->motionFlags = 0;
         other->speedLimit = 0x10000;
-        Actor_SetMoveTarget(other, block->x, block->y, block->z);
-        Script_WaitForEventTimeout(other);
+        FieldActor_SetMoveTarget(other, block->x, block->y, block->z);
+        Actor_WaitForMove(other);
         Func_02001044(block, gData_02001404);
         Func_0200104c(other);
         other->x = 0;
@@ -71,13 +71,13 @@ void Func_020001a0(s32 unused, s32 id) {
       } else {
         Call3((void (*)())Iwram_CopyWords, (s32)&saved, (s32)other, 128);
         Actor_ResetTargetsAndVelocity(9);
-        Actor_Jump(9, 4, 0);
-        Event_Wait(30);
+        FieldActor_Jump(9, 4, 0);
+        FieldEvent_Wait(30);
         Actor_ShowEmote(9, 257, 0);
-        Actor_SetAngleToward(9, 15, 0);
-        Event_Wait(60);
-        Motion_SetModeAndWaitAnimation(9, 4);
-        Event_Wait(20);
+        Actor_FaceActor(9, 15, 0);
+        FieldEvent_Wait(60);
+        Actor_SetAnimationAndWait(9, 4);
+        FieldEvent_Wait(20);
         { void *from = &saved; Iwram_CopyWords(other, from, 128); }
         MapGrid_CopyCellAttributes(53, 35, 1, 1, 53, 36);
         Flag_Set(0x224);

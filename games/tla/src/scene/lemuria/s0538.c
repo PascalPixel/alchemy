@@ -31,7 +31,7 @@ void Func_02000560(void) {
   asm volatile("" : "+l"(flag));
   x = 0x3580000;
   z = 0x3f80000;
-  GameFlag_SetBit(flag + 0x63);
+  Event_SetFlag(flag + 0x63);
   value = Func_02001d5c(x, z, 0);
   /* FAKEMATCH: the first z moves to a temporary so the second starts before the
    * first store call's arguments, as ⚓️ has it; with z reassigned after that

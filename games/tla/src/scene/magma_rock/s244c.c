@@ -9,7 +9,7 @@ void Actor_SetSingleChildFlags(struct Actor *object,
 s32 Func_02003a7c(void);
 
 void Func_0200244c(s32 height) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
 
   if (!Flag_IsSet(0x109)) {
     object->motionFlags = 0;
@@ -19,8 +19,8 @@ void Func_0200244c(s32 height) {
     object->velocityY = 0;
     gMainRoutineWork.renderMode = 2;
     object->actionFlags = 1;
-    Camera_FollowActor(gMainRoutineWork.currentOwner, 0);
+    FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
     Func_02003a7c();
-    wait(1);
+    System_Wait(1);
   }
 }

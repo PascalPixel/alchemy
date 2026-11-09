@@ -1,17 +1,17 @@
 #include "local.h"
 
 void Func_02000098(s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
   s32 frames = 60;
 
   object->motionFlags = 3;
   while (frames != 0) {
-    wait(1);
+    System_Wait(1);
     if (object->velocityY == 0)
       break;
     frames--;
   }
-  wait(10);
+  System_Wait(10);
   Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
 }

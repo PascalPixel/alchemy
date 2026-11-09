@@ -3,17 +3,17 @@
 void Func_02001ca0(s32 a, s32 b) {
   struct Actor **work = Ram_HeapSlots->effectWork;
 
-  work[5] = Actor_GetById(9);
+  work[5] = Actor_Get(9);
   Func_02001190(a, b);
-  GameFlag_SetBit(0x350);
+  Event_SetFlag(0x350);
 }
 
 void Func_02001cd0(s32 a, s32 b) {
   struct Actor **work = Ram_HeapSlots->effectWork;
 
-  work[5] = Actor_GetById(11);
+  work[5] = Actor_Get(11);
   Func_02001190(a, b);
-  GameFlag_SetBit(0x351);
+  Event_SetFlag(0x351);
 }
 
 struct EffectConfig {

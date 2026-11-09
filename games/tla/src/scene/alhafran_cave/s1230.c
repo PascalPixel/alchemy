@@ -12,7 +12,7 @@ void Func_02001230(const u16 *list) {
 loop:
   {
     u32 id = entry[0];
-    struct Actor *object = Actor_GetById(id);
+    struct Actor *object = Actor_Get(id);
     s16 kind = entry[1];
     s16 flag = entry[2];
 

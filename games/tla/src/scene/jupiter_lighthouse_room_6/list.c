@@ -16,7 +16,7 @@ void Scene_SetArrivalFlags(s32 value);
 void Func_020003a4(s32 value);
 
 void Func_02000ea0(s32 id, s32 value) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
 
   if (object != NULL) {
     object->action = value;

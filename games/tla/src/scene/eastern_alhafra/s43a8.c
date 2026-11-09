@@ -14,7 +14,7 @@ extern s32 gData_02004cc8[];
 
 struct Actor *Func_020043a8(s32 *direction, s32 *slot, s32 *kind) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor **entry;
   struct Actor *object;
   u32 i, k;

@@ -18,7 +18,7 @@ void Func_02000f30(struct Actor *object) {
   s32 height =
       Map_GetTerrainHeight(object->terrainId, object->x, object->z) >> 19;
 
-  if (GameFlag_Test(object->action)) {
+  if (Event_GetFlag(object->action)) {
     upper |= 0xff00;
     lower &= ~0x80;
     if (object->terrainHeight >> 19 != height)

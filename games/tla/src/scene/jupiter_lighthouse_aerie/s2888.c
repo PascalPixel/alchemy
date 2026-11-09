@@ -1,12 +1,13 @@
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
+#include "event_inline.h"
 
 void Func_02002888(s32 dx, s32 dz, s32 value) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   u8 *event = Ram_HeapSlots->eventWork;
   struct JupiterLighthouseAerieWork *work =
       (struct JupiterLighthouseAerieWork *)gData_02003488;
-  s32 x = GameFlag_GetByte(work->flag);
-  s32 z = GameFlag_GetByte(work->flag + 8);
+  s32 x = FieldGameFlag_GetByte(work->flag);
+  s32 z = FieldGameFlag_GetByte(work->flag + 8);
 
   if (x != 0 || z != 0) {
     struct Actor *shadow;

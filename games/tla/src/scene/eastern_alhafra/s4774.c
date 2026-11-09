@@ -17,7 +17,7 @@ void Func_02004774(struct Actor *object) {
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
-  Vector_AddPolarOffsetFar(0x100000, angle, position);
+  FieldVector_AddPolarOffset(0x100000, angle, position);
   hit = Func_02004c3c(position, 1);
   if (hit != 0) {
     i = 0;
@@ -32,11 +32,11 @@ void Func_02004774(struct Actor *object) {
     i++;
     if (i <= 5)
       goto next;
-    Actor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
+    FieldActor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
   }
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
   if (Func_02004a64(object, position) > 0)
-    Actor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
+    FieldActor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
 }

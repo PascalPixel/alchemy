@@ -12,7 +12,7 @@ s32 Func_02001064(struct Actor *object) {
   frame = object->action;
   if (frame > 31)
     return 0;
-  scale = Iwram_MulQ16(Math_Sine(frame << 10), 0x14000);
+  scale = Iwram_MulQ16(Math_Sin(frame << 10), 0x14000);
   object->scaleX = scale;
   object->scaleY = scale;
   object->x = anchor->x;

@@ -42,14 +42,14 @@ void Func_0200043c(struct TreasureIsleCell *cells, s16 index) {
   struct TreasureIsleCell *cell;
   struct EffectOptions options;
 
-  Camera_SetSpeedParameters(0x60000, 0xc000);
+  FieldCamera_SetSpeed(0x60000, 0xc000);
   // As &cells[index], the sum takes its operands the other way round.
   cell = (struct TreasureIsleCell *)((index << 4) + (s32)cells);
   CameraBounds((cell->x << 20) + 0x80000, -1, (cell->z << 20) + 0x80000, 1);
   Func_02001014();
   SetFade(0, 0x100000, 0x10000);
   SetFade(-1, -1, 0xe666);
-  Sound_Play(567);
+  Event_PlaySound(567);
   options.startScaleX = 0x13333;
   options.startScaleY = 0x18000;
   options.priority = 1;
@@ -62,10 +62,10 @@ void Func_0200043c(struct TreasureIsleCell *cells, s16 index) {
                 0, 0x3a0000, &options);
   Func_0200015c((cell->x << 20) + 0x120000, 0, (cell->z << 20) + 0x80000, 0, 0,
                 0, 0x3a0000, &options);
-  Event_Wait(10);
+  FieldEvent_Wait(10);
   SetCells(6, 100, 3, 4, cell->x + 63, cell->z - 2);
-  Event_Wait(10);
+  FieldEvent_Wait(10);
   SetCells(3, 100, 3, 4, cell->x + 63, cell->z - 2);
-  Event_Wait(10);
+  FieldEvent_Wait(10);
   Func_020003fc(cells, index);
 }

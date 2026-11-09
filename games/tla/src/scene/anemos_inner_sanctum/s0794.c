@@ -22,6 +22,6 @@ s32 Func_02000794(struct Actor *object) {
                 &params);
   x = (object->bounce >> 20) + 64;
   y = object->gravity >> 20;
-  Map_CopyCellPictureIndicesRect(x, y + 26, x, y, 1, 1);
+  MapGrid_CopyCellsTo(x, y + 26, x, y, 1, 1);
   return 0;
 }

@@ -90,7 +90,7 @@ s32 Func_02000b24(void) {
   Text_DrawMessage(message + 1, window, 0, 16);
   Text_DrawMessage(message + 3, window, 0, 36);
   Func_02002220();
-  wait(10);
+  System_Wait(10);
 restart:
   mask = 3;
   goto poll;
@@ -108,16 +108,16 @@ scan:
       goto receive;
     }
   }
-  wait(1);
+  System_Wait(1);
 poll:
   if (!(gInput[1] & 2))
     goto scan;
-  Sound_Play(113);
+  Event_PlaySound(113);
   goto close;
 receive:
-  wait(10);
+  System_Wait(10);
   Serial_StartReceive(Ram_MapCellBackup);
-  wait(10);
+  System_Wait(10);
   linkMask = 3;
   idle = 0;
   ok = 1;
@@ -137,9 +137,9 @@ transfer:
     request[2] = 0;
     request[3] = 0;
     Func_02002228();
-    wait(10);
+    System_Wait(10);
     Func_02002220();
-    wait(10);
+    System_Wait(10);
     goto restart;
   }
   idle++;
@@ -150,7 +150,7 @@ transfer:
     goto done;
   }
   if (gSerialReceiveDest != 0) {
-    wait(1);
+    System_Wait(1);
     i++;
     if (i < 600000)
       goto transfer;
@@ -160,16 +160,16 @@ done:
     WindowSprite_PrepareForRedraw(window);
     Text_DrawMessage(MSGNO(MsgFieldDataTransferWasInterrupted), window, 0, 4);
   interrupted:
-    wait(1);
+    System_Wait(1);
     if (!(gInput[1] & 1))
       goto interrupted;
   close:
     Window_Close(window, 2);
     return -1;
   }
-  wait(10);
+  System_Wait(10);
   Func_02002228();
-  wait(10);
+  System_Wait(10);
   Window_Close(window, 2);
   flags = gGameFlagBytes;
   Iwram_CopyWords(flags, Ram_ReceivedFlags, 0x214);
@@ -179,7 +179,7 @@ done:
   Unit_Calculate(2);
   Unit_Calculate(3);
   Iwram_CopyWords(Ram_ReceivedFlags, flags, 0xf40);
-  Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
+  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                 gMainRoutineWork.paletteGlow[1]);
   return 1;
 }

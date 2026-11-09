@@ -17,7 +17,7 @@ void Func_0200385c(struct Actor *object) {
     return;
   }
   *(u8 *)((u8 *)object + 0x5a) = 0;
-  if (GameFlag_Test(0x106))
+  if (Event_GetFlag(0x106))
     angle = -1;
   else
     angle = gData_02004740[(gInput >> 4) & 15];

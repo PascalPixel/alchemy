@@ -53,8 +53,8 @@ void Func_02000158(s32 message, s32 x, s32 y, s32 left, s32 line, s32 frames,
     window->unk0a = 0;
   }
   while (!Message_AllTyped())
-    wait(1);
-  wait(1);
+    System_Wait(1);
+  System_Wait(1);
   Window_Close(window, 2);
   if (!wide) {
     Window_Close(name, 2);
@@ -64,7 +64,7 @@ void Func_02000158(s32 message, s32 x, s32 y, s32 left, s32 line, s32 frames,
     s32 i = frames;
 
     do {
-      wait(1);
+      System_Wait(1);
     } while (--i != 0);
   }
   gData_02000a28++;

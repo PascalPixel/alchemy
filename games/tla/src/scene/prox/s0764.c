@@ -25,19 +25,19 @@ extern u8 MsgProx119[];
 
 void Func_02000764(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct TalkActor *object = ((struct TalkActor *)Actor_GetById(16));
+  struct TalkActor *object = ((struct TalkActor *)Actor_Get(16));
   s16 angle = object->angle;
 
   Func_02004464();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   object->unk63 = 1;
   if (work->unk166 == 0) {
-    Actor_SetAngleToward(16, gMainRoutineWork.currentOwner, 0);
-    Event_SetMessageId((s32)MsgProx113);
+    Actor_FaceActor(16, gMainRoutineWork.currentOwner, 0);
+    FieldEvent_SetMessageId((s32)MsgProx113);
   } else {
-    Event_SetMessageId((s32)MsgProx117);
+    FieldEvent_SetMessageId((s32)MsgProx117);
   }
-  Event_ShowMessageAndWait(16, 0);
+  Event_ShowMessage(16, 0);
   if (work->unk166 == 0)
     object->angle = angle;
   object->unk63 = 0;
@@ -46,19 +46,19 @@ void Func_02000764(void) {
 
 void Func_020007f4(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct TalkActor *object = ((struct TalkActor *)Actor_GetById(17));
+  struct TalkActor *object = ((struct TalkActor *)Actor_Get(17));
   s16 angle = object->angle;
 
   Func_02004464();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   object->unk63 = 1;
   if (work->unk166 == 0) {
-    Actor_SetAngleToward(17, gMainRoutineWork.currentOwner, 0);
-    Event_SetMessageId((s32)MsgProx114);
+    Actor_FaceActor(17, gMainRoutineWork.currentOwner, 0);
+    FieldEvent_SetMessageId((s32)MsgProx114);
   } else {
-    Event_SetMessageId((s32)MsgProx118);
+    FieldEvent_SetMessageId((s32)MsgProx118);
   }
-  Event_ShowMessageAndWait(17, 0);
+  Event_ShowMessage(17, 0);
   if (work->unk166 == 0)
     object->angle = angle;
   object->unk63 = 0;
@@ -67,19 +67,19 @@ void Func_020007f4(void) {
 
 void Func_02000884(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct TalkActor *object = ((struct TalkActor *)Actor_GetById(18));
+  struct TalkActor *object = ((struct TalkActor *)Actor_Get(18));
   s16 angle = object->angle;
 
   Func_02004464();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   object->unk63 = 1;
   if (work->unk166 == 0) {
-    Actor_SetAngleToward(18, gMainRoutineWork.currentOwner, 0);
-    Event_SetMessageId((s32)MsgProx115);
+    Actor_FaceActor(18, gMainRoutineWork.currentOwner, 0);
+    FieldEvent_SetMessageId((s32)MsgProx115);
   } else {
-    Event_SetMessageId((s32)MsgProx119);
+    FieldEvent_SetMessageId((s32)MsgProx119);
   }
-  Event_ShowMessageAndWait(18, 0);
+  Event_ShowMessage(18, 0);
   if (work->unk166 == 0)
     object->angle = angle;
   object->unk63 = 0;

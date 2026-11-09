@@ -31,7 +31,7 @@ test:
     id = *table++;
     if (cell != *table++)
       goto again;
-    watch->object = Actor_GetById(id);
+    watch->object = Actor_Get(id);
     result = *table;
   }
   return result;

@@ -25,11 +25,11 @@ s32 Func_02000a48(void) {
   s32 x, z;
 
   Func_02003aec();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   Func_02003c1c();
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room1) {
-    Map_CopyCellAttributeRect(98, 21, 4, 3, 78, 21);
-    Map_CopyCellAttributeRect(98, 27, 4, 3, 78, 24);
+    MapGrid_CopyCellAttributes(98, 21, 4, 3, 78, 21);
+    MapGrid_CopyCellAttributes(98, 27, 4, 3, 78, 24);
     Func_020006cc(gData_02003d98);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
     if (gMainRoutineWork.entrance <= 3) {
@@ -42,8 +42,8 @@ s32 Func_02000a48(void) {
       MapGrid_CopyCellAttributes(79, 37, 2, 1, 79, 36);
       Func_020006cc(gData_02003de4);
     } else {
-      Map_CopyCellAttributeRect(103, 39, 1, 1, 103, 38);
-      Map_CopyCellAttributeRect(99, 42, 5, 1, 99, 38);
+      MapGrid_CopyCellAttributes(103, 39, 1, 1, 103, 38);
+      MapGrid_CopyCellAttributes(99, 42, 5, 1, 99, 38);
       Func_020006cc(gData_02003de8);
     }
   }
@@ -51,23 +51,23 @@ s32 Func_02000a48(void) {
   z = leader->z >> 20;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room1) {
     if (x == 15 && z == 25)
-      GameFlag_SetBit(0x8d6);
+      Event_SetFlag(0x8d6);
     else if (x == 16 && z == 22)
-      GameFlag_SetBit(0x8d5);
+      Event_SetFlag(0x8d5);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
     if (gMainRoutineWork.entrance <= 3) {
       if (x == 27 && z == 33)
-        GameFlag_SetBit(0x8d7);
+        Event_SetFlag(0x8d7);
     } else if (gMainRoutineWork.entrance <= 8) {
       if (x == 55 && z == 35)
-        GameFlag_SetBit(0x8d8);
+        Event_SetFlag(0x8d8);
     } else if (gMainRoutineWork.entrance <= 12) {
       if (x == 16 && z == 36)
-        GameFlag_SetBit(0x8d9);
+        Event_SetFlag(0x8d9);
     } else if (x == 40 && z == 37) {
-      GameFlag_SetBit(0x8da);
+      Event_SetFlag(0x8da);
     } else if (x == 35 && z == 38) {
-      GameFlag_SetBit(0x8db);
+      Event_SetFlag(0x8db);
     }
   }
   return Func_02003af4();

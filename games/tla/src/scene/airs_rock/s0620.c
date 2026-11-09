@@ -16,22 +16,22 @@ void Func_02000620(void) {
   struct Actor *leader;
   s32 value;
 
-  object = (struct Actor *)((s32)Actor_GetById(11));
+  object = (struct Actor *)((s32)Actor_Get(11));
   value = Func_02000348(3, 70, 67);
   Func_02003bc8();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   if ((object->x >> 20) == 32) {
-    GameFlag_SetBit(0x311);
+    Event_SetFlag(0x311);
     value &= 0xff;
     Func_02000384(4, 70, 67, value);
     Func_02000384(2, 33, 54, value);
   } else {
-    GameFlag_ClearBit(0x311);
+    Event_ClearFlag(0x311);
     value = (value & 0xff) | 0xff00;
     Func_02000384(4, 70, 67, value);
     Func_02000384(2, 33, 54, value);
   }
-  leader = (struct Actor *)((s32)Actor_GetById(gMainRoutineWork.currentOwner));
+  leader = (struct Actor *)((s32)Actor_Get(gMainRoutineWork.currentOwner));
   if ((leader->y >> 19) == 26)
     MapGrid_CopyCellAttributes(70, 67, 1, 1, 33, 54);
   Func_02003bd0();

@@ -49,9 +49,9 @@ void Func_02004620(void) {
     MapGrid_CopyCellsLayered(0, 13, 1, 1, state->originX + 7,
                              state->originZ - 2);
     if (state->statuesReady != 0) {
-      Sound_Play(248);
+      Event_PlaySound(248);
       Func_020056b4();
-      Event_ResolvePendingActions(0);
+      FieldEvent_ResolvePendingActions(0);
       Func_020044b4(2);
       i = 19;
       do {
@@ -61,7 +61,7 @@ void Func_02004620(void) {
         register s32 *offset asm("r2") = &state->statueOffset;
 
         *offset += 0x333;
-        wait(1);
+        System_Wait(1);
         i--;
       } while (i >= 0);
       Func_020044d0(1);

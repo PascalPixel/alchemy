@@ -63,12 +63,12 @@ void Func_020002b4(void) {
     if (step == 0) {
       *(s32 *)Data_02003090 = 1;
       *(s32 *)Data_02003024 = step;
-      Sound_Play(153);
+      Event_PlaySound(153);
     }
     if (step == 14) {
       *(s32 *)Data_02003090 = 0;
       *(s32 *)Data_02003024 = 1;
-      Sound_Play(153);
+      Event_PlaySound(153);
     }
     (*time)++;
   }

@@ -22,22 +22,22 @@ s32 Func_02000190(void) {
   s32 effect = 0x204;
 
   *screen = effect;
-  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
-  Actor_SetSingleChildFlags(Actor_GetById(19), 0);
-  GameFlag_SetBit(0x907);
-  GameFlag_ClearBit(0x9b4);
-  if (GameFlag_Test(0x909))
-    Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
-  Actor_SetSingleChildFlags(Actor_GetById(9), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(10), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(11), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(12), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(13), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(14), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(15), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(16), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(17), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(18), 0);
+  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+  Actor_SetSingleChildFlags(Actor_Get(19), 0);
+  Event_SetFlag(0x907);
+  Event_ClearFlag(0x9b4);
+  if (Event_GetFlag(0x909))
+    Actor_SetPosition(19, 0, 0);
+  Actor_SetSingleChildFlags(Actor_Get(9), 0);
+  Actor_SetSingleChildFlags(Actor_Get(10), 0);
+  Actor_SetSingleChildFlags(Actor_Get(11), 0);
+  Actor_SetSingleChildFlags(Actor_Get(12), 0);
+  Actor_SetSingleChildFlags(Actor_Get(13), 0);
+  Actor_SetSingleChildFlags(Actor_Get(14), 0);
+  Actor_SetSingleChildFlags(Actor_Get(15), 0);
+  Actor_SetSingleChildFlags(Actor_Get(16), 0);
+  Actor_SetSingleChildFlags(Actor_Get(17), 0);
+  Actor_SetSingleChildFlags(Actor_Get(18), 0);
   if (gMainRoutineWork.entrance == 90) {
     gMainRoutineWork.ownerOverride = 1;
     Func_020005a4((s32)&SceneId_Ov688, 1);
@@ -51,9 +51,9 @@ s32 Func_02000190(void) {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = effect;
   }
   /* FAKEMATCH(wrapper): forwarded, so that the flag number is built for each call; as
-   * GameFlag_Test(0x96b), 15 of 153 instructions differ in tla-en. */
+   * Event_GetFlag(0x96b), 15 of 153 instructions differ in tla-en. */
   if (gMainRoutineWork.entrance == 3 && Event_GetFlag(0x96b)) {
-    GameFlag_ClearBit(0x96b);
+    Event_ClearFlag(0x96b);
     Func_020003cc();
   }
   return 0;

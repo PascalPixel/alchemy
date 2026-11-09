@@ -283,7 +283,7 @@ void Func_02001e34(void) {
   if (Event_AskYesNoWithActorAnimation(owner, 0) == 1)
     goto refused;
   Event_ShowMessageAndWait(9, 0);
-  Actor_SetPositionAndReset(9, x >> 16, z >> 16);
+  Actor_WalkToAndWait(9, x >> 16, z >> 16);
 tutorial:
   Func_020011fc();
   Func_02004db0();
@@ -305,7 +305,7 @@ refused:
   // The constant local: with a plain 0 here, the zero that motionFlags = 2
   // leaves is shared by the first visit's stores of 0 and its reloads take
   // other registers (differ 26).
-  Func_080d7788(9, zero, 7);
+  Djinn_JoinParty(9, zero, 7);
   Func_02004dc0();
   Func_02004c28();
   Flag_Clear(0x16e);

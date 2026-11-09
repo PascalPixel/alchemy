@@ -1,25 +1,26 @@
 #include "islets.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 void Func_02002780(void) {
   struct IsletsEventWork *work = Ram_HeapSlots->eventWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct Actor *object;
 
-  object = Actor_GetById(party->currentOwner);
+  object = Actor_Get(party->currentOwner);
   Func_02003e64();
-  Event_ResolvePendingActions(0);
-  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
-  Actor_SetModeById(party->currentOwner, 2);
-  Actor_SetSpeedParameters(party->currentOwner, 0x8000, 0x4000);
-  Actor_SetMoveTarget(object, ((8 - (object->x >> 16) % 16) << 16) + object->x,
+  FieldEvent_ResolvePendingActions(0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
+  Actor_SetAnimation(party->currentOwner, 2);
+  Actor_SetSpeed(party->currentOwner, 0x8000, 0x4000);
+  FieldActor_SetMoveTarget(object, ((8 - (object->x >> 16) % 16) << 16) + object->x,
                       object->y, object->z);
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
   object->angle = FACING_NORTH;
-  Actor_SetMovementTypeById(party->currentOwner, gData_02004028);
-  wait(12);
-  Sound_Play(123);
+  Actor_SetScript(party->currentOwner, gData_02004028);
+  System_Wait(12);
+  Event_PlaySound(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(work->exit);
+  FieldEvent_SetExitRequest(work->exit);
 }

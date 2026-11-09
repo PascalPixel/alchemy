@@ -10,21 +10,21 @@ void Func_02000570(void) {
    * forwarded through ActorPlaceFacing; as direct calls to
    * Actor_SetHorizontalPositionAndAngleWithTerrain, 18 of 72 instructions
    * differ in tla-en. */
-  if (!GameFlag_Test(0x8ab)) {
+  if (!Event_GetFlag(0x8ab)) {
     FIELD_AT(Ram_HeapSlots->eventWork, u16, 0xd4c) = 3;
-    if (!GameFlag_Test(0x911)) {
+    if (!Event_GetFlag(0x911)) {
       Func_020007dc();
     } else {
-      Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
-      Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
+      Actor_SetPosition(9, 0, 0);
+      Actor_SetPosition(10, 0, 0);
     }
-  } else if (GameFlag_Test(0x8ff)) {
+  } else if (Event_GetFlag(0x8ff)) {
     ActorPlaceFacing(9, PIXELS(515), PIXELS(841), FACING_NORTHEAST);
     ActorPlaceFacing(10, PIXELS(472), PIXELS(877), FACING_NORTH);
-    Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
+    Actor_SetPosition(8, 0, 0);
   } else {
     ActorPlaceFacing(9, PIXELS(515), PIXELS(841), FACING_NORTHWEST);
     ActorPlaceFacing(10, PIXELS(472), PIXELS(877), FACING_NORTH);
-    Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
+    Actor_SetPosition(8, 0, 0);
   }
 }

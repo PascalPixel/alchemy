@@ -1,8 +1,8 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
+#include "event_inline.h"
 
 struct Overlay6abEventWork {
   u8 unk000[0x1ac];
@@ -19,15 +19,7 @@ void Func_02001d7c(void);
 void Func_02001df0(s32 a, s32 b, s32 c, s32 d);
 void Func_02003e04(void);
 void Func_020041fc(void);
-void Func_0200423c();
-void Func_02004244();
-void Func_0200432c(s32 actor, s32 a, s32 b);
 void Func_0200443c(s32 a);
-s32 GameFlag_GetByte(s32 flag);
-void GameFlag_SetBit(s32 flag);
-s32 GameFlag_Test(s32 flag);
-void wait(s32 frames);
-struct Actor *Actor_GetById(s32 id);
 extern struct Actor *Data_02004cec;
 extern char SceneId_Ov6abRoom1;
 
@@ -43,13 +35,13 @@ s32 Func_020002f4(void) {
   if (scene == (s32)&SceneId_Ov6abRoom1) {
     Func_0200443c(0);
     if (GameFlag_Test(0xa30)) {
-      /* FAKEMATCH(wrapper): Func_0200423c and Func_02004244 called through
+      /* FAKEMATCH(wrapper): Map_CopyCellAttributeRect and Func_0802b450 called through
        * Call6, here and below; as direct calls, 12 of 255 instructions differ
        * in tla-en. */
-      Call6((void (*)())Func_0200423c, 65, 65, 9, 21, 38, 24);
-      Call6((void (*)())Func_02004244, 65, 65, 9, 21, 38, 24);
-      Call6((void (*)())Func_02004244, 76, 64, 9, 22, 38, 87);
-      Call6((void (*)())Func_02004244, 76, 64, 9, 22, 102, 23);
+      MapGrid_CopyCellAttributes(65, 65, 9, 21, 38, 24);
+      MapGrid_CopyCellsLayered(65, 65, 9, 21, 38, 24);
+      MapGrid_CopyCellsLayered(76, 64, 9, 22, 38, 87);
+      MapGrid_CopyCellsLayered(76, 64, 9, 22, 102, 23);
     }
     if (entrance == 11) {
       struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -78,25 +70,25 @@ s32 Func_020002f4(void) {
     }
     if (entrance == 1 || entrance == 20) {
       if (!GameFlag_Test(0xa30)) {
-        Actor_SetSpritePriority(11, 3);
-        Actor_SetSpritePriority(12, 3);
+        FieldActor_SetSpritePriority(11, 3);
+        FieldActor_SetSpritePriority(12, 3);
         Actor_GetById(12)->scaleX = 0xffff0000;
       }
       if (GameFlag_Test(0xa4b)) {
         Func_02000d88();
-        Func_0200432c(10, 0, 0);
+        Actor_SetPosition(10, 0, 0);
       } else if (GameFlag_Test(0xa4a)) {
         GameFlag_SetBit(0x233);
       } else {
-        Func_0200432c(10, 0, 0);
+        Actor_SetPosition(10, 0, 0);
       }
       if (GameFlag_Test(0xa3b)) {
         if (!GameFlag_Test(0xa30)) {
-          Func_0200432c(11, 0, 0);
-          Func_0200432c(12, 0, 0);
+          Actor_SetPosition(11, 0, 0);
+          Actor_SetPosition(12, 0, 0);
         }
         Func_02000d88();
-        wait(10);
+        System_Wait(10);
         if (!GameFlag_Test(0xa3a)) {
           Func_02000ae4(0);
           if (!GameFlag_Test(0x109)) {
@@ -105,8 +97,8 @@ s32 Func_020002f4(void) {
           }
         }
         if (Actor_GetById(13)->x > 0x1900000) {
-          Call6((void (*)())Func_0200423c, 39, 22, 2, 1, 43, 13);
-          Call6((void (*)())Func_0200423c, 31, 21, 2, 2, 40, 12);
+          MapGrid_CopyCellAttributes(39, 22, 2, 1, 43, 13);
+          MapGrid_CopyCellAttributes(31, 21, 2, 2, 40, 12);
         }
       } else if (entrance == 20) {
         Func_02000714();

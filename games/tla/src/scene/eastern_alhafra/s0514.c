@@ -60,9 +60,9 @@ void Func_02000514(void) {
     if (Event_GetFlag(0x8a4) == 0 || facing == 0xc000) {
       Func_020044c4(unk);
     } else {
-      GameFlag_SetBit(0x8a6);
+      Event_SetFlag(0x8a6);
       Func_02004a94();
-      Event_ResolvePendingActions(0);
+      FieldEvent_ResolvePendingActions(0);
       FieldCamera_MoveTo(PIXELS(336), -1, PIXELS(560), 1);
       Func_020044c4(unk);
       Func_080dbdd4(actor15->x - PIXELS(24), actor15->z, 0, 0);
@@ -71,23 +71,23 @@ void Func_02000514(void) {
       Func_080dbdd4(actor15->x - PIXELS(8), actor15->z, 2, 0);
       Func_080dbdd4(actor15->x + PIXELS(8), actor15->z, 2, 0);
       Func_080dbdd4(actor15->x + PIXELS(24), actor15->z, 2, 0);
-      Actor_SetModeById(15, 3);
-      Actor_OffsetPositionAndResetMotion(15, 0, 16);
-      Event_Wait(20);
+      Actor_SetAnimation(15, 3);
+      Actor_SetDestinationOffset(15, 0, 16);
+      FieldEvent_Wait(20);
       actor15->gravity = 0xccc;
       actor15->motionFlags = 3;
       i = 0;
       if (actor15->y > 0) {
         do {
-          wait(1);
+          System_Wait(1);
           i++;
         } while (i <= 59 && actor15->y > 0);
       }
       Func_02000fa4();
-      Sound_Play(240);
-      Actor_SetModeById(15, 8);
-      Event_Wait(60);
-      Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
+      Event_PlaySound(240);
+      Actor_SetAnimation(15, 8);
+      FieldEvent_Wait(60);
+      FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
       Func_02004a9c();
     }
   }

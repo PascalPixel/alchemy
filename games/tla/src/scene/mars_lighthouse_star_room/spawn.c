@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "call.h"
+#include "event_inline.h"
 
 extern const u8 gData_02004744[];
 
@@ -8,7 +8,6 @@ void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Func_020041cc(struct Actor *object, s32 mode);
 void Func_020041dc(struct Actor *object, const void *script);
-struct Actor *Func_020041e4();
 void Func_020015ec(void);
 
 void Func_02001750(struct Actor *object) {
@@ -22,8 +21,7 @@ void Func_02001750(struct Actor *object) {
 }
 
 void Func_02001780(s32 *position, s32 speed, s32 flag) {
-  struct Actor *object = (struct Actor *)Value4(
-      (s32 (*)())Func_020041e4, 366, position[0], position[1], position[2]);
+  struct Actor *object = FieldActor_Create(366, position[0], position[1], position[2]);
 
   if (object != NULL) {
     object->bounce = 0;

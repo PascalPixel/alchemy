@@ -12,7 +12,7 @@ void Func_02002a08(void);
 void Func_02002a38(void) {
   s32 priority;
 
-  if (GameFlag_Test(0x109) == 0) {
+  if (Event_GetFlag(0x109) == 0) {
     s32 entrance = (u16)gMainRoutineWork.entrance;
 
     if (gMainRoutineWork.entrance == 6)
@@ -24,5 +24,5 @@ void Func_02002a38(void) {
   // The priority in a local is built before the task function's address (passed
   // directly, the address loads first).
   priority = 0x480;
-  Task_Add(Func_02002a08, priority);
+  Task_AddFrame(Func_02002a08, priority);
 }

@@ -5,5 +5,5 @@
 void Func_02001274(struct Actor *object, s32 mode);
 
 void Func_020012f8(void) {
-  Func_02001274(Actor_GetById(Party_GetLeaderActor()), 0);
+  Func_02001274(Actor_Get(FieldParty_GetLeaderActor()), 0);
 }

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "event_inline.h"
 
 typedef struct Actor {
   u8 pad0[8];
@@ -28,7 +29,6 @@ typedef struct State {
   Entry entries[4];
 } State;
 
-s32 GameFlag_Test();
 void Func_02001b1c();
 void Func_02001d08();
 void Func_02001d50();

@@ -12,7 +12,7 @@ void Func_02001684(void) {
     s32 x = offset + 0x1800000;
     s32 z = 0x1900000 - offset;
     s32 y = 0xa00000;
-    struct Actor *object = Import_ActorCreate(0x12d, x, y, z);
+    struct Actor *object = FieldActor_Create(0x12d, x, y, z);
     s32 scale = 0x547a;
 
     if (object != NULL) {
@@ -33,7 +33,7 @@ void Func_020016fc(void) {
     s32 x = offset + 0x1a00000;
     s32 z = 0x1600000 - offset;
     s32 y = 0xa00000;
-    struct Actor *object = Import_ActorCreate(0x12d, x, y, z);
+    struct Actor *object = FieldActor_Create(0x12d, x, y, z);
     s32 scale = 0x547a;
 
     if (object != NULL) {

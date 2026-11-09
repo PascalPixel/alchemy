@@ -6,18 +6,17 @@
 #include "call.h"
 #include "text/msg_ids.h"
 #include "version.h"
+#include "event_inline.h"
 
-void GameFlag_SetBit();
-void GameFlag_ClearBit();
 void Func_02003fec();
 
 void Func_020025a4(void) {
-  GameFlag_SetBit(0x218);
+  Event_SetFlag(0x218);
   return;
 }
 
 void Func_020025b0(void) {
-  GameFlag_ClearBit(0x218);
+  Event_ClearFlag(0x218);
   return;
 }
 

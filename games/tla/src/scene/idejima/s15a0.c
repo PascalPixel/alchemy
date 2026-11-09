@@ -26,7 +26,7 @@ void Func_020015a0(void) {
   s32 i;
 
   for (i = 0; i != 160; i++) {
-    s32 wave = Math_Sine(((u8)gData_02003c10 - i - (layer->y >> 16) + 160) << 9) +
+    s32 wave = Math_Sin(((u8)gData_02003c10 - i - (layer->y >> 16) + 160) << 9) +
                0x10000;
 
     line[i] = (layer->y >> 16) + (wave >> 15);

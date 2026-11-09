@@ -14,7 +14,7 @@ s32 Func_0200140c(void) {
   s32 flag = 0xa30;
 
   party = &gMainRoutineWork;
-  if (GameFlag_Test(flag))
+  if (Event_GetFlag(flag))
     Func_02005548(party->map +
                       ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),
                   0x5000000);

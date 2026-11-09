@@ -20,7 +20,7 @@ void Func_0200257c(void) {
 
   for (i = 0; i != 160; i++) {
     spread = (160 - i) >> 2;
-    wave = Math_Sine((i + (u8)gFrameCount) << 8);
+    wave = Math_Sin((i + (u8)gFrameCount) << 8);
     /* FAKEMATCH(temporary): value holds line[0]'s first value, then
      * wave + y for line[2]; as the plain statements, 41 of 135 instructions
      * differ in tla-en. */

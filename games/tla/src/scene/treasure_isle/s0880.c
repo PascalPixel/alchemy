@@ -29,6 +29,6 @@ void Func_02000880(s32 unused, s32 frame, s32 id) {
   } else if (frame == 45) {
     MapGrid_CopyCellsLayered(9, 100, 3, 4, cells[id].x + 63, cells[id].z - 2);
     MapGrid_CopyCellAttributes(0, 0, 1, 1, cells[id].x, cells[id].z);
-    GameFlag_ClearBit(cells[id].flag);
+    Event_ClearFlag(cells[id].flag);
   }
 }

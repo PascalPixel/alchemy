@@ -102,11 +102,11 @@ void Func_02001738(struct Actor *object) {
     s32 i;
 
     Func_02003c4c(object, 144);
-    parts[0] = ((struct Actor *)Import_ActorCreate(
+    parts[0] = (FieldActor_Create(
         type, object->x + 0x10000, object->y + 0x200000, object->z));
     for (i = 1; i != 4; i++) {
       struct ResourceSprite *first = parts[0]->animation;
-      struct Actor *part = ((struct Actor *)Import_ActorCreate(type, 0, 0, 0));
+      struct Actor *part = (FieldActor_Create(type, 0, 0, 0));
       struct ResourceSprite *sprite;
 
       parts[i] = part;
@@ -165,7 +165,7 @@ void Func_02001738(struct Actor *object) {
       else
         id = Func_020010cc(x, z, gData_02003dee);
     }
-    fifthPart = Actor_GetById(id);
+    fifthPart = Actor_Get(id);
     fifthPart->unk5c[6] = 4;
     fifthPart->watchedObject = object;
     fifthPart->update = Func_020015e4;

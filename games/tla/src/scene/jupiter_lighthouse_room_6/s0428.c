@@ -22,7 +22,7 @@ void Func_02000428(s32 id) {
   struct JupiterLighthouseRoom6Object *object;
   s32 height;
 
-  object = ((struct JupiterLighthouseRoom6Object *)Actor_GetById(id));
+  object = ((struct JupiterLighthouseRoom6Object *)Actor_Get(id));
   object->motionFlags = 4;
   height = object->height;
   WORD_AT(object, 68) = 0;

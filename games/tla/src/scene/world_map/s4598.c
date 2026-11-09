@@ -14,7 +14,7 @@ void Func_02004598(struct Actor *object) {
     Func_02004b38(object);
     return;
   }
-  scale = Math_Sine(step << 10);
+  scale = Math_Sin(step << 10);
   object->scaleX = scale;
   object->scaleY = scale;
 
@@ -34,7 +34,7 @@ void Func_020045e4(struct Actor *object) {
     Func_02004b38(object);
     return;
   }
-  scale = Math_Sine(step << 10);
+  scale = Math_Sin(step << 10);
   object->scaleX = scale;
   object->scaleY = -scale;
 

@@ -8,6 +8,7 @@
 #include "scene_tables.h"
 #include "iwram_call.h"
 #include "field_sprite.h"
+#include "event_inline.h"
 
 extern const struct SceneEntrance gSceneEntrances[];
 extern const u32 gSceneExits[];
@@ -25,49 +26,22 @@ extern char SceneId_Ov678Room9;
 extern char SceneId_Ov678Room10;
 extern char SceneId_Ov678Room11;
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-s32 GameFlag_GetByte(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);
-void wait(s32 frames);
-void Event_Wait(s32 frames);
-struct Actor *Actor_GetById(s32 id);
-void Actor_SetModeById(u32 id, s32 mode);
-void Actor_SetSpritePriority(u32 id, s32 variant);
-void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
-void Actor_SetAngleToward(s32 id, s32 target, s32 flags);
-void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
-void Actor_WaitForMoveById(s32 id);
-void Actor_CommitPositionAndActivate(s32 id, s32 x, s32 z);
-void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Func_02002764(s32 id, s32 a);
 void Func_02002778(s32 a, s32 b);
-void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02002898(void);
 void Func_020028a0(void);
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Func_020028e0(s32 id, s32 a, s32 b);
-void Func_080d47b4(s32 id, s32 a, s32 b);
-void Func_080d489c(s32 id, s32 a);
 void Func_02002928(void);
-void Import_EventSetExitRequest(s32 a);
 void Func_02002938(s32 a, s32 b);
-void Func_080d2b4c(s32 a, s32 b);
 void Func_02002958(s32 a, s32 b, s32 c);
-void Event_ResolvePendingActions(s32 a);
 void Func_02002990(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Func_020029a8(s32 a, s32 b, s32 c);
-void Sound_Play(s32 a);
 s32 Random16Far(void);
-struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Func_02002800(struct Actor *object, const void *data);
-void Map_CopyCellsRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Animation_SetStateFlags(struct Actor *object, s32 flags);
-void Task_RemoveFar(void (*func)(void));
 
 extern s32 gData_02003458;
 extern s32 gData_0200345c;
@@ -131,18 +105,12 @@ extern u8 gData_020023c4[];
 #define DIFF(a, b) ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))
 
 s32 Math_Cosine(s32 angle);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Func_02002400(struct Actor *object);
 extern const u8 gData_02002af4[];
 extern s32 gData_020035f0;
 extern u8 gMapShapeGrid[];
-void Func_0802b450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02002810(void);
-void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
-void Script_WaitForEventTimeout(struct Actor *object);
 void Func_02002828(void);
-s32 Party_GetLeaderActor(void);
-void Task_Add(void (*func)(void), s32 priority);
 void Func_02001eb8(void);
 void Func_02001ff0(s32 x, s32 z);
 void Func_0200237c(void);

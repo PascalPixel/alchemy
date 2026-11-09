@@ -1,6 +1,6 @@
 #include "types.h"
 #include "main_routine_work.h"
-#include "call.h"
+#include "event_inline.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -11,7 +11,6 @@
 s32 Func_0200012c();
 void Func_02000168();
 void Func_02004c80();
-s32 GameFlag_Test();
 s32 Map_GetTerrainHeight();
 void Scene_SetActorSpritePriority();
 
@@ -29,7 +28,7 @@ void Func_020001f8(s32 a0) {
   t3 = Map_GetTerrainHeight(FIELD_AT((34 + v5), u8, 0), FIELD_AT(v5, s32, 8),
                             FIELD_AT(v5, s32, 16));
   v7 = (t3 >> 19);
-  t4 = GameFlag_Test(FIELD_AT(v5, s16, 100));
+  t4 = Event_GetFlag(FIELD_AT(v5, s16, 100));
   if (t4 == 0)
     goto L_02008268;
   v6 = (v6 & -0xff01);

@@ -102,8 +102,8 @@ struct UnitItems {
 
 #define ACTOR_SET_MODE_AND_WAIT(id, mode, frames)                              \
   do {                                                                         \
-    Actor_SetModeById(id, mode);                                               \
-    Event_Wait(frames);                                                        \
+    Actor_SetAnimation(id, mode);                                               \
+    FieldEvent_Wait(frames);                                                        \
   } while (0)
 
 void Func_02000cd0(void) {
@@ -140,7 +140,7 @@ void Func_02000cd0(void) {
   FieldEvent_Wait_(60);
   Func_020059f4_(0x186);
   Func_020057ac_(-1, -1, 0xe666);
-  Map_WaitForShakeToSettle();
+  MapGrid_WaitForShakeToSettle();
   Func_02005914_(0x6666, 0xccc);
   Camera_MoveWithinMapBounds_(0x2000000, 0x600000, 0x1280000, 1);
   Func_02005924();
@@ -169,7 +169,7 @@ void Func_02000cd0(void) {
   ACTOR_SET_MODE_AND_WAIT(28, 4, 33);
   Func_020059f4_(34);
   Func_020058d4_(0x101c, 0, 0);
-  ((void *)Func_080d47b4(7, 0x100, 0));
+  ((void *)Actor_ShowEmote(7, 0x100, 0));
   Func_020058fc_(4, 0x100, 30);
   ACTOR_SET_MODE_AND_WAIT(27, 4, 33);
   Func_020058d4_(27, 0, 0);
@@ -183,7 +183,7 @@ void Func_02000cd0(void) {
   FieldEvent_Wait_(10);
   ACTOR_SET_MODE_AND_WAIT(27, 3, 20);
   Func_020058d4_(27, 0, 0);
-  ((void *)Func_080d47b4(7, 0x102, 30));
+  ((void *)Actor_ShowEmote(7, 0x102, 30));
   Motion_SetVarCbAndRefresh_(28, 2);
   FieldEvent_Wait_(5);
   FieldMessage_ShowAtActor_(0x101c, 0);
@@ -202,7 +202,7 @@ L_02008fc4:
   Func_020058d4_(0x101c, 0, 0);
 L_02008fe0:
   Func_020058fc_(7, 0x100, 0);
-  ((void *)Func_080d47b4(4, 0x100, 30));
+  ((void *)Actor_ShowEmote(4, 0x100, 30));
   Actor_ArmCallback_(7, 0x8000, 0);
   Func_020058ec_(4, 0);
   FieldEvent_Wait_(10);
@@ -239,7 +239,7 @@ L_02008fe0:
   Func_020058d4_(28, 0, 0);
   Actor_WaitForMoveById_(4);
   Actor_GetById_(4)->actionFlags &= 0xfe;
-  ((void *)Func_080d47b4(4, 0x109, 30));
+  ((void *)Actor_ShowEmote(4, 0x109, 30));
   Func_020058ec_(7, 0x8000);
   Func_020058d4_(7, 0, 0);
   Func_020058fc_(27, 0x108, 30);
@@ -250,9 +250,9 @@ L_02008fe0:
   Func_02005904_(7, 0x102);
   Func_02005904_(gMainRoutineWork.currentOwner, 0x102);
   FieldEvent_Wait_(30);
-  ((void *)Func_080d47b4(28, 0x108, 30));
+  ((void *)Actor_ShowEmote(28, 0x108, 30));
   Actor_ArmCallback_(28, 0xb000, 0);
-  FieldMessage_ShowAtActor(28, 0);
+  Event_OpenMessage(28, 0);
   t135 = Event_AskYesNoWithActorAnimation_(4, 0);
   if (t135 != 0)
     goto L_02009236;
@@ -275,11 +275,11 @@ L_02009260:
   Func_020058fc_(27, 0x109, 30);
   Actor_ArmCallback_(27, 0xd000, 0);
   Func_020058d4_(0x201b, 0, 0);
-  ((void *)Func_080d47b4(4, 0x108, 30));
+  ((void *)Actor_ShowEmote(4, 0x108, 30));
   Actor_ArmCallback_(28, 0xd000, 0);
   ACTOR_SET_MODE_AND_WAIT(28, 4, 33);
   Func_020058d4_(28, 0, 0);
-  ((void *)Func_080d47b4(4, 0x101, 30));
+  ((void *)Actor_ShowEmote(4, 0x101, 30));
   Actor_ArmCallback_(27, 0xb000, 0);
   ACTOR_SET_MODE_AND_WAIT(27, 4, 33);
   Func_020058d4_(0x201b, 0, 0);
@@ -296,8 +296,8 @@ L_02009260:
   do {
     gMainRoutineWork.battleRule24b = 2;
   } while (0);
-  Party_SetFields1eeAnd1f0((s32)&SceneId_Ov6a5, 10);
-  Party_SetFields1f2And1f4((s32)&SceneId_Ov6a5, 10);
+  Event_SetAfterBattleDestination((s32)&SceneId_Ov6a5, 10);
+  Event_SetDefeatDestination((s32)&SceneId_Ov6a5, 10);
   GameFlag_SetBit_(0x11b);
   Func_0200593c_(13, 5);
   return;

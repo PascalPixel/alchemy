@@ -56,7 +56,7 @@ void Func_02001f7c(void) {
   u32 i;
 
   Func_02003bc8();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   /* FAKEMATCH(one-pass): BG0CNT's value in a block of its own, built before
    * its address; as a plain block, 2 of 520 instructions differ in tla-en. */
@@ -90,16 +90,16 @@ row:
   if (i != 16)
     goto row;
   Heap_Release(buffer);
-  Sound_Play(246);
-  ((u8 *)Actor_GetById(14))[98] = 9;
-  ((u8 *)Actor_GetById(14))[99] = 1;
-  Actor_GetById(14)->update = Func_0200092c;
+  Event_PlaySound(246);
+  ((u8 *)Actor_Get(14))[98] = 9;
+  ((u8 *)Actor_Get(14))[99] = 1;
+  Actor_Get(14)->update = Func_0200092c;
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
-      spark = ((struct Actor *)Import_ActorCreate(0x2a0, Actor_GetById(14)->x,
-                                  Actor_GetById(14)->y, Actor_GetById(14)->z));
+      spark = (FieldActor_Create(0x2a0, Actor_Get(14)->x,
+                                  Actor_Get(14)->y, Actor_Get(14)->z));
       {
-        s32 priority = ((s8 *)Actor_GetById(14)->animation)[9] & 12;
+        s32 priority = ((s8 *)Actor_Get(14)->animation)[9] & 12;
 
         /* FAKEMATCH(temporary): the sprite held in the row pointer; as
          * spark->animation, 20 of 520 instructions differ in tla-en. */
@@ -117,95 +117,95 @@ row:
       Func_02003b28(spark, 7);
       Func_02003b38(spark, gData_02003d1c);
       Actor_SetSingleChildFlags(spark, 0);
-      Actor_SetPartAttribute(spark, 2);
+      Actor_SetSpriteColor(spark, 2);
       spark->update = Func_020008ac;
     }
-    Event_Wait(1);
+    FieldEvent_Wait(1);
   }
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0x10003, 0);
-  BattleEffect_StartBufferInterpolation(60);
-  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  PaletteFade_Interpolate(60);
+  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02003c30();
-  Camera_SetSpeedParameters(0x10000, 0x2000);
-  Camera_MoveWithinMapBounds(PIXELS(536), -1, PIXELS(216), 1);
+  FieldCamera_SetSpeed(0x10000, 0x2000);
+  FieldCamera_MoveTo(PIXELS(536), -1, PIXELS(216), 1);
   Func_02003c30();
-  Actor_GetById(14)->update = 0;
-  Actor_SetPartAttribute(Actor_GetById(14), 6);
+  Actor_Get(14)->update = 0;
+  Actor_SetSpriteColor(Actor_Get(14), 6);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   gBgScroll[0].x = 0xff88;
   gBgScroll[0].y = 0x10;
-  wait(30);
-  Sound_Play(138);
+  System_Wait(30);
+  Event_PlaySound(138);
   PaletteFade_ApplySource(0x10003, 0);
   PaletteFade_ApplyTarget(0x7fff, 0);
-  BattleEffect_StartBufferInterpolation(1);
-  Actor_GetById(gMainRoutineWork.currentOwner)->angle = FACING_SOUTH;
-  wait(1);
-  BattleEffect_ApplyColorToSourceBuffer(0x7fff, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
-  BattleEffect_StartBufferInterpolation(8);
+  PaletteFade_Interpolate(1);
+  Actor_Get(gMainRoutineWork.currentOwner)->angle = FACING_SOUTH;
+  System_Wait(1);
+  PaletteFade_ApplySource(0x7fff, 0);
+  PaletteFade_ApplyTarget(0x10003, 0);
+  PaletteFade_Interpolate(8);
   REG_DISPCNT |= DISPCNT_BG0_ON;
-  Map_CopyCellPictureIndicesRect(52, 12, 29, 9, 9, 9);
-  Map_CopyCellPictureIndicesRect(52, 76, 29, 73, 9, 9);
+  MapGrid_CopyCellsTo(52, 12, 29, 9, 9, 9);
+  MapGrid_CopyCellsTo(52, 76, 29, 73, 9, 9);
   Func_02001dc4(0x2280000, 0xe40000);
   i = 0;
 fade1:
   REG_BLDALPHA = BLEND_ALPHA(16 - (i >> 1), 16);
-  wait(1);
+  System_Wait(1);
   i++;
   if (i != 32)
     goto fade1;
   gBgScroll[0].x = 0xffac;
   gBgScroll[0].y = 0;
-  wait(1);
-  Sound_Play(138);
+  System_Wait(1);
+  Event_PlaySound(138);
   PaletteFade_ApplySource(0x10003, 0);
   PaletteFade_ApplyTarget(0x7fff, 0);
-  BattleEffect_StartBufferInterpolation(1);
-  wait(1);
-  BattleEffect_ApplyColorToSourceBuffer(0x7fff, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
-  BattleEffect_StartBufferInterpolation(8);
+  PaletteFade_Interpolate(1);
+  System_Wait(1);
+  PaletteFade_ApplySource(0x7fff, 0);
+  PaletteFade_ApplyTarget(0x10003, 0);
+  PaletteFade_Interpolate(8);
   REG_DISPCNT |= DISPCNT_BG0_ON;
-  Map_CopyCellPictureIndicesRect(52, 22, 29, 9, 9, 9);
-  Map_CopyCellPictureIndicesRect(52, 86, 29, 73, 9, 9);
+  MapGrid_CopyCellsTo(52, 22, 29, 9, 9, 9);
+  MapGrid_CopyCellsTo(52, 86, 29, 73, 9, 9);
   Func_02001dc4(0x2080000, 0xf20000);
   i = 0;
 fade2:
   REG_BLDALPHA = BLEND_ALPHA(16 - (i >> 1), 16);
-  wait(1);
+  System_Wait(1);
   i++;
   if (i != 32)
     goto fade2;
-  Sound_Play(145);
+  Event_PlaySound(145);
   PaletteFade_ApplySource(0x10003, 0);
   PaletteFade_ApplyTarget(0x7fff, 0);
-  BattleEffect_StartBufferInterpolation(1);
+  PaletteFade_Interpolate(1);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
-  Event_Wait(20);
+  FieldEvent_Wait(20);
   Func_02001dc4(0x2000000, 0xc60000);
   Func_02001dc4(0x2320000, 0xf20000);
   Func_02001dc4(0x2090000, 0xdf0000);
-  Map_CopyCellPictureIndicesRect(62, 2, 29, 9, 9, 9);
-  Map_CopyCellAttributeRect(62, 2, 9, 9, 29, 9);
-  Map_CopyCellPictureIndicesRect(62, 66, 29, 73, 9, 9);
-  BattleEffect_ApplyColorToSourceBuffer(0x7fff, 0);
+  MapGrid_CopyCellsTo(62, 2, 29, 9, 9, 9);
+  MapGrid_CopyCellAttributes(62, 2, 9, 9, 29, 9);
+  MapGrid_CopyCellsTo(62, 66, 29, 73, 9, 9);
+  PaletteFade_ApplySource(0x7fff, 0);
   PaletteFade_ApplyTarget(0x10003, 0);
-  BattleEffect_StartBufferInterpolation(60);
-  wait(60);
-  BattleEffect_ApplyColorToSourceBuffer(0x10003, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(60);
-  wait(70);
+  PaletteFade_Interpolate(60);
+  System_Wait(60);
+  PaletteFade_ApplySource(0x10003, 0);
+  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_Interpolate(60);
+  System_Wait(70);
   Func_02003b00();
   Func_02003af8();
-  Func_0803f9c0(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
+  WindowColor_Apply(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
   REG_BLDCNT = 0;
   REG_DISPCNT |= DISPCNT_BG0_ON;
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;
-  GameFlag_SetBit(0x87b);
+  Event_SetFlag(0x87b);
   Func_02003bd0();
 }

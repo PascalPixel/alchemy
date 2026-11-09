@@ -9,18 +9,19 @@
 #include "system.h"
 #include "types.h"
 #include "field_event.h"
+#include "event_inline.h"
 
-#define Actor_SetPartAttribute ((void (*)(void *, s32))Actor_SetPartAttribute)
+#define Actor_SetSpriteColor ((void (*)(void *, s32))Actor_SetPartAttribute)
 
 extern u32 gFrameCount;
 
 s32 OverlayObject_UpdateEveryFourFrames(void *obj) {
   if ((gFrameCount & 3) == 0)
-    Actor_SetPartAttribute(obj, 7);
+    Actor_SetSpriteColor(obj, 7);
   else
-    Actor_SetPartAttribute(obj, 0);
+    Actor_SetSpriteColor(obj, 0);
 
   if ((gFrameCount & 7) == 0)
-    Import_SoundPlay(138);
+    Event_PlaySound(138);
   return 0;
 }

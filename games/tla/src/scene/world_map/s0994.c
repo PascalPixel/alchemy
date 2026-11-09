@@ -39,71 +39,71 @@ void Func_02000994(void) {
   s32 west = FACING_WEST;
 
   if (Flag_IsSet(0xa21) && !Flag_IsSet(0x9d0)) {
-    object = Actor_GetById(gMainRoutineWork.currentOwner);
+    object = Actor_Get(gMainRoutineWork.currentOwner);
     x = object->x;
     z = object->z;
     x >>= 20;
     z >>= 20;
     Func_02004c20();
-    Event_ResolvePendingActions(0);
+    FieldEvent_ResolvePendingActions(0);
     if (Flag_IsSet(0x9b3)) {
-      Func_080d46a4(0x16666, 6);
+      FieldEffect_ScheduleRatioTransition(0x16666, 6);
       Func_02004c98(5, gMainRoutineWork.currentOwner);
-      wait(1);
-      Actor_SetPositionAndReset(5, (x << 4) + 24, (z << 4) - 12);
-      Actor_ArmCallback(5, southwest, 0);
-      Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner,
+      System_Wait(1);
+      Actor_WalkToAndWait(5, (x << 4) + 24, (z << 4) - 12);
+      Actor_FaceDirection(5, southwest, 0);
+      Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner,
                                   FACING_NORTHEAST);
       Func_02004da8();
-      Event_SetMessageId((s32)MsgWeShouldnT);
-      Event_ShowMessageAndWait(5, 0);
+      FieldEvent_SetMessageId((s32)MsgWeShouldnT);
+      Event_ShowMessage(5, 0);
       Func_02004db0();
       Actor_JoinLeader(5);
-      wait(1);
-      Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 7312, 8192);
-      Func_080d46a4(0x10000, 6);
+      System_Wait(1);
+      Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 7312, 8192);
+      FieldEffect_ScheduleRatioTransition(0x10000, 6);
     } else {
       s32 besideZ;
 
-      Func_080d46a4(0x16666, 6);
+      FieldEffect_ScheduleRatioTransition(0x16666, 6);
       Func_02004c98(5, gMainRoutineWork.currentOwner);
-      wait(1);
+      System_Wait(1);
       x <<= 4;
       besideZ = (z << 4) - 12;
-      Actor_SetPositionAndReset(5, x + 24, besideZ);
-      Actor_ArmCallback(5, southwest, 0);
-      Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner,
+      Actor_WalkToAndWait(5, x + 24, besideZ);
+      Actor_FaceDirection(5, southwest, 0);
+      Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner,
                                   FACING_NORTHEAST);
       Func_02004da8();
-      Event_SetMessageId((s32)MsgYouReNot);
-      Event_ShowMessageAndWait(5, 0);
+      FieldEvent_SetMessageId((s32)MsgYouReNot);
+      Event_ShowMessage(5, 0);
       Func_02004db0();
-      Actor_ArmCallback(5, west, 0);
-      Func_080d489c(gMainRoutineWork.currentOwner, 258);
-      Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, x + 12, besideZ);
-      Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, 0);
-      Actor_SetModeById(5, 4);
+      Actor_FaceDirection(5, west, 0);
+      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 258);
+      Actor_WalkToAndWait(gMainRoutineWork.currentOwner, x + 12, besideZ);
+      Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0);
+      Actor_SetAnimation(5, 4);
       Func_02004da8();
-      Event_ShowMessageAndWait(5, 0);
-      Func_080d47b4(5, 265, 0);
-      Event_ShowMessageAndWait(5, 0);
-      Actor_SetModeById(5, 3);
-      Event_ShowMessageAndWait(5, 0);
+      Event_ShowMessage(5, 0);
+      Actor_ShowEmote(5, 265, 0);
+      Event_ShowMessage(5, 0);
+      Actor_SetAnimation(5, 3);
+      Event_ShowMessage(5, 0);
       Func_02004db0();
       Actor_JoinLeader(5);
-      wait(1);
-      Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 7312, 8192);
+      System_Wait(1);
+      Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 7312, 8192);
       Flag_Set(0x9b3);
-      Func_080d46a4(0x10000, 6);
+      FieldEffect_ScheduleRatioTransition(0x10000, 6);
     }
-    wait(8);
+    System_Wait(8);
     Func_02004c28();
   } else {
     struct EventDestination *work = Ram_HeapSlots->eventWork;
 
     Func_02004c20();
-    Event_ResolvePendingActions(0);
-    Sound_Play(123);
-    Import_EventSetExitRequest(work->scene);
+    FieldEvent_ResolvePendingActions(0);
+    Event_PlaySound(123);
+    FieldEvent_SetExitRequest(work->scene);
   }
 }

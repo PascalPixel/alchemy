@@ -31,7 +31,7 @@ void Func_02002db0(struct JupiterLighthouseAerieWork *work,
                    struct JupiterLighthouseAerieEntry *entry);
 
 s32 Func_020030e0(void) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   struct JupiterLighthouseAerieWork *work = (struct JupiterLighthouseAerieWork *)Data_02004458;
@@ -40,9 +40,9 @@ s32 Func_020030e0(void) {
 
   for (i = 0; i < work->count; i++, entry++) {
     if (entry->x == x && entry->z == z) {
-      if (GameFlag_Test(entry->flag) == 0) {
+      if (Event_GetFlag(entry->flag) == 0) {
         Func_02002d40(work, entry);
-        GameFlag_SetBit(entry->flag);
+        Event_SetFlag(entry->flag);
         work->current = i;
         break;
       }

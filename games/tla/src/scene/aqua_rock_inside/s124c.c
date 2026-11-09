@@ -1,6 +1,5 @@
 #include "local.h"
 
-void Map_SetScreenShake(s32 a, s32 b, s32 c);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -13,7 +12,7 @@ void Func_0200124c(void) {
   s32 i;
 
   Func_02003d7c();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   layer[3] -= 0x200000;
   Func_02003cdc();
   Func_02003d44_(0x10000, 0x10000, 0x10000);
@@ -26,21 +25,21 @@ shake:
     s32 column = 77;
     s32 row = 8;
 
-    Func_0802b450(70, 8, 7, 6, column, row);
-    wait(1);
-    Func_0802b450(50, 8, 7, 6, column, row);
-    wait(1);
+    MapGrid_CopyCellsLayered(70, 8, 7, 6, column, row);
+    System_Wait(1);
+    MapGrid_CopyCellsLayered(50, 8, 7, 6, column, row);
+    System_Wait(1);
   }
   i--;
   if (i >= 0)
     goto shake;
-  wait(10);
+  System_Wait(10);
   for (i = 127; i >= 0; i--) {
     layer[3] += 0x4000;
-    wait(1);
+    System_Wait(1);
   }
   Func_02003d44_(-1, -1, 0xe666);
   Func_02003d84();
   Func_02003d1c_(38, 9, 7, 6, 13, 9);
-  GameFlag_SetBit(0x349);
+  Event_SetFlag(0x349);
 }

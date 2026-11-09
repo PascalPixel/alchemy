@@ -27,7 +27,7 @@ top:
     if (id == entry) {
       /* FAKEMATCH(pin): the object in r6, as the native keeps it; as a plain
        * local, 18 of 61 instructions differ in tla-en. */
-      register struct Actor *object asm("r6") = Actor_GetById(id);
+      register struct Actor *object asm("r6") = Actor_Get(id);
       s32 a;
       s32 flag;
 
@@ -37,7 +37,7 @@ top:
       if (count < 8)
         object->scaleY -= 0x1f00;
       if (mode == 1) {
-        GameFlag_SetBit(flag);
+        Event_SetFlag(flag);
         Func_02001acc(id, a, flag, object->terrainId);
         object->scaleY = 0x10000;
       }

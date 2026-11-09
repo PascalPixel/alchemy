@@ -1,15 +1,11 @@
 #include "../../../../games/tla/src/scene/magma_rock_inside/local.h"
 #include "io_reg.h"
-#include "call.h"
 
 struct FieldActor;
 
-void Func_02004f30(s32 cue);
 void Func_02004d40(void);
 void Func_02004d48(void);
-void Func_02004d10(s32 a, s32 b, s32 c);
 void Func_02004e20(void);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 struct FieldActor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
 void Func_02004cb0(struct FieldActor *actor);
 s32 Func_02000694(u32 layer, s32 x, s32 y, s32 value);
@@ -20,26 +16,26 @@ void Func_020028ac(void) {
   struct Actor *other;
   s32 i;
 
-  object = Actor_GetById(((s8 *)Ram_HeapSlots->eventWork)[0xd30]);
-  Actor_SetPartAttribute(object, 0);
-  Func_02004f30(136);
+  object = Actor_Get(((s8 *)Ram_HeapSlots->eventWork)[0xd30]);
+  Actor_SetSpriteColor(object, 0);
+  Event_PlaySound(136);
   i = 0;
   do {
     object->scaleY = object->scaleX += 0x1000;
-    wait(5);
+    System_Wait(5);
     i++;
   } while (i != 16);
-  GameFlag_SetBit(0x305);
-  other = Actor_GetById(9);
+  Event_SetFlag(0x305);
+  other = Actor_Get(9);
   Func_02004d40();
-  Func_02004e90(0);
-  Call3((void (*)())Func_02004d10, 0x20000, 0x10000, 0x10000);
-  Func_02004f30(141);
+  FieldEvent_ResolvePendingActions(0);
+  MapGrid_SetShake(0x20000, 0x10000, 0x10000);
+  Event_PlaySound(141);
   FieldEvent_Wait(30);
-  Camera_MoveWithinMapBounds(0x780000, -1, 0x1580000, 1);
+  FieldCamera_MoveTo(0x780000, -1, 0x1580000, 1);
   Func_02004e20();
   FieldEvent_Wait(30);
-  Func_02004f30(0x22d);
+  Event_PlaySound(0x22d);
   {
     register u16 alpha __asm__("r3") =
         0x1000; /* FAKEMATCH: the blend value pinned to r3, as the
@@ -63,7 +59,7 @@ void Func_020028ac(void) {
     FieldEvent_Wait(5);
     i++;
   } while (i != 32);
-  Func_02004f30(0x22a);
+  Event_PlaySound(0x22a);
   Func_02004c98(other, 4);
   Func_02004cb0(actor);
   FieldEvent_Wait(1);

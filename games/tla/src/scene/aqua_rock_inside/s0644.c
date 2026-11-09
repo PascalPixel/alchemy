@@ -4,7 +4,7 @@
 void Func_0200061c(struct Actor *object);
 
 void Func_02000644(s32 unused, s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
   s32 x;
 
   if (id == 9) {
@@ -12,16 +12,16 @@ void Func_02000644(s32 unused, s32 id) {
     if (x == 39) {
 #if !TLA_PATCH_1
       object->motionFlags = 3;
-      wait(15);
+      System_Wait(15);
       object->motionFlags = 0;
-      GameFlag_SetBit(0x95c);
-      Map_CopyCellAttributeRect(41, 9, 1, 1, x, id);
+      Event_SetFlag(0x95c);
+      MapGrid_CopyCellAttributes(41, 9, 1, 1, x, id);
 #else
       Func_02003d7c();
-      Event_ResolvePendingActions(0);
+      FieldEvent_ResolvePendingActions(0);
       Func_0200061c(object);
-      GameFlag_SetBit(0x95c);
-      Map_CopyCellAttributeRect(41, 9, 1, 1, x, id);
+      Event_SetFlag(0x95c);
+      MapGrid_CopyCellAttributes(41, 9, 1, 1, x, id);
       Func_02003d84();
 #endif
     }

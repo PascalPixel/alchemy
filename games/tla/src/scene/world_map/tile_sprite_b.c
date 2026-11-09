@@ -54,13 +54,13 @@ s32 Func_020003a8(struct Actor *object) {
 s32 Func_020003b4(struct Actor *object) {
   s32 x, z;
 
-  if (!GameFlag_Test(0x200))
+  if (!Event_GetFlag(0x200))
     return 1;
   Actor_SetSingleChildFlags(object, 0);
   x = object->x;
   object->acceleration = 0x1000;
   object->speedLimit = 0x1000;
   z = object->z;
-  Actor_SetMoveTarget(object, x - 0x1e0000, object->y, z + 0x80000);
+  FieldActor_SetMoveTarget(object, x - 0x1e0000, object->y, z + 0x80000);
   return 0;
 }

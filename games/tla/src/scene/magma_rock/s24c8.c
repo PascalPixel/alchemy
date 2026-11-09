@@ -8,7 +8,7 @@
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 
 void Func_020024c8(void) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   /* FAKEMATCH: one zero for the velocity store and, through a 64-bit copy, the
    * call's argument clears r1 after the owner's load (one reordered pair;
    * alchemy permute). */
@@ -17,7 +17,7 @@ void Func_020024c8(void) {
   if (Flag_IsSet(0x109)) {
     s32 height;
 
-    wait(1);
+    System_Wait(1);
     height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
     object->velocityY = zero;
     object->terrainHeight = height;
@@ -26,7 +26,7 @@ void Func_020024c8(void) {
     {
       s64 flags = zero;
 
-      Camera_FollowActor(gMainRoutineWork.currentOwner, flags);
+      FieldCamera_FollowActor(gMainRoutineWork.currentOwner, flags);
     }
   }
 }

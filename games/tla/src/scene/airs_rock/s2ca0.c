@@ -173,7 +173,7 @@ s32 Func_02002ca0(void) {
     case 1:
     case 2:
     case 3:
-      Task_Add(Func_02002b88, 0x480);
+      Task_AddFrame(Func_02002b88, 0x480);
       Actor_GetById(8)->motionFlags = 0;
       Actor_GetById(8)->y = 0xfff80000;
       Actor_SetSpritePriority(8, 2);
@@ -208,7 +208,7 @@ s32 Func_02002ca0(void) {
       beam[4] = 0x4000;
       beam[5] = 0x4000;
       Func_02003b50();
-      wait(1);
+      System_Wait(1);
       break;
     case 6:
       if (!GameFlag_Test(265))
@@ -248,7 +248,7 @@ s32 Func_02002ca0(void) {
         dma = (volatile struct DmaRegisters *)0x040000b0;
         while ((s32)dma->control < 0)
           ;
-        Task_Add(Func_020024b0, 0xc80);
+        Task_AddFrame(Func_020024b0, 0xc80);
         beam = (s32 *)Ram_HeapSlots->mapWork;
         beam = (s32 *)((u8 *)beam + 0x178);
         beam[6] = 0x4000;
@@ -294,13 +294,13 @@ s32 Func_02002ca0(void) {
       }
       Actor_SetSpritePriority(14, 1);
       Func_02003b50();
-      wait(1);
+      System_Wait(1);
       if (GameFlag_Test(265)) {
         leader = LEADER();
         leader->terrainId = 0;
         leader->y = leader->terrainHeight =
             Map_GetTerrainHeight(0, leader->x, leader->z - leader->y);
-        Camera_FollowActor(gMainRoutineWork.currentOwner, 0);
+        FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
       }
       break;
     case 99:

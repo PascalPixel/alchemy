@@ -13,8 +13,6 @@
 
 #define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
 
-s32 FieldMessage_ShowAtActor();
-s32 Func_080d47b4();
 
 static inline void Prox_MessageOpen(s32 actor, s32 flags) {
   /* FAKEMATCH: scene calls reach the main image through one inline layer; through

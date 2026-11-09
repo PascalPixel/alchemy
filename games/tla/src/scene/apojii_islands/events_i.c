@@ -1,7 +1,7 @@
 #include "local.h"
 
 void Func_02001308(s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
 
   if (object != 0) {
     u8 *meta = ResourceMetadata_Register(object->animation, 0x17d);
@@ -14,17 +14,17 @@ void Func_02001308(s32 id) {
 }
 
 void Func_02001338(s32 entrance) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 i;
 
   Func_02001cc4();
-  Event_ResolvePendingActions(0);
-  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
+  FieldEvent_ResolvePendingActions(0);
+  FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   leader->motionFlags = 0;
   leader->priorityFlags |= 0x20;
-  Sound_Play(215);
+  Event_PlaySound(215);
   Func_02001c6c(leader, 18);
-  Sound_Play(612);
+  Event_PlaySound(612);
   for (i = 0; i < 60; i++) {
     s32 angle;
 
@@ -34,11 +34,11 @@ void Func_02001338(s32 entrance) {
     angle = leader->angle;
     leader->angle = angle + 0x1000;
     if ((i & 7) == 0)
-      Func_020010d8(Actor_GetById(15));
-    wait(1);
+      Func_020010d8(Actor_Get(15));
+    System_Wait(1);
   }
   Func_02001ccc();
-  Import_EventSetExitRequest(entrance);
+  FieldEvent_SetExitRequest(entrance);
 }
 
 /// Every other frame, emits particle 7 (5 on every other such frame) from the

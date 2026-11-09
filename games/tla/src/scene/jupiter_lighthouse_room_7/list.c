@@ -17,7 +17,7 @@ void Func_02001a48(const u8 *data, s32 a, s32 b);
 void Func_02002bec(void);
 
 void Func_02001eb8(s32 id, s32 value) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *object = Actor_Get(id);
 
   if (object != NULL) {
     object->action = value;

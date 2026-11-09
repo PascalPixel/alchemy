@@ -5,6 +5,7 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 extern char SceneId_Ov66aRoom1;
 extern char SceneId_Ov66aRoom2;
@@ -49,26 +50,13 @@ struct AlhafranCaveSwitch {
   s16 flag;
 };
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void Event_Wait(s32 frames);
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Actor_ApplyRandomChildValues(void);
-void FieldMessage_ShowAtActor(s32 id, s32 flags);
-s32 Event_AskYesNoWithActorAnimation(s32 a, s32 b);
 void Func_020013f0(struct Actor *object, s32 mode);
-void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_0802b450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02001420(s32 x, s32 z, s32 a, s32 b);
-void Event_SetMessageId(s32 message);
-void Event_ShowMessageAndWait(s32 id, s32 flags);
 void Func_02001580(const void *data);
 s32 Func_02001588(void);
-s32 Party_GetLeaderActor(void);
-s32 Func_080dbdd4(s32 x, s32 z, s32 a, s32 b);
 void Func_020015d8(void);
 void Func_020015f0(const void *data, s32 x, s32 y, s32 z);
 

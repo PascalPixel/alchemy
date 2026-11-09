@@ -23,7 +23,7 @@ void Func_02000538(void) {
    * Value, this file's own); as direct calls, 8 of 216 instructions differ in
    * tla-en. */
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *linked = actor->watchedObject;
   struct Actor *shadow;
   u8 *p;
@@ -31,7 +31,7 @@ void Func_02000538(void) {
   s32 i;
 
   Func_02001be8();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   i = 0;
   work->unkD46 = i;
 
@@ -47,7 +47,7 @@ void Func_02000538(void) {
     actor->angle = (u8)gFrameCount << 12;
     p = &actor->priorityFlags;
     *p ^= 2 << (gFrameCount & 1);
-    wait(1);
+    System_Wait(1);
   }
   work->unkD44 = 1;
   work->unkD46 = 1;
@@ -59,34 +59,34 @@ void Func_02000538(void) {
   actor->motionFlags = 3;
   Actor_SetSingleChildFlags(actor, 1);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  shadow = Func_080d4568();
+  shadow = FieldCamera_GetActor();
   shadow->speedLimit = 0x80000;
   shadow->acceleration = 0x10000;
   shadow->motionFlags = 0;
-  Actor_SetMoveTarget(shadow, actor->x,
+  FieldActor_SetMoveTarget(shadow, actor->x,
                       Map_GetTerrainHeight(0, actor->x, actor->z), actor->z);
   i = 0;
   if (actor->y > actor->terrainHeight + 0x100000) {
     do {
-      wait(1);
+      System_Wait(1);
       i++;
       if (i > 59)
         break;
     } while (actor->y > actor->terrainHeight + 0x100000);
   }
-  Sound_Play(127);
+  Event_PlaySound(127);
   i = 0;
   if (actor->velocityY != 0) {
     do {
-      wait(1);
+      System_Wait(1);
       i++;
       if (i > 59)
         break;
     } while (actor->velocityY != 0);
   }
-  Script_WaitForEventTimeout(shadow);
-  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
-  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  Actor_WaitForMove(shadow);
+  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
+  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unkD46 = 1;
   work->unk154 = 0;
   Func_02001bf0();

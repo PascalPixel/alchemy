@@ -7,20 +7,12 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "call.h"
+#include "event_inline.h"
 
 struct Trigger;
 
-struct Actor *Actor_GetById(s32 id);
-void GameFlag_ClearBit(s32 flag);
 s32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
-void FieldEvent_Wait(s32 frames);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void Actor_Stop(s32 id);
-void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
-void Actor_SetAngleToward(s32 id, s32 target, s32 flags);
-void Task_RemoveFar(void (*func)(void));
 void Func_02000038(struct Actor *object);
 void Func_02004d24(s32 id);
 void Func_02004d50(s32 id);
@@ -29,11 +21,6 @@ void Func_02005010(void);
 void Func_020050b0(void);
 void Func_0200560c(void);
 void Func_02005614(void);
-void Func_020056dc(const u8 *message);
-void Func_020056f4(s32 id, s32 flags);
-void Func_02005704(s32 id, s32 angle);
-void Func_02005744(s32 a);
-void Func_02005784(s32 a);
 void Func_020057cc(void);
 
 extern const u8 MsgUhhhhnnnICan[];
@@ -61,15 +48,12 @@ struct MarsLighthouseAerieParty {
   s16 held;
 };
 
-s32 Task_Add(void (*func)(void), s32 priority);
 s32 Func_0200508c(u16 *list);
-void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void MarsLighthouseAerie_ObjTurn(s32 id, s32 angle) {
-  Func_02005704(id, angle);
+  Actor_ArmCallbackAndRefresh(id, angle);
 }
 
 #endif

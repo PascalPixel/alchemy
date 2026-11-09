@@ -37,9 +37,9 @@ const u8 *Func_02000600(void) {
 }
 
 void Func_02000698(void) {
-  Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 2;
+  Actor_Get(gMainRoutineWork.currentOwner)->terrainId = 2;
 }
 
 void Func_020006b4(void) {
-  Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 0;
+  Actor_Get(gMainRoutineWork.currentOwner)->terrainId = 0;
 }

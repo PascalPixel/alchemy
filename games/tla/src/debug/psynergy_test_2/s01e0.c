@@ -59,12 +59,12 @@ void Func_020001e0(s32 x, s32 y, s32 z, s32 count) {
     spark->position[0] = x;
     spark->position[1] = y;
     spark->position[2] = z;
-    Vector_AddPolarOffsetFar((Random16Far() << 3) + 0x80000, angle,
+    FieldVector_AddPolarOffset((Random16Far() << 3) + 0x80000, angle,
                              spark->position);
     spark->velocity[0] = 0;
     spark->velocity[1] = 0x50000;
     spark->velocity[2] = 0;
-    Vector_AddPolarOffsetFar((Random16Far() << 1) + 0x20000, angle,
+    FieldVector_AddPolarOffset((Random16Far() << 1) + 0x20000, angle,
                              spark->velocity);
     work->next++;
     work->next &= 63;

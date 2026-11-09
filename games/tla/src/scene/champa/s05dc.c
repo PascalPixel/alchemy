@@ -7,20 +7,19 @@
        ->v)
 
 #include "call.h"
+#include "event_inline.h"
 s32 Func_02002a44();
-s32 Event_ResolvePendingActions();
 s32 Func_02002a5c();
-s32 GameFlag_ClearBit();
 s32 Func_02002a4c();
 
 void Func_020005dc(s32 a0) {
   s32 t2;
 
   Func_02002a44();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   t2 = Value3(Func_02002a5c, a0, 0x19f, -1);
   if (t2 == 0) {
-    GameFlag_ClearBit(0xa74);
+    Event_ClearFlag(0xa74);
   }
   Func_02002a4c();
 }

@@ -14,9 +14,9 @@ void Func_02000e04(s32 id);
 s32 Func_02000bf0(void) {
   Scene_SetArrivalFlags(0);
   Func_02000d80(0);
-  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 0x40;
+  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x40;
   if (Flag_IsSet(0xa00))
-    Func_080dbdd4(0xd00000, 0x2a00000, 2, 236);
+    MapGrid_SetCellBehavior(0xd00000, 0x2a00000, 2, 236);
   if (Flag_IsSet(0xa00)) {
     Func_02000e04(10);
     Func_02000e04(12);
@@ -26,7 +26,7 @@ s32 Func_02000bf0(void) {
     Func_02000e04(16);
   }
   if (Flag_IsSet(0xa09)) {
-    Actor_SetHorizontalPositionWithTerrain(11, PIXELS(216), PIXELS(552));
+    Actor_SetPosition(11, PIXELS(216), PIXELS(552));
     Func_02000e04(11);
   }
   return 0;

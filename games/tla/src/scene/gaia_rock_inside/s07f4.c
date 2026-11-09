@@ -18,14 +18,14 @@ struct DustSprite {
 };
 
 s32 Func_020007f4(void) {
-  struct Actor *source = Actor_GetById(9);
+  struct Actor *source = Actor_Get(9);
   s32 i;
 
-  Sound_Play(202);
+  Event_PlaySound(202);
   i = 3;
   do {
     {
-      struct Actor *dust = ((struct Actor *)Import_ActorCreate(
+      struct Actor *dust = (FieldActor_Create(
           0x11d, source->x, source->y, source->z));
 
       if (dust != 0) {
@@ -36,7 +36,7 @@ s32 Func_020007f4(void) {
         Func_02004dac(dust, gData_020050f4);
         ((struct DustSprite *)dust->animation)->layer = 1;
         dust->bounce = Math_Cosine(((Random16Far() << 3) >> 16) << 14) >> 1;
-        dust->unk4c = Math_Sine(((Random16Far() << 3) >> 16) << 14) >> 1;
+        dust->unk4c = Math_Sin(((Random16Far() << 3) >> 16) << 14) >> 1;
         dust->gravity = 0;
         dust->action = ((Random16Far() << 9) >> 16) - 0x100;
         dust->speedLimit = 0;

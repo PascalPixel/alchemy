@@ -2,10 +2,10 @@
 
 void Func_02002a58(s32 sourceId, s32 id, s32 kind, s32 value,
                    const void *script) {
-  struct Actor *source = Actor_GetById(sourceId);
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *source = Actor_Get(sourceId);
+  struct Actor *object = Actor_Get(id);
 
-  Actor_SetPositionAndResetMotion(object, source->x, source->y, source->z);
+  FieldActor_SetPositionAndResetMotion(object, source->x, source->y, source->z);
   Func_020041dc(object, script);
   Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;

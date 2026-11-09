@@ -1,5 +1,8 @@
 #include "alhafra_interiors.h"
 
+struct AlhafraInteriorsObject *Actor_GetById(s32 id);
+void Event_SetMessageId(s32 message);
+void Event_ShowMessageAndWait(s32 speaker, s32 flags);
 void Func_020001ac(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 

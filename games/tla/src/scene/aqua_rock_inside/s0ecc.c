@@ -13,14 +13,14 @@ void Func_02000ecc(s32 unused, s32 id) {
     s32 i;
 
     Func_02003d7c();
-    Event_ResolvePendingActions(0);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-    Sound_Play(0x22d);
-    Actor_SetModeById(9, 2);
+    FieldEvent_ResolvePendingActions(0);
+    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
+    Event_PlaySound(0x22d);
+    Actor_SetAnimation(9, 2);
     Func_02003d24_(114, 39, 1, 2, 113, 39);
     for (i = 31; i >= 0; i--) {
       layer[3] -= 0x10000;
-      wait(4);
+      System_Wait(4);
     }
     /* FAKEMATCH: the loop is written with goto so that it carries no loop
      * notes: the bytes rebuild the zero and the depth on every pass, and a for
@@ -33,7 +33,7 @@ void Func_02000ecc(s32 unused, s32 id) {
     object->motionFlags = 0;
     object->terrainHeight = -0x200000;
     object->y = -0x200000;
-    Actor_SetSpritePriority(i, 3);
+    FieldActor_SetSpritePriority(i, 3);
     i++;
     if (i <= 15)
       goto place;
@@ -43,14 +43,14 @@ void Func_02000ecc(s32 unused, s32 id) {
     i = 12;
   blend:
     IO_WRITE_QUEUE_PUSH(0x04000052, 0x1000 | i, 0x20000);
-    wait(4);
+    System_Wait(4);
     i--;
     if (i >= 0)
       goto blend;
-    Map_CopyCellAttributeRect(105, 41, 12, 13, 41, 41);
-    Func_0802b450(105, 105, 12, 13, 105, 41);
+    MapGrid_CopyCellAttributes(105, 41, 12, 13, 41, 41);
+    MapGrid_CopyCellsLayered(105, 105, 12, 13, 105, 41);
     Func_02003cfc();
     Func_02003d84();
-    GameFlag_SetBit(0x238);
+    Event_SetFlag(0x238);
   }
 }

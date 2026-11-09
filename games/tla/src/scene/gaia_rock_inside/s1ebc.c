@@ -14,15 +14,15 @@ s32 Func_02004f74(s32 entrance, s32 count);
 void Func_02001ebc(void) {
   s32 count;
 
-  if (GameFlag_Test(0x927)) {
-    FieldMessage_Show((s32)MsgGaiaRockInside08, 1);
+  if (Event_GetFlag(0x927)) {
+    Message_ShowCentered((s32)MsgGaiaRockInside08, 1);
   } else {
-    s32 a = GameFlag_Test(0x9bc);
-    s32 b = GameFlag_Test(0x9bd);
-    s32 c = GameFlag_Test(0x9be);
+    s32 a = Event_GetFlag(0x9bc);
+    s32 b = Event_GetFlag(0x9bd);
+    s32 c = Event_GetFlag(0x9be);
     s32 scene;
 
-    count = a + b + c + GameFlag_Test(0x9bf);
+    count = a + b + c + Event_GetFlag(0x9bf);
     /* FAKEMATCH(barrier): the count is summed before the battle rule store;
      * without it, 8 of 68 instructions differ in tla-en. */
     __asm__ volatile("");
@@ -31,12 +31,12 @@ void Func_02001ebc(void) {
      * store; without it, 4 of 68 instructions differ in tla-en. */
     __asm__ volatile("");
     scene = (s32)&SceneId_Ov681Room1;
-    Party_SetFields1eeAnd1f0(scene, 10);
-    if (PartyInventory_FindOwner(0x1c3) != -1) {
+    Event_SetAfterBattleDestination(scene, 10);
+    if (FieldPartyInventory_FindOwner(0x1c3) != -1) {
       if (count == 0)
-        Party_SetFields1f2And1f4(scene, 12);
+        Event_SetDefeatDestination(scene, 12);
     } else {
-      Party_SetFields1f2And1f4(scene, 11);
+      Event_SetDefeatDestination(scene, 11);
     }
     Func_02004f74(12, count);
   }

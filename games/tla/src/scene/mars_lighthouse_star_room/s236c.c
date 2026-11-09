@@ -2,12 +2,10 @@
 #include "flag_call.h"
 
 void Func_02001fcc(void);
-void Func_020043c4(s32 a, s32 b);
 void Func_020043fc(s32 a, s32 b);
 s32 Func_0200422c(s32 layer, s32 x, s32 z);
 void Func_02002120(struct Actor *object);
 void Func_020042dc(void);
-void Func_0200444c(s32 skip);
 extern u8 gData_020023c4[];
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 
@@ -72,12 +70,12 @@ s32 Func_0200236c(void) {
    * instructions differ in tla-en. */
   ((s32 (*)(s32, s32))Func_02001fcc)(-10, 0);
 #endif
-  Func_020043c4(0x70000, 0xe000);
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  FieldCamera_SetSpeed(0x70000, 0xe000);
+  leader = Actor_Get(gMainRoutineWork.currentOwner);
   ride = (struct RideState *)(gData_020023c4 + 0x188);
   Flag_Set(0x106);
   Func_020042dc();
-  Func_0200444c(0);
+  FieldEvent_ResolvePendingActions(0);
   Flag_Clear(0x106);
   leader->update = (void (*)(void))Func_02002120;
   leader->angle = 0x4000;
@@ -93,7 +91,7 @@ s32 Func_0200236c(void) {
         leader->z = (leader->z & 0xfff00000) + 0x80000;
     }
     ride->active = 0;
-    wait(1);
+    System_Wait(1);
   }
   FieldEvent_Wait(30);
   leader->update = 0;

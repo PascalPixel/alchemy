@@ -15,21 +15,21 @@ void Func_02002cb4(u8 mode) {
   u16 *state = gSceneState;
   u16 *pending = state + 1;
 
-  if (!GameFlag_Test(265)) {
+  if (!Event_GetFlag(265)) {
     s32 i;
     s32 id;
 
     *state = 0;
     *pending = 0;
-    Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 0x40;
+    Actor_Get(FieldParty_GetLeaderActor())->priorityFlags |= 0x40;
     for (i = 0, id = 8; id <= 16; i++, id++) {
-      Actor_SetHorizontalPositionWithTerrain(id, gData_0200533c[i][0] << 19, gData_0200533c[i][1] << 19);
+      Actor_SetPosition(id, gData_0200533c[i][0] << 19, gData_0200533c[i][1] << 19);
       Func_02002b04(id, mode);
     }
   }
   {
     s32 priority = 0x480;
 
-    Task_Add(Func_02002b8c, priority);
+    Task_AddFrame(Func_02002b8c, priority);
   }
 }

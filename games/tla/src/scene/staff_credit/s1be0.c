@@ -103,5 +103,5 @@ void Func_02001be0(s32 progress) {
       goto loop;
   }
 done:
-  VramCache_Load(gData_02003fc6, 0x100, gData_02003fd8);
+  Vram_Load(gData_02003fc6, 0x100, gData_02003fd8);
 }

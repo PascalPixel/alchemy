@@ -22,16 +22,13 @@ void Func_02000798(void);
 void Func_020019c4(void);
 void Func_020046b4(void);
 void Func_02004718(void);
-void Func_02004bf8(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_02004d58(s32 a0, s32 a1);
-void Func_02004d60(s32 frames);
 void Func_02004dc8(void);
 void Func_02004dd0(void);
 void BattleEffect_PrepareBufferInterpolation(void);
 
 void Func_020009c0(void) {
-  Func_02004d10(0x10000, 0x2000);
-  Camera_MoveWithinMapBounds(PIXELS(88), -1, PIXELS(696), 1);
+  FieldCamera_SetSpeed(0x10000, 0x2000);
+  FieldCamera_MoveTo(PIXELS(88), -1, PIXELS(696), 1);
   Func_020019c4();
 }
 
@@ -40,17 +37,17 @@ void Func_020009e8(void) {
   Flag_Clear(0x106);
   Flag_Clear(0x104);
   Func_02004ca8();
-  Func_02004da0(0);
+  FieldEvent_ResolvePendingActions(0);
   Func_02004d20();
   FieldEvent_Wait(120);
   Func_02004cb0();
 }
 
 void Func_02000a24(void) {
-  struct Actor *object = Actor_GetById(12);
+  struct Actor *object = Actor_Get(12);
 
   if (!Flag_IsSet(0xa4d)) {
-    Func_02004de0(0x23d);
+    Event_PlaySound(0x23d);
     Flag_Set(0x232);
     object->x = S16_AT(object, 100) << 16;
     object->z = S16_AT(object, 102) << 16;

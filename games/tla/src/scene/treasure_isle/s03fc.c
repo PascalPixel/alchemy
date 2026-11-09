@@ -15,5 +15,5 @@ void Func_020003fc(s32 a0, s32 a1) {
   MapGrid_CopyCellAttributes(1, 0, 1, 1,
                              FIELD_AT((((a1 << 16) >> 12) + a0), s32, 0),
                              FIELD_AT((((a1 << 16) >> 12) + a0), s32, 4));
-  GameFlag_SetBit(FIELD_AT((((a1 << 16) >> 12) + a0), u16, 12));
+  Event_SetFlag(FIELD_AT((((a1 << 16) >> 12) + a0), u16, 12));
 }

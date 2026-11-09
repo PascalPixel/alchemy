@@ -20,7 +20,7 @@ extern s16 gData_02002c5c[];
 extern s16 gData_02002efc[];
 
 const s16 *Func_0200004c(void) {
-  if (GameFlag_Test(0x97f))
+  if (Event_GetFlag(0x97f))
     return gData_02002efc;
   return gData_02002c5c;
 }

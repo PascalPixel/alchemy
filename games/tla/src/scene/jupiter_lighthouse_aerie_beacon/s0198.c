@@ -65,7 +65,7 @@ void Func_02000198(void) {
     center->scaleX = 0x10000;
     center->scaleY = 0x10000;
     SceneActor_ParkRecord(center);
-    Actor_SetMovementTypeById(36, gData_0200641c);
+    Actor_SetScript(36, gData_0200641c);
     break;
   case 25:
     /* FAKEMATCH(volatile): the centre's y read through a volatile pointer in
@@ -112,8 +112,8 @@ void Func_02000198(void) {
     ColorBuffer_Interpolate(12);
     break;
   case 48:
-    Actor_Stop(36);
-    GameFlag_SetBit(0x202);
+    FieldActor_Stop(36);
+    Event_SetFlag(0x202);
     break;
   }
   if (spawn) {
@@ -123,7 +123,7 @@ void Func_02000198(void) {
     if (effect != 0) {
       sprite = effect->animation;
       Func_02005764(effect, gData_02006470);
-      Actor_SetPartAttribute(effect, 1);
+      Actor_SetSpriteColor(effect, 1);
       effect->motionFlags = 0;
       angle = Random16Far() & 0xffff000;
       effect->action = angle;
@@ -134,7 +134,7 @@ void Func_02000198(void) {
         BYTE_AT(effect, 0x62) = counter;
       }
       effect->update = Func_020000ec;
-      effect->speedLimit = Math_Sine((u32)(Random16Far() * 0xffff) >> 20) * 24;
+      effect->speedLimit = Math_Sin((u32)(Random16Far() * 0xffff) >> 20) * 24;
       effect->speedLimit = center->speedLimit >> 16;
       sprite->nextFrame = 0;
       sprite->priority = 1;

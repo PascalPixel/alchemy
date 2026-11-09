@@ -15,5 +15,5 @@ void Func_02000f98(void) {
 
   Func_02001c0c(1, 0, Func_02000ef8);
   priority = 0xc80;
-  Task_Add(Func_02000f58, priority);
+  FieldTask_AddFrame(Func_02000f58, priority);
 }

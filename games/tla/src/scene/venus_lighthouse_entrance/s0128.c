@@ -28,20 +28,20 @@ s32 Func_02000128(void) {
   s32 t33;
 
   FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x100;
-  t0 = ((s32)Actor_GetById(FIELD_AT(gMainRoutineWork, s32, 532)));
+  t0 = ((s32)Actor_Get(FIELD_AT(gMainRoutineWork, s32, 532)));
   FIELD_AT((t0 + 0x23), u8, 0) = (0x20 | FIELD_AT((t0 + 0x23), u8, 0));
-  Actor_SetModeById(10, 5);
+  Actor_SetAnimation(10, 5);
   FieldActor_SetSpritePriority(10, 1);
   Actor_SetAnimation(11, 5);
   FieldActor_SetSpritePriority(11, 1);
   FieldActor_SetSpritePriority(14, 2);
-  Actor_SetSpritePriority(19, 2);
-  t7 = GameFlag_Test(0x892);
+  FieldActor_SetSpritePriority(19, 2);
+  t7 = Event_GetFlag(0x892);
   if (t7 != 0) {
     Actor_SetPosition(10, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
+    Actor_SetPosition(11, 0, 0);
   }
-  t10 = GameFlag_Test(0x890);
+  t10 = Event_GetFlag(0x890);
   if (t10 != 0) {
     Actor_SetPosition(12, 0, 0);
     Actor_SetPosition(13, 0, 0);
@@ -52,13 +52,13 @@ s32 Func_02000128(void) {
     Actor_SetPosition(18, 0, 0);
     Actor_SetPosition(19, 0, 0);
     Actor_SetPosition(20, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(21, 0, 0);
+    Actor_SetPosition(21, 0, 0);
   }
   if (FIELD_AT(gMainRoutineWork, s16, 482) == 9) {
-    t21 = GameFlag_Test(0x891);
+    t21 = Event_GetFlag(0x891);
     if (t21 == 0) {
       Func_020028b4();
-      Event_ResolvePendingActions(0);
+      FieldEvent_ResolvePendingActions(0);
       Func_0200030c();
       Func_020028bc();
     }
@@ -70,7 +70,7 @@ s32 Func_02000128(void) {
     Func_02001c30();
   }
   if (FIELD_AT(gMainRoutineWork, s16, 482) == 0x63) {
-    GameFlag_SetBit(0x893);
+    Event_SetFlag(0x893);
   }
   if (FIELD_AT(gMainRoutineWork, s16, 482) == 0x5a) {
     FIELD_AT(gMainRoutineWork, s32, 532) = 5;
@@ -79,17 +79,17 @@ s32 Func_02000128(void) {
     Party_RemoveActiveOwner(7);
     Func_0200299c((s32)&SceneId_VenusLighthouseEntrance, 1);
   }
-  t33 = GameFlag_Test(0x893);
+  t33 = Event_GetFlag(0x893);
   if (t33 == 0) {
     Actor_SetAnimation(22, 5);
-    Actor_SetSpritePriority(22, 1);
+    FieldActor_SetSpritePriority(22, 1);
   } else {
-    Actor_SetHorizontalPositionWithTerrain(22, 40 << 16, 248 << 16);
-    t37 = ((s32)Actor_GetById(22));
+    Actor_SetPosition(22, 40 << 16, 248 << 16);
+    t37 = ((s32)Actor_Get(22));
     FIELD_AT(t37, u16, 6) = 0x4000;
     Func_02002a04(0x16, 0x4000, 0);
-    Actor_SetSpritePriority(22, 3);
-    Actor_SetActionCallback(((s32)Actor_GetById(22)), 8);
+    FieldActor_SetSpritePriority(22, 3);
+    Actor_SetActionCallback(((s32)Actor_Get(22)), 8);
   }
   return 0;
 }

@@ -12,7 +12,7 @@ void Func_02003f0c();
 
 void Func_0200208c(void) {
   Func_02003e64();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   Func_02003f0c(gMainRoutineWork.currentOwner, 6, 1);
   Func_02003e6c();
   return;
@@ -21,7 +21,7 @@ void Func_0200208c(void) {
 void Func_020020b4(void) {
   struct Actor *object0;
 
-  object0 = Actor_GetById(gMainRoutineWork.currentOwner);
+  object0 = Actor_Get(gMainRoutineWork.currentOwner);
   object0->terrainId = 2;
   return;
 }
@@ -29,7 +29,7 @@ void Func_020020b4(void) {
 void Func_020020d0(void) {
   struct Actor *object0;
 
-  object0 = Actor_GetById(gMainRoutineWork.currentOwner);
+  object0 = Actor_Get(gMainRoutineWork.currentOwner);
   object0->terrainId = 0;
   return;
 }

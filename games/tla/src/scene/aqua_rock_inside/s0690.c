@@ -1,8 +1,8 @@
 #include "local.h"
 
 void Func_02000690(void) {
-  Actor_SetModeById(8, 4);
-  Actor_SetPartAttribute(Actor_GetById(8), 6);
+  Actor_SetAnimation(8, 4);
+  Actor_SetSpriteColor(Actor_Get(8), 6);
   Func_02003d14_(123, 15, 5, 3, 110, 15);
   ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->value16a = 88;
 }
@@ -13,7 +13,7 @@ void Func_020006d0(void) {
 
   gData_02004d84 = count;
   row = count / 8;
-  Map_CopyCellsRect((count & 1) * 5 + 118, 47 - row, 5, 2, 110, 47 - row);
+  MapGrid_CopyCells((count & 1) * 5 + 118, 47 - row, 5, 2, 110, 47 - row);
   if (gData_02004d84 == 0)
-    Task_RemoveFar(Func_020006d0);
+    FieldTask_Remove(Func_020006d0);
 }

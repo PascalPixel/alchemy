@@ -9,7 +9,7 @@ void Func_02002d04(struct Actor *object) {
     return;
   }
   *(u8 *)((u8 *)object + 0x5a) = 0;
-  if (GameFlag_Test(0x106))
+  if (Event_GetFlag(0x106))
     angle = -1;
   else
     angle = gData_020047fc[(gInput >> 4) & 15];
@@ -32,9 +32,9 @@ void Func_02002d90(void) {
 
 
   if (work->actionCounter != 0) {
-    Call1((void (*)())GameFlag_SetBit, 0x106);
+    Event_SetFlag(0x106);
     Func_020043f4();
     Func_02004444();
-    GameFlag_ClearBit(0x106);
+    Event_ClearFlag(0x106);
   }
 }

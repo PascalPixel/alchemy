@@ -55,7 +55,7 @@ s32 Func_02000cf4(void) {
    * the next; without this one, 27 of 241 instructions differ in tla-en. */
   __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom2) {
-    Task_Add(Func_02000ba0, TASK_PASS_VBLANK);
+    Task_AddFrame(Func_02000ba0, TASK_PASS_VBLANK);
     Func_02001064(0, 8, 9);
     if (Flag_IsSet(0x308))
       PlaceObject(10, PIXELS(264), PIXELS(184));
@@ -74,7 +74,7 @@ s32 Func_02000cf4(void) {
    * tla-en. */
   __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom3) {
-    Task_Add(Func_02000ba0, TASK_PASS_VBLANK);
+    Task_AddFrame(Func_02000ba0, TASK_PASS_VBLANK);
     Func_02001064(0, 8, 9);
     if (Flag_IsSet(0x309))
       PlaceObject(10, PIXELS(664), PIXELS(248));
@@ -104,7 +104,7 @@ s32 Func_02000cf4(void) {
        * to the 12, as the native has them; unpinned, 12 of 241 instructions
        * differ in tla-en. */
       register u8 *flags asm("r2") =
-          (u8 *)Actor_GetById(i + 9)->animation + 37;
+          (u8 *)Actor_Get(i + 9)->animation + 37;
 
       *flags |= 12;
     }

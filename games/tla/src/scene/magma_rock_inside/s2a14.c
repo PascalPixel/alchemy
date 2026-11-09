@@ -6,7 +6,7 @@ void Func_02002a14(struct Actor *source) {
   object->scaleY = 0x6666;
   object->scaleX = 0x6666;
   object->motionFlags = 0;
-  Actor_SetPartAttribute(object, 10);
+  Actor_SetSpriteColor(object, 10);
   Scene_SetActorSpritePriority(object, 1);
   Func_02004c98(object, 1);
   Actor_SetSingleChildFlags(object, 0);

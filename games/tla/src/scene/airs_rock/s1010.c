@@ -55,7 +55,7 @@ void Func_02001010(void) {
   s32 x;
 
   Func_02003bc8();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   REG_DISPCNT &= ~0x100;
   Func_02003af0(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
                 buffer);
@@ -63,8 +63,8 @@ void Func_02001010(void) {
   Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, 0x840000d0,
           (volatile u32 *)0x040000d4);
   Heap_Release(buffer);
-  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
-  Actor_SetSpritePriority(8, 1);
+  FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
+  FieldActor_SetSpritePriority(8, 1);
   {
     s32 control = 0x40d;
 
@@ -93,16 +93,16 @@ row:
   if (i != 18)
     goto row;
   Heap_Release(buffer);
-  Sound_Play(246);
-  ((u8 *)Actor_GetById(8))[98] = 9;
-  ((u8 *)Actor_GetById(8))[99] = 1;
-  Actor_GetById(8)->update = Func_0200092c;
+  Event_PlaySound(246);
+  ((u8 *)Actor_Get(8))[98] = 9;
+  ((u8 *)Actor_Get(8))[99] = 1;
+  Actor_Get(8)->update = Func_0200092c;
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
-      spark = (struct Actor *)Import_ActorCreate(
-          0x2a0, Actor_GetById(8)->x, Actor_GetById(8)->y, Actor_GetById(8)->z);
+      spark = FieldActor_Create(
+          0x2a0, Actor_Get(8)->x, Actor_Get(8)->y, Actor_Get(8)->z);
       {
-        s32 priority = ((s8 *)Actor_GetById(8)->animation)[9] & 12;
+        s32 priority = ((s8 *)Actor_Get(8)->animation)[9] & 12;
 
         cell = spark->animation;
         ((struct SpriteParts *)cell)->part = priority >> 2;
@@ -116,18 +116,18 @@ row:
       Func_02003b28(spark, 7);
       Func_02003b38(spark, gData_02003d1c);
       Actor_SetSingleChildFlags(spark, 0);
-      Actor_SetPartAttribute(spark, 2);
+      Actor_SetSpriteColor(spark, 2);
       spark->update = Func_020008ac;
     }
-    Event_Wait(1);
+    FieldEvent_Wait(1);
   }
-  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02003c30();
   FieldCamera_SetSpeed(0x10000, 0x2000);
   FieldCamera_MoveTo(0x14a0000, -1, 0x490000, 1);
   Func_02003c30();
-  Task_Add(Func_02000ef4, 0xc80);
-  Sound_Play(163);
+  Task_AddFrame(Func_02000ef4, 0xc80);
+  Event_PlaySound(163);
   REG_BLDALPHA = 0xf00;
   REG_BLDCNT = 0x3f41;
   REG_DISPCNT |= 0x100;
@@ -135,12 +135,12 @@ row:
   i = 0;
 glow:
   REG_BLDALPHA = ((15 - (i >> 2)) << 8) | (i >> 2);
-  ((u8 *)Actor_GetById(8))[98] = Random16Far() & 7;
+  ((u8 *)Actor_Get(8))[98] = Random16Far() & 7;
   i++;
-  Event_Wait(1);
+  FieldEvent_Wait(1);
   if (i != 64)
     goto glow;
-  Event_Wait(60);
+  FieldEvent_Wait(60);
   REG_BLDALPHA = 15;
   REG_BLDCNT = 0xc42;
   MapGrid_SetShake(0x30000, 0x30000, 0x10000);
@@ -164,8 +164,8 @@ glow:
                    &options);
     }
     REG_BLDALPHA = (((j >> 4) & 15) << 8) | (16 - ((j >> 4) & 15));
-    ((u8 *)Actor_GetById(8))[98] = Random16Far() & 7;
-    Event_Wait(1);
+    ((u8 *)Actor_Get(8))[98] = Random16Far() & 7;
+    FieldEvent_Wait(1);
     if (j != 255)
       goto burst;
   }
@@ -173,51 +173,51 @@ glow:
   MapGrid_CopyCellAttributes(38, 9, 1, 1, 16, 9);
   MapGrid_CopyCellAttributes(38, 9, 1, 1, 24, 9);
   Func_02003b50();
-  Event_Wait(1);
+  FieldEvent_Wait(1);
   REG_BLDCNT = 0x3f41;
   REG_BLDALPHA = 15;
   MapGrid_SetShake(-1, -1, 0xe666);
   Event_PlaySound(390);
-  ((u8 *)Actor_GetById(8))[98] = 6;
+  ((u8 *)Actor_Get(8))[98] = 6;
   i = 0;
 fade:
   REG_BLDALPHA = ((i >> 2) << 8) | (16 - (i >> 2));
-  Event_Wait(1);
+  FieldEvent_Wait(1);
   i++;
   if (i != 65)
     goto fade;
-  Task_RemoveFar(Func_02000ef4);
+  FieldTask_Remove(Func_02000ef4);
   {
     s32 zero = 0;
 
-    ((u8 *)Actor_GetById(8))[99] = zero;
-    wait(30);
-    Actor_GetById(8)->update = (void (*)(void))zero;
-    Actor_SetPartAttribute(Actor_GetById(8), 6);
-    Map_WaitForShakeToSettle();
-    Event_Wait(60);
+    ((u8 *)Actor_Get(8))[99] = zero;
+    System_Wait(30);
+    Actor_Get(8)->update = (void (*)(void))zero;
+    Actor_SetSpriteColor(Actor_Get(8), 6);
+    MapGrid_WaitForShakeToSettle();
+    FieldEvent_Wait(60);
     REG_BLDCNT = zero;
   }
   Func_02003b00();
   Func_02003af8();
   work = &gMainRoutineWork;
-  Func_0803f9c0(work->paletteGlow[0], work->paletteGlow[1]);
+  WindowColor_Apply(work->paletteGlow[0], work->paletteGlow[1]);
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 1;
   {
     s32 *ownerId = &work->currentOwner;
 
-    Actor_GetById(*ownerId)->priorityFlags &= ~32;
-    Actor_GetById(*ownerId)->priorityFlags |= 1;
+    Actor_Get(*ownerId)->priorityFlags &= ~32;
+    Actor_Get(*ownerId)->priorityFlags |= 1;
     {
-      u8 *flags = &Actor_GetById(8)->priorityFlags;
+      u8 *flags = &Actor_Get(8)->priorityFlags;
       u8 v = *flags | 1;
 
       *flags = v;
     }
-    Camera_FollowActor(*ownerId, 1);
+    FieldCamera_FollowActor(*ownerId, 1);
   }
   Func_02003c30();
-  GameFlag_SetBit(0x858);
+  Event_SetFlag(0x858);
   Func_02003bd0();
 }

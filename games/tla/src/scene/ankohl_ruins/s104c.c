@@ -2,7 +2,6 @@
 #include "ankohl_ruins.h"
 #include "call.h"
 
-void Func_0802b450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02000b78(s32 kind, s32 a, s32 x, s32 y, s32 z, s32 b);
 
 /// When the objects with ids 9 and 10 stand on cells (12, 45) and (14, 45),
@@ -20,49 +19,48 @@ void Func_02000c24(s32 unused, s32 id) {
   s32 kind;
 
   if (id == 9 && column == 12 && row == 45) {
-    Call1((void (*)())GameFlag_SetBit, 0x9d9);
+    Event_SetFlag(0x9d9);
     Call2((void (*)())Func_02000b30, 9, 181);
   }
   if (id == 10 && column == 14 && row == 45) {
-    Call1((void (*)())GameFlag_SetBit, 0x9da);
+    Event_SetFlag(0x9da);
     Call2((void (*)())Func_02000b30, 10, 181);
   }
   if (!GameFlag_Test(0x9da) || !GameFlag_Test(0x9d9))
     return;
   Func_02002e44();
-  Call1((void (*)())Event_ResolvePendingActions, 0);
-  Call3((void (*)())Map_SetScreenShake, 0x20000, 0x20000, 0x10000);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(216), -1, PIXELS(770),
-        1);
-  Call1((void (*)())Event_Wait, 15);
-  Call1((void (*)())Sound_Play, 202);
+  FieldEvent_ResolvePendingActions(0);
+  MapGrid_SetShake(0x20000, 0x20000, 0x10000);
+  FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(770), 1);
+  FieldEvent_Wait(15);
+  Event_PlaySound(202);
   toColumn = 12;
   highRow = 111;
-  Call6((void (*)())Func_0802b450, 12, 91, 3, 1, toColumn, highRow);
-  Call1((void (*)())Event_Wait, 60);
-  Call1((void (*)())Sound_Play, 0x23f);
+  MapGrid_CopyCellsLayered(12, 91, 3, 1, toColumn, highRow);
+  FieldEvent_Wait(60);
+  Event_PlaySound(0x23f);
   lowRow = 47;
-  Call6((void (*)())Map_CopyCellsRect, 16, 27, 3, 2, toColumn, lowRow);
-  Call6((void (*)())Map_CopyCellsRect, 16, 91, 3, 2, toColumn, highRow);
+  MapGrid_CopyCells(16, 27, 3, 2, toColumn, lowRow);
+  MapGrid_CopyCells(16, 91, 3, 2, toColumn, highRow);
   rise = -40;
   // The last argument is also kept for the later calls, as the native keeps
   // the 3 it stores.
   Func_02000b78(3, 15, 200, rise, 0x2e8, kind = 3);
-  Call6((void (*)())Map_CopyCellsRect, 16, 27, 3, 3, toColumn, lowRow);
-  Call6((void (*)())Map_CopyCellsRect, 16, 91, 3, 3, toColumn, highRow);
+  MapGrid_CopyCells(16, 27, 3, 3, toColumn, lowRow);
+  MapGrid_CopyCells(16, 91, 3, 3, toColumn, highRow);
   Call6((void (*)())Func_02000b78, 3, 10, 200, rise, 0x2f8, kind);
-  Call6((void (*)())Map_CopyCellsRect, 16, 27, 3, 4, toColumn, lowRow);
-  Call6((void (*)())Map_CopyCellsRect, 16, 91, 3, 4, toColumn, highRow);
+  MapGrid_CopyCells(16, 27, 3, 4, toColumn, lowRow);
+  MapGrid_CopyCells(16, 91, 3, 4, toColumn, highRow);
   Call6((void (*)())Func_02000b78, 3, 10, 200, rise, 0x308, kind);
-  Call6((void (*)())Map_CopyCellsRect, 16, 27, 3, 5, toColumn, lowRow);
-  Call6((void (*)())Map_CopyCellsRect, 16, 91, 3, 5, toColumn, highRow);
+  MapGrid_CopyCells(16, 27, 3, 5, toColumn, lowRow);
+  MapGrid_CopyCells(16, 91, 3, 5, toColumn, highRow);
   Call6((void (*)())Func_02000b78, 3, 10, 200, rise, 0x318, kind);
-  Call6((void (*)())Map_CopyCellsRect, 16, 27, 3, 6, toColumn, lowRow);
-  Call6((void (*)())Map_CopyCellsRect, 16, 91, 3, 6, toColumn, highRow);
-  Call3((void (*)())Map_SetScreenShake, -1, -1, 0xe666);
+  MapGrid_CopyCells(16, 27, 3, 6, toColumn, lowRow);
+  MapGrid_CopyCells(16, 91, 3, 6, toColumn, highRow);
+  MapGrid_SetShake(-1, -1, 0xe666);
   Call6((void (*)())Func_02000b78, 3, 10, 200, rise, 0x328, kind);
-  Call6((void (*)())Map_CopyCellsRect, 16, 27, 3, 13, toColumn, lowRow);
-  Call6((void (*)())Map_CopyCellsRect, 16, 91, 3, 13, toColumn, highRow);
+  MapGrid_CopyCells(16, 27, 3, 13, toColumn, lowRow);
+  MapGrid_CopyCells(16, 91, 3, 13, toColumn, highRow);
   Func_02002e4c();
 }
 
@@ -76,35 +74,35 @@ void Func_02000e60(s32 unused, s32 id) {
 
   if (id != 8 || column != 12 || row != 5)
     return;
-  GameFlag_SetBit(0x9dc);
+  Event_SetFlag(0x9dc);
   Func_02000b30(8, 181);
   Func_02002e44();
-  Event_ResolvePendingActions(0);
-  Event_Wait(15);
-  Sound_Play(202);
+  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_Wait(15);
+  Event_PlaySound(202);
   AnkohlRuins_Call2df4(29, 70, 3, 1, 12, 71);
   AnkohlRuins_CamBounds(PIXELS(216), -1, PIXELS(120), 1);
   AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
-  Event_Wait(60);
-  Sound_Play(0x23f);
-  Map_CopyCellsRect(35, 6, 7, 2, 10, 7);
-  Map_CopyCellsRect(35, 70, 7, 2, 10, 71);
+  FieldEvent_Wait(60);
+  Event_PlaySound(0x23f);
+  MapGrid_CopyCells(35, 6, 7, 2, 10, 7);
+  MapGrid_CopyCells(35, 70, 7, 2, 10, 71);
   Func_02000b78(6, 10, 200, -40, 124, 3);
-  Map_CopyCellsRect(35, 6, 7, 3, 10, 7);
-  Map_CopyCellsRect(35, 70, 7, 3, 10, 71);
+  MapGrid_CopyCells(35, 6, 7, 3, 10, 7);
+  MapGrid_CopyCells(35, 70, 7, 3, 10, 71);
   Func_02000b78(3, 10, 184, -40, 140, 5);
-  Map_CopyCellsRect(35, 6, 7, 4, 10, 7);
-  Map_CopyCellsRect(35, 70, 7, 4, 10, 71);
+  MapGrid_CopyCells(35, 6, 7, 4, 10, 7);
+  MapGrid_CopyCells(35, 70, 7, 4, 10, 71);
   Func_02000b78(3, 10, 184, -40, 156, 5);
-  Map_CopyCellsRect(35, 6, 7, 5, 10, 7);
-  Map_CopyCellsRect(35, 70, 7, 5, 10, 71);
+  MapGrid_CopyCells(35, 6, 7, 5, 10, 7);
+  MapGrid_CopyCells(35, 70, 7, 5, 10, 71);
   Func_02000b78(3, 10, 184, -40, 172, 5);
   AnkohlRuins_Call2e24(-1, -1, 0xe666);
-  Map_CopyCellsRect(35, 6, 7, 6, 10, 7);
-  Map_CopyCellsRect(35, 70, 7, 6, 10, 71);
-  Event_Wait(15);
-  Map_CopyCellsRect(35, 6, 7, 16, 10, 7);
-  Map_CopyCellsRect(35, 70, 7, 16, 10, 71);
+  MapGrid_CopyCells(35, 6, 7, 6, 10, 7);
+  MapGrid_CopyCells(35, 70, 7, 6, 10, 71);
+  FieldEvent_Wait(15);
+  MapGrid_CopyCells(35, 6, 7, 16, 10, 7);
+  MapGrid_CopyCells(35, 70, 7, 16, 10, 71);
   Func_02002e4c();
 }
 
@@ -116,19 +114,19 @@ void Func_0200104c(s32 unused, s32 id) {
   if (id == 10 && x == 15 && z == 24) {
     Actor_SetSingleChildFlags(Actor_GetById(10), 0);
     object->y -= 0x20000;
-    Event_Wait(1);
+    FieldEvent_Wait(1);
     object->y -= 0x20000;
-    Event_Wait(1);
+    FieldEvent_Wait(1);
     object->y -= 0x40000;
-    Event_Wait(1);
+    FieldEvent_Wait(1);
     object->y -= 0x80000;
-    Event_Wait(1);
-    Actor_SetModeById(9, 3);
-    Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
-    Sound_Play(188);
-    Event_Wait(45);
-    Actor_SetModeById(9, 4);
-    Sound_Play(564);
-    GameFlag_SetBit(0x9dd);
+    FieldEvent_Wait(1);
+    Actor_SetAnimation(9, 3);
+    Actor_SetPosition(10, 0, 0);
+    Event_PlaySound(188);
+    FieldEvent_Wait(45);
+    Actor_SetAnimation(9, 4);
+    Event_PlaySound(564);
+    Event_SetFlag(0x9dd);
   }
 }

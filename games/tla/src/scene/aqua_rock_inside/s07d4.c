@@ -4,7 +4,6 @@ extern const u8 gData_02003fb8[];
 
 void Sound_WaitForBgmRestore(void);
 void Func_020007a8(void);
-void Map_SetScreenShake(s32 a, s32 b, s32 c);
 void Func_02003ebc(void);
 
 static __inline__ void Func_02003d44_(s32 a, s32 b, s32 c) {
@@ -19,27 +18,27 @@ void Func_020007d4(void) {
   s32 j;
 
   Func_02003d7c();
-  Event_ResolvePendingActions(0);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
+  FieldEvent_ResolvePendingActions(0);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xc000, 0);
   Func_020007a8();
-  Sound_Play(78);
-  Event_Wait(60);
-  Sound_Play(162);
+  Event_PlaySound(78);
+  FieldEvent_Wait(60);
+  Event_PlaySound(162);
   Func_02003d44_(0x10000, 0x10000, 0x10000);
-  Event_Wait(20);
+  FieldEvent_Wait(20);
   Func_02003d44_(0x10000, 0x20000, 0x10000);
-  Event_Wait(20);
+  FieldEvent_Wait(20);
   Func_02003d44_(0x10000, 0x30000, 0x10000);
-  Event_Wait(40);
+  FieldEvent_Wait(40);
   priority = 0x480;
-  Task_Add(Func_020006d0, priority);
-  Camera_SetSpeedParameters(0x28000, 0x4000);
-  Camera_MoveWithinMapBounds(0x1380000, -1, 0x1f80000, 1);
-  Sound_Play(164);
+  FieldTask_AddFrame(Func_020006d0, priority);
+  FieldCamera_SetSpeed(0x28000, 0x4000);
+  FieldCamera_MoveTo(0x1380000, -1, 0x1f80000, 1);
+  Event_PlaySound(164);
   Func_02003d24_(75, 96, 7, 13, 80, 27);
-  Func_0802b450(91, 96, 7, 10, 16, 31);
-  Func_0802b450(99, 96, 7, 14, 16, 91);
-  Map_CopyCellAttributeRect(43, 0, 5, 9, 17, 31);
+  MapGrid_CopyCellsLayered(91, 96, 7, 10, 16, 31);
+  MapGrid_CopyCellsLayered(99, 96, 7, 14, 16, 91);
+  MapGrid_CopyCellAttributes(43, 0, 5, 9, 17, 31);
   /* FAKEMATCH: both loops are written with goto so that they carry no loop
    * notes: the bytes build the two stack arguments and the table address on
    * every pass, and for loops hoist them (differ 38). */
@@ -52,7 +51,7 @@ cell:
 
     Func_02003d24_(gData_02003fb8[index], gData_02003fb8[index + 1], 7, 13, 80,
                    27);
-    wait(1);
+    System_Wait(1);
   }
   j++;
   if (j <= 6)
@@ -62,12 +61,12 @@ cell:
     goto row;
   Func_02003e54();
   Func_02003d44_(-1, -1, 0xe666);
-  Sound_Play(390);
-  Event_Wait(30);
-  Sound_Play(80);
+  Event_PlaySound(390);
+  FieldEvent_Wait(30);
+  Event_PlaySound(80);
   Sound_WaitForBgmRestore();
   Func_02003d84();
   Func_02003ebc();
-  GameFlag_SetBit(0x95d);
-  GameFlag_SetBit(0x143);
+  Event_SetFlag(0x95d);
+  Event_SetFlag(0x143);
 }

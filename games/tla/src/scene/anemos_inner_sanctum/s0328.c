@@ -28,7 +28,7 @@ void Func_02000328(void) {
 
 
   saved = work->value1ac;
-  BattleEffect_ApplyColorToTargetBuffer(0x202108, 1);
+  PaletteFade_ApplyTarget(0x202108, 1);
   Func_02003458_(0x10000, 2);
   ((struct AnemosInnerSanctumEventWork *)Ram_HeapSlots->eventWork)->value1ac =
       0x100;
@@ -36,11 +36,11 @@ void Func_02000328(void) {
   Event_WaitTransitionFrames();
   Func_02000178();
   Func_020034a8();
-  wait(40);
+  System_Wait(40);
   Func_02000158();
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
-  BattleEffect_StartBufferInterpolation(16);
-  wait(16);
+  PaletteFade_ApplyTarget(0x10000, 1);
+  PaletteFade_Interpolate(16);
+  System_Wait(16);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 

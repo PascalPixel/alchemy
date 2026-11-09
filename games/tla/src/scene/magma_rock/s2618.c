@@ -6,6 +6,7 @@
 #include "field/event_work.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
+#include "event_inline.h"
 
 extern u8 gData_02003d9e[];
 extern u8 gData_02003d98[];
@@ -19,13 +20,10 @@ extern u8 gData_02003dd6[];
 extern u8 gData_02003dee[];
 extern u8 gData_02003de8[];
 extern u8 gData_02003e02[];
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 s32 Func_02000668();
 void Func_02000ee4();
-void Actor_SetHorizontalPositionWithTerrain();
 void Func_02003c0c();
-void Map_CopyCellAttributeRect();
 s32 Func_020006cc();
 void Func_02002518();
 void Func_02002d08();
@@ -37,7 +35,6 @@ void Func_02003be4();
 void Func_02003bfc();
 void Func_0200079c();
 void Func_020024c8();
-void Map_CopyCellPictureIndicesRect();
 
 s32 Func_02002618(void) {
   struct MainRoutineWork *work;
@@ -67,16 +64,14 @@ s32 Func_02002618(void) {
     if (Flag_IsSet(0x109) == 0)
       Call3((void (*)())Func_02000ee4, 21, 13, 0);
     if (Flag_IsSet(0x8d5))
-      Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 8, 0x1080000,
-            0x1680000);
+      Actor_SetPosition(8, 0x1080000, 0x1680000);
     if (Flag_IsSet(0x8d6))
-      Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 10, 0xf80000,
-            0x1980000);
+      Actor_SetPosition(10, 0xf80000, 0x1980000);
     other = (s32)gData_02003d98;
     value2 = 78;
     Func_02003c0c(other);
-    Call6((void (*)())Map_CopyCellAttributeRect, 98, 21, 4, 3, value2, 21);
-    Call6((void (*)())Map_CopyCellAttributeRect, 98, 27, 4, 3, value2, 24);
+    MapGrid_CopyCellAttributes(98, 21, 4, 3, value2, 21);
+    MapGrid_CopyCellAttributes(98, 27, 4, 3, value2, 24);
     Func_020006cc(other);
     if (Flag_IsSet(0x109) == 0) {
       actor = Actor_GetById(20);
@@ -106,8 +101,7 @@ s32 Func_02002618(void) {
       Func_02003bec();
       Call3((void (*)())Func_02003bf4, 0, 11, 12);
       if (Flag_IsSet(0x8d7))
-        Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 15, 0x1b80000,
-              0x2180000);
+        Actor_SetPosition(15, 0x1b80000, 0x2180000);
       Func_02003c0c(gData_02003dac);
       id = *entrance;
       if (id == 1) {
@@ -148,8 +142,7 @@ s32 Func_02002618(void) {
           Call3((void (*)())Func_02000ee4, 21, 12, 0);
         }
         if (Flag_IsSet(0x8d8))
-          Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 16,
-                0x3780000, 0x2380000);
+          Actor_SetPosition(16, 0x3780000, 0x2380000);
         Func_02003c0c(gData_02003dd2);
         Func_02000668(gData_02003dc4);
         if (Flag_IsSet(0x109) == 0) {
@@ -188,8 +181,7 @@ s32 Func_02002618(void) {
         }
       } else if (*entrance <= 12) {
         if (Flag_IsSet(0x8d9))
-          Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 8,
-                0x1080000, 0x2480000);
+          Actor_SetPosition(8, 0x1080000, 0x2480000);
         rise = (s32)gData_02003de4;
         Func_02003c0c(rise);
         Func_020006cc(rise);
@@ -230,18 +222,16 @@ s32 Func_02002618(void) {
         }
         Call1((void (*)())Func_02002518, 13);
         if (Flag_IsSet(0x8da))
-          Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 8,
-                0x2880000, 0x2580000);
+          Actor_SetPosition(8, 0x2880000, 0x2580000);
         if (Flag_IsSet(0x8db))
-          Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 9,
-                0x2380000, 0x2680000);
+          Actor_SetPosition(9, 0x2380000, 0x2680000);
         Func_0200079c(gData_02003de8);
         if (Flag_IsSet(0x250))
-          Call6((void (*)())Map_CopyCellAttributeRect, 121, 48, 1, 3, 123, 48);
+          MapGrid_CopyCellAttributes(121, 48, 1, 3, 123, 48);
         if (Flag_IsSet(0x251))
-          Call6((void (*)())Map_CopyCellAttributeRect, 121, 48, 1, 3, 125, 48);
+          MapGrid_CopyCellAttributes(121, 48, 1, 3, 125, 48);
         if (Flag_IsSet(0x252))
-          Call6((void (*)())Map_CopyCellAttributeRect, 108, 56, 1, 3, 109, 56);
+          MapGrid_CopyCellAttributes(108, 56, 1, 3, 109, 56);
         if (*entrance == 14) {
           Call1((void (*)())Func_0200244c, 0x300000);
         } else if (*entrance == 16 || *entrance == 17) {
@@ -259,16 +249,14 @@ s32 Func_02002618(void) {
     }
   } else if (scene == (s32)&SceneId_Ov691Room3) {
     if (Flag_IsSet(0x8dc)) {
-      Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 8, 0, 0);
+      Actor_SetPosition(8, 0, 0);
       value3 = 42;
-      Call6((void (*)())Map_CopyCellAttributeRect, 0, 32, 5, 8, value3, 17);
-      Call6((void (*)())Map_CopyCellAttributeRect, 0, 96, 5, 8, value3, 81);
+      MapGrid_CopyCellAttributes(0, 32, 5, 8, value3, 17);
+      MapGrid_CopyCellAttributes(0, 96, 5, 8, value3, 81);
       value4 = 5;
       other = 8;
-      Call6((void (*)())Map_CopyCellPictureIndicesRect, 0, 32, 42, 17, value4,
-            other);
-      Call6((void (*)())Map_CopyCellPictureIndicesRect, 0, 96, 42, 81, value4,
-            other);
+      MapGrid_CopyCellsTo(0, 32, 42, 17, value4, other);
+      MapGrid_CopyCellsTo(0, 96, 42, 81, value4, other);
     }
     leader = &work->currentOwner;
     Actor_GetById(*leader)->priorityFlags |= 32;

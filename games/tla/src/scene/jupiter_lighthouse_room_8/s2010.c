@@ -23,10 +23,10 @@ void Func_02002188(void);
 void Func_02001dc8(void);
 
 void Func_02002010(s32 x, s32 z, s32 effect) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct JupiterLighthouseRoom8EventWork *work = Ram_HeapSlots->eventWork;
-  s32 dx = ((s32)GameFlag_GetByte(gData_02002bf8.flag));
-  s32 dz = ((s32)GameFlag_GetByte(gData_02002bf8.flag + 8));
+  s32 dx = ((s32)FieldGameFlag_GetByte(gData_02002bf8.flag));
+  s32 dz = ((s32)FieldGameFlag_GetByte(gData_02002bf8.flag + 8));
 
   if (dx != 0 || dz != 0) {
     struct Actor *marker;

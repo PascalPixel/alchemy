@@ -60,57 +60,57 @@ void Func_02003a6c(s32 mode) {
   }
 
   for (i = 0; i <= 4 && list[i] != 64; i++) {
-    ((struct SceneActor *)Actor_GetById(list[i]))->unk_55 = 0;
-    Actor_SetSpritePriority(list[i], 1);
+    ((struct SceneActor *)Actor_Get(list[i]))->unk_55 = 0;
+    FieldActor_SetSpritePriority(list[i], 1);
     count++;
   }
 
   for (i = 0; i <= 5; i++) {
-    ((struct SceneActor *)Actor_GetById(gData_020069dc[i]))->unk_23 |= 32;
-    Actor_SetSpritePriority(gData_020069dc[i], 0);
+    ((struct SceneActor *)Actor_Get(gData_020069dc[i]))->unk_23 |= 32;
+    FieldActor_SetSpritePriority(gData_020069dc[i], 0);
   }
 
-  Sound_Play(223);
+  Event_PlaySound(223);
 
   for (i = 0; i <= 227; i++) {
     work->unk_0c -= speed;
     for (j = 0; j < count; j++) {
       struct SceneActor *actor;
 
-      ((struct SceneActor *)Actor_GetById(list[j]))->unk_10 += speed;
-      actor = ((struct SceneActor *)Actor_GetById(list[j]));
-      actor->unk_40 = ((struct SceneActor *)Actor_GetById(list[j]))->unk_10;
+      ((struct SceneActor *)Actor_Get(list[j]))->unk_10 += speed;
+      actor = ((struct SceneActor *)Actor_Get(list[j]));
+      actor->unk_40 = ((struct SceneActor *)Actor_Get(list[j]))->unk_10;
     }
     if ((i & 3) == 3)
       speed += 0x1999;
     if (speed > 0x17fff)
       speed = 0x18000;
-    wait(1);
+    System_Wait(1);
     if (mode == 0) {
       if (i == 40)
-        Camera_MoveWithinMapBounds(128 << 18, 208 << 15, 152 << 17, 1);
+        FieldCamera_MoveTo(128 << 18, 208 << 15, 152 << 17, 1);
       if (i == 120)
         break;
     } else if (mode == 1) {
       if (i == 40)
-        Camera_MoveWithinMapBounds(128 << 18, 208 << 15, 176 << 17, 1);
+        FieldCamera_MoveTo(128 << 18, 208 << 15, 176 << 17, 1);
       if (i == 120)
         break;
     } else if (mode == 3) {
       if (i == 40)
-        Camera_FollowActor(0, 1);
+        FieldCamera_FollowActor(0, 1);
       if (i == 120)
         break;
     }
   }
 
   for (i = 0; i <= 5; i++) {
-    ((struct SceneActor *)Actor_GetById(gData_020069dc[i]))->unk_23 &= 223;
-    Actor_SetSpritePriority(gData_020069dc[i], 1);
+    ((struct SceneActor *)Actor_Get(gData_020069dc[i]))->unk_23 &= 223;
+    FieldActor_SetSpritePriority(gData_020069dc[i], 1);
   }
 
   for (i = 0; i < count; i++) {
-    Actor_SetHorizontalPositionWithTerrain(list[i], 0, 0);
-    ((struct SceneActor *)Actor_GetById(list[i]))->unk_55 = 0;
+    Actor_SetPosition(list[i], 0, 0);
+    ((struct SceneActor *)Actor_Get(list[i]))->unk_55 = 0;
   }
 }

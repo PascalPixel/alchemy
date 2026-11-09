@@ -29,7 +29,7 @@ void Func_02000398(struct Orbiter *actor, s32 *x, s32 *z) {
   SET_VECTOR(position, (actor->centerX + 16) << 16, 0x100000,
              actor->centerZ << 16);
   turn = gData_02005af0 * 0x3000 + angle;
-  Vector_AddPolarOffsetFar(0xd0000, turn + 0x8000, position);
+  FieldVector_AddPolarOffset(0xd0000, turn + 0x8000, position);
   *x = position[0];
   *z = position[2];
 }
@@ -42,7 +42,7 @@ s32 Func_02000408(struct Orbiter *actor) {
   actor->flags23 = 0;
   SET_POSITION(actor, (actor->centerX + 16) << 16, 0x100000,
                actor->centerZ << 16);
-  Vector_AddPolarOffsetFar(0xd0000, angle + 0x8000, &actor->x);
+  FieldVector_AddPolarOffset(0xd0000, angle + 0x8000, &actor->x);
   next = *phase + gData_02005af0;
   if (next < 0)
     next = 179;

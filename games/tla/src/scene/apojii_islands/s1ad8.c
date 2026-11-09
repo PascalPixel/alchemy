@@ -53,7 +53,7 @@ void Func_02001ad8(void) {
   buf = HeapSlot_AllocEwram(56, 0x400);
   Func_02001c24(gField_Tiles679, buf);
   work->vramEntry = Resource_FindFreeEntry();
-  work->tileBase = VramCache_Load(work->vramEntry, 0x300, buf);
+  work->tileBase = Vram_Load(work->vramEntry, 0x300, buf);
   HeapSlot_Release(56);
   work->field808 = size;
   i = 0;
@@ -72,5 +72,5 @@ loop:
   p++;
   if (i < 64)
     goto loop;
-  Task_Add(Func_02001940, TASK_PASS_VBLANK);
+  Task_AddFrame(Func_02001940, TASK_PASS_VBLANK);
 }

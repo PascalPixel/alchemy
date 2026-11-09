@@ -7,6 +7,7 @@
        ->v)
 
 #include "call.h"
+#include "event_inline.h"
 s32 Func_02001b1c();
 
 void Func_020000d4(void) { Call7(Func_02001b1c, 0x38, 0, 5, 3, 0x5e, 0x1a, 1); }

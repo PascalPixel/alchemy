@@ -1,5 +1,6 @@
 #include "types.h"
 #include "iwram_call.h"
+#include "event_inline.h"
 
 struct OrbitEffect {
   u8 unk00[6];
@@ -22,10 +23,8 @@ struct OrbitEffect {
 
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 void Func_02000e2c(struct OrbitEffect *effect, const u32 *script);
 void Func_02000e5c(struct OrbitEffect *effect, s32 priority);
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *position);
 struct OrbitEffect *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
 extern u32 gData_020015c0[];
@@ -39,7 +38,7 @@ void Func_02000474(struct OrbitEffect *effect) {
   radius = Random16Far() + 0x20000;
   angle = effect->angle;
   dx = Iwram_MulQ16(radius, Math_Cosine(angle));
-  dz = Iwram_MulQ16(radius, Math_Sine(angle));
+  dz = Iwram_MulQ16(radius, Math_Sin(angle));
   effect->x += dx;
   effect->z += dz;
   effect->angle += 0xfff0;

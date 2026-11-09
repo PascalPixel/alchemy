@@ -44,16 +44,16 @@ void Func_020006ac(void) {
   if (!Flag_IsSet(0xa0e)) {
     Flag_Set(0xa0e);
     Func_020028b0();
-    Event_ResolvePendingActions(0);
+    FieldEvent_ResolvePendingActions(0);
     PaletteFade_ApplySource(0x10000, 0);
-    BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
-    BattleEffect_StartBufferInterpolation(30);
+    PaletteFade_ApplyTarget(0x10003, 1);
+    PaletteFade_Interpolate(30);
     Event_WaitTransitionFrames();
-    Actor_SetModeById(0, 1);
-    Event_Wait(30);
-    Func_0803ce64((s32)MsgFieldShowAnemosPower, 0, -2);
-    BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-    BattleEffect_StartBufferInterpolation(30);
+    Actor_SetAnimation(0, 1);
+    FieldEvent_Wait(30);
+    FieldMessage_ShowCentered((s32)MsgFieldShowAnemosPower, 0, -2);
+    PaletteFade_ApplyTarget(0x10000, 0);
+    PaletteFade_Interpolate(30);
     Func_020028b8();
   }
 }
@@ -75,9 +75,9 @@ void Func_02000734(void) {
   u32 random2;
   u32 scaled;
 
-  actor = ((struct SparkActor *)Actor_GetById(22));
-  Sound_Play(190);
-  Actor_SetSingleChildFlags(((struct SparkActor *)Actor_GetById(22)), 0);
+  actor = ((struct SparkActor *)Actor_Get(22));
+  Event_PlaySound(190);
+  Actor_SetSingleChildFlags(((struct SparkActor *)Actor_Get(22)), 0);
   p = &params;
   p->count = 1;
   p->kind = 5;
@@ -85,7 +85,7 @@ void Func_02000734(void) {
   p->spread = 0x6666;
   p->rise = 0x30000;
   for (i = 0; i <= 31; i++) {
-    Event_Wait(1);
+    FieldEvent_Wait(1);
     if (!(i & 1)) {
       random = Random16Far();
       /* FAKEMATCH: random * 24 written in steps with two barriers: ⚓️ loads x
@@ -107,8 +107,8 @@ void Func_02000734(void) {
                     0, -0x40000, 0, 0x1b0000, p);
     }
     if (i == 20)
-      Actor_ConfigureSpriteColor(22, 0x100);
+      Actor_SetSpriteColorById(22, 0x100);
   }
-  Actor_ConfigureSpriteColor(22, 0);
-  Actor_SetSingleChildFlags(((struct SparkActor *)Actor_GetById(22)), 1);
+  Actor_SetSpriteColorById(22, 0);
+  Actor_SetSingleChildFlags(((struct SparkActor *)Actor_Get(22)), 1);
 }

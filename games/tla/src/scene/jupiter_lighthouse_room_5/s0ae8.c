@@ -34,21 +34,21 @@ s32 Func_02000ae8(void) {
     Actor_SetPositionAndFacing(22, PIXELS(64), PIXELS(225), angle);
   }
   Func_020029c8(gData_02002fb8);
-  Actor_SetActionCallback(Actor_GetById(64), 9);
-  object = Actor_GetById(23);
+  Actor_SetActionCallback(Actor_Get(64), 9);
+  object = Actor_Get(23);
   object->scaleX = 0;
   object->motionFlags = 0;
   SET_POSITION(object, 0x2a80000, 0x200000, 0x2440000);
-  Actor_SetSingleChildFlags(Actor_GetById(23), 0);
-  object = Actor_GetById(24);
+  Actor_SetSingleChildFlags(Actor_Get(23), 0);
+  object = Actor_Get(24);
   object->scaleX = 0;
   object->motionFlags = 0;
   SET_POSITION(object, 0x2a80000, 0x400000, 0x2440000);
-  Actor_SetSingleChildFlags(Actor_GetById(24), 0);
+  Actor_SetSingleChildFlags(Actor_Get(24), 0);
   if (Flag_IsSet(0xa00)) {
     MapGrid_CopyCellsLayered(58, 99, 3, 3, 41, 99);
     MapGrid_CopyCellsLayered(123, 32, 1, 5, 106, 32);
-    Task_Add(Func_020001a4, TASK_PASS_VBLANK);
+    Task_AddFrame(Func_020001a4, TASK_PASS_VBLANK);
   }
   return 0;
 }

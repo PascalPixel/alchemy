@@ -54,8 +54,8 @@ void Func_02000078(s32 message) {
   Message_CloseFinishedWindows();
   Message_OpenWindow(message, 5, 0, 0x22);
   while (Message_AllTyped() == 0)
-    wait(1);
-  wait(1);
+    System_Wait(1);
+  System_Wait(1);
 }
 
 void Func_020000a4(s32 message, s32 count) {
@@ -72,7 +72,7 @@ void Func_020000a4(s32 message, s32 count) {
   wait:
     if (INPUT_HELD != 0)
       goto next;
-    wait(1);
+    System_Wait(1);
   check:
     if (INPUT_HELD & 2)
       goto done;
@@ -123,7 +123,7 @@ void Func_020001d4(s32 value) { Func_02000f2c(0, value); }
 void Func_020001e0(void) {}
 
 void Func_020001e4(void) {
-  FieldMessage_Show((s32)MsgYouWentUp, 1);
+  Message_ShowCentered((s32)MsgYouWentUp, 1);
   Unit_LevelUpTo(4, ((u8 *)Unit_Get(4))[15] + 10);
   Unit_LevelUpTo(5, ((u8 *)Unit_Get(5))[15] + 10);
   Unit_LevelUpTo(6, ((u8 *)Unit_Get(6))[15] + 10);
@@ -132,7 +132,7 @@ void Func_020001e4(void) {
 void Func_02000224(void) {
   s32 i;
 
-  FieldMessage_Show((s32)MsgYouGotTreasure, 1);
+  Message_ShowCentered((s32)MsgYouGotTreasure, 1);
   gMainRoutineWork.coins = 777777;
   for (i = 9; i >= 0; i--) {
     Inventory_AddItem(4, 228);
@@ -152,10 +152,10 @@ static __inline__ void Unit_AddHpBy(s32 owner, s32 delta) {
 void Func_0200026c(void) {
   u8 *state;
 
-  FieldMessage_Show((s32)MsgTheBodyIs, 1);
+  Message_ShowCentered((s32)MsgTheBodyIs, 1);
   Unit_AddHpBy(4, -100);
-  Unit_AddHp(5, -100);
-  Unit_AddHp(6, -33);
+  FieldUnit_AddHp(5, -100);
+  FieldUnit_AddHp(6, -33);
   Unit_AddPp(4, -50);
   Unit_AddPp(5, -40);
   Unit_AddPp(6, -35);
@@ -172,14 +172,14 @@ void Func_0200026c(void) {
 }
 
 void Func_020002f4(s32 owner, s32 element, s32 djinn, s32 activate) {
-  GameFlag_SetBit(element * 20 + djinn + 48);
+  Event_SetFlag(element * 20 + djinn + 48);
   Djinn_AddToOwner(owner, element, djinn);
   if (activate == 1)
     Djinn_Activate(owner, element, djinn);
 }
 
 void Func_02000330(void) {
-  FieldMessage_Show((s32)MsgYouGotA, 1);
+  Message_ShowCentered((s32)MsgYouGotA, 1);
   Func_020002f4(4, 0, 0, 1);
   Func_020002f4(4, 0, 1, 1);
   Func_020002f4(4, 0, 2, 1);
@@ -228,59 +228,59 @@ static __inline__ void Actor_SetPositionById(s32 actor, s32 x, s32 z) {
 }
 
 void Func_02000464(s32 unused, s32 actor) {
-  Func_080d47b4(actor, 0x100, 50);
-  Actor_Jump(actor, 6, 15);
-  Actor_Jump(actor, 6, 15);
-  Event_Wait(10);
+  Actor_ShowEmote(actor, 0x100, 50);
+  FieldActor_Jump(actor, 6, 15);
+  FieldActor_Jump(actor, 6, 15);
+  FieldEvent_Wait(10);
   if (GameFlag_TestBit(0x200) == 0) {
-    Event_SetMessageId((s32)MsgDailaInteriorsGah);
-    Event_ShowMessageAndWait(actor, 0);
+    FieldEvent_SetMessageId((s32)MsgDailaInteriorsGah);
+    Event_ShowMessage(actor, 0);
     Actor_SetPositionById(actor, 360, 72);
-    Actor_ArmCallback(actor, 0x4000, 0);
-    GameFlag_SetBit(0x200);
+    Actor_FaceDirection(actor, 0x4000, 0);
+    Event_SetFlag(0x200);
   } else {
-    Event_SetMessageId((s32)MsgDailaInteriorsYarg);
-    Event_ShowMessageAndWait(actor, 0);
+    FieldEvent_SetMessageId((s32)MsgDailaInteriorsYarg);
+    Event_ShowMessage(actor, 0);
     Actor_SetPositionById(actor, 392, 104);
-    Actor_ArmCallback(actor, 0x8000, 0);
-    GameFlag_ClearBit(0x200);
+    Actor_FaceDirection(actor, 0x8000, 0);
+    Event_ClearFlag(0x200);
   }
-  Event_Wait(20);
+  FieldEvent_Wait(20);
 }
 
 void Func_02000508(s32 unused, s32 actor) {
-  Actor_SetAngleToward(actor, 4, 0);
-  Event_Wait(10);
+  Actor_FaceActor(actor, 4, 0);
+  FieldEvent_Wait(10);
   Actor_Emote(actor, 0x103, 50);
-  Actor_Jump(actor, 6, 15);
-  Actor_Jump(actor, 6, 15);
-  Event_Wait(10);
-  Event_SetMessageId((s32)MsgDailaInteriorsWhatAreYouDoing);
-  Event_ShowMessageAndWait(actor, 0);
-  Event_Wait(10);
+  FieldActor_Jump(actor, 6, 15);
+  FieldActor_Jump(actor, 6, 15);
+  FieldEvent_Wait(10);
+  FieldEvent_SetMessageId((s32)MsgDailaInteriorsWhatAreYouDoing);
+  Event_ShowMessage(actor, 0);
+  FieldEvent_Wait(10);
 }
 
 void Func_0200055c(s32 unused, s32 actor) {
-  Actor_SetAngleToward(actor, 4, 0);
-  Event_Wait(10);
+  Actor_FaceActor(actor, 4, 0);
+  FieldEvent_Wait(10);
   Actor_Emote(actor, 0x103, 50);
-  Actor_Jump(actor, 6, 15);
-  Actor_Jump(actor, 6, 15);
-  Event_Wait(10);
-  Event_SetMessageId((s32)MsgDailaInteriorsWhatAreYouDoing);
-  Event_ShowMessageAndWait(actor, 0);
-  Event_Wait(10);
+  FieldActor_Jump(actor, 6, 15);
+  FieldActor_Jump(actor, 6, 15);
+  FieldEvent_Wait(10);
+  FieldEvent_SetMessageId((s32)MsgDailaInteriorsWhatAreYouDoing);
+  Event_ShowMessage(actor, 0);
+  FieldEvent_Wait(10);
 }
 
 void Func_020005b0(void) {
   s32 frames;
   s32 flags;
 
-  Actor_SetModeById(21, 2);
-  Event_Wait(10);
+  Actor_SetAnimation(21, 2);
+  FieldEvent_Wait(10);
   frames = 25;
   flags = 0;
-  Map_CopyCellsRect(57, 16, 4, 6, frames, flags);
+  MapGrid_CopyCells(57, 16, 4, 6, frames, flags);
 }
 
 void Func_020005dc(s32 value) {
@@ -288,10 +288,10 @@ void Func_020005dc(s32 value) {
   s32 flags;
 
   if (value == 1) {
-    Actor_SetModeById(21, 2);
+    Actor_SetAnimation(21, 2);
     frames = 25;
     flags = 0;
-    Map_CopyCellsRect(57, 16, 4, 6, frames, flags);
+    MapGrid_CopyCells(57, 16, 4, 6, frames, flags);
   }
 }
 

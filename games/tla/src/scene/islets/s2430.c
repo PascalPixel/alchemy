@@ -1,15 +1,16 @@
 #include "../../../../games/tla/src/scene/islets/islets.h"
+#include "event_inline.h"
 
 void Func_02002430(void) {
-  struct Actor *first = Actor_GetById(12);
-  struct Actor *second = Actor_GetById(13);
+  struct Actor *first = Actor_Get(12);
+  struct Actor *second = Actor_Get(13);
 
   gData_0200519c = first->x;
   gData_02005194 = first->z;
   gData_02005198 = second->x;
   gData_02005190 = second->z;
   Func_02003e64();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   if (gData_0200519c >> 20 == 7 && gData_02005194 >> 20 == 29 &&
       gData_02005198 >> 20 == 7 && gData_02005190 >> 20 == 28) {
     ((u8 *)first)[0x62] = 0;

@@ -20,7 +20,7 @@ s32 Func_02004e64(void);
 // The Japanese edition has no form of this function here.
 #if TLA_PATCH_1
 s32 Func_0200042c(void) {
-  struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   /* FAKEMATCH(pin): i in r10, which leaves r8 to the options pointer; as a
    * plain local, 12 of 177 instructions differ in tla-en. */
   register u32 i asm("r10");
@@ -28,10 +28,10 @@ s32 Func_0200042c(void) {
   s32 spawn = 1;
 
   Func_02004e5c();
-  Event_ResolvePendingActions(0);
+  FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Func_02004dc4();
-  wait(1);
+  System_Wait(1);
   actor->y = 0x820000;
   actor->gravity = 0x8000;
   actor->bounce = 0;
@@ -39,9 +39,9 @@ s32 Func_0200042c(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Sound_Play(204);
+  Event_PlaySound(204);
   actor->motionFlags = 3;
-  Event_Wait(24);
+  FieldEvent_Wait(24);
   options.palette = 7;
   options.update = Effect_AdvanceMotion;
   options.startScaleX = 0xa3d7;
@@ -64,7 +64,7 @@ loop:
     if (spawn) {
       velocity[0] = cosine;
       velocity[1] = 0;
-      velocity[2] = Math_Sine(angle);
+      velocity[2] = Math_Sin(angle);
       velocity[0] += velocity[0] >> 1;
       velocity[0] += (Random16Far() * 0xc000 >> 16) - 0x6000;
       velocity[2] += (Random16Far() * 0x6000 >> 16) - 0x3000;
@@ -75,17 +75,17 @@ loop:
   }
   if (i <= 16)
     goto loop;
-  Sound_Play(188);
-  Func_080d489c(gMainRoutineWork.currentOwner, 0x101);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
+  Event_PlaySound(188);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  Map_WaitForShakeToSettle();
-  Func_080d489c(gMainRoutineWork.currentOwner, 0x100);
+  MapGrid_WaitForShakeToSettle();
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
   actor->gravity = 0x10000;
   actor->bounce = 0x4000;
-  Event_Wait(10);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
+  FieldEvent_Wait(10);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
   return Func_02004e64();
 }

@@ -13,7 +13,7 @@ s32 Func_0200020c(void) {
   if (!Flag_IsSet(0x109) && gMainRoutineWork.entrance == 6)
     Func_02001bcc(gMainRoutineWork.currentOwner);
   if (Flag_IsSet(0xa01)) {
-    Actor_SetHorizontalPositionWithTerrain(10, PIXELS(280), PIXELS(536));
+    Actor_SetPosition(10, PIXELS(280), PIXELS(536));
     Func_02000060(0);
   }
   if (Flag_IsSet(0x200))

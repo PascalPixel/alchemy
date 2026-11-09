@@ -31,33 +31,33 @@ static __inline__ void Actor_SetSpeedParameters_(s32 actor, s32 speed,
 void Func_020029a4(void) {
   struct Actor *actor;
 
-  actor = Actor_GetById(8);
-  Event_Wait(60);
+  actor = Actor_Get(8);
+  FieldEvent_Wait(60);
   Func_02004c20();
-  Event_ResolvePendingActions(0);
-  Func_080d46a4(0x9999, 1);
+  FieldEvent_ResolvePendingActions(0);
+  FieldEffect_ScheduleRatioTransition(0x9999, 1);
   actor->scaleX = 0x13333;
   actor->scaleY = 0x13333;
-  Camera_FollowActor(8, 1);
-  wait(1);
-  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+  FieldCamera_FollowActor(8, 1);
+  System_Wait(1);
+  Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
+  Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner),
                                      0);
-  Actor_SetSingleChildFlags(Actor_GetById(8), 0);
+  Actor_SetSingleChildFlags(Actor_Get(8), 0);
   Actor_SetSpeedParameters_(8, 0x6666, 0x3333);
   actor->action = 0;
-  Actor_SetMovementTypeById(8, gData_02004eb8);
-  Task_Add(Func_020028cc, TASK_PASS_VBLANK);
+  Actor_SetScript(8, gData_02004eb8);
+  Task_AddFrame(Func_020028cc, TASK_PASS_VBLANK);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->startTransition = 0x100;
-  BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
+  PaletteFade_ApplyTarget(0x10003, 1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->transitionFrames = 32;
   Event_StartScreenTransition();
-  Event_Wait(120);
-  Func_080d46a4(0x16666, 300);
-  Event_Wait(270);
+  FieldEvent_Wait(120);
+  FieldEffect_ScheduleRatioTransition(0x16666, 300);
+  FieldEvent_Wait(270);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->transitionFrames = 16;
   *(u16 *)BG_PLTT = RGB(31, 31, 31);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(77);
+  FieldEvent_SetExitRequest(77);
 }

@@ -1,9 +1,8 @@
-#include "types.h"
-#include "io_reg.h"
-#include "io_write_queue.h"
-#include "system.h"
-#include "frame.h"
-#include "dma.h"
+/// @file
+/// The register write queue that VBlank carries out after each finished frame.
+// Part of system.c.
+
+#include "../system_internal.h"
 
 #define DEFINE_QUEUE_IO_WRITE(name, delay)                                     \
   void name(u32 address, u32 value) {                                          \
@@ -36,37 +35,6 @@
     }                                                                          \
     *ime = saved;                                                              \
   }
-
-#define SOUND_PRESET_COUNT 5
-
-s32 Sound_LoadPresetParameters(s32 preset) {
-  if ((u32)preset > SOUND_PRESET_COUNT - 1)
-    preset = 0;
-  return 0;
-}
-
-void Func_08013b38(void) {}
-
-void Func_08013b3c(void) {}
-
-static inline void Reg_Write16(u32 value, volatile u16 *reg) {
-  /* FAKEMATCH: through the inline the value stays a word, built by movs, lsls,
-   * adds as the native builds 0xc3ff; a halfword constant store loads it from
-   * the pool (three rows). */
-  *reg = value;
-}
-
-void Input_HandleKeyInterrupt(void) {
-  if (gSleepActive == 0) {
-    volatile u16 *keycnt = &REG_KEYCNT;
-
-    /* FAKEMATCH: the native loads the register address before it builds the
-     * value (one reordered row). */
-    __asm__ volatile("" : "+l"(keycnt));
-    Reg_Write16(0xc3ff, keycnt);
-    gResetRequested = 1;
-  }
-}
 
 /* FAKEMATCH: the one-pass read and repeated IME address preserve the native
  * order, as above. */
@@ -124,3 +92,5 @@ void IoWriteQueue_FlushPending(void) {
     }
   }
 }
+
+#undef DEFINE_QUEUE_IO_WRITE

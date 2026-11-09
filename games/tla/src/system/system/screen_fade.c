@@ -1,22 +1,8 @@
 /// @file
-/// Display: configure brightness fades to white or black and wait for
-/// completion.
+/// Screen fades through the blend registers.
+// Part of system.c.
 
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "lib.h"
-#include "menu.h"
-#include "minigame.h"
-#include "sound.h"
-#include "system.h"
-#include "types.h"
-#include "fixed_math.h"
-#include "iwram_call.h"
-#include "affine.h"
-#include "io_reg.h"
+#include "../system_internal.h"
 
 // Fade_Update advances the fade each VBlank.
 // BLDY 0 leaves brightness unchanged; 16 produces solid white or black.
@@ -147,60 +133,4 @@ void Fade_Wait(void) {
       wait(1);
     } while (gBlendDuration != 0);
   }
-}
-
-extern u8 gOamBucketMasks[];
-
-void Render_ResetFrame(void) {
-  gObjAffineCount = 0;
-  Iwram_ClearWords(gOamBucketMasks, 32);
-}
-
-/// Takes the next of the 32 sprite affine matrices and fills it with the
-/// rotation and scale of source; returns its index, or 31 when all are taken.
-s32 AffineMatrix_BuildForEffect(struct AffineTransform *source) {
-  union AffineMatrix *matrix;
-  s16 *coefficient;
-  s32 xScale;
-  s32 yScale;
-  s32 angle;
-  u8 index;
-
-  xScale = (s16)source->scaleX;
-  angle = source->angle;
-  yScale = (s16)source->scaleY;
-  index = gObjAffineCount;
-  if (index > 31)
-    return 31;
-
-  matrix = &gObjAffineMatrices[index];
-  coefficient = matrix->coefficients;
-  gObjAffineCount = index + 1;
-  if ((xScale == yScale || xScale == -yScale) && angle == 0) {
-    s32 reciprocal;
-    s32 xReciprocal;
-
-    reciprocal = Iwram_SignedDivide(0x10000, yScale);
-    xReciprocal = reciprocal;
-    if (xScale == -yScale)
-      xReciprocal = -reciprocal;
-
-    matrix->rows[0] = (u16)xReciprocal;
-    matrix->rows[1] = reciprocal << 16;
-  } else {
-    s32 sine;
-    s32 cosine;
-
-    sine = Trig_Sin(angle);
-    cosine = Trig_Cos(angle);
-    *coefficient = cosine / xScale;
-    coefficient++;
-    *coefficient = sine / xScale;
-    coefficient++;
-    *coefficient = (-sine) / yScale;
-    coefficient++;
-    *coefficient = cosine / yScale;
-  }
-
-  return index;
 }

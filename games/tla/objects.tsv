@@ -54,18 +54,7 @@ main	rom_main_00	games/tla/src/system/resource/execute_transfer
 main	rom_main_00	games/tla/src/system/resource/patch_thumb_branch
 main	rom_main_00	games/tla/src/system/heap_slot_release
 main	rom_main_00	games/tla/src/system/heap_release
-main	rom_main_00	games/tla/src/system/f01319c	.text
-main	rom_main_00	games/tla/src/system/constant_zero_result	.text
-main	rom_main_00	games/tla/src/system/resource/resource	.text
-main	rom_main_00	games/tla/src/system/f0133c4	.text
-main	rom_main_00	games/tla/src/system/setirq	.text
-main	rom_main_00	games/tla/src/system/frame_interrupt	.text
 main	rom_main_00	games/tla/src/system/system	.text
-main	rom_main_00	games/tla/src/system/input	.text
-main	rom_main_00	games/tla/src/system/f01399c	.text	en de es fr it ja
-main	rom_main_00	games/tla/src/system/io	.text
-main	rom_main_00	games/tla/src/system/blend	.text
-main	rom_main_00	games/tla/src/system/oam_buckets	.text
 main	rom_main_00	games/tla/src/system/resource/allocate_blocks	.text
 main	rom_main_00	games/tla/src/system/resource/clear_slot_references	.text
 main	rom_main_00	games/tla/src/system/resource/activate_entry	.text

@@ -1,0 +1,504 @@
+/// @file
+/// Interrupt handlers, the frame wait, key repeat and the VBlank handler.
+// Part of system.c.
+
+#include "../system_internal.h"
+
+void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler) {
+  if (irq <= 13) {
+    volatile u16 *ime_reg = &REG_IME;
+    u32 ime;
+    u32 bit;
+    u32 ie;
+
+    ime = *ime_reg;
+    /* FAKEMATCH: the empty do-while keeps the saved IME copy ahead of
+       the IME store; without it the store comes first (2 differ). */
+    do {
+    } while (0);
+    /* FAKEMATCH: writing the IME register address keeps its disabled
+       low bit while emitting the measured register store; literal zero
+       scored 340 and an ordinary word zero temporary scored 260. */
+    *ime_reg = (u32)ime_reg;
+    /* FAKEMATCH: the empty do-while keeps the IE address load after
+       the IME store; without it three instructions reorder (180). */
+    do {
+    } while (0);
+    bit = 1 << irq;
+    ie = REG_IE & ~bit;
+    if (handler != 0)
+      ie |= bit;
+    REG_IE = ie;
+    if (irq <= 2) {
+      u32 enable = 8 << irq;
+      u32 keep = ~enable;
+      u32 stat;
+
+      if (irq == 2) {
+        enable |= vcount << 8;
+        keep &= 0xff;
+      }
+      stat = REG_DISPSTAT & keep;
+      if (handler != 0)
+        stat |= enable;
+      REG_DISPSTAT = stat;
+    }
+    if (handler != 0)
+      gIrqHandlers[irq] = handler;
+    else
+      gIrqHandlers[irq] = Irq_Ignore;
+    REG_IME = ime;
+  }
+}
+
+struct SoundVBlankState {
+  u8 lastVBlank;
+  u8 unk01;
+  u8 unk02;
+  u8 unk03;
+};
+extern volatile struct SoundVBlankState gData_03001138;
+extern volatile u16 gData_0300121c;
+extern u32 gVBlankCount;
+extern u8 *gData_03007ff0;
+void Func_081c0088(void);
+s32 SoundDriver_EnterVBlankUpdate(void);
+void IwramSoundRenderVBlank(s32) __attribute__((long_call));
+
+void System_WaitForFrameInterrupt(void) {
+  u32 saved;
+  u8 *sound;
+
+  /* FAKEMATCH(volatile): gData_0300121c read as volatile; as a plain u16, 61
+     of 73 instructions differ in tla-en. */
+
+  if (gData_03001138.unk02) {
+    gData_0300121c &= ~1;
+    for (;;)
+      if (gData_0300121c & 1)
+        return;
+  } else {
+    IRQ_LOCK(saved);
+    gData_0300121c &= ~1;
+    gData_03001138.lastVBlank = gVBlankCount;
+    gData_03001138.unk03 = 1;
+    sound = gData_03007ff0;
+    if (sound[4] <= 1)
+      gData_03001138.unk01 = sound[11];
+    else
+      gData_03001138.unk01 = sound[4] - 1;
+    REG_IME = saved;
+    Func_081c0088();
+    if (SoundDriver_EnterVBlankUpdate() == 0) {
+      void (*render)(s32) = IwramSoundRenderVBlank;
+
+      render(8);
+    }
+    gData_03001138.unk03 = 0;
+    while (!(gData_0300121c & 1))
+      ;
+  }
+}
+
+#define SLEEP_IDLE_FRAMES 10800
+#define RGB_WHITE 0x7fff
+
+#undef Io_Write16
+#define Io_Write16(value_, reg_)                                               \
+  do {                                                                         \
+    /* FAKEMATCH: plain halfword stores pool the sleep constants; a            \
+     * word-valued temporary */                                                \
+    /* preserves their measured register construction. */                      \
+    u32 word_ = (u16)(value_);                                                 \
+    *(reg_) = word_;                                                           \
+  } while (0)
+
+static __inline__ void System_Reset(void) {
+  /* FAKEMATCH: the ordinary indirect call uses r5/r6 and returns through LR;
+   * this register carries the native ARM restart target in r4. */
+  register u32 entry __asm__("r4");
+  gCartridgeResetMarker = 0x19670704;
+  m4aSoundVSyncOffFar();
+  entry = Cart_Restart;
+  Io_Write16(0, &REG_IME);
+  CAMELOT_ASM("the cartridge restart transfers control without returning.")
+  __asm__ volatile("bx %0" : : "r"(entry));
+}
+
+static __inline__ void Bios_Stop(void) {
+  CAMELOT_ASM("BIOS Stop has no C instruction.")
+  __asm__ volatile("swi 3");
+}
+
+void wait(s32 frames) {
+  u32 i;
+  u32 line;
+  s32 j;
+  s16 display;
+  s16 backdrop;
+
+  for (i = 0; i < (u32)frames; i++) {
+    gTasksRunning = 1;
+    Task_RunPass(TASK_PASS_VBLANK);
+    gTasksRunning = 0;
+    if (gRenderOamEnabled) {
+      Render_BuildOamList(HeapSlot_Alloc(80, 0x400));
+    } else {
+      gOamUsage.used = 0;
+      gOamUsage.limit = 256;
+    }
+    gFrameRenderPending = 1;
+    if (gCpuLoadDisplayEnabled) {
+      line = *(u16 *)&REG_VCOUNT;
+      if (line >= 160)
+        line -= 160;
+      else
+        line += 68;
+      line += (gFrameVBlanks - 1) << 8;
+      if (gCpuLoadTimer == 0)
+        gCpuLoadPeak = 0;
+      else
+        gCpuLoadTimer--;
+      if (gCpuLoadPeak < line) {
+        gCpuLoadPeak = line;
+        gCpuLoadTimer = 30;
+      }
+    }
+    if (gSleepDisabled == 0) {
+      if (gAutoSleepEnabled) {
+        if (gInput.held)
+          gIdleFrameCount = 0;
+        else {
+          gIdleFrameCount++;
+          if (gIdleFrameCount > SLEEP_IDLE_FRAMES)
+            gSleepRequested = 1;
+        }
+      }
+      if (gInput.held == (KEYS_SHOULDERS | KEY_SELECT))
+        gSleepRequested = 1;
+    }
+    if (gDebugMode) {
+      for (;;) {
+        if (gDebugPaused) {
+          if (gInput.repeat & (KEY_A | KEY_B | KEY_SELECT))
+            break;
+          if (gInput.held & KEYS_DPAD)
+            break;
+          if (gInput.repeat & KEY_START) {
+            gDebugPaused = 0;
+            break;
+          }
+        } else {
+          if (gInput.held != (KEY_START | KEY_SELECT))
+            break;
+          gDebugPaused = 1;
+        }
+        System_WaitForFrameInterrupt();
+        Input_UpdateKeyRepeatAndDirection();
+        if (gResetRequested) {
+          gResetRequested = 0;
+          System_Reset();
+        }
+      }
+    }
+    gLastFrameVBlanks = gFrameVBlanks;
+    gFrameVBlanks = 0;
+    System_WaitForFrameInterrupt();
+    HeapSlot_Release(80);
+    Render_ResetFrame();
+    gFrameCount++;
+    gFrameWaitCount++;
+    Input_UpdateKeyRepeatAndDirection();
+    if (gSerialExchangeActive) {
+      Serial_PollStatus();
+      if (gSerialWork.mode)
+        gSerialWork.transferEnabled = 1;
+    }
+    if (gSleepRequested && gSleepDisabled == 0) {
+      display = REG_DISPCNT;
+      backdrop = PLTT_BACKDROP;
+      if (gSleepRequested == 1) {
+        Io_Write16(0, &REG_DISPCNT);
+        Io_Write16(RGB_WHITE, &PLTT_BACKDROP);
+        for (j = 9; j >= 0; j--)
+          System_WaitForFrameInterrupt();
+        while (gInput.held)
+          System_WaitForFrameInterrupt();
+        gSleepActive = 1;
+        {
+          u32 high;
+
+          /* FAKEMATCH(barrier): the wake mask's first instruction before
+           * REG_KEYCNT's address loads; as plain C, 3 of 326 instructions
+           * differ in tla-en. */
+          high = KEYCNT_SLEEP_WAKE >> 8;
+          asm volatile("" : "+l"(high));
+          REG_KEYCNT = (high << 8) + (KEYCNT_SLEEP_WAKE & 255);
+        }
+        Bios_SoundBiasOff();
+        Bios_Stop();
+        Bios_SoundBiasOn();
+        Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
+        Io_Write16(0, &gSleepActive);
+        for (j = 9; j >= 0; j--)
+          System_WaitForFrameInterrupt();
+        while (gInput.held)
+          System_WaitForFrameInterrupt();
+        Io_Write16(display, &REG_DISPCNT);
+        Io_Write16(backdrop, &PLTT_BACKDROP);
+        gSleepRequested = 0;
+        gIdleFrameCount = 0;
+      } else
+        gSleepRequested--;
+    }
+    if (gResetRequested) {
+      gResetRequested = 0;
+      System_Reset();
+    }
+  }
+}
+
+void Input_ResetKeyRepeat(void) { gInput.repeatTimer = 19; }
+
+/// Frames a key is held before it first repeats, and between later repeats.
+#define INPUT_KEY_REPEAT_FIRST 19
+#define INPUT_KEY_REPEAT_NEXT 6
+
+/// Runs once a frame after VBlank, as The Broken Seal's twin does. When the
+/// repeat timer has run out, the held keys repeat into gInput.repeat.
+/// gInput.direction is the same keys with at most one D-pad direction: of
+/// several held directions it keeps the one added last (previousDirection
+/// remembers it), and with all four it keeps none. Last, the keys newly held
+/// since the previous frame go to pressed, and previousHeld takes held.
+void Input_UpdateKeyRepeatAndDirection(void) {
+  u32 held;
+  u32 keys;
+  u32 axis = 0;
+  u32 directionCount;
+  u32 mask;
+  s32 delay;
+
+  held = gInput.held;
+  /* FAKEMATCH(barrier): the form kept; as the plain read, 2 of 113
+   * instructions differ in tla-en (the timer is loaded before held). */
+  asm("");
+  delay = gInput.repeatTimer;
+  if (delay <= 0) {
+    keys = held;
+    gInput.repeat = held;
+    if (delay == 0)
+      gInput.repeatTimer = INPUT_KEY_REPEAT_NEXT;
+    else
+      gInput.repeatTimer = INPUT_KEY_REPEAT_FIRST;
+  } else {
+    keys = 0;
+    gInput.repeat = 0;
+  }
+
+  if (keys != 0) {
+    // Count the D-pad directions in the repeat
+    directionCount = 0;
+    if (keys & KEY_UP)
+      directionCount = 1;
+    if (keys & KEY_DOWN)
+      directionCount++;
+    if (keys & KEY_LEFT)
+      directionCount++;
+    if (keys & KEY_RIGHT)
+      directionCount++;
+
+    gInput.direction = keys;
+    switch (directionCount) {
+    default:
+      gInput.previousDirection = KEYS_HORIZONTAL;
+      /* FAKEMATCH(one-pass): the form kept; as plain C with no block, 2 of 113
+       * instructions differ in tla-en (the direction is loaded before the
+       * mask). */
+      do {
+      } while (0);
+      mask = 0xffff & ~KEYS_DPAD;
+      gInput.direction &= mask;
+      break;
+    case 0:
+      gInput.previousDirection = KEYS_HORIZONTAL;
+      break;
+    case 1:
+      gInput.previousDirection = keys & KEYS_DPAD;
+      break;
+    case 2:
+      if ((gInput.previousDirection & gInput.direction) == 0)
+        gInput.previousDirection = KEYS_HORIZONTAL;
+      gInput.direction &= gInput.previousDirection ^ 0xffff;
+      break;
+    case 3:
+      if (gInput.previousDirection & KEYS_HORIZONTAL)
+        axis = KEYS_HORIZONTAL;
+      if (gInput.previousDirection & KEYS_VERTICAL)
+        axis = KEYS_VERTICAL;
+      mask = 0xffff ^ axis;
+      gInput.previousDirection = keys & mask;
+      gInput.direction &= mask;
+      break;
+    }
+  } else {
+    gInput.direction = keys;
+  }
+
+  gInput.pressed = held & ~gInput.previousHeld;
+  /* FAKEMATCH(barrier): the form kept; as plain C, 2 of 113 instructions
+   * differ in tla-en (previousHeld is stored before pressed). */
+  asm("");
+  gInput.previousHeld = held;
+}
+
+struct BgScrollRegs {
+  u32 words[4];
+};
+
+
+extern void (*gData_030011f8)(void);
+extern volatile u8 gBlendDuration;
+
+void SoundDriver_VSyncRefresh(void);
+void Fade_Update(void);
+
+CAMELOT_ASM("ldmia and stmia of four registers: agscc's block moves stop at "
+            "three, so a 16-byte struct copy compiles to 12 and 4")
+static __inline__ void Copy16Bytes(const void *source, volatile void *destination) {
+  register const void *src __asm__("r0") = source;
+  register volatile void *dst __asm__("r1") = destination;
+  __asm__ volatile("ldmia %0!, {r2, r3, r4, r5}\n\tstmia %1!, {r2, r3, r4, r5}"
+                   : "+r"(src), "+r"(dst)
+                   :
+                   : "r2", "r3", "r4", "r5", "memory");
+}
+
+void Func_0801399c(void) {
+  u32 keys;
+  u32 vblankCount;
+  void (*hook)(void);
+
+  {
+    volatile u16 *dma0 = REG_DMA0;
+
+    dma0[5] &= ~0x3a00;
+    dma0[5] &= ~0x8000;
+    dma0[5];
+  }
+  if (gSerialExchangeActive != 0) {
+    gLinkStatus = Serial_ExchangePayloads((void *)&gSerialTransfer,
+                                                 gSerialPeerPayloads);
+    Serial_StepBlockTransfer();
+  }
+  SoundDriver_VSyncRefresh();
+  if (gBlendDuration != 0)
+    Fade_Update();
+  if (gFrameRenderPending != 0) {
+    gFrameRenderPending = 0;
+    if (gOamUsage.used != 0)
+      Dma_Set(Ram_HeapSlots->unk4c[1], OAM, 0x84000000 + gOamUsage.used,
+              REG_DMA3);
+    Copy16Bytes(gBgScroll, REG_BG0HOFS);
+    IoWriteQueue_FlushPending();
+  }
+  hook = gData_030011f8;
+  if (hook != 0) {
+    gData_030011f8 = 0;
+    hook();
+  }
+  Task_RunPassBeforeVBlankTasks(TASK_PASS_FRAME);
+
+  keys = REG_KEYINPUT ^ 0x3ff;
+  {
+    /* FAKEMATCH(volatile): the input record read through a volatile pointer; as gInput read plainly, 31 of 152 instructions differ in tla-en. */
+    volatile struct InputState *input = (void *)&gInput;
+    u32 pressed = keys & ~input->held;
+
+    input->pressed = pressed;
+    input->pendingPressed |= pressed;
+    input->held = keys;
+    if (keys == 0) {
+      input->repeatTimer = 19;
+      input->repeat = keys;
+    } else if (input->held & (input->previousVblankHeld ^ 0xffff)) {
+      input->repeatTimer = -1;
+      input->repeat = keys;
+    } else if (input->repeatTimer > 0) {
+      input->repeatTimer--;
+    }
+  }
+  {
+    /* FAKEMATCH(volatile): the VBlank count read through a volatile pointer; as a plain pointer, 33 of 152 instructions differ in tla-en. */
+    volatile u32 *count;
+    /* FAKEMATCH(volatile): the sound state volatile; as plain, 25 of 152 instructions differ in tla-en. */
+    volatile struct SoundVBlankState *sound;
+
+    count = &gVBlankCount;
+    /* FAKEMATCH(volatile): this store through a volatile view; as a plain store, 2 of 152 instructions differ in tla-en. */
+    ((volatile struct InputState *)&gInput)->previousVblankHeld = keys;
+    sound = &gData_03001138;
+    vblankCount = *count;
+    if (sound->lastVBlank != (u8)vblankCount && sound->unk03 == 0) {
+      sound->unk01 = gData_03007ff0[4];
+      Func_081c0088();
+      if (SoundDriver_EnterVBlankUpdate() == 0) {
+        void (*render)(s32) = IwramSoundRenderVBlank;
+
+        render(8);
+      }
+      sound->lastVBlank = vblankCount;
+    }
+    *count = vblankCount + 1;
+  }
+  /* FAKEMATCH(one-pass): the frame count's step in a block that runs once; as a plain step, 2 of 152 instructions differ in tla-en. */
+  do {
+    gFrameVBlanks++;
+  } while (0);
+  gData_0300121c = 1;
+}
+
+#define SOUND_PRESET_COUNT 5
+
+s32 Sound_LoadPresetParameters(s32 preset) {
+  if ((u32)preset > SOUND_PRESET_COUNT - 1)
+    preset = 0;
+  return 0;
+}
+
+void Func_08013b38(void) {}
+
+void Func_08013b3c(void) {}
+
+static inline void Reg_Write16(u32 value, volatile u16 *reg) {
+  /* FAKEMATCH: through the inline the value stays a word, built by movs, lsls,
+   * adds as the native builds 0xc3ff; a halfword constant store loads it from
+   * the pool (three rows). */
+  *reg = value;
+}
+
+void Input_HandleKeyInterrupt(void) {
+  if (gSleepActive == 0) {
+    volatile u16 *keycnt = &REG_KEYCNT;
+
+    /* FAKEMATCH: the native loads the register address before it builds the
+     * value (one reordered row). */
+    __asm__ volatile("" : "+l"(keycnt));
+    Reg_Write16(0xc3ff, keycnt);
+    gResetRequested = 1;
+  }
+}
+
+
+#undef SLEEP_IDLE_FRAMES
+#undef RGB_WHITE
+#undef INPUT_KEY_REPEAT_FIRST
+#undef INPUT_KEY_REPEAT_NEXT
+#undef SOUND_PRESET_COUNT
+// wait()'s Io_Write16 above stands in for io_write.h's; the parts after this
+// one write through io_write.h's again.
+#undef Io_Write16
+#define Io_Write16(v, reg)                                                     \
+  do {                                                                         \
+    u32 value_ = (v);                                                          \
+    *(reg) = value_;                                                           \
+  } while (0)

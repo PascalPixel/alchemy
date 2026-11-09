@@ -2134,23 +2134,7 @@ main	rom_main_10	games/tla/src/menu/credits/slides	.rodata
 main	rom_main_10	games/tla/src/menu/credits/slides	.data
 main	rom_main_10	games/tla/src/graphics/credits/font	.rodata
 main	rom_main_11	games/tla/src/gamepak/far_call/resource_b	.text
-main	rom_main_11	games/tla/src/menu/title_intro/title_wait	.text
-main	rom_main_11	games/tla/src/menu/title_intro/f1a6154	.text	en de es fr it ja
-main	rom_main_11	games/tla/src/menu/title_intro/f1a6638	.text	en de es fr it ja
-main	rom_main_11	games/tla/src/menu/title_intro/f1a6724	.text	en de es fr it ja
-main	rom_main_11	games/tla/src/menu/title_intro/f1a68b4	.text
-main	rom_main_11	games/tla/src/menu/title_intro/title_logo_piece	.text
-main	rom_main_11	games/tla/src/menu/title_intro/f1a6b50	.text
-main	rom_main_11	games/tla/src/menu/title_intro/f1a6ea0	.text	en de es fr it ja
-main	rom_main_11	games/tla/src/menu/title_intro/title_intro	.text
-main	rom_main_11	games/tla/src/menu/title_intro/splash	.text
-main	rom_main_11	games/tla/src/menu/title_intro/f1a76f8	.text	en de es fr it ja
-main	rom_main_11	games/tla/src/menu/title_intro/interpolate_buffers	.text
-main	rom_main_11	games/tla/src/menu/title_intro/f1a78c0	.text
-main	rom_main_11	games/tla/src/menu/title_intro/f1a7a28	.text	en de es fr it ja
-main	rom_main_11	games/tla/src/menu/title_intro/title	.text
-main	rom_main_11	games/tla/src/menu/title_intro/color_buffer	.text
-main	rom_main_11	games/tla/src/menu/title_intro/clamp	.text
+main	rom_main_11	games/tla/src/menu/title_intro	.text
 main	rom_main_11	games/tla/src/graphics/title/prompt	.rodata
 main	rom_main_11	games/tla/src/menu/title_intro/logo	.rodata
 main	rom_main_11	games/tla/src/graphics/title/d01a873e	.rodata

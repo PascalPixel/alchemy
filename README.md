@@ -12,7 +12,7 @@ Alchemy is a reconstruction of the source for the Game Boy Advance games ☀️ 
 
 Each game has its own folder of code, pictures, music and text: [games/tbs](games/tbs) for The Broken Seal and [games/tla](games/tla) for The Lost Age. The Broken Seal is fully rebuilt from this repository, in Japanese, English, German, French, Spanish, and Italian. The Lost Age is in progress, and the parts not yet rewritten still come from your own cartridge dump.
 
-<img src="https://alchemy.pascalpixel.com/PROGRESS_CHART.png" width="838" alt="How much of each game's code and data is rebuilt, day by day since 16 July 2026" />
+<img src="https://alchemy.pascalpixel.com/PROGRESS_CHART.png" width="838" alt="How much of each game's code is rebuilt, day by day since 16 July 2026" />
 
 ## Build
 

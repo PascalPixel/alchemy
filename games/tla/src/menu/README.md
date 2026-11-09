@@ -11,9 +11,11 @@ the lobby are scene [overlays](../../../tbs/glossary.md#overlay) in
 ## What differs from The Broken Seal
 
 - `menu.c` is The Broken Seal's menu object as far as the pieces the screens
-  share, written as its first part, `menu/shared.c`, cut where The Broken
-  Seal's is. The item menu and the rest of the bank follow a scaffold in
-  tla-en, so they stay files of their own, one function or small family to
-  a file, some still named for their address (`f0fae8c.c`).
+  share and the start of the Item screen, written as its parts
+  `menu/shared.c` and `menu/item.c`, cut where The Broken Seal's are. The
+  rest of the item menu and of the bank follow a function the German,
+  French, Spanish and Italian editions add, still a scaffold, so they stay
+  files of their own, one function or small family to a file, some still
+  named for their address (`f0fae8c.c`).
 - `title_intro.c` is one object, as The Broken Seal's is; the credits' C is
   still a file to a function or family under `credits/`.

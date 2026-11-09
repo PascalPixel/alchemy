@@ -28,7 +28,7 @@ void Text_UseExtraTilesFar(s32 flag);
 void Link_DrawShiftedTilePairFar(void *tiles);
 s32 Party_ListActiveOwnersFar(u16 *owners);
 void Resource_LoadPairedBlocksIfAvailable(void);
-void Func_080fa368(s32 x, s32 y, s32 mode, s32 columns);
+void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns);
 void Menu_SetFirstObjectRowCoordinates(s32 offset);
 void Palette_LightenHighlight(s32 paletteNumber);
 s32 Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 frame);
@@ -85,7 +85,7 @@ s32 Func_08100e7c(void) {
   Link_DrawShiftedTilePairFar((void *)0x06002500);
   menu->memberCount = Party_ListActiveOwnersFar(menu->owners);
   Resource_LoadPairedBlocksIfAvailable();
-  Func_080fa368(0, 3, 0, 7);
+  ItemMenu_Initialize(0, 3, 0, 7);
   Menu_SetFirstObjectRowCoordinates(0);
   Palette_LightenHighlight(14);
   menu->helpWindow = Window_CreateFar(13, 0, 17, 5, 2);

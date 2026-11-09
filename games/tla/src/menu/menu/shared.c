@@ -23,33 +23,8 @@ s32 Menu_SuspendFieldTasks(void) {
   return Task_SuspendOverlayTasks();
 }
 
-// The menu work, Ram_HeapSlots->menuRuntime, as the item menu's pieces read
-// it: The Broken Seal's ItemMenuWork, whose names its fields take, laid out
-// differently after 0x20.
-struct InventoryMenuState {
-  u8 unk000[0x14];
-  struct WindowSprite *sideIcons[2];
-  s8 sideIndex[2];
-  s8 sideCount[2];
-  u8 unk020[8];
-  struct RenderInput *statusWindow;
-  u8 unk02c[4];
-  struct RenderInput *infoWindow;
-  u8 unk034[0xc];
-  struct RenderInput *modalWindow;
-  u8 unk044[0xb2];
-  u8 columnCount;
-  u8 rowCount;
-  u8 unk0f8[0x78];
-  void *cursor;
-  u8 unk174[0xaa];
-  u16 completionFlag;
-  u8 unk220[0x40];
-  s8 equipPreview;
-};
-
 void Window_InitializeWork(s32 unused) {
-  struct InventoryMenuState *work = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *work = Ram_HeapSlots->menuRuntime;
 
   Dma_Fill32(0, work, 0x33b * 4);
   work->sideIndex[0] = -1;
@@ -60,15 +35,13 @@ void Window_InitializeWork(s32 unused) {
 }
 
 void Window_CloseFar();
-struct Window *Window_CreateFar(s32 x, s32 y, s32 width, s32 height,
-                                    s32 style);
+struct Window *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void WindowSprite_RedrawSavedRectFar(struct Window *window);
 
 /// Creates *handle's window if absent and returns 1. Otherwise returns 0,
 /// redrawing its saved rectangle unless flags has 0x100 set.
 /// flags: the low 8 bits select the window type.
-s32 Window_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 w, s32 h,
-                            s32 flags) {
+s32 Window_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 w, s32 h, s32 flags) {
   s32 cur;
   s32 style;
 
@@ -86,8 +59,8 @@ s32 Window_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 w, s32 h,
 }
 
 /// Closes *handle's window if present, then sets the handle to NULL.
-/// Although declared with one argument, the caller's second argument stays in r1
-/// and reaches Window_CloseFar.
+/// Although declared with one argument, the caller's second argument stays in
+/// r1 and reaches Window_CloseFar.
 void Window_CloseIfOpen(void **handle) {
   if (*handle != NULL) {
     Window_CloseFar(*handle);
@@ -154,7 +127,7 @@ void *SideObject_CreateFar(s32 owner, s32 x, s32 y, struct RenderInput *window,
 void *Heap_Alloc(s32 size);
 void Heap_Release(void *block);
 void Unit_UpdateClassFar(s32 owner);
-void Inventory_EquipFar(s32 owner, s32 slot);
+s32 Inventory_EquipFar(s32 owner, s32 slot);
 void Unit_CalculateFar(s32 owner);
 
 static inline void RestoreUnit(struct BattleUnit *unit,
@@ -169,7 +142,7 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
   s32 created;
   struct ItemDefinition *def;
   u32 item;
-  struct InventoryMenuState *state;
+  struct ItemMenuWork *state;
   struct BattleUnit *unit;
   struct RenderInput *window;
   s32 ailmentRows;
@@ -178,13 +151,13 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
   u8 ailments[8];
 
   created = 0;
-  state = (struct InventoryMenuState *)Ram_HeapSlots->menuRuntime;
+  state = (struct ItemMenuWork *)Ram_HeapSlots->menuRuntime;
   unit = Unit_Get(owner);
   item = unit->inventory[slot];
   def = Item_Get(item & ITEM_ID_MASK);
   if (!(mode & STATUS_PANEL_LOWER_ONLY))
-    created = Window_UpdateOrCreate((s32 *)&state->statusWindow, 0, 5, 13, 12,
-                                    0x102);
+    created =
+        Window_UpdateOrCreate((s32 *)&state->statusWindow, 0, 5, 13, 12, 0x102);
   window = state->statusWindow;
 
   if (!(mode & STATUS_PANEL_LOWER_ONLY)) {
@@ -462,7 +435,7 @@ void StatusPanel_DrawHpPp(struct BattleUnit *unit, s32 window) {
 void Icon_CreateStatChangeArrow();
 
 void Text_DrawStatComparison(const struct BattleUnit *alt,
-                               const struct BattleUnit *base, s32 work) {
+                             const struct BattleUnit *base, s32 work) {
   Text_DrawCharacterAtOffsetFar((s32)MsgPanelStatLabel,
                                 (struct RenderInput *)work, 0, 32);
   Text_DrawNumberAtOffsetFar(base->atk, 3, work, 16, 40);
@@ -743,7 +716,7 @@ void PsynergyMenu_PositionOwnerEntry(struct WindowSprite **slot, s32 index,
 /// 24x16-pixel cells.
 /// x0, y0: top left of the grid.
 void ItemMenu_PlaceIcon(struct WindowSprite **slot, s32 i, s32 x0, s32 y0,
-                       s32 cols) {
+                        s32 cols) {
   struct WindowSprite *obj;
 
   if (i > 15)
@@ -780,10 +753,10 @@ void ItemMenu_RefreshEntry(s32 layout) {
   } while (index <= 0xE);
 }
 
-void Text_GetMessageSizeFar(s32 message, s32 *left, s32 *top,
-                                     s32 *width, s32 *height);
+void Text_GetMessageSizeFar(s32 message, s32 *left, s32 *top, s32 *width,
+                            s32 *height);
 void Window_SetBounds(struct RenderInput *window, s32 x, s32 y, s32 width,
-                        s32 height);
+                      s32 height);
 void WindowSprite_ClearListFar(struct RenderInput *window);
 void wait(s32 frames);
 
@@ -801,8 +774,7 @@ void wait(s32 frames);
 // As The Broken Seal's ItemMenu_ShowMessage: in Japanese its first
 // form, from patch 1 its TBS_PATCH_1 form less the redraw after the wait.
 void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
-  struct InventoryMenuState *menu =
-      (struct InventoryMenuState *)Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuRuntime;
   struct RenderInput *window;
   s32 height;
   s32 width;
@@ -845,7 +817,7 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
   if (y != -1)
     // With the second argument Window_CloseIfOpen passes on in r1.
     ((void (*)(void **, s32))Window_CloseIfOpen)((void **)&menu->modalWindow,
-                                                  1);
+                                                 1);
 #endif
 }
 
@@ -949,7 +921,7 @@ void Sound_PlayFar(s32 cue);
 void Input_ResetKeyRepeat(void);
 
 s32 Func_080f8f9c(s32 horizontal, s32 count, s32 per_page, s32 *cursor,
-                         s32 *page) {
+                  s32 *page) {
   s32 pages;
   s32 next;
   s32 previous;
@@ -1177,7 +1149,7 @@ void Text_DrawWorkValueWithLabel(s32 work) {
 }
 
 void Window_SetBounds(struct RenderInput *window, s32 x, s32 y, s32 width,
-                        s32 height) {
+                      s32 height) {
   if (window != NULL) {
     window->width = width;
     window->x = x;

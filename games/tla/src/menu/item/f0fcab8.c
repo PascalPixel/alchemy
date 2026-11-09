@@ -26,7 +26,7 @@ void Window_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
 void Window_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
 void Window_InitializeWork(s32 mode);
 s32 Party_ListActiveOwnersFar(s16 *owners);
-void Func_080fa368(s32 a, s32 b, s32 c, s32 d);
+void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns);
 void Palette_LightenHighlight(s32 palette);
 void Link_DrawShiftedTilePairFar(void *tiles);
 s32 Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
@@ -90,7 +90,7 @@ s32 Func_080fcab8(void) {
   Text_UseExtraTilesFar(1);
 #endif
   screen->partyCount = Party_ListActiveOwnersFar(screen->ownerIds);
-  Func_080fa368(0, 3, 0, 7);
+  ItemMenu_Initialize(0, 3, 0, 7);
   screen->messageWindow = Window_CreateFar(13, 0, 17, 3, 2);
   Palette_LightenHighlight(14);
   Link_DrawShiftedTilePairFar((void *)0x06002500);

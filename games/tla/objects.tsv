@@ -279,9 +279,7 @@ main	rom_main_01	games/tla/src/field/map/f02b38c	.text
 main	rom_main_01	games/tla/src/field/map/f02b450	.text
 main	rom_main_01	games/tla/src/field/map/edit	.text
 main	rom_main_01	games/tla/src/field/map/f02b878	.text
-main	rom_main_01	recon/tla/it/rom	.rom.0002b998	it
-main	rom_main_01	recon/tla/fr/rom	.rom.0002b998	fr
-main	rom_main_01	games/tla/src/field/map/f02b998	.text	en de es ja
+main	rom_main_01	games/tla/src/field/map/f02b998	.text
 main	rom_main_01	games/tla/src/field/map/perspective	.text
 main	rom_main_01	games/tla/src/field/map/f02be4c	.text
 main	rom_main_01	games/tla/src/field/map/f02c088	.text	en de es fr it ja

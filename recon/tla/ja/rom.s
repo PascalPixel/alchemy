@@ -2,8 +2,6 @@
 	.incbin "baserom.gba", 0x000162da, 0x00000002
 	.section .rom.00016e02, "ax"
 	.incbin "baserom.gba", 0x00016e02, 0x00000002
-	.section .rom.000212d8, "ax"
-	.incbin "baserom.gba", 0x000212d8, 0x00000194
 	.section .rom.0002279e, "ax"
 	.incbin "baserom.gba", 0x0002279e, 0x00000002
 	.section .rom.000233a6, "ax"

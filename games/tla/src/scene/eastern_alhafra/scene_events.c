@@ -11,8 +11,8 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "call.h"
 #include "text/msg_ids.h"
+#include "event_inline.h"
 
 struct DoorStep {
   s32 script;
@@ -22,18 +22,6 @@ struct DoorStep {
 
 extern struct DoorStep gData_02005290[];
 
-s32 GameFlag_Test();
-void GameFlag_SetBit();
-struct Actor *Actor_GetById();
-void Actor_SetAngleToward();
-void Actor_SetSpeedParameters();
-void Actor_ArmCallback();
-void Actor_SetPositionAndReset();
-void Actor_WaitForMoveById();
-void Motion_SetVarCbAndRefresh();
-void FieldEvent_Wait();
-s32 FieldMessage_ShowAtActor();
-s32 Event_AskYesNoWithActorAnimation();
 void Event_FinishScreenTransition();
 void Event_WaitTransitionFrames();
 void Func_0200112c(void);
@@ -42,22 +30,12 @@ void Func_02001cb0(void);
 void Func_02000394(s32, s32);
 void Func_0200042c(s32, s32);
 void Func_02000514(void);
-s32 Func_02004a44();
 s32 Func_02004a84();
 void Func_02004a94();
 void Func_02004a9c();
-s32 Func_02004b04();
-s32 Func_02004b3c();
-s32 Func_02004b4c();
-s32 Func_02004b5c();
-s32 Func_02004b6c();
-s32 Func_02004bac();
 s32 Func_02004bb4();
-s32 Func_02004be4();
-s32 Func_02004bec();
 s32 Func_02004c44();
 s32 Func_02004c4c();
-void Func_02004c9c(s32);
 
 void Func_020006ec(s32 mode) {
   s32 tile;
@@ -76,36 +54,36 @@ void Func_020006ec(s32 mode) {
 void Func_02000730(void) {
   GameFlag_SetBit(0x8a8);
   Func_02004a94();
-  Func_02004be4(0);
-  Func_02004b3c(MsgWhatSYour);
-  Func_02004b6c(22, 0x101, 40);
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId(MsgWhatSYour);
+  Func_080d47b4(22, 0x101, 40);
   Actor_SetAngleToward(22, gMainRoutineWork.currentOwner, 0);
-  FieldEvent_Wait(20);
-  Call3((void (*)())Func_02004b4c, 22, 0, 10);
+  Event_Wait(20);
+  FieldEvent_ShowMessageThenWait(22, 0, 10);
   Motion_SetVarCbAndRefresh(22, 2);
-  FieldEvent_Wait(10);
+  Event_Wait(10);
   FieldMessage_ShowAtActor(22, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) != 0) {
-    FieldEvent_Wait(30);
-    Call3((void (*)())Func_02004b4c, 22, 0, 0);
+    Event_Wait(30);
+    FieldEvent_ShowMessageThenWait(22, 0, 0);
   } else {
-    FieldEvent_Wait(20);
+    Event_Wait(20);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     FieldMessage_ShowAtActor(22, 0);
     if (Event_AskYesNoWithActorAnimation(4, 0) != 0) {
-      FieldEvent_Wait(30);
-      Call3((void (*)())Func_02004b4c, 22, 0, 0);
+      Event_Wait(30);
+      FieldEvent_ShowMessageThenWait(22, 0, 0);
     } else {
-      FieldEvent_Wait(20);
+      Event_Wait(20);
       ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
       FieldMessage_ShowAtActor(22, 0);
       if (Event_AskYesNoWithActorAnimation(4, 0) != 0) {
-        FieldEvent_Wait(30);
-        Call3((void (*)())Func_02004b4c, 22, 0, 0);
+        Event_Wait(30);
+        FieldEvent_ShowMessageThenWait(22, 0, 0);
       } else {
-        FieldEvent_Wait(20);
+        Event_Wait(20);
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
-        Func_02004b4c(22, 0, 0);
+        Event_ShowMessageThenWait(22, 0, 0);
       }
     }
   }
@@ -115,17 +93,17 @@ void Func_02000730(void) {
 
 void Func_02000838(void) {
   if (GameFlag_Test(0x8a7)) {
-    if (Value1(GameFlag_Test, 0x904) == 0) {
+    if (Event_GetFlag(0x904) == 0) {
       GameFlag_SetBit(0x904);
       Func_02001cb0();
     }
   } else if (GameFlag_Test(0x8ab)) {
     if (GameFlag_Test(0x8a0) && Func_02004a84(151) == -1 &&
-        Value1(GameFlag_Test, 0x8ad) == 0) {
+        Event_GetFlag(0x8ad) == 0) {
       GameFlag_SetBit(0x8ad);
       Func_020017ec();
     }
-  } else if (Value1(GameFlag_Test, 0x8a9) == 0) {
+  } else if (Event_GetFlag(0x8a9) == 0) {
     GameFlag_SetBit(0x8a9);
     Func_0200112c();
   }
@@ -133,16 +111,15 @@ void Func_02000838(void) {
 
 void Func_020008cc(struct DoorStep *step, s32 countdown, s32 unused) {
   Func_02004a94();
-  Func_02004be4(0);
-  Func_02004c9c(158);
-  Func_02004a44(step->script, step->x, step->z);
+  Event_ResolvePendingActions(0);
+  Sound_Play(158);
+  Map_PlayMapEdit(step->script, step->x, step->z);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
-  Call3((void (*)())Actor_CenterOnColumn, gMainRoutineWork.currentOwner, 2,
-        -8);
-  FieldEvent_Wait(10);
-  Func_02004bac(countdown);
+  Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
+  Event_Wait(10);
+  Import_EventSetExitRequest(countdown);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_02004a9c();
@@ -165,19 +142,19 @@ run:
     return;
   GameFlag_SetBit(0x8bf);
   Func_02004a94();
-  Func_02004be4(0);
-  Call3(Actor_SetPositionAndReset, 4, 488, 440);
-  Call4((void (*)())Func_02004bec, 5, -16, 0, 0);
-  Func_02004b5c(4, FACING_WEST);
-  FieldEvent_Wait(20);
-  Func_02004b3c(MsgIDonTKnowWhatWe);
-  Call3((void (*)())Func_02004b4c, 5, 0, 5);
+  Event_ResolvePendingActions(0);
+  Actor_WalkToAndWait(4, 488, 440);
+  FieldActor_LaunchFromLeader(5, -16, 0, 0);
+  Actor_ArmCallbackAndRefresh(4, FACING_WEST);
+  Event_Wait(20);
+  Event_SetMessageId(MsgIDonTKnowWhatWe);
+  FieldEvent_ShowMessageThenWait(5, 0, 5);
   Actor_SetModeById(5, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != NULL)
     Actor_ResetAndSetPosition(5, ((s16 *)leader)[5], ((s16 *)leader)[9]);
   Actor_WaitForMoveById(5);
-  Call3((void (*)())Func_02004b04, 5, 0, 0);
+  Actor_SetPosition(5, 0, 0);
   Func_02004a9c();
   return;
 check:

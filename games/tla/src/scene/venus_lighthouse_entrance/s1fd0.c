@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
+#include "event_inline.h"
 
 struct GlowState {
   s32 x; ///< 16.16 pixels
@@ -45,9 +46,6 @@ struct GlowWork {
 #include "call.h"
 #include "iwram_call.h"
 
-s32 Math_Sine(s32 angle);
-void Import_SoundPlay(s32 cue);
-void Func_02002894(s32 a, s32 b, s32 c);
 void Func_02002a14(struct GlowSprite *sprite, struct GlowState *state);
 
 void Func_02001fd0(void) {
@@ -86,7 +84,7 @@ void Func_02001fd0(void) {
       object->motionFlags = 3;
       object->velocityY = 0x180000;
       work->follow = 0;
-      Import_SoundPlay(134);
+      Sound_Play(134);
     }
     work->height += 8;
     if (work->height > 79) {
@@ -130,7 +128,7 @@ void Func_02001fd0(void) {
     asm("");
     timer = &work->timer;
     if (work->timer == 10)
-      Import_SoundPlay(310);
+      Sound_Play(310);
     if (*timer == 90) {
       work->stage++;
       work->timer = -1;
@@ -141,11 +139,11 @@ void Func_02001fd0(void) {
     s16 *timer = &work->timer;
 
     if (work->timer == 0) {
-      Import_SoundPlay(144);
-      Call3((void (*)())Func_02002894, 0x30000, 0x30000, 0x10000);
+      Sound_Play(144);
+      MapGrid_SetShake(0x30000, 0x30000, 0x10000);
     }
     if (*timer == 30) {
-      Call3((void (*)())Func_02002894, -1, -1, 0xe666);
+      MapGrid_SetShake(-1, -1, 0xe666);
       if (work->timer == 30) {
         work->stage = 999;
         work->timer = -1;

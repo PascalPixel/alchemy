@@ -9,6 +9,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
+#include "event_inline.h"
 
 struct LobbyEventWork {
   u8 unk000[0x16a];
@@ -19,8 +20,6 @@ extern s32 gData_020022bc;
 
 void Func_02001a14(void);
 void Func_02001a1c(void);
-void Func_02001a64(s32 message);
-void Func_02001ab4(s32 skip);
 
 static __inline__ s32 Flag_Test(s32 flag) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
@@ -43,8 +42,8 @@ s32 Func_020002d8(void) {
     return set;
   }
   Func_02001a14();
-  Func_02001ab4(0);
-  Func_02001a64((s32)MsgIfYouWantToParticipate);
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)MsgIfYouWantToParticipate);
   FieldMessage_ShowAtActor(8, 0);
   wait(5);
   GameFlag_SetBit(0x200);
@@ -58,9 +57,9 @@ s32 Func_02000344(void) {
   GameFlag_ClearBit(0x200);
   GameFlag_ClearBit(0x203);
   Func_02001a14();
-  Func_02001ab4(0);
+  Event_ResolvePendingActions(0);
   work->raisedTrigger = 0;
-  Func_02001a64((s32)MsgTheLinkWas);
+  Event_SetMessageId((s32)MsgTheLinkWas);
   FieldMessage_ShowAtActor(8, 0);
   GameFlag_ClearBit(0x205);
   Func_02001a1c();

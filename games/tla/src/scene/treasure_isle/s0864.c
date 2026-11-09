@@ -6,7 +6,6 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
-s32 Func_02001024();
+#include "event_inline.h"
 
-void Func_02000864(void) { Call2(Func_02001024, 0x17, 0x4d); }
+void Func_02000864(void) { Field_RequestDjinnBattle(0x17, 0x4d); }

@@ -4,7 +4,7 @@ extern char SceneId_Ov695;
 
 void Func_0200083c(void) {
   Func_02001080();
-  Func_020011e0(0);
+  Event_ResolvePendingActions(0);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 

@@ -1,6 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 extern char SceneId_Ov681Room2;
 extern char SceneId_Ov681Room3;
@@ -23,12 +24,8 @@ extern u8 gData_020023c4[];
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Func_02004dac(struct Actor *object, const u8 *script);
-void Func_02005014(s32 cue);
-struct Actor *Actor_GetById(u32 id);
 u32 Func_02004904(void);
 void Func_02004d9c(struct Actor *object, s32 mode);
-void GameFlag_SetBit(s32 flag);
-void wait(s32 frames);
 
 /// Return the table for the current room.
 const void *Func_020009e8(void) {
@@ -54,7 +51,7 @@ void Func_02000a60(struct Actor *object) {
   if ((gData_02005ee4 & 31) == 0) {
     object->scaleX = 0x10000;
     Func_02004dac(object, gData_02005e28);
-    Func_02005014(106);
+    Sound_Play(106);
   }
   gData_02005ee4++;
 }
@@ -68,7 +65,7 @@ void Func_02000aac(struct Actor *object) {
   if ((gData_02005ee4 & 31) == 0) {
     object->scaleY = 0x10000;
     Func_02004dac(object, gData_02005d6c);
-    Func_02005014(106);
+    Sound_Play(106);
   }
   gData_02005ee4++;
 }

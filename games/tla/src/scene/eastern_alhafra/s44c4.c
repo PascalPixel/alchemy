@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
-#include "call.h"
+#include "event_inline.h"
 
 struct PushTarget {
   s32 x; ///< 16.16 fixed-point pixels
@@ -16,18 +16,9 @@ struct PushTarget {
 extern s8 gData_02004cb0[];
 extern s32 gData_02004cc8[];
 
-struct Actor *Actor_GetById(s32 id);
 void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, s32 width, s32 height,
                            s32 value);
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void wait(s32 frames);
-void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
 void Func_02004a0c(struct Actor *object, s32 mode);
-void Func_02004c9c(s32 sound);
-void Func_02004a34(struct Actor *object, s32 x, s32 y, s32 z);
-void Actor_WaitForMoveById(s32 id);
-void Func_02004a3c(struct Actor *object);
-void Func_02004a54(s32 x, s32 z, s32 width, s32 height, s32 toX, s32 toZ);
 void Func_02004c0c(void);
 void Func_02004774(void);
 
@@ -86,9 +77,9 @@ void Func_020044c4(struct PushTarget target) {
     Func_02004a0c(object, 3);
   else
     Func_02004a0c(object, 2);
-  Func_02004c9c(239);
-  Call3((void (*)())Actor_SetSpeedParameters, target.id, 0x8000, 0x1999);
-  Func_02004a34(object, target.x, target.y, target.z);
+  Sound_Play(239);
+  Actor_SetSpeed(target.id, 0x8000, 0x1999);
+  Actor_SetMoveTarget(object, target.x, target.y, target.z);
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x4ccc, 0x1999);
@@ -102,9 +93,9 @@ void Func_020044c4(struct PushTarget target) {
   leader->update = 0;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
-  Func_02004a3c(object);
-  Func_02004c9c(298);
-  Func_02004c9c(213);
+  Script_WaitForEventTimeout(object);
+  Sound_Play(298);
+  Sound_Play(213);
   Actor_SetPositionAndResetMotion(object, target.x, object->y, target.z);
   Func_02004a0c(object, 1);
   target.x = target.x + (gData_02004cb0[footprint * 4] << 16);
@@ -113,15 +104,15 @@ void Func_020044c4(struct PushTarget target) {
   target.z >>= 20;
   originX = *(s32 *)(map + 328) >> 20;
   originZ = *(s32 *)(map + 332) >> 20;
-  Call6((void (*)())Func_02004a54, target.x, target.z, width, height,
-        originX + target.x, originZ + target.z);
+  MapGrid_CopyCellAttributes(target.x, target.z, width, height,
+                             originX + target.x, originZ + target.z);
   Map_FillCellRectByte2(0, target.x, target.z, width, height, 255);
   Map_FillCellRectByte2(2, target.x, target.z, width, height, 255);
   cell[0] = (from[0] + (gData_02004cb0[footprint * 4] << 16)) >> 20;
   cell[2] = (from[2] + (gData_02004cb0[footprint * 4 + 1] << 16)) >> 20;
   originX += cell[0];
   originZ += cell[2];
-  Func_02004a54(originX, originZ, width, height, cell[0], cell[2]);
+  Map_CopyCellAttributeRect(originX, originZ, width, height, cell[0], cell[2]);
   Map_FillCellRectByte2(2, cell[0], cell[2], width, height, 0);
   Func_02004c0c();
 }

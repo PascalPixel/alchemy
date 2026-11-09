@@ -3,13 +3,11 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 void Func_02001158(s32 id);
-void Func_02001108(s32 id, s32 x, s32 z);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
 
 s32 Func_02000f28(void) {
   struct Actor *object;
@@ -29,7 +27,7 @@ s32 Func_02000f28(void) {
   object->terrainHeight = -0x40000;
   Actor_GetById(18)->priorityFlags |= 0x20;
   Actor_SetSpritePriority(18, 1);
-  Func_02001108(18, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
 
   object = Actor_GetById(19);
   object->motionFlags = 0;
@@ -37,7 +35,7 @@ s32 Func_02000f28(void) {
   object->terrainHeight = 0xc0000;
   Actor_GetById(19)->priorityFlags |= 0x20;
   Actor_SetSpritePriority(19, 1);
-  Func_02001108(19, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
 
   object = Actor_GetById(20);
   object->motionFlags = 0;
@@ -45,7 +43,7 @@ s32 Func_02000f28(void) {
   object->terrainHeight = 0xc0000;
   Actor_GetById(20)->priorityFlags |= 0x20;
   Actor_SetSpritePriority(20, 1);
-  Func_02001108(20, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
 
   Actor_SetSingleChildFlags(Actor_GetById(19), 0);
   Actor_SetSingleChildFlags(Actor_GetById(20), 0);

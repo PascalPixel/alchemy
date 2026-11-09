@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
+#include "event_inline.h"
 
 struct BeamSprite {
   u8 unk00[8];
@@ -45,15 +46,11 @@ struct BeamWork {
   struct Actor *second;
 };
 
-void Func_02002b68(s32 sound);
 void Func_0200105c(struct Actor *object);
-void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x,
-                                      s32 y, s32 z);
 void Func_02002b20(s32 *position);
 void Func_02002b38(struct BeamSprite *sprite);
 void Func_02002b40(struct BeamSprite *sprite, struct BeamSpark *spark);
 u32 Random16Far(void);
-s32 Math_Sine(s32 angle);
 s32 Math_Cosine(s32 angle);
 
 #define LERP(from, to, t, n) ((from) + ((to) - (from)) * (t) / (n))
@@ -131,7 +128,7 @@ void Func_02001080(void) {
     break;
   case 3:
     if (t == 0)
-      Func_02002b68(131);
+      Sound_Play(131);
     work->carried[0] = ((work->from[0] >> 2) +
                         ((work->to[0] >> 2) - (work->from[0] >> 2)) * t / 96)
                        << 2;
@@ -153,7 +150,7 @@ void Func_02001080(void) {
     break;
   case 4:
     if (work->frame == 0) {
-      Func_02002b68(220);
+      Sound_Play(220);
       Func_0200105c(work->second);
     }
     large = &work->large;

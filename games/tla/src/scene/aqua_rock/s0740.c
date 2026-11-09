@@ -1,9 +1,7 @@
 #include "types.h"
+#include "event_inline.h"
 
 extern s32 gData_02003204, gData_02003208, gData_0200320c, gData_02003210;
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
 
 /// Unless flag 0x104 is set, runs four 240-frame timers (gData_02003204 to
 /// gData_02003210) that hold flags 0x200 to 0x203 set for their last 90

@@ -94,9 +94,9 @@ GameFlag_SetByte:
 	.thumb_func
 Func_0200197c:
 	overlay_veneer Map_CenterOnFollowedPointFar
-	.global Func_02001984
+	.global Map_CopyCellPictureIndicesRect
 	.thumb_func
-Func_02001984:
+Map_CopyCellPictureIndicesRect:
 	overlay_veneer Map_CopyCellPictureIndicesRectFar
 	.global Func_0200198c
 	.thumb_func
@@ -106,9 +106,9 @@ Func_0200198c:
 	.thumb_func
 Func_02001994:
 	overlay_veneer Func_080201a0
-	.global Func_0200199c
+	.global Map_CopyCellAttributeRect
 	.thumb_func
-Func_0200199c:
+Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.global Window_Create
 	.thumb_func
@@ -162,9 +162,9 @@ Party_CountActiveOwners:
 	.thumb_func
 Func_02001a04:
 	overlay_veneer Func_080ad208
-	.global FieldEvent_Wait
+	.global Event_Wait
 	.thumb_func
-FieldEvent_Wait:
+Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
 	.global Func_02001a14
 	.thumb_func
@@ -206,21 +206,21 @@ Actor_StartRepeatedMotion:
 	.thumb_func
 Actor_SetAngleToward:
 	overlay_veneer Actor_SetAngleTowardFar
-	.global Func_02001a64
+	.global Event_SetMessageId
 	.thumb_func
-Func_02001a64:
+Event_SetMessageId:
 	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
 	overlay_veneer FieldMessage_ShowAtActorFar
-	.global Func_02001a74
+	.global Event_ShowMessageAndWait
 	.thumb_func
-Func_02001a74:
+Event_ShowMessageAndWait:
 	overlay_veneer Event_ShowMessageAndWaitFar
-	.global Func_02001a7c
+	.global Func_080d47b4
 	.thumb_func
-Func_02001a7c:
+Func_080d47b4:
 	overlay_veneer Func_080c8210
 	.global Func_02001a84
 	.thumb_func
@@ -246,9 +246,9 @@ Event_StartScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_02001ab4
+	.global Event_ResolvePendingActions
 	.thumb_func
-Func_02001ab4:
+Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02001abc
 	.thumb_func
@@ -262,9 +262,9 @@ DjinnRecovery_CountDownTwenty:
 	.thumb_func
 DebugParty_LoadPreset:
 	overlay_veneer DebugParty_LoadPresetFar
-	.global Func_02001ad4
+	.global Sound_Play
 	.thumb_func
-Func_02001ad4:
+Sound_Play:
 	overlay_veneer Sound_PlayFar
 	.global Func_02001adc
 	.thumb_func

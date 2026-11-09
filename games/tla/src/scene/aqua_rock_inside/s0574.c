@@ -14,8 +14,8 @@ void Func_02000574(s32 unused, s32 id) {
   Func_02003d54();
   Func_02003cdc();
   Func_02003d7c();
-  Func_02003eac(0);
-  Func_02003ef4(0x22c);
+  Event_ResolvePendingActions(0);
+  Sound_Play(0x22c);
   for (i = 0; i <= 31; i++) {
     Func_02003460(i << 16);
     layer[3] += 0x10000;

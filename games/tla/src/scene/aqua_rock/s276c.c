@@ -4,6 +4,7 @@
 #include "io_reg.h"
 #include "resource.h"
 #include "task.h"
+#include "event_inline.h"
 
 struct DustParticle {
   u32 link;
@@ -29,7 +30,6 @@ extern const u8 gField_Tiles679[];
 void Func_020025d4(void);
 void Func_020028b0(const void *source, void *destination);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 Task_Add(void (*func)(void), s32 order);
 
 /// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
 /// decoded into VRAM, and Func_020025d4 scheduled at priority 0x480 to move

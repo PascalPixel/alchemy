@@ -7,16 +7,16 @@
 
 struct Actor *Actor_GetById(u32 id);
 void Func_02001cc4(void);
-void Func_02001dcc(s32 skip);
+void Event_ResolvePendingActions(s32 skip);
 void Func_02000780(void);
-void Func_02001e2c(s32 cue);
+void Sound_Play(s32 cue);
 void wait(s32 frames);
 void Func_02001ad8(void);
 void Func_02001ba0(s32 a);
 void Func_02001dec(s32 a);
 u16 Random16Far(void);
-s32 Func_02001da4(s32 a, s32 b);
-void Func_02001dac(s32 frames);
+s32 BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
+void BattleEffect_StartBufferInterpolation(s32 frames);
 void Func_02001de4(void);
 void Task_RemoveFar(void (*func)(void));
 s32 Task_Add(void (*func)(void), s32 priority);
@@ -25,14 +25,14 @@ void Func_020006bc(void);
 void Func_020017bc(void);
 void Func_020017f8(u32 base, s32 a, s32 b);
 void GameFlag_SetBit(s32 flag);
-void Func_02001d7c(s32 a, s32 b);
+void Camera_SetSpeedParameters(s32 a, s32 b);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-s32 Func_02001d6c(s32 a, s32 b, s32 c);
+s32 Func_080d47b4(s32 a, s32 b, s32 c);
 void Func_02001d8c(void);
-void Func_02001d94(s32 cue);
+void Import_EventSetExitRequest(s32 cue);
 
 static inline void ApojiiIslands_Flash(s32 strength, s32 mode) {
-  Func_02001da4(strength, mode);
+  BattleEffect_ApplyColorToTargetBuffer(strength, mode);
 }
 
 static inline void ApojiiIslands_CamMove(s32 x, s32 y, s32 z, s32 mode) {
@@ -50,11 +50,11 @@ void Func_020007a4(s32 unused, s32 id) {
   s32 i;
 
   Func_02001cc4();
-  Func_02001dcc(0);
+  Event_ResolvePendingActions(0);
   actor->update = Func_02000780;
-  Func_02001e2c(78);
+  Sound_Play(78);
   wait(30);
-  Func_02001e2c(21);
+  Sound_Play(21);
   Func_02001ad8();
   Func_02001ba0(17);
   Func_02001dec(170);
@@ -62,14 +62,15 @@ void Func_020007a4(s32 unused, s32 id) {
   /* FAKEMATCH(wrapper): both flashes forwarded through ApojiiIslands_Flash,
    * which keeps each call's own constants; called directly, 10 of 188
    * instructions differ in tla-en. */
-  /* FAKEMATCH(signature): Func_02001da4 declared returning s32, though its
-   * target returns nothing; as void, 2 of 188 instructions differ in tla-en. */
+  /* FAKEMATCH(signature): BattleEffect_ApplyColorToTargetBuffer declared
+   * returning s32, though its target returns nothing; as void, 2 of 188
+   * instructions differ in tla-en. */
 flash:
   ApojiiIslands_Flash(Random16Far() & 0x7fff, 0);
-  Func_02001dac(15);
+  BattleEffect_StartBufferInterpolation(15);
   wait(10);
   ApojiiIslands_Flash(0x10000, 0);
-  Func_02001dac(10);
+  BattleEffect_StartBufferInterpolation(10);
   i--;
   wait(10);
   if (i >= 0)
@@ -91,15 +92,15 @@ blend:
     goto blend;
   GameFlag_SetBit(0x95f);
   GameFlag_SetBit(0x95e);
-  Func_02001d7c(0x10000, 0x2000);
+  Camera_SetSpeedParameters(0x10000, 0x2000);
   /* FAKEMATCH(wrapper): the camera moves forwarded through
    * ApojiiIslands_CamMove, so each builds its own -1; called directly, 25 of
    * 188 instructions differ in tla-en. */
   ApojiiIslands_CamMove(PIXELS(360), -1, PIXELS(328), 1);
-  Func_02001d6c(16, 256, 20);
+  Func_080d47b4(16, 256, 20);
   Func_02001d8c();
   ApojiiIslands_CamMove(PIXELS(440), -1, PIXELS(376), 1);
   Func_02001d8c();
   ApojiiIslands_CamMove(PIXELS(472), -1, PIXELS(408), 1);
-  Func_02001d94(77);
+  Import_EventSetExitRequest(77);
 }

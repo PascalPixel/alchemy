@@ -1,9 +1,9 @@
 #include "types.h"
-#include "call.h"
 #include "iwram_call.h"
 #include "heap_release.h"
 #include "owner_state.h"
 #include "serial.h"
+#include "event_inline.h"
 
 /// The list inside a sent recovery table, as ☀️'s DjinnRecoveryList.
 struct OfferList {
@@ -20,7 +20,6 @@ struct OfferTable {
 s32 Func_02000538(u16 *memberIds);
 s32 Func_0200192c(void *data, s32 size);
 s32 Func_0200193c(void);
-void wait(s32 frames);
 
 s32 Func_02000578(void) {
   s32 result;

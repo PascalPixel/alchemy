@@ -12,14 +12,14 @@ extern const u8 gData_02004d0c[];
 void Func_02000af8(void);
 s32 Actor_GetById();
 s32 GameFlag_Test();
-void Func_02004b04();
+void Actor_SetHorizontalPositionWithTerrain();
 void Actor_ArmCallback();
 void Func_02004c5c();
-void Func_02004c54();
+void Func_080d3928();
 void Actor_SetSingleChildFlags();
 void Actor_SetModeById();
-void Func_02004a5c();
-void Func_02004a54();
+void Func_0802b450();
+void Map_CopyCellAttributeRect();
 void Actor_SetSpritePriority();
 void Func_02003274(void);
 void Func_02000fa4(void);
@@ -41,61 +41,67 @@ s32 Func_02000b18(void) {
   if (Value1(GameFlag_Test, 0x8a7) != 0) {
     if (Value1(GameFlag_Test, 0x905) != 0 &&
         Value1(GameFlag_Test, 0x90f) == 0) {
-      Call3(Func_02004b04, 30, PIXELS(184), PIXELS(616));
-      Call3(Func_02004b04, 31, PIXELS(136), PIXELS(600));
-      Call3(Func_02004b04, 28, PIXELS(168), PIXELS(584));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 30, PIXELS(184),
+            PIXELS(616));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 31, PIXELS(136),
+            PIXELS(600));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 28, PIXELS(168),
+            PIXELS(584));
       Call3(Actor_ArmCallback, 28, FACING_SOUTH, 0);
       Call3(Func_02004c5c, 30, 0, 13);
       Call3(Func_02004c5c, 31, 0x8000, 13);
       Call3(Func_02004c5c, 28, 0, 13);
-      Call3(Func_02004b04, 25, PIXELS(112), PIXELS(432));
-      Call3(Func_02004b04, 27, PIXELS(176), PIXELS(408));
-      Call3(Func_02004b04, 29, PIXELS(152), PIXELS(376));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 25, PIXELS(112),
+            PIXELS(432));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 27, PIXELS(176),
+            PIXELS(408));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 29, PIXELS(152),
+            PIXELS(376));
       Call3(Actor_ArmCallback, 29, FACING_SOUTH, 0);
-      Call2(Func_02004c54, 25, 0x4000);
+      Call2(Func_080d3928, 25, 0x4000);
       Call2(Actor_SetSingleChildFlags, Value1(Actor_GetById, 25), 0);
-      Call2(Func_02004c54, 27, 0xc000);
+      Call2(Func_080d3928, 27, 0xc000);
       Call2(Actor_SetSingleChildFlags, Value1(Actor_GetById, 27), 0);
-      Call2(Func_02004c54, 29, 0x4000);
+      Call2(Func_080d3928, 29, 0x4000);
       Call2(Actor_SetSingleChildFlags, Value1(Actor_GetById, 29), 0);
       Call2(Actor_SetModeById, 25, 13);
       Call2(Actor_SetModeById, 27, 13);
       Call2(Actor_SetModeById, 29, 13);
     }
     if (Value1(GameFlag_Test, 0x905) != 0) {
-      Call6(Func_02004a5c, 40, 0, 24, 31, 11, 6);
-      Call6(Func_02004a5c, 84, 15, 10, 10, 75, 15);
-      Call6(Func_02004a54, 10, 24, 1, 1, 11, 24);
-      Call3(Func_02004b04, 9, 0, 0);
-      Call3(Func_02004b04, 8, 0, 0);
-      Call3(Func_02004b04, 10, 0, 0);
-      Call3(Func_02004b04, 11, 0, 0);
-      Call3(Func_02004b04, 15, 0, 0);
+      Call6(Func_0802b450, 40, 0, 24, 31, 11, 6);
+      Call6(Func_0802b450, 84, 15, 10, 10, 75, 15);
+      Call6(Map_CopyCellAttributeRect, 10, 24, 1, 1, 11, 24);
+      Call3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
+      Call3(Actor_SetHorizontalPositionWithTerrain, 8, 0, 0);
+      Call3(Actor_SetHorizontalPositionWithTerrain, 10, 0, 0);
+      Call3(Actor_SetHorizontalPositionWithTerrain, 11, 0, 0);
+      Call3(Actor_SetHorizontalPositionWithTerrain, 15, 0, 0);
     }
   }
   if (gMainRoutineWork.entrance == 99) {
     gMainRoutineWork.secondary = 1;
     gMainRoutineWork.entrance = 1;
-    Call3(Func_02004b04, 4, PIXELS(136), PIXELS(552));
-    Call3(Func_02004b04, 26, PIXELS(120), PIXELS(552));
-    Call3(Func_02004b04, 30, PIXELS(184), PIXELS(616));
-    Call3(Func_02004b04, 31, PIXELS(136), PIXELS(600));
-    Call3(Func_02004b04, 28, PIXELS(160), PIXELS(584));
-    Call2(Func_02004c54, 30, 0x4000);
+    Call3(Actor_SetHorizontalPositionWithTerrain, 4, PIXELS(136), PIXELS(552));
+    Call3(Actor_SetHorizontalPositionWithTerrain, 26, PIXELS(120), PIXELS(552));
+    Call3(Actor_SetHorizontalPositionWithTerrain, 30, PIXELS(184), PIXELS(616));
+    Call3(Actor_SetHorizontalPositionWithTerrain, 31, PIXELS(136), PIXELS(600));
+    Call3(Actor_SetHorizontalPositionWithTerrain, 28, PIXELS(160), PIXELS(584));
+    Call2(Func_080d3928, 30, 0x4000);
     Actor_SetSingleChildFlags(Actor_GetById(30), 0);
-    Call2(Func_02004c54, 31, 0xc000);
+    Call2(Func_080d3928, 31, 0xc000);
     Actor_SetSingleChildFlags(Actor_GetById(31), 0);
-    Call2(Func_02004c54, 28, 0x4000);
+    Call2(Func_080d3928, 28, 0x4000);
     Actor_SetSingleChildFlags(Actor_GetById(28), 0);
     Actor_SetSpritePriority(27, 2);
     Actor_SetSpritePriority(25, 2);
     Actor_SetSpritePriority(29, 2);
-    Call3(Func_02004b04, 25, PIXELS(160), PIXELS(392));
-    Call3(Func_02004b04, 27, PIXELS(176), PIXELS(408));
-    Call3(Func_02004b04, 29, PIXELS(152), PIXELS(376));
-    Func_02004c54(27, 0xc000);
+    Call3(Actor_SetHorizontalPositionWithTerrain, 25, PIXELS(160), PIXELS(392));
+    Call3(Actor_SetHorizontalPositionWithTerrain, 27, PIXELS(176), PIXELS(408));
+    Call3(Actor_SetHorizontalPositionWithTerrain, 29, PIXELS(152), PIXELS(376));
+    Func_080d3928(27, 0xc000);
     Actor_SetSingleChildFlags(Actor_GetById(27), 0);
-    Call2(Func_02004c54, 29, 0x4000);
+    Call2(Func_080d3928, 29, 0x4000);
     Actor_SetSingleChildFlags(Actor_GetById(29), 0);
     Call3(Actor_ArmCallback, 25, 0xd000, 0);
     Call3(Actor_ArmCallback, 29, FACING_SOUTH, 0);
@@ -145,10 +151,10 @@ s32 Func_02000b18(void) {
   Actor_SetSpritePriority(10, 2);
   ((u8 *)OBJECT(23))[0x62] = 1;
   if (GameFlag_Test(0x8ab) != 0 && GameFlag_Test(0x8a7) == 0) {
-    Func_02004b04(22, 0, 0);
-    Func_02004b04(23, 0, 0);
-    Func_02004b04(24, 0, 0);
-    Func_02004b04(25, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(22, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
   }
   return 0;
 }

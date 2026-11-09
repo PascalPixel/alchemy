@@ -1,6 +1,6 @@
 #include "garoh.h"
 
-void Func_02005194(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
+void Func_0802b450(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
 void Func_02005304(s32 a, s32 b);
 void Func_0200530c(s32 a, s32 b);
@@ -10,7 +10,7 @@ void Field_DispatchTypeHandler(s32 type);
 
 static inline void BlendBack(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02005194(a0, a1, a2, a3, a4, a5);
+  Func_0802b450(a0, a1, a2, a3, a4, a5);
 }
 
 /// The fourth argument is passed unextended (0xf000), where spawn.c's
@@ -22,12 +22,12 @@ void Func_020013b0(s32 id) {
 
   Func_02001360(object->x + 0x80000, object->y + 0x1c0000, object->z, 0x1000,
                 20);
-  Func_02005394(151);
-  FieldEvent_Wait(20);
+  Sound_Play(151);
+  Event_Wait(20);
   Func_02001360(object->x - 0x80000, object->y + 0x1c0000, object->z, 0xf000,
                 20);
-  Func_02005394(151);
-  FieldEvent_Wait(20);
+  Sound_Play(151);
+  Event_Wait(20);
 }
 
 void Func_02001418(s32 actor) {

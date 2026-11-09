@@ -2,18 +2,15 @@
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "event_work.h"
+#include "event_inline.h"
 
 extern char ResourceId_FarCall00A;
 extern char SceneId_Ov64c;
 extern char SceneId_Ov6b4;
 
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void wait(s32 frames);
 void Func_0200020c(s32 stage);
 void Func_0200101c(void);
 void Func_02001f8c(s32 resource);
-void Func_02002044(s32 a, s32 b);
 void Func_02002054(s32 scene, s32 entrance);
 void Func_020020ac(s32 value);
 
@@ -28,7 +25,7 @@ s32 Func_02000b64(void) {
   work->screenEffect = 0;
   work->delay = 16;
   wait(1);
-  Func_02002044(0x80000, 0x10000);
+  Camera_SetSpeedParameters(0x80000, 0x10000);
   GameFlag_ClearBit(0x12f);
   Func_0200101c();
   switch (gMainRoutineWork.entrance) {

@@ -6,10 +6,10 @@ struct EventWork1cc {
   struct Actor *object;
 };
 
-void Func_020029f8(s32 id, s32 effect);
+void Func_080d489c(s32 id, s32 effect);
 
 static inline void Actor_SetAttachedEffect(s32 actorId, s32 effect) {
-  Func_020029f8(actorId, effect);
+  Func_080d489c(actorId, effect);
 }
 
 void Func_02001e00(void) {
@@ -37,9 +37,9 @@ void Func_02001e00(void) {
     Func_02001d30(leader);
   if (result < 0) {
     Actor_SetAttachedEffect(owner, 0x102);
-    Func_02002930(leader, leader->x, leader->y, leader->z + 0x80000);
+    Actor_SetMoveTarget(leader, leader->x, leader->y, leader->z + 0x80000);
     Func_02002910(leader, 49);
-    Func_02002938(leader);
+    Script_WaitForEventTimeout(leader);
     do {
       wait(1);
     } while (leader->y != leader->terrainHeight);

@@ -1,16 +1,11 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
-#include "call.h"
+#include "event_inline.h"
 
-s32 Actor_GetById();
 s32 Func_02000348();
 s32 Func_02003bc8();
-s32 Func_02003c88();
-s32 GameFlag_SetBit();
 s32 Func_02000384();
-s32 GameFlag_ClearBit();
-s32 Func_02003b80();
 s32 Func_02003bd0();
 
 /// Object 11's column sets or clears flag 0x311 and writes the low byte of the
@@ -21,10 +16,10 @@ void Func_02000620(void) {
   struct Actor *leader;
   s32 value;
 
-  object = (struct Actor *)Actor_GetById(11);
+  object = (struct Actor *)((s32)Actor_GetById(11));
   value = Func_02000348(3, 70, 67);
   Func_02003bc8();
-  Func_02003c88(0);
+  Event_ResolvePendingActions(0);
   if ((object->x >> 20) == 32) {
     GameFlag_SetBit(0x311);
     value &= 0xff;
@@ -36,8 +31,8 @@ void Func_02000620(void) {
     Func_02000384(4, 70, 67, value);
     Func_02000384(2, 33, 54, value);
   }
-  leader = (struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = (struct Actor *)((s32)Actor_GetById(gMainRoutineWork.currentOwner));
   if ((leader->y >> 19) == 26)
-    Call6(Func_02003b80, 70, 67, 1, 1, 33, 54);
+    MapGrid_CopyCellAttributes(70, 67, 1, 1, 33, 54);
   Func_02003bd0();
 }

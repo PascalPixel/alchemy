@@ -1,6 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "ram_buffer.h"
+#include "event_inline.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -11,11 +12,6 @@
 
 extern s32 gData_020056c4[];
 extern s32 gData_02005728[];
-
-struct Actor *Actor_GetById(s32 id);
-void GameFlag_SetBit(s32 flag);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_ClearBit(s32 flag);
 
 struct Counted {
   s32 *script;

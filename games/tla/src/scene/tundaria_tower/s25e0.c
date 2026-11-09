@@ -2,18 +2,14 @@
 /// Places the listed actors on their cells.
 
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "map.h"
+#include "event_inline.h"
 
 extern u8 gMapShapeGrid[];
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-void wait(s32 frames);
-void Func_02003088(s32 id, s32 x, s32 z);
 void Func_02003090(s32 id, s32 target);
 void Func_020025c8(s32 id);
 s32 Func_02003160(struct Actor *object);
@@ -47,9 +43,9 @@ void Func_020025e0(u16 *list) {
   Func_020025c8(10);
   Actor_SetModeById(9, 0);
   wait(1);
-  Func_02003088(8, 0, 0);
-  Func_02003088(9, 0, 0);
-  Func_02003088(10, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
   wait(1);
   if (*list == 0xffff)
     goto done;
@@ -62,7 +58,7 @@ next:
   shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
   object->unk5c[0] = 3;
   if (GameFlag_Test(nextFlag)) {
-    Func_02003088(id, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
   } else {
     s32 shape;
     u8 *slot;

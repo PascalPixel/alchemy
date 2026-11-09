@@ -1,14 +1,13 @@
 #include "types.h"
 #include "call.h"
 #include "iwram_call.h"
+#include "event_inline.h"
 
 extern u32 gFrameCount;
 extern s16 gData_02003fc4;
 extern s16 gData_02003fc6;
 extern u8 gData_02003fd8[][32];
 extern u8 gData_020040d8[][32];
-
-void VramCache_Load(s32 entry, s32 size, void *source);
 
 void Func_02001be0(s32 progress) {
   /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and

@@ -7,7 +7,7 @@
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "actor.h"
-#include "call.h"
+#include "event_inline.h"
 
 struct LandingEffectOptions {
   s32 kind;
@@ -27,23 +27,13 @@ struct LandingEventWork {
   s32 field1ac;
 };
 
-struct Actor *Actor_GetById(s32 id);
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
-void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 u32 Random16Far(void);
 void Effect_AdvanceMotion();
 void Func_02002e44(void);
-void Func_02002edc(s32 value);
 void Func_02002dec(void);
-void Func_02002eec(s32 cue);
-void Func_02002e9c(s32 actor, s32 value);
-void Func_02002e24(s32 a, s32 b, s32 c);
-void Func_02002e2c(void);
 void Func_02002e4c(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -57,8 +47,8 @@ void Func_02000418(void) {
   s32 velocity[3];
 
   Func_02002e44();
-  Func_02002edc(0);
-  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
+  Event_ResolvePendingActions(0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Func_02002dec();
   wait(1);
   leader->y = 0x820000;
@@ -68,9 +58,9 @@ void Func_02000418(void) {
   ((struct LandingEventWork *)Ram_HeapSlots->eventWork)->field1ac = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02002eec(204);
+  Sound_Play(204);
   leader->motionFlags = 3;
-  FieldEvent_Wait(24);
+  Event_Wait(24);
   options.palette = 7;
   options.update = Effect_AdvanceMotion;
   options.scaleX = 0xa3d7;
@@ -89,16 +79,16 @@ loop:
   i++;
   if (i <= 16)
     goto loop;
-  Func_02002eec(188);
-  Func_02002e9c(gMainRoutineWork.currentOwner, 0x101);
+  Sound_Play(188);
+  Func_080d489c(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
-  Call3((void (*)())Func_02002e24, 0x50000, 0x50000, 0x10000);
-  Call3((void (*)())Func_02002e24, -1, -1, 0xe666);
-  Func_02002e2c();
-  Func_02002e9c(gMainRoutineWork.currentOwner, 0x100);
+  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
+  MapGrid_SetShake(-1, -1, 0xe666);
+  Map_WaitForShakeToSettle();
+  Func_080d489c(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
-  FieldEvent_Wait(10);
+  Event_Wait(10);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   ((struct LandingEventWork *)Ram_HeapSlots->eventWork)->field1ac = 0x204;
   Func_02002e4c();

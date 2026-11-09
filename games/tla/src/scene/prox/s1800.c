@@ -6,7 +6,6 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
-s32 Func_0200442c();
+#include "event_inline.h"
 
-void Func_02001800(void) { Call6(Func_0200442c, 0x19, 3, 1, 1, 0x19, 9); }
+void Func_02001800(void) { MapGrid_CopyCellAttributes(0x19, 3, 1, 1, 0x19, 9); }

@@ -5,14 +5,10 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "text/msg_ids.h"
+#include "event_inline.h"
 
 extern char SceneId_Ov681Room1;
 
-s32 GameFlag_Test(s32 flag);
-void FieldMessage_Show(s32 message, s32 position);
-void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
-s32 PartyInventory_FindOwner(s32 item);
-void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
 s32 Func_02004f74(s32 entrance, s32 count);
 
 void Func_02001ebc(void) {

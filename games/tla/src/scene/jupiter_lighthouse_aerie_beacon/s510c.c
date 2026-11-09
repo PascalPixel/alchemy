@@ -2,14 +2,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "scene_tables.h"
-
-struct Actor *Actor_GetById(s32 id);
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
-void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
-void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void Actor_SetPositionAndCommit(s32 actor, s32 x, s32 z);
-struct Actor *Func_0200592c(void);
+#include "event_inline.h"
 
 void Func_0200510c(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -25,14 +18,11 @@ void Func_0200510c(void) {
   wait(1);
   Actor_SetPositionAndResetMotion(object, (x << 20) + PIXELS(8), object->y,
                                   (z << 20) + PIXELS(8));
-  FieldEvent_Wait(4);
-  Func_0200592c()->y -= 0x80000;
+  Event_Wait(4);
+  Func_080d4568()->y -= 0x80000;
 }
 
-void Func_020059f4(s32 sound);
 /// Map_CopyCellsRect through this overlay's import.
-void Func_0200579c(s32 srcX, s32 srcZ, s32 width, s32 height, s32 dstX,
-                   s32 dstZ);
 
 /// The cells Func_02005534 watches, and the cell it copies over the one the
 /// leader steps on.
@@ -67,7 +57,7 @@ void Func_02005194(struct CellTarget *table, struct CellTargetEntry *entry) {
   sourceZBit = table->z & 64;
   z = (leader->z >> 20) | sourceZBit;
   Func_0200510c();
-  Func_020059f4(161);
-  Func_0200579c(table->x, table->z + 1, 1, 1, x, z);
-  FieldEvent_Wait(12);
+  Sound_Play(161);
+  Map_CopyCellsRect(table->x, table->z + 1, 1, 1, x, z);
+  Event_Wait(12);
 }

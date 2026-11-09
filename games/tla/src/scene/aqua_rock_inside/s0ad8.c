@@ -1,9 +1,9 @@
 #include "local.h"
 
 void Func_02000ad8(void) {
-  Func_02003d24(106, 14, 14, 13, 81, 14);
-  Func_02003d24(44, 78, 14, 12, 17, 78);
-  Func_02003d1c(81, 14, 14, 13, 17, 14);
+  Func_0802b450(106, 14, 14, 13, 81, 14);
+  Func_0802b450(44, 78, 14, 12, 17, 78);
+  Map_CopyCellAttributeRect(81, 14, 14, 13, 17, 14);
   GameFlag_SetBit(0xa6a);
 }
 

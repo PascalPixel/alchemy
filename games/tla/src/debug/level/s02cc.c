@@ -4,6 +4,7 @@
 #include "dma.h"
 #include "edition.h"
 #include "text/msg_ids.h"
+#include "event_inline.h"
 
 #define ITEM_COUNT 512
 
@@ -19,12 +20,10 @@ void Text_DrawStringInWindow(const u8 *text, void *window, s32 x, s32 y);
 void Text_DrawNumberAtOffset(s32 value, s32 format, void *window, s32 x, s32 y);
 void Text_DrawCharacterAtOffset(s32 character, void *window, s32 x, s32 y);
 void Window_Close(void *window, s32 mode);
-void wait(s32 frames);
 s32 PartyInventory_HasSpace(void);
 s32 PartyInventory_Add(s32 item);
 void ItemMenu_DrawItemDetails(void *window, s32 item);
 struct ItemDefinition *Func_020006bc(s32 item);
-void Func_0200073c(s32 cue);
 
 static inline u32 Input_PressedFenced(u32 mask) {
   u32 keys = gInput.pressed & mask;
@@ -43,7 +42,7 @@ void Func_020002cc(void) {
 
   count = ITEM_COUNT;
   step = 0;
-  Func_0200073c(112);
+  Sound_Play(112);
   item = 1;
   redraw = 1;
   window = Window_Create(0, 0, 30, 7, 2);
@@ -79,50 +78,50 @@ void Func_020002cc(void) {
     }
     if (Input_PressedFenced(1)) {
       if (PartyInventory_Add(item) == -1) {
-        Func_0200073c(113);
+        Sound_Play(113);
         break;
       }
-      Func_0200073c(175);
+      Sound_Play(175);
     }
     if (gInput.pressed & 2) {
-      Func_0200073c(113);
+      Sound_Play(113);
       break;
     }
     if (gInput.repeat & 64) {
       step = -1;
       item--;
       redraw = 1;
-      Func_0200073c(111);
+      Sound_Play(111);
     }
     if (gInput.repeat & 128) {
       step = 1;
       item++;
       redraw = 1;
-      Func_0200073c(111);
+      Sound_Play(111);
     }
     if (gInput.repeat & 16) {
       step = 1;
       item += 10;
       redraw = 1;
-      Func_0200073c(111);
+      Sound_Play(111);
     }
     if (gInput.repeat & 32) {
       step = -1;
       item -= 10;
       redraw = 1;
-      Func_0200073c(111);
+      Sound_Play(111);
     }
     if (gInput.repeat & 256) {
       step = 1;
       item += 30;
       redraw = 1;
-      Func_0200073c(111);
+      Sound_Play(111);
     }
     if (gInput.repeat & 512) {
       step = -1;
       item -= 30;
       redraw = 1;
-      Func_0200073c(111);
+      Sound_Play(111);
     }
     if (step == -1) {
       item = (item + ITEM_COUNT) % count;

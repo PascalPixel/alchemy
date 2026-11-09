@@ -4,6 +4,7 @@
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "event_inline.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
@@ -14,9 +15,6 @@ extern u16 gData_020035bc[];
 extern u16 gData_020035dc[];
 extern u16 gData_020035e0[];
 
-s32 GameFlag_Test();
-void Task_Add();
-struct FieldActor *Actor_GetById();
 s32 Map_GetTerrainHeight();
 void Func_02002b54();
 void Func_02002c44();

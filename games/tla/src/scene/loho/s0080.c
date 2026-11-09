@@ -1,24 +1,13 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 extern char SceneId_Ov6A6Room2;
 extern char MsgLoho23;
 extern char MsgLoho27;
 extern const u8 gData_02001900[];
 extern const u8 gData_02001a80[];
-
-void FieldEvent_Wait(s32 frames);
-void FieldMessage_ShowAtActor(s32 id, s32 flags);
-s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
-void FieldMessage_Show(s32 message, s32 mode);
-void Func_020012b0(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                   s32 destY);
-void Func_020012b8(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                   s32 destY);
-void Func_02001380(s32 message);
-void Func_02001390(s32 id, s32 flags);
-s32 Func_02001420(void);
 
 struct EventWork15a {
   u8 unk000[0x15a];
@@ -32,27 +21,27 @@ const u8 *Func_02000080(void) {
 }
 
 void Func_020000ac(void) {
-  Func_020012b0(69, 70, 10, 12, 24, 7);
-  Func_020012b8(69, 70, 10, 12, 24, 7);
-  Func_020012b0(79, 70, 10, 12, 88, 7);
-  Func_020012b8(79, 70, 10, 12, 88, 7);
-  Func_020012b0(69, 82, 10, 12, 24, 71);
-  Func_020012b8(69, 82, 10, 12, 24, 71);
+  Map_CopyCellAttributeRect(69, 70, 10, 12, 24, 7);
+  Func_0802b450(69, 70, 10, 12, 24, 7);
+  Map_CopyCellAttributeRect(79, 70, 10, 12, 88, 7);
+  Func_0802b450(79, 70, 10, 12, 88, 7);
+  Map_CopyCellAttributeRect(69, 82, 10, 12, 24, 71);
+  Func_0802b450(69, 82, 10, 12, 24, 71);
 }
 
 void Func_0200012c(s32 actor) {
   s32 msg = (s32)&MsgLoho23;
 
-  Func_02001380(msg);
+  Event_SetMessageId(msg);
   FieldMessage_ShowAtActor(actor, 0);
-  if (Event_AskYesNoWithActorAnimation(Func_02001420(), 0) == 0) {
-    FieldEvent_Wait(10);
-    Func_02001380(msg + 1);
+  if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
+    Event_Wait(10);
+    Event_SetMessageId(msg + 1);
   } else {
-    FieldEvent_Wait(20);
-    Func_02001380(msg + 2);
+    Event_Wait(20);
+    Event_SetMessageId(msg + 2);
   }
-  Func_02001390(actor, 0);
+  Event_ShowMessageAndWait(actor, 0);
 }
 
 void Func_02000178(void) {

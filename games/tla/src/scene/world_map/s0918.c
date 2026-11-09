@@ -4,33 +4,18 @@
 #include "ram_buffer.h"
 #include "flag_call.h"
 #include "text/msg_ids.h"
+#include "event_inline.h"
 
 struct EventDestination {
   u8 unk000[0x154];
   s16 scene;
 };
 
-void wait(s32 frames);
-void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
-void Actor_WaitForMoveById(s32 actor);
-void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Func_02004c20(void);
 void Func_02004c28(void);
-void Func_02004c88(s32 actor, s32 x, s32 z);
 void Func_02004c98(s32 actor, s32 target);
-void Func_02004cd8(s32 message);
-void Func_02004cf0(s32 actor, s32 flags);
-void Func_02004d00(s32 actor, s32 angle);
-s32 Func_02004d08(s32 actor, s32 value, s32 frames);
-void Func_02004d10(s32 actor, s32 value);
-void Func_02004d40(s32 value);
 void Func_02004da8(void);
 void Func_02004db0(void);
-void Func_02004db8(s32 value);
-void Func_02004df8(s32 value, s32 mode);
-void Func_02004e30(s32 cue);
-struct Actor *Actor_GetById(s32 id);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_0200050c(void);
@@ -41,7 +26,7 @@ void Func_02000918(void) {
   struct Actor *leader = Actor_GetById(8);
 
   Func_02004c20();
-  Func_02004db8(0);
+  Event_ResolvePendingActions(0);
   if (gMainRoutineWork.renderMode == 8)
     Func_0200050c();
   Event_FinishScreenTransition();
@@ -51,6 +36,6 @@ void Func_02000918(void) {
   gMainRoutineWork.unk280 = 0;
   gMainRoutineWork.ownerOverride = 0;
   GameFlag_ClearBit(0x176);
-  Func_02004e30(123);
-  Func_02004d40(work->scene);
+  Sound_Play(123);
+  Import_EventSetExitRequest(work->scene);
 }

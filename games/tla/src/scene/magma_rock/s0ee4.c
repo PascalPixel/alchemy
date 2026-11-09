@@ -3,12 +3,11 @@
 #include "types.h"
 #include "actor.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define HALF_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Func_02000dc0(void);
 

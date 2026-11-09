@@ -1,7 +1,7 @@
 #include "types.h"
 #include "actor.h"
+#include "event_inline.h"
 
-s32 GameFlag_Test(s32 flag);
 extern u32 gInput;
 extern s16 gData_02003272[];
 void Func_02002f80(struct Actor *object, s32 mode);

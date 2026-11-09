@@ -1,7 +1,7 @@
 #include "types.h"
 #include "actor.h"
+#include "event_inline.h"
 
-s32 Math_Sine(s32 angle);
 void Func_02004b38(struct Actor *object);
 
 void Func_02004598(struct Actor *object) {

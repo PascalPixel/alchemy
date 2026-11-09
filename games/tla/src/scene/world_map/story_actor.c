@@ -2,6 +2,7 @@
 #include "actor.h"
 #include "iwram_call.h"
 #include "field_coordinate.h"
+#include "event_inline.h"
 
 struct BobbingMarker {
   u8 unk00[6];
@@ -16,11 +17,7 @@ struct BobbingMarker {
 
 extern u32 gFrameCount;
 
-s32 GameFlag_Test(s32 flag);
-s32 Math_Sine(s32 angle);
 void Animation_ApplyChildValues(struct BobbingMarker *marker, s32 value);
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle,
-                              union FieldCoordinate *position);
 
 static __inline__ s32 MulQ16(s32 a, s32 b) {
   /* FAKEMATCH: through the inline the multiply's address loads between the

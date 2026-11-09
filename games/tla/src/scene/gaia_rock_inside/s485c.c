@@ -1,8 +1,7 @@
 #include "types.h"
+#include "event_inline.h"
 
 extern u8 gData_020023c4[];
-void Func_02004f6c(s32 value);
-void Func_02005014(s32 value);
 
 void Func_0200485c(s32 direction) {
   s32 *state = (s32 *)(gData_020023c4 + 0x288);
@@ -12,14 +11,14 @@ void Func_0200485c(s32 direction) {
   switch (next) {
   case 250:
   case 251:
-    Func_02004f6c(next);
+    Import_EventSetExitRequest(next);
     break;
   case 0:
     next = 1;
   default:
     *state = next;
-    Func_02004f6c(direction);
+    Import_EventSetExitRequest(direction);
     break;
   }
-  Func_02005014(123);
+  Sound_Play(123);
 }

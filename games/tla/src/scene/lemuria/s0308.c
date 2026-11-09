@@ -2,16 +2,10 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
-void Actor_TurnToFaceEachOther(s32 id, s32 other, s32 mode);
-void Actor_SetModeById(u32 id, s32 mode);
-void wait(s32 frames);
 void Func_02001bcc(void);
 void Func_02001bd4(void);
-void Func_02001c6c(s32 message);
-void Func_02001c7c(s32 id, s32 a, s32 b);
-void Func_02001d04(s32 a);
 
 extern u8 MsgItHasBeen;
 extern u8 MsgEveryoneSpoilsMe;
@@ -28,15 +22,15 @@ void Func_02000308(void) {
 
   object->action = 1;
   Func_02001bcc();
-  Func_02001d04(0);
+  Event_ResolvePendingActions(0);
   if (*(s16 *)(work + 0x166) == 0) {
-    Func_02001c6c((s32)&MsgItHasBeen);
+    Event_SetMessageId((s32)&MsgItHasBeen);
     Actor_TurnToFaceEachOther(18, gMainRoutineWork.currentOwner, 2);
   } else {
-    Func_02001c6c((s32)&MsgEveryoneSpoilsMe);
+    Event_SetMessageId((s32)&MsgEveryoneSpoilsMe);
   }
   Actor_SetModeById(18, 0);
-  Func_02001c7c(18, 0, 10);
+  Event_ShowMessageThenWait(18, 0, 10);
   Func_02001bd4();
   object->action = 0;
   object->angle = angle;
@@ -51,15 +45,15 @@ void Func_02000398(void) {
 
   object->action = 1;
   Func_02001bcc();
-  Func_02001d04(0);
+  Event_ResolvePendingActions(0);
   if (*(s16 *)(work + 0x166) == 0) {
-    Func_02001c6c((s32)&MsgWeAreThe);
+    Event_SetMessageId((s32)&MsgWeAreThe);
     Actor_TurnToFaceEachOther(19, gMainRoutineWork.currentOwner, 2);
   } else {
-    Func_02001c6c((s32)&MsgAreThereOther);
+    Event_SetMessageId((s32)&MsgAreThereOther);
   }
   Actor_SetModeById(19, 0);
-  Func_02001c7c(19, 0, 10);
+  Event_ShowMessageThenWait(19, 0, 10);
   Func_02001bd4();
   object->action = 0;
   object->angle = angle;

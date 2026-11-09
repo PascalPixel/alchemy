@@ -6,23 +6,19 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById();
 s32 Func_02004464();
-s32 Func_020045ec();
-s32 Func_0200451c();
-s32 Func_0200453c();
 s32 Func_0200446c();
 extern u8 MsgProx33[];
 
 void Func_02000620(void) {
   Func_02004464();
-  Func_020045ec(0);
-  Func_0200451c((s32)MsgProx33);
-  Func_0200453c(0xf, 0);
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)MsgProx33);
+  Event_AskYesNoAndShowResponse(0xf, 0);
   Func_0200446c();
 }
 

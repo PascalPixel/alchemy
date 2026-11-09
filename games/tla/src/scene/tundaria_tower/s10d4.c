@@ -2,6 +2,7 @@
 #include "io_reg.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 struct ReflectionSprite {
   u8 unk00[2];
@@ -15,9 +16,6 @@ struct ReflectionAnimation {
   u8 unk00[0x28];
   struct ReflectionSprite *sprite;
 };
-
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
 
 void Func_020010d4(struct Actor *object) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);

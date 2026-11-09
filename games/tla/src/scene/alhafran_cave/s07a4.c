@@ -3,11 +3,11 @@
 #include "call.h"
 
 void Func_02001230(const u16 *table);
-void Func_02001488(s32 actor, s32 x, s32 z);
+void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
 void Func_02001520(s32 value);
 void Func_02001568(void);
 void Func_02001570(s32 a, s32 b, s32 c, s32 d);
-void Func_02001598(s32 actor, s32 value);
+void Func_080d3928(s32 actor, s32 value);
 void Func_020015e0(s32 value);
 void Func_020015e8(const void *data, s32 a, s32 b, s32 c);
 void Func_02001220(void);
@@ -47,7 +47,7 @@ void Func_0200051c(void) {
   Actor_GetById(11)->priorityFlags |= 32;
   Func_02001230(gData_020016e4);
   Actor_SetSingleChildFlags(Actor_GetById(9), 0);
-  Call2((void (*)())Func_02001598, 14, 0x1000);
+  Call2((void (*)())Func_080d3928, 14, 0x1000);
   Actor_SetModeById(12, 0);
   Actor_SetModeById(13, 1);
   Actor_SetModeById(14, 2);
@@ -60,39 +60,39 @@ void Func_0200051c(void) {
   Animation_ApplyChildValues(Actor_GetById(13), 6);
   Animation_ApplyChildValues(Actor_GetById(14), 6);
   if (GameFlag_Test(0x8a7)) {
-    Func_02001488(15, 0, 0);
-    Func_02001488(18, 0, 0);
-    Func_02001488(16, 0, 0);
-    Func_02001488(17, 0, 0);
-    Func_02001488(19, 0, 0);
-    Func_02001488(20, 0, 0);
-    Func_02001488(21, 0, 0);
-    Func_02001488(22, 0, 0);
-    Func_02001488(24, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(21, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(22, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
     Actor_GetById(23)->update = Func_02001220;
   } else if (GameFlag_Test(0x8ab)) {
-    Func_02001488(23, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
     Actor_SetSpritePriority(18, 2);
     Actor_SetSpritePriority(16, 2);
     Actor_SetSpritePriority(17, 2);
     Actor_SetSpritePriority(19, 2);
     Actor_SetSpritePriority(20, 2);
     if (!GameFlag_Test(0x8bd)) {
-      Call3((void (*)())Func_02001488, 17, PIXELS(712), PIXELS(216));
-      Call3((void (*)())Func_02001488, 19, PIXELS(744), PIXELS(216));
+      Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 17, PIXELS(712), PIXELS(216));
+      Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 19, PIXELS(744), PIXELS(216));
     } else {
-      Func_02001488(22, 0, 0);
-      Func_02001488(21, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(22, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(21, 0, 0);
     }
   } else {
-    Func_02001488(18, 0, 0);
-    Func_02001488(16, 0, 0);
-    Func_02001488(17, 0, 0);
-    Func_02001488(19, 0, 0);
-    Func_02001488(20, 0, 0);
-    Func_02001488(21, 0, 0);
-    Func_02001488(22, 0, 0);
-    Func_02001488(24, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(21, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(22, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
     Actor_GetById(23)->update = Func_02001220;
   }
   if (gMainRoutineWork.entrance == 9 && !GameFlag_Test(0x109)) {

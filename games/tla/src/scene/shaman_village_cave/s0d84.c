@@ -6,7 +6,7 @@ void Func_02000d84(void) {
   u32 id;
 
   Func_02001080();
-  Func_020011e0(0);
+  Event_ResolvePendingActions(0);
   id = 8;
 next:
   object = Actor_GetById(id);
@@ -18,9 +18,9 @@ next:
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_CenterOnColumn(gMainRoutineWork.currentOwner, 2, -8);
-  FieldEvent_Wait(5);
-  Func_02001210(123);
-  Func_02001198(work->value154);
+  Event_Wait(5);
+  Sound_Play(123);
+  Import_EventSetExitRequest(work->value154);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_02001088();

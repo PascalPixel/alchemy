@@ -1,5 +1,5 @@
 #include "types.h"
-#include "call.h"
+#include "event_inline.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -8,14 +8,9 @@
    } *)(base))                                                                 \
        ->v)
 
-typedef void (*TaskFunc)(void);
-
 u8 *HeapSlot_AllocFar(s32 slot, s32 size);
 void Func_02002c88(void);
 void Func_02002d34(void);
-s32 Task_Add(TaskFunc func, s32 order);
-void Func_02003434(s32 x, s32 y, s32 z);
-void wait(s32 frames);
 void Func_02002de4(void);
 
 void Func_02002f58(const s32 *position) {
@@ -35,7 +30,7 @@ void Func_02002f58(const s32 *position) {
 
     Task_Add(Func_02002de4, priority);
   }
-  Call3((void (*)())Func_02003434, 0x40000, 0x40000, 0x10000);
+  MapGrid_SetShake(0x40000, 0x40000, 0x10000);
   state = 0;
   do {
     switch (state) {
@@ -66,7 +61,7 @@ void Func_02002f58(const s32 *position) {
       }
       break;
     }
-    Call1((void (*)())wait, 1);
+    System_Wait(1);
     time++;
   } while (state != 999);
 }

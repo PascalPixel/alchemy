@@ -1,9 +1,9 @@
 #include "types.h"
 #include "field_event.h"
+#include "event_inline.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-struct FieldActor *Actor_GetById();
 void Actor_SetSingleChildFlags();
 void Func_02002184();
 
@@ -18,7 +18,7 @@ void Func_02002094(u16 *table) {
   row = table;
 loop:
   id = row[0];
-  object = Actor_GetById(id);
+  object = ((struct FieldActor *)Actor_GetById(id));
   x = row[1];
   z = row[2];
 

@@ -10,10 +10,10 @@ struct SlideWork {
 
 s32 Func_02003d2c(struct Actor *object, s32 *position);
 void Func_02002bd4(struct Actor *object);
-void Func_02003e3c(s32 id, s32 effect);
-void Func_02003ce4(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_080d489c(s32 id, s32 effect);
+void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02003cc4(struct Actor *object, s32 animation);
-void Func_02003cec(struct Actor *object);
+void Script_WaitForEventTimeout(struct Actor *object);
 
 void Func_02002ca4(void) {
   struct Actor *center;
@@ -41,10 +41,10 @@ void Func_02002ca4(void) {
   if (hit < 0) {
     /* FAKEMATCH(wrapper): Call2 kept; as a direct call, 2 of 151 instructions
      * differ in tla-en. */
-    Call2(Func_02003e3c, id, 258);
-    Func_02003ce4(actor, actor->x, actor->y, actor->z + 0x80000);
+    Call2(Func_080d489c, id, 258);
+    Actor_SetMoveTarget(actor, actor->x, actor->y, actor->z + 0x80000);
     Func_02003cc4(actor, 49);
-    Func_02003cec(actor);
+    Script_WaitForEventTimeout(actor);
     do {
       wait(1);
     } while (actor->y != actor->terrainHeight);

@@ -5,6 +5,7 @@
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "graphics/vram_tab.h"
+#include "event_inline.h"
 
 struct SwingActor {
   s16 id;
@@ -31,8 +32,6 @@ struct SwingWork {
 
 extern u8 gData_020023c4[];
 extern u32 gFrameCount;
-struct Actor *Actor_GetById(u32 id);
-s32 Math_Sine(s32 angle);
 void Func_0200119c(u32 *oam, s32 depth);
 
 // Draws the swinging actors' ropes and heads (the 16 records of gData_020023c4

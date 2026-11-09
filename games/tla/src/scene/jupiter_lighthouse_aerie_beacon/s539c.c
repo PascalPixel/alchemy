@@ -3,35 +3,25 @@
 #include "main_routine_work.h"
 #include "actor.h"
 #include "field_effect.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
-void Actor_SetModeById(u32 id, s32 mode);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 use_setter);
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 void Effect_AdvanceMotion(union FieldObject *object);
 void Func_02004bd4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 void Func_0200577c(void);
-void Func_020057ac(s32 a, s32 b, s32 c);
-void Func_020057b4(void);
 void Func_02005814(void);
 void Func_0200581c(void);
-void Func_02005904(s32 id, s32 value);
-void Func_02005984(s32 a0);
-void Func_020059f4(s32 cue);
 
 static __inline__ void Camera_SetBounds(s32 x, s32 y, s32 z, s32 use_setter) {
   Camera_MoveWithinMapBounds(x, y, z, use_setter);
 }
 
 static __inline__ void Func_020057ac_(s32 a, s32 b, s32 c) {
-  Func_020057ac(a, b, c);
+  Map_SetScreenShake(a, b, c);
 }
 
 void Func_0200539c(void) {
@@ -41,7 +31,7 @@ void Func_0200539c(void) {
   u32 i;
 
   Func_02005814();
-  Func_02005984(0);
+  Event_ResolvePendingActions(0);
   Camera_SetBounds(-1, -1, -1, 0);
   Func_0200577c();
   wait(1);
@@ -52,9 +42,9 @@ void Func_0200539c(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Func_020059f4(204);
+  Sound_Play(204);
   leader->motionFlags = 3;
-  FieldEvent_Wait(24);
+  Event_Wait(24);
   options.palette = 7;
   options.update = Effect_AdvanceMotion;
   options.startScaleX = 0xa3d7;
@@ -71,16 +61,16 @@ void Func_0200539c(void) {
     Func_02004bd4(leader->x, leader->y, leader->z, velocity.x, velocity.y,
                   velocity.z, 0x1090001, &options);
   }
-  Func_020059f4(188);
-  Func_02005904(gMainRoutineWork.currentOwner, 0x101);
+  Sound_Play(188);
+  Func_080d489c(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
   Func_020057ac_(0x50000, 0x50000, 0x10000);
   Func_020057ac_(-1, -1, 0xe666);
-  Func_020057b4();
-  Func_02005904(gMainRoutineWork.currentOwner, 0x100);
+  Map_WaitForShakeToSettle();
+  Func_080d489c(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
-  FieldEvent_Wait(10);
+  Event_Wait(10);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   Func_0200581c();
 }

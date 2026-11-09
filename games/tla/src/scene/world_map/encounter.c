@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "version.h"
+#include "event_inline.h"
 
 /// The world map's event work, as far as the encounter events read it.
 struct EncounterWork {
@@ -11,7 +12,6 @@ struct EncounterWork {
 };
 
 u32 Random16Far(void);
-void Func_02004d50(s32 a, s32 b);
 
 // Once the party has walked nine tenths of the encounter threshold, a coin
 // toss either requests the event's battle now or makes the party walk the
@@ -30,7 +30,7 @@ void Func_02004d50(s32 a, s32 b);
     party = &gMainRoutineWork;                                                      \
     if (party->encounterSteps >= work->threshold * 9 / 10) {                   \
       if (Random16Far() < 0x8000) {                                            \
-        Func_02004d50(a, b);                                                   \
+        Func_080d2b4c(a, b);                                                   \
         work->bias = 0;                                                        \
       } else {                                                                 \
         party->encounterSteps = work->threshold;                               \
@@ -52,7 +52,7 @@ void Func_02004d50(s32 a, s32 b);
     if (party->renderMode == 1) {                                              \
       if (party->encounterSteps >= work->threshold * 9 / 10) {                 \
         if (Random16Far() < 0x8000) {                                          \
-          Func_02004d50(a, b);                                                 \
+          Func_080d2b4c(a, b);                                                 \
           work->bias = 0;                                                      \
         } else {                                                               \
           party->encounterSteps = work->threshold;                             \

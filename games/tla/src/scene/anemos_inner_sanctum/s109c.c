@@ -6,9 +6,8 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
+#include "event_inline.h"
 s32 Func_02003498();
-s32 Func_02003378();
 extern u8 gMainRoutineWork[];
 extern u8 MsgHat[];
 extern u8 gData_020036e4[];
@@ -23,16 +22,16 @@ void Func_0200109c(void) {
   } else {
     if (FIELD_AT(gMainRoutineWork, s16, 480) == (s32)MsgCrownBoostsLuck) {
       Func_02003498((s32)gData_020036ea);
-      Call4(Func_02003378, 2, 0x480000, 0x1b80000, 0xff);
+      Field_SetCellBehaviorAt(2, 0x480000, 0x1b80000, 0xff);
     } else {
       if (FIELD_AT(gMainRoutineWork, s16, 480) == (s32)MsgHatBoostsAgility) {
         Func_02003498((s32)gData_020036f6);
-        Call4(Func_02003378, 2, 0x1180000, 0x1580000, 0xff);
-        Call4(Func_02003378, 2, 0x1180000, 0x1780000, 0xff);
-        Call4(Func_02003378, 2, 0x1280000, 0x1680000, 0xff);
-        Call4(Func_02003378, 2, 0x1180000, 0x1680000, 0xe8);
-        Call4(Func_02003378, 2, 0x2080000, 0x2780000, 0xff);
-        Call4(Func_02003378, 2, 0x2080000, 0x2680000, 0xe8);
+        Field_SetCellBehaviorAt(2, 0x1180000, 0x1580000, 0xff);
+        Field_SetCellBehaviorAt(2, 0x1180000, 0x1780000, 0xff);
+        Field_SetCellBehaviorAt(2, 0x1280000, 0x1680000, 0xff);
+        Field_SetCellBehaviorAt(2, 0x1180000, 0x1680000, 0xe8);
+        Field_SetCellBehaviorAt(2, 0x2080000, 0x2780000, 0xff);
+        Field_SetCellBehaviorAt(2, 0x2080000, 0x2680000, 0xe8);
       }
     }
   }

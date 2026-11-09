@@ -6,7 +6,6 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
-s32 Func_02002304();
+#include "event_inline.h"
 
-void Func_02000704(void) { Func_02002304(0x1500000, 0x2500000, 0, 4); }
+void Func_02000704(void) { Func_080dbdd4(0x1500000, 0x2500000, 0, 4); }

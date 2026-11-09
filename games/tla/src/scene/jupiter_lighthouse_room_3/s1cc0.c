@@ -2,7 +2,7 @@
 
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_SetPositionAndCommit(s32 actor, s32 x, s32 z);
-struct Actor *Func_020023f0(void);
+struct Actor *Func_080d4568(void);
 
 void Func_02001cc0(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -18,14 +18,14 @@ void Func_02001cc0(void) {
   wait(1);
   Actor_SetPositionAndResetMotion(object, (x << 20) + PIXELS(8), object->y,
                                   (z << 20) + PIXELS(8));
-  FieldEvent_Wait(4);
-  Func_020023f0()->y -= 0x80000;
+  Event_Wait(4);
+  Func_080d4568()->y -= 0x80000;
 }
 
-void Func_02002470(s32 sound);
+void Sound_Play(s32 sound);
 /// Map_CopyCellsRect through this overlay's import.
-void Func_02002328(s32 srcX, s32 srcZ, s32 width, s32 height, s32 dstX,
-                   s32 dstZ);
+void Map_CopyCellsRect(s32 srcX, s32 srcZ, s32 width, s32 height, s32 dstX,
+                       s32 dstZ);
 
 /// The cells Func_020020e8 watches, and the cell it copies over the one the
 /// leader steps on.
@@ -60,7 +60,7 @@ void Func_02001d48(struct CellTarget *table, struct CellTargetEntry *entry) {
   sourceZBit = table->z & 64;
   z = (leader->z >> 20) | sourceZBit;
   Func_02001cc0();
-  Func_02002470(161);
-  Func_02002328(table->x, table->z + 1, 1, 1, x, z);
-  FieldEvent_Wait(12);
+  Sound_Play(161);
+  Map_CopyCellsRect(table->x, table->z + 1, 1, 1, x, z);
+  Event_Wait(12);
 }

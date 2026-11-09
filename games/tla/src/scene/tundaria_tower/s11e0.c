@@ -4,32 +4,22 @@
 #include "main_routine_work.h"
 #include "event_work.h"
 #include "frame.h"
-#include "call.h"
 #include "field_effect.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
-void Func_02003000(s32 a, s32 b, s32 c);
-void Func_02003008(void);
 void Func_02003048(void);
 void Func_02003050(void);
-void Func_020030c8(s32 actor, s32 a);
-void Func_02003148(s32 a);
-void Func_020031a8(s32 sound);
 void Func_02002fa8(void);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 u32 Random16Far(void);
 void Effect_AdvanceMotion(struct FieldEffect *effect);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
 static inline void TundariaTower_SetWork(s32 a, s32 b, s32 c) {
-  Call3((void (*)())Func_02003000, a, b, c);
+  MapGrid_SetShake(a, b, c);
 }
 
 static inline void TundariaTower_CamBounds(s32 x, s32 y, s32 z, s32 mode) {
@@ -43,7 +33,7 @@ void Func_020011e0(void) {
   u32 i;
 
   Func_02003048();
-  Func_02003148(0);
+  Event_ResolvePendingActions(0);
   TundariaTower_CamBounds(-1, -1, -1, 0);
   Func_02002fa8();
   wait(1);
@@ -54,9 +44,9 @@ void Func_020011e0(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Func_020031a8(204);
+  Sound_Play(204);
   leader->motionFlags = 3;
-  FieldEvent_Wait(24);
+  Event_Wait(24);
   options.palette = 7;
   options.update = (void *)Effect_AdvanceMotion;
   options.startScaleX = 0xcccc;
@@ -76,13 +66,13 @@ void Func_020011e0(void) {
                   velocity[2], 0x01090001, &options);
     i++;
   } while (i <= 16);
-  Func_020031a8(188);
-  Func_020030c8(gMainRoutineWork.currentOwner, 0x101);
+  Sound_Play(188);
+  Func_080d489c(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
-  Call3((void (*)())Func_02003000, 0x50000, 0x50000, 0x10000);
-  Call3((void (*)())Func_02003000, -1, -1, 0xe666);
-  Func_02003008();
-  Func_020030c8(gMainRoutineWork.currentOwner, 0x100);
+  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
+  MapGrid_SetShake(-1, -1, 0xe666);
+  Map_WaitForShakeToSettle();
+  Func_080d489c(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;

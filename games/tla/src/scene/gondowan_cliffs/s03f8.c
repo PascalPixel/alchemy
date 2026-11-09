@@ -2,29 +2,16 @@
 #include "actor.h"
 #include "field_sprite.h"
 #include "system/field_effect.h"
-#include "call.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(u32 id);
 void Func_0200120c(void);
 void Func_02001214(void);
-void Func_020012e4(s32 skip);
-void Func_020011d4(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                   s32 destY);
-void wait(s32 frames);
 s32 Math_Cosine(s32 angle);
 void Func_020003cc(void);
-void Actor_SetSpeedParameters(u32 id, s32 speed, s32 acceleration);
-void Actor_ResetAndSetPosition(u32 id, s32 x, s32 z);
-void Actor_WaitForMoveById(u32 id);
 void Func_020003dc(struct Actor *object, s32 mode);
-void Func_0200131c(s32 cue);
-void Func_020011f4(s32 a, s32 b, s32 c);
 void Func_020001ec(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
-void Actor_SetModeById(u32 id, s32 mode);
-void Func_020011fc(void);
-void GameFlag_SetBit(s32 flag);
 
 void Func_020003f8(s32 unk0, s32 id) {
   struct Actor *actor = Actor_GetById(id);
@@ -36,8 +23,8 @@ void Func_020003f8(s32 unk0, s32 id) {
   if (actor->x >> 20 != 76)
     return;
   Func_0200120c();
-  Func_020012e4(0);
-  Call6((void (*)())Func_020011d4, 74, 31, 1, 1, 74, 33);
+  Event_ResolvePendingActions(0);
+  MapGrid_CopyCellAttributes(74, 31, 1, 1, 74, 33);
   if (Actor_GetById(15)->x >> 20 == 76) {
     actor->motionFlags = 0;
     actor->collisionFlags = 0;
@@ -50,17 +37,17 @@ void Func_020003f8(s32 unk0, s32 id) {
       actor->targetX = 0x80000000;
     }
     actor->update = Func_020003cc;
-    Call3((void (*)())Actor_SetSpeedParameters, id, 0x30000, 0x18000);
-    Call3((void (*)())Actor_ResetAndSetPosition, id, 1193, 530);
+    Actor_SetSpeed(id, 0x30000, 0x18000);
+    Actor_SetDestination(id, 1193, 530);
     actor->gravity = 0xcccc;
     actor->motionFlags = 3;
     actor->terrainId = 0;
     Actor_WaitForMoveById(id);
     Func_020003dc(actor, 0);
-    Func_0200131c(188);
-    Call3((void (*)())Func_020011f4, 0x50000, 0x50000, 0x10000);
-    Func_0200131c(141);
-    Call3((void (*)())Func_020011f4, -1, -1, 0xe666);
+    Sound_Play(188);
+    MapGrid_SetShake(0x50000, 0x50000, 0x10000);
+    Sound_Play(141);
+    MapGrid_SetShake(-1, -1, 0xe666);
     ((struct FieldSprite *)actor->animation)->rotation = 0x1000;
     // Cleared through a word: as a function pointer the store sinks below the
     // effect options.
@@ -74,9 +61,9 @@ void Func_020003f8(s32 unk0, s32 id) {
                   EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                       EFFECT_SCALE_TO_TARGET,
                   &options);
-    Func_0200131c(154);
+    Sound_Play(154);
     Actor_SetModeById(id, 3);
-    Func_020011fc();
+    Map_WaitForShakeToSettle();
     Actor_GetById(15)->priorityFlags |= 2;
     GameFlag_SetBit(0x884);
   }

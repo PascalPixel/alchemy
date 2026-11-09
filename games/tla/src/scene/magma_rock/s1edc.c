@@ -1,16 +1,13 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 extern s16 gData_02003de8[];
 
-struct Actor *Actor_GetById(s32 id);
 struct Actor *Actor_FindInCell(s32 *position, struct Actor *except);
-void GameFlag_SetBit(s32 flag);
 void Func_0200074c(struct Actor *object);
 void Func_020005cc(s32 layer, s32 x, s32 z, s32 height);
-void Func_02003aa4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_020003b4(void);
 void Func_020006cc(s16 *ids);
 
@@ -35,10 +32,10 @@ void Func_02001edc(void) {
 
     Func_020005cc(*terrainId, x, z, height);
   }
-  Call6((void (*)())Func_02003aa4, 94, 44, 5, 1, 99, 38);
+  MapGrid_CopyCellAttributes(94, 44, 5, 1, 99, 38);
   Func_020003b4();
   *terrainId = 0;
-  Call6((void (*)())Func_02003aa4, 99, 42, 5, 1, 99, 38);
+  MapGrid_CopyCellAttributes(99, 42, 5, 1, 99, 38);
   Func_020005cc(*terrainId, object->x >> 20, object->z >> 20,
                 (object->terrainHeight >> 19) + 4);
   Func_020006cc(gData_02003de8);

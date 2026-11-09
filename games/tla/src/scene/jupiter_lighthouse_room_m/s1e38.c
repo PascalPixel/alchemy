@@ -3,13 +3,14 @@
 
 extern u32 gData_02005548[];
 
-void Func_0200484c(s32 id, s32 x, s32 z, s32 angle);
+void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
+                                                    s32 angle);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Actor_SetMovementTypeById(s32 id, const void *script);
 
 static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_0200484c(id, x, z, angle);
+  Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, angle);
 }
 
 /* FAKEMATCH: the angle passes through a block temporary: the native shares the

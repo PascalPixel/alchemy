@@ -1,9 +1,9 @@
 #include "types.h"
 #include "actor.h"
+#include "event_inline.h"
 
 extern u16 gData_02004ca4[];
 
-void Vector_AddPolarOffsetFar(s32 length, s32 angle, s32 *position);
 struct Actor *Func_02004c3c(s32 *position, s32 mode);
 s32 Func_02004a64(struct Actor *object, s32 *position);
 

@@ -86,17 +86,17 @@ Import_ActorCreate:
 	.thumb_func
 Func_02002dec:
 	overlay_veneer Map_CenterOnFollowedPointFar
-	.global Func_02002df4
+	.global Map_CopyCellsRect
 	.thumb_func
-Func_02002df4:
+Map_CopyCellsRect:
 	overlay_veneer Map_CopyCellsRectFar
-	.global Func_02002dfc
+	.global Map_CopyCellAttributeRect
 	.thumb_func
-Func_02002dfc:
+Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global Func_02002e04
+	.global Func_0802b450
 	.thumb_func
-Func_02002e04:
+Func_0802b450:
 	overlay_veneer Func_080201f0
 	.global Func_02002e0c
 	.thumb_func
@@ -110,23 +110,23 @@ Actor_SetSingleChildFlags:
 	.thumb_func
 Animation_SetStateFlags:
 	overlay_veneer Animation_SetStateFlagsFar
-	.global Func_02002e24
+	.global Map_SetScreenShake
 	.thumb_func
-Func_02002e24:
+Map_SetScreenShake:
 	overlay_veneer Map_SetScreenShakeFar
 	.ifndef TLA_EDITION_JA
-	.global Func_02002e2c
+	.global Map_WaitForShakeToSettle
 	.thumb_func
-Func_02002e2c:
+Map_WaitForShakeToSettle:
 	overlay_veneer Func_08020230
 	.endif
 	.global Func_02002e34
 	.thumb_func
 Func_02002e34:
 	overlay_veneer Actor_SetSpritePriorityDirectFar
-	.global FieldEvent_Wait
+	.global Event_Wait
 	.thumb_func
-FieldEvent_Wait:
+Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
 	.global Func_02002e44
 	.thumb_func
@@ -148,9 +148,9 @@ Actor_OffsetPositionAndResetMotion:
 	.thumb_func
 Actor_WaitForMoveById:
 	overlay_veneer Actor_WaitForMoveByIdFar
-	.global Func_02002e6c
+	.global Actor_SetHorizontalPositionWithTerrain
 	.thumb_func
-Func_02002e6c:
+Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -168,13 +168,13 @@ Actor_SetPartAttribute:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_02002e94
+	.global Func_080d47b4
 	.thumb_func
-Func_02002e94:
+Func_080d47b4:
 	overlay_veneer Func_080c8210
-	.global Func_02002e9c
+	.global Func_080d489c
 	.thumb_func
-Func_02002e9c:
+Func_080d489c:
 	overlay_veneer Func_080c8218
 	.global Camera_FollowActor
 	.thumb_func
@@ -188,9 +188,9 @@ Camera_MoveWithinMapBounds:
 	.thumb_func
 Func_02002eb4:
 	overlay_veneer Func_080c8240
-	.global Func_02002ebc
+	.global Import_EventSetExitRequest
 	.thumb_func
-Func_02002ebc:
+Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
 	.global Event_StartScreenTransition
 	.thumb_func
@@ -206,15 +206,15 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Func_02002ed4:
 	overlay_veneer Func_080c8480
-	.global Func_02002edc
+	.global Event_ResolvePendingActions
 	.thumb_func
-Func_02002edc:
+Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02002ee4
 	.thumb_func
 Func_02002ee4:
 	overlay_veneer ObjectTable_SnapshotFar
-	.global Func_02002eec
+	.global Sound_Play
 	.thumb_func
-Func_02002eec:
+Sound_Play:
 	overlay_veneer Sound_PlayFar

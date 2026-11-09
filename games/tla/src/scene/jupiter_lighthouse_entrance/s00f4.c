@@ -10,10 +10,10 @@
 s32 Actor_GetById();
 s32 Func_02001b1c();
 s32 GameFlag_Test();
-s32 Func_02001ab4();
+s32 Actor_SetHorizontalPositionWithTerrain();
 s32 Func_02001a7c();
-s32 Func_02001b0c();
-s32 Func_02001acc();
+s32 Event_ResolvePendingActions();
+s32 Func_080d489c();
 s32 Actor_OffsetPositionAndResetMotion();
 s32 Actor_WaitForMoveById();
 s32 Func_02001a84();
@@ -27,12 +27,12 @@ void Func_020000f4(void) {
   Call7(Func_02001b1c, 0x38, 0, 3, 3, 0x4f, 0x19, 1);
   t2 = GameFlag_Test(0xfe2);
   if (t2 == 0) {
-    Call3(Func_02001ab4, 0x40, 0x1180000, 0x1b80000);
+    Call3(Actor_SetHorizontalPositionWithTerrain, 0x40, 0x1180000, 0x1b80000);
     if ((FIELD_AT(t0, s32, 8) >> 20) == 0x11) {
       if ((FIELD_AT(t0, s32, 16) >> 20) == 0x1b) {
         Func_02001a7c();
-        Func_02001b0c(0);
-        Call2(Func_02001acc, FIELD_AT(gMainRoutineWork, s32, 532), 0x102);
+        Event_ResolvePendingActions(0);
+        Call2(Func_080d489c, FIELD_AT(gMainRoutineWork, s32, 532), 0x102);
         Call3(Actor_OffsetPositionAndResetMotion,
               FIELD_AT(gMainRoutineWork, s32, 532), -16, 0);
         FIELD_AT(t0, s32, 40) = 0x60000;

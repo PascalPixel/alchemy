@@ -3,9 +3,9 @@
 #include "actor.h"
 #include "field_sprite.h"
 #include "macros.h"
+#include "event_inline.h"
 
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 void Func_020021b4(struct Actor *object, s32 a);
 
 /// A particle's step: it circles at its angle (action) around x 214 and

@@ -21,10 +21,10 @@ extern u32 gFrameCount;
 
 struct Actor *Actor_GetById(s32 id);
 void Func_02003aec(void);
-void Func_02003bcc(s32 value);
+void Event_ResolvePendingActions(s32 value);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void Func_02003c54(s32 cue);
+void Sound_Play(s32 cue);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Actor_SetActionById(s32 id, s32 action);
 u32 Random16Far(void);
@@ -33,11 +33,11 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    struct MagmaRockEffectOptions *options);
 void wait(s32 frames);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
-void FieldEvent_Wait(s32 frames);
+void Event_Wait(s32 frames);
 void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
-void Func_02003ac4(s32 a, s32 b, s32 c);
-void Func_02003acc(void);
-void Func_02003b74(s32 a, s32 b);
+void Map_SetScreenShake(s32 a, s32 b, s32 c);
+void Map_WaitForShakeToSettle(void);
+void Func_080d452c(s32 a, s32 b);
 void Func_02003b6c(void);
 void Func_02003af4(void);
 
@@ -51,9 +51,9 @@ void Func_02001c00(void) {
   u32 phase;
 
   Func_02003aec();
-  Func_02003bcc(0);
+  Event_ResolvePendingActions(0);
   GameFlag_SetBit(0x260);
-  Func_02003c54(133);
+  Sound_Play(133);
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 6);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 10);
   Actor_SetActionById(gMainRoutineWork.currentOwner, 32);
@@ -82,7 +82,7 @@ first:
   leader->motionFlags = 3;
   leader->gravity = 0xcccc;
   leader->bounce = 0;
-  FieldEvent_Wait(1);
+  Event_Wait(1);
   leader->angle = 0xc000;
   i = 60;
 second:
@@ -99,13 +99,13 @@ second:
     if (i != 0)
       goto second;
   }
-  Func_02003c54(188);
+  Sound_Play(188);
   Actor_SetSingleChildFlags(leader, 1);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
-  Call3((void (*)())Func_02003ac4, 0x50000, 0x80000, 0x10000);
-  Call3((void (*)())Func_02003ac4, -1, -1, 0xe666);
-  Func_02003acc();
-  Func_02003b74(gMainRoutineWork.currentOwner, 1);
+  Call3((void (*)())Map_SetScreenShake, 0x50000, 0x80000, 0x10000);
+  Call3((void (*)())Map_SetScreenShake, -1, -1, 0xe666);
+  Map_WaitForShakeToSettle();
+  Func_080d452c(gMainRoutineWork.currentOwner, 1);
   Func_02003b6c();
   Actor_SetModeById(gMainRoutineWork.currentOwner, 4);
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 0);

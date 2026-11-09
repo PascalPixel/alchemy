@@ -2,23 +2,17 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
   s16 returnEntrance;
 };
 
-struct Actor *Actor_GetById(s32 id);
-void wait(s32 frames);
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_0200463c(s32 cue);
-void Func_020043f4(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_020043fc(struct Actor *object);
-void Func_0200458c(s32 entrance);
 
 void Func_02001b7c(void) {
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
@@ -29,11 +23,11 @@ void Func_02001b7c(void) {
 
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   cell = object->x >> 16;
-  Func_020043f4(object, ((8 - cell % 16) << 16) + object->x, object->y,
+  Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,
                 object->z - 0x40000);
-  Func_020043fc(object);
+  Script_WaitForEventTimeout(object);
   object->angle = 0xc000;
-  Func_0200463c(128);
+  Sound_Play(128);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
   id = gMainRoutineWork.currentOwner;
@@ -44,5 +38,5 @@ void Func_02001b7c(void) {
   wait(4);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_0200458c(entrance);
+  Import_EventSetExitRequest(entrance);
 }

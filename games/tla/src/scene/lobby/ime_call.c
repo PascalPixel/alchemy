@@ -1,11 +1,11 @@
 #include "types.h"
 #include "io_reg.h"
+#include "event_inline.h"
 
 void Func_0200191c(void);
 void Func_02001914(void);
 void Func_02001a14(void);
 void Func_02001a1c(void);
-void Func_02001ab4(s32 value);
 void Func_02001abc(s32 value);
 
 void Func_02000044(void) {

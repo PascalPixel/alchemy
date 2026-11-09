@@ -1,9 +1,9 @@
 /// @file
 /// The falling rocks' setup: loads their picture, sets up 64 small sprites,
 /// marks each rock idle and starts the task that spawns them.
-#include "call.h"
 #include "types.h"
 #include "system/task.h"
+#include "event_inline.h"
 
 extern char ResourceId_FallingRock;
 
@@ -39,7 +39,6 @@ struct RockWork *HeapSlot_AllocFar(s32 slot, s32 size);
 void *Resource_GetTableEntry(s32 id);
 void Func_02003a14(void *entry, void *destination);
 s32 Resource_FindFreeEntry(void);
-s32 VramCache_Load(s32 entry, s32 size, void *data);
 void Func_02003c34(struct RockSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 void Func_0200379c(void);
@@ -57,7 +56,7 @@ void Func_020038dc(void) {
   /* FAKEMATCH(wrapper): forwarded, so that its constant goes straight to the
    * argument; as a direct VramCache_Load call, 41 of 83 instructions differ in
    * tla-en. */
-  tile = Value3((s32 (*)())VramCache_Load, entry, 0x500, (s32)work);
+  tile = Vram_Load(entry, 0x500, work);
   work->tileBase = tile;
   work->resource = entry;
   rock = work->rocks;
@@ -78,5 +77,5 @@ void Func_020038dc(void) {
   /* FAKEMATCH(wrapper): forwarded, so that its constant goes straight to the
    * argument; as a direct Task_Add call, 6 of 83 instructions differ in
    * tla-en. */
-  Value2((s32 (*)())Task_Add, (s32)Func_0200379c, 0x480);
+  Task_AddFrame(Func_0200379c, 0x480);
 }

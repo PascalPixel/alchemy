@@ -17,14 +17,15 @@ struct MapLayerBits {
 
 void Func_02003e64(void);
 void Func_02003e6c(void);
-void Func_02003fa4(s32 skip);
+void Event_ResolvePendingActions(s32 skip);
 void GameFlag_ClearBit(s32 flag);
 void GameFlag_SetBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
 void Func_02003410(void);
 void PaletteQueue_Add(s32 a, s32 b, s32 c, s32 d);
-void Func_02003edc(s32 id, s32 x, s32 z);
-void Func_02003ee4(s32 id, s32 x, s32 z, s32 angle);
+void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
+void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
+                                                    s32 angle);
 struct Actor *Actor_GetById(u32 id);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Task_Add(void (*func)(void), s32 priority);
@@ -41,7 +42,7 @@ void Func_0200329c(void) {
   s32 done;
 
   Func_02003e64();
-  Func_02003fa4(0);
+  Event_ResolvePendingActions(0);
   ((struct MapLayerBits *)map)->priority = 1;
   if (gMainRoutineWork.entrance == 2)
     GameFlag_ClearBit(303);
@@ -59,12 +60,13 @@ void Func_0200329c(void) {
   }
   PaletteQueue_Add(4, 12, 5, 4);
   if (GameFlag_Test(0xaa5) && (done = GameFlag_Test(265)) == 0) {
-    Func_02003edc(10, 0x1180000, 0x1d40000);
+    Actor_SetHorizontalPositionWithTerrain(10, 0x1180000, 0x1d40000);
     Actor_GetById(10)->motionFlags = done;
     {
       s32 a1 = 0x1280000;
 
-      Call3((void (*)())Func_02003edc, 9, a1, 0x1c40000);
+      Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 9, a1,
+            0x1c40000);
     }
   }
   Actor_SetSingleChildFlags(Actor_GetById(9), 0);
@@ -77,9 +79,10 @@ void Func_0200329c(void) {
       {
         s32 a3 = 0x4000;
 
-        Call4((void (*)())Func_02003ee4, 9, 0x980000, 0x3000000, a3);
+        Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 9,
+              0x980000, 0x3000000, a3);
       }
-      Func_02003edc(10, 0xb00000, 0x3090000);
+      Actor_SetHorizontalPositionWithTerrain(10, 0xb00000, 0x3090000);
       wait(1);
     }
   }
@@ -122,14 +125,15 @@ struct MapLayerBits {
 
 void Func_02003e64(void);
 void Func_02003e6c(void);
-void Func_02003fa4(s32 skip);
+void Event_ResolvePendingActions(s32 skip);
 void GameFlag_ClearBit(s32 flag);
 void GameFlag_SetBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
 void Func_02003410(void);
 s32 PaletteQueue_Add(s16 bank, s16 index, s16 delay, s16 count);
-void Func_02003edc(s32 id, s32 x, s32 z);
-void Func_02003ee4(s32 id, s32 x, s32 z, s32 angle);
+void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
+void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
+                                                    s32 angle);
 struct Actor *Actor_GetById(u32 id);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Task_Add(void (*func)(void), s32 priority);
@@ -146,7 +150,7 @@ void Func_0200329c(void) {
   s32 done;
 
   Func_02003e64();
-  Func_02003fa4(0);
+  Event_ResolvePendingActions(0);
   ((struct MapLayerBits *)map)->priority = 1;
   if (gMainRoutineWork.entrance == 2)
     GameFlag_ClearBit(303);
@@ -154,12 +158,13 @@ void Func_0200329c(void) {
   PaletteQueue_Add(3, 12, 5, 4);
   PaletteQueue_Add(4, 12, 5, 4);
   if (GameFlag_Test(0xaa5) && (done = GameFlag_Test(265)) == 0) {
-    Func_02003edc(10, 0x1180000, 0x1d40000);
+    Actor_SetHorizontalPositionWithTerrain(10, 0x1180000, 0x1d40000);
     Actor_GetById(10)->motionFlags = done;
     {
       s32 a1 = 0x1280000;
 
-      Call3((void (*)())Func_02003edc, 9, a1, 0x1c40000);
+      Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 9, a1,
+            0x1c40000);
     }
   }
   Actor_SetSingleChildFlags(Actor_GetById(9), 0);
@@ -172,9 +177,10 @@ void Func_0200329c(void) {
       {
         s32 a3 = 0x4000;
 
-        Call4((void (*)())Func_02003ee4, 9, 0x980000, 0x3000000, a3);
+        Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 9,
+              0x980000, 0x3000000, a3);
       }
-      Func_02003edc(10, 0xb00000, 0x3090000);
+      Actor_SetHorizontalPositionWithTerrain(10, 0xb00000, 0x3090000);
       wait(1);
     }
   }

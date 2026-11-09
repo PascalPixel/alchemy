@@ -1,29 +1,20 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "system/vector3.h"
+#include "event_inline.h"
 
 extern char SceneId_Ov67bRoom1;
 extern u32 gFrameCount;
-s32 GameFlag_Test(s32 flag);
 void Func_02001e00(void);
-struct Actor *Actor_GetById(s32 id);
 s32 Func_02002970(struct Actor *object, struct Vector3 *position);
 void Func_02001d30(struct Actor *object);
-void Func_020029f8(u32 id, s32 cue);
-void Func_02002930(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02002910(struct Actor *object, s32 mode);
-void Func_02002938(struct Actor *object);
-void wait(s32 frames);
 void Func_02002998(void);
-void Func_02002a48(s32 skip);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void FieldEvent_Wait(s32 frames);
 u32 Random16Far(void);
 void Func_020029a0(void);
-void Func_02002a18(s32 mode);
 
 struct EventWork1cc {
   u8 unk000[0x1cc];
@@ -54,10 +45,10 @@ void Func_02000d80(void) {
     if (result < 0) {
       /* FAKEMATCH(wrapper): Call2 kept; as a direct call, 2 of 220 instructions
        * differ in tla-en. */
-      Call2(Func_020029f8, owner, 258);
-      Func_02002930(leader, leader->x, leader->y, leader->z - 0x80000);
+      Actor_SetAttachedEffect(owner, 258);
+      Actor_SetMoveTarget(leader, leader->x, leader->y, leader->z - 0x80000);
       Func_02002910(leader, 7);
-      Func_02002938(leader);
+      Script_WaitForEventTimeout(leader);
       do
         wait(1);
       while (leader->y != leader->terrainHeight);
@@ -74,12 +65,12 @@ void Func_02000d80(void) {
       if (gMainRoutineWork.scene != (s32)&SceneId_Ov67bRoom1)
         return;
       Func_02002998();
-      Func_02002a48(0);
+      Event_ResolvePendingActions(0);
       leader->motionFlags = 0;
       Actor_SetSingleChildFlags(leader, 0);
       gMainRoutineWork.renderMode = 2;
       Func_02001d30(leader);
-      FieldEvent_Wait(5);
+      Event_Wait(5);
       for (i = 59; i >= 0; i--) {
         leader->y += 0x20000;
         leader->angle += 0x1000;
@@ -89,7 +80,7 @@ void Func_02000d80(void) {
       }
       gMainRoutineWork.renderMode = 0;
       Func_020029a0();
-      Func_02002a18(6);
+      Import_EventSetExitRequest(6);
       return;
     }
     ahead.x = leader->x + 0x5b333;

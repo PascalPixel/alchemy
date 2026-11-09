@@ -6,17 +6,15 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
-s32 Func_02002b5c();
-s32 Actor_GetById();
+#include "event_inline.h"
 
 void Func_0200014c(void) {
   s32 t2;
   s32 t1;
 
-  Func_02002b5c(0x40, 0x1880000, 0x2380000);
-  t1 = Actor_GetById(64);
+  ObjectEvent_PlaceOnGround(0x40, 0x1880000, 0x2380000);
+  t1 = ((s32)Actor_GetById(64));
   FIELD_AT((t1 + 0x55), u8, 0) = 0;
-  t2 = Actor_GetById(64);
+  t2 = ((s32)Actor_GetById(64));
   FIELD_AT(t2, s32, 12) = 0x200000;
 }

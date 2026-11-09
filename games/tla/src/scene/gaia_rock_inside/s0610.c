@@ -1,12 +1,11 @@
 #include "types.h"
 #include "actor.h"
 #include "field_sprite.h"
+#include "event_inline.h"
 
 extern const u8 gData_020050d0[];
 
 u32 Random16Far(void);
-struct Actor *Actor_GetById(s32 id);
-struct Actor *Import_ActorCreate(s32 kind, s32 x, s32 y, s32 z);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02004dac(struct Actor *object, const u8 *script);
 
@@ -51,8 +50,8 @@ s32 Func_02000678(void) {
   struct Actor *object;
   struct FieldSprite *sprite;
 
-  object = Import_ActorCreate(14, source->x + 0x80000, source->y - 0x20000,
-                              source->z);
+  object = ((struct Actor *)Import_ActorCreate(14, source->x + 0x80000,
+                                               source->y - 0x20000, source->z));
   object->motionFlags = 0;
   Actor_SetSingleChildFlags(object, 0);
   Func_02004dac(object, gData_020050d0);

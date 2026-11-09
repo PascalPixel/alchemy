@@ -9,7 +9,7 @@ s32 Func_02001564(struct Actor *object) {
   if (object->y + object->velocityY < object->terrainHeight) {
     flag = GameFlag_Test(0x221);
     if (flag) {
-      Func_020029b0(106);
+      Sound_Play(106);
       return 0;
     }
     spark = Func_02002808_(0x10d, object->x, object->y, object->z);
@@ -21,7 +21,7 @@ s32 Func_02001564(struct Actor *object) {
       Actor_SetSingleChildFlags(spark, 0);
       Func_020027f8(spark, 2);
     }
-    Func_020029b0(106);
+    Sound_Play(106);
     object->y = object->terrainHeight;
     object->velocityY = 0;
     if (GameFlag_Test(0x104) == 0) {

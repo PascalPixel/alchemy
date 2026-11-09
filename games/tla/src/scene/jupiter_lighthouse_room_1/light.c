@@ -2,6 +2,7 @@
 #include "iwram_call.h"
 #include "field_event.h"
 #include "task.h"
+#include "event_inline.h"
 
 extern u8 gField_CachedTilesA[];
 extern u8 gField_CachedTilesB[];
@@ -15,10 +16,8 @@ extern s16 gData_0200239e;
 void *Heap_Alloc(s32 size);
 void Func_02001a4c(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
-void VramCache_Load(s32 entry, s32 size, void *source);
 void Heap_Release(void *block);
 void Func_02000b3c(void);
-struct FieldActor *Actor_GetById(s32 id);
 
 static inline void *BumpAlloc(s32 size) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */

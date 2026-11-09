@@ -1,10 +1,10 @@
-#include "call.h"
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "map.h"
+#include "event_inline.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -21,16 +21,10 @@ extern u32 gData_020053e4[];
 
 u8 *Unit_Get(s32 owner);
 void Func_020044f8(s32 level);
-s32 Func_02004fe4(void);
-struct Actor *Actor_GetById(s32 id);
 void Func_020048a0(void);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void Func_02004ebc(s32 id, s32 x, s32 z);
 s32 Func_02004904(void);
 void Func_02004d9c(struct Actor *object, s32 mode);
 void Func_02004dc4(void);
-void wait(s32 frames);
 void Func_02004de4(u16 *script);
 void Func_02004274(s32 song);
 void Func_02000aac(void);
@@ -57,7 +51,7 @@ s32 Func_02004280(void) {
       for (i = 0; i <= 13; i++)
         total += unit[i];
       Func_020044f8(total);
-      Actor_GetById(Func_02004fe4())->priorityFlags |= 32;
+      Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
       map[261] = 1;
       {
         volatile u16 control = *(volatile u16 *)0x0400000c & ~3;
@@ -70,13 +64,15 @@ s32 Func_02004280(void) {
       Func_020048a0();
       stage = (s32 *)(gData_020023c4 + 0x288);
       /* FAKEMATCH(wrapper): the call forwarded through Call3; as a direct
-       * Func_02004ebc call, 2 of 229 instructions differ in tla-en. */
+       * Actor_SetHorizontalPositionWithTerrain call, 2 of 229 instructions
+       * differ in tla-en. */
       if (*stage == 3 && !GameFlag_Test(0x3f6))
-        Call3((void (*)())Func_02004ebc, 64, 0x680000, 0x580000);
+        Actor_SetPosition(64, 0x680000, 0x580000);
       /* FAKEMATCH(wrapper): the call forwarded through Call3; as a direct
-       * Func_02004ebc call, 2 of 229 instructions differ in tla-en. */
+       * Actor_SetHorizontalPositionWithTerrain call, 2 of 229 instructions
+       * differ in tla-en. */
       if (*stage == 9)
-        Call3((void (*)())Func_02004ebc, 65, 0x680000, 0x480000);
+        Actor_SetPosition(65, 0x680000, 0x480000);
       if (GameFlag_Test(*stage + 0xa50)) {
         struct Actor *climber = Actor_GetById(8);
         u32 angle = Func_02004904();

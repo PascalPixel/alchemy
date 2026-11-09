@@ -6,15 +6,10 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
 #include "scene_tables.h"
-s32 GameFlag_Test();
-s32 GameFlag_SetBit();
+#include "event_inline.h"
 s32 Func_02000070();
 s32 Func_02001380();
-s32 Func_020013f8();
-s32 Actor_SetPositionAndReset();
-s32 Actor_ArmCallback();
 s32 Func_020001e4();
 s32 Func_02001388();
 
@@ -22,13 +17,13 @@ void Func_020000d0(void) {
   s32 t0;
   s32 actor = FIELD_AT(&gMainRoutineWork, s32, 532);
 
-  t0 = Value1(GameFlag_Test, 0x200);
+  t0 = Event_GetFlag(0x200);
   if (t0 == 0) {
     GameFlag_SetBit(0x200);
     Func_02000070();
   }
   Func_02001380();
-  Func_020013f8(0);
+  Event_ResolvePendingActions(0);
   Actor_SetPositionAndReset(actor, 120, 152);
   Actor_ArmCallback(actor, FACING_SOUTH, 0);
   Func_020001e4();

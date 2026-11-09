@@ -13,21 +13,21 @@ void Func_02003504(void) {
   s32 y;
   s32 z;
 
-  Func_02005c9c(154);
+  Sound_Play(154);
   for (i = 0; i <= 7; i++) {
     Actor_SetPartAttribute(Actor_GetById(17), 7);
     wait(2);
     Actor_SetPartAttribute(Actor_GetById(17), 0);
     wait(2);
   }
-  Func_02005c9c(209);
+  Sound_Play(209);
   i = 0;
   angle = 0;
   do {
     x = center->x;
     y = center->y + 0x180000;
     z = center->z;
-    spark = Func_02005a34(673, x, y, z);
+    spark = Import_ActorCreate(673, x, y, z);
     if (spark != 0) {
       previous = Func_02005c44(spark->sprite, previous);
       spark->motionFlags = 0;

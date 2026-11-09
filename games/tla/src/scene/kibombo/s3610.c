@@ -5,7 +5,7 @@ void Func_02003610(void) {
   Task_RemoveFar(Func_02002ccc);
   wait(1);
   Func_02005bb4();
-  FieldEvent_Wait(40);
+  Event_Wait(40);
   if (gData_02007950 != 0)
     Func_02003504();
 }
@@ -25,21 +25,21 @@ void Func_02003640(s32 open, s32 hide) {
     }
   } else {
     Kibombo_MapCopy(45, 37, 79, 15, 3, 2);
-    Func_02005b0c(12, 0, 0);
-    Func_02005b0c(13, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
   }
 }
 
 void Func_020036e0(s32 open, s32 mode) {
   if (open != 0) {
-    Func_02005a64(41, 38, 79, 16, 3, 3);
+    Map_CopyCellPictureIndicesRect(41, 38, 79, 16, 3, 3);
     Kibombo_BlendStart(12, 21, 1, 1, 16, 22);
     if (mode != 0)
       Actor_SetPositionAndResetMotion(Actor_GetById(14), PIXELS(264),
                                       PIXELS(32), PIXELS(308));
     switch (mode) {
     case 0:
-      Func_02005b0c(14, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
       break;
     case 1:
       Actor_SetModeById(14, 0);
@@ -63,8 +63,8 @@ void Func_020036e0(s32 open, s32 mode) {
       break;
     }
   } else {
-    Func_02005a64(45, 38, 79, 16, 3, 3);
+    Map_CopyCellPictureIndicesRect(45, 38, 79, 16, 3, 3);
     Kibombo_BlendStart(17, 22, 1, 1, 16, 22);
-    Func_02005b0c(14, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
   }
 }

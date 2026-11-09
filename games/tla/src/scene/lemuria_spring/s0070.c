@@ -1,10 +1,9 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
+#include "event_inline.h"
 
 extern const u16 gData_02001678[];
-void Func_02001408(s32 cue);
-void wait(s32 frames);
 
 static inline void RegSet(s32 value, s32 reg) {
   /* FAKEMATCH: the value passes through an s32 inline parameter: the native
@@ -19,7 +18,7 @@ void Func_02000070(void) {
   s32 i;
 
 
-  Func_02001408(216);
+  Sound_Play(216);
   layer = (s32 *)(map + 0x178);
   i = 15;
 next:

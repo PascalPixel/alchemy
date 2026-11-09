@@ -2,9 +2,9 @@
 /// Rewrites the map cells under a pushable actor. The actor's sprite
 /// shape picks one of the six footprints in gData_0200407c (four signed bytes
 /// each, in sixteenths of a cell); the cells under it are copied from the
-/// map's spare area (Func_02003e24) and byte 2 of both collision layers there
-/// is filled with 255 (Func_02003790). Returns 1, or 0 for a shape with no
-/// footprint. The twin of overlay 668's Func_020040ec.
+/// map's spare area (Map_CopyCellAttributeRect) and byte 2 of both collision
+/// layers there is filled with 255 (Func_02003790). Returns 1, or 0 for a shape
+/// with no footprint. The twin of overlay 668's Func_020040ec.
 
 #include "islets.h"
 
@@ -48,7 +48,7 @@ s32 Func_02003684(s32 id) {
   z >>= 20;
   fromZ = *(s32 *)(map + 0x14c) >> 20;
   fromX = (u16)b;
-  Func_02003e24(x, z, width, height, x + fromX, z + (u16)fromZ);
+  Map_CopyCellAttributeRect(x, z, width, height, x + fromX, z + (u16)fromZ);
   Func_02003790(0, x, z, width, height, 255);
   Func_02003790(2, x, z, width, height, 255);
   return 1;

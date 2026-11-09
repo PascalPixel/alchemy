@@ -17,7 +17,8 @@ void Func_02000a68(void);
 void Func_02000be4(void);
 void Func_02000d30(void);
 void Func_02000e00(void);
-void Func_02005214(s32 id, s32 x, s32 z, s32 angle);
+void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
+                                                    s32 angle);
 void Func_020052f4(s32 value);
 void Func_0200538c(void);
 
@@ -34,7 +35,8 @@ s32 Func_02000aa8(void) {
        * argument, 4 of 128 instructions differ in tla-en. */
       s32 angle = 0x4000;
 
-      Value4((s32 (*)())Func_02005214, 10, PIXELS(328), PIXELS(162), angle);
+      Value4((s32 (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 10,
+             PIXELS(328), PIXELS(162), angle);
     }
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
     Func_020052f4(0);

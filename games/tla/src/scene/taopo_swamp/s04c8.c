@@ -1,21 +1,17 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "system/vector3.h"
+#include "event_inline.h"
 
 extern char SceneId_Ov678Room5, SceneId_Ov678Room7, SceneId_Ov678Room8,
     SceneId_Ov678Room9;
 extern u8 gData_020029b8[];
 extern u8 gData_020029c0[];
 s32 Func_02002708(s32 hole);
-s32 GameFlag_Test(s32 flag);
-struct Actor *Actor_GetById(u32 id);
 void Func_02002898(void);
-void Func_02002968(s32 mode);
 s32 Func_02002850(struct Actor *object, struct Vector3 *position);
 void Func_02000428(s32 hole);
-void wait(s32 frames);
 
 void Func_020004c8(s32 hole) {
   struct Actor *leader;
@@ -49,7 +45,7 @@ void Func_020004c8(s32 hole) {
     return;
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   Func_02002898();
-  Func_02002968(0);
+  Event_ResolvePendingActions(0);
   goto test;
 sink:
   if (result < 0) {

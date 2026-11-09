@@ -2,24 +2,24 @@
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void Func_020049c4(s32 sound);
+void Sound_Play(s32 sound);
 void Func_020047d4(void);
 void Func_020047dc(void);
-void Func_0200494c(s32 value);
+void Event_ResolvePendingActions(s32 value);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_020048f4(void);
 void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
-void Func_020048b4(s32 id, s32 angle);
-void Func_02004924(s32 a, s32 b);
-void Func_0200491c(s32 a, s32 b);
-void Func_0200492c(s32 frames);
-void Func_020048cc(s32 id, s32 emote, s32 frames);
+void Actor_ArmCallbackAndRefresh(s32 id, s32 angle);
+void BattleEffect_ApplyColorToSourceBuffer(s32 a, s32 b);
+void BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
+void BattleEffect_StartBufferInterpolation(s32 frames);
+void Func_080d47b4(s32 id, s32 emote, s32 frames);
 void Actor_SetModeById(u32 id, s32 mode);
 void Func_02002efc(s32 value);
 void Func_020000c4(void);
 void Actor_StartRepeatedMotion(s32 id, s32 variant);
-void Func_020048d4(s32 id, s32 emote);
-void Func_020048e4(s32 a, s32 b);
+void Func_080d489c(s32 id, s32 emote);
+void Camera_SetSpeedParameters(s32 a, s32 b);
 void Sound_WaitForJingle(void);
 void Func_02004774(s32 x, s32 z, s32 a, s32 b);
 
@@ -28,7 +28,7 @@ static __inline__ void Func_02004774_(s32 x, s32 z, s32 a, s32 b) {
 }
 
 static __inline__ void Func_020048b4_(s32 id, s32 angle) {
-  Func_020048b4(id, angle);
+  Actor_ArmCallbackAndRefresh(id, angle);
 }
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z, s32 mode) {
@@ -55,9 +55,9 @@ void Func_020003b8(s32 unused, s32 id) {
       } while (object->y > object->terrainHeight || object->velocityY != 0);
     }
     object->motionFlags = 0;
-    Func_020049c4(134);
+    Sound_Play(134);
     Func_020047d4();
-    Func_0200494c(0);
+    Event_ResolvePendingActions(0);
     Camera_MoveWithinMapBounds_(254 << 18, -1, 232 << 16, 1);
     Func_020048f4();
     Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
@@ -70,44 +70,44 @@ void Func_020003b8(s32 unused, s32 id) {
     }
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 1000, 248);
     Func_020048b4_(gMainRoutineWork.currentOwner, 0);
-    Func_02004924(0x10000, 0);
-    Func_0200491c(0x10003, 0);
-    Func_0200492c(60);
-    FieldEvent_Wait(50);
+    BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
+    BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
+    BattleEffect_StartBufferInterpolation(60);
+    Event_Wait(50);
     Func_020048b4_(gMainRoutineWork.currentOwner, 0x6000);
-    FieldEvent_Wait(20);
+    Event_Wait(20);
     Func_020048b4_(gMainRoutineWork.currentOwner, 0x2000);
-    FieldEvent_Wait(20);
+    Event_Wait(20);
     Func_020048b4_(gMainRoutineWork.currentOwner, 0x6000);
-    FieldEvent_Wait(20);
+    Event_Wait(20);
     Func_020048b4_(gMainRoutineWork.currentOwner, 0x2000);
-    FieldEvent_Wait(20);
+    Event_Wait(20);
     Func_020048b4_(gMainRoutineWork.currentOwner, 0x4000);
-    FieldEvent_Wait(20);
-    Func_020048cc(gMainRoutineWork.currentOwner, 257, 50);
+    Event_Wait(20);
+    Func_080d47b4(gMainRoutineWork.currentOwner, 257, 50);
     Func_020048b4_(gMainRoutineWork.currentOwner, 0);
-    FieldEvent_Wait(20);
+    Event_Wait(20);
     Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
-    FieldEvent_Wait(40);
+    Event_Wait(40);
     Func_02002efc(0);
     Func_020000c4();
     Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
     Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags |= 1;
     Actor_StartRepeatedMotion(4, 3);
-    Func_020048d4(4, 258);
-    FieldEvent_Wait(40);
-    FieldEvent_Wait(60);
-    Func_020048e4(0x30000, 0x6000);
+    Func_080d489c(4, 258);
+    Event_Wait(40);
+    Event_Wait(60);
+    Camera_SetSpeedParameters(0x30000, 0x6000);
     Camera_MoveWithinMapBounds_(131 << 19, 0, 174 << 16, 1);
     Func_020048f4();
-    FieldEvent_Wait(10);
+    Event_Wait(10);
     object->update = 0;
-    Func_020049c4(80);
+    Sound_Play(80);
     Sound_WaitForJingle();
-    FieldEvent_Wait(10);
+    Event_Wait(10);
     Camera_MoveWithinMapBounds_(246 << 18, -0x400000, 248 << 16, 1);
     Func_020048f4();
-    FieldEvent_Wait(10);
+    Event_Wait(10);
     Func_02002efc(1);
     Func_020047dc();
   }

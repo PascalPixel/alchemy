@@ -21,8 +21,8 @@ void Func_02002c14(void);
 void Func_020035ec(void);
 void Func_02003764(void);
 void Func_02003a30(void);
-void Func_02003bf0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02003c68(s32 id, s32 x, s32 z);
+void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 
 static __inline__ s32 Flag_Test(s32 flag) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
@@ -32,7 +32,7 @@ static __inline__ s32 Flag_Test(s32 flag) {
 static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
                                           s32 f) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003bf0(a, b, c, d, e, f);
+  Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
 static __inline__ void Actor_SetPosition(struct Actor *object, s32 x,
@@ -65,7 +65,7 @@ void Func_0200390c(void) {
     GameFlag_SetBit(entrance + 789);
   }
   if (Flag_Test(0x871) != 0)
-    Func_02003c68(9, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
   Func_020035ec();
   if (GameFlag_Test(265) == 0) {
     if (gMainRoutineWork.entrance > 16) {

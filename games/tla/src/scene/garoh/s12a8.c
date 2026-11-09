@@ -1,6 +1,7 @@
 #include "types.h"
 #include "field_effect.h"
 #include "actor.h"
+#include "event_inline.h"
 
 struct Vec {
   s32 x;
@@ -8,9 +9,7 @@ struct Vec {
   s32 z;
 };
 
-struct Actor *Actor_GetById(s32 id);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 void Effect_AdvanceMotion(union FieldObject *object);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,

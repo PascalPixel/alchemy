@@ -8,7 +8,7 @@ void Func_0200087c(void) {
   struct ShrineOfTheSeaGodMapLayer *layer2 = &map->layers[2];
   struct ShrineOfTheSeaGodObject *leader =
       Actor_GetById(gMainRoutineWork.currentOwner);
-  struct ShrineOfTheSeaGodObject *camera = Func_02003ad0();
+  struct ShrineOfTheSeaGodObject *camera = Func_080d4568();
   struct ShrineOfTheSeaGodObject *object8 = Actor_GetById(8);
   struct ShrineOfTheSeaGodObject *object9 = Actor_GetById(9);
   struct ShrineOfTheSeaGodObject *object10 = Actor_GetById(10);

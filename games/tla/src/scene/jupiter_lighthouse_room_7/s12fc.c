@@ -3,19 +3,11 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "frame.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 void Func_02002b6c(void);
-void Func_02002c0c(s32 value);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void wait(s32 frames);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-struct Actor *Func_02002bdc(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_02002b04(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_02002c5c(s32 sound);
-void Func_02002b0c(struct Actor *object);
-void Camera_FollowActor(s32 id, s32 flag);
 void Func_02002b74(void);
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
@@ -44,7 +36,7 @@ void Func_020012fc(void) {
   s32 i;
 
   Func_02002b6c();
-  Func_02002c0c(0);
+  Event_ResolvePendingActions(0);
   i = 0;
   work->unkD46 = i;
 
@@ -72,12 +64,12 @@ void Func_020012fc(void) {
   actor->motionFlags = 3;
   Actor_SetSingleChildFlags(actor, 1);
   Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
-  shadow = Func_02002bdc();
+  shadow = Func_080d4568();
   shadow->speedLimit = 0x80000;
   shadow->acceleration = 0x10000;
   shadow->motionFlags = 0;
-  Func_02002b04(shadow, actor->x, Map_GetTerrainHeight(0, actor->x, actor->z),
-                actor->z);
+  Actor_SetMoveTarget(shadow, actor->x,
+                      Map_GetTerrainHeight(0, actor->x, actor->z), actor->z);
   i = 0;
   if (actor->y > actor->terrainHeight + 0x100000) {
     do {
@@ -87,7 +79,7 @@ void Func_020012fc(void) {
         break;
     } while (actor->y > actor->terrainHeight + 0x100000);
   }
-  Func_02002c5c(127);
+  Sound_Play(127);
   i = 0;
   if (actor->velocityY != 0) {
     do {
@@ -97,7 +89,7 @@ void Func_020012fc(void) {
         break;
     } while (actor->velocityY != 0);
   }
-  Func_02002b0c(shadow);
+  Script_WaitForEventTimeout(shadow);
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unkD46 = 1;

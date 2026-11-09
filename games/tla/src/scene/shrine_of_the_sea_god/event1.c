@@ -6,8 +6,8 @@
 extern const u8 gData_02003cbc[];
 
 void Func_02003988(void);
-void Func_020039b8(s32 a, s32 b, s32 c);
-void Func_02003ad8(s32 a);
+void Map_SetScreenShake(s32 a, s32 b, s32 c);
+void Import_EventSetExitRequest(s32 a);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 
@@ -25,8 +25,8 @@ void Func_02000ce8(void) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_020039d8();
-  Func_02003b08(0);
-  Func_02003b48(244);
+  Event_ResolvePendingActions(0);
+  Sound_Play(244);
   ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
   Camera_MoveWithinMapBounds(172 << 17, -1, 248 << 16, 0);
   ShrineOfTheSeaGod_CopyRect(62, 77, 62, 18, 19, 6);
@@ -41,7 +41,7 @@ void Func_02000ce8(void) {
   ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 515;
   Event_StartScreenTransition();
-  Call3((void (*)())Func_020039b8, 0x10000, 0x10000, 0x10000);
+  Call3((void (*)())Map_SetScreenShake, 0x10000, 0x10000, 0x10000);
   // A goto loop: as a for, while or do loop, loop.c hoists the 0x8000 the
   // bytes rebuild on every pass (differ 64).
   i = 0;
@@ -60,9 +60,9 @@ loop:
   wait(frames);
   if (i <= 99)
     goto loop;
-  Func_02003b48(288);
-  Func_02003b48(390);
-  Func_020039b8(0, 0, 0);
+  Sound_Play(288);
+  Sound_Play(390);
+  Map_SetScreenShake(0, 0, 0);
   ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 521;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
@@ -84,15 +84,15 @@ void Func_02000e38(void) {
   object = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_020039d8();
-  Func_02003b08(0);
+  Event_ResolvePendingActions(0);
   ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
   Camera_MoveWithinMapBounds(344 << 16, -1, 248 << 16, 1);
   ShrineOfTheSeaGod_CopyRect(62, 77, 62, 18, 19, 6);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 20);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   object->motionFlags = 0;
-  Func_02003b48(245);
-  Call3((void (*)())Func_020039b8, 0x10000, 0x10000, 0x10000);
+  Sound_Play(245);
+  Call3((void (*)())Map_SetScreenShake, 0x10000, 0x10000, 0x10000);
   // A goto loop: the bytes reload the step on every pass, and a for loop
   // hoists it (differ 30).
   i = 0;
@@ -109,7 +109,7 @@ loop:
   i++;
   if (i <= 99)
     goto loop;
-  Func_02003ad8(1);
+  Import_EventSetExitRequest(1);
 }
 
 void Func_02000f18(s32 actor) {
@@ -158,7 +158,7 @@ void Func_02001010(struct ShrineOfTheSeaGodObject *object) {
   do {
     wait(1);
   } while (object->speed != 0);
-  Func_02003b48(188);
+  Sound_Play(188);
   wait(10);
   object->motionFlags = 0;
 }
@@ -169,9 +169,9 @@ void Func_02001038(void) {
 
   if (z == 16) {
     Func_020039d8();
-    Func_02003b08(0);
+    Event_ResolvePendingActions(0);
     Func_02001010(object);
-    Func_020039a8(0, 0, 1, 1, 15, z);
+    Map_CopyCellAttributeRect(0, 0, 1, 1, 15, z);
     Actor_SetSpritePriority(8, 3);
     Func_020039e0();
     GameFlag_SetBit(0x301);

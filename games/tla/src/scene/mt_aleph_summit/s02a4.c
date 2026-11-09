@@ -1,7 +1,7 @@
 #include "types.h"
+#include "event_inline.h"
 
 extern u32 gFrameCount;
-s32 Math_Sine(s32 angle);
 
 void Func_020002a4(u16 *colors, u16 *target, s32 count) {
   s32 i = 0;

@@ -48,7 +48,7 @@ void Func_02003164(const struct Vec3 *origin) {
 
     Task_Add(Func_02002de4, priority);
   }
-  Func_0200362c(139);
+  Sound_Play(139);
   state = 0;
   do {
     if (state == 0) {

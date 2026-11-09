@@ -1,13 +1,11 @@
 #include "types.h"
 #include "edition.h"
 #include "serial.h"
-#include "call.h"
+#include "event_inline.h"
 
 void *Unit_Get(s32 owner);
 void *Djinn_GetRecoveryTable(s32 which);
 s32 Func_0200193c(void);
-void Message_DecodeRawUnbounded(s32 message, u16 *buffer);
-void wait(s32 frames);
 
 extern const u8 MsgEnemyLabel[];
 
@@ -63,8 +61,7 @@ s32 Func_0200039c(void) {
     if (record[0x12a] != 0)
       result++;
     wait(2);
-    Call2((void (*)())Message_DecodeRawUnbounded, (s32)MsgEnemyLabel,
-          namePrefix);
+    FieldMessage_DecodeRawUnbounded((s32)MsgEnemyLabel, namePrefix);
     for (i = 0; i <= LOBBY_PREFIX_LIMIT && namePrefix[i] != 0; i++)
       ;
 #if LOBBY_PREFIX_LIMIT == 7

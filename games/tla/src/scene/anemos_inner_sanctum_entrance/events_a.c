@@ -17,14 +17,14 @@ void Func_02000388(void) {
   struct AnemosInnerSanctumEntranceParty *party;
 
   Func_02000cb4();
-  Func_02000d44(0);
+  Event_ResolvePendingActions(0);
   Actor_StartRepeatedMotion(8, 2);
-  FieldEvent_Wait(20);
-  Func_02000d24(0x10000, 0);
-  Func_02000d1c(0x10003, 1);
-  Func_02000d2c(60);
-  FieldEvent_Wait(60);
-  Func_02000ca4((s32)&MsgIAmTheShadow, 0, 6);
+  Event_Wait(20);
+  BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
+  BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
+  BattleEffect_StartBufferInterpolation(60);
+  Event_Wait(60);
+  Func_0803ce64((s32)&MsgIAmTheShadow, 0, 6);
   party = (struct AnemosInnerSanctumEntranceParty *)&gMainRoutineWork;
   party->battleGroup = 0x1a9f;
   party->battleRule = 2;
@@ -39,17 +39,17 @@ void Func_02000408(void) {
   object->scaleX = 0x4000;
   object->scaleY = 0x4000;
   Func_02000cb4();
-  Func_02000d44(0);
-  Func_02000d64(151);
+  Event_ResolvePendingActions(0);
+  Sound_Play(151);
   Actor_SetPartAttribute(Actor_GetById(8), 7);
   Actor_SetPartAttribute(Actor_GetById(15), 7);
-  FieldEvent_Wait(20);
-  Func_02000d64(190);
+  Event_Wait(20);
+  Sound_Play(190);
   Func_02000cdc(15, 8);
   wait(1);
   Actor_SetMovementTypeById(8, gData_02000ea4);
   Actor_SetMovementTypeAndWaitById(15, gData_02000e20);
   Actor_SetMovementTypeAndWaitById(15, gData_02000e5c);
-  FieldEvent_Wait(10);
+  Event_Wait(10);
   Func_02000cbc();
 }

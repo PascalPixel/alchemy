@@ -1,9 +1,8 @@
 #include "types.h"
 #include "field_event.h"
+#include "event_inline.h"
 
-struct FieldActor *Actor_GetById();
 void Actor_SetSingleChildFlags();
-s32 GameFlag_Test();
 void Func_02002f80();
 void Func_02000338();
 
@@ -17,7 +16,7 @@ void Func_02000404(u16 *table) {
     return;
   row = table;
 loop:
-  object = Actor_GetById(row[0]);
+  object = ((struct FieldActor *)Actor_GetById(row[0]));
   animation = row[1];
   flag = row[2];
 

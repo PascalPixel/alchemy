@@ -3,6 +3,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "event_work.h"
+#include "event_inline.h"
 
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXELS(v) (((s16 *)&(v))[1])
@@ -10,8 +11,6 @@
 extern u16 gData_02004070[];
 extern s8 gData_0200407c[][4];
 extern s32 gData_02004094[];
-
-struct Actor *Actor_GetById(s32 id);
 
 struct Actor *Func_02003940(s32 *direction, s32 *slot, s32 *kind) {
   struct EventWork *work = Ram_HeapSlots->eventWork;

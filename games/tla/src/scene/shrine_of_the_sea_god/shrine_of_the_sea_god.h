@@ -63,7 +63,7 @@ struct ShrineOfTheSeaGodMapWork {
 
 struct ShrineOfTheSeaGodObject *Actor_GetById(s32 id);
 void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
+void Event_Wait(s32 frames);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -78,16 +78,16 @@ void Actor_SetPositionAndResetMotion(struct ShrineOfTheSeaGodObject *object,
 void Actor_SetModeById(s32 actor, s32 mode);
 void Func_020039d8(void);
 void Func_020039e0(void);
-void Func_02003b08(s32 skip);
+void Event_ResolvePendingActions(s32 skip);
 void Func_02003aa0(s32 actor);
-void Func_02003998(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
+void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
-void Func_020039a8(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02003ae0(s32 actor, s32 value);
+void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Func_080d2b4c(s32 actor, s32 value);
 void Func_02003b28(void);
 void Func_02003b38(const void *script);
 void Func_02003b40(void);
-void Func_02003b48(s32 cue);
+void Sound_Play(s32 cue);
 void Func_02001200(s32 show);
 void Func_0200142c(struct ShrineOfTheSeaGodObject *object);
 
@@ -95,25 +95,25 @@ static inline void ShrineOfTheSeaGod_CopyRect(s32 sx, s32 sy, s32 w, s32 h,
                                               s32 dx, s32 dy) {
   /* FAKEMATCH: the rectangle copy reaches the main image through one inline layer.
    */
-  Func_02003998(sx, sy, w, h, dx, dy);
+  Map_CopyCellPictureIndicesRect(sx, sy, w, h, dx, dy);
 }
 
 static inline void ShrineOfTheSeaGod_BlendStart(s32 a, s32 b, s32 c, s32 d,
                                                 s32 e, s32 f) {
   /* FAKEMATCH: the blend start reaches the main image through one inline layer. */
-  Func_020039a8(a, b, c, d, e, f);
+  Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
-void Func_02003a30(s32 actor, s32 x, s32 z);
-void Func_02003a38(s32 actor, s32 x, s32 z, s32 angle);
-void Func_02003a70(s32 message);
-void Func_02003a78(s32 actor, s32 a, s32 b);
-void Func_02003a80(s32 speaker, s32 flags);
-void Func_02003aa8(s32 actor, s32 height, s32 frames);
-void Func_02003ab0(s32 actor, s32 emote);
-void Func_02003ab8(s32 speed, s32 acceleration);
+void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
+void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z, s32 angle);
+void Event_SetMessageId(s32 message);
+void Event_ShowMessageThenWait(s32 actor, s32 a, s32 b);
+void Event_ShowMessageAndWait(s32 speaker, s32 flags);
+void Func_080d47b4(s32 actor, s32 height, s32 frames);
+void Func_080d489c(s32 actor, s32 emote);
+void Camera_SetSpeedParameters(s32 speed, s32 acceleration);
 void Func_02003ac8(void);
-struct ShrineOfTheSeaGodObject *Func_02003ad0(void);
+struct ShrineOfTheSeaGodObject *Func_080d4568(void);
 void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
 void Actor_WaitForMoveById(s32 actor);
 void Actor_Stop(s32 actor);
@@ -133,7 +133,7 @@ static inline void ShrineOfTheSeaGod_Jump(s32 actor, s32 height, s32 frames) {
   /* FAKEMATCH: the frames stay fixed in r2 for the same reason. */
   register s32 f __asm__("r2") = frames;
 
-  Func_02003aa8(actor, h, f);
+  Func_080d47b4(actor, h, f);
 }
 
 static inline void ShrineOfTheSeaGod_ObjSpeed(s32 actor, s32 speed,
@@ -159,7 +159,7 @@ static inline void ShrineOfTheSeaGod_ObjTurn(s32 actor, s32 angle, s32 frames) {
 
 static inline void ShrineOfTheSeaGod_ObjPlace(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003a30(actor, x, z);
+  Actor_SetHorizontalPositionWithTerrain(actor, x, z);
 }
 
 static inline void
@@ -171,7 +171,7 @@ ShrineOfTheSeaGod_ObjSetPos(struct ShrineOfTheSeaGodObject *object, s32 x,
 
 static inline void ShrineOfTheSeaGod_CamSpeed(s32 speed, s32 acceleration) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003ab8(speed, acceleration);
+  Camera_SetSpeedParameters(speed, acceleration);
 }
 
 static inline void ShrineOfTheSeaGod_CamMove(s32 x, s32 y, s32 z, s32 mode) {
@@ -181,12 +181,12 @@ static inline void ShrineOfTheSeaGod_CamMove(s32 x, s32 y, s32 z, s32 mode) {
 
 static inline void ShrineOfTheSeaGod_MessagePut(s32 speaker, s32 flags) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003a80(speaker, flags);
+  Event_ShowMessageAndWait(speaker, flags);
 }
 
 static inline void ShrineOfTheSeaGod_ObjEmote(s32 actor, s32 emote) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003ab0(actor, emote);
+  Func_080d489c(actor, emote);
 }
 
 void Task_Add(void (*func)(void), s32 priority);
@@ -212,12 +212,12 @@ static inline s32 ShrineOfTheSeaGod_FlagCheck(s32 flag) {
 static inline void ShrineOfTheSeaGod_ObjPlaceAt(s32 actor, s32 x, s32 z,
                                                 s32 angle) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003a38(actor, x, z, angle);
+  Actor_SetHorizontalPositionAndAngleWithTerrain(actor, x, z, angle);
 }
 
 static inline void ShrineOfTheSeaGod_ObjPlaceTurn(s32 actor, s32 x, s32 z,
                                                   s32 angle) {
-  Func_02003a38(actor, x, z, angle);
+  Actor_SetHorizontalPositionAndAngleWithTerrain(actor, x, z, angle);
 }
 
 #endif

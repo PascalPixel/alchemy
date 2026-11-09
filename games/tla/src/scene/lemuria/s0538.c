@@ -1,10 +1,10 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
+#include "event_inline.h"
 
 void Func_02001d74(void);
 void Func_02001ccc(s32 scene, s32 entrance);
-void GameFlag_SetBit(s32 flag);
 s32 Func_02001d5c(s32 x, s32 z, s32 layer);
 void Func_02001d64(s32 x, s32 z, s32 layer, s32 value);
 

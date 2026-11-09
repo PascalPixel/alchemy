@@ -28,15 +28,15 @@ void Func_02003598(void) {
   Actor_SetModeById(15, 2);
   Actor_SetModeById(16, 2);
   if (GameFlag_Test(0x231)) {
-    Func_020039a8(0, 0, 3, 1, 19, 13);
-    Func_020039a8(40, 0, 2, 1, 19, 33);
+    Map_CopyCellAttributeRect(0, 0, 3, 1, 19, 13);
+    Map_CopyCellAttributeRect(40, 0, 2, 1, 19, 33);
     Actor_SetPositionAndResetMotion(Actor_GetById(15), PIXELS(320), -PIXELS(21),
                                      PIXELS(534));
     Actor_SetSpritePriority(15, 3);
   }
   if (GameFlag_Test(0x232)) {
-    Func_020039a8(0, 0, 3, 1, 24, 22);
-    Func_020039a8(40, 0, 2, 1, 24, 24);
+    Map_CopyCellAttributeRect(0, 0, 3, 1, 24, 22);
+    Map_CopyCellAttributeRect(40, 0, 2, 1, 24, 24);
     Actor_SetPositionAndResetMotion(Actor_GetById(16), PIXELS(400), -PIXELS(21),
                                      PIXELS(390));
     Actor_SetSpritePriority(16, 3);

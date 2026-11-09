@@ -1,8 +1,7 @@
 #include "types.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
 void Func_02002cb4(s32 a);
 void Func_02004f74(s32 a, s32 b);
 void Func_02004ff4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);

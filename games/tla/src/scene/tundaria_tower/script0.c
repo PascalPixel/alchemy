@@ -1,9 +1,7 @@
 #include "types.h"
-
-void GameFlag_SetBit(s32 a0);
-void Func_020030f0(s32 a0, s32 a1);
+#include "event_inline.h"
 
 void Func_02000280(void) {
   GameFlag_SetBit(513);
-  Func_020030f0(8, 52);
+  Func_080d2b4c(8, 52);
 }

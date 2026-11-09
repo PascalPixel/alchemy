@@ -1,7 +1,7 @@
 #include "local.h"
 
 void Func_020013f8(void) {
-  struct Actor *object = Actor_GetById(Func_02002a68());
+  struct Actor *object = Actor_GetById(Party_GetLeaderActor());
 
   if (object != 0 && (object->animationKind & 15) == 1) {
     struct FieldSprite *sprite;

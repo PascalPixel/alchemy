@@ -1,5 +1,5 @@
 #include "types.h"
-#include "call.h"
+#include "event_inline.h"
 
 struct TreasureIsleCell {
   s32 x;
@@ -12,10 +12,6 @@ struct TreasureIsleCell {
 extern struct TreasureIsleCell gData_0200117c[];
 extern struct TreasureIsleCell gData_020011cc[];
 
-void Func_02000f9c();
-void Func_02000f94();
-void GameFlag_ClearBit();
-
 void Func_02000880(s32 unused, s32 frame, s32 id) {
   struct TreasureIsleCell *cells;
 
@@ -27,12 +23,12 @@ void Func_02000880(s32 unused, s32 frame, s32 id) {
     id -= 50;
   }
   if (frame == 15) {
-    Call6(Func_02000f9c, 3, 100, 3, 4, cells[id].x + 63, cells[id].z - 2);
+    MapGrid_CopyCellsLayered(3, 100, 3, 4, cells[id].x + 63, cells[id].z - 2);
   } else if (frame == 30) {
-    Call6(Func_02000f9c, 6, 100, 3, 4, cells[id].x + 63, cells[id].z - 2);
+    MapGrid_CopyCellsLayered(6, 100, 3, 4, cells[id].x + 63, cells[id].z - 2);
   } else if (frame == 45) {
-    Call6(Func_02000f9c, 9, 100, 3, 4, cells[id].x + 63, cells[id].z - 2);
-    Call6(Func_02000f94, 0, 0, 1, 1, cells[id].x, cells[id].z);
+    MapGrid_CopyCellsLayered(9, 100, 3, 4, cells[id].x + 63, cells[id].z - 2);
+    MapGrid_CopyCellAttributes(0, 0, 1, 1, cells[id].x, cells[id].z);
     GameFlag_ClearBit(cells[id].flag);
   }
 }

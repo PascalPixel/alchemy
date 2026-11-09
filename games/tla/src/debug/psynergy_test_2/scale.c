@@ -1,15 +1,11 @@
 #include "types.h"
 #include "actor.h"
 #include "fixed_math.h"
-
-void Func_020005a0();
-void Func_020005c8();
-struct Actor *Actor_GetById();
-void wait();
+#include "event_inline.h"
 
 void Func_02000384(s32 mode, s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
   if (mode == 1)
-    Func_020005a0(a, b, c, d, e, f);
+    Map_CopyCellsRect(a, b, c, d, e, f);
 }
 
 void Func_020003a8(s32 mode, s32 id, s32 x, s32 z) {
@@ -18,7 +14,7 @@ void Func_020003a8(s32 mode, s32 id, s32 x, s32 z) {
 
   object = Actor_GetById(id);
   if (mode == 1) {
-    Func_020005c8(id, x << 16, z << 16);
+    Actor_SetHorizontalPositionWithTerrain(id, x << 16, z << 16);
     object->scaleX = 0;
     object->scaleY = 0;
   }

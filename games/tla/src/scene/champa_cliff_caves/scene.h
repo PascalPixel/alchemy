@@ -32,20 +32,20 @@ void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
 void Func_0200016c(const struct WarpTarget *warp, s32 door, s32 mode);
-void Func_02003414(s32 scene, s32 x, s32 z);
-void Func_0200341c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02003424(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Map_PlayMapEdit(s32 scene, s32 x, s32 z);
+void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Func_0802b450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_0200345c(void);
 void Func_02003464(void);
 void Func_02003474(s32 a, s32 b, s32 c);
-void Func_0200350c(s32 message);
-void Func_02003524(s32 speaker, s32 flags);
-void Func_02003534(s32 actor, s32 angle);
-void Func_02003574(s32 door);
-void Func_020035b4(s32 skip);
-s32 Func_020035f4(void);
+void Event_SetMessageId(s32 message);
+void Event_ShowMessageAndWait(s32 speaker, s32 flags);
+void Actor_ArmCallbackAndRefresh(s32 actor, s32 angle);
+void Import_EventSetExitRequest(s32 door);
+void Event_ResolvePendingActions(s32 skip);
+s32 Party_GetLeaderActor(void);
 void Func_02003624(struct FieldActor *object, struct FieldActor *target);
-void Func_0200362c(s32 cue);
+void Sound_Play(s32 cue);
 
 static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column,
                                                     s32 offset) {
@@ -61,7 +61,7 @@ Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx, s32 dz) {
 
 static __inline__ void Func_02003534_(s32 actor, s32 angle) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003534(actor, angle);
+  Actor_ArmCallbackAndRefresh(actor, angle);
 }
 
 #endif

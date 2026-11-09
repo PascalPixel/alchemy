@@ -6,10 +6,10 @@ extern const u8 gData_020061a8[];
 void Actor_Stop(s32 actor);
 
 void Func_020045d0(void) {
-  Func_02005ba4(0x4cccc, 0x9999);
+  Camera_SetSpeedParameters(0x4cccc, 0x9999);
   Kibombo_CamMove(132 << 17, 0, 200 << 17, 1);
   Func_02005bb4();
-  FieldEvent_Wait(10);
+  Event_Wait(10);
   Actor_Jump(18, 6, 0);
   Actor_Jump(19, 6, 0);
   Actor_Jump(20, 6, 0);
@@ -20,10 +20,10 @@ void Func_020045d0(void) {
   Actor_Jump(25, 6, 40);
   Kibombo_ObjTurn(20, FACING_SOUTH + FACING_STEP);
   Actor_Jump(20, 2, 0);
-  Func_02005b64(0x4000 + 20, 0);
+  Event_ShowMessageAndWait(0x4000 + 20, 0);
   Kibombo_ObjTurn(23, FACING_SOUTHEAST + FACING_STEP);
   Actor_Jump(23, 2, 0);
-  Func_02005b64(0x4000 + 23, 0);
+  Event_ShowMessageAndWait(0x4000 + 23, 0);
   Actor_SetMovementTypeById(18, gData_020061a8);
   Actor_SetMovementTypeById(19, gData_020061a8);
   Actor_SetMovementTypeById(20, gData_020061a8);
@@ -32,11 +32,11 @@ void Func_020045d0(void) {
   Actor_SetMovementTypeById(23, gData_020061a8);
   Actor_SetMovementTypeById(24, gData_020061a8);
   Actor_SetMovementTypeById(25, gData_020061a8);
-  FieldEvent_Wait(40);
+  Event_Wait(40);
   Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
   Actor_Jump(17, 2, 10);
   Actor_Jump(17, 4, 10);
-  Func_02005b64(17, 0);
+  Event_ShowMessageAndWait(17, 0);
   Actor_Stop(18);
   Actor_Stop(19);
   Actor_Stop(20);
@@ -45,7 +45,7 @@ void Func_020045d0(void) {
   Actor_Stop(23);
   Actor_Stop(24);
   Actor_Stop(25);
-  FieldEvent_Wait(40);
+  Event_Wait(40);
   Kibombo_ObjArm(18, FACING_NORTH + FACING_STEP, 0);
   Kibombo_ObjArm(19, FACING_NORTH + FACING_STEP, 0);
   Kibombo_ObjArm(20, FACING_NORTH + FACING_STEP, 0);
@@ -54,13 +54,13 @@ void Func_020045d0(void) {
   Kibombo_ObjArm(23, FACING_NORTHWEST + FACING_STEP, 0);
   Kibombo_ObjArm(24, FACING_NORTHWEST + FACING_STEP, 0);
   Kibombo_ObjArm(25, FACING_NORTHWEST + FACING_STEP, 0);
-  Func_02005b94(17, 0x107, 0);
+  Func_080d47b4(17, 0x107, 0);
   Kibombo_MessagePut(0x8000 + 17, 0);
   Kibombo_MessagePut(0x8000 + 17, 0);
   Motion_SetModeAndWaitAnimation(17, 3);
   Kibombo_MessagePut(0x8000 + 17, 0);
   Actor_Jump(17, 4, 10);
-  Func_02005b64(0x8000 + 17, 0);
+  Event_ShowMessageAndWait(0x8000 + 17, 0);
 }
 
 void Func_020047e4(void) {
@@ -71,11 +71,11 @@ void Func_020047e4(void) {
   struct KibomboObject *object;
 
   Func_02004524();
-  Func_02005c9c(161);
+  Sound_Play(161);
   Func_02003640(0, 1);
-  FieldEvent_Wait(20);
-  Func_02005b4c((s32)MsgYouAreStillNot);
-  Func_02005b64(17, 0);
+  Event_Wait(20);
+  Event_SetMessageId((s32)MsgYouAreStillNot);
+  Event_ShowMessageAndWait(17, 0);
   object = gData_02007950;
   if (object != 0) {
     // Lowers the object 0x4000 a frame down to y 0x240000.
@@ -91,10 +91,10 @@ void Func_020047e4(void) {
     }
   }
   Motion_SetModeAndWaitAnimation(17, 4);
-  Func_02005b64(17, 0);
+  Event_ShowMessageAndWait(17, 0);
   Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
-  Func_02005b64(0x4011, 0);
+  Event_ShowMessageAndWait(0x4011, 0);
   GameFlag_SetBit(0x8fc);
   GameFlag_SetBit(265);
-  Func_02005bc4(12);
+  Import_EventSetExitRequest(12);
 }

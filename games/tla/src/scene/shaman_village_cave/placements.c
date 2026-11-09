@@ -12,10 +12,8 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "call.h"
 #include "text/msg_ids.h"
-
-void GameFlag_SetBit();
+#include "event_inline.h"
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;

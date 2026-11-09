@@ -25,7 +25,7 @@ struct EventWork {
 extern s32 gData_0200632c;
 
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Func_020052c4(s32 a);
+void Import_EventSetExitRequest(s32 a);
 void Func_02002694(void);
 void Func_02003878(void);
 
@@ -38,11 +38,11 @@ static inline void CamMove(s32 x, s32 y, s32 z, s32 mode) {
 void Func_02000960(void) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
 
-  Func_02005394(123);
+  Sound_Play(123);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->unk1ac = 521;
   CamMove(-1, -1, -1, 0);
   Flag_Set(0x121);
-  Func_020052c4(event->unk154);
+  Import_EventSetExitRequest(event->unk154);
 }
 
 void Func_020009a4(void) {

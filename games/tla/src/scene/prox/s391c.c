@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "fixed_math.h"
 #include "ram_buffer.h"
@@ -7,6 +6,7 @@
 #include "system/iwram_call.h"
 #include "system/input.h"
 #include "system/main_routine_work.h"
+#include "event_inline.h"
 
 /// A point on the map: 16.16 fixed-point pixels.
 struct Position {
@@ -19,14 +19,9 @@ s32 ArcTan2(s32 y, s32 x);
 void Func_0200385c(void);
 void Func_020038e8(void);
 void Func_020043c4(struct Actor *actor, s32 mode);
-void Func_020043f4(struct Actor *actor, s32 x, s32 y, s32 z);
-void Func_020043fc(struct Actor *actor);
-s32 Func_02004424(u8 layer, s32 x, s32 z);
 s32 Func_02004454(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
 s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
 void Actor_SetAnimationSpeed(struct Actor *actor, s32 speed);
-void Vector_AddPolarOffsetFar(s32 length, s32 angle, struct Position *position);
-void wait(s32 frames);
 extern s16 gData_02004780[];
 
 void Func_0200391c(void) {
@@ -70,7 +65,7 @@ top:
   x = startX;
   z = startZ;
   layer = &actor->terrainId;
-  startBehavior = Func_02004424(*layer, x, z);
+  startBehavior = GetMapCellCollision(*layer, x, z);
   dz = z - actor->z;
   dx = x - actor->x;
   distance = Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz);
@@ -83,8 +78,8 @@ top:
     heading = (s16)ArcTan2(z - actor->z, x - actor->x);
     heading = (s16)((heading + 0x2000) & -0x4000);
   }
-  Call3((void (*)())Vector_AddPolarOffsetFar, PIXELS(16), heading, &probe);
-  nextBehavior = Func_02004424(*layer, position->x, position->z);
+  FieldVector_AddPolarOffset(PIXELS(16), heading, &probe);
+  nextBehavior = GetMapCellCollision(*layer, position->x, position->z);
   if (nextBehavior == 255 ||
       Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y >
           PIXELS(8)) {
@@ -100,10 +95,10 @@ top:
   actor->speedLimit = PIXELS(2);
   actor->acceleration = 0x1999;
   actor->action = 0;
-  Func_020043f4(actor, startX, actor->y, startZ);
+  Actor_SetMoveTarget(actor, startX, actor->y, startZ);
   Func_020043c4(actor, 2);
   Actor_SetAnimationSpeed(actor, 48);
-  Func_020043fc(actor);
+  Script_WaitForEventTimeout(actor);
   actor->update = Func_0200385c;
   goto test;
 body:
@@ -131,8 +126,8 @@ body:
   z = next->z;
   actor->speedLimit = PIXELS(2);
   actor->acceleration = 0x1999;
-  Func_020043f4(actor, next->x, next->y, next->z);
-  Func_020043fc(actor);
+  Actor_SetMoveTarget(actor, next->x, next->y, next->z);
+  Script_WaitForEventTimeout(actor);
   if (nextBehavior != startBehavior) {
     goto blocked;
   }
@@ -148,15 +143,15 @@ test:
     step = NULL;
   }
   next = &probe;
-  nextBehavior = Func_02004424(*layer, next->x, next->z);
+  nextBehavior = GetMapCellCollision(*layer, next->x, next->z);
   if (nextBehavior != 255) {
     goto body;
   }
 stop:
   actor->speedLimit = PIXELS(2);
   actor->acceleration = PIXELS(1);
-  Func_020043f4(actor, x, actor->y, z);
-  Func_020043fc(actor);
+  Actor_SetMoveTarget(actor, x, actor->y, z);
+  Script_WaitForEventTimeout(actor);
   wait(2);
   goto top;
 

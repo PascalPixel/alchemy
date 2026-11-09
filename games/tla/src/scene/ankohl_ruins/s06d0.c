@@ -35,9 +35,9 @@ void Func_020006d0(s32 unused, s32 id) {
   __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room5) {
     if (id == 8) {
-      Func_02002dfc(17, 85, 1, 1, 17, 83);
+      Map_CopyCellAttributeRect(17, 85, 1, 1, 17, 83);
       AnkohlRuins_Call2dfc(19, 84, 1, 1, 18, 82);
-      Func_02002dfc(19, 84, 1, 1, 19, 83);
+      Map_CopyCellAttributeRect(19, 84, 1, 1, 19, 83);
     }
 #if !TLA_PATCH_1
     if (id == 9)

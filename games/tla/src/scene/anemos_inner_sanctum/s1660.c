@@ -6,32 +6,25 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
+#include "event_inline.h"
 s32 Func_02003398();
-s32 Func_02003488();
-s32 Actor_SetPositionAndReset();
-s32 FieldEvent_Wait();
-s32 Func_02003328();
-s32 Func_020033e0();
-s32 Func_020034b8();
-s32 GameFlag_SetBit();
 s32 Func_020033a0();
 extern u8 gMainRoutineWork[];
 
 void Func_02001660(void) {
   Func_02003398();
-  Func_02003488(0);
+  Event_ResolvePendingActions(0);
   Actor_SetPositionAndReset(FIELD_AT(gMainRoutineWork, s32, 532), 536, 360);
-  FieldEvent_Wait(8);
-  Call6(Func_02003328, 50, 22, 33, 22, 1, 1);
-  Func_020033e0(14, 0, 0);
-  Func_020034b8(0x248);
-  FieldEvent_Wait(30);
-  Func_020034b8(0xbc);
-  Func_02003328(50, 20, 31, 20, 1, 2);
-  FieldEvent_Wait(5);
-  Func_02003328(51, 20, 31, 20, 1, 2);
-  FieldEvent_Wait(5);
+  Event_Wait(8);
+  MapGrid_CopyCellsTo(50, 22, 33, 22, 1, 1);
+  Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
+  Sound_Play(0x248);
+  Event_Wait(30);
+  Sound_Play(0xbc);
+  Map_CopyCellPictureIndicesRect(50, 20, 31, 20, 1, 2);
+  Event_Wait(5);
+  Map_CopyCellPictureIndicesRect(51, 20, 31, 20, 1, 2);
+  Event_Wait(5);
   GameFlag_SetBit(0x200);
   Func_020033a0();
 }

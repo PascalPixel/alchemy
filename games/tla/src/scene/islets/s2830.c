@@ -7,7 +7,7 @@ void Func_02002830(void) {
   struct Actor *object = Actor_GetById(9);
 
   Func_02003eec(9, gMainRoutineWork.currentOwner);
-  Func_02003edc(10, PIXELS(273), PIXELS(520));
+  Actor_SetHorizontalPositionWithTerrain(10, PIXELS(273), PIXELS(520));
   wait(1);
   object->angle = FACING_NORTH;
   owner->update = (void (*)(void))Func_02001278;
@@ -28,18 +28,18 @@ void Func_02002830(void) {
   owner->update = 0;
   object->update = 0;
   Actor_GetById(10)->update = 0;
-  Func_02003fac(gMainRoutineWork.currentOwner, 9);
-  Func_02003f24((s32)MsgHereWeAre);
-  Func_02003f2c(9, 0);
+  Func_080dc978(gMainRoutineWork.currentOwner, 9);
+  Event_SetMessageId((s32)MsgHereWeAre);
+  Event_ShowMessageAndWait(9, 0);
   Actor_SetModeById(9, 1);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_Jump(gMainRoutineWork.currentOwner, 6, 0);
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 312, 440);
-  Func_02003f3c(gMainRoutineWork.currentOwner, FACING_SOUTHWEST);
-  Func_02003f2c(9, 0);
+  Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, FACING_SOUTHWEST);
+  Event_ShowMessageAndWait(9, 0);
   Func_02003fb4();
-  Call2((void (*)())Func_02003f3c, 9, FACING_SOUTH);
+  Call2((void (*)())Actor_ArmCallbackAndRefresh, 9, FACING_SOUTH);
   work = Ram_HeapSlots->eventWork;
   work->field1ac = 0x100;
   Func_020034d8();

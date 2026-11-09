@@ -10,8 +10,8 @@
        ->v)
 
 void Func_02000560();
-void Func_02001b8c();
-void Func_02001c2c();
+void Func_0802b450();
+void Actor_SetHorizontalPositionWithTerrain();
 void Func_02001cfc();
 void Func_02001d24();
 void Func_02001d3c();
@@ -44,14 +44,14 @@ s32 Func_02000bdc(void) {
   t7 = Actor_GetById(21);
   FIELD_AT(t7, s32, 108) = (s32)Func_02001b3c;
   Actor_SetModeById(22, 3);
-  Call3(Func_02001c2c, 18, PIXELS(40), PIXELS(952));
+  Call3(Actor_SetHorizontalPositionWithTerrain, 18, PIXELS(40), PIXELS(952));
   Actor_SetMovementTypeById(18, (s32)&gData_02001d84);
   t11 = Actor_GetById(18);
   v6 = t11;
   t12 = Actor_GetById(19);
   FIELD_AT(v6, s32, 104) = t12;
   FIELD_AT(v6, s32, 108) = (s32)Func_020000e8;
-  Call3(Func_02001c2c, 19, PIXELS(88), PIXELS(904));
+  Call3(Actor_SetHorizontalPositionWithTerrain, 19, PIXELS(88), PIXELS(904));
   Actor_SetMovementTypeById(19, (s32)&gData_02001e04);
   t15 = Actor_GetById(19);
   v6 = t15;
@@ -61,7 +61,7 @@ s32 Func_02000bdc(void) {
   t17 = GameFlag_Test(0x908);
   if (t17 == 0)
     goto L_02008c9c;
-  Call3(Func_02001c2c, 30, PIXELS(440), PIXELS(1048));
+  Call3(Actor_SetHorizontalPositionWithTerrain, 30, PIXELS(440), PIXELS(1048));
 L_02008c9c:
   t19 = GameFlag_Test(0x964);
   if (t19 == 0)
@@ -69,13 +69,13 @@ L_02008c9c:
   t20 = GameFlag_Test(0x969);
   if (t20 != 0)
     goto L_02008cd4;
-  Call3(Func_02001c2c, 24, PIXELS(456), PIXELS(520));
-  Call3(Func_02001c2c, 25, PIXELS(472), PIXELS(520));
+  Call3(Actor_SetHorizontalPositionWithTerrain, 24, PIXELS(456), PIXELS(520));
+  Call3(Actor_SetHorizontalPositionWithTerrain, 25, PIXELS(472), PIXELS(520));
 L_02008cd4:
   t23 = GameFlag_Test(0x969);
   if (t23 != 0)
     goto L_02008cee;
-  Func_02001c2c(26, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(26, 0, 0);
   goto L_02008cf8;
 L_02008cee:
   t25 = Actor_GetById(26);
@@ -87,7 +87,7 @@ L_02008cf8:
   t27 = GameFlag_Test(0x969);
   if (t27 != 0)
     goto L_02008d2a;
-  Call3(Func_02001c2c, 7, PIXELS(56), PIXELS(1016));
+  Call3(Actor_SetHorizontalPositionWithTerrain, 7, PIXELS(56), PIXELS(1016));
   Actor_SetModeById(7, 9);
 L_02008d2a:
   Func_02001d24();
@@ -102,8 +102,8 @@ L_02008d2a:
     goto L_02008da6;
   Actor_SetSpritePriority(28, 2);
   Actor_SetSpritePriority(27, 2);
-  Call3(Func_02001c2c, 28, PIXELS(840), PIXELS(920));
-  Call3(Func_02001c2c, 27, PIXELS(840), PIXELS(936));
+  Call3(Actor_SetHorizontalPositionWithTerrain, 28, PIXELS(840), PIXELS(920));
+  Call3(Actor_SetHorizontalPositionWithTerrain, 27, PIXELS(840), PIXELS(936));
   Call4(Func_02001d3c, 1, 0x96f, 28, 27);
 L_02008da6:
   t40 = Actor_GetById(28);
@@ -137,7 +137,7 @@ L_02008e22:
   t53 = GameFlag_Test(0x966);
   if (t53 == 0)
     goto L_02008e44;
-  Call6(Func_02001b8c, 3, 1, 1, 1, 54, 45);
+  Call6(Func_0802b450, 3, 1, 1, 1, 54, 45);
 L_02008e44:
   t55 = Actor_GetById(31);
   v6 = t55;

@@ -2,31 +2,32 @@
 #include "scene_tables.h"
 
 void Func_02005a4c(void);
-void Func_02005b14(s32 actor, s32 x, s32 z, s32 angle);
-void Func_02005bd4(s32 a, s32 b);
-void Func_02005bdc(s32 a, s32 b);
-void Func_02005be4(s32 frames);
+void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z,
+                                                    s32 angle);
+void BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
+void BattleEffect_ApplyColorToSourceBuffer(s32 a, s32 b);
+void BattleEffect_StartBufferInterpolation(s32 frames);
 
 void Func_02004cf4(void) {
   struct KibomboEventWork *work;
   struct KibomboObject *leader;
 
   Func_02005a9c();
-  Func_02005c3c(0);
+  Event_ResolvePendingActions(0);
   Kibombo_CamMove(-1, -1, -1, 0);
   Camera_MoveWithinMapBounds(PIXELS(384), -1, PIXELS(601), 0);
   wait(1);
-  Func_02005b14(gMainRoutineWork.currentOwner, PIXELS(370), PIXELS(636),
-                FACING_NORTH);
+  Actor_SetHorizontalPositionAndAngleWithTerrain(
+      gMainRoutineWork.currentOwner, PIXELS(370), PIXELS(636), FACING_NORTH);
   Func_02005a4c();
   wait(1);
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
-  Func_02005bdc(0, 0);
-  Func_02005bd4(0x10002, 0);
+  BattleEffect_ApplyColorToSourceBuffer(0, 0);
+  BattleEffect_ApplyColorToTargetBuffer(0x10002, 0);
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1b4 = 60;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_Wait(40);
+  Event_Wait(40);
   Kibombo_ObjArm(10, FACING_NORTHWEST + FACING_STEP, 20);
   Kibombo_ObjArm(10, FACING_NORTH + FACING_STEP, 20);
   Motion_SetModeAndWaitAnimation(10, 3);
@@ -35,17 +36,17 @@ void Func_02004cf4(void) {
   Kibombo_ObjArm(10, FACING_NORTHWEST + FACING_STEP, 20);
   Kibombo_ObjArm(10, FACING_NORTH + FACING_STEP, 20);
   Actor_GetById(10)->velocityY = PIXELS(3);
-  FieldEvent_Wait(40);
+  Event_Wait(40);
   Actor_SetModeById(9, 3);
   Motion_SetModeAndWaitAnimation(8, 3);
-  Func_02005bd4(0x10000, 0);
-  Func_02005be4(40);
+  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  BattleEffect_StartBufferInterpolation(40);
   wait(60);
   Motion_SetModeAndWaitAnimation(10, 3);
-  Func_02005b4c((s32)MsgRightWellI);
-  Func_02005b64(10, 0);
+  Event_SetMessageId((s32)MsgRightWellI);
+  Event_ShowMessageAndWait(10, 0);
   Motion_SetModeAndWaitAnimation(9, 3);
-  Func_02005b64(9, 0);
+  Event_ShowMessageAndWait(9, 0);
   Actor_ArmCallback(10, FACING_EAST, 0);
   Kibombo_ObjArm(gMainRoutineWork.currentOwner, FACING_WEST, 40);
   Kibombo_ObjArm(10, FACING_NORTH + FACING_STEP, 0);
@@ -54,36 +55,36 @@ void Func_02004cf4(void) {
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   Actor_Jump(8, 4, 10);
   Kibombo_MessagePut(0x2008, 0);
-  Func_02005b7c(9, FACING_EAST);
-  Func_02005b94(8, 259, 20);
+  Actor_ArmCallbackAndRefresh(9, FACING_EAST);
+  Func_080d47b4(8, 259, 20);
   Kibombo_MessagePut(0x2008, 0);
-  Func_02005b94(9, 256, 20);
-  Func_02005b64(9, 0);
+  Func_080d47b4(9, 256, 20);
+  Event_ShowMessageAndWait(9, 0);
   Kibombo_ObjTurn(8, FACING_WEST);
   Actor_SetModeById(8, 4);
   Kibombo_MessagePut(0x2008, 0);
   Kibombo_ObjTurn(8, FACING_SOUTH + FACING_STEP);
   Kibombo_MessagePut(0x2008, 0);
   Actor_SetModeById(8, 4);
-  Func_02005b64(0x2008, 0);
+  Event_ShowMessageAndWait(0x2008, 0);
   Kibombo_ObjArm(9, FACING_NORTH + FACING_STEP, 0);
   Kibombo_ObjSpeed(8, 0x19999, 0xcccc);
   Kibombo_ObjWalk(8, 364, 576);
   Kibombo_ObjArm(8, FACING_NORTHWEST + FACING_STEP, 0);
-  Func_02005b94(9, 261, 80);
-  Func_02005b64(9, 0);
+  Func_080d47b4(9, 261, 80);
+  Event_ShowMessageAndWait(9, 0);
   Kibombo_ObjTurn(9, FACING_SOUTHEAST + FACING_STEP);
-  Func_02005b64(9, 0);
+  Event_ShowMessageAndWait(9, 0);
   Actor_SetModeById(9, 4);
-  Func_02005b64(9, 0);
-  Func_02005b64(9, 0);
+  Event_ShowMessageAndWait(9, 0);
+  Event_ShowMessageAndWait(9, 0);
   Motion_SetModeAndWaitAnimation(10, 3);
-  Func_02005b64(10, 0);
-  Func_02005b7c(10, FACING_EAST);
-  Func_02005b64(10, 0);
-  Func_02005b7c(gMainRoutineWork.currentOwner, FACING_WEST);
+  Event_ShowMessageAndWait(10, 0);
+  Actor_ArmCallbackAndRefresh(10, FACING_EAST);
+  Event_ShowMessageAndWait(10, 0);
+  Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, FACING_WEST);
   Actor_SetModeById(10, 3);
-  Func_02005b64(10, 0);
+  Event_ShowMessageAndWait(10, 0);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   Kibombo_ObjSpeed(10, 0xcccc, 0x6666);
   Actor_SetModeById(10, 2);
@@ -92,7 +93,7 @@ void Func_02004cf4(void) {
     Actor_ResetAndSetPosition(10, ((s16 *)&leader->x)[1],
                               ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(10);
-  Func_02005b0c(10, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
   work = Ram_HeapSlots->eventWork;
   work->field1b4 = 16;
   work->screenEffect = 0x209;

@@ -5,10 +5,10 @@
 /// 1 to the level plus a base.
 
 #include "types.h"
-#include "call.h"
 #include "map.h"
 #include "ram_buffer.h"
 #include "vram_tab.h"
+#include "event_inline.h"
 
 struct AnkohlRuinsSprite {
   s32 x;
@@ -29,7 +29,6 @@ struct AnkohlRuinsSpriteWork {
 
 extern struct AnkohlRuinsSpriteWork Data_02004030;
 
-s32 GameFlag_Test(s32 flag);
 void Func_02002dac(u32 *oam, s32 b);
 
 void Func_020012c4(void) {

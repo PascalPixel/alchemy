@@ -1,5 +1,6 @@
 #include "types.h"
 #include "frame.h"
+#include "event_inline.h"
 
 struct GaiaRockInsideOrbit {
   u8 unk00[8];
@@ -18,7 +19,6 @@ struct GaiaRockInsideOrbit {
 };
 
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 // Called by its linked name: through Iwram_MulQ16's fixed address the
 // multiply's address is loaded one call early (2 of 75 instructions differ in
 // tla-en).

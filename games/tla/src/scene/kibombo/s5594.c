@@ -15,7 +15,7 @@ void Func_02005594(void) {
   u32 i;
 
   Func_02005a9c();
-  Func_02005c3c(0);
+  Event_ResolvePendingActions(0);
   GameFlag_SetBit(0x869);
   GameFlag_SetBit(0x202);
   gData_02007948[0] = BG_PLTT[9];
@@ -57,7 +57,7 @@ void Func_02005594(void) {
   Actor_SetSpritePriority(5, 2);
   Actor_SetSpritePriority(6, 2);
   if (GameFlag_Test(0x92e))
-    Func_02005b0c(7, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(7, 0, 0);
   else if (GameFlag_Test(0x92f)) {
     /* FAKEMATCH: the temporary builds the angle before the position, as the
      * native does (differ 4 without it). */
@@ -67,7 +67,7 @@ void Func_02005594(void) {
   }
   if (GameFlag_Test(0x8fd)) {
     Func_020036e0(1, 6);
-    Func_02005b0c(17, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
   }
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

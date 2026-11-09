@@ -2,8 +2,8 @@
 /// The glow's frame callback.
 
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
+#include "event_inline.h"
 
 struct GlowSprite {
   u8 unk_0[12];
@@ -26,7 +26,6 @@ struct Glow {
   s16 frame;
 };
 
-s32 Math_Sine(s32 angle);
 void Func_020035c4(s32 *position);
 void Func_02003604(struct GlowSprite *sprite);
 

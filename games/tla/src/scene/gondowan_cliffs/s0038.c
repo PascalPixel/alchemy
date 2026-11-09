@@ -3,11 +3,10 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
+#include "event_inline.h"
 
 extern const u8 gData_02001698[];
 extern const u8 gData_02001728[];
-
-void Func_020012c4(s32, s32);
 
 struct TileSprite {
   u8 unk00[18];
@@ -25,7 +24,7 @@ s32 Func_02000038(struct Actor *object) {
   return 1;
 }
 
-void Func_02000058(void) { Func_020012c4(21, 49); }
+void Func_02000058(void) { Func_080d2b4c(21, 49); }
 
 const u8 *Func_02000064(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov66bRoom2)

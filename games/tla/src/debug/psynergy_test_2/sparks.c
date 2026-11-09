@@ -1,5 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "event_inline.h"
 
 struct Spark {
   s32 position[3];
@@ -29,15 +30,11 @@ struct SparkWork {
 };
 
 s32 Random16Far(void);
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 void *HeapSlot_AllocFar(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 void *Resource_GetTableEntry(s32 id);
 s32 Resource_FindFreeEntry(void);
 void Resource_ResetEntry(s32 entry);
-s32 VramCache_Load(s32 entry, s32 size, void *data);
-void Task_Add(void (*func)(void), s32 priority);
-void Task_RemoveFar(void (*func)(void));
 void Func_02000560(void *resource, void *destination);
 void Func_020005f0(struct SparkSprite *sprite, s32 a, s32 b, s32 c, s32 tile);
 void Func_020005f8(struct SparkSprite *sprite, struct Spark *spark);

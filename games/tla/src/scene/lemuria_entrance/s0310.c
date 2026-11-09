@@ -33,7 +33,7 @@ void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
-void FieldEvent_Wait(s32 frames);
+void Event_Wait(s32 frames);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetMovementTypeById(s32 id, const void *script);
 void Actor_RefreshSelectorById(u32 id);
@@ -49,11 +49,11 @@ void Message_CloseFinishedWindows(void);
 s32 Func_0200053c(s32 a, s32 b, s32 c, s32 d);
 void Func_0200055c(void);
 void Func_02000564(void);
-void Func_0200058c(s32 id, s32 x, s32 z);
-void Func_0200059c(s32 message);
-void Func_020005ac(s32 countdown);
-void Func_020005cc(s32 skip);
-void Func_020005dc(s32 cue);
+void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
+void Event_SetMessageId(s32 message);
+void Import_EventSetExitRequest(s32 countdown);
+void Event_ResolvePendingActions(s32 skip);
+void Sound_Play(s32 cue);
 void Func_02000310(s32 kind, s32 frames);
 
 static __inline__ s32 Flag_Test(s32 flag) {
@@ -111,7 +111,7 @@ void Func_02000310(s32 kind, s32 frames) {
   x = Func_0200053c(id, 0, x, 5);
   while (Message_AllTyped() == 0)
     wait(1);
-  FieldEvent_Wait(frames);
+  Event_Wait(frames);
   Window_Close(x, 2);
   Message_CloseFinishedWindows();
 }

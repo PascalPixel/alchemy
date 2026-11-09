@@ -1,14 +1,13 @@
 #include "types.h"
 #include "field_event.h"
 #include "iwram_call.h"
+#include "event_inline.h"
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
 extern u32 gFrameCount;
 
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
-void Actor_SetPartAttribute(struct FieldActor *object, s32 value);
 
 /// Circles the object around the centre in words 68 and 76, the radius
 /// growing with its height, one step of 256 per lap.

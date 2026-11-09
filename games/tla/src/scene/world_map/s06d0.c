@@ -3,28 +3,20 @@
 #include "main_routine_work.h"
 #include "actor.h"
 #include "event_work.h"
+#include "event_inline.h"
 
 extern u8 gMapBlocks[];
 
-void GameFlag_ClearBit(s32 flag);
-void wait(s32 frames);
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 s32 GetWorldMapCollision(s32 *position);
-void Vector_AddPolarOffsetFar(s32 distance, s32 angle, s32 *position);
 s32 Func_02004b88(struct Actor *object, s32 *position);
 void Func_02004c20(void);
-void Func_02004db8(s32 value);
-void Func_02004e30(s32 cue);
 void Func_02004b18(struct Actor *object, s32 mode);
 void Func_02004b48(struct Actor *object);
-void Func_02004b50(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_02004b58(struct Actor *object);
 void Func_02004dc8(void);
 void Func_02004dc0(void);
 void Func_02004c28(void);
-void Func_02004df8(s32 a, s32 b);
 
 void Func_020006d0(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -68,10 +60,10 @@ void Func_020006d0(void) {
     }
   }
   if (blocked == 0) {
-    Func_02004e30(78);
+    Sound_Play(78);
     Func_02004c20();
-    Func_02004db8(0);
-    Func_02004df8(0x10000, 10);
+    Event_ResolvePendingActions(0);
+    Func_080d46a4(0x10000, 10);
     gMainRoutineWork.renderMode = 1;
     gMainRoutineWork.ownerOverride = 0;
     GameFlag_ClearBit(0x176);
@@ -86,15 +78,15 @@ void Func_020006d0(void) {
     Actor_SetSingleChildFlags(leader, 0);
     Func_02004b18(leader, 6);
     wait(6);
-    Func_02004e30(152);
+    Sound_Play(152);
     Func_02004b18(leader, 7);
     leader->speedLimit = 0x30000;
     leader->acceleration = 0x20000;
     leader->velocityY = 0x40000;
     leader->motionFlags = flags;
     Func_02004b48(leader);
-    Func_02004b50(leader, position[0], 0, position[2]);
-    Func_02004b58(leader);
+    Actor_SetMoveTarget(leader, position[0], 0, position[2]);
+    Script_WaitForEventTimeout(leader);
     Func_02004b18(leader, 6);
     wait(6);
     Func_02004c28();

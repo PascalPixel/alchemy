@@ -3,15 +3,13 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "call.h"
 #include "text/msg_ids.h"
+#include "event_inline.h"
 
 void Func_020034fc();
-void Task_Add();
-void Task_RemoveFar();
 
 void Func_020034d8(void) {
-  Value2((s32 (*)())Task_Add, &Func_020034fc, 0x480);
+  Task_AddFrame(&Func_020034fc, 0x480);
   return;
 }
 

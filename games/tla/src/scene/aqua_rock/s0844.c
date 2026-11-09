@@ -1,18 +1,11 @@
 #include "types.h"
-#include "call.h"
 #include "task.h"
+#include "event_inline.h"
 
 struct Unk02003450 {
   s16 unk00[16];
 };
 extern struct Unk02003450 Data_02003450[];
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void Func_02002968(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                   s32 destY);
-void Func_02002958(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                   s32 destY);
 void Func_02000740(void);
 void Func_02000580(void);
 
@@ -61,13 +54,13 @@ void Func_02000844(void) {
       s32 srcX = opened->unk00[0] + 3, srcY = opened->unk00[1],
           height = opened->unk00[8], destX = opened->unk00[4],
           destY = opened->unk00[5];
-      Func_02002968(srcX, srcY, 3, height, destX, destY);
+      Func_0802b450(srcX, srcY, 3, height, destX, destY);
     }
     {
       s32 srcX = opened->unk00[2] + 3, srcY = opened->unk00[3],
           height = opened->unk00[8], destX = opened->unk00[6],
           destY = opened->unk00[7];
-      Func_02002958(srcX, srcY, 3, height, destX, destY);
+      Map_CopyCellsRect(srcX, srcY, 3, height, destX, destY);
     }
     opened->unk00[12] = 9999;
     opened->unk00[11] = 9999;
@@ -79,18 +72,18 @@ void Func_02000844(void) {
       s32 srcX = opened->unk00[0] + 3, srcY = opened->unk00[1],
           height = opened->unk00[8], destX = opened->unk00[4],
           destY = opened->unk00[5];
-      Func_02002968(srcX, srcY, 3, height, destX, destY);
+      Func_0802b450(srcX, srcY, 3, height, destX, destY);
     }
     {
       s32 srcX = opened->unk00[2] + 3, srcY = opened->unk00[3],
           height = opened->unk00[8], destX = opened->unk00[6],
           destY = opened->unk00[7];
-      Func_02002958(srcX, srcY, 3, height, destX, destY);
+      Map_CopyCellsRect(srcX, srcY, 3, height, destX, destY);
     }
     opened->unk00[12] = 9999;
     opened->unk00[11] = 9999;
     opened->unk00[10] = 1;
   }
-  Value2((s32 (*)())Task_Add, (s32)Func_02000740, TASK_PASS_VBLANK);
+  Task_AddFrame(Func_02000740, TASK_PASS_VBLANK);
   Task_Add(Func_02000580, TASK_PASS_VBLANK);
 }

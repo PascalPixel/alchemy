@@ -9,13 +9,13 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 extern u8 gData_020017b0[];
 extern u8 gData_02001860[];
 
 void Func_02000f14(s32, s32, s32);
 void Func_02000ebc(s32, s32);
-void Func_02000dac(s32, s32, s32, s32, s32, s32);
 void Func_02000e5c(s32, s32, s32);
 void Func_0200092c(s32, s32, s32, s32, s32, s32, s32);
 void Func_02000950(s32, s32, s32, s32);
@@ -23,8 +23,6 @@ void Func_020009c0(s32, s32, s32, s32);
 void Func_02000a10(s32, s32, s32, s32, s32);
 void Func_02000c4c(struct Actor *, void *);
 void Func_02000d4c(struct Actor *);
-void GameFlag_SetBit(s32);
-struct Actor *Actor_GetById(s32);
 
 void Func_02000660(void) {
   Func_02000f14(249, 40, 168);
@@ -62,7 +60,7 @@ void Func_02000724(void) {
 
   frames = 16;
   flags = 10;
-  Func_02000dac(48, 26, 2, 4, frames, flags);
+  Map_CopyCellsRect(48, 26, 2, 4, frames, flags);
 }
 
 void Func_02000740(void) {}

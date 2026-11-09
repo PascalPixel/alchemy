@@ -6,14 +6,12 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
-s32 FieldMessage_Show();
-s32 Func_02001408();
+#include "event_inline.h"
 s32 Func_02001358();
 extern u8 MsgAndTheOthers[];
 
 void Func_02000054(void) {
   FieldMessage_Show((s32)MsgAndTheOthers, 1);
-  Func_02001408(0x7e);
+  Sound_Play(0x7e);
   Func_02001358(1);
 }

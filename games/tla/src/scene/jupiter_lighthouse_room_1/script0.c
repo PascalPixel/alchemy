@@ -1,5 +1,4 @@
 #include "types.h"
+#include "event_inline.h"
 
-void Func_02001b84(s32 a0);
-
-void Func_02000054(void) { Func_02001b84(6); }
+void Func_02000054(void) { Import_EventSetExitRequest(6); }

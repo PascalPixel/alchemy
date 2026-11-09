@@ -2,14 +2,9 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
-void wait(s32 frames);
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_SetSpritePriority(u32 id, s32 variant);
-void Actor_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-void Func_020022bc(s32 a);
 
 /// Once the leader stands at height 32 or more, it rises and spins for 110
 /// frames.
@@ -33,6 +28,6 @@ void Func_02000454(void) {
       object->angle = angle;
       wait(2);
     }
-    Func_020022bc(12);
+    Import_EventSetExitRequest(12);
   }
 }

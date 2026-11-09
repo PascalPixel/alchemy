@@ -3,6 +3,7 @@
 #include "actor.h"
 #include "magma_rock.h"
 #include "macros.h"
+#include "event_inline.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -11,8 +12,6 @@ void Func_02002024(s32 x, s32 z);
 void Func_02003820(s32 x, s32 y, s32 z, s32 kind);
 void Func_020038dc(void);
 void Func_02003998(void);
-void Func_02003a94(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02003aa4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 /// Func_020014bc's counterpart: on cue 0 it hands the target to Func_020020d0;
 /// modes 2 and 3 run Func_02002024 at the target's cell, and mode 3 also clears
@@ -47,10 +46,10 @@ void Func_020020f8(s32 mode, s32 cue) {
                   16);
     target = work->target;
     SET_POSITION(target, 0, 0, 0);
-    Func_02003aa4(0, 32, 5, 8, 42, 17);
-    Func_02003aa4(0, 96, 5, 8, 42, 81);
-    Func_02003a94(0, 32, 42, 17, 5, last);
-    Func_02003a94(0, 96, 42, 81, 5, last);
+    Map_CopyCellAttributeRect(0, 32, 5, 8, 42, 17);
+    Map_CopyCellAttributeRect(0, 96, 5, 8, 42, 81);
+    Map_CopyCellPictureIndicesRect(0, 32, 42, 17, 5, last);
+    Map_CopyCellPictureIndicesRect(0, 96, 42, 81, 5, last);
   }
   if (cue == 0x3e7)
     Func_02003998();

@@ -6,7 +6,7 @@
 // offset pointer is set after the angle's load).
 #include "types.h"
 #include "actor.h"
-#include "call.h"
+#include "event_inline.h"
 
 struct Orbiter {
   u8 unk00[8];
@@ -23,7 +23,6 @@ struct Orbiter {
   struct Actor *anchor;
 };
 
-void Vector_AddPolarOffsetFar(s32 length, s32 angle, s32 *position);
 void Func_02001364(struct Orbiter *orbiter);
 
 s32 Func_020013bc(struct Orbiter *orbiter) {
@@ -34,8 +33,7 @@ s32 Func_020013bc(struct Orbiter *orbiter) {
   orbiter->x = anchor->x;
   orbiter->y = anchor->y + 0x80000;
   orbiter->z = anchor->z;
-  Call3((void (*)())Vector_AddPolarOffsetFar, orbiter->radius, orbiter->angle,
-        (s32)&orbiter->x);
+  FieldVector_AddPolarOffset(orbiter->radius, orbiter->angle, &orbiter->x);
   /* FAKEMATCH(temporary): the angle's address, taken after the first push,
    * sets r2 from r8 before the second push reads it; as orbiter->angle,
    * 2 of 89 instructions differ in tla-en. */

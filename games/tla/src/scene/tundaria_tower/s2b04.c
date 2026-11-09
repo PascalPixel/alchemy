@@ -1,4 +1,5 @@
 #include "types.h"
+#include "event_inline.h"
 
 union FieldObject;
 
@@ -7,16 +8,13 @@ union FieldObject;
 #include "field_effect.h"
 #include "field_sprite.h"
 
-struct Actor *Actor_GetById(s32 id);
 u32 Random16Far(void);
 void Actor_SetSingleChildFlags(struct FieldEffect *object, s32 flags);
-struct FieldEffect *Func_02002f98(s32 type, s32 x, s32 y, s32 z);
 void Func_02002f80(struct FieldEffect *object, s32 mode);
 void Func_02002f90(struct FieldEffect *object, const void *script);
 s32 Func_02003150(struct FieldSprite *sprite, s32 state);
 void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 extern const u8 gData_02003304[];
 
 void Func_02002b04(void) {
@@ -29,8 +27,8 @@ void Func_02002b04(void) {
   if (leader != NULL) {
     state = 0;
     for (i = 0; i < 17; i++) {
-      struct FieldEffect *effect =
-          Func_02002f98(285, leader->x, leader->y, leader->z);
+      struct FieldEffect *effect = ((struct FieldEffect *)Import_ActorCreate(
+          285, leader->x, leader->y, leader->z));
 
       if (effect != NULL) {
         s32 angle;

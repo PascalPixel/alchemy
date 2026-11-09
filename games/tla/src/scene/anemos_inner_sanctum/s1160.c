@@ -3,35 +3,27 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 extern char SceneId_Ov6B0Room2;
 extern char SceneId_Ov6B0Room3;
 extern char SceneId_Ov6B0Room4;
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void FieldEvent_Wait(s32 frames);
-void Func_02003328(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02003378(s32 a, s32 x, s32 z, s32 b);
 void Func_02003380(s32 x, s32 z, s32 a, s32 b);
 void Func_02003398(void);
 void Func_020033a0(void);
-void Func_020033e0(s32 id, s32 x, s32 z);
-void Func_02003488(s32 a);
 void Func_020034a0(void);
-void Func_020034b8(s32 sound);
 
 static __inline__ void MoveObject(s32 id, s32 x, s32 z) {
   /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as a direct call, 2
    * of 243 instructions differ in tla-en. */
-  Func_020033e0(id, x, z);
+  Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 
 static __inline__ void SetCell(s32 a, s32 x, s32 z, s32 b) {
   /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as direct calls, 36
    * of 243 instructions differ in tla-en. */
-  Func_02003378(a, x, z, b);
+  SetMapCellCollision(a, x, z, b);
 }
 
 /// An event handler from the sanctum's event table (data.c), reading the
@@ -46,7 +38,7 @@ void Func_02001160(void) {
   s32 z;
 
   Func_02003398();
-  Func_02003488(0);
+  Event_ResolvePendingActions(0);
   Func_020034a0();
   x = leader->x >> 19;
   z = leader->z >> 19;
@@ -80,15 +72,15 @@ void Func_02001160(void) {
     if (x == 7 && z == 53)
       GameFlag_SetBit(0xa82);
     if (x == 67 && z == 45) {
-      Func_02003328(50, 22, 33, 22, 1, 1);
-      Func_020033e0(14, 0, 0);
-      Func_020034b8(0x248);
-      FieldEvent_Wait(30);
-      Func_020034b8(188);
-      Func_02003328(50, 20, 31, 20, 1, 2);
-      FieldEvent_Wait(5);
-      Func_02003328(51, 20, 31, 20, 1, 2);
-      FieldEvent_Wait(5);
+      Map_CopyCellPictureIndicesRect(50, 22, 33, 22, 1, 1);
+      Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
+      Sound_Play(0x248);
+      Event_Wait(30);
+      Sound_Play(188);
+      Map_CopyCellPictureIndicesRect(50, 20, 31, 20, 1, 2);
+      Event_Wait(5);
+      Map_CopyCellPictureIndicesRect(51, 20, 31, 20, 1, 2);
+      Event_Wait(5);
       Func_02003380(0x1f00000, 0x1500000, 0, 0);
       GameFlag_SetBit(0xa83);
     }
@@ -98,7 +90,8 @@ void Func_02001160(void) {
       if (!GameFlag_Test(0xa84)) {
         s32 fromX = (Actor_GetById(12)->x >> 16) << 16;
 
-        Func_020033e0(13, fromX, (Actor_GetById(12)->z >> 16) << 16);
+        Actor_SetHorizontalPositionWithTerrain(
+            13, fromX, (Actor_GetById(12)->z >> 16) << 16);
         MoveObject(12, PIXELS(728), PIXELS(472));
       }
       GameFlag_SetBit(0xa85);

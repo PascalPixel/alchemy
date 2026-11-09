@@ -1,6 +1,7 @@
 #include "types.h"
 #include "task.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 struct SpringPoint {
   s32 x;
@@ -35,13 +36,9 @@ extern u8 gData_0200174c[];
 extern u8 gData_02001750[];
 extern u16 gData_02001754[];
 
-struct Actor *Actor_GetById(s32 id);
-void Actor_SetModeById(s32 id, s32 mode);
-void wait(s32 frames);
 void Func_020008f0(s32 actor, s32 active);
 void Func_02000904(void);
 void Func_020012e8(struct Actor *object, s32 mode);
-void Func_02001408(s32 cue);
 
 /// Places the four actors from their tables, resets the ride and installs
 /// its task.
@@ -108,7 +105,7 @@ s32 Func_02001184(s32 side) {
   ride->hold = 0xffff;
   for (gData_02001820 = 0;; gData_02001820++) {
   if (gData_02001820 == 50)
-    Func_02001408(300);
+    Sound_Play(300);
   /* FAKEMATCH: the volatile read keeps the frame's reload where both paths
    * meet; plain, PRE copies it onto the cue's path (differ 2). */
   if (gData_02001820 == 16) {

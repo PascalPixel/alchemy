@@ -9,7 +9,7 @@ void Func_02002430(void) {
   gData_02005198 = second->x;
   gData_02005190 = second->z;
   Func_02003e64();
-  Func_02003fa4(0);
+  Event_ResolvePendingActions(0);
   if (gData_0200519c >> 20 == 7 && gData_02005194 >> 20 == 29 &&
       gData_02005198 >> 20 == 7 && gData_02005190 >> 20 == 28) {
     ((u8 *)first)[0x62] = 0;

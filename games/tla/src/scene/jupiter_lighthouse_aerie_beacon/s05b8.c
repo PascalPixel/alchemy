@@ -5,6 +5,7 @@
 #include "actor.h"
 #include "ram_buffer.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 /// The halves of a 16.16 coordinate. Read through an s16 pointer instead, the
 /// high half's offset folds into the coordinate's (differ 11).
@@ -21,13 +22,11 @@ struct SpriteRecord {
 
 extern u32 gFrameCount;
 
-struct Actor *Actor_GetById(s32 id);
 s32 Random16Far(void);
-void Func_02005884(s32 id, s32 x, s32 z);
 
 /// While the view's z is at most 177 pixels, sets object 36 at y 0x6f8000 and
 /// full size on odd frames, or at y 0x688000 and 1.3 times the size on even
-/// ones; beyond it, calls Func_02005884(36, 0, 0).
+/// ones; beyond it, calls Actor_SetHorizontalPositionWithTerrain(36, 0, 0).
 void Func_020005b8(void) {
   struct Actor *object = Actor_GetById(36);
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -43,17 +42,17 @@ void Func_020005b8(void) {
          ->record)
         ->unk05 = 1;
     if (gFrameCount & 1) {
-      Func_02005884(36, PIXELS(512), PIXELS(264));
+      Actor_SetHorizontalPositionWithTerrain(36, PIXELS(512), PIXELS(264));
       Actor_GetById(36)->y = 0x6f8000;
       Actor_GetById(36)->scaleX = 0x10000;
       Actor_GetById(36)->scaleY = 0x10000;
     } else {
-      Func_02005884(36, PIXELS(512), PIXELS(264));
+      Actor_SetHorizontalPositionWithTerrain(36, PIXELS(512), PIXELS(264));
       Actor_GetById(36)->y = 0x688000;
       Actor_GetById(36)->scaleX = 0x14ccc;
       Actor_GetById(36)->scaleY = 0x14ccc;
     }
   } else {
-    Func_02005884(36, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(36, 0, 0);
   }
 }

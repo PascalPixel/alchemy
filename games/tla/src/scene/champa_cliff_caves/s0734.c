@@ -2,9 +2,7 @@
 /// Fades five background colours from one set to another.
 
 #include "types.h"
-#include "call.h"
-
-void wait(s32 frames);
+#include "event_inline.h"
 
 /// Fades five background colours, from palette entry 114, from one set to
 /// another over the given number of frames, one step a frame.

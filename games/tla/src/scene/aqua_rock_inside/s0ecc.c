@@ -13,9 +13,9 @@ void Func_02000ecc(s32 unused, s32 id) {
     s32 i;
 
     Func_02003d7c();
-    Func_02003eac(0);
+    Event_ResolvePendingActions(0);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-    Func_02003ef4(0x22d);
+    Sound_Play(0x22d);
     Actor_SetModeById(9, 2);
     Func_02003d24_(114, 39, 1, 2, 113, 39);
     for (i = 31; i >= 0; i--) {
@@ -47,8 +47,8 @@ void Func_02000ecc(s32 unused, s32 id) {
     i--;
     if (i >= 0)
       goto blend;
-    Func_02003d1c(105, 41, 12, 13, 41, 41);
-    Func_02003d24(105, 105, 12, 13, 105, 41);
+    Map_CopyCellAttributeRect(105, 41, 12, 13, 41, 41);
+    Func_0802b450(105, 105, 12, 13, 105, 41);
     Func_02003cfc();
     Func_02003d84();
     GameFlag_SetBit(0x238);

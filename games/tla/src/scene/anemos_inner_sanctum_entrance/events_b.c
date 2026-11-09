@@ -23,7 +23,7 @@ void Func_020004e4(s32 a, s32 b) {
     }
   }
   GameFlag_SetBit(0x200);
-  Func_02000d64(201);
+  Sound_Play(201);
   Func_02000be0(1);
   Func_02000494();
 }

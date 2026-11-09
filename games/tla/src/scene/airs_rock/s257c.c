@@ -1,15 +1,14 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "system/io_reg.h"
 #include "system/dma.h"
+#include "event_inline.h"
 
 extern u32 gFrameCount;
 extern s8 gData_02004696;
 extern s8 gData_02004697;
 extern s16 gData_020046a0[];
-s32 Math_Sine(s32 angle);
 u32 Random16Far(void);
 
 void Func_0200257c(void) {

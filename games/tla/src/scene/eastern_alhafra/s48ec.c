@@ -1,15 +1,14 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "field_event.h"
+#include "event_inline.h"
 
-struct FieldActor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
 s32 Func_02004c34(struct FieldActor *object);
 void Func_02004a0c(struct FieldActor *object, s32 mode);
 #include "map.h"
 
 void Func_020048ec(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct FieldActor *object = Actor_GetById(id);
+  struct FieldActor *object = ((struct FieldActor *)Actor_GetById(id));
   struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
 
   cell += Func_02004c34(object);

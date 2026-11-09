@@ -1,5 +1,5 @@
 #include "types.h"
-#include "call.h"
+#include "event_inline.h"
 
 struct Unk02003450 {
   s16 unk00;
@@ -18,11 +18,6 @@ struct Unk02003450 {
   s16 unk1E;
 };
 extern struct Unk02003450 Data_02003450[];
-s32 GameFlag_Test(s32 flag);
-void Func_02002968(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                   s32 destY);
-void Func_02002958(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                   s32 destY);
 
 void Func_02000580(void) {
   struct Unk02003450 *entry;
@@ -50,15 +45,16 @@ void Func_02000580(void) {
         flag = entry->unk1A[i];
         inverse = flag ^ 1;
         if (entry->unk16[i] & 1) {
-          Call6(Func_02002968, flag * 3 + entry->unk00, entry->unk02 + row, 3,
-                1, entry->unk08, entry->unk0A + row);
-          Call6(Func_02002958, flag * 3 + entry->unk04, entry->unk06 + row, 3,
-                1, entry->unk0C, entry->unk0E + row);
+          MapGrid_CopyCellsLayered(flag * 3 + entry->unk00, entry->unk02 + row,
+                                   3, 1, entry->unk08, entry->unk0A + row);
+          MapGrid_CopyCells(flag * 3 + entry->unk04, entry->unk06 + row, 3, 1,
+                            entry->unk0C, entry->unk0E + row);
         } else {
-          Call6(Func_02002968, inverse * 3 + entry->unk00, entry->unk02 + row,
-                3, 1, entry->unk08, entry->unk0A + row);
-          Call6(Func_02002958, inverse * 3 + entry->unk04, entry->unk06 + row,
-                3, 1, entry->unk0C, entry->unk0E + row);
+          MapGrid_CopyCellsLayered(inverse * 3 + entry->unk00,
+                                   entry->unk02 + row, 3, 1, entry->unk08,
+                                   entry->unk0A + row);
+          MapGrid_CopyCells(inverse * 3 + entry->unk04, entry->unk06 + row, 3,
+                            1, entry->unk0C, entry->unk0E + row);
         }
         entry->unk16[i]++;
       }

@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
 #include "ram_buffer.h"
@@ -7,20 +6,16 @@
 #include "event_work.h"
 #include "bg_scroll.h"
 #include "sprite.h"
+#include "event_inline.h"
 
 extern u8 gWorldMapPackedTilesB[];
 extern u8 gWorldMapPackedPicturesB[];
 extern u8 gWorldMapPalettesB[];
 
-void wait(s32 frames);
 void *Heap_AllocEwram(s32 size);
 void Func_02004aa8(void *source, void *destination);
 void Func_02004ac8(void);
 void Func_02004ad8(void);
-void Func_02004bb8(s32 hue, s32 brightness);
-void Func_02004d78(s32 color, s32 mode);
-void Func_02004d88(s32 frames);
-void Func_02004e30(s32 cue);
 
 void Func_020042e0(void) {
   u8 *buffer = Heap_AllocEwram(0x4000);
@@ -54,27 +49,27 @@ void Func_020042e0(void) {
     y += 352;
     x += 17;
   }
-  Func_02004e30(164);
+  Sound_Play(164);
   wait(120);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   // mode holds one 0 for the rest of the function; the closing scroll reset
   // stores it again.
   mode = 0;
-  Func_02004d78(0x7fff, mode);
-  Func_02004d88(1);
+  BattleEffect_ApplyColorToTargetBuffer(0x7fff, mode);
+  BattleEffect_StartBufferInterpolation(1);
   QueueIoWriteDelay2(0x04000052, 0x1000);
   wait(1);
-  Func_02004d78(0, 0);
-  Func_02004d88(60);
-  Func_02004e30(78);
+  BattleEffect_ApplyColorToTargetBuffer(0, 0);
+  BattleEffect_StartBufferInterpolation(60);
+  Sound_Play(78);
   wait(60);
-  Func_02004e30(390);
+  Sound_Play(390);
   wait(120);
   Ram_HeapSlots->objectSystem->suspended = 1;
   wait(1);
   Func_02004ad8();
   Func_02004ac8();
-  Func_02004bb8(gMainRoutineWork.paletteGlow[0],
+  Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
                 gMainRoutineWork.paletteGlow[1]);
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;

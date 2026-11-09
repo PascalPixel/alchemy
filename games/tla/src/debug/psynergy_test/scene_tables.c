@@ -11,6 +11,7 @@
 #include "input.h"
 #include "main_routine_work.h"
 #include "text/msg_ids.h"
+#include "event_inline.h"
 
 extern u8 gData_02001300[];
 
@@ -20,24 +21,12 @@ void *Func_02000dec(s32, s32, s32, s32);
 void Func_02000df4(s32, s32);
 void Func_02000f1c(s32, s32);
 void Func_02000f2c(s32, s32);
-s32 Func_02000eac(s32, s32, s32);
-void Func_02000e94(s32);
-void Func_02000e9c(s32, s32);
-void Func_02000dac(s32, s32, s32, s32, s32, s32);
 void Func_02000ecc(s32, s32, s32, s32, s32, s32, s32);
 void Message_CloseFinishedWindows(void);
 void Message_OpenWindow(s32, s32, s32, s32);
 s32 Message_AllTyped(void);
-void FieldMessage_Show(s32, s32);
 void Unit_Calculate(s32);
 s32 Unit_AddPp(s32, s32);
-void GameFlag_SetBit(s32);
-struct Actor *Actor_GetById(s32);
-void Actor_Jump(s32, s32, s32);
-void FieldEvent_Wait(s32);
-void Actor_SetPositionAndReset(s32, s32, s32);
-void Actor_ArmCallback(s32, s32, s32);
-void Actor_SetAngleToward(s32, s32, s32);
 
 #define INPUT_HELD (*(volatile u32 *)&gInput.held)
 
@@ -223,7 +212,7 @@ void Func_02000454(void) { Actor_GetById(4)->terrainId = 0; }
 static __inline__ void Actor_Emote(s32 actor, s32 emote, s32 frames) {
   /* FAKEMATCH: a direct call sets the actor before the emote; ⚓️ adds the
    * emote's 255 after it. */
-  Func_02000eac(actor, emote, frames);
+  Func_080d47b4(actor, emote, frames);
 }
 
 static __inline__ s32 GameFlag_TestBit(s32 flag) {
@@ -239,48 +228,48 @@ static __inline__ void Actor_SetPositionById(s32 actor, s32 x, s32 z) {
 }
 
 void Func_02000464(s32 unused, s32 actor) {
-  Func_02000eac(actor, 0x100, 50);
+  Func_080d47b4(actor, 0x100, 50);
   Actor_Jump(actor, 6, 15);
   Actor_Jump(actor, 6, 15);
-  FieldEvent_Wait(10);
+  Event_Wait(10);
   if (GameFlag_TestBit(0x200) == 0) {
-    Func_02000e94((s32)MsgDailaInteriorsGah);
-    Func_02000e9c(actor, 0);
+    Event_SetMessageId((s32)MsgDailaInteriorsGah);
+    Event_ShowMessageAndWait(actor, 0);
     Actor_SetPositionById(actor, 360, 72);
     Actor_ArmCallback(actor, 0x4000, 0);
     GameFlag_SetBit(0x200);
   } else {
-    Func_02000e94((s32)MsgDailaInteriorsYarg);
-    Func_02000e9c(actor, 0);
+    Event_SetMessageId((s32)MsgDailaInteriorsYarg);
+    Event_ShowMessageAndWait(actor, 0);
     Actor_SetPositionById(actor, 392, 104);
     Actor_ArmCallback(actor, 0x8000, 0);
     GameFlag_ClearBit(0x200);
   }
-  FieldEvent_Wait(20);
+  Event_Wait(20);
 }
 
 void Func_02000508(s32 unused, s32 actor) {
   Actor_SetAngleToward(actor, 4, 0);
-  FieldEvent_Wait(10);
+  Event_Wait(10);
   Actor_Emote(actor, 0x103, 50);
   Actor_Jump(actor, 6, 15);
   Actor_Jump(actor, 6, 15);
-  FieldEvent_Wait(10);
-  Func_02000e94((s32)MsgDailaInteriorsWhatAreYouDoing);
-  Func_02000e9c(actor, 0);
-  FieldEvent_Wait(10);
+  Event_Wait(10);
+  Event_SetMessageId((s32)MsgDailaInteriorsWhatAreYouDoing);
+  Event_ShowMessageAndWait(actor, 0);
+  Event_Wait(10);
 }
 
 void Func_0200055c(s32 unused, s32 actor) {
   Actor_SetAngleToward(actor, 4, 0);
-  FieldEvent_Wait(10);
+  Event_Wait(10);
   Actor_Emote(actor, 0x103, 50);
   Actor_Jump(actor, 6, 15);
   Actor_Jump(actor, 6, 15);
-  FieldEvent_Wait(10);
-  Func_02000e94((s32)MsgDailaInteriorsWhatAreYouDoing);
-  Func_02000e9c(actor, 0);
-  FieldEvent_Wait(10);
+  Event_Wait(10);
+  Event_SetMessageId((s32)MsgDailaInteriorsWhatAreYouDoing);
+  Event_ShowMessageAndWait(actor, 0);
+  Event_Wait(10);
 }
 
 void Func_020005b0(void) {
@@ -288,10 +277,10 @@ void Func_020005b0(void) {
   s32 flags;
 
   Actor_SetModeById(21, 2);
-  FieldEvent_Wait(10);
+  Event_Wait(10);
   frames = 25;
   flags = 0;
-  Func_02000dac(57, 16, 4, 6, frames, flags);
+  Map_CopyCellsRect(57, 16, 4, 6, frames, flags);
 }
 
 void Func_020005dc(s32 value) {
@@ -302,7 +291,7 @@ void Func_020005dc(s32 value) {
     Actor_SetModeById(21, 2);
     frames = 25;
     flags = 0;
-    Func_02000dac(57, 16, 4, 6, frames, flags);
+    Map_CopyCellsRect(57, 16, 4, 6, frames, flags);
   }
 }
 

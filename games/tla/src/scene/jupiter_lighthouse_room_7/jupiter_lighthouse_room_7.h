@@ -22,7 +22,7 @@ void wait(s32 frames);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void FieldEvent_Wait(s32 frames);
+void Event_Wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
@@ -33,10 +33,10 @@ void Func_02000060(s32 mode);
 void Func_020005e8(s32 mode);
 void Func_020009f8(s32 id, s32 x, s32 z, s32 dx, s32 dz);
 void Func_020024ac(void);
-void Func_02002b1c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02002b24(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02002b2c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02002ba4(s32 id, s32 x, s32 z);
-void Func_02002c5c(s32 cue);
+void Map_CopyCellsRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Func_0802b450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
+void Sound_Play(s32 cue);
 
 #endif

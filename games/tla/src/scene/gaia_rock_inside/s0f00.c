@@ -1,7 +1,7 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "iwram_call.h"
+#include "event_inline.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -18,7 +18,6 @@ extern s32 gData_020064f8;
 extern s32 gData_020055c0[];
 extern s32 gData_0200559c[];
 
-struct Actor *Actor_GetById(s32 id);
 void Actor_ResetTargetsAndVelocity(u32 objectId);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 

@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
+#include "event_inline.h"
 
 struct MapLayer {
   u8 *cells;
@@ -12,8 +13,6 @@ struct MapLayers {
   struct MapLayer layers[4];
 };
 
-s32 GameFlag_Test(s32 flag);
-struct Actor *Actor_GetById(s32 id);
 s32 Func_02003db0(struct Actor *object);
 void Func_02003ba0(struct Actor *object, s32 mode);
 

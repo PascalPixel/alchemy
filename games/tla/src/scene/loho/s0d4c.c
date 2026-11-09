@@ -1,16 +1,13 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 extern char MsgLoho17;
 extern char MsgLoho19;
 extern char MsgLoho51;
 extern char MsgLoho53;
 
-s32 GameFlag_Test(s32 flag);
-struct Actor *Actor_GetById(s32 id);
-void Func_02001380(s32 message);
-void Func_02001390(s32 id, s32 flags);
 void Func_02001430(s32 a, s32 b);
 void Func_02001438(s32 id);
 
@@ -20,10 +17,10 @@ void Func_02000d4c(void) {
     Func_02001430(30, 8);
   } else {
     if (GameFlag_Test(0xa5f))
-      Func_02001380((s32)&MsgLoho51);
+      Event_SetMessageId((s32)&MsgLoho51);
     else
-      Func_02001380((s32)&MsgLoho17);
-    Func_02001390(8, 0);
+      Event_SetMessageId((s32)&MsgLoho17);
+    Event_ShowMessageAndWait(8, 0);
   }
 }
 
@@ -36,9 +33,9 @@ void Func_02000da4(s32 actor) {
     Func_02001438(actor);
   } else {
     if (GameFlag_Test(0xa5f))
-      Func_02001380((s32)&MsgLoho53);
+      Event_SetMessageId((s32)&MsgLoho53);
     else
-      Func_02001380((s32)&MsgLoho19);
-    Func_02001390(actor, 0);
+      Event_SetMessageId((s32)&MsgLoho19);
+    Event_ShowMessageAndWait(actor, 0);
   }
 }

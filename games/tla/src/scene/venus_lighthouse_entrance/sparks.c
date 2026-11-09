@@ -11,6 +11,7 @@
 #include "ram_buffer.h"
 #include "resource.h"
 #include "heap_release.h"
+#include "event_inline.h"
 
 struct SparkWork {
   u8 unk0000[0x2102];
@@ -18,8 +19,6 @@ struct SparkWork {
   u8 unk2104[0x80];
   s16 resource;
 };
-
-void Task_RemoveFar(void (*func)(void));
 
 void VenusLighthouseEntrance_StopSparks(void) {
   struct SparkWork *work = Ram_HeapSlots->menuRuntime;

@@ -1,12 +1,12 @@
 /// @file
 /// Records which of eleven listed cells persons 10 and 11 stand on, as the two halves of the byte flag 0x210.
 #include "iwram_call.h"
-#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 #include "types.h"
+#include "event_inline.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -16,7 +16,6 @@
        ->v)
 
 extern const s16 gData_0200530c[][2];
-struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_SetByte(s32 flag, s32 value);
 
 s32 Func_02002974(void) {

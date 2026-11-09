@@ -2,8 +2,8 @@
 #include "system/ram_buffer.h"
 #include "map.h"
 #include "actor.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
 
 void Func_02004a5c(s32 id, s32 x, s32 y, s32 z) {

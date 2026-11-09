@@ -1,4 +1,5 @@
 #include "types.h"
+#include "event_inline.h"
 
 struct Walker {
   u8 unk00[0x63];
@@ -8,15 +9,13 @@ struct Walker {
   void (*update)(void);
 };
 
-struct Walker *Actor_GetById(s32 id);
-void Func_020044cc(s32 actor, s32 x, s32 z);
 void Func_020003bc(void);
 
 void Func_0200279c(s32 actor, s32 x, s32 z, s32 frames) {
-  struct Walker *object = Actor_GetById(actor);
+  struct Walker *object = ((struct Walker *)Actor_GetById(actor));
 
   object->frames = frames;
   object->arrived = 0;
   object->update = Func_020003bc;
-  Func_020044cc(actor, x << 16, z << 16);
+  Actor_SetHorizontalPositionWithTerrain(actor, x << 16, z << 16);
 }

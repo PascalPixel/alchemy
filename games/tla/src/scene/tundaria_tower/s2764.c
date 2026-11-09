@@ -1,26 +1,22 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 s32 Func_020030f8(void);
 struct Actor *Func_02003188(s32 *position, s32 mode);
 void Func_02003048(void);
 void Func_02003050(void);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void Func_020031a8(s32 sound);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void wait(s32 frames);
 void Func_02002f80(struct Actor *object, s32 mode);
 void Func_02002748(struct Actor *object, struct Actor *to);
 void ObjectVisual_CopyAttributes(s32 id, s32 from);
 void Func_020029d0(s32 value);
-void Func_02003000(s32 a, s32 b, s32 c);
 void Func_02002ca8(s32 offset, s32 layer);
 void Func_02002b04(void);
 
-static __inline__ void Shake(s32 a, s32 b, s32 c) { Func_02003000(a, b, c); }
+static __inline__ void Shake(s32 a, s32 b, s32 c) {
+  Map_SetScreenShake(a, b, c);
+}
 
 void Func_02002764(const u16 *table) {
   struct Actor *leader;
@@ -54,7 +50,7 @@ void Func_02002764(const u16 *table) {
       Func_02002f80(partner, 1);
       Func_02002748(partner, trap);
       wait(1);
-      Func_020031a8(125);
+      Sound_Play(125);
       Actor_SetPartAttribute(Actor_GetById(8), 7);
       wait(2);
       Func_02002f80(partner, 0);
@@ -76,7 +72,7 @@ void Func_02002764(const u16 *table) {
         motion = &leader->motionFlags;
         wait(1);
         *motion = 0;
-        Func_020031a8(185);
+        Sound_Play(185);
         Shake(0x10000, 0x40000, 0x10000);
         Func_020029d0(0);
         wait(8);
@@ -92,7 +88,7 @@ void Func_02002764(const u16 *table) {
         wait(5);
         Actor_SetPositionAndResetMotion(partner, 0, 0, 0);
         wait(2);
-        Func_020031a8(188);
+        Sound_Play(188);
         Func_02002b04();
         wait(20);
         GameFlag_SetBit(second);

@@ -6,17 +6,13 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
-s32 Actor_TurnToFaceEachOther();
-s32 Func_02000b24();
-s32 Func_02000b3c();
-s32 Actor_ArmCallback();
+#include "event_inline.h"
 extern u8 gMainRoutineWork[];
 extern u8 MsgAlhafraInteriors48[];
 
 void Func_0200047c(s32 a0, s32 a1) {
   Actor_TurnToFaceEachOther(a1, FIELD_AT(gMainRoutineWork, s32, 532), 0);
-  Func_02000b24((s32)MsgAlhafraInteriors48);
-  Func_02000b3c(a1, 0);
-  Call3(Actor_ArmCallback, a1, 0xe000, 0);
+  Event_SetMessageId((s32)MsgAlhafraInteriors48);
+  Event_ShowMessageAndWait(a1, 0);
+  Actor_FaceDirection(a1, 0xe000, 0);
 }

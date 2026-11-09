@@ -1,9 +1,9 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "iwram_call.h"
 #include "actor.h"
+#include "event_inline.h"
 
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXELS(v) (((s16 *)&(v))[1])
@@ -34,11 +34,6 @@ struct RideWork {
 
 extern u8 gData_020023c4[];
 
-s32 GameFlag_Test(s32 flag);
-struct Actor *Actor_GetById(s32 id);
-void Func_0200131c(s32 cue);
-s32 Math_Sine(s32 angle);
-
 // The swinging actors' callback, the same as Yampi Desert's platforms: for each
 // of the 16 entries it moves the actor on its timer, writes its height to the
 // collision and cell maps, and carries its rider with a bob.
@@ -64,11 +59,11 @@ void Func_02000be4(void) {
     if (object->x == 0 && object->z == 0)
       continue;
     if (entry->timer == entry->riseAt) {
-      Func_0200131c(206);
+      Sound_Play(206);
       entry->step = 4;
     }
     if (entry->timer == entry->fallAt) {
-      Func_0200131c(395);
+      Sound_Play(395);
       entry->step = -8;
     }
     if (entry->step != 0) {

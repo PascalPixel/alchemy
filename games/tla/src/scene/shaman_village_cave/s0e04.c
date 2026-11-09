@@ -8,7 +8,7 @@ struct ShamanVillageCaveSceneWork {
 
 s32 GameFlag_Test(s32 flag);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void Func_020010e8(s32 id, s32 x, s32 z);
+void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Func_020003cc(void);
 void Func_02000404(void);
 void Func_02000a24(void);
@@ -16,7 +16,7 @@ void Func_0200087c(void);
 
 static __inline__ void ShamanVillageCave_ObjPlace(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_020010e8(id, x, z);
+  Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 
 s32 Func_02000e04(void) {
@@ -25,9 +25,9 @@ s32 Func_02000e04(void) {
   ((struct ShamanVillageCaveSceneWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 516;
   if (GameFlag_Test(0x9a9))
-    Func_020010e8(8, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
   if (GameFlag_Test(0x9aa))
-    Func_020010e8(10, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
   if (GameFlag_Test(83) || GameFlag_Test(163))
     GameFlag_SetBit(0x205);
   if (GameFlag_Test(0x9a8)) {

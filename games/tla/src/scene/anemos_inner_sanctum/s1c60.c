@@ -1,5 +1,6 @@
 #include "types.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 extern char SceneId_Ov694Room1;
 
@@ -8,7 +9,6 @@ struct MainRoutineWork2c2 {
   u8 value;
 };
 
-void FieldEvent_Wait(s32 frames);
 void Func_020000f4(void);
 void Func_02000158(void);
 void Func_02003448(s32 scene, s32 entrance);
@@ -24,6 +24,6 @@ void Func_02001c60(void) {
     party->value = 2;
   }
   Func_02003448((s32)&SceneId_Ov694Room1, 99);
-  FieldEvent_Wait(40);
+  Event_Wait(40);
   Func_02000158();
 }

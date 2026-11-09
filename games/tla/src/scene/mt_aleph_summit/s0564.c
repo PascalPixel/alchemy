@@ -22,33 +22,33 @@ void Camera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
 void Event_FinishScreenTransition(void);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void FieldEvent_Wait(s32 frames);
+void Event_Wait(s32 frames);
 void Field_StartPaletteTransition(s32 a);
 void Func_020002a4(u16 *colors, u16 *target, s32 count);
 void Func_0200032c(u16 *colors, s32 count, s32 delta);
 void Func_02000394(void);
 void Func_02000478(s32 radius, u32 count);
 void Func_02001454(void);
-void Func_0200147c(s32 a, s32 b, s32 c);
-void Func_02001484(s32 a, s32 b);
-void Func_020014b4(s32 a, s32 b, s32 c);
-void Func_020014d4(s32 a, s32 b);
-void Func_020014e4(const void *message);
-void Func_020014ec(s32 a, s32 b, s32 c);
-void Func_020014f4(s32 a, s32 b);
-s32 Func_0200150c(s32 a, s32 b, s32 c);
-void Func_02001514(s32 a, s32 b);
-void Func_0200151c(s32 a, s32 b);
+void Map_SetScreenShake(s32 a, s32 b, s32 c);
+void Func_0803f9c0(s32 a, s32 b);
+void Actor_SetHorizontalPositionWithTerrain(s32 a, s32 b, s32 c);
+void Actor_ConfigureSpriteColor(s32 a, s32 b);
+void Event_SetMessageId(const void *message);
+void Event_ShowMessageThenWait(s32 a, s32 b, s32 c);
+void Event_ShowMessageAndWait(s32 a, s32 b);
+s32 Func_080d47b4(s32 a, s32 b, s32 c);
+void Func_080d489c(s32 a, s32 b);
+void Camera_SetSpeedParameters(s32 a, s32 b);
 void Func_0200152c(void);
 void Func_02001534(s32 scene, s32 entrance);
-void Func_0200153c(s32 a, s32 b);
-void Func_02001544(s32 a);
+void BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
+void BattleEffect_StartBufferInterpolation(s32 a);
 void Func_02001564(s32 a, s32 b);
 void Func_02001574(void);
 void Func_0200157c(void);
 void Func_02001584(void);
 void Func_0200158c(struct Actor *object, s32 a);
-void Func_02001594(s32 a);
+void Sound_Play(s32 a);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
@@ -87,15 +87,15 @@ s32 Func_02000564(void) {
 
   buffer = Heap_AllocEwram(0x200);
   Func_02001454();
-  Call2((void (*)())Func_02001484, gMainRoutineWork.paletteGlow[0],
+  Call2((void (*)())Func_0803f9c0, gMainRoutineWork.paletteGlow[0],
         gMainRoutineWork.paletteGlow[1]);
-  Call3((void (*)())Func_020014b4, 4, 0, 0);
+  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 4, 0, 0);
   mode = gMainRoutineWork.entrance;
   if (mode == 10) {
     Func_02001534((s32)&SceneId_Ov64c, 72);
   } else if (mode == 2) {
     Call4((void (*)())Camera_MoveWithinMapBounds, 0x1000000, -1, 0x800000, 0);
-    Call2((void (*)())Func_0200151c, 0x10000, 0x2000);
+    Call2((void (*)())Camera_SetSpeedParameters, 0x10000, 0x2000);
     Call2((void (*)())Actor_SetSingleChildFlags,
           (s32)Value1((s32 (*)())Actor_GetById, 8), 0);
     Call2((void (*)())Actor_SetModeById, 8, 12);
@@ -115,7 +115,7 @@ s32 Func_02000564(void) {
     i = 0;
   L1:
     if (i == 3) {
-      Call2((void (*)())Func_0200151c, 0x1999, 0x333);
+      Call2((void (*)())Camera_SetSpeedParameters, 0x1999, 0x333);
       Call4((void (*)())Camera_MoveWithinMapBounds, 0x13c0000, -1, 0x12c0000,
             1);
     }
@@ -157,19 +157,19 @@ s32 Func_02000564(void) {
     j++;
     if (j != 10)
       goto L2;
-    Call3((void (*)())Func_0200150c, 8, 0x102, 0);
+    Call3((void (*)())Func_080d47b4, 8, 0x102, 0);
     Call1((void (*)())wait, 30);
-    Call1((void (*)())Func_020014e4, MsgGoldenSunFormation);
-    Call2((void (*)())Func_020014f4, 0x4008, 0);
+    Call1((void (*)())Event_SetMessageId, MsgGoldenSunFormation);
+    Call2((void (*)())Event_ShowMessageAndWait, 0x4008, 0);
     Call1((void (*)())wait, 30);
     Call2((void (*)())Motion_SetVarCbAndRefresh, 8, 2);
-    Call2((void (*)())Func_020014f4, 0x4008, 0);
+    Call2((void (*)())Event_ShowMessageAndWait, 0x4008, 0);
     Call2((void (*)())Actor_SetActionById, 8, 32);
     i = 0;
   L4:
     if (i == 16) {
       Call4((void (*)())Camera_MoveWithinMapBounds, 0x13c0000, -1, 0x800000, 1);
-      Call2((void (*)())Func_0200151c, 0x20000, 0x4000);
+      Call2((void (*)())Camera_SetSpeedParameters, 0x20000, 0x4000);
     }
     if (i == 19)
       Event_FinishScreenTransition();
@@ -184,7 +184,7 @@ s32 Func_02000564(void) {
     block = slots->block32;
     CopyToPalette(buffer, (void *)0x5000000, 0x1c0);
     Call4((void (*)())Camera_MoveWithinMapBounds, 0x1000000, -1, 0x900000, 0);
-    Call2((void (*)())Func_0200151c, 0x10000, 0x2000);
+    Call2((void (*)())Camera_SetSpeedParameters, 0x10000, 0x2000);
     Call2((void (*)())Actor_SetModeById, 8, 14);
     object = ACTOR(8);
     scale = 0;
@@ -203,17 +203,17 @@ s32 Func_02000564(void) {
     REG_DISPCNT &= 0xfdff;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Call3((void (*)())Func_0200147c, 0x40000, 0x40000, 0x10000);
+    Call3((void (*)())Map_SetScreenShake, 0x40000, 0x40000, 0x10000);
     i = 0;
   L5:
     gBgScroll[2].y += 8;
-    Call1((void (*)())FieldEvent_Wait, 5);
+    Call1((void (*)())Event_Wait, 5);
     i++;
     if (i != 30)
       goto L5;
     Call2((void (*)())Actor_SetModeById, 8, 15);
     Call1((void (*)())wait, 60);
-    Call1((void (*)())Func_02001594, 212);
+    Call1((void (*)())Sound_Play, 212);
     REG_BG1CNT &= 0xfffc;
     REG_BG1CNT |= 1;
     REG_BLDCNT = 0x3f42;
@@ -221,11 +221,11 @@ s32 Func_02000564(void) {
     j = 0;
   L6:
     if (j == 16) {
-      Call1((void (*)())Func_02001594, 140);
+      Call1((void (*)())Sound_Play, 140);
       Call2((void (*)())Actor_SetModeById, 8, 16);
     }
     if (j == 51) {
-      Call1((void (*)())Func_02001594, 107);
+      Call1((void (*)())Sound_Play, 107);
       Iwram_CopyWords(buffer, (void *)0x5000000, 0x1c0);
       Iwram_CopyWords(block + 0xf80, block + 0x1040, 96);
     }
@@ -246,11 +246,11 @@ s32 Func_02000564(void) {
     if (j != 84)
       goto L6;
     Call2((void (*)())Actor_SetSpritePriority, 8, 3);
-    Call3((void (*)())Func_0200147c, -1, -1, 0xe666);
-    Call1((void (*)())Func_02001594, 0x186);
+    Call3((void (*)())Map_SetScreenShake, -1, -1, 0xe666);
+    Call1((void (*)())Sound_Play, 0x186);
     Call4((void (*)())Camera_MoveWithinMapBounds, 0x1000000, -1, 0x13e0000, 0);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, (REG_BG1CNT & ~3) | 3, 0x20000);
-    Call1((void (*)())Func_02001594, 212);
+    Call1((void (*)())Sound_Play, 212);
     Call1((void (*)())wait, 1);
     Call2((void (*)())Task_Add, Func_02000394, 0x480);
     j = 0;
@@ -263,81 +263,82 @@ s32 Func_02000564(void) {
     Call2((void (*)())Actor_SetSpritePriority, 8, 1);
     Call2((void (*)())Actor_SetModeById, 8, 1);
     Call4((void (*)())Camera_MoveWithinMapBounds, 0x1000000, -1, 0x800000, 1);
-    Call2((void (*)())Func_0200151c, 0x10000, 0x2000);
+    Call2((void (*)())Camera_SetSpeedParameters, 0x10000, 0x2000);
     Func_0200152c();
     Call3((void (*)())Actor_SetSpeedParameters, 8, 0x4ccc, 0x2666);
     Call3((void (*)())Actor_SetPositionAndReset, 8, 248, 128);
     Call2((void (*)())Motion_SetVarCbAndRefresh, 8, 2);
-    Call1((void (*)())FieldEvent_Wait, 5);
-    Call1((void (*)())Func_02001594, 78);
-    Call1((void (*)())Func_020014e4, MsgGoldenSunEternalLifeAndPower);
-    Call3((void (*)())Func_020014ec, 0x2008, 0, 5);
+    Call1((void (*)())Event_Wait, 5);
+    Call1((void (*)())Sound_Play, 78);
+    Call1((void (*)())Event_SetMessageId, MsgGoldenSunEternalLifeAndPower);
+    Call3((void (*)())Event_ShowMessageThenWait, 0x2008, 0, 5);
     Call3((void (*)())Actor_ArmCallback, 8, 0x4000, 0);
-    Call1((void (*)())FieldEvent_Wait, 30);
+    Call1((void (*)())Event_Wait, 30);
     Call2((void (*)())Actor_SetModeById, 8, 14);
-    Call3((void (*)())Func_020014ec, 0x2008, 0, 5);
+    Call3((void (*)())Event_ShowMessageThenWait, 0x2008, 0, 5);
     Call2((void (*)())Actor_SetModeById, 8, 15);
-    Call3((void (*)())Func_020014ec, 0x2008, 0, 150);
-    Func_0200150c(8, 0x101, 30);
+    Call3((void (*)())Event_ShowMessageThenWait, 0x2008, 0, 150);
+    Func_080d47b4(8, 0x101, 30);
     Call2((void (*)())Actor_SetModeById, 8, 1);
     Call3((void (*)())Actor_ArmCallback, 8, 0x6000, 0);
-    Call1((void (*)())FieldEvent_Wait, 10);
+    Call1((void (*)())Event_Wait, 10);
     Call3((void (*)())Actor_ArmCallback, 8, 0x2000, 0);
-    Call1((void (*)())FieldEvent_Wait, 10);
+    Call1((void (*)())Event_Wait, 10);
     Call3((void (*)())Actor_ArmCallback, 8, 0x6000, 0);
-    Call1((void (*)())FieldEvent_Wait, 10);
+    Call1((void (*)())Event_Wait, 10);
     Call3((void (*)())Actor_ArmCallback, 8, 0x2000, 0);
-    Call1((void (*)())FieldEvent_Wait, 10);
+    Call1((void (*)())Event_Wait, 10);
     Call3((void (*)())Actor_ArmCallback, 8, 0x4000, 0);
-    Call1((void (*)())FieldEvent_Wait, 50);
+    Call1((void (*)())Event_Wait, 50);
     Call2((void (*)())Actor_SetModeById, 8, 15);
-    Call1((void (*)())FieldEvent_Wait, 50);
-    Call3((void (*)())Func_020014ec, 0x2008, 0, 5);
-    Call1((void (*)())FieldEvent_Wait, 50);
+    Call1((void (*)())Event_Wait, 50);
+    Call3((void (*)())Event_ShowMessageThenWait, 0x2008, 0, 5);
+    Call1((void (*)())Event_Wait, 50);
     Call2((void (*)())Motion_SetVarCbAndRefresh, 8, 2);
-    Call1((void (*)())FieldEvent_Wait, 5);
+    Call1((void (*)())Event_Wait, 5);
     Call2((void (*)())Actor_SetSingleChildFlags,
           (s32)Value1((s32 (*)())Actor_GetById, 9), 0);
     Call3((void (*)())Actor_SetPositionAndReset, 9, 216, 96);
     Call3((void (*)())Actor_ArmCallback, 8, 0x2000, 0);
-    Call3((void (*)())Func_0200150c, 8, 0x102, 30);
-    Call1((void (*)())Func_020014e4, (MsgGoldenSunEternalLifeAndPower + 4));
-    Call3((void (*)())Func_020014ec, 0x2008, 0, 5);
-    Call1((void (*)())Func_02001594, 0x2d2);
-    Call3((void (*)())Func_020014ec, 9, 0, 5);
+    Call3((void (*)())Func_080d47b4, 8, 0x102, 30);
+    Call1((void (*)())Event_SetMessageId,
+          (MsgGoldenSunEternalLifeAndPower + 4));
+    Call3((void (*)())Event_ShowMessageThenWait, 0x2008, 0, 5);
+    Call1((void (*)())Sound_Play, 0x2d2);
+    Call3((void (*)())Event_ShowMessageThenWait, 9, 0, 5);
     Call2((void (*)())Actor_SetModeById, 8, 1);
     Call3((void (*)())Actor_ArmCallback, 8, 0xa000, 0);
-    Call3((void (*)())Func_0200150c, 8, 0x100, 30);
+    Call3((void (*)())Func_080d47b4, 8, 0x100, 30);
     ACTOR(8)->actionFlags &= ~1;
     Call3((void (*)())Actor_ResetAndSetPositionInMode2, 8, 0x100, 136);
     Call3((void (*)())Actor_SetSpeedParameters, 8, 0x9999, 0x4ccc);
-    Call1((void (*)())FieldEvent_Wait, 20);
+    Call1((void (*)())Event_Wait, 20);
     Call2((void (*)())Actor_SetModeById, 8, 1);
-    Call3((void (*)())Func_020014ec, 0x2008, 0, 5);
+    Call3((void (*)())Event_ShowMessageThenWait, 0x2008, 0, 5);
     Call2((void (*)())Actor_SetModeById, 9, 4);
-    Call3((void (*)())Func_020014ec, 9, 0, 5);
+    Call3((void (*)())Event_ShowMessageThenWait, 9, 0, 5);
     Call2((void (*)())Motion_SetVarCbAndRefresh, 8, 2);
-    Call1((void (*)())FieldEvent_Wait, 5);
-    Call3((void (*)())Func_020014ec, 0x2008, 0, 5);
+    Call1((void (*)())Event_Wait, 5);
+    Call3((void (*)())Event_ShowMessageThenWait, 0x2008, 0, 5);
     message = MsgGoldenSunEternalLifeAndPower;
     Call2((void (*)())Actor_SetModeById, 9, 5);
-    Call3((void (*)())Func_020014ec, 9, 0, 5);
-    Call2((void (*)())Func_02001514, 8, 0x102);
-    Call1((void (*)())FieldEvent_Wait, 20);
-    Call3((void (*)())Func_020014ec, 0x2008, 0, 5);
+    Call3((void (*)())Event_ShowMessageThenWait, 9, 0, 5);
+    Call2((void (*)())Func_080d489c, 8, 0x102);
+    Call1((void (*)())Event_Wait, 20);
+    Call3((void (*)())Event_ShowMessageThenWait, 0x2008, 0, 5);
     Call2((void (*)())Actor_SetModeById, 9, 6);
-    Call3((void (*)())Func_020014ec, 9, 0, 5);
-    Call3((void (*)())Func_0200150c, 8, 0x107, 30);
+    Call3((void (*)())Event_ShowMessageThenWait, 9, 0, 5);
+    Call3((void (*)())Func_080d47b4, 8, 0x107, 30);
     message += 12;
-    Call1((void (*)())Func_020014e4, message);
-    Call3((void (*)())Func_020014ec, 0x2008, 0, 5);
+    Call1((void (*)())Event_SetMessageId, message);
+    Call3((void (*)())Event_ShowMessageThenWait, 0x2008, 0, 5);
     Call2((void (*)())Actor_SetModeById, 8, 13);
     Func_02001574();
     Call2((void (*)())Func_0200158c, (s32)Value1((s32 (*)())Actor_GetById, 8),
           2);
-    Call1((void (*)())Func_02001594, 178);
+    Call1((void (*)())Sound_Play, 178);
     Call2((void (*)())Func_02001564, 8, 0x4084);
-    Call1((void (*)())FieldEvent_Wait, 20);
+    Call1((void (*)())Event_Wait, 20);
     Call2((void (*)())Actor_SetModeById, 9, 3);
     Call3((void (*)())Actor_SetSpeedParameters, 9, 0x1999, 0xccc);
     j = 0;
@@ -350,19 +351,19 @@ s32 Func_02000564(void) {
     }
     i = 0;
   L9:
-    Call2((void (*)())Func_020014d4, 9, 0x100);
-    Call1((void (*)())FieldEvent_Wait, 3);
-    Call2((void (*)())Func_020014d4, 9, 0);
-    Call1((void (*)())FieldEvent_Wait, 3);
+    Call2((void (*)())Actor_ConfigureSpriteColor, 9, 0x100);
+    Call1((void (*)())Event_Wait, 3);
+    Call2((void (*)())Actor_ConfigureSpriteColor, 9, 0);
+    Call1((void (*)())Event_Wait, 3);
     i++;
     if (i != 10)
       goto L9;
     j++;
     if (j != 4)
       goto L8;
-    Func_0200150c(8, 0x108, 30);
-    Call3((void (*)())Func_020014ec, 0x2008, 0, 5);
-    Call1((void (*)())FieldEvent_Wait, 10);
+    Func_080d47b4(8, 0x108, 30);
+    Call3((void (*)())Event_ShowMessageThenWait, 0x2008, 0, 5);
+    Call1((void (*)())Event_Wait, 10);
     Call2((void (*)())Func_0200158c, (s32)Value1((s32 (*)())Actor_GetById, 8),
           0);
     Func_02001584();
@@ -372,53 +373,53 @@ s32 Func_02000564(void) {
     Call2((void (*)())Func_0200158c, (s32)Value1((s32 (*)())Actor_GetById, 9),
           2);
     Call1((void (*)())wait, 30);
-    Call1((void (*)())Func_02001594, 212);
-    Call3((void (*)())Func_0200147c, 0x100000, 0x100000, 0x10000);
+    Call1((void (*)())Sound_Play, 212);
+    Call3((void (*)())Map_SetScreenShake, 0x100000, 0x100000, 0x10000);
     i = 0;
   L10:
-    Call2((void (*)())Func_0200153c, 0x10005, 1);
-    Call1((void (*)())Func_02001544, 1);
-    Call1((void (*)())FieldEvent_Wait, 2);
-    Call2((void (*)())Func_0200153c, 0x10000, 1);
-    Call1((void (*)())Func_02001544, 1);
-    Call1((void (*)())FieldEvent_Wait, 2);
+    Call2((void (*)())BattleEffect_ApplyColorToTargetBuffer, 0x10005, 1);
+    Call1((void (*)())BattleEffect_StartBufferInterpolation, 1);
+    Call1((void (*)())Event_Wait, 2);
+    Call2((void (*)())BattleEffect_ApplyColorToTargetBuffer, 0x10000, 1);
+    Call1((void (*)())BattleEffect_StartBufferInterpolation, 1);
+    Call1((void (*)())Event_Wait, 2);
     i++;
     if (i != 4)
       goto L10;
-    Call3((void (*)())Func_0200147c, 0, 0, 0);
+    Call3((void (*)())Map_SetScreenShake, 0, 0, 0);
     Call2((void (*)())Motion_SetVarCbAndRefresh, 8, 2);
     Call1((void (*)())Field_StartPaletteTransition, 1);
     Call2((void (*)())Func_02001564, 8, 0x1110);
-    Call1((void (*)())FieldEvent_Wait, 20);
+    Call1((void (*)())Event_Wait, 20);
     Call3((void (*)())Actor_SetSpeedParameters, 8, 0x80000, 0x40000);
     Call2((void (*)())Func_02000478, 128, 8);
     ACTOR(8)->actionFlags &= ~1;
     Call3((void (*)())Actor_ResetAndSetPositionInMode2, 8, 0x118, 160);
     Call2((void (*)())Actor_SetModeById, 8, 17);
-    Call1((void (*)())Func_02001594, 134);
-    Call1((void (*)())FieldEvent_Wait, 2);
+    Call1((void (*)())Sound_Play, 134);
+    Call1((void (*)())Event_Wait, 2);
     Call2((void (*)())Func_02000478, 128, 8);
-    Call1((void (*)())FieldEvent_Wait, 2);
+    Call1((void (*)())Event_Wait, 2);
     Call2((void (*)())Func_02000478, 128, 8);
-    Call1((void (*)())FieldEvent_Wait, 56);
-    Call1((void (*)())Func_02001594, 178);
+    Call1((void (*)())Event_Wait, 56);
+    Call1((void (*)())Sound_Play, 178);
     i = 0;
     ACTOR(8)->motionFlags = i;
   L11:
     if (i == 16)
       Call2((void (*)())Actor_SetModeById, 8, 18);
     ACTOR(8)->y += 0x2666;
-    Call1((void (*)())FieldEvent_Wait, 1);
+    Call1((void (*)())Event_Wait, 1);
     i++;
     if (i != 64)
       goto L11;
     Call2((void (*)())Motion_SetVarCbAndRefresh, 8, 2);
-    Call1((void (*)())FieldEvent_Wait, 5);
-    Call3((void (*)())Func_020014ec, 0x2008, 0, 5);
+    Call1((void (*)())Event_Wait, 5);
+    Call3((void (*)())Event_ShowMessageThenWait, 0x2008, 0, 5);
     i = 0;
   L12:
     ACTOR(8)->y += 0x10000;
-    Call1((void (*)())FieldEvent_Wait, 1);
+    Call1((void (*)())Event_Wait, 1);
     i++;
     if (i != 32)
       goto L12;
@@ -426,67 +427,67 @@ s32 Func_02000564(void) {
     i = 0;
   L13:
     ACTOR(8)->y -= 0x851eb;
-    Call1((void (*)())FieldEvent_Wait, 1);
+    Call1((void (*)())Event_Wait, 1);
     i++;
     if (i != 5)
       goto L13;
     Call2((void (*)())Func_02000478, 0x100, 16);
     Call2((void (*)())Actor_SetModeById, 8, 17);
-    Call1((void (*)())Func_02001594, 145);
-    Call3((void (*)())Func_0200147c, 0x100000, 0x100000, 0x10000);
-    Call1((void (*)())FieldEvent_Wait, 10);
-    Call3((void (*)())Func_0200147c, -1, -1, 0xe666);
+    Call1((void (*)())Sound_Play, 145);
+    Call3((void (*)())Map_SetScreenShake, 0x100000, 0x100000, 0x10000);
+    Call1((void (*)())Event_Wait, 10);
+    Call3((void (*)())Map_SetScreenShake, -1, -1, 0xe666);
     Call2((void (*)())Func_0200158c, (s32)Value1((s32 (*)())Actor_GetById, 9),
           0);
     Func_02001584();
     Func_0200157c();
-    Call1((void (*)())Func_02001594, 0x186);
+    Call1((void (*)())Sound_Play, 0x186);
     Call2((void (*)())Actor_SetModeById, 9, 4);
     Call1((void (*)())Field_StartPaletteTransition, 32);
-    Call1((void (*)())FieldEvent_Wait, 10);
-    Call3((void (*)())Func_020014ec, 9, 0, 5);
+    Call1((void (*)())Event_Wait, 10);
+    Call3((void (*)())Event_ShowMessageThenWait, 9, 0, 5);
     Call2((void (*)())Motion_SetVarCbAndRefresh, 8, 2);
-    Call1((void (*)())FieldEvent_Wait, 5);
-    Call3((void (*)())Func_020014ec, 0x2008, 0, 5);
+    Call1((void (*)())Event_Wait, 5);
+    Call3((void (*)())Event_ShowMessageThenWait, 0x2008, 0, 5);
     Call2((void (*)())Actor_SetModeById, 9, 3);
-    Call3((void (*)())Func_020014ec, 9, 0, 5);
+    Call3((void (*)())Event_ShowMessageThenWait, 9, 0, 5);
     Call2((void (*)())Actor_SetModeById, 8, 18);
-    Call1((void (*)())FieldEvent_Wait, 10);
-    Call3((void (*)())Func_020014ec, 0x2008, 0, 5);
-    Call1((void (*)())FieldEvent_Wait, 120);
-    Call1((void (*)())Func_02001594, 107);
+    Call1((void (*)())Event_Wait, 10);
+    Call3((void (*)())Event_ShowMessageThenWait, 0x2008, 0, 5);
+    Call1((void (*)())Event_Wait, 120);
+    Call1((void (*)())Sound_Play, 107);
     i = 0;
   L14:
-    Call3((void (*)())Func_0200147c, (i << 16) + 0x10000, (i << 16) + 0x10000,
-          0x10000);
-    Call1((void (*)())FieldEvent_Wait, 8);
+    Call3((void (*)())Map_SetScreenShake, (i << 16) + 0x10000,
+          (i << 16) + 0x10000, 0x10000);
+    Call1((void (*)())Event_Wait, 8);
     i++;
     if (i != 2)
       goto L14;
     Call2((void (*)())Actor_SetModeById, 9, 8);
-    Call1((void (*)())FieldEvent_Wait, 60);
+    Call1((void (*)())Event_Wait, 60);
     Call2((void (*)())Actor_SetModeById, 9, 7);
-    Call3((void (*)())Func_020014ec, 9, 0, 5);
-    Func_0200150c(8, 0x101, 30);
-    Call3((void (*)())Func_020014ec, 0x2008, 0, 5);
+    Call3((void (*)())Event_ShowMessageThenWait, 9, 0, 5);
+    Func_080d47b4(8, 0x101, 30);
+    Call3((void (*)())Event_ShowMessageThenWait, 0x2008, 0, 5);
     Call2((void (*)())Actor_SetModeById, 9, 8);
-    Call3((void (*)())Func_020014ec, 9, 0, 5);
+    Call3((void (*)())Event_ShowMessageThenWait, 9, 0, 5);
     for (i = 0, j = 0x20000; i != 4; i++, j += 0x10000) {
-      Call3((void (*)())Func_0200147c, j, j, 0x10000);
-      Call1((void (*)())FieldEvent_Wait, 8);
+      Call3((void (*)())Map_SetScreenShake, j, j, 0x10000);
+      Call1((void (*)())Event_Wait, 8);
     }
     Call2((void (*)())Motion_SetVarCbAndRefresh, 8, 2);
-    Call1((void (*)())FieldEvent_Wait, 5);
-    Call3((void (*)())Func_020014ec, 0x2008, 0, 5);
+    Call1((void (*)())Event_Wait, 5);
+    Call3((void (*)())Event_ShowMessageThenWait, 0x2008, 0, 5);
     Call2((void (*)())Actor_SetModeById, 9, 3);
-    Call3((void (*)())Func_020014ec, 9, 0, 5);
+    Call3((void (*)())Event_ShowMessageThenWait, 9, 0, 5);
     Call2((void (*)())Motion_SetVarCbAndRefresh, 8, 2);
-    Call1((void (*)())FieldEvent_Wait, 5);
+    Call1((void (*)())Event_Wait, 5);
     Call2((void (*)())Actor_SetModeById, 9, 4);
-    Call3((void (*)())Func_020014ec, 9, 0, 5);
-    Call1((void (*)())FieldEvent_Wait, 10);
+    Call3((void (*)())Event_ShowMessageThenWait, 9, 0, 5);
+    Call1((void (*)())Event_Wait, 10);
     slots = (struct HeapSlots *)Ram_HeapSlots->mapWork;
-    Call3((void (*)())Func_0200147c, 0x100000, 0x100000, 0x10000);
+    Call3((void (*)())Map_SetScreenShake, 0x100000, 0x100000, 0x10000);
     j = 0;
     scale = -0x1e000;
   L16:
@@ -498,10 +499,10 @@ s32 Func_02000564(void) {
       ACTOR(9)->z -= 0x20000;
     }
     if (j == 47)
-      Call3((void (*)())Func_020014b4, 9, 0, 0);
+      Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
     if (j == 64) {
-      Call2((void (*)())Func_0200153c, 0x7fff, 0);
-      Call1((void (*)())Func_02001544, 64);
+      Call2((void (*)())BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
+      Call1((void (*)())BattleEffect_StartBufferInterpolation, 64);
     }
     FIELD(slots, 332) -= 0x10000;
     ACTOR(8)->z += 0x10000;
@@ -510,17 +511,17 @@ s32 Func_02000564(void) {
     scale += 0x1000;
     if (j != 128)
       goto L16;
-    Call1((void (*)())Func_02001594, 78);
-    Call1((void (*)())FieldEvent_Wait, 32);
-    Call1((void (*)())Func_02001594, 208);
-    Call1((void (*)())FieldEvent_Wait, 120);
+    Call1((void (*)())Sound_Play, 78);
+    Call1((void (*)())Event_Wait, 32);
+    Call1((void (*)())Sound_Play, 208);
+    Call1((void (*)())Event_Wait, 120);
     Call1((void (*)())Task_RemoveFar, Func_02000394);
-    Call2((void (*)())Func_0200153c, 0x7fff, 0);
-    Call1((void (*)())Func_02001544, 1);
+    Call2((void (*)())BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
+    Call1((void (*)())BattleEffect_StartBufferInterpolation, 1);
     Call1((void (*)())wait, 1);
-    Call1((void (*)())Func_02001594, 0x186);
-    Call2((void (*)())Func_0200153c, 0, 0);
-    Call1((void (*)())Func_02001544, 120);
+    Call1((void (*)())Sound_Play, 0x186);
+    Call2((void (*)())BattleEffect_ApplyColorToTargetBuffer, 0, 0);
+    Call1((void (*)())BattleEffect_StartBufferInterpolation, 120);
     Call1((void (*)())wait, 0x12c);
     Func_02001534((s32)&SceneId_Ov6b3, 1);
   } else {

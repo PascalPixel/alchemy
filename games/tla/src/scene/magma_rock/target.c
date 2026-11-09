@@ -3,9 +3,8 @@
 #include "actor.h"
 #include "magma_rock.h"
 #include "macros.h"
+#include "event_inline.h"
 
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void FieldEvent_Wait(s32 frames);
 void Func_02000ff4(void);
 void Func_020011e4(struct Actor *object);
 void Func_02003820(s32 x, s32 y, s32 z, s32 kind);
@@ -14,21 +13,20 @@ void Func_02003998(void);
 void Func_02003a54(struct Actor *object, s32 a);
 void Func_02003aec(void);
 void Func_02003af4(void);
-void Func_02003bcc(s32 value);
 
 void Func_02001444(void) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
   struct Actor *object;
 
   Func_02003aec();
-  Func_02003bcc(0);
-  FieldEvent_Wait(10);
+  Event_ResolvePendingActions(0);
+  Event_Wait(10);
   object = work->target;
   object->update = NULL;
   Actor_SetPartAttribute(object, 7);
-  FieldEvent_Wait(3);
+  Event_Wait(3);
   Actor_SetPartAttribute(work->target, 0);
-  FieldEvent_Wait(1);
+  Event_Wait(1);
   Func_020011e4(work->target);
   Func_02003af4();
 }
@@ -38,7 +36,7 @@ void Func_0200148c(void) {
   struct Actor *object;
 
   Func_02003aec();
-  Func_02003bcc(0);
+  Event_ResolvePendingActions(0);
   object = work->target;
   object->action = 0x400;
   object->update = Func_02000ff4;

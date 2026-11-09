@@ -1,16 +1,13 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
 #include "system/vector3.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById();
 void Func_02003d7c();
-s32 Func_02003eac();
 void Func_02000ca8();
 s32 Func_02003d2c(struct Actor *object, struct Vector3 *target);
-void wait();
 
 void Func_02000cc8(s32 trigger) {
   s32 clear = 1;
@@ -36,7 +33,7 @@ void Func_02000cc8(s32 trigger) {
     return;
   object = Actor_GetById(gMainRoutineWork.currentOwner);
   Func_02003d7c();
-  Func_02003eac(0);
+  Event_ResolvePendingActions(0);
   goto test;
 step:
   if (result < 0) {

@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 extern const u8 gData_02003f44[];
 extern const u8 gData_02003f52[];
@@ -15,27 +16,16 @@ extern const u8 gData_02003fb8[];
 extern const u8 gData_02003fc0[];
 extern const u8 gData_02003fc4[];
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void wait(s32 frames);
-struct Actor *Actor_GetById(s32 id);
 void Func_020000a4(const void *data, s32 a, s32 b);
 void Func_020002f8(const void *data);
 void Func_02000708(const void *data);
 void Func_02001474(s32 show);
 void Func_02002180(void);
-void Func_02003bf0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02003c28(void);
 void Func_02003c30(void);
-void Func_02003d78(s32 skip);
 void Func_02003dc0(const void *data);
 void Func_02003dc8(void);
-void Func_02003df8(s32 cue);
-void Func_02003c68(s32 id, s32 x, s32 z);
 void Func_02003de8(void);
-void Func_02003be0(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
-                   s32 height);
 void Func_020015b8(struct Actor *object);
 void Func_0200172c(void);
 void Func_02001804(void);
@@ -53,7 +43,7 @@ extern const struct CellRecord gData_02004066[];
 static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
                                           s32 f) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003bf0(a, b, c, d, e, f);
+  Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
 void Func_02001554(s32 a, s32 b) { Func_020000a4(gData_02003f98, a, b); }
@@ -73,7 +63,7 @@ void Func_020015b8(struct Actor *object) {
   do {
     wait(1);
   } while (object->velocityY != 0);
-  Func_02003df8(188);
+  Sound_Play(188);
   wait(10);
   *flags = 0;
 }
@@ -85,9 +75,9 @@ void Func_020015e0(void) {
   x = object->x >> 20;
   if (x == 56 && (object->z >> 20) == 32) {
     Func_02003c28();
-    Func_02003d78(0);
+    Event_ResolvePendingActions(0);
     Func_020015b8(object);
-    Func_02003bf0(54, 32, 2, 1, x, 64);
+    Map_CopyCellAttributeRect(54, 32, 2, 1, x, 64);
     GameFlag_SetBit(0x301);
     Func_02003c30();
   }
@@ -102,11 +92,11 @@ void Func_02001640(void) {
   Func_02003dc8();
   if (x == 52) {
     Func_02003c28();
-    Func_02003d78(0);
-    Func_02003bf0(51, 7, 1, 1, x, 7);
+    Event_ResolvePendingActions(0);
+    Map_CopyCellAttributeRect(51, 7, 1, 1, x, 7);
     wait(1);
     Func_020015b8(object);
-    Func_02003bf0(50, 7, 1, 1, x, 7);
+    Map_CopyCellAttributeRect(50, 7, 1, 1, x, 7);
     GameFlag_SetBit(0x840);
     Func_02003c30();
   }
@@ -121,11 +111,11 @@ void Func_020016b0(void) {
   Func_02003dc8();
   if (x == 47) {
     Func_02003c28();
-    Func_02003d78(0);
-    Func_02003bf0(47, 12, 1, 1, x, 13);
+    Event_ResolvePendingActions(0);
+    Map_CopyCellAttributeRect(47, 12, 1, 1, x, 13);
     wait(1);
     Func_020015b8(object);
-    Func_02003bf0(50, 16, 1, 1, x, 13);
+    Map_CopyCellAttributeRect(50, 16, 1, 1, x, 13);
     Actor_SetSpritePriority(19, 2);
     Func_02003c30();
   } else if (x == 46) {
@@ -135,7 +125,7 @@ void Func_020016b0(void) {
 
 static __inline__ void Actor_PlaceOnTerrain(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003c68(id, x, z);
+  Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 
 void Func_0200172c(void) {
@@ -157,7 +147,7 @@ void Func_020017a0(void) {
   if ((Actor_GetById(20)->x >> 20) == 38) {
     flags = &Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags;
     Func_02003c28();
-    Func_02003d78(0);
+    Event_ResolvePendingActions(0);
     *flags = 0;
     wait(1);
     Func_02003de8();

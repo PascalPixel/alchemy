@@ -23,8 +23,8 @@ void Effect_AdvanceMotion(void *object);
 void Func_02001340(struct ShrineOfTheSeaGodObject *object,
                    struct ShrineOfTheSeaGodObject *other);
 void Func_02001464(void);
-void Func_020039b8(s32 a, s32 b, s32 c);
-void Func_020039c0(void);
+void Map_SetScreenShake(s32 a, s32 b, s32 c);
+void Map_WaitForShakeToSettle(void);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 u32 Random16Far(void);
@@ -40,7 +40,7 @@ void Func_02001474(void) {
   s32 spin;
 
   Func_020039d8();
-  Func_02003b08(0);
+  Event_ResolvePendingActions(0);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 408, 328);
   Func_02001340(leader, stone);
   ShrineOfTheSeaGod_BlendStart(0, 50, 3, 1, 24, 70);
@@ -53,8 +53,8 @@ void Func_02001474(void) {
   do
     wait(1);
   while (*(s32 *)((u8 *)leader + 40) != 0);
-  Func_02003b48(227);
-  Call3((void (*)())Func_020039b8, 0x10000, 0x20000, 0x10000);
+  Sound_Play(227);
+  Call3((void (*)())Map_SetScreenShake, 0x10000, 0x20000, 0x10000);
   options.palette = 7;
   options.update = Effect_AdvanceMotion;
   options.startScaleX = 0xa3d7;
@@ -75,7 +75,7 @@ void Func_02001474(void) {
   }
   *(s32 *)((u8 *)leader + 40) = 0x40000;
   wait(2);
-  Call3((void (*)())Func_020039b8, -1, -1, 0xe666);
+  Call3((void (*)())Map_SetScreenShake, -1, -1, 0xe666);
   Task_RemoveFar(Func_02001464);
   spin = 0x200;
   for (i = 0; i <= 7;) {
@@ -88,7 +88,7 @@ void Func_02001474(void) {
     i++;
     wait(1);
   }
-  Func_020039c0();
+  Map_WaitForShakeToSettle();
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
   leader->layer = 0;
   wait(10);

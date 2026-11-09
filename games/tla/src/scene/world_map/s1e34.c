@@ -1,8 +1,8 @@
 #include "types.h"
-#include "call.h"
 #include "main_routine_work.h"
 #include "actor.h"
 #include "flag_call.h"
+#include "event_inline.h"
 
 extern u32 gInput;
 extern char MsgDjinnGiveTutorialA[];
@@ -20,50 +20,32 @@ extern char MsgSoWeGo[];
 extern char MsgHmmmmDoYou[];
 extern char MsgWellThatS[];
 
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
-struct Actor *Actor_GetById(s32 id);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Party_RemoveActiveOwner(s32 owner);
 void Party_AddActiveOwner(s32 owner);
 s32 Djinn_AddToOwner(s32 owner, s32 element, s32 djinni);
 u32 *DjinnRecovery_AddStandby(u32 owner, u32 element, u32 djinni);
-void Actor_SetAngleToward(s32 id, s32 target, s32 mode);
-void Actor_Jump(s32 id, s32 height, s32 frames);
-void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
-void Motion_SetVarCbAndRefresh(s32 id, s32 value);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-s32 FieldMessage_ShowAtActor(s32 id, s32 mode);
-void FieldMessage_Show(s32 message, s32 mode);
-s32 Event_AskYesNoWithActorAnimation(s32 id, s32 mode);
 void Menu_AnimateSelectionToEntry(s32 a, s32 b);
 void Func_020011fc(void);
-void Func_02004b50(struct Actor *object, s32 x, s32 y, s32 z);
 static inline void SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
-  Func_02004b50(object, x, y, z);
+  Actor_SetMoveTarget(object, x, y, z);
 }
 void Func_02004ba8(s32 a, s32 b);
 void Func_02004bf8(s32 value);
 void Func_02004c20(void);
 void Func_02004c28(void);
 void Func_02004c98(s32 id, s32 target);
-void Func_02004cd8(s32 message);
-void Func_02004cf0(s32 id, s32 mode);
-s32 Func_02004d08(s32 id, s32 animation, s32 frames);
 
 static inline void ShowEmote(s32 id, s32 animation, s32 frames) {
-  Func_02004d08(id, animation, frames);
+  Func_080d47b4(id, animation, frames);
 }
 void Func_02004da8(void);
 void Func_02004db0(void);
-void Func_02004db8(s32 value);
 void Func_02004dc0(void);
-void Func_02004dd0(s32 id, s32 element, s32 djinni);
-void Func_02004df8(s32 a, s32 b);
 void Func_02004e00(void);
 void Func_02004e28(void);
-void Func_02004e30(s32 cue);
 
 /// A tutorial message: the second set (from MsgDjinnGiveTutorialB) when
 /// secondSet is 1.
@@ -101,7 +83,7 @@ void Func_02001e34(void) {
     if (gInput & 64)
       Flag_Set(0x175);
     Func_02004c20();
-    Func_02004db8(0);
+    Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Party_RemoveActiveOwner(0);
@@ -119,12 +101,12 @@ void Func_02001e34(void) {
     Func_02004bf8(1);
     Flag_Set(0x16e);
     Func_02004c20();
-    Func_02004db8(0);
+    Event_ResolvePendingActions(0);
     Djinn_AddToOwner(owner, 0, 7);
     DjinnRecovery_AddStandby(owner, 0, 7);
     Func_02004da8();
     Actor_SetAngleToward(owner, 9, 0);
-    FieldEvent_Wait(10);
+    Event_Wait(10);
     ShowEmote(owner, 0x101, 60);
     {
       s32 one = 1;
@@ -133,11 +115,11 @@ void Func_02001e34(void) {
     Actor_SetAngleToward(9, owner, 0);
     wait(16);
     flag = Flag_IsSet(0x175);
-    Func_02004cd8(TUTORIAL_SET_MESSAGE(flag, MsgHey2));
+    Event_SetMessageId(TUTORIAL_SET_MESSAGE(flag, MsgHey2));
     i = 15;
-    Func_02004cf0(9, 0);
+    Event_ShowMessageAndWait(9, 0);
     Func_02004db0();
-    Func_02004df8(0x13333, 6);
+    Func_080d46a4(0x13333, 6);
     Func_02004e00();
     Func_02004da8();
     djinni->motionFlags = 2;
@@ -167,33 +149,33 @@ void Func_02001e34(void) {
     if (Event_AskYesNoWithActorAnimation(owner, 0) == 1) {
       Actor_Jump(9, 2, 20);
       Actor_Jump(9, 2, 20);
-      Func_02004cd8(TUTORIAL_MESSAGE(MsgWellYouWeren));
+      Event_SetMessageId(TUTORIAL_MESSAGE(MsgWellYouWeren));
       FieldMessage_ShowAtActor(9, 0);
       if (Event_AskYesNoWithActorAnimation(owner, 0) == 1) {
-        Func_02004cd8(TUTORIAL_MESSAGE(MsgWellYouWeren + 1));
-        Func_02004cf0(9, 0);
+        Event_SetMessageId(TUTORIAL_MESSAGE(MsgWellYouWeren + 1));
+        Event_ShowMessageAndWait(9, 0);
       } else {
-        Func_02004cd8(TUTORIAL_MESSAGE(MsgWellYouWeren + 2));
-        Func_02004cf0(9, 0);
+        Event_SetMessageId(TUTORIAL_MESSAGE(MsgWellYouWeren + 2));
+        Event_ShowMessageAndWait(9, 0);
       }
     } else {
-      Func_02004cd8(TUTORIAL_MESSAGE(MsgSeeYouKnow));
-      Func_02004cf0(9, 0);
+      Event_SetMessageId(TUTORIAL_MESSAGE(MsgSeeYouKnow));
+      Event_ShowMessageAndWait(9, 0);
     }
     ShowEmote(owner, 0x100, 30);
     Actor_Jump(9, 2, 20);
     Actor_Jump(9, 2, 20);
-    Func_02004cd8(TUTORIAL_MESSAGE(MsgEvenIKnow));
+    Event_SetMessageId(TUTORIAL_MESSAGE(MsgEvenIKnow));
     i = 15;
-    Func_02004cf0(9, 0);
+    Event_ShowMessageAndWait(9, 0);
     ShowEmote(owner, 0x102, 30);
-    Func_02004cf0(9, 0);
+    Event_ShowMessageAndWait(9, 0);
     ShowEmote(owner, 0x100, 30);
-    Func_02004cf0(9, 0);
+    Event_ShowMessageAndWait(9, 0);
     Motion_SetVarCbAndRefresh(owner, 2);
-    Func_02004cf0(9, 0);
+    Event_ShowMessageAndWait(9, 0);
     Actor_Jump(9, 2, 30);
-    Func_02004cf0(9, 0);
+    Event_ShowMessageAndWait(9, 0);
     djinni->motionFlags = 0;
     SetMoveTarget(djinni, x, 0x100000, z);
     while (i >= 0) {
@@ -202,7 +184,7 @@ void Func_02001e34(void) {
       i--;
     }
     Actor_SetModeById(owner, 1);
-    Func_02004cf0(9, 0);
+    Event_ShowMessageAndWait(9, 0);
     djinni->motionFlags = 2;
     djinni->velocityY = 0;
     djinni->terrainHeight = 0;
@@ -213,11 +195,11 @@ void Func_02001e34(void) {
       i--;
     }
     Actor_SetModeById(owner, 22);
-    Func_02004cf0(9, 0);
-    Func_02004d08(9, 0x102, 30);
+    Event_ShowMessageAndWait(9, 0);
+    Func_080d47b4(9, 0x102, 30);
     Actor_SetAngleToward(9, owner, 0);
     Motion_SetVarCbAndRefresh(9, 2);
-    Func_02004cf0(9, 0);
+    Event_ShowMessageAndWait(9, 0);
     Actor_Jump(9, 2, 30);
     FieldMessage_ShowAtActor(9, 0);
     count = 0;
@@ -229,14 +211,14 @@ void Func_02001e34(void) {
         if (i == 0) {
           Actor_Jump(9, 2, 20);
           Actor_Jump(9, 2, 20);
-          Func_02004cd8(TUTORIAL_MESSAGE(MsgOhAllRight));
-          Func_02004cf0(9, 0);
+          Event_SetMessageId(TUTORIAL_MESSAGE(MsgOhAllRight));
+          Event_ShowMessageAndWait(9, 0);
           goto joined;
         }
       } else if (i == 1) {
         Actor_Jump(9, 2, 20);
         Actor_Jump(9, 2, 20);
-        Func_02004cd8(count + TUTORIAL_MESSAGE(MsgOhComeOn));
+        Event_SetMessageId(count + TUTORIAL_MESSAGE(MsgOhComeOn));
         FieldMessage_ShowAtActor(9, 0);
         count++;
         goto plead;
@@ -245,62 +227,62 @@ void Func_02001e34(void) {
     Actor_SetModeById(owner, 22);
     Actor_Jump(9, 2, 20);
     Actor_Jump(9, 4, 20);
-    Func_02004cd8(TUTORIAL_MESSAGE(MsgIMSo));
-    Func_02004cf0(9, 0);
+    Event_SetMessageId(TUTORIAL_MESSAGE(MsgIMSo));
+    Event_ShowMessageAndWait(9, 0);
   joined:
     Func_02004ba8(0x133, 4);
-    Func_02004e30(81);
+    Sound_Play(81);
     FieldMessage_Show(TUTORIAL_MESSAGE(MsgTheVenusDjinni), 3);
-    Func_02004cd8(TUTORIAL_MESSAGE(MsgTheVenusDjinni + 1));
+    Event_SetMessageId(TUTORIAL_MESSAGE(MsgTheVenusDjinni + 1));
     Actor_Jump(9, 2, 20);
     FieldMessage_ShowAtActor(9, 0);
     if (Event_AskYesNoWithActorAnimation(owner, 0) == 1)
       goto refused;
     if (Flag_IsSet(0x175))
-      Func_02004e30(17);
+      Sound_Play(17);
     else
-      Func_02004e30(35);
+      Sound_Play(35);
     goto tutorial;
   }
   Func_02004c20();
-  Func_02004db8(0);
+  Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_02004c98(9, owner);
   djinni->velocityY = 0xa0000;
   SetMoveTarget(djinni, x, 0, z);
-  FieldEvent_Wait(30);
+  Event_Wait(30);
   Func_02004da8();
   Actor_SetAngleToward(9, owner, 0);
   Actor_SetAngleToward(owner, 9, 0);
   Actor_SetModeById(owner, 22);
-  Func_02004cd8(TUTORIAL_MESSAGE(MsgSeeWeDjinn));
+  Event_SetMessageId(TUTORIAL_MESSAGE(MsgSeeWeDjinn));
   Actor_Jump(9, 2, 20);
   Actor_Jump(9, 2, 20);
-  Func_02004cf0(9, 0);
+  Event_ShowMessageAndWait(9, 0);
   Motion_SetVarCbAndRefresh(9, 2);
-  Func_02004cf0(9, 0);
-  Func_02004e30(111);
+  Event_ShowMessageAndWait(9, 0);
+  Sound_Play(111);
   Menu_AnimateSelectionToEntry(0, 2);
   Flag_Set(0x16f);
   Flag_Clear(0x171);
   Func_02004e28();
-  Func_02004cd8(TUTORIAL_MESSAGE(MsgSoWeGo));
+  Event_SetMessageId(TUTORIAL_MESSAGE(MsgSoWeGo));
   SetMoveTarget(djinni, 0x27880000, 0, 0x20a40000);
-  FieldEvent_Wait(30);
-  Func_02004cf0(9, 0);
+  Event_Wait(30);
+  Event_ShowMessageAndWait(9, 0);
   Actor_SetAngleToward(9, owner, 0);
-  Func_02004cf0(9, 0);
+  Event_ShowMessageAndWait(9, 0);
   FieldMessage_ShowAtActor(9, 0);
   if (Event_AskYesNoWithActorAnimation(owner, 0) != 1)
     goto refused;
   Actor_SetModeById(owner, 22);
   Motion_SetVarCbAndRefresh(9, 2);
-  Func_02004cd8(TUTORIAL_MESSAGE(MsgHmmmmDoYou));
+  Event_SetMessageId(TUTORIAL_MESSAGE(MsgHmmmmDoYou));
   FieldMessage_ShowAtActor(9, 0);
   if (Event_AskYesNoWithActorAnimation(owner, 0) == 1)
     goto refused;
-  Func_02004cf0(9, 0);
+  Event_ShowMessageAndWait(9, 0);
   Actor_SetPositionAndReset(9, x >> 16, z >> 16);
 tutorial:
   Func_020011fc();
@@ -308,22 +290,22 @@ tutorial:
   return;
 refused:
   Actor_SetModeById(owner, 22);
-  Func_02004cd8(TUTORIAL_MESSAGE(MsgWellThatS));
+  Event_SetMessageId(TUTORIAL_MESSAGE(MsgWellThatS));
   Actor_Jump(9, 2, 20);
   Actor_Jump(9, 2, 20);
-  Func_02004cf0(9, 0);
-  Func_02004d08(9, 0x100, 30);
-  Func_02004cf0(9, 0);
+  Event_ShowMessageAndWait(9, 0);
+  Func_080d47b4(9, 0x100, 30);
+  Event_ShowMessageAndWait(9, 0);
   Flag_Set(0x16f);
   Flag_Set(0x171);
   Func_02004e28();
   Actor_Jump(9, 2, 20);
-  Func_02004cf0(9, 0);
+  Event_ShowMessageAndWait(9, 0);
   Func_02004db0();
   // The constant local: with a plain 0 here, the zero that motionFlags = 2
   // leaves is shared by the first visit's stores of 0 and its reloads take
   // other registers (differ 26).
-  Func_02004dd0(9, zero, 7);
+  Func_080d7788(9, zero, 7);
   Func_02004dc0();
   Func_02004c28();
   Flag_Clear(0x16e);

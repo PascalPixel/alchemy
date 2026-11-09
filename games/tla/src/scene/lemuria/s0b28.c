@@ -2,11 +2,10 @@
 #include "frame.h"
 #include "ram_buffer.h"
 #include "map.h"
+#include "event_inline.h"
 
 extern u8 gData_02002590;
 extern s16 gData_020025a0[2][160];
-
-s32 Math_Sine(s32 angle);
 
 void Func_02000b28(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[1];

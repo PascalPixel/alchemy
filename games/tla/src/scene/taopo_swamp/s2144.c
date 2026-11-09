@@ -1,7 +1,7 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "field_sprite.h"
+#include "event_inline.h"
 
 struct SpriteWork {
   u8 unk00[17];
@@ -25,20 +25,14 @@ struct SceneState {
 extern volatile u32 gInput;
 extern struct SceneState gSceneState;
 extern u8 gData_02002ae8[];
-s32 Func_02002998(void);
-struct Actor *Actor_GetById(s32 id);
 void Func_02002898(void);
-void Func_02002968(s32 mode);
 void Func_020028a0(void);
-struct Actor *Func_02002808(s32 type, s32 x, s32 y, s32 z);
 void Func_02002800(struct Actor *object, const void *script);
 void Animation_ApplyChildArgument(void *sprite, s32 argument);
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
 
 void Func_02002144(void) {
   struct SceneState *state = &gSceneState;
-  struct Actor *actor = Actor_GetById(Func_02002998());
+  struct Actor *actor = Actor_GetById(Party_GetLeaderActor());
   struct SpriteWork *sprite = actor->animation;
   struct Actor *spark;
   struct FieldSprite *sparkSprite;
@@ -64,10 +58,10 @@ void Func_02002144(void) {
   if (state->timer < 0x1400)
     return;
   Func_02002898();
-  Func_02002968(0);
+  Event_ResolvePendingActions(0);
   actor->animationKind = 0;
   for (i = 1; i >= 0; i--) {
-    spark = Func_02002808(269, actor->x, actor->y, actor->z);
+    spark = ((struct Actor *)Import_ActorCreate(269, actor->x, actor->y, actor->z));
     if (spark != 0) {
       sparkSprite = spark->animation;
       Func_02002800(spark, gData_02002ae8);
@@ -81,7 +75,7 @@ void Func_02002144(void) {
     }
     wait(15);
   }
-  FieldEvent_Wait(30);
+  Event_Wait(30);
   actor->animationKind = 1;
   sprite->level = 0;
   sprite->mode = 0;

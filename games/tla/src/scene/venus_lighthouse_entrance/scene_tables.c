@@ -10,10 +10,7 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "actor.h"
-
-struct Actor *Actor_GetById(u32 id);
-void FieldEvent_Wait(s32 frames);
-void Import_SoundPlay(s32 cue);
+#include "event_inline.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -29,7 +26,7 @@ void VenusLighthouseEntrance_RunActorSparkBurst(void *object) {
   Func_02002a34(8, 0x4084);
   Func_02002a44();
   Func_02002a5c(Actor_GetById(5), 2);
-  FieldEvent_Wait(20);
+  Event_Wait(20);
   Func_020023a4(object);
   Func_02002a5c(Actor_GetById(5), 0);
   Func_02002a54();
@@ -40,5 +37,5 @@ void VenusLighthouseEntrance_RunActorSparkBurst(void *object) {
 void VenusLighthouseEntrance_UpdateSparkTrail(struct Actor *object) {
   Func_0200260c(object, object->x, object->y, object->z);
   if (++object->action % 8 == 0)
-    Import_SoundPlay(125);
+    Sound_Play(125);
 }

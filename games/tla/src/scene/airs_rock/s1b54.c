@@ -6,11 +6,10 @@
 #include "iwram_call.h"
 #include "system/field_effect.h"
 #include "system/vector3.h"
+#include "event_inline.h"
 
-s32 GameFlag_Test(s32 flag);
 void Func_02003cd0(struct Actor *object, s32 cue);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 void Func_02003b28(struct Actor *object, s32 mode);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);

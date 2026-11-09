@@ -26,16 +26,16 @@ void Func_020002f8(const void *data);
 void Func_02000708(const void *data);
 void Func_02001474(s32 show);
 void Func_02002180(void);
-void Func_02003bf0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02003c28(void);
 void Func_02003c30(void);
-void Func_02003d78(s32 skip);
+void Event_ResolvePendingActions(s32 skip);
 void Func_02003dc0(const void *data);
 void Func_02003dc8(void);
-void Func_02003df8(s32 cue);
-void Func_02003c68(s32 id, s32 x, s32 z);
+void Sound_Play(s32 cue);
+void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Func_02003de8(void);
-void Func_02003be0(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
+void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                    s32 height);
 void Func_020015b8(struct Actor *object);
 void Func_0200172c(void);
@@ -53,10 +53,10 @@ struct CellRecord {
 extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
-void Func_02003c70(u32 id, s32 x, s32 z, s16 angle);
-struct Actor *Func_02003cc8(s32 id, s32 a, s32 b);
+void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 id, s32 x, s32 z, s16 angle);
+struct Actor *Func_080d47b4(s32 id, s32 a, s32 b);
 void Func_02003cf0(void);
-struct Actor *Func_02003cf8(void);
+struct Actor *Func_080d4568(void);
 void Func_02003d50(s32 a, s32 b);
 void Func_02003d58(s32 a, s32 b);
 void Func_02003d60(void);
@@ -69,7 +69,7 @@ void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Actor_Jump(s32 id, s32 a, s32 b);
 void Actor_ArmCallback(s32 id, s32 a, s32 b);
 void Actor_WatchAndSetScript(s32 id, s32 target);
-void FieldEvent_Wait(s32 frames);
+void Event_Wait(s32 frames);
 void Task_Add(void (*func)(void), s32 priority);
 void Task_RemoveFar(void (*func)(void));
 void Field_DispatchTypeHandler(s32 type);
@@ -93,65 +93,65 @@ static __inline__ void Actor_MoveTo(s32 id, s32 x, s32 z) {
 
 static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003c70(id, x, z, angle);
+  Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, angle);
 }
 
 void Func_020021e8(void) {
   Func_02003c28();
-  Func_02003d78(0);
-  Func_02003cf8()->motionFlags = 0;
+  Event_ResolvePendingActions(0);
+  Func_080d4568()->motionFlags = 0;
   Camera_MoveWithinMapBounds(658 << 16, -1, 164 << 16, 1);
   Func_02003cf0();
   Actor_SetAngleToward(24, gMainRoutineWork.currentOwner, 0);
-  Func_02003cc8(24, 0x100, 40);
+  Func_080d47b4(24, 0x100, 40);
   Actor_SetSpeed(24, 0x19999, 0xcccc);
   Actor_MoveTo(24, 664, 136);
-  Func_02003be0(68, 33, 105, 6, 1, 1);
-  Func_02003df8(161);
+  Map_CopyCellPictureIndicesRect(68, 33, 105, 6, 1, 1);
+  Sound_Play(161);
   Func_020021b4();
   GameFlag_SetBit(0x247);
   Actor_MoveTo(24, 664, 104);
-  Func_02003be0(69, 33, 105, 4, 1, 1);
-  Func_02003df8(229);
+  Map_CopyCellPictureIndicesRect(69, 33, 105, 4, 1, 1);
+  Sound_Play(229);
   Func_020021b4();
-  FieldEvent_Wait(10);
+  Event_Wait(10);
   Actor_Jump(24, 6, 16);
   Actor_PlaceFacing(24, 222 << 18, 168 << 16, FACING_SOUTH);
-  FieldEvent_Wait(20);
+  Event_Wait(20);
   GameFlag_SetBit(0x86c);
   Func_02003c30();
 }
 
 void Func_020022e0(void) {
   Func_02003c28();
-  Func_02003d78(0);
+  Event_ResolvePendingActions(0);
   Camera_MoveWithinMapBounds(245 << 18, -1, 168 << 16, 1);
   Func_02003cf0();
   Actor_SetAngleToward(24, gMainRoutineWork.currentOwner, 0);
-  Func_02003cc8(24, 0x100, 40);
+  Func_080d47b4(24, 0x100, 40);
   Actor_GetById(24)->motionFlags = 0;
   Actor_SetSpritePriority(24, 1);
   Actor_SetSpeed(24, 0x19999, 0xcccc);
   Actor_MoveTo(24, 940, 168);
   Actor_MoveTo(24, 984, 152);
   Actor_MoveTo(24, 1040, 152);
-  Func_02003c68(24, 0, 0);
-  FieldEvent_Wait(20);
+  Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
+  Event_Wait(20);
   GameFlag_SetBit(0x86d);
   Func_02003c30();
 }
 
 void Func_02002390(void) {
   Func_02003c28();
-  Func_02003d78(0);
+  Event_ResolvePendingActions(0);
   Camera_MoveWithinMapBounds(144 << 16, -1, 214 << 15, 1);
   Func_02003cf0();
   Actor_SetAngleToward(25, gMainRoutineWork.currentOwner, 0);
-  Func_02003cc8(25, 0x100, 40);
+  Func_080d47b4(25, 0x100, 40);
   Actor_SetSpeed(25, 0x19999, 0xcccc);
   Actor_SetPositionAndReset(25, 168, 104);
-  FieldEvent_Wait(10);
-  Func_02003df8(153);
+  Event_Wait(10);
+  Sound_Play(153);
   Actor_GetById(25)->velocityY = 0x80000;
   Actor_SetSingleChildFlags(Actor_GetById(25), 0);
   Actor_SetPositionAndReset(25, 200, 104);
@@ -164,13 +164,13 @@ void Func_02002390(void) {
 
 void Func_02002458(void) {
   Func_02003c28();
-  Func_02003d78(0);
+  Event_ResolvePendingActions(0);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 25);
-  Func_02003cf8()->motionFlags = 0;
+  Func_080d4568()->motionFlags = 0;
   Camera_SetBounds(212 << 17, -1, 208 << 15, 1);
   Func_02003cf0();
   Actor_SetAngleToward(25, gMainRoutineWork.currentOwner, 0);
-  Func_02003cc8(25, 0x100, 20);
+  Func_080d47b4(25, 0x100, 20);
   Camera_MoveWithinMapBounds(212 << 17, -1, 152 << 16, 1);
   Actor_SetSpeed(25, 0x19999, 0xcccc);
   Actor_MoveTo(25, 424, 152);
@@ -180,8 +180,8 @@ void Func_02002458(void) {
   Actor_MoveTo(25, 456, 168);
   Actor_MoveTo(25, 456, 184);
   GameFlag_SetBit(0x241);
-  Func_02003be0(69, 51, 92, 11, 1, 1);
-  Func_02003df8(161);
+  Map_CopyCellPictureIndicesRect(69, 51, 92, 11, 1, 1);
+  Sound_Play(161);
   Func_020021b4();
   Actor_MoveTo(25, 456, 216);
   Actor_MoveTo(25, 584, 216);

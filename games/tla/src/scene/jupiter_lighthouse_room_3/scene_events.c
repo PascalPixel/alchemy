@@ -23,7 +23,7 @@ void Func_02000134(s32 unused, s32 id) {
   }
   if (placed) {
     wait(10);
-    Func_02002470(134);
+    Sound_Play(134);
     for (i = 0; i < 30; i++) {
       if (object->y <= object->terrainHeight && object->velocityY == 0)
         break;
@@ -36,7 +36,7 @@ void Func_02000134(s32 unused, s32 id) {
   }
 }
 
-void Func_020001c0(void) { Func_020023f8(12); }
+void Func_020001c0(void) { Import_EventSetExitRequest(12); }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
@@ -93,7 +93,7 @@ s32 Func_02000250(void) {
   if (GameFlag_Test(0x200)) {
     for (i = 0, x = 0xb00000; i <= 3; i++, x += 0x100000) {
       Lift_(0x1000000, x, 0, 0);
-      Func_02002458(0x1000000, x, 0, 0);
+      Func_080dbdd4(0x1000000, x, 0, 0);
       if (i <= 1)
         Func_02002460(0x1000000, x, 0, 128);
     }

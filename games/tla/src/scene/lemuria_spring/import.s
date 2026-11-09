@@ -46,9 +46,9 @@ Func_020012e8:
 	.thumb_func
 Actor_SetAnimationSpeed:
 	overlay_veneer Actor_SetAnimationSpeedFar
-	.global Func_020012f8
+	.global Map_CopyCellPictureIndicesRect
 	.thumb_func
-Func_020012f8:
+Map_CopyCellPictureIndicesRect:
 	overlay_veneer Map_CopyCellPictureIndicesRectFar
 	.global Window_Create
 	.thumb_func
@@ -110,9 +110,9 @@ PartyInventory_CountFreeSlots:
 	.thumb_func
 Func_02001370:
 	overlay_veneer Func_080ad2f8
-	.global FieldEvent_Wait
+	.global Event_Wait
 	.thumb_func
-FieldEvent_Wait:
+Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
 	.global Func_02001380
 	.thumb_func
@@ -138,9 +138,9 @@ Actor_GetById:
 	.thumb_func
 Actor_SetPositionAndReset:
 	overlay_veneer Actor_SetPositionAndResetFar
-	.global Func_020013b0
+	.global Actor_SetHorizontalPositionWithTerrain
 	.thumb_func
-Func_020013b0:
+Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
 	.global Func_020013b8
 	.thumb_func
@@ -150,17 +150,17 @@ Func_020013b8:
 	.thumb_func
 Actor_SetModeById:
 	overlay_veneer Actor_SetModeByIdFar
-	.global Func_020013c8
+	.global Event_SetMessageId
 	.thumb_func
-Func_020013c8:
+Event_SetMessageId:
 	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
 	overlay_veneer FieldMessage_ShowAtActorFar
-	.global Func_020013d8
+	.global Event_ShowMessageAndWait
 	.thumb_func
-Func_020013d8:
+Event_ShowMessageAndWait:
 	overlay_veneer Event_ShowMessageAndWaitFar
 	.global Actor_ArmCallback
 	.thumb_func
@@ -174,15 +174,15 @@ Event_StartScreenTransition:
 	.thumb_func
 Func_020013f0:
 	overlay_veneer Func_080c83e0
-	.global Func_020013f8
+	.global Event_ResolvePendingActions
 	.thumb_func
-Func_020013f8:
+Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02001400
 	.thumb_func
 Func_02001400:
 	overlay_veneer Func_080c8928
-	.global Func_02001408
+	.global Sound_Play
 	.thumb_func
-Func_02001408:
+Sound_Play:
 	overlay_veneer Sound_PlayFar

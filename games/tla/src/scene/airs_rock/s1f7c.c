@@ -6,7 +6,7 @@
 #include "field_sprite.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
-#include "call.h"
+#include "event_inline.h"
 
 /// A field sprite's byte 9: the top of its first tile and its priority (OAM
 /// attribute 2), read as bit-fields.
@@ -28,42 +28,25 @@ void *Heap_Alloc(s32 size);
 void Heap_Release(void *block);
 void Func_02003bc8(void);
 void Func_02003bd0(void);
-void Func_02003c88(s32 skip);
 void *Resource_GetTableEntry(s32 id);
 void Func_02003af0(void *resource, void *dest);
-void Func_02003cd8(s32 cue);
-struct Actor *Actor_GetById(u32 id);
 void Func_0200092c(void);
 void Func_020008ac(void);
-struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 u32 Random16Far(void);
 void Func_02003b28(struct Actor *object, s32 mode);
 void Func_02003b38(struct Actor *object, const u8 *script);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         u32 value);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void FieldEvent_Wait(s32 frames);
-void wait(s32 frames);
-void Func_02003c58(s32 a, s32 b);
-s32 Func_02003c50(s32 a, s32 b);
-s32 Func_02003c60(s32 frames);
-s32 Camera_FollowActor(s32 id, s32 a);
 void Func_02003c30(void);
-void Func_02003c20(s32 a, s32 b);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_02005dcc(s32 a, s32 b, s32 c);
 void Func_02001dc4(s32 x, s32 z);
-void Func_02003b68(s32 x, s32 z, s32 width, s32 height, s32 a, s32 b);
-void Func_02003b80(s32 x, s32 z, s32 a, s32 b, s32 width, s32 height);
 void Func_02003b00(void);
 void Func_02003af8(void);
-void Func_02003bb8(s32 hue, s32 brightness);
-void GameFlag_SetBit(s32 flag);
 
 /// The pillar of light in Air's Rock, overlay 664's Func_02003654 with object
 /// 14 glowing: the camera moves to (0x218, 0xd8), the leader turns, and the
 /// light flashes twice (cue 138), each time copying cells into the map
-/// (Func_02003b68 at (52, 12) and (52, 22)) and lighting a spot
+/// (Map_CopyCellPictureIndicesRect at (52, 12) and (52, 22)) and lighting a spot
 /// (Func_02001dc4), then (cue 145) three more spots light and the cells at
 /// (62, 2) open; sets flag 0x87b.
 void Func_02001f7c(void) {
@@ -73,7 +56,7 @@ void Func_02001f7c(void) {
   u32 i;
 
   Func_02003bc8();
-  Func_02003c88(0);
+  Event_ResolvePendingActions(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   /* FAKEMATCH(one-pass): BG0CNT's value in a block of its own, built before
    * its address; as a plain block, 2 of 520 instructions differ in tla-en. */
@@ -107,14 +90,14 @@ row:
   if (i != 16)
     goto row;
   Heap_Release(buffer);
-  Func_02003cd8(246);
+  Sound_Play(246);
   ((u8 *)Actor_GetById(14))[98] = 9;
   ((u8 *)Actor_GetById(14))[99] = 1;
   Actor_GetById(14)->update = Func_0200092c;
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
-      spark = Import_ActorCreate(0x2a0, Actor_GetById(14)->x,
-                                  Actor_GetById(14)->y, Actor_GetById(14)->z);
+      spark = ((struct Actor *)Import_ActorCreate(0x2a0, Actor_GetById(14)->x,
+                                  Actor_GetById(14)->y, Actor_GetById(14)->z));
       {
         s32 priority = ((s8 *)Actor_GetById(14)->animation)[9] & 12;
 
@@ -137,14 +120,14 @@ row:
       Actor_SetPartAttribute(spark, 2);
       spark->update = Func_020008ac;
     }
-    FieldEvent_Wait(1);
+    Event_Wait(1);
   }
-  Call2((void (*)())Func_02003c58, 0x10000, 0);
-  Call2((void (*)())Func_02003c50, 0x10003, 0);
-  Func_02003c60(60);
+  PaletteFade_ApplySource(0x10000, 0);
+  PaletteFade_ApplyTarget(0x10003, 0);
+  BattleEffect_StartBufferInterpolation(60);
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02003c30();
-  Func_02003c20(0x10000, 0x2000);
+  Camera_SetSpeedParameters(0x10000, 0x2000);
   Camera_MoveWithinMapBounds(PIXELS(536), -1, PIXELS(216), 1);
   Func_02003c30();
   Actor_GetById(14)->update = 0;
@@ -154,18 +137,18 @@ row:
   gBgScroll[0].x = 0xff88;
   gBgScroll[0].y = 0x10;
   wait(30);
-  Func_02003cd8(138);
-  Call2((void (*)())Func_02003c58, 0x10003, 0);
-  Call2((void (*)())Func_02003c50, 0x7fff, 0);
-  Func_02003c60(1);
+  Sound_Play(138);
+  PaletteFade_ApplySource(0x10003, 0);
+  PaletteFade_ApplyTarget(0x7fff, 0);
+  BattleEffect_StartBufferInterpolation(1);
   Actor_GetById(gMainRoutineWork.currentOwner)->angle = FACING_SOUTH;
   wait(1);
-  Func_02003c58(0x7fff, 0);
-  Func_02003c50(0x10003, 0);
-  Func_02003c60(8);
+  BattleEffect_ApplyColorToSourceBuffer(0x7fff, 0);
+  BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
+  BattleEffect_StartBufferInterpolation(8);
   REG_DISPCNT |= DISPCNT_BG0_ON;
-  Func_02003b68(52, 12, 29, 9, 9, 9);
-  Func_02003b68(52, 76, 29, 73, 9, 9);
+  Map_CopyCellPictureIndicesRect(52, 12, 29, 9, 9, 9);
+  Map_CopyCellPictureIndicesRect(52, 76, 29, 73, 9, 9);
   Func_02001dc4(0x2280000, 0xe40000);
   i = 0;
 fade1:
@@ -177,17 +160,17 @@ fade1:
   gBgScroll[0].x = 0xffac;
   gBgScroll[0].y = 0;
   wait(1);
-  Func_02003cd8(138);
-  Call2((void (*)())Func_02003c58, 0x10003, 0);
-  Call2((void (*)())Func_02003c50, 0x7fff, 0);
-  Func_02003c60(1);
+  Sound_Play(138);
+  PaletteFade_ApplySource(0x10003, 0);
+  PaletteFade_ApplyTarget(0x7fff, 0);
+  BattleEffect_StartBufferInterpolation(1);
   wait(1);
-  Func_02003c58(0x7fff, 0);
-  Func_02003c50(0x10003, 0);
-  Func_02003c60(8);
+  BattleEffect_ApplyColorToSourceBuffer(0x7fff, 0);
+  BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
+  BattleEffect_StartBufferInterpolation(8);
   REG_DISPCNT |= DISPCNT_BG0_ON;
-  Func_02003b68(52, 22, 29, 9, 9, 9);
-  Func_02003b68(52, 86, 29, 73, 9, 9);
+  Map_CopyCellPictureIndicesRect(52, 22, 29, 9, 9, 9);
+  Map_CopyCellPictureIndicesRect(52, 86, 29, 73, 9, 9);
   Func_02001dc4(0x2080000, 0xf20000);
   i = 0;
 fade2:
@@ -196,29 +179,29 @@ fade2:
   i++;
   if (i != 32)
     goto fade2;
-  Func_02003cd8(145);
-  Call2((void (*)())Func_02003c58, 0x10003, 0);
-  Call2((void (*)())Func_02003c50, 0x7fff, 0);
-  Func_02003c60(1);
+  Sound_Play(145);
+  PaletteFade_ApplySource(0x10003, 0);
+  PaletteFade_ApplyTarget(0x7fff, 0);
+  BattleEffect_StartBufferInterpolation(1);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
-  FieldEvent_Wait(20);
+  Event_Wait(20);
   Func_02001dc4(0x2000000, 0xc60000);
   Func_02001dc4(0x2320000, 0xf20000);
   Func_02001dc4(0x2090000, 0xdf0000);
-  Func_02003b68(62, 2, 29, 9, 9, 9);
-  Func_02003b80(62, 2, 9, 9, 29, 9);
-  Func_02003b68(62, 66, 29, 73, 9, 9);
-  Func_02003c58(0x7fff, 0);
-  Call2((void (*)())Func_02003c50, 0x10003, 0);
-  Func_02003c60(60);
+  Map_CopyCellPictureIndicesRect(62, 2, 29, 9, 9, 9);
+  Map_CopyCellAttributeRect(62, 2, 9, 9, 29, 9);
+  Map_CopyCellPictureIndicesRect(62, 66, 29, 73, 9, 9);
+  BattleEffect_ApplyColorToSourceBuffer(0x7fff, 0);
+  PaletteFade_ApplyTarget(0x10003, 0);
+  BattleEffect_StartBufferInterpolation(60);
   wait(60);
-  Func_02003c58(0x10003, 0);
-  Func_02003c50(0x10000, 0);
-  Func_02003c60(60);
+  BattleEffect_ApplyColorToSourceBuffer(0x10003, 0);
+  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  BattleEffect_StartBufferInterpolation(60);
   wait(70);
   Func_02003b00();
   Func_02003af8();
-  Func_02003bb8(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
+  Func_0803f9c0(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
   REG_BLDCNT = 0;
   REG_DISPCNT |= DISPCNT_BG0_ON;
   gBgScroll[0].x = 0;

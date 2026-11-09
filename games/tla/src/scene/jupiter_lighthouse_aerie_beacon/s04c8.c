@@ -2,23 +2,20 @@
 #include "actor.h"
 #include "field_sprite.h"
 #include "flag_call.h"
+#include "event_inline.h"
 
 extern u32 gFrameCount;
 extern const u8 gData_020068b0[];
 
 u32 Random16Far(void);
-s32 Math_Sine(u32 angle);
-struct Actor *Actor_GetById(s32 id);
-struct Actor *Func_0200576c(s32 type, s32 x, s32 y, s32 z);
 void Func_02005764(struct Actor *object, const void *script);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Func_02000090(void);
 
 static inline struct Actor *Actor_Create(s32 type, s32 x, s32 y, s32 z) {
   /* FAKEMATCH(wrapper): the effect created through an inline, which
    * evaluates the position before the type; as a direct call of
-   * Func_0200576c, 4 of 94 instructions differ in tla-en. */
-  return Func_0200576c(type, x, y, z);
+   * Import_ActorCreate, 4 of 94 instructions differ in tla-en. */
+  return ((struct Actor *)Import_ActorCreate(type, x, y, z));
 }
 
 /// Every third frame, or every frame once flag 0x201 is set, spawns a particle

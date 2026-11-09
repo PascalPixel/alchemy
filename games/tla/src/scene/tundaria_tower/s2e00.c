@@ -1,9 +1,9 @@
 /// @file
 /// The falling rocks' setup: loads their picture, sets up 64 small sprites, marks each
 /// rock idle and starts the task that spawns them.
-#include "call.h"
 #include "types.h"
 #include "ram_buffer.h"
+#include "event_inline.h"
 
 /// One falling rock: where it is, how it moves and how long it has fallen.
 struct Rock {
@@ -43,10 +43,8 @@ void *Resource_GetTableEntry(s32 id);
 extern char ResourceId_FallingRock;
 void Func_02002f40(void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
-s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Func_02003190(struct RockSprite *sprite, s32 width, s32 height, u32 attr,
                    s32 tile);
-s32 Task_Add(void (*func)(void), s32 priority);
 void Func_02002cc0(void);
 
 void Func_02002e00(void) {
@@ -62,7 +60,7 @@ void Func_02002e00(void) {
   resource = Resource_FindFreeEntry();
   /* FAKEMATCH(wrapper): forwarded, so that its constant goes straight to the argument; as
    * a direct VramCache_Load call, 41 of 83 instructions differ in tla-en. */
-  tile = Value3((s32 (*)())VramCache_Load, resource, sizeof(work->tiles), (s32)work);
+  tile = Vram_Load(resource, sizeof(work->tiles), work);
   work->tileBase = tile;
   work->resource = resource;
   rock = work->rocks;
@@ -84,5 +82,5 @@ void Func_02002e00(void) {
   }
   /* FAKEMATCH(wrapper): forwarded, so that its constant goes straight to the argument; as
    * a direct Task_Add call, 6 of 83 instructions differ in tla-en. */
-  Value2((s32 (*)())Task_Add, (s32)Func_02002cc0, 0x480);
+  Task_AddFrame(Func_02002cc0, 0x480);
 }

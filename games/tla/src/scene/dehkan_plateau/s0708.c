@@ -5,18 +5,12 @@
 #include "map.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
-#include "call.h"
+#include "event_inline.h"
 
 extern u8 gMapShapeGrid[];
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void wait(s32 frames);
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
-struct Actor *Actor_GetById(s32 id);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void ObjectVisual_CopyAttributes(s32 id, s32 value);
@@ -28,12 +22,9 @@ void Func_02000aa8(void);
 void Func_02000c4c(s32 level, s32 layer);
 void Func_02003ba0(struct Actor *object, s32 mode);
 void Func_02003ba8(struct Actor *object, const void *script);
-struct Actor *Func_02003bb0(s32 type, s32 x, s32 y, s32 z);
-void Func_02003c00(s32 a, s32 b, s32 c);
 s32 Func_02003c10(s32 layer, s32 x, s32 z);
 void Func_02003c28(void);
 void Func_02003c30(void);
-void Func_02003c68(s32 id, s32 x, s32 z);
 void Func_02003c78(s32 id, s32 target);
 void Func_02003cc0(s32 id);
 s32 Func_02003d20(void);
@@ -41,7 +32,6 @@ s32 Func_02003d80(void *sprite, s32 frame);
 s32 Func_02003db0(struct Actor *object);
 s32 Func_02003dd0(s32 layer, s32 shape, s32 height);
 struct Actor *Func_02003dd8(s32 *position, s32 mode);
-void Func_02003df8(s32 cue);
 void Effect_AdvanceMotionAtLeaderPriority(struct Actor *object);
 
 /// The effect fields of an Actor, as field_effect.h names them.
@@ -91,7 +81,7 @@ next:
       Func_02003ba0(helper, 1);
       Func_020006ec(helper, target);
       wait(1);
-      Func_02003df8(125);
+      Sound_Play(125);
       Actor_SetPartAttribute(Actor_GetById(8), 7);
       wait(2);
       Func_02003ba0(helper, 0);
@@ -114,8 +104,8 @@ next:
         Func_020006ec(helper, target);
         wait(1);
         leader->motionFlags = result;
-        Func_02003df8(185);
-        Call3((void (*)())Func_02003c00, 0x10000, 0x40000, 0x10000);
+        Sound_Play(185);
+        MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Func_02000974(0);
         wait(8);
         Func_02003ba0(helper, 2);
@@ -124,13 +114,13 @@ next:
         wait(16);
         Func_02000c4c(-2, target->terrainId);
         wait(4);
-        Call3((void (*)())Func_02003c00, -1, -1, 0xe666);
+        MapGrid_SetShake(-1, -1, 0xe666);
         wait(8);
         leader->motionFlags = 3;
         wait(5);
         Actor_SetPositionAndResetMotion(helper, 0, 0, 0);
         wait(2);
-        Func_02003df8(188);
+        Sound_Play(188);
         Func_02000aa8();
         wait(20);
         GameFlag_SetBit(done);

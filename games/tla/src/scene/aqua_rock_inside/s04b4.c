@@ -20,8 +20,8 @@ void Func_020004bc(s32 unused, s32 id) {
   Func_02003cdc();
   column = (Actor_GetById(12)->x >> 20) - 42;
   Func_02003d7c();
-  Func_02003eac(0);
-  Func_02003ef4(0x22c);
+  Event_ResolvePendingActions(0);
+  Sound_Play(0x22c);
   for (i = 0; i <= 31; i++) {
     Func_02003460(i << 16);
     {

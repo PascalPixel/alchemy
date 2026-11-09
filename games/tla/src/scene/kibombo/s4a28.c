@@ -14,13 +14,13 @@ void Func_02004a28(void) {
   Actor_SetPartAttribute(Actor_GetById(12), 0);
   Actor_SetPartAttribute(Actor_GetById(13), 0);
   wait(8);
-  Func_02005b94(17, 0x100, 20);
-  Func_02005b4c((s32)MsgLookTheGreatGabomba);
-  Func_02005b5c(17, 0, 20);
+  Func_080d47b4(17, 0x100, 20);
+  Event_SetMessageId((s32)MsgLookTheGreatGabomba);
+  Event_ShowMessageThenWait(17, 0, 20);
   Kibombo_SePlay(0x240);
   Func_020036e0(1, 0);
-  FieldEvent_Wait(20);
-  Func_02005c9c(233);
+  Event_Wait(20);
+  Sound_Play(233);
   object->scaleY = 0x1999;
   Actor_SetPositionAndResetMotion(Actor_GetById(14), 0x1080000, 0x180000,
                                   0x1340000);
@@ -31,7 +31,7 @@ void Func_02004a28(void) {
     object->y += 0x2000;
     wait(1);
   }
-  Func_02005c9c(0x12a);
+  Sound_Play(0x12a);
   if (gData_02007950 != 0) {
     gData_02007950->motionFlags = 0;
     // As a while loop, which moves the global's address out of the loop, 24
@@ -44,7 +44,7 @@ void Func_02004a28(void) {
         goto lower;
     }
   }
-  Func_02005c9c(232);
+  Sound_Play(232);
   if (gData_02007950 != 0) {
     gData_02007950->motionFlags = 0;
     // As a for loop, which moves the global's address out of the loop, 25 of
@@ -65,16 +65,16 @@ void Func_02004a28(void) {
       wait(1);
     }
   }
-  Func_02005b0c(14, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
   Func_020036e0(0, 0);
   Func_02003640(1, 1);
-  FieldEvent_Wait(10);
+  Event_Wait(10);
   Func_02003640(0, 1);
-  FieldEvent_Wait(40);
+  Event_Wait(40);
   Kibombo_SePlay(0x240);
   Func_02003640(1, 1);
   Func_020036e0(1, 0);
-  Func_02005c9c(132);
+  Sound_Play(132);
   Actor_SetPositionAndResetMotion(Actor_GetById(14), 0x1080000, 0x180000,
                                   0x1340000);
   wait(1);
@@ -83,8 +83,8 @@ void Func_02004a28(void) {
     object->y += 0x8000;
     wait(1);
   }
-  Func_02005b9c(17, 0x102);
-  FieldEvent_Wait(40);
+  Func_080d489c(17, 0x102);
+  Event_Wait(40);
   Kibombo_ObjTurn(17, 0x3000);
   Kibombo_MessagePut(0x4011, 0);
   Kibombo_ObjEmote(17, 0x108, 20);
@@ -93,10 +93,10 @@ void Func_02004a28(void) {
   Kibombo_MessagePut(0x4011, 0);
   Kibombo_ObjSpeed(17, 0xcccc, 0x6666);
   Kibombo_ObjWalk(17, 0x108, 0x140);
-  Func_02005b0c(17, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x203;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   GameFlag_SetBit(0x8fb);
-  Func_02005bc4(13);
+  Import_EventSetExitRequest(13);
 }

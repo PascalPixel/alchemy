@@ -1,11 +1,11 @@
 #include "types.h"
 #include "actor.h"
 #include "field_sprite.h"
+#include "event_inline.h"
 
 extern const u8 gData_02006bc8[];
 
 u32 Random16Far(void);
-struct Actor *Func_02004b30(s32 kind, s32 x, s32 y, s32 z);
 void Func_02004b18(struct Actor *object, s32 mode);
 void Func_02004b20(struct Actor *object, const u8 *script);
 
@@ -21,7 +21,8 @@ void Func_02002594(void) {
 
   x = ((Random16Far() * 40) >> 16) << 16;
   z = ((Random16Far() * 30) >> 16) << 16;
-  obj = Func_02004b30(285, x + 0x7b80000, 0, z + 0x1c5c0000);
+  obj = ((struct Actor *)Import_ActorCreate(285, x + 0x7b80000, 0,
+                                            z + 0x1c5c0000));
   if (obj != NULL) {
     sprite = obj->animation;
     scale = ((Random16Far() << 15) >> 16) + 0x13333;

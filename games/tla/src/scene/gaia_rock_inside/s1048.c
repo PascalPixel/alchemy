@@ -2,8 +2,8 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "text/msg_ids.h"
-#include "call.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 extern s32 gData_0200559c[];
 extern s32 gData_02005610[];
@@ -13,25 +13,11 @@ extern s32 gData_0200646c[];
 extern s32 gData_020064ec;
 extern s32 gData_020064f0;
 
-void GameFlag_SetBit(s32 flag);
-struct Actor *Actor_GetById(s32 id);
-void Camera_FollowActor(s32 id, s32 value);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
-void Actor_SetAngleToward(s32 id, s32 target, s32 frames);
-void Actor_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
-void Actor_WaitForMoveById(s32 id);
-void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
-void FieldEvent_Wait(s32 frames);
 void Func_02000f00(void);
 void Func_02000fac(void);
 void Func_02004e5c(void);
 void Func_02004e64(void);
-void Func_02004f0c(s32 message);
-void Func_02004f14(s32 id, s32 value);
-s32 Func_02004f2c(s32 id, s32 emote, s32 frames);
 void Func_02004f54(void);
-void Func_02004fcc(s32 value);
 
 /// Object 10 turns to the leader, talks and walks to its place while the camera
 /// follows; flag 0x9de is set, and object 9's script decides whether two
@@ -40,37 +26,37 @@ void Func_02001048(void) {
   struct Actor *object = Actor_GetById(9);
 
   Func_02004e5c();
-  Func_02004fcc(0);
-  Func_02004f0c((s32)MsgGaiaRockInside02);
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)MsgGaiaRockInside02);
   Camera_FollowActor(10, 1);
   if (object->script == gData_02005610 || object->script == gData_0200559c)
     Actor_RefreshSelectorById(9);
   Func_02000f00();
   Actor_SetModeById(10, 1);
   Actor_SetAngleToward(10, gMainRoutineWork.currentOwner, 0);
-  Func_02004f2c(10, 256, 0);
-  FieldEvent_Wait(30);
-  Func_02004f14(10, 0);
+  Func_080d47b4(10, 256, 0);
+  Event_Wait(30);
+  Event_ShowMessageAndWait(10, 0);
   Actor_ResetAndSetPositionInMode2(10, 496, 456);
   Actor_WaitForMoveById(10);
-  Call3(Actor_ArmCallback, 10, FACING_EAST + FACING_STEP, 0);
-  FieldEvent_Wait(10);
-  Func_02004f14(10, 0);
-  Func_02004f2c(10, 261, 0);
-  FieldEvent_Wait(45);
-  Func_02004f14(10, 0);
+  Actor_FaceDirection(10, FACING_EAST + FACING_STEP, 0);
+  Event_Wait(10);
+  Event_ShowMessageAndWait(10, 0);
+  Func_080d47b4(10, 261, 0);
+  Event_Wait(45);
+  Event_ShowMessageAndWait(10, 0);
   Actor_ArmCallback(10, FACING_NORTH + FACING_STEP, 0);
-  FieldEvent_Wait(30);
-  Call4(Camera_MoveWithinMapBounds, PIXELS(488), -1, PIXELS(392), 1);
+  Event_Wait(30);
+  FieldCamera_MoveTo(PIXELS(488), -1, PIXELS(392), 1);
   Func_02004f54();
-  Func_02004f14(10, 0);
+  Event_ShowMessageAndWait(10, 0);
   Camera_FollowActor(10, 1);
   Func_02004f54();
   Actor_ArmCallback(10, FACING_EAST + FACING_STEP, 0);
-  FieldEvent_Wait(10);
-  Func_02004f14(10, 0);
+  Event_Wait(10);
+  Event_ShowMessageAndWait(10, 0);
   Motion_SetModeAndWaitAnimation(10, 3);
-  Call4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   GameFlag_SetBit(0x9de);
   if (object->script == gData_020056c4 || object->script == gData_02005728) {
     gData_0200646c[2] = gData_020064ec = gData_0200646c[14];

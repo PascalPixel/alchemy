@@ -3,8 +3,7 @@
 #include "../../../../games/tla/include/map.h"
 #include "../../../../games/tla/include/actor.h"
 #include "system/main_routine_work.h"
-
-struct Actor *Actor_GetById(u32 id);
+#include "event_inline.h"
 
 void Func_020049e4(void) {
   if (gMainRoutineWork.renderMode == 2) {

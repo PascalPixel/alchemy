@@ -8,8 +8,8 @@ void Func_02001340(struct ShrineOfTheSeaGodObject *object,
   u32 n;
   u32 i;
 
-  Func_02003ab0(gMainRoutineWork.currentOwner, 258);
-  Func_02003b48(210);
+  Func_080d489c(gMainRoutineWork.currentOwner, 258);
+  Sound_Play(210);
   object->motionFlags = 0;
   for (n = 0; n <= 1; n++) {
     other->y -= 0x10000;

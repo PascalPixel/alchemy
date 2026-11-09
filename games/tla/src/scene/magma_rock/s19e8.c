@@ -4,9 +4,8 @@
 #include "main_routine_work.h"
 #include "scene_ids.h"
 #include "magma_rock.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
-void GameFlag_SetBit(s32 flag);
 void Func_020014bc(s32 mode, s32 cue);
 
 /// In room 1 or 2, targets actor 15 or 14, runs Func_020014bc and sets flag

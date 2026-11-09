@@ -4,9 +4,9 @@
 
 void Func_020000fc(void);
 void Func_02000220(void);
-void Func_02001488(s32 actor, s32 x, s32 z);
+void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
 void Func_02001578(const void *data);
-void Func_02001598(s32 actor, s32 value);
+void Func_080d3928(s32 actor, s32 value);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 
 void Func_020002f8(void) {
@@ -39,7 +39,7 @@ void Func_020002f8(void) {
   object->y = 0x100000;
   /* FAKEMATCH(wrapper): the call forwarded through Call2; as a direct call,
    * 4 of 223 instructions differ in tla-en. */
-  Call2((void (*)())Func_02001598, 13, 0x1000);
+  Call2((void (*)())Func_080d3928, 13, 0x1000);
   Actor_SetModeById(11, 2);
   Actor_SetModeById(12, 3);
   Actor_SetModeById(13, 2);
@@ -57,8 +57,10 @@ void Func_020002f8(void) {
   if (Value1((s32 (*)())GameFlag_Test, 0x8a7)) {
     /* FAKEMATCH(wrapper): both calls forwarded through Call3; either as a
      * direct call, 2 of 223 instructions differ in tla-en. */
-    Call3((void (*)())Func_02001488, 14, 0xc80000, 0x880000);
-    Call3((void (*)())Func_02001488, 15, 0x1880000, 0x1680000);
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 14, 0xc80000,
+          0x880000);
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 15, 0x1880000,
+          0x1680000);
   }
   object = Actor_GetById(14);
   object->motionFlags = 0;

@@ -12,11 +12,8 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "call.h"
 #include "text/msg_ids.h"
-
-void Func_02001060();
-void GameFlag_SetBit();
+#include "event_inline.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -28,12 +25,12 @@ void Func_0200004c(s32 arg0, s32 arg1) {
   if (arg1 != 8)
     goto L_02008072;
   GameFlag_SetBit(0x9a9);
-  Func_02001060(0, 2, 1, 1, 2, arg1);
+  Map_CopyCellAttributeRect(0, 2, 1, 1, 2, arg1);
 L_02008072:
   if (arg1 != 10)
     goto L_02008094;
   GameFlag_SetBit(0x9aa);
-  Call6((void (*)())Func_02001060, 0, 32, 1, 1, 14, 38);
+  MapGrid_CopyCellAttributes(0, 32, 1, 1, 14, 38);
 L_02008094:
   return;
 }

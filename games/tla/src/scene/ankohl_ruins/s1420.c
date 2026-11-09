@@ -7,6 +7,7 @@
 #include "system/io_reg.h"
 #include "system/task.h"
 #include "types.h"
+#include "event_inline.h"
 
 struct AnkohlRuinsFloatSprite {
   s32 x;
@@ -27,7 +28,6 @@ struct AnkohlRuinsFloatWork {
 
 extern struct AnkohlRuinsFloatWork Data_02004030;
 void Func_020012c4(void);
-s32 GameFlag_Test(s32 flag);
 s32 Resource_FindFreeEntry(void);
 
 void Func_02001420(void) {

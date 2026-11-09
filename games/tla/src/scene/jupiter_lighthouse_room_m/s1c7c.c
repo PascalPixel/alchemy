@@ -5,17 +5,18 @@
 extern const u8 MsgIMSorry[];
 
 void Func_020047d4(void);
-void Func_0200494c(s32 a);
-void Func_0200484c(s32 id, s32 x, s32 z, s32 angle);
+void Event_ResolvePendingActions(s32 a);
+void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
+                                                    s32 angle);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_0200488c(const u8 *message);
-void Func_0200489c(s32 actor, s32 a, s32 b);
-struct Actor *Func_020048cc(s32 actor, s32 emote, s32 frames);
+void Event_SetMessageId(const u8 *message);
+void Event_ShowMessageThenWait(s32 actor, s32 a, s32 b);
+struct Actor *Func_080d47b4(s32 actor, s32 emote, s32 frames);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 d);
 void Func_020048f4(void);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void Func_020048b4(s32 actor, s32 a);
+void Actor_ArmCallbackAndRefresh(s32 actor, s32 a);
 void Actor_OffsetPositionAndReset(u32 objectId, s32 x_offset, s32 z_offset);
 void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
 void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
@@ -43,13 +44,13 @@ static __inline__ void JupiterLighthouseRoomM_AddPp(s32 owner, s32 delta) {
 static __inline__ void JupiterLighthouseRoomM_Func_020048b4(s32 actor, s32 a) {
   /* FAKEMATCH: forwarding through the inline builds the second argument around
    * the first, as the native does (direct: differ 2 of 160). */
-  Func_020048b4(actor, a);
+  Actor_ArmCallbackAndRefresh(actor, a);
 }
 
 static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does (direct: differ 35 of 160). */
-  Func_0200484c(id, x, z, angle);
+  Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, angle);
 }
 
 /* FAKEMATCH: the angle passes through a block temporary, so it is built before
@@ -64,7 +65,7 @@ static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle) {
 /// with owners 2 and 0, whose first values and PP drop by 10000. "I'm sorry"
 void Func_02001c7c(void) {
   Func_020047d4();
-  Func_0200494c(0);
+  Event_ResolvePendingActions(0);
   PLACE(0, 776, 202, FACING_WEST);
   PLACE(2, 731, 232, FACING_NORTHWEST);
   PLACE(27, 731, 213, FACING_SOUTH);
@@ -75,21 +76,21 @@ void Func_02001c7c(void) {
   Actor_SetModeById(27, 1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Func_0200488c(MsgIMSorry);
-  Func_0200489c(2, 0, 5);
-  Func_020048cc(4, 0x100, 30);
+  Event_SetMessageId(MsgIMSorry);
+  Event_ShowMessageThenWait(2, 0, 5);
+  Func_080d47b4(4, 0x100, 30);
   Camera_MoveWithinMapBounds(PIXELS(705), 0, PIXELS(177), 1);
   Func_020048f4();
-  FieldEvent_Wait(30);
+  Event_Wait(30);
   Actor_SetSingleChildFlags(Actor_GetById(2), 0);
   Actor_SetModeById(2, 32);
-  FieldEvent_Wait(10);
+  Event_Wait(10);
   JupiterLighthouseRoomM_Func_020048b4(0, FACING_SOUTHWEST);
-  Func_0200489c(0, 0, 5);
-  Func_020048cc(26, 0x107, 30);
-  Func_0200489c(26, 0, 5);
+  Event_ShowMessageThenWait(0, 0, 5);
+  Func_080d47b4(26, 0x107, 30);
+  Event_ShowMessageThenWait(26, 0, 5);
   Actor_OffsetPositionAndReset(26, 24, 0);
-  FieldEvent_Wait(20);
+  Event_Wait(20);
   do {
     /* FAKEMATCH: the one-pass block ends CSE's block, so the byte store's dead
      * zero is not kept in r8 for the store of the owner below (without: differ

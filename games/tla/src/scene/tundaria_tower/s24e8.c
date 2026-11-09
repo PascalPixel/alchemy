@@ -1,7 +1,7 @@
 #include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
 
 void Func_02002f80(struct Actor *object, s32 mode);
-void Func_020031a8(s32 cue);
+void Sound_Play(s32 cue);
 void Func_020029d0(s32 a);
 void Func_02002b04(void);
 void wait(s32 frames);
@@ -22,7 +22,7 @@ loop:
   Func_02003048();
   nextFlag = flag + 1;
   if (!GameFlag_Test(nextFlag)) {
-    Func_020031a8(185);
+    Sound_Play(185);
     TundariaTower_SetWork(0x10000, 0x40000, 0x10000);
     Func_020029d0(0);
     wait(8);
@@ -34,7 +34,7 @@ loop:
     wait(8);
     Actor_SetPositionAndResetMotion(object, 0, 0, 0);
     wait(2);
-    Func_020031a8(188);
+    Sound_Play(188);
     Func_02002b04();
     wait(20);
     GameFlag_SetBit(flag);

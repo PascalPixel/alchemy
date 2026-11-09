@@ -7,6 +7,7 @@
 #include "actor.h"
 #include "event_work.h"
 #include "bg_scroll.h"
+#include "event_inline.h"
 
 extern u16 gData_02003dbc;
 extern u16 gData_02003dbe;
@@ -25,19 +26,12 @@ extern u8 gData_0200215c[];
 extern u8 Data_0200217c[];
 extern u8 Data_02002469[];
 
-void wait(s32 frames);
-void GameFlag_ClearBit(s32 flag);
-void GameFlag_SetBit(s32 flag);
-struct Actor *Actor_GetById(s32 id);
-void Func_02002034(s32 id, s32 x, s32 z);
 void *Heap_AllocEwram(s32 size);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 z, s32 mode) {
   Camera_MoveWithinMapBounds(x, -1, z, mode);
 }
 void Func_02001fdc(void);
-void Func_0200208c(s32 value, s32 frames);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -45,15 +39,10 @@ void Func_02002074(void);
 // The veneer of Resource_DecodeType01Far.
 s32 Func_02001f54(const void *source, void *destination);
 void Func_02002024(void);
-void Func_02002084(s32 value);
-s32 Task_Add(void (*func)(void), s32 order);
-void Task_RemoveFar(void (*func)(void));
 void Func_0200005c(void);
-void Func_020020b4(s32 cue);
 void Animation_SetStateFlags(struct Actor *object, s32 flags);
 void Func_020000c0(u16 *colors, s32 count, s32 red, s32 green, s32 blue);
 void Func_02000138(u8 *grid, s32 count, s32 scale);
-void Func_02002044(s32 a, s32 b);
 void Func_0200207c(void);
 void Func_02001f74(void);
 void Heap_Release(void *pointer);
@@ -74,7 +63,7 @@ void Func_0200020c(s32 stage) {
   s32 i;
   s32 frame;
 
-  Func_02002034(8, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
   gData_02003dbe = 0;
   wait(1);
   GameFlag_ClearBit(0x109);
@@ -89,7 +78,7 @@ void Func_0200020c(s32 stage) {
   Camera_MoveWithinMapBounds_(gData_02003d20[stage][0] << 16,
                               gData_02003d20[stage][1] << 16, 0);
   Func_02001fdc();
-  Func_0200208c(gData_02003d5c[stage], 1);
+  Func_080d46a4(gData_02003d5c[stage], 1);
   map->yaw = 0x1000;
   map->unk11c = 0xd000;
   Iwram_ClearWords((void *)0x050001c0, 32);
@@ -105,7 +94,7 @@ void Func_0200020c(s32 stage) {
 
       map->yaw = (length - frame) << 5;
       if (frame == length - 59)
-        Func_0200208c(gData_02003d70[stage], 60);
+        Func_080d46a4(gData_02003d70[stage], 60);
     }
     if (frame >= gData_02003d84[stage] - 64)
     // Pointer arithmetic folds gData_02003d88 + 1 into one literal, as the
@@ -159,9 +148,9 @@ void Func_0200020c(s32 stage) {
     wait(1);
   }
   Func_02002024();
-  Func_02002084(0);
+  Event_ResolvePendingActions(0);
   Task_Add(Func_0200005c, 0x480);
-  Func_020020b4(246);
+  Sound_Play(246);
   for (frame = 0; frame != 172; frame++) {
     if (frame == 0) {
       if (stage == 4) {
@@ -195,7 +184,8 @@ void Func_0200020c(s32 stage) {
         z = -0x1e0000;
         x0 = -0x320000;
 
-        Func_02002034(8, (top << 16) + x0, (left << 16) + z);
+        Actor_SetHorizontalPositionWithTerrain(8, (top << 16) + x0,
+                                               (left << 16) + z);
       }
       Animation_SetStateFlags(Actor_GetById(8), 1);
       Actor_SetModeById(8, 0);
@@ -334,11 +324,11 @@ void Func_0200020c(s32 stage) {
   }
   Task_RemoveFar(Func_0200005c);
   if (stage != 4) {
-    Func_02002044(0x60000, 0xc000);
+    Camera_SetSpeedParameters(0x60000, 0xc000);
     Func_0200207c();
     Camera_MoveWithinMapBounds_(gData_02003d48[stage][0] << 16,
                                 gData_02003d48[stage][1] << 16, 1);
-    Func_0200208c(0xb333, 60);
+    Func_080d46a4(0xb333, 60);
     for (frame = 0; frame != 124;) {
       map->yaw += 0xffe0;
       if (frame == 60) {

@@ -18,7 +18,7 @@ void Func_02000598(void);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void Func_02000aec();
+void Actor_SetHorizontalPositionWithTerrain();
 
 s32 Func_020005b8(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 521;
@@ -40,15 +40,17 @@ s32 Func_020005b8(void) {
     else
       GameFlag_ClearBit(0x200);
     if (GameFlag_Test(0x200) && GameFlag_Test(0x823) && !GameFlag_Test(0x903)) {
-      Call3(Func_02000aec, 31, PIXELS(376), PIXELS(316));
-      Call3(Func_02000aec, 32, PIXELS(392), PIXELS(344));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 31, PIXELS(376),
+            PIXELS(316));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 32, PIXELS(392),
+            PIXELS(344));
     } else {
-      Func_02000aec(31, 0, 0);
-      Func_02000aec(32, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(31, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(32, 0, 0);
     }
   } else if (GameFlag_Test(0x8ab)) {
     if (GameFlag_Test(0x971))
-      Func_02000aec(31, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(31, 0, 0);
   } else {
     Actor_SetSpritePriority(24, 2);
     Actor_SetSpritePriority(19, 3);
@@ -65,7 +67,7 @@ void Func_02000bb4();
 void Func_02000578(void);
 void Func_02000598(void);
 s32 GameFlag_Test(s32 flag);
-void Func_02000aec();
+void Actor_SetHorizontalPositionWithTerrain();
 
 s32 Func_020005b8(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 521;
@@ -83,12 +85,12 @@ s32 Func_020005b8(void) {
   Actor_GetById(15)->update = Func_02000598;
   if (GameFlag_Test(0x8a7)) {
     if (!GameFlag_Test(0x823) || GameFlag_Test(0x903)) {
-      Call3(Func_02000aec, 31, 0, 0);
-      Call3(Func_02000aec, 32, 0, 0);
+      Call3(Actor_SetHorizontalPositionWithTerrain, 31, 0, 0);
+      Call3(Actor_SetHorizontalPositionWithTerrain, 32, 0, 0);
     }
   } else if (GameFlag_Test(0x8ab)) {
     if (GameFlag_Test(0x971))
-      Call3(Func_02000aec, 31, 0, 0);
+      Call3(Actor_SetHorizontalPositionWithTerrain, 31, 0, 0);
   } else {
     Actor_SetSpritePriority(24, 2);
     Actor_SetSpritePriority(19, 3);

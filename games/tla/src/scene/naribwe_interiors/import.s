@@ -30,9 +30,9 @@ GameFlag_Test:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Func_020010a0
+	.global Func_0802372c
 	.thumb_func
-Func_020010a0:
+Func_0802372c:
 	overlay_veneer Func_08020300
 	.global FieldMessage_Show
 	.thumb_func
@@ -58,9 +58,9 @@ Party_AdjustCoins:
 	.thumb_func
 Func_020010d0:
 	overlay_veneer Party_FindOwnerWithActionFar
-	.global FieldEvent_Wait
+	.global Event_Wait
 	.thumb_func
-FieldEvent_Wait:
+Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
 	.global Func_020010e0
 	.thumb_func
@@ -82,9 +82,9 @@ Actor_GetById:
 	.thumb_func
 Actor_ResetAndSetPositionInMode2:
 	overlay_veneer Actor_ResetAndSetPositionInMode2Far
-	.global Func_02001108
+	.global Actor_SetHorizontalPositionWithTerrain
 	.thumb_func
-Func_02001108:
+Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -106,17 +106,17 @@ Actor_Jump:
 	.thumb_func
 Actor_SetPartAttribute:
 	overlay_veneer Actor_SetPartAttributeFar
-	.global Func_02001138
+	.global Event_SetMessageId
 	.thumb_func
-Func_02001138:
+Event_SetMessageId:
 	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
 	overlay_veneer FieldMessage_ShowAtActorFar
-	.global Func_02001148
+	.global Event_ShowMessageAndWait
 	.thumb_func
-Func_02001148:
+Event_ShowMessageAndWait:
 	overlay_veneer Event_ShowMessageAndWaitFar
 	.global Actor_SetSpritePriority
 	.thumb_func
@@ -126,29 +126,29 @@ Actor_SetSpritePriority:
 	.thumb_func
 Func_02001158:
 	overlay_veneer Func_080c8208
-	.global Func_02001160
+	.global Func_080d47b4
 	.thumb_func
-Func_02001160:
+Func_080d47b4:
 	overlay_veneer Func_080c8210
-	.global Func_02001168
+	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func
-Func_02001168:
+BattleEffect_ApplyColorToTargetBuffer:
 	overlay_veneer BattleEffect_ApplyColorToTargetBufferFar
-	.global Func_02001170
+	.global BattleEffect_ApplyColorToSourceBuffer
 	.thumb_func
-Func_02001170:
+BattleEffect_ApplyColorToSourceBuffer:
 	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
-	.global Func_02001178
+	.global BattleEffect_StartBufferInterpolation
 	.thumb_func
-Func_02001178:
+BattleEffect_StartBufferInterpolation:
 	overlay_veneer BattleEffect_StartBufferInterpolationFar
-	.global Func_02001180
+	.global Event_ResolvePendingActions
 	.thumb_func
-Func_02001180:
+Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02001188
+	.global Party_GetLeaderActor
 	.thumb_func
-Func_02001188:
+Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
 	.global Func_02001190
 	.thumb_func
@@ -162,7 +162,7 @@ Func_02001198:
 	.thumb_func
 Func_020011a0:
 	overlay_veneer Func_08108070
-	.global Func_020011a8
+	.global Sound_Play
 	.thumb_func
-Func_020011a8:
+Sound_Play:
 	overlay_veneer Sound_PlayFar

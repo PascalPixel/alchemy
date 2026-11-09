@@ -9,20 +9,20 @@ struct EventTransition {
 
 void Func_02001774(void);
 void Func_02001868(void);
-void Func_020034d4(s32 actor, s32 x, s32 z);
+void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
 void Func_020035ac(s32 a);
-void Func_0200361c(s32 a, s32 b);
+void Func_080d3b28(s32 a, s32 b);
 
 static __inline__ void Func_020034d4_(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  Func_020034d4(actor, x, z);
+  Actor_SetHorizontalPositionWithTerrain(actor, x, z);
 }
 
 static __inline__ void Func_0200361c_(s32 a, s32 b) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does. */
-  Func_0200361c(a, b);
+  Func_080d3b28(a, b);
 }
 
 s32 Func_020004d4(void) {

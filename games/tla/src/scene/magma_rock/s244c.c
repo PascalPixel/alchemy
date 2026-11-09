@@ -2,12 +2,10 @@
 #include "main_routine_work.h"
 #include "actor.h"
 #include "flag_call.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
-s32 wait(s32 frames);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-s32 Camera_FollowActor(s32 id, s32 a);
 s32 Func_02003a7c(void);
 
 void Func_0200244c(s32 height) {

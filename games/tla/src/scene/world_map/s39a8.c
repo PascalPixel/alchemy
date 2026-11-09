@@ -1,8 +1,7 @@
 #include "types.h"
 #include "iwram_call.h"
 #include "actor.h"
-
-s32 Math_Sine(s32 angle);
+#include "event_inline.h"
 
 s32 Func_020039a8(struct Actor *object) {
   struct Actor *parent = object->watchedObject;

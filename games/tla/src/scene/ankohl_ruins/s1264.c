@@ -1,8 +1,7 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
-
-void GameFlag_SetBit(s32 flag);
+#include "event_inline.h"
 
 void Func_02001264(s32 a, s32 id) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room1)

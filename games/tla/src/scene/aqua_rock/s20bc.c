@@ -5,8 +5,8 @@ void Func_020020bc(s32 entrance) {
   s32 *owner = &gMainRoutineWork.currentOwner;
 
   Func_02002998();
-  Func_02002a48(0);
-  Func_02002a70(228);
+  Event_ResolvePendingActions(0);
+  Sound_Play(228);
   leader->update = (void (*)(void))Func_02002030;
   leader->motionFlags = 0;
   leader->speedLimit = 0x3333;
@@ -18,7 +18,7 @@ void Func_020020bc(s32 entrance) {
   leader->update = 0;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02002a18(entrance);
+  Import_EventSetExitRequest(entrance);
   Func_020029a0();
 }
 
@@ -30,15 +30,16 @@ void Func_02002158(void) {
 
   if (flag == 0) {
     Func_02002998();
-    Func_02002a48(0);
+    Event_ResolvePendingActions(0);
     Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
     leader->motionFlags = flag;
-    Func_020029d8(*owner, ((s16 *)&leader->x)[1] << 16,
-                  (((s16 *)&leader->z)[1] << 16) - 0x100000);
+    Actor_SetHorizontalPositionWithTerrain(*owner, ((s16 *)&leader->x)[1] << 16,
+                                           (((s16 *)&leader->z)[1] << 16) -
+                                               0x100000);
     Actor_SetPartAttribute(Actor_GetById(*owner), 9);
     Actor_SetSingleChildFlags(Actor_GetById(*owner), 0);
     Event_StartScreenTransition();
-    Func_02002a70(228);
+    Sound_Play(228);
     leader->update = (void (*)(void))Func_02002030;
     Actor_SetSpeedParameters(*owner, 0x6666, 0x3333);
     Actor_CommitPositionAndActivate(*owner, 0, 8);

@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -16,25 +17,12 @@ struct LohoPicture {
 
 extern const struct LohoPicture gData_02001f14;
 
-void FieldEvent_Wait(s32 frames);
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
-void Actor_WaitForMoveById(s32 id);
-void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_020012a0(const void *data, s32 a, s32 b);
-void Func_020012a8(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                   s32 destY);
 void Func_020012e0(void);
 void Func_020012e8(void);
-void Func_02001348(s32 id, s32 x, s32 z);
-void Func_020013d0(s32 value);
-void Func_020013f8(s32 value);
-void Func_02001448(s32 cue);
 
 static __inline__ void Offset_(s32 id, s32 dx, s32 dz) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
@@ -51,7 +39,7 @@ void Func_02000eec(void) {
   } while (0);
   Actor_SetModeById(party->currentOwner, 2);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
-  Func_02001448(123);
+  Sound_Play(123);
   Offset_(gMainRoutineWork.currentOwner, 0, -4);
-  Func_020013d0(work->value);
+  Import_EventSetExitRequest(work->value);
 }

@@ -46,9 +46,9 @@ Text_GetMessageSize:
 	.thumb_func
 Message_CloseFinishedWindows:
 	overlay_veneer Message_CloseFinishedWindowsFar
-	.global FieldEvent_Wait
+	.global Event_Wait
 	.thumb_func
-FieldEvent_Wait:
+Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
 	.global Func_0200055c
 	.thumb_func
@@ -74,25 +74,25 @@ Actor_SetMovementTypeById:
 	.thumb_func
 Actor_RefreshSelectorById:
 	overlay_veneer Actor_RefreshSelectorByIdFar
-	.global Func_0200058c
+	.global Actor_SetHorizontalPositionWithTerrain
 	.thumb_func
-Func_0200058c:
+Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
 	.global Actor_SetModeById
 	.thumb_func
 Actor_SetModeById:
 	overlay_veneer Actor_SetModeByIdFar
-	.global Func_0200059c
+	.global Event_SetMessageId
 	.thumb_func
-Func_0200059c:
+Event_SetMessageId:
 	overlay_veneer Event_SetMessageIdFar
 	.global Func_020005a4
 	.thumb_func
 Func_020005a4:
 	overlay_veneer Event_SetDestinationFar
-	.global Func_020005ac
+	.global Import_EventSetExitRequest
 	.thumb_func
-Func_020005ac:
+Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
 	.global Event_StartScreenTransition
 	.thumb_func
@@ -106,15 +106,15 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_020005cc
+	.global Event_ResolvePendingActions
 	.thumb_func
-Func_020005cc:
+Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
 	.global BattleEffect_GetResourceId
 	.thumb_func
 BattleEffect_GetResourceId:
 	overlay_veneer BattleEffect_GetResourceIdFar
-	.global Func_020005dc
+	.global Sound_Play
 	.thumb_func
-Func_020005dc:
+Sound_Play:
 	overlay_veneer Sound_PlayFar

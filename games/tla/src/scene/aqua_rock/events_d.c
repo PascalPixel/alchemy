@@ -35,7 +35,7 @@ void Func_0200119c(s32 unused, s32 id) {
     wait(30);
     object->z += 0x10000;
     GameFlag_SetBit(0x951);
-    Func_02002960(54, 58, 1, 1, column, 52);
+    Map_CopyCellAttributeRect(54, 58, 1, 1, column, 52);
   }
 }
 
@@ -47,6 +47,6 @@ void Func_020011e0(s32 unused, s32 id) {
     wait(30);
     object->z += 0x10000;
     GameFlag_SetBit(0x952);
-    Func_02002960(54, 58, 1, 1, column, 58);
+    Map_CopyCellAttributeRect(54, 58, 1, 1, column, 58);
   }
 }

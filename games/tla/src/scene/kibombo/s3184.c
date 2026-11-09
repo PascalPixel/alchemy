@@ -22,7 +22,7 @@ void Func_02003220(void);
 void Func_02003898(void);
 void Func_020038ec(void);
 
-struct KibomboObject *Func_02005a34(s32 type, s32 x, s32 y, s32 z);
+struct KibomboObject *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Func_02005a24(struct KibomboObject *object, s32 mode);
 void Func_02005a3c(struct KibomboObject *object);
 void Actor_SetSingleChildFlags(struct KibomboObject *object, u32 value);
@@ -34,7 +34,7 @@ void Field_DispatchTypeHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02005bb4(void);
-void Func_02005bc4(s32 countdown);
+void Import_EventSetExitRequest(s32 countdown);
 void Func_02005c14(s32 a, s32 b);
 s32 Func_02005c1c(s32 a, s32 b);
 void Func_02005c24(void);

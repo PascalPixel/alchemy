@@ -1,6 +1,7 @@
 #include "types.h"
 #include "frame.h"
 #include "actor.h"
+#include "event_inline.h"
 
 struct MagmaRockEffectConfig {
   s32 kind;
@@ -14,7 +15,6 @@ struct MagmaRockEffectConfig {
 
 extern u32 gData_02003d50[];
 
-s32 GameFlag_Test(s32 flag);
 u32 Random16Far(void);
 void Func_02003c4c(struct Actor *object, s32 value);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

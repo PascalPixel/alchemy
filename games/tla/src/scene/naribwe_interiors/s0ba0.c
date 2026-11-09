@@ -1,7 +1,5 @@
 #include "types.h"
-#include "call.h"
-
-s32 GameFlag_Test(s32 flag);
+#include "event_inline.h"
 
 // Lists the flags still unset for a group: from 7 up to the limit, skipping 7
 // in group 0 and 9 and 10 in group 1, each flag group * 20 + i + 48 not yet set

@@ -77,14 +77,14 @@ chosen:
   } else {
     Actor_SetAngleToward(actor, gMainRoutineWork.currentOwner, 5);
     if (!GameFlag_Test_(0x975))
-      Func_0200350c((s32)MsgIMeanIt);
+      Event_SetMessageId((s32)MsgIMeanIt);
     else if (!GameFlag_Test_(0x976))
-      Func_0200350c((s32)MsgTheLegendSaysThat);
+      Event_SetMessageId((s32)MsgTheLegendSaysThat);
     else if (!GameFlag_Test_(0x977))
-      Func_0200350c((s32)MsgYesThereS);
+      Event_SetMessageId((s32)MsgYesThereS);
     else
-      Func_0200350c((s32)MsgTheTridentSeems);
-    Func_02003524(actor, 0);
+      Event_SetMessageId((s32)MsgTheTridentSeems);
+    Event_ShowMessageAndWait(actor, 0);
     Actor_ArmCallback_(actor, 0x5000, 0);
   }
 }

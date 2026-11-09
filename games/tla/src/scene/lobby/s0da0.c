@@ -10,15 +10,11 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "text/msg_ids.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 void MessageArgument_ClearAll(void);
 void Func_020019e4(s32 value, s32 digits);
 void Func_02001a14(void);
-void Func_02001a64(s32 message);
-void Func_02001a74(s32 actor, s32 flags);
-void Func_02001ab4(s32 skip);
-void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
 
 // Tells the leader's win count, total or in a row by the way the lead faces.
 s32 Func_02000da0(s32 actor) {
@@ -27,7 +23,7 @@ s32 Func_02000da0(s32 actor) {
   s32 base;
 
   Func_02001a14();
-  Func_02001ab4(0);
+  Event_ResolvePendingActions(0);
   Actor_SetAngleToward(actor, gMainRoutineWork.currentOwner, 0);
   if ((facing - 0xa001) <= 0x3ffe) {
     base = (s32)MsgItLooksLikeThisIs;
@@ -35,11 +31,11 @@ s32 Func_02000da0(s32 actor) {
     if (*count != 0) {
       MessageArgument_ClearAll();
       Func_020019e4(*count, 5);
-      Func_02001a64(base + 1);
-      Func_02001a74(actor, 0);
+      Event_SetMessageId(base + 1);
+      Event_ShowMessageAndWait(actor, 0);
     } else {
-      Func_02001a64((s32)MsgIWillTell);
-      Func_02001a74(actor, 0);
+      Event_SetMessageId((s32)MsgIWillTell);
+      Event_ShowMessageAndWait(actor, 0);
     }
   } else {
     base = (s32)MsgItLooksLikeThisIsYour;
@@ -47,11 +43,11 @@ s32 Func_02000da0(s32 actor) {
     if (*count != 0) {
       MessageArgument_ClearAll();
       Func_020019e4(*count, 5);
-      Func_02001a64(base + 1);
-      Func_02001a74(actor, 0);
+      Event_SetMessageId(base + 1);
+      Event_ShowMessageAndWait(actor, 0);
     } else {
-      Func_02001a64((s32)MsgIWillTellYou);
-      Func_02001a74(actor, 0);
+      Event_SetMessageId((s32)MsgIWillTellYou);
+      Event_ShowMessageAndWait(actor, 0);
     }
   }
 }

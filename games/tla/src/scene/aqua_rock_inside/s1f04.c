@@ -10,7 +10,7 @@ void Func_02001f04(void) {
   s32 i;
 
   Func_02003d7c();
-  Func_02003eac(0);
+  Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Animation_ApplyChildValues(object, 9);
   *flags = 0;
@@ -37,7 +37,7 @@ fall:
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
   *flags = saved;
   object->velocityY = 0x80000;
-  Func_02003ef4(215);
+  Sound_Play(215);
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 168, 200);
   Func_02003d84();
 }

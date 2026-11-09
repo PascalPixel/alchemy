@@ -11,7 +11,7 @@ void Func_020000f0(s32 unused, s32 id) {
      * zero r2, as native; plainly, 8 instructions differ in tla-en. */
     __asm__("" : : "m"(object->priorityFlags));
     Func_02000098(id);
-    Func_02001060(40, 19, 1, 1, x, 19);
+    Map_CopyCellAttributeRect(40, 19, 1, 1, x, 19);
   }
   Func_02001060_(99, 6, 4, 3, 99, 18);
 }

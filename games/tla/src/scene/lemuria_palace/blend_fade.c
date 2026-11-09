@@ -1,9 +1,8 @@
 #include "types.h"
 #include "io_reg.h"
+#include "event_inline.h"
 
 extern u8 gData_0200308c;
-
-void wait(s32 frames);
 
 static __inline__ void Blend_WriteAlpha(s32 value) {
   // The s32 parameter keeps each constant a word built with shifts; a u16 store

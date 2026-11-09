@@ -18,13 +18,13 @@ void Func_02001338(s32 entrance) {
   s32 i;
 
   Func_02001cc4();
-  Func_02001dcc(0);
+  Event_ResolvePendingActions(0);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   leader->motionFlags = 0;
   leader->priorityFlags |= 0x20;
-  Func_02001e2c(215);
+  Sound_Play(215);
   Func_02001c6c(leader, 18);
-  Func_02001e2c(612);
+  Sound_Play(612);
   for (i = 0; i < 60; i++) {
     s32 angle;
 
@@ -38,7 +38,7 @@ void Func_02001338(s32 entrance) {
     wait(1);
   }
   Func_02001ccc();
-  Func_02001d94(entrance);
+  Import_EventSetExitRequest(entrance);
 }
 
 /// Every other frame, emits particle 7 (5 on every other such frame) from the

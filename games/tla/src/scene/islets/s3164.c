@@ -28,7 +28,7 @@ void Func_02003164(void) {
     object->motionFlags = zero;
     Actor_SetSpritePriority(10, 1);
   }
-  Func_02003edc(11, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
   Func_02003f4c(12);
   Func_02003f4c(13);
   set = GameFlag_Test(0x212);
@@ -43,7 +43,7 @@ void Func_02003164(void) {
     {
       s32 held = 29;
 
-      Call6((void (*)())Func_02003e24, 7, 3, 1, 1, 7, held);
+      Call6((void (*)())Map_CopyCellAttributeRect, 7, 3, 1, 1, 7, held);
     }
   } else {
     struct Actor *first = Actor_GetById(12);
@@ -65,5 +65,5 @@ void Func_02003164(void) {
   }
   Func_020020ec(last->x, last->z, 1, 255);
   if (GameFlag_Test(0x213))
-    Call6((void (*)())Func_02003e24, 5, 2, 1, 2, 5, 28);
+    Call6((void (*)())Map_CopyCellAttributeRect, 5, 2, 1, 2, 5, 28);
 }

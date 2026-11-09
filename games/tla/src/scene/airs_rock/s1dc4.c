@@ -1,10 +1,10 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "iwram_call.h"
 #include "field_sprite.h"
 #include "system/field_effect.h"
 #include "system/vector3.h"
+#include "event_inline.h"
 
 u32 Random16Far(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -15,9 +15,6 @@ void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02003b38(struct Actor *object, const u8 *script);
 void Func_02003b28(struct Actor *object, s32 mode);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
-void Func_02003b58(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_02003b98(s32 a, s32 b, s32 c);
 extern u8 gData_02003dfc[];
 
 void Func_02001dc4(s32 x, s32 z) {
@@ -63,8 +60,9 @@ void Func_02001dc4(s32 x, s32 z) {
     scatter.x = Iwram_MulQ16(Math_Cosine(scatter.y << 12), radius);
     scatter.z = Iwram_MulQ16(Math_Sine(scatter.y << 12), radius);
     ((struct FieldSprite *)rock->animation)->priority = 1;
-    Func_02003b58(rock, rock->x + scatter.x, rock->y, rock->z + scatter.z);
+    Actor_SetMoveTarget(rock, rock->x + scatter.x, rock->y,
+                        rock->z + scatter.z);
   }
-  Func_02003b98(0x50000, 0x70000, 0x10000);
-  Func_02003b98(shakeA, shakeA, shakeC);
+  Map_SetScreenShake(0x50000, 0x70000, 0x10000);
+  Map_SetScreenShake(shakeA, shakeA, shakeC);
 }

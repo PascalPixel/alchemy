@@ -2,33 +2,20 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
-#include "call.h"
 #include "version.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
-#define OBJECT(id) ((struct Actor *)Actor_GetById((id)))
+#define OBJECT(id) ((struct Actor *)((s32)Actor_GetById((id))))
 
 extern const u8 gData_02004508[];
 extern const u8 gData_02004554[];
 extern const u8 MsgWellHereWe[];
-s32 Actor_GetById();
 void Func_02003eec();
-void Func_02003edc();
-void wait();
-void Actor_SetPartAttribute();
-void Actor_SetModeById();
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Actor_SetSpeedParameters();
 void Func_02003dec();
-void Actor_SetMovementTypeById();
-void Func_02003f3c();
-void Func_02003fac();
-void Func_02003f24();
-void Func_02003f2c();
-void Actor_Jump();
-void Actor_SetPositionAndCommit();
 void Func_02003fb4(void);
 void Func_020034d8(void);
 void Func_02001278(void);
@@ -46,11 +33,12 @@ void Func_020029c4(void) {
   u8 *done;
 
   Func_02003eec(9, gMainRoutineWork.currentOwner);
-  Func_02003edc(10, PIXELS(240), PIXELS(540));
+  Actor_SetHorizontalPositionWithTerrain(10, PIXELS(240), PIXELS(540));
   wait(1);
   guide->angle = FACING_SOUTH;
   leader->update = Func_02001278;
-  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
+  Actor_SetPartAttribute(((s32)Actor_GetById(gMainRoutineWork.currentOwner)),
+                         15);
   Actor_SetModeById(9, 3);
   wait(1);
 #if TLA_PATCH_1 /* The Japanese release leaves the transition word. */
@@ -58,7 +46,7 @@ void Func_020029c4(void) {
 #endif
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Call3(Actor_SetSpeedParameters, 9, 0xcccc, 0x6666);
+  Actor_SetSpeed(9, 0xcccc, 0x6666);
   Actor_SetSpeedParameters(10, 0xcccc, 0x6666);
   OBJECT(10)->update = Func_02000df8;
   guide->update = Func_02000df8;
@@ -72,19 +60,20 @@ void Func_020029c4(void) {
   leader->update = 0;
   guide->update = 0;
   OBJECT(10)->update = 0;
-  Func_02003f3c(9, FACING_NORTH);
-  Func_02003fac(gMainRoutineWork.currentOwner, 9);
-  Func_02003f24(MsgWellHereWe);
-  Func_02003f2c(9, 0);
+  Actor_ArmCallbackAndRefresh(9, FACING_NORTH);
+  Func_080dc978(gMainRoutineWork.currentOwner, 9);
+  Event_SetMessageId(MsgWellHereWe);
+  Event_ShowMessageAndWait(9, 0);
   Actor_SetModeById(9, 1);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
-  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetPartAttribute(((s32)Actor_GetById(gMainRoutineWork.currentOwner)),
+                         0);
   Actor_Jump(gMainRoutineWork.currentOwner, 6, 0);
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 152, 742);
-  Call2(Func_02003f3c, gMainRoutineWork.currentOwner, FACING_SOUTH);
-  Func_02003f2c(9, 0);
+  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
+  Event_ShowMessageAndWait(9, 0);
   Func_02003fb4();
-  Call2(Func_02003f3c, 9, FACING_SOUTH);
+  Actor_FaceDirectionAndWait(9, FACING_SOUTH);
   Func_020034d8();
 #if TLA_PATCH_1
   *(s32 *)(EVENT_WORK + 0x1ac) = 0x100;

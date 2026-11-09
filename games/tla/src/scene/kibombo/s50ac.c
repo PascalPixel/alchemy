@@ -14,7 +14,7 @@ void Func_020050ac(void) {
 }
 
 void Func_02005114(void) {
-  Func_02005b0c(11, PIXELS(88), PIXELS(314));
+  Actor_SetHorizontalPositionWithTerrain(11, PIXELS(88), PIXELS(314));
   Actor_SetSingleChildFlags(Actor_GetById(11), 0);
   Actor_GetById(11)->scaleY = 0x8000;
   Func_020050ac();

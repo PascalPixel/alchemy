@@ -27,7 +27,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
+void Event_Wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetModeById(u32 id, s32 mode);
 void Actor_SetSpritePriority(u32 id, s32 variant);
@@ -36,15 +36,15 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Task_Add(void (*func)(void), s32 priority);
 void Func_02002360(struct Actor *object, s32 a);
 void Func_02002368();
-void Func_020023b0(s32 id, s32 x, s32 z);
+void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Func_020023d0(s32 id);
-void Func_020023f8(s32 id);
+void Import_EventSetExitRequest(s32 id);
 void Func_02002400(void);
 void Func_02002440(s32 id, s32 a);
-void Func_02002458(s32 x, s32 z, s32 a, s32 b);
+void Func_080dbdd4(s32 x, s32 z, s32 a, s32 b);
 void Func_02002460(s32 x, s32 z, s32 a, s32 b);
 void Func_02002468(s32 id);
-void Func_02002470(s32 cue);
+void Sound_Play(s32 cue);
 void Func_02000054(struct Actor *object);
 void Func_02000404(void);
 void Func_02000c78(s32 id);
@@ -69,7 +69,7 @@ static __inline__ s32 GameFlag_Test_(s32 flag) {
 
 static __inline__ void Func_020023b0_(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_020023b0(id, x, z);
+  Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 
 #endif

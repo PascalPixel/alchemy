@@ -1,14 +1,11 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
-#include "call.h"
 #include "fixed_math.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void wait(s32 frames);
-struct Actor *Func_02000598(s32 type, s32 x, s32 y, s32 z);
 void Func_020005d8(s32 scene, s32 entrance);
 
 /// Mode 1 places object kind 354 at (x, z) in pixels; mode 2 grows object
@@ -19,15 +16,14 @@ void Func_02000468(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
   struct Actor *object;
 
   if (mode == 1) {
-    object = (struct Actor *)Value4((s32 (*)())Func_02000598, 354,
-                                            x << 16, 0, z << 16);
+    object = FieldActor_Create(354, x << 16, 0, z << 16);
     if (object != NULL) {
       Actor_SetSingleChildFlags(object, 0);
       object->priorityFlags = 2;
     }
   }
   if (mode == 2) {
-    object = Func_02000598(252, x << 16, 0, z << 16);
+    object = ((struct Actor *)Import_ActorCreate(252, x << 16, 0, z << 16));
     if (object != NULL) {
       s32 scale;
 

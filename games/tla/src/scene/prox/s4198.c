@@ -1,5 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "event_inline.h"
 
 /// One falling rock: where it is, how it moves and how long it has fallen.
 struct Rock {
@@ -33,7 +34,6 @@ struct RockWork {
 };
 
 s32 Random16Far(void);
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 
 /// Spawns count rocks around (x, y, z), each pushed out at a random angle and
 /// thrown up and out along it.

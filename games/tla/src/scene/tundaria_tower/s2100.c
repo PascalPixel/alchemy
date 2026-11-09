@@ -1,14 +1,13 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
+#include "event_inline.h"
 
 struct GabombaStatueEffectWork {
   u8 unk00[0x1a];
   s16 objectId;
 };
 
-struct Actor *Actor_GetById(s32 id);
-void GameFlag_SetBit(s32 flag);
 void Func_02002184(s32 id, s32 a, s32 flag, s32 terrain);
 
 // Finds the current target's table row and shrinks it.

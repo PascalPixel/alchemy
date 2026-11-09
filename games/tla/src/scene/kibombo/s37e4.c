@@ -47,13 +47,13 @@ void Func_020038ec(void) {
   struct KibomboEventWork *work = Ram_HeapSlots->eventWork;
 
   Func_02005a9c();
-  Func_02005c3c(0);
+  Event_ResolvePendingActions(0);
   if (GameFlag_Test(0x202))
     Func_02003898();
-  Func_02005c9c(123);
+  Sound_Play(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02005bc4(work->exit);
+  Import_EventSetExitRequest(work->exit);
 }
 
 void Func_02003930(void) {
@@ -72,22 +72,22 @@ void Func_02003948(void) {
   
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   Func_02005a9c();
-  Func_02005c3c(0);
+  Event_ResolvePendingActions(0);
   Kibombo_CamMove(-1, -1, -1, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   x = leader->x;
   px = x >> 16;
-  Func_02005a54(leader, ((8 - px % 16) << 16) + x, leader->y, leader->z);
-  Func_02005a5c(leader);
+  Actor_SetMoveTarget(leader, ((8 - px % 16) << 16) + x, leader->y, leader->z);
+  Script_WaitForEventTimeout(leader);
   leader->facing = 0xc000;
   if (GameFlag_Test(0x202))
     Func_02003898();
   Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
                                           gData_02005cd0);
   wait(12);
-  Func_02005c9c(123);
+  Sound_Play(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02005bc4(work->exit);
+  Import_EventSetExitRequest(work->exit);
 }

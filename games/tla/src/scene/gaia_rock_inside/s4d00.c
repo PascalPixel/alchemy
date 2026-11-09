@@ -6,9 +6,8 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
 #include "task.h"
-s32 Task_Add();
+#include "event_inline.h"
 extern u8 Func_020049e4[];
 
 void Func_02004d00(void) {

@@ -2,39 +2,20 @@
 #include "actor.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
-#include "call.h"
+#include "event_inline.h"
 
 extern u8 gData_02002a04[];
-struct Actor *Actor_GetById(u32 id);
 void Func_02002898(void);
-void Func_02002968(s32 mode);
 void Func_020028a0(void);
-void Func_02002870(void);
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 u32 Random16Far(void);
 void Func_02000c14(void);
 void Func_02000ca0(void);
 void Func_02000c24(void);
 void Func_02000cec(void);
-void Actor_SetSpeedParameters(u32 id, s32 speed, s32 acceleration);
-void Actor_ResetAndSetPosition(u32 id, s32 x, s32 z);
-void Actor_WaitForMoveById(u32 id);
-void Func_020028d0(s32 id, s32 x, s32 z);
-void Func_020029b0(s32 cue);
-void Func_02002868(s32 a, s32 b, s32 c);
-struct Actor *Func_02002808(s32 type, s32 x, s32 y, s32 z);
 void Func_02002800(struct Actor *object, const u8 *script);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Task_Add(void (*func)(void), s32 priority);
-void Func_02002918(s32 a, s32 b);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Func_02002838(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                   s32 destY);
-void GameFlag_SetBit(s32 flag);
 
 void Func_02000d2c(void) {
   struct Actor *rock = Actor_GetById(19);
@@ -45,7 +26,7 @@ void Func_02000d2c(void) {
   s32 turn = -256;
 
   Func_02002898();
-  Func_02002968(0);
+  Event_ResolvePendingActions(0);
   for (i = 9; i >= 0; i--) {
     wait(1);
     ((struct FieldSprite *)rock->animation)->rotation += turn;
@@ -53,27 +34,27 @@ void Func_02000d2c(void) {
     rock->targetX = 0x80000000;
   }
   rock->update = Func_02000c14;
-  Call3((void (*)())Actor_SetSpeedParameters, 19, 0x20000, 0x10000);
-  Call3((void (*)())Actor_ResetAndSetPosition, 19, 492, 246);
+  Actor_SetSpeed(19, 0x20000, 0x10000);
+  Actor_SetDestination(19, 492, 246);
   rock->gravity = 0xcccc;
   rock->motionFlags = 3;
   rock->terrainId = 0;
   Actor_WaitForMoveById(19);
   rock->velocityY = 0;
   rock->y = rock->terrainHeight;
-  Call3((void (*)())Func_020028d0, 19, 0x1e00000, 0xf80000);
+  Actor_SetPosition(19, 0x1e00000, 0xf80000);
   ((struct FieldSprite *)rock->animation)->rotation = 0;
-  Func_020029b0(188);
-  Call3((void (*)())Func_02002868, 0x50000, 0x50000, 0x10000);
-  Func_020029b0(141);
-  Call3((void (*)())Func_02002868, -1, -1, 0xe666);
-  Call3((void (*)())Func_020028d0, 10, 0x1e00000, 0xf80000);
-  Call3((void (*)())Actor_ResetAndSetPosition, 10, 440, 232);
+  Sound_Play(188);
+  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
+  Sound_Play(141);
+  MapGrid_SetShake(-1, -1, 0xe666);
+  Actor_SetPosition(10, 0x1e00000, 0xf80000);
+  Actor_SetDestination(10, 440, 232);
   Actor_GetById(10)->velocityY = 0xa0000;
   rock->update = 0;
   i = 15;
 burst:
-  clod = Func_02002808(255, rock->x, rock->y + 0x100000, rock->z);
+  clod = ((struct Actor *)Import_ActorCreate(255, rock->x, rock->y + 0x100000, rock->z));
   if (clod == 0)
     goto next;
   angle = Random16Far();
@@ -96,25 +77,25 @@ next:
   i--;
   if (i >= 0)
     goto burst;
-  Func_02002870();
-  Call2((void (*)())Task_Add, (s32)Func_02000ca0, 0x480);
+  Map_WaitForShakeToSettle();
+  Task_AddFrame(Func_02000ca0, 0x480);
   wait(40);
-  Call2((void (*)())Func_02002918, 0xe666, 0x1ccc);
-  Call4((void (*)())Camera_MoveWithinMapBounds, 0x1500000, -1, 0x1180000, 1);
+  FieldCamera_SetSpeed(0xe666, 0x1ccc);
+  FieldCamera_MoveTo(0x1500000, -1, 0x1180000, 1);
   i = 11;
   row = 114;
 drain:
-  Call6((void (*)())Func_02002838, 50, row, 13, 5, 18, 15);
+  MapGrid_CopyCells(50, row, 13, 5, 18, 15);
   wait(8);
   row -= 5;
   i--;
   if (i > 0)
     goto drain;
-  Call2((void (*)())Task_Add, (s32)Func_02000c24, 0x480);
+  Task_AddFrame(Func_02000c24, 0x480);
   wait(60);
-  Call2((void (*)())Task_Add, (s32)Func_02000cec, 0x480);
+  Task_AddFrame(Func_02000cec, 0x480);
   wait(24);
-  FieldEvent_Wait(120);
+  Event_Wait(120);
   Func_020028a0();
   GameFlag_SetBit(0x330);
 }

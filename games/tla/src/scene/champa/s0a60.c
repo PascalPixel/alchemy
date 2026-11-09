@@ -1,8 +1,8 @@
 #include "types.h"
+#include "event_inline.h"
 
 extern s32 gData_0200320c[];
 extern s32 gData_0200b410[];
-s32 GameFlag_Test(s32 flag);
 
 extern u32 gFrameCount;
 

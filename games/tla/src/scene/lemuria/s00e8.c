@@ -2,8 +2,8 @@
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "actor.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 s32 Func_02001d54(struct Actor *object);
 void Func_02001ba4(struct Actor *object, s32 priority);
 void Func_02001b7c(struct Actor *object, s32 mode);

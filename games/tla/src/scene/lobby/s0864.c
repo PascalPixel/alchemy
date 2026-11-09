@@ -13,6 +13,7 @@
 #include "serial.h"
 #include "task.h"
 #include "text/msg_ids.h"
+#include "event_inline.h"
 
 struct LobbyEventWork {
   u8 unk000[0x16a];
@@ -30,25 +31,10 @@ void Func_0200198c(s32 layer);
 void Func_02001994(s32 layer);
 void Func_02001a14(void);
 void Func_02001a1c(void);
-void Func_02001a64(s32 message);
 void Func_02001a8c(s32 a, s32 b);
-void Func_02001ab4(s32 skip);
-void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
-void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
-void Task_RemoveFar(void *func);
 struct Window *Message_OpenWindow(const u8 *message, s32 x, s32 y, s32 flags);
-void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
-void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void Actor_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
-void Actor_WaitForMoveById(s32 actor);
 
 extern char SceneId_Ov6b5;
-
-static inline void Actor_SetSpeed(s32 actor, s32 speed, s32 acceleration) {
-  /* FAKEMATCH(wrapper): Actor_SetSpeed forwarded inline; as direct calls to
-   * Actor_SetSpeedParameters, 45 of 329 instructions differ in tla-en. */
-  Actor_SetSpeedParameters(actor, speed, acceleration);
-}
 
 // Touching the lobby counter: waits for the opponent, walks the lead to the
 // arena door, swaps party records and starts the link battle.
@@ -71,14 +57,14 @@ s32 Func_02000864(void) {
   cnt = 0;
   if (Flag_IsSet(0x173)) {
     Func_02001a14();
-    Func_02001ab4(0);
+    Event_ResolvePendingActions(0);
   } else {
     if (!Flag_IsSet(0x200))
       return;
     if (Flag_IsSet(0x205))
       return;
     Func_02001a14();
-    Func_02001ab4(0);
+    Event_ResolvePendingActions(0);
     Flag_Set(0x203);
     LinkLobby_WriteSlotValue(2);
     if (!Func_0200006c(2))
@@ -119,7 +105,7 @@ s32 Func_02000864(void) {
     Func_02001994(5);
     if (Flag_IsSet(0x173)) {
       Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
-      Func_02001a64((s32)MsgGoodLuck2);
+      Event_SetMessageId((s32)MsgGoodLuck2);
       FieldMessage_ShowAtActor(8, 0);
       wait(45);
       Actor_SetSpeed(4, 0x10000, 0x8000);

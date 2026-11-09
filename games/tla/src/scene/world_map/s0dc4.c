@@ -3,19 +3,14 @@
 #include "main_routine_work.h"
 #include "actor.h"
 #include "event_work.h"
-#include "call.h"
 #include "flag_call.h"
+#include "event_inline.h"
 
 extern char MsgIVeHeard[];
 extern char SceneId_WorldMap;
 extern char SceneId_Ov6a5;
 extern u8 gData_0200632c[];
 
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
-struct Actor *Actor_GetById(s32 id);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void Actor_SetMovementTypeById(s32 id, void *callback);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02000d4c(void);
@@ -31,14 +26,8 @@ void Func_0200310c(void);
 void Func_02003490(void);
 void Func_02003960(void);
 void Func_02003d44(s32 mode);
-void Func_02004b60(s32 a, s32 b, s32 c, s32 d);
 void Func_02004c00(void);
-void Func_02004c88(s32 id, s32 x, s32 z);
-void Func_02004cd8(s32 message);
-void Func_02004cf0(s32 id, s32 mode);
-void Func_02004d20(s32 a, s32 b);
 void Func_02004d38(s32 scene, s32 entrance);
-void Func_02004df8(s32 a, s32 b);
 
 s32 Func_02000dc4(void) {
   struct EventWork *work;
@@ -54,23 +43,23 @@ s32 Func_02000dc4(void) {
     ship->unk66 = 0;
   }
   if (gMainRoutineWork.ownerOverride != 0)
-    Func_02004df8(0x10000, 1);
+    Func_080d46a4(0x10000, 1);
   GameFlag_SetBit(0x144);
   work = Ram_HeapSlots->eventWork;
   work->screenEffect = 0x400;
   work->delay = 16;
   wait(1);
-  Func_02004d20(0x80000, 0x10000);
+  Camera_SetSpeedParameters(0x80000, 0x10000);
   GameFlag_ClearBit(0x12f);
   Func_02003960();
-  /* FAKEMATCH(wrapper): the three Func_02004b60 calls forwarded through Call4,
-   * so each builds its own constants (the 256 is not shared); as direct calls,
-   * 12 of 270 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the three Map_SetWindowCellTile calls forwarded through
+   * Call4, so each builds its own constants (the 256 is not shared); as direct
+   * calls, 12 of 270 instructions differ in tla-en. */
   if (GameFlag_Test(0x90f))
-    Call4((void (*)())Func_02004b60, 0, 240, 336, 288);
+    Field_SetWorldMapWindowCellTile(0, 240, 336, 288);
   if (GameFlag_Test(0xa21)) {
-    Call4((void (*)())Func_02004b60, 0, 224, 208, 256);
-    Call4((void (*)())Func_02004b60, 16, 224, 224, 256);
+    Field_SetWorldMapWindowCellTile(0, 224, 208, 256);
+    Field_SetWorldMapWindowCellTile(16, 224, 224, 256);
   }
   if (GameFlag_Test(0xa77))
     Func_02000d4c();
@@ -127,12 +116,12 @@ s32 Func_02000dc4(void) {
   case 72:
     Func_02003d44(2);
     Actor_SetPartAttribute(Actor_GetById(7), 15);
-    Func_02004c88(7, 0x1c6d0000, 0x1c840000);
+    Actor_SetHorizontalPositionWithTerrain(7, 0x1c6d0000, 0x1c840000);
     wait(1);
-    Func_02004cd8((s32)MsgIVeHeard);
-    Func_02004cf0(7, 0);
-    FieldEvent_Wait(20);
-    Func_02004cf0(7, 0);
+    Event_SetMessageId((s32)MsgIVeHeard);
+    Event_ShowMessageAndWait(7, 0);
+    Event_Wait(20);
+    Event_ShowMessageAndWait(7, 0);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Func_02004d38((s32)&SceneId_Ov6a5, 9);

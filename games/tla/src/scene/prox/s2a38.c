@@ -3,9 +3,8 @@
 // unsigned first and tested signed against 6, as the native reads it twice.
 #include "types.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
-s32 GameFlag_Test(s32 flag);
-void Task_Add(void (*func)(void), s32 priority);
 void Func_02001c24(s32 value);
 void Func_020045dc(s32 value);
 void Func_02002a08(void);

@@ -15,5 +15,5 @@ void Func_02003628(void) {
   Heap_Release(buffer);
   priority = 0x41c;
   Task_Add(Func_020034fc, priority);
-  Func_02003ef4(220);
+  Sound_Play(220);
 }

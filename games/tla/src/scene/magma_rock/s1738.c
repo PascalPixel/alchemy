@@ -1,10 +1,10 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "field/event_work.h"
 #include "scene_ids.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
+#include "event_inline.h"
 
 /// The native reads these event work halfwords signed (ldrsh).
 
@@ -33,10 +33,7 @@ u32 Random16Far(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    struct MagmaRockEffectConfig *config);
-struct Actor *Actor_GetById(s32 id);
-struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Func_02003a54(struct Actor *object, s32 a);
 void Func_02003c4c(struct Actor *object, s32 a);
@@ -105,11 +102,11 @@ void Func_02001738(struct Actor *object) {
     s32 i;
 
     Func_02003c4c(object, 144);
-    parts[0] = Import_ActorCreate(type, object->x + 0x10000,
-                                  object->y + 0x200000, object->z);
+    parts[0] = ((struct Actor *)Import_ActorCreate(
+        type, object->x + 0x10000, object->y + 0x200000, object->z));
     for (i = 1; i != 4; i++) {
       struct ResourceSprite *first = parts[0]->animation;
-      struct Actor *part = Import_ActorCreate(type, 0, 0, 0);
+      struct Actor *part = ((struct Actor *)Import_ActorCreate(type, 0, 0, 0));
       struct ResourceSprite *sprite;
 
       parts[i] = part;

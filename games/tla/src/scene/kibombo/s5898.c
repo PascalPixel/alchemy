@@ -14,7 +14,7 @@ void Func_02005898(void) {
   Func_02003288();
   if (gMainRoutineWork.entrance == 9) {
     if (GameFlag_Test(0x8ef)) {
-      Func_02005b0c(10, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
       if (GameFlag_Test(0x8ee)) {
         /* FAKEMATCH(temporary): the angle in a local of each branch, built
          * before the position; as the constant passed to

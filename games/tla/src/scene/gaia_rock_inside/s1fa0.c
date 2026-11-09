@@ -6,10 +6,8 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
 #include "ram_buffer.h"
-s32 Actor_GetById();
-s32 GameFlag_ClearBit();
+#include "event_inline.h"
 s32 Func_02004f8c();
 
 struct GaiaRockInsideEventWork {
@@ -19,13 +17,11 @@ struct GaiaRockInsideEventWork {
 
 extern const u8 MsgCheckedTheAltar[];
 
-void FieldMessage_Show(const u8 *message, s32 position);
-s32 PartyInventory_FindOwner(s32 item);
 
 void Func_02001fa0(void) {
   s32 t0;
 
-  t0 = Actor_GetById(66);
+  t0 = ((s32)Actor_GetById(66));
   FIELD_AT(t0, s32, 8) = 0x2280000;
   FIELD_AT(t0, s32, 16) = 0x1280000;
   FIELD_AT(t0, s32, 12) = -1966080;

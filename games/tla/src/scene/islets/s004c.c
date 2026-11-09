@@ -30,17 +30,17 @@ void Func_020000d8(void) {
     object->gravity = 0x8000;
     Actor_SetModeById(10, 3);
     Actor_OffsetPositionAndResetMotion(10, 0, 8);
-    FieldEvent_Wait(22);
-    Func_02003ffc(240);
+    Event_Wait(22);
+    Sound_Play(240);
     Actor_SetModeById(10, 8);
     object->priorityFlags |= 2;
     object->motionFlags = 0;
     object->velocityY = 0;
     object->y = PIXELS(-8);
     object->terrainHeight = PIXELS(-8);
-    Func_02003e24(9, 1, 4, 1, 9, 10);
-    Func_02003e24(9, 8, 4, 1, 9, 9);
-    Func_02003e24(9, 64, 4, 1, 9, 74);
+    Map_CopyCellAttributeRect(9, 1, 4, 1, 9, 10);
+    Map_CopyCellAttributeRect(9, 8, 4, 1, 9, 9);
+    Map_CopyCellAttributeRect(9, 64, 4, 1, 9, 74);
     GameFlag_SetBit(0xa2c);
   }
 }

@@ -3,45 +3,12 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
-struct Actor *Actor_GetById(s32 id);
-void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
-void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
-void Actor_WaitForMoveById(s32 id);
-void Actor_CommitPositionAndActivate(s32 id, s32 x, s32 z);
-void Actor_CenterOnColumn(s32 id, s32 column, s32 offset);
-void Actor_SetAngleToward(s32 id, s32 target, s32 flags);
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
-void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
-void FieldMessage_ShowAtActor(s32 id, s32 flags);
-s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
-void Func_02002ae8(const void *data, s32 a, s32 b);
-void Func_02002af0(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                   s32 destY);
-void Func_02002af8(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                   s32 destY);
 void Func_02002b28(void);
 void Func_02002b30(void);
-void Func_02002b88(s32 id, s32 a, s32 b);
-void Func_02002b90(s32 id, s32 x, s32 y, s32 z);
-void Func_02002bd0(s32 message);
-void Func_02002be0(s32 id, s32 a, s32 b);
-void Func_02002be8(s32 a, s32 b);
-void Func_02002bf8(s32 id, s32 a);
-void Func_02002c08(s32 id, s32 a, s32 b);
-void Func_02002c30(s32 a);
-void Func_02002c58(s32 a);
-s32 Func_02002c80(void);
 void Func_02002c88(s32 a, s32 b);
-void Func_02002c90(s32 a);
 void Func_02000f80(void);
 void Func_020019d8(void);
 
@@ -90,7 +57,7 @@ void Func_020029c8(void) {
   if (*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154) > 34)
     next = 15;
   Actor_ArmCallback(4, FACING_NORTH, 0);
-  FieldEvent_Wait(10);
+  Event_Wait(10);
   Actor_GetById(4)->actionFlags &= 0xfe;
   Actor_OffsetPositionAndResetMotion(4, 0, 4);
   Actor_WaitForMoveById(4);
@@ -99,9 +66,9 @@ void Func_020029c8(void) {
   Actor_OffsetPositionAndResetMotion(4, 0, 16);
   Actor_WaitForMoveById(4);
   Actor_SetModeById(4, 10);
-  FieldEvent_Wait(10);
-  Func_02002c90(123);
-  Func_02002c30(next);
+  Event_Wait(10);
+  Sound_Play(123);
+  Import_EventSetExitRequest(next);
   Func_02002b30();
 }
 
@@ -109,7 +76,7 @@ void Func_02002a58(void) {
   s32 id;
 
   Func_02002b28();
-  Func_02002c58(0);
+  Event_ResolvePendingActions(0);
   CommitPos(4, 0, -14);
   id = 4;
   Actor_CommitPositionAndActivate(id, 16, 0);
@@ -120,7 +87,7 @@ void Func_02002a80(void) {
   s32 id, x, z;
 
   Func_02002b28();
-  Func_02002c58(0);
+  Event_ResolvePendingActions(0);
   CommitPos(4, -2, -6);
   x = 14;
   z = 8;
@@ -135,7 +102,7 @@ void Func_02002ab0(void) {
   s32 id, a;
 
   Func_02002b28();
-  Func_02002c58(0);
+  Event_ResolvePendingActions(0);
   a = 192;
   id = 4;
   /* FAKEMATCH: the actor id comes between the angle byte and its shift. */

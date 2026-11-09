@@ -1,4 +1,5 @@
 #include "types.h"
+#include "event_inline.h"
 
 struct EpilogueWindow {
   u8 unk00[8];
@@ -19,7 +20,6 @@ struct EpilogueWindow *Message_OpenWindow(s32 id, s32 x, s32 y,
 struct EpilogueWindow *Func_02000804(s32 message, s32 a, s32 left, s32 line);
 s32 Message_AllTyped(void);
 void Window_Close(struct EpilogueWindow *window, s32 mode);
-void wait(s32 frames);
 
 /// Opens the epilogue's message window at x and y and, unless bit 15 of the
 /// message is set, a name window at left and line that Func_0200005c follows;

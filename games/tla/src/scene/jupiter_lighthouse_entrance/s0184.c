@@ -6,7 +6,6 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
-s32 Func_02001aec();
+#include "event_inline.h"
 
-void Func_02000184(void) { Func_02001aec(4); }
+void Func_02000184(void) { Import_EventSetExitRequest(4); }

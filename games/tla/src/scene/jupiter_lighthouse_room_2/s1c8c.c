@@ -3,6 +3,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "io_reg.h"
+#include "event_inline.h"
 
 struct CellTargetEntry;
 
@@ -18,15 +19,8 @@ struct CellTarget {
   s16 tile;
 };
 
-struct Actor *Actor_GetById(s32 id);
 void Func_02001b94(void);
-void Func_0200232c(s32 sound);
-void Func_02002204(s32 srcX, s32 srcZ, s32 width, s32 height, s32 dstX,
-                   s32 dstZ);
-void FieldEvent_Wait(s32 frames);
-void wait(s32 frames);
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-void Actor_SetModeById(u32 id, s32 mode);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 #include "io_write.h"
@@ -37,9 +31,9 @@ void Func_02001c8c(struct CellTarget *table, struct CellTargetEntry *entry) {
   s32 z = (leader->z >> 20) | (s16)(table->z & 64);
 
   Func_02001b94();
-  Func_0200232c(229);
-  Func_02002204(table->x, table->z + 2, 1, 1, x, z);
-  FieldEvent_Wait(12);
+  Sound_Play(229);
+  Map_CopyCellsRect(table->x, table->z + 2, 1, 1, x, z);
+  Event_Wait(12);
   leader->angle = 0x4000;
   leader->motionFlags = 0;
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
@@ -48,11 +42,11 @@ void Func_02001c8c(struct CellTarget *table, struct CellTargetEntry *entry) {
   REG_DISPCNT |= 0x8000;
   table->shown = 1;
   Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
-  FieldEvent_Wait(16);
+  Event_Wait(16);
   x = 0;
   do {
     if (x == 5)
-      Func_0200232c(204);
+      Sound_Play(204);
     leader->scaleX += -0x400;
     leader->scaleY += -0x300;
     leader->y += -0x9999;

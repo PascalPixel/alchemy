@@ -49,15 +49,15 @@ void Func_02000708(struct TundariaTowerPosition *position, s32 count,
                    s32 scale);
 void Func_02002c1c(s32 a, s32 b, s32 owner);
 void Func_02002cc0(void);
-void Func_02002fc0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02002fe8(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Map_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02003048(void);
 void Func_02003050(void);
-void Func_02003088(s32 id, s32 x, s32 z);
+void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Func_020030c0(s32 id);
 void Func_02003100(void);
 void Func_02003140(void);
-void Func_02003148(s32 a);
+void Event_ResolvePendingActions(s32 a);
 void Func_02003170(const u8 *script);
 
 extern const u8 MsgThereSSomething[];
@@ -80,14 +80,14 @@ extern const u8 gData_02003c90[];
 void Func_02000840(struct Actor *object);
 void Func_02002ebc(void);
 
-void Func_02003000(s32 a, s32 b, s32 c);
-void Func_02003108(s32 color, s32 b);
-void Func_02003110(s32 color, s32 b);
+void Map_SetScreenShake(s32 a, s32 b, s32 c);
+void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 b);
+void BattleEffect_ApplyColorToSourceBuffer(s32 color, s32 b);
 void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
 
 static inline void TundariaTower_FadeFrom(s32 color, s32 b) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003110(color, b);
+  BattleEffect_ApplyColorToSourceBuffer(color, b);
 }
 
 static inline void TundariaTower_ObjPlace(s32 actor, s32 x, s32 z) {
@@ -98,7 +98,7 @@ static inline void TundariaTower_ObjPlace(s32 actor, s32 x, s32 z) {
 
 static inline void TundariaTower_SetWork(s32 a, s32 b, s32 c) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003000(a, b, c);
+  Map_SetScreenShake(a, b, c);
 }
 
 #endif

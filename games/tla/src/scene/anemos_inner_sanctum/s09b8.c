@@ -1,15 +1,12 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
+#include "event_inline.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
 extern s32 gData_02003584[];
 
-struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 void Animation_SetStateFlags(struct Actor *object, s32 flags);
-void Actor_SetPartAttribute(struct Actor *object, s32 part);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_020032e0(struct Actor *object, s32 mode);
@@ -26,7 +23,8 @@ void Func_020009b8(s32 x, s32 y, s16 part, s16 a3) {
   s32 i;
 
   for (i = 0; i != 16;) {
-    struct Actor *object = Import_ActorCreate(0x2a0, x, y, 0x980000);
+    struct Actor *object =
+        ((struct Actor *)Import_ActorCreate(0x2a0, x, y, 0x980000));
     s32 angle = i << 12;
 
     Vector_AddPolarOffsetFar_(0x200000, angle, &object->x);

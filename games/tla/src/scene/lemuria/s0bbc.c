@@ -1,6 +1,6 @@
 #include "types.h"
+#include "event_inline.h"
 
-void Task_Add(void (*func)(void), s32 priority);
 void Func_02000b28(void);
 void Func_02000ad8(void);
 

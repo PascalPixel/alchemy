@@ -2,12 +2,10 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "field_effect.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 u32 Random16Far(void);
-void GameFlag_SetBit(s32 flag);
 void Func_02000338(struct Actor *object);
-void Func_02002fc0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
@@ -34,7 +32,8 @@ void Func_02000a48(s32 arg0, s32 arg1) {
     object->scaleY = 0x10000;
     GameFlag_SetBit(object->action);
     Func_02000338(Actor_GetById(effectWork[13]));
-    Func_02002fc0(67, 23, (object->x >> 20) + 64, object->z >> 20, 1, 1);
+    Map_CopyCellPictureIndicesRect(67, 23, (object->x >> 20) + 64,
+                                   object->z >> 20, 1, 1);
     object->z = 0;
     object->y = 0;
     object->x = 0;

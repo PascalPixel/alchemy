@@ -3,12 +3,12 @@
 #include "frame.h"
 
 s32 Math_Sine(s32 angle);
-void Func_020048d4(s32 actor, s32 a);
+void Func_080d489c(s32 actor, s32 a);
 
 static __inline__ void I_Func_020048d4(s32 actor, s32 a) {
   /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; called
    * directly at its one site, 2 of 37 instructions differ in tla-en. */
-  Func_020048d4(actor, a);
+  Func_080d489c(actor, a);
 }
 
 s32 Func_02000a78(void) {

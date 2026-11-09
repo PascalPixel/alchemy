@@ -1,7 +1,7 @@
 #include "iwram_call.h"
 #include "types.h"
-#include "call.h"
 #include "vector3.h"
+#include "event_inline.h"
 
 struct SpringTossMotion {
   u8 unused[2];
@@ -29,12 +29,9 @@ extern s32 gData_02001828;
 extern u8 gData_02001746[];
 extern u8 gData_02001749[];
 
-struct Actor *Actor_GetById(u32 id);
 void Func_020008f0(s32 actor, s32 active);
 void Func_020012e8(struct Actor *object, s32 mode);
-void Func_02001408(s32 cue);
 void Func_02000884(s32 id, s32 *pos, s32 dir, s32 palette, s32 value);
-s32 Math_Sine(s32 angle);
 s32 Math_Cosine(s32 angle);
 
 void Func_02000904(void) {
@@ -349,7 +346,7 @@ void Func_02000904(void) {
           toss->velocity.z = -deltaZ * speed / distance;
           toss->attractionFrames = toss->attractionFrames - 100;
         }
-        Func_02001408(301);
+        Sound_Play(301);
         nextMode = (obstacle->speedMode + 1) % 3;
         obstacle->reactionFrames = 36;
         obstacle->speedMode = nextMode;

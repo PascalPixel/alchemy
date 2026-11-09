@@ -16,12 +16,12 @@ void Func_020007d0(void);
 void Func_02000b28(s32 id);
 void Func_02001498(void);
 void Func_020015a0(s32 id, s32 value);
-void Func_0200220c(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
+void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
+                               s32 destX, s32 destY);
+void Func_0802b450(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
-void Func_02002214(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                   s32 destY);
-void Func_0200227c(s32 id, s32 x, s32 z);
-void Func_02002304(s32 x, s32 z, s32 a2, s32 a3);
+void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
+void Func_080dbdd4(s32 x, s32 z, s32 a2, s32 a3);
 void Func_02002314(s32 a);
 void Func_02002324(const void *script, s32 a, s32 b, s32 c);
 s32 Scene_SetArrivalFlags();
@@ -43,11 +43,11 @@ s32 Func_02000854(void) {
   Func_02000054();
   Func_020007d0();
   if (GameFlag_Test(0xa02)) {
-    Func_0200227c(17, 0, 0);
-    Func_0200220c(28, 39, 1, 1, 20, 39);
-    Func_02002214(28, 39, 1, 1, 20, 39);
-    Func_02002214(92, 39, 2, 3, 84, 39);
-    Func_02002304(168 << 17, 164 << 18, 2, 236);
+    Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
+    Map_CopyCellAttributeRect(28, 39, 1, 1, 20, 39);
+    Func_0802b450(28, 39, 1, 1, 20, 39);
+    Func_0802b450(92, 39, 2, 3, 84, 39);
+    Func_080dbdd4(168 << 17, 164 << 18, 2, 236);
   } else {
     Func_02001498();
     Func_020015a0(17, 0);
@@ -62,7 +62,7 @@ s32 Func_02000854(void) {
     Func_02000b28(11);
   }
   if (GameFlag_Test(0xa03)) {
-    Func_0200227c(12, 148 << 17, 208 << 15);
+    Actor_SetHorizontalPositionWithTerrain(12, 148 << 17, 208 << 15);
     Func_02000b28(12);
   }
   return 0;

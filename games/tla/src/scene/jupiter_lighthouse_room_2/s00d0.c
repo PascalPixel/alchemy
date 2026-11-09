@@ -2,23 +2,18 @@
 #include "actor.h"
 #include "field_sprite.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 extern s32 gData_02002b88[3];
 
-struct Actor *Actor_GetById(s32 id);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void Camera_FollowActor(s32 id, s32 a);
-void Task_Add(void (*func)(void), s32 priority);
-void Task_RemoveFar(void (*func)(void));
-void wait(s32 frames);
 void Func_02000054(void);
 void Func_020000b4(void);
 void Func_020021b4(struct Actor *object, s32 a);
 void Func_020021d4(struct Actor *object);
 void Func_0200224c(void);
 void Func_02002254(void);
-void Func_020022dc(s32 a);
 
 void Func_020000d0(s32 kind) {
   s32 owner = gMainRoutineWork.currentOwner;
@@ -28,7 +23,7 @@ void Func_020000d0(s32 kind) {
   s32 *target;
 
   Func_0200224c();
-  Func_020022dc(0);
+  Event_ResolvePendingActions(0);
   target = gData_02002b88;
   if (kind == 32) {
     target[0] = 136 << 16;

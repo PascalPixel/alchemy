@@ -65,7 +65,7 @@ void wait(s32 frames);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void FieldEvent_Wait(s32 frames);
+void Event_Wait(s32 frames);
 struct AlhafraInteriorsObject *Actor_GetById(s32 id);
 void Actor_SetPositionAndResetMotion(struct AlhafraInteriorsObject *object,
                                       s32 x, s32 y, s32 z);
@@ -76,16 +76,16 @@ void Actor_SetSpritePriority(s32 actor, s32 variant);
 
 void Func_02000a94(void);
 void Func_02000a9c(void);
-void Func_02000b24(s32 message);
-void Func_02000b34(s32 actor, s32 a, s32 b);
-void Func_02000b3c(s32 speaker, s32 flags);
-void Func_02000b4c(s32 actor, s32 angle);
-void Func_02000b8c(s32 skip);
+void Event_SetMessageId(s32 message);
+void Event_ShowMessageThenWait(s32 actor, s32 a, s32 b);
+void Event_ShowMessageAndWait(s32 speaker, s32 flags);
+void Actor_ArmCallbackAndRefresh(s32 actor, s32 angle);
+void Event_ResolvePendingActions(s32 skip);
 void Func_02000bc4(s32 shop, s32 keeper);
 void Func_02000bcc(s32 keeper);
 void Func_02000bd4(s32 shop, s32 keeper);
-void Func_02000bdc(s32 cue);
-void Func_02000aec(s32 actor, s32 x, s32 z);
+void Sound_Play(s32 cue);
+void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
 void Actor_SetSingleChildFlags(struct AlhafraInteriorsObject *object,
                                         u32 value);
 void Animation_SetStateFlags(struct AlhafraInteriorsObject *object, s32 flags);
@@ -106,15 +106,15 @@ void Actor_SetMovementTypeById(s32 actor, const void *callback);
 void Actor_SetMovementTypeAndWaitById(s32 actor, const void *callback);
 s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
-void Func_02000b5c(s32 actor, s32 emote, s32 frames);
-void Func_02000b64(s32 actor, s32 emote);
+void Func_080d47b4(s32 actor, s32 emote, s32 frames);
+void Func_080d489c(s32 actor, s32 emote);
 void Actor_Jump(s32 actor, s32 speed, s32 frames);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
 void Actor_WaitForMoveById(s32 actor);
 void Event_PrepareObjectAndApplyValue(s32 actor, s32 value);
 
-s32 Func_02000ba4(void);
+s32 Party_GetLeaderActor(void);
 
 // ---- this overlay
 

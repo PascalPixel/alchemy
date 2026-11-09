@@ -2,21 +2,19 @@
 /// Rewrites the map cells under a pushable actor: its sprite shape picks one of
 /// the six footprints in gData_02002484 (four signed bytes each, in sixteenths
 /// of a cell); the cells under it are copied from the map's spare area
-/// (Func_02002330) and byte 2 of both collision layers there is filled with
-/// 255. Returns 1, or 0 for a shape with no footprint. The twin of overlay
-/// 6ad's Func_02004938.
+/// (Map_CopyCellAttributeRect) and byte 2 of both collision layers there is
+/// filled with 255. Returns 1, or 0 for a shape with no footprint. The twin of
+/// overlay 6ad's Func_02004938.
 
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "field_sprite.h"
+#include "event_inline.h"
 
 extern const u16 gData_02002478[];
 extern const s8 gData_02002484[][4];
 
-struct Actor *Actor_GetById(s32 id);
-void Func_02002330(s32 x, s32 z, s32 width, s32 height, s32 toX, s32 toZ);
 void Map_FillCellRectByte2(s32 layer, s32 x, s32 y, u32 width, u32 height,
                            s32 value);
 
@@ -56,7 +54,7 @@ s32 Func_02000c78(s32 id) {
   mapZ = *(s32 *)(map + 332) >> 20;
   toX = x + (u16)i;
   toZ = z + (u16)mapZ;
-  Func_02002330(x, z, width, height, toX, toZ);
+  Map_CopyCellAttributeRect(x, z, width, height, toX, toZ);
   Map_FillCellRectByte2(0, x, z, width, height, 255);
   Map_FillCellRectByte2(2, x, z, width, height, 255);
   return 1;

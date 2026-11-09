@@ -102,9 +102,9 @@ Func_020006ec:
 	.thumb_func
 Actor_GetById:
 	overlay_veneer Actor_GetByIdFar
-	.global Func_020006fc
+	.global Actor_SetHorizontalPositionWithTerrain
 	.thumb_func
-Func_020006fc:
+Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -114,27 +114,27 @@ Actor_SetModeById:
 	.thumb_func
 Actor_WaitForAnimationChange:
 	overlay_veneer Actor_WaitForAnimationChangeFar
-	.global Func_02000714
+	.global Event_SetMessageId
 	.thumb_func
-Func_02000714:
+Event_SetMessageId:
 	overlay_veneer Event_SetMessageIdFar
-	.global Func_0200071c
+	.global Event_ShowMessageAndWait
 	.thumb_func
-Func_0200071c:
+Event_ShowMessageAndWait:
 	overlay_veneer Event_ShowMessageAndWaitFar
-	.global Func_02000724
+	.global Import_EventSetExitRequest
 	.thumb_func
-Func_02000724:
+Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_0200072c
+	.global Event_ResolvePendingActions
 	.thumb_func
-Func_0200072c:
+Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
 	.global ItemMenu_DrawItemDetails
 	.thumb_func
 ItemMenu_DrawItemDetails:
 	overlay_veneer ItemMenu_DrawItemDetailsFar
-	.global Func_0200073c
+	.global Sound_Play
 	.thumb_func
-Func_0200073c:
+Sound_Play:
 	overlay_veneer Sound_PlayFar

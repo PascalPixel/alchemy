@@ -1,27 +1,17 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
-void GameFlag_SetBit(s32 flag);
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
-void Func_0200220c(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                   s32 destY);
-void Func_02002214(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                   s32 destY);
-void Func_0200227c(s32 id, s32 x, s32 z);
-void Func_02002304(s32 x, s32 z, s32 a2, s32 a3);
-void Func_0200232c(s32 cue);
 
 static inline void CopyCells(s32 srcX, s32 srcY, s32 width, s32 height,
                              s32 destX, s32 destY) {
   /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep each stack
    * argument in its own register (differ 10 as direct calls). */
-  Func_02002214(srcX, srcY, width, height, destX, destY);
+  Func_0802b450(srcX, srcY, width, height, destX, destY);
 }
 
 /// Actor id comes down: once it rests on the terrain (or after 30 frames) cue
@@ -48,25 +38,25 @@ void Func_02000500(s32 unused, s32 id) {
                 (object->y > object->terrainHeight || object->velocityY != 0);
          i++)
       wait(1);
-    Func_0200232c(188);
+    Sound_Play(188);
   }
   if (object->x >> 20 == 20 && object->z >> 20 == 39) {
     GameFlag_SetBit(0xa02);
     Actor_SetSingleChildFlags(Actor_GetById(id), 0);
     Actor_SetSpritePriority(id, 3);
-    Func_0200227c(id, 0, 0);
-    Func_0200220c(28, 39, 1, 1, 20, 39);
-    Func_02002214(28, 39, 1, 1, 20, 39);
-    Func_02002214(92, 39, 1, 1, 84, 39);
-    FieldEvent_Wait(30);
-    Func_0200232c(167);
-    Func_02002214(92, 40, 1, 1, 84, 40);
-    FieldEvent_Wait(20);
-    Func_0200232c(167);
+    Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
+    Map_CopyCellAttributeRect(28, 39, 1, 1, 20, 39);
+    Func_0802b450(28, 39, 1, 1, 20, 39);
+    Func_0802b450(92, 39, 1, 1, 84, 39);
+    Event_Wait(30);
+    Sound_Play(167);
+    Func_0802b450(92, 40, 1, 1, 84, 40);
+    Event_Wait(20);
+    Sound_Play(167);
     CopyCells(92, 41, 1, 1, 84, 41);
-    FieldEvent_Wait(20);
-    Func_0200232c(167);
-    Func_02002214(93, 41, 1, 1, 85, 41);
-    Func_02002304(168 << 17, 164 << 18, 2, 236);
+    Event_Wait(20);
+    Sound_Play(167);
+    Func_0802b450(93, 41, 1, 1, 85, 41);
+    Func_080dbdd4(168 << 17, 164 << 18, 2, 236);
   }
 }

@@ -1,17 +1,14 @@
 /// @file
 /// On entering, sets each listed pillar from its two flags, then lifts the leader onto the ground under it.
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 extern u8 gMapShapeGrid[];
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-void Func_02003b0c(s32 id, s32 a, s32 b);
 s32 Func_02003c04(struct Actor *object);
 s32 Func_02003adc(s32 layer, s32 x, s32 z);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
@@ -42,7 +39,7 @@ next:
   cells = map->layers[object->terrainId].cells;
   shapes = gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
   if (GameFlag_Test(nextFlag)) {
-    Func_02003b0c(id, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
   } else {
     s32 shape;
     u8 *slot;

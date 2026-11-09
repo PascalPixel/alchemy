@@ -2,8 +2,8 @@
 
 void Func_02002834(s32 id);
 void Func_020025a8(s32 id);
-void Func_02002a20(s32 a, s32 b);
-void Func_02002a28(s32 frames);
+void BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
+void BattleEffect_StartBufferInterpolation(s32 frames);
 void Func_02002948(s32 layer);
 void Func_02002940(s32 layer);
 void Func_02000b10(struct Actor *object);
@@ -17,7 +17,7 @@ void Func_02000b68(s32 unused, s32 id) {
   s32 i;
 
   Func_02002998();
-  Func_02002a48(0);
+  Event_ResolvePendingActions(0);
   object->update = (void (*)(void))Func_02000b10;
   wait(30);
   if (GameFlag_Test(0xa68) == 0)
@@ -25,16 +25,16 @@ void Func_02000b68(s32 unused, s32 id) {
   else
     Func_02002834(0);
   for (i = 3; i >= 0; i--) {
-    Func_02002a20(Random16Far() & 0x7fff, 0);
-    Func_02002a28(15);
+    BattleEffect_ApplyColorToTargetBuffer(Random16Far() & 0x7fff, 0);
+    BattleEffect_StartBufferInterpolation(15);
     wait(10);
-    Func_02002a20(0x10000, 0);
-    Func_02002a28(10);
+    BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+    BattleEffect_StartBufferInterpolation(10);
     wait(10);
   }
-  Func_02002a20(0x7fff, 0);
-  Func_02002a28(20);
-  FieldEvent_Wait(20);
+  BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
+  BattleEffect_StartBufferInterpolation(20);
+  Event_Wait(20);
   if (GameFlag_Test_(0xa68) == 0) {
     GameFlag_SetBit(0xa68);
     Func_02002958_(64, 64, 1, 2, 51, 82);
@@ -56,9 +56,9 @@ void Func_02000b68(s32 unused, s32 id) {
     object->update = (void (*)(void))Func_02000b58;
     Func_020025a8(0);
   }
-  FieldEvent_Wait(30);
-  Func_02002a20(0x10000, 0);
-  Func_02002a28(30);
-  FieldEvent_Wait(15);
+  Event_Wait(30);
+  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  BattleEffect_StartBufferInterpolation(30);
+  Event_Wait(15);
   Func_020029a0();
 }

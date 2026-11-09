@@ -1,4 +1,5 @@
 #include "types.h"
+#include "event_inline.h"
 
 struct Mover {
   u8 unk00[8];
@@ -18,7 +19,6 @@ struct Mover {
   s16 spin;
 };
 
-void Vector_AddPolarOffsetFar(s32 distance, s32 angle, s32 *position);
 void Func_020006a4(struct Mover *mover);
 
 s32 Func_020006f8(struct Mover *mover) {

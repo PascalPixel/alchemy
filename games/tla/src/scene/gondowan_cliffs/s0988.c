@@ -3,9 +3,9 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
-#include "call.h"
 #include "scene_tables.h"
 #include "io_reg.h"
+#include "event_inline.h"
 
 struct MapLayerBits {
   u8 unk00[23];
@@ -18,21 +18,13 @@ extern char SceneId_Ov66bRoom1, SceneId_Ov66bRoom2;
 extern u8 gData_02001ae0[];
 void Func_02000768(void);
 void Func_020007d8(void);
-s32 GameFlag_Test(s32 flag);
-s32 Func_02001314(void);
-struct Actor *Actor_GetById(u32 id);
 void Func_020012f4(void);
 void Func_0200130c(s32 a, s32 b, s32 c, s32 d);
 void Func_020012fc(void);
 void Func_02001304(s32 a, s32 b, s32 c);
-void Func_0200124c();
-void Func_020011d4();
-void Func_020011dc();
 void Func_02000fcc(s32 a, s32 b);
 u16 *Func_02001068(s32 index, s32 actor, s32 start, s32 low, s32 high);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
-void Actor_SetModeById(u32 id, s32 mode);
-void Task_Add(void (*func)(void), s32 priority);
 void Func_02000738(void);
 
 /// Gondowan Cliffs' setup: Ov66bRoom2 runs Func_02000768 and returns; with
@@ -55,7 +47,7 @@ s32 Func_02000988(void) {
     Func_020007d8();
     return 0;
   }
-  Actor_GetById(Func_02001314())->priorityFlags |= 32;
+  Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
   /* FAKEMATCH(one-pass): the room test through the placing of actor 17 in a
    * once-only block, which loads gMainRoutineWork before the scene offset; as
    * plain statements, 2 of 227 instructions differ in tla-en. */
@@ -69,19 +61,19 @@ s32 Func_02000988(void) {
       Func_02001304(0, 8, 9);
     }
     if (GameFlag_Test(0x885))
-      Func_0200124c(14, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
     else
       Actor_GetById(14)->scaleY = 0x14000;
     if (GameFlag_Test(0x201))
-      Call6(Func_020011d4, 79, 28, 1, 1, 81, 28);
+      MapGrid_CopyCellAttributes(79, 28, 1, 1, 81, 28);
     if (GameFlag_Test(0x202))
-      Call6(Func_020011d4, 115, 35, 1, 1, 117, 35);
+      MapGrid_CopyCellAttributes(115, 35, 1, 1, 117, 35);
     Func_02000fcc(0, 240);
     Func_02001068(0, 17, 0, 0, 64);
     if (GameFlag_Test(0x886)) {
       actor = Actor_GetById(17);
-      Call6(Func_020011dc, 124, 1, 1, 1, 119, 43);
-      Call3(Func_0200124c, 17, PIXELS(1912), PIXELS(728));
+      MapGrid_CopyCellsLayered(124, 1, 1, 1, 119, 43);
+      Actor_SetPosition(17, PIXELS(1912), PIXELS(728));
       height = Map_GetTerrainHeight(0, actor->x, actor->z);
       actor->y = height;
       actor->terrainHeight = height;
@@ -89,8 +81,8 @@ s32 Func_02000988(void) {
   } while (0);
   Actor_SetModeById(16, 4);
   if (GameFlag_Test(0x884)) {
-    Call6(Func_020011d4, 74, 31, 1, 1, 74, 33);
-    Func_0200124c(15, PIXELS(1193), PIXELS(530));
+    MapGrid_CopyCellAttributes(74, 31, 1, 1, 74, 33);
+    Actor_SetHorizontalPositionWithTerrain(15, PIXELS(1193), PIXELS(530));
     Actor_GetById(15)->priorityFlags |= 2;
     Actor_GetById(15)->collisionFlags = 0;
     Actor_SetModeById(15, 2);

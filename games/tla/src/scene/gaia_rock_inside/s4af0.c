@@ -2,30 +2,20 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "iwram_call.h"
-#include "call.h"
+#include "event_inline.h"
 
 extern const u8 gData_020062d4[];
 extern const u8 gData_02006290[];
 
-struct Actor *Actor_GetById(s32 id);
 void Func_02004e5c(void);
 void Func_02004e64(void);
-void Func_02004fcc(s32 mode);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 immediate);
 void Func_02004a5c(s32 id, s32 x, s32 y, s32 z);
 void Func_02004dac(struct Actor *object, const u8 *script);
 void Func_02004d9c(struct Actor *object, s32 mode);
-struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
-void Func_02005014(s32 cue);
-void Func_02004e24(s32 x, s32 y, s32 z);
-void Func_02004f34(s32 id, s32 value);
 void Func_02004f54(void);
-void FieldEvent_Wait(s32 frames);
 void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
-void GameFlag_SetBit(s32 flag);
 
 void Func_02004af0(s32 id, s32 flag) {
   struct MainRoutineWork *entryWork = &gMainRoutineWork;
@@ -48,14 +38,15 @@ void Func_02004af0(s32 id, s32 flag) {
   leader = Actor_GetById(entryWork->currentOwner);
   gravity = leader->gravity;
   Func_02004e5c();
-  Func_02004fcc(0);
-  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
+  Event_ResolvePendingActions(0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   object = Actor_GetById(value);
   Func_02004a5c(value, leader->x, leader->y, leader->z);
   Func_02004dac(object, gData_020062d4);
   i = 15;
 burst:
-  object = Import_ActorCreate(255, leader->x, leader->y + 0x100000, leader->z);
+  object = ((struct Actor *)Import_ActorCreate(
+      255, leader->x, leader->y + 0x100000, leader->z));
   if (object != NULL) {
     u32 angle;
     u32 size;
@@ -77,13 +68,13 @@ burst:
   i--;
   if (i >= 0)
     goto burst;
-  Func_02005014(590);
-  Func_02005014(217);
-  Call3((void (*)())Func_02004e24, 0x20000, 0x20000, 0xe666);
-  Func_02004f34(gMainRoutineWork.currentOwner, 257);
+  Sound_Play(590);
+  Sound_Play(217);
+  MapGrid_SetShake(0x20000, 0x20000, 0xe666);
+  Func_080d489c(gMainRoutineWork.currentOwner, 257);
   Func_02004d9c(leader, 40);
-  FieldEvent_Wait(40);
-  Func_02005014(204);
+  Event_Wait(40);
+  Sound_Play(204);
   leader->motionFlags = 3;
   leader->gravity = 0x547a;
   for (value = 0; value < 180; value++) {
@@ -91,18 +82,18 @@ burst:
     if (leader->y <= leader->terrainHeight)
       break;
   }
-  Func_02005014(188);
+  Sound_Play(188);
   work = &gMainRoutineWork;
   leader->gravity = gravity;
-  Func_02004f34(work->currentOwner, 0);
+  Func_080d489c(work->currentOwner, 0);
   Func_02004d9c(leader, 38);
-  Call3((void (*)())Func_02004e24, 0x10000, 0x40000, 0x10000);
+  MapGrid_SetShake(0x10000, 0x40000, 0x10000);
   wait(10);
-  Call3((void (*)())Func_02004e24, -1, -1, 0xe666);
+  MapGrid_SetShake(-1, -1, 0xe666);
   wait(20);
   Camera_MoveWithinMapBounds(leader->x, leader->y, leader->z, 1);
   Func_02004f54();
-  FieldEvent_Wait(20);
+  Event_Wait(20);
   Actor_SetSingleChildFlags(leader, 1);
   Func_02004d9c(leader, 1);
   leader->velocityY = 0x40000;

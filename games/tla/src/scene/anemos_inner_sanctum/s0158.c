@@ -6,8 +6,7 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
-s32 Task_RemoveFar();
+#include "event_inline.h"
 extern u8 Func_020001f8[];
 
 void Func_02000158(void) {

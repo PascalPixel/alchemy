@@ -2,7 +2,7 @@
 
 void Func_02002998(void);
 void Func_020029a0(void);
-void Func_02002a48(s32 a);
+void Event_ResolvePendingActions(s32 a);
 void Func_02001d30(struct Actor *object);
 void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
 
@@ -13,7 +13,7 @@ void Func_0200153c(void) {
   s32 angle;
 
   Func_02002998();
-  Func_02002a48(0);
+  Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;

@@ -7,13 +7,13 @@
 
 void Func_020017dc(void);
 void Func_02001868(void);
-s32 Func_02002fe0(s32 layer, s32 x, s32 z);
+s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_02002fb0(struct Actor *object, s32 x, s32 y, s32 z);
+void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02002f80(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-void Func_02002fb8(struct Actor *object);
+void Script_WaitForEventTimeout(struct Actor *object);
 s32 Func_02003028(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 void wait(s32 frames);
 
@@ -52,9 +52,9 @@ retry:
   targetX = x;
   targetZ = z;
   layer = &object->terrainId;
-  startCell = Func_02002fe0(*layer, x, z);
+  startCell = GetMapCellCollision(*layer, x, z);
   Vector_AddPolarOffsetFar(0x100000, angle, p);
-  cell = Func_02002fe0(*layer, p[0], p[2]);
+  cell = GetMapCellCollision(*layer, p[0], p[2]);
   if (cell == 255 ||
       Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
     object->angle = angle;
@@ -95,8 +95,8 @@ overlap:
   targetZ = q[2];
   object->speedLimit = 0x20000;
   object->acceleration = 0x1999;
-  Func_02002fb0(object, q[0], q[1], q[2]);
-  Func_02002fb8(object);
+  Actor_SetMoveTarget(object, q[0], q[1], q[2]);
+  Script_WaitForEventTimeout(object);
   if (cell != startCell)
     goto moved;
 walk:
@@ -105,14 +105,14 @@ walk:
   __asm__("" : : : "sfp");
   Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
   q = position;
-  cell = Func_02002fe0(*layer, q[0], q[2]);
+  cell = GetMapCellCollision(*layer, q[0], q[2]);
   if (cell != 255)
     goto walkNext;
 blocked:
   object->speedLimit = 0x20000;
   object->acceleration = 0x10000;
-  Func_02002fb0(object, targetX, object->y, targetZ);
-  Func_02002fb8(object);
+  Actor_SetMoveTarget(object, targetX, object->y, targetZ);
+  Script_WaitForEventTimeout(object);
   wait(2);
   goto retry;
 moved:

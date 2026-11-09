@@ -1,7 +1,7 @@
 #include "types.h"
 #include "main_routine_work.h"
-#include "call.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -14,9 +14,6 @@ void Func_020019dc();
 void Func_02001db0();
 void Func_02001eb8();
 void Func_02001ee8();
-void Func_02002ba4();
-s32 GameFlag_Test();
-s32 Actor_GetById();
 extern u8 gData_020031c4[];
 
 s32 Func_02000e30(void) {
@@ -26,18 +23,18 @@ s32 Func_02000e30(void) {
   FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x204;
   if ((u32)((FIELD_AT(&gMainRoutineWork, u16, 482) + -3) << 16) > (u32)0x10000)
     goto L_02008e6e;
-  t1 = Actor_GetById(gMainRoutineWork.currentOwner);
+  t1 = ((s32)Actor_GetById(gMainRoutineWork.currentOwner));
   FIELD_AT(t1, u8, 35) = (32 | FIELD_AT(t1, u8, 35));
 L_02008e6e:
-  t2 = Actor_GetById(8);
+  t2 = ((s32)Actor_GetById(8));
   FIELD_AT(t2, s32, 24) = 0xc000;
-  t3 = Actor_GetById(8);
+  t3 = ((s32)Actor_GetById(8));
   FIELD_AT(t3, s32, 28) = 0xc000;
   Func_020019dc((s32)&gData_020031c4);
   t5 = GameFlag_Test(0xa1b);
   if (t5 == 0)
     goto L_02008eaa;
-  Func_02002ba4(16, PIXELS(136), PIXELS(600));
+  Actor_SetHorizontalPositionWithTerrain(16, PIXELS(136), PIXELS(600));
   Func_02000060(0);
 L_02008eaa:
   t8 = GameFlag_Test(0x202);
@@ -60,7 +57,7 @@ L_02008ebe:
   if (t17 == 0)
     goto L_02008f12;
 L_02008f08:
-  Func_02002ba4(18, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
 L_02008f12:
   t19 = GameFlag_Test(0xa11);
   if (t19 != 0)
@@ -72,21 +69,21 @@ L_02008f12:
   if (t21 == 0)
     goto L_02008f46;
 L_02008f3c:
-  Func_02002ba4(19, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
 L_02008f46:
-  t23 = Actor_GetById(gMainRoutineWork.currentOwner);
+  t23 = ((s32)Actor_GetById(gMainRoutineWork.currentOwner));
   FIELD_AT(t23, u8, 35) = (64 | FIELD_AT(t23, u8, 35));
-  t24 = Actor_GetById(10);
+  t24 = ((s32)Actor_GetById(10));
   FIELD_AT(t24, u8, 35) = (FIELD_AT(t24, u8, 35) | 128);
-  t25 = Actor_GetById(11);
+  t25 = ((s32)Actor_GetById(11));
   FIELD_AT(t25, u8, 35) = (FIELD_AT(t25, u8, 35) | 128);
-  t26 = Actor_GetById(12);
+  t26 = ((s32)Actor_GetById(12));
   FIELD_AT(t26, u8, 35) = (FIELD_AT(t26, u8, 35) | 128);
-  t27 = Actor_GetById(13);
+  t27 = ((s32)Actor_GetById(13));
   FIELD_AT(t27, u8, 35) = (FIELD_AT(t27, u8, 35) | 128);
-  t28 = Actor_GetById(14);
+  t28 = ((s32)Actor_GetById(14));
   FIELD_AT(t28, u8, 35) = (FIELD_AT(t28, u8, 35) | 128);
-  t29 = Actor_GetById(15);
+  t29 = ((s32)Actor_GetById(15));
   v5 = (128 | FIELD_AT(t29, u8, 35));
   FIELD_AT(t29, u8, 35) = v5;
   return 0;

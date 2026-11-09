@@ -6,33 +6,14 @@
 #include "main_routine_work.h"
 #include "system/io_reg.h"
 #include "text/msg_ids.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 void Func_02004e5c(void);
-void Func_02004fcc(s32 mode);
-void FieldMessage_Show(s32 message, s32 position);
-void Func_02004f2c(s32 id, s32 animation, s32 frames);
-void Actor_ResetAndSetPositionInMode2(u32 objectId, s32 x, s32 z);
-void Actor_WaitForMoveById(u32 objectId);
 void Func_02004ec4(s32 id, s32 target);
-void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
-void Func_02004f0c(s32 message);
-void Func_02004f14(s32 id, s32 flags);
-void FieldEvent_Wait(s32 frames);
-void Motion_SetModeAndWaitAnimation(u32 objectId, s32 action);
-void Func_02004e24(s32 x, s32 y, s32 z);
-void Func_02004e2c(void);
 void Func_02004ddc(void);
-void wait(s32 frames);
 void Func_020015d0(s32 a, s32 b);
 void Func_02004dd4(void);
-void Func_02004ebc(s32 id, s32 x, s32 z);
 void Party_LearnAbility(s32 unit, s32 ability);
-void GameFlag_SetBit(s32 flag);
-void Actor_SetSpeedParameters(u32 objectId, s32 speedLimit,
-                                     s32 acceleration);
-void Actor_SetModeById(u32 id, s32 mode);
-void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
 s32 Func_02004e64(void);
 
 s32 Func_020019cc(void) {
@@ -46,46 +27,39 @@ s32 Func_020019cc(void) {
    * call.h, so each builds its own; as direct calls, 32 of 250 instructions differ
    * in tla-en. */
   Func_02004e5c();
-  Call1((void (*)())Func_02004fcc, 0);
+  FieldEvent_ResolvePendingActions(0);
   message = (s32)MsgGaiaRockInside09;
   ((s32 (*)())FieldMessage_Show)(message, 1);
-  Call3((void (*)())Func_02004f2c, gMainRoutineWork.currentOwner, 0x100, 0);
+  Actor_ShowEmote(gMainRoutineWork.currentOwner, 0x100, 0);
   if (leader->z >> 19 <= 39) {
-    Call3((void (*)())Actor_ResetAndSetPositionInMode2,
-          gMainRoutineWork.currentOwner, 0x1b8, 0x148);
+    Actor_WalkTo(gMainRoutineWork.currentOwner, 0x1b8, 0x148);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   }
-  Call2((void (*)())Func_02004ec4, 11, gMainRoutineWork.currentOwner);
-  Call3((void (*)())Actor_ResetAndSetPositionInMode2,
-        gMainRoutineWork.currentOwner, 0x1d6, 0x162);
-  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 11, 0x1be, 0x162);
+  Func_02004ec4(11, gMainRoutineWork.currentOwner);
+  Actor_WalkTo(gMainRoutineWork.currentOwner, 0x1d6, 0x162);
+  Actor_WalkTo(11, 0x1be, 0x162);
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Call1((void (*)())Actor_WaitForMoveById, 11);
-  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xc000,
-        0);
-  Call3((void (*)())Actor_ArmCallback, 11, 0, 0);
-  Func_02004f0c(message + 1);
-  Call2((void (*)())Func_02004f14, 11, 0);
-  Call1((void (*)())FieldEvent_Wait, 10);
-  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x8000,
-        0);
-  Call1((void (*)())FieldEvent_Wait, 10);
-  Call2((void (*)())Motion_SetModeAndWaitAnimation, gMainRoutineWork.currentOwner,
-        3);
-  Call1((void (*)())FieldEvent_Wait, 10);
-  Call2((void (*)())Motion_SetModeAndWaitAnimation, 11, 3);
-  Call1((void (*)())FieldEvent_Wait, 10);
-  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xc000,
-        0);
-  Call3((void (*)())Actor_ArmCallback, 11, 0xc000, 0);
-  Call1((void (*)())FieldEvent_Wait, 10);
-  Call3((void (*)())Actor_ResetAndSetPositionInMode2,
-        gMainRoutineWork.currentOwner, 0x1d2, 0x156);
+  FieldActor_WaitForMoveById(11);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xc000, 0);
+  Actor_FaceDirection(11, 0, 0);
+  Event_SetMessageId(message + 1);
+  Event_ShowMessage(11, 0);
+  FieldEvent_Wait(10);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x8000, 0);
+  FieldEvent_Wait(10);
+  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
+  FieldEvent_Wait(10);
+  Actor_SetAnimationAndWait(11, 3);
+  FieldEvent_Wait(10);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xc000, 0);
+  Actor_FaceDirection(11, 0xc000, 0);
+  FieldEvent_Wait(10);
+  Actor_WalkTo(gMainRoutineWork.currentOwner, 0x1d2, 0x156);
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Call2((void (*)())FieldMessage_Show, message + 2, 1);
-  Call3((void (*)())Func_02004e24, 0x50000, 0x70000, 0x10000);
-  Call3((void (*)())Func_02004e24, -1, -1, 0xe666);
-  Func_02004e2c();
+  Message_ShowCentered(message + 2, 1);
+  MapGrid_SetShake(0x50000, 0x70000, 0x10000);
+  MapGrid_SetShake(-1, -1, 0xe666);
+  Map_WaitForShakeToSettle();
   Func_02004ddc();
   level = REG_BLDALPHA & 0xff;
   while (level != 0) {
@@ -104,20 +78,19 @@ s32 Func_020019cc(void) {
     wait(1);
   }
   Func_02004dd4();
-  Call3((void (*)())Func_02004ebc, 12, 0, 0);
-  Call2((void (*)())Party_LearnAbility, 4, 139);
-  Call1((void (*)())GameFlag_SetBit, 0x9ba);
-  Call3((void (*)())Actor_SetSpeedParameters, 11, 0x13333, 0x9999);
-  Call2((void (*)())Actor_SetModeById, 11, 2);
+  Actor_SetPosition(12, 0, 0);
+  Party_LearnAbility(4, 139);
+  Event_SetFlag(0x9ba);
+  Actor_SetSpeed(11, 0x13333, 0x9999);
+  Actor_SetAnimation(11, 2);
   {
     struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
 
     if (owner != 0)
-      Call3((void (*)())Actor_ResetAndSetPosition, 11,
-            ((s16 *)&owner->x)[1], ((s16 *)&owner->z)[1]);
+      Actor_SetDestination(11, ((s16 *)&owner->x)[1], ((s16 *)&owner->z)[1]);
   }
-  Call1((void (*)())Actor_WaitForMoveById, 11);
-  Call3((void (*)())Func_02004ebc, 11, 0, 0);
-  Call1((void (*)())FieldEvent_Wait, 20);
+  FieldActor_WaitForMoveById(11);
+  Actor_SetPosition(11, 0, 0);
+  FieldEvent_Wait(20);
   return Func_02004e64();
 }

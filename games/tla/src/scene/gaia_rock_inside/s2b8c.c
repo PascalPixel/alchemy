@@ -5,10 +5,10 @@
 /// 180 they come back.
 
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "ram_buffer.h"
 #include "event_work.h"
+#include "event_inline.h"
 
 struct SwayState {
   u16 frame;
@@ -17,8 +17,6 @@ struct SwayState {
 
 extern struct SwayState gSceneState;
 
-s32 GameFlag_Test(s32 flag);
-struct Actor *Actor_GetById(s32 id);
 void Func_02002b58(s32 id, s32 x, s32 z);
 
 void Func_02002b8c(void) {

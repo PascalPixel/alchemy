@@ -2,23 +2,18 @@
 /// The scene's setup: places its actors, then plays what the entrance it was
 /// reached by calls for.
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "event_work.h"
+#include "event_inline.h"
 
 extern char SceneId_Ov688;
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_0200058c(s32 id, s32 x, s32 z);
 void Func_020005a4(s32 scene, s32 entrance);
 void Func_020003cc(void);
 
@@ -32,7 +27,7 @@ s32 Func_02000190(void) {
   GameFlag_SetBit(0x907);
   GameFlag_ClearBit(0x9b4);
   if (GameFlag_Test(0x909))
-    Func_0200058c(19, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
   Actor_SetSingleChildFlags(Actor_GetById(9), 0);
   Actor_SetSingleChildFlags(Actor_GetById(10), 0);
   Actor_SetSingleChildFlags(Actor_GetById(11), 0);
@@ -57,7 +52,7 @@ s32 Func_02000190(void) {
   }
   /* FAKEMATCH(wrapper): forwarded, so that the flag number is built for each call; as
    * GameFlag_Test(0x96b), 15 of 153 instructions differ in tla-en. */
-  if (gMainRoutineWork.entrance == 3 && Value1((s32 (*)())GameFlag_Test, 0x96b)) {
+  if (gMainRoutineWork.entrance == 3 && Event_GetFlag(0x96b)) {
     GameFlag_ClearBit(0x96b);
     Func_020003cc();
   }

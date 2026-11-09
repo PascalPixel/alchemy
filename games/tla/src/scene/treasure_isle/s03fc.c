@@ -6,16 +6,14 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
-s32 Func_02000f9c();
-s32 Func_02000f94();
-s32 GameFlag_SetBit();
+#include "event_inline.h"
 
 void Func_020003fc(s32 a0, s32 a1) {
-  Call6(Func_02000f9c, 0, 0x64, 3, 4,
-        (FIELD_AT((((a1 << 16) >> 12) + a0), s32, 0) + 0x3f),
-        (FIELD_AT((((a1 << 16) >> 12) + a0), s32, 4) - 2));
-  Call6(Func_02000f94, 1, 0, 1, 1, FIELD_AT((((a1 << 16) >> 12) + a0), s32, 0),
-        FIELD_AT((((a1 << 16) >> 12) + a0), s32, 4));
+  MapGrid_CopyCellsLayered(0, 0x64, 3, 4,
+                           (FIELD_AT((((a1 << 16) >> 12) + a0), s32, 0) + 0x3f),
+                           (FIELD_AT((((a1 << 16) >> 12) + a0), s32, 4) - 2));
+  MapGrid_CopyCellAttributes(1, 0, 1, 1,
+                             FIELD_AT((((a1 << 16) >> 12) + a0), s32, 0),
+                             FIELD_AT((((a1 << 16) >> 12) + a0), s32, 4));
   GameFlag_SetBit(FIELD_AT((((a1 << 16) >> 12) + a0), u16, 12));
 }

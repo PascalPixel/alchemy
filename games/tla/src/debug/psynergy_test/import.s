@@ -42,13 +42,13 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Func_02000da4
+	.global Import_ActorCreate
 	.thumb_func
-Func_02000da4:
+Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_02000dac
+	.global Map_CopyCellsRect
 	.thumb_func
-Func_02000dac:
+Map_CopyCellsRect:
 	overlay_veneer Map_CopyCellsRectFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
@@ -58,9 +58,9 @@ Actor_SetSingleChildFlags:
 	.thumb_func
 Animation_ApplyChildValues:
 	overlay_veneer Animation_ApplyChildValuesFar
-	.global Func_02000dc4
+	.global Func_0802372c
 	.thumb_func
-Func_02000dc4:
+Func_0802372c:
 	overlay_veneer Func_08020300
 	.global Window_Close
 	.thumb_func
@@ -130,9 +130,9 @@ Unit_LevelUpTo:
 	.thumb_func
 Item_AdjustCounter:
 	overlay_veneer Item_AdjustCounterFar
-	.global FieldEvent_Wait
+	.global Event_Wait
 	.thumb_func
-FieldEvent_Wait:
+Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
 	.global Func_02000e5c
 	.thumb_func
@@ -146,9 +146,9 @@ Actor_GetById:
 	.thumb_func
 Actor_SetPositionAndReset:
 	overlay_veneer Actor_SetPositionAndResetFar
-	.global Func_02000e74
+	.global Actor_SetHorizontalPositionWithTerrain
 	.thumb_func
-Func_02000e74:
+Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -162,21 +162,21 @@ Actor_Jump:
 	.thumb_func
 Actor_SetAngleToward:
 	overlay_veneer Actor_SetAngleTowardFar
-	.global Func_02000e94
+	.global Event_SetMessageId
 	.thumb_func
-Func_02000e94:
+Event_SetMessageId:
 	overlay_veneer Event_SetMessageIdFar
-	.global Func_02000e9c
+	.global Event_ShowMessageAndWait
 	.thumb_func
-Func_02000e9c:
+Event_ShowMessageAndWait:
 	overlay_veneer Event_ShowMessageAndWaitFar
 	.global Actor_ArmCallback
 	.thumb_func
 Actor_ArmCallback:
 	overlay_veneer Actor_ArmCallbackFar
-	.global Func_02000eac
+	.global Func_080d47b4
 	.thumb_func
-Func_02000eac:
+Func_080d47b4:
 	overlay_veneer Func_080c8210
 	.global Func_02000eb4
 	.thumb_func
@@ -246,7 +246,7 @@ Func_02000f2c:
 	.thumb_func
 Func_02000f34:
 	overlay_veneer Func_08108068
-	.global Func_02000f3c
+	.global Sound_Play
 	.thumb_func
-Func_02000f3c:
+Sound_Play:
 	overlay_veneer Sound_PlayFar

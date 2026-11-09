@@ -6,14 +6,8 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
+#include "event_inline.h"
 s32 Func_02004e5c();
-s32 Func_02004fcc();
-s32 PartyInventory_FindOwner();
-s32 Func_02004f0c();
-s32 Func_02004f14();
-s32 Actor_GetById();
-s32 Actor_RefreshSelectorById();
 s32 Func_02000f00();
 s32 Func_02000fac();
 s32 Func_02004e64();
@@ -26,19 +20,19 @@ void Func_020012ac(void) {
   s32 t2;
 
   Func_02004e5c();
-  Func_02004fcc(0);
+  Event_ResolvePendingActions(0);
   t2 = PartyInventory_FindOwner(0x1c3);
   if (t2 != -1) {
-    Func_02004f0c((s32)MsgGaiaRockInside07);
-    Func_02004f14(0xa, 0);
+    Event_SetMessageId((s32)MsgGaiaRockInside07);
+    Event_ShowMessageAndWait(0xa, 0);
   } else {
-    t5 = Actor_GetById(9);
+    t5 = ((s32)Actor_GetById(9));
     if (FIELD_AT(t5, s32, 0) == (s32)gData_02005610) {
       Actor_RefreshSelectorById(9);
     }
     Func_02000f00();
-    Func_02004f0c((s32)MsgGaiaRockInside04);
-    Call2(Func_02004f14, 0xa, 0);
+    Event_SetMessageId((s32)MsgGaiaRockInside04);
+    Event_ShowMessage(0xa, 0);
     Func_02000fac();
   }
   Func_02004e64();

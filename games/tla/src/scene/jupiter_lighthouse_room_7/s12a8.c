@@ -1,11 +1,11 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "field_event.h"
+#include "event_inline.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-struct FieldActor *Actor_GetById();
 s32 Map_GetTerrainHeight();
 void Func_02002b54();
 void Func_02002c44();
@@ -14,7 +14,7 @@ void Func_020012a8(s32 id) {
   struct FieldActor *object;
   s32 height;
 
-  object = Actor_GetById(id);
+  object = ((struct FieldActor *)Actor_GetById(id));
   object->motionFlags = 4;
   height = object->terrainHeight;
   WORD_AT(object, 68) = 0;

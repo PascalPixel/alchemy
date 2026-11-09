@@ -1,9 +1,9 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "field_sprite.h"
 #include "vram_tab.h"
+#include "event_inline.h"
 
 struct LinkedDetail {
   u8 unk00[22];
@@ -27,7 +27,6 @@ struct WorldMapOam {
   u16 size : 2;
 };
 
-struct Actor *Func_02004b30(s32 kind, s32 x, s32 y, s32 z);
 void Animation_ApplyChildArgument(void *sprite, s32 argument);
 void Resource_ResetEntry(s32 entry);
 void Func_02004598(struct Actor *object);
@@ -41,7 +40,8 @@ void Func_02004634(struct Actor *parent) {
   s32 i;
 
   for (i = 0; i < 2; ++i) {
-    child = Func_02004b30(271, parent->x, parent->y, parent->z);
+    child = ((struct Actor *)Import_ActorCreate(271, parent->x, parent->y,
+                                                parent->z));
     pair[i] = child;
     if (child != NULL) {
       child->terrainHeight = parent->terrainHeight;

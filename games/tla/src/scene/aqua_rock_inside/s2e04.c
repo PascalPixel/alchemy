@@ -18,13 +18,13 @@ void Func_02002e34(s32 entrance) {
   s32 i;
 
   Func_02003d7c();
-  Func_02003eac(0);
+  Event_ResolvePendingActions(0);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   leader->motionFlags = 0;
   leader->priorityFlags |= 0x20;
-  Func_02003ef4(215);
+  Sound_Play(215);
   Func_02003cc4(leader, 18);
-  Func_02003ef4(612);
+  Sound_Play(612);
   for (i = 0; i < 60; i++) {
     s32 angle;
 
@@ -38,7 +38,7 @@ void Func_02002e34(s32 entrance) {
     wait(1);
   }
   Func_02003d84();
-  Func_02003e5c(entrance);
+  Import_EventSetExitRequest(entrance);
 }
 
 void Func_0200015c(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags,

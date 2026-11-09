@@ -5,7 +5,7 @@
 #include "field_sprite.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
-#include "call.h"
+#include "event_inline.h"
 
 struct SpriteParts {
   u8 unk00[9];
@@ -24,39 +24,20 @@ void *Heap_Alloc(s32 size);
 void Heap_Release(void *block);
 void Func_02003bc8(void);
 void Func_02003bd0(void);
-void Func_02003c88(s32 skip);
 void *Resource_GetTableEntry(s32 id);
 void Func_02003af0(void *resource, void *dest);
-void Func_02003cd8(s32 cue);
-struct Actor *Actor_GetById(u32 id);
 void Func_0200092c(void);
 void Func_020008ac(void);
-struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 u32 Random16Far(void);
 void Func_02003b28(struct Actor *object, s32 mode);
 void Func_02003b38(struct Actor *object, const u8 *script);
 void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void FieldEvent_Wait(s32 frames);
-void wait(s32 frames);
-s32 Camera_FollowActor(s32 id, s32 a);
 void Func_02003c30(void);
-void Func_02003c20(s32 a, s32 b);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Task_RemoveFar(void (*func)(void));
-void Task_Add(void (*func)(void), s32 priority);
 void Func_020024b0(void);
 void Func_0200257c(void);
 void Func_02000ef4(void);
-void Func_02003c58(s32 a, s32 b);
-s32 Func_02003c50(s32 a, s32 b);
-s32 Func_02003c60(s32 frames);
-void Func_02003b98(s32 a, s32 b, s32 c);
-void Func_02003ba0(void);
 void Func_02003b00(void);
 void Func_02003af8(void);
-void Func_02003bb8(s32 hue, s32 brightness);
-void GameFlag_SetBit(s32 flag);
 
 void Func_020026b8(void) {
   u16 *buffer = Heap_Alloc(0x680);
@@ -67,7 +48,7 @@ void Func_020026b8(void) {
   s32 z;
 
   Func_02003bc8();
-  Func_02003c88(0);
+  Event_ResolvePendingActions(0);
   REG_DISPCNT &= ~0x100;
   Func_02003af0(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
                 buffer);
@@ -99,7 +80,7 @@ void Func_020026b8(void) {
     cell += 16;
   }
   Heap_Release(buffer);
-  Func_02003cd8(246);
+  Sound_Play(246);
   ((u8 *)Actor_GetById(12))[98] = 9;
   ((u8 *)Actor_GetById(12))[99] = 1;
   Actor_GetById(12)->update = Func_0200092c;
@@ -107,8 +88,9 @@ void Func_020026b8(void) {
     s32 low = gFrameCount & 3;
 
     if (low == 0) {
-      spark = Import_ActorCreate(0x2a0, Actor_GetById(12)->x,
-                                 Actor_GetById(12)->y, Actor_GetById(12)->z);
+      spark = ((struct Actor *)Import_ActorCreate(0x2a0, Actor_GetById(12)->x,
+                                                  Actor_GetById(12)->y,
+                                                  Actor_GetById(12)->z));
       {
         s32 priority = ((s8 *)Actor_GetById(12)->animation)[9] & 12;
 
@@ -127,27 +109,27 @@ void Func_020026b8(void) {
       Actor_SetPartAttribute(spark, 2);
       spark->update = Func_020008ac;
     }
-    FieldEvent_Wait(1);
+    Event_Wait(1);
   }
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02003c30();
-  Call2((void (*)())Func_02003c20, 0x10000, 0x2000);
-  Call4((void (*)())Camera_MoveWithinMapBounds, 0x980000, -1, 0x900000, 1);
+  FieldCamera_SetSpeed(0x10000, 0x2000);
+  FieldCamera_MoveTo(0x980000, -1, 0x900000, 1);
   Func_02003c30();
   Task_RemoveFar(Func_020024b0);
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 0;
-  Call2((void (*)())Func_02003c58, 0x10000, 0);
-  Call2((void (*)())Func_02003c50, 0x7fff, 0);
-  Func_02003c60(1);
+  PaletteFade_ApplySource(0x10000, 0);
+  PaletteFade_ApplyTarget(0x7fff, 0);
+  BattleEffect_StartBufferInterpolation(1);
   wait(1);
-  Call2((void (*)())Func_02003c58, 0x7fff, 0);
-  Call2((void (*)())Func_02003c50, 0x10000, 0);
-  Func_02003c60(8);
+  PaletteFade_ApplySource(0x7fff, 0);
+  PaletteFade_ApplyTarget(0x10000, 0);
+  BattleEffect_StartBufferInterpolation(8);
   Task_Add(Func_0200257c, 0xc80);
-  Func_02003cd8(163);
+  Sound_Play(163);
   REG_DISPCNT |= 0x100;
-  Call3((void (*)())Func_02003b98, 0x30000, 0x30000, 0x10000);
+  MapGrid_SetShake(0x30000, 0x30000, 0x10000);
   z = 0xffff8000;
   for (i = 0x4000; i != 0x48000; i += 0x400, z += 0xfffffc00) {
     beam[6] = i;
@@ -162,18 +144,18 @@ void Func_020026b8(void) {
   for (i = 0; i != 257; i++) {
     REG_BLDALPHA = (8 - (i >> 5)) | 0x1000;
     ((u8 *)Actor_GetById(12))[98] = Random16Far() & 7;
-    FieldEvent_Wait(1);
+    Event_Wait(1);
   }
   REG_DISPCNT &= ~0x200;
   wait(30);
-  Call1((void (*)())Func_02003cd8, 390);
+  Event_PlaySound(390);
   REG_BLDALPHA = 0x10;
   REG_BLDCNT = 0x3f41;
-  Call3((void (*)())Func_02003b98, -1, -1, 0xe666);
+  MapGrid_SetShake(-1, -1, 0xe666);
   ((u8 *)Actor_GetById(12))[98] = 6;
   for (i = 0; i != 129; i++) {
     REG_BLDALPHA = ((i >> 3) << 8) | (0x10 - (i >> 3));
-    FieldEvent_Wait(1);
+    Event_Wait(1);
   }
   Task_RemoveFar(Func_02000ef4);
   {
@@ -183,13 +165,13 @@ void Func_020026b8(void) {
     wait(30);
     Actor_GetById(12)->update = (void (*)(void))zero;
     Actor_SetPartAttribute(Actor_GetById(12), 6);
-    Func_02003ba0();
-    FieldEvent_Wait(60);
+    Map_WaitForShakeToSettle();
+    Event_Wait(60);
     REG_BLDCNT = zero;
   }
   Func_02003b00();
   Func_02003af8();
-  Func_02003bb8(gMainRoutineWork.paletteGlow[0],
+  Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
                 gMainRoutineWork.paletteGlow[1]);
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 1;

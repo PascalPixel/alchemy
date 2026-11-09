@@ -5,7 +5,7 @@ void Func_02000a24(void) {
   const u8 *message;
 
   Func_02003d7c();
-  Func_02003eac(0);
+  Event_ResolvePendingActions(0);
   seen = GameFlag_Test(0x95d);
   message = MsgCheckedTheColumn;
   if (!seen) {

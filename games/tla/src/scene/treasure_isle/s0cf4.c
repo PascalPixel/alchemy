@@ -5,6 +5,7 @@
 #include "flag_call.h"
 #include "task.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 struct TreasureIsleEventWork {
   u8 unk000[0x1ac];
@@ -18,18 +19,15 @@ extern char SceneId_Ov6afRoom4;
 extern u32 gData_0200117c[];
 extern u32 gData_020011cc[];
 
-struct Actor *Actor_GetById(s32 id);
-s32 Task_Add(void (*func)(void), s32 priority);
 void Func_020003fc(void *cells, s32 index);
 void Func_02000ba0(void);
-void Func_02000fec(s32 id, s32 x, s32 z);
 void Func_0200105c(void);
 s32 Func_02001064(s32 a, s32 b, s32 c);
 
 static __inline__ void PlaceObject(s32 id, s32 x, s32 z) {
   /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as direct calls, 12
    * of 241 instructions differ in tla-en. */
-  Func_02000fec(id, x, z);
+  Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 
 /// Treasure Isle's setup for each of its four rooms: places the objects whose

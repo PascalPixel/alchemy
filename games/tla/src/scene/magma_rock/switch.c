@@ -3,18 +3,11 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "magma_rock.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void FieldEvent_Wait(s32 frames);
-void Actor_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
 void Func_020014bc(s32 mode, s32 cue);
 void Func_02003aec(void);
 void Func_02003af4(void);
-void Func_02003b7c(s32 a);
-void Func_02003bcc(s32 value);
-void Func_02003c54(s32 a);
 
 void Func_02001a8c(s32 mode, s32 cue) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
@@ -54,12 +47,12 @@ void Func_02001b44(void) {
 
   if (party->renderMode != 2) {
     Func_02003aec();
-    Func_02003bcc(0);
+    Event_ResolvePendingActions(0);
     Actor_GetById(party->currentOwner)->motionFlags = 0;
     Actor_ResetAndSetPositionInMode2(party->currentOwner, 264, 440);
-    FieldEvent_Wait(5);
-    Func_02003c54(123);
-    Func_02003b7c(2);
+    Event_Wait(5);
+    Sound_Play(123);
+    Import_EventSetExitRequest(2);
     Func_02003af4();
   }
   GameFlag_SetBit(0x2f8);

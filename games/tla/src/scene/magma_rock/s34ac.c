@@ -4,18 +4,16 @@
 #include "main_routine_work.h"
 #include "field_sprite.h"
 #include "field_effect.h"
+#include "event_inline.h"
 
 extern const s32 gData_02003e0c[];
 
-struct Actor *Actor_GetById(s32 id);
-struct FieldActor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 u32 Random16Far(void);
 u32 Func_02003bd4(struct FieldSprite *sprite, u32 frame);
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Func_02003a54(struct FieldEffect *effect, s32 mode);
 void Func_02003a5c(struct FieldEffect *effect, const s32 *script);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
 
 void Func_020034ac(s32 spread) {

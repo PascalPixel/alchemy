@@ -5,8 +5,8 @@
 
 void Func_02003988(void);
 void Func_020039a0(void);
-void Func_020039b8(s32 a, s32 b, s32 c);
-void Func_020039c0(void);
+void Map_SetScreenShake(s32 a, s32 b, s32 c);
+void Map_WaitForShakeToSettle(void);
 void Func_02003854(s32 actor);
 void Func_0200087c(void);
 void Func_0200092c(void);
@@ -20,14 +20,14 @@ void Func_02000994(void) {
   struct ShrineOfTheSeaGodMapLayer *layer2 = &map->layers[2];
   struct ShrineOfTheSeaGodObject *leader =
       Actor_GetById(gMainRoutineWork.currentOwner);
-  struct ShrineOfTheSeaGodObject *ride = Func_02003ad0();
+  struct ShrineOfTheSeaGodObject *ride = Func_080d4568();
   struct ShrineOfTheSeaGodObject *a = Actor_GetById(8);
   struct ShrineOfTheSeaGodObject *b = Actor_GetById(9);
   struct ShrineOfTheSeaGodObject *c = Actor_GetById(10);
   u32 i;
 
   Func_020039d8();
-  Func_02003b08(0);
+  Event_ResolvePendingActions(0);
   ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
@@ -55,8 +55,8 @@ void Func_02000994(void) {
       ->screenEffect = 0x209;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Call3((void (*)())Func_020039b8, 0x10000, 0x10000, 0x10000);
-  Func_02003b48(245);
+  Call3((void (*)())Map_SetScreenShake, 0x10000, 0x10000, 0x10000);
+  Sound_Play(245);
   i = 0;
   do {
     i++;
@@ -89,11 +89,11 @@ void Func_02000994(void) {
   Func_0200094c(65, 58);
   Io_Write16(0xf05, &REG_BLDALPHA);
   Func_0200094c(65, 51);
-  Call3((void (*)())Func_020039b8, 0, 0x10000, 0x10000);
+  Call3((void (*)())Map_SetScreenShake, 0, 0x10000, 0x10000);
   Io_Write16(0x1004, &REG_BLDALPHA);
   wait(10);
-  Func_02003b48(390);
-  Call3((void (*)())Func_020039b8, -1, -1, 0xe666);
+  Sound_Play(390);
+  Call3((void (*)())Map_SetScreenShake, -1, -1, 0xe666);
   Io_Write16(0x1003, &REG_BLDALPHA);
   wait(10);
   Io_Write16(0x1002, &REG_BLDALPHA);
@@ -104,7 +104,7 @@ void Func_02000994(void) {
   ShrineOfTheSeaGod_CopyRect(103, 51, 6, 56, 18, 25);
   ShrineOfTheSeaGod_CopyRect(46, 108, 9, 12, 12, 3);
   wait(10);
-  Func_020039c0();
+  Map_WaitForShakeToSettle();
   ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 0x204;
   Func_02003854(8);

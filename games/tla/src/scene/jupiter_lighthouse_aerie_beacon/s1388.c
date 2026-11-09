@@ -8,24 +8,24 @@
 
 #include "call.h"
 s32 Func_02005814();
-s32 Func_02005984();
-s32 Func_0200588c();
+s32 Event_ResolvePendingActions();
+s32 Actor_SetHorizontalPositionAndAngleWithTerrain();
 s32 Actor_SetModeById();
 s32 Camera_MoveWithinMapBounds();
 s32 Event_StartScreenTransition();
 s32 Event_WaitTransitionFrames();
-s32 Func_020058c4();
-s32 Func_020058d4();
-s32 Func_020058fc();
+s32 Event_SetMessageId();
+s32 Event_ShowMessageThenWait();
+s32 Func_080d47b4();
 s32 Actor_GetById();
 s32 Actor_OffsetPositionAndResetMotion();
 s32 Actor_WaitForMoveById();
 s32 Camera_FollowActor();
 s32 Actor_SetPositionAndReset();
-s32 Func_020058ec();
-s32 FieldEvent_Wait();
+s32 Actor_ArmCallbackAndRefresh();
+s32 Event_Wait();
 s32 Actor_ArmCallback();
-s32 Func_020058dc();
+s32 Event_ShowMessageAndWait();
 s32 Actor_OffsetPositionAndReset();
 s32 Unit_AddHp();
 s32 Party_SetFields1eeAnd1f0();
@@ -36,7 +36,7 @@ extern u8 gMainRoutineWork[];
 extern u8 MsgBlank5[];
 
 static __inline__ void W_Func_020058fc(s32 a0, s32 a1, s32 a2) {
-  Func_020058fc(a0, a1, a2);
+  Func_080d47b4(a0, a1, a2);
 }
 
 void Func_02001388(void) {
@@ -61,18 +61,23 @@ void Func_02001388(void) {
   s32 t36;
 
   Func_02005814();
-  Call1(Func_02005984, 0);
+  Call1(Event_ResolvePendingActions, 0);
   fast = 0xa000;
-  Call4(Func_0200588c, 4, 0x2000000, 0x1380000, fast);
-  Call4(Func_0200588c, 7, 0x2100000, 0x1300000, fast);
+  Call4(Actor_SetHorizontalPositionAndAngleWithTerrain, 4, 0x2000000, 0x1380000,
+        fast);
+  Call4(Actor_SetHorizontalPositionAndAngleWithTerrain, 7, 0x2100000, 0x1300000,
+        fast);
   slow = 0x2000;
-  Call4(Func_0200588c, 0x1b, 0x1f80000, 0x1300000, slow);
+  Call4(Actor_SetHorizontalPositionAndAngleWithTerrain, 0x1b, 0x1f80000,
+        0x1300000, slow);
   {
-    Call4(Func_0200588c, 0x1c, 0x2080000, 0x1200000, slow);
+    Call4(Actor_SetHorizontalPositionAndAngleWithTerrain, 0x1c, 0x2080000,
+          0x1200000, slow);
   }
   {
     s32 north = 0xc000;
-    Call4(Func_0200588c, 5, 0x2280000, 0x1880000, north);
+    Call4(Actor_SetHorizontalPositionAndAngleWithTerrain, 5, 0x2280000,
+          0x1880000, north);
   }
   Call2(Actor_SetModeById, 0x1b, 9);
   Call2(Actor_SetModeById, 0x1c, 8);
@@ -81,8 +86,8 @@ void Func_02001388(void) {
   Call4(Camera_MoveWithinMapBounds, 0x2080000, 0x680000, 0x1380000, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Call1(Func_020058c4, (s32)MsgBlank5);
-  Call3(Func_020058d4, 5, 0, 0);
+  Call1(Event_SetMessageId, (s32)MsgBlank5);
+  Call3(Event_ShowMessageThenWait, 5, 0, 0);
   W_Func_020058fc(4, 0x100, 0);
   W_Func_020058fc(7, 0x100, 0);
   W_Func_020058fc(0x1c, 0x100, 0);
@@ -118,22 +123,22 @@ void Func_02001388(void) {
   FIELD_AT((t36 + 0x5a), u8, 0) = (1 | FIELD_AT((t36 + 0x5a), u8, 0));
   Call2(Camera_FollowActor, 4, 1);
   Call3(Actor_SetPositionAndReset, 5, 0x228, 0x158);
-  Func_020058fc(5, 0x102, 0x1e);
-  Call3(Func_020058d4, 5, 0, 0);
-  Call2(Func_020058ec, 7, 0x4000);
-  Call1(FieldEvent_Wait, 0xa);
-  Call3(Func_020058d4, 7, 0, 0);
-  Call2(Func_020058ec, 0x1c, 0x6000);
-  Func_020058fc(0x1c, 0x107, 0x1e);
-  Call3(Func_020058d4, 0x1c, 0, 0);
-  Call3(Func_020058d4, 0x1b, 0, 0);
+  Func_080d47b4(5, 0x102, 0x1e);
+  Call3(Event_ShowMessageThenWait, 5, 0, 0);
+  Call2(Actor_ArmCallbackAndRefresh, 7, 0x4000);
+  Call1(Event_Wait, 0xa);
+  Call3(Event_ShowMessageThenWait, 7, 0, 0);
+  Call2(Actor_ArmCallbackAndRefresh, 0x1c, 0x6000);
+  Func_080d47b4(0x1c, 0x107, 0x1e);
+  Call3(Event_ShowMessageThenWait, 0x1c, 0, 0);
+  Call3(Event_ShowMessageThenWait, 0x1b, 0, 0);
   Actor_ArmCallback(0x1c, slow, 0);
-  Func_020058ec(0x1b, slow);
-  Call2(Func_020058ec, 5, fast);
-  Call1(FieldEvent_Wait, 0xa);
-  Call2(Func_020058dc, 5, 0);
+  Actor_ArmCallbackAndRefresh(0x1b, slow);
+  Call2(Actor_ArmCallbackAndRefresh, 5, fast);
+  Call1(Event_Wait, 0xa);
+  Call2(Event_ShowMessageAndWait, 5, 0);
   Call3(Actor_OffsetPositionAndReset, 5, -8, -24);
-  Call2(Func_020058ec, 4, slow);
+  Call2(Actor_ArmCallbackAndRefresh, 4, slow);
   /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds
    * the order around it; as the plain statement, 2 of 349 instructions differ
    * in tla-en. */
@@ -144,12 +149,12 @@ void Func_02001388(void) {
    * the order around it; as the plain statement, 2 of 349 instructions differ
    * in tla-en. */
   do {
-    Call1(FieldEvent_Wait, 0x14);
+    Call1(Event_Wait, 0x14);
   } while (0);
   Call3(Actor_ArmCallback, 7, fast, 0);
-  Call2(Func_020058ec, 4, fast);
-  Call2(Func_020058ec, 5, fast);
-  Call1(FieldEvent_Wait, 0xa);
+  Call2(Actor_ArmCallbackAndRefresh, 4, fast);
+  Call2(Actor_ArmCallbackAndRefresh, 5, fast);
+  Call1(Event_Wait, 0xa);
   Call3(Actor_OffsetPositionAndResetMotion, 4, -16, -8);
   Call3(Actor_OffsetPositionAndResetMotion, 7, -16, -8);
   Call3(Actor_OffsetPositionAndResetMotion, 5, -16, -8);
@@ -165,7 +170,7 @@ void Func_02001388(void) {
   FIELD_AT(t69, s32, 40) = 0x40000;
   t70 = Value1(Actor_GetById, 0x1c);
   FIELD_AT(t70, s32, 40) = 0x40000;
-  Call1(FieldEvent_Wait, 4);
+  Call1(Event_Wait, 4);
   if (FIELD_AT(gMainRoutineWork, s16, 598) == -1) {
     Call2(Unit_AddHp, 4, -10);
   }

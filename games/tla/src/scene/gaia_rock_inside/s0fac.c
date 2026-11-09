@@ -1,6 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "iwram_call.h"
+#include "event_inline.h"
 
 extern struct Actor gData_0200646c;
 extern s32 gData_020064ec;
@@ -10,11 +11,7 @@ extern s32 gData_020064f8;
 extern s32 gData_020055c0[];
 extern s32 gData_0200559c[];
 
-struct Actor *Actor_GetById(s32 id);
-void Actor_ResetAndSetPositionInMode2(u32 objectId, s32 x, s32 z);
-void Actor_WaitForMoveById(u32 objectId);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-void Actor_SetModeById(u32 id, s32 mode);
 
 void Func_02000fac(void) {
   struct Actor *walker = Actor_GetById(9);

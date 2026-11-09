@@ -1,24 +1,18 @@
-#include "call.h"
 #include "types.h"
 #include "actor.h"
 #include "field/event_work.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
 #include "field_effect.h"
+#include "event_inline.h"
 
 extern u32 gFrameCount;
 extern u32 gData_02003d50[];
 
-struct FieldActor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 s32 Math_Cosine(s32 angle);
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Camera_FollowActor(s32 id, s32 flag);
 void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
 u32 Random16Far(void);
-void wait(s32 frames);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 s32 Func_020005a0(s32 *a, s32 *b);
@@ -29,13 +23,9 @@ void Func_02000d40(void);
 void Func_020011b8(void);
 void Func_02003a54(struct Actor *object, s32 a);
 void Func_02003a6c(struct Actor *object);
-void Func_02003a84(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_02003a8c(struct Actor *object);
 void Func_02003aec(void);
 s32 Func_02003af4(void);
-void Func_02003b5c(s32 a, s32 b);
 void Func_02003b6c(void);
-void Func_02003bcc(s32 value);
 
 s32 Func_020011e4(struct Actor *source) {
   s32 position[3];
@@ -59,7 +49,7 @@ s32 Func_020011e4(struct Actor *source) {
   Func_02003a54(object, 1);
   Actor_SetSingleChildFlags(object, 0);
   Func_02003aec();
-  Func_02003bcc(0);
+  Event_ResolvePendingActions(0);
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
@@ -92,12 +82,12 @@ stop:
   object->acceleration = 0x20000;
   object->speedLimit = 0x20000;
   object->update = Func_02000d40;
-  Func_02003a84(object, position[0], position[1], position[2]);
-  /* FAKEMATCH(wrapper): the form kept; as Func_02003b5c(0x20000, 0x4000), 2 of
-   * 260 instructions differ in tla-en. */
-  Call2((void (*)())Func_02003b5c, 0x20000, 0x4000);
+  Actor_SetMoveTarget(object, position[0], position[1], position[2]);
+  /* FAKEMATCH(wrapper): the form kept; as Camera_SetSpeedParameters(0x20000,
+   * 0x4000), 2 of 260 instructions differ in tla-en. */
+  FieldCamera_SetSpeed(0x20000, 0x4000);
   Camera_MoveWithinMapBounds(position[0], position[1], position[2], 1);
-  Func_02003a8c(object);
+  Script_WaitForEventTimeout(object);
   object->update = NULL;
   Func_02003a6c(object);
   for (i = 0; i != 16; i++) {
@@ -128,17 +118,17 @@ hit:
   object->acceleration = 0x20000;
   object->speedLimit = 0x20000;
   object->update = Func_02000d40;
-  Func_02003a84(object, position[0], position[1], position[2]);
-  /* FAKEMATCH(wrapper): the form kept; as Func_02003b5c(0x20000, 0x4000), 2 of
-   * 260 instructions differ in tla-en. */
-  Call2((void (*)())Func_02003b5c, 0x20000, 0x4000);
+  Actor_SetMoveTarget(object, position[0], position[1], position[2]);
+  /* FAKEMATCH(wrapper): the form kept; as Camera_SetSpeedParameters(0x20000,
+   * 0x4000), 2 of 260 instructions differ in tla-en. */
+  FieldCamera_SetSpeed(0x20000, 0x4000);
   Camera_MoveWithinMapBounds(position[0], position[1], position[2], 1);
-  Func_02003a8c(object);
+  Script_WaitForEventTimeout(object);
   object->update = NULL;
   Func_02003a6c(object);
   /* FAKEMATCH(wrapper): the form kept; as GameFlag_SetBit(0x2f0), 8 of 260
    * instructions differ in tla-en. */
-  Call1((void (*)())GameFlag_SetBit, 0x2f0);
+  Event_SetFlag(0x2f0);
   Func_02000c08(i);
   GameFlag_ClearBit(0x2f0);
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);

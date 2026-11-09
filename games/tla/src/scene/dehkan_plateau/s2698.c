@@ -4,19 +4,13 @@
 #include "actor.h"
 #include "field_sprite.h"
 #include "fixed_math.h"
+#include "event_inline.h"
 
-void GameFlag_SetBit(s32 flag);
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
 u32 Random16Far(void);
-struct Actor *Actor_GetById(s32 id);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02003ba0(struct Actor *object, s32 mode);
 void Func_02003ba8(struct Actor *object, const void *script);
-struct Actor *Func_02003bb0(s32 type, s32 x, s32 y, s32 z);
 s32 Func_02003d80(void *sprite, s32 frame);
-void Func_02003df8(s32 cue);
 void Effect_AdvanceMotion(struct Actor *object);
 
 /// The effect fields of an Actor, as field_effect.h names them.
@@ -44,7 +38,7 @@ void Func_02002698(s32 id, s32 center, s32 flag) {
   s32 frame;
   u32 i;
 
-  Func_02003df8(125);
+  Sound_Play(125);
   Actor_SetPartAttribute(Actor_GetById(id), 7);
   wait(2);
   Actor_SetModeById(id, 0);
@@ -61,8 +55,8 @@ void Func_02002698(s32 id, s32 center, s32 flag) {
     /* FAKEMATCH(temporary): the form kept; as one call argument, 10 of 129
      * instructions differ in tla-en. */
     y = leader->y - ((((Random16Far() * 7) << 1) >> 16) << 16);
-    object = Func_02003bb0(285, (i << 17) + leader->x - Q16_ONE * 8,
-                           y - Q16_ONE * 2, leader->z);
+    object = ((struct Actor *)Import_ActorCreate(
+        285, (i << 17) + leader->x - Q16_ONE * 8, y - Q16_ONE * 2, leader->z));
     if (object != NULL) {
       effect = (struct EffectView *)object;
       frame = Func_02003d80(effect->sprite, frame);
@@ -85,5 +79,5 @@ void Func_02002698(s32 id, s32 center, s32 flag) {
     }
   }
   GameFlag_SetBit(flag);
-  FieldEvent_Wait(20);
+  Event_Wait(20);
 }

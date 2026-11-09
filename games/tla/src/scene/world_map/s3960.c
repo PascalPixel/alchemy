@@ -4,10 +4,10 @@
 #include "sprite.h"
 #include "io_write_queue.h"
 #include "task.h"
+#include "event_inline.h"
 
 extern u8 gData_02006c08[];
 
-s32 Task_Add(void (*func)(void), s32 order);
 void Func_020036a8(void);
 
 /// While the object system runs, the world map's blend is queued for the

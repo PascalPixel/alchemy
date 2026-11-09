@@ -2,10 +2,9 @@
 #include "actor.h"
 #include "iwram_call.h"
 #include "system/vector3.h"
+#include "event_inline.h"
 
 u32 Random16Far(void);
-void Vector_AddPolarOffsetFar(s32 distance, s32 angle, struct Vector3 *v);
-void Func_02002930(struct Actor *object, s32 x, s32 y, s32 z);
 
 struct ActorTail {
   u8 head[0x5e];
@@ -49,7 +48,7 @@ again:
   goto end;
 found:
   coordinate = p->y;
-  Func_02002930(object, p->x, coordinate, p->z);
+  Actor_SetMoveTarget(object, p->x, coordinate, p->z);
 end:
   /* FAKEMATCH(temporary): the form kept; as return 0, 22 of 107 instructions
    * differ in tla-en. */

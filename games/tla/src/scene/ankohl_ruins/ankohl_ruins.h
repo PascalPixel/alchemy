@@ -35,7 +35,7 @@ extern s32 gData_02003788;
 extern s32 gData_0200378c;
 
 s32 Task_Add(void (*func)(void), s32 priority);
-void FieldEvent_Wait(s32 frames);
+void Event_Wait(s32 frames);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Actor_OffsetPositionAndResetMotion(s32 actor, s32 x, s32 z);
 void Actor_WaitForMoveById(s32 actor);
@@ -44,15 +44,15 @@ void Func_0200160c(void);
 void Func_020019a0(void);
 void Func_02001f7c(void);
 s32 Func_02002dcc(void (*callback)(void));
-void Func_02002df4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02002dfc(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02002e24(s32 a, s32 b, s32 c);
+void Map_CopyCellsRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Map_SetScreenShake(s32 a, s32 b, s32 c);
 void Func_02002e44(void);
 void Func_02002e4c(void);
-void Func_02002e94(s32 actor, s32 a, s32 b);
-void Func_02002e9c(s32 actor, s32 a);
-void Func_02002edc(s32 skip);
-void Func_02002eec(s32 cue);
+void Func_080d47b4(s32 actor, s32 a, s32 b);
+void Func_080d489c(s32 actor, s32 a);
+void Event_ResolvePendingActions(s32 skip);
+void Sound_Play(s32 cue);
 
 static inline s32 AnkohlRuins_FlagCheck(s32 flag) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
@@ -61,7 +61,7 @@ static inline s32 AnkohlRuins_FlagCheck(s32 flag) {
 
 static inline void AnkohlRuins_Call2e24(s32 a, s32 b, s32 c) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002e24(a, b, c);
+  Map_SetScreenShake(a, b, c);
 }
 
 static inline void AnkohlRuins_CamBounds(s32 x, s32 y, s32 z, s32 mode) {
@@ -72,20 +72,20 @@ static inline void AnkohlRuins_CamBounds(s32 x, s32 y, s32 z, s32 mode) {
 static inline void AnkohlRuins_Call2df4(s32 a, s32 b, s32 c, s32 d, s32 e,
                                         s32 f) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002df4(a, b, c, d, e, f);
+  Map_CopyCellsRect(a, b, c, d, e, f);
 }
 
 static inline void AnkohlRuins_Call2dfc(s32 a, s32 b, s32 c, s32 d, s32 e,
                                         s32 f) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002dfc(a, b, c, d, e, f);
+  Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Camera_FollowActor(s32 actor, s32 target);
 void Func_02002e34(struct Actor *object, s32 a);
-void Func_02002e6c(s32 id, s32 a, s32 b);
+void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
 void Func_02002eb4(void);
 
 #endif

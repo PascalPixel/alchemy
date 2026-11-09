@@ -16,7 +16,7 @@ void Func_020030b8(struct KibomboObject *object) {
 }
 
 void Func_02003104(s32 x, s32 y, s32 z) {
-  struct KibomboObject *object = Func_02005a34(0x106, x, y, z);
+  struct KibomboObject *object = Import_ActorCreate(0x106, x, y, z);
   struct FieldSprite *sprite;
 
   if (object != 0) {

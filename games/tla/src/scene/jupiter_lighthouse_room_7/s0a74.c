@@ -1,16 +1,9 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
-#include "call.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test();
-void GameFlag_ClearBit(s32 flag);
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Camera_FollowActor(s32 id, s32 flag);
 void Func_02002bd4(void);
 void Func_020009f8(s32 id, s32 x, s32 z, s32 dz, s32 dx);
 void Func_020002f0(void);
@@ -24,25 +17,24 @@ void Func_02000a74(void) {
   struct Actor *object;
   s32 i;
 
-  if (Value1(GameFlag_Test, 2576) + Value1(GameFlag_Test, 2578) +
-          Value1(GameFlag_Test, 2580) + Value1(GameFlag_Test, 2577) +
-          Value1(GameFlag_Test, 2579) + Value1(GameFlag_Test, 2581) ==
+  if (Event_GetFlag(2576) + Event_GetFlag(2578) + Event_GetFlag(2580) +
+          Event_GetFlag(2577) + Event_GetFlag(2579) + Event_GetFlag(2581) ==
       0)
     return;
   Camera_MoveWithinMapBounds(148 << 18, -1, PIXELS(248), 1);
   Func_02002bd4();
-  FieldEvent_Wait(10);
-  if (Value1(GameFlag_Test, 2576))
+  Event_Wait(10);
+  if (Event_GetFlag(2576))
     Func_020009f8(18, 35, 15, -16, 0);
-  if (Value1(GameFlag_Test, 2577))
+  if (Event_GetFlag(2577))
     Func_020009f8(19, 35, 15, -16, 0);
-  if (Value1(GameFlag_Test, 2578))
+  if (Event_GetFlag(2578))
     Func_020009f8(18, 31, 16, 16, 0);
-  if (Value1(GameFlag_Test, 2579))
+  if (Event_GetFlag(2579))
     Func_020009f8(19, 31, 16, 16, 0);
-  if (Value1(GameFlag_Test, 2580))
+  if (Event_GetFlag(2580))
     Func_020009f8(18, 33, 10, -16, 0);
-  if (Value1(GameFlag_Test, 2581))
+  if (Event_GetFlag(2581))
     Func_020009f8(19, 33, 10, -16, 0);
   GameFlag_ClearBit(2576);
   GameFlag_ClearBit(2577);
@@ -74,7 +66,7 @@ void Func_02000a74(void) {
     } while (object->y > object->terrainHeight || object->velocityY != 0);
   }
   object->motionFlags = 0;
-  FieldEvent_Wait(30);
+  Event_Wait(30);
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02002bd4();
 }

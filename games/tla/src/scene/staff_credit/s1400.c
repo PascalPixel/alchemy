@@ -5,30 +5,20 @@
 #include "main_routine_work.h"
 #include "actor.h"
 #include "event_work.h"
-#include "call.h"
+#include "event_inline.h"
 
 extern u8 gWorldMapPackedTiles[];
 extern u8 gWorldMapPackedPictures[];
 extern u8 gWorldMapPalettes[];
 extern u16 gData_02003fc0;
 
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
-void GameFlag_ClearBit(s32 flag);
-void GameFlag_SetBit(s32 flag);
-struct Actor *Actor_GetById(s32 id);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_02001ff4(s32 a, s32 b, s32 c);
-void Func_020020b4(s32 cue);
 void Func_02002074(void);
 void *Heap_AllocEwram(s32 size);
 s32 Func_02001f54(const void *source, void *destination);
-void Task_Add(void (*func)(void), s32 priority);
-void Task_RemoveFar(void (*func)(void));
 void Func_0200130c(void);
 void Func_02002024(void);
-void Func_02002084(s32 value);
 void Func_02001f74(void);
 void Heap_Release(void *pointer);
 
@@ -50,8 +40,8 @@ void Func_02001400(s32 mode) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   if (mode == 2) {
-    Func_02001ff4(0x20000, 0x30000, 0x10000);
-    Func_020020b4(141);
+    Map_SetScreenShake(0x20000, 0x30000, 0x10000);
+    Sound_Play(141);
   }
   Func_02002074();
   buffer = Heap_AllocEwram(0x4000);
@@ -78,57 +68,57 @@ void Func_02001400(s32 mode) {
   }
   Task_Add(Func_0200130c, 0x480);
   Func_02002024();
-  Func_02002084(0);
-  Func_020020b4(246);
+  Event_ResolvePendingActions(0);
+  Sound_Play(246);
   gData_02003fc0 = 0xe00;
   PUSH_PICTURE(0x3480);
-  FieldEvent_Wait(2);
+  Event_Wait(2);
   gData_02003fc0 = 0xd00;
   PUSH_PICTURE(0x2e80);
-  FieldEvent_Wait(2);
+  Event_Wait(2);
   gData_02003fc0 = 0xc00;
   PUSH_PICTURE(0x2880);
-  FieldEvent_Wait(2);
+  Event_Wait(2);
   gData_02003fc0 = 0xb00;
   PUSH_PICTURE(0x2280);
-  FieldEvent_Wait(2);
+  Event_Wait(2);
   gData_02003fc0 = 0xa00;
   PUSH_PICTURE(0x1c80);
-  FieldEvent_Wait(2);
+  Event_Wait(2);
   gData_02003fc0 = 0x900;
   PUSH_PICTURE(0x1680);
-  FieldEvent_Wait(2);
+  Event_Wait(2);
   gData_02003fc0 = 0x800;
   PUSH_PICTURE(0x1080);
-  FieldEvent_Wait(140);
+  Event_Wait(140);
   PUSH_PICTURE(0x1680);
-  FieldEvent_Wait(4);
+  Event_Wait(4);
   PUSH_PICTURE(0x1c80);
-  FieldEvent_Wait(4);
+  Event_Wait(4);
   PUSH_PICTURE(0x2280);
-  FieldEvent_Wait(4);
+  Event_Wait(4);
   gData_02003fc0 = 0x900;
   PUSH_PICTURE(0x2880);
-  FieldEvent_Wait(4);
+  Event_Wait(4);
   gData_02003fc0 = 0xa00;
   PUSH_PICTURE(0x2e80);
-  FieldEvent_Wait(4);
+  Event_Wait(4);
   gData_02003fc0 = 0xb00;
   PUSH_PICTURE(0x3480);
-  FieldEvent_Wait(4);
+  Event_Wait(4);
   gData_02003fc0 = 0xc00;
   PUSH_PICTURE(0x3a80);
   if (mode == 1) {
-    Call3((void (*)())Func_02001ff4, 0x20000, 0x20000, 0x10000);
-    Func_020020b4(141);
+    MapGrid_SetShake(0x20000, 0x20000, 0x10000);
+    Sound_Play(141);
     gData_02003fc0 = 0xd00;
-    FieldEvent_Wait(4);
+    Event_Wait(4);
     gData_02003fc0 = 0xe00;
-    FieldEvent_Wait(4);
+    Event_Wait(4);
     gData_02003fc0 = 0xf00;
-    FieldEvent_Wait(4);
+    Event_Wait(4);
     gData_02003fc0 = 0x1000;
-    FieldEvent_Wait(45);
+    Event_Wait(45);
     Task_RemoveFar(Func_0200130c);
     Func_02001f74();
     level = gData_02003fc0;
@@ -136,13 +126,13 @@ void Func_02001400(s32 mode) {
     QueueIoWriteDelay2(0x04000050, 0);
   } else {
     gData_02003fc0 = 0xd00;
-    FieldEvent_Wait(4);
+    Event_Wait(4);
     gData_02003fc0 = 0xe00;
-    FieldEvent_Wait(4);
+    Event_Wait(4);
     gData_02003fc0 = 0xf00;
-    FieldEvent_Wait(4);
+    Event_Wait(4);
     gData_02003fc0 = 0x1000;
-    FieldEvent_Wait(45);
+    Event_Wait(45);
     Task_RemoveFar(Func_0200130c);
     Func_02001f74();
     level = gData_02003fc0;

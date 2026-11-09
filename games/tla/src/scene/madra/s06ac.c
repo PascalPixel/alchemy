@@ -5,15 +5,13 @@
 #include "event_work.h"
 #include "field_sprite.h"
 #include "flag_call.h"
-#include "call.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Func_0200068c(void);
 void Func_02000f80(void);
 void Func_020019d8(void);
-void Func_02002b88(s32 id, s32 x, s32 z);
 
 /// Madra's prepare step: sets up actor 26 (larger, its sprite flags set)
 /// and places actors 26 to 28, 33 and 66 by the story flags, then runs
@@ -36,13 +34,13 @@ s32 Func_020006ac(void) {
     }
     ((struct FieldSprite *)Actor_GetById(26)->animation)->unk19 = 1;
     if (Flag_IsSet(0x8ff) == 0 && Flag_IsSet(0x8ab) != 0) {
-      Func_02002b88(27, 0, 0);
-      Func_02002b88(28, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(27, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(28, 0, 0);
       if (Flag_IsSet(0x280) == 0)
-        Func_02002b88(26, 0, 0);
+        Actor_SetHorizontalPositionWithTerrain(26, 0, 0);
     } else if (Flag_IsSet(0x8ff) != 0 || Flag_IsSet(0x910) != 0 ||
                Flag_IsSet(0x280) == 0) {
-      Func_02002b88(26, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(26, 0, 0);
     }
   }
   if (gMainRoutineWork.entrance == 9 && Flag_IsSet(0x913) == 0)
@@ -53,9 +51,9 @@ s32 Func_020006ac(void) {
       Flag_Set(0x98e);
     }
     if (Flag_IsSet(0x98e))
-      Func_02002b88(33, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(33, 0, 0);
   } else {
-    Func_02002b88(66, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(66, 0, 0);
   }
   return 0;
 }

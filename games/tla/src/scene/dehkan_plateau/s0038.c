@@ -1,7 +1,7 @@
 #include "types.h"
 #include "actor.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Func_02000128(s32 id, u32 mode, s32 flag, s32 layer);

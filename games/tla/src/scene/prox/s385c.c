@@ -1,7 +1,7 @@
 #include "types.h"
 #include "actor.h"
+#include "event_inline.h"
 
-s32 GameFlag_Test(s32 flag);
 void Actor_SetAnimationSpeed(struct Actor *object,
                                          s32 value);
 void Func_020043c4(struct Actor *object, s32 mode);

@@ -7,27 +7,8 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
-s32 GameFlag_Test();
+#include "event_inline.h"
 s32 Func_02004464();
-s32 Func_020045ec();
-s32 Func_0200463c();
-s32 Func_02004404();
-s32 GameFlag_SetBit();
-s32 FieldEvent_Wait();
-s32 Func_020044d4();
-s32 Func_02004584();
-s32 Func_0200456c();
-s32 Camera_MoveWithinMapBounds();
-s32 Actor_SetSpeedParameters();
-s32 Actor_SetPositionAndReset();
-s32 Actor_ArmCallback();
-s32 Func_0200454c();
-s32 Actor_SetModeById();
-s32 Func_0200451c();
-s32 Func_02004534();
-s32 Func_0200455c();
-s32 Motion_SetModeAndWaitAnimation();
 s32 Func_0200446c();
 extern u8 MsgProx47[];
 
@@ -35,52 +16,52 @@ void Func_02000914(void) {
   s32 t0;
   s32 t8;
 
-  t0 = Value1(GameFlag_Test, 0xa3d);
+  t0 = Event_GetFlag(0xa3d);
   if (t0 != 0) {
   } else {
     Func_02004464();
-    Func_020045ec(0);
-    Func_0200463c(158);
-    Call6(Func_02004404, 0x59, 0, 0x4d, 0x10, 1, 2);
+    Event_ResolvePendingActions(0);
+    Sound_Play(158);
+    MapGrid_CopyCellsTo(0x59, 0, 0x4d, 0x10, 1, 2);
     GameFlag_SetBit(0x200);
-    FieldEvent_Wait(10);
+    Event_Wait(10);
     {
       s32 y = 0xc0;
-      Call4(Func_020044d4, 8, PIXELS(520), PIXELS(360), y << 6);
+      Actor_SetPositionAndFacing(8, PIXELS(520), PIXELS(360), y << 6);
     }
-    t8 = Func_02004584();
+    t8 = ((s32)Func_080d4568());
     FIELD_AT((t8 + 0x55), u8, 0) = t0;
-    Func_0200456c(0x19999, 0x3333);
+    Camera_SetSpeedParameters(0x19999, 0x3333);
     Camera_MoveWithinMapBounds(PIXELS(552), -1, PIXELS(388), 1);
-    FieldEvent_Wait(10);
-    Call3(Actor_SetSpeedParameters, 8, 0x13333, 0x9999);
-    Call3(Actor_SetPositionAndReset, 8, 526, 384);
-    Call3(Actor_ArmCallback, 9, FACING_WEST, 0);
-    Call3(Actor_SetPositionAndReset, 8, 540, 388);
-    Call2(Func_0200454c, 8, 0);
+    Event_Wait(10);
+    Actor_SetSpeed(8, 0x13333, 0x9999);
+    Actor_WalkToAndWait(8, 526, 384);
+    Actor_FaceDirection(9, FACING_WEST, 0);
+    Actor_WalkToAndWait(8, 540, 388);
+    Actor_FaceDirectionAndWait(8, 0);
     Actor_SetModeById(8, 4);
-    Func_0200451c((s32)MsgProx47);
-    Call2(Func_02004534, 0x4008, 0);
-    Func_0200455c(9, 0x101, 0);
-    Call2(Func_02004534, 9, 0);
-    Call2(Actor_SetModeById, 8, 3);
-    Call2(Func_02004534, 0x4008, 0);
-    Func_0200455c(9, 0x100, 20);
-    Call3(Actor_ArmCallback, 9, 0xb000, 0);
-    Call2(Func_02004534, 9, 0);
-    Call3(Actor_ArmCallback, 8, 0xb000, 40);
-    Call2(Func_0200454c, 8, 0);
-    Call2(Actor_SetModeById, 8, 4);
-    Call2(Func_02004534, 0x4008, 0);
-    Call2(Func_0200454c, 9, FACING_WEST);
-    Call2(Motion_SetModeAndWaitAnimation, 9, 3);
-    Call2(Func_02004534, 9, 0);
-    Func_0200455c(8, 0x109, 20);
-    Call2(Func_02004534, 0x4008, 0);
-    Call2(Actor_SetModeById, 9, 3);
-    Call2(Func_02004534, 9, 0);
-    Call3(Actor_ArmCallback, 9, 0xb000, 0);
-    Call2(Func_0200454c, 8, 0xb000);
+    Event_SetMessageId((s32)MsgProx47);
+    Event_ShowMessage(0x4008, 0);
+    Func_080d47b4(9, 0x101, 0);
+    Event_ShowMessage(9, 0);
+    Actor_SetAnimation(8, 3);
+    Event_ShowMessage(0x4008, 0);
+    Func_080d47b4(9, 0x100, 20);
+    Actor_FaceDirection(9, 0xb000, 0);
+    Event_ShowMessage(9, 0);
+    Actor_FaceDirection(8, 0xb000, 40);
+    Actor_FaceDirectionAndWait(8, 0);
+    Actor_SetAnimation(8, 4);
+    Event_ShowMessage(0x4008, 0);
+    Actor_FaceDirectionAndWait(9, FACING_WEST);
+    Actor_SetAnimationAndWait(9, 3);
+    Event_ShowMessage(9, 0);
+    Func_080d47b4(8, 0x109, 20);
+    Event_ShowMessage(0x4008, 0);
+    Actor_SetAnimation(9, 3);
+    Event_ShowMessage(9, 0);
+    Actor_FaceDirection(9, 0xb000, 0);
+    Actor_FaceDirectionAndWait(8, 0xb000);
     GameFlag_SetBit(0x9c0);
     Func_0200446c();
   }

@@ -17,9 +17,9 @@ void Func_02000e78(s32 id, struct Actor *object) {
   saved = id;
   for (i = 16; i > 0; i--) {
     object->y -= PIXELS(2);
-    FieldEvent_Wait(1);
+    Event_Wait(1);
   }
-  Func_02005394(136);
+  Sound_Play(136);
   Func_020012a8(saved);
 }
 
@@ -111,12 +111,12 @@ void Func_02000fa4(void) {
 
 static inline void CopyRect(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02005184(a0, a1, a2, a3, a4, a5);
+  Map_CopyCellPictureIndicesRect(a0, a1, a2, a3, a4, a5);
 }
 
 static inline void BlendRect(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_0200518c(a0, a1, a2, a3, a4, a5);
+  Map_CopyCellAttributeRect(a0, a1, a2, a3, a4, a5);
 }
 
 void Func_02000fbc(void) {
@@ -130,8 +130,8 @@ void Func_02000fec(void) {
 }
 
 void Func_0200101c(void) {
-  Func_02005184(44, 5, 19, 5, 3, 3);
-  Func_02005184(108, 5, 83, 5, 3, 2);
+  Map_CopyCellPictureIndicesRect(44, 5, 19, 5, 3, 3);
+  Map_CopyCellPictureIndicesRect(108, 5, 83, 5, 3, 2);
   BlendRect(44, 5, 3, 3, 19, 5);
 }
 
@@ -145,10 +145,10 @@ s32 Func_0200108c(void) { return Flag_IsSet(0x310); }
 void Func_02001098(void) {
   if (Flag_IsSet(0x310)) {
     if (Flag_IsSet(0x318))
-      Func_020052cc(0x10003, 1);
+      BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
     else
-      Func_020052cc(0x10007, 1);
-    Func_020052d4(16);
+      BattleEffect_ApplyColorToTargetBuffer(0x10007, 1);
+    BattleEffect_StartBufferInterpolation(16);
   }
 }
 
@@ -158,8 +158,8 @@ void Func_020010d4(void) {
 }
 
 void Func_02001104(void) {
-  Func_02005184(39, 5, 19, 5, 3, 3);
-  Func_02005184(103, 5, 83, 5, 3, 2);
+  Map_CopyCellPictureIndicesRect(39, 5, 19, 5, 3, 3);
+  Map_CopyCellPictureIndicesRect(103, 5, 83, 5, 3, 2);
   BlendRect(39, 5, 3, 3, 19, 5);
 }
 
@@ -169,17 +169,17 @@ void Func_02001144(void) {
   if (!Flag_IsSet(0x91b)) {
     Flag_Set(0x210);
     if (gMainRoutineWork.entrance == 1) {
-      Func_020052cc(0x10003, 1);
+      BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
       Flag_Set(0x310);
       Flag_Set(0x318);
     } else {
-      Func_020052cc(0x10000, 1);
+      BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
       Flag_Clear(0x310);
       Flag_Clear(0x318);
     }
     work = Ram_HeapSlots->eventWork;
     if (work->fadeLock == 0)
-      Func_020052d4(120);
+      BattleEffect_StartBufferInterpolation(120);
   }
 }
 
@@ -189,16 +189,16 @@ void Func_020011c8(void) {
   if (!Flag_IsSet(0x91b)) {
     Flag_Set(0x211);
     if (gMainRoutineWork.entrance == 2) {
-      Func_020052cc(0x10003, 1);
+      BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
       Flag_Set(0x310);
       Flag_Set(0x318);
     } else {
-      Func_020052cc(0x10007, 1);
+      BattleEffect_ApplyColorToTargetBuffer(0x10007, 1);
       Flag_Set(0x310);
       Flag_Clear(0x318);
     }
     work = Ram_HeapSlots->eventWork;
     if (work->fadeLock == 0)
-      Func_020052d4(120);
+      BattleEffect_StartBufferInterpolation(120);
   }
 }

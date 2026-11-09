@@ -1,17 +1,14 @@
 #include "types.h"
 #include "actor.h"
+#include "event_inline.h"
 
 extern const u8 gData_020050f4[];
 
-struct Actor *Actor_GetById(s32 id);
-struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
-void Func_02005014(s32 cue);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02004d9c(struct Actor *object, s32 mode);
 void Func_02004dac(struct Actor *object, const u8 *script);
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 void Effect_AdvanceMotionAtLeaderPriority(void);
 
 struct DustSprite {
@@ -24,12 +21,12 @@ s32 Func_020007f4(void) {
   struct Actor *source = Actor_GetById(9);
   s32 i;
 
-  Func_02005014(202);
+  Sound_Play(202);
   i = 3;
   do {
     {
-      struct Actor *dust =
-          Import_ActorCreate(0x11d, source->x, source->y, source->z);
+      struct Actor *dust = ((struct Actor *)Import_ActorCreate(
+          0x11d, source->x, source->y, source->z));
 
       if (dust != 0) {
         dust->motionFlags = 0;

@@ -70,9 +70,9 @@ Func_02000804:
 	.thumb_func
 Text_GetMessageSize:
 	overlay_veneer Text_GetMessageSizeFar
-	.global FieldEvent_Wait
+	.global Event_Wait
 	.thumb_func
-FieldEvent_Wait:
+Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
 	.global Actor_GetById
 	.thumb_func
@@ -114,7 +114,7 @@ Func_0200085c:
 	.thumb_func
 Func_02000864:
 	overlay_veneer Func_081a0028
-	.global Func_0200086c
+	.global Sound_Play
 	.thumb_func
-Func_0200086c:
+Sound_Play:
 	overlay_veneer Sound_PlayFar

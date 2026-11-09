@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 extern const u8 gData_02003f44[];
 extern const u8 gData_02003f52[];
@@ -15,27 +16,16 @@ extern const u8 gData_02003fb8[];
 extern const u8 gData_02003fc0[];
 extern const u8 gData_02003fc4[];
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void wait(s32 frames);
-struct Actor *Actor_GetById(s32 id);
 void Func_020000a4(const void *data, s32 a, s32 b);
 void Func_020002f8(const void *data);
 void Func_02000708(const void *data);
 void Func_02001474(s32 show);
 void Func_02002180(void);
-void Func_02003bf0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02003c28(void);
 void Func_02003c30(void);
-void Func_02003d78(s32 skip);
 void Func_02003dc0(const void *data);
 void Func_02003dc8(void);
-void Func_02003df8(s32 cue);
-void Func_02003c68(s32 id, s32 x, s32 z);
 void Func_02003de8(void);
-void Func_02003be0(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
-                   s32 height);
 void Func_020015b8(struct Actor *object);
 void Func_0200172c(void);
 void Func_02001804(void);
@@ -58,7 +48,7 @@ static __inline__ s32 Flag_Test(s32 flag) {
 static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
                                           s32 f) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003bf0(a, b, c, d, e, f);
+  Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
 extern s32 gData_0200567c;
@@ -149,11 +139,11 @@ void Func_0200200c(struct Actor *object) {
   x = object->x >> 20;
   if (x == 12) {
     Func_02003c28();
-    Func_02003d78(0);
-    Func_02003bf0(0, 32, 1, 1, x, 11);
+    Event_ResolvePendingActions(0);
+    Map_CopyCellAttributeRect(0, 32, 1, 1, x, 11);
     wait(1);
     Func_020015b8(object);
-    Func_02003bf0(1, 32, 1, 1, x, 11);
+    Map_CopyCellAttributeRect(1, 32, 1, 1, x, 11);
     Func_02003c30();
   } else if (x == 18) {
     cell = ((struct MapCells *)Ram_HeapSlots->mapWork)->cells;
@@ -166,7 +156,7 @@ void Func_0200200c(struct Actor *object) {
     cell[2] = 11;
   } else if (x == 55) {
     Map_CopyAttributes(53, 20, 1, 1, 54, 20);
-    Func_02003bf0(57, 20, 1, 1, 56, 20);
+    Map_CopyCellAttributeRect(57, 20, 1, 1, 56, 20);
   }
 }
 

@@ -1,7 +1,7 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "field_sprite.h"
+#include "event_inline.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -11,38 +11,27 @@ extern s32 gData_0200641c[];
 extern s32 gData_02006470[];
 
 u32 Random16Far(void);
-s32 Math_Sine(u32 angle);
-struct Actor *Actor_GetById(s32 id);
-struct Actor *Func_0200576c(s32 type, s32 x, s32 y, s32 z);
 void Func_02005764(struct Actor *object, const void *script);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void Func_020059f4(s32 cue);
-void Func_020057ac(s32 a, s32 b, s32 c);
-void Func_02005954(s32 target, s32 mode);
-void Func_02005964(s32 frames);
 void SceneActor_ParkRecord(struct Actor *object);
-void Actor_SetMovementTypeById(s32 id, const void *script);
-void Actor_Stop(s32 id);
-void GameFlag_SetBit(s32 flag);
 void Func_020000ec(void);
 
-static inline void Event_PlayCue(s32 cue) { Func_020059f4(cue); }
+static inline void Event_PlayCue(s32 cue) { Sound_Play(cue); }
 
 static inline void Work_SetValuesIfNonNegative(s32 first, s32 second,
                                                s32 third) {
-  Func_020057ac(first, second, third);
+  Map_SetScreenShake(first, second, third);
 }
 
 static inline void ColorBuffer_ApplyTarget(s32 value, s32 mode) {
-  Func_02005954(value, mode);
+  BattleEffect_ApplyColorToTargetBuffer(value, mode);
 }
 
 static inline void ColorBuffer_Interpolate(s32 frames) {
-  Func_02005964(frames);
+  BattleEffect_StartBufferInterpolation(frames);
 }
 
 static inline struct Actor *Actor_Create(s32 type, s32 x, s32 y, s32 z) {
-  return Func_0200576c(type, x, y, z);
+  return ((struct Actor *)Import_ActorCreate(type, x, y, z));
 }
 
 void Func_02000198(void) {

@@ -26,10 +26,10 @@ void Func_020011a8(void) {
     if (result < 0) {
       /* FAKEMATCH(wrapper): Call2 kept; as a direct call, 2 of 151 instructions
        * differ in tla-en. */
-      Call2(Func_02001d74, owner, 0x102);
-      Func_02001c84(leader, leader->x, leader->y, leader->z + 0x80000);
+      Call2(Func_080d489c, owner, 0x102);
+      Actor_SetMoveTarget(leader, leader->x, leader->y, leader->z + 0x80000);
       Func_02001c6c(leader, 49);
-      Func_02001c8c(leader);
+      Script_WaitForEventTimeout(leader);
       do {
         wait(1);
       } while (leader->y != leader->terrainHeight);

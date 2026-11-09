@@ -1,6 +1,6 @@
 #include "types.h"
-#include "call.h"
 #include "iwram_call.h"
+#include "event_inline.h"
 
 #define GRID_WIDTH 28
 
@@ -39,8 +39,6 @@ typedef struct {
 
 extern u32 gRandomState;
 extern u8 gData_020023c4[];
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
 void *Heap_AllocEwram(s32 size);
 void Heap_Release(void *buffer);
 u32 Random16Far(void);

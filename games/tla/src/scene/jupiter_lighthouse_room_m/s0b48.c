@@ -8,7 +8,8 @@ extern u32 gData_020055ec[];
 extern u32 gData_02005644[];
 extern u32 gData_0200569c[];
 
-void Func_0200484c(s32 id, s32 x, s32 z, s32 angle);
+void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
+                                                    s32 angle);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Actor_SetMovementTypeById(s32 id, const void *script);
 void Task_Add(void (*func)(void), s32 priority);
@@ -17,7 +18,7 @@ s32 Func_02000a78(void);
 static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does (direct: differ 30 of 57). */
-  Func_0200484c(id, x, z, angle);
+  Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, angle);
 }
 
 static __inline__ void ObjSpeed(s32 id, s32 speed, s32 acceleration) {

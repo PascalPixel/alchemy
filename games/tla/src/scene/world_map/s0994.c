@@ -5,33 +5,18 @@
 #include "flag_call.h"
 #include "text/msg_ids.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 struct EventDestination {
   u8 unk000[0x154];
   s16 scene;
 };
 
-void wait(s32 frames);
-void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
-void Actor_WaitForMoveById(s32 actor);
-void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Func_02004c20(void);
 void Func_02004c28(void);
-void Func_02004c88(s32 actor, s32 x, s32 z);
 void Func_02004c98(s32 actor, s32 target);
-void Func_02004cd8(s32 message);
-void Func_02004cf0(s32 actor, s32 flags);
-void Func_02004d00(s32 actor, s32 angle);
-s32 Func_02004d08(s32 actor, s32 value, s32 frames);
-void Func_02004d10(s32 actor, s32 value);
-void Func_02004d40(s32 value);
 void Func_02004da8(void);
 void Func_02004db0(void);
-void Func_02004db8(s32 value);
-void Func_02004df8(s32 value, s32 mode);
-void Func_02004e30(s32 cue);
-struct Actor *Actor_GetById(s32 id);
 
 /// Brings the actor to the player character's position.
 static __inline__ void Actor_JoinLeader(s32 actor) {
@@ -43,7 +28,7 @@ static __inline__ void Actor_JoinLeader(s32 actor) {
     Actor_ResetAndSetPosition(actor, ((s16 *)&leader->x)[1],
                               ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(actor);
-  Func_02004c88(actor, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(actor, 0, 0);
 }
 
 void Func_02000994(void) {
@@ -60,54 +45,56 @@ void Func_02000994(void) {
     x >>= 20;
     z >>= 20;
     Func_02004c20();
-    Func_02004db8(0);
+    Event_ResolvePendingActions(0);
     if (Flag_IsSet(0x9b3)) {
-      Func_02004df8(0x16666, 6);
+      Func_080d46a4(0x16666, 6);
       Func_02004c98(5, gMainRoutineWork.currentOwner);
       wait(1);
       Actor_SetPositionAndReset(5, (x << 4) + 24, (z << 4) - 12);
       Actor_ArmCallback(5, southwest, 0);
-      Func_02004d00(gMainRoutineWork.currentOwner, FACING_NORTHEAST);
+      Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner,
+                                  FACING_NORTHEAST);
       Func_02004da8();
-      Func_02004cd8((s32)MsgWeShouldnT);
-      Func_02004cf0(5, 0);
+      Event_SetMessageId((s32)MsgWeShouldnT);
+      Event_ShowMessageAndWait(5, 0);
       Func_02004db0();
       Actor_JoinLeader(5);
       wait(1);
       Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 7312, 8192);
-      Func_02004df8(0x10000, 6);
+      Func_080d46a4(0x10000, 6);
     } else {
       s32 besideZ;
 
-      Func_02004df8(0x16666, 6);
+      Func_080d46a4(0x16666, 6);
       Func_02004c98(5, gMainRoutineWork.currentOwner);
       wait(1);
       x <<= 4;
       besideZ = (z << 4) - 12;
       Actor_SetPositionAndReset(5, x + 24, besideZ);
       Actor_ArmCallback(5, southwest, 0);
-      Func_02004d00(gMainRoutineWork.currentOwner, FACING_NORTHEAST);
+      Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner,
+                                  FACING_NORTHEAST);
       Func_02004da8();
-      Func_02004cd8((s32)MsgYouReNot);
-      Func_02004cf0(5, 0);
+      Event_SetMessageId((s32)MsgYouReNot);
+      Event_ShowMessageAndWait(5, 0);
       Func_02004db0();
       Actor_ArmCallback(5, west, 0);
-      Func_02004d10(gMainRoutineWork.currentOwner, 258);
+      Func_080d489c(gMainRoutineWork.currentOwner, 258);
       Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, x + 12, besideZ);
-      Func_02004d00(gMainRoutineWork.currentOwner, 0);
+      Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, 0);
       Actor_SetModeById(5, 4);
       Func_02004da8();
-      Func_02004cf0(5, 0);
-      Func_02004d08(5, 265, 0);
-      Func_02004cf0(5, 0);
+      Event_ShowMessageAndWait(5, 0);
+      Func_080d47b4(5, 265, 0);
+      Event_ShowMessageAndWait(5, 0);
       Actor_SetModeById(5, 3);
-      Func_02004cf0(5, 0);
+      Event_ShowMessageAndWait(5, 0);
       Func_02004db0();
       Actor_JoinLeader(5);
       wait(1);
       Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 7312, 8192);
       Flag_Set(0x9b3);
-      Func_02004df8(0x10000, 6);
+      Func_080d46a4(0x10000, 6);
     }
     wait(8);
     Func_02004c28();
@@ -115,8 +102,8 @@ void Func_02000994(void) {
     struct EventDestination *work = Ram_HeapSlots->eventWork;
 
     Func_02004c20();
-    Func_02004db8(0);
-    Func_02004e30(123);
-    Func_02004d40(work->scene);
+    Event_ResolvePendingActions(0);
+    Sound_Play(123);
+    Import_EventSetExitRequest(work->scene);
   }
 }

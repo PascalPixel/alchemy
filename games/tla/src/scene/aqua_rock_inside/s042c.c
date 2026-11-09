@@ -17,8 +17,8 @@ void Func_0200042c(s32 unused, s32 id) {
         object->y += step;
       }
       GameFlag_SetBit(0x95a);
-      Func_02003d1c(0, 12, 1, 1, 9, row);
-      Func_02003d1c(0, 12, 1, 1, 13, row);
+      Map_CopyCellAttributeRect(0, 12, 1, 1, 9, row);
+      Map_CopyCellAttributeRect(0, 12, 1, 1, 13, row);
     }
   } else if (id == 11) {
     if (object->x >> 20 == 51) {

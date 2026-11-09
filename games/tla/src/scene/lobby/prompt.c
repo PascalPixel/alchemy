@@ -11,14 +11,11 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "text/msg_ids.h"
+#include "event_inline.h"
 
 void Func_020019e4(s32 value, s32 digits);
 void Func_02001a14(void);
 void Func_02001a1c(void);
-void Func_02001a64(s32 message);
-s32 Func_02001a74(s32 actor, s32 flags);
-void Func_02001ab4(s32 skip);
-void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
 s32 Window_Create();
 void WindowSprite_PrepareForRedraw();
 void Text_DrawNumber();
@@ -31,10 +28,10 @@ s32 Func_02000e4c(s32 id) {
   s32 shown;
 
   Func_02001a14();
-  Func_02001ab4(0);
+  Event_ResolvePendingActions(0);
   Actor_SetAngleToward(id, gMainRoutineWork.currentOwner, 0);
-  Func_02001a64((s32)MsgChooseYourParameters);
-  Func_02001a74(id, 0);
+  Event_SetMessageId((s32)MsgChooseYourParameters);
+  Event_ShowMessageAndWait(id, 0);
   window = Window_Create(0, 0, 6, 4, 2);
   choice = 0;
   shown = -1;
@@ -78,11 +75,11 @@ s32 Func_02000e4c(s32 id) {
     if (ok != 0) {
       message = (s32)MsgThereSNoSuch;
     show:
-      Func_02001a64(message);
-      Func_02001a74(9, 0);
+      Event_SetMessageId(message);
+      Event_ShowMessageAndWait(9, 0);
     } else {
-      Func_02001a64((s32)MsgTheSettingsAre);
-      Func_02001a74(9, 0);
+      Event_SetMessageId((s32)MsgTheSettingsAre);
+      Event_ShowMessageAndWait(9, 0);
     }
   }
   wait(10);

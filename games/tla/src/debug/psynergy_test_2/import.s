@@ -58,21 +58,21 @@ GameFlag_Test:
 	.thumb_func
 GameFlag_SetBit:
 	overlay_veneer GameFlag_SetBitFar
-	.global Func_02000598
+	.global Import_ActorCreate
 	.thumb_func
-Func_02000598:
+Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_020005a0
+	.global Map_CopyCellsRect
 	.thumb_func
-Func_020005a0:
+Map_CopyCellsRect:
 	overlay_veneer Map_CopyCellsRectFar
-	.global Func_020005a8
+	.global Map_CopyCellAttributeRect
 	.thumb_func
-Func_020005a8:
+Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global Func_020005b0
+	.global Func_0802b450
 	.thumb_func
-Func_020005b0:
+Func_0802b450:
 	overlay_veneer Func_080201f0
 	.global Actor_SetSingleChildFlags
 	.thumb_func
@@ -82,9 +82,9 @@ Actor_SetSingleChildFlags:
 	.thumb_func
 Actor_GetById:
 	overlay_veneer Actor_GetByIdFar
-	.global Func_020005c8
+	.global Actor_SetHorizontalPositionWithTerrain
 	.thumb_func
-Func_020005c8:
+Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
 	.global Actor_SetModeById
 	.thumb_func

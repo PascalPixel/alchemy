@@ -3,11 +3,10 @@
 #include "main_routine_work.h"
 #include "actor.h"
 #include "event_work.h"
+#include "event_inline.h"
 
 extern struct Actor *gData_02006c08[];
 
-struct Actor *Actor_GetById(s32 id);
-void Func_02004e30(s32 value);
 
 /// The event countdown takes before when the party leader's x is less than
 /// that of the object in slot - 100 of the overlay's table, else after.
@@ -35,7 +34,7 @@ void Func_02003600(s32 slot, s32 before, s32 after) {
     else
       work->countdown = elseValue;
   }
-  Func_02004e30(123);
+  Sound_Play(123);
 }
 
 /// The same on z.
@@ -63,5 +62,5 @@ void Func_02003654(s32 slot, s32 before, s32 after) {
     else
       work->countdown = elseValue;
   }
-  Func_02004e30(123);
+  Sound_Play(123);
 }

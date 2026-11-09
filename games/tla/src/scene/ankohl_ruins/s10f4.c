@@ -3,6 +3,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "map.h"
+#include "event_inline.h"
 
 struct AnkohlRuinsEventWork {
   u8 unk000[0x154];
@@ -13,8 +14,6 @@ struct AnkohlRuinsEventWork {
 
 extern struct MapCell gMapCellBuffer[];
 
-s32 GameFlag_Test(s32 flag);
-struct Actor *Actor_GetById(s32 id);
 s32 Func_02002e0c(struct Actor *object, s32 *position);
 
 void Func_020010f4(void) {

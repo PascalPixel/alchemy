@@ -3,14 +3,12 @@
 #include "field_sprite.h"
 #include "fixed_math.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 extern u32 gFrameCount;
 extern const u8 gData_02004f10[];
 
-struct Actor *Actor_GetById(s32 id);
-struct Actor *Func_02004b30(s32 kind, s32 x, s32 y, s32 z);
 u32 Random16Far(void);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Func_02004b18(struct Actor *object, s32 mode);
 void Func_02004b20(struct Actor *object, const u8 *script);
 
@@ -18,7 +16,7 @@ static __inline__ struct Actor *Func_02004b30_(s32 kind, s32 x, s32 y, s32 z) {
   /* FAKEMATCH(wrapper): the create call forwarded through an inline, so its
    * arguments build in r0 after the position loads; as a direct call, 32 of
    * 91 instructions differ in tla-en. */
-  return Func_02004b30(kind, x, y, z);
+  return ((struct Actor *)Import_ActorCreate(kind, x, y, z));
 }
 
 void Func_020028cc(void) {

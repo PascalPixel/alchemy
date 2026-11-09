@@ -2,6 +2,7 @@
 #include "input.h"
 #include "main_routine_work.h"
 #include "text/msg_ids.h"
+#include "event_inline.h"
 
 extern const u8 gData_02000744[];
 
@@ -18,9 +19,7 @@ void Text_DrawStringInWindow(const u8 *text, void *window, s32 x, s32 y);
 void Text_DrawNumberInWindow(s32 value, s32 digits, void *window, s32 x,
                                s32 y);
 void Window_Close(void *window, s32 mode);
-void wait(s32 frames);
 void Func_0200017c(s32 delta);
-void Func_0200073c(s32 cue);
 
 /// The pressed keys under a mask, for the last test of a group: the next
 /// test loads gInput's address again.
@@ -65,18 +64,18 @@ void Func_020001a8(void) {
      * (read plainly, the two first tests merge into one mask, differ 30). */
     if ((KEYS_PRESSED & 8) != 0 || Input_PressedFenced(4) != 0) {
       Func_0200017c(5);
-      Func_0200073c(93);
+      Sound_Play(93);
       flag = 1;
     }
 
     if ((KEYS_PRESSED & 1) != 0) {
       Func_0200017c(1);
-      Func_0200073c(91);
+      Sound_Play(91);
       flag = 1;
     }
 
     if ((KEYS_PRESSED & 2) != 0) {
-      Func_0200073c(113);
+      Sound_Play(113);
       WindowSprite_RedrawSavedRect(win);
       wait(1);
       Window_Close(win, 1);

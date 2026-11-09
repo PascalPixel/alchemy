@@ -6,7 +6,6 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
-s32 Func_02002b5c();
+#include "event_inline.h"
 
-void Func_02000178(void) { Call3(Func_02002b5c, 0x40, 0, 0); }
+void Func_02000178(void) { TreasureSpot_SetPosition(0x40, 0, 0); }

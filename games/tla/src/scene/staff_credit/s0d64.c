@@ -4,8 +4,8 @@
 
 #define Func_020036a8 Func_02000d64
 #define Func_02004e08 Func_02002094
-#define Func_02004e10 Func_0200209c
-#define Func_02004b30 Func_02001fcc
+#define Func_02004e10 Party_GetLeaderActor
+#define Func_02004b30 Import_ActorCreate
 #define Func_02004b20 Func_02001fc4
 #define Func_02004b18 Func_02001fbc
 #define Func_02004b38 Func_02001fd4

@@ -12,6 +12,7 @@
 #include "iwram_call.h"
 #include "flag_call.h"
 #include "actor.h"
+#include "event_inline.h"
 
 void LinkLobby_WriteSlotValue(s32 slot) {
   s32 *dst = (s32 *)gSerialTransfer.payload;
@@ -31,7 +32,6 @@ struct LinkPeerSignature {
 extern struct LinkPeerSignature gLinkPeerSignatures[];
 extern s32 gData_020022b8;
 
-struct Actor *Actor_GetById(s32 id);
 s32 Func_0200006c(s32 slot);
 
 /// The lobby's task each frame: counts frames without the opponent, clears

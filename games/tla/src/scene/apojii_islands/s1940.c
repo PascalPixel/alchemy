@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
+#include "event_inline.h"
 
 struct GroundParticle {
   u8 unk00[4];
@@ -34,7 +35,6 @@ struct GroundParticleWork {
 
 extern s16 gData_02001f18[];
 
-s32 GameFlag_Test(s32 flag);
 s32 Random16Far(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02001c3c(void *entry, s32 slot);

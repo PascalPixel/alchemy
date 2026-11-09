@@ -21,7 +21,7 @@ void Func_02002940(s32 a);
 void Func_02000b58(void);
 void Func_0200169c(void);
 void Func_02001670(void);
-void Func_02002968(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Func_0802b450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02000844(void);
 void Func_02002158(void);
 void Func_02001d98(void);
@@ -67,12 +67,14 @@ s32 Func_020017f4(void) {
       Actor_SetModeById(id, 0);
     }
     if (GameFlag_Test(0x950))
-      Call3(Func_020029d8, 25, PIXELS(520), PIXELS(584));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 25, PIXELS(520),
+            PIXELS(584));
     x = GameFlag_GetByte(0x310);
     z = GameFlag_GetByte(0x318);
     if (z != 0)
-      Func_020029d8(24, (x << 20) + 0x80000, (z << 20) + 0x80000);
-    Actor_GetById(Func_02002a68())->priorityFlags |= 32;
+      Actor_SetHorizontalPositionWithTerrain(24, (x << 20) + 0x80000,
+                                             (z << 20) + 0x80000);
+    Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
     Task_Add(Func_020013f8, 0x480);
     Actor_SetSpritePriority(28, 1);
     Value2((s32 (*)())Actor_SetSpritePriority, 24, 1);
@@ -91,19 +93,24 @@ s32 Func_020017f4(void) {
     if (gMainRoutineWork.entrance == 5)
       Func_0200169c();
     if (GameFlag_Test(0x955)) {
-      Call3(Func_020029d8, 17, PIXELS(392), PIXELS(824));
-      Call3(Func_020029d8, 18, PIXELS(424), PIXELS(824));
-      Call3(Func_020029d8, 19, PIXELS(456), PIXELS(824));
-      Call3(Func_020029d8, 20, PIXELS(488), PIXELS(824));
-      Call3(Func_020029d8, 21, PIXELS(520), PIXELS(824));
-      Call6(Func_02002960, 64, 66, 9, 3, 24, 53);
-      Call6(Func_02002958, 64, 66, 11, 7, 87, 50);
+      Call3(Actor_SetHorizontalPositionWithTerrain, 17, PIXELS(392),
+            PIXELS(824));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 18, PIXELS(424),
+            PIXELS(824));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 19, PIXELS(456),
+            PIXELS(824));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 20, PIXELS(488),
+            PIXELS(824));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 21, PIXELS(520),
+            PIXELS(824));
+      Call6(Map_CopyCellAttributeRect, 64, 66, 9, 3, 24, 53);
+      Call6(Map_CopyCellsRect, 64, 66, 11, 7, 87, 50);
       Actor_GetById(21)->update = Func_02001670;
     }
     if (GameFlag_Test(0xa6b)) {
-      Call6(Func_02002960, 62, 41, 1, 2, 33, 41);
-      Call6(Func_02002968, 116, 95, 3, 13, 0x60, 0x20);
-      Call6(Func_02002968, 122, 95, 3, 13, 0x20, 0x60);
+      Call6(Map_CopyCellAttributeRect, 62, 41, 1, 2, 33, 41);
+      Call6(Func_0802b450, 116, 95, 3, 13, 0x60, 0x20);
+      Call6(Func_0802b450, 122, 95, 3, 13, 0x20, 0x60);
       Func_02001f60(12);
     }
     Func_02000844();
@@ -112,20 +119,22 @@ s32 Func_020017f4(void) {
   } else if (scene == (s32)&SceneId_Ov67bRoom2) {
     Actor_SetSingleChildFlags(Actor_GetById(14), 0);
     if (GameFlag_Test(545))
-      Call6(Func_02002960, 42, 32, 1, 1, 44, 32);
+      Call6(Map_CopyCellAttributeRect, 42, 32, 1, 1, 44, 32);
     if (GameFlag_Test(546))
-      Call6(Func_02002960, 48, 32, 1, 1, 46, 32);
+      Call6(Map_CopyCellAttributeRect, 48, 32, 1, 1, 46, 32);
     if (GameFlag_Test(547))
-      Call6(Func_02002960, 44, 44, 1, 1, 46, 44);
+      Call6(Map_CopyCellAttributeRect, 44, 44, 1, 1, 46, 44);
     Actor_SetModeById(12, 2);
     if (GameFlag_Test(0x951)) {
-      Call3(Func_020029d8, 12, PIXELS(856), PIXELS(840));
-      Call6(Func_02002960, 54, 58, 1, 1, 53, 52);
+      Call3(Actor_SetHorizontalPositionWithTerrain, 12, PIXELS(856),
+            PIXELS(840));
+      Call6(Map_CopyCellAttributeRect, 54, 58, 1, 1, 53, 52);
     }
     Actor_SetModeById(13, 2);
     if (GameFlag_Test(0x952)) {
-      Call3(Func_020029d8, 13, PIXELS(856), PIXELS(936));
-      Call6(Func_02002960, 54, 58, 1, 1, 53, 58);
+      Call3(Actor_SetHorizontalPositionWithTerrain, 13, PIXELS(856),
+            PIXELS(936));
+      Call6(Map_CopyCellAttributeRect, 54, 58, 1, 1, 53, 58);
     }
     if (gMainRoutineWork.entrance == 5 || gMainRoutineWork.entrance == 7) {
       Func_02002550();
@@ -147,15 +156,15 @@ s32 Func_020017f4(void) {
       if (GameFlag_Test(0xa69)) {
         Func_020025a8(8);
         Func_02002834(8);
-        Func_020029d8(15, PIXELS(264), PIXELS(792));
+        Actor_SetHorizontalPositionWithTerrain(15, PIXELS(264), PIXELS(792));
         Actor_SetSingleChildFlags(Actor_GetById(15), 0);
         Actor_GetById(15)->collisionFlags = 0;
         Actor_GetById(15)->priorityFlags |= 2;
         Actor_GetById(15)->update = Func_02001d98;
-        Func_02002960(15, 48, 1, 1, 16, 48);
-        Func_02002960(17, 50, 1, 1, 16, 50);
-        Func_02002968(0x40, 68, 5, 13, 14, 94);
-        Func_02002960(64, 68, 5, 8, 14, 34);
+        Map_CopyCellAttributeRect(15, 48, 1, 1, 16, 48);
+        Map_CopyCellAttributeRect(17, 50, 1, 1, 16, 50);
+        Func_0802b450(0x40, 68, 5, 13, 14, 94);
+        Map_CopyCellAttributeRect(64, 68, 5, 8, 14, 34);
       }
     }
     if (!GameFlag_Test(265)) {

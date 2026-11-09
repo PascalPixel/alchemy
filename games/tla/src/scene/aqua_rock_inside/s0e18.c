@@ -7,7 +7,7 @@ void Func_02000e18(s32 value) {
   u8 *flags;
 
   Func_02003d7c();
-  Func_02003eac(0);
+  Event_ResolvePendingActions(0);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   flags = &object->motionFlags;
   speed = 0;
@@ -17,11 +17,11 @@ void Func_02000e18(s32 value) {
   __asm__("");
   object->priorityFlags |= 0x20;
   Func_02003cc4(object, 18);
-  Func_02003ef4(215);
+  Sound_Play(215);
   wait(13);
   Animation_ApplyChildValues(object, 9);
   Func_02003cc4(object, 28);
-  Func_02003ef4(0x236);
+  Sound_Play(0x236);
   for (i = 0; i <= 59; i++) {
     if (i == 30)
       Event_FinishScreenTransition();
@@ -32,5 +32,5 @@ void Func_02000e18(s32 value) {
     wait(1);
   }
   Func_02003d84();
-  Func_02003e5c(value);
+  Import_EventSetExitRequest(value);
 }

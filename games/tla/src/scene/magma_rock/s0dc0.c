@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "system/main_routine_work.h"
 #include "types.h"
+#include "event_inline.h"
 
 struct MagmaRockEventWork {
   u8 unk000[362];
@@ -9,7 +10,6 @@ struct MagmaRockEventWork {
 };
 
 s32 Math_Cosine(s32 angle);
-struct Actor *Actor_GetById(s32 id);
 void Func_02000c40(struct Actor *object);
 void Func_02000d40(struct Actor *object);
 s32 Func_020005a0(s32 *a, s32 *b);

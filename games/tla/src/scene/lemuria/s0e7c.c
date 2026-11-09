@@ -3,36 +3,14 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "call.h"
 #include "text/msg_ids.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById();
-void Actor_ResetAndSetPosition();
 void Animation_SetIndexAndInitializeObjects();
-void FieldEvent_Wait();
 void Func_020001bc();
 void Func_02001bcc();
 void Func_02001bd4();
-void Func_02001c2c();
-void Func_02001c6c();
-void Func_02001c7c();
-void Func_02001c94();
-void Func_02001ca4();
-void Func_02001d04();
-void Func_02001d0c();
-void Camera_MoveWithinMapBounds();
-void Motion_SetModeAndWaitAnimation();
-void Actor_ArmCallback();
-void Actor_WaitForMoveById();
-void Actor_CommitPositionAndActivate();
-void Actor_Jump();
-void Actor_SetSpritePriority();
-void Actor_SetPositionAndReset();
-void Actor_SetSpeedParameters();
-void Camera_FollowActor();
-void Actor_WatchAndSetScript();
-void Actor_SetModeById();
 
 void Func_02000e7c(s32 id) {
   struct Actor *leader;
@@ -41,64 +19,64 @@ void Func_02000e7c(s32 id) {
   s32 c;
 
   Func_02001bcc();
-  Func_02001d04(0);
-  Func_02001c6c((s32)MsgOh2);
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)MsgOh2);
   Animation_SetIndexAndInitializeObjects((s32)Actor_GetById(12), 56);
   if (id == 21) {
-    Call3((void (*)())Actor_SetPositionAndReset, 4, 376, 968);
+    Actor_WalkToAndWait(4, 376, 968);
     Actor_ArmCallback(4, FACING_EAST, 0);
-    Call4((void (*)())Func_02001d0c, 12, 16, -16, FACING_EAST);
+    FieldActor_LaunchFromLeader(12, 16, -16, FACING_EAST);
     a = 0;
     b = 0x800a;
     c = 0x5000;
   } else {
-    Call3((void (*)())Actor_SetPositionAndReset, 4, 552, 968);
-    Call3((void (*)())Actor_ArmCallback, 4, FACING_WEST, 0);
-    Call4((void (*)())Func_02001d0c, 12, -16, -16, FACING_WEST);
+    Actor_WalkToAndWait(4, 552, 968);
+    Actor_FaceDirection(4, FACING_WEST, 0);
+    FieldActor_LaunchFromLeader(12, -16, -16, FACING_WEST);
     a = 0x8000;
     b = -10;
     c = 0x3000;
   }
   Actor_WaitForMoveById(12);
   Actor_WatchAndSetScript(4, 12);
-  Call3((void (*)())Actor_SetSpeedParameters, 12, 0x10000, 0x8000);
+  Actor_SetSpeed(12, 0x10000, 0x8000);
   Camera_FollowActor(12, 1);
-  Call3((void (*)())Actor_SetPositionAndReset, 12, 464, 952);
-  Func_02001c94(12, a);
-  FieldEvent_Wait(10);
-  Value3((s32 (*)())Func_02001ca4, 12, 0x100, 30);
-  Func_02001c7c(12, 0, 5);
-  Func_02001c94(12, b);
-  FieldEvent_Wait(10);
-  Value3((s32 (*)())Func_02001ca4, 12, 0x100, 30);
-  Func_02001c7c(12, 0, 5);
-  Call3((void (*)())Actor_SetPositionAndReset, 12, 464, 784);
-  FieldEvent_Wait(10);
-  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
+  Actor_WalkToAndWait(12, 464, 952);
+  Actor_ArmCallbackAndRefresh(12, a);
+  Event_Wait(10);
+  Actor_ShowEmote(12, 0x100, 30);
+  Event_ShowMessageThenWait(12, 0, 5);
+  Actor_ArmCallbackAndRefresh(12, b);
+  Event_Wait(10);
+  Actor_ShowEmote(12, 0x100, 30);
+  Event_ShowMessageThenWait(12, 0, 5);
+  Actor_WalkToAndWait(12, 464, 784);
+  Event_Wait(10);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Actor_Jump(12, 6, 15);
   Actor_Jump(12, 6, 23);
-  FieldEvent_Wait(10);
-  Func_02001c94(12, c);
-  FieldEvent_Wait(10);
-  Func_02001c7c(12, 0, 5);
-  FieldEvent_Wait(20);
+  Event_Wait(10);
+  Actor_ArmCallbackAndRefresh(12, c);
+  Event_Wait(10);
+  Event_ShowMessageThenWait(12, 0, 5);
+  Event_Wait(20);
   Actor_SetSpritePriority(4, 1);
-  Call3((void (*)())Func_02001c2c, 4, PIXELS(464), PIXELS(856));
-  Call3((void (*)())Actor_SetPositionAndReset, 4, 464, 796);
-  FieldEvent_Wait(10);
+  Actor_SetPosition(4, PIXELS(464), PIXELS(856));
+  Actor_WalkToAndWait(4, 464, 796);
+  Event_Wait(10);
   Motion_SetModeAndWaitAnimation(12, 3);
-  FieldEvent_Wait(10);
-  Call3((void (*)())Actor_SetSpeedParameters, 12, 0x13333, 0x9999);
+  Event_Wait(10);
+  Actor_SetSpeed(12, 0x13333, 0x9999);
   Actor_SetModeById(12, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(12, ((s16 *)&leader->x)[1],
                               ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(12);
-  Func_02001c2c(12, 0, 0);
-  FieldEvent_Wait(10);
+  Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+  Event_Wait(10);
   Actor_GetById(4)->priorityFlags |= 1;
-  Call3((void (*)())Actor_SetPositionAndReset, 4, 464, 776);
+  Actor_WalkToAndWait(4, 464, 776);
   Func_020001bc();
   Func_02001bd4();
 }
@@ -107,25 +85,25 @@ void Func_0200109c(void) {
   struct Actor *leader;
 
   Func_02001bcc();
-  Func_02001d04(0);
-  Func_02001c6c((s32)MsgWhereAreYou);
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)MsgWhereAreYou);
   Animation_SetIndexAndInitializeObjects((s32)Actor_GetById(12), 56);
-  Call2((void (*)())Func_02001c94, 4, FACING_SOUTH);
+  Actor_FaceDirectionAndWait(4, FACING_SOUTH);
   Actor_SetSpritePriority(12, 1);
-  Func_02001d0c(12, 0, 16, FACING_NORTH + FACING_STEP);
+  Func_080d3070(12, 0, 16, FACING_NORTH + FACING_STEP);
   Actor_WaitForMoveById(12);
-  FieldEvent_Wait(5);
-  Func_02001c7c(12, 0, 5);
-  Call3((void (*)())Actor_SetSpeedParameters, 12, 0x13333, 0x9999);
+  Event_Wait(5);
+  Event_ShowMessageThenWait(12, 0, 5);
+  Actor_SetSpeed(12, 0x13333, 0x9999);
   Actor_SetModeById(12, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(12, ((s16 *)&leader->x)[1],
                               ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(12);
-  Func_02001c2c(12, 0, 0);
-  FieldEvent_Wait(10);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 4, 0, -16);
+  Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+  Event_Wait(10);
+  Actor_WalkByAndWait(4, 0, -16);
   Func_020001bc();
   Func_02001bd4();
 }

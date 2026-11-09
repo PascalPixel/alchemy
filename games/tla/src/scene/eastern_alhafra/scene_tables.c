@@ -9,24 +9,19 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "main_routine_work.h"
-#include "call.h"
+#include "event_inline.h"
 
 extern u8 gData_02004d0c[];
 extern u8 gData_02004dbc[];
 extern u8 gData_02004fe4[];
 
-s32 GameFlag_Test();
-void GameFlag_SetBit();
-struct Actor *Actor_GetById();
 void Func_02000fa4(void);
 void Func_02003f48(s32, s32, s32, s32);
 void Func_02004004(void);
 void Func_020040c0(void);
 void Func_02004868(void *, s32, s32);
-s32 Func_02004a34();
 s32 Func_02004a7c();
 s32 Func_02004c24();
-s32 Func_02004c7c();
 s32 Func_02004c8c();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -72,12 +67,10 @@ void Func_020000c8(s32 mode, s32 arg) {
     /* FAKEMATCH: ⚓️ finishes the second object's speed before it builds the
      * first position. */
     __asm__ volatile("");
-    Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)a, 0x1e80000, a->y,
-          0x1380000);
-    Call4((void (*)())Func_02004a34, (s32)a, 0x1b80000, 0, 0x1380000);
-    Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)b, 0x1e80000, b->y,
-          0x1380000);
-    Call4((void (*)())Func_02004a34, (s32)b, 0x1b80000, 0, 0x1780000);
+    FieldActor_SetPositionAndResetMotion(a, 0x1e80000, a->y, 0x1380000);
+    FieldActor_SetMoveTarget(a, 0x1b80000, 0, 0x1380000);
+    FieldActor_SetPositionAndResetMotion(b, 0x1e80000, b->y, 0x1380000);
+    FieldActor_SetMoveTarget(b, 0x1b80000, 0, 0x1780000);
     Func_02004c8c(1);
     Func_02004c8c(2);
     i = 0;
@@ -109,8 +102,8 @@ void Func_02000190(s32 unused, s32 id) {
     x = object->x >> 20;
     z = object->z >> 20;
     if (x == 34 && z == 32 && leaderX == 33)
-      Func_02004c7c(0x2100000, 0x2000000, 2, 255);
+      Func_080dbdd4(0x2100000, 0x2000000, 2, 255);
     if (x == 33 && z == 32 && leaderX == 32)
-      Value4(Func_02004c7c, 0x2000000, 0x2000000, 2, 255);
+      MapGrid_SetCellBehavior(0x2000000, 0x2000000, 2, 255);
   }
 }

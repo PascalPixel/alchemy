@@ -1,8 +1,8 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "effect_sprite.h"
+#include "event_inline.h"
 
 struct BeamSpark {
   u8 unk00[0x18];
@@ -36,22 +36,14 @@ extern char ResourceId_GoldenTrident;
 
 void *HeapSlot_AllocFar(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
-struct Actor *Actor_GetById(s32 id);
 void *Resource_GetTableEntry(s32 id);
 void Func_020029a0(void *resource, void *destination);
 s32 Resource_FindFreeEntry(void);
-s32 VramCache_Load(s32 entry, s32 size, void *data);
 void Resource_ResetEntry(s32 entry);
 void Func_02002b30(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
                    u32 attributes, s32 tile);
 void Func_02002a20(struct Actor *object);
-void Func_02002a28(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_02002b68(s32 sound);
 void Func_0200105c(struct Actor *object);
-void FieldEvent_Wait(s32 frames);
-void wait(s32 frames);
-void Task_Add(void (*func)(void), s32 priority);
-void Task_RemoveFar(void (*func)(void));
 void Func_02001080(void);
 
 static __inline__ void SetUp(struct EffectSprite *sprite, s32 pivotX,
@@ -131,10 +123,10 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
   carrier->speedLimit = 0x8000;
   carrier->acceleration = 0x8000;
   Func_02002a20(carrier);
-  Func_02002a28(carrier, work->start[0], work->start[1], work->start[2]);
-  Func_02002b68(142);
+  Actor_SetMoveTarget(carrier, work->start[0], work->start[1], work->start[2]);
+  Sound_Play(142);
   Func_0200105c(work->first);
-  FieldEvent_Wait(40);
+  Event_Wait(40);
   work->side = side;
   work->step = 0;
   work->unkb02 = 0;

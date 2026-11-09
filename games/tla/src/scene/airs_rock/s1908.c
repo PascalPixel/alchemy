@@ -1,11 +1,11 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "field/event_work.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
+#include "event_inline.h"
 
 extern u8 gData_02003de0[], gData_02003dcc[];
 struct Shot {
@@ -14,16 +14,13 @@ struct Shot {
   u8 unk63; ///< set with unk62, cleared when it ends
 };
 
-struct Actor *Actor_GetById(u32 id);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 s32 Func_02000348(s32 layer, s32 x, s32 z);
 void Func_02003cd0(struct Actor *object, s32 cue);
 void Func_02003b38(struct Actor *object, const u8 *script);
 s32 Func_020018d8(s32 *a, s32 *b);
 s32 Func_020018ac(s32 *a, s32 *b);
-s32 GameFlag_Test(s32 flag);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 
 void Func_02001908(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);

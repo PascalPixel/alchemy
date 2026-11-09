@@ -17,17 +17,17 @@ s32 Func_02000f6c(s32 id);
 s32 Func_02000fbc(s32 actor);
 void Func_0200191c(void);
 void Func_0200197c(void);
-void Func_02001984(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
-                   s32 height);
+void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
+                                    s32 width, s32 height);
 void Func_020019e4(s32 value, s32 digits);
 void Func_020019ec(void);
 void Func_02001a14(void);
 void Func_02001a1c(void);
-void Func_02001a64(s32 message);
-void Func_02001a74(s32 actor, s32 flags);
-void Func_02001a7c(s32 actor, s32 animation, s32 flags);
+void Event_SetMessageId(s32 message);
+void Event_ShowMessageAndWait(s32 actor, s32 flags);
+void Func_080d47b4(s32 actor, s32 animation, s32 flags);
 s32 Func_02001a84(s32 scene, s32 entrance);
-void Func_02001ab4(s32 skip);
+void Event_ResolvePendingActions(s32 skip);
 void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
 void FieldMessage_Show(const u8 *message, s32 flags);
 
@@ -42,7 +42,7 @@ s32 Func_02001130(s32 actor) {
   s32 own = Func_02000f6c(actor);
 
   Func_02001a14();
-  Func_02001ab4(0);
+  Event_ResolvePendingActions(0);
   Actor_SetAngleToward(actor, gMainRoutineWork.currentOwner, 0);
   if (GameFlag_Test(0x304)) {
     GameFlag_Test(0x2f4);
@@ -64,11 +64,11 @@ s32 Func_02001130(s32 actor) {
   } else {
     base = (s32)MsgILlFight;
   }
-  Func_02001a64(base + actor);
-  Func_02001a74(actor, 0);
+  Event_SetMessageId(base + actor);
+  Event_ShowMessageAndWait(actor, 0);
   if (base == (s32)MsgILlFight && actor == 5) {
-    Func_02001a7c(5, 263, 0);
-    FieldEvent_Wait(10);
+    Func_080d47b4(5, 263, 0);
+    Event_Wait(10);
   }
   Func_02001a1c();
 }
@@ -90,7 +90,7 @@ s32 Func_0200122c(s32 actor) {
     return;
   }
   Func_02001a14();
-  Func_02001ab4(0);
+  Event_ResolvePendingActions(0);
   if (GameFlag_Test(0x206)) {
     switch (actor) {
     case 13:
@@ -117,15 +117,15 @@ s32 Func_0200122c(s32 actor) {
     }
     GameFlag_SetBit(0x206);
   }
-  Func_02001a64(message);
+  Event_SetMessageId(message);
   FieldMessage_ShowAtActor(actor, 0);
-  FieldEvent_Wait(1);
+  Event_Wait(1);
   if (message == (s32)MsgYouLookA) {
     Actor_StartRepeatedMotion(14, 1);
     Actor_SetModeById(14, 4);
-    FieldEvent_Wait(15);
+    Event_Wait(15);
     Actor_SetAngleToward(14, gMainRoutineWork.currentOwner, 0);
-    FieldEvent_Wait(5);
+    Event_Wait(5);
     FieldMessage_ShowAtActor(14, 0);
   }
   Func_02001a1c();
@@ -135,7 +135,7 @@ s32 Func_02001304(s32 actor) {
   s32 message;
 
   Func_02001a14();
-  Func_02001ab4(0);
+  Event_ResolvePendingActions(0);
   Actor_SetAngleToward(actor, gMainRoutineWork.currentOwner, 0);
   if (!Flag_Test(0x204)) {
     if (Party_CountActiveOwners() == 8)
@@ -149,7 +149,7 @@ s32 Func_02001304(s32 actor) {
     message = (s32)MsgYouCanChange;
     GameFlag_ClearBit(0x204);
   }
-  Func_02001a64(message);
+  Event_SetMessageId(message);
   FieldMessage_ShowAtActor(actor, 0);
   Func_02001a1c();
 }
@@ -158,14 +158,14 @@ s32 Func_02001388(s32 id) {
   struct MainRoutineWork *gs;
 
   Func_02001a14();
-  Func_02001ab4(0);
+  Event_ResolvePendingActions(0);
   gs = &gMainRoutineWork;
   Actor_SetAngleToward(id, gs->currentOwner, 0);
   if (gs->linkTallies[2] != 0) {
     Func_020019e4(gs->linkTallies[2], 5);
-    Func_02001a64((s32)MsgYouVeWon);
+    Event_SetMessageId((s32)MsgYouVeWon);
   } else {
-    Func_02001a64((s32)MsgICanTWaitTo);
+    Event_SetMessageId((s32)MsgICanTWaitTo);
   }
   FieldMessage_ShowAtActor(id, 0);
   Func_02001a1c();

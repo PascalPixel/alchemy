@@ -15,18 +15,18 @@ void Func_02000584(const void *data);
 void Func_020012d8(void);
 void Func_020018a8(void);
 void Func_02001fac(void);
-void Func_02003be0(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
+void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                    s32 height);
-void Func_02003bf0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02003c68(s32 id, s32 x, s32 z);
-void Func_02003c70(s32 id, s32 x, s32 z, s32 angle);
+void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
+void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z, s32 angle);
 void Func_02003cc0(s32 id);
 void Func_02003db8(const void *data);
 
 static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
                                           s32 f) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003bf0(a, b, c, d, e, f);
+  Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
 static __inline__ void Actor_SetPosition(struct Actor *object, s32 x,
@@ -37,7 +37,7 @@ static __inline__ void Actor_SetPosition(struct Actor *object, s32 x,
 
 static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003c70(id, x, z, angle);
+  Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, angle);
 }
 
 void Func_02003164(void) {
@@ -66,11 +66,11 @@ void Func_02003164(void) {
     s32 angle = 0x4000;
 
     Actor_PlaceFacing(24, 222 << 18, 168 << 16, angle);
-    Func_02003be0(68, 33, 105, 6, 1, 1);
-    Func_02003be0(69, 33, 105, 4, 1, 1);
+    Map_CopyCellPictureIndicesRect(68, 33, 105, 6, 1, 1);
+    Map_CopyCellPictureIndicesRect(69, 33, 105, 4, 1, 1);
     GameFlag_SetBit(583);
   }
   if (GameFlag_Test(0x86d) != 0)
-    Func_02003c68(24, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
   Func_02001fac();
 }

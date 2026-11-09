@@ -2,22 +2,18 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 struct AnemosInnerSanctumEventWork {
   u8 unk000[0x1ac];
   s32 value1ac;
 };
 
-struct Actor *Actor_GetById(s32 id);
-void GameFlag_SetBit(s32 flag);
-void wait(s32 frames);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02000158(void);
 void Func_02000178(void);
 void Func_020017b4(void);
-void Func_02003458(s32 a, s32 b);
-void Func_02003468(s32 a);
 void Func_020034a8(void);
 
 void Func_02001938(void) {

@@ -6,7 +6,6 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
-s32 GameFlag_SetBit();
+#include "event_inline.h"
 
 void Func_02000e24(void) { GameFlag_SetBit(0x970); }

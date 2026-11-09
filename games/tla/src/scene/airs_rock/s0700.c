@@ -1,16 +1,11 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(u32 id);
-void Func_02003cd8(s32 cue);
 void Func_02003b28(struct Actor *object, s32 mode);
-void wait(s32 frames);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Func_02003b58(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_02003b60(struct Actor *object);
-void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Func_02003c98(void);
 
 /// The leader jumps up 12 pixels (cue 390, mode 6 then 1), climbs 28 pixels
@@ -21,16 +16,16 @@ void Func_02000700(void) {
   s32 z = leader->z;
   u32 i;
 
-  Func_02003cd8(390);
+  Sound_Play(390);
   Func_02003b28(leader, 6);
   wait(10);
   Func_02003b28(leader, 1);
   Actor_SetSingleChildFlags(leader, 0);
   leader->motionFlags |= 2;
   leader->velocityY = 0x40000;
-  Func_02003b58(leader, leader->x, leader->y, z + 0xc0000);
+  Actor_SetMoveTarget(leader, leader->x, leader->y, z + 0xc0000);
   wait(6);
-  Func_02003cd8(217);
+  Sound_Play(217);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x5000, 0);
   leader->motionFlags = 0;
   for (i = 0; i < 14; i++) {
@@ -40,9 +35,9 @@ void Func_02000700(void) {
   }
   leader->motionFlags = 3;
   leader->velocityY = 0x30000;
-  Func_02003b58(leader, leader->x, leader->y, z + 0x100000);
-  Func_02003b60(leader);
+  Actor_SetMoveTarget(leader, leader->x, leader->y, z + 0x100000);
+  Script_WaitForEventTimeout(leader);
   Actor_SetSingleChildFlags(leader, 1);
-  Func_02003cd8(390);
+  Sound_Play(390);
   Func_02003c98();
 }

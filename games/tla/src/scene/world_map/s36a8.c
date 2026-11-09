@@ -4,7 +4,6 @@
 /// event when the leader touches it. Overlay 64c keeps the same code.
 
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "map.h"
@@ -12,6 +11,7 @@
 #include "event_work.h"
 #include "iwram_call.h"
 #include "flag_call.h"
+#include "event_inline.h"
 
 /// One of the scene's placed objects, 20 bytes; a zero kind ends the list.
 struct WorldMapPlacement {
@@ -34,16 +34,13 @@ extern struct Actor *gData_02006c08[];
 extern u8 gData_02006bd4[];
 
 struct WorldMapPlacement *Func_02004e08(void);
-s32 Func_02004e10(void);
-struct Actor *Actor_GetById(s32 id);
-struct Actor *Func_02004b30(s32 sprite, s32 x, s32 y, s32 z);
 void Func_02004b20(struct Actor *object, void *dispatch);
 void Func_02004b18(struct Actor *object, s32 mode);
 void Func_02004b38(struct Actor *object);
 
 void Func_020036a8(void) {
   struct WorldMapPlacement *placement = Func_02004e08();
-  struct Actor *leader = Actor_GetById(Func_02004e10());
+  struct Actor *leader = Actor_GetById(Party_GetLeaderActor());
   s32 leaderReach =
       ((struct WorldMapSprite *)leader->animation)->scale * leader->radius;
   u32 i;
@@ -103,7 +100,8 @@ void Func_020036a8(void) {
         if (object == NULL) {
           struct WorldMapSprite *sprite;
 
-          object = Func_02004b30(placement->sprite, px, 0, pz);
+          object = ((struct Actor *)Import_ActorCreate(placement->sprite, px, 0,
+                                                       pz));
           if (object == NULL)
             goto next;
           Func_02004b20(object, gData_02006bd4);

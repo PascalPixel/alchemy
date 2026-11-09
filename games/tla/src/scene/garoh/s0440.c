@@ -27,8 +27,8 @@ void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
 void Actor_CenterOnColumn(s32 id, s32 column, s32 dz);
 void Event_FinishScreenTransition(void);
-void Func_0200517c(const void *data, s32 a, s32 b);
-void Func_020052c4(s32 value);
+void Map_PlayMapEdit(const void *data, s32 a, s32 b);
+void Import_EventSetExitRequest(s32 value);
 
 /// Return the table for the current room.
 const void *Func_02000440(void) {
@@ -53,7 +53,7 @@ const void *Func_02000440(void) {
 static __inline__ void Func_0200517c_(const void *data, s32 a, s32 b) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own argument
    * order, as ☀️'s scene layer does (called directly, differ 12). */
-  Func_0200517c(data, a, b);
+  Map_PlayMapEdit(data, a, b);
 }
 
 static __inline__ void OffsetPosition_(s32 id, s32 dx, s32 dz) {
@@ -78,7 +78,7 @@ void Func_020004cc(void) {
   s32 i;
 
   Func_020051ac();
-  Func_02005324(0);
+  Event_ResolvePendingActions(0);
   // A goto loop: the bytes rebuild the zero on every pass, which a for
   // loop hoists (differ 12).
   i = 8;
@@ -93,7 +93,7 @@ loop:
   if ((u32)i <= 63)
     goto loop;
   index = *(s16 *)(work + 0x154);
-  Func_02005394(158);
+  Sound_Play(158);
   index--;
   Func_0200517c_(gData_02005de0[index].data, gData_02005de0[index].a,
                  gData_02005de0[index].b);
@@ -107,8 +107,8 @@ loop:
     else
       CenterOnColumn_(owner, 2, -4);
   }
-  FieldEvent_Wait(6);
-  Func_020052c4(*(s16 *)(work + 0x154));
+  Event_Wait(6);
+  Import_EventSetExitRequest(*(s16 *)(work + 0x154));
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_020051b4();

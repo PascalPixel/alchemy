@@ -1,10 +1,10 @@
 #include "local.h"
 
-void Func_02003d44(s32 a, s32 b, s32 c);
+void Map_SetScreenShake(s32 a, s32 b, s32 c);
 
 static __inline__ void Func_02003d44_(s32 a, s32 b, s32 c) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003d44(a, b, c);
+  Map_SetScreenShake(a, b, c);
 }
 
 void Func_0200124c(void) {
@@ -12,7 +12,7 @@ void Func_0200124c(void) {
   s32 i;
 
   Func_02003d7c();
-  Func_02003eac(0);
+  Event_ResolvePendingActions(0);
   layer[3] -= 0x200000;
   Func_02003cdc();
   Func_02003d44_(0x10000, 0x10000, 0x10000);
@@ -25,9 +25,9 @@ shake:
     s32 column = 77;
     s32 row = 8;
 
-    Func_02003d24(70, 8, 7, 6, column, row);
+    Func_0802b450(70, 8, 7, 6, column, row);
     wait(1);
-    Func_02003d24(50, 8, 7, 6, column, row);
+    Func_0802b450(50, 8, 7, 6, column, row);
     wait(1);
   }
   i--;

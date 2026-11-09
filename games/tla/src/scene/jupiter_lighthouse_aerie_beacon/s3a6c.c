@@ -1,5 +1,5 @@
 #include "types.h"
-#include "call.h"
+#include "event_inline.h"
 struct SceneActor {
   u8 pad0[16];
   s32 unk_10;
@@ -22,13 +22,6 @@ struct Iwram {
   u8 pad0[32];
   struct FieldWork *field;
 };
-void Camera_FollowActor(s32 id, s32 flag);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Func_02005884(s32, s32, s32);
-void Func_020059f4(s32);
-void Actor_SetSpritePriority(u32, s32);
-struct SceneActor *Actor_GetById(s32);
-void wait(s32);
 extern s32 Data_02006a1c;
 extern s32 gData_020059fc[];
 extern s32 gData_02005a0c[];
@@ -67,26 +60,26 @@ void Func_02003a6c(s32 mode) {
   }
 
   for (i = 0; i <= 4 && list[i] != 64; i++) {
-    Actor_GetById(list[i])->unk_55 = 0;
+    ((struct SceneActor *)Actor_GetById(list[i]))->unk_55 = 0;
     Actor_SetSpritePriority(list[i], 1);
     count++;
   }
 
   for (i = 0; i <= 5; i++) {
-    Actor_GetById(gData_020069dc[i])->unk_23 |= 32;
+    ((struct SceneActor *)Actor_GetById(gData_020069dc[i]))->unk_23 |= 32;
     Actor_SetSpritePriority(gData_020069dc[i], 0);
   }
 
-  Func_020059f4(223);
+  Sound_Play(223);
 
   for (i = 0; i <= 227; i++) {
     work->unk_0c -= speed;
     for (j = 0; j < count; j++) {
       struct SceneActor *actor;
 
-      Actor_GetById(list[j])->unk_10 += speed;
-      actor = Actor_GetById(list[j]);
-      actor->unk_40 = Actor_GetById(list[j])->unk_10;
+      ((struct SceneActor *)Actor_GetById(list[j]))->unk_10 += speed;
+      actor = ((struct SceneActor *)Actor_GetById(list[j]));
+      actor->unk_40 = ((struct SceneActor *)Actor_GetById(list[j]))->unk_10;
     }
     if ((i & 3) == 3)
       speed += 0x1999;
@@ -112,12 +105,12 @@ void Func_02003a6c(s32 mode) {
   }
 
   for (i = 0; i <= 5; i++) {
-    Actor_GetById(gData_020069dc[i])->unk_23 &= 223;
+    ((struct SceneActor *)Actor_GetById(gData_020069dc[i]))->unk_23 &= 223;
     Actor_SetSpritePriority(gData_020069dc[i], 1);
   }
 
   for (i = 0; i < count; i++) {
-    Func_02005884(list[i], 0, 0);
-    Actor_GetById(list[i])->unk_55 = 0;
+    Actor_SetHorizontalPositionWithTerrain(list[i], 0, 0);
+    ((struct SceneActor *)Actor_GetById(list[i]))->unk_55 = 0;
   }
 }

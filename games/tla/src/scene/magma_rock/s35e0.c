@@ -3,13 +3,12 @@
 #include "main_routine_work.h"
 #include "field_sprite.h"
 #include "system/field_effect.h"
+#include "event_inline.h"
 
 extern const u8 gData_02003e3c[];
 
-struct Actor *Actor_GetById(s32 id);
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 s32 Func_02003bd4(struct FieldSprite *sprite, s32 state);
 void Func_02003a54(struct FieldEffect *object, s32 mode);

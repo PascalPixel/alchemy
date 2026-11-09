@@ -6,9 +6,9 @@ void Func_0200065c(void) {
   s32 i;
 
   Func_02002898();
-  Func_02002968(0);
+  Event_ResolvePendingActions(0);
   Actor_SetAngleToward(gMainRoutineWork.currentOwner, 8, 0);
-  Func_02002908(gMainRoutineWork.currentOwner, 256, 30);
+  Func_080d47b4(gMainRoutineWork.currentOwner, 256, 30);
   Camera_MoveWithinMapBounds(PIXELS(408), -1, PIXELS(312), 1);
   Func_02002928();
   Func_02002910_(8, 257);
@@ -16,16 +16,16 @@ void Func_0200065c(void) {
   i = 2;
   do {
     object->velocityY = 0x20000;
-    Func_020029b0(152);
+    Sound_Play(152);
     object->speedLimit = speed;
     object->acceleration = speed / 2;
     Actor_CommitPositionAndActivate(8, 0, 8);
     speed += 0x4000;
   } while (--i >= 0);
-  Func_020029b0(310);
+  Sound_Play(310);
   object->velocityY = 0x40000;
   Actor_CommitPositionAndActivate(8, 0, 8);
-  FieldEvent_Wait(60);
+  Event_Wait(60);
   GameFlag_SetBit(0x310);
   Func_020028a0();
 }
@@ -50,7 +50,7 @@ void Func_02000744(s32 a, s32 id) {
 
   if (id == 9 && object->x >> 20 == 16) {
     Func_02000710(9);
-    Func_02002840(15, 26, 1, 1, 16, 26);
+    Map_CopyCellAttributeRect(15, 26, 1, 1, 16, 26);
     GameFlag_SetBit(0xa6f);
   }
 }
@@ -89,11 +89,11 @@ void Func_02000810(s32 id) {
   object = Actor_GetById(id);
   if (object->x >> 20 == leader->x >> 20 &&
       object->z >> 20 == leader->z >> 20) {
-    Func_02002910(gMainRoutineWork.currentOwner, 0x102);
+    Func_080d489c(gMainRoutineWork.currentOwner, 0x102);
     Actor_CommitPositionAndActivate(gMainRoutineWork.currentOwner, 0, 16);
-    FieldEvent_Wait(2);
+    Event_Wait(2);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-    FieldEvent_Wait(10);
+    Event_Wait(10);
   }
   Func_02002840_(22, 8, 1, 1, 26, 8);
 }
@@ -144,11 +144,11 @@ void Func_020009c0(s32 id) {
   object = Actor_GetById(id);
   if (object->x >> 20 == leader->x >> 20 &&
       object->z >> 20 == leader->z >> 20) {
-    Func_02002910(gMainRoutineWork.currentOwner, 0x102);
+    Func_080d489c(gMainRoutineWork.currentOwner, 0x102);
     Actor_CommitPositionAndActivate(gMainRoutineWork.currentOwner, 0, 16);
-    FieldEvent_Wait(2);
+    Event_Wait(2);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-    FieldEvent_Wait(10);
+    Event_Wait(10);
   }
   Func_02002840_(1, 1, 1, 1, 25, 27);
 }
@@ -183,7 +183,7 @@ void Func_02000afc(s32 a, s32 id) {
     object->priorityFlags |= 2;
     GameFlag_SetBit(0x332);
     GameFlag_SetBit(0x333);
-    Func_02002840(7, 17, 1, 1, 7, 15);
+    Map_CopyCellAttributeRect(7, 17, 1, 1, 7, 15);
   }
 }
 
@@ -210,7 +210,7 @@ void Func_02000b90(s32 a, s32 id) {
     Actor_OffsetPositionAndResetMotion(id, -32, 0);
     Actor_WaitForMoveById(id);
     Actor_SetModeById(id, 3);
-    Func_02002840(25, 18, 1, 1, 25, 16);
+    Map_CopyCellAttributeRect(25, 18, 1, 1, 25, 16);
   }
 }
 
@@ -228,7 +228,7 @@ void Func_02000c24(void) {
   a = Random16Far() * 32;
   x = Random16Far() * 16 + a + 0x12c0000;
   z = Random16Far() * 16 + a + 0x1040000;
-  object = Func_02002808(0x11d, x, 0, z);
+  object = Import_ActorCreate(0x11d, x, 0, z);
   Func_02002800(object, gData_020029c8);
   Actor_SetSingleChildFlags(object, 0);
   Animation_SetStateFlags(object, 1);

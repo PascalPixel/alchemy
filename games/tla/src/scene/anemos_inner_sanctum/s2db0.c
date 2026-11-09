@@ -10,7 +10,7 @@ struct PushEvent {
 };
 
 void Func_02002cb8(void);
-void Func_02003350(s32 x, s32 z, s32 a, s32 b, s32 cellX, s32 cellZ);
+void Map_CopyCellsRect(s32 x, s32 z, s32 a, s32 b, s32 cellX, s32 cellZ);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Event_FinishScreenTransition(void);
@@ -30,9 +30,9 @@ void Func_02002db0(struct PushEvent *event) {
   z = object->z >> 20;
   z |= (s16)(event->z & mask);
   Func_02002cb8();
-  Func_020034b8(229);
-  Func_02003350(event->x, event->z + 2, 1, 1, x, z);
-  FieldEvent_Wait(12);
+  Sound_Play(229);
+  Map_CopyCellsRect(event->x, event->z + 2, 1, 1, x, z);
+  Event_Wait(12);
   {
     u32 zero = 0;
 
@@ -53,10 +53,10 @@ void Func_02002db0(struct PushEvent *event) {
   REG_DISPCNT |= 0x8000;
   event->busy = 1;
   Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
-  FieldEvent_Wait(16);
+  Event_Wait(16);
   for (x = 0; x < 40; x++) {
     if (x == 5)
-      Func_020034b8(204);
+      Sound_Play(204);
     object->scaleX += -0x400;
     object->scaleY += -0x300;
     object->y += -0x9999;

@@ -3,12 +3,12 @@
 #include "main_routine_work.h"
 #include "scene_ids.h"
 #include "field_event.h"
+#include "event_inline.h"
 
 // Import stubs: Event_Start and Event_End, and the pending
 // actions' resolution.
 void Func_02000fcc(void);
 void Func_02000fd4(void);
-void Func_0200104c(s32 skip);
 void Func_0200043c(void *cells, s32 index);
 extern u32 gData_0200117c[];
 extern u32 gData_020011cc[];
@@ -21,7 +21,7 @@ void Func_020005ac(void) {
 
   if (!Flag_IsSet(0x303)) {
     Func_02000fcc();
-    Func_0200104c(0);
+    Event_ResolvePendingActions(0);
     Func_0200043c(gData_0200117c, 0);
     Flag_Set(0x303);
     count = 1;
@@ -29,7 +29,7 @@ void Func_020005ac(void) {
   if (!Flag_IsSet(0x304)) {
     if (count == 0)
       Func_02000fcc();
-    Func_0200104c(0);
+    Event_ResolvePendingActions(0);
     Func_0200043c(gData_0200117c, 1);
     Flag_Set(0x304);
     count++;
@@ -37,7 +37,7 @@ void Func_020005ac(void) {
   if (!Flag_IsSet(0x305)) {
     if (count == 0)
       Func_02000fcc();
-    Func_0200104c(0);
+    Event_ResolvePendingActions(0);
     Func_0200043c(gData_0200117c, 2);
     Flag_Set(0x305);
     count++;
@@ -45,7 +45,7 @@ void Func_020005ac(void) {
   if (!Flag_IsSet(0x306)) {
     if (count == 0)
       Func_02000fcc();
-    Func_0200104c(0);
+    Event_ResolvePendingActions(0);
     Func_0200043c(gData_0200117c, 3);
     Flag_Set(0x306);
     count++;
@@ -62,7 +62,7 @@ void Func_02000684(void) {
 
   if (!Flag_IsSet(0x30a)) {
     Func_02000fcc();
-    Func_0200104c(0);
+    Event_ResolvePendingActions(0);
     Func_0200043c(gData_020011cc, 0);
     Flag_Set(0x30a);
     count = 1;
@@ -70,7 +70,7 @@ void Func_02000684(void) {
   if (!Flag_IsSet(0x30b)) {
     if (count == 0)
       Func_02000fcc();
-    Func_0200104c(0);
+    Event_ResolvePendingActions(0);
     Func_0200043c(gData_020011cc, 1);
     Flag_Set(0x30b);
     count++;
@@ -78,7 +78,7 @@ void Func_02000684(void) {
   if (!Flag_IsSet(0x30c)) {
     if (count == 0)
       Func_02000fcc();
-    Func_0200104c(0);
+    Event_ResolvePendingActions(0);
     Func_0200043c(gData_020011cc, 2);
     Flag_Set(0x30c);
     count++;
@@ -90,20 +90,18 @@ void Func_02000684(void) {
 void Func_02000728(void) {
   if (!Flag_IsSet(0x307)) {
     Func_02000fcc();
-    Func_0200104c(0);
+    Event_ResolvePendingActions(0);
     Func_0200043c(gData_0200117c, 4);
     Flag_Set(0x307);
     Func_02000fd4();
   }
 }
 
-struct FieldActor *Actor_GetById(s32 id);
-
 /// Called through the scene table with an object id: in each of the first
 /// four rooms, sets a flag when object 8 to 11 is at a given x; object 11 at
 /// a given x and z in the second room runs Func_02000728 instead.
 void Func_02000760(s32 unused, s32 id) {
-  struct FieldActor *object = Actor_GetById(id);
+  struct FieldActor *object = ((struct FieldActor *)Actor_GetById(id));
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom1) {
     if (id == 8 && object->x >> 20 == 16)

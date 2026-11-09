@@ -2,8 +2,7 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
-
-struct Actor *Actor_GetById(s32 id);
+#include "event_inline.h"
 
 s32 Func_02000590(void) {
   u8 *event = Ram_HeapSlots->eventWork;

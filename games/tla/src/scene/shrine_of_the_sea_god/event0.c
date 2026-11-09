@@ -17,6 +17,6 @@ void Func_02000280(void) {
       GameFlag_SetBit(0x341);
     else if (*state == 5)
       GameFlag_SetBit(0x342);
-    Func_02003ae0(14, 67);
+    Func_080d2b4c(14, 67);
   }
 }

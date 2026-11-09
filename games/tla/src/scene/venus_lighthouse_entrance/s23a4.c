@@ -1,7 +1,7 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
+#include "event_inline.h"
 
 struct GlowState {
   s32 x; ///< 16.16 pixels
@@ -54,23 +54,16 @@ extern u8 gField_Tiles64D[];
 
 void *HeapSlot_AllocFar(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *actor, s32 flags);
 void Func_02002824(void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 void Resource_ResetEntry(s32 entry);
-s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Func_02002a0c(struct GlowSprite *sprite, s32 width, s32 height, s32 attr,
                    s32 tile);
 s32 Func_02002a24(struct Actor *actor);
 s32 Func_02002a2c(struct Actor *actor);
-struct Actor *Func_0200286c(s32 kind, s32 x, s32 y, s32 z);
 void Func_0200285c(struct Actor *actor, s32 mode);
 void Func_02002874(struct Actor *actor);
-void Import_SoundPlay(s32 cue);
-void wait(s32 frames);
-s32 Task_Add(void (*func)(void), s32 order);
-void Task_RemoveFar(void (*func)(void));
 void Func_02001fd0(void);
 
 void Func_020023a4(s32 id) {
@@ -105,7 +98,8 @@ void Func_020023a4(s32 id) {
     sprite++;
     state++;
   }
-  effect = Func_0200286c(290, actor->x, actor->y, actor->z);
+  effect =
+      ((struct Actor *)Import_ActorCreate(290, actor->x, actor->y, actor->z));
   work->effect = effect;
   Func_0200285c(effect, 1);
   Actor_SetSingleChildFlags(effect, 0);
@@ -118,7 +112,7 @@ void Func_020023a4(s32 id) {
   work->timer = 0;
   work->height = 0;
   work->follow = 1;
-  Import_SoundPlay(221);
+  Sound_Play(221);
   Task_Add(Func_02001fd0, 0x480);
   if (work->stage != 999) {
   wait:

@@ -1,6 +1,6 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
+#include "event_inline.h"
 
 struct ResourceTableEntry {
   u16 unk0;
@@ -33,7 +33,6 @@ extern const u8 gData_02000f44[];
 extern struct ResourceTableEntry gResourceTableEntries[];
 
 s32 Resource_FindFreeEntry(void);
-s32 VramCache_Load(s32 entry, s32 size, const void *data);
 void Func_02000ee4(struct SparkleSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 s32 Func_02000ef4(struct Actor *object);

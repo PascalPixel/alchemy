@@ -2,8 +2,8 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "scene_ids.h"
+#include "event_inline.h"
 
-s32 GameFlag_Test();
 s32 Func_02001b3c();
 
 s32 Func_02000198(void) {

@@ -1,13 +1,10 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
+#include "event_inline.h"
 
 extern u8 gSceneState[];
-s32 GameFlag_Test(s32 flag);
-struct Actor *Actor_GetById(u32 id);
-void Actor_SetModeById(u32 id, s32 mode);
 void Func_02002d48(s32 id, s32 dx, s32 dz);
 
 // The Islets' marching guards (objects 11 to 18): while the event work is busy

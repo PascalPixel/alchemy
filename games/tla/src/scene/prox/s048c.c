@@ -2,8 +2,7 @@
 #include "scene_tables.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
-
-s32 GameFlag_Test(s32 flag);
+#include "event_inline.h"
 
 extern struct ActorPlacement gData_02004b14[];
 extern struct ActorPlacement gData_02004b2c[];

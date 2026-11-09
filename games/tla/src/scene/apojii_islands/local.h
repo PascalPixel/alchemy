@@ -19,7 +19,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
+void Event_Wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetModeById(u32 id, s32 mode);
 struct Actor *Import_ActorCreate(s32 kind, s32 x, s32 y, s32 z);
@@ -61,35 +61,35 @@ void Func_02001c0c(s32 a, s32 b, void *callback);
 void Func_02001c24(const void *source, void *destination);
 void Func_02001c6c(struct Actor *object, s32 mode);
 void Func_02001c74(struct Actor *object, const void *data);
-void Func_02001c84(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_02001c8c(struct Actor *object);
+void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
+void Script_WaitForEventTimeout(struct Actor *object);
 s32 Func_02001c9c(struct Actor *object, s32 *position);
 void Func_02001cc4(void);
 void Func_02001ccc(void);
-void Func_02001d04(s32 id, s32 x, s32 z);
+void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Func_02001d2c(s32 id, s32 a, s32 b);
-void Func_02001d44(s32 message);
-void Func_02001d54(s32 id, s32 a);
-void Func_02001d6c(s32 id, s32 emote, s32 frames);
-void Func_02001d74(s32 id, s32 emote);
-void Func_02001d7c(s32 a, s32 b);
+void Event_SetMessageId(s32 message);
+void Event_ShowMessageAndWait(s32 id, s32 a);
+void Func_080d47b4(s32 id, s32 emote, s32 frames);
+void Func_080d489c(s32 id, s32 emote);
+void Camera_SetSpeedParameters(s32 a, s32 b);
 void Func_02001d8c(void);
-void Func_02001d94(s32 a);
+void Import_EventSetExitRequest(s32 a);
 void Func_02001d9c(void);
-void Func_02001da4(s32 a, s32 b);
-void Func_02001dac(s32 a);
-void Func_02001dcc(s32 a);
-void Func_02001dd4(s32 a, s32 b, s32 c);
+void BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
+void BattleEffect_StartBufferInterpolation(s32 a);
+void Event_ResolvePendingActions(s32 a);
+void Func_080d7788(s32 a, s32 b, s32 c);
 void Func_02001de4(void);
 void Func_02001dec(s32 a);
 void Func_02001df4(void);
 void Func_02001dfc(void);
 void Func_02001e04(s32 a, s32 b, s32 c, s32 d);
 void Func_02001e0c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
-s32 Func_02001e14(void);
+s32 Party_GetLeaderActor(void);
 void Func_02001e1c(s32 a, s32 b);
 void Func_02001e24(s32 a, s32 b);
-void Func_02001e2c(s32 cue);
+void Sound_Play(s32 cue);
 
 void Func_0200015c(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags,
                    s32 *params);
@@ -154,7 +154,7 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
 
 static __inline__ void Func_02001d04_(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001d04(id, x, z);
+  Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 
 static __inline__ void Func_02001e0c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,

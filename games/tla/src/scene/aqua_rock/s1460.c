@@ -3,8 +3,8 @@
 
 void Func_02002998(void);
 void Func_020029a0(void);
-void Func_02002a48(s32 a);
-void Func_02002a70(s32 cue);
+void Event_ResolvePendingActions(s32 a);
+void Sound_Play(s32 cue);
 void Func_02001d30(struct Actor *object);
 void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
 
@@ -16,9 +16,9 @@ void Func_02001460(void) {
   s32 up;
   struct MainRoutineWork *state;
 
-  Func_02002a70(612);
+  Sound_Play(612);
   Func_02002998();
-  Func_02002a48(0);
+  Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;

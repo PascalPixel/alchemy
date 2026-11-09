@@ -29,9 +29,9 @@ void Func_02004524(void) {
   struct KibomboEventWork *work;
 
   Func_02005a9c();
-  Func_02005c3c(0);
+  Event_ResolvePendingActions(0);
   Kibombo_CamMove(-1, -1, -1, 0);
-  Func_02005bbc()->motionFlags = 0;
+  Func_080d4568()->motionFlags = 0;
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   KIBOMBO_TASK_ADD(Func_02002ccc, 0x480);
@@ -46,5 +46,5 @@ void Func_02004524(void) {
   work->screenEffect = 0x201;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_Wait(40);
+  Event_Wait(40);
 }

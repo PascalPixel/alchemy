@@ -1,7 +1,6 @@
 #include "types.h"
 #include "actor.h"
-
-void wait(s32 frames);
+#include "event_inline.h"
 
 struct TileSprite {
   u8 unk00[18];

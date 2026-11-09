@@ -6,25 +6,25 @@
 #include "text/msg_ids.h"
 s32 Camera_MoveWithinMapBounds();
 s32 Event_AskYesNoWithActorAnimation();
-s32 FieldEvent_Wait();
-struct Actor *Func_0200576c();
-s32 Func_02005784();
-s32 Func_0200578c();
-s32 Func_020057ac();
-s32 Func_020057d4();
+s32 Event_Wait();
+struct Actor *Import_ActorCreate();
+s32 Actor_SetMoveTarget();
+s32 Script_WaitForEventTimeout();
+s32 Map_SetScreenShake();
+s32 Icon_DrawItem();
 s32 Func_02005814();
 s32 Func_0200581c();
-s32 Func_02005884();
+s32 Actor_SetHorizontalPositionWithTerrain();
 s32 Func_02005894();
-s32 Func_020058c4();
-s32 Func_020058ec();
+s32 Event_SetMessageId();
+s32 Actor_ArmCallbackAndRefresh();
 void Func_02005924();
-s32 Func_02005934();
-s32 Func_02005954();
-s32 Func_0200595c();
-s32 Func_02005964();
-s32 Func_02005984();
-s32 Func_020059f4();
+s32 Import_EventSetExitRequest();
+s32 BattleEffect_ApplyColorToTargetBuffer();
+s32 BattleEffect_ApplyColorToSourceBuffer();
+s32 BattleEffect_StartBufferInterpolation();
+s32 Event_ResolvePendingActions();
+s32 Sound_Play();
 s32 GameFlag_ClearBit();
 s32 GameFlag_SetBit();
 s32 GameFlag_Test();
@@ -59,7 +59,7 @@ void Func_0200065c(void) {
 
   if (GameFlag_Test(0xa23) != 0) {
     Func_02005814();
-    Call1((void (*)())Func_02005984, 0);
+    Call1((void (*)())Event_ResolvePendingActions, 0);
     Call2((void (*)())FieldMessage_Show, (s32)MsgThereSeemsTo, 5);
     answer = Event_AskYesNoWithActorAnimation(4, 0);
     if (answer != 0) {
@@ -75,17 +75,17 @@ void Func_0200065c(void) {
       Call3((void (*)())Actor_ArmCallback, 28, 0xd000, 0);
       Call3((void (*)())Actor_SetSpeedParameters, 4, 0x10000, 0x8000);
       Call3((void (*)())Actor_SetPositionAndReset, 4, 0x200, 0x126);
-      Call2((void (*)())Func_020058ec, 4, 0xc000);
-      Call1((void (*)())FieldEvent_Wait, 20);
-      Call2((void (*)())Func_0200595c, 0x10000, 0);
-      Call2((void (*)())Func_02005954, 0x10003, 1);
-      Call1((void (*)())Func_02005964, 20);
+      Call2((void (*)())Actor_ArmCallbackAndRefresh, 4, 0xc000);
+      Call1((void (*)())Event_Wait, 20);
+      Call2((void (*)())BattleEffect_ApplyColorToSourceBuffer, 0x10000, 0);
+      Call2((void (*)())BattleEffect_ApplyColorToTargetBuffer, 0x10003, 1);
+      Call1((void (*)())BattleEffect_StartBufferInterpolation, 20);
       Call1((void (*)())wait, 20);
       Call1((void (*)())PartyInventory_Remove, 245);
       actor4 = Actor_GetById(4);
       created =
-          (struct Actor *)Value4((s32 (*)())Func_0200576c, 0x1e9, actor4->x,
-                                 actor4->y + 0x80000, actor4->z);
+          (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 0x1e9,
+                                 actor4->x, actor4->y + 0x80000, actor4->z);
       if (created != 0) {
         sprite = created->animation;
         sprite->unk1b[0] = 0;
@@ -98,7 +98,7 @@ void Func_0200065c(void) {
         created->speedLimit = 0x6666;
         created->acceleration = 0xccc;
         buffer = HeapSlot_AllocFar(68, 0x608);
-        Call1((void (*)())Func_020057d4, 246);
+        Call1((void (*)())Icon_DrawItem, 246);
         Call3((void (*)())VramCache_Load, sprite->vramBlock, 128,
               (s32)(buffer + 0x400));
         Call1((void (*)())HeapSlot_Release, 68);
@@ -113,17 +113,18 @@ void Func_0200065c(void) {
       actor37->speedLimit = 0x6666;
       actor37->scaleX = 0x2000;
       actor37->scaleY = 0x2000;
-      Call1((void (*)())Func_020058c4, (s32)MsgThereSeemsTo + 1);
-      Call1((void (*)())Func_020059f4, 36);
+      Call1((void (*)())Event_SetMessageId, (s32)MsgThereSeemsTo + 1);
+      Call1((void (*)())Sound_Play, 36);
       if (created != 0) {
         flags = &created->motionFlags;
         *flags = 0;
         created->gravity = 0x9999;
         created->bounce = 0xcccc;
         created->velocityY = 0x80000;
-        Call4((void (*)())Func_02005784, created, 0x2000000, 0x800000,
+        Call4((void (*)())Actor_SetMoveTarget, created, 0x2000000, 0x800000,
               0x1260000);
-        Call4((void (*)())Func_02005784, actor37, 0x2000000, -1, 0x1260000);
+        Call4((void (*)())Actor_SetMoveTarget, actor37, 0x2000000, -1,
+              0x1260000);
         Call2((void (*)())Func_02005894, 7, gMainRoutineWork.currentOwner);
         Call1((void (*)())wait, 1);
         Call3((void (*)())Actor_SetSpeedParameters, 7, 0xcccc, 0x6666);
@@ -136,16 +137,17 @@ void Func_0200065c(void) {
         Call1((void (*)())wait, 1);
         Call3((void (*)())Actor_ArmCallback, 4, 0xc000, 0);
         Call3((void (*)())Actor_ArmCallback, 7, 0xc000, 0);
-        Call1((void (*)())Func_0200578c, created);
+        Call1((void (*)())Script_WaitForEventTimeout, created);
         state = 4;
         *flags = state;
-        Call1((void (*)())FieldEvent_Wait, 90);
+        Call1((void (*)())Event_Wait, 90);
         *flags = 0;
-        Call4((void (*)())Func_02005784, created, 0x2000000, 0x800000,
+        Call4((void (*)())Actor_SetMoveTarget, created, 0x2000000, 0x800000,
               0x1080000);
-        Call4((void (*)())Func_02005784, actor37, 0x2000000, -1, 0x1080000);
+        Call4((void (*)())Actor_SetMoveTarget, actor37, 0x2000000, -1,
+              0x1080000);
         *flags = state;
-        Call1((void (*)())FieldEvent_Wait, 60);
+        Call1((void (*)())Event_Wait, 60);
         *flags = 0;
         actor37->x = 0;
         actor37->targetX = 0x80000000;
@@ -158,13 +160,13 @@ void Func_0200065c(void) {
         actor37->velocityY = 0;
         actor37->velocityZ = 0;
         actor37->action = 0;
-        Call1((void (*)())Func_0200578c, created);
+        Call1((void (*)())Script_WaitForEventTimeout, created);
         *flags = state;
-        Call1((void (*)())FieldEvent_Wait, 90);
+        Call1((void (*)())Event_Wait, 90);
         *flags = 0;
-        Call4((void (*)())Func_02005784, created, 0x2000000, 0x5c0000,
+        Call4((void (*)())Actor_SetMoveTarget, created, 0x2000000, 0x5c0000,
               0x1080000);
-        Call1((void (*)())Func_0200578c, created);
+        Call1((void (*)())Script_WaitForEventTimeout, created);
         created->x = 0;
         created->targetX = 0x80000000;
         created->targetY = 0x80000000;
@@ -176,22 +178,22 @@ void Func_0200065c(void) {
         created->velocityZ = 0;
         created->action = 0;
       }
-      Call1((void (*)())FieldEvent_Wait, 40);
-      Call2((void (*)())Func_02005954, 0x10000, 0);
-      Call1((void (*)())Func_02005964, 20);
+      Call1((void (*)())Event_Wait, 40);
+      Call2((void (*)())BattleEffect_ApplyColorToTargetBuffer, 0x10000, 0);
+      Call1((void (*)())BattleEffect_StartBufferInterpolation, 20);
       Call1((void (*)())wait, 20);
       Call3((void (*)())Actor_OffsetPositionAndReset, 4, 0, -16);
       Call3((void (*)())Actor_OffsetPositionAndReset, 7, 0, -16);
       Call1((void (*)())Actor_WaitForMoveById, gMainRoutineWork.currentOwner);
       Call2((void (*)())Actor_SetModeById, gMainRoutineWork.currentOwner, 1);
       Call2((void (*)())Actor_SetModeById, 7, 1);
-      Call1((void (*)())FieldEvent_Wait, 50);
-      Call1((void (*)())Func_020059f4, 141);
-      Call1((void (*)())FieldEvent_Wait, 30);
-      Call3((void (*)())Func_020057ac, 0x10000, 0x10000, 0x10000);
-      Call1((void (*)())FieldEvent_Wait, 30);
-      Call3((void (*)())Func_020057ac, 0x20000, 0x20000, 0x10000);
-      Call1((void (*)())FieldEvent_Wait, 30);
+      Call1((void (*)())Event_Wait, 50);
+      Call1((void (*)())Sound_Play, 141);
+      Call1((void (*)())Event_Wait, 30);
+      Call3((void (*)())Map_SetScreenShake, 0x10000, 0x10000, 0x10000);
+      Call1((void (*)())Event_Wait, 30);
+      Call3((void (*)())Map_SetScreenShake, 0x20000, 0x20000, 0x10000);
+      Call1((void (*)())Event_Wait, 30);
       Actor_GetById(0)->priorityFlags |= 1;
       Actor_GetById(1)->priorityFlags |= 1;
       Actor_GetById(2)->priorityFlags |= 1;
@@ -213,7 +215,7 @@ void Func_0200065c(void) {
       Call2((void (*)())Actor_SetSpritePriority, gMainRoutineWork.currentOwner,
             1);
       Call2((void (*)())Actor_SetSpritePriority, 7, 1);
-      Call1((void (*)())FieldEvent_Wait, 20);
+      Call1((void (*)())Event_Wait, 20);
       Actor_SetSingleChildFlags(Actor_GetById(31), 0);
       Actor_SetPartAttribute(Actor_GetById(31), 7);
       actor31 = Actor_GetById(31);
@@ -237,24 +239,24 @@ void Func_0200065c(void) {
       Call2((void (*)())Actor_SetMovementTypeById, 31, (s32)gData_02006338);
       Call2((void (*)())Actor_SetMovementTypeById, 32, (s32)gData_02006338);
       Task_Add((s32)Func_020004c8, 0x480);
-      Call3((void (*)())Func_02005884, 9, 0, 0);
-      Call3((void (*)())Func_02005884, 10, 0, 0);
-      Call3((void (*)())Func_02005884, 23, 0, 0);
-      Call3((void (*)())Func_02005884, 24, 0, 0);
-      Call1((void (*)())Func_020059f4, 145);
-      Call3((void (*)())Func_020057ac, 0x60000, 0x60000, 0x10000);
-      Call2((void (*)())Func_02005954, 0x4063ff, 0);
-      Call1((void (*)())Func_02005964, 16);
+      Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
+      Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 10, 0, 0);
+      Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 23, 0, 0);
+      Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 24, 0, 0);
+      Call1((void (*)())Sound_Play, 145);
+      Call3((void (*)())Map_SetScreenShake, 0x60000, 0x60000, 0x10000);
+      Call2((void (*)())BattleEffect_ApplyColorToTargetBuffer, 0x4063ff, 0);
+      Call1((void (*)())BattleEffect_StartBufferInterpolation, 16);
       Call1((void (*)())wait, 16);
-      Call1((void (*)())Func_020059f4, 63);
+      Call1((void (*)())Sound_Play, 63);
       Call1((void (*)())wait, 180);
-      Call2((void (*)())Func_02005954, 0x7fff, 0);
-      Call1((void (*)())Func_02005964, 60);
-      Call1((void (*)())Func_020059f4, 141);
+      Call2((void (*)())BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
+      Call1((void (*)())BattleEffect_StartBufferInterpolation, 60);
+      Call1((void (*)())Sound_Play, 141);
       Call1((void (*)())wait, 60);
       Call1((void (*)())Task_RemoveFar, (s32)Func_020004c8);
       Call1((void (*)())GameFlag_SetBit, 0x11a);
-      Call1((void (*)())Func_02005934, 2);
+      Call1((void (*)())Import_EventSetExitRequest, 2);
     }
     Func_0200581c();
   }

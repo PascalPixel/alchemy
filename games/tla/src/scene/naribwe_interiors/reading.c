@@ -1,12 +1,9 @@
 #include "types.h"
 #include "main_routine_work.h"
-#include "scene_call.h"
 #include "text/msg_ids.h"
+#include "event_inline.h"
 
-void Func_02001138(s32 a0);
-void Func_02001148(s32 a0, s32 a1);
 s32 Func_020010d0(s32 item);
-s32 PartyInventory_FindOwner(s32 item);
 s32 Func_0200097c(void);
 s32 Func_020009a4(void);
 s32 Func_020009f8(void);
@@ -16,20 +13,20 @@ s32 Func_02000c04(void);
 void Func_02000760(void) {
   u8 *message = MsgBeyondTheWeapon;
 
-  Func_02001138((s32)message);
-  Func_02001148(10, 0);
+  Event_SetMessageId((s32)message);
+  Event_ShowMessageAndWait(10, 0);
   switch (Func_0200097c()) {
   case 0:
-    Func_02001138((s32)(message + 1));
-    Func_02001148(10, 0);
+    Event_SetMessageId((s32)(message + 1));
+    Event_ShowMessageAndWait(10, 0);
     break;
   case 1:
-    Func_02001138((s32)(message + 2));
-    Func_02001148(10, 0);
+    Event_SetMessageId((s32)(message + 2));
+    Event_ShowMessageAndWait(10, 0);
     break;
   case 2:
-    Func_02001138((s32)(message + 3));
-    Func_02001148(10, 0);
+    Event_SetMessageId((s32)(message + 3));
+    Event_ShowMessageAndWait(10, 0);
     break;
   }
 }
@@ -37,32 +34,32 @@ void Func_02000760(void) {
 void Func_020007b4(void) {
   u8 *message = MsgIFeelA;
 
-  Func_02001138((s32)message);
-  Func_02001148(10, 0);
+  Event_SetMessageId((s32)message);
+  Event_ShowMessageAndWait(10, 0);
   switch (Func_020009a4()) {
   case 3:
-    Func_02001138((s32)MsgYouAreLost);
-    Func_02001148(10, 0);
+    Event_SetMessageId((s32)MsgYouAreLost);
+    Event_ShowMessageAndWait(10, 0);
     break;
   case 4:
-    Func_02001138((s32)MsgADistantIsle);
-    Func_02001148(10, 0);
+    Event_SetMessageId((s32)MsgADistantIsle);
+    Event_ShowMessageAndWait(10, 0);
     break;
   case 5:
-    Func_02001138((s32)MsgISeeA);
-    Func_02001148(10, 0);
+    Event_SetMessageId((s32)MsgISeeA);
+    Event_ShowMessageAndWait(10, 0);
     break;
   case 6:
-    Func_02001138((s32)MsgATinyFigure);
-    Func_02001148(10, 0);
+    Event_SetMessageId((s32)MsgATinyFigure);
+    Event_ShowMessageAndWait(10, 0);
     break;
   case 7:
-    Func_02001138((s32)MsgISeeYou);
-    Func_02001148(10, 0);
+    Event_SetMessageId((s32)MsgISeeYou);
+    Event_ShowMessageAndWait(10, 0);
     break;
   default:
-    Func_02001138((s32)(message + 6));
-    Func_02001148(10, 0);
+    Event_SetMessageId((s32)(message + 6));
+    Event_ShowMessageAndWait(10, 0);
     break;
   }
 }
@@ -71,43 +68,43 @@ void Func_02000838(void) {
   s32 message = Func_02000c04();
 
   if (message == (s32)MsgInTheItem) {
-    Func_02001138(message);
-    Func_02001148(10, 0);
+    Event_SetMessageId(message);
+    Event_ShowMessageAndWait(10, 0);
   } else {
-    Func_02001138((s32)MsgInTheItem - 42);
-    Func_02001148(10, 0);
-    Func_02001138(message);
-    Func_02001148(10, 0);
+    Event_SetMessageId((s32)MsgInTheItem - 42);
+    Event_ShowMessageAndWait(10, 0);
+    Event_SetMessageId(message);
+    Event_ShowMessageAndWait(10, 0);
   }
 }
 
 void Func_02000878(void) {
-  Func_02001138((s32)MsgBeyondTheItem);
-  Func_02001148(10, 0);
+  Event_SetMessageId((s32)MsgBeyondTheItem);
+  Event_ShowMessageAndWait(10, 0);
   switch (Func_020009f8()) {
   case 0:
-    Func_02001138((s32)MsgISeeYouInside);
-    Func_02001148(10, 0);
+    Event_SetMessageId((s32)MsgISeeYouInside);
+    Event_ShowMessageAndWait(10, 0);
     break;
   case 9:
-    Func_02001138((s32)MsgYouMustForge);
-    Func_02001148(10, 0);
+    Event_SetMessageId((s32)MsgYouMustForge);
+    Event_ShowMessageAndWait(10, 0);
     break;
   case 10:
-    Func_02001138((s32)MsgYouWillRaise);
-    Func_02001148(10, 0);
+    Event_SetMessageId((s32)MsgYouWillRaise);
+    Event_ShowMessageAndWait(10, 0);
     break;
   case 11:
-    Func_02001138((s32)MsgYouWillGain);
-    Func_02001148(10, 0);
+    Event_SetMessageId((s32)MsgYouWillGain);
+    Event_ShowMessageAndWait(10, 0);
     break;
   case 12:
-    Func_02001138((s32)MsgYouHaveThe);
-    Func_02001148(10, 0);
+    Event_SetMessageId((s32)MsgYouHaveThe);
+    Event_ShowMessageAndWait(10, 0);
     break;
   case 13:
-    Func_02001138((s32)MsgTheObjectThat);
-    Func_02001148(10, 0);
+    Event_SetMessageId((s32)MsgTheObjectThat);
+    Event_ShowMessageAndWait(10, 0);
     break;
   }
 }
@@ -115,24 +112,24 @@ void Func_02000878(void) {
 void Func_02000920(void) {
   u8 *message = MsgTheObjectYou;
 
-  Func_02001138((s32)message);
-  Func_02001148(10, 0);
+  Event_SetMessageId((s32)message);
+  Event_ShowMessageAndWait(10, 0);
   switch (Func_02000a7c()) {
   case 14:
-    Func_02001138((s32)(message + 1));
-    Func_02001148(10, 0);
+    Event_SetMessageId((s32)(message + 1));
+    Event_ShowMessageAndWait(10, 0);
     break;
   case 15:
-    Func_02001138((s32)(message + 2));
-    Func_02001148(10, 0);
+    Event_SetMessageId((s32)(message + 2));
+    Event_ShowMessageAndWait(10, 0);
     break;
   case 16:
-    Func_02001138((s32)(message + 3));
-    Func_02001148(10, 0);
+    Event_SetMessageId((s32)(message + 3));
+    Event_ShowMessageAndWait(10, 0);
     break;
   case 17:
-    Func_02001138((s32)(message + 4));
-    Func_02001148(10, 0);
+    Event_SetMessageId((s32)(message + 4));
+    Event_ShowMessageAndWait(10, 0);
     break;
   }
 }

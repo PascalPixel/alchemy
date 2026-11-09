@@ -1,5 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "event_inline.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -8,8 +9,6 @@
    } *)(base))                                                                 \
        ->v)
 
-s32 GameFlag_SetBit(s32 flag);
-s32 GameFlag_ClearBit(s32 flag);
 void Func_02004594(void);
 void Func_020045e4(void);
 

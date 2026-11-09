@@ -1,8 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "scene_tables.h"
-
-struct Actor *Actor_GetById(u32 id);
+#include "event_inline.h"
 
 void Func_02002b04(u32 id, s8 mode) {
   struct Actor *object = Actor_GetById(id);

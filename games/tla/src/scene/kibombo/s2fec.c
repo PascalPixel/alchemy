@@ -20,7 +20,7 @@ void Func_02002fec(struct KibomboObject *object) {
 void Func_02003030(void) {
   if ((gFrameCount & 63) == 0) {
     struct KibomboObject *object =
-        Func_02005a34(0x11d, 0x580000, 0x100000, 0x13a0000);
+        Import_ActorCreate(0x11d, 0x580000, 0x100000, 0x13a0000);
     u8 *part;
     s32 mask;
 

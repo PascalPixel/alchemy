@@ -1,9 +1,9 @@
 #include "types.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 extern char SceneId_Ov6A6Room1;
 
-s32 GameFlag_Test(s32 flag);
 void Func_020000ac(void);
 
 s32 Func_020011ec(void) {

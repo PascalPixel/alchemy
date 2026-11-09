@@ -7,7 +7,7 @@ void Func_02003c84(void);
 
 void Func_020057e0(void) {
   Func_02005a9c();
-  Func_02005c3c(0);
+  Event_ResolvePendingActions(0);
   GameFlag_SetBit(514);
   gData_02007948[0] = PALETTE_WORD(169);
   gData_02007948[1] = PALETTE_WORD(167);

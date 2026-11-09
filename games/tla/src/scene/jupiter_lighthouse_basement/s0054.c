@@ -5,6 +5,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
+#include "event_inline.h"
 
 struct MainRoutineWork254 {
   u8 unk000[0x254];
@@ -14,11 +15,8 @@ struct MainRoutineWork254 {
 extern const u8 gData_020022e8[];
 extern const u8 gData_0200236c[];
 
-s32 GameFlag_Test(s32 flag);
 s32 Random16Far(void);
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 void Func_02001bec(struct Actor *object, s32 mode);
-void Func_02001ce4(s32 a);
 void Func_02001cec(s32 a, s32 b);
 void Func_02001d1c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Func_02001d44(s32 a, s32 b, s32 c);
@@ -50,9 +48,9 @@ void Func_02000094(void) {
 
 void Func_020000f8(void) { Func_02001d1c_(69, 1, 4, 3, 108, 31, 1); }
 
-void Func_02000118(void) { Func_02001ce4(4); }
+void Func_02000118(void) { Import_EventSetExitRequest(4); }
 
-void Func_02000124(void) { Func_02001ce4(6); }
+void Func_02000124(void) { Import_EventSetExitRequest(6); }
 
 const u8 *Func_02000130(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov699Room2)

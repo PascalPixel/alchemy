@@ -15,8 +15,8 @@ void Func_020023b0(void) {
   wait(1);
   Actor_SetPositionAndResetMotion(object, (x << 20) + PIXELS(8), object->y,
                                   (z << 20) + PIXELS(8));
-  FieldEvent_Wait(4);
-  Func_02002af8()->y -= 0x80000;
+  Event_Wait(4);
+  Func_080d4568()->y -= 0x80000;
 }
 
 /// Centers the leader on its cell, plays sound 161 and copies the cell below
@@ -44,7 +44,7 @@ void Func_02002438(struct JupiterLighthouseAerieWork *table,
   sourceZBit = table->z & 64;
   z = (leader->z >> 20) | sourceZBit;
   Func_020023b0();
-  Func_02002b68(161);
-  Func_02002a40(table->x, table->z + 1, 1, 1, x, z);
-  FieldEvent_Wait(12);
+  Sound_Play(161);
+  Map_CopyCellsRect(table->x, table->z + 1, 1, 1, x, z);
+  Event_Wait(12);
 }

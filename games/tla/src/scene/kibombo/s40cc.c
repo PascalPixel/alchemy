@@ -9,49 +9,49 @@ void Func_020040cc(void) {
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   Kibombo_CamMove(-1, -1, -1, 0);
-  Func_02005bbc()->motionFlags = 0;
+  Func_080d4568()->motionFlags = 0;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Kibombo_TaskAdd(Func_02002ccc, 0x480);
-  FieldEvent_Wait(40);
-  Func_02005c9c(78);
+  Event_Wait(40);
+  Sound_Play(78);
   Kibombo_CamSpeed(0xcccc, 0x1999);
   Kibombo_CamMove(PIXELS(264), -1, PIXELS(388), 1);
   Func_02005bb4();
   Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
   Motion_SetModeAndWaitAnimation(17, 3);
-  Func_02005b4c((s32)MsgLetUsNow);
-  Func_02005b64(0x4000 + 17, 0);
-  Func_02005c9c(26);
+  Event_SetMessageId((s32)MsgLetUsNow);
+  Event_ShowMessageAndWait(0x4000 + 17, 0);
+  Sound_Play(26);
   Actor_SetSingleChildFlags(Actor_GetById(27), 0);
   Actor_GetById(27)->motionFlags = 0;
   Actor_SetPositionAndResetMotion(Actor_GetById(27), PIXELS(265), PIXELS(24),
                                   PIXELS(344));
-  Func_02005ba4(0x6666, 0xccc);
+  Camera_SetSpeedParameters(0x6666, 0xccc);
   Camera_MoveWithinMapBounds(PIXELS(264), -1, PIXELS(340), 1);
   Kibombo_ObjSpeed(17, 0x3333, 0x1999);
   Actor_SetPositionAndReset(17, 264, 374);
   wait(1);
   Kibombo_TaskAdd(Func_02002eb0, 0x480);
-  FieldEvent_Wait(20);
+  Event_Wait(20);
   Task_RemoveFar(Func_02002ccc);
   Func_020032e0();
   Kibombo_TaskAdd(Func_02002ccc, 0x480);
-  Func_02005b64(17, 0);
-  Func_02005c9c(11);
+  Event_ShowMessageAndWait(17, 0);
+  Sound_Play(11);
   Func_02003610();
-  FieldEvent_Wait(160);
-  Func_02005b5c(17, 0, 80);
-  Func_02005c9c(0x240);
+  Event_Wait(160);
+  Event_ShowMessageThenWait(17, 0, 80);
+  Sound_Play(0x240);
   Func_02003640(1, 1);
-  FieldEvent_Wait(20);
-  Func_02005b5c(17, 0, 40);
+  Event_Wait(20);
+  Event_ShowMessageThenWait(17, 0, 40);
   Task_RemoveFar(Func_02002ccc);
   wait(1);
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x202;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02005bc4(10);
+  Import_EventSetExitRequest(10);
 }
 
 void Func_02004294(void) {
@@ -62,7 +62,7 @@ void Func_02004294(void) {
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   Kibombo_CamMove(-1, -1, -1, 0);
-  Func_02005bbc()->motionFlags = 0;
+  Func_080d4568()->motionFlags = 0;
   Actor_SetSingleChildFlags(Actor_GetById(27), 0);
   Actor_GetById(27)->motionFlags = 0;
   Actor_SetPositionAndResetMotion(Actor_GetById(27), PIXELS(265), PIXELS(24),
@@ -77,14 +77,14 @@ void Func_02004294(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   KIBOMBO_TASK_ADD(Func_02002ccc, 0x480);
-  FieldEvent_Wait(40);
-  Func_02005c9c(161);
+  Event_Wait(40);
+  Sound_Play(161);
   Func_02003640(0, 1);
-  FieldEvent_Wait(20);
-  Func_02005b9c(17, 0x102);
-  FieldEvent_Wait(20);
-  Func_02005b4c((s32)MsgYouAreStill);
-  Func_02005b64(17, 0);
+  Event_Wait(20);
+  Func_080d489c(17, 0x102);
+  Event_Wait(20);
+  Event_SetMessageId((s32)MsgYouAreStill);
+  Event_ShowMessageAndWait(17, 0);
   slot = &gData_02007950;
   object = *slot;
   if (object != 0) {
@@ -110,14 +110,14 @@ void Func_02004294(void) {
     } while (y > 0x240000);
   }
   Motion_SetModeAndWaitAnimation(17, 4);
-  Func_02005b64(17, 0);
+  Event_ShowMessageAndWait(17, 0);
   Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
-  Func_02005b64(0x4000 + 17, 0);
+  Event_ShowMessageAndWait(0x4000 + 17, 0);
   GameFlag_ClearBit(0x8f7);
-  Func_02005c9c(11);
-  FieldEvent_Wait(80);
+  Sound_Play(11);
+  Event_Wait(80);
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02005bc4(11);
+  Import_EventSetExitRequest(11);
 }

@@ -6,14 +6,11 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
-s32 Func_02000b5c();
-s32 Func_02000b24();
-s32 Func_02000b3c();
+#include "event_inline.h"
 extern u8 MsgAlhafraInteriors06[];
 
 void Func_02000298(s32 a0) {
-  Func_02000b5c(a0, 0x107, 0x1e);
-  Func_02000b24((s32)MsgAlhafraInteriors06);
-  Func_02000b3c(a0, 0);
+  Func_080d47b4(a0, 0x107, 0x1e);
+  Event_SetMessageId((s32)MsgAlhafraInteriors06);
+  Event_ShowMessageAndWait(a0, 0);
 }

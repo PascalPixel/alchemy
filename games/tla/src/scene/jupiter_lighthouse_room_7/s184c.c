@@ -1,7 +1,7 @@
 #include "types.h"
-#include "call.h"
 #include "field_coordinate.h"
 #include "field_sprite.h"
+#include "event_inline.h"
 
 /// struct Actor as this function reads it, its coordinates as
 /// FieldCoordinate.
@@ -18,22 +18,21 @@ struct PositionedActor {
   u8 motionFlags;
 };
 
-struct PositionedActor *Actor_GetById(s32 id);
 void Animation_ApplyChildValues(struct PositionedActor *object, s32 value);
-void Func_02002ba4(s32 id, s32 a1, s32 a2);
-s32 GameFlag_Test(s32 flag);
 
 void Func_0200184c(void) {
-  struct PositionedActor *actor9 = Actor_GetById(9);
-  struct PositionedActor *actor10 = Actor_GetById(10);
-  struct PositionedActor *actor23 = Actor_GetById(23);
+  struct PositionedActor *actor9 = ((struct PositionedActor *)Actor_GetById(9));
+  struct PositionedActor *actor10 =
+      ((struct PositionedActor *)Actor_GetById(10));
+  struct PositionedActor *actor23 =
+      ((struct PositionedActor *)Actor_GetById(23));
   struct FieldSprite *sprite = actor23->animation;
 
-  Call3((void (*)())Func_02002ba4, 24, 0x2000000, 0xf80000);
-  Call3((void (*)())Func_02002ba4, 23, 0x2000000, 0xf80000);
-  Call3((void (*)())Func_02002ba4, 9, 0x1d80000, 0x1000000);
-  Call3((void (*)())Func_02002ba4, 10, 0x2280000, 0x1000000);
-  Actor_GetById(24)->scaleX = 0;
+  Actor_SetPosition(24, 0x2000000, 0xf80000);
+  Actor_SetPosition(23, 0x2000000, 0xf80000);
+  Actor_SetPosition(9, 0x1d80000, 0x1000000);
+  Actor_SetPosition(10, 0x2280000, 0x1000000);
+  ((struct PositionedActor *)Actor_GetById(24))->scaleX = 0;
   actor23->motionFlags = 0;
   actor23->y.fixed = actor23->terrainHeight;
   actor9->motionFlags = 0;
@@ -49,10 +48,11 @@ void Func_0200184c(void) {
     }
     actor23->x.fixed -= 0x28f40;
     sprite->rotation += 0x800;
-    Animation_ApplyChildValues(Actor_GetById(9), 4);
-    Animation_ApplyChildValues(Actor_GetById(11), 4);
+    Animation_ApplyChildValues(((struct PositionedActor *)Actor_GetById(9)), 4);
+    Animation_ApplyChildValues(((struct PositionedActor *)Actor_GetById(11)),
+                               4);
   }
-  if (Value1((s32 (*)())GameFlag_Test, 0xa0b)) {
+  if (Event_GetFlag(0xa0b)) {
     actor10->y.fixed += 0x66640;
     {
       s32 step = 0x1eb80;
@@ -61,8 +61,10 @@ void Func_0200184c(void) {
     }
     actor23->x.fixed += 0x28f40;
     sprite->rotation -= 0x800;
-    Animation_ApplyChildValues(Actor_GetById(10), 4);
-    Animation_ApplyChildValues(Actor_GetById(12), 4);
+    Animation_ApplyChildValues(((struct PositionedActor *)Actor_GetById(10)),
+                               4);
+    Animation_ApplyChildValues(((struct PositionedActor *)Actor_GetById(12)),
+                               4);
   }
   if (GameFlag_Test(0xa0a) && GameFlag_Test(0xa0b)) {
     actor9->y.fixed += 0x199900;

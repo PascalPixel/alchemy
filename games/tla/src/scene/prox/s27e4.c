@@ -6,14 +6,8 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
-s32 GameFlag_Test(s32 a);
+#include "event_inline.h"
 void Func_0200279c(s32 a, s32 b, s32 c, s32 d);
-void wait(s32 a);
-void Actor_SetMovementTypeById(s32 a, s32 b);
-void Actor_SetSpritePriority(s32 a, s32 b);
-s32 Actor_GetById(s32 a);
-void Actor_SetPartAttribute(s32 a, s32 b);
 extern u8 gData_020047ac[];
 extern u8 gData_02004848[];
 extern u8 gData_020048e4[];
@@ -37,5 +31,5 @@ void Func_020027e4(void) {
     }
   }
   Actor_SetSpritePriority(20, 1);
-  Actor_SetPartAttribute(Actor_GetById(20), 0xf);
+  Actor_SetPartAttribute(((s32)Actor_GetById(20)), 0xf);
 }

@@ -4,6 +4,7 @@
 #include "ram_buffer.h"
 #include "scene_tables.h"
 #include "system/main_routine_work.h"
+#include "event_inline.h"
 
 /// A point on the map: 16.16 fixed-point pixels.
 struct Position {
@@ -14,14 +15,9 @@ struct Position {
 
 void Func_020038e8(void);
 void Func_020043c4(struct Actor *actor, s32 mode);
-void Func_020043f4(struct Actor *actor, s32 x, s32 y, s32 z);
-void Func_020043fc(struct Actor *actor);
-s32 Func_02004424(u8 layer, s32 x, s32 z);
 s32 Func_02004454(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
 s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
 void Actor_SetAnimationSpeed(struct Actor *actor, s32 speed);
-void Vector_AddPolarOffsetFar(s32 length, s32 angle, struct Position *position);
-void wait(s32 frames);
 void Func_0200385c(void);
 
 void Func_02003ee8(void) {
@@ -71,9 +67,10 @@ top:
   position->z = startZ = (actor->z & 0xfff00000) + i;
   x = startX;
   z = startZ;
-  startBehavior = Func_02004424(*(layer = &actor->terrainId), startX, startZ);
+  startBehavior =
+      GetMapCellCollision(*(layer = &actor->terrainId), startX, startZ);
   Vector_AddPolarOffsetFar(PIXELS(16), heading, position);
-  nextBehavior = Func_02004424(*layer, position->x, position->z);
+  nextBehavior = GetMapCellCollision(*layer, position->x, position->z);
   if (nextBehavior == 255 ||
       Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y > i) {
     actor->angle = heading;
@@ -120,8 +117,8 @@ body:
   z = next->z;
   actor->speedLimit = PIXELS(2);
   actor->acceleration = 0x1999;
-  Func_020043f4(actor, next->x, next->y, next->z);
-  Func_020043fc(actor);
+  Actor_SetMoveTarget(actor, next->x, next->y, next->z);
+  Script_WaitForEventTimeout(actor);
   if (nextBehavior != startBehavior) {
     goto blocked;
   }
@@ -137,15 +134,15 @@ test:
    * tla-en. */
   step = NULL;
   next = &probe;
-  nextBehavior = Func_02004424(*layer, next->x, next->z);
+  nextBehavior = GetMapCellCollision(*layer, next->x, next->z);
   if (nextBehavior != 255) {
     goto body;
   }
 stop:
   actor->speedLimit = PIXELS(2);
   actor->acceleration = PIXELS(1);
-  Func_020043f4(actor, x, actor->y, z);
-  Func_020043fc(actor);
+  Actor_SetMoveTarget(actor, x, actor->y, z);
+  Script_WaitForEventTimeout(actor);
   wait(2);
   goto top;
 

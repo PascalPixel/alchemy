@@ -3,12 +3,12 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
+#include "event_inline.h"
 
 // The Japanese form of this function, the older revision without the test
 // that the leader stands within 11 of the actor, is still on its listing.
 #if TLA_PATCH_1
 
-struct Actor *Actor_GetById(s32 id);
 s32 SceneActor_CalculateFixedPointDistance(s32 *from, s32 *to);
 s32 Func_020002d8(struct Actor *actor, struct Actor *target, s32 distance,
                   s32 flag);
@@ -48,7 +48,6 @@ s32 Func_020003bc(struct Actor *actor) {
 
 #else
 
-struct Actor *Actor_GetById(s32 id);
 s32 Func_020002d8(struct Actor *actor, struct Actor *target, s32 distance,
                   s32 flag);
 

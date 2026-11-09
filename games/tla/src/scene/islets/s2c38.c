@@ -12,11 +12,11 @@ void Func_02002c38(void) {
   Call3((void (*)())Actor_SetSpeedParameters, 10, 0xcccc, 0x6666);
   Actor_GetById(10)->collisionFlags |= 0x80;
   if (GameFlag_Test(0xaa1)) {
-    spawned = (struct Actor *)Value4((s32 (*)())Func_02003df4, 489, 0x1180000,
-                                     0, 0x3480000);
+    spawned = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 489,
+                                     0x1180000, 0, 0x3480000);
     if (spawned != 0) {
       spawned->motionFlags = 0;
-      Func_02003e3c(spawned, 454);
+      Func_0802372c(spawned, 454);
       Actor_SetSingleChildFlags(spawned, 0);
       spawned->collisionFlags = 9;
       spawned->unk5c[0] = 1;

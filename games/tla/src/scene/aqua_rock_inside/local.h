@@ -19,7 +19,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
+void Event_Wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetModeById(u32 id, s32 mode);
 struct Actor *Import_ActorCreate(s32 kind, s32 x, s32 y, s32 z);
@@ -148,27 +148,27 @@ void Func_02003c7c(const void *source, void *destination);
 void Func_02003cc4(struct Actor *object, s32 mode);
 void Func_02003ccc(struct Actor *object, const void *data);
 void Func_02003cdc(void);
-void Func_02003d14(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02003d1c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02003d24(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Map_CopyCellsRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Func_0802b450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02003d54(void);
 void Func_02003d64(s32 item, s32 mode);
 void Func_02003d7c(void);
 void Func_02003d84(void);
 void Func_02003df4(s32 id, s32 a, s32 b);
-void Func_02003e44(s32 a, s32 b);
+void Camera_SetSpeedParameters(s32 a, s32 b);
 void Func_02003e54(void);
-void Func_02003e64(s32 a, s32 b);
+void Func_080d2b4c(s32 a, s32 b);
 void Func_02003e6c(void);
-void Func_02003eac(s32 a);
+void Event_ResolvePendingActions(s32 a);
 void Func_02003eb4(s32 a, s32 b);
 void Func_02003ecc(s32 a);
-void Func_02003eec(s32 a, s32 b);
-void Func_02003ef4(s32 cue);
+void Func_080d3b28(s32 a, s32 b);
+void Sound_Play(s32 cue);
 void Func_02002bd4(struct Actor *object);
 s32 Func_02002ed4(struct Actor *object);
-void Func_02003ddc(s32 id, s32 x, s32 z);
-void Func_02003e5c(s32 a);
+void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
+void Import_EventSetExitRequest(s32 a);
 void Func_02003ed4(void);
 
 void Func_020006d0(void);
@@ -223,19 +223,19 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
 static __inline__ void Func_02003d14_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003d14(a, b, c, d, e, f);
+  Map_CopyCellsRect(a, b, c, d, e, f);
 }
 
 static __inline__ void Func_02003d1c_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003d1c(a, b, c, d, e, f);
+  Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
 static __inline__ void Func_02003d24_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003d24(a, b, c, d, e, f);
+  Func_0802b450(a, b, c, d, e, f);
 }
 
 static __inline__ void *MemAlloc_(s32 size) {

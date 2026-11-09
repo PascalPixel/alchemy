@@ -1,5 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "event_inline.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -8,8 +9,6 @@
    } *)(base))                                                                 \
        ->v)
 
-void wait(s32 frames);
-void Task_RemoveFar(void *func);
 s32 Resource_ResetEntry(u32 entry);
 void HeapSlot_Release(s32 slot);
 void Func_02002de4(void);

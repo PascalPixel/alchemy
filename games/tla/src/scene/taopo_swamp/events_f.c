@@ -19,7 +19,7 @@ void Func_02000fbc(s32 a, s32 id) {
     object->priorityFlags |= 2;
     GameFlag_SetBit(0x339);
     GameFlag_SetBit(0x33a);
-    Func_02002840(11, 19, 1, 1, 11, 21);
+    Map_CopyCellAttributeRect(11, 19, 1, 1, 11, 21);
   }
 }
 
@@ -45,7 +45,7 @@ void Func_02001038(s32 a, s32 id) {
     Actor_OffsetPositionAndResetMotion(id, 0, -32);
     Actor_WaitForMoveById(id);
     Actor_SetModeById(id, 3);
-    Func_02002840(30, 13, 1, 1, 31, 11);
+    Map_CopyCellAttributeRect(30, 13, 1, 1, 31, 11);
   }
 }
 

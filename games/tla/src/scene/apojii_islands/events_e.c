@@ -7,9 +7,9 @@ void Func_02000de0(s32 actor) {
     return;
   }
   Func_02001cc4();
-  Func_02001dcc(0);
-  Func_02001d44((s32)&MsgWowYouLook);
-  Func_02001d54(actor, 0);
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)&MsgWowYouLook);
+  Event_ShowMessageAndWait(actor, 0);
   Func_02001ccc();
 }
 
@@ -17,18 +17,18 @@ void Func_02000e40(s32 actor) {
   s32 msg;
 
   Func_02001cc4();
-  Func_02001dcc(0);
+  Event_ResolvePendingActions(0);
   msg = (s32)&MsgYouGuysAren;
-  Func_02001d44(msg);
+  Event_SetMessageId(msg);
   FieldMessage_ShowAtActor(actor, 0);
-  if (Event_AskYesNoWithActorAnimation(Func_02001e14(), 0) == 0) {
-    FieldEvent_Wait(10);
-    Func_02001d44(msg + 1);
+  if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
+    Event_Wait(10);
+    Event_SetMessageId(msg + 1);
   } else {
-    FieldEvent_Wait(20);
-    Func_02001d44(msg + 2);
+    Event_Wait(20);
+    Event_SetMessageId(msg + 2);
   }
-  Func_02001d54(actor, 0);
+  Event_ShowMessageAndWait(actor, 0);
   Func_02001ccc();
 }
 
@@ -39,8 +39,8 @@ void Func_02000e98(s32 actor) {
     return;
   }
   Func_02001cc4();
-  Func_02001dcc(0);
-  Func_02001d44((s32)&MsgItDBe);
-  Func_02001d54(actor, 0);
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)&MsgItDBe);
+  Event_ShowMessageAndWait(actor, 0);
   Func_02001ccc();
 }

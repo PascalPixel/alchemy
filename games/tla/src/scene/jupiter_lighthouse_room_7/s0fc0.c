@@ -1,5 +1,6 @@
 #include "jupiter_lighthouse_room_7.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 void Scene_SetArrivalFlags(s32 flags);
 void Func_02001224(s32 mode);
@@ -18,12 +19,12 @@ s32 Func_02000fc0(void) {
   if (gMainRoutineWork.entrance == 12) {
     /* FAKEMATCH: the placements go through the call layer; called directly,
      * they share 0xa80000 and the z values in saved registers (differ 46). */
-    Call3((void (*)())Func_02002ba4, 10, PIXELS(168), PIXELS(264));
-    Call3((void (*)())Func_02002ba4, 11, PIXELS(200), PIXELS(264));
-    Call3((void (*)())Func_02002ba4, 12, PIXELS(232), PIXELS(264));
-    Call3((void (*)())Func_02002ba4, 13, PIXELS(168), PIXELS(296));
-    Call3((void (*)())Func_02002ba4, 14, PIXELS(136), PIXELS(328));
-    Call3((void (*)())Func_02002ba4, 15, PIXELS(168), PIXELS(328));
+    Actor_SetPosition(10, PIXELS(168), PIXELS(264));
+    Actor_SetPosition(11, PIXELS(200), PIXELS(264));
+    Actor_SetPosition(12, PIXELS(232), PIXELS(264));
+    Actor_SetPosition(13, PIXELS(168), PIXELS(296));
+    Actor_SetPosition(14, PIXELS(136), PIXELS(328));
+    Actor_SetPosition(15, PIXELS(168), PIXELS(328));
   }
   if (!GameFlag_Test(0x109) && Func_02000290() != 2) {
     GameFlag_ClearBit(0xa10);

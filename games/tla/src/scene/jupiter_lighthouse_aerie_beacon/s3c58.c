@@ -1,6 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "ram_buffer.h"
+#include "event_inline.h"
 
 struct HeapSlotWords {
   s32 unk00[8];
@@ -15,11 +16,7 @@ struct ScrollWork {
 extern s32 Data_02006a1c;
 extern s32 gData_02005a20[];
 
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_0200577c(void);
-void Func_020059f4(s32 sound);
-struct Actor *Actor_GetById(s32 id);
-void wait(s32 frames);
 
 void Func_02003c58(s32 mode) {
   struct ScrollWork *work = (struct ScrollWork *)(((struct HeapSlotWords *)Ram_HeapSlots)->map + 376);
@@ -33,7 +30,7 @@ void Func_02003c58(s32 mode) {
     count++;
   }
   if (mode != 0) {
-    Func_020059f4(223);
+    Sound_Play(223);
     i = 0;
     work->height += 0x18000;
     while (work->height < Data_02006a1c) {

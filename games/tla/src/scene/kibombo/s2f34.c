@@ -10,7 +10,7 @@ void Func_02002f34(void) {
 
   if (phase == 0) {
     struct KibomboObject *object =
-        Func_02005a34(0x16e, 0x1080000, 0x200000, 0x13c0000);
+        Import_ActorCreate(0x16e, 0x1080000, 0x200000, 0x13c0000);
     s32 value;
 
     if (object != 0) {

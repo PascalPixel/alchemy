@@ -30,11 +30,11 @@ void Func_02000070(void) {
     Actor_SetSpritePriority(10, 3);
     object->motionFlags = 3;
     wait(5);
-    Func_02002470(134);
+    Sound_Play(134);
     object->motionFlags = 2;
     for (i = 0, x = 0xb00000; i <= 3; i++, x += 0x100000) {
       Lift_(0x1000000, x, 0, 0);
-      Func_02002458(0x1000000, x, 0, 0);
+      Func_080dbdd4(0x1000000, x, 0, 0);
       if (i <= 1)
         Func_02002460(0x1000000, x, 0, 128);
     }

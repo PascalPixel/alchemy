@@ -2,6 +2,7 @@
 #include "iwram_call.h"
 #include "field_event.h"
 #include "task.h"
+#include "event_inline.h"
 
 extern u8 gField_CachedTilesA[];
 extern u8 gField_CachedTilesB[];
@@ -15,7 +16,6 @@ extern s16 gData_02002e32;
 void *Heap_Alloc(s32 size);
 void Func_020022a0(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
-void VramCache_Load(s32 entry, s32 size, void *source);
 void Heap_Release(void *block);
 void Func_02001388(void);
 

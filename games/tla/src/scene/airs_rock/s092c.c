@@ -1,9 +1,8 @@
 #include "types.h"
 #include "actor.h"
+#include "event_inline.h"
 
 extern u32 gFrameCount;
-
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
 
 void Func_0200092c(struct Actor *object) {
   u8 *bytes = (u8 *)object;

@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 /// The object this update drives: an Actor with its own bytes over the callback
 /// word.
@@ -45,12 +46,8 @@ s32 Func_020042e0(s32 *a, s32 *b);
 void Func_02005764(struct Object6a5 *object, const void *script);
 void Func_02005994(struct Vector3 *position);
 s32 Func_020059e4();
-void Func_020059f4(s32 sound);
-s32 GameFlag_Test(s32 flag);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 void Actor_SetAnimationSpeed(struct Object6a5 *object, s32 value);
-struct Actor *Actor_GetById(s32 id);
 s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));
 extern u8 gData_020069fc[];
 extern s32 Data_02006a28;
@@ -73,7 +70,7 @@ void Func_0200430c(struct Object6a5 *object) {
   timer = object->unk64 + 1;
   object->unk64 = timer;
   if ((timer & 31) == 31)
-    Func_020059f4(231);
+    Sound_Play(231);
   {
     s8 *from = leader->animation;
     s8 *to = object->sprite;
@@ -114,6 +111,6 @@ void Func_0200430c(struct Object6a5 *object) {
   object->unk63 = 0;
   object->update = 0;
   Func_02005764(object, gData_020069fc);
-  Func_020059f4(228);
+  Sound_Play(228);
   Data_02006a28 = 0;
 }

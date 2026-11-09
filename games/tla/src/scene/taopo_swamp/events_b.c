@@ -14,8 +14,8 @@ void Func_02000334(void) {
     Func_020028d0_(64, PIXELS(264), PIXELS(664));
     if (leader->x >> 20 == 16 && leader->z >> 20 == 41) {
       Func_02002898();
-      Func_02002968(0);
-      Func_02002910(gMainRoutineWork.currentOwner, 0x102);
+      Event_ResolvePendingActions(0);
+      Func_080d489c(gMainRoutineWork.currentOwner, 0x102);
       Actor_OffsetPositionAndResetMotion_(gMainRoutineWork.currentOwner, 0,
                                                  -16);
       leader->velocityY = 0x60000;

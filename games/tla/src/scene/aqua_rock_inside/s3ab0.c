@@ -1,6 +1,7 @@
 #include "types.h"
 #include "iwram_call.h"
 #include "system/io_reg.h"
+#include "event_inline.h"
 
 struct WaterOutlet {
   u16 state;
@@ -20,11 +21,7 @@ struct WaterWork {
 
 extern u8 gData_020023c4[];
 
-typedef void (*TaskFunc)(void);
-
-s32 GameFlag_Test(s32 flag);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 Task_Add(TaskFunc func, s32 order);
 void Func_02003a70(void);
 
 void Func_02003ab0(const u16 *spots, const u16 *levels, void (*handler)(void)) {

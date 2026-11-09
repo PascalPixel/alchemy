@@ -1,12 +1,11 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 extern u32 gFrameCount;
 
-struct Actor *Actor_GetById(s32 id);
 u32 Random16Far(void);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 
 static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
   /* FAKEMATCH: as in ☀️'s scene layer, forwarding through the inline sets the

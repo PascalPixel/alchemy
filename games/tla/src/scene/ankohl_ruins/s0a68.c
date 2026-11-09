@@ -8,14 +8,14 @@ void Func_02000a68(s32 unused, s32 objectId) {
   if (object->z >> 20 == 31) {
     object->motionFlags = 3;
     Func_02002e34(object, 3);
-    Func_02002eec(204);
+    Sound_Play(204);
     while (frames != 0) {
       wait(1);
       if (object->velocityY == 0)
         break;
       frames--;
     }
-    Func_02002e6c(id, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
     if (id == 10)
       GameFlag_SetBit(0x9d2);
     if (id == 11)

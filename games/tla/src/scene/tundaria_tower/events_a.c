@@ -14,7 +14,7 @@ void Func_020007dc(s32 step) {
     Func_02000708(&position, 1, 0xcccc);
     break;
   case 3:
-    Func_02002fc0(31, 85, 20, 85, 3, 4);
+    Map_CopyCellPictureIndicesRect(31, 85, 20, 85, 3, 4);
     position.x = 0x15b0000;
     position.y = 0;
     position.z = 0x1780000;
@@ -47,21 +47,21 @@ void Func_020008a8(void) {
   struct Actor *object = Actor_GetById(8);
 
   Func_02003048();
-  Func_02003148(0);
+  Event_ResolvePendingActions(0);
   GameFlag_SetBit(0x944);
-  Call6((void (*)())Func_02002fe8, 11, 22, 3, 2, 20, 22);
+  Call6((void (*)())Map_CopyCellAttributeRect, 11, 22, 3, 2, 20, 22);
   object->gravity = 0x8000;
   object->motionFlags = 3;
   OverlayObject_WaitUntilIdle(object);
-  Func_02003088(8, 0, 0);
-  Func_02003088(68, PIXELS(344), PIXELS(372));
+  Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(68, PIXELS(344), PIXELS(372));
   Actor_GetById(68)->update = (void (*)(void))Func_02000840;
   Func_02003050();
 }
 
 void Func_02000920(void) {
   Func_02003048();
-  Func_02003148(0);
+  Event_ResolvePendingActions(0);
   FieldMessage_Show(MsgThereSSomething, 1);
   if (GameFlag_Test(0x949)) {
     struct EventWork *work = Ram_HeapSlots->eventWork;

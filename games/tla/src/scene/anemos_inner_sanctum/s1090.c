@@ -6,7 +6,6 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
-s32 GameFlag_ClearBit();
+#include "event_inline.h"
 
 void Func_02001090(void) { GameFlag_ClearBit(0x200); }

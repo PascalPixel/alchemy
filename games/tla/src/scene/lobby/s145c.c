@@ -11,6 +11,7 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
+#include "event_inline.h"
 
 struct LobbyEventWork {
   u8 unk000[0x16a];
@@ -33,22 +34,14 @@ void Func_02001414(s32 value);
 void Func_02001914(void);
 void Func_02001944(void *func, s32 mask);
 void Func_02001994(s32 entry);
-void Func_0200199c(s32 x, s32 y, s32 width, s32 height, s32 destX, s32 destY);
 void Func_020019e4(s32 value, s32 digits);
 void Func_02001a04(s32 value);
 void Func_02001a14(void);
 void Func_02001a1c(void);
-void Func_02001a64(s32 message);
-void Func_02001a74(s32 actor, s32 flags);
-void Func_02001ab4(s32 skip);
-void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
 void Sound_LoadPresetParameters(s32 preset);
 void LinkLobby_WriteSlotValue(s32 value);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void wait(s32 frames);
-void Task_Add(void *func, s32 priority);
-s32 GameFlag_GetByte(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);
 
 static inline s32 Flag_GetByte(s32 flag) {
@@ -66,8 +59,8 @@ static inline void Flag_SetByte(s32 flag, s32 value) {
 static inline void Map_CopyCells(s32 x, s32 y, s32 width, s32 height, s32 destX,
                                  s32 destY) {
   /* FAKEMATCH(wrapper): Map_CopyCells forwarded inline; as direct calls to
-   * Func_0200199c, 6 of 438 instructions differ in tla-en. */
-  Func_0200199c(x, y, width, height, destX, destY);
+   * Map_CopyCellAttributeRect, 6 of 438 instructions differ in tla-en. */
+  Map_CopyCellAttributeRect(x, y, width, height, destX, destY);
 }
 
 s32 Func_0200145c(void) {
@@ -109,7 +102,7 @@ s32 Func_0200145c(void) {
     s32 v;
 
     Func_02001a14();
-    Func_02001ab4(0);
+    Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     LinkLobby_WriteSlotValue(5);
@@ -128,7 +121,7 @@ s32 Func_0200145c(void) {
       Flag_SetByte(1000, v + 1);
     }
     Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
-    Func_02001a64((s32)MsgNotBadWould + msg);
+    Event_SetMessageId((s32)MsgNotBadWould + msg);
     FieldMessage_ShowAtActor(8, 0);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
       if (wins > 90)
@@ -145,11 +138,11 @@ s32 Func_0200145c(void) {
       score = *(u16 *)score;
       if (gMainRoutineWork.linkTallies[2] < score) {
         gMainRoutineWork.linkTallies[2] = score;
-        Func_02001a64((s32)MsgYouWonBattle);
+        Event_SetMessageId((s32)MsgYouWonBattle);
         FieldMessage_ShowAtActor(8, 0);
         Func_02001400();
       } else {
-        Func_02001a64((s32)MsgYouWonBattlePlease);
+        Event_SetMessageId((s32)MsgYouWonBattlePlease);
         FieldMessage_ShowAtActor(8, 0);
       }
       LinkLobby_WriteSlotValue(0);
@@ -158,7 +151,7 @@ s32 Func_0200145c(void) {
   } else if (gMainRoutineWork.entrance == 9) {
     gMainRoutineWork.linkTallies[1]++;
     Func_02001a14();
-    Func_02001ab4(0);
+    Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     LinkLobby_WriteSlotValue(5);
@@ -171,11 +164,11 @@ s32 Func_0200145c(void) {
     score = *(u16 *)score;
     if (gMainRoutineWork.linkTallies[2] < score) {
       gMainRoutineWork.linkTallies[2] = score;
-      Func_02001a64((s32)MsgYouWonBattle);
+      Event_SetMessageId((s32)MsgYouWonBattle);
       FieldMessage_ShowAtActor(8, 0);
       Func_02001400();
     } else {
-      Func_02001a64((s32)MsgYouWonBattleI);
+      Event_SetMessageId((s32)MsgYouWonBattleI);
       FieldMessage_ShowAtActor(8, 0);
     }
     gMainRoutineWork.linkTallies[3] = 0;
@@ -187,7 +180,7 @@ s32 Func_0200145c(void) {
     s32 v;
 
     Func_02001a14();
-    Func_02001ab4(0);
+    Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     LinkLobby_WriteSlotValue(0);
@@ -220,7 +213,7 @@ s32 Func_0200145c(void) {
     s32 v;
 
     Func_02001a14();
-    Func_02001ab4(0);
+    Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     LinkLobby_WriteSlotValue(0);
@@ -239,12 +232,12 @@ s32 Func_0200145c(void) {
     GameFlag_SetByte(0x3f8, -1);
     if (gMainRoutineWork.unk244[6] != 0) {
       Func_02001a14();
-      Func_02001ab4(0);
+      Event_ResolvePendingActions(0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
-      Func_02001a64((s32)MsgNoteYouCan);
-      Func_02001a74(8, 0);
+      Event_SetMessageId((s32)MsgNoteYouCan);
+      Event_ShowMessageAndWait(8, 0);
       Func_02001a1c();
     }
     gMainRoutineWork.unk244[6] = 0;

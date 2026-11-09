@@ -28,19 +28,19 @@ extern const u8 gData_0200308c[];
 struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-void FieldEvent_Wait(s32 frames);
+void Event_Wait(s32 frames);
 void Func_02001d50(void);
 void Func_02001d58(void);
-void Func_02001eb8(s32 skip);
-void Func_02001e18(s32 message);
-void Func_02001e30(s32 speaker, s32 flags);
-void Func_02001e48(s32 actor, s32 animation, s32 frames);
-s32 Func_02001ee8(void);
+void Event_ResolvePendingActions(s32 skip);
+void Event_SetMessageId(s32 message);
+void Event_ShowMessageAndWait(s32 speaker, s32 flags);
+void Func_080d47b4(s32 actor, s32 animation, s32 frames);
+s32 Party_GetLeaderActor(void);
 void Func_02001f00(s32 actor);
 void Func_02001f08(s32 slot, s32 actor);
-void Func_02001d38(struct Actor *object, s32 value);
-void Func_02001db8(s32 actor, s32 x, s32 z);
-void Func_02001dc0(s32 actor, s32 x, s32 z, s32 angle);
+void Func_0802372c(struct Actor *object, s32 value);
+void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
+void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z, s32 angle);
 void Func_020007dc(void);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
@@ -64,7 +64,7 @@ static inline void ActorTurn(s32 actor, s32 angle, s32 frames) {
 
 static inline void ActorPlace(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001db8(actor, x, z);
+  Actor_SetHorizontalPositionWithTerrain(actor, x, z);
 }
 
 #endif

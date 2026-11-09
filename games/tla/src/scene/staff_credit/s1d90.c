@@ -10,7 +10,7 @@ extern u32 Data_02003fcc[3];
 
 struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
-s32 Func_0200209c(void);
+s32 Party_GetLeaderActor(void);
 void Func_0200200c(s32 value);
 s32 Func_02002014(void);
 void Func_02001be0(s32 progress);
@@ -22,7 +22,7 @@ void Func_02001f7c(u32 *oam, s32 priority);
 void Func_02001d90(void) {
   u32 *oam = Data_02003fcc;
   s32 tile = gResourceTableEntries[gData_02003fc6].offset >> 5;
-  struct Actor *leader = Actor_GetById(Func_0200209c());
+  struct Actor *leader = Actor_GetById(Party_GetLeaderActor());
   s32 screen[3];
   u32 attributes;
 

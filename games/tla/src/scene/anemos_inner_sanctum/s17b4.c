@@ -3,6 +3,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "frame.h"
+#include "event_inline.h"
 
 struct AnemosInnerSanctumEventWork {
   u8 unk000[0x16a];
@@ -11,19 +12,12 @@ struct AnemosInnerSanctumEventWork {
 
 extern const s32 gData_02003594[];
 
-struct Actor *Actor_GetById(s32 id);
-struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 u32 Random16Far(void);
-void GameFlag_ClearBit(s32 flag);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Func_020032e0(struct Actor *object, s32 value);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Func_020032e8(struct Actor *object, const s32 *script);
-void Func_020034b8(s32 sound);
-void Vector_AddPolarOffsetFar(s32 length, s32 angle, s32 *position);
-s32 Func_02003348(s32 layer, s32 x, s32 z);
 
 static __inline__ void AddPolar(s32 length, s32 angle, s32 *position) {
   /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as a direct call, 4
@@ -54,7 +48,7 @@ void Func_020017b4(struct Actor *self) {
   ahead[1] = leader->y;
   ahead[2] = next[1] = self->z + (leader->z - self->acceleration);
   if (self->unk4c != leader->x || self->acceleration != leader->z) {
-    dust = Import_ActorCreate(0x2a0, self->x, self->y, self->z);
+    dust = ((struct Actor *)Import_ActorCreate(0x2a0, self->x, self->y, self->z));
     dust->x += ((Random16Far() & 15) - 8) << 16;
     dust->y += ((Random16Far() & 31) - 4) << 16;
     dust->motionFlags = 0;
@@ -66,19 +60,19 @@ void Func_020017b4(struct Actor *self) {
     self->unk4c = leader->x;
     self->acceleration = leader->z;
     if ((gFrameCount & 3) == 0)
-      Func_020034b8(106);
+      Sound_Play(106);
   }
   if (ahead[2] >> 16 > 248)
     return;
   AddPolar(0x70000, 0x8000 - leader->angle, ahead);
-  if (Func_02003348(self->terrainId, ahead[0], ahead[2]) == 255)
+  if (GetMapCellCollision(self->terrainId, ahead[0], ahead[2]) == 255)
     return;
   {
     s32 x = next[0];
 
     self->x = x;
     self->z = next[1];
-    kind = Func_02003348(self->terrainId, x, next[1]);
+    kind = GetMapCellCollision(self->terrainId, x, next[1]);
   }
   if (kind == 52) {
     ((struct AnemosInnerSanctumEventWork *)Ram_HeapSlots->eventWork)->unk16a =

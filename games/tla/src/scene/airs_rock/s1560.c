@@ -2,29 +2,18 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "input.h"
-#include "call.h"
+#include "event_inline.h"
 
 extern s32 gFrameCount;
-struct Actor *Actor_GetById(u32 id);
 void Func_02003bc8(void);
 void Func_02003bd0(void);
-void Func_02003c88(s32 skip);
-void Func_02003cd8(s32 cue);
 void Func_02003c30(void);
-struct Actor *Func_02003c40(void);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         u32 value);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void wait(s32 frames);
 s32 Func_02000348(u32 layer, s32 x, s32 z);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02003b28(struct Actor *object, s32 mode);
-void Func_02003b58(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_02003b60(struct Actor *object);
 void OverlayObject_WaitUntilIdle(struct Actor *object);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-s32 Camera_FollowActor(s32 id, s32 a);
 
 void Func_02001560(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -37,12 +26,12 @@ void Func_02001560(void) {
   s32 still;
 
   Func_02003bc8();
-  Func_02003c88(0);
+  Event_ResolvePendingActions(0);
   motion = &leader->motionFlags;
   *motion = 4;
   Actor_SetSingleChildFlags(leader, 0);
   GameFlag_SetBit(0x250);
-  Func_02003cd8(137);
+  Sound_Play(137);
   riding = (u8 *)ride + 99;
   rise = 0;
   while (*riding != 0) {
@@ -55,7 +44,7 @@ void Func_02001560(void) {
     leader->priorityFlags ^= 2 << (gFrameCount & 1);
     wait(1);
   }
-  Func_02003cd8(0x120);
+  Sound_Play(0x120);
   facing = ride->angle;
   if (facing == 0xc000) {
     rider = ride->watchedObject;
@@ -114,7 +103,7 @@ void Func_02001560(void) {
     leader->terrainHeight = height;
     Func_02003b28(leader, 6);
     wait(6);
-    Func_02003cd8(152);
+    Sound_Play(152);
     Func_02003b28(leader, 7);
     leader->speedLimit = 0x20000;
     leader->acceleration = 0x8000;
@@ -122,9 +111,9 @@ void Func_02001560(void) {
     *motion = 2;
     leader->priorityFlags = 1;
     leader->terrainId = ((u8 *)rider)[98];
-    Func_02003b58(leader, leader->x + dx, leader->y, leader->z + dz);
+    Actor_SetMoveTarget(leader, leader->x + dx, leader->y, leader->z + dz);
     OverlayObject_WaitUntilIdle(leader);
-    Func_02003b60(leader);
+    Script_WaitForEventTimeout(leader);
     Actor_SetSingleChildFlags(leader, 1);
     *motion = 3;
   } else {
@@ -136,15 +125,15 @@ void Func_02001560(void) {
     leader->velocityY = 0x60000;
     leader->priorityFlags = 1;
     *motion = 3;
-    Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
-    dust = Func_02003c40();
+    FieldCamera_MoveTo(-1, -1, -1, 0);
+    dust = Func_080d4568();
     dust->speedLimit = 0x80000;
     dust->acceleration = 0x10000;
     dust->motionFlags = still;
-    Func_02003b58(dust, leader->x,
+    Actor_SetMoveTarget(dust, leader->x,
                   Map_GetTerrainHeight(0, leader->x, leader->z), leader->z);
     OverlayObject_WaitUntilIdle(leader);
-    Func_02003b60(dust);
+    Script_WaitForEventTimeout(dust);
   }
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;

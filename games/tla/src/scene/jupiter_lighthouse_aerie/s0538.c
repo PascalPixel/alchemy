@@ -21,12 +21,12 @@ s32 Func_02000538(void) {
 void Scene_SetArrivalFlags(s32 flags);
 void Func_02001cb4(void);
 void Func_02001dbc(s32 actor, s32 mode);
-void Func_02002a48(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                   s32 destY);
-void Func_02002a50(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
+void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
+                               s32 destX, s32 destY);
+void Func_0802b450(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
 void Func_02002a78(s32 x, s32 z, s32 a, s32 b);
-void Func_02002ab8(s32 actor, s32 x, s32 z);
+void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
 
 /// The room's setup: actors 13 and 14 by flags 0xa0a and 0xa0b (with the map
 /// cells copied when set), then the terrain under each.
@@ -36,11 +36,11 @@ s32 Func_02000604(void) {
   Scene_SetArrivalFlags(0);
   Func_02001cb4();
   if (GameFlag_Test(0xa0a)) {
-    Func_02002ab8(13, 0, 0);
-    Func_02002a50(66, 39, 1, 1, 70, 10);
-    Func_02002a50(5, 75, 1, 1, 6, 75);
-    Func_02002a48(5, 12, 1, 1, 6, 12);
-    Func_02002a50(70, 39, 1, 1, 71, 10);
+    Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
+    Func_0802b450(66, 39, 1, 1, 70, 10);
+    Func_0802b450(5, 75, 1, 1, 6, 75);
+    Map_CopyCellAttributeRect(5, 12, 1, 1, 6, 12);
+    Func_0802b450(70, 39, 1, 1, 71, 10);
   } else {
     Func_02001dbc(13, 3);
     Actor_GetById(13)->priorityFlags |= 32;
@@ -53,11 +53,11 @@ s32 Func_02000604(void) {
     Func_02002a78(object->x, object->z, 0, last);
   }
   if (GameFlag_Test(0xa0b)) {
-    Func_02002ab8(14, 0, 0);
-    Func_02002a50(68, 39, 1, 1, 121, 10);
-    Func_02002a50(58, 75, 1, 1, 57, 75);
-    Func_02002a48(58, 12, 1, 1, 57, 12);
-    Func_02002a50(72, 39, 1, 1, 120, 10);
+    Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
+    Func_0802b450(68, 39, 1, 1, 121, 10);
+    Func_0802b450(58, 75, 1, 1, 57, 75);
+    Map_CopyCellAttributeRect(58, 12, 1, 1, 57, 12);
+    Func_0802b450(72, 39, 1, 1, 120, 10);
   } else {
     Func_02001dbc(14, 5);
     Actor_GetById(14)->priorityFlags |= 32;

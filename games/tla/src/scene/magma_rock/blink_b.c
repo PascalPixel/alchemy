@@ -1,8 +1,7 @@
 #include "types.h"
 #include "frame.h"
 #include "actor.h"
-
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
+#include "event_inline.h"
 
 void Func_020020d0(struct Actor *object) {
   if (gFrameCount & object->unk5c[7])

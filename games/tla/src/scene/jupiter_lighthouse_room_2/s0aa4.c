@@ -3,6 +3,7 @@
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "event_inline.h"
 
 extern s32 gData_02002b34;
 extern s32 gData_02002b38;
@@ -10,8 +11,6 @@ extern u16 gData_02002b98[];
 extern u16 gData_02002bb8[];
 extern u16 gData_02002bbc[];
 
-s32 GameFlag_Test();
-void Task_Add();
 void Func_020009e8(void);
 
 void Func_02000aa4(s32 mode) {

@@ -43,7 +43,7 @@ struct Actor *Actor_GetById(s32 id);
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_SetPositionAndCommit(s32 actor, s32 x, s32 z);
 void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
+void Event_Wait(s32 frames);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 s32 GameFlag_GetByte(s32 flag);
@@ -61,9 +61,9 @@ void Func_020024a8(struct JupiterLighthouseAerieWork *work,
                    struct JupiterLighthouseAerieEntry *entry);
 void Func_02002640(void);
 void Func_02002a18(void);
-void Func_02002a40(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-struct Actor *Func_02002af8(void);
+void Map_CopyCellsRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+struct Actor *Func_080d4568(void);
 void Func_02002b28(s32 id, s32 a);
-void Func_02002b68(s32 cue);
+void Sound_Play(s32 cue);
 
 #endif

@@ -16,14 +16,14 @@ void Func_02001a3c(void) {
   struct ShrineOfTheSeaGodObject *leader;
 
   Func_020039d8();
-  Func_02003b08(0);
-  Func_02003a70((s32)MsgFieldRopeThrownAgain);
-  Func_02003a80(0x200c, 0);
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)MsgFieldRopeThrownAgain);
+  Event_ShowMessageAndWait(0x200c, 0);
   ShrineOfTheSeaGod_ObjSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   ShrineOfTheSeaGod_ObjSpeed(14, 0xcccc, 0x6666);
   ShrineOfTheSeaGod_ObjWalk(gMainRoutineWork.currentOwner, 272, 336);
   ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-  Func_02003a30(14, 272 << 16, 336 << 16);
+  Actor_SetHorizontalPositionWithTerrain(14, 272 << 16, 336 << 16);
   wait(1);
   ShrineOfTheSeaGod_ObjWalk(14, 256, 336);
   Actor_ArmCallback(14, 0, 0);
@@ -37,7 +37,7 @@ void Func_02001a3c(void) {
   Actor_Jump(13, 4, 20);
   ShrineOfTheSeaGod_MessagePut(0x800d, 0);
   Motion_SetModeAndWaitAnimation(12, 3);
-  FieldEvent_Wait(20);
+  Event_Wait(20);
   Motion_SetVarCbAndRefresh(12, 2);
   Actor_Jump(12, 6, 80);
   ShrineOfTheSeaGod_MessagePut(0x800d, 0);
@@ -48,12 +48,12 @@ void Func_02001a3c(void) {
   ShrineOfTheSeaGod_MessagePut(0x800d, 0);
   ShrineOfTheSeaGod_MessagePut(0x400c, 0);
   Actor_ArmCallback(13, 0, 0);
-  Func_02003ab0(13, 258);
-  FieldEvent_Wait(20);
-  Func_02003a80(0x800d, 0);
+  Func_080d489c(13, 258);
+  Event_Wait(20);
+  Event_ShowMessageAndWait(0x800d, 0);
   Motion_SetModeAndWaitAnimation(12, 3);
-  Func_02003a80(0x400c, 0);
-  Func_02003ab8(0x33333, 0x6666);
+  Event_ShowMessageAndWait(0x400c, 0);
+  Camera_SetSpeedParameters(0x33333, 0x6666);
   ShrineOfTheSeaGod_CamMove(420 << 16, -1, 200 << 16, 1);
   ShrineOfTheSeaGod_ObjSpeed(12, 0x19999, 0xcccc);
   ShrineOfTheSeaGod_ObjWalk(12, 346, 186);
@@ -64,8 +64,8 @@ void Func_02001a3c(void) {
   ShrineOfTheSeaGod_ObjWalk(12, 456, 268);
   ShrineOfTheSeaGod_ObjWalk(12, 488, 240);
   ShrineOfTheSeaGod_ObjWalk(12, 488, 226);
-  Func_02003a30(12, 0, 0);
-  Func_02003ab8(0x4cccc, 0x9999);
+  Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+  Camera_SetSpeedParameters(0x4cccc, 0x9999);
   Camera_MoveWithinMapBounds(264 << 16, -1, 320 << 16, 1);
   Func_02003ac8();
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_WEST, 0);
@@ -78,8 +78,8 @@ void Func_02001a3c(void) {
     Actor_ResetAndSetPosition(14, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(14);
-  Func_02003a30(14, 0, 0);
-  Func_02003a30(13, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
   GameFlag_SetBit(0x872);
   Func_020039e0();
 }

@@ -1,7 +1,6 @@
 #include "types.h"
 #include "actor.h"
-
-struct Actor *Actor_GetById(s32 id);
+#include "event_inline.h"
 
 extern s16 gData_02002bda;
 extern struct Actor *gData_02002bdc[];

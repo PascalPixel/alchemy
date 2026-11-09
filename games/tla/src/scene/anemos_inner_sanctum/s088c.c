@@ -1,5 +1,6 @@
 #include "types.h"
 #include "system/iwram_call.h"
+#include "event_inline.h"
 
 struct Vector3 {
   s32 x;
@@ -29,22 +30,19 @@ struct Work {
 
 void Animation_SetStateFlags();
 s32 ArcTan2();
-struct Work *Import_ActorCreate();
 void Func_020006f8();
 void Func_020032e0();
 void Func_020032e8();
 void Actor_SetSingleChildFlags();
-void Actor_SetPartAttribute();
 void Scene_SetActorSpritePriority();
 u32 Random16Far();
-void Vector_AddPolarOffsetFar();
 extern u8 gData_02003684[];
 
 void Func_0200088c(struct Vector3 *from, struct Vector3 *to, s16 part) {
   struct Work *actor;
   s32 x, z, distance;
 
-  actor = Import_ActorCreate(0x2a0, from->x, from->y, from->z);
+  actor = ((struct Work *)Import_ActorCreate(0x2a0, from->x, from->y, from->z));
   x = (from->x - to->x) >> 16;
   z = (from->z - to->z) >> 16;
   actor->unk64 = ArcTan2(from->z - to->z, from->x - to->x);

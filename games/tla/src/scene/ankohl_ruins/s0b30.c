@@ -1,9 +1,6 @@
 #include "types.h"
 #include "actor.h"
-
-struct Actor *Actor_GetById(s32 id);
-void wait(s32 frames);
-void Func_02002eec(s32 cue);
+#include "event_inline.h"
 
 /// Runs the cue, if any, and sets the object's motion flags to 3 while it
 /// moves, for at most 60 frames until its vertical speed is 0, then clears
@@ -37,7 +34,7 @@ void Func_02000b30(s32 id, s32 cue) {
       break;
   }
   if (cue != 0)
-    Func_02002eec(cue);
+    Sound_Play(cue);
   wait(10);
   *held = 0;
 }

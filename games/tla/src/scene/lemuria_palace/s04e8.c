@@ -1,9 +1,9 @@
 #include "types.h"
+#include "event_inline.h"
 
 extern s32 gData_02003020;
 extern s32 gData_02003094;
 
-void Task_RemoveFar(void (*func)(void));
 void Resource_ResetEntry(s32 entry);
 void Func_020002b4(void);
 

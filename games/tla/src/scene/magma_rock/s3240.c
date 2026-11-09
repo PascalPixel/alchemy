@@ -1,23 +1,16 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
-#include "call.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 s32 Func_02003b8c(void);
 struct Actor *Func_02003c2c(s32 *position, s32 flags);
 void Func_02003aec(void);
 s32 Func_02003af4(void);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void Func_02003c54(s32 cue);
-void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
-void wait(s32 frames);
 void Func_02003a54(struct Actor *object, s32 mode);
 void Func_02003224(struct Actor *object, struct Actor *target);
 void Func_020034ac(s32 mode);
-void Func_02003ac4(s32 x, s32 y, s32 z);
 void Func_02003784(s32 level, s32 layer);
 void Func_020035e0(void);
 
@@ -59,7 +52,7 @@ body:
         Func_02003a54(actor8, 1);
         Func_02003224(actor8, target);
         wait(1);
-        Func_02003c54(125);
+        Sound_Play(125);
         Actor_SetPartAttribute(Actor_GetById(8), 7);
         wait(2);
         Func_02003a54(actor8, 0);
@@ -81,11 +74,11 @@ body:
         wait(1);
         flags = &leader->motionFlags;
         *flags = 0;
-        Func_02003c54(185);
+        Sound_Play(185);
         /* FAKEMATCH(wrapper): forwarded through Call3, which builds each
-         * 0x10000 apart; as Func_02003ac4(0x10000, 0x40000, 0x10000), 21 of 191
-         * instructions differ in tla-en. */
-        Call3((void (*)())Func_02003ac4, 0x10000, 0x40000, 0x10000);
+         * 0x10000 apart; as Map_SetScreenShake(0x10000, 0x40000, 0x10000), 21
+         * of 191 instructions differ in tla-en. */
+        MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Func_020034ac(0);
         wait(8);
         Func_02003a54(actor8, 2);
@@ -95,15 +88,15 @@ body:
         Func_02003784(-2, target->terrainId);
         wait(4);
         /* FAKEMATCH(wrapper): forwarded through Call3, which builds each -1
-         * apart; as Func_02003ac4(-1, -1, 0xe666), 23 of 191 instructions
+         * apart; as Map_SetScreenShake(-1, -1, 0xe666), 23 of 191 instructions
          * differ in tla-en. */
-        Call3((void (*)())Func_02003ac4, -1, -1, 0xe666);
+        MapGrid_SetShake(-1, -1, 0xe666);
         wait(8);
         *flags = 3;
         wait(5);
         Actor_SetPositionAndResetMotion(actor8, 0, 0, 0);
         wait(2);
-        Func_02003c54(188);
+        Sound_Play(188);
         Func_020035e0();
         wait(20);
         GameFlag_SetBit(flag + 1);

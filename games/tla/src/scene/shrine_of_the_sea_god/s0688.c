@@ -5,8 +5,8 @@
 #include "scene_tables.h"
 
 void Func_020039a0(void);
-void Func_020039b8(s32 a, s32 b, s32 c);
-void Func_02003ad8(s32 value);
+void Map_SetScreenShake(s32 a, s32 b, s32 c);
+void Import_EventSetExitRequest(s32 value);
 void Func_02000568(void);
 void Func_02000618(void);
 void Func_0200063c(s32 x, s32 y);
@@ -17,12 +17,12 @@ void Func_02000688(void) {
   u32 i;
 
   Func_020039d8();
-  Func_02003b08(0);
+  Event_ResolvePendingActions(0);
   Func_020039a0();
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Camera_MoveWithinMapBounds(248 << 16, -1, 168 << 16, 1);
   Func_02003ac8();
-  Func_02003b48(244);
+  Sound_Play(244);
   Io_Write16(BLEND_ALPHA(1, 16), &REG_BLDALPHA);
   wait(10);
   Io_Write16(BLEND_ALPHA(2, 16), &REG_BLDALPHA);
@@ -31,7 +31,7 @@ void Func_02000688(void) {
   wait(10);
   Io_Write16(BLEND_ALPHA(4, 16), &REG_BLDALPHA);
   wait(10);
-  Call3((void (*)())Func_020039b8, 0, 0x10000, 0x10000);
+  Call3((void (*)())Map_SetScreenShake, 0, 0x10000, 0x10000);
   ShrineOfTheSeaGod_CopyRect(59, 124, 9, 12, 12, 3);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
@@ -40,7 +40,7 @@ void Func_02000688(void) {
   Actor_SetSpritePriority(10, 1);
   ShrineOfTheSeaGod_CopyRect(46, 51, 6, 56, 18, 25);
   wait(10);
-  Call3((void (*)())Func_020039b8, 0x10000, 0x10000, 0x10000);
+  Call3((void (*)())Map_SetScreenShake, 0x10000, 0x10000, 0x10000);
   Func_0200063c(65, 51);
   Func_0200063c(65, 58);
   Io_Write16(BLEND_ALPHA(5, 15), &REG_BLDALPHA);
@@ -73,5 +73,5 @@ void Func_02000688(void) {
       ->screenEffect = 521;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02003ad8(3);
+  Import_EventSetExitRequest(3);
 }

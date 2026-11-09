@@ -6,7 +6,6 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
-s32 Func_02003c88();
+#include "event_inline.h"
 
-void Func_02000824(void) { Func_02003c88(0); }
+void Func_02000824(void) { Event_ResolvePendingActions(0); }

@@ -10,31 +10,18 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
-#include "call.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test();
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_02002c5c();
 s32 Func_02000194(void);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_020002f0(void);
-void Actor_Stop(s32 id);
-void Func_02002ba4(s32 id, s32 a, s32 b);
 s32 Func_02000290(void);
 void Func_02002b6c(void);
 void Func_02002b74(void);
-void Func_02002c0c(s32 value);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Camera_FollowActor(s32 id, s32 flag);
 void Func_02002bd4(void);
 void Func_02002ad4(struct Actor *object, s32 mode);
-void Func_02002c3c(s32 x, s32 z, s32 layer, s32 value);
 void Func_020005e8(s32 value);
 void Func_02002b54(s32 x, s32 z, s32 a, s32 b);
 void Func_02002c4c(s32 x, s32 z, s32 a, s32 b);
@@ -57,7 +44,7 @@ void Func_020007a4(s32 unused, s32 id) {
           break;
       } while (object->y > object->terrainHeight || object->velocityY != 0);
     }
-    Call1(Func_02002c5c, 188);
+    Event_PlaySound(188);
     object->motionFlags = 0;
   }
   if ((u32)(id - 18) <= 1) {
@@ -65,33 +52,33 @@ void Func_020007a4(s32 unused, s32 id) {
     if (spot == -1)
       return;
     Actor_SetSingleChildFlags(Actor_GetById(id), 0);
-    FieldEvent_Wait(30);
+    Event_Wait(30);
     Func_020002f0();
     if (spot == 0)
-      Call1(Func_02002c5c, 167);
+      Event_PlaySound(167);
     if (spot == 1)
-      Call1(Func_02002c5c, 167);
-    if (spot == 3 && Value1(GameFlag_Test, 2576))
-      Call1(Func_02002c5c, 167);
-    if (spot == 4 && Value1(GameFlag_Test, 2577))
-      Call1(Func_02002c5c, 167);
+      Event_PlaySound(167);
+    if (spot == 3 && Event_GetFlag(2576))
+      Event_PlaySound(167);
+    if (spot == 4 && Event_GetFlag(2577))
+      Event_PlaySound(167);
     Actor_Stop(gMainRoutineWork.currentOwner);
-    Func_02002ba4(id, 0, 0);
-    if (Func_02000290() != 2 || !Value1(GameFlag_Test, 2582))
+    Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
+    if (Func_02000290() != 2 || !Event_GetFlag(2582))
       return;
     object = Actor_GetById(17);
     GameFlag_ClearBit(2582);
-    FieldEvent_Wait(10);
+    Event_Wait(10);
     Func_02002b6c();
-    Func_02002c0c(0);
+    Event_ResolvePendingActions(0);
     Camera_MoveWithinMapBounds(166 << 18, -1, PIXELS(136), 1);
     Func_02002bd4();
-    FieldEvent_Wait(20);
-    Func_02002c5c(151);
+    Event_Wait(20);
+    Sound_Play(151);
     Func_02002ad4(object, 3);
     object->priorityFlags &= ~2;
-    Func_02002c3c(object->x, object->z, object->terrainId, 255);
-    FieldEvent_Wait(30);
+    Func_080dbdd4(object->x, object->z, object->terrainId, 255);
+    Event_Wait(30);
     Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
     Func_02002bd4();
     Func_02002b74();
@@ -105,18 +92,18 @@ void Func_020007a4(s32 unused, s32 id) {
   if (object->x >> 20 == 8 && *(volatile s32 *)&object->z >> 20 == 12) {
     GameFlag_SetBit(2586);
     Actor_SetSingleChildFlags(Actor_GetById(20), 0);
-    FieldEvent_Wait(30);
-    Func_02002c5c(167);
+    Event_Wait(30);
+    Sound_Play(167);
     Func_020005e8(1);
-    if (!Value1(GameFlag_Test, 2583))
+    if (!Event_GetFlag(2583))
       return;
     object = Actor_GetById(9);
     GameFlag_ClearBit(2583);
-    FieldEvent_Wait(20);
-    Func_02002c5c(151);
+    Event_Wait(20);
+    Sound_Play(151);
     Func_02002ad4(object, 3);
     object->priorityFlags &= ~2;
-    Func_02002c3c(object->x, object->z, object->terrainId, 255);
+    Func_080dbdd4(object->x, object->z, object->terrainId, 255);
   } else {
     Func_02002b54(object->x, object->z, 0, 8);
     Func_02002c4c(object->x, object->z, 0, 128);

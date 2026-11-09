@@ -6,19 +6,17 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
-s32 Actor_GetById();
+#include "event_inline.h"
 s32 Func_02004dac();
 s32 Actor_SetAnimationSpeed();
-s32 Func_02004f34();
 extern u8 gData_02005610[];
 
 s32 Func_02000748(void) {
   s32 t0;
 
-  t0 = Actor_GetById(9);
+  t0 = ((s32)Actor_GetById(9));
   Func_02004dac(t0, (s32)gData_02005610);
   Actor_SetAnimationSpeed(t0, 0);
-  Call2(Func_02004f34, 0xa, 0x102);
+  Actor_SetAttachedEffect(0xa, 0x102);
   return 0;
 }

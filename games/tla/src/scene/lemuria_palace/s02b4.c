@@ -1,5 +1,4 @@
 #include "iwram_call.h"
-#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
@@ -9,6 +8,7 @@
 #include "actor.h"
 #include "system/vector3.h"
 #include "system/io_reg.h"
+#include "event_inline.h"
 
 extern u8 gData_0200308c[];
 extern u8 Data_02003098[];
@@ -19,7 +19,6 @@ extern u8 Data_02003024[];
 extern u8 Data_02003060[];
 extern u8 Data_02003030[];
 s32 __modsi3();
-void Func_02002124();
 s32 Func_020020d4();
 s32 Func_0200210c();
 
@@ -64,12 +63,12 @@ void Func_020002b4(void) {
     if (step == 0) {
       *(s32 *)Data_02003090 = 1;
       *(s32 *)Data_02003024 = step;
-      Func_02002124(153);
+      Sound_Play(153);
     }
     if (step == 14) {
       *(s32 *)Data_02003090 = 0;
       *(s32 *)Data_02003024 = 1;
-      Func_02002124(153);
+      Sound_Play(153);
     }
     (*time)++;
   }

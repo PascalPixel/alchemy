@@ -1,7 +1,7 @@
-#include "call.h"
 #include "types.h"
 #include "actor.h"
 #include "system/dma.h"
+#include "event_inline.h"
 
 extern const u16 Field_Palette685[];
 extern char ResourceId_FieldEffectExplosion;
@@ -33,19 +33,14 @@ struct FlashWork {
 };
 
 struct FlashWork *HeapSlot_AllocFar(s32 slot, s32 size);
-struct Actor *Actor_GetById(s32 id);
-void wait(s32 frames);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void *Resource_GetTableEntry(s32 resourceId);
 void Func_020033dc(void *entry, void *destination);
 s32 Resource_FindFreeEntry(void);
-s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Func_020035fc(struct FlashSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 void Func_020035c4(s32 *position);
-void Func_0200362c(s32 cue);
 void Func_02003604(struct FlashSprite *sprite);
-void Func_020034d4(s32 id, s32 x, s32 z);
 s32 Resource_ResetEntry(u32 entry);
 void HeapSlot_Release(s32 slot);
 
@@ -82,7 +77,7 @@ void Func_020029f8(s32 id, s32 mode) {
   Func_020033dc(Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion),
                 work);
   slot = Resource_FindFreeEntry();
-  tile = Value3((s32 (*)())VramCache_Load, slot, 0x400, (s32)work);
+  tile = Vram_Load(slot, 0x400, work);
   sprite = &work->sprite;
   Place(sprite, 8, 16, 0x40000000, tile);
   sprite->unk1e = 240;
@@ -100,7 +95,7 @@ void Func_020029f8(s32 id, s32 mode) {
     sprite->scaleY = 0x20000;
     sprite->z = z + 0xa0000;
   }
-  Func_0200362c(145);
+  Sound_Play(145);
   for (i = 0; i <= 71; i++) {
     sprite = &work->sprite;
     switch (i) {
@@ -129,7 +124,7 @@ void Func_020029f8(s32 id, s32 mode) {
     Func_02003604(sprite);
     wait(1);
   }
-  Func_020034d4(id, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
   Resource_ResetEntry(slot);
   HeapSlot_Release(220);
 }

@@ -13,9 +13,9 @@ s32 Func_02001d68();
 s32 Func_02001df4();
 s32 Func_02002a74();
 s32 Func_02003190();
-s32 Func_02003328();
+s32 Map_CopyCellPictureIndicesRect();
 s32 Func_02003380();
-s32 Func_020033e0();
+s32 Actor_SetHorizontalPositionWithTerrain();
 s32 Func_02003490();
 s32 GameFlag_SetBit();
 s32 GameFlag_Test();
@@ -58,27 +58,27 @@ s32 Func_02001e64(void) {
     t3 = Value1((s32 (*)())GameFlag_Test, 0xa87);
     if (t3 != 0) {
       Call3((void (*)())Func_02000a78, 0x208, 48, 0);
-      Call6((void (*)())Func_02003328, 85, 34, 85, 8, 9, 8);
+      Call6((void (*)())Map_CopyCellPictureIndicesRect, 85, 34, 85, 8, 9, 8);
     }
     t6 = Value1((s32 (*)())GameFlag_Test, 0xa88);
     if (t6 != 0) {
       Call3((void (*)())Func_02000a78, 0x228, 48, 3);
-      Call6((void (*)())Func_02003328, 101, 34, 101, 8, 9, 8);
+      Call6((void (*)())Map_CopyCellPictureIndicesRect, 101, 34, 101, 8, 9, 8);
     }
     t9 = Value1((s32 (*)())GameFlag_Test, 0xa89);
     if (t9 != 0) {
       Call3((void (*)())Func_02000a78, 0x1f8, 40, 10);
-      Call6((void (*)())Func_02003328, 85, 46, 85, 20, 9, 8);
+      Call6((void (*)())Map_CopyCellPictureIndicesRect, 85, 46, 85, 20, 9, 8);
     }
     t12 = Value1((s32 (*)())GameFlag_Test, 0xa8a);
     if (t12 != 0) {
       Call3((void (*)())Func_02000a78, 0x238, 40, 2);
-      Call6((void (*)())Func_02003328, 101, 46, 101, 20, 9, 8);
+      Call6((void (*)())Map_CopyCellPictureIndicesRect, 101, 46, 101, 20, 9, 8);
     }
     t15 = Value1((s32 (*)())GameFlag_Test, 0xa8b);
     if (t15 == 0)
       goto L_0200a6e6;
-    Call6((void (*)())Func_02003328, 54, 7, 33, 7, 1, 2);
+    Call6((void (*)())Map_CopyCellPictureIndicesRect, 54, 7, 33, 7, 1, 2);
     Call4((void (*)())Func_02003380, 0x2180000, 0x880000, 0, 0);
     goto L_0200a6e6;
   }
@@ -86,11 +86,13 @@ s32 Func_02001e64(void) {
     goto L_0200a1b4;
   Call2((void (*)())Actor_SetSpritePriority, 8, 1);
   if ((Value1((s32 (*)())GameFlag_Test, 0xa80)) != 0) {
-    Call3((void (*)())Func_020033e0, 8, 0x1280000, 0xf80000);
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 8, 0x1280000,
+          0xf80000);
     Call2((void (*)())Actor_SetSpritePriority, 8, 2);
   }
   if ((Value1((s32 (*)())GameFlag_Test, 0xa81)) != 0) {
-    Call3((void (*)())Func_020033e0, 10, 0x1b80000, 0x2f80000);
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 10, 0x1b80000,
+          0x2f80000);
   }
   Call1((void (*)())Func_02003490, (s32)gData_020036e4);
   FIELD_AT((Value1((s32 (*)())Actor_GetById, (FIELD_AT(v_r6, s32, 532)))), u8,
@@ -102,7 +104,8 @@ s32 Func_02001e64(void) {
   if ((Value1((s32 (*)())GameFlag_Test, 0x300)) == 0)
     goto L_0200a03c;
   Call2((void (*)())Actor_SetModeById, 9, 2);
-  Call3((void (*)())Func_020033e0, 9, 0x2d80000, 0x780000);
+  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 9, 0x2d80000,
+        0x780000);
 L_0200a03c:
   if (gMainRoutineWork.entrance == 18 && GameFlag_Test(0x300) == 0)
     Func_02001d68();
@@ -111,32 +114,32 @@ L_0200a03c:
     if (work->entrance != 10)
       goto L_0200a6e6;
     if ((Value1((s32 (*)())GameFlag_Test, 0x300)) != 0) {
-      Call3((void (*)())Func_020033e0, 9, 0, 0);
+      Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
     }
     if ((Value1((s32 (*)())GameFlag_Test, 0x207)) != 0) {
       t42 = Value1((s32 (*)())Actor_GetById, 9);
       FIELD_AT(t42, u8, 85) = 4;
     }
     if ((Value1((s32 (*)())GameFlag_Test, 0x200)) != 0) {
-      Call6((void (*)())Func_02003328, 54, 87, 44, 86, 1, 1);
+      Call6((void (*)())Map_CopyCellPictureIndicesRect, 54, 87, 44, 86, 1, 1);
     }
     if ((Value1((s32 (*)())GameFlag_Test, 0x201)) != 0) {
-      Call6((void (*)())Func_02003328, 54, 87, 46, 86, 1, 1);
+      Call6((void (*)())Map_CopyCellPictureIndicesRect, 54, 87, 46, 86, 1, 1);
     }
     if ((Value1((s32 (*)())GameFlag_Test, 0x202)) != 0) {
-      Call6((void (*)())Func_02003328, 54, 87, 43, 87, 1, 1);
+      Call6((void (*)())Map_CopyCellPictureIndicesRect, 54, 87, 43, 87, 1, 1);
     }
     if ((Value1((s32 (*)())GameFlag_Test, 0x203)) != 0) {
-      Call6((void (*)())Func_02003328, 54, 87, 45, 87, 1, 1);
+      Call6((void (*)())Map_CopyCellPictureIndicesRect, 54, 87, 45, 87, 1, 1);
     }
     if ((Value1((s32 (*)())GameFlag_Test, 0x204)) != 0) {
-      Call6((void (*)())Func_02003328, 54, 87, 47, 87, 1, 1);
+      Call6((void (*)())Map_CopyCellPictureIndicesRect, 54, 87, 47, 87, 1, 1);
     }
     if ((Value1((s32 (*)())GameFlag_Test, 0x205)) != 0) {
-      Call6((void (*)())Func_02003328, 54, 87, 44, 88, 1, 1);
+      Call6((void (*)())Map_CopyCellPictureIndicesRect, 54, 87, 44, 88, 1, 1);
     }
     if ((Value1((s32 (*)())GameFlag_Test, 0x206)) != 0) {
-      Call6((void (*)())Func_02003328, 54, 87, 46, 88, 1, 1);
+      Call6((void (*)())Map_CopyCellPictureIndicesRect, 54, 87, 46, 88, 1, 1);
     }
     FIELD_AT((Value1((s32 (*)())Actor_GetById, (work->currentOwner))), u8,
              35) |= 32;
@@ -156,15 +159,19 @@ L_0200a1b4:
            35) |= 64;
   FIELD_AT((Value1((s32 (*)())Actor_GetById, 9)), u8, 98) = v_r5;
   if ((Value1((s32 (*)())GameFlag_Test, 0xa82)) != 0) {
-    Call3((void (*)())Func_020033e0, 8, 0x380000, 0x1a80000);
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 8, 0x380000,
+          0x1a80000);
   }
   if ((Value1((s32 (*)())GameFlag_Test, 0xa83)) != 0) {
-    Call3((void (*)())Func_020033e0, 10, 0x2180000, 0x1680000);
-    Call6((void (*)())Func_02003328, 51, 20, 31, 20, v_r5, v_two);
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 10, 0x2180000,
+          0x1680000);
+    Call6((void (*)())Map_CopyCellPictureIndicesRect, 51, 20, 31, 20, v_r5,
+          v_two);
     Call4((void (*)())Func_02003380, 0x1f00000, 0x1500000, 0, 0);
   }
   if ((Value1((s32 (*)())GameFlag_Test, 0xa84)) != 0) {
-    Call3((void (*)())Func_020033e0, 13, 0x2e80000, 0x1c80000);
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 13, 0x2e80000,
+          0x1c80000);
   }
   if ((Value1((s32 (*)())GameFlag_Test, 0xa85)) == 0)
     goto L_0200a2c6;
@@ -175,9 +182,11 @@ L_0200a1b4:
   t78 = FIELD_AT((Value1((s32 (*)())Actor_GetById, 12)), s16, 10);
   t80 = FIELD_AT((Value1((s32 (*)())Actor_GetById, 12)), s16, 18);
   v_r5 = (t78 << 16);
-  Call3((void (*)())Func_020033e0, 13, v_r5, (t80 << 16));
+  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 13, v_r5,
+        (t80 << 16));
 L_0200a2b8:
-  Call3((void (*)())Func_020033e0, 12, 0x2d80000, 0x1d80000);
+  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 12, 0x2d80000,
+        0x1d80000);
 L_0200a2c6:
   Call1((void (*)())Func_02003490, (s32)gData_020036ea);
   goto L_0200a6e6;
@@ -185,7 +194,8 @@ L_0200a2ce:
   if (v_r1 != (s32)&SceneId_Ov6B0Room4)
     goto L_0200a52c;
   if ((Value1((s32 (*)())GameFlag_Test, 0xa86)) != 0) {
-    Call3((void (*)())Func_020033e0, 9, 0x1080000, 0x1680000);
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 9, 0x1080000,
+          0x1680000);
   }
   Call1((void (*)())Func_02003490, (s32)gData_020036f6);
   v_r3 = (FIELD_AT(v_r6, u16, 482));
@@ -204,7 +214,7 @@ L_0200a2ce:
     FIELD_AT(t95, u8, 35) |= 128;
     goto L_0200a3a8;
   }
-  Call3((void (*)())Func_020033e0, 8, 0, 0);
+  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 8, 0, 0);
   Call1((void (*)())GameFlag_SetBit, 0x200);
   Call1((void (*)())GameFlag_SetBit, 0x201);
   Call1((void (*)())GameFlag_SetBit, 0x202);
@@ -218,26 +228,26 @@ L_0200a3a8:
     FIELD_AT(t106, u8, 85) = 4;
   }
   if ((Value1((s32 (*)())GameFlag_Test, 0x200)) != 0) {
-    Call6((void (*)())Func_02003328, 17, 71, 8, 69, 1, 1);
+    Call6((void (*)())Map_CopyCellPictureIndicesRect, 17, 71, 8, 69, 1, 1);
   }
   if ((Value1((s32 (*)())GameFlag_Test, 0x205)) != 0) {
-    Call6((void (*)())Func_02003328, 17, 71, 6, 71, 1, 1);
+    Call6((void (*)())Map_CopyCellPictureIndicesRect, 17, 71, 6, 71, 1, 1);
   }
   if ((Value1((s32 (*)())GameFlag_Test, 0x201)) != 0) {
-    Call6((void (*)())Func_02003328, 17, 71, 5, 75, 1, 1);
+    Call6((void (*)())Map_CopyCellPictureIndicesRect, 17, 71, 5, 75, 1, 1);
   }
   if ((Value1((s32 (*)())GameFlag_Test, 0x202)) != 0) {
-    Call6((void (*)())Func_02003328, 17, 71, 8, 75, 1, 1);
+    Call6((void (*)())Map_CopyCellPictureIndicesRect, 17, 71, 8, 75, 1, 1);
   }
   if ((Value1((s32 (*)())GameFlag_Test, 0x203)) != 0) {
-    Call6((void (*)())Func_02003328, 17, 71, 11, 75, 1, 1);
+    Call6((void (*)())Map_CopyCellPictureIndicesRect, 17, 71, 11, 75, 1, 1);
   }
   if ((Value1((s32 (*)())GameFlag_Test, 0x204)) != 0) {
-    Call6((void (*)())Func_02003328, 17, 71, 8, 73, 1, 1);
+    Call6((void (*)())Map_CopyCellPictureIndicesRect, 17, 71, 8, 73, 1, 1);
   }
   if ((Value1((s32 (*)())GameFlag_Test, 0x206)) == 0)
     goto L_0200a6e6;
-  Call6((void (*)())Func_02003328, 17, 71, 10, 71, 1, 1);
+  Call6((void (*)())Map_CopyCellPictureIndicesRect, 17, 71, 10, 71, 1, 1);
   goto L_0200a6e6;
 L_0200a4a2:
   if (v_r2 == 11) {
@@ -294,7 +304,7 @@ L_0200a52c:
 L_0200a580:
   if ((Value1((s32 (*)())GameFlag_Test, 0x304)) != 0)
     goto L_0200a596;
-  Call3((void (*)())Func_020033e0, 11, 0, 0);
+  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 11, 0, 0);
 L_0200a596:
   FIELD_AT((Value1((s32 (*)())Actor_GetById, (gMainRoutineWork.currentOwner))),
            u8, 35) |= 64;
@@ -321,7 +331,7 @@ L_0200a606:
     v_r1 = 0x780000;
     goto L_0200a650;
   }
-  Call6((void (*)())Func_02003328, 18, 1, 11, 4, 1, 2);
+  Call6((void (*)())Map_CopyCellPictureIndicesRect, 18, 1, 11, 4, 1, 2);
   v_r1 = 176;
   v_r0 = 0xb80000;
   goto L_0200a67a;
@@ -332,11 +342,12 @@ L_0200a63a:
   v_r0 = 9;
   v_r1 = 0x2280000;
 L_0200a650:
-  Call3((void (*)())Func_020033e0, v_r0, v_r1, (v_r2 << 15));
+  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, v_r0, v_r1,
+        (v_r2 << 15));
   Call1((void (*)())GameFlag_SetBit, 0x200);
   goto L_0200a6e6;
 L_0200a660:
-  Call6((void (*)())Func_02003328, 18, 1, 26, 4, 1, 2);
+  Call6((void (*)())Map_CopyCellPictureIndicesRect, 18, 1, 26, 4, 1, 2);
   v_r1 = 176;
   v_r0 = 0x1a80000;
 L_0200a67a:
@@ -344,11 +355,12 @@ L_0200a67a:
   goto L_0200a6e6;
 L_0200a686:
   if ((Value1((s32 (*)())GameFlag_Test, 0x303)) != 0) {
-    Call3((void (*)())Func_020033e0, 10, 0x3180000, 0x780000);
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 10, 0x3180000,
+          0x780000);
     Call1((void (*)())GameFlag_SetBit, 0x200);
     goto L_0200a6d0;
   }
-  Call6((void (*)())Func_02003328, 18, 1, 53, 4, 1, 2);
+  Call6((void (*)())Map_CopyCellPictureIndicesRect, 18, 1, 53, 4, 1, 2);
   Call4((void (*)())Func_02003380, 0x3580000, 0x580000, 0, 2);
 L_0200a6d0:
   FIELD_AT(v_r5, s32, 236) = ((FIELD_AT(v_r5, s32, 236)) + 0x80000);

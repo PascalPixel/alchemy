@@ -5,17 +5,17 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void Func_020047d4(void);
 void Func_020047dc(void);
-void Func_0200494c(s32 value);
-void Func_020049c4(s32 sound);
+void Event_ResolvePendingActions(s32 value);
+void Sound_Play(s32 sound);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Camera_FollowActor(s32 id, s32 flag);
 void Func_020048f4(void);
-void Func_0200474c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_020048e4(s32 a, s32 b);
-void Func_0200475c(s32 a, s32 b, s32 c);
+void Func_0802b450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Camera_SetSpeedParameters(s32 a, s32 b);
+void Map_SetScreenShake(s32 a, s32 b, s32 c);
 void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
 void Actor_SetSpritePriority(u32 id, s32 variant);
-void Func_02004844(s32 id, s32 a, s32 b);
+void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
 
 static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
                                                            s32 dz) {
@@ -27,20 +27,20 @@ static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
 static __inline__ void Func_0200475c_(s32 a, s32 b, s32 c) {
   /* FAKEMATCH(wrapper): forwarded inline; as a plain call, 46 of 292
    * instructions differ in tla-en. */
-  Func_0200475c(a, b, c);
+  Map_SetScreenShake(a, b, c);
 }
 
 static __inline__ void Func_020048e4_(s32 a, s32 b) {
   /* FAKEMATCH(wrapper): forwarded inline; as a plain call, 26 of 292
    * instructions differ in tla-en. */
-  Func_020048e4(a, b);
+  Camera_SetSpeedParameters(a, b);
 }
 
 static __inline__ void Func_0200474c_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
   /* FAKEMATCH(wrapper): forwarded inline; as a plain call, 12 of 292
    * instructions differ in tla-en. */
-  Func_0200474c(a, b, c, d, e, f);
+  Func_0802b450(a, b, c, d, e, f);
 }
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
@@ -77,14 +77,14 @@ void Func_0200060c(void) {
     return;
   GameFlag_SetBit(514);
   Func_020047d4();
-  Func_0200494c(0);
-  Func_020049c4(124);
+  Event_ResolvePendingActions(0);
+  Sound_Play(124);
   Camera_MoveWithinMapBounds_(194 << 18, -1, PIXELS(208), 1);
   Func_020048f4();
-  FieldEvent_Wait(6);
-  Func_020049c4(217);
+  Event_Wait(6);
+  Sound_Play(217);
   Func_0200474c_(49, 103, 4, 3, 49, 76);
-  FieldEvent_Wait(6);
+  Event_Wait(6);
   Func_0200474c_(49, 106, 4, 3, 49, 76);
   x = object->x >> 20;
   if (x == 49)
@@ -105,7 +105,7 @@ void Func_0200060c(void) {
     Func_020048e4_(0x40000, 0x8000);
     Camera_FollowActor(23, 1);
     Func_020048f4();
-    Func_020049c4(310);
+    Sound_Play(310);
     object->gravity = 0x8000;
     object->motionFlags = 2;
     object->terrainHeight = PIXELS(-80);
@@ -119,7 +119,7 @@ void Func_0200060c(void) {
       } while (object->y > object->terrainHeight);
     }
     Func_0200475c_(0x30000, 0x30000, 0xf333);
-    Func_020049c4(134);
+    Sound_Play(134);
     object->gravity = 0x10000;
     object->velocityY = PIXELS(6);
     Actor_SetSpeedParameters_(23, 0x18000, 0xc000);
@@ -127,37 +127,37 @@ void Func_0200060c(void) {
       Actor_OffsetPositionAndResetMotion_(23, -32, 0);
     else
       Actor_OffsetPositionAndResetMotion(23, 32, 0);
-    FieldEvent_Wait(7);
+    Event_Wait(7);
     Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
     object->gravity = 0x8000;
     object->terrainHeight = PIXELS(-240);
-    FieldEvent_Wait(80);
+    Event_Wait(80);
     Func_0200475c_(0x50000, 0x50000, 0x10000);
-    Func_020049c4(144);
-    FieldEvent_Wait(20);
+    Sound_Play(144);
+    Event_Wait(20);
     Func_0200475c_(-1, -1, 0xe666);
-    Func_02004844(23, 0, 0);
-    FieldEvent_Wait(10);
+    Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
+    Event_Wait(10);
   } else if (spot == 1 || spot == 4) {
     Actor_SetSpritePriority(23, 1);
     Func_020048e4_(0x40000, 0x8000);
     Camera_FollowActor(23, 1);
     Func_020048f4();
-    Func_020049c4(310);
+    Sound_Play(310);
     object->gravity = 0x8000;
     object->motionFlags = 2;
     object->terrainHeight = PIXELS(-240);
-    FieldEvent_Wait(20);
+    Event_Wait(20);
     Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
-    FieldEvent_Wait(60);
+    Event_Wait(60);
     Func_0200475c_(0x50000, 0x50000, 0x10000);
-    Func_020049c4(144);
-    FieldEvent_Wait(20);
+    Sound_Play(144);
+    Event_Wait(20);
     Func_0200475c_(-1, -1, 0xe666);
-    Func_02004844(23, 0, 0);
-    FieldEvent_Wait(10);
+    Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
+    Event_Wait(10);
   }
-  FieldEvent_Wait(20);
+  Event_Wait(20);
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_020048f4();
   Func_020047dc();

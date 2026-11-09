@@ -1,15 +1,12 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "field_sprite.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-void Func_02005884(s32 id, s32 x, s32 z);
 
 static __inline__ void Func_02001c10_(s32 id, s32 x, s32 z) {
-  Func_02005884(id, x, z);
+  Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 
 static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Test(flag); }

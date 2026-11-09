@@ -12,43 +12,43 @@ void *Heap_Alloc(s32 size);
 void Heap_Release(void *block);
 void *Resource_GetTableEntry(s32 id);
 void Func_0200468c(void *resource, void *destination);
-void Func_02004924(s32 a, s32 b);
-void Func_0200491c(s32 a, s32 b);
-void Func_0200492c(s32 frames);
-void Func_020049c4(s32 sound);
-void Func_0200475c(s32 a, s32 b, s32 c);
+void BattleEffect_ApplyColorToSourceBuffer(s32 a, s32 b);
+void BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
+void BattleEffect_StartBufferInterpolation(s32 frames);
+void Sound_Play(s32 sound);
+void Map_SetScreenShake(s32 a, s32 b, s32 c);
 void Actor_Jump(s32 id, s32 mode, s32 value);
 void Actor_OffsetPositionAndReset(s32 id, s32 dx, s32 dz);
-void Func_0200474c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-s32 Func_020049ac(s32 x, s32 z, s32 a, s32 b);
+void Func_0802b450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+s32 Func_080dbdd4(s32 x, s32 z, s32 a, s32 b);
 void Func_020046b4(void);
 void Func_020046a4(void);
-void Func_02004784(s32 hue, s32 brightness);
+void Func_0803f9c0(s32 hue, s32 brightness);
 void Func_0200354c(void);
 
 static __inline__ void Func_0200474c_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
   /* FAKEMATCH(wrapper): forwarded inline; as direct calls, 8 of 281
    * instructions differ in tla-en. */
-  Func_0200474c(a, b, c, d, e, f);
+  Func_0802b450(a, b, c, d, e, f);
 }
 
 static __inline__ void Func_0200475c_(s32 a, s32 b, s32 c) {
   /* FAKEMATCH(wrapper): forwarded inline; as direct calls, 21 of 281
    * instructions differ in tla-en. */
-  Func_0200475c(a, b, c);
+  Map_SetScreenShake(a, b, c);
 }
 
 static __inline__ void Func_0200491c_(s32 a, s32 b) {
   /* FAKEMATCH(wrapper): forwarded inline; as direct calls, 21 of 281
    * instructions differ in tla-en. */
-  Func_0200491c(a, b);
+  BattleEffect_ApplyColorToTargetBuffer(a, b);
 }
 
 static __inline__ void Func_02004924_(s32 a, s32 b) {
   /* FAKEMATCH(wrapper): forwarded inline; as direct calls, 21 of 281
    * instructions differ in tla-en. */
-  Func_02004924(a, b);
+  BattleEffect_ApplyColorToSourceBuffer(a, b);
 }
 
 void Func_020000c4(void) {
@@ -88,13 +88,13 @@ void Func_020000c4(void) {
   wait(30);
   Func_02004924_(0x10003, 0);
   Func_0200491c_(0x7fff, 0);
-  Func_0200492c(1);
+  BattleEffect_StartBufferInterpolation(1);
   wait(1);
   Func_02004924_(0x7fff, 0);
   Func_0200491c_(0x10003, 0);
-  Func_0200492c(8);
+  BattleEffect_StartBufferInterpolation(8);
   REG_DISPCNT |= 0x100;
-  Func_020049c4(144);
+  Sound_Play(144);
   Func_0200475c_(0x50000, 0x70000, 0x10000);
   Func_0200475c_(-1, -1, 0xe666);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
@@ -108,13 +108,13 @@ void Func_020000c4(void) {
   }
   Func_0200474c_(104, 42, 5, 11, 61, 42);
   Func_0200474c_(106, 52, 1, 1, 63, 84);
-  Func_020049ac(130 << 19, 160 << 16, 2, 236);
+  Func_080dbdd4(130 << 19, 160 << 16, 2, 236);
   Func_02004924_(0x10003, 0);
   Func_0200491c_(0x10000, 0);
-  Func_0200492c(60);
+  BattleEffect_StartBufferInterpolation(60);
   Func_020046b4();
   Func_020046a4();
-  Func_02004784(gMainRoutineWork.paletteGlow[0],
+  Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
                 gMainRoutineWork.paletteGlow[1]);
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;

@@ -3,11 +3,9 @@
 #include "actor.h"
 #include "flag_call.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
-s32 wait(s32 frames);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
-void Camera_FollowActor(s32 id, s32 a);
 
 void Func_020024c8(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);

@@ -1,7 +1,7 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
+#include "event_inline.h"
 
 struct Splash {
   s32 x;
@@ -30,7 +30,6 @@ struct Splashes {
 extern struct Splashes gData_02005970;
 extern const s8 gData_0200534c[];
 
-void Vector_AddPolarOffsetFar(s32 length, s32 angle, s32 *position);
 // Advances Aqua Rock's two water streams one cell along the map: each stream
 // follows the turn its cell's kind gives, leaves a splash on every open cell
 // (255) it crosses, stops on a wall kind and counts the cells of the given kind

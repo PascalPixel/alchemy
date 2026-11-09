@@ -8,34 +8,22 @@
 #include "field_sprite.h"
 #include "system/field_effect.h"
 #include "system/vector3.h"
-#include "call.h"
+#include "event_inline.h"
 
 extern s32 gFrameCount;
 extern s16 gData_02004674[][4];
 extern const u8 gData_02003d1c[];
 void Func_02003bc8(void);
 void Func_02003bd0(void);
-void Func_02003c88(s32 skip);
-void Func_02003cd8(s32 cue);
 void Func_02003b28(struct Actor *object, s32 mode);
 void Func_02003b38(struct Actor *object, const u8 *script);
 void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
-void Func_02003b58(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_02003b60(struct Actor *object);
-void FieldEvent_Wait(s32 frames);
 u32 Random16Far(void);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Func_02000840(void);
-s32 Math_Sine(s32 angle);
 s32 Math_Cosine(s32 angle);
 s32 Func_02000348(u32 layer, s32 x, s32 z);
-void Func_02003c20(s32 a, s32 b);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 s32 Func_02003ba8(struct Actor *object);
-void Func_02003b68(s32 x, s32 z, s32 width, s32 height, s32 a, s32 b);
-void Func_02003b80(s32 x, s32 z, s32 a, s32 b, s32 width, s32 height);
 void Func_02003b50(void);
-void GameFlag_SetBit(s32 flag);
 void Func_02003b48(struct Actor *object);
 void Func_02003c38(s32 actor, s32 a);
 void Func_02003c30(void);
@@ -82,10 +70,9 @@ void Func_0200095c(void) {
    * and Call6, so each builds its own constants; as direct calls, 382 of 632
    * instructions differ in tla-en. */
   Func_02003bc8();
-  Func_02003c88(0);
-  Func_02003cd8(207);
-  gust = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 280, leader->x,
-                                leader->y, leader->z);
+  Event_ResolvePendingActions(0);
+  Sound_Play(207);
+  gust = FieldActor_Create(280, leader->x, leader->y, leader->z);
   Func_02003b28(gust, 2);
   Actor_SetSingleChildFlags(gust, 0);
   gust->scaleX = 0x1b333;
@@ -95,13 +82,13 @@ void Func_0200095c(void) {
   ((struct MotionView *)gust)->flags = flag;
   ((struct FieldSprite *)gust->animation)->priority =
       ((struct FieldSprite *)effect->target->animation)->priority;
-  Func_02003b58(gust, effect->target->x, effect->target->y,
-                effect->target->z + 0xffff0000);
+  Actor_SetMoveTarget(gust, effect->target->x, effect->target->y,
+                      effect->target->z + 0xffff0000);
   while (gust->scaleY <= 0x14ccb) {
     gust->scaleY += 0x1999;
-    FieldEvent_Wait(1);
+    Event_Wait(1);
   }
-  Func_02003b60(gust);
+  Script_WaitForEventTimeout(gust);
   gust->z = effect->target->z + 0xffff0000;
   while (gust->scaleY <= 0x1cccb) {
     if ((gFrameCount & 3) == 0) {
@@ -127,10 +114,10 @@ void Func_0200095c(void) {
     } else {
       Actor_SetPartAttribute(effect->target, 4);
     }
-    FieldEvent_Wait(1);
+    Event_Wait(1);
   }
   Actor_SetPartAttribute(effect->target, 0);
-  Func_02003cd8(136);
+  Sound_Play(136);
   cell.x = effect->target->x >> 20;
   cell.z = effect->target->z >> 20;
   angle = (leader->angle + 0x2000) & 0xc000;
@@ -154,10 +141,9 @@ void Func_0200095c(void) {
   cell.z = newZ;
   gust->speedLimit = 0x40000;
   gust->acceleration = 0x40000;
-  Func_02003b58(gust, cell.x << 16, gust->y, cell.z << 16);
-  Call2(Func_02003c20, 0x50000, 0x50000);
-  Call4((void (*)())Camera_MoveWithinMapBounds, (s32)(newX << 16), (s32)(-1),
-        (s32)(newZ << 16), (s32)(1));
+  Actor_SetMoveTarget(gust, cell.x << 16, gust->y, cell.z << 16);
+  FieldCamera_SetSpeed(0x50000, 0x50000);
+  FieldCamera_MoveTo((s32)(newX << 16), (s32)(-1), (s32)(newZ << 16), (s32)(1));
   while (Func_02003ba8(gust) == 0) {
     if ((gFrameCount & 1) == 0) {
       leaves.priority = 1;
@@ -170,17 +156,17 @@ void Func_0200095c(void) {
                     EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                     &leaves);
     }
-    FieldEvent_Wait(1);
+    Event_Wait(1);
   }
   if (hit == 255) {
-    Func_02003cd8(136);
+    Sound_Play(136);
   } else {
     cell.x = ((s16 *)&gust->x)[1] + delta.x * 48;
     cell.z = ((s16 *)&gust->z)[1] + delta.z * 48;
     gust->speedLimit = 0x8000;
     gust->acceleration = 0x8000;
-    Func_02003b58(gust, cell.x << 16, gust->y, cell.z << 16);
-    Func_02003cd8(235);
+    Actor_SetMoveTarget(gust, cell.x << 16, gust->y, cell.z << 16);
+    Sound_Play(235);
     hit -= 30;
     while (Func_02003ba8(gust) == 0) {
       if ((gFrameCount & 1) == 0) {
@@ -202,31 +188,35 @@ void Func_0200095c(void) {
         cellZ = cell.z;
         if (hit & 1) {
           sourceX = (u16)gData_02004674[hit][0];
-          Call6(Func_02003b68, (s16)sourceX, gData_02004674[hit][1], cellX,
-                cellZ - 1, 1, 3);
-          Call6(Func_02003b80, gData_02004674[hit][0], gData_02004674[hit][1],
-                1, 2, cellX, cellZ);
-          Call6(Func_02003b80, gData_02004674[hit][0], gData_02004674[hit][1],
-                1, 2, gust->x >> 20, gust->z >> 20);
+          MapGrid_CopyCellsTo((s16)sourceX, gData_02004674[hit][1], cellX,
+                              cellZ - 1, 1, 3);
+          MapGrid_CopyCellAttributes(gData_02004674[hit][0],
+                                     gData_02004674[hit][1], 1, 2, cellX,
+                                     cellZ);
+          MapGrid_CopyCellAttributes(gData_02004674[hit][0],
+                                     gData_02004674[hit][1], 1, 2,
+                                     gust->x >> 20, gust->z >> 20);
         } else {
           sourceX = (u16)gData_02004674[hit][0];
-          Call6(Func_02003b68, (s16)sourceX, gData_02004674[hit][1], cellX,
-                cell.z - (hit >> 1), 1, 1);
-          Call6(Func_02003b80, gData_02004674[hit][0], gData_02004674[hit][1],
-                1, 1, cellX, cellZ);
-          Call6(Func_02003b80, gData_02004674[hit][0], gData_02004674[hit][1],
-                1, 1, gust->x >> 20, gust->z >> 20);
+          MapGrid_CopyCellsTo((s16)sourceX, gData_02004674[hit][1], cellX,
+                              cell.z - (hit >> 1), 1, 1);
+          MapGrid_CopyCellAttributes(gData_02004674[hit][0],
+                                     gData_02004674[hit][1], 1, 1, cellX,
+                                     cellZ);
+          MapGrid_CopyCellAttributes(gData_02004674[hit][0],
+                                     gData_02004674[hit][1], 1, 1,
+                                     gust->x >> 20, gust->z >> 20);
         }
         Func_02003b50();
       }
-      FieldEvent_Wait(1);
+      Event_Wait(1);
     }
     if (hit == 2) {
-      Call6(Func_02003b68, gData_02004674[2][0], gData_02004674[2][1], cell.x,
-            cell.z, 1, 1);
+      MapGrid_CopyCellsTo(gData_02004674[2][0], gData_02004674[2][1], cell.x,
+                          cell.z, 1, 1);
       Func_02003b50();
     }
-    Func_02003cd8(298);
+    Sound_Play(298);
     GameFlag_SetBit(flag + 0x850);
   }
   gust->acceleration = 0;
@@ -238,10 +228,10 @@ void Func_0200095c(void) {
     gust->scaleX -= 0x2666;
     gust->scaleY -= 0x4000;
     gust->y += 0x38000;
-    FieldEvent_Wait(1);
+    Event_Wait(1);
   }
   Func_02003b48(gust);
-  FieldEvent_Wait(30);
+  Event_Wait(30);
   Func_02003c38(gMainRoutineWork.currentOwner, 1);
   Func_02003c30();
   Func_02003bd0();

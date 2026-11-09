@@ -1,5 +1,6 @@
 #include "types.h"
 #include "system/ram_buffer.h"
+#include "event_inline.h"
 
 struct Entry {
   s32 x;
@@ -19,7 +20,6 @@ struct EntryWork {
 };
 
 u32 Random16Far(void);
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle, void *position);
 
 void Func_02003820(s32 x, s32 y, s32 z, s32 count) {
   struct EntryWork *work;

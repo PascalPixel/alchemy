@@ -6,23 +6,19 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
-s32 GameFlag_Test();
-s32 GameFlag_SetBit();
-s32 Func_02002adc();
-s32 Func_02002af4();
+#include "event_inline.h"
 extern u8 MsgChampa35[];
 extern u8 MsgChampa36[];
 
 void Func_02000554(s32 a0) {
   s32 t0;
 
-  t0 = Value1(GameFlag_Test, 0x972);
+  t0 = Event_GetFlag(0x972);
   if (t0 == 0) {
     GameFlag_SetBit(0x972);
-    Func_02002adc((s32)MsgChampa35);
+    Event_SetMessageId((s32)MsgChampa35);
   } else {
-    Func_02002adc((s32)MsgChampa36);
+    Event_SetMessageId((s32)MsgChampa36);
   }
-  Func_02002af4(a0, 0);
+  Event_ShowMessageAndWait(a0, 0);
 }

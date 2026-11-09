@@ -3,10 +3,9 @@
 #include "field_sprite.h"
 #include "field_effect.h"
 #include "vector3.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 u32 Random16Far(void);
 void Effect_AdvanceMotion(union FieldObject *object);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

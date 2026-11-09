@@ -1,7 +1,7 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
+#include "event_inline.h"
 
 struct MapFocus {
   s32 scrolledX;
@@ -22,7 +22,6 @@ struct MapFocus {
 extern u8 gMapCellBuffer[];
 extern u8 gMapShapeGrid[];
 void Func_02002810(void);
-void wait(s32 frames);
 
 void Func_02001ff0(s32 x, s32 z) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;

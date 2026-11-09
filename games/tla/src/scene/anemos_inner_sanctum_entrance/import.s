@@ -70,21 +70,21 @@ Func_02000c64:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_02000c74
+	.global Actor_SetMoveTarget
 	.thumb_func
-Func_02000c74:
+Actor_SetMoveTarget:
 	overlay_veneer Actor_SetTargetPosition
-	.global Func_02000c7c
+	.global Script_WaitForEventTimeout
 	.thumb_func
-Func_02000c7c:
+Script_WaitForEventTimeout:
 	overlay_veneer Actor_CommitPosition
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
 	overlay_veneer Map_GetTerrainHeightFar
-	.global Func_02000c8c
+	.global GetMapCellCollision
 	.thumb_func
-Func_02000c8c:
+GetMapCellCollision:
 	overlay_veneer GetMapCellCollisionFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
@@ -94,13 +94,13 @@ Actor_SetSingleChildFlags:
 	.thumb_func
 Animation_SetStateFlags:
 	overlay_veneer Animation_SetStateFlagsFar
-	.global Func_02000ca4
+	.global Func_0803ce64
 	.thumb_func
-Func_02000ca4:
+Func_0803ce64:
 	overlay_veneer Func_08038210
-	.global FieldEvent_Wait
+	.global Event_Wait
 	.thumb_func
-FieldEvent_Wait:
+Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
 	.global Func_02000cb4
 	.thumb_func
@@ -154,17 +154,17 @@ Func_02000d0c:
 	.thumb_func
 Func_02000d14:
 	overlay_veneer Func_080c82e0
-	.global Func_02000d1c
+	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func
-Func_02000d1c:
+BattleEffect_ApplyColorToTargetBuffer:
 	overlay_veneer BattleEffect_ApplyColorToTargetBufferFar
-	.global Func_02000d24
+	.global BattleEffect_ApplyColorToSourceBuffer
 	.thumb_func
-Func_02000d24:
+BattleEffect_ApplyColorToSourceBuffer:
 	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
-	.global Func_02000d2c
+	.global BattleEffect_StartBufferInterpolation
 	.thumb_func
-Func_02000d2c:
+BattleEffect_StartBufferInterpolation:
 	overlay_veneer BattleEffect_StartBufferInterpolationFar
 	.global Event_StartScreenTransition
 	.thumb_func
@@ -174,9 +174,9 @@ Event_StartScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_02000d44
+	.global Event_ResolvePendingActions
 	.thumb_func
-Func_02000d44:
+Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_02000d4c
 	.thumb_func
@@ -190,7 +190,7 @@ Func_02000d54:
 	.thumb_func
 Func_02000d5c:
 	overlay_veneer Func_080c87e8
-	.global Func_02000d64
+	.global Sound_Play
 	.thumb_func
-Func_02000d64:
+Sound_Play:
 	overlay_veneer Sound_PlayFar

@@ -2,33 +2,24 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
-#include "call.h"
 #include "system/io_reg.h"
 #include "system/dma.h"
+#include "event_inline.h"
 
 extern char SceneId_Ov663Room1, SceneId_Ov663Room2, SceneId_Ov663Room3;
 extern const u8 gData_02003d94[], gData_02003e4c[];
-struct Actor *Actor_GetById(u32 id);
-s32 GameFlag_Test(s32 flag);
 void Func_02002c24(s32 offset);
-void Func_02003b68(s32 x, s32 z, s32 width, s32 height, s32 a, s32 b);
-void Func_02003b80(s32 x, s32 z, s32 a, s32 b, s32 width, s32 height);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
 void Func_02001b54(void);
-void Func_02003bf8(s32 id, s32 x, s32 z);
 void Func_02003cb0(const u8 *table);
 void Func_020003e8(const u8 *table);
 void Func_02003ca0(const u8 *table);
-void Task_Add(void (*func)(void), s32 priority);
 void Func_02002b88(void);
 void Func_020024b0(void);
 void Func_02000620(void);
 void Func_02003b50(void);
-void wait(s32 frames);
 void Func_02003c80(s32 a);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 Camera_FollowActor(s32 id, s32 a);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02001f7c(void);
@@ -64,49 +55,49 @@ s32 Func_02002ca0(void) {
       Func_02002c24(0x580000);
     }
     if (GameFlag_Test(0x850)) {
-      Call6(Func_02003b68, 0x40, 0, 113, 11, 3, 3);
-      Call6(Func_02003b80, 0x40, 0, 3, 2, 113, 12);
-      Call6(Func_02003b80, 0x40, 0, 3, 2, 49, 12);
+      MapGrid_CopyCellsTo(0x40, 0, 113, 11, 3, 3);
+      MapGrid_CopyCellAttributes(0x40, 0, 3, 2, 113, 12);
+      MapGrid_CopyCellAttributes(0x40, 0, 3, 2, 49, 12);
     }
     if (GameFlag_Test(0x851)) {
-      Call6(Func_02003b68, 0x40, 0, 70, 39, 1, 4);
-      Call6(Func_02003b80, 0x40, 0, 1, 3, 70, 40);
-      Call6(Func_02003b80, 0x40, 0, 1, 3, 6, 40);
+      MapGrid_CopyCellsTo(0x40, 0, 70, 39, 1, 4);
+      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 70, 40);
+      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 6, 40);
     }
     if (GameFlag_Test(0x852)) {
-      Call6(Func_02003b68, 0x40, 0, 103, 38, 1, 4);
-      Call6(Func_02003b80, 0x40, 0, 1, 3, 103, 39);
-      Call6(Func_02003b80, 0x40, 0, 1, 3, 39, 39);
+      MapGrid_CopyCellsTo(0x40, 0, 103, 38, 1, 4);
+      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 103, 39);
+      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 39, 39);
     }
     if (GameFlag_Test(0x853)) {
-      Call6(Func_02003b68, 0x40, 0, 87, 43, 1, 4);
-      Call6(Func_02003b80, 0x40, 0, 1, 3, 87, 44);
-      Call6(Func_02003b80, 0x40, 0, 1, 3, 23, 44);
+      MapGrid_CopyCellsTo(0x40, 0, 87, 43, 1, 4);
+      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 87, 44);
+      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 23, 44);
     }
     if (GameFlag_Test(0x854)) {
-      Call6(Func_02003b68, 0x40, 0, 70, 52, 1, 4);
-      Call6(Func_02003b80, 0x40, 0, 1, 3, 70, 52);
-      Call6(Func_02003b80, 0x40, 0, 1, 3, 6, 53);
+      MapGrid_CopyCellsTo(0x40, 0, 70, 52, 1, 4);
+      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 70, 52);
+      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 6, 53);
     }
     if (GameFlag_Test(0x855)) {
-      Call6(Func_02003b68, 0x40, 0, 79, 49, 3, 3);
-      Call6(Func_02003b80, 0x40, 0, 3, 2, 79, 50);
-      Call6(Func_02003b80, 0x40, 0, 3, 2, 15, 50);
+      MapGrid_CopyCellsTo(0x40, 0, 79, 49, 3, 3);
+      MapGrid_CopyCellAttributes(0x40, 0, 3, 2, 79, 50);
+      MapGrid_CopyCellAttributes(0x40, 0, 3, 2, 15, 50);
     }
     if (GameFlag_Test(0x856)) {
-      Call6(Func_02003b68, 0x40, 0, 103, 0x30, 1, 4);
-      Call6(Func_02003b80, 0x40, 0, 1, 3, 103, 49);
-      Call6(Func_02003b80, 0x40, 0, 1, 3, 39, 49);
+      MapGrid_CopyCellsTo(0x40, 0, 103, 0x30, 1, 4);
+      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 103, 49);
+      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 39, 49);
     }
     if (GameFlag_Test(0x857)) {
-      Call6(Func_02003b68, 0x40, 0, 111, 52, 3, 3);
-      Call6(Func_02003b80, 0x40, 0, 3, 2, 111, 53);
-      Call6(Func_02003b80, 0x40, 0, 3, 2, 47, 53);
+      MapGrid_CopyCellsTo(0x40, 0, 111, 52, 3, 3);
+      MapGrid_CopyCellAttributes(0x40, 0, 3, 2, 111, 53);
+      MapGrid_CopyCellAttributes(0x40, 0, 3, 2, 47, 53);
     }
     if (GameFlag_Test(0x858)) {
-      Call6(Func_02003b68, 68, 0, 79, 0, 11, 10);
-      Call6(Func_02003b80, 38, 9, 1, 1, 0x10, 9);
-      Call6(Func_02003b80, 38, 9, 1, 1, 24, 9);
+      MapGrid_CopyCellsTo(68, 0, 79, 0, 11, 10);
+      MapGrid_CopyCellAttributes(38, 9, 1, 1, 0x10, 9);
+      MapGrid_CopyCellAttributes(38, 9, 1, 1, 24, 9);
       Actor_SetPartAttribute(Actor_GetById(8), 6);
     }
   }
@@ -137,13 +128,13 @@ s32 Func_02002ca0(void) {
       SWAY(10, 0);
       SWAY(11, 60);
       if (GameFlag_Test(0x85f))
-        Call3(Func_02003bf8, 12, 0x1080000, 0x2b80000);
+        Actor_SetPosition(12, 0x1080000, 0x2b80000);
       if (GameFlag_Test(0x860))
-        Call3(Func_02003bf8, 13, 0x2d80000, 0x2d80000);
+        Actor_SetPosition(13, 0x2d80000, 0x2d80000);
       if (GameFlag_Test(0x861))
-        Call3(Func_02003bf8, 15, 0x1580000, 0x3080000);
+        Actor_SetPosition(15, 0x1580000, 0x3080000);
       if (GameFlag_Test(0x862))
-        Call3(Func_02003bf8, 0x10, 0x2780000, 0x3180000);
+        Actor_SetPosition(0x10, 0x2780000, 0x3180000);
       Func_02003cb0(gData_02003d94);
       Func_020003e8(gData_02003d94);
       Func_02003ca0(gData_02003e4c);
@@ -159,7 +150,7 @@ s32 Func_02002ca0(void) {
       Func_02002c24(0xffc80000);
     case 12:
       if (GameFlag_Test(0x887))
-        Call3(Func_02003bf8, 22, 0x3180000, 0x1280000);
+        Actor_SetPosition(22, 0x3180000, 0x1280000);
       Func_02003cb0(gData_02003d94);
       Func_020003e8(gData_02003d94);
       HANG(17, 0x100000, 60);
@@ -206,9 +197,9 @@ s32 Func_02002ca0(void) {
       Actor_GetById(11)->y = 0xd00000;
       Actor_GetById(11)->terrainHeight = Actor_GetById(11)->y;
       if (GameFlag_Test(0x310))
-        Call3(Func_02003bf8, 10, 0x1f80000, 0x3680000);
+        Actor_SetPosition(10, 0x1f80000, 0x3680000);
       if (GameFlag_Test(785))
-        Call3(Func_02003bf8, 11, 0x2080000, 0x3680000);
+        Actor_SetPosition(11, 0x2080000, 0x3680000);
       Func_02000620();
       beam = (s32 *)Ram_HeapSlots->mapWork;
       beam = (s32 *)((u8 *)beam + 0x178);
@@ -249,7 +240,7 @@ s32 Func_02002ca0(void) {
       Actor_GetById(12)->priorityFlags |= 2;
       Func_02003c80(0);
       if (GameFlag_Test(0x879))
-        Call3(Func_02003bf8, 13, 0xb80000, 0x1180000);
+        Actor_SetPosition(13, 0xb80000, 0x1180000);
       if (!GameFlag_Test(0x87a)) {
         *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
         REG_BLDALPHA = 0x1008;
@@ -292,12 +283,12 @@ s32 Func_02002ca0(void) {
       beam[4] = 0xd000;
       beam[5] = 0xd000;
       if (!GameFlag_Test(0x87b)) {
-        Call6(Func_02003b68, 29, 9, 62, 2, 9, 9);
-        Call6(Func_02003b80, 29, 9, 9, 9, 62, 2);
-        Call6(Func_02003b68, 29, 73, 62, 66, 9, 9);
-        Call6(Func_02003b68, 52, 2, 29, 9, 9, 9);
-        Call6(Func_02003b80, 52, 2, 9, 9, 29, 9);
-        Call6(Func_02003b68, 52, 66, 29, 73, 9, 9);
+        MapGrid_CopyCellsTo(29, 9, 62, 2, 9, 9);
+        MapGrid_CopyCellAttributes(29, 9, 9, 9, 62, 2);
+        MapGrid_CopyCellsTo(29, 73, 62, 66, 9, 9);
+        MapGrid_CopyCellsTo(52, 2, 29, 9, 9, 9);
+        MapGrid_CopyCellAttributes(52, 2, 9, 9, 29, 9);
+        MapGrid_CopyCellsTo(52, 66, 29, 73, 9, 9);
       } else {
         Actor_SetPartAttribute(Actor_GetById(14), 6);
       }
@@ -313,12 +304,12 @@ s32 Func_02002ca0(void) {
       }
       break;
     case 99:
-      Call6(Func_02003b68, 29, 9, 62, 2, 9, 9);
-      Call6(Func_02003b80, 29, 9, 9, 9, 62, 2);
-      Call6(Func_02003b68, 29, 73, 62, 66, 9, 9);
-      Call6(Func_02003b68, 52, 2, 29, 9, 9, 9);
-      Call6(Func_02003b80, 52, 2, 9, 9, 29, 9);
-      Call6(Func_02003b68, 52, 66, 29, 73, 9, 9);
+      MapGrid_CopyCellsTo(29, 9, 62, 2, 9, 9);
+      MapGrid_CopyCellAttributes(29, 9, 9, 9, 62, 2);
+      MapGrid_CopyCellsTo(29, 73, 62, 66, 9, 9);
+      MapGrid_CopyCellsTo(52, 2, 29, 9, 9, 9);
+      MapGrid_CopyCellAttributes(52, 2, 9, 9, 29, 9);
+      MapGrid_CopyCellsTo(52, 66, 29, 73, 9, 9);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       Func_02001f7c();

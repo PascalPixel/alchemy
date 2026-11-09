@@ -1,5 +1,6 @@
 #include "types.h"
 #include "actor.h"
+#include "event_inline.h"
 
 struct MagmaRockEffectParams {
   s32 unk00;
@@ -14,7 +15,6 @@ extern u32 gFrameCount;
 extern const u8 gData_02003d74[];
 
 u32 Random16Far(void);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 unused, s32 speed, s32 phase,
                    s32 life, struct MagmaRockEffectParams *params);
 void Func_02000dc0(void);

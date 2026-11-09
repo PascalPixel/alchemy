@@ -2,8 +2,8 @@
 #include "actor.h"
 #include "owner_state.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 s32 Unit_AddPp();
 void Func_02003c3c(void);

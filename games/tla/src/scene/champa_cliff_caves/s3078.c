@@ -1,5 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "event_inline.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -8,9 +9,6 @@
    } *)(base))                                                                 \
        ->v)
 
-void wait(s32 frames);
-void Task_RemoveFar(void *func);
-void Func_02003434(s32 x, s32 y, s32 z);
 s32 Resource_ResetEntry(u32 entry);
 void HeapSlot_Release(s32 slot);
 void Func_02002de4(void);
@@ -51,7 +49,7 @@ void Func_02003078(void) {
     time++;
   } while (state != 999);
   Task_RemoveFar(Func_02002de4);
-  Func_02003434(0, 0, 0);
+  Map_SetScreenShake(0, 0, 0);
   Resource_ResetEntry(FIELD_AT(work, s16, 4188));
   Resource_ResetEntry(FIELD_AT(work, s16, 4192));
   HeapSlot_Release(220);

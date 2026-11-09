@@ -6,16 +6,14 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
+#include "event_inline.h"
 void Func_02003bc8(void);
-void Func_02003c88(s32 a);
-void FieldMessage_Show(s32 a, s32 b);
 void Func_02003bd0(void);
 extern u8 MsgFieldWindStoneWarning[];
 
 void Func_02000548(void) {
   Func_02003bc8();
-  Func_02003c88(0);
+  Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgFieldWindStoneWarning, 1);
   Func_02003bd0();
 }

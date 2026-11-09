@@ -10,15 +10,13 @@
 #include "flag_call.h"
 #include "main_routine_work.h"
 #include "text/msg_ids.h"
+#include "event_inline.h"
 
 void Func_02000044(void);
 s32 Func_0200006c(s32 slot);
 void LinkLobby_WriteSlotValue(s32 slot);
 void Func_02001a14(void);
 void Func_02001a1c(void);
-void Func_02001a64(s32 message);
-void Func_02001ab4(s32 skip);
-void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
 
 /// The lobby clerk: offers the link battle, or reports on the one waiting.
 s32 Func_02000bb0(void) {
@@ -28,7 +26,7 @@ s32 Func_02000bb0(void) {
 
   msg = (s32)MsgPleaseSpeakTo;
   Func_02001a14();
-  Func_02001ab4(0);
+  Event_ResolvePendingActions(0);
   Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
   if (Func_0200006c(0) == 0)
     wait(1);
@@ -36,7 +34,7 @@ s32 Func_02000bb0(void) {
     LinkLobby_WriteSlotValue(5);
     Func_02000044();
     if (!Flag_IsSet(0x173)) {
-      Func_02001a64(msg + 5);
+      Event_SetMessageId(msg + 5);
       FieldMessage_ShowAtActor(8, 0);
       answer = Event_AskYesNoWithActorAnimation(4, 0);
       if (answer == 0) {
@@ -61,7 +59,7 @@ s32 Func_02000bb0(void) {
   } else {
     if (Flag_IsSet(0x173)) {
       LinkLobby_WriteSlotValue(0);
-      Func_02001a64((s32)MsgYourOpponentHas);
+      Event_SetMessageId((s32)MsgYourOpponentHas);
       FieldMessage_ShowAtActor(8, 0);
       Flag_Clear(0x202);
       Flag_Clear(0x173);
@@ -72,28 +70,28 @@ s32 Func_02000bb0(void) {
       // accepted challenge back into its opening: the native keeps one copy of
       // each, as ☀️'s lobby does.
     message:
-      Func_02001a64(line);
+      Event_SetMessageId(line);
     open_message:
       FieldMessage_ShowAtActor(8, 0);
     } else if (!Flag_IsSet(0x201) && !Flag_IsSet(0x300)) {
-      Func_02001a64(msg);
+      Event_SetMessageId(msg);
       FieldMessage_ShowAtActor(8, 0);
       Flag_Set(0x300);
     } else {
       Flag_Set(0x300);
       if (Flag_IsSet(0x201))
-        Func_02001a64(msg + 2);
+        Event_SetMessageId(msg + 2);
       else
-        Func_02001a64(msg + 1);
+        Event_SetMessageId(msg + 1);
       FieldMessage_ShowAtActor(8, 0);
       if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
         if (Func_0200006c(0)) {
           Flag_Set(0x16c);
           Flag_Set(0x172);
           if (Flag_IsSet(0x201))
-            Func_02001a64(msg + 3);
+            Event_SetMessageId(msg + 3);
           else
-            Func_02001a64(msg + 4);
+            Event_SetMessageId(msg + 4);
           LinkLobby_WriteSlotValue(1);
           Flag_Set(0x202);
           goto open_message;
@@ -101,7 +99,7 @@ s32 Func_02000bb0(void) {
           Flag_Set(0x205);
         }
       } else {
-        Func_02001a64(msg);
+        Event_SetMessageId(msg);
         FieldMessage_ShowAtActor(8, 0);
       }
     }

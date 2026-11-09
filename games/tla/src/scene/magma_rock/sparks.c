@@ -2,13 +2,13 @@
 #include "ram_buffer.h"
 #include "resource.h"
 #include "heap_release.h"
+#include "event_inline.h"
 
 struct MagmaRockSparkWork {
   u8 unk0000[0x1604];
   s16 resource;
 };
 
-void Task_RemoveFar(void (*func)(void));
 void Func_0200379c(void);
 
 void Func_02003998(void) {

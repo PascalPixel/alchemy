@@ -14,11 +14,11 @@ void Func_020018bc(void) {
   struct ShrineOfTheSeaGodObject *pillar = Actor_GetById(16);
 
   Func_020039d8();
-  Func_02003b08(0);
+  Event_ResolvePendingActions(0);
   ShrineOfTheSeaGod_ObjWalk(gMainRoutineWork.currentOwner, 408, 360);
   Func_02001340(leader, pillar);
-  Func_020039a8(0, 0, 3, 1, 24, 22);
-  Func_020039a8(40, 0, 2, 1, 24, 24);
+  Map_CopyCellAttributeRect(0, 0, 3, 1, 24, 22);
+  Map_CopyCellAttributeRect(40, 0, 2, 1, 24, 24);
   wait(1);
   leader->motionFlags = 3;
   Actor_SetSpritePriority(16, 3);
@@ -30,9 +30,9 @@ void Func_020018bc(void) {
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x9999, 0x1999);
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 406, 360);
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 400, 392);
-  Func_02003b48(161);
-  Func_02003a30(23, 0, 0);
-  Func_02003a30(24, 0, 0);
+  Sound_Play(161);
+  Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
   Task_RemoveFar(Func_020018ac);
   wait(1);
   Func_020039e0();

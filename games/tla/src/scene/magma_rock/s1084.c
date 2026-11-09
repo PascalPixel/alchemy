@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
+#include "event_inline.h"
 
 struct MagmaRockWork {
   s32 unk00;
@@ -11,7 +12,6 @@ struct MagmaRockWork {
   struct Actor *target;
 };
 
-struct Actor *Actor_GetById(s32 id);
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z);
 
 s32 Func_02001084(u16 *table) {

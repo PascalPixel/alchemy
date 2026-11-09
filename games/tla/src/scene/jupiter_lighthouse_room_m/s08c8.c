@@ -5,18 +5,18 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Func_020047d4(void);
 void Func_020047dc(void);
-void Func_0200494c(s32 a);
-void Func_020049c4(s32 cue);
+void Event_ResolvePendingActions(s32 a);
+void Sound_Play(s32 cue);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 d);
 void Func_020048f4(void);
-void Func_0200474c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Func_0802b450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Camera_FollowActor(s32 id, s32 flag);
 
 static __inline__ void Func_0200474c_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as ☀️'s scene layer does (both calls direct: differ 12 of 61). */
-  Func_0200474c(a, b, c, d, e, f);
+  Func_0802b450(a, b, c, d, e, f);
 }
 
 void Func_020008c8(void) {
@@ -24,16 +24,16 @@ void Func_020008c8(void) {
     return;
   GameFlag_ClearBit(0x202);
   Func_020047d4();
-  Func_0200494c(0);
-  Func_020049c4(125);
+  Event_ResolvePendingActions(0);
+  Sound_Play(125);
   Camera_MoveWithinMapBounds(PIXELS(776), -1, PIXELS(208), 1);
   Func_020048f4();
-  FieldEvent_Wait(6);
+  Event_Wait(6);
   Func_0200474c_(49, 103, 4, 3, 49, 76);
-  FieldEvent_Wait(6);
-  Func_020049c4(133);
-  Func_0200474c(49, 100, 4, 3, 49, 76);
-  FieldEvent_Wait(20);
+  Event_Wait(6);
+  Sound_Play(133);
+  Func_0802b450(49, 100, 4, 3, 49, 76);
+  Event_Wait(20);
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_020048f4();
   Func_020047dc();

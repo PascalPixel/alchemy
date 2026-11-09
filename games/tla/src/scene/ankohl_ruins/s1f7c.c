@@ -55,6 +55,6 @@ void Func_02001f7c(void) {
     GameFlag_SetBit(0x201);
     GameFlag_ClearBit(0x17d);
     GameFlag_ClearBit(0x161);
-    Func_02002eec(208);
+    Sound_Play(208);
   }
 }

@@ -3,16 +3,13 @@
 #include "main_routine_work.h"
 #include "scene_ids.h"
 #include "io_reg.h"
+#include "event_inline.h"
 
 struct EventWork1ac {
   u8 unk000[0x1ac];
   s32 screenEffect;
 };
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void wait(s32 frames);
-void Task_Add(void (*func)(void), s32 priority);
 void Actor_SetWideSprite(s32 id, s32 wide);
 void Func_020018e0(void);
 void Func_020027e4(void);
@@ -21,8 +18,6 @@ void Func_020029c8(void);
 void Func_02002a38(void);
 void Func_0200440c(s32 layer);
 void Func_02004414(s32 layer);
-void Func_0200459c(s32 a, s32 b);
-void Func_020045a4(s32 frames);
 void Func_020045dc(s32 a);
 void Func_0200461c(s32 a);
 
@@ -88,8 +83,8 @@ s32 Func_02002614(void) {
       Func_02002878();
     }
     if (GameFlag_Test(0x201)) {
-      Func_0200459c(0x10004, 1);
-      Func_020045a4(16);
+      BattleEffect_ApplyColorToTargetBuffer(0x10004, 1);
+      BattleEffect_StartBufferInterpolation(16);
       wait(16);
     }
   }

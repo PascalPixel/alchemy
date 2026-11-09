@@ -1,10 +1,10 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "map.h"
 #include "task.h"
+#include "event_inline.h"
 
 extern const u8 gData_02003f80[];
 extern const u8 gData_02003fc4[];
@@ -12,9 +12,6 @@ extern const u8 gData_02003fc8[];
 extern s32 gData_02005678;
 extern s32 gData_0200567c;
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-struct Actor *Actor_GetById(s32 id);
 void Func_020001d0(const void *data);
 void Func_02000c64(const void *data);
 void Func_020013b0(void);
@@ -22,11 +19,6 @@ void Func_0200172c(void);
 void Func_02001930(void);
 void Func_02001ee8(void);
 void Func_02001fc4(void);
-void Func_02003be0(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
-                   s32 height);
-void Func_02003bf0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02003c68(s32 id, s32 x, s32 z);
-void Func_02003c70(s32 id, s32 x, s32 z, s32 angle);
 void Func_02003cc0(s32 id);
 void Func_02003d90(void);
 s32 Func_02003d98(void);
@@ -74,7 +66,7 @@ void Func_02003284(void) {
   else
     /* FAKEMATCH(wrapper): forwarded, so each call builds its own constants; as direct
      * calls, 8 of 276 instructions differ in tla-en. */
-    Call6((void (*)())Func_02003bf0, 38, 32, 1, 1, 38, 33);
+    MapGrid_CopyCellAttributes(38, 32, 1, 1, 38, 33);
   Actor_GetById(14)->priorityFlags &= ~1;
   Actor_GetById(15)->priorityFlags &= ~1;
   Actor_GetById(16)->priorityFlags &= ~1;
@@ -97,28 +89,28 @@ void Func_02003284(void) {
 
     /* FAKEMATCH(wrapper): forwarded, so the angle loads ahead of the coordinates; as
      * direct calls, 4 of 276 instructions differ in tla-en. */
-    Call4((void (*)())Func_02003c70, 25, 212 << 17, 208 << 15, angle);
+    Actor_SetPositionAndFacing(25, 212 << 17, 208 << 15, angle);
   }
   Actor_SetModeById(18, 3);
   if (GameFlag_Test(0x86f) != 0) {
     object = Actor_GetById(18);
-    Call6((void (*)())Func_02003bf0, 27, 8, 1, 1, 27, 9);
+    MapGrid_CopyCellAttributes(27, 8, 1, 1, 27, 9);
     Actor_SetModeById(18, 4);
     object->priorityFlags |= 2;
     *((u8 *)object + 89) &= ~1;
     GameFlag_SetBit(517);
     GameFlag_SetBit(577);
-    Func_02003be0(69, 51, 92, 11, 1, 1);
+    Map_CopyCellPictureIndicesRect(69, 51, 92, 11, 1, 1);
     {
       s32 angle = 0x4000;
 
-      Call4((void (*)())Func_02003c70, 25, 154 << 18, 140 << 17, angle);
+      Actor_SetPositionAndFacing(25, 154 << 18, 140 << 17, angle);
     }
   }
   if (GameFlag_Test(0x870) != 0) {
     GameFlag_SetBit(528);
     GameFlag_SetBit(534);
-    Func_02003c68(25, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
   }
   Func_020001d0(gData_02003f80);
   Func_020013b0();

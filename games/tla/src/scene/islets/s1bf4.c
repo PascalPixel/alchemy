@@ -16,16 +16,16 @@ void Func_02001a68(void) {
   u8 *done;
 
   Func_02003e64();
-  Func_02003fa4(0);
+  Event_ResolvePendingActions(0);
   Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
-  FieldEvent_Wait(10);
-  Func_02003f24((s32)MsgYouAllSet);
-  Func_02003f2c(9, 0);
+  Event_Wait(10);
+  Event_SetMessageId((s32)MsgYouAllSet);
+  Event_ShowMessageAndWait(9, 0);
   Func_02003fc4();
   result = Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   if (result == 0) {
     Func_02003fbc();
-    Func_02003f2c(9, 0);
+    Event_ShowMessageAndWait(9, 0);
     ((struct {
       u8 unk000[0x295];
       u8 unk295;
@@ -38,7 +38,7 @@ void Func_02001a68(void) {
     leader->update = (void (*)(void))Func_02001278;
     Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
     Actor_SetModeById(9, 3);
-    FieldEvent_Wait(20);
+    Event_Wait(20);
     Func_02003fc4();
     Call3((void (*)())Actor_SetSpeedParameters, 9, 0x19999, 0xcccc);
     Call3((void (*)())Actor_SetSpeedParameters, 10, 0x19999, 0xcccc);
@@ -47,7 +47,7 @@ void Func_02001a68(void) {
     *done = 0;
     object->update = update;
     Actor_SetMovementTypeById(9, gData_020045a4);
-    FieldEvent_Wait(30);
+    Event_Wait(30);
     Actor_GetById(10)->update = update;
     Actor_SetMovementTypeById(10, gData_020045f0);
     do {
@@ -59,23 +59,24 @@ void Func_02001a68(void) {
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Func_02003fbc();
-    Func_02003f7c(4);
+    Import_EventSetExitRequest(4);
   } else {
     Func_02003fbc();
-    Func_02003f24((s32)MsgYouAllSet + 4);
-    Func_02003f2c(9, 0);
-    Call2((void (*)())Func_02003f3c, 9, FACING_SOUTH);
+    Event_SetMessageId((s32)MsgYouAllSet + 4);
+    Event_ShowMessageAndWait(9, 0);
+    Call2((void (*)())Actor_ArmCallbackAndRefresh, 9, FACING_SOUTH);
   }
   Func_02003e6c();
 }
 
 void Func_02001bf4(void) {
   Func_02003e64();
-  Func_02003fa4(0);
+  Event_ResolvePendingActions(0);
   Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
-  Func_02003f24((s32)MsgMyPopS);
-  Func_02003f2c(9, 0);
-  Call2((void (*)())Func_02003f3c, 9, FACING_NORTHWEST + FACING_STEP);
+  Event_SetMessageId((s32)MsgMyPopS);
+  Event_ShowMessageAndWait(9, 0);
+  Call2((void (*)())Actor_ArmCallbackAndRefresh, 9,
+        FACING_NORTHWEST + FACING_STEP);
   Func_02003e6c();
 }
 

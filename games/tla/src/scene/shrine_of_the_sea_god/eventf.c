@@ -151,8 +151,8 @@ void Func_02003094(void) {
   Func_02003b18();
   Func_02003b20(0, 515, 10, 11);
   if (GameFlag_Test(0x872)) {
-    Func_02003a30(12, 0, 0);
-    Func_02003a30(13, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
   }
 }
 
@@ -180,7 +180,7 @@ void Func_02003134(void) {
   Actor_GetById(12)->motionFlags = 0;
   ShrineOfTheSeaGod_BlendStart(3, 15, 1, 1, 6, 15);
   if (GameFlag_Test(0x873)) {
-    Func_02003a30(11, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
   } else if (GameFlag_Test(0x872)) {
     /* FAKEMATCH: the function-scope angle temporary preserves its early
      * constant construction; a direct argument through the unbound helper
@@ -227,7 +227,7 @@ void Func_0200320c(void) {
     ShrineOfTheSeaGod_ObjSetPos(Actor_GetById(8), 200 << 16, 0, 296 << 16);
   Func_02003b30(gData_02003cbc);
   if (GameFlag_Test(0x875))
-    Func_02003a30(15, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
   else if (GameFlag_Test(0x874)) {
     /* FAKEMATCH: the function-scope angle temporary preserves its early
      * constant construction; a direct argument through the unbound helper

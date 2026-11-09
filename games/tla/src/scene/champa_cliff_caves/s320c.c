@@ -31,7 +31,7 @@ void Func_0200320c(void) {
 
     Task_Add(Func_02002de4, priority);
   }
-  Func_0200362c(144);
+  Sound_Play(144);
   state = 0;
   do {
     switch (state) {

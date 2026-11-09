@@ -6,15 +6,14 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
+#include "event_inline.h"
 s32 Func_020030e0();
-s32 Func_02003450();
 
 void Func_020017a0(void) {
   s32 t0;
 
   t0 = Func_020030e0();
   if (t0 != 0) {
-    Func_02003450(0xc);
+    Import_EventSetExitRequest(0xc);
   }
 }

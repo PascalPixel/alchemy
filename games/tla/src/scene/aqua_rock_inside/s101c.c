@@ -29,7 +29,7 @@ void Func_0200107c(s32 unused, s32 id) {
     {
       s32 row = 33;
 
-      Func_02003d1c(8, row, 1, 1, object->x >> 20, 34);
+      Map_CopyCellAttributeRect(8, row, 1, 1, object->x >> 20, 34);
     }
   }
 }

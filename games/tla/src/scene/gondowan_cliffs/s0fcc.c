@@ -22,7 +22,7 @@ void Heap_Release(void *block);
 void Task_Add();
 void Func_02000be4(void);
 void Func_02000dac(void);
-s32 Func_02001314(void);
+s32 Party_GetLeaderActor(void);
 struct Actor *Actor_GetById(s32 id);
 
 void Func_02000fcc(s32 unused, s32 value) {
@@ -41,5 +41,5 @@ void Func_02000fcc(s32 unused, s32 value) {
   work->value = value;
   Task_Add((s32)Func_02000be4, 0x48d);
   Task_Add((s32)Func_02000dac, 0x480);
-  Actor_GetById(Func_02001314())->priorityFlags |= 0x40;
+  Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 0x40;
 }

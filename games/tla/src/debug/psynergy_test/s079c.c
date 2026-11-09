@@ -7,9 +7,9 @@
 struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 s32 Item_AdjustCounter(s32 item, s32 delta);
-void Func_02000dac(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02000dc4(struct Actor *object, s32 value);
-void Func_02000e74(s32 actor, s32 x, s32 z);
+void Map_CopyCellsRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Func_0802372c(struct Actor *object, s32 value);
+void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
 void Func_02000ed4(s32 actor, s32 angle);
 void Func_02000edc(s32 actor, s32 angle, s32 frames);
 void Func_02000f04(s32 actor);
@@ -45,12 +45,14 @@ s32 Func_0200079c(void) {
   Call2((void (*)())Func_02000ed4, 10, 0x8000);
   Func_02000ed4(12, 0);
   if (GameFlag_Test(0x300))
-    Func_02000dac(36, 28, 1, 1, 10, 10);
+    Map_CopyCellsRect(36, 28, 1, 1, 10, 10);
   if (GameFlag_Test(0x301))
-    Call3((void (*)())Func_02000e74, 18, 184 << 16, 184 << 16);
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 18, 184 << 16,
+          184 << 16);
   if (GameFlag_Test(0x302) && !GameFlag_Test(0x310))
-    Call3((void (*)())Func_02000e74, 19, 200 << 16, 200 << 16);
-  Func_02000dc4(Actor_GetById(19), 50);
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 19, 200 << 16,
+          200 << 16);
+  Func_0802372c(Actor_GetById(19), 50);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 

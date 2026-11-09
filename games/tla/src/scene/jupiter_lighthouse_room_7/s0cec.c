@@ -1,10 +1,8 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-void Vector_AddPolarOffsetFar(s32 distance, s32 angle, s32 *vector);
 void Func_02002bec(void);
 void Func_02002c24(void);
 

@@ -7,36 +7,10 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
 #include "version.h"
-s32 GameFlag_Test();
-s32 GameFlag_SetBit();
+#include "event_inline.h"
 s32 Func_02000a94();
-s32 Func_02000b8c();
-s32 Func_02000b24();
-s32 Actor_SetPositionAndReset();
-s32 Func_02000b4c();
-s32 Camera_MoveWithinMapBounds();
 s32 Func_02000b7c();
-s32 FieldEvent_Wait();
-s32 Motion_SetVarCbAndRefresh();
-s32 Func_02000b34();
-s32 Func_02000b5c();
-s32 Motion_SetModeAndWaitAnimation();
-s32 Actor_Jump();
-s32 Actor_SetSpeedParameters();
-s32 Actor_SetSpritePriority();
-s32 Camera_FollowActor();
-s32 Actor_ResetAndSetPositionInMode2();
-s32 Actor_WaitForMoveById();
-s32 Actor_SetModeById();
-s32 Actor_CommitPositionAndActivate();
-s32 Actor_SetMovementTypeById();
-s32 Actor_WatchAndSetScript();
-s32 Actor_RefreshSelectorById();
-s32 Actor_Stop();
-s32 Func_02000aec();
-s32 Func_02000bdc();
 s32 Func_02000a9c();
 extern u8 MsgAlhafraInteriors120[];
 extern u8 gData_02000be4[];
@@ -45,109 +19,109 @@ void Func_02000738(void) {
   s32 t0;
   s32 t1;
 
-  t0 = Value1(GameFlag_Test, 0x903);
+  t0 = Event_GetFlag(0x903);
   if (t0 != 0) {
   } else {
 #if TLA_PATCH_1 /* The Japanese edition does not check 0x200. */
-    t1 = Value1(GameFlag_Test, 0x200);
+    t1 = Event_GetFlag(0x200);
     if (t1 == 0) {
     } else
 #endif
     {
       GameFlag_SetBit(0x903);
       Func_02000a94();
-      Func_02000b8c(0);
-      Func_02000b24((s32)MsgAlhafraInteriors120);
-      Call3(Actor_SetPositionAndReset, 4, 504, 328);
-      Call2(Func_02000b4c, 4, FACING_WEST);
-      Call4(Camera_MoveWithinMapBounds, PIXELS(408), -1, PIXELS(328), 1);
+      Event_ResolvePendingActions(0);
+      Event_SetMessageId((s32)MsgAlhafraInteriors120);
+      Actor_WalkToAndWait(4, 504, 328);
+      Actor_FaceDirectionAndWait(4, FACING_WEST);
+      FieldCamera_MoveTo(PIXELS(408), -1, PIXELS(328), 1);
       Func_02000b7c();
-      FieldEvent_Wait(10);
+      Event_Wait(10);
       Motion_SetVarCbAndRefresh(31, 2);
-      FieldEvent_Wait(5);
-      Call3(Func_02000b34, 0x1f, 0, 5);
-      Func_02000b5c(0x20, 0x100, 0x1e);
-      Call3(Func_02000b34, 0x20, 0, 5);
+      Event_Wait(5);
+      FieldEvent_ShowMessageThenWait(0x1f, 0, 5);
+      Func_080d47b4(0x20, 0x100, 0x1e);
+      FieldEvent_ShowMessageThenWait(0x20, 0, 5);
       {
         s32 b = 0x109, c = 0x1e;
         /* FAKEMATCH: the native schedule sets the first argument last. */
         __asm__ volatile("" : "+l"(b), "+l"(c));
-        Func_02000b5c(0x1f, b, c);
+        Func_080d47b4(0x1f, b, c);
       }
-      Call3(Func_02000b34, 0x1f, 0, 5);
-      Func_02000b5c(0x20, 0x102, 0x1e);
-      Call3(Func_02000b34, 0x20, 0, 5);
+      FieldEvent_ShowMessageThenWait(0x1f, 0, 5);
+      Func_080d47b4(0x20, 0x102, 0x1e);
+      FieldEvent_ShowMessageThenWait(0x20, 0, 5);
       Motion_SetModeAndWaitAnimation(31, 3);
-      FieldEvent_Wait(10);
-      Call3(Func_02000b34, 0x1f, 0, 5);
-      Call3(Actor_Jump, 32, 6, 15);
-      Call3(Actor_Jump, 32, 6, 23);
-      Call3(Func_02000b34, 0x20, 0, 5);
+      Event_Wait(10);
+      FieldEvent_ShowMessageThenWait(0x1f, 0, 5);
+      FieldActor_Jump(32, 6, 15);
+      FieldActor_Jump(32, 6, 23);
+      FieldEvent_ShowMessageThenWait(0x20, 0, 5);
       Motion_SetModeAndWaitAnimation(31, 3);
-      FieldEvent_Wait(10);
-      Call3(Func_02000b34, 0x1f, 0, 5);
-      Func_02000b5c(0x20, 0x109, 0x1e);
-      Call3(Func_02000b34, 0x20, 0, 5);
+      Event_Wait(10);
+      FieldEvent_ShowMessageThenWait(0x1f, 0, 5);
+      Func_080d47b4(0x20, 0x109, 0x1e);
+      FieldEvent_ShowMessageThenWait(0x20, 0, 5);
       Motion_SetVarCbAndRefresh(31, 2);
-      FieldEvent_Wait(5);
-      Call3(Func_02000b34, 0x1f, 0, 5);
+      Event_Wait(5);
+      FieldEvent_ShowMessageThenWait(0x1f, 0, 5);
       Motion_SetModeAndWaitAnimation(32, 3);
-      FieldEvent_Wait(10);
-      Call3(Func_02000b34, 0x20, 0, 5);
-      Func_02000b4c(31, 0xd000);
-      FieldEvent_Wait(15);
-      Call3(Func_02000b34, 0x1f, 0, 5);
+      Event_Wait(10);
+      FieldEvent_ShowMessageThenWait(0x20, 0, 5);
+      Actor_ArmCallbackAndRefresh(31, 0xd000);
+      Event_Wait(15);
+      FieldEvent_ShowMessageThenWait(0x1f, 0, 5);
       Motion_SetModeAndWaitAnimation(32, 3);
-      FieldEvent_Wait(10);
-      Call3(Func_02000b34, 0x20, 0, 5);
-      Func_02000b4c(31, 0x3000);
-      FieldEvent_Wait(15);
+      Event_Wait(10);
+      FieldEvent_ShowMessageThenWait(0x20, 0, 5);
+      Actor_ArmCallbackAndRefresh(31, 0x3000);
+      Event_Wait(15);
       Motion_SetModeAndWaitAnimation(31, 3);
-      FieldEvent_Wait(20);
+      Event_Wait(20);
       Motion_SetModeAndWaitAnimation(32, 3);
-      FieldEvent_Wait(20);
-      Call3(Actor_SetSpeedParameters, 31, 0x10000, 0x8000);
-      Call3(Actor_SetSpeedParameters, 32, 0x10000, 0x8000);
-      Call2(Actor_SetSpritePriority, 31, 2);
-      Call2(Actor_SetSpritePriority, 32, 2);
-      Call2(Camera_FollowActor, 32, 1);
+      Event_Wait(20);
+      Actor_SetSpeed(31, 0x10000, 0x8000);
+      Actor_SetSpeed(32, 0x10000, 0x8000);
+      FieldActor_SetSpritePriority(31, 2);
+      FieldActor_SetSpritePriority(32, 2);
+      FieldCamera_FollowActor(32, 1);
       Actor_ResetAndSetPositionInMode2(31, 394, 342);
-      FieldEvent_Wait(10);
-      Call3(Actor_ResetAndSetPositionInMode2, 32, 450, 346);
+      Event_Wait(10);
+      Actor_WalkTo(32, 450, 346);
       Actor_WaitForMoveById(31);
       Actor_ResetAndSetPositionInMode2(31, 450, 346);
       Actor_WaitForMoveById(32);
-      Call3(Actor_ResetAndSetPositionInMode2, 32, 470, 328);
+      Actor_WalkTo(32, 470, 328);
       Actor_WaitForMoveById(31);
-      Call3(Actor_ResetAndSetPositionInMode2, 31, 470, 328);
+      Actor_WalkTo(31, 470, 328);
       Actor_WaitForMoveById(32);
       Actor_ResetAndSetPositionInMode2(32, 486, 328);
       Actor_WaitForMoveById(32);
-      Call2(Actor_SetModeById, 32, 1);
-      Func_02000b4c(32, FACING_EAST);
+      Actor_SetAnimation(32, 1);
+      Actor_ArmCallbackAndRefresh(32, FACING_EAST);
       Actor_WaitForMoveById(31);
-      Call2(Actor_SetModeById, 31, 1);
-      Call2(Func_02000b4c, 31, FACING_EAST);
-      Call3(Actor_CommitPositionAndActivate, 4, 0, -16);
-      Func_02000b4c(4, FACING_SOUTH);
-      FieldEvent_Wait(10);
+      Actor_SetAnimation(31, 1);
+      Actor_FaceDirectionAndWait(31, FACING_EAST);
+      Actor_WalkByAndWait(4, 0, -16);
+      Actor_ArmCallbackAndRefresh(4, FACING_SOUTH);
+      Event_Wait(10);
       Actor_SetMovementTypeById(32, (s32)gData_02000be4);
-      FieldEvent_Wait(10);
+      Event_Wait(10);
       Actor_SetMovementTypeById(31, (s32)gData_02000be4);
-      FieldEvent_Wait(10);
+      Event_Wait(10);
       Actor_WatchAndSetScript(4, 32);
-      FieldEvent_Wait(60);
-      Call2(Actor_SetSpritePriority, 31, 3);
+      Event_Wait(60);
+      FieldActor_SetSpritePriority(31, 3);
       Actor_SetSpritePriority(32, 3);
       Actor_RefreshSelectorById(32);
       Actor_Stop(4);
-      Call4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
-      Func_02000aec(32, 0, 0);
-      Func_02000bdc(0x7b);
+      FieldCamera_MoveTo(-1, -1, -1, 0);
+      Actor_SetHorizontalPositionWithTerrain(32, 0, 0);
+      Sound_Play(0x7b);
       Actor_RefreshSelectorById(31);
-      Func_02000aec(31, 0, 0);
-      Func_02000bdc(0x7b);
-      FieldEvent_Wait(10);
+      Actor_SetHorizontalPositionWithTerrain(31, 0, 0);
+      Sound_Play(0x7b);
+      Event_Wait(10);
       Func_02000a9c();
     }
   }

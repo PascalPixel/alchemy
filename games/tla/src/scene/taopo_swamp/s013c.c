@@ -1,7 +1,7 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "field_sprite.h"
+#include "event_inline.h"
 
 struct Charge {
   u8 pad[17];
@@ -10,20 +10,13 @@ struct Charge {
 };
 
 extern u8 gData_02002ae8[];
-struct Actor *Actor_GetById(u32 id);
 void Func_02002898(void);
-void Func_02002968(s32 mode);
 void Func_020028a0(void);
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
 u32 Random16Far(void);
-struct Actor *Func_02002808(s32 type, s32 x, s32 y, s32 z);
 void Func_02002800(struct Actor *object, const u8 *script);
 void Animation_ApplyChildArgument(void *sprite, s32 argument);
 void Animation_ApplyChildValuesToRecord(void *sprite, s32 value);
 void Animation_ApplyChildValue(void *sprite, s32 value);
-void Func_020028d0(s32 id, s32 a, s32 b);
-void GameFlag_SetBit(s32 flag);
 
 // When actor id stands at x 12, inside an event: the actor drops in place, then
 // for 25 frames throws splashes, then two sparks, and sets flag 0x8e5.
@@ -36,7 +29,7 @@ void Func_0200013c(s32 unused, s32 id) {
   if (actor->x >> 20 != 12)
     return;
   Func_02002898();
-  Func_02002968(0);
+  Event_ResolvePendingActions(0);
   actor->motionFlags = 3;
   wait(5);
   actor->motionFlags = 0;
@@ -54,7 +47,7 @@ do {
     if (k == 0) {
       x = actor->x + Random16Far() * 2 - Random16Far() * 2;
       z = actor->z + Random16Far() * 2 - Random16Far() * 2;
-      splash = Func_02002808(14, x, actor->y, z);
+      splash = ((struct Actor *)Import_ActorCreate(14, x, actor->y, z));
       if (splash != 0) {
         splashSprite = splash->animation;
         splash->terrainHeight = actor->terrainHeight;
@@ -76,7 +69,7 @@ do {
   actor->animationKind = 0;
   actor->y = 0;
   for (i = 1; i >= 0; i--) {
-    spark = Func_02002808(269, actor->x, actor->y, actor->z);
+    spark = ((struct Actor *)Import_ActorCreate(269, actor->x, actor->y, actor->z));
     if (spark != 0) {
       sparkSprite = spark->animation;
       Func_02002800(spark, gData_02002ae8);
@@ -95,9 +88,9 @@ do {
     }
     wait(15);
   }
-  FieldEvent_Wait(30);
+  Event_Wait(30);
   actor->animationKind = 1;
-  Func_020028d0(id, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
   Func_020028a0();
   GameFlag_SetBit(0x8e5);
 }

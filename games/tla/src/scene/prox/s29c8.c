@@ -6,10 +6,8 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
+#include "event_inline.h"
 s32 Func_020045dc();
-s32 Task_Add();
-s32 GameFlag_Test();
 s32 Func_02001cf0();
 extern u8 gMainRoutineWork[];
 extern u8 Func_020029a4[];

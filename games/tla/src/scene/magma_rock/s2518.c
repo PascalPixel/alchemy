@@ -1,7 +1,7 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "field/sprite.h"
+#include "event_inline.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -27,10 +27,7 @@ struct LayeredSprite {
   struct AnimationEntry *entries[4];
 };
 
-struct Actor *Actor_GetById(s32 id);
-struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Func_02003a54(struct Actor *object, s32 a);
 void Func_020015e4(void);
@@ -51,12 +48,12 @@ static inline void BuildParts(struct Actor *anchor) {
   struct LayeredSprite *sprite;
   u32 i;
 
-  parts[0] = Import_ActorCreate(0x15f, anchor->x + 0x10000,
-                                anchor->y + 0x200000, anchor->z);
+  parts[0] = ((struct Actor *)Import_ActorCreate(
+      0x15f, anchor->x + 0x10000, anchor->y + 0x200000, anchor->z));
   i = 1;
 next:
   first = parts[0]->animation;
-  part = Import_ActorCreate(0x15f, 0, 0, 0);
+  part = ((struct Actor *)Import_ActorCreate(0x15f, 0, 0, 0));
   parts[i] = part;
   sprite = part->animation;
   sprite->slot = first->slot;

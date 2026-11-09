@@ -11,12 +11,9 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
-s32 Actor_GetById();
-s32 Actor_SetModeById();
+#include "event_inline.h"
 s32 Event_StartScreenTransition();
 s32 Func_020010f4();
-s32 GameFlag_Test();
 extern u8 gMainRoutineWork[];
 
 s32 Func_0200012c(void) {
@@ -28,7 +25,7 @@ s32 Func_0200012c(void) {
   s32 alpha;
 
   FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x100;
-  t0 = Value1(Actor_GetById, FIELD_AT(gMainRoutineWork, s32, 532));
+  t0 = (s32)Actor_Get(FIELD_AT(gMainRoutineWork, s32, 532));
   FIELD_AT((t0 + 0x23), u8, 0) = (0x20 | FIELD_AT((t0 + 0x23), u8, 0));
   blend = 0x3f42;
   FIELD_AT(0x4000050, u16, 0) = blend;
@@ -38,16 +35,16 @@ s32 Func_0200012c(void) {
   } while (0);
   alpha = 0x80c;
   FIELD_AT(0x4000052, u16, 0) = alpha;
-  Call2(Actor_SetModeById, 0x18, 2);
-  Call2(Actor_SetModeById, 0x19, 2);
-  t3 = Value1(Actor_GetById, 0x18);
+  Actor_SetAnimation(0x18, 2);
+  Actor_SetAnimation(0x19, 2);
+  t3 = (s32)Actor_Get(0x18);
   FIELD_AT((t3 + 0x23), u8, 0) = 2;
-  t4 = Value1(Actor_GetById, 0x19);
+  t4 = (s32)Actor_Get(0x19);
   FIELD_AT((t4 + 0x23), u8, 0) = 2;
   Event_StartScreenTransition();
   if (FIELD_AT(gMainRoutineWork, s16, 482) == 1) {
     Func_020010f4();
-    t7 = Value1(GameFlag_Test, 0x200);
+    t7 = Event_GetFlag(0x200);
     if (t7 != 0) {
       FIELD_AT(0x4000050, u16, 0) = blend;
       FIELD_AT(0x4000052, u16, 0) = 0x1000;

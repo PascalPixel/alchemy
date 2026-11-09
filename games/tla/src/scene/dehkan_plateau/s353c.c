@@ -1,11 +1,7 @@
 #include "types.h"
-#include "call.h"
+#include "event_inline.h"
 
 extern const u16 gData_02004276[];
-
-s32 GameFlag_Test(s32 flag);
-void Func_02003be0(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
-                   s32 height);
 
 void Func_0200353c(void) {
   /* FAKEMATCH(pin): flag in r5, which leaves r6 to the entry; as a plain
@@ -24,15 +20,15 @@ void Func_0200353c(void) {
       x = *entry++;
       y = *entry++;
       one = 1;
-      Call6((void (*)())Func_02003be0, 3, 8, x, y, one, one);
+      MapGrid_CopyCellsTo(3, 8, x, y, one, one);
       x = entry[0];
       y = entry[1];
-      Call6((void (*)())Func_02003be0, 67, 3, x, y, one, 5);
+      MapGrid_CopyCellsTo(67, 3, x, y, one, 5);
       if (flag == 1)
-        Call6((void (*)())Func_02003be0, 67, 4, 69, 3, one, one);
+        MapGrid_CopyCellsTo(67, 4, 69, 3, one, one);
       x -= 64;
       y += 66;
-      Call6((void (*)())Func_02003be0, 3, 69, x, y, one, 4);
+      MapGrid_CopyCellsTo(3, 69, x, y, one, 4);
       return;
     }
     if (flag == 863)

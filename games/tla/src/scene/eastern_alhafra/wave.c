@@ -1,16 +1,13 @@
 #include "types.h"
-#include "call.h"
 #include "io_reg.h"
 #include "dma.h"
 #include "ram_buffer.h"
 #include "map.h"
+#include "event_inline.h"
 
 extern u8 gData_020054f0[];
 extern u16 gData_020056e0[2][160];
 extern u32 gFrameCount;
-
-s32 Math_Sine(s32 angle);
-void Task_Add();
 
 // BG1's wave: each frame the finished table of scanline offsets is handed to
 // an HBlank DMA, while the other table is filled for the next frame.
@@ -49,6 +46,6 @@ void Func_02000a98(void) {
 }
 
 void Func_02000af8(void) {
-  Value2((s32 (*)())Task_Add, (s32)Func_02000a98, 0x480);
-  Value2((s32 (*)())Task_Add, (s32)Func_02000a44, 0xc80);
+  Task_AddFrame(Func_02000a98, 0x480);
+  Task_AddFrame(Func_02000a44, 0xc80);
 }

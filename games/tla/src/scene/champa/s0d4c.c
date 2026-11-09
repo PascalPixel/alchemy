@@ -1,5 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "event_inline.h"
 
 struct ChampaEventWork {
   u8 unk000[0x1c4];
@@ -11,7 +12,6 @@ s32 BattleEffect_GetResourceId(s32 object);
 void Message_OpenWindow(s32 id, s32 x, s32 y, u32 flags);
 void Func_02002a2c(s32 object, s32 a, s32 b, s32 c);
 s32 Message_AllTyped(void);
-void wait(s32 frames);
 
 void Func_02000d4c(s32 firstId, s32 firstX, s32 firstY, s32 firstA, s32 firstB,
                    s32 secondId, volatile s32 secondX, s32 secondY, s32 secondA,

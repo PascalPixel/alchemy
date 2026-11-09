@@ -6,7 +6,6 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
-s32 Func_020045f4();
+#include "event_inline.h"
 
-void Func_02000290(void) { Call3(Func_020045f4, 0x18, 1, 0x13); }
+void Func_02000290(void) { Djinn_JoinParty(0x18, 1, 0x13); }

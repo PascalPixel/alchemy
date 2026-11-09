@@ -3,20 +3,11 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "frame.h"
-#include "call.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 void Func_0200224c(void);
-void Func_020022dc(s32 value);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void wait(s32 frames);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-struct Actor *Func_020022b4(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_020021ec(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_0200232c(s32 sound);
-void Func_020021f4(struct Actor *object);
-void Camera_FollowActor(s32 id, s32 flag);
 void Func_02002254(void);
 
 struct EventWork {
@@ -36,7 +27,7 @@ void Func_02000b7c(void) {
   s32 i;
 
   Func_0200224c();
-  Func_020022dc(0);
+  Event_ResolvePendingActions(0);
   i = 0;
   work->valueD46 = 0;
   actor->motionFlags = 4;
@@ -60,25 +51,25 @@ void Func_02000b7c(void) {
   actor->priorityFlags = 1;
   actor->motionFlags = 3;
   Actor_SetSingleChildFlags(actor, 1);
-  Call4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
-  shadow = Func_020022b4();
+  FieldCamera_MoveTo(-1, -1, -1, 0);
+  shadow = Func_080d4568();
   shadow->speedLimit = 0x80000;
   shadow->acceleration = 0x10000;
   shadow->motionFlags = 0;
-  Func_020021ec(shadow, actor->x, Map_GetTerrainHeight(0, actor->x, actor->z),
-                actor->z);
+  Actor_SetMoveTarget(shadow, actor->x,
+                      Map_GetTerrainHeight(0, actor->x, actor->z), actor->z);
   i = 0;
   while (i <= 59 && actor->y > actor->terrainHeight + 0x100000) {
     i++;
     wait(1);
   }
-  Func_0200232c(127);
+  Sound_Play(127);
   i = 0;
   while (i <= 59 && actor->velocityY != 0) {
     i++;
     wait(1);
   }
-  Func_020021f4(shadow);
+  Script_WaitForEventTimeout(shadow);
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->valueD46 = 1;

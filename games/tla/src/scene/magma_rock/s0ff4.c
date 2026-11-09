@@ -1,7 +1,7 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
+#include "event_inline.h"
 
 struct MagmaRockEventWork {
   u8 unk000[0x15a];
@@ -15,7 +15,6 @@ struct MagmaRockEventWork {
   u16 value1b2;
 };
 
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Func_02001738(void);
 
 void Func_02000ff4(struct Actor *object) {

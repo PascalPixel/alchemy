@@ -1,8 +1,8 @@
 #include "types.h"
 #include "actor.h"
+#include "event_inline.h"
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-void Func_020020b4(s32 cue);
 void Func_020011f4(struct Actor *object);
 void Func_0200122c(struct Actor *object);
 
@@ -10,11 +10,11 @@ void Func_02001274(struct Actor *object, s32 mode) {
   if (mode == 0) {
     object->update = 0;
     Animation_ApplyChildValues(object, 0);
-    Func_020020b4(390);
+    Sound_Play(390);
   } else if (mode == 1) {
     object->update = (void (*)(void))Func_020011f4;
   } else {
     object->update = (void (*)(void))Func_0200122c;
-    Func_020020b4(291);
+    Sound_Play(291);
   }
 }

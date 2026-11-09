@@ -1,18 +1,11 @@
 #include "types.h"
 #include "actor.h"
-#include "call.h"
+#include "event_inline.h"
 
 extern s32 gData_0200519c, gData_02005194, gData_02005198, gData_02005190;
-struct Actor *Actor_GetById(u32 id);
 void Func_020020ec(s32 x, s32 z, s32 layer, s32 value);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
 void Func_02003e64(void);
 void Func_02003e6c(void);
-void Func_02003fa4(s32 skip);
-void Func_02003e24();
-void wait(s32 frames);
-void Func_02003ffc(s32 cue);
 
 void Func_020021d0(void) {
   struct Actor *first = Actor_GetById(12);
@@ -50,21 +43,21 @@ void Func_020021d0(void) {
   if (!GameFlag_Test(0x210) && firstX == 12 && firstZ == 26) {
     both = 0;
     Func_02003e64();
-    Func_02003fa4(0);
+    Event_ResolvePendingActions(0);
     if (secondX == 12 && secondZ == 26) {
-      Func_02003e24(7, 2, 1, 1, firstX, firstZ);
+      Map_CopyCellAttributeRect(7, 2, 1, 1, firstX, firstZ);
       both = 1;
     }
     first->motionFlags = 3;
     wait(10);
-    Func_02003ffc(161);
+    Sound_Play(161);
     wait(10);
     first->motionFlags = 0;
     GameFlag_SetBit(0x210);
     if (both) {
       Func_020020ec(first->x, first->z, 3, 0);
       Func_020020ec(second->x, second->z, 3, 0);
-      Call6(Func_02003e24, 7, 3, 1, 1, 12, 26);
+      MapGrid_CopyCellAttributes(7, 3, 1, 1, 12, 26);
       GameFlag_SetBit(0x212);
       ((u8 *)first)[0x62] = 1;
       ((u8 *)second)[0x62] = 1;
@@ -74,21 +67,21 @@ void Func_020021d0(void) {
   if (!GameFlag_Test(0x211) && secondX == 7 && secondZ == 29) {
     both = 0;
     Func_02003e64();
-    Func_02003fa4(0);
+    Event_ResolvePendingActions(0);
     if (firstX == 7 && firstZ == 29) {
-      Func_02003e24(7, 2, 1, 1, firstX, firstZ);
+      Map_CopyCellAttributeRect(7, 2, 1, 1, firstX, firstZ);
       both = 1;
     }
     second->motionFlags = 3;
     wait(10);
-    Func_02003ffc(161);
+    Sound_Play(161);
     wait(10);
     second->motionFlags = 0;
     GameFlag_SetBit(0x211);
     if (both) {
       Func_020020ec(first->x, first->z, 3, 0);
       Func_020020ec(second->x, second->z, 3, 0);
-      Call6(Func_02003e24, 7, 3, 1, 1, 7, 29);
+      MapGrid_CopyCellAttributes(7, 3, 1, 1, 7, 29);
       GameFlag_SetBit(0x212);
       ((u8 *)first)[0x62] = 1;
       ((u8 *)second)[0x62] = 1;

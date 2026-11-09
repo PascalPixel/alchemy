@@ -3,18 +3,14 @@
 #include "main_routine_work.h"
 #include "field_sprite.h"
 #include "io_reg.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z,
                                                   s32 type);
 void OverlayObject_WaitUntilIdle(struct Actor *object);
-void Func_02003310(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02003398(void);
 void Func_020033a0(void);
 void Func_020032f8(struct Actor *object);
-void Func_020033e0(s32 id, s32 x, s32 z);
-void Func_02003488(s32 a);
-void Func_020034b8(s32 cue);
 
 struct SpriteView {
   u8 unk00[4];
@@ -43,8 +39,8 @@ void Func_020019a8(void) {
   object->acceleration = 0x10000;
   object->speedLimit = 0x10000;
   Func_02003398();
-  Func_02003488(0);
-  Func_02003310(object, position[0], 0, position[2]);
+  Event_ResolvePendingActions(0);
+  Actor_SetMoveTarget(object, position[0], 0, position[2]);
   effect =
       OverlayObject_PrepareObject(object->x, 0, position[2] + 0x3b0000, 286);
   effect->scaleX = 0x18000;
@@ -58,13 +54,13 @@ void Func_020019a8(void) {
   REG_WINOUT = WINOUT_WIN01_ALL | WINOUT_WINOBJ_BG0 | WINOUT_WINOBJ_BG1 |
                WINOUT_WINOBJ_BG2 | WINOUT_WINOBJ_BG3 | WINOUT_WINOBJ_CLR;
   REG_DISPCNT |= DISPCNT_OBJWIN_ON;
-  Func_020034b8(204);
+  Sound_Play(204);
   object->motionFlags = 3;
   OverlayObject_WaitUntilIdle(object);
   object->x = 0;
   object->y = 0;
   object->z = 0;
-  Func_020033e0(8, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
   Func_020032f8(effect);
   Func_020033a0();
 }

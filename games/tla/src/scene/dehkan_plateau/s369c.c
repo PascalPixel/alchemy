@@ -1,27 +1,22 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-struct Actor *Actor_GetById(s32 id);
 void Func_02001804(void);
 void Func_02001fdc(void);
 void Func_0200353c(void);
 void Func_02003764(void);
-void Func_02003be0(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
-                   s32 height);
 
 void Func_0200369c(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   Func_02001fdc();
   if (GameFlag_Test(0x86c) != 0) {
-    Func_02003be0(3, 8, 30, 33, 1, 1);
-    Func_02003be0(67, 3, 94, 28, 1, 5);
-    Func_02003be0(3, 69, 30, 93, 1, 4);
+    Map_CopyCellPictureIndicesRect(3, 8, 30, 33, 1, 1);
+    Map_CopyCellPictureIndicesRect(67, 3, 94, 28, 1, 5);
+    Map_CopyCellPictureIndicesRect(3, 69, 30, 93, 1, 4);
   }
   {
     s32 entrance = *(u16 *)&gMainRoutineWork.entrance;

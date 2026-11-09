@@ -1,11 +1,11 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "field_sprite.h"
 #include "vram_tab.h"
 #include "actor_view.h"
 #include "graphics/resource.h"
+#include "event_inline.h"
 
 struct LinkedDetail {
   u8 unk00[22];
@@ -27,7 +27,6 @@ struct LinkedSpriteView {
   u8 unk11 : 7;
 };
 
-struct Actor *Func_02001fcc(s32 kind, s32 x, s32 y, s32 z);
 void Func_02001a34(struct Actor *object);
 void Func_02001a80(struct Actor *object);
 
@@ -39,7 +38,8 @@ void Func_02001ad0(struct Actor *parent) {
   s32 i;
 
   for (i = 0; i < 2; i++) {
-    child = Func_02001fcc(271, parent->x, parent->y, parent->z);
+    child = ((struct Actor *)Import_ActorCreate(271, parent->x, parent->y,
+                                                parent->z));
     pair[i] = child;
     if (child != NULL) {
       child->terrainHeight = parent->terrainHeight;

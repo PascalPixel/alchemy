@@ -2,10 +2,8 @@
 #include "actor.h"
 #include "field_sprite.h"
 #include "system/vector3.h"
+#include "event_inline.h"
 
-s32 Math_Sine(s32 angle);
-void Vector_AddPolarOffsetFar(s32 distance, s32 angle, struct Vector3 *v);
-void Func_02005c9c(s32 cue);
 void Resource_ResetEntry(s32 block);
 void Func_02005a3c(struct Actor *object);
 
@@ -63,7 +61,7 @@ void Func_02003308(struct Actor *actor) {
     ((struct FieldSprite *)object->actor.animation)->rotation += 0x1000;
     if (((struct FieldSprite *)object->actor.animation)->rotation == 0 &&
         --*timer == 0) {
-      Func_02005c9c(220);
+      Sound_Play(220);
       *stage = 2;
     }
     break;

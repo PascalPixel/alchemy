@@ -3,13 +3,12 @@
 #include "actor.h"
 #include "field_sprite.h"
 #include "macros.h"
+#include "event_inline.h"
 
 extern const u8 gData_02004f90[];
 extern const u8 gData_02004f9c[];
 
 u32 Random16Far(void);
-void Vector_AddPolarOffsetFar(s32 angle, s32 distance, s32 *position);
-struct Actor *Func_02004b30(s32 kind, s32 x, s32 y, s32 z);
 void Func_02004b20(struct Actor *object, const u8 *script);
 void Animation_ApplyChildArgument(void *sprite, s32 argument);
 
@@ -17,7 +16,7 @@ static __inline__ struct Actor *Func_02004b30_(s32 kind, s32 x, s32 y,
                                                        s32 z) {
   /* FAKEMATCH: forwarding through the inline builds the kind after the position
    * loads, as in the native (direct: differ 4). */
-  return Func_02004b30(kind, x, y, z);
+  return ((struct Actor *)Import_ActorCreate(kind, x, y, z));
 }
 
 /// Spawns a pair of sparks at the object.
@@ -72,7 +71,7 @@ void Func_02003aac(struct Actor *object) {
   SET_VECTOR(position, object->x, object->y + 0x20000, object->z);
   angle = Random16Far();
   Vector_AddPolarOffsetFar(angle * 20, Random16Far(), position);
-  particle = Func_02004b30(674, position[0], position[1], position[2]);
+  particle = ((struct Actor *)Import_ActorCreate(674, position[0], position[1], position[2]));
   if (particle != NULL) {
     particle->terrainHeight = object->terrainHeight;
     sprite = particle->animation;

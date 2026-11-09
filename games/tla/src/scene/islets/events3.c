@@ -3,18 +3,16 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "call.h"
 #include "text/msg_ids.h"
+#include "event_inline.h"
 
 void Func_02003e64();
 void Func_02003e6c();
 void Func_02003f0c();
-void Func_02003fa4();
-struct Actor *Actor_GetById();
 
 void Func_0200208c(void) {
   Func_02003e64();
-  Func_02003fa4(0);
+  Event_ResolvePendingActions(0);
   Func_02003f0c(gMainRoutineWork.currentOwner, 6, 1);
   Func_02003e6c();
   return;

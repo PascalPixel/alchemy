@@ -5,18 +5,12 @@
 #include "map.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
-#include "call.h"
+#include "event_inline.h"
 
 extern u8 gMapShapeGrid[];
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void wait(s32 frames);
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
-struct Actor *Actor_GetById(s32 id);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void ObjectVisual_CopyAttributes(s32 id, s32 value);
@@ -28,12 +22,9 @@ void Func_02000aa8(void);
 void Func_02000c4c(s32 level, s32 layer);
 void Func_02003ba0(struct Actor *object, s32 mode);
 void Func_02003ba8(struct Actor *object, const void *script);
-struct Actor *Func_02003bb0(s32 type, s32 x, s32 y, s32 z);
-void Func_02003c00(s32 a, s32 b, s32 c);
 s32 Func_02003c10(s32 layer, s32 x, s32 z);
 void Func_02003c28(void);
 void Func_02003c30(void);
-void Func_02003c68(s32 id, s32 x, s32 z);
 void Func_02003c78(s32 id, s32 target);
 void Func_02003cc0(s32 id);
 s32 Func_02003d20(void);
@@ -41,7 +32,6 @@ s32 Func_02003d80(void *sprite, s32 frame);
 s32 Func_02003db0(struct Actor *object);
 s32 Func_02003dd0(s32 layer, s32 shape, s32 height);
 struct Actor *Func_02003dd8(s32 *position, s32 mode);
-void Func_02003df8(s32 cue);
 void Effect_AdvanceMotionAtLeaderPriority(struct Actor *object);
 
 /// The effect fields of an Actor, as field_effect.h names them.
@@ -61,23 +51,15 @@ struct EffectView {
 };
 #include "event_work.h"
 #include "field_effect.h"
-void Func_02003d78(s32 skip);
-void Func_02003cd0(s32 id, s32 value);
-void FieldEvent_Wait(s32 frames);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 
 void Func_02000fc4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 void Effect_AdvanceMotion(union FieldObject *object);
 void Func_02003bc8(void);
-void Func_02003c00(s32 a, s32 b, s32 c);
-void Func_02003c08(void);
-void Func_02003df8(s32 cue);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 
 void Func_02003764(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -87,8 +69,8 @@ void Func_02003764(void) {
   s32 spawn;
 
   Func_02003c28();
-  Func_02003d78(0);
-  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
+  Event_ResolvePendingActions(0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Func_02003bc8();
   wait(1);
   leader->y = 0x820000;
@@ -98,9 +80,9 @@ void Func_02003764(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02003df8(204);
+  Sound_Play(204);
   leader->motionFlags = 3;
-  FieldEvent_Wait(24);
+  Event_Wait(24);
   opts = &options;
   opts->palette = 7;
   opts->update = Effect_AdvanceMotion;
@@ -132,16 +114,16 @@ loop:
   }
   if (i <= 16)
     goto loop;
-  Func_02003df8(188);
-  Func_02003cd0(gMainRoutineWork.currentOwner, 0x101);
+  Sound_Play(188);
+  Func_080d489c(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
-  Call3((void (*)())Func_02003c00, 0x50000, 0x50000, 0x10000);
-  Call3((void (*)())Func_02003c00, -1, -1, 0xe666);
-  Func_02003c08();
-  Func_02003cd0(gMainRoutineWork.currentOwner, 0x100);
+  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
+  MapGrid_SetShake(-1, -1, 0xe666);
+  Map_WaitForShakeToSettle();
+  Func_080d489c(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
-  FieldEvent_Wait(10);
+  Event_Wait(10);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Func_02003c30();

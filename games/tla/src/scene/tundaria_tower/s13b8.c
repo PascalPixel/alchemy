@@ -6,6 +6,7 @@
 #include "scene_ids.h"
 #include "scene_tables.h"
 #include "types.h"
+#include "event_inline.h"
 
 struct TundariaTowerEventWork {
   u8 unk000[428];
@@ -21,26 +22,15 @@ extern union FieldObject *Data_02003ccc;
 void Func_02000840(struct Actor *object);
 void Func_020010d4(void);
 void Func_0200137c(void);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
 void Func_02000548(void);
 void Func_0200058c(void);
 void Func_02000404(const u8 *data);
 void Func_020011e0(void);
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void Func_02003020(struct Actor *object, s32 a);
-void Func_02002fc0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02002fe8(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02003088(s32 id, s32 x, s32 z);
 s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value);
-void Actor_WatchAndSetScript(s32 id, s32 owner);
-struct Actor *Func_02002f98(s32 a, s32 b, s32 c, s32 d);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
-void Actor_SetPartAttribute(struct Actor *object, s32 a);
 void Animation_SetStateFlags(struct Actor *object, s32 a);
 void Func_02003168(const u8 *data);
-s32 Task_Add(void (*func)(void), s32 priority);
 
 s32 Func_020013b8(void) {
   struct Actor *object;
@@ -71,18 +61,18 @@ s32 Func_020013b8(void) {
         object->motionFlags = 0;
         object->terrainHeight = PIXELS(8);
         object->y = PIXELS(8);
-        Call2((void (*)())Func_02003020, (s32)object, 0x1b9);
+        Actor_SetItemIcon(object, 0x1b9);
         if (GameFlag_Test(0x944)) {
-          Call6((void (*)())Func_02002fc0, 31, 85, 20, 85, 3, 4);
-          Call6((void (*)())Func_02002fe8, 11, 22, 3, 2, 20, 22);
-          Call3((void (*)())Func_02003088, 68, PIXELS(344), PIXELS(372));
+          MapGrid_CopyCellsTo(31, 85, 20, 85, 3, 4);
+          MapGrid_CopyCellAttributes(11, 22, 3, 2, 20, 22);
+          Actor_SetPosition(68, PIXELS(344), PIXELS(372));
           Actor_GetById(68)->update = (void (*)(void))Func_02000840;
-          Call3((void (*)())Func_02003088, 8, 0, 0);
+          Actor_SetPosition(8, 0, 0);
         }
       } else if (GameFlag_Test(0x944)) {
-        Call6((void (*)())Func_02002fc0, 31, 85, 20, 85, 3, 4);
-        Call6((void (*)())Func_02002fe8, 11, 22, 3, 2, 20, 22);
-        Call3((void (*)())Func_02003088, 8, 0, 0);
+        MapGrid_CopyCellsTo(31, 85, 20, 85, 3, 4);
+        MapGrid_CopyCellAttributes(11, 22, 3, 2, 20, 22);
+        Actor_SetPosition(8, 0, 0);
       }
       break;
     }
@@ -92,7 +82,7 @@ s32 Func_020013b8(void) {
     case 7:
       if (!GameFlag_Test(100)) {
         if (!GameFlag_Test(0x200)) {
-          Call3((void (*)())Func_02003088, 8, PIXELS(344), PIXELS(536));
+          Actor_SetPosition(8, PIXELS(344), PIXELS(536));
           MapCell_SetAttributes(0, 21, 33, 0x3300);
           MapCell_SetAttributes(0, 22, 33, 0xff00);
         } else if (!GameFlag_Test(0x201)) {
@@ -109,8 +99,7 @@ s32 Func_020013b8(void) {
   } else if (scene == (s32)&SceneId_Ov68fRoom6) {
     switch (gMainRoutineWork.entrance) {
     case 3:
-      object = (struct Actor *)Value4((s32 (*)())Func_02002f98, 0x11e, PIXELS(472),
-                                      0, PIXELS(200));
+      object = FieldActor_Create(0x11e, PIXELS(472), 0, PIXELS(200));
       if (object != NULL) {
         Call2((void (*)())Scene_SetActorSpritePriority, (s32)object, 1);
         object->motionFlags = 0;
@@ -123,9 +112,9 @@ s32 Func_020013b8(void) {
     case 2:
       Func_02000404(gData_0200335a);
       if (GameFlag_Test(0x947)) {
-        Call3((void (*)())Func_02003088, 13, PIXELS(216), PIXELS(136));
+        Actor_SetPosition(13, PIXELS(216), PIXELS(136));
         if (GameFlag_Test(0x946))
-          Call3((void (*)())Func_02003088, 12, PIXELS(200), PIXELS(136));
+          Actor_SetPosition(12, PIXELS(200), PIXELS(136));
       }
       Func_02003168(gData_02003264);
       Actor_SetSpritePriority(12, 2);
@@ -133,13 +122,13 @@ s32 Func_020013b8(void) {
     case 4:
     case 5:
       if (GameFlag_Test(0x94b)) {
-        Call6((void (*)())Func_02002fc0, 18, 97, 6, 97, 3, 4);
-        Call6((void (*)())Func_02002fc0, 82, 34, 70, 34, 3, 2);
-        Call6((void (*)())Func_02002fe8, 7, 36, 1, 1, 7, 35);
+        MapGrid_CopyCellsTo(18, 97, 6, 97, 3, 4);
+        MapGrid_CopyCellsTo(82, 34, 70, 34, 3, 2);
+        MapGrid_CopyCellAttributes(7, 36, 1, 1, 7, 35);
       }
       {
         union FieldObject **slot = &Data_02003ccc;
-        struct Actor *effect = Func_02002f98(4, 0, 0, 0);
+        struct Actor *effect = ((struct Actor *)Import_ActorCreate(4, 0, 0, 0));
 
         effect->unk4c = 144 << 18;
         effect->update = Func_020010d4;
@@ -152,7 +141,7 @@ s32 Func_020013b8(void) {
     case 7:
       {
         union FieldObject **slot = &Data_02003ccc;
-        struct Actor *effect = Func_02002f98(4, 0, 0, 0);
+        struct Actor *effect = ((struct Actor *)Import_ActorCreate(4, 0, 0, 0));
 
         effect->unk4c = 156 << 18;
         effect->update = Func_020010d4;
@@ -169,8 +158,8 @@ s32 Func_020013b8(void) {
   } else if (scene == (s32)&SceneId_Ov68fRoom7) {
     GameFlag_SetBit(0x144);
     if (GameFlag_Test(0x948)) {
-      Call6((void (*)())Func_02002fc0, 13, 26, 13, 16, 3, 3);
-      Call6((void (*)())Func_02002fe8, 13, 26, 3, 3, 13, 16);
+      MapGrid_CopyCellsTo(13, 26, 13, 16, 3, 3);
+      MapGrid_CopyCellAttributes(13, 26, 3, 3, 13, 16);
     } else {
       Task_Add(Func_0200137c, 0x480);
     }

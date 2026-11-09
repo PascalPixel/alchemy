@@ -12,7 +12,7 @@ s32 Func_020059b4();
 s32 Actor_GetById();
 s32 GameFlag_Test();
 s32 Func_02004644();
-s32 Func_02005884();
+s32 Actor_SetHorizontalPositionWithTerrain();
 s32 Actor_SetSingleChildFlags();
 s32 Task_Add();
 s32 Func_02000cd0();
@@ -61,7 +61,7 @@ s32 Func_02003d9c(void) {
     FIELD_AT(t11, s32, 24) = 0;
   }
   if ((u32)((FIELD_AT(gMainRoutineWork, u16, 482) - 1) << 16) > 0x10000) {
-    Func_02005884(24, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
   }
   Actor_SetSingleChildFlags(Actor_GetById(36), 0);
   Actor_SetSingleChildFlags(Actor_GetById(36), 0);
@@ -88,8 +88,8 @@ s32 Func_02003d9c(void) {
           } else {
             t25 = GameFlag_Test(0xa21);
             if (t25 != 0) {
-              Call3(Func_02005884, 27, 0, 0);
-              Func_02005884(28, 0, 0);
+              Call3(Actor_SetHorizontalPositionWithTerrain, 27, 0, 0);
+              Actor_SetHorizontalPositionWithTerrain(28, 0, 0);
             }
           }
         }

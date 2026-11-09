@@ -2,6 +2,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 extern char SceneId_Ov6A6Room1;
 extern char SceneId_Ov6A6Room2;
@@ -10,15 +11,9 @@ extern const u8 gData_02001ae0[];
 extern const u8 gData_02001aec[];
 extern const u8 gData_02001dd4[];
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-struct Actor *Actor_GetById(s32 id);
-void FieldMessage_Show(s32 message, s32 mode);
-void Func_02001348(s32 id, s32 x, s32 z);
-
 static __inline__ void Func_02001348_(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001348(id, x, z);
+  Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 
 void Func_02000c84(void) {

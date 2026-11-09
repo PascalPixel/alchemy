@@ -20,16 +20,16 @@ void Func_02000098(void) {}
 void Func_0200009c(void) {}
 
 void Func_020000a0(s32 id) {
-  Func_020014b8((s32)&MsgOhStoppedBy);
+  Event_SetMessageId((s32)&MsgOhStoppedBy);
   FieldMessage_ShowAtActor(id, 0);
-  if (Event_AskYesNoWithActorAnimation(Func_02001590(), 0) == 0) {
-    FieldEvent_Wait(10);
-    Func_020014b8((s32)(&MsgOhStoppedBy + 1));
+  if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
+    Event_Wait(10);
+    Event_SetMessageId((s32)(&MsgOhStoppedBy + 1));
   } else {
-    FieldEvent_Wait(20);
-    Func_020014b8((s32)(&MsgOhStoppedBy + 2));
+    Event_Wait(20);
+    Event_SetMessageId((s32)(&MsgOhStoppedBy + 2));
   }
-  Func_020014d0(id, 0);
+  Event_ShowMessageAndWait(id, 0);
 }
 
 void Func_020000ec(void) { Func_02001580(gData_02001608); }

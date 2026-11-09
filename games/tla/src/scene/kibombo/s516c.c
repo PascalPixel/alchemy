@@ -3,27 +3,20 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
-#include "call.h"
 #include "scene_tables.h"
 #include "io_reg.h"
+#include "event_inline.h"
 
 extern u16 gData_02007948[4];
-struct Actor *Actor_GetById(u32 id);
 void Func_02005a9c(void);
 void Func_02005aa4(void);
-void Func_02005c3c(s32 skip);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 u8 *Unit_Get(s32 unit);
 void Party_RemoveOwnerRestored(s32 unit);
 void Func_020050ac(void);
 void Func_020031f0(s32 id);
-void Func_02005b0c(s32 id, s32 x, s32 z);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Task_Add(void (*func)(void), s32 priority);
 void Func_02002c34(void);
 
 static __inline__ s32 Gauge(s32 value, s32 max) {
@@ -54,7 +47,7 @@ void Func_0200516c(void) {
   s32 done;
 
   Func_02005a9c();
-  Func_02005c3c(0);
+  Event_ResolvePendingActions(0);
   done = GameFlag_Test(265);
   if (!done) {
     actor->motionFlags = done;
@@ -114,10 +107,10 @@ void Func_0200516c(void) {
   Func_020031f0(29);
   Actor_SetSpritePriority(30, 3);
   if (GameFlag_Test(0x8fd)) {
-    Func_02005b0c(26, 0, 0);
-    Func_02005b0c(27, 0, 0);
-    Func_02005b0c(28, 0, 0);
-    Call3((void (*)())Func_02005b0c, 21, PIXELS(302), PIXELS(172));
+    Actor_SetHorizontalPositionWithTerrain(26, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(27, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(28, 0, 0);
+    Actor_SetPosition(21, PIXELS(302), PIXELS(172));
   }
   GameFlag_SetBit(0x86b);
   Event_StartScreenTransition();

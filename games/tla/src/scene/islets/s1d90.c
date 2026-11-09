@@ -6,11 +6,11 @@ void Func_02001d90(void) {
   Value2((s32 (*)())Task_Add, (s32)Func_02001cac, 0xc80);
 }
 
-void Func_02003fac();
+void Func_080dc978();
 void Func_02003fb4();
 void Func_02003fbc();
 void Func_02003fc4();
-void Func_02003edc();
+void Actor_SetHorizontalPositionWithTerrain();
 void Actor_Jump();
 void PartyInventory_GiveItem();
 
@@ -35,40 +35,41 @@ void Func_02001db0(void) {
   if (z > 0xac0000)
     return;
   Func_02003e64();
-  Func_02003fa4(0);
+  Event_ResolvePendingActions(0);
   Actor_SetModeById(19, 1);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 216, 184);
-  Func_02003fac(gMainRoutineWork.currentOwner, 9);
-  Func_02003f24((s32)MsgThankYouSo);
+  Func_080dc978(gMainRoutineWork.currentOwner, 9);
+  Event_SetMessageId((s32)MsgThankYouSo);
   Actor_Jump(9, 2, 10);
   Actor_Jump(9, 4, 10);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Call3((void (*)())Actor_ArmCallback, 9, FACING_WEST, 10);
-  Func_02003f2c(9, 0);
+  Event_ShowMessageAndWait(9, 0);
   Actor_GetById(9)->actionFlags &= ~1;
   Actor_SetPositionAndReset(9, 222, 186);
-  FieldEvent_Wait(1);
+  Event_Wait(1);
   Actor_GetById(9)->actionFlags |= 1;
   Actor_GetById(9)->actionFlags &= ~1;
   Actor_SetPositionAndReset(9, 232, 186);
-  FieldEvent_Wait(1);
+  Event_Wait(1);
   Actor_GetById(9)->actionFlags |= 1;
-  Func_02003f3c(gMainRoutineWork.currentOwner, FACING_SOUTH);
+  Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, FACING_SOUTH);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   item = Actor_GetById(20);
   item->motionFlags = 0;
-  Call2((void (*)())Func_02003e3c, (s32)item, 0x1c4);
+  Call2((void (*)())Func_0802372c, (s32)item, 0x1c4);
   Actor_SetPositionAndResetMotion(item, leader->x, leader->y + PIXELS(24),
                                   leader->z);
-  FieldEvent_Wait(20);
+  Event_Wait(20);
   Func_02003fc4();
   Value2((s32 (*)())PartyInventory_GiveItem, 0x1c4, 0);
   Func_02003fbc();
-  Func_02003edc(20, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   Func_02003fb4();
-  Call2((void (*)())Func_02003f3c, 9, FACING_NORTHWEST + FACING_STEP);
+  Call2((void (*)())Actor_ArmCallbackAndRefresh, 9,
+        FACING_NORTHWEST + FACING_STEP);
   GameFlag_SetBit(0xaa2);
   Func_02003e6c();
 }

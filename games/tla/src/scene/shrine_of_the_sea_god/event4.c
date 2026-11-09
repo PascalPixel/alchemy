@@ -10,7 +10,7 @@ void Func_02001658(struct ShrineOfTheSeaGodObject *object, s32 base) {
   do {
     wait(1);
   } while (object->speed != 0);
-  Func_02003b48(240);
+  Sound_Play(240);
   Actor_SetSpritePriority(base + 21, 3);
   Actor_SetSpritePriority(base + 22, 3);
   Actor_SetPositionAndResetMotion(Actor_GetById(base + 21), object->x, 0,
@@ -30,11 +30,11 @@ void Func_020016d8(void) {
   struct ShrineOfTheSeaGodObject *pillar = Actor_GetById(15);
 
   Func_020039d8();
-  Func_02003b08(0);
+  Event_ResolvePendingActions(0);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 328, 216);
   Func_02001340(leader, pillar);
-  Func_020039a8(0, 0, 3, 1, 19, 13);
-  Func_020039a8(40, 0, 2, 1, 19, 33);
+  Map_CopyCellAttributeRect(0, 0, 3, 1, 19, 13);
+  Map_CopyCellAttributeRect(40, 0, 2, 1, 19, 33);
   wait(1);
   leader->motionFlags = 3;
   Actor_SetSpritePriority(15, 3);
@@ -51,13 +51,13 @@ void Func_020016d8(void) {
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x9999, 0x1999);
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 328, 224);
   ShrineOfTheSeaGod_ObjCommit(gMainRoutineWork.currentOwner, 321, 256);
-  Func_02003a30(21, 0, 0);
-  Func_02003a30(22, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(21, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(22, 0, 0);
   ShrineOfTheSeaGod_ObjCommit(gMainRoutineWork.currentOwner, 321, 320);
   ShrineOfTheSeaGod_ObjCommit(gMainRoutineWork.currentOwner, 321, 400);
   ShrineOfTheSeaGod_ObjCommit(gMainRoutineWork.currentOwner, 321, 480);
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 321, 536);
-  Func_02003b48(161);
+  Sound_Play(161);
   Actor_SetSpritePriority(9, 2);
   Actor_GetById(9)->priorityFlags |= 2;
   Actor_SetSpritePriority(11, 2);

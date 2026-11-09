@@ -6,18 +6,15 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
-s32 GameFlag_Test();
-s32 Func_02002a0c();
-s32 Func_02002a04();
+#include "event_inline.h"
 
 s32 Func_02000c04(void) {
   s32 t0;
 
   t0 = GameFlag_Test(0x97f);
   if (t0 != 0) {
-    Call6(Func_02002a0c, 0xb, 0x33, 5, 4, 0x10, 0x17);
-    Func_02002a04(11, 51, 5, 6, 16, 23);
+    MapGrid_CopyCellsLayered(0xb, 0x33, 5, 4, 0x10, 0x17);
+    Map_CopyCellAttributeRect(11, 51, 5, 6, 16, 23);
   }
   return 0;
 }

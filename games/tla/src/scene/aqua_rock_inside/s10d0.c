@@ -13,11 +13,11 @@ void Func_020010d0(struct Actor *object) {
 
 void Func_020010ec(void) {
   Func_02003d7c();
-  Func_02003eac(0);
+  Event_ResolvePendingActions(0);
   FieldMessage_Show(MsgCheckedThePsynergy, 1);
-  Func_02003ef4(126);
+  Sound_Play(126);
   Func_02003eb4(999, 0);
-  FieldEvent_Wait(10);
+  Event_Wait(10);
   GameFlag_ClearBit(0x142);
   FieldMessage_Show(MsgCheckedThePsynergy + 1, 1);
   Func_02003d84();
@@ -26,8 +26,8 @@ void Func_020010ec(void) {
 void Func_02001138(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
 
-  Func_02003d1c(17, 39, 2, 1, 20, 39);
-  Func_02003d1c(23, 39, 1, 1, object->x >> 20, 39);
+  Map_CopyCellAttributeRect(17, 39, 2, 1, 20, 39);
+  Map_CopyCellAttributeRect(23, 39, 1, 1, object->x >> 20, 39);
 }
 
 void Func_02001170(void) {

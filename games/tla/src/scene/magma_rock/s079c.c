@@ -3,15 +3,14 @@
 /// cell under it, and blocks the cells ahead of and behind it on a cell with attribute
 /// bit 6.
 #include "iwram_call.h"
-#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "text/msg_ids.h"
 #include "types.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z);
 void Actor_SetSingleChildFlags();

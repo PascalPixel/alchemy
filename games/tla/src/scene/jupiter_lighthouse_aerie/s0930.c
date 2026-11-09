@@ -3,20 +3,12 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "frame.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 void Func_02002a88(void);
-void Func_02002b18(s32 value);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void wait(s32 frames);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-struct Actor *Func_02002af8(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_02002a28(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_02002b68(s32 sound);
-void Func_02002a30(struct Actor *object);
-void Camera_FollowActor(s32 id, s32 flag);
 void Func_02002a90(void);
 
 struct EventWork {
@@ -40,7 +32,7 @@ void Func_02000930(void) {
   s32 i;
 
   Func_02002a88();
-  Func_02002b18(0);
+  Event_ResolvePendingActions(0);
   i = 0;
   work->valueD46 = 0;
   actor->motionFlags = 4;
@@ -65,24 +57,24 @@ void Func_02000930(void) {
   actor->motionFlags = 3;
   Actor_SetSingleChildFlags(actor, 1);
   Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
-  shadow = Func_02002af8();
+  shadow = Func_080d4568();
   shadow->speedLimit = 0x80000;
   shadow->acceleration = 0x10000;
   shadow->motionFlags = 0;
-  Func_02002a28(shadow, actor->x, Map_GetTerrainHeight(0, actor->x, actor->z),
+  Actor_SetMoveTarget(shadow, actor->x, Map_GetTerrainHeight(0, actor->x, actor->z),
                 actor->z);
   i = 0;
   while (i <= 59 && actor->y > actor->terrainHeight + 0x100000) {
     i++;
     wait(1);
   }
-  Func_02002b68(127);
+  Sound_Play(127);
   i = 0;
   while (i <= 59 && actor->velocityY != 0) {
     i++;
     wait(1);
   }
-  Func_02002a30(shadow);
+  Script_WaitForEventTimeout(shadow);
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->valueD46 = 1;

@@ -6,14 +6,10 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
+#include "event_inline.h"
 s32 Func_02000644();
 s32 Func_02004634();
 s32 Func_02004464();
-s32 Func_020045ec();
-s32 GameFlag_Test();
-s32 Func_0200451c();
-s32 Func_02004534();
 s32 Func_0200446c();
 extern u8 MsgProx135[];
 extern u8 MsgProx56[];
@@ -27,14 +23,14 @@ void Func_02000674(void) {
     Func_02004634(0xe, 0x16);
   } else {
     Func_02004464();
-    Func_020045ec(0);
+    Event_ResolvePendingActions(0);
     t4 = GameFlag_Test(0xa3d);
     if (t4 != 0) {
-      Func_0200451c((s32)MsgProx135);
+      Event_SetMessageId((s32)MsgProx135);
     } else {
-      Func_0200451c((s32)MsgProx56);
+      Event_SetMessageId((s32)MsgProx56);
     }
-    Call2(Func_02004534, 22, 0);
+    Event_ShowMessage(22, 0);
     Func_0200446c();
   }
 }

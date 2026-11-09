@@ -1,14 +1,12 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "event_inline.h"
 
 extern u32 gFrameCount;
 extern u16 Data_02006340[];
-
-s32 Math_Sine(s32 angle);
 
 void Func_020002a4(void) {
   // Declared first: x then wins its allocation tie with sine.

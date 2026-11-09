@@ -19,7 +19,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
+void Event_Wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetModeById(u32 id, s32 mode);
 struct Actor *Import_ActorCreate(s32 kind, s32 x, s32 y, s32 z);
@@ -74,17 +74,17 @@ void Func_020028b8(const void *source, void *destination);
 void Func_02002910(struct Actor *object, s32 mode);
 void Func_02002918(struct Actor *object, const void *data);
 void Func_02002928(struct Actor *object);
-void Func_02002960(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02002958(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02002a20(s32 a, s32 b);
-s32 Func_02002a68(void);
+void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Map_CopyCellsRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
+s32 Party_GetLeaderActor(void);
 void Func_02002998(void);
 void Func_020029a0(void);
-void Func_020029d8(s32 id, s32 x, s32 z);
-void Func_02002a18(s32 a);
-void Func_02002a48(s32 a);
+void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
+void Import_EventSetExitRequest(s32 a);
+void Event_ResolvePendingActions(s32 a);
 void Func_02002a60(void);
-void Func_02002a70(s32 cue);
+void Sound_Play(s32 cue);
 void Actor_ResetAndSetPosition(s32 id, s32 x, s32 z);
 s32 Func_02002030(struct Actor *object);
 
@@ -131,18 +131,18 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
 static __inline__ void Func_02002960_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002960(a, b, c, d, e, f);
+  Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
 static __inline__ void Func_02002958_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002958(a, b, c, d, e, f);
+  Map_CopyCellsRect(a, b, c, d, e, f);
 }
 
 static __inline__ void Func_02002a20_(s32 a, s32 b) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002a20(a, b);
+  BattleEffect_ApplyColorToTargetBuffer(a, b);
 }
 
 static __inline__ void Actor_ResetAndSetPosition_(s32 id, s32 x, s32 z) {

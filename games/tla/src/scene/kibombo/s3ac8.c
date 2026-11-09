@@ -57,11 +57,11 @@ void Func_02003c14(void) {
   u32 i;
 
   Func_02005a9c();
-  Func_02005c3c(0);
+  Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   KIBOMBO_TASK_ADD(Func_02002d64, 0x480);
-  FieldEvent_Wait(20);
+  Event_Wait(20);
   // As a for loop, loop.c keeps gInput's address and the mask in registers
   // across the wait; the native builds both again each frame (differ 18).
   i = 0;
@@ -71,7 +71,7 @@ next:
 test:
   if (i > 159)
     goto done;
-  FieldEvent_Wait(1);
+  Event_Wait(1);
   if ((gInput.held & 11) == 0)
     goto next;
 done:
@@ -79,5 +79,5 @@ done:
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1b4 = 32;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02005bc4(11);
+  Import_EventSetExitRequest(11);
 }

@@ -2,11 +2,11 @@
 #include "ram_buffer.h"
 #include "system/io_reg.h"
 #include "system/dma.h"
+#include "event_inline.h"
 
 extern s8 gData_02004694;
 extern s8 gData_02004695;
 extern s16 gData_020046a0[];
-s32 Math_Sine(s32 angle);
 
 void Func_020024b0(void) {
   s32 *scroll = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x178);

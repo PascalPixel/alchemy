@@ -3,9 +3,9 @@
 
 void Func_02002834(s32 id);
 void Func_020025a8(s32 id);
-void Func_02002a28(s32 frames);
-void Func_02002968(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02002a00(s32 a, s32 b);
+void BattleEffect_StartBufferInterpolation(s32 frames);
+void Func_0802b450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Camera_SetSpeedParameters(s32 a, s32 b);
 void Func_02002a10(void);
 void Func_02000b10(struct Actor *object);
 void Func_02000b58(struct Actor *object);
@@ -19,46 +19,46 @@ void Func_02001224(s32 unused, s32 id) {
   s32 i;
 
   Func_02002998();
-  Func_02002a48(0);
+  Event_ResolvePendingActions(0);
   object->update = (void (*)(void))Func_02000b10;
   wait(30);
   Func_02002834(8);
-  Func_02002a70(220);
+  Sound_Play(220);
   for (i = 3; i >= 0; i--) {
-    Func_02002a20(Random16Far() & 0x7fff, 0);
-    Func_02002a28(15);
+    BattleEffect_ApplyColorToTargetBuffer(Random16Far() & 0x7fff, 0);
+    BattleEffect_StartBufferInterpolation(15);
     wait(10);
-    Func_02002a20(0x10000, 0);
-    Func_02002a28(10);
+    BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+    BattleEffect_StartBufferInterpolation(10);
     wait(10);
   }
-  Func_02002a20(0x7fff, 0);
-  Func_02002a28(20);
-  FieldEvent_Wait(20);
+  BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
+  BattleEffect_StartBufferInterpolation(20);
+  Event_Wait(20);
   GameFlag_SetBit(0xa69);
-  Func_02002960(15, 48, 1, 1, 16, 48);
-  Func_02002960(17, 50, 1, 1, 16, 50);
+  Map_CopyCellAttributeRect(15, 48, 1, 1, 16, 48);
+  Map_CopyCellAttributeRect(17, 50, 1, 1, 16, 50);
   object->update = (void (*)(void))Func_02000b58;
   Func_020025a8(8);
-  Func_02002968(64, 68, 5, 13, 14, 94);
-  Func_02002960(64, 68, 5, 8, 14, 34);
-  FieldEvent_Wait(30);
+  Func_0802b450(64, 68, 5, 13, 14, 94);
+  Map_CopyCellAttributeRect(64, 68, 5, 8, 14, 34);
+  Event_Wait(30);
   Func_02002a20_(0x10000, 0);
-  Func_02002a28(30);
-  FieldEvent_Wait(15);
-  Func_02002a00(0x10000, 0x2000);
+  BattleEffect_StartBufferInterpolation(30);
+  Event_Wait(15);
+  Camera_SetSpeedParameters(0x10000, 0x2000);
   Camera_MoveWithinMapBounds(PIXELS(248), -PIXELS(32), PIXELS(760), 1);
   Func_02002a10();
-  Func_020029d8(15, PIXELS(264), PIXELS(792));
+  Actor_SetHorizontalPositionWithTerrain(15, PIXELS(264), PIXELS(792));
   Actor_SetSingleChildFlags(Actor_GetById(15), 0);
   Actor_GetById(15)->collisionFlags = 0;
   Actor_GetById(15)->priorityFlags |= 2;
   Actor_GetById(15)->update = (void (*)(void))Func_02001d98;
-  FieldEvent_Wait(30);
+  Event_Wait(30);
   for (i = 5; i >= 0; i--) {
-    Func_02002a70(623);
+    Sound_Play(623);
     wait(10);
   }
-  FieldEvent_Wait(30);
+  Event_Wait(30);
   Func_020029a0();
 }

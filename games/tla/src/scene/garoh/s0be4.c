@@ -11,10 +11,10 @@ void Func_02000be4(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
   if (GameFlag_Test(0x91b) == 0 || GameFlag_Test(0x310) != 0) {
     GameFlag_SetBit(0x310);
-    Func_020052cc(0x10007, 1);
+    BattleEffect_ApplyColorToTargetBuffer(0x10007, 1);
     if (GameFlag_Test(0x311))
-      Func_020052cc(0x10003, 2);
-    Func_020052d4(1);
+      BattleEffect_ApplyColorToTargetBuffer(0x10003, 2);
+    BattleEffect_StartBufferInterpolation(1);
     Event_WaitTransitionFrames();
     Func_0200538c();
     {
@@ -23,14 +23,14 @@ void Func_02000be4(void) {
       *(volatile u16 *)&BG_PLTT_COLOR(1, 14) = 0x7fff;
       *(u16 *)(palette + 60) = *(volatile u16 *)&BG_PLTT_COLOR(1, 14);
     }
-    Func_020052cc(0x10000, 1);
+    BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
   } else {
-    Func_02005184(10, 32, 10, 10, 1, 1);
-    Func_02005184(12, 32, 25, 22, 1, 1);
-    Func_02005184(11, 33, 8, 22, 1, 1);
-    Func_02005184(74, 32, 74, 10, 1, 1);
-    Func_02005184(76, 32, 89, 22, 1, 1);
-    Func_02005184(75, 33, 72, 22, 1, 1);
+    Map_CopyCellPictureIndicesRect(10, 32, 10, 10, 1, 1);
+    Map_CopyCellPictureIndicesRect(12, 32, 25, 22, 1, 1);
+    Map_CopyCellPictureIndicesRect(11, 33, 8, 22, 1, 1);
+    Map_CopyCellPictureIndicesRect(74, 32, 74, 10, 1, 1);
+    Map_CopyCellPictureIndicesRect(76, 32, 89, 22, 1, 1);
+    Map_CopyCellPictureIndicesRect(75, 33, 72, 22, 1, 1);
   }
   if (gMainRoutineWork.entrance == 12) {
     struct EventWork *work = Ram_HeapSlots->eventWork;

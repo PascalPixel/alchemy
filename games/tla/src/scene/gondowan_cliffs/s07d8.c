@@ -1,26 +1,14 @@
 #include "types.h"
 #include "main_routine_work.h"
-#include "scene_call.h"
 #include "text/msg_ids.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 void Func_0200120c(void);
-void Func_020012e4(s32 skip);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Event_FinishScreenTransition(void);
 void Func_02001254(s32 actor, s32 target);
-void Actor_WatchAndSetScript(s32 actor, s32 target);
-void Func_0200128c(s32 message);
-void Func_020012a4(s32 actor, s32 emote, s32 frames);
-void Func_02001294(s32 speaker, s32 flags);
-void Actor_Stop(s32 actor);
-void Func_020012ac(s32 actor, s32 emote);
-void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void Actor_SetModeById(s32 actor, s32 mode);
-void Func_0200124c(s32 actor, s32 x, s32 z);
-void Func_0200131c(s32 cue);
-void Func_020012bc(s32 countdown);
 
 static inline void GondowanCliffs_ObjWalk(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH: scene calls reach the main image through one inline layer; as
@@ -34,14 +22,14 @@ static inline void GondowanCliffs_Jump(s32 actor, s32 height, s32 frames) {
    * overlay 694's Contigo_Jump. */
   register s32 h __asm__("r1") = height;
 
-  Func_020012a4(actor, h, frames);
+  Func_080d47b4(actor, h, frames);
 }
 
 /// The scene that asks where the party intends to go, to help recover the black
 /// orb.
 void Func_020007d8(void) {
   Func_0200120c();
-  Func_020012e4(0);
+  Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   GondowanCliffs_ObjWalk(gMainRoutineWork.currentOwner, 552, 488);
@@ -54,36 +42,36 @@ void Func_020007d8(void) {
   Actor_WatchAndSetScript(22, gMainRoutineWork.currentOwner);
   Func_02001254(22, gMainRoutineWork.currentOwner);
   GondowanCliffs_ObjWalk(gMainRoutineWork.currentOwner, 608, 472);
-  Func_0200128c((s32)MsgWhereDoYou);
+  Event_SetMessageId((s32)MsgWhereDoYou);
   GondowanCliffs_Jump(22, 258, 20);
-  Func_02001294(22, 0);
+  Event_ShowMessageAndWait(22, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_WEST, 10);
   Actor_Jump(5, 6, 15);
   Actor_Jump(5, 6, 23);
-  Func_02001294(5, 0);
+  Event_ShowMessageAndWait(5, 0);
   Actor_Stop(6);
   Actor_SetAngleToward(6, 5, 0);
-  Func_02001294(6, 0);
+  Event_ShowMessageAndWait(6, 0);
   Actor_WatchAndSetScript(6, gMainRoutineWork.currentOwner);
-  Func_020012ac(gMainRoutineWork.currentOwner, 258);
-  FieldEvent_Wait(30);
+  Func_080d489c(gMainRoutineWork.currentOwner, 258);
+  Event_Wait(30);
   Motion_SetModeAndWaitAnimation(22, 3);
-  Func_02001294(22, 0);
+  Event_ShowMessageAndWait(22, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
   Actor_SetModeById(6, 3);
   Actor_SetModeById(5, 3);
   Motion_SetModeAndWaitAnimation(22, 3);
-  FieldEvent_Wait(30);
+  Event_Wait(30);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 584, 472);
-  Func_0200124c(22, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(22, 0, 0);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 568, 480);
-  Func_0200124c(6, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(6, 0, 0);
   GondowanCliffs_ObjWalk(gMainRoutineWork.currentOwner, 552, 488);
-  Func_0200124c(5, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(5, 0, 0);
   GondowanCliffs_ObjWalk(gMainRoutineWork.currentOwner, 528, 488);
   Event_FinishScreenTransition();
-  Func_0200131c(123);
+  Sound_Play(123);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 512, 488);
   Event_WaitTransitionFrames();
-  Func_020012bc(1);
+  Import_EventSetExitRequest(1);
 }

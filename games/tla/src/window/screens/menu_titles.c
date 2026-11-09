@@ -1,0 +1,528 @@
+/// @file
+/// Pictures and command icons loaded for the menus, and BG1's priority.
+// Part of screens.c.
+
+#include "../screens_internal.h"
+
+#define Resource_DecodeByteLzInRam                                             \
+  ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
+
+void RenderResource_LoadPair(s32 groupIndex, s32 resourceIndex) {
+  void *stagingBuffer = HeapSlot_AllocEwram(56, 0x400);
+  s32 resourceAddress = gRenderResource_PairSourceTable[groupIndex];
+
+  if (resourceIndex <= 0x5F) {
+    Resource_DecodeByteLzInRam((void *)resourceAddress, stagingBuffer);
+    VramCache_Load(resourceIndex, 0x200, stagingBuffer);
+    HeapSlot_Release(56);
+  }
+}
+
+struct WindowSprite *
+RenderResource_CreatePair(s32 group, struct RenderInput *input, s32 x, s32 y) {
+  s32 index;
+  struct WindowSprite *first;
+  struct WindowSprite *second;
+
+  index = Resource_FindFreeEntry();
+  if (index > 95)
+    return NULL;
+
+  RenderResource_LoadPair(group, index);
+  first = WindowSprite_Create(index, OUTPUT_SIZE_32X16, input, x, y);
+  first->sentinel = 0xFD;
+  second = WindowSprite_Create(index, OUTPUT_SIZE_32X16, input, x + 32, y);
+  second->sentinel = 0xFD;
+  second->sprite.oam.index += 8;
+  return first;
+}
+
+struct BobPairObject {
+  struct BobPairObject *next;
+  u8 unk04[4];
+  u8 baseY;
+  u8 unk09[11];
+  u8 y;
+};
+
+/// Counted up by every VBlank.
+extern volatile u32 gVBlankCount;
+extern const u8 gWindow_PairBobOffsets[];
+
+/// Bobs the object and the one after it by the same step of an eight-step
+/// table, advanced every four VBlanks.
+void Func_08045018(struct BobPairObject *object) {
+  s32 value;
+
+  value = object->baseY + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
+  object->y = value;
+  /* FAKEMATCH: tying the object to an empty asm loads the next object before
+   * the second count is shifted, as native; plainly, 2 instructions differ in
+   * tla-en. */
+  asm("" : "+r"(object));
+  object = object->next;
+  value = object->baseY + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
+  object->y = value;
+}
+
+extern char ResourceId_CommandIcons;
+
+void RenderResource_LoadCommandIcon(s32 index, s32 value, s32 flag) {
+  s32 size = 1024;
+  void *buffer = HeapSlot_AllocEwram(56, size);
+  u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
+
+  if (value <= 95) {
+    Resource_DecodeByteLzInRam((void *)((u32)base + base[index]), buffer);
+    if (flag != 0)
+      SpriteColor_RemapPixelsFar(buffer, 768);
+    VramCache_Load(value, size, buffer);
+    HeapSlot_Release(56);
+  }
+}
+
+struct WindowSprite *RenderResource_CreateCommandIcon(s32 arg0, s32 arg1,
+                                                      struct RenderInput *arg2,
+                                                      s32 arg3, s32 arg4) {
+  s32 index;
+  struct WindowSprite *entity;
+
+  index = Resource_FindFreeEntry();
+  entity = NULL;
+  if (index != 0x60) {
+    RenderResource_LoadCommandIcon(arg0, index, arg1);
+    entity = WindowSprite_Create(index, OUTPUT_SIZE_32X32, arg2, arg3, arg4);
+    entity->sprite.oam.palette256 = 1;
+    entity->sentinel = 0xfb;
+  }
+  return entity;
+}
+
+struct Effect {
+  unsigned x : 16;
+  unsigned y : 16;
+  unsigned z : 16;
+  unsigned unk : 16;
+};
+
+struct Object {
+  u8 filler0[6];
+  u16 src6;
+  u8 src8;
+  u8 filler9[6];
+  u8 out15;
+  u8 filler16[4];
+  u8 out20;
+  u8 mode21 : 2;
+  u8 rest21 : 6;
+  u16 pos22 : 9;
+  u16 affine22 : 5;
+  u16 rest22 : 2;
+};
+
+extern u32 gVBlankCount;
+extern s32 gWindowSprite_PulseScales[];
+
+void Func_080450fc(struct Object *obj) {
+  s32 v;
+  struct Effect effect;
+
+  v = gWindowSprite_PulseScales[(gVBlankCount >> 1) & 7] / 256;
+
+  if (obj != 0) {
+    effect.x = v;
+    effect.y = v;
+    effect.z = 0;
+    obj->affine22 =
+        AffineMatrix_BuildForEffect((struct AffineTransform *)&effect);
+    obj->mode21 = 3;
+    obj->pos22 = obj->src6 + 0xfff0;
+    obj->out20 = obj->src8 + 0xf0;
+    obj->out15 = 0xfc;
+  }
+}
+
+s32 GameFlag_Test(s32 flag);
+
+s32 Func_0804519c(void) {
+  if (GameFlag_Test(0x175))
+    return (s32)MsgDjinnGiveTutorialB;
+  return (s32)MsgDjinnGiveTutorialA;
+}
+
+struct BarPatternRow {
+  u32 word0;
+  u32 word1;
+};
+
+extern const struct BarPatternRow gMenu_BarPatternRows[];
+
+static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
+
+s32 Func_080451bc(void) {
+  s32 set;
+  s32 n;
+
+  for (set = 0; set < 2; set++) {
+    for (n = 0; n < 6; n++) {
+      u32 *tile = (u32 *)(set * 0x180 + n * 0x40 + 0x06006280);
+      s32 x;
+
+      Iwram_FillWords(tile, 64, 0x44444444);
+      for (x = 1; x <= 7; x++) {
+        s32 mi = n;
+
+        if (set == 1 && x <= 1) {
+          continue;
+        }
+        if (set == 0 && n > x - 2) {
+          mi = x - 2;
+          if (mi < 0) {
+            mi = 0;
+          }
+        }
+        tile[x] = XorWord(tile[x], gMenu_BarPatternRows[mi].word0);
+        tile[x + 8] = XorWord(tile[x + 8], gMenu_BarPatternRows[mi].word1);
+      }
+    }
+  }
+}
+
+void Window_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+  s32 tile_offset = arg3 * 2;
+  s32 tile = tile_offset + 0xF315;
+
+  Window_SetTilemapEntry((struct Window *)arg0, 0x400 | tile, arg1, arg2,
+                           0);
+  Window_SetTilemapEntry((struct Window *)arg0, tile_offset + 0xF314,
+                           arg1 + 1, arg2, 0);
+  Window_SetTilemapEntry((struct Window *)arg0, tile, arg1 + 2, arg2, 0);
+}
+
+extern u8 gData_03001e40[];
+
+void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
+                                   s32 shift) {
+  s32 neg;
+  s32 rshift;
+  s32 lshift;
+  s32 i;
+
+  neg = -shift;
+  i = 0;
+  rshift = neg * 4;
+  lshift = shift * 4;
+
+  do {
+    u32 result;
+    u32 shifted;
+    u32 fallback;
+    s32 j;
+
+    shifted = *second++;
+    result = 0;
+    fallback = *first++;
+    if (shift < 0)
+      shifted >>= rshift;
+    else
+      shifted <<= lshift;
+
+    j = 7;
+    do {
+      result <<= 4;
+      if (shifted > 0x0FFFFFFF)
+        result += shifted >> 28;
+      else
+        result += fallback >> 28;
+      j--;
+      shifted <<= 4;
+      fallback <<= 4;
+    } while (j >= 0);
+
+    *output++ = result;
+    i++;
+  } while (i <= 7);
+}
+
+void Link_DrawShiftedTilePair(s32 offset) {
+  s32 phase = (gFrameCount >> 2) & 3;
+
+  if (phase > 2) {
+    phase = 2;
+  }
+  if (phase <= 0) {
+    phase = 1;
+  }
+  phase = phase + 1;
+  Graphics_MergeShiftedTileRows((u32 *)0x06000220, (u32 *)gRomShiftedTilePair,
+                                (u32 *)offset, -phase);
+  Graphics_MergeShiftedTileRows((u32 *)0x06000240,
+                                (u32 *)(gRomShiftedTilePair + 32),
+                                (u32 *)(offset + 32), phase);
+}
+
+void Func_0804537c(s32 offset) {
+  s32 phase = (gFrameCount >> 2) & 3;
+
+  if (phase > 2) {
+    phase = 2;
+  }
+  if (phase <= 0) {
+    phase = 1;
+  }
+  phase = phase + 1;
+  Graphics_MergeShiftedTileRows((u32 *)0x06000400, (u32 *)gRomShiftedTilePair,
+                                (u32 *)offset, -phase);
+  Graphics_MergeShiftedTileRows((u32 *)0x06000400,
+                                (u32 *)(gRomShiftedTilePair + 32),
+                                (u32 *)(offset + 32), phase);
+}
+
+void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
+  s32 bank = 0;
+  s32 palOffset = 0;
+  s32 dstBank = 0;
+
+  do {
+    s32 row = 0;
+    s32 dstOffset = (dstBank + bank) << 6;
+
+    do {
+      u16 *out = (u16 *)((u8 *)dst + dstOffset);
+      u16 *src = (u16 *)((u8 *)0x06000600 + (row << 5));
+      s32 col = 0;
+
+      do {
+        u32 packed = *src++;
+        u32 dec = 0;
+        s32 nibble = 0;
+
+        do {
+          u32 color = gGraphics_ExpandNibbleTable[(packed & 15) + palOffset]
+                      << (nibble * 4);
+          nibble++;
+          packed >>= 4;
+          dec |= color;
+        } while (nibble <= 3);
+
+        col++;
+        *out++ = dec;
+      } while (col <= 15);
+
+      row++;
+      dstOffset += 32;
+    } while (row <= 9);
+
+    palOffset += 16;
+    dstBank += 4;
+    bank++;
+  } while (bank <= 1);
+}
+
+s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
+  s32 result;
+  u8 *work;
+
+  work = HeapSlot_AllocEwram(0x44, 0x608);
+  Icon_DrawMisc(resource);
+  result = VramCache_Reload(index, (s32)(work + 0x400));
+  HeapSlot_Release(0x44);
+  return result;
+}
+
+s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index) {
+  s32 result;
+  u8 *work;
+
+  work = HeapSlot_AllocEwram(0x44, 0x608);
+  ItemIcon_Compose(resource, 0x1a);
+  result = VramCache_Reload(index, (s32)(work + 0x400));
+  HeapSlot_Release(0x44);
+  return result;
+}
+
+s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
+  s32 out;
+  s32 cur;
+  s32 ret;
+  u8 *work;
+
+  work = HeapSlot_AllocEwram(0x44, 0x608);
+  cur = index;
+  Ability_LoadGlyph(resource, 0, &cur, &out, 1);
+  ret = VramCache_Reload(index, (s32)(work + 0x400));
+  HeapSlot_Release(0x44);
+  return ret;
+}
+
+s32 Func_08045528(u32 entry, s32 slot) {
+  s32 tile;
+
+  if (entry > 7)
+    entry = 0;
+  UiGlyph_LoadEntryWithPalette(Portrait_GetForSpeaker(entry), 0, &slot,
+                               &tile, 14, 1);
+  return tile;
+}
+
+extern u8 Tile_Decompress4bppCode[];
+extern u8 Tile_Decompress4bppCodeSize[];
+
+/// Returns gWindow_FixedTileBlocks[0], whatever no is.
+s32 WindowSprite_GetPointerTiles(s32 no) {
+  if (no != 0)
+    no = 0;
+  return gWindow_FixedTileBlocks[no];
+}
+
+/// Copies the 4bpp decompression routine to RAM and runs it on the stream
+/// whose address the work holds at 0x604, decoding into the work.
+void Func_08045564(u8 *work) {
+  void (*routine)(void *, void *);
+
+  RamCode_Load(routine, Tile_Decompress4bppCode, Tile_Decompress4bppCodeSize);
+  routine(*(void **)(work + 0x604), work);
+  Heap_Release(routine);
+}
+
+#define Text_DrawStringAtOffset                                              \
+  ((void (*)(u8 *, s32, s32, s32))Text_DrawStringAtOffset)
+
+/// Opens a 6x4 window at the upper left, draws its label and returns its
+/// handle.
+s32 Link_CreateCountdownLabelWindow(void) {
+  s32 win = (s32)Window_Create(0, 0, 6, 4, 6);
+
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
+    (LANGUAGE == LANGUAGE_ITALIAN)
+  Text_DrawStringAtOffset(gLink_TimeLabelString, win, 0, 0);
+#else
+  Text_DrawStringInWindow(gLink_TimeLabelString, win, 0, 0);
+#endif
+  return win;
+}
+
+extern char ResourceId_CommandIcons;
+
+s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1) {
+  GlyphTransfer *buffer = HeapSlot_Alloc(68, sizeof(GlyphTransfer));
+  u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
+  u8 **slot = &buffer->encoded;
+  void *target = (void *)((u32)base + base[arg1]);
+  s32 ret;
+
+  *slot = target;
+  Resource_DecodeByteLzInRam(target, buffer);
+  ret = VramCache_Reload(arg0, (s32)buffer);
+  HeapSlot_Release(68);
+  return ret;
+}
+
+void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
+                              s32 tile) {
+  GlyphTransfer *decoded;
+  u8 *font;
+  u8 *remapped;
+  u8 *src;
+  u8 *dst;
+  s32 i;
+  u32 index;
+  u32 vram;
+  s32 offset;
+
+  decoded = (GlyphTransfer *)HeapSlot_Alloc(68, sizeof(*decoded));
+  font = Resource_GetTableEntry((u32)&ResourceId_CommandIcons);
+  decoded->encoded = font + ((u16 *)font)[glyph];
+  Resource_DecodeByteLzInRam(decoded->encoded, decoded);
+  remapped = Heap_Alloc(0x400);
+  src = decoded->input;
+  dst = remapped;
+  for (i = 0; i < 0x400; i++) {
+    index = *src++;
+    if (palette->slot[index] == 255) {
+      palette->slot[index] = palette->count;
+      if (palette->count < 64) {
+        ((u16 *)0x05000000)[palette->count] = ((u16 *)0x05000200)[index];
+        palette->count++;
+      }
+    }
+    *dst++ = palette->slot[index];
+  }
+  // The native copies the tile index down, loads the VRAM base and only then
+  // shifts the index; plain C shifts before the load (differ 2). Three barriers
+  // keep that order: one barrier on the base alone swaps r1 and r2 (differ 6),
+  // and the offset as its own barrier-held value puts them back.
+  /* FAKEMATCH: keeps the index copy first (differ 2 without) */
+  __asm__("" : : "l"(tile));
+  vram = 0x06004000;
+  /* FAKEMATCH: keeps the base load before the shift (differ 2 without) */
+  __asm__("" : : "r"(vram));
+  offset = tile * 64;
+  /* FAKEMATCH: keeps the offset in r1 and the base in r2 (differ 6 without) */
+  __asm__("" : : "r"(offset));
+  Dma_Set(remapped, (void *)(offset + vram), DMA_COPY_WORDS(256), REG_DMA3);
+  Heap_Release(remapped);
+  HeapSlot_Release(68);
+}
+
+typedef struct {
+  u16 code : 10;
+  u16 style : 6;
+} CharacterCell;
+
+void Func_080456f8(u8 *base, s32 index, u32 value) {
+  u8 *entry;
+  s32 offset;
+  s32 store_offset;
+  s32 load_offset;
+
+  offset = index * 28;
+  entry = base + offset + 0x104;
+  Text_LoadRemappedGlyph((struct GlyphPalette *)base, value, index * 16);
+  store_offset = offset + 0x11C;
+  *(u32 *)(base + store_offset) = value;
+  /* FAKEMATCH(one-pass): the constant stored in a once-only block, after
+   * the value; as a plain store, 4 of 47 instructions differ in tla-en. */
+  do {
+    *(u32 *)(entry + 4) = 0x80002000;
+  } while (0);
+  *(u32 *)(entry + 8) = 0;
+  load_offset = offset + 0x110;
+  ((CharacterCell *)(entry + 8))->code =
+      Resource_LoadIndexedIntoBuffer(*(u16 *)(base + load_offset), value);
+}
+
+void Graphics_SetBg1Priority3(void) {
+  u32 mask = 4;
+  u32 value = REG_BG1CNT;
+
+  mask = -mask;
+  value &= mask;
+  value |= 3;
+  REG_BG1CNT = value;
+}
+
+void Func_08045780(void) {
+  u32 mask = 4;
+  u32 value = REG_BG1CNT;
+
+  mask = -mask;
+  value &= mask;
+  REG_BG1CNT = value;
+}
+
+void Func_08045794(void) {
+  /* FAKEMATCH: a named zero is built with movs; as a literal the halfword store
+   * loads it from the pool (differ 13). */
+  u32 zero = 0;
+
+  REG_BG0VOFS = zero;
+  /* FAKEMATCH: a one-pass block loads the handler before the interrupt number
+   * is built; called straight the two rows trade places (differ 2). */
+  do {
+    Irq_SetHandler(2, 136, Func_08045780);
+  } while (0);
+}
+
+#undef Resource_DecodeByteLzInRam
+#undef Text_DrawStringAtOffset

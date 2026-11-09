@@ -108,8 +108,6 @@ void Text_DrawStringAtOffsetFar(const u8 *text, s32 window, s32 offsetX,
 #ifndef OWN_Text_DrawStringInWindowFar
 void Text_DrawStringInWindowFar(u8 *text, s32 window, u32 x, u32 y);
 #endif
-void Text_RenderWideStringInWindow(s16 *text, struct Window *window, s32 x,
-                                   s32 y);
 void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 void Window_DrawDividerLineFar(s32, s32, s32, s32, s32);
 void WindowSprite_UpdateAll(void);

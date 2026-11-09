@@ -1,14 +1,204 @@
-#include "types.h"
-#include "ram_buffer.h"
-#include "window.h"
-#include "uiwindow.h"
-#include "render_input.h"
-#include "main_routine_work.h"
-#include "input.h"
-#include "dma.h"
-#include "io_reg.h"
-#include "edition.h"
-#include "text_font.h"
+/// @file
+/// The name entry screen.
+// Part of screens.c.
+
+#include "../screens_internal.h"
+
+// The Japanese name entry screen enters kana, whose voicing marks (dakuten
+// and handakuten) are characters of their own that join the kana before them.
+// The other editions have no marks: in the first function's place they keep
+// one that accepts every letter, and they drop the second.
+#if LANGUAGE == LANGUAGE_JAPANESE
+extern const u8 gNameEntry_VoicedMarkRanges[];
+extern const u8 gNameEntry_SemivoicedMarkRanges[];
+
+/// Returns whether `letter` may follow `previous` in a name: any character but
+/// a voicing mark may, and a voicing mark only after a kana in its table of
+/// ranges (pairs of first and last kana, ended by 0).
+s32 Func_08044488(s32 letter, s32 previous) {
+  const u8 *range;
+
+  if (letter < TEXT_MARK_VOICED || letter > TEXT_MARK_SEMIVOICED)
+    return 1;
+  if (letter == TEXT_MARK_VOICED)
+    range = gNameEntry_VoicedMarkRanges;
+  else
+    range = gNameEntry_SemivoicedMarkRanges;
+  for (; *range != 0; range += 2) {
+    if (previous >= range[0] && previous <= range[1])
+      return 1;
+  }
+  return 0;
+}
+
+/// Returns how many letters `name` has, not counting its voicing marks.
+s32 Func_080444c4(const u8 *name) {
+  s32 count;
+
+  count = 0;
+  for (; *name != 0; name++) {
+    if ((u8)(*name - TEXT_MARK_VOICED) >
+        TEXT_MARK_SEMIVOICED - TEXT_MARK_VOICED)
+      count++;
+  }
+  return count;
+}
+#else
+/// Unused: the Japanese edition's mark test (Func_08044488 there), which
+/// accepts every letter where no letter takes a mark.
+UNUSED s32 Window_ReturnOne(void) { return 1; }
+#endif
+
+void Func_08044348(struct Window *window, const void *resource) {
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  u16 *buffer = Heap_AllocEwram(0x300);
+  s32 offset;
+  u16 *map;
+  u16 *vram;
+  u16 *source;
+  s32 row;
+  s32 col;
+
+  source = buffer;
+  Resource_DecodeType01(resource, buffer);
+  offset = (((s16)window->y << 5) + (s16)window->x) * 2;
+  map = (u16 *)((u8 *)work->tilemap + offset);
+  vram = (u16 *)(offset + 0x06002000);
+  for (row = 0; row < window->height; row++) {
+    for (col = 0; col < window->width;) {
+      s16 tile = *source;
+
+      col++;
+      /* FAKEMATCH(one-pass): the two stores in a block run once; as the two
+       * stores alone, 2 of 66 instructions differ in tla-en. */
+      do {
+        *vram = tile;
+        *map = tile;
+      } while (0);
+      source++;
+      vram++;
+      map++;
+    }
+    vram += 32 - window->width;
+    map += 32 - window->width;
+  }
+  Heap_Release(buffer);
+}
+
+s32 Text_MeasureEntry(s32 start, u32 *width, u32 *height, s32 mode);
+
+void Window_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
+                                 s32 width, s32 height, u32 field) {
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+
+  x += (s16)object->x + 1;
+  y += (s16)object->y + 1;
+  field <<= 12;
+  if (x < 0) {
+    width += x;
+    x = 0;
+  }
+  if (x + width > 29) {
+    width = 30 - x;
+  }
+  if (y < 0) {
+    height += y;
+    y = 0;
+  }
+  if (y + height > 29) {
+    height = 20 - y;
+  }
+  if (width > 0 && height > 0) {
+    do {
+      u16 *pixel = &work->tilemap[y][x];
+      s32 remaining = width;
+      while (remaining != 0) {
+        u32 value = *pixel;
+        value &= 0xFFFFEFFF;
+        value |= field;
+        remaining--;
+        *pixel = value;
+        pixel++;
+      }
+      height--;
+      y++;
+    } while (height != 0);
+    work->dirty = 1;
+  }
+}
+
+s32 Resource_LoadFixedBlockBIntoFreeSlot(void) {
+  s32 slot;
+
+  slot = Resource_FindFreeEntry();
+  VramBlock_LoadResourceFar(slot, 0x80, (s32)&ResourceId_UiIconTiles);
+  return slot;
+}
+
+void Resource_CopyFixedBlockB(s32 slot) {
+  VramBlock_LoadResourceFar(slot, 0x80, (s32)&ResourceId_UiIconTiles);
+}
+
+void Resource_CopyFixedBlockA(s32 slot) {
+  VramBlock_LoadResourceFar(slot, 0x80, (s32)&ResourceId_UiFixedBlockATiles);
+}
+
+#if (LANGUAGE != LANGUAGE_JAPANESE)
+s32 Text_SetString(const u8 *str) {
+  struct WindowWork *work;
+  u16 *dst;
+  s32 count;
+  u32 width;
+  u32 height;
+
+  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  count = 0;
+  if (*str != 0) {
+    dst = work->entries;
+    do {
+      *dst = *str;
+      str++;
+      /* FAKEMATCH: the ARM9TDMI load schedule moves the count step after the
+       * next character's load and the entry step; native counts right after the
+       * store. */
+      __asm__ volatile("");
+      count++;
+      /* FAKEMATCH: this boundary keeps the next character's load ahead of the
+       * entry step, as native. */
+      __asm__ volatile("");
+      dst++;
+    } while (*str != 0);
+  }
+  work->entries[count] = 0;
+  Text_MeasureEntry(0, &width, &height, 0);
+  return width;
+}
+
+void Text_DrawPaddedLabel(s32 output, u8 *input) {
+  u8 text[20];
+  s32 length = 0;
+
+  if (*input != 0) {
+    do {
+      text[length] = *input;
+      input++;
+      length++;
+    } while (*input != 0);
+  }
+
+  text[length++] = 8;
+  text[length++] = 2;
+
+  while (length <= 6) {
+    text[length++] = 95;
+  }
+
+  text[length++] = 8;
+  text[length++] = 15;
+  text[length] = 0;
+  Text_DrawString(text, output, 0, -2);
+}
+#endif
 
 #define NAME_MAX_BYTES 14
 #define NAME_MAX_LETTERS 5
@@ -84,38 +274,25 @@ extern const u8 gNameEntry_AlternateKeyboardTilemap[];
 
 void Text_DrawString(u8 *text, s32 window, s32 x, s32 y);
 // Japanese only, at 0x08044488 there.
-s32 Func_08044488(s32 letter, s32 previous);
 // Japanese only, at 0x080444c4 there: how many letters `name` has, its marks
 // not counted.
-s32 Func_080444c4(const u8 *name);
 #endif
 #if NAME_KEY_LABELS
 extern u8 gNameEntry_DeleteKeyLabel[];
 extern u8 gNameEntry_EndKeyLabel[];
 
-void Text_DrawStringInWindow(u8 *text, struct Window *window, s32 x, s32 y);
 #endif
 
-u8 *Unit_Get(s32 owner);
 void Window_LoadGraphics(void);
 void Func_0803f9c0(s32 glow, s32 sub);
-struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 void Func_0803d3c0(s32 member, s32 x, s32 y, s32 side);
-void Func_08044348(struct Window *window, const void *resource);
-void Window_DrawDividerLine(struct Window *window, s32 x0, s32 y0, s32 x1,
-                            s32 y1);
-void Text_DrawPaddedLabel(struct Window *window, u8 *name);
 s32 Resource_FindFreeEntry(void);
 void VramBlock_LoadResourceFar(s32 slot, s32 size, s32 resource);
 void Func_08108048(struct NameCursorMotion *cursor, s32 x, s32 y);
 void Func_08108040(struct NameCursorMotion *cursor, s32 x, s32 y, s32 speed);
 void Func_08108030(struct NameCursorMotion *cursor);
 void Func_08108038(struct NameCursorMotion *cursor);
-s32 Text_SetString(const u8 *str);
-void WindowSprite_PrepareForRedraw(struct Window *window);
 void wait(s32 frames);
-void Window_SetTilemapFlagRect(struct Window *window, s32 x, s32 y, s32 width,
-                               s32 height, s32 palette);
 void Sound_PlayFar(s32 cue);
 void Func_0803d450(s32 member);
 
@@ -459,7 +636,7 @@ s32 Func_08044558(s32 member) {
     }
   }
   editedName[NAME_MAX_BYTES] = 0;
-  Text_DrawPaddedLabel(nameWindow, originalName);
+  Text_DrawPaddedLabel((s32)nameWindow, originalName);
   keyRow = 5;
   vramSlot = Resource_FindFreeEntry();
   keyColumn = NAME_COMMAND_COLUMN;
@@ -580,7 +757,7 @@ s32 Func_08044558(s32 member) {
         letterCount--;
         *--end = 0;
         WindowSprite_PrepareForRedraw(nameWindow);
-        Text_DrawPaddedLabel(nameWindow, editedName);
+        Text_DrawPaddedLabel((s32)nameWindow, editedName);
         textDirty = 1;
         continue;
       }
@@ -595,7 +772,7 @@ s32 Func_08044558(s32 member) {
         if (letterCount == 0) {
           nameCaret.sprite->active = 13;
           WindowSprite_PrepareForRedraw(nameWindow);
-          Text_DrawPaddedLabel(nameWindow, originalName);
+          Text_DrawPaddedLabel((s32)nameWindow, originalName);
           wait(10);
         } else {
           u8 *dst = originalName;
@@ -627,7 +804,7 @@ s32 Func_08044558(s32 member) {
         cursorDirty = 1;
       }
       WindowSprite_PrepareForRedraw(nameWindow);
-      Text_DrawPaddedLabel(nameWindow, editedName);
+      Text_DrawPaddedLabel((s32)nameWindow, editedName);
       textDirty = 1;
     }
   }
@@ -640,3 +817,19 @@ s32 Func_08044558(s32 member) {
   return result;
 }
 #endif
+
+#undef NAME_MAX_BYTES
+#undef NAME_MAX_LETTERS
+#undef NAME_COMMAND_COLUMN
+#undef NAME_KEYBOARD_HEIGHT
+#undef NAME_DIVIDER_BOTTOM
+#undef NAME_KEY_CURSOR_Y
+#undef NAME_REMOVE_ROW
+#undef NAME_FINISH_ROW
+#undef NAME_PAGE_ROW
+#undef NAME_BLANK_ROW
+#undef NAME_LAST_ROW
+#undef NAME_LABEL_WIDTH
+#undef NAME_KEY_LABELS
+#undef NAME_FINISH_WIDTH
+#undef IS_KANA_MARK

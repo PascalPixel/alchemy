@@ -1,4 +1,10 @@
 // Draft, differ 2 of 1022 (tla-en, 2026-11-08)
+// Devices pass (2026-11-09), none below 2: the fourth quarter's function
+// pointer through a statement expression with an identity asm, with or
+// without an "m" input on the slot (175, 177), or through a block-local
+// pointer (154, 175 with the asm); size through an asm before the call (49).
+// An asm placed before the stores cannot give str r7 a dependent, and one
+// after the call follows the call's memory flush.
 // Left: one pair in the glow arm's (mode 0) fourth quarter: ldr r5, =cells
 // issues between str r0, [sp] and str r7, [sp, #4]; the listing has both
 // stores first. tla-de, -es, -fr and -it: the same 2; tla-ja the same 2 at

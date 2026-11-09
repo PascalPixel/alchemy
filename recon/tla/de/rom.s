@@ -145,12 +145,6 @@ Func_080e5d5c:
 	.incbin "baserom.gba", 0x000f38c6, 0x00000002
 	.section .rom.000f78d2, "ax"
 	.incbin "baserom.gba", 0x000f78d2, 0x00000002
-	.section .rom.000f7dfc, "ax"
-	.global Func_080eadfc
-	.type Func_080eadfc, %function
-	.thumb_func
-Func_080eadfc:
-	.incbin "baserom.gba", 0x000f7dfc, 0x000000b8
 	.section .rom.000f8296, "ax"
 	.incbin "baserom.gba", 0x000f8296, 0x00000002
 	.section .rom.000fc81c, "ax"
@@ -308,13 +302,6 @@ BattleEffect_RunLightSurge:
 	.incbin "baserom.gba", 0x00171430, 0x00000744
 	.section .rom.00179f16, "ax"
 	.incbin "baserom.gba", 0x00179f16, 0x00000002
-	.section .rom.0017d724, "ax"
-	.balign 4
-	.global BattleEffect_RunRisingDragonEnemy
-	.type BattleEffect_RunRisingDragonEnemy, %function
-	.thumb_func
-BattleEffect_RunRisingDragonEnemy:
-	.incbin "baserom.gba", 0x0017d724, 0x00000954
 	.section .rom.0017ea58, "ax"
 	.global BattleEffect_RunDaedalus
 	.type BattleEffect_RunDaedalus, %function
@@ -327,11 +314,6 @@ BattleEffect_RunDaedalus:
 	.thumb_func
 BattleEffect_RunCatastrophe:
 	.incbin "baserom.gba", 0x001843fc, 0x00002a00
-	.section .rom.0018ad40, "ax"
-	.balign 4
-	.global Func_0818ad40
-Func_0818ad40:
-	.incbin "baserom.gba", 0x0018ad40, 0x00000b28
 	.section .rom.0018cb74, "ax"
 	.global BattleEffect_RunTrident
 	.type BattleEffect_RunTrident, %function

@@ -236,10 +236,10 @@ Resource_DirectoryTable:
 	resource VineCardSheet, BattleEffect_VineCardSheet
 	resource DragonCardSheet, BattleEffect_DragonCardSheet
 	resource BoltCardSheet, BattleEffect_BoltCardSheet
-	resource , BattleEffect_ButterflyCardSheet
+	resource ButterflyCardSheet, BattleEffect_ButterflyCardSheet
 	resource SheepCardSheet, BattleEffect_SheepCardSheet
-	resource , BattleEffect_SkeletonCardSheet
-	resource , BattleEffect_SwordCardSheet
+	resource SkeletonCardSheet, BattleEffect_SkeletonCardSheet
+	resource SwordCardSheet, BattleEffect_SwordCardSheet
 	resource BoulderPicture, BattleEffect_BoulderPicture
 	resource BladeSheet, BattleEffect_BladeSheet
 	resource ClawSlashSheet, BattleEffect_ClawSlashSheet

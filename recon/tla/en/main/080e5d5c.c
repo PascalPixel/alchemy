@@ -1,4 +1,8 @@
 // Draft, differ 4 of 639 (tla-en, 2026-11-08)
+// Devices pass (2026-11-09), none below 4: the mask or the flags held in each
+// other local (glowEntry, starEntry, starTile 4; glowTile, spot 18; j 11;
+// rise, frame, angle, speed, size 34 to 180), as `flags & (v = 4)`,
+// `(v = 4) & flags`, `flags & (v = 4, 4)` or `(v = flags) & 4` (16).
 // Left: the airborne test's two registers. The listing loads motionFlags into
 // r2 and builds the 4 in r3 (ldrb r2 / movs r3, #4 / ands r3, r2); the kept
 // form, the mask held in inReach, gives ldrb r3 / movs r2, #4. Every edition

@@ -1,151 +1,3 @@
-// Draft, differ 2 of 1246 (tla-en, 2026-11-08)
-// Left: the dissolve's zero (movs r5, #0) is scheduled one slot early, ahead of
-// mov lr (the 7 of i & 7) and mov ip (frame - 48); the listing has it after
-// both. sched2 breaks the tie by RTL order, and loop.c hoists `first = 0` from
-// the top of the outer body ahead of the inner loop's invariants. The literal
-// 0 (set inside the if, after the compare) hoists in the listing's place, but
-// then first has no second lifetime (25, below); a variable set inside the if
-// is not hoisted at all, since first lives elsewhere (264). What would settle
-// it: a second lifetime for first, in r5 and with no r0 or r1 preference, that
-// leaves the dissolve's literal 0 alone. The listing has no other r5 value that
-// only stores: the 0x2001 and 0xc80 arguments, &middle, the wave's angle, the
-// model, the step pointers, the strike's -1 and the burst's force all copy to
-// r0 or r1, and the shards' i % 4 * 3 meets cell (r0) as its first operand.
-// Other editions: their bytes equal tla-en's but for call targets and pool
-// words (ja's copy sits at 0818ad44), and the draft compiles the same in all
-// six, so each differs in the same 2 instructions; diff cannot measure them
-// (their scaffold sections carry no Thumb marker), so they were compared by
-// disassembling the draft object and the scaffold bytes.
-// What settled it this round (2026-11-08, from 42):
-// - The flight's x took r0 because first's burst lifetime (`first = 127; first
-//   &= Random16()`) gives first an r0 preference: cse puts the known 127
-//   second, so the AND's first operand is Random16's r0, and global.c's
-//   expand_preferences merges first's preferences into x where first dies in
-//   `x = first + q`. The burst now has its own force (it matches as before) and
-//   first's second lifetime is the dissolve's zero, which only stores: x takes
-//   r3 (42 to 28).
-// - REG_BG2X before scroll: `x <<= 8; REG_BG2X = -x; scroll = -x` (24; with
-//   `REG_BG2X = -(x << 8); scroll = -(x << 8)` 26).
-// - The sheep frames at Ram_MapCellBuffer + 0x683e, a number, not CARD_NOISE's
-//   symbol: reload then builds the address, and its rotation through the spill
-//   registers moves on one, giving the listing's r4, r6, r0 for the sleep
-//   draw's scratches (24 to 12).
-// - The shards' `fade * 696` inside the draw, not a shade local: loop.c hoists
-//   it after i = 0, so fade (r1) is still live at i's reload and i takes r2;
-//   with the cell sum back as one expression (no k) the shards match (12 to 2).
-// Tried this round without gain: first's second lifetime as `card.y - 1` (4:
-// the decrement lands in r5), as the shards' width Data_081974f4[cell] (8: its
-// load moves ahead of the x argument), as the shards' i % 4 * 3 (44: an r0
-// preference again), as the sheep's address sum (40); first local with the
-// literal 0 (25: first ties to card.x's load); `first = 0` at the top of the
-// inner loop or in its init (2), inside the if (264), before the outer loop
-// (33: i = 0 reuses it); a row pointer or a level local for the inner loop's
-// invariants (4, 6); the flight as one expression (14: card.x + q, then - 64).
-// Earlier rounds (their "Left" items are settled above):
-// 2026-11-08, from 44: the shards' step->variant + time read into a local k
-// first loaded the variant ahead of i % 4 (42). Tried and no gain: k with the
-// sum reversed (90), k / 8 as its own step (398 to 409), the variant read
-// before step, the cell built in two statements (284); for the flight, a
-// once-only block after x, an empty else, `register`, x in the test, no q (all
-// 42); `x <<= 8` before a combined store (52); the sleep draw's operands
-// regrouped or a block-scoped pointer (42). 8 minutes of permute (seed 4242):
-// nothing below 42.
-// 2026-11-08, no change at 44: the flight's x as `x = t / 48; x += first`,
-// `x = first; x += q`, x declared first, `x = -(x << 8)` before the store (all
-// 44), and `scroll = -(x << 8); REG_BG2X = scroll` (93); the sleep draw's
-// operand orders (44) and a local for its left edge (60); the shards' cell sum
-// reordered (44 to 284). 8 minutes of permute found nothing under 65.
-// 2026-11-07: the sheep's 127 mask as a block local (`u32 mask = 127`, both
-// velocities) breaks the sleep spawn's inheritance of r6: sp+8 is reloaded into
-// r0 as the listing (83 to 44). Left: the flight's x in r0 for r3, the sleep
-// draw's and the shards' scratch registers. Before (83, 2026-11-06): the
-// flight's x takes r0 (tied to the quotient) for the listing's r3, and the
-// sleep spawn inherits r6 for the listing's reload of sp+8 into r0; the rest is
-// branch and pool offsets after that one missing instruction, and the sleep
-// draw's scratch registers. x pinned to r3 (measured 2026-11-06, not kept): 90;
-// the quotient then takes r3 too and is copied there (adds r3, r0) before the
-// sum, as either operand order. Also tried 2026-11-06: the sleep range as
-// (u32)(frame - 48) <= 31 (83, the same), and its step from frame - 48 directly
-// (417). What settled it this round: the shards' force is `first`, the flight's
-// base, set as `first = 127; first &= Random16()` with `first + 64` at each
-// use. That second lifetime makes first global, so the flight keeps the copy of
-// card.x (adds r5, r2) with first in r5 and &card in r6, and the burst loop
-// matches (127 loaded into r5 and the + 64 after the cosine call). `(Random16()
-// & 127)
-// + 64` or `first = Random16() & 127` puts 127 in r3 and copies r0 to r5 (78
-// with the extra instruction). For x: `q + first`, `t` reused for x, x at
-// function scope, every order of the copy, the subtraction and the divide, and
-// `x -= 112; overflow = x` change nothing.
-// Measured 2026-11-05 (tla-en): differ 92 of 1246, 48 with slots and pool
-// offsets normalized, 20 with registers masked too. What settled it this round:
-// - The butterflies' step by index (`&work->particles[slot + i]`): the reduced
-// giv's
-//   start then comes after the loop's hoists, so the 127 in r6 is live there
-//   and the step's reload takes r0, as the listing.
-// - The sheep's step local (r5 by local-alloc, the 127 r6 behind it), through
-//   `slot`, a variable set in both spawns: a block's own `frame - 48` makes the
-//   step's fields dest-address givs of frame, and their reduction takes a frame
-//   slot.
-// - u8 *pixels: `void *pixels` puts void * in the texture's alias set, so the
-//   vertices store conflicted with the texture word.
-// Left then, top first:
-// 1. (Settled 2026-11-06, above.) The flight's copy of card.x (adds r5, r2):
-//    first has to be global or it ties to the load. A second lifetime in a
-//    later block gives the copy (`first = x << 8` before the store, or `first =
-//    card.y - 1`), but x then takes r2 for r3: its preferences are r2 and r3,
-//    from what is not found.
-// 2. REG_BG2X before scroll: a local for the value gives the listing's order,
-// with
-//    x in r0 tied to the quotient.
-// 3. The sleep spawn reloads sp+8 (ldr r0) where this draft inherits r6 from
-// the
-//    compare. One reload more or less rotates every scratch after it: the other
-//    rows from there on follow it.
-// Measured 2026-11-05 (tla-en): differ 82 of 1246, 40 with slots and pool
-// offsets normalized, 11 with registers masked too. The flight now reads as the
-// listing: the difference is multiplied first, card.x copied after it, and the
-// base stays in a register of its own across the divide. That needs a pseudo
-// living past one block (a block's own local ties to the load and the copy
-// goes), so it shares first with the first spawn, which then has first in r5
-// for r2. Left: step in r5 and the 127 mask in r6 in both spawns, with first
-// and sp+8 following; model->vertices stored three instructions early. Step as
-// its own local in both spawns gives r5 and r6 as the listing there (and first
-// r2) but costs a slot (frame 88): 431 raw. One pseudo across the flight and
-// both spawns goes to r6 behind &card. Both spawns' r5 hold while &card takes
-// r6 only if the flight's base is local yet untied, which no form here gives.
-// Measured 2026-11-05 (tla-en): differ 92 of 1246. The flight's base is card.x
-// - 64 (the draft had lost the 64), the sleep step is &particles[time], the
-// first spawn's step an integer sum. Left: the native's copy of card.x into r5
-// before __divsi3; step in r5 and the 127 mask in r6 in both spawns.
-// Draft, differ 213 of 1246, skeleton gap 27 (tla-en, 2026-11-01)
-// No close ☀️ twin (call order BattleEffect_RunBoreas 0.468): ⚓️'s own effect
-// on ☀️'s frame, a sibling of the four cards of Func_0818a220. The card itself
-// scrolls on a tiled background; its picture is a textured quad by ⚓️'s model
-// kernels. The native stack frame (84, as this draft's) holds effect at sp+48,
-// the mode 44, canvas 40, the blitter pair 32, the card's scale 28, the
-// background's scroll 24, the card's overflow past the scroll's range 20, the
-// length 16, the length less 8 at 12 and frame - 48 at 8; the texture is at
-// sp+52, the targets' middle at 60 and the card at 72. Native registers: work
-// r10, frame r11, i r8, the noise pointer and the sword's time r9.
-// Left: the sleep block's step is written work->particles + (frame - 48), which
-// gives the lowest gap but folds to frame * 28 less a pooled constant and puts
-// frame in r9 for r11. With s32 time = frame - 48 and &work->particles[time]
-// instead, frame takes r11 and differ is 111, gap 35; the native's shape is
-// that one. Either way step takes r6 and the 127 mask r5 where the native has
-// them the other way round, in the baffle and sleep spawns. The native's sleep
-// spawn also reloads sp+8 (ldr r0) and builds step in place (add r5, sl).
-// The flight keeps card.x in r2 and copies it to r5 just before __divsi3
-// (adds r5, r2, #0); here one pseudo takes r5. model->vertices stores three
-// instructions later than the native's, which falls inside the texture's
-// bitfield update; every order of the assignments was tried, and splitting the
-// bitfields forces a spill. The rest is scheduling ties at the top and in the
-// frame 0 block.
-// Tried without gain: step split per block or across two or three variables
-// (all partitions), a local for the mask, every order of the local
-// declarations, the load order at the top, and a local for 0x2001.
-// What closed the most: CARD from gMapCellBuffer, an array symbol rather than
-// the header's fixed number. A symbol plus an offset is not a constant gcse
-// propagates, so noise stays in a register as the native's does (582 to 137).
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -467,9 +319,12 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
           for (i = 0; i != 64; i++) {
             // first, free here, holds the cleared pixel: a second lifetime
             // keeps the flight's copy of card.x (see the header).
-            first = 0;
             for (j = 0; j != 32; j++) {
-              if (noise[(i & 7) * 32 + j] == frame - 48)
+              /* FAKEMATCH(dead): first cleared inside the test, or'd into
+               * frame - 48, so loop.c hoists the zero after the test's 7 and
+               * level; as `first = 0;` at the top of the outer body, 2 of
+               * 1246 instructions differ in tla-en. */
+              if (noise[(i & 7) * 32 + j] == (frame - 48 | (first = 0)))
                 card[i * 32 + j] = first;
             }
           }

@@ -1,5 +1,11 @@
 // Draft, differ 2 of 1150 (tla-en, 2026-11-08); no device left. Every edition
 // differs by the same 2.
+// Devices pass (2026-11-09), none below 2. sched2 (verbose) after j's zero:
+// the 6's copy to ip and line's zero tie on priority (1), class and
+// dependents (0 each), so LUID decides. Tried: line = j * 16 as a giv behind
+// a once-only block, line << 1 or line + line, or an asm operand hiding it
+// from CSE (213 to 702: line stops being reduced or j * 32 is); the table's
+// 6 set in the for init (256).
 // Left: one swap in the mote loop's preheader. The listing sets line (r4) to 0
 // after `mov ip, r1` (the hoisted 6 of gData_08197410[motes]); here before it.
 // sched2 breaks that tie by RTL order, so in the original r4's 0 is emitted

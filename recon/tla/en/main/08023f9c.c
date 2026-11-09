@@ -1,4 +1,7 @@
 // Draft, differ 4 of 875 (tla-en, 2026-11-08)
+// Devices pass (2026-11-09), none below 4: after the first product, an asm
+// on ratio or on the product, clobbering r6 or reading the stored velocityX
+// (6 each: the order stays and the asm's 4 bytes move the next pool).
 // All six editions differ by the same 4. Left: one swap in the slope
 // slowdown; every other instruction and register agrees. After the first
 // Iwram_MulQ16 product the native runs `adds r1, r5` (the next argument),

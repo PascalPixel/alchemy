@@ -1,4 +1,8 @@
 // Draft, differ 4 of 2278 (tla-en, 2026-11-08)
+// Devices pass (2026-11-09), none below 4: the turned flash's picture sum as a
+// block-local pic (4, the same rows) with an asm on pic, on step, flash, i or
+// canvas reading pic, or on pic reading step (51 to 570); 0x128a through an
+// asm (194).
 // Every edition measures 4 (tla-ja, de, es, fr, it alike), the same four rows.
 // Left: in the turned flash's first draw the native issues adds r1, r2, r1 and
 // adds r3, #138 before mov r4, sl, and adds r1, r1, r3 before ldr r2, [r7];

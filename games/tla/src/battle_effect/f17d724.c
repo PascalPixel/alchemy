@@ -1,99 +1,3 @@
-// Draft, differ 2 of 1034 (tla-en, 2026-11-08). tla-ja (at 0817d728), tla-de,
-// tla-es, tla-fr and tla-it measure the same 2. Left: in the model block the
-// listing schedules the frame's reload (mov r0, fp) before the strip's pool
-// load (ldr r7); here the load goes first. In sched2 the two tie (priority 85,
-// four dependents each), so insn order decides, and the strip's reload comes
-// first because the mesh store precedes scrollU. Reload's rotation (r4 for
-// 0x700, then r7, then r0) gives the listing's registers only in that order:
-// scrollU first swaps them (22). Tried 2026-11-08, none better: every order of
-// pixels, mesh and scrollU (22 to 52), texture after pixels (4), scrollU's
-// value as a local at seven points (2 to 220), eight spellings of
-// 127 & ~(frame << 2) (all 2), strip set at four other places (2 to 208), and
-// permutes of the block (8 minutes) and of the whole function (10 minutes).
-// Leads: a source whose frame reload comes first while r7 is busy, or a fifth
-// dependent on the frame copy.
-// Settled 2026-11-08, each measured: max = 31 is set in the colour loop's for,
-// after i (18 to 16: the listing schedules movs r6, #31 last); the burst is
-// indexed &work->particles[first + i] inside its loop, so strength reduction
-// adds the offset to work (adds r7, r3, r2; 16 to 14); the trail's slot is
-// computed before y, and startY is set in the for after i = 0 (14 to 2: slot
-// crosses the branch in r1, and y still live at i = 0 sends the zero to r4 and
-// the pool base to r7, as the listing's rotation has them). Without the dead
-// green the draft now measures 331.
-// Older notes follow. 2026-11-08, from 38 to 18: the colour loop took the
-// adopted sibling f190b74.c's form: entry read once, blue as
-// ((u16)entry >> 10) & 31 (lsls 16, lsrs 26, pooled 31), a dead green taken and
-// clamped (tagged), red = max & entry from a one-constant local (hoisted 31 and
-// its copy; red = 31 & entry gives 66), and color set before i in the for (22
-// to 18). Blue's mask is plain
-// again, (*color >> 10) & 31: the (u16) casts gain nothing under the GBA tune.
-// The red and blue clamps and the frame < 0 test are the ROM's dead code
-// (without the test, 400). Tried, none better: green set after the clamp (75);
-// (u16)(*color << 16 >> 26) gives lsls 16 but asrs 26 and a second ldrh (50);
-// the same through (u32) loads twice and keeps lsrs 10 (55); a u32 c local
-// (80); once-only blocks around blue, slot or startY, first folded into one
-// expression, &SPARKS[128] + first, the burst as particles + first (all 38).
-// Later 6 November, none better: green dropped for red twice (75; red's clamp
-// then stays in r2 as the listing's); with it, a u16 c local gives the listing's
-// lsls 16, lsrs 26 and pooled 31 for blue but loads with ldrsh (ARM promotes a
-// short local signed) and red takes the zero extension (112); red read from
-// *color with blue from a u16 c loads twice (72); an s32 c, or j reused as c,
-// lets combine see the zero extension (121, 224); slot as its declaration's
-// initializer, ahead of y (84).
-// 2026-11-06: the trail takes source.x / 2 as a local x (46 to 38). Left: the colour loop (lsrs 10 for lsls 16, lsrs 26, one copy of red, pointer in r0; 22), the trail's slot in r3 for r1 (10); slot before y, or green dropped for red twice (83), or ((u16)c >> 10) & 31 from an s32 c (86), all worse; also the burst's adds r7, r3, r2 (2), the model block's strip load (2). Settled 2026-11-06: the trail stores y before x (90 to 86), the model's mesh is set before scrollU (86 to 80), and the trail's slot is computed after startY (80 to 46). Tried for the colour loop, none better: s32 c with red = 31 then red &= c (134), c <<= 16 then (u32)c >> 26 (127: the shifts, but one shared mask), green computed and dropped (94, 123), (u16)c casts (88, 89).
-// Draft, differ 90 of 1034 (tla-en, 2026-11-05); 45 with slots and pool offsets normalized, 10 with registers blind too. Measured, not kept: s32 c = *color; c <<= 16; blue = ((u32)c >> 26) & 31; with (red << 10) | (red << 5) | blue gives the listing's shifts and clamp but one shared mask, no pooled 31 (168). The pooled 31 and the shifts have not been had together.
-// Draft, differ 90 of 1034 (tla-en, 2026-11-05); 45 with slots and pool offsets normalized, 10 with registers blind too. Blue's mask as a halfword gives the pooled 31 (98 to 90); (u16)(*color >> 10) still compiles to lsrs 10 where the listing has lsls 16, lsrs 26: combine knows the load is zero-extended. Hiding that with a tied empty asm moves the rest to 131.
-// Measured 2026-11-05 (tla-en): differ 98: the model's mesh and vertices are typed pointers, not void.
-// Measured 2026-11-05 (tla-en): 106 of 1034, unchanged. 280 + 300 typings of the colour loop's
-// blue: none gives lsls 16, lsrs 26 with ldrh and a pooled 31 without costing more elsewhere.
-// 2026-11-05: differ 106 of 1034 (tla-en). Green read, then set to red before the
-// clamps: count and later rows agree, but the colour loop still has lsrs 10 and a
-// copy for lsls 16, lsrs 26, so that loop is not settled.
-// 2026-11-05: differ 130 of 1034 (tla-en). Tried on the colour loop, none
-// giving lsls 16, lsrs 26: u16 and s16 locals with narrowing casts (165 to
-// 172), u16 red and blue (141, 168), a bitfield (148), a mask local (184), an
-// s32 local (181). Judgment's flash loop has the same shape: ldrh, lsls, lsrs
-// 26 and a pooled 31.
-// Draft, differ 142 of 1034, skeleton gap 34 (tla-en, 2026-11-01)
-//
-// BattleEffect_RunRisingDragonEnemy. Same instruction count, calls, control
-// flow and frame (116); no device. What is left is one wrong shift and a run of
-// reload registers it starts.
-// - The colour loop has asrs #26 where the listing has lsrs #26, and takes its
-//   pointer in r0 where the listing takes r4 (constants r6, r5). The pointer's
-//   r0 moves reload's rotation by one (mov r1, r8 for mov r0, r8), which
-//   accounts for most register differences from there to frame 134. The
-//   listing's value is read once as HImode: ldrh, lsls 16, lsrs 26, and a
-//   pooled 31 (HImode AND). (u16)((s16)*color >> 10) & 31 gives all of that but
-//   a signed shift. Tried for lsrs, none keeps the lsls: u16 or s16 or s32 c,
-//   s16 *color, (u16)*color, (u32)(c << 16) >> 26, a multi-set s32 value,
-//   BG_PLTT[i + 96]; a three-minute permute of the loop found nothing. In
-//   allocation r0 is free for the pointer here, so the listing has some reason
-//   to skip it (a lower-priority pseudo preferring r0 is the lead); nothing
-//   found.
-// - The model block stores vertices before kind and shade; the listing after.
-//   Statement moves, a six local and a late tex change nothing.
-// - The opening's second reload of victim, and the burst's adds r7, r3, r2
-// (here
-//   r2, r3), are ties: every cast spelling of the sum compiles the same.
-// - The trail's zero and base: settled 2026-11-06 by computing slot after
-//   startY; setting trail before i still costs (116 to 126).
-// Settled this round, each measured:
-// - blit is draw[2], for the word at sp+68.
-// - cells is a set-once constant, so reload fetches it into r0; indexing
-// through
-//   (struct Corner *)(cells + j) keeps j * 8 apart from y's j * 2, so y is a
-//   giv the inner loop hoists: the mov r3, sl copy and its spill at sp+12,
-//   which closes the frame. strip is set-once too.
-// - The x expression stays one expression, which is what puts it in r0, frees
-// r3
-//   for y's copy and gives r1 and r4 to j * 8 and j * 2018; 370 to 193.
-// - BattleEffect_LoadBlitter returns s32. The model's stores are in listing
-// order, except mesh before scrollU (2026-11-06).
-// - vertices is a local set once at the top; zero is set before the model is
-//   allocated; the sparks are separate pointers, one per loop; first is a
-//   variable, so (x * 4) * 28 multiplies by 28 after the shift.
-
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -475,7 +379,16 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
     model->texture = tex;
     tex->pixels = work->sheet;
     model->mesh = strip;
-    model->scrollU = 127 & ~(frame << 2);
+    {
+      s32 u = frame << 2;
+
+      /* FAKEMATCH(barrier): an empty asm that claims to read frame, giving
+       * frame's reload a fifth dependent, so sched2 takes it before the
+       * strip's pool load; without it, 2 of 1034 instructions differ in
+       * tla-en. */
+      asm("" : "+l"(u) : "l"(frame));
+      model->scrollU = 127 & ~u;
+    }
     Render_ResetTransformState();
     Func_080151e4(0x8000, 0x10000, 0x8000);
     Transform_Push();

@@ -1,6 +1,18 @@
-// Draft, differ 8 of 1361 (tla-en, 2026-11-08)
-// BattleEffect_RunMegiddo. All six editions measure 8 (tla-ja's copy is at
-// 0818ff00: pass that address). Left, three causes:
+// Draft, differ 4 of 1361 (tla-en, 2026-11-09)
+// 2026-11-09, 8 to 4: cause 3 below is closed by a tagged barrier, an empty
+// asm on frame * 2 that claims to clobber r3, so local-alloc gives the
+// temporary r2 (the gcse table then has 1111 insns, still in the good range
+// below). Left: causes 1 and 2. Tried for them this round, none below 4: an
+// asm on pair after `pair = (s32 *)req` (98) or after pair[1] (6: pair[1]
+// then goes to [sp, #120] and req[0] through r2); for the model copy, an asm
+// writing model right after the allocation or t (4: the copy then loses to
+// movs r3, #6), after model->kind (4: the kind store then passes movs r2, #0),
+// after any later store (8, 10), or also reading t (6 to 10); one writing t
+// (142). The counts (sched2, base form): the copy 7 dependents, t 5,
+// movs r3, #6 and movs r2, #0 4 each, all priority 174 or 173.
+// Before (2026-11-08, differ 8): BattleEffect_RunMegiddo. All six editions
+// measured 8 (tla-ja's copy is at 0818ff00: pass that address). Left, three
+// causes:
 // 1. req's first word (2 rows): the listing stores it as [sp, #116], the draft
 // through r2 (the call's argument). The direct store needs req as a DImode
 // struct: struct { s32 v[2]; } req; req.v[0] = req.v[1] = scale * 2; gives the
@@ -95,7 +107,8 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -112,13 +125,14 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
-void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
+void BattleEffect_SpawnObjects(s32 count, s32 resource,
+                               s32 mode); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                               s32 speedLimit, s32 velocityY, s32 percent);
+                                   s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
                                        s32 flags);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -126,7 +140,7 @@ void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                      s32 drag);
+                                          s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
@@ -142,7 +156,7 @@ s32 Trig_Cos(s32 angle);
 
 void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleEffect_StartTiledCanvas(s32 bgControl);
@@ -313,11 +327,15 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
     }
     if (frame == 0) {
       Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gData_02014000, 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gData_02014000, 0,
+                                 0);
       Resource_LoadAndDecompress((s32)&ResourceId_Data0E9, work->sheet, 0, 0);
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x800, 0, 0);
-      Resource_LoadAndDecompress((s32)&ResourceId_Data103, work->sheet + 0x1000, 1, 1);
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0CD, work->sheet + 0x2400, 1, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x800,
+                                 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data103, work->sheet + 0x1000,
+                                 1, 1);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0CD, work->sheet + 0x2400,
+                                 1, 0);
       Graphics_LoadGreyRamp();
       REG_BLDALPHA = 0x1010;
       if (!effect->side) {
@@ -394,7 +412,13 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       if (frame <= 63) {
         d = -16;
       } else if ((u32)(frame - 64) <= 7) {
-        d = frame * 2 - 144;
+        s32 twice = frame * 2;
+
+        /* FAKEMATCH(barrier): an empty asm on twice that claims to clobber r3,
+         * so local-alloc gives twice r2 as the listing has it; as
+         * d = frame * 2 - 144, 4 of 1361 instructions differ in tla-en. */
+        asm("" : "+l"(twice) : : "r3");
+        d = twice - 144;
       } else if ((u32)(frame - 72) <= 11) {
         d = 0;
       } else if (frame > 154) {
@@ -446,7 +470,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       target[4] = zero;
       work->transferMode = 2;
       work->transferValue = 50;
-      Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_Data148), 128);
+      Iwram_CopyWords((void *)BG_PLTT,
+                      Resource_GetTableEntry((s32)&ResourceId_Data148), 128);
     }
     if (frame > 154) {
       s32 d = 16 - (frame - 155) / 2;
@@ -492,7 +517,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       work->transferMode = 1;
       work->transferValue = 0x10101010;
     }
-    /* FAKEMATCH(temporary): f, a copy of frame tested below; as frame > 1, 159 of 1361 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): f, a copy of frame tested below; as frame > 1, 159
+     * of 1361 instructions differ in tla-en. */
     f = frame;
     if (frame > 174) {
       Func_08164a4c(2, 2, 2);
@@ -579,7 +605,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
           n = 32;
         }
         i = 0;
-        /* FAKEMATCH(temporary): twice, frame * 2 kept apart; as scroll = frame * 3, 99 of 1361 instructions differ in tla-en. */
+        /* FAKEMATCH(temporary): twice, frame * 2 kept apart; as scroll = frame
+         * * 3, 99 of 1361 instructions differ in tla-en. */
         twice = frame * 2;
         angle = -0x4000;
         tilt = n * 384;
@@ -651,8 +678,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         s32 size = 1;
 
         Render_ProjectPoint(p, screen);
-        blit[0](canvas, sprites + gData_08197410[size - 1], screen[0], screen[1],
-             size, 4);
+        blit[0](canvas, sprites + gData_08197410[size - 1], screen[0],
+                screen[1], size, 4);
         p->y -= 2;
       }
     }

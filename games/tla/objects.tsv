@@ -1851,12 +1851,7 @@ main	rom_main_05	games/tla/src/field/map/cell_index	.text	ja en de
 main	rom_main_05	games/tla/src/field/map/cell_tag	.text	ja en de
 main	rom_main_05	games/tla/src/field/map/f0eabd0	.text
 main	rom_main_05	games/tla/src/field/map/f0eace8	.text	en de es fr it ja
-main	rom_main_05	recon/tla/ja/rom	.rom.000ead40	ja
-main	rom_main_05	recon/tla/it/rom	.rom.000eadf0	it
-main	rom_main_05	recon/tla/fr/rom	.rom.000efdf0	fr
-main	rom_main_05	recon/tla/es/rom	.rom.000f3df0	es
-main	rom_main_05	recon/tla/de/rom	.rom.000f7dfc	de
-main	rom_main_05	recon/tla/raw/080eadfc	.text	en
+main	rom_main_05	games/tla/src/field/map/f0eadfc	.text
 main	rom_main_05	games/tla/src/field/map/f0eaeb4	.text
 main	rom_main_05	games/tla/src/field/object/objfind	.text
 main	rom_main_05	games/tla/src/field/event_commands/effect_sprite	.text
@@ -2882,12 +2877,7 @@ main	rom_main_09	games/tla/src/battle_effect/f17c6ac	.text
 main	rom_main_09	games/tla/src/battle_effect/f17cc30	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f17d174	.text
 main	rom_main_09	games/tla/src/battle_effect/repeating_tilemap	.text
-main	rom_main_09	recon/tla/it/rom	.rom.0017d724	it
-main	rom_main_09	recon/tla/fr/rom	.rom.0017d724	fr
-main	rom_main_09	recon/tla/es/rom	.rom.0017d724	es
-main	rom_main_09	recon/tla/de/rom	.rom.0017d724	de
-main	rom_main_09	recon/tla/raw/0817d724	.text	en
-main	rom_main_09	recon/tla/ja/rom	.rom.0017d728	ja
+main	rom_main_09	games/tla/src/battle_effect/f17d724	.text
 main	rom_main_09	games/tla/src/battle_effect/variant_j	.text
 main	rom_main_09	games/tla/src/battle_effect/f17e0c0	.text	it
 main	rom_main_09	games/tla/src/battle_effect/f17e0c0	.text	fr
@@ -2960,12 +2950,7 @@ main	rom_main_09	games/tla/src/battle_effect/f189b14	.text	en
 main	rom_main_09	games/tla/src/battle_effect/summon_modes_3	.text
 main	rom_main_09	games/tla/src/battle_effect/f18a220	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/summon_modes_4	.text
-main	rom_main_09	recon/tla/it/rom	.rom.0018ad40	it
-main	rom_main_09	recon/tla/fr/rom	.rom.0018ad40	fr
-main	rom_main_09	recon/tla/es/rom	.rom.0018ad40	es
-main	rom_main_09	recon/tla/de/rom	.rom.0018ad40	de
-main	rom_main_09	recon/tla/raw/0818ad40	.text	en
-main	rom_main_09	recon/tla/ja/rom	.rom.0018ad44	ja
+main	rom_main_09	games/tla/src/battle_effect/f18ad40	.text
 main	rom_main_09	games/tla/src/battle_effect/f18b868	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/summon_modes_5	.text
 main	rom_main_09	games/tla/src/battle_effect/f18bc98	.text

@@ -1,4 +1,14 @@
 // Draft, differ 86 of 902 (tla-en, 2026-11-09)
+// 2026-11-09 (round 12), unchanged at 86. From --alloc: the + 15 copy (11
+// refs over 45, priority 0.733) is allocated before d (11 over 50, 0.660);
+// both prefer LO_REGS, the copy takes r7, d falls to ip, and reload spills
+// r7. d first needs 13 refs at its length (0.78) or 44 insns of life (0.75).
+// Refs are weighted by natural-loop depth (2 in the row, 3 in the column),
+// so one more use of d in the row would do; and since the copy's life lies
+// inside d's, no third pseudo can hold r7 against the copy but not d. Not
+// better: quad[1] as q + column + 17 (317: not reduced, q being r4), a + 17
+// (923), v + column + 17 (942), c + 1 (431); an input-only empty asm on d
+// after quad[1] (677).
 // 2026-11-09 (round 11), unchanged at 86: the twin f16dc50.c's form, a
 // block-local s32 bottom = v + 15 inside the quad block, reads 926 (a new
 // local renumbers the pseudos and resizes the frame); phase or height

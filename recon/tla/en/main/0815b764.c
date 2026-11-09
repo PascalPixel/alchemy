@@ -1,4 +1,14 @@
-// Draft, differ 40 of 1932 (tla-en, 2026-11-09)
+// Draft, differ 36 of 1932 (tla-en, 2026-11-09); 36 in every edition
+// 2026-11-09 (round 12), 40 to 36, no new device: a single-move search over
+// the ship-burst setup's statements (asm included) puts model->shade = 0
+// after model->vertices, so the shade's zero store no longer precedes the
+// giv inits (rows 1335 to 1338 now match). Left: the zero (shade and j share
+// r0 here; the listing builds shade's zero in r3 early and j's in r2 late:
+// j = 0 last, shade first gives exactly those two stores but 49 with one more
+// instruction, because the vertices' reload then rotates to r0 and t's init
+// reloads frame), the giv inits' frame * 3 (about 24), the 0x1c000 (4: a
+// function-level constant local for it reads 1259 to 1277) and the palette
+// step pair (2).
 // 2026-11-09 (round 11), unchanged at 40, a few attempts. The loop dump
 // lists the ship-burst givs in reverse discovery order, which is their init
 // order: t << 9, t << 11, -t * 512, -t, t * 3072, t * 3, t * 2, t; t * 2 and
@@ -824,7 +834,6 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       asm("" : : "r"(frame));
       model = Render_AllocateModelList(1);
       j = 0;
-      model->shade = 0;
       work->transferMode = 2;
       work->transferValue = 50;
       texture2.logWidth = 7;
@@ -834,6 +843,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       model->mesh = gData_08199364;
       model->kind = 7;
       model->vertices = verts;
+      model->shade = 0;
       for (; j != 2; j++) {
         s32 t = frame - 76 - j * 16;
 

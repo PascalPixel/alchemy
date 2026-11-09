@@ -1,4 +1,21 @@
-// Draft, differ 36 of 1122 (tla-en, 2026-11-09), no device; 36 in every edition
+// Draft, differ 18 of 1122 (tla-en, 2026-11-09), no device; 18 in every edition
+// 2026-11-09 (round 12), 36 to 18, no device. The cell buffer is one s32
+// cells for the whole function (set after work->transferValue, used by the
+// droplets, the 0xc1 load, the falling drops and the rings' texture): it
+// lives so long that global.c gives it no register, so reload rebuilds it
+// from the pool at each use, as the listing does (ldr r4 in the droplet
+// loop, ldr r1 for 0xc1, both rings pool words). The sums are written int
+// first, (u8 *)(offset + cells) and (u8 *)(circles[tier] + cells), for the
+// listing's operand order. The rings' setup stores then run pixels, kind,
+// texture, unk04, mesh, vertices, scrollU, scrollV (a single-move search over
+// the stores, 42 to 22), and cells set before blit[0] puts the FlashBurst
+// base's load after the 0xF8 arguments and the pool words in the listing's
+// order (22 to 18). Left: that load one row late (2: it comes after the bl,
+// where the listing loads it before; with cells set at the droplets it came
+// first, as it has three dependents to the id load's two), the tridents'
+// reset (4), and the sched2 ties below (12). Single-move searches over the
+// declarations, the setup statements, the glint and the tridents' bodies
+// find nothing further.
 // 2026-11-09 (round 11), unchanged at 36, about 10 attempts. The droplet
 // loop's gMapCellBuffer load is a loop.c movable judged not desirable
 // (threshold 17 x savings 1 x life 1 < 19 insns), and cse1 stops at the
@@ -322,6 +339,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
   s32 offset;
   s32 x;
   s32 grow; // Also each trident's first frame: one local, reused.
+  s32 cells; // The cell buffer's address, held for the whole function.
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -338,25 +356,24 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
                 BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   work->transferMode = 2;
   work->transferValue = 50;
+  cells = (s32)gMapCellBuffer;
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   circles = (s16 *)(work->sheet + 0x4c56);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   offset = (s32)gMapCellBuffer;
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0F8, work->sheet + 0xc56, 0,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                             (u8 *)offset + 0x5000, 1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0F8, work->sheet + 0xc56, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, (u8 *)offset + 0x5000, 1, 0);
   offset = 0x2400;
   size = 2;
   // Twelve shaded droplets, 2 to 24 wide.
   for (i = 0; i != 12; i++) {
-    Func_0815b434(gMapCellBuffer + offset, size, 0x10000);
+    Func_0815b434((u8 *)(offset + cells), size, 0x10000);
     circles[i] = offset;
     offset += (i * 2 + 3) * size / 2;
     size += 2;
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, gMapCellBuffer, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, (u8 *)cells, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0FA, Data_02011000, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, Data_02011400, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
@@ -490,7 +507,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
             s32 tier = index >> 1;
 
             BattleEffectKernels_IntegrateVector2(p, 64, 0);
-            Func_0818caa8(Ram_MapCellBuffer + circles[tier], dropX, dropY, drop);
+            Func_0818caa8((u8 *)(circles[tier] + cells), dropX, dropY, drop);
           }
         }
       }
@@ -503,13 +520,13 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
       model = Render_AllocateModelList(1);
       texture.logWidth = 7;
       texture.logHeight = 7;
+      texture.pixels = (void *)cells;
       model->kind = 7;
       model->texture = &texture;
-      model->scrollU = 0;
       model->unk04 = 0;
       model->mesh = Data_08198ec4;
       model->vertices = vertices;
-      texture.pixels = Ram_MapCellBuffer;
+      model->scrollU = 0;
       model->scrollV = 0;
 
       // Eight rings of foam.

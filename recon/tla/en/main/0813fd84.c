@@ -1,4 +1,15 @@
 // Draft, differ 32 of 2579 (tla-en, 2026-11-09); 32 in every edition
+// 2026-11-09 (round 12), unchanged at 32. A reload trace of the object loop:
+// i's, scrollX's and the place pointer's reloads pick r0, r1, r2 at the
+// place stores, the i == 8 arm reloads only into its outputs, so the else
+// arm starts from last_spill_reg 2 and picks r0, r1, r2 (r3 to r6 busy). The
+// listing's r1, r2, r0 need last_spill_reg 0 there: one more pick after the
+// place stores, landing on r0 and leaving no code (a redundant reload of i
+// that reload_cse deletes would do it). Not better: 8 == i (32), i >= 8 (36),
+// place[2] before place[0] (48); single-move searches over the object loop's
+// statements and the frame's statements before it (32); over the blasts'
+// statements no valid order beats 32 (y -= r after the first blit reads 30
+// but changes the program).
 // 2026-11-09 (last stretch), 34 to 32, no device: the priority mask as one
 // byte expression, u8 x = ((s8 *)obj)[9] & -13, read through the signed byte
 // (the creation block's s8 mask is gone). The and is then QImode: its -13 is a

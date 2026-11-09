@@ -1,4 +1,11 @@
 // Draft, differ 34 of 3111 (tla-en, 2026-11-09)
+// Twelfth round, 9 November, unchanged at 34, not worked beyond a measure.
+// With shown = djinnList[j] the Djinn loop counts 79 insns in loop.c's first
+// pass and 76 in its second (848). scan_loop recounts after moving
+// invariants only when load_mems makes a register, so the first pass's
+// count is the one before any constant moves; at 68 the two-use masks
+// (0xf00, 0x3e0000: savings 2, life 2, 17 x 2 x 2 = 68) would move in that
+// same pass as well.
 // Eleventh round, 9 November, unchanged at 34, about 20 attempts. Note 1's
 // next: with shown = djinnList[j], ten one-constant locals set before the
 // loop (0xf00 and 0x3e0000 once per use, 0x5001, the 0, 0x10000, 0xff,

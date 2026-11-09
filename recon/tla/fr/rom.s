@@ -54,13 +54,6 @@ Func_0802b998:
 	.incbin "baserom.gba", 0x0004205e, 0x00000002
 	.section .rom.000421d6, "ax"
 	.incbin "baserom.gba", 0x000421d6, 0x00000002
-	.section .rom.000422c4, "ax"
-	.balign 4
-	.global Text_DrawPrefixedNumberAtOffset
-	.type Text_DrawPrefixedNumberAtOffset, %function
-	.thumb_func
-Text_DrawPrefixedNumberAtOffset:
-	.incbin "baserom.gba", 0x000422c4, 0x000000a0
 	.section .rom.000425ca, "ax"
 	.incbin "baserom.gba", 0x000425ca, 0x00000002
 	.section .rom.00045342, "ax"

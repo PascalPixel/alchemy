@@ -1,11 +1,8 @@
 // Draft, differ 0 of 74 (tla-en, 2026-11-08); re-measured 2026-11-08 by
-// --symbol: ja and de 74, es, fr and it 76, all differ 0. Ready for tla-es,
-// tla-fr and tla-it only, but not through the tool: adopt main must include
-// English (adopt edition needs an adopted object), and English must stay on
-// its listing for the pool word below. By hand: this file without its header
-// as games/tla/src/window/f042274.c, an objects.tsv row for it in es, fr and
-// it in place of each one's rom.s section for Text_DrawPrefixedNumberAtOffset
-// (as field/f021a84 is linked in fr and it only), English's raw row kept.
+// --symbol: ja and de 74, es, fr and it 76, all differ 0. Spanish, French and
+// Italian link this C as games/tla/src/window/f042274.c (2026-11-09, by hand:
+// adopt main must include English). English, German and Japanese stay on their
+// listings for the pool word below.
 // Earlier: every instruction matches in
 // all six editions, and tla-es, tla-fr and tla-it match byte for byte (their
 // form sets both halfwords in the branches and pools no 0xf01e; compiled for

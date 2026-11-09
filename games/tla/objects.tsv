@@ -704,9 +704,7 @@ main	rom_main_02	recon/tla/fr/rom	.rom.000421d6	fr
 main	rom_main_02	recon/tla/es/rom	.rom.000421f2	es
 main	rom_main_02	recon/tla/de/rom	.rom.000421da	de
 main	rom_main_02	games/tla/src/window/render	.text
-main	rom_main_02	recon/tla/it/rom	.rom.000422d8	it
-main	rom_main_02	recon/tla/fr/rom	.rom.000422c4	fr
-main	rom_main_02	recon/tla/es/rom	.rom.000422e0	es
+main	rom_main_02	games/tla/src/window/f042274	.text	es fr it
 main	rom_main_02	recon/tla/de/rom	.rom.000422c8	de
 main	rom_main_02	recon/tla/raw/08042274	.text	en
 main	rom_main_02	recon/tla/ja/rom	.rom.000423b8	ja

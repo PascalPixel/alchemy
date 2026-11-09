@@ -5,10 +5,9 @@
 /// menu_internal.h holds what every part shares; the code is in the files under
 /// menu/, included here in the order it has in the ROM. Camelot's own files are
 /// not recoverable: the ROM shows one object, and these parts are ours, cut
-/// where The Broken Seal's are. The object ends at ItemMenu_HideAllIcons: in
-/// the German, French, Spanish and Italian editions a recon/ scaffold follows
-/// it, so the rest of the item menu and of the bank stay objects of their own
-/// until it matches.
+/// where The Broken Seal's are. The object ends at ItemMenu_HideAllIcons, or
+/// at Func_08104484 in the editions that have it; the rest of the item menu
+/// and of the bank are still objects of their own.
 
 #include "menu_internal.h"
 

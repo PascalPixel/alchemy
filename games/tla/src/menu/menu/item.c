@@ -832,3 +832,17 @@ void ItemMenu_HideAllIcons(void) {
     }
   }
 }
+
+#if TLA_PATCH_2
+/// Hides the item icons in every fifth slot, 0 to 30, after a trade.
+void Func_08104484(void) {
+  struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuRuntime;
+  s32 slot;
+
+  for (slot = 0; slot <= 31; slot++) {
+    struct WindowSprite *icon = menu->entryIcons[slot];
+    if (icon != 0 && slot % 5 == 0)
+      icon->active = 13;
+  }
+}
+#endif

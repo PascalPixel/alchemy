@@ -1268,10 +1268,6 @@ main	rom_main_06	games/tla/src/gamepak/far_call/uiicon_2
 main	rom_main_06	games/tla/src/gamepak/far_call/table_39
 main	rom_main_06	games/tla/src/gamepak/far_call/table_40
 main	rom_main_06	games/tla/src/menu/menu	.text
-main	rom_main_06	recon/tla/it/rom	.rom.000fa484	it
-main	rom_main_06	recon/tla/fr/rom	.rom.000fc494	fr
-main	rom_main_06	recon/tla/es/rom	.rom.00100478	es
-main	rom_main_06	recon/tla/de/rom	.rom.00104484	de
 main	rom_main_06	games/tla/src/menu/item/close	.text
 main	rom_main_06	games/tla/src/menu/item/redraw_category	.text
 main	rom_main_06	games/tla/src/menu/item/f0fa870	.text	en de es fr it ja

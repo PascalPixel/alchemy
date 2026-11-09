@@ -8,6 +8,7 @@
 #include "io_reg.h"
 #include "irq.h"
 #include "dma.h"
+#include "irq_lock.h"
 
 /// A link cable packet: its packet number, the consoles not yet heard from,
 /// its checksum and a 24-byte payload.
@@ -160,19 +161,18 @@ static __inline__ void Serial_ResetTransferState(void) {
   u32 saved;
   u32 zero;
 
-  /* FAKEMATCH: the blocks preserve IME write order; the repeated state
-   * assignment keeps its allocation priority above the IME pointer. */
+  state = &gSerialTransfer;
+  ime = &REG_IME;
+  IME_SAVE(ime, saved);
+  IME_DISABLE(ime);
+  zero = 0;
+  /* FAKEMATCH(dead): state set again; as the one assignment above, 14 of 62
+   * instructions differ in tbs-en (BattleArena_ExchangePartyRecords). */
+  state = &gSerialTransfer;
+  // An empty once-only loop ends CSE's block, so the stores take zero's
+  // register rather than the constant; without it, 29 of 62 instructions differ
+  // in tbs-en (BattleArena_ExchangePartyRecords).
   do {
-    state = &gSerialTransfer;
-    ime = &REG_IME;
-  } while (0);
-  do {
-    saved = *ime;
-    *ime = (u16)ime;
-  } while (0);
-  do {
-    zero = 0;
-    state = &gSerialTransfer;
   } while (0);
   state->status = 0x80;
   gSerialSendSource = zero;

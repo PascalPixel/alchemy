@@ -46,13 +46,6 @@ void Camera_InitializeDefaultTransform(void) {
 
   transfer.x = 0;
   transfer.y = 0;
-  {
-    struct BattleCamera *result = state;
-    transfer.z = state->distance;
-    Iwram_TransformVector(&transfer, (s32 *)result);
-    /* FAKEMATCH: canceling XORs keep the state pointer live across the call;
-     * without them the unpinned result changes two instruction rows. */
-    state->distance ^= 1;
-    state->distance ^= 1;
-  }
+  transfer.z = state->distance;
+  Iwram_TransformVector(&transfer, (s32 *)state);
 }

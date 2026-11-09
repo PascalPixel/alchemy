@@ -59,13 +59,7 @@ void Func_081b3294(void) {
   }
 
   dma = REG_DMA0;
-  {
-    /* FAKEMATCH(temporary): the control read before the mask's constant,
-     * with the barrier; as dma[5] &= ~DMA_START_TIMING_DRQ_REPEAT, 2 of 106
-     * instructions differ in tla-en. */
-    u16 control = dma[5];
-    dma[5] = control & ~DMA_START_TIMING_DRQ_REPEAT;
-  }
+  dma[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
   dma[5] &= ~DMA_ENABLE;
   (void)dma[5];
   // One halfword at each HBlank (repeating, destination reloaded).

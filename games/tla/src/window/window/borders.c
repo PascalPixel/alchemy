@@ -320,42 +320,39 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
 /// the screen (tiles 0, 15, 30 by 6), creating the window first if it is not
 /// open; a message that decodes to nothing shows nothing.
 void Message_Show(s32 message) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
-  struct UiMessageSlot *slot = Ram_HeapSlots->unk84[4];
+  s32 entry;
+  struct UiMessageSlot *slot;
+  struct Window *previous;
   struct Window *window;
-  /* FAKEMATCH(pin): the entry held in r8, copied from r0 only after the
-   * result is cleared; as a plain local, 2 of 69 instructions differ in
-   * tla-en. */
-  register s32 entry asm("r8");
+  struct WindowWork *work;
   s32 result;
 
+  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  slot = Ram_HeapSlots->unk84[4];
+  // Default: 0 until the message starts; the same zero clears a new window's
+  // cursor.
+  result = 0;
   // The menu state reads 2 while the message decodes.
   work->menuState = 2;
-  {
-    s32 decoded = Message_Decode(message, 1);
-    u16 present;
-
-    work->menuState = 1;
-    present = work->entries[decoded];
-    result = 0;
-    entry = decoded;
-    if (present == 0)
-      return;
-  }
-  if (slot->window == NULL) {
-    window = Window_Create(0, 15, 30, 6, 10);
-    slot->window = window;
-    Func_0803a2b0(0, 15, 30, 6, 1);
-    slot->cursor = result;
-  } else {
-    window = slot->window;
-  }
-  if (window != NULL) {
-    result = (s32)BattleMessage_Continue(window, entry, slot->cursor);
-    slot->result = result;
-    slot->cursor = 0;
-    if (result == 0)
-      Window_Close(window, 1);
+  entry = Message_Decode(message, 1);
+  work->menuState = 1;
+  if (work->entries[entry] != 0) {
+    previous = slot->window;
+    if (previous == NULL) {
+      window = Window_Create(0, 15, 30, 6, 10);
+      slot->window = window;
+      Func_0803a2b0(0, 15, 30, 6, 1);
+      slot->cursor = result;
+    } else {
+      window = previous;
+    }
+    if (window != NULL) {
+      result = (s32)BattleMessage_Continue(window, entry, slot->cursor);
+      slot->result = result;
+      slot->cursor = 0;
+      if (result == 0)
+        Window_Close(window, 1);
+    }
   }
 }
 

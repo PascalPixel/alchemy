@@ -8,17 +8,14 @@
 
 void Menu_DrawSelectionRow(s32 arg, s32 value, s16 *sub);
 
-s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *modeArg) {
-  /* FAKEMATCH(pin): the field pointer in r0, where the native keeps it; as
-   * the plain parameter, 32 of 165 instructions differ in tla-en (gInput's
-   * address takes r0). */
-  register s16 *mode asm("r0") = modeArg;
-
+s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
   if (gInput.repeat & KEY_A)
     return -1;
   if (gInput.repeat & KEY_B)
     return -2;
-  if ((gInput.repeat & KEY_DOWN) || (gInput.repeat & KEY_UP)) {
+  if (gInput.repeat & KEY_DOWN) {
+    *mode ^= 1;
+  } else if (gInput.repeat & KEY_UP) {
     *mode ^= 1;
   } else if (gInput.repeat & KEY_RIGHT) {
     if (*mode == 0) {

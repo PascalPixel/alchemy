@@ -23,8 +23,9 @@ void Func_080d784c(void) {
   u32 scene = 0xfff;
   s32 id;
 
-  /* FAKEMATCH(barrier): the form kept; as scene &= raw without the asm, 57 of
-   * 107 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): the 0xfff mask through an empty asm, so it is moved
+   * to r10 and the event masked there before the flag test's argument is
+   * built; without it, 57 of 107 instructions differ in tla-en. */
   asm("" : "+r"(scene));
   scene &= raw;
   if (GameFlag_Test(0x109) != 0 && flags == 0) {

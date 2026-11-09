@@ -81,10 +81,9 @@ void Func_080e6400(void) {
       picture = work->picture;
       vram = (u8 *)OBJ_VRAM0 + work->pictureTile * TILE_SIZE_4BPP;
       Func_080e62f4(work->tiles, picture, work->timer + 14);
-      /* FAKEMATCH(signature): the heap copy of Render_CopyStrided, void
-       * elsewhere (UploadFn), called as returning a pointer, so the call sets
-       * r0 and the later r0 move depends on it; as void, 2 of 596
-       * instructions differ in tla-en. */
+      // The heap copy of Render_CopyStrided called as returning the source
+      // pointer it leaves in r0, which moves picture to r0 after the width's
+      // 32; called as void, 2 of 596 instructions differ in tla-en.
       ((const u8 *(*)(const u8 *, s32, s32, void *))Ram_HeapSlots->unk4c[2])(
           picture, 32, 32, vram);
       sprite = &work->pictureSprite;

@@ -103,8 +103,8 @@ s32 Func_0802a124(struct Actor *object) {
       leftPosition.z = object->z;
       Vector_AddPolarOffset(0x80000, direction + 0x1555, &leftPosition);
       rightPosition.x = object->x;
-      /* FAKEMATCH(temporary): y read into its own local; read in the block,
-       * 2 of 470 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): y read into its own local before the block; as
+       * object->y read in the block, 2 of 470 instructions differ in tla-en. */
       y = object->y;
       // The right probe's y stored in a once-only block; as the plain store,
       // 50 of 470 instructions differ in tla-en.

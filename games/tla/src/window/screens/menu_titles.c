@@ -424,8 +424,6 @@ void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
   u8 *dst;
   s32 i;
   u32 index;
-  u32 vram;
-  s32 offset;
 
   decoded = (GlyphTransfer *)HeapSlot_Alloc(68, sizeof(*decoded));
   font = Resource_GetTableEntry((u32)&ResourceId_CommandIcons);
@@ -445,19 +443,8 @@ void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
     }
     *dst++ = palette->slot[index];
   }
-  // The native copies the tile index down, loads the VRAM base and only then
-  // shifts the index; plain C shifts before the load (differ 2). Three barriers
-  // keep that order: one barrier on the base alone swaps r1 and r2 (differ 6),
-  // and the offset as its own barrier-held value puts them back.
-  /* FAKEMATCH: keeps the index copy first (differ 2 without) */
-  __asm__("" : : "l"(tile));
-  vram = 0x06004000;
-  /* FAKEMATCH: keeps the base load before the shift (differ 2 without) */
-  __asm__("" : : "r"(vram));
-  offset = tile * 64;
-  /* FAKEMATCH: keeps the offset in r1 and the base in r2 (differ 6 without) */
-  __asm__("" : : "r"(offset));
-  Dma_Set(remapped, (void *)(offset + vram), DMA_COPY_WORDS(256), REG_DMA3);
+  Dma_Set(remapped, BG_CHAR_BLOCK(1) + tile * 64, DMA_COPY_WORDS(256),
+          REG_DMA3);
   Heap_Release(remapped);
   HeapSlot_Release(68);
 }

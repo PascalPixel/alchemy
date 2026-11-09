@@ -140,7 +140,8 @@ extern const u8 Data_081991a4[];
 
 static inline s32 ClearWords(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_ClearWords, 14 of 1101 instructions differ in tla-en. */
+   * Iwram_ClearWords, 14 of 1101 instructions of BattleEffect_RunSerac differ
+   * in tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 

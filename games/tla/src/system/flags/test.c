@@ -65,22 +65,12 @@ void GameFlag_ClearBit(s32 flag) {
 }
 
 u32 GameFlag_Toggle(s32 flag) {
-  s32 bit;
   s32 mask;
   u8 *bytes;
   s32 value;
 
-  bit = 7;
+  mask = 1 << (7 & flag);
   bytes = gGameFlagBytes;
-  /* FAKEMATCH: Without it the flag base loads after the mask is built (differ
-   * 2); keep that load before the and. */
-  __asm__("" : : "r"(bytes));
-  bit &= flag;
-  mask = 1;
-  /* FAKEMATCH: Keeps the 1 after the and; naming the base again keeps it in r2
-   * and the mask in r1 (differ 16 without). */
-  __asm__("" : : "r"(mask), "r"(bytes));
-  mask <<= bit;
   flag = ((u32)flag << 20) >> 23;
   bytes[flag] ^= mask;
   value = bytes[flag] & mask;

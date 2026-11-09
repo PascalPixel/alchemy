@@ -14,13 +14,16 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   u32 ime;
   u32 *slot;
 
-  /* FAKEMATCH: the one-pass block and the loop on a zero local keep the IME
-   * save through slot's register, as in ☀️; with the slot's address taken at
-   * its declaration, 2 instructions differ in tla-en. */
+  // The save in a once-only block loads REG_IME's address after the stack
+  // frame is made, and a loop on a zero local stores it through slot before
+  // IME is cleared; without them, 8 of 54 instructions differ in tla-en.
   do {
     u16 *imeReg;
     s32 once;
 
+    /* FAKEMATCH(temporary): a pointer to ime, which keeps the save in a stack
+     * slot stored through r6; as ime directly, 33 of 54 instructions differ
+     * in tla-en. */
     slot = &ime;
     imeReg = (u16 *)&REG_IME;
     once = 0;

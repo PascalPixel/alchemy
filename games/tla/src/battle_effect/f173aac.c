@@ -872,7 +872,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
 
         i = 0;
         twice = frame * 2;
-        // Index first, as a plain integer sum: the listing adds offset + base.
+        // Index first, as a plain integer sum: the add takes the offset first.
         p = (void *)((twice * 28) + (s32)work->particles);
         p->x = from.x / 2 << 16;
         p->y = (from.y + 8) << 16;

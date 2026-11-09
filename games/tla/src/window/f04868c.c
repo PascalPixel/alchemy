@@ -276,9 +276,9 @@ s32 Func_0804868c(s32 member) {
   work->dirty = 1;
 
   for (;;) {
-    struct DjinnMenuOam *sprite = &cursorSprite;
     /* FAKEMATCH(temporary): sprite holds &cursorSprite; as cursorSprite used
      * directly, 417 of 1246 instructions differ in tla-en. */
+    struct DjinnMenuOam *sprite = &cursorSprite;
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow ||
         redraw != 0) {

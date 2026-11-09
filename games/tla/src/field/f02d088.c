@@ -59,10 +59,9 @@ void Func_0802d088(s32 region, s32 gradual) {
 
         q->count = count + 1;
         offset *= sizeof(u32);
-        /* FAKEMATCH(barrier): an empty asm keeps the tint load after the
-         * offset's scaling; as the same push with no asm (or as
-         * IO_WRITE_QUEUE_PUSH(0x4000054, (u16)work->tint, 0x20000)), 2 of
-         * 210 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): an empty asm keeps the tint's load after the
+         * offset's scaling; without it, 2 of 210 instructions differ in
+         * tla-en. */
         asm("");
         entry = (u32 *)((u8 *)q->entries + offset);
         *entry++ = (u16)work->tint;

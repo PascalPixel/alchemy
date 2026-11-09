@@ -50,17 +50,11 @@ s32 VramCache_AllocateBlocks(u32 slot, u32 size) {
 }
 
 s32 VramCache_GetLongestFreeRun(void) {
+  s32 run = 0;
   u8 *marker = gResourceBlockOwners;
-  s32 run;
-  s32 longest;
-  /* FAKEMATCH: the count takes r2 and the run r1; unpinned, the barrier below
-   * swaps them (differ 18), and without the barrier the pin alone schedules the
-   * count's first half ahead of the table load (differ 2) */
-  register s32 remaining asm("r2");
+  s32 longest = 0;
+  s32 remaining = VRAM_BLOCK_COUNT;
 
-  run = 0;
-  longest = 0;
-  remaining = VRAM_BLOCK_COUNT;
   do {
     if (*marker++ != VRAM_BLOCK_OWNER_FREE) {
       run = 0;
@@ -99,19 +93,15 @@ s32 VramCache_FreeBlocks(s32 resourceId) {
   if ((u32)resourceId >= VRAM_CACHE_ENTRY_COUNT)
     return -1;
   marker = gResourceBlockOwners;
-  /* FAKEMATCH: the plain order sets up the count before the marker. */
-  __asm__("" : "+r"(marker));
   emptyMarker = VRAM_BLOCK_OWNER_FREE;
-  /* FAKEMATCH: the plain order sets up the count before the marker. */
-  __asm__("" : "+r"(marker));
   remaining = VRAM_BLOCK_COUNT;
   do {
     if (*marker == resourceId) {
       *marker = emptyMarker;
       clearedCount++;
     }
-    marker++;
     remaining--;
+    marker++;
   } while (remaining != 0);
   if (clearedCount != 0)
     return -1;
@@ -156,14 +146,7 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
   s32 offset;
   void *dst;
 
-  {
-    struct VramBlockCacheEntry *table = gResourceTableEntries;
-
-    /* FAKEMATCH: the empty asm reading the address gives its load another
-     * dependent, so it comes before the copy of no to r5. */
-    asm("" : "+l"(no) : "l"(table));
-    entry = &table[no];
-  }
+  entry = &gResourceTableEntries[no];
   if (no >= VRAM_CACHE_ENTRY_COUNT)
     return 0;
   if (size > 8192)

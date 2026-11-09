@@ -36,9 +36,9 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 flags,
   output->kind = 1;
   output->active = 1;
   WindowSprite_AppendToList((struct WindowSpriteList *)input, output);
-  /* FAKEMATCH: the barrier after the call keeps the list argument's copy
-   * (mov r0, r8) after the last stores; without it the copy comes three
-   * stores earlier (differ 2). */
+  /* FAKEMATCH(barrier): an empty asm after the call keeps the list argument's
+   * copy (mov r0, r8) after the last stores; without it, 2 of 63 instructions
+   * differ in tla-en. */
   __asm__ volatile("");
   return output;
 }
@@ -182,19 +182,15 @@ void Window_FillFromScene(void *dst) {
   u8 *scene = Ram_HeapSlots->windowTiles;
 
   if (scene == 0) {
-    /* FAKEMATCH: the fill value is pinned to the r3 it takes, which loads it
-       from the pool before the buffer's address is formed; a plain Dma_Fill16
-       forms the address first (one reordered pair, differ 2). */
-    register u16 value asm("r3") = 0xe0e0;
-
-    Dma_Fill16(value, dst, 0x140);
+    Dma_Fill16(0xe0e0, dst, 0x140);
   } else {
     void (*code)(void *, void *);
 
     RamCode_Load(code, Tile_BuildCellPicturesCode, Tile_BuildCellPicturesCodeSize);
     code(dst, scene + 8);
-    /* FAKEMATCH: the barrier keeps the second argument's add ahead of the
-       first argument's copy; without it they trade places (differ 2). */
+    /* FAKEMATCH(barrier): an empty asm after the call keeps the second
+       argument's add ahead of the first argument's copy; without it, 2 of 50
+       instructions differ in tla-en. */
     asm("");
     Heap_Release(code);
   }

@@ -5,7 +5,7 @@
 // Shape, as in Func_0819574c: the corner pointers are formed inside the face
 // loop so loop.c hoists them past its guard, faces are indexed so the face
 // pointer is loop.c's copy at sp+8, and after the sort the corners are read
-// from ax at offsets. The declaration order gives the native's stack slots.
+// from ax at offsets. The declaration order sets the stack slots.
 // ax is spelled as an integer sum: &vertices[vertexCount] adds its operands
 // the other way round (one more instruction differs).
 #include "types.h"
@@ -108,7 +108,7 @@ void Func_08195a9c(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
     Iwram_TransformVector(&vertices[i], &vertices[i]);
 
   for (i = 0; i != faceCount; i++) {
-    // As an integer sum: the native adds the scaled count first.
+    // As an integer sum, so the scaled count is added first.
     ax = (s32 *)(vertexCount * 4 + (s32)vertices);
     bx = &vertices[vertexCount + 3];
     cx = &vertices[vertexCount + 6];
@@ -228,8 +228,8 @@ void Func_08195a9c(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
           vA += dvA;
           /* FAKEMATCH(dead): edge B's values stepped on though nothing reads
            * them again; flow deletes both, and cse2 then stores uv[0] to uB
-           * ahead of uA, as the native does; as no steps, 4 of 966 instructions
-           * differ in tla-en. */
+           * ahead of uA; without them, 4 of 966 instructions differ in
+           * tla-en. */
           uB += duB;
           vB += dvB;
         }

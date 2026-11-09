@@ -121,17 +121,17 @@ void Func_080e5d5c(void) {
     scene->z = caster->z;
     Vector_AddPolarOffset(lift, scene->facing, &scene->x);
   } else if (child->motionFlags & 4) {
-    /* FAKEMATCH(dead): a store the line after next overwrites; its test
-     * builds 300 in a reload register, the one pick before scene's reload
-     * for the y store, which sends scene to r4 and the 0x200000 to r0; as
-     * the function without it, 12 of 639 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): lift cleared under a test of the ground's height, a
+     * store the line after next overwrites, which sends scene to r4 and the
+     * 0x200000 to r0 for the y store; without it, 12 of 639 instructions
+     * differ in tla-en. */
     if (child->terrainHeight == 300)
       lift = 0;
     scene->y = child->terrainHeight;
     lift = child->y - child->terrainHeight + 0x200000;
   }
   if (scene->enabled != 0) {
-    // As x != -1 this splits the -1 and loses the listing's mvns.
+    // As x != -1 this splits the -1 and loses the mvns.
     spot = ~Func_080cda84(scene->fieldKind, caster, &scene->x);
     inReach = (u32)(-spot | spot) >> 31;
     if (inReach == 1) {

@@ -137,10 +137,11 @@ s32 Func_08108b70(void) {
   s32 unitId;
   s32 capacitySlot;
   s32 removedCount;
+  /* FAKEMATCH(dead): both A-button tests also store into key, which nothing
+   * reads; as if (gInput.pressed & 1) at both, 8 of 540 instructions differ in
+   * tla-en. */
   s32 key;
 
-  /* FAKEMATCH(dead): both A tests store into key, never read; as plain
-     `if (gInput.pressed & 1)`, 8 of 540 instructions differ in tla-en. */
   shop->itemWindow = 0;
   shop->moneyWindow =
       Window_CreateFar(MONEY_WINDOW_X, 7, MONEY_WINDOW_WIDTH, 4, 2);

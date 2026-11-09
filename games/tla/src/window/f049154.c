@@ -193,7 +193,7 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
 
     y = index * 2;
     /* FAKEMATCH(barrier): an empty asm after the row, which keeps it and the
-     * zero ahead of the stores; without it, 12 of 984 instructions differ in
+     * zero ahead of the stores; without it, 6 of 984 instructions differ in
      * tla-en. */
     asm("");
     sprite = &sprites[index];
@@ -249,6 +249,8 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
   orderedSummons[orderedCount] = SUMMON_END;
 
   for (;;) {
+    /* FAKEMATCH(temporary): cur holds &cursorStorage; as cursorStorage used
+     * directly, 277 of 984 instructions differ in tla-en. */
     cur = &cursorStorage;
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {

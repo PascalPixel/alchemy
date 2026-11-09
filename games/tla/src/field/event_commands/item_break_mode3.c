@@ -12,9 +12,6 @@ struct Actor *BattleEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
                                                    s32 angle) {
   struct Actor *object;
   s32 scale;
-  /* FAKEMATCH: the limit's first byte is pinned to the r2 the native builds it
-   * in; as a free temporary it takes r3 and the scale r2 (differ 30). */
-  register s32 limit asm("r2");
 
   Sound_PlayFar(138);
   object = Actor_Spawn(278, x, y, z);
@@ -31,13 +28,8 @@ struct Actor *BattleEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
         object->scaleX = scale;
         object->angle += 0x2000;
         wait(1);
-        limit = 255;
         scale = object->scaleX;
-        /* FAKEMATCH: the native starts the 0xffff limit, loads the scale, then
-         * finishes the limit; as a constant the load comes after its shift
-         * (differ 2). */
-        asm volatile("" : "+l"(limit));
-      } while (scale <= (limit << 8) + 255);
+      } while (scale <= 0xffff);
     }
     object->angle = angle;
   }

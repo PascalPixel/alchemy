@@ -204,9 +204,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   REG_BG2PA = 0x100;
 
   // Mode 1: the user leaps and flashes; the streams lean the user's way.
-  /* FAKEMATCH(temporary): tested through direction so that CSE keeps the mode
-   * reload in this arm; as if (mode == 1), 2 of 1681 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(temporary): mode tested through its copy in direction, so CSE
+   * keeps the mode reload in this arm; as if (mode == 1), 2 of 1591
+   * instructions differ in tla-en. */
   direction = mode;
   if (direction == 1) {
     struct MotionObject *user = GetBattleObjectSlotFar(effect->actor)->object;
@@ -336,10 +336,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
         Ram_HeapSlots->transitionWork;
     s32 transferMode = 3;
 
-    /* FAKEMATCH(temporary): the transfer mode set before the blitter build,
-     * so its 3 stays in r6 across the call as the native keeps it; as
-     * work->transferMode = 3 after the call, 36 of 1681 instructions differ
-     * in tla-en. */
+    /* FAKEMATCH(temporary): the transfer mode's 3 set in transferMode before
+     * the blitter build, so it stays in r6 across the call; as
+     * work->transferMode = 3, 16 of 1591 instructions differ in tla-en. */
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 32;
     Func_08196404(HEAP_BLITTER, 8, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
@@ -355,23 +354,33 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     frame = 0;
     do {
       s32 angle = frame << 8;
-      /* FAKEMATCH(pin): the frame count in r2, so the division's temporary
-       * stays apart; as a plain local, 10 of 1681 instructions differ in
-       * tla-en. */
-      register s32 count asm("r2") = work->frame;
-      /* FAKEMATCH(pin): the work's copy in r0, where the line pointer starts;
-       * as a plain local, 12 of 1681 instructions differ in tla-en. */
-      register u8 *base asm("r0") = (u8 *)work;
-      s32 heat = count / 4;
+      s32 count = work->frame;
+      u8 *base = (u8 *)work;
+      s32 dividend;
+      s32 heat;
       u16 *line;
       s32 size;
       s32 x;
       s32 y;
 
-      /* FAKEMATCH(barrier): count read and base passed through an empty asm,
-       * keeping count's load apart from the division; as no asm, 11 of 1681
+      /* FAKEMATCH(temporary): the division written out on a copy of count,
+       * which it tests and biases; as heat = count / 4, 4 of 1591 instructions
+       * differ in tla-en. */
+      dividend = count;
+      /* FAKEMATCH(dead): updates that cancel out end CSE's knowledge of count,
+       * so the test reads the copy; without them, 4 of 1591 instructions
+       * differ in tla-en. */
+      if (base) {
+        count++;
+        count--;
+      }
+      if (dividend < 0)
+        dividend += 3;
+      heat = dividend >> 2;
+      /* FAKEMATCH(barrier): count and base through an empty asm clobbering r1
+       * and r3, so count keeps r2 and base takes r0; without it, 67 of 1591
        * instructions differ in tla-en. */
-      asm("" : "=r"(base) : "0"(base), "r"(count));
+      asm("" : "=r"(base) : "0"(base), "r"(count) : "r1", "r3");
       line = HEAT_LINES(base);
 
       if (mode == 1) {
@@ -384,18 +393,22 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       {
         s32 hold;
 
-        /* FAKEMATCH(barrier): hold takes r7 across the call, so heat takes r4
-         * and the native's sp+8 caller-save around the cue; as no asm on hold,
-         * 336 of 1681 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): hold set by an empty asm takes r7 across the
+         * call, so heat takes r4 and its sp+8 save; without hold, 336 of 1591
+         * instructions differ in tla-en. */
         asm("" : "=r"(hold));
-        /* FAKEMATCH(barrier): r6 clobbered around the cue; as no clobber, 350
-         * of 1681 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): an empty asm that clobbers r6 before the call;
+         * without it, 336 of 1591 instructions differ in tla-en. */
         asm("" : : : "r6");
         if (frame == 0)
           Sound_PlayFar(SE_STREAMS);
-
-        /* FAKEMATCH(barrier): hold's use, the other half of the asm above. */
-        asm("" : : "r"(hold));
+        /* FAKEMATCH(dead): updates of hold that cancel out, under a test of
+         * hold, keep it live across the call; without them, 336 of 1591
+         * instructions differ in tla-en. */
+        if (hold) {
+          hold++;
+          hold--;
+        }
       }
 
       // The heat palette: black at the top and bottom, rising through red
@@ -404,18 +417,17 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
         *line++ = 0;
       for (; i != 135; i++) {
         s32 green = i - 16;
-        s32 red = green;
-        /* FAKEMATCH(pin): level in r2, where unpinned it swaps registers with
-         * the quotient; as a plain local, 42 of 1681 instructions differ in
-         * tla-en. The quotient keeps the explicit bias of the other game's
-         * form. */
+        s32 quarter = green / 4;
+        s32 level = quarter + heat;
+        s32 red;
 
-        register s32 level asm("r2");
-
-        if (green < 0)
-          red += 3;
-        red >>= 2;
-        level = red + heat;
+        /* FAKEMATCH(dead): updates of quarter that cancel out, under a test of
+         * quarter, keep it live past level's sum, so level takes r2; as level =
+         * quarter + heat alone, 18 of 1591 instructions differ in tla-en. */
+        if (quarter) {
+          quarter++;
+          quarter--;
+        }
         red = level - 32;
         green = level - 80;
 

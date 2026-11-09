@@ -97,10 +97,8 @@ s32 Func_0810abf0(void) {
   chooseAgain = 0;
   unitId = 0;
 #else
-  // Italian draft, differ 4 of 660 bytes in tla-it (8 November 2026): the
-  // zero stored to memberIndex takes r5 for r0 here and r3 for r5 after the
-  // windows. Its FAKEMATCH(temporary), firstMessage, carries the prompt's
-  // message into the first call; as the plain message, 26 differ.
+  // Italian draft, 8 of 282 instructions differ in tla-it: the zero stored to
+  // memberIndex takes r5 for r0 here and r3 for r5 after the windows.
   // XXX: what keeps the later zero apart; cse2 (not cse1) turns
   // priceWindow = NULL into a copy of this zero's pseudo, which addressof made
   // for memberIndex, so the zero lives in r5 across the windows (diff 8 of
@@ -142,6 +140,9 @@ s32 Func_0810abf0(void) {
   // Round 8 (9 November), still 8. On the 25 form: the three later zeros in
   // other orders 24 or 25 (unitId's reload still finds no zero to inherit),
   // unitId = memberIndex 40, both from priceWindow 25.
+  /* FAKEMATCH(temporary): firstMessage carries the prompt's message into the
+   * first call; as Func_0810a9ac((s32)MsgWhoShallIRevive), 42 of 282
+   * instructions differ in tla-it. */
   firstMessage = (s32)MsgWhoShallIRevive;
 #endif
   // DEAD: memberIndex is set again after the price window before any read.
@@ -149,9 +150,9 @@ s32 Func_0810abf0(void) {
   redraw = 1;
   {
     s8 *partyAction = &shop->partyAction;
-    /* FAKEMATCH(temporary): partyAction read through a pointer to it; as
-     * serviceKind = shop->partyAction, 4 of 297 instructions differ in tla-en.
-     */
+    /* FAKEMATCH(temporary): partyAction read through a pointer to it, so
+     * memberIndex's 0 is stored before it is read; as serviceKind =
+     * shop->partyAction, 4 of 297 instructions differ in tla-en. */
     serviceKind = *partyAction;
   }
 #if SERVICE_PRICE_WINDOW
@@ -255,7 +256,8 @@ loop:
   }
   {
     s32 count = shop->partyMemberCount;
-    /* FAKEMATCH(temporary): the count copied into count before the call; as
+    /* FAKEMATCH(temporary): the member count read into a local of its own, so
+     * it loads before memberIndex's address is set; as
      * Func_08108690(&memberIndex, shop->partyMemberCount, 4), 2 of 297
      * instructions differ in tla-en. */
     redraw = Func_08108690(&memberIndex, count, 4);

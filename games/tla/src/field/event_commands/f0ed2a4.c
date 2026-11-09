@@ -165,16 +165,16 @@ s32 Func_080ed2a4(s32 mode) {
       if ((input->repeat & 8) && gliding == 0) {
         Func_080ec1d0(&screenX, &screenY);
         *cursorX = screenX << 16;
-        /* FAKEMATCH(dead): input reset to the &gInput it already holds; as
-         * without the reset, 57 of 548 instructions differ in tla-en. */
+        // DEAD: input set again to the &gInput it already holds; the ROM keeps
+        // the reload.
         input = &gInput;
         *cursorZ = screenY << 16;
         gliding = 1;
       }
       if (!(keys->held & 8) && gliding == 1) {
         *cursorX = *wayX;
-        /* FAKEMATCH(dead): input reset to the &gInput it already holds; as
-         * without the reset, 61 of 548 instructions differ in tla-en. */
+        // DEAD: input set again to the &gInput it already holds; the ROM keeps
+        // the reload.
         input = &gInput;
         *cursorZ = Data_0202a650;
         gliding = 0;

@@ -91,14 +91,16 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_EndCanvasLayer(void);
 
 static inline s32 ClearWords(void *destination, s32 size) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_ClearWords, 2 of 386 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the sheet's clear through this inline; as a direct
+   * call to Iwram_ClearWords, 2 of 386 instructions of Func_0817e698 differ
+   * in tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 4 of 386 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the palette copies through this inline; as direct
+   * calls to Iwram_CopyWords, 4 of 386 instructions of Func_0817e698 differ
+   * in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 

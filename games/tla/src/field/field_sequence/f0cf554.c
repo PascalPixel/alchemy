@@ -75,8 +75,8 @@ void Func_080cf554(void) {
       y = object->y;
       z = object->z;
     }
-    /* FAKEMATCH(temporary): the form kept; as dx = (x - originX) >> 16 and dz
-     * likewise, 2 of 193 instructions differ in tla-en. */
+    // Both differences are taken before either is shifted; shifted as each is
+    // taken, 2 of 193 instructions differ in tla-en.
     dx = x - originX;
     dz = z - originZ - y;
     dx >>= 16;

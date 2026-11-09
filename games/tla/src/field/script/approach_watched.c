@@ -19,25 +19,12 @@ s32 Actor_ApproachWatchedActor(struct Actor *object) {
   s32 deltaXPixels;
   s32 remainingDistance;
   s32 moveX;
-  /* FAKEMATCH(pin): the watched object held in the r2 the native keeps it in;
-   * as a plain local, 15 of 65 instructions differ in tla-en. */
-  register struct Actor *watchedObject asm("r2");
+  struct Actor *watchedObject;
 
   watchedObject = object->watchedObject;
   object->speedLimit = watchedObject->speedLimit;
   object->acceleration = watchedObject->acceleration;
-  {
-    /* FAKEMATCH(temporary): the object's x in its own variable, which ⚓️
-     * loads before the watched object's; as object->x in the subtraction
-     * with no barrier, 2 of 65 instructions differ in tla-en. */
-    s32 objectX = object->x;
-
-    /* FAKEMATCH(barrier): the empty asm that holds the temporary's load
-     * ahead; as the temporary alone, 9 of 65 instructions differ in
-     * tla-en. */
-    asm volatile("" : "+l"(objectX));
-    dx = watchedObject->x - objectX;
-  }
+  dx = watchedObject->x - object->x;
   dz = watchedObject->z - object->z;
   deltaXPixels = dx >> 16;
   deltaZPixels = dz >> 16;

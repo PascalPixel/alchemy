@@ -31,16 +31,12 @@ static const struct SoundTestCues sSoundTestCues = {{0, 80, 100}};
 /// the commands 0, 78 and 390.
 // As ☀️'s SoundTest_Run (games/tbs/src/sound/sound.c).
 void Func_081c1014(void) {
-  /* FAKEMATCH(temporary): the cues' address loaded before sp is copied for
-   * the array, through an empty asm on it (barrier); as s32 cues[3] = {0,
-   * 80, 100}, 2 of 145 instructions differ in tla-en. */
-  const struct SoundTestCues *initial = &sSoundTestCues;
   struct SoundTestCues cues;
   s32 preset;
   s32 row;
   s32 timer;
 
-  cues = *initial;
+  cues = sSoundTestCues;
   row = 0;
   preset = 3;
   // The store in a once-only block, after preset's setup and before the

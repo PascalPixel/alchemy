@@ -174,10 +174,13 @@ void LuckyDice_Run(void) {
   s32 groundPoint[3];
   s32 screen[3];
   s32 unused[8];
-  u16 affineA;
-  u16 affineB;
-  u16 affineC;
-  u16 affineD;
+  // volatile: four halfwords stored to sp+166..160 and each reloaded with ldrh,
+  // the form the bytes prove; as plain u16 locals, 888 of 2055 instructions
+  // differ in tla-en.
+  volatile u16 affineA;
+  volatile u16 affineB;
+  volatile u16 affineC;
+  volatile u16 affineD;
   s32 spinRate[2];
   s32 flashTimer[2];
   s32 luckyNumbers[2];
@@ -224,14 +227,6 @@ void LuckyDice_Run(void) {
   s32 pairCount;
   s16 affineScale;
 
-  /* FAKEMATCH(dead): the four affine halfwords' addresses taken, so each is
-   * stored to sp+166..160 and reloaded with ldrh, as The Broken Seal's
-   * LuckyDice_Run keeps them; as plain u16 locals, 894 of 2055 instructions
-   * differ in tla-en. */
-  (void)&affineA;
-  (void)&affineB;
-  (void)&affineC;
-  (void)&affineD;
   HeapSlot_Alloc(100, 0x60e);
   spritePalette = HeapSlot_Alloc(96, 0x200);
   diceWork = HeapSlot_AllocEwram(92, 0x7b7c);

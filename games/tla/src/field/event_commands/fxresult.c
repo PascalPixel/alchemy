@@ -29,9 +29,10 @@ void Func_080e0978(s32 value) {
     work->failed = 1;
   } else {
     state->valueD32 = value;
-    /* FAKEMATCH: the ARM9 scheduling would load the first result before storing
-     * the value. */
-    __asm__("");
+    // An empty once-only loop keeps the first result's load after the value's
+    // store; without it, 4 of 34 instructions differ in tla-en.
+    do {
+    } while (0);
     state->valueD33 = first;
     state->valueD31 = second;
   }

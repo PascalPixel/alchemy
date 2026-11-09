@@ -205,16 +205,7 @@ void SelectionScreen_BuildEntries(u32 unused) {
   }
 
   // Icons are 16 pixels apart: the row is centred on x 100, at y 140.
-  {
-    s32 offset = rowPosition * 8;
-    /* FAKEMATCH(pin): the 100 a halfword pinned to r3 behind a barrier, so it
-     * loads from the pool before the offset of baseX is built; as
-     * screen->baseX = 100 - rowPosition * 8, 2 of 130 instructions differ in
-     * tla-en. */
-    register u16 left asm("r3") = 100;
-
-    screen->baseX = left - offset;
-  }
+  screen->baseX = 100 - rowPosition * 8;
   screen->baseY = 140;
   // The count is reused as a pixel offset while the row is placed.
   for (previous = screen->head, rowPosition = 0; previous != 0;
@@ -1525,7 +1516,9 @@ void UiTextResource_SetPosition(struct TextResourcePosition *obj, s32 arg1,
                                 s32 arg2) {
   obj->index = arg1;
   obj->kind = arg2;
-  /* FAKEMATCH: the native stores the index before it loads the slot kind. */
+  /* FAKEMATCH(barrier): an empty asm keeps the index's store ahead of the
+   * depth argument (mov r1, #252); without it, 2 of 13 instructions differ in
+   * tla-en. */
   __asm__("");
   Oam_AddSpriteAtDepth((s32 *)obj, 0xFC);
 }

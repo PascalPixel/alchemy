@@ -236,7 +236,7 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
 
     y = i * 2;
     /* FAKEMATCH(barrier): an empty asm after the row, which keeps it and the
-     * zero ahead of the stores; without it, 12 of 817 instructions differ in
+     * zero ahead of the stores; without it, 10 of 817 instructions differ in
      * tla-en. */
     asm("");
     iconSprite = &sprites[i];
@@ -256,6 +256,8 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
   Func_08049a04(0xf019, 0x211);
 
   for (;;) {
+    /* FAKEMATCH(temporary): iconSprite holds &cursor; as cursor used directly,
+     * 304 of 817 instructions differ in tla-en. */
     iconSprite = &cursor;
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;

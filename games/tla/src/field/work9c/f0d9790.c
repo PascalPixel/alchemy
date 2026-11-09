@@ -65,9 +65,9 @@ s32 Func_080d9790(s32 index, s32 x, s32 y, s32 z) {
     i = segments + 1;
     do {
       i += -1;
-      /* FAKEMATCH(barrier): an empty asm reading the counter, which copies it
-       * for the compare ahead of the store; as the plain counted loop, 2 of 225
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm reading the counter in a low register,
+       * which copies it for the compare ahead of the store; without it, 2 of
+       * 225 instructions differ in tla-en. */
       asm("" : : "l"(i));
       *cursor++ = node;
       node = node->next;

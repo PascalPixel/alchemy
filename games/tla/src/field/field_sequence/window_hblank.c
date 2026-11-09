@@ -15,30 +15,15 @@ void BattleEffect_StartWindowHBlankDma(void) {
   s32 in;
   s32 out;
   s32 other;
-  s32 dispHigh;
 
   work = Ram_HeapSlots->screenTransition;
   src = work->pages[work->page];
   channel = REG_DMA0;
   // Stop the previous transfer before priming the first line's registers.
-  {
-    u16 control;
-
-    /* FAKEMATCH(temporary): REG_DISPCNT's high bits start in a variable of
-     * their own, after the page load as the native does; as
-     * `REG_DISPCNT |= ...`, 2 of 68 instructions differ in tla-en. */
-    dispHigh = 128;
-    /* FAKEMATCH(temporary): DMA 0's control read into its own variable for
-     * the barrier below; as `channel[5] &= ~DMA_START_TIMING_DRQ_REPEAT`, 2
-     * of 68 instructions differ in tla-en. */
-    control = channel[5];
-    channel[5] = control & ~DMA_START_TIMING_DRQ_REPEAT;
-  }
+  channel[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
   channel[5] &= ~DMA_ENABLE;
   (void)channel[5];
-  // REG_DISPCNT
-  dispHigh <<= 19;
-  *(volatile u16 *)dispHigh |= DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
+  REG_DISPCNT |= DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   // The load in a once-only block comes before the register address is
   // built; as the plain load, 2 of 68 instructions differ in tla-en.
   do {
@@ -46,6 +31,9 @@ void BattleEffect_StartWindowHBlankDma(void) {
   } while (0);
   REG_WININ = in;
   src++;
+  /* FAKEMATCH(temporary): WINOUT's value read into out before the register
+   * address is built; as REG_WINOUT = *src, 10 of 68 instructions differ in
+   * tla-en. */
   out = *src;
   REG_WINOUT = out;
   src++;

@@ -85,12 +85,13 @@ retry:
   return 0;
 found:
   {
-    /* FAKEMATCH(pin): the object in r0 ahead of the target's words; as a plain
-     * argument, 2 of 188 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the object moved to r0 before the target's words load;
+     * as a plain local, 2 of 188 instructions differ in tla-en. */
     register struct Actor *moved asm("r0") = (struct Actor *)object;
 
-    /* FAKEMATCH(barrier): an empty asm after the pin, which holds it ahead; without
-     * it, 2 of 188 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): the empty asm holding the pin above, which keeps the
+     * move ahead of the loads; without it, 2 of 188 instructions differ in
+     * tla-en. */
     asm("");
     Actor_SetMoveTarget(moved, pos.x, pos.y, pos.z);
   }

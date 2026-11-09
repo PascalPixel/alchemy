@@ -78,9 +78,9 @@ loop:
   {
     struct MapWork *view = slots->mapWork;
     s32 *leader;
-    /* FAKEMATCH: needed to match: an integer field cursor keeps the view load
-     * order; reusing it for the height x argument keeps the leader in r2.
-     * Separate temporaries differ by 14 instructions. */
+    /* FAKEMATCH(temporary): one integer cursor for the stores and the x keeps
+     * the leader in r2; as a u32 * cursor and an x of its own, 16 of 79
+     * instructions differ in tla-en. */
     u32 attr;
     s32 z;
 

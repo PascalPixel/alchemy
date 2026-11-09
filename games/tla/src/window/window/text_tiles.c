@@ -547,14 +547,7 @@ void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
   *counter = zero;
   Message_Decode(arg0, 1);
   canvas->entries[*counter] = zero;
-  {
-    /* FAKEMATCH(pin): the mask pinned to the r2 it takes, so it loads from
-     * the pool before the count is reread; as a plain constant, 4 of 49
-     * instructions differ in tla-en. */
-    register u16 mask asm("r2") = UI_TEXT_ENTRY_COUNT - 1;
-
-    *counter = (*counter + 1) & mask;
-  }
+  *counter = (*counter + 1) & (UI_TEXT_ENTRY_COUNT - 1);
   Text_DrawWideStringAtOffset(canvas->entries, (struct Window *)arg1, arg2,
                               arg3);
 }

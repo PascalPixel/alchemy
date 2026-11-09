@@ -81,19 +81,22 @@ void wait(s32 frames);
 
 static inline s32 ClearWords(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_ClearWords, 14 of 1102 instructions differ in tla-en. */
+   * Iwram_ClearWords, 14 of 1102 instructions of Func_0813eb70 differ in
+   * tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 
 static inline s32 FillWords(void *destination, s32 size, u32 value) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_FillWords, 4 of 1102 instructions differ in tla-en. */
+   * Iwram_FillWords, 4 of 1102 instructions of Func_0813eb70 differ in
+   * tla-en. */
   return Iwram_FillWords(destination, size, value);
 }
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 47 of 1102 instructions differ in tla-en. */
+   * Iwram_CopyWords, 47 of 1102 instructions of Func_0813eb70 differ in
+   * tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 

@@ -69,7 +69,8 @@ void Func_080e249c(void) {
   }
 
   for (i = 0; ids[i] != -1; i++) {
-    /* FAKEMATCH(wrapper): ids[Index(i)]; as ids[i], 18 of 160 instructions
+    /* FAKEMATCH(wrapper): ids[Index(i)], through an inline that returns i,
+     * so the id is read before the kind; as ids[i], 18 of 160 instructions
      * differ in tla-en. */
     s32 event = Func_080ce458(0x50000005, work->kind, ids[Index(i)]);
 

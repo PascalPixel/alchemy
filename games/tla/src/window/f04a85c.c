@@ -183,8 +183,10 @@ void Resource_ResetEntry(s32 slot);
   }
 
 s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
-  /* FAKEMATCH(signature): Oam_AddSpriteAtDepth declared returning s32; as
-   * void, 2 of 1647 instructions differ in tla-en. */
+  /* FAKEMATCH(signature): Oam_AddSpriteAtDepth declared returning s32, though
+   * it returns nothing, so the call sets r0 and the marker's last attribute
+   * byte is stored before its address goes to r0; as void, 2 of 1647
+   * instructions differ in tla-en. */
   u16 candidateIds[8];
   struct TargetSprite cursorSprites[6];
   struct TargetTrack cursorTracks[6];
@@ -233,9 +235,9 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
   targetCount = 0;
   redraw = 0xffff;
   cursorSlot = VramCache_AllocEntry(256);
-  /* FAKEMATCH(dead): a null derived from selection, with no constant
-   * equivalence, keeps conditionWindow in a register; as conditionWindow =
-   * NULL, 492 of 1647 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): a null computed from selection, which the compiler cannot
+   * fold to a constant, keeps conditionWindow in a register; as
+   * conditionWindow = NULL, 492 of 1647 instructions differ in tla-en. */
   conditionWindow = (struct TargetWindow *)((u32)(u16)selection >> 16);
   if (spread == 0)
     spread = 1;
@@ -337,7 +339,7 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
 
   for (;;) {
     // A once-only block: its end keeps the tile reload after the sprite's
-    // words, as the listing schedules them.
+    // words.
     do {
       /* FAKEMATCH(temporary): firstSprite holds &cursorSprites[0]; as
        * cursorSprites used directly, 399 of 1647 instructions differ in tla-en.
@@ -572,9 +574,9 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
             if (unit->delusion != 0)
               count++;
 #if TLA_PATCH_2
-            /* FAKEMATCH(temporary): count read back through a pointer to it;
-             * as `count == 0`, 144 of 1748 instructions differ in tla-de
-             * (spill slots). */
+            /* FAKEMATCH(temporary): count read back through a pointer to it,
+             * which keeps count in its stack slot; as count == 0, 142 of 1748
+             * instructions differ in tla-de. */
             countAddress = &count;
 #endif
             if (unit->stun != 0)

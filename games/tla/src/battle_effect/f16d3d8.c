@@ -12,8 +12,9 @@
 
 // The pixel half of a 16.16 fixed-point value.
 static inline s16 *Fixed_Halves(s32 *value) {
-  /* FAKEMATCH(wrapper): the halves read through this inline; as the cast
-   * ((s16 *)&v)[1], 324 of 374 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the halves read through this inline; as the cast ((s16
+   * *)&v)[1], 324 of 374 instructions of BattleEffect_RunStoneJustice differ in
+   * tla-en. */
   return (s16 *)value;
 }
 #define HI(v) (Fixed_Halves(&(v))[1])

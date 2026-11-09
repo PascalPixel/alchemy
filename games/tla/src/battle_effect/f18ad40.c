@@ -431,8 +431,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       for (i = 0; i != 64; i++) {
         step = &work->particles[i];
         if (step->variant >= 0 && step->variant <= 63) {
-          // CARD_NOISE at its fixed address: reload builds the number here, as
-          // the listing's scratch registers show.
+          // CARD_NOISE at its fixed address: reload builds the number here.
           draw[0](canvas,
                   Ram_MapCellBuffer + 0x683e + ((step->variant / 4 & 3) << 10),
                   overflow + HI(step->x) - 16, HI(step->y) - 16, 32, 32);

@@ -81,8 +81,8 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect,
     palette = (s32)&ResourceId_PinkBurstSheet;
   else if (mode == 3) {
     palette = (s32)&ResourceId_GlowOrbSheet;
-    /* FAKEMATCH(barrier): the empty asm keeps the mode-3 branch apart from the
-     * identical mode-1 branch; as plain C, 8 of 553 instructions differ in
+    /* FAKEMATCH(barrier): an empty asm keeps the mode-3 arm apart from the
+     * identical mode-1 arm; without it, 8 of 553 instructions differ in
      * tla-en. */
     asm("");
   } else if (mode == 1)

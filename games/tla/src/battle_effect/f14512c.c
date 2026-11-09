@@ -285,9 +285,9 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
 
   // Modes 3 and 5 clear both canvases and go on into a summon canvas effect.
   if (mode == 3 || mode == 5) {
-    /* FAKEMATCH(wrapper): the clears through an inline forwarder, whose
-     * parameter leaves 0x3c00 a constant each clear builds anew; as direct
-     * calls, 16 of 718 instructions differ in tla-en. */
+    /* FAKEMATCH(wrapper): both clears through ClearWords_, which builds the
+     * size anew for each; as direct Iwram_ClearWords calls, 16 of 718
+     * instructions differ in tla-en. */
     ClearWords_((void *)0x06004000, 0x3c00);
     ClearWords_(canvas, 0x3c00);
     Task_Remove(Palette_StepFadeTransfer);

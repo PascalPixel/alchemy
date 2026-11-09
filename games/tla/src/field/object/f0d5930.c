@@ -13,10 +13,10 @@ struct WorkA0Node *Func_080d5930(s32 *position) {
   work = WORK_A0;
   if (work == NULL)
     return NULL;
-  /* FAKEMATCH(barrier): the empty asm keeps the loop's set-up (the item
-   * pointer, the best distance, the count and the IWRAM entry) below the
-   * workspace test; as the plain early return, 31 of 84 instructions differ
-   * in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm keeps the loop's set-up (the item
+   * pointer, the best distance, the count and the IWRAM entry) after the
+   * workspace test, where if-conversion would hoist it; without it, 29 of 84
+   * instructions differ in tla-en. */
   asm("");
   item = work->items;
   best = 0x10000000;

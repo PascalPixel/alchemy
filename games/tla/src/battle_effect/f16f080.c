@@ -295,11 +295,13 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     model->kind = 7;
     model->mesh = Data_08199244;
     splash = 25000;
-    /* FAKEMATCH(barrier): asm("" : "+r"(splash)); as the plain splash = 25000
-       with no asm, 137 of 568 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm through splash hides its constant, so it
+     * stays in a register through the loop; without it, 137 of 568
+     * instructions differ in tla-en. */
     asm("" : "+r"(splash));
-    // A goto loop: no loop notes, so loop.c neither hoists the halving nor
-    // weights splash's refs by a third depth (with a for loop, 14).
+    // The loop is written with goto: as for (i = 0; i != 6; i++, drop++),
+    // loop.c hoists the halving of splash out of it, and 150 of 568
+    // instructions differ in tla-en.
     i = 0;
     drop = work->particles;
   nextSplash:

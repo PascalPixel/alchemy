@@ -84,7 +84,8 @@ typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
 
 static inline CopyWordsFn CopyWordsRoutine(void) {
   /* FAKEMATCH(wrapper): the routine fetched through this inline; as direct
-   * calls to Iwram_CopyWords, 4 of 1146 instructions differ in tla-en. */
+   * calls to Iwram_CopyWords, 4 of 1146 instructions of Func_0814fab8 differ in
+   * tla-en. */
   return Iwram_CopyWords;
 }
 
@@ -318,18 +319,17 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
 
         // The lights turn and close in two pixels a frame.
         if (frame > member * 8) {
-          /* FAKEMATCH(barrier): mode held by an empty asm in its high
-             register; as without it, 2 of 1146 instructions differ in
-             tla-en. */
+          /* FAKEMATCH(barrier): an empty asm through mode keeps it in a high
+           * register; without it, 2 of 1146 instructions differ in tla-en. */
           __asm__("" : "+h"(mode));
           LOAD_BLITTER(draw[0], flags, BLIT_MAX);
           Func_08196404(BLITTER_SLOT_ALTERNATE, 7, 7, flags, additive);
           {
             void **slot = &Ram_HeapSlots->unkb8[1];
 
-            /* FAKEMATCH(barrier): the slot's address held by an empty asm with
-               an output; as draw[1] = Ram_HeapSlots->unkb8[1], 32 of 1146
-               instructions differ in tla-en. */
+            /* FAKEMATCH(barrier): an empty asm through slot hides that it holds
+             * the heap slot's address; as draw[1] = Ram_HeapSlots->unkb8[1], 32
+             * of 1146 instructions differ in tla-en. */
             __asm__("" : "=r"(slot) : "0"(slot));
             draw[1] = (DrawRectangle)*slot;
           }

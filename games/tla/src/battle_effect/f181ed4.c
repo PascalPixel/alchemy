@@ -59,8 +59,8 @@ extern const u8 gData_08198c6c[];
 extern const u8 Data_08198df8[];
 
 static inline void CopyPalette(const void *palette) {
-  /* FAKEMATCH(wrapper): the palette copy through an inline; as the plain call,
-     4 of 513 instructions differ in tla-en. */
+  // Both palette copies go through this helper; as direct calls to
+  // Iwram_CopyWords, 4 of 513 instructions of Func_08181ed4 differ in tla-en.
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 }
 void BattleEffect_StartCanvasLayer(s32 bgControl);

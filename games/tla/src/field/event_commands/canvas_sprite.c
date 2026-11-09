@@ -34,9 +34,9 @@ void Func_080eb594(void) {
     Dma_Set(canvas, tiles, CANVAS_DMA, REG_DMA3);
     {
       s32 size = 128;
-      /* FAKEMATCH(pin): the canvas pinned to the r0 it is passed in, so
-       * its copy comes after the entry's load; as Iwram_FillWords(canvas,
-       * CANVAS_SIZE, 0), 2 of 98 instructions differ in tla-en. */
+      /* FAKEMATCH(pin): the canvas pinned to the r0 it is passed in, so its
+       * copy there comes before the size's shift; as a plain u8 *buffer, 2
+       * of 98 instructions differ in tla-en. */
       register u8 *buffer asm("r0");
       s32 (*fill)(void *, s32, u32);
 

@@ -192,8 +192,9 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         s32 blue;
 
         red &= entry;
-        /* FAKEMATCH(dead): green is taken and clamped, then never used; as no
-         * green at all, 61 of 1075 instructions differ in tla-en. */
+        /* FAKEMATCH(dead): green is taken and clamped, then never used, which
+         * keeps blue's (u16) cast as a shift pair; as no green at all, 61 of
+         * 1075 instructions differ in tla-en. */
         green = ((u16)entry >> 5) & 31;
         blue = ((u16)entry >> 10) & 31;
 
@@ -341,8 +342,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
           else
             y = 168 - age * 16;
         } else {
-          /* FAKEMATCH(dead): both arms alike, so effect->side is read again;
-           * as x = to.x / 2, 176 of 1075 instructions differ in tla-en. */
+          // DEAD: both arms alike; the ROM keeps the test of effect->side.
           if (effect->side == 0)
             x = to.x / 2;
           else

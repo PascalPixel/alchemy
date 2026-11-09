@@ -28,9 +28,9 @@ void Scene_AssignViewFlags(struct SceneRegionEntry *entry) {
   GameFlag_ClearBit(0x164);
   GameFlag_SetBit(0x165);
   while (entry->id != -1) {
-    /* FAKEMATCH: reading the flag through a u16 adds one loop
-       instruction, which keeps loop-invariant motion to the reference's
-       single hoisted bound address. */
+    /* FAKEMATCH(temporary): the flag read through a u16 copy, whose extra
+     * instruction keeps loop-invariant motion to one hoisted bound address;
+     * as s16 flag = entry->flag, 18 of 57 instructions differ in tla-en. */
     u16 raw = entry->flag;
     s16 flag = raw;
 

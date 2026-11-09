@@ -139,9 +139,8 @@ void Func_08126e00(void) {
     phase = 3 - ring->age / 8;
     if (phase >= 0) {
       ring->age++;
-      /* FAKEMATCH(barrier): an empty asm between `ring->age++;` and `draw(dest,
-       * (u8 *)work + Data_08129830[phase], ringX + 48, ringY + 48, 32,`, which
-       * keeps their instructions apart; as plain statements, 2 of 267
+      /* FAKEMATCH(barrier): an empty asm after the age's store, so
+       * Data_08129830's address loads after it; without it, 2 of 267
        * instructions differ in tla-en. */
       asm("");
       draw(dest, (u8 *)work + Data_08129830[phase], ringX + 48, ringY + 48, 32,

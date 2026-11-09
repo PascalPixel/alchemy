@@ -43,9 +43,9 @@ void Sound_SetFixedSampleFreq(u32 mode) {
     REG_TM0CNT_L = __divsi3(-140448, samples);
   } while (0);
   buffer = gData_02003a90;
-  /* FAKEMATCH: the clear goes through the inline wrapper Sound_ClearWords, as
-   * ☀️'s IWRAM call layer, so the entry's pool load comes after the size's shift
-   * (differ 2 called directly). */
+  /* FAKEMATCH(wrapper): the clear forwarded through Sound_ClearWords, so the
+   * entry's address loads after the size's shift; as Iwram_ClearWords(buffer,
+   * 0x18c0), 2 of 58 instructions differ in tla-en. */
   Sound_ClearWords(buffer, 0x18c0);
   m4aSoundVSyncOn();
   REG_DMA1SAD = (u32)buffer;

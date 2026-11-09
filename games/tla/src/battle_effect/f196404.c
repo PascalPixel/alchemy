@@ -122,8 +122,8 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
   u32 frame[34];
 
   src = BattleEffect_PatchTemplateCode;
-  /* FAKEMATCH(temporary): dst holds the block's size before its address; as
-   * HeapSlot_Alloc(slot, 436), 31 of 597 instructions differ in tla-en. */
+  // dst is reused for the block's size; as HeapSlot_Alloc(slot, 436), 31 of
+  // 597 instructions differ in tla-en.
   dst = (u32 *)436;
   dst = HeapSlot_Alloc(slot, (s32)dst);
 
@@ -355,8 +355,8 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
     register s32 count __asm__("r2") = words * 4;
     s32 size = count;
 
-    /* FAKEMATCH(barrier): an empty asm keeps words alive past count's set; as
-     * nothing, 6 of 597 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm that keeps words alive past count's
+     * set; without it, 6 of 597 instructions differ in tla-en. */
     __asm__("" : : "r"(words));
     Dma_Set(runCopy, dst, DMA_COPY_WORDS(count / 4), REG_DMA3);
     dst = (u32 *)((u8 *)dst + size);

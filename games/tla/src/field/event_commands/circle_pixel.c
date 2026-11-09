@@ -8,8 +8,8 @@ void BattleEffect_PlotCanvasPixel(s32 x, s32 y, s32 color);
 /// (63, 63): a radius (16.16) and an angle, the cosine leftward and the sine
 /// upward.
 void Func_080e7f94(s32 unused, s32 radius, s32 angle, s32 color) {
-  /* FAKEMATCH(pin): the angle fixed in r8, which leaves the multiply's entry in
-   * r10; as the plain parameter, 12 of 39 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the angle pinned to r8, which leaves the multiply's entry
+   * to r10; as angle itself, 12 of 39 instructions differ in tla-en. */
   register s32 turn asm("r8") = angle;
   s32 center = 63;
   s32 x = Iwram_MulQ16(Trig_Cos(turn), radius);

@@ -72,9 +72,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
   void *canvas;
   s32 i;
   s32 frame;
-  /* FAKEMATCH(dead): a pair, as the twin has, of which only draw[0] is used:
-   * the unused second word fills four bytes of the native stack frame; as one
-   * blitter, 82 of 552 instructions differ in tla-en. */
+  // Unused: draw[1] gives the stack frame its 4 bytes.
   DrawRectangle draw[2];
   u8 *sprites;
   struct EffectPosition pos;

@@ -48,10 +48,9 @@ void Func_081263fc(s32 mode, s32 resource, s32 level) {
     u32 offset = 0x100;
     void *vram;
 
-    /* FAKEMATCH(dead): as in The Broken Seal, cancelling updates under a test
-     * end CSE before the decoder's arguments, so the VRAM address loads
-     * before the data add; as decode(data + 0x100, (void *)0x06008000), 2 of
-     * 137 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): two updates that cancel, under a test that emits
+     * nothing, end a CSE block so the VRAM address loads before the data's
+     * add; without them, 2 of 137 instructions differ in tla-en. */
     if (session) {
       offset++;
       offset--;

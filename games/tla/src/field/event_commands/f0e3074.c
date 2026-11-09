@@ -72,14 +72,14 @@ void Func_080e3074(void) {
   blue = 31 << 10;
   for (j = 0; j < 16; j++) {
     c = j + 16;
-    /* FAKEMATCH(barrier): an empty asm between `c = j + 16;` and `*palette++ =
-     * (c << 5) | blue | c;`, which keeps their instructions apart; as plain
-     * statements, 2 of 713 instructions differ in tla-en. */
-    asm("");
+    // An empty once-only loop keeps c's add ahead of the colour's copy;
+    // without it, 2 of 713 instructions differ in tla-en.
+    do {
+    } while (0);
     *palette++ = (c << 5) | blue | c;
-    /* FAKEMATCH(barrier): an empty asm between `asm("");` and `}`, which keeps
-     * their instructions apart; as plain statements, 4 of 713 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm that ends the loop's body, which keeps
+     * the counters' updates after the colour's store; without it, 4 of 713
+     * instructions differ in tla-en. */
     asm("");
   }
   Func_080eb824();
@@ -163,9 +163,9 @@ void Func_080e3074(void) {
     work->to[2] = *(s16 *)(event + 0xd42) << 16;
     Task_Add(Func_080e2ec0, 0x480);
     while (work->state != 999) {
-      /* FAKEMATCH(barrier): an empty asm between `while (work->state != 999) {`
-       * and `if (frame == 30)`, which keeps their instructions apart; as plain
-       * statements, 2 of 713 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm that opens the wait loop, which keeps
+       * 999's copy to r8 ahead of the state's address; without it, 2 of 713
+       * instructions differ in tla-en. */
       asm("");
       if (frame == 30)
         Func_080e249c();
@@ -197,9 +197,9 @@ void Func_080e3074(void) {
     Task_Add(Func_080e2d64, 0x480);
     frame = 0;
     while (work->state != 999) {
-      /* FAKEMATCH(barrier): an empty asm between `while (work->state != 999) {`
-       * and `if (frame == 30)`, which keeps their instructions apart; as plain
-       * statements, 2 of 713 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm that opens the wait loop, which keeps
+       * 999's copy to r8 ahead of the state's address; without it, 2 of 713
+       * instructions differ in tla-en. */
       asm("");
       if (frame == 30)
         Func_080e249c();

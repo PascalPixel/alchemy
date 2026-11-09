@@ -93,9 +93,9 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
   }
   if (request->command == 10) {
     Func_0811d7e8(request, &battle->plan);
-    /* FAKEMATCH(barrier): an empty asm between `Func_0811d7e8(request,
-     * &battle->plan);` and `result = 0;`, which keeps their instructions apart;
-     * as plain statements, 2 of 421 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm after the call, so the plan's address
+     * is finished before request is copied to r0; without it, 2 of 421
+     * instructions differ in tla-en. */
     asm("");
     result = 0;
   } else {

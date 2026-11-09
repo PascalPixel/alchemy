@@ -104,9 +104,9 @@ void Func_080eb960(s32 objectId) {
     for (; i >= 0; i--, sprite++, spark++) {
       if (spark->age >= 0) {
         struct EffectSprite *drawn = sprite;
-        /* FAKEMATCH(barrier): an empty asm through drawn, which keeps it apart
-           from sprite; as the plain copy, 83 of 325 instructions differ in
-           tla-en. */
+        /* FAKEMATCH(barrier): sprite copied to drawn through an empty asm,
+           which keeps the two in registers of their own; as sprite itself (or
+           the plain copy), 83 of 325 instructions differ in tla-en. */
         asm("" : "=r"(drawn) : "0"(drawn));
 
         if ((u32)spark->age < SPARK_LIFE) {

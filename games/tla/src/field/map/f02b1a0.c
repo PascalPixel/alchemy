@@ -8,9 +8,11 @@ struct TilePos {
 
 void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
                                     u32 width, u32 height) {
-  /* FAKEMATCH(temporary): the twin's chains of temporaries set the registers
-   * and the schedule of the cell loop; as a plain body, 208 of 142 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(temporary): the cell's attribute bits and its BG map offset
+   * built through chains of copies (tmp3 to tmp15), which set the cell loop's
+   * registers and schedule; as The Broken Seal's
+   * MapGrid_CopyCellPictureIndicesRect writes them, each value assigned once,
+   * 158 of 142 instructions differ in tla-en. */
   u32 *src = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
   u32 *dst = (u32 *)Ram_MapCellBuffer + (dstY * 128 + dstX);
   struct MapLayer *layer = Ram_HeapSlots->mapWork->layers;

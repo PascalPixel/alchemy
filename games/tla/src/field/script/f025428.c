@@ -53,8 +53,8 @@ s32 Func_08025428(struct Actor *cameraObject) {
     } else {
       dx = (x - cameraObject->x) / Q16_ONE;
       /* FAKEMATCH(dead): this dy, overwritten below, ranks y above the bounds
-       * in global allocation and keeps it in r5 as native; without it, 54 of
-       * 228 instructions differ in tla-en. */
+       * in global allocation and keeps it in r5; without it, 54 of 228
+       * instructions differ in tla-en. */
       dy = (y - cameraObject->y) / Q16_ONE;
       dz = (z - cameraObject->z) / Q16_ONE;
       distance = Iwram_Sqrt(dx * dx + dz * dz) << 16;

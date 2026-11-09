@@ -154,15 +154,8 @@ s32 Text_SetString(const u8 *str) {
     do {
       *dst = *str;
       str++;
-      /* FAKEMATCH: the ARM9TDMI load schedule moves the count step after the
-       * next character's load and the entry step; native counts right after the
-       * store. */
-      __asm__ volatile("");
-      count++;
-      /* FAKEMATCH: this boundary keeps the next character's load ahead of the
-       * entry step, as native. */
-      __asm__ volatile("");
       dst++;
+      count++;
     } while (*str != 0);
   }
   work->entries[count] = 0;

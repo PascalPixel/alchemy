@@ -47,15 +47,15 @@ void Func_080d6f34(s32 withCue) {
   struct SparkParticleWork *work = HeapSlot_AllocEwram(116, 0x814);
   struct SparkParticle *particle = work->particles;
   volatile u32 fill;
-  /* FAKEMATCH: the register variable builds the fill word's zero in r1
-   * (differ 8 without it: it takes r3, set before the work pointer copy). */
+  /* FAKEMATCH(pin): the fill's zero held in r1, built after the copy of
+   * work; as a plain local, 8 of 100 instructions differ in tla-en. */
   register u32 zero asm("r1");
   u8 *tiles;
   u32 i;
   struct HeapSlots *slots;
-  /* FAKEMATCH: the register variable keeps the cleared word's zero set inside
-   * the loop on every pass and in r6 for the last blend register (differ 4
-   * without it). */
+  /* FAKEMATCH(pin): clear held in r6, which keeps its zero set inside the
+   * loop on every pass and ready for the last blend register; as a plain
+   * local, 4 of 100 instructions differ in tla-en. */
   register s32 clear asm("r6");
 
   zero = 0;
@@ -70,8 +70,9 @@ void Func_080d6f34(s32 withCue) {
   for (; i < 64; i++, particle++) {
     struct MapWork *view = slots->mapWork;
     s32 *focus;
-    /* FAKEMATCH: reusing the integer field cursor for the height's x argument
-     * keeps the stores in r1 (a word pointer with x of its own differs 18). */
+    /* FAKEMATCH(temporary): one integer cursor for the attribute stores and
+     * the height's x keeps the stores in r1; as an s32 * cursor and an x of
+     * its own, 18 of 100 instructions differ in tla-en. */
     u32 p;
     s32 z;
 

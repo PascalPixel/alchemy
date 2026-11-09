@@ -162,7 +162,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
   }
   palette = Resource_GetTableEntry(resource);
   /* FAKEMATCH(barrier): an empty asm between the picture's table entry and
-     its + 128; as palette = Resource_GetTableEntry(resource) + 128, 2 of 818
+     its + 128 copies the entry before the sheet is read; without it, 2 of 818
      instructions differ in tla-en. */
   asm("");
   palette += 128;

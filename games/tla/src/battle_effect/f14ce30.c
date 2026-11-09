@@ -205,12 +205,13 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
     if (frame >= 48 && frame <= 96) {
       s32 pose = (frame - 48) / 24 % 3;
 
-      /* FAKEMATCH(temporary): the argument held first, which orders the
-       * argument rows; as a direct argument, 2 of 1490 instructions differ in
-       * tla-en. */
+      /* FAKEMATCH(temporary): the left pose copied into left before the
+       * call's other argument is read; as a direct argument, 2 of 1490
+       * instructions differ in tla-en. */
       {
-        __typeof__(Data_081981fc[pose * 2]) held_ = Data_081981fc[pose * 2];
-        Animation_ApplyChildArgumentFar(work->objects[3], held_);
+        u8 left = Data_081981fc[pose * 2];
+
+        Animation_ApplyChildArgumentFar(work->objects[3], left);
       }
       Animation_ApplyChildArgumentFar(work->objects[4],
                                       Data_081981fc[pose * 2 + 1]);
@@ -553,9 +554,9 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
   HeapSlot_Release(HEAP_BLITTER);
   Func_081180e8(134);
   // Tear down.
-  /* FAKEMATCH(wrapper): the burst through an inline forwarder, whose parameter
-   * leaves 128 << 16 a constant set in argument order; as a direct call, 2 of
-   * 1490 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the burst through BurstAt_, whose parameter sets 128 <<
+   * 16 in argument order; as a direct Func_0816467c call, 2 of 1490
+   * instructions differ in tla-en. */
   BurstAt_(2, 128 << 16, height);
   for (i = 0; i != 8; i++)
     ResourceObject_ReleaseFar(work->objects[i]);

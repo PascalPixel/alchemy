@@ -201,9 +201,9 @@ s32 Func_081197f0(s32 enemyGroup) {
 
   if (GameFlag_Test(0x16c) != 0) {
     battle->twoSided = 1;
-    /* FAKEMATCH(barrier): an empty asm between `battle->twoSided = 1;` and
-     * `gMainRoutineWork.battleStart = 4;`, which keeps their instructions
-     * apart; as plain statements, 4 of 885 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm after the twoSided store, so
+     * battleStart's address is started after it; without it, 4 of 885
+     * instructions differ in tla-en. */
     asm("");
     gMainRoutineWork.battleStart = 4;
   }
@@ -331,9 +331,9 @@ s32 Func_081197f0(s32 enemyGroup) {
         if (enemyGroup == 80)
           Func_081197a8(80);
         if (actingUnit <= 7 && battle->defeated == 1) {
-          /* FAKEMATCH(barrier): an empty asm between `{` and
-           * `battle->defeatState = 3;`, which keeps their instructions apart;
-           * as plain statements, 2 of 885 instructions differ in tla-en. */
+          /* FAKEMATCH(barrier): an empty asm before the defeatState store,
+           * so battle's copy (mov r5, r9) comes before the 3; without it, 2
+           * of 885 instructions differ in tla-en. */
           asm("");
           battle->defeatState = 3;
         }

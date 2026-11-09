@@ -13,9 +13,9 @@ void Func_0815b634(void) {
   u16 flipped[64];
   s32 i;
 
-  /* FAKEMATCH(wrapper): both copies through an inline forwarder, so each builds
-   * its array's address anew; as direct calls, 19 of 39 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(wrapper): both copies through CopyWords_, so each builds its
+   * array's address anew; as direct Iwram_CopyWords calls, 19 of 39
+   * instructions differ in tla-en. */
   CopyWords_(saved, (void *)BG_PLTT, 128);
   for (i = 1; i != 64; i++)
     flipped[i] = saved[64 - i];

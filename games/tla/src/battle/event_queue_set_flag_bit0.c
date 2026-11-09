@@ -17,8 +17,7 @@ struct BattleObj *BattleObject_Get(s32 arg0);
 s32 BattleObject_MarkForRelease(s32 arg0);
 
 s32 BattleActor_DestroyTemporaryObject(s32 arg0) {
-  /* FAKEMATCH: the shared discard-only result type preserves the epilogue
-   * register choice. */
+  // UB: declared s32 but returns no value; no caller reads it.
   struct BattleUnit *creature;
   struct BattleObj *runtime;
 

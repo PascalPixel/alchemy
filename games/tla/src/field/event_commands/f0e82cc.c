@@ -144,9 +144,10 @@ void Func_080e82cc(void) {
       s32 control;
 
       control = 0x480;
-      /* FAKEMATCH(barrier): an empty asm between the control value and its store
-         to BG0's register; without it, 2 of 563 instructions differ in tla-en. */
-      asm("");
+      // An empty once-only loop keeps the register's address after the
+      // control value; without it, 2 of 563 instructions differ in tla-en.
+      do {
+      } while (0);
       REG_BG0CNT = control;
     }
     Resource_DecodeType01(

@@ -252,8 +252,8 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       texture.logHeight = 5;
       texture.pixels = work->sheet;
       /* FAKEMATCH(signature): RenderModel's kind and shade typed long, whose
-       * alias set lets sched2 store mesh and vertices first; as s32, as in
-       * every adopted RenderModel, 4 of 543 instructions differ in tla-en. */
+       * alias set lets sched2 store mesh and vertices first; as s32, as every
+       * other RenderModel has them, 4 of 543 instructions differ in tla-en. */
       model->kind = 6;
       model->mesh = buffer;
       model->vertices = projected;

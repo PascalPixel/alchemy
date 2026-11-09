@@ -11,9 +11,9 @@ void Func_08143354(void) {
   s32 row;
   s32 column;
 
-  /* FAKEMATCH(wrapper): both fills forwarded through FillWords_, which keeps
-   * each call's own constants, as the scene layer does; as direct
-   * Iwram_FillWords calls, 33 of 40 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): both fills through FillWords_, which sets each call's
+   * own constants anew; as direct Iwram_FillWords calls, 33 of 40 instructions
+   * differ in tla-en. */
   FillWords_((void *)map, 0x100, -1);
   map += 0x40;
   FillWords_((void *)map, 0x80, 0x03ff03ff);

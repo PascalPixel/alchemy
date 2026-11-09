@@ -81,26 +81,21 @@ void Func_080e4d9c(void) {
     red = 31;
     blue = 31 << 10;
     for (; i <= 31; i++) {
-      {
-        /* FAKEMATCH(temporary): the green term in a local of its own; as one
-         * expression, 2 of 950 instructions differ in tla-en. */
-        s32 green =
-            (((Trig_Sin((((u32)*frames >> 1) + i << 16) + 0x90000 >> 5) * 12) >>
-              16) +
-             16)
-            << 5;
-        /* FAKEMATCH(barrier): an empty asm between `s32 green =
-         * (((Trig_Sin((((u32)*frames >> 1) + i << 16) + 0x90000 >> 5) * 12) >>
-         * 16) + 16) << 5;` and `*palette++ = green | blue | red;`, which keeps
-         * their instructions apart; as plain statements, 2 of 950 instructions
-         * differ in tla-en. */
-        asm("");
-        *palette++ = green | blue | red;
-      }
-      /* FAKEMATCH(barrier): an empty asm between `}` and `}`, which keeps their
-       * instructions apart; as plain statements, 4 of 950 instructions differ
-       * in tla-en. */
-      asm("");
+      s32 green =
+          (((Trig_Sin((((u32)*frames >> 1) + i << 16) + 0x90000 >> 5) * 12) >>
+            16) +
+           16)
+          << 5;
+
+      // An empty once-only loop keeps the green term's shift ahead of blue's
+      // copy; without it, 2 of 950 instructions differ in tla-en.
+      do {
+      } while (0);
+      *palette++ = green | blue | red;
+      // An empty once-only loop that ends the body keeps i's update after the
+      // colour's store; without it, 4 of 950 instructions differ in tla-en.
+      do {
+      } while (0);
     }
   } else if (work->paletteMode == 2) {
     Dma_Set(Data_080f0fa0, (void *)0x050003e0, DMA_ENABLE << 16 | 0x10,

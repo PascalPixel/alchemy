@@ -31,9 +31,9 @@ void Func_0814cca8(void) {
   REG_DISPCNT = 1;
   gBgScroll[0].y = 32;
   BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
-  /* FAKEMATCH(wrapper): both fills forwarded through FillWords_, which keeps
-   * each call's own size; as direct Iwram_FillWords calls, 43 of 59
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): both fills through FillWords_, which sets each call's
+   * own size anew; as direct Iwram_FillWords calls, 43 of 59 instructions
+   * differ in tla-en. */
   FillWords_(buffer, 0x4000, 0);
   FillWords_((void *)0x06004000, 0x4000, 0);
   wait(1);

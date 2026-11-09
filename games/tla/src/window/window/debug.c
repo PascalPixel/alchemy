@@ -576,9 +576,9 @@ s32 Func_08041350(void) {
     if (result != 0) {
       column = (column + columns) % columns;
       row = (row + 9) % 9;
-      /* FAKEMATCH: the window's x through a halfword temporary copies the
-       * window out of r10 for each field; read in place it is copied once
-       * (differ 23). */
+      /* FAKEMATCH(temporary): the window's x read through a halfword
+       * temporary, which copies the window out of r10 for each field; as
+       * (s16)window->x in place, 23 of 261 instructions differ in tla-en. */
       left = window->x;
       x = (column * 7 + left) * 8 - 4;
       y = ((s16)window->y << 3) + (row << 4) + 12;

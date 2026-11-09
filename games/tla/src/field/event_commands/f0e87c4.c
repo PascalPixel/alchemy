@@ -138,9 +138,9 @@ void Func_080e87c4(void) {
     mote = work->motes;
     spark = work->sprites;
     for (i = 63; i >= 0; i--, spark++, mote++) {
-      /* FAKEMATCH(barrier): the index masks loaded inside the loop, where
-       * loop.c would hoist 0xfffffc00 into r9; as no asm, 36 of 226
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm that opens the loop's body, which
+       * keeps the index's 0xfffffc00 mask loaded inside the loop rather than
+       * hoisted to r9; without it, 36 of 226 instructions differ in tla-en. */
       asm("");
       if (mote->timer >= 0) {
         spark->oam.index = tile + (mote->timer & 3) * 2;

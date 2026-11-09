@@ -1,34 +1,20 @@
 #include "types.h"
 #include "actor.h"
+#include "fixed_math.h"
 
 /// Raises the object's scale in sixteenths to full size and commits its
 /// position.
 void BattleEffect_SnapScaleToFull(struct Actor *object) {
   s32 next;
   s32 scale;
-  s32 limit;
-  s32 step;
 
   if (object != NULL) {
-    limit = 0xff;
     scale = object->scaleX;
-    limit = (limit << 8) + 0xff;
-    if (scale <= limit) {
-      /* FAKEMATCH: the native copies the limit to ip for the loop; as a free
-       * temporary the bound shares r3 with the limit and the loop takes other
-       * registers (differ 21). */
-      register s32 bound asm("r12");
-
-      step = 0x1000;
-      /* FAKEMATCH: the step is kept in a register ahead of the copy, as the
-       * native hoists it; as a constant it is built around the copy (differ 4).
-       */
-      asm("" : "+l"(step));
-      bound = limit;
+    if (scale <= 0xffff) {
       do {
-        next = scale + step;
+        next = scale + Q16_ONE / 16;
         scale = next;
-      } while (next <= bound);
+      } while (next <= 0xffff);
       object->scaleX = next;
       object->scaleY = next;
     }

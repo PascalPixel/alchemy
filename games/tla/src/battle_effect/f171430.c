@@ -129,10 +129,9 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
   void *canvas;
   s32 frame;
   s32 i;
-  /* FAKEMATCH(dead): seven unused locals that raise camera's register
-   * number, so gcse's hash puts camera->pos after frame << 8 and their
-   * slots come out as the listing's; as no locals, 8 of 828 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(dead): seven locals nothing uses, which raise camera's
+   * register number so gcse's hash puts camera->pos after frame << 8; as no
+   * locals, 8 of 828 instructions differ in tla-en. */
   s32 unused1;
   s32 unused2;
   s32 unused3;
@@ -200,16 +199,15 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
 
   frame = 0;
   /* FAKEMATCH(dead): pos first takes the camera's look-at point, a store the
-   * loop's pos = &screen overwrites: gcse then copies camera->pos from here
-   * instead of inserting it after pos, as the listing orders the preheader; as
-   * the function without it, 16 of 828 instructions differ in tla-en. */
+   * loop's pos = &screen overwrites, so gcse copies camera->pos from here
+   * instead of inserting it after pos in the loop's preheader; without it, 16
+   * of 828 instructions differ in tla-en. */
   pos = (struct EffectPosition *)camera->pos;
   /* FAKEMATCH(dead): the texture's address, computed as center's address
-   * less 8 so that texture's own address is still first taken by the bolts
-   * (whose bit-field stores then stay one word), stored where vertices is set
-   * again before any read: gcse copies it from here, before pos, as the
-   * listing orders the preheader; as the function without it, 8 of 828
-   * instructions differ in tla-en. */
+   * less 8 so the bolts still take texture's own address first (their
+   * bit-field stores then stay one word), stored in vertices, which is set
+   * again before any read, so gcse copies it from here ahead of pos in the
+   * loop's preheader; without it, 8 of 828 instructions differ in tla-en. */
   vertices = (s16 *)((s32)&center - 8);
   for (pos = &screen; frame != LIGHT_SURGE_FRAMES; frame++) {
     if (frame == 64) {
@@ -437,7 +435,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
     Heap_Release(model);
     Heap_Release(vertices);
     /* FAKEMATCH(dead): a read of shade the compiler folds to nothing, which
-     * spills shade to the listing's slot; as a plain 4, 283 of 828 instructions
+     * keeps shade in its stack slot; as a plain 4, 283 of 828 instructions
      * differ in tla-en. */
     Func_08158ce0(4 + ((shade & 255) >> 8), 4);
     BattleEffect_CountDownBattlerTints();

@@ -41,8 +41,8 @@ void ObjectEffect_EndContextEffect(s32 mode) {
   ResourceMetadata_ClearRecordFar(ctx->entries[1]);
   {
     /* FAKEMATCH(pin): the sprite copied into r1 for its two stores, leaving
-     * r3 to the zero's reload; as ctx in both stores, 8 of 69 instructions
-     * differ in tla-en. */
+     * r3 to the zero's copy from sl; as ctx in both stores, 8 of 69
+     * instructions differ in tla-en. */
     register struct ContextSprite *pinnedCtx asm("r1") = ctx;
 
     pinnedCtx->flags = 1;

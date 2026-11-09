@@ -478,9 +478,9 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
                   do {
                     void (*transform)(const void *, s32 *) =
                         Iwram_TransformVector;
-                    /* FAKEMATCH(pin): the result pointer in r1, set ahead of
-                     * r0; as a plain argument, 2 of 1493 instructions differ
-                     * in tla-en. */
+                    /* FAKEMATCH(pin): the result pointer in r1, set before the
+                     * point in r0; as a plain argument, 2 of 1493 instructions
+                     * differ in tla-en. */
                     register s32 *result __asm__("r1") = &screen.x;
                     transform(&spark[index].x, result);
                   } while (0);

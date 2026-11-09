@@ -36,9 +36,9 @@ s32 Func_080da6e0(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
     i = count + 1;
     do {
       i += -1;
-      /* FAKEMATCH(barrier): an empty asm reading the counter, which copies it
-       * for the compare ahead of the store; as the plain counted loop, 2 of 259
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm reading the counter in a low register,
+       * which copies it for the compare ahead of the store; without it, 2 of
+       * 259 instructions differ in tla-en. */
       asm("" : : "l"(i));
       *entry++ = node;
       node = node->next;

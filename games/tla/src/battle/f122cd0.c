@@ -283,10 +283,9 @@ void BattleEvent_Playback(void) {
       QueueIoWriteDelay6(0x0400004a, 16);
       ((u32 *)prompt)[1] = 0xa000;
       ((u32 *)prompt)[2] = x;
-      /* FAKEMATCH(barrier): an empty asm between `((u32 *)prompt)[2] = x;` and
-       * `prompt->tile = VramCache_Reload(events->arrowResource,
-       * pictureTiles);`, which keeps their instructions apart; as plain
-       * statements, 4 of 870 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm after x is stored, so prompt's copy
+       * (mov r1, r9) comes before x's (mov r2, r8); without it, 4 of 844
+       * instructions differ in tla-en. */
       asm("");
       prompt->tile = VramCache_Reload(events->arrowResource, pictureTiles);
       x = window->x * 8 + (offset->x >> 8) + 4;

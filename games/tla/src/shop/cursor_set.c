@@ -62,7 +62,6 @@ void Func_081089e4(struct ShopCursor *cursor) {
   struct ShopCursorSprite3 *sprite;
   s32 delta;
   s32 step;
-  u32 mask;
 
   sprite = (struct ShopCursorSprite3 *)cursor->anchor;
   if (sprite != NULL) {
@@ -75,27 +74,15 @@ void Func_081089e4(struct ShopCursor *cursor) {
         sprite->x = sprite->x - step;
       else
         sprite->x = sprite->x - 1;
+      sprite->oam.x = sprite->x;
     } else if (delta < 0) {
       if (step != 0)
         sprite->x = sprite->x + step;
       else
         sprite->x = sprite->x + 1;
-    } else {
-      // Neither move: skip the shared sprite update.
-      goto y_axis;
-    }
-    {
-      /* FAKEMATCH: the barrier reloads x before the 0x1ff mask is built, and x
-       * pinned to r3 leaves the mask r2, as native; plain, as The Broken Seal
-       * writes it in each branch, 2 instructions differ in tla-en. */
-      register u32 x asm("r3") = sprite->x;
-
-      mask = 0x1ff;
-      mask &= x;
-      sprite->oam.x = mask;
+      sprite->oam.x = sprite->x;
     }
 
-  y_axis:
     delta = sprite->y - cursor->targetY;
     step = delta / 4;
     if (step < 0)

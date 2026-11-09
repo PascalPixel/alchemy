@@ -57,27 +57,16 @@ void BattleEffect_EndCanvasLayer(void);
 // targets flash one by one, eight frames apart, each with the hit sound.
 void Func_08182898(struct BattleEffectArgument *effect) {
   void *canvas = Ram_HeapSlots->battleFxWork[1];
-  struct BattleEffectWork *work;
-  /* FAKEMATCH(dead): the blitter pair, of which this effect uses the first,
-   * spills as one DImode pseudo into the unused frame word the native has;
-   * as a single DrawRectangle, 8 of 225 instructions differ in tla-en. */
+  struct BattleEffectWork *work =
+      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  // Unused: draw[1] gives the stack frame its 4 bytes.
   DrawRectangle draw[2];
   s32 frame;
   s32 i;
   struct EffectStep *bubble;
 
   // Each frame the transfer task copies the canvas and clears it.
-  {
-    /* FAKEMATCH(pin): the task function pinned to r0 behind an empty asm that
-     * holds r1, with work loaded after it, so the pool load comes before
-     * work's; as Task_Add(BattleEffect_..., TASK_PASS_FRAME) with work
-     * set at its declaration, 2 of 225 instructions differ in tla-en. */
-    register void (*func)(void) __asm__("r0") =
-        BattleEffect_ProcessPendingGraphicsTransfer;
-
-    work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-    Task_Add(func, TASK_PASS_FRAME);
-  }
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   work->transferMode = 2;
   work->transferValue = 50;
   BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER,

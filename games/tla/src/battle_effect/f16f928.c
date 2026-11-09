@@ -203,8 +203,9 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
   // Clear the canvas and its characters and hand the layer over.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(104);
-  /* FAKEMATCH(barrier): the clear routine's load kept after HeapSlot_Release;
-   * as plain calls with no barrier, 2 of 376 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm that keeps the clear routine's load
+   * after HeapSlot_Release; without it, 2 of 376 instructions differ in
+   * tla-en. */
   __asm__("");
   Iwram_ClearWords((void *)0x06004000, size);
   Iwram_ClearWords(canvas, size);

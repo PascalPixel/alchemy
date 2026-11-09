@@ -26,17 +26,12 @@ void BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value) {
   struct RecordChild **children;
   u8 mask = 0xff;
   u8 frame;
-  /* FAKEMATCH: the count read through a pointer taken first loads it before the
-   * mask is copied for the or, as the native; read directly it loads after (one
-   * reordered row, differ 2). */
-  u8 *countp;
 
   while ((record = GetMotionRecord(object, index)) != NULL) {
-    countp = &record->count;
     children = &record->entries[1];
     child = record->entries[0];
     frame = child->frame;
-    count = *countp;
+    count = record->count;
     child->param = value;
     child->frame = frame | mask;
     for (child_index = 1; child_index < count; child_index++) {

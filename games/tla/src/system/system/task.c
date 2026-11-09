@@ -178,8 +178,9 @@ s32 Task_SuspendAll(TaskFunc func) {
         continue;
     }
     TASK_STATE_HIGH(task) |= 1;
-    /* FAKEMATCH: the result copy follows the priority's high byte store, as in
-     * Task_SuspendOverlayTasks. */
+    /* FAKEMATCH(barrier): an empty asm after the priority's high byte store,
+     * so the result's copy follows it; without it, 2 of 27 instructions differ
+     * in tla-en. */
     __asm__ volatile("");
     result = i;
   }
@@ -199,8 +200,9 @@ s32 Task_SuspendOverlayTasks(void) {
   for (i = 0; i <= 23; i++, task++) {
     if ((task->func >> 24) == 2 && (task->flags & 1) == 0) {
       TASK_STATE_HIGH(task) |= 1;
-      /* FAKEMATCH: under the ARM9TDMI load schedule the result copy fills the
-       * priority byte's load delay; native stores the byte first. */
+      /* FAKEMATCH(barrier): an empty asm after the priority's high byte
+       * store, so the result's copy follows it; without it, 2 of 31
+       * instructions differ in tla-en. */
       __asm__ volatile("");
       result = i;
     }

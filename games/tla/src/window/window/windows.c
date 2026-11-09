@@ -64,9 +64,10 @@ typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
 
 static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size,
                                 u32 value) {
-  // The routine's entry comes in as a parameter, so the call loads it before
-  // the fill value; as a direct call, 2 of 38 instructions of
-  // WindowSystem_InitField differ in tla-en.
+  /* FAKEMATCH(wrapper): the fill called through this inline, whose entry
+   * comes in as a parameter, so the call loads it before the fill value; as a
+   * direct call, 2 of 38 instructions of WindowSystem_InitField differ in
+   * tla-en. */
   return fill(dst, size, value);
 }
 
@@ -196,8 +197,9 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
 }
 
 static inline void Window_FillWords(void *destination, s32 size, u32 value) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to the
-   * fixed entry, 10 of 68 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the call through this inline; as direct calls to the
+   * fixed entry, 10 of 68 instructions of Window_DrawOpened differ in tla-en.
+   */
   Iwram_FillWordsEntry(destination, size, value);
 }
 

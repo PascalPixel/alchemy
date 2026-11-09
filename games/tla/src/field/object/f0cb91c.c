@@ -343,12 +343,13 @@ s32 FieldSequence_Run(void) {
         s32 zero = 0;
 
         Func_080e7804();
-        // (s16): the id compared as the field's own width (79 differ without).
+        // (s16): the id compared as the field's own width; without it, 79 of
+        // 1300 instructions differ in tla-en.
         if (ARRIVAL.scene != (s16)(s32)&SceneId_WorldMap)
           goto clearOwner;
-        /* FAKEMATCH(barrier): an r0 clobber, so reload forgets r0 between the
-         * 0x2be and 0x2c0 addresses; as no asm, 21 of 1300 instructions differ
-         * in tla-en. */
+        /* FAKEMATCH(barrier): an empty asm clobbering r0, so the entrance's
+         * offset 0x2c0 is built afresh, not added to the scene's 0x2be in r0;
+         * without it, 21 of 1300 instructions differ in tla-en. */
         asm("" : : : "r0");
         if ((value = Func_080c9e1c(ARRIVAL.entrance)) & 16)
         clearOwner:
@@ -636,8 +637,8 @@ s32 FieldSequence_Run(void) {
       wait(1);
       leader = Func_080cb8e8();
       if (gDebugMode == 0 || !GameFlag_Test(355)) {
-        /* FAKEMATCH(signature): the u16 unk66 read as s16 (an ldrsh); as
-         * leader->unk66 == 0, 39 of 1300 instructions differ in tla-en. */
+        // unk66 read signed (ldrsh), as its other readers read it; as
+        // leader->unk66 == 0, 39 of 1300 instructions differ in tla-en.
         if (*pending == 0 ||
             (leader->action == 0 && *(s16 *)&leader->unk66 == 0))
           Func_080cb2b8(leader->terrainId, leader->x, leader->y, leader->z);

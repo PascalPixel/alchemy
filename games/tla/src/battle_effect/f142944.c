@@ -164,9 +164,9 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
       center.y -= 24;
     } else {
       center.y -= 48;
-      /* FAKEMATCH(barrier): the empty asm gives the centre's address two more
-       * references, so global.c ranks it above the corners; as no asm, 189 of
-       * 734 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm taking the centre's address gives it
+       * two more references, so the register allocator ranks it above the
+       * corners; without it, 189 of 734 instructions differ in tla-en. */
       __asm__("" : : "r"(&center));
     }
 

@@ -11,36 +11,6 @@
 
 typedef DrawRectangle BlitterPair[2];
 
-// Spelling: a one-word union, so the entry stores are in alias set 0.
-union QueueWord {
-  u32 word;
-};
-
-// IO_WRITE_QUEUE_PUSH through union QueueWord, with an empty asm that claims
-// r3 between the value and the address.
-#define SWIRL_PUSH_CLAIMING_R3(address, value, control)                        \
-  {                                                                            \
-    struct IoWriteQueue *q = &gIoWriteQueue;                                   \
-    u32 saved;                                                                 \
-    s32 count;                                                                 \
-    u16 *count_ = &q->count;                                                   \
-                                                                               \
-    IRQ_LOCK(saved);                                                           \
-    count = *count_;                                                           \
-    if (count <= 31) {                                                         \
-      union QueueWord *entry = (void *)q->entries[count];                      \
-                                                                               \
-      *count_ = count + 1;                                                     \
-      entry->word = (value);                                                   \
-      entry++;                                                                 \
-      asm("" : "=r"(entry) : "0"(entry) : "r3");                               \
-      entry->word = (address);                                                 \
-      entry++;                                                                 \
-      entry->word = (control);                                                 \
-    }                                                                          \
-    IRQ_UNLOCK(saved);                                                         \
-  }
-
 // The swirl runs until A is pressed, at most this many frames.
 #define SWIRL_MAX_FRAMES 312000
 
@@ -176,20 +146,16 @@ void Func_08191530(struct BattleEffectArgument *effect) {
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PB, sine, 0x20000);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PC, -sine, 0x20000);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PD, cosine, 0x20000);
-    /* FAKEMATCH(barrier): an empty asm claiming r3 after the value store; as
-     * IO_WRITE_QUEUE_PUSH, 6 of 468 instructions differ in tla-en. */
-    SWIRL_PUSH_CLAIMING_R3((u32)&REG_BG2X,
-                           (Iwram_MulQ16(-120 << 24, cosine) +
-                            Iwram_MulQ16(-72 << 24, sine) + 0x400000) >>
-                               8,
-                           0x30000);
-    /* FAKEMATCH(barrier): an empty asm claiming r3 after the value store; as
-     * IO_WRITE_QUEUE_PUSH, 6 of 468 instructions differ in tla-en. */
-    SWIRL_PUSH_CLAIMING_R3((u32)&REG_BG2Y,
-                           (Iwram_MulQ16(-120 << 24, -sine) +
-                            Iwram_MulQ16(-72 << 24, cosine) + 0x400000) >>
-                               8,
-                           0x30000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X,
+                        (Iwram_MulQ16(-120 << 24, cosine) +
+                         Iwram_MulQ16(-72 << 24, sine) + 0x400000) >>
+                            8,
+                        0x30000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2Y,
+                        (Iwram_MulQ16(-120 << 24, -sine) +
+                         Iwram_MulQ16(-72 << 24, cosine) + 0x400000) >>
+                            8,
+                        0x30000);
     wait(1);
   }
 

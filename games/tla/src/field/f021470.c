@@ -83,14 +83,18 @@ void Func_08021470(struct Vector3 *eye, struct Vector3 *target,
     depth = targetZ - eyeZ;
     targetDeltaX -= eyeX;
     {
-      /* FAKEMATCH(pin): the call's arguments and ip, where its stub reads the
-       * target, pinned; as a plain call to the stub, 3 of 156 instructions
+      /* FAKEMATCH(pin): x held in r0 from its shift, which keeps the two
+       * differences in r1 and r4; as a plain local, 15 of 156 instructions
        * differ in tla-en. */
       register s32 x __asm__("r0") = targetDeltaX >> 4;
-      register s32 y __asm__("r1") = depth >> 4;
+      s32 y = depth >> 4;
+      /* FAKEMATCH(pin): the target held in ip, where the stub Func_080216f0
+       * reads it; as the plain call through table->atan2.target, 1 of 156
+       * instructions differ in tla-en. */
       register void *entry __asm__("ip") = table->atan2.target;
-      /* FAKEMATCH(barrier): an empty asm keeps ip's target alive into the
-       * call; as the pins alone, 3 of 156 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm reading the arguments and the
+       * target, which keeps ip's load alive into the stub's call; without it,
+       * 2 of 156 instructions differ in tla-en. */
       __asm__("" : : "r"(x), "r"(y), "r"(entry));
       angle = (u16)Func_080216f0(x, y);
     }

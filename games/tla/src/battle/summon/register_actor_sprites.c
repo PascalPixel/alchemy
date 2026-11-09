@@ -29,8 +29,8 @@ s32 SummonSlot_RegisterActorSprites(s32 unit) {
   struct BattleUnit *actor = Unit_Get(unit);
   s32 singleSlot = BattleClass_IsSmall(actor->enemyId);
   /* FAKEMATCH(temporary): result cleared a halfword at a time, which keeps
-   * pass a copy of its register (mov r4, r10), as in The Broken Seal; as an
-   * s32 set to 0, 2 of 134 instructions differ in tla-en. */
+   * pass a copy of its register (mov r4, r10); as an s32 set to 0, 2 of 134
+   * instructions differ in tla-en. */
   union {
     s32 value;
     u16 halves[2];

@@ -58,7 +58,7 @@ void Func_080ece20(void) {
     bufferRow = firstRow + row;
     unwrapped = bufferRow;
     /* FAKEMATCH(barrier): an empty asm reading x, which keeps it live over the
-       row; as no asm, 78 of 149 instructions differ in tla-en. */
+       row's start; without it, 118 of 149 instructions differ in tla-en. */
     asm("" : : "r"(x));
     if (bufferRow > 23)
       bufferRow -= 24;
@@ -77,8 +77,9 @@ void Func_080ece20(void) {
       to = 0x06000000;
       x <<= 6;
       x += (s32)buffer;
-      /* FAKEMATCH(barrier): a tied empty asm holding VRAM's address and reading
-         i; as the literal, 4 of 149 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): VRAM's address through an empty asm that also
+         reads i, which builds it once in r7 ahead of the loop; without it, 10
+         of 149 instructions differ in tla-en. */
       asm("" : "=r"(to) : "0"(to), "r"(i));
       for (; i <= 30; i++) {
         Dma_Set((void *)x, (void *)((tile << 6) + to), 0x84000010,

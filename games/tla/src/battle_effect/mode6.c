@@ -2,21 +2,7 @@
 #include "io_reg.h"
 
 /// BG2 back to one texel per pixel across.
-void Graphics_ResetBg2Pa(void) {
-  /* FAKEMATCH: the value pinned to r3, as in f18284c.c, loads the halfword
-   * from the pool before the register address is started; as a plain store, 2
-   * instructions differ in tla-en. */
-  register u16 value __asm__("r3") = Q_8_8(1);
-
-  REG_BG2PA = value;
-}
+void Graphics_ResetBg2Pa(void) { REG_BG2PA = Q_8_8(1); }
 
 /// BG2 at half a texel per pixel across: twice as wide.
-void Graphics_SetBg2AffineScaleHalf(void) {
-  /* FAKEMATCH: as in Graphics_ResetBg2Pa, the pooled halfword is loaded before
-   * the register address is started (differ 2 without the pin and its barrier).
-   */
-  register u16 value __asm__("r3") = Q_8_8(0.5);
-
-  REG_BG2PA = value;
-}
+void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }

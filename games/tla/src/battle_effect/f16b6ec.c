@@ -188,11 +188,10 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
       s32 row;
 
       yaw = 0;
-      /* FAKEMATCH(dead): the radius set alike in both arms; as one set before
-       * the if, 41 of 609 instructions differ in tla-en. */
-      /* FAKEMATCH(temporary): the radius held in the vertices pointer through
-       * casts; as its own s32 local, 358 of 609 instructions differ in tla-en.
-       */
+      // vertices is reused for the radius, 32, through casts; an s32 of its own
+      // differs.
+      /* FAKEMATCH(dead): both arms set the radius alike; as one set before the
+       * if, 41 of 609 instructions differ in tla-en. */
       if (mode == 0) {
         x = 80;
         vertices = (u8 *)32;

@@ -34,23 +34,12 @@ void Party_AdjustCoinsFar(s32 amount);
 void Func_08109188(void);
 void Shop_DrawItemCount(s32 window, s32 unitId);
 
-void Func_0810a108(s32 unitIdArg, s32 slot, s32 countArg) {
+void Func_0810a108(s32 unitId, s32 slot, s32 count) {
   struct ShopRuntime *shop;
-  s32 unitId;
-  s32 count;
 
   shop = Ram_HeapSlots->menuRuntime;
-  /* FAKEMATCH(temporary): unitId and count copied from the arguments after
-   * the block, so that their moves to r8 and r7 fall among the address's; as
-   * the arguments used directly, 4 of 167 instructions differ in tla-en. */
-  unitId = unitIdArg;
-  /* FAKEMATCH(dead): the dead store keeps GCSE from propagating the copy back
-   * to the argument, which then moves to r8 before the block; as the copy
-   * alone, 2 of 167 instructions differ in tla-en. */
-  unitIdArg = 0;
-  count = countArg;
   // The inner block gives its locals their pseudos after the item id's
-  // offset, which puts the stack slots in the native's order.
+  // offset, which puts the stack slots in the ROM's order.
   {
     struct BattleUnit *unit = Unit_Get(unitId);
     s32 itemId = unit->inventory[slot] & 0x1ff;

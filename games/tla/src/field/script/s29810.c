@@ -31,8 +31,9 @@ s32 Func_080c8828(s32 arg);
 /// flag 0x146 is clear.
 s32 Func_08029838(s32 arg) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  /* FAKEMATCH: the flag lives in r0, where the native also returns the early
-   * zero; as a free local it takes r6 and the argument r0 (differ 14). */
+  /* FAKEMATCH(pin): pressed held in r0, the register the early zero is
+   * returned in, so the argument moves to r6; as a plain local, which takes r6
+   * itself, 14 of 61 instructions differ in tla-en. */
   register s32 pressed asm("r0") = 0;
 
   if (work == NULL)

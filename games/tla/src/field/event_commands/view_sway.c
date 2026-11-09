@@ -110,15 +110,7 @@ s32 Func_080e989c(s32 counter, s32 level) {
   const u8 *wave;
 
   step = (counter + 12) % 24;
-  /* FAKEMATCH(barrier): a volatile empty asm on the step keeps its copy ahead
-   * of the table's address; as the plain step, 2 of 76 instructions differ in
-   * tla-en. */
-  asm volatile("" : "+l"(step));
   wave = gData_080f0fe0;
-  /* FAKEMATCH(barrier): an empty asm taking the table's address puts its load
-   * before the step's shift; as the plain step, 2 of 76 instructions differ in
-   * tla-en. */
-  asm("" : "+l"(step) : "l"(wave));
   phase = step * 4;
   redLevel = wave[(s16)(phase % 96)];
   bias = level - 7;

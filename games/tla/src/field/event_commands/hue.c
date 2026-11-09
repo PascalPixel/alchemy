@@ -16,18 +16,14 @@ void BattleEffect_ArmBg0HBlankDma(void) {
   struct WaveFxScroll *work = Ram_HeapSlots->unk4c[3];
 
   if (!work->delay) {
-    /* FAKEMATCH: the temporary holds the page's offset in words until the
-     * barrier, so the stopped control word is stored first; as
-     * work->lines[work->page], 2 instructions differ in tla-en. */
-    s32 line = work->page * 81;
+    u16 *lines = work->lines[work->page];
     volatile u16 *dma = REG_DMA0;
 
     dma[5] &= 0xc5ff; // Clear start timing and repeat.
     dma[5] &= 0x7fff; // Stop.
-    line *= 4;
     (void)dma[5];
     // One halfword per HBlank, repeating with destination reload.
-    Dma_Set((u8 *)work + line, REG_BG0HOFS, DMA_HBLANK_HALFWORD_PER_LINE,
+    Dma_Set(lines, REG_BG0HOFS, DMA_HBLANK_HALFWORD_PER_LINE,
             (volatile u32 *)dma);
   }
 }

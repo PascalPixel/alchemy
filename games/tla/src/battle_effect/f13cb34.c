@@ -62,7 +62,8 @@ void wait(s32 frames);
 // between the two clears.
 static inline s32 ClearWords(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_ClearWords, 16 of 477 instructions differ in tla-en. */
+   * Iwram_ClearWords, 16 of 477 instructions of Func_0813cb34 differ in
+   * tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 

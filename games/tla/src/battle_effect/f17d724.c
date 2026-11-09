@@ -275,7 +275,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
 
         red = max & entry;
         /* FAKEMATCH(dead): green is taken and clamped, then never used; as no
-         * green at all, 331 of 1034 instructions differ in tla-en. */
+         * green at all, 329 of 1034 instructions differ in tla-en. */
         green = ((u16)entry >> 5) & 31;
         blue = ((u16)entry >> 10) & 31;
         // DEAD: both channels are already at most 31.

@@ -2,6 +2,7 @@
 #include "system.h"
 #include "objdisp.h"
 #include "actor.h"
+#include "fixed_math.h"
 
 extern const s32 gData_080f0e78[];
 
@@ -19,17 +20,13 @@ void UpdateRisingParticleBurst(void *object) {
   s32 i;
   s32 dist;
   u32 spread;
-  s32 shrink = -0x800;
 
-  /* FAKEMATCH: ⚓️ loads the hoisted shrink step before the cue's argument;
-   * as a constant it loads after the call (differ 2). */
-  asm volatile("" : "+r"(shrink));
   Sound_PlayFar(154);
   for (i = 30; i >= 0; i--) {
     src->y += 1 << 16;
     src->angle += 0x2000; // 1/8 turn
-    src->scaleX += shrink;
-    src->scaleY += shrink;
+    src->scaleX += -Q16_ONE / 32;
+    src->scaleY += -Q16_ONE / 32;
     wait(1);
   }
   for (i = 7; i >= 0; i--) {

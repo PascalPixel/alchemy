@@ -36,14 +36,7 @@ void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
   effect->z += velocityZ;
   effect->velocity.x = velocityX - velocityX / 18;
   effect->velocity.z = velocityZ - velocityZ / 16;
-  {
-    /* FAKEMATCH(temporary): the x scale rate read into a block temporary,
-     * which loads it before the x scale; as effect->scaleX +=
-     * effect->scaleRateX, 2 of 59 instructions differ in tla-en. */
-    s32 rate = effect->scaleRateX;
-
-    effect->scaleX += rate;
-  }
+  effect->scaleX += effect->scaleRateX;
   sprite = effect->sprite;
   effect->scaleY += effect->scaleRateY;
   sprite->rotation += effect->spin;

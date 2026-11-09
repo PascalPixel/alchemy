@@ -90,8 +90,8 @@ void System_WaitForFrameInterrupt(void) {
 #define RGB_WHITE 0x7fff
 
 static __inline__ void System_Reset(void) {
-  /* FAKEMATCH: the ordinary indirect call uses r5/r6 and returns through LR;
-   * this register carries the native ARM restart target in r4. */
+  /* FAKEMATCH(pin): entry held in r4, where the restart's bx takes it; as a
+   * plain local, 83 of 326 instructions of wait differ in tla-en. */
   register u32 entry __asm__("r4");
   gCartridgeResetMarker = 0x19670704;
   m4aSoundVSyncOffFar();
@@ -204,10 +204,13 @@ void wait(s32 frames) {
         {
           u32 high;
 
-          /* FAKEMATCH(barrier): the wake mask's first instruction before
-           * REG_KEYCNT's address loads; as plain C, 3 of 326 instructions
-           * differ in tla-en. */
+          // The wake mask written as its high byte shifted up plus its low
+          // byte is built in a register; as the constant, it loads from the
+          // pool.
           high = KEYCNT_SLEEP_WAKE >> 8;
+          /* FAKEMATCH(barrier): an empty asm on high, so the mask's first
+           * instruction comes before REG_KEYCNT's address loads; without it,
+           * 2 of 326 instructions differ in tla-en. */
           asm volatile("" : "+l"(high));
           REG_KEYCNT = (high << 8) + (KEYCNT_SLEEP_WAKE & 255);
         }
@@ -255,8 +258,8 @@ void Input_UpdateKeyRepeatAndDirection(void) {
   s32 delay;
 
   held = gInput.held;
-  /* FAKEMATCH(barrier): the form kept; as the plain read, 2 of 113
-   * instructions differ in tla-en (the timer is loaded before held). */
+  /* FAKEMATCH(barrier): an empty asm after held is read, so it loads before
+   * the repeat timer; without it, 2 of 113 instructions differ in tla-en. */
   asm("");
   delay = gInput.repeatTimer;
   if (delay <= 0) {
@@ -316,8 +319,9 @@ void Input_UpdateKeyRepeatAndDirection(void) {
   }
 
   gInput.pressed = held & ~gInput.previousHeld;
-  /* FAKEMATCH(barrier): the form kept; as plain C, 2 of 113 instructions
-   * differ in tla-en (previousHeld is stored before pressed). */
+  /* FAKEMATCH(barrier): an empty asm after pressed is stored, so
+   * previousHeld is stored after it; without it, 2 of 113 instructions
+   * differ in tla-en. */
   asm("");
   gInput.previousHeld = held;
 }

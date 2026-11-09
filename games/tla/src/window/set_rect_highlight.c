@@ -53,10 +53,11 @@ void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 alt) {
           p++;
         } while (col != 0);
       }
-      tiles->dirty |= 2 << ((u32)y >> 2);
-      /* FAKEMATCH: the ARM9 scheduling would count the row down before marking
-       * it dirty. */
-      __asm__("");
+      // The dirty-row mark in a once-only block keeps it before the row count's
+      // step; as the plain store, 2 of 72 instructions differ in tla-en.
+      do {
+        tiles->dirty |= 2 << ((u32)y >> 2);
+      } while (0);
       height--;
       y++;
     } while (height != 0);

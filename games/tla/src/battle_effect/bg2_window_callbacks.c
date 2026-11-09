@@ -21,13 +21,7 @@ void BattleEffect_AdvanceBg2OnInterval(void) {
   work = (struct AffineStepWork *)Ram_HeapSlots->battleFxWork[0];
 
   if (++work->counter == work->period) {
-    /* FAKEMATCH: x pinned to r3 loads before the affine reference register's
-     * address starts, as the native does; as a plain store, 2 instructions
-     * differ in tla-en. */
-    register s32 x __asm__("r3") = work->x;
-
-
-    REG_BG2X = x;
+    REG_BG2X = work->x;
     REG_BG2Y = work->y;
     work->x += work->stepX;
     work->y += work->stepY;

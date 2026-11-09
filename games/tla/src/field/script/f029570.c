@@ -62,17 +62,18 @@ s32 Func_08029570(struct Actor *object) {
     position.y = object->y;
     position.z = object->z;
     Vector_AddPolarOffset(0x80000, angle, &position);
-    // Read through the slot's address: as Ram_HeapSlots->unk84[7], 44 differ.
+    // Read through the slot's address: as Ram_HeapSlots->unk84[7], 44 of 324
+    // instructions differ in tla-en.
     workA0 = *(struct WorkA0 **)&Ram_HeapSlots->unk84[7];
     point = workA0->items;
     best = NULL;
     bestDistance = 0x10000000;
     if (workA0 == NULL) {
       collisionFlags = 1;
-      /* FAKEMATCH(dead): the event work slot copied onto itself, a second insn
-         with no reload that keeps if-conversion from lifting the loop count
-         above the null test; as the bare `collisionFlags = 1;`, 29 of 324
-         instructions differ in tla-en. */
+      /* FAKEMATCH(dead): the event work slot copied onto itself, a second
+       * store in the null branch that keeps the loop count from being lifted
+       * above the null test; without it, 29 of 324 instructions differ in
+       * tla-en. */
       Ram_HeapSlots->eventWork = Ram_HeapSlots->eventWork;
     } else {
       for (count = 0; count < 128; count++, point++) {
@@ -105,10 +106,9 @@ s32 Func_08029570(struct Actor *object) {
             slot->amplitude = 0x20000;
           object->watchedObject = (struct Actor *)best;
         }
-        /* FAKEMATCH(dead): position.x copied onto itself before the copies,
-           a store that stops gcse carrying the compare's x load past the
-           pair block; as the plain x, y and z copies, 45 of 324 instructions
-           differ in tla-en. */
+        /* FAKEMATCH(dead): position.x copied onto itself before the copies, a
+         * store that stops GCSE carrying the compare's x load past the pair
+         * block; without it, 45 of 324 instructions differ in tla-en. */
         position.x = position.x;
         position.x = best->x;
         position.y = best->y;

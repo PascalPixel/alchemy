@@ -101,23 +101,15 @@ s32 Render_CopyTextureToIwram(struct Texture *source, struct Texture *copy) {
   s32 size = (1 << source->logWidth) << source->logHeight;
   u32 pixels;
   s32 misalign;
-  s32 mask;
 
   if (Heap_GetRemainingIwram() < size + 8)
     return 0;
   *(u16 *)copy = *(u16 *)source;
   copy->pixels = (u32)Heap_Alloc(size + 8);
-  /* FAKEMATCH: ⚓️ stores the allocation before it starts the mask; without the
-   * barrier the forced mask below is scheduled before the store */
-  asm volatile("");
-  mask = 4;
-  /* FAKEMATCH: ⚓️ starts the -4 mask before it loads the pixels; as a plain
-   * constant the mask starts after the misalignment is added (differ 2) */
-  asm volatile("" : "+l"(mask));
   pixels = source->pixels;
   misalign = pixels & 3;
   Iwram_CopyWords((void *)copy->pixels, (void *)(pixels - misalign),
-                  (size + misalign + 3) & -mask);
+                  (size + misalign + 3) & -4);
   copy->pixels += misalign;
   return 1;
 }

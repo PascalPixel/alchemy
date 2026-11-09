@@ -32,7 +32,8 @@ s32 Func_0811de78(struct BattlePlan *plan) {
       (struct EscapeTransition *)Ram_HeapSlots->transitionWork;
   u32 aid = plan->actorId;
   struct BattleWork *scene = Ram_HeapSlots->battleWork;
-  s32 partyMode;
+  // Default: 0 until the party branch copies completed.
+  s32 partyMode = 0;
 
   completed = 0;
   presentation->targetYaw = 0x2000;
@@ -41,10 +42,6 @@ s32 Func_0811de78(struct BattlePlan *plan) {
 
   if (aid <= 7) {
     partyMode = completed;
-    /* FAKEMATCH(barrier): an empty asm on partyMode keeps it a copy of
-     * completed (mov r2, r10); as plain C it folds to movs r2, #0, and 2 of
-     * 108 instructions differ in tla-en. */
-    __asm__("" : "=r"(partyMode) : "0"(partyMode));
     if (scene->encounterMode != 2)
       partyMode = 1;
 

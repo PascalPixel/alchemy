@@ -150,10 +150,10 @@ void Func_0802386c(void) {
           leftPriority = 0;
           middlePriority = 0;
           if (!(*priorityFlags & 32)) {
-            /* FAKEMATCH(temporary): the base priority's address in a
-             * function-scope pointer, whose earlier pseudo takes the stack
-             * slot above the animation kind's address; as priority =
-             * BASE_PRIORITY(map), 22 of 606 instructions differ in tla-en. */
+            /* FAKEMATCH(temporary): the base priority read through a
+             * function-scope pointer, which gives the two spills at sp+12 and
+             * sp+16 their order; as priority = BASE_PRIORITY(map), 8 of 606
+             * instructions differ in tla-en. */
             basePriority = &BASE_PRIORITY(map);
             priority = *basePriority;
             if (Func_0802d45c(layer, probeX, feetZ) == object->terrainHeight) {

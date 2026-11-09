@@ -102,19 +102,11 @@ flowchart TD
   class walk sequence
 ```
 
-The six functions are `struct SceneEntryPoints`, which sits at the very
-start of every overlay (`entry/<scene>.s`), each function behind an 8-byte
-[veneer](../../glossary.md#veneer) so that the main image can call it at a
-fixed place whatever the overlay holds. `FieldSequence_Run` calls
-`gOverlayArea.triggers()`, then `Scene_ApplyEntrance` reads the entrances,
-`Actor_ResetForLeader` the actor placements, and `gOverlayArea.initialize()`
-runs the setup; `Field_CheckExitRegions` reads the regions as the party walks,
-and `Scene_TakeExit`, in the main routine, reads the exits once the scene has
-ended. Vault names its six `Scene_Initialize`, `Scene_GetEntrances`,
-`Scene_GetExits`, `Scene_GetActorPlacements`, `Scene_GetTriggers` and
-`Scene_GetExitRegions`; most overlays give some of them names of their own
-(`BabiLighthouse_SetupMap`, `BabiLighthouse_GetExits`), since only the order
-is fixed.
+The six functions sit at the very start of every overlay, always in the
+same order (`struct SceneEntryPoints`), each behind an 8-byte
+[veneer](../../glossary.md#veneer), so the field finds each one at a fixed
+place whatever the overlay holds. Only the order is fixed, and a scene
+names its six functions as it likes.
 [System code](../system/README.md#how-an-overlay-reaches-the-rest-of-the-game)
 explains the overlay's other table, the imports through which the scene calls
 the main image back.
@@ -127,11 +119,8 @@ the leader out, and a trigger for each thing the player can do. The field is
 drawn in three dimensions: x runs east, z runs south across the ground, and
 y is height, so a position in these tables is three numbers in pixels, and a
 facing is one of eight headings ([Words used here](#words-used-here) gives
-the units). The five kinds of row are `struct SceneEntrance`, the
-`SCENE_EXIT` words of the exit table, `struct ActorPlacement`,
-`struct SceneExitRegion` and `struct Trigger`, all in `scene_tables.h` and
-`scene.h`; each table ends with a row whose first column is
-`SCENE_TABLE_END`, and a trigger table with `TRIGGERS_END`.
+the units). Every table ends with an end row, and the rows are declared in
+`scene_tables.h`.
 
 ### Conditions
 
@@ -142,12 +131,10 @@ flag is set, or always.
 
 | Condition | The row holds |
 | --- | --- |
-| `CONDITION_ALWAYS` (-1) | always |
+| `CONDITION_ALWAYS` | always |
 | a game flag, such as `FLAG_VALE_NUT_CAUGHT` | while the flag is clear |
 | `IF_FLAG_SET(flag)` | while the flag is set |
-| `CONDITION_IN_VIEW` (0), in actor placements only | while the actor stands inside the camera's box, in the scenes that call `Scene_AssignViewFlags` |
-
-`GameFlag_IsConditionActive` tests every condition column the same way.
+| `CONDITION_IN_VIEW`, in actor placements only | while the actor stands inside the camera's box, on a sheet of rooms ([Design](#design)) |
 
 ### Entrances
 
@@ -163,8 +150,8 @@ matches; the camera box is read even when the party keeps its position after
 a battle, so the view stays the room's.
 
 A camera box smaller than the screen is widened to it, so the view is always
-at least 240 by 160 pixels. `Scene_ApplyEntrance` reads the table, and
-`scene_exits.h` names every entrance.
+at least 240 by 160 pixels. `scene_exits.h` names every entrance and every
+exit.
 
 ### Exits
 
@@ -192,10 +179,10 @@ exit leads into a battle.
 | `EXIT_TO_BATTLE(exit, formation)` | this exit starts a battle against that [formation](../../glossary.md#formation) |
 | `SCENE_EXITS_END` | the end of the table |
 
-The exit a scene ended on is the number `FieldSequence_Run` returns, and
-`Scene_TakeExit` in the main routine finds the scene's header and then the
-first row of that exit whose flag is clear; a row of exit 0, or the end of
-the scene's rows, sends the party to the first row's scene at its first
+When a scene ends, the field sequence hands the main routine the exit the
+party took. The main routine finds the scene's header in the table and then
+the first row of that exit whose flag is clear; a row of exit 0, or the end
+of the scene's rows, sends the party to the first row's scene at its first
 entrance. An exit that is also how the leader leaves, with a sound and an
 animation up or down stairs, is chosen by its trigger row
 ([below](#what-a-trigger-row-says)).
@@ -227,21 +214,10 @@ floats at that height instead. A Djinni's row holds while its caught flag is
 clear and, away from the World Map, while its hiding flag is clear too, so a
 Djinni the party fled from stays hidden until the scene is entered afresh.
 
-| Column | Meaning |
-| --- | --- |
-| `sprite` | the actor's sprite; 0 to 7 is one of the party's characters |
-| `condition` | when the row holds ([Conditions](#conditions)) |
-| `movement` | `MOVEMENT_TYPE_STAND`, `MOVEMENT_TYPE_WANDER` and the rest of `enum MovementType`, or an actor script |
-| `x`, `y`, `z` | its position in pixels, written `PIXELS(n)` |
-| `facing` | its heading, `enum Facing` |
-| `talkFacing` | how it turns when spoken to, `enum ActorTalkFacing`: `TALK_FACING_PARTY_AND_BACK` turns back afterwards, `TALK_FACING_PARTY_THEN_WATCH` keeps watching the leader |
-
-Each scene names its actors in an enum in row order from
-`ACTOR_FIRST_PLACED`; `ACTOR_PARTY_LEADER` is Isaac, the one the player moves
-everywhere but Colosso. `Event_SpawnActorPlacements` places the rows, and
-`Scene_FindActorPlacement` finds an actor's row again from its id, counting
-the rows the same way. Up to four tables can be placed in one scene, since
-an event can add a table of its own after the scene's.
+Each scene names its actors in row order from `ACTOR_FIRST_PLACED`, and
+`ACTOR_PARTY_LEADER` is Isaac, the one the player moves everywhere but
+Colosso. Up to four tables can be placed in one scene, since an event can
+add a table of its own after the scene's.
 
 ### Exit regions
 
@@ -256,9 +232,6 @@ holds the leader's position takes its exit. A box has a height as well, so
 in Kolima's tunnel each one sits at the top of a ladder, and climbing it is
 the way out. Fourteen scenes have regions, Kolima's tunnel and the Tolbi
 ship's deck among them; the rest answer with none.
-
-`Field_CheckExitRegions` tests the rows, `struct SceneExitRegion`, from
-`Field_UpdateWalking`.
 
 ### What a trigger row says
 
@@ -305,7 +278,7 @@ searching, a number the scene's own code raises.
 A step trigger's form says how firmly the leader must mean it: a plain
 `TRIGGER_STEP` runs on the first step onto the cell, `STEP_TRIGGER_WALKING`
 once the leader has pushed against it for more than 12
-[frames](../../glossary.md#frame), and the
+[frames](../../glossary.md#frame), or more than 2 in its quick form, and the
 `_FACING` and `_WALKING_INTO` forms only while the leader
 faces within an eighth of a turn of the heading the row names, which is how
 a doorstep opens only to someone walking north into it. A `TRIGGER_EXIT` row
@@ -339,13 +312,6 @@ at addresses above any message number.
 The row is `struct Trigger`; its kinds, their forms and the `FIND_` values
 are in `scene_tables.h`.
 
-| Name | Value | Meaning |
-| --- | --- | --- |
-| `STEP_TRIGGER_FLAG_WALKING` | more than 12 frames of pushing | a step trigger that waits for the leader to mean it |
-| `STEP_TRIGGER_FLAG_QUICK` | more than 2 frames | a walking step trigger that runs almost at once |
-| `TRIGGER_FLAG_FACING` | an eighth of a turn | how far the leader's heading may differ from the row's |
-| `FIELD_RAISED_TRIGGER_MENUS` | 250 | the raised trigger the menus hand to the scene while `FLAG_MENUS_RAISE_TRIGGER` is set |
-
 ### Which triggers a cell starts
 
 ![Isaac walks north into the foot of the ladder beside his house in Vale and climbs it onto the roof](https://alchemy.pascalpixel.com/places/vale/events/Event_ClimbLadderOntoRoof.gif)
@@ -370,12 +336,8 @@ in and only then asks for the exit, which is how Dora can refuse at Isaac's
 door. The ladder in the recording is a step trigger too: walking north into
 its foot runs the event that climbs the leader and changes the roof's cells
 so that it can be walked on, and another step trigger puts the bridge's
-cells back when the leader steps off it.
-
-`Field_UpdateWalking` notes the number of a marked cell the leader steps
-onto, `Scene_RunStepTriggerOrExit` runs its step trigger or takes its exit,
-and `Actor_GetTriggerCellAheadOfCurrent` finds the cell to search, 16 pixels
-ahead of the leader.
+cells back when the leader steps off it. The cell a press of A searches is
+the one 16 pixels ahead of the leader.
 
 ## How a trigger is chosen
 
@@ -430,11 +392,6 @@ A person Halt has stopped answers with a `TRIGGER_TALK_HALTED` row where the
 scene has one; otherwise a talk row that is a message is still shown, and
 one that is an event gives one of two lines of dots instead.
 
-`FieldSequence_Run` finds the person ahead with `Field_FindNearbyTalkTarget`
-and asks `Scene_FindActorTalkTrigger` whether a row exists, and
-`Scene_TalkToActor` runs it; `Scene_FindTrigger` does the reading for every
-kind of row.
-
 ### Searching
 
 ![Isaac checks the chest in Sol Sanctum: `Isaac checked the chest...`, the Small Jewel rises from it with the treasure jingle, and `Isaac got a Small Jewel.`](https://alchemy.pascalpixel.com/guides/front/chest.gif)
@@ -451,9 +408,7 @@ have no row: their two lines are the same everywhere.
 An item the chest gives stays in it when no party member can carry it, and
 the chest closes again; a Psynergy Stone restores every party member's PP
 and is gone once taken; a mimic's chest jumps up and the battle starts, and
-the chest is gone once the mimic is beaten. `Field_ExamineCell` runs a
-search, and `Scene_ExamineTriggerIgnoresCondition` says which rows are found
-regardless.
+the chest is gone once the mimic is beaten.
 
 ### Stepping and raising
 
@@ -463,7 +418,6 @@ the scene ends with that exit. A scene's own code can raise a trigger by
 number, as a stop in a chase raises the row that reads the cornered
 suspect's mind, and the menus raise one while `FLAG_MENUS_RAISE_TRIGGER` is
 set, so that a scene can answer a menu press with a refusal instead.
-`Scene_RunStepTriggerOrExit` and `Scene_RunRaisedTrigger` run these.
 
 ## Events
 
@@ -507,12 +461,9 @@ leader and resets the message state, and close with `Event_End`; the door
 above runs without either. The innkeeper's talk in the recording is the
 other usual shape: `Event_Start`, a message chosen by a flag, shown and
 waited for, `Event_End`. An event is plain C written in the calls of
-`event.h` and `event_inline.h`, and a command that takes time lets frames
-pass before it returns: `Event_Wait` calls `wait()`, which runs one frame
-after another ([System](../../system.md#waiting-and-tasks) explains it). A
-few commands are called through an `Import_` name, such as
-`Import_EventSetExitRequest`, declared without its arguments so that the
-call compiles as the original did; `event.h` says which.
+`event.h`, and a command that takes time lets frames pass before it
+returns: `Event_Wait` calls `wait()`, which runs one frame after another
+([System](../../system.md#waiting-and-tasks) explains it).
 
 ## State that cleans itself up
 
@@ -536,16 +487,14 @@ uses for what they hold there, beside its includes:
 #define FLAG_FUCHIN_FALLS_ENTRANCE_FIRST_LOG_EAST FLAG_AREA_TEMP_01
 ```
 
-`Scene_Arrive`, in the main routine, clears them before each scene unless
-the party keeps its position, and the flags are in
-`games/tbs/include/flags.h`; [Game rules](../game/README.md#the-game-flags)
+The main routine clears them before each scene, unless the party is coming
+back to where it stood; [Game rules](../game/README.md#the-game-flags)
 describes the game flags as a whole.
 
-| Name | Value | Meaning |
+| Flags | How many | Cleared |
 | --- | --- | --- |
-| `FLAG_SCENE_TEMP_00` to `FLAG_SCENE_TEMP_FF` | `0x200` to `0x2ff` | cleared on every ordinary arrival in a scene |
-| `FLAG_AREA_TEMP_00` to `FLAG_AREA_TEMP_FF` | `0x300` to `0x3ff` | cleared on entering another area |
-| `FLAG_KEEP_PARTY_POSITION` | `0x109` | the party is coming back to where it stood: both ranges stay |
+| `FLAG_SCENE_TEMP_00` to `FLAG_SCENE_TEMP_FF` | 256 | on every ordinary arrival in a scene |
+| `FLAG_AREA_TEMP_00` to `FLAG_AREA_TEMP_FF` | 256 | on entering another area |
 
 ## The Title, the File Screen and the Battle Arena
 
@@ -573,13 +522,6 @@ passages between floors; and many scenes share the small field effects and
 the helpers that move actors. The ROM holds a copy in each overlay, alike but
 for the addresses they hold.
 
-A header in `shared/` is code: each scene includes it where the code lies in
-that overlay, since the include decides where its bytes land, and including
-it twice in one scene would place it twice. A helper that some of the scenes
-including its header never call is `UNUSED`, so that a current GCC stays
-quiet there. Renaming a function in `shared/` renames it in every scene that
-includes the header; each header's opening comment says what it holds.
-
 ## From Vale's doorstep into the house
 
 ![Isaac walks north into the door of Jenna's grandparents' house in Vale; the door opens, he walks in, and the room inside fades in](https://alchemy.pascalpixel.com/places/vale/events/Event_EnterJennasGrandparentsHouse.gif)
@@ -590,13 +532,12 @@ that is one of the mechanisms above.
 
 ### The step
 
-The field sequence is in its walk, and in each frame `Field_UpdateWalking`
-looks at the cell under the leader. The doorstep's cell carries the number
-Vale's table gives the grandparents' door, within the scene's own range, so
-the walk notes a step request for it and stops. The loop answers it with
-`Scene_RunStepTriggerOrExit`, which asks `Scene_FindTrigger` for the first
-step row with that subject whose condition holds. Vale's table has this
-one:
+The field sequence is in its walk, and in each frame it looks at the cell
+under the leader. The doorstep's cell carries the number Vale's table gives
+the grandparents' door, within the scene's own range, so the walk notes a
+step request for it and stops. The field answers the request by reading
+Vale's trigger table from the top for the first step row with that subject
+whose condition holds. Vale's table has this one:
 
 ```c
 { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(Vale_EnterJennasGrandparentsHouse) },
@@ -604,7 +545,7 @@ one:
 
 The form asks for more than a step: the leader must have pushed against the
 doorstep for more than 12 frames and be facing north. Isaac is, so the row
-fits, and its value is an event, which the loop calls.
+fits, and its value is an event, which the field calls.
 
 ### The event
 
@@ -613,64 +554,45 @@ plays; the cell animation opens the door and holds the event until it has;
 Isaac starts walking to a spot inside the doorway, which takes no time; and
 the last line asks for the exit `VALE_TO_COTTAGE_ROOMS_A_NORTH`. That is a
 request, so it waits in the field's work until the event has returned. When
-it has, the loop finds the exit request first of all, since leaving comes
-before anything else, and `FieldSequence_Run` ends the scene and returns
-that exit.
+it has, the field finds the exit request first of all, since leaving comes
+before anything else, ends the scene and hands the exit to the main
+routine.
 
 ### The exit
 
-The main routine hands the exit to `Scene_TakeExit`, which asks Vale's
-overlay for its exit table and finds, under `SCENE_EXITS(Vale)`, this row:
+The main routine asks Vale's overlay for its exit table and finds, under
+`SCENE_EXITS(Vale)`, this row:
 
 ```c
 SCENE_EXIT(VALE_TO_COTTAGE_ROOMS_A_NORTH, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_NORTH),
 ```
 
 So what runs next is `SceneId_CottageRoomsA` at the entrance
-`COTTAGE_ROOMS_A_FROM_VALE_NORTH`. `Scene_Arrive` clears Vale's scene temp
-flags, and keeps the area temp flags, since the houses are in Vale's area;
-`Scene_LoadOverlay` unpacks the cottage rooms' overlay over Vale's.
+`COTTAGE_ROOMS_A_FROM_VALE_NORTH`. The main routine clears Vale's scene
+temp flags, keeps the area temp flags, since the houses are in Vale's area,
+and unpacks the cottage rooms' overlay over Vale's.
 
 ### The room
 
-`FieldSequence_Run` starts again and asks the new overlay its questions.
-Its trigger table comes first. Then `Scene_ApplyEntrance` reads the entrance
-table and finds the row for `COTTAGE_ROOMS_A_FROM_VALE_NORTH`: Isaac is
-placed at (337, 0, 199) facing north, and the camera is boxed in from
-(252, 4) to (548, 236), which is the one room of the sheet the house is drawn
-on. `CottageRoomsA_GetActorPlacements` chooses its table by the story flags
-and marks each row as in or out of that box, so only the grandparents' room
-is peopled. Last, `CottageRoomsA_Initialize` runs, and once the party has
-left Vale it lays the grandmother in her sickbed for this entrance. The
-scene fades in.
-
-### The same moment, mechanism by mechanism
-
-| Step | Mechanism |
-| --- | --- |
-| Isaac pushes north against the doorstep | the walk notes the cell's number, a step request |
-| The door row is found | the trigger table, read from the top for a step row with that subject |
-| The door opens and Isaac walks in | the event, one command at a time |
-| The exit is asked for | a request, answered once the event has returned |
-| The exit leads to the room | the exit table, read by the main routine |
-| Vale's notes are forgotten | the scene temp flags, cleared on arrival |
-| Isaac stands in the right room | the entrance table: a position and the camera's box |
-| The grandparents are there | the actor placement table, with the box deciding who appears |
-| The grandmother is in bed | the scene's setup, by entrance and story flags |
+The field sequence starts again and asks the new overlay its questions.
+Its trigger table comes first. Then the entrance table gives the row for
+`COTTAGE_ROOMS_A_FROM_VALE_NORTH`: Isaac is placed at (337, 0, 199) facing
+north, and the camera is boxed in from (252, 4) to (548, 236), which is the
+one room of the sheet the house is drawn on. The overlay chooses its actor
+placement table by the story flags and marks each row as in or out of that
+box, so only the grandparents' room is peopled. Last, the scene's setup
+runs, and once the party has left Vale it lays the grandmother in her
+sickbed for this entrance. The scene fades in.
 
 ## Design
 
-Each overlay is three objects, linked in this order into the overlay area:
-`entry/<scene>`, `<scene>` and `import/<scene>`. Every overlay's RAM
-variables take the overlay's `bss` row of `objects.tsv`; where they are
-still written in assembly, that row names a fourth object,
-`bss/<scene>.s`. The scene
-table, `gScenes` in [`field/scenes.s`](../field/scenes.s), gives each scene
-its overlay, area, scene type and map, and names it `SceneId_<Scene>`;
-several scenes may share one overlay, and then share its file. A scene
-overlay stays one file, because its code is laid out by kind (entry points,
-then every handler, then every scene's tables), with each scene's parts
-spread through it.
+The scene table, `gScenes` in [`field/scenes.s`](../field/scenes.s), gives
+each scene its overlay, area, scene type and map, and names it
+`SceneId_<Scene>`; several scenes may share one overlay, and then share its
+file. The four are chosen independently: the Bilibin Barricade runs on
+Bilibin's overlay but is an area of its own, and Vault before and after the
+thieves is two scenes drawn on one map. An overlay is one file, laid out by
+kind: its entry points, then every function, then every scene's tables.
 
 Rooms are packed several to a map, a
 [sheet of rooms](../../glossary.md#sheet-of-rooms): the rooms drawn in one
@@ -684,31 +606,25 @@ sheet's actor placements use `CONDITION_IN_VIEW`, so that the field peoples
 only the room the camera's box holds.
 
 A scene's functions, its events among them, take its name (`Vault_`,
-`VaultRevisit_`, `ColosseumNavampaMatch_`) and say what the player sees.
-Shared helpers take their family's prefix (`Colosso_`, `MercuryLighthouse_`,
-`KolimaPalette_`, `PushedActor_`, and `FieldEffect_` for the field effects),
-and some keep older descriptive names (`Scene_`,
-`Actor_SetFlagBitByRelativeDepth`). A run of functions inside one overlay
-that is about one thing takes that thing's name, and a party member's or the
-leader's part in an event takes that character's (`Ivan_StepOnDeck`,
-`Leader_StopMoving`).
+`VaultRevisit_`) and say what the player sees there, and shared helpers
+take their family's (`Colosso_`, `MercuryLighthouse_`, and `FieldEffect_`
+for the field effects).
 
 ## How it fits with the rest of the game
 
-`MainRoutine_Run` unpacks the overlay into `gOverlayArea`
-(`Scene_LoadOverlay`) and `FieldSequence_Run` calls its entries;
-[System](../../system.md#overlays) describes the entry and import tables and
-how the overlay is loaded. The scene table and how scenes depend on the story
+The main routine unpacks a scene's overlay and the field sequence calls its
+entries;
+[System code](../system/README.md#how-an-overlay-reaches-the-rest-of-the-game)
+describes the entry and import tables and how the overlay is loaded. The
+scene table and how scenes depend on the story
 are in [Field](../../field.md#scenes-and-areas), and the requests the field
 answers between a trigger and its event in
 [Field code](../field/README.md#the-field-sequence-serves-requests). The maps
 the scenes are drawn on are in [Maps](../map/README.md), and the debug
 scenes, built the same way, in [Debug scenes](../debug/README.md).
 
-To find the code for a scene, find its row in `field/scenes.s`: the
-overlay's resource number begins the rows of `objects.tsv` that name its
-files. To find what someone says, search `games/tbs/text/en.po` for the line;
-its `msgctxt` is the name the scene writes (`MsgVaultWelcomeToVaultTheTownAt`).
+To find what someone says, search `games/tbs/text/en.po` for the line; its
+`msgctxt` is the name the scene writes (`MsgVaultWelcomeToVaultTheTownAt`).
 
 ## Limits
 
@@ -723,21 +639,19 @@ its `msgctxt` is the name the scene writes (`MsgVaultWelcomeToVaultTheTownAt`).
 
 ## Words used here
 
-- position: pixels, x east, y up and z south; the field keeps them in
-  16.16 fixed point (`PIXELS(n)`), and a cell is 16 by 16 pixels.
-- facing: `enum Facing`, eight headings in 1/65536 turns from `FACING_EAST`
-  through `FACING_SOUTH` to `FACING_NORTHEAST`.
+- position: pixels, x east, y up and z south, written `PIXELS(n)`; a cell
+  is 16 by 16 pixels.
+- facing: `enum Facing`, eight headings an eighth of a turn apart, from
+  `FACING_EAST` through `FACING_SOUTH` to `FACING_NORTHEAST`.
 - condition: a table row's test ([Conditions](#conditions)).
 - camera box: the corners an entrance row gives, within which the camera
   moves; a room on a sheet of rooms is the box its entrance gives.
 - scene temp flags and area temp flags: `FLAG_SCENE_TEMP_xx` and
   `FLAG_AREA_TEMP_xx`, the two ranges cleared for scene code
   ([above](#state-that-cleans-itself-up)).
-- messages: each line of game text has a name (its `msgctxt` in
-  `games/tbs/text/en.po`, such as `MsgVaultWelcomeToVaultTheTownAt`);
-  `MSGNO(name)` is its number. `Event_ShowMessageAndWait` chooses the next
-  message after showing one, so a line that follows a named one has no name
-  of its own.
+- messages: each line of game text has a name, and `MSGNO(name)` is its
+  number. Showing a message chooses the one after it as the next, so a line
+  that follows a named one has no name of its own.
 - update routine: an actor's `update`, run each frame with the actor.
 
 ## Evidence

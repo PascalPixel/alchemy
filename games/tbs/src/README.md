@@ -1,118 +1,146 @@
 # The Broken Seal's source
 
 The player sees a town, a battle, a menu or a game of dice, and somewhere in
-this folder is the C that runs it. The folders follow the cartridge. The
-game's code lies there in two kinds of place: the [banks](../glossary.md#bank)
-of the [main image](../glossary.md#main-image), fourteen stretches of code the
-processor runs straight from the cartridge, and the
-[overlays](../glossary.md#overlay), one packed piece of code for each
-[scene](../glossary.md#scene) or group of scenes, unpacked into RAM only while
-one of them runs. Most folders are one bank or one kind of overlay.
+this folder is the C that runs it. The folders follow the cartridge, where
+the code lies in two kinds of place
+([The console](../README.md#the-console)). The
+[banks](../glossary.md#bank) are fourteen stretches of code the processor
+runs straight from the cartridge, together the
+[main image](../glossary.md#main-image). The
+[overlays](../glossary.md#overlay) are the code of each
+[scene](../glossary.md#scene), unpacked into memory only while the party is
+there. Most folders here are one bank or one kind of overlay.
 
-The folders come first, then what lies under them, each resting on the one
-before:
+## Finding the code for something in the game
 
-1. The folders, grouped by the four divisions of the code, and what each
-   holds.
-2. The banks: where each folder's code lies on the cartridge, and why the
-   main image is cut into fourteen.
-3. Objects and parts: the unit the build compiles, and how the longest are
-   split to be read.
-4. Overlays: the three files every scene's code is made of.
-5. Headers: what the whole game shares, and what each file declares.
-6. C and assembly: which compiler built each file, and why a few files stay
-   assembly.
+Start from what was on the screen:
+
+| What the player saw                                     | Where its code is                                     |
+| ------------------------------------------------------- | ----------------------------------------------------- |
+| a town, cave or room: its people, their lines, its events | `scene/`, a file named for the place, such as [scene/vale.c](scene/vale.c) |
+| the people moving, the map drawn and scrolling           | `field/field/`                                        |
+| walking into a random battle, a chest, talking to someone | `field/field_sequence/`                               |
+| field Psynergy such as Move, and what an event can do   | `field/event_commands/`                               |
+| Lucky Dice and Lucky Wheels                             | `field/lucky_dice.c`, `field/lucky_wheels.c`          |
+| a battle's turns, its damage, an enemy's choice         | `battle/battle/`                                      |
+| what an ability looks like in battle                    | `battle_effect/battle_effect/`, a file for each effect |
+| what an item, ability, enemy, Djinni or class is        | the tables in `game/`, such as `game/item_table.c`    |
+| a message window opening and typing                     | `window/window/`                                      |
+| the battle menus, the file list, name entry             | `window/screens/`                                     |
+| the Psynergy, Djinn, Item and Status screens            | `menu/menu/`                                          |
+| the title intro and the credits                         | `menu/title_intro.c`, `menu/credits.c`                |
+| a shop, an inn, a Sanctum's healer                      | `shop/shop/`                                          |
+| music, a jingle or a sound effect                       | `sound/sound.c`, with the names in `include/sounds.h` |
+| saving                                                  | `system/system/save.c`                                |
+| a picture or a map                                      | `graphics/`, `map/`                                   |
+
+Searching for the English name of a thing usually finds it. Each battle
+effect's file opens by naming the abilities that play it, so searching
+`battle_effect/` for Quake leads to
+[quake.c](battle_effect/battle_effect/quake.c). The game's text is in
+[`games/tbs/text`](../text), one file for each language, and every message
+there has a name the code uses: "(No saved data)" is `MsgSaveNoData`, and
+searching for that leads to the save file list in
+[window/screens/save.c](window/screens/save.c).
+
+To read the game from the beginning, start at `System_Initialize` in
+[system/system/start_up.c](system/system/start_up.c), the first C to run. It
+ends by calling the [main routine](../glossary.md#main-routine), in
+[system/main_routine.c](system/main_routine.c), which is short enough to
+read whole. [System code](system/README.md#start-up) follows power-on step
+by step.
 
 ## What each folder holds
 
-The code folders are grouped by the
-[four divisions](../README.md#the-four-divisions) of the code, each with a
-page of its own, and each code folder holds one or more banks
-([below](#banks-and-folders)). The other folders each gather one kind of
-thing, a scene, a map or a picture, from wherever on the cartridge it ends
-up. Each
-folder name's source is in the [glossary](../glossary.md#bank-folder).
+The code is in [four divisions](../README.md#the-four-divisions), each with
+a page of its own, and every folder has a guide.
 
-[System](../system.md), the code under every sequence, is two folders:
+[System](../system.md), the code under everything else:
 
-- [System code](system/README.md) starts the console and lets time pass
-  through [`wait()`](../glossary.md#wait), one [frame](../glossary.md#frame)
-  at a time, with the [main routine](../glossary.md#main-routine), the
-  [tasks](../glossary.md#task), the [heap](../glossary.md#heap-and-pools), the
-  buttons, saving, the link cable, the memory map and the overlays.
-- [The Game Pak](gamepak/README.md) holds what belongs to the cartridge
-  itself: the ROM header, the [far-call](../glossary.md#far-call) tables, the
+- [System code](system/README.md): start-up, the main routine,
+  [`wait()`](../glossary.md#wait) and the [tasks](../glossary.md#task), the
+  [heap](../glossary.md#heap-and-pools), the buttons, saving and the link
+  cable.
+- [The Game Pak](gamepak/README.md): what belongs to the cartridge itself.
+  The [far-call](../glossary.md#far-call) tables through which banks call
+  each other, the
   [resource directory](../glossary.md#resource-directory), the numbered list
-  through which every image, table and overlay is found, and the flash chip
-  the saves are written to.
+  through which every picture, map and overlay is found, and the code for
+  the chip the saves are written to.
+- [Sound](sound/README.md): the code that plays music, jingles and sound
+  effects. The music and samples themselves are in
+  [`games/tbs/sound`](../sound).
+- [Graphics](graphics/README.md): every picture, as a PNG.
+- [Debug scenes](debug/README.md): the ten test scenes the developers left
+  on the cartridge.
 
-[Field](../field.md), the party walking around a place, is one folder:
+[Field](../field.md), the party walking around a place:
 
-- [Field code](field/README.md) is the code under every town, dungeon and
-  the World Map: the [actors](../glossary.md#actor), walking, loading,
-  scrolling and drawing the map, and the
-  [field sequence](../glossary.md#field-sequence) in `field_sequence.c`,
-  which runs one scene from its set-up to the [exit](../glossary.md#exit) the
-  party leaves by, with random encounters, field
-  [Psynergy](../glossary.md#psynergy-and-pp) and the event commands
-  (`event_commands.c`), and Lucky Dice and Lucky Wheels.
+- [Field code](field/README.md): the [actors](../glossary.md#actor),
+  walking, drawing and scrolling the map, and the
+  [field sequence](../glossary.md#field-sequence), which runs one scene from
+  the party's arrival to the [exit](../glossary.md#exit) it leaves by. Also
+  random encounters, field [Psynergy](../glossary.md#psynergy-and-pp), the
+  commands events are written in, and Lucky Dice and Lucky Wheels.
+- [Scenes](scene/README.md): one file for each place, saying who stands
+  where and what happens there, and the three scenes that are screens: the
+  Title, the File Screen and the Battle Arena.
+- [Maps](map/README.md): the [maps](../glossary.md#map) the scenes are
+  played on, as data.
 
-[Battle](../battle.md), the sequence a fight runs in, is two folders:
+[Battle](../battle.md), a fight from its opening to the spoils:
 
-- [Battles](battle/README.md) runs a fight: the order of actions, the
-  enemies' choices, what each ability does to its targets and the spoils.
-- [Battle effects](battle_effect/README.md) draws what each ability shows on
-  screen, one function for each battle effect.
-
-[Interface](../interface.md), the screens the player reads and the counters
-the party spends at, is three folders:
-
-- [Windows](window/README.md) draws the boxes text appears in, decodes the
-  stored messages and types them out, and holds the screens built from
-  windows, among them the battle menus, the file list and name entry.
-- [Menus](menu/README.md) holds the field menu's Psynergy, Djinn, Item and
-  Status screens, and the title intro and the credits.
-- [Shops](shop/README.md) holds every counter that buys, sells, repairs or
-  heals, and the inn.
-
-Six folders stand beside the four divisions:
-
-- [Game rules](game/README.md) holds the party's state and the rules every
-  division asks about: [units](../glossary.md#unit) and their stats, items,
-  levels, classes, [Djinn](../glossary.md#djinn) and the
-  [game flags](../glossary.md#game-flag), with the C tables that define every
+- [Battles](battle/README.md): the order of actions, the enemies' choices,
+  what each ability does to its targets, and the spoils.
+- [Game rules](game/README.md): the party's state and the rules every part
+  of the game asks about. [Units](../glossary.md#unit) and their stats,
+  items, levels, classes, [Djinn](../glossary.md#djinn) and the
+  [game flags](../glossary.md#game-flag), with the tables that define every
   item, ability, Djinni, enemy, [summon](../glossary.md#summons) and class.
-- [Sound](sound/README.md) holds the sound layer, Nintendo's MusicPlayer2000
-  driver and the mixer copied into
-  [IWRAM](../glossary.md#iwram-and-ewram), the console's fast RAM; the music
-  and samples themselves are in [`games/tbs/sound`](../sound).
-- [Scenes](scene/README.md) holds the scenes' overlays: who stands where, the
-  [triggers](../glossary.md#trigger) and the [events](../glossary.md#event),
-  and the three scenes that are screens: the Title, the File Screen and the
-  Battle Arena.
-- [Debug scenes](debug/README.md) holds the three debug overlays and the ten
-  debug scenes the cartridge keeps.
-- [Maps](map/README.md) holds the [maps](../glossary.md#map) as data.
-- [Graphics](graphics/README.md) holds the pictures, each with the assembly
-  that only places it.
+- [Battle effects](battle_effect/README.md): what each ability shows on
+  screen.
+
+[Interface](../interface.md), the screens the player reads:
+
+- [Windows](window/README.md): the boxes text appears in, the typing of
+  messages, and the screens built from windows, among them the battle menus,
+  the file list and name entry.
+- [Menus](menu/README.md): the field menu's Psynergy, Djinn, Item and Status
+  screens, the title intro and the credits.
+- [Shops](shop/README.md): every counter that buys, sells, repairs or heals,
+  and the inn.
 
 ## Banks and folders
 
-A function's address lies in the range of the bank that holds it, and the
-folders are cut along the same lines, so a folder's name usually says which
-stretch of the cartridge its code occupies. [`main.ld`](../main.ld) lays the
-main image out in fourteen banks, each after the first starting at an address
-fixed per [edition](../glossary.md#editions). Each bank opens with its
-far-call table,
-the 8-byte [veneers](../glossary.md#veneer) through which other banks call
-its functions, so a bank's code can grow or shrink without moving an address
-another bank holds
+A bank is a stretch of the cartridge with a fixed start, and the folders are
+cut along the same lines, so a folder's name usually says which stretch of
+the cartridge its code is in. Each bank opens with its far-call table, and
+the banks are named after those tables
 ([The Game Pak](gamepak/README.md#why-the-main-image-is-cut-into-banks)
-gives the reason in full). The System's bank 00 is the exception: other banks
-call its functions directly, and its table, at the start of the cartridge,
-serves only the overlays ([System](../system.md#banks-and-far-calls)).
+says why the code is cut up this way). Each large bank is one folder. A
+small bank's code sits in the folder it belongs with: the credits and the
+title intro are banks of their own, and live in `menu/` with the other
+screens.
 
-The cartridge runs from the header to the last packed overlay in this order:
+| Bank | Its far-call table | Its code                                                        |
+| ---- | ------------------ | --------------------------------------------------------------- |
+| 00   | `SYSTEM.S`         | `system/`, with the save chip's code in `gamepak/flash/`        |
+| 01   | `FIELD.S`          | `field/`                                                        |
+| 02   | `WINDOW.S`         | `window/`                                                       |
+| 03   | `GAME.S`           | `game/`                                                         |
+| 04   | `FIELD_SEQUENCE.S` | `system/main_routine.c`, then `field/field_sequence.c` and `field/event_commands.c` |
+| 05   | `MENU.S`           | `menu/`                                                         |
+| 06   | `SHOP.S`           | `shop/`                                                         |
+| 07   | `BATTLE.S`         | `battle/`                                                       |
+| 08   | `BATTLE_EFFECT.S`  | `battle_effect/`                                                |
+| 09   | `CREDITS.S`        | `menu/credits.c`                                                |
+| 10   | `TITLE.S`          | `menu/title_intro.c`                                            |
+| 11   | `LUCKY_DICE.S`     | `field/lucky_dice.c`                                            |
+| 12   | `LUCKY_WHEELS.S`   | `field/lucky_wheels.c`                                          |
+| 13   | `SOUND.S`          | `sound/sound.c`                                                 |
+
+The tables themselves are the files of `gamepak/far_call/`. After the
+banks, the cartridge holds everything that is data, in this order:
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -129,87 +157,43 @@ flowchart TD
   class directory directory
 ```
 
-Each large bank is one folder, and each small bank's code sits in the folder
-it belongs with: the credits and the title intro are banks of their own,
-both called by the Title, and live in `menu/` with the screens. The object
-list, [`objects.tsv`](../objects.tsv), names each object's bank in its
-`place` column, as `main.ld` does, and the banks take their names from their
-far-call tables, which are the `.S` files of `gamepak/far_call/` (assembly
-the C preprocessor reads first):
-
-| Place         | Far-call table     | Folder                                                                           |
-| ------------- | ------------------ | -------------------------------------------------------------------------------- |
-| `rom_main_00` | `SYSTEM.S`         | `system`, with the flash chip's code in `gamepak/flash`                          |
-| `rom_main_01` | `FIELD.S`          | `field`                                                                          |
-| `rom_main_02` | `WINDOW.S`         | `window`                                                                         |
-| `rom_main_03` | `GAME.S`           | `game`                                                                           |
-| `rom_main_04` | `FIELD_SEQUENCE.S` | `system/main_routine.c`, then `field` (`field_sequence.c`, `event_commands.c`)   |
-| `rom_main_05` | `MENU.S`           | `menu`                                                                           |
-| `rom_main_06` | `SHOP.S`           | `shop`                                                                           |
-| `rom_main_07` | `BATTLE.S`         | `battle`                                                                         |
-| `rom_main_08` | `BATTLE_EFFECT.S`  | `battle_effect`                                                                  |
-| `rom_main_09` | `CREDITS.S`        | `menu` (`credits.c`)                                                             |
-| `rom_main_10` | `TITLE.S`          | `menu` (`title_intro.c`)                                                         |
-| `rom_main_11` | `LUCKY_DICE.S`     | `field/lucky_dice.c`                                                             |
-| `rom_main_12` | `LUCKY_WHEELS.S`   | `field/lucky_wheels.c`                                                           |
-| `rom_main_13` | `SOUND.S`          | `sound`                                                                          |
-
-The sound driver's music and samples are under
-[`games/tbs/sound`](../sound), and `SPRITE.S`, the fifteenth far-call table,
-has one entry, the sprite metadata lookup in `system/sprite_metadata.c`.
-
-The object list also lays out the two RAMs, EWRAM and IWRAM, before and
-after the banks: their layout (`system/ewram.s`, `system/iwram.s`,
-`system/iwram_high.s`), which only gives each variable its address, and the
-routines the cartridge carries to copy into IWRAM at start-up, the interrupt
-code and the sound mixer, which `main.ld` places in the ROM and links at
-their IWRAM addresses.
+The fifteenth far-call table, `SPRITE.S`, has one entry: the lookup of a
+sprite by its number, in `system/sprite_metadata.c`
+([Graphics](graphics/README.md#sprites-and-their-animations)).
 
 ## Objects and parts
 
-Every file the build compiles or assembles is one object, the linker's unit.
-[`objects.tsv`](../objects.tsv) lists the objects in link order, with the
-image each belongs to (`main`, or an overlay's number in the resource
-directory), its place in that image, its sections (the kinds of bytes it
-places: code, read-only data, RAM variables), and, where only some editions
-link it, those editions. Within one
-object, code and data follow the order they are defined in, so a function's
-place in its file is its place on the cartridge, and only the object list
-orders the objects themselves.
+Each compiled file is one [object](../glossary.md#object), and inside it
+the functions keep the order they have on the cartridge. Neighbours in a
+file are neighbours on the cartridge.
 
-Some objects are too long to read as one file: the battle object runs to
-some 13,000 lines. Such an object is written as parts, each holding one
-family of functions, in a folder of the object's own name beside its `.c`.
-`battle/battle.c` includes its private header, `battle_internal.h`, and then
-the 24 files under `battle/battle/`; only `battle.c` is compiled. The `.c`
-opens with a guide to its parts and then includes them in cartridge order,
-and each part opens with what it holds, so the tops of a folder's files read
-as its table of contents. Eleven objects are written this way: `system`,
-`field`, `field_sequence`, `event_commands`, `game`, `window`, `screens`,
-`menu`, `shop`, `battle` and `battle_effect`.
+Some objects are too long to read as one file: the battle's runs to some
+13,000 lines. Such an object is written as parts, each holding one family of
+functions, in a folder with the object's name. `battle/battle.c` is only a
+guide to its parts followed by a list of them, and the code is in the 24 files
+of `battle/battle/`, such as `turn.c`, `enemy_ai.c` and `spoils.c`. The parts
+are compiled together as the one file `battle.c`, so they share what
+`battle_internal.h` declares and nothing else needs to see it.
 
-| File                  | What it says                                          |
-| --------------------- | ----------------------------------------------------- |
-| `<object>.c`          | the guide comment, then its parts in cartridge order  |
-| `<object>_internal.h` | what the parts share; places no bytes                 |
-| `<object>/*.c`        | the parts, each opening with what it holds            |
+Eleven objects are written this way: `system`, `field`, `field_sequence`,
+`event_commands`, `game`, `window`, `screens`, `menu`, `shop`, `battle` and
+`battle_effect`. In each, the guide at the top of the `.c` file is the place
+to start, and each part opens by saying what it holds.
 
 ## Overlays
 
-When the party arrives somewhere, the scene's code is unpacked into one
-32 KB area of EWRAM, over the scene before, and the field asks it who stands
-where and what can happen ([System](../system.md#overlays)). In the source,
-an overlay is three files in its folder, linked in this order:
+When the party arrives somewhere, the scene's code is unpacked into memory
+over the scene before, and the field asks it who stands where and what can
+happen ([System](../system.md#overlays)). There are 96 overlays: 93 in
+`scene/` and 3 in `debug/`. Each is three files:
 
+- `<scene>.c`, the scene's code and tables. This is the one to read.
 - `entry/<scene>.s`, the
-  [entry table](../glossary.md#entry-table-and-import-table): six veneers,
-  one for each question the field asks a scene, its set-up and the functions
-  that hand the field sequence its entrances, exits, actor placements,
-  triggers and exit regions ([Scenes](scene/README.md#the-entry-table)).
-- `<scene>.c`, the scene's code and tables.
-- `import/<scene>.s`, the import table: one veneer for each main-image
-  function the overlay calls, chosen by name from the one list every overlay
-  keeps in the same order, `system/overlay/imports.inc`.
+  [entry table](../glossary.md#entry-table-and-import-table): one entry for
+  each of the six questions the field asks a scene
+  ([Scenes](scene/README.md#the-entry-table)).
+- `import/<scene>.s`, the import table: one entry for each function of the
+  main image the scene calls.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -226,123 +210,67 @@ flowchart TD
   class entry,import table
 ```
 
-Every overlay with RAM variables has a row in
-[`overlays.tsv`](../overlays.tsv) for its `.bss` section; where those
-variables are still assembly, `scene/bss/<scene>.s` holds them. Code several
-scenes use is in headers under `scene/shared/`, and each scene that includes
-one compiles its own copy, since only one overlay is loaded at a time and
-each reaches only the main image
+Code that several scenes use is in the headers of `scene/shared/`. Only one
+overlay is in memory at a time, so each scene that uses such a header gets a
+copy of its own
 ([Scenes](scene/README.md#code-shared-between-overlays)).
-`system/overlay/overlay.ld` links each overlay at the overlay area's address.
-[System code](system/README.md#how-an-overlay-reaches-the-rest-of-the-game)
-describes how an overlay is packed and loaded.
-
-| Folder   | Overlays                                                       |
-| -------- | -------------------------------------------------------------- |
-| `scene/` | 93, with the Title, the File Screen and the Battle Arena       |
-| `debug/` | 3: the test scenes, Increase item and level, and Menu test     |
 
 ## Headers
 
-A struct the field fills and a battle reads has to be declared once, where
-both can see it. [`games/tbs/include`](../include) holds what the whole game
-shares: types, structures, flags, sounds, the ids of scenes, items, abilities
-and sprites, and the event calls. The `Makefile` puts `include` and its
-folders `battle`, `field`, `game`, `gamepak`, `graphics`, `menu`, `shop`,
-`sound`, `system` and `window` on the include path, so code includes those
-headers by name alone. Each compiled C file, a module, has a
-[module header](../glossary.md#module-header) at the same path under
-[`include/module`](../include/module) (`module/battle/battle.h` for
-`battle/battle.c`), and an object written as parts keeps its private header
-beside it.
+A structure the field fills and a battle reads has to be declared once,
+where both can see it. [`games/tbs/include`](../include) holds what the
+whole game shares, and it is where the names of things are:
 
-| Header                        | What it holds                                             |
-| ----------------------------- | --------------------------------------------------------- |
-| `include/flags.h`             | the game flags                                            |
-| `include/sounds.h`            | the music, jingles and sound effects                      |
-| `include/field/event.h`       | the calls events are written in                           |
-| `include/module/<path>.h`     | what the C file at `<path>.c` defines                     |
-| `include/module/import.h`     | the main-image routines the overlays call                 |
-| `include/gamepak/far_call/`   | each far-call table's `Far` names                         |
+| Header                                     | What it names                                    |
+| ------------------------------------------ | ------------------------------------------------ |
+| `flags.h`                                  | the game flags                                   |
+| `sounds.h`                                 | the music, jingles and sound effects             |
+| `scene_ids.h`                              | the scenes                                       |
+| `item_ids.h`, `ability_ids.h`, `djinn_ids.h`, `enemy_ids.h` | the items, abilities, Djinn and enemies |
+| `sprite_ids.h`                             | the sprites                                      |
+| `field/event.h`                            | the calls events are written in                  |
+| `module/<path>.h`                          | what the C file at `<path>.c` defines            |
+
+The last row is the [module header](../glossary.md#module-header): every C
+file has one at the same path under [`include/module`](../include/module),
+so `battle/battle.c` is declared in `module/battle/battle.h`.
 
 ## C and assembly
 
-Nearly all of the game is C: about 95% of the bytes of code across the six
-editions, with the far-call and overlay veneers counted apart. Three
-[compilers](../glossary.md#the-compilers) built it. Three files are compiled
-as ARM, the processor's 32-bit instructions, and the rest as Thumb, its
-16-bit ones. Two of the three ARM C files are copied into RAM before they
-run, since ARM instructions run slowly over the cartridge's 16-bit bus; the
-third, the ARM actor update, is unused
+Nearly all of the game is C. The processor has two sets of instructions:
+Thumb, whose instructions are 16 bits long, and ARM, whose are 32. Almost
+every C file is Thumb. Three are ARM: `window/glyph_arm.c`,
+`field/world_map_lines.c` and `field/actor_update_arm.c`. The first two are
+copied into RAM before they run, since ARM instructions run slowly from the
+cartridge, and the third is unused
 ([Field](field/README.md#routines-run-from-ram)).
 
-| Code                                   | Compiler                           | Where                                                                       |
-| -------------------------------------- | ---------------------------------- | --------------------------------------------------------------------------- |
-| ARM C                                  | GCC 2.95.2                         | `window/glyph_arm.c`, `field/actor_update_arm.c`, `field/world_map_lines.c` |
-| the sound driver's C, the flash chip's C | `old_agbcc`                       | `sound/`, `gamepak/flash/`                                                  |
-| the game's Thumb C                     | alchemy-gcc, a GCC of July 2000    | every other C file, and libgcc                                              |
+The files ending in `.s` are assembly, and there are three kinds:
 
-Code stays assembly only where its instructions show that none of those
-compilers wrote it. Each such file states that proof in comment lines at its
-top that begin `@ Why`. The
-proofs are instructions the compilers never emit: a branch on a shift's carry
-(`system/trig.s`, `system/decompress_byte_lz.s`), a load into `pc` from a
-table the code rewrites (`battle/background_decode.s`), a switch from Thumb
-to ARM inside a routine (`sound/mixer.s`), a write to the processor's mode
-(`system/entry.s`). Most of this handwritten code is decoders, the sound
-mixing and the routines copied into IWRAM. The few handwritten instructions
-inside the C are each marked `CAMELOT_ASM` with their proof.
+- Most only place data: a picture built from the PNG beside it, a table, or
+  a map, under the name the code uses.
+- The far-call tables in `gamepak/far_call/` and each overlay's entry and
+  import tables are lists of [veneers](../glossary.md#veneer), tiny pieces
+  of code that only jump on.
+- A few are routines written by hand in assembly: the sound mixer, the
+  interrupt code, some arithmetic, and the decoders that unpack pictures
+  and text.
 
-The decoders unpack tiles, sprites and text for the rest of the game. Each is
-linked into the bank of the code that calls it and written in ARM, so its
-caller copies it into RAM first, a
-[heap slot](../glossary.md#heap-slot) or the heap
-([Field](field/README.md#routines-run-from-ram)). For the two battle
-background decoders the copy is needed for another reason too: they rewrite
-their own table of commands before they start, which only code in RAM can do.
+The decoders are ARM, so the code that calls one copies it into RAM first.
+Each sits beside its caller:
 
-| Routine                                                        | What it unpacks                                                                    | File                                                                       |
-| -------------------------------------------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `Text_DecodeSymbol`, `Message_FindArm`                         | one symbol of packed message text; where a message starts                          | `window/message_decode.s`                                                  |
-| `Tile_Decompress4bpp`, `Tile_ExpandMasked`, `Tile_ExpandOpaque` | window images and icons                                                            | `window/decompress_4bpp.s`, `window/expand_opaque.s`                       |
-| `Render_DecodePicture`, `TileMap_DrawRows`                     | a sprite animation's picture into its sprite; the World Map's still picture        | `field/picture_decode.s`                                                   |
-| `Tile_ConvertMapGrid`                                          | a map's three decoded planes into cells                                            | `field/map_grid_convert.s`                                                 |
-| `BitDecoder_DecodeImage`                                       | a battle background                                                                | `battle/background_decode.s`                                               |
-| `Credits_DecodeBackground`                                     | a battle background, its colours moved into one half of the credits' memory        | `menu/credits_background_decode.s`, `menu/credits_background_expand.s`     |
-
-The rest of the assembly, about 50 KB in each edition, is veneers: the
-8-byte entries of the far-call tables in `gamepak/far_call/` and of every
-overlay's entry and import tables. The compiler's library routines come from
-libgcc, built from alchemy-gcc's sources: the call-through-register routine,
-linked once into bank 00 and into each overlay that needs it, and the
-double-precision arithmetic two overlays use (`scene/vault_cave.c` and
-`scene/lunpa_fortress.c`). Most `.s` files place data, not code: an image
-built from the PNG beside it, a table from its `.tsv`, or a map, under the
-name the code uses.
-
-## Where to start reading
-
-`System_Initialize`, in [system/system/start_up.c](system/system/start_up.c),
-is the first C to run; it ends by calling `MainRoutine_Run` through its
-far-call veneer. The main routine, in
-[system/main_routine.c](system/main_routine.c), is short enough to read
-whole, and [System code](system/README.md#start-up) follows power-on step by
-step.
-
-To find the code behind something in the game, search for its English name.
-Each battle effect's comment names the abilities that play it, so searching
-`battle_effect/battle_effect/` for Quake leads to
-[quake.c](battle_effect/battle_effect/quake.c). Each place's code is the
-overlay in `scene/` named for it, such as [scene/bilibin.c](scene/bilibin.c).
-The game's text is in [`games/tbs/text`](../text), a PO catalog for each
-language, where each message carries its linker name: "(No saved data)" is
-`MsgSaveNoData`, which leads to the save file list in
-[window/screens/save.c](window/screens/save.c).
+| What it unpacks                                              | File                                |
+| ------------------------------------------------------------ | ----------------------------------- |
+| a message's packed text                                      | `window/message_decode.s`           |
+| the windows' pictures and icons                              | `window/decompress_4bpp.s`, `window/expand_opaque.s` |
+| a sprite's picture; the World Map's still picture            | `field/picture_decode.s`            |
+| a map's grid                                                 | `field/map_grid_convert.s`          |
+| a battle background                                          | `battle/background_decode.s`        |
+| a battle background, for the credits                         | `menu/credits_background_decode.s`  |
 
 ## Evidence
 
 The folders and the parts are ours. The cartridge keeps no file or folder
-names and shows one object where an object is written as parts, so nothing
-in it records how [Camelot](../glossary.md#camelot) divided its files; each
-folder is cut along a bank or a kind of thing, and each part where one
-family of functions ends and the next begins.
+names, so nothing in it records how [Camelot](../glossary.md#camelot)
+divided its files. Each folder is cut along a bank or a kind of thing, and
+each part where one family of functions ends and the next begins.

@@ -39,11 +39,10 @@ flowchart TD
   class tasks,scripts frame
 ```
 
-This page is the first chapter. It starts with the console and the frame,
-the unit everything else is measured in, then takes the four mechanisms in
-order, each with what the player sees of it, and ends by following one moment
-of the game through all four. The pages for the
-[four divisions](#the-four-divisions) of the code go deeper into each.
+Before the four mechanisms come the console and the frame, the unit
+everything else is measured in. The pages for the
+[four divisions](#the-four-divisions) of the code go deeper into each
+mechanism.
 
 ## The console
 
@@ -76,7 +75,7 @@ memory at start-up.
 | EWRAM           | 256 KB | the scene's overlay and one of the heap's two pools              |
 | IWRAM           | 32 KB  | the interrupt handlers, the stack and the heap's other pool      |
 
-[System](system.md#start-up) follows the console from power-on to the first
+[System code](src/system/README.md#start-up) follows the console from power-on to the first
 sequence.
 
 ## The frame
@@ -89,13 +88,8 @@ next [VBlank](glossary.md#vblank), the moment about 60 times a second between
 one picture on the screen and the next. Isaac walks
 one pixel a frame, and runs one and a half with B held; a message types a
 few letters a frame; a pause in a conversation is so many frames; an animation
-shows each of its pictures for so many frames.
-
-| Name               | Value               | Meaning                                       |
-| ------------------ | ------------------- | --------------------------------------------- |
-| `FIELD_WALK_SPEED` | `Q16_ONE`           | 1 pixel a frame, in 16.16 fixed point         |
-| `FIELD_RUN_SPEED`  | `Q16_ONE * 3 / 2`   | 1.5 pixels a frame, with the dash key held    |
-| 60 frames          |                     | about one second                              |
+shows each of its pictures for so many frames. Sixty frames are about one
+second.
 
 A frame is what the game does for one picture, and then a halt until the
 next VBlank. The VBlank interrupt runs on its own at every
@@ -222,7 +216,7 @@ line of the screen its own scale, a wider and more distant strip of the flat
 map the higher the line, so the land tilts away from the party
 (`WorldMap_BuildScanlineTable`). Walking out of Vale's gate leads to it, and
 walking into a town on it leads to that town's first scene.
-[Field](field.md#the-world-map) works through the lines.
+[Field code](src/field/README.md#the-world-map-in-perspective) works through the lines.
 
 ### Exits and entrances
 
@@ -249,7 +243,7 @@ The first row that holds wins. Until the Sanctum erupts, the path leads to
 Vale. Once it has, and until the party leaves Vale for good, the same path
 leads to a different scene, Vale erupting, drawn on the same map with the
 villagers gathered. After that it leads to Vale again. The recording shows
-the first two. [Field](field.md#exits-and-entrances) covers the tables.
+the first two. [Scenes](src/scene/README.md#exits) covers the tables.
 
 ### Game flags
 
@@ -281,7 +275,7 @@ area of RAM when the party arrives, over the scene before. The rooms of one
 place often share their code, so the 201 scenes share 96 overlays. The main
 image asks the overlay a fixed set of questions through a small table at its
 start: where the party can arrive, where it can leave, who stands where and
-what can happen there. [System](system.md#overlays) describes both tables,
+what can happen there. [System code](src/system/README.md#how-an-overlay-reaches-the-rest-of-the-game) describes both tables,
 and [Places](https://alchemy.pascalpixel.com/tbs/places) has a page for every
 scene.
 
@@ -334,8 +328,9 @@ memory from. So a sequence passes everything on through the main routine's
 work and the game flags, and any scene or battle can follow any other. The
 [debug menus](glossary.md#debug-menus) rely on this: the debug scene selector
 writes any scene and entrance as what runs next and lets the scene end, and
-the main routine takes the party there. [System](system.md#the-main-routine)
-goes through the clearing up and the start-up before the first sequence.
+the main routine takes the party there.
+[System code](src/system/README.md#clearing-away-the-last-sequence) goes
+through the clearing up.
 
 ### What the game remembers
 
@@ -351,7 +346,7 @@ Three kinds of memory hold the game's state, each with its own lifetime.
 
 A save file is the first two: the main routine's work and the flags, written
 to the cartridge's flash chip. Everything else is rebuilt from them when the
-party arrives somewhere. [System](system.md#saving) covers the writing.
+party arrives somewhere. [System code](src/system/README.md#saving) covers the writing.
 
 ## Code that waits
 
@@ -422,7 +417,7 @@ the event, the event calls `Event_ShowMessageAndWait`, and that calls
 `wait()`: one chain of calls, on one stack, standing still at its deepest
 call while the frames go by. A wait can come from deep inside that chain,
 and `wait()` keeps room on the stack for the frame's work
-([System](system.md#waiting-and-tasks)).
+([System code](src/system/README.md#the-stack-switch-in-wait)).
 
 ### Events
 
@@ -451,7 +446,7 @@ request, carries on walking when it returns. While a screen is open the
 scene's people are held behind it. The screens live in their own
 [bank](glossary.md#bank) of the main image and share one
 [work](glossary.md#work), since only one runs at a time.
-[Interface](interface.md#the-field-menu) goes through them.
+[Menus](src/menu/README.md#the-screens) goes through them.
 
 ## Tasks
 
@@ -537,7 +532,7 @@ comes first, so an event that ends by taking an exit simply ends the scene.
 | 11    | `item`                       | use an item on the field                                                |
 | 12    | `pauseMenu`                  | the Pause menu                                                          |
 
-[Field](field.md#the-field-sequence-and-its-requests) follows the loop
+[Field code](src/field/README.md#the-twelve-requests) follows the loop
 through each.
 
 ## Actor scripts
@@ -614,7 +609,7 @@ step too high or a drop too deep counts as a wall.
 | a cell               | 16 pixels | one square of the map's grid                  |
 
 [Maps](src/map/README.md) shows how the three layers share one grid, and
-[Field](field.md#movement) gives the speeds on each kind of ground.
+[Field code](src/field/README.md#walking-and-running) gives the speeds on each kind of ground.
 
 ### Triggers
 
@@ -651,7 +646,7 @@ it. The driver has eight players, one for each kind, so a sound of one kind
 plays over the others, and the music already playing carries on when it is
 asked for again, which lets every scene ask for its music on arrival. The mixing
 happens in the VBlank interrupt, so the music keeps time whatever the code
-is doing. [System](system.md#sound) covers the driver.
+is doing. [Sound](src/sound/README.md#the-sound-driver) covers the driver.
 
 ## From a conversation to a battle and back
 

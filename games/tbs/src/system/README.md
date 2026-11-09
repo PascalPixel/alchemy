@@ -47,205 +47,212 @@ flowchart TD
   class tasks,vblank frame
 ```
 
-`system.c` is one object written as parts under `system/`, in cartridge order
-([Source](../README.md#objects-and-parts) says how parts are compiled); the
-main routine is an object of its own, `main_routine.c`, linked first in bank
-04 before the [field sequence](../../glossary.md#field-sequence). The
-cartridge itself, its header, the far-call tables of the banks, the resource
-directory and the flash chip, is [The Game Pak](../gamepak/README.md). The
-page ends by following one frame of the conversation above through the
-mechanisms.
+The cartridge itself, with its header, its banks, its directory of packed
+things and its flash chip, is [The Game Pak](../gamepak/README.md).
 
 ## Start-up
-
-Start-up puts memory in order and starts the services everything relies on,
-once, then hands over to the main routine for as long as the console is on.
 
 ![Isaac stands in Vale, then A, B, Select and Start restart the game and the Camelot logo comes up](https://alchemy.pascalpixel.com/guides/runtime/soft-reset.gif)
 
 Switching on runs the cartridge's first instruction once the console's own
-logo has gone; pressing A, B, Select and Start together, as in the
-recording, runs that same instruction again, so a reset runs start-up in
-full, and the Camelot logo that follows is drawn by the Title, the main
-routine's first scene.
+logo has gone. Pressing A, B, Select and Start together, as in the recording,
+runs that same instruction again, so a reset goes through start-up in full.
+The Camelot logo that follows is drawn by the Title, the main routine's
+first scene.
 
-Start-up runs from top to bottom with nothing yet moving, in this order. It
-stops any line-by-line DMA left running and sets the speed the console reads
-the cartridge at. It clears IWRAM, the fast memory, below the stacks, and
-empties the [heap](../../glossary.md#heap-and-pools). It copies 5 KB of
-routines from the cartridge into IWRAM, the interrupt dispatcher among them,
-points the console's interrupt vector at that dispatcher and installs a table
-of handlers, one for each kind of interrupt. An interrupt is the console's
-way of running a piece of code at a moment of its own choosing, whatever else
-is running; the two start-up enables are the VBlank, after every image, and
-the keypad, when the reset buttons are pressed. Then it loads the windows'
-graphics, installs the VBlank handler, arms the reset buttons, starts the
-sound driver and empties the task table. It waits ten frames and starts the
-main routine, which never returns.
+Start-up puts memory in order and starts the services everything else relies
+on. It runs once, from top to bottom, with nothing yet moving:
 
-The reset buttons work through the keypad interrupt: pressing all four marks
-a reset as wanted, and the frame loop carries it out at the end of the frame
-by jumping to the cartridge's first instruction. During sleep the same
-interrupt only wakes the console.
+1. It quiets the hardware. A reset can arrive in the middle of an effect
+   that changes the image line by line, and the hardware copy that drives
+   such an effect would otherwise keep running.
+2. It clears [IWRAM](../../glossary.md#iwram-and-ewram), the console's small
+   fast memory, below the stacks, and empties the
+   [heap](../../glossary.md#heap-and-pools).
+3. It copies 5 KB of routines from the cartridge into IWRAM, where they run
+   fastest. These are the resident code: the routine that receives every
+   interrupt, the sound mixing and a few small helpers the whole game calls.
+4. It sets up the interrupts. Each kind of interrupt has a handler, a
+   routine the console runs when that interrupt comes. Start-up switches on
+   two: the VBlank, after every image, and the keypad, when the four reset
+   buttons are pressed together.
+5. It loads the windows' graphics, starts the sound driver and empties the
+   task table.
+6. It waits ten frames and starts the main routine, which never returns.
 
-The cartridge header jumps to `System_Entry`, which sets up the stacks and
-calls `System_Initialize`; that installs the resident code and the handlers
-through `System_InstallIwramAndIrqs` and ends with `MainRoutine_RunFar`. The
-reset is `Input_HandleKeyInterrupt`, and `wait()` carries it out through
-`System_SoftReset`. The German, French, Spanish and Italian editions also take
-the interrupt raised when the cartridge is removed, whose handler,
-`Iwram_Halt`, stops the game.
+The reset buttons work through the keypad interrupt. Pressing all four only
+marks a reset as wanted; the frame loop carries it out at the end of its
+frame by jumping to the cartridge's first instruction. While the console
+sleeps, the same interrupt only wakes it.
 
-| Name                | Value                  | Meaning                                              |
-| ------------------- | ---------------------- | ---------------------------------------------------- |
-| `IwramResident_Rom` | 5 KB                   | the routines copied into IWRAM at power-on           |
-| `KEYCNT_SOFT_RESET` | A, B, Select and Start | the buttons that raise the keypad interrupt          |
-| `WAITCNT_GAME`      | `0x4014`               | how fast the console reads the cartridge             |
-| `wait(10)`          | 10 frames              | the pause before the main routine starts             |
+The German, French, Spanish and Italian editions also switch on the
+interrupt the console raises when the cartridge is pulled out. Start-up is
+`System_Initialize`, in `system/start_up.c`.
 
 ## The main routine
 
-The main routine, `MainRoutine_Run`, runs every scene, battle and game of
-dice or slots, one after another, and never returns;
-[System](../../system.md#the-main-routine) gives its place in the game.
-
 ![Isaac walks through Goma Cave until a random battle starts: the screen goes black, the battle opens on a Ghost and a Skeleton, the party beats them and takes its experience and coins, and the cave comes back with the party where it stood](https://alchemy.pascalpixel.com/guides/overworld/battle-return.gif)
 
-`System_Initialize` starts it at power-on through `MainRoutine_RunFar`;
-`Game_RestartQuest`, which would start it again at the opening, has a
-far-call veneer and no caller. Its argument, an `enum GameStart`, chooses
-the first scene: the Title, or in debug mode Vale or the File Screen. Before
-its loop it applies the window colours from the options, empties the sprite
-cache and the task table, and then each pass of its loop does the same
-things around one sequence.
+The main routine runs every scene, battle and game of dice or slots, one
+after another, and never returns;
+[System](../../system.md#the-main-routine) gives its place in the game. It
+is one loop, `MainRoutine_Run` in `main_routine.c`, and every pass of the
+loop does the same things around one sequence: it clears away what the last
+sequence left, runs the next one, and works out what follows it. In the
+recording the loop goes round three times: the cave, the battle, the cave
+again.
 
 ### Clearing away the last sequence
 
-A pass opens with `SE_STOP_ACTION_SE`, a sound with no tracks that stops any
-loop the last scene left playing on the sound player that carries the
-field's and the battle's action sounds (`MUSIC_PLAYER_ACTION_SE`), such as a
-rolling log. `FLAG_SKIP_SCENE_CHANGE_SOUND`, which the World Map's lighthouse
-transition and two Venus Lighthouse scenes set, skips it once and clears
-itself. The pass stops DMA 0, which a scene may have left repeating line by
-line, then tears down what the last sequence left: `Task_ResetAll`
-empties the task table, `Irq_SetHandler` drops the HBlank and VCount
-handlers, `Heap_Initialize` empties the heap, and `DebugText_Clear` and
-`VramCache_Reset` clear the debug text and the sprite VRAM cache. What lives
-outside the heap survives: the
-[main routine's work](../../glossary.md#main-routines-work),
-`gMainRoutineWork`, the game flags, and fixed buffers such as
-`gActorSnapshot`.
+A sequence can end with things still going: a sound that loops, an effect on
+the screen, routines that run every frame, memory it borrowed. The next
+sequence must not inherit any of them, so each pass opens by stopping them
+all:
+
+- **Looping sounds.** The field's and the battle's action sounds, such as a
+  rolling log, can loop. The main routine plays a silent sound in their
+  place, which cuts the loop off. The World Map's lighthouse transition and
+  two Venus Lighthouse scenes want their sound to carry over, and set
+  `FLAG_SKIP_SCENE_CHANGE_SOUND` to skip the silence once.
+- **Effects drawn line by line.** The console can interrupt the game after
+  each line of the image it draws (the HBlank interrupt) or when the drawing
+  reaches a chosen line (the VCount interrupt). A sequence uses these to
+  change the image from one line to the next, as the opening of a battle
+  does. A handler left behind would go on running under the next sequence,
+  so both are switched off.
+- **Tasks.** The task table is emptied.
+- **Memory.** The heap is emptied, and so is the cache that hands out the
+  sprites' tile memory.
+
+What lives outside the heap survives: the
+[main routine's work](../../glossary.md#main-routines-work), the game flags,
+and a few fixed buffers. They are all that one sequence can pass to the next.
 
 ### Running another sequence
 
-The main routine then reads `gMainRoutineWork.next`. An id from
-`SEQUENCE_NONE` up runs a sequence other than the field sequence
-([System](../../system.md#the-main-routine) lists them): `Battle_RunFar` for
-a battle, with the entrance as the [formation](../../glossary.md#formation),
-and `MainRoutine_RunDice` and `MainRoutine_RunSlots` for the dice and slots
-sequences, which copy BG palettes 14 and 15 (15 holds the window colours)
-into a 64-byte heap block before the game and back after it. Each returns a
-result, and
-`Scene_ReturnFromSequence` chooses the scene that comes back: in the
-recording, Goma Cave with the party where the battle found it.
+The main routine then reads what runs next from its work. A battle, Lucky
+Dice or Lucky Wheels
+([The Broken Seal](../../README.md#the-main-routine-and-its-sequences) lists
+them) runs from start to finish and returns a result. For a battle, the
+number that would be a scene's entrance is the
+[formation](../../glossary.md#formation) to fight. Around Lucky Dice and
+Lucky Wheels the main routine saves the last two background palettes, one of
+which holds the window colours, and puts them back afterwards.
 
-A defeat, result -1, revives the leader at 1 HP; after a defeat in the
-prologue (`FLAG_CHILDHOOD`) Isaac and Garet are healed in full as well. The
-party then goes to the defeat destination an event set
-(`Event_SetDefeatDestination`), or without one to the restart point. Any
-other result goes to the after-battle destination an event set
-(`Event_SetAfterBattleDestination`), or without one back to the return point
-with `FLAG_KEEP_PARTY_POSITION` set, so the party stands where it did. A
-destination may name only its scene or only its entrance; the return point
-fills in the other.
+The result decides which scene comes back (`Scene_ReturnFromSequence`):
+
+- **Any result but a defeat** goes back to the return point: the
+  scene and entrance the party last arrived by, which the field sequence
+  writes down as each scene starts. The main routine also sets
+  `FLAG_KEEP_PARTY_POSITION`, so the party stands where it stood. That is
+  the recording: Goma Cave comes back with the party where the battle found
+  it.
+- **A defeat** revives the leader at 1 HP and sends the party to the restart
+  point, usually the last Sanctum. A defeat in the prologue also heals Isaac
+  and Garet in full.
+- **A story battle** can name its own destinations beforehand, one for after
+  the battle and one for a defeat, and those win over the two rules above. A
+  destination may name only its scene or only its entrance; the return point
+  fills in the other. Both are forgotten when the next scene starts.
+
+The result itself stays in the main routine's work, where the scene that
+comes back can read it.
 
 ### Arriving in a scene
 
-Any other id is a [scene](../../glossary.md#scene), and its entry is either
-an ordinary entry, one without `FLAG_KEEP_PARTY_POSITION`, or a return, with
-it. On an ordinary entry `Scene_Arrive` clears the flags that last for one
-scene and, on entering a new [area](../../glossary.md#area), those that last
-for one area
-([State that cleans itself up](../scene/README.md#state-that-cleans-itself-up)
-gives their ranges); a new area also shows its name, resets the counters of
-random battles and hazardous ground and makes this entrance the place Retreat
-leads back to. Every ordinary entry also clears the Djinn's hiding flags,
-`FLAG_DJINN_HIDING_FIRST` and the 79 after it, one for each Djinni id, which
-keep a Djinni that got away out of its room until the room is entered again,
-and the 16 flags after them, which nothing else uses. On a return the flags
-stay as they were.
+When a [scene](../../glossary.md#scene) comes next, the main routine first
+asks how the party arrives. An ordinary entry is a walk through a door or
+off the edge of a map. A return, marked by `FLAG_KEEP_PARTY_POSITION`, is a
+scene coming back after a battle or a game of dice or slots. On a return
+nothing is reset.
 
-`Scene_ChooseMusic` takes the first rule of `gScene_MusicRules` that matches
-the scene or its area, the entrance and a flag, or `SOUND_KEEP_BGM` when none
-does. On an ordinary entry that music plays unless `FLAG_KEEP_MUSIC_ONCE`
-(cleared as it is used) or `FLAG_KEEP_MUSIC_HELD` (left set) keeps the music
-playing. On a return, `gMainRoutineWork.returnMusic` plays instead if it holds
-any music: it is saved whenever the Pause menu opens, and a random battle and
-every ordinary entry set it to -1, so after a random battle the scene's own
-music plays.
+On an ordinary entry the game forgets what was meant to last for one visit:
 
-Last, `Scene_LoadOverlay` unpacks the scene's overlay into `gOverlayArea`
-([below](#how-an-overlay-reaches-the-rest-of-the-game)) and
-`FieldSequence_Run` runs the scene
+- The flags that last for one scene are cleared, and on entering a new
+  [area](../../glossary.md#area), the flags that last for one area
+  ([State that cleans itself up](../scene/README.md#state-that-cleans-itself-up)
+  gives their ranges).
+- A new area also shows its name, starts the count of steps towards a random
+  battle and the count on hazardous ground from zero, and makes this
+  entrance the place Retreat leads back to.
+- The Djinn's hiding flags are cleared, one for each of the 80 Djinni ids. A
+  Djinni that got away stays out of its room only until the room is entered
+  again.
+
+Then the scene's music is chosen. A table of rules, `gScene_MusicRules`,
+gives music by scene or area, by entrance and by flag, and the first rule
+that matches wins. On an ordinary entry that music plays, unless an event
+asked for the music already playing to carry on, either for this one change
+of scene (`FLAG_KEEP_MUSIC_ONCE`) or until further notice
+(`FLAG_KEEP_MUSIC_HELD`). On a return, the music saved when the Pause menu
+last opened plays instead, if there is any. A random battle and every
+ordinary entry throw that saved music away, so after a random battle the
+scene's own music starts again.
+
+Last, the scene's overlay is unpacked into memory
+([below](#how-an-overlay-reaches-the-rest-of-the-game)) and the field
+sequence runs the scene
 ([Field code](../field/README.md#the-field-sequence-serves-requests)).
 
 ### Taking an exit
 
 ![Isaac walks down the path from Sol Sanctum's entrance twice: before the eruption the path leads into Vale as usual, and after it the same path leads into Vale with the villagers gathered by the river](https://alchemy.pascalpixel.com/guides/front/sol-entrance-warp.gif)
 
-`FieldSequence_Run` returns the kind of exit the scene ended on, and
-`Scene_TakeExit` turns it into the next
-[destination](../../glossary.md#destination). It reads the overlay's exit
-table: a header word naming a scene, then that scene's exits, one packed word
-each holding the exit's kind, the scene it leads to and the entrance there,
-with a flag word after it where the exit holds only until a flag is set. The
-first exit of the ended kind, or marked for any kind, whose flag is clear
-wins; the recording shows one path leading to two scenes as the eruption's
-flag changes. With no exit of that kind, the destination is the scene of the
-scene's first exit, at entrance 0. `EXIT_KEEP_DESTINATION` means the
-destination is already written: by an event, Retreat, a random battle or a
-party that fell.
+The field sequence ends by returning the
+[exit](../../glossary.md#exit) the party took, and the main routine turns
+it into the next [destination](../../glossary.md#destination). It reads the
+scene's exit table from the overlay and takes the first row for that exit
+whose flag, if it has one, is not set
+([The Broken Seal](../../README.md#exits-and-entrances) reads the three rows
+behind this recording). A scene with no row for the exit sends the party to
+the scene of its first row, at entrance 0.
 
-| Name                    | Value   | Meaning                                                   |
-| ----------------------- | ------- | --------------------------------------------------------- |
-| `SEQUENCE_NONE`         | 507     | the first id above the scene table; runs nothing          |
-| `SEQUENCE_SLOTS`        | 508     | Lucky Wheels                                              |
-| `SEQUENCE_DICE`         | 509     | Lucky Dice                                                |
-| `SEQUENCE_BATTLE`       | 510     | a battle; the entrance is the formation                   |
-| `EXIT_KEEP_DESTINATION` |         | the destination is already in the main routine's work     |
-| `MINIGAME_PALETTE_BYTES` | 64 bytes | BG palettes 14 and 15, saved around Lucky Dice or Lucky Wheels |
+Vale's door to the Sanctum is the plainest case. The door's event,
+`Vale_EnterSanctum`, plays a thump, opens the door, walks Isaac through and
+asks for the exit `VALE_TO_SANCTUM`. Vale's exit table holds the row
+`SCENE_EXIT(VALE_TO_SANCTUM, Sanctum, SANCTUM_FROM_VALE)`, so the Sanctum's
+scene runs next, at its entrance from Vale.
+
+One exit is special. `EXIT_KEEP_DESTINATION` says the destination is already
+written, by an event, by Retreat, by a random battle or by a party that
+fell, and the main routine leaves it alone.
 
 ## The frame loop
 
-The frame loop inside `wait()` runs the game one frame at a time and hands
-each finished frame to the screen at the next VBlank.
-
 ![In Vault, Isaac talks to a villager walking his rounds: the villager stops and turns to him, says `Welcome to Vault, the town at the heart of Angara.`, and goes back to his rounds](https://alchemy.pascalpixel.com/guides/field/talk-walk.gif)
 
-The screen is redrawn about 60 times a second, and after each image the
-console pauses in the vertical blank, the VBlank, before it starts the next.
-Changing the image while it is drawn would show half the change, so code
-writes new positions, scroll and colours to memory during the frame, and the
-VBlank interrupt's code copies them to the hardware together.
+The villager walks, stops, turns and speaks, and each of those movements is
+a number of frames. The frame loop inside `wait()` runs the game one frame
+at a time and hands each finished frame to the screen at the next VBlank.
 
-Each frame, `wait()` runs the frame pass's tasks
-(`Task_RunPass(TASK_PASS_FRAME)`), with `gTasksRunning` set while they run,
-then gathers every [sprite](../../glossary.md#sprite-and-oam) the code asked
-to show into the list the hardware reads (`Oam_BuildBuffer`,
-[below](#the-frames-sprites)), in a 1 KB heap slot that lives for one frame.
-It marks the frame finished, `gFrameRenderPending`, and halts the processor
-until the VBlank handler, `System_VBlankHandler`, has run once. After the
-halt it releases the frame's heap slot, starts the next frame's sprites
-(`Oam_ResetFrame`), counts the frame (`gFrameCount`, `gPlayTimeFrames`) and
-turns the buttons read at VBlank into repeats ([below](#buttons-and-sleep)).
+Changing the image while the console draws it would show half the change. So
+during a frame the game writes its new sprite positions, scroll and colours
+into ordinary memory, and the VBlank interrupt copies them to the hardware
+together, in the pause between two images.
+
+Each frame, `wait()` does five things in order:
+
+1. It runs the tasks of the frame pass, the routines that each do one
+   frame's share of a job.
+2. It gathers every [sprite](../../glossary.md#sprite-and-oam) the code
+   asked to show into the list the hardware reads
+   ([below](#the-frames-sprites)). The list is built in a 1 KB block of the
+   heap that lives for one frame.
+3. It marks the frame finished and halts the processor until the VBlank
+   handler has run once.
+4. After the halt it gives the frame's block back, empties the sprite lists
+   for the next frame and counts the frame, once for the game and once for
+   the play time a save file keeps.
+5. It turns the buttons read at VBlank into repeats
+   ([below](#buttons-and-sleep)).
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  tasks(["The frame pass: Task_RunPass(TASK_PASS_FRAME)"]) --> oam(["Oam_BuildBuffer: the frame's sprite list"])
-  oam --> pending(["gFrameRenderPending = 1; halt"])
-  pending --> vblank(["System_VBlankHandler: the list, the scroll and the queued writes go to the hardware; the VBlank pass; the buttons; the sound"])
-  vblank --> after(["Oam_ResetFrame, the counters, the key repeats"])
+  tasks(["The frame pass: every task does its share"]) --> oam(["The frame's sprite list is built"])
+  oam --> pending(["The frame is marked finished; halt"])
+  pending --> vblank(["VBlank: the list, the scroll and the queued writes go to the hardware; the VBlank pass; the buttons; the sound"])
+  vblank --> after(["The sprite lists are emptied, the frame is counted, held buttons repeat"])
   after -- "another frame" --> tasks
   classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef hardware fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
@@ -255,290 +262,261 @@ flowchart TD
 
 ### What VBlank does
 
-At VBlank the interrupt's handler, `System_VBlankHandler`, runs whatever the
-frame loop is doing. It stops any line-by-line DMA left running, trades the
-link cable's payloads if a link is up, advances the music's fades and the
-screen fade, and then, only if the frame was marked finished, does what has
-to land
-on screen: it copies the sprite list to the hardware's OAM, the scroll of the
-four [background layers](../../glossary.md#background-layer) from `gBgScroll`,
-and carries out the queued register writes
-([below](#the-register-write-queue)). The display writes come first, while
-the blank lasts, since OAM can be written only in a blank and a palette or
-scroll changed while lines are drawn shows half changed. It then runs the
-one-shot `gVBlankCallback`, cleared before it is called, runs the VBlank
-pass's tasks, reads the buttons, counts the VBlank and sets `gVBlankDone`,
-which the halted frame loop is waiting for. Last it mixes the next stretch of
-sound (`Mixer_Enter`), which need only finish before the next VBlank.
+The VBlank handler, `System_VBlankHandler` in `system/frame.c`, runs at
+every VBlank whatever the frame loop is doing. Its work is of three kinds.
 
-The screen writes happen only for a finished frame, so a frame that runs
-past VBlank changes nothing on screen until the next one: the image keeps
-the previous frame's sprites, scroll and settings together, and the frame
-lasts two VBlanks or more, which is [slowdown](../../glossary.md#slowdown).
-The music is mixed at every VBlank whatever the frame is doing, so it keeps
-its tempo. One small delay follows from the order: buttons read at VBlank
-reach the game's code at the start of its next frame.
+There is what has to land on screen, done only if the frame was marked
+finished. It copies the sprite list to OAM, the hardware's own sprite table,
+copies the scroll of the four
+[background layers](../../glossary.md#background-layer), and carries out the
+queued register writes ([below](#the-register-write-queue)). These are
+done early, while the blank lasts: the hardware accepts a new sprite table
+only during a blank, and a colour or a scroll changed while lines are being
+drawn shows half changed.
 
-`gFrameVBlanks` counts the VBlanks since the frame loop last halted, so a
-frame that overran shows 2 or more, and `gLastFrameVBlanks` keeps the count as
-the last frame left it, by which the windows pace their typing
-([Windows](../window/README.md#how-fast-the-letters-come)). When the debug
-CPU-load display is on, the frame loop also measures the load, as the line
-the frame ended on, for that display.
+There is what has to happen at every VBlank whether the frame is finished
+or not. It trades the link cable's payloads if a link is up, moves the music's
+fades and the screen fade one step on, runs the tasks of the VBlank pass and
+reads the buttons. Then it tells the halted frame loop that the VBlank has
+come.
+
+And there is the sound: the handler ends by mixing the next stretch of it.
+The mixing comes last because it is the least urgent, and need only finish
+before the next VBlank.
+
+Because the screen writes wait for a finished frame, a frame that runs past
+its VBlank changes nothing on screen. The image keeps the previous frame's
+sprites, scroll and settings together, and the late frame goes up whole at
+the VBlank after: that is [slowdown](../../glossary.md#slowdown). The music
+is mixed at every VBlank regardless, so it keeps its tempo.
+
+The handler also counts the VBlanks each frame took, which is 1 for a frame
+in time and 2 or more for one that overran. The windows pace their typing
+by that count
+([Windows](../window/README.md#how-fast-the-letters-come)). One small delay
+follows from the order of things: a button read at VBlank reaches the game's
+code at the start of its next frame.
 
 ### Screen fades
 
-The screen fade darkens or brightens the whole image over a number of
-VBlanks, through the hardware's blend registers: `ScreenFade_ToBlack` and the
-three like it set a target brightness and a duration, and `ScreenFade_Update`,
-called by the VBlank handler, moves `REG_BLDY` a little each VBlank, in a
-straight line from the start level to the target. `ScreenFade_Wait` waits a
-frame at a time until the fade has finished. The Title and the battle use
-it; the field
-fades its scenes in through the palette fade instead
+The screen fade darkens or brightens the whole image through the hardware's
+brightness setting, which runs from 0, the image as drawn, to 16, all black
+or all white. Code asks for a target and a number of VBlanks, and the VBlank
+handler moves the brightness a step each VBlank, in a straight line from
+where it was to the target. Because it is stepped at VBlank, a fade takes
+the same time whether or not the game is slowing down. The game's own fades
+cover the sprites and every background layer but the first. The Title and
+the battle fade this way; the field fades its scenes in by changing the
+colours themselves
 ([Field code](../field/README.md#the-palette-fade)).
-
-| Name             | Value | Meaning                                      |
-| ---------------- | ----- | -------------------------------------------- |
-| `FADE_LEVEL_MAX` | 16    | `REG_BLDY`'s strongest level, all white or all black |
-| `FADE_GAME_LAYERS` | all but `BG0` | the layers the game's fades cover    |
 
 ### Buttons and sleep
 
 ![Isaac stands at the Sanctum's door in Vale while only L and R are held; after three seconds the screen turns white as the console goes to sleep](https://alchemy.pascalpixel.com/guides/runtime/sleep.gif)
 
-The VBlank handler reads the keypad into `gKeysHeld` and `gKeysPressed`, the
-buttons down now and those that went down since the last VBlank, and starts
-or counts down the repeat timer: a newly held button restarts the repeat at
-once, and letting go of every button restarts the full delay. After its halt
-the frame loop turns the held buttons into `gKeysRepeat`, as when the player
-holds Down in a menu: the first repeat comes after about a third of a second,
-then one every tenth of a second. Where several directions are held, the
-repeat keeps only the one pressed last.
+The VBlank handler reads the keypad into two sets: the buttons down now,
+and the buttons that went down since the last VBlank. From the first set the
+frame loop makes a third, the repeats, which is what a menu reads when the
+player holds Down to run through a list. A held button repeats first after
+about a third of a second and then ten times a second. Pressing another
+button starts a repeat at once, and letting go of everything brings back the
+full delay. Where several directions are held, the repeat keeps only the one
+pressed last.
 
-Holding L and R alone for three seconds puts the console to sleep, with the
-screen off and the battery spared until L and R wake it: the frame loop
-counts the frames they have been held, turns the screen white for a second,
-switches the sound off and stops the processor, and after waking restores the
-screen and waits a few VBlanks before carrying on. The frame loop also counts
-frames with no button held and sleeps after three minutes of them when
-auto-sleep is on: the settings menu's auto-sleep row switches it at once, a
-new game starts with it off, a loaded file brings back what it saved, and in
-debug mode the File Screen turns it on when it finds no backup memory. Some
-moments forbid sleep altogether (`gSleepDisabled`). In debug mode
-(`gDebugMode`), Start and Select held pause the game, and A, B, Select or the
-D-pad then advance it one frame at a time.
+Holding L and R, and nothing else, for three seconds puts the console to
+sleep. The frame loop counts the frames they have been held, turns the
+screen white for a second, switches the sound off and stops the processor.
+With the screen off and the processor stopped the console spares its
+battery until L and R are pressed again; the game then puts the screen back
+and waits a moment before carrying on.
 
-`wait()` counts the hold and the idle frames against `SLEEP_COMBO_FRAMES` and
-`SLEEP_IDLE_FRAMES`; `Input_UpdateKeyRepeatAndDirection` repeats keys after
-`INPUT_KEY_REPEAT_FIRST` frames, then every `INPUT_KEY_REPEAT_NEXT`.
+The frame loop also counts frames with no button held, and sleeps after
+three minutes of them when auto-sleep is on. The settings menu's auto-sleep
+row switches it; a new game starts with it off and a loaded file brings back
+what it saved. The credits and the Battle Arena's lobby turn it off, and the
+File Screen can forbid sleep of either kind.
 
-| Name                     | Value         | Meaning                                              |
-| ------------------------ | ------------- | ---------------------------------------------------- |
-| `INPUT_KEY_REPEAT_FIRST` | 19 frames     | a held button's first repeat                         |
-| `INPUT_KEY_REPEAT_NEXT`  | 6 frames      | each later repeat                                    |
-| `SLEEP_COMBO_FRAMES`     | 180 frames    | L and R held alone for three seconds                 |
-| `SLEEP_IDLE_FRAMES`      | 10,800 frames | three minutes with no button, with auto-sleep on     |
-| `SLEEP_WHITE_VBLANKS`    | 60 VBlanks    | the white screen shown before the processor stops    |
-| `SLEEP_WAKE_VBLANKS`     | 10 VBlanks    | waited after waking, with the screen restored        |
+In debug mode, holding Start and Select pauses the game, and A, B, Select or
+the D-pad then advance it one frame at a time.
+
+| Name                     | Value         | Meaning                                           |
+| ------------------------ | ------------- | ------------------------------------------------- |
+| `INPUT_KEY_REPEAT_FIRST` | 19 frames     | a held button's first repeat                      |
+| `INPUT_KEY_REPEAT_NEXT`  | 6 frames      | each later repeat                                 |
+| `SLEEP_COMBO_FRAMES`     | 180 frames    | L and R held alone for three seconds              |
+| `SLEEP_IDLE_FRAMES`      | 10,800 frames | three minutes with no button, with auto-sleep on  |
+| `SLEEP_WHITE_VBLANKS`    | 60 VBlanks    | the white screen shown before the processor stops |
+| `SLEEP_WAKE_VBLANKS`     | 10 VBlanks    | waited after waking, with the screen restored     |
 
 ## The stack switch in `wait()`
 
-The stack switch gives the frame loop and its tasks room to run however deep
-the waiting code is.
-
 The stack is the scratch memory every function call takes a little of, and
-it is small: 1,792 bytes at the top of IWRAM, which the interrupts share.
-Code can ask to wait from deep inside its own calls, when most of the stack
+gives back when it returns. It is small: 1,792 bytes at the top of IWRAM,
+which the interrupts share. The deeper a chain of calls, the further down
+the stack has grown.
+
+Code can ask to wait from deep inside such a chain, when most of the stack
 is already in use, and the tasks that run while it waits need stack of their
-own. So before running any frames, `wait()` looks at where the waiting code's
-stack has reached. When it has grown below a fixed line 512 bytes above the
-stack's floor, `Ram_FrameWaitStackTop`, `wait()` copies the part below the
-line aside into ordinary memory, `gSavedStack`, and starts afresh from the
-line; when the wait is over it puts the copy back. A caller whose stack is
-still above the line keeps it.
+own. So before running any frames, `wait()` looks at how far down the
+caller's stack has reached. If it has grown below a fixed line, 512 bytes
+above the stack's floor, `wait()` copies the part below the line aside into
+a buffer in the larger memory, `gSavedStack`, and runs its frames from the
+line. When the wait is over it puts the copy back, and the caller carries on
+without having noticed. A caller whose stack is still above the line simply
+keeps it.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  enter(["wait(n) is called with the stack below the line"]) --> copy(["The part below the line is copied to gSavedStack"])
-  copy --> run(["The frames run from the line, with 512 bytes to the floor"])
-  run --> restore(["The copy is put back; wait(n) returns"])
+  enter(["wait(n) is called deep inside other code: the stack has grown below the line"])
+  enter -- "the part below the line is copied aside" --> saved(["gSavedStack, in EWRAM: the waiting code's deepest calls, kept for the wait"])
+  enter -- "the stack starts again at the line" --> run(["The stack, in IWRAM: 512 bytes from the line to the floor, for the frame loop, the tasks and VBlank"])
+  run -- "n frames done" --> restore(["wait(n) returns on the stack it was called with"])
+  saved -- "copied back" --> restore
   classDef code fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   class enter,restore code
-  class copy,run frame
+  class saved,run frame
 ```
 
-The frame loop and the tasks therefore have at least 512 bytes, however deep
-the waiting code, and so does what VBlank does when the VBlank arrives during
-the halt. The price is one rule: a task returns within its frame, because a
-second wait would overwrite the copy the first one saved. The rule is kept by
-the code alone, and every task keeps it (see [Evidence](#evidence)).
+The frame loop and the tasks therefore always have at least 512 bytes, and
+so does the VBlank handler when it runs during the halt. The buffer the
+copy goes to holds 3,152 bytes, far more than the 512 that can lie below
+the line.
 
-| Name                    | Value        | Meaning                                                 |
-| ----------------------- | ------------ | ------------------------------------------------------- |
-| `Ram_FrameWaitStackTop` | `0x03007a00` | the line the frames run from                            |
-| `Ram_IwramHeapEnd`      | `0x03007800` | the stack's floor, 512 bytes below the line             |
-| `gSavedStack`           | 3,152 bytes  | where the part below the line is kept, in EWRAM         |
-| `gSavedStackSize`       |              | bytes copied, or 0 when the caller kept its own stack   |
+The price is one rule: a task returns within its frame. There is one buffer,
+so a task that waited would start a second wait inside the first, and the
+second would overwrite the copy the first one saved. Nothing checks the
+rule; the code simply keeps it, and every task does
+(see [Evidence](#evidence)).
 
 ## The heap
 
 The heap lends blocks of memory to the rest of the game: a scene's work, a
 menu's buffers, a battle effect's pictures.
 
-It works like a pile: each block goes on top of the last, and giving one back
-gives back everything taken after it. That makes taking and giving back a
-block cost almost nothing, at the price of one rule: blocks go back in the
-reverse of the order they were taken. The main routine empties the whole heap
-before
-each sequence, so no block outlives the sequence that took it.
+It works like a pile: each block goes on top of the last, and giving one
+back gives back everything taken after it. Taking a block is then only a
+matter of moving the top of the pile up, and giving it back of moving it
+down again, which costs almost nothing. The price is one rule: blocks go
+back in the reverse of the order they were taken. The main routine empties
+the whole heap before each sequence, so no block outlives the sequence that
+took it.
 
-There are two piles, one in fast IWRAM and one in the larger EWRAM; a request
-tries IWRAM first and falls back on EWRAM, or the other way round for
-`Heap_AllocEwram` and `HeapSlot_AllocEwram`. Some blocks have to be found
-again by code that took none of them, such as a scene's
-[work](../../glossary.md#work), which a task reads every frame. Those are kept
-in numbered places, the [heap slots](../../glossary.md#heap-slot), and asking
-for a slot that already holds a block simply returns that block, whatever
-size is asked for. A block is lent as it is, with whatever the memory held
+There are two piles, the pools: one in fast IWRAM and one in the larger
+EWRAM. A request tries IWRAM first and falls back on EWRAM, and code that
+wants room more than speed, such as the battle and the save, asks the other
+way round. A block is lent as it is, holding whatever the memory held
 before.
 
-Giving blocks back out of order fails later: later blocks stay in their
-slots, pointing at memory the next request hands out again. For the same
-reason, code stops using a block before giving it back, which is why a
-battle effect stops the task copying its pictures first.
+Some blocks have to be found again by code that did not take them, such as
+a scene's [work](../../glossary.md#work), which a task reads every frame.
+Those are kept in numbered places, the
+[heap slots](../../glossary.md#heap-slot). Asking for a slot that already
+holds a block simply returns that block, whatever size is asked for, so the
+code that sets a work up and the code that reads it make the same call.
 
-Code takes a block with `Heap_Alloc` or, for a heap slot, `HeapSlot_Alloc`,
-and gives it back with `Heap_Release` or `HeapSlot_Release`, which sets the
-pool's next address back to the block's start; the pool is read off the
-block's address. The slots live in `gHeapSlots`, whose first two words are
-the two pools' next addresses, and `Heap_Initialize` empties all of it.
+Giving blocks back out of order goes wrong later, not at once. The blocks
+taken after the one given back stay in their slots, pointing at memory the
+next request hands out again, and two pieces of code then write over each
+other. For the same reason, code stops using a block before it gives it
+back: a battle effect first stops the task that copies its pictures, then
+returns the memory they were in.
 
-| Name           | Value   | Meaning                                                   |
-| -------------- | ------- | --------------------------------------------------------- |
-| `gHeapSlots`   | 64 words | two pool pointers and 62 heap slots, `enum HeapSlot`     |
-| `gIwramHeap`   | 22 KB   | the IWRAM pool, from 8 KB to the stack's floor at 30 KB   |
-| `gEwramHeap`   | 32 KB   | the EWRAM pool, at 192 KB                                 |
-| a block's size |         | rounded up to whole words                                 |
+| Name         | Value    | Meaning                                                 |
+| ------------ | -------- | ------------------------------------------------------- |
+| `gIwramHeap` | 22 KB    | the IWRAM pool, from 8 KB to the stack's floor at 30 KB |
+| `gEwramHeap` | 32 KB    | the EWRAM pool, at 192 KB                               |
+| `gHeapSlots` | 62 slots | the numbered places, named by `enum HeapSlot`           |
 
 ## The task runner
 
-The task runner keeps the list of routines that run every frame or every
-VBlank, in priority order, until each is removed.
+Some things have to happen every frame whatever else is going on: scrolling
+the map, typing the windows' text, placing each actor's sprite where the
+actor now stands. Each is a task, a routine added to a table once and then
+run every frame until it is removed, or until the main routine empties the
+table at the next transition. The table holds 20.
 
-Some things have to happen every frame whatever else is going on: scrolling the
-map, typing the windows' text, placing each actor's sprite where the actor
-now stands. Each is a task, added once and run until it is removed or the
-main routine empties the table at the next transition. A task's priority says
-which of the two passes runs it, the frame's or VBlank's, and where in that
-pass, highest first: the high byte is the pass, the low byte the rank. The
-battle camera, `BattleCamera_Update`, ranks one below the battle's playback,
-so in every frame it runs after it.
+The table is run twice over, in two passes: the frame pass, which `wait()`
+runs once a frame, and the VBlank pass, which the VBlank handler runs once
+a VBlank. A task's priority says which pass it belongs to and its rank
+within that pass, and a pass runs its tasks from the highest rank down. The
+rank is how one task is made to see another's work: the battle's camera
+ranks one below the battle's playback, so in every frame the camera is
+placed after the playback has moved everything.
 
-Adding a task sorts the table by priority, highest first, and a pass then
-runs the table from the top, calling every task whose high byte matches. A
-task can be paused and resumed without losing its place in the order: a
-paused task's high byte is made odd, which matches neither pass. When a menu
-opens over a scene, the tasks whose code is in the scene's overlay pause,
-except the few a scene marks to keep running under a menu, as the Battle
-Arena and Colosso do. The table holds 20 tasks. The game adds a task only
-outside a pass, so a pass sees the table in one order from its start to its
-end.
+Adding a task sorts the table by priority, so a pass only has to walk it
+from the top. The game adds tasks only outside a pass, so a pass sees the
+table in one order from its start to its end.
 
-The original game's sort stops one pass early, so the first two tasks in the
-table can be left in the wrong order
-([`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix)).
+A task can be paused and resumed without losing its rank: a paused task is
+marked so that neither pass picks it up. When a menu opens over a scene, the
+tasks that belong to the scene's own code are paused this way, so the scene
+stands still behind the menu. A scene can mark a task to keep running under
+a menu, as the Battle Arena and Colosso do.
 
-`Task_Add` adds a task, or gives one already in the table a new priority, and
-sorts with `Task_Sort`; `Task_Remove` removes it; `Task_RunPass` runs
-`TASK_PASS_FRAME` or `TASK_PASS_VBLANK`; `Task_SuspendOverlayTasks` and
-`Task_ResumeOverlayTasks` pause and resume a scene's tasks, `Task_SetFlags`
-marks one to keep running; and `Task_ResetAll` clears the table.
-
-| Name                    | Value    | Meaning                                                  |
-| ----------------------- | -------- | -------------------------------------------------------- |
-| `TASK_COUNT`            | 20       | tasks the table holds                                    |
-| `TASK_PASS_FRAME`       | `0xc80`  | the frame pass; add a rank to run earlier in it          |
-| `TASK_PASS_VBLANK`      | `0x480`  | the VBlank pass                                          |
-| `TASK_PRIORITY_EMPTY`   | `0xffff` | an empty slot, sorted last                               |
-| `TASK_PRIORITY_REMOVED` | `0x7fff` | a removed task; its odd high byte matches no pass        |
-| `struct Task`           | 8 bytes  | `func`, `priority` and `flags`, whose bit 0 keeps it running under a menu |
+The original game's sort stops one sweep early, so the first two tasks in
+the table can be left in the wrong order
+([`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix)). The task code is
+`system/task.c`.
 
 ## The register write queue
 
-The register write queue holds the changes to the hardware's registers that
-a frame asks for, so that VBlank can carry them out together.
+The hardware's registers are its settings: which layers show, how two of
+them blend, where a window cuts the image. Like a sprite's position, a
+setting changed while the image is being drawn would show half changed, and
+a setting changed a frame before the sprites it goes with would show the two
+out of step.
 
-The hardware's registers decide how the screen is drawn: which layers show,
-how two blend, where a window cuts the image. Code that changes them while
-a frame is being prepared adds its writes to a queue, and VBlank's code
-carries them out together with the sprites and the scroll, and only for a
-frame that has finished, so a frame's changes reach the screen together
-or wait together. A frame left unfinished keeps its writes for the next. Each
-entry is a value, an address and a control word saying how wide the write is
-and whether the value is stored, ORed in or cleared; an entry whose control
-word names no width is a DMA transfer instead, carried out through DMA 3. The
-queue takes 32 writes; a write to a full queue is dropped.
+So code that changes a register during a frame adds the write to a queue
+instead, and the VBlank handler carries the whole queue out together with
+the sprites and the scroll, and only for a finished frame. A frame's changes
+reach the screen together or wait together: a frame that overruns keeps its
+writes for the next VBlank.
 
-`IoWriteQueue_Store16`, `IoWriteQueue_SetBits16` and their byte and word
-forms add a write; `IoWriteQueue_FlushPending` empties the queue,
-`gIoWriteQueue`, by copying the routine that carries the writes out,
-`Resource_ExecuteTransfer`, onto the stack in IWRAM each time and running it
-there.
-
-| Name             | Value      | Meaning                                       |
-| ---------------- | ---------- | --------------------------------------------- |
-| `gIoWriteQueue`  | 32 entries | a value, an address and a control word each   |
-| `IO_WRITE_8` to `IO_WRITE_32` |  | the write's width                       |
-| `IO_WRITE_SET`, `IO_WRITE_CLEAR` | | set or clear the value's bits instead of storing it |
+A queued write can replace a register's value, or switch some of its
+settings on or off and leave the rest as they are. An entry can also be a
+copy of a whole block of memory, which is how a fade's new colours reach
+the palettes. The queue takes 32 writes a frame, and a write to a full queue
+is dropped.
 
 ## The frame's sprites
 
-The frame's sprites are gathered once a frame into the list the hardware
-draws from, in depth order.
+Which sprite is in front changes from frame to frame, as people walk in
+front of and behind each other. So the game builds the hardware's sprite
+table anew every frame, in order of depth.
 
-Everything that draws a sprite puts its entry on the list of one of 256
-depth slots, `gOamDepthLists`, with `Oam_AddSpriteAtDepth`; a higher slot is
-drawn in front, and slot 0, where the field puts its shadows, behind
-everything. Each frame `Oam_BuildBuffer` walks the slots from the highest
-down and writes the hardware's list into the frame's scratch heap slot, with
-an ARM routine copied into a heap block for the walk and released after it,
-and the VBlank handler copies that list into OAM while `gOamCopyEnabled` is
-set; Lucky Dice, Lucky Wheels and the credits clear it and write OAM
-themselves. `Oam_ResetFrame` empties the slots for the next frame.
+It does so with 256 depth slots. Everything that shows a sprite puts it in
+a slot, and a higher slot is drawn in front; slot 0, where the field puts
+its shadows, is behind everything. Once the frame's tasks have run, the
+frame loop walks the slots from the highest down and writes the hardware's
+table in that order, and the VBlank handler copies it to the hardware. The
+slots are emptied after every frame, so a sprite shows only for as long as
+something keeps asking for it. Lucky Dice, Lucky Wheels and the credits
+switch the copy off and write the hardware's table themselves.
 
 A sprite drawn scaled or rotated also needs one of the hardware's 32
-rotation-scaling matrices, which `OamMatrix_AllocFromTransform` hands out one
-after another each frame. Once all 32 are taken it hands out matrix 0 again
-without filling it, so a sprite is drawn with whatever the first matrix
-holds.
-
-| Name                       | Value | Meaning                                         |
-| -------------------------- | ----- | ----------------------------------------------- |
-| `RENDER_DEPTH_SLOT_COUNT`  | 256   | depth slots; the front is slot 255, the back slot 0 |
-| `OBJ_AFFINE_MATRIX_COUNT`  | 32    | rotation-scaling matrices a frame               |
-| `HEAP_SLOT_FRAME_SCRATCH`  | 1 KB  | the heap slot the list is built in, one frame long |
+rotation-scaling settings, which are handed out one after another each
+frame. Once all 32 are taken, a further sprite is given the first one again
+without changing it, so it is drawn with whatever the first one holds.
 
 ## Memory map
 
 The memory map is the fixed place each part of the game lives in, the same
 on every console.
 
-The console has two kinds of working memory, IWRAM and EWRAM. EWRAM, 256 KB,
-is large but slower and holds most of the game's data: its variables, the
-current scene's code, the map's grid and pictures being unpacked, and the
-larger heap. IWRAM, 32 KB, is fast and holds what must run or be read
-quickly: routines copied from the cartridge at power-on, the busiest
-variables, a second heap and the stacks. Video memory holds the tiles and tile
-maps the screen is drawn from, and the processor runs the
+The console has two kinds of working memory. EWRAM, 256 KB, is large but
+slower and holds most of the game's data: its variables, the current scene's
+code, the map's grid and pictures being unpacked, and the larger pool of the
+heap. IWRAM, 32 KB, is fast and holds what must run or be read quickly:
+routines copied from the cartridge at power-on, the busiest variables, the
+heap's other pool and the stacks. Video memory holds the tiles and tile maps
+the screen is drawn from, and the processor runs the
 [main image](../../glossary.md#main-image) straight from the cartridge.
 
 Each area has a fixed place, the same in every
 [edition](../../glossary.md#editions), except that German reserves 16 bytes
-before the IWRAM variables, so all of them sit 16 bytes higher (two of them
-are fixed addresses, below):
+before the IWRAM variables, so all of them sit 16 bytes higher:
 
 | EWRAM, from | Size | What |
 | --- | --- | --- |
@@ -558,15 +536,12 @@ are fixed addresses, below):
 | 30 KB | the build stamp and the start of the stacks |
 | the last 256 bytes | the stack tops and the address the console jumps to on an interrupt |
 
-The allocators test only against the end of EWRAM and against the IWRAM
-heap's end at 30 KB, so each heap can run into the buffer above it, and in
-play both do: the EWRAM heap reaches into the world map's tile buffer in
-battle, and in battle the IWRAM heap runs over the sound mixer's copy at
-28 KB, which stays idle through a battle (the measurements are in the comments
-on `gEwramHeap` and `gIwramHeap`, `include/system/heap_release.h`).
-`main.ld` declares the areas, `ewram.s`, `iwram.s` and `iwram_high.s` lay out
-their variables, and the English link map, `out/tbs-en/tbs-en.map`, has every
-address.
+A request is refused only when the EWRAM pool would pass the end of EWRAM,
+or the IWRAM pool the stack's floor at 30 KB. Each pool can therefore grow
+into the buffer that lies in its way, and in play both do. In a battle the
+EWRAM pool reaches into the world map's tile buffer, which only the world
+map uses, and the IWRAM pool runs over the sound driver's copy of its mixer
+at 28 KB, which stays idle through a battle.
 
 ### Video memory
 
@@ -575,41 +550,38 @@ tiles plus a screen map saying which tile goes where; a sprite draws its own
 tiles wherever it is put. On a scene, video memory holds the windows' tiles
 first, then the windows' screen map and the three map layers' screen maps,
 then the map's three sheets of tiles, and in its last 32 KB the sprites'
-tiles, which a cache hands out in 512 blocks of 64 bytes. The credits screen
-divides the background memory into two halves instead
+tiles.
+
+The sprites' 32 KB is shared by everything that shows a sprite, so a cache
+hands it out, in 512 blocks of 64 bytes, two tiles each. A sprite's pictures
+take the first run of free blocks long enough to hold them, and the cache
+remembers who owns each block; it can serve 96 owners at once. The credits
+screen divides the background memory into two halves instead
 ([Menus](../menu/README.md#two-battle-backgrounds-in-one-background-memory)).
-
-The window tiles are placed by `Window_LoadGraphics`, the map's by
-`MapGrid_LoadMap` ([Maps](../map/README.md)), and the sprite tiles by the
-cache's `VramCache_Load` and `VramCache_AllocateBlocks`, which finds the first
-run of unowned blocks long enough and records the entry that owns each block
-in `gVramCacheBlockOwners`.
-
-| Name                      | Value | Meaning                                       |
-| ------------------------- | ----- | --------------------------------------------- |
-| `VRAM_BLOCK_COUNT`        | 512   | blocks of sprite tile memory                  |
-| `VRAM_BLOCK_BYTES`        | 64    | bytes in a block, two 16-colour tiles         |
-| `VRAM_CACHE_ENTRY_COUNT`  | 96    | cache entries that can own blocks             |
 
 ## How an overlay reaches the rest of the game
 
-An [overlay](../../glossary.md#overlay) is a scene's code, packed on the
-cartridge and unpacked into one area of EWRAM when the party arrives.
-
 ![Isaac climbs the steps to the Sanctum's door in Vale: Vale fades out, and the Sanctum's hall fades in with Isaac just inside its door](https://alchemy.pascalpixel.com/guides/front/sanctum-door.gif)
 
-Walking into the Sanctum unpacks its code into the overlay area over Vale's.
-Every overlay is built to run at `gOverlayArea`, so only one is ever loaded
-and each carries its own copy of the code several scenes need;
+Walking into the Sanctum unpacks its code over Vale's. An
+[overlay](../../glossary.md#overlay) is a scene's code, packed on the
+cartridge and unpacked into one 32 KB area of EWRAM when the party arrives;
 [System](../../system.md#overlays) says why a scene's code is an overlay at
-all. There are 96 overlays: several scenes can share one, and the Title and
-a few screens that are mostly menus are overlays too.
+all. Every overlay is built to run at that one place, so only one is ever
+loaded.
+
+There are 96 overlays for the 201 scenes. Several scenes can share one, as
+fourteen scenes on and around Crossbone Isle do, and the Title and a few
+screens that are mostly menus are overlays too. One scene can also hold
+several places: the Sanctum the party walks into here is one scene holding
+six Sanctums, Vale's among them, and it answers for whichever entrance the
+party arrives at.
 
 An overlay meets the rest of the game at two tables:
 
 - At its start, the
-  [entry table](../../glossary.md#entry-table-and-import-table): the functions
-  the main image calls to ask the scene about itself
+  [entry table](../../glossary.md#entry-table-and-import-table): the six
+  functions the main image calls to ask the scene about itself
   ([Scenes](../scene/README.md#the-entry-table) explains each).
 - At its end, the import table: one entry for each function of the main image
   the overlay calls. A direct call reaches only a few megabytes either way,
@@ -634,63 +606,33 @@ flowchart TD
   class entry,import table
 ```
 
-Every overlay keeps the same list of possible imports in the same order, and
-takes from it only what it uses. As the game unpacks an overlay it also fixes
-up the overlay's calls: on the cartridge each call is stored relative to the
-start of the overlay, and the processor needs it relative to the call itself.
+Every overlay draws its imports from the same list in the same order, and
+takes from it only what it uses.
 
-The entry table is `struct SceneEntryPoints`; the list of imports is
-`overlay/imports.inc`, which every overlay's entry and import tables include.
-Before each scene the main routine calls `Scene_LoadOverlay`, whose
-`Overlay_Load` unpacks the overlay the scene table names with
-`Decompress_TaggedLz` and then fixes up its calls with a RAM copy of
-`Resource_PatchThumbBranch`, taken from the heap and released again.
-`overlay/overlay.ld` links each overlay at `gOverlayArea`,
-`overlay/overlays.s` places the 96 packed streams, and the packer is
-`tools/ags-overlays`.
-
-| Name                     | Value        | Meaning                                         |
-| ------------------------ | ------------ | ----------------------------------------------- |
-| `gOverlayArea`           | `0x02008000` | the 32 KB every overlay is unpacked into        |
-| `struct SceneEntryPoints` | 48 bytes    | six entries, each an 8-byte veneer              |
-| overlays                 | 96           | 93 scenes' and 3 for the debug menus            |
-
-## The addresses that stay put
-
-Some code reaches the sound mixer, the heap's end and a few buffers by a
-number written into it, wherever the linker puts the rest.
-[The original](../../glossary.md#the-original) holds 23 such fixed addresses,
-so the matching build compiles the same numbers, and the memory map keeps
-what they point at in place: the cartridge's first instruction, eleven
-routines copied into IWRAM, the map and decode buffers that follow the
-overlay area, the sound mixer, the end of the IWRAM heap, the stack `wait()`
-runs its frames on, and two IWRAM variables whose German address differs.
-Each is defined once, with why it stays where it is, and the check build with
-a current GCC (`make modern`) reaches each by its name instead.
-
-They are the `FIXED_ADDRESS` lines of `include/system/ram_buffer.h`,
-`include/system/iwram_call.h` and `include/gamepak/rom_header.h`. The
-routines in IWRAM are called through the inlines of `iwram_call.h`, one for
-each: `Iwram_SignedDivide`, `Iwram_Sqrt`, `Iwram_CopyWords` and the rest.
+Unpacking has one more step. A call inside the overlay is stored on the
+cartridge as a distance from the start of the overlay, and the processor
+needs the distance from the call itself. So after unpacking the code, the
+game goes through it and corrects every call (`Overlay_Load`).
 
 ## Saving
+
+![Isaac opens the Pause menu by Vale's river and chooses Save your quest: the File Screen lists the three files, and `Your game was saved.` confirms it](https://alchemy.pascalpixel.com/guides/runtime/save.gif)
 
 Saving writes the new copy of a save before it lets go of the old one, so a
 save survives the power going at any moment.
 
-![Isaac opens the Pause menu by Vale's river and chooses Save your quest: the File Screen lists the three files, and `Your game was saved.` confirms it](https://alchemy.pascalpixel.com/guides/runtime/save.gif)
-
 The cartridge's [flash chip](../gamepak/README.md#the-flash-chip) is written
-a sector at a time, and each of the three save
+a sector at a time, and it has 16 sectors of 4 KB. Each of the three save
 [files](../../glossary.md#file-and-part) is two parts, each in a sector of
-its own: the first part holds the file's summary for the file list, the game
-flags and the main routine's work, the second where the scene's people
-stand. A part in its sector opens with a
-16-byte header: a signature, `CAMELOT`, the part's number, a checksum of the
-part and a counter. Each save goes into an empty sector, its copy stamped
-with a count one higher than the old copy's, and only once it is written and
-verified is the old copy marked empty. Whenever the power goes, one whole copy
-remains, and the game keeps the one with the higher count.
+its own. The first part holds the file's summary for the file list, the
+game flags and the main routine's work; the second holds where the scene's
+people stand. Three files of two parts fill six sectors at most, so at
+least ten stay empty.
+
+A part in its sector opens with a short header: the word `CAMELOT`, which
+marks the sector as holding a save, the part's number, a checksum of the
+part and a count. The checksum is a sum over the part's bytes, kept so that
+a part damaged or only half written can be told from a good one.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -704,73 +646,58 @@ flowchart TD
   class write,old hardware
 ```
 
-The flash has 16 sectors. A new copy of a part goes into an empty sector
-chosen at random, which spreads the wear over the chip, and the last empty
-sector is kept back for replacing an existing save, so replacing one always
-has room.
-Every save, load, copy or delete starts by reading all 16 sectors to find the
-newest copy of each part; a sector counts as taken when its signature and
-checksum are good, and of two copies of a part only the newer stays taken.
-When a part's count passes 65,000 the new copy is written again over the old
-sector as count 1, with the high copy kept valid until that write has been
-verified.
+Every save, load, copy or delete starts by reading all 16 sectors to learn
+what is where. A sector counts as taken when its `CAMELOT` and its checksum
+are good, and of two copies of the same part only the one with the higher
+count stays taken.
 
-The sectors are scanned by `Save_InitializeWork`, which takes the save work
-in a heap slot, finds the flash chip and reads each sector with
-`Save_ReadSector`; `Save_WritePart` writes a part, choosing its sector with
-`Save_SelectWriteSector` and programming it with `Save_WriteSector` before
-`Save_InvalidateSector` frees the old one; `Save_ReadPart` loads one, and
-`Save_ReleaseWork` gives the work back. The Save command itself is
-`Save_ToChosenFile` ([Windows](../window/README.md#saving)), and `savedata.c`
-holds the signature a sector is recognized by.
+A save then writes each part into an empty sector, stamped with a count one
+higher than the old copy's, and reads it back to check it. Only then is the
+old copy's sector marked empty. If the power goes before the new copy is
+whole, the old one is still there; if it goes after, the new one has the
+higher count. Either way one whole copy remains.
 
-| Name                   | Value    | Meaning                                                |
-| ---------------------- | -------- | ------------------------------------------------------ |
-| `SAVE_SECTOR_COUNT`    | 16       | sectors of 4 KB                                        |
-| `SAVE_FILE_COUNT`      | 3        | files; file n is parts n and n + 3                     |
-| `SAVE_PART_NONE`       | 16       | the part number of an empty sector                     |
-| `SAVE_COUNTER_LIMIT`   | 65,000   | the highest count kept; the next copy restarts at 1    |
-| `SAVE_CHECKSUM_BYTES`  | 4,072    | payload bytes summed into the checksum                 |
-| `SAVE_FLASH_IDENTIFY_ATTEMPTS` | 8 | tries to find the flash chip, a frame apart          |
+The empty sector is chosen at random, which spreads the wear over the
+chip. The last empty sector is
+kept back for replacing a part that already has a copy, so replacing a save
+always has room.
+
+The count's place in the header holds numbers up to 65,535, so past 65,000
+the count starts over: the new copy is written a second
+time, over the old copy's sector, as count 1, and the high-numbered copy is
+kept until that write has been checked.
+
+The sector code is `system/save.c`; the Save command and the File Screen
+that call it are in [Windows](../window/README.md#saving).
 
 ## The link cable
 
-The link cable joins two consoles so that a small fixed payload passes each
-way every VBlank, and anything larger rides inside it.
+Two consoles joined by a cable trade a small fixed payload at every VBlank,
+24 bytes each way, and anything larger rides inside it. The Battle Arena's
+link battles and the File Screen's transfer use it.
 
-Two consoles joined by a cable trade a payload every VBlank, and anything
-larger, such as a [party](../../glossary.md#the-party) for a link battle,
-rides inside it in numbered blocks that are sent again when one goes missing.
-The Battle Arena's link battles and the File Screen's transfer use it.
+Each payload travels in a packet with its number, a note of which consoles
+have yet to be heard from, and a checksum; a payload whose checksum is wrong
+is not used, and neither is one that arrives while the hardware reports a
+failed transfer. One of the consoles sets the pace, sending the packet a
+piece at a time on the beat of a hardware timer, about 20 pieces a frame.
 
-Each VBlank's payload carries 24 bytes each way, in a packet with its number,
-the consoles yet to be heard from and a checksum; one console clocks the
-transfers from a hardware timer, a halfword at a time, about 20 a frame.
-Larger data travels 20 bytes a VBlank. The receiver keeps a block only when
-its number is the one it expects, and otherwise asks for that one again; the
-sender then goes back and sends from there. A payload that arrives while the
-hardware reports a failed transfer is thrown away.
-
-`Serial_Initialize` sets the port up and installs the serial and timer
-handlers; VBlank's code trades the payloads through `Serial_ExchangePayloads`
-and advances a block transfer with `Serial_StepBlockTransfer`; larger data
-starts with `Serial_StartSend` and `Serial_StartReceive`.
-
-| Name                             | Value         | Meaning                                       |
-| -------------------------------- | ------------- | --------------------------------------------- |
-| `SERIAL_PAYLOAD_BYTES`           | 24            | one console's payload each VBlank             |
-| `SERIAL_BLOCK_BYTES`             | 20            | bulk data carried in each payload             |
-| `SERIAL_TIMER_RELOAD`            | `0xc963`      | the clock between halfwords, about 20 a frame |
-| `SERIAL_TRANSFER_TIMEOUT_FRAMES` | 600,000       | about three hours before a transfer gives up  |
+Larger data, such as a [party](../../glossary.md#the-party) for a link
+battle, is cut into numbered blocks of 20 bytes, one to a payload. The
+receiver keeps a block only when its number is the one it expects, and
+otherwise asks for that one again; the sender then goes back and sends from
+there. Code
+waiting for a transfer gives up after 600,000 frames, a little under three
+hours.
 
 ## One frame of a conversation
 
 ![A villager by Vale's river says `I don't blame Felix.` and waits for A; the river keeps moving, and the next page, `If only we'd been able to save him on that fateful day.`, types out](https://alchemy.pascalpixel.com/guides/engine/waiting-talk.gif)
 
 The villager's second page is typing out, a few letters a frame, while the
-river flows. The event showing it is standing at `Event_ShowMessageAndWait`,
-which is standing at `wait(1)`, and one frame of that wait passes through the
-mechanisms above one after another.
+river flows. The event showing it is standing at the command that shows a
+message and waits, which is standing at `wait(1)`, and one frame of that
+wait passes through the mechanisms above one after another.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -792,73 +719,51 @@ flowchart TD
 
 The field sequence called the event, the event called the message command,
 and that called `wait(1)`: one chain of calls on one stack. `wait()`
-compares the stack pointer with the line, `Ram_FrameWaitStackTop`; this
-chain is shallow and stays above it, so the frames run on the caller's own
-stack.
+compares the top of that chain with the line. This chain is shallow and
+stays above it, so the frames run on the caller's own stack and nothing is
+copied.
 
 ### The frame pass
 
-`Task_RunPass(TASK_PASS_FRAME)` runs the table from the top. The palette
-fade, `PaletteFade_Update`, runs first, and hands its new colours to the
-register write queue as two DMAs into the palettes, so they land at VBlank
-with the rest. Then `Actor_UpdateAllThumb` moves every actor on, the
-villager's actor script included, and the map's scroll follows the camera.
-`WindowSystem_Update` types the next letters of the page into the window's
-tiles and bobs the arrow, `TilesetAnim_Update` moves the river's water on a
-picture, and `ActorSystem_PlaceSprites` links each actor's sprite into its
-depth slot with `Oam_AddSpriteAtDepth`.
+The frame pass runs the task table from the top. The palette fade runs
+first and hands its new colours to the register write queue, so they land
+at VBlank with the rest. Then the actors' task moves every actor on, the
+villager's [actor script](../../glossary.md#actor-script) included, and the
+map's scroll follows the camera. The windows' task types the next letters of
+the page into the window's tiles and bobs the arrow, the map's animation
+moves the river's water on by one picture, and the last task puts each
+actor's sprite into its depth slot.
 
 ### The image
 
-`Oam_BuildBuffer` takes `HEAP_SLOT_FRAME_SCRATCH` from the heap and writes
-the hardware's sprite list into it from the depth slots, the highest slot
-first;
-`gFrameRenderPending` is set, and the processor halts. At the VBlank,
-`System_VBlankHandler` copies that list into OAM, the layers' scroll from
-`gBgScroll` into the scroll registers and the queued writes into their
-registers, all while the screen is blank; runs the VBlank pass; reads the
-keypad, where A has just gone down, into `gKeysHeld` and `gKeysPressed`; and
-mixes the next stretch of the river's music. `gVBlankDone` is set and the
-frame loop wakes.
+The frame loop takes the frame's 1 KB block from the heap and writes the
+hardware's sprite table into it from the depth slots, the highest slot
+first. It marks the frame finished, and the processor halts.
+
+At the VBlank, the handler copies that table to the hardware, the layers'
+scroll into the scroll registers and the queued writes into theirs, all
+while the screen is blank. It runs the VBlank pass, reads the keypad, where
+A has just gone down, and mixes the next stretch of the river's music. Then
+the frame loop wakes.
 
 ### Out of the wait
 
-The frame loop releases the frame's heap slot, empties the depth slots for
-the next frame, counts the frame and turns the keys read at VBlank into
-repeats. One frame is done; `wait(1)` puts the stack back and returns, and
-`Event_ShowMessageAndWait` asks whether the window has closed
-(`Window_IsClosedFar`). It is still open: the press reaches the windows'
+The frame loop gives the frame's block back, empties the depth slots for
+the next frame, counts the frame and works out the button repeats. One
+frame is done; `wait(1)` returns, and the message command asks whether the
+window has closed. It is still open. The press of A reaches the windows'
 task in the next frame's pass, which dismisses the page and starts closing
-the window over the frames after it, and the event keeps asking a frame at a
-time until the window has closed, then goes on to its next line.
-
-### The same frame, mechanism by mechanism
-
-| Moment                                | Mechanism                                                  |
-| ------------------------------------- | ---------------------------------------------------------- |
-| The event calls `wait(1)`             | the stack switch's test in `wait()`                        |
-| The actors move, the letters type     | the task runner's frame pass, in priority order            |
-| A sprite is placed                    | the frame's sprites: a depth slot                          |
-| The fade's colours are queued         | the register write queue                                   |
-| The list is built, then the halt      | the frame loop, in the frame's heap slot                   |
-| The image, the scroll, the writes     | what VBlank does, for a finished frame                     |
-| A is read                             | the VBlank handler's keypad read                           |
-| The river's music keeps time          | the sound mixed at every VBlank                            |
-| `wait(1)` returns                     | the frame loop, then the stack put back                    |
-| The page closes                       | the windows' task, in the next frame's pass                |
+the window over the frames after it. The command keeps asking a frame at a
+time until the window has closed, and then the event goes on to its next
+line.
 
 ## Design
 
 A frame's changes reach the hardware together
-([System](../../system.md#design) covers the rest): code writes copies in
-memory (the sprite lists, the scroll, the write queue) and VBlank's code
-commits them only for a finished frame.
-
-The ROM shows the System's bank 00 code as one object, compiled once through
-`system.c`; the parts are our cut of it. The main routine is the first code of
-bank 04, and nothing it defines is read by the field sequence's object after
-it, so it is compiled as an object of its own in this folder, with the System
-it belongs to.
+([System](../../system.md#design) covers the rest): during the frame, code
+writes only to copies in memory, the sprite lists, the scroll and the write
+queue, and the VBlank handler commits them only for a finished frame. A
+slow frame is therefore shown late and never shown half done.
 
 Every sequence starts cold, from the main routine's work and the game flags
 ([The Broken Seal](../../README.md#why-every-sequence-starts-fresh)).
@@ -885,8 +790,8 @@ here.
   end of EWRAM, and each may run into the buffer above it.
 - 20 tasks at a time.
 - 32 queued register writes.
-- 256 depth levels for sprites and 32 rotation-scaling matrices a frame; once
-  all 32 are taken, a sprite is drawn with whatever the first matrix holds.
+- 256 depth levels for sprites and 32 rotation-scaling settings a frame;
+  once all 32 are taken, a sprite is drawn with whatever the first one holds.
 - At least 512 bytes of stack for the frame loop and its tasks.
 - An overlay has the 32 KB of the overlay area.
 - 16 flash sectors for the three save files.
@@ -897,8 +802,10 @@ here.
 - **resident code**: code copied into IWRAM at power-on or when sound starts.
 - **the frame pass** and **the VBlank pass**: the two runs of the task
   table, once a frame by `wait()` and once a VBlank by the VBlank handler.
-- **the line**: `Ram_FrameWaitStackTop`, the stack address `wait()` runs its
-  frames from.
+- **the line**: the stack address `wait()` runs its frames from,
+  `Ram_FrameWaitStackTop`, 512 bytes above the stack's floor.
+- **depth slot**: one of the 256 places a sprite is put for a frame; a
+  higher slot is drawn in front.
 
 Frame, VBlank, IWRAM, EWRAM, heap slot, task, sprite and OAM, file and part
 are in the [glossary](../../glossary.md).
@@ -907,39 +814,23 @@ are in the [glossary](../../glossary.md).
 
 The folder is named for the credits' Programming "System" (`gCredits_Lines`).
 The names inside it come from what the code does; none is recovered from
-Camelot. `IwramIrqMain` and the other resident routines are named from their
-code, and the fixed addresses come from the literals in the ROM's code.
-`types.h` describes a `FIXED_ADDRESS` as checked against the link; the
-Makefile and the tool tests of `make test` hold no comparison of a literal
-with its symbol's linked address, and `make modern` reaches each by its name
-without comparing. A one-off comparison of
-every one of them with the six Broken Seal linker maps found every literal
-equal to its symbol in each edition its `#if` selects.
+Camelot.
 
-The heaps' high points (how far each heap reached) were measured in the
-English edition in libmgba, with the heap's next address read at every frame
-and every release: a Goma Cave battle, the field menu, the Item screen, field
+How far each pool of the heap reaches was measured in the English edition
+in an emulator, with the top of each pool read at every frame and every
+release: a Goma Cave battle, the field menu, the Item screen, field
 [Psynergy](../../glossary.md#psynergy-and-pp), a shop, an inn, a talk, the
-world map and its still picture, the credits and sleep mode.
+world map and its still picture, the credits and sleep.
 
-`gSavedStack` holds 3,152 bytes, though a stack below the frame-wait top and
-above the heap's end is at most 512. `ewram.s` lays EWRAM out in 4 KB groups
-(`gSceneLocalState` opens the second, `gSleepActive` the third, the music state
-the fourth), and `gSavedStack` is the last cell of the third, sized to reach
-the fourth.
-
-No task waits, and none adds a task. A call graph of the English build's
-objects, main image and overlays, from each function the code adds as a task,
-each actor update routine and each `SC_CALL` routine, finds ten paths to
-`wait()`: nine from tasks, none of which takes it, and one from the debug
-scene selector, which only the unused `DebugSceneSelect_Schedule` would add
-as a task. Of the nine, the scene tasks face actors in a direction with a
-wait of 0 (`Actor_FaceDirection`), the world map's lighthouse jitter moves
-the camera with a glide, Lucky Wheels and the link countdown open instant
-windows (`WINDOW_FLAG_INSTANT`), and battle playback's sprite respawn tests
-`gTasksRunning`. The same graph has no path from any task to `Task_Add`.
-
-Idle sleep's switches: the settings menu's auto-sleep row, the File Screen in
-debug mode when it finds no backup memory, and a loaded file's own setting
-(`gIdleSleepEnabled`); a new game, the credits and the Battle Arena's lobby
-turn it off.
+No task waits, and none adds a task. A call graph of the English edition's
+code, main image and overlays, from each function the code adds as a task,
+each actor update routine and each routine an actor script calls
+(`SC_CALL`), finds ten
+paths to `wait()`: nine from tasks, none of which takes it, and one from the
+debug scene selector, which only the unused `DebugSceneSelect_Schedule`
+would add as a task. Of the nine, the scene tasks turn actors to a direction
+with a wait of 0 frames, the world map's lighthouse jitter moves the camera
+with a glide, Lucky Wheels and the link countdown open windows that appear
+at once, and the battle playback's sprite respawn first tests whether the
+tasks are running. The same graph has no path from any task to the routine
+that adds one.

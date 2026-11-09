@@ -509,7 +509,7 @@ Evidence: plain English; the time's パターン and コマ each mean other thin
 
 Which of the sixteen 16-colour palettes a tile or a sprite is drawn in, the
 4-bit number the hardware reads beside each tile
-([Graphics](src/graphics/README.md#how-an-image-is-built-and-placed)).
+([Graphics](src/graphics/README.md#how-the-console-draws-a-picture)).
 
 Evidence: plain English for the hardware's own field.
 
@@ -587,8 +587,8 @@ Evidence: Camelot: the area names.
 
 What a scene shows and stands on: three background layers and a grid of cells
 under them, 128 by 128; several scenes can share one ([Maps](src/map/README.md)).
-Each map is a folder of `src/map/` named by its row of `gMaps`
-(`map_151/`), or for its place where one is known (`colosso/`).
+Each map is a folder of `src/map/` named by a number (`map_147/`), or
+for its place where one is known (`colosso/`).
 
 Evidence: Camelot: the credits' "Maps".
 
@@ -830,7 +830,7 @@ the code that draws it.
 ### Unit
 
 Either side's fighter in a battle (`struct Unit`); a party member is a unit
-in the party ([Battle](battle.md#units-and-abilities)).
+in the party ([Game rules](src/game/README.md#the-unit)).
 
 Evidence: plain English; the game's キャラ means only a party member.
 
@@ -838,7 +838,7 @@ Evidence: plain English; the game's キャラ means only a party member.
 
 One group of enemies a battle is fought against, a row of
 `src/battle/formations.c`, 380 in all
-([Battle](battle.md#starting-a-battle)).
+([Battles](src/battle/README.md#the-enemies-of-a-formation)).
 
 Evidence: plain English.
 

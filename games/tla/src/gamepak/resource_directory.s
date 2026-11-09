@@ -494,7 +494,7 @@ Resource_DirectoryTable:
 	resource DustPuffA, FieldEffect_DustPuffA
 	resource DustPuffB, FieldEffect_DustPuffB
 	resource , Resource_Data1E3
-	resource , FieldEffect_GoldStar
+	resource GoldStar, FieldEffect_GoldStar
 	resource , FieldEffect_GoldCrystal
 	resource FlamingArrow, FieldEffect_FlamingArrow
 	resource BowDraw, FieldEffect_BowDraw

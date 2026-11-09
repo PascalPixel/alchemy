@@ -1,4 +1,18 @@
 // Draft, differ 36 of 1932 (tla-en, 2026-11-09); 36 in every edition
+// 2026-11-09 (round 13), unchanged at 36: dead tests (FAKEMATCH dead) do not
+// reach what is left. A reload trace of the listing's order (shade = 0 right
+// after the model's allocation, j = 0 after model->vertices: 49) shows the
+// asm's frame reload picking r7 (round-robin index 5), then the vertices
+// reload r0 and j's zero r1 where the listing has r1 and r2: one pick short.
+// A dead test there (if ((s32)model == 300) j = 1; and the like) gives that
+// pick, but its label ends reload inheritance, so the giv inits reload frame
+// instead of reading r7 (148 to 151). The frame * 3 rows need t * 3072's init
+// before -t * 512's: -t * 512's init takes r7 for its 38912, and frame * 3
+// reads r7 in the listing, so only the giv order can do it; dead tests on
+// t * 3072 or -t * 512 before or after the yaw (161 to 1176) and the asm
+// moved to each later slot of the setup (49 to 1230) do not. The else arm's
+// 0x1c000 is a local pseudo tied to its result (loop.c: savings 1, life 1,
+// not desirable to move); in the listing it is rebuilt by reload in r3.
 // 2026-11-09 (round 12), 40 to 36, no new device: a single-move search over
 // the ship-burst setup's statements (asm included) puts model->shade = 0
 // after model->vertices, so the shade's zero store no longer precedes the

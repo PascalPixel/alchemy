@@ -1,4 +1,14 @@
 // Draft, differ 86 of 902 (tla-en, 2026-11-09)
+// 2026-11-09 (round 13), unchanged at 86. A dead test on d in the row (if (d
+// == 300) frames = 0;, FAKEMATCH dead) adds two weighted refs: d (13 refs,
+// 0.765) then ranks above the + 15 copy, takes r7 and the copy ip, as the
+// listing needs. But reload then spills r0 (a 12-ref pseudo) rather than r7,
+// since d's 13 refs make r7 the dearer spill, and the frame shrinks to 128
+// (979). The listing's d must stay at 11 refs for reload to spill it, so it
+// ranks first by a life of 44 or fewer, not by refs. Not better: the test
+// with 0 for 300, on b or v, before or after d's init, in the column loop or
+// after it (665 to 979), or storing to frame, height, model or bubble (979;
+// on phase it folds away, 86).
 // 2026-11-09 (round 12), unchanged at 86. From --alloc: the + 15 copy (11
 // refs over 45, priority 0.733) is allocated before d (11 over 50, 0.660);
 // both prefer LO_REGS, the copy takes r7, d falls to ip, and reload spills

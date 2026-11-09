@@ -1747,12 +1747,7 @@ main	rom_main_05	games/tla/src/field/event_commands/f0e572c	.text	ja
 main	rom_main_05	games/tla/src/field/event_commands/f0e5a64	.text	ja
 main	rom_main_05	games/tla/src/field/event_commands/psynergy_effects_10	.text
 main	rom_main_05	games/tla/src/field/event_commands/psynergy_effects_06	.text
-main	rom_main_05	recon/tla/de/rom	.rom.000f2d5c	de
-main	rom_main_05	recon/tla/es/rom	.rom.000eed50	es
-main	rom_main_05	recon/tla/fr/rom	.rom.000ead50	fr
-main	rom_main_05	recon/tla/it/rom	.rom.000e5d50	it
-main	rom_main_05	recon/tla/raw/080e5d5c	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000e5d18	ja
+main	rom_main_05	games/tla/src/field/event_commands/f0e5d5c	.text
 main	rom_main_05	games/tla/src/field/event_commands/f0e62f4	.text
 main	rom_main_05	games/tla/src/field/event_commands/psynergy_effects_11	.text
 main	rom_main_05	games/tla/src/field/event_commands/f0e6400	.text

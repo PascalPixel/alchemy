@@ -1,4 +1,14 @@
-// Draft, differ 32 of 2579 (tla-en, 2026-11-09); 32 in every edition
+// Draft, differ 16 of 2579 (tla-en, 2026-11-09); 16 in every edition (de, es
+// and fr by --symbol BattleEffect_RunCruelRuin)
+// 2026-11-09 (round 13), 32 to 16: a tagged dead test (if (i == 300) u = 0;)
+// after the place stores makes the one extra reload pick, so the else arm's
+// reloads take r1, r2, r0 as in the listing. Left: the blasts (8, sched2), the
+// object loop's row and last steps (4), the mask copy tie (4: combine leaves
+// the and as (and -13copy byte) and the output ties to the copy). Not better:
+// the same test on tile, phase or scrollX (16), on phase, row or j in the
+// else arm (16 to 54), before the place stores (32, 70); dead tests in the
+// creation loop around the mask (16 to 643), on last or row in the object
+// loop for the giv order (16 to 275), on r or y in the blasts (266 to 401).
 // 2026-11-09 (round 12), unchanged at 32. A reload trace of the object loop:
 // i's, scrollX's and the place pointer's reloads pick r0, r1, r2 at the
 // place stores, the i == 8 arm reloads only into its outputs, so the else
@@ -1043,6 +1053,13 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         s32 tile = i + k_ + phase;
         place[0] = (i << 21) + scrollX;
         place[2] = 0x790000 + (j << 21);
+        /* FAKEMATCH(dead): a store both arms below overwrite; its test
+         * builds 300 in a reload register, the one pick after the place
+         * stores that leaves reload's round-robin on r0, so the else arm's
+         * reloads take r1, r2 and r0; without it, 32 of 2579 instructions
+         * differ in tla-en. */
+        if (i == 300)
+          u = 0;
         if (i == 8) {
           obj = *last;
           {s32 t_ = phase + 71; s32 q_ = t_; if (t_ < 0) q_ = phase + 78; q_ >>= 3; q_ <<= 3; u = t_ - q_;}

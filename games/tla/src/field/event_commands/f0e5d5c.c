@@ -1,92 +1,3 @@
-// Draft, differ 4 of 639 (tla-en, 2026-11-09)
-// Near6 round (9 November), still 4. The greg dump: inReach is spilled and its
-// 4 is a reload (the round-robin step the plain test lacks), and regmove ties
-// the and's output to the flags' pseudo (ldrb r3); the listing's ands writes
-// the 4's register (r3) with the flags in r2, so its and has an output other
-// than the flags. Not better: (inReach = 4) & child->motionFlags, the comma
-// forms (inReach = 4, inReach & flags) and (inReach = 4, flags & inReach),
-// 4 & flags (12), the result held in inReach, spot, glowEntry or starEntry
-// (4 to 12).
-// Near5 round (9 November), still 4. Traced with the scratch cc1 (reload
-// picks): the listing's else-if registers (scene's y store in r4, 0x200000 in
-// r0) follow when the round-robin stands at index 3 before it; the plain test
-// leaves it at 1. A block-local at = &scene->x with an empty asm "+r" on it,
-// set after the x, y or z store, gives exactly that rotation and the whole
-// else-if branch, but scene's last reload is then at's (r2, which the add
-// changes), so the facing load cannot reuse r1 and picks r3: mov r3, r9 /
-// ldrh r1, [r3] for the listing's ldrh r1, [r1] (9, one instruction more).
-// At set before the stores, or facing read into a local first, keeps r1 but
-// loses the pick (14, 20). Input asms on scene ("l") before or after any store
-// 71 to 81. A function-level mask local, wherever set, also shared with
-// Func_080dbe80's 4: local-alloc moves its single-use set beside the test, or
-// cprop folds the call's, so the trace is the plain form's (12). The flag read
-// as ((u8 *)child)[85], >> 2 & 1 or a u16 at 84: 12. Permute 10 minutes, seed
-// 6061 (50,000 candidates): nothing below 4.
-// Near4 round (9 November), still 4: an empty asm reading and writing scene
-// memory ("+m" on *scene, scene->x or scene->z, in the NULL branch or the
-// else-if, with the kept or the plain test) to force one more reload of scene:
-// 68 to 76, the asm's reference to scene moves its register. Asms on scene,
-// &scene->x or caster as "l" or "r" inputs: 13 to 77.
-// 9 November, still 4. The else-if branch's registers follow once the NULL
-// branch's &scene->x goes through a local, with the plain test (no inReach
-// device): a block-local at = &scene->x set after the z store gives the
-// else-if exactly but reloads scene into r3 for scene->facing where the
-// listing reuses r1 (9); carried through shine, (s32 *)(shine = (void *)
-// &scene->x), every row matches but the add, built as movs r2, #4 / add r2, r9
-// where the listing has mov r2, r9 / adds r2, #4: shine sits in fp, so reload
-// takes the commuted alternative (4, the same count as the kept form). Through
-// starEntry or glowEntry the store to its slot stays (7); through sprite,
-// pending, particle, glow, object, canvas or the other locals 11 to 451; at at
-// function scope 9; facing read first 12.
-// Devices pass (2026-11-09), none below 4: the mask or the flags held in each
-// other local (glowEntry, starEntry, starTile 4; glowTile, spot 18; j 11;
-// rise, frame, angle, speed, size 34 to 180), as `flags & (v = 4)`,
-// `(v = 4) & flags`, `flags & (v = 4, 4)` or `(v = flags) & 4` (16).
-// Left: the airborne test's two registers. The listing loads motionFlags into
-// r2 and builds the 4 in r3 (ldrb r2 / movs r3, #4 / ands r3, r2); the kept
-// form, the mask held in inReach, gives ldrb r3 / movs r2, #4. Every edition
-// measures the same (tla-ja, de, es, fr and it: 4; de, es and fr by --symbol).
-// The plain test (child->motionFlags & 4) gives the listing's ands but 12: the
-// else-if branch's two reloads, scene's base for the scene->y store and the
-// 0x200000 for lift, take r2 and r4 where the listing has r4 and r0. They are
-// reload's round-robin choices (spill registers r0 to r4), one step behind the
-// listing's: the listing makes one more round-robin reload than this draft
-// between the scene->x store in the NULL branch (r1, both) and the scene->y
-// store. Confirmed: the NULL branch passing (s32 *)(glowEntry = (s32)&scene->x)
-// makes that reload (adds r2, #4 then needs a spill register) and the else-if
-// branch then matches exactly, but its store to glowEntry stays (7). What the
-// listing's extra reload is was not found; the motionFlags mask in a spilled
-// local (inReach, glowEntry or starEntry) is the nearest. Tried without gain:
-// the test as a bitfield, (flags >> 2) & 1, a u8 local, casts, a dedicated mask
-// local (16), the test stored in inReach, spot or glowEntry, nested ifs,
-// child != NULL first (44), lift as lift += ..., split, reordered or through a
-// long long (4, other rows), the NULL branch's stores in one statement, a
-// caster copy, a centre pointer for &scene->x (33), and two permute runs over
-// the opening (10 and 12 minutes; best 4, by the same reused local).
-// 2026-11-08, third pass (28 to 4): both pins and the zero default i = 0 are
-// gone. The particles are stepped by a pointer the loop advances after j, so
-// j++ takes its 1 in r0 before the particle's 28 and wait(1) reuses it; with
-// that, speed += 0x28000 as its own statement gives the copy-then-add in r6
-// unpinned. The objects loop counting with j puts j above scene in the
-// allocator's order (j to r10, scene to r9) without the r9 pin. Pins measured
-// on that form: none needed (an r9 pin on the glow tile now costs 68).
-// Earlier passes (2026-11-01 to 11-08) reached 28 only with pins on the glow
-// tile (r9) and speed (r6).
-// A field Psynergy that raises a glowing object
-// (object 352) before the caster or at the target: the scene sits 32 pixels
-// before the caster, or on the target's ground when it is airborne. With a
-// target in reach and no solid object at the spot (Func_080cda84,
-// Func_080dbe80), the shine plays: the glow disc on the canvas, a glow
-// sprite and 32 gold stars (FieldEffect_GoldStar) bursting from a ring, the
-// object rising 24 frames, then Func_080e5a64 runs as a frame callback, the
-// effect's stage-5 event running each frame and the glow drawn unless the
-// event mode is 3 or the event work's flags at 0xd4c say otherwise, until it
-// parks at 999; then the object bursts (Func_080dbf94). Otherwise the
-// object sinks and shrinks (BattleEffect_SinkAndShrinkObject) and scatters
-// sixteen particles. Cue 114 ends both.
-// Found by allocation: size is a whole-function constant left unallocated;
-// glow is reassigned in the frame loop; rise is its own counter; j counts the
-// objects, stars and particles alike.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -204,14 +115,18 @@ void Func_080e5d5c(void) {
   struct ShineParticle *particle;
 
   lift = 0x200000;
-  /* FAKEMATCH(temporary): the mask 4 held in inReach; as child->motionFlags & 4,
-   * 12 of 639 instructions differ in tla-en. */
   if (child == NULL) {
     scene->x = caster->x;
     scene->y = caster->y;
     scene->z = caster->z;
     Vector_AddPolarOffset(lift, scene->facing, &scene->x);
-  } else if (child->motionFlags & (inReach = 4)) {
+  } else if (child->motionFlags & 4) {
+    /* FAKEMATCH(dead): a store the line after next overwrites; its test
+     * builds 300 in a reload register, the one pick before scene's reload
+     * for the y store, which sends scene to r4 and the 0x200000 to r0; as
+     * the function without it, 12 of 639 instructions differ in tla-en. */
+    if (child->terrainHeight == 300)
+      lift = 0;
     scene->y = child->terrainHeight;
     lift = child->y - child->terrainHeight + 0x200000;
   }

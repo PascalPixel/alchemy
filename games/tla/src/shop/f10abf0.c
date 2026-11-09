@@ -126,6 +126,19 @@ s32 Func_0810abf0(void) {
   // 31). An empty once-only block after the top store, the prompt, the list
   // window, the cursor store or its first draw: 8 to 18 (cse2 still takes the
   // top zero).
+  // Near7 round (9 November), still 8. cse2's make_regs_eqv keeps the top zero
+  // canonical because priceWindow's pseudo dies inside the block. A dead
+  // two-armed test (if ((s32)shop == 300) chooseAgain = 0; else redraw = 0;
+  // a one-armed test is skipped by cse's skip-blocks, 0 and 1 arms become a
+  // store-flag) ends cse's block, and the later store keeps a zero of its own,
+  // but local-alloc gives it r3 and the store cross-jumps with memberIndex++'s
+  // (17). With priceWindow = NULL after that test and before Func_080f8060 the
+  // zero crosses the call, takes r5 and the store matches; unitId's zero then
+  // reloads fresh (movs r0, #0; mov r8, r0), as find_equiv_reg meets the call's
+  // movs r2, #0 first and gives up on it (call-clobbered), and the top zero
+  // takes r3 (25). price = 0 as that zero (a default) doubles price's live
+  // length (its REG_EQUAL) and gives r5 to shop (160); memberIndex = unitId
+  // after the zeros 10 (the store takes chooseAgain's r7).
   firstMessage = (s32)MsgWhoShallIRevive;
 #endif
   // DEAD: memberIndex is set again after the price window before any read.

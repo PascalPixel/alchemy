@@ -1,4 +1,12 @@
 // Draft, differ 4 of 2278 (tla-en, 2026-11-09)
+// Near7 round (9 November), still 4. Before sched2 the rows run adds r1, r2,
+// r1 < adds r3, #138 < adds r1, r1, r3 < mov r4, sl < ldr r2, [r7] in RTL
+// order, so with mov r4, sl at three dependents the first two win on luid and
+// adds r1, r1, r3 then needs ldr r2, [r7] at four. mov r4, sl's four are the
+// block's end, the release's barrier (sl's last use), ldrb r4's output and its
+// use; the listing has the same registers, so its RTL differs. The turned
+// flash's first release as a plain call with the asm 36, without it 40; the
+// asm dropped, or as an empty once-only block, 6.
 // Near6 round (9 November), still 4. In sched2's order (t = 43 to 46, no
 // stall between) the listing needs adds r1, r2, r1 and adds r3, #138 at 4
 // dependents each and adds r1, r1, r3 at 6 (their RTL order then wins the

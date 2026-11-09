@@ -1,4 +1,9 @@
 // Draft, differ 34 of 3111 (tla-en, 2026-11-09)
+// Near7 round (9 November), not worked beyond a trace. Page 2's x and y loads
+// are one insn each (the offset's movs is the pattern's scratch register),
+// both data dependents of the helpWindow reload at the pick (class 1, cost
+// 3), so y leads only if x's insn depends on a no-unit insn issued in that
+// load's stall cycles (an operand in r0 or r3, which x writes).
 // Twelfth round, 9 November, unchanged at 34, not worked beyond a measure.
 // With shown = djinnList[j] the Djinn loop counts 79 insns in loop.c's first
 // pass and 76 in its second (848). scan_loop recounts after moving

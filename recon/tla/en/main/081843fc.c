@@ -1,4 +1,12 @@
 // Draft, differ 4 of 4580 (tla-en, 2026-11-09). Measure 081843fc,081848ec together.
+// Near7 round (9 November), still 4. The sparks' y as y = top + (the cosine
+// term), then y -= the height >> 1: 4; the cosine term alone first: 521. A
+// dead test on n between the cosine and the height read (to put n's
+// caller-save restore before the table's pool load in RTL) adds a use to n
+// and live length to every pseudo across it, and global.c reorders the high
+// registers (658 to 685). The tornado: both rows rank 1, class 3 after mov
+// r9, r2, no dependents, so only luid or a dependent of movs r7, #0 inside
+// its block could move it.
 // Near6 round (9 November), still 4. The tornado in the sched2 dump: movs r7,
 // #0 (the i * 45 giv's init) and mov ip, r3 (the hoisted 0x1b5a) both have
 // priority 1 and no dependents, the block's last two insns, so RTL order

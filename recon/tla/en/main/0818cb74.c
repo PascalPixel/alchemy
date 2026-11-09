@@ -1,4 +1,11 @@
 // Draft, differ 18 of 1122 (tla-en, 2026-11-09), no device; 18 in every edition
+// Near7 round (9 November), still 18. The FlashBurst base: every read that
+// follows a call in RTL keeps an anti dependence on it, so the listing's ldr
+// r7 before the 0xF8 call's bl is a register live across that call, not the
+// reload at its use. offset set before cells, after the tornado load, after
+// the 0xF8 call, as cells, or the argument from cells: 18 each (cse merges
+// offset into cells); a dead two-armed test between cells and offset to stop
+// the merge: 146 to 223.
 // 2026-11-09 (round 12), 36 to 18, no device. The cell buffer is one s32
 // cells for the whole function (set after work->transferValue, used by the
 // droplets, the 0xc1 load, the falling drops and the rings' texture): it

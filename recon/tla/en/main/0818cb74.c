@@ -1,4 +1,15 @@
 // Draft, differ 36 of 1122 (tla-en, 2026-11-09), no device; 36 in every edition
+// 2026-11-09 (round 11), unchanged at 36, about 10 attempts. The droplet
+// loop's gMapCellBuffer load is a loop.c movable judged not desirable
+// (threshold 17 x savings 1 x life 1 < 19 insns), and cse1 stops at the
+// loop's end note where cse2 does not, so the 0xc1 load's reuse is cse2's.
+// Hoisted (a dead store of the base at the body's end, life 15) the base
+// takes r8 (149); the twin f16c274.c's form (an s32 cells for the first
+// load and the loop) takes r8 too (146 to 153); the loop as do-while, 36.
+// Probe only: with the 0xc1 load from Ram_MapCellBuffer (no reuse) the
+// in-loop load is rebuilt each pass, but tied to r0 (241), not the r4 of
+// the listing, so the listing's base is an unallocated pseudo that reload
+// rebuilds, not a local-alloc one.
 // 2026-11-09 (last stretch), unchanged at 36, about 15 attempts. Read from the
 // --alloc and greg dumps: the droplet loop's gMapCellBuffer (pseudo 90, set in
 // the loop) has 5 refs (2 + 2 in the loop, 1 for the 0xc1 load cse reuses) over

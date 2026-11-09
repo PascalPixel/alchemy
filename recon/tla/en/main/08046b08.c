@@ -1,4 +1,25 @@
 // Draft, differ 34 of 3111 (tla-en, 2026-11-09)
+// Eleventh round, 9 November, unchanged at 34, about 20 attempts. Note 1's
+// next: with shown = djinnList[j], ten one-constant locals set before the
+// loop (0xf00 and 0x3e0000 once per use, 0x5001, the 0, 0x10000, 0xff,
+// MsgDjinnName, 0x80000000) and column = j / 3 then (column << 3) - column,
+// the loop counts 68 insns and loop.c reduces djinnList[j] in its first
+// pass, as the native's slot needs. It costs 228: cse2 makes each repeated
+// mask a copy of the first, and those two take fp and r9, which are free
+// around the loop (split by a once-only block 228; all set before
+// holdTilemapUpload = 1, 329, fp and r9 again). Any long-lived local there
+// takes them, so the 68 must come without one; gcse's cprop folds only
+// 0x5001 into its add (no pseudo left), not the compare, zero store or masks.
+// A dead re-read of djinnList[j] (adds giv benefit) combines with j * 4
+// instead: no ldmia, 907 to 912. The help window on page 2: y and width as
+// locals load y first with no device (36), but reload then handles y before
+// x and its round robin gives y's index r3; the listing's r2 for y and r3
+// for x mean reload saw x first and sched2 put y first. With the asm both
+// loads rank priority 70 with five dependents each, so luid picks x; the
+// asm with "+m"(*helpWindow) or "m"(helpWindow->x) changes nothing (34).
+// The gcse bucket count (note 1) also counts the (use (const_int 0)) that
+// flow's find_basic_blocks, run by gcse, puts after a call ending a block
+// before a label (two in the Djinn loop); they emit nothing.
 // Tenth round, 9 November, unchanged at 34: not worked beyond a trace. A
 // scratch cc1 that prints PRE's buckets (analysis only) confirms note 1: 1383
 // buckets, the sfp - 212 hoist in bucket 1267, nineteen PRE registers made

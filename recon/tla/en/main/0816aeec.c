@@ -1,4 +1,9 @@
 // Draft, differ 86 of 902 (tla-en, 2026-11-09)
+// 2026-11-09 (round 11), unchanged at 86: the twin f16dc50.c's form, a
+// block-local s32 bottom = v + 15 inside the quad block, reads 926 (a new
+// local renumbers the pseudos and resizes the frame); phase or height
+// reused for the + 15 at the row top, before d's init or after b's, 285 to
+// 977.
 // 2026-11-09 (last stretch), 88 to 86: the permuter (seed 6262) found a
 // once-only block around quad[7], quad[8] and quad[9] (plain C, no device);
 // nothing else below 88 in 12 minutes. A row-level bottom = v + 15

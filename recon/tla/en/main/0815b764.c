@@ -1,4 +1,14 @@
 // Draft, differ 40 of 1932 (tla-en, 2026-11-09)
+// 2026-11-09 (round 11), unchanged at 40, a few attempts. The loop dump
+// lists the ship-burst givs in reverse discovery order, which is their init
+// order: t << 9, t << 11, -t * 512, -t, t * 3072, t * 3, t * 2, t; t * 2 and
+// t * 3, synth_mult's steps of t * 3072, are reduced as givs of their own,
+// so their inits come after t * 3072's. The listing's frame * 3 before
+// -t * 512's init needs a giv or a loop-moved insn met after -t * 512 in the
+// body. Not better: frame * 3 spelled into sc (558); a yaw local at the j == 0
+// arm's top (1158) and 0x1c000 through a local at the loop body's top
+// (1256): each new block local renumbers the pseudos after it, and the
+// frame changes.
 // 2026-11-09 (last stretch), unchanged at 40. The else arm's 0x1c000 and the
 // ship-burst's frame reloads fit the pattern the other drafts show: in the
 // listing a constant or spilled value is rebuilt by reload at its use, and

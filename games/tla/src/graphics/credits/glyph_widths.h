@@ -1,8 +1,7 @@
 /// @file
 /// The staff credits font's advance widths in pixels, characters 0x20 to
-/// 0x7f, beside the font (font.png). slides.c includes it after its line
-/// tables.
-// ☀️'s credits.c includes its own copy the same way.
+/// 0x7f, beside the font (font.png). menu/credits.c includes it after its
+/// line tables, as The Broken Seal's credits.c includes its own copy.
 // clang-format off
 #include "edition.h"
 const u8 gDisplayScroll_GlyphWidths[96] = {

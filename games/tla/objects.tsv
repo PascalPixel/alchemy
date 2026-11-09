@@ -2103,27 +2103,9 @@ main	rom_main_10	games/tla/src/menu/credits/credits_background_expand_2_link
 main	rom_main_10	games/tla/src/menu/credits/credits_background_expand_2_dispatch
 main	rom_main_10	games/tla/src/menu/credits/credits_background_expand_2_tables
 main	rom_main_10	games/tla/src/menu/credits/credits_background_expand_2_commands
-main	rom_main_10	games/tla/src/menu/credits/clear_character_block	.text
-main	rom_main_10	games/tla/src/menu/credits/load_character_block	.text
-main	rom_main_10	games/tla/src/menu/credits/scroll	.text
-main	rom_main_10	games/tla/src/menu/credits/f1a06e0	.text
-main	rom_main_10	games/tla/src/menu/credits/f1a08c4	.text
-main	rom_main_10	games/tla/src/menu/credits/crawl	.text
-main	rom_main_10	games/tla/src/menu/credits/f1a0a70	.text
-main	rom_main_10	games/tla/src/menu/credits/f1a0be8	.text
-main	rom_main_10	games/tla/src/menu/credits/scrolobj	.text
-main	rom_main_10	games/tla/src/menu/credits/scroll_close	.text
-main	rom_main_10	games/tla/src/menu/credits/f1a101c	.text
-main	rom_main_10	games/tla/src/menu/credits/scene_state_set_halfword	.text
-main	rom_main_10	games/tla/src/menu/credits/scroll_map	.text
-main	rom_main_10	games/tla/src/menu/credits/f1a133c	.text	en de es fr it ja
-main	rom_main_10	games/tla/src/menu/credits/f1a150c	.text
-main	rom_main_10	games/tla/src/menu/credits/f1a15dc	.text	en de es fr it ja
-main	rom_main_10	games/tla/src/menu/credits/scroll_wait	.text
-main	rom_main_10	games/tla/src/menu/credits/scroll_border	.text
-main	rom_main_10	games/tla/src/menu/credits/scroll_fade	.text
-main	rom_main_10	games/tla/src/menu/credits/slides	.rodata
-main	rom_main_10	games/tla/src/menu/credits/slides	.data
+main	rom_main_10	games/tla/src/menu/credits	.text
+main	rom_main_10	games/tla/src/menu/credits	.rodata
+main	rom_main_10	games/tla/src/menu/credits	.data
 main	rom_main_10	games/tla/src/graphics/credits/font	.rodata
 main	rom_main_11	games/tla/src/gamepak/far_call/resource_b	.text
 main	rom_main_11	games/tla/src/menu/title_intro	.text

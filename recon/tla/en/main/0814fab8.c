@@ -1,4 +1,41 @@
-// Draft, differ 22 of 1146 (tla-en, 2026-11-09)
+// Draft, differ 2 of 1146 (tla-en, 2026-11-09; the same 2 in ja, de, es, fr, it)
+// Seventh round, 9 November, 22 to 2, both pins gone. Traced with a scratch
+// cc1 that prints reload's choices and PRE's buckets (analysis only):
+// - The prelude is read into a local before its test and passed as the first
+//   build's mode: it lives in r8 and reload copies it to r5 for the [sp]
+//   store, as the listing (CSE folds a register set from it to 1, but not
+//   that store).
+// - The 4 comes from flipX and flipX2, function-level locals holding it, one
+//   per build (one local for both lets CSE share the xors). loop.c then folds
+//   each xor into its r3 load, after the [sp] store, as the listing has it,
+//   and reload picks r4 for each 4 and r5 for the second build's 0.
+// - The second build's entry is read as *(DrawRectangle *)&...->unkb8[1]:
+//   the address folds to one constant, where ->unkb8[1] builds it as the
+//   first fetch's 0x03000000 plus 188, which loop.c hoists by "forces" and
+//   reload rebuilds one pick later. That hoist also cost draw[0] the insn
+//   that ranks draw[1] first for r4 (draw[0] then r8, as the listing).
+// - The last palette copy now goes through the routine wrapper as the other
+//   four, and the CopyWords inline is gone (32 to 10 as a direct call, 8
+//   through the routine).
+// - The center's once-only block is gone: screen.x is scaled as a plain
+//   statement and an empty once-only block opens the burst instead (8 to 2;
+//   the permuter, seed 4242, found it empty after the store, 6). Its loop
+//   notes still end CSE's block, so the burst and the pictures read screen
+//   from the stack, but no barrier sits between screen.x's store and the
+//   burst's test, which sched2 now interleaves as the listing does.
+// Left (2): the lights' first build loads flags after movs r1, #7. The ldr is
+// anti-dependent on the [sp] store (both r3), so after the store sched2
+// ranks it class 2 against the independent movs (class 3) at equal
+// priority 67; the listing needs that ldr first. Not better: an empty
+// once-only block before or after that build (2, 8), the mode as additive + 1
+// or BLIT_MAX + additive (2); 12 minutes of permuter on this form (seed 7777).
+// Earlier the same round, not better: the barrier at the lights
+// replaced by the *& spelling (84), a local holding 1 for the lights' mode
+// (108), flags ^ additive (60), the wrapper at any one copy dropped (43 to 61),
+// member or draw declared in the frame loop (88 to 116). PRE numbers the
+// member loop's hoisted addresses by hash bucket, and camera + 12 sits in
+// bucket (regno + 224) mod 507: one more pseudo before camera (284 for 282)
+// wraps it to bucket 1 and rotates four spill slots (the f1 state, 32).
 // Sixth round, 9 November (devices pass), 28 to 22: the four palette copies
 // of modes 3, 5, 8 and 9 fetch the routine through an inline that returns it
 // (FAKEMATCH wrapper, from the permuter), which puts the routine's pool load
@@ -18,8 +55,6 @@
 // additive in place of the center's once-only block (666 to 723), the
 // wrapper at mode 9 alone (75). 10 minutes of permuter (seed 9133) on the
 // pinned form found only the wrapper.
-// Every edition measures 22 (tla-en, -ja, -de, -es, -fr, -it, 9 November):
-// the same pairs, so no edition's bytes differ here from English.
 // Fifth round, 8 November: the mode 4 site takes flags | COMPOSITE_FLIP_Y
 // into a local between the first build and the first entry's fetch (36 to
 // 28). Global allocation tied draw[0]'s and draw[1]'s value pseudos by
@@ -209,17 +244,6 @@ s32 BattleUnit_GetEffectHeightFar(s32 actor);
 #define LOAD_BLITTER(out, flags, mode)                                         \
   Func_08196404(BLITTER_SLOT, 7, 7, flags, mode);                              \
   out = (DrawRectangle)Ram_HeapSlots->unk64[1]
-#define LOAD_BLITTER_ALTERNATE(out, flags, mode)                               \
-  Func_08196404(BLITTER_SLOT_ALTERNATE, 7, 7, flags, mode);                    \
-  out = (DrawRectangle)Ram_HeapSlots->unkb8[1]
-
-// The whole load in a one-pass block; see the header for why the Djinni needs
-// it.
-#define LOAD_BLITTER_WHOLE_PASS(out, flags, mode)                              \
-  do {                                                                         \
-    Func_08196404(BLITTER_SLOT, 7, 7, flags, mode);                            \
-    out = (DrawRectangle)Ram_HeapSlots->unk64[1];                              \
-  } while (0)
 
 // The Lost Age's blitter modes: 3 minus The Broken Seal's
 // COMPOSITE_ADDITIVE, COMPOSITE_MAX and COMPOSITE_TRANSPARENT.
@@ -260,14 +284,8 @@ typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
 
 static inline CopyWordsFn CopyWordsRoutine(void) {
   /* FAKEMATCH(wrapper): the routine fetched through this inline; as direct
-   * calls to Iwram_CopyWords, 24 of 1146 instructions differ in tla-en. */
+   * calls to Iwram_CopyWords, 6 of 1146 instructions differ in tla-en. */
   return Iwram_CopyWords;
-}
-
-static inline s32 CopyWords(void *destination, const void *source, s32 size) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 24 of 1146 instructions differ in tla-en. */
-  return Iwram_CopyWords(destination, source, size);
 }
 
 // Lights gather around each target in turn, eight frames apart, turning as
@@ -293,6 +311,11 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
   s32 additive = BLIT_ADDITIVE;
   // Holds 0 for the whole function: the center's coordinates are stored from it.
   s32 zero = 0;
+  // Each holds COMPOSITE_FLIP_X for the whole function, one for each of the
+  // Djinni's builds: reload rebuilds the 4 at each xor, and the two xors stay
+  // apart.
+  s32 flipX = COMPOSITE_FLIP_X;
+  s32 flipX2 = COMPOSITE_FLIP_X;
   s32 frame;
   s32 i;
   s32 origin[3];
@@ -389,7 +412,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
       palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
     else
       palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
-    CopyWords((void *)BG_PLTT, palette, 128);
+    CopyWordsRoutine()((void *)BG_PLTT, palette, 128);
   }
   if (mode == 3 || mode == 6)
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSheet,
@@ -437,6 +460,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
 
   for (frame = start; frame != effect->count * 8 + 108; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+    s32 prelude;
 
     if (frame == 0)
       Sound_PlayFar(142);
@@ -449,24 +473,16 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
 
     // The Djinni sways, and after frame 32 rises two pixels a frame; for
     // the first four frames it is drawn ADDITIVE as well.
-    if (effect->prelude == 1) {
+    prelude = effect->prelude;
+    if (prelude == 1) {
       s32 x = ((Trig_Sin(frame << 11) * 20) >> 16) + origin[0] + shift - 20;
       s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + origin[1] - 24;
-      /* FAKEMATCH(pin): the 4 set in r4 before each build; as flags ^
-         COMPOSITE_FLIP_X at both, 151 of 1146 instructions differ in
-         tla-en. */
-      register s32 four asm("r4");
 
-      four = COMPOSITE_FLIP_X;
-      {
-        /* FAKEMATCH(pin): BLIT_MAX passed as the prelude, 1 here, in r5; as
-           BLIT_MAX, 80 of 1146 instructions differ in tla-en. */
-        register s32 max asm("r5") = effect->prelude;
-
-        LOAD_BLITTER(draw[0], flags ^ four, max);
-      }
-      four = COMPOSITE_FLIP_X;
-      LOAD_BLITTER_ALTERNATE(draw[1], flags ^ four, additive);
+      // The mode is the prelude, 1 here: BLIT_MAX.
+      LOAD_BLITTER(draw[0], flags ^ flipX, prelude);
+      Func_08196404(BLITTER_SLOT_ALTERNATE, 7, 7, flags ^ flipX2, additive);
+      // Read through the slot's address, which folds to one constant.
+      draw[1] = *(DrawRectangle *)&Ram_HeapSlots->unkb8[1];
 
       if (frame > 32)
         y = y - frame * 2 + 64;
@@ -507,7 +523,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
             void **slot = &Ram_HeapSlots->unkb8[1];
 
             /* FAKEMATCH(barrier): the slot's address held by an empty asm with an
-               output; as draw[1] = Ram_HeapSlots->unkb8[1], 54 of 1146
+               output; as draw[1] = Ram_HeapSlots->unkb8[1], 34 of 1146
                instructions differ in tla-en. */
             __asm__("" : "=r"(slot) : "0"(slot));
             draw[1] = (DrawRectangle)*slot;
@@ -559,13 +575,18 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
       center[1] = zero;
       center[2] = zero;
       EffectPosition_ProjectPoint(center, &screen);
-      do {
-        screen.x = screen.x * 4 / 5 + shift;
-      } while (0);
+      screen.x = screen.x * 4 / 5 + shift;
 
       // The burst: from frame 52, six pictures four frames apart.
       if (frame >= member * 8 + 52 && frame < member * 8 + 76) {
-        s32 cel = (frame - member * 8 - 52) / 4 % 6;
+        s32 cel;
+
+        // An empty once-only block: its loop notes end CSE's block here, so the
+        // burst reads screen from the stack, not through the pointer passed to
+        // EffectPosition_ProjectPoint.
+        do {
+        } while (0);
+        cel = (frame - member * 8 - 52) / 4 % 6;
 
         LOAD_BLITTER(draw[0], flags, BLIT_MAX);
         draw[0](canvas, work->sheet + cel * 1600 + SERIES_B_BURST,

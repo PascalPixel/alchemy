@@ -1,4 +1,16 @@
 // Draft, differ 24 of 3921 (tla-en, 2026-11-09)
+// Tenth round, 9 November, unchanged at 24. Traced with a scratch cc1 that
+// prints each reload pick (analysis only): the spill registers are r0 to r4
+// and r7, picked round robin. Third phase, listing: i's zero r4, z's zero r0,
+// then one pick of r1 before z's read r2 and the -0x800 r3; the -0x100 r4, 1
+// r0, compare r1 and next i r2 after it already match. Here z's zero takes
+// i's r4 through find_equiv_reg (i's reload movs r4, #0 sits just before it,
+// no label between), and the five's movs r1, #5 is the one r1 pick. A zero
+// local set just before the frame loop gives z the listing's fresh r0, but
+// CSE then stores the timer from z and the ay store reloads its own 0 (79,
+// 85); ay or timer from that local (79 to 445), z from it (58), i and z
+// initialised in either order or apart (24). 14 minutes of permuter on the
+// frame == 0 block (seed 9917, PERM_RANDOMIZE): nothing below 24.
 // Ninth round, 9 November (devices pass), 58 to 24, about 35 attempts: the third
 // phase computes ay * 40 as (ay * five) << 3, five a function-level local
 // holding 5 (plain C; the permuter, seed 7172, found the first step, a local

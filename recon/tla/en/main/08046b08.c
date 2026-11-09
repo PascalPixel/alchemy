@@ -1,4 +1,12 @@
 // Draft, differ 34 of 3111 (tla-en, 2026-11-09)
+// Tenth round, 9 November, unchanged at 34: not worked beyond a trace. A
+// scratch cc1 that prints PRE's buckets (analysis only) confirms note 1: 1383
+// buckets, the sfp - 212 hoist in bucket 1267, nineteen PRE registers made
+// in bucket order (2436 to 2454), it the second-last. A hoist whose
+// expression holds a pseudo moves one bucket per pseudo created before that
+// pseudo (in 0814fab8.c two more locals moved camera + 12 from bucket 506 to
+// 1 and rotated its spill slots); sfp - 212 holds none, so only the bucket
+// count, that is the insn count at gcse, moves it.
 // Ninth round, 9 November (devices pass), 38 to 34. Window_DrawThreeTileColumn
 // is declared s32 (FAKEMATCH signature at the range column, found by the
 // permuter, seed 5151; it returns nothing): the call then sets r0, and movs

@@ -1,4 +1,22 @@
-// Draft, differ 40 of 2680 (tla-en, 2026-11-09; the same 40 in ja, de, es, fr, it)
+// Draft, differ 32 of 2680 (tla-en, 2026-11-09; the same 32 in ja, de, es, fr, it)
+// 2026-11-09, later, 40 to 32: the flash step goes through a local assigned
+// twice, addB = addR = addG = step = (step = 304 - frame * 2) (FAKEMATCH
+// temporary, found by the permuter on the flash block, seed 5309): its minus
+// then puts frame * 2's dead r2 first, subs r2, r3, r2 as the listing. The
+// local set once, or the same self-assignment on addG, addR or addB: 40.
+// Traced with a scratch cc1 that prints
+// reload's picks (analysis only); the spill registers are r0 to r6, picked
+// round robin. Rings: 1792 r0, the radius r1 (mov r1, lr), half's output
+// reload into fp takes combine_reloads' dead r3 with no pick, so cx's reload
+// is the next pick, r2; the listing's r4 needs one more pick of r2 or r3
+// between the radius and cx. Flash step: the minus's REG_DEAD notes list the
+// 304 (r3) before frame * 2 (r2) because flow scans the second operand first
+// and prepends; CSE folds every copy into the minus's own destination, so no
+// combine rebuilds the insn (which would reverse its notes): a temp v, v =
+// frame * 2 then 304 - v, an inline returning the step, all 40; the 304 from
+// a function-level local gives the dead r3 to frame * 2 but moves frame's
+// reload to r4 (48); (152 - frame) * 2 55. The slot reads as *(T *)&...: 40
+// (draw[1], DRAW_ALT's call) or worse (draw[0] 124, sprites 53).
 // 2026-11-09 (devices pass), 52 to 40: the second queue loop's source base
 // passes through an identity inline (FAKEMATCH wrapper, found by the
 // permuter, seed 6162), which settles that loop's table and source registers
@@ -341,6 +359,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   s32 depth;
   s32 zoom;
   s32 addR, addG, addB;
+  s32 step;
   s32 cx, cy, squash, sx, ring, rings, shift;
   s32 i;
   u8 *cells;
@@ -574,7 +593,10 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         flag = 1;
       }
       if ((u32)(frame - 144) <= 8) {
-        addB = addR = addG = 304 - frame * 2;
+        /* FAKEMATCH(temporary): the step taken through a local assigned twice; as
+         * addB = addR = addG = 304 - frame * 2, 40 of 2680 instructions differ in
+         * tla-en. */
+        addB = addR = addG = step = (step = 304 - frame * 2);
         flag = 1;
       }
       if (flag == 1) {

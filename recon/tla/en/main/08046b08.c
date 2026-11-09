@@ -1,4 +1,16 @@
-// Draft, differ 38 of 3111 (tla-en, 2026-11-08)
+// Draft, differ 34 of 3111 (tla-en, 2026-11-09)
+// Ninth round, 9 November (devices pass), 38 to 34. Window_DrawThreeTileColumn
+// is declared s32 (FAKEMATCH signature at the range column, found by the
+// permuter, seed 5151; it returns nothing): the call then sets r0, and movs
+// r1, #16 leads the window's reload as in the listing (36 to 34). Page 2's help window
+// passes y through a statement expression with an empty asm that claims to
+// change it (tagged barrier), so y's ldrsh leads and width precedes height
+// as in the listing; x still loads first (2 rows). Not better: y and x both
+// through block locals with asms (40: the index registers swap), pins of y,
+// x, width and height (42), x, width or height through the asm (38), x
+// depending on y through an asm operand (831); at the range column, the 16,
+// the 0, the window or range through an asm (36 to 840). Note 1 (the slots)
+// stands as below.
 // Eighth round, 8 November: 40 to 38, three tagged barriers (the cursor sprite,
 // the two fill loops). The list icons' loop now sets sprite in its for, after
 // iconEntry, so add r5, sp, #480 follows mov r8, r0 as in the native. Left:
@@ -377,8 +389,9 @@ struct SummaryAbility *BattleAction_Get(s32 id);
 s32 Resource_LoadIndexedEntryToBuffer(s32 id, s32 slot);
 void Text_DrawNumberAtOffset(s32 value, s32 digits,
                                struct SummaryWindow *window, s32 x, s32 y);
-void Window_DrawThreeTileColumn(struct SummaryWindow *window, s32 x, s32 y,
-                                  s32 pattern, s32 flags);
+// Returns nothing; typed s32 here, see the range column in page 1.
+s32 Window_DrawThreeTileColumn(struct SummaryWindow *window, s32 x, s32 y,
+                               s32 pattern, s32 flags);
 struct SummaryRecovery *Djinn_GetRecoveryTableFar(s32 kind);
 void MessageArgument_ClearAll(void);
 void MessageArgument_Push(s32 value, s32 kind);
@@ -974,6 +987,10 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
               range = 11;
             else
               range--;
+            /* FAKEMATCH(signature): Window_DrawThreeTileColumn typed s32
+             * though it returns nothing, so the call sets r0 and movs r1, #16
+             * leads the window's reload; as void, 36 of 3111 instructions
+             * differ in tla-en. */
             Window_DrawThreeTileColumn(statusWindow, 16, j * 2 + 8, range, 0);
           }
           /* FAKEMATCH(barrier): an empty asm keeps the list loop's exit on the fill
@@ -999,8 +1016,16 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       u32 entry;
 
       WindowSprite_RedrawSavedRect(statusWindow);
-      Func_0803a2b0(helpWindow->x, helpWindow->y, helpWindow->width,
-                    helpWindow->height, 0);
+      Func_0803a2b0(helpWindow->x, ({
+                      s32 y = helpWindow->y;
+
+                      /* FAKEMATCH(barrier): y passed through an empty asm
+                       * that claims to change it; as helpWindow->y, 38 of
+                       * 3111 instructions differ in tla-en. */
+                      asm("" : "+r"(y));
+                      y;
+                    }),
+                    helpWindow->width, helpWindow->height, 0);
       Window_DrawDividerLine(statusWindow, 0, 16, 29, 16);
       djinnCount = 0;
       for (element = 0; element <= 3; element++) {

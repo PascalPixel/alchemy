@@ -1,4 +1,15 @@
-// Draft, differ 36 of 1122 (tla-en, 2026-11-08), no device; 36 in every edition
+// Draft, differ 36 of 1122 (tla-en, 2026-11-09), no device; 36 in every edition
+// 2026-11-09 (devices pass), unchanged at 36, about 25 attempts. The tridents in
+// the listing's order (shade, pixels, then the reset) with x passed through an
+// asm that claims to change it stop reload inheriting x from r0 (mov r1, r8 as
+// the listing) and the block then differs only by mov r8, r0 scheduled three
+// rows late (36, the same count; any placement of the asm, "=r" with "0", an
+// "h" operand: 36; "+l" 77). Not better: identity inlines on the droplet
+// base, the 0xc1 destination, offset, the first setup's pixels, zero, unk04,
+// mesh or vertices (36 to 235); the droplet base through an asm (40); the 0xc1
+// destination through an asm output with an "i" input (216, and wrong: the
+// output is never set). 12 minutes of permuter (seed 7171): nothing below 36
+// that keeps the program (one swapped two loads, 59).
 // 2026-11-08 (devices pass), unchanged at 36: an empty asm before the 0xc1 load, after the droplet loop or inside it, or the 0xc1 destination through an asm operand, leaves cse2's reuse in place (36); the droplet's cell base through an asm operand, 40.
 // (tla-ja's copy is at 0x0818cb78: diff --edition tla-ja --symbol BattleEffect_RunTrident).
 // 2026-11-08 (last), from 40: the spray's grow and the tridents' start are one local

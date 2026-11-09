@@ -1,6 +1,25 @@
-// Draft, differ 28 of 1146 (tla-en, 2026-11-08)
-// Every edition measures 28 (tla-en, -ja, -de, -es, -fr, -it): the same
-// pairs, so no edition's bytes differ here from English.
+// Draft, differ 22 of 1146 (tla-en, 2026-11-09)
+// Sixth round, 9 November (devices pass), 28 to 22: the four palette copies
+// of modes 3, 5, 8 and 9 fetch the routine through an inline that returns it
+// (FAKEMATCH wrapper, from the permuter), which puts the routine's pool load
+// between movs r0, #160 and its shift as the listing has it (28 to 26). The
+// Djinni's two builds take their 4 from a pin in r4 set before each build
+// (the xors then each reload flags and xor with r4, as the listing) and the
+// first build's BLIT_MAX from a pin in r5 (the prelude, which is 1 there);
+// the second build's 0 is additive's. The empty asm on the 4 is gone. Left
+// (22): the prelude is reread for the r5 pin (ldr r1; ldr r5) where the
+// listing keeps it in r8 from the test and copies it (mov r8, r1; mov r5,
+// r8): about 9 rows; the second build's 0 in r2 where the listing reloads
+// it into r5 (4); the lights' first build movs r1 before ldr r3 (2); the
+// center's ldr r0 and screen.x's store (6). Not better: the r5 pin set
+// from a prelude local (CSE folds it to movs r5, #1: 127) or BLIT_MAX (113),
+// a pinned 0 for the second build (128), the 4 pinned once at its
+// declaration (47), an asm-held BLIT_MAX (369), dead tests on zero or
+// additive in place of the center's once-only block (666 to 723), the
+// wrapper at mode 9 alone (75). 10 minutes of permuter (seed 9133) on the
+// pinned form found only the wrapper.
+// Every edition measures 22 (tla-en, -ja, -de, -es, -fr, -it, 9 November):
+// the same pairs, so no edition's bytes differ here from English.
 // Fifth round, 8 November: the mode 4 site takes flags | COMPOSITE_FLIP_Y
 // into a local between the first build and the first entry's fetch (36 to
 // 28). Global allocation tied draw[0]'s and draw[1]'s value pseudos by
@@ -237,9 +256,17 @@ extern char ResourceId_VenusDjinnSheet;
 extern char ResourceId_JupiterDjinnSheet;
 extern u16 Data_08197424[]; // gBattleEffect_FlareCells
 
+typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
+
+static inline CopyWordsFn CopyWordsRoutine(void) {
+  /* FAKEMATCH(wrapper): the routine fetched through this inline; as direct
+   * calls to Iwram_CopyWords, 24 of 1146 instructions differ in tla-en. */
+  return Iwram_CopyWords;
+}
+
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 30 of 1146 instructions differ in tla-en. */
+   * Iwram_CopyWords, 24 of 1146 instructions differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 
@@ -321,15 +348,15 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_VioletStreakSheet,
                                work->sheet + SERIES_B_PICTURE, 1, 1);
     if (mode == 3)
-      Iwram_CopyWords((void *)BG_PLTT,
+      CopyWordsRoutine()((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet),
                       128);
     else if (mode == 5)
-      Iwram_CopyWords((void *)BG_PLTT,
+      CopyWordsRoutine()((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
                       128);
     else
-      Iwram_CopyWords(
+      CopyWordsRoutine()(
           (void *)BG_PLTT,
           Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet), 128);
   } else if (mode == 4) {
@@ -338,7 +365,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
   } else if (mode == 9) {
     Resource_LoadAndDecompress((s32)&ResourceId_WispSheet,
                                work->sheet + SERIES_B_PICTURE, 1, 0);
-    Iwram_CopyWords((void *)BG_PLTT,
+    CopyWordsRoutine()((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
                     128);
   } else {
@@ -425,13 +452,21 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
     if (effect->prelude == 1) {
       s32 x = ((Trig_Sin(frame << 11) * 20) >> 16) + origin[0] + shift - 20;
       s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + origin[1] - 24;
-      s32 four = COMPOSITE_FLIP_X;
+      /* FAKEMATCH(pin): the 4 set in r4 before each build; as flags ^
+         COMPOSITE_FLIP_X at both, 151 of 1146 instructions differ in
+         tla-en. */
+      register s32 four asm("r4");
 
-      LOAD_BLITTER(draw[0], flags ^ COMPOSITE_FLIP_X, BLIT_MAX);
-      /* FAKEMATCH(barrier): the 4 held by an empty asm with an output; as flags ^
-         COMPOSITE_FLIP_X, 83 of 1146 instructions differ in tla-en. */
-      __asm__("" : "=r"(four) : "0"(four));
-      LOAD_BLITTER_ALTERNATE(draw[1], flags ^ four, BLIT_ADDITIVE);
+      four = COMPOSITE_FLIP_X;
+      {
+        /* FAKEMATCH(pin): BLIT_MAX passed as the prelude, 1 here, in r5; as
+           BLIT_MAX, 80 of 1146 instructions differ in tla-en. */
+        register s32 max asm("r5") = effect->prelude;
+
+        LOAD_BLITTER(draw[0], flags ^ four, max);
+      }
+      four = COMPOSITE_FLIP_X;
+      LOAD_BLITTER_ALTERNATE(draw[1], flags ^ four, additive);
 
       if (frame > 32)
         y = y - frame * 2 + 64;
@@ -472,7 +507,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
             void **slot = &Ram_HeapSlots->unkb8[1];
 
             /* FAKEMATCH(barrier): the slot's address held by an empty asm with an
-               output; as draw[1] = Ram_HeapSlots->unkb8[1], 60 of 1146
+               output; as draw[1] = Ram_HeapSlots->unkb8[1], 54 of 1146
                instructions differ in tla-en. */
             __asm__("" : "=r"(slot) : "0"(slot));
             draw[1] = (DrawRectangle)*slot;

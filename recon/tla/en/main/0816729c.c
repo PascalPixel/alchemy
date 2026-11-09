@@ -1,4 +1,12 @@
-// Draft, differ 52 of 2680 (tla-en, 2026-11-08; the same 52 in ja, de, es, fr, it)
+// Draft, differ 40 of 2680 (tla-en, 2026-11-09; the same 40 in ja, de, es, fr, it)
+// 2026-11-09 (devices pass), 52 to 40: the second queue loop's source base
+// passes through an identity inline (FAKEMATCH wrapper, found by the
+// permuter, seed 6162), which settles that loop's table and source registers
+// (r4 and r5) and its pool order; the first loop's base through it as well
+// changes nothing (40), through it alone 52. Not better this pass: the flash
+// step's 304 or frame * 2 through an asm or a pin, -(frame * 2) + 304 (52 to
+// 76); the four DRAW_ALT draws' sheet or y through asms or a pin (959 to
+// 1035). Left as below, but for queue loop 2.
 // 2026-11-08, fourth pass, 54 to 52: the shake's scroll value is a local y before
 // the store (movs r3, #3 then the gBgScroll pool load, as the native). What is left,
 // each traced in the rtl dumps (diff --rtl), so the next round need not re-derive it:
@@ -306,6 +314,12 @@ static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   return Iwram_CopyWords(destination, source, size);
 }
 
+static inline u8 *PassBuffer(u8 *buffer) {
+  /* FAKEMATCH(wrapper): the second queue's source base passed through this
+   * inline; as Ram_MapCellBuffer, 52 of 2680 instructions differ in tla-en. */
+  return buffer;
+}
+
 // Judgment: the sky gathers sixteen tiles of light that fold into a sigil,
 // then the sigil's beam strikes and the ground erupts in a ring of
 // shockwaves and debris.
@@ -514,7 +528,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       for (i = 0; i != 13; i++) {
         IO_WRITE_QUEUE_PUSH(
             OBJ_TILES((struct JudgmentObject *)work->objects[Data_08198ab4[i]]),
-            (u32)(Ram_MapCellBuffer + i * 0x400), 0x84000100);
+            (u32)(PassBuffer(Ram_MapCellBuffer) + i * 0x400), 0x84000100);
       }
     }
 

@@ -1,4 +1,10 @@
-// Draft, differ 40 of 1932 (tla-en, 2026-11-08)
+// Draft, differ 40 of 1932 (tla-en, 2026-11-09)
+// 2026-11-09 (devices pass), unchanged at 40. The else arm's 0x1c000 as a
+// pinned r3 (265), through an asm (310) or a local (40), its shift through an
+// asm (419); identity inlines on t, t * 3072, sc, the yaws or t << 11 (40,
+// or 331 to 1209 where they reach t's giv); the palette copies or the fills
+// through an inline that returns the routine (40). 12 minutes of permuter
+// (seed 6161): only j = model->shade = 0 (44, weighted better).
 // Every edition measures the same 40 (tla-ja, tla-de, tla-es, tla-fr, tla-it):
 // the function's code is one form in all six, so what is left is the C, not an
 // edition difference.

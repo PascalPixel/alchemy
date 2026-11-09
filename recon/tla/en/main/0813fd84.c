@@ -1,4 +1,15 @@
-// Draft, differ 34 of 2579 (tla-en, 2026-11-08)
+// Draft, differ 34 of 2579 (tla-en, 2026-11-09)
+// 2026-11-09 (devices pass), unchanged at 34. Mask: the -13 through a copy
+// held by an empty asm (493 to 566: the copy and the mask merge and spill),
+// the copy tied to the mask by an asm operand (533), a u8 copy through an asm
+// (44), a pinned -13 in r4 with a copy (87: CSE folds the constant into the
+// copy and the pin's set dies), a dead m = 0 before the creation loop to
+// keep its copy from loop.c's single-use replacement (552 to 611), inline
+// helpers for the and-or or the priority bit-field (65 to 87: -13 straight
+// into r2, the copy gone; the bit-field one narrows the skeleton gap to 15),
+// an identity inline on the mask (65, gap 13, the same). Blasts: the
+// 0x10000, y, half, r, canvas or sheet through asms or identity inlines (34
+// to 2111). 12 minutes of permuter (seed 5152): nothing below 34.
 // The same 34 in ja, de, es, fr and it (-mtune=gba); every edition's bytes agree with en's here.
 // 2026-11-08 (last), from 36: the closing once-only block now holds the backdrop call as well as
 // gBgScroll[1].y = 32, so the store, the ldrh it may alias and the call share one schedule block and

@@ -1,5 +1,31 @@
-// Draft, differ 58 of 3921 (tla-en, 2026-11-08)
-// All six editions 58 (tla-ja measured at its own address, 0817ea5c). Both empty asms tagged.
+// Draft, differ 24 of 3921 (tla-en, 2026-11-09)
+// Ninth round, 9 November (devices pass), 58 to 24, about 35 attempts: the third
+// phase computes ay * 40 as (ay * five) << 3, five a function-level local
+// holding 5 (plain C; the permuter, seed 7172, found the first step, a local
+// holding 40, which gave 47 as a muls by 40). Reload then spends r1 on the 5,
+// which is the one reload register the listing spends before z's read: z's
+// read, the -0x800, the loop's tail and the next loop's i and -1 now take
+// the listing's registers, and the instruction count is the listing's. Left
+// (24): ay * 5 is movs r1, #5; adds; muls where the listing shifts and adds
+// (6 rows), and z's zero inherits i's r4 where the listing has its own movs
+// r0, #0 (3): together they are the listing's fresh zero in r0 and some use
+// of r1 not yet found; the spawn call (6), and three single pairs before it
+// (6), and a branch distance (2).
+// Also measured: z's 0 from a pin in r0 set before i = 0 gives that fresh
+// zero and the listing's tail without forty (54), but z then takes r6 and the
+// hoisted zero sl (any of r0 to r3 the same); with forty, 60. Not better: the
+// pin after i = 0 (68 to 85), pins on i's zero (71) or both (153), z through
+// an asm (85), z = (s16)0 (47), the shifts kept with forty folded in (58),
+// forty set just before the spawn call (47, the same); at the spawn call,
+// i = 0 through an asm (104 to 121), the copy routine through an inline
+// returning it, a direct call or an inline taking it, identity inlines on 663
+// or sprites[0] (58 each). On the five form: the pin (93), the shifts spelled
+// out (73), five in a block (75), an eight local (64), (ay * five) * 8 (24).
+// The permuter's other finds on the 58 form: a work copy for the third phase
+// (46 there, a temporary; not kept). All six editions 24 (each at its own
+// address).
+// Before this round all six editions measured 58 (tla-ja at its own address,
+// 0817ea5c). Both empty asms tagged.
 // Eighth round, 8 November, unchanged at 58, about 27 attempts. Read from the greg and
 // sched2 dumps (--rtl), so the next round need not repeat them:
 // - Third phase, first loop. Listing's reload registers: i's zero r4, z's zero r0 (a
@@ -353,6 +379,9 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
   s32 shipY;
   s32 wavePhase;
   s32 savedY;
+  // Holds 5 for the whole function: the third phase's ay * 40 is ay * five
+  // shifted, so reload builds the 5 for it.
+  s32 five = 5;
   s32 bgX;
   struct SummonWork *work;
   s32 k;
@@ -433,7 +462,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         mp = (u8 *)(k * 2 + (s32)map);
         do {
           v = ((u8 *)work)[gData_08197410[n] + i + off];
-          /* FAKEMATCH(dead): w set to 32 inside the row loop, after the load; as w = 32 at its declaration before the loops, 112 of 3921 instructions differ in tla-en. */
+          /* FAKEMATCH(dead): w set to 32 inside the row loop, after the load; as w = 32 at its declaration before the loops, 78 of 3921 instructions differ in tla-en. */
           w = 32;
           if (v != 0) {
             v = v - j * 4 - 40;
@@ -476,7 +505,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       work->sprites[i + 18] = obj;
       obj->priority = 3;
       /* FAKEMATCH(barrier): an asm operand cuts i, known 21, from the copy's source; as
-       * DECODE_BUFFER + i * 0x400 with no asm, 60 of 3921 instructions differ in tla-en. */
+       * DECODE_BUFFER + i * 0x400 with no asm, 26 of 3921 instructions differ in tla-en. */
       __asm__("" : "=r"(i) : "0"(i));
       Iwram_Copy((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
                  DECODE_BUFFER + i * 0x400, 0x800);
@@ -490,7 +519,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       Iwram_Copy((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
                  DECODE_BUFFER, 0x100);
       /* FAKEMATCH(barrier): an empty asm keeps the call before the loop's hoisted
-       * constants; as no asm, 62 of 3921 instructions differ in tla-en. */
+       * constants; as no asm, 28 of 3921 instructions differ in tla-en. */
       __asm__("");
       for (i = 0; i != 15; i++) {
         work->sprites[42 + i] = Func_0815b3b0(16, 8, 0x4000, 0xf000);
@@ -1262,7 +1291,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         p->timer = 0;
         Random16();
         p->ay = 0;
-        p->z = z - *(vs32 *)&p->ay * 40 - 0x800;
+        p->z = z - (*(vs32 *)&p->ay * five << 3) - 0x800;
         p->vx = -Trig_Cos(p->z) * 8;
         p->vy = -Trig_Sin(p->z) * 8;
         p->x = ((Random16() % 80 + 80) << 16) - p->vx * 24;

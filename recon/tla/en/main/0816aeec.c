@@ -1,4 +1,7 @@
-// Draft, differ 88 of 902 (tla-en, 2026-11-08)
+// Draft, differ 88 of 902 (tla-en, 2026-11-09)
+// 2026-11-09 (devices pass), unchanged at 88: an asm claiming to change d at
+// the row top, before or after quad[1] or at the column's top (677 to 687:
+// d is then no longer a counter and the grid's registers rotate).
 // 2026-11-08, thirteenth pass, 90 to 88, no new device. The waves step the
 // column between the height (now a local y) and the store, so column++ leads
 // the + 64 as in the listing (6 lines to 4). The palette copy names the
@@ -72,7 +75,7 @@
 // (b, c and d as row counters from Q, a = i + column left unreduced, the quad
 // from (row * 15 + column) * 24 in the if block, so the row slots and quad
 // start match) plus Q pinned to r4 (register asm, a pin: needs
-// FAKEMATCH(pin) on adoption, or a milder device), the vertex from
+// a pin tag on adoption, or a milder device), the vertex from
 // (c - 16) * 4, the + 15 as v + 15, and quad[20] and quad[21] moved (the
 // permuter, 10 minutes). Without the pin this form is 401. The frame loop
 // now nearly matches; what is left is in the grid: the vertex starts from

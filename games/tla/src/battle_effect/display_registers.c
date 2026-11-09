@@ -9,7 +9,7 @@
 /// Writes the window, display and blend registers, all at once.
 void Graphics_ApplyWindowBlendRegisters(void) {
   /* FAKEMATCH(pin): the work pointer kept in r2, so the registers' address
-   * takes r1; as a plain local, 62 of 55 instructions differ in tla-en. */
+   * takes r1; as a plain local, 31 of 55 instructions differ in tla-en. */
   register struct BattleFxWork *work asm("r2") =
       (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
 
@@ -35,7 +35,7 @@ void Graphics_ApplyWindowBlendRegisters(void) {
 /// Writes background 2's scale (BG2PA and BG2PD) and its reference point.
 void Display_ApplyBg2Affine(void) {
   /* FAKEMATCH(pin): the work pointer kept in r2, so the registers' address
-   * takes r1; as a plain local, 32 of 30 instructions differ in tla-en. */
+   * takes r1; as a plain local, 16 of 30 instructions differ in tla-en. */
   register struct BattleFxWork *work asm("r2") =
       (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
 

@@ -43,7 +43,7 @@ void Func_0802b450(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
         mask = 0x7ff;
         /* FAKEMATCH(barrier): an empty asm on mask once it holds 0x7ff, which
          * ranks mask above the destination word in local allocation, so mask
-         * keeps r3, the word r2 and 0xfffff800 r1; without it, 49 of 148
+         * keeps r3, the word r2 and 0xfffff800 r1; without it, 23 of 145
          * instructions differ in tla-en. */
         __asm__("" : "+r"(mask));
         cellPictureId = cell & cellPictureId;
@@ -57,10 +57,7 @@ void Func_0802b450(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
         row = y & 15;
         n = row << 5;
         n += column;
-        /* FAKEMATCH(temporary): the offset copied from scaled; as offset =
-         * n * 4, 150 of 148 instructions differ in tla-en. */
-        scaled = n * 4;
-        offset = scaled;
+        offset = n * 4;
         for (; i < 3; i += 1) {
           if (view->x <= x && view->x + 16 > x && view->y <= y &&
               view->y + 12 > y) {
@@ -85,7 +82,9 @@ void Func_0802b450(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
             *(u32 *)screenTile = *(u32 *)pictureRows;
             break;
           }
-          offset += 2048;
+          // scaled, reused for the step to the next layer's BG map.
+          scaled = 2048;
+          offset += scaled;
           view++;
         }
       }

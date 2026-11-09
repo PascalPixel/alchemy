@@ -1,4 +1,5 @@
 #include "types.h"
+#include "io_reg.h"
 #include "ram_buffer.h"
 #include "map.h"
 
@@ -8,11 +9,6 @@ struct TilePos {
 
 void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
                                     u32 width, u32 height) {
-  /* FAKEMATCH(temporary): the cell's attribute bits and its BG map offset
-   * built through chains of copies (tmp3 to tmp15), which set the cell loop's
-   * registers and schedule; as The Broken Seal's
-   * MapGrid_CopyCellPictureIndicesRect writes them, each value assigned once,
-   * 158 of 142 instructions differ in tla-en. */
   u32 *src = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
   u32 *dst = (u32 *)Ram_MapCellBuffer + (dstY * 128 + dstX);
   struct MapLayer *layer = Ram_HeapSlots->mapWork->layers;
@@ -22,6 +18,7 @@ void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
   u32 y;
   u32 x;
 
+  // The three layers' visible areas: their scroll positions in cells.
   for (i = 2; i >= 0; i--) {
     pos->x = layer->x >> 20;
     pos->y = layer->y >> 20;
@@ -32,58 +29,52 @@ void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
     for (x = dstX; x < dstX + width; x++) {
       u32 val = *src++;
       u32 cell = val & 0xfff;
-      u32 offset;
-      u32 tmp3;
-      u32 n;
-      u32 tmp6;
-      u32 tmp9;
-      u32 tmp12;
-      u32 tmp11;
-      u32 tmp13;
-      u32 tmp15;
-      tmp9 = *dst;
-      tmp3 = tmp9 & -0x1000;
-      tmp12 = x & 15;
-      dst[0] = cell | tmp3;
-      tmp6 = tmp12;
+      u32 column, row, mapCell, offset, bytes;
+
+      *dst = (*dst & 0xfffff000) | cell;
+      column = x & 15;
       dst++;
       i = 0;
-      tmp15 = y & 15;
-      tmp3 = tmp15;
+      row = y & 15;
       pos = tile;
-      tmp13 = tmp3 << 5;
-      tmp12 = tmp13;
-      n = tmp12;
-      n += tmp6;
-      tmp13 = 4 * n;
-      tmp11 = tmp13;
-      tmp6 = tmp11;
-      offset = tmp6;
+      // offset is the cell's place in a 32x32 BG map: 128 bytes a cell row,
+      // 4 a cell.
+      mapCell = row << 5;
+      mapCell += column;
+      offset = mapCell * 4;
+      // The first layer whose visible area (16x12 cells) holds the cell has
+      // the cell picture written to its BG map too, and only that one (a map
+      // lays its layers out in different parts of the grid); the layers' BG
+      // maps follow each other, 2,048 bytes apart, from screen block 5.
       for (; i < 3; i++) {
-        if (pos->x <= (s32)x && 16 + pos->x > (s32)x && pos->y <= (s32)y &&
+        if (pos->x <= (s32)x && pos->x + 16 > (s32)x && pos->y <= (s32)y &&
             pos->y + 12 > (s32)y) {
-          u32 scr, blk;
-          u8 *dest, *tiles;
+          u32 screenAddress, cellPictureAddress;
+          u8 *screenTile, *cellPictureRows;
 
-          scr = 0x06002800;
-          dest = (u8 *)scr;
-          dest += offset;
-          tmp11 = cell * 8;
-          blk = (u32)Ram_MapBlocks;
-          tiles = (u8 *)blk;
-          tiles += tmp11;
-          *(u32 *)dest = *(u32 *)tiles;
+          // The cell picture's (8 bytes) top two tiles, and its bottom two
+          // 64 bytes further on.
+          screenAddress = (u32)BG_SCREEN_BLOCK(5);
+          screenTile = (u8 *)screenAddress;
+          screenTile += offset;
+          bytes = cell * 8;
+          cellPictureAddress = (u32)Ram_MapBlocks;
+          cellPictureRows = (u8 *)cellPictureAddress;
+          cellPictureRows += bytes;
+          *(u32 *)screenTile = *(u32 *)cellPictureRows;
 
-          blk = (u32)Ram_MapBlocks + 4;
-          tiles = (u8 *)blk;
-          tiles += tmp11;
-          scr = 0x06002840;
-          dest = (u8 *)scr;
-          dest += offset;
-          *(u32 *)dest = *(u32 *)tiles;
+          cellPictureAddress = (u32)Ram_MapBlocks + 4;
+          cellPictureRows = (u8 *)cellPictureAddress;
+          cellPictureRows += bytes;
+          screenAddress = (u32)BG_SCREEN_BLOCK(5) + 64;
+          screenTile = (u8 *)screenAddress;
+          screenTile += offset;
+          *(u32 *)screenTile = *(u32 *)cellPictureRows;
           break;
         }
-        offset += 0x800;
+        // bytes, reused for the step to the next layer's BG map.
+        bytes = 2048;
+        offset += bytes;
         pos++;
       }
     }

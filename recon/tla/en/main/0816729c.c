@@ -1,4 +1,12 @@
 // Draft, differ 24 of 2680 (tla-en, 2026-11-09; the same 24 in ja, de, es, fr, it)
+// 2026-11-09, round 7, unchanged at 24. Queue loop 1, read from a scratch cc1
+// printing sched2's ready lists (analysis only): the value store's 21 is its
+// true dependence into the objects load (u32 read, int set, as the store); the
+// listing's order needs the count store above it (22 or more) or that
+// dependence at cost 0. The objects read as void **, struct JudgmentObject **,
+// u8 ** (pointer sets, no dependence): 32, the value store then falls behind
+// the whole tile chain. An asm with the queue count as a memory operand after
+// the push, to give the count store a dependant: "+m" 58, "m" 143.
 // 2026-11-09, round 6, 32 to 24: the rings' cx reloads take the listing's r4
 // in both halves. A tagged dead test after each dx (if (dx > 1000) top = 0;
 // top is set again before it is read) builds 1000 in a reload register: the

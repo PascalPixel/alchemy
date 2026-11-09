@@ -1,4 +1,22 @@
-// Draft, differ 8 of 183 (tla-en, 2026-11-09); 8 in every edition
+// Draft, differ 4 of 183 (tla-en, 2026-11-09); 4 in every edition
+// 2026-11-09 (round 7), 8 to 4, no new device: the copies are a struct
+// (SnapshotCopy, 25 bytes padded to 28). Their stores then carry that struct's
+// alias set, which is disjoint from the unit's (the loads carry
+// SnapshotUnit's), so sched2 sees no store-to-load dependence between copies
+// and the first two strb fall behind the constants' second halves as listed
+// (traced: with u8 rows, each store's priority is 3 above the next load's;
+// without the dependence the constant half outranks it). Left: the PP base
+// (4). Natively it is a reload at the add: its pseudo has no hard register
+// and reload rematerializes the REG_EQUIV symbol, round-robin after the HP
+// store's r2, into r0; find_reg would also take r1 there, which is what the
+// dead test stands in for. Here the base is a local pseudo and local-alloc
+// gives it r3. Measured without gain: 128 forms of the PP block (pp load,
+// address, dead test and store in 8 orders; pp as u32, u16, s32, s16; the
+// address as &Data_0200ffec[i], &Data_0200ff58.vitals[i], Data_0200ffec + i,
+// &snap->vitals[i]): 4 at best; the store as Data_0200ff58.vitals[i].pp
+// (133: CSE keeps 148 apart from the symbol); a function-level base pointer
+// (142: global allocation gives it fp; with fp fixed, diagnostic only, it is
+// rematerialized but the rotation is lost, 123); Unit_Get as malloc (8).
 // 2026-11-09 (round 6), 12 to 8: the copies' two temporaries and the
 // once-only block are gone, and the tag loop is a plain for over j. What they
 // stood in for is r1 in reload's spill set (the listing gets it at the PP
@@ -109,7 +127,11 @@ struct SnapshotUnit {
 };
 
 extern struct Snapshot Data_0200ff58;
-extern u8 Data_0200ff6c[][28];
+struct SnapshotCopy {
+  u8 bytes[25];
+};
+
+extern struct SnapshotCopy Data_0200ff6c[];
 extern struct SnapshotVitals Data_0200ffec[];
 extern u8 Data_0812a16c[];
 
@@ -122,7 +144,7 @@ void Func_0811843c(void) {
   // Set here, between snap and ids: the native sets i before it loads ids.
   s32 i = 0;
   u8 *ids = Data_0812a16c;
-  u8 (*copies)[28] = Data_0200ff6c;
+  struct SnapshotCopy *copies = Data_0200ff6c;
 
   for (; i <= 4; i++, copies++) {
     struct SnapshotUnit *unit = Unit_Get(ids[i]);
@@ -154,31 +176,31 @@ void Func_0811843c(void) {
         for (j = 0; j < 4; j++)
           snap->tags[i][j] = unit->tags[j];
       }
-      (*copies)[0] = unit->snapshot[0];
-      (*copies)[1] = unit->snapshot[1];
-      (*copies)[2] = unit->snapshot[2];
-      (*copies)[3] = unit->snapshot[3];
-      (*copies)[4] = unit->snapshot[4];
-      (*copies)[5] = unit->snapshot[5];
-      (*copies)[6] = unit->snapshot[6];
-      (*copies)[7] = unit->snapshot[7];
-      (*copies)[8] = unit->snapshot[8];
-      (*copies)[9] = unit->snapshot[9];
-      (*copies)[10] = unit->snapshot[10];
-      (*copies)[11] = unit->snapshot[11];
-      (*copies)[12] = unit->snapshot[12];
-      (*copies)[13] = unit->snapshot[13];
-      (*copies)[14] = unit->snapshot[14];
-      (*copies)[15] = unit->snapshot[15];
-      (*copies)[16] = unit->snapshot[16];
-      (*copies)[17] = unit->snapshot[17];
-      (*copies)[18] = unit->snapshot[18];
-      (*copies)[19] = unit->snapshot[19];
-      (*copies)[20] = unit->snapshot[20];
-      (*copies)[21] = unit->snapshot[21];
-      (*copies)[22] = unit->snapshot[22];
-      (*copies)[23] = unit->snapshot[23];
-      (*copies)[24] = unit->snapshot[24];
+      copies->bytes[0] = unit->snapshot[0];
+      copies->bytes[1] = unit->snapshot[1];
+      copies->bytes[2] = unit->snapshot[2];
+      copies->bytes[3] = unit->snapshot[3];
+      copies->bytes[4] = unit->snapshot[4];
+      copies->bytes[5] = unit->snapshot[5];
+      copies->bytes[6] = unit->snapshot[6];
+      copies->bytes[7] = unit->snapshot[7];
+      copies->bytes[8] = unit->snapshot[8];
+      copies->bytes[9] = unit->snapshot[9];
+      copies->bytes[10] = unit->snapshot[10];
+      copies->bytes[11] = unit->snapshot[11];
+      copies->bytes[12] = unit->snapshot[12];
+      copies->bytes[13] = unit->snapshot[13];
+      copies->bytes[14] = unit->snapshot[14];
+      copies->bytes[15] = unit->snapshot[15];
+      copies->bytes[16] = unit->snapshot[16];
+      copies->bytes[17] = unit->snapshot[17];
+      copies->bytes[18] = unit->snapshot[18];
+      copies->bytes[19] = unit->snapshot[19];
+      copies->bytes[20] = unit->snapshot[20];
+      copies->bytes[21] = unit->snapshot[21];
+      copies->bytes[22] = unit->snapshot[22];
+      copies->bytes[23] = unit->snapshot[23];
+      copies->bytes[24] = unit->snapshot[24];
     }
   }
 }

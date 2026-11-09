@@ -1,4 +1,10 @@
 // Draft, differ 16 of 828 (tla-en, 2026-11-09); 16 in every edition, the same rows.
+// 9 November (round 7), unchanged at 16. Raw gcse hashes (scratch cc1 printing
+// them, analysis only): &texture 13882, &screen 13914, frame << 8 13956,
+// camera->pos 13957, table 347 (buckets 2, 34, 76, 77). The preheader's order
+// is not bucket order (camera->pos is inserted before &texture, whose bucket
+// is earlier), so a table size that wraps camera->pos first (303, 317, 357, 367)
+// would not by itself give the listing's order.
 // 9 November (round 6), 26 to 16: frame's reload at the pillars' frame <= 47
 // test takes the listing's r1. A tagged dead test before it (if (i == 300)
 // growth = 0;) builds 300 in a reload register: the one pick reload spent

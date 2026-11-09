@@ -1,5 +1,29 @@
-// Draft, differ 16 of 3921 (tla-en, 2026-11-09); 16 in every edition (tla-ja
+// Draft, differ 8 of 3921 (tla-en, 2026-11-09); 8 in every edition (tla-ja
 // at 0817ea5c).
+// Twelfth round, 9 November, 16 to 8. Read from a scratch cc1 that prints each
+// sched2 ready list with priority, class and dependants (analysis only):
+// - The spawn call (6) and the orange palette copy: both reach Iwram_CopyWords
+//   through IwramIrqMain (IWRAM_COPY_WORDS_LINKED, the trade's form). Its address
+//   is then a pool MEM, which depends on the call before it (the call flushes
+//   memory), so the spawn call's priority becomes 3 and it leads, as listed; the
+//   palette copy loads it into a local after its source, so it is set after the
+//   arguments and wins the tie with lsls r0. Both in that pool, one word.
+// - pos.x's read after the tile store (2): with -fstrict-aliasing a bitfield
+//   store carries Sprite's alias set, which holds int through the 32-bit scale,
+//   so the s32 read waits for it. Through SpriteAttributes (no int) it does not
+//   and is scheduled first, as listed. Sprite without scale makes every such
+//   pair independent (22), a nested attribute struct for every access 68.
+// Left (8): the map loop's k = 0 (2) and the third phase's z = 0 and mov sl
+// (4): natively both come after the loop's hoisted constants in RTL order
+// (ties broken by LUID), as a strength-reduced giv's init would; and mov r1, fp
+// one row early (2): the empty asm before the 42 + i loop is an ASM_INPUT, so
+// every earlier read of fp gains it as a dependant and the reload of fp outranks
+// adds r3, #120 on dependants (3 to 2). That loop's copy through
+// IWRAM_COPY_WORDS_LINKED does the asm's work and settles mov r1, fp, but its
+// pool word is then a second word where the listing has one (14); linking any
+// one of the eight copies before it, 24 to 120. Not better: the plain IwramCopyWords
+// symbol for every copy (415), every copy linked (36), the map loop's k as j * 16
+// in three spellings (1696: not reduced, "not worth while"), k's init first (57).
 // Eleventh round, 9 November, 24 to 16: the third phase's registers are the
 // listing's. Two tagged dead branches stand in for the five: the first puts a
 // label between i = 0 and z = 0, so find_equiv_reg stops there and z's zero
@@ -185,6 +209,7 @@
 #include "resource.h"
 #include "heap_release.h"
 #include "system/iwram_call.h"
+#include "system/irq.h"
 #include "types.h"
 typedef volatile u16 vu16;
 typedef volatile u32 vu32;
@@ -226,6 +251,14 @@ typedef struct Sprite {
   u8 unk16;
   u8 unk17;
 } Sprite;
+
+/// A sprite's first ten bytes, its attribute 2 fields after eight others.
+struct SpriteAttributes {
+  u8 unk00[8];
+  u16 tile : 10;
+  u16 priority : 2;
+  u16 palette : 4;
+};
 
 typedef struct VramSlot {
   u16 unk0;
@@ -297,6 +330,10 @@ struct SystemWork {
 
 #define SYSTEM ((struct SystemWork *)0x03000000)
 static inline void Iwram_Copy(void *d, const void *s, s32 n) { Iwram_CopyWords(d, s, n); }
+/// Iwram_CopyWords reached from IwramIrqMain rather than at its fixed address,
+/// as the trade's snapshot copies reach it: its address is then a pool load,
+/// made after the arguments and after the call before it.
+#define IWRAM_COPY_WORDS_LINKED ((CopyFunc)(IwramIrqMain + Iwram_CopyWordsOffset))
 #define Iwram_Clear Iwram_ClearWords
 extern VramSlot gResourceTableEntries[];
 #define VRAM_SLOTS gResourceTableEntries
@@ -591,7 +628,10 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
             obj = work->sprites[k];
             v = work->particles[row + (wavePhase + 64 + i) % 8].timer;
           }
-          obj->tile = v & 0x3ff;
+          // The tile through the attributes alone: as obj->tile, the store would
+          // also stand for the sprite's 32-bit scale and pos.x's read would wait
+          // for it (2 of 3921 instructions differ in tla-en).
+          ((struct SpriteAttributes *)obj)->tile = v & 0x3ff;
           if (pos.x > 0xffffff)
             pos.x -= 0x1200000;
           Render_ApplyProjectedPlacementFar(work->sprites[j * 9 + i], &pos, &scale, 0);
@@ -1295,14 +1335,19 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
   BattleEffect_SpawnObjects(1, 663, 1);
   for (i = 0; i != 15; i++) {
     work->sprites[1 + i] = Func_0815b3b0(32, 16, 0x80006000, 0);
-    Iwram_Copy(work->sprites[1 + i], work->sprites[0], 24);
+    IWRAM_COPY_WORDS_LINKED(work->sprites[1 + i], work->sprites[0], 24);
     work->sprites[1 + i]->unk16 = 32;
     work->sprites[1 + i]->unk17 = 8;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->frames, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0BA, work->frames + 0x3000, 0, 0);
-  Iwram_Copy((void *)0x05000000, (const void *)Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-             128);
+  {
+    const void *colors =
+        (const void *)Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
+    CopyFunc copy = IWRAM_COPY_WORDS_LINKED;
+
+    copy((void *)0x05000000, colors, 128);
+  }
 
   for (frame = 0; frame != 109; frame++) {
     if (frame == 0) {

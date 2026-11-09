@@ -1,4 +1,14 @@
-// Draft, differ 32 of 2680 (tla-en, 2026-11-09; the same 32 in ja, de, es, fr, it)
+// Draft, differ 24 of 2680 (tla-en, 2026-11-09; the same 24 in ja, de, es, fr, it)
+// 2026-11-09, round 6, 32 to 24: the rings' cx reloads take the listing's r4
+// in both halves. A tagged dead test after each dx (if (dx > 1000) top = 0;
+// top is set again before it is read) builds 1000 in a reload register: the
+// one pick between the radius and cx the listing has. Its branch is empty by
+// reload and gone after it, so nothing of it is left in the code. The test on
+// radius (in lr) instead, 28 in the first half but 46 in the second; on
+// halfSlope or slope, 50 to 2128; right after half, 49 to 682 (the label
+// stops half's own register from being reused). The two older dead branches
+// re-measured on this form (231, 205). Left: queue loop 1 (4), DRAW_ALT's
+// ties (8 and 10) and the release loop (2), all sched2 order.
 // 2026-11-09, last: a 12-minute permute of the rings' first half (half to
 // top, PERM_RANDOMIZE, seed 4242, 14,792 candidates): nothing below 32; cx
 // copied to a ring local first, 32. Traced: cx's first reload is the pick
@@ -956,10 +966,16 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
 
             half = radius / 2;
             dx = (half * sx) / 8;
+            /* FAKEMATCH(dead): a store top's own line overwrites; its test
+             * builds 1000 in a reload register before cx's reload, the one
+             * pick that sends cx to r4; without it, 28 of 2680 instructions
+             * differ in tla-en. */
+            if (dx > 1000)
+              top = 0;
             right = cx + dx;
             /* FAKEMATCH(dead): a branch whose store the next line overwrites
              * restores the label CSE and reload saw between the edges; without
-             * it, 241 of 2680 instructions differ in tla-en. */
+             * it, 231 of 2680 instructions differ in tla-en. */
             if (dx > cx)
               left = 0;
             left = cx - dx;
@@ -990,10 +1006,15 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
 
             halfSlope = slope / 2;
             dx = (halfSlope * sx) / 8;
+            /* FAKEMATCH(dead): as above, the pick before cx's reload in the
+             * second half; without it, 28 of 2680 instructions differ in
+             * tla-en. */
+            if (dx > 1000)
+              top = 0;
             right = cx + dx;
             /* FAKEMATCH(dead): a branch whose store the next line overwrites
              * restores the label CSE and reload saw between the edges; without
-             * it, 116 of 2680 instructions differ in tla-en. */
+             * it, 205 of 2680 instructions differ in tla-en. */
             if (dx > cx)
               left = 0;
             left = cx - dx;

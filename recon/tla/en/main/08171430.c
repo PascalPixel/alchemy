@@ -1,4 +1,14 @@
-// Draft, differ 26 of 828 (tla-en, 2026-11-08); 26 in every edition, the same rows.
+// Draft, differ 16 of 828 (tla-en, 2026-11-09); 16 in every edition, the same rows.
+// 9 November (round 6), 26 to 16: frame's reload at the pillars' frame <= 47
+// test takes the listing's r1. A tagged dead test before it (if (i == 300)
+// growth = 0;) builds 300 in a reload register: the one pick reload spent
+// there in the listing; its empty branch is gone after reload. On z, x or a
+// 0x10000 compare, 40 to 46; on sway, 662. Left: the preheader's RTL order
+// (16). pos = &screen as the first statement of the frame loop (for or
+// do-while) is still PRE expression 34, inserted before camera->pos (73) and
+// &texture (116): 58. A never-true test of camera->pos against &texture before
+// the loop computes the three in the listing's order, but their pseudos then
+// take other slots and registers (106).
 // 9 November: cells as the fixed Ram_MapCellBuffer in place of gMapCellBuffer, 26.
 // 2026-11-08 (devices pass), unchanged at 26: an empty asm before, after or between the frame loop's inits (26 to 30), or pos set through an asm before the loop (265, 279), does not reorder the preheader.
 // Left: the frame loop's preheader order (16 rows: the listing computes
@@ -513,6 +523,12 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
         s32 growth;
         u32 scale;
 
+        /* FAKEMATCH(dead): a store both arms below overwrite; its test builds
+         * 300 in a reload register, the one pick before frame's reload that
+         * sends it to r1; without it, 26 of 828 instructions differ in
+         * tla-en. */
+        if (i == 300)
+          growth = 0;
         if (frame <= 47) {
           growth = Trig_Sin((frame << 9) - 0x2000);
         } else {

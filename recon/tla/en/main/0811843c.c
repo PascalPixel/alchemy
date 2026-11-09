@@ -1,4 +1,22 @@
-// Draft, differ 12 of 183 (tla-en, 2026-11-09); 12 in every edition
+// Draft, differ 8 of 183 (tla-en, 2026-11-09); 8 in every edition
+// 2026-11-09 (round 6), 12 to 8: the copies' two temporaries and the
+// once-only block are gone, and the tag loop is a plain for over j. What they
+// stood in for is r1 in reload's spill set (the listing gets it at the PP
+// add, where r2 holds the PP value and r3 the address). Now the PP value
+// waits in a local (tagged temporary) while pv = &Data_0200ffec[i] is built,
+// and a tagged dead test between them (if (i == 300) j = 0;) builds 300 in a
+// reload register with r2 and r3 busy: find_reg takes r1 there, the test's
+// empty branch is gone after reload, and the copies rotate r0, r1, r2 as
+// listed. pv as plain C is still needed (119 without). Left: the PP base is
+// a pseudo in r3 where the listing reloads it into r0 above the HP strh (4),
+// and the first two copies' stores come one slot early (4: ldrb then strb
+// with one instruction between where the listing has two). The PP base as a
+// reload is out of reach: spilled, retry_global_alloc gives it ip; hoisted,
+// fp; gcse's cprop propagates only a bare SYMBOL_REF set (Thumb forces every
+// symbol to the pool at expand); an inline helper, even with const
+// parameters, copies its pointer argument through a pseudo (12). On this
+// form: the once-only block, a first temporary (8 each); first and src back
+// (10, 12); s8 snapshot or copies (8); the tag loop counted down (10).
 // 2026-11-09 (later), 14 to 12, no new device: the tag loop counts j down
 // from 3 in a do-while and indexes [3 - j]; j's init is then the first set of
 // the block, so it holds r0 when reload rebuilds the destination's snap, and
@@ -103,8 +121,6 @@ void Func_0811843c(void) {
   struct Snapshot *snap = &Data_0200ff58;
   // Set here, between snap and ids: the native sets i before it loads ids.
   s32 i = 0;
-  u8 *src;
-  s32 first;
   u8 *ids = Data_0812a16c;
   u8 (*copies)[28] = Data_0200ff6c;
 
@@ -116,27 +132,30 @@ void Func_0811843c(void) {
       snap->listed[i] = 1;
       if (i > 2) {
         snap->vitals[i].hp = unit->hp > 0 ? unit->hp : 1;
-        Data_0200ffec[i].pp = unit->unk3a;
+        {
+          struct SnapshotVitals *pv;
+          u32 pp;
+
+          /* FAKEMATCH(temporary): the PP value held in a local while pv is
+           * built; as pv->pp = unit->unk3a, 123 of 183 instructions differ
+           * in tla-en. */
+          pp = unit->unk3a;
+          pv = &Data_0200ffec[i];
+          /* FAKEMATCH(dead): a store the tag loop's init overwrites; its
+           * test builds 300 in a reload register while pp and pv hold r2
+           * and r3, which puts r1 among reload's registers; without it, 119
+           * of 183 instructions differ in tla-en. */
+          if (i == 300)
+            j = 0;
+          pv->pp = pp;
+        }
       }
       if (i <= 2) {
-        // Counted down from 3, set before the copy's pointers: the counter
-        // is then live in r0 when the destination's snap is reloaded.
-        j = 3;
-        do {
-          snap->tags[i][3 - j] = unit->tags[3 - j];
-        } while (--j >= 0);
+        for (j = 0; j < 4; j++)
+          snap->tags[i][j] = unit->tags[j];
       }
-      /* FAKEMATCH(temporary): the form kept; as (*copies)[0] =
-       * unit->snapshot[0], 26 of 183 instructions differ in tla-en. */
-      first = unit->snapshot[0];
-      /* FAKEMATCH(temporary): the form kept; as (*copies)[1] =
-       * unit->snapshot[1], 121 of 183 instructions differ in tla-en. */
-      src = &unit->snapshot[1];
-      // Once-only: the first two copies share one schedule block.
-      do {
-        (*copies)[0] = first;
-        (*copies)[1] = *src;
-      } while (0);
+      (*copies)[0] = unit->snapshot[0];
+      (*copies)[1] = unit->snapshot[1];
       (*copies)[2] = unit->snapshot[2];
       (*copies)[3] = unit->snapshot[3];
       (*copies)[4] = unit->snapshot[4];

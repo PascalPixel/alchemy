@@ -1,4 +1,19 @@
-// Draft, differ 24 of 3921 (tla-en, 2026-11-09)
+// Draft, differ 16 of 3921 (tla-en, 2026-11-09); 16 in every edition (tla-ja
+// at 0817ea5c).
+// Eleventh round, 9 November, 24 to 16: the third phase's registers are the
+// listing's. Two tagged dead branches stand in for the five: the first puts a
+// label between i = 0 and z = 0, so find_equiv_reg stops there and z's zero
+// is its own reload (r0); the second's test reloads work (fp) once after it,
+// the one pick before z's read; ay * 40 is then plain C and shifts as the
+// listing does. Left: z's movs r0, #0 and mov sl, r0 are scheduled two rows
+// early (4: in the listing's RTL they follow the loop's hoisted zero and the
+// sprites pointer, as a giv's init would; z as a giv of i, 75 to 85), the
+// spawn call (6) and the three pairs before it (6). Learned on the way:
+// asm("") and asm volatile("") are ASM_INPUT, which find_equiv_reg's
+// volatile_insn_p passes (28 between the inits); a volatile asm with operand
+// syntax or an r4 clobber stops it, but z's zero then copies the hoisted zero's
+// r7 (30) or CSE forgets i == 0 and the loop gains an entry test (71). The
+// inits and the two branches in other orders: 47 to 69.
 // Tenth round, 9 November, unchanged at 24. Traced with a scratch cc1 that
 // prints each reload pick (analysis only): the spill registers are r0 to r4
 // and r7, picked round robin. Third phase, listing: i's zero r4, z's zero r0,
@@ -391,9 +406,6 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
   s32 shipY;
   s32 wavePhase;
   s32 savedY;
-  // Holds 5 for the whole function: the third phase's ay * 40 is ay * five
-  // shifted, so reload builds the 5 for it.
-  s32 five = 5;
   s32 bgX;
   struct SummonWork *work;
   s32 k;
@@ -1295,15 +1307,26 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
   for (frame = 0; frame != 109; frame++) {
     if (frame == 0) {
       s32 z;
+      Particle *p;
 
-      for (i = 0, z = 0; i != 16; z -= 0x100, i++) {
-        Particle *p;
-
+      i = 0;
+      /* FAKEMATCH(dead): a store the next line overwrites; its branch puts
+       * a label between i's zero and z's, so z's zero is a reload of its
+       * own; without it, 58 of 3921 instructions differ in tla-en. */
+      if (work == NULL)
+        z = 1;
+      z = 0;
+      /* FAKEMATCH(dead): a store the loop's first line overwrites; its test
+       * reloads work once between z's zero and z's first read; without it,
+       * 69 of 3921 instructions differ in tla-en. */
+      if (work == NULL)
+        p = NULL;
+      for (; i != 16; z -= 0x100, i++) {
         p = &work->particles[i];
         p->timer = 0;
         Random16();
         p->ay = 0;
-        p->z = z - (*(vs32 *)&p->ay * five << 3) - 0x800;
+        p->z = z - (*(vs32 *)&p->ay * 40) - 0x800;
         p->vx = -Trig_Cos(p->z) * 8;
         p->vy = -Trig_Sin(p->z) * 8;
         p->x = ((Random16() % 80 + 80) << 16) - p->vx * 24;

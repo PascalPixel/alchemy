@@ -1,4 +1,16 @@
-// Draft, differ 34 of 2579 (tla-en, 2026-11-09)
+// Draft, differ 32 of 2579 (tla-en, 2026-11-09); 32 in every edition
+// 2026-11-09 (last stretch), 34 to 32, no device: the priority mask as one
+// byte expression, u8 x = ((s8 *)obj)[9] & -13, read through the signed byte
+// (the creation block's s8 mask is gone). The and is then QImode: its -13 is a
+// QImode temporary that reload builds in SImode (movs r4, #13; negs) and moves
+// (adds rN, r4, #0), the listing's three rows; an s32 x keeps a sign extension
+// (42), an s8 x 64, the and written in place 65. Left at the mask (2): the and
+// ties its output to the -13 (operand 1, as the Thumb andsi3 expander's bic
+// path orders it), so the byte takes r2 and the copy r3, where the listing has
+// them the other way round; -13 & byte, ~12, 0xf3, (u8) or (s8) casts and a
+// local holding -13 (s32: 89, u8: 50) do not reorder it; a pinned r2 mask is
+// worse (74 to 89). 12 minutes of permuter (seed 8484) on this form: nothing
+// below 32.
 // 2026-11-09 (devices pass), unchanged at 34. Mask: the -13 through a copy
 // held by an empty asm (493 to 566: the copy and the mask merge and spill),
 // the copy tied to the mask by an asm operand (533), a u8 copy through an asm
@@ -768,14 +780,13 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   for (q = 0; q != 2; q++) {
     u8 *src;
     struct RuinObject *obj;
-    s8 mask = -13;
 
     i = 0;
     src = work->sheet + q * 0x1000;
     for (; i != 8; i++) {
       obj = Func_0815b290(32, 32, 0x80000000, 0xf000);
       work->objects[q * 9 + i] = obj;
-      {s32 x = ((u8 *)obj)[9]; x &= mask; x |= 4; ((u8 *)obj)[9] = x;}
+      {u8 x = ((s8 *)obj)[9] & -13; x |= 4; ((u8 *)obj)[9] = x;}
       CopyWords_((void *)OBJ_TILES(obj), src, 512);
       src += 512;
     }

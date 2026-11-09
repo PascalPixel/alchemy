@@ -1,4 +1,15 @@
-// Draft, differ 88 of 902 (tla-en, 2026-11-09)
+// Draft, differ 86 of 902 (tla-en, 2026-11-09)
+// 2026-11-09 (last stretch), 88 to 86: the permuter (seed 6262) found a
+// once-only block around quad[7], quad[8] and quad[9] (plain C, no device);
+// nothing else below 88 in 12 minutes. A row-level bottom = v + 15
+// pinned to ip (register asm, for quad[7], [9] and [21]) gives the listing's
+// grid core: d spilled to slot 8 and the + 15 in ip. It costs 208: the + 15
+// giv is then found at the row top, before the vertex's row * 24 - 84 (a
+// moved insn of the column loop), so the two outer givs' slots 24 and 28 swap,
+// and reload's rotation shifts downstream (one ip reload inherited by all three
+// stores where the listing reloads it twice). Its place among the row
+// statements does not matter (208 to 212); a row-level row * 24 - 84 local
+// before it, 328 to 336.
 // 2026-11-09 (devices pass), unchanged at 88: an asm claiming to change d at
 // the row top, before or after quad[1] or at the column's top (677 to 687:
 // d is then no longer a counter and the grid's registers rotate).
@@ -489,9 +500,12 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
         quad[4] = x + 67;
         quad[6] = x + 67;
         quad[18] = x + 67;
-        quad[7] = v + 15;
-        quad[8] = u;
-        quad[9] = v + 15;
+        // Once-only: the three stores share one schedule block.
+        do {
+          quad[7] = v + 15;
+          quad[8] = u;
+          quad[9] = v + 15;
+        } while (0);
         quad[16] = u;
         quad[21] = v + 15;
         quad[5] = q;

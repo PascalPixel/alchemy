@@ -1,4 +1,12 @@
 // Draft, differ 40 of 1932 (tla-en, 2026-11-09)
+// 2026-11-09 (last stretch), unchanged at 40. The else arm's 0x1c000 and the
+// ship-burst's frame reloads fit the pattern the other drafts show: in the
+// listing a constant or spilled value is rebuilt by reload at its use, and
+// each such reload turns reload's register rotation; a pin makes it an
+// ordinary insn and moves the rotation (the 265 of the pinned r3). Thumb's
+// subsi3 takes only registers, so loop.c's single-use replacement cannot fold
+// 0x1c000 into the subtraction. 12 minutes of permuter (seed 9191): nothing
+// below 40 (best 42).
 // 2026-11-09 (devices pass), unchanged at 40. The else arm's 0x1c000 as a
 // pinned r3 (265), through an asm (310) or a local (40), its shift through an
 // asm (419); identity inlines on t, t * 3072, sc, the yaws or t << 11 (40,

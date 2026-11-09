@@ -1,4 +1,16 @@
 // Draft, differ 36 of 1122 (tla-en, 2026-11-09), no device; 36 in every edition
+// 2026-11-09 (last stretch), unchanged at 36, about 15 attempts. Read from the
+// --alloc and greg dumps: the droplet loop's gMapCellBuffer (pseudo 90, set in
+// the loop) has 5 refs (2 + 2 in the loop, 1 for the 0xc1 load cse reuses) over
+// 1 call, so CALLER_SAVE_PROFITABLE (4 * calls < refs) puts it in r4 with
+// str/ldr sp+8; at 4 refs, or 2 calls, it would have no register and reload
+// would rebuild it from the pool at each use, as the listing does. Not better:
+// the base through an empty asm ("+r", "=r"/"0", "r", volatile or not: 40 to
+// 217; a non-volatile asm is hoisted with the load), a pinned r4 base (217:
+// the post-loop load is fresh, but the in-loop load is no longer a reload, so
+// reload's rotation runs one step behind for the rest of the function), the
+// loop written with goto and a stepped index (260). 12 minutes of permuter
+// (seed 4242): nothing below 36 (best 59).
 // 2026-11-09 (devices pass), unchanged at 36, about 25 attempts. The tridents in
 // the listing's order (shade, pixels, then the reset) with x passed through an
 // asm that claims to change it stop reload inheriting x from r0 (mov r1, r8 as

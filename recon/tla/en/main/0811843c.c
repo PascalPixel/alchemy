@@ -1,4 +1,20 @@
-// Draft, differ 28 of 183 (tla-en, 2026-11-08)
+// Draft, differ 14 of 183 (tla-en, 2026-11-09); 14 in every edition
+// 2026-11-09 (last stretch), 28 to 14: the permuter (seed 7) found an s32
+// first holding snapshot[0] (a second tagged temporary, 28 without it), and
+// (seed 31) a once-only block around the first two copies (16 to 14). Left,
+// the same one cause: the PP store's Data_0200ffec should be a reload (r0,
+// hoisted above the HP strh), the rotation step that sends the tag loop's
+// snap reload to r1; the copies' two temporaries stand in for that step.
+// The tag loop as a count-down `*dst++ = *s++` with its counter pinned to r0
+// (set first, so the snap reload skips r0) gives the native mov r1, r8 but
+// moves movs r0, #3, mov sl and add sl (16 to 18 on this form). Not better:
+// a block or function-level PP pointer (it takes r0 or fp: 142 to 149), the
+// PP pointer and address pinned (30), the tag destination spelled six ways,
+// the PP base as an integer address (diagnostic only, and O2 forbids it: 18,
+// CSE still loads it into a pseudo), a third permute (seed 777): nothing
+// below 14. Why the PP pseudo has no register is still open: reload's
+// find_reg breaks equal spill costs by REG_ALLOC_ORDER (r3, r2, r1, r0), and
+// a PP pseudo live at the ldrsh's scratch costs 4 refs like the sl copy in r1.
 // 2026-11-08 (devices pass), unchanged at 28: Data_0200ffec pinned to r0 for the PP store gives the native ldr r0 above the HP strh (30), and with the PP address also pinned to r3, 26; the tag loop's snap reload then still takes r0 for r1, and pinning or a barrier on the tag destination costs 50 to 157. Two pins for two rows is no progress, so neither is kept. An empty asm on the PP address (46 to 149) or after the HP store (46) is worse.
 // Written now as its matched twin Func_081185c4 (the restore) is: the copies
 // pointer stepped in the for list after i (the loop end then steps i, the tag
@@ -69,6 +85,7 @@ void Func_0811843c(void) {
   // Set here, between snap and ids: the native sets i before it loads ids.
   s32 i = 0;
   u8 *src;
+  s32 first;
   u8 *ids = Data_0812a16c;
   u8 (*copies)[28] = Data_0200ff6c;
 
@@ -86,11 +103,17 @@ void Func_0811843c(void) {
         for (j = 0; j <= 3; j++)
           snap->tags[i][j] = unit->tags[j];
       }
+      /* FAKEMATCH(temporary): the form kept; as (*copies)[0] =
+       * unit->snapshot[0], 28 of 183 instructions differ in tla-en. */
+      first = unit->snapshot[0];
       /* FAKEMATCH(temporary): the form kept; as (*copies)[1] =
        * unit->snapshot[1], 119 of 183 instructions differ in tla-en. */
       src = &unit->snapshot[1];
-      (*copies)[0] = unit->snapshot[0];
-      (*copies)[1] = *src;
+      // Once-only: the first two copies share one schedule block.
+      do {
+        (*copies)[0] = first;
+        (*copies)[1] = *src;
+      } while (0);
       (*copies)[2] = unit->snapshot[2];
       (*copies)[3] = unit->snapshot[3];
       (*copies)[4] = unit->snapshot[4];

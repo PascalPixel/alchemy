@@ -2620,12 +2620,7 @@ main	rom_main_09	games/tla/src/battle_effect/f14ea58	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/series_a	.text
 main	rom_main_09	games/tla/src/battle_effect/f14ef44	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/stat_boost	.text
-main	rom_main_09	recon/tla/it/rom	.rom.0014fab8	it
-main	rom_main_09	recon/tla/fr/rom	.rom.0014fab8	fr
-main	rom_main_09	recon/tla/es/rom	.rom.0014fab8	es
-main	rom_main_09	recon/tla/de/rom	.rom.0014fab8	de
-main	rom_main_09	recon/tla/raw/0814fab8	.text	en
-main	rom_main_09	recon/tla/ja/rom	.rom.0014fab8	ja
+main	rom_main_09	games/tla/src/battle_effect/f14fab8	.text
 main	rom_main_09	games/tla/src/battle_effect/summon_canvas_modes	.text
 main	rom_main_09	recon/tla/it/rom	.rom.001504d6	it
 main	rom_main_09	recon/tla/fr/rom	.rom.001504d6	fr

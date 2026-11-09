@@ -119,6 +119,13 @@ s32 Func_0810abf0(void) {
   // avoided around it); firstMessage set to 0 at the top so cse2 forgets that
   // zero (42 and 70: the later store is then dropped as redundant); the zeros
   // reordered or copied from priceWindow (8, 17).
+  // Near6 round (9 November), still 8. The top zero through an empty asm
+  // ("+r") keeps priceWindow's pseudo for the later store, as the listing, but
+  // that pseudo then dies at the store (r3, not r5) and the store cross-jumps
+  // with memberIndex++'s (17; with the later zeros reordered or chained 17 to
+  // 31). An empty once-only block after the top store, the prompt, the list
+  // window, the cursor store or its first draw: 8 to 18 (cse2 still takes the
+  // top zero).
   firstMessage = (s32)MsgWhoShallIRevive;
 #endif
   // DEAD: memberIndex is set again after the price window before any read.

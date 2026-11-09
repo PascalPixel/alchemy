@@ -1,4 +1,12 @@
 // Draft, differ 4 of 4580 (tla-en, 2026-11-09). Measure 081843fc,081848ec together.
+// Near6 round (9 November), still 4. The tornado in the sched2 dump: movs r7,
+// #0 (the i * 45 giv's init) and mov ip, r3 (the hoisted 0x1b5a) both have
+// priority 1 and no dependents, the block's last two insns, so RTL order
+// decides, and loop.c emits the giv's init after the hoisted copy; nothing
+// after the init in its block can give it a dependent. The sparks' y: empty
+// asms ("+h" or "+l") before x's table read, before y or after it, on r, i,
+// angle or ry 4; on n 78, x 32, canvas or rise 149 to 161, frame 870 and
+// more, top 3132.
 // Near5 round (9 November), still 4. The sparks' y in the sched2 dump: after
 // top's reload, the height table's pool load (reload of the base kept in r8)
 // and n's caller-save restore tie at priority 104, class 3 and 4 dependents

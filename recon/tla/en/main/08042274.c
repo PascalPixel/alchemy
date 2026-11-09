@@ -3,6 +3,19 @@
 // Italian link this C as games/tla/src/window/f042274.c (2026-11-09, by hand:
 // adopt main must include English). English, German and Japanese stay on their
 // listings for the pool word below.
+// Near6 round (9 November): no C form pools 0x0000f01e with a word load's
+// reach. alchemy-gcc pools an integer only as a halfword constant: set before
+// reload it takes *thumb_movhi_insn's constant alternative, whose `ldrh rN,
+// label` GAS 2.10 assembles as the listing's ldr rN, [pc, #...], with the word
+// 61470 but a 64-byte pool range (u16 *p = output; p[1] = 0xf01e: differ 5,
+// the pool behind a new branch); reloaded, it is moved as SImode -4066, the
+// word 0xfffff01e (this form). Every SImode 61470 is split by
+// *thumb_movsi_gba_const, and cse forces no constant into the pool on Thumb
+// (each constant SET is valid). Measured: a static const u16 or u32, a const
+// u16 table with a constant index, an enum, a cast, a u32 or s32 local, a
+// union local, a compound literal (array or union), a u32 store over both
+// halfwords, a register u16 local, a float's bits: built (6 or 10) or the
+// same 0xfffff01e.
 // Earlier: every instruction matches in
 // all six editions, and tla-es, tla-fr and tla-it match byte for byte (their
 // form sets both halfwords in the branches and pools no 0xf01e; compiled for

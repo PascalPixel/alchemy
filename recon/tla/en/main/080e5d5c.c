@@ -1,4 +1,12 @@
-// Draft, differ 4 of 639 (tla-en, 2026-11-08)
+// Draft, differ 4 of 639 (tla-en, 2026-11-09)
+// Near6 round (9 November), still 4. The greg dump: inReach is spilled and its
+// 4 is a reload (the round-robin step the plain test lacks), and regmove ties
+// the and's output to the flags' pseudo (ldrb r3); the listing's ands writes
+// the 4's register (r3) with the flags in r2, so its and has an output other
+// than the flags. Not better: (inReach = 4) & child->motionFlags, the comma
+// forms (inReach = 4, inReach & flags) and (inReach = 4, flags & inReach),
+// 4 & flags (12), the result held in inReach, spot, glowEntry or starEntry
+// (4 to 12).
 // Near5 round (9 November), still 4. Traced with the scratch cc1 (reload
 // picks): the listing's else-if registers (scene's y store in r4, 0x200000 in
 // r0) follow when the round-robin stands at index 3 before it; the plain test

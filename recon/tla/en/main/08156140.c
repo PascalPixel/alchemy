@@ -1,4 +1,12 @@
-// Draft, differ 4 of 2278 (tla-en, 2026-11-08)
+// Draft, differ 4 of 2278 (tla-en, 2026-11-09)
+// Near6 round (9 November), still 4. In sched2's order (t = 43 to 46, no
+// stall between) the listing needs adds r1, r2, r1 and adds r3, #138 at 4
+// dependents each and adds r1, r1, r3 at 6 (their RTL order then wins the
+// ties), or mov r4, sl at 3 and ldr r2, [r7] at 4. An empty asm on a high
+// register ("+h") emits nothing and takes no unit, so it can reset the last
+// scheduled insn only in a cycle the unit is busy; there is none here. Such
+// asms at the odd flash's head, after its first load or after its first draw:
+// on j, steps, user, k or shift 4, on x 20, on mode 497 to 750.
 // Near5 round (9 November), still 4. The sched2 numbers at the turned flash's
 // first draw (after the 0x198a's shift, all priority 138 or 137): mov r4, sl 4
 // dependents (one the release's loop-note barrier), adds r1, r2, r1 and adds

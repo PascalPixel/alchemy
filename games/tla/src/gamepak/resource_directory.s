@@ -382,7 +382,7 @@ Resource_DirectoryTable:
 	resource BlueBeastSheet, BattleEffect_BlueBeastSheet
 	resource RedCrescentSheetB, BattleEffect_RedCrescentSheetB
 	resource SpiralSheet, BattleEffect_SpiralSheet
-	resource , BattleEffect_VioletStreakSheet
+	resource VioletStreakSheet, BattleEffect_VioletStreakSheet
 	resource CrescentMoonSheet, BattleEffect_CrescentMoonSheet
 	resource ThornVineSheet, BattleEffect_ThornVineSheet
 	resource IceShardSheet, BattleEffect_IceShardSheet

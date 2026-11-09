@@ -8,8 +8,11 @@ explains the window system for The Broken Seal.
 
 ## What differs from The Broken Seal
 
-- The code is not gathered into objects with parts: each file holds one
-  function or a small family, some still named by address (`f03975c.c`).
+- `window.c` holds what The Broken Seal's window object opens with: the
+  window sprite pool, the window system's set-up and opening a window.
+  `screens.c` holds what its screens object opens with: creating window
+  sprites and the portraits. Each other file holds one function or a small
+  family, some still named by address (`f03975c.c`).
 - `cell_picture.c` is ARM code, compiled with GCC 2.95.2 like The Broken
   Seal's ARM files (`ARM_C`).
 - `glow_update_sine.c` holds `PaletteGlow_UpdateSine`, which pulses four

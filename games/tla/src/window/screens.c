@@ -1,3 +1,8 @@
+/// @file
+/// Creating window sprites, from a resource, a loaded entry or a command icon,
+/// and the speakers' portraits: the functions The Broken Seal's screens object
+/// opens with (its window/screens/window_sprites.c), in the same order.
+
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -9,14 +14,80 @@
 #include "system.h"
 #include "render_input.h"
 #include "types.h"
+#include "output.h"
 #include "ram_buffer.h"
 #include "resource.h"
+#include "vram_tab.h"
 #include "window.h"
 #include "stddef.h"
 
 s32 Portrait_GetForSpeaker(s32 key);
 void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                                   s32 palette, s32 reuse);
+
+/// Takes a free window output, writes its OAM attributes at the window's
+/// position offset by (offsetX, offsetY) pixels and appends it to the window's
+/// list. Releases the resource slot and returns NULL when no output is free.
+// As ☀️'s WindowSprite_Create.
+struct WindowSprite *WindowSprite_Create(s32 slot, s32 flags,
+                                         struct RenderInput *input, s32 offsetX,
+                                         s32 offsetY) {
+  s32 x;
+  struct WindowSprite *output;
+  s32 y;
+
+  output = WindowSprite_AcquireFree();
+  if (output == NULL) {
+    Resource_ResetEntry((u32)slot);
+    return NULL;
+  }
+  x = offsetX + (s16)input->x * 8 + 8;
+  y = offsetY + (s16)input->y * 8 + 8;
+  x &= 0x1ff;
+  y &= 0xff;
+  *(u32 *)&output->sprite.oam = (x << 16) | y | flags;
+  ((u32 *)&output->sprite.oam)[1] = gResourceTableEntries[slot].offset >> 5;
+  output->sentinel = 254;
+  output->x = x;
+  output->y = (s16)y;
+  output->next = NULL;
+  output->index = (s8)slot;
+  output->kind = 1;
+  output->active = 1;
+  WindowSprite_AppendToList((struct WindowSpriteList *)input, output);
+  /* FAKEMATCH: the barrier after the call keeps the list argument's copy
+   * (mov r0, r8) after the last stores; without it the copy comes three
+   * stores earlier (differ 2). */
+  __asm__ volatile("");
+  return output;
+}
+
+struct WindowSprite *WindowSprite_CreateFromResource(s32 arg0, s32 arg1,
+                                                     struct RenderInput *arg2,
+                                                     s32 arg3, s32 arg4) {
+  s32 no;
+
+  no = Resource_LoadByMode(arg0, arg1);
+  if (no < 0) {
+    return NULL;
+  }
+  return WindowSprite_Create(no, OUTPUT_SIZE_16X16, arg2, arg3, arg4);
+}
+
+struct WindowSprite *WindowSprite_CreateLoaded(s32 arg0, s32 arg1,
+                                               struct RenderInput *arg2,
+                                               s32 arg3, s32 arg4) {
+  s32 no;
+  struct WindowSprite *result;
+
+  no = Resource_FindFreeEntry();
+  result = NULL;
+  if (no != 0x60) {
+    Icon_CopyResourceToSlot(arg0, arg1, no);
+    result = WindowSprite_Create(no, OUTPUT_SIZE_16X16, arg2, arg3, arg4);
+  }
+  return result;
+}
 
 struct WindowSprite *WindowSprite_CreateWithTransform(s32 arg0,
                                                       struct RenderInput *arg1,
@@ -113,4 +184,13 @@ void Portrait_Reload(u32 slot, s32 key, s32 unused) {
   __asm__("" : "+l"(palette) : "l"(cached), "l"(offset));
   entry = cached;
   UiGlyph_LoadEntryWithPalette(id, unused, &entry, &tile, palette + 14, 1);
+}
+
+/// Sets active to mode and resets the animation step (animStep) to zero.
+/// out: sprite output; nothing happens if NULL.
+void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode) {
+  if (out != NULL) {
+    out->active = mode;
+    out->animStep = 0;
+  }
 }

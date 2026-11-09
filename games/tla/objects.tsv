@@ -386,11 +386,7 @@ main	rom_main_02	games/tla/src/window/expand_masked
 main	rom_main_02	games/tla/src/window/expand_masked_masks
 main	rom_main_02	games/tla/src/window/expand_opaque
 main	rom_main_02	games/tla/src/window/expand_opaque_masks
-main	rom_main_02	games/tla/src/window/output_acquire_free	.text
-main	rom_main_02	games/tla/src/window/uiinit	.text
 main	rom_main_02	games/tla/src/window/window	.text
-main	rom_main_02	games/tla/src/window/draw_by_attributes	.text
-main	rom_main_02	games/tla/src/window/finalize	.text
 main	rom_main_02	recon/tla/it/rom	.rom.0003939a	it
 main	rom_main_02	recon/tla/fr/rom	.rom.0003939a	fr
 main	rom_main_02	recon/tla/es/rom	.rom.0003939a	es
@@ -660,10 +656,7 @@ main	rom_main_02	games/tla/src/window/f042274	.text	es fr it
 main	rom_main_02	recon/tla/de/rom	.rom.000422c8	de
 main	rom_main_02	recon/tla/raw/08042274	.text	en
 main	rom_main_02	recon/tla/ja/rom	.rom.000423b8	ja
-main	rom_main_02	games/tla/src/window/from_resource	.text
-main	rom_main_02	games/tla/src/window/loaded	.text
-main	rom_main_02	games/tla/src/window/output	.text
-main	rom_main_02	games/tla/src/window/window_sprite_set_motion	.text
+main	rom_main_02	games/tla/src/window/screens	.text
 main	rom_main_02	recon/tla/it/rom	.rom.000425de	it
 main	rom_main_02	recon/tla/fr/rom	.rom.000425ca	fr
 main	rom_main_02	recon/tla/es/rom	.rom.000425e6	es

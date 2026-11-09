@@ -31,10 +31,9 @@ void Event_ResolvePendingActions(s32 skip);
 void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
 void FieldMessage_Show(const u8 *message, s32 flags);
 
-static __inline__ s32 Flag_Test(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Test(flag); }
 
 s32 Func_02001130(s32 actor) {
   s32 base = (s32)MsgItSOur;

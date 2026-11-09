@@ -48,18 +48,17 @@ void Event_StartScreenTransition(void);
 void VenusLighthouse_RunSetupStep(void);
 void SceneState_RunActor13AtColumn42Setup(void);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void Venus_ObjWalk(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetPositionAndReset(actor, x, z);
 }
 
 static inline void Venus_ObjTurn(s32 actor, s32 angle, s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ArmCallback(actor, angle, frames);
 }
 
 static inline void Venus_ObjWalk2(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ResetAndSetPositionInMode2(actor, x, z);
 }
 
@@ -73,32 +72,26 @@ static inline void Venus_Jump(s32 actor, s32 height, s32 frames) {
 }
 
 static inline void Venus_CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 static inline void Venus_MessagePut(s32 actor, s32 value) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001c24(actor, value);
 }
 
 static inline void Venus_ObjSetPos(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001be4(actor, x, z);
 }
 
 static inline void Venus_ObjSpeed(s32 actor, s32 speed, s32 acceleration) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetSpeedParameters(actor, speed, acceleration);
 }
 
 static inline void Venus_ObjCommit(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_CommitPositionAndActivate(actor, x, z);
 }
 
 static inline void Venus_ObjEffectSet(s32 actor, s32 value) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001ccc(actor, value);
 }
 

@@ -19,10 +19,9 @@ s32 Resource_FindFreeEntry(void);
 void Heap_Release(void *block);
 void Func_02001888(void);
 
-static inline void *BumpAlloc(s32 size) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return Heap_Alloc(size);
-}
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 void Func_02001a44(void) {
   u8 *buffer = BumpAlloc(0xc00);

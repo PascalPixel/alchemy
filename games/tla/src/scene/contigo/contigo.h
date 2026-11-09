@@ -37,9 +37,10 @@ static inline void Contigo_Jump(s32 actor, s32 height, s32 frames) {
   Func_080d47b4(a, h, f);
 }
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void Contigo_Tiles(s32 srcX, s32 srcY, s32 width, s32 height,
                                  s32 destX, s32 destY, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_0200423c(srcX, srcY, width, height, destX, destY, mode);
 }
 

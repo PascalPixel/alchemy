@@ -17,18 +17,15 @@ void Func_02000d94(s32 actor, s32 jump, s32 frames);
 void Func_02000cac(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                    s32 height);
 
-static inline s32 Daila_FlagCheck(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static inline s32 Daila_FlagCheck(s32 flag) { return GameFlag_Test(flag); }
 
 static inline void Daila_ObjWalk(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetPositionAndReset(actor, x, z);
 }
 
 static inline void Daila_ObjPlace(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02000d4c(actor, x, z);
 }
 
@@ -45,7 +42,6 @@ static inline void Daila_Jump(s32 actor, s32 height, s32 frames) {
 
 static inline void Daila_CopyCells(s32 srcX, s32 srcY, s32 destX, s32 destY,
                                    s32 width, s32 height) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02000cac(srcX, srcY, destX, destY, width, height);
 }
 

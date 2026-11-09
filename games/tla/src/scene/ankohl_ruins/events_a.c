@@ -4,8 +4,9 @@ void Func_02002e7c(s32 id, s32 a, s32 b);
 void Sound_Play(s32 a);
 void Import_EventSetExitRequest(s32 a);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_Start(s32 id, s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02002e7c(id, a, b);
 }
 

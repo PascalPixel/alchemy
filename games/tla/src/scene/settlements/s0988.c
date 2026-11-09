@@ -16,10 +16,9 @@ void Func_0200125c(void);
 void Func_02002140(s32 a);
 void Func_02002188(const void *data);
 
-static __inline__ void Place(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_020020c0(id, x, z);
-}
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static __inline__ void Place(s32 id, s32 x, s32 z) { Func_020020c0(id, x, z); }
 
 s32 Func_02000988(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x100;

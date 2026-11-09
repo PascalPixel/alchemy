@@ -76,23 +76,21 @@ void Field_DispatchTypeHandler(s32 type);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_MoveWithinMapBounds(a, b, c, d);
 }
 
 static __inline__ void Actor_SetSpeed(s32 id, s32 speed, s32 acceleration) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
 static __inline__ void Actor_MoveTo(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetPositionAndReset(id, x, z);
 }
 
 static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, angle);
 }
 

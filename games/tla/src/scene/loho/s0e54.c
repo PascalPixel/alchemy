@@ -24,13 +24,13 @@ void Event_WaitTransitionFrames(void);
 void Func_020012e0(void);
 void Func_020012e8(void);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_020012a0_(const void *data, s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Map_PlayMapEdit(data, a, b);
 }
 
 static __inline__ void Offset_(s32 id, s32 dx, s32 dz) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_OffsetPositionAndResetMotion(id, dx, dz);
 }
 

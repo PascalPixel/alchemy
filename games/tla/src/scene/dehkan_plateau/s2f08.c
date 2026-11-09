@@ -62,8 +62,9 @@ void Field_DispatchTypeHandler(s32 type);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_SetAngle(s32 id, s32 angle) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ArmCallbackAndRefresh(id, angle);
 }
 

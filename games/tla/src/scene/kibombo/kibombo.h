@@ -123,8 +123,9 @@ void Actor_SetMoveTarget(struct KibomboObject *object, s32 x, s32 y, s32 z);
 void Script_WaitForEventTimeout(struct KibomboObject *object);
 void Event_StartScreenTransition(void);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void Kibombo_ObjTurn(s32 actor, s32 angle) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ArmCallbackAndRefresh(actor, angle);
 }
 
@@ -135,18 +136,15 @@ static inline void Kibombo_BlendStart(s32 a, s32 b, s32 c, s32 d, s32 e,
 }
 
 static inline s32 Kibombo_FlagCheck(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return GameFlag_Test(flag);
 }
 
 static inline void Kibombo_ObjArm(s32 actor, s32 angle, s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ArmCallback(actor, angle, frames);
 }
 
 static inline void Kibombo_ObjSetPos(struct KibomboObject *object, s32 x, s32 y,
                                      s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetPositionAndResetMotion(object, x, y, z);
 }
 
@@ -169,53 +167,44 @@ void Actor_WaitForMoveById(s32 actor);
 void Event_PrepareObjectAndApplyValue(s32 actor, s32 value);
 
 static inline void Kibombo_CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 static inline void Kibombo_CamSpeed(s32 speed, s32 acceleration) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_SetSpeedParameters(speed, acceleration);
 }
 
 static inline void Kibombo_ObjSpeed(s32 actor, s32 speed, s32 acceleration) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetSpeedParameters(actor, speed, acceleration);
 }
 
 static inline void Kibombo_ObjWalk(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetPositionAndReset(actor, x, z);
 }
 
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z, s32 angle);
 
 static inline void Kibombo_ObjPlaceFacing(s32 actor, s32 x, s32 z, s32 angle) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetHorizontalPositionAndAngleWithTerrain(actor, x, z, angle);
 }
 
 void Actor_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
 
 static inline void Kibombo_ObjPlace(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ResetAndSetPositionInMode2(actor, x, z);
 }
 
 static inline void Kibombo_MapCopy(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Map_CopyCellPictureIndicesRect(a, b, c, d, e, f);
 }
 
 static inline void Kibombo_SePlay(s32 cue) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Sound_Play(cue);
 }
 
 void BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
 
 static inline void Kibombo_FadeTo(s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   BattleEffect_ApplyColorToTargetBuffer(a, b);
 }
 
@@ -228,27 +217,22 @@ static inline void Kibombo_FadeTo(s32 a, s32 b) {
   }
 
 static inline void Kibombo_ObjEmote(s32 actor, s32 emote, s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_080d47b4(actor, emote, frames);
 }
 
 static inline void Kibombo_ObjEmoteWait(s32 actor, s32 emote) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_080d489c(actor, emote);
 }
 
 static inline void Kibombo_TaskAdd(void (*func)(void), s32 priority) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Task_Add(func, priority);
 }
 
 static inline void Kibombo_MessagePut(s32 speaker, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Event_ShowMessageAndWait(speaker, flags);
 }
 
 static inline void Kibombo_MessageOpen(s32 speaker, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   FieldMessage_ShowAtActor(speaker, flags);
 }
 

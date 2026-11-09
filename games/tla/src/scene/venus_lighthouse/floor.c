@@ -65,14 +65,12 @@ void Func_02001c34(s32 actor, s32 height, s32 frames);
 void Func_02001cbc(void);
 s32 Func_020005a8(struct VenusActor *object);
 
-static inline s32 Venus_FlagCheck(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static inline s32 Venus_FlagCheck(s32 flag) { return GameFlag_Test(flag); }
 
 static inline void Venus_CopyCells(s32 sx, s32 sy, s32 dx, s32 dy, s32 w,
                                    s32 h) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Import_MapCopyCellPictureIndicesRect(sx, sy, dx, dy, w, h);
 }
 

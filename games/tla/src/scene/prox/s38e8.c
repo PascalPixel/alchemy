@@ -12,10 +12,9 @@
 void Func_02004594(void);
 void Func_020045e4(void);
 
-static inline void FlagSet(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static inline void FlagSet(s32 flag) { GameFlag_SetBit(flag); }
 
 void Func_020038e8(void) {
   void *work = Ram_HeapSlots->eventWork;

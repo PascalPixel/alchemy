@@ -12,9 +12,10 @@ void Actor_CommitPositionAndActivate(s32 actor, s32 dx, s32 dz);
 void Func_080d3b28(s32 a, s32 b);
 void Actor_SetHorizontalPositionWithTerrain(s32 a, s32 b, s32 c);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_CommitPositionAndActivate_(s32 actor,
                                                                s32 dx, s32 dz) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_CommitPositionAndActivate(actor, dx, dz);
 }
 

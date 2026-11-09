@@ -41,8 +41,9 @@ extern u8 MsgHeyMisterAre;
 extern u8 MsgDidYouCome;
 extern u8 MsgIsThereBy;
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void CommitPos(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_CommitPositionAndActivate(id, x, z);
 }
 

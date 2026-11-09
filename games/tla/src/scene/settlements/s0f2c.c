@@ -2,10 +2,9 @@
 
 void Func_0200156c(s32 id);
 
-static __inline__ void Place(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_020020c0(id, x, z);
-}
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static __inline__ void Place(s32 id, s32 x, s32 z) { Func_020020c0(id, x, z); }
 
 void Func_02000f2c(void) {
   struct Actor *object = Actor_GetById(9);

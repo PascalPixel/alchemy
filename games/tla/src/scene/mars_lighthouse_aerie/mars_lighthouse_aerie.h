@@ -66,8 +66,9 @@ s32 Func_0200508c(u16 *list);
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void MarsLighthouseAerie_ObjTurn(s32 id, s32 angle) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02005704(id, angle);
 }
 

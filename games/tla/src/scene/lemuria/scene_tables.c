@@ -44,19 +44,18 @@ extern u8 MsgEveryoneSpoilsMe;
 extern u8 MsgWeAreThe;
 extern u8 MsgAreThereOther;
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_ArmCallback_(s32 id, s32 angle, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ArmCallback(id, angle, flags);
 }
 
 static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column, s32 offset) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_CenterOnColumn(id, column, offset);
 }
 
 static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
                                                            s32 dz) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_OffsetPositionAndResetMotion(id, dx, dz);
 }
 

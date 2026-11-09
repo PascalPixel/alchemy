@@ -85,8 +85,9 @@ void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 b);
 void BattleEffect_ApplyColorToSourceBuffer(s32 color, s32 b);
 void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void TundariaTower_FadeFrom(s32 color, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   BattleEffect_ApplyColorToSourceBuffer(color, b);
 }
 
@@ -97,7 +98,6 @@ static inline void TundariaTower_ObjPlace(s32 actor, s32 x, s32 z) {
 }
 
 static inline void TundariaTower_SetWork(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Map_SetScreenShake(a, b, c);
 }
 

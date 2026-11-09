@@ -14,8 +14,9 @@ void Func_02000404(void);
 void Func_02000a24(void);
 void Func_0200087c(void);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void ShamanVillageCave_ObjPlace(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 

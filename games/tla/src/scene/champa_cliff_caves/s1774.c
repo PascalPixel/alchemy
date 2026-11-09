@@ -17,13 +17,13 @@ s32 Func_080d47b4(s32 actor, s32 value, s32 frames);
 void Event_ShowMessageThenWait(s32 actor, s32 value, s32 frames);
 void Func_0200356c(s32 scene, s32 entrance);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_020034d4_(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetHorizontalPositionWithTerrain(actor, x, z);
 }
 
 static __inline__ void Actor_ArmCallback_(s32 actor, s32 angle, s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ArmCallback(actor, angle, frames);
 }
 
@@ -87,7 +87,6 @@ void Actor_Stop(s32 id);
 void Actor_ResetAndSetPosition(s32 id, s32 x, s32 z);
 
 static __inline__ void Func_02003544_(s32 actor, s32 value, s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_080d47b4(actor, value, frames);
 }
 

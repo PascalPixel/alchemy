@@ -8,8 +8,9 @@ void Func_02005314(void);
 void Func_0200531c(void);
 void Field_DispatchTypeHandler(s32 type);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void BlendBack(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_0802b450(a0, a1, a2, a3, a4, a5);
 }
 

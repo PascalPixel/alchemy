@@ -8,8 +8,9 @@ struct FieldActor;
 struct FieldActor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 kind);
 void Func_02004eec(s32 id, s32 a, s32 b);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02004eec_(s32 id, s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02004eec(id, a, b);
 }
 

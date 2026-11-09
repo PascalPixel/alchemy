@@ -4,10 +4,9 @@
 extern char SceneId_Ov690Room1;
 extern char SceneId_Ov690Room9;
 
-static __inline__ void Place(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_020020c0(id, x, z);
-}
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static __inline__ void Place(s32 id, s32 x, s32 z) { Func_020020c0(id, x, z); }
 
 s32 Func_02000b18(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room9) {

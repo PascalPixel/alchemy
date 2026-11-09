@@ -88,42 +88,37 @@ void Func_020003b4(void);
 void Func_0200055c(s32 id);
 void Func_02001448(void);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void Func_020054e0_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
                                   s32 a5) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020054e0(a0, a1, a2, a3, a4, a5);
 }
 
 static inline void Func_020054e8_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
                                   s32 a5) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020054e8(a0, a1, a2, a3, a4, a5);
 }
 
 static inline void Func_020054f0_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
                                   s32 a5) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020054f0(a0, a1, a2, a3, a4, a5);
 }
 
 static inline void Func_02005598_(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02005598(id, x, z);
 }
 
 static inline struct Actor *Func_02005498_(s32 kind, s32 x, s32 y,
                                                    s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return Func_02005498(kind, x, y, z);
 }
 
 static inline void Vector_AddPolar(s32 length, s32 angle, s32 *position) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Vector_AddPolarOffsetFar(length, angle, position);
 }
 
 static inline void Camera_SetBounds(s32 x, s32 y, s32 z, s32 use_setter) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_MoveWithinMapBounds(x, y, z, use_setter);
 }
 

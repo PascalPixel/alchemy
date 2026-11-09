@@ -130,36 +130,32 @@ extern u8 MsgWowYouLook;
 extern u8 MsgYouGuysAren;
 extern u8 MsgItDBe;
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x,
                                                              s32 y, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return Import_ActorCreate(kind, x, y, z);
 }
 
 static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column,
                                                     s32 offset) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_CenterOnColumn(id, column, offset);
 }
 
 static __inline__ void Actor_ArmCallback_(s32 id, s32 angle, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ArmCallback(id, angle, flags);
 }
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_MoveWithinMapBounds(x, a, z, b);
 }
 
 static __inline__ void Func_02001d04_(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 
 static __inline__ void Func_02001e0c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001e0c(a, b, c, d, e, f, g);
 }
 

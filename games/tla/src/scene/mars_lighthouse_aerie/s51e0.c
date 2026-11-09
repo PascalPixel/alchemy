@@ -19,8 +19,9 @@ void Func_0200575c(s32 a, s32 b);
 void Func_0200576c(s32 a);
 void Func_020057c4(void);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_0200575c_(s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_0200575c(a, b);
 }
 

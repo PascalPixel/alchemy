@@ -204,42 +204,37 @@ extern const u8 MsgCheckedTheColumn[];
 extern const u8 MsgCheckedThePsynergy[];
 extern const u8 MsgCheckedTheTabletIt[];
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x,
                                                              s32 y, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return Import_ActorCreate(kind, x, y, z);
 }
 
 static __inline__ void Actor_ArmCallback_(s32 id, s32 angle, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ArmCallback(id, angle, flags);
 }
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_MoveWithinMapBounds(x, a, z, b);
 }
 
 static __inline__ void Func_02003d14_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Map_CopyCellsRect(a, b, c, d, e, f);
 }
 
 static __inline__ void Func_02003d1c_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
 static __inline__ void Func_02003d24_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_0802b450(a, b, c, d, e, f);
 }
 
 static __inline__ void *MemAlloc_(s32 size) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return Heap_Alloc(size);
 }
 

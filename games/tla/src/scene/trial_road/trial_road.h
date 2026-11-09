@@ -69,15 +69,15 @@ void Func_02005998(s32 a, s32 b);
 void Func_02005a50(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Func_02005a60(s32 a, s32 b, s32 c);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ struct Actor *Actor_Create(s32 type, s32 x, s32 y,
                                                       s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return ((struct Actor *)Import_ActorCreate(type, x, y, z));
 }
 
 static __inline__ void Func_02005a50_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02005a50(a, b, c, d, e, f, g);
 }
 

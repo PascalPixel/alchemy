@@ -12,18 +12,15 @@ void Func_02000804(s32 item);
 void Func_02000978(s32 item);
 void Func_02000a34(s32 item);
 
-static __inline__ s32 GameFlag_Test_(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Test(flag); }
 
 static __inline__ void Func_0200343c_(s32 x, s32 z, s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_0200343c(x, z, a, b);
 }
 
 static __inline__ void Actor_ArmCallback_(s32 actor, s32 angle, s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ArmCallback(actor, angle, frames);
 }
 

@@ -108,22 +108,21 @@ extern u32 gData_02005514[];
 extern s16 gData_020054dc[];
 extern s16 gData_020054e0[];
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void
 Actor_SetSingleChildFlags_(struct Actor *object, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetSingleChildFlags(object, flags);
 }
 
 static __inline__ struct Actor *Func_02005140_(s32 type, s32 x, s32 y,
                                                        s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return ((struct Actor *)Import_ActorCreate(type, x, y, z));
 }
 
 static __inline__ void
 Actor_SetPositionAndResetMotion_(struct Actor *object, s32 x, s32 y,
                                   s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetPositionAndResetMotion(object, x, y, z);
 }
 
@@ -135,7 +134,6 @@ static __inline__ void Func_020053d0_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
 }
 
 static __inline__ void Func_020053a8_(s32 a, s32 b, s32 c, s32 d) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020053a8(a, b, c, d);
 }
 

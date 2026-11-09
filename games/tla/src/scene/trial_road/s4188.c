@@ -19,13 +19,11 @@ void Func_02003da0(void);
 void Func_02003f68(void);
 void Func_02005770(const void *source, void *destination);
 
-static __inline__ void *Pool_Alloc(s32 size) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return Heap_AllocEwram(size);
-}
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static __inline__ void *Pool_Alloc(s32 size) { return Heap_AllocEwram(size); }
 
 static __inline__ void Words_Clear(void *destination, s32 size) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Iwram_ClearWords(destination, size);
 }
 

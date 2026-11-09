@@ -159,81 +159,69 @@ void Func_02000c24(void);
 void Func_02000ca0(void);
 void Func_02000cec(void);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ s32 GameFlag_GetByte_(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return GameFlag_GetByte(flag);
 }
 
 static __inline__ void
 Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx, s32 dz) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_OffsetPositionAndResetMotion(id, dx, dz);
 }
 
 static __inline__ void Func_02002840_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
 static __inline__ void Func_020028d0_(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 
 static __inline__ void Func_020028e0_(s32 id, s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020028e0(id, a, b);
 }
 
 static __inline__ void Func_02002910_(s32 id, s32 a) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_080d489c(id, a);
 }
 
 static __inline__ void Func_02002958_(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02002958(a, b, c);
 }
 
 static __inline__ void Func_02002990_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02002990(a, b, c, d, e, f, g);
 }
 
 static __inline__ struct Actor *Func_02002808_(s32 type, s32 x, s32 y,
                                                        s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return Import_ActorCreate(type, x, y, z);
 }
 
 static __inline__ void Func_02002838_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Map_CopyCellsRect(a, b, c, d, e, f);
 }
 
 static __inline__ void Actor_SetSpeedParameters_(s32 id, s32 speed,
                                                         s32 acceleration) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
 static __inline__ void Func_02002848_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_0802b450(a, b, c, d, e, f);
 }
 
 static __inline__ void Func_02002818_(struct Actor *object, s32 x,
                                       s32 y, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetMoveTarget(object, x, y, z);
 }
 
 static __inline__ void Func_020029a8_(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020029a8(a, b, c);
 }
 

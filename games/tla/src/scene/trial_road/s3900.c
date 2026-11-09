@@ -19,9 +19,10 @@ void Event_StartScreenTransition(void);
 void Func_02005880(void);
 void Func_02005980(void);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void
 Actor_OffsetPositionAndResetMotion_(s32 actor, s32 dx, s32 dz) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_OffsetPositionAndResetMotion(actor, dx, dz);
 }
 

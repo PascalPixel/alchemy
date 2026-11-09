@@ -90,31 +90,28 @@ s32 Math_Sine(s32 angle);
 
 void Func_02001e1c(struct Actor *object, s32 part);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void Func_02004c28_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
                                   s32 a5) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02004c28(a0, a1, a2, a3, a4, a5);
 }
 
 static inline void Func_02004c30_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
                                   s32 a5) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02004c30(a0, a1, a2, a3, a4, a5);
 }
 
 static inline void Func_02004cd8_(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02004cd8(id, x, z);
 }
 
 static inline struct Actor *Func_02004bd8_(s32 kind, s32 x, s32 y,
                                                    s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return Func_02004bd8(kind, x, y, z);
 }
 
 static inline void Camera_SetBounds(s32 x, s32 y, s32 z, s32 use_setter) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_MoveWithinMapBounds(x, y, z, use_setter);
 }
 

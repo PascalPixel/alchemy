@@ -14,18 +14,17 @@ void Func_02004d30(void);
 void Func_02004da8(void);
 void Func_02004db0(void);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Camera_MoveWithinMapBounds_(s32 a, s32 b, s32 c, s32 d) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_MoveWithinMapBounds(a, b, c, d);
 }
 
 static __inline__ void Func_02004b78_(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Map_SetScreenShake(a, b, c);
 }
 
 static __inline__ void Func_02004d78_(s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   BattleEffect_ApplyColorToTargetBuffer(a, b);
 }
 

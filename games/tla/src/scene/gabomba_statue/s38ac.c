@@ -14,10 +14,9 @@ void Heap_Release(void *block);
 s32 Resource_FindFreeEntry(void);
 void Func_020055cc(const u8 *data, void *buffer);
 
-static __inline__ void *Mem_Alloc(s32 size) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return Heap_Alloc(size);
-}
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static __inline__ void *Mem_Alloc(s32 size) { return Heap_Alloc(size); }
 
 void Func_020038ac(void) {
   struct SceneState *state = &gSceneState;

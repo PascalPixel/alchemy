@@ -57,18 +57,15 @@ extern const u16 gData_02002cec[];
 extern const u16 gData_02002d0c[];
 extern const u16 gData_02002d10[];
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Lift_(s32 x, s32 z, s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02002368(x, z, a, b);
 }
 
-static __inline__ s32 GameFlag_Test_(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
+static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Test(flag); }
 
 static __inline__ void Func_020023b0_(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 

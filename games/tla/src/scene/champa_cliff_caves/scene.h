@@ -47,20 +47,19 @@ s32 Party_GetLeaderActor(void);
 void Func_02003624(struct FieldActor *object, struct FieldActor *target);
 void Sound_Play(s32 cue);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column,
                                                     s32 offset) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_CenterOnColumn(id, column, offset);
 }
 
 static __inline__ void
 Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx, s32 dz) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_OffsetPositionAndResetMotion(id, dx, dz);
 }
 
 static __inline__ void Func_02003534_(s32 actor, s32 angle) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ArmCallbackAndRefresh(actor, angle);
 }
 

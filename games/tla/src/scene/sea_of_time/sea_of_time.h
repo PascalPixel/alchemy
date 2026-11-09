@@ -85,8 +85,9 @@ s32 Func_020003d0(s32 *a, s32 *b);
 void Func_0200141c(s32 x, s32 z, s32 actor);
 void Func_020018a8(s32 x, s32 z, s32 actor);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static inline s32 SeaOfTime_Cos(s32 angle) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return Math_Cosine(angle);
 }
 

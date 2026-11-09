@@ -21,14 +21,14 @@ void Func_02001cec(s32 a, s32 b);
 void Func_02001d1c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Func_02001d44(s32 a, s32 b, s32 c);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02001d1c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001d1c(a, b, c, d, e, f, g);
 }
 
 static __inline__ void Func_02001d44_(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001d44(a, b, c);
 }
 

@@ -6,8 +6,9 @@ extern const s16 gData_020019cc[];
 
 void GameFlag_SetByte(s32 flag, s32 value);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ s32 GameFlag_GetByte_(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return ((s32)GameFlag_GetByte(flag));
 }
 

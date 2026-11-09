@@ -41,8 +41,9 @@ extern u8 MsgHeyMisterAre;
 extern u8 MsgDidYouCome;
 extern u8 MsgIsThereBy;
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 

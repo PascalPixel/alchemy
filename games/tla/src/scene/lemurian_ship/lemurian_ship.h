@@ -90,8 +90,9 @@ void Func_02002cd8(s32 actor, s32 target);
     Task_Add((func), priority_);                      \
   }
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void LemurianShip_TaskAdd(void (*func)(void), s32 priority) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Task_Add(func, priority);
 }
 

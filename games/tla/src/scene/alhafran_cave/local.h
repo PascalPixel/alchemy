@@ -85,25 +85,23 @@ extern u8 gData_02001a18[];
 extern u8 gData_02001a90[];
 extern u8 gData_02001be0[];
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02001420_(s32 x, s32 z, s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001420(x, z, a, b);
 }
 
 static __inline__ void Func_020015d0_(s32 x, s32 z, s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_080dbdd4(x, z, a, b);
 }
 
 static __inline__ void Func_02001400_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
 static __inline__ void Func_02001408_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_0802b450(a, b, c, d, e, f);
 }
 

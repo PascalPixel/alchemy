@@ -61,8 +61,9 @@ void Func_02004c98(struct Actor *object, s32 a);
 void Func_02004ca0(struct Actor *object, const void *data);
 void Func_02004df8(s32 id);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return Import_ActorCreate(kind, x, y, z);
 }
 

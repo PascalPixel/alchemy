@@ -23,9 +23,10 @@ void Func_02001a9c();
 void Func_02001928(struct Actor *object, s32 priority);
 void Func_02001b38(struct Actor *object, s32 priority);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ struct Actor *ObjectCreate_(s32 kind, s32 x, s32 y,
                                                       s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return Func_020041e4(kind, x, y, z);
 }
 #include "main_routine_work.h"

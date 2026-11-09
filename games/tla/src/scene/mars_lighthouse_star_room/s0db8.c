@@ -6,14 +6,14 @@ void Actor_SetModeById(u32 id, s32 mode);
 void Func_0200432c(s32 id, s32 x, s32 z);
 void Func_0200423c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_0200432c_(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_0200432c(id, x, z);
 }
 
 static __inline__ void Func_0200423c_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_0200423c(a, b, c, d, e, f);
 }
 

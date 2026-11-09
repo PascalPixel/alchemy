@@ -107,51 +107,44 @@ extern const u8 gData_02003214[];
 extern const u8 gData_02003220[];
 extern const u8 gData_020032d4[];
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ s32 GameFlag_Test_(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return GameFlag_Test(flag);
 }
 
 static __inline__ void GameFlag_ClearBit_(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   GameFlag_ClearBit(flag);
 }
 
 static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x,
                                                              s32 y, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return Import_ActorCreate(kind, x, y, z);
 }
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_MoveWithinMapBounds(x, a, z, b);
 }
 
 static __inline__ void Func_02002960_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
 static __inline__ void Func_02002958_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Map_CopyCellsRect(a, b, c, d, e, f);
 }
 
 static __inline__ void Func_02002a20_(s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   BattleEffect_ApplyColorToTargetBuffer(a, b);
 }
 
 static __inline__ void Actor_ResetAndSetPosition_(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ResetAndSetPosition(id, x, z);
 }
 
 static __inline__ void *MemAlloc_(s32 size) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return Heap_Alloc(size);
 }
 

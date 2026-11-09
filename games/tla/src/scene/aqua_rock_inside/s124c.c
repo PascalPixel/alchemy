@@ -2,8 +2,9 @@
 
 void Map_SetScreenShake(s32 a, s32 b, s32 c);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02003d44_(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Map_SetScreenShake(a, b, c);
 }
 

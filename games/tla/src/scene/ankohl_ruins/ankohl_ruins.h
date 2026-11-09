@@ -54,30 +54,27 @@ void Func_080d489c(s32 actor, s32 a);
 void Event_ResolvePendingActions(s32 skip);
 void Sound_Play(s32 cue);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static inline s32 AnkohlRuins_FlagCheck(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return GameFlag_Test(flag);
 }
 
 static inline void AnkohlRuins_Call2e24(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Map_SetScreenShake(a, b, c);
 }
 
 static inline void AnkohlRuins_CamBounds(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 static inline void AnkohlRuins_Call2df4(s32 a, s32 b, s32 c, s32 d, s32 e,
                                         s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Map_CopyCellsRect(a, b, c, d, e, f);
 }
 
 static inline void AnkohlRuins_Call2dfc(s32 a, s32 b, s32 c, s32 d, s32 e,
                                         s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 

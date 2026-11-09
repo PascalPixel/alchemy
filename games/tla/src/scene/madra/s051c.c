@@ -18,18 +18,17 @@ void Func_02002b30(void);
     Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, angle_);          \
   }
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void ObjSpeed(s32 id, s32 speed, s32 acceleration) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
 static __inline__ void ObjSetPos(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetPositionAndReset(id, x, z);
 }
 
 static __inline__ void ObjCall2bf8(s32 id, s32 a) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ArmCallbackAndRefresh(id, a);
 }
 

@@ -13,14 +13,14 @@ struct EventWork154 {
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_020012e8(void);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_020012a8_(s32 srcX, s32 srcY, s32 width, s32 height,
                                       s32 destX, s32 destY) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Map_CopyCellPictureIndicesRect(srcX, srcY, width, height, destX, destY);
 }
 
 static __inline__ void Func_02001348_(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 

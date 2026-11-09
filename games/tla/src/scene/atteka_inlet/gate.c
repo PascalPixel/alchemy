@@ -18,9 +18,10 @@ void Func_02001018(void);
 void Func_02001120(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY, s32 layer);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void MapCopy(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                            s32 destY, s32 layer) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001120(srcX, srcY, width, height, destX, destY, layer);
 }
 

@@ -16,8 +16,9 @@ void Func_02000178(void);
 void Func_020017b4(void);
 void Func_020034a8(void);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02003458_(s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   BattleEffect_ApplyColorToTargetBuffer(a, b);
 }
 

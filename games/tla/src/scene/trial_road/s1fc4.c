@@ -9,9 +9,10 @@ extern u8 gData_02007e28[];
 
 void Func_02001f08(void);
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Words_Copy(void *destination, const void *source,
                                   s32 size) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Iwram_CopyWords(destination, source, size);
 }
 

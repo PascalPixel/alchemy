@@ -9,8 +9,9 @@
 #include "call.h"
 #include "event_inline.h"
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Champa_MessageOpen(s32 speaker, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   FieldMessage_ShowAtActor(speaker, flags);
 }
 

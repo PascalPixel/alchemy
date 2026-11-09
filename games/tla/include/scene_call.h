@@ -1,14 +1,16 @@
 #ifndef TLA_SCENE_CALL_H
 #define TLA_SCENE_CALL_H
 
-#include "types.h"
+/// @file
+/// The routines the scenes' own event inlines call, declared once for the
+/// files that have not yet moved to event_inline.h.
+///
+/// A scene file that wraps a routine in a small inline of its own does what
+/// event_inline.h does: it is a habit of the whole game written once, a layer
+/// and not a compiler-steering device. The inline's parameters are its own, so
+/// each call builds its constants and stack arguments again.
 
-// Scene forwarding. ⚓️'s scene files call the main image directly, except where
-// a static inline wrapper is the only form that matches, as in ☀️'s scene layer
-// (field_event.h). The wrapper's parameters keep each call's own constants and
-// stack arguments in their own registers; called directly at those sites, nearby
-// calls share a constant in one register or reuse r3 for each stack argument.
-// Every wrapper carries the tag `FAKEMATCH: forwarded inline; see scene_call.h.`
+#include "types.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);

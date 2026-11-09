@@ -83,38 +83,33 @@ void Func_020021a0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 extern const u8 gData_02002380[];
 extern const u8 gData_020023a0[];
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void CommitPos(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_CommitPositionAndActivate(id, x, z);
 }
 
 static __inline__ void Window(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020021a0(a, b, c, d, e, f, g);
 }
 
 static __inline__ void CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02002018(a, b, c, d, e, f);
 }
 
 static __inline__ void CopyCells2(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02002030(a, b, c, d, e, f);
 }
 
 static __inline__ void SetPosCommit(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetPositionAndCommit(id, x, z);
 }
 
 static __inline__ s32 Flag_Test(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return GameFlag_Test(flag);
 }
 
 static __inline__ void Flag_Set(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   GameFlag_SetBit(flag);
 }
 

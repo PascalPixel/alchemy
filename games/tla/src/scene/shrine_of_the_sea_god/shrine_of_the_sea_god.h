@@ -136,56 +136,48 @@ static inline void ShrineOfTheSeaGod_Jump(s32 actor, s32 height, s32 frames) {
   Func_080d47b4(actor, h, f);
 }
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void ShrineOfTheSeaGod_ObjSpeed(s32 actor, s32 speed,
                                               s32 acceleration) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetSpeedParameters(actor, speed, acceleration);
 }
 
 static inline void ShrineOfTheSeaGod_ObjWalk(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetPositionAndReset(actor, x, z);
 }
 
 static inline void ShrineOfTheSeaGod_ObjCommit(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetPositionAndCommit(actor, x, z);
 }
 
 static inline void ShrineOfTheSeaGod_ObjTurn(s32 actor, s32 angle, s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ArmCallback(actor, angle, frames);
 }
 
 static inline void ShrineOfTheSeaGod_ObjPlace(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetHorizontalPositionWithTerrain(actor, x, z);
 }
 
 static inline void
 ShrineOfTheSeaGod_ObjSetPos(struct ShrineOfTheSeaGodObject *object, s32 x,
                             s32 y, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetPositionAndResetMotion(object, x, y, z);
 }
 
 static inline void ShrineOfTheSeaGod_CamSpeed(s32 speed, s32 acceleration) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_SetSpeedParameters(speed, acceleration);
 }
 
 static inline void ShrineOfTheSeaGod_CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 static inline void ShrineOfTheSeaGod_MessagePut(s32 speaker, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Event_ShowMessageAndWait(speaker, flags);
 }
 
 static inline void ShrineOfTheSeaGod_ObjEmote(s32 actor, s32 emote) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_080d489c(actor, emote);
 }
 
@@ -193,7 +185,6 @@ void Task_Add(void (*func)(void), s32 priority);
 
 static inline void ShrineOfTheSeaGod_TaskAdd(void (*func)(void),
                                              s32 priority) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Task_Add(func, priority);
 }
 
@@ -205,13 +196,11 @@ static inline void ShrineOfTheSeaGod_TaskAdd(void (*func)(void),
   } while (0)
 
 static inline s32 ShrineOfTheSeaGod_FlagCheck(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return GameFlag_Test(flag);
 }
 
 static inline void ShrineOfTheSeaGod_ObjPlaceAt(s32 actor, s32 x, s32 z,
                                                 s32 angle) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetHorizontalPositionAndAngleWithTerrain(actor, x, z, angle);
 }
 

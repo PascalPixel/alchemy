@@ -74,8 +74,9 @@ extern u8 MsgHeyMisterAre;
 extern u8 MsgDidYouCome;
 extern u8 MsgIsThereBy;
 
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ s32 Flag_Test(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return GameFlag_Test(flag);
 }
 

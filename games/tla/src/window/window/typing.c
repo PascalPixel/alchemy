@@ -1,12 +1,81 @@
-#include "types.h"
-#include "ram_buffer.h"
-#include "window.h"
-#include "glyph.h"
-#include "input.h"
-#include "main_routine_work.h"
-#include "frame.h"
-#include "edition.h"
-#include "version.h"
+/// @file
+/// The per-frame message update: typing text and running its control codes.
+// Part of window.c.
+
+#include "../window_internal.h"
+
+#define PANEL_TILE_ROWS ((u32 *)0x06002500)
+#define PANEL_ROW_COUNT 30
+#define PANEL_ROW_WORDS 32
+#define PANEL_ROW_LEAD 8
+
+// Shifts each panel row left by step characters.
+void Func_0803975c(s32 step) {
+  s32 shift = step * 6;
+  u32 *base = PANEL_TILE_ROWS;
+  s32 n;
+
+  for (n = 0; n < PANEL_ROW_COUNT; n++) {
+    u32 *row = base + n * PANEL_ROW_WORDS;
+
+    Dma_Set(row + PANEL_ROW_LEAD + shift, row + PANEL_ROW_LEAD,
+            DMA_COPY_WORDS(PANEL_ROW_WORDS - PANEL_ROW_LEAD - shift), REG_DMA3);
+    Iwram_FillWords(row + (PANEL_ROW_WORDS - shift), shift * 4, 0);
+  }
+}
+
+s32 Message_StepScript(struct UiChannelSlot *channel);
+struct Window_0803cbf8;
+void Func_0803cbf8(struct Window_0803cbf8 *window);
+
+void Message_UpdateAll(void) {
+  u8 *channel = (u8 *)Ram_HeapSlots->windowTiles + 0x6b8;
+  s32 channelNo = 0;
+  s32 one = 1;
+
+  do {
+    u8 *current = *(u8 **)channel;
+
+    if (current != 0 && *(s32 *)(current + 0x18) == 0) {
+      u16 flags = *(u16 *)(current + 0x16);
+
+      if (flags == 0) {
+        *(u8 **)channel = (u8 *)0;
+      } else {
+        s32 pending = *(u16 *)(current + 0x12);
+        s32 kind;
+
+        if (pending != 0) {
+          Func_0803cbf8((struct Window_0803cbf8 *)channel);
+        } else {
+          kind = Message_StepScript((struct UiChannelSlot *)channel);
+          switch (kind) {
+          case 8:
+            *(u16 *)(*(u8 **)channel + 0x14) = one;
+            break;
+          case 9: {
+            u8 *entity = *(u8 **)channel;
+
+            Window_Close((struct Window *)entity,
+                            (u16)(*(u16 *)(entity + 0x16) & 2));
+            *(u16 *)(channel + 0x04) = pending;
+            *(u16 *)(channel + 0x06) = pending;
+            *(u16 *)(channel + 0x12) = pending;
+            *(u16 *)(channel + 0x14) = pending;
+            *(u16 *)(channel + 0x16) = pending;
+            *(u16 *)(channel + 0x18) = pending;
+            *(u16 *)(channel + 0x1a) = pending;
+            *(u16 *)(*(u8 **)channel + 0x14) = one;
+            break;
+          }
+          }
+        }
+      }
+    }
+    channelNo++;
+    channel += 0x28;
+  } while (channelNo != 3);
+}
 
 extern const u8 gText_SpeedDelays[];
 extern const u8 gData_080aa0df[];
@@ -18,12 +87,8 @@ void Func_08039754(struct UiChannelSlot *channel);
 void Func_0803972c(struct UiChannelSlot *channel);
 s32 Message_CheckCancelByInput(struct UiChannelSlot *channel);
 s32 Message_CheckCancelByModeInput(struct UiChannelSlot *channel);
-s32 Func_0803bde4(struct Window *window, u32 c, s32 x, s32 y, s32 flags);
 void WindowSprite_PrepareForRedraw(struct Window *window);
 void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
-void Window_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
-                        u16 *spacing, u32 flags);
-void Window_DrawBorder(s32 x, s32 y, s32 width, s32 height);
 s32 Resource_ResetEntry(u32 slot);
 void Sound_PlayFar(s32 cue);
 
@@ -322,3 +387,10 @@ s32 Message_StepScript(struct UiChannelSlot *channel) {
 
   return 0;
 }
+
+#undef PANEL_TILE_ROWS
+#undef PANEL_ROW_COUNT
+#undef PANEL_ROW_WORDS
+#undef PANEL_ROW_LEAD
+#undef TEXT_SPEED
+#undef ENTRY_MASK

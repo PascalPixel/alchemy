@@ -86,7 +86,7 @@ s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align);
 void Resource_ClearOwnerListAndCounters(void);
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
                                    s32 shift);
-s32 ItemIcon_Compose(s32, s32);
+s32 ItemIcon_Compose(u32 code, u32 layers);
 void Unit_LearnPsynergyFar(void);
 void WindowSprite_ClearList(void *work);
 void WindowSprite_Release(struct WindowSprite *node);
@@ -98,10 +98,8 @@ void SpriteColor_RemapPixelsFar(void *buffer, s32 size);
 void NumberText_FormatDecimal(s32);
 void Icon_BuildCommandIconTiles(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3,
                                 s32 arg4);
-#ifndef OWN_Icon_BuildAbilityIconTiles
-void Icon_BuildAbilityIconTiles(s32 icon, s32 with_base, s32 *slot, s32 *tile,
+void Icon_BuildAbilityIconTiles(u32 icon, s32 with_base, s32 *slot, s32 *tile,
                                 s32 reuse);
-#endif
 void Text_DrawNumberAtOffsetFar(s32 value, s32 width, s32 window, s32 x, s32 y);
 void Text_DrawNumberInWindowFar(s32 value, s32 width, s32 window, s32 x, s32 y);
 void Text_DrawString(u8 *text, s32 window, s32 x, s32 y);
@@ -110,7 +108,8 @@ void Text_DrawStringAtOffsetFar(const u8 *text, s32 window, s32 offsetX,
 #ifndef OWN_Text_DrawStringInWindowFar
 void Text_DrawStringInWindowFar(u8 *text, s32 window, u32 x, u32 y);
 #endif
-void Text_RenderWideStringInWindow(u16 *text, s32 window, s32 x, s32 y);
+void Text_RenderWideStringInWindow(s16 *text, struct Window *window, s32 x,
+                                   s32 y);
 void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 void Window_DrawDividerLineFar(s32, s32, s32, s32, s32);
 void WindowSprite_UpdateAll(void);

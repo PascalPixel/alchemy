@@ -329,6 +329,9 @@ static void Kolima_TalkToHealer(void) {
     Sanctum_Run(ACTOR_HEALER);
   } else {
     Event_SetMessageId(MsgKolimaToldHolyTrees);
+    // "I am told the holy tree's rage caused this horrible..."
+    // Yes: "You may not have noticed, but something changed when those..."
+    // No: "I agree. Something did change when the gems fell."
     Event_AskYesNo(ACTOR_HEALER, 0);
   }
   Event_End();
@@ -423,6 +426,7 @@ static void Kolima_LowerBridge(void) {
                   40);
   Actor_RunRepeatedMotion(ACTOR_BRIDGE_VILLAGER, 2);
   Event_SetMessageId(MsgKolimaGoingCrossBridge);
+  // "Are you going to cross the bridge?"
   Event_ShowMessage(ACTOR_BRIDGE_VILLAGER, 0);
   FieldCamera_SetSpeedParameters(PIXELS(2) / 5, PIXELS(1) / 20);
   FieldCamera_MoveTo(PIXELS(168), 0, PIXELS(234), 1);
@@ -432,6 +436,7 @@ static void Kolima_LowerBridge(void) {
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_BRIDGE_VILLAGER, ANIM_NOD);
+  // "Oh... Right! Go right ahead!"
   Event_ShowMessage(ACTOR_BRIDGE_VILLAGER, 0);
   Actor_FaceDirection(ACTOR_BRIDGE_VILLAGER, FACING_WEST_NORTHWEST, 20);
   Actor_RunRepeatedMotion(ACTOR_BRIDGE_VILLAGER, 1);

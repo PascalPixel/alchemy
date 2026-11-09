@@ -801,20 +801,24 @@ static void ValePrologue_DoraSendsIsaacToThePlaza(void) {
   // so..." and tells the two to take refuge in the plaza.
   message = MsgValeKyleAbleStop;
   Event_SetMessageId(message);
+  // "Kyle... Will they be able to stop the Boulder?"
   Event_ShowMessage(ACTOR_DORA, 0);
   Actor_WalkToAndWait(ACTOR_KYLE, 294, 838);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_KYLE, ANIM_SHAKE_HEAD);
+  // "I don't think so... Not for long, anyway..."
   Event_ShowMessage(ACTOR_KYLE, 0);
   Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_KYLE, FACING_SOUTH, 0);
+  // "You two go on ahead and take refuge in the plaza."
   Event_ShowMessageThenWait(ACTOR_KYLE, 0, 20);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 10);
   // "Aren't you coming?" "I need to help evacuate the other villagers."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_KYLE, ANIM_SHAKE_HEAD);
+  // "I need to help evacuate the other villagers."
   Event_ShowMessage(ACTOR_KYLE, 0);
   Actor_SetAttachedEffect(ACTOR_DORA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -825,8 +829,10 @@ static void ValePrologue_DoraSendsIsaacToThePlaza(void) {
   Actor_SetSpeed(ACTOR_DORA, PIXELS(3) / 2, PIXELS(3) / 4);
   Actor_WalkToAndWait(ACTOR_DORA, 289, 883);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTHEAST, 0);
+  // "Let me help you, Kyle!"
   Event_ShowMessage(ACTOR_DORA, 0);
   Actor_RunRepeatedMotion(ACTOR_KYLE, 2);
+  // "It's too dangerous, Dora. Please, just take good care of Isaac!"
   Event_ShowMessage(ACTOR_KYLE, 0);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   // "Isaac is old enough to get to the plaza on his own."
@@ -835,17 +841,20 @@ static void ValePrologue_DoraSendsIsaacToThePlaza(void) {
   // "You can find your way, can't you, Isaac?" She asks again on every no:
   // "You're a big boy now, Isaac."
   Event_SetMessageId((message + 8));
+  // "You can find your way, can't you, Isaac?"
   Event_OpenMessage(ACTOR_DORA, 0);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 302, 905);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   while (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
     Actor_RunRepeatedMotion(ACTOR_DORA, 1);
     Event_SetMessageId(MsgValeBigBoyWhy);
+    // "You're a big boy now, Isaac. Why don't you go on your own?"
     Event_OpenMessage(ACTOR_DORA, 0);
   }
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   // "You know the way--just go south to get to the plaza. Be careful!"
   Event_SetMessageId(MsgValeKnowWayGo);
+  // "You know the way-just go south to get to the plaza. Be careful!"
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   // Kyle and Dora run north toward the Boulder and out of sight.
@@ -1189,11 +1198,16 @@ static void ValePrologue_BumpIntoShovingMan(void) {
   Actor_ShowEmote(ACTOR_SHOVING_MAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   message = MsgValeHuh;
   Event_SetMessageId(message);
+  // "Huh? Isaac?"
   Event_ShowMessage(ACTOR_SHOVING_MAN, 0);
   Event_Wait(20);
+  // "Did you come to get me?"
+  // Yes: "Oh... Sorry to shove you like that."
+  // No: "This isn't the time for games! Foolish boy!"
   Event_AskYesNo(ACTOR_SHOVING_MAN, 0);
   Actor_RunRepeatedMotion(ACTOR_SHOVING_MAN, 2);
   Event_SetMessageId((message + 4));
+  // "Well...we'd better get to the plaza before the Boulder hits."
   Event_ShowMessageThenWait(ACTOR_SHOVING_MAN, 0, 20);
   Actor_RunScriptAndWait(ACTOR_SHOVING_MAN, gValePrologue_ShovingManScript);
   GameFlag_Set(FLAG_VALE_STORM_BUMPED_INTO_VILLAGER);
@@ -1209,12 +1223,14 @@ static void ValePrologue_HearGaretStruggling(void) {
     if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) == 0) {
       Event_Start();
       Event_SetMessageId(MsgValeUghHrnghhh);
+      // "Ugh... Hrnghhh..."
       Event_ShowMessageThenWait(ACTOR_GARET_CHILD, 0, 20);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 382, 619);
       Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
       Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
       Event_Wait(30);
+      // "Isaac, what do you want? I'm trying to save my things!"
       Event_ShowMessage(ACTOR_GARET_CHILD, 0);
       GameFlag_Set(FLAG_VALE_STORM_HEARD_GARET);
       Event_End();
@@ -1248,6 +1264,7 @@ static void ValePrologue_TalkToGaret(void) {
     Actor_FaceActor(ACTOR_GARET_CHILD, ACTOR_PARTY_LEADER, 0);
     Event_Wait(20);
     Event_SetMessageId(MsgValeBoulderNeedGet);
+    // "Isaac... The Boulder... We need to get help, or everyone..."
     Event_ShowMessage(ACTOR_GARET_CHILD, 0);
     Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_NORTHEAST, 10);
     Event_End();
@@ -1330,6 +1347,7 @@ static void ValePrologue_UnusedGaretJoinsIsaac(void) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
     message = MsgValeHey;
     Event_SetMessageId(message);
+    // "Hey! Isaac!"
     Event_ShowMessage(ACTOR_GARET_CHILD, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
@@ -1341,18 +1359,24 @@ static void ValePrologue_UnusedGaretJoinsIsaac(void) {
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
     Event_Wait(30);
     Actor_SetScript(ACTOR_GARET_CHILD, gValePrologue_UnusedGaretPantingScript);
+    // "*Hah* *Hah*"
     Event_ShowMessage(ACTOR_GARET_CHILD, 0);
     actor = Actor_Get(ACTOR_GARET_CHILD);
     actor->scaleY = Q16_ONE;
     Actor_RunRepeatedMotion(ACTOR_GARET_CHILD, 1);
     Event_Wait(20);
+    // "Are you trapped, too?"
+    // Yes: "Hmph! It's not like you to be caught unprepared, Isaac."
+    // No: "Oh, you got held up seeing off the elders who went to help..."
     Event_AskYesNo(ACTOR_GARET_CHILD, 0);
     Event_Wait(40);
     Actor_RunRepeatedMotion(ACTOR_GARET_CHILD, 1);
     Event_SetMessageId((message + 5));
+    // "You came just in time... We can go together."
     Event_ShowMessageThenWait(ACTOR_GARET_CHILD, 0, 20);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_GARET_CHILD, ANIM_NOD);
+    // "Everyone's gathering down south, in the town plaza."
     Event_ShowMessage(ACTOR_GARET_CHILD, 0);
     Actor_SetSpeed(ACTOR_GARET_CHILD, PIXELS(1), PIXELS(1) / 2);
     Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_WALK);
@@ -1389,12 +1413,14 @@ static void ValePrologue_WarnAboutMtAleph(void) {
   Actor_FaceEachOther(ACTOR_GARET_CHILD, ACTOR_PARTY_LEADER, 0);
   Event_Wait(30);
   Event_SetMessageId(MsgValeNorthLeadsToMtAleph);
+  // "We shouldn't go north... that'll take us toward Mt. Aleph."
   Event_ShowMessage(ACTOR_GARET_CHILD, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_SOUTH, 0);
+  // "The plaza is over that way. We need to head south."
   Event_ShowMessage(ACTOR_GARET_CHILD, 0);
   Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1429,8 +1455,10 @@ static void ValePrologue_GaretCommentsOnBlockedPath(s32 x, s32 y) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Event_SetMessageId(MsgValeCantGetAroundThisRock);
+  // "We can't get around this rock!"
   Event_ShowMessage(ACTOR_GARET_CHILD, 0);
   Actor_RunRepeatedMotion(ACTOR_GARET_CHILD, 2);
+  // "We'll have to find another way."
   Event_ShowMessage(ACTOR_GARET_CHILD, 0);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_WALK);
@@ -1505,6 +1533,7 @@ static void ValePrologue_WatchBoulderFall(void) {
     Actor_SetSpritePriority(ACTOR_ELDER_FAR_EAST, 3);
     Actor_SetSpritePriority(ACTOR_ELDER_FAR_WEST, 3);
     Event_SetMessageId(MsgValeTheBoulderIsFalling);
+    // "Ahhh! The Boulder! It's falling!"
     Event_ShowMessageThenWait(ACTOR_ELDER_EAST_STAND_IN, 0, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_NORTH, 20);
@@ -1734,6 +1763,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_FELIX_CHILD), 0);
   wait(3);
   Event_SetMessageId(MsgValeNoBrother);
+  // "Oh no! My brother!"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA_CHILD, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 150, 1094);
@@ -2003,8 +2033,10 @@ static void ValePrologue_DoraGoesForHelp(void) {
   Event_Wait(40);
   northMessage = MsgValeGoLookNorth;
   Event_SetMessageId(northMessage);
+  // "I'll go look up north... You head for the plaza, all right?"
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_JENNA_CHILD, ANIM_NOD);
+  // "Yes, ma'am. We're looking for anyone with any Psynergy left,..."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA_CHILD, 0, 40);
   Actor_SetAnimation(ACTOR_DORA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_JENNA_CHILD, ANIM_NOD);
@@ -2017,11 +2049,13 @@ static void ValePrologue_DoraGoesForHelp(void) {
   Actor_RefreshSelectorById(ACTOR_DORA);
   Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 0);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "Isaac!"
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_WEST, 10);
   Actor_WalkToAndWait(ACTOR_DORA, 105, 1086);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
+  // "You saw what happened?"
   Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0);
   Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_EAST, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
@@ -2036,10 +2070,12 @@ static void ValePrologue_DoraGoesForHelp(void) {
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   helpMessage = MsgValeDontSupposeTwo;
   Event_SetMessageId(helpMessage);
+  // "I don't suppose... Could the two of you help me?"
   Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
     Event_SetMessageId((helpMessage + 1));
+    // "Jenna has gone to the plaza to get help. Go join her."
     Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0, 30);
     Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_WEST, 20);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -2051,6 +2087,7 @@ static void ValePrologue_DoraGoesForHelp(void) {
     Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
     Actor_SetAnimation(ACTOR_DORA, ANIM_SHAKE_HEAD);
     Event_SetMessageId((helpMessage + 2));
+    // "You don't have to if you don't want to... Just get..."
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0);
   }
   Actor_SetScript(ACTOR_DORA, gValePrologue_DoraLeavesForHelp);
@@ -2085,12 +2122,15 @@ static void ValePrologue_TalkAboutSavingFelix(void) {
   Actor_FaceEachOther(ACTOR_KYLE, ACTOR_PARTY_LEADER, 20);
   if (GameFlag_Get(FLAG_VALE_STORM_KYLE_GREETED_ISAAC) != 0) {
     Event_SetMessageId(MsgValeTwoDontEnough);
+    // "You two don't have enough Psynergy to save Felix. Go find help."
     Event_ShowMessageThenWait(ACTOR_KYLE, 0, 10);
   } else {
     Event_SetMessageId(MsgValeOh);
     Actor_StartRepeatedMotion(ACTOR_KYLE, 1);
+    // "Oh, Isaac..."
     Event_ShowMessageThenWait(ACTOR_KYLE, 0, 10);
     Actor_StartRepeatedMotion(ACTOR_KYLE, 2);
+    // "You two don't have enough Psynergy to save Felix. Go find help."
     Event_ShowMessageThenWait(ACTOR_KYLE, 0, 10);
   }
   Actor_FaceDirection(ACTOR_KYLE, facing, 20);
@@ -2165,9 +2205,11 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
                           60);
       Actor_RunRepeatedMotion(ACTOR_JENNA_CHILD, 2);
       Event_SetMessageId(MsgValeMomDadBack);
+      // "Mom! Dad! We're back!"
       Event_ShowMessageThenWait(ACTOR_JENNA_CHILD, 0, 40);
       Actor_SetPosition(ACTOR_DORA, PIXELS(101), PIXELS(1197));
       Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST, 0);
+      // "Is that you, Jenna?"
       Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_DORA, 0, 10);
       Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_NORTHWEST, 0);
       FieldCamera_SetSpeedParameters(PIXELS(6) / 5, PIXELS(3) / 20);
@@ -2180,8 +2222,10 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
       FieldCamera_WaitForMove();
       Event_Wait(40);
       Actor_RunRepeatedMotion(ACTOR_JENNA_CHILD, 2);
+      // "Yes, ma'am..."
       Event_ShowMessageThenWait(ACTOR_JENNA_CHILD, 0, 20);
       Actor_RunRepeatedMotion(ACTOR_DORA, 2);
+      // "I couldn't find anyone who could help... How did you do?"
       Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_DORA, 0, 20);
       FieldCamera_SetSpeedParameters(PIXELS(2), PIXELS(1) / 4);
       FieldCamera_MoveTo(PIXELS(221), -1, PIXELS(1385), 1);
@@ -2198,12 +2242,15 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
       Actor_FaceActor(ACTOR_GARET_CHILD, ACTOR_DORA, 0);
       Actor_FaceActor(ACTOR_JENNA_CHILD, ACTOR_DORA, 0);
       Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+      // "You're just in time."
       Event_ShowMessage(ACTOR_DORA, 0);
       Actor_RunRepeatedMotion(ACTOR_JENNA_CHILD, 2);
+      // "Then my brother is still..."
       Event_ShowMessageThenWait(ACTOR_JENNA_CHILD, 0, 10);
       Actor_FaceDirection(ACTOR_DORA, FACING_NORTHEAST, 40);
       Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHEAST, 20);
       Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+      // "Felix is all right. He's hanging in there."
       Event_ShowMessage(ACTOR_DORA, 0);
       Actor_FaceEachOther(ACTOR_JENNA_CHILD, ACTOR_EXHAUSTED_STRONGMAN, 0);
       Actor_FaceEachOther(ACTOR_GARET_CHILD, ACTOR_PARTY_LEADER, 0);
@@ -2214,6 +2261,7 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
       Actor_FaceActor(ACTOR_EXHAUSTED_STRONGMAN, ACTOR_DORA, 0);
       Actor_RunRepeatedMotion(ACTOR_DORA, 2);
       Event_Wait(20);
+      // "Come down here, so we can save Felix!"
       Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
       Actor_SetAnimation(ACTOR_JENNA_CHILD, ANIM_NOD);
@@ -2733,6 +2781,7 @@ static void ValePrologue_StrongmanTriesToGoForHelp(void) {
     Actor_RunRepeatedMotion(ACTOR_EXHAUSTED_STRONGMAN, 2);
     Event_Wait(20);
     Event_SetMessageId(MsgValeICantMoveGetHelp);
+    // "It's no use. I can't move... Isaac, please get help!"
     Event_ShowMessage(ACTOR_EXHAUSTED_STRONGMAN, 0);
     Actor_SetScript(ACTOR_EXHAUSTED_STRONGMAN,
                     gValePrologue_SquashAndStretchScript);
@@ -2750,6 +2799,7 @@ static void ValePrologue_StrongmanTriesToGoForHelp(void) {
     }
     Event_Wait(20);
     Event_SetMessageId(MsgValeIllGo);
+    // "Oh, ohhh... I... I'll go!"
     Event_ShowMessageThenWait(ACTOR_EXHAUSTED_STRONGMAN, 0, 20);
     Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN, ANIM_STAND);
     Actor_Jump(ACTOR_EXHAUSTED_STRONGMAN, 4, 0);
@@ -2767,6 +2817,7 @@ static void ValePrologue_StrongmanTriesToGoForHelp(void) {
     Event_Wait(60);
     Actor_RunRepeatedMotion(ACTOR_EXHAUSTED_STRONGMAN, 2);
     Event_Wait(20);
+    // "It's no use. I can't move... Isaac, please get help!"
     Event_ShowMessage(ACTOR_EXHAUSTED_STRONGMAN, 0);
     Actor_SetScript(ACTOR_EXHAUSTED_STRONGMAN,
                     gValePrologue_SquashAndStretchScript);
@@ -2793,6 +2844,7 @@ static void ValePrologue_GaretFollowsIsaac(void) {
   Actor_SetPosition(ACTOR_GARET_CHILD, PIXELS(249), PIXELS(1240));
   wait(1);
   Event_SetMessageId(MsgValeIsaac);
+  // "Isaac..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_GARET_CHILD, 0);
   Actor_SetPosition(ACTOR_GARET_CHILD, PIXELS(172), PIXELS(1278));
   wait(1);
@@ -2801,10 +2853,12 @@ static void ValePrologue_GaretFollowsIsaac(void) {
   FieldCamera_WaitForMove();
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_GARET_CHILD, ANIM_SHAKE_HEAD);
+  // "I can't let him go alone..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_GARET_CHILD, 0,
                                  10);
   Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_NORTH, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET_CHILD, 2);
+  // "It's times like these that we men have to stand together!"
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_GARET_CHILD, 0, 10);
   Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_EAST_SOUTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_GARET_CHILD, ANIM_NOD);

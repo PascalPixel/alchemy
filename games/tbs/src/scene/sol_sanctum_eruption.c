@@ -252,7 +252,9 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   SolSanctumEruption_SetMaterializationTint(1, 20, 20);
   SolSanctumEruption_SetMaterializationTint(0, 20, 40);
   Event_SetMessageId(MsgSolSanctumJennaWhatHappened);
+  // "What's the matter? What happened?"
   Event_ShowMessageThenWait(ACTOR_MENARDI, 0, 20);
+  // "No! Not again!"
   Event_ShowMessage(ACTOR_SATUROS, 0);
   SolSanctumEruption_SetMaterializationTint(1, 20, 0);
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 20);
@@ -314,6 +316,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   }
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_GARET, 0, 80);
   Event_SetMessageId(MsgSolSanctumKradenCouldThatBeThe);
+  // "Could that be... the Wise One?!?"
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 20);
   SolSanctumEruption_SetMaterializationTint(1, 20, 0);
   sparkles->stopped = 0;
@@ -962,6 +965,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   // miracle we survived." No: "How can you be so calm?"
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_SetMessageId(MsgSolSanctumWellTurnedBadly);
+  // "Well, this turned out badly, wouldn't you say?"
   Event_OpenMessage(ACTOR_GARET, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
@@ -978,6 +982,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Event_Wait(40);
   // Garet: "Jenna and Kraden are gone!"
   Event_SetMessageId(MsgSolSanctumFriendsGone);
+  // "Jenna and Kraden are gone!"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   Actor_Jump(ACTOR_PARTY_LEADER, 2, 0);
   Event_Wait(10);
@@ -990,6 +995,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   // Garet: "You don't think they'll hurt Jenna and Kraden, do you?" Either
   // way, he trusts Felix to look after them.
+  // "You don't think they'll hurt Jenna and Kraden, do you?"
   Event_OpenMessage(ACTOR_GARET, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Event_Wait(10);
@@ -1049,6 +1055,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   // Garet: "This really is terrible..." and they have a long way to go.
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_SetMessageId(MsgSolSanctumThisIsTerrible);
+  // "This really is terrible..."
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(40);
@@ -1060,6 +1067,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST_NORTHEAST, 0);
   Event_Wait(10);
+  // "We've got a long way to go if we're gonna make it out of here."
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(10);
@@ -1144,6 +1152,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_WalkToAndWait(ACTOR_GARET, 231, 175);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Event_SetMessageId(MsgSolSanctumOverHere);
+  // "Hey, Isaac... Isaac, I'm over here. Come on, we've gotta go."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(40);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -1336,6 +1345,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   // The Wise One: "Return it to its bag." and the Elemental Stars are moving
   // away from here.
   Event_SetMessageId(MsgSolSanctumReturnStarToBag);
+  // "Return it to its bag."
   Event_ShowMessageThenWait(ACTOR_WISE_ONE, 0, 20);
   if (star != NULL) {
     Actor_Release(star);
@@ -1344,6 +1354,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 60);
+  // "The Elemental Stars are... moving away from here..."
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Event_Wait(40);
 

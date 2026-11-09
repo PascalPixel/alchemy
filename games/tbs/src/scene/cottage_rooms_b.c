@@ -354,6 +354,7 @@ static void CottageRoomsB_ScholarAsksAboutKraden(s32 speakerId) {
   s32 firstMessage = MsgValeFolksSeemKnow;
 
   Event_SetMessageId(firstMessage);
+  // "You folks seem to know quite a bit about Kraden, don't you?"
   Event_OpenMessage(speakerId, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Event_Wait(10);
@@ -396,12 +397,14 @@ static void CottageRoomsB_AskIsaacHisBusiness(void) {
   Event_Wait(30);
   Event_SetMessageId(MsgValeHeyBoy);
   Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_MASKED_MAN, 10);
+  // "Hey... Boy..."
   Event_ShowMessageThenWait(ACTOR_MASKED_MAN, 0, 6);
   Actor_ShowEmote(ACTOR_MASKED_MAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_StartRepeatedMotion(ACTOR_MASKED_MAN, 1);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_MASKED_MAN, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Do you have business with me?"
   Event_OpenMessage(ACTOR_MASKED_MAN, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
     gFieldWork->message++;
@@ -422,8 +425,10 @@ static void CottageRoomsB_AskWhetherMaskedManWasFelix(void) {
   Event_Start();
   Actor_FaceActor(ACTOR_YOUNG_MAN_SAW_MASK, ACTOR_PARTY_LEADER, 10);
   Event_SetMessageId(MsgValeTheMaskedManWasFelix);
+  // "That masked man... He was Felix, right?"
   Event_OpenMessage(ACTOR_YOUNG_MAN_SAW_MASK, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    // "It's hard to believe, but...what if Jenna was involved in..."
     Event_ShowMessage(ACTOR_YOUNG_MAN_SAW_MASK, 0);
   } else {
     work = gFieldWork;
@@ -688,12 +693,14 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   // now!"
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Event_SetMessageId(firstMessage + 2);
+  // "The Mt. Aleph Boulder is going to fall!"
   FieldEvent_ShowMessageThenWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA, 0, 60);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_DORA, 1);
   Event_Wait(40);
+  // "Come on, Isaac. We have to go-now!"
   FieldEvent_ShowMessageThenWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -717,6 +724,7 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   // "Isaac! You forgot something!" Catch plays from Dora on the tunic.
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Isaac! You forgot something!"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA,
                     0);
   CottageRoomsB_DemonstrateCatch();
@@ -854,6 +862,7 @@ static void CottageRoomsB_HurryToThePlaza(void) {
   Actor_WalkToAndWait(ACTOR_KYLE, 427, 483);
   FieldCamera_WaitForArrival();
   Event_SetMessageId(MsgValeDoraHurryBoulder);
+  // "Isaac, Dora, hurry! The Boulder could fall at any second!"
   Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_KYLE, 0, 10);
   FieldCamera_SetSpeedParameters(PIXELS(3) / 2, PIXELS(3) / 16);
   FieldCamera_MoveWithinMapBounds(PIXELS(480), -1, PIXELS(444), 1);
@@ -936,10 +945,14 @@ static void CottageRoomsB_TalkToInnkeeper(void) {
       Actor_FaceActor(ACTOR_INNKEEPER, ACTOR_PARTY_LEADER, 10);
       if (Event_GetFlag(FLAG_VALE_INNKEEPER_WELCOMED_ISAAC) == 0) {
         Event_SetMessageId(MsgValeCameBack2);
+        // "Oh, it's you, Isaac. You came back, huh?"
         Event_ShowMessage(ACTOR_INNKEEPER, 0);
         GameFlag_Set(FLAG_VALE_INNKEEPER_WELCOMED_ISAAC);
       }
       Event_SetMessageId(MsgValeHomeJustToStay);
+      // "You've come all the way home just to stay here? Are you sure?"
+      // Yes: "Oh, I see... You don't want to get used to staying at..."
+      // No: "That's better! You've come all the way back. Now, go on home."
       Event_AskYesNo(ACTOR_INNKEEPER, 0);
       Actor_FaceDirection(ACTOR_INNKEEPER, FACING_WEST_NORTHWEST, 10);
     } else {
@@ -965,6 +978,7 @@ static void CottageRoomsB_RemarkIsaacHasGrown(void) {
   Event_Start();
   Actor_FaceActor(ACTOR_MAN_ISAAC_HAS_GROWN, ACTOR_PARTY_LEADER, 10);
   Event_SetMessageId(MsgValeYouveGrownSoMuch);
+  // "Well if it isn't Isaac! You've grown so much, I almost..."
   Event_ShowMessage(ACTOR_MAN_ISAAC_HAS_GROWN, 0);
   Actor_FaceDirection(ACTOR_MAN_ISAAC_HAS_GROWN, FACING_NORTH_NORTHWEST, 10);
   GameFlag_Set(FLAG_VALE_MAN_SAW_ISAAC_GROWN);
@@ -977,6 +991,7 @@ static void CottageRoomsB_RemarkIsaacHasGrown(void) {
 static void CottageRoomsB_ReadInnkeepersThoughts(void) {
   Event_Start();
   Event_SetMessageId(MsgValeDoraWouldntLetHimStay);
+  // "I wonder if Isaac came here because Dora wouldn't let him..."
   Event_ShowMessage(ACTOR_INNKEEPER, 0);
   GameFlag_Set(FLAG_READ_THOUGHTS_ABOUT_DORA);
   Event_End();
@@ -988,6 +1003,7 @@ static void CottageRoomsB_ReadInnkeepersThoughts(void) {
 static void CottageRoomsB_ReadThoughtsAboutDorasIllness(void) {
   Event_Start();
   Event_SetMessageId(MsgValeDoraWasStruckWithIllness);
+  // "Does Isaac know that Dora was struck with an illness?"
   Event_ShowMessage(ACTOR_MAN_ISAAC_HAS_GROWN, 0);
   GameFlag_Set(FLAG_READ_THOUGHTS_ABOUT_DORA);
   Event_End();
@@ -1008,9 +1024,11 @@ static void CottageRoomsB_VisitSickDora(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 40);
   Actor_StartRepeatedMotion(ACTOR_DORA, 2);
   Event_SetMessageId(MsgValeCoughCoughWho);
+  // "Cough, cough! Who is it? Is it the innkeeper? Is it time to eat?"
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 80);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_StartRepeatedMotion(ACTOR_DORA, 1);
+  // "No? Cough... Then who-"
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 60);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Event_Wait(80);
@@ -1026,6 +1044,7 @@ static void CottageRoomsB_VisitSickDora(void) {
   // "Isaac..." "Are you finally home? Have you completed your mission!?"
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
+  // "Are you finally home? Have you completed your mission!?"
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_DORA_HEAD_SWAYING);
@@ -1036,6 +1055,7 @@ static void CottageRoomsB_VisitSickDora(void) {
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_DORA, 1);
   Event_Wait(20);
+  // "Have you forgotten your promise, Isaac?"
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_DORA_HEAD_BOWED);
   Event_Wait(20);
@@ -1044,6 +1064,7 @@ static void CottageRoomsB_VisitSickDora(void) {
   // "You promised you wouldn't come back until your quest was complete,
   // right?" Either reply has its own answer; she is less surprised when Mind
   // Read has told Isaac of her illness.
+  // "You promised you wouldn't come back until your quest was..."
   Event_OpenMessage(ACTOR_DORA, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
     gFieldWork->message += 1;
@@ -1057,6 +1078,7 @@ static void CottageRoomsB_VisitSickDora(void) {
   // Branch on Isaac's replies and whether Mind Read revealed her illness.
   firstMessage = MsgValeWhoToldIll;
   Event_SetMessageId(firstMessage);
+  // "Who told you I was ill? The mayor? Or cough ...was it the..."
   Event_OpenMessage(ACTOR_DORA, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
     gFieldWork->message += 1;
@@ -1070,14 +1092,17 @@ static void CottageRoomsB_VisitSickDora(void) {
   // "You can't get out of your promises just because you're worried about
   // me." "I just caught a cold." "But I'm fine now. Look!"
   Event_SetMessageId(firstMessage + 3);
+  // "You can't get out of your promises just because you're..."
   Event_ShowMessage(ACTOR_DORA, 0);
   Actor_RunRepeatedMotion(ACTOR_DORA, 1);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_DORA_HEAD_SWAYING);
   Actor_StartRepeatedMotion(ACTOR_DORA, 2);
+  // "I... Cough... I just caught a cold. That's all."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_DORA, 1);
   Event_Wait(20);
+  // "But I'm fine now. Cough... Look!"
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Event_Wait(40);
@@ -1106,6 +1131,7 @@ static void CottageRoomsB_VisitSickDora(void) {
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_SetSpeed(ACTOR_DORA, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_WalkToAndWait(ACTOR_DORA, 572, 384);
+  // "Don't worry about me. Go on. Do your best to complete your..."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);
@@ -1129,12 +1155,14 @@ static void CottageRoomsB_TalkToDora(void) {
                                gCottageRoomsB_DoraFacesIsaacScript);
     Event_Wait(20);
     Event_SetMessageId(MsgValeDontWorryBest);
+    // "Don't you worry about me. Just do your best to complete your..."
     Event_ShowMessage(ACTOR_DORA, 0);
   } else {
     Actor_RunRepeatedMotion(ACTOR_DORA, 2);
     Event_Wait(40);
     message = MsgValeUnnOhhKyle;
     Event_SetMessageId(message);
+    // "Unn... Ohh... Kyle... Don't go..."
     Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
     FieldMessage_Show((message + 1), 1);
   }

@@ -750,6 +750,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
   Event_Start();
   Field_EndBusyAndReveal();
   Event_SetMessageId(MsgAltmillerRotatedRock);
+  // "Isaac rotated the rock."
   Event_ShowMessage(ACTOR_FIRST_ROCK, 0);
   Event_End();
   for (i = 0; i < LIGHT_COUNT; i++) {
@@ -918,6 +919,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_RunRepeatedMotion(ACTOR_INVISIBLE_BABI, 2);
   Event_Wait(20);
   Event_SetMessageId(MsgAltmillerCameBackPleaseDraughtQuickly);
+  // "You... You came back... Please, the draught- quickly."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 232, 160);
@@ -935,6 +937,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(20);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
+  // "Oh, thank you! You've saved my life. Squeak... Glug glug glug..."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
@@ -1023,9 +1026,11 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
     Event_Wait(30);
     Event_SetMessageId(MsgAltmillerWouldHaveRevealedMyselfSooner);
+    // "I would have revealed myself sooner, but I could not even..."
     Event_ShowMessage(ACTOR_BABI, 0);
   } else {
     Event_SetMessageId(MsgAltmillerMustTraveledIndeedIfDidnt);
+    // "You must be well traveled indeed if that didn't shock you."
     Event_ShowMessage(ACTOR_BABI, 0);
   }
   // Ask how Babi became invisible and hear about his Alchemy.
@@ -1033,13 +1038,16 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Event_Wait(20);
+  // "How did you become paralyzed while you were invisible?"
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
+  // "And that ability to conceal yourself... Are you an Adept?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "An Adept? What are you talking about?"
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
@@ -1186,9 +1194,11 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_OpenMessage(ACTOR_GARET, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_SetMessageId(MsgAltmillerThatsKradenSaidAlchemyCould);
+    // "That's right! Kraden said Alchemy could thwart death itself!"
     Event_ShowMessage(ACTOR_GARET, 0);
   } else {
     Event_SetMessageId(MsgAltmillerForgotKradenSaidAlchemyCould);
+    // "You forgot? Kraden said Alchemy could be used to thwart death."
     Event_ShowMessage(ACTOR_GARET, 0);
   }
   Event_SetMessageId(MsgAltmillerWhatWasThat);
@@ -1196,6 +1206,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
   Event_Wait(10);
+  // "What was that?"
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
@@ -1208,6 +1219,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(30);
+  // "Did you say you know Kraden?"
   Event_OpenMessage(ACTOR_BABI, 0);
   Event_SetMessageId(MsgAltmillerBabi);
   Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0);
@@ -1579,12 +1591,14 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     Event_Wait(20);
     Event_SetMessageId(MsgAltmillerSoWellDoIt);
+    // "So we'll do it?"
     Event_ShowMessage(ACTOR_GARET, 0);
   } else {
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     Event_Wait(20);
     Event_SetMessageId(MsgAltmillerDontWantEitherDo);
+    // "You don't want to either, do you?"
     Event_ShowMessage(ACTOR_GARET, 0);
   }
   // Let Isaac answer the invitation and reunite the party.
@@ -1592,37 +1606,46 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
   Event_Wait(30);
+  // "Either way, we're stuck here in Tolbi until Colosso is over."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(30);
+  // "Babi said that he wanted to talk to us, didn't he?"
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "He seemed to know Kraden."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(30);
+  // "What could be the connection between Lemuria and Adepts?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Event_Wait(20);
+  // "I suspect he knows quite a bit about what's going on with us."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "I guess all we can do is wait around until Colosso is..."
   Event_ShowMessage(ACTOR_GARET, 0);
+  // "Come on, let's enter Colosso! Can we do it?"
   Event_OpenMessage(ACTOR_GARET, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     Event_Wait(30);
     Event_SetMessageId(MsgAltmillerGreatItsDecidedJustHave);
+    // "Great! It's decided. We'll just have to do our best!"
     Event_ShowMessage(ACTOR_GARET, 0);
     Event_Wait(10);
     Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
     Event_Wait(30);
+    // "If you want to do it, Isaac, we'll go along with you."
     Event_ShowMessage(ACTOR_IVAN, 0);
     Event_Wait(20);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1635,12 +1658,14 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
     Event_Wait(30);
     Event_SetMessageId(MsgAltmillerDontLetMeDownLike);
+    // "What? Don't let me down like this!"
     Event_ShowMessage(ACTOR_GARET, 0);
     Event_Wait(10);
     Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
     Event_Wait(30);
+    // "I guess we'll just wait until we reach Tolbi and let Isaac..."
     Event_ShowMessage(ACTOR_IVAN, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1698,6 +1723,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Event_SetMessageId(MsgAltmillerSee);
   Actor_RunRepeatedMotion(ACTOR_INVISIBLE_BABI, 2);
   Event_Wait(20);
+  // "You... You can see me?"
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   FieldCamera_MoveTo(PIXELS(248), -1, PIXELS(184), 1);
@@ -1711,58 +1737,72 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(40);
+  // "Someone's there."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Event_Wait(20);
+  // "Wrapped in Psynergetic light... Who could it be?"
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "You know about Psynergy? And you can see me?"
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_IVAN, 50);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Event_Wait(30);
+  // "Come on, mister! Don't hide-show yourself!"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_SetAttachedEffect(ACTOR_INVISIBLE_BABI,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_RunRepeatedMotion(ACTOR_INVISIBLE_BABI, 2);
   Event_Wait(30);
+  // "Even if I wanted to show myself... As you can see, I cannot..."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(20);
   Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Event_Wait(30);
+  // "What do you mean, 'as you can see'? You're invisible!"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "Oh... That's right."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "You say you can't move... What happened?"
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  // "Hmmm, yes. I ran out of my draught and collapsed here."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 30);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "Draught?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Event_Wait(20);
+  // "Exactly what kind of draught is it?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "You couldn't even begin to comprehend if I tried to tell..."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Actor_RunRepeatedMotion(ACTOR_INVISIBLE_BABI, 2);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "You seem to be in a lot of pain. Your life depends on that..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
+  // "It does. Could you do me a favor?"
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -1772,21 +1812,27 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Event_Wait(60);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
+  // "A favor? What is it?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(20);
+  // "I'd like you to get my draught for me."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "Get it? Where is it?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_INVISIBLE_BABI, 2);
   Event_Wait(20);
+  // "Deep in this cave..."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Event_Wait(20);
+  // "What, is there a pharmacy down there?"
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "Witty, aren't we? I'll have to tell you how to find it. Can..."
   Event_OpenMessage(ACTOR_INVISIBLE_BABI, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
@@ -1798,6 +1844,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
     Actor_WalkByAndWait(ACTOR_GARET, 0, -16);
     Event_Wait(10);
     Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 30);
+    // "Are you kidding, Isaac? We haven't even actually seen this guy!"
     Event_ShowMessage(ACTOR_GARET, 0);
   } else {
     Event_SetMessageId(MsgAltmillerDontTrustAnyone);
@@ -1808,6 +1855,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
     Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 30);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     Event_Wait(20);
+    // "I'm with you, Isaac. I don't trust anyone who's afraid to..."
     Event_ShowMessage(ACTOR_GARET, 0);
   }
 
@@ -1819,6 +1867,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Actor_WalkByAndWait(ACTOR_IVAN, 0, -16);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_IVAN, ACTOR_PARTY_LEADER, 30);
+  // "He said he couldn't move even if he wanted to, right?..."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(10);
@@ -1828,6 +1877,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Actor_FaceActor(ACTOR_GARET, ACTOR_MIA, 0);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_MIA, 0);
   Event_Wait(20);
+  // "I agree with Ivan- whoever he is, he needs our help."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
@@ -1837,6 +1887,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Event_Wait(30);
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Event_Wait(20);
+  // "Fine! Okay! We should help people in need. Is that better!?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(30);
   Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 30);
@@ -1855,69 +1906,86 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Event_SetMessageId(line);
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "He said he couldn't move even if he wanted to, right?..."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(30);
+  // "I agree with Ivan- whoever he is, he needs our help."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
+  // "Fine! Okay! We should help people in need. Is that better!?"
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(30);
+  // "I'm with you, Isaac. I don't trust anyone who's afraid to..."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(30);
+  // "He said he couldn't even move, didn't he? Someone is in..."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Event_Wait(30);
+  // "I agree with Ivan line of thinking."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "Fine! Whatever! We'll help everybody who needs help. Is that..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(30);
+  // "Will you get it for me?!"
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Event_Wait(30);
+  // "What do we have to do to get your draught?"
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Event_Wait(30);
+  // "First, you'll have to go deep into the cave."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
+  // "You'll find five rocks sticking up out of the ground."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(30);
+  // "Rotate the rocks on the left and right sides."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
+  // "When you turn the rocks in the right order, five colored..."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
+  // "Colored lights!? This sounds weird."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "That's right. Lights will appear on the wall."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "There will be five colors: blue, green, white, yellow, and red."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Actor_RunRepeatedMotion(ACTOR_INVISIBLE_BABI, 2);
   Event_Wait(20);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Turn the five rocks in accordance with those colors."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_MIA, 40);
@@ -1969,14 +2037,17 @@ static void AltmillerCave_RepeatRockOrder(void) {
   Event_Start();
   question = MsgAltmillerForgetOrderRock;
   Event_SetMessageId(question);
+  // "Did you forget the order of rock colors?"
   Event_OpenMessage(ACTOR_INVISIBLE_BABI, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(20);
     Event_SetMessageId(question + 1);
+    // "From the left, it's blue, green, white, yellow, and red...."
     Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   } else {
     Event_Wait(20);
     Event_SetMessageId(question + 2);
+    // "Deep in the cave are five rocks. Turn the ones on the ends..."
     Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   }
   Event_End();
@@ -1994,12 +2065,14 @@ static void AltmillerCave_BabiCallsPartyBack(void) {
   GameFlag_Set(FLAG_BABI_CALLED_PARTY_BACK);
   Event_Start();
   Event_SetMessageId(MsgAltmillerWait);
+  // "Wait..."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(30);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(30);
+  // "The draught is... on a table behind the door."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);

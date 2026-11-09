@@ -294,6 +294,7 @@ static void GomaCaveEntrance_IvanRejoins(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "It's no use. Our Psynergy isn't strong enough to free that..."
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);
@@ -317,6 +318,7 @@ static void GomaCaveEntrance_IvanRejoins(void) {
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 20);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     Event_Wait(20);
+    // "You want to move the stump, right?"
     Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
@@ -336,11 +338,13 @@ static void GomaCaveEntrance_IvanRejoins(void) {
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 20);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "It looks like it's trapped in the ivy."
     Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
+    // "Isn't there anything we can do?"
     Event_ShowMessageThenWait(ACTOR_IVAN, 0, 120);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
@@ -352,11 +356,13 @@ static void GomaCaveEntrance_IvanRejoins(void) {
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
     Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
     Event_Wait(30);
+    // "I know!"
     Event_ShowMessageThenWait(ACTOR_IVAN, 0, 30);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 20);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     Event_Wait(20);
+    // "I have a great idea. Leave it to me!"
     Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);

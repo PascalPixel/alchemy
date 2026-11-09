@@ -514,6 +514,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   FieldActor_LaunchFromLeader(ACTOR_MIA, 24, 16, FACING_NORTH);
   Actor_WaitForMoveById(ACTOR_MIA);
   Event_Wait(20);
+  // "You're sure they went through this door?"
   Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
   FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
@@ -522,6 +523,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_WITNESS, ANIM_NOD);
   Event_Wait(30);
+  // "Yes, they opened the stone door and entered!"
   Event_ShowMessage(ACTOR_WITNESS, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_FARAN, FACING_NORTH, 0);
@@ -530,6 +532,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
   Event_Wait(20);
+  // "Well? Does the door open?"
   Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
   // The witnesses try the stone door and disagree about who passed through it.
@@ -543,28 +546,33 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Actor_RunRepeatedMotion(ACTOR_DOUBTING_THE_DOOR, 2);
   Event_Wait(40);
   Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
+  // "It's hopeless. It won't budge..."
   Event_ShowMessage(ACTOR_DOUBTING_THE_DOOR, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_EAST, 0);
   Event_Wait(25);
   Actor_RunRepeatedMotion(ACTOR_WORRIED_FOR_SHEBA, 2);
   Event_Wait(20);
+  // "Of course not! I told you, this door doesn't open!"
   Event_ShowMessage(ACTOR_WORRIED_FOR_SHEBA, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_WEST, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "If it did open, we would have gone in long ago to study the..."
   Event_ShowMessage(ACTOR_WORRIED_FOR_SHEBA, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_WITNESS, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "But I'm certain they went through this door!"
   Event_ShowMessage(ACTOR_WITNESS, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_SOUTH, 0);
   Event_Wait(20);
+  // "And I'm saying no one has ever gone through here..."
   Event_ShowMessage(ACTOR_WORRIED_FOR_SHEBA, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 75);
@@ -575,6 +583,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_FARAN, FACING_SOUTH, 0);
   Event_Wait(30);
+  // "Oh! Iodem..."
   Event_ShowMessage(ACTOR_FARAN, 0);
   FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(320), 1);
   FieldCamera_WaitForMove();
@@ -582,25 +591,31 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   // The party learns where the kidnappers went and is asked to pursue them.
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   Event_Wait(30);
+  // "Faran!"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "I am so sorry about Sheba..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  // "Why did this sort of thing have to happen?"
   Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Are Felix and the others beyond this door?"
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
+  // "Yes. Beyond the door that no normal man can open..."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
+  // "If they got through, then we can, too. Right?"
   Event_OpenMessage(ACTOR_GARET, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(30);
@@ -608,6 +623,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     Event_Wait(30);
+    // "Will you go for us?"
     Event_ShowMessage(ACTOR_IODEM, 0);
     gFieldWork->message++;
   } else {
@@ -617,6 +633,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
     Event_Wait(20);
     gFieldWork->message++;
+    // "There is no one else who can go after them."
     Event_ShowMessage(ACTOR_IODEM, 0);
   }
   Event_Wait(10);
@@ -624,33 +641,41 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Actor_SetSpeed(ACTOR_FARAN, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_FARAN, 0, 16);
   Event_Wait(20);
+  // "Iodem, just who are these people?"
   Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
   Event_Wait(35);
+  // "They come from the far north. They have chased the ones who..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
   Event_Wait(20);
+  // "They've been chasing that fearsome group?"
   Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "Yes. They are most fearsome."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
+  // "Such awful power... And what they're trying to do seems very..."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(30);
+  // "We're the only ones who can stop them."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "You think you can stop them?"
   Event_OpenMessage(ACTOR_FARAN, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "You seem quite sure of yourself, but what do you think you..."
     Event_ShowMessage(ACTOR_FARAN, 0);
     gFieldWork->message++;
   } else {
@@ -658,10 +683,12 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
     Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
     Event_Wait(20);
     gFieldWork->message++;
+    // "Hmph! Not with that attitude, you can't!"
     Event_ShowMessage(ACTOR_FARAN, 0);
   }
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
+  // "I have never heard such harsh words from you, Faran."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_WORRIED_FOR_SHEBA, 2);
@@ -669,12 +696,14 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Actor_SetSpeed(ACTOR_WORRIED_FOR_SHEBA, PIXELS(13) / 10, PIXELS(13) / 20);
   Actor_WalkByAndWait(ACTOR_WORRIED_FOR_SHEBA, 0, 16);
   Event_Wait(20);
+  // "What do you expect when, in the midst of such dangers... you..."
   Event_ShowMessage(ACTOR_WORRIED_FOR_SHEBA, 0);
   Event_Wait(10);
   Actor_SetSpeed(ACTOR_DOUBTING_THE_DOOR, PIXELS(13) / 10, PIXELS(13) / 20);
   Actor_WalkByAndWait(ACTOR_DOUBTING_THE_DOOR, 0, 16);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | EMOTE_SCOWL, 50);
+  // "If you want me to trust them, they must give me reason to..."
   Event_ShowMessage(ACTOR_DOUBTING_THE_DOOR, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
@@ -683,15 +712,18 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
   Event_Wait(25);
+  // "First, you will have to demonstrate your powers to us."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
+  // "Can you follow the same paths that they took?"
   Event_OpenMessage(ACTOR_IODEM, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     Event_Wait(30);
+    // "Your confidence means nothing unless you show that you can..."
     Event_ShowMessage(ACTOR_IODEM, 0);
     gFieldWork->message++;
   } else {
@@ -699,6 +731,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
     Event_Wait(20);
     gFieldWork->message++;
+    // "Well, you have no choice... You will have to try."
     Event_ShowMessage(ACTOR_IODEM, 0);
   }
   Event_Wait(10);
@@ -708,6 +741,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_FARAN, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(40);
+  // "Iodem asks only that you stand back and watch."
   Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_DOUBTING_THE_DOOR, ACTOR_WORRIED_FOR_SHEBA, 50);
@@ -734,6 +768,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_FARAN, FACING_SOUTH, 0);
   Event_Wait(20);
+  // "Now, show me what you can do."
   Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
   Actor_SetSpeed(ACTOR_FARAN, PIXELS(1), PIXELS(1) / 2);
@@ -782,6 +817,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "The door!"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Actor_Jump(ACTOR_IODEM, 4, 13);
   Actor_Jump(ACTOR_IODEM, 4, 30);
@@ -800,14 +836,17 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
   Event_Wait(20);
+  // "I don't believe it! The door opened!"
   Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "Incredible! It really does open."
   Event_ShowMessage(ACTOR_WORRIED_FOR_SHEBA, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_WEST, 0);
   Event_Wait(25);
+  // "How in the world did you open the door?"
   Event_ShowMessage(ACTOR_DOUBTING_THE_DOOR, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_FARAN, FACING_WEST, 0);
@@ -817,21 +856,26 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Event_Wait(20);
+  // "I don't know how to explain it..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
+  // "We did it because we're us!"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "It would take too long to explain."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "There's no time for an explanation, anyway."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
   Event_Wait(25);
+  // "That's right. We must rescue Sheba!"
   Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
@@ -840,6 +884,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Actor_WalkByAndWait(ACTOR_IODEM, 0, -40);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
   Event_Wait(20);
+  // "Let's go, Faran. We've got to save Sheba!"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
@@ -1107,6 +1152,7 @@ static void BabiLighthouse_InspectTruthDoorSwitch(void) {
     }
   } else {
     Event_SetMessageId(MsgBabiTruthDoorOpenThoseSeeing);
+    // "The truth of this door is open to those seeing with their..."
     Event_ShowMessage(-1, 0);
   }
   Event_End();

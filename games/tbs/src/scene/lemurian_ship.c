@@ -354,14 +354,17 @@ static void LemurianShip_SetSail(void) {
   Event_Wait(50);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
+  // "It looks like it's finally time to leave Gondowan."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(20);
+  // "It's so strange... We've been traveling for so long, and yet..."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
   Event_Wait(40);
+  // "Now that I think about it, so many things have happened."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
@@ -378,16 +381,19 @@ static void LemurianShip_SetSail(void) {
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Event_Wait(20);
+  // "But our journey will be over as soon as we find Jenna, right?"
   Event_OpenMessage(1, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(30);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
+    // "The end of one journey, but the beginning of another? No way!"
     Event_ShowMessage(ACTOR_GARET, 0);
     gFieldWork->message++;
   } else {
     Event_Wait(30);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
     gFieldWork->message++;
+    // "What did you say? Our next journey? What journey is that?"
     Event_ShowMessage(ACTOR_GARET, 0);
   }
   Event_Wait(10);
@@ -395,6 +401,7 @@ static void LemurianShip_SetSail(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
+  // "You didn't forget, did you, Garet?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
@@ -404,13 +411,16 @@ static void LemurianShip_SetSail(void) {
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
   Event_Wait(30);
+  // "Our promise to Babi."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
+  // "Oh... Lemuria!"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
+  // "I wonder what kind of place Lemuria is."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
@@ -419,6 +429,7 @@ static void LemurianShip_SetSail(void) {
   Event_Wait(20);
   // The second question, Mia's: must they find Jenna before going to
   // Lemuria? Garet answers either way.
+  // "We have to find Jenna before going to Lemuria, don't we?"
   Event_OpenMessage(3, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(20);
@@ -426,6 +437,7 @@ static void LemurianShip_SetSail(void) {
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
     Event_Wait(20);
+    // "Yeah. That's important."
     Event_ShowMessage(ACTOR_GARET, 0);
     gFieldWork->message++;
   } else {
@@ -435,6 +447,7 @@ static void LemurianShip_SetSail(void) {
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
     Event_Wait(20);
     gFieldWork->message++;
+    // "Huh? Jenna's going to be very sad when I tell her what you said!"
     Event_ShowMessage(ACTOR_GARET, 0);
   }
   Event_Wait(10);
@@ -446,8 +459,10 @@ static void LemurianShip_SetSail(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(20);
+  // "At any rate, this will be our first time on the ocean."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(20);
+  // "So this is the ocean Kraden wanted me to see."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -456,6 +471,7 @@ static void LemurianShip_SetSail(void) {
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
   // The third question, Mia's: the seas are rough; will they be all right?
+  // "The seas are very rough. Do you think we will be okay?"
   Event_OpenMessage(3, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
@@ -465,6 +481,7 @@ static void LemurianShip_SetSail(void) {
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
     Event_Wait(20);
+    // "This is a Lemurian ship. We'll be fine."
     Event_ShowMessage(ACTOR_MIA, 0);
     gFieldWork->message++;
   } else {
@@ -472,6 +489,7 @@ static void LemurianShip_SetSail(void) {
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
     Event_Wait(20);
     gFieldWork->message++;
+    // "I guess it's hard to say. Still, we must go, just the same..."
     Event_ShowMessage(ACTOR_MIA, 0);
   }
   Event_Wait(10);
@@ -479,6 +497,7 @@ static void LemurianShip_SetSail(void) {
   // for them. The departure theme starts.
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Event_Wait(30);
+  // "Well... Shall we, then?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -488,10 +507,12 @@ static void LemurianShip_SetSail(void) {
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(20);
+  // "To sea..."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
+  // "Jenna is waiting for us!"
   Event_ShowMessage(ACTOR_MIA, 0);
   Sound_Play(SOUND_FADE_OUT_BGM);
   Event_Wait(10);

@@ -138,6 +138,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 static void Suhalla_AskIfGoingToLalivero(s32 actorId) {
   s32 firstMessage = MsgSuhallaTryingGetLalivero;
   Event_SetMessageId(firstMessage);
+  // "Are you trying to get to Lalivero?"
   Event_OpenMessage(actorId, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(10);
@@ -155,6 +156,7 @@ static void Suhalla_AskIfGoingToLalivero(s32 actorId) {
 static void Suhalla_AskIfBroughtBySandstorm(s32 actorId) {
   s32 firstMessage = MsgSuhallaBroughtSuhallaSandstorm;
   Event_SetMessageId(firstMessage);
+  // "You were brought to Suhalla by the sandstorm, right?"
   Event_OpenMessage(actorId, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(10);

@@ -213,9 +213,13 @@ static void LacquerRoomsB_TalkToItemMerchant(void) {
     Shop_Run(XIAN_ITEM_STOCK, ACTOR_XIAN_ITEM_MERCHANT);
   } else if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
     Event_SetMessageId(MsgXianXiansSpecialArmorNotSuited);
+    // "Xian's special armor is not suited to warriors... It is..."
     Event_ShowMessage(ACTOR_XIAN_ITEM_MERCHANT, 0);
   } else {
     Event_SetMessageId(MsgXianDoPlanCrossDesertWarrior);
+    // "Do you plan to cross the desert, warrior?"
+    // Yes: "It will take much strength. Perhaps you should buy many..."
+    // No: "You are wise, warrior. The wise man knows to avoid danger."
     Event_AskYesNo(ACTOR_XIAN_ITEM_MERCHANT, 0);
   }
   Event_End();
@@ -248,6 +252,9 @@ static void LacquerRoomsB_TalkToInnkeeper(void) {
 static void LacquerRoomsB_AskAboutSilkRoad(void) {
   Event_Start();
   Event_SetMessageId(MsgXianSomethingWrongOnSilkRoad);
+  // "Is something wrong on Silk Road? In Lamakan Desert, too?"
+  // Yes: "That is terrible. No one can use Silk Road!"
+  // No: "The desert is fine? That is good to hear."
   Event_AskYesNo(ACTOR_YOUNG_MAN_ON_SILK_ROAD, 0);
   Event_End();
 }
@@ -258,6 +265,9 @@ static void LacquerRoomsB_AskAboutSilkRoad(void) {
 static void LacquerRoomsB_AskAboutAltinMonsters(void) {
   Event_Start();
   Event_SetMessageId(MsgXianDidMonstersInAltinSpit);
+  // "Did the monsters in Altin spit water?"
+  // Yes: "The town was flooded by monsters? That takes much water. How..."
+  // No: "It is not true? But why would Feizhi lie?"
   Event_AskYesNo(ACTOR_OLD_MAN_ON_THE_ALTIN_ROAD, 0);
   Event_End();
 }
@@ -269,11 +279,13 @@ static void LacquerRoomsB_AskAboutAltinMonsters(void) {
 static void LacquerRoomsB_FeizhiThanksParty(void) {
   Event_Start();
   Event_SetMessageId(MsgXianWarriorWelcome);
+  // "Oh, warrior! Welcome!"
   Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_FaceActor(ACTOR_FEIZHI, ACTOR_HSU, 0);
   Event_Wait(60);
   Actor_FaceActor(ACTOR_FEIZHI, ACTOR_PARTY_LEADER, 0);
   Event_Wait(20);
+  // "Hsu was saved, thanks to you and Master Hama. You have my..."
   Event_ShowMessage(ACTOR_FEIZHI, 0);
   Event_End();
 }

@@ -332,10 +332,12 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 20);
   Actor_StartRepeatedMotion(ACTOR_IODEM, 2);
   Event_SetMessageId(MsgSuhallaMeaning);
+  // "What is the meaning of this!?"
   Event_ShowMessageThenWait(ACTOR_IODEM, 0, 40);
   // The guards describe the attack before Iodem asks who was responsible.
   Actor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_RunRepeatedMotion(ACTOR_WEST_GUARD, 2);
+  // "Uh! Is... Is that Iodem...?"
   Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
   Actor_WalkToAndWait(ACTOR_IODEM, 132, 420);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH_NORTHEAST, 0);
@@ -343,61 +345,78 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
   Actor_WalkToAndWait(ACTOR_IODEM, 138, 416);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH_NORTHWEST, 10);
   Actor_StartRepeatedMotion(ACTOR_IODEM, 2);
+  // "What has happened to the gate?"
   Event_ShowMessageThenWait(ACTOR_IODEM, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_WEST_GUARD, 2);
+  // "There was a strange group... No papers... They wanted to pass..."
   Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 40);
   Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_RunRepeatedMotion(ACTOR_EAST_GUARD, 2);
+  // "Uhh... Iodem..."
   Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_WalkToAndWait(ACTOR_IODEM, 144, 420);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_EAST_GUARD, 2);
+  // "We tried to hold them back...but they were too powerful!"
   Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 20);
   Actor_SetAttachedEffect(ACTOR_EAST_GUARD,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_StartRepeatedMotion(ACTOR_EAST_GUARD, 3);
+  // "They had strange powers... We were no match for them."
   Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 20);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH_SOUTHWEST, 20);
   // Iodem: "It must have been Felix!", and the party answers yes or no. Once he
   // has heard the wounded soldiers in Suhalla he adds that they must find
   // Sheba, then track down the monsters that did this.
+  // "It must have been Felix!"
+  // Yes: "Yeah... No one else is capable of this."
+  // No: "Don't you know the work of your own foe's hand? Who else..."
   Event_AskYesNo(ACTOR_IODEM, 0);
   if (GameFlag_Get(FLAG_IODEM_MET_WOUNDED_SOLDIERS) != 0) {
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH_NORTHEAST, 40);
     Actor_SetAttachedEffect(ACTOR_IODEM,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
+    // "After we find Sheba, we must track down the monsters that..."
     Event_ShowMessageThenWait(ACTOR_IODEM, 0, 10);
   } else {
     gFieldWork->message += 1;
   }
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH_SOUTHWEST, 10);
+  // "We must get to Babi Lighthouse as soon as possible!"
   Event_ShowMessageThenWait(ACTOR_IODEM, 0, 40);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH_NORTHWEST, 10);
+  // "Yes, but we cannot leave the soldiers like this..."
   Event_ShowMessageThenWait(ACTOR_IODEM, 0, 10);
   Actor_WalkToAndWait(ACTOR_IODEM, 138, 416);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH_NORTHWEST, 20);
   Actor_StartRepeatedMotion(ACTOR_WEST_GUARD, 2);
+  // "We're okay. Don't worry about us! Get after them, please..."
   Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
   Actor_SetAttachedEffect(ACTOR_IODEM,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 1);
   Event_Wait(20);
+  // "But that would be..."
   Event_ShowMessageThenWait(ACTOR_IODEM, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_EAST_GUARD, 2);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 10);
   Actor_RunRepeatedMotion(ACTOR_EAST_GUARD, 1);
   Event_Wait(20);
+  // "We were bested in battle, but we will survive... Now go!"
   Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_WEST_GUARD, 2);
+  // "If they have done anything at the lighthouse... It would be..."
   Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 1);
   Event_Wait(20);
+  // "He's right. We've got to stop them!"
   Event_ShowMessageThenWait(ACTOR_IODEM, 0, 20);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH_SOUTHWEST, 10);
+  // "We're going after them, right, Isaac!"
   Event_ShowMessageThenWait(ACTOR_IODEM, 0, 10);
   Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -430,6 +449,7 @@ static void SuhallaGate_TalkToEastGuard(void) {
 
   if (GameFlag_Get(FLAG_SUHALLA_GATE_ATTACK_SEEN) != 0) {
     Event_SetMessageId(MsgSuhallaPityColossoVictor);
+    // "It's a pity a Colosso victor should end up like this... Next..."
     Event_ShowMessage(ACTOR_EAST_GUARD, 0);
   } else {
     Event_SetMessageId(MsgSuhallaWantGoBabi);
@@ -464,6 +484,7 @@ static void SuhallaGate_SoldierVanishes(void) {
   Event_Start();
 
   Event_SetMessageId(MsgFieldVenusLighthouseWasAttackedBy);
+  // "Venus Lighthouse was... attacked by strange... wanderers..."
   Event_ShowMessageThenWait(ACTOR_VANISHING_SOLDIER, 0, 10);
 
   beat = 0;

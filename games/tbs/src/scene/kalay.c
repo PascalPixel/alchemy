@@ -484,6 +484,9 @@ const struct Trigger *Kalay_GetTriggers(void) {
 static void Kalay_TalkAboutLeavingHome(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayCameKalayBecauseDidntLike);
+  // "I came to Kalay because I didn't like Tolbi... You want to..."
+  // Yes: "Because Babi, the ruler of Tolbi, frightens me. He has ruled..."
+  // No: "Kalay is a much better town than Tolbi. I won't go back."
   Event_AskYesNo(ACTOR_MAN_WHO_LEFT_TOLBI, 0);
   Event_End();
 }
@@ -503,9 +506,11 @@ static void Kalay_AskAboutCaveAccess(void) {
     Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_TUNNEL_GUARD, 0);
     Event_Wait(10);
     Event_SetMessageId(MsgKalayDoWantGoCaveUp);
+    // "Do you want to go to the cave up ahead?"
     Event_OpenMessage(ACTOR_TUNNEL_GUARD, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
       Actor_SetAnimationAndWait(ACTOR_TUNNEL_GUARD, ANIM_SHAKE_HEAD);
+      // "I'd like to let you go, but I cannot. You'd better just turn..."
       Event_ShowMessage(ACTOR_TUNNEL_GUARD, 0);
     } else {
       message = &gFieldWork->message;
@@ -523,6 +528,9 @@ static void Kalay_AskAboutCaveAccess(void) {
 static void Kalay_TalkAboutLayana(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayLayanaWasVeryHardOn);
+  // "Layana was very hard on all of you, wasn't she?"
+  // Yes: "I think she went too far, telling you all to leave... But..."
+  // No: "Her words were hard, but you know how painful they were for..."
   Event_AskYesNo(ACTOR_WAITING_MAN, 0);
   Event_End();
 }
@@ -541,6 +549,7 @@ static void Kalay_TalkToWeaponMerchant(void) {
   } else {
     Event_Start();
     Event_SetMessageId(MsgKalayLordHammetSellsHisBest);
+    // "Lord Hammet sells all his best weapons elsewhere. These..."
     Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
     Event_End();
   }
@@ -560,6 +569,9 @@ static void Kalay_TalkToArmorMerchant(void) {
   } else {
     Event_Start();
     Event_SetMessageId(MsgKalayDidFindNeededInWeapon);
+    // "Did you find what you needed in the Weapon Shop?"
+    // Yes: "Then you'll like our armor, too."
+    // No: "Ah... You seek only the finest items. Kalay's weapons and..."
     Event_AskYesNo(ACTOR_ARMOR_MERCHANT, 0);
     Event_End();
   }
@@ -578,6 +590,7 @@ static void Kalay_TalkToItemMerchant(void) {
   } else {
     Event_Start();
     Event_SetMessageId(MsgKalayLadyLayanaSharedInLord);
+    // "Lady Layana shared in Lord Hammet's hardships when he built..."
     Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
     Event_End();
   }
@@ -728,22 +741,27 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_RunRepeatedMotion(ACTOR_FIRST_TOURIST, 2);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST, FACING_SOUTH_SOUTHWEST, 20);
     Event_SetMessageId(MsgKalayWhyWeStoppingAtPlace);
+    // "Why are we stopping at a place like this?"
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST, 0, 10);
     Actor_RunRepeatedMotion(ACTOR_FIRST_TOURIST + 1, 2);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 1, FACING_NORTH_NORTHWEST, 10);
     Actor_SetAnimation(ACTOR_FIRST_TOURIST + 1, ANIM_NOD);
+    // "Yeah! We have to hurry, or we'll be late for Colosso!"
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 1, 0, 10);
     Actor_SetAttachedEffect(ACTOR_FIRST_TOURIST + 5,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
+    // "Late for Colosso? We can't have that!"
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 5, 0, 10);
     Actor_ShowEmote(ACTOR_FIRST_TOURIST + 4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     40);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_NORTH_NORTHWEST, 10);
+    // "That won't do at all!"
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 4, 0, 10);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_WEST, 10);
     Actor_RunRepeatedMotion(ACTOR_FIRST_TOURIST + 4, 2);
     Actor_SetAnimation(ACTOR_FIRST_TOURIST + 4, ANIM_SHAKE_HEAD);
+    // "We paid good money to see Colosso! We can't be late!"
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 4, 0, 10);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_NORTH_NORTHWEST, 0);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 5, FACING_SOUTH_SOUTHWEST, 20);
@@ -753,6 +771,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_SetAttachedEffect(ACTOR_HEAD_GUIDE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
+    // "Everything will be just fine, folks!"
     Event_ShowMessageThenWait(ACTOR_HEAD_GUIDE, 0, 10);
     Actor_RunRepeatedMotion(ACTOR_HEAD_GUIDE, 2);
     head = Actor_Get(ACTOR_HEAD_GUIDE);
@@ -775,21 +794,27 @@ static void Kalay_WatchTourGroupDeparture(void) {
     headHome->steeringFlags |= ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_HEAD_GUIDE, 180, 272);
     Actor_FaceDirection(ACTOR_HEAD_GUIDE, FACING_EAST, 0);
+    // "We're just checking to make sure no one is missing!"
     Event_ShowMessageThenWait(ACTOR_HEAD_GUIDE, 0, 10);
     Actor_ShowEmote(ACTOR_OURANOS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     Actor_RunRepeatedMotion(ACTOR_OURANOS, 1);
     Actor_SetAnimationAndWait(ACTOR_OURANOS, ANIM_NOD);
+    // "Well, I guess that's OK..."
     Event_ShowMessageThenWait(ACTOR_OURANOS, 0, 10);
     Actor_RunRepeatedMotion(ACTOR_FIRST_TOURIST + 6, 1);
+    // "But if anyone is missing, we're the one's who'll miss out."
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 6, 0, 10);
     Actor_SetAnimation(ACTOR_FIRST_TOURIST + 6, ANIM_SHAKE_HEAD);
+    // "Forget about them! Let's just get a move on!"
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 6, 0, 10);
     Actor_RunRepeatedMotion(ACTOR_SECOND_GUIDE, 2);
     Actor_ShowEmote(ACTOR_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+    // "Oh, dear..."
     Event_ShowMessageThenWait(ACTOR_SECOND_GUIDE, 0, 10);
     Actor_Jump(ACTOR_HEAD_GUIDE, 2, 20);
     Actor_Jump(ACTOR_HEAD_GUIDE, 4, 40);
     Actor_RunRepeatedMotion(ACTOR_HEAD_GUIDE, 2);
+    // "All right, hurry up and start counting!"
     Event_ShowMessageThenWait(ACTOR_HEAD_GUIDE, 0, 10);
     Actor_SetSpeed(ACTOR_SECOND_GUIDE, PIXELS(8) / 5, PIXELS(4) / 5);
     Actor_WalkToAndWait(ACTOR_SECOND_GUIDE, 265, 282);
@@ -841,6 +866,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_SetAnimationAndWait(ACTOR_HEAD_GUIDE, ANIM_SHAKE_HEAD);
     message = MsgKalayShortOnePerson;
     Event_SetMessageId(message);
+    // "Uh-oh... We're short one person... Now where could he be?"
     Event_ShowMessageThenWait(ACTOR_HEAD_GUIDE, 0, 40);
     // The guides pace while the tourists complain one by one.
     Kalay_StartGuidesPacing();
@@ -874,6 +900,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 3, FACING_NORTH_NORTHWEST, 10);
     Actor_RunRepeatedMotion(ACTOR_FIRST_TOURIST + 3, 1);
     Event_SetMessageId(message + 6);
+    // "Come on! Why aren't we leaving yet?"
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 3, 0, 10);
     Task_Remove(Kalay_AlternateGuidesPacing);
     Actor_Stop(ACTOR_HEAD_GUIDE);
@@ -893,6 +920,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     message += 5;
     Actor_RunRepeatedMotion(ACTOR_FIRST_TOURIST + 2, 2);
     Event_SetMessageId(message);
+    // "Uh-oh... We're short one person... Now where could he be?"
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 2, 0, 20);
     Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 2);
     Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 3);
@@ -909,6 +937,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_SetAnimationAndWait(ACTOR_FIRST_TOURIST + 4, ANIM_SHAKE_HEAD);
     message = MsgKalayDecideEnteringColosso;
     Event_SetMessageId(message);
+    // "We have to decide if we're entering Colosso once we reach Tolbi."
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 4, 0, 10);
     Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 4);
     Actor_Stop(ACTOR_OURANOS);
@@ -922,14 +951,17 @@ static void Kalay_WatchTourGroupDeparture(void) {
     message += 3;
     Actor_SetAnimationAndWait(ACTOR_OURANOS, ANIM_SHAKE_HEAD);
     Event_SetMessageId(message);
+    // "We have to decide if we're entering Colosso once we reach Tolbi."
     Event_ShowMessageThenWait(ACTOR_OURANOS, 0, 10);
     Actor_RunRepeatedMotion(ACTOR_FIRST_TOURIST + 6, 1);
     Actor_SetAnimation(ACTOR_FIRST_TOURIST + 6, ANIM_SHAKE_HEAD);
+    // "I hear there was a landslide on the road to Tolbi. We paid..."
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 6, 0, 10);
     Actor_ShowEmote(ACTOR_OURANOS, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     Actor_ShowEmote(ACTOR_HEAD_GUIDE, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     Actor_RunRepeatedMotion(ACTOR_HEAD_GUIDE, 2);
     Event_SetMessageId(MsgKalayThatsWeCantWaitAny);
+    // "That's it... We can't wait any longer!"
     Event_ShowMessageThenWait(ACTOR_HEAD_GUIDE, 0, 10);
     Actor_Stop(ACTOR_FIRST_TOURIST);
     Actor_Stop(ACTOR_FIRST_TOURIST + 1);
@@ -960,23 +992,31 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 6, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_OURANOS, FACING_WEST, 40);
     Actor_Jump(ACTOR_SECOND_GUIDE, 4, 40);
+    // "Can't wait? What do you mean?"
     Event_ShowMessageThenWait(ACTOR_SECOND_GUIDE, 0, 10);
     Actor_RunRepeatedMotion(ACTOR_HEAD_GUIDE, 1);
+    // "We all knew that anyone who was late would be left behind,..."
     Event_ShowMessageThenWait(ACTOR_HEAD_GUIDE, 0, 10);
     Actor_SetAnimationAndWait(ACTOR_SECOND_GUIDE, ANIM_NOD);
+    // "Everyone understood that."
     Event_ShowMessageThenWait(ACTOR_SECOND_GUIDE, 0, 10);
     Actor_SetAnimationAndWait(ACTOR_HEAD_GUIDE, ANIM_NOD);
+    // "Then what's the problem? We'll miss the boat if we wait any..."
     Event_ShowMessageThenWait(ACTOR_HEAD_GUIDE, 0, 10);
     Actor_ShowEmote(ACTOR_FIRST_TOURIST, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     Actor_StartRepeatedMotion(ACTOR_FIRST_TOURIST, 1);
+    // "Miss the boat? We can't let that happen!"
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST, 0, 10);
     Actor_ShowEmote(ACTOR_FIRST_TOURIST + 1, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+    // "We paid a lot of money... We have to arrive before the..."
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 1, 0, 10);
     Actor_SetAnimationAndWait(ACTOR_SECOND_GUIDE, ANIM_SHAKE_HEAD);
     Event_Wait(40);
     Actor_SetAnimationAndWait(ACTOR_SECOND_GUIDE, ANIM_NOD);
+    // "There's nothing we can do... Let's go!"
     Event_ShowMessageThenWait(ACTOR_SECOND_GUIDE, 0, 20);
     Actor_SetAnimationAndWait(ACTOR_HEAD_GUIDE, ANIM_NOD);
+    // "Yeah! Let's go!"
     Event_ShowMessageThenWait(ACTOR_HEAD_GUIDE, 0, 10);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST, FACING_SOUTH_SOUTHWEST, 0);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 1, FACING_NORTH_NORTHWEST, 4);
@@ -995,6 +1035,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_SetAnimation(ACTOR_FIRST_TOURIST + 6, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_OURANOS, ANIM_NOD);
     Actor_Jump(ACTOR_HEAD_GUIDE, 2, 40);
+    // "OK... Follow me, and stay in line!"
     Event_ShowMessageThenWait(ACTOR_HEAD_GUIDE, 0, 10);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 1, FACING_WEST, 4);
@@ -1604,9 +1645,11 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_PALACE_GUARD, ANIM_SHAKE_HEAD);
   Event_SetMessageId(MsgKalayLordHammetsPalaceLordAway);
+  // "This is Lord Hammet's palace. The lord is away. Please, begone."
   Event_ShowMessageThenWait(ACTOR_PALACE_GUARD, 0, 10);
   Actor_FaceDirection(ACTOR_SECOND_PALACE_GUARD, FACING_SOUTH_SOUTHWEST, 10);
   Actor_SetAnimationAndWait(ACTOR_SECOND_PALACE_GUARD, ANIM_NOD);
+  // "We will happily welcome visitors once Lord Hammet has returned."
   Event_ShowMessageThenWait(ACTOR_SECOND_PALACE_GUARD, 0, 10);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1619,12 +1662,14 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Actor_WalkToAndWait(ACTOR_IVAN, 212, 268);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 20);
+  // "Leave this to me."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_WalkToAndWait(ACTOR_IVAN, 202, 254);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(10);
+  // "It is I... Please permit me to see Lady Layana."
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 10);
   Actor_ShowEmote(ACTOR_PALACE_GUARD, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_SECOND_PALACE_GUARD, EMOTE_IN_FRONT | EMOTE_QUESTION,
@@ -1635,58 +1680,75 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Actor_FaceDirection(ACTOR_SECOND_PALACE_GUARD, FACING_SOUTH_SOUTHEAST, 20);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
+  // "Don't you recognize me? I am Ivan, servant to Lord Hammet!"
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_PALACE_GUARD, 2);
+  // "Ivan...?"
   Event_ShowMessageThenWait(ACTOR_PALACE_GUARD, 0, 10);
   Actor_ShowEmote(ACTOR_PALACE_GUARD, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_StartRepeatedMotion(ACTOR_PALACE_GUARD, 2);
+  // "I didn't recognize you- You're so tan! But it really is you,..."
   Event_ShowMessageThenWait(ACTOR_PALACE_GUARD, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_SECOND_PALACE_GUARD, 2);
+  // "Oh, it's Ivan! You've grown so much in such a short time, Ivan!"
   Event_ShowMessageThenWait(ACTOR_SECOND_PALACE_GUARD, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 10);
+  // "Have I really changed that much?"
+  // Yes: "Really? I'm surprised... It doesn't feel like it's been that..."
+  // No: "You probably wouldn't know. You only met me after I got left..."
   Event_AskYesNo(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_PALACE_GUARD, 1);
   Actor_SetAnimationAndWait(ACTOR_PALACE_GUARD, ANIM_SHAKE_HEAD);
+  // "That doesn't matter... What's important is that the thieves..."
   Event_ShowMessageThenWait(ACTOR_PALACE_GUARD, 0, 10);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 20);
   Actor_RunRepeatedMotion(ACTOR_SECOND_PALACE_GUARD, 1);
   Actor_SetAnimationAndWait(ACTOR_SECOND_PALACE_GUARD, ANIM_NOD);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
+  // "Please tell us, will Lord Hammet be freed soon, too?"
   Event_ShowMessageThenWait(ACTOR_SECOND_PALACE_GUARD, 0, 10);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 60);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 10);
+  // "Freed? Lord Hammet is a prisoner?"
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 10);
   Actor_FaceDirection(ACTOR_PALACE_GUARD, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SECOND_PALACE_GUARD, FACING_WEST, 40);
   Actor_FaceDirection(ACTOR_PALACE_GUARD, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_SECOND_PALACE_GUARD, FACING_SOUTH_SOUTHEAST, 10);
   Actor_RunRepeatedMotion(ACTOR_PALACE_GUARD, 1);
+  // "...You haven't heard? I can see we'll need to fill you in on..."
   Event_OpenMessage(ACTOR_PALACE_GUARD, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
+    // "No, Isaac! There are no secrets between us!"
     Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0, 10);
     gFieldWork->message++;
   } else {
     gFieldWork->message++;
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
+    // "My companions and I have overcome many hardships together!"
     FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0, 10);
   }
   Actor_RunRepeatedMotion(ACTOR_SECOND_PALACE_GUARD, 2);
+  // "Very well, then... Why were you not with Lord Hammet?"
   Event_ShowMessageThenWait(ACTOR_SECOND_PALACE_GUARD, 0, 10);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
+  // "I remained in Vault to look for his stolen rod."
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 10);
   Actor_SetAttachedEffect(ACTOR_PALACE_GUARD,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
+  // "Stolen? Someone stole his rod?"
   Event_ShowMessageThenWait(ACTOR_PALACE_GUARD, 0, 10);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+  // "Yes, the Shaman's Rod. But I was able to recover it..."
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 10);
   Actor_SetAttachedEffect(ACTOR_PALACE_GUARD,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1694,20 +1756,27 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
   Actor_RunRepeatedMotion(ACTOR_PALACE_GUARD, 2);
+  // "Then Lord Hammet must still be imprisoned in Lunpa..."
   Event_ShowMessageThenWait(ACTOR_PALACE_GUARD, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_SECOND_PALACE_GUARD, 2);
   Actor_FaceDirection(ACTOR_SECOND_PALACE_GUARD, FACING_WEST, 10);
+  // "I must report this to Lady Layana!"
   Event_ShowMessageThenWait(ACTOR_SECOND_PALACE_GUARD, 0, 10);
   Actor_FaceDirection(ACTOR_PALACE_GUARD, FACING_EAST, 10);
   Actor_SetAnimationAndWait(ACTOR_PALACE_GUARD, ANIM_NOD);
   Actor_FaceDirection(ACTOR_PALACE_GUARD, FACING_SOUTH_SOUTHEAST, 10);
+  // "Ivan, come see Lady Layana with me... You can explain it all..."
   Event_ShowMessage(ACTOR_PALACE_GUARD, 0);
   Actor_FaceDirection(ACTOR_SECOND_PALACE_GUARD, FACING_SOUTH_SOUTHEAST, 10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 10);
+  // "Isaac, you saw Lord Hammet heading north, didn't you?"
+  // Yes: "That must have been when Lord Hammet went toward Lunpa."
+  // No: "No, I mean the day Lord Hammet went toward Lunpa..."
   Event_AskYesNo(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
+  // "Lady Layana will surely be glad to hear your tale. Please,..."
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
@@ -1827,6 +1896,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_Jump(ACTOR_BUNZA, 2, 20);
   Actor_SetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
   Event_SetMessageId(MsgKalayWeveArrivedHammet);
+  // "We've arrived, Hammet."
   Event_ShowMessageThenWait(ACTOR_BUNZA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1868,9 +1938,11 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_SetScript(ACTOR_IVAN, motionActions);
   Actor_SetScript(ACTOR_MIA, motionActions);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "Arrived where?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 2, 0, 10);
   Actor_ShowEmote(ACTOR_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH_SOUTHEAST, 20);
+  // "Oh, didn't I tell you about this entrance, Ivan?"
   Event_ShowMessageThenWait(ACTOR_HAMMET, 0, 10);
   Actor_Stop(ACTOR_PARTY_LEADER);
   Actor_Stop(ACTOR_GARET);
@@ -1883,15 +1955,20 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
+  // "This underground passage leads to Hammet Palace."
   Event_ShowMessageThenWait(ACTOR_HAMMET, 0, 10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "An underground passage? What for?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
+  // "Just to be safe."
   Event_ShowMessageThenWait(ACTOR_HAMMET, 0, 10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "I don't understand. Why bring the wagon in this way?"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH_SOUTHWEST, 0);
   Actor_RunRepeatedMotion(ACTOR_BUNZA, 2);
+  // "Because Dodonpa's henchmen may be here in Kalay..."
   Event_ShowMessageThenWait(ACTOR_BUNZA, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
@@ -1908,34 +1985,43 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 10);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_NORTH_NORTHEAST, 10);
   Actor_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
+  // "Well then, Bunza, would you please take them to the town's..."
   Event_ShowMessageThenWait(ACTOR_HAMMET, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
   Actor_SetAttachedEffect(ACTOR_IVAN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
+  // "What? Why? We'll just go this way with you."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 2, 0, 10);
   Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHEAST, 10);
   Actor_SetAnimation(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
+  // "You can't. You must go through town to the Palace."
   Event_ShowMessageThenWait(ACTOR_BUNZA, 0, 10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "I'm confused..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 10);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH_SOUTHEAST, 10);
   Actor_ShowEmote(ACTOR_HAMMET, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  // "You have no reason to hide, now, do you?"
   Event_ShowMessageThenWait(ACTOR_HAMMET, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
+  // "Why shouldn't we just go in this way?"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH_SOUTHWEST, 10);
   Actor_SetAnimation(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
+  // "That would raise suspicions."
   Event_ShowMessageThenWait(ACTOR_BUNZA, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 10);
   Actor_SetAnimationAndWait(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
+  // "Wouldn't it be strange if people who aren't even supposed to..."
   Event_ShowMessageThenWait(ACTOR_BUNZA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_HAMMET, ANIM_SHAKE_HEAD);
+  // "If anyone noticed, they might learn of this secret entrance."
   Event_ShowMessageThenWait(ACTOR_HAMMET, 0, 10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
@@ -1943,6 +2029,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH_SOUTHEAST, 10);
   Actor_SetAnimation(ACTOR_HAMMET, ANIM_NOD);
+  // "Now, do you understand?"
   Event_OpenMessage(ACTOR_HAMMET, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
@@ -1953,10 +2040,13 @@ static void Kalay_HammetReturnsToPalace(void) {
   } else {
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_BUNZA, 2);
+    // "In that case how about this?"
     Event_ShowMessageThenWait(ACTOR_BUNZA, 0, 40);
+    // "I think Hammet and Lady Layana need time for their reunion..."
     Event_ShowMessageThenWait(ACTOR_BUNZA, 0, 10);
     Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 20);
+    // "In that case, we will gladly ride in the wagon."
     Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 10);
   }
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);

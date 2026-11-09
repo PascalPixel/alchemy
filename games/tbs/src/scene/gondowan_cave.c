@@ -239,10 +239,12 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
     Event_Wait(10);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
     Event_SetMessageId(MsgKaragolWhyGoingBackIsaacDo);
+    // "Why are you going back, Isaac? Do you need to get something..."
     Event_OpenMessage(ACTOR_IODEM, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
       // "I see... In that case, I shall wait here for you to return." The
       // saved place becomes Tolbi's.
+      // "I see... In that case, I shall wait here for you to return."
       Event_ShowMessage(ACTOR_IODEM, 0);
       Actor_WalkTo(ACTOR_IODEM, 152, 232);
       Event_ClearFlag(FLAG_IODEM_FOLLOWING_PARTY);
@@ -254,6 +256,7 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
       // "Then we should continue on our way to the lighthouse." He rejoins
       // the party, and Isaac steps away from the step trigger.
       gFieldWork->message += 1;
+      // "Then we should continue on our way to the lighthouse."
       Event_ShowMessage(ACTOR_IODEM, 0);
       Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
       leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -285,6 +288,7 @@ static void GondowanCave_IodemRejoins(void) {
   Event_Wait(10);
   Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
   Event_SetMessageId(MsgKaragolIveBeenWaitingForIsaac);
+  // "I've been waiting for you, Isaac! We should go to Babi..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
   {
@@ -312,6 +316,7 @@ static void GondowanCave_SoldierAsksAboutCrossing(void) {
 
   firstMessage = MsgKaragolDoYouWishCrossInto;
   Event_SetMessageId(firstMessage);
+  // "Do you wish to cross into Gondowan?"
   Event_OpenMessage(ACTOR_FIRST_SOLDIER, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
@@ -323,6 +328,7 @@ static void GondowanCave_SoldierAsksAboutCrossing(void) {
     Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   } else {
     gFieldWork->message++;
+    // "That's a good idea. They wouldn't let you into Babi..."
     Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   }
 }

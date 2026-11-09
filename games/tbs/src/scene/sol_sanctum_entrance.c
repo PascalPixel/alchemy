@@ -857,6 +857,9 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   // Kraden: "This is your first time here, right?" Yes: "Take a good look at
   // it." No: "I doubt that..."
   Event_SetMessageId(MsgSolSanctumKradenFirstTimeAtSol);
+  // "This is the entrance to Sol Sanctum. This is your first time..."
+  // Yes: "It's an important relic of our past. Take a good look at it."
+  // No: "I doubt that... Few ever get the chance to see this sanctum..."
   Event_AskYesNo(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
   Event_Wait(20);
   FieldCamera_MoveTo(PIXELS(1224), -1, PIXELS(148), 1);
@@ -990,6 +993,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   // Garet: "What's wrong, Kraden?"
   Event_SetMessageId(MsgSolSanctumWrongKraden);
+  // "What's wrong, Kraden?"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_StartRepeatedMotion(ACTOR_KRADEN, 2);
@@ -1009,8 +1013,10 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_Wait(20);
   // Kraden: the sanctum always looked strange to him, not as he imagined.
+  // "I've come here many times, and I've always thought it..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "I had always imagined Sol Sanctum would look different, somehow."
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   Actor_FaceEachOther(ACTOR_PARTY_LEADER, 5, 0);
   Event_Wait(40);
@@ -1024,8 +1030,10 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   // Kraden: a sanctum built in honour of the sun ought to show it somewhere.
+  // "Sol Sanctum was built in honor of the sun. There ought to be..."
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 10);
+  // "I was always puzzled why there wasn't."
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 20);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
@@ -1051,12 +1059,14 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
     // Yes: Garet says it is too dangerous to split up; they stay together.
     Event_SetMessageId(MsgSolSanctumDangerousSplitStay);
     Actor_RunRepeatedMotion(ACTOR_GARET, 1);
+    // "But it's too dangerous for us to split up. We should stay..."
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   } else {
     // No: Jenna objects to turning back now; Isaac nods and Garet agrees to
     // help Kraden.
     Event_SetMessageId(MsgSolSanctumCantSeriouslyWant);
     Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 20);
+    // "You can't seriously want to turn back after we've come this far."
     Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
@@ -1070,6 +1080,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
     Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 30);
     Actor_RunRepeatedMotion(ACTOR_GARET, 1);
     Event_Wait(10);
+    // "Let's help Kraden. We should stick together, after all."
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   }
 
@@ -1161,6 +1172,7 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 30);
   // Kraden: "More statues... It doesn't look like we can reach them".
   Event_SetMessageId(MsgSolSanctumMoreStatuesOutOfReach);
+  // "More statues... Hmm... It doesn't look like we can reach..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0, 10);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);

@@ -216,13 +216,17 @@ static void LogRoomsB_WelcomeIsaacBack(void) {
   Event_SetMessageId(MsgVaultIsaacYouveComeBackVault);
   Actor_TurnToFaceEachOther(ACTOR_MAYOR, ACTOR_PARTY_LEADER, 2);
   Actor_SetAnimation(ACTOR_MAYOR, ANIM_STAND);
+  // "Oh, Isaac! You've come back to Vault!"
   Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_MAYOR, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Ever since you left, all sorts of crazy things have been..."
   Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 20);
   Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  // "Those thieves you caught have escaped from jail."
   Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 30);
   // The negative answer advances to the next message before continuing.
+  // "We were worried that they might come after you. Have you run..."
   Event_OpenMessage(ACTOR_MAYOR, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
     gFieldWork->message++;
@@ -259,9 +263,11 @@ static void LogRoomsB_OfferBones(void) {
   Actor_TurnToFaceEachOther(ACTOR_GIRL_AT_THE_INN, ACTOR_PARTY_LEADER, 0);
   if (GameFlag_Get(FLAG_VAULT_BONE_RECEIVED) == 0) {
     Event_SetMessageId(MsgVaultHaveLotLeftoverBonesFrom);
+    // "I have a lot of leftover bones from dinner. Here, do you..."
     Event_OpenMessage(ACTOR_GIRL_AT_THE_INN, 0);
   } else {
     Event_SetMessageId(MsgVaultWantMoreBones);
+    // "What? You want more bones?"
     Event_OpenMessage(ACTOR_GIRL_AT_THE_INN, 0);
   }
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
@@ -276,6 +282,7 @@ static void LogRoomsB_OfferBones(void) {
       Actor_SetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIM_SHAKE_HEAD);
       Event_Wait(20);
       Event_SetMessageId(MsgVaultWowHaveManyThingsArent);
+      // "Wow, you have so many things. Aren't you a greedy lad!"
       Event_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
     } else {
       ItemDisplay_ShowItem(ITEM_BONE, 3);
@@ -329,6 +336,7 @@ static void LogRoomsB_TalkToWeaponMerchant(void) {
     Shop_Run(VAULT_WEAPON_STOCK, ACTOR_VAULT_WEAPON_MERCHANT);
   } else {
     Event_SetMessageId(MsgVaultTheresRiverFireOnOther);
+    // "There's a river of fire on the other side of Mt. Aleph...."
     Event_ShowMessage(ACTOR_VAULT_WEAPON_MERCHANT, 0);
   }
 
@@ -347,6 +355,7 @@ static void LogRoomsB_TalkToArmorMerchant(void) {
     Shop_Run(VAULT_ARMOR_STOCK, ACTOR_VAULT_ARMOR_MERCHANT);
   } else {
     Event_SetMessageId(MsgVaultTheySayVolcanoOnMt);
+    // "They say the volcano on Mt. Aleph has torn our continent in..."
     Event_ShowMessage(ACTOR_VAULT_ARMOR_MERCHANT, 0);
   }
 
@@ -365,6 +374,7 @@ static void LogRoomsB_TalkToItemMerchant(void) {
     Shop_Run(VAULT_ITEM_STOCK, ACTOR_VAULT_ITEM_MERCHANT);
   } else {
     Event_SetMessageId(MsgVaultWeHaventBeenGettingMany);
+    // "We haven't been getting many customers lately. Maybe I'll..."
     Event_ShowMessage(ACTOR_VAULT_ITEM_MERCHANT, 0);
   }
 
@@ -383,6 +393,7 @@ static void LogRoomsB_TalkToInnkeeper(void) {
     Inn_CheckIn(VAULT_INN, ACTOR_VAULT_INNKEEPER);
   } else {
     Event_SetMessageId(MsgVaultMmmmNothingDoNothingDo);
+    // "Mmmm. Nothing to do, nothing to do. I hate this! It's all..."
     Event_ShowMessage(ACTOR_VAULT_INNKEEPER, 0);
   }
 

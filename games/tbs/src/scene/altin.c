@@ -360,12 +360,17 @@ static void Altin_AskAboutFirstVisit(void) {
   Event_Start();
   Event_SetMessageId(MsgAltinYourFirstTimeVisitAltin);
 
+  // "Is this your first time to visit Altin?"
   Event_OpenMessage(ACTOR_GREETING_STRONGMAN, 0);
 
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
+    // "Look at how much Altin has changed! You can't do much here..."
     Event_ShowMessage(ACTOR_GREETING_STRONGMAN, 0);
   } else {
     Event_SkipMessages(1);
+    // "We must look a lot like a coastal town, huh?"
+    // Yes: "Nothing gets by you... Altin never even had a well in the..."
+    // No: "The day the gems fell from the sky, these water-spewing..."
     Event_AskYesNo(ACTOR_GREETING_STRONGMAN, 0);
   }
 
@@ -377,6 +382,9 @@ static void Altin_AskAboutFirstVisit(void) {
 static void Altin_AskAboutHydros(void) {
   Event_Start();
   Event_SetMessageId(MsgAltinDidSeeWaterGushingOut);
+  // "Did you see water gushing out when you slew those hydros..."
+  // Yes: "I see... So the water monsters are like giant water tanks..."
+  // No: "Really... Then how could they have carried all that water?"
   Event_AskYesNo(ACTOR_CURIOUS_STRONGMAN, 0);
   Event_End();
 }
@@ -393,10 +401,14 @@ static void Altin_TalkToThirstyOldWoman(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
     Event_SetMessageId(MsgAltinOnesWhoDefeatedWaterBeasts);
+    // "Are you the ones who defeated the water beasts?"
+    // Yes: "We'd be much obliged if you'd also help rebuild the village."
+    // No: "I heard our rescuers were young. I'd like to meet them."
     Event_AskYesNo(ACTOR_THIRSTY_OLD_WOMAN, 0);
   } else {
     Actor_SetAnimation(ACTOR_THIRSTY_OLD_WOMAN, ANIM_SHAKE_HEAD);
     Event_SetMessageId(MsgAltinWeCantDrinkWaterMonsters);
+    // "We can't drink the water the monsters spew! It's disgusting...."
     Event_ShowMessageThenWait(ACTOR_THIRSTY_OLD_WOMAN, 0, 10);
     if (GameFlag_Get(FLAG_ALTIN_WATER_BEAST_LEFT) == 0) {
       beast = Actor_Get(ACTOR_WATER_BEAST);
@@ -429,6 +441,9 @@ static void Altin_AskAboutRuins(void) {
 
   Event_Start();
   Event_SetMessageId(MsgAltinTrueFoundAncientRuinsIn);
+  // "Is it true you found ancient ruins in the deepest part of..."
+  // Yes: "Really? I always thought that mine held some kind of secret."
+  // No: "Hmmm, are you sure you even went down there? Someone ought..."
   Event_AskYesNo(ACTOR_OLD_MAN_ROCK_FLUSHED_OUT, 0);
   Event_End();
 }
@@ -440,6 +455,9 @@ static void CottageRoomsD_AskAboutXianGirl(void) {
 
   Event_Start();
   Event_SetMessageId(MsgAltinGirlFromXianWasAsking);
+  // "A girl from Xian was asking questions about young warriors...."
+  // Yes: "She was searching very hard."
+  // No: "Well, if not, I hope she finds whoever she was looking for."
   Event_AskYesNo(ACTOR_ROOM_ONE_SECOND_GUEST, 0);
   Event_End();
 }
@@ -451,6 +469,9 @@ static void CottageRoomsD_AskAboutWayWest(void) {
 
   Event_Start();
   Event_SetMessageId(MsgAltinTryingFindYourWayWest);
+  // "Are you trying to find your way west through the mountains?"
+  // Yes: "There should be a passage that leads west at the bottom of..."
+  // No: "I don't know what you did, but we are grateful you defeated..."
   Event_AskYesNo(ACTOR_ROOM_TWO_GUEST, 0);
   Event_End();
 }
@@ -462,6 +483,9 @@ static void CottageRoomsD_AskAboutMonsters(void) {
 
   Event_Start();
   Event_SetMessageId(MsgAltinDefeatedThoseMonstersDidnt);
+  // "You defeated those monsters, didn't you?"
+  // Yes: "Here, let me thank you with...a kiss! Hey, you're turning..."
+  // No: "Oh, you didn't? Still, I'm happy to be back home, so here's..."
   Event_AskYesNo(ACTOR_KISSING_GIRL, 0);
   Event_End();
 }
@@ -472,6 +496,9 @@ static void CottageRoomsD_AskAboutMineBeasts(void) {
 
   Event_Start();
   Event_SetMessageId(MsgAltinThereFewBeastsInMine);
+  // "There are a few beasts in the mine still, but they're down..."
+  // Yes: "Good. Then we can just mine the upper passages."
+  // No: "If they're in the upper passages, then we can't mine like we..."
   Event_AskYesNo(ACTOR_MAN_WAITING_TO_GO_HOME, 0);
   Event_End();
 }
@@ -496,6 +523,9 @@ static void CottageRoomsD_TalkToWeaponMerchant(void) {
     Event_Start();
     Event_SetMessageId(MsgAltinDoWantWeapons);
 
+    // "Do you want weapons?"
+    // Yes: "I'll sell you anything you want once the waters have..."
+    // No: "You wouldn't say that if you saw my weapons. I wish I could..."
     Event_AskYesNo(ACTOR_WEAPON_MERCHANT, 0);
     Event_End();
     return;
@@ -523,6 +553,7 @@ static void Altin_TalkToArmorMerchant(void) {
   if (GameFlag_Get(FLAG_ALTIN_WATER_DROPPED_TWICE) == 0) {
     Event_Start();
     Event_SetMessageId(MsgAltinMyStoreSubmergedWantSell);
+    // "My store is submerged... I want to sell armor, but there's..."
     Event_ShowMessage(ACTOR_FLOODED_ARMOR_MERCHANT, 0);
     Event_End();
     return;
@@ -547,6 +578,7 @@ static void Altin_TalkToItemMerchant(void) {
   if (GameFlag_Get(FLAG_ALTIN_WATER_DROPPED_ONCE) == 0) {
     Event_Start();
     Event_SetMessageId(MsgAltinWillDoIfMyMerchandise);
+    // "Oh, no! What will I do if all my merchandise is soaked?"
     Event_ShowMessage(ACTOR_FLOODED_ITEM_MERCHANT, 0);
     Event_End();
     return;
@@ -583,9 +615,13 @@ static void CottageRoomsD_TalkToInnkeeper(void) {
 
   if (GameFlag_Get(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
     Event_SetMessageId(MsgAltinThereSmallTempleWestAltin);
+    // "There is a small temple to the west of Altin Mine. They may..."
     Event_ShowMessage(ACTOR_INNKEEPER, 0);
   } else {
     Event_SetMessageId(MsgAltinWeGotLittleDampBut);
+    // "We got a little damp, but we're doing okay. We must count..."
+    // Yes: "After all, a lot of good people have been hurt in this flooding."
+    // No: "You have to remember, lots of people lost everything they..."
     Event_AskYesNo(ACTOR_INNKEEPER, 0);
   }
 

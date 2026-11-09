@@ -2705,14 +2705,18 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Actor_SetAttachedEffect(ACTOR_FELIX,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
+  // "Why is this happening? Is it to protect Venus Lighthouse?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_FELIX, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
+  // "I'm slipping... I can't hold on any longer."
   Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 20);
   Actor_SetAnimation(ACTOR_SHEBA, SHEBA_ANIMATION_HANG);
   Event_Wait(10);
   Actor_StartRepeatedMotion(ACTOR_FELIX, 2);
+  // "Nooo! Don't let go! You can't! You'll..."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_FELIX, 0, 40);
   Actor_SetAnimation(ACTOR_SHEBA, SHEBA_ANIMATION_SLIP);
+  // "Good-bye, Felix, and thank you."
   Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 20);
   Sound_Play(SOUND_FADE_OUT_BGM);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
@@ -2730,6 +2734,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Event_Wait(80);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_SHAKE_HEAD);
   Event_Wait(40);
+  // "Sheba!!! No! I won't let you die!"
   Event_ShowMessageThenWait(ACTOR_FELIX, 0, 40);
   Actor_SetAnimation(ACTOR_FELIX, FELIX_ANIMATION_KNEEL);
   Event_Wait(10);

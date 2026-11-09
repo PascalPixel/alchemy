@@ -179,6 +179,9 @@ const struct Trigger *Scene_GetTriggers(void) {
 static void HammetPalace_AskWhetherHammetWillBeReleased(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayLordHammetWillReleasedSoon);
+  // "Lord Hammet will be released soon. Right?"
+  // Yes: "I hope so. Otherwise, Layana will be overwhelmed by sorrow."
+  // No: "It wouldn't hurt you to lie a little, you know!"
   Event_AskYesNo(ACTOR_ASKING_IF_HAMMET_WILL_BE_RELEASED, 0);
   Event_End();
 }
@@ -189,6 +192,9 @@ static void HammetPalace_AskWhetherHammetWillBeReleased(void) {
 static void HammetPalace_AskWhetherSilkTradeHasEnded(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayHasLegacyLordHammetsSilk);
+  // "Has the legacy of Lord Hammet's silk trading come to an end?"
+  // Yes: "How can you say that! Lady Layana would be devastated!"
+  // No: "You're right. I never should have said that. I feel terrible..."
   Event_AskYesNo(ACTOR_ASKING_ABOUT_THE_SILK_TRADE, 0);
   Event_End();
 }
@@ -203,12 +209,16 @@ static void HammetPalace_LayanaScoldsLunpaVisit(void) {
   Event_Start();
   Actor_ShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Event_SetMessageId(MsgKalayIsaacSneakedIntoLunpaThats);
+  // "Isaac, you sneaked into Lunpa? That's far too dangerous!"
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_LAYANA, 2);
+  // "But I am happy to learn that Hammet is not hurt."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_SHAKE_HEAD);
+  // "Thank you, Isaac... But please, do not go to Lunpa again."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_NOD);
+  // "Please, fulfill your quest."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   GameFlag_Set(FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS);
   Event_End();
@@ -405,37 +415,52 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_ShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_SetMessageId(MsgKalayWhenHeardWereBackIvan);
   // The following replies advance through this conversation's message block.
+  // "When I heard that you were back, Ivan, I had dared to..."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
+  // "We thought Lord Hammet had been released from Lunpa, too."
   Event_ShowMessageThenWait(ACTOR_FIRST_SOLDIER, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_SHAKE_HEAD);
+  // "We sent the ransom money they demanded, so he should return..."
   Event_ShowMessageThenWait(ACTOR_SECOND_SOLDIER, 0, 10);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 10);
+  // "What's been happening in Lunpa these days?"
   FieldEvent_ShowMessageThenWait(
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_SECOND_SOLDIER, 2);
+  // "The leadership in Lunpa passed from its founder, Lunpa, the..."
   Event_ShowMessageThenWait(ACTOR_SECOND_SOLDIER, 0, 10);
   Actor_SetAnimation(ACTOR_FIRST_SOLDIER, ANIM_SHAKE_HEAD);
+  // "Dodonpa is a very evil man. His father, Donpa, is..."
   Event_ShowMessageThenWait(ACTOR_FIRST_SOLDIER, 0, 10);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 10);
+  // "When did you send the ransom money?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN, 0, 10);
   Actor_ShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "Let's see... First, the volcano erupted..."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_SECOND_SOLDIER, 2);
+  // "And the ransom note came right after the eruption."
   Event_ShowMessageThenWait(ACTOR_SECOND_SOLDIER, 0, 10);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHEAST, 10);
   Actor_SetAnimationAndWait(ACTOR_FIRST_SOLDIER, ANIM_NOD);
+  // "We rushed the money to them right away. I remember it well."
   Event_ShowMessageThenWait(ACTOR_FIRST_SOLDIER, 0, 10);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 10);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
+  // "It's been quite a while since the eruption..."
   FieldEvent_ShowMessageThenWait(
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_FIRST_SOLDIER, ANIM_NOD);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 10);
+  // "Is it possible they have no intention of letting Lord Hammet go?"
+  // Yes: "You think so, too, Isaac?"
+  // No: "I don't want to believe it either, but something seems wrong..."
   Event_AskYesNo(SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN, 0);
   Actor_SetAttachedEffect(ACTOR_LAYANA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
+  // "Are you saying Dodonpa won't release Hammet!?"
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(10);
@@ -443,9 +468,11 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+  // "I agree with Ivan. If they were going to release him, they'd..."
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   Actor_ShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
+  // "I am sorry, Lady Layana, but I think Ivan might be right."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 40);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_EAST_SOUTHEAST, 40);
   Actor_SetSpeed(ACTOR_LAYANA, PIXELS(2) / 5, PIXELS(1) / 5);
@@ -887,11 +914,14 @@ static void HammetPalace_HammetsHomecoming(void) {
   Actor_ShowEmote(ACTOR_HAMMET, v5, 20);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH_SOUTHWEST, 20);
   Event_SetMessageId(MsgKalayItsIvanHisCompanionsPerfect);
+  // "So! It's Ivan and his companions... Perfect timing!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_HAMMET, 0, 10);
   Actor_ShowEmote(ACTOR_LAYANA, v5, 20);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_SOUTH_SOUTHEAST, 20);
+  // "So, it's you..."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 20);
   Actor_ShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
+  // "I told you time and time again not to go to Lunpa, but you..."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -904,13 +934,17 @@ static void HammetPalace_HammetsHomecoming(void) {
   Event_Wait(60);
   Actor_ShowEmote(ACTOR_HAMMET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_WEST_SOUTHWEST, 10);
+  // "Please, Layana, don't be so harsh on them."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_HAMMET, 0, 10);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_EAST_SOUTHEAST, 10);
   Actor_ShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  // "Naturally, I'm happy that they rescued you."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_LAYANA, 2);
+  // "But this was something that Kalay should have handled alone."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 20);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_SOUTH_SOUTHEAST, 10);
+  // "You had a more pressing quest at hand, no?"
   Event_OpenMessage(ACTOR_LAYANA, 0);
   v5 = 1;
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {

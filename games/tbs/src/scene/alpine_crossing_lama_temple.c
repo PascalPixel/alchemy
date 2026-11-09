@@ -262,13 +262,18 @@ static void LamaTemple_TalkToMonkAskingAboutTheEast(void) {
 
   Event_Start();
   Event_SetMessageId(MsgMountainYoungWarriorsDoComeFrom);
+  // "Young warriors, do you come from the east?"
   Event_OpenMessage(ACTOR_MONK_ASKING_ABOUT_THE_EAST, 0);
 
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
     Event_Wait(20);
+    // "Then you must have come across Lamakan Desert..."
     Event_ShowMessage(ACTOR_MONK_ASKING_ABOUT_THE_EAST, 0);
   } else {
     Event_SkipMessages(1);
+    // "Did you stop in Xian along the way?"
+    // Yes: "Master Feh, in Xian, is very close to our Master Hama...."
+    // No: "Then it is good that you have come here. Feh's kung fu is..."
     Event_AskYesNo(ACTOR_MONK_ASKING_ABOUT_THE_EAST, 0);
   }
 
@@ -280,6 +285,9 @@ static void LamaTemple_TalkToMonkAskingAboutTheEast(void) {
 static void LamaTemple_TalkToMeditatingMonk(void) {
   Event_Start();
   Event_SetMessageId(MsgMountainDoKnowMeditation);
+  // "Do you know what meditation is?"
+  // Yes: "It allows you to find peace by closing your eyes... and..."
+  // No: "It is training in which you clear your mind of all..."
   Event_AskYesNo(ACTOR_MEDITATING_MONK, 0);
   Event_End();
 }
@@ -289,6 +297,9 @@ static void LamaTemple_TalkToMeditatingMonk(void) {
 static void LamaTemple_TalkToChiMonk(void) {
   Event_Start();
   Event_SetMessageId(MsgMountainDidKnowMasterHamaGreatest);
+  // "Did you know that Master Hama is the greatest master of Chi?"
+  // Yes: "You do? Then you must have already met Master Feh in Xian,..."
+  // No: "Then today, you shall see that Master Hama is truly the..."
   Event_AskYesNo(ACTOR_CHI_MONK, 0);
   Event_End();
 }
@@ -335,6 +346,7 @@ static void LamaTemple_RunHamasFarewell(void) {
   Actor_SetAnimationAndWait(ACTOR_TEMPLE_HAMA, ANIM_NOD);
   Event_Wait(20);
   Event_SetMessageId(MsgMountainAdeptsLetMeThankAgain);
+  // "Adepts, let me thank you again. I am truly grateful."
   Event_ShowMessageThenWait(ACTOR_TEMPLE_HAMA, 0, 20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
@@ -343,15 +355,19 @@ static void LamaTemple_RunHamasFarewell(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_TEMPLE_HAMA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "I did not expect you to come and aid us."
   Event_ShowMessageThenWait(ACTOR_TEMPLE_HAMA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "No, Master Hama... We are the ones who should be grateful."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
+  // "Thank you for passing the power of Reveal on to me... But..."
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_TEMPLE_HAMA, 2);
   Actor_FaceDirection(ACTOR_TEMPLE_HAMA, FACING_SOUTH_SOUTHWEST, 20);
+  // "What is it, Ivan?"
   Event_ShowMessageThenWait(ACTOR_TEMPLE_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Event_Wait(120);
@@ -360,11 +376,13 @@ static void LamaTemple_RunHamasFarewell(void) {
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 20);
+  // "Well, really, I was the one who suggested we help you, right?"
   Event_OpenMessage(ACTOR_GARET, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_MIA, FACING_EAST, 20);
     Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+    // "What? Didn't you want us to hurry on to the desert, Garet?"
     Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
@@ -373,6 +391,7 @@ static void LamaTemple_RunHamasFarewell(void) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(60);
     Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 20);
+    // "Did I, Mia? Did I really? I think you must be mistaken...."
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
     Event_SkipMessages(2);
   } else {
@@ -381,10 +400,12 @@ static void LamaTemple_RunHamasFarewell(void) {
     Actor_FaceDirection(ACTOR_MIA, FACING_EAST, 20);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
     Event_Wait(20);
+    // "No, Garet... You wanted us to get moving!"
     Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
+    // "Isaac, Mia... Don't make me look like a fool..."
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   }
 
@@ -397,6 +418,7 @@ static void LamaTemple_RunHamasFarewell(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 0);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_TEMPLE_HAMA, FACING_SOUTH_SOUTHEAST, 20);
+  // "Do not worry, Garet. I do not mind."
   Event_ShowMessageThenWait(ACTOR_TEMPLE_HAMA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
@@ -404,9 +426,11 @@ static void LamaTemple_RunHamasFarewell(void) {
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_TEMPLE_HAMA, ANIM_NOD);
   Event_Wait(20);
+  // "Travel well, my friends."
   Event_ShowMessageThenWait(ACTOR_TEMPLE_HAMA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_TEMPLE_HAMA, 2);
   Event_Wait(20);
+  // "I hope to see you soon."
   Event_ShowMessageThenWait(ACTOR_TEMPLE_HAMA, 0, 20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
@@ -431,14 +455,19 @@ static void LamaTemple_RunHamasFarewell(void) {
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 20);
+  // "Weren't you going to ask Master Hama what she meant earlier?"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 20);
+  // "We do not know when we will be able to see Master Hama again."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
+  // "Isaac, don't you think we should ask Master Hama what she meant?"
+  // Yes: "See? If it's bothering you, you should just go ahead and ask..."
+  // No: "Huh? You think we should just leave it as is?"
   Event_AskYesNo(ACTOR_GARET, 0);
   Event_Wait(20);
 
@@ -446,6 +475,7 @@ static void LamaTemple_RunHamasFarewell(void) {
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
+  // "Thank you, everyone..."
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
@@ -453,28 +483,35 @@ static void LamaTemple_RunHamasFarewell(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "but it is better that we leave now."
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Event_Wait(20);
+  // "What do you mean?"
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH_NORTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(20);
+  // "Master Hama hasn't looked me in the eye since she said those..."
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  // "Well, that just makes me even more curious!"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Don't worry about it. I doubt she would even tell me if I asked."
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  // "Well, that's just..."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(20);
+  // "Master Hama will tell me when we have completed our mission."
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
@@ -488,6 +525,7 @@ static void LamaTemple_RunHamasFarewell(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(20);
+  // "I have to believe that..."
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
@@ -549,6 +587,7 @@ static void LamaTemple_TalkToHealer(void) {
     Sanctum_Run(ACTOR_TRAVELING_HEALER);
   } else {
     Event_SetMessageId(MsgMountainAmTravelingAroundWorldSpread);
+    // "I am traveling around the world to spread good will."
     Event_ShowMessage(ACTOR_TRAVELING_HEALER, 0);
   }
   Event_End();
@@ -566,6 +605,7 @@ static void AlpineCrossing_FeizhiArrives(void) {
     Event_Start();
     Actor_SetPosition(ACTOR_FEIZHI, PIXELS(536), PIXELS(216));
     Event_SetMessageId(MsgMountainYahhSilkRoadBouldersBlock);
+    // "Yahh! Silk Road! Boulders block the road!"
     Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Event_Wait(20);
@@ -588,11 +628,13 @@ static void AlpineCrossing_FeizhiArrives(void) {
     Actor_Get(ACTOR_FEIZHI)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
     Event_Wait(10);
     Actor_FaceDirection(ACTOR_FEIZHI, FACING_WEST, 20);
+    // "My vision... It came true."
     Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
     Actor_StartRepeatedMotion(ACTOR_FEIZHI, 2);
     Actor_SetAttachedEffect(ACTOR_FEIZHI,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(60);
+    // "Hsu, Hsu!"
     Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
 
     // Feizhi runs down the path with the camera; the leader follows her
@@ -618,6 +660,7 @@ static void AlpineCrossing_FeizhiArrives(void) {
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     Actor_SetAnimationAndWait(ACTOR_FEIZHI, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "It is no good. I cannot hear Hsu's voice!"
     Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
     Event_End();
   }
@@ -630,6 +673,7 @@ static void AlpineCrossing_TalkToFeizhi(void) {
   Event_Start();
   Event_SetMessageId(MsgMountainDoDoWarriorShouldReturn);
   Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  // "What do I do? Warrior, should I return to Xian?"
   Event_OpenMessage(ACTOR_FEIZHI, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
     Event_SkipMessages(1);
@@ -658,20 +702,25 @@ static void AlpineCrossing_HamaReachesHsu(void) {
   Actor_RunRepeatedMotion(ACTOR_HAMA, 2);
   Event_Wait(20);
   Event_SetMessageId(MsgMountainHsuOkay);
+  // "Hsu, are you okay?"
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_HSU, 1);
   Event_Wait(20);
+  // "Master Hama, I am okay. But the boulder... I cannot move."
   Event_ShowMessageThenWait(ACTOR_HSU, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
+  // "Hsu seems unhurt. You must be glad, Feizhi."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH_NORTHEAST, 20);
+  // "Yes. Thank you, Master. But how can we free him?"
   Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(60);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "I don't know what we can do."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_StartRepeatedMotion(ACTOR_FEIZHI, 2);
   Actor_SetAttachedEffect(ACTOR_FEIZHI,
@@ -696,14 +745,17 @@ static void AlpineCrossing_LiftBoulder(void) {
   Actor_StartRepeatedMotion(ACTOR_HAMA, 2);
   Event_Wait(60);
   Event_SetMessageId(MsgMountainIsaacDidLiftBoulder);
+  // "Isaac, did you lift the boulder?"
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_SetAttachedEffect(ACTOR_FEIZHI,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_Jump(ACTOR_FEIZHI, 4, 0);
   Event_Wait(60);
+  // "Oh my! The boulder! It floats!"
   Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_HAMA, 1);
   Event_Wait(20);
+  // "Quickly, Feizhi. We must pull Hsu free!"
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH_NORTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_FEIZHI, ANIM_NOD);
@@ -718,6 +770,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_HAMA, 2);
   Event_Wait(20);
+  // "Ready yourself, Hsu. I am going to pull. One, two, three!"
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_Get(ACTOR_HAMA)->steeringFlags &= (u8)~ACTOR_FACES_MOTION;
   Actor_Get(ACTOR_FEIZHI)->steeringFlags &= (u8)~ACTOR_FACES_MOTION;
@@ -748,12 +801,17 @@ static void AlpineCrossing_LiftBoulder(void) {
   Event_Wait(50);
   Actor_Jump(ACTOR_FEIZHI, 2, 0);
   Event_Wait(20);
+  // "He is halfway out. Just a little further."
   Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
 
   // Hama asks the leader to hold the boulder a moment longer.
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
+  // "Can you hang on just a moment longer, Isaac?"
+  // Yes: "Thank you, Isaac!"
+  // No: "You cannot back out now! You must be responsible!"
   Event_AskYesNo(ACTOR_HAMA, 0);
+  // "Ready? I am going to pull! One, two, three!"
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
 
   // The second heave pulls Hsu free.
@@ -780,10 +838,13 @@ static void AlpineCrossing_LiftBoulder(void) {
   Actor_Jump(ACTOR_FEIZHI, 2, 0);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH_NORTHEAST, 20);
+  // "We did it! Master Hama, Hsu is free!"
   Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
+  // "We did it, Feizhi!"
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 30);
+  // "Thank you, Isaac!"
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
 
   // Feizhi steps back; they agree to send for Master Feh.
@@ -794,12 +855,15 @@ static void AlpineCrossing_LiftBoulder(void) {
   Actor_SetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_CROUCH);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
+  // "We must contact Master Feh and ask him to tend to Hsu's..."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEIZHI, ANIM_NOD);
   Event_Wait(20);
+  // "I will ask him to clean up the rocks, too."
   Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
+  // "Excellent. If Silk Road remains blocked, everyone will suffer."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);

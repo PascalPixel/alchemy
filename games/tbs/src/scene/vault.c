@@ -250,12 +250,14 @@ static void Vault_IvanStaysBehind(void) {
   Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
   Event_Wait(20);
   Event_SetMessageId(MsgVaultLeavingImStillWorriedAbout);
+  // "Are you leaving? I'm still worried about the rod, so I'll..."
   Event_ShowMessageThenWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   // Return any Djinn before removing Ivan from the party.
   if (Vault_GetIvanVenusDjinnCount() != 0) {
     Event_SetMessageId(MsgVaultWaitDontWantTakeYour);
+    // "Oh, wait, I don't want to take your Djinni. I'll just leave..."
     Event_ShowMessage(ACTOR_IVAN, 0);
     Vault_ReturnIsaacsDjinni();
     wait(20);
@@ -926,6 +928,7 @@ s32 Scene_Initialize(void) {
           Event_Wait(30);
           Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
           Event_SetMessageId(MsgVaultWelcomeBackTwo);
+          // "Welcome back, you two! Let's go find the rod!"
           Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
           Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
           Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -959,6 +962,7 @@ s32 Scene_Initialize(void) {
           Event_Wait(30);
           Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
           Event_SetMessageId(MsgVaultWelcomeBackTwo);
+          // "Welcome back, you two! Let's go find the rod!"
           Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
           Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
           Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);

@@ -221,6 +221,7 @@ static void ValeKradensCottage_TalkToBoyByTheFence(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     Event_SetMessageId(MsgValeIllClimbTheFenceSomeday);
+    // "Once I'm as old as you, Isaac, I'm going to climb that..."
     Event_ShowMessage(ACTOR_BOY_BY_THE_FENCE, 0);
   } else {
     message = MsgValeHearAwfulGrowls;
@@ -228,6 +229,7 @@ static void ValeKradensCottage_TalkToBoyByTheFence(void) {
     Actor_FaceActor(ACTOR_BOY_BY_THE_FENCE, ACTOR_PARTY_LEADER, 10);
     Actor_RunRepeatedMotion(ACTOR_BOY_BY_THE_FENCE, 2);
     Event_Wait(6);
+    // "Do you hear those awful growls coming from the other side of..."
     Event_OpenMessage(ACTOR_BOY_BY_THE_FENCE, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
       Event_SetMessageId(message + 1);
@@ -266,6 +268,7 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_KRADEN, 20);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
+    // "Oh! Isaac..."
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
     // Garet and Jenna step out of Isaac and stand either side of him.
     leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -286,25 +289,31 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 20);
     Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
     Event_Wait(10);
+    // "You look like something's bothering you."
     Event_ShowMessageThenWait(ACTOR_JENNA, 0, 20);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
     Event_Wait(10);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 10);
+    // "Me? Ah, well..."
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
     // Garet names Saturos and Menardi; Kraden finds them persistent.
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 40);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
+    // "It's those two, isn't it? Saturos and Menardi were their..."
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 10);
     Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
+    // "Are they still out there? They're very persistent..."
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 8);
     // Jenna asks whether they wanted something from him; it seems so.
     Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH_SOUTHEAST, 20);
+    // "Did they want something from you, Kraden?"
     Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 10);
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Event_Wait(10);
+    // "That seems to be the case..."
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 6);
     // The three are puzzled, and Jenna asks what he means.
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -313,11 +322,13 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 0);
     Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHWEST, 20);
     Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
+    // "Seems to be?"
     Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
     // Kraden: they spoke of Mt. Aleph and Sol Sanctum as if they had seen
     // them.
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+    // "Mt. Aleph and Sol Sanctum... They spoke as if they'd seen..."
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
     Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
     Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 20);
@@ -329,6 +340,7 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 40);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 40);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 20);
+    // "Isn't that strange?"
     Event_OpenMessage(ACTOR_KRADEN, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
       Event_SetMessageId(MsgValeYouCannotEnterMtAleph);
@@ -343,10 +355,12 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Event_SetMessageId(MsgValeJennaTheyMightBeThieves);
     Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
     Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 10);
+    // "And if they entered secretly, then they might be thieves!"
     Event_ShowMessageThenWait(ACTOR_JENNA, 0, 6);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
     Actor_Jump(ACTOR_GARET, 4, 30);
     Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 10);
+    // "We have to go tell the high elders and the villagers!"
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 6);
     // The three agree and turn to go.
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 10);
@@ -419,6 +433,7 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Event_SetMessageId(sneakingMessage);
     Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 10);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
+    // "We'll be fine if they don't see us, right?"
     Event_OpenMessage(ACTOR_GARET, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
       Event_SetMessageId((sneakingMessage + 1));
@@ -431,10 +446,12 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Event_SetMessageId(MsgValeJennaOurSecret);
     Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 10);
     Actor_RunRepeatedMotion(ACTOR_JENNA, 1);
+    // "This will just be our secret, OK?"
     Event_OpenMessage(ACTOR_JENNA, 0);
     Event_Wait(4);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
       Actor_Jump(ACTOR_JENNA, 2, 20);
+      // "No, Isaac! You can't even tell your mother!"
       Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
     } else {
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -447,6 +464,7 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     // Kraden: then it is decided.
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Event_Wait(10);
+    // "Then it's decided!"
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 0);
@@ -539,9 +557,11 @@ static void ValeKradensCottage_KradenSetsOff(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_SetMessageId(MsgValeKradenOurBestBet);
+  // "This is our best bet."
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 10);
+  // "All right! Let's go!"
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   // Isaac nods to Garet, then to Jenna.
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
@@ -618,6 +638,7 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   // Saturos is overheard: the villagers know little of Sol Sanctum.
   strangersMessage = MsgValeTheyKnowLittleOfThe;
   Event_SetMessageId(strangersMessage);
+  // "They seem to know little of Sol Sanctum's mysteries."
   Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 10);
 
   // Isaac hurries forward and Garet and Jenna step out beside him.
@@ -717,22 +738,27 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   // him.
   accusationMessage = MsgValeYoureTheOnesSneakingAround;
   Event_SetMessageId(accusationMessage);
+  // "Hey, you're the ones who were sneaking around!"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_FaceEachOther(ACTOR_SATUROS, ACTOR_MENARDI, 40);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH_NORTHEAST, 20);
+  // "Sneaking... Who are you, to accuse me!"
   Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 60);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_MENARDI, ANIM_NOD);
+  // "So Kraden's engagement was with you..."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MENARDI, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
+  // "Yeah, we're off to meet him right now."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0, 20);
   // Saturos asks whether their appointment is important enough to drive the
   // strangers away.
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 2);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST, 20);
+  // "And this appointment is important enough to drive us away?"
   Event_OpenMessage(ACTOR_SATUROS, 0);
 
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
@@ -752,6 +778,7 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   // Saturos lets them go; Jenna is surprised and Menardi doubts him, but he
   // sees no reason to delay the children.
   Event_SetMessageId(MsgValeSaturosGo);
+  // "Go..."
   Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 6);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -763,12 +790,15 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 10);
+  // "You're letting us go?"
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 2);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 10);
+  // "Are you sure, Saturos?"
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MENARDI, 0, 10);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_WEST, 20);
   Actor_SetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
+  // "Menardi, we have no reason to delay these children any further."
   Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 2);
   Event_Wait(10);
@@ -798,6 +828,7 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   // Garet: let's go. The village music returns and Garet and Jenna walk back
   // into Isaac; the strangers keep turning to watch him.
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
+  // "Let's... Let's go, Isaac."
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 1, 20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -837,6 +868,7 @@ static void ValeKradensCottage_OverhearKraden(void) {
     // Kraden wonders aloud who they were, while Garet and Jenna step out of
     // Isaac behind him.
     Event_SetMessageId(MsgValeWho);
+    // "Just who were they?"
     Event_ShowMessage(ACTOR_KRADEN, 0);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     {
@@ -1031,6 +1063,7 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
       Event_Start();
       Actor_RunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 2);
       Event_SetMessageId(MsgValeSaveYourselves);
+      // "This is it for me. Save yourselves..."
       Event_ShowMessage(ACTOR_ROCKSLIDE_SURVIVOR, 0);
       Event_End();
     } else {
@@ -1041,6 +1074,7 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
       // over to him.
       message = MsgValeRockslideDestroyedFence;
       Event_SetMessageId(message);
+      // "Rockslide...destroyed fence... Monsters everywhere..."
       Event_ShowMessageThenWait(ACTOR_ROCKSLIDE_SURVIVOR, 0, 20);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                       30);
@@ -1057,11 +1091,13 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
       Event_Wait(40);
       // He asks whether he will die. Yes: he gives up and tells them to save
       // themselves.
+      // "I'm hurt pretty badly... Do you think I'll die?"
       Event_OpenMessage(ACTOR_ROCKSLIDE_SURVIVOR, 0);
       if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
         Actor_RunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 2);
         Event_Wait(20);
         Event_SetMessageId((message + 2));
+        // "I knew it... This is it for me. Save yourselves..."
         Event_ShowMessage(ACTOR_ROCKSLIDE_SURVIVOR, 0);
         GameFlag_Set(FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP);
       } else {
@@ -1070,6 +1106,7 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
         Actor_RunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 2);
         Event_Wait(20);
         Event_SetMessageId((message + 3));
+        // "This is awful. I'm left here for the monsters to..."
         Event_ShowMessageThenWait(ACTOR_ROCKSLIDE_SURVIVOR, 0, 40);
         Actor_FaceActor(ACTOR_ROCKSLIDE_SURVIVOR, ACTOR_PARTY_LEADER, 0);
         Actor_SetAnimation(ACTOR_ROCKSLIDE_SURVIVOR, ANIM_STAND);
@@ -1077,10 +1114,12 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
         Actor_SetAnimation(ACTOR_ROCKSLIDE_SURVIVOR, 6);
         Actor_ShowEmote(ACTOR_ROCKSLIDE_SURVIVOR,
                         EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+        // "Wait... That's strange... I'm not hurt at all!"
         Event_ShowMessageThenWait(ACTOR_ROCKSLIDE_SURVIVOR, 0, 10);
         Actor_SetAnimation(ACTOR_ROCKSLIDE_SURVIVOR, ANIM_STAND);
         Event_Wait(10);
         Actor_SetAnimationAndWait(ACTOR_ROCKSLIDE_SURVIVOR, ANIM_NOD);
+        // "But I'm serious about the monsters, so be careful on your..."
         Event_ShowMessageThenWait(ACTOR_ROCKSLIDE_SURVIVOR, 0, 10);
         Actor_SetAnimationAndWait(ACTOR_ROCKSLIDE_SURVIVOR, ANIM_NOD);
         // Follow his escape until the party can see that he is unharmed.
@@ -1167,6 +1206,9 @@ static void ValeKradensCottage_FightSecondMonster(void) {
 static void ValeKradensCottage_TalkToCottageVisitor(void) {
   Event_Start();
   Event_SetMessageId(MsgValeMemoriesOfThisCottage);
+  // "You must have so many memories of this cottage, don't you?"
+  // Yes: "I thought so. You used to visit Kraden a lot, Isaac."
+  // No: "I understand. You don't have time to dwell on old memories..."
   Event_AskYesNo(ACTOR_COTTAGE_VISITOR, 0);
   Event_End();
 }

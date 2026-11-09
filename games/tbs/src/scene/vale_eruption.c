@@ -189,6 +189,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Event_SetMessageId(MsgValeMtAlephWasInactive);
   Actor_ShowEmote(ACTOR_GREAT_HEALER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(60);
+  // "I thought Mt. Aleph was inactive..."
   Event_ShowMessage(ACTOR_GREAT_HEALER, 0);
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(30);
@@ -198,27 +199,33 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   // Garet's sister doubts he is up there; her brother says someone saw him
   // climb.
   Actor_SetAnimationAndWait(ACTOR_GARETS_SISTER, ANIM_SHAKE_HEAD);
+  // "Grandpa, we don't even know if he's up there!"
   Event_ShowMessage(ACTOR_GARETS_SISTER, 0);
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceActor(ACTOR_GARETS_BROTHER, ACTOR_GARETS_SISTER, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_GARETS_BROTHER, ANIM_SHAKE_HEAD);
+  // "But, Sis, someone saw him and his friends climbing Mt. Aleph."
   Event_ShowMessage(ACTOR_GARETS_BROTHER, 0);
   // The guard saw them hanging around; Dora says they went to Kraden's house,
   // and the mayor and Dora wonder what Alchemy has to do with the eruption.
   Actor_RunRepeatedMotion(ACTOR_GUARD, 1);
+  // "They were hanging around here while I was on guard duty."
   Event_ShowMessage(ACTOR_GUARD, 0);
   Actor_FaceActor(ACTOR_DORA, ACTOR_GUARD, 0);
   Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_DORA, 1);
+  // "Isaac and Garet went to Mr. Kraden's house."
   Event_ShowMessage(ACTOR_DORA, 0);
   Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_DORA, 0);
   Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
+  // "Didn't they say they were studying Alchemy?"
   Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   Actor_FaceActor(ACTOR_DORA, ACTOR_GARETS_GRANDFATHER, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
+  // "Yes, they did...but... what does that have to do with the..."
   Event_ShowMessage(ACTOR_DORA, 0);
   Event_Wait(60);
   MapGrid_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
@@ -261,6 +268,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_MoveToAndWait(ACTOR_GARET, 105, 342);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
+  // "Uh-oh. It's Grandpa and the others."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
@@ -292,6 +300,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
 
   // The villagers spot them: "Garet!" "Isaac!" Garet's brother cries "Garet!"
   // and the villagers turn to the path.
+  // "Garet!"
   Event_ShowMessage(ACTOR_GARETS_BROTHER, 0);
   Actor_SetAttachedEffect(ACTOR_GARET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -308,13 +317,16 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   FieldCamera_WaitForArrival();
   Event_Wait(50);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
+  // "Isaac!"
   Event_ShowMessage(ACTOR_DORA, 0);
   Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_GREAT_HEALER, 1);
+  // "You're safe!"
   Event_ShowMessage(ACTOR_GREAT_HEALER, 0);
   Event_Wait(40);
   // The mayor: "Come over here, both of you!"
   Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
+  // "Come over here, both of you!"
   Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH_SOUTHEAST, 0);
@@ -352,6 +364,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
 
   // "Where have you been?" "What happened?"
   Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
+  // "Where have you been?"
   Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(50);
@@ -360,6 +373,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   // The Great Healer: "What happened?" The two look at each other and shake
   // their heads.
   Actor_RunRepeatedMotion(ACTOR_GREAT_HEALER, 1);
+  // "What happened?"
   Event_ShowMessage(ACTOR_GREAT_HEALER, 0);
   Event_Wait(40);
   Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
@@ -388,6 +402,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
     Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_WEST, 0);
     Event_Wait(40);
     Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
+    // "They were taken away? By whom?"
     Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     Event_SkipMessages(1);
   } else {
@@ -399,6 +414,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
     Event_Wait(40);
     Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
     Event_SkipMessages(1);
+    // "What do you mean, they were taken away?"
     Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   }
   Event_Wait(30);
@@ -414,6 +430,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
 
   // "This is all very complicated... Come into the sanctum, both of you."
   Actor_RunRepeatedMotion(ACTOR_GREAT_HEALER, 1);
+  // "This is all very complicated."
   Event_ShowMessage(ACTOR_GREAT_HEALER, 0);
   Actor_FaceActor(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
   Event_Wait(30);
@@ -421,6 +438,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_GREAT_HEALER, ANIM_NOD);
   Event_Wait(30);
+  // "We'll need you to tell us exactly what happened on the mountain."
   Event_ShowMessage(ACTOR_GREAT_HEALER, 0);
   Event_Wait(20);
   // The mayor agrees with a nod; the Great Healer sends them inside.
@@ -432,6 +450,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_FaceDirection(ACTOR_GREAT_HEALER, FACING_WEST, 0);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_GREAT_HEALER, 1);
+  // "Come into the sanctum, both of you."
   Event_ShowMessage(ACTOR_GREAT_HEALER, 0);
   Event_Wait(40);
   Actor_TurnToFaceEachOther(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);

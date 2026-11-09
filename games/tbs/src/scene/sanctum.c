@@ -342,15 +342,18 @@ static void Sanctum_ReadMindAboutGoldenStatue(void) {
 static void Sanctum_ReconsiderQuest(void) {
   Event_Start();
   Event_SetMessageId(MsgSanctumAreYouSure);
+  // "Are you sure?"
   Event_OpenMessage(ACTOR_HEALER, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Actor_SetAnimationAndWait(ACTOR_HEALER, 3);
     Event_Wait(20);
   } else {
     Event_Wait(20);
+    // "Would you like to think it over?"
     Event_OpenMessage(ACTOR_HEALER, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
       Event_Wait(20);
+      // "Isaac, will you take the fate of the world in your hands?"
       Event_OpenMessage(ACTOR_HEALER, 0);
       if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
         Event_Wait(20);
@@ -410,13 +413,18 @@ static void Sanctum_AskAboutNewAdepts(void) {
   wait(1);
 #endif
   Event_SetMessageId(MsgSanctumIsaacYourNewFriendsAdepts);
+  // "Isaac, are your new friends Adepts by any chance?"
   Event_OpenMessage(ACTOR_WEST_HEALER, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    // "So, there are others besides Valeans who have been granted..."
     Event_ShowMessage(ACTOR_WEST_HEALER, 0);
   } else {
     gFieldWork->message++;
+    // "......"
+    // "......"
     FieldEvent_ShowTwoMessagesAndWait(SANCTUM_NEW_FRIENDS_SPEAKER, 16, 1, 24, 1,
                                       3, 7, 16, 1, 14, 0);
+    // "Your friend seems angered by your words, Isaac... That..."
     Event_ShowMessage(ACTOR_WEST_HEALER, 0);
   }
   Event_End();
@@ -430,6 +438,7 @@ static void Sanctum_AskAboutPsynergyChanges(void) {
   Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_PARTY_LEADER, 0);
   Event_Wait(10);
   Event_SetMessageId(MsgSanctumDoFeelAnyChangeIn);
+  // "Do you feel any change in your Psynergy?"
   Event_OpenMessage(ACTOR_EAST_HEALER, 0);
 
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
@@ -499,6 +508,7 @@ static void Sanctum_WarnBeforeLeaving(void) {
   Actor_SetAnimationAndWait(ACTOR_HEALER, 4);
   Event_Wait(20);
   Event_SetMessageId(MsgSanctumOnceStepOutsideVillageCannot);
+  // "Once you step outside the village, you cannot take back your..."
   Event_ShowMessage(ACTOR_HEALER, 0);
   GameFlag_Set(FLAG_SANCTUM_WARNED_BEFORE_LEAVING);
   Event_End();
@@ -659,6 +669,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_Wait(30);
     Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 2);
     Event_SetMessageId(MsgSanctumWeHadIdeaTrueSanctum);
+    // "We had no idea... The true sanctum..."
     Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     Event_Wait(10);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -671,11 +682,13 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
     Actor_FaceActor(ACTOR_GARET, ACTOR_DORA, 0);
     Event_Wait(20);
+    // "And Jenna and Kraden... They're prisoners?"
     Event_OpenMessage(ACTOR_DORA, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
       Event_Wait(20);
       Actor_SetAnimationAndWait(ACTOR_DORA, 3);
       Event_Wait(20);
+      // "They've been taken against their will... How awful!"
       Event_ShowMessage(ACTOR_DORA, 0);
       gFieldWork->message++;
     } else {
@@ -683,6 +696,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
       Actor_SetAnimationAndWait(ACTOR_DORA, 4);
       Event_Wait(20);
       gFieldWork->message++;
+      // "Well...we can only hope they're all right."
       Event_ShowMessage(ACTOR_DORA, 0);
     }
     Event_Wait(20);
@@ -692,11 +706,13 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Actor_FaceActor(ACTOR_GARET, ACTOR_WEST_HEALER, 0);
     Actor_FaceActor(ACTOR_DORA, ACTOR_WEST_HEALER, 0);
     Event_Wait(20);
+    // "Do you think they can be saved?"
     Event_OpenMessage(ACTOR_WEST_HEALER, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
       Event_Wait(20);
       Actor_SetAnimationAndWait(ACTOR_WEST_HEALER, 3);
       Event_Wait(20);
+      // "Jenna's brother, Felix, will protect them, won't he?"
       Event_ShowMessage(ACTOR_WEST_HEALER, 0);
       gFieldWork->message++;
     } else {
@@ -704,6 +720,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
       Actor_SetAnimationAndWait(ACTOR_WEST_HEALER, 4);
       Event_Wait(20);
       gFieldWork->message++;
+      // "Then our hopes must lie with Felix."
       Event_ShowMessage(ACTOR_WEST_HEALER, 0);
     }
     Event_Wait(20);
@@ -721,6 +738,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_Wait(20);
     Actor_WalkToAndWait(ACTOR_GARETS_GRANDFATHER, 224, 120);
     Event_Wait(10);
+    // "What is it, Great Healer? You have been very quiet."
     Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     Event_Wait(20);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
@@ -731,6 +749,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_DORA, 1);
     Event_Wait(10);
+    // "It's like you're a thousand miles away."
     Event_ShowMessage(ACTOR_DORA, 0);
     Event_Wait(30);
     Actor_RunRepeatedMotion(ACTOR_HEALER, 3);
@@ -740,6 +759,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_HEALER, 3);
     Event_Wait(10);
+    // "That hovering stone, the one that appeared before Isaac..."
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTH_SOUTHWEST, 0);
@@ -748,12 +768,14 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, 3);
     Event_Wait(10);
+    // "What about it?"
     Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_HEALER, 3);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_HEALER, FACING_SOUTH_SOUTHEAST, 0);
     Event_Wait(10);
+    // "I have seen it before in my dreams."
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTH_SOUTHWEST, 0);
@@ -771,6 +793,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_Wait(60);
     Actor_RunRepeatedMotion(ACTOR_HEALER, 1);
     Event_Wait(10);
+    // "In my mind's eye, it appeared again just now and spoke to me."
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_Wait(10);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -783,10 +806,12 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_Wait(60);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     Event_Wait(10);
+    // "You saw it just now?"
     Event_ShowMessage(ACTOR_GARET, 0);
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_HEALER, 3);
     Event_Wait(10);
+    // "It must be the Wise One, guardian of the Elemental Stars."
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_Wait(10);
     Actor_ShowEmote(ACTOR_GARETS_GRANDFATHER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -798,6 +823,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_HEALER, 4);
     Event_Wait(10);
+    // "It told me what happened to you in Sol Sanctum."
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_Wait(30);
     Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_PARTY_LEADER, 0);
@@ -809,12 +835,14 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_Wait(20);
     Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_HEALER, 0);
     Event_Wait(20);
+    // "So, what does the Wise One say about the eruption?"
     Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     Event_Wait(30);
     Actor_RunRepeatedMotion(ACTOR_DORA, 2);
     Event_Wait(20);
     Actor_FaceActor(ACTOR_HEALER, ACTOR_PARTY_LEADER, 0);
     Event_Wait(20);
+    // "Will the volcano destroy Vale?"
     Event_ShowMessage(ACTOR_DORA, 0);
     Event_Wait(20);
     Event_Wait(40);
@@ -1123,6 +1151,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
   Event_SetMessageId(MsgSanctumIsaacWillAcceptResponsibilityFor);
   Actor_RunRepeatedMotion(ACTOR_HEALER, 1);
   Event_Wait(20);
+  // "Isaac, will you accept responsibility for the fate of the land?"
   Event_OpenMessage(ACTOR_HEALER, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Sanctum_ReceiveWiseOnesMission();
@@ -1138,6 +1167,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
     Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, 4);
     Event_Wait(20);
+    // "I can't blame you... I couldn't do it if I were in your shoes."
     Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     Event_Wait(20);
     Actor_Get(ACTOR_EAST_HEALER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -1196,6 +1226,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Event_Wait(20);
   // Garet and the Mayor react to Isaac accepting the burden.
   Event_SetMessageId(MsgSanctumAcceptIsaacCantMean);
+  // "You accept? Oh, Isaac... You can't mean it..."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(20);
   Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_GARET, 0);
@@ -1203,6 +1234,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Actor_ShowEmote(ACTOR_GARETS_GRANDFATHER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
                   0);
   Event_Wait(60);
+  // "You chose to leave your decision to Isaac. There shall be no..."
   Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
@@ -1220,6 +1252,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_HEALER, 3);
   Event_Wait(30);
+  // "O, Wise One, these two have accepted your quest. Give us..."
   Event_ShowMessage(ACTOR_HEALER, 0);
   Event_Wait(80);
   Sound_Play(SOUND_FADE_OUT_BGM);
@@ -2170,6 +2203,7 @@ static void Sanctum_TalkAboutJourneyFromXian(void) {
 
   Event_Start();
   Event_SetMessageId(MsgSanctumCameXianFromVeryDistant);
+  // "I came to Xian from very distant lands to spread good will."
   Event_ShowMessage(ACTOR_HEALER, 0);
   Event_End();
 }

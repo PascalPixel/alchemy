@@ -223,12 +223,14 @@ static void Tolbi_HideRevealedChest(void) {
 /// The first sign at Tolbi Spring: face away and toss a coin in.
 static void Tolbi_ReadSpringSign(void) {
   Event_SetMessageId(MsgTolbiFaceAwayTolbi);
+  // "Face away from Tolbi Spring and toss a coin into it. If you..."
   Event_ShowMessage(-1, 0);
 }
 
 /// The second sign at Tolbi Spring: a Lucky Medal wins better prizes.
 static void Tolbi_ReadLuckyMedalSign(void) {
   Event_SetMessageId(MsgTolbiTossLuckyMedal);
+  // "If you toss a Lucky Medal and you get really lucky, you'll..."
   Event_ShowMessage(-1, 0);
 }
 
@@ -264,6 +266,7 @@ static void Tolbi_TalkToOlderBrother(void) {
   Event_SetMessageId(msg);
   Actor_SetAnimation(ACTOR_TOLBI_OLDER_BROTHER, 0);
   Actor_FaceEachOther(ACTOR_TOLBI_OLDER_BROTHER, ACTOR_PARTY_LEADER, 2);
+  // "I'm the oldest, so I shouldn't have to share my allowance."
   Event_ShowMessageThenWait(ACTOR_TOLBI_OLDER_BROTHER, 0, 10);
   kid->facing = facing;
   wait(1);
@@ -302,6 +305,7 @@ static void Tolbi_TalkToYoungerSister(void) {
   Event_SetMessageId(msg);
   Actor_SetAnimation(ACTOR_TOLBI_YOUNGER_SISTER, 0);
   Actor_FaceEachOther(ACTOR_TOLBI_YOUNGER_SISTER, ACTOR_PARTY_LEADER, 2);
+  // "Mama told us to share the money. Doesn't my brother remember?"
   Event_ShowMessageThenWait(ACTOR_TOLBI_YOUNGER_SISTER, 0, 10);
   kid->facing = facing;
   wait(1);
@@ -327,6 +331,9 @@ const struct Trigger *Tolbi_SelectTriggers(void) {
 static void Tolbi_AskAboutLivingPastHundred(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiSomeoneLiveMore);
+  // "Can someone live to be more than 100 years old?"
+  // Yes: "Hmmm. Still, I'm pretty sure Babi is a lot older than 100..."
+  // No: "You could be right. But then, what about Tolbi's ruler,..."
   Event_AskYesNo(ACTOR_TOLBI_SUSPICIOUS_OLD_WOMAN, 0);
   Event_End();
 }
@@ -336,6 +343,9 @@ static void Tolbi_AskAboutLivingPastHundred(void) {
 static void Tolbi_TalkToFather(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiChildrenLoveSouvenirs);
+  // "Children really do love souvenirs, don't they?"
+  // Yes: "I'll bet you like them, too. Don't try to hide it! I used to..."
+  // No: "Hmph! You're only saying that because your parents never..."
   Event_AskYesNo(ACTOR_TOLBI_FATHER, 0);
   Event_End();
 }
@@ -346,8 +356,10 @@ static void Tolbi_TalkToMother(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiPatientLittleGuy);
   Actor_FaceDirection(ACTOR_TOLBI_MOTHER, FACING_NORTH, 0);
+  // "Be patient, little guy."
   Event_ShowMessage(ACTOR_TOLBI_MOTHER, 0);
   Actor_FaceDirection(ACTOR_TOLBI_MOTHER, FACING_WEST, 0);
+  // "I'll buy you better sweets than those later on."
   Event_ShowMessage(ACTOR_TOLBI_MOTHER, 0);
   Event_End();
 }
@@ -358,6 +370,7 @@ static void Tolbi_TalkToCryingBoy(void) {
   Actor_FaceDirection(ACTOR_TOLBI_CRYING_BOY, FACING_SOUTH, 0);
   Actor_StartRepeatedMotion(ACTOR_TOLBI_CRYING_BOY, 2);
   Event_SetMessageId(MsgTolbiWaahBuySweets);
+  // "Waah! Buy me some sweets! I said buy me some sweets!"
   Event_ShowMessage(ACTOR_TOLBI_CRYING_BOY, 0);
   Event_End();
 }
@@ -367,6 +380,7 @@ static void Tolbi_TalkToCryingBoy(void) {
 static void Tolbi_TalkToSleepingScalper(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiInnsFullStaying);
+  // "The inns are all full, so I'm staying here. This archway..."
   Event_ShowMessage(ACTOR_TOLBI_SCALPER, 0);
   Event_End();
 }
@@ -376,6 +390,9 @@ static void Tolbi_TalkToSleepingScalper(void) {
 static void Tolbi_AskWhetherPartyWasInFinals(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiFinalsWerent);
+  // "You were in the finals, weren't you?"
+  // Yes: "I was moved by how you were so determined, despite your size."
+  // No: "What? You weren't? You know, you look just like that warrior."
   Event_AskYesNo(ACTOR_TOLBI_FATHER, 0);
   Event_End();
 }
@@ -386,13 +403,16 @@ static void Tolbi_TalkToSnackVendor(void) {
   if (Event_GetFlag(FLAG_TOLBI_CORN_GIVEN) == 0) {
     GameFlag_Set(FLAG_TOLBI_CORN_GIVEN);
     Event_SetMessageId(MsgTolbiLeftovers);
+    // "Hey there, these are leftovers, but have some!"
     Event_ShowMessage(ACTOR_TOLBI_SNACK_VENDOR, 0);
     Item_ShowFound(ITEM_CORN, 3);
+    // "You got some corn."
     Event_ShowMessage(ACTOR_TOLBI_SNACK_VENDOR, 0);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
     Party_GiveItem(ITEM_CORN, 0);
   } else {
     Event_SetMessageId(MsgTolbiFestivalLongerUsual);
+    // "The festival was longer than usual this year, so I made more..."
     Event_ShowMessage(ACTOR_TOLBI_SNACK_VENDOR, 0);
   }
   Event_End();
@@ -516,10 +536,12 @@ static void Tolbi_TalkToSpringVisitor(void) {
   Actor_FaceDirection(ACTOR_TOLBI_SPRING_VISITOR, FACING_SOUTH, 0);
   Event_Wait(20);
   Event_SetMessageId(MsgTolbiWantTestLuck);
+  // "Hmm? Do you want to test your luck at Tolbi Spring?"
   Event_OpenMessage(ACTOR_TOLBI_SPRING_VISITOR, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     // Yes: "I'll give you the chance to go first."
     gFieldWork->message++;
+    // "Really? Well then, I'll give you the chance to go first."
     Event_ShowMessage(ACTOR_TOLBI_SPRING_VISITOR, 0);
     Actor_SetSpeed(ACTOR_TOLBI_SPRING_VISITOR, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkToAndWait(ACTOR_TOLBI_SPRING_VISITOR, 320, 304);
@@ -527,6 +549,7 @@ static void Tolbi_TalkToSpringVisitor(void) {
     Actor_FaceDirection(ACTOR_TOLBI_SPRING_VISITOR, FACING_NORTHWEST, 0);
     GameFlag_Set(FLAG_TOLBI_SPRING_OPENED);
   } else {
+    // "Oh, you don't? Well, I'm just going to keep trying for a while."
     Event_ShowMessage(ACTOR_TOLBI_SPRING_VISITOR, 0);
   }
   Event_End();
@@ -590,6 +613,7 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   // "Have you seen anyone who looks like this?", under a "Missing Person"
   // window showing Babi's portrait. The poster, placed with Babi's sprite,
   // becomes the speaker so that answering closes that portrait window.
+  // "Hey, have you seen anyone who looks like this?"
   Event_OpenMessage(ACTOR_TOLBI_SOLDIER_A, 0);
   Event_Wait(25);
   Portrait_OpenWindow(SPRITE_BABI, 0, 12, 7);
@@ -607,6 +631,7 @@ static void Tolbi_MeetSearchingSoldiers(void) {
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_TOLBI_SOLDIER_A, FACING_EAST, 0);
     Event_Wait(30);
+    // "Babi must be nearby!!!"
     Event_ShowMessage(ACTOR_TOLBI_SOLDIER_A, 0);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_TOLBI_SOLDIER_A, FACING_SOUTH, 0);
@@ -637,6 +662,7 @@ static void Tolbi_MeetSearchingSoldiers(void) {
     Actor_FaceDirection(ACTOR_TOLBI_SOLDIER_A, FACING_EAST, 0);
     Event_Wait(30);
     gFieldWork->message += 1;
+    // "Where's Babi!? He doesn't seem to be here. Let's look over..."
     Event_ShowMessage(ACTOR_TOLBI_SOLDIER_A, 0);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_TOLBI_SOLDIER_A, FACING_SOUTH, 0);

@@ -444,6 +444,9 @@ static void Imil_TalkToOldMan(void) {
     Actor_FaceActor(ACTOR_OLD_MAN, ACTOR_PARTY_LEADER, 0);
     Event_Wait(10);
     Event_SetMessageId(MsgMercuryReallySayDie);
+    // "Did I really say I was going to die from that disease?"
+    // Yes: "Ha ha ha! I must have really felt sick to say that! I'm good..."
+    // No: "That's right! The strong old man of Imil, that's me!"
     Event_AskYesNo(ACTOR_OLD_MAN, 0);
     Event_End();
   } else {
@@ -452,6 +455,7 @@ static void Imil_TalkToOldMan(void) {
       Actor_SetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_SIT_UP);
       MapGrid_PlayMapEdit(gImil_CellStepsA, 10, 69);
       Event_SetMessageId(MsgMercuryFeelMuchBetter);
+      // "I feel much better, thanks to Mia. I should be fine now."
       Event_ShowMessage(ACTOR_OLD_MAN, 0);
       Actor_SetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_LIE_BACK);
       MapGrid_AnimateCells(gImil_CellStepsB, 10, 69);
@@ -462,11 +466,13 @@ static void Imil_TalkToOldMan(void) {
       oldMan->timer = 10;
       Actor_SetScript(ACTOR_OLD_MAN, gImil_ShiverScript);
       Event_SetMessageId(MsgMercuryOoohHelpMe);
+      // "Oooh... Help me..."
       Event_ShowMessage(ACTOR_OLD_MAN, 0);
       Actor_Stop(ACTOR_OLD_WOMAN);
       Actor_ShowEmote(ACTOR_OLD_WOMAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
       Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_NORTH_NORTHEAST, 10);
       Actor_StartRepeatedMotion(ACTOR_OLD_WOMAN, 2);
+      // "Grandpa! Grandpa! Hold on!"
       Event_ShowMessageThenWait(ACTOR_OLD_WOMAN, 0, 20);
       Actor_SetScript(ACTOR_PARTY_LEADER, gImil_LeaderStepAsideScript);
       Actor_SetSpeed(ACTOR_OLD_WOMAN, PIXELS(8) / 5, PIXELS(4) / 5);
@@ -477,9 +483,11 @@ static void Imil_TalkToOldMan(void) {
       Actor_SetAttachedEffect(ACTOR_OLD_WOMAN,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Event_Wait(60);
+      // "Oh, no! This is terrible!"
       Event_ShowMessageThenWait(ACTOR_OLD_WOMAN, 0, 10);
       Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_SOUTH_SOUTHEAST, 20);
       Actor_StartRepeatedMotion(ACTOR_OLD_WOMAN, 2);
+      // "Get Mia... Please, get Mia!"
       Event_ShowMessage(ACTOR_OLD_WOMAN, 0);
       oldWoman = Actor_Get(ACTOR_OLD_WOMAN);
       oldWoman->collisionFlags ^= ACTOR_PUSHABLE;
@@ -520,6 +528,9 @@ static void Imil_TalkToMegan(void) {
     Event_ShowMessage(ACTOR_MEGAN, 0);
   } else {
     Event_SetMessageId(MsgImilHaveVisitedOldCoupleWho);
+    // "Have you visited the old couple who live near the entrance..."
+    // Yes: "Oh. That's too bad. That's where Mia was headed. You..."
+    // No: "Mia went to their house. You might have seen her if you..."
     Event_AskYesNo(ACTOR_MEGAN, 0);
     Import_GameFlagSet(FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE);
     Import_GameFlagSet(FLAG_IMIL_MIA_SENT_FOR);
@@ -655,6 +666,7 @@ static void Imil_TalkToWeaponMerchant(void) {
     Actor_FaceActor(ACTOR_WEAPON_MERCHANT, ACTOR_PARTY_LEADER, 0);
     Event_Wait(10);
     Event_SetMessageId(MsgMercuryCatchUpLostOpportunity);
+    // "I have to catch up on lost opportunity! It's time for business!"
     Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
     Actor_FaceDirection(ACTOR_WEAPON_MERCHANT, FACING_SOUTH, 10);
     Event_End();
@@ -667,6 +679,7 @@ static void Imil_TalkToWeaponMerchant(void) {
       Event_Wait(20);
       Actor_RunScriptAndWait(ACTOR_WEAPON_MERCHANT, gImil_BobScript);
       Event_SetMessageId(MsgMercuryStoreClosedUntilWell);
+      // "Our store is closed until we get well..."
       Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
       FieldCamera_MoveWithinMapBounds(PIXELS(426), -1, PIXELS(616), 1);
       FieldCamera_WaitForMove();
@@ -691,6 +704,7 @@ static void Imil_TalkToArmorMerchant(void) {
     Actor_FaceActor(ACTOR_ARMOR_MERCHANT, ACTOR_PARTY_LEADER, 0);
     Event_Wait(10);
     Event_SetMessageId(MsgMercuryShameStoreClosed);
+    // "It's a shame the store was closed for something as minor as..."
     Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
     Actor_FaceDirection(ACTOR_ARMOR_MERCHANT, FACING_SOUTH, 10);
     Event_End();
@@ -703,6 +717,7 @@ static void Imil_TalkToArmorMerchant(void) {
       Event_Wait(20);
       Actor_RunScriptAndWait(ACTOR_ARMOR_MERCHANT, gImil_BobScript);
       Event_SetMessageId(MsgMercuryTooSickBusiness);
+      // "Sorry, but I'm too sick to do business today. Try again..."
       Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
       FieldCamera_MoveWithinMapBounds(PIXELS(426), -1, PIXELS(616), 1);
       FieldCamera_WaitForMove();
@@ -726,6 +741,7 @@ static void Imil_TalkToItemMerchant(void) {
     Event_Start();
     Actor_FaceActor(ACTOR_ITEM_MERCHANT, ACTOR_PARTY_LEADER, 0);
     Event_SetMessageId(MsgMercuryRecoveredThanksFountain);
+    // "I'm fully recovered, thanks to the fountain! I can get back..."
     Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
     Actor_FaceDirection(ACTOR_ITEM_MERCHANT, FACING_SOUTH, 0);
     Event_End();
@@ -733,12 +749,14 @@ static void Imil_TalkToItemMerchant(void) {
     if (IMIL_FACES_COUNTER(facing)) {
       Event_Start();
       Event_SetMessageId(MsgMercuryMomsSickGetWhatever);
+      // "Mom's sick, but I can get you whatever you need..."
       Event_ShowMessage(ACTOR_ITEM_MERCHANTS_DAUGHTER, 0);
       Shop_Run(SHOP_IMIL_ITEMS, ACTOR_ITEM_MERCHANTS_DAUGHTER);
       Event_End();
     } else {
       Actor_FaceActor(ACTOR_ITEM_MERCHANTS_DAUGHTER, ACTOR_PARTY_LEADER, 10);
       Event_SetMessageId(MsgMercuryDadLumberjack);
+      // "My dad is a lumberjack. He's down south working in Kolima."
       Event_ShowMessage(ACTOR_ITEM_MERCHANTS_DAUGHTER, 0);
       Actor_FaceDirection(ACTOR_ITEM_MERCHANTS_DAUGHTER, FACING_SOUTH_SOUTHWEST,
                           10);

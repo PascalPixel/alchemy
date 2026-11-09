@@ -146,6 +146,7 @@ static void StoneRooms_LeaderSilencesThieves(void) {
 
   // "Shut yer yaps!"; the two thieves start.
   Event_SetMessageId(MsgVaultThiefLeaderSilencesThieves);
+  // "Shut yer yaps!"
   Event_ShowMessage(ACTOR_THIEF_LEADER, 0);
 
   Actor_StartRepeatedMotion(ACTOR_LEFT_THIEF, 2);
@@ -159,6 +160,7 @@ static void StoneRooms_LeaderSilencesThieves(void) {
   Actor_RunRepeatedMotion(ACTOR_THIEF_LEADER, 1);
   Event_Wait(20);
 
+  // "They got us this time, but next time... Oh, they'll pay for..."
   Event_ShowMessage(ACTOR_THIEF_LEADER, 0);
 
   Event_End();
@@ -174,6 +176,7 @@ static void StoneRooms_LeftThiefRegretsEscape(void) {
   Actor_RunRepeatedMotion(ACTOR_LEFT_THIEF, 2);
   Event_Wait(20);
   Event_SetMessageId(MsgVaultLeftThiefRegretsEscape);
+  // "If only we had escaped to the cave northeast of Goma Range."
   Event_ShowMessage(ACTOR_LEFT_THIEF, 0);
   Event_End();
 }
@@ -188,6 +191,7 @@ static void StoneRooms_RightThiefRegretsStaying(void) {
   Actor_SetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Event_SetMessageId(MsgVaultRightThiefRegretsStaying);
+  // "Blast! I knew we should have skipped town sooner."
   Event_ShowMessage(ACTOR_RIGHT_THIEF, 0);
   Event_End();
 }
@@ -201,6 +205,7 @@ static void StoneRooms_RightThiefRegretsStaying(void) {
 static void StoneRooms_ReadLeaderMind(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultThiefLeaderThoughts);
+  // "I'll be out of this jail before you know it. You'll see!"
   Event_ShowMessage(ACTOR_THIEF_LEADER, 0);
   Event_End();
 }
@@ -209,6 +214,7 @@ static void StoneRooms_ReadLeaderMind(void) {
 static void StoneRooms_ReadLeftThiefMind(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultLeftThiefThoughts);
+  // "Sigh... Will I ever run free again?"
   Event_ShowMessage(ACTOR_LEFT_THIEF, 0);
   Event_End();
 }
@@ -218,6 +224,7 @@ static void StoneRooms_ReadLeftThiefMind(void) {
 static void StoneRooms_ReadRightThiefMind(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultRightThiefThoughts);
+  // "I wonder if this is because we stole Hammet's Shaman's Rod."
   Event_ShowMessage(ACTOR_RIGHT_THIEF, 0);
   Event_End();
 }

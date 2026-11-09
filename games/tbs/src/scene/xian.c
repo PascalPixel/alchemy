@@ -335,6 +335,9 @@ const struct ActorPlacement *Xian_GetActorPlacements(void) {
 static void Xian_AskAboutYoungWarriors(void) {
   Event_Start();
   Event_SetMessageId(MsgXianYoungWarriorsVeryGallantCame);
+  // "Young warriors, very gallant! You came through Mogall Forest?"
+  // Yes: "Incredible. I respect your deeds."
+  // No: "Came from Altin? No. That is a lie. Silk Road is blocked. No..."
   Event_AskYesNo(ACTOR_WOMAN_ON_YOUNG_WARRIORS, 0);
   Event_End();
 }
@@ -371,11 +374,13 @@ static void Xian_TalkToWaterCarrier(void) {
     Event_SetMessageId(MsgXianNowMustGetWaterAgain);
     if (GameFlag_Get(FLAG_XIAN_WATER_SPILLED) == 0) {
       gFieldWork->message++;
+      // "Do not speak to me. I might spill my water."
       Event_ShowMessage(ACTOR_WOMAN_CARRYING_WATER, 0);
       Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->timer = 0;
       carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
       carrier->facing = savedFacing;
     } else {
+      // "Now I must get water again. This work is hard on my back."
       Event_ShowMessage(ACTOR_WOMAN_CARRYING_WATER, 0);
       Actor_FaceDirection(ACTOR_WOMAN_CARRYING_WATER, FACING_WEST, 20);
     }
@@ -451,6 +456,7 @@ static void Xian_TalkToWaterCarrier(void) {
   Actor_StartRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
   Event_Wait(70);
   Event_SetMessageId(MsgXianDoingMadeMeSpillMy);
+  // "What are you doing! You made me spill my water!"
   Event_ShowMessageThenWait(ACTOR_WOMAN_CARRYING_WATER, 0, 20);
   Scene_PlayQueuedMusic();
   if ((Actor_Get(ACTOR_PARTY_LEADER)->x.fixed >> 20) == 26 &&
@@ -526,12 +532,14 @@ static void Xian_TalkToKungFuStudent(void) {
     Actor_FaceActor(ACTOR_KUNG_FU_STUDENT, ACTOR_PARTY_LEADER, 0);
     Event_Wait(10);
     Event_SetMessageId(MsgXianKungFuStrong);
+    // "My kung fu is strong. If you go to Master Feh's school every..."
     Event_ShowMessage(ACTOR_KUNG_FU_STUDENT, 0);
     Actor_FaceDirection(ACTOR_KUNG_FU_STUDENT, FACING_EAST, 10);
     Event_End();
   } else {
     // Step back, then watch the student jump and strike the tree.
     Event_SetMessageId(MsgXianHooWhaaaHachaaa);
+    // "Hoo-whaaa... Hachaaa!"
     Event_ShowMessage(ACTOR_KUNG_FU_STUDENT, 0);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -602,6 +610,7 @@ static void Xian_TalkToKungFuStudent(void) {
     Actor_FaceDirection(ACTOR_KUNG_FU_STUDENT, FACING_EAST, 20);
     Actor_RunRepeatedMotion(ACTOR_KUNG_FU_STUDENT, 2);
     Event_Wait(20);
+    // "Heh heh heh..."
     Event_ShowMessageThenWait(ACTOR_KUNG_FU_STUDENT, 0, 20);
     GameFlag_Set(FLAG_XIAN_STRIKE_SHOWN);
     Scene_PlayQueuedMusic();
@@ -617,6 +626,9 @@ static void Xian_TalkToKungFuStudent(void) {
 static void Xian_TalkToFeizhi(void) {
   Event_Start();
   Event_SetMessageId(MsgXianWarriorsFromSchoolStrongWarriors);
+  // "You are the warriors from the school... Are you strong warriors?"
+  // Yes: "I am happy to see strong warriors. I hope you will go west."
+  // No: "You are weak warriors? Very few warriors would call..."
   Event_AskYesNo(ACTOR_FEIZHI, 0);
   Event_End();
 }

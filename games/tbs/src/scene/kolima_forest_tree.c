@@ -198,12 +198,15 @@ static void KolimaForestTree_TalkToLaurel(void) {
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_OPEN_EYES);
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Event_SetMessageId(MsgKolimaForestKolimaAlive);
+    // "The forest of Kolima is alive once again, thanks to you......"
     Event_ShowMessage(ACTOR_LAUREL, 0);
   } else if (Event_GetFlag(FLAG_MET_LAUREL) != 0) {
     Event_SetMessageId(MsgKolimaLeaveBeforeForest);
+    // "Leave now, before this forest is destroyed..."
     Event_ShowMessage(ACTOR_LAUREL, 0);
   } else {
     Event_SetMessageId(MsgKolimaWho);
+    // "Who are you...?"
     Event_ShowMessageThenWait(ACTOR_LAUREL, 0, 20);
     KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_LAUREL,
                                  FACE_GESTURE_CLOSE_EYES);
@@ -240,6 +243,7 @@ static void KolimaForestTree_TalkToTret(void) {
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_TRET, FACE_GESTURE_OPEN_EYES);
     Event_SetMessageId(MsgKolimaNowHaveSuchPowerAxe);
+    // "Now that I have such power, no axe shall ever touch me..."
     Event_ShowMessage(ACTOR_TRET, 0);
     KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_TRET, FACE_GESTURE_CLOSE_EYES);
   } else {
@@ -247,6 +251,7 @@ static void KolimaForestTree_TalkToTret(void) {
       KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_TRET,
                                    FACE_GESTURE_OPEN_EYES);
       Event_SetMessageId(MsgKolimaSilence2);
+      // "..."
       Event_ShowMessage(ACTOR_TRET, 0);
       KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_TRET,
                                    FACE_GESTURE_CLOSE_EYES);
@@ -259,14 +264,17 @@ static void KolimaForestTree_TalkToTret(void) {
       }
     } else {
       Event_SetMessageId(MsgKolimaSilence);
+      // "..."
       Event_ShowMessage(ACTOR_TRET, 0);
       PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24),
                               PALETTES_BG);
       PaletteFade_StartInterpolation(20);
       wait(40);
+      // "Hroooom! He will not speak to you, child!"
       FieldEvent_ShowMessageThenWait(
           SPEAKER_PORTRAIT_RIGHT | ACTOR_TRETS_WRATHFUL_SIDE, 0, 10);
       Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+      // "I control all in Tret's realm!"
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_TRETS_WRATHFUL_SIDE, 0);
       PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
       PaletteFade_StartInterpolation(20);
@@ -367,10 +375,12 @@ static void KolimaForestTree_RejectHermesWater(void) {
   Event_Wait(80);
   // Hear the wrathful side's refusal, then restore the leader's motion.
   Event_SetMessageId(MsgKolimaControlTretsHeartShallNot);
+  // "I control Tret's heart! I shall not let you do anything to him!"
   FieldEvent_ShowMessageThenWait(
       SPEAKER_PORTRAIT_RIGHT | ACTOR_TRETS_WRATHFUL_SIDE, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(20);
+  // "Tret, the forest, and the village of Kolima all shall wither..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_TRETS_WRATHFUL_SIDE, 0);
   Scene_PlayMusic();
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
@@ -505,6 +515,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Sound_Play(MUS_COLOSSO_INTRO);
   // Tret and Laurel discover that their powers have returned.
   Event_SetMessageId(MsgKolimaFeelGreatPowerSpreadingThrough);
+  // "I feel a great power spreading through me..."
   Event_ShowMessage(ACTOR_TRET, 0);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
@@ -603,6 +614,7 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_TRET, FACE_GESTURE_OPEN_EYES);
   Event_Wait(10);
   Event_SetMessageId(MsgKolimaShouldDoPeopleKolimaCursed);
+  // "That should do it. The people of Kolima are cursed no more."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   KolimaForestTree_NodTogether();
   FieldCamera_MoveTo(PIXELS(234), 0, PIXELS(232), 1);
@@ -625,9 +637,11 @@ static void KolimaForestTree_RestoreTret(void) {
   Event_Wait(20);
   // Explain the curse and how the falling Psynergy Stones changed the forest.
   Event_SetMessageId(MsgKolimaWasIndeedAngryPeopleHad);
+  // "I was indeed angry that people had laid waste to my..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
+  // "Then those gems fell into my branches..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   KolimaForestTree_NodTogether();
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_TRET, FACE_GESTURE_BLINK);
@@ -763,6 +777,7 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_TRET, FACE_GESTURE_BLINK);
   Event_Wait(20);
   Event_SetMessageId(MsgKolimaOweGreatDebtHaveSaved);
+  // "I owe you a great debt. You have saved Kolima, the forest,..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_BLINK);
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_BLINK);

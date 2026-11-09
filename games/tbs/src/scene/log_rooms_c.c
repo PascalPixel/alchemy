@@ -196,6 +196,7 @@ static void LogRoomsC_TalkToWeaponMerchant(void) {
     Shop_Run(KOLIMA_WEAPON_SHOP, ACTOR_WEAPON_MERCHANT);
   } else {
     Event_SetMessageId(MsgKolimaFuchinTempleOnOtherSide);
+    // "Fuchin Temple is on the other side of the river. It's quite..."
     Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
   }
   Event_End();
@@ -212,6 +213,7 @@ static void LogRoomsC_TalkToArmorMerchant(void) {
     Shop_Run(KOLIMA_ARMOR_SHOP, ACTOR_ARMOR_MERCHANT);
   } else {
     Event_SetMessageId(MsgKolimaGrandBridgeAcrossRiverPride);
+    // "The grand bridge across the river is the pride of Kolima."
     Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
   }
   Event_End();
@@ -227,6 +229,7 @@ static void LogRoomsC_TalkToItemMerchant(void) {
     Shop_Run(KOLIMA_ITEM_SHOP, ACTOR_ITEM_MERCHANT);
   } else {
     Event_SetMessageId(MsgKolimaWhenWasTreeLearnedAppreciate);
+    // "When I was a tree, I learned to appreciate the sun."
     Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
   }
   Event_End();
@@ -244,6 +247,7 @@ static void LogRoomsC_TalkToInnkeeper(void) {
     Inn_CheckIn(KOLIMA_INN, ACTOR_INNKEEPER);
   } else {
     Event_SetMessageId(MsgKolimaTheySayMccoyHaltedConstruction);
+    // "They say that McCoy halted construction of the palace. With..."
     Event_ShowMessage(ACTOR_INNKEEPER, 0);
   }
 

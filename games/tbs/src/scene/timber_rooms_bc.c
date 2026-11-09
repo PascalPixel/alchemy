@@ -268,11 +268,13 @@ static void TimberRoomsBC_TalkToWeaponMerchant(s32 keeper) {
     Shop_Run(LALIVERO_WEAPON_STOCK, keeper);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     Event_SetMessageId(MsgLaliveroWentOceanLook);
+    // "I went to the ocean to look for Sheba today, but it was so..."
     Event_ShowMessage(keeper, 0);
   } else {
     s32 message = MsgLaliveroTakenHostageFaran;
 
     Event_SetMessageId(message);
+    // "Sheba was taken hostage, and Faran went after them?"
     Event_OpenMessage(keeper, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Event_Wait(10);
@@ -291,9 +293,11 @@ static void TimberRoomsBC_TalkToArmorMerchant(s32 keeper) {
     Shop_Run(LALIVERO_ARMOR_STOCK, keeper);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     Event_SetMessageId(MsgLaliveroWantedSendShips);
+    // "We wanted to send ships out to sea to find Sheba, but we..."
     Event_ShowMessage(keeper, 0);
   } else {
     Event_SetMessageId(MsgLaliveroWarriorRightPlease);
+    // "You're a warrior, right? Please rescue Sheba! I'll give you..."
     Event_ShowMessage(keeper, 0);
   }
 }
@@ -305,9 +309,11 @@ static void TimberRoomsBC_TalkToItemMerchant(s32 keeper) {
     Shop_Run(LALIVERO_ITEM_STOCK, keeper);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     Event_SetMessageId(MsgLaliveroImpossibleGoOcean);
+    // "It is impossible to go out on the ocean now. Be careful when..."
     Event_ShowMessage(keeper, 0);
   } else {
     Event_SetMessageId(MsgLaliveroGuessPeopleAngara);
+    // "I guess it was people from Angara who took Sheba hostage...."
     Event_ShowMessage(keeper, 0);
   }
 }
@@ -319,9 +325,11 @@ static void TimberRoomsBC_TalkToHealer(s32 healer) {
     Sanctum_Run(healer);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     Event_SetMessageId(MsgLaliveroBabiLighthouseStruck);
+    // "Babi Lighthouse was struck down, just as I knew it would be."
     Event_ShowMessage(healer, 0);
   } else {
     Event_SetMessageId(MsgLaliveroBabiIsntBuilding);
+    // "Babi isn't building a lighthouse-it's a tower... Maybe he is..."
     Event_ShowMessage(healer, 0);
   }
 }
@@ -333,9 +341,11 @@ static void TimberRoomsBC_TalkToInnkeeper(s32 innkeeper) {
     Inn_CheckIn(LALIVERO_INN, innkeeper);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     Event_SetMessageId(MsgLaliveroDidntKnowTime);
+    // "I didn't know it at the time, but that loud noise was the..."
     Event_ShowMessage(innkeeper, 0);
   } else {
     Event_SetMessageId(MsgLaliveroWantStayLet);
+    // "If you want to stay, I'll let you, because it means money..."
     Event_ShowMessage(innkeeper, 0);
   }
 }
@@ -355,18 +365,22 @@ static void TimberRoomsBC_TalkToInnWorker(void) {
   Event_Wait(50);
   Actor_ShowEmote(ACTOR_INN_WORKER, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_FaceActor(ACTOR_INN_WORKER, ACTOR_PARTY_LEADER, 20);
+  // "Oh, I'm sorry..."
   Event_ShowMessage(ACTOR_INN_WORKER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_INN_WORKER, ANIM_SHAKE_HEAD);
   Event_Wait(30);
+  // "I'm so worried about Sheba, I can't concentrate."
   Event_ShowMessage(ACTOR_INN_WORKER, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_INN_WORKER, 2);
   Event_Wait(30);
+  // "But no matter how much I worry, there isn't anything I can do."
   Event_ShowMessage(ACTOR_INN_WORKER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_INN_WORKER, ANIM_NOD);
   Event_Wait(20);
+  // "...Now, to work, to work!"
   Event_ShowMessage(ACTOR_INN_WORKER, 0);
   if ((u16)side == FACING_WEST) {
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 16);
@@ -389,6 +403,7 @@ static void TimberRoomsBC_IodemCallsOut(void) {
   FieldCamera_WaitForMove();
   Event_Wait(30);
   Event_SetMessageId(MsgLaliveroPleaseWaitForMeOutside);
+  // "Please wait for me outside Faran's house. I wish to speak..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
@@ -404,6 +419,7 @@ static void TimberRoomsBC_TalkToIodem(void) {
 
   GameFlag_Set(FLAG_IODEM_ASKED_TO_MEET);
   Event_SetMessageId(MsgLaliveroPleaseWaitForMeOutside);
+  // "Please wait for me outside Faran's house. I wish to speak..."
   Event_ShowMessage(ACTOR_IODEM, 0);
 }
 
@@ -463,6 +479,7 @@ static void TimberRoomsBC_ReportToFaran(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
+  // "How did the search for Sheba turn out?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   // Faran and Iodem tell of the search for Sheba.
@@ -470,25 +487,31 @@ static void TimberRoomsBC_ReportToFaran(void) {
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 70);
+  // "We were unable to find any sign of her."
   Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "The seas are too rough to search."
   Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
   Event_Wait(20);
+  // "And there's no sign of her on land..."
   Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "Tolbi is responsible for Sheba's fate."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "No apology can reflect the sorrow I feel at your loss, Faran..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
+  // "All we can do for Sheba now is... hope."
   Event_ShowMessage(ACTOR_FARAN, 0);
   // The party tells what became of Jenna and the others; the version that saw
   // the ship at Idejima knows Idejima was swept away with it.
@@ -498,6 +521,7 @@ static void TimberRoomsBC_ReportToFaran(void) {
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
     Event_Wait(20);
+    // "But tell me, what of Jenna and the others?"
     Event_ShowMessage(ACTOR_FARAN, 0);
     Event_Wait(10);
     Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 50);
@@ -505,22 +529,27 @@ static void TimberRoomsBC_ReportToFaran(void) {
     Event_Wait(10);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
     Event_Wait(20);
+    // "The same. We've searched all over, but they're nowhere to be..."
     Event_ShowMessage(ACTOR_GARET, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "The ground tore apart from the shock of the lighthouse, and..."
     Event_ShowMessage(ACTOR_MIA, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     Event_Wait(20);
+    // "Apparently, everything at Idejima, including the ship, was..."
     Event_ShowMessage(ACTOR_IVAN, 0);
     Event_Wait(20);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+    // "So, Idejima itself was washed out to sea?"
     Event_OpenMessage(ACTOR_IODEM, 0);
     Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0);
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
     Event_Wait(20);
+    // "Incredible... Then the cave, too, has been flooded?"
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -528,17 +557,21 @@ static void TimberRoomsBC_ReportToFaran(void) {
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     Event_Wait(20);
+    // "But we think Jenna and the others are still alive."
     Event_ShowMessage(ACTOR_GARET, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "They may have been washed out to sea with Idejima."
     Event_ShowMessage(ACTOR_MIA, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Event_Wait(30);
+    // "We have decided to continue searching for Jenna."
     Event_ShowMessage(ACTOR_IVAN, 0);
     Event_Wait(10);
     Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 30);
+    // "Haven't we, Isaac?"
     Event_OpenMessage(ACTOR_IVAN | SPEAKER_PORTRAIT_RIGHT, 0);
   }
   // Will the party keep searching? Faran answers either way.
@@ -555,6 +588,7 @@ static void TimberRoomsBC_ReportToFaran(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
     Event_Wait(30);
+    // "Do not worry about Sheba. I just hope you are able to find..."
     Event_ShowMessage(ACTOR_FARAN, 0);
     (gFieldWork->message)++;
   } else {
@@ -779,6 +813,7 @@ static void TimberRoomsBC_TellFaranAboutJenna(void) {
 
   Actor_RunRepeatedMotion(ACTOR_FARAN, 2);
   Event_Wait(20);
+  // "But tell me, what of Jenna and the others?"
   Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
 
@@ -787,21 +822,25 @@ static void TimberRoomsBC_TellFaranAboutJenna(void) {
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Event_Wait(20);
+  // "The same. We've searched all over, but they're nowhere to be..."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
 
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "The ground tore apart from the shock of the lighthouse..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
 
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
+  // "And then Idejima was swept out to sea..."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
 
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
+  // "My goodness... Then... Jenna and the others must have..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
 
@@ -811,25 +850,30 @@ static void TimberRoomsBC_TellFaranAboutJenna(void) {
 
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(30);
+  // "Felix said at the lighthouse that he sent Jenna ahead to the..."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(30);
 
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "But we think they survived."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
 
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "They may have been washed out to sea with Idejima..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
 
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(30);
+  // "So, we have decided to continue searching for Jenna."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
 
   Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 30);
+  // "Haven't we, Isaac?"
   Event_OpenMessage(ACTOR_IVAN | SPEAKER_PORTRAIT_RIGHT, 0);
 }
 

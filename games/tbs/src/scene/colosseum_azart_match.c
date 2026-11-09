@@ -868,23 +868,33 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_SetMessageId(MsgColossoSiteFirstFinalsBattle);
+  // "This is the site of the first finals battle."
   Event_ShowMessage(guide, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "So this is where warriors test their mettle against each other."
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_StartRepeatedMotion(guide, 3);
+  // "Well, no... It's actually more than that."
   Event_ShowMessage(guide, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "What else is involved?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_FaceActor(guide, ACTOR_IVAN, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(guide, ANIM_NOD);
+  // "The warriors are racing to get here first and get the best..."
   Event_ShowMessage(guide, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "So there's an advantage to getting here first? That's quite..."
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "That's too hard for Isaac. We must support him as well we can..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_ShowEmote(guide, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   // Pan over each stage while the guide explains the finals rules.
+  // "Um, don't you want to hear my explanation?"
+  // Yes: "All right. Then let me explain in detail..."
+  // No: "Ask the attendants for explanations of the stages."
   if (Event_AskYesNo(guide, 0) == 0) {
     do {
       Event_SetMessageId(MsgColossoWarriorsEnterFinalsWithoutAny);
@@ -896,18 +906,23 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
       Event_Wait(1);
       Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
       Actor_SetAnimationAndWait(guide, ANIM_NOD);
+      // "Warriors enter the finals without any of their own equipment."
       Event_ShowMessage(guide, 0);
       Actor_FaceDirection(guide, FACING_NORTHWEST, 0);
       Event_Wait(20);
+      // "Please look over there."
       Event_ShowMessage(guide, 0);
       FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveTo(PIXELS(312), -1, PIXELS(104), 1);
       FieldCamera_WaitForMove();
+      // "That is the starting point of the first stage of the finals."
       Event_ShowMessage(guide, 0);
       FieldCamera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
       FieldCamera_MoveTo(PIXELS(776), -1, PIXELS(104), 1);
+      // "You must get through several stages before you reach the arena."
       Event_ShowMessage(guide, 0);
       FieldCamera_WaitForMove();
+      // "The chests along the way contain items that may be useful in..."
       Event_ShowMessage(guide, 0);
       FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveTo(PIXELS(1240), -1, PIXELS(168), 1);
@@ -915,32 +930,41 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
       // BUG: FACING_SOUTHWEST is passed where an actor id belongs; no
       // actor has it, so the guide does not turn.
       Actor_FaceActor(guide, FACING_SOUTHWEST, 0);
+      // "This is the battle arena. After getting here, the warriors..."
       Event_ShowMessage(guide, 0);
       FieldCamera_MoveTo(PIXELS(1304), -1, PIXELS(168), 1);
       FieldCamera_WaitForMove();
       Actor_FaceActor(guide, ACTOR_PARTY_LEADER, 0);
+      // "You can get weapons in the arena, too, but one is weaker..."
       Event_ShowMessage(guide, 0);
+      // "So you'll have the advantage if you get here first."
       Event_ShowMessage(guide, 0);
+      // "Also, you can use the equipment you get here in your next match."
       Event_ShowMessage(guide, 0);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
       Actor_RunRepeatedMotion(guide, 2);
     } while (Event_AskYesNo(guide, 0) != 0);
     Actor_RunRepeatedMotion(guide, 2);
     Event_SetMessageId(MsgColossoAskAttendantsForExplanationsStages);
+    // "Ask the attendants for explanations of the stages."
     Event_ShowMessage(guide, 0);
   }
   // Explain the party's support role, then gather them behind Isaac.
   Event_SetMessageId(MsgColossoIsaacYoureContestantInFinals);
   Actor_RunRepeatedMotion(guide, 2);
+  // "...Isaac, you're a contestant in the finals. Do not forget..."
   Event_ShowMessage(guide, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
+  // "Hey, where do we cheer from?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
+  // "Would you like to visit the stages and hear a description..."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
+  // "Yes. We'll decide where to cheer for Isaac after hearing the..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Event_Wait(1);
@@ -993,6 +1017,7 @@ static void ColosseumAzartMatch_TalkToRockAttendant(s32 actorId) {
       FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(168), 1);
       FieldCamera_WaitForMove();
+      // "They call this the Rock Challenge."
       Event_ShowMessage(actorId, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 280, 200);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
@@ -1031,6 +1056,7 @@ static void ColosseumAzartMatch_TalkToRockAttendant(s32 actorId) {
       Colosso_RepeatStageNumber(actorId, 1);
     } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
       Event_SetMessageId(MsgColossoObjectiveStageClear);
+      // "The objective in this stage is to clear a path as quickly as..."
       Event_ShowMessage(actorId, 0);
     }
     Colosso_OfferCheeringSpot(path, actorId, 1);
@@ -1070,6 +1096,7 @@ static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
       FieldCamera_SetSpeedParameters(PIXELS(3) / 2, PIXELS(3) / 16);
       FieldCamera_MoveWithinMapBounds(PIXELS(608), -1, PIXELS(216), 1);
       FieldCamera_WaitForMove();
+      // "This area is called the Pipeworks."
       Event_ShowMessage(attendant, 0);
       Colosso_ShowPointer(56, 64, 0);
       Event_Wait(60);
@@ -1104,6 +1131,7 @@ static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
       Colosso_RepeatStageNumber(attendant, 2);
     } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
       Event_SetMessageId(MsgColossoObjectiveMakeGood);
+      // "The objective here is to make good use of the scales."
       Event_ShowMessage(attendant, 0);
     }
     Colosso_OfferCheeringSpot(path, attendant, 2);
@@ -1145,6 +1173,7 @@ static void ColosseumAzartMatch_TalkToBridgeAttendant(s32 actorId) {
       Colosso_RepeatStageNumber(actorId, 3);
     } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
       Event_SetMessageId(MsgColossoOperatorBridgeWillAlsoCheer);
+      // "The operator of the bridge will also cheer for you in this..."
       Event_ShowMessage(actorId, 0);
     }
     Colosso_OfferCheeringSpot(path, actorId, 3);
@@ -1169,6 +1198,7 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
     FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
     FieldCamera_MoveTo(PIXELS(1088), -1, PIXELS(168), 1);
     FieldCamera_WaitForMove();
+    // "This place is normally called the Lumber Water Crossing Area."
     Event_ShowMessage(actorId, 0);
     Colosso_ShowPointer(120, 72, 0);
     Event_ShowMessage(actorId, 0);
@@ -1200,6 +1230,7 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
     Colosso_RepeatStageNumber(actorId, 4);
   } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
     Event_SetMessageId(MsgColossoLogsKeyClearingStage);
+    // "The logs are the key to clearing this stage."
     Event_ShowMessage(actorId, 0);
   }
   Colosso_OfferCheeringSpot(path, actorId, 4);

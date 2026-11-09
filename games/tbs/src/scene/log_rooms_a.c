@@ -508,6 +508,7 @@ static void LogRoomsA_GaretRefusesToLeave(void) {
   Leader_StopMoving();
 #endif
   Event_SetMessageId(MsgVaultWeDontHaveTimeFor);
+  // "We don't have time for that, Isaac!"
   Event_ShowMessage(ACTOR_GARET, 0);
 }
 
@@ -610,6 +611,7 @@ static void LogRoomsA_TalkToItemMerchant(void) {
     LogRoomsA_AskYesNoAndShowReply(ACTOR_ITEM_MERCHANT);
   } else {
     Event_SetMessageId(MsgVaultWithBridgeOutWillQuite);
+    // "With the bridge out, it will be quite a while 'til we can go..."
     Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
   }
   Event_End();
@@ -706,6 +708,7 @@ static void LogRoomsA_SuspectedLeaderDodges(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_SUSPECTED_LEADER, 2);
   Event_SetMessageId(MsgVaultOwStop);
+  // "Ow! Stop it!"
   Event_ShowMessage(ACTOR_SUSPECTED_LEADER, 0);
   Actor_SetSpeed(ACTOR_SUSPECTED_LEADER, PIXELS(4), PIXELS(2));
   if ((u32)((suspect->facing & 0xf000) - TRIG_TURN * 5 / 16) <=
@@ -774,6 +777,7 @@ static void LogRoomsA_SuspectedThiefDodges(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_SUSPECTED_THIEF, 2);
   Event_SetMessageId(MsgVaultNoLeaveAlone);
+  // "No! Leave me alone!"
   Event_ShowMessage(ACTOR_SUSPECTED_THIEF, 0);
   Actor_SetSpeed(ACTOR_SUSPECTED_THIEF, PIXELS(7) / 2, PIXELS(7) / 4);
   switch (actor->timer) {
@@ -875,6 +879,7 @@ static void LogRoomsA_MayorGivesWaterOfLife(void) {
     Party_GiveItem(ITEM_WATER_OF_LIFE, 0);
   }
   Event_SetMessageId(MsgVaultHeadingOutBeyondGomaRange);
+  // "Are you heading out beyond Goma Range, by any chance?"
   Event_OpenMessage(ACTOR_MAYOR, 0);
   Event_Wait(20);
   if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
@@ -896,9 +901,11 @@ static void LogRoomsA_OfferBones(void) {
   LogRoomsA_FaceEachOtherAndWait(ACTOR_GIRL_AT_THE_INN, ACTOR_PARTY_LEADER, 2);
   if (GameFlag_Get(FLAG_VAULT_BONE_RECEIVED) == 0) {
     Event_SetMessageId(MsgVaultHaveLotLeftoverBonesFrom);
+    // "I have a lot of leftover bones from dinner. Here, do you..."
     Event_OpenMessage(ACTOR_GIRL_AT_THE_INN, 0);
   } else {
     Event_SetMessageId(MsgVaultWantMoreBones);
+    // "What? You want more bones?"
     Event_OpenMessage(ACTOR_GIRL_AT_THE_INN, 0);
   }
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
@@ -911,6 +918,7 @@ static void LogRoomsA_OfferBones(void) {
       Actor_SetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIM_SHAKE_HEAD);
       Event_Wait(20);
       Event_SetMessageId(MsgVaultWowHaveManyThingsArent);
+      // "Wow, you have so many things. Aren't you a greedy lad!"
       Event_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
     } else {
       Item_ShowFound(ITEM_BONE, 3);
@@ -1081,6 +1089,7 @@ static void LogRoomsA_MeetIvan(void) {
     // Asked again: "Would you really? Would you help me find the rod?"
     Sound_Play(MUS_IVAN);
     Event_SetMessageId(MsgVaultWouldReallyWouldHelpMe);
+    // "Would you really? Would you help me find the rod?"
     Event_OpenMessage(ACTOR_IVAN, 0);
   }
   // Accepting the search lets Ivan merge into the leader's position; a no gets
@@ -1288,6 +1297,7 @@ static void LogRoomsA_IvanJoinsRodSearch(void) {
   Event_PrepareActorAndApplyValue(IVAN, 1);
   Event_SetMessageId(message + 22);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
+  // "Let me read the minds of the townspeople to find the rod."
   Event_ShowMessage(ACTOR_IVAN, 0);
 }
 
@@ -1471,6 +1481,7 @@ static void LogRoomsA_FreeRooferAndConfrontThieves(void) {
     Event_SetMessageId(base);
     Actor_RunRepeatedMotion(ACTOR_THIEF_LEADER, 2);
     Event_Wait(20);
+    // "What? You mean, even if we return everything we stole and..."
     Event_ShowMessage(ACTOR_THIEF_LEADER, 0);
     // Both answers go on with the same refusal.
     base -= 3;
@@ -1544,6 +1555,7 @@ static void LogRoomsA_LeaveLoft(void) {
   if (GameFlag_Get(FLAG_VAULT_THIEVES_ATTACKED) == 0) {
     Event_Start();
     Event_SetMessageId(MsgVaultUhnnUhnn);
+    // "Uhnn... Uhnn..."
     Event_ShowMessage(ACTOR_TIED_UP_VILLAGER, 0);
     Event_End();
   }
@@ -1653,6 +1665,7 @@ static void LogRoomsA_DiscussSuspiciousGuests(void) {
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   base = MsgVaultTheyreActingSuspiciousSomethingsNot;
   Event_SetMessageId(base);
+  // "They're acting suspicious. Something's not right..."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
   LogRoomsA_FaceActorAndWait(ACTOR_GARET, ACTOR_IVAN, 20);
@@ -1685,6 +1698,7 @@ static void LogRoomsA_DiscussSuspiciousGuests(void) {
   // "Isaac, you take the lead." The two walk back into him, and the suspects
   // are put back at their table.
   Event_SetMessageId(MsgVaultIsaacTakeLead);
+  // "Isaac, you take the lead."
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Event_Wait(40);
@@ -3076,6 +3090,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
 
     if (LogRoomsA_GetIvanVenusDjinnCount() != 0) {
       Event_SetMessageId(MsgVaultWaitDontWantTakeYour);
+      // "Oh, wait, I don't want to take your Djinni. I'll just leave..."
       Event_ShowMessage(ACTOR_IVAN, 0);
       Vault_ReturnIsaacsDjinni();
     }

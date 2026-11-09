@@ -257,6 +257,9 @@ const struct Trigger *Scene_GetTriggers(void) {
 static void McCoyPalace_AskAboutGoingToKolima(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinYouWillingGoKolimaForest);
+  // "Oh, are you willing to go to Kolima Forest?"
+  // Yes: "I forget how many people Lord McCoy has hired to end the..."
+  // No: "You don't look too strong, but that may be for the best."
   Event_AskYesNo(ACTOR_VILLAGER_ASKING_ABOUT_KOLIMA_FOREST, 0);
   Event_End();
 }
@@ -270,9 +273,11 @@ static void McCoyPalace_TalkToWomanInMiladysNightgown(void) {
   Actor_RunRepeatedMotion(ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN, 2);
   Event_Wait(40);
   Event_SetMessageId(MsgBilibinAaaah);
+  // "AAAAH!!!"
   Event_ShowMessageThenWait(ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN, 0, 20);
   Actor_FaceActor(ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN, ACTOR_PARTY_LEADER, 0);
   Event_Wait(20);
+  // "Oh! For a second, I thought you were milady. You really..."
   Event_ShowMessageThenWait(ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN, 0, 10);
   Actor_FaceDirection(ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN,
                       FACING_NORTH_NORTHWEST, 10);
@@ -299,6 +304,9 @@ static void McCoyPalace_TalkToOldManPraisingTheWarriors(void) {
 static void McCoyPalace_TalkToSoldierWatchingKolima(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinWasWatchingFromHereAfter);
+  // "I was watching from here. After all that fuss, you still..."
+  // Yes: "I don't know how you removed the curse, but you're the best!"
+  // No: "You lie! I saw you walking through the barricade! And then I..."
   Event_AskYesNo(ACTOR_SOLDIER_WATCHING_KOLIMA, 0);
   Event_End();
 }
@@ -503,6 +511,7 @@ static void McCoyPalace_CaptainAsksPartyToChoose(void) {
       Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 2);
       Event_Wait(20);
       Event_SetMessageId(MsgBilibinPleaseTakeYourRewardBefore);
+      // "Please take your reward before your depart!"
       Event_ShowMessage(ACTOR_CAPTAIN, 0);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 616, 762);
@@ -529,6 +538,7 @@ static void McCoyPalace_CaptainSeesPartyOff(void) {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_CAPTAIN, ANIM_NOD);
     Event_SetMessageId(MsgBilibinAlwaysWelcomeInPalaceLord);
+    // "You are always welcome in the palace of Lord McCoy."
     Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
     Actor_SetSpeed(ACTOR_CAPTAIN, PIXELS(4) / 5, PIXELS(2) / 5);
     Actor_WalkToAndWait(ACTOR_CAPTAIN, 570, 758);
@@ -693,18 +703,23 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     Event_Wait(10);
     // The captain announces the warriors before they enter the audience.
     Event_SetMessageId(MsgBilibinMatter);
+    // "What's the matter, then?"
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                    10);
     Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 2);
+    // "Sir! Some new warriors have just arrived in the palace!"
     Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 20);
     Actor_RunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
+    // "New warriors, yeh say?"
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                    10);
     Actor_SetAnimationAndWait(ACTOR_CAPTAIN, ANIM_NOD);
     Event_Wait(40);
     Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+    // "We've sent many a man intae Kolima Forest, but not a one has..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
     Actor_RunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
+    // "These warriors... Did yeh get a good look at 'em?"
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                    10);
     Actor_SetAttachedEffect(ACTOR_CAPTAIN,
@@ -720,6 +735,7 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
+    // "Come closer, laddy."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
     FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(664), 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 684);
@@ -777,10 +793,12 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     }
   declined:
     Event_SetMessageId(MsgBilibinTooYoungForTheJob);
+    // "Bah! Yeh're too young. Yeh cannae handle the job."
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                    10);
     Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTH_SOUTHEAST, 0);
     Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_SHAKE_HEAD);
+    // "Yeh can leave now..."
     Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
@@ -856,6 +874,7 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
   // A returning party can reconsider the assignment without replaying the
   // captain's announcement.
   Event_SetMessageId(MsgBilibinYehveChangeHeart);
+  // "What is it? Yeh've had a change of heart? Yeh want tae help..."
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
     // Reuse the initial refusal's dialogue and departure.
@@ -873,6 +892,7 @@ accepted:
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_SetMessageId(MsgBilibinHmmmWellGrant);
+  // "Hmmm. Well, I'll grant yeh're a brave lot."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
   // Animate McCoy tossing the barricade key to the party.
   actor = Actor_Get(ACTOR_BARRICADE_KEY);
@@ -889,6 +909,7 @@ accepted:
   Actor_SetSpeed(ACTOR_BARRICADE_KEY, PIXELS(2), PIXELS(1));
   Actor_MoveToAndWait(ACTOR_BARRICADE_KEY, 894, 668);
   Event_Wait(40);
+  // "Here. This key'll get yeh past the barricades tae the east..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -896,9 +917,11 @@ accepted:
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_SHAKE_HEAD);
+  // "Even with the key, such wee lads as yerselves'll never reach..."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 10);
+  // "He's making fun of us! Calling us children! That's just..."
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
@@ -908,12 +931,14 @@ accepted:
       Actor_StartRepeatedMotion(ACTOR_GARET, 2);
       Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
       Event_SetMessageId(MsgBilibinSeriousDoesntBother);
+      // "Are you serious, Isaac? It doesn't bother you?"
       Event_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
     } while (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 1);
   }
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   // Resolve Garet\'s objections before McCoy dismisses the party.
   Event_SetMessageId(MsgBilibinWellDontLet);
+  // "Well, don't let him get to you. We'll just have to prove we..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0, 10);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -923,6 +948,7 @@ accepted:
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  // "So, yeh've decided to accept our little job?"
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 20);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHEAST, 10);
@@ -930,24 +956,29 @@ accepted:
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
+  // "Hey, Ivan! You... You don't look too enthusiastic."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0, 10);
   Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 20);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 10);
+  // "That curse can turn a man into a tree! You think we stand a..."
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+  // "What? Yeah, of course we do!"
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0, 10);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 10);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
+  // "You know we do, right, Isaac?"
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   while (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
     Event_SetMessageId(MsgBilibinComeSaidYoud);
+    // "Come on, Isaac! You said you'd do it! We're still going, right?"
     Event_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
   }
   Event_Wait(10);
@@ -959,10 +990,12 @@ accepted:
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
   Event_SetMessageId(MsgBilibinWellSGoing);
+  // "Well, if Isaac's going, I guess I'm in, too."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHWEST, 10);
   Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_SHAKE_HEAD);
+  // "At least we all agree on something!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
@@ -979,16 +1012,19 @@ accepted:
   Actor_SetAttachedEffect(ACTOR_CAPTAIN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
+  // "What troubles you, Milord? They seem willing enough..."
   Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_WEST_SOUTHWEST, 20);
+  // "They call themselves warriors...but they're naught but wee..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
   Actor_SetAnimationAndWait(ACTOR_CAPTAIN, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_SHAKE_HEAD);
   Actor_SetAnimation(ACTOR_LORD_MCCOY, ANIM_SHAKE_HEAD);
+  // "Aye, these are desperate times, but I cannae send such wee..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
   Actor_Jump(ACTOR_BARRICADE_KEY, 6, 0);
@@ -1010,29 +1046,37 @@ accepted:
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 2);
+  // "Then what will happen to Kolima Forest?"
   Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_NOD);
+  // "We cannae give up hope on our other champions!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  20);
   Actor_SetAnimationAndWait(ACTOR_CAPTAIN, ANIM_NOD);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
+  // "But... But what about us?"
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0, 10);
   Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHEAST, 10);
   Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_SHAKE_HEAD);
+  // "We cannae send yeh intae certain doom."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
+  // "What if we said that we were going east anyway?"
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0, 10);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHWEST, 10);
   Actor_SetAnimation(ACTOR_LORD_MCCOY, ANIM_SHAKE_HEAD);
+  // "Yeh can go once things have settled down."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_SHAKE_HEAD);
+  // "But that means... you're not going to let us go?"
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0, 10);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHEAST, 10);
   Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_NOD);
+  // "Ach, it's fer yer own good, lad."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
@@ -1042,6 +1086,7 @@ accepted:
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_WEST_SOUTHWEST, 10);
   Actor_SetAnimationAndWait(ACTOR_LORD_MCCOY, ANIM_NOD);
   Event_Wait(10);
+  // "I dinnae want tae talk about it anymore. Captain?"
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 2);
   Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST_SOUTHEAST, 10);
@@ -1065,6 +1110,7 @@ accepted:
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 852, 666);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 864, 672);
   Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST_SOUTHEAST, 10);
+  // "I'm sorry, but you should leave now."
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_CAPTAIN, 0, 20);
   Actor_Stop(ACTOR_PARTY_LEADER);
   Actor_Stop(ACTOR_GARET);
@@ -1136,6 +1182,7 @@ static void McCoyPalace_CaptainHintsAtBarricade(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 2);
   Event_SetMessageId(MsgBilibinNameSorryRejected);
+  // "Your name was...Isaac? I'm sorry you were rejected."
   Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 264, 660);
@@ -1143,18 +1190,25 @@ static void McCoyPalace_CaptainHintsAtBarricade(void) {
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 248, 660);
   Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST_SOUTHEAST, 40);
   Actor_SetAnimationAndWait(ACTOR_CAPTAIN, ANIM_SHAKE_HEAD);
+  // "I never, ever, expected anything like this to happen to Bilibin."
   Event_ShowMessage(ACTOR_CAPTAIN, 0);
   Actor_SetAnimationAndWait(ACTOR_CAPTAIN, ANIM_NOD);
+  // "Will you promise me you won't go to Kolima?"
+  // Yes: "That's good."
+  // No: "You are persistent, aren't you?"
   Event_AskYesNo(ACTOR_CAPTAIN, 0);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 2);
+  // "That barricade... You may not need a key."
   Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_SetAttachedEffect(ACTOR_CAPTAIN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 1);
+  // "Oops... I shouldn't have said anything."
   Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_CAPTAIN, ANIM_NOD);
+  // "Well, I'm going to go now."
   Event_ShowMessage(ACTOR_CAPTAIN, 0);
   Actor_SetSpeed(ACTOR_CAPTAIN, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 248, 772);
@@ -1356,12 +1410,14 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 1);
   // McCoy explains his caution and offers a choice from the treasury.
   Event_SetMessageId(MsgBilibinWasButWorriedYehMight);
+  // "I was but worried yeh might nae stop here on yer way back."
   Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 40);
   Actor_RunRepeatedMotion(ACTOR_LORD_MCCOY, 2);
+  // "I want tae show my appreciation for yer help..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0,
                                  10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -1516,10 +1572,12 @@ static void McCoyPalace_PresentRewardChests(void) {
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 1);
   // The captain and the keeper explain that only one chest may be chosen.
   Event_SetMessageId(MsgBilibinLordMccoyOrdered);
+  // "Lord McCoy ordered that Isaac and his companions be brought..."
   Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 622, 780);
   Actor_FaceDirection(ACTOR_CAPTAIN, FACING_NORTH, 10);
   Actor_RunRepeatedMotion(ACTOR_SOLDIER_SHOWING_THE_REWARD, 2);
+  // "You may select a single item from among these four chests."
   Event_ShowMessageThenWait(ACTOR_SOLDIER_SHOWING_THE_REWARD, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);

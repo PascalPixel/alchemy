@@ -482,6 +482,7 @@ static void TreeRooms_FightTret(void) {
   Event_Start();
   Sound_Play(SOUND_FADE_OUT_BGM);
   Event_SetMessageId(MsgTretHmHrooom);
+  // "Hm HROOOM!!!"
   Event_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Sound_Play(MUS_CONFRONTATION);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
@@ -624,6 +625,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   wait(80);
   // Tret comes to: "Oh... Mmmmm... What has happened to me?"
   Event_SetMessageId(MsgTretMmmmm);
+  // "Oh... Mmmmm..."
   FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
@@ -692,6 +694,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
     Actor_SetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
     Event_SetMessageId(MsgTretDoingNowsNot);
+    // "What are you doing, Isaac! Now's not the time to fool around!"
     Event_ShowMessage(SPEAKER(ACTOR_GARET), 0);
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 10);
     Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
@@ -700,6 +703,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Event_Wait(20);
   TreeRooms_PlayGesture(TRET_GESTURE_BLINK);
   Event_SetMessageId(MsgTretTurnedPeopleKolima);
+  // "I turned the people of Kolima into trees?"
   FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);

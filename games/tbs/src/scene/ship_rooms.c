@@ -871,20 +871,24 @@ static void ShipRooms_TalkToCaptainsQuartersCrewman(void) {
   Field_EndBusyAndReveal();
   if (GameFlag_Get(FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL) != 0) {
     Event_SetMessageId(MsgTolbiShipIfShipFromTolbiHad);
+    // "If the ship from Tolbi had come, I'd feel differently, but..."
     Event_ShowMessage(ACTOR_QUARTERS_CREWMAN, 0);
   } else {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
       Event_SetMessageId(MsgTolbiShipNowWantSeeCaptainToo);
+      // "Now what? You want to see the captain too?"
       Event_OpenMessage(ACTOR_QUARTERS_CREWMAN, 0);
       if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
         ShipRooms_DiscussLaunchingWithoutAnchor();
       } else {
         Actor_StartRepeatedMotion(ACTOR_QUARTERS_CREWMAN, 2);
+        // "Well, you don't have any business here then. Off with you now!"
         Event_ShowMessage(ACTOR_QUARTERS_CREWMAN, 0);
         Actor_FaceDirection(ACTOR_QUARTERS_CREWMAN, FACING_NORTH_NORTHEAST, 0);
       }
     } else {
       Event_SetMessageId(MsgTolbiShipButWeCantSendShip);
+      // "But we can't send the ship out without hiring some warriors."
       Event_ShowMessage(ACTOR_QUARTERS_CREWMAN, 0);
     }
   }
@@ -896,6 +900,9 @@ static void ShipRooms_TalkToCaptainsQuartersCrewman(void) {
 static void ShipRooms_TalkToSeanInCaptainsQuarters(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiShipYouCameAskCaptainSet);
+  // "You came to ask the captain to set sail, right?"
+  // Yes: "If we had worked together, we'd be out at sea right now. But..."
+  // No: "Heh heh... In that case, why don't you take a tour of the..."
   Event_AskYesNo(ACTOR_QUARTERS_SEAN, 0);
   Event_End();
 }
@@ -916,9 +923,11 @@ static void ShipRooms_TalkToCaptain(void) {
     Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, 3);
   } else if (Event_GetFlag(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
     Event_SetMessageId(MsgTolbiShipWeDontKnowMightHappen);
+    // "We don't know what might happen before we arrive. Be ready..."
     Event_ShowMessage(ACTOR_QUARTERS_CAPTAIN, 0);
   } else if (GameFlag_Get(FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL) != 0) {
     Event_SetMessageId(MsgTolbiShipBadLuckLosingMyLucky);
+    // "Oh, of all the bad luck...losing my lucky charm! This ship..."
     Event_ShowMessage(ACTOR_QUARTERS_CAPTAIN, 0);
     if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) == 0 &&
         GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND) != 0) {
@@ -926,6 +935,7 @@ static void ShipRooms_TalkToCaptain(void) {
     }
   } else {
     Event_SetMessageId(MsgTolbiShipItsTooLateHireMercenaries);
+    // "It's too late to hire mercenaries now... There's no time."
     Event_ShowMessage(ACTOR_QUARTERS_CAPTAIN, 0);
   }
   Event_End();
@@ -954,6 +964,7 @@ static void ShipRooms_TalkToWaitingWarrior(void) {
     }
   } else {
     Event_SetMessageId(MsgTolbiShipLongerWeSitHereMore);
+    // "The longer we sit here, the more time we have to think. I..."
     Event_ShowMessage(ACTOR_HOLD_WARRIOR, 0);
   }
   Event_End();
@@ -965,9 +976,13 @@ static void ShipRooms_TalkToWaitingMuscleAdmirer(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
     Event_SetMessageId(MsgTolbiShipYouGoingRow);
+    // "Are you going to row?"
+    // Yes: "Hmmm. So, you have to row, even though you're a fighter, huh?"
+    // No: "Oh. Helping to protect the ship suits you better, doesn't..."
     Event_AskYesNo(ACTOR_HOLD_MUSCLE_ADMIRER, 0);
   } else {
     Event_SetMessageId(MsgTolbiShipTheresWholeBunchReallyMuscular);
+    // "There's a whole bunch of really muscular men on the floor..."
     Event_ShowMessage(ACTOR_HOLD_MUSCLE_ADMIRER, 0);
   }
   Event_End();
@@ -1040,6 +1055,7 @@ static void ShipRooms_AskLadyToRow(void) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
     Event_SetMessageId(MsgTolbiShipDontFeelDontTalkMe);
+    // "I don't feel so well.. Don't talk to me..."
     Event_ShowMessage(ACTOR_SEA_HOLD_LADY, 0);
     Event_End();
   } else {
@@ -1066,6 +1082,7 @@ static void ShipRooms_AskStaredAtPassengerToRow(void) {
     Actor_RunRepeatedMotion(ACTOR_SEA_HOLD_STARED_AT_PASSENGER, 2);
     Event_Wait(20);
     Event_SetMessageId(MsgTolbiShipOhhhhNooooGoingMakeMe);
+    // "What? Ohhhh, noooo... Are you going to make me row?"
     Event_OpenMessage(ACTOR_SEA_HOLD_STARED_AT_PASSENGER, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
       ShipRooms_Say(ACTOR_SEA_HOLD_STARED_AT_PASSENGER);
@@ -1109,8 +1126,10 @@ static void ShipRooms_AskSecondGuideToRow(void) {
     ShipRooms_RejoinParty(rowerId);
   } else {
     Event_SetMessageId(MsgTolbiShipHaHaHaRowingFeel);
+    // "Ha ha ha. Rowing, right? Feel free to choose whomever you like."
     Event_ShowMessageThenWait(ACTOR_SEA_HOLD_SECOND_GUIDE, 0, 60);
     Actor_RunRepeatedMotion(ACTOR_SEA_HOLD_SECOND_GUIDE, 1);
+    // "What? Me? You must be joking! Really?"
     Event_OpenMessage(ACTOR_SEA_HOLD_SECOND_GUIDE, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
       ShipRooms_Say(ACTOR_SEA_HOLD_SECOND_GUIDE);
@@ -2796,6 +2815,7 @@ static void ShipRooms_CastOff(void) {
   ShipRooms_Turn(ACTOR_QUARTERS_CAPTAIN, FACING_SOUTH_SOUTHWEST);
   Actor_StartRepeatedMotion(ACTOR_QUARTERS_CAPTAIN, 2);
   Event_SetMessageId(MsgTolbiShipCastOff);
+  // "All right. Cast off!"
   Event_ShowMessageThenWait(ACTOR_QUARTERS_CAPTAIN, 0, 20);
   ShipRooms_RunEventCommand(
       SHIP_CLOSE_SCREEN,
@@ -2809,6 +2829,7 @@ static void ShipRooms_AnnounceDeparture(void) {
   Actor_FaceDirection(ACTOR_QUARTERS_CAPTAIN, FACING_SOUTH_SOUTHWEST, 40);
   Actor_StartRepeatedMotion(ACTOR_QUARTERS_CAPTAIN, 2);
   Event_SetMessageId(MsgTolbiShipWereOff);
+  // "All right, we're off!"
   Event_ShowMessageThenWait(ACTOR_QUARTERS_CAPTAIN, 0, 20);
   ShipRooms_RunEventCommand(
       SHIP_CLOSE_SCREEN,
@@ -2832,6 +2853,7 @@ static void ShipRooms_KajaCallsToOars(void) {
   Actor_FaceDirection(ACTOR_HOLD_KAJA, FACING_WEST, 20);
   Actor_StartRepeatedMotion(ACTOR_HOLD_KAJA, 2);
   Event_SetMessageId(MsgTolbiShipRowThoseOars);
+  // "Row those oars!"
   Event_ShowMessageThenWait(ACTOR_HOLD_KAJA, 0, 20);
   ShipRooms_RunEventCommand(SHIP_CLOSE_SCREEN,
                             SHIP_ROOMS_PASSENGER_HOLD_TO_ROWING_DECK_ROWING, 0);
@@ -2853,6 +2875,7 @@ static void ShipRooms_KajaCallsReplacementToOars(void) {
   Actor_FaceDirection(ACTOR_SEA_HOLD_KAJA, FACING_WEST, 20);
   Actor_StartRepeatedMotion(ACTOR_SEA_HOLD_KAJA, 2);
   Event_SetMessageId(MsgTolbiShipRowThoseOars);
+  // "Row those oars!"
   Event_ShowMessageThenWait(ACTOR_SEA_HOLD_KAJA, 0, 20);
   ShipRooms_RunEventCommand(SHIP_CLOSE_SCREEN,
                             SHIP_ROOMS_PASSENGER_HOLD_TO_ROWING_DECK_ROWING, 0);
@@ -2921,6 +2944,7 @@ static void ShipRooms_AskAboutMonsters(void) {
   Actor_FaceDirection(ACTOR_QUARTERS_CAPTAIN, FACING_SOUTH_SOUTHEAST, 20);
   Actor_StartRepeatedMotion(ACTOR_QUARTERS_CAPTAIN, 2);
   Event_SetMessageId(MsgTolbiShipMonsters);
+  // "Monsters?"
   Event_ShowMessageThenWait(ACTOR_QUARTERS_CAPTAIN, 0, 20);
   ShipRooms_RunEventCommand(
       SHIP_CLOSE_SCREEN,
@@ -3070,6 +3094,7 @@ static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
         SHIP_CLOSE_SCREEN, SHIP_ROOMS_ROWING_DECK_TO_TOLBI_SHIP_DECK_READY, 0);
   } else {
     Event_SetMessageId(MsgTolbiShipBack);
+    // "Isaac, you're back."
     FieldEvent_ShowMessageThenWait(KAJA_ROWING_SPEAKER, 0, 40);
     Actor_ShowEmote(ACTOR_ROWING_KAJA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     ShipRooms_Say(KAJA_ROWING_SPEAKER);
@@ -3883,6 +3908,7 @@ static void ShipRooms_NoticeShipRocking(void) {
   ShipRooms_Turn(ACTOR_MIA, FACING_SOUTHWEST);
   // The party notices the rocking, then turns to the crew for an explanation.
   Event_SetMessageId(MsgTolbiShipWonderWhatsWrongShipShouldnt);
+  // "I wonder what's wrong... The ship shouldn't be rocking this..."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 40);
   ShipRooms_Say(ACTOR_ROWING_KAJA);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);

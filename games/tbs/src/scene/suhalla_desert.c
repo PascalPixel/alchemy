@@ -451,17 +451,22 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Event_SetMessageId(MsgSuhallaSandstorm);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
+    // "A sandstorm!"
     Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+    // "There'll be trouble if we get caught up in one of those..."
     Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+    // "But something is wrong... Why are there so many?"
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 30);
     Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
+    // "If we don't get past here, we'll never make it to Babi..."
     Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+    // "We must step carefully if we hope to escape the desert."
     Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
     Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
@@ -542,22 +547,31 @@ static void SuhallaDesert_IodemAsksWhetherToPressOn(void) {
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 30);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
+    // "Sheba is nowhere to be found."
     Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+    // "I wonder what happened..."
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(30);
     Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
+    // "Should we search the desert once more or press on to Lalivero?"
     Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 30);
+    // "What do you say, Isaac? Should we keep going?"
+    // Yes: "Ah, yes. I had forgotten about your foes..."
+    // No: "But I must carry out Babi's orders..."
     Event_AskYesNo(ACTOR_IODEM, 0);
     Event_Wait(30);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
+    // "Our guard gate lies ahead."
     Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
+    // "We can leave Sheba to the soldiers at the gate."
     Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_SetSpeed(ACTOR_IODEM, PIXELS(7) / 10, PIXELS(7) / 20);
     Actor_WalkToAndWait(ACTOR_IODEM, 440, 1256);
+    // "Well, perhaps we should head there first, then."
     Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);

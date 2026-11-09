@@ -216,6 +216,7 @@ static void StuccoRoomsB_WatchWomanHideMedal(void) {
   Actor_WalkToAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 600, 848);
   Actor_FaceDirection(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, FACING_NORTH, 0);
   Event_Wait(40);
+  // "Hey, what's this?"
   Event_ShowMessage(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
   Actor_RunRepeatedMotion(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 2);
   Event_Wait(30);
@@ -234,16 +235,19 @@ static void StuccoRoomsB_WatchWomanHideMedal(void) {
   Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 2);
   Event_Wait(20);
+  // "Uh-oh."
   Event_ShowMessage(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "I didn't find anything!"
   Event_ShowMessage(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN,
                   EMOTE_IN_FRONT | EMOTE_WINCE, 50);
+  // "I was just doing some work I...had to do."
   Event_ShowMessage(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
 
   // She hides it and comes back, then leaves.
@@ -254,6 +258,7 @@ static void StuccoRoomsB_WatchWomanHideMedal(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, ANIM_NOD);
   Event_Wait(20);
+  // "It's rude to startle people!"
   Event_ShowMessage(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 16, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
@@ -275,6 +280,7 @@ static void StuccoRoomsB_WatchPassengersArgue(void) {
   Event_Wait(30);
   Actor_Jump(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 4, 13);
   Actor_Jump(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 4, 30);
+  // "He won't sail the ship, even though we agreed to do whatever..."
   Event_ShowMessage(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 0);
   Event_Wait(10);
 
@@ -283,15 +289,18 @@ static void StuccoRoomsB_WatchPassengersArgue(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE, ANIM_NOD);
   Event_Wait(30);
+  // "Co-Correct. The ships cannot go out for any reason."
   Event_ShowMessage(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_THIRD_PASSENGER,
                             ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "What kind of person would refuse such an offer?"
   Event_ShowMessage(ACTOR_STUCCO_ROOMS_B_THIRD_PASSENGER, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 2);
   Event_Wait(20);
+  // "You tell the captain again that he needs to set sail tomorrow."
   Event_ShowMessage(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE, ANIM_NOD);
@@ -362,9 +371,11 @@ static void StuccoRoomsB_TalkToItemMerchant(s32 speaker) {
     Shop_Run(STUCCO_ROOMS_B_ITEM_SHOP, speaker);
   } else if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
     Event_SetMessageId(MsgTolbiRightOneWell);
+    // "You're Isaac, right? The one that did so well in the finals!..."
     Event_ShowMessage(speaker, 0);
   } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
     Event_SetMessageId(MsgTolbiRequireLotHealing);
+    // "They require a lot of healing herbs once the finals begin...."
     Event_ShowMessage(speaker, 0);
   } else {
     StuccoRoomsB_AskYesNo(MsgTolbiFirstTimeTolbi, speaker);
@@ -381,12 +392,15 @@ static void StuccoRoomsB_TalkToWeaponMerchant(s32 speaker) {
     StuccoRoomsB_AskYesNo(MsgTolbiComeWayKalay, speaker);
   } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
     Event_SetMessageId(MsgTolbiColossoFinalsFinally);
+    // "So, the Colosso finals are finally here! Once Colosso ends,..."
     Event_ShowMessage(speaker, 0);
   } else {
     Event_SetMessageId(MsgTolbiLookStrongGo);
+    // "You look strong... Go fight at Colosso!"
     Event_ShowMessage(speaker, 0);
     Actor_ShowEmote(speaker, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
     Event_Wait(40);
+    // "Hang on! Now that I think about it, the tryouts have already..."
     Event_ShowMessage(speaker, 0);
   }
 }
@@ -400,12 +414,15 @@ static void StuccoRoomsB_TalkToArmorMerchant(s32 speaker) {
   } else {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       Event_SetMessageId(MsgTolbiWasntAbleWatch);
+      // "I wasn't able to watch the finals this year! My mother says..."
       Event_ShowMessage(speaker, 0);
     } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
       Event_SetMessageId(MsgTolbiMaybeCloseShop);
+      // "Hmm... Maybe I'll close the shop so I can go watch the finals."
       Event_ShowMessage(speaker, 0);
     } else {
       Event_SetMessageId(MsgTolbiIfCanMakeNameFor);
+      // "If you can make a name for yourself at Colosso, you might..."
       Event_ShowMessage(speaker, 0);
     }
   }
@@ -422,6 +439,7 @@ static void StuccoRoomsB_TalkToChef(s32 speaker) {
 static void StuccoRoomsB_TalkToWaitress(s32 speaker) {
   Event_Start();
   Event_SetMessageId(MsgTolbiGrrrChefInBadMood);
+  // "Grrr! The chef is in a bad mood because he didn't get to see..."
   Event_ShowMessage(speaker, 0);
   Event_End();
 }
@@ -444,12 +462,14 @@ static void StuccoRoomsB_TalkToMedalWoman(s32 speaker) {
     if (Event_GetFlag(FLAG_STUCCO_ROOMS_B_MEDAL_WOMAN_SAID_HELLO) == 0) {
       GameFlag_Set(FLAG_STUCCO_ROOMS_B_MEDAL_WOMAN_SAID_HELLO);
       Event_SetMessageId(MsgTolbiHello);
+      // "Oh... Hello!"
       Event_ShowMessage(speaker, 0);
       Event_Wait(10);
       Actor_RunRepeatedMotion(speaker, 2);
       Event_Wait(20);
     }
     Event_SetMessageId(MsgTolbiHoHumFine);
+    // "Ho hum. I'm fine. It's nothing."
     Event_ShowMessage(speaker, 0);
   }
   Event_End();
@@ -474,6 +494,7 @@ static void StuccoRoomsB_TalkToAngryPassenger(s32 speaker) {
   Event_SetMessageId(MsgTolbiGrrrScamWhyWontThey);
   Actor_ShowEmote(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER,
                   EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
+  // "Grrr! What a scam! Why won't they let the ships sail out..."
   Event_ShowMessage(speaker, 0);
   Event_End();
 }
@@ -496,12 +517,15 @@ static void StuccoRoomsB_TalkToHealer(s32 speaker) {
   } else {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       Event_SetMessageId(MsgTolbiShipsArentGoing);
+      // "If the ships aren't going, why not forget heading east and..."
       Event_ShowMessage(speaker, 0);
     } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
       Event_SetMessageId(MsgTolbiMissFinalsTolbis);
+      // "If you miss the finals at Tolbi's Festival, you'll regret..."
       Event_ShowMessage(speaker, 0);
     } else {
       Event_SetMessageId(MsgTolbiWasteStuckHereWhenSuch);
+      // "What a waste to be stuck here when such a big festival's..."
       Event_ShowMessage(speaker, 0);
     }
   }

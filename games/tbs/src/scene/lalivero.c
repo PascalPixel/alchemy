@@ -196,6 +196,7 @@ static void Lalivero_TalkToVillagerTheyTookSheba(s32 actorId) {
   actor = Actor_Get(actorId);
   actor->scaleY = Q16_ONE;
   Event_SetMessageId(MsgLaliveroOhhTheyTookShebaHeaded);
+  // "Ohh... They took Sheba and headed for the ruins."
   Event_ShowMessage(actorId, 0);
   Actor_FaceDirection(actorId, FACING_NORTH, 0);
   Event_Wait(20);
@@ -207,6 +208,7 @@ static void Lalivero_TalkToVillagerTheyTookSheba(s32 actorId) {
 static void Lalivero_WomanAsksIfLeaving(s32 actorId) {
   s32 message = MsgLaliveroLeavingLalivero;
   Event_SetMessageId(message);
+  // "Are you leaving Lalivero?"
   Event_OpenMessage(actorId, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(10);
@@ -224,6 +226,7 @@ static void Lalivero_WharfGuardLetsPartyThrough(void) {
 
   GameFlag_Set(FLAG_LALIVERO_WHARF_OPEN);
   Event_SetMessageId(MsgLaliveroWasToldLetInIf);
+  // "I was told to let you in if you showed up... The door is open."
   Event_ShowMessage(ACTOR_WHARF_GUARD, 0);
   Actor_SetSpeed(ACTOR_WHARF_GUARD, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_WHARF_GUARD, -16, 0);
@@ -298,34 +301,41 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
+  // "More of Tolbi's soldiers lay defeated..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
   Event_Wait(30);
+  // "Is this more of their work?"
   Event_OpenMessage(ACTOR_IODEM, 0);
   Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0);
   Event_Wait(30);
   // The soldiers know Iodem's voice: seven attackers took Sheba.
   Actor_RunRepeatedMotion(ACTOR_WEST_SOLDIER, 2);
   Event_Wait(20);
+  // "That voice... It's Iodem..."
   Event_ShowMessage(ACTOR_WEST_SOLDIER, 0);
   Event_Wait(10);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_WEST_SOLDIER, 30);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
+  // "You survived!"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Actor_SetAnimation(ACTOR_WEST_SOLDIER, ANIM_STAND);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_WEST_SOLDIER, 2);
   Event_Wait(30);
+  // "We suffered great losses..."
   Event_ShowMessage(ACTOR_WEST_SOLDIER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   Event_Wait(20);
+  // "Were you fighting a group of six people?"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_EAST_SOLDIER, 2);
   Event_Wait(20);
+  // "There were...seven..."
   Event_ShowMessage(ACTOR_EAST_SOLDIER, 0);
   Event_Wait(10);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_EAST_SOLDIER, 0);
@@ -333,6 +343,7 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Actor_SetAnimation(ACTOR_EAST_SOLDIER, ANIM_STAND);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
+  // "You've survived as well!"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -342,22 +353,27 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
+  // "There were seven? Is this the same group you were following..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_EAST_SOLDIER, 2);
   Event_Wait(30);
+  // "I'm certain of it. One of them must have been...Sheba."
   Event_ShowMessage(ACTOR_EAST_SOLDIER, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_EAST_SOLDIER, 20);
+  // "Sheba, you say... Is this true!?"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_WEST_SOLDIER, 2);
   Event_Wait(20);
+  // "The scholar Kraden was protecting her. I'm sure it was Sheba..."
   Event_ShowMessage(ACTOR_WEST_SOLDIER, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
   Event_Wait(30);
+  // "Did you hear that, Isaac? What do they want with Sheba?"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -374,19 +390,23 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
   Event_Wait(30);
+  // "Sheba... They all..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_EAST_SOLDIER, 2);
   Event_Wait(20);
+  // "Once they finished with us, they headed for Babi Lighthouse."
   Event_ShowMessage(ACTOR_EAST_SOLDIER, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
   Event_Wait(20);
+  // "What do they hope to find at Babi Lighthouse?"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_EAST_SOLDIER, ANIM_NOD);
   Event_Wait(30);
+  // "They spoke of the ruins beneath the lighthouse..."
   Event_ShowMessage(ACTOR_EAST_SOLDIER, 0);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
@@ -395,22 +415,26 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Actor_WalkToAndWait(ACTOR_IODEM, 256, 384);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
   Event_Wait(20);
+  // "Ruins? Of course! The foundations of the lighthouse!"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_WEST_SOLDIER, 2);
   Event_Wait(20);
+  // "And Faran, the master of the Lalivero, followed them into..."
   Event_ShowMessage(ACTOR_WEST_SOLDIER, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   Event_Wait(20);
+  // "I see. Faran, too..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetSpeed(ACTOR_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
   // Iodem resolves to follow; the soldiers send the party on.
   Actor_WalkByAndWait(ACTOR_IODEM, 0, 16);
   Event_Wait(10);
+  // "Isaac! We must head for Babi Lighthouse as well."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
@@ -421,10 +445,12 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
+  // "Are you concerned about these soldiers?"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_EAST_SOLDIER, 2);
   Event_Wait(20);
+  // "We're fine... You must hurry to the lighthouse."
   Event_ShowMessage(ACTOR_EAST_SOLDIER, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
@@ -432,6 +458,7 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_WEST_SOLDIER, 2);
   Event_Wait(20);
+  // "The lighthouse... Sheba... If anything happens... Just hurry..."
   Event_ShowMessage(ACTOR_WEST_SOLDIER, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
@@ -442,6 +469,7 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
+  // "Even the soldiers insist, Isaac! Come on!"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -484,6 +512,7 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Actor_LaunchFromLeader(ACTOR_IVAN, 0, 16, FACING_NORTH);
   Actor_WaitForMoveById(ACTOR_GARET);
   Event_Wait(30);
+  // "Where are you going, Isaac? Iodem asked us to wait. Did you..."
   Event_OpenMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
@@ -492,6 +521,7 @@ static void Lalivero_IodemGivesBlackOrb(void) {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "We're going to need to work on your memory, Isaac."
     Event_ShowMessage(ACTOR_MIA, 0);
     gFieldWork->message += 1;
   } else {
@@ -499,10 +529,12 @@ static void Lalivero_IodemGivesBlackOrb(void) {
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
     Event_Wait(20);
     gFieldWork->message += 1;
+    // "I know we need to leave, but we should hear what Iodem has..."
     Event_ShowMessage(ACTOR_MIA, 0);
   }
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
+  // "We can delay our departure a little longer. Let's wait."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -547,6 +579,7 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   MapGrid_CopyCellsLayered(32, 0, 1, 2, 4, 18);
   Sound_Play(SE_DOOR_CLOSE);
   Event_Wait(20);
+  // "Thank you for waiting for me."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -560,28 +593,35 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   Event_Wait(30);
+  // "As you no doubt have guessed, I need to speak with you about..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(30);
+  // "Yes, the island of the ancients far out to sea."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
+  // "When you could not find Jenna, you returned to Venus Lighthouse."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
+  // "Yeah. The base of the lighthouse was flooded, so we couldn't..."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "And that's when you gazed out to sea, as you promised Babi..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "Yes... And we saw an area wrapped in mist."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   Event_Wait(30);
+  // "I remembered how Babi said Lemuria was always covered in mist."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
@@ -595,22 +635,27 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   Event_Wait(30);
+  // "I am not sure, but I am beginning to think that may be..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "If it is, then Babi's life..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   Event_Wait(20);
+  // "...could be saved? Yes."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Event_Wait(20);
+  // "Then I guess we have no choice but to go..."
   Event_OpenMessage(ACTOR_GARET, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "Good. Then it's settled. I'll make arrangements for you to..."
     Event_ShowMessage(ACTOR_IODEM, 0);
     gFieldWork->message += 1;
   } else {
@@ -618,27 +663,33 @@ static void Lalivero_IodemGivesBlackOrb(void) {
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
     Event_Wait(20);
     gFieldWork->message += 1;
+    // "You swore an oath. It is meaningless unless you go immediately."
     Event_ShowMessage(ACTOR_IODEM, 0);
   }
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "But...we have to find Jenna first..."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 50);
+  // "That is the other reason I wanted to see you... to give you..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
   // Iodem takes out the Black Orb.
   Actor_SetPosition(ACTOR_BLACK_ORB, PIXELS(88), PIXELS(332));
+  // "Iodem takes out the Black Orb."
   Event_ShowMessage(-1, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_Jump(ACTOR_MIA, 4, 13);
   Actor_Jump(ACTOR_MIA, 4, 30);
+  // "Oh, isn't that..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   Event_Wait(30);
+  // "You will need it to sail Babi's ship."
   Event_ShowMessage(ACTOR_IODEM, 0);
   // Arriving through the aerie, the party also talks about the ship they saw
   // at Idejima.
@@ -649,21 +700,26 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
+  // "Babi told me the ship of the ancients is an incredible vessel."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   Event_Wait(30);
+  // "It will make your search for Jenna easier."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "We appreciate it."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
+  // "But I want you to find Lemuria as soon as possible."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(30);
+  // "We promised Babi we would find Lemuria. We will not fail him."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
@@ -684,10 +740,12 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Event_Wait(30);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "The ship is docked at the edge of town. You will know it..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   Event_Wait(30);
+  // "Farewell! And bring back news of Lemuria!"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -717,14 +775,17 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
   Event_Wait(20);
+  // "Right on, Isaac! We finally get to see the ocean!"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Event_Wait(20);
+  // "To sea we go!"
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(30);
+  // "It is time to depart."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -770,10 +831,12 @@ static void Lalivero_TalkAboutIdejimaShip(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
+  // "I thought the ship we saw at Idejima was Babi's..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "His ship is here in Lalivero."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -783,17 +846,21 @@ static void Lalivero_TalkAboutIdejimaShip(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
+  // "So the ship at the peninsula was Saturos's ship!"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Perhaps, but we have no way of finding that out now..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "Yes... They're gone..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(30);
+  // "But now we can sail the ship of the ancients!"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
@@ -802,6 +869,7 @@ static void Lalivero_TalkAboutIdejimaShip(void) {
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(30);
+  // "It certainly will aid us in our search for Jenna."
   Event_ShowMessage(ACTOR_IVAN, 0);
 }
 
@@ -810,6 +878,7 @@ static void Lalivero_TalkAboutIdejimaShip(void) {
 static void Lalivero_TurnBackToTheShip(void) {
   Event_Start();
   Event_SetMessageId(MsgLaliveroWhereGoingArentWeTaking);
+  // "Where are you going? Aren't we taking Babi's ship? Then we..."
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
   Event_End();

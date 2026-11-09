@@ -440,9 +440,13 @@ static void ColosseumEntrance_DiscussSeating(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_BABI_SAVED)) {
     Event_SetMessageId(MsgColosseumColosseumAlreadyFullIfReally);
+    // "The colosseum is already full! If you really want to watch,..."
     Event_ShowMessage(ACTOR_VILLAGER_SEATING, 0);
   } else {
     Event_SetMessageId(MsgColosseumHopingGetInSeeColosso);
+    // "Are you hoping to get in to see Colosso now?"
+    // Yes: "First-timers all make that mistake. If you want to see..."
+    // No: "Good choice... If you want in, you should come back early..."
     Event_AskYesNo(ACTOR_VILLAGER_SEATING, 0);
   }
   Event_End();
@@ -456,9 +460,11 @@ static void ColosseumEntrance_DiscussLuckyGuessSeats(void) {
     Actor_ShowEmote(ACTOR_OLD_WOMAN_GOOD_SPOT, EMOTE_IN_FRONT | EMOTE_WINCE,
                     40);
     Event_SetMessageId(MsgColosseumWantWatchFinalsFromGood);
+    // "I want to watch the finals from a good spot, but it costs..."
     Event_ShowMessage(ACTOR_OLD_WOMAN_GOOD_SPOT, 0);
   } else {
     Event_SetMessageId(MsgColosseumColossosLuckyGuessMakesBattles);
+    // "Colosso's Lucky Guess makes the battles in the colosseum better."
     Event_ShowMessage(ACTOR_OLD_WOMAN_GOOD_SPOT, 0);
   }
   Event_End();
@@ -479,6 +485,7 @@ static void ColosseumEntrance_DiscussLuckyGuessWinnings(void) {
     ColosseumEntrance_FaceDirection(ACTOR_SCALPER, FACING_EAST);
   } else {
     Event_SetMessageId(MsgColosseumWantWinBigPutOn);
+    // "I want to win big, so I put it all on a warrior no one else..."
     Event_ShowMessage(ACTOR_SCALPER, 0);
   }
   Event_End();
@@ -492,14 +499,17 @@ static void ColosseumEntrance_OfferLuckyGuess(void) {
   if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
     if (Event_GetFlag(FLAG_LUCKY_GUESS_REFUSED_ISAAC) != 0) {
       Event_SetMessageId(MsgColosseumLookImSorryButWe);
+      // "Look, I'm sorry, but we have some rules to help keep things..."
       Event_ShowMessage(ACTOR_LUCKY_GUESS_MAN, 0);
     } else {
       Event_SetMessageId(MsgColosseumWantTryOutLuckyGuess);
+      // "Want to try out the Lucky Guess?"
       Event_OpenMessage(ACTOR_LUCKY_GUESS_MAN, 0);
       if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
         gFieldWork->message++;
         Actor_ShowEmote(ACTOR_LUCKY_GUESS_MAN,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+        // "Aren't you Isaac? The one handpicked by Babi?"
         Event_OpenMessage(ACTOR_LUCKY_GUESS_MAN, 0);
         if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
           gFieldWork->message++;
@@ -508,11 +518,15 @@ static void ColosseumEntrance_OfferLuckyGuess(void) {
         Event_ShowMessage(ACTOR_LUCKY_GUESS_MAN, 0);
         GameFlag_Set(FLAG_LUCKY_GUESS_REFUSED_ISAAC);
       } else {
+        // "Let me know if you want to play, okay?"
         Event_ShowMessage(ACTOR_LUCKY_GUESS_MAN, 0);
       }
     }
   } else {
     Event_SetMessageId(MsgColosseumDoKnowLuckyGuess);
+    // "Do you know what the Lucky Guess is?"
+    // Yes: "Entrants can't pick their own team members. That way, the..."
+    // No: "It's a game where you try to guess which warrior will win..."
     Event_AskYesNo(ACTOR_LUCKY_GUESS_MAN, 0);
   }
   Event_End();
@@ -586,6 +600,7 @@ static void ColosseumEntrance_TalkToDekka(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_DEKKA, 2);
   Event_SetMessageId(MsgColosseumDekkaMustWinFinalsDekka);
+  // "Dekka must win the finals. Dekka. Dekka..."
   Event_ShowMessageThenWait(ACTOR_DEKKA, 0, 20);
   if (Event_GetFlag(FLAG_NAVAMPA_SPOKE_FOR_DEKKA) != 0) {
     Event_Wait(20);
@@ -644,6 +659,7 @@ static void ColosseumEntrance_AskIfReadyForFinals(void) {
   Event_Start();
   Actor_TurnToFaceEachOther(ACTOR_FINALS_SOLDIER, ACTOR_PARTY_LEADER, 20);
   Event_SetMessageId(MsgColosseumYouReadyForFinals);
+  // "Are you ready for the finals?"
   Event_OpenMessage(ACTOR_FINALS_SOLDIER, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) != 0)
     gFieldWork->message++;
@@ -904,6 +920,7 @@ static void ColosseumEntrance_FinalsStart(void) {
     Actor_FaceDirection(ACTOR_FINALS_SOLDIER, FACING_SOUTH_SOUTHEAST, 20);
     Actor_RunRepeatedMotion(ACTOR_FINALS_SOLDIER, 1);
     Event_SetMessageId(MsgColosseumYouReadyForFinals);
+    // "Are you ready for the finals?"
     Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_FINALS_SOLDIER, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
       Event_Wait(20);
@@ -1013,6 +1030,7 @@ static void ColosseumEntrance_FinalsStart(void) {
           COLOSSEUM_WAITING_ROOM_TO_PILLARED_PASSAGE_EAST);
     } else {
       gFieldWork->message++;
+      // "We'll be starting soon, so you'd better get ready fast!"
       Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_FINALS_SOLDIER, 0);
     }
     Event_End();
@@ -1044,6 +1062,7 @@ static void ColosseumEntrance_TalkToTrialAttendant(void) {
   } else {
     Actor_StartRepeatedMotion(ACTOR_TRIAL_ATTENDANT, 2);
     Event_SetMessageId(MsgColosseumSilence);
+    // "!!!"
     Event_ShowMessage(ACTOR_TRIAL_ATTENDANT, 0);
     FieldCamera_GetActor()->motionFlags = clearedTrialSeen;
     wait(1);

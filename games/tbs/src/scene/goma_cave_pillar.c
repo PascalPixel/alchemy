@@ -571,6 +571,7 @@ static void GomaCavePillar_WitnessCheersForgeCaught(void) {
   Actor_RunRepeatedMotion(ACTOR_WITNESS, 2);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Event_SetMessageId(MsgGomaGotWowThatsPrettyImpressive);
+  // "You got it? Wow, that's pretty impressive! Keep your eyes..."
   Event_ShowMessage(ACTOR_WITNESS, 0);
   Actor_SetAnimationAndWait(ACTOR_WITNESS, ANIM_NOD);
   Event_Wait(30);

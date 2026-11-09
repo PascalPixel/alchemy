@@ -178,6 +178,9 @@ const struct Trigger *Scene_GetTriggers(void) {
 static void McCoyPalaceGrounds_TalkToNorthWorker(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinHaveYouSeenBarricadeWe);
+  // "Have you seen the barricade we built on the road to Kolima?"
+  // Yes: "It's pretty shabby, because it was built on short notice......"
+  // No: "It's off to the east, if you want to see it. It was a rush..."
   Event_AskYesNo(ACTOR_NORTH_WORKER, 0);
   Event_End();
 }
@@ -189,6 +192,9 @@ static void McCoyPalaceGrounds_TalkToNorthWorker(void) {
 static void McCoyPalaceGrounds_TalkToLadyMcCoy(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinTellingMeImResponsibleFor);
+  // "Are you telling me that I'm responsible for this?"
+  // Yes: "Sure, I had them cut the tree down so I could build my..."
+  // No: "That curse of the tree spirit is a foolish old superstition!..."
   Event_AskYesNo(ACTOR_LADY_MCCOY, 0);
   Event_End();
 }
@@ -198,6 +204,9 @@ static void McCoyPalaceGrounds_TalkToLadyMcCoy(void) {
 static void McCoyPalaceGrounds_TalkToWestGuard(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinDoThinkCanBecomeAs);
+  // "Do you think I can become as fine a warrior as you?"
+  // Yes: "Really? Then I will try my best!"
+  // No: "Don't be so harsh... Just say yes, even if you don't mean it."
   Event_AskYesNo(ACTOR_WEST_GUARD, 0);
   Event_End();
 }
@@ -218,25 +227,31 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
     if (GameFlag_Get(FLAG_KEEPING_MCCOY_WAITING) != 0) {
       if (Event_GetFlag(FLAG_GUARD_SCOLDED) == 0) {
         Event_SetMessageId(MsgBilibinWhere);
+        // "Where were you?"
         Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 10);
         Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
+        // "Lord McCoy is angry because he couldn't find you."
         Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 10);
         Actor_RunRepeatedMotion(ACTOR_EAST_GUARD, 2);
         GameFlag_Set(FLAG_GUARD_SCOLDED);
       }
       Event_SetMessageId(MsgBilibinMasterQuiteCranky);
+      // "The master can be quite cranky. Hurry along, now!"
       Event_ShowMessage(ACTOR_EAST_GUARD, 0);
     } else {
       Event_SetMessageId(MsgBilibinLordMccoyDifficult);
+      // "Lord McCoy is a very difficult man. Be careful how you act..."
       Event_ShowMessage(ACTOR_EAST_GUARD, 0);
       goto guard;
     }
   } else {
     // On the first visit, the guards confer before opening the gate.
     Event_SetMessageId(MsgBilibinLordOnlyMeet);
+    // "The lord will only meet with brave and mighty warriors. You..."
     Event_OpenMessage(ACTOR_EAST_GUARD, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       gFieldWork->message++;
+      // "Hmmm, I see... You seem pretty confident..."
       Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 10);
       if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed < PIXELS(270)) {
         Actor_SetSpeed(ACTOR_EAST_GUARD, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -248,15 +263,18 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
       Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_WEST_SOUTHWEST, 20);
       Actor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
       Actor_StartRepeatedMotion(ACTOR_WEST_GUARD, 1);
+      // "What do you say? They look a little young to get involved in..."
       Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
       Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
       Actor_StartRepeatedMotion(ACTOR_EAST_GUARD, 1);
+      // "Nobody else seems up to the challenge, though. What do we..."
       Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 20);
       Actor_SetAnimation(ACTOR_WEST_GUARD, ANIM_NOD);
       Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_NOD);
       Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTH_SOUTHEAST, 0);
       Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH_SOUTHWEST, 10);
       Actor_StartRepeatedMotion(ACTOR_WEST_GUARD, 1);
+      // "All right. I shall let you pass. Follow me!"
       Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 20);
       Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_EAST_NORTHEAST, 0);
       Actor_SetSpeed(ACTOR_EAST_GUARD, PIXELS(1), PIXELS(1) / 2);
@@ -377,26 +395,32 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
   Actor_StartRepeatedMotion(ACTOR_WEST_GUARD, 2);
   Actor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Event_SetMessageId(MsgBilibinOhItS);
+  // "Oh! It's..."
   Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
   Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH_SOUTHWEST, 10);
   Actor_StartRepeatedMotion(ACTOR_EAST_GUARD, 2);
   Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  // "Oh! Sir!"
   Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 20);
   Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_EAST_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_WEST_SOUTHWEST, 40);
   Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH_SOUTHWEST, 10);
   Actor_RunRepeatedMotion(ACTOR_WEST_GUARD, 1);
+  // "We've been looking everywhere for you!"
   Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_EAST_GUARD, 1);
+  // "The curse of the holy tree... You're the ones who broke it,..."
   Event_OpenMessage(ACTOR_EAST_GUARD, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   // Refusals repeat the accusation until the player acknowledges it.
   while (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
     Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     Event_SetMessageId(MsgBilibinNotTrueWitnesses);
+    // "That's not true. We have witnesses who say they saw you in..."
     Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 10);
     Actor_StartRepeatedMotion(ACTOR_EAST_GUARD, 2);
+    // "It was you, wasn't it?"
     Event_OpenMessage(ACTOR_EAST_GUARD, 0);
   }
   Event_Wait(10);
@@ -407,10 +431,12 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_WEST_GUARD, 1);
   Event_SetMessageId(MsgBilibinUnderArrest);
+  // "You're under arrest!"
   Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
   Actor_SetSpeed(ACTOR_WEST_GUARD, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_WEST_GUARD, 314, 280);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
+  // "Let's go. Lord McCoy is waiting."
   Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 40);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);

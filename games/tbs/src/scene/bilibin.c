@@ -389,6 +389,9 @@ static void Bilibin_ExamineTreeMan(void) {
 static void Bilibin_AskAboutEntranceTree(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinDidSeeTreeAtEntrance);
+  // "Did you see the tree at the entrance?"
+  // Yes: "That tree was once a man... He came to our village under a..."
+  // No: "I can't believe you missed the tree... You should look..."
   Event_AskYesNo(ACTOR_VILLAGER_ASKS_ABOUT_TREE, 0);
   Event_End();
 }
@@ -399,6 +402,9 @@ static void Bilibin_AskAboutEntranceTree(void) {
 static void Bilibin_AskAboutSoutheastRoute(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinHaveTriedHeadingSoutheastFrom);
+  // "Have you tried heading southeast from here?"
+  // Yes: "That barricade was built because there's been trouble in Kolima."
+  // No: "The road is blocked, so you might as well not even bother. I..."
   Event_AskYesNo(ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST, 0);
   Event_End();
 }
@@ -409,6 +415,9 @@ static void Bilibin_AskAboutSoutheastRoute(void) {
 static void Bilibin_AskAboutBeingATree(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinWasTurnedIntoTreeFor);
+  // "I was turned into a tree for a while... Can you believe it?"
+  // Yes: "I think I now know what it means to sink your roots in one..."
+  // No: "Yeah, I can't even believe it myself."
   Event_AskYesNo(ACTOR_FORMER_TREE_MAN, 0);
   Event_End();
 }
@@ -419,6 +428,9 @@ static void Bilibin_AskAboutBeingATree(void) {
 static void Bilibin_AskAboutCurseBreakers(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinCurseWasBrokenThanksEfforts);
+  // "The curse was broken all thanks to the efforts of three..."
+  // Yes: "That's amazing! You broke the so-called curse!"
+  // No: "I didn't think so. You don't look very tough at all."
   Event_AskYesNo(ACTOR_BOY_SCARED_OF_ENTRANCE, 0);
   Event_End();
 }
@@ -429,6 +441,9 @@ static void Bilibin_AskAboutCurseBreakers(void) {
 static void Bilibin_AskAboutImil(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinHaveEverBeenVillageImil);
+  // "Have you ever been to the village of Imil, up north?"
+  // Yes: "Did you see the great lighthouse over there? I bet it was..."
+  // No: "If you ever go there, be sure to visit their famous lighthouse."
   Event_AskYesNo(ACTOR_STRONGMAN_IMIL_TOWER, 0);
   Event_End();
 }
@@ -543,6 +558,7 @@ static void Bilibin_PullJillFromRiver(void) {
     FieldPsynergy_StartMindReadWave(0, ACTOR_JILL_TREE);
     wait(10);
     Event_SetMessageId(MsgBilibinThankSavedMeFromBeing);
+    // "Thank you! You saved me from being washed downstream!"
     Event_ShowMessage(ACTOR_JILL_TREE, 0);
     FieldPsynergy_FinishWaveAndReleaseHeapBlock();
     wait(10);
@@ -582,6 +598,7 @@ static void Bilibin_JillGivesHardNut(void) {
     Actor_ShowEmote(ACTOR_GANG_MEMBER_WEST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     20);
     Event_SetMessageId(MsgBilibinYoureGuy);
+    // "Hey! You're that guy!"
     Event_ShowMessageThenWait(ACTOR_GANG_MEMBER_WEST, 0, 10);
     Actor_ShowEmote(ACTOR_GANG_MEMBER_EAST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     0);
@@ -590,6 +607,7 @@ static void Bilibin_JillGivesHardNut(void) {
     Actor_ShowEmote(ACTOR_GANG_MEMBER_EAST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     20);
     Event_SetMessageId(MsgBilibinYoureGuy);
+    // "Hey! You're that guy!"
     Event_ShowMessageThenWait(ACTOR_GANG_MEMBER_EAST, 0, 10);
     Actor_ShowEmote(ACTOR_GANG_MEMBER_WEST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     0);
@@ -601,6 +619,7 @@ static void Bilibin_JillGivesHardNut(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 268, 184);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
   Actor_RunRepeatedMotion(ACTOR_GANG_MEMBER_WEST, 2);
+  // "Jill, are these the people who saved you?"
   Event_ShowMessageThenWait(ACTOR_GANG_MEMBER_WEST, 0, 10);
   Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JILL, FACING_SOUTH_SOUTHEAST, 20);
@@ -613,10 +632,12 @@ static void Bilibin_JillGivesHardNut(void) {
   Actor_FaceDirection(ACTOR_GANG_MEMBER_EAST, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_SOUTH_SOUTHEAST, 10);
   Actor_RunRepeatedMotion(ACTOR_JILL, 1);
+  // "Remember me? I was that tree!"
   Event_ShowMessageThenWait(ACTOR_JILL, 0, 10);
   Actor_SetAnimation(ACTOR_GANG_MEMBER_EAST, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GANG_MEMBER_WEST, ANIM_NOD);
   Event_Wait(20);
+  // "I would have been swept down the river if it wasn't for you."
   Event_ShowMessage(ACTOR_JILL, 0);
   Actor_SetSpeed(ACTOR_JILL, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_Get(ACTOR_JILL)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -625,6 +646,7 @@ static void Bilibin_JillGivesHardNut(void) {
   Actor_Get(ACTOR_JILL)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
+  // "Please, take this. It is a small token of my appreciation."
   Event_ShowMessageThenWait(ACTOR_JILL, 0, 10);
   // Show the named gift before adding it to the party's inventory.
   FieldMessage_Show(MsgBilibinJillGaveIsaacSpecialGift, 1);

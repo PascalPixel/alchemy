@@ -1187,6 +1187,7 @@ static void VenusLighthouse_HearOfTheAttack(void) {
   Event_SetMessageId(MsgFieldVenusLighthouseWasAttackedBy);
   flickersLeft = 10;
   flickerDelay = 8;
+  // "Venus Lighthouse was... attacked by strange... wanderers..."
   Event_ShowMessageThenWait(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK, 0, 20);
   do {
     Actor_SetSpriteColorById(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK,
@@ -1212,8 +1213,10 @@ static void VenusLighthouse_HearOfTheAttack(void) {
 static void VenusLighthouse_TalkToWaitingScholar(void) {
   Event_Start();
   Event_SetMessageId(MsgVenusIveWaitedLongSeeIts);
+  // "I've waited so long to see what it's like inside Venus..."
   Event_ShowMessageThenWait(ACTOR_WAITING_SCHOLAR, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_WAITING_SCHOLAR, 2);
+  // "I can't even move without feeling terrible, terrible pain."
   Event_ShowMessage(ACTOR_WAITING_SCHOLAR, 0);
   Event_End();
 }
@@ -1471,6 +1474,7 @@ static void VenusLighthouse_MovePillarTowardWall(void) {
       Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
       Event_Wait(20);
       Event_SetMessageId(MsgVenusHmmmWeCantPushBlock);
+      // "Hmmm. We can't push the block farther than this."
       Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
       Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 10);
       Actor_ShowEmote(ACTOR_GARET, emote, 60);
@@ -1478,6 +1482,7 @@ static void VenusLighthouse_MovePillarTowardWall(void) {
       Event_Wait(20);
       Actor_RunRepeatedMotion(ACTOR_GARET, 2);
       Event_Wait(20);
+      // "It'd be great if we could carry that block and drop it to..."
       Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
       Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
@@ -1569,11 +1574,13 @@ static void VenusLighthouse_TalkToScholarByDoor(void) {
   Event_SetMessageId(MsgVenusThoughtIdExploreAfterDoor);
   Actor_FaceActor(ACTOR_DOOR_SCHOLAR, ACTOR_PARTY_LEADER, 0);
   Event_Wait(10);
+  // "I thought I'd explore after the door opened. While I was..."
   Event_ShowMessageThenWait(ACTOR_DOOR_SCHOLAR, 0, 20);
   Actor_FaceDirection(ACTOR_DOOR_SCHOLAR, FACING_NORTHEAST, 0);
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(448), -1, PIXELS(432), 1);
   FieldCamera_WaitForMove();
+  // "They did something to the statue that made the floor light up."
   Event_ShowMessage(ACTOR_DOOR_SCHOLAR, 0);
   Event_End();
 }

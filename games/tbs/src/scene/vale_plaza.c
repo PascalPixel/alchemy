@@ -513,6 +513,9 @@ static void ValePlaza_AskAboutMeditation(void) {
   Event_Start();
   Event_SetMessageId(MsgValeMeditateOnMtAlephDaily);
   Actor_FaceEachOther(ACTOR_MAN_ASKING_ABOUT_MEDITATION, ACTOR_PARTY_LEADER, 2);
+  // "Isaac! Have you remembered to meditate on Mt. Aleph daily?"
+  // Yes: "That's very good of you! Meditating helps keep the peace in..."
+  // No: "For shame, Isaac! Mt. Aleph keeps watch over Vale. Meditate..."
   Event_AskYesNo(ACTOR_MAN_ASKING_ABOUT_MEDITATION, 0);
   Event_End();
 }
@@ -526,6 +529,9 @@ static void ValePlaza_RecallThreeYearsAgo(void) {
   Event_Start();
   Event_SetMessageId(MsgValeADifficultTimeThreeYears);
   Actor_FaceEachOther(ACTOR_WOMAN_RECALLING_STORM, ACTOR_PARTY_LEADER, 2);
+  // "You had a very difficult time three years ago, didn't you?"
+  // Yes: "You lost your father... Jenna lost her whole family... It..."
+  // No: "You're a strong lad, Isaac, so you were able to deal with it..."
   Event_AskYesNo(ACTOR_WOMAN_RECALLING_STORM, 0);
   Event_End();
 }
@@ -539,6 +545,9 @@ static void ValePlaza_AskAboutTheTravelers(void) {
   Event_Start();
   Event_SetMessageId(MsgValeDidTheTravelersMeetThe);
   Actor_FaceEachOther(ACTOR_FIRST_CHILD, ACTOR_PARTY_LEADER, 2);
+  // "Did the travelers that stopped by today go to meet the mayor?"
+  // Yes: "I told them where Kraden lives, and they didn't even thank..."
+  // No: "It's very polite to visit the mayor when coming to a new..."
   Event_AskYesNo(ACTOR_FIRST_CHILD, 0);
   Event_End();
 }
@@ -581,6 +590,9 @@ static void ValePlaza_DemonstratePsynergy(void) {
     Event_SetMessageId(MsgValeShownNewAbility);
     Actor_FaceEachOther(ACTOR_STRONGMAN_SHOWING_PSYNERGY, ACTOR_PARTY_LEADER,
                         0);
+    // "Hey, Isaac, have I shown you my new ability?"
+    // Yes: "It takes hard work to reach this level of mastery, Isaac."
+    // No: "Really? Well, here's a little sample for you!"
     Event_AskYesNo(ACTOR_STRONGMAN_SHOWING_PSYNERGY, 0);
     Event_Wait(20);
     Actor_StartRepeatedMotion(ACTOR_STRONGMAN_SHOWING_PSYNERGY, 2);
@@ -615,6 +627,7 @@ static void ValePlaza_DemonstratePsynergy(void) {
                              SPRITE_COLOR_NORMAL);
     Event_Wait(40);
     Event_SetMessageId(MsgValeBeholdPowerPsynergy);
+    // "Behold, the power of Psynergy! Hahh! Impressive, isn't it?"
     Event_ShowMessage(ACTOR_STRONGMAN_SHOWING_PSYNERGY, 0);
   }
   Event_End();
@@ -632,8 +645,10 @@ static void ValePlaza_AskAboutJourney(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     Event_SetMessageId(MsgValeAnythingInterestingOnYourTrip);
+    // "Did you see anything interesting on your trip, Isaac?"
     Event_OpenMessage(ACTOR_AFTER_KALAY_CURIOUS_OLD_MAN, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
+      // "You didn't, hmm? I can see in your eyes that you're not..."
       Event_ShowMessage(ACTOR_AFTER_KALAY_CURIOUS_OLD_MAN, 0);
     } else {
       struct FieldWork *work = gFieldWork;
@@ -643,9 +658,15 @@ static void ValePlaza_AskAboutJourney(void) {
     }
   } else if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     Event_SetMessageId(MsgValeYouSawTheWiseOne);
+    // "You saw the Wise One? The same Wise One from the healers' tales?"
+    // Yes: "That is a blessing... A blessing, indeed."
+    // No: "It was the Wise One who saved the town when Mt. Aleph erupted."
     Event_AskYesNo(ACTOR_CURIOUS_OLD_MAN, 0);
   } else {
     Event_SetMessageId(MsgValeCanIUsePsynergy);
+    // "Huh? Are you...asking me if I can use Psynergy, Isaac?"
+    // Yes: "If I were ten years younger, I'd have plenty to offer, but..."
+    // No: "I thought not... You have to be young and strong to use..."
     Event_AskYesNo(ACTOR_STORM_CURIOUS_OLD_MAN, 0);
   }
   Event_End();
@@ -741,9 +762,11 @@ static void ValePlaza_TalkAboutHelping(void) {
   Actor_FaceEachOther(ACTOR_STORM_GIRL_WHO_SAW_JENNA, ACTOR_PARTY_LEADER, 10);
   if (GameFlag_Get(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) != 0) {
     Event_SetMessageId(MsgValeSureHelp);
+    // "Be sure to help Felix."
     Event_ShowMessage(ACTOR_STORM_GIRL_WHO_SAW_JENNA, 0);
   } else {
     Event_SetMessageId(MsgValeWentOffWay);
+    // "Jenna went off that way!"
     Event_ShowMessage(ACTOR_STORM_GIRL_WHO_SAW_JENNA, 0);
   }
   Event_End();
@@ -787,9 +810,11 @@ static void ValePlaza_PsynergyStoneIsGone(void) {
   Event_Wait(20);
   Actor_StartRepeatedMotion(ACTOR_AFTER_KALAY_HUT_OWNER, 2);
   Event_SetMessageId(MsgValeThePsynergyStoneIsGone);
+  // "Hey! Where'd that Psynergy Stone go? It's gone!"
   Event_ShowMessageThenWait(ACTOR_AFTER_KALAY_HUT_OWNER, 0, 40);
   Actor_FaceActor(ACTOR_AFTER_KALAY_HUT_OWNER, ACTOR_PARTY_LEADER, 20);
   Actor_StartRepeatedMotion(ACTOR_AFTER_KALAY_HUT_OWNER, 2);
+  // "All that's left is a big hole in my roof. But the memory of..."
   Event_ShowMessage(ACTOR_AFTER_KALAY_HUT_OWNER, 0);
   GameFlag_Set(FLAG_VALE_PSYNERGY_STONE_GONE_TOLD);
   Actor_Stop(ACTOR_AFTER_KALAY_HUT_OWNER);
@@ -1083,6 +1108,7 @@ static void ValePlaza_SentToAidElders(void) {
     FieldCamera_WaitForMove();
     Event_SetMessageId(MsgValeGoAidElders);
     Actor_RunRepeatedMotion(ACTOR_STORM_GARETS_GRANDFATHER, 2);
+    // "Go aid the elders! The Boulder is too heavy for them to hold..."
     FieldEvent_ShowMessageThenWait(
         SPEAKER_WINDOW_ABOVE | ACTOR_STORM_GARETS_GRANDFATHER, 0, 10);
     // Isaac walks over and Garet steps out of him.
@@ -1104,13 +1130,16 @@ static void ValePlaza_SentToAidElders(void) {
     Actor_FaceEachOther(ACTOR_STORM_FIRST_AIDE, ACTOR_STORM_SECOND_AIDE, 0);
     Event_Wait(20);
     Actor_StartRepeatedMotion(ACTOR_STORM_FIRST_AIDE, 1);
+    // "We can't let the Mt. Aleph Boulder destroy our village."
     Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_STORM_FIRST_AIDE, 0,
                               10);
     Actor_SetAnimation(ACTOR_STORM_SECOND_AIDE, ANIM_NOD);
+    // "Let's go help the elders."
     Event_ShowMessageThenWait(ACTOR_STORM_SECOND_AIDE, 0, 10);
     Actor_FaceDirection(ACTOR_STORM_FIRST_AIDE, FACING_EAST, 0);
     Actor_FaceDirection(ACTOR_STORM_SECOND_AIDE, FACING_EAST_NORTHEAST, 10);
     Actor_SetAnimationAndWait(ACTOR_STORM_GARETS_GRANDFATHER, ANIM_NOD);
+    // "We're counting on you."
     FieldEvent_ShowMessageThenWait(
         SPEAKER_WINDOW_ABOVE | ACTOR_STORM_GARETS_GRANDFATHER, 0, 10);
 #if TBS_PATCH_4
@@ -1134,6 +1163,7 @@ static void ValePlaza_SentToAidElders(void) {
     Actor_FaceDirection(ACTOR_STORM_GARET, FACING_EAST, 10);
     // Garet calls out to Grandpa and Jenna; Jenna asks whether they came to
     // help her.
+    // "Grandpa! Jenna!"
     Event_ShowMessage(ACTOR_STORM_GARET, 0);
     Actor_FaceDirection(ACTOR_STORM_GARETS_GRANDFATHER, FACING_WEST, 0);
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_JENNA, FACING_SOUTHWEST, 20);
@@ -1253,6 +1283,7 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 93, 343);
   Event_SetMessageId(MsgValeOnlyTwoSurvived);
+  // "Only the two of us survived..."
   Event_ShowMessage(ACTOR_FIRST_TRAVELER, 0);
   // The ominous music starts; the camera rises to the travelers and the second
   // traveler walks in.

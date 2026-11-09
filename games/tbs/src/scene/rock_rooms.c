@@ -316,9 +316,15 @@ static void RockRooms_TalkToInnkeeper(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     Event_SetMessageId(MsgLunpaInnkeeperOffersRoom);
+    // "Do you want rest in our inn?"
+    // Yes: "I see. In that case, go ahead and stay. I won't ask why."
+    // No: "Well, do as you like. Feel free to stay here anytime you like."
     Event_AskYesNo(ACTOR_INNKEEPER, 0);
   } else {
     Event_SetMessageId(MsgLunpaInnkeeperOffersOwnHome);
+    // "Do you want to sleep at my place?"
+    // Yes: "You must be kidding. Go rest in your own home!"
+    // No: "Of course not! With no travelers in town, no one wants to..."
     Event_AskYesNo(ACTOR_INNKEEPER, 0);
   }
   Event_End();
@@ -330,6 +336,9 @@ static void RockRooms_TalkToInnkeeper(void) {
 static void RockRooms_TalkToChef(void) {
   Event_Start();
   Event_SetMessageId(MsgLunpaChefOffersStory);
+  // "Do you want to hear about how I delivered meals to the fortress?"
+  // Yes: "I was blindfolded and guided along a cool path. I walked for..."
+  // No: "I was so relieved when I got back to the village. The guy I..."
   Event_AskYesNo(ACTOR_CHEF, 0);
   GameFlag_Set(FLAG_LUNPA_HEARD_OF_PRISONER);
   Event_End();
@@ -340,6 +349,7 @@ static void RockRooms_TalkToChef(void) {
 static void RockRooms_ReadChefsThoughts(void) {
   Event_Start();
   Event_SetMessageId(MsgLunpaChefThinksOfPrisoner);
+  // "I feel bad for that poor man they've got locked up in the..."
   Event_ShowMessage(ACTOR_CHEF, 0);
   GameFlag_Set(FLAG_LUNPA_HEARD_OF_PRISONER);
   Event_End();
@@ -350,6 +360,9 @@ static void RockRooms_ReadChefsThoughts(void) {
 static void RockRooms_AskWhetherDonpasGuest(void) {
   Event_Start();
   Event_SetMessageId(MsgLunpaInnClerkAsksAboutGuest);
+  // "Are you Donpa's guest?"
+  // Yes: "So, you're the one we were told to give the royal treatment..."
+  // No: "Really, you're not? Well, then, who is Donpa's guest?"
   Event_AskYesNo(ACTOR_WOMAN_ASKING_FOR_DONPAS_GUEST, 0);
   Event_End();
 }
@@ -365,11 +378,13 @@ static void RockRooms_TalkToHealer(void) {
   } else if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     Event_Start();
     Event_SetMessageId(MsgLunpaTemplePriestReopened);
+    // "A number of Dodonpa's men set out not too long ago. I wonder..."
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_End();
   } else {
     Event_Start();
     Event_SetMessageId(MsgLunpaTemplePriestSealed);
+    // "I think that thief Dodonpa is a terrible man. But it's not..."
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_End();
   }
@@ -380,11 +395,13 @@ static void RockRooms_ReadItemMerchantsThoughts(void) {
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     Event_Start();
     Event_SetMessageId(MsgLunpaIsntWeaponsVendors);
+    // "It isn't just the weapons vendors whose inventory is..."
     Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
     Event_End();
   } else {
     Event_Start();
     Event_SetMessageId(MsgLunpaItemMerchantSealedThoughts);
+    // "I bought a lot of stock, but I'm already running out..."
     Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
     Event_End();
   }
@@ -400,11 +417,13 @@ static void RockRooms_TalkToItemMerchant(void) {
   } else if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     Event_Start();
     Event_SetMessageId(MsgLunpaItemMerchantReopened);
+    // "The weapons and armor vendors are looking desperate. The..."
     Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
     Event_End();
   } else {
     Event_Start();
     Event_SetMessageId(MsgLunpaItemMerchantSealed);
+    // "They bought a lot of stock, which is why they're holding up,..."
     Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
     Event_End();
   }
@@ -414,9 +433,11 @@ static void RockRooms_TalkToItemMerchant(void) {
 static void RockRooms_ReadWeaponMerchantsThoughts(void) {
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     Event_SetMessageId(MsgLunpaWeaponMerchantReopenedThoughts);
+    // "All those weapons, but I doubt Dodonpa's henchmen can use them!"
     Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
   } else {
     Event_SetMessageId(MsgLunpaWeaponMerchantSealedThoughts);
+    // "I'll have to close this shop soon if things don't change..."
     Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
   }
 }
@@ -435,11 +456,13 @@ static void RockRooms_TalkToWeaponMerchant(void) {
     } else {
       Event_Start();
       Event_SetMessageId(MsgLunpaWeaponMerchantReopened);
+      // "The end is near! Doom is upon us! To arms! To arms! Once..."
       Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
       Event_End();
     }
   } else {
     Event_SetMessageId(MsgLunpaWeaponMerchantSealed);
+    // "The village is sealed, so we can't buy or sell anything...."
     Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
   }
 }
@@ -448,9 +471,11 @@ static void RockRooms_TalkToWeaponMerchant(void) {
 static void RockRooms_ReadArmorMerchantsThoughts(void) {
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     Event_SetMessageId(MsgLunpaArmorMerchantReopenedThoughts);
+    // "Once I sell this armor, I'm closing shop... It's kind of a..."
     Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
   } else {
     Event_SetMessageId(MsgLunpaArmorMerchantSealedThoughts);
+    // "I should have bought more stock while I had the chance..."
     Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
   }
 }
@@ -469,11 +494,13 @@ static void RockRooms_TalkToArmorMerchant(void) {
     } else {
       Event_Start();
       Event_SetMessageId(MsgLunpaArmorMerchantReopened);
+      // "What do you think? I've got some incredible products here,..."
       Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
       Event_End();
     }
   } else {
     Event_SetMessageId(MsgLunpaArmorMerchantSealed);
+    // "I'll sell you as much armor as you like, once the village is..."
     Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
   }
 }
@@ -515,6 +542,7 @@ static void RockRooms_TalkToTravelingHealer(void) {
 #endif
   } else {
     Event_SetMessageId(MsgLunpaTravelingPriest);
+    // "I have been traveling the lands spreading good will."
     Event_ShowMessage(ACTOR_TRAVELING_HEALER, 0);
   }
 }

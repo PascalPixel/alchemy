@@ -769,6 +769,7 @@ static u8 WestLunpaCave_LeaderAnswersYes(void) {
 /// Asks whether the party really intends to refuse the ride.
 static u8 WestLunpaCave_GaretAsksIfNotRiding(void) {
   Event_SetMessageId(MsgLunpaGaretAsksIfNotRiding);
+  // "Huh? You don't want to ride in Bunza's wagon?"
   Event_OpenMessage(ACTOR_GARET, 0);
   return Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0;
 }
@@ -776,6 +777,7 @@ static u8 WestLunpaCave_GaretAsksIfNotRiding(void) {
 /// Asks whether unfinished business explains the refusal to ride.
 static u8 WestLunpaCave_GaretAsksAboutUnfinishedBusiness(void) {
   Event_SetMessageId(MsgLunpaGaretAsksAboutUnfinishedBusiness);
+  // "Do you have some unfinished business in Lunpa?"
   Event_OpenMessage(ACTOR_GARET, 0);
   return Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0;
 }
@@ -786,6 +788,7 @@ static u8 Party_ConfirmsStaying(void) { return TRUE; }
 /// Lets Bunza check whether the party has unfinished business before leaving.
 static u8 WestLunpaCave_BunzaAsksAboutUnfinishedBusiness(void) {
   Event_SetMessageId(MsgLunpaBunzaAsksAboutUnfinishedBusiness);
+  // "Do you have any unfinished business?"
   Event_OpenMessage(ACTOR_BUNZA, 0);
   return Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0;
 }
@@ -793,6 +796,7 @@ static u8 WestLunpaCave_BunzaAsksAboutUnfinishedBusiness(void) {
 /// Opens Garet's confirmation prompt; WagonChoice_Run collects the answer.
 static u8 WestLunpaCave_GaretChecksNothingLeftToDo(void) {
   Event_SetMessageId(MsgLunpaGaretChecksNothingLeft);
+  // "Don't startle me! You don't have anything left to do, do you?"
   Event_OpenMessage(ACTOR_GARET, 0);
   return TRUE;
 }
@@ -800,6 +804,7 @@ static u8 WestLunpaCave_GaretChecksNothingLeftToDo(void) {
 /// Asks whether the party has changed its mind about taking the wagon.
 static u8 WestLunpaCave_MiaAsksIfRidingAfterAll(void) {
   Event_SetMessageId(MsgLunpaMiaAsksIfRidingAfter);
+  // "So, what? You've changed your mind? You do want to go with them?"
   Event_OpenMessage(ACTOR_MIA, 0);
   return Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0;
 }
@@ -827,6 +832,7 @@ static u8 WestLunpaCave_BunzaCannotWait(void) {
 /// Asks the leader to confirm that something still needs doing here.
 static u8 WestLunpaCave_GaretAsksAboutThingsToDo(void) {
   Event_SetMessageId(MsgLunpaGaretAsksAboutThingsTo);
+  // "Are you saying you still have some things to do here in Lunpa?"
   Event_OpenMessage(ACTOR_GARET, 0);
   return Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0;
 }

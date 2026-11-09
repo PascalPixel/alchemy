@@ -1130,6 +1130,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   wait(1);
   // Hammet will not stay, and the wagons head south for the bridge.
   Event_SetMessageId(MsgWorldMapWeCantStayAnotherMinute);
+  // "We can't stay another minute in a dangerous place like this...."
   Event_ShowMessageThenWait(ACTOR_CARAVAN_HAMMET, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 40);
@@ -1173,6 +1174,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Event_Wait(60);
   Actor_FaceDirection(ACTOR_CARAVAN_MAN, FACING_EAST, 20);
   Actor_StartRepeatedMotion(ACTOR_CARAVAN_MAN, 3);
+  // "Master Hammet! This is terrible! The bridge has been..."
   Event_ShowMessageThenWait(ACTOR_CARAVAN_MAN, 0, 20);
   Actor_SetPosition(ACTOR_CARAVAN_HAMMET, PIXELS(5656), PIXELS(1784));
   wait(1);
@@ -1183,6 +1185,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_WalkToAndWait(ACTOR_CARAVAN_HAMMET, 5640, 1784);
   Event_Wait(20);
   Actor_StartRepeatedMotion(ACTOR_CARAVAN_HAMMET, 2);
+  // "What...? The bridge?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CARAVAN_HAMMET,
                                  0, 10);
   Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_SOUTH_SOUTHEAST, 60);
@@ -1196,19 +1199,24 @@ static void WorldMap_ShowHammetsCaravan(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
   Actor_StartRepeatedMotion(ACTOR_CARAVAN_HAMMET, 2);
+  // "This is awful... How are we going to get to Kalay now?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CARAVAN_HAMMET,
                                  0, 40);
   Actor_RunRepeatedMotion(ACTOR_CARAVAN_MAN, 1);
   Actor_FaceDirection(ACTOR_CARAVAN_MAN, FACING_EAST, 10);
+  // "...Master Hammet, I'm worried about leaving Ivan behind..."
   Event_ShowMessageThenWait(ACTOR_CARAVAN_MAN, 0, 10);
   Actor_ShowEmote(ACTOR_CARAVAN_HAMMET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  // "As fond as I am of Ivan, it is his fault my rod was stolen..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CARAVAN_HAMMET,
                                  0, 10);
   Actor_RunRepeatedMotion(ACTOR_CARAVAN_HAMMET, 1);
   Actor_SetAnimationAndWait(ACTOR_CARAVAN_HAMMET, ANIM_NOD);
+  // "And his strange powers will aid him in search of the rod."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CARAVAN_HAMMET, 0,
                             10);
   Actor_ShowEmote(ACTOR_CARAVAN_MAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "Ivan has strange powers?"
   Event_ShowMessageThenWait(ACTOR_CARAVAN_MAN, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_CARAVAN_HAMMET, ANIM_NOD);
   WorldMap_Unfreeze();
@@ -1584,6 +1592,7 @@ static void WorldMap_ShowDjinnTutorial(void) {
   WorldMap_Freeze();
   Actor_RunRepeatedMotion(ACTOR_VENUS_DJINNI, 2);
   Event_SetMessageId(MsgWorldMapAfterBringingDjinniIntoYour);
+  // "After bringing a Djinni into your party, you must set it to..."
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   Event_Wait(30);
   Sound_Play(SE_MENU_CURSOR_MOVE);
@@ -1593,6 +1602,7 @@ static void WorldMap_ShowDjinnTutorial(void) {
   DjinnMenu_Run();
   Actor_Jump(ACTOR_VENUS_DJINNI, 4, 30);
   Event_SetMessageId(MsgWorldMapNextIllShowHowCan);
+  // "Next, I'll show you how you can use us in battle."
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   GameFlag_Clear(FLAG_DJINN_LESSON_PART_A);
   GameFlag_Set(FLAG_DJINN_LESSON_PART_B);
@@ -1637,6 +1647,7 @@ static void WorldMap_MeetFlint(void) {
     Actor_FaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
     wait(16);
     Event_SetMessageId(MsgWorldMapOh);
+    // "Oh!"
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     WorldMap_Unfreeze();
     FieldEffect_ScheduleRatioTransition(6 * Q16_ONE / 5, 6);
@@ -1724,6 +1735,7 @@ static void WorldMap_MeetFlint(void) {
       Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
       if (count == 6) {
         Event_SetMessageId(MsgWorldMapMeanieDontCare);
+        // "Meanie! I don't care what you say! I'm coming along with you!"
         Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
         goto listened;
       }
@@ -1736,6 +1748,7 @@ static void WorldMap_MeetFlint(void) {
     Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
     Actor_Jump(ACTOR_VENUS_DJINNI, 4, 20);
     Event_SetMessageId(MsgWorldMapSeeWontRegret);
+    // "Oh, you'll see! You won't regret it!"
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   listened:
     MessageArgument_Push(300, 4);
@@ -1744,6 +1757,7 @@ static void WorldMap_MeetFlint(void) {
     Message_ShowCentered(count++, 3);
     Event_SetMessageId(count);
     Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
+    // "..., the Venus Djinni, is now Isaac's ally!"
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Sound_Play(MUS_DJINN_LESSON);
     WorldMap_ShowDjinnTutorial();
@@ -1765,8 +1779,10 @@ static void WorldMap_MeetFlint(void) {
   Event_SetMessageId(MsgWorldMapSeeDjinnUseful);
   Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
   Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
+  // "See! We Djinn can be very useful, can't we?"
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   Actor_RunRepeatedMotion(ACTOR_VENUS_DJINNI, 2);
+  // "And one more thing..."
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   Sound_Play(SE_MENU_CURSOR_MOVE);
   Menu_AnimateSelectionToEntry(0, 2);
@@ -1776,16 +1792,21 @@ static void WorldMap_MeetFlint(void) {
   Event_SetMessageId(MsgWorldMapGoSetStandby);
   FieldActor_SetMoveTarget(djinni, PIXELS(5584), 0, PIXELS(1328));
   Event_Wait(30);
+  // "So, we go from set to standby to recovery, then back to set."
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   Actor_FaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
+  // "This is the simplest way to use us."
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
+  // "Did you get all that?"
   Event_OpenMessage(ACTOR_VENUS_DJINNI, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
     Actor_RunRepeatedMotion(ACTOR_VENUS_DJINNI, 2);
     Event_SetMessageId(MsgWorldMapHmmmmExplainAgain);
+    // "Hmmmm, shall I explain it all to you again?"
     Event_OpenMessage(ACTOR_VENUS_DJINNI, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) != 1) {
+      // "Well, then, I guess I'll start from the beginning, OK?"
       Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
       Actor_WalkToAndWait(ACTOR_VENUS_DJINNI, x >> 16, z >> 16);
       WorldMap_ShowDjinnTutorial();
@@ -1799,11 +1820,13 @@ static void WorldMap_MeetFlint(void) {
   Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_ShowEmote(ACTOR_VENUS_DJINNI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "Oh, yeah! If you want to learn more about Djinn, refer to..."
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   Event_SetFlag(FLAG_DJINN_LESSON_PART_A);
   Event_SetFlag(FLAG_DJINN_LESSON_PART_B);
   DjinnMenu_Run();
   Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
+  // "Okay, I'll join you now. Thank you very much! Please, use us..."
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   WorldMap_Unfreeze();
   Djinn_JoinParty(ACTOR_VENUS_DJINNI, ELEMENT_VENUS,
@@ -1904,6 +1927,7 @@ static void WorldMap_RunBlackOrbEvent(void) {
   Actor_ShowEmote(gWorldMapIodem, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_StartRepeatedMotion(gWorldMapIodem, 2);
   Event_SetMessageId(MsgWorldMapLook);
+  // "Look at this!"
   Event_ShowMessageThenWait(gWorldMapIodem | SPEAKER_PORTRAIT_LEFT, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   WorldMap_Unfreeze();
@@ -1917,6 +1941,7 @@ static void WorldMap_RunBlackOrbEvent(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
   Actor_RunRepeatedMotion(gWorldMapIodem, 1);
+  // "What happened?"
   Event_ShowMessageThenWait(
       gWorldMapIodem | SPEAKER_PORTRAIT_LEFT | SPEAKER_PORTRAIT_RIGHT, 0, 40);
   Actor_WalkToAndWait(gWorldMapIodem, 5992, 3400);
@@ -1926,6 +1951,7 @@ static void WorldMap_RunBlackOrbEvent(void) {
   Actor_SetScript(ACTOR_PARTY_LEADER, gBlackOrbLeaderScript);
   Event_Wait(20);
   Actor_RunRepeatedMotion(gWorldMapIodem, 1);
+  // "Babi's ship..."
   Event_ShowMessageThenWait(gWorldMapIodem, 0, 10);
   while (Actor_Get(ACTOR_PARTY_LEADER)->timer == 0) {
     wait(1);
@@ -1950,6 +1976,7 @@ static void WorldMap_RunBlackOrbEvent(void) {
   Party_GiveItem(ITEM_BLACK_ORB, 0);
   Actor_RunRepeatedMotion(gWorldMapIodem, 1);
   Event_SetMessageId(MsgWorldMapNowUseOnShip);
+  // "Now use it... on the ship."
   Event_ShowMessageThenWait(gWorldMapIodem, 0, 10);
   Actor_FaceDirection(gWorldMapIodem, FACING_SOUTH_SOUTHEAST, 0);
   WorldMap_Unfreeze();
@@ -2019,6 +2046,7 @@ static void WorldMap_TalkAboutBlackOrb(void) {
   Event_Start();
   Actor_FaceActor(ACTOR_IODEM, ACTOR_PARTY_LEADER, 0);
   Event_SetMessageId(MsgWorldMapNowUseOnShip);
+  // "Now use it... on the ship."
   Event_ShowMessage(gWorldMapIodem, 0);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH_SOUTHEAST, 0);
   Event_End();
@@ -2033,6 +2061,7 @@ static void WorldMap_IodemCallsIsaacBack(void) {
   Event_Start();
   WorldMap_Freeze();
   Event_SetMessageId(MsgWorldMapIsaacWhereGoingSaidUse);
+  // "Isaac, where you going? I said to use the Orb on Babi's ship!"
   Event_ShowMessage(gWorldMapIodem, 0);
   WorldMap_Unfreeze();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
@@ -2135,6 +2164,7 @@ static void WorldMap_UseBlackOrb(void) {
   Actor_RunRepeatedMotion(gWorldMapIodem, 2);
   message = MsgWorldMapMatter;
   Event_SetMessageId(message);
+  // "What's the matter?"
   Event_ShowMessageThenWait(gWorldMapIodem, 0, 80);
   if (orb != NULL) {
     Actor_Release(orb);
@@ -2142,15 +2172,19 @@ static void WorldMap_UseBlackOrb(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(40);
   Actor_Jump(gWorldMapIodem, 6, 40);
+  // "Strange... Nothing happened. What does it mean?"
   Event_ShowMessageThenWait(gWorldMapIodem, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Actor_FaceDirection(gWorldMapIodem, FACING_NORTH_NORTHEAST, 20);
+  // "Could Babi have been wrong?"
   Event_ShowMessageThenWait(
       gWorldMapIodem | SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT, 0, 40);
   Actor_SetAnimationAndWait(gWorldMapIodem, ANIM_SHAKE_HEAD);
+  // "No. Not Babi..."
   Event_ShowMessageThenWait(
       gWorldMapIodem | SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT, 0, 20);
   Actor_FaceDirection(gWorldMapIodem, FACING_SOUTH_SOUTHEAST, 20);
+  // "I was wrong-it is not yet time. We must press on to Babi..."
   Event_ShowMessageThenWait(gWorldMapIodem, 0, 10);
   Actor_SetSpeed(gWorldMapIodem, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetAnimation(gWorldMapIodem, ANIM_WALK);
@@ -2162,6 +2196,7 @@ static void WorldMap_UseBlackOrb(void) {
   Actor_SetAnimation(ACTOR_IODEM, ANIM_STAND);
   Actor_FaceDirection(gWorldMapIodem, FACING_SOUTH_SOUTHWEST, 10);
   Actor_RunRepeatedMotion(gWorldMapIodem, 1);
+  // "I will take that back, for now."
   Event_ShowMessageThenWait(gWorldMapIodem | SPEAKER_PORTRAIT_LEFT, 0, 20);
   Actor_SetSpeed(gWorldMapIodem, PIXELS(1), PIXELS(1) / 2);
   Actor_Get(ACTOR_IODEM)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -2179,6 +2214,7 @@ static void WorldMap_UseBlackOrb(void) {
   PartyInventory_Discard(ITEM_BLACK_ORB);
   Event_Wait(20);
   Actor_SetAnimation(gWorldMapIodem, ANIM_SHAKE_HEAD);
+  // "We will return to the ship later."
   Event_ShowMessageThenWait(gWorldMapIodem, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(gWorldMapIodem, ANIM_NOD);
@@ -2243,32 +2279,45 @@ static void WorldMap_ShowEndingEvent(void) {
   Event_Wait(20);
   // Jenna and Kraden talk on the drifting island before Alex arrives.
   Event_SetMessageId(MsgWorldMapKradenHowLongWillIsland);
+  // "Oh, Kraden... How long will this island continue to drift?"
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_Wait(20);
+  // "I don't know... I wish you could tell me."
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 20);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
+  // "Sheesh... You're no help in times like this."
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 20);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
+  // "Hey, I'm hungry..."
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
+  // "How can you think about food?"
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 20);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 100);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  // "I wonder what happened to my brother..."
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 20);
+  // "I can't be certain, but it looks like they lit the Venus beacon."
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
+  // "You don't have to tell me that. That's how we wound up..."
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Actor_SetAttachedEffect(ACTOR_KRADEN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(80);
+  // "You are so cranky today, Jenna!"
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 20);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
+  // "Well, I suppose you must be worried about Felix."
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 120);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 1);
+  // "Isaac and his friends must have been nearby, too."
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 40);
+  // "They probably were..."
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 20);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  // "I miss them... Isaac... Felix..."
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 120);
   // Alex comes to show them something and leads them on.
   Actor_SetSpeed(ACTOR_ALEX, PIXELS(2) / 5, PIXELS(1) / 5);
@@ -2276,11 +2325,13 @@ static void WorldMap_ShowEndingEvent(void) {
   Actor_WalkToAndWait(ACTOR_ALEX, 7572, 3468);
   Actor_WalkToAndWait(ACTOR_ALEX, 7560, 3488);
   Event_Wait(20);
+  // "There is something I wish to show you."
   FieldEvent_ShowMessageThenWait(
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0, 20);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
+  // "Walk this way."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX,
                     0);
   WorldMap_LoadDefaultCellsAndUpdateBlock();

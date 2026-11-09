@@ -1469,6 +1469,7 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   Actor_SetSpeed(ACTOR_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   Event_SetMessageId(MsgImilSomebodyHere);
+  // "Somebody...is here."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_WalkToAndWait(ACTOR_MIA, 840, 648);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
@@ -1477,22 +1478,26 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   mia = Actor_Get(ACTOR_MIA);
   mia->scaleX = -Q16_ONE;
   Event_Wait(20);
+  // "Someone is here..."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_SetAnimation(ACTOR_MIA, ANIM_STAND);
   mia = Actor_Get(ACTOR_MIA);
   mia->scaleX = Q16_ONE;
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 20);
+  // "Can you hear it, too?"
   Event_OpenMessage(ACTOR_MIA, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
+    // "Alex is the only one other than I who can enter Mercury..."
     Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
     gFieldWork->message += 1;
   } else {
     gFieldWork->message += 1;
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
+    // "You can't hear it? Well, I can. Alex is the only one other..."
     Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   }
   Event_Wait(20);
@@ -1506,6 +1511,7 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "But this statue is blocking my way..."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   GameFlag_Set(FLAG_MIA_SENSED_SOMEONE_INSIDE);
   Event_End();
@@ -1582,15 +1588,18 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH_NORTHEAST, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH_SOUTHWEST, 10);
     Event_SetMessageId(MsgMercuryDidThat);
+    // "Did you do that?"
     Event_OpenMessage(ACTOR_MIA, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
       gFieldWork->message += 1;
       Event_Wait(20);
       Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
+      // "I knew it... I saw a ghostly force pushing it!"
       Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
     } else {
       Event_Wait(20);
       Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
+      // "No, I saw it! I'm certain that flow of force came from you."
       Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
       gFieldWork->message += 1;
     }
@@ -2740,6 +2749,7 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
+  // "You've saved me again, haven't you!"
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
@@ -2749,6 +2759,7 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   Actor_SetAnimation(ACTOR_MIA, 16);
   Event_Wait(50);
   Actor_SetAnimation(ACTOR_MIA, ANIM_STAND);
+  // "Do you have business in the lighthouse, too?"
   Event_OpenMessage(ACTOR_MIA, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
     // Each "no" brings "Please, don't hide anything." until the party says
@@ -2756,12 +2767,15 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_MIA, 2);
     Event_Wait(20);
+    // "Please tell me the truth!"
     Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "I can't believe you'd go so far to help someone you just met."
     Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
     Event_Wait(20);
+    // "You have some errand in this lighthouse, don't you?"
     Event_OpenMessage(ACTOR_MIA, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
       Event_Wait(20);
@@ -2785,17 +2799,21 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   Actor_SetSpeed(ACTOR_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_MIA, 728, 632);
   Event_Wait(20);
+  // "I thought so..."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_SetAnimation(ACTOR_MIA, 16);
+  // "I am sure there will be more places ahead that I cannot pass..."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_SetAnimation(ACTOR_MIA, ANIM_STAND);
   Actor_FaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Only those of the Mercury Clan are permitted to enter this..."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 90);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
+  // "However, I sense something special about you. I feel that I..."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Event_PrepareActorAndApplyValue(MIA, 1);
   // "The Adept Mia joined your party!" Fizz, a Mercury Djinni, comes with

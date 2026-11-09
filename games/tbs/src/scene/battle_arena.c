@@ -503,6 +503,7 @@ static s32 BattleArena_PromptToParticipate(void) {
   }
   Event_Start();
   Event_SetMessageId(MsgLobbyWantParticipatePlease);
+  // "If you want to participate, please step into the circle!"
   Event_OpenMessage(ACTOR_ATTENDANT, 0);
   wait(5);
   GameFlag_Set(FLAG_BATTLE_ARENA_ATTENDANT_ASKED);
@@ -526,6 +527,7 @@ static s32 BattleArena_ReportDisconnection(void) {
   Event_Start();
   work->raisedTrigger = LOBBY_EVENT_NONE;
   Event_SetMessageId(MsgLobbyLinkDisconnected);
+  // "The link was disconnected."
   Event_OpenMessage(ACTOR_ATTENDANT, 0);
   GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED);
   Event_End();
@@ -984,6 +986,7 @@ static s32 BattleArena_EnterBattle(void) {
     if (GameFlag_Get(FLAG_MONSTER_BATTLE)) {
       Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
       Event_SetMessageId(MsgLobbyGoodLuck);
+      // "Good luck!"
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
       wait(45);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE, Q16_ONE / 2);
@@ -1090,6 +1093,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
     BattleArena_InitializeSerial();
     if (!Event_GetFlag(FLAG_MONSTER_BATTLE)) {
       Event_SetMessageId(messageBase + 5);
+      // "You do not have an opponent. Would you like to battle a monster?"
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
       answer = Event_AskYesNoWithActorAnimation(0, 0);
       // Yes starts a monster series: FLAG_AREA_TEMP_E8's byte and
@@ -1118,6 +1122,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
     if (Event_GetFlag(FLAG_MONSTER_BATTLE)) {
       BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
       Event_SetMessageId(MsgLobbyOpponentArrived);
+      // "Your opponent has arrived!"
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
       GameFlag_Clear(FLAG_BATTLE_ARENA_PLAYER_AGREED);
       GameFlag_Clear(FLAG_MONSTER_BATTLE);
@@ -1136,6 +1141,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
     } else if (!GameFlag_Get(FLAG_BATTLE_ARENA_PARTNER_ASKED) &&
                !Event_GetFlag(FLAG_BATTLE_ARENA_ATTENDANT_EXPLAINED)) {
       Event_SetMessageId(messageBase);
+      // "Please speak to me when you want to fight in a battle."
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
       GameFlag_Set(FLAG_BATTLE_ARENA_ATTENDANT_EXPLAINED);
     } else {
@@ -1164,6 +1170,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
         }
       } else {
         Event_SetMessageId(messageBase);
+        // "Please speak to me when you want to fight in a battle."
         Event_OpenMessage(ACTOR_ATTENDANT, 0);
       }
     }
@@ -1194,9 +1201,11 @@ static s32 BattleArena_ReportWinTallies(s32 actorId) {
       MessageArgument_ClearAll();
       MessageArgument_Push(*tally, MESSAGE_ARGUMENT_NUMBER);
       Event_SetMessageId(messageBase + 1);
+      // "You've won ... Linked Battle. Keep up the good work!"
       Event_ShowMessage(actorId, 0);
     } else {
       Event_SetMessageId(MsgLobbyTellTotalWins);
+      // "I will tell you your total wins when you finish the linked..."
       Event_ShowMessage(actorId, 0);
     }
   } else {
@@ -1206,9 +1215,11 @@ static s32 BattleArena_ReportWinTallies(s32 actorId) {
       MessageArgument_ClearAll();
       MessageArgument_Push(*tally, MESSAGE_ARGUMENT_NUMBER);
       Event_SetMessageId(messageBase + 1);
+      // "You've won ... Linked Battle. Check the board on the wall..."
       Event_ShowMessage(actorId, 0);
     } else {
       Event_SetMessageId(MsgLobbyTellConsecutiveWins);
+      // "I will tell you your consecutive wins when you finish the..."
       Event_ShowMessage(actorId, 0);
     }
   }
@@ -1230,6 +1241,7 @@ static s32 BattleArena_ChooseDebugParameterSet(s32 actorId) {
   Event_Start();
   Actor_FaceActor(actorId, gMainRoutineWork.leaderActorId, 0);
   Event_SetMessageId(MsgLobbyChooseParameters);
+  // "Choose your parameters here."
   Event_ShowMessage(actorId, 0);
   window = Window_Create(0, 0, 6, 4, WINDOW_FLAG_INSTANT);
   setIndex = 0;
@@ -1264,12 +1276,15 @@ static s32 BattleArena_ChooseDebugParameterSet(s32 actorId) {
   }
   if (setIndex < 0) {
     Event_SetMessageId(MsgLobbyTease);
+    // "What is this, just a tease?"
     Event_ShowMessage(ACTOR_LINKED_WINS_TELLER, 0);
   } else if (loadResult != 0) {
     Event_SetMessageId(MsgLobbyNoParameterAsk);
+    // "There's no such parameter. Ask Mr. Sugimoto."
     Event_ShowMessage(ACTOR_LINKED_WINS_TELLER, 0);
   } else {
     Event_SetMessageId(MsgLobbySettingsMadeRest);
+    // "The settings are made. The rest is up to you."
     Event_ShowMessage(ACTOR_LINKED_WINS_TELLER, 0);
   }
   wait(10);
@@ -1432,6 +1447,7 @@ static s32 BattleArena_ExplainPartyOrder(s32 actorId) {
     GameFlag_Clear(FLAG_BATTLE_ARENA_PARTY_ORDER_NEXT);
   }
   Event_SetMessageId(message);
+  // "You can change the order of your party in the status screen...."
   Event_OpenMessage(actorId, 0);
   Event_End();
 #ifdef UBFIX
@@ -1618,10 +1634,12 @@ s32 BattleArena_RunRoundResult(void) {
         gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] =
             gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK];
         Event_SetMessageId(MsgLobbyWonNumberBattleBroke);
+        // "You won ... battle. You broke the record!"
         Event_OpenMessage(ACTOR_ATTENDANT, 0);
         BattleArena_SaveMonsterBattleResults();
       } else {
         Event_SetMessageId(MsgLobbyWonNumberBattle);
+        // "You won ... battle. Please speak to me when you wish to..."
         Event_OpenMessage(ACTOR_ATTENDANT, 0);
       }
       BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
@@ -1644,10 +1662,12 @@ s32 BattleArena_RunRoundResult(void) {
       gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] =
           gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK];
       Event_SetMessageId(MsgLobbyWonNumberBattleBroke);
+      // "You won ... battle. You broke the record!"
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
       BattleArena_SaveMonsterBattleResults();
     } else {
       Event_SetMessageId(MsgLobbyWonNumberBattleTold);
+      // "You won ... battle. I told you our monsters were tough!..."
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
     }
     gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK] = 0;
@@ -1720,6 +1740,7 @@ s32 BattleArena_RunRoundResult(void) {
       Event_WaitTransitionFrames();
       Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
       Event_SetMessageId(MsgLobbyNoteCantUse);
+      // "Note: you can't use the sleep function in battle stages!"
       Event_ShowMessage(ACTOR_ATTENDANT, 0);
       Event_End();
     }

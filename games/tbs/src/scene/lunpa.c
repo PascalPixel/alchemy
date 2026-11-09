@@ -328,6 +328,9 @@ static void Lunpa_TalkToWestGuard(void) {
   Event_Start();
   Actor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Event_SetMessageId(MsgLunpaWestGuardAsksAboutEntering);
+  // "What's with you? You wanna enter Lunpa?"
+  // Yes: "Well, you can't! Go back to where you came from!"
+  // No: "You came all this way for nothing? That doesn't make any..."
   Event_AskYesNo(ACTOR_WEST_GUARD, 0);
   Event_End();
 }
@@ -339,12 +342,15 @@ static void Lunpa_TalkToEastGuard(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
     Event_SetMessageId(MsgLunpaEastGuardDemandsAuthorization);
+    // "This is Lunpa. You cannot enter without Dodonpa's authorization."
     Event_ShowMessage(ACTOR_EAST_GUARD, 0);
   } else {
     Event_SetMessageId(MsgLunpaEastGuardAsksIfFrom);
+    // "You're not from Kalay, are you?"
     Event_OpenMessage(ACTOR_EAST_GUARD, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       gFieldWork->message++;
+      // "You're not here to save Hammet, are you?"
       Event_OpenMessage(ACTOR_EAST_GUARD, 0);
       if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
         gFieldWork->message++;
@@ -370,9 +376,11 @@ static void Lunpa_ReadEastGuardsThoughts(void) {
       thoughts = MsgLunpaEastGuardTrustsCaveGate;
     }
     Event_SetMessageId(thoughts);
+    // "Even if they enter through the cave, they can't get into..."
     Event_ShowMessage(ACTOR_EAST_GUARD, 0);
   } else {
     Event_SetMessageId(MsgLunpaEastGuardThinksMerchantHarmless);
+    // "That merchant was desperate to do business in the village...."
     Event_ShowMessage(ACTOR_EAST_GUARD, 0);
   }
 }
@@ -382,6 +390,9 @@ static void Lunpa_ReadEastGuardsThoughts(void) {
 static void Lunpa_AskAboutLengthOfStay(void) {
   Event_Start();
   Event_SetMessageId(MsgLunpaVillagerAAsksHowLong);
+  // "Have you been in Lunpa long?"
+  // Yes: "Hmm... Your face doesn't ring a bell. I guess you don't..."
+  // No: "Oh, so you're a new member of Dodonpa's gang?"
   Event_AskYesNo(ACTOR_MAN_ASKING_HOW_LONG_IN_LUNPA, 0);
   Event_End();
 }
@@ -391,6 +402,9 @@ static void Lunpa_AskAboutLengthOfStay(void) {
 static void Lunpa_AskAboutHammetsKidnapping(void) {
   Event_Start();
   Event_SetMessageId(MsgLunpaVillagerCAsksAboutKidnapping);
+  // "Is it true that Dodonpa kidnapped Hammet and extorted ransom..."
+  // Yes: "Then I guess Dodonpa's men were telling the truth."
+  // No: "I didn't think so. Not even Dodonpa would do such a terrible..."
   Event_AskYesNo(ACTOR_MAN_ON_HAMMETS_KIDNAPPING, 0);
   Event_End();
 }
@@ -400,6 +414,9 @@ static void Lunpa_AskAboutHammetsKidnapping(void) {
 static void Lunpa_AskAboutSeeingDonpa(void) {
   Event_Start();
   Event_SetMessageId(MsgLunpaVillagerGAsksAboutDonpa);
+  // "You want to see Donpa?"
+  // Yes: "Donpa is in the fortress. You'll have to go there if you..."
+  // No: "I didn't think so... It's impossible to see Donpa now."
   Event_AskYesNo(ACTOR_BOY_ASKING_TO_SEE_DONPA, 0);
   Event_End();
 }
@@ -410,6 +427,7 @@ static void Lunpa_ComplainAboutCold(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_WOMAN_WITH_NO_FREEDOM, 3);
   Event_SetMessageId(MsgLunpaVillagerBShivers);
+  // "It's gotten colder... I'm shiverin' just standin' here."
   Event_ShowMessage(ACTOR_WOMAN_WITH_NO_FREEDOM, 0);
   Event_End();
 }
@@ -419,6 +437,9 @@ static void Lunpa_ComplainAboutCold(void) {
 static void Lunpa_AskAboutFortressCommotion(void) {
   Event_Start();
   Event_SetMessageId(MsgLunpaVillagerDAsksAboutCommotion);
+  // "Do you want to know what caused the commotion at the fortress?"
+  // Yes: "Someone snuck into the fortress to save the merchant Hammet!..."
+  // No: "They're foolhardy to invade such a well- guarded fortress!..."
   Event_AskYesNo(ACTOR_WOMAN_SAYING_DONPA_IS_TOO_OLD, 0);
   Event_End();
 }
@@ -521,6 +542,7 @@ static void Lunpa_GaretTurnsIsaacBack(void) {
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_SetMessageId(MsgLunpaGaretRefusesToReturn);
+  // "Isaac! Don't be stupid! We can't go in there, remember?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 100);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
@@ -665,6 +687,7 @@ static void Lunpa_GuardsBlockGate(void) {
     Actor_SetAnimation(ACTOR_RIGHT_GUARD, ANIM_STILL);
     Actor_FaceDirection(ACTOR_RIGHT_GUARD, FACING_SOUTH_SOUTHWEST, 0);
     Event_SetMessageId(MsgLunpaGuardsWarnPartyAway);
+    // "Don't come any closer to the fortress!"
     Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
     GameFlag_Set(FLAG_LUNPA_FORTRESS_GATES_GUARDS_AT_DOOR);
     Lunpa_CopyGatewayCollision(6, 11);
@@ -873,6 +896,7 @@ static void Lunpa_GuardsThrowIsaacOut(void) {
   Task_Remove(Lunpa_KickUpLeaderDust);
   Event_Wait(50);
   Event_SetMessageId(MsgLunpaGuardForbidsReturn);
+  // "And don't come back!"
   Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
   Actor_Get(ACTOR_LEFT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_Get(ACTOR_RIGHT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;

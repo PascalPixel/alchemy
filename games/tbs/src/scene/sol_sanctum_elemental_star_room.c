@@ -769,6 +769,7 @@ static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void) {
   Event_AskYesNo(ACTOR_GARET, 0);
   Event_Wait(10);
   Event_SetMessageId(MsgSolSanctumMenardiDontYouWantThem);
+  // "What's wrong, Felix... Don't you want them to feel safe?"
   Event_ShowMessage(ACTOR_MENARDI, 0);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH_NORTHEAST, 10);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -1018,6 +1019,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
   Event_Wait(20);
   Event_SetMessageId(MsgSolSanctumPermitRelieveElemental);
+  // "Will you permit me to relieve you of those Elemental Stars?"
   Event_ShowMessage(ACTOR_ALEX, 0);
   Actor_SetPosition(ACTOR_SATUROS, PIXELS(469), PIXELS(348));
   Event_Wait(20);
@@ -1097,6 +1099,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
     Event_SetMessageId(MsgSolSanctumDontWantAnything);
+    // "You don't want anything to happen to your friends, do you?"
     Event_OpenMessage(ACTOR_ALEX, 0);
     if (Event_AskYesNoWithActorAnimation(1, 0) == 0) {
       do {
@@ -1104,6 +1107,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
         Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
         Event_Wait(10);
         Event_SetMessageId(MsgSolSanctumDoubtHowFeel);
+        // "I doubt that's how you really feel. I'll ask you once again...."
         Event_OpenMessage(ACTOR_ALEX, 0);
       } while (Event_AskYesNoWithActorAnimation(1, 0) == 0);
     }
@@ -1314,6 +1318,7 @@ static void SolSanctumElementalStarRoom_TalkToKraden(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX)) {
     Event_SetMessageId(MsgSolSanctumKradenIAmResponsible);
+    // "I am sorry, everyone... I am responsible for all of this."
     Event_ShowMessage(ACTOR_KRADEN, 0);
   } else {
     if (GameFlag_Get(FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED) == 0)
@@ -1333,6 +1338,7 @@ static void SolSanctumElementalStarRoom_TalkToJenna(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX)) {
     Event_SetMessageId(MsgSolSanctumJennaMyBrotherIsAlive);
+    // "My brother is alive... but...why didn't he tell me sooner?"
     Event_ShowMessage(ACTOR_JENNA, 0);
   } else {
     if (GameFlag_Get(FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED) == 0)
@@ -1350,6 +1356,7 @@ static void SolSanctumElementalStarRoom_TalkToJenna(void) {
 static void SolSanctumElementalStarRoom_TalkToSaturos(void) {
   Event_Start();
   Event_SetMessageId(MsgSolSanctumSaturosBringTheFinalStar);
+  // "If you want to save them, you'll bring us the final..."
   Event_ShowMessage(ACTOR_SATUROS, 0);
   Event_End();
 }
@@ -1359,6 +1366,7 @@ static void SolSanctumElementalStarRoom_TalkToSaturos(void) {
 static void SolSanctumElementalStarRoom_TalkToMenardi(void) {
   Event_Start();
   Event_SetMessageId(MsgSolSanctumMenardiBringTheFinalGem);
+  // "What are you doing? Bring us the final gem!"
   Event_ShowMessage(ACTOR_MENARDI, 0);
   Event_End();
 }
@@ -1367,6 +1375,7 @@ static void SolSanctumElementalStarRoom_TalkToMenardi(void) {
 static void SolSanctumElementalStarRoom_TalkToFelix(void) {
   Event_Start();
   Event_SetMessageId(MsgSolSanctumFelixSilence);
+  // "..."
   Event_ShowMessage(ACTOR_FELIX, 0);
   Event_End();
 }
@@ -1375,6 +1384,7 @@ static void SolSanctumElementalStarRoom_TalkToFelix(void) {
 static void SolSanctumElementalStarRoom_TalkToAlex(void) {
   Event_Start();
   Event_SetMessageId(MsgSolSanctumAlexOnlyOneLeft);
+  // "There is only one left. You're almost done."
   Event_ShowMessage(ACTOR_ALEX, 0);
   Event_End();
 }
@@ -1583,6 +1593,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   rising->y.fixed = PIXELS(40);
   Event_Wait(1);
   Event_SetMessageId(MsgSolSanctumKradenWhereAreWe);
+  // "Wha-Where are we?"
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
   Actor_Jump(ACTOR_JENNA, 4, 0);
@@ -2013,6 +2024,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
     Event_SetMessageId(MsgSolSanctumJennaWontYouPlease);
     Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
     Actor_Jump(ACTOR_JENNA, 4, 60);
+    // "Don't make me ask you again! Won't you please do it?"
     Event_OpenMessage(ACTOR_JENNA, 0);
   }
   Event_SetMessageId(MsgSolSanctumJennaThankYou);

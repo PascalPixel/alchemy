@@ -470,10 +470,14 @@ static void Vale_TalkAboutTheMayorAndTremors(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     Event_SetMessageId(MsgValeTheGroundStillShakes);
+    // "The ground still shakes sometimes, but everyone says the..."
     Event_ShowMessage(ACTOR_GIRL_JEALOUS_OF_GARET, 0);
   } else {
     Event_SetMessageId(MsgValeYourGrandpaIsTheMayor);
     Actor_FaceEachOther(ACTOR_GIRL_JEALOUS_OF_GARET, ACTOR_PARTY_LEADER, 4);
+    // "I'm jealous of you, Garet, because your grandpa's the mayor...."
+    // Yes: "Yeah... When travelers come, you get to hear all about the..."
+    // No: "Hmph... I can't believe you're not jealous, Isaac. I sure..."
     Event_AskYesNo(ACTOR_GIRL_JEALOUS_OF_GARET, 0);
   }
   Event_End();
@@ -487,17 +491,22 @@ static void Vale_WarnAboutGoingBeyondKradensCottage(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     Event_SetMessageId(MsgValeKradenHasntComeBack);
+    // "I guess Kraden still hasn't come back."
     Event_ShowMessage(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, 0);
   } else if (GameFlag_Get(flag) == 0) {
     GameFlag_Set(flag);
     Event_SetMessageId(MsgValeDoYouNeedToGo);
     Actor_FaceEachOther(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, ACTOR_PARTY_LEADER,
                         4);
+    // "Do you need to go past here?"
+    // Yes: "You must be going to Kraden's cottage..."
+    // No: "You mustn't go beyond Kraden's cottage. There are monsters..."
     Event_AskYesNo(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, 0);
   } else {
     Event_SetMessageId(MsgValeDontGoBeyondKradensCottage);
     Actor_FaceEachOther(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, ACTOR_PARTY_LEADER,
                         4);
+    // "You mustn't go beyond Kraden's cottage. There are monsters..."
     Event_ShowMessage(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, 0);
   }
   Event_End();
@@ -512,17 +521,21 @@ static void Vale_ArgueWithGaretsSister(void) {
     Event_SetMessageId(MsgValeYouMakeMeSoMad);
     Actor_ShowEmote(ACTOR_GARETS_SISTER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARETS_SISTER, 20);
+    // "Garet, you make me so mad sometimes!"
     Event_ShowMessageThenWait(ACTOR_GARETS_SISTER, 0, 6);
     Actor_FaceDirection(ACTOR_GARETS_SISTER, FACING_WEST, 30);
     Actor_Jump(ACTOR_GARETS_SISTER, 2, 20);
+    // "Your training stone crushed my flowers!"
     Event_ShowMessageThenWait(ACTOR_GARETS_SISTER, 0, 6);
     Actor_FaceEachOther(ACTOR_GARETS_SISTER, ACTOR_PARTY_LEADER, 10);
     Actor_ShowEmote(ACTOR_GARETS_SISTER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+    // "You're in for it tonight... Just wait and see!"
     Event_ShowMessageThenWait(ACTOR_GARETS_SISTER, 0, 10);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   } else {
     Actor_ShowEmote(ACTOR_GARETS_SISTER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     Event_SetMessageId(MsgValeIllGetYouForMy);
+    // "I'll get you for my flowers! Just see what happens...tonight!"
     Event_ShowMessageThenWait(ACTOR_GARETS_SISTER, 0, 20);
   }
   Event_End();
@@ -548,6 +561,7 @@ static void Vale_AskWhetherJennaHasReturned(void) {
   Event_Start();
   Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, 20);
   Event_SetMessageId(MsgValeIsJennaBackYet);
+  // "Oh, it's Isaac, isn't it? Is Jenna back yet? Promise me,..."
   Event_ShowMessage(ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, 0);
   GameFlag_Set(FLAG_VALE_ASKED_IF_JENNA_IS_BACK);
   Event_End();
@@ -561,8 +575,10 @@ static void Vale_ReactToAnotherTremor(void) {
   wait(10);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Event_SetMessageId(MsgValeIFeltAnotherOne);
+  // "Aghh! I felt another one!"
   Event_ShowMessageThenWait(ACTOR_WOMAN_FEELING_TREMORS, 0, 20);
   Actor_FaceActor(ACTOR_WOMAN_FEELING_TREMORS, ACTOR_PARTY_LEADER, 20);
+  // "They've been going on for a while. I can't even sleep at night!"
   Event_ShowMessage(ACTOR_WOMAN_FEELING_TREMORS, 0);
   Event_End();
 }
@@ -576,6 +592,9 @@ static void Vale_AskAboutTheLackOfTravelers(void) {
   Event_Wait(20);
   Actor_FaceActor(ACTOR_MAN_MISSING_TRAVELERS, ACTOR_PARTY_LEADER, 20);
   Event_SetMessageId(MsgValeNoTravelersSinceTheEruption);
+  // "I wonder why we haven't seen any travelers since the..."
+  // Yes: "Oh, the bridge to the south was ruined? That explains it."
+  // No: "You don't know either? It's not like we banned visitors..."
   Event_AskYesNo(ACTOR_MAN_MISSING_TRAVELERS, 0);
   GameFlag_Set(FLAG_VALE_ASKED_ABOUT_TRAVELERS);
   Event_End();
@@ -664,9 +683,12 @@ static void Vale_EnterIsaacsHouse(void) {
       GameFlag_Get(FLAG_KALAY_REACHED) == 0) {
     Event_Start();
     Event_SetMessageId(MsgValeYouCantBeIsaac);
+    // "Who are you? You can't be... You're not Isaac, are you?"
     Event_OpenMessage(ACTOR_DORA, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+      // "Isaac... That's a lie!"
       Event_ShowMessageThenWait(ACTOR_DORA, 0, 60);
+      // "He promised not to return until he fulfills his mission. My..."
       Event_ShowMessage(ACTOR_DORA, 0);
     } else {
       u16 *message = &gFieldWork->message;
@@ -741,9 +763,11 @@ static void Vale_HaveJennaStopTheAlephDetour(void) {
   Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JENNA, 2);
   Event_SetMessageId(MsgValeKradenIsWaitingForUs);
   if (leader->x.fixed < jenna->x.fixed) {
+    // "Kraden is waiting for us. We should go to his house."
     Event_ShowMessageThenWait(
         SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0, 2);
   } else {
+    // "Kraden is waiting for us. We should go to his house."
     Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_JENNA, 0, 2);
   }
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -776,7 +800,9 @@ static void Vale_WatchThePuppies(void) {
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
     Event_Wait(2);
     Event_SetMessageId(MsgValeRrruffRrrruff);
+    // "Rrruff! Rrrruff!"
     Event_ShowMessageThenWait(ACTOR_FIRST_PUPPY, 0, 2);
+    // "Woof! Woof!"
     Event_ShowMessageThenWait(ACTOR_FIRST_PUPPY + 1, 0, 2);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     SET_VECTOR(cameraPosition, leader->x.fixed, leader->y.fixed,
@@ -819,7 +845,9 @@ static void Vale_TurnBackFromThePuppies(void) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     msg = MsgValeRrruffRrrruff;
     Event_SetMessageId(msg);
+    // "Rrruff! Rrrruff!"
     Event_ShowMessageThenWait(ACTOR_FIRST_PUPPY, 0, 2);
+    // "Woof! Woof!"
     Event_ShowMessageThenWait(ACTOR_FIRST_PUPPY + 1, 0, 2);
     FieldMessage_Show(msg + 2, 1);
     Event_Wait(6);
@@ -896,6 +924,9 @@ static void Vale_WarnAgainstSneakingUpMtAleph(void) {
   Actor_StartRepeatedMotion(ACTOR_MAN_GUARDING_MT_ALEPH, 2);
   Event_Wait(20);
   Event_SetMessageId(MsgValeNotSneakingUpMtAleph);
+  // "You're not planning on sneaking up to Mt. Aleph, are you?"
+  // Yes: "Mt. Aleph is a sacred peak. No one can climb it without..."
+  // No: "Well, I'll overlook it this time... But I've got my eye on..."
   Event_AskYesNo(ACTOR_MAN_GUARDING_MT_ALEPH, 0);
   actor = Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH);
 #ifdef UBFIX
@@ -949,6 +980,9 @@ static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
   actor->scaleX = Q16_ONE;
   actor->scaleY = Q16_ONE;
   Event_SetMessageId(MsgValeNotSneakingUpMtAleph);
+  // "You're not planning on sneaking up to Mt. Aleph, are you?"
+  // Yes: "Mt. Aleph is a sacred peak. No one can climb it without..."
+  // No: "Well, I'll overlook it this time... But I've got my eye on..."
   Event_AskYesNo(ACTOR_MAN_GUARDING_MT_ALEPH, 0);
   actor = Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH);
 #ifdef UBFIX
@@ -1125,6 +1159,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
 
   Event_SetMessageId(MsgValeGoodJob);
   Actor_Jump(ACTOR_DORA, 2, 20);
+  // "Good job, Isaac."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_STEP, 20);
   Vale_MoveActorAlongLowerZPath(ACTOR_DORA, 5, 6, 0);
@@ -1166,8 +1201,10 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH_NORTHEAST, 60);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Event_Wait(20);
+  // "You and Garet have been working yourselves to the bone..."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHWEST, 30);
+  // "Do you think things would be any different if you'd had..."
   Event_OpenMessage(ACTOR_DORA, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
     gFieldWork->message++;
@@ -1178,13 +1215,16 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Event_Wait(20);
   Event_SetMessageId(MsgValeDevastatedWhenKyle);
+  // "I was devastated when Kyle died..."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_WalkToAndWait(ACTOR_DORA, 386, 825);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Event_Wait(60);
+  // "I felt all alone..."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 60);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHWEST, 10);
+  // "It's taken some time, but I'm better now."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_WalkToAndWait(ACTOR_DORA, 372, 832);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHWEST, 20);
@@ -1192,15 +1232,18 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Event_Wait(20);
+  // "I still have you, Isaac."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Event_Wait(20);
+  // "You're almost seventeen. You're so much like Kyle was when..."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Event_Wait(20);
+  // "I'm looking forward to seeing where life takes you."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
 
   FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
@@ -1328,11 +1371,14 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Actor_RunRepeatedMotion(ACTOR_DORA, 3);
   Event_Wait(30);
+  // "You're just as stubborn as your father!"
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_Jump(ACTOR_DORA, 4, 0);
   Actor_RunRepeatedMotion(ACTOR_DORA, 3);
   Actor_SetAnimation(ACTOR_DORA, ANIM_DORA_HANDS_UP);
   Event_Wait(5);
+  // "Ahhh!"
+  // "Be careful, ma'am!"
   FieldEvent_ShowTwoMessagesAndWait(ACTOR_DORA, 14, 2, 24, 2, ACTOR_GARET, 10,
                                     14, 4, 14, 0);
   actor = Actor_Get(ACTOR_DORA);
@@ -1688,6 +1734,7 @@ static void Vale_GaretMeetsHisSister(void) {
   msg = MsgValeAh;
   Event_SetMessageId(msg);
   Actor_StartRepeatedMotion(ACTOR_GARETS_SISTER_AFTER_KALAY, 2);
+  // "Ah!"
   Event_ShowMessageThenWait(ACTOR_GARETS_SISTER_AFTER_KALAY, 0, 20);
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(398), -1, PIXELS(582), 1);
@@ -1703,15 +1750,18 @@ static void Vale_GaretMeetsHisSister(void) {
   }
   Actor_WalkToAndWait(ACTOR_GARET, 402, 608);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 20);
+  // "It's been a while..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_GARET, 0);
   Actor_FaceDirection(ACTOR_GARETS_SISTER_AFTER_KALAY, FACING_SOUTH_SOUTHWEST,
                       20);
   Actor_SetAnimationAndWait(ACTOR_GARETS_SISTER_AFTER_KALAY, ANIM_NOD);
+  // "You're back?"
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_SISTER_AFTER_KALAY, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_GARETS_SISTER_AFTER_KALAY, 2);
+  // "Have you gone home to see Dad yet?"
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_SISTER_AFTER_KALAY, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
     gFieldWork->message++;
@@ -1722,28 +1772,36 @@ static void Vale_GaretMeetsHisSister(void) {
   Actor_ShowEmote(ACTOR_GARETS_SISTER_AFTER_KALAY,
                   EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_SetMessageId(msg + 6);
+  // "...So have I."
   FieldEvent_ShowMessageThenWait(
       SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_SISTER_AFTER_KALAY, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
   Event_Wait(40);
+  // "Sis..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_GARET, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_GARETS_SISTER_AFTER_KALAY, 1);
   Actor_FaceDirection(ACTOR_GARETS_SISTER_AFTER_KALAY, FACING_NORTH_NORTHEAST,
                       20);
+  // "Don't get me wrong. I... I was just worried you might get..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_SISTER_AFTER_KALAY, 0);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+  // "Yeah, all right... Thanks, Sis."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_GARET, 0, 120);
+  // "So, are you home for good? Or..."
   FieldEvent_ShowMessageThenWait(
       SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_SISTER_AFTER_KALAY, 0, 20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  // "Not just yet..."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_GARET, 0, 40);
   Actor_SetAnimationAndWait(ACTOR_GARETS_SISTER_AFTER_KALAY, ANIM_SHAKE_HEAD);
+  // "You're leaving... again?"
   FieldEvent_ShowMessageThenWait(
       SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_SISTER_AFTER_KALAY, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_GARETS_SISTER_AFTER_KALAY, FACING_SOUTH_SOUTHWEST,
                       20);
+  // "Don't push yourself too hard...when you leave again."
   Event_ShowMessageThenWait(
       SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_SISTER_AFTER_KALAY, 0, 10);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1780,6 +1838,7 @@ static void Vale_GaretAsksToProtectFamily(void) {
   Actor_WalkToAndWait(ACTOR_GARET, 346, 745);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 20);
   Event_SetMessageId(MsgValeHowHaveYouBeen);
+  // "Hey, how have you been?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_RunRepeatedMotion(ACTOR_GARETS_BROTHER_AFTER_KALAY, 2);
   Actor_ShowEmote(ACTOR_GARETS_BROTHER_AFTER_KALAY,
@@ -1790,35 +1849,45 @@ static void Vale_GaretAsksToProtectFamily(void) {
                       10);
   Actor_FaceDirection(ACTOR_GARETS_BROTHER_AFTER_KALAY, FACING_SOUTH_SOUTHEAST,
                       40);
+  // "Oh, Garet! And Isaac!"
   Event_ShowMessageThenWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Actor_RunRepeatedMotion(ACTOR_GARETS_BROTHER_AFTER_KALAY, 1);
   Actor_FaceDirection(ACTOR_GARETS_BROTHER_AFTER_KALAY, FACING_SOUTH_SOUTHWEST,
                       10);
+  // "What happened!? You're back already!?"
   Event_ShowMessageThenWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
+  // "Already? What kind of way is that to greet us?"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, ANIM_NOD);
+  // "But-But they said you might never come back!"
   Event_ShowMessageThenWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST_SOUTHEAST, 40);
   Actor_SetAnimationAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, ANIM_SHAKE_HEAD);
+  // "And it still seems like you're not back for good, like..."
   Event_ShowMessage(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
+  // "Really? Is that what it seems like?"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, ANIM_NOD);
+  // "Yeah... You and your friends... You all look like you are..."
   Event_ShowMessageThenWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
+  // "You're smarter than you look."
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_GARETS_BROTHER_AFTER_KALAY, 2);
+  // "I have to shape up while you're gone, right? If not..."
   Event_ShowMessageThenWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST_SOUTHEAST, 20);
+  // "Hey, the family'll be fine, as long as you're here! Am I..."
   Event_OpenMessage(ACTOR_GARET, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
@@ -1828,8 +1897,10 @@ static void Vale_GaretAsksToProtectFamily(void) {
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 10);
   Event_SetMessageId(MsgValeEverProtectFamily);
+  // "WHATEVER YOU DO, you must protect the family while I'm gone...."
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_SetAnimationAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, ANIM_NOD);
+  // "Don't push yourself too hard, OK?"
   Event_ShowMessageThenWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(20);
@@ -1886,8 +1957,10 @@ UNUSED static void Vale_UnusedWaterBurstsByTheRiver(void) {
   Actor_FaceDirection(ACTOR_STRONGMAN_REMEMBERING_FELIX, FACING_NORTH_NORTHEAST,
                       10);
   Event_SetMessageId(MsgValeIUsedToPlayHere);
+  // "I still remember when Felix and I used to play here...*Sniff*"
   Event_ShowMessageThenWait(ACTOR_STRONGMAN_REMEMBERING_FELIX, 0, 40);
   Actor_FaceActor(ACTOR_STRONGMAN_REMEMBERING_FELIX, ACTOR_PARTY_LEADER, 20);
+  // "Felix must be protecting Jenna... I'm sure of it."
   Event_ShowMessage(ACTOR_STRONGMAN_REMEMBERING_FELIX, 0);
   Actor_FaceDirection(ACTOR_STRONGMAN_REMEMBERING_FELIX, FACING_WEST, 10);
   GameFlag_Set(FLAG_VALE_UNUSED_WATER_BURST_SEEN);
@@ -2092,6 +2165,7 @@ static void Vale_MendingTheRoof(void) {
   FieldCamera_WaitForMove();
   Actor_Jump(ACTOR_OPENING_DORA, 2, 20);
   Event_SetMessageId(message + 1);
+  // "Isaac! Haven't you finished mending the roof yet?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_OPENING_DORA, 0,
                                  10);
   leader->scaleX = Q16_ONE;
@@ -2104,6 +2178,7 @@ static void Vale_MendingTheRoof(void) {
   Event_Wait(40);
   Actor_StartRepeatedMotion(ACTOR_OPENING_DORA, 2);
   Event_Wait(40);
+  // "You're almost done? OK! Keep at it!"
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_OPENING_DORA, 0, 40);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
   Actor_SetScript(ACTOR_PARTY_LEADER, gVale_LeaderHammers);
@@ -2117,6 +2192,7 @@ static void Vale_MendingTheRoof(void) {
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 40);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 40);
+  // "Hyaa!"
   Event_ShowMessageThenWait(
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_GARET, 0, 10);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -2124,6 +2200,7 @@ static void Vale_MendingTheRoof(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 30);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Event_Wait(40);
+  // "Hee hee... Still training, Garet?"
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 30);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(10);
@@ -2534,6 +2611,7 @@ static void Vale_RoofMended(void) {
   leader->scaleY = Q16_ONE;
   Actor_Jump(ACTOR_DORA, 2, 20);
   Event_SetMessageId(MsgValeGoodJob);
+  // "Good job, Isaac."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST_SOUTHEAST, 10);
   Vale_MoveActorAlongLowerZPath(ACTOR_DORA, 5, 6, 0);
@@ -2571,8 +2649,10 @@ static void Vale_RoofMended(void) {
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH_NORTHEAST, 60);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
+  // "You and Garet have been working yourselves to the bone..."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHWEST, 30);
+  // "Do you think things would be any different if you'd had..."
   Event_OpenMessage(ACTOR_DORA, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
     gFieldWork->message++;
@@ -2581,13 +2661,16 @@ static void Vale_RoofMended(void) {
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH_NORTHEAST, 60);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Event_SetMessageId(MsgValeDevastatedWhenKyle);
+  // "I was devastated when Kyle died..."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_WalkToAndWait(ACTOR_DORA, 386, 825);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Event_Wait(60);
+  // "I felt all alone..."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 60);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHWEST, 10);
+  // "It's taken some time, but I'm better now."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_WalkToAndWait(ACTOR_DORA, 372, 832);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHWEST, 10);
@@ -2595,12 +2678,15 @@ static void Vale_RoofMended(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Event_Wait(20);
+  // "I still have you, Isaac."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
+  // "You're almost seventeen. You're so much like Kyle was when..."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+  // "I'm looking forward to seeing where life takes you."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
   FieldCamera_MoveTo(PIXELS(377), PIXELS(160), PIXELS(860), 1);
@@ -2722,11 +2808,14 @@ static void Vale_RoofMended(void) {
   Event_SetMessageId(MsgValeAsStubbornAsYourFather);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Actor_RunRepeatedMotion(ACTOR_DORA, 3);
+  // "You're just as stubborn as your father!"
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_Jump(ACTOR_DORA, 4, 0);
   Actor_RunRepeatedMotion(ACTOR_DORA, 3);
   Actor_SetAnimation(ACTOR_DORA, ANIM_DORA_HANDS_UP);
   Event_Wait(5);
+  // "Ahhh!"
+  // "Be careful, ma'am!"
   FieldEvent_ShowTwoMessagesAndWait(ACTOR_DORA, 14, 2, 24, 2, ACTOR_GARET, 10,
                                     14, 4, 14, none);
   Sound_Play(SE_RATTLE);

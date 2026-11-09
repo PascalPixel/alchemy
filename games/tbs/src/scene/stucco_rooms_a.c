@@ -269,6 +269,7 @@ const struct Trigger *StuccoRoomsA_GetTriggers(void) {
 static void StuccoRoomsA_TalkToTourGuide(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayPleaseFinishEatingIfTaking);
+  // "Please finish eating if you are taking the tour! We'll be..."
   Event_ShowMessage(ACTOR_TOUR_GUIDE, 0);
   GameFlag_Set(FLAG_KALAY_HEARD_OF_COLOSSO_TOUR);
   Event_End();
@@ -279,6 +280,9 @@ static void StuccoRoomsA_TalkToTourGuide(void) {
 static void StuccoRoomsA_AskAboutSouthernContinent(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayDoKnowAboutContinentSouth);
+  // "Do you know about the continent south of Tolbi?"
+  // Yes: "The guest next door is dressed like he comes from Gondowan."
+  // No: "That continent is called Gondowan. It is very large. They..."
   Event_AskYesNo(ACTOR_YOUNG_MAN_ASKING_ABOUT_THE_SOUTH, 0);
   Event_End();
 }
@@ -297,9 +301,13 @@ static void StuccoRoomsA_TalkToInnkeeper(void) {
 
     if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
       Event_SetMessageId(MsgKalayOurInnFeelsEmptyNow);
+      // "Our inn feels so empty, now that the Colosso tour group has..."
       Event_ShowMessage(ACTOR_INNKEEPER, 0);
     } else {
       Event_SetMessageId(MsgKalayGoingTolbiAlso);
+      // "Are you going to Tolbi also?"
+      // Yes: "Oh, so you must be taking the Colosso tour, too... The..."
+      // No: "Merchants are always coming up with new ideas. A Colosso..."
       Event_AskYesNo(ACTOR_INNKEEPER, 0);
       GameFlag_Set(FLAG_KALAY_HEARD_OF_COLOSSO_TOUR);
     }
@@ -321,6 +329,7 @@ static void StuccoRoomsA_TalkToHealer(void) {
   } else {
     Event_Start();
     Event_SetMessageId(MsgKalayCanLiveInPeaceIn);
+    // "You can live in peace in Kalay, as long as you practice good..."
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_End();
   }

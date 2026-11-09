@@ -336,13 +336,18 @@ static void FuchinTemple_BoyMonkSpeaksOfNyunpa(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_NYUNPA_ENLIGHTENED) != 0) {
     Event_SetMessageId(MsgXianNowHeTrulyBeyondWorlds);
+    // "Now, he truly is beyond the world's concerns. Is he watching..."
+    // Yes: "I believed that once. But now, I am no longer so sure."
+    // No: "Yes... This seems very wrong. The world has lost something..."
     Event_AskYesNo(ACTOR_ADMIRING_BOY_MONK, 0);
     Event_End();
   } else {
     Event_SetMessageId(MsgXianIsntNobleHimTrySave);
+    // "Isn't it noble of him to try to save the world by becoming..."
     Event_OpenMessage(ACTOR_ADMIRING_BOY_MONK, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
       gFieldWork->message++;
+      // "Do you know what you mean when you say that?"
       Event_OpenMessage(ACTOR_ADMIRING_BOY_MONK, 0);
       if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
         gFieldWork->message++;
@@ -366,6 +371,7 @@ static void FuchinTemple_MonkLetsPartyIntoGrotto(void) {
   monk = Actor_Get(ACTOR_FALLS_MONK);
   Event_Start();
   Event_SetMessageId(MsgXianAlreadyHeardTest);
+  // "I have already heard of your test from Master Nyunpa. You..."
   Event_ShowMessageThenWait(ACTOR_FALLS_MONK, 0, 20);
   // The monk leaps aside and lands in a puff of dust.
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 168, 392);
@@ -410,16 +416,21 @@ static void FuchinTemple_MonkAsksWhetherTestIsDone(void) {
   Actor_RunRepeatedMotion(ACTOR_FALLS_MONK, 2);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
+  // "Young master, did you complete the test?"
+  // Yes: "Why, you have mastered the secrets of Fuchin Temple!?"
+  // No: "But you must have..."
   Event_AskYesNo(ACTOR_FALLS_MONK, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_FALLS_MONK, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
   Actor_FaceDirection(ACTOR_FALLS_MONK, FACING_NORTH_NORTHEAST, 20);
   Actor_RunRepeatedMotion(ACTOR_FALLS_MONK, 2);
   Event_Wait(20);
+  // "Master Nyunpa is waiting for you..."
   Event_ShowMessageThenWait(ACTOR_FALLS_MONK, 0, 20);
   Actor_FaceDirection(ACTOR_FALLS_MONK, FACING_EAST, 20);
   Actor_SetAnimationAndWait(ACTOR_FALLS_MONK, ANIM_NOD);
   Event_Wait(20);
+  // "Proceed to the temple."
   Event_ShowMessageThenWait(ACTOR_FALLS_MONK, 0, 20);
   MapGrid_CopyCellAttributes(10, 26, 1, 1, 10, 24);
   Event_End();
@@ -488,6 +499,7 @@ static void FuchinTemple_NyunpaOffersTest(void) {
     Event_Wait(30);
     Actor_ShowEmote(ACTOR_NYUNPA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     Event_SetMessageId(MsgXianFollowThemDoNot);
+    // "You follow them, do you not?"
     Event_OpenMessage(ACTOR_NYUNPA, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
       Actor_ShowEmote(ACTOR_NYUNPA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
@@ -504,6 +516,7 @@ static void FuchinTemple_NyunpaOffersTest(void) {
       Event_Wait(20);
       Actor_SetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
       Event_Wait(20);
+      // "I knew it!"
       Event_ShowMessage(ACTOR_NYUNPA, 0);
     }
     Event_Wait(20);
@@ -526,6 +539,7 @@ static void FuchinTemple_NyunpaOffersTest(void) {
   Event_OpenMessage(ACTOR_NYUNPA, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
     Event_SetMessageId(MsgXianThenCannotTellGiveUp);
+    // "Then I cannot tell you. Give up and go back from whence you..."
     Event_ShowMessage(ACTOR_NYUNPA, 0);
     GameFlag_Set(FLAG_FUCHIN_TEMPLE_NYUNPA_TEST_DECLINED);
   } else {
@@ -566,6 +580,9 @@ static void FuchinTemple_NyunpaOffersTest(void) {
 static void FuchinTemple_NyunpaFeelsMindRead(void) {
   Event_Start();
   Event_SetMessageId(MsgXianEnjoyReadingMindsOthersDo);
+  // "You enjoy reading the minds of others, do you not?"
+  // Yes: "If you overdo it, you will soon learn to despise the ability."
+  // No: "That is good. Enjoy reading the minds of others while you..."
   Event_AskYesNo(ACTOR_NYUNPA, 0);
   Event_End();
 }
@@ -576,6 +593,9 @@ static void FuchinTemple_NyunpaFeelsMindRead(void) {
 static void FuchinTemple_StudentWelcomesToSchool(void) {
   Event_Start();
   Event_SetMessageId(MsgXianMasterFehsSchoolCameWatch);
+  // "This is Master Feh's school... You came to watch?"
+  // Yes: "Promise me you will be quiet."
+  // No: "Warriors should learn martial arts. They will help in battles."
   Event_AskYesNo(ACTOR_WELCOMING_STUDENT, 0);
   Event_End();
 }
@@ -626,6 +646,9 @@ static void FuchinTemple_TalkToJumpingStudent(void) {
 static void FuchinTemple_StudentAsksAboutFeh(void) {
   Event_Start();
   Event_SetMessageId(MsgXianMasterFehVeryBusyDo);
+  // "Master Feh is very busy. Do you still wish to see him?"
+  // Yes: "Look there. You see that line? Stand there and use Chi. If..."
+  // No: "You will not see Master Feh? That is too bad."
   Event_AskYesNo(ACTOR_TREE_STUDENT, 0);
   Event_End();
 }
@@ -801,9 +824,11 @@ static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
     Event_ShowMessageThenWait(ACTOR_TREE_STUDENT, 0, 20);
     Actor_RunRepeatedMotion(ACTOR_TREE_STUDENT, 2);
     Event_SetMessageId(MsgXianWarriorsCannotUse);
+    // "Warriors cannot use... Wait. This is different from Chi."
     Event_ShowMessageThenWait(ACTOR_TREE_STUDENT, 0, 20);
     Actor_SetAnimationAndWait(ACTOR_TREE_STUDENT, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "Do not step over the line, warrior."
     Event_ShowMessageThenWait(ACTOR_TREE_STUDENT, 0, 20);
     Actor_SetAnimationAndWait(ACTOR_TREE_STUDENT, ANIM_NOD);
     Event_Wait(20);
@@ -843,15 +868,20 @@ static void FuchinTemple_StudentsSeeTreeFall(void) {
   Actor_RunRepeatedMotion(ACTOR_TREE_STUDENT, 2);
   Event_Wait(20);
   Event_SetMessageId(MsgXianLookTreeFell);
+  // "Look! The tree fell."
   Event_ShowMessageThenWait(ACTOR_TREE_STUDENT, 0, 20);
+  // "Master, did you see? The warrior used Chi!"
   Event_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
   Actor_ShowEmote(ACTOR_FEH, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_ShowEmote(ACTOR_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "Master, what is the matter?"
   Event_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "He did not do it from the line, so I cannot be sure."
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_ShowEmote(ACTOR_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  // "That is not good. Warrior, do it right! Do it from the line."
   Event_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
   Actor_TurnToFaceEachOther(ACTOR_TREE_STUDENT, ACTOR_FEH, 0);
   Event_Wait(20);
@@ -998,15 +1028,20 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
                   0);
   Event_Wait(60);
   Event_SetMessageId(MsgXianDidDoWarrior);
+  // "What did you do, warrior?"
   Event_ShowMessageThenWait(ACTOR_PROUD_STUDENT, 0, 20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_PROUD_STUDENT, 0);
   Actor_RunRepeatedMotion(ACTOR_TREE_STUDENT, 1);
   Event_Wait(20);
+  // "The warrior used Chi! He did it from the line... and the..."
   Event_ShowMessageThenWait(ACTOR_TREE_STUDENT, 0, 20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_TREE_STUDENT, 0);
   Actor_RunRepeatedMotion(ACTOR_MESSENGER_STUDENT, 2);
   Event_Wait(20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_MESSENGER_STUDENT, 0);
+  // "He knows kung fu! Do you know kung fu?"
+  // Yes: "Your Chi must be strong if you can use it from afar. I must..."
+  // No: "It is unbelievable that someone who does not know kung fu..."
   Event_AskYesNo(ACTOR_MESSENGER_STUDENT, 0);
   Event_Wait(50);
   // Bring the observers out through the school door.
@@ -1028,6 +1063,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   actor = Actor_Get(ACTOR_MESSENGER_STUDENT);
 
   actor->steeringFlags = ACTOR_FACES_MOTION | actor->steeringFlags;
+  // "Ya! What happened!? The door opened on its own!"
   Event_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 50);
   Actor_SetPosition(ACTOR_FEIZHI, PIXELS(304), PIXELS(216));
   Actor_WalkToAndWait(ACTOR_FEIZHI, 304, 248);
@@ -1058,6 +1094,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Actor_WaitForMoveById(ACTOR_FEIZHI);
   Sound_Play(SE_DOOR_CLOSE);
   MapGrid_AnimateCells(gFuchinTemple_FehsDoorCloses, 78, 13);
+  // "Feizhi! Wait!"
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_FaceActor(ACTOR_WELCOMING_STUDENT, ACTOR_FEIZHI, 0);
   Actor_FaceActor(ACTOR_KICKING_STUDENT, ACTOR_FEIZHI, 0);
@@ -1073,69 +1110,90 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Are you worried that Hsu is late?"
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEIZHI, ANIM_NOD);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_FEH, 1);
   Event_Wait(20);
+  // "He is only a little late in returning from Lama Temple. Do..."
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH_NORTHEAST, 20);
+  // "Something is wrong with Hsu... I sense it."
   Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_ShowEmote(ACTOR_FEH, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  // "Ahhh, Feizhi... Is it your power again?"
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEIZHI, ANIM_NOD);
   Event_Wait(20);
+  // "Ever since gems fell from the sky and hit me, I have sensed..."
   Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
   Event_Wait(20);
+  // "You say you sense evil ever since you received the power of..."
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEIZHI, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "I do not believe it, Feizhi. Your visions are just coincidences."
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_FEIZHI, 2);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_FEIZHI, FACING_EAST, 20);
+  // "My visions came true many times, no?"
   Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_FaceDirection(ACTOR_MESSENGER_STUDENT, FACING_WEST, 20);
   Actor_SetAnimationAndWait(ACTOR_MESSENGER_STUDENT, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_FEIZHI, ANIM_NOD);
   Event_Wait(20);
+  // "I had a vision about Mogall Forest, and that came true..."
   Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_MESSENGER_STUDENT, ANIM_NOD);
   Event_Wait(20);
+  // "Yes, your predictions came true, Feizhi. It was very surprising!"
   Event_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
   Actor_FaceDirection(ACTOR_FEIZHI, FACING_WEST, 20);
+  // "The flood in Altin... Did I not predict that, too?"
   Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_WELCOMING_STUDENT, ANIM_NOD);
   Event_Wait(20);
+  // "All Feizhi's predictions come true."
   Event_ShowMessageThenWait(ACTOR_WELCOMING_STUDENT, 0, 20);
   Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH_NORTHEAST, 20);
   Actor_RunRepeatedMotion(ACTOR_FEIZHI, 1);
   Event_Wait(20);
+  // "See, Father?"
   Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_ShowEmote(ACTOR_FEH, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  // "I have heard this all. I was surprised, too, but it is still..."
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "You still don't believe it?"
   Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
   Event_Wait(20);
+  // "Hsu is late, so you worry too much. But do not think bad..."
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  // "You sent people to find Hsu, correct?"
   Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
+  // "Stubborn old man."
   Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_ShowEmote(ACTOR_FEH, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  // "What did you say, Feizhi? You should not speak so to your..."
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEIZHI, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "I will not ask anyone. I will go alone, then!"
   Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_FEH, 2);
   Event_Wait(20);
+  // "It is too dangerous."
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_FEIZHI, 2);
   Event_Wait(10);
@@ -1146,23 +1204,29 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_WELCOMING_STUDENT, 2);
   Event_Wait(20);
+  // "Ya! Master Feh! Feizhi has gone!"
   Event_ShowMessageThenWait(ACTOR_WELCOMING_STUDENT, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_TREE_STUDENT, 2);
   Event_Wait(20);
+  // "Feizhi was very angry. She was frightening!"
   Event_ShowMessageThenWait(ACTOR_TREE_STUDENT, 0, 20);
   Actor_FaceActor(ACTOR_MESSENGER_STUDENT, ACTOR_FEH, 0);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_MESSENGER_STUDENT, 2);
   Event_Wait(20);
+  // "Hsu is in danger. Feizhi is going to help."
   Event_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
   Actor_FaceActor(ACTOR_FEH, ACTOR_MESSENGER_STUDENT, 0);
   Event_Wait(20);
+  // "Feizhi knows kung fu. She will be all right."
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Feizhi is alone. She cannot go too far."
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
   Event_Wait(20);
+  // "She will give up soon enough. Until then, let her be."
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_SetSpeed(ACTOR_FEH, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_FEH, 256, 248);
@@ -1251,15 +1315,18 @@ static void FuchinTemple_FehAsksToSeeChi(void) {
 
   Event_Start();
   Event_SetMessageId(MsgXianWarriorWillShowMeYour);
+  // "Warrior, will you show me your Chi?"
   Event_OpenMessage(ACTOR_FEH, 0);
 
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Event_Wait(20);
+    // "Very good. Now show me."
     Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
     GameFlag_Set(FLAG_FEH_WAITS_TO_SEE_CHI);
     Event_End();
   } else {
     gFieldWork->message += 1;
+    // "What you can do is an incredible thing. Hiding it is not good."
     Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
     Event_End();
   }
@@ -1310,6 +1377,7 @@ static void FuchinTemple_FehSeesChi(void) {
   Actor_FaceActor(ACTOR_KICKING_STUDENT, ACTOR_TRAINING_TREE, 0);
   Actor_RunRepeatedMotion(ACTOR_FEH, 2);
   Event_Wait(20);
+  // "Ya! The tree fell!"
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 40);
   Actor_FaceActor(ACTOR_WELCOMING_STUDENT, ACTOR_FEH, 0);
   Actor_FaceActor(ACTOR_KICKING_STUDENT, ACTOR_FEH, 0);
@@ -1320,25 +1388,31 @@ static void FuchinTemple_FehSeesChi(void) {
   Actor_FaceActor(ACTOR_TREE_STUDENT, ACTOR_FEH, 0);
   Actor_FaceActor(ACTOR_MESSENGER_STUDENT, ACTOR_FEH, 0);
   Event_Wait(20);
+  // "Master, did you see? The warrior used Chi."
   Event_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_MESSENGER_STUDENT, ANIM_NOD);
   Event_Wait(20);
+  // "The warrior's Chi is excellent! Are you surprised, Master?"
   Event_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
   Actor_ShowEmote(ACTOR_FEH, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_ShowEmote(ACTOR_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "What is wrong, Master?"
   Event_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
+  // "Hmmmm... The warrior did make the tree fall. I grant you that..."
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_ShowEmote(ACTOR_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_ShowEmote(ACTOR_TREE_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_SetSpeed(ACTOR_TREE_STUDENT, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 216, 176);
   Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTH_SOUTHEAST, 20);
+  // "Is something wrong with the warrior's Chi?"
   Event_ShowMessageThenWait(ACTOR_TREE_STUDENT, 0, 20);
   Actor_FaceDirection(ACTOR_FEH, FACING_NORTH_NORTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "What the warrior did... It is not Chi."
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_StartRepeatedMotion(ACTOR_WELCOMING_STUDENT, 2);
   Actor_StartRepeatedMotion(ACTOR_KICKING_STUDENT, 2);
@@ -1350,12 +1424,17 @@ static void FuchinTemple_FehSeesChi(void) {
   Actor_StartRepeatedMotion(ACTOR_MESSENGER_STUDENT, 2);
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_PROUD_STUDENT, 2);
+  // "What? It is not Chi?"
   Event_ShowMessageThenWait(ACTOR_PROUD_STUDENT, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
   Event_Wait(20);
+  // "Hmmm... It looks very similar...but it is not Chi."
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
   Actor_FaceDirection(ACTOR_FEH, FACING_SOUTH_SOUTHWEST, 20);
+  // "Warrior... Have you been to Fuchin Temple?"
+  // Yes: "Ah... I knew it."
+  // No: "Hmmm... That is strange."
   Event_AskYesNo(ACTOR_FEH, 0);
   Actor_ShowEmote(ACTOR_WELCOMING_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_Wait(5);
@@ -1374,16 +1453,20 @@ static void FuchinTemple_FehSeesChi(void) {
   Actor_ShowEmote(ACTOR_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_Wait(60);
   Actor_RunRepeatedMotion(ACTOR_MESSENGER_STUDENT, 2);
+  // "How are Chi and Fuchin Temple related?"
   Event_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
   Event_Wait(20);
+  // "I learned my Chi from Master Hama of Lama Temple."
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_ShowEmote(ACTOR_TREE_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "Then it is the same as Chi, is it not?"
   Event_ShowMessageThenWait(ACTOR_TREE_STUDENT, 0, 20);
   Actor_FaceActor(ACTOR_FEH, ACTOR_TREE_STUDENT, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Very similar... But still different..."
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 40);
   Actor_TurnToFaceEachOther(ACTOR_PUNCHING_STUDENT, ACTOR_KICKING_STUDENT, 0);
   Actor_TurnToFaceEachOther(ACTOR_JUMPING_STUDENT, ACTOR_WATCHING_STUDENT, 0);
@@ -1396,6 +1479,7 @@ static void FuchinTemple_FehSeesChi(void) {
   Actor_FaceActor(ACTOR_WATCHING_STUDENT, ACTOR_FEH, 0);
   Actor_FaceActor(ACTOR_TREE_STUDENT, ACTOR_FEH, 0);
   Event_Wait(20);
+  // "Chi concentrates the energy of the body into the hand......"
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_FEH, 2);
   Event_Wait(20);
@@ -1409,9 +1493,13 @@ static void FuchinTemple_FehSeesChi(void) {
   Actor_SetAnimationAndWait(ACTOR_MESSENGER_STUDENT, ANIM_NOD);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_FEH, FACING_SOUTH_SOUTHWEST, 20);
+  // "You, warrior, used energy focused from the mind. Understand?"
+  // Yes: "This warrior is wise. The power to will something to move..."
+  // No: "Remember this... Wishing for something is the same as..."
   Event_AskYesNo(ACTOR_FEH, 0);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
   Event_Wait(20);
+  // "Fuchin's Ki releases the mind's energy like Chi releases the..."
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_WELCOMING_STUDENT, ANIM_NOD);
@@ -1425,7 +1513,9 @@ static void FuchinTemple_FehSeesChi(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_FEH, 2);
   Event_Wait(20);
+  // "The body's energy has limits, but mental energy has few limits."
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
+  // "Train your Ki. It will grow very strong. Do your best, warrior."
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
@@ -1433,6 +1523,7 @@ static void FuchinTemple_FehSeesChi(void) {
   Actor_FaceDirection(ACTOR_FEH, FACING_WEST, 20);
   Actor_RunRepeatedMotion(ACTOR_FEH, 2);
   Event_Wait(20);
+  // "Practice, everyone! Chi has its limits, but anyone can use..."
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_SetAnimation(ACTOR_WELCOMING_STUDENT, ANIM_NOD);
   Actor_SetAnimation(ACTOR_KICKING_STUDENT, ANIM_NOD);
@@ -1482,6 +1573,9 @@ static void FuchinTemple_FehSeesChi(void) {
 static void FuchinTemple_StudentAsksAboutAltin(void) {
   Event_Start();
   Event_SetMessageId(MsgXianWaterMonstersFloodedAltinDid);
+  // "Water monsters flooded Altin. Did you defeat them, warrior?"
+  // Yes: "You are much stronger than you look, warrior. I have much..."
+  // No: "Oh... You are not the strong warrior Feizhi spoke of?"
   Event_AskYesNo(ACTOR_PUNCHING_STUDENT, 0);
   Event_End();
 }
@@ -1523,6 +1617,7 @@ static void FuchinTemple_TalkToHealer(void) {
     Sanctum_Run(ACTOR_HEALER);
   } else {
     Event_SetMessageId(MsgXianImTravelingAroundWorldSpread);
+    // "I'm traveling around the world to spread good will."
     Event_ShowMessage(ACTOR_HEALER, 0);
   }
 
@@ -1536,6 +1631,7 @@ static void FuchinTemple_ReadNyunpasLastWish(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_NYUNPA, 2);
   Event_SetMessageId(MsgXianIsaacAmCountingOnBring);
+  // "Isaac... Is that you...? I am...counting on you... to bring..."
   Event_ShowMessage(ACTOR_NYUNPA, 0);
   Event_End();
 }
@@ -1693,19 +1789,24 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
   Actor_SetAnimation(ACTOR_NYUNPA, ANIM_STAND);
   // Praise the completed test before answering the follow-up questions.
   Event_SetMessageId(MsgXianExcellentIsaac);
+  // "Excellent, Isaac!"
   Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
+  // "I am glad to see you master the secrets of Fuchin Temple!"
   Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
   Event_Wait(20);
+  // "We monks call the power you have obtained Ki."
   Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "You seem confused, Isaac."
   Event_OpenMessage(ACTOR_NYUNPA, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
     Event_Wait(20);
+    // "This is called 'force' by the western world, but it is..."
     Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
     gFieldWork->message += 2;
   } else {
@@ -1713,21 +1814,27 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
     Actor_RunRepeatedMotion(ACTOR_NYUNPA, 2);
     Event_Wait(20);
     gFieldWork->message++;
+    // "You possess great wisdom for one so young, but I feel I must..."
     Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
     Actor_SetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
     Event_Wait(20);
+    // "It is called 'force' by the western world, but it is really..."
     Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
   }
+  // "I will teach you, as I promised. Use this power to go..."
   Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_NYUNPA, 2);
   Event_Wait(20);
+  // "What would happen if you let loose this energy in the forest?"
   Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "Ha ha! You are curious, no?"
   Event_OpenMessage(ACTOR_NYUNPA, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
     Event_Wait(10);
     Actor_ShowEmote(ACTOR_NYUNPA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     Event_SetMessageId(MsgXianCanReadMindsKnowCurious);
+    // "I can read minds, you know. You are curious, aren't you?"
     Event_OpenMessage(ACTOR_NYUNPA, 0);
     do {
       if (Event_AskYesNoWithActorAnimation(0, 0) != 1) {
@@ -1736,6 +1843,7 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
       Event_Wait(10);
       Actor_ShowEmote(ACTOR_NYUNPA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
       Event_SetMessageId(MsgXianDontTryHard);
+      // "You don't have to try so hard. You are curious, are you not?"
       Event_OpenMessage(ACTOR_NYUNPA, 0);
     } while (1);
   }
@@ -1744,24 +1852,29 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
   Event_Wait(20);
+  // "Monsters that wait in hiding would show themselves. You..."
   Event_OpenMessage(ACTOR_NYUNPA, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(20);
+    // "Sometimes, you must let go of your belief that fighting..."
     Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
     gFieldWork->message++;
   } else {
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_NYUNPA, 2);
     gFieldWork->message++;
+    // "Ha ha... That is right. There is no good in wanton destruction."
     Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
   }
   Actor_SetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
   Event_Wait(20);
+  // "Monsters are cowardly. They will run once they know you can..."
   Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_NYUNPA, 2);
   Event_Wait(20);
+  // "They are creatures of the woods... So they do not get lost..."
   Event_ShowMessageThenWait(ACTOR_NYUNPA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);
@@ -1792,6 +1905,7 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_RunRepeatedMotion(ACTOR_HAMAS_BOY_MONK, 2);
   Event_Wait(20);
   Event_SetMessageId(MsgXianMasterHamaMeditatingPleaseExtremely);
+  // "Master Hama is meditating. Please be extremely quiet."
   Event_ShowMessageThenWait(ACTOR_HAMAS_BOY_MONK, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1799,6 +1913,7 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH, 30);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
+  // "So, Isaac, you and your Adept companions have finally come."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
@@ -1837,21 +1952,29 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 20);
+  // "Finally come? Was she expecting us?"
+  // Yes: "But how did she know we'd be here now?"
+  // No: "Then, how come she knew we were coming, Isaac?"
   Event_AskYesNo(ACTOR_GARET, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
+  // "I had anticipated your arrival."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 20);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  // "You knew we were coming, then?"
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
+  // "I have been waiting a long while for you. You come seeking..."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  // "You know about the Elemental Stars, too? Who... Who are you?"
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH_SOUTHEAST, 20);
+  // "I am a Jupiter Adept, just like Ivan."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
@@ -1864,58 +1987,73 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 0);
   Event_Wait(20);
+  // "I'm not a Jupiter Adept! What are you talking about?"
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
+  // "You are, Ivan, although you may not yet know it."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
+  // "Why do you say that?"
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
+  // "Do you not have the power to read minds?"
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_IVAN, 50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 30);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(20);
+  // "This ability is unique to the Jupiter Adepts."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "You predicted our coming... Is that also Psynergy?"
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH_SOUTHWEST, 20);
+  // "Ho ho! Excellent question, Miss Mia."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
+  // "Yes, the ability to foresee events also belongs to the..."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 20);
+  // "Then, can Ivan learn the power of prediction, too?"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Actor_FaceActor(ACTOR_HAMA, ACTOR_IVAN, 0);
   Event_Wait(10);
+  // "He already has."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_IVAN, 0);
   Actor_FaceActor(ACTOR_MIA, ACTOR_IVAN, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  // "I don't think I have-"
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
+  // "You do. You merely do not yet know that you have it."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(20);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
+  // "The power of Jupiter must be great if it lets you see the..."
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_FaceActor(ACTOR_HAMA, ACTOR_GARET, 0);
   Event_Wait(20);
+  // "Oh, but Ivan can learn to use an even greater power!"
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  // "What greater power?"
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_FaceActor(ACTOR_HAMA, ACTOR_GARET, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -1924,19 +2062,24 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
+  // "Reveal."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
+  // "Reveal?"
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
+  // "Yes. I have waited long to pass the power of true sight on..."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Event_Wait(20);
+  // "You waited here in Lama Temple just to teach Reveal to Ivan?"
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH_SOUTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
+  // "You will need Reveal if you are to achieve your goals..."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
@@ -1945,32 +2088,40 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Jupiter Adepts can learn Reveal on their own, over time..."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_HAMA, 2);
   Event_Wait(20);
+  // "But that power alone will not help you find Saturos as his..."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
+  // "It was Saturos and his companions who blocked Silk Road."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(60);
+  // "Felix and the rest of them, huh? Those cowards!"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Felix bears a terrible fate, a burden I would not wish on..."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "A terrible fate? What do you mean?"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_StartRepeatedMotion(ACTOR_HAMA, 1);
   Event_Wait(60);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "I am sorry, but I can say nothing more of this matter."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  // "Now, we must focus on the power of Reveal."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
@@ -1979,16 +2130,22 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "You will need the power of Reveal to cross the evil Lamakan..."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 20);
+  // "An evil desert? Is that even possible?"
+  // Yes: "You believe that, Isaac? Well, I just don't buy it."
+  // No: "It's hard to believe, isn't it, Isaac? I feel the same way."
   Event_AskYesNo(ACTOR_GARET, 0);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   Event_Wait(20);
+  // "Why will we need Reveal to cross the desert?"
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 20);
   Actor_FaceDirection(ACTOR_HAMA, FACING_NORTH, 20);
+  // "Crossing Lamakan Desert was hard enough with the extreme heat."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
@@ -1996,6 +2153,7 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH, 20);
+  // "But evil has taken hold of the desert, and its heat has..."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
@@ -2004,12 +2162,16 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Entering the desert now is nothing short of asking for death."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "Then how can Saturos cross such a deadly place?"
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
+  // "Saturos and Menardi are Mars Adepts."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
+  // "I am merely guessing... but their powers might help them..."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -2020,9 +2182,11 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_SetAttachedEffect(ACTOR_MIA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
+  // "I still don't understand... How will Reveal help us in such..."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH_SOUTHWEST, 20);
   Event_Wait(20);
+  // "Reveal will help you find oases to cool you against the heat."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -2030,6 +2194,7 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
   Event_Wait(20);
+  // "Why would we need Reveal for that? Won't we be able to see..."
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_GARET, 0);
@@ -2043,6 +2208,9 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(20);
+  // "Do you know what a mirage is?"
+  // Yes: "The desert is filled with mirages that prevent you from..."
+  // No: "Intense heat creates a curtain of air that distorts the..."
   Event_AskYesNo(ACTOR_HAMA, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -2050,28 +2218,36 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(60);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 20);
+  // "Sounds like we should have Ivan learn Reveal, don't you think?"
+  // Yes: "Yeah! I don't want to die in any evil desert!"
+  // No: "Oh, come on, Isaac! If we're going to follow Felix, we'll..."
   Event_AskYesNo(ACTOR_GARET, 0);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 20);
+  // "Ivan, you should let Master Hama teach you how to use Reveal."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 30);
   Actor_FaceDirection(ACTOR_HAMA, FACING_EAST, 20);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "What's wrong, Master Hama? You can pass Reveal on to me,..."
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_FaceDirection(ACTOR_HAMA, FACING_NORTH, 20);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  // "I am unsure that it will work."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "In preparation for this day, I tried to pass a power on to a..."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "My student was not an Adept..."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
@@ -2080,6 +2256,7 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_HAMA, 1);
   Event_Wait(20);
+  // "But I thought anyone could hone a skill he or she already..."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
@@ -2094,9 +2271,11 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "However, I saw no change in the girl."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   // Interrupt the discussion with the arrival from the southern path.
   Actor_SetPosition(ACTOR_FEIZHI_IN_LAMA_TEMPLE, PIXELS(472), PIXELS(608));
+  // "No! There was change!"
   Event_ShowMessageThenWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -2114,6 +2293,7 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_SetSpeed(ACTOR_FEIZHI_IN_LAMA_TEMPLE, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 472, 536);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "Feizhi... Why are you here?"
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 40);
   Actor_WalkToAndWait(ACTOR_IVAN, 488, 512);
@@ -2125,21 +2305,27 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 20);
   Actor_RunRepeatedMotion(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 2);
   Event_Wait(20);
+  // "I sensed it!"
   Event_ShowMessageThenWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "Sensed it? What did you sense?"
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_StartRepeatedMotion(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 2);
   Actor_SetAttachedEffect(ACTOR_FEIZHI_IN_LAMA_TEMPLE,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
+  // "Hsu is in great danger!"
   Event_ShowMessageThenWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "Hsu left this place a long time ago."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_FEIZHI_IN_LAMA_TEMPLE,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  // "I know... But Hsu did not return to Xian."
   Event_ShowMessageThenWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
   Actor_StartRepeatedMotion(ACTOR_HAMA, 1);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  // "...The boulders in the mountains!"
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
@@ -2148,11 +2334,14 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, ANIM_NOD);
   Event_Wait(20);
+  // "I sensed it. I came through the mine. I came to ask for help."
   Event_ShowMessageThenWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "I sensed nothing, as I was focused on Isaac's arrival..."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "But why has the power come to you now, after all this time?"
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   // BUG: ACTOR_FEIZHI is Feizhi's number in the school's table. Hama's room
   // places no actor at that number, so Feizhi does not bounce before she
@@ -2163,10 +2352,13 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_StartRepeatedMotion(ACTOR_FEIZHI, 1);
 #endif
   Event_Wait(20);
+  // "Gems fell from the sky. One hit me right on the head."
   Event_ShowMessageThenWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  // "Gems..."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "Psynergy Stones..."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(2);
@@ -2177,12 +2369,14 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Actor_FaceActor(ACTOR_HAMA, ACTOR_PARTY_LEADER, 0);
   Event_Wait(20);
+  // "Then this may work after all."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_SetSpeed(ACTOR_FEIZHI_IN_LAMA_TEMPLE, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 472, 504);
   Event_Wait(20);
   Actor_StartRepeatedMotion(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 1);
   Event_Wait(20);
+  // "What about Hsu?"
   Event_ShowMessageThenWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
   Actor_FaceActor(ACTOR_HAMA, ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0);
   Actor_SetSpeed(ACTOR_HAMA, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -2194,16 +2388,19 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
+  // "Let us hurry to Hsu's aid!"
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_WalkTo(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 472, 568);
   Actor_WalkToAndWait(ACTOR_HAMA, 472, 536);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Actor_WaitForMoveById(ACTOR_FEIZHI_IN_LAMA_TEMPLE);
+  // "Master Hama, what about us? What about Reveal?"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_StartRepeatedMotion(ACTOR_HAMA, 2);
   Actor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_FaceDirection(ACTOR_FEIZHI_IN_LAMA_TEMPLE, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_HAMA, FACING_NORTH_NORTHEAST, 20);
+  // "I had completely forgotten."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
@@ -2216,6 +2413,7 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_FaceDirection(ACTOR_HAMAS_BOY_MONK, FACING_NORTH_NORTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
+  // "It seems I succeeded in passing my power to Feizhi. You will..."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(20);

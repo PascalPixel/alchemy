@@ -160,6 +160,7 @@ static void TimberRoomsA_TalkToMerchant(s32 actorId) {
   } else if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
     s32 question = MsgSuhallaArentSurprisedFind;
     Event_SetMessageId(question);
+    // "Aren't you surprised to find so few shops?"
     Event_OpenMessage(actorId, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Event_Wait(10);
@@ -170,6 +171,7 @@ static void TimberRoomsA_TalkToMerchant(s32 actorId) {
     Event_ShowMessage(actorId, 0);
   } else {
     Event_SetMessageId(MsgSuhallaOursOnlyStore);
+    // "Ours is the only store in Suhalla. This is a small village,..."
     Event_ShowMessage(actorId, 0);
   }
 }
@@ -184,9 +186,11 @@ static void TimberRoomsA_TalkToInnkeeper(s32 actorId) {
     Inn_CheckIn(INN_SUHALLA, actorId);
   } else if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
     Event_SetMessageId(MsgSuhallaBusyEverSince);
+    // "We've been busy ever since the surge of sandstorms! We are..."
     Event_ShowMessage(actorId, 0);
   } else {
     Event_SetMessageId(MsgSuhallaSighNothinMaybe);
+    // "Sigh. Nothin' to do... Maybe we'll see business once Tolbi's..."
     Event_ShowMessage(actorId, 0);
   }
 }
@@ -202,9 +206,11 @@ static void TimberRoomsA_TalkToHealer(s32 actorId) {
     Sanctum_Run(actorId);
   } else if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
     Event_SetMessageId(MsgSuhallaWonderWhySandstorms);
+    // "I wonder why we're having all these sandstorms..."
     Event_ShowMessage(actorId, 0);
   } else {
     Event_SetMessageId(MsgSuhallaGetSickThinkingAboutLalivero);
+    // "I get sick thinking about Lalivero being under Tolbi's rule."
     Event_ShowMessage(actorId, 0);
   }
 }
@@ -217,6 +223,7 @@ static void TimberRoomsA_TalkToHealer(s32 actorId) {
 static void TimberRoomsA_AskIfBlownHere(s32 actorId) {
   s32 question = MsgSuhallaSupposeFolkBlown;
   Event_SetMessageId(question);
+  // "I suppose you folk were blown here on your way to Babi..."
   Event_OpenMessage(actorId, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(10);
@@ -263,6 +270,7 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_SOUTH, 2);
     Event_Wait(20);
+    // "Iodem..."
     Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
@@ -276,10 +284,12 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
     Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
     Event_Wait(30);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+    // "You soldiers were supposed to be heading for Babi Lighthouse!"
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
     Event_Wait(20);
+    // "Iodem... What are you doing here?"
     Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
     Event_Wait(10);
     Actor_SetSpeed(ACTOR_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -287,27 +297,33 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
     Actor_WalkByAndWait(ACTOR_IODEM, 48, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
     Event_Wait(30);
+    // "Babi ordered me to go to the lighthouse with Isaac."
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(20);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+    // "You were escorting Sheba to Lalivero, no?"
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(20);
     Actor_ShowEmote(ACTOR_SOLDIER_SOUTH, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+    // "We've disgraced Tolbi..."
     Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
     Event_Wait(10);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
     Event_Wait(20);
+    // "What has happened to Sheba? Where is Sheba!?"
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_SOLDIER_NORTH, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "I don't know. When we awoke, we were here in these beds."
     Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
     Event_Wait(10);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
     Event_Wait(30);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
+    // "If anything has happened to Sheba, what will become of the..."
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_StartRepeatedMotion(ACTOR_SOLDIER_SOUTH, 2);
@@ -321,22 +337,27 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "Sheba was the sole reason Lalivero aided us in its construction."
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(20);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
+    // "We entrusted you with Sheba to speed up the construction...."
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_SOUTH, 2);
     Event_Wait(20);
+    // "Iodem... I know that, at the very least, Sheba wasn't in the..."
     Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
     Event_Wait(10);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SOLDIER_SOUTH, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
     Event_Wait(20);
+    // "Is this true!?"
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
     Event_Wait(20);
+    // "Sheba was entrusted to our care, so we shielded her from any..."
     Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
     Event_Wait(10);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SOLDIER_NORTH, 0);
@@ -344,19 +365,23 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(40);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     Event_Wait(30);
+    // "You acted properly, then, but where is Sheba now?"
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_SOLDIER_NORTH, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "Probably not far from the edge of the sandstorm that hit us..."
     Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
     Event_Wait(10);
     Actor_FaceEachOther(ACTOR_IODEM, ACTOR_PARTY_LEADER, 30);
+    // "Isaac, we must go to the desert and find Sheba."
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_SOUTH, 2);
     Event_Wait(20);
+    // "If you're going to the desert...beware of that cyclone!"
     Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
     Event_Wait(10);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SOLDIER_SOUTH, 0);
@@ -365,6 +390,7 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
     Event_Wait(20);
+    // "At first, we couldn't avoid getting caught in the sandstorms."
     Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
     Event_Wait(10);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SOLDIER_NORTH, 0);
@@ -376,6 +402,7 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_SOLDIER_SOUTH, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "But there were others who were able to make it through the..."
     Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
     Event_Wait(10);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -387,6 +414,7 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
     Event_Wait(20);
+    // "Who knows how they got it, but they used water to stop the..."
     Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
     Event_Wait(10);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
@@ -397,6 +425,7 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(10);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
     Event_Wait(30);
+    // "Water? You can stop the sandstorms with water..."
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
@@ -405,10 +434,12 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(30);
     Event_Wait(10);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+    // "I think I understand. Now get some rest..."
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_SOLDIER_SOUTH, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "Wait, Iodem... There is more. You must not meet our fate..."
     Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
     Event_Wait(10);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
@@ -419,32 +450,39 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_SOUTH, 2);
     Event_Wait(20);
+    // "The sandstorms are caused by monsters."
     Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
     Event_Wait(10);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+    // "Can this be?"
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
     Event_Wait(20);
+    // "The others... They slayed the beasts... That's how they got..."
     Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
     Event_Wait(20);
     Event_Wait(10);
     Actor_FaceEachOther(ACTOR_IODEM, ACTOR_PARTY_LEADER, 0);
     Event_Wait(30);
+    // "Wh-Who-what are they?"
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_SOLDIER_SOUTH, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "When the storms stopped, they would move ahead, but a new..."
     Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
     Event_Wait(10);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
     Actor_ShowEmote(ACTOR_SOLDIER_NORTH, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
+    // "They had strange powers. We had to bring barrels filled with..."
     Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
     Event_Wait(20);
+    // "But carrying the barrels exhausted us...and then the beast..."
     Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 3);
     Event_Wait(20);
@@ -453,10 +491,12 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(30);
     Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
     Event_Wait(10);
+    // "That's enough... Get some rest!"
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_SOUTH, 2);
     Event_Wait(20);
+    // "They are dangerous, those others. Slay that beast and take..."
     Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
     Event_Wait(10);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SOLDIER_SOUTH, 0);
@@ -464,6 +504,7 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     Event_Wait(30);
+    // "Thank you for your help. You have dispatched your duties..."
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_StartRepeatedMotion(ACTOR_SOLDIER_SOUTH, 2);
@@ -474,22 +515,27 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
     Actor_WalkByAndWait(ACTOR_IODEM, -12, 0);
     Event_Wait(20);
     // Both answers converge on the following line after different waits.
+    // "Could these others be the ones you are following, Isaac?"
     Event_OpenMessage(ACTOR_IODEM, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Event_Wait(20);
+      // "You took the same impression from their tale as I did..."
       Event_ShowMessage(ACTOR_IODEM, 0);
       gFieldWork->message++;
     } else {
       Event_Wait(10);
       gFieldWork->message++;
+      // "I don't know why... but that is the sense I get from this..."
       Event_ShowMessage(ACTOR_IODEM, 0);
     }
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
     Event_Wait(20);
+    // "We must find Sheba as quickly as we can!"
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
+    // "Then, we shall get through the Suhalla and pursue your..."
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);

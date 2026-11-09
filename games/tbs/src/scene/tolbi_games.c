@@ -285,6 +285,7 @@ const struct ActorPlacement *TolbiSpring_GetActorPlacements(void) {
 static void TolbiSpring_AskAboutLuckyMedal(s32 actorId) {
   s32 question = MsgTolbiLuckyMedal;
   Event_SetMessageId(question);
+  // "Do you have a Lucky Medal?"
   Event_OpenMessage(actorId, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Event_Wait(10);
@@ -299,6 +300,7 @@ static void TolbiSpring_AskAboutLuckyMedal(s32 actorId) {
 static void TolbiSpring_AskAboutFirstDiceGame(s32 actorId) {
   s32 question = MsgTolbiYerFirstTime;
   Event_SetMessageId(question);
+  // "Is this yer first time to play Lucky Dice?"
   Event_OpenMessage(actorId, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Event_Wait(10);
@@ -330,6 +332,7 @@ static void TolbiSpring_TossCoinOrMedal(void) {
 static void TolbiSpring_ReadLuckyWheelsRules(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiLuckyWheelsRulesPullLever);
+  // "Lucky Wheels Rules Pull the lever and try to line up..."
   Event_OpenMessage(-1, 0);
   Event_End();
 }
@@ -338,6 +341,7 @@ static void TolbiSpring_ReadLuckyWheelsRules(void) {
 static void TolbiSpring_ReadLuckyWheelsPrizes(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiLuckyWheelsPrizesPrizesDetermined);
+  // "Lucky Wheels Prizes Prizes are determined by which icons you..."
   Event_OpenMessage(-1, 0);
   Event_End();
 }
@@ -428,11 +432,13 @@ s32 TolbiSpring_Initialize(void) {
         Event_Wait(20);
         Event_SetMessageId(MsgTolbiYaWonNumber);
         MessageArgument_Push(coinChange, 5);
+        // "Ya won ... coin! Talk about lucky!"
         Event_ShowMessage(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
         Sound_WaitForJingle();
       } else if (coinChange < 0) {
         Event_SetMessageId(MsgTolbiYaLostNumber);
         MessageArgument_Push(-coinChange, 5);
+        // "Ya lost ... coin. Better luck next time."
         Event_ShowMessage(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
       }
       Event_End();
@@ -449,6 +455,7 @@ s32 TolbiSpring_Initialize(void) {
         TolbiSpring_OfferLuckyWheels(1);
       } else if (wonPrizes[0] != -2) {
         Event_SetMessageId(MsgTolbiCongratulations);
+        // "Congratulations!"
         Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
         if (*wonPrizes != -1) {
           for (prizeIndex = 0; wonPrizes[prizeIndex] != -1; prizeIndex++) {
@@ -469,6 +476,7 @@ s32 TolbiSpring_Initialize(void) {
         }
         gMainRoutineWork.wonPrizes[0] = -2;
         Event_SetMessageId(MsgTolbiComeAgain);
+        // "Come again!"
         Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
       }
       Event_End();
@@ -571,46 +579,57 @@ static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
     s32 message = MsgTolbiStepRightTry;
 
     Event_SetMessageId(message);
+    // "Step right up and try your hand at lucky wheels!"
     Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
     if (tickets == 0) {
+      // "You gotta have game tickets to play."
       Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
       return;
     }
     Event_SetMessageId(message + 2);
     MessageArgument_Push(tickets, 5);
+    // "You have ... game ticket, Isaac. Would you like to use these..."
     Event_OpenMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
+      // "The rules are listed on the sign. Take a look, take a look."
       Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
       return;
     }
     room = PartyInventory_CountFreeSlots();
     if (room == 0) {
       Event_SetMessageId(message + 4);
+      // "You can't carry any more items. Are you sure you want to play?"
       Event_OpenMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
     } else if (room <= 6) {
       Event_SetMessageId(message + 5);
+      // "If you win anything, you might not be able to take it with..."
       Event_OpenMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
     }
     if (room <= 6 && Event_AskYesNoWithActorAnimation(0, 0) != 0) {
       Event_SetMessageId(MsgTolbiGetRidItems);
+      // "Then get rid of some items and come again."
       Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
       return;
     }
   } else {
     if (tickets == 0) {
       Event_SetMessageId(MsgTolbiBadComeBack);
+      // "Too bad... Come back after you get some tickets."
       Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
       return;
     }
     Event_SetMessageId(MsgTolbiBadLikeUse);
+    // "Too bad... Would you like to use your tickets to keep playing?"
     Event_OpenMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
       Event_SetMessageId(MsgTolbiComeAgain);
+      // "Come again!"
       Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
       return;
     }
   }
   Event_SetMessageId(MsgTolbiStepRightEnjoy);
+  // "Step right up and enjoy yourself."
   Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
   Event_LeaveFor(SEQUENCE_SLOTS, 0);
   Event_SetAfterBattleDestination((s32)&SceneId_StuccoRoomsC,
@@ -629,6 +648,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
   coins = gMainRoutineWork.coins;
   if (coins < cost) {
     Event_SetMessageId(MsgTolbiYaDontEnough);
+    // "Hey! Ya don't have enough coins! Ya gotta pay to play."
     Event_OpenMessage(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
     return;
   }
@@ -636,8 +656,10 @@ static void TolbiSpring_OfferLuckyDice(void) {
   Actor_Snapshot();
   Event_SetMessageId(MsgTolbiBuddyWannaTry);
   MessageArgument_Push(cost, 5);
+  // "Hey, buddy, wanna try yer luck at the dice? It's ... coin to..."
   Event_OpenMessage(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    // "OK! Then take the dice."
     Event_ShowMessage(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 128);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 152);
@@ -648,6 +670,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
                                     STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE);
   } else {
     gFieldWork->message++;
+    // "No? Oh, well. Who's next?"
     Event_ShowMessage(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
   }
   Event_End();
@@ -677,6 +700,7 @@ prompt:
   coins = state->coins;
   medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
   Event_SetMessageId(message);
+  // "What will you throw?"
   Event_OpenMessage(-1, 0);
   window = Window_Create(0, 0, TOLBI_SPRING_COUNT_WIDTH, 4, 2);
   {
@@ -696,6 +720,7 @@ prompt:
   if (choice == SPRING_TOSS_COIN) {
     if (coins == 0) {
       Event_SetMessageId(message + 1);
+      // "You don't have any coins!"
       Event_ShowMessage(-1, 0);
       wait(1);
       goto prompt;
@@ -703,12 +728,14 @@ prompt:
   } else if (choice == SPRING_TOSS_MEDAL) {
     if (medals == 0) {
       Event_SetMessageId(message + 2);
+      // "You have no Lucky Medals!"
       Event_ShowMessage(-1, 0);
       wait(1);
       goto prompt;
     }
     if (PartyInventory_CountFreeSlots() == 0) {
       Event_SetMessageId(message + 4);
+      // "You can't carry more items. Do you still want to play?"
       Event_OpenMessage(-1, 0);
       if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
         goto end;
@@ -745,6 +772,7 @@ prompt:
     coins = state->coins;
     medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
     Event_SetMessageId(message);
+    // "What will you throw?"
     Event_OpenMessage(-1, 0);
     window = Window_Create(0, 0, TOLBI_SPRING_COUNT_WIDTH, 4, 2);
     Text_DrawMessageAsTiles(text, window, 0, 0);
@@ -765,6 +793,7 @@ prompt:
     if (choice == SPRING_TOSS_COIN) {
       if (coins == 0) {
         Event_SetMessageId(message + 1);
+        // "You don't have any coins!"
         Event_ShowMessage(-1, 0);
         wait(1);
         continue;
@@ -772,12 +801,14 @@ prompt:
     } else if (choice == SPRING_TOSS_MEDAL) {
       if (medals == 0) {
         Event_SetMessageId(message + 2);
+        // "You have no Lucky Medals!"
         Event_ShowMessage(-1, 0);
         wait(1);
         continue;
       }
       if (PartyInventory_CountFreeSlots() == 0) {
         Event_SetMessageId(message + 4);
+        // "You can't carry more items. Do you still want to play?"
         Event_OpenMessage(-1, 0);
         if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
           Event_End();
@@ -838,6 +869,7 @@ prompt:
             5);
 #endif
         Event_SetMessageId(MsgTolbiWonNumberCoin);
+        // "You won ... coin!"
         Event_ShowMessage(-1, 0);
       } else {
         Sound_Play(SE_MENU_CANCEL);

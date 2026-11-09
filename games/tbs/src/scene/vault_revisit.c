@@ -182,6 +182,7 @@ static void VaultRevisit_RecognizeThiefCatchers(void) {
   Actor_FaceActor(ACTOR_WELCOMING_YOUNG_MAN, ACTOR_PARTY_LEADER, 2);
   GameFlag_Set(FLAG_VAULT_REVISIT_YOUNG_MAN_RECOGNIZED_PARTY);
   Event_SetMessageId(MsgVaultWarriorsWhoCaptured);
+  // "You! You're the warriors who captured the thieves a while..."
   Event_ShowMessage(ACTOR_WELCOMING_YOUNG_MAN, 0);
   Event_End();
 }
@@ -206,6 +207,7 @@ static void VaultRevisit_PraisePartyStrength(void) {
   GameFlag_Set(FLAG_VAULT_REVISIT_PARTY_PRAISED);
   GameFlag_Set(FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES);
   Event_SetMessageId(MsgVaultTalkingMayorStrong);
+  // "Oh, it's you... I was just talking about you with our mayor...."
   Event_ShowMessage(ACTOR_MAYORS_VISITOR, 0);
   Event_End();
 }
@@ -239,11 +241,14 @@ static void VaultRevisit_GreetWarriorGuy(void) {
   if (Event_GetFlag(FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED) == 0) {
     Actor_ShowEmote(ACTOR_BOY_ROUND_THE_WELL,
                     EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+    // "Hey, it's that warrior guy!"
     Event_ShowMessageThenWait(ACTOR_BOY_ROUND_THE_WELL, 0, 10);
+    // "Yeah, and Ivan, too."
     Event_ShowMessageThenWait(ACTOR_BOY_ROUND_THE_WELL, 0, 10);
     GameFlag_Set(FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED);
   }
   Event_SetMessageId(text + 2);
+  // "I'm so glad you came back to Vault!"
   Event_ShowMessageThenWait(ACTOR_BOY_ROUND_THE_WELL, 0, 10);
   actor->facing = facing;
   wait(1);
@@ -264,6 +269,7 @@ static void VaultRevisit_WishEldersWereBrave(void) {
   Event_SetMessageId(MsgVaultWishVaultsElders);
   Actor_SetAnimation(ACTOR_GIRL_ROUND_THE_WELL, 0);
   Actor_TurnToFaceEachOther(ACTOR_GIRL_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
+  // "I wish Vault's elders were as brave as you!"
   Event_ShowMessageThenWait(ACTOR_GIRL_ROUND_THE_WELL, 0, 10);
   actor->facing = originalFacing;
   wait(1);
@@ -278,6 +284,7 @@ static void VaultRevisit_AskAboutJailbreak(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultGuysCheckJail);
   Actor_TurnToFaceEachOther(ACTOR_STRONGMAN_ON_WATCH, ACTOR_PARTY_LEADER, 2);
+  // "Oh, so did you guys check out the jail?"
   Event_OpenMessage(ACTOR_STRONGMAN_ON_WATCH, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
     gFieldWork->message += 1;
@@ -296,6 +303,7 @@ static void VaultRevisit_ReadMindAndRecognizeThiefCatchers(void) {
   Actor_FaceActor(ACTOR_WELCOMING_YOUNG_MAN, ACTOR_PARTY_LEADER, 20);
   GameFlag_Set(FLAG_VAULT_REVISIT_YOUNG_MAN_RECOGNIZED_PARTY);
   Event_SetMessageId(MsgVaultWarriorsWhoCaptured);
+  // "You! You're the warriors who captured the thieves a while..."
   Event_ShowMessageThenWait(ACTOR_WELCOMING_YOUNG_MAN, 0, 20);
   Event_End();
 }
@@ -319,6 +327,7 @@ static void VaultRevisit_ReadMindAndPraisePartyStrength(void) {
   GameFlag_Set(FLAG_VAULT_REVISIT_PARTY_PRAISED);
   GameFlag_Set(FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES);
   Event_SetMessageId(MsgVaultTalkingMayorStrong);
+  // "Oh, it's you... I was just talking about you with our mayor...."
   Event_ShowMessageThenWait(ACTOR_MAYORS_VISITOR, 0, 20);
   Event_End();
 }
@@ -380,6 +389,7 @@ static void VaultRevisit_ReadMindOnJailKey(void) {
     Event_Wait(20);
     Event_SetMessageId(MsgVaultGuysCheckJail);
     Actor_TurnToFaceEachOther(ACTOR_STRONGMAN_ON_WATCH, ACTOR_PARTY_LEADER, 2);
+    // "Oh, so did you guys check out the jail?"
     Event_OpenMessage(ACTOR_STRONGMAN_ON_WATCH, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
       gFieldWork->message++;
@@ -605,6 +615,7 @@ static void VaultRevisit_TalkToDog(void) {
   Actor_SetAnimation(ACTOR_VAULT_DOG, ANIM_STILL);
   Actor_TurnToFaceEachOther(ACTOR_VAULT_DOG, ACTOR_PARTY_LEADER, 0);
   Event_Wait(2);
+  // "Ruff! Rrruff!!"
   Event_ShowMessage(ACTOR_VAULT_DOG, 0);
   Actor_SetAnimation(ACTOR_VAULT_DOG, ANIM_STAND);
 

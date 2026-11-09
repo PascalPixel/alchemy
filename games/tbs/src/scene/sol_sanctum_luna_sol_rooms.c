@@ -609,6 +609,7 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 10);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "What does it all mean? Isaac, would you look farther up the..."
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Event_SetMessageId((request + 1));
@@ -674,6 +675,7 @@ static void SolSanctumLunaSolRooms_KradenStopsPartyLeaving(void) {
   Actor_WalkToAndWait(ACTOR_KRADEN, 288, 232);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 10);
+  // "That way leads out of the sanctum. It should be in these rooms."
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0 ||
@@ -1631,6 +1633,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   // Garet: "Did that floating eye thing save us?" A stronger tremor throws
   // them both aside.
   Event_SetMessageId(MsgSolSanctumFloatingEyeThing);
+  // "Did that floating eye thing save us?"
   Event_OpenMessage(1, 0);
   Event_AskYesNoWithActorAnimation(0, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);

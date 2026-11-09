@@ -455,6 +455,7 @@ static void TolbiShipMast_AnnounceClearCourse(void) {
   Actor_Jump(ACTOR_LOOKOUT, 4, 40);
   Actor_StartRepeatedMotion(ACTOR_LOOKOUT, 2);
   Event_SetMessageId(MsgTolbiShipShipsCourseClear);
+  // "Ship's course... Clear!"
   Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 20);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -502,6 +503,7 @@ static void TolbiShipMast_RunAvastEvent(void) {
   Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(ACTOR_LOOKOUT, FACING_NORTH_NORTHWEST, 0);
   Event_SetMessageId(MsgTolbiShipAvast);
+  // "Avast!"
   Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
   // The three monsters appear where the sparkle turned.
   Actor_SetPosition(ACTOR_FIRST_SIGHTED_MONSTER, x, PIXELS(210));
@@ -544,6 +546,7 @@ static void TolbiShipMast_RunAvastEvent(void) {
   Actor_Jump(ACTOR_LOOKOUT, 4, 10);
   Actor_Jump(ACTOR_LOOKOUT, 6, 40);
   Actor_StartRepeatedMotion(ACTOR_LOOKOUT, 3);
+  // "Monsters sighted!"
   Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 20);
   (*work)->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
@@ -670,6 +673,7 @@ static void TolbiShipMast_ShowMonsters(void) {
   Sound_Play(MUS_CONFRONTATION);
   GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   Event_SetMessageId(MsgTolbiShipMonsters2);
+  // "Monsters!"
   Event_ShowMessageThenWait(ACTOR_SEAN, 0, 20);
   Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_WalkToAndWait(ACTOR_LOOKOUT, 164, 344);
@@ -850,6 +854,7 @@ static void TolbiShipMast_AnnounceLand(void) {
   Actor_Jump(ACTOR_LOOKOUT, 4, 10);
   Actor_Jump(ACTOR_LOOKOUT, 6, 20);
   Event_SetMessageId(MsgTolbiShipLandHo);
+  // "Land ho!"
   Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 20);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);

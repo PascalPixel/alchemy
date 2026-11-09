@@ -1207,12 +1207,16 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   Event_WaitTransitionFrames();
   Event_SetMessageId(MsgColossoSiteSecondFinals);
   Actor_SetAnimationAndWait(attendantId, ANIM_NOD);
+  // "This is the site of the second finals match."
   Event_ShowMessage(attendantId, 0);
   Actor_RunRepeatedMotion(attendantId, 2);
+  // "As I explained earlier, each stage has its own attendant."
   Event_ShowMessage(attendantId, 0);
   Actor_RunRepeatedMotion(attendantId, 2);
+  // "Please ask the attendants directly for descriptions of each..."
   Event_ShowMessage(attendantId, 0);
   Actor_RunRepeatedMotion(attendantId, 2);
+  // "...Isaac, that first match was terrific. I'll be right here,..."
   Event_ShowMessage(attendantId, 0);
   // Gather the companions into Isaac before the attendant returns to his post.
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
@@ -1265,6 +1269,7 @@ static void ColosseumSatrageMatch_TalkToMiniMazeAttendant(s32 attendant) {
       FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveWithinMapBounds(PIXELS(1224), -1, PIXELS(184), 1);
       FieldCamera_WaitForMove();
+      // "This stage is dubbed the Mini-Maze."
       Event_ShowMessage(attendant, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 1272, 168);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
@@ -1287,6 +1292,7 @@ static void ColosseumSatrageMatch_TalkToMiniMazeAttendant(s32 attendant) {
       Colosso_RepeatStageNumber(attendant, 1);
     } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
       Event_SetMessageId(MsgColossoMainThingStage);
+      // "The main thing with this stage is to proceed through the..."
       Event_ShowMessage(attendant, 0);
     }
     Colosso_OfferCheeringSpot(result, attendant, 1);
@@ -1330,6 +1336,7 @@ static void ColosseumSatrageMatch_TalkToShiftingFloorAttendant(s32 attendant) {
     } else {
       if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
         Event_SetMessageId(MsgColossoOperatorLiftsWillCheerFor);
+        // "The operator of the lifts will cheer for you here."
         Event_ShowMessage(attendant, 0);
       }
     }
@@ -1359,6 +1366,7 @@ static void ColosseumSatrageMatch_TalkToLogRollingAttendant(s32 attendant) {
       FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
       FieldCamera_MoveTo(PIXELS(752), -1, PIXELS(224), 1);
       FieldCamera_WaitForMove();
+      // "This is the Log- Rolling Stage."
       Event_ShowMessage(attendant, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 856, 264);
       Event_Wait(10);
@@ -1383,6 +1391,7 @@ static void ColosseumSatrageMatch_TalkToLogRollingAttendant(s32 attendant) {
       Colosso_RepeatStageNumber(attendant, 3);
     } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
       Event_SetMessageId(MsgColossoHereYourObjectiveRideLogs);
+      // "Here, your objective is to ride the logs as quickly as possible."
       Event_ShowMessage(attendant, 0);
     }
     Colosso_OfferCheeringSpot(result, attendant, 3);
@@ -1415,6 +1424,7 @@ static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
     FieldCamera_MoveTo(PIXELS(536), -1, PIXELS(192), 1);
     z = 264;
     FieldCamera_WaitForMove();
+    // "The fans just call this The Wall."
     Event_ShowMessage(attendant, 0);
     Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 632, z);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
@@ -1443,6 +1453,7 @@ static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
     Colosso_RepeatStageNumber(attendant, 4);
   } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
     Event_SetMessageId(MsgColossoScalingWallQuickly);
+    // "Scaling the wall quickly is priority one in this stage."
     Event_ShowMessage(attendant, 0);
   }
   Colosso_OfferCheeringSpot(result, attendant, 4);
@@ -1513,6 +1524,7 @@ static void ColosseumSatrageMatch_TalkToBoardWalkAttendant(s32 attendant) {
     FieldCamera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
     FieldCamera_MoveTo(PIXELS(312), -1, PIXELS(176), 1);
     FieldCamera_WaitForMove();
+    // "This place is called the Board Walk."
     Event_ShowMessage(attendant, 0);
     Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 408, 264);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
@@ -1532,6 +1544,7 @@ static void ColosseumSatrageMatch_TalkToBoardWalkAttendant(s32 attendant) {
     Colosso_RepeatStageNumber(attendant, 5);
   } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
     Event_SetMessageId(MsgColossoFocusRollingLogs);
+    // "Your focus here will be rolling the logs to form a path."
     Event_ShowMessage(attendant, 0);
   }
   Colosso_OfferCheeringSpot(result, attendant, 5);

@@ -253,11 +253,15 @@ static void CottageRoomsC_TalkToArmorMerchant(void) {
       Event_SetMessageId(MsgBilibinHaveEverHeardOcean);
       Actor_FaceActor(ACTOR_BILIBIN_ARMOR_MERCHANT, ACTOR_PARTY_LEADER, 0);
       Event_Wait(10);
+      // "Have you ever heard of the 'ocean'?"
+      // Yes: "If you travel over the ocean to far, far away, you'll find..."
+      // No: "The ocean is immense... You would want to sing if you ever..."
       Event_AskYesNo(ACTOR_BILIBIN_ARMOR_MERCHANT, 0);
       Actor_FaceDirection(ACTOR_BILIBIN_ARMOR_MERCHANT, FACING_SOUTH_SOUTHEAST,
                           10);
     } else {
       Event_SetMessageId(MsgBilibinForSomeReasonOceanFills);
+      // "For some reason, the ocean fills me with hope and desire......"
       Event_ShowMessage(ACTOR_BILIBIN_ARMOR_MERCHANT, 0);
     }
   }
@@ -270,6 +274,7 @@ static void CottageRoomsC_TalkToWorriedChef(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinImReallyWorriedAboutKolima);
   Actor_FaceActor(ACTOR_BILIBIN_CHEF, ACTOR_PARTY_LEADER, 0);
+  // "I'm really worried about Kolima. I was born there, you know?..."
   Event_ShowMessage(ACTOR_BILIBIN_CHEF, 0);
   Actor_FaceDirection(ACTOR_BILIBIN_CHEF, FACING_NORTH, 10);
   Event_End();
@@ -280,9 +285,11 @@ static void CottageRoomsC_TalkToWorriedChef(void) {
 static void CottageRoomsC_TalkToHungryDiner(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinGrrr);
+  // "Grrr..."
   Event_ShowMessageThenWait(ACTOR_BILIBIN_HUNGRY_DINER, 0, 20);
   Actor_FaceActor(ACTOR_BILIBIN_HUNGRY_DINER, ACTOR_PARTY_LEADER, 0);
   Event_Wait(10);
+  // "Did you hear a sound? You heard it, right?"
   Event_OpenMessage(ACTOR_BILIBIN_HUNGRY_DINER, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
     gFieldWork->message++;
@@ -300,6 +307,7 @@ static void CottageRoomsC_AskAboutTreeSpirit(void) {
   Event_SetMessageId(MsgBilibinDoBelieveTreeSpiritCan);
   Actor_FaceActor(ACTOR_BILIBIN_DINER, ACTOR_PARTY_LEADER, 0);
   Event_Wait(10);
+  // "Do you believe a tree spirit can curse a man?"
   Event_OpenMessage(ACTOR_BILIBIN_DINER, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
     gFieldWork->message++;
@@ -314,6 +322,9 @@ static void CottageRoomsC_AskAboutTreeSpirit(void) {
 static void CottageRoomsC_AskAboutHolyTree(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinDoKnowIfHolyTree);
+  // "Do you know if the holy tree survived?"
+  // Yes: "That makes sense. Those who were turned into trees are back..."
+  // No: "Then how did the people who became trees get returned to..."
   Event_AskYesNo(ACTOR_BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN, 0);
   Event_End();
 }
@@ -324,6 +335,9 @@ static void CottageRoomsC_AskAboutHolyTree(void) {
 static void CottageRoomsC_AskAboutSilk(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinDoKnowSilk);
+  // "Do you know what silk is?"
+  // Yes: "That's what they make in Xian village on the other side of..."
+  // No: "Caterpillars are raised on mulberry leaves. When the..."
   Event_AskYesNo(ACTOR_BILIBIN_GIRL_SILK, 0);
   Event_End();
 }
@@ -341,9 +355,13 @@ static void CottageRoomsC_TalkToInnkeeper(void) {
     Inn_CheckIn(BILIBIN_INN, ACTOR_BILIBIN_INNKEEPER);
   } else if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Event_SetMessageId(MsgBilibinWasntCurseInKolimaHorrifying);
+    // "Wasn't that curse in Kolima horrifying?"
+    // Yes: "Even heroes like you can feel fear. Just imagine how scary..."
+    // No: "You can say that now, because it's all over. At the time, we..."
     Event_AskYesNo(ACTOR_BILIBIN_INNKEEPER, 0);
   } else {
     Event_SetMessageId(MsgBilibinCurseOnKolimaScaryDevelopment);
+    // "A curse on Kolima? What a scary development!"
     Event_ShowMessage(ACTOR_BILIBIN_INNKEEPER, 0);
   }
 
@@ -361,13 +379,16 @@ static void CottageRoomsC_TalkToBusyChef(void) {
     // The first time (FLAG_BILIBIN_CHEF_CALLED_ORDERS, kept until the party
     // leaves Bilibin), the chef shouts orders and the kitchen worker answers.
     Event_SetMessageId(MsgBilibinTwoSpecialsOneDinnerOne);
+    // "Two specials! One dinner! One sandwich! One dessert! Hurry up!"
     Event_ShowMessage(ACTOR_BILIBIN_CHEF, 0);
     Actor_FaceDirection(ACTOR_BILIBIN_CHEF, FACING_WEST, 20);
+    // "Hey, you! Are you done yet?"
     Event_ShowMessage(ACTOR_BILIBIN_CHEF, 0);
     Actor_StartRepeatedMotion(ACTOR_BILIBIN_KITCHEN_WORKER, 2);
     Actor_SetAttachedEffect(ACTOR_BILIBIN_KITCHEN_WORKER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(60);
+    // "Almost..."
     Event_ShowMessage(ACTOR_BILIBIN_KITCHEN_WORKER, 0);
     Event_Wait(10);
     GameFlag_Set(FLAG_BILIBIN_CHEF_CALLED_ORDERS);
@@ -375,6 +396,7 @@ static void CottageRoomsC_TalkToBusyChef(void) {
   // Then, as every later time, he sends the party to the waitress.
   Actor_FaceActor(ACTOR_BILIBIN_CHEF, ACTOR_PARTY_LEADER, 0);
   Event_SetMessageId(MsgBilibinIfWantMealSpeakWaitress);
+  // "If you want a meal, speak to the waitress."
   Event_ShowMessage(ACTOR_BILIBIN_CHEF, 0);
   Actor_FaceDirection(ACTOR_BILIBIN_CHEF, FACING_NORTH, 10);
   Event_End();
@@ -385,8 +407,10 @@ static void CottageRoomsC_TalkToBusyChef(void) {
 static void CottageRoomsC_TalkToKitchenWorker(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinReallyThinkHeadChefHas);
+  // "I really think the head chef has changed. It's too much!"
   Event_ShowMessage(ACTOR_BILIBIN_KITCHEN_WORKER, 0);
   Actor_FaceActor(ACTOR_BILIBIN_KITCHEN_WORKER, ACTOR_PARTY_LEADER, 0);
+  // "I can't keep up with his energy!"
   Event_ShowMessage(ACTOR_BILIBIN_KITCHEN_WORKER, 0);
   Actor_FaceDirection(ACTOR_BILIBIN_KITCHEN_WORKER, FACING_EAST, 10);
   Event_End();
@@ -397,8 +421,10 @@ static void CottageRoomsC_TalkToKitchenWorker(void) {
 static void CottageRoomsC_TalkToWaitress(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinLetsSeeServeThemWater);
+  // "Let's see, serve them water...then get the silverware."
   Event_ShowMessage(ACTOR_BILIBIN_WAITRESS, 0);
   Actor_FaceActor(ACTOR_BILIBIN_WAITRESS, ACTOR_PARTY_LEADER, 0);
+  // "The head chef will yell if you slow down..."
   Event_ShowMessage(ACTOR_BILIBIN_WAITRESS, 0);
   Actor_FaceDirection(ACTOR_BILIBIN_WAITRESS, FACING_NORTH, 10);
   Event_End();
@@ -409,6 +435,9 @@ static void CottageRoomsC_TalkToWaitress(void) {
 static void CottageRoomsC_TalkAboutMeal(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinWasSomeMealDontJust);
+  // "That was some meal! Don't you just love the food here?"
+  // Yes: "I know how you feel. Go find a table and pig out!"
+  // No: "What!? Why am I even talking to you, when I could be eating!?"
   Event_AskYesNo(ACTOR_BILIBIN_DINER, 0);
   Event_End();
 }

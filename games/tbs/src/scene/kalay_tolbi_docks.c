@@ -388,6 +388,9 @@ const struct Trigger *KalayTolbiDocks_GetTriggers(void) {
 static void KalayTolbiDocks_AskAboutTolbiCrossing(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayWantGoToTolbi);
+  // "Do you want to go to Tolbi?"
+  // Yes: "You can't go any further along Silk Road. If you're going to..."
+  // No: "I see. Well then, how about taking a long look around the ship?"
   Event_AskYesNo(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 0);
   Event_End();
 }
@@ -400,16 +403,20 @@ static void KalayTolbiDocks_TalkToWomanWithAMessage(void) {
   Event_Start();
   if (Event_GetFlag(FLAG_KALAY_DOCKS_CARRYING_MESSAGE) == 0) {
     Event_SetMessageId(MsgKalayGoingTakeShip);
+    // "Are you going to take the ship?"
     Event_OpenMessage(ACTOR_WOMAN_WITH_A_MESSAGE, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+      // "When you reach Tolbi, please pass a message to my daughter...."
       Event_ShowMessage(ACTOR_WOMAN_WITH_A_MESSAGE, 0);
       GameFlag_Set(FLAG_KALAY_DOCKS_CARRYING_MESSAGE);
     } else {
       gFieldWork->message++;
+      // "Is that so? Well, then I guess I'll ask someone else then."
       Event_ShowMessage(ACTOR_WOMAN_WITH_A_MESSAGE, 0);
     }
   } else {
     Event_SetMessageId(MsgKalayPassMessageDaughter);
+    // "When you reach Tolbi, please pass a message to my daughter...."
     Event_ShowMessage(ACTOR_WOMAN_WITH_A_MESSAGE, 0);
   }
   Event_End();
@@ -429,6 +436,7 @@ static void KalayTolbiDocks_RemindBoardShip(void) {
       Event_Start();
 #endif
       Event_SetMessageId(MsgKalayFinishedOutHereBoardShip);
+      // "When you're finished out here, please board the ship."
       Event_OpenMessage(ACTOR_CHECKING_TICKETS, 0);
       Actor_FaceDirection(ACTOR_CHECKING_TICKETS, FACING_SOUTH, 0);
 #if TBS_PATCH_3
@@ -455,13 +463,16 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
   if (Event_GetFlag(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) != 0) {
     if (Event_GetFlag(FLAG_KALAY_DOCKS_WENT_ASHORE) != 0) {
       Event_SetMessageId(MsgKalayFinishedOutHereBoardShip);
+      // "When you're finished out here, please board the ship."
       Event_OpenMessage(ACTOR_CHECKING_TICKETS, 0);
     } else {
       Event_SetMessageId(MsgKalayWantGoAshore);
+      // "Do you want to go ashore?"
       Event_OpenMessage(ACTOR_CHECKING_TICKETS, 0);
       if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
         Event_Wait(10);
         Event_SetMessageId(MsgKalayWantGoAshore + 1);
+        // "Please pass through."
         Event_ShowMessage(ACTOR_CHECKING_TICKETS, 0);
         Actor_WalkToAndWait(ACTOR_CHECKING_TICKETS, 88, 1288);
         Actor_FaceDirection(ACTOR_CHECKING_TICKETS, FACING_SOUTH, 0);
@@ -469,6 +480,7 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
         GameFlag_Set(FLAG_KALAY_DOCKS_WENT_ASHORE);
       } else {
         Event_SetMessageId(MsgKalayWantGoAshore + 2);
+        // "We'll be setting sail soon, so please board the ship."
         Event_ShowMessage(ACTOR_CHECKING_TICKETS, 0);
       }
     }
@@ -477,6 +489,7 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
       return;
     }
     Event_SetMessageId(MsgKalayTicketsPlease);
+    // "Tickets, please. Please show your tickets."
     Event_ShowMessage(ACTOR_CHECKING_TICKETS, 0);
     // Hand over the actual inventory ticket before walking past the gate.
     if (GameFlag_Get(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
@@ -486,6 +499,7 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
       Actor_WalkToAndWait(ACTOR_CHECKING_TICKETS, 88, 1288);
       Actor_FaceDirection(ACTOR_CHECKING_TICKETS, FACING_SOUTH, 0);
       gFieldWork->message++;
+      // "Thank you very much. Please board the ship, and we'll set..."
       Event_ShowMessage(ACTOR_CHECKING_TICKETS, 0);
       Inventory_Discard(ticketHolder, ticketSlot);
       GameFlag_Set(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER);
@@ -495,6 +509,7 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
       Actor_WalkToAndWait(ACTOR_CHECKING_TICKETS, 88, 1304);
       Actor_FaceDirection(ACTOR_CHECKING_TICKETS, FACING_EAST, 0);
     } else {
+      // "You can't board the ship without a ticket. Please go and..."
       Event_ShowMessage(ACTOR_CHECKING_TICKETS, 0);
     }
   }
@@ -509,12 +524,15 @@ static void KalayTolbiDocks_TalkToDockWorker(void) {
 
   if (GameFlag_Get(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) != 0) {
     Event_SetMessageId(MsgKalayBoardWaitSetSail);
+    // "Please board the ship and wait to set sail."
     Event_OpenMessage(ACTOR_DOCK_WORKER, 0);
   } else if (GameFlag_Get(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
     Event_SetMessageId(MsgKalayHaveTicketsGiveHim);
+    // "If you have tickets, please give them to him and board the ship."
     Event_ShowMessage(ACTOR_DOCK_WORKER, 0);
   } else {
     Event_SetMessageId(MsgKalayAfterHandingOverTicket);
+    // "After handing over your ticket, you may board the ship."
     Event_ShowMessage(ACTOR_DOCK_WORKER, 0);
   }
 
@@ -537,15 +555,19 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
   Event_Start();
   if (Event_GetFlag(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
     Event_SetMessageId(MsgKalayHandInTicketPlank);
+    // "Hand in your ticket at the ship's plank."
     Event_ShowMessage(ACTOR_SELLING_TICKETS, 0);
   } else {
     Event_SetMessageId(MsgKalayLookingForTickets);
+    // "Are you looking for tickets for boarding?"
     Event_OpenMessage(ACTOR_SELLING_TICKETS, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
+      // "Please buy a ticket if you're planning to travel by ship."
       Event_ShowMessageThenWait(ACTOR_SELLING_TICKETS, 0, 10);
     } else {
       gFieldWork->message++;
       MessageArgument_Push(ticketPrice, 5);
+      // "Let's see...there are four of you, so it will cost ......"
       Event_OpenMessage(ACTOR_SELLING_TICKETS, 0);
       // Keep the balance visible while the player confirms the purchase.
       coinsWindow =
@@ -564,6 +586,7 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
         Window_Close(coinsWindow, 2);
         Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
         Event_Wait(10);
+        // "You're not going to do it? If you don't get onboard, you..."
         Event_ShowMessage(ACTOR_SELLING_TICKETS, 0);
       } else if ((u32)ticketPrice > (u32)state->coins) {
         Window_Close(coinsWindow, 2);
@@ -571,12 +594,14 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
         Event_Wait(10);
         gFieldWork->message++;
         Sound_Play(SE_MENU_CANCEL);
+        // "Uh oh... You don't have enough money. I can't sell you a ticket."
         Event_ShowMessage(ACTOR_SELLING_TICKETS, 0);
       } else {
         Window_Close(coinsWindow, 2);
         Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
         Event_Wait(10);
         gFieldWork->message += 3;
+        // "All right then, please take your ticket."
         Event_ShowMessage(ACTOR_SELLING_TICKETS, 0);
         // Complete both inventory and coin changes only after confirmation.
         Party_GiveItem(ITEM_BOAT_TICKET, 0);
@@ -595,6 +620,9 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
 static void KalayTolbiDocks_AskAboutRoughCrossing(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayHearScaryTrip);
+  // "I hear you had a scary trip. You even got attacked by a monster!"
+  // Yes: "I wonder why the sea is so dangerous all of a sudden..."
+  // No: "And you fought off all those monsters alone? ...No way!..."
   Event_AskYesNo(ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP, 0);
   Event_End();
 }
@@ -603,6 +631,9 @@ static void KalayTolbiDocks_AskAboutRoughCrossing(void) {
 static void KalayTolbiDocks_AskAboutSeasickTourists(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayTouristsLookUpset);
+  // "The tourists look a little upset. Did they get seasick?"
+  // Yes: "The sea was calm, but that monster sure gave them a rough ride."
+  // No: "The ship was attacked by monsters? It came within inches of..."
   Event_AskYesNo(ACTOR_YOUNG_MAN_ASKING_IF_SEASICK, 0);
   Event_End();
 }
@@ -616,6 +647,7 @@ static void KalayTolbiDocks_TalkToWaitingDaughter(void) {
     Actor_FaceActor(ACTOR_WAITING_DAUGHTER, ACTOR_PARTY_LEADER, 0);
     Event_Wait(20);
     Event_SetMessageId(MsgKalayThanksMessageParents);
+    // "Thank you for giving me the message from my parents."
     Event_ShowMessage(ACTOR_WAITING_DAUGHTER, 0);
     Event_End();
   } else {
@@ -625,18 +657,22 @@ static void KalayTolbiDocks_TalkToWaitingDaughter(void) {
     Actor_FaceActor(ACTOR_WAITING_DAUGHTER, ACTOR_PARTY_LEADER, 0);
     Event_Wait(20);
     Event_SetMessageId(MsgKalaySilkRoadBlocked);
+    // "Silk Road was blocked, so I thought my parents might come by..."
     Event_ShowMessage(ACTOR_WAITING_DAUGHTER, 0);
     if (GameFlag_Get(FLAG_KALAY_DOCKS_CARRYING_MESSAGE) != 0) {
       Event_Wait(20);
       Actor_ShowEmote(ACTOR_WAITING_DAUGHTER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+      // "What's that? You have a message for me from my parents?"
       Event_OpenMessage(ACTOR_WAITING_DAUGHTER, 0);
       if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
         Event_Wait(20);
+        // "Oh, they couldn't make it because the tickets were too..."
         Event_ShowMessage(ACTOR_WAITING_DAUGHTER, 0);
         GameFlag_Set(FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED);
       } else {
         Event_Wait(10);
         gFieldWork->message++;
+        // "Oh... I hope nothing awful's happened to them..."
         Event_ShowMessage(ACTOR_WAITING_DAUGHTER, 0);
         Event_Wait(10);
         Actor_FaceDirection(ACTOR_WAITING_DAUGHTER, FACING_EAST, 0);
@@ -839,6 +875,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Event_Wait(10);
   Actor_Jump(ACTOR_GARET, 6, 15);
   Actor_Jump(ACTOR_GARET, 6, 40);
+  // "Incredible! So this is the ocean Kraden was talking about!"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(20);
   FieldCamera_MoveTo(PIXELS(264), -1, PIXELS(1448), 1);
@@ -857,12 +894,14 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Actor_SetAnimationAndWait(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI,
                             ANIM_SHAKE_HEAD);
   Event_Wait(10);
+  // "The Karagol is surrounded by land, so technically, it's not..."
   Event_ShowMessage(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
   Event_Wait(50);
+  // "What? But this looks just the way Kraden described it!"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
@@ -873,6 +912,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, FACING_SOUTH, 0);
   Event_Wait(30);
+  // "Someday, I want to see a real ocean, Isaac!"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -930,20 +970,24 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_TOUR_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
+  // "I returned the cost of your ticket to you. Let's leave it at..."
   Event_ShowMessage(ACTOR_TOUR_GUIDE, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_ANGRY_YOUNG_MAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 50);
   Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_EAST, 0);
   Actor_Jump(ACTOR_ANGRY_YOUNG_MAN, 4, 13);
   Actor_Jump(ACTOR_ANGRY_YOUNG_MAN, 4, 30);
+  // "Why should I, when all you did was give me what's mine!?"
   Event_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_STRANDED_WOMAN, 2);
   Event_Wait(20);
+  // "Isn't the tour group responsible for getting us back to Kalay?"
   Event_ShowMessage(ACTOR_STRANDED_WOMAN, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_TOUR_GUIDE, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "With the road blocked and the ships stuck here, we have no..."
   Event_ShowMessage(ACTOR_TOUR_GUIDE, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_ANGRY_YOUNG_MAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 55);
@@ -974,6 +1018,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Sound_Play(SE_DOOR_CLOSE);
   Actor_WalkByAndWait(ACTOR_TOUR_GUIDE, -8, 0);
   Event_Wait(20);
+  // "You brought us all here! Take responsibility for it!..."
   Event_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_TOUR_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
@@ -983,33 +1028,39 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_BODYGUARD, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Must you really resort to violence?"
   Event_ShowMessage(ACTOR_BODYGUARD, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_NORTHEAST, 0);
   Event_Wait(35);
   Actor_RunRepeatedMotion(ACTOR_ANGRY_YOUNG_MAN, 2);
   Event_Wait(20);
+  // "What are you-"
   Event_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_BODYGUARD, FACING_SOUTHEAST, 0);
   Event_Wait(55);
   Actor_FaceDirection(ACTOR_BODYGUARD, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(30);
+  // "I was hired for just this sort of thing..."
   Event_ShowMessage(ACTOR_BODYGUARD, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_STRANDED_WOMAN, FACING_NORTHEAST, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_STRANDED_WOMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
+  // "You mean, you hired a bodyguard?"
   Event_ShowMessage(ACTOR_STRANDED_WOMAN, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_TOUR_GUIDE, 2);
   Event_Wait(20);
+  // "Yeah! Because of rabble- rousing customers like you!"
   Event_ShowMessage(ACTOR_TOUR_GUIDE, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_TOUR_GUIDE, FACING_NORTHWEST, 0);
   Event_Wait(60);
   Actor_FaceDirection(ACTOR_TOUR_GUIDE, FACING_WEST, 0);
   Event_Wait(30);
+  // "We've asked this nice man to act as a guard...for everyone's..."
   Event_ShowMessage(ACTOR_TOUR_GUIDE, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_EAST, 0);
@@ -1017,12 +1068,14 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_ANGRY_YOUNG_MAN, 2);
   Event_Wait(20);
+  // "What are you talking about?"
   Event_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
   Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 8, 0);
   Actor_SetSpeed(ACTOR_BODYGUARD, PIXELS(2), PIXELS(1));
   Actor_WalkByAndWait(ACTOR_BODYGUARD, -8, 16);
   Actor_FaceDirection(ACTOR_BODYGUARD, FACING_WEST, 0);
+  // "I wouldn't go any farther than that if I were you!"
   Event_ShowMessage(ACTOR_BODYGUARD, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_ANGRY_YOUNG_MAN, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
@@ -1033,10 +1086,12 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_ANGRY_YOUNG_MAN, 2);
   Event_Wait(20);
+  // "Ge-Get outta my way!"
   Event_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BODYGUARD, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Sorry, but I was hired to BE in your way! Please. Let it go..."
   Event_ShowMessage(ACTOR_BODYGUARD, 0);
   Event_Wait(10);
   Actor_Get(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -1074,15 +1129,18 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Actor_WalkByAndWait(ACTOR_STRANDED_WOMAN, 24, 0);
   Actor_FaceDirection(ACTOR_STRANDED_WOMAN, FACING_NORTH, 0);
   Event_Wait(10);
+  // "This is ridiculous!"
   Event_ShowMessage(ACTOR_STRANDED_WOMAN, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BODYGUARD, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "I know... And after I asked him so nicely..."
   Event_ShowMessage(ACTOR_BODYGUARD, 0);
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_BODYGUARD, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkByAndWait(ACTOR_BODYGUARD, -8, 0);
   Event_Wait(20);
+  // "You're wasting time on this!? Why don't you find a way to..."
   Event_ShowMessage(ACTOR_BODYGUARD, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_ANGRY_YOUNG_MAN, 2);

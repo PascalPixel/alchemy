@@ -397,6 +397,7 @@ static void BabiPalace_ShowBeds(s32 actorId) {
     GameFlag_Set(FLAG_BABI_PALACE_ATTENDANT_SHOWED_BEDS);
     GameFlag_Clear(FLAG_BABI_PALACE_BEDS_OPEN);
     Event_SetMessageId(MsgTolbiWeHaveJustEnoughExtra);
+    // "We have just enough extra beds in this room for everybody...."
     Event_ShowMessage(actorId, 0);
     Event_Wait(10);
     facingBits = roundedFacing << 16;
@@ -418,12 +419,15 @@ static void BabiPalace_ShowBeds(s32 actorId) {
     Event_Wait(20);
     facingOrMessage = MsgTolbiUseFourBeds;
     Event_SetMessageId(facingOrMessage);
+    // "You may use these four beds. Will you be going right to sleep?"
     Event_OpenMessage(actorId, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Event_SetMessageId(facingOrMessage + 1);
+      // "Then, enjoy your rest."
       Event_ShowMessage(actorId, 0);
     } else {
       Event_SetMessageId(facingOrMessage + 2);
+      // "Well, if you do get tired, feel free to sleep here anytime..."
       Event_ShowMessage(actorId, 0);
     }
     Event_Wait(10);
@@ -456,6 +460,7 @@ static void BabiPalace_OfferRest(s32 actorId) {
     Event_Wait(20);
     question = MsgTolbiCameRestBefore;
     Event_SetMessageId(question);
+    // "You all came to rest up before the match, didn't you? Would..."
     Event_OpenMessage(actorId, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Event_Wait(10);
@@ -472,6 +477,7 @@ static void BabiPalace_OfferRest(s32 actorId) {
     Actor_WalkByAndWait(actorId, 0, 48);
   } else {
     Event_SetMessageId(MsgTolbiTiredFeelFreeRest);
+    // "Well, if you're tired, please feel free to get some rest."
     Event_OpenMessage(actorId, 0);
   }
   Event_End();
@@ -484,6 +490,7 @@ static void BabiPalace_AskAboutColosso(s32 actorId) {
   s32 question = MsgTolbiPlanningEnterColosso;
 
   Event_SetMessageId(question);
+  // "Are you planning to enter Colosso?"
   Event_OpenMessage(actorId, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(10);
@@ -508,6 +515,7 @@ static void BabiPalace_TalkToWarriorWithIndigestion(s32 actorId) {
   indigestionScript = gBabiPalace_IndigestionScript;
   Actor_SetScript(actorId, indigestionScript);
   Event_SetMessageId(MsgTolbiCantFightBecauseLittleIndigestion);
+  // "I can't fight because of a little indigestion? That's pathetic!"
   Event_ShowMessage(actorId, 0);
   Actor_Stop(actorId);
   actor->scaleY = Q16_ONE;
@@ -517,6 +525,7 @@ static void BabiPalace_TalkToWarriorWithIndigestion(s32 actorId) {
   Event_Wait(30);
   Actor_RunRepeatedMotion(actorId, 2);
   Event_Wait(60);
+  // "Maybe I can shrug off this pain in my gut... I have to enter..."
   Event_ShowMessage(actorId, 0);
   Event_Wait(20);
   Actor_ShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
@@ -527,6 +536,7 @@ static void BabiPalace_TalkToWarriorWithIndigestion(s32 actorId) {
   Actor_RunRepeatedMotion(actorId, 2);
   Event_Wait(30);
   Actor_SetScript(actorId, indigestionScript);
+  // "It's no use! My stomach really hurts!"
   Event_ShowMessage(actorId, 0);
   Actor_FaceDirection(actorId, FACING_NORTHEAST, 0);
   Event_Wait(10);
@@ -542,6 +552,7 @@ static void BabiPalace_TalkToWarriorWithIndigestion(s32 actorId) {
 static void BabiPalace_ReadShebasMind(s32 casterId, s32 actorId) {
   Event_Start();
   Event_SetMessageId(MsgTolbiEvenIfEscapedBabiPalace);
+  // "Even if I escaped Babi Palace, my power could not get me to..."
   Event_ShowMessage(actorId, 0);
   if (Event_GetFlag(FLAG_SHEBA_NOTICED_MIND_READ) == 0) {
     GameFlag_Set(FLAG_SHEBA_NOTICED_MIND_READ);
@@ -549,10 +560,12 @@ static void BabiPalace_ReadShebasMind(s32 casterId, s32 actorId) {
     Event_Wait(50);
     Actor_ShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 70);
     Actor_FaceActor(actorId, ACTOR_PARTY_LEADER, 40);
+    // "Did you just..."
     Event_ShowMessage(actorId, 0);
     Event_Wait(30);
     Actor_SetAnimationAndWait(actorId, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "No, it is nothing."
     Event_ShowMessage(actorId, 0);
     Actor_FaceDirection(actorId, FACING_WEST, 0);
   }
@@ -580,18 +593,22 @@ static void BabiPalace_OfferCloakBall(void) {
   Field_EndBusyAndReveal();
   msg = MsgTolbiFoundCloakBall;
   Event_SetMessageId(msg);
+  // "You found the Cloak Ball."
   Event_ShowMessage(-1, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
   Event_Wait(30);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_BABI, 30);
+  // "Isaac! Is that Cloak Ball what you desire?"
   Event_OpenMessage(ACTOR_BABI, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
     Event_SetMessageId(msg + 2);
+    // "Then please leave the Cloak Ball alone. Do not worry about..."
     Event_ShowMessage(ACTOR_BABI, 0);
   } else {
     Event_Wait(20);
     Event_SetMessageId(msg + 3);
+    // "That Cloak Ball is very precious to me. I can't just give it..."
     Event_ShowMessage(ACTOR_BABI, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -617,6 +634,7 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Actor_Get(ACTOR_FINALS_ATTENDANT)->spriteStorageKind = 0;
   wait(1);
   REG_DISPCNT = DISPCNT_OBJ_ON | DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
+  // "Isaac! Get up, Isaac!"
   Event_ShowMessage(-1, 0);
   REG_DISPCNT = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
   Actor_Get(ACTOR_PARTY_LEADER)->spriteStorageKind = 1;
@@ -641,6 +659,7 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Event_Wait(30);
+  // "Are you okay? You were having nightmares for quite a while..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -655,15 +674,18 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Event_Wait(50);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(30);
+  // "What's the matter, Isaac?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  // "What? You entered and fought in the finals?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "How could you? You haven't even been to the colosseum yet,..."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
@@ -672,6 +694,7 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Sounds like you've been dreaming, Isaac."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
@@ -681,6 +704,7 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
   Event_Wait(30);
+  // "You're so exhausted, it's giving you nightmares. Are you..."
   Event_OpenMessage(ACTOR_GARET, 0);
   if (Event_AskYesNoWithActorAnimation(-1, 0) != 0) {
     Event_Wait(10);
@@ -688,12 +712,14 @@ static void BabiPalace_WakeFromFinalsDream(void) {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     Event_Wait(20);
+    // "You think you can manage? I understand, but don't overdo it,..."
     Event_ShowMessage(ACTOR_GARET, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_NOD);
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     Event_Wait(20);
+    // "Isaac's awake now, so let's head over to the colosseum."
     Event_ShowMessage(ACTOR_GARET, 0);
     gFieldWork->message += 1;
   } else {
@@ -703,6 +729,7 @@ static void BabiPalace_WakeFromFinalsDream(void) {
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     Event_Wait(20);
+    // "Okay! We're off to the colosseum!"
     Event_ShowMessage(ACTOR_GARET, 0);
   }
   Event_Wait(10);
@@ -746,6 +773,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
   Event_Start();
   Field_EndBusyAndReveal();
   Event_SetMessageId(MsgTolbiLikeSleep);
+  // "Would you like to sleep now?"
   Event_OpenMessage(-1, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
   } else {
@@ -768,6 +796,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
     FieldActor_LaunchFromLeader(ACTOR_GARET, 16, 0, FACING_WEST);
     Actor_RefreshSelectorById(ACTOR_GARET);
     Event_Wait(10);
+    // "Ohh, I'm so tired..."
     Event_ShowMessage(ACTOR_GARET, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -782,6 +811,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
     FieldActor_LaunchFromLeader(ACTOR_IVAN, -16, 0, FACING_EAST);
     Actor_RefreshSelectorById(ACTOR_IVAN);
     Event_Wait(10);
+    // "I didn't think we'd ever find a place to stay. What a relief!"
     Event_ShowMessage(ACTOR_IVAN, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -796,6 +826,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
     FieldActor_LaunchFromLeader(ACTOR_MIA, 16, 0, FACING_WEST);
     Actor_RefreshSelectorById(ACTOR_MIA);
     Event_Wait(10);
+    // "Let's rest up for tomorrow."
     Event_ShowMessage(ACTOR_MIA, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -812,10 +843,12 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
     Event_Wait(10);
+    // "Good night."
     Event_ShowMessage(ACTOR_MIA, 0);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     Event_Wait(10);
     if (GameFlag_Get(FLAG_BABI_PALACE_FIRST_NIGHT) == 0) {
+      // "G'night."
       Event_ShowMessage(ACTOR_GARET, 0);
     } else {
       gFieldWork->message++;
@@ -823,6 +856,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Event_Wait(10);
     if (GameFlag_Get(FLAG_BABI_PALACE_FIRST_NIGHT) == 0) {
+      // "Sleep well."
       Event_ShowMessage(ACTOR_IVAN, 0);
     } else {
       gFieldWork->message++;
@@ -840,10 +874,12 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     Event_Wait(10);
+    // "Morning."
     Event_ShowMessage(ACTOR_GARET, 0);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Event_Wait(10);
     if (GameFlag_Get(FLAG_BABI_PALACE_FIRST_NIGHT) == 0) {
+      // "Good morning."
       Event_ShowMessage(ACTOR_IVAN, 0);
     } else {
       gFieldWork->message++;
@@ -851,6 +887,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
     Event_Wait(10);
     if (GameFlag_Get(FLAG_BABI_PALACE_FIRST_NIGHT) == 0) {
+      // "Good morning."
       Event_ShowMessage(ACTOR_MIA, 0);
     } else {
       gFieldWork->message++;
@@ -867,6 +904,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Actor_WaitForMoveById(ACTOR_MIA);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
     Event_Wait(20);
+    // "All right, Isaac! We've got another hard day of work ahead..."
     Event_ShowMessage(ACTOR_GARET, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -897,6 +935,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_IODEM, 40, 0);
   Actor_WalkToAndWait(ACTOR_IODEM, 584, 360);
+  // "Iodem, Iodem!"
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
@@ -911,12 +950,14 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_NOD);
   Event_Wait(30);
+  // "We went to Altmiller Cave, as you commanded."
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
   Actor_WalkByAndWait(ACTOR_IODEM, -16, 0);
   Event_Wait(10);
+  // "And what have you? What news is there of Babi?"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimation(ACTOR_FIRST_SOLDIER, ANIM_SHAKE_HEAD);
@@ -924,12 +965,14 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(20);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  // "This is futile..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Actor_SetSpeed(ACTOR_FIRST_SOLDIER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_FIRST_SOLDIER, 8, 0);
   Event_Wait(20);
+  // "Iodem, why did you send us to look for Babi in a place like..."
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
@@ -938,10 +981,12 @@ static void BabiPalace_HearSoldiersReport(void) {
   Actor_SetSpeed(ACTOR_SECOND_SOLDIER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_SECOND_SOLDIER, 8, 0);
   Event_Wait(20);
+  // "Why would Lord Babi enter such a dangerous cave alone? It's..."
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Inconceivable? Is that what you were going to say?"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimation(ACTOR_FIRST_SOLDIER, ANIM_NOD);
@@ -950,23 +995,29 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
   Event_Wait(20);
+  // "Altmiller Cave is an evil place."
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "If Babi went there alone, a monster might have..."
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  // "I'm aware of Altmiller Cave's...eccentricities."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "You knew? Then why would you send us in there, Iodem?"
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "Lord Babi has left in secret before..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_SECOND_SOLDIER, 2);
   Event_Wait(20);
+  // "You mean, this isn't the first time Lord Babi has..."
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
@@ -974,9 +1025,11 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
   Event_Wait(20);
+  // "Do you know where he went before?"
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "I followed Lord Babi once..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
   Actor_FaceEachOther(ACTOR_FIRST_SOLDIER, ACTOR_SECOND_SOLDIER, 60);
@@ -986,32 +1039,39 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
+  // "I was certain he had gone into Altmiller Cave..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "Did you ever investigate the cave, Iodem?"
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_NOD);
   Event_Wait(30);
+  // "What was he doing in the cave?"
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
   Actor_SetAttachedEffect(ACTOR_IODEM,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(30);
+  // "Once he entered the cave, Lord Babi vanished before my very..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "Vanished?"
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   Event_Wait(30);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "You mean you lost sight of Lord Babi. Is that it?"
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "After he entered the mouth of the cave, I followed him......"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
   Actor_FaceEachOther(ACTOR_FIRST_SOLDIER, ACTOR_SECOND_SOLDIER, 60);
@@ -1020,14 +1080,17 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(20);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  // "I tried following him several times after that. Each time,..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
   Event_Wait(20);
+  // "And you think that's where Lord Babi went this morning, Iodem?"
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_NOD);
   Event_Wait(30);
+  // "But if he always returned from Altmiller Cave before..."
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
@@ -1035,30 +1098,38 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_SECOND_SOLDIER, 2);
   Event_Wait(20);
+  // "Then he should be back soon, right?"
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "No. This time is different. Something puzzles me..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
   Event_Wait(20);
+  // "What do you mean?"
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "It is certainly strange that Lord Babi should go right..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "What is it?"
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "Lord Babi's bedding was not disturbed this morning."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "What's unusual about that?"
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Last night, Lord Babi did not use his bed. That is the problem."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
   Actor_FaceEachOther(ACTOR_FIRST_SOLDIER, ACTOR_SECOND_SOLDIER, 60);
@@ -1068,6 +1139,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
+  // "Lord Babi has, in fact, been missing since last night."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAttachedEffect(ACTOR_FIRST_SOLDIER,
@@ -1080,31 +1152,38 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
   Event_Wait(20);
+  // "And that is why I am so worried. He has never done this before."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_FIRST_SOLDIER, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "We didn't know he'd been missing so long..."
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "You don't think Lord Babi's been ki-"
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
   Event_Wait(20);
+  // "Speak no such foolishness! I am sure Lord Babi is alive and..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_FIRST_SOLDIER, ANIM_NOD);
   Event_Wait(30);
+  // "Ah, yes, of course."
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  // "I will go to the colosseum in Lord Babi's stead. You must..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_NOD);
   Event_Wait(30);
+  // "We will all conduct another round of searches."
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
@@ -1128,6 +1207,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Actor_SetSpeed(ACTOR_IODEM, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkByAndWait(ACTOR_IODEM, -16, 0);
   Event_Wait(30);
+  // "Lord Babi, where have you gone?"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
@@ -1415,6 +1495,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   FieldCamera_WaitForMove();
   Event_Wait(20);
   Event_Wait(10);
+  // "I've been waiting for you and your companions, Isaac!"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetSpeed(ACTOR_BABI, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -1422,8 +1503,10 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
+  // "I've been waiting here because I wanted to speak with you."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(20);
+  // "It's hard to talk when you're so far away... Come over here."
   Event_ShowMessage(ACTOR_IODEM, 0);
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 1);
   FieldCamera_WaitForMove();
@@ -1440,6 +1523,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
+  // "The battles at Colosso were spectacular!"
   Event_ShowMessage(ACTOR_BABI, 0);
 
   // If the leader won the finals, Iodem brings the victor's prize, the Lure
@@ -1448,16 +1532,19 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     Event_Wait(20);
+    // "It was most rewarding to see Babi's favored warrior steal..."
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_FaceDirection(ACTOR_BABI, FACING_NORTHWEST, 0);
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
     Event_Wait(20);
+    // "Iodem, bring him the victor's prize."
     Event_ShowMessage(ACTOR_BABI, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     Event_Wait(20);
+    // "Yes, sir, right away."
     Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
     Event_Wait(20);
@@ -1487,6 +1574,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     Actor_WalkByAndWait(ACTOR_BABI, 0, 16);
     Event_Wait(40);
     MessageArgument_Push(ITEM_LURE_CAP, 2);
+    // "Isaac received ...."
     Event_ShowMessage(-1, 0);
     Item_ShowFound(ITEM_LURE_CAP, 3);
     Party_GiveItem(ITEM_LURE_CAP, 0);
@@ -1497,6 +1585,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     Event_Wait(30);
     Actor_RunRepeatedMotion(ACTOR_BABI, 2);
     Event_Wait(20);
+    // "Incidentally, Isaac, are you feeling better now?"
     Event_OpenMessage(ACTOR_BABI, 0);
     gFieldWork->message += 2;
   } else {
@@ -1504,6 +1593,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     Event_Wait(20);
+    // "It was wonderful to see Babi's handpicked warrior make it so..."
     Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_FaceDirection(ACTOR_BABI, FACING_NORTHWEST, 0);
     Event_Wait(40);
@@ -1515,6 +1605,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     Event_Wait(30);
     Actor_RunRepeatedMotion(ACTOR_BABI, 2);
     Event_Wait(20);
+    // "Incidentally, Isaac, are you feeling better now?"
     Event_OpenMessage(ACTOR_BABI, 0);
   }
 
@@ -1522,6 +1613,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     Event_Wait(20);
+    // "Ah, the recuperative powers of youth...and after such fierce..."
     Event_ShowMessage(ACTOR_IODEM, 0);
     gFieldWork->message++;
   } else {
@@ -1529,6 +1621,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     Event_Wait(20);
     gFieldWork->message++;
+    // "You must be exhausted. I'm amazed to see you on your feet..."
     Event_ShowMessage(ACTOR_IODEM, 0);
   }
 
@@ -1537,6 +1630,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
+  // "Who could expect less from the warriors who rescued me?"
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
@@ -1544,6 +1638,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(10);
   Actor_Jump(ACTOR_GARET, 4, 13);
   Actor_Jump(ACTOR_GARET, 4, 30);
+  // "Enough with the flattery. Let's get to the point: why were..."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
@@ -1554,17 +1649,20 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   wait(2);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
   Event_Wait(10);
+  // "Such insolence! Who do you think you are, to speak to Babi so?"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(30);
   Actor_FaceActor(ACTOR_BABI, ACTOR_IODEM, 30);
+  // "Let it be, Iodem. There are other ways to judge a man."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
   Actor_FaceEachOther(ACTOR_BABI, ACTOR_GARET, 0);
   Event_Wait(40);
+  // "What is it you said you were called?"
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
@@ -1574,12 +1672,14 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_GARET, 30);
+  // "He's talking to you, Garet."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 50);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
+  // "That's right, Garet. We shall explain all."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
@@ -1588,6 +1688,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
+  // "We intended to thank you and your companions for saving..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
@@ -1600,22 +1701,27 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "But it would seem that gratitude is not enough..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "I have disclosed everything to Iodem."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "What do you mean by everything?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
   Event_Wait(20);
+  // "You do wish to know more about Lemuria, correct?"
   Event_OpenMessage(ACTOR_BABI, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
     Event_Wait(30);
+    // "Yes, indeed... Your desire is as plain as day."
     Event_ShowMessage(ACTOR_BABI, 0);
     gFieldWork->message++;
   } else {
@@ -1623,11 +1729,13 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
     Event_Wait(20);
     gFieldWork->message++;
+    // "You can't hide your interest from me. It is written on your..."
     Event_ShowMessage(ACTOR_BABI, 0);
   }
 
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "I have just seen Psynergy for the first time... It is an..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1638,19 +1746,23 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_FaceActor(ACTOR_BABI, ACTOR_IODEM, 60);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
   Event_Wait(20);
+  // "I used my Cloak Ball to show him Psynergy."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "No one else could see it, but I knew Isaac's tournament was..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "I thought it unlikely that you would fight using such power..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "No need to be ashamed, Isaac. Psynergy is also a warrior's..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 50);
@@ -1664,9 +1776,11 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
+  // "When I first learned of your power, I was shocked. I thought..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "You have mentioned Lemuria many times, Babi. What is it?"
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
@@ -1674,6 +1788,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
   Event_Wait(20);
+  // "It is the city of an ancient people, lying far out at sea."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(20);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
@@ -1685,23 +1800,28 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(50);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
   Event_Wait(20);
+  // "Many years ago, about the time of the great flood, Babi went..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
+  // "I see..."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_BABI, FACING_WEST, 0);
   Event_Wait(40);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  // "The great flood struck while I was traveling with Lunpa."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "Lunpa... You mean Lunpa the thief?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_BABI, ACTOR_IVAN, 40);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
+  // "I know it is hard to believe... It happened a hundred years ago."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
@@ -1713,26 +1833,32 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(50);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
+  // "You mean...those rumors about you are...true?"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 40);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
+  // "Kraden once mentioned the Stone of Sages. Do you think..."
   Event_OpenMessage(ACTOR_GARET, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(20);
+    // "So the stone that grants immortality came from Lemuria?"
     Event_ShowMessage(ACTOR_GARET, 0);
     gFieldWork->message += 3;
   } else {
     Event_Wait(10);
     gFieldWork->message++;
+    // "Huh? Don't tell me you forgot about the Stone of Sages..."
     Event_OpenMessage(ACTOR_GARET, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Event_Wait(20);
+      // "It rules all, can change anything into gold, grants..."
       Event_ShowMessage(ACTOR_GARET, 0);
       gFieldWork->message++;
     } else {
       gFieldWork->message++;
+      // "I can't think of anything else that would let him live for..."
       Event_ShowMessage(ACTOR_GARET, 0);
     }
   }
@@ -1740,6 +1866,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "So you've even heard of the Stone of Sages... I'm afraid I..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -1750,25 +1877,31 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
+  // "It is the draught of Lemuria that has allowed me to live for..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "The draught of Lemuria?"
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
   Event_Wait(20);
+  // "It is a magical draught once taken by those who lived in..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
+  // "And just drinking stops you from aging?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_BABI, 40);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
+  // "Is that what it does?"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 70);
+  // "Hmmm... It would be more accurate to say it slows the aging..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -1778,20 +1911,24 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "There is death in Lemuria..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
+  // "But it only comes to those whose senses have failed from..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(30);
+  // "Do the people of Lemuria use Psynergy, like we do?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "You have that draught, Babi... That's why you've lived so long."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
@@ -1804,9 +1941,11 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
+  // "And become wealthy enough to rule Tolbi."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "What are you getting at?"
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1816,6 +1955,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "What is your purpose in making everyone study Alchemy?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
@@ -1825,10 +1965,12 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Event_Wait(20);
+  // "I'm starting to wonder myself. What do you hope to gain, Babi?"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
+  // "Ah. If I had attained true immortality... There would be no..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -1839,12 +1981,14 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
+  // "I'm not sure I understand."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_BABI, FACING_WEST, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "I had precious little draught, and now I am running out."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
@@ -1857,20 +2001,24 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "You all saw it. There was but little left in the cave..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "How long will it last? And what will happen when it runs out?"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
   Actor_FaceEachOther(ACTOR_BABI, ACTOR_IODEM, 40);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
   Event_Wait(20);
+  // "It will run out any day now. And when it does, my life is at..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_SetAttachedEffect(ACTOR_IODEM,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
+  // "Why didn't you tell us sooner? We must hurry to Lemuria!"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Actor_SetSpeed(ACTOR_IODEM, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, 24);
@@ -1879,6 +2027,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_FaceActor(ACTOR_MIA, ACTOR_IODEM, 0);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_IODEM, 0);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
+  // "It is pointless..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
@@ -1890,9 +2039,11 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
+  // "What on earth do you mean, pointless?"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  // "We cannot find Lemuria."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
@@ -1900,6 +2051,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_WalkByAndWait(ACTOR_IODEM, 0, -24);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
   Event_Wait(20);
+  // "But you just said that it lies far out at sea..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_BABI, FACING_WEST, 0);
@@ -1909,42 +2061,52 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
+  // "If we search the seas, we're sure to find it!"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "I've sent so many ships in the past in search of Lemuria."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "This must have been long before I joined you... But still..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
+  // "I needed more Lemurian draught, but I couldn't find Lemuria."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
+  // "Why did you collapse in the cave if you still had more draught?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
+  // "I have been rationing it, but this time, I waited too long..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "You were trying to make it last longer..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
+  // "I overexerted myself trying to find Lemuria before it ran out."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(30);
+  // "And your reason for calling us here has to do with Lemuria?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
+  // "Exactly. I want you to find Lemuria."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
@@ -1957,6 +2119,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
   Event_Wait(20);
+  // "I have not been able to locate Lemuria by sea, but perhaps..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -1966,38 +2129,47 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
+  // "I can hide it no longer... I have built Babi Lighthouse to..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "What? That's why you're building the lighthouse?"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_BABI, ACTOR_IODEM, 30);
+  // "No, there's more to it than that."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "We've spotted something in the ocean southeast of the..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
+  // "Something dangerous, no doubt. What, monsters? We can handle..."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
   Event_Wait(20);
+  // "That may be... However, something else troubles me more."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "What is it, my lord?"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_BABI, FACING_WEST, 0);
   Event_Wait(20);
+  // "No sailor has been able to keep his bearings at sea."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "You're kidding! You mean they can't even keep a straight course?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
@@ -2008,9 +2180,11 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Event_Wait(20);
+  // "Is there something that distorts distance or direction or..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "The currents shift there, subtly changing a ship's direction."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -2020,12 +2194,15 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(30);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  // "So the lighthouse will help the ships keep their bearings..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "So, how exactly did you get away from Lemuria after the..."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "That is the thing, Garet!"
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 50);
@@ -2035,13 +2212,16 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
+  // "I crossed the sea in a Lemurian ship. I am hoping you can..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "But why us, when you have so many powerful soldiers at your..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "None of them have the ability to use Psynergy."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -2051,45 +2231,55 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "One must have Psynergy to sail this ship!"
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "Then that would mean that Babi is an Adept, wouldn't it?"
   Event_OpenMessage(ACTOR_IVAN, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_BABI, 0) == 0) {
     Event_Wait(10);
+    // "That must be it. No normal person could use that Cloak Ball."
     Event_ShowMessage(ACTOR_IVAN, 0);
     gFieldWork->message++;
   } else {
     Event_Wait(10);
     gFieldWork->message++;
+    // "But, Isaac, no normal person could master the Cloak Ball!"
     Event_ShowMessage(ACTOR_IVAN, 0);
   }
 
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
   Event_Wait(20);
+  // "I learned to use a little Psynergy during my stay in Lemuria."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "With what little I'd learned, I was able to guide the ship."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
   Event_Wait(20);
+  // "In that case, perhaps... I could sail the ship."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_FaceActor(ACTOR_BABI, ACTOR_IODEM, 40);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(30);
+  // "No. It must be an Adept."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 40);
+  // "What should we do, Isaac? Will you do what he wants?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
   Event_Wait(30);
+  // "If you do, I will grant you whatever you wish."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -2099,10 +2289,12 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Event_Wait(30);
+  // "You shouldn't make vows you will later find you cannot keep..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "I haven't even considered my own wishes lately."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_IODEM, ACTOR_BABI, 60);
@@ -2113,28 +2305,34 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
+  // "In that case, I could provide you with a wealth of items you..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
+  // "Babi's offer is very generous... You will consider going,..."
   Event_OpenMessage(ACTOR_IODEM, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(20);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+    // "Isaac, we have to beat Felix and the others to the lighthouse."
     Event_ShowMessage(ACTOR_GARET, 0);
     gFieldWork->message++;
   } else {
     Event_Wait(10);
     gFieldWork->message++;
+    // "Not this time. We have to beat Felix and the others to the..."
     Event_ShowMessage(ACTOR_GARET, 0);
   }
 
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
+  // "The lighthouse!?"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "Do you mean Venus Lighthouse?"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -2144,31 +2342,37 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(30);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "Well then, our paths are intertwined. I, too, must go to..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_BABI, 40);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "But we cannot get to the top of Venus Lighthouse, can we?"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_FaceActor(ACTOR_BABI, ACTOR_IODEM, 40);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
+  // "These Adepts may be able to solve the riddle that blocks us."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
+  // "Ah, I see... The thought hadn't occurred to me."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
   Event_Wait(20);
+  // "Isaac! You shall go to Venus Lighthouse with Iodem."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Do not worry... You can take care of your own business first."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
@@ -2180,54 +2384,66 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(30);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 50);
+  // "I see... If they can solve the riddle of the lighthouse......"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
+  // "So, we can search for Lemuria after they complete their own..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
+  // "Is that acceptable?"
   Event_OpenMessage(ACTOR_BABI, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(20);
     Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+    // "Ah, you will undertake this quest! I am most grateful!"
     Event_ShowMessage(ACTOR_BABI, 0);
     gFieldWork->message++;
   } else {
     Event_Wait(10);
     Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     gFieldWork->message++;
+    // "If you need time to make up your mind, then please do so."
     Event_ShowMessage(ACTOR_BABI, 0);
   }
 
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
+  // "In any case, you will need my assistance to reach the..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_FaceActor(ACTOR_BABI, ACTOR_IODEM, 40);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
+  // "I'll make preparations so that I am ready to leave at any time."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_BABI, 40);
+  // "I take my leave now to make preparations."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_FaceDirection(ACTOR_BABI, FACING_WEST, 0);
   Event_Wait(20);
+  // "Then you can all meet at Gondowan Passage..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "That's a brilliant idea!"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
   Event_Wait(20);
+  // "One more thing. I'd like you to think about a suitable reward."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
+  // "Yes. I will take care of that immediately, as well."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
@@ -2246,6 +2462,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
   Event_Wait(20);
+  // "I shall be waiting for you at the passage."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
@@ -2277,6 +2494,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_BABI, FACING_EAST, 0);
   Event_Wait(20);
+  // "Your first task shall be the riddles of Venus Lighthouse. I..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
@@ -2371,14 +2589,17 @@ static void BabiPalace_PassOnBabisWord(void) {
   Event_Wait(20);
   question = MsgTolbiArent;
   Event_SetMessageId(question);
+  // "You're Isaac, aren't you?"
   Event_OpenMessage(ACTOR_FIRST_GUARD, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(20);
     Event_SetMessageId(question + 1);
+    // "Babi left word that he would be waiting for you at the..."
     Event_ShowMessage(ACTOR_FIRST_GUARD, 0);
   } else {
     Event_Wait(20);
     Event_SetMessageId(question + 2);
+    // "Oh, I guess I was mistaken..."
     Event_ShowMessage(ACTOR_FIRST_GUARD, 0);
     Event_Wait(20);
     Actor_FaceEachOther(ACTOR_FIRST_GUARD, ACTOR_SECOND_GUARD, 60);
@@ -2395,10 +2616,12 @@ static void BabiPalace_PassOnBabisWord(void) {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_FIRST_GUARD, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "No, I'm certain it was you."
     Event_ShowMessage(ACTOR_FIRST_GUARD, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_FIRST_GUARD, 2);
     Event_Wait(20);
+    // "Babi left word that he would be waiting for you at the..."
     Event_ShowMessage(ACTOR_FIRST_GUARD, 0);
   }
   Event_End();
@@ -2410,9 +2633,11 @@ static void BabiPalace_ThankForSavingBabi(void) {
   if (Event_GetFlag(FLAG_BABI_PALACE_GUARD_THANKED_PARTY) == 0) {
     GameFlag_Set(FLAG_BABI_PALACE_GUARD_THANKED_PARTY);
     Event_SetMessageId(MsgTolbiIsaacIdReallyLikeThank);
+    // "Isaac, I'd really like to thank you for saving Babi. He is..."
     Event_ShowMessage(ACTOR_SECOND_GUARD, 0);
   } else {
     Event_SetMessageId(MsgTolbiBabiWaitingForAtColosseum);
+    // "Babi is waiting for you at the colosseum. He wants you to go..."
     Event_ShowMessage(ACTOR_SECOND_GUARD, 0);
   }
 }
@@ -2424,12 +2649,15 @@ static void BabiPalace_AskAboutRemainingWarriors(s32 actorId) {
   s32 question = MsgTolbiWarriorsWhoStayed;
 
   Event_SetMessageId(question);
+  // "All the warriors who stayed in the palace left when Colosso..."
   Event_OpenMessage(actorId, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_SetMessageId(question + 1);
+    // "Oh, that's too bad. I bet we could have had a good time..."
     Event_ShowMessage(actorId, 0);
   } else {
     Event_SetMessageId(question + 2);
+    // "Huh? I thought for sure you'd be going, too. I guess not..."
     Event_ShowMessage(actorId, 0);
   }
 }

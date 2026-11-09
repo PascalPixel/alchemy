@@ -859,11 +859,13 @@ static void TolbiShipDeck_TalkToCrewMember(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
     Event_SetMessageId(MsgTolbiShipNowWeHaveProtectShip);
+    // "Now that we have you to protect the ship, we ought to be..."
     Event_ShowMessage(ACTOR_KALAY_CREW_MEMBER, 0);
   } else {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
       Actor_RunRepeatedMotion(ACTOR_KALAY_CREW_MEMBER, 2);
       Event_SetMessageId(MsgTolbiShipSomebodyStopThem);
+      // "Somebody stop them..."
       Event_ShowMessage(ACTOR_KALAY_CREW_MEMBER, 0);
       crewMember = Actor_Get(ACTOR_KALAY_CREW_MEMBER);
       random = Random_Next();
@@ -876,6 +878,7 @@ static void TolbiShipDeck_TalkToCrewMember(void) {
                       EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
       Actor_StartRepeatedMotion(ACTOR_KALAY_CREW_MEMBER, 3);
       Event_SetMessageId(MsgTolbiShipToldWereLeavingSoonSet);
+      // "I told you, we're leaving soon. We'll set sail when our..."
       Event_ShowMessage(ACTOR_KALAY_CREW_MEMBER, 0);
     }
   }
@@ -893,11 +896,13 @@ static void TolbiShipDeck_TalkToTourGuide(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
     Event_SetMessageId(MsgTolbiShipHaveMakeThemPromiseHelp);
+    // "We'll have to make them promise to help row before we can..."
     Event_ShowMessage(ACTOR_KALAY_TOUR_GUIDE, 0);
   } else {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
       Actor_RunRepeatedMotion(ACTOR_KALAY_TOUR_GUIDE, 2);
       Event_SetMessageId(MsgTolbiShipTheyCantPlanningMutiny);
+      // "They can't be planning a mutiny..."
       Event_ShowMessage(ACTOR_KALAY_TOUR_GUIDE, 0);
       guide = Actor_Get(ACTOR_KALAY_TOUR_GUIDE);
       random = Random_Next();
@@ -910,6 +915,7 @@ static void TolbiShipDeck_TalkToTourGuide(void) {
                       0);
       Actor_StartRepeatedMotion(ACTOR_KALAY_TOUR_GUIDE, 3);
       Event_SetMessageId(MsgTolbiShipIfWeDontLeaveSoon);
+      // "If we don't leave soon, Colosso will start without us! Will..."
       Event_ShowMessage(ACTOR_KALAY_TOUR_GUIDE, 0);
     }
   }
@@ -921,6 +927,9 @@ static void TolbiShipDeck_TalkToTourGuide(void) {
 static void TolbiShipDeck_AskHeadedForColosso(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiShipHeadedColosso);
+  // "Are you headed for Colosso, too?"
+  // Yes: "I thought so. Most people coming at this time of year..."
+  // No: "You came all this way, and you're not going to Colosso? That..."
   Event_AskYesNo(ACTOR_ARRIVED_ASKS_ABOUT_COLOSSO, 0);
   Event_End();
 }
@@ -1229,6 +1238,7 @@ static void TolbiShipDeck_ConfrontCrewman(void) {
   Actor_FaceActor(ACTOR_KALAY_CREWMAN, ACTOR_PARTY_LEADER, 20);
   Actor_StartRepeatedMotion(ACTOR_KALAY_CREWMAN, 2);
   Event_SetMessageId(MsgTolbiShipDidntDoAnything);
+  // "I didn't do anything..."
   Event_ShowMessageThenWait(ACTOR_KALAY_CREWMAN, 0, 20);
   Actor_ShowEmote(ACTOR_KALAY_CREWMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   GameFlag_Set(FLAG_TOLBI_SHIP_CREWMAN_CAUGHT);
@@ -1605,6 +1615,7 @@ static void TolbiShipDeck_AnnouncePreparationsReady(s32 messenger,
   Actor_Jump(crewMember, 4, 40);
   Actor_StartRepeatedMotion(crewMember, 2);
   Event_SetMessageId(MsgTolbiShipPreparationsReady);
+  // "Preparations... Ready!"
   Event_ShowMessageThenWait(crewMember, 0, 20);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
@@ -1629,6 +1640,7 @@ static void TolbiShipDeck_SightSeaMonsters(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_SEA_KAJA, 1);
   Event_SetMessageId(MsgTolbiShipAyeCaptainSeaMonsters);
+  // "Aye, Captain! Sea monsters!"
   Event_ShowMessageThenWait(ACTOR_SEA_KAJA, 0, 10);
   TolbiShipDeck_Turn(ACTOR_SEA_SEAN, FACING_SOUTH_SOUTHWEST);
   Actor_Jump(ACTOR_SEA_SEAN, 4, 20);
@@ -2899,6 +2911,7 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
       if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
         Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
         Event_SetMessageId(MsgTolbiShipIsaacDontTalkLikeShouldnt);
+        // "Isaac, don't talk like that. Shouldn't we listen to them?"
         Event_OpenMessage(ACTOR_IVAN, 0);
       } else
         break;
@@ -2957,6 +2970,7 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
   Actor_RunRepeatedMotion(ACTOR_SEA_SEAN, 1);
   TolbiShipDeck_Turn(ACTOR_SEA_SEAN, FACING_SOUTH_SOUTHWEST);
   Event_SetMessageId(MsgTolbiShipHowWasIsaacDidExplore);
+  // "How was it, Isaac? Did you explore the island thoroughly?"
   Event_OpenMessage(SPEAKER(ACTOR_SEA_SEAN, SPEAKER_PORTRAIT_RIGHT), 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {

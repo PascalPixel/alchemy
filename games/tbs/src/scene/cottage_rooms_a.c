@@ -248,6 +248,9 @@ static void CottageRoomsA_AskAboutKradensStudies(void) {
   Event_Start();
   Event_SetMessageId(MsgValeKradenCameToStudyMt);
   Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_MAN_ON_KRADENS_STUDIES, 6);
+  // "So Kraden came to Vale to study Mt. Aleph, right?"
+  // Yes: "He said he was studying Mt. Aleph and Alchemy and the..."
+  // No: "But I thought... Well, whatever. If he furthers the wisdom..."
   Event_AskYesNo(ACTOR_MAN_ON_KRADENS_STUDIES, 0);
   Event_End();
 }
@@ -261,6 +264,9 @@ static void CottageRoomsA_AskToScareVisitors(void) {
   Event_Start();
   Event_SetMessageId(MsgValeLetsScareKradensVisitors);
   Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_STRONGMAN_SCARING_VISITORS, 6);
+  // "I hear old man Kraden's got some visitors. Let's go use our..."
+  // Yes: "You're more of a prankster than I thought, Isaac. I like that."
+  // No: "What? You're too serious, Isaac... Only someone who has..."
   Event_AskYesNo(ACTOR_STRONGMAN_SCARING_VISITORS, 0);
   Event_End();
 }
@@ -278,6 +284,7 @@ static void CottageRoomsA_GiveFarewellHerb(void) {
   Event_Start();
   if (Event_GetFlag(FLAG_VALE_FAREWELL_HERB_RECEIVED) != 0) {
     Event_SetMessageId(MsgValeYouMustSaveJenna);
+    // "You must save Jenna! You must, Isaac!"
     Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
     FieldActor_SetTargetAndCallback(
         ACTOR_ITEM_MERCHANT, ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
@@ -285,6 +292,7 @@ static void CottageRoomsA_GiveFarewellHerb(void) {
   } else {
     gift = MsgValeThisIsMyFarewellGift;
     Event_SetMessageId(gift);
+    // "This is my farewell gift."
     Event_ShowMessageThenWait(ACTOR_ITEM_MERCHANT, 0, 20);
     FieldMessage_Show((gift + 1), 1);
     Party_GiveItem(ITEM_HERB, 0);
@@ -301,6 +309,9 @@ static void CottageRoomsA_GiveFarewellHerb(void) {
 static void CottageRoomsA_AskAboutStrangePowers(void) {
   Event_Start();
   Event_SetMessageId(MsgValeTheCulpritsHadStrangePowers);
+  // "They say the people who caused this whole mess had strange..."
+  // Yes: "If they were using Psynergy... That means there are towns..."
+  // No: "If that's the case, then I don't need to worry. It means..."
   Event_AskYesNo(ACTOR_WOMAN_ON_VISITORS_IN_TOWN, 0);
   Event_End();
 }
@@ -312,6 +323,9 @@ static void CottageRoomsA_AskAboutStrangePowers(void) {
 static void CottageRoomsA_AskAboutDora(void) {
   Event_Start();
   Event_SetMessageId(MsgValeDidYouHearAboutDora);
+  // "Did you hear us talking about Dora just now?"
+  // Yes: "Dora told us not to worry...that it's just a fever. Don't..."
+  // No: "You didn't hear? But you look concerned. We'll be looking..."
   Event_AskYesNo(ACTOR_GARETS_FATHER, 0);
   Event_End();
 }
@@ -323,6 +337,7 @@ static void CottageRoomsA_AskAboutDora(void) {
 static void CottageRoomsA_WorryAboutTravelersHealth(void) {
   Event_Start();
   Event_SetMessageId(MsgValeHopeDidntGet);
+  // "I hope you didn't get sick during your travels... Garet..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_GARETS_MOTHER, 0);
   Event_End();
 }
@@ -477,6 +492,9 @@ static void CottageRoomsA_TalkToWeaponMerchant(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     Event_SetMessageId(MsgValeYouCameBack);
+    // "Oh, it's you, Isaac. You came back?"
+    // Yes: "Vale won't be very quiet anymore... But I'm glad to see you...."
+    // No: "Oh, you're not back for good? That's too bad."
     Event_AskYesNo(ACTOR_WEAPON_MERCHANT, 0);
   } else {
     if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
@@ -532,6 +550,7 @@ static void CottageRoomsA_TalkToItemMerchant(void) {
     if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
       Event_Start();
       Event_SetMessageId(MsgValeWhenDidYouComeBack);
+      // "Isaac! When did you come back? After the way you left, I..."
       Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
       Event_End();
     } else {
@@ -540,6 +559,7 @@ static void CottageRoomsA_TalkToItemMerchant(void) {
       } else {
         Event_Start();
         Event_SetMessageId(MsgValeAWiseManFleesWhen);
+        // "A wise man knows to flee from battle when he's injured."
         Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
         Event_End();
       }
@@ -655,6 +675,7 @@ static void CottageRoomsA_GaretComesHome(void) {
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_GARETS_FATHER, FACING_NORTH_NORTHEAST, 20);
   Event_SetMessageId(MsgValeHey2);
+  // "Hey..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT |
                                      ACTOR_GARETS_FATHER,
                                  0, 20);
@@ -663,28 +684,34 @@ static void CottageRoomsA_GaretComesHome(void) {
   Actor_Stop(ACTOR_IVAN);
   Actor_Stop(ACTOR_MIA);
   Actor_ShowEmote(ACTOR_GARETS_MOTHER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "What?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER,
                                  0, 20);
   Actor_RunRepeatedMotion(ACTOR_GARETS_FATHER, 2);
   Event_Wait(40);
+  // "Shouldn't we look for Garet?"
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT |
                                      ACTOR_GARETS_FATHER,
                                  0, 10);
   Actor_FaceDirection(ACTOR_GARETS_MOTHER, FACING_SOUTH_SOUTHWEST, 10);
+  // "Why?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER,
                                  0, 40);
   Actor_RunRepeatedMotion(ACTOR_GARETS_FATHER, 2);
   Event_Wait(20);
+  // "Isaac still doesn't know about Dora...right? Someone should..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT |
                                      ACTOR_GARETS_FATHER,
                                  0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Actor_ShowEmote(ACTOR_GARETS_MOTHER, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
+  // "You miss Garet, don't you? You're looking for an excuse to..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER,
                                  0, 40);
   Actor_StartRepeatedMotion(ACTOR_GARETS_FATHER, 2);
   Actor_ShowEmote(ACTOR_GARETS_FATHER, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
   Actor_SetAnimation(ACTOR_GARETS_FATHER, ANIM_SHAKE_HEAD);
+  // "What? No! I just..."
   Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT |
                                 ACTOR_GARETS_FATHER,
                             0, 10);
@@ -794,6 +821,7 @@ static void CottageRoomsA_GaretComesHome(void) {
   // His mother knows he is leaving again soon; his grandparents are glad to
   // see him well.
   Event_SetMessageId(MsgValeYoureLeavingAgainSoon);
+  // "You're leaving again soon...aren't you?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0);
   FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
   Event_Wait(20);
@@ -802,8 +830,10 @@ static void CottageRoomsA_GaretComesHome(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
   Actor_FaceDirection(ACTOR_GARETS_GRANDMOTHER, FACING_NORTH_NORTHEAST, 10);
+  // "I'm just glad to see you're doing well!"
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDMOTHER, 0);
   Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
+  // "That's right."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDFATHER, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST_SOUTHWEST, 10);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
@@ -817,6 +847,7 @@ static void CottageRoomsA_GaretComesHome(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST_SOUTHWEST, 20);
+  // "Let me introduce you to my new friends."
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 40);
@@ -833,6 +864,7 @@ static void CottageRoomsA_GaretComesHome(void) {
   Actor_WalkToAndWait(ACTOR_IVAN, 819, 489);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH_NORTHWEST, 40);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
+  // "Umm... I am Ivan. Pleased to meet you."
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   CottageRoomsA_FamilyNods();

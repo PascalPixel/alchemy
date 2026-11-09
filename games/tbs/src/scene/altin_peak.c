@@ -1153,6 +1153,7 @@ static void AltinPeak_ReadFallingRockSign(void) {
     Event_SetMessageId(message + 1);
     Actor_SetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "Tch! We came this deep into the mine just to find a dead end!"
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
     Actor_Jump(ACTOR_GARET, 6, 0);
     Actor_SetSpeed(ACTOR_GARET, PIXELS(8) / 5, PIXELS(4) / 5);
@@ -2199,10 +2200,12 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 10);
   Event_SetMessageId(MsgAltinWeDidIsaacWeBeat);
+  // "We did it, Isaac! We beat the last water beast!"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
+  // "I wonder why Altin's guardian statues turned into monsters...."
   Event_OpenMessage(ACTOR_IVAN, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
@@ -2218,10 +2221,12 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Event_SetMessageId(MsgAltinGuardianStatuesWereCreatedLong);
+  // "The guardian statues were created long, long ago."
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 40);
+  // "What are they for?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -2251,6 +2256,7 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Event_Wait(60);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
+  // "There's a treasure chest behind the guardian statue!"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 20);
@@ -2259,10 +2265,12 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
+  // "It must all be related to these ruins, buried deep in the..."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 40);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+  // "I guess so... Hey, Isaac, we should check that chest before..."
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);

@@ -1378,11 +1378,13 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Event_Wait(20);
   Actor_SetScript(ACTOR_PARTY_LEADER, gColosseumNavampaMatch_LeaderActionB);
   // Let each companion react before the leader settles back to sleep.
+  // "Isaac!!!"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(20);
   Actor_WalkToAndWait(ACTOR_GARET, 1504, 176);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "Isaac..."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_IVAN);
   Event_Wait(30);
@@ -1398,6 +1400,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   Event_Wait(30);
+  // "Isaac..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_MIA);
   Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_MIA);
@@ -1413,19 +1416,23 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_MIA);
   Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_MIA);
   Event_Wait(20);
+  // "Isaac..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_SetScript(ACTOR_PARTY_LEADER, gColosseumNavampaMatch_LeaderActionC);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
   Event_Wait(20);
+  // "Isaac..."
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
   Event_Wait(20);
+  // "Isaac..."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_PARTY_LEADER);
   Event_Wait(20);
+  // "Isaac..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_SetScript(ACTOR_PARTY_LEADER, leaderScaleScript);
   Event_Wait(60);
@@ -1499,8 +1506,11 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(1);
   Event_SetMessageId(MsgColossoIsaacFellAsleep);
+  // "Isaac fell asleep..."
   Event_ShowMessage(ACTOR_GARET, 0);
+  // "He must be exhausted."
   Event_ShowMessage(ACTOR_IVAN, 0);
+  // "Let's leave him to sleep for now."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(60);
   Event_End();
@@ -1539,12 +1549,16 @@ static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
   Event_WaitTransitionFrames();
   Event_SetMessageId(MsgColossoSiteThirdFinals);
   Actor_SetAnimationAndWait(guideId, ANIM_NOD);
+  // "This is the site of the third finals match."
   Event_ShowMessage(guideId, 0);
   Actor_RunRepeatedMotion(guideId, 2);
+  // "By now, you know that each stage has its own attendant."
   Event_ShowMessage(guideId, 0);
   Actor_RunRepeatedMotion(guideId, 2);
+  // "Ask the attendants descriptions of the stages."
   Event_ShowMessage(guideId, 0);
   Actor_RunRepeatedMotion(guideId, 2);
+  // "Honestly, Isaac, I didn't think you'd make it this far! I'll..."
   Event_ShowMessage(guideId, 0);
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
@@ -1602,6 +1616,7 @@ static void ColosseumNavampaMatch_TalkToScalesAttendant(s32 guideId) {
     FieldCamera_MoveWithinMapBounds(PIXELS(152), -1, PIXELS(200), 1);
     FieldCamera_WaitForMove();
     Event_Wait(30);
+    // "This stage is called the Scales of Justice."
     Event_ShowMessage(guideId, 0);
     Colosso_ShowPointer(104, 68, 0);
     Event_Wait(60);
@@ -1640,6 +1655,7 @@ static void ColosseumNavampaMatch_TalkToScalesAttendant(s32 guideId) {
     Colosso_RepeatStageNumber(guideId, 1);
   } else if (promptResult == COLOSSO_GUIDE_OFFER_CHEERING) {
     Event_SetMessageId(MsgColossoObjectiveGetAcross);
+    // "Here your objective is to get across the gaps as quickly as..."
     Event_ShowMessage(guideId, 0);
   }
   Colosso_OfferCheeringSpot(promptResult, guideId, 1);
@@ -1667,6 +1683,7 @@ static void ColosseumNavampaMatch_TalkToSteppingStoneAttendant(s32 guideId) {
     x = 280;
     FieldCamera_WaitForMove();
     Event_Wait(30);
+    // "This is the Stepping- Stone Stage."
     Event_ShowMessage(guideId, 0);
     Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, x, 200);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
@@ -1697,6 +1714,7 @@ static void ColosseumNavampaMatch_TalkToSteppingStoneAttendant(s32 guideId) {
     Colosso_RepeatStageNumber(guideId, 2);
   } else if (promptResult == COLOSSO_GUIDE_OFFER_CHEERING) {
     Event_SetMessageId(MsgColossoYourGoalInStageSimple);
+    // "Your goal in this stage is simple: find the shortest path."
     Event_ShowMessage(guideId, 0);
   }
   Colosso_OfferCheeringSpot(promptResult, guideId, 2);
@@ -1753,6 +1771,7 @@ static void ColosseumNavampaMatch_TalkToWallWedgeAttendant(s32 guideId) {
       work->raisedTrigger = 0;
     } else if (promptResult == COLOSSO_GUIDE_OFFER_CHEERING) {
       Event_SetMessageId(MsgColossoOperatorWallsCheer);
+      // "The operator of the walls will cheer for you on this stage."
       Event_ShowMessage(guideId, 0);
     }
     Colosso_OfferCheeringSpot(promptResult, guideId, 3);
@@ -1783,7 +1802,9 @@ static void ColosseumNavampaMatch_TalkToFreeClimbAttendant(s32 guideId) {
       FieldCamera_MoveTo(PIXELS(856), -1, PIXELS(168), 1);
       FieldCamera_WaitForMove();
       Event_Wait(30);
+      // "This place is normally called the Free- Climb Area."
       Event_ShowMessage(guideId, 0);
+      // "This sheer wall has a bumpy surface."
       Event_ShowMessage(guideId, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 816, 200);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
@@ -1818,6 +1839,7 @@ static void ColosseumNavampaMatch_TalkToFreeClimbAttendant(s32 guideId) {
       Colosso_RepeatStageNumber(guideId, 4);
     } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
       Event_SetMessageId(MsgColossoClearStageMustAbleChange);
+      // "To clear this stage, you must be able to change directions..."
       Event_ShowMessage(guideId, 0);
     }
     Colosso_OfferCheeringSpot(result, guideId, 4);
@@ -1874,7 +1896,9 @@ static void ColosseumNavampaMatch_TalkToMovingSidewalkAttendant(s32 guideId) {
       FieldCamera_MoveTo(PIXELS(1080), -1, PIXELS(168), 1);
       FieldCamera_WaitForMove();
       Event_Wait(30);
+      // "This is called the Moving Sidewalk Stage."
       Event_ShowMessage(guideId, 0);
+      // "The conveyor belt moves opposite the direction you need to go."
       Event_ShowMessage(guideId, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 984, 184);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
@@ -1911,6 +1935,7 @@ static void ColosseumNavampaMatch_TalkToMovingSidewalkAttendant(s32 guideId) {
       Colosso_RepeatStageNumber(guideId, 5);
     } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
       Event_SetMessageId(MsgColossoInStageMustTryOutpace);
+      // "In this stage, you must try to outpace the conveyor belt."
       Event_ShowMessage(guideId, 0);
     }
     Colosso_OfferCheeringSpot(result, guideId, 5);
@@ -1939,6 +1964,7 @@ static void ColosseumNavampaMatch_TalkToLogRollingAttendant(s32 actorId) {
     FieldCamera_MoveWithinMapBounds(PIXELS(1288), -1, PIXELS(152), 1);
     FieldCamera_WaitForMove();
     Event_Wait(30);
+    // "This is another log-rolling area."
     Event_ShowMessage(actorId, 0);
     Colosso_ShowPointer(180, 88, 0);
     Event_Wait(60);
@@ -1955,6 +1981,7 @@ static void ColosseumNavampaMatch_TalkToLogRollingAttendant(s32 actorId) {
     Colosso_RepeatStageNumber(actorId, 6);
   } else if (state == COLOSSO_GUIDE_OFFER_CHEERING) {
     Event_SetMessageId(MsgColossoHereMustFigureOutHow);
+    // "Here you must figure out how the logs and stones need to be..."
     Event_ShowMessage(actorId, 0);
   }
 

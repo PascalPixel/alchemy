@@ -1,11 +1,8 @@
-#include "types.h"
-#include "graphics.h"
-#include "window.h"
-#include "task.h"
-#include "ram_buffer.h"
-#include "main_routine_work.h"
-#include "scene.h"
-#include "edition.h"
+/// @file
+/// The area name notice, and removing an item from the inventory.
+// Part of window.c.
+
+#include "../window_internal.h"
 
 struct TimedNoticeWork {
   u8 unk000[0x21c];
@@ -16,12 +13,6 @@ struct TimedNoticeWork {
 #define TIMED_NOTICE_WORK ((struct TimedNoticeWork *)Ram_HeapSlots->eventWork)
 
 void UiTimedNotice_Update(void);
-struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
-                                 s32 style);
-extern u8 MsgDebugAreaName;
-
-void Text_DrawMessage(s32 resource, struct Window *window, s32 x, s32 y);
-
 /// Opens the area-name window, which closes after ninety frames.
 void UiTimedNotice_Create(void) {
   struct TimedNoticeWork *work;
@@ -83,3 +74,12 @@ void UiTimedNotice_CloseIfActive(void) {
     Task_Remove(UiTimedNotice_Update);
   }
 }
+
+void PartyInventory_RemoveFar(s32 item);
+
+s32 Func_0803f968(s32 unused, s32 item) {
+  PartyInventory_RemoveFar(item);
+  return 0;
+}
+
+#undef TIMED_NOTICE_WORK

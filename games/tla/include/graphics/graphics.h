@@ -93,7 +93,7 @@ void WindowSprite_Release(struct WindowSprite *node);
 #ifndef OWN_Resource_DecodeByteLzInRam
 s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
 #endif
-s32 Resource_LoadByMode(s32 mode, s32 value);
+s32 Resource_LoadByMode(u32 mode, s32 value);
 void SpriteColor_RemapPixelsFar(void *buffer, s32 size);
 void NumberText_FormatDecimal(s32);
 void Icon_BuildCommandIconTiles(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3,

@@ -6,6 +6,10 @@
 /// includes it before the parts, and each part includes it too, so that a part
 /// read on its own still resolves.
 
+// The window object defines these with its own types.
+#define OWN_UiTextResource_Initialize
+#define OWN_UiTextResource_SetPosition
+
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -65,5 +69,9 @@ void Window_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
 s32 Text_GetMessageSize(s32 no, s32 *x, s32 *y, u32 *width, u32 *height);
 s32 Func_0803bde4(struct Window *window, s32 character, s32 x, s32 y,
                   s32 mode);
+void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2, u32 y2);
+void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y);
+void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y);
 
 #endif

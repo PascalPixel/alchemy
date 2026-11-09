@@ -59,8 +59,12 @@ void Resource_ScheduleOwnerReset(void);
 void *Text_FormatPlayTime(s32, u8 *);
 void Window_HighlightRectFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void Icon_PrepareActor(struct WindowSprite *icon);
+#ifndef OWN_UiTextResource_Initialize
 void UiTextResource_Initialize(struct Actor_0801c0dc *obj, s32 *slot);
+#endif
+#ifndef OWN_UiTextResource_SetPosition
 void UiTextResource_SetPosition(struct Obj *obj, s32 arg1, s32 arg2);
+#endif
 void Window_SetTilemapEntryFar(s32, s32, s32, s32, s32);
 
 #endif

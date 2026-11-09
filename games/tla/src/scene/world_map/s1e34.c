@@ -1,108 +1,3 @@
-// Draft, differ 2 of 714 (tla-en, 2026-11-08)
-// Devices pass (2026-11-09), none below 2: an asm after the zero stores that
-// reads them ("m") to give each store a third dependent, carried by djinni
-// (212: djinni leaves r6), x, z or i (16 to 24), count (deleted as dead: 2),
-// or SetMoveTarget's 0 or 0x27880000 argument (16, 88).
-// Every edition is differ 2 (tla-en, ja, de, es, fr, it), the same one row.
-// Left: `mov sl, r2`, the copy of the motionFlags address into sl for the
-// later stores, comes before the stores of 0 to velocityY and terrainHeight
-// where the listing has it after them. Both forms compute the address as the
-// listing does (movs r2, #85; adds r2, r2, r6: an add whose output is the sl
-// pseudo), and the copy is reload's output copy right after that add; sched2
-// ties it with both stores (priority 2, class 3, two dependents each) and
-// takes it first by its lower LUID. So the listing's copy, or a dependence
-// that ranks the stores first, sits elsewhere. Tried at 2 without gain: a u8
-// *flags set after the stores, at function or then-arm scope, with or without
-// an unread reassignment, a second pointer, or a once-only block round the
-// first store (2 to 82; a pointer moved to the stack or the entry's reload
-// registers moved); zero at the first visit's stores or SetMoveTarget (2);
-// motionFlags = 2 moved after each later store (8 to 52); an 8-minute permute
-// from 2 (about 36,000 candidates) found nothing under 2.
-// 8 November, after: 12 more minutes of permute at seed 31 (59,000
-// candidates), nothing below 2.
-// 8 November, last round, 18 to 2: centerZ dropped (both centres are CSE's
-// shared constants, as the listing's register order shows); the flag device
-// (tagged temporary) kills the test's known zero (16 with motionFlags = 2
-// stored through *&, which then stopped the bit-field path's early zero); and
-// the local zero, one constant for its whole life used once (the permuter's
-// find), puts the stores of 0 on its own rematerialized zero and fixes the
-// reload registers at MsgWellYouWeren and the first angle loop (2, the plain
-// member store then as good as *&). The device is still needed with zero (53
-// without it); zero unused is 26. Not moved: TUTORIAL_MESSAGE's operand
-// order (16 both ways), the angle add spelled four ways (16).
-// Before, differ 18. 8 November, later: motionFlags = 0 now comes before the third
-// SetMoveTarget, as the listing's strb shows (28 to 18), and the z temporary
-// (a tagged FAKEMATCH) is replaced by centerZ, a local holding 0x20a40000 for
-// its whole life (18; one assignment without it is 53). Left, one cause: the
-// flag result still sits in r8 as the known zero for velocityY and
-// terrainHeight, so centerZ is reloaded from the pool at both SetMoveTarget
-// calls where the listing keeps it in r8. A centerX local (65), the test
-// reversed through a goto, !(... != 0), a (u32) < 1 test (18 each), a
-// chained zero store (18, 20), GameFlag_Test direct (67) and a once-only
-// block round the zero stores (28) do not move it; an 8-minute permute (8,710
-// candidates) found nothing under 18.
-// Earlier on 8 November: three older devices measured free and removed (the s32 local for
-// motionFlags = 2, the zero local for velocityY and terrainHeight, the long
-// cast on the second velocityY store: 28 each and together); the z temporary
-// still costs (65 as one assignment; 61 measured today) and the u16 store of
-// 1 through a constant local stays (105 without). The listing keeps both
-// centres in registers (0x27880000 in r9, 0x20a40000 in r8); here r8 holds
-// the flag result as the known zero, so the z centre is reloaded at both
-// SetMoveTarget calls. Tried without gain: !Flag_IsSet (28), a once-only
-// block around either zero store (38, 40), z += offset (28, 62 split), x
-// given the same temporary (73); a 9-minute permute (9407 candidates) found
-// nothing under 28.
-// 6 November: z first set to its centre, a temporary (permuter), turns 65 to
-// 30: the native keeps 0x20a40000 in r8 for both SetMoveTarget calls. Left:
-// the flag result still sits in r8 as the zero for velocityY and
-// terrainHeight, the motionFlags strb order, and the muls scheduling below.
-// Plain centre locals (centerZ, centerX) 38 to 77; with the flag temporary
-// 66 to 77. Before: differ 65 (while loops in place of labels): cse1 puts the stores of 0
-// to velocityY and terrainHeight in the flag test result (reg 62, known 0 on
-// the then-arm through the skipped gInput block), so it lives in r8 and shifts
-// r8, r9, fp and the frame; with those two stores probed as nonzero it is
-// differ 28. 6 November, plain tries: GameFlag_Test direct 99; i = Flag_IsSet,
-// if (i == 0) 96; the same through owner 66; count = 0 at entry 133; a do-while
-// grow loop and a chained store both 65. 5 November: differ 65 of 714 with x
-// read first as the native does (46 with the false order). What turns the rest
-// is the zero: after the test of 0x16e the then-arm knows the result is 0 and
-// cse keeps it in r8 for the later stores of 0 (reg 62), where the native has
-// movs r3, #0. A <= 0 test gives 28 but is not the native's beq. An empty asm
-// or one-pass after the test does not stop it. Draft, differ 46 of 714 (tla-en,
-// 2026-11-05). Older notes below may predate this figure. Under -Os, 5
-// November: differ 46 of 714 (tla-en); older figures below predate it. Draft,
-// differ 57 of 714, skeleton gap 10 (tla-en, 2026-11-01) The Venus Djinni
-// (actor 9) joins on the world map and offers its tutorial, as The Broken
-// Seal's WorldMap_MeetFlint; the second visit offers it again. owner is set
-// only on the first path: the native reads r7 uninitialized on the second, so
-// owner is live from entry and conflicts with everything. Plain shape, all
-// measured here: no count = 0 at entry; u16 stores go through a pointer cast (a
-// member store's bit-field path leaves a zero pseudo that CSE reuses across
-// calls); the first motionFlags store takes an s32 local before its address,
-// the later two stay member stores (their zero is the native's r2); wait(1)
-// comes before i--; ShowEmote and SetMoveTarget are The Broken Seal's
-// forwarding inlines (Actor_ShowEmote, FieldActor_SetMoveTarget); the +1 and +2
-// arms each end with Func_02004cf0, so both jumps cross-jump; Djinn_AddToOwner,
-// DjinnRecovery_AddStandby and FieldMessage_ShowAtActor return values.
-// Func_02004d08's s32 return is what ordering asks for, its main-image type
-// unchecked. The long store is an alias spelling: the native has no store
-// dependence between the motionFlags strb and velocityY. Left, one cause: the
-// inline's return pseudo is known 0 after the flag test, and cse2 reuses it for
-// velocityY = 0, costing r5 and the frame. Plain tries failed: goto, switch,
-// u32 compares, a one-pass block (cse2 ignores its loop end), a zero local, an
-// inline for the zero stores. Two devices were taken back out because neither
-// reaches differ 0; with them this draft is differ 10: `flag = 0x16e; flag =
-// GameFlag_Test(flag); if (flag == 0) {` with `flag = Flag_IsSet(0x175);`
-// before the MsgHey2 message: 20, temporary. `flags = &motionFlags; *flags =
-// two;`, an unread `flags = (u8 *)djinni;` beside the zero stores, `flags =
-// &djinni->motionFlags;` after them and
-// `*flags = 0;` at the third store: 10, dead; this puts native's late mov sl.
-// The last 10 of that form: strb [r2, r6] where native keeps adds r2 and mov
-// sl, r2 (reload_combine fires; a second use of r2 would stop it), and at
-// MsgSoWeGo and MsgHmmmmDoYou the pool load before muls: sched2 ranks muls 45
-// over the load 44 (4 + 41 against 2 + 1 + 41). An asm or one-pass fixes these
-// but flips `adds r1, r7` at Func_02004c98. That ranking is K2's
-// -mthumb-slow-loads model, a compiler question for Pascal, out of scope here.
 #include "types.h"
 #include "call.h"
 #include "main_routine_work.h"
@@ -173,8 +68,7 @@ void Func_02004e30(s32 cue);
 /// A tutorial message: the second set (from MsgDjinnGiveTutorialB) when
 /// secondSet is 1.
 #define TUTORIAL_SET_MESSAGE(secondSet, base)                                  \
-  ((secondSet) *                                                               \
-       ((s32)MsgDjinnGiveTutorialB - (s32)MsgDjinnGiveTutorialA) +             \
+  ((secondSet) * ((s32)MsgDjinnGiveTutorialB - (s32)MsgDjinnGiveTutorialA) +   \
    (s32)(base))
 
 /// A tutorial message: the second set while flag 0x175 is set.
@@ -252,6 +146,10 @@ void Func_02001e34(void) {
     djinni->acceleration = 0x10000;
     djinni->velocityY = 0;
     djinni->terrainHeight = 0;
+    /* FAKEMATCH(barrier): an empty asm that reads and writes all of djinni,
+     * so sched2 takes the two stores of 0 before the copy of the motionFlags
+     * address into sl; as no asm, 2 of 714 instructions differ in tla-en. */
+    asm("" : "+m"(*djinni));
     SetMoveTarget(djinni, 0x27880000, 0, 0x20a40000);
     while (i >= 0) {
       djinni->scaleX += 0x800;

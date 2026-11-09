@@ -208,7 +208,7 @@ Resource_DirectoryTable:
 	resource Data0C3, Resource_Data0C3
 	resource , Resource_Data0C4
 	resource PetalSheet, BattleEffect_PetalSheet
-	resource , BattleEffect_CrescentRowSheet
+	resource CrescentRowSheet, BattleEffect_CrescentRowSheet
 	resource , BattleEffect_RuneCircleSheet
 	resource , Resource_Data0C8
 	resource Data0C9, Resource_Data0C9

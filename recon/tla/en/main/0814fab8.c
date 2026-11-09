@@ -29,6 +29,14 @@
 // priority 67; the listing needs that ldr first. Not better: an empty
 // once-only block before or after that build (2, 8), the mode as additive + 1
 // or BLIT_MAX + additive (2); 12 minutes of permuter on this form (seed 7777).
+// Near4 round (9 November), still 2. The sched2 dump: after the [sp] store
+// (cost 3) the ldr is class 2, the movs class 3, both priority 67 (a load
+// feeding a call costs 1). What would order them is an emitted-nothing insn of
+// priority 67 that loses to the store and then wins (3 dependents, placed
+// before the call): after it both are class 3 and the ldr's 4 dependents beat
+// the movs's 3. Tried before LOAD_BLITTER: asms on screen or screen.x in
+// memory ("+m", "=m", with an r4 clobber: 47, screen.x then loads into r3), and
+// "+r" asms on member, frame, canvas or additive (58 to 747).
 // Earlier the same round, not better: the barrier at the lights
 // replaced by the *& spelling (84), a local holding 1 for the lights' mode
 // (108), flags ^ additive (60), the wrapper at any one copy dropped (43 to 61),

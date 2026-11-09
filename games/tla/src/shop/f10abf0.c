@@ -106,6 +106,9 @@ s32 Func_0810abf0(void) {
   // for memberIndex, so the zero lives in r5 across the windows (diff 8 of
   // 282 instructions; the zeros reordered, chained, in once-only blocks or
   // through NULL, chooseAgain, unitId or priceWindow: 8 to 173).
+  // 9 November: the later zero made by an empty asm (as an output tied to 0,
+  // "+r" on a zero local, or on priceWindow) gives the zero a stack slot and
+  // keeps the first in r5: 63.
   firstMessage = (s32)MsgWhoShallIRevive;
 #endif
   // DEAD: memberIndex is set again after the price window before any read.

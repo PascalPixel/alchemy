@@ -234,12 +234,6 @@ BattleEffect_RunCruelRuin:
 	.incbin "baserom.gba", 0x00142942, 0x00000002
 	.section .rom.0014a812, "ax"
 	.incbin "baserom.gba", 0x0014a812, 0x00000002
-	.section .rom.0014bee0, "ax"
-	.global BattleEffect_RunZagan
-	.type BattleEffect_RunZagan, %function
-	.thumb_func
-BattleEffect_RunZagan:
-	.incbin "baserom.gba", 0x0014bee0, 0x00000a48
 	.section .rom.0014cd46, "ax"
 	.incbin "baserom.gba", 0x0014cd46, 0x00000002
 	.section .rom.0014fab8, "ax"

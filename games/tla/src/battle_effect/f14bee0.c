@@ -1,56 +1,3 @@
-// Draft, differ 2 of 1150 (tla-en, 2026-11-08); no device left. Every edition
-// differs by the same 2.
-// 9 November: the preheader comes right, the tail then swaps. With a
-// function-level local rowSize = 16, line = k * rowSize from a second counter k
-// stepped after j (for (j = 0, k = 0; j != 10; j++, k++)) is a reduced giv (a
-// product by a register is worth reducing) of a biv processed first: line's
-// zero and register (r4) and j * 7's (r0) match, but each giv's increment
-// goes before its own biv's, so adds r0, #7 precedes adds r4, #16 (2). Stepped
-// k++ first, the increments come right and the inits and registers swap (8);
-// line = j * rowSize with one counter, the same (8). The listing's order is
-// one biv whose line giv is processed before j * 7: that needs line found after
-// the hoisted j * 7 (inside the motes loop it reduces line * 2 instead: 187), or
-// j * 7 reduced only in loop.c's second pass. Also 2 or worse: the rings'
-// texture as FIXED_ADDRESS 0x02014000 (2), line set in the for step (28 to 703),
-// j * 7 as a local at the body's top (697). Permute 10 minutes from each of
-// the draft and the two-counter form: nothing below 2.
-// Devices pass (2026-11-09), none below 2. sched2 (verbose) after j's zero:
-// the 6's copy to ip and line's zero tie on priority (1), class and
-// dependents (0 each), so LUID decides. Tried: line = j * 16 as a giv behind
-// a once-only block, line << 1 or line + line, or an asm operand hiding it
-// from CSE (213 to 702: line stops being reduced or j * 32 is); the table's
-// 6 set in the for init (256).
-// Left: one swap in the mote loop's preheader. The listing sets line (r4) to 0
-// after `mov ip, r1` (the hoisted 6 of gData_08197410[motes]); here before it.
-// sched2 breaks that tie by RTL order, so in the original r4's 0 is emitted
-// after loop.c's hoisted invariants, where strength reduction puts a reduced
-// giv's start (the j * 7 copy's `movs r0, #0` sits there too): the for's own
-// init cannot get there. A reduced j * 16 would, but every form tried either
-// lets CSE fold line * 2 into j << 5 or reduces j * 32 instead (6 to 703):
-// line = j * 16 at the top of the body, in the for's step, as u16, s16 or u8;
-// the store as sprites[line * 2 + i] in five spellings or through a u16
-// pointer; cell = sprites + line * 2 in three spellings. j * size (a local
-// 16) reduces the right giv and orders r4 right, but keeps 16 in r8 (105).
-// line + line, line scoped in the frame-27 block, u32, the inits swapped: 2
-// or worse. What would settle it: a source form whose 16-step register is a
-// reduced giv while its doubling stays outside every giv.
-// 8 November, third round (12 to 2): the rings' texture pointer is a local,
-// ringPixels, holding gData_02014000 for the whole function; left without a
-// register it is reloaded at each use, which loads it into r0 after the
-// model's copy and moves the vertices' reload into r1 (12 to 4); the
-// once-only block around the vertices store then goes (4 to 2). Task_Add is
-// declared from task.h, returning s32 as it does: its call sets r0, which is
-// all the wrapper did, so the wrapper and its tag are gone (a void Task_Add
-// measures 4). Earlier rounds: the three objects loops, `movs r3, #58` and
-// the texture's barrier were settled by 6 November.
-// What the shape rests on, each measured: position and velocity are 8-byte
-// structs held in registers, so each spills as a pair and every field reloads;
-// `j * 7` stays an expression so its hoisted copy takes the [sp, #8] slot; the
-// table stays non-const and indexed through a variable, which keeps its load
-// in the loop and the 6 in a register; cell starts as the offset and adds
-// sprites second; the shake's offsets are computed before the BG1 store.
-// `none` is a guess at the zero r5 holds across the first calls.
-
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -87,7 +34,8 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+void BattleEffect_LoadBlitter(s32 slot,
+                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -104,13 +52,14 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
-void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
+void BattleEffect_SpawnObjects(s32 count, s32 resource,
+                               s32 mode); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                               s32 speedLimit, s32 velocityY, s32 percent);
+                                   s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
                                        s32 flags);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -118,7 +67,7 @@ void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                      s32 drag);
+                                          s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
@@ -132,7 +81,7 @@ s32 Trig_Cos(s32 angle);
 
 void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleEffect_StartTiledCanvas(s32 bgControl);
@@ -201,8 +150,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
   struct EffectStep *p;
   s32 none;
   u8 *ringPixels;
-  s32 line;
-  s32 motes;
+  s32 size;
   s32 scroll;
   s32 frame;
   s32 i;
@@ -232,16 +180,10 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
       Iwram_FillWords((void *)(BG_PLTT + 96), 256, 0x7fff7fff);
       Resource_LoadAndDecompress((s32)&ResourceId_Data134, work->sheet, 0, 0);
       // Ten ever-fainter copies of one mote.
-      motes = 3;
-      for (j = 0, line = 0; j != 10; line += 16, j++) {
-        u8 *cell;
-
-        i = 0;
-        cell = (u8 *)(line * 2);
-        cell += (s32)sprites;
-
-        for (; i != 32; i++) {
-          s32 offset = gData_08197410[motes] + i + 0x700;
+      for (j = 0; j != 10; j++) {
+        size = 4;
+        for (i = 0; i != size * size * 2; i++) {
+          s32 offset = gData_08197410[size - 1] + i + 0x700;
           s32 value = ((u8 *)work)[offset];
 
           if (value != 0) {
@@ -250,7 +192,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
               value = 1;
             }
           }
-          *cell++ = value;
+          sprites[size * size * j * 2 + i] = value;
         }
       }
       Resource_LoadAndDecompress((s32)&ResourceId_PetalSheet, work->sheet, 1,
@@ -486,7 +428,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
     }
     if ((!(frame & 1) || !skip) && frame <= 119) {
       blit[1](canvas, work->sheet + ((frame / 3) & 3) * 6000,
-                  (position.x / 2 >> 16) - 12, (position.y >> 16) - 58, 60, 100);
+              (position.x / 2 >> 16) - 12, (position.y >> 16) - 58, 60, 100);
     }
     if (frame == 157) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, ringPixels, 0, 0);

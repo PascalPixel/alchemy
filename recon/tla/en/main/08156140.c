@@ -1,4 +1,8 @@
 // Draft, differ 4 of 2278 (tla-en, 2026-11-08)
+// Near4 round (9 November), still 4: permute 10 minutes, seed 5151 (about
+// 22,000 candidates), nothing below 4. In the sched2 dump every row of that
+// draw carries an anti dependence on the blitter load's call; mov r4, sl is
+// reload's copy of the hoisted Data_081984ec base.
 // Devices pass (2026-11-09), none below 4: the turned flash's picture sum as a
 // block-local pic (4, the same rows) with an asm on pic, on step, flash, i or
 // canvas reading pic, or on pic reading step (51 to 570); 0x128a through an

@@ -1,4 +1,22 @@
-// Draft, differ 4 of 1361 (tla-en, 2026-11-09)
+// Draft, differ 2 of 1361 (tla-en, 2026-11-09, near4 round)
+// Cause 2 closed (4 to 2) by three empty asms that read and write *t after
+// model->scrollV (tagged barriers): each is one more dependent of t's setter,
+// 8 against the copy's 7, so sched2 takes add r6, sp, #108 first; the asms
+// reference t, so t passes half in local-alloc and takes r5, which an asm on
+// half puts back (barrier). Two asms are not enough (4); placed right after t
+// the textureBytes[1] store moves (4). Left: cause 1, req[0] stored through
+// r2. The address of *(s32 *)req is its own pseudo at expand time, which cse1
+// merges into pair's; the listing's direct [sp, #116] is what reload writes
+// for a spilled address pseudo equivalent to the frame address, so it wants
+// a second address pseudo that CSE does not merge. Tried at 2 or worse: a
+// once-only block round the req[0] store (also with req a volatile struct
+// x, y); v set before pair; req as volatile s32[2], a volatile DImode struct
+// or a volatile x, y struct with no pair (the stores then come in the
+// listing's order but req[0] still goes through r2); a struct with a
+// zero-length tail (BLKmode); req as a DImode struct (exact rows, but its
+// slot is assigned at purge_addressof, below the texture: 6) or a DImode
+// union (6); req and the texture both DImode (527, 537).
+// Before (4):
 // 9 November, later, still 4: its RAM buffers as FIXED_ADDRESS constants
 // (the ring's cells, transformed, strip, sheet2, the 0xC2 load, the camera
 // parameters), alone and up to three together, change nothing. For cause 2,
@@ -573,6 +591,17 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       model->texture = t;
       model->shade = 0;
       model->scrollV = 0;
+      /* FAKEMATCH(barrier): an empty asm that reads and writes *t, one of three
+       * that each add a dependent to t's setter, so sched2 takes add r6, sp,
+       * #108 before the model's copy; as two of them, 4 of 1361 instructions
+       * differ in tla-en. */
+      asm("" : "+m"(*t));
+      /* FAKEMATCH(barrier): the second asm on *t; as two of them, 4 of 1361
+       * instructions differ in tla-en. */
+      asm("" : "+m"(*t));
+      /* FAKEMATCH(barrier): the third asm on *t; as two of them, 4 of 1361
+       * instructions differ in tla-en. */
+      asm("" : "+m"(*t));
       // A once-only block: it ends CSE's block after the % 5.
       do {
         t->pixels = work->sheet + 0x1000 + ((frame / 2) % 5) * 0x400;
@@ -581,6 +610,10 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       {
         s32 half = 0x8000;
 
+        /* FAKEMATCH(barrier): an empty asm on half, whose references keep it
+         * ahead of t for r5 once the asms on *t add theirs; as no asm, 26 of
+         * 1361 instructions differ in tla-en. */
+        asm("" : "+r"(half));
         Render_ResetTransformState();
         Func_080151e4(half, 0x10000, half);
       }

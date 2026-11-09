@@ -1,4 +1,9 @@
 // Draft, differ 4 of 639 (tla-en, 2026-11-08)
+// Near4 round (9 November), still 4: an empty asm reading and writing scene
+// memory ("+m" on *scene, scene->x or scene->z, in the NULL branch or the
+// else-if, with the kept or the plain test) to force one more reload of scene:
+// 68 to 76, the asm's reference to scene moves its register. Asms on scene,
+// &scene->x or caster as "l" or "r" inputs: 13 to 77.
 // 9 November, still 4. The else-if branch's registers follow once the NULL
 // branch's &scene->x goes through a local, with the plain test (no inReach
 // device): a block-local at = &scene->x set after the z store gives the

@@ -1,4 +1,14 @@
 // Draft, differ 4 of 875 (tla-en, 2026-11-08)
+// Near4 round (9 November), still 4. sched2 after the first product: the
+// store (class 1), the copy (class 2) and the r6 rematerialisation (class 3,
+// no dependence) all rank 69; the listing's order follows if that load is
+// class 2, an anti dependence on the call, which is what a pool read of a
+// linked symbol gets. The second and third products through the linked
+// IwramMulQ16 (long_call) give exactly that order, but the symbol takes a
+// pool word of its own where the listing's ldr r6 reads the same word as ldr
+// r4 (0x638 in the listing object), and ratio and the pointer swap r5 and r6
+// (222; only the second through it 59; through a block-local mulQ16 pointer
+// 222). An asm reading and writing *object after the first store: 4.
 // 9 November, still 4. The products called through the linked IwramMulQ16
 // (a pool read, which sched2 ties to the call before it) in place of the
 // fixed address: in the slope slowdown 85 (two) and 116 (three), elsewhere 6

@@ -1,4 +1,15 @@
 // Draft, differ 4 of 4580 (tla-en, 2026-11-09). Measure 081843fc,081848ec together.
+// Near4 round (9 November), still 4. The tornado, from the loop dumps: the
+// listing's order needs 0x1b5a moved out of the i loop in loop.c's second pass.
+// With dst before src, its set is the j loop's first movable and is moved in
+// the first pass (then the i loop moves it before the i * 45 init). With src
+// before dst it comes after src's five movables and is "not desirable" in the
+// first pass, so the preheader comes right, but the j loop's two givs then
+// swap r4 and r5 (20; also with dst declared first, src++ first: 20; indexed
+// 40). Splitting 0x145a off as dst += 0x145a after src leaves 0x1b5a in the
+// loop (30); (u8 *)work + ... + 0x1b5a or &work->sheet[...] 4; a block-local
+// constant 136; a sheet pointer 20. Permute 10 minutes, seed 5152 (5,400
+// candidates): nothing below 4.
 // 9 November, 8 to 4: the wave closed. Its row offset is off = j * rowStep, a
 // function-level local holding 8 (plain C): a product by a register costs a
 // multiply, so loop.c finds the giv worth reducing (as j * 8 it was not: 0 vs

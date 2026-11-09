@@ -22,7 +22,7 @@ SECTIONS
         "*/games/tla/src/scene/world_map/prepare.o"(.text)
         "*/games/tla/src/scene/world_map/s12bc.o"(.text)
         "*/games/tla/src/scene/world_map/s1c5c.o"(.text)
-        "*/resource_64b_overlay.o"(.text.x02009e34)
+        "*/games/tla/src/scene/world_map/s1e34.o"(.text)
         "*/games/tla/src/scene/world_map/s2594.o"(.text)
         "*/games/tla/src/scene/world_map/s2618.o"(.text)
         "*/games/tla/src/scene/world_map/s2640.o"(.text)

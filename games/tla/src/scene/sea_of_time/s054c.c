@@ -8,7 +8,7 @@ struct SeaOfTimeEventWork0154 {
 void Func_0200054c(void) {
   struct SeaOfTimeEventWork0154 *work =
       (struct SeaOfTimeEventWork0154 *)Ram_HeapSlots->eventWork;
-  struct SeaOfTimeObject *object = Actor_GetById(8);
+  struct SeaOfTimeObject *object = ((struct SeaOfTimeObject *)Actor_GetById(8));
   struct {
     s32 x, y, z;
   } center;
@@ -105,7 +105,7 @@ void Func_0200054c(void) {
   phase &= frame;
   if (phase == 0) {
     if ((frame & 10) == 0)
-      Func_02002054(0x255);
+      Sound_Play(0x255);
     spark.mode = 2;
     spark.kind = 7;
     spark.scaleX = 0xcccc;

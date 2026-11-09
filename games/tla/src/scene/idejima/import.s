@@ -2,9 +2,9 @@
 	.thumb
 	.include "games/tla/src/system/overlay/imports.inc"
 	.balign 4
-	.global Task_Wait
+	.global wait
 	.thumb_func
-Task_Wait:
+wait:
 	overlay_veneer waitFar
 	.global Task_Add
 	.thumb_func
@@ -42,13 +42,13 @@ Import_ActorCreate:
 	.thumb_func
 Func_02003180:
 	overlay_veneer Map_CenterOnFollowedPointFar
-	.global Import_MapCopyCellPictureIndicesRect
+	.global Map_CopyCellPictureIndicesRect
 	.thumb_func
-Import_MapCopyCellPictureIndicesRect:
+Map_CopyCellPictureIndicesRect:
 	overlay_veneer Map_CopyCellPictureIndicesRectFar
-	.global Func_02003190
+	.global Map_CopyCellAttributeRect
 	.thumb_func
-Func_02003190:
+Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
@@ -62,9 +62,9 @@ FieldMessage_Show:
 	.thumb_func
 Func_020031a8:
 	overlay_veneer Func_080ad208
-	.global FieldEvent_Wait
+	.global Event_Wait
 	.thumb_func
-FieldEvent_Wait:
+Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
 	.global Import_EventStart
 	.thumb_func
@@ -122,21 +122,21 @@ Actor_SetPositionAndReset:
 	.thumb_func
 Actor_WaitForMoveById:
 	overlay_veneer Actor_WaitForMoveByIdFar
-	.global Func_02003228
+	.global Actor_SetHorizontalPositionWithTerrain
 	.thumb_func
-Func_02003228:
+Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
-	.global Func_02003230
+	.global Actor_SetHorizontalPositionAndAngleWithTerrain
 	.thumb_func
-Func_02003230:
+Actor_SetHorizontalPositionAndAngleWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionAndAngleWithTerrainFar
 	.global Import_ActorPlaceAtActor
 	.thumb_func
 Import_ActorPlaceAtActor:
 	overlay_veneer Actor_MoveToObjectFar
-	.global Import_ActorSetAnimation
+	.global Actor_SetModeById
 	.thumb_func
-Import_ActorSetAnimation:
+Actor_SetModeById:
 	overlay_veneer Actor_SetModeByIdFar
 	.global Motion_SetModeAndWaitAnimation
 	.thumb_func
@@ -170,45 +170,45 @@ Actor_TurnToFaceEachOther:
 	.thumb_func
 Actor_SetPartAttribute:
 	overlay_veneer Actor_SetPartAttributeFar
-	.global Import_EventSetMessageId
+	.global Event_SetMessageId
 	.thumb_func
-Import_EventSetMessageId:
+Event_SetMessageId:
 	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
 	overlay_veneer FieldMessage_ShowAtActorFar
-	.global Func_02003298
+	.global Event_ShowMessageThenWait
 	.thumb_func
-Func_02003298:
+Event_ShowMessageThenWait:
 	overlay_veneer Func_080c8198
-	.global Import_EventShowMessageAndWait
+	.global Event_ShowMessageAndWait
 	.thumb_func
-Import_EventShowMessageAndWait:
+Event_ShowMessageAndWait:
 	overlay_veneer Event_ShowMessageAndWaitFar
-	.global Import_EventAskYesNoWithActorAnimation
+	.global Event_AskYesNoAndShowResponse
 	.thumb_func
-Import_EventAskYesNoWithActorAnimation:
+Event_AskYesNoAndShowResponse:
 	overlay_veneer Func_080c81a8
 	.global Actor_ArmCallback
 	.thumb_func
 Actor_ArmCallback:
 	overlay_veneer Actor_ArmCallbackFar
-	.global Func_020032b8
+	.global Battle_ShowPairedUnitWorkAndWait
 	.thumb_func
-Func_020032b8:
+Battle_ShowPairedUnitWorkAndWait:
 	overlay_veneer Battle_ShowPairedUnitWorkAndWaitFar
-	.global Import_ActorShowEmote
+	.global Func_080d47b4
 	.thumb_func
-Import_ActorShowEmote:
+Func_080d47b4:
 	overlay_veneer Func_080c8210
-	.global Import_ActorSetAttachedEffect
+	.global Func_080d489c
 	.thumb_func
-Import_ActorSetAttachedEffect:
+Func_080d489c:
 	overlay_veneer Func_080c8218
-	.global Import_CameraSetSpeed
+	.global Camera_SetSpeedParameters
 	.thumb_func
-Import_CameraSetSpeed:
+Camera_SetSpeedParameters:
 	overlay_veneer Camera_SetSpeedParametersFar
 	.global Camera_MoveWithinMapBounds
 	.thumb_func
@@ -218,13 +218,13 @@ Camera_MoveWithinMapBounds:
 	.thumb_func
 Func_020032e0:
 	overlay_veneer Func_080c8240
-	.global Func_020032e8
+	.global Import_EventSetExitRequest
 	.thumb_func
-Func_020032e8:
+Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_020032f0
+	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func
-Func_020032f0:
+BattleEffect_ApplyColorToTargetBuffer:
 	overlay_veneer BattleEffect_ApplyColorToTargetBufferFar
 	.global Event_StartScreenTransition
 	.thumb_func
@@ -238,9 +238,9 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_02003310
+	.global Event_ResolvePendingActions
 	.thumb_func
-Func_02003310:
+Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
 	.global Actor_WatchAndSetScript
 	.thumb_func
@@ -250,7 +250,7 @@ Actor_WatchAndSetScript:
 	.thumb_func
 Func_02003320:
 	overlay_veneer Func_080c8930
-	.global Import_SoundPlay
+	.global Sound_Play
 	.thumb_func
-Import_SoundPlay:
+Sound_Play:
 	overlay_veneer Sound_PlayFar

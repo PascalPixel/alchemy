@@ -4,6 +4,7 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
+#include "event_inline.h"
 
 extern char SceneId_Ov662Room1;
 extern char SceneId_Ov662Room2;
@@ -27,8 +28,6 @@ extern const u8 gData_02001d28[];
 extern const u8 gData_02001ddc[];
 extern const u8 gData_02001e78[];
 
-s32 Task_Add(void (*func)(void), s32 priority);
-void FieldEvent_Wait(s32 frames);
 s32 Func_020001d4(struct YampiDesertCaveRect *rect);
 void Func_02000458(struct YampiDesertCaveRect rect);
 void Func_02000898(void);
@@ -36,16 +35,9 @@ void Func_020008fc(void);
 s32 Func_02000978(u16 *list);
 void Func_0200099c(void);
 void Func_02000bc0(const u8 *a, s32 b, s32 c);
-void Func_02001848(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_020018d8(s32 scene, s32 entrance);
 void Func_02001920(s32 a, s32 b, s32 c);
 void Func_02001958(void);
-
-static inline void YampiDesertCave_Call1848(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                            s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001848(a, b, c, d, e, f);
-}
 
 static inline void YampiDesertCave_Call1920(s32 a, s32 b, s32 c) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */

@@ -1,6 +1,6 @@
 #include "local.h"
 #include "version.h"
-#include "call.h"
+#include "event_inline.h"
 
 #if !TLA_PATCH_1
 #define CATACOMBS_SCREEN_EFFECT 513
@@ -34,27 +34,27 @@ s32 Func_02000ecc(void) {
     Func_0200126c(gMainRoutineWork.currentOwner);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room3) {
     if (GameFlag_Test(0x200))
-      Call6(Func_02001164, 6, 23, 1, 1, 8, 23);
+      MapGrid_CopyCellAttributes(6, 23, 1, 1, 8, 23);
     if (GameFlag_Test(513))
-      Call6(Func_02001164, 0, 4, 1, 1, 8, 15);
+      MapGrid_CopyCellAttributes(0, 4, 1, 1, 8, 15);
     if (GameFlag_Test(514))
-      Call6(Func_02001164, 0, 4, 1, 1, 9, 0x10);
+      MapGrid_CopyCellAttributes(0, 4, 1, 1, 9, 0x10);
     if (GameFlag_Test(515))
-      Call6(Func_02001164, 0, 4, 1, 1, 8, 17);
+      MapGrid_CopyCellAttributes(0, 4, 1, 1, 8, 17);
     if (GameFlag_Test(516))
-      Call6(Func_02001164, 0, 4, 1, 1, 6, 17);
+      MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 17);
     if (GameFlag_Test(517))
-      Call6(Func_02001164, 0, 4, 1, 1, 5, 0x10);
+      MapGrid_CopyCellAttributes(0, 4, 1, 1, 5, 0x10);
     if (GameFlag_Test(518))
-      Call6(Func_02001164, 0, 4, 1, 1, 6, 15);
+      MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 15);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room5 &&
       GameFlag_Test(0x200))
-    Call6(Func_02001164, 15, 18, 1, 1, 17, 18);
+    MapGrid_CopyCellAttributes(15, 18, 1, 1, 17, 18);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room4 &&
       GameFlag_Test(0x9ce) && !GameFlag_Test(0xf93) && !GameFlag_Test(265)) {
     statue = Actor_GetById(0x40);
-    Call3(Func_020011cc, 0x40, 0xa80000, 0x980000);
+    Actor_SetPosition(0x40, 0xa80000, 0x980000);
     statue->motionFlags = 6;
     statue->terrainHeight += 0x100000;
   }

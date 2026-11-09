@@ -1,12 +1,12 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "event_inline.h"
 
 struct SparkWork {
   u8 unk0000[0x1d9c];
   s16 resource;
 };
 
-void Task_RemoveFar(void (*func)(void));
 void Resource_ResetEntry(s32 entry);
 void HeapSlot_Release(s32 slot);
 void Func_02001538(void);

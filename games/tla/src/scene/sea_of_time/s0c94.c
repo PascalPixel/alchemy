@@ -3,23 +3,18 @@
 /// every 10 frames, then hands the rest of the event to Func_02000c50's task.
 #include "iwram_call.h"
 #include "system/io_reg.h"
-#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 #include "types.h"
+#include "event_inline.h"
 
 extern s32 gFrameCount;
 extern s32 gData_020022cc;
 extern s32 gData_020022c8;
 void Func_02000c50(void);
 void Func_02001fac(void);
-void Func_02002044(s32 skip);
-void GameFlag_SetBit(s32 flag);
-void Func_02002054(s32 sound);
-void wait(s32 frames);
-s32 Task_Add(void (*func)(void), s32 priority);
 s32 Func_02001fb4(void);
 
 s32 Func_02000c94(void) {
@@ -29,9 +24,9 @@ s32 Func_02000c94(void) {
   s32 frame;
 
   Func_02001fac();
-  Func_02002044(0);
+  Event_ResolvePendingActions(0);
   GameFlag_SetBit(0x200);
-  Func_02002054(0x22d);
+  Sound_Play(0x22d);
   do {
     wait(10);
     changed = 0;

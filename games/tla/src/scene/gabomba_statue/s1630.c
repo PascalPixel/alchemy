@@ -4,30 +4,17 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
   s16 exit;
 };
 
-struct Actor *Actor_GetById(s32 id);
 void Func_020056b4(struct Actor *object);
-void Func_0200580c(s32 value);
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
-void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void Func_0200565c(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_02005664(struct Actor *object);
-void Func_02005854(s32 sound);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_020057c4(s32 exit);
-
-static __inline__ void Actor_Place(struct Actor *object, s32 x, s32 y, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_0200565c(object, x, y, z);
-}
 
 /// Jumps down the hole.
 void Func_02001630(void) {
@@ -44,7 +31,7 @@ void Func_02001630(void) {
   work = Ram_HeapSlots->eventWork;
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   Func_020056b4(leader);
-  Func_0200580c(0);
+  Event_ResolvePendingActions(0);
   leader->motionFlags = 0;
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 472, 144);
@@ -52,11 +39,11 @@ void Func_02001630(void) {
   Actor_RefreshSelectorById(gMainRoutineWork.currentOwner);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 13);
-  Actor_Place(leader, PIXELS(472), 0, PIXELS(156));
-  Func_02005664(leader);
+  FieldActor_SetMoveTarget(leader, PIXELS(472), 0, PIXELS(156));
+  Script_WaitForEventTimeout(leader);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 10);
-  Func_02005854(123);
+  Sound_Play(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_020057c4(work->exit);
+  Import_EventSetExitRequest(work->exit);
 }

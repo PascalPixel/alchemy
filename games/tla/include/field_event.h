@@ -40,20 +40,10 @@ struct FieldActor {
 #define ACTOR_NO_TARGET ((s32)0x80000000)
 
 void Task_Wait(s32 frames);
-void GameFlag_Set(s32 flag);
 void Event_Wait(s32 frames);
 void Event_Start(void);
 void Event_End(void);
-struct FieldActor *Actor_Get(s32 actor);
-void Actor_SetAnimation(s32 actor, s32 animation);
 struct FieldActor *Actor_Create(s32 type, s32 x, s32 y, s32 z);
-void Actor_SetScript(struct FieldActor *object, const void *script);
-void Actor_SetPalette(struct FieldActor *object, s32 palette);
-void Actor_SetSpriteFlags(struct FieldActor *actor, s32 flags);
-void Map_CopyCellsTo(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
-                     s32 height);
-void Map_CopyCellAttributes(s32 srcX, s32 srcY, s32 width, s32 height,
-                            s32 destX, s32 destY);
 void Sound_PlayFar(s32 cue);
 
 void Import_EventStart(void);

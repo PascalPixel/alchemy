@@ -1,5 +1,6 @@
 #include "contigo.h"
 #include "task.h"
+#include "event_inline.h"
 
 extern u16 gData_02006000;
 extern u16 gData_02006008;
@@ -8,8 +9,6 @@ extern u16 *gData_02006010;
 extern u16 gData_0200601c;
 extern u16 gData_02006020;
 
-s32 Task_Add(void (*func)(void), s32 priority);
-void Task_RemoveFar(void (*func)(void));
 s32 Func_020001d4(s16 *list);
 void Func_020001f8(void);
 

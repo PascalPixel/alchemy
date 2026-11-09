@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
-#include "call.h"
+#include "event_inline.h"
 
 struct Spark {
   u8 unk00[0x18];
@@ -36,18 +36,15 @@ struct SparkWork {
   s16 vramEntry;
 };
 
-struct Actor *Actor_GetById(s32 id);
 void *HeapSlot_AllocFar(s32 slot, s32 size);
 void *Resource_GetTableEntry(s32 id);
 extern char ResourceId_ColouredOrbs;
 void Func_020027b8(void *resource, void *destination);
 s32 Resource_FindFreeEntry(void);
-s32 VramCache_Load(s32 entry, s32 size, void *data);
 void Func_020029e0(struct SparkSprite *sprite, s32 width, s32 height,
                    s32 attributes, s32 tile);
 s32 Func_020029f0(struct Actor *object);
 s32 Func_020029f8(struct Actor *object);
-void Task_Add(void (*func)(void), s32 priority);
 void Func_02001538(void);
 
 void Func_02001718(const s32 *from, const s32 *to) {
@@ -67,7 +64,7 @@ void Func_02001718(const s32 *from, const s32 *to) {
   work->to[2] = to[2];
   Func_020027b8(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs), work);
   entry = Resource_FindFreeEntry();
-  tile = Value3((s32 (*)())VramCache_Load, entry, 0x400, (s32)work);
+  tile = Vram_Load(entry, 0x400, work);
   work->tile = tile;
   work->vramEntry = entry;
   i = 0;
@@ -93,5 +90,5 @@ void Func_02001718(const s32 *from, const s32 *to) {
   }
   /* FAKEMATCH(wrapper): the task through Value2; as a direct call, 8 of 145
    * instructions differ in tla-en. */
-  Value2((s32 (*)())Task_Add, (s32)Func_02001538, 0x480);
+  Task_AddFrame(Func_02001538, 0x480);
 }

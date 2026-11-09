@@ -1,5 +1,6 @@
 #include "../../../../games/tla/src/scene/caverns/caverns.h"
 #include "actor.h"
+#include "event_inline.h"
 
 struct CurrentUnit {
   u8 unk00[0x14];
@@ -12,7 +13,6 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_020010cc(s32 x, s32 z, s32 layer, s32 height);
 s32 Func_020003f0(u32 layer, s32 x, s32 y, s32 value);
 void Func_0200053c(s32 offset);
-void Vector_AddPolarOffsetFar(s32 distance, s32 angle, s32 *position);
 
 void Func_020006a8(void) {
   s32 position[3];
@@ -30,7 +30,8 @@ void Func_020006a8(void) {
     if (current->unk1c != 147)
       Func_0200053c(1);
   } else {
-    leader = (struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner);
+    leader = (struct Actor *)((struct FieldActor *)Actor_GetById(
+        gMainRoutineWork.currentOwner));
     angle = (leader->angle + 0x2000) & 0xc000;
     position[0] = leader->x;
     position[1] = leader->y;
@@ -39,7 +40,7 @@ void Func_020006a8(void) {
     if (*ids == 0xffff)
       goto search_done;
   search:
-    object = (struct Actor *)Actor_GetById(*ids);
+    object = (struct Actor *)((struct FieldActor *)Actor_GetById(*ids));
     if (position[0] >> 20 == object->x >> 20 &&
         position[1] / 0x10000 == object->y / 0x10000 &&
         position[2] >> 20 == object->z >> 20)

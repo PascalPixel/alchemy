@@ -54,21 +54,21 @@ Import_ActorCreate:
 	.thumb_func
 Func_0200108c:
 	overlay_veneer Actor_Destroy
-	.global Func_02001094
+	.global Map_CopyCellPictureIndicesRect
 	.thumb_func
-Func_02001094:
+Map_CopyCellPictureIndicesRect:
 	overlay_veneer Map_CopyCellPictureIndicesRectFar
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
 	overlay_veneer Map_GetTerrainHeightFar
-	.global Func_020010a4
+	.global GetMapCellCollision
 	.thumb_func
-Func_020010a4:
+GetMapCellCollision:
 	overlay_veneer GetMapCellCollisionFar
-	.global Func_020010ac
+	.global Map_CopyCellAttributeRect
 	.thumb_func
-Func_020010ac:
+Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.global Func_020010b4
 	.thumb_func
@@ -86,9 +86,9 @@ Animation_SetStateFlags:
 	.thumb_func
 Func_020010cc:
 	overlay_veneer Func_08020360
-	.global FieldEvent_Wait
+	.global Event_Wait
 	.thumb_func
-FieldEvent_Wait:
+Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
 	.global Func_020010dc
 	.thumb_func
@@ -114,9 +114,9 @@ Actor_OffsetPositionAndResetMotion:
 	.thumb_func
 Actor_WaitForMoveById:
 	overlay_veneer Actor_WaitForMoveByIdFar
-	.global Func_0200110c
+	.global Actor_SetHorizontalPositionWithTerrain
 	.thumb_func
-Func_0200110c:
+Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -134,13 +134,13 @@ Actor_ArmCallback:
 	.thumb_func
 Camera_FollowActor:
 	overlay_veneer Camera_FollowActorFar
-	.global Func_02001134
+	.global Import_EventSetExitRequest
 	.thumb_func
-Func_02001134:
+Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_0200113c
+	.global Event_ResolvePendingActions
 	.thumb_func
-Func_0200113c:
+Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
 	.global Actor_CommitPositionAndActivate
 	.thumb_func
@@ -158,7 +158,7 @@ Func_02001154:
 	.thumb_func
 Func_0200115c:
 	overlay_veneer Func_080c8738
-	.global Func_02001164
+	.global Sound_Play
 	.thumb_func
-Func_02001164:
+Sound_Play:
 	overlay_veneer Sound_PlayFar

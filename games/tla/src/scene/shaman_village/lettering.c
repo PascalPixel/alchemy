@@ -4,6 +4,7 @@
 #include "dma.h"
 #include "io_reg.h"
 #include "edition.h"
+#include "event_inline.h"
 
 // The European editions' lettering sheet has one more palette row.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||                      \
@@ -25,13 +26,6 @@ struct LetteringSheet {
   u8 palettes[LETTERING_PALETTE_ROWS][32];
   u8 graphics[8][1024];
 };
-
-static inline s32 Vram_Load(s32 block, s32 size, const void *data) {
-  /* FAKEMATCH(wrapper): forwarded as the Broken Seal's scene layer forwards it,
-   * so the size is built after the tile address; as a direct call, 2 of 57
-   * instructions differ in tla-en. */
-  return VramCache_Load(block, size, data);
-}
 
 /// Decodes the lettering sheet, sends one graphic's palette to OBJ palette 15
 /// and loads its tiles into a VRAM block of its own. Graphic 8 has a palette of

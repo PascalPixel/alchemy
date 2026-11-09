@@ -7,6 +7,7 @@
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 #include "field_sprite.h"
+#include "event_inline.h"
 
 struct JupiterLighthouseRoom6Object {
   u8 unk00[6];
@@ -61,75 +62,18 @@ struct JupiterLighthouseRoom6EventWork {
 extern s32 gFrameCount;
 
 u32 Random16Far(void);
-void wait(s32 frames);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void FieldEvent_Wait(s32 frames);
-struct JupiterLighthouseRoom6Object *Actor_GetById(s32 id);
-void Actor_SetPositionAndResetMotion(struct JupiterLighthouseRoom6Object *object, s32 x,
-                                      s32 y, s32 z);
-void Actor_SetPartAttribute(struct JupiterLighthouseRoom6Object *object, s32 value);
-void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
-void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
-void Actor_SetSpritePriority(s32 actor, s32 variant);
 
-void Func_02001b04(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02001b44(void);
 void Func_02001b4c(void);
-void Func_02001bc4(s32 skip);
-void Func_02001bec(s32 cue);
-void Func_02001b6c(s32 actor, s32 x, s32 z);
-struct JupiterLighthouseRoom6Object *Func_02001acc(s32 type, s32 x, s32 y, s32 z);
 void Func_02001ab4(struct JupiterLighthouseRoom6Object *object, s32 mode);
 void Actor_SetSingleChildFlags(struct JupiterLighthouseRoom6Object *object,
                                         u32 value);
 void Animation_SetStateFlags(struct JupiterLighthouseRoom6Object *object, s32 flags);
-void Actor_SetModeById(s32 actor, s32 mode);
-void Task_Add(void (*func)(void), s32 priority);
-void Task_RemoveFar(void (*func)(void));
 void Field_DispatchTypeHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_02001ba4(s32 countdown);
 
-void Func_02001ae4(struct JupiterLighthouseRoom6Object *object, s32 x, s32 y, s32 z);
-void Func_02001aec(struct JupiterLighthouseRoom6Object *object);
 void Event_StartScreenTransition(void);
-
-static inline void JupiterLighthouseRoom6_BlendStart(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                           s32 f) {
-  /* FAKEMATCH: the blend start reaches the main image through one inline layer. */
-  Func_02001b04(a, b, c, d, e, f);
-}
-
-static inline s32 JupiterLighthouseRoom6_FlagCheck(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
-
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-struct JupiterLighthouseRoom6Object *Func_02001b9c(void);
-void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void Actor_SetMovementTypeById(s32 actor, const void *callback);
-void Actor_SetMovementTypeAndWaitById(s32 actor, const void *callback);
-s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
-s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
-void Func_02001b84(s32 actor, s32 emote);
-void Actor_Jump(s32 actor, s32 speed, s32 frames);
-void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
-void Actor_WaitForMoveById(s32 actor);
-void Event_PrepareObjectAndApplyValue(s32 actor, s32 value);
-
-void Func_02001b0c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-
-static inline void JupiterLighthouseRoom6_MapPlay(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                        s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001b0c(a, b, c, d, e, f);
-}
 
 // ---- this overlay
 

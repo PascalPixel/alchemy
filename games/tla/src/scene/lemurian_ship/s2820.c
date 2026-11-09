@@ -1,4 +1,5 @@
 #include "lemurian_ship.h"
+#include "event_inline.h"
 #include "scene_tables.h"
 
 void Func_02001474(void);
@@ -9,36 +10,40 @@ void Func_02001a9c(void);
 void Func_02002820(void) {
   struct LemurianShipObject *object;
 
-  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+  ((struct LemurianShipObject *)Actor_GetById(gMainRoutineWork.currentOwner))
+      ->priorityFlags |= 32;
   LEMURIAN_SHIP_TASK_ADD(Func_02001474, 0x480);
   if (GameFlag_Test(0x93f)) {
-    object = Actor_GetById(64);
+    object = ((struct LemurianShipObject *)Actor_GetById(64));
     object->motionFlags = 0;
-    Actor_SetPositionAndResetMotion(Actor_GetById(64), PIXELS(136), PIXELS(-32),
-                                    PIXELS(392));
+    Actor_SetPositionAndResetMotion(
+        ((struct LemurianShipObject *)Actor_GetById(64)), PIXELS(136),
+        PIXELS(-32), PIXELS(392));
     object->height = 0xfff00000;
     Actor_SetSpritePriority(64, 3);
-    Actor_SetPartAttribute(Actor_GetById(64), 1);
-    Func_02002cd0(8, 0, 0);
-    Func_02002cd0(9, 0, 0);
-    Func_02002cd0(10, 0, 0);
-    Func_02002cd0(11, 0, 0);
-    Func_02002cd0(12, 0, 0);
-    Func_02002cd0(13, 0, 0);
+    Actor_SetPartAttribute(((struct LemurianShipObject *)Actor_GetById(64)), 1);
+    Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
     wait(1);
   }
   if (GameFlag_Test(0x9e4)) {
-    struct LemurianShipObject *marker = Actor_GetById(64);
+    struct LemurianShipObject *marker =
+        ((struct LemurianShipObject *)Actor_GetById(64));
 
-    Func_02002cd0(64, marker->x, marker->z + 0xfed00000);
-    Actor_SetPartAttribute(Actor_GetById(64), 0);
-    LemurianShip_BlendStart(6, 0, 1, 2, 6, 4);
-    Func_02002d68(0x80000, 0x100000, 0xf80000, 0x1000000);
+    Actor_SetHorizontalPositionWithTerrain(64, marker->x,
+                                           marker->z + 0xfed00000);
+    Actor_SetPartAttribute(((struct LemurianShipObject *)Actor_GetById(64)), 0);
+    MapGrid_CopyCellAttributes(6, 0, 1, 2, 6, 4);
+    Func_080d45b8(0x80000, 0x100000, 0xf80000, 0x1000000);
     Camera_FollowActor(gMainRoutineWork.currentOwner, 0);
     Func_02002c10();
     wait(1);
   }
-  if (LemurianShip_FlagCheck(0x22f)) {
+  if (Event_GetFlag(0x22f)) {
     Func_02001a9c();
     GameFlag_ClearBit(0x22f);
   }

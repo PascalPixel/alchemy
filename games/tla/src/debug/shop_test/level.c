@@ -2,11 +2,11 @@
 #include "main_routine_work.h"
 #include "owner_state.h"
 #include "input.h"
+#include "event_inline.h"
 
 extern const u8 MsgRaiseEveryoneS[];
 extern const u8 gData_02000e80[];
 
-void wait(s32 frames);
 void *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void Text_DrawMessage(const u8 *message, void *window, s32 x, s32 y);
 void Text_DrawStringAtOffset(const void *text, void *window, s32 x, s32 y);
@@ -15,7 +15,6 @@ void Text_DrawNumberInWindow(s32 value, s32 a, void *window, s32 x, s32 y);
 void WindowSprite_RedrawSavedRect(void *window);
 void Window_Close(void *window, s32 mode);
 void Func_02000704(s32 levels);
-void Func_02000e78(s32 cue);
 
 /// The level-raising window: shows the current member's name and level,
 /// raises every active member 5 levels on Start or Select and 1 on A, and
@@ -42,7 +41,7 @@ void Func_02000748(void) {
     wait(1);
     if ((gInput.pressed & 8) || (gInput.pressed & 4)) {
       Func_02000704(5);
-      Func_02000e78(93);
+      Sound_Play(93);
       redraw = 1;
     }
     /* FAKEMATCH: the memory barrier keeps GCSE's PRE from reusing the Start and
@@ -51,12 +50,12 @@ void Func_02000748(void) {
     __asm__ volatile("" : : : "memory");
     if (gInput.pressed & 1) {
       Func_02000704(1);
-      Func_02000e78(91);
+      Sound_Play(91);
       redraw = 1;
     }
     if (gInput.pressed & 2)
       break;
   }
-  Func_02000e78(113);
+  Sound_Play(113);
   Window_Close(window, 2);
 }

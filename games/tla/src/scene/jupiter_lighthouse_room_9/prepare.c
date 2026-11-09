@@ -4,10 +4,10 @@
 #include "main_routine_work.h"
 #include "event_work.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 extern s32 gData_02002618;
 
-struct Actor *Actor_GetById(s32 id);
 void Func_0200130c(s32 kind, s32 x, s32 z, s32 a, s32 b);
 void Func_02001a28(s32 dx, s32 dz, s32 effect);
 void Func_02000460(s32 mode);

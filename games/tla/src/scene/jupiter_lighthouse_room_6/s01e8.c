@@ -24,7 +24,7 @@ s32 Func_020001e8(void) {
 
   work->screenEffect = 0x204;
   if (GameFlag_Test(0xa19)) {
-    Func_02001b6c(12, PIXELS(72), PIXELS(600));
+    Actor_SetHorizontalPositionWithTerrain(12, PIXELS(72), PIXELS(600));
     Func_020000b4(0);
   }
   if (GameFlag_Test(0x200))

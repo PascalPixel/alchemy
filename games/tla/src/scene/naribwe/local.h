@@ -6,6 +6,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 extern const struct SceneEntrance gSceneEntrances[];
 extern const u32 gSceneExits[];
@@ -18,35 +19,17 @@ struct WarpEntry {
   u16 z;
 };
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
-struct Actor *Actor_GetById(s32 id);
-void Actor_SetModeById(u32 id, s32 mode);
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void FieldMessage_ShowAtActor(s32 id, s32 flags);
-s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_02000534(const void *script, s32 x, s32 z);
 void Func_0200054c(void);
 void Func_02000554(void);
-void Func_02000574(s32 id, s32 x, s32 z);
-void Func_02000584(s32 message);
-void Func_02000594(s32 id, s32 a);
 void Func_0200059c(s32 id);
-void Func_020005a4(s32 a);
-void Func_020005bc(s32 id, s32 x, s32 z);
-void Func_020005c4(s32 a);
 void Func_020005cc(void);
 void Func_020005d4(s32 a, s32 b, s32 c, s32 d);
-s32 Func_020005dc(void);
 void Func_020005e4(s32 a, s32 b);
 void Func_020005ec(s32 a);
-void Func_020005f4(s32 a);
 void Func_02000464(void);
 
 extern const u8 gData_020006cc[];
@@ -65,20 +48,5 @@ extern u8 MsgNaribwe21;
 extern u8 MsgNaribwe43;
 extern u8 MsgNaribwe23;
 extern u8 MsgNaribwe45;
-
-static __inline__ s32 GameFlag_Test_(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
-
-static __inline__ void Func_02000574_(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02000574(id, x, z);
-}
-
-static __inline__ void Func_020005bc_(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_020005bc(id, x, z);
-}
 
 #endif

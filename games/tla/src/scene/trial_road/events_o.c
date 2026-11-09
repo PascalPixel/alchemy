@@ -1,4 +1,5 @@
 #include "trial_road.h"
+#include "event_inline.h"
 
 void Func_020011c0(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 2;
@@ -9,6 +10,6 @@ void Func_020011dc(void) {
 }
 
 void Func_020011f8(void) {
-  Map_CopyCells(12, 21, 1, 1, 19, 21);
+  MapGrid_CopyCellAttributes(12, 21, 1, 1, 19, 21);
   GameFlag_SetBit(0x374);
 }

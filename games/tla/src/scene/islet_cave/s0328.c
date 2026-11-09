@@ -2,27 +2,18 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 struct IsletCaveEventWork {
   u8 unk000[0x1ac];
   s32 value1ac;
 };
 
-struct Actor *Actor_GetById(s32 id);
-void GameFlag_SetBit(s32 flag);
-void wait(s32 frames);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02000158(void);
 void Func_02000178(void);
-void Func_020012ec(s32 a, s32 b);
-void Func_020012fc(s32 a);
 void Func_0200132c(void);
-
-static __inline__ void Func_020012ec_(s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_020012ec(a, b);
-}
 
 void Func_02000328(void) {
   struct IsletCaveEventWork *work = Ram_HeapSlots->eventWork;
@@ -30,8 +21,8 @@ void Func_02000328(void) {
 
 
   saved = work->value1ac;
-  Func_020012ec(0x202108, 1);
-  Func_020012ec_(0x10000, 2);
+  BattleEffect_ApplyColorToTargetBuffer(0x202108, 1);
+  PaletteFade_ApplyTarget(0x10000, 2);
   ((struct IsletCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -39,8 +30,8 @@ void Func_02000328(void) {
   Func_0200132c();
   wait(40);
   Func_02000158();
-  Func_020012ec(0x10000, 1);
-  Func_020012fc(16);
+  BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
+  BattleEffect_StartBufferInterpolation(16);
   wait(16);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;

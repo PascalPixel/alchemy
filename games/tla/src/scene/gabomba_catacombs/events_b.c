@@ -7,13 +7,14 @@ void Func_0200094c(void) {
   struct Actor *steam;
 
   if ((gFrameCount & 7) == 0) {
-    steam = Func_0200115c(14, leader->x, leader->y + 0x60000, leader->z);
+    steam = ((struct Actor *)Import_ActorCreate(
+        14, leader->x, leader->y + 0x60000, leader->z));
     if (steam) {
       Actor_SetSingleChildFlags(steam, 0);
       Func_0200114c(steam, 1);
       Func_02001154(steam, gData_0200128c);
     }
-    Func_02001284(0x26f);
+    Sound_Play(0x26f);
   }
   Func_020008a0(leader, 0xd999);
 }

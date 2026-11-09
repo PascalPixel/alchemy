@@ -1,30 +1,27 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 extern char SceneId_Ov671Room4;
 extern s32 gData_02005af0;
-s32 Func_0200584c(void);
-struct Actor *Actor_GetById(u32 id);
 struct Actor *Func_020005b4(struct Actor *object, s32 kind);
 void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 speed);
 void Func_02000a20(struct Actor *object);
-void Func_020057c4(s32 exit);
 
 // Moves the controlled character with the moving platforms (Func_020005b4 finds
 // the one under it, 360 forward and 361 back): it stays within 2 pixels of the
 // platform's x and is carried along z by the speed in gData_02005af0; past 20
 // pixels from the platform it steps off (Func_020006ac). In Ov671Room4 at cell
 // (28, 15) or (30, 15) it ends the ride (Func_02000a20) and runs exit 5 or 6
-// (Func_020057c4).
+// (Import_EventSetExitRequest).
 void Func_02000ad4(void) {
   struct Actor *actor, *platform;
   s32 speed, d, sign, x, z, platformZ, offset;
 
   if (gData_02005af0 == 0)
     return;
-  actor = Actor_GetById(Func_0200584c());
+  actor = Actor_GetById(Party_GetLeaderActor());
   speed = gData_02005af0 << 15;
   platform = Func_020005b4(actor, 360);
   if (platform != 0) {
@@ -75,9 +72,9 @@ void Func_02000ad4(void) {
     return;
   if (x == 28) {
     Func_02000a20(actor);
-    Func_020057c4(5);
+    Import_EventSetExitRequest(5);
   } else if (x == 30) {
     Func_02000a20(actor);
-    Func_020057c4(6);
+    Import_EventSetExitRequest(6);
   }
 }

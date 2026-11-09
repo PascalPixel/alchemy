@@ -1,13 +1,12 @@
 #include "types.h"
 #include "main_routine_work.h"
-#include "call.h"
+#include "event_inline.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-void Camera_MoveWithinMapBounds();
 void Event_StartScreenTransition();
 void Event_WaitTransitionFrames();
 void Func_0200253c();
@@ -22,16 +21,7 @@ void Func_020053ac();
 void Func_0200564c();
 void Func_020056b4();
 void Func_020056bc();
-void Func_02005714();
-void Func_0200580c();
-void GameFlag_ClearBit();
-s32 GameFlag_Test();
 void Actor_SetSingleChildFlags();
-s32 Actor_GetById();
-void Actor_SetModeById();
-void Actor_SetPartAttribute();
-void Task_Add();
-void wait();
 void Func_02001ac0();
 void Func_02002074();
 extern u8 gData_02005d8c[];
@@ -41,30 +31,30 @@ void Func_02003634(void) {
       t30, t42, t43, t46, t50, t53, t59, t60, p_r3, v_r5;
   const u8 *table;
 
-  t1 = Actor_GetById(10);
+  t1 = ((s32)Actor_GetById(10));
   Actor_SetPartAttribute(t1, 3);
   Task_Add((s32)Func_02002074, 0x480);
-  t4 = Actor_GetById(11);
+  t4 = ((s32)Actor_GetById(11));
   Actor_SetPartAttribute(t4, 11);
-  t6 = Actor_GetById(12);
+  t6 = ((s32)Actor_GetById(12));
   Actor_SetPartAttribute(t6, 11);
-  t8 = Actor_GetById(13);
+  t8 = ((s32)Actor_GetById(13));
   Actor_SetPartAttribute(t8, 10);
-  t10 = Actor_GetById(14);
+  t10 = ((s32)Actor_GetById(14));
   Actor_SetPartAttribute(t10, 10);
-  t12 = Actor_GetById(16);
+  t12 = ((s32)Actor_GetById(16));
   Actor_SetSingleChildFlags(t12, 0);
-  t14 = Actor_GetById(17);
+  t14 = ((s32)Actor_GetById(17));
   Actor_SetSingleChildFlags(t14, 0);
-  t16 = Actor_GetById(18);
+  t16 = ((s32)Actor_GetById(18));
   Actor_SetSingleChildFlags(t16, 0);
-  t18 = Actor_GetById(19);
+  t18 = ((s32)Actor_GetById(19));
   Actor_SetSingleChildFlags(t18, 0);
-  t20 = Actor_GetById(20);
+  t20 = ((s32)Actor_GetById(20));
   Actor_SetSingleChildFlags(t20, 0);
-  t22 = Actor_GetById(21);
+  t22 = ((s32)Actor_GetById(21));
   Actor_SetSingleChildFlags(t22, 0);
-  t24 = Actor_GetById(22);
+  t24 = ((s32)Actor_GetById(22));
   Actor_SetSingleChildFlags(t24, 0);
   t26 = GameFlag_Test(0x8fb);
   if (t26 == 0)
@@ -78,17 +68,16 @@ L_0200b6f2:
   t29 = GameFlag_Test(0x8fc);
   if (t29 == 0)
     goto L_0200b762;
-  t30 = Actor_GetById(gMainRoutineWork.currentOwner);
+  t30 = ((s32)Actor_GetById(gMainRoutineWork.currentOwner));
   v_r5 = t30;
-  Func_02005714(11, 0, 0);
-  Func_02005714(12, 0, 0);
-  Func_02005714(13, 0, 0);
-  Func_02005714(14, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
   Func_020053ac();
   Func_020056b4();
-  Func_0200580c(0);
-  Call4((void (*)())Camera_MoveWithinMapBounds, FIELD_AT(v_r5, s32, 8), -1,
-        FIELD_AT(v_r5, s32, 16), 0);
+  Event_ResolvePendingActions(0);
+  FieldCamera_MoveTo(FIELD_AT(v_r5, s32, 8), -1, FIELD_AT(v_r5, s32, 16), 0);
   Func_0200564c();
   wait(1);
   Func_020056bc();
@@ -128,11 +117,11 @@ L_0200b7dc:
     goto L_0200b7e4;
   Func_02002a64();
 L_0200b7e4:
-  t53 = Value1((s32 (*)())GameFlag_Test, 0x8fc);
+  t53 = Event_GetFlag(0x8fc);
   if (t53 == 0)
     goto L_0200b856;
   Func_020056b4();
-  Func_0200580c(0);
+  Event_ResolvePendingActions(0);
   FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x201;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

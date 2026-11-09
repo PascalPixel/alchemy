@@ -1,26 +1,18 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 s32 Func_020059c0(void);
 struct Actor *Func_02005a28(s32 *position, s32 mode);
 void Func_02005880(void);
 void Func_02005888(void);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void Func_02005a68(s32 sound);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void Task_Wait(s32 frames);
 void Func_020057c8(struct Actor *object, s32 mode);
 void Func_0200480c(struct Actor *object, struct Actor *to);
 void ObjectVisual_CopyAttributes(s32 id, s32 from);
 void Func_02004a94(s32 value);
-void Func_02005838(s32 a, s32 b, s32 c);
 void Func_02004d6c(s32 offset, s32 layer);
 void Func_02004bc8(void);
-
-static __inline__ void Shake(s32 a, s32 b, s32 c) { Func_02005838(a, b, c); }
 
 void Func_02004828(const u16 *table) {
   struct Actor *leader;
@@ -53,20 +45,20 @@ void Func_02004828(const u16 *table) {
     if (!GameFlag_Test(flag)) {
       Func_020057c8(partner, 1);
       Func_0200480c(partner, trap);
-      Task_Wait(1);
-      Func_02005a68(125);
+      wait(1);
+      Sound_Play(125);
       Actor_SetPartAttribute(Actor_GetById(8), 7);
-      Task_Wait(2);
+      wait(2);
       Func_020057c8(partner, 0);
       ObjectVisual_CopyAttributes(id, 9);
       Actor_SetPartAttribute(Actor_GetById(8), 0);
-      Task_Wait(2);
+      wait(2);
       Actor_SetPartAttribute(Actor_GetById(8), 7);
-      Task_Wait(4);
+      wait(4);
       Actor_SetPartAttribute(Actor_GetById(8), 0);
       Func_02004a94(0);
       Func_0200480c(trap, partner);
-      Task_Wait(1);
+      wait(1);
       GameFlag_SetBit(flag);
     } else {
       second = flag + 1;
@@ -74,27 +66,27 @@ void Func_02004828(const u16 *table) {
         Func_020057c8(partner, 0);
         Func_0200480c(partner, trap);
         motion = &leader->motionFlags;
-        Task_Wait(1);
+        wait(1);
         *motion = 0;
-        Func_02005a68(185);
-        Shake(0x10000, 0x40000, 0x10000);
+        Sound_Play(185);
+        MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Func_02004a94(0);
-        Task_Wait(8);
+        wait(8);
         Func_020057c8(partner, 2);
         Func_02004d6c(-2, trap->terrainId);
         Func_02004a94(1);
-        Task_Wait(16);
+        wait(16);
         Func_02004d6c(-2, trap->terrainId);
-        Task_Wait(4);
-        Shake(-1, -1, 0xe666);
-        Task_Wait(8);
+        wait(4);
+        MapGrid_SetShake(-1, -1, 0xe666);
+        wait(8);
         *motion = 3;
-        Task_Wait(5);
+        wait(5);
         Actor_SetPositionAndResetMotion(partner, 0, 0, 0);
-        Task_Wait(2);
-        Func_02005a68(188);
+        wait(2);
+        Sound_Play(188);
         Func_02004bc8();
-        Task_Wait(20);
+        wait(20);
         GameFlag_SetBit(second);
       }
     }

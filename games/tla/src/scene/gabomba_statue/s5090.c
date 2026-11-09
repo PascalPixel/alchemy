@@ -5,9 +5,9 @@
 /// to the middle digit and to each digit where timer + 60 and timer differ.
 
 #include "types.h"
-#include "call.h"
 #include "iwram_call.h"
 #include "graphics/vram_tab.h"
+#include "event_inline.h"
 
 struct Effect {
   u32 x : 16;
@@ -39,7 +39,6 @@ struct ClockWork {
 
 extern u8 gData_020023c4[];
 void Func_02004f84(s32 value, u8 *digits);
-void VramCache_Load(s32 block, s32 size, void *pixels);
 s32 AffineMatrix_BuildForEffect(void *matrix);
 s32 Func_02005020(s32 value);
 void Func_020055ec(void *oam, s32 priority);

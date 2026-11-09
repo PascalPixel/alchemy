@@ -3,15 +3,13 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
+#include "event_inline.h"
 
 struct EventWork1ac {
   u8 unk000[0x1ac];
   s32 screenEffect;
 };
 
-s32 GameFlag_Test(s32 flag);
-struct Actor *Actor_GetById(s32 id);
-s32 Func_0200584c(void);
 void Func_02001c10(void);
 void Func_020020f0(s32 value);
 void Func_020034ec(void);
@@ -20,12 +18,6 @@ void Func_0200359c(void);
 void Func_020035f0(void);
 void Func_02003634(void);
 void Func_02003868(void);
-void Func_02005674(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-
-static __inline__ void Map_CopyBlock(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02005674(a, b, c, d, e, f);
-}
 
 /// Prepares the current room.
 s32 Func_02003398(void) {
@@ -41,12 +33,12 @@ s32 Func_02003398(void) {
       Func_020020f0(1);
     Func_02001c10();
   }
-  Actor_GetById(Func_0200584c())->priorityFlags |= 0x20;
+  Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 0x20;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov671Room1) {
     Func_020034ec();
   } else if (scene == (s32)&SceneId_Ov671Room2) {
-    Map_CopyBlock(15, 68, 8, 3, 15, 4);
+    MapGrid_CopyCellAttributes(15, 68, 8, 3, 15, 4);
     Func_020034f4();
   } else if (scene == (s32)&SceneId_Ov671Room3) {
     Func_0200359c();

@@ -8,6 +8,7 @@
 #include "uiwindow.h"
 #include "oam.h"
 #include "fixed_math.h"
+#include "event_inline.h"
 
 /// A selection cursor, as the shops keep theirs (shop/cursor_set.c).
 struct ShopCursor {
@@ -61,7 +62,6 @@ void WindowSprite_RedrawSavedRect(struct Window *window);
 s32 Resource_FindFreeEntry(void);
 void Party_RemoveActiveOwner(s32 id);
 void Party_AddActiveOwner(s32 id);
-void wait(s32 frames);
 void Func_02000a70(s32 cell, u16 *text);
 void Func_02000db4(struct Window *window, s32 x, s32 y, s32 width, s32 height,
                    s32 palette);
@@ -73,7 +73,6 @@ s32 Func_020022b0(s32 mode);
 void Func_020022f8(s32 mode);
 void Func_02002300(void);
 void Func_02002308(void);
-void Func_02002310(s32 hue, s32 brightness);
 void Func_02002320(void *vram);
 void Func_02002328(s32 glyph, void *cell);
 void *Func_02002330(struct Window *window, void *glyph, s32 x, s32 y);
@@ -82,7 +81,6 @@ void Func_020023e8(void);
 void Func_020023f0(struct ShopCursor *cursor);
 void Func_020023f8(struct ShopCursor *cursor, s32 x, s32 y, s32 kind);
 void Func_02002400(struct ShopCursor *cursor, s32 x, s32 y);
-void Func_02002408(s32 cue);
 
 /// Gives a cursor its sprite.
 static inline void Cursor_Attach(struct ShopCursor *cursor,
@@ -191,7 +189,7 @@ s32 Func_02000e44(void) {
   s32 height;
 
   Func_02002208();
-  Func_02002310(gMainRoutineWork.paletteGlow[0],
+  Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
                 gMainRoutineWork.paletteGlow[1]);
   palette = (u16 *)0x050001c0;
   Dma_Set((const void *)0x050001e0, palette, (DMA_ENABLE | DMA_32BIT) << 16 | 8,
@@ -200,7 +198,7 @@ s32 Func_02000e44(void) {
   mode = Func_020022b0(1);
   if (mode == -1)
     return -1;
-  Func_02002408(71);
+  Sound_Play(71);
   cursor = 0;
   column = 0;
   row = 0;
@@ -267,7 +265,7 @@ s32 Func_02000e44(void) {
     Func_02000db4(window, drawColumn, drawRow, drawMode, height, 15);
     if (state == 0) {
       if (gInput.repeat & 16) {
-        Func_02002408(111);
+        Sound_Play(111);
         {
           s32 next = column + 1;
 
@@ -278,20 +276,20 @@ s32 Func_02000e44(void) {
         }
       }
       if (gInput.repeat & 32) {
-        Func_02002408(111);
+        Sound_Play(111);
         if (row == 2)
           column = (column + SIDE_COLUMN - 1) % SIDE_COLUMN;
         else
           column = (column + SIDE_COLUMN) % (SIDE_COLUMN + 1);
       }
       if (gInput.repeat & 128) {
-        Func_02002408(111);
+        Sound_Play(111);
         row = (row + 1) % 4;
         if (column == SIDE_COLUMN && row == 2)
           row = 3;
       }
       if (gInput.repeat & 64) {
-        Func_02002408(111);
+        Sound_Play(111);
         row = (row + 3) % 4;
         if (column != SIDE_COLUMN)
           goto not_side;
@@ -380,7 +378,7 @@ s32 Func_02000e44(void) {
           s32 code = gData_0200265e[column + row * SIDE_COLUMN];
 
           if (code <= 63) {
-            Func_02002408(112);
+            Sound_Play(112);
             Data_0200274a[cursor] = code;
             // The native calls the remainder and reads nothing back.
             __modsi3(cursor, 10);
@@ -413,12 +411,12 @@ s32 Func_02000e44(void) {
               DECODED_PASSWORD[action - 1] == (u16)crc % 256) {
             Text_DrawCharacterAtOffset(MSGNO(MsgFieldPasswordAccepted), box, 0,
                                        0);
-            Func_02002408(112);
+            Sound_Play(112);
           wait_accepted:
             wait(1);
             if (!(gInput.pressed & 1))
               goto wait_accepted;
-            Func_02002408(112);
+            Sound_Play(112);
             Func_02002350();
             party = &gMainRoutineWork;
             party->currentOwner = 0;
@@ -434,15 +432,15 @@ s32 Func_02000e44(void) {
             Window_Close(box, 2);
             Window_Close(grid, 2);
             Window_Close(window, 2);
-            Func_02002310(party->paletteGlow[0], party->paletteGlow[1]);
-            Func_02002408(74);
+            Func_0803f9c0(party->paletteGlow[0], party->paletteGlow[1]);
+            Sound_Play(74);
             wait(6);
             Func_020022f8(0);
             Func_020023e8();
             Iwram_CopyWords(Data_02012f94 + 0xac, gGameFlagBytes, 0xf40);
             return 0;
           }
-          Func_02002408(113);
+          Sound_Play(113);
           Text_DrawCharacterAtOffset(MSGNO(MsgFieldInvalidPassword), box, 0, 0);
         wait_rejected:
           wait(1);
@@ -453,23 +451,23 @@ s32 Func_02000e44(void) {
           DRAW_TITLE(window)
         } else if (gInput.repeat & 512 || action == 2) {
           if (cursor > 0) {
-            Func_02002408(111);
+            Sound_Play(111);
             cursor--;
           }
         } else if (gInput.repeat & 256 || action == 1) {
           if (cursor < length - 1) {
-            Func_02002408(111);
+            Sound_Play(111);
             cursor++;
           }
         } else if (gInput.pressed & 2) {
           if (cursor > 0) {
-            Func_02002408(111);
+            Sound_Play(111);
             cursor--;
           } else {
-            Func_02002408(113);
+            Sound_Play(113);
             Window_Close(grid, 2);
             Window_Close(window, 2);
-            Func_02002408(74);
+            Sound_Play(74);
             return -1;
           }
         }

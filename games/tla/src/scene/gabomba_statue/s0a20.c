@@ -3,14 +3,10 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 void Func_020056b4(struct Actor *object);
-void Func_0200580c(s32 value);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void Func_02005794(s32 id, s32 value);
-void FieldEvent_Wait(s32 frames);
-void wait(s32 frames);
-void Func_02005854(s32 sound);
 void Event_FinishScreenTransition(void);
 
 void Func_02000a20(struct Actor *object) {
@@ -19,18 +15,18 @@ void Func_02000a20(struct Actor *object) {
   struct MainRoutineWork *party;
 
   Func_020056b4(object);
-  Func_0200580c(0);
+  Event_ResolvePendingActions(0);
   Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->y = PIXELS(6);
   object->z = 0xf741cf;
   object->angle = FACING_SOUTH;
   party = &gMainRoutineWork;
-  Func_02005794(party->currentOwner, 258);
+  Func_080d489c(party->currentOwner, 258);
   Actor_SetModeById(party->currentOwner, 27);
-  FieldEvent_Wait(30);
+  Event_Wait(30);
   Actor_SetModeById(party->currentOwner, 28);
-  FieldEvent_Wait(10);
+  Event_Wait(10);
   for (i = 0; i <= 19; i++) {
     /* FAKEMATCH: one variable set twice in the loop keeps both constants inside
      * it, as the native loads them on every pass; as plain constants loop.c
@@ -42,7 +38,7 @@ void Func_02000a20(struct Actor *object) {
     object->y += delta;
     wait(1);
     if (i == 10)
-      Func_02005854(204);
+      Sound_Play(204);
     if (i == 20) {
       *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 521;
       Event_FinishScreenTransition();

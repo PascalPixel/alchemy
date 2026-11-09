@@ -1,14 +1,5 @@
 #include "types.h"
-#include "call.h"
-
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void FieldEvent_Wait(s32 frames);
-void FieldMessage_ShowAtActor(s32 id, s32 flags);
-s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
-void Func_02001c74(s32 message);
-void Func_02001c8c(s32 a, s32 b);
-s32 Func_02001d34(void);
+#include "event_inline.h"
 
 extern u8 MsgAlhafra03[];
 extern u8 MsgAlhafra04[];
@@ -18,49 +9,49 @@ extern u8 MsgAlhafra33[];
 void Func_0200013c(s32 actor) {
   s32 msg;
 
-  if (Value1((s32 (*)())GameFlag_Test, 0x8b0) == 0) {
+  if (Event_GetFlag(0x8b0) == 0) {
     msg = (s32)&MsgAlhafra03;
-    Func_02001c74(msg);
+    Event_SetMessageId(msg);
     FieldMessage_ShowAtActor(actor, 0);
-    if (Event_AskYesNoWithActorAnimation(Func_02001d34(), 0) == 0) {
-      Func_02001c74(msg + 1);
+    if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
+      Event_SetMessageId(msg + 1);
       GameFlag_SetBit(0x8b0);
     } else {
-      Func_02001c74(msg + 2);
+      Event_SetMessageId(msg + 2);
     }
-    Func_02001c8c(actor, 0);
+    Event_ShowMessageAndWait(actor, 0);
   } else {
-    Func_02001c74((s32)&MsgAlhafra04);
-    Func_02001c8c(actor, 0);
+    Event_SetMessageId((s32)&MsgAlhafra04);
+    Event_ShowMessageAndWait(actor, 0);
   }
 }
 
 void Func_020001a4(s32 actor) {
   s32 msg = (s32)&MsgAlhafra16;
 
-  Func_02001c74(msg);
+  Event_SetMessageId(msg);
   FieldMessage_ShowAtActor(actor, 0);
-  if (Event_AskYesNoWithActorAnimation(Func_02001d34(), 0) == 0) {
-    FieldEvent_Wait(10);
-    Func_02001c74(msg + 1);
+  if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
+    Event_Wait(10);
+    Event_SetMessageId(msg + 1);
   } else {
-    FieldEvent_Wait(20);
-    Func_02001c74(msg + 2);
+    Event_Wait(20);
+    Event_SetMessageId(msg + 2);
   }
-  Func_02001c8c(actor, 0);
+  Event_ShowMessageAndWait(actor, 0);
 }
 
 void Func_020001f0(s32 actor) {
   s32 msg = (s32)&MsgAlhafra33;
 
-  Func_02001c74(msg);
+  Event_SetMessageId(msg);
   FieldMessage_ShowAtActor(actor, 0);
-  if (Event_AskYesNoWithActorAnimation(Func_02001d34(), 0) == 0) {
-    FieldEvent_Wait(10);
-    Func_02001c74(msg + 1);
+  if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
+    Event_Wait(10);
+    Event_SetMessageId(msg + 1);
   } else {
-    FieldEvent_Wait(20);
-    Func_02001c74(msg + 2);
+    Event_Wait(20);
+    Event_SetMessageId(msg + 2);
   }
-  Func_02001c8c(actor, 0);
+  Event_ShowMessageAndWait(actor, 0);
 }

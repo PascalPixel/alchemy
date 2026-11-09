@@ -2,6 +2,7 @@
 #include "call.h"
 #include "actor.h"
 #include "iwram_call.h"
+#include "event_inline.h"
 
 struct PuzzleCell {
   u8 piece;
@@ -19,9 +20,7 @@ struct SceneState {
 
 extern struct SceneState gSceneState;
 extern const u8 gData_02006f38[], gData_02006ec0[];
-s32 Math_Sine(s32 angle);
 s32 Math_Cosine(s32 angle);
-void Func_02005854(s32 sound);
 void Func_02005634(struct Actor *object, const u8 *script);
 
 void Func_02004938(struct Actor *ball, s32 step) {
@@ -49,7 +48,7 @@ void Func_02004938(struct Actor *ball, s32 step) {
   if (goal == 2) {
     heading = row = col = 0;
     if (((u8 *)ball)[99] == 1) {
-      Func_02005854(204);
+      Sound_Play(204);
       Func_02005634(ball, gData_02006f38);
       ((u8 *)ball)[99] = goal;
     }
@@ -161,7 +160,7 @@ void Func_02004938(struct Actor *ball, s32 step) {
       if (x >> 20 == 24 && z >> 20 == 14) {
         ((u8 *)ball)[99] = 7;
       } else {
-        Func_02005854(204);
+        Sound_Play(204);
         Func_02005634(ball, gData_02006f38);
         ((u8 *)ball)[99] = 2;
       }
@@ -173,7 +172,7 @@ void Func_02004938(struct Actor *ball, s32 step) {
   default:
     heading = row = col = 0;
     if (((u8 *)ball)[99] == 1) {
-      Func_02005854(132);
+      Sound_Play(132);
       Func_02005634(ball, gData_02006ec0);
       ((u8 *)ball)[99] = 2;
     }

@@ -53,15 +53,15 @@ void Func_02001c6c(void) {
   mover->unk08 = 120;
   mover->unk0a = 150;
   if (!GameFlag_Test(0x363))
-    Func_020058e0(16, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
   else
     Func_0200078c(16);
   if (!GameFlag_Test(0x364))
-    Func_020058e0(17, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
   else
     Func_0200078c(17);
   if (!GameFlag_Test(0x365))
-    Func_020058e0(18, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
   else
     Func_0200078c(18);
   ((struct MapWorkByte23 *)Ram_HeapSlots->mapWork)->bits2 = 1;

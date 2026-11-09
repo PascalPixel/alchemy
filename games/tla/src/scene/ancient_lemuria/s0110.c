@@ -3,18 +3,11 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "flag_call.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Actor_Jump(s32 id, s32 a, s32 b);
-void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
-void Actor_ArmCallback(s32 id, s32 a, s32 b);
-void Actor_CommitPositionAndActivate(s32 id, s32 dx, s32 dz);
-void FieldEvent_Wait(s32 frames);
-void wait(s32 frames);
 void Func_02000048(void);
-void Func_0200195c(s32 id, s32 x, s32 z);
 void Func_02001a24(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY, s32 layer);
 
@@ -26,17 +19,11 @@ static inline void MapCopy(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
   Func_02001a24(srcX, srcY, width, height, destX, destY, layer);
 }
 
-static inline void PlaceActor(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): the inline orders the placement's arguments; as a
-   * direct call, 2 of 273 instructions differ in tla-en. */
-  Func_0200195c(id, x, z);
-}
-
 /// One hop of object 12 by (dx, dz).
 static inline void Hop(s32 dx, s32 dz) {
   Actor_Jump(12, 5, 0);
   Actor_CommitPositionAndActivate(12, dx, dz);
-  FieldEvent_Wait(3);
+  Event_Wait(3);
 }
 
 /// Once (flag 0x96c): object 12 spins for 30 frames while it grows from half
@@ -53,7 +40,7 @@ void Func_02000110(void) {
   Flag_Set(0x96c);
   Flag_Set(0x96e);
   Actor_SetSingleChildFlags(Actor_GetById(12), 0);
-  PlaceActor(12, 176 << 15, 216 << 16);
+  Actor_SetPosition(12, 176 << 15, 216 << 16);
   Actor_Jump(12, 9, 0);
   object->scaleY = 0x8000;
   object->scaleX = 0x8000;
@@ -82,12 +69,12 @@ void Func_02000110(void) {
   object->scaleX = 0x10000;
   Actor_SetSingleChildFlags(Actor_GetById(12), 1);
   Actor_SetSpritePriority(12, 1);
-  FieldEvent_Wait(8);
+  Event_Wait(8);
   Actor_Jump(12, 9, 0);
   Actor_SetPositionAndReset(12, 120, 200);
   Actor_GetById(12)->priorityFlags |= 1;
   Actor_SetPositionAndReset(12, 136, 200);
-  FieldEvent_Wait(3);
+  Event_Wait(3);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
   Hop(0, -16);
@@ -104,7 +91,7 @@ void Func_02000110(void) {
   Hop(16, 0);
   Hop(16, 0);
   Hop(16, 0);
-  Func_0200195c(12, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
   Actor_GetById(13)->update = Func_02000048;
   Actor_GetById(13)->action = 0;
 }

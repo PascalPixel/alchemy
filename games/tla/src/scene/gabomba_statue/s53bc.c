@@ -1,10 +1,9 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void GameFlag_SetBit(s32 flag);
 void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer);
 
 struct EffectWork {

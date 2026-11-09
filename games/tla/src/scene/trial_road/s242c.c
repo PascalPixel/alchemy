@@ -1,4 +1,5 @@
 #include "trial_road.h"
+#include "event_inline.h"
 #include "iwram_call.h"
 #include "map.h"
 #include "event_work.h"
@@ -52,12 +53,6 @@ struct TrialRoadDeal {
   layer->terrainIds = gMapShapeGrid + x;                                       \
   words[0] = Iwram_MulQ16(*viewX, words[4]) + words[2];                        \
   words[1] = Iwram_MulQ16(*viewZ, words[5]) + words[3]
-
-static __inline__ void Func_020058e0_(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): Func_020058e0_ forwarded inline; as direct calls to
-   * Func_020058e0, 30 of 879 instructions differ in tla-en. */
-  Func_020058e0(id, x, z);
-}
 
 s32 Func_0200242c(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -177,7 +172,7 @@ s32 Func_0200242c(void) {
         i = 0;
       hideUnused55:
         if (gData_02005bcc[i] != value)
-          Func_020058e0(i + 64, 0, 0);
+          Actor_SetHorizontalPositionWithTerrain(i + 64, 0, 0);
         i++;
         if (i <= 9)
           goto hideUnused55;
@@ -213,10 +208,10 @@ s32 Func_0200242c(void) {
           Func_02005828(24, 33, 10, 10, 24, 34);
           Func_02005828(58, 33, 10, 10, 58, 34);
           Func_02005828(92, 33, 10, 10, 92, 34);
-          Func_020058e0_(9, 160 << 14, 152 << 16);
-          Func_020058e0_(10, 192 << 13, 152 << 16);
-          Func_020058e0_(11, 184 << 16, 152 << 16);
-          Func_020058e0_(12, 200 << 16, 152 << 16);
+          Actor_SetPosition(9, 160 << 14, 152 << 16);
+          Actor_SetPosition(10, 192 << 13, 152 << 16);
+          Actor_SetPosition(11, 184 << 16, 152 << 16);
+          Actor_SetPosition(12, 200 << 16, 152 << 16);
         }
         Actor_SetPartAttribute(Actor_GetById(9), 3);
         Actor_SetPartAttribute(Actor_GetById(10), 3);
@@ -233,7 +228,7 @@ s32 Func_0200242c(void) {
         i = 0;
       hideUnused:
         if (gData_02005bd6[i] != value)
-          Func_020058e0(i + 64, 0, 0);
+          Actor_SetHorizontalPositionWithTerrain(i + 64, 0, 0);
         i++;
         if (i <= 9)
           goto hideUnused;
@@ -276,9 +271,9 @@ s32 Func_0200242c(void) {
   } else if (scene == (s32)&SceneId_Ov697Room2 && GameFlag_Test(2559) &&
              !GameFlag_Test(901)) {
     if (gTrialRoadState->mirrored != 0)
-      Map_Stamp(26, 79, 1, 2, 13, 79);
+      MapGrid_CopyCellsLayered(26, 79, 1, 2, 13, 79);
     else
-      Map_Stamp(26, 79, 1, 2, 18, 79);
+      MapGrid_CopyCellsLayered(26, 79, 1, 2, 18, 79);
   }
   return 0;
 }

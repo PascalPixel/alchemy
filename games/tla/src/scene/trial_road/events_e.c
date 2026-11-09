@@ -1,4 +1,5 @@
 #include "trial_road.h"
+#include "event_inline.h"
 
 void Func_02000768(void) {
   OBJECT_BYTE(Actor_GetById(17), 98) = 0;
@@ -11,7 +12,7 @@ void Func_0200078c(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
   if (object != NULL)
-    Map_Stamp(14, 27, 1, 1, object->x >> 20, object->z >> 20);
+    MapGrid_CopyCellsLayered(14, 27, 1, 1, object->x >> 20, object->z >> 20);
 }
 
 void Func_020007b4(void) {

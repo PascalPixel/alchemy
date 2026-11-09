@@ -1,7 +1,7 @@
 #include "types.h"
 #include "main_routine_work.h"
-#include "call.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -9,39 +9,26 @@
    } *)(base))                                                                 \
        ->v)
 
-s32 Event_AskYesNoWithActorAnimation();
 void Event_FinishScreenTransition();
 void Event_WaitTransitionFrames();
-void FieldEvent_Wait();
 void Func_02001730();
 void Func_0200182c();
 void Func_02001ec0();
-void Func_02002520();
-void Func_02002530();
-void Func_02002538();
-void Func_02002548();
-void Func_02002578();
-void Func_020025a0();
-void Actor_ArmCallback();
-void Actor_Jump();
-s32 Actor_GetById();
-void FieldMessage_ShowAtActor();
-void wait();
 extern u8 MsgIfYouWant[];
 
 void Func_02001d14(void) {
   s32 t1, t33, v5, v6, v7;
 
-  t1 = Actor_GetById(8);
+  t1 = ((s32)Actor_GetById(8));
   v7 = t1;
-  Call3(Actor_ArmCallback, 8, FACING_WEST, 0);
-  Call3(Actor_ArmCallback, 10, FACING_WEST, 0);
-  Call3(Actor_ArmCallback, 9, 0xb000, 0);
-  Call3(Actor_ArmCallback, 11, 0xb000, 0);
-  Func_02002548(gMainRoutineWork.currentOwner, 0);
-  Func_02002520((s32)&MsgIfYouWant);
+  Actor_FaceDirection(8, FACING_WEST, 0);
+  Actor_FaceDirection(10, FACING_WEST, 0);
+  Actor_FaceDirection(9, 0xb000, 0);
+  Actor_FaceDirection(11, 0xb000, 0);
+  Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, 0);
+  Event_SetMessageId((s32)&MsgIfYouWant);
   v5 = v7;
-  Func_02002538(8, 0);
+  Event_ShowMessageAndWait(8, 0);
   v5 = (v5 + 102);
   Func_0200182c();
   FIELD_AT(v5, s16, 0) = 1;
@@ -53,7 +40,7 @@ L_02009d78:
     goto L_02009d78;
   FIELD_AT(v5, s16, 0) = 2;
   wait(1);
-  Func_02002538(8, 0);
+  Event_ShowMessageAndWait(8, 0);
   FIELD_AT(v5, s16, 0) = 1;
 L_02009da0:
   wait(1);
@@ -61,7 +48,7 @@ L_02009da0:
     goto L_02009da0;
   FIELD_AT(v5, s16, 0) = 2;
   wait(1);
-  Func_02002538(8, 0);
+  Event_ShowMessageAndWait(8, 0);
   FIELD_AT(v5, s16, 0) = 1;
 L_02009dc4:
   wait(1);
@@ -69,7 +56,7 @@ L_02009dc4:
     goto L_02009dc4;
   FIELD_AT(v5, s16, 0) = 2;
   wait(1);
-  Func_02002538(8, 0);
+  Event_ShowMessageAndWait(8, 0);
   FIELD_AT(v5, s16, 0) = 1;
 L_02009de8:
   wait(1);
@@ -77,7 +64,7 @@ L_02009de8:
     goto L_02009de8;
   FIELD_AT(v5, s16, 0) = 3;
   wait(1);
-  Func_02002538(8, 0);
+  Event_ShowMessageAndWait(8, 0);
   Func_02001730();
   Actor_Jump(8, 4, 0);
   Actor_Jump(10, 4, 0);
@@ -86,22 +73,22 @@ L_02009de8:
   v5 = (s32)&gMainRoutineWork;
   v5 = (v5 + 0x214);
   Actor_ArmCallback(FIELD_AT(v5, s32, 0), FACING_SOUTH, 0);
-  Call3(Actor_ArmCallback, 8, 0xd000, 0);
-  Call3(Actor_ArmCallback, 10, 0xd000, 0);
-  Call3(Actor_ArmCallback, 9, 0xd000, 0);
-  Call2(Func_02002548, 11, 0xd000);
-  Value2((s32 (*)())FieldMessage_ShowAtActor, 8, 0);
+  Actor_FaceDirection(8, 0xd000, 0);
+  Actor_FaceDirection(10, 0xd000, 0);
+  Actor_FaceDirection(9, 0xd000, 0);
+  Actor_FaceDirectionAndWait(11, 0xd000);
+  Event_OpenMessage(8, 0);
   t33 = Event_AskYesNoWithActorAnimation(FIELD_AT(v5, s32, 0), 0);
   if (t33 != 0)
     goto L_02009e90;
   Func_02001ec0();
   goto L_02009eb4;
 L_02009e90:
-  Func_02002530(8, 0, 20);
+  Event_ShowMessageThenWait(8, 0, 20);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_020025a0(123);
-  FieldEvent_Wait(40);
-  Func_02002578(15);
+  Sound_Play(123);
+  Event_Wait(40);
+  Import_EventSetExitRequest(15);
 L_02009eb4:
 }

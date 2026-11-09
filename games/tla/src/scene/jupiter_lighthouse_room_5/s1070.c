@@ -4,19 +4,16 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "field_sprite.h"
+#include "event_inline.h"
 
 extern const s32 gData_020033e0[];
 extern s32 gData_02003400;
 
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
-void Func_02002a40(s32 sound);
 s32 Func_02002a20(s32 x, s32 z, s32 layer);
 void Func_020029b0(s32 *position);
 s32 Func_02001044(s32 *from, s32 *to);
-s32 GameFlag_Test(s32 flag);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 void Func_02002820(struct Actor *object, const s32 *script);
 
 void Func_02001070(struct Actor *self) {
@@ -33,7 +30,7 @@ void Func_02001070(struct Actor *self) {
   }
   Actor_SetAnimationSpeed(self, 16);
   if ((++*(u16 *)&self->action & 31) == 31)
-    Func_02002a40(231);
+    Sound_Play(231);
   {
     s8 *to = self->animation;
     s8 *from = leader->animation;
@@ -93,7 +90,7 @@ stop:
     *((u8 *)self + 0x63) = zero;
     self->update = zero;
     Func_02002820(self, gData_020033e0);
-    Func_02002a40(228);
+    Sound_Play(228);
     gData_02003400 = zero;
   }
 }

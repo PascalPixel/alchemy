@@ -8,6 +8,7 @@
 #include "input.h"
 #include "call.h"
 #include "text/msg_ids.h"
+#include "event_inline.h"
 
 struct IzumoRuinsEventWork {
   u8 unk000[0x154];
@@ -53,12 +54,7 @@ extern u8 gMapCellBuffer[];
 extern char SceneId_Ov67FRoom1;
 extern char SceneId_Ov67FRoom2;
 
-void wait(s32 frames);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
 void FieldEvent_Wait(s32 frames);
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 
@@ -68,12 +64,9 @@ s32 Func_02000eac(u32 layer, s32 x, s32 y);
 s32 Func_02000ee8(u32 layer, s32 x, s32 y, s32 value);
 void Func_02000f30(struct Actor *object);
 void Func_02001428(struct Actor *object, s32 value);
-void Func_02001450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02001460(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02001488(void);
 void Func_02001490(void);
 void Func_020014c0(s32 id);
-void Func_020014e8(s32 value);
 void Func_02001500(const void *data);
 void Func_02001518(const void *data);
 void Func_02001520(void);
@@ -95,13 +88,10 @@ void Func_0200100c(u16 *list);
 void Func_02000974(s32 mode);
 void Func_02000aa8(void);
 void Func_02001448(void);
-void Func_02001470(s32 a, s32 b, s32 c);
 s32 Func_02001508(struct Actor *object);
 void Func_02001510(const void *data);
 void Func_020014e0(s32 value);
 void Func_020014f8(const void *data);
-void Func_02001538(s32 cue);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Camera_FollowActor(s32 id, s32 flag);
 
 #endif

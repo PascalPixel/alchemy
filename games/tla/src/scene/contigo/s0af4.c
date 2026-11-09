@@ -1,5 +1,6 @@
 #include "scene_tables.h"
 #include "contigo.h"
+#include "event_inline.h"
 
 struct ContigoGlow {
   u8 unk00[0x0c];
@@ -11,20 +12,13 @@ struct ContigoGlow {
   u8 motionFlags;
 };
 
-void FieldMessage_Show(s32 message, s32 position);
-void Func_020041cc(s32 color, s32 b);
-void Func_020041d4(s32 color, s32 b);
-void Func_020041dc(s32 frames);
 void Func_02004264(void);
 void Func_0200426c(void);
 void Func_02004274(void);
 void Func_0200427c(struct ContigoObject *object, s32 mode);
-struct ContigoGlow *Func_02003fec(s32 type, s32 x, s32 y, s32 z);
 void Func_02003fdc(struct ContigoGlow *object, s32 mode);
 void Func_02003ff4(struct ContigoGlow *object);
 void Actor_SetSingleChildFlags(struct ContigoGlow *object, u32 value);
-void Task_Add(void (*func)(void), s32 priority);
-void Task_RemoveFar(void (*func)(void));
 void Func_02000a80(void);
 
 /// The glow that grows over actor 17 and sinks away again, then the scene goes
@@ -36,18 +30,18 @@ void Func_02000af4(void) {
   u32 i;
 
   Func_0200406c();
-  Func_02004204(0);
+  Event_ResolvePendingActions(0);
   if (GameFlag_Test(0x9b2))
     FieldMessage_Show((s32)MsgContigo163, 1);
   else
     FieldMessage_Show((s32)MsgContigo64, 1);
   Actor_SetModeById(17, 3);
-  Func_020041d4(0x10000, 0);
-  Func_020041cc(0x204084, 1);
-  Func_020041dc(16);
+  BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
+  BattleEffect_ApplyColorToTargetBuffer(0x204084, 1);
+  BattleEffect_StartBufferInterpolation(16);
   Func_02004264();
-  Func_0200427c(Actor_GetById(17), 2);
-  effect = Func_02003fec(280, x, 0, z);
+  Func_0200427c(((struct ContigoObject *)Actor_GetById(17)), 2);
+  effect = ((struct ContigoGlow *)Import_ActorCreate(280, x, 0, z));
   if (effect != 0) {
     Actor_SetSingleChildFlags(effect, 0);
     Func_02003fdc(effect, 2);
@@ -64,7 +58,7 @@ void Func_02000af4(void) {
       goto grow;
   }
   Task_Add(Func_02000a80, 0x480);
-  FieldEvent_Wait(120);
+  Event_Wait(120);
   Task_RemoveFar(Func_02000a80);
   if (effect != 0) {
     i = 0;
@@ -78,26 +72,26 @@ void Func_02000af4(void) {
       goto shrink;
     Func_02003ff4(effect);
   }
-  Func_0200427c(Actor_GetById(17), 0);
+  Func_0200427c(((struct ContigoObject *)Actor_GetById(17)), 0);
   Func_02004274();
   Func_0200426c();
-  Func_020041cc(0x10000, 1);
-  Func_020041dc(16);
+  BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
+  BattleEffect_StartBufferInterpolation(16);
   if (GameFlag_Test(0x9b2))
-    Func_0200412c((s32)MsgContigo164);
+    Event_SetMessageId((s32)MsgContigo164);
   else
-    Func_0200412c((s32)MsgContigo65);
+    Event_SetMessageId((s32)MsgContigo65);
   Motion_SetVarCbAndRefresh(17, 2);
-  Func_02004144(17, 0);
+  Event_ShowMessageAndWait(17, 0);
   Actor_SetModeById(17, 1);
   Contigo_Jump(14, 259, 0);
-  Contigo_ObjTurn(14, FACING_WEST, 20);
-  Func_02004144(14, 0);
-  Func_0200415c(15, FACING_EAST);
-  Func_02004144(15, 0);
+  Actor_FaceDirection(14, FACING_WEST, 20);
+  Event_ShowMessageAndWait(14, 0);
+  Actor_ArmCallbackAndRefresh(15, FACING_EAST);
+  Event_ShowMessageAndWait(15, 0);
   Actor_SetModeById(14, 3);
   Motion_SetModeAndWaitAnimation(15, 3);
-  Contigo_ObjTurn(15, 0xd000, 0);
-  Contigo_ObjFace(14, 0x3000);
+  Actor_FaceDirection(15, 0xd000, 0);
+  Actor_FaceDirectionAndWait(14, 0x3000);
   Func_02004074();
 }

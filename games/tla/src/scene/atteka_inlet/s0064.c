@@ -1,8 +1,7 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
-
-s32 GameFlag_Test(s32 flag);
+#include "event_inline.h"
 
 extern u8 gData_02001194[];
 extern u8 gData_020011ac[];

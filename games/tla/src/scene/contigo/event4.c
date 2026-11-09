@@ -1,4 +1,5 @@
 #include "contigo.h"
+#include "event_inline.h"
 
 void Func_02001354(void) { Contigo_Tiles(29, 35, 1, 2, 23, 47, 0); }
 
@@ -21,11 +22,11 @@ void Func_02001454(void) { Contigo_Tiles(32, 55, 5, 1, 39, 60, 0); }
 void Func_02001474(void) { Contigo_Tiles(32, 55, 3, 1, 40, 61, 0); }
 
 void Func_02001494(void) {
-  Contigo_CamSet(0, 0x2000000, 0x3700000, 0x4000000);
+  Field_SetCameraBounds(0, 0x2000000, 0x3700000, 0x4000000);
   GameFlag_SetBit(512);
 }
 
 void Func_020014b4(void) {
-  Contigo_CamSet(0, 0x2000000, 0x2000000, 0x4000000);
+  Field_SetCameraBounds(0, 0x2000000, 0x2000000, 0x4000000);
   GameFlag_ClearBit(512);
 }

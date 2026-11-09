@@ -1,14 +1,13 @@
 #include "types.h"
 #include "field_event.h"
+#include "event_inline.h"
 
 extern s16 gData_02002af2;
 extern struct FieldActor *gData_02002af4[];
 extern s16 gData_02002bf6;
 
-struct FieldActor *Actor_GetById(s32 id);
-
 void Func_02001544(s32 id, s32 value) {
-  struct FieldActor *object = Actor_GetById(id);
+  struct FieldActor *object = ((struct FieldActor *)Actor_GetById(id));
 
   if (object != NULL) {
     s16 *count;

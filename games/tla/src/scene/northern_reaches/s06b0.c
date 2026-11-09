@@ -1,6 +1,6 @@
 #include "types.h"
 #include "system/dma.h"
-#include "call.h"
+#include "event_inline.h"
 
 /// The sprite attributes, as The Broken Seal's render_input.h lays them out.
 struct OamData {
@@ -60,14 +60,9 @@ struct Work6a7 {
 
 s32 *Func_020009f0(void *resource, void *to);
 void Func_02000a10(struct Spark6a7 *spark, s32 value);
-void Func_02000a50(s32 a, s32 b, s32 c);
-void Func_02000b10(s32 color, s32 a);
-void Func_02000b18(s32 frames);
 void Func_02000b40(struct Sprite6a7 *sprite, s32 a, s32 b, s32 c, s32 tile);
 void Func_02000b48(struct Sprite6a7 *sprite, struct Particle6a7 *particle);
 void Func_02000b50(struct Particle6a7 *particle, s32 a, s32 b);
-void Func_02000b58(s32 cue);
-void FieldEvent_Wait(s32 frames);
 void *HeapSlot_AllocFar(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 void *Heap_Alloc(s32 size);
@@ -77,8 +72,6 @@ u32 Random16Far(void);
 void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_FindFreeEntry(void);
 s32 Resource_ResetEntry(u32 slot);
-s32 VramCache_Load(u32 slot, u32 size, const void *source);
-void wait(s32 frames);
 extern const u16 Field_Palette685[];
 extern char ResourceId_FieldEffectIceShard;
 extern char ResourceId_FieldEffectExplosion;
@@ -143,18 +136,18 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
           (volatile u32 *)0x40000d4);
   for (frame = 0; frame <= 149; frame++) {
     if ((frame & 31) == 0) {
-      Func_02000b58(145);
+      Sound_Play(145);
     }
     if (frame == 60) {
-      Func_02000b10(0x7fff, 0);
-      Func_02000b18(90);
-      Func_02000b58(141);
+      BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
+      BattleEffect_StartBufferInterpolation(90);
+      Sound_Play(141);
     }
     if (frame == 105) {
       callback();
       flying = 1;
-      Call3((void (*)())Func_02000a50, 0x60000, 0x60000, 0x10000);
-      Func_02000b58(228);
+      MapGrid_SetShake(0x60000, 0x60000, 0x10000);
+      Sound_Play(228);
     }
     if (frame == 130) {
       flying = 1;
@@ -196,8 +189,8 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
   }
   Resource_ResetEntry(sparkEntry);
   Heap_Release(sparks);
-  FieldEvent_Wait(40);
-  Func_02000a50(0, 0, 0);
+  Event_Wait(40);
+  Map_SetScreenShake(0, 0, 0);
   Resource_ResetEntry(entry);
   HeapSlot_Release(220);
 }

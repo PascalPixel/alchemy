@@ -1,5 +1,6 @@
 #include "types.h"
 #include "macros.h"
+#include "event_inline.h"
 
 struct Orbiter {
   u8 unk00[6];
@@ -18,7 +19,6 @@ struct Orbiter {
 };
 
 extern s32 gData_02005af0;
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *position);
 s32 __divsi3(s32 numerator, s32 denominator);
 
 void Func_02000398(struct Orbiter *actor, s32 *x, s32 *z) {

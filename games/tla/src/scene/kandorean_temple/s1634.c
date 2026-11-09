@@ -1,15 +1,12 @@
 #include "local.h"
-#include "call.h"
+#include "event_inline.h"
 
 extern s32 gData_020062a0;
 extern u16 gData_020062a8;
 
-void Func_02005178(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02005388(s32 cue);
 void Func_02000cd8(s32 id, s32 offset, s32 limit);
 void Func_02000cf8(s32 id, s32 offset, s32 limit);
-void Task_RemoveFar(void (*func)(void));
-s32 Math_Sine(s32 angle);
 
 void Func_02001634(void) {
   struct Actor *lift = Actor_GetById(13);
@@ -18,8 +15,7 @@ void Func_02001634(void) {
 
   if (*timer == 300) {
     Func_02005388(162);
-    Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)Actor_GetById(13),
-          PIXELS(440), PIXELS(-20), PIXELS(204));
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(13), PIXELS(440), PIXELS(-20), PIXELS(204));
     Actor_SetPositionAndResetMotion(Actor_GetById(15), PIXELS(440),
                                     PIXELS(-20), PIXELS(200));
     Actor_SetSpritePriority(13, 3);
@@ -36,7 +32,7 @@ void Func_02001634(void) {
     if (*(long *)&lift->y > -0x50000)
       Actor_SetSpritePriority(13, 2);
     if (lift->y >= 0) {
-      Call6((void (*)())Func_02005178, 0, 0, 1, 1, 27, 12);
+      MapGrid_CopyCellAttributes(0, 0, 1, 1, 27, 12);
       *timer = 2000;
     }
   } else if (*timer < 2800) {
@@ -45,10 +41,10 @@ void Func_02001634(void) {
     lift->y += Math_Sine(*phase) >> 1;
     *phase += 0x1000;
     if (*timer == 2280)
-      Call6((void (*)())Func_02005178, 27, 10, 1, 1, 27, 12);
+      MapGrid_CopyCellAttributes(27, 10, 1, 1, 27, 12);
     if (*timer > 2300 && *phase == 0) {
       if (GameFlag_Test(0x208)) {
-        Call6((void (*)())Func_02005178, 21, 0, 1, 1, 27, 12);
+        MapGrid_CopyCellAttributes(21, 0, 1, 1, 27, 12);
         Task_RemoveFar(Func_02001634);
       } else {
         *timer = 2800;
@@ -68,8 +64,8 @@ void Func_02001634(void) {
       s32 **timerRef = &timer;
 
       Func_02005388(245);
-      Func_02005230(13, 0, 0);
-      Func_02005230(15, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
       **timerRef = 0;
     }
   }

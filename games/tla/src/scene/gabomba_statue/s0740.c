@@ -1,10 +1,9 @@
 #include "types.h"
 #include "actor.h"
+#include "event_inline.h"
 
 extern s32 gData_02005af0;
 
-struct Actor *Actor_GetById(s32 id);
-s32 Func_0200584c(void);
 struct Actor *Func_020005b4(struct Actor *origin, s32 id);
 
 void Func_02000740(void) {
@@ -13,7 +12,7 @@ void Func_02000740(void) {
   if (step != 0) {
     s32 turn = step * 1092;
     s32 delta = -turn;
-    struct Actor *leader = Actor_GetById(Func_0200584c());
+    struct Actor *leader = Actor_GetById(Party_GetLeaderActor());
     struct Actor *near = Func_020005b4(leader, 358);
 
     if (near != NULL) {

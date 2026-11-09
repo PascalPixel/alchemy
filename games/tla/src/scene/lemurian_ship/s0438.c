@@ -1,4 +1,5 @@
 #include "lemurian_ship.h"
+#include "event_inline.h"
 
 extern const u8 gData_02002de8[];
 
@@ -11,23 +12,23 @@ void Func_02000438(void) {
     s32 cell;
 
     
-    leader = Actor_GetById(party->currentOwner);
+    leader = ((struct LemurianShipObject *)Actor_GetById(party->currentOwner));
     Func_02002c68();
-    Func_02002da8(0);
-    LemurianShip_CamMove(-1, -1, -1, 0);
+    Event_ResolvePendingActions(0);
+    FieldCamera_MoveTo(-1, -1, -1, 0);
     Actor_SetModeById(party->currentOwner, 2);
     Actor_SetSpeedParameters(party->currentOwner, 0x8000, 0x4000);
     x = leader->x;
     cell = x >> 16;
-    Func_02002c18(leader, ((8 - cell % 16) << 16) + x, leader->y, leader->z);
-    Func_02002c20(leader);
+    Actor_SetMoveTarget(leader, ((8 - cell % 16) << 16) + x, leader->y, leader->z);
+    Script_WaitForEventTimeout(leader);
     leader->facing = 0xc000;
     Actor_SetMovementTypeById(party->currentOwner,
                                             gData_02002de8);
     wait(12);
-    Func_02002de0(123);
+    Sound_Play(123);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
-    Func_02002d70(work->exit);
+    Import_EventSetExitRequest(work->exit);
   }
 }

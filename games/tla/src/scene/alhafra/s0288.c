@@ -7,26 +7,19 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
-s32 Func_02001c74();
-s32 Func_02001c84();
-s32 Actor_ArmCallback();
-s32 FieldEvent_Wait();
-s32 Func_02001ca4();
-s32 Actor_StartRepeatedMotion();
-s32 Func_02001cac();
+#include "event_inline.h"
 extern u8 MsgAlhafra50[];
 
 void Func_02000288(void) {
-  Func_02001c74((s32)MsgAlhafra50);
-  Call3(Func_02001c84, 0x18, 0, 0xa);
+  Event_SetMessageId((s32)MsgAlhafra50);
+  FieldEvent_ShowMessageThenWait(0x18, 0, 0xa);
   Actor_ArmCallback(19, -256, 0);
-  FieldEvent_Wait(10);
-  Func_02001ca4(0x13, 0x107, 0x1e);
-  Call3(Func_02001c84, 0x13, 0, 0xa);
-  Call2(Actor_StartRepeatedMotion, 24, 3);
-  Func_02001cac(0x18, 0x102);
-  FieldEvent_Wait(40);
-  Call3(Actor_ArmCallback, 19, FACING_WEST, 0);
-  Call3(Func_02001c84, 0x18, 0, 0);
+  Event_Wait(10);
+  Func_080d47b4(0x13, 0x107, 0x1e);
+  FieldEvent_ShowMessageThenWait(0x13, 0, 0xa);
+  FieldActor_StartRepeatedMotion(24, 3);
+  Func_080d489c(0x18, 0x102);
+  Event_Wait(40);
+  Actor_FaceDirection(19, FACING_WEST, 0);
+  FieldEvent_ShowMessageThenWait(0x18, 0, 0);
 }

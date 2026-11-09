@@ -2,7 +2,7 @@
 
 void Func_02003524(void) {
   Func_020051c0();
-  Func_02005370(0);
+  Event_ResolvePendingActions(0);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x209;
   Event_FinishScreenTransition();
@@ -11,12 +11,12 @@ void Func_02003524(void) {
 
 void Func_02003564(void) {
   Func_02003524();
-  Func_020052f8(3);
+  Import_EventSetExitRequest(3);
 }
 
 void Func_02003574(void) {
   Func_02003524();
-  Func_020052f8(4);
+  Import_EventSetExitRequest(4);
 }
 
 void Func_02003584(void) {
@@ -26,7 +26,7 @@ void Func_02003584(void) {
   struct MainRoutineWork *party;
 
   Func_020051c0();
-  Func_02005370(0);
+  Event_ResolvePendingActions(0);
   object->motionFlags = 0;
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
@@ -37,14 +37,14 @@ void Func_02003584(void) {
                                     object->z + PIXELS(3));
     wait(1);
   }
-  FieldEvent_Wait(20);
+  Event_Wait(20);
   party = &gMainRoutineWork;
   object->angle = FACING_SOUTH;
-  Func_020052d0(party->currentOwner, 258);
+  Func_080d489c(party->currentOwner, 258);
   Actor_SetModeById(party->currentOwner, 27);
-  FieldEvent_Wait(30);
+  Event_Wait(30);
   Actor_SetModeById(party->currentOwner, 28);
-  FieldEvent_Wait(10);
+  Event_Wait(10);
   Actor_SetSpritePriority(party->currentOwner, 3);
   for (i = 0; i <= 39; i++) {
     {
@@ -61,11 +61,11 @@ void Func_02003584(void) {
     object->y += delta;
     wait(1);
     if (i == 10)
-      Func_020053d8(204);
+      Sound_Play(204);
     if (i == 20) {
       ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
       Event_FinishScreenTransition();
     }
   }
-  Func_020052f8(5);
+  Import_EventSetExitRequest(5);
 }

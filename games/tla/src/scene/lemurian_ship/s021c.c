@@ -1,4 +1,5 @@
 #include "../../../../games/tla/src/scene/lemurian_ship/lemurian_ship.h"
+#include "event_inline.h"
 
 struct LemurianShipWarp {
   u16 exit;
@@ -9,19 +10,6 @@ struct LemurianShipWarp {
 
 extern struct LemurianShipWarp gData_02003904[];
 extern struct LemurianShipWarp gData_0200397c[];
-void Func_02002c28(s32 value, s32 x, s32 z);
-void Actor_OffsetPositionAndResetMotion(s32 actor, s32 a, s32 b);
-void Actor_CenterOnColumn(s32 actor, s32 a, s32 b);
-
-static inline void LemurianShip_ObjOffset(s32 actor, s32 a, s32 b) {
-  /* FAKEMATCH: scene calls reach the main image through one inline layer. */
-  Actor_OffsetPositionAndResetMotion(actor, a, b);
-}
-
-static inline void LemurianShip_ObjCenter(s32 actor, s32 a, s32 b) {
-  /* FAKEMATCH: scene calls reach the main image through one inline layer. */
-  Actor_CenterOnColumn(actor, a, b);
-}
 
 void Func_0200021c(void) {
   struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
@@ -32,11 +20,11 @@ void Func_0200021c(void) {
   u32 i;
 
   Func_02002c68();
-  Func_02002da8(0);
+  Event_ResolvePendingActions(0);
   found = 0;
   i = 8;
 next:
-  object = Actor_GetById(i);
+  object = ((struct LemurianShipObject *)Actor_GetById(i));
   if (object != NULL)
     object->motionFlags = 0;
   i++;
@@ -52,22 +40,22 @@ next2:
   offset += 12;
   if (i < 10)
     goto next2;
-  Func_02002de0(158);
+  Sound_Play(158);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
-  LemurianShip_MapCopy(0, 0, gData_02003904[found].x, gData_02003904[found].z,
-                       1, 2);
-  Func_02002c28(gData_02003904[found].value, gData_02003904[found].x,
-                gData_02003904[found].z + 60);
+  MapGrid_CopyCellsTo(0, 0, gData_02003904[found].x, gData_02003904[found].z, 1,
+                      2);
+  Map_PlayMapEdit(gData_02003904[found].value, gData_02003904[found].x,
+                  gData_02003904[found].z + 60);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
-  LemurianShip_ObjSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   {
     s32 owner = gMainRoutineWork.currentOwner;
 
     if (found == 12)
-      LemurianShip_ObjOffset(owner, 0, -4);
+      Actor_SetDestinationOffset(owner, 0, -4);
     else
-      LemurianShip_ObjCenter(owner, 2, -4);
+      Actor_CenterAndWalk(owner, 2, -4);
   }
-  FieldEvent_Wait(4);
-  Func_02002d70(work->exit);
+  Event_Wait(4);
+  Import_EventSetExitRequest(work->exit);
 }

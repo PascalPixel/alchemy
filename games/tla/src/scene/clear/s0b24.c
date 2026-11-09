@@ -6,6 +6,7 @@
 #include "iwram_call.h"
 #include "io_reg.h"
 #include "edition.h"
+#include "event_inline.h"
 
 // The copies go through an inline wrapper, as the Broken Seal's iwram_call.h
 // writes it.
@@ -33,13 +34,10 @@ void *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 mode);
 void Text_DrawMessage(s32 message, void *window, s32 x, s32 y);
 void Window_Close(void *window, s32 release);
 void WindowSprite_PrepareForRedraw(void *window);
-void wait(s32 frames);
 s32 Serial_StartReceive(void *destination);
 void Unit_Calculate(s32 id);
 void Func_02002220(void);
 void Func_02002228(void);
-void Func_02002310(s32 hue, s32 brightness);
-void Func_02002408(s32 cue);
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define REQUEST_EDITION 'C'
@@ -114,7 +112,7 @@ scan:
 poll:
   if (!(gInput[1] & 2))
     goto scan;
-  Func_02002408(113);
+  Sound_Play(113);
   goto close;
 receive:
   wait(10);
@@ -181,7 +179,7 @@ done:
   Unit_Calculate(2);
   Unit_Calculate(3);
   Iwram_CopyWords(Ram_ReceivedFlags, flags, 0xf40);
-  Func_02002310(gMainRoutineWork.paletteGlow[0],
+  Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
                 gMainRoutineWork.paletteGlow[1]);
   return 1;
 }

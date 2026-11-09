@@ -1,6 +1,6 @@
 /// @file
 /// Updates the sixteen movers at gData_020023c4 + 0x188 each frame: at its
-/// upAt and downAt phases a mover calls Func_02005a68 (206 or 395) and moves by
+/// upAt and downAt phases a mover calls Sound_Play (206 or 395) and moves by
 /// 4 or -8 a frame until it reaches its high or low offset; its phase counts
 /// round its period unless flag 260 is set. Each mover's shape, collision
 /// height and cell attribute byte follow its actor and offset, and its marker
@@ -9,6 +9,7 @@
 #include "trial_road.h"
 #include "iwram_call.h"
 #include "ram_buffer.h"
+#include "event_inline.h"
 
 struct TrialRoadMover {
   s16 id;
@@ -31,8 +32,6 @@ struct TrialRoadMovers {
   s16 shape;
   struct TrialRoadMover movers[16];
 };
-
-s32 Math_Sine(s32 angle);
 
 void Func_02003da0(void) {
   struct TrialRoadMovers *work =
@@ -58,11 +57,11 @@ void Func_02003da0(void) {
     if (actor->x == 0 && actor->z == 0)
       continue;
     if (mover->phase == mover->upAt) {
-      Func_02005a68(206);
+      Sound_Play(206);
       mover->speed = 4;
     }
     if (mover->phase == mover->downAt) {
-      Func_02005a68(395);
+      Sound_Play(395);
       mover->speed = -8;
     }
     if (mover->speed != 0) {

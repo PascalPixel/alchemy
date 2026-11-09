@@ -1,6 +1,7 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
+#include "event_inline.h"
 
 extern u8 gData_02004c70[];
 extern u8 gData_02004c88[];
@@ -9,8 +10,6 @@ extern u8 gData_02005018[];
 extern u8 gData_02005228[];
 extern u8 gData_02005318[];
 extern u8 gData_02005390[];
-
-s32 GameFlag_Test(s32 flag);
 
 u8 *Func_020007cc(void) {
   s16 scene = gMainRoutineWork.scene;

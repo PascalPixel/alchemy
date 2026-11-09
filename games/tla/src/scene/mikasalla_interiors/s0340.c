@@ -5,13 +5,9 @@
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "scene_ids.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_ClearBit();
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Func_02000454(void);
-void Func_020005e4(s32 id, s32 a, s32 b);
 
 s32 Func_02000340(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
@@ -22,7 +18,7 @@ s32 Func_02000340(void) {
     else if (!GameFlag_Test(0x821) ||
              (GameFlag_Test(0xa39) && !GameFlag_Test(0x341)) ||
              GameFlag_Test(34))
-      Func_020005e4(18, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
     else
       Actor_SetPartAttribute(Actor_GetById(18), 4);
     return 0;

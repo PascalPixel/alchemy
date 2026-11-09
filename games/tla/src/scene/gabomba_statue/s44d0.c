@@ -1,5 +1,6 @@
 #include "types.h"
 #include "actor.h"
+#include "event_inline.h"
 
 struct SceneState {
   u8 unk000[0x164];
@@ -17,20 +18,10 @@ struct SceneState {
 
 extern struct SceneState gSceneState;
 
-struct Actor *Actor_GetById(s32 id);
 void Func_02004380(s32 x, s32 z, s32 a);
-void Func_0200567c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_02005854(s32 sound);
 void Func_020056b4(void);
 void Func_020056bc(void);
-void Func_0200580c(s32 value);
 void Func_020044b4(s32 mode);
-void wait(s32 frames);
-
-static __inline__ void Map_Copy(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_0200567c(a, b, c, d, e, f);
-}
 
 void Func_020044d0(s32 value) {
   struct SceneState *state = &gSceneState;
@@ -53,11 +44,12 @@ void Func_02004530(void) {
   register s32 i asm("r6");
 
   if (state->redrawA == 0) {
-    Map_Copy(1, 13, 1, 1, state->originX + 3, state->originZ - 2);
+    MapGrid_CopyCellsLayered(1, 13, 1, 1, state->originX + 3,
+                             state->originZ - 2);
     if (state->statuesReady != 0) {
-      Func_02005854(248);
+      Sound_Play(248);
       Func_020056b4();
-      Func_0200580c(0);
+      Event_ResolvePendingActions(0);
       Func_020044b4(3);
       i = 19;
       do {

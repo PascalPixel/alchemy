@@ -1,9 +1,9 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "call.h"
 #include "flag_call.h"
 #include "text/msg_ids.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 struct JupiterLighthouseRoom5EventWork {
   u8 unk000[0x1c4];
@@ -16,25 +16,9 @@ struct JupiterLighthouseRoom5EventWork {
 void Func_020028a0(s32 value);
 void Func_020028b0(void);
 void Func_020028b8(void);
-void Func_020029a8(s32 value);
-void Func_02002928(void *message);
-void Func_02002938(s32 actor, s32 a, s32 b);
-void Func_02002940(s32 actor, s32 angle);
-void Func_02002900(s32 actor, s32 x, s32 z, s32 angle);
-s32 Func_02002950(s32 actor, s32 a, s32 b);
 void Func_02000734(void);
 void Func_02000810(s32 actor, s32 target);
-void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void FieldEvent_Wait(s32 frames);
-void *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(void *object, s32 flags);
-void Actor_SetPartAttribute(void *object, s32 value);
-void Camera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
-s32 FieldMessage_ShowAtActor(s32 actor, s32 flags);
-s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
-void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void Actor_CommitPositionAndActivate(s32 actor, s32 dx, s32 dz);
-void FieldMessage_Show(s32 message, s32 position);
 
 /// Once flag 0xa24 is set and neither 0xa23 nor 0xa22 is, actor 4 turns
 /// about, actor 22 rises in sparks and talks with it, then joins it; flags
@@ -50,57 +34,58 @@ void Func_020008a4(void) {
     return;
   Flag_Set(0xa22);
   Func_020028b0();
-  Func_020029a8(0);
-  Func_02002928(MsgFieldWaitingForCompanion);
-  Func_02002938(22, 0, 5);
-  Call3((void (*)())Actor_SetPositionAndReset, 4, 68, 280);
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId(MsgFieldWaitingForCompanion);
+  Event_ShowMessageThenWait(22, 0, 5);
+  Actor_WalkToAndWait(4, 68, 280);
   Actor_SetPositionAndReset(4, 68, 272);
-  Func_02002940(4, FACING_WEST);
-  FieldEvent_Wait(20);
-  Call2((void (*)())Func_02002940, 4, FACING_NORTH);
-  FieldEvent_Wait(20);
-  Func_02002940(4, FACING_EAST);
-  FieldEvent_Wait(20);
-  Func_02002940(4, FACING_NORTH);
-  FieldEvent_Wait(10);
-  Actor_SetSingleChildFlags(Actor_GetById(22), 0);
-  Actor_SetPartAttribute(Actor_GetById(22), 15);
+  Actor_ArmCallbackAndRefresh(4, FACING_WEST);
+  Event_Wait(20);
+  Actor_FaceDirectionAndWait(4, FACING_NORTH);
+  Event_Wait(20);
+  Actor_ArmCallbackAndRefresh(4, FACING_EAST);
+  Event_Wait(20);
+  Actor_ArmCallbackAndRefresh(4, FACING_NORTH);
+  Event_Wait(10);
+  Actor_SetSingleChildFlags(((void *)Actor_GetById(22)), 0);
+  Actor_SetPartAttribute(((void *)Actor_GetById(22)), 15);
   angle = 0x4000;
-  Func_02002900(22, PIXELS(64), PIXELS(225), angle);
+  Actor_SetHorizontalPositionAndAngleWithTerrain(22, PIXELS(64), PIXELS(225),
+                                                 angle);
   Func_02000734();
-  FieldEvent_Wait(40);
+  Event_Wait(40);
   Camera_MoveWithinMapBounds(PIXELS(68), -1, PIXELS(240), 1);
   FieldMessage_ShowAtActor(22, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Motion_SetModeAndWaitAnimation(22, 4);
-    Func_02002938(22, 0, 5);
+    Event_ShowMessageThenWait(22, 0, 5);
     EVENT_WORK->message++;
   } else {
     Motion_SetModeAndWaitAnimation(22, 3);
-    FieldEvent_Wait(10);
+    Event_Wait(10);
     EVENT_WORK->message++;
-    Func_02002938(22, 0, 5);
+    Event_ShowMessageThenWait(22, 0, 5);
   }
   Motion_SetModeAndWaitAnimation(22, 3);
-  FieldEvent_Wait(10);
-  Func_02002938(22, 0, 5);
-  Func_02002950(22, 265, 30);
-  Func_02002938(22, 0, 5);
+  Event_Wait(10);
+  Event_ShowMessageThenWait(22, 0, 5);
+  Func_080d47b4(22, 265, 30);
+  Event_ShowMessageThenWait(22, 0, 5);
   Motion_SetModeAndWaitAnimation(22, 4);
-  Func_02002938(22, 0, 5);
-  Func_02002938(22, 0, 5);
+  Event_ShowMessageThenWait(22, 0, 5);
+  Event_ShowMessageThenWait(22, 0, 5);
   Motion_SetModeAndWaitAnimation(22, 3);
-  FieldEvent_Wait(30);
+  Event_Wait(30);
   Camera_MoveWithinMapBounds(PIXELS(68), -1, PIXELS(256), 1);
   Actor_CommitPositionAndActivate(22, 0, 16);
-  FieldEvent_Wait(30);
+  Event_Wait(30);
   Func_02000810(22, 4);
   Func_020028a0(1);
   FieldMessage_Show((s16)EVENT_WORK->message++, 5);
-  FieldEvent_Wait(30);
+  Event_Wait(30);
   Motion_SetModeAndWaitAnimation(22, 3);
-  FieldEvent_Wait(30);
-  Func_02002938(22, 0, 5);
+  Event_Wait(30);
+  Event_ShowMessageThenWait(22, 0, 5);
   Flag_Set(0xa25);
   Flag_Set(0x161);
   Flag_Set(0x144);

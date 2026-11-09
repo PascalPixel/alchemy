@@ -2,8 +2,8 @@
 #include "main_routine_work.h"
 #include "inventory.h"
 #include "text/msg_ids.h"
+#include "event_inline.h"
 
-void FieldMessage_Show(s32 message, s32 position);
 void Party_RemoveActiveOwner(s32 owner);
 
 static __inline__ void Inventory_AddItemAgain(s32 owner, s32 item) {

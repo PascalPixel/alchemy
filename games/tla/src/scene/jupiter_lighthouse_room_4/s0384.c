@@ -1,23 +1,16 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
 void Func_020000c0(void);
 void Func_0200017c(void);
 void Func_020001ac(void);
 void Func_02000300(void);
 void Func_02001e48(void);
 void Func_02001e50(void);
-void Func_02001ed0(s32 value);
 void Func_02001f00(s32 id);
-void Actor_SetSpritePriority(u32 id, s32 variant);
-void Actor_SetModeById(u32 id, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 void Event_StartScreenTransition(void);
 
@@ -38,14 +31,14 @@ s32 Func_02000384(void) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     leader->priorityFlags &= ~64;
     Func_02001e48();
-    Func_02001ed0(0);
+    Event_ResolvePendingActions(0);
     Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
     Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
     Actor_SetAnimationSpeed(leader, 64);
     leader->motionFlags = flag;
     leader->y = leader->terrainHeight = -0x780000;
     Event_StartScreenTransition();
-    FieldEvent_Wait(10);
+    Event_Wait(10);
     for (i = 0; i <= 89 && leader->y < 0; i++) {
       leader->terrainHeight = leader->y = leader->y + 0x30000;
       leader->angle += 0x1800;
@@ -57,7 +50,7 @@ s32 Func_02000384(void) {
     leader->velocityY = 0x30000;
     leader->gravity = 0x8000;
     Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
-    FieldEvent_Wait(40);
+    Event_Wait(40);
     leader->gravity = 0x10000;
     leader->priorityFlags |= 64;
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;

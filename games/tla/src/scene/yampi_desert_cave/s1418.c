@@ -8,7 +8,7 @@
 #include "event_work.h"
 #include "io_reg.h"
 #include "version.h"
-#include "call.h"
+#include "event_inline.h"
 
 extern char SceneId_Ov661Room1;
 extern char SceneId_Ov661Room8;
@@ -19,17 +19,12 @@ extern u16 gData_02001a28[];
 extern u16 gData_02001a54[];
 extern const s16 gData_020019cc[];
 
-s32 GameFlag_Test(s32 flag);
-s32 GameFlag_GetByte(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);
-void GameFlag_SetBit(s32 flag);
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetWideSprite(s32 id, s32 wide);
 s32 Func_02000038(s32 id);
 void Func_020007dc(u16 *slots, u16 *colours, u16 *a, u16 *b);
 void Func_02000b54(const u8 *entries);
 void Func_020011e0(void);
-void Func_020018a8(s32 id, s32 x, s32 z);
 void Func_020018c8(s32 id);
 void Func_02001928(s32 value);
 
@@ -46,8 +41,8 @@ s32 Func_02001418(void) {
     Func_02000038(9);
     Func_02000038(10);
     if (GameFlag_Test(0x300)) {
-      Func_020018a8(11, 0, 0);
-      YampiDesertCave_Call1848(32, 13, 1, 1, 34, 13);
+      Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
+      MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, 13);
     }
     if (gMainRoutineWork.entrance == 1) {
       if (GameFlag_Test(0xa29)) {
@@ -66,11 +61,11 @@ s32 Func_02001418(void) {
     if (GameFlag_Test(0x303)) {
       /* FAKEMATCH(wrapper): the form kept; as a direct call, 2 of 390
        * instructions differ in tla-en. */
-      Call3(Func_020018a8, 8, 138 << 18, 216 << 16);
-      YampiDesertCave_Call1848(32, 13, 1, 1, 34, 13);
-      YampiDesertCave_Call1848(95, 3, 3, 3, 98, 13);
+      Actor_SetPosition(8, 138 << 18, 216 << 16);
+      MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, 13);
+      MapGrid_CopyCellAttributes(95, 3, 3, 3, 98, 13);
     } else {
-      YampiDesertCave_Call1848(32, 13, 1, 1, 34, 12);
+      MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, 12);
     }
     if (!GameFlag_Test(0x302))
       Actor_SetWideSprite(64, 1);
@@ -94,42 +89,42 @@ s32 Func_02001418(void) {
     Func_02000038(11);
     Func_02000b54(gData_02001d20);
     if (!GameFlag_Test(0x206))
-      YampiDesertCave_Call1848(48, 12, 1, 1, 46, 12);
+      MapGrid_CopyCellAttributes(48, 12, 1, 1, 46, 12);
     if (GameFlag_Test(0x301))
-      Func_020018a8(15, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
     if (GameFlag_Test(0x304)) {
       /* FAKEMATCH(wrapper): the form kept; as a direct call, 2 of 390
        * instructions differ in tla-en. */
-      Call3(Func_020018a8, 13, 168 << 16, 184 << 16);
-      YampiDesertCave_Call1848(12, 11, 1, 1, 10, 11);
+      Actor_SetPosition(13, 168 << 16, 184 << 16);
+      MapGrid_CopyCellAttributes(12, 11, 1, 1, 10, 11);
     } else {
 #if TLA_PATCH_1
       struct Actor *actor = Actor_GetById(13);
 
-      YampiDesertCave_Call1848(12, 11, 1, 1, actor->x >> 20, actor->z >> 20);
+      MapGrid_CopyCellAttributes(12, 11, 1, 1, actor->x >> 20, actor->z >> 20);
 #else
-      YampiDesertCave_Call1848(12, 11, 1, 1, 8, 10);
+      MapGrid_CopyCellAttributes(12, 11, 1, 1, 8, 10);
 #endif
     }
     if (GameFlag_Test(0x305)) {
       /* FAKEMATCH(wrapper): the form kept; as a direct call, 2 of 390
        * instructions differ in tla-en. */
-      Call3(Func_020018a8, 12, 154 << 18, 132 << 17);
-      YampiDesertCave_Call1848(38, 15, 1, 1, 38, 16);
+      Actor_SetPosition(12, 154 << 18, 132 << 17);
+      MapGrid_CopyCellAttributes(38, 15, 1, 1, 38, 16);
     } else {
-      YampiDesertCave_Call1848(38, 15, 1, 1, 39, 16);
+      MapGrid_CopyCellAttributes(38, 15, 1, 1, 39, 16);
     }
     if (!GameFlag_Test(65) && !GameFlag_Test(145)) {
-      /* FAKEMATCH(wrapper): the form kept; as GameFlag_GetByte(0x278), 18 of
-       * 390 instructions differ in tla-en. */
-      s32 step = Value1((s32 (*)())GameFlag_GetByte, 0x278);
+      /* FAKEMATCH(wrapper): the form kept; as ((s32)GameFlag_GetByte(0x278)),
+       * 18 of 390 instructions differ in tla-en. */
+      s32 step = FieldGameFlag_GetByte(0x278);
       s32 placed = GameFlag_Test(0x271);
 
       if (placed) {
         step = step / 32 * 2;
-        Func_020018a8(16, 0, 0);
-        Func_020018a8(17, gData_020019cc[step] << 19,
-                      gData_020019cc[step + 1] << 19);
+        Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
+        Actor_SetHorizontalPositionWithTerrain(17, gData_020019cc[step] << 19,
+                                               gData_020019cc[step + 1] << 19);
       } else {
         if (GameFlag_Test(0x109))
           GameFlag_SetByte(0x278, 0);

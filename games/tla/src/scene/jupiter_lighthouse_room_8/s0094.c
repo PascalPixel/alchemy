@@ -1,12 +1,9 @@
 #include "types.h"
 #include "actor.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
-void GameFlag_SetBit(s32 flag);
-void wait(s32 frames);
 void Func_020021e0(s32 x, s32 z, s32 a, s32 b);
 void Func_020022c0(s32 x, s32 z, s32 a, s32 b);
-void Func_020022c8(s32 cue);
 
 /// On cell (6, 14), sets flag 0xa18, waits until the object finishes falling
 /// and stops (at most 30 frames), then releases it.
@@ -19,7 +16,7 @@ void Func_02000094(s32 unused, s32 id) {
   if (object->x >> 20 == 6 && object->z >> 20 == 14) {
     GameFlag_SetBit(0xa18);
     wait(10);
-    Func_020022c8(134);
+    Sound_Play(134);
     y = object->y;
     floor = object->terrainHeight;
     /* FAKEMATCH(barrier): the height and the floor are read before the counter

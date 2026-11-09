@@ -1,18 +1,16 @@
 #include "types.h"
-#include "call.h"
 #include "main_routine_work.h"
 #include "iwram_call.h"
 #include "battle/battle_unit.h"
 #include "owner_state.h"
 #include "version.h"
+#include "event_inline.h"
 
 extern s32 gData_020026a0[];
 extern u16 gData_020026b0[];
 extern u16 gData_020026c0[];
 extern u16 gData_02002490[];
 
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
 s32 Unit_GetExperienceForLevel(s32 id, s32 level);
 void PartyInventory_Add(s32 item);
 void Unit_Calculate(s32 id);

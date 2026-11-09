@@ -1,15 +1,12 @@
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "map.h"
+#include "event_inline.h"
 
 extern u8 gMapShapeGrid[];
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-void Func_020014a0(s32 id, s32 x, s32 z);
 s32 Func_02001508(struct Actor *object);
 s32 Func_02001478(s32 layer, s32 x, s32 z);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
@@ -31,7 +28,7 @@ void Func_020001d0(u16 *list) {
     u8 *shapes = gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
 
     if (GameFlag_Test(next)) {
-      Func_020014a0(id, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
     } else {
       s32 index = Func_02001508(object);
       struct MapCell *cell;

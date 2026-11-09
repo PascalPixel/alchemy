@@ -12,27 +12,22 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "call.h"
 #include "text/msg_ids.h"
-
-void Func_020018e8();
-void GameFlag_SetBit();
+#include "event_inline.h"
 
 void Func_02000cec(void) {
   GameFlag_SetBit(0x271);
-  Func_020018e8(17, 17);
+  Func_080d2b4c(17, 17);
   return;
 }
 
 void Func_02001870();
 void Func_02001878();
-void Func_020018d0();
-void Func_02001930();
 
 void Func_02000d04(void) {
   Func_02001870();
-  Func_02001930(0);
-  Func_020018d0(gMainRoutineWork.currentOwner, 0x101, 32);
+  Event_ResolvePendingActions(0);
+  Func_080d47b4(gMainRoutineWork.currentOwner, 0x101, 32);
   Func_02001878();
   return;
 }

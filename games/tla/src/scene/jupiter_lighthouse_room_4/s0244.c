@@ -3,9 +3,9 @@
 #include "actor.h"
 #include "field_sprite.h"
 #include "macros.h"
+#include "event_inline.h"
 
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 void Func_02001da8(struct Actor *object, s32 mode);
 
 /// A particle's step, Jupiter Lighthouse room 2's Func_02000720 with other

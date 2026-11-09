@@ -22,25 +22,25 @@ GameFlag_ClearBit:
 	.thumb_func
 Actor_SetPositionAndResetMotion:
 	overlay_veneer Actor_SetPositionAndResetMotionFar
-	.global Func_020010bc
+	.global Actor_SetMoveTarget
 	.thumb_func
-Func_020010bc:
+Actor_SetMoveTarget:
 	overlay_veneer Actor_SetTargetPosition
-	.global Func_020010c4
+	.global Script_WaitForEventTimeout
 	.thumb_func
-Func_020010c4:
+Script_WaitForEventTimeout:
 	overlay_veneer Actor_CommitPosition
-	.global Func_020010cc
+	.global Map_CopyCellPictureIndicesRect
 	.thumb_func
-Func_020010cc:
+Map_CopyCellPictureIndicesRect:
 	overlay_veneer Map_CopyCellPictureIndicesRectFar
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
 	overlay_veneer Map_GetTerrainHeightFar
-	.global Func_020010dc
+	.global Map_CopyCellAttributeRect
 	.thumb_func
-Func_020010dc:
+Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
@@ -58,9 +58,9 @@ FieldMessage_Show:
 	.thumb_func
 PartyInventory_Remove:
 	overlay_veneer PartyInventory_RemoveFar
-	.global FieldEvent_Wait
+	.global Event_Wait
 	.thumb_func
-FieldEvent_Wait:
+Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
 	.global Func_0200110c
 	.thumb_func
@@ -82,9 +82,9 @@ Actor_SetSpeedParameters:
 	.thumb_func
 Actor_SetMovementTypeById:
 	overlay_veneer Actor_SetMovementTypeByIdFar
-	.global Func_02001134
+	.global Actor_SetHorizontalPositionWithTerrain
 	.thumb_func
-Func_02001134:
+Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
 	.global Func_0200113c
 	.thumb_func
@@ -106,9 +106,9 @@ Actor_SetSpritePriority:
 	.thumb_func
 Func_0200115c:
 	overlay_veneer Func_080c8208
-	.global Func_02001164
+	.global Camera_SetSpeedParameters
 	.thumb_func
-Func_02001164:
+Camera_SetSpeedParameters:
 	overlay_veneer Camera_SetSpeedParametersFar
 	.global Camera_MoveWithinMapBounds
 	.thumb_func
@@ -118,9 +118,9 @@ Camera_MoveWithinMapBounds:
 	.thumb_func
 Func_02001174:
 	overlay_veneer Func_080c8240
-	.global Func_0200117c
+	.global Import_EventSetExitRequest
 	.thumb_func
-Func_0200117c:
+Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
 	.global Func_02001184
 	.thumb_func
@@ -142,9 +142,9 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_020011ac
+	.global Event_ResolvePendingActions
 	.thumb_func
-Func_020011ac:
+Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
 	.global Func_020011b4
 	.thumb_func
@@ -194,7 +194,7 @@ Func_02001204:
 	.thumb_func
 Func_0200120c:
 	overlay_veneer Func_080c8750
-	.global Func_02001214
+	.global Sound_Play
 	.thumb_func
-Func_02001214:
+Sound_Play:
 	overlay_veneer Sound_PlayFar

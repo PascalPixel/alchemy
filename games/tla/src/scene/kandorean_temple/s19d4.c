@@ -2,8 +2,8 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "flag_call.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 void Func_02000778(struct Actor *object, s32 dz);
 void Func_02005388(s32 cue);
 extern s32 gData_02006298;

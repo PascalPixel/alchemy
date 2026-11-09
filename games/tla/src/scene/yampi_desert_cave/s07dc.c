@@ -3,13 +3,13 @@
 #include "ram_buffer.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "event_inline.h"
 
 extern u16 *gData_02001fd8;
 extern u16 *gData_02001fdc;
 extern u16 *gData_02001fe0;
 extern u16 *gData_02001fcc;
 
-void Func_020018f0(s32 a, s32 b);
 void Func_02000acc(void);
 
 /// Records the four palette lists, writes each listed palette entry from its
@@ -45,7 +45,7 @@ void Func_020007dc(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   }
   Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
-  Func_020018f0(0x10000, 0);
+  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   if ((s8)gMainRoutineWork.unk2c2 == 2)
     Func_02000acc();
 }

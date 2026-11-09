@@ -2,6 +2,7 @@
 #include "iwram_call.h"
 #include "actor.h"
 #include "task.h"
+#include "event_inline.h"
 
 struct SceneState {
   u8 unk000[0x160];
@@ -18,9 +19,6 @@ struct SceneState {
 
 extern struct SceneState gSceneState;
 
-s32 GameFlag_Test(s32 flag);
-struct Actor *Actor_GetById(s32 id);
-s32 Task_Add(void (*func)(void), s32 order);
 void Func_020038ac(void);
 void Func_02003974(void);
 s32 Func_02003a64(s32 value);

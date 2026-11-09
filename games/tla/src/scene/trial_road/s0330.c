@@ -1,47 +1,33 @@
 #include "types.h"
 #include "main_routine_work.h"
-#include "call.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-s32 Event_AskYesNoWithActorAnimation();
-void FieldEvent_Wait();
 void Func_02005868();
 void Func_02005880();
-void Func_02005960();
-void Func_02005990();
-void Func_020059e8();
-void Func_02005a68();
-void GameFlag_SetBit();
-s32 GameFlag_Test();
-void Actor_ArmCallback();
-void Actor_SetPositionAndReset();
-s32 Actor_GetById();
-void Actor_SetModeById();
-void FieldMessage_Show();
 extern u8 MsgTrialRoadGiveUpPrompt[];
 
 s32 Func_02000330(void) {
   s32 t1, t2, t9, v_r5, v_r6;
 
-  t1 = Actor_GetById(gMainRoutineWork.currentOwner);
+  t1 = ((s32)Actor_GetById(gMainRoutineWork.currentOwner));
   v_r5 = t1;
   v_r6 = FIELD_AT(0x3000000, s32, 108);
   t2 = GameFlag_Test(0x9ff);
   if (t2 == 0)
     goto L_02008400;
   Func_02005880();
-  Func_020059e8(0);
+  Event_ResolvePendingActions(0);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner,
                             (((FIELD_AT(v_r5, s32, 8) >> 20) << 4) + 8),
                             (((FIELD_AT(v_r5, s32, 16) >> 20) << 4) + 8));
-  Func_02005a68(229);
-  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner,
-        FACING_SOUTH, 0);
+  Sound_Play(229);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   v_r5 = (s32)&MsgTrialRoadGiveUpPrompt;
   FieldMessage_Show(v_r5, 13);
   v_r5 = (v_r5 + 1);
@@ -52,13 +38,13 @@ s32 Func_02000330(void) {
   if (t9 != 0)
     goto L_02008400;
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-  FieldEvent_Wait(10);
+  Event_Wait(10);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
-  FieldEvent_Wait(10);
-  Func_02005960(gMainRoutineWork.currentOwner, 0x109, 0);
-  FieldEvent_Wait(30);
+  Event_Wait(10);
+  Func_080d47b4(gMainRoutineWork.currentOwner, 0x109, 0);
+  Event_Wait(30);
   Func_02005868();
-  Func_02005990(9);
+  Import_EventSetExitRequest(9);
   return 1;
 L_02008400:
   GameFlag_SetBit(0x281);

@@ -1,24 +1,25 @@
 #include "scene_tables.h"
 #include "caverns.h"
+#include "event_inline.h"
 
 void Func_02000d68(void) {
   s32 value = HALF_AT(Ram_HeapSlots->eventWork, 340);
 
   if (value == 2)
-    Call3((void (*)())Func_0200110c, 8, PIXELS(144), PIXELS(224));
+    Actor_SetPosition(8, PIXELS(144), PIXELS(224));
   else
-    Call3((void (*)())Func_0200110c, 8, PIXELS(224), PIXELS(224));
+    Actor_SetPosition(8, PIXELS(224), PIXELS(224));
   Actor_ArmCallback(4, FACING_NORTH, 0);
-  FieldEvent_Wait(10);
-  BYTE_AT(Actor_GetById(4), 90) &= ~1;
-  Call6((void (*)())Func_02001094, 96, 14, 72, 14, 2, 1);
+  Event_Wait(10);
+  BYTE_AT(((struct FieldActor *)Actor_GetById(4)), 90) &= ~1;
+  MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
   Actor_OffsetPositionAndResetMotion(4, 0, 4);
   Actor_WaitForMoveById(4);
-  Actor_SetSingleChildFlags(Actor_GetById(4), 0);
+  Actor_SetSingleChildFlags(((struct FieldActor *)Actor_GetById(4)), 0);
   Actor_OffsetPositionAndResetMotion(4, 0, 16);
   Actor_WaitForMoveById(4);
   Actor_SetModeById(4, 13);
-  Func_02001164(123);
-  FieldEvent_Wait(14);
-  Func_02001134(value);
+  Sound_Play(123);
+  Event_Wait(14);
+  Import_EventSetExitRequest(value);
 }

@@ -12,8 +12,8 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "call.h"
 #include "text/msg_ids.h"
+#include "event_inline.h"
 
 s32 Func_02000038(s32 arg0) {
   *(u8 *)((u8 *)*(s32 *)((u8 *)arg0 + 80) + 26) = 0;
@@ -21,22 +21,9 @@ s32 Func_02000038(s32 arg0) {
   return 1;
 }
 
-void FieldEvent_Wait();
-void Func_02000a30();
-void Func_02000a38();
-void Func_02000a40();
 void Func_02000a68();
 void Func_02000a70();
-void Func_02000ab0();
-void Func_02000ac0();
-void Func_02000ad0();
-void Func_02000ad8();
 void Func_02000af0();
-void Func_02000b30();
-void GameFlag_SetBit();
-void GameFlag_Test();
-void Camera_MoveWithinMapBounds();
-struct Actor *Actor_GetById();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -49,9 +36,9 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void Func_02000064(void) {
-  Func_02000a40(47, 9, 9, 4, 25, 9);
-  Func_02000a40(47, 69, 9, 10, 25, 69);
-  Call6((void (*)())Func_02000a38, 111, 8, 9, 5, 89, 8);
+  Func_0802b450(47, 9, 9, 4, 25, 9);
+  Func_0802b450(47, 69, 9, 10, 25, 69);
+  MapGrid_CopyCellAttributes(111, 8, 9, 5, 89, 8);
   return;
 }
 
@@ -59,19 +46,19 @@ void Func_020000a8(void) {
   s32 result0;
   struct Actor *object1;
 
-  result0 = Value1((s32 (*)())GameFlag_Test, 0x200);
+  result0 = Event_GetFlag(0x200);
   if (result0 != 0)
     goto L_02008100;
   GameFlag_SetBit(0x200);
   Func_02000a68();
-  Func_02000b30(0);
-  Func_02000ac0((s32)MsgShipIceWallFirstApproach);
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)MsgShipIceWallFirstApproach);
   object1 = Actor_GetById(8);
-  Func_02000a30((s32)object1);
-  Func_02000ad8(8, FACING_NORTH);
-  FieldEvent_Wait(5);
-  Func_02000ad0(5, 0, 5);
-  Func_02000ad0(11, 0, 5);
+  Script_WaitForEventTimeout((s32)object1);
+  Actor_ArmCallbackAndRefresh(8, FACING_NORTH);
+  Event_Wait(5);
+  Event_ShowMessageThenWait(5, 0, 5);
+  Event_ShowMessageThenWait(11, 0, 5);
   Func_02000a70();
 L_02008100:
   return;
@@ -81,29 +68,29 @@ void Func_02000108(void) {
   s32 result0;
   struct Actor *object1;
 
-  result0 = Value1((s32 (*)())GameFlag_Test, 0x90c);
+  result0 = Event_GetFlag(0x90c);
   if (result0 != 0)
     goto L_020081d2;
   GameFlag_SetBit(0x90c);
   Func_02000a68();
-  Func_02000b30(0);
-  Func_02000ac0((s32)MsgShipIceWallCrewReposition);
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)MsgShipIceWallCrewReposition);
   object1 = Actor_GetById(8);
-  Func_02000a30((s32)object1);
-  FieldEvent_Wait(5);
-  Func_02000ad0(5, 0, 5);
+  Script_WaitForEventTimeout((s32)object1);
+  Event_Wait(5);
+  Event_ShowMessageThenWait(5, 0, 5);
   Camera_MoveWithinMapBounds(PIXELS(464), -1, PIXELS(176), 1);
   Func_02000af0();
-  FieldEvent_Wait(5);
-  Call3((void (*)())Func_02000ab0, 11, PIXELS(408), PIXELS(288));
-  Call3((void (*)())Func_02000ab0, 5, PIXELS(408), PIXELS(288));
-  Call3((void (*)())Func_02000ab0, 6, PIXELS(408), PIXELS(288));
-  Func_02000ad0(11, 0, 5);
-  Func_02000ad0(6, 0, 5);
-  Func_02000ad0(11, 0, 5);
-  Func_02000ab0(11, 0, 0);
-  Func_02000ab0(5, 0, 0);
-  Func_02000ab0(6, 0, 0);
+  Event_Wait(5);
+  Actor_SetPosition(11, PIXELS(408), PIXELS(288));
+  Actor_SetPosition(5, PIXELS(408), PIXELS(288));
+  Actor_SetPosition(6, PIXELS(408), PIXELS(288));
+  Event_ShowMessageThenWait(11, 0, 5);
+  Event_ShowMessageThenWait(6, 0, 5);
+  Event_ShowMessageThenWait(11, 0, 5);
+  Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(5, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(6, 0, 0);
   Func_02000a70();
 L_020081d2:
   return;

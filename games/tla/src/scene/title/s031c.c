@@ -2,14 +2,13 @@
 #include "task.h"
 #include "io_write_queue.h"
 #include "ram_buffer.h"
+#include "event_inline.h"
 
 extern s16 gData_020006dc;
 
 void Func_02000490(void);
 void Func_02000278(void);
 void Title_LoadSprites(s32 unused);
-void FieldEvent_Wait(s32 frames);
-void wait(s32 frames);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
@@ -19,7 +18,7 @@ void Func_0200031c(void) {
   s32 i;
 
   Func_02000490();
-  FieldEvent_Wait(30);
+  Event_Wait(30);
   gData_020006dc = 0;
   Title_LoadSprites(0);
   Task_Add(Func_02000278, TASK_PASS_VBLANK);
@@ -35,7 +34,7 @@ void Func_0200031c(void) {
                       IO_WRITE_16);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16, IO_WRITE_16);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 16), IO_WRITE_16);
-  FieldEvent_Wait(120);
+  Event_Wait(120);
   /* FAKEMATCH: a goto loop carries no loop notes, so each pass reloads the
    * queue and interrupt register addresses; as a for or do/while loop, 90
    * instructions differ in tla-en. */

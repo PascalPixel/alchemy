@@ -2,8 +2,8 @@
 #include "io_reg.h"
 #include "version.h"
 #include "task.h"
+#include "event_inline.h"
 
-s32 Task_Add(void (*func)(void), s32 priority);
 void Func_02005398(void);
 s32 Func_020053a0(s32 a, s32 b, s32 c);
 void Func_020053b8(const void *data);
@@ -40,10 +40,10 @@ void Func_0200290c(void) {
   REG_BLDCNT = 0x3f10;
   Func_02005388(245);
   Task_Add(Func_02000c74, TASK_PASS_VBLANK);
-  Func_02005230(13, 0, 0);
-  Func_02005230(14, 0, 0);
-  Func_02005230(15, 0, 0);
-  Func_02005230(16, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
   Func_02000b78(13);
   Func_02000b78(14);
   Func_02000bac(15);

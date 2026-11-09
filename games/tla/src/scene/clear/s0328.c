@@ -10,6 +10,7 @@
 #include "call.h"
 #include "flag_call.h"
 #include "field/event_work.h"
+#include "event_inline.h"
 
 extern s16 gData_020024f6;
 extern s16 gData_020024f8;
@@ -26,14 +27,12 @@ s32 Func_020002e0(void);
 s32 Func_02000b24(void);
 s32 Func_02000e44(void);
 s32 Func_020022b0(s32 mode);
-void Func_020022b8(s32 a, s32 b, s32 c);
 s32 Func_020022d0(void);
 s32 Func_020022d8(s32 mode);
 void Func_020022e0(void);
 void Func_020022e8(void);
 s32 Func_020022f0(void);
 s32 Func_020022f8(s32 step);
-void Func_02002310(s32 hue, s32 brightness);
 void Func_02002350(void);
 void Func_02002370(void *data, s32 a, s32 b);
 u32 Func_02002388(void);
@@ -41,17 +40,11 @@ void Func_02002390(void);
 void Func_02002398(void);
 void Func_020023a0(void *data);
 void Func_020023b8(s32 a, s32 b);
-s32 Func_020023d8(s32 mode);
 void Func_020023e0(s32 scene, s32 entrance);
 void Func_020023e8(void);
-void Func_02002408(s32 cue);
-s32 Task_Add(void (*func)(void), s32 priority);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void FieldEvent_Wait(s32 frames);
-void wait(s32 frames);
-void FieldMessage_Show(s32 message, s32 position);
 void Message_CloseFinishedWindows(void);
 s32 Menu_RunConfirmSelection(s32 a, s32 b, s32 c, s32 d);
 s32 Menu_SelectSaveSlotAction(void);
@@ -111,7 +104,7 @@ s32 Func_02000328(void) {
   ask_save:
     message = (s32)MsgSaveYourAdventure;
     FieldMessage_Show(message, 5);
-    i = Func_020023d8(1);
+    i = Func_080d295c(1);
     Message_CloseFinishedWindows();
     if (i == 0) {
       FieldMessage_Show(message + 1, 1);
@@ -126,10 +119,10 @@ s32 Func_02000328(void) {
       if (i == -1)
         goto ask_save;
     }
-    FieldEvent_Wait(60);
+    Event_Wait(60);
     Event_FinishScreenTransition();
-    Func_02002408(78);
-    FieldEvent_Wait(300);
+    Sound_Play(78);
+    Event_Wait(300);
     Func_020023b8((s32)&SceneId_Title, 1);
     return 0;
   }
@@ -139,7 +132,7 @@ top:
   if (result < 0 && gDebugMode) {
     gMainRoutineWork.unk244[6] = 1;
     gAutoSleepEnabled = 1;
-    Func_020022b8((s32)&SceneId_DailaInteriors1, 1, 8);
+    Func_0803ce64((s32)&SceneId_DailaInteriors1, 1, 8);
   }
   if (result == 0 && !started) {
     wait(30);
@@ -153,7 +146,7 @@ top:
     result = 0;
   if (result == 0) {
     Func_02002350();
-    Func_02002310(gMainRoutineWork.paletteGlow[0],
+    Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
                   gMainRoutineWork.paletteGlow[1]);
     i = 4;
     limit = 5;
@@ -237,7 +230,7 @@ top:
           {
             struct MainRoutineWork *party = &gMainRoutineWork;
 
-            Func_02002310(party->paletteGlow[0], party->paletteGlow[1]);
+            Func_0803f9c0(party->paletteGlow[0], party->paletteGlow[1]);
             RESTORE_CELLS()
             Func_020023a0(Ram_MapCellBackup);
             party->unk284[3] = 1;
@@ -271,7 +264,7 @@ top:
     {
       struct MainRoutineWork *party = &gMainRoutineWork;
 
-      Func_02002310(party->paletteGlow[0], party->paletteGlow[1]);
+      Func_0803f9c0(party->paletteGlow[0], party->paletteGlow[1]);
       if (PARTY_WORD(party, 0) != Func_02002388()) {
         RETURN_TO_SAVED(party)
       } else if (mask = 0x208, (gInput[0] & mask) == mask) {
@@ -321,7 +314,7 @@ top:
       party->currentOwner = 4;
       if (Flag_IsSet(0x9ff))
         Func_02002390();
-      Func_02002310(party->paletteGlow[0], party->paletteGlow[1]);
+      Func_0803f9c0(party->paletteGlow[0], party->paletteGlow[1]);
       Flag_Clear(0x109);
       Flag_Clear(0x106);
       party->ownerOverride = 0;
@@ -336,7 +329,7 @@ link:
   result = Func_020022d8(6);
   if (result == -1)
     goto top;
-  Func_02002310(gMainRoutineWork.paletteGlow[0],
+  Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
                 gMainRoutineWork.paletteGlow[1]);
 again:
   result = Func_020022b0(2);
@@ -382,10 +375,10 @@ again:
 #endif
 finish:
   ((struct EventWork *)Ram_HeapSlots->eventWork)->countdown = 999;
-  FieldEvent_Wait(30);
-  Func_02002408(78);
+  Event_Wait(30);
+  Sound_Play(78);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_Wait(60);
+  Event_Wait(60);
   return 0;
 }

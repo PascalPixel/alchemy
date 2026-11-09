@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 extern u32 gData_020001b0[];
 
@@ -10,10 +11,6 @@ struct MapBits {
   u8 mode : 2;
 };
 
-void GameFlag_SetBit(s32 flag);
-void Task_Add(void (*func)(void), s32 priority);
-void *Actor_GetById(s32 id);
-void Actor_SetModeById(u32 id, s32 mode);
 void Func_02000190(void);
 void Func_02000198(s32 a, s32 b, s32 c);
 void Func_020001a8(s32 a, s32 flag, s32 b, s32 c);
@@ -27,7 +24,8 @@ s32 Func_02000074(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 256;
   Task_Add(Func_020000fc, 0x480);
   {
-    u8 *flags = (u8 *)Actor_GetById(gMainRoutineWork.currentOwner) + 35;
+    u8 *flags =
+        (u8 *)((void *)Actor_GetById(gMainRoutineWork.currentOwner)) + 35;
     u32 value = *flags;
     u32 bit = 32;
 

@@ -1,8 +1,7 @@
 #include "types.h"
 
 #include "actor.h"
-
-struct Actor *Actor_GetById(s32 id);
+#include "event_inline.h"
 
 void Func_02001950(s32 show, s32 first, u32 count) {
   u32 i;

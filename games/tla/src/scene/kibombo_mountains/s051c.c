@@ -1,11 +1,10 @@
 #include "types.h"
 #include "actor.h"
 #include "flag_call.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 void Func_0200015c(s32 id);
 void Func_020004f4(s32 id, s32 x, s32 z);
-void Func_0200106c(s32 a, s32 b, s32 c, s32 d, s32 x, s32 z);
 
 void Func_0200051c(s32 unused, s32 cell) {
   if (cell == 20) {
@@ -16,7 +15,7 @@ void Func_0200051c(s32 unused, s32 cell) {
 
       if (x == 4) {
         Func_0200015c(20);
-        Func_0200106c(3, 28, 1, 1, x, 28);
+        Map_CopyCellAttributeRect(3, 28, 1, 1, x, 28);
         Flag_Set(0x8e7);
       }
     }
@@ -32,7 +31,7 @@ void Func_0200051c(s32 unused, s32 cell) {
 
         if (z == 30) {
           Func_0200015c(13);
-          Func_0200106c(32, 30, 1, 2, x, z);
+          Map_CopyCellAttributeRect(32, 30, 1, 2, x, z);
           Flag_Set(0x8e8);
         }
       }

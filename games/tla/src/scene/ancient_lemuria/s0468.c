@@ -2,35 +2,14 @@
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "actor.h"
-#include "call.h"
+#include "event_inline.h"
 
 extern u8 MsgLemuriaStayExploring[];
 extern u8 MsgLemuriaStayExploringAlternate[];
 
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-s32 GameFlag_Test(s32 flag);
-struct Actor *Actor_GetById(s32 id);
-void Actor_SetModeById(u32 id, s32 mode);
-void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
-void Actor_Jump(s32 id, s32 speed, s32 frames);
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
-void Actor_ResetAndSetPosition(s32 id, s32 x, s32 z);
-void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
-void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
-void Actor_WaitForMoveById(s32 id);
 void Func_02000080(s32 id);
 void Func_02001914(void);
 void Func_0200191c(void);
-void Func_0200195c(s32 id, s32 x, s32 z);
-void Func_02001994(u8 *message);
-void Func_020019a4(s32 id, s32 a, s32 b);
-void Func_020019ec(s32 value);
-void Func_020019fc(s32 value);
-void Func_02001a0c(s32 id, s32 a, s32 b, s32 c);
-void Func_02001a2c(s32 value);
 
 /// Once flag 0x96c is set and 0x96d is not: sets 0x96d, clears 0x96e, launches
 /// object 12 from 22 pixels up at half size and turns it an eighth of a turn a
@@ -41,7 +20,7 @@ void Func_02000468(void) {
   s32 i;
   struct Actor *p;
 
-  if (Value1(GameFlag_Test, 0x96d))
+  if (Event_GetFlag(0x96d))
     return;
   if (!GameFlag_Test(0x96c))
     return;
@@ -49,13 +28,13 @@ void Func_02000468(void) {
   GameFlag_SetBit(0x96d);
   GameFlag_ClearBit(0x96e);
   Func_02000080(13);
-  Call3(Func_0200195c, 12, 270 << 16, 184 << 16);
+  Actor_SetPosition(12, 270 << 16, 184 << 16);
   object->y = 22 << 16;
   Actor_Jump(12, 11, 0);
   object->scaleY = 0x8000;
   object->scaleX = 0x8000;
-  Call3(Actor_SetSpeedParameters, 12, 0x23333, 0x11999);
-  Call3(Actor_ResetAndSetPositionInMode2, 12, 312, 184);
+  Actor_SetSpeed(12, 0x23333, 0x11999);
+  Actor_WalkTo(12, 312, 184);
   for (i = 23; i >= 0; i--) {
     {
       /* FAKEMATCH(temporary): the turn in its own register; as a plain

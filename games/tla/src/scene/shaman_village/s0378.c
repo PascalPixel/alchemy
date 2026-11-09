@@ -2,10 +2,10 @@
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "event_inline.h"
 
 extern s16 gData_02006350[];
 
-s32 Math_Sine(s32 angle);
 u32 Random16Far(void);
 
 static inline s32 LowestLineOffset(void) {

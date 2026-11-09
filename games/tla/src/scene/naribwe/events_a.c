@@ -1,4 +1,5 @@
 #include "local.h"
+#include "event_inline.h"
 
 void Func_02000088(void) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -23,20 +24,20 @@ const u8 *Func_020000b8(void) {
 void Func_020000d8(void) {
   s32 msg;
 
-  if (GameFlag_Test_(0x85d) == 0) {
+  if (Event_GetFlag(0x85d) == 0) {
     msg = (s32)&MsgNaribwe02;
-    Func_02000584(msg);
+    Event_SetMessageId(msg);
     FieldMessage_ShowAtActor(14, 0);
-    if (Event_AskYesNoWithActorAnimation(Func_020005dc(), 0) == 0) {
-      Func_02000584(msg + 1);
+    if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
+      Event_SetMessageId(msg + 1);
       GameFlag_SetBit(0x85d);
     } else {
-      Func_02000584(msg + 2);
+      Event_SetMessageId(msg + 2);
     }
-    Func_02000594(14, 0);
+    Event_ShowMessageAndWait(14, 0);
   } else {
-    Func_02000584((s32)&MsgNaribwe03);
-    Func_02000594(14, 0);
+    Event_SetMessageId((s32)&MsgNaribwe03);
+    Event_ShowMessageAndWait(14, 0);
   }
 }
 
@@ -45,34 +46,34 @@ void Func_02000140(void) {
 
   if (GameFlag_Test(0x85e) == 0) {
     msg = (s32)&MsgNaribwe07;
-    Func_02000584(msg);
+    Event_SetMessageId(msg);
     FieldMessage_ShowAtActor(18, 0);
-    if (Event_AskYesNoWithActorAnimation(Func_020005dc(), 0) == 0) {
-      Func_02000584(msg + 1);
+    if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
+      Event_SetMessageId(msg + 1);
       GameFlag_SetBit(0x85d);
     } else {
-      Func_02000584(msg + 2);
+      Event_SetMessageId(msg + 2);
     }
-    Func_02000594(18, 0);
+    Event_ShowMessageAndWait(18, 0);
   } else {
-    Func_02000584((s32)&MsgNaribwe08);
-    Func_02000594(14, 0);
+    Event_SetMessageId((s32)&MsgNaribwe08);
+    Event_ShowMessageAndWait(14, 0);
   }
 }
 
 void Func_020001a8(void) {
   s32 msg = (s32)&MsgNaribwe09;
 
-  Func_02000584(msg);
+  Event_SetMessageId(msg);
   FieldMessage_ShowAtActor(19, 0);
-  if (Event_AskYesNoWithActorAnimation(Func_020005dc(), 0) == 0) {
-    FieldEvent_Wait(10);
-    Func_02000584(msg + 1);
+  if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
+    Event_Wait(10);
+    Event_SetMessageId(msg + 1);
   } else {
-    FieldEvent_Wait(20);
-    Func_02000584(msg + 2);
+    Event_Wait(20);
+    Event_SetMessageId(msg + 2);
   }
-  Func_02000594(19, 0);
+  Event_ShowMessageAndWait(19, 0);
 }
 
 void Func_020001f0(s32 actor) {
@@ -82,9 +83,9 @@ void Func_020001f0(s32 actor) {
     return;
   }
   Func_0200054c();
-  Func_020005c4(0);
-  Func_02000584((s32)&MsgNaribwe21);
-  Func_02000594(actor, 0);
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)&MsgNaribwe21);
+  Event_ShowMessageAndWait(actor, 0);
   Func_02000554();
 }
 
@@ -95,9 +96,9 @@ void Func_02000250(s32 actor) {
     return;
   }
   Func_0200054c();
-  Func_020005c4(0);
-  Func_02000584((s32)&MsgNaribwe43);
-  Func_02000594(actor, 0);
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)&MsgNaribwe43);
+  Event_ShowMessageAndWait(actor, 0);
   Func_02000554();
 }
 
@@ -108,9 +109,9 @@ void Func_020002b0(s32 actor) {
     return;
   }
   Func_0200054c();
-  Func_020005c4(0);
-  Func_02000584((s32)&MsgNaribwe23);
-  Func_02000594(26, 0);
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)&MsgNaribwe23);
+  Event_ShowMessageAndWait(26, 0);
   Func_02000554();
 }
 
@@ -121,16 +122,10 @@ void Func_0200030c(s32 actor) {
     return;
   }
   Func_0200054c();
-  Func_020005c4(0);
-  Func_02000584((s32)&MsgNaribwe45);
-  Func_02000594(26, 0);
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)&MsgNaribwe45);
+  Event_ShowMessageAndWait(26, 0);
   Func_02000554();
-}
-
-static __inline__ void Func_02000534_(const void *script, s32 x, s32 z) {
-  /* FAKEMATCH: forwarding through the inline loads the table's fields as the
-   * native does, the script last (differ 12 as a direct call). */
-  Func_02000534(script, x, z);
 }
 
 void Func_02000368(void) {
@@ -139,7 +134,7 @@ void Func_02000368(void) {
   u32 id;
 
   Func_0200054c();
-  Func_020005c4(0);
+  Event_ResolvePendingActions(0);
   for (id = 8; id <= 63; id++) {
     u8 *actor = (u8 *)Actor_GetById(id);
 
@@ -159,15 +154,15 @@ void Func_02000368(void) {
    * subtraction after it; sched2 ranks the subtraction above the call (differ 2
    * and 4 without the first and second). */
   asm("");
-  Func_020005f4(158);
+  Sound_Play(158);
   asm("");
   index -= 4;
-  Func_02000534_(gData_0200064c[index].script, gData_0200064c[index].x,
-                 gData_0200064c[index].z);
+  MapGrid_AnimateCells(gData_0200064c[index].script, gData_0200064c[index].x,
+                       gData_0200064c[index].z);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
-  Func_020005a4(*(s16 *)work);
+  Import_EventSetExitRequest(*(s16 *)work);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_02000554();

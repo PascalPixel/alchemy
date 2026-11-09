@@ -1,4 +1,5 @@
 #include "types.h"
+#include "event_inline.h"
 #include "field_event.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
@@ -10,13 +11,6 @@ extern s32 gData_020010d0[];
 extern s32 gData_02001238[];
 extern s32 gData_02001490[];
 extern s32 gData_02001664[];
-
-static inline void CenterAndWalk(s32 actor, s32 priority, s32 dz) {
-  /* FAKEMATCH: as in the scene layer of The Broken Seal, the inline parameter
-   * keeps the native order (direct: -6 is negated before the priority is
-   * loaded, 2 differ) */
-  Import_ActorCenterAndWalk(actor, priority, dz);
-}
 
 static inline void ReturnHome(s32 mode, s32 actor, s32 flag) {
   /* FAKEMATCH: as in the scene layer of The Broken Seal, the inline parameter
@@ -43,14 +37,14 @@ void Func_0200009c(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   Import_EventStart();
-  Import_EventResolvePendingActions(0);
-  Import_ActorSetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
-  Import_ActorSetSpritePriority(gMainRoutineWork.currentOwner, 2);
-  Import_ActorGet(gMainRoutineWork.currentOwner)->motionFlags = 0;
-  Import_SoundPlay(123);
-  Import_ActorSetAnimation(gMainRoutineWork.currentOwner, 2);
-  CenterAndWalk(gMainRoutineWork.currentOwner, 2, -6);
-  Import_EventWait(10);
+  Event_ResolvePendingActions(0);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
+  Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
+  Sound_Play(123);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+  Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -6);
+  Event_Wait(10);
   Import_EventSetExitRequest(work->exit);
   Import_EventFinishScreenTransition();
   Import_EventWaitTransitionFrames();

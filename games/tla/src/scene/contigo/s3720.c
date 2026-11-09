@@ -2,6 +2,7 @@
 #include "scene_tables.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_inline.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -10,35 +11,13 @@ extern const u8 gData_020046ac[];
 extern const u8 gData_020046d8[];
 extern const u8 gData_02004704[];
 
-struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void wait(s32 frames);
-void Task_Add(void (*func)(void), s32 priority);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Actor_Stop(s32 actor);
-void Camera_FollowActor(s32 actor, s32 mode);
 void Func_02000038(const u8 *a, const u8 *b, const u8 *c, const u8 *d);
 s32 Func_020006d0(struct Actor *object);
 void Func_02001724(void);
 void Func_020036f0(void);
 void Func_02003ffc(void);
-void Func_020040d4(s32 actor, s32 x, s32 z);
-void Func_020041a4(s32 a, s32 x, s32 y, s32 z);
-
-static __inline__ void Func_020040d4_(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): forwarding keeps the call's own constants; called
-   * directly, 2 of 136 instructions differ in tla-en. */
-  Func_020040d4(actor, x, z);
-}
-
-static __inline__ void Func_020041a4_(s32 a, s32 x, s32 y, s32 z) {
-  /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; called
-   * directly, 27 of 136 instructions differ in tla-en. */
-  Func_020041a4(a, x, y, z);
-}
 
 /// Schedules Func_020036f0 and gives objects 14 and 15 their flag bytes and
 /// Func_020006d0 as their update (object 15 brought in and placed while flag
@@ -59,8 +38,8 @@ void Func_02003720(void) {
   *(void **)((u8 *)object + 108) = Func_020006d0;
   if (GameFlag_Test(0xa21) != 0 && GameFlag_Test(0x9b2) == 0) {
     Actor_Stop(15);
-    Func_020040d4(15, 0, 0);
-    Func_020040d4(13, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
     Func_02001724();
   } else {
     object = Actor_GetById(15);
@@ -69,7 +48,7 @@ void Func_02003720(void) {
     *(void **)((u8 *)object + 108) = Func_020006d0;
   }
   if (GameFlag_Test(0x9e7) != 0 && GameFlag_Test(0x9e6) == 0) {
-    Func_020040d4_(17, PIXELS(32), PIXELS(708));
+    Actor_SetPosition(17, PIXELS(32), PIXELS(708));
   } else {
     Actor_SetPartAttribute(Actor_GetById(17), 15);
     Actor_SetSingleChildFlags(Actor_GetById(17), 0);
@@ -83,12 +62,12 @@ void Func_02003720(void) {
       GameFlag_SetBit(0x200);
       break;
     default:
-      Func_020041a4_(0, 0x2000000, 0x2000000, 0x4000000);
+      Field_SetCameraBounds(0, 0x2000000, 0x2000000, 0x4000000);
       break;
     }
   }
   if (GameFlag_Test(0x200) != 0) {
-    Func_020041a4_(0, 0x2000000, 0x3700000, 0x4000000);
+    Field_SetCameraBounds(0, 0x2000000, 0x3700000, 0x4000000);
     Camera_FollowActor(gMainRoutineWork.currentOwner, 0);
     Func_02003ffc();
     wait(1);

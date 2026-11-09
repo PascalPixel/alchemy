@@ -1,4 +1,5 @@
 #include "types.h"
+#include "event_inline.h"
 
 struct SceneState {
   u8 unk000[0x168];
@@ -11,7 +12,6 @@ extern const u8 gField_CachedTilesA[];
 void *Heap_Alloc(s32 size);
 void Heap_Release(void *block);
 s32 Resource_FindFreeEntry(void);
-void VramCache_Load(s32 handle, s32 size, void *source);
 void Func_020055cc(const u8 *data, void *buffer);
 
 static __inline__ void *Mem_Alloc(s32 size) {

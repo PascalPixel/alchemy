@@ -4,7 +4,7 @@
 #include "actor.h"
 #include "ram_buffer.h"
 #include "types.h"
-#include "call.h"
+#include "event_inline.h"
 
 struct Spark {
   s32 mode;
@@ -20,19 +20,13 @@ struct EventWork {
 };
 
 extern u32 gFrameCount;
-struct Actor *Actor_GetById(s32 id);
 void Func_02001fac(void);
 void Func_02001fb4(void);
-void Func_02002044(s32 skip);
-void Func_02002054(s32 cue);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
 s32 Func_0200034c(u32 layer, s32 x, s32 y);
-void Func_02001f6c(struct Actor *actor, s32 x, s32 y, s32 z);
 s32 Func_02001f9c(struct Actor *actor);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 d,
                    struct Spark *spark);
-void wait(s32 frames);
 
 void Func_02000818(void) {
   s32 pos[4];
@@ -48,7 +42,7 @@ void Func_02000818(void) {
   actor = Actor_GetById(8);
   angle = (work->unk154 - 45) << 14;
   Func_02001fac();
-  Func_02002044(0);
+  Event_ResolvePendingActions(0);
   x = actor->x >> 20;
   z = actor->z >> 20;
   dx = Math_Cosine(angle) >> 16;
@@ -69,13 +63,13 @@ void Func_02000818(void) {
     z += dz;
     targetX += dx << 20;
     targetZ += dz << 20;
-    Func_02001f6c(actor, targetX, actor->y, targetZ);
+    Actor_SetMoveTarget(actor, targetX, actor->y, targetZ);
     while (Func_02001f9c(actor) == 0) {
       s32 phase = 3;
       phase &= gFrameCount;
       if (phase == 0) {
         if ((gFrameCount & 10) == 0) {
-          Func_02002054(0x255);
+          Sound_Play(0x255);
         }
         spark.mode = 2;
         spark.kind = 7;

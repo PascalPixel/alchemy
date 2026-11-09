@@ -1,9 +1,9 @@
 #include "sea_of_time.h"
 #include "main_routine_work.h"
 #include "io_reg.h"
-#include "call.h"
 #include "scene_ids.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 /// The 14 colours of BG palette 3 (entries 1 to 14) that the fade returns to,
 /// copied from palette RAM by Func_02001cdc and rotated by Func_02001650 in
@@ -15,14 +15,8 @@ struct SavedColors {
 extern struct SavedColors gData_020026c0;
 
 void Func_020010a8(struct SeaOfTimeObject *object);
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
-void Actor_WaitForMoveById(s32 id);
-void Func_02001f74(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02001f4c(struct SeaOfTimeObject *object, s32 value);
-void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
 void Func_0200200c(s32 a, s32 b);
-void wait(s32 frames);
 
 void Func_02001108(void) {
   volatile u16 fill;
@@ -36,22 +30,22 @@ void Func_02001108(void) {
   u32 j;
 
   Func_02001fac();
-  Func_02002044(0);
+  Event_ResolvePendingActions(0);
   GameFlag_SetBit(0x8dd);
-  Call3((void (*)())Actor_SetSpeedParameters, 8, 0x10000, 0x8000);
-  Actor_GetById(8)->facing = FACING_NORTH;
-  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 8, 352, 264);
-  Func_02001fec(0x10000, 0x2000);
+  Actor_SetSpeed(8, 0x10000, 0x8000);
+  ((struct SeaOfTimeObject *)Actor_GetById(8))->facing = FACING_NORTH;
+  Actor_WalkTo(8, 352, 264);
+  Camera_SetSpeedParameters(0x10000, 0x2000);
   Camera_MoveWithinMapBounds(352 << 16, -1, 196 << 16, 1);
   Func_02001ffc();
   Actor_WaitForMoveById(8);
-  Func_02002054(78);
-  Func_02002054(556);
+  Sound_Play(78);
+  Sound_Play(556);
   // Fills palette 3's entries 1 to 14 with one colour.
   fill = RGB(11, 6, 23);
   Dma_Set((const void *)&fill, (void *)&BG_PLTT_COLOR(3, 1),
           (DMA_ENABLE | DMA_SRC_FIXED) << 16 | 14, REG_DMA3);
-  Func_02001f74(49, 70, 19, 73, 6, 6);
+  Map_CopyCellPictureIndicesRect(49, 70, 19, 73, 6, 6);
   // Steps each colour's red, green and blue by one toward the saved palette
   // every 10 frames until none changes.
 fade:
@@ -98,7 +92,7 @@ fade:
   }
   if (changed)
     goto fade;
-  FieldEvent_Wait(30);
+  Event_Wait(30);
   // For 360 frames, spawns an effect every 16 frames, then every 8, then
   // every other frame, and plays sound 164 every 64 frames. As a C loop,
   // loop.c moves the mask, the palette and the options address out of it,
@@ -106,7 +100,7 @@ fade:
   i = 0;
 sparks:
   if ((i & 63) == 0)
-    Func_02002054(164);
+    Sound_Play(164);
   if (i < 120) {
     if (i & 15)
       goto next;
@@ -151,12 +145,13 @@ next:
     }
     i++;
   }
-  object = Import_ActorCreate(159, 0x15c0000, 0, 0xb80000);
+  object = ((struct SeaOfTimeObject *)Import_ActorCreate(159, 0x15c0000, 0,
+                                                         0xb80000));
   // The object's per-frame hook, struct Actor's update.
   *(void (**)(struct SeaOfTimeObject *))((u8 *)object + 0x6c) = Func_020010a8;
-  FieldEvent_Wait(60);
+  Event_Wait(60);
   Func_02001f4c(object, 1);
-  FieldEvent_Wait(40);
+  Event_Wait(40);
   gMainRoutineWork.battleRule24b = 2;
   Party_SetFields1eeAnd1f0((s32)&SceneId_Ov687Room2, 4);
   Func_0200200c(12, 6);

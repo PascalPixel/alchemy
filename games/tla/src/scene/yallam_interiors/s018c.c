@@ -6,19 +6,16 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
+#include "event_inline.h"
 void Func_020009b0(void);
-void Func_02000a50(s32 a);
-void Func_02000a18(s32 a);
-void Func_02000a28(s32 a, s32 b);
 void Func_020009b8(void);
 extern u8 MsgYallamInteriors22[];
 
 s32 Func_0200018c(void) {
   Func_020009b0();
-  Func_02000a50(0);
-  Func_02000a18((s32)MsgYallamInteriors22);
-  Func_02000a28(10, 0);
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)MsgYallamInteriors22);
+  Event_ShowMessageAndWait(10, 0);
   Func_020009b8();
   return 0;
 }

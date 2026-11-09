@@ -41,18 +41,18 @@ s32 Func_02000360(void) {
   if (Flag_IsSet(0x90a))
     Actor_SetSpritePriority(9, 1);
   else
-    Func_020004bc(9, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
 #endif
   return 0;
 }
 
 s32 Func_020003cc(void) {
   if (!Flag_IsSet(0x8df)) {
-    Func_0200045c(57, 52, 64, 15, 1, 1);
-    Func_0200045c(60, 53, 67, 16, 6, 3);
-    Func_0200045c(50, 52, 16, 16, 6, 3);
-    Func_0200045c(50, 61, 16, 28, 10, 3);
-    Func_0200045c(61, 61, 16, 63, 10, 3);
+    Map_CopyCellPictureIndicesRect(57, 52, 64, 15, 1, 1);
+    Map_CopyCellPictureIndicesRect(60, 53, 67, 16, 6, 3);
+    Map_CopyCellPictureIndicesRect(50, 52, 16, 16, 6, 3);
+    Map_CopyCellPictureIndicesRect(50, 61, 16, 28, 10, 3);
+    Map_CopyCellPictureIndicesRect(61, 61, 16, 63, 10, 3);
   }
   return 0;
 }

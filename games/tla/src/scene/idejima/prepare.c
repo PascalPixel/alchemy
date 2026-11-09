@@ -3,8 +3,8 @@
 #include "task.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
+#include "event_inline.h"
 
-s32 GameFlag_Test(s32 flag);
 void Func_0200153c(void);
 void Func_02001558(void);
 void Func_020015a0(void);

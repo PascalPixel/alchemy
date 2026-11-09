@@ -1,5 +1,6 @@
 #include "types.h"
 #include "iwram_call.h"
+#include "event_inline.h"
 
 struct ClockWork {
   u8 unk00[132];
@@ -9,7 +10,6 @@ struct ClockWork {
 };
 
 extern u8 gData_020023c4[];
-void Func_02005854(s32 sound);
 s32 Math_Cosine(s32 angle);
 
 /// Converts the remaining frames into minutes, seconds and tenths
@@ -41,7 +41,7 @@ s32 Func_02005020(s32 time) {
     *ringing = 1;
   } else if (*ringing) {
     if (clock->timer != 0)
-      Func_02005854(236);
+      Sound_Play(236);
     *ringing = second;
   }
   if (second <= 19) {

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "event_inline.h"
 
 struct Wanderer {
   u8 unk00[6];
@@ -10,10 +11,9 @@ struct Wanderer {
   u16 facingB;
 };
 
-void Func_020057cc(s32 a, s32 b);
 u32 Random16Far(void);
 
-void Func_02000280(void) { Func_020057cc(33, 9); }
+void Func_02000280(void) { Func_080d2b4c(33, 9); }
 s32 Func_0200028c(struct Wanderer *actor) {
   u8 *timer = &actor->timer;
 

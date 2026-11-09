@@ -6,15 +6,14 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
+#include "event_inline.h"
 s32 Func_02001d2c();
-s32 Actor_GetById();
 extern u8 gData_02001d54[];
 
 void Func_0200026c(s32 a0, s32 a1) {
   s32 t1;
 
   Func_02001d2c((s32)gData_02001d54);
-  t1 = Actor_GetById(a1);
+  t1 = ((s32)Actor_GetById(a1));
   FIELD_AT((t1 + 0x23), u8, 0) = 0;
 }

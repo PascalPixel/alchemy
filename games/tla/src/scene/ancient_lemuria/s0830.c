@@ -1,9 +1,6 @@
 #include "scene.h"
 #include "main_routine_work.h"
-
-void GameFlag_ClearBit();
-void Func_020018f4();
-void Func_020018ec();
+#include "event_inline.h"
 
 s32 Func_020007a4(void) {
   s32 entrance = gMainRoutineWork.entrance;
@@ -19,9 +16,9 @@ s32 Func_020007a4(void) {
   else if (entrance == 5)
     GameFlag_SetBit(0x960);
   if (GameFlag_Test(0x960)) {
-    Func_020018f4(38, 47, 26, 12, 8, 47);
-    Func_020018f4(102, 47, 26, 12, 72, 47);
-    Func_020018ec(38, 47, 26, 12, 8, 47);
+    Func_0802b450(38, 47, 26, 12, 8, 47);
+    Func_0802b450(102, 47, 26, 12, 72, 47);
+    Map_CopyCellAttributeRect(38, 47, 26, 12, 8, 47);
   }
   return 0;
 }

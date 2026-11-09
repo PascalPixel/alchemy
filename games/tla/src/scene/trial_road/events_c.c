@@ -1,8 +1,8 @@
 #include "trial_road.h"
 #include "macros.h"
 
-#include "scene_call.h"
 #include "text/msg_ids.h"
+#include "event_inline.h"
 
 struct EventWork15a {
   u8 unk000[0x15a];
@@ -11,7 +11,6 @@ struct EventWork15a {
 
 void Func_02005880(void);
 void Func_02005888(void);
-void Func_020059e8(s32 a);
 
 void Func_020005b4(s32 id) {
   s32 flag;
@@ -22,7 +21,7 @@ void Func_020005b4(s32 id) {
     flag = 0x286;
   if (!GameFlag_Test(flag)) {
     Func_02005880();
-    Func_020059e8(0);
+    Event_ResolvePendingActions(0);
     FieldMessage_Show((s32)MsgTrialRoadChestBlocked, 1);
     Func_02005888();
   } else {

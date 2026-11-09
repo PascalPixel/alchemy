@@ -22,13 +22,13 @@ GameFlag_Test:
 	.thumb_func
 GameFlag_SetBit:
 	overlay_veneer GameFlag_SetBitFar
-	.global Func_02000c88
+	.global Import_ActorCreate
 	.thumb_func
-Func_02000c88:
+Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_02000c90
+	.global Map_CopyCellsRect
 	.thumb_func
-Func_02000c90:
+Map_CopyCellsRect:
 	overlay_veneer Map_CopyCellsRectFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
@@ -192,9 +192,9 @@ Func_02000dc8:
 	.thumb_func
 Func_02000dd0:
 	overlay_veneer Func_080ad2f8
-	.global FieldEvent_Wait
+	.global Event_Wait
 	.thumb_func
-FieldEvent_Wait:
+Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
 	.global PartyInventory_GiveItem
 	.thumb_func
@@ -208,25 +208,25 @@ Event_AskYesNoWithActorAnimation:
 	.thumb_func
 Actor_GetById:
 	overlay_veneer Actor_GetByIdFar
-	.global Func_02000df8
+	.global Actor_SetHorizontalPositionWithTerrain
 	.thumb_func
-Func_02000df8:
+Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
 	.global Actor_SetModeById
 	.thumb_func
 Actor_SetModeById:
 	overlay_veneer Actor_SetModeByIdFar
-	.global Func_02000e08
+	.global Event_SetMessageId
 	.thumb_func
-Func_02000e08:
+Event_SetMessageId:
 	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
 	overlay_veneer FieldMessage_ShowAtActorFar
-	.global Func_02000e18
+	.global Event_ShowMessageAndWait
 	.thumb_func
-Func_02000e18:
+Event_ShowMessageAndWait:
 	overlay_veneer Event_ShowMessageAndWaitFar
 	.global Func_02000e20
 	.thumb_func
@@ -236,9 +236,9 @@ Func_02000e20:
 	.thumb_func
 Func_02000e28:
 	overlay_veneer Func_080c83e0
-	.global Func_02000e30
+	.global Party_GetLeaderActor
 	.thumb_func
-Func_02000e30:
+Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
 	.global ItemMenu_DrawItemDetails
 	.thumb_func
@@ -272,7 +272,7 @@ Func_02000e68:
 	.thumb_func
 Func_02000e70:
 	overlay_veneer Func_081080a0
-	.global Func_02000e78
+	.global Sound_Play
 	.thumb_func
-Func_02000e78:
+Sound_Play:
 	overlay_veneer Sound_PlayFar

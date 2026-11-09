@@ -26,17 +26,17 @@ Func_02000540:
 	.thumb_func
 Func_02000548:
 	overlay_veneer Actor_StartScriptFar
-	.global Func_02000550
+	.global Import_ActorCreate
 	.thumb_func
-Func_02000550:
+Import_ActorCreate:
 	overlay_veneer Func_080200c0
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global FieldEvent_Wait
+	.global Event_Wait
 	.thumb_func
-FieldEvent_Wait:
+Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
 	.global Func_02000568
 	.thumb_func
@@ -62,41 +62,41 @@ Actor_Jump:
 	.thumb_func
 Actor_SetPartAttribute:
 	overlay_veneer Actor_SetPartAttributeFar
-	.global Func_02000598
+	.global Event_SetMessageId
 	.thumb_func
-Func_02000598:
+Event_SetMessageId:
 	overlay_veneer Event_SetMessageIdFar
-	.global Func_020005a0
+	.global Event_ShowMessageAndWait
 	.thumb_func
-Func_020005a0:
+Event_ShowMessageAndWait:
 	overlay_veneer Event_ShowMessageAndWaitFar
 	.global Actor_ArmCallback
 	.thumb_func
 Actor_ArmCallback:
 	overlay_veneer Actor_ArmCallbackFar
-	.global Func_020005b0
+	.global Actor_ArmCallbackAndRefresh
 	.thumb_func
-Func_020005b0:
+Actor_ArmCallbackAndRefresh:
 	overlay_veneer Actor_ArmCallbackAndRefreshFar
 	.global Actor_SetSpritePriority
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_020005c0
+	.global Func_080d47b4
 	.thumb_func
-Func_020005c0:
+Func_080d47b4:
 	overlay_veneer Func_080c8210
-	.global Func_020005c8
+	.global Import_EventSetExitRequest
 	.thumb_func
-Func_020005c8:
+Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_020005d0
+	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func
-Func_020005d0:
+BattleEffect_ApplyColorToTargetBuffer:
 	overlay_veneer BattleEffect_ApplyColorToTargetBufferFar
-	.global Func_020005d8
+	.global BattleEffect_StartBufferInterpolation
 	.thumb_func
-Func_020005d8:
+BattleEffect_StartBufferInterpolation:
 	overlay_veneer BattleEffect_StartBufferInterpolationFar
 	.global Event_StartScreenTransition
 	.thumb_func
@@ -110,19 +110,19 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_020005f8
+	.global Event_ResolvePendingActions
 	.thumb_func
-Func_020005f8:
+Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02000600
+	.global Func_080dc978
 	.thumb_func
-Func_02000600:
+Func_080dc978:
 	overlay_veneer Func_080c84e8
 	.global Func_02000608
 	.thumb_func
 Func_02000608:
 	overlay_veneer Func_080c84f0
-	.global Func_02000610
+	.global Sound_Play
 	.thumb_func
-Func_02000610:
+Sound_Play:
 	overlay_veneer Sound_PlayFar

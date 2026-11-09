@@ -5,6 +5,7 @@
 #include "sea_of_time.h"
 #include "map.h"
 #include "io_reg.h"
+#include "event_inline.h"
 
 /// The event work's fields this function reads that SeaOfTimeEventWork lacks.
 struct EventWork_02001650 {
@@ -18,7 +19,6 @@ extern u16 Data_02002580[160];
 extern u16 gData_020026c0[14];
 extern s16 gData_0200257c[1];
 
-void Func_0200201c(s32 colors, s32 mode);
 
 void Func_02001650(void) {
   u16 *line = Data_02002580;
@@ -103,7 +103,7 @@ void Func_02001650(void) {
 
   Dma_Set((const void *)BG_PLTT, Ram_HeapSlots->block32, DMA_COPY_WORDS(112),
           REG_DMA3);
-  Func_0200201c(0x10000, 0);
+  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   *(s32 *)((u8 *)layer + 0x1c) = 0;
   for (i = 0; i != 160; i++)
     *line++ =

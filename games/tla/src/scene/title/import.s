@@ -54,9 +54,9 @@ Fade_Wait:
 	.thumb_func
 Func_020005d4:
 	overlay_veneer Func_080382f0
-	.global Func_020005dc
+	.global Func_0803f9c0
 	.thumb_func
-Func_020005dc:
+Func_0803f9c0:
 	overlay_veneer Func_08038348
 	.global Func_020005e4
 	.thumb_func
@@ -66,9 +66,9 @@ Func_020005e4:
 	.thumb_func
 Func_020005ec:
 	overlay_veneer Party_SetLeaderFelixFar
-	.global FieldEvent_Wait
+	.global Event_Wait
 	.thumb_func
-FieldEvent_Wait:
+Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
 	.global Actor_GetById
 	.thumb_func
@@ -106,7 +106,7 @@ Func_02000634:
 	.thumb_func
 Func_0200063c:
 	overlay_veneer Func_081a6028
-	.global Func_02000644
+	.global Sound_Play
 	.thumb_func
-Func_02000644:
+Sound_Play:
 	overlay_veneer Sound_PlayFar

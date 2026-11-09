@@ -4,11 +4,10 @@
 #include "main_routine_work.h"
 #include "map.h"
 #include "iwram_call.h"
-#include "call.h"
+#include "event_inline.h"
 
 extern u8 gMapShapeGrid[];
 
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Func_020010ec(s32 layer, s32 x, s32 z);

@@ -9,7 +9,7 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "main_routine_work.h"
-#include "call.h"
+#include "event_inline.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -23,20 +23,15 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 extern s32 gData_02002618;
 
-struct Actor *Actor_GetById();
-void Actor_SetSpritePriority();
 s32 Func_02001978();
-s32 Func_02001c10();
-s32 Func_02001c50();
-s32 Func_02001c90();
 struct Actor *Func_02000910();
 
 void Func_02000054(void) {
   if (gMainRoutineWork.renderMode == 10)
-    Func_02001c90(0x2200000, 0x1100000, 0, 255);
+    Func_080dbdd4(0x2200000, 0x1100000, 0, 255);
 }
 
-void Func_0200007c(void) { Func_02001c90(0x2200000, 0x1100000, 0, 6); }
+void Func_0200007c(void) { Func_080dbdd4(0x2200000, 0x1100000, 0, 6); }
 
 void Func_02000090(s32 id) {
   struct Actor *object;
@@ -44,11 +39,11 @@ void Func_02000090(s32 id) {
   if (gData_02002618 == 0) {
     object = Actor_GetById(8);
     if (id == 30) {
-      Value3(Func_02001c10, 8, PIXELS(296), PIXELS(600));
+      Actor_SetPosition(8, PIXELS(296), PIXELS(600));
       object->y = 0;
       object->angle = FACING_WEST;
     } else if (id == 31) {
-      Value3(Func_02001c10, 8, PIXELS(136), PIXELS(680));
+      Actor_SetPosition(8, PIXELS(136), PIXELS(680));
       object->y = 0;
       object->angle = 0;
     }
@@ -65,19 +60,19 @@ void Func_020000e8(s32 id) {
       Actor_GetById(gMainRoutineWork.currentOwner)->y > 0) {
     object = Actor_GetById(8);
     if (id == 50) {
-      Value3(Func_02001c10, 8, PIXELS(488), PIXELS(280));
+      Actor_SetPosition(8, PIXELS(488), PIXELS(280));
       object->y = PIXELS(32);
       object->angle = FACING_WEST;
     } else if (id == 51) {
-      Value3(Func_02001c10, 8, PIXELS(472), PIXELS(184));
+      Actor_SetPosition(8, PIXELS(472), PIXELS(184));
       object->y = PIXELS(32);
       object->angle = FACING_WEST;
     } else if (id == 52) {
-      Value3(Func_02001c10, 8, PIXELS(616), PIXELS(280));
+      Actor_SetPosition(8, PIXELS(616), PIXELS(280));
       object->y = PIXELS(32);
       object->angle = 0;
     } else if (id == 53) {
-      Value3(Func_02001c10, 8, PIXELS(632), PIXELS(184));
+      Actor_SetPosition(8, PIXELS(632), PIXELS(184));
       object->y = PIXELS(32);
       object->angle = 0;
     }
@@ -91,7 +86,7 @@ void Func_020000e8(s32 id) {
 void Func_0200018c(s32 arg) {
   if (Actor_GetById(gMainRoutineWork.currentOwner)->y == 0 &&
       Func_02001978(arg) != 0)
-    Func_02001c50(13);
+    Import_EventSetExitRequest(13);
 }
 
 void Func_020001bc(s32 arg) {
@@ -108,7 +103,7 @@ void Func_020001bc(s32 arg) {
     if (x == 8 && z == 39)
       Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
     if (Func_02001978(arg) != 0)
-      Func_02001c50(14);
+      Import_EventSetExitRequest(14);
   }
 }
 

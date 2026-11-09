@@ -1,4 +1,5 @@
 #include "yallam.h"
+#include "event_inline.h"
 #include "types.h"
 #include "main_routine_work.h"
 
@@ -17,31 +18,13 @@ const u8 *Func_02000218(void) {
   return gData_02002ac4;
 }
 
-static __inline__ void Offset(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarding through the inline sets the arguments up in their own
-   * order; the direct call negates the offset last (differ 2). */
-  Actor_OffsetPositionAndResetMotion(id, x, z);
-}
-
-static __inline__ void CenterOn(s32 id, s32 column, s32 offset) {
-  /* FAKEMATCH: forwarding through the inline sets the arguments up in their own
-   * order; the direct call negates the offset last (differ 2). */
-  Actor_CenterOnColumn(id, column, offset);
-}
-
-static __inline__ void Func_02002460_(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH: forwarding through the inline loads the stop's fields as the
-   * native does, the first word last (differ 12 as a direct call). */
-  Func_02002460(a, b, c);
-}
-
 void Func_02000270(void) {
   u8 *event = Ram_HeapSlots->eventWork;
   u32 i;
   s32 index;
 
   Func_02002488();
-  Func_02002590(0);
+  Event_ResolvePendingActions(0);
   for (i = 8; i <= 63; i++) {
     u8 *actor = (u8 *)Actor_GetById(i);
 
@@ -60,11 +43,11 @@ void Func_02000270(void) {
    * decrement after it, as in overlay 66d's Func_02000368 (differ 2 without the
    * first). */
   asm("");
-  Func_020025a0(158);
+  Sound_Play(158);
   asm("");
   index--;
-  Func_02002460_(gData_02002ce4[index].a, gData_02002ce4[index].b,
-                 gData_02002ce4[index].c);
+  MapGrid_AnimateCells(gData_02002ce4[index].a, gData_02002ce4[index].b,
+                       gData_02002ce4[index].c);
   /* FAKEMATCH: the empty asm ends the shift's output dependences on the later
    * calls (r4 is call-used), so sched2 takes the table address first as the
    * native does (differ 2). */
@@ -75,12 +58,12 @@ void Func_02000270(void) {
     s32 owner = gMainRoutineWork.currentOwner;
 
     if (index == 7)
-      Offset(owner, 0, -4);
+      Actor_SetDestinationOffset(owner, 0, -4);
     else
-      CenterOn(owner, 2, -4);
+      Actor_CenterAndWalk(owner, 2, -4);
   }
-  FieldEvent_Wait(10);
-  Func_02002578(*(s16 *)(event + 340));
+  Event_Wait(10);
+  Import_EventSetExitRequest(*(s16 *)(event + 340));
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_02002490();

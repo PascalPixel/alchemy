@@ -1,8 +1,8 @@
 #include "types.h"
 #include "actor.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 
 struct ActorSprite {

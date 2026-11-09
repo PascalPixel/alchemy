@@ -1,7 +1,6 @@
 #include "yampi_desert_cave.h"
 #include "task.h"
-
-void Task_RemoveFar(void (*func)(void));
+#include "event_inline.h"
 
 void Func_02000898(void) {
   gData_02001fe8 = 0;

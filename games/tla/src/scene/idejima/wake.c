@@ -3,29 +3,15 @@
 #include "field_event.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
-#include "call.h"
 #include "text/msg_ids.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
-struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void Camera_MoveWithinMapBounds();
-void Motion_SetVarCbAndRefresh();
-void Motion_SetModeAndWaitAnimation();
-void Actor_Jump();
-void Actor_SetSpeedParameters();
-void Actor_SetPositionAndReset();
 void Actor_WaitForAnimationChange();
-s32 FieldMessage_ShowAtActor();
-s32 Event_AskYesNoWithActorAnimation();
-void FieldEvent_Wait();
 void Event_StartScreenTransition();
 void Event_WaitTransitionFrames();
-void GameFlag_SetBit();
-void GameFlag_ClearBit();
 void Func_02003180();
-void Func_02003228();
-void Func_02003310();
 
 void FelixWake_StartStep(void) {}
 
@@ -37,7 +23,7 @@ void FelixWake_WaitForButton(void) {
   FelixWake_StartStep();
 wait:
   if (--frames != -1) {
-    Task_Wait(1);
+    wait(1);
     if (gInput.pressed == 0) {
       goto wait;
     }
@@ -53,75 +39,75 @@ void Func_02002c64(void) {
 
   FelixWake_StartStep();
   Import_EventStart();
-  Func_02003310(0);
-  Call4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
-  Task_Wait(1);
-  Call4(Camera_MoveWithinMapBounds, PIXELS(384), -1, PIXELS(728), 0);
-  Task_Wait(1);
-  Import_ActorSetAnimation(gMainRoutineWork.currentOwner, 41);
-  Task_Wait(1);
+  Event_ResolvePendingActions(0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
+  wait(1);
+  FieldCamera_MoveTo(PIXELS(384), -1, PIXELS(728), 0);
+  wait(1);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 41);
+  wait(1);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
-  Task_Wait(1);
-  Call3(Func_02003228, gMainRoutineWork.currentOwner, PIXELS(384), PIXELS(728));
-  Func_02003228(11, PIXELS(384), PIXELS(702));
-  Task_Wait(1);
+  wait(1);
+  Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(384), PIXELS(728));
+  Actor_SetHorizontalPositionWithTerrain(11, PIXELS(384), PIXELS(702));
+  wait(1);
   Func_02003180();
-  Task_Wait(1);
+  wait(1);
   FelixWake_EndStep();
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Task_Wait(10);
+  wait(10);
   FelixWake_WaitForButton();
   FelixWake_StartStep();
   Motion_SetVarCbAndRefresh(gMainRoutineWork.currentOwner, 2);
-  Task_Wait(1);
+  wait(1);
   FelixWake_EndStep();
   FelixWake_WaitForButton();
   FelixWake_StartStep();
-  Import_ActorSetAnimation(gMainRoutineWork.currentOwner, 42);
-  Task_Wait(1);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 42);
+  wait(1);
   FelixWake_EndStep();
   FelixWake_WaitForButton();
   FelixWake_StartStep();
-  Import_ActorSetAnimation(gMainRoutineWork.currentOwner, 1);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
-  Task_Wait(1);
+  wait(1);
   Actor_Jump(gMainRoutineWork.currentOwner, 4, 20);
-  Import_EventSetMessageId((s32)MsgIdejimaCheckForInjuries);
+  Event_SetMessageId((s32)MsgIdejimaCheckForInjuries);
   FieldMessage_ShowAtActor(11, 0);
-  Task_Wait(1);
+  wait(1);
   answer = Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   leader = gMainRoutineWork.currentOwner;
   if (answer == 0) {
     Actor_WaitForAnimationChange(leader);
-    Import_ActorSetAnimation(gMainRoutineWork.currentOwner, 45);
-    Task_Wait(1);
+    Actor_SetModeById(gMainRoutineWork.currentOwner, 45);
+    wait(1);
     FelixWake_EndStep();
-    FieldEvent_Wait(50);
+    Event_Wait(50);
     FelixWake_StartStep();
-    Import_ActorSetAnimation(gMainRoutineWork.currentOwner, 46);
-    Task_Wait(1);
+    Actor_SetModeById(gMainRoutineWork.currentOwner, 46);
+    wait(1);
     FelixWake_EndStep();
-    FieldEvent_Wait(50);
+    Event_Wait(50);
     FelixWake_StartStep();
-    Import_EventShowMessageAndWait(11, 0);
-    Task_Wait(1);
+    Event_ShowMessageAndWait(11, 0);
+    wait(1);
     Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
     FelixWake_EndStep();
-    FieldEvent_Wait(20);
+    Event_Wait(20);
     FelixWake_StartStep();
-    Import_ActorSetAnimation(gMainRoutineWork.currentOwner, 47);
-    Task_Wait(1);
+    Actor_SetModeById(gMainRoutineWork.currentOwner, 47);
+    wait(1);
     FelixWake_EndStep();
-    FieldEvent_Wait(50);
+    Event_Wait(50);
     FelixWake_StartStep();
-    Import_ActorSetAnimation(gMainRoutineWork.currentOwner, 48);
-    Task_Wait(1);
+    Actor_SetModeById(gMainRoutineWork.currentOwner, 48);
+    wait(1);
     FelixWake_EndStep();
-    FieldEvent_Wait(50);
+    Event_Wait(50);
     FelixWake_StartStep();
-    Import_EventShowMessageAndWait(11, 0);
-    Task_Wait(1);
+    Event_ShowMessageAndWait(11, 0);
+    wait(1);
     Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   } else {
     Actor_WaitForAnimationChange(leader);
@@ -129,12 +115,12 @@ void Func_02002c64(void) {
     Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x6666, 0x3333);
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 384, 746);
     FelixWake_EndStep();
-    FieldEvent_Wait(20);
+    Event_Wait(20);
     FelixWake_StartStep();
-    Import_EventShowMessageAndWait(11, 0);
+    Event_ShowMessageAndWait(11, 0);
     Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   }
-  Func_02003228(11, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
   GameFlag_ClearBit(0x12f);
   GameFlag_SetBit(0x844);
   Import_EventEnd();

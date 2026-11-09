@@ -38,9 +38,9 @@ Party_AdjustCoins:
 	.thumb_func
 Func_020009a0:
 	overlay_veneer PartyInventory_FindRoomFar
-	.global FieldEvent_Wait
+	.global Event_Wait
 	.thumb_func
-FieldEvent_Wait:
+Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
 	.global Func_020009b0
 	.thumb_func
@@ -78,9 +78,9 @@ Actor_ResetAndSetPositionInMode2:
 	.thumb_func
 Actor_WaitForMoveById:
 	overlay_veneer Actor_WaitForMoveByIdFar
-	.global Func_020009f8
+	.global Actor_SetHorizontalPositionWithTerrain
 	.thumb_func
-Func_020009f8:
+Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -94,17 +94,17 @@ Actor_StartRepeatedMotion:
 	.thumb_func
 Actor_SetAngleToward:
 	overlay_veneer Actor_SetAngleTowardFar
-	.global Func_02000a18
+	.global Event_SetMessageId
 	.thumb_func
-Func_02000a18:
+Event_SetMessageId:
 	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
 	overlay_veneer FieldMessage_ShowAtActorFar
-	.global Func_02000a28
+	.global Event_ShowMessageAndWait
 	.thumb_func
-Func_02000a28:
+Event_ShowMessageAndWait:
 	overlay_veneer Event_ShowMessageAndWaitFar
 	.global Actor_ArmCallback
 	.thumb_func
@@ -122,13 +122,13 @@ Func_02000a40:
 	.thumb_func
 Func_02000a48:
 	overlay_veneer Func_080c8480
-	.global Func_02000a50
+	.global Event_ResolvePendingActions
 	.thumb_func
-Func_02000a50:
+Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02000a58
+	.global Party_GetLeaderActor
 	.thumb_func
-Func_02000a58:
+Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
 	.global Func_02000a60
 	.thumb_func

@@ -2,21 +2,21 @@
 	.thumb
 	.include "games/tla/src/system/overlay/imports.inc"
 	.balign 4
-	.global Import_GameFlagIsSet
+	.global GameFlag_Test
 	.thumb_func
-Import_GameFlagIsSet:
+GameFlag_Test:
 	overlay_veneer GameFlag_TestFar
-	.global Import_GameFlagSet
+	.global GameFlag_SetBit
 	.thumb_func
-Import_GameFlagSet:
+GameFlag_SetBit:
 	overlay_veneer GameFlag_SetBitFar
-	.global Func_02000c48
+	.global Map_CopyCellAttributeRect
 	.thumb_func
-Func_02000c48:
+Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global Import_EventWait
+	.global Event_Wait
 	.thumb_func
-Import_EventWait:
+Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
 	.global Import_EventStart
 	.thumb_func
@@ -26,17 +26,17 @@ Import_EventStart:
 	.thumb_func
 Import_EventEnd:
 	overlay_veneer Event_EndFar
-	.global Import_EventAskYesNoWithActorAnimation
+	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
-Import_EventAskYesNoWithActorAnimation:
+Event_AskYesNoWithActorAnimation:
 	overlay_veneer Event_AskYesNoWithActorAnimationFar
-	.global Import_ActorGet
+	.global Actor_GetById
 	.thumb_func
-Import_ActorGet:
+Actor_GetById:
 	overlay_veneer Actor_GetByIdFar
-	.global Import_ActorSetSpeed
+	.global Actor_SetSpeedParameters
 	.thumb_func
-Import_ActorSetSpeed:
+Actor_SetSpeedParameters:
 	overlay_veneer Actor_SetSpeedParametersFar
 	.global Actor_ResetAndSetPosition
 	.thumb_func
@@ -50,21 +50,21 @@ Actor_SetPositionAndCommit:
 	.thumb_func
 Actor_SetPositionAndReset:
 	overlay_veneer Actor_SetPositionAndResetFar
-	.global Import_ActorCenterAndWalk
+	.global Actor_CenterOnColumn
 	.thumb_func
-Import_ActorCenterAndWalk:
+Actor_CenterOnColumn:
 	overlay_veneer Actor_CenterOnColumnFar
 	.global Actor_WaitForMoveById
 	.thumb_func
 Actor_WaitForMoveById:
 	overlay_veneer Actor_WaitForMoveByIdFar
-	.global Func_02000ca8
+	.global Actor_SetHorizontalPositionWithTerrain
 	.thumb_func
-Func_02000ca8:
+Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
-	.global Import_ActorSetAnimation
+	.global Actor_SetModeById
 	.thumb_func
-Import_ActorSetAnimation:
+Actor_SetModeById:
 	overlay_veneer Actor_SetModeByIdFar
 	.global Actor_Jump
 	.thumb_func
@@ -86,29 +86,29 @@ Actor_SetAngleToward:
 	.thumb_func
 Actor_TurnToFaceEachOther:
 	overlay_veneer Actor_TurnToFaceEachOtherFar
-	.global Import_EventSetMessageId
+	.global Event_SetMessageId
 	.thumb_func
-Import_EventSetMessageId:
+Event_SetMessageId:
 	overlay_veneer Event_SetMessageIdFar
-	.global Import_FieldMessageShowAtActor
+	.global FieldMessage_ShowAtActor
 	.thumb_func
-Import_FieldMessageShowAtActor:
+FieldMessage_ShowAtActor:
 	overlay_veneer FieldMessage_ShowAtActorFar
-	.global Import_EventShowMessageAndWait
+	.global Event_ShowMessageAndWait
 	.thumb_func
-Import_EventShowMessageAndWait:
+Event_ShowMessageAndWait:
 	overlay_veneer Event_ShowMessageAndWaitFar
 	.global Actor_ArmCallback
 	.thumb_func
 Actor_ArmCallback:
 	overlay_veneer Actor_ArmCallbackFar
-	.global Import_ActorSetSpritePriority
+	.global Actor_SetSpritePriority
 	.thumb_func
-Import_ActorSetSpritePriority:
+Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_02000d08
+	.global Func_080d47b4
 	.thumb_func
-Func_02000d08:
+Func_080d47b4:
 	overlay_veneer Func_080c8210
 	.global Import_EventSetExitRequest
 	.thumb_func
@@ -134,13 +134,13 @@ Actor_SetWideSprite:
 	.thumb_func
 Import_ActorReturnHome:
 	overlay_veneer Actor_ReturnHomeFar
-	.global Import_EventResolvePendingActions
+	.global Event_ResolvePendingActions
 	.thumb_func
-Import_EventResolvePendingActions:
+Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02000d48
+	.global Func_080d3070
 	.thumb_func
-Func_02000d48:
+Func_080d3070:
 	overlay_veneer Motion_LaunchFromFocusedObjectFar
 	.global Func_02000d50
 	.thumb_func
@@ -150,9 +150,9 @@ Func_02000d50:
 	.thumb_func
 Func_02000d58:
 	overlay_veneer Func_080c8708
-	.global Import_PartyGetLeaderActor
+	.global Party_GetLeaderActor
 	.thumb_func
-Import_PartyGetLeaderActor:
+Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
 	.global Func_02000d68
 	.thumb_func
@@ -162,7 +162,7 @@ Func_02000d68:
 	.thumb_func
 Import_ShopOpen:
 	overlay_veneer Func_08108008
-	.global Import_SoundPlay
+	.global Sound_Play
 	.thumb_func
-Import_SoundPlay:
+Sound_Play:
 	overlay_veneer Sound_PlayFar

@@ -1,14 +1,12 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "field_sprite.h"
+#include "event_inline.h"
 
 extern const u16 gData_020022d0[];
 extern const s8 gData_020022dc[][4];
 
-struct Actor *Actor_GetById(s32 id);
-void Func_020021b0(s32 x, s32 z, s32 width, s32 height, s32 toX, s32 toZ);
 void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, s32 width, s32 height,
                            s32 value);
 
@@ -48,7 +46,7 @@ s32 Func_02000af0(s32 id) {
   mapZ = *(s32 *)(map + 332) >> 20;
   toX = x + (u16)i;
   toZ = z + (u16)mapZ;
-  Func_020021b0(x, z, width, height, toX, toZ);
+  Map_CopyCellAttributeRect(x, z, width, height, toX, toZ);
   Map_FillCellRectByte2(0, x, z, width, height, 255);
   Map_FillCellRectByte2(2, x, z, width, height, 255);
   return 1;

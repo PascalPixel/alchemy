@@ -1,10 +1,8 @@
 #include "trial_road.h"
-#include "call.h"
+#include "event_inline.h"
 
-void Func_02005990(s32 direction);
 s32 Func_02000330(s32 value);
 s32 Func_020000fc(s32 value);
-void Actor_CommitPositionAndActivate(s32 id, s32 dx, s32 dz);
 void ObjectEffect_StartContextEffect26(void);
 
 void Func_02000138(s32 direction) {
@@ -17,28 +15,27 @@ void Func_02000138(s32 direction) {
         if (Func_02000330(0) == 0)
           /* FAKEMATCH(wrapper): Call3 kept; as a direct call, 2 of 93
            * instructions differ in tla-en. */
-          Call3(Actor_CommitPositionAndActivate, gMainRoutineWork.currentOwner,
-                0, -16);
+          Actor_WalkByAndWait(gMainRoutineWork.currentOwner, 0, -16);
         return;
       }
-      Func_02005990(direction + 4);
+      Import_EventSetExitRequest(direction + 4);
     } else {
       state->field16[0]--;
-      Func_02005990(direction);
+      Import_EventSetExitRequest(direction);
     }
-    Func_02005a68(123);
+    Sound_Play(123);
   }
   if ((u32)(direction - 3) <= 1) {
     state->field16[0]++;
     if (state->field16[0] > 3) {
       if (GameFlag_Test(2559) && Func_020000fc(0) == 0)
         GameFlag_SetBit(901);
-      Func_02005a68(128);
+      Sound_Play(128);
       ObjectEffect_StartContextEffect26();
-      Func_02005990(direction + 4);
+      Import_EventSetExitRequest(direction + 4);
     } else {
-      Func_02005990(direction);
-      Func_02005a68(123);
+      Import_EventSetExitRequest(direction);
+      Sound_Play(123);
     }
     if (state->field16[0] > state->field1a)
       state->field1a = state->field16[0];

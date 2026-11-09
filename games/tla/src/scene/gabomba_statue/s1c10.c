@@ -2,10 +2,10 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "task.h"
+#include "event_inline.h"
 
 extern u32 gData_02005910[];
 extern u8 Data_0202c001[];
-struct Actor *Actor_GetById(u32 id);
 void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
 void Func_02001b98(void);
 

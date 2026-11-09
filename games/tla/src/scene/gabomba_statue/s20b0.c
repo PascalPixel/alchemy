@@ -1,10 +1,10 @@
 #include "types.h"
 
 #include "actor.h"
+#include "event_inline.h"
 
 extern const s8 gData_02005940[];
 
-struct Actor *Actor_GetById(s32 id);
 void Func_0200561c(void *animation, s32 a);
 void Func_02005624(struct Actor *object, s32 mode);
 

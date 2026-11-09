@@ -42,9 +42,9 @@ Func_02002bf0:
 	.thumb_func
 Func_02002bf8:
 	overlay_veneer Actor_StartScriptFar
-	.global Func_02002c00
+	.global Import_ActorCreate
 	.thumb_func
-Func_02002c00:
+Import_ActorCreate:
 	overlay_veneer Func_080200c0
 	.global Actor_SetPositionAndResetMotion
 	.thumb_func
@@ -54,33 +54,33 @@ Actor_SetPositionAndResetMotion:
 	.thumb_func
 Func_02002c10:
 	overlay_veneer Map_CenterOnFollowedPointFar
-	.global Func_02002c18
+	.global Actor_SetMoveTarget
 	.thumb_func
-Func_02002c18:
+Actor_SetMoveTarget:
 	overlay_veneer Actor_SetTargetPosition
-	.global Func_02002c20
+	.global Script_WaitForEventTimeout
 	.thumb_func
-Func_02002c20:
+Script_WaitForEventTimeout:
 	overlay_veneer Actor_CommitPosition
-	.global Func_02002c28
+	.global Map_PlayMapEdit
 	.thumb_func
-Func_02002c28:
+Map_PlayMapEdit:
 	overlay_veneer Map_PlayMapEditFar
-	.global Func_02002c30
+	.global Map_CopyCellPictureIndicesRect
 	.thumb_func
-Func_02002c30:
+Map_CopyCellPictureIndicesRect:
 	overlay_veneer Map_CopyCellPictureIndicesRectFar
-	.global Func_02002c38
+	.global Map_CopyCellAttributeRect
 	.thumb_func
-Func_02002c38:
+Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Func_02002c48
+	.global Map_SetScreenShake
 	.thumb_func
-Func_02002c48:
+Map_SetScreenShake:
 	overlay_veneer Map_SetScreenShakeFar
 	.global FieldMessage_Show
 	.thumb_func
@@ -90,9 +90,9 @@ FieldMessage_Show:
 	.thumb_func
 PartyInventory_Remove:
 	overlay_veneer PartyInventory_RemoveFar
-	.global FieldEvent_Wait
+	.global Event_Wait
 	.thumb_func
-FieldEvent_Wait:
+Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
 	.global Func_02002c68
 	.thumb_func
@@ -146,9 +146,9 @@ Actor_OffsetPositionAndResetMotion:
 	.thumb_func
 Actor_WaitForMoveById:
 	overlay_veneer Actor_WaitForMoveByIdFar
-	.global Func_02002cd0
+	.global Actor_SetHorizontalPositionWithTerrain
 	.thumb_func
-Func_02002cd0:
+Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
 	.global Func_02002cd8
 	.thumb_func
@@ -182,53 +182,53 @@ Actor_SetAngleToward:
 	.thumb_func
 Actor_SetPartAttribute:
 	overlay_veneer Actor_SetPartAttributeFar
-	.global Func_02002d18
+	.global Event_SetMessageId
 	.thumb_func
-Func_02002d18:
+Event_SetMessageId:
 	overlay_veneer Event_SetMessageIdFar
-	.global Func_02002d20
+	.global Event_ShowMessageAndWait
 	.thumb_func
-Func_02002d20:
+Event_ShowMessageAndWait:
 	overlay_veneer Event_ShowMessageAndWaitFar
 	.global Actor_ArmCallback
 	.thumb_func
 Actor_ArmCallback:
 	overlay_veneer Actor_ArmCallbackFar
-	.global Func_02002d30
+	.global Actor_ArmCallbackAndRefresh
 	.thumb_func
-Func_02002d30:
+Actor_ArmCallbackAndRefresh:
 	overlay_veneer Actor_ArmCallbackAndRefreshFar
 	.global Actor_SetSpritePriority
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_02002d40
+	.global Func_080d47b4
 	.thumb_func
-Func_02002d40:
+Func_080d47b4:
 	overlay_veneer Func_080c8210
-	.global Func_02002d48
+	.global Func_080d489c
 	.thumb_func
-Func_02002d48:
+Func_080d489c:
 	overlay_veneer Func_080c8218
 	.global Camera_FollowActor
 	.thumb_func
 Camera_FollowActor:
 	overlay_veneer Camera_FollowActorFar
-	.global Func_02002d58
+	.global Camera_SetSpeedParameters
 	.thumb_func
-Func_02002d58:
+Camera_SetSpeedParameters:
 	overlay_veneer Camera_SetSpeedParametersFar
 	.global Camera_MoveWithinMapBounds
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02002d68
+	.global Func_080d45b8
 	.thumb_func
-Func_02002d68:
+Func_080d45b8:
 	overlay_veneer Func_080c8260
-	.global Func_02002d70
+	.global Import_EventSetExitRequest
 	.thumb_func
-Func_02002d70:
+Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
 	.global Func_02002d78
 	.thumb_func
@@ -238,9 +238,9 @@ Func_02002d78:
 	.thumb_func
 Party_SetFields1eeAnd1f0:
 	overlay_veneer Party_SetFields1eeAnd1f0Far
-	.global Func_02002d88
+	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func
-Func_02002d88:
+BattleEffect_ApplyColorToTargetBuffer:
 	overlay_veneer BattleEffect_ApplyColorToTargetBufferFar
 	.global Event_StartScreenTransition
 	.thumb_func
@@ -254,9 +254,9 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_02002da8
+	.global Event_ResolvePendingActions
 	.thumb_func
-Func_02002da8:
+Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
 	.global Actor_WatchAndSetScript
 	.thumb_func
@@ -282,7 +282,7 @@ Func_02002dd0:
 	.thumb_func
 Func_02002dd8:
 	overlay_veneer Func_080c8728
-	.global Func_02002de0
+	.global Sound_Play
 	.thumb_func
-Func_02002de0:
+Sound_Play:
 	overlay_veneer Sound_PlayFar

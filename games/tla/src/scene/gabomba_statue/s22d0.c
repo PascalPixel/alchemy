@@ -1,4 +1,5 @@
 #include "types.h"
+#include "event_inline.h"
 
 struct Orbiter {
   u8 unk00[85];
@@ -13,15 +14,14 @@ struct Orbiter {
 
 extern const u8 gData_0200e88c[];
 
-struct Orbiter *Actor_GetById(s32 id);
 void Func_02005624(struct Orbiter *object, s32 mode);
 void Func_02005634(struct Orbiter *object, const u8 *script);
 void Actor_SetSingleChildFlags(struct Orbiter *object, s32 flags);
 void Animation_ApplyChildValues(struct Orbiter *object, s32 value);
 
 void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
-  struct Orbiter *object = Actor_GetById(slot);
-  struct Orbiter *target = Actor_GetById(targetId);
+  struct Orbiter *object = ((struct Orbiter *)Actor_GetById(slot));
+  struct Orbiter *target = ((struct Orbiter *)Actor_GetById(targetId));
 
   Func_02005624(object, 0);
   Func_02005634(object, gData_0200e88c);

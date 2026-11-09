@@ -7,6 +7,7 @@
 #include "actor.h"
 #include "ram_buffer.h"
 #include "resource.h"
+#include "event_inline.h"
 
 struct ClearWork {
   u8 unk00[20];
@@ -18,8 +19,6 @@ extern u16 gData_020024f4[];
 
 void Fade_ToBlack(s32 vblanks);
 void Func_020021f8(void *source, void *destination);
-struct Actor *Actor_GetById(s32 id);
-void Task_RemoveFar(void (*func)(void));
 
 static __inline__ void Decode_(void *source, void *destination) {
   /* FAKEMATCH: forwarding through the inline keeps the buffer address a

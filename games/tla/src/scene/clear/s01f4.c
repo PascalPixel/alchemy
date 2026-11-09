@@ -1,5 +1,6 @@
 #include "types.h"
 #include "input.h"
+#include "event_inline.h"
 
 // The two secret button codes: unlocked, held and progress of each.
 extern s16 gData_020024f6;
@@ -10,8 +11,6 @@ extern s16 gData_020024fe;
 extern s16 gData_02002500;
 extern const u16 gData_02002410[];
 extern const u16 gData_02002418[];
-
-void Func_02002408(s32 cue);
 
 /// Follows the two secret button codes: each held key that matches the next
 /// key of a code advances it, a wrong key starts it again, and finishing a
@@ -36,7 +35,7 @@ void Func_020001f4(void) {
         } while (0);
         if (gData_02002410[gData_020024fa] == 0) {
           gData_020024f6 = 1;
-          Func_02002408(110);
+          Sound_Play(110);
         }
       } else {
         gData_020024fa = 0;
@@ -61,7 +60,7 @@ void Func_020001f4(void) {
         } while (0);
         if (gData_02002418[gData_020024fc] == 0) {
           gData_020024f8 = 1;
-          Func_02002408(110);
+          Sound_Play(110);
         }
       } else {
         gData_020024fc = 0;

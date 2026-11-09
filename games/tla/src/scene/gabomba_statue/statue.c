@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "scene_tables.h"
+#include "event_inline.h"
 
 struct GateEventWork {
   u8 unk000[362];
@@ -17,19 +18,12 @@ struct FieldAnimation {
   struct FieldPart *part;
 };
 
-struct Actor *Actor_GetById(s32 id);
 void Func_020043a4(s32 value);
 void Func_020056b4(struct Actor *object);
 void Func_020056bc(void);
-void Func_0200580c(s32 value);
-void Func_02005854(s32 sound);
 void Func_02005624(struct Actor *object, s32 mode);
-void FieldEvent_Wait(s32 frames);
 s32 Func_020053a0(void);
 void Func_02005784(s32 id);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void GameFlag_SetBit(s32 flag);
-s32 GameFlag_Test(s32 flag);
 void Func_0200193c(void);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 void Func_02001a6c(s32 value) {
@@ -42,9 +36,9 @@ void Func_02001a8c(void) {
   struct Actor *object = Actor_GetById(15);
 
   Func_020056b4(object);
-  Func_0200580c(0);
-  FieldEvent_Wait(20);
-  Func_02005854(214);
+  Event_ResolvePendingActions(0);
+  Event_Wait(20);
+  Sound_Play(214);
   Func_02005624(object, 5);
   object->scaleY = 0x10000;
   Func_020056bc();

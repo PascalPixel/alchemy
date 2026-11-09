@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
+#include "event_inline.h"
 
 struct ClockWork {
   u8 unk00[132];
@@ -10,11 +11,8 @@ struct ClockWork {
 };
 
 extern u8 gData_020023c4[];
-void Func_02005854(s32 sound);
 void Func_02005090(void);
 s32 Math_Cosine(s32 angle);
-void Task_RemoveFar(void (*func)(void));
-s32 Task_Add(void (*func)(void), s32 order);
 void Func_02005210(void);
 void Func_0200525c(void);
 s32 __divsi3(s32 numerator, s32 denominator);

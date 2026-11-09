@@ -7,7 +7,7 @@ void Func_02000a0c(struct Actor *object);
 
 void Func_02000adc(void) {
   struct Actor *object =
-      Func_02005140(0x11d, 0x2b80000, 0x1c0000, 0x9c0000);
+      ((struct Actor *)Import_ActorCreate(0x11d, 0x2b80000, 0x1c0000, 0x9c0000));
 
   if (object) {
     s32 timer;

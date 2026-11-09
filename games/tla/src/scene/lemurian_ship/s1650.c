@@ -1,4 +1,5 @@
 #include "lemurian_ship.h"
+#include "event_inline.h"
 #include "scene_tables.h"
 
 extern const u8 gData_02002f1c[];
@@ -13,57 +14,56 @@ void PartyInventory_Remove(s32 item);
 /// "How did all these monsters get on board?"
 void Func_02001650(void) {
   Func_02002c68();
-  Func_02002da8(0);
-  Func_02002d18((s32)MsgLemurianShip01);
-  Func_02002de0(78);
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)MsgLemurianShip01);
+  Sound_Play(78);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  LemurianShip_ObjSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-  LemurianShip_ObjWalk(gMainRoutineWork.currentOwner, 808, 208);
-  LemurianShip_CamSpeed(0xcccc, 0x1999);
-  LemurianShip_CamMove(PIXELS(808), -1, PIXELS(176), 1);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 808, 208);
+  FieldCamera_SetSpeed(0xcccc, 0x1999);
+  FieldCamera_MoveTo(PIXELS(808), -1, PIXELS(176), 1);
   Func_02002cd8(7, gMainRoutineWork.currentOwner);
   Func_02002cd8(6, gMainRoutineWork.currentOwner);
   Func_02002cd8(5, gMainRoutineWork.currentOwner);
   Func_02002cd8(8, gMainRoutineWork.currentOwner);
   wait(1);
-  LemurianShip_ObjSpeed(7, 0xcccc, 0x6666);
-  LemurianShip_ObjSpeed(6, 0xcccc, 0x6666);
-  LemurianShip_ObjSpeed(5, 0xcccc, 0x6666);
-  LemurianShip_ObjSpeed(8, 0xcccc, 0x6666);
+  Actor_SetSpeed(7, 0xcccc, 0x6666);
+  Actor_SetSpeed(6, 0xcccc, 0x6666);
+  Actor_SetSpeed(5, 0xcccc, 0x6666);
+  Actor_SetSpeed(8, 0xcccc, 0x6666);
   Actor_SetMovementTypeById(6, gData_02002f44);
   Actor_SetMovementTypeById(5, gData_02002f88);
   Actor_SetMovementTypeById(8, gData_02002fcc);
   Actor_SetMovementTypeAndWaitById(7, gData_02002f1c);
-  FieldEvent_Wait(20);
-  Func_02002d20(7, 0);
-  LemurianShip_ObjTurn(7, FACING_SOUTH);
-  Func_02002d20(7, 0);
+  Event_Wait(20);
+  Event_ShowMessageAndWait(7, 0);
+  Actor_FaceDirectionAndWait(7, FACING_SOUTH);
+  Event_ShowMessageAndWait(7, 0);
   Actor_SetModeById(7, 3);
-  Func_02002d20(7, 0);
+  Event_ShowMessageAndWait(7, 0);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
-  LemurianShip_ObjWalk(7, 808, 148);
+  Actor_WalkToAndWait(7, 808, 148);
   Motion_SetVarCbAndRefresh(7, 2);
   Actor_SetSpritePriority(7, 1);
-  Func_02002de0(220);
+  Sound_Play(220);
   Task_Add(Func_020015c8, 0x480);
-  FieldEvent_Wait(60);
-  Func_02002de0(390);
-  FieldEvent_Wait(20);
+  Event_Wait(60);
+  Sound_Play(390);
+  Event_Wait(20);
   Task_RemoveFar(Func_020015c8);
-  Func_02002de0(251);
-  LemurianShip_CamSet(0x2b00000, 0, 0x3a00000, 0x2200000);
-  LemurianShip_CamMove(PIXELS(808), -1, PIXELS(448), 0);
-  LemurianShip_ObjPlace(gMainRoutineWork.currentOwner, PIXELS(808),
-                        PIXELS(480));
-  LemurianShip_ObjPlace(7, PIXELS(808), PIXELS(420));
-  LemurianShip_ObjPlace(6, PIXELS(784), PIXELS(468));
-  LemurianShip_ObjPlace(5, PIXELS(832), PIXELS(468));
-  Func_02002cd0(8, PIXELS(792), PIXELS(488));
+  Sound_Play(251);
+  Field_SetCameraBounds(0x2b00000, 0, 0x3a00000, 0x2200000);
+  FieldCamera_MoveTo(PIXELS(808), -1, PIXELS(448), 0);
+  Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(808), PIXELS(480));
+  Actor_SetPosition(7, PIXELS(808), PIXELS(420));
+  Actor_SetPosition(6, PIXELS(784), PIXELS(468));
+  Actor_SetPosition(5, PIXELS(832), PIXELS(468));
+  Actor_SetHorizontalPositionWithTerrain(8, PIXELS(792), PIXELS(488));
   Func_02002c10();
-  FieldEvent_Wait(20);
-  Func_02002de0(246);
-  FieldEvent_Wait(80);
+  Event_Wait(20);
+  Sound_Play(246);
+  Event_Wait(80);
   ((struct LemurianShipEventWork *)Ram_HeapSlots->eventWork)->screenEffect =
       513;
   Event_FinishScreenTransition();
@@ -86,5 +86,5 @@ void Func_02001650(void) {
   GameFlag_SetBit(0x932);
   GameFlag_SetBit(0x93f);
   gMainRoutineWork.ownerOverride = 1;
-  Func_02002d70(90);
+  Import_EventSetExitRequest(90);
 }

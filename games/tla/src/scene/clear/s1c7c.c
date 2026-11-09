@@ -1,7 +1,7 @@
 #include "types.h"
-#include "call.h"
 #include "main_routine_work.h"
 #include "battle_unit.h"
+#include "event_inline.h"
 
 struct UnitBaseStats {
   s16 hp;
@@ -19,7 +19,6 @@ extern s32 gData_020026f0[];
 extern u16 gData_0200270c[];
 extern u16 gData_0200271c[];
 
-s32 GameFlag_Test(s32 flag);
 void *Unit_Get(s32 owner);
 
 s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {

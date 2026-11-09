@@ -6,7 +6,7 @@
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Func_020000bc
+	.global Func_080d7788
 	.thumb_func
-Func_020000bc:
+Func_080d7788:
 	overlay_veneer Func_080c8580

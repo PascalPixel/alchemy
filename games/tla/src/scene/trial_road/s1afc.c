@@ -15,7 +15,7 @@ void Func_02001afc(void) {
   if (!GameFlag_Test(0x339))
     OBJECT_BYTE(Actor_GetById(16), 98) = 1;
   else
-    Func_020058e0(22, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(22, 0, 0);
   Func_020006b4(15);
   Func_020006b4(16);
   Func_020006b4(17);
@@ -48,8 +48,8 @@ void Func_02001bdc(void) { Func_020042f0(gData_02007734); }
 /// their collision flags; then runs Func_02000d70, and Func_020006b4 and
 /// Func_0200062c for object 15.
 void Func_02001bec(void) {
-  Func_02005818(11, 22, 11, 8, 11, 64);
-  Func_02005818(79, 22, 11, 8, 79, 64);
+  Map_CopyCellAttributeRect(11, 22, 11, 8, 11, 64);
+  Map_CopyCellAttributeRect(79, 22, 11, 8, 79, 64);
   OBJECT_BYTE(Actor_GetById(16), 98) = 1;
   OBJECT_BYTE(Actor_GetById(17), 98) = 1;
   OBJECT_BYTE(Actor_GetById(18), 98) = 1;

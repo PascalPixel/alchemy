@@ -2,23 +2,18 @@
 /// Sends actor 8 to a point 8 pixels along z and, until Func_02001f9c says it is
 /// done, raises a pair of effects at its two sides every fourth frame.
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "system/field_effect.h"
+#include "event_inline.h"
 
 extern u32 gFrameCount;
-struct Actor *Actor_GetById(s32 id);
 void Func_02001fac(void);
 void Func_02001fb4(void);
-void Func_02002044(s32 skip);
 s32 Math_Cosine(s32 angle);
-s32 Math_Sine(s32 angle);
-void Func_02001f6c(struct Actor *actor, s32 x, s32 y, s32 z);
 s32 Func_02001f9c(struct Actor *actor);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
-void wait(s32 frames);
 
 void Func_02000ef0(void) {
   s32 sides[4];
@@ -30,8 +25,8 @@ void Func_02000ef0(void) {
 
   actor = Actor_GetById(8);
   Func_02001fac();
-  Func_02002044(0);
-  Func_02001f6c(actor, actor->x, actor->y, actor->z + 0x80000);
+  Event_ResolvePendingActions(0);
+  Actor_SetMoveTarget(actor, actor->x, actor->y, actor->z + 0x80000);
   // A goto loop: as while (Func_02001f9c(actor) == 0), loop.c moves 0xb0000
   // out of the loop and 191 of 165 instructions differ.
   while (Func_02001f9c(actor) == 0) {

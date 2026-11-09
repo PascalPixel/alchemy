@@ -1,8 +1,8 @@
 #include "types.h"
-#include "call.h"
 #include "input.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "event_inline.h"
 
 extern const u8 gData_02000e84[];
 extern const u8 gData_02000e90[];
@@ -25,9 +25,7 @@ s32 PartyInventory_HasSpace(void);
 s32 PartyInventory_Add(s32 item);
 void ItemMenu_DrawItemDetails(void *window, s32 item);
 void Window_Close(void *window, s32 release);
-void wait(s32 frames);
 struct ItemSummary *Func_02000d48(s32 item);
-void Func_02000e78(s32 cue);
 
 #define ITEM_COUNT 500
 
@@ -47,7 +45,7 @@ void Func_02000848(void) {
   details = Window_Create(0, 8, 13, 10, 2);
   Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010, REG_DMA3);
   Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001, REG_DMA3);
-  Func_02000e78(112);
+  Sound_Play(112);
   wait(1);
   while (1) {
     if (redraw) {
@@ -68,50 +66,50 @@ void Func_02000848(void) {
     wait(1);
     if (gInput.pressed & 1) {
       if (PartyInventory_Add(item) == -1) {
-        Func_02000e78(113);
+        Sound_Play(113);
         break;
       }
-      Func_02000e78(175);
+      Sound_Play(175);
     }
     if (gInput.pressed & 2) {
-      Func_02000e78(113);
+      Sound_Play(113);
       break;
     }
     if (gInput.repeat & 0x80) {
       step = 1;
       item++;
       redraw = 1;
-      Func_02000e78(111);
+      Sound_Play(111);
     }
     if (gInput.repeat & 0x40) {
       step = -1;
       item--;
       redraw = 1;
-      Func_02000e78(111);
+      Sound_Play(111);
     }
     if (gInput.repeat & 0x10) {
       step = 1;
       item += 10;
       redraw = 1;
-      Func_02000e78(111);
+      Sound_Play(111);
     }
     if (gInput.repeat & 0x20) {
       step = -1;
       item -= 10;
       redraw = 1;
-      Func_02000e78(111);
+      Sound_Play(111);
     }
     if (gInput.repeat & 0x100) {
       step = 1;
       item += 30;
       redraw = 1;
-      Func_02000e78(111);
+      Sound_Play(111);
     }
     if (gInput.repeat & 0x200) {
       step = -1;
       item -= 30;
       redraw = 1;
-      Func_02000e78(111);
+      Sound_Play(111);
     }
     if (step == -1) {
       for (item = (item + ITEM_COUNT) % entryCount;

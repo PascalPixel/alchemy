@@ -1,4 +1,5 @@
 #include "lemurian_ship.h"
+#include "event_inline.h"
 #include "flag_call.h"
 #include "scene_tables.h"
 
@@ -10,108 +11,114 @@ void Func_02001dc8(s32 id);
 /// Places a platform object at its raised position.
 #define RAISE(id, x, z)                                                        \
   {                                                                            \
-    LemurianShip_ObjSetPos(Actor_GetById(id), x, PIXELS(-32), z);              \
-    Actor_GetById(id)->height = -0x200000;                                     \
+    FieldActor_SetPositionAndResetMotion(                                      \
+        ((struct LemurianShipObject *)Actor_GetById(id)), x, PIXELS(-32), z);  \
+    ((struct LemurianShipObject *)Actor_GetById(id))->height = -0x200000;      \
   }
 
 void Func_02001e0c(void) {
-  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+  ((struct LemurianShipObject *)Actor_GetById(gMainRoutineWork.currentOwner))
+      ->priorityFlags |= 32;
   Func_02002dc8(gData_02003010);
-  Actor_GetById(8)->priorityFlags |= 32;
+  ((struct LemurianShipObject *)Actor_GetById(8))->priorityFlags |= 32;
   Actor_SetSpritePriority(8, 1);
-  Actor_GetById(9)->priorityFlags |= 32;
+  ((struct LemurianShipObject *)Actor_GetById(9))->priorityFlags |= 32;
   if (GameFlag_Test(0x932)) {
-    struct LemurianShipObject *object = Actor_GetById(15);
+    struct LemurianShipObject *object =
+        ((struct LemurianShipObject *)Actor_GetById(15));
 
     object->motionFlags = 0;
-    LemurianShip_ObjSetPos(Actor_GetById(15), 206 << 18, PIXELS(-32),
-                           144 << 15);
+    FieldActor_SetPositionAndResetMotion(
+        ((struct LemurianShipObject *)Actor_GetById(15)), 206 << 18,
+        PIXELS(-32), 144 << 15);
     object->height = -0x200000;
     if (GameFlag_Test(0x212))
-      LemurianShip_BlendStart(110, 1, 3, 1, 110, 4);
+      MapGrid_CopyCellAttributes(110, 1, 3, 1, 110, 4);
     else
-      LemurianShip_BlendStart(110, 0, 3, 1, 110, 4);
+      MapGrid_CopyCellAttributes(110, 0, 3, 1, 110, 4);
     if (!GameFlag_Test(0x222))
-      Func_02002cd0(9, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
   }
   if (GameFlag_Test(0x983)) {
     if (GameFlag_Test(0x207)) {
-      Func_02002cd0(15, 0, 0);
-      Func_02002c30(68, 68, 50, 64, 3, 3);
-      LemurianShip_BlendStart(102, 16, 3, 2, 110, 4);
-      Func_02002c38(50, 0, 3, 1, 50, 4);
+      Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
+      Map_CopyCellPictureIndicesRect(68, 68, 50, 64, 3, 3);
+      MapGrid_CopyCellAttributes(102, 16, 3, 2, 110, 4);
+      Map_CopyCellAttributeRect(50, 0, 3, 1, 50, 4);
     } else {
       RAISE(15, 206 << 18, 144 << 15)
-      Func_02002c30(72, 68, 50, 64, 3, 3);
-      Func_02002c38(106, 16, 3, 2, 110, 4);
-      Func_02002c38(50, 1, 3, 1, 50, 4);
+      Map_CopyCellPictureIndicesRect(72, 68, 50, 64, 3, 3);
+      Map_CopyCellAttributeRect(106, 16, 3, 2, 110, 4);
+      Map_CopyCellAttributeRect(50, 1, 3, 1, 50, 4);
       if (GameFlag_Test(0x212))
-        Func_02002c38(110, 1, 3, 1, 110, 4);
+        Map_CopyCellAttributeRect(110, 1, 3, 1, 110, 4);
       else
-        Func_02002c38(110, 0, 3, 1, 110, 4);
+        Map_CopyCellAttributeRect(110, 0, 3, 1, 110, 4);
     }
   }
   if (GameFlag_Test(0x933)) {
-    Func_02002c38(42, 0, 1, 1, 46, 5);
-    Func_02002c38(43, 0, 1, 1, 45, 5);
-    Func_02002c38(43, 0, 1, 1, 47, 5);
+    Map_CopyCellAttributeRect(42, 0, 1, 1, 46, 5);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 45, 5);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 47, 5);
     RAISE(16, 186 << 18, 176 << 15)
     if (!GameFlag_Test(0x223))
-      Func_02002cd0(10, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
   } else {
     Func_02001dc8(10);
   }
   if (GameFlag_Test(0x934)) {
-    struct LemurianShipObject *block = Actor_GetById(8);
+    struct LemurianShipObject *block =
+        ((struct LemurianShipObject *)Actor_GetById(8));
 
-    Func_02002c38(42, 0, 1, 1, 47, 9);
-    Func_02002c38(43, 0, 1, 1, 46, 9);
-    Func_02002c38(43, 0, 1, 1, 48, 9);
-    Func_02002c38(43, 0, 1, 1, 47, 10);
-    Func_02002c38(43, 0, 1, 1, 47, 8);
+    Map_CopyCellAttributeRect(42, 0, 1, 1, 47, 9);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 46, 9);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 48, 9);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 47, 10);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 47, 8);
     RAISE(17, 190 << 18, 152 << 16)
     if (block->x >> 20 == 47 && block->z >> 20 == 8)
       Func_02002dc8(gData_02003010);
     if (!GameFlag_Test(0x224))
-      Func_02002cd0(11, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
   } else {
     Func_02001dc8(11);
   }
   if (GameFlag_Test(0x935)) {
-    struct LemurianShipObject *block = Actor_GetById(8);
+    struct LemurianShipObject *block =
+        ((struct LemurianShipObject *)Actor_GetById(8));
     s32 x = block->x >> 20;
     s32 z = block->z >> 20;
 
-    Func_02002c38(42, 0, 1, 1, 49, 7);
-    Func_02002c38(43, 0, 1, 1, 49, 6);
-    Func_02002c38(43, 0, 1, 1, 50, 7);
-    Func_02002c38(43, 0, 1, 1, 48, 7);
-    Func_02002c38(43, 0, 1, 1, 49, 8);
+    Map_CopyCellAttributeRect(42, 0, 1, 1, 49, 7);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 49, 6);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 50, 7);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 48, 7);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 49, 8);
     RAISE(18, 198 << 18, 240 << 15)
     if ((x == 48 && z == 7) || (x == 49 && z == 8))
       Func_02002dc8(gData_02003010);
     if (!GameFlag_Test(0x225))
-      Func_02002cd0(12, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
   } else {
     Func_02001dc8(12);
   }
   if (GameFlag_Test(0x936)) {
-    LemurianShip_BlendStart(42, 0, 1, 1, 51, 7);
+    MapGrid_CopyCellAttributes(42, 0, 1, 1, 51, 7);
     RAISE(19, 206 << 18, 240 << 15)
     if (!GameFlag_Test(0x226))
-      Func_02002cd0(13, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
   } else {
     Func_02001dc8(13);
   }
   if (GameFlag_Test(0x937)) {
-    Func_02002c38(42, 0, 1, 1, 51, 9);
-    Func_02002c38(43, 0, 1, 1, 51, 8);
-    Func_02002c38(43, 0, 1, 1, 50, 9);
-    Func_02002c38(43, 0, 1, 1, 52, 9);
-    Func_02002c38(43, 0, 1, 1, 51, 10);
+    Map_CopyCellAttributeRect(42, 0, 1, 1, 51, 9);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 51, 8);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 50, 9);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 52, 9);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 51, 10);
     RAISE(20, 206 << 18, 152 << 16)
     if (!GameFlag_Test(0x227))
-      Func_02002cd0(14, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
   } else {
     Func_02001dc8(14);
   }

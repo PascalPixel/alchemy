@@ -1,4 +1,5 @@
 #include "types.h"
+#include "event_inline.h"
 
 struct PuzzleCell {
   u8 kind;
@@ -21,16 +22,10 @@ struct SceneState {
 
 extern struct SceneState gSceneState;
 
-void Func_0200567c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-
-static __inline__ void Map_Copy(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_0200567c(a, b, c, d, e, f);
-}
-
 void Func_020046c8(void) {
   if (gSceneState.redrawB != 0) {
-    Map_Copy(0, 12, 1, 1, gSceneState.originX + 7, gSceneState.originZ - 2);
+    MapGrid_CopyCellsLayered(0, 12, 1, 1, gSceneState.originX + 7,
+                             gSceneState.originZ - 2);
     gSceneState.redrawB = 0;
   }
 }

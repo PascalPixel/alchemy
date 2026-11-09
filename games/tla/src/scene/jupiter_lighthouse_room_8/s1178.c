@@ -1,5 +1,6 @@
 #include "types.h"
 #include "actor.h"
+#include "event_inline.h"
 
 struct IsletsVector {
   s32 x;
@@ -11,8 +12,6 @@ extern const u16 gData_020022d0[];
 
 s32 Func_020021b8(struct Actor *object, struct IsletsVector *position);
 struct Actor *Func_020022a8(struct IsletsVector *position, s32 mode);
-void Vector_AddPolarOffsetFar(s32 distance, s32 angle,
-                              struct IsletsVector *position);
 
 void Func_02001178(struct Actor *object) {
   struct IsletsVector position;

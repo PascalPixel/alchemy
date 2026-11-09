@@ -1,11 +1,7 @@
 #include "types.h"
 #include "actor.h"
-#include "call.h"
 #include "fixed_math.h"
-
-void Func_02000df8();
-struct Actor *Actor_GetById();
-void wait();
+#include "event_inline.h"
 
 void Func_02000ae0(s32 mode, s32 id, s32 x, s32 z) {
   struct Actor *object;
@@ -13,7 +9,7 @@ void Func_02000ae0(s32 mode, s32 id, s32 x, s32 z) {
 
   object = Actor_GetById(id);
   if (mode == 1) {
-    Func_02000df8(id, x << 16, z << 16);
+    Actor_SetHorizontalPositionWithTerrain(id, x << 16, z << 16);
     object->scaleX = 0;
     object->scaleY = 0;
   }
@@ -35,7 +31,7 @@ void Func_02000b50(s32 mode, s32 id, s32 x, s32 z) {
 
   object = Actor_GetById(id);
   if (mode == 2) {
-    Func_02000df8(id, x << 16, z << 16);
+    Actor_SetHorizontalPositionWithTerrain(id, x << 16, z << 16);
     object->y = 0x200000;
     object->motionFlags = 3;
     object->gravity = 0x170a;

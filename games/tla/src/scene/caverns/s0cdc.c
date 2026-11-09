@@ -8,10 +8,10 @@ s32 Func_02000c38(struct FieldActor *object, s16 *position) {
 
   if (blocked == 0) {
     Func_020010dc();
-    Func_0200113c(0);
+    Event_ResolvePendingActions(0);
     Func_02001074(object, 6);
     wait(6);
-    Func_02001164(152);
+    Sound_Play(152);
     Func_02001074(object, 7);
     object->speed = 0x30000;
     object->acceleration = 0x20000;
@@ -36,7 +36,8 @@ s32 Func_02000c38(struct FieldActor *object, s16 *position) {
 }
 
 void Func_02000cdc(void) {
-  struct FieldActor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct FieldActor *leader =
+      ((struct FieldActor *)Actor_GetById(gMainRoutineWork.currentOwner));
   s32 position[3];
   s32 x;
 

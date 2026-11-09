@@ -3,10 +3,9 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "call.h"
 #include "text/msg_ids.h"
+#include "event_inline.h"
 
-void Actor_SetModeById();
 void Func_020007dc(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void Func_02000848(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 

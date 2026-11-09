@@ -1,10 +1,10 @@
 #include "iwram_call.h"
-#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 #include "types.h"
+#include "event_inline.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -13,7 +13,6 @@
    } *)(base))                                                                 \
        ->v)
 
-s32 Actor_GetById();
 void Actor_SetSingleChildFlags();
 s32 Func_02000128();
 
@@ -29,7 +28,7 @@ s32 Func_02000038(s32 a0, s32 a1, s32 a2, s32 a3) {
   r7 = r0;
 L_0200804e:
   r8 = FIELD_AT(r7, u16, 0);
-  v0 = Actor_GetById(r8);
+  v0 = ((s32)Actor_GetById(r8));
   r5 = v0;
   r6 = *(s16 *)(r7 + 2);
   r4 = *(s16 *)(r7 + 4);

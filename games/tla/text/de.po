@@ -18611,11 +18611,11 @@ msgctxt "MsgItemMenuEmpty"
 msgid "04563"
 msgstr "Du hast keine Items."
 
-msgctxt "message"
+msgctxt "MsgWhoseItem"
 msgid "04564"
 msgstr "Wessen Item?"
 
-msgctxt "message"
+msgctxt "MsgWhichItem"
 msgid "04565"
 msgstr "Welches Item?"
 
@@ -18623,15 +18623,15 @@ msgctxt "message"
 msgid "04566"
 msgstr "Was wirst du tun?"
 
-msgctxt "message"
+msgctxt "MsgUseOnWhom"
 msgid "04567"
 msgstr "An wem benutzen?"
 
-msgctxt "message"
+msgctxt "MsgGiveToWhom"
 msgid "04568"
 msgstr "Wem geben?"
 
-msgctxt "message"
+msgctxt "MsgSwapForWhat"
 msgid "04569"
 msgstr "Wofür tauschen?"
 
@@ -19287,11 +19287,11 @@ msgctxt "message"
 msgid "04732"
 msgstr "Keine Attribute"
 
-msgctxt "message"
+msgctxt "MsgEquippedIt"
 msgid "04733"
 msgstr "Angelegt"
 
-msgctxt "message"
+msgctxt "MsgDroppedIt"
 msgid "04734"
 msgstr "Weggeworfen"
 
@@ -19299,19 +19299,19 @@ msgctxt "message"
 msgid "04735"
 msgstr "Wird mit etwas ausgetauscht."
 
-msgctxt "message"
+msgctxt "MsgGiven"
 msgid "04736"
 msgstr "Gegeben"
 
-msgctxt "message"
+msgctxt "MsgRemoved"
 msgid "04737"
 msgstr "Entfernt"
 
-msgctxt "message"
+msgctxt "MsgTraded"
 msgid "04738"
 msgstr "Getauscht"
 
-msgctxt "message"
+msgctxt "MsgCannotRemoveItem"
 msgid "04739"
 msgstr "Nicht ablegbar!"
 
@@ -19319,11 +19319,11 @@ msgctxt "message"
 msgid "04740"
 msgstr "Verflucht!"
 
-msgctxt "message"
+msgctxt "MsgCannotTrade"
 msgid "04741"
 msgstr "Nicht tauschbar!"
 
-msgctxt "message"
+msgctxt "MsgCannotHoldMore"
 msgid "04742"
 msgstr "Kein Platz mehr."
 

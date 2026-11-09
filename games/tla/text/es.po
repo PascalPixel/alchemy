@@ -18531,11 +18531,11 @@ msgctxt "MsgItemMenuEmpty"
 msgid "04563"
 msgstr "No tienes objetos."
 
-msgctxt "message"
+msgctxt "MsgWhoseItem"
 msgid "04564"
 msgstr "Elige personaje."
 
-msgctxt "message"
+msgctxt "MsgWhichItem"
 msgid "04565"
 msgstr "Elige un objeto."
 
@@ -18543,15 +18543,15 @@ msgctxt "message"
 msgid "04566"
 msgstr "¿Qué haces?"
 
-msgctxt "message"
+msgctxt "MsgUseOnWhom"
 msgid "04567"
 msgstr "¿Sobre quién?"
 
-msgctxt "message"
+msgctxt "MsgGiveToWhom"
 msgid "04568"
 msgstr "¿A quién?"
 
-msgctxt "message"
+msgctxt "MsgSwapForWhat"
 msgid "04569"
 msgstr "¿A cambio de qué?"
 
@@ -19191,11 +19191,11 @@ msgctxt "message"
 msgid "04728"
 msgstr "Sin atributos."
 
-msgctxt "message"
+msgctxt "MsgEquippedIt"
 msgid "04729"
 msgstr "Equipado."
 
-msgctxt "message"
+msgctxt "MsgDroppedIt"
 msgid "04730"
 msgstr "Tirado."
 
@@ -19203,19 +19203,19 @@ msgctxt "message"
 msgid "04731"
 msgstr "Será cambiado por algo."
 
-msgctxt "message"
+msgctxt "MsgGiven"
 msgid "04732"
 msgstr "Entregado."
 
-msgctxt "message"
+msgctxt "MsgRemoved"
 msgid "04733"
 msgstr "Quitado."
 
-msgctxt "message"
+msgctxt "MsgTraded"
 msgid "04734"
 msgstr "Cambiado."
 
-msgctxt "message"
+msgctxt "MsgCannotRemoveItem"
 msgid "04735"
 msgstr "¡No puedes!"
 
@@ -19223,11 +19223,11 @@ msgctxt "message"
 msgid "04736"
 msgstr "¡Pers. maldito!"
 
-msgctxt "message"
+msgctxt "MsgCannotTrade"
 msgid "04737"
 msgstr "¡No puedes!"
 
-msgctxt "message"
+msgctxt "MsgCannotHoldMore"
 msgid "04738"
 msgstr "¡Tiene muchos!"
 

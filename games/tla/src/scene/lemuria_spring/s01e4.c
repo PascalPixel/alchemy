@@ -1,55 +1,13 @@
-// Matches: differ 0 (tla-en, 2026-11-08)
-// 2026-11-08: wrapped in #if TLA_PATCH_1, as adopted files whose Japanese form
-// is older are (mars_lighthouse_entrance/s263c.c), so tla-ja compiles it to nothing and keeps its older form.
-// Still not adoptable by the tool: Func_020001e4's scaffold section
-// .text.x020081e4 holds both forms (.ifdef TLA_EDITION_JA ... .else ...), and
-// adopt overlay refuses a section with edition forms unless the draft covers
-// them all. Either the scaffold section is cut by hand to its Japanese branch
-// (kept linked after the new file, as resource_6ad.ld keeps .text.x0200a97c)
-// and the file goes into lemuria_spring/ as s01e4.c, or the Japanese form is
-// matched as C (about 300 instructions, an older layout) and adopted with
-// --edition-forms.
-// Also differ 0 in tla-de, tla-es, tla-fr and tla-it (French through
-// COUNT_WINDOW_WIDTH and COUNT_NUMBER_X). tla-ja stays on its scaffold: its
-// message ids have other names, so the draft does not compile there, and its
-// listing is an older layout (about 300 instructions, saves r11, holds choice
-// in r8).
-// The Lost Age's twin of The Broken Seal's TolbiSpring_RunSpringGame
-// (games/tbs/src/scene/tolbi_games.c): choose coin or medal, toss, award.
-// The prompt is a goto loop, as a real outer loop hoists its pool loads, and
-// the shared notice tail sits at a join so its -1 is reloaded. result also
-// holds the text ids (r5) and window the windows (r6); the weight total and
-// prize index have their own locals, as in the twin.
-// What closed it (52 to 0, 2026-11-08): FieldMessage_ShowAtActor returns s32
-// (games/tla/src/field/event/f0d3c88.c); called as a value-returning function,
-// movs r1, #0 falls between movs r0, #1 and negs r0, r0 as in the listing (48).
-// Separate total and prize locals instead of reusing choice and window (26):
-// window's argument-register preferences no longer pass to the halving's slot,
-// so the weight takes r1, r1 joins reload's spill registers, and reload's round
-// robin gives the listing's r1, r2, r3, r1, r2 at the top. Then the text id no
-// longer needs to pass through result (0).
-// Devices left, each measured at the match: minusOne (temporary, 57) and two
-// call.h wrappers, the first FieldMessage_ShowAtActor call (144) and
-// GameFlag_Test (43); the other ShowAtActor call and Party_AdjustCoins are
-// direct calls through their prototypes (0). Tried and no better: minusOne
-// as s32, u32, s16 or s8 (57; s64 and u64 both match), one s32 -1 local for the
-// compares and calls (50), a separate text local (13 or 17), a call through a
-// cast for the first ShowAtActor (144). Func_020013d8 and Func_0200049c are
-// declared void and GameFlag_SetBit s32, as their definitions are (no change).
-
-#include "version.h"
-
-// From patch 1; the Japanese release keeps an older form, still on its
-// listing.
-#if TLA_PATCH_1
-
 #include "types.h"
 #include "call.h"
 #include "text/msg_ids.h"
+#include "version.h"
 #include "main_routine_work.h"
 #include "edition.h"
 
 #include "input.h"
+// The Japanese catalog does not name these yet.
+extern u8 MsgWhatWillYou[], MsgCoins2[], MsgToss2[], MsgYouWonCoin[];
 extern u16 gData_0200173c[];
 extern s32 gData_02001700[];
 void Func_02001380();
@@ -80,33 +38,53 @@ s32 Random16Far();
 void Func_02001388();
 
 // French draws the count window two tiles wider, its numbers 16 pixels further
-// right.
+// right; Japanese draws them 16 pixels further left, each followed by its
+// counter word.
 #if LANGUAGE == LANGUAGE_FRENCH
 #define COUNT_WINDOW_WIDTH 19
 #define COUNT_NUMBER_X 88
+#elif LANGUAGE == LANGUAGE_JAPANESE
+#define COUNT_WINDOW_WIDTH 17
+#define COUNT_NUMBER_X 56
 #else
 #define COUNT_WINDOW_WIDTH 17
 #define COUNT_NUMBER_X 72
+#endif
+
+// The toss prompt's window: two tiles narrower in Japanese, against the right
+// edge.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define TOSS_WINDOW_X 22
+#define TOSS_WINDOW_WIDTH 7
+#else
+#define TOSS_WINDOW_X 20
+#define TOSS_WINDOW_WIDTH 9
 #endif
 
 #define WEIGHT(i) ((s8)gMainRoutineWork.unk13d[i])
 
 s32 Func_020001e4(void) {
   s32 choice;
+#if !TLA_PATCH_1
+  s32 text;
+#endif
   s32 message;
   s32 coins;
   s32 medals;
   struct Window *window;
   s32 result;
   s32 prizeRoll;
+#if TLA_PATCH_1
   s32 notice;
+#endif
   s32 total;
   s32 prize;
-  /* FAKEMATCH(temporary): minusOne, a 64-bit -1 for two calls, so CSE does
-   * not share the cancel compare's -1 with them; as -1, 57 of 286 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(temporary): minusOne, a 64-bit -1 for these calls, so CSE does
+   * not share a compare's -1 with them; as -1, 57 of 286 instructions differ in
+   * tla-en and 68 of 300 in tla-ja. */
   s64 minusOne = -1;
 
+#if TLA_PATCH_1
   Func_02001380();
   choice = 0;
   Func_020013f8(0);
@@ -152,7 +130,7 @@ full:
       goto end;
   }
 toss:
-  window = Window_Create(20, 15, 9, 4, 2);
+  window = Window_Create(TOSS_WINDOW_X, 15, TOSS_WINDOW_WIDTH, 4, 2);
   result = (s32)MsgToss2;
   Text_DrawCharacterAtOffset(result, window, 0, 0);
   Text_DrawCharacterAtOffset(result + 1, window, 0, 8);
@@ -172,12 +150,89 @@ toss:
     wait(1);
   }
   Window_Close(window, 2);
+#else
+  // The Japanese release keeps The Broken Seal's Japanese layout: a real loop
+  // around the prompt and the toss, a counter word after each count, and the
+  // coin or medal taken as soon as it is chosen, so cancelling the toss loses
+  // it. From patch 1 it is taken once the toss is confirmed.
+  choice = 0;
+  Func_02001380();
+  Func_020013f8(0);
+  for (;;) {
+    coins = gMainRoutineWork.coins;
+    medals = PartyInventory_CountItem(229);
+    message = (s32)MsgWhatWillYou;
+    Func_020013c8(message);
+    /* FAKEMATCH(wrapper): forwarded, so the -1 is built after movs r1, #0; as
+     * a direct call, 38 of 300 instructions differ in tla-ja. */
+    Value2(FieldMessage_ShowAtActor, -1, 0);
+    window = Window_Create(0, 0, COUNT_WINDOW_WIDTH, 4, 2);
+    text = (s32)MsgCoins2;
+    Text_DrawCharacterAtOffset(text, window, 0, 0);
+    Text_DrawNumberInWindow(coins, 6, window, COUNT_NUMBER_X, 0);
+    Text_DrawCharacterAtOffset(text + 2, window, 104, 0);
+    Text_DrawCharacterAtOffset(text + 1, window, 0, 8);
+    Text_DrawNumberInWindow(medals, 6, window, COUNT_NUMBER_X, 8);
+    Text_DrawCharacterAtOffset(text + 2, window, 104, 8);
+    choice = Menu_SelectCoinsOrMedals(choice);
+    Window_Close(window, 2);
+    Message_CloseFinishedWindows();
+    if (choice == -1)
+      goto end;
+    if (choice == 0) {
+      if (coins == 0) {
+        Func_020013c8(message + 1);
+        Func_020013d8(-1, 0);
+        wait(1);
+        continue;
+      }
+      Party_AdjustCoins(-1);
+    } else if (choice == 1) {
+      if (medals == 0) {
+        Func_020013c8(message + 2);
+        Func_020013d8(-1, 0);
+        wait(1);
+        continue;
+      }
+      PartyInventory_Remove(229);
+      if (PartyInventory_CountFreeSlots() == 0) {
+        Func_020013c8(message + 4);
+        FieldMessage_ShowAtActor(-1, 0);
+        if (Event_AskYesNoWithActorAnimation(0, 0) != 0)
+          goto end;
+      }
+    }
+    window = Window_Create(TOSS_WINDOW_X, 15, TOSS_WINDOW_WIDTH, 4, 2);
+    result = (s32)MsgToss2;
+    Text_DrawCharacterAtOffset(result, window, 0, 0);
+    Text_DrawCharacterAtOffset(result + 1, window, 0, 8);
+    wait(5);
+    Func_02001408(116);
+    for (;;) {
+      if (gInput.pressed & 1) {
+        Func_02001408(112);
+        result = 0;
+        break;
+      }
+      if (gInput.pressed & 2) {
+        Func_02001408(113);
+        result = -1;
+        break;
+      }
+      wait(1);
+    }
+    Window_Close(window, 2);
+    break;
+  }
+#endif
   if (result != -1) {
+#if TLA_PATCH_1
     if (choice == 0) {
       Party_AdjustCoins(minusOne);
     } else if (choice == 1) {
       PartyInventory_Remove(229);
     }
+#endif
     result = Func_02001184(choice);
     if (choice == 0) {
       if (result != 4) {
@@ -185,7 +240,7 @@ toss:
         Func_02001408(91);
         Func_02001328(gData_0200173c[result], 5);
         Func_020013c8((s32)MsgYouWonCoin);
-        Func_020013d8(-1, 0);
+        Func_020013d8((s32)minusOne, 0);
       } else {
         Func_02001408(113);
         FieldEvent_Wait(10);
@@ -193,10 +248,11 @@ toss:
     } else {
       total = 0;
       /* FAKEMATCH(wrapper): forwarded, so the flag number is built for each
-       * call; as a direct call, 43 of 286 instructions differ in tla-en. */
+       * call; as a direct call, 43 of 286 instructions differ in tla-en and 40
+       * of 300 in tla-ja. */
       if (result == 0 && Value1(GameFlag_Test, 0x90b) == 0) {
         GameFlag_SetBit(0x90b);
-        Func_0200049c(-1);
+        Func_0200049c((s32)minusOne);
       } else {
         for (prize = 0; prize < result * 3 + 3; prize++)
           total += (s8)gMainRoutineWork.unk13d[prize];
@@ -218,5 +274,3 @@ end:
   Func_02001388();
   return 0;
 }
-
-#endif

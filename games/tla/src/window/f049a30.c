@@ -18,6 +18,13 @@
 #define REFUSAL_TEXT_LENGTH 52
 #endif
 
+// Japanese decodes both texts raw where the other languages copy them expanded.
+#if LANGUAGE != LANGUAGE_JAPANESE
+#define MENU_TEXT_COPY Message_CopyExpanded
+#else
+#define MENU_TEXT_COPY Message_DecodeRaw
+#endif
+
 extern u8 MsgItemName[];
 extern u8 MsgItemPlainName[];
 extern u8 MsgKey0d46[];
@@ -114,6 +121,7 @@ void Vram_FillWindowBlockPattern(void);
 s32 Item_ClassifyUseAbility(s32 member, s32 item);
 void *Item_Get(s32 item);
 void Message_CopyExpanded(s32 message, u16 *text, s32 capacity);
+void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
 void Text_DrawWideStringAtOffset(u16 *text, struct ItemMenuWindow *window,
                                  s32 x, s32 y);
 void WindowSprite_RedrawSavedRect(struct ItemMenuWindow *window);
@@ -208,15 +216,14 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
       if (count != 0) {
         if (Item_ClassifyUseAbility(member,
                                     entries[firstEntry + selectedRow]) == 2)
-          Message_CopyExpanded((s32)MsgKey0d4f, messageText,
-                               CURSOR_TEXT_LENGTH);
+          MENU_TEXT_COPY((s32)MsgKey0d4f, messageText, CURSOR_TEXT_LENGTH);
         else
-          Message_CopyExpanded((entries[firstEntry + selectedRow] & 0x1ff) +
-                                   (s32)MsgItemPlainName,
-                               messageText, CURSOR_TEXT_LENGTH);
+          MENU_TEXT_COPY((entries[firstEntry + selectedRow] & 0x1ff) +
+                             (s32)MsgItemPlainName,
+                         messageText, CURSOR_TEXT_LENGTH);
         sprite = &cursorStorage;
       } else {
-        Message_CopyExpanded((s32)MsgKey0d46, messageText, CURSOR_TEXT_LENGTH);
+        MENU_TEXT_COPY((s32)MsgKey0d46, messageText, CURSOR_TEXT_LENGTH);
       }
       Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       drawnRow = selectedRow;
@@ -308,14 +315,11 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
         }
         Sound_PlayFar(114);
         if (unusableReason == 2)
-          Message_CopyExpanded((s32)MsgKey0d4f, messageText,
-                               REFUSAL_TEXT_LENGTH);
+          MENU_TEXT_COPY((s32)MsgKey0d4f, messageText, REFUSAL_TEXT_LENGTH);
         else if (entries[result] & ITEM_BROKEN)
-          Message_CopyExpanded((s32)MsgKey0d4d, messageText,
-                               REFUSAL_TEXT_LENGTH);
+          MENU_TEXT_COPY((s32)MsgKey0d4d, messageText, REFUSAL_TEXT_LENGTH);
         else
-          Message_CopyExpanded((s32)MsgKey0d4c, messageText,
-                               REFUSAL_TEXT_LENGTH);
+          MENU_TEXT_COPY((s32)MsgKey0d4c, messageText, REFUSAL_TEXT_LENGTH);
         Vram_FillWindowBlockPattern();
         Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       } else {

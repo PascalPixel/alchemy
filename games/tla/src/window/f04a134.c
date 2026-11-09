@@ -101,6 +101,14 @@ struct PsynergyMenuOam {
 #define CURSOR_TEXT_LENGTH 52
 #endif
 
+// Japanese decodes the text under the cursor raw where the other languages
+// copy it expanded.
+#if LANGUAGE != LANGUAGE_JAPANESE
+#define CURSOR_TEXT_COPY Message_CopyExpanded
+#else
+#define CURSOR_TEXT_COPY Message_DecodeRaw
+#endif
+
 // The list is a tile wider in Spanish and French, and its columns move with it.
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH)
 #define LIST_WINDOW_X 8
@@ -164,6 +172,7 @@ void Func_08049a04(u32 sourceTile, u32 destinationTile);
 void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 palette);
 void Vram_FillWindowBlockPattern(void);
 void Message_CopyExpanded(s32 message, u16 *text, s32 capacity);
+void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
 void Text_DrawWideStringAtOffset(u16 *text, struct PsynergyMenuWindow *window,
                                  s32 x, s32 y);
 void WindowSprite_RedrawSavedRect(struct PsynergyMenuWindow *window);
@@ -260,11 +269,11 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
                            window->width - 2, 1, 15);
       Vram_FillWindowBlockPattern();
       if (count != 0)
-        Message_CopyExpanded((actions[firstEntry + selectedRow] & 0x3fff) +
-                                 (s32)MsgAbilityDescription,
-                             messageText, CURSOR_TEXT_LENGTH);
+        CURSOR_TEXT_COPY((actions[firstEntry + selectedRow] & 0x3fff) +
+                             (s32)MsgAbilityDescription,
+                         messageText, CURSOR_TEXT_LENGTH);
       else
-        Message_CopyExpanded((s32)MsgKey0d48, messageText, CURSOR_TEXT_LENGTH);
+        CURSOR_TEXT_COPY((s32)MsgKey0d48, messageText, CURSOR_TEXT_LENGTH);
       Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       drawnRow = selectedRow;
       if (firstEntry != drawnFirstEntry) {

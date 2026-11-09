@@ -1,4 +1,8 @@
 // Draft, differ 2 of 714 (tla-en, 2026-11-08)
+// Devices pass (2026-11-09), none below 2: an asm after the zero stores that
+// reads them ("m") to give each store a third dependent, carried by djinni
+// (212: djinni leaves r6), x, z or i (16 to 24), count (deleted as dead: 2),
+// or SetMoveTarget's 0 or 0x27880000 argument (16, 88).
 // Every edition is differ 2 (tla-en, ja, de, es, fr, it), the same one row.
 // Left: `mov sl, r2`, the copy of the motionFlags address into sl for the
 // later stores, comes before the stores of 0 to velocityY and terrainHeight

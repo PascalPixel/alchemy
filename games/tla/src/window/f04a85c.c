@@ -7,14 +7,17 @@
 #include "module/system/system.h"
 
 // Widths in tiles that fit each language's text: the "Set Djinni" window
-// (MsgSetDjinni), the condition list, and the Mystery names' copy.
+// (MsgSetDjinni), the condition list, and the Mystery names' copy, which
+// Japanese decodes raw where the other languages copy it expanded.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define TARGET_SET_DJINNI_WIDTH 8
 #define TARGET_CONDITION_LIST_WIDTH 14
+#define TARGET_MYSTERY_NAME_COPY Message_DecodeRaw
 #define TARGET_MYSTERY_NAME_CAPACITY 10
 #else
 #define TARGET_SET_DJINNI_WIDTH 9
 #define TARGET_CONDITION_LIST_WIDTH 16
+#define TARGET_MYSTERY_NAME_COPY Message_CopyExpanded
 #define TARGET_MYSTERY_NAME_CAPACITY 14
 #endif
 
@@ -123,6 +126,7 @@ void Text_DrawCharacterAtOffset(s32 message, struct TargetWindow *window, s32 x,
                                 s32 y);
 void Func_08041f70(s32 color);
 void Message_CopyExpanded(s32 message, u16 *text, s32 capacity);
+void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
 s32 Text_GetWideStringWidth(u16 *text);
 void Vram_ClearWindowBlock(void);
 void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x,
@@ -453,7 +457,8 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
                 Window_Create(helpColumn, 8, TARGET_SET_DJINNI_WIDTH, 3, 6);
 #endif
             Func_08041f70(2);
-            Text_DrawCharacterAtOffset((s32)MsgSetDjinni, conditionWindow, 0, 0);
+            Text_DrawCharacterAtOffset((s32)MsgSetDjinni, conditionWindow, 0,
+                                       0);
             Func_08041f70(15);
             break;
           case 1:
@@ -499,14 +504,16 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
             conditionWindow = Window_Create(helpColumn, 8, 12, 3, 6);
             if (unit->hp != 0)
               goto no_condition;
-            Text_DrawCharacterAtOffset((s32)MsgEffectDowned, conditionWindow, 0, 0);
+            Text_DrawCharacterAtOffset((s32)MsgEffectDowned, conditionWindow, 0,
+                                       0);
             break;
           case 3:
             TARGET_HELP_COLUMN(7, 5, 18);
             conditionWindow = Window_Create(helpColumn, 8, 12, 3, 6);
             if (unit->poison == 0)
               goto no_condition;
-            Text_DrawCharacterAtOffset((s32)MsgEffectCurePoison, conditionWindow, 0, 0);
+            Text_DrawCharacterAtOffset((s32)MsgEffectCurePoison,
+                                       conditionWindow, 0, 0);
             break;
           case 4: {
             count = 0;
@@ -528,7 +535,8 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
             TARGET_CONDITION_LIST_WINDOW();
             count = 0;
             if (unit->delusion != 0) {
-              Text_DrawCharacterAtOffset((s32)MsgRemoveDelusion, conditionWindow, 0, 0);
+              Text_DrawCharacterAtOffset((s32)MsgRemoveDelusion,
+                                         conditionWindow, 0, 0);
               count = 1;
             }
             if (unit->stun != 0) {
@@ -537,18 +545,18 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
               count++;
             }
             if (unit->sleep != 0) {
-              Text_DrawCharacterAtOffset((s32)MsgWakeFromSleep, conditionWindow, 0,
-                                         count * 8);
+              Text_DrawCharacterAtOffset((s32)MsgWakeFromSleep, conditionWindow,
+                                         0, count * 8);
               count++;
             }
             if (unit->psySeal != 0) {
-              Text_DrawCharacterAtOffset((s32)MsgBreakPsynergySeal, conditionWindow, 0,
-                                         count * 8);
+              Text_DrawCharacterAtOffset((s32)MsgBreakPsynergySeal,
+                                         conditionWindow, 0, count * 8);
               count++;
             }
             if (unit->grimReaper != 0) {
-              Text_DrawCharacterAtOffset((s32)MsgDispelGrimReaper, conditionWindow, 0,
-                                         count * 8);
+              Text_DrawCharacterAtOffset((s32)MsgDispelGrimReaper,
+                                         conditionWindow, 0, count * 8);
               count++;
             }
             if (count == 0)
@@ -591,12 +599,13 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
             TARGET_CONDITION_LIST_WINDOW();
             count = 0;
             if (unit->poison != 0) {
-              Text_DrawCharacterAtOffset((s32)MsgEffectCurePoison, conditionWindow, 0, 0);
+              Text_DrawCharacterAtOffset((s32)MsgEffectCurePoison,
+                                         conditionWindow, 0, 0);
               count = 1;
             }
             if (unit->delusion != 0) {
-              Text_DrawCharacterAtOffset((s32)MsgRemoveDelusion, conditionWindow, 0,
-                                         count * 8);
+              Text_DrawCharacterAtOffset((s32)MsgRemoveDelusion,
+                                         conditionWindow, 0, count * 8);
               count++;
             }
             if (unit->stun != 0) {
@@ -605,23 +614,23 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
               count++;
             }
             if (unit->sleep != 0) {
-              Text_DrawCharacterAtOffset((s32)MsgWakeFromSleep, conditionWindow, 0,
-                                         count * 8);
+              Text_DrawCharacterAtOffset((s32)MsgWakeFromSleep, conditionWindow,
+                                         0, count * 8);
               count++;
             }
             if (unit->psySeal != 0) {
-              Text_DrawCharacterAtOffset((s32)MsgBreakPsynergySeal, conditionWindow, 0,
-                                         count * 8);
+              Text_DrawCharacterAtOffset((s32)MsgBreakPsynergySeal,
+                                         conditionWindow, 0, count * 8);
               count++;
             }
             if (unit->grimReaper != 0) {
-              Text_DrawCharacterAtOffset((s32)MsgDispelGrimReaper, conditionWindow, 0,
-                                         count * 8);
+              Text_DrawCharacterAtOffset((s32)MsgDispelGrimReaper,
+                                         conditionWindow, 0, count * 8);
               count++;
             }
             if (unit->haunt != 0) {
-              Text_DrawCharacterAtOffset((s32)MsgDispelEvilSpirit, conditionWindow, 0,
-                                         count * 8);
+              Text_DrawCharacterAtOffset((s32)MsgDispelEvilSpirit,
+                                         conditionWindow, 0, count * 8);
               count++;
             }
             if (count != 0)
@@ -629,7 +638,8 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
           }
           no_condition:
             Func_08041f70(2);
-            Text_DrawCharacterAtOffset((s32)MsgEffectNone, conditionWindow, 0, 0);
+            Text_DrawCharacterAtOffset((s32)MsgEffectNone, conditionWindow, 0,
+                                       0);
             Func_08041f70(15);
             break;
           }
@@ -643,7 +653,8 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
           width = (s32)MsgMysteryMan;
           if (target->enemyId == 355)
             width++;
-          Message_CopyExpanded(width, targetName, TARGET_MYSTERY_NAME_CAPACITY);
+          TARGET_MYSTERY_NAME_COPY(width, targetName,
+                                   TARGET_MYSTERY_NAME_CAPACITY);
         } else {
           for (i = 0; i <= 13; i++) {
             targetName[i] = n = target->name[i];

@@ -828,7 +828,7 @@ main	rom_main_02	recon/tla/raw/08046b08	.text	en
 main	rom_main_02	games/tla/src/window/f04868c	.text	en
 main	rom_main_02	games/tla/src/window/f049154	.text	en
 main	rom_main_02	recon/tla/ja/rom	.rom.00046612	ja
-main	rom_main_02	recon/tla/ja/rom	.rom.0004888c	ja
+main	rom_main_02	games/tla/src/window/f04868c	.text	ja
 main	rom_main_02	games/tla/src/window/f049154	.text	ja
 main	rom_main_02	games/tla/src/window/classify_use_ability	.text
 main	rom_main_02	recon/tla/it/rom	.rom.00049b12	it
@@ -845,12 +845,11 @@ main	rom_main_02	games/tla/src/window/f049a30	.text	es
 main	rom_main_02	games/tla/src/window/f04a134	.text	es
 main	rom_main_02	games/tla/src/window/f049a30	.text	de
 main	rom_main_02	games/tla/src/window/f04a134	.text	de
-main	rom_main_02	games/tla/src/window/f049a30	.text	en
+main	rom_main_02	games/tla/src/window/f049a30	.text	en ja
 main	rom_main_02	games/tla/src/window/f04a134	.text	en
 main	rom_main_02	games/tla/src/window/f04a85c	.text	en de es fr it
-main	rom_main_02	recon/tla/ja/rom	.rom.00049c20	ja
-main	rom_main_02	recon/tla/ja/rom	.rom.0004a324	ja
-main	rom_main_02	recon/tla/ja/rom	.rom.0004aa4c	ja
+main	rom_main_02	games/tla/src/window/f04a134	.text	ja
+main	rom_main_02	games/tla/src/window/f04a85c	.text	ja
 main	rom_main_02	games/tla/src/window/countdown	.text
 main	rom_main_02	games/tla/src/window/f04b7c0	.text
 main	rom_main_02	games/tla/src/window/classify_entry_kind	.text
@@ -1990,10 +1989,10 @@ main	rom_main_06	recon/tla/it/rom	.rom.000f9642	it
 main	rom_main_06	recon/tla/fr/rom	.rom.000fb642	fr
 main	rom_main_06	recon/tla/es/rom	.rom.000ff636	es
 main	rom_main_06	recon/tla/de/rom	.rom.00103642	de
-main	rom_main_06	games/tla/src/menu/item/f0f9644	.text	en
+main	rom_main_06	games/tla/src/menu/item/f0f9644	.text	en de es fr it
 main	rom_main_06	recon/tla/ja/rom	.rom.000f942a	ja
 main	rom_main_06	games/tla/src/menu/item/f0f94a4	.text	ja
-main	rom_main_06	recon/tla/ja/rom	.rom.000f953c	ja
+main	rom_main_06	games/tla/src/menu/item/f0f9644	.text	ja
 main	rom_main_06	games/tla/src/menu/item/use	.text
 main	rom_main_06	games/tla/src/menu/item/f0fa368	.text
 main	rom_main_06	games/tla/src/menu/item/interface	.text

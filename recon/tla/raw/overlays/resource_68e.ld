@@ -10,7 +10,7 @@ SECTIONS
         "*/games/tla/src/scene/lemuria_spring/scene_events.o"(.text)
         "*/games/tla/src/scene/lemuria_spring/s012c.o"(.text)
         "*/games/tla/src/scene/lemuria_spring/prepare.o"(.text)
-        "*/resource_68e_overlay.o"(.text.x020081e4)
+        "*/games/tla/src/scene/lemuria_spring/s01e4.o"(.text)
         "*/games/tla/src/scene/lemuria_spring/s049c.o"(.text)
         "*/games/tla/src/scene/lemuria_spring/s0884.o"(.text)
         "*/games/tla/src/scene/lemuria_spring/s08f0.o"(.text)

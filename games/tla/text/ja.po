@@ -16680,11 +16680,11 @@ msgctxt "MsgItemMenuEmpty"
 msgid "04104"
 msgstr "アイテムをもっていません"
 
-msgctxt "message"
+msgctxt "MsgWhoseItem"
 msgid "04105"
 msgstr "だれのアイテム?"
 
-msgctxt "message"
+msgctxt "MsgWhichItem"
 msgid "04106"
 msgstr "どのアイテム?"
 
@@ -16692,15 +16692,15 @@ msgctxt "message"
 msgid "04107"
 msgstr "どうしますか?"
 
-msgctxt "message"
+msgctxt "MsgUseOnWhom"
 msgid "04108"
 msgstr "だれにつかいますか?"
 
-msgctxt "message"
+msgctxt "MsgGiveToWhom"
 msgid "04109"
 msgstr "だれにわたしますか?"
 
-msgctxt "message"
+msgctxt "MsgSwapForWhat"
 msgid "04110"
 msgstr "どれとこうかん?"
 
@@ -17324,11 +17324,11 @@ msgctxt "message"
 msgid "04265"
 msgstr "むぞくせい"
 
-msgctxt "message"
+msgctxt "MsgEquippedIt"
 msgid "04266"
 msgstr "そうびしました"
 
-msgctxt "message"
+msgctxt "MsgDroppedIt"
 msgid "04267"
 msgstr "すてました"
 
@@ -17336,19 +17336,19 @@ msgctxt "message"
 msgid "04268"
 msgstr "なにかとこうかんします"
 
-msgctxt "message"
+msgctxt "MsgGiven"
 msgid "04269"
 msgstr "わたしました"
 
-msgctxt "message"
+msgctxt "MsgRemoved"
 msgid "04270"
 msgstr "はずしました"
 
-msgctxt "message"
+msgctxt "MsgTraded"
 msgid "04271"
 msgstr "こうかんしました"
 
-msgctxt "message"
+msgctxt "MsgCannotRemoveItem"
 msgid "04272"
 msgstr "はずせないそうびがあります!"
 
@@ -17356,11 +17356,11 @@ msgctxt "message"
 msgid "04273"
 msgstr "呪われてしまった!"
 
-msgctxt "message"
+msgctxt "MsgCannotTrade"
 msgid "04274"
 msgstr "こうかんできません!"
 
-msgctxt "message"
+msgctxt "MsgCannotHoldMore"
 msgid "04275"
 msgstr "わたせません!"
 
@@ -20998,7 +20998,7 @@ msgstr ""
 "トレビの いずみに\n"
 "ちょうせんしますか?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgWhatWillYou"
 msgid "05038"
 msgstr "なにを なげますか?{end_now}"
 
@@ -21010,7 +21010,7 @@ msgctxt "message"
 msgid "05040"
 msgstr "ラッキーメダルを もってないよ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouWonCoin"
 msgid "05041"
 msgstr "{argument_signed_number}コインを 手に入れた!{end_wait}"
 
@@ -21026,7 +21026,7 @@ msgstr ""
 "{protagonist_name}は\n"
 "おもいとどまった!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgCoins2"
 msgid "05044"
 msgstr "コイン    "
 
@@ -21038,7 +21038,7 @@ msgctxt "message"
 msgid "05046"
 msgstr "まい"
 
-msgctxt "message"
+msgctxt "MsgToss2"
 msgid "05047"
 msgstr "A なげる"
 

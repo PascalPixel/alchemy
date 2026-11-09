@@ -6,6 +6,7 @@
 #include "ram_buffer.h"
 #include "irq.h"
 #include "flag_call.h"
+#include "version.h"
 
 struct ItemMenuIcon {
   struct ItemMenuIcon *next;
@@ -59,6 +60,30 @@ typedef s32 (*ItemWordCopyFn)(void *dst, const void *src, s32 size);
 #define ITEM_IWRAM_COPY_WORDS                                                  \
   ((ItemWordCopyFn)(IwramIrqMain + Iwram_CopyWordsOffset))
 
+// Where the trade's closing message starts: two tiles further left in Italian.
+#if LANGUAGE == LANGUAGE_ITALIAN
+#define TRADED_MESSAGE_X 13
+#else
+#define TRADED_MESSAGE_X 15
+#endif
+
+// Where "Can't trade it!" starts: four tiles further left in French, over the
+// status window, which is redrawn after it.
+#if LANGUAGE == LANGUAGE_FRENCH
+#define CANNOT_TRADE_X 11
+#else
+#define CANNOT_TRADE_X 15
+#endif
+
+// Where "You were cursed!" and "Removed" start: further right in Japanese.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define CURSED_MESSAGE_X 15
+#define REMOVED_MESSAGE_X 17
+#else
+#define CURSED_MESSAGE_X 14
+#define REMOVED_MESSAGE_X 14
+#endif
+
 // The item menu's messages, under The Broken Seal's names for the same text
 // (message number in tla-en first).
 extern const u8 MsgWhoseItem[];        // 04103: "Whose item?"
@@ -82,6 +107,9 @@ s32 Unit_RefreshPsynergyFar(s32 unit);
 void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y);
 void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void Func_080fae8c(s32 member, s32 slot, s32 mode, s32 target);
+#if TLA_PATCH_2
+void Func_08104484(void);
+#endif
 
 s32 Func_080f9644(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   s32 done;
@@ -120,7 +148,11 @@ s32 Func_080f9644(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_SetItemWindowRow3();
       menu->selectedItemIcon->state = 13;
       ItemMenu_DrawMessage(0, (s32)&MsgWhoseItem);
+#if TLA_PATCH_1
+      // Japanese redraws the information window after each modal message
+      // instead.
       WindowSprite_RedrawSavedRectFar(menu->infoWindow);
+#endif
       Text_DrawWorkValueWithLabel(menu->infoWindow);
       command = ItemMenu_SelectMember(0);
       if (command == -1) {
@@ -179,6 +211,9 @@ s32 Func_080f9644(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           WindowSprite_ClearListFar(menu->infoWindow);
           InventoryMenu_ShowModalMessage(
               menu->messageOffset + (s32)MsgItemUseResult, 0, -1);
+#if !TLA_PATCH_1
+          WindowSprite_RedrawSavedRectFar(menu->infoWindow);
+#endif
           menu->listIcon->state = 13;
           menu->itemCount =
               ItemMenu_CollectItems(Unit_Get(menu->itemOwner), menu->items, 0);
@@ -229,6 +264,9 @@ s32 Func_080f9644(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           WindowSprite_ClearListFar(menu->infoWindow);
           InventoryMenu_ShowModalMessage(
               menu->messageOffset + (s32)MsgItemUseResult, 0, -1);
+#if !TLA_PATCH_1
+          WindowSprite_RedrawSavedRectFar(menu->infoWindow);
+#endif
           menu->listIcon->state = 13;
           Func_080fb6d4();
           state = 1;
@@ -375,6 +413,9 @@ s32 Func_080f9644(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       if (aborted == 0) {
         menu->itemOwner = menu->targetOwner;
         menu->selectedItem &= 0x1ff;
+#if TLA_PATCH_2
+        ItemMenu_SetMessageWindowHeight6();
+#endif
         WindowSprite_RedrawSavedRectFar(menu->messageWindow);
         Func_080fc12c();
         result = Func_080fc2e0(0);
@@ -400,7 +441,8 @@ s32 Func_080f9644(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           if ((item->flags & 1) != 0) {
             Sound_PlayFar(0x67);
             WindowSprite_ClearListFar(menu->infoWindow);
-            InventoryMenu_ShowModalMessage((s32)MsgEquippedIt + 7, 14, 14);
+            InventoryMenu_ShowModalMessage((s32)MsgEquippedIt + 7,
+                                           CURSED_MESSAGE_X, 14);
           }
         }
       }
@@ -481,13 +523,20 @@ s32 Func_080f9644(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         Iwram_CopyWords(source, sourceCopy, size);
         Iwram_CopyWords(target, targetCopy, size);
         WindowSprite_ClearListFar(menu->infoWindow);
-        InventoryMenu_ShowModalMessage((s32)MsgCannotTrade, 15, 14);
+        InventoryMenu_ShowModalMessage((s32)MsgCannotTrade, CANNOT_TRADE_X, 14);
+#if LANGUAGE == LANGUAGE_FRENCH
+        WindowSprite_RedrawSavedRectFar(menu->statusWindow);
+#endif
       } else {
         Unit_RefreshPsynergyFar(menu->itemOwner);
         Unit_RefreshPsynergyFar(menu->targetOwner);
         Unit_CalculateFar(menu->itemOwner);
         Unit_CalculateFar(menu->targetOwner);
         ItemMenu_SetMessageWindowHeight5();
+#if TLA_PATCH_2
+        ItemMenu_SetMessageWindowHeight6();
+        Func_08104484();
+#endif
         WindowSprite_RedrawSavedRectFar(menu->messageWindow);
         menu->itemOwner = menu->targetOwner;
         menu->selectedItem &= 0x1ff;
@@ -505,10 +554,12 @@ s32 Func_080f9644(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
             if ((item->flags & 1) != 0) {
               Sound_PlayFar(0x67);
               WindowSprite_ClearListFar(menu->infoWindow);
-              InventoryMenu_ShowModalMessage((s32)MsgEquippedIt + 7, 14, 14);
+              InventoryMenu_ShowModalMessage((s32)MsgEquippedIt + 7,
+                                             CURSED_MESSAGE_X, 14);
             }
           } else {
-            InventoryMenu_ShowModalMessage((s32)MsgTraded, 15, 14);
+            InventoryMenu_ShowModalMessage((s32)MsgTraded, TRADED_MESSAGE_X,
+                                           14);
           }
         }
       }
@@ -527,6 +578,9 @@ s32 Func_080f9644(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       if (result == -2) {
         WindowSprite_ClearListFar(menu->infoWindow);
         InventoryMenu_ShowModalMessage((s32)MsgCannotRemoveItem, 0, -1);
+#if !TLA_PATCH_1
+        WindowSprite_RedrawSavedRectFar(menu->infoWindow);
+#endif
         state = 1;
         break;
       }
@@ -544,7 +598,8 @@ s32 Func_080f9644(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       if ((item->flags & 1) != 0) {
         Sound_PlayFar(0x67);
         WindowSprite_ClearListFar(menu->infoWindow);
-        InventoryMenu_ShowModalMessage((s32)MsgEquippedIt + 7, 14, 8);
+        InventoryMenu_ShowModalMessage((s32)MsgEquippedIt + 7, CURSED_MESSAGE_X,
+                                       8);
       }
       state = 1;
       break;
@@ -563,7 +618,7 @@ s32 Func_080f9644(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       Func_080fae8c(menu->itemOwner, menu->selectedSlot, 0, menu->itemOwner);
       menu->equipPreview = 0;
       WindowSprite_ClearListFar(menu->infoWindow);
-      InventoryMenu_ShowModalMessage((s32)MsgRemoved, 14, 8);
+      InventoryMenu_ShowModalMessage((s32)MsgRemoved, REMOVED_MESSAGE_X, 8);
       Event_ClearInvalidPackedValuesFar();
       state = 1;
       break;

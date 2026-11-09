@@ -18517,11 +18517,11 @@ msgctxt "MsgItemMenuEmpty"
 msgid "04563"
 msgstr "Non hai strumenti."
 
-msgctxt "message"
+msgctxt "MsgWhoseItem"
 msgid "04564"
 msgstr "Quale personaggio?"
 
-msgctxt "message"
+msgctxt "MsgWhichItem"
 msgid "04565"
 msgstr "Quale strumento?"
 
@@ -18529,15 +18529,15 @@ msgctxt "message"
 msgid "04566"
 msgstr "Che fai?"
 
-msgctxt "message"
+msgctxt "MsgUseOnWhom"
 msgid "04567"
 msgstr "Usare su chi?"
 
-msgctxt "message"
+msgctxt "MsgGiveToWhom"
 msgid "04568"
 msgstr "A chi darlo?"
 
-msgctxt "message"
+msgctxt "MsgSwapForWhat"
 msgid "04569"
 msgstr "Scambiare per cosa?"
 
@@ -19177,11 +19177,11 @@ msgctxt "message"
 msgid "04728"
 msgstr "Nessun attributo"
 
-msgctxt "message"
+msgctxt "MsgEquippedIt"
 msgid "04729"
 msgstr "Attivato."
 
-msgctxt "message"
+msgctxt "MsgDroppedIt"
 msgid "04730"
 msgstr "Buttato strum."
 
@@ -19189,19 +19189,19 @@ msgctxt "message"
 msgid "04731"
 msgstr "Strum. da scambiare per qualcosa"
 
-msgctxt "message"
+msgctxt "MsgGiven"
 msgid "04732"
 msgstr "Dato strumento"
 
-msgctxt "message"
+msgctxt "MsgRemoved"
 msgid "04733"
 msgstr "Riposto strum."
 
-msgctxt "message"
+msgctxt "MsgTraded"
 msgid "04734"
 msgstr "Scambio effettuato"
 
-msgctxt "message"
+msgctxt "MsgCannotRemoveItem"
 msgid "04735"
 msgstr "Imposs. riporre!"
 
@@ -19209,11 +19209,11 @@ msgctxt "message"
 msgid "04736"
 msgstr "Hai una maled.!"
 
-msgctxt "message"
+msgctxt "MsgCannotTrade"
 msgid "04737"
 msgstr "Imposs. scamb.!"
 
-msgctxt "message"
+msgctxt "MsgCannotHoldMore"
 msgid "04738"
 msgstr "Non c'è posto!"
 

@@ -1,4 +1,8 @@
 // Draft, differ 2 of 350 (tla-en, 2026-11-08)
+// Devices pass (2026-11-09), none below 2: the palette base set inside the
+// loop body, as a block local or through palette (29), the table through a
+// block-local pointer (158). Both giv inits have no dependent in the
+// preheader, and no source statement can land among loop.c's inits.
 // Differ 2 in all six editions, the same two rows. scene/sea_of_time. Left: in the fade loop's entry block the native sets the
 // table offset (r9) before the palette pointer (r10); here the palette comes
 // first: `mov sl, r4` and `mov r9, r0` swap. Both are reduced givs of i, and

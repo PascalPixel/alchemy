@@ -20,6 +20,14 @@
 #define DJINN_TURNS_X 48
 #endif
 
+// Japanese decodes four of the menu's six messages raw where the other
+// languages copy them expanded.
+#if LANGUAGE != LANGUAGE_JAPANESE
+#define DJINN_MESSAGE_COPY Message_CopyExpanded
+#else
+#define DJINN_MESSAGE_COPY Message_DecodeRaw
+#endif
+
 extern u8 MsgDjinnName[];
 extern u8 MsgDjinnEffect[];
 extern u8 MsgDjinniStillRecovering[];
@@ -142,6 +150,7 @@ void Vram_FillWindowBlockPattern(void);
 void MessageArgument_ClearAll(void);
 void MessageArgument_Push(s32 value, s32 kind);
 s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);
+void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
 struct DjinnMenuWindow *Func_080464dc(struct DjinnMenuWindow *window,
                                       s32 member, s32 encodedDjinn, s32 page,
                                       s32 *pageCount);
@@ -299,8 +308,8 @@ s32 Func_0804868c(s32 member) {
           }
         }
         if (alreadySelected != 0) {
-          Message_CopyExpanded((s32)MsgCannotUseSameDjinniTwice, messageText,
-                               DJINN_MESSAGE_CAPACITY);
+          DJINN_MESSAGE_COPY((s32)MsgCannotUseSameDjinniTwice, messageText,
+                             DJINN_MESSAGE_CAPACITY);
           if (previewWindow != NULL) {
             Window_Close(previewWindow, 1);
             previewWindow = NULL;
@@ -314,9 +323,9 @@ s32 Func_0804868c(s32 member) {
             MessageArgument_Push((selectedDjinn & DJINN_ENTRY_RECOVERY_MASK) >>
                                      DJINN_ENTRY_RECOVERY_SHIFT,
                                  5);
-            Message_CopyExpanded(((selectedDjinn & 0xf00) >> 8) * 20 +
-                                     (selectedDjinn & 0xff) + (s32)MsgDjinnEffect,
-                                 messageText, DJINN_MESSAGE_CAPACITY);
+            DJINN_MESSAGE_COPY(((selectedDjinn & 0xf00) >> 8) * 20 +
+                                   (selectedDjinn & 0xff) + (s32)MsgDjinnEffect,
+                               messageText, DJINN_MESSAGE_CAPACITY);
             if (previewWindow != NULL) {
               Window_Close(previewWindow, 1);
               previewWindow = NULL;
@@ -335,13 +344,13 @@ s32 Func_0804868c(s32 member) {
         } else {
           previewWindow = Func_080464dc(previewWindow, member, selectedDjinn,
                                         previewPage, &previewPages);
-          Message_CopyExpanded(((selectedDjinn & 0xf00) >> 8) * 20 +
-                                   (selectedDjinn & 0xff) + (s32)MsgDjinnEffect,
-                               messageText, DJINN_MESSAGE_CAPACITY);
+          DJINN_MESSAGE_COPY(((selectedDjinn & 0xf00) >> 8) * 20 +
+                                 (selectedDjinn & 0xff) + (s32)MsgDjinnEffect,
+                             messageText, DJINN_MESSAGE_CAPACITY);
         }
       } else {
-        Message_CopyExpanded((s32)MsgNoDjinn, messageText,
-                             DJINN_MESSAGE_CAPACITY);
+        DJINN_MESSAGE_COPY((s32)MsgNoDjinn, messageText,
+                           DJINN_MESSAGE_CAPACITY);
       }
       work->holdTilemapUpload = 0;
       if (previewPage == 0) {

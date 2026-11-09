@@ -18546,11 +18546,11 @@ msgctxt "MsgItemMenuEmpty"
 msgid "04563"
 msgstr "Pas d'objet."
 
-msgctxt "message"
+msgctxt "MsgWhoseItem"
 msgid "04564"
 msgstr "L'objet de?"
 
-msgctxt "message"
+msgctxt "MsgWhichItem"
 msgid "04565"
 msgstr "Quel objet?"
 
@@ -18558,15 +18558,15 @@ msgctxt "message"
 msgid "04566"
 msgstr "Choix de l'action?"
 
-msgctxt "message"
+msgctxt "MsgUseOnWhom"
 msgid "04567"
 msgstr "L'utiliser sur?"
 
-msgctxt "message"
+msgctxt "MsgGiveToWhom"
 msgid "04568"
 msgstr "Donner à?"
 
-msgctxt "message"
+msgctxt "MsgSwapForWhat"
 msgid "04569"
 msgstr "L'échanger avec?"
 
@@ -19206,11 +19206,11 @@ msgctxt "message"
 msgid "04728"
 msgstr "Sans attribut"
 
-msgctxt "message"
+msgctxt "MsgEquippedIt"
 msgid "04729"
 msgstr "Equipé."
 
-msgctxt "message"
+msgctxt "MsgDroppedIt"
 msgid "04730"
 msgstr "Jeté."
 
@@ -19218,19 +19218,19 @@ msgctxt "message"
 msgid "04731"
 msgstr "Sera échangé."
 
-msgctxt "message"
+msgctxt "MsgGiven"
 msgid "04732"
 msgstr "Donné."
 
-msgctxt "message"
+msgctxt "MsgRemoved"
 msgid "04733"
 msgstr "Enlevé."
 
-msgctxt "message"
+msgctxt "MsgTraded"
 msgid "04734"
 msgstr "Echangé."
 
-msgctxt "message"
+msgctxt "MsgCannotRemoveItem"
 msgid "04735"
 msgstr "Impossible à enlever!"
 
@@ -19238,11 +19238,11 @@ msgctxt "message"
 msgid "04736"
 msgstr "Vous êtes maudit!"
 
-msgctxt "message"
+msgctxt "MsgCannotTrade"
 msgid "04737"
 msgstr "Echange impossible!"
 
-msgctxt "message"
+msgctxt "MsgCannotHoldMore"
 msgid "04738"
 msgstr "Inventaire complet!"
 

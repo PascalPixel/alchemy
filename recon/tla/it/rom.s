@@ -188,12 +188,11 @@ Data_080f3984:
 	.incbin "baserom.gba", 0x000f94a2, 0x00000002
 	.section .rom.000f9642, "ax"
 	.incbin "baserom.gba", 0x000f9642, 0x00000002
-	.global Func_080f9644
-	.type Func_080f9644, %function
-	.thumb_func
-Func_080f9644:
-	.incbin "baserom.gba", 0x000f9644, 0x00000c98
 	.section .rom.000fa484, "ax"
+	.global Func_08104484
+	.type Func_08104484, %function
+	.thumb_func
+Func_08104484:
 	.incbin "baserom.gba", 0x000fa484, 0x0000003c
 	.section .rom.000fad1e, "ax"
 	.incbin "baserom.gba", 0x000fad1e, 0x00000002

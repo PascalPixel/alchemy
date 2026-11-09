@@ -56,8 +56,8 @@ s32 Func_080afbec(s32 unitId, s32 enemyId, s32 suffix) {
     return 0;
   unit = Unit_Get(unitId);
   {
-    /* FAKEMATCH: the entry taken first puts its pool load ahead of the size,
-     * where the native issues it (differ 4 without) */
+    // The entry held in a local loads before the size; as a plain
+    // Iwram_ClearWords call, 1 of 219 instructions differ in tla-en.
     s32 (*clear)(void *destination, s32 size) = Iwram_ClearWords;
 
     clear(unit, BATTLE_UNIT_SIZE);
@@ -228,25 +228,10 @@ s32 Summon_ListLearned(u8 *output) {
   u8 *source = gSummon_OrderList;
   u8 *end = gSummon_OrderList + 28;
   s32 count = 0;
-  /* FAKEMATCH: the one is kept in a register across the loop, as the
-     native keeps it in r8; written as a constant in the shift, with the
-     word pinned below, it is built in the loop (differ 18). */
-  u32 one = 1;
 
   do {
-    u8 value = *source;
-    /* FAKEMATCH: the word is pinned to the r3 it takes in the native, so
-       the and keeps its result there; in a plain local the word and the
-       bit trade registers (differ 10). */
-    register u32 flags asm("r3") = *(u32 *)Djinn_GetRecoveryTable(0);
-
-    /* FAKEMATCH: the barrier loads the word before the bit is started; as
-       plain C, the copy of the one comes first and 2 instructions differ
-       in tla-en. */
-    asm("");
-    source++;
-    flags &= one << value;
-    if (flags != 0) {
+    u8 value = *source++;
+    if (((*(u32 *)Djinn_GetRecoveryTable(0)) & (1 << value)) != 0) {
       *output++ = value;
       count++;
     }
@@ -263,12 +248,8 @@ const struct SummonDefinition *SummonDefinition_GetNear(u32 summonId) {
 
 void Func_080aff94(s32 bit) {
   u32 *state = (u32 *)Djinn_GetRecoveryTable(0);
-  /* FAKEMATCH: the word pinned to r3 is loaded before the bit is built; in a
-   * plain local, 10 instructions differ in tla-en. */
-  register u32 flags __asm__("r3") = *state;
 
-  flags |= 1 << bit;
-  *state = flags;
+  *state |= 1 << bit;
 }
 
 #undef SUFFIX_BASE

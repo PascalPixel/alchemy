@@ -1,4 +1,10 @@
 // Draft, differ 32 of 2680 (tla-en, 2026-11-09; the same 32 in ja, de, es, fr, it)
+// 2026-11-09, last: a 12-minute permute of the rings' first half (half to
+// top, PERM_RANDOMIZE, seed 4242, 14,792 candidates): nothing below 32; cx
+// copied to a ring local first, 32. Traced: cx's first reload is the pick
+// after the radius's r1 and finds r2 free (dx holds r3); the listing's r4
+// fits r2 being busy there or half's output reload being a pick (r2 busy,
+// r3) instead of combine_reloads' dead r3.
 // 2026-11-09, later, 40 to 32: the flash step goes through a local assigned
 // twice, addB = addR = addG = step = (step = 304 - frame * 2) (FAKEMATCH
 // temporary, found by the permuter on the flash block, seed 5309): its minus

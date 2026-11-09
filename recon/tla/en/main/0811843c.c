@@ -1,4 +1,23 @@
-// Draft, differ 14 of 183 (tla-en, 2026-11-09); 14 in every edition
+// Draft, differ 12 of 183 (tla-en, 2026-11-09); 12 in every edition
+// 2026-11-09 (later), 14 to 12, no new device: the tag loop counts j down
+// from 3 in a do-while and indexes [3 - j]; j's init is then the first set of
+// the block, so it holds r0 when reload rebuilds the destination's snap, and
+// that reload takes the listing's r1 (traced). Left: movs r0, #3 is scheduled
+// two rows early (it is first in RTL; the listing's is last, after the two
+// pointers), the PP reload (4) and the second copy (6). With this tag loop the
+// copies' temporaries and the once-only block are each still needed (121, 26,
+// 14 without); the PP base pinned to r0 is 14; count-down *d++ = *s++ forms
+// with d and s set after j: 18. Two pins settle the PP rows (8, not kept: the
+// pins reach no further): pv in r0 = Data_0200ffec, then pa in r3 =
+// (struct SnapshotVitals *)(i * 4 + (s32)pv) and pa->pp = unit->unk3a (pv[i],
+// pv + i, i + pv or a u8 * sum put pv first in the add: 10; either pin alone
+// 12 or 14). With them, src pinned to r3 in place of its temporary keeps 8
+// (first's byte then takes r2); src pinned inside the once-only block, 117.
+// The native's PP base is a reload at the add (r0, rotation after the HP
+// store's r2); that one reload would also put r1 in reload's spill set (find_reg
+// takes r1 with r3 the add's output and r2 the PP value), which is what the
+// copies' temporaries stand in for. A 12-minute permute of this form (seed
+// 2468): nothing below 12.
 // 2026-11-09 (last stretch), 28 to 14: the permuter (seed 7) found an s32
 // first holding snapshot[0] (a second tagged temporary, 28 without it), and
 // (seed 31) a once-only block around the first two copies (16 to 14). Left,
@@ -100,14 +119,18 @@ void Func_0811843c(void) {
         Data_0200ffec[i].pp = unit->unk3a;
       }
       if (i <= 2) {
-        for (j = 0; j <= 3; j++)
-          snap->tags[i][j] = unit->tags[j];
+        // Counted down from 3, set before the copy's pointers: the counter
+        // is then live in r0 when the destination's snap is reloaded.
+        j = 3;
+        do {
+          snap->tags[i][3 - j] = unit->tags[3 - j];
+        } while (--j >= 0);
       }
       /* FAKEMATCH(temporary): the form kept; as (*copies)[0] =
-       * unit->snapshot[0], 28 of 183 instructions differ in tla-en. */
+       * unit->snapshot[0], 26 of 183 instructions differ in tla-en. */
       first = unit->snapshot[0];
       /* FAKEMATCH(temporary): the form kept; as (*copies)[1] =
-       * unit->snapshot[1], 119 of 183 instructions differ in tla-en. */
+       * unit->snapshot[1], 121 of 183 instructions differ in tla-en. */
       src = &unit->snapshot[1];
       // Once-only: the first two copies share one schedule block.
       do {

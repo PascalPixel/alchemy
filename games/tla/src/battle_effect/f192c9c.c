@@ -1,259 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-08)
-// Measured with all five addresses in address order,
-// 0819284c,08192894,081929fc,08192a4c,08192c9c (the parent alone counts the
-// nested functions as moved). Re-measured 2026-11-08: differ 0, check tags
-// clean (11 tags). The 284 unused locals in the parent (34 without) are no
-// longer tagged: S2 counts an unused local that only shapes the stack frame as
-// ordinary C, so they carry an `// Unused:` note and UNUSED (still 0). The
-// resource ids take their directory rows' names: PinkPetalsTiles (0x9a)
-// exists; SunsetBackdrop (0x76), StarfieldFlareBackdrop (0x77) and
-// RobedGoddessTiles (0xa5) must be given in resource_directory.s
-// (`resource SunsetBackdrop, Battle_SunsetBackdrop` and so on) before
-// adopt main 08192c9c,0819284c,08192894,081929fc,08192a4c, then the build
-// decides the other editions. Eleven tagged devices, each tag with its own
-// plain form's figure: t * 4 / 3 in each ring arm of Iris_DrawSplash (700, 698), the draw
-// copied into blit in each ring arm (1114, 1108), i / 3 in the 423 band (29),
-// the band's off = 0 (168) and its first row passed through first (6), the
-// u16 colour copies in the second and last fades (171 each), the blend level
-// through alpha (14), and Iris_FillWords under FILL_WORDS (42). The constant m
-// in three fades is gone (s32 r = c & 31 matches); the shake's first store of
-// base is marked DEAD.
-// Other editions, the parent alone (08192c9c; tla-ja 08192ca0): ja, de, es, fr
-// and it each match all 4851 of the parent's instructions in order; their
-// figure, differ 418, is the listing running on into Func_0819574c, which
-// their scaffold section also holds. diff cannot bound the nested functions
-// there (no symbol at the section's start, 0819284c or ja's 08192850) and
-// omits literal pools, so the twelve-edition compare decides which editions
-// adopt it.
-// Review: the previous round did not adopt the unused locals, as declared
-// names no S2 kind names; they are tagged dead here as f127588's unused array
-// is. Retiring them needs the source's form for about 280 pseudos with no insn
-// at gcse (a dead block, an integration that folds away, or locals).
-// 2026-11-08, the slots: the eight spilled are PRE's reaching registers 4269
-// to 4288 (sp 32 to 60 hold 4288, 4286, 4280, 4279, 4278, 4277, 4271, 4269:
-// lower regno, higher slot), numbered in hash-bucket order (1981 buckets,
-// (regnos + constants) mod 1981). Their expressions, by draft regno: t << 2
-// (1890, t's argument), sprites + 1908 and sprites + 1931 (1905 is the splash's
-// sprites), 3448 >> 1, 3620 << 1, 3683 << 1 and >> 1, and sfp - 188, whose
-// bucket (1852) no pseudo moves. The listing's order is 4279, 4280, 4288, 4269,
-// 4271, 4277, 4286, 4278 from sp 60 down: 3683's pair and t << 2 wrap past the
-// table's end, 3620 << 1 passes sfp - 188 and 3448 >> 1 stays below it.
-// Measured this round with unused locals as the probe: the shift need not be
-// uniform. At least 95 extra pseudos before the splash's t (anywhere from the
-// top to just before the drops loop; 50 to 90 give 132 to 140, 16 at 90) and
-// 275 to 294 in all before the healing rings' 3448 match (100 before the
-// drops loop and 180 after the splash: 0; 250 or 300 in all: 132 or 162). So
-// the native's extra pseudos may be spread through the code up to the healing
-// rings. Also measured: a dead `if (0)` splash call is 341 pseudos (34 before
-// the drops loop or at the loop's top; 171 and 186 with a dead division
-// dropped); 280 locals in a nested function leave the parent untouched (each
-// nested function numbers its own pseudos); the four nested functions defined
-// in a block opening at the drops loop give 1575, at the loop's top 327.
-// Earlier the same day: the opening fade's empty asm dropped for r = m (34);
-// FILL_WORDS without its once-only block 731, calling Iwram_FillWords directly
-// 38; the cues before the splash through a static inline wrapper add one
-// pseudo per integration (10 in all) and leave 34; the same 280 locals inside
-// Iris_DrawSplash give 26 (integrate.c makes the unused locals' pseudos after
-// the body's).
-// 2026-11-06, the ring row: the cosine kept in py with `py * radius` in the
-// argument puts lsls first but keeps py in r0 past canvas's load (95); the
-// sheet as a local set after the cosine call, then the multiply (`py *= radius`
-// 52, `py = radius * py` 52, a cosine local 54 or 68); `radius * Trig_Cos(a)`
-// 48, `radius * Trig_Sin(a)` 40. Measured 2026-11-05 (tla-en): differ 36 of
-// 5364; 2 with slots and pool offsets normalized (one row), 2 with registers
-// masked too. Measure the rows, not raw. Left: the large rings' sheet offset.
-// `lsls r2, #3` of 0x700 comes after the multiply here and before it in the
-// listing. The two insns tie on priority (10) and on dependants (3 each), so
-// sched2 takes the lower luid, the multiply, whose source is the declaration
-// above the call; every form that moves the multiply past the sheet (a local
-// for the cosine, the call in the argument, a pin on r0) also changes its
-// operands or the registers around it. Measured with -fsched-verbose=5 (out of
-// tree: xgcc with the Makefile's flags, -dR). Slots: 274 to 293 unused locals
-// at the top of the function take raw to 2. PRE's hash is operand regnos plus
-// constants mod the table, so the listing's order of its low slots needs every
-// pseudo from the splash on about 280 higher than this draft's, and 1977 to
-// 1987 buckets (3952 to 3975 insns alive at GCSE, which the dead divisions now
-// give). The source makes those pseudos somewhere with no code; the locals show
-// the count and are not in this draft. Slots 176 to 188 are settled: a local a
-// nested function reaches gets its address pseudo when that function is parsed,
-// so the opening's reads are initializers above the nested functions. What
-// settled the code this round, from the dumps and the listing:
-// - Dead divisions are in three places. The 423 band's loop needs a call or 69
-// or
-//   more insns for loop.c to leave its giv (lifetime * threshold * benefit <
-//   insn_count); the ring arms need t * 4 to occur in the join, set into a
-//   variable that is set twice so cprop leaves PRE's copy, which puts it ahead
-//   of ring and blit. Flow deletes the divisions. They are S2's `dead` unless
-//   the source's form appears; they need their tags before adoption.
-// - Opening fade (earlier; s32 r = c & 31 now matches in all three fades): r is set from the constant local m (2026-11-08: the empty asm
-// that did it is free under -mtune=gba, 34 either way; r = 31 or a once-only
-// block 39 to 41); r has to be set
-//   before the and, or it ties to c. Every other fade reads `m & c` beside its
-//   m, so whether m hoists follows threshold against insn_count (the second
-//   fade's u16 v is one insn more; the 446 fade's mask sits before its loop).
-// - 423 band: i goes through a local with an insn between (a default for off),
-// so
-//   CSE keeps the copy for combine, which reverses the REG_DEAD notes, and
-//   combine_reloads gives i's output reload the scale's register.
-// - tileBuffer is a constant no register holds, so the decode's ldr r1 is a
-// reload
-//   at the call; set it after effect's last use or it takes effect's register.
-// - The first decode of the crystal has no once-only block: a note attaches to
-// the next
-//   real insn, which then orders everything after it (the verbose dump shows
-//   it).
-// - tiles from the symbol: a constant's REG_EQUIV doubles its live length.
-// - void *draw[2]: the store and the load after it then conflict. A sprite's
-//   resource through its field: a char read conflicts with the store before it.
-// Measured 2026-11-05 (tla-en): differ 496 of 5364, 111 with slots and pool
-// offsets normalized, 43 with registers masked too (draft 5364 instructions,
-// frame 420, pools equal island by island). Calls agree in order.
-// What this round settled, all from the listing: the low stack slots are
-// expressions PRE hoists (the rings' radii are not variables, the splash has
-// two cell variables, its ring offset is added before the sum, the spray's
-// position is y + segment * 32 for loop.c to reduce); a constant pseudo with no
-// register is rematerialized at each use, which is what the listing's repeated
-// pool loads are (function locals scene and streaks, a five-bit mask set in the
-// frame loop that loop.c hoists with every 31 it matches); every word fill and
-// decode ends its block through a once-only macro, so the &work one-pass device
-// is gone (S2: a macro every use matches through); the drop frames walk their
-// pointers, stepped at the loop's end, in i and j with the width in its own
-// local; each loop has its own locals where the listing has low registers for
-// them; the fades walk a pointer set before their counter; statement order
-// inside a loop's head settles who ties to whom (the band's y before its shade,
-// the scaled cell before the sheet offset, canvas and cell before a streak's
-// point). Reload picks its scratch registers in rotation across the whole
-// function, so one reload more or less shifts every scratch after it: most of
-// the registers still differing follow the first mismatch above them, so read
-// this top down. Still open, top first:
-// 1. Opening and 446 fades hoist a second 31 (r6, r5) and copy it for red; red
-//    here is built in the loop. c & 31 after blue and green hoists it but ties
-//    red to c; c & 31 first shares the hoisted 31 with the pool's. The second
-//    and last fades, with c & 31 last, hoist a 31 where the listing builds it
-//    in the loop: 2 rows each.
-// 2. The 423 band's (i - top) * 2 reduces to a giv where the listing keeps top
-// in
-//    r7 and recomputes; a break form and every spelling compile the same.
-// 3. The 754 frames' giv step (0xf8000000) is hoisted to ip in the listing.
-// 4. Slots: &canvas and &sparks are swapped (176, 184; the listing's three
-// frame
-//    addresses number in declaration order though they are stored in code
-//    order), and the tail of PRE's registers comes in another hash order, the
-//    rest of the raw rows (385). PRE's index is the operand's regno plus a code
-//    constant, mod a table of insns / 2 (the gcse dump prints the buckets; 3934
-//    insns, 1967 buckets). With these regnos the listing's order fits only
-//    tables of about 1889 to 1899 buckets: about 150 fewer insns alive at GCSE,
-//    with the pseudos about where they are. Extra insns can be added to test a
-//    table but not removed, so finding what the draft carries there that the
-//    source did not is next.
-// 5. The drop frames' counter and its i * 8 copy swap r4 and r5 (both sites).
-// Measured 2026-11-05 (tla-en): differ 2371 of 5364, 915 with slots and pool
-// offsets normalized, 241/244 with registers masked too (draft 5367
-// instructions, frame 416 where the listing has 420). Calls agree in order, 258
-// of 258. Compare with registers masked first: most of what is left is reload
-// and allocation following one early choice, so a right form can raise the raw
-// figure while the masked one falls.
-// What the listing settled this round: fades read one colour as an s32 and mask
-// red with `r = 31; r &= c` (first at the whitening, 401 and 446 fades, last at
-// the opening and 816 fades); a sprite's tile is stored before its frame; the
-// crystal's tile buffer is the fixed address, so its pool entry stays apart
-// from the decode call's; the splash computes its cell in the loop (PRE then
-// hoists only the inner sum, as the listing's slot 48 shows), has one counter
-// for its rings (r7), a ring pointer per arm (y then takes r9), and angle and
-// position per loop; the second span table is copied before the free-slot
-// search; the light bars' fixed-point time is `* 0x10000` (folded to frame <<
-// 16 plus a constant) with their x a constant local before the shade test; the
-// rings double y at the calls. Still open, each measured:
-// 1. i (r10) has priority 1.92 and one pseudo above it holds r7: i * 8 of the
-//    crystal's drop frames (1.93), which the listing has in r6. One more loop
-//    on i passes it, i takes r7 and the draft falls to about 5273 instructions,
-//    so the crystal band and the 446 clamp, r10 over r11 in the listing, keep
-//    their own counters (row, x with bandColumn): 5 and 6 instructions short
-//    there. The 446 frames take `w * 2 * w` for this reason; the listing's form
-//    is
-//    `(w * 2) * w`, as the crystal's frames have it.
-// 2. In the splash r takes r7 and the rings' counter r8 (priority 1.53 over
-//    1.28); the listing has them the other way. Sharing the counter with the
-//    column loop as well, which the listing also has in r7, sends it to r4 as a
-//    caller save.
-// 3. A streak head's base stays hoisted: the head's constant and the points'
-// are
-//    one value, so loop.c matches them (`move-insn matches`); the listing
-//    reloads the head's each pass and the points' from its own pool entry.
-//    Spelling the points from the scene's start folds back to the same
-//    constant, and a symbol either way rewrites it from the scene's base.
-// 4. The bright band's (i - top) * 2 still reduces to a giv where the listing
-//    keeps it; top's scope, the shift spelling and i set first do not move it.
-// 5. The opening and 446 fades hoist a second 31 and copy it for red; `c & 31`
-//    shares the green and blue mask instead. All types of c, r, g, b measured.
-// Measured 2026-11-05 (tla-en): differ 2314 of 5364, 1772 with slots and pool
-// offsets normalized. Colours read into s16 locals took it from 2613: c, r,
-// b. Counters follow the listing's loops: r10's loops are i, r11's are j, and
-// a loop the listing counts in r8 or a low register has a variable of its own
-//; the splash's five loops share one, r7 in
-// the listing. A loop more or less on i can move it to r7 and cost 1700.
-// Shape differs by small hunks only.
-// Measured 2026-11-05 (tla-en): differ 3039 of 5364. Measure with all five
-// addresses (the figure before this one, 3800 of 4851, was the parent alone:
-// 3287 of 5364 with all five). A tagged one-pass block settles the frame at
-// 420. Left: allocation throughout, led by the streak base the native reloads
-// each pass and the spilled &work slot.
-// Draft, differ 3287 of 5364, skeleton gap 373 + 380 (tla-en, 2026-11-01)
-// Measure with the four nested functions' listings as well:
-// diff ...08192c9c.c 0819284c,08192894,081929fc,08192a4c,08192c9c. Measured
-// against 08192c9c alone they all count as added. All four nested functions
-// are at differ 0; what is left is
-// BattleEffect_RunIris itself.
-// Same calls and control flow as the listing, and the prologue's shape now
-// matches. What is left is allocation, in this order of cause:
-// 1. The native's &work is one pseudo set twice: at entry, and again by
-//    `add r4, sp; str r4, [sp, #64]` in the frame == 446 block, right after
-//    Iwram_FillWords(work->sheet + 0x1810, ...). That is a second occurrence
-//    of the address in one basic block, so PRE's reaching register gets two
-//    sets. A do { } while (0) around that one Iwram_FillWords reproduces it:
-//    differ 3150, frame 420 as in the native, every slot's use count within a
-//    few of the listing's except the swaps in 2. It is a one-pass block, so it
-//    stays out. A static inline, a label, a goto to the next line, an empty if,
-//    if (0), an empty for and while (0) do not split it. Next step: the C that
-//    really ends CSE there; S2's macro exception would need the same form at
-//    every zero fill, which is Pascal's call.
-// 2. With that block, slots 176 and 184 are swapped (&canvas and &sparks) and
-//    &work sits at 40, not 64. The slots follow pseudo numbers from PRE, whose
-//    order comes from its hash table, sized by the function's insn count: 20
-//    extra insns move &work, so this may snap only as the count closes.
-// 3. Counters. The listing's registers read plainly: r10 is the outer counter
-//    nearly everywhere, r11 the inner one (the splash loop's outer is r11 with
-//    r10 inside, the crystal grid is r11 over r8). Writing exactly that gives
-//    4587: i wins r7 and every high-register mov goes. i must fall below the
-//    locals that fill r4 to r8 in the dense loops, so it is the right sharing
-//    with its priority still wrong (refs over live length). The names here are
-//    the older search's, and a per-loop rename search finds nothing better.
-// Measured: the opening runs canvas, work, objects, sprites, sparks, battle,
-// savedScroll, camera; Iris_DrawSplash's locals likewise (work and sprites
-// before draw). gData_08197410, Data_08199f40 and Data_0819a040 are not const:
-// the native rereads them in loops, which also supplies the register pressure
-// of the streak loop. Data_02012ef4 is the fixed address, not a symbol: CSE
-// then cannot rewrite the streak base as an earlier base + 20, and the pool
-// keeps its own entries as in the listing. The head of a streak is the 2-D
-// [i] (multiplied), its points flat [i * 10 + j] (synthesized). The drop
-// copies walk src with their own counter: `src[m]` lets loop.c drop m for an
-// end pointer. The bright band's test is compound, entry copy included, so v
-// is set in it. The second fade's red is 31 masked afterwards; the same form
-// at the 446 and 816 fades measures worse, though the listing's hoisted 31
-// suggests it there too.
-// Still open: the head of a streak hoists its base where the native reloads it
-// each pass (spelling does not move it, so look at loop.c's threshold); the
-// bright band reduces (i - top) * 2 to a giv where the native keeps it, likely
-// the same threshold.
-// Do not trust a small search gain here. Allocation flips on any change:
-// moving y into the else arm at frame 509, which is wrong against the listing,
-// gained 182 with the counters' registers unchanged. Swaps gaining 8 to 22 in
-// the palette, opening and spans2 orders also contradicted the listing and are
-// out. Resource ids 0x76, 0x77 and 0xa5 take the names of their directory rows
-// (Battle_SunsetBackdrop, Battle_StarfieldFlareBackdrop,
-// Summon_RobedGoddessTiles), which resource_directory.s must give them; 0x9a
-// is PinkPetalsTiles, named there already.
-
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
@@ -444,7 +188,8 @@ struct Spans4 {
   struct WordPair p[4];
 };
 
-extern char ResourceId_Data134, ResourceId_SunsetBackdrop, ResourceId_StarfieldFlareBackdrop;
+extern char ResourceId_Data134, ResourceId_SunsetBackdrop,
+    ResourceId_StarfieldFlareBackdrop;
 extern char ResourceId_RobedGoddessTiles, ResourceId_PinkPetalsTiles,
     ResourceId_VioletSkyBackdrop;
 extern struct ResourceTableEntry gResourceTableEntries[];
@@ -863,28 +608,28 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   // Unused: gives the stack frame its layout. These 284 locals (275 to 294
   // match) number the later pseudos as the native's, which orders PRE's
   // spilled registers in the frame (without them, 34 of 5364 differ).
-  UNUSED s32 z0, z1, z2, z3, z4, z5, z6, z7, z8, z9, z10, z11, z12, z13, z14, z15, z16,
-      z17, z18, z19, z20, z21, z22, z23, z24, z25, z26, z27, z28, z29, z30, z31,
-      z32, z33, z34, z35, z36, z37, z38, z39, z40, z41, z42, z43, z44, z45, z46,
-      z47, z48, z49, z50, z51, z52, z53, z54, z55, z56, z57, z58, z59, z60, z61,
-      z62, z63, z64, z65, z66, z67, z68, z69, z70, z71, z72, z73, z74, z75, z76,
-      z77, z78, z79, z80, z81, z82, z83, z84, z85, z86, z87, z88, z89, z90, z91,
-      z92, z93, z94, z95, z96, z97, z98, z99, z100, z101, z102, z103, z104,
-      z105, z106, z107, z108, z109, z110, z111, z112, z113, z114, z115, z116,
-      z117, z118, z119, z120, z121, z122, z123, z124, z125, z126, z127, z128,
-      z129, z130, z131, z132, z133, z134, z135, z136, z137, z138, z139, z140,
-      z141, z142, z143, z144, z145, z146, z147, z148, z149, z150, z151, z152,
-      z153, z154, z155, z156, z157, z158, z159, z160, z161, z162, z163, z164,
-      z165, z166, z167, z168, z169, z170, z171, z172, z173, z174, z175, z176,
-      z177, z178, z179, z180, z181, z182, z183, z184, z185, z186, z187, z188,
-      z189, z190, z191, z192, z193, z194, z195, z196, z197, z198, z199, z200,
-      z201, z202, z203, z204, z205, z206, z207, z208, z209, z210, z211, z212,
-      z213, z214, z215, z216, z217, z218, z219, z220, z221, z222, z223, z224,
-      z225, z226, z227, z228, z229, z230, z231, z232, z233, z234, z235, z236,
-      z237, z238, z239, z240, z241, z242, z243, z244, z245, z246, z247, z248,
-      z249, z250, z251, z252, z253, z254, z255, z256, z257, z258, z259, z260,
-      z261, z262, z263, z264, z265, z266, z267, z268, z269, z270, z271, z272,
-      z273, z274, z275, z276, z277, z278, z279, z280, z281, z282, z283;
+  UNUSED s32 z0, z1, z2, z3, z4, z5, z6, z7, z8, z9, z10, z11, z12, z13, z14,
+      z15, z16, z17, z18, z19, z20, z21, z22, z23, z24, z25, z26, z27, z28, z29,
+      z30, z31, z32, z33, z34, z35, z36, z37, z38, z39, z40, z41, z42, z43, z44,
+      z45, z46, z47, z48, z49, z50, z51, z52, z53, z54, z55, z56, z57, z58, z59,
+      z60, z61, z62, z63, z64, z65, z66, z67, z68, z69, z70, z71, z72, z73, z74,
+      z75, z76, z77, z78, z79, z80, z81, z82, z83, z84, z85, z86, z87, z88, z89,
+      z90, z91, z92, z93, z94, z95, z96, z97, z98, z99, z100, z101, z102, z103,
+      z104, z105, z106, z107, z108, z109, z110, z111, z112, z113, z114, z115,
+      z116, z117, z118, z119, z120, z121, z122, z123, z124, z125, z126, z127,
+      z128, z129, z130, z131, z132, z133, z134, z135, z136, z137, z138, z139,
+      z140, z141, z142, z143, z144, z145, z146, z147, z148, z149, z150, z151,
+      z152, z153, z154, z155, z156, z157, z158, z159, z160, z161, z162, z163,
+      z164, z165, z166, z167, z168, z169, z170, z171, z172, z173, z174, z175,
+      z176, z177, z178, z179, z180, z181, z182, z183, z184, z185, z186, z187,
+      z188, z189, z190, z191, z192, z193, z194, z195, z196, z197, z198, z199,
+      z200, z201, z202, z203, z204, z205, z206, z207, z208, z209, z210, z211,
+      z212, z213, z214, z215, z216, z217, z218, z219, z220, z221, z222, z223,
+      z224, z225, z226, z227, z228, z229, z230, z231, z232, z233, z234, z235,
+      z236, z237, z238, z239, z240, z241, z242, z243, z244, z245, z246, z247,
+      z248, z249, z250, z251, z252, z253, z254, z255, z256, z257, z258, z259,
+      z260, z261, z262, z263, z264, z265, z266, z267, z268, z269, z270, z271,
+      z272, z273, z274, z275, z276, z277, z278, z279, z280, z281, z282, z283;
 
   /* FAKEMATCH(wrapper): every FILL_WORDS forwarded through Iris_FillWords; as
    * FILL_WORDS calling Iwram_FillWords directly, 42 of 5364 instructions

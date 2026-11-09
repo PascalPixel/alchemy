@@ -128,8 +128,8 @@ Resource_DirectoryTable:
 	resource DesertBackdrop, Battle_DesertBackdrop
 	resource DuskCloudsBackdrop, Battle_DuskCloudsBackdrop
 	resource AerialViewBackdrop, Battle_AerialViewBackdrop
-	resource , Battle_SunsetBackdrop
-	resource , Battle_StarfieldFlareBackdrop
+	resource SunsetBackdrop, Battle_SunsetBackdrop
+	resource StarfieldFlareBackdrop, Battle_StarfieldFlareBackdrop
 	resource EarthHorizonBackdrop, Battle_EarthHorizonBackdrop
 	resource EndingCliffDayPicture, Ending_CliffDayPicture
 	resource EndingCliffSunsetPicture, Ending_CliffSunsetPicture
@@ -175,7 +175,7 @@ Resource_DirectoryTable:
 	resource , Summon_MissileTiles
 	resource GoldenDragonHeadTiles, Summon_GoldenDragonHeadTiles
 	resource GoldenDragonTiles, Summon_GoldenDragonTiles
-	resource , Summon_RobedGoddessTiles
+	resource RobedGoddessTiles, Summon_RobedGoddessTiles
 	resource LeafWarriorTiles, Summon_LeafWarriorTiles
 	resource BellMaidenTiles, Summon_BellMaidenTiles
 	resource , Summon_WingedKnightATiles

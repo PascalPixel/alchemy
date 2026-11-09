@@ -356,14 +356,6 @@ Func_0818f620:
 	.thumb_func
 BattleEffect_RunMegiddo:
 	.incbin "baserom.gba", 0x0018ff00, 0x00000c78
-	.section .rom.00192850, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x00192850, 0x00000450
-	.global BattleEffect_RunIris
-	.type BattleEffect_RunIris, %function
-	.thumb_func
-BattleEffect_RunIris:
-	.incbin "baserom.gba", 0x00192ca0, 0x00002ab0
 	.section .rom.001b8272, "ax"
 	.incbin "baserom.gba", 0x001b8272, 0x00000002
 	.section .rom.001c075a, "ax"

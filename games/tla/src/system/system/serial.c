@@ -1,6 +1,26 @@
-#include "serial.h"
-#include "dma.h"
-#include "irq_lock.h"
+/// @file
+/// The link cable: Serial_QueueCommand and the port's set-up. The rest of the
+/// link cable follows this object, in serial/.
+// Part of system.c.
+
+#include "../system_internal.h"
+
+struct SerialCommandWork {
+  u8 unk0000[0x313c];
+  u32 command;
+  u16 progress;
+  u16 state;
+};
+
+void Serial_QueueCommand(u32 command) {
+  struct SerialCommandWork *work = Ram_HeapSlots->serialWork;
+
+  if (work == 0)
+    return;
+  work->command = command;
+  work->progress = 0;
+  work->state = 3;
+}
 
 void Serial_Initialize(void) {
   u32 interruptEnable;

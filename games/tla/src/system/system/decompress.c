@@ -1,16 +1,8 @@
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "types.h"
-#include "resource.h"
-#include "heap_release.h"
-#include "dma.h"
-#include "io_reg.h"
+/// @file
+/// Resource decoding, through RAM copies of ARM code.
+// Part of system.c.
+
+#include "../system_internal.h"
 
 extern const u8 Resource_DecodeHalfwordLzCode[];
 extern u8 Resource_DecompressHalfwordsCodeSize[];

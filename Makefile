@@ -462,7 +462,7 @@ device-check:
 CLANG_FORMAT ?= clang-format
 FORMATTED := $(shell git ls-files 'games/tbs/*.c' 'games/tbs/*.h' 'games/tla/include/*/*.h' \
                $(addprefix games/tla/include/,call.h ed_asm.h edition.h fixed_math.h lib.h macros.h static_assert.h stddef.h string.h) \
-               games/tla/src/sound/sound.c games/tla/src/sound/tables.c 'games/tla/src/system/save/*.c' 'games/tla/src/gamepak/flash/*.c' \
+               games/tla/src/sound/sound.c games/tla/src/sound/tables.c games/tla/src/system/savedata.c games/tla/src/system/system/save.c 'games/tla/src/gamepak/flash/*.c' \
                $(addprefix games/tla/src/window/,f042f10.c f042ff0.c find_free_summary_slot.c party_status_close.c play_time.c \
                  progress_bar.c save_progress.c save_write.c saveload.c saveslot.c scan_part_flags.c) \
                games/tla/src/battle/wait_sync.c games/tla/src/game/ratios_second_input.c \

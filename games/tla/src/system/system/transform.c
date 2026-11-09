@@ -1,26 +1,8 @@
 /// @file
-/// Display: save/restore transforms and build rotation, translation, scale,
-/// and camera matrices.
+/// The 3D transform, its stack, the look-at matrix and the projection.
+// Part of system.c.
 
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "lib.h"
-#include "menu.h"
-#include "minigame.h"
-#include "sound.h"
-#include "system.h"
-#include "heap_release.h"
-#include "edition.h"
-#include "types.h"
-#include "transform.h"
-#include "dma.h"
-#include "io_reg.h"
-#include "fixed_math.h"
-#include "iwram_call.h"
-#include "macros.h"
+#include "../system_internal.h"
 
 // gTransform contains twelve s32 values in Q16 (1.0 = 0x10000).
 // Entries 0-8 form the 3x3 rotation; entries 9-11 hold the translation.
@@ -30,8 +12,6 @@
 
 /// The Lost Age obtains cosine by looking up sine ninety degrees ahead.
 #define COS(a) Trig_Sin((a) + 0x4000)
-
-#include "ram_buffer.h"
 
 void Render_EmptyHook(void) {}
 
@@ -311,3 +291,190 @@ void SceneTransform_ApplyScaledRotation(s32 *ang, s32 *pos, s32 *scale) {
   m[11] = pos[2];
   Iwram_TransformMatrix(m);
 }
+
+#define FixedSqrt(v) (Iwram_Sqrt(v) << 8)
+#define RelocatedQ16DotProduct Math_DotProductQ16Code
+extern const u32 Math_DotProductQ16Code[];
+
+typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
+
+void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
+  /* FAKEMATCH(pin): dot fixed to r10; as a plain local, 175 of 228 instructions
+     differ in tla-en. */
+  register Dot3Fn dot asm("r10");
+  u32 code[8];
+  s32 dx, dy, dz;
+  s32 ux;
+  s32 zero = 0;
+  s32 ex;
+  s32 ey;
+  s32 uz;
+  s32 vx, vy, vz;
+  s32 scale;
+  s32 ez;
+  s32 t;
+  s32 w;
+  u32 num = 0x80000000; // Dividend 2^31 for calculating the reciprocal.
+  /* FAKEMATCH(pin): divide fixed to r9; as a plain local, 141 of 228
+     instructions differ in tla-en. */
+  register u32 (*divide)(u32 dividend, u32 divisor) asm("r9");
+  /* FAKEMATCH(pin): mul fixed to r11; as a plain local, 209 of 228 instructions
+     differ in tla-en. */
+  register s32 (*mul)(s32 a, s32 b) asm("r11");
+
+  // Copy the dot-product routine to the stack and call it there.
+  {
+    u32 *dst = code;
+    dot = (Dot3Fn)dst;
+    mul = Iwram_MulQ16;
+    divide = Iwram_UnsignedDivideEntry;
+    Dma_Set(RelocatedQ16DotProduct, dst, (DMA_ENABLE | DMA_32BIT) << 16 | 8,
+            REG_DMA3);
+  }
+
+  // Unit viewing direction d, from target to eye.
+  dx = target[0] - eye[0];
+  dy = target[1] - eye[1];
+  dz = target[2] - eye[2];
+  t = Iwram_Sqrt(dot(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8));
+  scale = divide(num, t) >> 15;
+  scale = -scale;
+  dx = mul(dx, scale);
+  dy = mul(dy, scale);
+  dz = mul(dz, scale);
+  uz = -dx;
+  /* FAKEMATCH(one-pass): an empty one-pass loop after the store; without it, 2
+     of 228 instructions differ in tla-en. */
+  do {
+  } while (0);
+
+  // Normalize the horizontal axis u = (dz, 0, -dx).
+  w = 0x10000 - mul(dy, dy);
+  scale = 0x10000;
+  if (w > 0)
+    scale = divide(num, FixedSqrt(w)) << 1;
+  ux = mul(dz, scale);
+  uz = mul(uz, scale);
+
+  // Up axis v is the cross product of d and u.
+  vx = mul(dy, uz);
+  vy = mul(dz, ux) - mul(dx, uz);
+  vz = -mul(dy, ux);
+  scale = divide(num, FixedSqrt(dot(vx, vx, vy, vy, vz, vz))) << 1;
+  vx = mul(vx, scale);
+  vy = mul(vy, scale);
+  vz = mul(vz, scale);
+
+  // Place the three axes in columns; translation uses dot products with
+  // eye.
+  ex = eye[0];
+  ey = eye[1];
+  ez = eye[2];
+  out[0] = ux;
+  out[3] = zero;
+  out[6] = uz;
+  out[9] = -dot(ex, ux, ez, uz, zero, zero);
+  out[1] = vx;
+  out[4] = vy;
+  out[7] = vz;
+  out[10] = -dot(ex, vx, ey, vy, ez, vz);
+  out[2] = dx;
+  out[5] = dy;
+  out[8] = dz;
+  out[11] = -dot(ex, dx, ey, dy, ez, dz);
+}
+
+void Transform_SetLookAt(s32 *eye, s32 *target) {
+  Transform_BuildLookAt(eye, target, gTransform);
+}
+
+void Transform_ApplyLookAt(s32 *eye, s32 *target) {
+  s32 work[12];
+
+  Transform_BuildLookAt(eye, target, work);
+  Iwram_TransformMatrix(work);
+}
+
+s32 Trig_Sin(s32);
+
+void Projection_SetFieldOfView(s32 value, s32 param1, s32 param2) {
+  s32 half;
+  s32 first;
+  s32 result;
+
+  half = value / 2;
+  first = Trig_Sin(half);
+  result = Iwram_RatioMulQ14(first, Trig_Sin(half + 0x4000) * 0x50);
+  gCameraSceneParameters[1] = param1;
+  gCameraSceneParameters[0] = result;
+  gCameraSceneParameters[2] = param2;
+}
+
+void Projection_Set(u32 value0, u32 value1, u32 value2) {
+  u32 *work = gCameraSceneParameters;
+  work[0] = value0;
+  work[1] = value1;
+  work[2] = value2;
+}
+
+struct Projection {
+  s32 focal;
+  s32 near;
+  s32 far;
+  s32 centerX;
+  s32 centerY;
+};
+
+struct ProjectedPoint {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+// The Broken Seal's typed inline from iwram_call.h, the layer every call goes
+// through there.
+#undef Iwram_TransformVector
+static inline void Iwram_TransformVector(const void *vector, s32 *result) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to the
+   * fixed entry, 4 of 82 instructions differ in tla-en. */
+  Iwram_TransformVectorEntry(vector, result);
+}
+
+s32 Render_ProjectPoint(const void *point, struct ProjectedPoint *screen) {
+  struct ProjectedPoint view;
+  struct Projection *projection;
+  s32 depth;
+  s32 scale;
+  s32 x;
+  s32 y;
+
+  Iwram_TransformVector(point, &view.x);
+  depth = -view.z;
+  projection = (struct Projection *)gCameraSceneParameters;
+  if (depth >= projection->near && depth <= projection->far) {
+    screen->z = depth >> 16;
+    if (projection->focal != 0) {
+      u32 shifted = (u32)depth >> 11;
+
+      scale = Iwram_UnsignedDivide(projection->focal << 5, shifted);
+    } else {
+      scale = 0x151eb;
+    }
+    x = projection->centerX + Iwram_MulQ16(view.x, scale) / 0x10000;
+    y = projection->centerY - Iwram_MulQ16(view.y, scale) / 0x10000;
+    screen->x = x;
+    screen->y = y;
+    return scale;
+  }
+  *screen = view;
+  return 0;
+}
+
+#undef MTX_DMA
+#undef COS
+#undef FixedSqrt
+#undef RelocatedQ16DotProduct
+// Render_ProjectPoint's inline above stands in for iwram_call.h's
+// Iwram_TransformVector; the parts after this one call the entry directly
+// again.
+#define Iwram_TransformVector Iwram_TransformVectorEntry

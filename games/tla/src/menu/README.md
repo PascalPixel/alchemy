@@ -10,5 +10,8 @@ the lobby are scene [overlays](../../../tbs/glossary.md#overlay) in
 
 ## What differs from The Broken Seal
 
-- One function or small family goes to a file, some still named for their
-  address (`f0f8888.c`).
+- `menu.c` is The Broken Seal's menu object as far as the pieces the screens
+  share, written as its first part, `menu/shared.c`, cut where The Broken
+  Seal's is. The item menu and the rest of the bank follow a scaffold in
+  tla-en, so they stay files of their own, one function or small family to
+  a file, some still named for their address (`f0fae8c.c`).

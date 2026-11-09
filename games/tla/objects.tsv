@@ -1269,33 +1269,7 @@ main	rom_main_06	games/tla/src/gamepak/far_call/table_38
 main	rom_main_06	games/tla/src/gamepak/far_call/uiicon_2
 main	rom_main_06	games/tla/src/gamepak/far_call/table_39
 main	rom_main_06	games/tla/src/gamepak/far_call/table_40
-main	rom_main_06	games/tla/src/menu/field_tasks	.text
-main	rom_main_06	games/tla/src/menu/initialize_work	.text
-main	rom_main_06	games/tla/src/menu/lifecycle	.text
-main	rom_main_06	games/tla/src/menu/item/f0f8170	.text
-main	rom_main_06	games/tla/src/menu/value_rows	.text
-main	rom_main_06	games/tla/src/menu/create_with_resource_variant	.text
-main	rom_main_06	games/tla/src/menu/f0f8888	.text
-main	rom_main_06	games/tla/src/menu/call_icon_routine	.text
-main	rom_main_06	games/tla/src/menu/arrow_window	.text
-main	rom_main_06	games/tla/src/menu/f0f89a4	.text
-main	rom_main_06	games/tla/src/menu/f0f8a44	.text
-main	rom_main_06	games/tla/src/menu/f0f8ab4	.text
-main	rom_main_06	games/tla/src/menu/owner_ref	.text
-main	rom_main_06	games/tla/src/menu/ability/refresh	.text
-main	rom_main_06	games/tla/src/menu/ability/owner_entries	.text
-main	rom_main_06	games/tla/src/menu/position_owner_entry	.text
-main	rom_main_06	games/tla/src/menu/item/refresh_entry	.text
-main	rom_main_06	games/tla/src/menu/item/modal_message	.text
-main	rom_main_06	games/tla/src/menu/item/sort_by_list_order	.text
-main	rom_main_06	games/tla/src/menu/copy_list_order	.text
-main	rom_main_06	games/tla/src/menu/f0f8f9c	.text
-main	rom_main_06	games/tla/src/menu/draw_draw_page_indicator	.text
-main	rom_main_06	games/tla/src/menu/tilemap_flag_rect	.text
-main	rom_main_06	games/tla/src/menu/page_icons	.text
-main	rom_main_06	games/tla/src/menu/draw_work_value_with_label	.text
-main	rom_main_06	games/tla/src/menu/bounds	.text
-main	rom_main_06	games/tla/src/menu/cancel	.text
+main	rom_main_06	games/tla/src/menu/menu	.text
 main	rom_main_06	recon/tla/raw/080f94a2	.text	en
 main	rom_main_06	games/tla/src/menu/item/f0f94a4	.text	en de es fr it
 main	rom_main_06	games/tla/src/menu/item/f0f9644	.text	en de es fr it

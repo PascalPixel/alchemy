@@ -2756,12 +2756,7 @@ main	rom_main_09	recon/tla/de/rom	.rom.00170daa	de
 main	rom_main_09	games/tla/src/battle_effect/f170364	.text	ja
 main	rom_main_09	recon/tla/ja/rom	.rom.00170daa	ja
 main	rom_main_09	games/tla/src/battle_effect/f170dac	.text	en de es fr it ja
-main	rom_main_09	recon/tla/it/rom	.rom.00171430	it
-main	rom_main_09	recon/tla/fr/rom	.rom.00171430	fr
-main	rom_main_09	recon/tla/es/rom	.rom.00171430	es
-main	rom_main_09	recon/tla/de/rom	.rom.00171430	de
-main	rom_main_09	recon/tla/raw/08171430	.text	en
-main	rom_main_09	recon/tla/ja/rom	.rom.00171430	ja
+main	rom_main_09	games/tla/src/battle_effect/f171430	.text
 main	rom_main_09	games/tla/src/battle_effect/variant_f	.text
 main	rom_main_09	games/tla/src/battle_effect/f171bb0	.text
 main	rom_main_09	games/tla/src/battle_effect/variant_g	.text

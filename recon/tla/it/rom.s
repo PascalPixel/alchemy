@@ -263,12 +263,6 @@ Func_0816aeec:
 	.incbin "baserom.gba", 0x0016aeec, 0x000007e8
 	.section .rom.00170daa, "ax"
 	.incbin "baserom.gba", 0x00170daa, 0x00000002
-	.section .rom.00171430, "ax"
-	.global BattleEffect_RunLightSurge
-	.type BattleEffect_RunLightSurge, %function
-	.thumb_func
-BattleEffect_RunLightSurge:
-	.incbin "baserom.gba", 0x00171430, 0x00000744
 	.section .rom.00179f16, "ax"
 	.incbin "baserom.gba", 0x00179f16, 0x00000002
 	.section .rom.0017ea58, "ax"

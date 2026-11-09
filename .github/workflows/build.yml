@@ -146,11 +146,17 @@ jobs:
           rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal
           make devtools
 
-      - name: Download the durable report archive
-        run: |
-          for tag in $(alchemy-devtools/target/release/alchemy-devtools progress --volumes); do
-            gh release download "$tag" --dir "$RUNNER_TEMP/measured" --pattern '*.tsv' --pattern '*.pb'
-          done
+      # No archived file ever changes, so each run starts from the copy the
+      # last one fetched.
+      - name: Restore the report archive the last run fetched
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: ${{ runner.temp }}/measured
+          key: report-archive-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: report-archive-
+
+      - name: Bring the report archive up to date
+        run: alchemy-devtools/target/release/alchemy-devtools progress --fetch "$RUNNER_TEMP/measured"
 
       - name: Receive the build's ☀️ measurement
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0

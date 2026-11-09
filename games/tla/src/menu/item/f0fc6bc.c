@@ -229,3 +229,25 @@ s32 Func_080fc6bc(s32 pane) {
   wait(1);
   return result;
 }
+
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH) ||          \
+    (LANGUAGE == LANGUAGE_SPANISH)
+extern s32 gItemMenu_CommandColumnXTable[6];
+
+/// The cursor's x at the item command in column and row, from the table; 0
+/// outside three columns and three rows.
+s32 Func_08106b80(s32 column, s32 row) {
+  if (column > 2 || row > 2 || column < 0 || row < 0)
+    return 0;
+  return gItemMenu_CommandColumnXTable[row * 3 + column];
+}
+
+/// The cursor's y at the item command in row: 30 in the first row, 38 below.
+s32 Func_08106ba8(s32 column, s32 row) {
+  s32 y = 30;
+
+  if (row != 0)
+    y = 38;
+  return y;
+}
+#endif

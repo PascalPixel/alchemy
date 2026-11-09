@@ -1301,9 +1301,6 @@ main	rom_main_06	games/tla/src/menu/item/page	.text
 main	rom_main_06	games/tla/src/menu/item/f0fc558	.text
 main	rom_main_06	games/tla/src/menu/item/f0fc608	.text
 main	rom_main_06	games/tla/src/menu/item/f0fc6bc	.text
-main	rom_main_06	recon/tla/fr/rom	.rom.000feb24	fr
-main	rom_main_06	recon/tla/es/rom	.rom.00102b08	es
-main	rom_main_06	recon/tla/de/rom	.rom.00106b80	de
 main	rom_main_06	games/tla/src/menu/item/f0fcab8	.text
 main	rom_main_06	games/tla/src/menu/item/psynergy_class	.text
 main	rom_main_06	games/tla/src/menu/item/f0fcf5c	.text

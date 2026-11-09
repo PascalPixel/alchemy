@@ -2,7 +2,6 @@
 /// How far a pushed object can slide.
 
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))

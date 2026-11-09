@@ -1,4 +1,5 @@
 #include "jupiter_lighthouse_room_7.h"
+#include "call.h"
 #include "event_inline.h"
 
 void Func_02002b54(s32 x, s32 z, s32 layer, s32 value);

@@ -10,7 +10,6 @@
 #include "event_work.h"
 #include "resource.h"
 #include "heap_release.h"
-#include "call.h"
 #include "field_effect.h"
 
 struct Trigger;

@@ -5,7 +5,6 @@
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "actor.h"
-#include "call.h"
 #include "event_inline.h"
 
 #define DIFF(a, b) ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))

@@ -1,4 +1,5 @@
 #include "tundaria_tower.h"
+#include "call.h"
 
 void Func_02000fb8(s32 mode, s32 cue) {
   if (cue == 0) {

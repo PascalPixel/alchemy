@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "io_reg.h"
 
 extern u16 gData_02001a14;

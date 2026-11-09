@@ -1,7 +1,6 @@
 /// @file
 /// Clears the object's mark and the cells ahead of and behind it that the mark blocked.
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 

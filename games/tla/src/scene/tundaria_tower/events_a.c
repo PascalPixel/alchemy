@@ -1,4 +1,5 @@
 #include "tundaria_tower.h"
+#include "call.h"
 #include "scene_tables.h"
 
 void Func_020007dc(s32 step) {

@@ -6,7 +6,6 @@
 #include "frame.h"
 #include "actor.h"
 #include "main_routine_work.h"
-#include "call.h"
 #include "event_inline.h"
 
 struct Trigger;

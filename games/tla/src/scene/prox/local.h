@@ -6,7 +6,6 @@
 /// inline helpers some of their calls go through, as overlay 694's do.
 
 #include "types.h"
-#include "call.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"

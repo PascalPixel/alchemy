@@ -6,7 +6,6 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
 
 void Func_02000440(void) {
   FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x16a), u16, 0) = 0x21;

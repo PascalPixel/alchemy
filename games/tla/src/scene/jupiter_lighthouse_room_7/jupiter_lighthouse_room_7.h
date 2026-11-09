@@ -6,7 +6,6 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "input.h"
-#include "call.h"
 #include "text/msg_ids.h"
 
 struct JupiterLighthouseRoom7Cell {

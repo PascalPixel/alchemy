@@ -6,7 +6,6 @@
    } *)(base))                                                                 \
        ->v)
 
-#include "call.h"
 extern u8 gData_02002cde[];
 
 void Func_020015d0(s32 a0) { FIELD_AT(gData_02002cde, u16, 0) = a0; }

@@ -1,4 +1,5 @@
 #include "tundaria_tower.h"
+#include "call.h"
 
 void Func_02000f0c(s32 step) {
   struct TundariaTowerPosition position;

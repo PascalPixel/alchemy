@@ -1,4 +1,5 @@
 #include "airs_rock_inside.h"
+#include "call.h"
 
 extern const u8 gData_02006084[];
 

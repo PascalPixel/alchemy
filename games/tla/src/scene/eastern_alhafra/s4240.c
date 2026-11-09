@@ -8,7 +8,6 @@
 /// overlay 674's Func_020037d8 and overlay 662's Func_020001d4.
 
 #include "types.h"
-#include "call.h"
 #include "actor.h"
 #include "system/vector3.h"
 

@@ -2,7 +2,6 @@
 /// Draws thirty-two sprites that each shake by a random few pixels a frame.
 
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "vram_tab.h"

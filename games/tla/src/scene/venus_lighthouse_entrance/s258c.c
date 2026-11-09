@@ -1,5 +1,4 @@
 #include "types.h"
-#include "call.h"
 #include "ram_buffer.h"
 
 struct Unk_0200258cState {

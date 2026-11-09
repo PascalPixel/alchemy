@@ -7,7 +7,6 @@
 #include "ram_buffer.h"
 #include "map.h"
 #include "input.h"
-#include "call.h"
 #include "text/msg_ids.h"
 
 struct IsletsEventWork {

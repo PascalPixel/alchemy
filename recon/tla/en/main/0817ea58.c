@@ -1,5 +1,11 @@
 // Draft, differ 8 of 3921 (tla-en, 2026-11-09); 8 in every edition (tla-ja
 // at 0817ea5c).
+// 10 November, by hand, still 8: the map loop's row pointer respelled. The
+// sum with map first, (s32)map + k * 2, the u16 index &((u16 *)map)[k] and
+// (u8 *)map + k * 2: 10 each; (u8 *)map + k + k: 12; (k << 1) + (s32)map and
+// k + k + (s32)map: 8, the same rows. k's zero follows the hoisted 6 and 32
+// in the listing, which a zero set before the loop cannot do (movables go
+// before the loop's start, after every init), so k is a giv of j there.
 // Thirteenth round, 9 November, still 8, about 35 attempts.
 // - The map loop's k as j * step, step a local holding 16 (plain C): loop.c
 //   reduces k and its zero then follows the hoisted 6 and 32, as listed, but

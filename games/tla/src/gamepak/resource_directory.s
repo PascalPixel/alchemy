@@ -265,7 +265,7 @@ Resource_DirectoryTable:
 	resource Data0FC, Resource_Data0FC
 	resource Data0FD, Resource_Data0FD
 	resource ArcFragmentsSheet, BattleEffect_ArcFragmentsSheet
-	resource , Resource_Data0FF
+	resource Data0FF, Resource_Data0FF
 	resource AxeSheet, BattleEffect_AxeSheet
 	resource Data101, Resource_Data101
 	resource Data102, Resource_Data102
@@ -295,9 +295,9 @@ Resource_DirectoryTable:
 	resource FiveModeImage, BattleEffect_FiveModeImage
 	resource SpiderWebSheet, BattleEffect_SpiderWebSheet
 	resource VioletLightningSheetA, BattleEffect_VioletLightningSheetA
-	resource , BattleEffect_YellowSparkSheet
-	resource , BattleEffect_ProjectileVolleyImage
-	resource , BattleEffect_ShurikenSheet
+	resource YellowSparkSheet, BattleEffect_YellowSparkSheet
+	resource ProjectileVolleyImage, BattleEffect_ProjectileVolleyImage
+	resource ShurikenSheet, BattleEffect_ShurikenSheet
 	resource FlareSheet, BattleEffect_FlareSheet
 	resource FlareImage, BattleEffect_FlareImage
 	resource VioletPaletteB, BattleEffect_VioletPaletteB
@@ -330,9 +330,9 @@ Resource_DirectoryTable:
 	resource OrangePaletteA, BattleEffect_OrangePaletteA
 	resource FlashBurstSheet, BattleEffect_FlashBurstSheet
 	resource ThornSheet, BattleEffect_ThornSheet
-	resource , BattleEffect_CometSheetA
+	resource CometSheetA, BattleEffect_CometSheetA
 	resource CometSheetB, BattleEffect_CometSheetB
-	resource , BattleEffect_CometSheetC
+	resource CometSheetC, BattleEffect_CometSheetC
 	resource WhirlwindSheet, BattleEffect_WhirlwindSheet
 	resource GreenPillarSheet, BattleEffect_GreenPillarSheet
 	resource VineSheet, BattleEffect_VineSheet
@@ -405,7 +405,7 @@ Resource_DirectoryTable:
 	resource LightningBoltSheet, BattleEffect_LightningBoltSheet
 	resource BeamImage, BattleEffect_BeamImage
 	resource TwelveModeImage, BattleEffect_TwelveModeImage
-	resource , BattleEffect_WindStreakSheet
+	resource WindStreakSheet, BattleEffect_WindStreakSheet
 	resource YellowPaletteB, BattleEffect_YellowPaletteB
 	resource BlueRingSheet, BattleEffect_BlueRingSheet
 	resource RedPaletteC, BattleEffect_RedPaletteC

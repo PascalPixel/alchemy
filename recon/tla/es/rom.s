@@ -12,13 +12,6 @@ Func_08046b08:
 	.thumb_func
 BattleEffect_RunCruelRuin:
 	.incbin "baserom.gba", 0x0013fd84, 0x000017b8
-	.section .rom.00156140, "ax"
-	.balign 4
-	.global BattleEffect_RunProjectileVolley
-	.type BattleEffect_RunProjectileVolley, %function
-	.thumb_func
-BattleEffect_RunProjectileVolley:
-	.incbin "baserom.gba", 0x00156140, 0x000013a0
 	.section .rom.0015b764, "ax"
 	.balign 4
 	.global BattleEffect_RunUlysses

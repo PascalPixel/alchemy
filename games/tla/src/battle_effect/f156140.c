@@ -1,201 +1,3 @@
-// Draft, differ 4 of 2278 (tla-en, 2026-11-10)
-// Pools read 10 November: every literal pool word this draft compiles equals
-// the ROM's (diff compares instructions only; Catastrophe hid a wrong one).
-// Barrier round (10 November), still 4, two devices milder. Both flashes' empty
-// asms (barrier) give way to an empty once-only block before a plain release
-// (dead): the same four rows. The block after the release, or the release
-// kept as the macro, 6; before the draw 8 to 10; before the second draw 14 to
-// 16; with the picture's offset read into a local first (the form that closed
-// Catastrophe) 4 with the asm kept, 6 to 38 without; x, y or the side read
-// first 26 to 72. From the sched2 table: mov r4, sl loses its tie once the
-// release's barrier no longer counts among its dependents, but ldr r2, [r7]
-// (six dependents, priority 137) still beats adds r1, r1, r3 (four, 137);
-// the listing's order needs that load one below the add, which no placement
-// of a barrier gives.
-// Round 9 by hand (10 November), still 4, the turned flash's first draw: the
-// picture as sheet + 0x128a + table, sheet + (table + 0x128a), &sheet[...],
-// (u8 *)work + table + 0x198a, a block-local picture, sheet or table read, or
-// + 0 on the height: 4. The table read with 0x128a in a local 6; y, or x and
-// y in either order, as block locals 26; the height as a local used twice
-// 20; the width, or width and height, as locals 48 to 60; the draw routine
-// read into a local first 236.
-// Round 8 (9 November), still 4: the turned flash's x and y as -table + x,
-// with (s32) casts on the table reads, the whole x term cast, the size
-// arguments cast: 4; the y read as *(table + step) 188; flash->x through a
-// block local before the draw 20.
-// Near7 round (9 November), still 4. Before sched2 the rows run adds r1, r2,
-// r1 < adds r3, #138 < adds r1, r1, r3 < mov r4, sl < ldr r2, [r7] in RTL
-// order, so with mov r4, sl at three dependents the first two win on luid and
-// adds r1, r1, r3 then needs ldr r2, [r7] at four. mov r4, sl's four are the
-// block's end, the release's barrier (sl's last use), ldrb r4's output and its
-// use; the listing has the same registers, so its RTL differs. The turned
-// flash's first release as a plain call with the asm 36, without it 40; the
-// asm dropped, or as an empty once-only block, 6.
-// Near6 round (9 November), still 4. In sched2's order (t = 43 to 46, no
-// stall between) the listing needs adds r1, r2, r1 and adds r3, #138 at 4
-// dependents each and adds r1, r1, r3 at 6 (their RTL order then wins the
-// ties), or mov r4, sl at 3 and ldr r2, [r7] at 4. An empty asm on a high
-// register ("+h") emits nothing and takes no unit, so it can reset the last
-// scheduled insn only in a cycle the unit is busy; there is none here. Such
-// asms at the odd flash's head, after its first load or after its first draw:
-// on j, steps, user, k or shift 4, on x 20, on mode 497 to 750.
-// Near5 round (9 November), still 4. The sched2 numbers at the turned flash's
-// first draw (after the 0x198a's shift, all priority 138 or 137): mov r4, sl 4
-// dependents (one the release's loop-note barrier), adds r1, r2, r1 and adds
-// r3, #138 3 each, ldr r2, [r7] 6 (the two stack argument stores, which may
-// alias r7). The listing's order follows with mov r4, sl at 3 and ldr r2,
-// [r7] at 4 or fewer: both the barrier and the alias must go. The alias stays
-// while r7's base is unknown: the flash loop's base as the linked
-// gMapCellBuffer (its pool word, 0x1238 in the listing, has no other user)
-// gives the loop a stack slot of its own (646); the whole function on the
-// symbol 1229; flash->x and flash->y read through a const pointer change
-// nothing (this compiler marks only static read-only objects unchanging).
-// Permute 10 minutes, seed 6062 (12,000 candidates): nothing below 4.
-// Near4 round (9 November), still 4: permute 10 minutes, seed 5151 (about
-// 22,000 candidates), nothing below 4. In the sched2 dump every row of that
-// draw carries an anti dependence on the blitter load's call; mov r4, sl is
-// reload's copy of the hoisted Data_081984ec base.
-// Devices pass (2026-11-09), none below 4: the turned flash's picture sum as a
-// block-local pic (4, the same rows) with an asm on pic, on step, flash, i or
-// canvas reading pic, or on pic reading step (51 to 570); 0x128a through an
-// asm (194).
-// Every edition measures 4 (tla-ja, de, es, fr, it alike), the same four rows.
-// Left: in the turned flash's first draw the native issues adds r1, r2, r1 and
-// adds r3, #138 before mov r4, sl, and adds r1, r1, r3 before ldr r2, [r7];
-// the draft issues mov r4, sl and ldr r2, [r7] one row earlier each. The
-// sched2 dump (--rtl) shows why: all three rows rank 138 and mov r4, sl wins
-// on its four dependents, one of them the release's loop-note barrier (sl's
-// last use), then ldr r2, [r7] wins on its six (the two stack argument stores
-// alias it). Dropping that barrier alone would still leave ldr r2, [r7] first;
-// both native choices follow if an anti dependence cost 1 instead of 0, so
-// this is the K2 scheduling question, not a source shape. Fourth round tried
-// for it: the picture sum's terms or &sheet[...], -table + x, once-only blocks
-// around the draw, load and draw, or release and the next load (12, 22), the
-// asm before the release (6), plain releases with no asm (46 to 74: loop.c
-// then hoists Data_081984f4 into fp in place of Data_081984d7), and the
-// permuter on that draw for 7 min (14,700 candidates): none.
-// Settled this round: the streak's counter and zero. A function-scope local
-// holding the zero shows the native's registers: n as k with x as the zero
-// (for (k = 0, x = 0; ...)) gives the loop exactly but makes x outlive the
-// ABS copy, so cse compares x instead of it (20); k with shift or a fresh
-// zero lets k outrank shift and swaps them everywhere (46); hit as the zero
-// moves hit to r2 (24 to 26); register, u8, s16 or u32 held, held set in the
-// for init or in the loop, once-only loops round held (refs are recounted
-// after combine, so they add nothing): no gain. What works is held carried
-// through the loop by an asm operand (a tagged barrier), set after n in the
-// for init so the two movs come in the native's order: 10 to 4. Re-measured
-// the other devices: each flash barrier now pays 2 (6 without it), the dead
-// updates 35 and 28.
-//
-// Earlier, differ 10 (tla-en, 2026-11-08, -mtune=gba). Third round that day: the
-// streak as do-while (49), n + j or j first, a pointer base, a block pointer,
-// n = held, held as u8 or s16, n initialised at its declaration: 10; a literal
-// 0 or a counting-down n 12; empty once-only loops around held or the loop 10
-// to 16; either barrier alone as an empty once-only loop 12; the turned
-// flash's picture sum respelled four ways 10, through a local 207 to 221.
-// Earlier (12 before; rechecked later
-// that day: n = held = 0, n++ as a statement, u32 held, a literal 0, the
-// flash draw's sums respelled, the barriers as once-only loops (14): no gain;
-// the empty once-only loop at the glint is plain C, retagged as a note). The glint's
-// blitter as a plain call and an empty once-only loop settles the glint's
-// mov r8 and mov sl. Left: the streak's n and zero in each other's registers, and
-// in the turned flash's first draw, mov r4, sl and ldr r2, [r7] one row apart.
-// Each barrier pays 2 (12 without one, 14 without both). Tried for the barriers on
-// 2026-11-08: once-only blocks around the release, the load, the draw or both, an
-// empty once-only loop, locals for the slot and the flags: none. For the streak:
-// a once-only block around held, n or the store, held set in the loop, u32 n,
-// n < 1, a block pointer, an empty once-only loop after any statement near the
-// streak or the flashes: none. Permuter, about 20 min. Earlier tried for the streak
-// release loop's zero and counter (the native has them the other way round)
-// with held declared first or set later, a literal 0, a stepped pointer (12 to 14).
-// Measured 2026-11-05 (tla-en): differ 20 of 2278. Left: order: a multiply the
-// native issues later than alchemy-gcc does: sched2 ranks the chain into muls
-// too high (its cost of 4), so the constant or the multiply comes ahead of
-// independent rows, three times; a load the native issues earlier than
-// alchemy-gcc does, the load and store line K2 calls an approximation.
-
-// Draft, differ 76 of 2278, skeleton gap 68 (tla-en, 2026-11-01)
-
-// Draft of BattleEffect_RunProjectileVolley, the body of the volley family:
-// the user fires a volley of shots at each target, staggered by shot and
-// by target, and each shot that reaches its target flashes and throws
-// sparks. The mode picks the shot's picture and flight; its wrappers are C
-// in projectile_volley.c.
-
-// Modes, by the sheets they load and the shots they draw:
-// 0, 5, 8      comets (kind by strength; mode 5 an icy comet, mode 8
-// always the first), drawn as two mirrored halves, with
-// large flashes on impact
-// 1            spinning shuriken
-// 2            bouncing pellets
-// 3, 4, 11     yellow sparks, three sizes
-// 6, 12        fireballs trailing smoke (mode 12 from twice the user's x)
-// 7, 9, 10, 18 ice chips (10 and 18 start two steps ahead)
-// 13           a blue beam, its sheet halved into place
-// 14           tumbling crystals
-// 15, 16, 17   streaks falling to the ground; 16 raises smoke and 17
-// sprays glints of water around the first target
-// A Mercury Djinn may circle the user first (effect->prelude).
-
-// Twin: The Broken Seal's BattleEffect_RunProjectileVolley (effect.c), modes
-// 0-11. The Lost Age adds modes 12-18, the falling-streak particles, and
-// no longer opens the canvas differently for mode 10.
-// What remains: instructions, registers, frame and stack slots are all the
-// native's (2278 each); the only register difference left is the streak's n
-// and zero. Every other differing line is order within a block, so this
-// is sched2, not shape. Each is a question for Pascal (K2), not for this draft:
-// - A stack store goes early. The native issues str [sp, #136] (i) before a
-// load the draft ranks ahead of it: i = 0 against the pool load or work load
-// after it, and i against the effect load at each loop end, also sp+92, sp+52.
-// In the first block the native's order is movs r0; ldr r1; movs r4; str r0;
-// lsls r4, the str inside the chain, so it fits a store ranked one or two
-// higher than -mthumb-slow-loads ranks it. No barrier can give that interleave,
-// so none was added: a barrier here could not reach differ 0.
-// - In the glint loop the native reads p->x and p->y before the multiply; the
-// draft's muls goes first. Eight spellings of the two sums made no gain.
-// - The streak's n and its zero (r1 and r2 in the native) now match, through
-// the tagged asm operand on `held`; without it they swap (see the top note).
-// - After RELEASE_DRAW_BLITTER at the two flipped flashes the native loads r1
-// before r0, the draft r0 first; a plain call there is differ 132.
-// - RELEASE_DRAW_BLITTER is plain at two sites (comet, first; glint), where it
-// lets the native's p reload cross the call. All eight through the macro is
-// differ 82. Mixed, the macro is a one-pass device until that is settled (S2).
-
-// How the allocation was found, for the next reader:
-// - The smoke counter and the spark shift are one local, as in the twin, with
-// spawned in the hit block.
-// - The glint blitter was a do { } while (0) macro, as RELEASE_DRAW_BLITTER is
-// (2026-11-08: now a plain call followed by an empty once-only loop, 12 to 10).
-// The loop's label keeps loop.c from hoisting the glint size tables, and with that mode
-// lands in r9; as a plain call the draft loses 94 instructions, since work
-// then wins a register. The release macro took the gap from 144 to 130.
-// - beam is assigned inside the call's argument; assigned before it, the
-// temporaries shift by one register from the mode 13 branch on (differ 324
-// against 198).
-
-// Found this round, differ before and after:
-// glint set inside the spray loop, which loop.c hoists: p takes r11 and glint
-// r7, as the native, 192 to 86 (u8 glint gives 178, shared locals 306 up).
-// The palette copy through a local, as Func_0815c970: 196 to 192.
-// targetDelay local inside the shot loop, with j * stagger first: 78 to 76.
-
-// Tried, gap (removed + added) unless marked:
-// j * stagger + i * delay                                      208 (the rest
-// of this list was measured from later states)
-// LoadBlitter(188) through a do { } while (0) macro            150 against 144
-// i * delay kept in a local before the shot loop               122 against 118
-// (that was outside the j loop; inside it is the form kept)
-// a flat Data_08198478[mode * 5 + n]: no change; [mode][n] kept, as the twin
-// k and shift swapped, hit at function scope, glint and angle unsigned, p
-// stepped by hand, frame - 1 in the test, delay read before stagger: no gain
-
-// Changes from the twin: the effect argument is read directly (the Lost
-// Age never stores work->effect), blitters load through BattleEffect_LoadBlitter and
-// Func_08196404 with the Lost Age's mode numbers (max is 1, additive 0),
-// the task priority is 0xc80, the canvas preparer takes its flags packed,
-// the volley time counts count - 1 target delays, and a shot's z velocity
-// is worked out before its y velocity.
-
 #include "types.h"
 #include "battle_display.h"
 #include "battle_effect.h"
@@ -241,15 +43,15 @@ extern char ResourceId_IceChipSheet;
 extern char ResourceId_MercuryDjinnSmallSheet;
 
 // The Broken Seal's gVolley_* tables, in effect_table.s.
-extern u8 Data_08198475[];  // _CometHeights, by kind
-extern u8 Data_08198478[][5];  // _Modes: five bytes for each mode
-extern u8 Data_081984d7[];  // _FlashWidths
-extern u8 Data_081984de[];  // _FlashHeights
-extern u8 Data_081984e5[];  // _FlashSteps
-extern u8 Data_081984ec[];  // _FlashRises
-extern u16 Data_081984f4[]; // _FlashOffsets
-extern u16 Data_08198502[]; // _PelletOffsets
-extern u8 Data_0819850a[];  // the glints' palettes
+extern u8 Data_08198475[];    // _CometHeights, by kind
+extern u8 Data_08198478[][5]; // _Modes: five bytes for each mode
+extern u8 Data_081984d7[];    // _FlashWidths
+extern u8 Data_081984de[];    // _FlashHeights
+extern u8 Data_081984e5[];    // _FlashSteps
+extern u8 Data_081984ec[];    // _FlashRises
+extern u16 Data_081984f4[];   // _FlashOffsets
+extern u16 Data_08198502[];   // _PelletOffsets
+extern u8 Data_0819850a[];    // the glints' palettes
 // gBattleEffect_MoteCells; gBattleEffect_GlintCell* (offsets, widths,
 // heights); gPrism_ShardOffsets and the shards' widths and heights.
 extern u16 gData_08197410[];
@@ -292,12 +94,12 @@ void wait(s32 frames);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Render_ResetTransformState(void);
 void Transform_SetLookAt(s32 *eye, s32 *target);
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *pos);
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *pos);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 
-// BattleEffect_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap slot.
+// BattleEffect_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap
+// slot.
 #define BLITTER_ADDITIVE (0 << 4)
 #define BLITTER_MAX (1 << 4)
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
@@ -317,7 +119,7 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 #define PHASE_LATE_RESULTS 134
 
 void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
-                                  s32 mode) {
+                                      s32 mode) {
   struct EffectPosition screen;
   struct EffectPosition world;
   struct EffectPosition origin;
@@ -454,8 +256,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
     // place at 0x1000.
     u8 *beam;
 
-    Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet, beam = work->sheet,
-                               1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet,
+                               beam = work->sheet, 1, 1);
     for (i = 0; i != 0x5b2; i++) {
       work->sheet[0x1000 + i] = *beam;
       beam += 2;
@@ -626,7 +428,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
         if (frame > 69)
           djinnY = djinnY - frame * 2 + 138;
         if (effect->side == 1)
-          BattleEffect_LoadBlitter(188, BLITTER_ADDITIVE | CLIP | COMPOSITE_FLIP_X);
+          BattleEffect_LoadBlitter(188,
+                                   BLITTER_ADDITIVE | CLIP | COMPOSITE_FLIP_X);
         else
           BattleEffect_LoadBlitter(188, BLITTER_ADDITIVE | CLIP);
         draw[1] = DRAW_ALTERNATE;
@@ -780,7 +583,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
             // Only the comet's upper half is drawn; the lower half is the
             // same picture flipped.
             if (effect->side == 1)
-              BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP_X);
+              BattleEffect_LoadBlitter(188,
+                                       BLITTER_MAX | CLIP | COMPOSITE_FLIP_X);
             else
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP);
             DRAW_ALTERNATE(canvas, work->sheet + 0x1000, pos->x - 16,
@@ -788,9 +592,11 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                            Data_08198475[kind]);
             HeapSlot_Release(188);
             if (effect->side == 1)
-              BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
+              BattleEffect_LoadBlitter(188,
+                                       BLITTER_MAX | CLIP | COMPOSITE_FLIP);
             else
-              BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP_Y);
+              BattleEffect_LoadBlitter(188,
+                                       BLITTER_MAX | CLIP | COMPOSITE_FLIP_Y);
             DRAW_ALTERNATE(canvas, work->sheet + 0x1000, pos->x - 16, pos->y,
                            32, Data_08198475[kind]);
             RELEASE_DRAW_BLITTER();
@@ -850,11 +656,13 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                              flash->x - Data_081984d7[step],
                              flash->y - Data_081984ec[step],
                              Data_081984d7[step], Data_081984de[step]);
-              /* FAKEMATCH(dead): an empty once-only block before the release; as no block, 70 of 2278 instructions differ in tla-en. */
+              /* FAKEMATCH(dead): an empty once-only block before the release;
+               * as no block, 68 of 2278 instructions differ in tla-en. */
               do {
               } while (0);
               HeapSlot_Release(188);
-              BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
+              BattleEffect_LoadBlitter(188,
+                                       BLITTER_MAX | CLIP | COMPOSITE_FLIP);
               DRAW_ALTERNATE(
                   canvas, work->sheet + Data_081984f4[step], flash->x,
                   flash->y + Data_081984e5[step] - Data_081984ec[step],
@@ -862,15 +670,30 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
               RELEASE_DRAW_BLITTER();
             } else {
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP);
-              DRAW_ALTERNATE(canvas, work->sheet + Data_081984f4[step] + 0x128a,
-                             flash->x - Data_081984ec[step],
-                             flash->y - Data_081984d7[step],
-                             Data_081984de[step], Data_081984d7[step]);
-              /* FAKEMATCH(dead): an empty once-only block before the release; as no block, 40 of 2278 instructions differ in tla-en. */
+              {
+                s32 offset = Data_081984f4[step];
+                u8 *picture;
+                s32 rise;
+                s32 left;
+                s32 width;
+
+                // The picture, x and rise are read in a once-only block, after
+                // the offset and before the width (otherwise 2 to 4 of 2278
+                // differ, 2026-11-10).
+                do {
+                  picture = work->sheet + offset + 0x128a;
+                  left = flash->x;
+                  rise = Data_081984ec[step];
+                } while (0);
+                width = Data_081984d7[step];
+                DRAW_ALTERNATE(canvas, picture, left - rise, flash->y - width,
+                               Data_081984de[step], width);
+              }
               do {
               } while (0);
               HeapSlot_Release(188);
-              BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
+              BattleEffect_LoadBlitter(188,
+                                       BLITTER_MAX | CLIP | COMPOSITE_FLIP);
               DRAW_ALTERNATE(
                   canvas, work->sheet + Data_081984f4[step] + 0x128a,
                   flash->x + Data_081984e5[step] - Data_081984ec[step],

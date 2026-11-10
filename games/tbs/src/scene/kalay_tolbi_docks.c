@@ -799,6 +799,9 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
     ((u8 *)actor->sprite)[9] |= 12;
     ((u8 *)actor->sprite)[21] |= 12;
   }
+  // Once Colosso is over, the passengers stranded at Tolbi's docks gather
+  // here, and the two cells just north of where they stand take a wall's
+  // ground from the cell at (18, 18).
   if (GameFlag_Get(FLAG_COLOSSO_OVER)) {
     MapGrid_CopyCellAttributes(18, 18, 1, 1, 14, 18);
     MapGrid_CopyCellAttributes(18, 18, 1, 1, 15, 18);

@@ -781,7 +781,9 @@ static void AltinPeak_DrainThirdWater(void) {
 }
 
 /// Flips AltinPeakSecondWaterBeast's switch to its other position, redrawing it
-/// and changing the cell its position opens or closes.
+/// and changing the cell its position opens or closes. The switch is a lever
+/// beside a junction of the mine cart track, and what is redrawn is the red
+/// arrow sign next to it: pointing west with the flag clear, east with it set.
 static void AltinPeak_ToggleSecondWaterBeastRoomSwitchCells(void) {
   if (Event_GetFlag(FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH) != 0) {
     MapGrid_CopyCellAttributes(2, 0, 1, 1, 24, 80);

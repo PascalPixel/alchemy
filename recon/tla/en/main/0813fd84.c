@@ -1,7 +1,55 @@
-// Draft, differ 12 of 2579 (tla-en, 2026-11-09); 12 in every edition (de, es
+// Draft, differ 6 of 2579 (tla-en, 2026-11-10); 6 in every edition (de, es
+// and fr by --symbol BattleEffect_RunCruelRuin)
 // Pools read 10 November: every literal pool word this draft compiles equals
 // the ROM's (diff compares instructions only; Catastrophe hid a wrong one).
-// and fr by --symbol BattleEffect_RunCruelRuin)
+// 10 November, agent round, 12 to 6, about 45 measures. Left: the shaded
+// circle's lsls r2 (2) and the first blit's adds r3, ldr r0, add r1 (4).
+// - Second blit, 12 to 10: its empty once-only block moved from after the
+//   second BattleEffect_LoadBlitter to before the HeapSlot_Release between
+//   the blits. It is there to keep the two blits' work->sheet apart (without
+//   it cse shares work + 0x700, loop.c hoists it and a frame slot is added:
+//   440), and that works anywhere between the blits; the barrier now falls
+//   on movs r0, #188, first there anyway, so str r5, [sp] is no barrier and
+//   movs r1, #192 goes before it, having fewer ties to the call just made.
+// - Object loop, 10 to 6, in two steps. The else arm's index as m = j * 9;
+//   m += i: that product has two uses, so combine_givs makes it the parent
+//   of row's mult 9 givs (a giv used once is never a parent, and of equal
+//   candidates the latest found wins); it is found after *last's address
+//   giv, so row is set up and stepped first, as the listing has it. Alone
+//   that reads 195: row's init now precedes last's, row lives one insn
+//   longer, and its live length is doubled (its init is a constant), so its
+//   priority falls from 100/128 to 100/130, under the Apply pointer's
+//   42/54; the pointer takes r4 and row r8. No count of plain insns in the
+//   i loop repairs that (each adds 2 to row and 1 to the pointer; four dead
+//   tests would). The dead test now also reads row, j and last, i == 300 &&
+//   row == j && last == 0: 5 references each, and global.c ranks last
+//   (1.27), j (1.12), row (0.90), the pointer (0.75): r6, r7, r4, stack.
+//   Reading row alone puts row over j (32, their registers swapped); row
+//   and j without last puts j over last (32).
+// - What the listing still says about the truth: row's init is emitted
+//   before last's yet row outranks the Apply pointer without help, so
+//   either the pointer's init is not the last insn of the i loop's
+//   preheader there (tile's giv reduced on loop's second run would do it)
+//   or row has a reference this draft lacks. Not better: tile computed in
+//   the else arm (638, its giv is not replaceable there), tile from a
+//   phase + 64 local (227, gcse hoists the sum and the giv's benefit is 0),
+//   u = tile % 8 (202), Apply indexed by row + i (577, a second stepped
+//   pointer and a slot), a dead u = j * 9 before Apply (195, the same as
+//   the else arm's j * 9).
+// - Blasts, not better. sched2 here ranks by priority, class, MORE
+//   dependents, then order. Circle: lsls r2, add r0 and adds r1 tie at 4
+//   dependents each, and any barrier adds itself to all three. x, y, the
+//   sheet and 0x10000 (or 0x700 and 0x10000) as locals of a once-only
+//   block with a body: 20 and 18, cse folds the constants back into the
+//   argument loads after the block and the barrier lands on movs r0, #224.
+//   The listing's order is what expand first emits (0x700 and 0x10000 into
+//   temporaries, then r0 = work + temporary, r1, r2) before cse folds it,
+//   so there the fold did not happen. First blit: adds r3 needs more
+//   dependents than add r1; with no barrier before the second blit's r3
+//   load it would have them (the calls between count for r3, while r1
+//   stops at movs r1, #23), but every place a block can go between the
+//   blits adds the barrier to both. Second blit through a slot pointer
+//   local: 12, cse folds it.
 // 10 November, by hand, still 12 (27 attempts on the object loop, none on the
 // blasts). From the loop dump: the givs are found row (mult 9, insn 4676)
 // then last (mult 36 plus work, 4689), and reduced givs are set up and
@@ -966,8 +1014,15 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           y -= r;
           y += 8;
           ALT_BLITTER(canvas, work->sheet, x - half, y, half, r);
+          /* FAKEMATCH(dead): an empty once-only block; it keeps the two blits'
+           * work->sheet apart until after loop.c, and the scheduling barrier
+           * it leaves falls on HeapSlot_Release's movs r0, #188, which is
+           * first there anyway; as no block, 440 of 2579 instructions differ
+           * in tla-en. */
+          do {
+          } while (0);
           HeapSlot_Release(SLOT_ALT);
-          LOAD_BLITTER(SLOT_ALT, 23);
+          BattleEffect_LoadBlitter(SLOT_ALT, 23);
           ALT_BLITTER(canvas, work->sheet, x, y, half, r);
           HeapSlot_Release(SLOT_ALT);
         }
@@ -1101,18 +1156,23 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         s32 tile = i + k_ + phase;
         place[0] = (i << 21) + scrollX;
         place[2] = 0x790000 + (j << 21);
-        /* FAKEMATCH(dead): a store both arms below overwrite; its test
-         * builds 300 in a reload register, the one pick after the place
-         * stores that leaves reload's round-robin on r0, so the else arm's
-         * reloads take r1, r2 and r0; without it, 32 of 2579 instructions
-         * differ in tla-en. */
-        if (i == 300)
+        /* FAKEMATCH(dead): a store both arms below overwrite, behind a test
+         * that is never true. i == 300 builds 300 in a reload register, the
+         * one pick after the place stores that leaves reload's round-robin
+         * on r0, so the else arm's reloads take r1, r2 and r0; the reads of
+         * row, j and last raise their reference counts, so global.c ranks
+         * last, j, row and then the Apply pointer and they take r6, r7, r4
+         * and the stack; as no test, 197 of 2579 instructions differ in
+         * tla-en. */
+        if (i == 300 && row == j && last == 0)
           u = 0;
         if (i == 8) {
           obj = *last;
           {s32 t_ = phase + 71; s32 q_ = t_; if (t_ < 0) q_ = phase + 78; q_ >>= 3; q_ <<= 3; u = t_ - q_;}
         } else {
-          {s32 m = row; m += i; obj = work->objects[m];}
+          // j * 9 written again: this product, used twice, is the one loop.c
+          // keeps as row, so row is set up and stepped before last.
+          {s32 m = j * 9; m += i; obj = work->objects[m];}
           {s32 x_ = phase + i; s32 q_ = tile; if (tile < 0) q_ = x_ + 71; q_ >>= 3; q_ <<= 3; u = tile - q_;}
         }
 {s32 v = work->particles[row + u].variant & 0x3ff; s32 x = obj->attr.all & mask; obj->attr.all = x | v;}

@@ -16,9 +16,7 @@ void Func_02004a1c(void);
 /// holds the index's 0.
 void Func_0200050c(void) {
   s32 count;
-  /* FAKEMATCH(pin): the PP total in r6; as a plain local, 19 of 42
-   * instructions differ in tla-en. */
-  register s32 pp asm("r6");
+  s32 pp;
   s32 i;
 
   gMainRoutineWork.renderMode = 7;

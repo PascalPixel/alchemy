@@ -74,10 +74,7 @@ void Func_02005594(void) {
   Task_Add(Func_02002ccc, 0x480);
   for (i = 0; i <= 7; i++) {
     u8 *field = &Actor_GetById(i + 18)->field5c;
-    /* FAKEMATCH: the pin keeps the 2 in the loop, built after the field's
-     * address as the native does; as a constant loop.c hoists it into r6
-     * (differ 10). */
-    register s32 value asm("r3") = 2;
+    s32 value = 2;
 
     *field = value;
   }

@@ -12,7 +12,7 @@ void Func_02004970(const u16 *list) {
   struct Actor *object;
   s16 mode;
   s16 flag;
-  register s32 limit asm("r2");
+  s32 limit;
   s32 first;
   limit = 0xff;
   first = list[0];

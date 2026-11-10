@@ -7,10 +7,10 @@
 /// the three rows from 72 less the row of z. Nothing in this overlay calls it.
 // As ☀️'s MercuryLighthouseAerie_CollectBandSlots does.
 void Func_02003a28(s32 *out, s32 zArg) {
-  /* FAKEMATCH: four pins (z in r4, its shift in r2, the 64 and the column in
-   * r3) give the native's allocation; as plain locals, 9 to 40 instructions
+  /* FAKEMATCH: three pins (z's shift in r2, the 64 and the column in r3) give
+   * the native's allocation; as plain locals, 9 to 40 instructions
    * differ in tla-en. */
-  register s32 z asm("r4") = zArg;
+  s32 z = zArg;
   struct EventWork *work = Ram_HeapSlots->eventWork;
   u32 slot;
 
@@ -22,7 +22,7 @@ void Func_02003a28(s32 *out, s32 zArg) {
     struct Actor *object = work->objects[slot];
 
     if (object != NULL) {
-      register s32 column asm("r3") = object->x >> 20;
+      s32 column = object->x >> 20;
       s32 row = object->z >> 20;
 
       if (column >= 4 && column <= 8 && z + 8 <= row && row < z + 11)

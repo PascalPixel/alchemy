@@ -19,10 +19,7 @@ void Func_02003220(void) {
 
 void Func_0200324c(void) {
   u32 i;
-  /* FAKEMATCH: the zero pinned to r6 behind an empty asm is built in the loop
-   * and stored again after it; as a plain 0, 17 instructions differ in tla-en.
-   */
-  register s32 zero asm("r6");
+  s32 zero;
 
   for (i = 0; i <= 1; i++) {
     s32 id = i + 15;

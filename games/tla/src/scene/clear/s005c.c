@@ -34,10 +34,7 @@ void Func_0200005c(void) {
   u8 *res;
   s32 id;
   u16 *map;
-  /* FAKEMATCH: the column counter is pinned to r4: the native keeps the row
-   * counter in r0 and the column counter in r4, where this C (like ☀️'s native)
-   * gives the column counter r0. */
-  register u32 x asm("r4");
+  u32 x;
   u32 y;
   u16 tile;
   struct BgScroll *scroll;

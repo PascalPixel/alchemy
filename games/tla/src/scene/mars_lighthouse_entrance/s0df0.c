@@ -11,9 +11,7 @@ void Func_02000d18(void);
 /// and starts Func_02000d18.
 void Func_02000df0(void) {
   u32 *buffer = Heap_Alloc(0x100);
-  /* FAKEMATCH: ⚓️ keeps the fill pointer in r1 and the count in r2;
-   * unpinned, the pointer takes r2 and 10 instructions differ in tla-en. */
-  register u32 *word asm("r1") = buffer;
+  u32 *word = buffer;
   s32 count = 63;
 
   // A goto loop: as a for loop loop.c moves the fill word out of it.

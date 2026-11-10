@@ -20,10 +20,7 @@ void Func_020021d0(void) {
     Func_020020ec(gData_0200519c, gData_02005194, 1, 21);
     Func_020020ec(gData_0200519c, gData_02005194, 2, 0);
   } else {
-    /* FAKEMATCH(pin): the address pinned to r3 is loaded afresh, as in the
-     * native; as a plain read of gData_02005194, 6 of 260 instructions differ
-     * in tla-en. */
-    register s32 *z asm("r3") = &gData_02005194;
+    s32 *z = &gData_02005194;
 
     Func_020020ec(gData_0200519c, *z, 3, 0);
   }
@@ -31,10 +28,7 @@ void Func_020021d0(void) {
     Func_020020ec(gData_02005198, gData_02005190, 1, 21);
     Func_020020ec(gData_02005198, gData_02005190, 2, 0);
   } else {
-    /* FAKEMATCH(pin): the address pinned to r3 is loaded afresh, as in the
-     * native; as a plain read of gData_02005190, 6 of 260 instructions differ
-     * in tla-en. */
-    register s32 *z asm("r3") = &gData_02005190;
+    s32 *z = &gData_02005190;
 
     Func_020020ec(gData_02005198, *z, 3, 0);
   }

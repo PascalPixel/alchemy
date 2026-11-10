@@ -23,10 +23,7 @@ s32 Func_02002ec8(void) {
   Task_AddFrame(Func_02001558, TASK_PASS_FRAME);
   Task_AddFrame(Func_020015a0, TASK_PASS_VBLANK);
   {
-    /* FAKEMATCH: the party address pinned to r3 for the switch's read, apart
-     * from case 4's; unpinned, gcse merges the two into r1 and 8 instructions
-     * differ in tla-en. */
-    register struct MainRoutineWork *party asm("r3") = &gMainRoutineWork;
+    struct MainRoutineWork *party = &gMainRoutineWork;
 
     entrance = party->entrance;
   }

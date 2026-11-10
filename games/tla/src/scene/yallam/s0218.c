@@ -30,10 +30,7 @@ void Func_02000270(void) {
 
     if (actor != NULL) {
       u8 *flags = &actor[85];
-      /* FAKEMATCH: the zero pinned to r3 is rebuilt on every pass as the native
-       * does; loop.c hoists a plain zero out of the loop into a saved register.
-       */
-      register s32 zero asm("r3") = 0;
+      s32 zero = 0;
 
       *flags = zero;
     }

@@ -33,9 +33,7 @@ void Func_020021d4(void) {
   s32 z = Actor_Get(9)->z >> 20;
 
   if (Event_GetFlag(0x9dd) != 0 && z == 24) {
-    /* FAKEMATCH: the task function pinned to r5 leaves the z cell in r6; plain, the
-     * two swap (differ 12). */
-    register void (*func)(void) asm("r5") = Func_02001f7c;
+    void (*func)(void) = Func_02001f7c;
 
     if (Func_02002dcc(func) == -1) {
       AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);

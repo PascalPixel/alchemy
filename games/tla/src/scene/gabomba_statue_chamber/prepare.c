@@ -57,11 +57,7 @@ void Func_02001b14(void) {
     }
   }
   {
-    /* FAKEMATCH(pin): a hard register is outside global CSE, so the party
-     * state's address is loaded again here, as the native does; as a plain
-     * read of gMainRoutineWork.entrance, 30 of 58 instructions differ in
-     * tla-en. */
-    register struct MainRoutineWork *party asm("r3") = &gMainRoutineWork;
+    struct MainRoutineWork *party = &gMainRoutineWork;
 
     if (party->entrance == 3) {
       GameFlag_ClearBit(0xa27);

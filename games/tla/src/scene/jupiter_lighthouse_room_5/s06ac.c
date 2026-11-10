@@ -62,10 +62,7 @@ void Func_02000724(void) { GameFlag_ClearBit(0xa0e); }
 /// Actor 22 rises in a shower of sparks: one every other frame for 32 frames.
 void Func_02000734(void) {
   struct EffectParams params;
-  /* FAKEMATCH: the parameter block's pointer pinned to r6, where the native
-   * keeps it across the loop; unpinned it takes r7 and the odd-frame test r6
-   * (differ 22). */
-  register struct EffectParams *p asm("r6");
+  struct EffectParams *p;
   struct SparkActor *actor;
   u32 i;
   s32 x;

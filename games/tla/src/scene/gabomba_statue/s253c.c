@@ -29,11 +29,11 @@ s32 Func_02004d48(s32 a, s32 b);
 void Event_FinishScreenTransition(void);
 
 static __inline__ void Func_0200578c_ArgsFirst(s32 id, s32 a, s32 b) {
-  /* FAKEMATCH: the second and third arguments pinned to r1 and r2 are set
-   * before the id at four of Func_020027cc's five calls; as direct calls, 24
+  /* FAKEMATCH: the second argument pinned to r1 is set, with the third, before
+   * the id at four of Func_020027cc's five calls; as direct calls, 24
    * instructions differ in tla-en. */
   register s32 a_ asm("r1") = a;
-  register s32 b_ asm("r2") = b;
+  s32 b_ = b;
 
   Func_080d47b4(id, a_, b_);
 }

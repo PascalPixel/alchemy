@@ -40,11 +40,11 @@ void Event_FinishScreenTransition(void);
 void Func_0200581c(void);
 
 static __inline__ void Func_0200578c_ArgsFirst(s32 id, s32 a, s32 b) {
-  /* FAKEMATCH(pin): the second and third arguments pinned to r1 and r2, so the
-   * id is set last; as calls through a plain forwarding inline, 16 of 521
+  /* FAKEMATCH(pin): the second argument pinned to r1, so the id is set after
+   * it and the third; as calls through a plain forwarding inline, 16 of 521
    * instructions differ in tla-en. */
   register s32 a_ asm("r1") = a;
-  register s32 b_ asm("r2") = b;
+  s32 b_ = b;
 
   Func_080d47b4(id, a_, b_);
 }

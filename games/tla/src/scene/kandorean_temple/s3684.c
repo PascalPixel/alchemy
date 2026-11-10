@@ -9,9 +9,7 @@ extern s32 gData_020062a4;
 void Func_02003684(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *first = Actor_GetById(13);
-  /* FAKEMATCH: the second actor pinned to r6 leaves the leader in r8 as the
-   * native has; unpinned, the two trade registers (differ 24). */
-  register struct Actor *second asm("r6") = Actor_GetById(15);
+  struct Actor *second = Actor_GetById(15);
 
   Func_020051c0();
   Event_ResolvePendingActions(0);
@@ -59,8 +57,7 @@ rise:
 void Func_020037e0(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *first = Actor_GetById(14);
-  /* FAKEMATCH: as in Func_02003684, the second actor pinned to r6. */
-  register struct Actor *second asm("r6") = Actor_GetById(16);
+  struct Actor *second = Actor_GetById(16);
 
   Func_020051c0();
   Event_ResolvePendingActions(0);

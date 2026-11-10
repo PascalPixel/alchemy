@@ -64,10 +64,7 @@ void Func_020045d0(void) {
 }
 
 void Func_020047e4(void) {
-  /* FAKEMATCH(pin): the slot in r5, outside global CSE, so the loop loads its
-   * address each pass, as the native does; as a plain local, 12 of 71
-   * instructions differ in tla-en. */
-  register struct KibomboObject **slot asm("r5");
+  struct KibomboObject **slot;
   struct KibomboObject *object;
 
   Func_02004524();

@@ -6,9 +6,7 @@
 /// counted up and tested at the bottom.
 u16 Func_0200217c(u32 length, u8 *p) {
   u32 crc;
-  /* FAKEMATCH(pin): the byte index in r5; as a plain local, the index and
-   * length swap r5 and r6, and 5 of 32 instructions differ in tla-en. */
-  register u32 i asm("r5");
+  u32 i;
   u32 j;
 
   crc = 0xffff;

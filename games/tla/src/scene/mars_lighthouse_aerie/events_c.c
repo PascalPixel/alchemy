@@ -18,8 +18,7 @@ static __inline__ void Func_02005714_(s32 actor, s32 a, s32 b) {
   /* FAKEMATCH: pinned, the second and third arguments load before the actor, as
    * the native does at every call here (one reordered row per call without). */
   register s32 second asm("r1") = a;
-  /* FAKEMATCH: the third argument, pinned with the second. */
-  register s32 third asm("r2") = b;
+  s32 third = b;
 
   Func_080d47b4(actor, second, third);
 }
@@ -172,9 +171,7 @@ void Func_020029ac(void) {
   Event_ShowMessage(0x9000, 0);
   Actor_FaceDirectionAndWait(0, FACING_NORTHWEST);
   {
-    /* FAKEMATCH: pinned, the flags load before the actor (one reordered row
-     * without). */
-    register s32 flags asm("r1") = 0;
+    s32 flags = 0;
 
     Event_OpenMessage(0x8000, flags);
   }

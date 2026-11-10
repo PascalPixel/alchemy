@@ -1,8 +1,8 @@
 #include "ankohl_ruins.h"
 
 void Func_02000a68(s32 unused, s32 objectId) {
-  register s32 id asm("r5") = objectId;
-  register struct Actor *object asm("r6") = Actor_Get(id);
+  s32 id = objectId;
+  struct Actor *object = Actor_Get(id);
   s16 frames = 60;
 
   if (object->z >> 20 == 31) {

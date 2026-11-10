@@ -39,9 +39,7 @@ void Func_020044d0(s32 value) {
 /// 0x333 a frame for twenty frames, then clears it.
 void Func_02004530(void) {
   struct SceneState *state = &gSceneState;
-  /* FAKEMATCH(pin): the count in r6, which leaves r5 to the state; as a plain
-   * local, 22 of 72 instructions differ in tla-en. */
-  register s32 i asm("r6");
+  s32 i;
 
   if (state->redrawA == 0) {
     MapGrid_CopyCellsLayered(1, 13, 1, 1, state->originX + 3,
@@ -53,10 +51,7 @@ void Func_02004530(void) {
       Func_020044b4(3);
       i = 19;
       do {
-        /* FAKEMATCH(pin): a hard register is not moved out of the loop, so the
-         * offset's address is built every pass, as the native does; as
-         * state->statueOffset, 30 of 72 instructions differ in tla-en. */
-        register s32 *offset asm("r2") = &state->statueOffset;
+        s32 *offset = &state->statueOffset;
 
         *offset -= 0x333;
         System_Wait(1);

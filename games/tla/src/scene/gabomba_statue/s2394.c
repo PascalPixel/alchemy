@@ -18,9 +18,7 @@ void Func_020056bc(void);
 
 void Func_02002394(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
-  /* FAKEMATCH(pin): i in r10, which leaves r8 to the options pointer; as a
-   * plain local, 22 of 177 instructions differ in tla-en. */
-  register u32 i asm("r10");
+  u32 i;
   struct EffectOptions options;
 
   Func_020056b4();

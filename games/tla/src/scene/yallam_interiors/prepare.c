@@ -14,10 +14,7 @@ s32 Func_0200086c(void) {
   ((struct YallamInteriorsEventWork *)Ram_HeapSlots->eventWork)->screenEffect =
       0x209;
   {
-    /* FAKEMATCH: the party address pinned to r3 for the first scene read;
-     * unpinned, gcse merges both scene reads and 26 instructions differ in
-     * tla-en. */
-    register struct MainRoutineWork *party asm("r3") = &gMainRoutineWork;
+    struct MainRoutineWork *party = &gMainRoutineWork;
 
     scene = party->scene;
   }

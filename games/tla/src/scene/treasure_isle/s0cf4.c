@@ -99,11 +99,7 @@ s32 Func_02000cf4(void) {
     i = 0;
   next:
     {
-      /* FAKEMATCH(pin): the flags byte's address pinned to r2, which leaves r1
-       * to the 12, as the native has them; unpinned, 12 of 241 instructions
-       * differ in tla-en. */
-      register u8 *flags asm("r2") =
-          (u8 *)Actor_Get(i + 9)->animation + 37;
+      u8 *flags = (u8 *)Actor_Get(i + 9)->animation + 37;
 
       *flags |= 12;
     }

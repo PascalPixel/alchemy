@@ -43,10 +43,7 @@ void Func_02003548(void) {
 
 void Func_02003630(struct Actor *arg) {
   struct MainRoutineWork *party = &gMainRoutineWork;
-  /* FAKEMATCH: the object pinned to r5 and assigned after the barrier is
-   * copied after gMainRoutineWork's address loads; as a plain parameter, 2
-   * instructions differ in tla-en. */
-  register struct Actor *object asm("r5");
+  struct Actor *object;
   struct Actor *owner;
   s16 ownerY;
   s16 y;

@@ -21,9 +21,7 @@ s32 Func_02004e64(void);
 #if TLA_PATCH_1
 s32 Func_0200042c(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
-  /* FAKEMATCH(pin): i in r10, which leaves r8 to the options pointer; as a
-   * plain local, 12 of 177 instructions differ in tla-en. */
-  register u32 i asm("r10");
+  u32 i;
   struct EffectOptions options;
   s32 spawn = 1;
 

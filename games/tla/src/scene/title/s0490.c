@@ -29,9 +29,7 @@ void Func_02000490(void) {
   u8 *res;
   s32 id;
   u16 *map;
-  /* FAKEMATCH: the column counter pinned to r4 and the row counter left in
-   * r0, as native; unpinned, 20 instructions differ in tla-en. */
-  register u32 x asm("r4");
+  u32 x;
   u32 y;
   u16 tile;
   struct BgScroll *scroll;

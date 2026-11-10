@@ -31,16 +31,13 @@ static __inline__ void Func_02004b6c_(s32 actor, s32 a, s32 b) {
   /* FAKEMATCH: pinned, the second and third arguments load before the actor, as
    * the native does at every call here (one reordered row per call without). */
   register s32 second asm("r1") = a;
-  /* FAKEMATCH: the third argument, pinned with the second. */
-  register s32 third asm("r2") = b;
+  s32 third = b;
 
   Func_080d47b4(actor, second, third);
 }
 
 static __inline__ void FieldMessage_ShowAtActor_(s32 actor, s32 flags) {
-  /* FAKEMATCH: pinned, the flags load before the actor, as the native does (one
-   * reordered row without). */
-  register s32 f asm("r1") = flags;
+  s32 f = flags;
 
   FieldMessage_ShowAtActor(actor, f);
 }
@@ -62,9 +59,7 @@ void Func_02001cb0(void) {
   FieldEvent_ShowMessageThenWait(0x1c, 0, 0xa);
   Actor_FaceDirection(4, FACING_SOUTH, 0);
   {
-    /* FAKEMATCH: pinned, the mode loads before the z bound is shifted (one
-     * reordered row without). */
-    register s32 mode asm("r3") = 1;
+    s32 mode = 1;
 
     FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(632), mode);
   }

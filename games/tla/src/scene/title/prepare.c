@@ -172,10 +172,7 @@ void Title_LoadSprites(s32 unused) {
 void Func_02000278(void) {
   u32 *w;
   struct TitleSprite *p;
-  /* FAKEMATCH: the tile is pinned to r5 and the block's offset read into r3,
-   * keeping the cursor in r6 and the index in r7; as plain locals, 26
-   * instructions differ in tla-en. */
-  register s32 tile asm("r5");
+  s32 tile;
   s32 i;
   s32 n;
   s32 y;

@@ -17,9 +17,7 @@ void Func_0200187c(struct Panel_02001804 *panel) {
   void *work = Heap_AllocEwram(0x300);
   u16 *tiles;
   s32 offset;
-  /* FAKEMATCH(pin): the row in r6; as a plain local, 16 of 43 instructions
-   * differ in tla-en. */
-  register s32 row asm("r6");
+  s32 row;
   s32 column;
 
   offset = (panel->y * 32 + panel->x) * 2;

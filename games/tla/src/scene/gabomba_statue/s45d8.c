@@ -41,9 +41,7 @@ void Func_020045d8(void) {
 /// Side B's twin of Func_02004530: the offset moves up instead.
 void Func_02004620(void) {
   struct SceneState *state = &gSceneState;
-  /* FAKEMATCH(pin): the count in r6, as in Func_02004530; as a plain local,
-   * 22 of 74 instructions differ in tla-en. */
-  register s32 i asm("r6");
+  s32 i;
 
   if (state->redrawB == 0) {
     MapGrid_CopyCellsLayered(0, 13, 1, 1, state->originX + 7,
@@ -55,10 +53,7 @@ void Func_02004620(void) {
       Func_020044b4(2);
       i = 19;
       do {
-        /* FAKEMATCH(pin): the offset's address built every pass, as in
-         * Func_02004530; as state->statueOffset with the barrier, 30 of 74
-         * instructions differ in tla-en. */
-        register s32 *offset asm("r2") = &state->statueOffset;
+        s32 *offset = &state->statueOffset;
 
         *offset += 0x333;
         System_Wait(1);

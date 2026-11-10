@@ -1,4 +1,6 @@
 // Draft, differ 24 of 2680 (tla-en, 2026-11-09; the same 24 in ja, de, es, fr, it)
+// Pools read 10 November: every literal pool word this draft compiles equals
+// the ROM's (diff compares instructions only; Catastrophe hid a wrong one).
 // 2026-11-10, by hand, unchanged at 24. DRAW_ALT's empty block moved or
 // doubled: a second after the first 24, before the draw as well 38, before
 // the load as well 36, only before the draw 32, only before the load 30,

@@ -1,4 +1,6 @@
 // Draft, differ 12 of 1122 (tla-en, 2026-11-10), one device (dead); 12 in tla-ja
+// Pools read 10 November: every literal pool word this draft compiles equals
+// the ROM's (diff compares instructions only; Catastrophe hid a wrong one).
 // and tla-de too
 // 2026-11-10 (by hand), 18 to 12. The glints' blitter load takes the form the
 // same draw has in Catastrophe's sparks (081843fc.c): its colour in a block

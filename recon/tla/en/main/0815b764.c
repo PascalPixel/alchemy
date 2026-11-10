@@ -1,4 +1,6 @@
 // Draft, differ 36 of 1932 (tla-en, 2026-11-09); 36 in every edition
+// Pools read 10 November: every literal pool word this draft compiles equals
+// the ROM's (diff compares instructions only; Catastrophe hid a wrong one).
 // 2026-11-10 (by hand), unchanged at 36. The setup in the listing's order
 // (shade first, j = 0 last) with no asm 288: the setup's rows then match but
 // the vertices' reload takes r7 and frame r1, so the listing reloads frame

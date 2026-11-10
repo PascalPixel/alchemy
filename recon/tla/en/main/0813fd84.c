@@ -1,4 +1,6 @@
 // Draft, differ 12 of 2579 (tla-en, 2026-11-09); 12 in every edition (de, es
+// Pools read 10 November: every literal pool word this draft compiles equals
+// the ROM's (diff compares instructions only; Catastrophe hid a wrong one).
 // and fr by --symbol BattleEffect_RunCruelRuin)
 // 10 November, by hand, still 12 (27 attempts on the object loop, none on the
 // blasts). From the loop dump: the givs are found row (mult 9, insn 4676)

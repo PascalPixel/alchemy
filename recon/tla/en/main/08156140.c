@@ -1,4 +1,6 @@
 // Draft, differ 4 of 2278 (tla-en, 2026-11-10)
+// Pools read 10 November: every literal pool word this draft compiles equals
+// the ROM's (diff compares instructions only; Catastrophe hid a wrong one).
 // Barrier round (10 November), still 4, two devices milder. Both flashes' empty
 // asms (barrier) give way to an empty once-only block before a plain release
 // (dead): the same four rows. The block after the release, or the release

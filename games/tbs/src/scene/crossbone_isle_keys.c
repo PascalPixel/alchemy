@@ -1319,8 +1319,9 @@ UNUSED static void CrossboneIsleKeys_UnusedRedrawKeyActors(void) {
       Actor_SetPosition(ACTOR_FOURTH_BLUE_KEY, PIXELS(360), PIXELS(872));
     }
     break;
-  // XXX: why item codes 0 and 1; running it would show whether they are a
-  // leftover numbering.
+  // XXX (no evidence): why item codes 0 and 1, whose icons are a yellow gem and
+  // a sword, where CrossboneIsleKeys_InitializeKeys draws the keys' own;
+  // nothing calls this, and no other code or text says what it was for.
   case 10:
     Colosso_ShowItemIcon(ACTOR_FIRST_BLUE_KEY, 0);
     break;

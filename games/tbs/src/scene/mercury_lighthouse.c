@@ -235,11 +235,10 @@ enum MercuryLighthouseUpperActorId {
   /// ★ Named from what the player sees: the blue statue ACTOR_SLIDING_STATUE
   /// shows above, before it falls (its render)
   ACTOR_FALLEN_STATUE = ACTOR_FIRST_PLACED,
-  // XXX: what the square opening at (840,744) is; a staged recording of the
-  // slide would settle it.
   /// At rest beside a jet of water; its first slide takes it under the jet.
   /// When the door switch pipe stops at column 48, it slides over the floor to
-  /// the square opening at (840,744), where it falls.
+  /// the square hole in the floor at (840,744), a cell whose ground lies below
+  /// the floor's, and falls through it.
   /// ★ Named from what the player sees: a blue statue beside a jet of water
   /// (its render)
   ACTOR_SLIDING_STATUE,
@@ -1384,8 +1383,11 @@ static void MercuryLighthouse_SyncRowStatueFlags(void) {
       GameFlag_Clear(positionFlag + 1);
     }
   }
-  // XXX: what the cell at (58, 7) lets the party do once it changes; a staged
-  // recording of Move on the last statue would settle it.
+  // The last statue stands before the door back down to the middle floors.
+  // Moved a column west or east it clears the door, and the cell at (58, 7)
+  // becomes a jump spot: pushing north from it, the leader jumps the cell
+  // between and walks up to the door. With the statue in place the cell is
+  // plain ground and the leader stays south of it.
   column = Actor_Get(ACTOR_LAST_ROW_STATUE)->x.fixed / PIXELS(16);
   if (column == 57) {
     GameFlag_Set(FLAG_LAST_ROW_STATUE_WEST);
@@ -1403,11 +1405,13 @@ static void MercuryLighthouse_SyncRowStatueFlags(void) {
   Event_End();
 }
 
-// XXX: whether the statue at column 28 fills a gap or uncovers a passage; a
-// staged recording of Move on it would settle it.
 /// MercuryLighthouseUpper, Move on the gap statue: at column 28 it stays for
 /// good (FLAG_PASSAGE_STATUE_MOVED) and the cell at (31, 20) takes the behavior
-/// of the cell at (29, 20).
+/// of the cell at (29, 20), a jump spot. The statue stands on (29, 20), hiding
+/// the arched door to the lighthouse's exterior in the wall behind it; moved
+/// one column west it uncovers the door, and the leader on (31, 20) pushing
+/// west jumps the rough cell between onto the cell before the door. With the
+/// statue in place he cannot.
 static void MercuryLighthouse_ChangeCellForGapStatue(void) {
   s32 column;
 

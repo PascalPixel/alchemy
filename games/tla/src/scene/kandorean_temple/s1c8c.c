@@ -115,8 +115,10 @@ void Func_02001e58(void) {
    * load as the native has it; the plain store goes first (differ 2). */
   flags = &leader->motionFlags;
   zero = 0;
-  party = &gMainRoutineWork;
-  asm("");
+  // Once-only: as a plain statement tla-en does not match.
+  do {
+    party = &gMainRoutineWork;
+  } while (0);
   *flags = zero;
   Actor_SetSpeedParameters(party->currentOwner, 0x10000, 0x8000);
   Actor_SetPositionAndReset(party->currentOwner, 168, 80);

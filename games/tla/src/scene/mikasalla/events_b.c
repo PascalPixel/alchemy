@@ -57,11 +57,12 @@ s32 Func_0200030c(void) {
 
   object = Actor_GetById(16);
   flags = object->priorityFlags & ~1;
-  party = &gMainRoutineWork;
-  /* FAKEMATCH: the empty asm holds the store below gMainRoutineWork's address load,
-   * which sched2 otherwise puts above the ands (differ 2 with the plain
-   * statement). */
-  asm("");
+  // Once-only: the once-only block holds the store below gMainRoutineWork's
+  // address load, which sched2 otherwise puts above the ands (differ 2 with the
+  // plain statement).
+  do {
+    party = &gMainRoutineWork;
+  } while (0);
   object->priorityFlags = flags;
   Actor_GetById(party->currentOwner)->priorityFlags |= 0x20;
   if (party->scene == (s32)&SceneId_Ov65dRoom2) {

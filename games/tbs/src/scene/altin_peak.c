@@ -570,7 +570,10 @@ static void AltinPeak_FreezeFirstWaterBeastRoomSecondPuddle(void) {
   GameFlag_Set(FLAG_ALTIN_PEAK_SECOND_PUDDLE_FROZEN);
 }
 
-/// Frost on AltinPeakSpritz's first puddle.
+/// Frost on AltinPeakSpritz's first puddle. Its cell takes the ground of the
+/// map's cell (0, 0), a jump spot standing above the floor, so the pillar of
+/// ice can be hopped across; the puddle is drawn 32 pixels up, as the
+/// pillar's top.
 static void AltinPeak_FreezeSpritzRoomPuddle(void) {
   struct Actor *puddle;
 
@@ -612,7 +615,8 @@ static void AltinPeak_FreezePoolRoomPuddle(void) {
   GameFlag_Set(FLAG_ALTIN_PEAK_PUDDLE_FROZEN);
 }
 
-/// Frost on AltinPeakSpritz's second puddle.
+/// Frost on AltinPeakSpritz's second puddle. Its cell takes the map's cell
+/// (1, 0), a jump spot too, standing higher than the first puddle's.
 static void AltinPeak_FreezeSpritzRoomSecondPuddle(void) {
   struct Actor *puddle;
 

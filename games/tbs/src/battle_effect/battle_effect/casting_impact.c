@@ -127,6 +127,16 @@ enum CastingImpact {
   ((struct Particle *)(Ram_MapGridCellBuffer + 16384))
 #define CASTING_IMPACT_IMPACT_PARTICLE_COUNT 64
 
+// Asura's sheet in work->imageStorage, a byte a pixel: the beast's two
+// pictures, then its pieces. Both pictures are drawn 80 by 104, but the second
+// starts 96 rows after the first, so the first's last 8 rows are the second's
+// first 8; the pieces follow a whole 80 by 104 after the second.
+#define ASURA_BEAST_WIDTH 80
+#define ASURA_BEAST_HEIGHT 104
+#define ASURA_SHEET_SECOND_BEAST (ASURA_BEAST_WIDTH * 96)
+#define ASURA_SHEET_PIECES                                                     \
+  (ASURA_SHEET_SECOND_BEAST + ASURA_BEAST_WIDTH * ASURA_BEAST_HEIGHT)
+
 /// gCastingImpact_ImageX has seven pictures for each side.
 #define CASTING_IMPACT_IMAGE_X(side, image)                                    \
   gCastingImpact_ImageX[(side)][(image)]
@@ -1103,25 +1113,32 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       }
       if (frame <= 3) {
         if (work->args->side == EFFECT_SIDE_PARTY) {
-          blitters[0](canvas, work->imageStorage, 0, 24, 80, 104);
+          blitters[0](canvas, work->imageStorage, 0, 24, ASURA_BEAST_WIDTH,
+                      ASURA_BEAST_HEIGHT);
         } else {
-          blitters[0](canvas, work->imageStorage, 48, 24, 80, 104);
+          blitters[0](canvas, work->imageStorage, 48, 24, ASURA_BEAST_WIDTH,
+                      ASURA_BEAST_HEIGHT);
         }
       } else {
         if (frame <= 7) {
           if (work->args->side == EFFECT_SIDE_PARTY) {
-            blitters[0](canvas, work->imageStorage, 0, 24, 80, 104);
+            blitters[0](canvas, work->imageStorage, 0, 24, ASURA_BEAST_WIDTH,
+                        ASURA_BEAST_HEIGHT);
           } else {
-            blitters[0](canvas, work->imageStorage, 48, 24, 80, 104);
+            blitters[0](canvas, work->imageStorage, 48, 24, ASURA_BEAST_WIDTH,
+                        ASURA_BEAST_HEIGHT);
           }
         }
         if (work->args->side == EFFECT_SIDE_PARTY) {
-          blitters[0](canvas, work->imageStorage + 7680, 16, 16, 80, 104);
+          blitters[0](canvas, work->imageStorage + ASURA_SHEET_SECOND_BEAST, 16,
+                      16, ASURA_BEAST_WIDTH, ASURA_BEAST_HEIGHT);
         } else {
-          blitters[0](canvas, work->imageStorage + 7680, 32, 16, 80, 104);
+          blitters[0](canvas, work->imageStorage + ASURA_SHEET_SECOND_BEAST, 32,
+                      16, ASURA_BEAST_WIDTH, ASURA_BEAST_HEIGHT);
         }
         if (frame == 6 || frame == 7) {
-          blitters[0](canvas, work->imageStorage + 16000, 0, 16, 128, 91);
+          blitters[0](canvas, work->imageStorage + ASURA_SHEET_PIECES, 0, 16,
+                      128, 91);
         }
         if (frame == 8 || frame == 9) {
           blitters[0](canvas, pictures, 0, 16, 128, 91);

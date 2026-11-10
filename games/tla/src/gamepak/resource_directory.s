@@ -187,9 +187,9 @@ Resource_DirectoryTable:
 	resource GoldenScalesTiles, Summon_GoldenScalesTiles
 	resource GlowOrbSetSheet, BattleEffect_GlowOrbSetSheet
 	resource Data0B0, Resource_Data0B0
-	resource , Resource_Data0B1
+	resource Data0B1, Resource_Data0B1
 	resource , Resource_Data0B2
-	resource , Resource_Data0B3
+	resource Data0B3, Resource_Data0B3
 	resource Data0B4, Resource_Data0B4
 	resource Data0B5, Resource_Data0B5
 	resource CharmRingSheet, BattleEffect_CharmRingSheet
@@ -209,8 +209,8 @@ Resource_DirectoryTable:
 	resource Data0C4, Resource_Data0C4
 	resource PetalSheet, BattleEffect_PetalSheet
 	resource CrescentRowSheet, BattleEffect_CrescentRowSheet
-	resource , BattleEffect_RuneCircleSheet
-	resource , Resource_Data0C8
+	resource RuneCircleSheet, BattleEffect_RuneCircleSheet
+	resource Data0C8, Resource_Data0C8
 	resource Data0C9, Resource_Data0C9
 	resource Data0CA, Resource_Data0CA
 	resource Data0CB, Resource_Data0CB

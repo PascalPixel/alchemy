@@ -1796,12 +1796,7 @@ main	rom_main_09	games/tla/src/battle_effect/f15b434	.text
 main	rom_main_09	games/tla/src/battle_effect/f15b510	.text
 main	rom_main_09	games/tla/src/battle_effect/f15b634	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f15b68c	.text	en de es fr it ja
-main	rom_main_09	recon/tla/it/rom	.rom.0015b764	it
-main	rom_main_09	recon/tla/fr/rom	.rom.0015b764	fr
-main	rom_main_09	recon/tla/es/rom	.rom.0015b764	es
-main	rom_main_09	recon/tla/de/rom	.rom.0015b764	de
-main	rom_main_09	recon/tla/raw/0815b764	.text	en
-main	rom_main_09	recon/tla/ja/rom	.rom.0015b764	ja
+main	rom_main_09	games/tla/src/battle_effect/f15b764	.text
 main	rom_main_09	games/tla/src/battle_effect/fxmodee	.text
 main	rom_main_09	games/tla/src/battle_effect/f15c970	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f15cbd0	.text

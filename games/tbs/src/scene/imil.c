@@ -883,7 +883,7 @@ s32 Imil_Initialize(void) {
         wait(1);
         if (GameFlag_Get(FLAG_IMIL_MIA_SENT_FOR)) {
           Actor_SetPosition(ACTOR_OLD_WOMAN, PIXELS(149), PIXELS(116));
-          Actor_Get(ACTOR_OLD_WOMAN)->facing = 0;
+          Actor_Get(ACTOR_OLD_WOMAN)->facing = FACING_EAST;
           Actor_Get(ACTOR_OLD_MAN)->userValue = 0;
           Actor_SetScript(ACTOR_OLD_MAN, gImil_ShiverScript);
         } else {

@@ -852,7 +852,7 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
     Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
-    Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 1);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
     leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     leader->update = 0;
@@ -1089,7 +1089,7 @@ static s32 VenusLighthouse_JumpAcrossGap(void) {
       Actor_SetSpriteFlags(leader, 0);
       Actor_MoveToAndWait(ACTOR_PARTY_LEADER, landing.x >> 16, landing.z >> 16);
       Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
-      Actor_SetSpriteFlags(leader, 1);
+      Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
       *motionFlags = savedMotionFlags;
       Event_End();
       return 1;

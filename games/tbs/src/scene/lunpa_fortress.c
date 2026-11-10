@@ -1918,7 +1918,7 @@ static void LunpaFortress_FindHammet(void) {
                     60);
     Actor_FaceDirection(ACTOR_TOADONPA_HAMMET, FACING_WEST, 0);
     Actor_Jump(ACTOR_TOADONPA_HAMMET, 4, 0);
-    Actor_SetSpriteFlags(Actor_Get(ACTOR_TOADONPA_HAMMET), 1);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_TOADONPA_HAMMET), SPRITE_FLAG_SHADOW);
     Event_Wait(30);
     Actor_SetSpeed(ACTOR_IVAN, PIXELS(7) / 10, PIXELS(7) / 20);
     Actor_WalkTo(ACTOR_IVAN, 464, 192);
@@ -1979,7 +1979,7 @@ static void LunpaFortress_FindHammet(void) {
     Event_Wait(140);
     Actor_FaceDirection(ACTOR_TOADONPA_HAMMET, FACING_WEST, 0);
     Actor_Jump(ACTOR_TOADONPA_HAMMET, 4, 0);
-    Actor_SetSpriteFlags(Actor_Get(ACTOR_TOADONPA_HAMMET), 1);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_TOADONPA_HAMMET), SPRITE_FLAG_SHADOW);
     Event_SetMessageId(messageBase + 1);
     // "...Who are you?"
     Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
@@ -2212,7 +2212,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   LunpaFortress_OpenToadonpaDoor(4);
   Event_Start();
   leader = Actor_Get(ACTOR_TOADONPA_HAMMET);
-  Actor_SetSpriteFlags(leader, 1);
+  Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(456), PIXELS(184));
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_SetPosition(ACTOR_GARET, PIXELS(440), PIXELS(192));

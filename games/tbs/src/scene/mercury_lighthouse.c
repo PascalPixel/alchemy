@@ -2903,7 +2903,7 @@ static void MercuryLighthouse_RideLift(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Actor_SetDestination(ACTOR_PARTY_LEADER, 736, 584);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 1);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
   Actor_Get(ACTOR_PARTY_LEADER)->bounce = Q16_ONE / 4;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
   Event_Wait(6);

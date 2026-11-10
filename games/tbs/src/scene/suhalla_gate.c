@@ -491,7 +491,8 @@ static void SuhallaGate_SoldierVanishes(void) {
   // Six slow blinks are followed by twelve fast ones.
   do {
     Actor_SetSpriteColorById(ACTOR_VANISHING_SOLDIER, SPRITE_COLOR_NORMAL);
-    Actor_SetSpriteFlags(Actor_Get(ACTOR_VANISHING_SOLDIER), 1);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_VANISHING_SOLDIER),
+                         SPRITE_FLAG_SHADOW);
     wait(4);
 
     Actor_SetSpriteColorById(ACTOR_VANISHING_SOLDIER, SPRITE_COLOR_HIDDEN);
@@ -503,7 +504,8 @@ static void SuhallaGate_SoldierVanishes(void) {
   beat = 0;
   do {
     Actor_SetSpriteColorById(ACTOR_VANISHING_SOLDIER, SPRITE_COLOR_NORMAL);
-    Actor_SetSpriteFlags(Actor_Get(ACTOR_VANISHING_SOLDIER), 1);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_VANISHING_SOLDIER),
+                         SPRITE_FLAG_SHADOW);
     wait(2);
 
     Actor_SetSpriteColorById(ACTOR_VANISHING_SOLDIER, SPRITE_COLOR_HIDDEN);

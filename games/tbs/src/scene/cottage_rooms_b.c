@@ -716,7 +716,7 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 555, 680);
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH_NORTHEAST, 0);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 1);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
   Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 543, 674);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
@@ -1109,7 +1109,7 @@ static void CottageRoomsB_VisitSickDora(void) {
   // Make room for Dora to walk and demonstrate that she feels well.
   // Isaac steps back as Dora gets up, turns about and jumps three times.
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->facing = 0;
+  leader->facing = FACING_EAST;
   wait(1);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetDestination(ACTOR_PARTY_LEADER, 558, 388);

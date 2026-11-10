@@ -783,7 +783,7 @@ static void TolbiShipMast_RunMonsterLanding(void) {
   actor->x.fixed = PIXELS(172);
   actor->y.fixed = PIXELS(160);
   actor->z.fixed = PIXELS(340);
-  actor->facing = 0;
+  actor->facing = FACING_EAST;
   actor->bounce = 2 * Q16_ONE / 5;
   actor->gravity = PIXELS(3);
   Event_Wait(20);

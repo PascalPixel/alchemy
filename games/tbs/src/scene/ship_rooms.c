@@ -606,7 +606,7 @@ static void ShipRooms_PaceCaptainsQuarters(struct Actor *updated) {
     actor->riseCounter = 0;
     break;
   case 2:
-    actor->facing = 0;
+    actor->facing = FACING_EAST;
     actor->userValue++;
     actor->riseCounter = 0;
     break;
@@ -683,7 +683,7 @@ static void ShipRooms_WatchPacer(struct Actor *actor) {
     watcher->riseCounter = 0;
     pacer->riseEnabled = 0;
   } else if (pacer->riseEnabled == 3) {
-    watcher->facing = 0;
+    watcher->facing = FACING_EAST;
     pacer->riseEnabled = 0;
   }
 }
@@ -3274,7 +3274,7 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
   case SHIP_FACE_PARTY_EAST_AND_WEST:
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
-    Actor_FaceDirection(ACTOR_IVAN, 0, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_EAST, 0);
     Actor_FaceDirection(ACTOR_MIA, FACING_WEST, opt);
     break;
   case SHIP_FACE_PARTY:
@@ -3934,7 +3934,7 @@ static void ShipRooms_NoticeShipRocking(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 20);
   Actor_SetSpriteColorById(ACTOR_ROWING_KAJA, SPRITE_COLOR_NORMAL);
   actor = Actor_Get(ACTOR_ROWING_KAJA);
-  Actor_SetSpriteFlags(actor, 1);
+  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   Actor_SetSpeed(ACTOR_ROWING_KAJA, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 430, 134);
   ShipRooms_Turn(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHEAST);
@@ -4071,7 +4071,7 @@ static void ShipRooms_ReachIsland(void) {
   ShipRooms_RunEventCommand(SHIP_OPEN_SCREEN, 1, 20);
   Actor_SetSpriteColorById(ACTOR_ROWING_KAJA, SPRITE_COLOR_NORMAL);
   actor = Actor_Get(ACTOR_ROWING_KAJA);
-  Actor_SetSpriteFlags(actor, 1);
+  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   Actor_SetSpeed(ACTOR_ROWING_KAJA, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 408, 132);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 408, 142);

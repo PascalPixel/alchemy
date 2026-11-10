@@ -1052,7 +1052,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetSpritePriority(ACTOR_GARET, 2);
   Actor_Get(ACTOR_GARET)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   actor = Actor_Get(ACTOR_GARET);
-  Actor_SetSpriteFlags(actor, 1);
+  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   Actor_Jump(ACTOR_GARET, 6, 0);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   Kolima_FaceActorAndWait(ACTOR_GARET, FACING_SOUTH, 60);
@@ -1082,7 +1082,7 @@ static void Kolima_WitnessForestCurse(void) {
     Actor_SetSpritePriority(ACTOR_MIA, 2);
     Actor_Get(ACTOR_MIA)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
     actor = Actor_Get(ACTOR_MIA);
-    Actor_SetSpriteFlags(actor, 1);
+    Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
     Actor_Jump(ACTOR_MIA, 4, 0);
     Actor_SetDestinationOffset(ACTOR_MIA, -2, 0);
     Actor_SetAnimation(ACTOR_MIA, ANIM_STAND);
@@ -1108,7 +1108,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetSpritePriority(ACTOR_IVAN, 2);
   Actor_Get(ACTOR_IVAN)->priorityFlags |= stagingValue;
   actor = Actor_Get(ACTOR_IVAN);
-  Actor_SetSpriteFlags(actor, 1);
+  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   Actor_Jump(ACTOR_IVAN, 4, 0);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_STAND);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
@@ -1117,7 +1117,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= stagingValue;
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(actor, 1);
+  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Kolima_FaceActorAndWait(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 60);

@@ -1461,7 +1461,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_RunRepeatedMotion(ACTOR_GARET, 3);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 3);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), 1);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), SPRITE_FLAG_SHADOW);
   Actor_Jump(ACTOR_GARET, 6, 0);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(4), PIXELS(2));
@@ -2900,7 +2900,7 @@ static void Vale_RoofMended(void) {
   Actor_RunRepeatedMotion(ACTOR_GARET, 3);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 3);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), 1);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), SPRITE_FLAG_SHADOW);
   Actor_Jump(ACTOR_GARET, 6, 0);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(4), PIXELS(2));

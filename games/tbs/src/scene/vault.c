@@ -798,7 +798,7 @@ static void Vault_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
     if ((actor->velocityY >> 16) == 0)
       break;
   }
-  Actor_SetSpriteFlags(actor, 1);
+  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   actor->gravity = PIXELS(1);
 }
 

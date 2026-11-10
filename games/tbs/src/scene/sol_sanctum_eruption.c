@@ -1130,7 +1130,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_SetSpeed(ACTOR_WISE_ONE, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetDestination(ACTOR_WISE_ONE, 171, 152);
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_EAST, 0);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_WISE_ONE), 1);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_WISE_ONE), SPRITE_FLAG_SHADOW);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkTo(ACTOR_GARET, 217, 182);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST_SOUTHWEST, 0);

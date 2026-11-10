@@ -1391,7 +1391,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 295, 215);
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
   actor = Actor_Get(ACTOR_FIRST_WATER_BEAST);
-  Actor_SetSpriteFlags(actor, 1);
+  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Event_Wait(40);
   Sound_Play(SE_HIGH_JUMP);
@@ -1469,13 +1469,13 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 86, 214);
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
   movingActor = Actor_Get(ACTOR_FIRST_WATER_BEAST);
-  Actor_SetSpriteFlags(movingActor, 1);
+  Actor_SetSpriteFlags(movingActor, SPRITE_FLAG_SHADOW);
   Event_Wait(10);
   AltinPeak_PlayLandingShake(PIXELS(2), 8);
   Event_Wait(40);
   Actor_Get(ACTOR_FIRST_WATER_BEAST)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH_SOUTHEAST, 20);
-  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, 0, 40);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_EAST, 40);
   ((struct FieldEffect *)actor)->countdown = 0;
   actor->timer = 0;
   actor->userValue = 0;
@@ -1488,7 +1488,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   Event_Wait(16);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Event_Wait(40);
-  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, 0, 10);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_EAST, 10);
   Sound_Play(SE_BEAST_CRY);
   Actor_RunRepeatedMotion(ACTOR_FIRST_WATER_BEAST, 2);
   Event_Wait(80);

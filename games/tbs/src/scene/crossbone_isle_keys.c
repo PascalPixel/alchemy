@@ -364,7 +364,7 @@ static void CrossboneIsleKeys_BaneSecondEscape(void) {
       Actor_SetPosition(ACTOR_BANE, PIXELS(888), PIXELS(664));
       spinningDjinni = Actor_Get(ACTOR_BANE);
       spinningDjinni->sprite->rotation = TRIG_TURN * 31 / 32;
-      spinningDjinni->facing = 0;
+      spinningDjinni->facing = FACING_EAST;
       Actor_SetAnimationSpeed(spinningDjinni, 0);
       Actor_StartScript(spinningDjinni, gCrossboneIsleKeys_BaneSquashScript);
       Event_End();

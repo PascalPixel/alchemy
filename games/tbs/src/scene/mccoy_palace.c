@@ -1536,9 +1536,9 @@ static void McCoyPalace_PresentRewardChests(void) {
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveWithinMapBounds(PIXELS(628), -1, PIXELS(748), 0);
   McCoyPalace_OpenRewardChestRow();
-  Actor_Get(ACTOR_PARTY_LEADER)->facing = 0;
+  Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_EAST;
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(577), PIXELS(760));
-  Actor_Get(ACTOR_CAPTAIN)->facing = 0;
+  Actor_Get(ACTOR_CAPTAIN)->facing = FACING_EAST;
   Actor_SetPosition(ACTOR_CAPTAIN, PIXELS(592), PIXELS(760));
   Actor_Get(ACTOR_SOLDIER_SHOWING_THE_REWARD)->facing = FACING_WEST_NORTHWEST;
   Actor_SetPosition(ACTOR_SOLDIER_SHOWING_THE_REWARD, PIXELS(662), PIXELS(764));

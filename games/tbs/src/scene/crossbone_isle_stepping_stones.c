@@ -607,7 +607,7 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
       Actor_MoveToAndWait(ACTOR_PARTY_LEADER, destination.x >> 16,
                           destination.z >> 16);
       Actor_SelectAnimation(leader, 6);
-      Actor_SetSpriteFlags(leader, 1);
+      Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
       *flags = savedMotionFlags;
       Event_End();
       return 1;

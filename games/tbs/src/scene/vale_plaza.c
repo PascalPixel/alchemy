@@ -1382,7 +1382,7 @@ static void ValePlaza_FightTravelers(void) {
   // eavesdropping; whatever he answers, Garet thinks they look scary.
   Actor_SetSpriteColorById(ACTOR_STORM_GARET, SPRITE_COLOR_NORMAL);
   actor = Actor_Get(ACTOR_STORM_GARET);
-  Actor_SetSpriteFlags(actor, 1);
+  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   Actor_SetPosition(ACTOR_STORM_GARET, 0, PIXELS(331));
   Actor_SetSpeed(ACTOR_STORM_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_WalkToAndWait(ACTOR_STORM_GARET, 37, 339);

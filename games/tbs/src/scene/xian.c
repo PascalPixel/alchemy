@@ -663,7 +663,7 @@ static void Xian_JumpOverSpilledWater(void) {
       Actor_MoveToAndWait(ACTOR_PARTY_LEADER, landingPosition.x >> 16,
                           landingPosition.z >> 16);
       Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
-      Actor_SetSpriteFlags(leader, 1);
+      Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
       leader->motionFlags = savedMotionFlags;
       Event_End();
     }

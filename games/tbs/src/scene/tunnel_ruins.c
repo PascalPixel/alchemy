@@ -290,7 +290,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
                         TunnelRuins_GetLandingPixel(target->x),
                         TunnelRuins_GetLandingPixel(target->z));
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
-    Actor_SetSpriteFlags(actor, 1);
+    Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
     wait(6);
 
     actor->motionFlags = savedMotionFlags;
@@ -503,7 +503,7 @@ static void TunnelRuins_HopDownStep(void) {
                         EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM, &options);
     }
   }
-  Actor_SetSpriteFlags(leader, 1);
+  Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Event_End();
 }

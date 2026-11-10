@@ -1321,7 +1321,7 @@ static void Kalay_PrepareTunnelEntrance(void) {
   }
   if (GameFlag_Get(FLAG_KALAY_TUNNEL_OPEN) != 0) {
     guard = Actor_Get(ACTOR_TUNNEL_GUARD);
-    guard->facing = 0;
+    guard->facing = FACING_EAST;
   }
   if (gMainRoutineWork.entrance == KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH) {
     Kalay_HammetReturnsToPalace();
@@ -1785,7 +1785,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Actor_SetSpeed(ACTOR_PALACE_GUARD, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_SECOND_PALACE_GUARD, PIXELS(4) / 5, PIXELS(2) / 5);
   actor = Actor_Get(ACTOR_PALACE_GUARD);
-  actor->facing = 0;
+  actor->facing = FACING_EAST;
   actor = Actor_Get(ACTOR_SECOND_PALACE_GUARD);
   actor->facing = FACING_WEST;
   Actor_Get(ACTOR_PALACE_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;

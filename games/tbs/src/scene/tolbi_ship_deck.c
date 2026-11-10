@@ -352,7 +352,7 @@ enum TolbiShipDeckCellBehavior {
 /// call.
 static s32 TolbiShipDeck_ShowSprite(struct Actor *interpreter) {
   struct Actor *a = interpreter;
-  Actor_SetSpriteFlags(a, 1);
+  Actor_SetSpriteFlags(a, SPRITE_FLAG_SHADOW);
   return 0;
 }
 
@@ -1741,12 +1741,18 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
       (struct ActorPlacement *)gTolbiShipDeck_SecondAttackActorPlacements);
   wait(1);
   Actor_SetAnimation(ACTOR_SEA_SPLASH, 0);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_SEA_FIRST_HOVERING_MONSTER), 1);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_SEA_FIRST_HOVERING_MONSTER + 1), 1);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_SEA_FIRST_HOVERING_MONSTER + 2), 1);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_SEA_FIRST_HOVERING_MONSTER + 3), 1);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_SEA_SECOND_ATTACK_MONSTER), 1);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_SEA_SECOND_ATTACK_MONSTER + 1), 1);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_SEA_FIRST_HOVERING_MONSTER),
+                       SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_SEA_FIRST_HOVERING_MONSTER + 1),
+                       SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_SEA_FIRST_HOVERING_MONSTER + 2),
+                       SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_SEA_FIRST_HOVERING_MONSTER + 3),
+                       SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_SEA_SECOND_ATTACK_MONSTER),
+                       SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_SEA_SECOND_ATTACK_MONSTER + 1),
+                       SPRITE_FLAG_SHADOW);
   Actor_SetPosition(ACTOR_SEA_SEAN, PIXELS(256), PIXELS(640));
   Actor_SetScript(ACTOR_SEA_SEAN, gTolbiShipDeck_LookAroundActions);
   Actor_SetPosition(ACTOR_SEA_OURANOS, PIXELS(268), PIXELS(692));
@@ -1800,7 +1806,8 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   Actor_SetSpeed(ACTOR_SEA_SECOND_ATTACK_MONSTER + 2, PIXELS(4), PIXELS(2));
   Actor_Get(ACTOR_SEA_SECOND_ATTACK_MONSTER + 2)->velocityY = PIXELS(8);
   Actor_MoveToAndWait(ACTOR_SEA_SECOND_ATTACK_MONSTER + 2, 186, 612);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_SEA_SECOND_ATTACK_MONSTER + 2), 1);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_SEA_SECOND_ATTACK_MONSTER + 2),
+                       SPRITE_FLAG_SHADOW);
   Event_Wait(10);
   Actor_SetSpeed(ACTOR_SEA_SECOND_ATTACK_MONSTER + 2, PIXELS(2), PIXELS(1));
   Actor_MoveToAndWait(ACTOR_SEA_SECOND_ATTACK_MONSTER + 2, 216, 600);
@@ -1922,7 +1929,7 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   Sound_Play(SE_BEAST_CRY);
   Actor_SetPosition(ACTOR_SEA_FALLING_MONSTER_SHADOW, 0, 0);
   record = Actor_Get(ACTOR_SEA_THIRD_ATTACK_MONSTER + 2);
-  Actor_SetSpriteFlags(record, 1);
+  Actor_SetSpriteFlags(record, SPRITE_FLAG_SHADOW);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
   monster = Actor_Get(ACTOR_PARTY_LEADER);
   monster->motionFlags = 0;
@@ -2380,7 +2387,7 @@ static void TolbiShipDeck_RowersDisembark(void) {
   Actor_SetPosition(ACTOR_PARTY_LEADER, 216 << 16, 146 << 18);
   wait(1);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 1);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 216, 150 << 2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 190, 153 << 2);

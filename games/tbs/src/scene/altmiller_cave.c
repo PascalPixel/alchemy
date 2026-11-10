@@ -621,7 +621,7 @@ static void AltmillerCave_HopSelectedActor(void) {
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, components[0].part.pixel,
                         components[2].part.pixel);
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
-    Actor_SetSpriteFlags(actor, 1);
+    Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
     actor->motionFlags = motionFlags;
     Event_End();
   }

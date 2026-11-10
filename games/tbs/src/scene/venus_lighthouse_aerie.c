@@ -360,7 +360,7 @@ static void VenusLighthouseAerie_JumpToNextPlatform(void) {
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, destination.coordinates[0] >> 16,
                         destination.coordinates[2] >> 16);
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
-    Actor_SetSpriteFlags(actor, 1);
+    Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
     actor->motionFlags = flags;
   }
 }
@@ -555,7 +555,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 531, 161);
   Actor_SetDestination(ACTOR_RISING_PLATFORM, 520, 191);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 521, 141);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_RISING_PLATFORM), 1);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_RISING_PLATFORM), SPRITE_FLAG_SHADOW);
   Actor_SetDestination(ACTOR_RISING_PLATFORM, 515, 171);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 516, 121);
   Sound_Play(SE_STOP_ACTION_SE);
@@ -570,7 +570,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Sound_Play(SE_JUMP);
   leader->velocityY = PIXELS(4);
   Sound_Play(SE_JUMP);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 1);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 504, 148);
   Event_Wait(10);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
@@ -812,7 +812,7 @@ static void VenusLighthouseAerie_ShowPartyMember(s32 actorId, s32 shown) {
   if (shown != 0) {
     Actor_SetSpriteColorById(actorId, SPRITE_COLOR_NORMAL);
     member = Actor_Get(actorId);
-    Actor_SetSpriteFlags(member, 1);
+    Actor_SetSpriteFlags(member, SPRITE_FLAG_SHADOW);
     Actor_SetSpeed(actorId, PIXELS(4) / 5, PIXELS(2) / 5);
   } else {
     Actor_SetSpriteColorById(actorId, SPRITE_COLOR_HIDDEN);
@@ -1485,7 +1485,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 40);
   Actor_SetAnimation(ACTOR_SATUROS, ANIM_STAND);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_SATUROS), 1);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_SATUROS), SPRITE_FLAG_SHADOW);
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_SATUROS, PIXELS(1) / 5, PIXELS(1) / 10);
   Actor_WalkToAndWait(ACTOR_SATUROS, 300, 206);
@@ -1497,7 +1497,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_SetAnimation(ACTOR_SATUROS, SATUROS_ANIMATION_BREATHE);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_MENARDI, ANIM_STAND);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_MENARDI), 1);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_MENARDI), SPRITE_FLAG_SHADOW);
   Actor_Jump(ACTOR_MENARDI, 4, 40);
   Actor_SetSpeed(ACTOR_MENARDI, PIXELS(1) / 5, PIXELS(1) / 10);
   Actor_Get(ACTOR_MENARDI)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -2013,8 +2013,8 @@ static void VenusLighthouseAerie_UpdateBeamActors(void) {
   pairParked = Actor_IsParked(saturos);
   pairParked = Actor_IsParked(menardi);
   if (pairParked != 0) {
-    saturos->facing = 0;
-    menardi->facing = 0;
+    saturos->facing = FACING_EAST;
+    menardi->facing = FACING_EAST;
     if (GameFlag_Get(FLAG_VENUS_AERIE_FUSION_GROWING) != 0) {
       Actor_SetSpriteColorById(ACTOR_SATUROS, SPRITE_COLOR_WHITE);
       Actor_SetSpriteColorById(ACTOR_MENARDI, SPRITE_COLOR_WHITE);
@@ -2758,7 +2758,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(40);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 1);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_Jump(ACTOR_PARTY_LEADER, 6, 60);
   Actor_Get(ACTOR_PARTY_LEADER)->timer = 10;
@@ -2770,15 +2770,15 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   VenusLighthouseAerie_ShowMessage(ACTOR_IVAN);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   VenusLighthouseAerie_ShowMessage(ACTOR_MIA);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), 1);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), SPRITE_FLAG_SHADOW);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   Actor_Jump(ACTOR_GARET, 6, 60);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   Event_Wait(20);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_IVAN), 1);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_IVAN), SPRITE_FLAG_SHADOW);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_STAND);
   Actor_Jump(ACTOR_IVAN, 6, 40);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_MIA), 1);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_MIA), SPRITE_FLAG_SHADOW);
   Actor_SetAnimation(ACTOR_MIA, ANIM_STAND);
   Actor_Jump(ACTOR_MIA, 6, 60);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 60);

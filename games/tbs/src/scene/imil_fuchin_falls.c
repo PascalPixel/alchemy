@@ -1184,6 +1184,9 @@ static void FuchinFallsCave_RebuildEntranceLogs(void) {
 /// Puts the logs of Fuchin Falls Cave's second room where their flags say. The
 /// flags name cells in SceneId_FuchinFallsCaveZephyr, and the cells of the
 /// logs' tracks are rewritten to match.
+/// As in the third room, a stop without its log takes three walls in a row:
+/// from (20, 19) for a log lying north to south, from (14, 18) for one lying
+/// west to east.
 static void FuchinFallsCave_RebuildZephyrRoomLogs(void) {
   {
     s32 column = 12;
@@ -1270,6 +1273,10 @@ static void FuchinFallsCave_RebuildZephyrRoomLogs(void) {
 /// Puts the four logs of Fuchin Falls Cave's third room where their flags say.
 /// The flags name cells in SceneId_FuchinFallsCaveDragonsEye, and the cells of
 /// the logs' tracks are rewritten to match.
+/// The rewriting uses two kinds of cell kept in spare corners of the map: where
+/// a log lies, its three cells take step triggers (rows 41 to 44), which roll
+/// it when stepped on; a stop it is not at takes three walls in a row, from
+/// (14, 29) for a log lying west to east.
 static void FuchinFallsCave_RebuildDragonsEyeRoomLogs(void) {
   {
     MapGrid_CopyCellAttributes(12, 3, 9, 16, 12, 21);

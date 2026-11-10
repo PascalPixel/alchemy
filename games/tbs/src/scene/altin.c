@@ -837,6 +837,10 @@ static void Altin_ApplyWaterLevel(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   // Select the water-level layout area and remove villagers whose areas are
   // flooded.
+  // Altin at each level its water has dropped to is a whole 32-by-32 picture
+  // kept beside the flooded one. The picture for the level reached is copied
+  // over the town with its ground, and the townspeople that level has no
+  // place for are released.
   if (GameFlag_Get(FLAG_ALTIN_WATER_DRAINED) != 0) {
     MapGrid_CopyCellsTo(64, 32, 0, 32, 32, 32);
     MapGrid_CopyCellAttributes(64, 32, 32, 32, 0, 0);

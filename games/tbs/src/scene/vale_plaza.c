@@ -990,6 +990,10 @@ s32 ValePlaza_Initialize(void) {
   actor->scaleY = verticalScale;
   actor = Actor_Get(ACTOR_THIRD_IVY);
   actor->scaleY = verticalScale;
+  // Later in the story two things in the plaza are redrawn: the thatched roof
+  // north of it shows a dark crack once Kalay is reached, or a blue-grey patch
+  // once the party has left Vale, and the stretch of fence between the trees
+  // south of it is gone.
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     MapGrid_CopyCellsTo(97, 2, 80, 5, 2, 2);
     MapGrid_CopyCellsTo(42, 53, 42, 54, 3, 1);

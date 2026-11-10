@@ -12,6 +12,18 @@
 // destination's final add of 0x1b5a, then the source's final add of cells.
 // With the row from work->sheet and 0x145a added last: 18. The offset named
 // alone as i * 45 * 64: 117 (the i loop then reduces a giv of 2880).
+// The sparks' row, by hand the same day, still 2 (about 36 attempts). Local
+// alloc puts n in r4, the x table in sl and the y table in r8, so ldr r4,
+// [sp, #8] is caller-save's restore, placed before the first insn naming r4:
+// the listing needs one between the add of top and the table's set. The read
+// as *(n + table), n[table] or an integer sum, index first or last: 262 (cse
+// then keeps the element's address in r8, not the base). y in two statements:
+// 2. An empty asm reading n between them, "r", "l", "g" or "rm": 520 (one
+// more ref of n and global.c moves i from r9 to sl through the routine). The
+// asm reading a copy of n pinned to r4: 545; the read through that copy too:
+// 159. A once-only block between the halves or round either: 8 (a scheduling
+// barrier, both loads fall below the asrs and adds, the table's still first);
+// a plain block or if (1) round the second half: 2.
 // Last-four round (9 November), still 4, stopped early. The sparks' y in the
 // sched2 trace: after top's reload the table load (15505) and n's restore
 // (13695) are both priority 104, class 3, 4 dependents, so luid decides; the

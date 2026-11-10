@@ -2450,6 +2450,9 @@ s32 MercuryLighthouse_Initialize(void) {
         MapGrid_CopyCellsTo(5, 2, 5, 11, 1, 1);
         MapGrid_CopyCellsTo(9, 1, 9, 7, 1, 2);
       }
+      // The statue stands on the floor switch west of the dais, which holds
+      // the gate open: the sealed arch north of the dais is drawn as an open
+      // doorway.
       if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN)) {
         Actor_SetPosition(ACTOR_GATE_STATUE, PIXELS(88), PIXELS(216));
         Actor_Get(ACTOR_GATE_STATUE)->y.fixed += -PIXELS(2);
@@ -2468,6 +2471,8 @@ s32 MercuryLighthouse_Initialize(void) {
     case MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_EAST_NORTHEAST:
     case MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_NORTH_NORTHEAST:
       SetEffectRecordMode(Actor_Get(ACTOR_FOUNTAIN_PIPE), 1);
+      // The fountain pipe joined across the head of its pool, with a jet of
+      // water crossing it.
       if (GameFlag_Get(FLAG_FOUNTAIN_RUNNING)) {
         MercuryLighthouse_OpenFountainWithSpray(0);
         MapGrid_CopyCellAttributes(42, 41, 4, 1, 42, 39);
@@ -2541,6 +2546,8 @@ s32 MercuryLighthouse_Initialize(void) {
         MapGrid_CopyCellsTo(6, 29, 10, 23, 1, 1);
         MapGrid_CopyCellsTo(10, 28, 10, 18, 1, 2);
       }
+      // The upper floors' gate held open the same way: the sealed middle arch
+      // is drawn as an open doorway.
       if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN)) {
         Actor_SetPosition(ACTOR_FALLEN_STATUE, PIXELS(168), PIXELS(376));
         Actor_Get(ACTOR_FALLEN_STATUE)->y.fixed += -PIXELS(2);

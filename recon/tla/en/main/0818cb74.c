@@ -1,7 +1,52 @@
-// Draft, differ 12 of 1122 (tla-en, 2026-11-10), one device (dead); 12 in tla-ja
+// Draft, differ 2 of 1122 (tla-en, 2026-11-10), two devices (dead); 2 in tla-ja, de, es, fr, it
+// 2026-11-10 (agent round), 12 to 2, about 250 measures. Three of the four
+// places closed; each was read from the sched2 table first.
+// - The glint draw (12 to 8): gData_08197498, the heights, is not const (as
+//   f16fca8.c and f15537c.c already declare it). The height's ldrb is then no
+//   unchanging read, so it truly depends on the width's store to [sp] before
+//   it (a store costs 3), which lifts that store's priority above the 0x700
+//   chain's: the listing's ldrb, movs r0, str, lsls. The widths const or not:
+//   the same.
+// - The tridents (8 to 4): the listing's order (shade, pixels, reset) with
+//   the shade stored in both arms of a test on x. The listing's two signs,
+//   asrs before movs r1, #3 (equal dependents, so RTL order) and x reloaded
+//   from r8 where r0 still held it, both need a block boundary right after
+//   mov r8, r0 that is there for reload and for sched2 and gone in the
+//   output. Two alike arms that store to memory are not merged by jump1 (two
+//   alike register copies are); cross-jumping in jump2, after sched2, merges
+//   them and deletes the branch with its compare. The test x, x < 0, x == 3,
+//   scale < 0 or spinner: 4 each; i & 1 or frame == 300 (they need a reload
+//   register): 345, 126. A test with an empty arm (a dead store flow deletes)
+//   keeps the label through reload only: flow2 deletes the jump before
+//   sched2, and mov r8, r0 is then scheduled three rows late (8). Conditional
+//   copies of x through a second local are folded by cse and gcse (194).
+// - The spark loop's pool loads (4 to 2): the two loads tie on everything, so
+//   RTL order decides, and loop.c puts a hoisted table address after the
+//   for's init. The table's address as a local set before the walker puts it
+//   first; its index must then be a local byte offset, (spark - 1) * 2, or
+//   fold reassociates to (table + spark * 2) - 2 and the ldrh loses its
+//   register offset (25; nine inline spellings of the index, 25 each). The
+//   table in offset, size, x or grow: 541 to 581. The for's init reordered,
+//   the walker set before the for, an empty block before either: 4.
+// - Left, the FlashBurst base's ldr r7 one row late (2). In the listing it
+//   is before the 0xF8 call's bl, last of its arguments. Set before that call
+//   as a register (cells set after offset = 0x2400), it ties in priority with
+//   the arguments (the call's + 1 against the add's + 3, and the call's is
+//   the 0x5000 chain's 3) and has three dependents (the call, the add, the
+//   next r7) to their two, so it goes first, wherever it sits in RTL order:
+//   6 with the pool words it swaps. It goes last only when something after
+//   that call truly depends on the call: an empty once-only block after the
+//   call does it (ldr r7 is then last, as the listing), but the barrier's
+//   insn, ldr r0, is scheduled first of the third call's arguments and
+//   size = 2 can no longer rise to the top: 38. With the destination
+//   computed first, in or after the block, reload takes r0 for 0x5000 where
+//   the listing has r2: 220 to 253; size = 2 moved to every earlier line
+//   under seven such forms: 45 at best. A block with a body round the
+//   FlashBurst load 38 to 42; the assignment as a comma in the 0xF8 call's
+//   last argument 2 (cse still merges it); an empty block after every
+//   statement of the setup 38 to 52.
 // Pools read 10 November: every literal pool word this draft compiles equals
 // the ROM's (diff compares instructions only; Catastrophe hid a wrong one).
-// and tla-de too
 // 2026-11-10 (by hand), 18 to 12. The glints' blitter load takes the form the
 // same draw has in Catastrophe's sparks (081843fc.c): its colour in a block
 // local c, an empty once-only block, then the call. That settles the glints'
@@ -349,7 +394,7 @@ extern const struct PlacementSource Data_08196f18;
 extern const u16 gData_08197410[];
 extern const u16 gData_08197486[]; // the glints' cells
 extern const u8 gData_08197492[];  // widths
-extern const u8 gData_08197498[];  // heights
+extern u8 gData_08197498[];        // heights
 extern const u8 Data_08198cac[];
 extern const u8 Data_08198ec4[];
 extern const u8 gData_08199268[];
@@ -631,9 +676,14 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
             continue;
           }
           x = (spinner->variant / 8) % 3;
-          Render_ResetTransformState();
-          model->shade = -16;
+          /* FAKEMATCH(dead): a test on x with both arms alike; as one model->shade = -16, 192 of 1122 instructions differ in tla-en. */
+          if (x) {
+            model->shade = -16;
+          } else {
+            model->shade = -16;
+          }
           texture.pixels = work->sheet + (x << 12) + 0xc56;
+          Render_ResetTransformState();
           Func_08015160((centerX - 64) << 16, 0x200000, 0);
           Func_080150e4(spinner->z);
           if (i & 1) {
@@ -652,6 +702,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
     // The strike: flashes and a fountain of sparks.
     if (frame > 63) {
       struct EffectStep *drawn;
+      const u8 *cellTable;
 
       if (frame == 64) {
         for (i = 0, p = work->particles, x = centerX << 16; i != 32;
@@ -693,16 +744,23 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
         }
         drawn->variant++;
       }
-      for (i = 0, drawn = (struct EffectStep *)Data_02012964; i != 128;
-           i++, drawn++) {
+      // The cell table's address is a local set before the walker, and each
+      // spark's cell is read at its byte offset: the listing's pool order
+      // and its ldrh by register offset.
+      for (i = 0, cellTable = (const u8 *)gData_08197410,
+          drawn = (struct EffectStep *)Data_02012964;
+           i != 128; i++, drawn++) {
         s32 spark;
+        s32 at;
 
         if (drawn->variant < 0) {
           continue;
         }
         spark = (drawn->variant >> 3) + 1;
-        blit[0](canvas, sprites + gData_08197410[spark - 1],
-             HI(drawn->x) - spark / 2, HI(drawn->y) - spark, spark, spark * 2);
+        at = (spark - 1) * 2;
+        blit[0](canvas, sprites + *(const u16 *)(cellTable + at),
+                HI(drawn->x) - spark / 2, HI(drawn->y) - spark, spark,
+                spark * 2);
         drawn->variant--;
         BattleEffectKernels_IntegrateVector2(drawn, 56, 0x2000);
       }
@@ -721,7 +779,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
         {
           s32 c = Data_08199e54[Random16() & 3] | 3;
 
-          /* FAKEMATCH(dead): an empty once-only block before the blitter call; as no block, 281 of 1122 instructions differ in tla-en. */
+          /* FAKEMATCH(dead): an empty once-only block before the blitter call; as no block, 277 of 1122 instructions differ in tla-en. */
           do {
           } while (0);
           Func_08196404(188, 7, 7, c, 1);

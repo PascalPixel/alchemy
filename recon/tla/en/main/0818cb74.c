@@ -1,4 +1,18 @@
-// Draft, differ 18 of 1122 (tla-en, 2026-11-09), no device; 18 in every edition
+// Draft, differ 12 of 1122 (tla-en, 2026-11-10), one device (dead); 12 in tla-ja
+// and tla-de too
+// 2026-11-10 (by hand), 18 to 12. The glints' blitter load takes the form the
+// same draw has in Catastrophe's sparks (081843fc.c): its colour in a block
+// local c, an empty once-only block, then the call. That settles the glints'
+// y (adds r6, r6, r0 after lsrs r3) and the picture's pool load; without the
+// empty block 281, c as 3 | table or table | 3 alike. Left at the draw (2):
+// movs r0, #224 one row early and the width's str one row late. Not better
+// on top of it: the picture as table + sheet, &sheet[table], work + table +
+// 0x700 three ways, a block-local picture or table read, or k as i & 3 (12);
+// integer sums (14), *(table + k) (16), a second empty block before the
+// draw (16), the draw in a once-only block (18), a width local (24), the
+// draw routine in a local (98). Before it, at 18: y as cos + row - half 140,
+// row - half + cos 24, row + (cos - half) 49, i * 32 or cos * 16 >> 16 18,
+// cos >> 12 27; y built by -= 18, by += then -= 61 to 140; x built by -= 18.
 // 2026-11-09 (round 8), unchanged at 18, about 12 attempts. cells set after
 // offset = 0x2400 (or after the FlashBurst load) keeps offset's first value:
 // the base is then a register live across the 0xF8 call (ldr r7 before the
@@ -288,11 +302,6 @@ void Transform_Pop(void);
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1])
-
-#define LOAD_GLINT_BLITTER()                                                    \
-  do {                                                                         \
-    Func_08196404(188, 7, 7, 3 | Data_08199e54[Random16() & 3], 1);             \
-  } while (0)
 
 void Func_0815e22c(s32 *center); // the targets' centre on screen
 void Func_0815f0a0(s32 palette);
@@ -690,7 +699,14 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
         s32 y = (i << 5) + ((Trig_Cos(angle) << 4) >> 16) -
                 (gData_08197498[k] >> 1);
 
-        LOAD_GLINT_BLITTER();
+        {
+          s32 c = Data_08199e54[Random16() & 3] | 3;
+
+          /* FAKEMATCH(dead): an empty once-only block before the blitter call; as no block, 281 of 1122 instructions differ in tla-en. */
+          do {
+          } while (0);
+          Func_08196404(188, 7, 7, c, 1);
+        }
         ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
             canvas, work->sheet + gData_08197486[k], x, y, gData_08197492[k],
             gData_08197498[k]);

@@ -1,4 +1,11 @@
 // Draft, differ 4 of 2278 (tla-en, 2026-11-09)
+// Round 9 by hand (10 November), still 4, the turned flash's first draw: the
+// picture as sheet + 0x128a + table, sheet + (table + 0x128a), &sheet[...],
+// (u8 *)work + table + 0x198a, a block-local picture, sheet or table read, or
+// + 0 on the height: 4. The table read with 0x128a in a local 6; y, or x and
+// y in either order, as block locals 26; the height as a local used twice
+// 20; the width, or width and height, as locals 48 to 60; the draw routine
+// read into a local first 236.
 // Round 8 (9 November), still 4: the turned flash's x and y as -table + x,
 // with (s32) casts on the table reads, the whole x term cast, the size
 // arguments cast: 4; the y read as *(table + step) 188; flash->x through a

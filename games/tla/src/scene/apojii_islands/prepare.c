@@ -18,7 +18,8 @@ s32 Func_02000fb8(void) {
 
   ((struct MapBits *)Ram_HeapSlots->mapWork)->mode = 1;
   /* FAKEMATCH: as below. */
-  asm("");
+  do {
+  } while (0);
   effect = &((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect;
   party = &gMainRoutineWork;
   *effect = 0x202;
@@ -35,10 +36,12 @@ s32 Func_02000fb8(void) {
       Func_02000974();
   } else if (scene == (s32)&SceneId_Ov679Room3) {
     *effect = 0x100;
-    /* FAKEMATCH: each empty asm keeps the native's statement order: the store
-     * ahead of the next statement's constant (sched2 starts the constant first
-     * otherwise; without this one differ 4, without the first differ 2). */
-    asm("");
+    /* FAKEMATCH: each empty once-only block keeps the native's statement order:
+     * the store ahead of the next statement's constant (sched2 starts the
+     * constant first otherwise; without this one differ 4, without the first
+     * differ 2). */
+    do {
+    } while (0);
     if (party->entrance == 6)
       Func_020010b4();
   }

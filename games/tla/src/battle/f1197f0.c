@@ -201,10 +201,11 @@ s32 Func_081197f0(s32 enemyGroup) {
 
   if (GameFlag_Test(0x16c) != 0) {
     battle->twoSided = 1;
-    /* FAKEMATCH(barrier): an empty asm after the twoSided store, so
+    /* FAKEMATCH(dead): an empty once-only block after the twoSided store, so
      * battleStart's address is started after it; without it, 4 of 885
      * instructions differ in tla-en. */
-    asm("");
+    do {
+    } while (0);
     gMainRoutineWork.battleStart = 4;
   }
   if (battle->twoSided != 0) {

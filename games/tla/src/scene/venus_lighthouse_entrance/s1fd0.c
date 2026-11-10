@@ -122,10 +122,11 @@ void Func_02001fd0(void) {
       scale = 0;
     effect->scaleX = scale;
     effect->scaleY = scale;
-    /* FAKEMATCH(barrier): an empty asm after the scale's stores, which the
-     * timer's address follows; as no asm, 2 of 449 instructions differ in
+    /* FAKEMATCH(dead): an empty once-only block after the scale's stores, which
+     * the timer's address follows; as no block, 2 of 449 instructions differ in
      * tla-en. */
-    asm("");
+    do {
+    } while (0);
     timer = &work->timer;
     if (work->timer == 10)
       Sound_Play(310);

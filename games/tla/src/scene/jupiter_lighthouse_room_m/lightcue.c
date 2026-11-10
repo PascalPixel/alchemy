@@ -15,7 +15,8 @@ void Func_02003ac0(s32 id, s32 value) {
     object->timer = value;
     /* FAKEMATCH: ⚓️ loads the list and its count after the timer store; without
      * it the count's address is loaded before the store (6 differ) */
-    asm volatile("");
+    do {
+    } while (0);
     count = &gData_02005a82;
     gData_02005a84[*count] = object;
     (*count)++;

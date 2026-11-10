@@ -80,10 +80,11 @@ void Func_02001474(void) {
   spin = 0x200;
   for (i = 0; i <= 7;) {
     sprite->rotation += spin;
-    /* FAKEMATCH(barrier): an empty asm after the rotation's store, which the
-     * next load of the stone follows; as no asm, 2 of 199 instructions differ
-     * in tla-en. */
-    asm("");
+    /* FAKEMATCH(dead): an empty once-only block after the rotation's store,
+     * which the next load of the stone follows; as no block, 2 of 199
+     * instructions differ in tla-en. */
+    do {
+    } while (0);
     stone->z += 0x10000;
     i++;
     wait(1);

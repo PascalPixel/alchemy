@@ -47,7 +47,8 @@ void Func_0200099c(void) {
   work = (u8 *)Ram_HeapSlots->eventWork;
   /* FAKEMATCH: the native loads the event work before it addresses gMainRoutineWork;
    * without the barrier the scene offset is built first (differ 2). */
-  __asm__("");
+  do {
+  } while (0);
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov692Room2)
     Func_02004ee0(gData_020054fc);

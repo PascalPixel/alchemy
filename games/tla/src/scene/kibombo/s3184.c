@@ -54,9 +54,10 @@ void Func_02003184(void) {
   Kibombo_Spawn(x, 0x2e0000, 0x1b60000);
   Kibombo_Spawn(x, 0x340000, 0x1aa0000);
   Kibombo_Spawn(x, 0x3a0000, 0x19e0000);
-  /* FAKEMATCH(barrier): an empty asm before the last spawn, which shifts x's
-   * shift after the second register store as the native has it; without it,
-   * 2 of 43 instructions differ in tla-en. */
-  asm("");
+  /* FAKEMATCH(dead): an empty once-only block before the last spawn, which
+   * shifts x's shift after the second register store as the native has it;
+   * without it, 2 of 43 instructions differ in tla-en. */
+  do {
+  } while (0);
   Func_02003104(x, 0x400000, 0x1920000);
 }

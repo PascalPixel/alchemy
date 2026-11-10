@@ -319,10 +319,11 @@ void Input_UpdateKeyRepeatAndDirection(void) {
   }
 
   gInput.pressed = held & ~gInput.previousHeld;
-  /* FAKEMATCH(barrier): an empty asm after pressed is stored, so
+  /* FAKEMATCH(dead): an empty once-only block after pressed is stored, so
    * previousHeld is stored after it; without it, 2 of 113 instructions
    * differ in tla-en. */
-  asm("");
+  do {
+  } while (0);
   gInput.previousHeld = held;
 }
 

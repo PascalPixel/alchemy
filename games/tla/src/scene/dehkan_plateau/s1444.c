@@ -33,7 +33,8 @@ void Func_02001444(void) {
   y = Actor_GetById(gMainRoutineWork.currentOwner)->y;
   /* FAKEMATCH: ⚓️ loads the height before it builds the limit; the plain test
    * starts the constant first (one pair of instructions swapped). */
-  __asm__ volatile("");
+  do {
+  } while (0);
   if (y < 0x180000)
     Func_02002180();
 }

@@ -43,9 +43,11 @@ void Func_080e42d4(void) {
      * before the forward offset is built; without it, 10 of 93 instructions
      * differ in tla-en. */
     asm("" : "+l"(back));
-    /* FAKEMATCH(barrier): an empty asm that keeps the forward offset's add
-     * after that load; without it, 4 of 93 instructions differ in tla-en. */
-    asm volatile("");
+    /* FAKEMATCH(dead): an empty once-only block that keeps the forward offset's
+     * add after that load; without it, 4 of 93 instructions differ in tla-en.
+     */
+    do {
+    } while (0);
     if (Func_080dbd48(x + 0x80000, z + back, 2) == 0)
       reason = 4;
   }

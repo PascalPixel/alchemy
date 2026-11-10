@@ -25,12 +25,14 @@ s32 Func_0200028c(struct Wanderer *actor) {
 
     *timer = (Random16Far() * 40 >> 16) + 10;
     /* FAKEMATCH: ⚓️ stores the new time before it addresses the turn flag */
-    asm volatile("");
+    do {
+    } while (0);
     turned = &actor->turned;
     if (*turned != 0) {
       *turned = 0;
       /* FAKEMATCH: and clears the flag before it addresses the facing */
-      asm volatile("");
+      do {
+      } while (0);
       facing = &actor->facingA;
     } else {
       *turned = 1;

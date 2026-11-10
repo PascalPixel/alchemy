@@ -291,10 +291,11 @@ select_again:
         request->command = COMMAND_SUMMON;
         BattleParty_CountStandbyDjinn(0, counts);
         summonIndex = Summon_ListLearnedFar(summons);
-        /* FAKEMATCH(barrier): an empty asm after the summons are listed, so
-         * the djinn count's 0 argument is set after counts' address; without
-         * it, 2 of 755 instructions differ in tla-en. */
-        asm("");
+        /* FAKEMATCH(dead): an empty once-only block after the summons are
+         * listed, so the djinn count's 0 argument is set after counts' address;
+         * without it, 2 of 755 instructions differ in tla-en. */
+        do {
+        } while (0);
         for (summonIndex--; summonIndex >= 0; summonIndex--) {
           summon = SummonDefinition_Get(summons[summonIndex]);
           for (element = 0; element <= 3 &&

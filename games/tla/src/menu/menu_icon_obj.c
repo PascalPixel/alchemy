@@ -75,7 +75,8 @@ void Func_08105350(s32 index, s32 scale) {
 
   /* FAKEMATCH: the ARM9 scheduling would scale the index before loading the
    * menu work. */
-  __asm__("");
+  do {
+  } while (0);
   if (menu->objects[index] != NULL)
     menu->scale[index] = scale;
 }

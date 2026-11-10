@@ -47,10 +47,11 @@ L_02009052:
   Actor_SetPosition(10, PIXELS(504), PIXELS(520));
   Actor_SetAnimation(10, 2);
   FIELD_AT(v_r5, u8, 89) = 0;
-  /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
-   * the listing orders it; without it, 4 of 168 instructions differ in
+  /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here,
+   * as the listing orders it; without it, 4 of 168 instructions differ in
    * tla-en. */
-  asm("");
+  do {
+  } while (0);
   FIELD_AT(v_r5, u8, 35) = (2 | FIELD_AT(v_r5, u8, 35));
   MapGrid_SetCellBehavior(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16), 0,
                           0);
@@ -64,10 +65,11 @@ L_020090a8:
   Actor_SetPosition(11, PIXELS(408), PIXELS(536));
   Actor_SetAnimation(11, 2);
   FIELD_AT(v_r5, u8, 89) = 0;
-  /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
-   * the listing orders it; without it, 4 of 168 instructions differ in
+  /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here,
+   * as the listing orders it; without it, 4 of 168 instructions differ in
    * tla-en. */
-  asm("");
+  do {
+  } while (0);
   FIELD_AT(v_r5, u8, 35) = (2 | FIELD_AT(v_r5, u8, 35));
   MapGrid_SetCellBehavior(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16), 0,
                           0);

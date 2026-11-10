@@ -101,7 +101,8 @@ void Func_02000734(void) {
       y = actor->y;
       /* FAKEMATCH: ⚓️ loads y before it shifts the second random value (differ
        * 2 without the barrier). */
-      asm("");
+      do {
+      } while (0);
       Func_02001c88(x, y + (((random2 << 5) >> 16) << 16) + 0x200000, actor->z,
                     0, -0x40000, 0, 0x1b0000, p);
     }

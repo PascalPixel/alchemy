@@ -10,7 +10,8 @@ void Func_02000280(void) {
     return;
   y = leader->y;
   /* FAKEMATCH: loads the leader height before it builds the threshold. */
-  __asm__("");
+  do {
+  } while (0);
   if (y > 0xc0000) {
     GameFlag_SetBit(0x340);
     if (*state == 4)

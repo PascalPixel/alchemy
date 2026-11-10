@@ -169,10 +169,11 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
       step->velocityY = (Random16() & 63) << 13;
     }
     step->velocityZ = ((Random16() & 63) - 32) << 14;
-    /* FAKEMATCH(barrier): an empty asm that keeps the variant's 1 and i's
-     * step after velocityZ's store; without it, 4 of 1123 instructions
+    /* FAKEMATCH(dead): an empty once-only block that keeps the variant's 1 and
+     * i's step after velocityZ's store; without it, 4 of 1123 instructions
      * differ in tla-en. */
-    asm("");
+    do {
+    } while (0);
     step->variant = 1;
   }
 
@@ -199,9 +200,10 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
     else
       step->x = (-(Trig_Sin(angle) * 24) >> 16) + 16;
     step->y = (Trig_Cos(angle) * 16 >> 16) + 40;
-    /* FAKEMATCH(barrier): an empty asm that keeps the y store ahead of the
-     * variant's; without it, 2 of 1123 instructions differ in tla-en. */
-    asm("");
+    /* FAKEMATCH(dead): an empty once-only block that keeps the y store ahead of
+     * the variant's; without it, 2 of 1123 instructions differ in tla-en. */
+    do {
+    } while (0);
     step->variant = -(i * 2);
   }
   path = Resource_GetTableEntry((s32)&ResourceId_DualStreamPath);

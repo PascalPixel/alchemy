@@ -21,7 +21,8 @@ void Func_02000db8(s32 id) {
   object->motionFlags = 0;
   /* FAKEMATCH: keeps the flag store before the next address is formed (differ 2
    * without) */
-  __asm__("");
+  do {
+  } while (0);
   object->priorityFlags |= 2;
   object->collisionFlags = 0;
   if (id == 13) {

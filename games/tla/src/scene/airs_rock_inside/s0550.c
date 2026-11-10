@@ -35,7 +35,8 @@ void Func_020004d4(struct FieldActor *object) {
 
       /* FAKEMATCH: the barrier keeps the mask after the load (with the pin
        * above). */
-      __asm__ volatile("");
+      do {
+      } while (0);
       object->y = y + ((r & 31) << 16);
     }
     {
@@ -46,7 +47,8 @@ void Func_020004d4(struct FieldActor *object) {
 
       /* FAKEMATCH: the barrier keeps the mask after the load (with the pin
        * above). */
-      __asm__ volatile("");
+      do {
+      } while (0);
       object->z = z + ((r & 127) << 16);
     }
   }

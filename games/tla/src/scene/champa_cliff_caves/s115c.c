@@ -266,9 +266,10 @@ void Func_0200115c(void) {
     Party_SetFields1f2And1f4((s32)&SceneId_Ov685Room4, 98);
     Party_SetFields1eeAnd1f0((s32)&SceneId_Ov685Room4, 99);
     party = &gMainRoutineWork;
-    /* FAKEMATCH(barrier): holds the 2's store after the party pointer; as no
-     * asm, 10 of 613 instructions differ in tla-en. */
-    __asm__("");
+    /* FAKEMATCH(dead): holds the 2's store after the party pointer; as no
+     * block, 10 of 613 instructions differ in tla-en. */
+    do {
+    } while (0);
     party->battleRule24b = 2;
     Func_0200357c(12, 5);
   }

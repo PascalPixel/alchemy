@@ -179,7 +179,8 @@ void Func_02000afc(s32 a, s32 id) {
     object->collisionFlags = 0;
     /* FAKEMATCH: the native stores the collision flags before addressing the
      * priority byte. */
-    __asm__ volatile("");
+    do {
+    } while (0);
     object->priorityFlags |= 2;
     Event_SetFlag(0x332);
     Event_SetFlag(0x333);
@@ -202,7 +203,8 @@ void Func_02000b90(s32 a, s32 id) {
     object->collisionFlags = 0;
     /* FAKEMATCH: the native stores the collision flags before addressing the
      * priority byte. */
-    __asm__ volatile("");
+    do {
+    } while (0);
     object->priorityFlags |= 2;
     Event_SetFlag(0x335);
     Event_SetFlag(0x336);

@@ -69,7 +69,8 @@ void Func_020002e8(void) {
   u8 *event = Ram_HeapSlots->eventWork;
 
   /* FAKEMATCH: ⚓️ loads the event work before it builds the offset */
-  asm volatile("");
+  do {
+  } while (0);
   event[3384] = 1;
 }
 

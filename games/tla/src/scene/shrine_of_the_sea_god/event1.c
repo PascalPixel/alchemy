@@ -215,11 +215,13 @@ void Func_02001128(void) {
 
   y = leader->y;
   /* FAKEMATCH: loads the leader height before it builds the threshold. */
-  __asm__("");
+  do {
+  } while (0);
   if (y < 0x100000) {
     z = leader->z;
     /* FAKEMATCH: loads the leader depth before it builds the threshold. */
-    __asm__("");
+    do {
+    } while (0);
     if (z < 0x1280000) {
       Actor_SetSpritePriority(10, 1);
       Actor_SetSpritePriority(11, 1);

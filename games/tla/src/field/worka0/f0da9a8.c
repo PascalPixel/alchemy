@@ -47,10 +47,11 @@ struct TileEffectWork *Func_080da9a8(s32 kind) {
     Resource_DecodeType01(Data_080f0cb8, pictures + 2 * PICTURE_SIZE);
     Resource_DecodeType01(Data_080f0d07, pictures + 3 * PICTURE_SIZE);
     VramCache_Load(work->vramEntry, size, pictures);
-    /* FAKEMATCH(barrier): an empty asm closing the arm keeps each decode's
-     * destination set before its source loads; without it, 4 of 95
+    /* FAKEMATCH(dead): an empty once-only block closing the arm keeps each
+     * decode's destination set before its source loads; without it, 4 of 95
      * instructions differ in tla-en. */
-    asm("");
+    do {
+    } while (0);
   } else {
     Resource_DecodeType01(Data_080f0d5e, pictures);
     Resource_DecodeType01(Data_080f0dbb, pictures + PICTURE_SIZE);

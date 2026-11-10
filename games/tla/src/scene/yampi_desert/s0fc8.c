@@ -53,10 +53,11 @@ loop_3:
   Func_02000b84(232 << 16, 0, 184 << 16);
   Func_020041f8(176);
   partner->velocityY = 0x60000;
-  /* FAKEMATCH(barrier): an empty asm after the velocity store, which
+  /* FAKEMATCH(dead): an empty once-only block after the velocity store, which
    * addresses priorityFlags after it as the native does; without it, 2 of 279
    * instructions differ in tla-en. */
-  asm("");
+  do {
+  } while (0);
   partner->priorityFlags &= ~2;
   Actor_SetSpritePriority(21, 2);
   Actor_SetPartAttribute(Actor_GetById(21), 0);

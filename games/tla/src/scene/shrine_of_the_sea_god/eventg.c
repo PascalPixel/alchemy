@@ -92,7 +92,8 @@ s32 Func_02003894(void) {
         (struct ShrineOfTheSeaGodPartyExtra *)&gMainRoutineWork;
 
     /* FAKEMATCH: loads the party base before it builds the field offset. */
-    __asm__("");
+    do {
+    } while (0);
     if (party->value == 1) {
       if (GameFlag_Test(0x341))
         ShrineOfTheSeaGod_ObjPlaceAt(14, 360 << 16, 216 << 16, 0);

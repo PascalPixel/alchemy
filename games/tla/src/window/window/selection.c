@@ -1516,10 +1516,11 @@ void UiTextResource_SetPosition(struct TextResourcePosition *obj, s32 arg1,
                                 s32 arg2) {
   obj->index = arg1;
   obj->kind = arg2;
-  /* FAKEMATCH(barrier): an empty asm keeps the index's store ahead of the
-   * depth argument (mov r1, #252); without it, 2 of 13 instructions differ in
-   * tla-en. */
-  __asm__("");
+  /* FAKEMATCH(dead): an empty once-only block keeps the index's store ahead of
+   * the depth argument (mov r1, #252); without it, 2 of 13 instructions differ
+   * in tla-en. */
+  do {
+  } while (0);
   Oam_AddSpriteAtDepth((s32 *)obj, 0xFC);
 }
 

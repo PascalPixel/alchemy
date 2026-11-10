@@ -40,10 +40,11 @@ void Func_020005e8(s32 mode) {
     object->y = object->terrainHeight;
     if (i <= 5)
       goto L_02008684;
-    /* FAKEMATCH(barrier): an empty asm keeps the loop's exit branch from
-     * being threaded to the function's end; as the plain if/else, 4 of 175
+    /* FAKEMATCH(dead): an empty once-only block keeps the loop's exit branch
+     * from being threaded to the function's end; as the plain if/else, 4 of 175
      * instructions differ in tla-en. */
-    asm("");
+    do {
+    } while (0);
   } else {
     MapGrid_CopyCellsLayered(72, 46, 1, 7, 72, 9);
     MapGrid_CopyCellsLayered(72, 53, 8, 5, 72, 16);

@@ -56,10 +56,11 @@ void Func_02000714(void) {
   FIELD_AT(v6, s32, 24) = 0x4000;
   FIELD_AT(v6, s32, 28) = 0x4000;
   FIELD_AT(v8, u8, 85) = 0;
-  /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
-   * the listing orders it; without it, 10 of 343 instructions differ in
+  /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here,
+   * as the listing orders it; without it, 10 of 343 instructions differ in
    * tla-en. */
-  asm("");
+  do {
+  } while (0);
   FIELD_AT(v8, s32, 24) = 0x4000;
   FIELD_AT(v8, s32, 28) = 0x4000;
   FieldCamera_MoveTo(PIXELS(680), -1, PIXELS(228), 0);
@@ -143,10 +144,11 @@ void Func_02000714(void) {
 L_02008a04:
   FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), s16, 0) =
       (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
-  /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
-   * the listing orders it; without it, 2 of 343 instructions differ in
+  /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here,
+   * as the listing orders it; without it, 2 of 343 instructions differ in
    * tla-en. */
-  asm("");
+  do {
+  } while (0);
   Actor_WaitForAnimationChange(gMainRoutineWork.currentOwner);
   Actor_SetAnimation(13, 6);
   Event_ShowMessage(13, 0);

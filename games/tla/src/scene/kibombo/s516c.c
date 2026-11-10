@@ -59,9 +59,10 @@ void Func_0200516c(void) {
       unit = Unit_Get(7);
       *(u16 *)(unit + 0x38) = *(u16 *)(unit + 0x34);
       *(u16 *)(unit + 0x3a) = *(u16 *)(unit + 0x36);
-      /* FAKEMATCH(barrier): both copies stored before the gauge's argument
+      /* FAKEMATCH(dead): both copies stored before the gauge's argument
        * is extended; without it, 2 of 218 instructions differ in tla-en. */
-      asm("");
+      do {
+      } while (0);
       *(u16 *)(unit + 0x14) =
           Gauge(*(s16 *)(unit + 0x38), *(s16 *)(unit + 0x34));
       if (*(u16 *)(unit + 0x14) == 0 && *(s16 *)(unit + 0x38) != 0) {

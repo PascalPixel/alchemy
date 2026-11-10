@@ -186,10 +186,11 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
     u32 t = 0;
 
     y = i * 2;
-    /* FAKEMATCH(barrier): an empty asm after the row, which keeps it and the
-     * zero ahead of the stores; without it, 56 of 790 instructions differ in
-     * tla-en. */
-    asm("");
+    /* FAKEMATCH(dead): an empty once-only block after the row, which keeps it
+     * and the zero ahead of the stores; without it, 56 of 790 instructions
+     * differ in tla-en. */
+    do {
+    } while (0);
     iconSprite = &sprites[i];
     sprites[i].oam.word.attr01 = 0x40000000;
     sprites[i].oam.word.attr23 = t;

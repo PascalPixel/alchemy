@@ -19,10 +19,11 @@ void Func_02000094(s32 unused, s32 id) {
     Event_PlaySound(134);
     y = object->y;
     floor = object->terrainHeight;
-    /* FAKEMATCH(barrier): the height and the floor are read before the counter
+    /* FAKEMATCH(dead): the height and the floor are read before the counter
      * is cleared and again at the end of each pass; as plain C, 8 of 50
      * instructions differ in tla-en. */
-    __asm__ volatile("");
+    do {
+    } while (0);
     i = 0;
     goto test;
     do {

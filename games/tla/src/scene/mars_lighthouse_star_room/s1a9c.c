@@ -24,14 +24,16 @@ void Func_02001a9c(struct Actor *object) {
   object->bounce = dx - dx / 18;
   object->unk4c = dz - dz / 16;
   /* FAKEMATCH: ⚓️ stores the Z speed before it loads the scale rate */
-  asm volatile("");
+  do {
+  } while (0);
   rate = object->speedLimit;
   scale = object->scaleX;
   parts = object->animation;
   object->scaleX = scale + rate;
   object->scaleY += object->acceleration;
   /* FAKEMATCH: ⚓️ stores the Y scale before it addresses the action */
-  asm volatile("");
+  do {
+  } while (0);
   parts->unk12 += object->action;
   if (leader->y == leader->terrainHeight && Func_02001a44(object, leader)) {
     object->z -= object->unk4c;

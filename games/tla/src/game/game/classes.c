@@ -79,7 +79,8 @@ s32 Enemy_GetAttackElement(void *state) {
   /* FAKEMATCH: the barrier loads the table's address before the preset is
      scaled, and the offset local keeps the [r3, r2] address; as no barrier,
      2 instructions differ in tla-en. */
-  asm("");
+  do {
+  } while (0);
   offset = preset * sizeof(struct ElementPreset);
   return *(u32 *)((u8 *)table + offset);
 }

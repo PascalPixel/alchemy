@@ -19,7 +19,8 @@ void Func_02000270(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   /* FAKEMATCH: keeps the quadrant offset after the facing load. */
-  __asm__("");
+  do {
+  } while (0);
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02000ddc(1, actor);
@@ -36,7 +37,8 @@ void Func_020002d0(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   /* FAKEMATCH: keeps the quadrant offset after the facing load. */
-  __asm__("");
+  do {
+  } while (0);
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02000ddc(2, actor);
@@ -53,7 +55,8 @@ void Func_02000330(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   /* FAKEMATCH: keeps the quadrant offset after the facing load. */
-  __asm__("");
+  do {
+  } while (0);
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0x8000) {
     Func_02000dec(0, actor);
@@ -71,7 +74,8 @@ void Func_02000390(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   /* FAKEMATCH: keeps the quadrant offset after the facing load. */
-  __asm__("");
+  do {
+  } while (0);
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     if (GameFlag_Test(0x847) == 0) {
@@ -116,7 +120,8 @@ void Func_02000498(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   /* FAKEMATCH: keeps the quadrant offset after the facing load. */
-  __asm__("");
+  do {
+  } while (0);
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02000de4(actor);
@@ -133,7 +138,8 @@ void Func_020004f4(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   /* FAKEMATCH: keeps the quadrant offset after the facing load. */
-  __asm__("");
+  do {
+  } while (0);
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02000ddc(1, actor);
@@ -150,7 +156,8 @@ void Func_02000554(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   /* FAKEMATCH: keeps the quadrant offset after the facing load. */
-  __asm__("");
+  do {
+  } while (0);
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02000ddc(2, actor);
@@ -167,7 +174,8 @@ void Func_020005b4(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   /* FAKEMATCH: keeps the quadrant offset after the facing load. */
-  __asm__("");
+  do {
+  } while (0);
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0x8000) {
     Func_02000dec(0, actor);

@@ -14,7 +14,8 @@ void Func_02000e18(s32 value) {
   *flags = 0;
   /* FAKEMATCH: the barrier stores the motion flags before the priority address
    * is started; without it, 2 instructions differ in tla-en. */
-  __asm__("");
+  do {
+  } while (0);
   object->priorityFlags |= 0x20;
   Func_02003cc4(object, 18);
   Event_PlaySound(215);

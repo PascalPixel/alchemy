@@ -18,13 +18,15 @@ void Effect_AdvanceMotionLocal(union FieldObject *object) {
   effect->velocity.z = velocityZ - velocityZ / 16;
   /* FAKEMATCH: the ARM9 scheduling would load the scale rate before storing the
    * Z velocity. */
-  __asm__("");
+  do {
+  } while (0);
 
   scaleRateX = effect->scaleRateX;
   effect->scaleX += scaleRateX;
   sprite = effect->sprite;
   effect->scaleY += effect->scaleRateY;
   /* FAKEMATCH: and would address the spin before storing the Y scale. */
-  __asm__("");
+  do {
+  } while (0);
   sprite->rotation += effect->spin;
 }

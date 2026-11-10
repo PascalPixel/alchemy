@@ -24,7 +24,8 @@ s32 Func_020007fc(s32 *p) {
     /* FAKEMATCH: the barriers keep the first random value's shift after the
      * second call and the angle's load between the two shifts; plainly, 2
      * instructions differ in tla-en. */
-    __asm__("");
+    do {
+    } while (0);
     x = (u32)a << 9;
     angle = p[12];
     __asm__("");

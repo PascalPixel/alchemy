@@ -10,7 +10,8 @@ s32 Func_02000038(void) {
 
     /* FAKEMATCH: ⚓️ loads z before it builds the near limit; the plain test
      * starts the constant first (one pair of instructions swapped). */
-    __asm__ volatile("");
+    do {
+    } while (0);
     if (z >= 0x26c0000) {
       if (z <= 0x2740000)
         return 0;
@@ -27,7 +28,8 @@ s32 Func_0200006c(void) {
 
     /* FAKEMATCH: ⚓️ loads z before it builds the near limit; the plain test
      * starts the constant first (one pair of instructions swapped). */
-    __asm__ volatile("");
+    do {
+    } while (0);
     if (z >= 0x26c0000) {
       if (z <= 0x2740000)
         return 0;

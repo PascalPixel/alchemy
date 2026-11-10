@@ -178,10 +178,11 @@ s32 Task_SuspendAll(TaskFunc func) {
         continue;
     }
     TASK_STATE_HIGH(task) |= 1;
-    /* FAKEMATCH(barrier): an empty asm after the priority's high byte store,
-     * so the result's copy follows it; without it, 2 of 27 instructions differ
-     * in tla-en. */
-    __asm__ volatile("");
+    /* FAKEMATCH(dead): an empty once-only block after the priority's high byte
+     * store, so the result's copy follows it; without it, 2 of 27 instructions
+     * differ in tla-en. */
+    do {
+    } while (0);
     result = i;
   }
   IRQ_UNLOCK(saved_interrupt_master);
@@ -200,10 +201,11 @@ s32 Task_SuspendOverlayTasks(void) {
   for (i = 0; i <= 23; i++, task++) {
     if ((task->func >> 24) == 2 && (task->flags & 1) == 0) {
       TASK_STATE_HIGH(task) |= 1;
-      /* FAKEMATCH(barrier): an empty asm after the priority's high byte
-       * store, so the result's copy follows it; without it, 2 of 31
+      /* FAKEMATCH(dead): an empty once-only block after the priority's high
+       * byte store, so the result's copy follows it; without it, 2 of 31
        * instructions differ in tla-en. */
-      __asm__ volatile("");
+      do {
+      } while (0);
       result = i;
     }
   }

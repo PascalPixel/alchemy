@@ -53,7 +53,8 @@ void Func_02002124(void) {
 
   /* FAKEMATCH: ⚓️ loads the event work before it builds the field offset; the
    * plain load starts the offset first (one pair of instructions swapped). */
-  __asm__ volatile("");
+  do {
+  } while (0);
   active = work->active;
   if (active != 0)
     Func_0200200c(active);

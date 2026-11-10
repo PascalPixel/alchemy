@@ -192,10 +192,11 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
     u32 t = 0;
 
     y = index * 2;
-    /* FAKEMATCH(barrier): an empty asm after the row, which keeps it and the
-     * zero ahead of the stores; without it, 6 of 984 instructions differ in
-     * tla-en. */
-    asm("");
+    /* FAKEMATCH(dead): an empty once-only block after the row, which keeps it
+     * and the zero ahead of the stores; without it, 6 of 984 instructions
+     * differ in tla-en. */
+    do {
+    } while (0);
     sprite = &sprites[index];
     sprites[index].oam.word.attr01 = 0x40000000;
     sprites[index].oam.word.attr23 = t;

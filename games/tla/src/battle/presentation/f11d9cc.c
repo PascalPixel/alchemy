@@ -93,10 +93,11 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
   }
   if (request->command == 10) {
     Func_0811d7e8(request, &battle->plan);
-    /* FAKEMATCH(barrier): an empty asm after the call, so the plan's address
-     * is finished before request is copied to r0; without it, 2 of 421
+    /* FAKEMATCH(dead): an empty once-only block after the call, so the plan's
+     * address is finished before request is copied to r0; without it, 2 of 421
      * instructions differ in tla-en. */
-    asm("");
+    do {
+    } while (0);
     result = 0;
   } else {
     actingUnit[0] = request->unitId;

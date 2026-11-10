@@ -16,7 +16,8 @@ void Func_02001f04(void) {
   object->y = 0x500000;
   /* FAKEMATCH: the native stores the height before it starts the speed; without
    * the barrier the speed comes first (differ 2). */
-  __asm__("");
+  do {
+  } while (0);
   speed = 0x30000;
   /* FAKEMATCH: the loop is written with goto so that it carries no loop notes:
    * the bytes rebuild the turn step on every pass, and a for loop hoists it

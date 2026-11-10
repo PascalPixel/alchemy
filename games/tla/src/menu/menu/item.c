@@ -738,9 +738,11 @@ s32 ItemMenu_Use(void) {
   }
 
   item = menu->selectedItems[0];
-  /* FAKEMATCH(barrier): an empty asm between the item load and the 0x1ff mask;
-   * as mask = item & 0x1ff, 2 of 67 instructions differ in tla-en. */
-  asm("");
+  /* FAKEMATCH(dead): an empty once-only block between the item load and the
+   * 0x1ff mask; as mask = item & 0x1ff, 2 of 67 instructions differ in tla-en.
+   */
+  do {
+  } while (0);
   mask = 0x1ff;
   mask &= item;
   Func_08100d40(mask);

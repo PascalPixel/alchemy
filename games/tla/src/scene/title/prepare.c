@@ -97,10 +97,11 @@ s32 Func_0200005c(void) {
           Sound_Play(78);
           Fade_ToBlack(30);
           Fade_Wait();
-          /* FAKEMATCH: an empty asm keeps the counter's zero after the wait
-           * call, where plainly sched2 fills the call's stall with it (differ
-           * 2). */
-          __asm__ volatile("");
+          /* FAKEMATCH: an empty once-only block keeps the counter's zero after
+           * the wait call, where plainly sched2 fills the call's stall with it
+           * (differ 2). */
+          do {
+          } while (0);
           frames = 0;
           goto test2;
         next2:

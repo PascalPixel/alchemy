@@ -22,7 +22,8 @@ void Func_02000c38(void) {
       u16 facing = *(u16 *)((u8 *)found + 6);
 
       /* FAKEMATCH: ⚓️ reads the facing before it builds the half turn */
-      asm volatile("");
+      do {
+      } while (0);
       if (facing == 0x8000)
         dx = -dx;
       facing = *(u16 *)((u8 *)actor + 6);
@@ -49,7 +50,8 @@ void Func_02000c8c(void) {
     }
     facing = *(u16 *)((u8 *)actor + 6);
     /* FAKEMATCH: ⚓️ reads the facing before it builds the quarter turn */
-    asm volatile("");
+    do {
+    } while (0);
     if ((facing == 0x4000 && dz > 0) || (facing == 0xc000 && dz < 0))
       Func_020006ac(actor, 0, dz, 0x40000);
   }

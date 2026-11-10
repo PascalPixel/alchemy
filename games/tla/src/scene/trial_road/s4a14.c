@@ -36,10 +36,11 @@ void Func_02004a14(union FieldObject *object) {
   effect->z += velocityZ;
   effect->velocity.x = velocityX - velocityX / 18;
   effect->velocity.z = velocityZ - velocityZ / 16;
-  /* FAKEMATCH(barrier): an empty asm ends the velocity stores, so the scale
-   * step's loads follow the z velocity's store; without it, 2 of 59
+  /* FAKEMATCH(dead): an empty once-only block ends the velocity stores, so the
+   * scale step's loads follow the z velocity's store; without it, 2 of 59
    * instructions differ in tla-en. */
-  asm volatile("");
+  do {
+  } while (0);
   {
     /* FAKEMATCH(temporary): the x scale rate read into a block temporary,
      * which loads it before the x scale; as effect->scaleX +=
@@ -50,10 +51,11 @@ void Func_02004a14(union FieldObject *object) {
   }
   sprite = effect->sprite;
   effect->scaleY += effect->scaleRateY;
-  /* FAKEMATCH(barrier): an empty asm ends the scale stores, so the spin's
-   * address is built after the y scale's store; without it, 2 of 59
+  /* FAKEMATCH(dead): an empty once-only block ends the scale stores, so the
+   * spin's address is built after the y scale's store; without it, 2 of 59
    * instructions differ in tla-en. */
-  asm volatile("");
+  do {
+  } while (0);
   sprite->rotation += effect->spin;
 
   party = &gMainRoutineWork;

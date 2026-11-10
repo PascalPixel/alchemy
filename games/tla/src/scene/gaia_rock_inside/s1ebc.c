@@ -23,13 +23,15 @@ void Func_02001ebc(void) {
     s32 scene;
 
     count = a + b + c + Event_GetFlag(0x9bf);
-    /* FAKEMATCH(barrier): the count is summed before the battle rule store;
+    /* FAKEMATCH(dead): the count is summed before the battle rule store;
      * without it, 8 of 68 instructions differ in tla-en. */
-    __asm__ volatile("");
+    do {
+    } while (0);
     gMainRoutineWork.battleRule24b = 2;
-    /* FAKEMATCH(barrier): the scene address is loaded after the battle rule
+    /* FAKEMATCH(dead): the scene address is loaded after the battle rule
      * store; without it, 4 of 68 instructions differ in tla-en. */
-    __asm__ volatile("");
+    do {
+    } while (0);
     scene = (s32)&SceneId_Ov681Room1;
     Event_SetAfterBattleDestination(scene, 10);
     if (FieldPartyInventory_FindOwner(0x1c3) != -1) {

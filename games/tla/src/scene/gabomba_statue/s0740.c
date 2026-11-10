@@ -21,7 +21,8 @@ void Func_02000740(void) {
       /* FAKEMATCH: the native loads the neighbour's angle before it builds
        * 0x8000; the plain test builds the constant first (one reordered pair,
        * differ 2). */
-      asm volatile("");
+      do {
+      } while (0);
       if (angle == 0x8000)
         delta = turn;
     }

@@ -35,7 +35,8 @@ next:
   party = &gMainRoutineWork;
   /* FAKEMATCH: gMainRoutineWork's address loads before the owner list's offset is
    * built; without it the offset's movs comes first (differ 2) */
-  __asm__ volatile("");
+  do {
+  } while (0);
   if (party->activeOwners[i] == 0xff)
     goto none;
   /* FAKEMATCH: the native reads the owner byte again for the second test

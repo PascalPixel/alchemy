@@ -27,9 +27,10 @@ next:
       scale = ((u32)Random16Far() >> 1) + 0x4000;
       Func_020041dc(object, gData_02004474);
       Actor_SetSingleChildFlags(object, 0);
-      /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
-       * 2 of 113 instructions differ in tla-en. */
-      asm("");
+      /* FAKEMATCH(dead): an empty once-only block holds the order around it; as
+       * no block, 2 of 113 instructions differ in tla-en. */
+      do {
+      } while (0);
       object->velocityY = angle * 4 + 0x20000;
       object->velocityZ = Iwram_MulQ16(radius * 8, Math_Cosine(angle));
       object->velocityX = Iwram_MulQ16(radius * 8, Math_Sin(angle));

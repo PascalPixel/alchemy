@@ -26,10 +26,11 @@ void Animation_InitializeWorkFromMetadata(struct AnimationEntry *work) {
       z = 0;
       work->kind = info->drawKind;
       work->script = (u8 *)z;
-      /* FAKEMATCH(barrier): an empty asm keeps the kind's store and the
-       * script's clear ahead of the lists' stores; without it, 6 of 30
+      /* FAKEMATCH(dead): an empty once-only block keeps the kind's store and
+       * the script's clear ahead of the lists' stores; without it, 6 of 30
        * instructions differ in tla-en. */
-      asm("");
+      do {
+      } while (0);
       animation = info->animation;
       work->pictures = (void **)value;
       work->scripts = (u8 **)animation;

@@ -31,7 +31,8 @@ void Func_02000134(s32 unused, s32 id) {
     }
     object->motionFlags = 0;
     mode = 0;
-    __asm__("");
+    do {
+    } while (0);
     Func_02002368(object->x, object->z, mode, 0);
   }
 }

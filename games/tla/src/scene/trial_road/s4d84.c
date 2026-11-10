@@ -8,7 +8,8 @@ void Func_02004d84(u8 *text, u32 value) {
 
   /* FAKEMATCH: the native loads the digit table before it advances the text
    * (differ 2 without the barrier). */
-  __asm__("");
+  do {
+  } while (0);
   text += 8;
   *text = 0;
   text--;

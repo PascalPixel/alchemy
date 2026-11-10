@@ -17,13 +17,15 @@ void Func_02001e38(struct Actor *object) {
   object->unk4c = vz - vz / 16;
   /* FAKEMATCH: the ARM9 scheduling would load the scale rate before storing the
    * Z velocity. */
-  __asm__("");
+  do {
+  } while (0);
   rate = object->speedLimit;
   object->scaleX += rate;
   animation = object->animation;
   object->scaleY += object->acceleration;
   /* FAKEMATCH: and would address the spin before storing the Y scale. */
-  __asm__("");
+  do {
+  } while (0);
   animation->angle += object->action;
   if (target->y == target->terrainHeight && Func_02001de0(object, target)) {
     object->z -= object->unk4c;

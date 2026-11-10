@@ -27,7 +27,8 @@ void Func_02000864(struct Actor *object) {
   object->unk4c = vz - vz / 16;
   /* FAKEMATCH: ⚓️ stores the Z speed before it loads the scale rate, as overlay
    * 6aa's Func_02001f90 (differ 2 without it). */
-  asm volatile("");
+  do {
+  } while (0);
   rate = object->speedLimit;
   scale = object->scaleX;
   sprite = object->animation;
@@ -35,7 +36,8 @@ void Func_02000864(struct Actor *object) {
   object->scaleY += object->acceleration;
   /* FAKEMATCH: ⚓️ stores the Y scale before it addresses the action (differ 2
    * without it). */
-  asm volatile("");
+  do {
+  } while (0);
   sprite->rotation += object->action;
   if (leader->y == 0) {
     if (Func_02000824(object, leader)) {

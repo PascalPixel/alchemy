@@ -151,9 +151,10 @@ void Func_020012bc(s32 entrance) {
     Event_Wait(10);
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     gMainRoutineWork.battleRule24b = 2;
-    /* FAKEMATCH(barrier): the native loads the scene's id after this store; as
-     * no asm, 2 of 946 instructions differ in tla-en. */
-    asm("");
+    /* FAKEMATCH(dead): the native loads the scene's id after this store; as
+     * no block, 2 of 946 instructions differ in tla-en. */
+    do {
+    } while (0);
     {
       s32 worldMap = (s32)&SceneId_WorldMap;
 

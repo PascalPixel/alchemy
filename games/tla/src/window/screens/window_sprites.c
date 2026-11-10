@@ -36,10 +36,11 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 flags,
   output->kind = 1;
   output->active = 1;
   WindowSprite_AppendToList((struct WindowSpriteList *)input, output);
-  /* FAKEMATCH(barrier): an empty asm after the call keeps the list argument's
-   * copy (mov r0, r8) after the last stores; without it, 2 of 63 instructions
-   * differ in tla-en. */
-  __asm__ volatile("");
+  /* FAKEMATCH(dead): an empty once-only block after the call keeps the list
+   * argument's copy (mov r0, r8) after the last stores; without it, 2 of 63
+   * instructions differ in tla-en. */
+  do {
+  } while (0);
   return output;
 }
 
@@ -188,10 +189,11 @@ void Window_FillFromScene(void *dst) {
 
     RamCode_Load(code, Tile_BuildCellPicturesCode, Tile_BuildCellPicturesCodeSize);
     code(dst, scene + 8);
-    /* FAKEMATCH(barrier): an empty asm after the call keeps the second
+    /* FAKEMATCH(dead): an empty once-only block after the call keeps the second
        argument's add ahead of the first argument's copy; without it, 2 of 50
        instructions differ in tla-en. */
-    asm("");
+    do {
+    } while (0);
     Heap_Release(code);
   }
 }

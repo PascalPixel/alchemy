@@ -48,9 +48,10 @@ void Func_020010b4(struct Actor *shot) {
     ((struct Shot *)shot)->unk63 = 0;
     shot->update = 0;
     Func_02005d6c(shot, gData_020061cc);
-    /* FAKEMATCH(barrier): an empty asm holds the next statement after this
-     * one; as no asm, 2 of 211 instructions differ in tla-en. */
-    asm("");
+    /* FAKEMATCH(dead): an empty once-only block holds the next statement after
+     * this one; as no block, 2 of 211 instructions differ in tla-en. */
+    do {
+    } while (0);
     return;
   }
   if (((struct Shot *)shot)->unk62 == 0) {

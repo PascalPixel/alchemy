@@ -147,21 +147,23 @@ s32 Func_080fa870(s32 mode) {
             label = (s32)MsgTradeForWhat;
           } else if (heldCount != 0) {
             Text_DrawNumberInWindowFar(heldCount, 2, window, 8, 72);
-            /* FAKEMATCH(barrier): an empty asm between
+            /* FAKEMATCH(dead): an empty once-only block between
              * `Text_DrawNumberInWindowFar(heldCount, 2, window, 8, 72);` and
              * `labelX = IN_STOCK_LABEL_X;`, which keeps their instructions
              * apart; as plain statements, 2 of 387 instructions differ in
              * tla-en. */
-            asm("");
+            do {
+            } while (0);
             labelX = IN_STOCK_LABEL_X;
             label = (s32)MsgInStock;
           } else {
             labelX = 16;
-            /* FAKEMATCH(barrier): an empty asm between `labelX = 16;` and
-             * `label = (s32)MsgNoneInStock;`, which keeps their instructions
-             * apart; as plain statements, 2 of 387 instructions differ in
-             * tla-en. */
-            asm("");
+            /* FAKEMATCH(dead): an empty once-only block between `labelX = 16;`
+             * and `label = (s32)MsgNoneInStock;`, which keeps their
+             * instructions apart; as plain statements, 2 of 387 instructions
+             * differ in tla-en. */
+            do {
+            } while (0);
             label = (s32)MsgNoneInStock;
           }
           Text_DrawCharacterAtOffsetFar(label, window, labelX, 72);

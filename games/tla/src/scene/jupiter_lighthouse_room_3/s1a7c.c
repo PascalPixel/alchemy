@@ -127,9 +127,10 @@ s32 Func_02001a7c(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
         }
       }
     columnNext:
-      /* FAKEMATCH(barrier): an empty asm lengthening the table's life; as no
-       * asm, 224 of 268 instructions differ in tla-en. */
-      asm("");
+      /* FAKEMATCH(dead): an empty once-only block lengthening the table's life;
+       * as no block, 224 of 268 instructions differ in tla-en. */
+      do {
+      } while (0);
       /* FAKEMATCH(barrier): an empty asm lengthening the table's life; as no
        * asm, 224 of 268 instructions differ in tla-en. */
       asm("");

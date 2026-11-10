@@ -19,13 +19,15 @@ void Func_02000148(struct FieldActor *self) {
   x = self->x;
   /* FAKEMATCH: both positions are read before the sine is doubled; without it
    * the shift comes before the second read */
-  asm volatile("");
+  do {
+  } while (0);
   z += sine * 2;
   self->z = z;
   self->targetX = x;
   /* FAKEMATCH: the target z store stays ahead of the timer load; without it the
    * store falls behind (6 differ; placed by alchemy permute) */
-  asm volatile("");
+  do {
+  } while (0);
   self->targetZ = z;
   *(s16 *)&self->timer += -0x800;
 }

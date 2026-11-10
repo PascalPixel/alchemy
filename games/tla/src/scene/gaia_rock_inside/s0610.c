@@ -26,7 +26,8 @@ void Func_0200062c(struct Actor *object) {
   /* FAKEMATCH: two barriers load the scale and then the pooled -0x800 before
    * the random value is shifted; without them, 2 instructions differ in
    * tla-en. */
-  __asm__ volatile("");
+  do {
+  } while (0);
   bias = -0x800;
   /* FAKEMATCH: second barrier of the pair above: the pool load stays before the
    * shifts. */

@@ -64,7 +64,8 @@ s32 Inventory_GetQuantity(s32 owner, s32 slot) {
 
   owner = ((struct OwnerInventoryState *)Unit_Get(owner))->inventory[slot];
   /* FAKEMATCH: keeps the mask after the slot load. */
-  __asm__("");
+  do {
+  } while (0);
   item_id = ITEM_ID_MASK;
   item_id &= owner;
   owner = (u32)owner >> INVENTORY_QUANTITY_SHIFT;

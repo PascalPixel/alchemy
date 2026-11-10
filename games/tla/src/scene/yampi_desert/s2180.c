@@ -7,7 +7,8 @@ void Func_02002180(void) {
 
     /* FAKEMATCH: ⚓️ loads gMainRoutineWork's address before it builds the render
      * mode offset */
-    asm volatile("");
+    do {
+    } while (0);
     if (party->renderMode != 5 || gInput == 0)
       Func_020041f8(596);
   }

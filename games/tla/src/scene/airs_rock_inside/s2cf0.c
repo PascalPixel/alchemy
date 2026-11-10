@@ -200,9 +200,10 @@ fade:
   Func_02005e04(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-  /* FAKEMATCH(barrier): DISPCNT's address built after the blend store;
+  /* FAKEMATCH(dead): DISPCNT's address built after the blend store;
    * without it, 2 of 446 instructions differ in tla-en. */
-  asm volatile("");
+  do {
+  } while (0);
   REG_DISPCNT |= DISPCNT_BG0_ON;
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;

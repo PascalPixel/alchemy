@@ -19,15 +19,17 @@ void Func_02003210(struct FieldActor *self) {
   sine = Math_Sin(angle);
   z = centre->z;
   x = self->x;
-  /* FAKEMATCH(barrier): both positions are read before the sine is doubled;
+  /* FAKEMATCH(dead): both positions are read before the sine is doubled;
    * without it, 2 of 40 instructions differ in tla-en. */
-  asm volatile("");
+  do {
+  } while (0);
   z += sine * 2;
   self->z = z;
   self->targetX = x;
-  /* FAKEMATCH(barrier): the target z store stays ahead of the timer load;
+  /* FAKEMATCH(dead): the target z store stays ahead of the timer load;
    * without it, 2 of 40 instructions differ in tla-en. */
-  asm volatile("");
+  do {
+  } while (0);
   self->targetZ = z;
   *(s16 *)&self->timer += -0x800;
 }

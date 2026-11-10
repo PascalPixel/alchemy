@@ -38,16 +38,19 @@ void Func_0200009c(void) {
   /* FAKEMATCH: the empty asms on each side of the call keep the choice's
    * decrement after it, as in overlay 66d's Func_02000368 (differ 2 without
    * either). */
-  asm("");
+  do {
+  } while (0);
   Sound_Play(158);
-  asm("");
+  do {
+  } while (0);
   index--;
   MapGrid_AnimateCells(gData_0200073c[index].map, gData_0200073c[index].x,
                  gData_0200073c[index].z);
-  /* FAKEMATCH: the empty asm ends the shift's output dependences on the later
-   * calls (r4 is call-used), so sched2 takes the table address first as the
-   * native does (differ 2). */
-  asm("");
+  /* FAKEMATCH: the empty once-only block ends the shift's output dependences on
+   * the later calls (r4 is call-used), so sched2 takes the table address first
+   * as the native does (differ 2). */
+  do {
+  } while (0);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
 

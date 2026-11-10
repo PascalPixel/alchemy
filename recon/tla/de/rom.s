@@ -50,12 +50,6 @@ Func_0816aeec:
 	.thumb_func
 BattleEffect_RunDaedalus:
 	.incbin "baserom.gba", 0x0017ea58, 0x0000223c
-	.section .rom.001843fc, "ax"
-	.global BattleEffect_RunCatastrophe
-	.type BattleEffect_RunCatastrophe, %function
-	.thumb_func
-BattleEffect_RunCatastrophe:
-	.incbin "baserom.gba", 0x001843fc, 0x00002a00
 	.section .rom.0018cb74, "ax"
 	.global BattleEffect_RunTrident
 	.type BattleEffect_RunTrident, %function

@@ -181,10 +181,10 @@ Resource_DirectoryTable:
 	resource , Summon_WingedKnightATiles
 	resource , Summon_WingedKnightBTiles
 	resource , Summon_WingedKnightCTiles
-	resource , Summon_ChainedDemonTiles
-	resource , Summon_PurpleArmourTiles
-	resource , Summon_WhiteSpikesTiles
-	resource , Summon_GoldenScalesTiles
+	resource ChainedDemonTiles, Summon_ChainedDemonTiles
+	resource PurpleArmourTiles, Summon_PurpleArmourTiles
+	resource WhiteSpikesTiles, Summon_WhiteSpikesTiles
+	resource GoldenScalesTiles, Summon_GoldenScalesTiles
 	resource GlowOrbSetSheet, BattleEffect_GlowOrbSetSheet
 	resource Data0B0, Resource_Data0B0
 	resource , Resource_Data0B1
@@ -248,8 +248,8 @@ Resource_DirectoryTable:
 	resource SmallFlameSheet, BattleEffect_SmallFlameSheet
 	resource CornerRuneASheet, BattleEffect_CornerRuneASheet
 	resource CornerRuneBSheet, BattleEffect_CornerRuneBSheet
-	resource , Resource_Data0EE
-	resource , Resource_Data0EF
+	resource Data0EE, Resource_Data0EE
+	resource Data0EF, Resource_Data0EF
 	resource Data0F0, Resource_Data0F0
 	resource Data0F1, Resource_Data0F1
 	resource Data0F2, Resource_Data0F2
@@ -259,7 +259,7 @@ Resource_DirectoryTable:
 	resource DustCloudSheet, BattleEffect_DustCloudSheet
 	resource Data0F7, Resource_Data0F7
 	resource Data0F8, Resource_Data0F8
-	resource , Resource_Data0F9
+	resource Data0F9, Resource_Data0F9
 	resource , Resource_Data0FA
 	resource Data0FB, Resource_Data0FB
 	resource Data0FC, Resource_Data0FC

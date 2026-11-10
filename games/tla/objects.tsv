@@ -1973,13 +1973,7 @@ main	rom_main_09	games/tla/src/battle_effect/f1823a8	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f18284c	.text
 main	rom_main_09	games/tla/src/battle_effect/f182898	.text
 main	rom_main_09	games/tla/src/battle_effect/f182aa8	.text
-main	rom_main_09	recon/tla/raw/081843fc	.text	en
-main	rom_main_09	recon/tla/raw/081848ec	.text	en
-main	rom_main_09	recon/tla/de/rom	.rom.001843fc	de
-main	rom_main_09	recon/tla/es/rom	.rom.001843fc	es
-main	rom_main_09	recon/tla/fr/rom	.rom.001843fc	fr
-main	rom_main_09	recon/tla/it/rom	.rom.001843fc	it
-main	rom_main_09	recon/tla/ja/rom	.rom.00184400	ja
+main	rom_main_09	games/tla/src/battle_effect/f1843fc	.text
 main	rom_main_09	games/tla/src/battle_effect/f186dfc	.text
 main	rom_main_09	games/tla/src/battle_effect/f1885f0	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f188714	.text	ja

@@ -604,6 +604,8 @@ s32 Scene_Initialize(void) {
   } else {
     GomaCavePillar_CopyWestPillarCells(18);
   }
+  // The cells GomaCavePillar_PushStumpOver copies as it sets the flag, redrawn
+  // on arrival.
   if (GameFlag_Get(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
     Actor_SetPosition(ACTOR_STUMP, PIXELS(0), PIXELS(0));
     MapGrid_CopyCellAttributes(21, 45, 4, 2, 21, 11);

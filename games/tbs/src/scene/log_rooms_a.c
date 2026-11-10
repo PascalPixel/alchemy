@@ -2200,6 +2200,8 @@ s32 Scene_Initialize(void) {
     MapGrid_CopyCellsTo(54, 2, 46, 81, 4, 8);
     Actor_Get(ACTOR_CRATE)->collisionFlags |= 4;
     Actor_SetSpriteFlags(Actor_Get(ACTOR_CRATE), 0);
+    // The cells LogRoomsA_CheckCrateMoved copies as it sets the flag, redrawn
+    // on arrival.
     if (GameFlag_Get(FLAG_VAULT_CRATE_MOVED) != 0) {
       Actor_SetPosition(ACTOR_CRATE, PIXELS(676), PIXELS(411));
       MapGrid_CopyCellAttributes(101, 24, 3, 4, 41, 24);

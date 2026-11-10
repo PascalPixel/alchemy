@@ -934,9 +934,13 @@ static void ValeCave_ApplyEntryState(void) {
       Actor_CreateConfigured(PIXELS(642), 0, PIXELS(552), SPRITE_CHEST);
       MapGrid_CopyCellAttributes(23, 34, 13, 3, 0, 34);
       ValeCave_UpdateRidingLogPassage();
+      // The cells ValeCave_MoveWestCratesIntoWater copies as it sets the flag,
+      // redrawn on arrival.
       if (GameFlag_Get(FLAG_VALE_CAVE_WEST_CRATES_SUNK) != 0) {
         MapGrid_CopyCellAttributes(23, 41, 1, 1, 23, 39);
       }
+      // The cells ValeCave_MoveEastCratesIntoWater copies as it sets the flag,
+      // redrawn on arrival.
       if (GameFlag_Get(FLAG_VALE_CAVE_EAST_CRATES_SUNK) != 0) {
         MapGrid_CopyCellAttributes(31, 39, 2, 1, 27, 41);
       }

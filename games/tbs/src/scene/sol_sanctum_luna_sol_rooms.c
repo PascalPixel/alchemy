@@ -1485,6 +1485,8 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
       if (gMainRoutineWork.entrance !=
           SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION) {
         if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) == 0) {
+          // The cells SolSanctumLunaSolRooms_RiseToElementalStarRoom copies as
+          // it sets the flag, redrawn on arrival.
           if (GameFlag_Get(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) != 0) {
             MapGrid_CopyCellsTo(0, 32, 17, 39, 2, 1);
             MapGrid_CopyCellsTo(42, 62, 17, 36, 2, 3);

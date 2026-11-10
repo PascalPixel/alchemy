@@ -725,6 +725,8 @@ static void CrossboneIsle_UnusedBlowAwayFourthIvy(void) {
 static void CrossboneIsle_RestoreIvy(void) {
   struct Actor *actor;
 
+  // The cells CrossboneIsle_BlowAwayFirstIvy copies as it sets the flag,
+  // redrawn on arrival.
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY) != 0) {
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 8, 21);
     Actor_SetPosition(ACTOR_FIRST_IVY, PIXELS(968), PIXELS(968));

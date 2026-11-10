@@ -238,6 +238,8 @@ s32 Scene_Initialize(void) {
 
     record->collisionFlags = ACTOR_NOT_TARGETED | record->collisionFlags;
   }
+  // The cells GomaCaveEntrance_IvanRejoins copies as it sets the flag, redrawn
+  // on arrival.
   if (GameFlag_Get(FLAG_GOMA_CAVE_IVAN_JOINED) != 0) {
     MapGrid_CopyCellAttributes(74, 11, 1, 1, 73, 11);
   }
@@ -252,6 +254,8 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_WEST_PILLAR, PIXELS(264), PIXELS(312));
     MapGrid_CopyCellAttributes(48, 18, 1, 2, 16, 18);
   } else {
+    // The cells GomaCaveEntrance_MoveWestPillar copies as it sets the flag,
+    // redrawn on arrival.
     if (GameFlag_Get(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS) != 0) {
       Actor_SetPosition(ACTOR_WEST_PILLAR, PIXELS(280), PIXELS(312));
       MapGrid_CopyCellAttributes(47, 18, 1, 2, 16, 18);

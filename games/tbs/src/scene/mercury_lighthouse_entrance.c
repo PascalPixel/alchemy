@@ -476,6 +476,8 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   case MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_FROM_TWIN_FOUNTAINS_EAST:
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE:
     Task_AddFrame(MercuryLighthouse_CyclePalette, TASK_PASS_FRAME);
+    // The cells MercuryLighthouseEntrance_ActivateWithPly copies as it sets the
+    // flag, redrawn on arrival.
     if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED)) {
       MapGrid_CopyCellsTo(37, 98, 10, 97, 5, 3);
       MapGrid_CenterOnFollowedPoint();

@@ -1055,6 +1055,8 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     actor = Actor_Get(ACTOR_PUDDLE);
     actor->scaleX = 3 * Q16_ONE / 2;
     actor->scaleY = 3 * Q16_ONE / 2;
+    // The cells ColosseumNavampaMatch_StepOnScales copies as it sets the flag,
+    // redrawn on arrival.
     if (GameFlag_Get(FLAG_ON_SCALES) != 0) {
       MapGrid_CopyCellAttributes(0, 24, 1, 1, 9, 12);
     } else {

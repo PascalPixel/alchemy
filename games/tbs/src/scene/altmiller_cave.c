@@ -2190,6 +2190,8 @@ s32 AltmillerCave_Initialize(void) {
     }
     Actor_SetSpriteFlags(Actor_Get(ACTOR_SQUALL_ROOM_PUDDLE), 0);
 #if TBS_PATCH_1
+    // The cells AltmillerCave_UpdateMovedObstacle copies as it sets the flag,
+    // redrawn on arrival.
     if (GameFlag_Get(FLAG_ALTMILLER_CAVE_PILLAR_IN_PLACE)) {
       MapGrid_CopyCellAttributes(30, 20, 1, 1, 32, 20);
     }

@@ -1555,6 +1555,8 @@ static void ImilFuchinFalls_PrepareRoom(void) {
     }
     if (gMainRoutineWork.entrance <=
         FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_EAST) {
+      // The cells FuchinFallsCave_LightDragonWithEye copies as it sets the
+      // flag, redrawn on arrival.
       if (GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET)) {
         MapGrid_CopyCellsTo(30, 57, 19, 57, 1, 1);
         MapGrid_CopyCellsTo(30, 8, 12, 8, 8, 7);

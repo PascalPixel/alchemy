@@ -1740,6 +1740,8 @@ static void AltinPeak_RestorePoolRoom(void) {
   if (GameFlag_Get(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
     ((struct MapGridScrollWork *)gMapGridWork[0])->flags &= ~DISPCNT_BG1_ON;
   }
+  // The cells AltinPeak_FlipPoolRoomSwitch copies as it sets the flag, redrawn
+  // on arrival.
   if (GameFlag_Get(FLAG_ALTIN_PEAK_POOL_ROOM_SWITCH) != 0) {
     MapGrid_CopyCellAttributes(17, 93, 1, 1, 16, 92);
     MapGrid_CopyCellsTo(46, 29, 16, 28, 1, 2);
@@ -1786,6 +1788,8 @@ static void AltinPeak_RestoreSpritzRoom(void) {
     }
   }
   Task_AddFrame(AltinPeak_UpdateFrostPillarPriority, TASK_PASS_FRAME);
+  // The cells AltinPeak_FlipSpritzRoomSwitch copies as it sets the flag,
+  // redrawn on arrival.
   if (GameFlag_Get(FLAG_ALTIN_PEAK_SPRITZ_ROOM_SWITCH) != 0) {
     MapGrid_CopyCellAttributes(30, 82, 1, 1, 29, 81);
     MapGrid_CopyCellsTo(46, 28, 29, 17, 1, 2);
@@ -1818,6 +1822,8 @@ static void AltinPeak_RestoreFallingRocksRoom(void) {
     actor->y.fixed += -PIXELS(8);
     actor->sprite->rotation = TRIG_TURN * 3 / 4;
   }
+  // The cells AltinPeak_RunBoulderChase copies as it sets the flag, redrawn on
+  // arrival.
   if (GameFlag_Get(FLAG_ALTIN_PEAK_BOULDER_FALLEN)) {
     MapGrid_CopyCellsTo(25, 36, 43, 36, 11, 9);
     MapGrid_CopyCellAttributes(25, 35, 10, 5, 43, 35);

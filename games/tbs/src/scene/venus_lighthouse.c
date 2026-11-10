@@ -2831,6 +2831,8 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_FROM_PILLARS:
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR:
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
+      // The cells VenusLighthouse_MovePillarOntoSwitch copies as it sets the
+      // flag, redrawn on arrival.
       if (GameFlag_Get(FLAG_SCENE_TEMP_00))
         MapGrid_CopyCellsTo(44, 117, 41, 117, 3, 5);
       break;

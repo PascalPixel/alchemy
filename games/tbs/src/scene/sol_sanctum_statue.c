@@ -912,10 +912,14 @@ s32 SolSanctumStatue_Initialize(void) {
     MapGrid_CopyCellsTo(8, 60, 17, 39, 2, 2);
     MapGrid_CopyCellAttributes(0, 0, 2, 1, 17, 8);
   } else {
+    // The cells SolSanctumStatue_ShineLeftBeam copies as it sets the flag,
+    // redrawn on arrival.
     if (GameFlag_Get(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0) {
       Actor_SetPosition(ACTOR_LEFT_BEAM_STATUE, PIXELS(232), PIXELS(120));
       MapGrid_CopyCellsTo(0, 59, 15, 38, 4, 3);
     }
+    // The cells SolSanctumStatue_ShineRightBeam copies as it sets the flag,
+    // redrawn on arrival.
     if (GameFlag_Get(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
       Actor_SetPosition(ACTOR_RIGHT_BEAM_STATUE, PIXELS(344), PIXELS(120));
       MapGrid_CopyCellsTo(4, 59, 17, 38, 4, 3);
@@ -1666,6 +1670,8 @@ static void SolSanctumStatue_ShineLeftBeam(void) {
       FieldCamera_WaitForMove();
       Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);
       MapGrid_CopyCellsTo(0, 59, 15, 38, 4, 3);
+      // The cells SolSanctumStatue_ShineRightBeam copies as it sets the flag,
+      // redrawn on arrival.
       if (Event_GetFlag(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
         MapGrid_CopyCellsTo(8, 60, 17, 39, 2, 2);
       }
@@ -1691,6 +1697,8 @@ static void SolSanctumStatue_ShineRightBeam(void) {
       FieldCamera_WaitForMove();
       Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);
       MapGrid_CopyCellsTo(4, 59, 17, 38, 4, 3);
+      // The cells SolSanctumStatue_ShineLeftBeam copies as it sets the flag,
+      // redrawn on arrival.
       if (Event_GetFlag(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0) {
         MapGrid_CopyCellsTo(8, 60, 17, 39, 2, 2);
       }

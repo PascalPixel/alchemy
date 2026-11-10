@@ -1639,6 +1639,8 @@ s32 Vale_Initialize(void) {
 #if TBS_PATCH_4
     if (GameFlag_Get(FLAG_KALAY_REACHED)) {
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
+        // The cells Vale_ClimbLadderOntoRoof copies as it sets the flag,
+        // redrawn on arrival.
         if (GameFlag_Get(FLAG_VALE_ON_ROOF)) {
           MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
         }
@@ -1693,6 +1695,8 @@ s32 Vale_Initialize(void) {
       }
 #if TBS_PATCH_4
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
+        // The cells Vale_ClimbLadderOntoRoof copies as it sets the flag,
+        // redrawn on arrival.
         if (GameFlag_Get(FLAG_VALE_ON_ROOF)) {
           MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
         }
@@ -1712,6 +1716,8 @@ s32 Vale_Initialize(void) {
     }
 #if !TBS_PATCH_4
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
+      // The cells Vale_ClimbLadderOntoRoof copies as it sets the flag, redrawn
+      // on arrival.
       if (GameFlag_Get(FLAG_VALE_ON_ROOF)) {
         MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
       }

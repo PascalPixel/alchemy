@@ -2390,8 +2390,12 @@ s32 MercuryLighthouse_Initialize(void) {
       Scene_RedrawActorFootprint(ACTOR_SECOND_PIPE);
       Scene_RedrawActorFootprint(ACTOR_THIRD_PIPE);
       SetEffectRecordMode(Actor_Get(ACTOR_PIPE_END), 1);
+      // The cells MercuryLighthouse_PushChannelPipes copies as it sets the
+      // flag, redrawn on arrival.
       if (GameFlag_Get(FLAG_PIPE_1_JOINED)) {
         MapGrid_CopyCellsTo(119, 9, 109, 11, 1, 1);
+        // The cells MercuryLighthouse_PushChannelPipes copies as it sets the
+        // flag, redrawn on arrival.
         if (GameFlag_Get(FLAG_PIPE_2_JOINED))
           MapGrid_CopyCellsTo(118, 9, 104, 13, 1, 1);
         MapGrid_CenterOnFollowedPoint();
@@ -2494,6 +2498,8 @@ s32 MercuryLighthouse_Initialize(void) {
         statueX += PIXELS(64);
         positionFlag += 2;
       }
+      // The cells MercuryLighthouse_SyncRowStatueFlags copies as it sets the
+      // flag, redrawn on arrival.
       if (GameFlag_Get(FLAG_LAST_ROW_STATUE_WEST)) {
         Actor_SetPosition(ACTOR_LAST_ROW_STATUE, PIXELS(920), PIXELS(88));
         MapGrid_CopyCellAttributes(53, 10, 1, 1, 58, 7);

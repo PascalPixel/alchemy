@@ -2514,6 +2514,8 @@ s32 MercuryLighthouse_Initialize(void) {
       break;
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_EXTERIOR_EAST:
     case MERCURY_LIGHTHOUSE_UPPER_GAP_FROM_WATERFALLS:
+      // The gap statue one column west of the door it hid, and the jump spot
+      // that reaches the door (MercuryLighthouse_ChangeCellForGapStatue).
       if (GameFlag_Get(FLAG_PASSAGE_STATUE_MOVED)) {
         Actor_SetPosition(ACTOR_GAP_STATUE, PIXELS(456), PIXELS(328));
         MapGrid_CopyCellAttributes(29, 20, 1, 1, 31, 20);

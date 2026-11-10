@@ -2973,6 +2973,9 @@ s32 VenusLighthouse_Initialize(void) {
       Scene_QueueMusic(SE_AMBIENT_WATER);
       BlendScript_Suspend();
       Io_Write16(0, &REG_BLDCNT);
+      // With the wall moved, the stone wall and the fall of sand in the
+      // recess have changed sides: the wall stands to the west and the sand
+      // pours where it stood, to the east.
       if (Event_GetFlag(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED)) {
         MapGrid_CopyCellsTo(15, 96, 9, 96, 3, 3);
         MapGrid_CopyCellsTo(12, 96, 15, 96, 3, 3);
@@ -3178,6 +3181,9 @@ s32 VenusLighthouse_Initialize(void) {
       Actor_Get(ACTOR_RISING_PLATFORM)->y.fixed = -(PIXELS(33) / 2);
       BlendScript_Suspend();
       Io_Write16(0, &REG_BLDCNT);
+      // With a wall of this room moved, it has slid out of its recess and sand
+      // pours from behind it: the west wall here, the east wall below. That
+      // sand is what runs down the third floor's chutes.
       if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
         Scene_QueueMusic(SE_AMBIENT_WATER);
         MapGrid_CopyCellsTo(36, 81, 32, 81, 3, 2);

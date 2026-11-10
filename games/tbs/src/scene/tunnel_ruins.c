@@ -1594,6 +1594,9 @@ s32 TunnelRuins_Initialize(void) {
                                SPRITE_COLOR_HIDDEN);
       Actor_SetSpriteColorById(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
                                SPRITE_COLOR_HIDDEN);
+      // A pillar that has sunk lies flush with the floor, a pool of water on
+      // its top, with its hidden Frost target on it: the floor's cells are
+      // drawn so, the pillar and target put there, and the way past opened.
       if (GameFlag_Get(FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR)) {
         MapGrid_CopyCellsTo(59, 8, 49, 8, 1, 3);
         MapGrid_CopyCellAttributes(51, 8, 1, 1, 49, 8);

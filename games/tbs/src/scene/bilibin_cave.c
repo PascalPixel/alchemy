@@ -107,6 +107,8 @@
 /// near a pillar of ice (its render)
 #define FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR FLAG_AREA_TEMP_04
 /// At the Bilibin Cave Entrance, Growth has grown the sprout into a vine.
+/// ★ Named from what the player sees: a green sprout at the foot of the cliff,
+/// which Growth grows into a vine up it (its render)
 #define FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN FLAG_AREA_TEMP_05
 
 // BilibinCave_Initialize calls one of these for the scene being entered.

@@ -129,6 +129,8 @@ enum {
   CRYSTAL_COUNT = 16
 };
 
+/// The star the Wise One has the leader take out, lifted above him.
+/// ★ Named from its area name: Elemental Star Room
 enum { ACTOR_ELEMENTAL_STAR = 22 };
 
 #define ELEMENTAL_ARC_SCALE_X_DECREASE 7372

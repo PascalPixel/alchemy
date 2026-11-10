@@ -151,12 +151,12 @@ enum {
   ACTOR_SOUTHEAST_SINKING_PILLAR,
   /// Frost's target on the north-west pillar: SPRITE_PUDDLE in
   /// SPRITE_COLOR_HIDDEN, which moves onto the pillar when it sinks.
-  /// ★ Named from what the player sees: nothing until Frost raises a pillar of
-  /// ice from it (spr_227.png)
+  /// ★ Named from what the player sees: nothing on the sunken pillar until
+  /// Frost raises a pillar of ice there (its render)
   ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
   /// The same hidden target for the south-east pillar.
-  /// ★ Named from what the player sees: nothing until Frost raises a pillar of
-  /// ice from it (spr_227.png)
+  /// ★ Named from what the player sees: nothing on the sunken pillar until
+  /// Frost raises a pillar of ice there (its render)
   ACTOR_SOUTHEAST_PILLAR_FROST_TARGET
 };
 
@@ -172,7 +172,7 @@ enum {
   /// Frost's target on the Douse pillar: SPRITE_PUDDLE in SPRITE_COLOR_HIDDEN,
   /// held 32 pixels below the soaked pillar.
   /// ★ Named from what the player sees: nothing until Frost raises a pillar of
-  /// ice from it (spr_227.png)
+  /// ice from it (its render)
   ACTOR_DOUSE_PILLAR_FROST_TARGET,
   /// ★ Named from what the player sees: a white platform on a carved grey base,
   /// the west of two below the carved stones (its render)
@@ -532,7 +532,8 @@ static void TunnelRuins_HopDownStep(void) {
 #define FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED FLAG_SCENE_TEMP_03
 /// In TunnelRuinsLadyStatues, Frost has raised a pillar of ice from the soaked
 /// pillar's hidden target, 32 pixels below the pillar.
-/// ★ Named from what the player sees: a pillar of ice (spr_227.png)
+/// ★ Named from what the player sees: a pillar of ice rising where Frost is
+/// cast (its render)
 #define FLAG_TUNNEL_RUINS_DOUSE_FROST_TARGET_FROZEN FLAG_SCENE_TEMP_04
 
 /// The entrances of TunnelRuinsGreatStatue, TunnelRuinsLadyStatues, or

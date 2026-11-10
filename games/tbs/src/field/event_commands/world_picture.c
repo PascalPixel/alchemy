@@ -112,7 +112,20 @@ void WorldPicture_Initialize(void) {
   work->markerVramBlock = VramCache_FindFreeEntry();
   Dma_Fill32(0, markerTiles, WORLD_MAP_MARKER_TILE_BYTES);
   // The marker tiles' pixel rows: eight 4-bit pixels a word, the leftmost
-  // in the low bits.
+  // in the low bits. Each tile holds one dot in its top-left corner, with a
+  // shadow in colour 1 to its right and below (# the dot, + the shadow):
+  //
+  //   tiles 0 to 2      tile 3
+  //     ##.               .##..
+  //     ##+               ####.
+  //     .++               ####+
+  //                       .##++
+  //                       ..++.
+  //
+  // Tile 0, in colour 15, marks where the party is; tiles 1 and 2, in colours
+  // 4 and 7, are the two kinds an area's row of gWorldPicture_AreaMarkers
+  // asks for; tile 3, in colour 15, is the larger dot that blinks over the
+  // marker nearest the cursor.
   markerTiles[0] = 0xff;
   markerTiles[1] = 0x1ff;
   markerTiles[2] = 0x110;

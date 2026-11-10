@@ -31,7 +31,7 @@ cd alchemy
 make
 ```
 
-The first `make` builds, once, the [old compilers](games/tbs/glossary.md#the-compilers) the games were matched with: alchemy-gcc, pret's old_agbcc, GCC 2.95.2 and GNU's assembler 2.10, all from source in the `alchemy-gcc` submodule, with no download. A current compiler would produce different instructions, so the system's `arm-none-eabi-gcc` can't stand in for them. It prints plenty of old-compiler warnings, which is normal, and the compilers and build tools take about 500 MB. Then it builds the English Broken Seal as `out/tbs-en/tbs-en.gba`, ready for an emulator. Other languages build with `make tbs-ja`, `tbs-de`, `tbs-es`, `tbs-fr` or `tbs-it`.
+The first `make` builds, once, the old compilers the games were matched with: alchemy-gcc, pret's old_agbcc, GCC 2.95.2 and GNU's assembler 2.10, all from source in the `alchemy-gcc` submodule, with no download. A current compiler would produce different instructions, so the system's `arm-none-eabi-gcc` can't stand in for them. It prints plenty of old-compiler warnings, which is normal, and the compilers and build tools take about 500 MB. Then it builds the English Broken Seal as `out/tbs-en/tbs-en.gba`, ready for an emulator. Other languages build with `make tbs-ja`, `tbs-de`, `tbs-es`, `tbs-fr` or `tbs-it`.
 
 To check the build against the original, run `make compare`. It needs no cartridge: it compares the SHA-1 hash of the built file with the original's, recorded in `rom.sha1`, and ends with `OK` when they are equal. Every edition has its `compare-` target, such as `compare-tbs-ja`, `compare-tbs` checks all six of The Broken Seal, and `make -j8` builds in parallel.
 

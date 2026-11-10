@@ -13,6 +13,14 @@
 // draw routine in a local (98). Before it, at 18: y as cos + row - half 140,
 // row - half + cos 24, row + (cos - half) 49, i * 32 or cos * 16 >> 16 18,
 // cos >> 12 27; y built by -= 18, by += then -= 61 to 140; x built by -= 18.
+// The tridents with the same empty block: in the listing's order (x, shade,
+// pixels, reset) with the block after x, after the shade, after the pixels,
+// before x, twice, or the quotient in a block local with the block before the
+// remainder: 196 to 198 (198 with none); the shade before x 202; the block
+// after x in the draft's order 12. For reload not to take x from r0 there,
+// r0 must be set, a call made or a label passed between mov r8, r0 and the
+// shift in the order reload sees; the listing's ldr r0, [sp, #20] (the
+// second &texture) one row above the shift is the one candidate in sight.
 // 2026-11-09 (round 8), unchanged at 18, about 12 attempts. cells set after
 // offset = 0x2400 (or after the FlashBurst load) keeps offset's first value:
 // the base is then a register live across the 0xF8 call (ldr r7 before the

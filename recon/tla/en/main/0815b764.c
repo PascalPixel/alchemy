@@ -1,4 +1,17 @@
 // Draft, differ 36 of 1932 (tla-en, 2026-11-09); 36 in every edition
+// 2026-11-10 (by hand), unchanged at 36. The setup in the listing's order
+// (shade first, j = 0 last) with no asm 288: the setup's rows then match but
+// the vertices' reload takes r7 and frame r1, so the listing reloads frame
+// before the vertices in the order reload sees. That order with the asm after
+// the model's allocation or after the shade, or with an empty once-only block
+// in any slot: 49 to 53 with the asm (one instruction more: the step inits
+// reload frame a second time into r0), 288 to 292 without. An empty block in
+// the draft's own order 36 to 38. In the listing frame * 2 and frame * 3 are
+// built from r7 before the yaw step's 38912 takes r7, so the scale's init
+// stands before the yaw's where reload sees them: the yaw angle set first
+// through i 1208, through mask 282; the scale as t * 3 * 1024, (t * 3 << 10),
+// + -0x12000 or (t - 24) * 3072, and the yaw as -(t << 9), t * -512, -t << 9,
+// 0 - t * 512: 36 each; the scale as (t << 11) + (t << 10) 1267.
 // 2026-11-09 (round 13), unchanged at 36: dead tests (FAKEMATCH dead) do not
 // reach what is left. A reload trace of the listing's order (shade = 0 right
 // after the model's allocation, j = 0 after model->vertices: 49) shows the

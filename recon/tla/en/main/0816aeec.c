@@ -1,4 +1,9 @@
 // Draft, differ 86 of 902 (tla-en, 2026-11-09)
+// 2026-11-10 (by hand), unchanged at 86. d's first value moved to shorten its
+// life against the + 15 copy's: after c and b, between them, or after column
+// = 0 as well, 88 to 92; d as c + 1 868, as b + 16 346. An empty once-only
+// block at the row's top, before d, after d or before the column loop, with
+// d in either place: 88 to 94.
 // 2026-11-09 (round 13), unchanged at 86. A dead test on d in the row (if (d
 // == 300) frames = 0;, FAKEMATCH dead) adds two weighted refs: d (13 refs,
 // 0.765) then ranks above the + 15 copy, takes r7 and the copy ip, as the

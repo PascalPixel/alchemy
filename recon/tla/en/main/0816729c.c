@@ -1,4 +1,13 @@
 // Draft, differ 24 of 2680 (tla-en, 2026-11-09; the same 24 in ja, de, es, fr, it)
+// 2026-11-10, by hand, unchanged at 24. DRAW_ALT's empty block moved or
+// doubled: a second after the first 24, before the draw as well 38, before
+// the load as well 36, only before the draw 32, only before the load 30,
+// all three places 50, none 208; the mode through a block local 24, with an
+// empty block before the load 36. The frame > 143 pair written out: an empty
+// block before its first draw or its first load, or between the two draws,
+// 26 to 28; no block at its first draw 122; a sheet local for the pair 108;
+// width and height locals 767; the sheet as work + 0x700 or &sheet[0], or
+// the second x as x + 24, 24.
 // 2026-11-09, round 8, unchanged at 24, about 12 attempts on queue loop 1, with
 // the push written out locally. The value store through a one-member union
 // (alias set 0) puts the count store first (an output dependence), but the

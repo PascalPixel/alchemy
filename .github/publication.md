@@ -24,6 +24,13 @@ every writer adds to the newest, opening the next while the newest still has
 room for a whole landing (`alchemy-devtools progress --volumes` and
 `--archive`). No ROM, executable or map is uploaded.
 
+No archived file ever changes, so CI keeps its copy of the archive in the
+Actions cache and `alchemy-devtools progress --fetch` brings it level: one
+listing for each volume, a download only for a file the copy lacks, and a file
+no volume holds any more is dropped, so one withdrawn from a release never
+returns from the cache. Downloading the whole archive on every run spent
+GitHub's hourly allowance of API requests on a day of frequent landings.
+
 After the main build succeeds, the `publish` job admits the commit as
 `<commit>.accepted.tsv`, with or without a receipt:
 

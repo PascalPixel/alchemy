@@ -1,8 +1,38 @@
 // Draft, differ 10 of 2680 (tla-en, 2026-11-10; the same 10 in ja, de, es, fr, it: --symbol BattleEffect_RunJudgment)
-// re-measured this round: their listing objects did not read, and it was 24 in
-// each before)
 // Pools read 10 November: every literal pool word this draft compiles equals
 // the ROM's (diff compares instructions only; Catastrophe hid a wrong one).
+// 2026-11-10, agent round 2, unchanged at 10, about 65 measures on the two
+// DRAW_ALT sites with the sister drafts' findings.
+// - The draw typed as returning nothing (a void routine type at the slot
+//   call): no change at any of the four draws at frame <= 63, alone or all
+//   (10; with a block after every draw 12); at the frame > 143 pair 12 to 18
+//   in the present form and never lower in six block forms.
+// - Two alike arms round a whole draw as a block end (if (sheet) { draw }
+//   else { draw }): the arms are not merged, 182 to 1071. That device needs a
+//   real store in the arms, and no store stands between these draws.
+// - The four draws, read from loop.c's dump and sched2 together. The sheet
+//   move comes last only when no barrier follows anywhere in the block (each
+//   barrier depends on every use of r7 since the one before, which ties the
+//   move with r2 and r3 again), so the listing's block has none after the
+//   first draw's arguments. With none (102) the code differs because loop.c's
+//   second pass moves the 24 out of the strike loop and not the slot address,
+//   where the listing rebuilds the slot address at each draw (moved) and
+//   keeps the 24 in r5 (not moved). A constant is moved when threshold *
+//   savings * life >= the loop's real insns; the threshold is 15 here and
+//   drops 3 for each constant moved before, matching sets add their savings
+//   and their lives. Second pass, 1117 insns: the slot address has savings 2
+//   and life 46, 2 * 46 * 12 = 1104, not moved by 13; the 24 has savings 3
+//   and life 44 (42 of its own over the four draws), 3 * 44 * 9 = 1188,
+//   moved. The present blocks cut the 24 into three registers of short life
+//   (savings 5, life 22, 990, kept) and the slot address into shorter ones
+//   (savings 4, life 30, 1440, moved), which is why they match everything but
+//   the ties. With no blocks the listing's choice needs the slot address's
+//   life at 50 or more and the loop at 1189 insns or more in that pass, or
+//   the 24's life at 41 or less. A slot pointer local set before the sheet
+//   test gives the address life 49 and moves it, but the 24 still moves (118;
+//   set in its declaration 144); upper and lower y locals 149.
+// - The pair: nothing new. Its stack stores still lose to the work reload by
+//   one dependent in every form with no barrier before the first draw.
 // 2026-11-10, agent round, 24 to 10, and the empty asm (FAKEMATCH barrier) is
 // gone. About 1,900 measures, most of them enumerations of block positions.
 // - Queue loop 1, 4 to 0. The push is written out as QUEUE_PUSH_PARTED with an

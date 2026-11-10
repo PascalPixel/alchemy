@@ -146,6 +146,37 @@ enum SolSanctumElementalStarRoomCellBehavior {
       11 ///< a jump spot, walked into south
 };
 
+// The room's map (map_014) draws its middle layer from the grid 40 rows down
+// and its overhead layer from 56 columns across, so a cell of either layer is
+// written as the room's cell plus that start.
+#define MIDDLE_LAYER_ROW 40
+#define OVERHEAD_LAYER_COLUMN 56
+
+/// Puts out a star's light: a blank 3-by-3 of the middle layer over the light
+/// drawn above its pedestal, whose top-left cell is (column, row).
+#define PUT_OUT_STAR_LIGHT(column, row)                                        \
+  MapGrid_CopyCellsTo(0, MIDDLE_LAYER_ROW, column, MIDDLE_LAYER_ROW + (row),   \
+                      3, 3)
+
+/// The overhead layer's column where a risen pillar's picture starts, three
+/// cells wide about the pillar's own column.
+#define RISEN_PILLAR_LEFT(column) (OVERHEAD_LAYER_COLUMN + (column) - 1)
+
+/// Lets the party onto a risen pillar whose top is the cell (column, row):
+/// the top takes plain ground, and the two ground-layer cells under its shaft
+/// are redrawn.
+#define OPEN_RISEN_PILLAR(column, row)                                         \
+  (MapGrid_CopyCellAttributes(0, 0, 1, 1, column, row),                        \
+   MapGrid_CopyCellsTo(87, 42, column, (row) + 2, 1, 2))
+
+/// Draws a sunken pillar risen, as bagging a star raises three of them into
+/// stepping stones: its picture, 3 by 4 cells on the overhead layer, then
+/// OPEN_RISEN_PILLAR. The events play the rise (gSolSanctumElementalStarRoom_
+/// StarCells) where this draws its last picture.
+#define DRAW_RISEN_PILLAR(column, row)                                         \
+  (MapGrid_CopyCellsTo(83, 40, RISEN_PILLAR_LEFT(column), row, 3, 4),          \
+   OPEN_RISEN_PILLAR(column, row))
+
 #define NULL ((void *)0)
 
 struct Actor;
@@ -213,9 +244,9 @@ static void SolSanctumElementalStarRoom_BagVenusStar(void) {
   Event_Wait(20);
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Sound_Play(SE_CLATTER);
-  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells, 96, 29);
-  MapGrid_CopyCellAttributes(0, 0, 1, 1, 41, 29);
-  MapGrid_CopyCellsTo(87, 42, 41, 31, 1, 2);
+  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
+                      RISEN_PILLAR_LEFT(41), 29);
+  OPEN_RISEN_PILLAR(41, 29);
   Event_Wait(40);
   MapGrid_SetScreenShake(0, 0, 0);
   FieldCamera_SetSpeedParameters(PIXELS(32) / 5, PIXELS(4) / 5);
@@ -224,9 +255,9 @@ static void SolSanctumElementalStarRoom_BagVenusStar(void) {
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Event_Wait(20);
   Sound_Play(SE_CLATTER);
-  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells, 74, 29);
-  MapGrid_CopyCellAttributes(0, 0, 1, 1, 19, 29);
-  MapGrid_CopyCellsTo(87, 42, 19, 31, 1, 2);
+  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
+                      RISEN_PILLAR_LEFT(19), 29);
+  OPEN_RISEN_PILLAR(19, 29);
   Event_Wait(40);
   MapGrid_SetScreenShake(0, 0, 0);
   FieldCamera_MoveTo(PIXELS(663), -1, PIXELS(192), 1);
@@ -234,9 +265,9 @@ static void SolSanctumElementalStarRoom_BagVenusStar(void) {
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Event_Wait(20);
   Sound_Play(SE_CLATTER);
-  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells, 96, 10);
-  MapGrid_CopyCellAttributes(0, 0, 1, 1, 41, 10);
-  MapGrid_CopyCellsTo(87, 42, 41, 12, 1, 2);
+  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
+                      RISEN_PILLAR_LEFT(41), 10);
+  OPEN_RISEN_PILLAR(41, 10);
   Event_Wait(40);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
@@ -253,7 +284,7 @@ static void SolSanctumElementalStarRoom_BagVenusStar(void) {
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
   Event_Wait(20);
-  MapGrid_CopyCellsTo(0, 40, 43, 66, 3, 3);
+  PUT_OUT_STAR_LIGHT(43, 26);
   Event_Wait(20);
   // Present the collected star, then return to Kraden's explanation.
   member = SolSanctumElementalStarRoom_PresentStar(ITEM_VENUS_STAR, PIXELS(712),
@@ -316,9 +347,9 @@ static void SolSanctumElementalStarRoom_BagMercuryStar(void) {
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Event_Wait(20);
   Sound_Play(SE_CLATTER);
-  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells, 84, 4);
-  MapGrid_CopyCellAttributes(0, 0, 1, 1, 29, 4);
-  MapGrid_CopyCellsTo(87, 42, 29, 6, 1, 2);
+  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
+                      RISEN_PILLAR_LEFT(29), 4);
+  OPEN_RISEN_PILLAR(29, 4);
   Event_Wait(40);
   MapGrid_SetShake(0, 0, 0);
   FieldCamera_MoveTo(PIXELS(343), -1, PIXELS(369), 1);
@@ -326,9 +357,9 @@ static void SolSanctumElementalStarRoom_BagMercuryStar(void) {
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Event_Wait(20);
   Sound_Play(SE_CLATTER);
-  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells, 76, 21);
-  MapGrid_CopyCellAttributes(0, 0, 1, 1, 21, 21);
-  MapGrid_CopyCellsTo(87, 42, 21, 23, 1, 2);
+  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
+                      RISEN_PILLAR_LEFT(21), 21);
+  OPEN_RISEN_PILLAR(21, 21);
   Event_Wait(40);
   MapGrid_SetShake(0, 0, 0);
   FieldCamera_SetSpeed(PIXELS(16) / 5, PIXELS(2) / 5);
@@ -337,9 +368,9 @@ static void SolSanctumElementalStarRoom_BagMercuryStar(void) {
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Event_Wait(20);
   Sound_Play(SE_CLATTER);
-  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells, 76, 29);
-  MapGrid_CopyCellAttributes(0, 0, 1, 1, 21, 29);
-  MapGrid_CopyCellsTo(87, 42, 21, 31, 1, 2);
+  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
+                      RISEN_PILLAR_LEFT(21), 29);
+  OPEN_RISEN_PILLAR(21, 29);
   Event_Wait(40);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
@@ -356,7 +387,7 @@ static void SolSanctumElementalStarRoom_BagMercuryStar(void) {
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
   Event_Wait(20);
-  MapGrid_CopyCellsTo(0, 40, 43, 46, 3, 3);
+  PUT_OUT_STAR_LIGHT(43, 6);
   Event_Wait(20);
   // Present the collected star, then return to Kraden's explanation.
   member = SolSanctumElementalStarRoom_PresentStar(
@@ -431,9 +462,9 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Event_Wait(20);
   Sound_Play(SE_CLATTER);
-  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells, 65, 31);
-  MapGrid_CopyCellAttributes(0, 0, 1, 1, 10, 31);
-  MapGrid_CopyCellsTo(87, 42, 10, 33, 1, 2);
+  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
+                      RISEN_PILLAR_LEFT(10), 31);
+  OPEN_RISEN_PILLAR(10, 31);
   Event_Wait(40);
   MapGrid_SetShake(0, 0, 0);
   FieldCamera_SetSpeed(PIXELS(32) / 5, PIXELS(4) / 5);
@@ -442,9 +473,9 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Event_Wait(20);
   Sound_Play(SE_CLATTER);
-  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells, 79, 9);
-  MapGrid_CopyCellAttributes(0, 0, 1, 1, 24, 9);
-  MapGrid_CopyCellsTo(87, 42, 24, 11, 1, 2);
+  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
+                      RISEN_PILLAR_LEFT(24), 9);
+  OPEN_RISEN_PILLAR(24, 9);
   Event_Wait(40);
   MapGrid_SetShake(0, 0, 0);
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
@@ -453,9 +484,9 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Event_Wait(20);
   Sound_Play(SE_CLATTER);
-  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells, 91, 10);
-  MapGrid_CopyCellAttributes(0, 0, 1, 1, 36, 10);
-  MapGrid_CopyCellsTo(87, 42, 36, 12, 1, 2);
+  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
+                      RISEN_PILLAR_LEFT(36), 10);
+  OPEN_RISEN_PILLAR(36, 10);
   Event_Wait(40);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
@@ -472,7 +503,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
   Event_Wait(20);
-  MapGrid_CopyCellsTo(0, 40, 13, 66, 3, 3);
+  PUT_OUT_STAR_LIGHT(13, 26);
   Event_Wait(20);
   member = SolSanctumElementalStarRoom_PresentStar(
       ITEM_JUPITER_STAR, PIXELS(232), PIXELS(16), PIXELS(464));
@@ -1259,7 +1290,7 @@ static void SolSanctumElementalStarRoom_TakeMarsStar(void) {
   }
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-  MapGrid_CopyCellsTo(0, 40, 13, 46, 3, 3);
+  PUT_OUT_STAR_LIGHT(13, 6);
   Event_Wait(20);
   member = SolSanctumElementalStarRoom_PresentStar(ITEM_MARS_STAR, PIXELS(232),
                                                    PIXELS(16), PIXELS(144));
@@ -2121,40 +2152,22 @@ s32 SolSanctumElementalStarRoom_Initialize(void) {
     Actor_SetPosition(ACTOR_JENNA, PIXELS(440), PIXELS(346));
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED) != 0) {
-    MapGrid_CopyCellsTo(0, 40, 43, 66, 3, 3);
-    MapGrid_CopyCellsTo(83, 40, 96, 29, 3, 4);
-    MapGrid_CopyCellAttributes(0, 0, 1, 1, 41, 29);
-    MapGrid_CopyCellsTo(87, 42, 41, 31, 1, 2);
-    MapGrid_CopyCellsTo(83, 40, 74, 29, 3, 4);
-    MapGrid_CopyCellAttributes(0, 0, 1, 1, 19, 29);
-    MapGrid_CopyCellsTo(87, 42, 19, 31, 1, 2);
-    MapGrid_CopyCellsTo(83, 40, 96, 10, 3, 4);
-    MapGrid_CopyCellAttributes(0, 0, 1, 1, 41, 10);
-    MapGrid_CopyCellsTo(87, 42, 41, 12, 1, 2);
+    PUT_OUT_STAR_LIGHT(43, 26);
+    DRAW_RISEN_PILLAR(41, 29);
+    DRAW_RISEN_PILLAR(19, 29);
+    DRAW_RISEN_PILLAR(41, 10);
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED) != 0) {
-    MapGrid_CopyCellsTo(0, 40, 43, 46, 3, 3);
-    MapGrid_CopyCellsTo(83, 40, 84, 4, 3, 4);
-    MapGrid_CopyCellAttributes(0, 0, 1, 1, 29, 4);
-    MapGrid_CopyCellsTo(87, 42, 29, 6, 1, 2);
-    MapGrid_CopyCellsTo(83, 40, 76, 21, 3, 4);
-    MapGrid_CopyCellAttributes(0, 0, 1, 1, 21, 21);
-    MapGrid_CopyCellsTo(87, 42, 21, 23, 1, 2);
-    MapGrid_CopyCellsTo(83, 40, 76, 29, 3, 4);
-    MapGrid_CopyCellAttributes(0, 0, 1, 1, 21, 29);
-    MapGrid_CopyCellsTo(87, 42, 21, 31, 1, 2);
+    PUT_OUT_STAR_LIGHT(43, 6);
+    DRAW_RISEN_PILLAR(29, 4);
+    DRAW_RISEN_PILLAR(21, 21);
+    DRAW_RISEN_PILLAR(21, 29);
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX) != 0) {
-    MapGrid_CopyCellsTo(0, 40, 13, 66, 3, 3);
-    MapGrid_CopyCellsTo(83, 40, 65, 31, 3, 4);
-    MapGrid_CopyCellAttributes(0, 0, 1, 1, 10, 31);
-    MapGrid_CopyCellsTo(87, 42, 10, 33, 1, 2);
-    MapGrid_CopyCellsTo(83, 40, 79, 9, 3, 4);
-    MapGrid_CopyCellAttributes(0, 0, 1, 1, 24, 9);
-    MapGrid_CopyCellsTo(87, 42, 24, 11, 1, 2);
-    MapGrid_CopyCellsTo(83, 40, 91, 10, 3, 4);
-    MapGrid_CopyCellAttributes(0, 0, 1, 1, 36, 10);
-    MapGrid_CopyCellsTo(87, 42, 36, 12, 1, 2);
+    PUT_OUT_STAR_LIGHT(13, 26);
+    DRAW_RISEN_PILLAR(10, 31);
+    DRAW_RISEN_PILLAR(24, 9);
+    DRAW_RISEN_PILLAR(36, 10);
     SolSanctumElementalStarRoom_LineUpCaptors();
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED) == 0) {

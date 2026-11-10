@@ -466,6 +466,10 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   case MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_FROM_EAST_WATERFALLS:
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_WEST:
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_WEST_NORTHWEST:
+    // Once Ply has honored the heart, the twin fountains' two pools take the
+    // ground the goddess's pool takes: cells out in the water, hearts and rim
+    // cells, which the hops and lights answer, with the water between them a
+    // wall.
     if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED)) {
       MapGrid_CopyCellAttributes(84, 5, 10, 7, 20, 5);
       MapGrid_CopyCellAttributes(101, 5, 12, 7, 37, 5);

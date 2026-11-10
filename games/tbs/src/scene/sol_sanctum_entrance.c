@@ -729,6 +729,8 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
   switch (entrance) {
   case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST:
   case SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_FIRST_RELIEF_ROOM:
+    // With the first small jewel set, an arched doorway stands open in the
+    // north wall of this room, between its two lit sconces.
     if (GameFlag_Get(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET) != 0) {
       MapGrid_CopyCellsTo(1, 109, 4, 81, 1, 1);
       MapGrid_CopyCellsTo(0, 70, 30, 42, 1, 1);

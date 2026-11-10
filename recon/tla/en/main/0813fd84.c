@@ -1,7 +1,34 @@
-// Draft, differ 6 of 2579 (tla-en, 2026-11-10); 6 in every edition (de, es
+// Draft, differ 2 of 2579 (tla-en, 2026-11-10); 2 in every edition (de, es
 // and fr by --symbol BattleEffect_RunCruelRuin)
 // Pools read 10 November: every literal pool word this draft compiles equals
 // the ROM's (diff compares instructions only; Catastrophe hid a wrong one).
+// 10 November, agent round 2, 6 to 2, about 20 measures. Left: the second
+// blit's movs r1, #192, which the listing has before str r5, [sp].
+// - Circle, 6 to 4: the call through a cast to a routine returning long
+//   long (tagged). lsls r2, add r0 and adds r1 tied at 4 dependents; a call
+//   that returns a value sets its result registers, so the next loads of
+//   r0 and r1 depend on the call and no longer on this call's argument
+//   loads. Returning s32 frees only r0's and gives lsls r2, adds r1, add r0
+//   (6, other rows); long long frees r0's and r1's and gives the listing.
+// - First blit, 4 to 2, at the second blit's cost: HeapSlot_Release between
+//   the blits cast the same way (tagged), and the empty block back after
+//   the second BattleEffect_LoadBlitter. add r1's dependents then stop at
+//   the release, adds r3's run on to the load call, and adds r3 goes
+//   first. With the block before the release every count stops at the
+//   block and the tie stays, whatever the draw or the release returns (the
+//   draw as void or long long: 4, the same rows); with the block after the
+//   load call its barrier is str r5, [sp] again, the 2 left.
+// - What the listing says: all six rows come out right with no barrier in
+//   the blasts at all and plain void calls (circle: r2 counts the circle
+//   call, the load call and r2 = x - half, r0 and r1 one fewer; first blit:
+//   r3 counts three calls and the second blit's load, r1 stops at movs r1,
+//   #23). So the original kept the three work->sheet apart without a loop
+//   note. Not found: the calls through plain inlines, with or without a
+//   routine parameter or a base and offset (6 with the blocks, 456
+//   without: cse still shares the sum); a test cse cannot fold but gcse
+//   can, if (zero) u = 0, in place of each block (456: gcse folds the test
+//   and the sum is shared all the same); the second blit through a slot
+//   pointer with a dead second use (599, the pointer is hoisted).
 // 10 November, agent round, 12 to 6, about 45 measures. Left: the shaded
 // circle's lsls r2 (2) and the first blit's adds r3, ldr r0, add r1 (4).
 // - Second blit, 12 to 10: its empty once-only block moved from after the
@@ -1008,21 +1035,30 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           s32 y = Data_08197716[i];
           s32 half;
 
-          Func_0815b434(work->sheet, r, 0x10000);
+          /* FAKEMATCH(signature): the call through a cast to a routine
+           * returning long long; the call then sets r0 and r1, so the loads
+           * of its r0 and r1 arguments lose the next call's loads as
+           * dependents and lsls r2, which keeps its own, goes first; as the
+           * void call, 4 of 2579 instructions differ in tla-en. */
+          ((long long (*)(u8 *, s32, s32))Func_0815b434)(work->sheet, r,
+                                                         0x10000);
           LOAD_BLITTER(SLOT_ALT, 19);
           half = r / 2;
           y -= r;
           y += 8;
           ALT_BLITTER(canvas, work->sheet, x - half, y, half, r);
-          /* FAKEMATCH(dead): an empty once-only block; it keeps the two blits'
-           * work->sheet apart until after loop.c, and the scheduling barrier
-           * it leaves falls on HeapSlot_Release's movs r0, #188, which is
-           * first there anyway; as no block, 440 of 2579 instructions differ
-           * in tla-en. */
+          /* FAKEMATCH(signature): the call through a cast to a routine
+           * returning long long; the call then sets r1, so the blit's add r1
+           * stops counting dependents here while its adds r3 goes on to the
+           * next call, and adds r3 goes first; as the void call, 6 of 2579
+           * instructions differ in tla-en. */
+          ((long long (*)(s32))HeapSlot_Release)(SLOT_ALT);
+          BattleEffect_LoadBlitter(SLOT_ALT, 23);
+          /* FAKEMATCH(dead): an empty once-only block; it keeps the two
+           * blits' work->sheet apart until after loop.c; as no block, 438 of
+           * 2579 instructions differ in tla-en. */
           do {
           } while (0);
-          HeapSlot_Release(SLOT_ALT);
-          BattleEffect_LoadBlitter(SLOT_ALT, 23);
           ALT_BLITTER(canvas, work->sheet, x, y, half, r);
           HeapSlot_Release(SLOT_ALT);
         }

@@ -481,7 +481,8 @@ enum SpriteId {
   /// ★ Named from what the player sees: a man in a green cap and a green and
   /// yellow robe, carrying a pack on his back (spr_171.png)
   SPRITE_MAN_CARRYING_A_PACK,
-  SPRITE_172,
+  SPRITE_172, ///< empty; only Vault's unused Vault_SpawnDriftingEffect makes an
+              ///< actor of it
   SPRITE_173,
   SPRITE_174,
   SPRITE_175,

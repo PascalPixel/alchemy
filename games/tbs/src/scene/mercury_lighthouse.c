@@ -2421,6 +2421,10 @@ s32 MercuryLighthouse_Initialize(void) {
     case MERCURY_LIGHTHOUSE_MIDDLE_PIPES_FROM_GATE:
       SetEffectRecordMode(Actor_Get(ACTOR_STAIR_PIPE), 1);
       SetEffectRecordMode(Actor_Get(ACTOR_STAIR_PIPE_END), 1);
+      // With the stair pipe pushed into its pool, joining the pipe above to
+      // the one below, water runs on through the room's pipes and jets from
+      // their open ends. The pipe is put back in the pool, and the cells
+      // copied here are that state's.
       if (GameFlag_Get(FLAG_STAIRS_RAISED)) {
         wait(1);
         Sound_Play(SE_MERCURY_LIGHTHOUSE_MECHANISM);

@@ -1527,6 +1527,11 @@ s32 TunnelRuins_Initialize(void) {
     switch (gMainRoutineWork.entrance) {
     case TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR:
     case TUNNEL_RUINS_GREAT_STATUE_STATUE_FROM_FIRST_PILLARS:
+      // The round floor lamps before the purple pillar, with the path the
+      // great statue has opened lit: gold lines join the lamps along the
+      // first path's route, or along the second's, as
+      // VenusLighthouse_DrawFirstPath and _DrawSecondPath light them in the
+      // statue's own room. With neither flag the lamps stay dark.
       if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH)) {
         MapGrid_CopyCellsTo(121, 4, 74, 9, 5, 8);
         MapGrid_CopyCellsTo(18, 83, 9, 73, 3, 2);
@@ -1560,6 +1565,8 @@ s32 TunnelRuins_Initialize(void) {
     case TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_FIRST_PILLARS:
     case TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_SECOND_PILLARS:
     case TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_SINKING_PILLARS:
+      // Each path the great statue has opened stands one more stone column in
+      // this room's pit, a stepping stone across it.
       if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH))
         MapGrid_CopyCells(23, 17, 1, 2, 30, 8);
       if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH))
@@ -1745,6 +1752,8 @@ s32 TunnelRuins_Initialize(void) {
     case TUNNEL_RUINS_LADY_STATUES_PATHS_NORTHWEST:
     case TUNNEL_RUINS_LADY_STATUES_PATHS_SOUTHEAST:
     case TUNNEL_RUINS_LADY_STATUES_PATHS_NORTHEAST:
+      // Here too: the first path stands a column in the gap west of the
+      // middle platform, the second in the gap east of it.
       if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH))
         MapGrid_CopyCells(10, 30, 1, 2, 16, 30);
       if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH))
@@ -1759,6 +1768,9 @@ s32 TunnelRuins_Initialize(void) {
     case TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_NORTH:
     case TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_EAST:
       Event_Wait(1);
+      // With the five statues gathered as the door asks, the arch east of
+      // them is drawn as an open doorway and the statues stand where they
+      // were left.
       if (GameFlag_Get(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN)) {
         MapGrid_CopyCells(24, 59, 1, 2, 32, 46);
         Actor_SetPosition(ACTOR_LADY_STATUE_NORTHWEST, PIXELS(408),

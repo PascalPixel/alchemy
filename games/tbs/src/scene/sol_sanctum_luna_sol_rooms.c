@@ -1474,6 +1474,9 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
   // Restore completed puzzle tiles without replaying the
   // entrance's event.
   if (playedEntranceEvent == 0) {
+    // With all four seals open, the sun symbol glowing on the floor is
+    // redrawn as a crescent moon under a falling beam of light, and the
+    // room's glow is gone; the same is copied for the other room's symbol.
     if (SolSanctumLunaSolRooms_AreAllStatueLightsLit() != 0) {
       MapGrid_CopyCellsTo(30, 44, 30, 38, 12, 5);
       MapGrid_CopyCellsTo(30, 44, 34, 37, 4, 1);
@@ -1502,6 +1505,8 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
       Actor_SetPosition(ACTOR_KRADEN, 0, 0);
     } else {
       anyLightLit = 0;
+      // Short of all four, each open seal redraws its quarter of the symbol
+      // on each room's floor: two cells of the four-by-two picture.
       if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0) {
         MapGrid_CopyCellsTo(45, 28, 34, 10, 2, 1);
         MapGrid_CopyCellsTo(45, 30, 16, 10, 2, 1);

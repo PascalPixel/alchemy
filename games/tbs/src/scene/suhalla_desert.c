@@ -526,7 +526,9 @@ static void SuhallaDesert_IodemAsksWhetherToPressOn(void) {
   struct Actor *leader;
 
   if (GameFlag_Get(FLAG_IODEM_FOLLOWING_PARTY) != 0 &&
-      GameFlag_Get(0x1b7) == 0 &&
+      // Area 55 is Lalivero's, by the scene table: the party has not yet been
+      // there.
+      GameFlag_Get(FLAG_AREA_VISITED(55)) == 0 &&
       GameFlag_Get(FLAG_IODEM_MET_WOUNDED_SOLDIERS) != 0) {
     GameFlag_Set(FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA);
     Event_Start();

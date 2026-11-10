@@ -57,9 +57,6 @@ void Func_02000110(void) {
       if (object->scaleX <= (limit << 8) + 255)
         object->scaleX += 0xa00;
     }
-    /* FAKEMATCH(barrier): the memory barrier keeps the native's reload of the
-     * scale at the join; without it, 9 of 273 instructions differ in tla-en. */
-    asm("" ::: "memory");
     object->scaleY = object->scaleX;
     wait(1);
   }

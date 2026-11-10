@@ -29,7 +29,5 @@ void Menu_ReleaseEntryObjects(void) {
 void Menu_SetEntryObjectsHidden(s32 hidden) {
   struct MenuEntryWork *menu = Ram_HeapSlots->menuRuntime;
 
-  /* FAKEMATCH: ⚓️ loads the menu work before it builds the field offset */
-  __asm__ volatile("" : "+l"(menu));
   menu->hidden = hidden;
 }

@@ -82,10 +82,6 @@ void Func_02000cf0(struct Actor *object) {
   {
     s32 a = 256, b = 30;
 
-    /* FAKEMATCH: the native sets the id last; called plainly or through an
-     * inline wrapper the id is set before the 30 (one reordered pair, differ
-     * 2). */
-    asm volatile("" : "+l"(a), "+l"(b));
     Actor_ShowEmote(39, a, b);
   }
   Actor_WalkToAndWait(39, 344, 184);

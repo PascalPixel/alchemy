@@ -22,10 +22,6 @@ void Func_02000850(s32 unused, s32 id) {
       Event_SetFlag(0x9c7);
     }
   }
-  /* FAKEMATCH(barrier): a memory barrier makes the Room4 test reload
-   * gMainRoutineWork's address; without it, 70 of 235 instructions differ in
-   * tla-en. */
-  __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room4) {
     if (id == 8) {
       AnkohlRuins_Call2dfc(3, 114, 1, 1, 3, 113);

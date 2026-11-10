@@ -49,10 +49,6 @@ void Func_02003c8c(void) {
         Func_02003c54();
     }
   }
-  /* FAKEMATCH: an empty asm clobbering memory stops GCSE from keeping the party
-   * state's address in r5 across the tests; the native loads it again for each
-   * (differ 16 without). */
-  asm("" ::: "memory");
   if ((gMainRoutineWork.entrance >= 1 && gMainRoutineWork.entrance <= 3) ||
       gMainRoutineWork.entrance == 9) {
     if (GameFlag_Test(0x212))
@@ -81,9 +77,6 @@ void Func_02003c8c(void) {
       Func_0200482c();
   }
 #if TLA_PATCH_1 /* From patch 1. */
-  /* FAKEMATCH: as above, the barrier makes this test load gMainRoutineWork's
-   * address again. */
-  asm("" ::: "memory");
   if (gMainRoutineWork.entrance >= 8 && gMainRoutineWork.entrance <= 9)
     GameFlag_ClearBit(0x12f);
 #endif

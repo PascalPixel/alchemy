@@ -105,10 +105,6 @@ s32 Func_02002a74(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
           cx = i + x0;
           entry->x = cx;
           cz = j + z0;
-          /* FAKEMATCH(barrier): the empty asm tied to cz gives it the
-           * references that rank it ahead of cx; as no asm, 16 of 268
-           * instructions differ in tla-en. */
-          asm("" : "=r"(cz) : "0"(cz));
           entry->z = cz;
           entry->flag = flag;
           flag++;

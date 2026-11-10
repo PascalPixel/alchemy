@@ -11,10 +11,6 @@ void Func_020006d0(s32 unused, s32 id) {
       AnkohlRuins_Call2dfc(3, 68, 1, 1, 3, 70);
     }
   }
-  /* FAKEMATCH(barrier): memory barriers before each later scene test reload
-   * gMainRoutineWork's address, as the native does; as plain statements, 19 of
-   * 168 instructions differ in tla-en. */
-  __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room4) {
     if (id == 19) {
       AnkohlRuins_Call2dfc(35, 72, 1, 1, 38, 72);
@@ -25,14 +21,12 @@ void Func_020006d0(s32 unused, s32 id) {
     if (id == 18)
       AnkohlRuins_Call2dfc(39, 93, 1, 1, 40, 93);
   }
-  __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room3) {
     if (id == 8) {
       AnkohlRuins_Call2dfc(32, 69, 1, 1, 32, 70);
       AnkohlRuins_Call2dfc(33, 69, 1, 1, 33, 71);
     }
   }
-  __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room5) {
     if (id == 8) {
       MapGrid_CopyCellAttributes(17, 85, 1, 1, 17, 83);

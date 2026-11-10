@@ -50,9 +50,6 @@ ask:
   item = Func_020011a0(&unit, &slot);
   if (item == -1) {
 #else
-  /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 63 of 376
-   * instructions differ in tla-en. */
-  asm("" : : : "sfp");
   Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
   if (Func_020011a0(&unit, &slot) == -1) {
 #endif

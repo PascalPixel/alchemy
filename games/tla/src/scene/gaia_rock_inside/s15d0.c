@@ -70,9 +70,6 @@ void Func_020015d0(s32 idA, s32 idB) {
   REG_BLDCNT = 0x3f10;
   i = 0;
 first:
-  /* FAKEMATCH(barrier): two references each for a and i, ranking a over i over
-   * b; as no asm, 177 of 402 instructions differ in tla-en. */
-  asm("" : : "r"(a), "r"(i));
   {
     struct Spark *spark = ((void *)Import_ActorCreate(kind, a->x, a->y, a->z));
     Sound_Play(246);

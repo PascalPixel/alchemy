@@ -36,18 +36,10 @@ void Func_020006c8(s32 state) {
     *flash = 16;
   if (gData_02003a80 == 0)
     MapGrid_CopyCellsLayered(0, 122, 3, 3, 17, 67);
-  /* FAKEMATCH: each empty asm with a memory clobber keeps GCSE from carrying
-   * one load of the index across the calls; the native reloads it for every
-   * test (without them: differ 133). */
-  asm("" : : : "memory");
   if (gData_02003a80 == 1)
     MapGrid_CopyCellsLayered(0, 122, 3, 3, 8, 72);
-  /* FAKEMATCH: as above. */
-  asm("" : : : "memory");
   if (gData_02003a80 == 2)
     MapGrid_CopyCellsLayered(0, 122, 3, 3, 17, 72);
-  /* FAKEMATCH: as above. */
-  asm("" : : : "memory");
   if (gData_02003a80 == 3)
     MapGrid_CopyCellsLayered(0, 122, 3, 3, 8, 67);
   gData_02003a80 = next / 2;
@@ -55,12 +47,8 @@ void Func_020006c8(s32 state) {
     MapGrid_CopyCellsLayered(0, 125, 3, 3, 17, 67);
   if (gData_02003a80 == 1)
     MapGrid_CopyCellsLayered(0, 125, 3, 3, 8, 72);
-  /* FAKEMATCH: as above. */
-  asm("" : : : "memory");
   if (gData_02003a80 == 2)
     MapGrid_CopyCellsLayered(0, 125, 3, 3, 17, 72);
-  /* FAKEMATCH: as above. */
-  asm("" : : : "memory");
   if (gData_02003a80 == 3)
     MapGrid_CopyCellsLayered(0, 125, 3, 3, 8, 67);
 }

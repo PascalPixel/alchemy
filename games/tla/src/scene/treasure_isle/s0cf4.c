@@ -49,10 +49,6 @@ s32 Func_02000cf4(void) {
     if (Event_GetFlag(0x302))
       PlaceObject(10, PIXELS(440), PIXELS(344));
   }
-  /* FAKEMATCH(barrier): an empty asm with a memory clobber before each later
-   * room test, so GCSE does not carry gMainRoutineWork's address from one test to
-   * the next; without this one, 27 of 241 instructions differ in tla-en. */
-  __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom2) {
     Task_AddFrame(Func_02000ba0, TASK_PASS_VBLANK);
     Func_02001064(0, 8, 9);
@@ -69,9 +65,6 @@ s32 Func_02000cf4(void) {
     if (Event_GetFlag(0x307))
       Func_020003fc(gData_0200117c, 4);
   }
-  /* FAKEMATCH(barrier): as above; without it, 35 of 241 instructions differ in
-   * tla-en. */
-  __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom3) {
     Task_AddFrame(Func_02000ba0, TASK_PASS_VBLANK);
     Func_02001064(0, 8, 9);
@@ -84,9 +77,6 @@ s32 Func_02000cf4(void) {
     if (Event_GetFlag(0x30c))
       Func_020003fc(gData_020011cc, 2);
   }
-  /* FAKEMATCH(barrier): as above; without it, 39 of 241 instructions differ in
-   * tla-en. */
-  __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom4) {
     if (Event_GetFlag(0x30d))
       PlaceObject(8, PIXELS(696), PIXELS(600));

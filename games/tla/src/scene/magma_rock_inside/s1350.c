@@ -156,9 +156,6 @@ rise:
   row:
     i = 0;
   column:
-    /* FAKEMATCH(barrier): the empty asm rewriting row; as no asm, 111 of 537
-     * instructions differ in tla-en. */
-    asm("" : "+r"(row));
     burstPosition[0] = baseX + ((Random16Far() % 48) << 16);
     Func_0200015c(burstPosition[0], burstPosition[1],
                   burstPosition[2] + (row << 18) + 0x80000, 0, 0x10000, 0,
@@ -180,9 +177,6 @@ rise:
       /* FAKEMATCH(temporary): sparkRandom holding the call's value; as the call
        * inside the sum, 2 of 537 instructions differ in tla-en. */
       sparkRandom = Random16Far();
-      /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 379 of 537
-       * instructions differ in tla-en. */
-      asm("" : : : "sfp");
       sparkPosition = position;
       sparkPosition[0] = baseX + ((sparkRandom % 48) << 16);
       Func_0200015c(sparkPosition[0], sparkPosition[1],
@@ -203,9 +197,6 @@ rise:
       REG_BLDCNT = 0;
     } else if (t <= 127) {
       *(s32 *)&layer->unk08[4] += 0x8000;
-      /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 347 of 537
-       * instructions differ in tla-en. */
-      asm("" : : : "sfp");
       roomPosition = position;
       roomPosition[2] -= 0x8000;
       Func_02004cd8_(71, 76, srcX, srcZ - ((t - 47) >> 5) + 8, 3, 1);
@@ -228,9 +219,6 @@ last:
   /* FAKEMATCH(temporary): sparkRandom holding the call's value; as the call
    * inside the sum, 2 of 537 instructions differ in tla-en. */
   sparkRandom = Random16Far();
-  /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 404 of 537
-   * instructions differ in tla-en. */
-  asm("" : : : "sfp");
   sparkPosition = position;
   sparkPosition[0] = baseX + ((sparkRandom % 48) << 16);
   i++;

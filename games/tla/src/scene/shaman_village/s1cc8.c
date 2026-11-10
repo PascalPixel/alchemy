@@ -12,9 +12,6 @@ void Func_02001cc8(void) {
     object->motionFlags = 3;
     do {
       wait(1);
-      /* FAKEMATCH: one more use of the object in the loop gives it r5 and the
-       * speed r6; without it, 14 instructions differ in tla-en. */
-      __asm__("" : : "l"(object));
     } while (object->velocityY != 0);
     Sound_Play(188);
     wait(10);

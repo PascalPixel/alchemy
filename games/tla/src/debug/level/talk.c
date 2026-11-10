@@ -26,9 +26,6 @@ void Func_0200017c(s32 delta);
 static inline u32 Input_PressedFenced(u32 mask) {
   u32 keys = KEYS_PRESSED & mask;
 
-  /* FAKEMATCH: the memory clobber makes each test load gInput's address again;
-   * without it, 11 instructions of Func_020001a8 differ in tla-en. */
-  __asm__ volatile("" : "+r"(keys) : : "memory");
   return keys;
 }
 

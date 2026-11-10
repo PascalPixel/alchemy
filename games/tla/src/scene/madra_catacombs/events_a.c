@@ -88,10 +88,6 @@ void Func_02000568(void) {
   Event_ResolvePendingActions(0);
   Sound_Play(183);
   for (i = 0; i < 120; i++) {
-    /* FAKEMATCH: the native keeps the counter in r5 and the right door in r6;
-     * global.c ranks them 14/24 against 10/17 without the barrier and gives the
-     * door r5. */
-    __asm__("" : : "r"(i));
     left->x += -0x1999;
     /* FAKEMATCH(signature): read and written as long, another alias set than
      * the left door's int store, so the load need not wait for that store; as

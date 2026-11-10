@@ -44,8 +44,6 @@ void Resource_LoadPairedBlocksIfAvailable(void) {
 void Menu_ResetTwoResourceEntries(void) {
   struct ItemMenuBlocks *state = Ram_HeapSlots->menuRuntime;
 
-  /* FAKEMATCH: ⚓️ loads the state before it builds the slot offset */
-  asm volatile("" : "+l"(state));
   Resource_ResetEntry((u16)state->resourceSlots[0]);
   Resource_ResetEntry((u16)state->resourceSlots[1]);
 }

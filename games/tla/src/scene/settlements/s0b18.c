@@ -27,10 +27,6 @@ s32 Func_02000b18(void) {
     }
 #endif
   }
-  /* FAKEMATCH: the native reads the scene again here, address and all; without
-   * the barrier the address is kept in a register across the first block
-   * (differ 11). */
-  __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room1) {
     if (GameFlag_Test(0xa60)) {
       Map_CopyCellPictureIndicesRect(5, 46, 5, 47, 1, 1);

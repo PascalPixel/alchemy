@@ -55,9 +55,6 @@ void Func_02001880(void) {
   do {
     wait(1);
   } while (owner->unk63 == 0 || shaman->unk63 == 0);
-  /* FAKEMATCH: one more use of the shaman's flag gives its address r5 and the
-   * owner's r6; as plain C, 36 instructions differ in tla-en. */
-  __asm__("" : : "m"(shaman->unk63));
   Func_02003040();
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   Camera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(168), 1);
@@ -125,9 +122,6 @@ void Func_02001aa4(void) {
   do {
     wait(1);
   } while (owner->unk63 == 0 || shaman->unk63 == 0);
-  /* FAKEMATCH: one more use of the shaman's flag ranks its address ahead of the
-   * owner's (r5, then r6), as in Func_02001880 above. */
-  __asm__("" : : "m"(shaman->unk63));
   Func_02003040();
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   Camera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(168), 1);

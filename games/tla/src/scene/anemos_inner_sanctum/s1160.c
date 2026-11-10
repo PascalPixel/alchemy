@@ -47,20 +47,12 @@ void Func_02001160(void) {
     if (x != 8)
       SetCell(2, 0x480000, 0x1a80000, 232);
   }
-  /* FAKEMATCH(barrier): an empty asm with a memory clobber, so GCSE does not
-   * keep gMainRoutineWork's address from the first test; without it, 11 of 243
-   * instructions differ in tla-en. */
-  __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room4) {
     SetCell(2, 0x1180000, 0x1580000, 0);
     SetCell(2, 0x1180000, 0x1780000, 232);
     SetCell(2, 0x1280000, 0x1680000, 0);
     SetCell(2, 0x2080000, 0x2780000, 232);
   }
-  /* FAKEMATCH(barrier): as above, so the scene is read again for each test
-   * below rather than loaded early by GCSE; without it, 46 of 243 instructions
-   * differ in tla-en. */
-  __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room2) {
     if (x == 37 && z == 31) {
       GameFlag_SetBit(0xa80);

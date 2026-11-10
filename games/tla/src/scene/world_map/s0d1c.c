@@ -31,10 +31,6 @@ void Func_02000d4c(void) {
   Actor_SetSingleChildFlags(Actor_Get(19), 0);
   a = 0x4000;
   id = 19;
-  /* FAKEMATCH: the native builds the last argument, then the id, before it
-   * loads the two positions; a direct call and a forwarding inline load the
-   * positions first. */
-  __asm__ volatile("" : "+r"(a), "+r"(id));
   Actor_SetPositionAndFacing(id, PIXELS(10168), PIXELS(9648), a);
   Event_SetFlag(0xa77);
 }

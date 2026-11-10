@@ -19,8 +19,6 @@ void Func_02000494(void) {
     s32 none = 0;
     s32 on = 1;
 
-    /* FAKEMATCH: ⚓️ builds both values before it stores either */
-    asm("" : "+l"(none), "+l"(on));
     *flag = on;
     *(s32 *)((u8 *)object + 108) = none;
   }

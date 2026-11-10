@@ -22,10 +22,6 @@ void Func_0200371c(void) {
   if (gMainRoutineWork.entrance == 1 && !GameFlag_Test(0x88c)) {
     Func_02002ebc();
   } else {
-    /* FAKEMATCH: the memory clobber keeps GCSE from carrying gMainRoutineWork's
-     * address from the first test into this one, which reloads it; plainly,
-     * 13 instructions differ in tla-en. */
-    asm("" ::: "memory");
     if (gMainRoutineWork.entrance == 2 && !GameFlag_Test(0x88c))
       Func_02001bec();
   }

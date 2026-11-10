@@ -27,9 +27,6 @@ void Func_020003ac(void) {
     s32 x = 256;
     s32 z = 50;
 
-    /* FAKEMATCH: the native builds both arguments before the actor id, as
-     * Func_0200071c's barrier does (differ 2 without). */
-    __asm__ volatile("" : "+r"(x), "+r"(z));
     Func_080d47b4(8, x, z);
   }
   Event_ShowMessageThenWait(8, 0, 10);

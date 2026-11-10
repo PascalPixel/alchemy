@@ -59,8 +59,6 @@ void Func_02001958(s32 a0) {
     Event_ShowMessageThenWait(0x19, 0, 0xa);
     {
       s32 b = 0x107, c = 0x1e;
-      /* FAKEMATCH: the native schedule sets the first argument last. */
-      __asm__ volatile("" : "+l"(b), "+l"(c));
       Func_080d47b4(0x19, b, c);
     }
     Event_OpenMessage(0x19, 0);
@@ -91,8 +89,6 @@ void Func_02001958(s32 a0) {
     Event_Wait(70);
     {
       s32 b = 0x100, c = 0x32;
-      /* FAKEMATCH: the native schedule sets the first argument last. */
-      __asm__ volatile("" : "+l"(b), "+l"(c));
       Func_080d47b4(0x19, b, c);
     }
     Event_ShowMessageThenWait(0x19, 0, 0xa);

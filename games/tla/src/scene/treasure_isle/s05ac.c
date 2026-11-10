@@ -110,22 +110,16 @@ void Func_02000760(s32 unused, s32 id) {
     if (id == 10 && object->x >> 20 == 27)
       Event_SetFlag(0x302);
   }
-  /* FAKEMATCH: the memory barriers before the second, third and fourth room
-   * tests make each reload gMainRoutineWork, as the native does; with any two
-   * of the three, 29 instructions differ in tla-en. */
-  __asm__ volatile("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom2) {
     if (id == 10 && object->x >> 19 == 33)
       Event_SetFlag(0x308);
     if (id == 11 && object->x >> 19 == 85 && object->z >> 19 == 83)
       Func_02000728();
   }
-  __asm__ volatile("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom3) {
     if (id == 10 && object->x >> 19 == 83)
       Event_SetFlag(0x309);
   }
-  __asm__ volatile("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom4) {
     if (id == 8 && object->x >> 19 == 87)
       Event_SetFlag(0x30d);

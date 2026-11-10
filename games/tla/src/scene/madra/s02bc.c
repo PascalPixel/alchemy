@@ -22,8 +22,6 @@ void Func_020002bc(void) {
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
       a = 0x103;
       b = 30;
-      /* FAKEMATCH: as above. */
-      __asm__ volatile("" : "+r"(a), "+r"(b));
       Func_080d47b4(33, a, b);
       Event_ShowMessageThenWait(33, 0, 10);
     } else {

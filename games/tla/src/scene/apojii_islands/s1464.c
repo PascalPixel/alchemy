@@ -47,9 +47,6 @@ void Func_02001500(void) {
     Actor_SetSingleChildFlags(Actor_Get(*owner), 1);
     ((struct FieldSprite *)leader->animation)->priority = 1;
     offset = 10;
-    /* FAKEMATCH: the native sets the offset before it loads the owner (differ 2
-     * without the barrier). */
-    __asm__("" : "+r"(offset), "+m"(*(u8 *)owner));
     Actor_WalkByAndWait(*owner, 0, offset);
     leader->motionFlags = 3;
     leader->update = (void (*)(void))flag;

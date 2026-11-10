@@ -33,10 +33,6 @@ s32 Func_08100738(s32 slot, s32 ownerId, s32 targetId) {
    * tla-en. */
   entry = unit->inventory[slot];
   itemId = ITEM_ID_MASK;
-  /* FAKEMATCH(barrier): an empty asm that claims to change ownerId and
-   * clobbers r2, so reload reads the mask back from sl instead of reusing r2;
-   * as the same code without it, 22 of 90 instructions differ in tla-en. */
-  __asm__("" : "+l"(ownerId) : : "r2");
   itemId &= entry;
   item = Item_Get(itemId);
   useResult = BattleEffect_ApplyToTargets(OWNER_ACTION_ID_MASK & item->actionId,

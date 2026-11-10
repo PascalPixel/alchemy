@@ -30,7 +30,6 @@ s32 Func_02000e84(void) {
     Func_020032b0(1);
     SetBlend(1, 0x10000, 0x40000, 0x20000, 0x10000, 0x8000, 0x4000);
   }
-  __asm__("" : : : "memory");
   if (scene == (s32)&SceneId_Ov6ACRoom6) {
     switch (entrance) {
     case 1:

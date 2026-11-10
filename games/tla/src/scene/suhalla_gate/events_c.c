@@ -34,8 +34,6 @@ void Func_0200071c(void) {
   Actor_SetAngleToward(gMainRoutineWork.currentOwner, 8, 0);
   x = 0x100;
   z = 0;
-  /* FAKEMATCH: the native builds both arguments before loading the leader. */
-  __asm__ volatile("" : "+r"(x), "+r"(z));
   Func_080d47b4(gMainRoutineWork.currentOwner, x, z);
   Event_Wait(16);
   Actor_WalkTo(gMainRoutineWork.currentOwner, 488, 440);

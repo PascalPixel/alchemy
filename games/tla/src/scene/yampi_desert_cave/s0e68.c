@@ -9,9 +9,6 @@ void Func_02000e68(s32 unused, s32 id) {
     Map_CopyCellAttributeRect(98, 3, 3, 3, 97, row);
     Map_CopyCellAttributeRect(33, 12, 1, 1, 34, row);
   }
-  /* FAKEMATCH: the native reads the scene again here; without the barrier the
-   * read is moved up both paths */
-  __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3) {
     if (id == 12) {
       MapGrid_CopyCellAttributes(102, 15, 1, 1, 103, 15);
@@ -47,9 +44,6 @@ void Func_02000f10(s32 unused, s32 id) {
       Map_CopyCellAttributeRect(32, 13, 1, 1, 34, row);
     }
   }
-  /* FAKEMATCH: the native reads the scene again here; without the barrier the
-   * read is moved up both paths */
-  __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3) {
     if (id == 12) {
       s32 column;
@@ -66,9 +60,6 @@ void Func_02000f10(s32 unused, s32 id) {
     if (id == 13) {
       if (object->x >> 20 == 10 && object->z >> 20 == 11)
         GameFlag_SetBit(0x304);
-      /* FAKEMATCH: the native reads the position again for the last call;
-       * without the barrier both paths keep the first reads */
-      __asm__("" : : : "memory");
       MapGrid_CopyCellAttributes(12, 11, 1, 1, object->x >> 20,
                                  object->z >> 20);
     }

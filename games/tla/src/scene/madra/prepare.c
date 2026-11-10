@@ -120,8 +120,6 @@ void Func_02000968(void) {
     if (GameFlag_Test(0x300) == 0) {
       x = 0x100;
       z = 30;
-      /* FAKEMATCH: the native loads both distances before the actor id. */
-      __asm__ volatile("" : "+r"(x), "+r"(z));
       Func_080d47b4(14, x, z);
       Actor_SetAngleToward(14, 4, 0);
     }
@@ -150,8 +148,6 @@ void Func_02000a48(void) {
   Actor_SetAngleToward(11, 4, 0);
   Event_SetMessageId((s32)&MsgIsThereBy);
   flags = 0;
-  /* FAKEMATCH: the native loads the flags before the actor id. */
-  __asm__ volatile("" : "+r"(flags));
   FieldMessage_ShowAtActor(11, flags);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     GameFlag_SetBit(0x301);

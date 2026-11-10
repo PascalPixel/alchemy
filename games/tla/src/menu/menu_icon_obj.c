@@ -51,8 +51,6 @@ void MenuIcon_ReplaceObject(s32 index, s32 kind, s32 animation) {
 void MenuIcon_SetPosition(s32 index, s32 x, s32 y) {
   struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
 
-  /* FAKEMATCH: ⚓️ loads the menu work before it builds the field offset */
-  __asm__ volatile("" : "+l"(menu));
 
   if (menu->objects[index] != NULL) {
     menu->x[index] = x;
@@ -63,8 +61,6 @@ void MenuIcon_SetPosition(s32 index, s32 x, s32 y) {
 void MenuIcon_SetPicture(s32 index, s32 frame) {
   struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
 
-  /* FAKEMATCH: ⚓️ loads the menu work before it builds the field offset */
-  __asm__ volatile("" : "+l"(menu));
 
   if (menu->objects[index] != NULL)
     menu->frame[index] = frame;

@@ -22,9 +22,6 @@ void Func_02001770(void) {
     FieldEvent_ResolvePendingActions(1);
     {
       s32 y = 0x80;
-      /* FAKEMATCH: ⚓️ starts 0x4000 before the other arguments and shifts it
-       * after them; plain constants build it third (differ 2). */
-      asm volatile("" : "+l"(y));
       Actor_SetPositionAndFacing(20, PIXELS(408),
                                                      PIXELS(145), y << 7);
     }

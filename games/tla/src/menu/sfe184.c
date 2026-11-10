@@ -48,9 +48,6 @@ s32 Func_080fe184(void) {
     } y;
 
     y.value = 26;
-    /* FAKEMATCH: the native loads the row height before it builds the rows'
-     * offset (differ 2 without the barrier). */
-    __asm__ volatile("" : "+r"(y.value));
     for (index = 3; index >= 0; index--)
       state->ownerY[index] = y.value;
   }

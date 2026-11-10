@@ -19,8 +19,6 @@ void MenuIcon_PushSlots(void) {
   struct MenuSlotEntry *slot;
   s32 i;
 
-  /* FAKEMATCH: ⚓️ loads the menu work before it builds the field offset */
-  __asm__ volatile("" : "+l"(menu));
   if (menu->active != 0) {
     slot = menu->slots;
     for (i = 4; i >= 0; i--) {

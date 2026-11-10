@@ -31,10 +31,6 @@ void Func_020006ec(void) {
       s32 a = 0x106;
       s32 b = 10;
 
-      /* FAKEMATCH: the native loads the second and third arguments before the
-       * first; the plain call loads the first earlier (one instruction moved,
-       * differ 2). */
-      asm volatile("" : "+l"(a), "+l"(b));
       FieldActor_ShowEmote(13, a, b);
     }
     FieldEvent_ShowMessageThenWait(13, 0, 5);
@@ -42,10 +38,6 @@ void Func_020006ec(void) {
       s32 a = 0x108;
       s32 b = 15;
 
-      /* FAKEMATCH: the native loads the second and third arguments before the
-       * first; the plain call loads the first earlier (one instruction moved,
-       * differ 2). */
-      asm volatile("" : "+l"(a), "+l"(b));
       FieldActor_ShowEmote(13, a, b);
     }
     FieldEvent_ShowMessageThenWait(13, 0, 5);

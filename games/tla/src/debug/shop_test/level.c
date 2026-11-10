@@ -44,10 +44,6 @@ void Func_02000748(void) {
       Sound_Play(93);
       redraw = 1;
     }
-    /* FAKEMATCH: the memory barrier keeps GCSE's PRE from reusing the Start and
-     * Select tests' input address here, so the A test loads it again as the
-     * native does (differ 17 without). */
-    __asm__ volatile("" : : : "memory");
     if (gInput.pressed & 1) {
       Func_02000704(1);
       Sound_Play(91);

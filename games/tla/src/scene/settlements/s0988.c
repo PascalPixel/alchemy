@@ -23,9 +23,6 @@ s32 Func_02000988(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x100;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room7)
     Func_02000860();
-  /* FAKEMATCH: the native reads the scene again at each test; without the
-   * barrier the read is moved up both paths (differ 56 over the four tests). */
-  __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room9) {
     Func_02002140(0);
     Func_02002188(gData_0200226c);
@@ -58,12 +55,8 @@ s32 Func_02000988(void) {
     }
     Func_02002188(gData_02002272);
   }
-  /* FAKEMATCH: as at the second test. */
-  __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room3)
     Func_02002140(0);
-  /* FAKEMATCH: as at the second test. */
-  __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room6)
     Func_02002140(0);
   return 0;

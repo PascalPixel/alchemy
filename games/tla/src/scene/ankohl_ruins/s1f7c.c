@@ -35,9 +35,6 @@ void Func_02001f7c(void) {
       rider->z = raft->z - 0x100000;
     }
   }
-  /* FAKEMATCH(barrier): a memory barrier reloads the raft's z for its row;
-   * as a plain statement, 81 of 167 instructions differ in tla-en. */
-  __asm__("" : : : "memory");
   row = raft->z >> 20;
   if ((u16)(row - 31) <= 4 && !AnkohlRuins_FlagCheck(0x146)) {
     AnkohlRuins_Call2dfc(35, 83, 5, 4, 12, 96);

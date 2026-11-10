@@ -758,10 +758,6 @@ void Func_081a1294(const u8 *source, u8 *destination, s32 position) {
      * tla-en. */
     register volatile s32 *word asm("r2") = &gData_0200751c;
 
-    /* FAKEMATCH(barrier): clobbering r1 loads the address before the
-     * position is copied to r1 for its shift; as the pin alone, 4 of 76
-     * instructions differ in tla-en. */
-    __asm__("" : "+l"(word) : : "r1");
     *word = position << 16;
   }
   for (column = 0; column < 15; column++) {

@@ -64,10 +64,6 @@ void Func_020000e4(struct Actor *object) {
     register struct Actor *a asm("r1");
 
     a = anchor;
-    /* FAKEMATCH(barrier): an asm reading the copy, so the copy comes before
-     * the radius's + 6; as anchor->x read straight, 2 of 48 instructions
-     * differ in tla-en. */
-    asm("" : : "l"(a));
     along = a->x + cosine * (radius + 6);
   }
   object->x = along;

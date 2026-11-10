@@ -28,9 +28,6 @@ void Func_02000500(s32 unused, s32 id) {
   Actor_Get(party->currentOwner)->priorityFlags |= 1;
   if (object->x >> 20 == 20 && object->z >> 20 == 39)
     FieldActor_SetSpritePriority(id, 3);
-  /* FAKEMATCH: the memory barrier reads the position again for the terrain
-   * height, as the native does (differ 18 without). */
-  asm("" ::: "memory");
   if (object->terrainHeight !=
       Map_GetTerrainHeight(object->terrainId, object->x, object->z)) {
     System_Wait(2);

@@ -114,9 +114,6 @@ overlap:
   if (cell != startCell)
     goto moved;
 walk:
-  /* FAKEMATCH(barrier): as the one above; as no asm, 126 of 304 instructions
-   * differ in tla-en. */
-  __asm__("" : : : "sfp");
   FieldVector_AddPolarOffset(0x100000, angle, position);
   q = position;
   cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);

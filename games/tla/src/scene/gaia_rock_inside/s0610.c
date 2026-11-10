@@ -29,9 +29,6 @@ void Func_0200062c(struct Actor *object) {
   do {
   } while (0);
   bias = -0x800;
-  /* FAKEMATCH: second barrier of the pair above: the pool load stays before the
-   * shifts. */
-  __asm__ volatile("" : "+r"(bias));
   scale += (random << 12) >> 16;
   scale += bias;
   object->scaleX = scale;
@@ -58,9 +55,6 @@ s32 Func_02000678(void) {
   Func_02004dac(object, gData_020050d0);
   object->scaleX = 0x6666;
   object->scaleY = 0x6666;
-  /* FAKEMATCH: the object passed through this asm stores both scales before
-   * the sprite is loaded; without it, 4 instructions differ in tla-en. */
-  __asm__("" : "+r"(object));
   sprite = object->animation;
   sprite->priority = 1;
   object->bounce = 0;

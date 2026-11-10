@@ -36,10 +36,6 @@ void Func_020011fc(void) {
     s32 flag = Event_GetFlag(0x175);
     s32 base = (s32)MsgNextILl;
 
-    /* FAKEMATCH: the empty asm ties the flag to the message base, so the base
-     * loads before the multiply; as plain C, 2 instructions differ in tla-en.
-     */
-    asm("" : "+r"(flag) : "r"(base));
     FieldEvent_SetMessageId(
         flag * ((s32)MsgDjinnGiveTutorialB - (s32)MsgDjinnGiveTutorialA) +
         base);

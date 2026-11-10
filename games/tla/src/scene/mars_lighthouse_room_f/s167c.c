@@ -45,10 +45,6 @@ void Func_0200167c(void) {
       i += 0x1999;
     actor->angle = (u8)gFrameCount << 12;
     actor->priorityFlags ^= 2 << (gFrameCount & 1);
-    /* FAKEMATCH(barrier): the actor set in the loop keeps PRE from moving its
-     * flags' address out; as no asm, 74 of 216 instructions differ in tla-en.
-     */
-    asm("" : "+l"(actor));
     System_Wait(1);
   }
   work->unk_d44 = 1;

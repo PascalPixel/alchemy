@@ -9,9 +9,6 @@ void Func_02000404(void) {
   Event_SetFlag(0xf5d);
   Func_02002130(193, 3);
   mode = 0;
-  /* FAKEMATCH: the native loads the mode before the item; direct calls and
-   * forwarding inlines load the item first. */
-  __asm__ volatile("" : "+r"(mode));
   Party_GiveItem(193, mode);
   Func_02002070();
 }

@@ -22,10 +22,6 @@ s32 Func_02000538(u32 layer, u32 x, u32 y, u32 width, u32 height, s32 value) {
 
   if (map == NULL)
     return 0;
-  /* FAKEMATCH: the barrier's reference gives the map r4 ahead of the width;
-   * without it, the two registers swap and 12 instructions differ in tla-en.
-   * The coordinates serve as the loop counters, kept in r1 and r2. */
-  asm volatile("" : : "l"(map));
   if (layer <= 2)
     cells = map->layers[layer].cells;
   else

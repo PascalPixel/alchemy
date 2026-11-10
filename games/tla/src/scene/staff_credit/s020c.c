@@ -176,9 +176,6 @@ void Func_0200020c(s32 stage) {
         s32 x0;
 
         zero = 0;
-        /* FAKEMATCH(barrier): the native holds the scale's 0 from here; as a
-         * plain 0, 30 of 961 instructions differ in tla-en. */
-        asm volatile("" : "+l"(zero));
         top = camera[8];
         left = camera[9];
         z = -0x1e0000;

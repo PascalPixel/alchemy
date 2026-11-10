@@ -22,10 +22,6 @@ void Func_02004fc0(struct Actor *object) {
   if (hit != 0) {
     i = 0;
   next:
-    /* FAKEMATCH(barrier): a memory barrier at the loop's head, so
-     * hit->animation, its value and the table are loaded again on every pass;
-     * without it, 26 of 61 instructions differ in tla-en. */
-    __asm__("" : : : "memory");
     if (*((struct ObjectAnimationState *)hit->animation)->value28 ==
         gData_02005f58[i])
       return;

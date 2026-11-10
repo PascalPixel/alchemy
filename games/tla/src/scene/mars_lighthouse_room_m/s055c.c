@@ -28,38 +28,20 @@ void Func_0200055c(void) {
   if (Data_02003a7c == 0) {
     if (gData_02003a80 == 0)
       MapGrid_CopyCellAttributes(34, 8, 3, 3, 17, 8);
-    /* FAKEMATCH(barrier): each empty asm with a memory clobber keeps GCSE
-     * from carrying one load of the step across the calls; the native reloads
-     * it for every test (without the six of them: differ 98 of 164 in
-     * tla-en). */
-    asm("" : : : "memory");
     if (gData_02003a80 == 1)
       MapGrid_CopyCellAttributes(30, 8, 3, 3, 8, 8);
-    /* FAKEMATCH(barrier): as above. */
-    asm("" : : : "memory");
     if (gData_02003a80 == 2)
       MapGrid_CopyCellAttributes(34, 8, 3, 3, 17, 8);
-    /* FAKEMATCH(barrier): as above. */
-    asm("" : : : "memory");
     if (gData_02003a80 == 3)
       MapGrid_CopyCellAttributes(30, 8, 3, 3, 8, 8);
   }
-  /* FAKEMATCH(barrier): as above, so the blend is loaded again with its
-   * address; without it, 13 of 164 instructions differ in tla-en. */
-  asm("" : : : "memory");
   if (Data_02003a7c == 16) {
     if (gData_02003a80 == 0)
       MapGrid_CopyCellAttributes(34, 0, 3, 3, 17, 8);
-    /* FAKEMATCH(barrier): as above. */
-    asm("" : : : "memory");
     if (gData_02003a80 == 1)
       MapGrid_CopyCellAttributes(30, 4, 3, 3, 8, 8);
-    /* FAKEMATCH(barrier): as above. */
-    asm("" : : : "memory");
     if (gData_02003a80 == 2)
       MapGrid_CopyCellAttributes(34, 4, 3, 3, 17, 8);
-    /* FAKEMATCH(barrier): as above. */
-    asm("" : : : "memory");
     if (gData_02003a80 == 3)
       MapGrid_CopyCellAttributes(30, 0, 3, 3, 8, 8);
   }

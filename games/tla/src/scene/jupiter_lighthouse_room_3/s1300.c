@@ -25,11 +25,6 @@ void Func_02001300(struct Actor *object) {
   if (other != NULL) {
     i = 0;
   next:
-    /* FAKEMATCH(barrier): a memory barrier at the top of the shape search, so
-     * the shape, its pointers and the table address are read again on every
-     * pass as the native does; without it, 28 of 61 instructions differ in
-     * tla-en. */
-    asm volatile("" ::: "memory");
     if (*((struct ObjectAnimationState *)other->animation)->value28 ==
         gData_02002478[i])
       return;

@@ -27,7 +27,6 @@ void Func_0200324c(void) {
 
     Func_020031f0(id);
     zero = 0;
-    asm("" : "+r"(zero));
     object->motionFlags = zero;
   }
   Actor_GetById(15)->y = PIXELS(32);

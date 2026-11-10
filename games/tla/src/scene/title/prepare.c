@@ -126,10 +126,6 @@ s32 Func_0200005c(void) {
       Func_020005e4();
       Func_02000604((s32)&SceneId_VenusLighthouse, 99);
     }
-    /* FAKEMATCH: an empty asm with a memory clobber reads the entrance again
-     * for the third test on both paths; as plain C, 74 instructions differ in
-     * tla-en. */
-    __asm__ volatile("" : : : "memory");
     if (gMainRoutineWork.entrance == 3) {
       Sound_Play(75);
       Func_02000624(0);

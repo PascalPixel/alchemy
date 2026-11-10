@@ -34,9 +34,6 @@ body:
 
     if (Actor_GetById(id) != target) {
       list += 2;
-      /* FAKEMATCH(barrier): the form kept; as no asm at all, 64 of 158
-       * instructions differ in tla-en. */
-      asm("" : "=r"(leader) : "0"(leader));
       goto test;
     }
     {

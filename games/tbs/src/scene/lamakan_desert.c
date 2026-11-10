@@ -178,6 +178,30 @@ enum {
   FLAG_LAMAKAN_DESERT_SECOND_PSYNERGY_STONE = FLAG_AREA_TEMP_51
 };
 
+// A secret of the east and Smog scenes is a 4-by-2 patch of the map grid. On
+// entry each is saved to a spare patch of its own on row 126, numbered from
+// the west; hidden, it is drawn over with plain sand; Reveal copies it back.
+#define SECRET_SPARE_COLUMN(number) (64 + 4 * (number))
+#define SECRET_SPARE_ROW 126
+/// Saves the secret whose top-left cell is (column, row) to its spare patch.
+#define SAVE_SECRET(number, column, row)                                       \
+  MapGrid_CopyCells(column, row, 4, 2, SECRET_SPARE_COLUMN(number),            \
+                    SECRET_SPARE_ROW)
+/// Draws plain sand over a secret.
+#define HIDE_SECRET(column, row) MapGrid_CopyCells(70, 68, 4, 2, column, row)
+/// Copies a secret back from its spare patch.
+#define SHOW_SECRET(number, column, row)                                       \
+  MapGrid_CopyCells(SECRET_SPARE_COLUMN(number), SECRET_SPARE_ROW, 4, 2,       \
+                    column, row)
+// Five secrets also change the ground a row further south: hidden, the row
+// two below the patch's top takes the sand's ground; shown, the two rows from
+// one below its top take the ground of the saved patch's two rows.
+#define HIDE_SECRET_SOUTH_ROW(column, row)                                     \
+  MapGrid_CopyCellAttributes(70, 68, 4, 1, column, (row) + 2)
+#define SHOW_SECRET_SOUTH_ROWS(number, column, row)                            \
+  MapGrid_CopyCellAttributes(SECRET_SPARE_COLUMN(number), SECRET_SPARE_ROW, 4, \
+                             2, column, (row) + 1)
+
 #define NULL ((void *)0)
 
 #include "shared/field_effect_create.h"
@@ -318,32 +342,32 @@ static s32 Reveal_HideSecrets(void) {
 
   GameFlag_Clear(FLAG_SECRETS_REVEALED);
   if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertEast) {
-    MapGrid_CopyCells(70, 68, 4, 2, 22, 7);
-    MapGrid_CopyCells(70, 68, 4, 2, 8, 10);
-    MapGrid_CopyCells(70, 68, 4, 2, 23, 21);
-    MapGrid_CopyCellAttributes(70, 68, 4, 1, 23, 23);
-    MapGrid_CopyCells(70, 68, 4, 2, 16, 42);
-    MapGrid_CopyCells(70, 68, 4, 2, 36, 44);
-    MapGrid_CopyCells(70, 68, 4, 2, 14, 55);
+    HIDE_SECRET(22, 7);
+    HIDE_SECRET(8, 10);
+    HIDE_SECRET(23, 21);
+    HIDE_SECRET_SOUTH_ROW(23, 21);
+    HIDE_SECRET(16, 42);
+    HIDE_SECRET(36, 44);
+    HIDE_SECRET(14, 55);
   } else if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertSmog) {
-    MapGrid_CopyCells(70, 68, 4, 2, 42, 5);
-    MapGrid_CopyCells(70, 68, 4, 2, 20, 11);
-    MapGrid_CopyCellAttributes(70, 68, 4, 1, 20, 13);
-    MapGrid_CopyCells(70, 68, 4, 2, 14, 12);
-    MapGrid_CopyCells(70, 68, 4, 2, 56, 18);
-    MapGrid_CopyCells(70, 68, 4, 2, 7, 22);
-    MapGrid_CopyCellAttributes(70, 68, 4, 1, 7, 24);
-    MapGrid_CopyCells(70, 68, 4, 2, 44, 23);
-    MapGrid_CopyCellAttributes(70, 68, 4, 1, 44, 25);
-    MapGrid_CopyCells(70, 68, 4, 2, 38, 24);
-    MapGrid_CopyCells(70, 68, 4, 2, 26, 28);
-    MapGrid_CopyCells(70, 68, 4, 2, 17, 35);
-    MapGrid_CopyCells(70, 68, 4, 2, 50, 36);
-    MapGrid_CopyCells(70, 68, 4, 2, 34, 43);
-    MapGrid_CopyCellAttributes(70, 68, 4, 1, 34, 45);
-    MapGrid_CopyCells(70, 68, 4, 2, 6, 46);
-    MapGrid_CopyCells(70, 68, 4, 2, 27, 55);
-    MapGrid_CopyCells(70, 68, 4, 2, 43, 56);
+    HIDE_SECRET(42, 5);
+    HIDE_SECRET(20, 11);
+    HIDE_SECRET_SOUTH_ROW(20, 11);
+    HIDE_SECRET(14, 12);
+    HIDE_SECRET(56, 18);
+    HIDE_SECRET(7, 22);
+    HIDE_SECRET_SOUTH_ROW(7, 22);
+    HIDE_SECRET(44, 23);
+    HIDE_SECRET_SOUTH_ROW(44, 23);
+    HIDE_SECRET(38, 24);
+    HIDE_SECRET(26, 28);
+    HIDE_SECRET(17, 35);
+    HIDE_SECRET(50, 36);
+    HIDE_SECRET(34, 43);
+    HIDE_SECRET_SOUTH_ROW(34, 43);
+    HIDE_SECRET(6, 46);
+    HIDE_SECRET(27, 55);
+    HIDE_SECRET(43, 56);
   } else if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertManticore) {
     MapGrid_CopyCellsLayered(69, 99, 4, 2, 8, 16);
     MapGrid_CopyCellsLayered(69, 99, 4, 2, 6, 20);
@@ -393,33 +417,33 @@ static s32 Reveal_ShowSecrets(void) {
   GameFlag_Set(FLAG_SECRETS_REVEALED);
   // Restore each hidden patch from the spare cells saved on entry.
   if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertEast) {
-    MapGrid_CopyCells(64, 126, 4, 2, 22, 7);
-    MapGrid_CopyCells(68, 126, 4, 2, 8, 10);
-    MapGrid_CopyCells(72, 126, 4, 2, 23, 21);
-    MapGrid_CopyCellAttributes(72, 126, 4, 2, 23, 22);
-    MapGrid_CopyCells(76, 126, 4, 2, 16, 42);
-    MapGrid_CopyCells(80, 126, 4, 2, 36, 44);
-    MapGrid_CopyCells(84, 126, 4, 2, 14, 55);
+    SHOW_SECRET(0, 22, 7);
+    SHOW_SECRET(1, 8, 10);
+    SHOW_SECRET(2, 23, 21);
+    SHOW_SECRET_SOUTH_ROWS(2, 23, 21);
+    SHOW_SECRET(3, 16, 42);
+    SHOW_SECRET(4, 36, 44);
+    SHOW_SECRET(5, 14, 55);
     Actor_SetPosition(ACTOR_FIRST_PIT, PIXELS(400), PIXELS(364));
   } else if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertSmog) {
-    MapGrid_CopyCells(64, 126, 4, 2, 42, 5);
-    MapGrid_CopyCells(68, 126, 4, 2, 20, 11);
-    MapGrid_CopyCellAttributes(68, 126, 4, 2, 20, 12);
-    MapGrid_CopyCells(72, 126, 4, 2, 14, 12);
-    MapGrid_CopyCells(76, 126, 4, 2, 56, 18);
-    MapGrid_CopyCells(80, 126, 4, 2, 7, 22);
-    MapGrid_CopyCellAttributes(80, 126, 4, 2, 7, 23);
-    MapGrid_CopyCells(84, 126, 4, 2, 44, 23);
-    MapGrid_CopyCellAttributes(84, 126, 4, 2, 44, 24);
-    MapGrid_CopyCells(88, 126, 4, 2, 38, 24);
-    MapGrid_CopyCells(92, 126, 4, 2, 26, 28);
-    MapGrid_CopyCells(96, 126, 4, 2, 17, 35);
-    MapGrid_CopyCells(100, 126, 4, 2, 50, 36);
-    MapGrid_CopyCells(104, 126, 4, 2, 34, 43);
-    MapGrid_CopyCellAttributes(104, 126, 4, 2, 34, 44);
-    MapGrid_CopyCells(108, 126, 4, 2, 6, 46);
-    MapGrid_CopyCells(112, 126, 4, 2, 27, 55);
-    MapGrid_CopyCells(116, 126, 4, 2, 43, 56);
+    SHOW_SECRET(0, 42, 5);
+    SHOW_SECRET(1, 20, 11);
+    SHOW_SECRET_SOUTH_ROWS(1, 20, 11);
+    SHOW_SECRET(2, 14, 12);
+    SHOW_SECRET(3, 56, 18);
+    SHOW_SECRET(4, 7, 22);
+    SHOW_SECRET_SOUTH_ROWS(4, 7, 22);
+    SHOW_SECRET(5, 44, 23);
+    SHOW_SECRET_SOUTH_ROWS(5, 44, 23);
+    SHOW_SECRET(6, 38, 24);
+    SHOW_SECRET(7, 26, 28);
+    SHOW_SECRET(8, 17, 35);
+    SHOW_SECRET(9, 50, 36);
+    SHOW_SECRET(10, 34, 43);
+    SHOW_SECRET_SOUTH_ROWS(10, 34, 43);
+    SHOW_SECRET(11, 6, 46);
+    SHOW_SECRET(12, 27, 55);
+    SHOW_SECRET(13, 43, 56);
     Actor_SetPosition(ACTOR_FIRST_PIT, PIXELS(352), PIXELS(204));
     Actor_SetPosition(ACTOR_FIRST_PIT + 1, PIXELS(736), PIXELS(396));
     Actor_SetPosition(ACTOR_FIRST_PIT + 2, PIXELS(144), PIXELS(380));
@@ -996,27 +1020,27 @@ s32 LamakanDesert_Initialize(void) {
     HeatGauge_Start();
     Task_AddFrame(HeatGauge_RaiseQuarterTriggers, TASK_PASS_FRAME);
     if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertEast) {
-      MapGrid_CopyCells(22, 7, 4, 2, 64, 126);
-      MapGrid_CopyCells(8, 10, 4, 2, 68, 126);
-      MapGrid_CopyCells(23, 21, 4, 2, 72, 126);
-      MapGrid_CopyCells(16, 42, 4, 2, 76, 126);
-      MapGrid_CopyCells(36, 44, 4, 2, 80, 126);
-      MapGrid_CopyCells(14, 55, 4, 2, 84, 126);
+      SAVE_SECRET(0, 22, 7);
+      SAVE_SECRET(1, 8, 10);
+      SAVE_SECRET(2, 23, 21);
+      SAVE_SECRET(3, 16, 42);
+      SAVE_SECRET(4, 36, 44);
+      SAVE_SECRET(5, 14, 55);
     } else if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertSmog) {
-      MapGrid_CopyCells(42, 5, 4, 2, 64, 126);
-      MapGrid_CopyCells(20, 11, 4, 2, 68, 126);
-      MapGrid_CopyCells(14, 12, 4, 2, 72, 126);
-      MapGrid_CopyCells(56, 18, 4, 2, 76, 126);
-      MapGrid_CopyCells(7, 22, 4, 2, 80, 126);
-      MapGrid_CopyCells(44, 23, 4, 2, 84, 126);
-      MapGrid_CopyCells(38, 24, 4, 2, 88, 126);
-      MapGrid_CopyCells(26, 28, 4, 2, 92, 126);
-      MapGrid_CopyCells(17, 35, 4, 2, 96, 126);
-      MapGrid_CopyCells(50, 36, 4, 2, 100, 126);
-      MapGrid_CopyCells(34, 43, 4, 2, 104, 126);
-      MapGrid_CopyCells(6, 46, 4, 2, 108, 126);
-      MapGrid_CopyCells(27, 55, 4, 2, 112, 126);
-      MapGrid_CopyCells(43, 56, 4, 2, 116, 126);
+      SAVE_SECRET(0, 42, 5);
+      SAVE_SECRET(1, 20, 11);
+      SAVE_SECRET(2, 14, 12);
+      SAVE_SECRET(3, 56, 18);
+      SAVE_SECRET(4, 7, 22);
+      SAVE_SECRET(5, 44, 23);
+      SAVE_SECRET(6, 38, 24);
+      SAVE_SECRET(7, 26, 28);
+      SAVE_SECRET(8, 17, 35);
+      SAVE_SECRET(9, 50, 36);
+      SAVE_SECRET(10, 34, 43);
+      SAVE_SECRET(11, 6, 46);
+      SAVE_SECRET(12, 27, 55);
+      SAVE_SECRET(13, 43, 56);
     } else if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertManticore) {
       spareRow = 124;
       Scene_QueueMusic(SE_AMBIENT_WIND);

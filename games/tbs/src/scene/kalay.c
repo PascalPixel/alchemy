@@ -1467,10 +1467,17 @@ static void Kalay_PrepareTunnel(void) {
     MapGrid_CopyCellAttributes(22, 50, 2, 1, 24, 49);
   }
   if (GameFlag_Get(FLAG_TUNNEL_FIRST_PASSAGE_OPEN) != 0) {
+    // The west pool as Kalay_UpdateTunnelPassages leaves it: the first statue
+    // stands in the arch, the waterfall under it has run dry (the last of its
+    // eight pictures, a column of the overhead layer) and the pool has drained
+    // to bare floor.
     Actor_SetPosition(ACTOR_FIRST_STATUE, PIXELS(232), PIXELS(732));
     MapGrid_CopyCellAttributes(7, 44, 1, 1, 0, 1);
     MapGrid_CopyCellsTo(74, 58, 78, 41, 1, 5);
     MapGrid_CopyCellsTo(16, 109, 13, 109, 3, 2);
+    // DEAD: the draining's stages, drawn a column at a time, twice over, where
+    // the event shows three of them with a wait between. The drained floor
+    // copied below covers every cell they draw.
     MapGrid_CopyCellsTo(67, 64, 71, 44, 1, 2);
     MapGrid_CopyCellsTo(67, 64, 72, 44, 1, 2);
     MapGrid_CopyCellsTo(67, 68, 73, 43, 1, 2);
@@ -1493,6 +1500,8 @@ static void Kalay_PrepareTunnel(void) {
     MapGrid_CopyCellsTo(68, 64, 79, 44, 1, 2);
     MapGrid_CopyCellsTo(68, 66, 80, 44, 1, 2);
     MapGrid_CopyCellsTo(4, 0, 9, 42, 2, 2);
+    // The drained floor, on the ground layer and the overhead layer, and its
+    // ground.
     MapGrid_CopyCellsTo(7, 11, 7, 42, 10, 8);
     MapGrid_CopyCellsTo(71, 12, 71, 43, 10, 13);
     MapGrid_CopyCellAttributes(6, 13, 12, 12, 6, 44);
@@ -1506,9 +1515,11 @@ static void Kalay_PrepareTunnel(void) {
     }
   }
   if (GameFlag_Get(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) != 0) {
+    // The east pool the same way, the second statue in its arch.
     Actor_SetPosition(ACTOR_SECOND_STATUE, PIXELS(696), PIXELS(732));
     MapGrid_CopyCellsTo(74, 58, 107, 41, 1, 5);
     MapGrid_CopyCellsTo(45, 109, 42, 109, 3, 2);
+    // DEAD: the draining's stages again, covered by the drained floor below.
     MapGrid_CopyCellsTo(67, 64, 102, 44, 1, 2);
     MapGrid_CopyCellsTo(67, 64, 103, 44, 1, 2);
     MapGrid_CopyCellsTo(67, 64, 104, 44, 1, 2);

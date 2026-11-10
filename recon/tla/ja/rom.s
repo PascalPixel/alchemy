@@ -37,12 +37,6 @@ BattleEffect_RunJudgment:
 	.global Func_0816aeec
 Func_0816aeec:
 	.incbin "baserom.gba", 0x0016aeec, 0x000007e8
-	.section .rom.0017ea5c, "ax"
-	.global BattleEffect_RunDaedalus
-	.type BattleEffect_RunDaedalus, %function
-	.thumb_func
-BattleEffect_RunDaedalus:
-	.incbin "baserom.gba", 0x0017ea5c, 0x0000223c
 	.section .rom.0018cb78, "ax"
 	.global BattleEffect_RunTrident
 	.type BattleEffect_RunTrident, %function

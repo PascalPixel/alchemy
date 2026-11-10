@@ -1942,22 +1942,17 @@ main	rom_main_09	games/tla/src/battle_effect/f17e0c0	.text	ja
 main	rom_main_09	games/tla/src/battle_effect/variant_k	.text
 main	rom_main_09	games/tla/src/battle_effect/f17e698	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/pack_rows	.text
-main	rom_main_09	recon/tla/raw/0817ea58	.text	en
+main	rom_main_09	games/tla/src/battle_effect/f17ea58	.text
 main	rom_main_09	games/tla/src/battle_effect/f180c94	.text	en
 main	rom_main_09	games/tla/src/battle_effect/f1811d4	.text	en
-main	rom_main_09	recon/tla/de/rom	.rom.0017ea58	de
 main	rom_main_09	games/tla/src/battle_effect/f180c94	.text	de
 main	rom_main_09	games/tla/src/battle_effect/f1811d4	.text	de
-main	rom_main_09	recon/tla/es/rom	.rom.0017ea58	es
 main	rom_main_09	games/tla/src/battle_effect/f180c94	.text	es
 main	rom_main_09	games/tla/src/battle_effect/f1811d4	.text	es
-main	rom_main_09	recon/tla/fr/rom	.rom.0017ea58	fr
 main	rom_main_09	games/tla/src/battle_effect/f180c94	.text	fr
 main	rom_main_09	games/tla/src/battle_effect/f1811d4	.text	fr
-main	rom_main_09	recon/tla/it/rom	.rom.0017ea58	it
 main	rom_main_09	games/tla/src/battle_effect/f180c94	.text	it
 main	rom_main_09	games/tla/src/battle_effect/f1811d4	.text	it
-main	rom_main_09	recon/tla/ja/rom	.rom.0017ea5c	ja
 main	rom_main_09	games/tla/src/battle_effect/f180c94	.text	ja
 main	rom_main_09	games/tla/src/battle_effect/f1811d4	.text	ja
 main	rom_main_09	games/tla/src/battle_effect/f181910	.text	en de es fr it ja

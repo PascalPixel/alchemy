@@ -170,9 +170,9 @@ Resource_DirectoryTable:
 	resource RedCrescentTiles, Summon_RedCrescentTiles
 	resource WhiteArrowsTiles, Summon_WhiteArrowsTiles
 	resource WhiteWispsTiles, Summon_WhiteWispsTiles
-	resource , Summon_ForestCanopyTiles
-	resource , Summon_BronzeAutomatonTiles
-	resource , Summon_MissileTiles
+	resource ForestCanopyTiles, Summon_ForestCanopyTiles
+	resource BronzeAutomatonTiles, Summon_BronzeAutomatonTiles
+	resource MissileTiles, Summon_MissileTiles
 	resource GoldenDragonHeadTiles, Summon_GoldenDragonHeadTiles
 	resource GoldenDragonTiles, Summon_GoldenDragonTiles
 	resource RobedGoddessTiles, Summon_RobedGoddessTiles
@@ -196,8 +196,8 @@ Resource_DirectoryTable:
 	resource WhirlBeamSheet, BattleEffect_WhirlBeamSheet
 	resource EffectPalette00, BattleEffect_EffectPalette00
 	resource EffectPalette01, BattleEffect_EffectPalette01
-	resource , Resource_Data0BA
-	resource , Resource_Data0BB
+	resource Data0BA, Resource_Data0BA
+	resource Data0BB, Resource_Data0BB
 	resource , BattleEffect_ThinBoltSheet
 	resource BoltSheet, BattleEffect_BoltSheet
 	resource CurseSealSheet, BattleEffect_CurseSealSheet

@@ -40,12 +40,21 @@ struct JudgmentWork {
 #define JUDGMENT_SHEET_EXPLOSION 16384
 /// The first 24x24 flare picture, from the crescent sheet the sweep loads.
 #define JUDGMENT_SHEET_FLARE_A 16384
-/// The 16x17 small flash, the first of OverlayImageA's three pictures.
+// OverlayImageA's three flash pictures, a byte a pixel, one after another in
+// the sheet: the small flash, the large flash and the streak.
+#define JUDGMENT_FLASH_SMALL_WIDTH 16
+#define JUDGMENT_FLASH_SMALL_HEIGHT 17
+#define JUDGMENT_FLASH_LARGE_WIDTH 24
+#define JUDGMENT_FLASH_LARGE_HEIGHT 41
+#define JUDGMENT_FLASH_STREAK_WIDTH 22
+#define JUDGMENT_FLASH_STREAK_HEIGHT 44
 #define JUDGMENT_SHEET_FLASH_SMALL 24576
-/// The 24x41 large flash picture.
-#define JUDGMENT_SHEET_FLASH_LARGE 24848
-/// The 22x44 flash streak picture.
-#define JUDGMENT_SHEET_FLASH_STREAK 25832
+#define JUDGMENT_SHEET_FLASH_LARGE                                             \
+  (JUDGMENT_SHEET_FLASH_SMALL +                                                \
+   JUDGMENT_FLASH_SMALL_WIDTH * JUDGMENT_FLASH_SMALL_HEIGHT)
+#define JUDGMENT_SHEET_FLASH_STREAK                                            \
+  (JUDGMENT_SHEET_FLASH_LARGE +                                                \
+   JUDGMENT_FLASH_LARGE_WIDTH * JUDGMENT_FLASH_LARGE_HEIGHT)
 #define JUDGMENT_EXPLOSION_CELL_BYTES 1728 ///< bytes in each explosion picture
 #define JUDGMENT_WAVE_SIZE 120             ///< the wave picture is 120x120
 /// DMA word that fills the 128x128 canvas.
@@ -713,38 +722,50 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     // Frames 64 to 85: the flash plays twice: a small picture, a large one,
     // then four streaks that close in (68 to 75) or spread out (82 to 85).
     if (frame >= 64 && frame < 66) {
-      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_SMALL, 52, 51, 16, 17);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_SMALL, 52, 51,
+              JUDGMENT_FLASH_SMALL_WIDTH, JUDGMENT_FLASH_SMALL_HEIGHT);
     }
     if (frame >= 66 && frame < 68) {
-      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_LARGE, 48, 40, 24, 41);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_LARGE, 48, 40,
+              JUDGMENT_FLASH_LARGE_WIDTH, JUDGMENT_FLASH_LARGE_HEIGHT);
     }
     if (frame >= 68 && frame < 76) {
       s32 d = 76 - frame;
       draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, 49 - d / 2,
-              38 - d, 22, 44);
+              38 - d, JUDGMENT_FLASH_STREAK_WIDTH,
+              JUDGMENT_FLASH_STREAK_HEIGHT);
       draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, 49 - d / 2,
-              d + 38, 22, 44);
+              d + 38, JUDGMENT_FLASH_STREAK_WIDTH,
+              JUDGMENT_FLASH_STREAK_HEIGHT);
       draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, d / 2 + 49,
-              38 - d, 22, 44);
+              38 - d, JUDGMENT_FLASH_STREAK_WIDTH,
+              JUDGMENT_FLASH_STREAK_HEIGHT);
       draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, d / 2 + 49,
-              d + 38, 22, 44);
+              d + 38, JUDGMENT_FLASH_STREAK_WIDTH,
+              JUDGMENT_FLASH_STREAK_HEIGHT);
     }
     if (frame >= 78 && frame < 80) {
-      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_SMALL, 52, 51, 16, 17);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_SMALL, 52, 51,
+              JUDGMENT_FLASH_SMALL_WIDTH, JUDGMENT_FLASH_SMALL_HEIGHT);
     }
     if (frame >= 80 && frame < 82) {
-      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_LARGE, 48, 40, 24, 41);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_LARGE, 48, 40,
+              JUDGMENT_FLASH_LARGE_WIDTH, JUDGMENT_FLASH_LARGE_HEIGHT);
     }
     if (frame >= 82 && frame < 86) {
       s32 d = frame * 2 - 164;
       draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, 49 - d / 4,
-              38 - d, 22, 44);
+              38 - d, JUDGMENT_FLASH_STREAK_WIDTH,
+              JUDGMENT_FLASH_STREAK_HEIGHT);
       draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, 49 - d / 4,
-              d + 38, 22, 44);
+              d + 38, JUDGMENT_FLASH_STREAK_WIDTH,
+              JUDGMENT_FLASH_STREAK_HEIGHT);
       draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, d / 4 + 49,
-              38 - d, 22, 44);
+              38 - d, JUDGMENT_FLASH_STREAK_WIDTH,
+              JUDGMENT_FLASH_STREAK_HEIGHT);
       draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, d / 4 + 49,
-              d + 38, 22, 44);
+              d + 38, JUDGMENT_FLASH_STREAK_WIDTH,
+              JUDGMENT_FLASH_STREAK_HEIGHT);
     }
 
     // Frames 72 to 75: a ring of 256 of the largest motes grows around

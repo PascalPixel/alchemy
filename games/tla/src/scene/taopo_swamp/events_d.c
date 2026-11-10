@@ -177,10 +177,6 @@ void Func_02000afc(s32 a, s32 id) {
   if (object->x >> 20 == 7) {
     Actor_SetAnimation(id, 3);
     object->collisionFlags = 0;
-    /* FAKEMATCH: the native stores the collision flags before addressing the
-     * priority byte. */
-    do {
-    } while (0);
     object->priorityFlags |= 2;
     Event_SetFlag(0x332);
     Event_SetFlag(0x333);
@@ -201,10 +197,6 @@ void Func_02000b90(s32 a, s32 id) {
   if (object->z >> 20 == 16) {
     Actor_SetAnimation(id, 3);
     object->collisionFlags = 0;
-    /* FAKEMATCH: the native stores the collision flags before addressing the
-     * priority byte. */
-    do {
-    } while (0);
     object->priorityFlags |= 2;
     Event_SetFlag(0x335);
     Event_SetFlag(0x336);

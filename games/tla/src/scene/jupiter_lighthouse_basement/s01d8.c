@@ -51,10 +51,6 @@ void Func_020001d8(struct Actor *object) {
   }
   if (*(s16 *)((u8 *)object + 102) == 0)
     Func_0200015c(object);
-  /* FAKEMATCH: the loop note keeps the timer load after the reset call (stated
-   * plainly it is loaded before the test as well, 13 differ). */
-  do {
-  } while (0);
   (*(s16 *)((u8 *)object + 102))--;
   /* FAKEMATCH: the loop note ends the scheduling block: the native stores the
    * timer before it loads z (2 differ without it). */

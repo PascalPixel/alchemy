@@ -19,10 +19,6 @@ void Func_02003210(struct FieldActor *self) {
   sine = Math_Sin(angle);
   z = centre->z;
   x = self->x;
-  /* FAKEMATCH(dead): both positions are read before the sine is doubled;
-   * without it, 2 of 40 instructions differ in tla-en. */
-  do {
-  } while (0);
   z += sine * 2;
   self->z = z;
   self->targetX = x;

@@ -22,9 +22,6 @@ void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_0200093c(void) {
   struct EventWorkCbc *work = Ram_HeapSlots->eventWork;
 
-  /* FAKEMATCH: ⚓️ loads the event work before it builds the offset */
-  do {
-  } while (0);
   if (work->active != 0)
     Func_020008d0(work->active);
 }

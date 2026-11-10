@@ -19,10 +19,6 @@ void Func_02000db8(s32 id) {
   Actor_SetSingleChildFlags(Actor_Get(id), 0);
   FieldActor_SetSpritePriority(id, 3);
   object->motionFlags = 0;
-  /* FAKEMATCH: keeps the flag store before the next address is formed (differ 2
-   * without) */
-  do {
-  } while (0);
   object->priorityFlags |= 2;
   object->collisionFlags = 0;
   if (id == 13) {

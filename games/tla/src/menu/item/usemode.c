@@ -101,11 +101,6 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
     void *abilityData;
     u32 id;
 
-    /* FAKEMATCH: ⚓️ loads the item's use word before it builds the 0x3fff mask;
-     * the plain call starts the mask first (one pair of instructions swapped).
-     */
-    do {
-    } while (0);
     id = 0x3fff;
     id &= use;
     abilityData = BattleAction_Get(id);
@@ -150,11 +145,6 @@ void Func_080fb6d4(void) {
   u32 item = *(u16 *)(work + 0x16c);
   u32 mask;
 
-  /* FAKEMATCH: the barrier keeps the item load ahead of the 0x1ff mask, and the
-   * mask variable keeps the mask in r0 and the item in r3; without the barrier
-   * the mask is started before the load (differ 2). */
-  do {
-  } while (0);
   mask = 0x1ff;
   mask &= item;
   if (((u8 *)Item_Get(mask))[12] == 2 && Random16() < 0x2000) {

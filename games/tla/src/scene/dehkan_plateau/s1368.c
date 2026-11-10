@@ -32,10 +32,6 @@ void Func_02001368(void) {
   Func_02000708(gData_02003f52);
   Func_020012d8();
   y = Actor_GetById(gMainRoutineWork.currentOwner)->y;
-  /* FAKEMATCH: ⚓️ loads the height before it builds the limit; the plain test
-   * starts the constant first (one pair of instructions swapped). */
-  do {
-  } while (0);
   if (y < 0x80000) {
     Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;

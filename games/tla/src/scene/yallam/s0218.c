@@ -47,11 +47,6 @@ void Func_02000270(void) {
   index--;
   MapGrid_AnimateCells(gData_02002ce4[index].a, gData_02002ce4[index].b,
                        gData_02002ce4[index].c);
-  /* FAKEMATCH: the empty once-only block ends the shift's output dependences on
-   * the later calls (r4 is call-used), so sched2 takes the table address first
-   * as the native does (differ 2). */
-  do {
-  } while (0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   {

@@ -8,10 +8,6 @@ s32 Func_02000038(void) {
   if ((u32)(object->x - 0x940000) <= 0x80000) {
     s32 z = object->z;
 
-    /* FAKEMATCH: ⚓️ loads z before it builds the near limit; the plain test
-     * starts the constant first (one pair of instructions swapped). */
-    do {
-    } while (0);
     if (z >= 0x26c0000) {
       if (z <= 0x2740000)
         return 0;
@@ -26,10 +22,6 @@ s32 Func_0200006c(void) {
   if ((u32)(object->x - 0x840000) <= 0x80000) {
     s32 z = object->z;
 
-    /* FAKEMATCH: ⚓️ loads z before it builds the near limit; the plain test
-     * starts the constant first (one pair of instructions swapped). */
-    do {
-    } while (0);
     if (z >= 0x26c0000) {
       if (z <= 0x2740000)
         return 0;

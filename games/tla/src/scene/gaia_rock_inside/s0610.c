@@ -23,11 +23,6 @@ void Func_0200062c(struct Actor *object) {
   s32 bias;
   s32 limit;
 
-  /* FAKEMATCH: two barriers load the scale and then the pooled -0x800 before
-   * the random value is shifted; without them, 2 instructions differ in
-   * tla-en. */
-  do {
-  } while (0);
   bias = -0x800;
   scale += (random << 12) >> 16;
   scale += bias;

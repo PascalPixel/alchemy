@@ -33,10 +33,6 @@ void Func_020004d4(struct FieldActor *object) {
        * both). */
       register s32 y asm("r3") = leader->y;
 
-      /* FAKEMATCH: the barrier keeps the mask after the load (with the pin
-       * above). */
-      do {
-      } while (0);
       object->y = y + ((r & 31) << 16);
     }
     {
@@ -45,10 +41,6 @@ void Func_020004d4(struct FieldActor *object) {
        * (differ 4 without both). */
       register s32 z asm("r3") = leader->z;
 
-      /* FAKEMATCH: the barrier keeps the mask after the load (with the pin
-       * above). */
-      do {
-      } while (0);
       object->z = z + ((r & 127) << 16);
     }
   }
@@ -77,10 +69,6 @@ void Func_02000550(struct FieldActor *object) {
   }
   if (*(s16 *)((u8 *)object + 102) == 0)
     Func_020004d4(object);
-  /* FAKEMATCH: the loop note keeps the timer load after the reset call (stated
-   * plainly it is loaded before the test as well, 13 differ). */
-  do {
-  } while (0);
   (*(s16 *)((u8 *)object + 102))--;
   /* FAKEMATCH: the loop note ends the scheduling block: the native stores the
    * timer before it loads z (2 differ without it). */

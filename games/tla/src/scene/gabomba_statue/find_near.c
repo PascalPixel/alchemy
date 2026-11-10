@@ -44,10 +44,6 @@ void Func_02000550(void) {
   s32 direction;
   s32 i;
 
-  /* FAKEMATCH: taking actor's address keeps GCSE from hoisting the phase's
-   * address out of the loop, which the native rebuilds on every pass (differ 25
-   * without it). */
-  (void)&actor;
   if (Func_02005834(0) == 1) {
     direction = gData_02005af0;
     Func_020020f0(0);

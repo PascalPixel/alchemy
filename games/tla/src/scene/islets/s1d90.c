@@ -22,11 +22,6 @@ void Func_02001db0(void) {
   if (object->x < 0xe40000 || object->x > 0xec0000)
     return;
   z = object->z;
-  /* FAKEMATCH: the one-pass block loads z before 0xa40000 is built; plain, the
-   * ARM9TDMI schedule starts the constant first (differ 2), and z's two tests
-   * stay apart as the native's are (one range test differs by 71). */
-  do {
-  } while (0);
   if (z < 0xa40000)
     return;
   if (z > 0xac0000)

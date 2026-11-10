@@ -31,9 +31,6 @@ void Func_02001a9c(struct Actor *object) {
   parts = object->animation;
   object->scaleX = scale + rate;
   object->scaleY += object->acceleration;
-  /* FAKEMATCH: ⚓️ stores the Y scale before it addresses the action */
-  do {
-  } while (0);
   parts->unk12 += object->action;
   if (leader->y == leader->terrainHeight && Func_02001a44(object, leader)) {
     object->z -= object->unk4c;

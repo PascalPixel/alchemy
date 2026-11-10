@@ -199,10 +199,6 @@ s32 Func_02000a7c(void) {
 s32 Func_02000b60(s32 group) {
   s32 i = 17;
 
-  /* FAKEMATCH: taking group's address keeps GCSE from hoisting group * 20 out
-   * of the loop, which the native rebuilds on every pass (differ 10 without
-   * it). */
-  (void)&group;
 loop:
   {
     s32 flag = group * 20 + i + 48;

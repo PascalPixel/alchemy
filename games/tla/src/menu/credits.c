@@ -465,11 +465,6 @@ void Func_081a0cac(void) {
 
       *q++ = (row * 8 + 16 - fine) | ((col * 32 + 24) << 16) | 0x40004000;
       entry += 2;
-      /* FAKEMATCH: a one-pass block keeps the entry step ahead of the tile
-       * store; as plain statements, in either order, the step falls behind the
-       * tile step (2 differ). */
-      do {
-      } while (0);
       *q = tile;
       tile += 4;
       if (tile == 0x300)

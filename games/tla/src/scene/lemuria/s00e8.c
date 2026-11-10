@@ -23,10 +23,6 @@ s32 Func_020000e8(struct Actor *self) {
   state = &self->movementState;
   if (mode == 141) {
     effect = Ram_HeapSlots->effectWork;
-    /* FAKEMATCH: the barrier keeps the effect work load ahead of the 0x713
-     * offset (differ 2 more without it). */
-    do {
-    } while (0);
     if (effect[0x713] != 0)
       goto near;
   }

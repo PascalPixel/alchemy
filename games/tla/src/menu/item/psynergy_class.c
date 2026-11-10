@@ -121,10 +121,6 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
 
   step = PSYNERGY_STEP_MEMBER;
   done = 0;
-  /* FAKEMATCH(dead): the menu's address is built after the parameters and
-   * done are stored; without it, 4 of 344 instructions differ in tla-en. */
-  do {
-  } while (0);
   menu = Ram_HeapSlots->menuRuntime;
   useResult = 0;
 
@@ -254,10 +250,6 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
         u32 entry = menu->paneAction[0];
         u32 mask;
 
-        /* FAKEMATCH(dead): the entry's load before the mask is built;
-         * without it, 2 of 344 instructions differ in tla-en. */
-        do {
-        } while (0);
         mask = PSYNERGY_ABILITY_MASK;
         mask &= entry;
         action = BattleAction_Get(mask);
@@ -278,10 +270,6 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
           u32 entry = menu->paneAction[0];
           u32 mask;
 
-          /* FAKEMATCH(dead): the entry's load before the mask is built;
-           * without it, 2 of 344 instructions differ in tla-en. */
-          do {
-          } while (0);
           mask = PSYNERGY_ABILITY_MASK;
           mask &= entry;
           Func_08100d58(mask);

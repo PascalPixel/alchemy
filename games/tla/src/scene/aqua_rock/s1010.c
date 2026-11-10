@@ -35,10 +35,6 @@ void Func_0200106c(void) {
   }
   state = &gMainRoutineWork;
   object->gravity = saved;
-  /* FAKEMATCH: keeps the gravity store before the owner offset is built (differ
-   * 2 without) */
-  do {
-  } while (0);
   Func_080d489c(state->currentOwner, 0);
   Actor_SetSingleChildFlags(object, 1);
   Func_02002910(object, 1);

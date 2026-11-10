@@ -69,10 +69,6 @@ void MenuIcon_SetPicture(s32 index, s32 frame) {
 void Func_08105350(s32 index, s32 scale) {
   struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
 
-  /* FAKEMATCH: the ARM9 scheduling would scale the index before loading the
-   * menu work. */
-  do {
-  } while (0);
   if (menu->objects[index] != NULL)
     menu->scale[index] = scale;
 }

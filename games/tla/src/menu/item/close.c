@@ -146,11 +146,6 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
   struct ItemMenuOwner *owner;
   void *window;
 
-  /* FAKEMATCH(dead): an empty once-only block keeps the offset's shift ahead of
-   * the count load; as count's initializer in its declaration, 2 of 307
-   * instructions differ in tla-en. */
-  do {
-  } while (0);
   count = menu->paneCount[0];
   redraw = 2;
   result = 0;

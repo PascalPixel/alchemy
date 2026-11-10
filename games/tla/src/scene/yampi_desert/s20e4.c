@@ -19,9 +19,5 @@ void Func_020020e4(void) {
     }
   }
   party = &gMainRoutineWork;
-  /* FAKEMATCH: ⚓️ loads gMainRoutineWork's address before it builds the field
-   * offset */
-  do {
-  } while (0);
   party->unk2c3 = 0;
 }

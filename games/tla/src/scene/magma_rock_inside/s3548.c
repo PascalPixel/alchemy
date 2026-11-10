@@ -15,11 +15,6 @@ void Func_02003548(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room4) {
     s16 *script = gData_0200525c;
 
-    /* FAKEMATCH: the native loads the first script before it builds 0x302;
-     * sched2 puts the constant's longer chain first without the barrier (differ
-     * 2). */
-    do {
-    } while (0);
     Func_02000800(15, script, 0x302);
     Func_02000800(16, gData_0200525c, 0x302);
     Func_02000800(17, gData_020052bc, 0x302);

@@ -33,10 +33,6 @@ s32 Func_02000f6c(s32 owner) {
     goto none;
 next:
   party = &gMainRoutineWork;
-  /* FAKEMATCH: gMainRoutineWork's address loads before the owner list's offset is
-   * built; without it the offset's movs comes first (differ 2) */
-  do {
-  } while (0);
   if (party->activeOwners[i] == 0xff)
     goto none;
   /* FAKEMATCH: the native reads the owner byte again for the second test

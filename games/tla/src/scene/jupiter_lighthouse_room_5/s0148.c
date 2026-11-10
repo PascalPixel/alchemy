@@ -17,10 +17,6 @@ void Func_02000148(struct FieldActor *self) {
   sine = Math_Sin(angle);
   z = centre->z;
   x = self->x;
-  /* FAKEMATCH: both positions are read before the sine is doubled; without it
-   * the shift comes before the second read */
-  do {
-  } while (0);
   z += sine * 2;
   self->z = z;
   self->targetX = x;

@@ -51,11 +51,6 @@ void Func_02004a14(union FieldObject *object) {
   }
   sprite = effect->sprite;
   effect->scaleY += effect->scaleRateY;
-  /* FAKEMATCH(dead): an empty once-only block ends the scale stores, so the
-   * spin's address is built after the y scale's store; without it, 2 of 59
-   * instructions differ in tla-en. */
-  do {
-  } while (0);
   sprite->rotation += effect->spin;
 
   party = &gMainRoutineWork;

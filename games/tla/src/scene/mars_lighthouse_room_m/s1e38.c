@@ -23,9 +23,6 @@ void Func_02001e38(struct Actor *object) {
   object->scaleX += rate;
   animation = object->animation;
   object->scaleY += object->acceleration;
-  /* FAKEMATCH: and would address the spin before storing the Y scale. */
-  do {
-  } while (0);
   animation->angle += object->action;
   if (target->y == target->terrainHeight && Func_02001de0(object, target)) {
     object->z -= object->unk4c;

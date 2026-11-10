@@ -26,11 +26,6 @@ void Func_0200062c(void) {
   s32 t1, t2, t3, t4, t12, t30, t31, v5;
 
   t1 = (s32)Actor_Get(gMainRoutineWork.currentOwner);
-  /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here,
-   * as the listing orders it; without it, 2 of 276 instructions differ in
-   * tla-en. */
-  do {
-  } while (0);
   if (FIELD_AT(t1, s32, 12) > 0x600000)
     goto L_02008654;
   t2 = Event_GetFlag(0x969);

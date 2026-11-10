@@ -286,11 +286,6 @@ void Func_02000b84(void) {
   AddTask(Func_020001cc, 0x480);
   if (gMainRoutineWork.entrance == 10)
     Func_020002cc();
-  /* FAKEMATCH: the one-pass block keeps the second entrance test a load of its
-   * own (ldrsh, cmp #20); without it the two tests share a halfword load and
-   * compare shifted (differ 33). */
-  do {
-  } while (0);
   if (gMainRoutineWork.entrance == 20)
     Func_020006e4();
 }

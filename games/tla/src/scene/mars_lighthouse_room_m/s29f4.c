@@ -15,11 +15,6 @@ void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Func_020029f4(s32 x, s32 y, s32 z, s32 speed) {
   s32 i;
 
-  /* FAKEMATCH(dead): the four arguments are spilled before the counter is
-   * set, as in the native; without it, 4 of 98 instructions differ in
-   * tla-en. */
-  do {
-  } while (0);
   i = 1;
 next:
   {

@@ -24,9 +24,6 @@ s32 Func_0200028c(struct Wanderer *actor) {
     u16 *facing;
 
     *timer = (Random16Far() * 40 >> 16) + 10;
-    /* FAKEMATCH: ⚓️ stores the new time before it addresses the turn flag */
-    do {
-    } while (0);
     turned = &actor->turned;
     if (*turned != 0) {
       *turned = 0;

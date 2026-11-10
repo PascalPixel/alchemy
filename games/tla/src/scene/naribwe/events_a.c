@@ -5,11 +5,6 @@ void Func_02000088(void) {
   u8 *work = Ram_HeapSlots->eventWork;
   u8 *flag;
 
-  /* FAKEMATCH: ⚓️ loads the event work before it builds the flag's offset;
-   * without the barrier the offset's first half is scheduled ahead of the load
-   * (differ 2). */
-  do {
-  } while (0);
   flag = work + 0xd38;
   *flag = 1;
   if (gMainRoutineWork.entrance != 10)

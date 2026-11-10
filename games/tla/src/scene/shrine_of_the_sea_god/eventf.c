@@ -114,9 +114,6 @@ void Func_02003024(void) {
   const struct ShrineOfTheSeaGodSpot *spot = gData_02003cc0;
   u32 i;
 
-  /* FAKEMATCH: loads the spot table before it clears the counter. */
-  do {
-  } while (0);
   for (i = 0; i <= 15; i++) {
     s32 id = i + 8;
     struct ShrineOfTheSeaGodObject *object = Actor_GetById(id);

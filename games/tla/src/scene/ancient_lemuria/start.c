@@ -15,10 +15,6 @@ void Func_02000080(s32 id) {
   struct FieldActor *object = ((struct FieldActor *)Actor_GetById(id));
   struct FieldSprite *sprite = object->sprite;
 
-  /* FAKEMATCH: the sprite is loaded before the zero is built; a struct field, a
-   * chained assignment and a zero local all build the zero first (2 differ) */
-  do {
-  } while (0);
   WORD_AT(object, 108) = 0;
   object->timer = 0;
   sprite->rotation = 0;

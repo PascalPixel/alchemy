@@ -18,10 +18,6 @@ void Func_02001f90(s32 arg0) {
   Event_ResolvePendingActions(0);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   object->motionFlags = 0;
-  /* FAKEMATCH: keeps the flag store before the next address is formed (differ 2
-   * without) */
-  do {
-  } while (0);
   object->priorityFlags |= 0x20;
   Sound_Play(215);
   Func_02002910(object, 18);

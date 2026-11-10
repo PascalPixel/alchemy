@@ -99,9 +99,6 @@ void Func_02000944(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 frame;
 
-  /* FAKEMATCH: taking the object's address keeps the motion flags' address
-   * inside the loop; without it GCSE hoists it out (differ 24). */
-  (void)&object;
   Func_02005608();
   Actor_SetSingleChildFlags(object, 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);

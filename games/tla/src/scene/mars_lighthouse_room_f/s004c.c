@@ -30,9 +30,6 @@ const u8 *Func_02000058(void) {
 void Func_020000bc(void) {
   u8 *event = Ram_HeapSlots->eventWork;
 
-  /* FAKEMATCH: ⚓️ loads the event work before it builds the offset */
-  do {
-  } while (0);
   event[3384] = 1;
 }
 

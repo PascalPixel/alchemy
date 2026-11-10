@@ -9,9 +9,5 @@ void Func_020007ec(struct Actor *object) {
   object->unk4c -= object->unk4c / 10;
   object->scaleX += object->speedLimit;
   object->scaleY += object->acceleration;
-  /* FAKEMATCH: a one-pass block keeps the sprite load after the scaleY store
-   * (differ 6 without it). */
-  do {
-  } while (0);
   ((struct FieldSprite *)object->animation)->rotation += object->action;
 }

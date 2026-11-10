@@ -13,11 +13,6 @@ void Func_02000e80(s32 id, s32 value) {
     s16 *count;
 
     object->timer = value;
-    /* FAKEMATCH: ⚓️ loads the list and its count after the timer store; without
-     * it the count's address is loaded before the store (6 differ), and a
-     * post-increment index is worse (17) */
-    do {
-    } while (0);
     count = &gData_0200229a;
     gData_0200229c[*count] = object;
     (*count)++;

@@ -45,11 +45,6 @@ void Func_020019a8(void) {
       OverlayObject_PrepareObject(object->x, 0, position[2] + 0x3b0000, 286);
   effect->scaleX = 0x18000;
   effect->scaleY = 0x18000;
-  /* FAKEMATCH(dead): the sprite pointer loads after the two scale stores,
-   * as in the native; as plain statements, 6 of 98 instructions differ in
-   * tla-en. */
-  do {
-  } while (0);
   sprite = effect->animation;
   ((struct SpriteView *)sprite)->mode = 2;
   REG_WINOUT = WINOUT_WIN01_ALL | WINOUT_WINOBJ_BG0 | WINOUT_WINOBJ_BG1 |

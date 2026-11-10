@@ -43,9 +43,6 @@ void Func_02004d98(void);
 void Func_02003284(void) {
   u8 *event = Ram_HeapSlots->eventWork;
 
-  /* FAKEMATCH: ⚓️ loads the event work before it builds the offset */
-  do {
-  } while (0);
   if (S16_AT(event, 0xca2)) {
     Flag_Set(0x106);
     Func_02004d48();

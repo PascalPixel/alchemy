@@ -9,9 +9,6 @@ void Func_02000280(void) {
   if ((u8)(*state - 4) > 1)
     return;
   y = leader->y;
-  /* FAKEMATCH: loads the leader height before it builds the threshold. */
-  do {
-  } while (0);
   if (y > 0xc0000) {
     GameFlag_SetBit(0x340);
     if (*state == 4)

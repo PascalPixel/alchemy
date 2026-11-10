@@ -23,11 +23,6 @@ loop:
   Actor_SetSingleChildFlags(object, 0);
   Func_02004bc0(object, (u16)animation + Event_GetFlag((u16)flag));
   object->motionFlags = 0;
-  /* FAKEMATCH(dead): the collision byte's address is built after the
-   * motion store, as in the native; as plain statements, 2 of 56
-   * instructions differ in tla-en. */
-  do {
-  } while (0);
   object->collisionFlags &= 0xfe;
   object->timer = flag;
   Func_020001f8(object);

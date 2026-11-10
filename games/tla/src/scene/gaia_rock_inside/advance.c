@@ -25,8 +25,5 @@ void Effect_AdvanceMotionLocal(union FieldObject *object) {
   effect->scaleX += scaleRateX;
   sprite = effect->sprite;
   effect->scaleY += effect->scaleRateY;
-  /* FAKEMATCH: and would address the spin before storing the Y scale. */
-  do {
-  } while (0);
   sprite->rotation += effect->spin;
 }

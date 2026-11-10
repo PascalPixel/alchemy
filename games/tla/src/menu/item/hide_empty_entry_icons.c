@@ -23,11 +23,6 @@ void Menu_HideEmptyEntryIcons(const u16 *items) {
     if (items[slot] == 0) {
       Icon_PrepareActor(menu->entryIcons[slot]);
       menu->entryIcons[slot]->state = 13;
-      /* FAKEMATCH(dead): an empty once-only block keeps the counter's reload
-       * after the state store; without it, 2 of 32 instructions differ in
-       * tla-en. */
-      do {
-      } while (0);
     }
   }
 }

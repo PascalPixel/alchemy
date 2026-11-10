@@ -1,4 +1,15 @@
-// Draft, differ 4 of 2278 (tla-en, 2026-11-09)
+// Draft, differ 4 of 2278 (tla-en, 2026-11-10)
+// Barrier round (10 November), still 4, two devices milder. Both flashes' empty
+// asms (barrier) give way to an empty once-only block before a plain release
+// (dead): the same four rows. The block after the release, or the release
+// kept as the macro, 6; before the draw 8 to 10; before the second draw 14 to
+// 16; with the picture's offset read into a local first (the form that closed
+// Catastrophe) 4 with the asm kept, 6 to 38 without; x, y or the side read
+// first 26 to 72. From the sched2 table: mov r4, sl loses its tie once the
+// release's barrier no longer counts among its dependents, but ldr r2, [r7]
+// (six dependents, priority 137) still beats adds r1, r1, r3 (four, 137);
+// the listing's order needs that load one below the add, which no placement
+// of a barrier gives.
 // Round 9 by hand (10 November), still 4, the turned flash's first draw: the
 // picture as sheet + 0x128a + table, sheet + (table + 0x128a), &sheet[...],
 // (u8 *)work + table + 0x198a, a block-local picture, sheet or table read, or
@@ -837,9 +848,10 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                              flash->x - Data_081984d7[step],
                              flash->y - Data_081984ec[step],
                              Data_081984d7[step], Data_081984de[step]);
-              RELEASE_DRAW_BLITTER();
-              /* FAKEMATCH(barrier): the empty asm parts the scheduler's rows; as no asm, 6 of 2278 instructions differ in tla-en. */
-              __asm__("");
+              /* FAKEMATCH(dead): an empty once-only block before the release; as no block, 70 of 2278 instructions differ in tla-en. */
+              do {
+              } while (0);
+              HeapSlot_Release(188);
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
               DRAW_ALTERNATE(
                   canvas, work->sheet + Data_081984f4[step], flash->x,
@@ -852,9 +864,10 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                              flash->x - Data_081984ec[step],
                              flash->y - Data_081984d7[step],
                              Data_081984de[step], Data_081984d7[step]);
-              RELEASE_DRAW_BLITTER();
-              /* FAKEMATCH(barrier): the empty asm parts the scheduler's rows; as no asm, 6 of 2278 instructions differ in tla-en. */
-              __asm__("");
+              /* FAKEMATCH(dead): an empty once-only block before the release; as no block, 40 of 2278 instructions differ in tla-en. */
+              do {
+              } while (0);
+              HeapSlot_Release(188);
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
               DRAW_ALTERNATE(
                   canvas, work->sheet + Data_081984f4[step] + 0x128a,

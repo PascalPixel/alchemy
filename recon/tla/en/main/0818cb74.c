@@ -13,6 +13,15 @@
 // draw routine in a local (98). Before it, at 18: y as cos + row - half 140,
 // row - half + cos 24, row + (cos - half) 49, i * 32 or cos * 16 >> 16 18,
 // cos >> 12 27; y built by -= 18, by += then -= 61 to 140; x built by -= 18.
+// Barrier round (10 November), still 12. The glints' empty block moved as in
+// Catastrophe: inside the draw after the offset is read into a local, with
+// the picture summed five ways, 12 (the same rows); after the picture pointer
+// or right before the draw 16; before the colour read 14; round the blitter
+// call 16 to 18; after the sheet, the width, the height or the offset table
+// read first 107 to 246. From the sched2 table the draw's two rows are not a
+// count of dependents: after adds r1, r3, r1 the width's ldrb is anti
+// dependent on it (class 2) and movs r0, #224 is free (class 3), both at
+// priority 15, so the constant goes first; the listing has the ldrb first.
 // The tridents with the same empty block: in the listing's order (x, shade,
 // pixels, reset) with the block after x, after the shade, after the pixels,
 // before x, twice, or the quotient in a block local with the block before the

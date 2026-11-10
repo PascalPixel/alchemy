@@ -1,4 +1,53 @@
-// Draft, differ 36 of 1932 (tla-en, 2026-11-09); 36 in every edition
+// Draft, differ 2 of 1932 (tla-en, 2026-11-10); 2 in every edition
+// 2026-11-10 (agent round), 36 to 2; the ship-burst block's barrier asm is
+// gone. Three forms, in the order found:
+// - 36 to 8. The listing's frame * 2 and frame * 3 are not part of the scale
+//   step's init: they stand early in the setup, in a register that lives to
+//   the loop. A value frame * 3 computed right after the model's allocation
+//   and still referenced when the second cse pass runs is what cse2 builds
+//   the init's frame * 3072 from (the init's own shift and add are deleted),
+//   so only the init's << 10 and + -233472 stay behind the yaw's, frame is
+//   reloaded into r7 for it before the vertices, and t's init reloads frame
+//   itself. Kept as a dead first value of j (j = frame * 3 + 1, FAKEMATCH
+//   dead; - 228 or (frame - 76) * 3 measure the same, frame * 3 alone 105:
+//   j then is the value and its add is deleted with it). j is set twice, so
+//   the store outlives the trivially-dead sweeps before and between the
+//   loop passes and falls only to flow. A frame * 3 local that is never read
+//   is swept before the loop (288); read in the loop, the outer frame loop
+//   reduces it (448, the frame 4 bytes larger); a block-level sc with a dead
+//   first value frame * 3072 32 (sc is global and takes r0, but frame * 2
+//   and frame * 3 are a short-lived quantity in r3).
+//   With that value in place the 7 and the frame * 3 quantity compete for r1:
+//   local-alloc ranks a quantity by floor(log2 refs) * refs / life, refs
+//   weighted by loop depth + 1, and the 7 (12 / 26) lost to frame * 3
+//   (36 / 72): 272. model->kind = 7 stored before model->mesh shortens the
+//   7's life by two insns, the 7 ranks first and takes r1, frame * 3 r0: 8.
+//   The stores do not alias, so sched2 puts them back in the listing's order.
+//   A single-move search of the setup's twelve statements under both forms
+//   gave nothing lower (dead j 8 at four slots of kind, dead sc 28 at best).
+// - 8 to 2. The else arm's 0x1c000 - (t << 11) goes through the block's sc
+//   (declared once for both arms, at any level from the t block up to the
+//   ship-burst block: 2 each). sc lives in several blocks, so local-alloc
+//   cannot tie the constant to it and the constant takes r3, as the listing
+//   has it; as an argument expression the result is a block-local temporary
+//   copied to r0 and the constant is tied to it. No device.
+// - The palette step pair is what is left (2). The listing's order (pal,
+//   then the two level steps) is the draft's RTL order when the value is
+//   computed before the store (g |= ..., pal[i] = g: 18) or pal is stepped
+//   (*pal = ...; pal++: 33), but global.c then ranks pal last (refs 11 over
+//   live 50 or 56 against 46 and 48: its init comes first) and gives it r4
+//   where the listing has r1. The listing needs pal's step first and its
+//   init last, which one reduction order cannot give; it reads as pal's
+//   address reduced in the second loop pass as an address giv (its step put
+//   right after the store, its init after the first pass's) and the level
+//   steps in the first. Not found: *pal++ (84), pal set in the for's init
+//   (33), a pointer local at the top (2) or after g (81), once-only blocks
+//   round g, the store or both (2 to 18), *(pal + i) and integer sums (2),
+//   the red value as a local (16 to 599) or its factors reordered (2 to 4).
+//   pal measures the same 2 without volatile.
+// Also measured: a once-only block round the setup's stores, shade before it
+// and j = 0 after (292, no dead store); the dead store kept and mesh before
+// kind again 268.
 // Pools read 10 November: every literal pool word this draft compiles equals
 // the ROM's (diff compares instructions only; Catastrophe hid a wrong one).
 // 2026-11-10 (by hand), unchanged at 36. The setup in the listing's order
@@ -857,32 +906,36 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       s32 j;
 
       verts = Heap_AllocEwram(32);
-      /* FAKEMATCH(barrier): an empty asm reads frame into r7 here, where the
-       * listing reloads it, and the loop's step inits take it from there; as
-       * no asm, 317 of 1932 instructions differ in tla-en. */
-      asm("" : : "r"(frame));
       model = Render_AllocateModelList(1);
-      j = 0;
+      /* FAKEMATCH(dead): j takes frame * 3 + 1 here and 0 below before any
+       * read; the scale step's first value is then built from this frame * 3,
+       * where the listing builds it; as no store, 284 of 1932 instructions
+       * differ in tla-en. */
+      j = frame * 3 + 1;
+      model->shade = 0;
       work->transferMode = 2;
       work->transferValue = 50;
       texture2.logWidth = 7;
       texture2.logHeight = 7;
       model->texture = &texture2;
       texture2.pixels = work->sheet + 0x2781;
-      model->mesh = gData_08199364;
       model->kind = 7;
+      model->mesh = gData_08199364;
       model->vertices = verts;
-      model->shade = 0;
+      j = 0;
       for (; j != 2; j++) {
         s32 t = frame - 76 - j * 16;
 
         if (t >= 0) {
+          // One scale for both arms: the else arm's constant then keeps a
+          // register of its own.
+          s32 sc;
+
           Render_ResetTransformState();
           Func_08015160(0x80000, 0, 0);
           SceneTransform_ApplyPitch(0x4000);
           if (j == 0) {
-            s32 sc = t * 3072 - 0x12000;
-
+            sc = t * 3072 - 0x12000;
             if (t <= 39) {
               sc = t << 11;
               if (sc > 0xc000) {
@@ -893,7 +946,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
             SceneTransform_ApplyYaw(-t * 512);
           } else {
             if (t > 23) {
-              Func_0801521c(0x1c000 - (t << 11));
+              sc = 0x1c000 - (t << 11);
+              Func_0801521c(sc);
             } else {
               SceneTransform_ApplyPitch(0x3ff0 - t * 682);
               Func_080150e4(t * 169 + 0xf028);

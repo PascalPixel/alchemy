@@ -1,6 +1,55 @@
-// Draft, differ 24 of 2680 (tla-en, 2026-11-09; the same 24 in ja, de, es, fr, it)
+// Draft, differ 10 of 2680 (tla-en, 2026-11-10; the same 10 in ja, de, es, fr, it: --symbol BattleEffect_RunJudgment)
+// re-measured this round: their listing objects did not read, and it was 24 in
+// each before)
 // Pools read 10 November: every literal pool word this draft compiles equals
 // the ROM's (diff compares instructions only; Catastrophe hid a wrong one).
+// 2026-11-10, agent round, 24 to 10, and the empty asm (FAKEMATCH barrier) is
+// gone. About 1,900 measures, most of them enumerations of block positions.
+// - Queue loop 1, 4 to 0. The push is written out as QUEUE_PUSH_PARTED with an
+//   empty once-only block before the count store, before the value store and
+//   before the address store (all three: any two leave 2), the objects read as
+//   work->objects[i] in place of the u32 pointer, and the source as cells + i *
+//   0x400. The blocks make count + 1, the value store and the objects load
+//   barriers in turn, so the pool load cannot fill the store's three cycles.
+//   cells, a register set outside the loop, lets loop.c's first pass reduce
+//   the source giv; the objects giv is reduced in the second, so its increment
+//   is emitted after the source's (givs are reduced last found first, each
+//   increment put before the biv's): adds r1, #4 last, as the listing.
+// - Release loop, 2 to 0: the closing fill through a plain inline, FillWords
+//   (FAKEMATCH wrapper), in place of FILL and the asm. With no loop note after
+//   the fill nothing is a barrier, the last scheduled insn is the call, and
+//   the 0x77dc build (output dependent on it) outranks the work reload (data
+//   dependent). A direct Iwram_FillWords gives the same loop but emits its
+//   0x4000 before the routine's address (lsls r1 early, 14); the inline's
+//   body keeps the address first. Locals for the size, value or canvas: 14.
+// - Frame > 143 pair, 8 to 2: written out. The first draw reads the sheet in
+//   a once-only block with a body before the call and has no block after it;
+//   the second is DRAW_ALT_PLAIN, no block at all. Left: movs r4, #192 comes
+//   first after the load call, being the barrier (the first insn after the
+//   block is the slot address), where the listing has it after the stack
+//   stores and the work reload. All 128 placements of an empty block at the
+//   pair's seven gaps: 14 at best (one block before the second load or the
+//   second draw). There the stack stores tie the work reload on priority (47)
+//   and lose on dependents, 6 to 7 (the reload has movs r2, #36 and the add,
+//   the stores only the routine load); a barrier anywhere after the call adds
+//   one to both. With the sheet block: x, canvas or the routine pointer in the
+//   body or after it, 260 orders, 12 at best; width and height locals after
+//   the block 768; a dead test between the draws as the cse cut 68; the
+//   second mode through a local or as mode + 4, no change.
+// - The four draws at frame <= 63, 10 to 8: the second and fourth are
+//   DRAW_ALT_PLAIN (the first and third keep the block; plain at the third
+//   and fourth, or at the second alone, measures the same). Each draw given none, a block before
+//   its load, between load and draw, or after the draw, all 256: nothing
+//   lower. A once-only body for x, y, both, the sheet or the canvas at one
+//   draw at a time from the best forms: no gain. A shared size local for the
+//   24s with no blocks: 1015 (a new pseudo moves the whole frame). Read from
+//   sched2: the sheet move (r1 = r7) ties r2 and r3 on dependents wherever a
+//   barrier follows in the block, because every later barrier depends on each
+//   use of r7; with no barrier it has one fewer (r1 is next set by the next
+//   load's mode) and comes last as the listing, but then the 24 is rebuilt at
+//   each draw and the slot address takes r5 (0000: 102). The listing's first
+//   draw also loads the canvas before the routine pointer, which needs the
+//   canvas load to keep its later calls as dependents (no barrier after it).
 // 2026-11-10, by hand, unchanged at 24. DRAW_ALT's empty block moved or
 // doubled: a second after the first 24, before the draw as well 38, before
 // the load as well 36, only before the draw 32, only before the load 30,
@@ -363,13 +412,49 @@ static inline void FILL(void *dst, s32 size, s32 value) {
     Iwram_FillWords(dst, size, value);
   } while (0);
 }
+static inline void FillWords(void *dst, s32 size, s32 value) {
+  /* FAKEMATCH(wrapper): the closing fill of the gathering calls through this
+   * inline with no block; as a direct call to Iwram_FillWords there, 14 of
+   * 2680 instructions differ in tla-en. */
+  Iwram_FillWords(dst, size, value);
+}
 #define DRAW_ALT(mode, sheet, x, y, w, h)                                      \
     BattleEffect_LoadBlitter(SLOT_ALT, mode);                                  \
     ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, sheet, x, y, w, h);       \
     do { } while (0);                                                          \
     HeapSlot_Release(SLOT_ALT)
+// The same draw with no block between the draw and the release.
+#define DRAW_ALT_PLAIN(mode, sheet, x, y, w, h)                                \
+    BattleEffect_LoadBlitter(SLOT_ALT, mode);                                  \
+    ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, sheet, x, y, w, h);       \
+    HeapSlot_Release(SLOT_ALT)
 #define OBJ_TILES(obj)                                                         \
   (0x06010000 + gResourceTableEntries[(obj)->resource].tile)
+
+// IO_WRITE_QUEUE_PUSH with an empty once-only block before the count store,
+// the value store and the address store: the first tile queue matches only
+// with each of the three parted from the one before.
+#define QUEUE_PUSH_PARTED(address, value, control)                             \
+  {                                                                            \
+    struct IoWriteQueue *q = &gIoWriteQueue;                                   \
+    u32 saved;                                                                 \
+    s32 count;                                                                 \
+                                                                               \
+    IRQ_LOCK(saved);                                                           \
+    count = *&q->count;                                                        \
+    if (count <= 31) {                                                         \
+      u32 *entry = q->entries[count];                                          \
+                                                                               \
+      do { } while (0);                                                        \
+      *&q->count = count + 1;                                                  \
+      do { } while (0);                                                        \
+      *entry++ = (value);                                                      \
+      do { } while (0);                                                        \
+      *entry++ = (address);                                                    \
+      *entry = (control);                                                      \
+    }                                                                          \
+    IRQ_UNLOCK(saved);                                                         \
+  }
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the first palette copy calls through this inline; as a
@@ -575,10 +660,9 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       }
       Resource_DecodeType01(pal, Ram_MapCellBuffer);
       for (i = 0; i != 16; i++) {
-        u32 *objects = (u32 *)work->objects;
-        IO_WRITE_QUEUE_PUSH(
-            OBJ_TILES((struct JudgmentObject *)objects[i]),
-            (u32)(Ram_MapCellBuffer + i * 0x400), 0x84000100);
+        QUEUE_PUSH_PARTED(
+            OBJ_TILES((struct JudgmentObject *)work->objects[i]),
+            (u32)(cells + i * 0x400), 0x84000100);
       }
     }
     if (frame == 76) {
@@ -674,8 +758,18 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     if (frame > 143) {
       s32 y = frame * 16 - 2272;
 
-      DRAW_ALT(3, work->sheet, 36, y, 24, 64);
-      DRAW_ALT(7, work->sheet, 60, y, 24, 64);
+      BattleEffect_LoadBlitter(SLOT_ALT, 3);
+      {
+        u8 *sheet;
+
+        // Once-only: the sheet is read in a block of its own before the draw.
+        do {
+          sheet = work->sheet;
+        } while (0);
+        ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, sheet, 36, y, 24, 64);
+      }
+      HeapSlot_Release(SLOT_ALT);
+      DRAW_ALT_PLAIN(7, work->sheet, 60, y, 24, 64);
     }
 
     if ((u32)(frame - 144) <= 15) {
@@ -714,10 +808,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     frame++;
   } while (frame != 160 && (frame <= 4 || !(gInput.repeat & 3)));
 
-  FILL(canvas, 0x4000, 0);
-  /* FAKEMATCH(barrier): an empty asm parts the closing fill from the release
-   * loop; as no asm, 56 of 2680 instructions differ in tla-en. */
-  __asm__("");
+  FillWords(canvas, 0x4000, 0);
   for (i = 0; i != 16; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
@@ -920,9 +1011,9 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         sheet = work->sheet + 0x4240;
       }
       DRAW_ALT(19, sheet, 36, top - 24, 24, 24);
-      DRAW_ALT(23, sheet, 59, top - 24, 24, 24);
+      DRAW_ALT_PLAIN(23, sheet, 59, top - 24, 24, 24);
       DRAW_ALT(27, sheet, 36, top - 1, 24, 24);
-      DRAW_ALT(31, sheet, 59, top - 1, 24, 24);
+      DRAW_ALT_PLAIN(31, sheet, 59, top - 1, 24, 24);
     }
     if ((u32)(frame - 64) <= 1) {
       draw[0](canvas, work->sheet + 0x6000, 52, 51, 16, 17);

@@ -1,6 +1,17 @@
-// Draft, differ 4 of 4580 (tla-en, 2026-11-09). Measure 081843fc,081848ec together.
+// Draft, differ 2 of 4580 (tla-en, 2026-11-10). Measure 081843fc,081848ec together.
 // In the other five editions measure --symbol BattleEffect_RunCatastrophe (4580
-// instructions, 4 in each); the address pair there takes a longer extent.
+// instructions, 2 in each); the address pair there takes a longer extent.
+// 10 November, 4 to 2: the tornado closed, by hand from the loop dump. The
+// listing hoists 0x1b5a in loop.c's second pass, after the i * 45 giv's init.
+// move_movables likes each move less (threshold -= 3): as the j loop's first
+// movable the constant was moved at once, then again out of the i loop
+// ("halved since already moved"), ahead of the init. It is left for the second
+// pass when the source's five movables (i * 45 * 64) come before it. Source
+// first does that but swaps both giv bases and both pointers (20). The order
+// that matches: the destination's row from work, the source's offset, the
+// destination's final add of 0x1b5a, then the source's final add of cells.
+// With the row from work->sheet and 0x145a added last: 18. The offset named
+// alone as i * 45 * 64: 117 (the i loop then reduces a giv of 2880).
 // Last-four round (9 November), still 4, stopped early. The sparks' y in the
 // sched2 trace: after top's reload the table load (15505) and n's restore
 // (13695) are both priority 104, class 3, 4 dependents, so luid decides; the
@@ -1398,8 +1409,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       u8 *cells = cellBuffer;
 
       for (j = 0; j != 120; j++) {
-        u8 *dst = work->sheet + (row + j * 32) + 0x145a;
-        u8 *src = cells + i * 45 * 64 + j * 24;
+        u8 *line = (u8 *)work + (row + j * 32);
+        s32 offset = i * 45 * 64 + j * 24;
+        u8 *dst = line + 0x1b5a;
+        u8 *src = cells + offset;
         s32 m;
 
         for (m = 0; m != 24; m++) {

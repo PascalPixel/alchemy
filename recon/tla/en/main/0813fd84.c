@@ -1,5 +1,23 @@
 // Draft, differ 12 of 2579 (tla-en, 2026-11-09); 12 in every edition (de, es
 // and fr by --symbol BattleEffect_RunCruelRuin)
+// 10 November, by hand, still 12 (27 attempts on the object loop, none on the
+// blasts). From the loop dump: the givs are found row (mult 9, insn 4676)
+// then last (mult 36 plus work, 4689), and reduced givs are set up and
+// stepped latest found first, so last comes before row; the listing has row
+// first, so there the mult 9 giv that survives is found after last.
+// - last written before row, with j * 9 inline, as work->objects + j * 9 + 8,
+//   as &work->objects[8] + j * 9, or as a byte offset of j * 36 in four
+//   spellings: 12, the same rows. Row's own insn then does come after last
+//   (4693), but with lifetime 0: the product by 36 computes j * 9 on the way
+//   (4676, a temporary), cse makes that temporary row's holder, and it stays
+//   the parent.
+// - last's offset without a j * 9 inside it, j * 32 + j * 4 or j * 8 + j on
+//   the pointer, in six spellings: 300 (two instructions longer and one
+//   stack slot moved, so every sp offset after it differs).
+// - row after last in a form cse folds back to j * 9, (j << 3) + j, j * 8 +
+//   j, j + j * 8, j * 3 * 3, j * 5 + j * 4: 12. In a form it cannot fold, j *
+//   10 - j or (j << 4) - j * 7: 652 and 659 (row is no longer a plain
+//   reduced giv).
 // 2026-11-09 (round 14), 16 to 12, no device: the mask's byte is read into an
 // s32 local first, s32 b = ((u8 *)obj)[9]; u8 x = b & -13; the and's -13
 // operand is then a QImode register and the byte a SUBREG of an SImode one,

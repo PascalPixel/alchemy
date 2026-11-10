@@ -1,4 +1,27 @@
 // Draft, differ 2 of 1122 (tla-en, 2026-11-10), two devices (dead); 2 in tla-ja, de, es, fr, it
+// 2026-11-10 (agent round 2), unchanged at 2, about 50 measures, all on the
+// FlashBurst base. With the base a register set before the 0xF8 call (cells
+// set after offset = 0x2400), the sched2 table has ldr r7 at priority 6 with
+// the call's three argument loads and three dependents (the call, the add,
+// movs r7, #144) to their two (the call, the register's next setter), so it
+// goes first: 6. The tie is structural: its priority is the third call's
+// add + 3, theirs the 0xF8 call + 1, and that call's is the 0x5000 chain's
+// 3. Tried on both forms (base reloaded after the call, 2; base a register,
+// 6): the 0xF8 call typed as returning a value, by a cast at the call, takes
+// a dependent from ldr r0, which then goes last of the four (4 and 8, the
+// wrong load); the Tornado call so typed moves its movs r3, #0 (6, 10); the
+// FlashBurst call so typed 2, 6; pairs and all three 4 to 12. A plain static
+// inline round the 0xF8 load, the FlashBurst load or all three: 2, 6. The
+// base returned by an inline that makes the 0xF8 call, or set after that
+// call: 2. A non-constant or dead first value of offset (work, work->sheet)
+// before the address: 2, 6. The FlashBurst load in both arms of a test
+// (offset, !offset, offset < 0, cells, size, work, canvas) is not
+// cross-jumped, the calls stay double, and size = 2 cannot rise past the
+// block end: 53 to 208. What would close it: ldr r7 with two dependents and
+// a place in RTL order after movs r3, #0, or something after the 0xF8 call
+// that truly depends on it and is not scheduled first; C gives neither (only
+// a queued post-increment is emitted between a call's argument loads and
+// the call).
 // 2026-11-10 (agent round), 12 to 2, about 250 measures. Three of the four
 // places closed; each was read from the sched2 table first.
 // - The glint draw (12 to 8): gData_08197498, the heights, is not const (as

@@ -111,6 +111,21 @@
 /// The dim red tint the rooms fade to.
 #define SOL_SANCTUM_WARM_TINT (PALETTE_TINT_CUSTOM | RGB(17, 13, 11))
 
+// A falling light in the Luna room is a column of five cells kept in a
+// staging column on row 59, with the ten cells it falls through, unlit, ten
+// rows above it on row 49.
+/// Draws a light with its top at (column, row).
+#define DRAW_LIGHT(staging, column, row)                                       \
+  MapGrid_CopyCellsTo(staging, 59, column, row, 1, 5)
+/// Moves a light a row down to (column, row): its first cell is copied over
+/// the row it leaves, then it is drawn again.
+#define MOVE_LIGHT_DOWN(staging, column, row)                                  \
+  (MapGrid_CopyCellsTo(staging, 59, column, (row) - 1, 1, 1),                  \
+   DRAW_LIGHT(staging, column, row))
+/// Puts back the ten unlit cells a light falls through, from (column, row).
+#define CLEAR_LIGHT_PATH(staging, column, row)                                 \
+  MapGrid_CopyCellsTo(staging, 49, column, row, 1, 10)
+
 /// The cell behaviors of the floor cells the events answer; behaviors 1
 /// and 2 are the exits.
 enum SolSanctumLunaSolRoomsCellBehavior {
@@ -703,27 +718,23 @@ static void SolSanctumLunaSolRooms_UpdateFirstFallingLight(void) {
     switch (gSolSanctumLunaSolRooms_Light1Timer) {
     case 0:
       Sound_Play(SE_FALLING_LIGHT);
-      MapGrid_CopyCellsTo(46, 59, 30, 33, 1, 5);
+      DRAW_LIGHT(46, 30, 33);
       break;
     case 1:
-      MapGrid_CopyCellsTo(46, 59, 30, 33, 1, 1);
-      MapGrid_CopyCellsTo(46, 59, 30, 34, 1, 5);
+      MOVE_LIGHT_DOWN(46, 30, 34);
       break;
     case 2:
-      MapGrid_CopyCellsTo(46, 59, 30, 34, 1, 1);
-      MapGrid_CopyCellsTo(46, 59, 30, 35, 1, 5);
+      MOVE_LIGHT_DOWN(46, 30, 35);
       break;
     case 3:
-      MapGrid_CopyCellsTo(46, 59, 30, 35, 1, 1);
-      MapGrid_CopyCellsTo(46, 59, 30, 36, 1, 5);
+      MOVE_LIGHT_DOWN(46, 30, 36);
       break;
     case 4:
       gSolSanctumLunaSolRooms_FlashState = 2;
-      MapGrid_CopyCellsTo(46, 59, 30, 36, 1, 1);
-      MapGrid_CopyCellsTo(46, 59, 30, 37, 1, 5);
+      MOVE_LIGHT_DOWN(46, 30, 37);
       break;
     case 80:
-      MapGrid_CopyCellsTo(46, 49, 30, 33, 1, 10);
+      CLEAR_LIGHT_PATH(46, 30, 33);
       break;
     }
     gSolSanctumLunaSolRooms_Light1Timer++;
@@ -749,27 +760,23 @@ static void SolSanctumLunaSolRooms_UpdateSecondFallingLight(void) {
     switch (gSolSanctumLunaSolRooms_Light2Timer) {
     case 0:
       Sound_Play(SE_FALLING_LIGHT);
-      MapGrid_CopyCellsTo(47, 59, 42, 33, 1, 5);
+      DRAW_LIGHT(47, 42, 33);
       break;
     case 1:
-      MapGrid_CopyCellsTo(47, 59, 42, 33, 1, 1);
-      MapGrid_CopyCellsTo(47, 59, 42, 34, 1, 5);
+      MOVE_LIGHT_DOWN(47, 42, 34);
       break;
     case 2:
-      MapGrid_CopyCellsTo(47, 59, 42, 34, 1, 1);
-      MapGrid_CopyCellsTo(47, 59, 42, 35, 1, 5);
+      MOVE_LIGHT_DOWN(47, 42, 35);
       break;
     case 3:
-      MapGrid_CopyCellsTo(47, 59, 42, 35, 1, 1);
-      MapGrid_CopyCellsTo(47, 59, 42, 36, 1, 5);
+      MOVE_LIGHT_DOWN(47, 42, 36);
       break;
     case 4:
       gSolSanctumLunaSolRooms_FlashState = 2;
-      MapGrid_CopyCellsTo(47, 59, 42, 36, 1, 1);
-      MapGrid_CopyCellsTo(47, 59, 42, 37, 1, 5);
+      MOVE_LIGHT_DOWN(47, 42, 37);
       break;
     case 90:
-      MapGrid_CopyCellsTo(47, 49, 42, 33, 1, 10);
+      CLEAR_LIGHT_PATH(47, 42, 33);
       break;
     }
     gSolSanctumLunaSolRooms_Light2Timer++;
@@ -787,27 +794,23 @@ static void SolSanctumLunaSolRooms_UpdateThirdFallingLight(void) {
     switch (gSolSanctumLunaSolRooms_Light3Timer) {
     case 0:
       Sound_Play(SE_FALLING_LIGHT);
-      MapGrid_CopyCellsTo(48, 59, 31, 36, 1, 5);
+      DRAW_LIGHT(48, 31, 36);
       break;
     case 1:
-      MapGrid_CopyCellsTo(48, 59, 31, 36, 1, 1);
-      MapGrid_CopyCellsTo(48, 59, 31, 37, 1, 5);
+      MOVE_LIGHT_DOWN(48, 31, 37);
       break;
     case 2:
-      MapGrid_CopyCellsTo(48, 59, 31, 37, 1, 1);
-      MapGrid_CopyCellsTo(48, 59, 31, 38, 1, 5);
+      MOVE_LIGHT_DOWN(48, 31, 38);
       break;
     case 3:
-      MapGrid_CopyCellsTo(48, 59, 31, 38, 1, 1);
-      MapGrid_CopyCellsTo(48, 59, 31, 39, 1, 5);
+      MOVE_LIGHT_DOWN(48, 31, 39);
       break;
     case 4:
       gSolSanctumLunaSolRooms_FlashState = 2;
-      MapGrid_CopyCellsTo(48, 59, 31, 39, 1, 1);
-      MapGrid_CopyCellsTo(48, 59, 31, 40, 1, 5);
+      MOVE_LIGHT_DOWN(48, 31, 40);
       break;
     case 95:
-      MapGrid_CopyCellsTo(48, 49, 31, 36, 1, 10);
+      CLEAR_LIGHT_PATH(48, 31, 36);
       break;
     }
     gSolSanctumLunaSolRooms_Light3Timer++;
@@ -825,27 +828,23 @@ static void SolSanctumLunaSolRooms_UpdateFourthFallingLight(void) {
     switch (gSolSanctumLunaSolRooms_Light4Timer) {
     case 0:
       Sound_Play(SE_FALLING_LIGHT);
-      MapGrid_CopyCellsTo(46, 59, 41, 36, 1, 5);
+      DRAW_LIGHT(46, 41, 36);
       break;
     case 1:
-      MapGrid_CopyCellsTo(46, 59, 41, 36, 1, 1);
-      MapGrid_CopyCellsTo(46, 59, 41, 37, 1, 5);
+      MOVE_LIGHT_DOWN(46, 41, 37);
       break;
     case 2:
-      MapGrid_CopyCellsTo(46, 59, 41, 37, 1, 1);
-      MapGrid_CopyCellsTo(46, 59, 41, 38, 1, 5);
+      MOVE_LIGHT_DOWN(46, 41, 38);
       break;
     case 3:
-      MapGrid_CopyCellsTo(46, 59, 41, 38, 1, 1);
-      MapGrid_CopyCellsTo(46, 59, 41, 39, 1, 5);
+      MOVE_LIGHT_DOWN(46, 41, 39);
       break;
     case 4:
       gSolSanctumLunaSolRooms_FlashState = 2;
-      MapGrid_CopyCellsTo(46, 59, 41, 39, 1, 1);
-      MapGrid_CopyCellsTo(46, 59, 41, 40, 1, 5);
+      MOVE_LIGHT_DOWN(46, 41, 40);
       break;
     case 85:
-      MapGrid_CopyCellsTo(46, 49, 41, 36, 1, 10);
+      CLEAR_LIGHT_PATH(46, 41, 36);
       break;
     }
     gSolSanctumLunaSolRooms_Light4Timer++;

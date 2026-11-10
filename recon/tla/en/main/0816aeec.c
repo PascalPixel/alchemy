@@ -1,4 +1,59 @@
-// Draft, differ 86 of 902 (tla-en, 2026-11-09)
+// Draft, differ 86 of 902 (tla-en, 2026-11-10)
+// 2026-11-10 (agent round), unchanged at 86, the pin still there. One line
+// went: i = v at the row's top, with a = v + column, compiles to the same
+// code (the pin's plain form is then 857, not 941). About 60 forms measured.
+// What the listing implies, from the loop and greg dumps. Its row has three
+// reduced givs on the stack (row * 15 at 32, row * 16 + 15 at 28, row * 24 -
+// 84 at 24) and a fourth in r9, row * 16, stepped by 16 and read only by a,
+// by the copy into r4 and by at most one start: it ranks under x (11 over
+// 102, 0.324), so it has 12 refs or fewer over its 120. Two moved insns copy
+// slots 28 and 24 into ip and slot 56. Whatever holds r4 ranks between the
+// column (46 over 160, 1.438, which otherwise takes r4 through caller-save
+// before it tries r8) and u (12 over 24, 1.5): 19 refs over 51 or 52, or 17
+// over 46 or 47, a life not doubled. So r4 is one pseudo read by the three
+// stores and by three or four of the starts of b, c, d and the vertex, and
+// d's start comes after the + 15 copy. The draft has the pin instead, d and
+// the copy the wrong way round, and the vertex start reading the base.
+// With the pin kept. d as a + 17 is reduced in the first pass, its start
+// right after the + 15 copy: both 11 over 46, the copy wins on its lower
+// number (98; with i = v 923, because cse2 then rewrites the starts to read
+// i, the register of the class whose last use in the text is latest, and i
+// cannot share r4 with the pin). d from the vertex's own index (n = row * 16
+// + column; d = n + 17 at the column's top, a set twice so it is no giv and
+// does not combine with n) is reduced only in the second pass, after the
+// quad's start: 11 over 40 (0.825), it takes r7, is spilled to slot 8 and the
+// copy takes ip, as the listing has them. But its start reads the base, now
+// 14 refs (0.350), which takes sl ahead of x (219; x set last 474). With the
+// vertex stepped by hand from q the base is back at 12 and, with quad[20] = u
+// one statement later (u 12 over 25, under the vertex's 17 over 47), every
+// register is the listing's; reload then takes r3 for the multiply and spills
+// the product to slot 12 (222 to 239; six orders of the row and column
+// statements 227 to 862). The pin cannot reach 0: a pinned r4 gives its refs
+// to the base.
+// Without the pin. i kept live through the column loop by a dead arm (if
+// (never) i = 0;, never a constant only gcse folds, so the copy is not
+// propagated): 936, the column outranks i (112 over 554, 1.213: i's first
+// set is a constant, so its life counts double) and takes r4; the grid on
+// its own column 858; the pixel loop on its own counter 1005 (i's life then
+// counts once, 2.405, and it takes r6). q = row << 4 in the if block after
+// the once-only block is hoisted as a copy of v and the givs b, c, d (q +
+// column + 1, 17, 16) start from it, but cse2 rewrites the starts to the
+// base (855 to 861), and with i = v before it regmove gives them back to
+// the copy, which then inherits i's preference for r0 (the splash's i << 14
+// argument) and u, skipping r0, takes r4 (600 to 720; with the splash on its
+// own counter, a diagnostic, u r0, i r4, column r8 but the counter in sl:
+// 303). A function-level q read once after the grid (i = q, a dead store) to
+// make it the class's register: set in the if block it is not hoisted (874),
+// at the column's top gcse propagates the copy into the if block (879), at
+// the row's top loop computes its final value and replaces it (857). b, c
+// and d from a with a plain row << 4 for quad[5]: 691.
+// Measured on the way: gcse replaces a copy's uses only in later blocks,
+// never in the copy's own; it rewrites only the first row << 4 of a block as
+// a copy of v, and loop.c starts a giv from a moved insn's register only when
+// that insn is a copy (from a moved shift it recomputes the shift each row);
+// two moved copies of v become one register; a giv whose life ends before
+// another's begins is derived from it and shares its register (d's quad[1]
+// before c's quad[2]), unless both are block locals set first.
 // 2026-11-10 (by hand), unchanged at 86. d's first value moved to shorten its
 // life against the + 15 copy's: after c and b, between them, or after column
 // = 0 as well, 88 to 92; d as c + 1 868, as b + 16 346. An empty once-only
@@ -504,11 +559,10 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
     s32 x;
     s8 *cells = (s8 *)gMapCellBuffer;
 
-    /* FAKEMATCH(pin): q held in r4; as a plain local, 941 of 902 instructions
+    /* FAKEMATCH(pin): q held in r4; as a plain local, 857 of 902 instructions
      * differ in tla-en. */
     register s32 q asm("r4");
     q = v;
-    i = v;
     column = 0;
     x = -60;
     d = q + 17;
@@ -518,7 +572,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
     for (; column != WATER_COLUMNS;
          c++, b++, d++, column++, x += 8) {
       s8 *vertex = cells + (row * 16 + column) * 4;
-      s32 a = i + column;
+      s32 a = v + column;
       s32 u = column * 8;
 
       vertex[0] = column * 11 - 82;

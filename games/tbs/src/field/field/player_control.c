@@ -200,6 +200,9 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
       s32 delayIterations;
 
       delayIterations = delayKeyMask;
+      // Four empty delay loops, each written with goto: as do { } while, none
+      // matches in tbs-en (menu/status.c's spin records why: the loop optimizer
+      // deletes an empty loop).
     wait_a:
       --delayIterations;
       if (delayIterations != 0)

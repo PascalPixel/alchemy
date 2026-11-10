@@ -160,6 +160,7 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   fixedZ = positionZ;
   region = gOverlayArea.regions();
   if (region != 0 && (work = gFieldWork, minX = region->minX, minX != -1)) {
+    // Written with goto: as do { } while, tbs-en does not match.
   loop:
     minY = region->minY;
     minZ = region->minZ;

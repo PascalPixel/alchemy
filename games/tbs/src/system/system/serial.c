@@ -398,6 +398,7 @@ void Serial_HandleTransferInterrupt(void) {
     receiveState->sendIndex++;
 
   channel = 0;
+  // Written with goto: as do { } while, tbs-en does not match.
 receive_loop:
   // Hand complete packets to the frame code without overwriting its buffers.
   {

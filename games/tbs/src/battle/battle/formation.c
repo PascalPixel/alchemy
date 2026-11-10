@@ -399,6 +399,7 @@ s32 BattleEnemy_LetterFirstOfKind(s32 classId) {
       return;
     }
     // The name's end, then the letter and a new terminator after it.
+    // Written with goto: as do { } while, tbs-en does not match.
   scan_slots:
     nameIndex++;
     if (nameIndex > 13)

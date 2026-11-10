@@ -298,17 +298,17 @@ void Func_02001828(void) {
           GameFlag_SetBit(0x300);
           cell.x = (gust->x >> 20) + 64;
           cell.z = gust->z >> 20;
-          Call6(Func_02005d9c, 90, 25, cell.x + 1, cell.z, 1, 3);
-          Call6(Func_02005d9c, 21, 88, 24, 89, 1, 2);
-          Call6(Func_02005dac, 23, 92, 2, 1, 23, 89);
-          Call6(Func_02005dac, 18, 33, 2, 1, 23, 25);
+          Func_02005d9c(90, 25, cell.x + 1, cell.z, 1, 3);
+          Func_02005d9c(21, 88, 24, 89, 1, 2);
+          Func_02005dac(23, 92, 2, 1, 23, 89);
+          Func_02005dac(18, 33, 2, 1, 23, 25);
         } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room7) {
           cell.x = gust->x >> 20;
           cell.z = ((gust->z - gust->y) >> 20) + 64;
           if (hit == 0) {
             GameFlag_SetBit(772);
-            Call6(Func_02005d9c, 39, 82, cell.x, cell.z, 1, 1);
-            Call6(Func_02005dac, 39, 82, 1, 1, 38, 82);
+            Func_02005d9c(39, 82, cell.x, cell.z, 1, 1);
+            Func_02005dac(39, 82, 1, 1, 38, 82);
             Call6(Func_02005dac, 38, 19, 1, 1, 38, 18);
           } else {
             GameFlag_SetBit(773);

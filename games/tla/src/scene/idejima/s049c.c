@@ -102,7 +102,7 @@ void Func_020006a8(void) {
     FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(721), 1);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
     MapGrid_CopyCellAttributes(38, 31, 2, 1, 25, 42);
-    Call1(Func_02000098, 8);
+    Func_02000098(8);
     Actor_SetHorizontalPositionWithTerrain(8, PIXELS(312), PIXELS(666));
     System_Wait(1);
     Actor_SetSpeed(8, 0x19999, 0xcccc);
@@ -154,7 +154,7 @@ void Func_020006a8(void) {
     Actor_SetScript(8, gData_02003734);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
     MapGrid_CopyCellAttributes(38, 31, 2, 1, 17, 46);
-    Call1(Func_02000098, 5);
+    Func_02000098(5);
     Actor_SetSpeed(5, 0x19999, 0xcccc);
     Actor_WalkToAndWait(5, 212, 680);
     Actor_WalkToAndWait(5, 192, 712);

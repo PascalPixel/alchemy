@@ -109,7 +109,7 @@ s32 Func_020017f4(void) {
     }
     if (GameFlag_Test(0xa6b)) {
       Call6(Map_CopyCellAttributeRect, 62, 41, 1, 2, 33, 41);
-      Call6(Func_0802b450, 116, 95, 3, 13, 0x60, 0x20);
+      Func_0802b450(116, 95, 3, 13, 0x60, 0x20);
       Call6(Func_0802b450, 122, 95, 3, 13, 0x20, 0x60);
       Func_02001f60(12);
     }

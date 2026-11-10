@@ -57,7 +57,7 @@ L_02008694:
   FieldEvent_SetMessageId((s32)&MsgAreYouKids);
   Actor_SetPosition(12, PIXELS(872), PIXELS(880));
   t12 = (s32)Actor_Get(12);
-  Call2(Animation_SetIndexAndInitializeObjects, t12, 43);
+  Animation_SetIndexAndInitializeObjects(t12, 43);
   Actor_SetAnimation(12, 3);
   Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 0);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
@@ -74,7 +74,7 @@ L_02008694:
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(928), 1);
   Func_02001cc4();
-  t30 = Value1(Func_02001bbc, 133);
+  t30 = Func_02001bbc(133);
   v5 = t30;
   if (v5 == -1)
     goto L_02008778;

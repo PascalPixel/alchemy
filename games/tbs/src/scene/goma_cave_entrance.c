@@ -250,6 +250,9 @@ s32 Scene_Initialize(void) {
     MapGrid_CopyCellAttributes(39, 12, 3, 1, 8, 12);
     MapGrid_CopyCellAttributes(43, 11, 3, 1, 12, 11);
   }
+  // One step along, the west pillar stands on column 16, and the two cells
+  // there are plain ground where they are otherwise a climb; two steps along
+  // it has cleared them and the climb is back.
   if (GameFlag_Get(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP) != 0) {
     Actor_SetPosition(ACTOR_WEST_PILLAR, PIXELS(264), PIXELS(312));
     MapGrid_CopyCellAttributes(48, 18, 1, 2, 16, 18);

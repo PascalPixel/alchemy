@@ -2900,6 +2900,9 @@ s32 VenusLighthouse_Initialize(void) {
       Scene_QueueMusic(SE_AMBIENT_WATER);
       FieldEffect_StartFadeOverlay(0);
       wait(2);
+      // With the wall on the floor above moved, the sand that poured down the
+      // middle of this room has stopped: the fall is drawn as the dry stone
+      // chute it ran down, and the cells under it are copied in afresh.
       if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED)) {
         MapGrid_CopyCellsTo(111, 5, 117, 5, 5, 2);
         MapGrid_CopyCellsTo(111, 10, 117, 10, 5, 2);
@@ -3003,6 +3006,9 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_FROM_PILLAR_SOCKETS:
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_EAST_NORTHEAST:
       Scene_QueueMusic(SE_AMBIENT_WATER);
+      // With the west wall of the floor above moved, sand runs down the dry
+      // stone chute west of the middle one; the east wall does the same for
+      // the chute to its east.
       if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
         MapGrid_CopyCells(53, 12, 3, 13, 26, 12);
         MapGrid_CopyCellsTo(81, 41, 89, 14, 9, 2);

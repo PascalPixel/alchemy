@@ -26,7 +26,8 @@ field asks for them:
 4. [Events](#events), the code a trigger runs, an
    [event](../../glossary.md#event) being the C routine itself.
 5. The [flags that clean themselves up](#state-that-cleans-itself-up), which
-   let a scene keep notes without putting anything back.
+   let a scene keep notes without putting anything back, and how a scene
+   [draws its room to match](#drawing-the-room-to-match) them.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -495,6 +496,37 @@ describes the game flags as a whole.
 | --- | --- | --- |
 | `FLAG_SCENE_TEMP_00` to `FLAG_SCENE_TEMP_FF` | 256 | on every ordinary arrival in a scene |
 | `FLAG_AREA_TEMP_00` to `FLAG_AREA_TEMP_FF` | 256 | on entering another area |
+
+### Drawing the room to match
+
+A flag only remembers that something happened. The room is drawn fresh from
+its map every time the party arrives, so a scene must change the map to
+match what its flags say, and it does that by copying cells. A map's grid is
+far larger than most rooms, and its unused corners hold spare cells: the
+same patch of the room in its other states.
+
+In Kalay's tunnel ([`kalay.c`](kalay.c)) a pool lies under a waterfall, and
+the map keeps its floor a second time, drained. When the party pushes a
+statue into the arch the water falls from, the event copies the drained
+floor over the pool, a little at a time with waits between, so the water is
+seen to sink, and sets a flag. The next time the party arrives, the scene's
+setup finds the flag set and makes the same copy at once: the pool is
+already dry, and nothing had to be saved but the flag.
+
+A copy can carry a cell's picture, its ground, or both. Copying the ground
+alone changes where the party can walk and leaves the picture as it was. In
+Mercury Lighthouse ([`mercury_lighthouse.c`](mercury_lighthouse.c)) a statue
+stands in front of a door; once it is moved aside, one cell near it is given
+the ground of a cell the leader can jump from, and from then on a jump
+reaches the door.
+
+The three layers of a map are windows onto the one grid
+([Maps](../map/README.md#one-grid-three-layers)), so a copy reaches a layer
+by where it writes. In Sol Sanctum's Elemental Star Room
+([`sol_sanctum_elemental_star_room.c`](sol_sanctum_elemental_star_room.c))
+taking a star raises three pillars out of the dark as stepping stones: each
+pillar's picture is copied onto the overhead layer, at the pillar's own cell
+plus the place where that layer's window starts.
 
 ## The Title, the File Screen and the Battle Arena
 

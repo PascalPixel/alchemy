@@ -1,4 +1,19 @@
 // Draft, differ 34 of 3111 (tla-en, 2026-11-09)
+// 10 November, by hand, still 34: the Djinn loop's slot (6 of the 34: the
+// same insns, [sp, #20] listed and [sp, #52] here).
+// - Slots fall as pseudo numbers rise, measured by declaring next at every
+//   one of the 40 places among the function's top-level locals: first, sp+140;
+//   after work, 136; after cursorPosition, 108; after itemCount, 68; last, 60;
+//   in the loop's own block, as here, 52. None of the 40 measures below 62
+//   (the other spilled locals trade sp+44 to sp+60 among themselves). sp+20
+//   is below anything a declared variable reaches, so the listed pointer is
+//   made after expansion: loop.c's reduced giv, as the earlier rounds said.
+// - The indexed form, shown = djinnList[j]: 848. From its loop dump the read's
+//   address giv is worth 68 against 79 insns in the first pass and 76 in the
+//   second, so it is reduced in neither. The six constants the first pass
+//   finds not desirable (savings 2, 1, 2, 1, 1, 1) come to 8, exactly 76
+//   less 68: were they moved in the first pass, the second would reduce the
+//   giv.
 // Near7 round (9 November), not worked beyond a trace. Page 2's x and y loads
 // are one insn each (the offset's movs is the pattern's scratch register),
 // both data dependents of the helpWindow reload at the pick (class 1, cost

@@ -19,10 +19,7 @@ void Func_0200032c(s32 unused, s32 id) {
   s32 i;
 
   if (id == 13) {
-    /* FAKEMATCH(volatile): z read for the test as volatile, so the failing test
-     * reloads it with the other; as object->z, 6 of 222 instructions differ in
-     * tla-en. */
-    if (object->x >> 20 == 6 && *(volatile s32 *)&object->z >> 20 == 12) {
+    if (object->x >> 20 == 6 && *(s32 *)&object->z >> 20 == 12) {
       Event_SetFlag(2570);
       object->motionFlags = 3;
       System_Wait(2);
@@ -52,10 +49,7 @@ void Func_0200032c(s32 unused, s32 id) {
     }
   }
   if (id == 14) {
-    /* FAKEMATCH(volatile): z read for the test as volatile, so the failing test
-     * reloads it with the other; as object->z, 6 of 222 instructions differ in
-     * tla-en. */
-    if (object->x >> 20 == 57 && *(volatile s32 *)&object->z >> 20 == 12) {
+    if (object->x >> 20 == 57 && *(s32 *)&object->z >> 20 == 12) {
       Event_SetFlag(2571);
       object->motionFlags = 3;
       System_Wait(2);

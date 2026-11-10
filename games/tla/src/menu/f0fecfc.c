@@ -36,10 +36,7 @@ s32 Func_080fecfc(s32 selectedIndex, s32 direction) {
       clear--;
     } while ((s32)clear >= (s32)reordered);
   }
-  /* FAKEMATCH(volatile): the native reads the count again after each copy;
-   * as the plain menu->partyCount, loop.c counts the copy down from a hoisted
-   * count and 59 of 129 instructions differ in tla-en. */
-  for (index = 0; index < *(volatile u8 *)&menu->partyCount; index++)
+  for (index = 0; index < *(u8 *)&menu->partyCount; index++)
     reordered[index] = menu->ownerIds[index];
 
   if (direction == 1) {

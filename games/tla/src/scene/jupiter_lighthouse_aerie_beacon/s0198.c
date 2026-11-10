@@ -68,11 +68,8 @@ void Func_02000198(void) {
     Actor_SetScript(36, gData_0200641c);
     break;
   case 25:
-    /* FAKEMATCH(volatile): the centre's y read through a volatile pointer in
-     * cases 25 and 26; as center->y in both, 28 of 204 instructions differ in
-     * tla-en. */
     gData_02006a24--;
-    if (*(volatile s32 *)&center->y > 0) {
+    if (*(s32 *)&center->y > 0) {
       ColorBuffer_ApplyTarget(0x203210, 0);
       ColorBuffer_Interpolate(16);
       gData_02006a24++;

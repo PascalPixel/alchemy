@@ -15,9 +15,7 @@ void Func_020000fc(void) {
     if (gData_020001b0[0] == 8)
       gData_020001b0[0] = 0;
     i = gData_020001b0[0]++;
-    /* FAKEMATCH(volatile): the colours read through a volatile view; as plain
-     * u16, 22 of 49 instructions differ in tla-en. */
-    colors = (volatile u16 *)0x05000180;
+    colors = (u16 *)0x05000180;
     *(u16 *)0x050000c2 = colors[i];
     *(u16 *)0x050000c4 = colors[(i + 1) & 7];
     *(u16 *)0x050000c6 = colors[(i + 2) & 7];

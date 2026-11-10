@@ -86,10 +86,7 @@ void Func_020007a4(s32 unused, s32 id) {
   }
   if (id != 20)
     return;
-  /* FAKEMATCH(volatile): z read for the test as volatile, so the failing test
-   * reloads it with the other; as object->z, 6 of 230 instructions differ in
-   * tla-en. */
-  if (object->x >> 20 == 8 && *(volatile s32 *)&object->z >> 20 == 12) {
+  if (object->x >> 20 == 8 && *(s32 *)&object->z >> 20 == 12) {
     Event_SetFlag(2586);
     Actor_SetSingleChildFlags(Actor_GetById(20), 0);
     Event_Wait(30);

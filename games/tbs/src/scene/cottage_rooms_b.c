@@ -885,6 +885,8 @@ static void CottageRoomsB_HurryToThePlaza(void) {
   alpha = &REG_BLDALPHA;
 
   // The flame brightens over four frames, then fades away over sixteen.
+  // The brightening is written with goto: as do { } while (++i <= 3), tbs-en
+  // does not match.
   i = 0;
 ramp:
   *alpha = BLEND_ALPHA(14, 16) + i;

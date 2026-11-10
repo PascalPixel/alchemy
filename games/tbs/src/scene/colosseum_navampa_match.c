@@ -1065,6 +1065,10 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     }
   }
 
+  // The Scales of Justice are two pans on poles. With the weight, a rock, on
+  // the western ledge they have tipped: the west pan hangs low and the east
+  // one high, where otherwise the west is high and the east low. The two
+  // cells under the pans take the ground that goes with it.
   if (GameFlag_Get(FLAG_WEIGHT_ON_SCALES) != 0) {
     MapGrid_CopyCellAttributes(15, 12, 1, 1, 13, 12);
     MapGrid_CopyCellAttributes(1, 25, 1, 1, 9, 12);

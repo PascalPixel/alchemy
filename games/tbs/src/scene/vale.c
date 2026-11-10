@@ -372,6 +372,8 @@ enum ValeAnimation {
 
 /// The roof of Isaac's house has just been mended; for the rest of the visit
 /// Dora frets about the hole Garet left.
+/// ★ Named from the game: "But what am I going to do about this hole?"
+/// (MsgValeIToldGaretItWas)
 #define FLAG_VALE_ROOF_JUST_MENDED FLAG_SCENE_TEMP_02
 /// The leader has climbed the ladder onto the roof of Isaac's house, whose
 /// cells are changed so it can be walked.
@@ -393,6 +395,8 @@ enum ValeAnimation {
 #define FLAG_VALE_GARET_MET_SISTER FLAG_AREA_TEMP_03
 /// Back from Kalay, Garet has asked his brother to protect the family while he
 /// is gone.
+/// ★ Named from the game: "you must protect the family while I'm gone."
+/// (MsgValeEverProtectFamily)
 #define FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY FLAG_AREA_TEMP_04
 /// Unused: the water has burst up by the river and the strongman has remembered
 /// Felix (Vale_UnusedWaterBurstsByTheRiver, which nothing reaches).
@@ -400,6 +404,8 @@ enum ValeAnimation {
 #define FLAG_VALE_UNUSED_WATER_BURST_SEEN FLAG_AREA_TEMP_05
 /// Back from Kalay, the burly man has asked about the lack of travellers since
 /// the eruption.
+/// ★ Named from the game: "I wonder why we haven't seen any travelers since
+/// the eruption..." (MsgValeNoTravelersSinceTheEruption)
 #define FLAG_VALE_ASKED_ABOUT_TRAVELERS FLAG_AREA_TEMP_07
 /// Vale_RoofMended has played, in which Dora praises the roof and sends
 /// the three off to Mt. Aleph.

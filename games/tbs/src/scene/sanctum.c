@@ -103,6 +103,8 @@
 
 /// After the quest is refused, the Great Healer has warned that stepping
 /// outside the village is final.
+/// ★ Named from the game: "Once you step outside the village, you cannot take
+/// back your decision." (MsgSanctumOnceStepOutsideVillageCannot)
 #define FLAG_SANCTUM_WARNED_BEFORE_LEAVING FLAG_SCENE_TEMP_00
 /// The party is starting again from the Great Healer after refusing the quest,
 /// so the account of Sol Sanctum is skipped.

@@ -296,8 +296,7 @@ enum {
   VALE_PLAZA_FROM_WORLD_MAP = 10,
   VALE_PLAZA_FROM_CHEST_CAVE =
       11, ///< ★ Named from what the player sees: a small cave off the plaza
-          ///< with a chest at its far end (its render,
-          ///< places/goma-cave-stream/map-5.png)
+          ///< with a chest at its far end (its render)
   VALE_PLAZA_FROM_SANCTUM = 12,
   /// Beside VALE_PLAZA_FROM_CHEST_CAVE, facing north; no exit leads here.
   VALE_PLAZA_CHEST_CAVE_UNUSED = 15,
@@ -892,7 +891,7 @@ enum {
   GOMA_CAVE_STREAM_CHEST_CAVE_FROM_VALE_PLAZA =
       5, ///< ★ Named from what the player sees: a small cave off Vale's
          ///< plaza, walled off from the rest of this map, with a chest at
-         ///< its far end (its render, places/goma-cave-stream/map-5.png)
+         ///< its far end (its render)
 };
 /// SceneId_GomaCaveStream's exits.
 enum {
@@ -1433,57 +1432,59 @@ enum {
           ///< Forest through the door at Tret's foot (its render)
   TREE_ROOMS_AFTER_FIGHT_TRET = 19, ///< TreeRooms_FightTret
   // The landings below the cocoons, each numbered as its cocoon's cell
-  // behavior (TreeRooms_StepOnCocoon).
+  // behavior (TreeRooms_StepOnCocoon) and lying straight below it, one room
+  // down.
+  /// The second floor's nine cocoons drop into the entrance room. They are
+  /// numbered row by row from the north, west to east within a row.
+  /// ★ Named from what the player sees: nine golden cocoons on the web that
+  /// covers the second floor (its render)
   TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_1 = 21,
   TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_2 = 22,
   TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_3 = 23,
   TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_4 = 24,
   TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_5 = 25,
+  /// Lands one cell east of its cocoon.
   TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_6 = 26,
   TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_7 = 27,
   TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_8 = 28,
   TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_9 = 29,
+  /// The third floor's two cocoons drop onto the second floor. The cocoon
+  /// drawn on the southwest web has no step trigger.
+  /// ★ Named from what the player sees: a golden cocoon on the web in the
+  /// west of the third floor, and one on the web in its east (its render)
   TREE_ROOMS_FROM_THIRD_FLOOR_WEST_COCOON = 31,
   TREE_ROOMS_FROM_THIRD_FLOOR_EAST_COCOON = 32,
   /// The way down to Tret: the leader falls on from here.
+  /// ★ Named from what the player sees: the cocoon in the middle of the web
+  /// that covers the fifth floor, the highest room, with eight cocoons around
+  /// it and a ninth beyond the southeast one (its render)
   TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON = 50,
+  /// The fifth floor's other cocoons drop onto the fourth floor.
   TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_COCOON = 51,
   TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_COCOON = 52,
   TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_COCOON = 53,
   TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_COCOON = 54,
   TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_COCOON = 55,
+  /// Lands where TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_COCOON does, two cells
+  /// north of its cocoon, though the cell below it is open ground.
   TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_COCOON = 56,
   TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_COCOON = 57,
   TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_COCOON = 58,
+  /// ★ Named from what the player sees: the cocoon at the web's southeast
+  /// edge, one place east of the southeast cocoon (its render)
   TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON = 59,
 };
 /// SceneId_TreeRooms's exits.
 enum {
   TREE_ROOMS_TO_KOLIMA_FOREST_TREE = 1,
-  TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST =
-      2, ///< ★ Named from what the player sees: the lowest room, where Tret's
-         ///< face looks out of the wall (its render)
-  TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHEAST =
-      3, ///< ★ Named from what the player sees: the lowest room, where Tret's
-         ///< face looks out of the wall (its render)
-  TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH =
-      4, ///< ★ Named from what the player sees: the lowest room, where Tret's
-         ///< face looks out of the wall (its render)
-  TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTHEAST =
-      5, ///< ★ Named from what the player sees: the lowest room, where Tret's
-         ///< face looks out of the wall (its render)
-  TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTHWEST =
-      6, ///< ★ Named from what the player sees: the lowest room, where Tret's
-         ///< face looks out of the wall (its render)
-  TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH =
-      7, ///< ★ Named from what the player sees: the lowest room, where Tret's
-         ///< face looks out of the wall (its render)
-  TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHWEST =
-      8, ///< ★ Named from what the player sees: the lowest room, where Tret's
-         ///< face looks out of the wall (its render)
-  TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHEAST =
-      9, ///< ★ Named from what the player sees: the lowest room, where Tret's
-         ///< face looks out of the wall (its render)
+  TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST = 2,
+  TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHEAST = 3,
+  TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH = 4,
+  TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTHEAST = 5,
+  TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTHWEST = 6,
+  TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH = 7,
+  TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHWEST = 8,
+  TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHEAST = 9,
   TREE_ROOMS_ENTRANCE_TO_SECOND_FLOOR =
       10, ///< ★ Named from what the player sees: the webbed room one floor
           ///< above the entrance, reached up a vine (its render)

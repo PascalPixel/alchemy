@@ -262,6 +262,8 @@ struct BilibinRippleTimer gBilibin_RippleTimer;
 
 /// The party has looked once at the tree at Bilibin's entrance, so a second
 /// look says it looks like a living person.
+/// ★ Named from the game: "It's a tree, but it almost looks like... a man?"
+/// (MsgBilibinItsTreeButAlmostLooks)
 #define FLAG_BILIBIN_TREE_EXAMINED FLAG_AREA_TEMP_01
 /// McCoy's gate guards have let the party in but it has not yet entered the
 /// palace; the garden guard who reads it is in another area, so it is

@@ -1,198 +1,3 @@
-// Draft, differ 34 of 3111 (tla-en, 2026-11-09)
-// 10 November, by hand, still 34: the Djinn loop's slot (6 of the 34: the
-// same insns, [sp, #20] listed and [sp, #52] here).
-// - Slots fall as pseudo numbers rise, measured by declaring next at every
-//   one of the 40 places among the function's top-level locals: first, sp+140;
-//   after work, 136; after cursorPosition, 108; after itemCount, 68; last, 60;
-//   in the loop's own block, as here, 52. None of the 40 measures below 62
-//   (the other spilled locals trade sp+44 to sp+60 among themselves). sp+20
-//   is below anything a declared variable reaches, so the listed pointer is
-//   made after expansion: loop.c's reduced giv, as the earlier rounds said.
-// - The indexed form, shown = djinnList[j]: 848. From its loop dump the read's
-//   address giv is worth 68 against 79 insns in the first pass and 76 in the
-//   second, so it is reduced in neither. The six constants the first pass
-//   finds not desirable (savings 2, 1, 2, 1, 1, 1) come to 8, exactly 76
-//   less 68: were they moved in the first pass, the second would reduce the
-//   giv.
-// Near7 round (9 November), not worked beyond a trace. Page 2's x and y loads
-// are one insn each (the offset's movs is the pattern's scratch register),
-// both data dependents of the helpWindow reload at the pick (class 1, cost
-// 3), so y leads only if x's insn depends on a no-unit insn issued in that
-// load's stall cycles (an operand in r0 or r3, which x writes).
-// Twelfth round, 9 November, unchanged at 34, not worked beyond a measure.
-// With shown = djinnList[j] the Djinn loop counts 79 insns in loop.c's first
-// pass and 76 in its second (848). scan_loop recounts after moving
-// invariants only when load_mems makes a register, so the first pass's
-// count is the one before any constant moves; at 68 the two-use masks
-// (0xf00, 0x3e0000: savings 2, life 2, 17 x 2 x 2 = 68) would move in that
-// same pass as well.
-// Eleventh round, 9 November, unchanged at 34, about 20 attempts. Note 1's
-// next: with shown = djinnList[j], ten one-constant locals set before the
-// loop (0xf00 and 0x3e0000 once per use, 0x5001, the 0, 0x10000, 0xff,
-// MsgDjinnName, 0x80000000) and column = j / 3 then (column << 3) - column,
-// the loop counts 68 insns and loop.c reduces djinnList[j] in its first
-// pass, as the native's slot needs. It costs 228: cse2 makes each repeated
-// mask a copy of the first, and those two take fp and r9, which are free
-// around the loop (split by a once-only block 228; all set before
-// holdTilemapUpload = 1, 329, fp and r9 again). Any long-lived local there
-// takes them, so the 68 must come without one; gcse's cprop folds only
-// 0x5001 into its add (no pseudo left), not the compare, zero store or masks.
-// A dead re-read of djinnList[j] (adds giv benefit) combines with j * 4
-// instead: no ldmia, 907 to 912. The help window on page 2: y and width as
-// locals load y first with no device (36), but reload then handles y before
-// x and its round robin gives y's index r3; the listing's r2 for y and r3
-// for x mean reload saw x first and sched2 put y first. With the asm both
-// loads rank priority 70 with five dependents each, so luid picks x; the
-// asm with "+m"(*helpWindow) or "m"(helpWindow->x) changes nothing (34).
-// The gcse bucket count (note 1) also counts the (use (const_int 0)) that
-// flow's find_basic_blocks, run by gcse, puts after a call ending a block
-// before a label (two in the Djinn loop); they emit nothing.
-// Tenth round, 9 November, unchanged at 34: not worked beyond a trace. A
-// scratch cc1 that prints PRE's buckets (analysis only) confirms note 1: 1383
-// buckets, the sfp - 212 hoist in bucket 1267, nineteen PRE registers made
-// in bucket order (2436 to 2454), it the second-last. A hoist whose
-// expression holds a pseudo moves one bucket per pseudo created before that
-// pseudo (in 0814fab8.c two more locals moved camera + 12 from bucket 506 to
-// 1 and rotated its spill slots); sfp - 212 holds none, so only the bucket
-// count, that is the insn count at gcse, moves it.
-// Ninth round, 9 November (devices pass), 38 to 34. Window_DrawThreeTileColumn
-// is declared s32 (FAKEMATCH signature at the range column, found by the
-// permuter, seed 5151; it returns nothing): the call then sets r0, and movs
-// r1, #16 leads the window's reload as in the listing (36 to 34). Page 2's help window
-// passes y through a statement expression with an empty asm that claims to
-// change it (tagged barrier), so y's ldrsh leads and width precedes height
-// as in the listing; x still loads first (2 rows). Not better: y and x both
-// through block locals with asms (40: the index registers swap), pins of y,
-// x, width and height (42), x, width or height through the asm (38), x
-// depending on y through an asm operand (831); at the range column, the 16,
-// the 0, the window or range through an asm (36 to 840). Note 1 (the slots)
-// stands as below.
-// Eighth round, 8 November: 40 to 38, three tagged barriers (the cursor sprite,
-// the two fill loops). The list icons' loop now sets sprite in its for, after
-// iconEntry, so add r5, sp, #480 follows mov r8, r0 as in the native. Left:
-// note 1 (about 28), the range column's movs r1, #16 (2), page 2's help-window
-// loads (6) and, on page 0, movs r2, #128 before the status kind's reload (2).
-// Note 1 is two separate facts, both about pseudo numbers:
-// - statusSprites' hoist (sfp - 212) is a gcse PRE register, and PRE numbers
-//   its registers by hash bucket, (13926 + offset) mod buckets, with buckets
-//   = (insns at gcse) / 2 | 1, 1383 here, so -212 wraps and sorts last. With
-//   1397 to 1523 buckets (or 1269 to 1371) it sorts below the other hoists as
-//   in the native: padding the function's end with 30 or 40 empty asms (a
-//   probe only) moved it and the four other hoists to slots 20 to 40, the
-//   native's order one slot lower because next still sits at 52. So the
-//   original has at least 25 more, or 21 fewer, RTL insns at gcse than this
-//   draft; 20 or 26 asms (1393, 1395 buckets) change nothing.
-// - next (slot 20) must be numbered after every PRE register and before the
-//   Psynergy list's 64 + j * 16 giv (slot 16, reduced in loop.c's first pass,
-//   which takes loops last to first): a giv reduced in that first pass.
-//   djinnList[j] is reduced there only when the loop counts 68 insns or fewer
-//   (benefit 4 times threshold 17; 79 now): every constant set (0xf00 and
-//   0x3e0000 twice each, 0x10000, 0xff, the 0 argument, MsgDjinnName, 0x5001,
-//   0x80000000) out of the loop and column's copy gone. Mask locals bring
-//   only the second pass to 68: the giv then outnumbers the Psynergy giv
-//   (slots 16 and 20 swap) and PRE shares the masked values across the
-//   calls, 211.
-// Tried, nothing better: a block-local pointer for the status sprites (40);
-// the range column's call with tileFlags (40), a ternary (70) or range =
-// ability->range - 1 (95); page 2's help window through locals in all 64
-// orders (best 38: y and width first give the native's order, but reload's
-// round robin gives y's index r3 and the window's ldr r0 moves one earlier);
-// rowBase or released as its fifth argument (38); the status help message's
-// operand orders (38); djinnList + j and byte-offset spellings (no giv, 850).
-// Other editions, each at its own address: tla-ja 93 (08046d04: help texts of
-// 32 not 52 characters, one more branch on the Djinn page, a few layout
-// constants), tla-de 223, tla-es 282, tla-fr 238, tla-it 282 (58 to 72 more
-// instructions of language layout); all stay on their scaffolds.
-// Seventh round, 8 November: unchanged. At the cursor sprite, without its asm
-// the draft loads the call's second argument ahead of the word stores (56);
-// a constant local for the first word or the tile read into a block local 56,
-// the words swapped 58, through the name sprite's pointer 119 to 132.
-// Sixth round, 8 November: without the first fill loop's asm 42, without both 44;
-// the list loop's test as j < 4, the fill loop with j++ as its own statement, 42;
-// the fill as if-do-while 66, j != 4 94, a goto to the fill loop 870.
-// Fifth round, 8 November: the name sprite's and both place_sprites loops' empty
-// asms are now empty once-only blocks (do { } while (0)), 40 each, so plain C; at
-// the cursor sprite a once-only block reads 98 to 115 in any position (the asm
-// stays, 56 without), at the two fill loops 42 (the same as no asm: the list
-// loop's exit is threaded past the fill test before reload; while, goto-free
-// do-while and j < 4 forms 44 or 94). Page 2's help-window call loads x before
-// y here (sched2 tie by luid, equal dependents); y first through a local reads
-// 44 (index registers swap). djinnList[j] or &djinnList[j] read 850 (no giv,
-// one slot fewer). 20 minutes of permuter (seed 7741; most
-// candidates did not compile): nothing below 40.
-// Fourth round, 7 November: next set in the Djinn loop's for after j = 0 (46 to
-// 40, its copy now through r2 as the native); 8 minutes of permuter, nothing
-// better. Slots run by descending pseudo number, so next must outnumber the
-// hoist: only loop.c's giv (note 1) gives it that.
-// Third round, 7 November: an empty asm after the first sprite word at the
-// name, cursor, status and list icon sprites (tagged barriers) closes note 2
-// (88 to 46); the two fill-loop barriers now pay 2 each. Left: note 1's slots
-// (next and statusSprites' hoist; the hoist is a PRE register numbered by
-// hash bucket, (13926 + offset) mod 1381, so -212 sorts last) and note 3.
-// Second round, 6 November: 40 minutes of permuter (seed 7105), nothing better.
-// Left: the two stack slots of note 1 and the scheduling pairs of notes 2
-// and 3 (sprite words, the help window's loads on page 2, movs r1, #16
-// before the range column's window).
-// The items' first entry is read as entries + rowBase + row (2 better than
-// &entries[rowBase + row]); count = 0 and j = -1 as statements before the
-// first item loop (8 better than the comma in its for). The two empty asms
-// before the fill loops are tagged barriers (92 without both) that stop the
-// list loops' exits threading past the fill loops' tests; a second counter
-// for the fill loop (i, row or its own k) reads 218 to 522. next's declaration
-// in any position of the function's locals reads 124. Older notes follow.
-// Draft, differ 124 of 3111, skeleton gap 27 (tla-en, 2026-11-01): the battle
-// summary screen, The Broken Seal's BattleStatusScreen_Run
-// (games/tbs/src/window/screens/battle_status.c) grown into four pages that A
-// cycles through: the stats (page 0, as The Broken Seal's), the member's battle
-// Psynergy (1, four rows a page, with PP cost, element and range, coloured by
-// what can be cast), its Djinn (2, three columns of three, set, on standby or
-// recovering with the turns left) and its items (3, four rows, usable ones
-// first). Each list page has its own cursor group (3 to 5), and the help line
-// follows the cursor. The battle figure is spawned for the member shown and
-// released on the way out; a reserve member (past the fourth) is labelled.
-//
-// Control flow, loops and instruction count agree with the listing. The devices
-// are the barriers. Three things are left, none closed by reshaping:
-//
-// 1. Two stack slots, about 20 instructions. next is [sp, #20] in the native and
-// [sp, #52] here, which moves helpText and statusKind by 4; statusSprites'
-// hoisted address is [sp, #44] in the native and [sp, #20] here. Slots follow
-// pseudo number, so the native's pointer is one loop.c made: djinnList[j],
-// reduced as an address giv with the increment beside the load (ldmia). Here
-// that giv is refused: "68 vs 76", benefit 4 times threshold 17 against 76 real
-// insns (the mask constants' sets are most of them). It reduces, and the slot
-// drops below the hoists, once one-constant locals bring the loop to 68 insns,
-// but those locals break the masks' allocation and CSE across the calls. A
-// benefit of 5 or a threshold of 19 would do it without them; a threshold is a
-// compiler question, out of scope here. Tried: a pointer set in the loop, one
-// shared with the list build, one set before the test (reduces, no auto-inc), a
-// struct's array (benefit 3), a two-step index. S2 has no device for this, so
-// the scheduling devices below cannot reach differ 0 and none was added.
-//
-// 2. Sprite words: after ldr of 0x80000400 and friends the draft fills the load's
-// stall with an argument set-up (adds r0, r5 and ldr r1 at the name, cursor and
-// list icon sprites), the native stores straight away. That reorders the pool,
-// so those sites differ by a word in every pc offset. No source form moves it;
-// a store's use of a load looks costed differently (K2's scheduling model).
-//
-// 3. Scheduling pairs: cursor.group's store before reading groupPositions[0]
-// (three sites, the array read through [cursor.group] changes nothing),
-// add r1 around the count's store, the help window's four loads on page 2,
-// and movs r7, #0 (helpValue set after
-// agilityDelta costs 90: see below). Without the barriers the two list loops'
-// exits thread past the fill loops' tests (bgt +114, not +26); break changes
-// nothing.
-//
-// Forms the match depends on: helpValue is set before agilityDelta's read, which
-// shortens &unit->agi's life by one insn so it outranks the size and takes r5, and
-// IwramCopyWords falls out of its register and is reloaded at each call. The
-// Djinn list is built through djinnList[djinnCount], a giv of the count, not a
-// pointer: that gives the t + base start and both increments. The recovery list
-// is read through recovery->entries[k] (base + t). j is also the "not yet shown"
-// -1 of pages 1 and 3 and the scroll marks' counter; statusKinds[i++] rather than
-// a pointer, so the stages are not reread after a store; the positions read
-// directly from the cursor after clamping, not through a local; the sprites'
-// words and fields share a union.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -204,9 +9,9 @@ extern u8 MsgClassName[];
 extern u8 MsgDjinnName[];
 extern u8 MsgItemName[];
 extern u8 MsgItemPlainName[];
-extern u8 Msg_0885[];
-extern u8 Msg_09b1[];
-extern u8 Msg_0cf9[];
+extern u8 MsgAbilityDescription[];
+extern u8 MsgDjinnEffect[];
+extern u8 MsgReadyToSummon[];
 extern u8 Msg_0d10[];
 extern u8 Msg_0d11[];
 extern u8 Msg_0d12[];
@@ -215,17 +20,17 @@ extern u8 Msg_0d15[];
 extern u8 Msg_0d16[];
 extern u8 Msg_0d17[];
 extern u8 Msg_0d19[];
-extern u8 Msg_0d1a[];
-extern u8 Msg_0d1d[];
-extern u8 Msg_0d1e[];
-extern u8 Msg_0d1f[];
-extern u8 Msg_0d20[];
-extern u8 Msg_0d21[];
-extern u8 Msg_0d33[];
-extern u8 Msg_0d46[];
-extern u8 Msg_0d48[];
-extern u8 Msg_0d4e[];
-extern u8 Msg_0d4f[];
+extern u8 MsgExp[];
+extern u8 MsgNormal[];
+extern u8 MsgCantFight[];
+extern u8 MsgInTheBack[];
+extern u8 MsgKey0d20[];
+extern u8 MsgKey0d21[];
+extern u8 MsgNormalStatus[];
+extern u8 MsgKey0d46[];
+extern u8 MsgKey0d48[];
+extern u8 MsgNoDjinn[];
+extern u8 MsgKey0d4f[];
 
 struct SummaryElement {
   s16 power;
@@ -415,7 +220,7 @@ s32 VramCache_Reload(s32 entry, const void *tiles);
 void Window_Close(void *window, s32 mode);
 void Sound_PlayFar(s32 cue);
 struct SummaryWindow *Window_Create(s32 x, s32 y, s32 width, s32 height,
-                                      s32 flags);
+                                    s32 flags);
 void Func_08041b68(void);
 void Func_0804537c(u32 address);
 void Func_08045528(s32 member, s32 slot);
@@ -430,21 +235,22 @@ void *Item_Get(s32 item);
 s32 Item_ClassifyUseAbility(s32 member, s32 item);
 void Message_CopyExpanded(s32 message, u16 *text, s32 capacity);
 void WindowSprite_RedrawSavedRect(struct SummaryWindow *window);
-void Func_0803a2b0(s32 x, s32 y, s32 width, s32 height, s32 flags);
-void Text_DrawWideStringAtOffset(u16 *text, struct SummaryWindow *window,
-                                     s32 x, s32 y);
+// Returns nothing; typed s32 here, see the help window in page 2.
+s32 Func_0803a2b0(s32 x, s32 y, s32 width, s32 height, s32 flags);
+void Text_DrawWideStringAtOffset(u16 *text, struct SummaryWindow *window, s32 x,
+                                 s32 y);
 void Window_DrawDividerLine(struct SummaryWindow *window, s32 x, s32 y,
-                              s32 width, s32 height);
+                            s32 width, s32 height);
 void Func_08041f70(s32 color);
 void Text_DrawCharacterAtOffset(s32 message, struct SummaryWindow *window,
-                                  s32 x, s32 y);
+                                s32 x, s32 y);
 s32 ItemIcon_LoadIntoSlot(s32 item, s32 slot);
 void Window_SetTilemapEntry(struct SummaryWindow *window, s32 entry, s32 x,
-                              s32 y, s32 flags);
+                            s32 y, s32 flags);
 struct SummaryAbility *BattleAction_Get(s32 id);
 s32 Resource_LoadIndexedEntryToBuffer(s32 id, s32 slot);
 void Text_DrawNumberAtOffset(s32 value, s32 digits,
-                               struct SummaryWindow *window, s32 x, s32 y);
+                             struct SummaryWindow *window, s32 x, s32 y);
 // Returns nothing; typed s32 here, see the range column in page 1.
 s32 Window_DrawThreeTileColumn(struct SummaryWindow *window, s32 x, s32 y,
                                s32 pattern, s32 flags);
@@ -452,9 +258,9 @@ struct SummaryRecovery *Djinn_GetRecoveryTableFar(s32 kind);
 void MessageArgument_ClearAll(void);
 void MessageArgument_Push(s32 value, s32 kind);
 void Text_DrawStringAtOffset(const u8 *text, struct SummaryWindow *window,
-                               s32 x, s32 y);
+                             s32 x, s32 y);
 void Text_DrawNumberInWindow(s32 value, s32 digits,
-                               struct SummaryWindow *window, s32 x, s32 y);
+                             struct SummaryWindow *window, s32 x, s32 y);
 s32 Unit_GetElementLevelFar(s32 member, s32 element);
 void Resource_LoadTableEntryToBuffer(s32 entry, s32 slot);
 void *Heap_Alloc(s32 size);
@@ -469,18 +275,17 @@ void PartyStatus_Draw(s32 flags);
 // and items).
 #define SUMMARY_DRAW_PAGE_MARKS(window, count, rowBase)                        \
   {                                                                            \
-    for (j = 0; j < ((count) + 3) / 4; j++) {                         \
-      s32 tile = 0xf301 + j;                                                \
+    for (j = 0; j < ((count) + 3) / 4; j++) {                                  \
+      s32 tile = 0xf301 + j;                                                   \
                                                                                \
-      if (j == (rowBase) / 4)                                               \
-        tile = 0xf30b + j;                                                  \
-      Window_SetTilemapEntry(                                                \
-          window, tile, (window)->width - ((count) + 3) / 4 + j - 10, 7,    \
-          0);                                                                  \
+      if (j == (rowBase) / 4)                                                  \
+        tile = 0xf30b + j;                                                     \
+      Window_SetTilemapEntry(                                                  \
+          window, tile, (window)->width - ((count) + 3) / 4 + j - 10, 7, 0);   \
     }                                                                          \
-    Window_SetTilemapEntry(window, 0xf336,                                   \
-                             (window)->width - ((count) + 3) / 4 - 11, 7, 0);  \
-    Window_SetTilemapEntry(window, 0xf337, (window)->width - 10, 7, 0);      \
+    Window_SetTilemapEntry(window, 0xf336,                                     \
+                           (window)->width - ((count) + 3) / 4 - 11, 7, 0);    \
+    Window_SetTilemapEntry(window, 0xf337, (window)->width - 10, 7, 0);        \
   }
 
 s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
@@ -557,7 +362,8 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
   }
   for (i = 0; i <= 3; i++) {
     iconSlots[i] = VramCache_AllocEntry(0x80);
-    iconSprites[i].oam.f.tile = VramCache_Reload(iconSlots[i], (const void *)-1);
+    iconSprites[i].oam.f.tile =
+        VramCache_Reload(iconSlots[i], (const void *)-1);
   }
   if (listCount != 0) {
     for (i = 0; i <= 5; i++) {
@@ -584,7 +390,9 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
     if (redraw != 0)
       Func_08045528(member, portraitSlot);
     sprite->oam.word.attr01 = 0x80000400;
-    // A once-only block: the sprite word is stored straight after its load.
+    /* FAKEMATCH(dead): an empty once-only block, so the sprite word is stored
+     * straight after its load; as no block, 10 of 3111 instructions differ in
+     * tla-en. */
     do {
     } while (0);
     sprite->oam.word.attr23 = 0;
@@ -625,7 +433,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       break;
     }
     Window_HighlightRect(statusWindow->x, statusWindow->y, statusWindow->width,
-                        statusWindow->height, 15);
+                         statusWindow->height, 15);
 
     // A turns the page; each list page starts its own group at the top.
     if (gInput.pressed & 1) {
@@ -799,8 +607,8 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       cursor.column = stop->column;
       cursor.row = stop->row;
       Window_HighlightRect(statusWindow->x + stop->highlightColumn + 1,
-                          statusWindow->y + stop->highlightRow + 1,
-                          stop->highlightWidth, 1, 14);
+                           statusWindow->y + stop->highlightRow + 1,
+                           stop->highlightWidth, 1, 14);
     } else if (cursor.group == 1) {
       cursor.helpEntry =
           gOwnerStatus_EquipmentCursors[cursor.groupPositions[cursor.group]]
@@ -823,10 +631,10 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
               .row;
       if (statusKinds[0] == 0)
         Window_HighlightRect(statusWindow->x + 15, statusWindow->y + 1, 10, 1,
-                            14);
+                             14);
       else
         Window_HighlightRect(statusWindow->x + cursor.column + 1,
-                            statusWindow->y + cursor.row + 1, 2, 2, 14);
+                             statusWindow->y + cursor.row + 1, 2, 2, 14);
     } else if (cursor.group == 3 || cursor.group == 5) {
       s8 position = cursor.groupPositions[cursor.group];
 
@@ -835,15 +643,15 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         cursor.column = -2;
       else
         cursor.column = -1;
-      Window_HighlightRect(statusWindow->x + 1, statusWindow->y + cursor.row + 1,
-                          20, 1, 14);
+      Window_HighlightRect(statusWindow->x + 1,
+                           statusWindow->y + cursor.row + 1, 20, 1, 14);
     } else {
       s32 position = cursor.groupPositions[4];
 
       cursor.row = (s8)(position % 3) * 2 + 9;
       cursor.column = (s8)(position / 3) * 7 - 2;
       Window_HighlightRect(statusWindow->x + cursor.column + 3,
-                          statusWindow->y + cursor.row + 1, 7, 1, 14);
+                           statusWindow->y + cursor.row + 1, 7, 1, 14);
     }
     if (cursor.drawnHelpEntry != cursor.helpEntry) {
       cursor.drawnHelpEntry = cursor.helpEntry;
@@ -880,7 +688,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
     cursorSprite.oam.word.attr01 = 0x40000400;
     cursorSprite.oam.word.attr23 = 0;
     /* FAKEMATCH(barrier): an empty asm stores the sprite words straight after
-     * their load, before the call's arguments; as no asm, 54 of 3111
+     * their load, before the call's arguments; as no asm, 16 of 3111
      * instructions differ in tla-en. */
     asm("");
     cursorSprite.oam.f.tile =
@@ -891,8 +699,8 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
 
       cursorSprite.oam.f.x = page == 0 ? x - bob / 4 : x + bob / 4;
     }
-    cursorSprite.oam.f.y =
-        cursorPosition.y + statusWindow->y * 8 - (s32)(gFrameCount & 4) / 4 + 16;
+    cursorSprite.oam.f.y = cursorPosition.y + statusWindow->y * 8 -
+                           (s32)(gFrameCount & 4) / 4 + 16;
     if (page != 0)
       cursorSprite.oam.f.affineIndex = 0;
     else
@@ -916,13 +724,14 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
 
       count = 0;
       j = -1;
-      for (index = 0;
-           index != 15 && (item = unit->items[index]) != 0; index++) {
+      for (index = 0; index != 15 && (item = unit->items[index]) != 0;
+           index++) {
         Item_Get(item);
         if (Item_ClassifyUseAbility(member, item) == 0)
           entries[count++] = item;
       }
-      for (index = 0; index != 15 && (item = unit->items[index]) != 0; index++) {
+      for (index = 0; index != 15 && (item = unit->items[index]) != 0;
+           index++) {
         Item_Get(item);
         if (Item_ClassifyUseAbility(member, item) != 0)
           entries[count++] = item;
@@ -937,12 +746,12 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         u16 *entry = entries + rowBase + row;
 
         if (Item_ClassifyUseAbility(member, *entry) == 2)
-          Message_CopyExpanded((s32)Msg_0d4f, itemText, 32);
+          Message_CopyExpanded((s32)MsgKey0d4f, itemText, 32);
         else
           Message_CopyExpanded((*entry & 0x1ff) + (s32)MsgItemPlainName,
-                                   itemText, 32);
+                               itemText, 32);
       } else {
-        Message_CopyExpanded((s32)Msg_0d46, itemText, 32);
+        Message_CopyExpanded((s32)MsgKey0d46, itemText, 32);
       }
       WindowSprite_RedrawSavedRect(statusWindow);
       Func_0803a2b0(helpWindow->x, helpWindow->y, helpWindow->width,
@@ -959,12 +768,13 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
           else if (item & 0x400)
             Func_08041f70(2);
           Text_DrawCharacterAtOffset((item & 0x1ff) + (s32)MsgItemName,
-                                       statusWindow, 32, 64 + j * 16);
+                                     statusWindow, 32, 64 + j * 16);
           Func_08041f70(15);
           iconSprites[j].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[j]);
         }
-        /* FAKEMATCH(barrier): an empty asm keeps the list loop's exit on the fill
-         * loop's test; as no asm, 40 of 3111 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): an empty asm keeps the list loop's exit on the
+         * fill loop's test; as no asm, 2 of 3111 instructions differ in tla-en.
+         */
         asm("");
         for (; j <= 3; j++)
           iconSprites[j].oam.f.tile =
@@ -1002,10 +812,10 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         Vram_FillWindowBlockPattern();
         if (count != 0)
           Message_CopyExpanded((entries[rowBase + row] & 0x3fff) +
-                                       (s32)Msg_0885,
-                                   psynergyText, 52);
+                                   (s32)MsgAbilityDescription,
+                               psynergyText, 52);
         else
-          Message_CopyExpanded((s32)Msg_0d48, psynergyText, 52);
+          Message_CopyExpanded((s32)MsgKey0d48, psynergyText, 52);
         WindowSprite_RedrawSavedRect(statusWindow);
         Func_0803a2b0(helpWindow->x, helpWindow->y, helpWindow->width,
                       helpWindow->height, 0);
@@ -1030,14 +840,14 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
             tileFlags = 0;
             work->textColor = 5;
             Text_DrawCharacterAtOffset(id + (s32)MsgAbilityNothing,
-                                         statusWindow, 16, 64 + j * 16);
+                                       statusWindow, 16, 64 + j * 16);
             Text_DrawNumberAtOffset(ability->ppCost, 2, statusWindow, 104,
-                                      64 + j * 16);
+                                    64 + j * 16);
             Func_08041f70(15);
             work->textColor = 15;
             if (ability->element != 4)
               Window_SetTilemapEntry(statusWindow, 0x5001 + ability->element,
-                                       15, j * 2 + 8, tileFlags);
+                                     15, j * 2 + 8, tileFlags);
             range = ability->range;
             if (range == 255)
               range = 11;
@@ -1045,12 +855,13 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
               range--;
             /* FAKEMATCH(signature): Window_DrawThreeTileColumn typed s32
              * though it returns nothing, so the call sets r0 and movs r1, #16
-             * leads the window's reload; as void, 36 of 3111 instructions
+             * leads the window's reload; as void, 2 of 3111 instructions
              * differ in tla-en. */
             Window_DrawThreeTileColumn(statusWindow, 16, j * 2 + 8, range, 0);
           }
-          /* FAKEMATCH(barrier): an empty asm keeps the list loop's exit on the fill
-           * loop's test; as no asm, 40 of 3111 instructions differ in tla-en. */
+          /* FAKEMATCH(barrier): an empty asm keeps the list loop's exit on the
+           * fill loop's test; as no asm, 2 of 3111 instructions differ in
+           * tla-en. */
           asm("");
           for (; j <= 3; j++)
             iconSprites[j].oam.f.tile =
@@ -1072,16 +883,11 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       u32 entry;
 
       WindowSprite_RedrawSavedRect(statusWindow);
-      Func_0803a2b0(helpWindow->x, ({
-                      s32 y = helpWindow->y;
-
-                      /* FAKEMATCH(barrier): y passed through an empty asm
-                       * that claims to change it; as helpWindow->y, 38 of
-                       * 3111 instructions differ in tla-en. */
-                      asm("" : "+r"(y));
-                      y;
-                    }),
-                    helpWindow->width, helpWindow->height, 0);
+      /* FAKEMATCH(signature): Func_0803a2b0 typed s32 though it returns
+       * nothing, so the call sets r0 and y's load leads x's; as void, 6 of
+       * 3111 instructions differ in tla-en. */
+      Func_0803a2b0(helpWindow->x, helpWindow->y, helpWindow->width,
+                    helpWindow->height, 0);
       Window_DrawDividerLine(statusWindow, 0, 16, 29, 16);
       djinnCount = 0;
       for (element = 0; element <= 3; element++) {
@@ -1095,17 +901,17 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
             s32 k;
             s32 value;
 
-            for (k = 0;
-                 k < recovery->count &&
-                 !(recovery->entries[k].owner == member &&
-                   recovery->entries[k].element == element &&
-                   recovery->entries[k].index == bit);
+            for (k = 0; k < recovery->count &&
+                        !(recovery->entries[k].owner == member &&
+                          recovery->entries[k].element == element &&
+                          recovery->entries[k].index == bit);
                  k++)
               ;
             value = (element << 8) | bit | 0x10000;
             djinnList[djinnCount] = value;
             if (recovery->entries[k].turns > 0)
-              djinnList[djinnCount] = value | (recovery->entries[k].turns << 17);
+              djinnList[djinnCount] =
+                  value | (recovery->entries[k].turns << 17);
             djinnCount++;
           }
         }
@@ -1121,50 +927,55 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
           if (entry & 0x3e0000) {
             MessageArgument_Push((entry & 0x3e0000) >> 17, 5);
             Message_CopyExpanded(((entry & 0xf00) >> 8) * 20 + (entry & 0xff) +
-                                     (s32)Msg_09b1,
+                                     (s32)MsgDjinnEffect,
                                  psynergyText, 32);
           } else {
-            Message_CopyExpanded((s32)Msg_0cf9, psynergyText, 32);
+            Message_CopyExpanded((s32)MsgReadyToSummon, psynergyText, 32);
           }
         } else {
           Message_CopyExpanded(((entry & 0xf00) >> 8) * 20 + (entry & 0xff) +
-                                   (s32)Msg_09b1,
+                                   (s32)MsgDjinnEffect,
                                psynergyText, 32);
         }
       } else {
-        Message_CopyExpanded((s32)Msg_0d4e, psynergyText, 32);
+        Message_CopyExpanded((s32)MsgNoDjinn, psynergyText, 32);
       }
       work->holdTilemapUpload = released;
       Vram_FillWindowBlockPattern();
       Text_DrawWideStringAtOffset(psynergyText, helpWindow, 0, 20);
       if (rowBase != shownBase) {
-        u32 *next;
         u32 shown;
         s32 column;
         s32 tileRow;
 
-        for (j = 0, next = djinnList; j <= 8; j++) {
-          shown = *next++;
+        for (j = 0; j <= 8; j++) {
+          // rowBase is this page's 0, as pages 1 and 3 index their lists.
+          shown = djinnList[rowBase + j];
           column = j / 3 * 7;
           tileRow = j % 3 * 2 + 9;
           if (shown == 0x80000000)
             break;
-          Window_SetTilemapEntry(statusWindow,
-                                   ((shown & 0xf00) >> 8) + 0x5001, column,
-                                   tileRow, 0);
+          Window_SetTilemapEntry(statusWindow, ((shown & 0xf00) >> 8) + 0x5001,
+                                 column, tileRow, 0);
           if (shown & 0x3e0000)
             Func_08041f70(4);
           else if (shown & 0x10000)
             Func_08041f70(2);
-          Text_DrawCharacterAtOffset(
-              ((shown & 0xf00) >> 8) * 20 + (shown & 0xff) + (s32)MsgDjinnName,
-              statusWindow, column * 8 + 8, tileRow * 8);
+          Text_DrawCharacterAtOffset(((shown & 0xf00) >> 8) * 20 +
+                                         (shown & 0xff) + (s32)MsgDjinnName,
+                                     statusWindow, column * 8 + 8, tileRow * 8);
           if (shown & 0x3e0000)
             Text_DrawNumberAtOffset((shown & 0x3e0000) >> 17, 2, statusWindow,
-                                      column * 8 + 40, tileRow * 8);
+                                    column * 8 + 40, tileRow * 8);
           Func_08041f70(15);
         }
       }
+      /* FAKEMATCH(dead): a never-true arm, pages 1 and 3's scroll marks
+       * with this page's 0; gcse folds it away but sizes its table with the
+       * arm's insns, which orders the hoisted addresses' stack slots; as no
+       * arm, 62 of 3111 instructions differ in tla-en. */
+      if (released > 4)
+        SUMMARY_DRAW_PAGE_MARKS(statusWindow, released, rowBase);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
     }
@@ -1178,10 +989,10 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       }
       Text_DrawStringAtOffset(unit->name, statusWindow, 0, 0);
       if (memberIndex > 3)
-        Text_DrawCharacterAtOffset((s32)Msg_0d1f, statusWindow, 40, 16);
+        Text_DrawCharacterAtOffset((s32)MsgInTheBack, statusWindow, 40, 16);
       Text_DrawStringAtOffset(gOwnerStatus_LevelString, statusWindow, 56, 0);
       Text_DrawNumberInWindow(unit->level, 2, statusWindow, 72, 0);
-      Text_DrawCharacterAtOffset((s32)Msg_0d1a, statusWindow, 0, 8);
+      Text_DrawCharacterAtOffset((s32)MsgExp, statusWindow, 0, 8);
       Text_DrawNumberInWindow(unit->experience, 8, statusWindow, 40, 8);
       Text_DrawStringAtOffset(gOwnerStatus_HpString, statusWindow, 40, 24);
       Text_DrawNumberInWindow(unit->hp, 4, statusWindow, 56, 24);
@@ -1191,43 +1002,43 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       Text_DrawNumberInWindow(unit->pp, 4, statusWindow, 56, 32);
       Text_DrawStringAtOffset(gOwnerStatus_SlashString, statusWindow, 88, 32);
       Text_DrawNumberInWindow(unit->ppMax, 4, statusWindow, 96, 32);
-      Text_DrawCharacterAtOffset((s32)Msg_0d1a - 10, statusWindow, 136, 16);
+      Text_DrawCharacterAtOffset((s32)MsgExp - 10, statusWindow, 136, 16);
       Text_DrawNumberInWindow(unit->atk, 3, statusWindow, 184, 16);
-      Text_DrawCharacterAtOffset((s32)Msg_0d1a - 9, statusWindow, 136, 24);
+      Text_DrawCharacterAtOffset((s32)MsgExp - 9, statusWindow, 136, 24);
       Text_DrawNumberInWindow(unit->def, 3, statusWindow, 184, 24);
-      Text_DrawCharacterAtOffset((s32)Msg_0d1a - 8, statusWindow, 136, 32);
+      Text_DrawCharacterAtOffset((s32)MsgExp - 8, statusWindow, 136, 32);
       Text_DrawNumberInWindow(unit->agi, 3, statusWindow, 184, 32);
-      Text_DrawCharacterAtOffset((s32)Msg_0d1a - 7, statusWindow, 136, 40);
+      Text_DrawCharacterAtOffset((s32)MsgExp - 7, statusWindow, 136, 40);
       Text_DrawNumberInWindow(unit->luck, 3, statusWindow, 184, 40);
       Text_DrawCharacterAtOffset((s32)MsgClassName + unit->classId,
-                                   statusWindow, 0, 48);
+                                 statusWindow, 0, 48);
       if (page == 0) {
         if (hasDjinn != 0)
-          Text_DrawCharacterAtOffset((s32)Msg_0d1a - 1, statusWindow, 0, 72);
-        Text_DrawCharacterAtOffset((s32)Msg_0d1a - 5, statusWindow, 0, 80);
-        Text_DrawCharacterAtOffset((s32)Msg_0d1a - 4, statusWindow, 0, 88);
-        Text_DrawCharacterAtOffset((s32)Msg_0d1a - 3, statusWindow, 0, 96);
+          Text_DrawCharacterAtOffset((s32)MsgExp - 1, statusWindow, 0, 72);
+        Text_DrawCharacterAtOffset((s32)MsgExp - 5, statusWindow, 0, 80);
+        Text_DrawCharacterAtOffset((s32)MsgExp - 4, statusWindow, 0, 88);
+        Text_DrawCharacterAtOffset((s32)MsgExp - 3, statusWindow, 0, 96);
         for (j = 0; j <= 3; j++) {
           s32 pal = 1;
 
           if (hasDjinn != 0)
             pal = 0;
           Window_SetTilemapEntry(statusWindow, 0x5001 + j, 7 + j * 4, pal + 8,
-                                   0);
+                                 0);
           if (hasDjinn != 0) {
             Text_DrawNumberInWindow(unit->djinnSetCount[j], 1, statusWindow,
-                                      40 + j * 32, 72);
+                                    40 + j * 32, 72);
             Text_DrawStringAtOffset(gOwnerStatus_SlashString, statusWindow,
-                                      48 + j * 32, 72);
+                                    48 + j * 32, 72);
             Text_DrawNumberInWindow(unit->djinnHeld[j], 1, statusWindow,
-                                      48 + j * 32 + 8, 72);
+                                    48 + j * 32 + 8, 72);
           }
           Text_DrawNumberInWindow(Unit_GetElementLevelFar(member, j), 2,
-                                    statusWindow, 48 + j * 32, 80);
+                                  statusWindow, 48 + j * 32, 80);
           Text_DrawNumberInWindow(unit->element[j].power, 3, statusWindow,
-                                    40 + j * 32, 88);
+                                  40 + j * 32, 88);
           Text_DrawNumberInWindow(unit->element[j].resist, 3, statusWindow,
-                                    40 + j * 32, 96);
+                                  40 + j * 32, 96);
         }
       }
 
@@ -1332,9 +1143,9 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       }
       statusCount = i;
       if (statusKinds[0] == 0)
-        Text_DrawCharacterAtOffset(unit->hp != 0 ? (s32)Msg_0d1d
-                                                   : (s32)Msg_0d1e,
-                                     statusWindow, 112, 0);
+        Text_DrawCharacterAtOffset(unit->hp != 0 ? (s32)MsgNormal
+                                                 : (s32)MsgCantFight,
+                                   statusWindow, 112, 0);
     }
 
     if (page == 0) {
@@ -1395,16 +1206,20 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
           break;
         }
         MessageArgument_Push(helpValue, 5);
-        Message_CopyExpanded(statusKind + (s32)Msg_0d33, helpText, 128);
+        /* FAKEMATCH(dead): an empty once-only block between the two calls, so
+         * movs r2, #128 leads statusKind's reload; as no block, 2 of 3111
+         * instructions differ in tla-en. */
+        do {
+        } while (0);
+        Message_CopyExpanded(statusKind + (s32)MsgNormalStatus, helpText, 128);
       } else if (cursor.helpEntry == 2 && unit->level <= 98) {
         MessageArgument_Push(
             Unit_GetExperienceForLevelFar(member, unit->level + 1) -
                 unit->experience,
             5);
-        Message_CopyExpanded((s32)Msg_0d20, helpText, 128);
+        Message_CopyExpanded((s32)MsgKey0d20, helpText, 128);
       } else {
-        Message_CopyExpanded(cursor.helpEntry + (s32)Msg_0d21, helpText,
-                                 128);
+        Message_CopyExpanded(cursor.helpEntry + (s32)MsgKey0d21, helpText, 128);
       }
       Text_DrawWideStringAtOffset(helpText, helpWindow, 0, 4);
       Heap_Release(helpText);
@@ -1415,13 +1230,16 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
   place_sprites:
     {
       struct SummaryResourceEntry *entry;
-      s32 *slot = statusSlots;
+      s32 *slot;
       s32 iconX;
 
       sprite = statusSprites;
+      slot = statusSlots;
       for (i = 0, entry = gResourceTableEntries, iconX = 112; i <= 10; i++) {
         sprite->oam.word.attr01 = 0x40000400;
-        // A once-only block: the sprite word is stored straight after its load.
+        /* FAKEMATCH(dead): an empty once-only block, so the sprite word is
+         * stored straight after its load; as no block, 14 of 3111 instructions
+         * differ in tla-en. */
         do {
         } while (0);
         sprite->oam.word.attr23 = 0;
@@ -1441,8 +1259,9 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
             iconRow = 0;
              i <= 3; i++) {
           sprite->oam.word.attr01 = 0x40000400;
-          // A once-only block: the sprite word is stored straight after its
-          // load.
+          /* FAKEMATCH(dead): an empty once-only block, so the sprite word is
+           * stored straight after its load; as no block, 2 of 3111
+           * instructions differ in tla-en. */
           do {
           } while (0);
           sprite->oam.word.attr23 = 0;

@@ -392,7 +392,7 @@ main	rom_main_02	recon/tla/de/rom	.rom.00046b7c	de
 main	rom_main_02	games/tla/src/window/f04868c	.text	de
 main	rom_main_02	games/tla/src/window/f049154	.text	de
 main	rom_main_02	games/tla/src/window/f046414	.text	en
-main	rom_main_02	recon/tla/raw/08046b08	.text	en
+main	rom_main_02	games/tla/src/window/f046b08	.text	en
 main	rom_main_02	games/tla/src/window/f04868c	.text	en
 main	rom_main_02	games/tla/src/window/f049154	.text	en
 main	rom_main_02	games/tla/src/window/f046414	.text	ja

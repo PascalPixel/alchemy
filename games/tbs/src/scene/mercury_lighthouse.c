@@ -2679,6 +2679,9 @@ s32 MercuryLighthouse_Initialize(void) {
       Actor_SetSpritePriority(ACTOR_FIRST_VISITOR + 1, 1);
       Actor_SetSpritePriority(ACTOR_FIRST_VISITOR + 2, 1);
       keepPartyPosition = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
+      // The lift's place with the lift gone back up, the two copies
+      // MercuryLighthouse_RideLift ends with; the arrivals from the entrance
+      // and the World Map below draw the same.
       if (keepPartyPosition) {
         MapGrid_CopyCellAttributes(104, 34, 5, 4, 40, 34);
         MapGrid_CopyCellsTo(45, 91, 40, 91, 5, 4);

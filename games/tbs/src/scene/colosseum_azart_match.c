@@ -767,6 +767,8 @@ s32 ColosseumAzartMatch_Initialize(void) {
   actor->motionFlags = zero;
   actor->priorityFlags = 2;
   MapGrid_CopyCellAttributes(63, 25, 1, 3, col, 9);
+  // With the pipeworks' pillar pushed, water pours from the pipe above it
+  // down into the pool at the wall's foot.
   if (GameFlag_Get(FLAG_PIPEWORKS_PIPE_PUSHED)) {
     MapGrid_CopyCellAttributes(37, 7, 1, 4, 34, 7);
     MapGrid_CopyCellAttributes(36, 7, 1, 4, 37, 7);

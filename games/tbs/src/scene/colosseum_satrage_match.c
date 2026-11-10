@@ -1028,6 +1028,9 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   }
   Actor_Get(ACTOR_WALL_PILLAR)->priorityFlags = 2;
   zero = 0;
+  // With the wall pillar moved, the cell it stood on takes the ground of the
+  // cell south of it. The map stores the two alike, open ground, so the copy
+  // only matters where the cell has been changed since the map loaded.
   if (GameFlag_Get(FLAG_WALL_PILLAR_MOVED)) {
     MapGrid_CopyCellAttributes(35, 78, 1, 1, 35, 77);
   }

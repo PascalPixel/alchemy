@@ -48,7 +48,7 @@ struct ScriptInterpreter;
 
 extern const u8 gDriftScene_SpawnScript[];
 extern const u32 gIdejimaExits[];
-extern const u32 gSceneExits[];
+extern u32 gSceneExits[];
 extern struct Actor gSnapshotObjects[];
 extern const u8 gIdejima_ActorDepartureScript[];
 extern u8 gLinkLobby_SlotColumns[];

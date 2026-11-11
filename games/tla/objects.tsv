@@ -307,8 +307,7 @@ main	rom_main_01	games/tla/src/field/animdata	.rodata
 main	rom_main_01	games/tla/src/field/object/objdata	.rodata
 main	rom_main_01	games/tla/src/field/map/world_map_resources	.rodata
 main	rom_main_01	games/tla/src/field/terrain/curve_data	.rodata
-main	rom_main_01	games/tla/src/field/map/mapdata	.rodata
-main	rom_main_01	games/tla/src/field/map/griddata	.rodata
+main	rom_main_01	games/tla/src/field/map_grid_data	.rodata
 main	rom_main_01	games/tla/src/field/script/object_script	.rodata
 main	rom_main_01	games/tla/src/field/map/layered	.rodata
 main	rom_main_01	games/tla/src/field/map/f030310	.rodata

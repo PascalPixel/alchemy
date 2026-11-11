@@ -1,3 +1,8 @@
+/// @file
+/// Map ground: the height curve of each cell kind, the world map's terrain
+/// behaviour and the small tables after them, then the battle formation's
+/// placement scale.
+
 #include "types.h"
 
 //--------------------------------------------------------------------------
@@ -80,6 +85,12 @@ const s8 gWorldMap_DirectionOffsets[8][2] = {
 
 /// Two 1.0s (Q16).
 const u32 gWorldMap_UnitScale[2] = {
+    0x10000,
+    0x10000,
+};
+
+/// The battle formation's placement scale (Q16).
+const s32 gBattle_FormationPlacementScale[2] = {
     0x10000,
     0x10000,
 };

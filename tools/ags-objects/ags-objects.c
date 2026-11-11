@@ -2,13 +2,11 @@
  * ags-objects.c
  *
  * Write edition object lists and linker fragments in source order.
- * TSV rows describe images, placement, sections, and edition selection.
- * Overlays still written as one linker script each name their objects
- * themselves. Either way the same Make variables result, and the table
- * gives the main image its linker fragments.
+ * TSV rows describe images, placement, sections, and edition selection;
+ * the table gives the main image and each overlay its linker fragments,
+ * and the Make variables that name their objects.
  */
 #include "../shared/shared.h"
-#include <dirent.h>
 
 static const char *defaults = ".text .rodata .data .padding";
 typedef struct
@@ -108,32 +106,6 @@ objectList(Buffer *text, const char *variable, const Strings *objects)
 	byte(text, '\n');
 }
 
-/*
- * The script path reads object names only; placement remains owned by the
- * existing linker script.
- */
-static Strings
-named(const char *path)
-{
-	Buffer text = readFile(path);
-	Strings objects = {0};
-	char *p = (char *) text.data;
-	while ((p = strstr(p, "\"*/")))
-	{
-		p += 3;
-		char *end = strstr(p, ".o\"");
-		if (!end)
-			break;
-		char save = *end;
-		*end = 0;
-		addObject(&objects, p);
-		*end = save;
-		p = end + 3;
-	}
-	free(text.data);
-	return objects;
-}
-
 static void
 readRows(const char *path, const char *language, Strings *images)
 {
@@ -205,46 +177,10 @@ writeOverlay(const char *id, const Strings *bss, Strings *objects)
 	}
 }
 
-/*
- * Overlays still written as one linker script each, resource_<id>.ld in one
- * folder, name their objects themselves; the script keeps their placement.
- */
-static Strings *
-scriptOverlays(const char *folderPath, Strings *images)
-{
-	DIR *folder = opendir(folderPath);
-	struct dirent *entry;
-	while ((entry = readdir(folder)))
-	{
-		size_t n = strlen(entry->d_name);
-		if (n > 12 && !strncmp(entry->d_name, "resource_", 9) &&
-			!strcmp(entry->d_name + n - 3, ".ld"))
-		{
-			char *id = copyString(entry->d_name + 9);
-			id[n - 12] = 0;
-			addString(images, id);
-			free(id);
-		}
-	}
-	closedir(folder);
-	sortStrings(images);
-	Strings *objects = allocate(images->len, sizeof(Strings));
-	for (size_t i = 0; i < images->len; i++)
-	{
-		char *path =
-			formatString("%s/resource_%s.ld", folderPath, images->items[i]);
-		objects[i] = named(path);
-		free(path);
-	}
-	return objects;
-}
-
 int
 main(int argc, char **argv)
 {
-	const char *usage = "usage: ags-objects OBJECTS.tsv OVERLAYS LANG BUILD\n"
-						"OVERLAYS is overlays.tsv, or a folder of overlay "
-						"scripts resource_<id>.ld";
+	const char *usage = "usage: ags-objects OBJECTS.tsv OVERLAYS.tsv LANG BUILD";
 	startTool(argc, argv, usage);
 	if (argc != 5)
 		fail("%s", usage);
@@ -269,22 +205,13 @@ main(int argc, char **argv)
 		save(path, &text);
 		free(path);
 	}
-	DIR *folder = opendir(argv[2]);
-	if (folder)
-	{
-		closedir(folder);
-		objects = scriptOverlays(argv[2], &images);
-	}
-	else
-	{
-		Buffer headers = readFile(argv[2]);
-		Strings bss = split((char *) headers.data, '\n');
-		objects = allocate(images.len, sizeof(Strings));
-		for (size_t i = 0; i < images.len; i++)
-			writeOverlay(images.items[i], &bss, objects + i);
-		freeStrings(&bss);
-		free(headers.data);
-	}
+	Buffer headers = readFile(argv[2]);
+	Strings bss = split((char *) headers.data, '\n');
+	objects = allocate(images.len, sizeof(Strings));
+	for (size_t i = 0; i < images.len; i++)
+		writeOverlay(images.items[i], &bss, objects + i);
+	freeStrings(&bss);
+	free(headers.data);
 	freeStrings(&places);
 	for (size_t i = 0; i < count; i++)
 	{

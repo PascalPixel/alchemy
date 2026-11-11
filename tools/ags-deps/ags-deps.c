@@ -29,7 +29,7 @@ typedef struct
 static char *
 resolve(const Dependencies *deps, const char *from, const char *name, bool c)
 {
-	if (!strncmp(name, "games/", 6) || !strncmp(name, "recon/", 6))
+	if (!strncmp(name, "games/", 6))
 		return copyString(name);
 	if (c)
 	{

@@ -260,7 +260,7 @@ Resource_DirectoryTable:
 	resource Data0F7, Resource_Data0F7
 	resource Data0F8, Resource_Data0F8
 	resource Data0F9, Resource_Data0F9
-	resource , Resource_Data0FA
+	resource Data0FA, Resource_Data0FA
 	resource Data0FB, Resource_Data0FB
 	resource Data0FC, Resource_Data0FC
 	resource Data0FD, Resource_Data0FD

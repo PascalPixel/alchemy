@@ -1,4 +1,85 @@
-// Draft, differ 88 of 902 (tla-en, 2026-11-11), no pin
+// Draft, differ 84 of 902 (tla-en, 2026-11-11), no pin
+// 2026-11-11 (second agent round), 88 to 84, no device added. The vertex and
+// the quad are written through bit-field structs (WaterVertex, WaterTriangle)
+// in place of byte pointers; the once-only block, a device since today's S2,
+// now carries its tag. What the round found, most of it not yet in the file:
+// Reload's registers give the listing's order before sched2. Reload hands out
+// its spill registers round-robin (allocate_reload_reg: r0 r1 r2 r3 r5 r7
+// here, skipping any a live pseudo holds) and never inherits from r7. Read
+// that way the listing says: before the loop the three slots' starts (r3 r5
+// r7); at the row's top column = 0 (r0), the - 84 copy (r1), the + 15 copy
+// (r2), x = -60 (r3), d's start (r5, so b's start is later), the quad's
+// start (row * 15 in r7, the mesh in r0), the vertex's start (cells in r7);
+// in the latch x's step (r0), d's (r3), the column's (r7); in the if block
+// + 15 in r7 at [7] and again at [9], r0 at [21] (u dead), d in r3 at [1]
+// (x + 67 dead), a in r7 at [12]. With sched2's ties (equal priority falls
+// to original order) that is the store order 4 5 6 7 8 9 16 17 18 19 20 21 0
+// 1 2 12 13 14, the struct's own order with the indices last, and the steps
+// c, d, b, quad, vertex (the listing has adds r2, #24 before adds r1, #4:
+// earlier rounds read them the other way round). So: x's start follows the
+// two moved copies, which no user statement can (moved insns go last before
+// the loop), so x is a giv reduced in the first pass (8 * column - 60), with
+// x + 67 computed from it in the loop (recombine_givs' "derived from", or a
+// giv of the reduced register not worth reducing in the second pass); the
+// quad and the vertex are reduced in one pass, the vertex found first, and
+// that pass is the second (their starts' * 24 and << 2 would otherwise be
+// reduced by the row loop's second pass).
+// The stores are bit-fields. In the listing the load of d (add r3, sp, #8;
+// ldrb) is scheduled above ten stores and the load of the - 84 copy above
+// two: sched2 allows that only if store and load cannot alias, and a store
+// through a byte pointer has alias set 0 and depends on every earlier load.
+// (lang_get_alias_set gives set 0 to any reference of char precision). A
+// store to an 8-bit bit-field member escapes that and is the same strb (the
+// mechanism was measured, not read to its end in the compiler). Measured
+// on the diagnostic below: with the stores in the natural order and the
+// struct, the if block and the latch match the listing instruction for
+// instruction; through u8 * the d load stays below quad[0] (115 against 99).
+// Here the vertex struct alone gives 88 to 84 (the - 84 load now leads subs
+// r3, #82 as in the listing); the quad struct changes nothing in this order.
+// Why the natural order cannot be taken yet. u then lives 22 insns (12 over
+// 22, 1.636) and outranks the vertex (17 over 44, 1.545) unless the vertex's
+// start comes after the quad's four insns (17 over 40, 1.7). The vertex from
+// a (cells + a * 4, a = row * 16 + column) is exactly that: not a giv in the
+// first pass, reduced in the second after the quad, starts d, b, quad,
+// vertex and steps x, c, d, b, quad, vertex as the listing has them, vertex
+// r1 and u r0 (measured). But its start then reads the base in RTL (reload's
+// find_equiv_reg still prints r4), q is left with 17 refs over 50 (1.36)
+// and the column (46 over 162, 1.42) takes r4: 853. With c a giv and q set
+// after x: 855. As a diagnostic only, a dead test on q at the row's top (if
+// (q == 300) frames = 0;, two more refs, 19 over 51) on that form: 115, and
+// with the structs 99, the only differences left the row top's rotation (x
+// is still a user counter there) and the body top's reload registers that
+// follow from it. Not kept: a second dead device and more than 84.
+// What q can be, narrowed. A real copy of the base that only the grid reads
+// is rewritten to the base by cse2 at every start (make_regs_eqv keeps the
+// register whose last reference in the text is later, and the base's step at
+// the row's end is later), which leaves it 11 refs: so a copy the listing's
+// ranks allow is either unseen by cse2 (the device) or referenced after the
+// row loop. i as that copy (i = v): every start reads i, as the listing, but
+// gcse's copy propagation sends the three stores to the base and i (103 over
+// 476, or 112 over 502 with the stores) stays under the column; i = row << 4
+// is not reduced (benefit 2 + 3 less the user variable's 4 and the step's 2);
+// i = v or i = row << 4 inside the if block is not hoisted (a conditional
+// set of a register used outside its block). The vertex written with q but
+// hidden from the first pass: cells inline (gMapCellBuffer + (q + column) *
+// 4) is reduced in halves, q << 2 in the first pass and + cells in the
+// second (245); nine spellings of the address fold to the same giv (235 to
+// 245); an in-loop w - row (w = v + row at the row's top) is a copy of q the
+// second pass never looks through (259, not reduced at all).
+// x as a giv: s32 x = column * 8 - 60 in the if block or at the column's
+// top, with or without a once-only block round the stores: cse1 folds x + 67
+// to (column << 3) + 7, x dies and the giv starts at 7 (247). A second
+// column counter for the quad (n or i, stepped last) is merged or changes
+// nothing: not needed once the steps are read in the right order.
+// Not better on this file: u before a 645, b declared before d 190, - 84
+// stored first 98, x's step first or second 89, the once-only block removed
+// 86, 350 single store moves without it 86.
+// Leads: the vertex from a with a q that still has 19 refs (a start that
+// names q in the second pass, or two more honest refs), then the natural
+// store order with the structs, which closes the if block and the latch; and
+// x as a first-pass giv whose + 67 survives cse1, which puts its start after
+// the copies and turns the row top's rotation into the listing's.
+// Before this round: differ 88 of 902 (tla-en, 2026-11-11), no pin.
 // 2026-11-11 (agent round), 86 with the pin to 88 without it: the pin is
 // gone, for one FAKEMATCH(dead), the mildest kind in place of the worst.
 // What r4 is. Its references in the listing: one write, mov r4, r9 at the
@@ -466,6 +547,29 @@ struct RenderModel {
   u8 scrollV;
 };
 
+// A vertex of the water: three signed bytes, written as bit-fields (a store
+// through a plain byte pointer is scheduled after every earlier load).
+struct WaterVertex {
+  s32 x : 8;
+  s32 y : 8;
+  s32 z : 8;
+};
+
+// One triangle of the water's mesh: three vertex indices, then a texture
+// coordinate for each.
+struct WaterTriangle {
+  u32 index0 : 8;
+  u32 index1 : 8;
+  u32 index2 : 8;
+  u32 : 8;
+  u32 u0 : 8;
+  u32 v0 : 8;
+  u32 u1 : 8;
+  u32 v1 : 8;
+  u32 u2 : 8;
+  u32 v2 : 8;
+};
+
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
@@ -634,39 +738,43 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
 
     for (; column != WATER_COLUMNS;
          c++, column++, x += 8) {
-      s8 *vertex = cells + (q + column) * 4;
+      struct WaterVertex *vertex =
+          (struct WaterVertex *)(cells + (q + column) * 4);
       s32 a = row * 16 + column;
       s32 u = column * 8;
 
-      vertex[0] = column * 11 - 82;
-      vertex[1] = 60;
-      vertex[2] = row * 24 - 84;
+      vertex->x = column * 11 - 82;
+      vertex->y = 60;
+      vertex->z = row * 24 - 84;
       if (row <= 6 && column <= 14) {
-        u8 *quad = mesh + (row * 15 + column) * 24;
+        struct WaterTriangle *quad =
+            (struct WaterTriangle *)(mesh + (row * 15 + column) * 24);
         s32 d = q + column + 17;
         s32 b = q + column + 1;
 
-        quad[4] = x + 67;
-        quad[1] = d;
-        quad[6] = x + 67;
-        quad[18] = x + 67;
-        // Once-only: the stores inside share one schedule block.
+        quad[0].u0 = x + 67;
+        quad[0].index1 = d;
+        quad[0].u1 = x + 67;
+        quad[1].u1 = x + 67;
+        /* FAKEMATCH(dead): a once-only block round three stores, which share
+         * one schedule block; as plain statements, 86 of 902 instructions
+         * differ in tla-en. */
         do {
-          quad[7] = v + 15;
-          quad[8] = u;
-          quad[9] = v + 15;
+          quad[0].v1 = v + 15;
+          quad[0].u2 = u;
+          quad[0].v2 = v + 15;
         } while (0);
-        quad[16] = u;
-        quad[5] = q;
-        quad[17] = q;
-        quad[19] = q;
-        quad[0] = b;
-        quad[20] = u;
-        quad[21] = v + 15;
-        quad[2] = c;
-        quad[12] = a;
-        quad[13] = b;
-        quad[14] = c;
+        quad[1].u0 = u;
+        quad[0].v0 = q;
+        quad[1].v0 = q;
+        quad[1].v1 = q;
+        quad[0].index0 = b;
+        quad[1].u2 = u;
+        quad[1].v2 = v + 15;
+        quad[0].index2 = c;
+        quad[1].index0 = a;
+        quad[1].index1 = b;
+        quad[1].index2 = c;
       }
     }
   }

@@ -385,7 +385,6 @@ SECTIONS
         "*/games/tla/src/window/expand_opaque.o"(.text .rodata .data .padding)
         "*/games/tla/src/window/expand_opaque_masks.o"(.text .rodata .data .padding)
         "*/games/tla/src/window/window.o"(.text)
-        "*/games/tla/src/window/f042274.o"(.text)
         "*/games/tla/src/window/screens.o"(.text)
         "*/games/tla/src/window/show_message_and_wait_complete.o"(.text)
         "*/games/tla/src/window/f0457d0.o"(.text)

@@ -11,8 +11,8 @@
 /// cut where The Broken Seal's are. debug.c holds the debug menus, which The
 /// Lost Age keeps here, between the Pause menu and the text tiles, where The
 /// Broken Seal keeps them in its screens object (screens/debug.c). The object
-/// ends at Text_DrawNumberInWindow: Text_DrawPrefixedNumberAtOffset, which
-/// closes The Broken Seal's, is not yet C in every edition. Where to start:
+/// ends at Text_DrawPrefixedNumberAtOffset, as The Broken Seal's does. Where to
+/// start:
 ///
 ///   Windows         windows.c: Window_Create, Window_Close;
 ///                   borders.c: Window_DrawBorder, Window_UpdateZooms

@@ -345,7 +345,6 @@ main	rom_main_02	games/tla/src/window/expand_masked_masks
 main	rom_main_02	games/tla/src/window/expand_opaque
 main	rom_main_02	games/tla/src/window/expand_opaque_masks
 main	rom_main_02	games/tla/src/window/window	.text
-main	rom_main_02	games/tla/src/window/f042274	.text
 main	rom_main_02	games/tla/src/window/screens	.text
 main	rom_main_02	games/tla/src/window/show_message_and_wait_complete	.text
 main	rom_main_02	games/tla/src/window/f0457d0	.text	it

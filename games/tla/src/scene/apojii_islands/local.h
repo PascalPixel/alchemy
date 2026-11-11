@@ -11,10 +11,7 @@
 #include "field_sprite.h"
 #include "event_inline.h"
 
-extern const struct SceneEntrance gSceneEntrances[];
 extern const u32 gSceneExits[];
-extern const struct ActorPlacement gActorPlacements[];
-extern const struct Trigger gSceneEvents[];
 
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Actor_SetSingleChildFlags(struct Actor *object,

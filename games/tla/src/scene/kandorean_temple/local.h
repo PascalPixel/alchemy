@@ -11,10 +11,7 @@
 #include "input.h"
 #include "event_inline.h"
 
-extern const struct SceneEntrance gSceneEntrances[];
 extern const u32 gSceneExits[];
-extern const struct ActorPlacement gActorPlacements[];
-extern const struct Trigger gSceneEvents[];
 
 u32 Random16Far(void);
 void Actor_SetSingleChildFlags(struct Actor *object,

@@ -19,9 +19,13 @@ void Func_0200031c();
 void Func_0200282c();
 void Func_02002834();
 
+extern s16 gSceneRegions[];
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return gSceneRegions; }
+const struct SceneRegion *Scene_GetRegions(void) {
+  return (const struct SceneRegion *)gSceneRegions;
+}
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 

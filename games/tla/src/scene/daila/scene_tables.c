@@ -10,6 +10,8 @@
 #include "field_event.h"
 #include "scene_tables.h"
 
+extern const struct SceneEntrance gDailaEntrances[];
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gDailaEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }

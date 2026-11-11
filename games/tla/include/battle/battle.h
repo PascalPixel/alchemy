@@ -104,7 +104,6 @@ extern const u8 gColorBuffer_FadeStep2Map[32];
 extern const u8 gColorBuffer_FadeStep3Map[32];
 extern u16 gEncounter_EnemyGroupTable[];
 extern struct WorldMapWork gWorldMapWork;
-extern const struct SceneCueRule gScene_CueRuleTable[];
 s32 AnimationObject_SelectAnimationFar(struct AnimationObject *, s32);
 s16 *Scene_FindActorPlacement(s16 action);
 s32 BattleActor_RemoveFromLists(s32);

@@ -10,9 +10,7 @@
 #include "field_sprite.h"
 #include "event_inline.h"
 
-extern const struct SceneEntrance gSceneEntrances[];
 extern const u32 gSceneExits[];
-extern const struct ActorPlacement gActorPlacements[];
 
 extern char SceneId_Ov678Room1;
 extern char SceneId_Ov678Room2;

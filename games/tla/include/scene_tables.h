@@ -116,6 +116,12 @@ struct TriggerView {
 /// heading in control bits 15..12.
 #define TRIGGER_FLAG_FACING 0x400
 
+/// A scene overlay's own entrances, actor placements and triggers, which its
+/// getters return.
+extern struct SceneEntrance gSceneEntrances[];
+extern struct ActorPlacement gActorPlacements[];
+extern struct Trigger gSceneEvents[];
+
 struct SceneRegion;
 
 /// The table a scene overlay starts with (gOverlayArea): a veneer word and an

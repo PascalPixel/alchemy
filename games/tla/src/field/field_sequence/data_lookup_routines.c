@@ -63,6 +63,8 @@ struct SceneCueRule {
   s16 cue;
 };
 
+extern const struct SceneCueRule gScene_CueRuleTable[];
+
 void Scene_ResolveInteractionResult(void) {
   s16 cue = 79;
   s16 scene = gMainRoutineWork.scene;

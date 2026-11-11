@@ -20,6 +20,8 @@
 
 enum { ENTRANCE_ALTERNATE_PLACEMENTS = 99 };
 
+extern const struct ActorPlacement gActorPlacementsEntrance99[];
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }

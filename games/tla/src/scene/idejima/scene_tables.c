@@ -10,6 +10,12 @@
 #include "field_event.h"
 #include "scene_tables.h"
 
+extern const struct SceneEntrance gIdejimaEntrances[];
+extern const struct Trigger gIdejimaEvents[];
+extern const struct Trigger gIdejimaEventsEntrance1[];
+extern const struct Trigger gIdejimaEventsWake[];
+extern const struct ActorPlacement gIdejimaPlacements[];
+
 enum { ENTRANCE_WAKE = 2, ENTRANCE_WAKE_AGAIN = 4 };
 
 const struct SceneEntrance *Scene_GetEntrances(void) {

@@ -6,9 +6,7 @@
 #include "scene_tables.h"
 #include "event_inline.h"
 
-extern const struct SceneEntrance gSceneEntrances[];
 extern const u32 gSceneExits[];
-extern const struct ActorPlacement gActorPlacements[];
 
 struct WarpTarget {
   s32 scene;

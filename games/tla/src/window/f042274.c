@@ -25,8 +25,8 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work,
 
   canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   text = String_FormatNumber(formatted, value, 4);
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
-    (LANGUAGE == LANGUAGE_ITALIAN)
+  // Each label is two tiles; the PP label's second is the HP label's in
+  // English, German and Japanese (WINDOW_TILE_PP_LABEL_END).
   if (variant == 0) {
     output[0] = WINDOW_TILE_HP_LABEL;
     output[1] = WINDOW_TILE_HP_LABEL_END;
@@ -34,24 +34,6 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work,
     output[0] = WINDOW_TILE_PP_LABEL;
     output[1] = WINDOW_TILE_PP_LABEL_END;
   }
-#else
-  if (variant == 0) {
-    output[0] = WINDOW_TILE_HP_LABEL;
-  } else {
-    output[0] = WINDOW_TILE_PP_LABEL;
-  }
-  // XXX: English, German and Japanese link this function from their listings:
-  // their ROM loads the end tile from the literal pool 90 bytes away, which no
-  // other constant in the game's C does; a C form that pools exactly that word
-  // would settle it (recon/tla/en/main/08042274.c lists the forms tried).
-  {
-    // Held in a u16 local, the end tile is loaded; stored directly, it is
-    // built.
-    u16 second = WINDOW_TILE_HP_LABEL_END;
-
-    output[1] = second;
-  }
-#endif
   for (index = 0; index <= 4; index++) {
     output[index + 2] = text[index];
   }

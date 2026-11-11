@@ -752,8 +752,8 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 
   canvas = WINDOW_WORK;
   text = String_FormatNumber(formatted, value, 4);
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
-    (LANGUAGE == LANGUAGE_ITALIAN)
+  // Each label is two tiles; the PP label's second is the HP label's in
+  // English, German and Japanese (WINDOW_TILE_PP_LABEL_END).
   if (variant == 0) {
     output[0] = WINDOW_TILE_HP_LABEL;
     output[1] = WINDOW_TILE_HP_LABEL_END;
@@ -761,14 +761,6 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
     output[0] = WINDOW_TILE_PP_LABEL;
     output[1] = WINDOW_TILE_PP_LABEL_END;
   }
-#else
-  if (variant == 0) {
-    output[0] = WINDOW_TILE_HP_LABEL;
-  } else {
-    output[0] = WINDOW_TILE_PP_LABEL;
-  }
-  output[1] = WINDOW_TILE_HP_LABEL_END;
-#endif
   for (index = 0; index <= 4; index++) {
     output[index + 2] = text[index];
   }

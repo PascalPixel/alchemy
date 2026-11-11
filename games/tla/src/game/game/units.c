@@ -636,7 +636,10 @@ extern u8 gData_02001000[];
 extern u8 gGameFlagBytes[];
 extern u8 gOwnerStates[];
 extern u32 gFrameWaitCount;
+#ifndef MODERN
+// A current GCC refuses the volatile redeclaration and reads frame.h's.
 extern volatile u8 gAutoSleepEnabled;
+#endif
 extern volatile u16 gIdleFrameCount;
 extern s16 gData_020036d0;
 extern u16 gData_02003860;

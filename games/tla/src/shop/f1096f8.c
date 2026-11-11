@@ -53,7 +53,10 @@
 #define QUANTITY_COINS_X 144
 #endif
 
+#ifndef MODERN
+// A current GCC refuses the volatile redeclaration and reads input.h's.
 extern volatile struct InputState gInput;
+#endif
 extern const u8 gShop_QuantityTiles[];
 extern u8 MsgCoins[];
 

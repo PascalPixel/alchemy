@@ -46,8 +46,11 @@ struct BobPairObject {
   u8 y;
 };
 
+#ifndef MODERN
+// A current GCC refuses the volatile redeclaration and reads name_entry.c's.
 /// Counted up by every VBlank.
 extern volatile u32 gVBlankCount;
+#endif
 extern const u8 gWindow_PairBobOffsets[];
 
 /// Bobs the object and the one after it by the same step of an eight-step

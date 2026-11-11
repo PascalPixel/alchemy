@@ -1,20 +1,53 @@
-#include "types.h"
-#include "ram_buffer.h"
-#include "main_routine_work.h"
-#include "battle_unit.h"
-#include "battle_effect.h"
+/// @file
+/// Using an item or Psynergy from the menu: what it does to the party, and the
+/// sound it plays.
+// Part of menu.c.
 
-struct InventoryMenuState {
-  u8 unk000[0x204];
-  u16 ownerIds[8];
-  u8 unk214;
-  u8 partyCount;
-  u8 unk216[0x48];
-  u16 messageOffset;
-};
+#include "../menu_internal.h"
+
+s32 ItemMenu_CollectItems(struct OwnerInventoryState *owner, u16 *items,
+                          s32 mode);
+s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
+                                s32 fixedScale);
+
+s32 Func_08100738(s32 slot, s32 ownerId, s32 targetId) {
+  struct InventoryMenuState *menu;
+  s32 useResult;
+  s32 itemId;
+  s32 entry;
+  struct OwnerInventoryState *unit;
+  struct ItemDefinition *item;
+
+  unit = Unit_Get(ownerId);
+  menu = Ram_HeapSlots->menuRuntime;
+  /* FAKEMATCH(temporary): the inventory entry read into its own local first, so
+   * the barrier sits between the mask and the and; as itemId &=
+   * unit->inventory[slot] after the asm, 24 of 90 instructions differ in
+   * tla-en. */
+  entry = unit->inventory[slot];
+  itemId = ITEM_ID_MASK;
+  itemId &= entry;
+  item = Item_Get(itemId);
+  useResult = BattleEffect_ApplyToTargets(OWNER_ACTION_ID_MASK & item->actionId,
+                                          ownerId, targetId, 1);
+  if (useResult != -1) {
+    item = Item_Get(unit->inventory[slot]);
+    if (item->useType == 1) {
+      Inventory_RemoveFar(ownerId, slot);
+      menu->itemCount = ItemMenu_CollectItems(unit, menu->items, 0);
+    }
+    if (item->useType == 4) {
+      if (itemId == 184)
+        itemId = 185;
+      unit->inventory[slot] = itemId;
+    }
+    useResult = 0;
+  }
+  return useResult;
+}
 
 struct BattleAct *BattleAction_Get(s32 action);
-struct BattleUnit *Unit_Get(s32 owner);
+
 s32 Battle_CalculateRecoveryFar(s32 value, s32 selector, s32 multiplier);
 void Unit_UpdateRatiosFar(s32 unitId);
 void Unit_CalculateFar(s32 unitId);
@@ -55,7 +88,8 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 
   for (targetIndex = 0; targetIndex < menu->partyCount; targetIndex++) {
     if (effect->range == 0xff) {
-      targetId = menu->ownerIds[targetIndex];
+      // Read unsigned (ldrh): the party's ids, as this routine's bytes load them.
+      targetId = (u16)menu->ownerIds[targetIndex];
       target = Unit_Get(targetId);
     }
 
@@ -274,7 +308,49 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   }
 
   for (targetIndex = 0; targetIndex < menu->partyCount; targetIndex++)
-    Unit_CalculateFar(menu->ownerIds[targetIndex]);
+    Unit_CalculateFar((u16)menu->ownerIds[targetIndex]);
   menu->messageOffset = messageOffset;
   return 0;
+}
+
+s32 Ability_PlayUseAnimation(s32 action);
+
+s32 Func_08100d40(s32 item) {
+  return Ability_PlayUseAnimation(Item_Get(item)->actionId & 0x3fff);
+}
+
+s32 Sound_PlayReturnOne(s32 cue);
+
+/// Plays the sound of action used from the menu, and returns at once: no
+/// animation is drawn and nothing waits. Formulas 1 and 11 play sound 126,
+/// formula 1 twice; otherwise effects 1, 2, 31 and 32 play nothing, effect 5
+/// sound 82, effect 3 sound 84, and every other effect sound 91.
+s32 Ability_PlayUseAnimation(s32 action) {
+  u8 *definition = BattleAction_Get(action);
+
+  switch (definition[1] & 15) {
+  case 1:
+    Sound_PlayReturnOne(126);
+  case 11:
+    Sound_PlayReturnOne(126);
+    break;
+  default:
+    switch (definition[3]) {
+    case 1:
+    case 2:
+    case 31:
+    case 32:
+      break;
+    case 5:
+      Sound_PlayReturnOne(82);
+      break;
+    case 3:
+      Sound_PlayReturnOne(84);
+      break;
+    default:
+      Sound_PlayReturnOne(91);
+      break;
+    }
+    break;
+  }
 }

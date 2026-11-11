@@ -61,7 +61,7 @@ s32 Task_SuspendOverlayTasks(void);
 s32 Task_SetFlags(TaskFunc func, u32 mask);
 s32 Task_ResumeAll(TaskFunc func);
 s32 Task_ResumeOverlayTasks(void);
-s32 Menu_ResumeFieldTasks(void);
+void Menu_ResumeFieldTasks(void);
 s32 Menu_SuspendFieldTasks(void);
 
 void Task_RunPass(s32 pass);

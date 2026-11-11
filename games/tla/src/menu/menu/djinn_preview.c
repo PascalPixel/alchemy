@@ -1,11 +1,9 @@
-#include "types.h"
-#include "ram_buffer.h"
-#include "input.h"
-#include "main_routine_work.h"
-#include "iwram_call.h"
-#include "uiwindow.h"
-#include "window.h"
-#include "djinn_menu.h"
+/// @file
+/// Previewing a change before it is made, and the check that keeps the
+/// party's Djinn balanced.
+// Part of menu.c.
+
+#include "../menu_internal.h"
 
 extern u8 MsgDjinnCompareSet[];
 extern u8 MsgDjinnCompareStandby[];
@@ -18,29 +16,22 @@ extern u8 gMenu_BackdropBorderTile[];
 
 void wait(s32 frames);
 void Sound_PlayFar(s32 cue);
-s32 Party_ListActiveOwnersFar(u16 *owners);
+
 void Func_08104e38(s32 first, s32 second);
-void WindowSprite_ClearListFar(s32 window);
-void WindowSprite_RedrawSavedRectFar(s32 window);
+
 void WindowSprite_PrepareForRedrawFar(s32 window);
-void Window_CloseIfOpen(void *window, s32 mode);
-s32 Window_UpdateOrCreate(void *handle, s32 x, s32 y, s32 width, s32 height,
-                          s32 style);
+
 void *Heap_AllocEwram(s32 size);
 void Heap_Release(void *buffer);
 void *Unit_Get(s32 owner);
-void Djinn_ActivateFar(s32 owner, s32 element, s32 index);
-void Djinn_DeactivateFar(s32 owner, s32 element, s32 index);
+
 s32 Djinn_AddToOwnerFar(s32 owner, s32 element, s32 index);
 void Unit_CalculateFar(s32 owner);
-s32 PsynergyList_Diff(u16 *before, u16 *after, u16 *out, s32 *gained,
-                      s32 *lost);
-void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+
 void Func_08101a54(s32 window, s32 x, s32 y, s32 entry);
 s32 Text_SetColorFar(s32 color);
 void Window_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 mode);
-void Window_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
-                                  s32 height);
+
 void MessageArgument_PushFar(s32 value, s32 kind);
 s32 Menu_GetDjinnGiveMessage(void);
 s32 Message_OpenWindowFar(s32 message, s32 x, s32 y, s32 style);
@@ -50,32 +41,14 @@ void Func_08038290(void);
 void Func_080f8a44(s32 x, s32 y);
 void Func_080f8ab4(s32 x, s32 y);
 s32 DjinnMenu_DrawPairPreview(s32 mode, s32 param);
-void Func_08103218(s32 window, s32 x, s32 y, s32 owner, s32 a, s32 b, s32 c,
-                   s32 page, s32 d);
+
 void Func_08105350(s32 index, s32 scale);
 void MenuIcon_SetPosition(s32 index, s32 x, s32 y);
 s32 Trig_Sin(s32 angle);
 s32 Menu_GetModuloOfSum(s32 value, s32 count);
 void Input_ResetKeyRepeat(void);
-s32 Task_Add(void (*func)(void), s32 order);
+
 void Menu_UpdateEntryObjectTransforms(void);
-
-typedef s32 (*CopyFn)(void *, const void *, s32);
-typedef s32 (*FillFn)(void *, s32, u32);
-
-static __inline__ void CopyWords(const void *src, CopyFn copy, void *dst,
-                                 s32 size) {
-  /* FAKEMATCH(wrapper): the source loads before the routine and the
-   * destination, as the native does; as a direct call, 6 of 1244 instructions
-   * differ in tla-en. */
-  copy(dst, src, size);
-}
-
-static __inline__ void FillWords(FillFn fill, void *dst, s32 size, u32 value) {
-  /* FAKEMATCH(wrapper): the routine loads before its arguments; as a direct
-   * call, 4 of 1244 instructions differ in tla-en. */
-  fill(dst, size, value);
-}
 
 s32 Func_081039fc(u32 mode) {
   struct DjinnMenuWork *menu;
@@ -526,4 +499,265 @@ s32 Func_081039fc(u32 mode) {
   ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 0;
   wait(1);
   return result;
+}
+
+extern u8 MsgCurrentStatus[];
+extern u8 gMenu_BackdropBorderTile[];
+
+void WindowSprite_PrepareForRedrawFar(s32 window);
+
+void Window_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 mode);
+void *Heap_AllocEwram(s32 size);
+void Heap_Release(void *block);
+s32 PsynergyList_Diff(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
+                      u16 *out, s32 *firstCount, s32 *secondCount);
+
+s32 Menu_GetModuloOfSum(s32 value, s32 count);
+void MenuIcon_SetPosition(s32 index, s32 x, s32 y);
+void Input_ResetKeyRepeat(void);
+void Sound_PlayFar(s32 cue);
+void Menu_UpdateEntryObjectTransforms(void);
+void wait(s32 frames);
+
+s32 Func_08104540(void) {
+  s32 selectedPages[2];
+  s32 pageCounts[2];
+  s32 gained;
+  s32 lost;
+  s32 redraw;
+  s32 frame;
+  void *leftWindowSlot;
+  void *rightWindowSlot;
+  s32 *helpWindowSlot;
+  struct WindowWork *render;
+  u32 pressedKeys;
+  u32 repeatedKeys;
+  struct DjinnMenuWork *menu;
+  struct OwnerActionState *unit;
+  struct DjinnPreviewWindow *window;
+  u16 *listedActions;
+  void *saved;
+  s32 result;
+  s32 tile;
+  s32 pageIndex;
+  s32 side;
+  u8 *pairMember;
+  s32 *counts;
+  s32 *selected;
+  s32 blink;
+
+  menu = Ram_HeapSlots->menuRuntime;
+  redraw = 1;
+  result = 0;
+  frame = 0;
+  menu->cursor->active = 13;
+  /* FAKEMATCH(temporary): selected = selectedPages, the page array read through
+   * a pointer; as selectedPages itself, 12 of 436 instructions differ in
+   * tla-en. */
+  selected = selectedPages;
+  selected[1] = selected[0] = result;
+  for (side = 3; side >= 0; side--)
+    menu->memberY[side] = 200;
+  WindowSprite_ClearListFar(menu->listWindow);
+  wait(1);
+  /* FAKEMATCH(temporary): counts = pageCounts, the count array read through a
+   * pointer; as pageCounts itself, 55 of 436 instructions differ in tla-en. */
+  counts = pageCounts;
+  counts[1] = counts[0] = 1;
+  listedActions = Heap_AllocEwram(96);
+  saved = Heap_AllocEwram(332);
+  unit = Unit_Get(menu->shownMember[0]);
+  counts[1] = counts[0] = PsynergyList_Diff(
+      unit->actionSlots, unit->actionSlots, listedActions, &gained, &lost);
+  Heap_Release(saved);
+  Heap_Release(listedActions);
+  counts[0] = (counts[0] - 1) / 6 + 1;
+  if (counts[0] == 0)
+    counts[0] = 1;
+  counts[1] = (counts[1] - 1) / 6 + 1;
+  if (counts[1] == 0)
+    counts[1] = 1;
+  leftWindowSlot = &menu->window;
+  Window_UpdateOrCreate(leftWindowSlot, 0, 5, 15, 15, 2);
+  rightWindowSlot = &menu->secondWindow;
+  Window_UpdateOrCreate(rightWindowSlot, 15, 5, 15, 15, 2);
+  helpWindowSlot = &menu->helpWindow;
+  WindowSprite_RedrawSavedRectFar(*helpWindowSlot);
+  WindowSprite_RedrawSavedRectFar(menu->statusWindow);
+  Text_DrawCharacterAtOffsetFar((s32)MsgCurrentStatus, menu->statusWindow, 0,
+                                0);
+  Text_DrawCharacterAtOffsetFar((s32)MsgCurrentStatus + 2, menu->statusWindow,
+                                0, 16);
+  side = 0;
+  while (1) {
+    s32 *pageCount;
+    s32 *selectedPage;
+    /* FAKEMATCH(temporary): selectedPage = &selected[side], taken at the top of
+     * the loop; as selected[side] at each page turn, 22 of 436 instructions
+     * differ in tla-en. */
+    selectedPage = &selected[side];
+    render = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+    pressedKeys = gInput.pressed;
+    repeatedKeys = gInput.repeat;
+    /* FAKEMATCH(temporary): pageCount = &pageCounts[side], taken at the top of
+     * the loop; as pageCounts[side] at each page turn, 227 of 436 instructions
+     * differ in tla-en. */
+    pageCount = &pageCounts[side];
+    pairMember = menu->pairMember;
+    if (redraw) {
+      render->menuBusy = 1;
+      WindowSprite_PrepareForRedrawFar(menu->window);
+      WindowSprite_PrepareForRedrawFar((s32)menu->secondWindow);
+      Func_08103218(menu->window, 0, 0, *pairMember, 0, 0, 3, 0, 1);
+      Func_08103218((s32)menu->secondWindow, 0, 0, *pairMember, 0, 0, 3,
+                    selectedPages[0] + 1, 1);
+      render->menuBusy = 0;
+    }
+    if (counts[side] > 1) {
+      window = menu->secondWindow;
+      for (pageIndex = 0; pageIndex < counts[side]; pageIndex++) {
+        tile = 0xf031 + pageIndex;
+        if (pageIndex > 8)
+          tile = 0xf03f;
+        if (pageIndex == selected[side])
+          tile -= 0x1000;
+        Window_SetTilemapEntryFar((s32)window, tile,
+                                  window->width - counts[side] + pageIndex - 2,
+                                  -1, 0);
+      }
+      Window_SetTilemapEntryFar((s32)window, 0xf128,
+                                window->width - counts[side] - 3, -1, 0);
+      Window_SetTilemapEntryFar((s32)window, 0xf129, window->width - 2, -1, 0);
+      UiRender_MarkRow(render, window->y);
+    }
+    frame++;
+    blink = frame % 60 - 5;
+    CLAMP(blink, 0, 29);
+    MenuIcon_SetPosition(0, 32, 200);
+    // DEAD: the test cannot change the result, redraw = 0 alone does the same;
+    // the ROM keeps the compare (its twin also steps a phase under it).
+    if (redraw)
+      redraw = 0;
+    if ((frame & 3) == 0) {
+      if (frame & 4)
+        Iwram_CopyWords((void *)0x060052c0, gMenu_BackdropBorderTile, 32);
+      else
+        Iwram_FillWords((void *)0x060052c0, 32, 0x44444444);
+    }
+    if (pressedKeys & KEY_START) {
+      Sound_PlayFar(113);
+      result = -2;
+      break;
+    }
+    if (pressedKeys & (KEY_A | KEY_B | KEY_R | KEY_L)) {
+      Sound_PlayFar(113);
+      result = -1;
+      break;
+    }
+    if (repeatedKeys & KEY_LEFT) {
+      (*selectedPage)--;
+      *selectedPage = Menu_GetModuloOfSum(*selectedPage, *pageCount);
+      Sound_PlayFar(111);
+      Input_ResetKeyRepeat();
+      redraw = 1;
+    } else if (repeatedKeys & KEY_RIGHT) {
+      (*selectedPage)++;
+      *selectedPage = Menu_GetModuloOfSum(*selectedPage, *pageCount);
+      Sound_PlayFar(111);
+      Input_ResetKeyRepeat();
+      redraw = 1;
+    }
+    wait(1);
+  }
+  {
+    // A local holding one constant: as a literal argument, 2 of 436
+    // instructions differ in tla-en.
+    s32 priority = TASK_PASS_VBLANK;
+    Task_Add(Menu_UpdateEntryObjectTransforms, priority);
+  }
+  ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 1;
+  Window_CloseIfOpen(helpWindowSlot, 1);
+  wait(1);
+  Window_UpdateOrCreate(helpWindowSlot, 13, 0, 17, 5, 2);
+  Window_CloseIfOpen(leftWindowSlot, 1);
+  Window_CloseIfOpen(rightWindowSlot, 1);
+  WindowSprite_RedrawSavedRectFar(menu->listWindow);
+  WindowSprite_RedrawSavedRectFar(menu->unopenedWindow);
+  WindowSprite_RedrawSavedRectFar(menu->statusWindow);
+  ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 0;
+  wait(1);
+  return result;
+}
+
+s32 Func_0810498c(s32 self, s32 other);
+
+/// Marks in table each other owner a djinn can move to from self and keep the
+/// party's djinn balanced, and returns how many there are.
+// The Broken Seal's Djinn_MarkBalancedEntries.
+s32 Func_08104928(s8 *table, s32 self) {
+  s32 cnt;
+  s32 i;
+  s8 *p;
+  struct DjinnMenuWork *state;
+
+  state = Ram_HeapSlots->menuRuntime;
+  cnt = 0;
+  i = 0;
+  if (cnt < state->memberCount) {
+    p = table;
+    do {
+      *p = 0;
+      if (i != self) {
+        if (Func_0810498c(self, i) == 0) {
+          *p = 1;
+          cnt += 1;
+        }
+      }
+      i += 1;
+      p += 1;
+    } while (i < state->memberCount);
+  }
+  return cnt;
+}
+
+void Func_081049c8(u8 *counts);
+
+// Test whether moving one from from to to preserves the balance.
+s32 Func_0810498c(s32 from, s32 to) {
+  s8 counts[16];
+  s32 balanced;
+
+  Func_081049c8((u8 *)counts);
+  counts[from] -= 1;
+  counts[to] += 1;
+  balanced = 1;
+  if (counts[from] + 2 <= counts[to])
+    balanced = 0;
+  return balanced;
+}
+
+// Func_081049c8: The Broken Seal's Djinn_CountTurns.
+
+void Func_081049c8(u8 *counts) {
+  struct DjinnMenuWork *work;
+  struct DjinnUnit *unit;
+  s32 ownerIndex;
+  s32 element;
+  s32 bit;
+  s32 count;
+
+  work = Ram_HeapSlots->menuRuntime;
+  for (ownerIndex = 0; ownerIndex < work->memberCount; ownerIndex++) {
+    unit = Unit_Get(work->owners[ownerIndex]);
+    count = 0;
+    for (element = 0; element <= 3; element++) {
+      for (bit = 0; bit <= 19; bit++) {
+        if (unit->djinnSet[element] & (1 << bit))
+          count++;
+        else if (unit->djinnHeld[element] & (1 << bit))
+          count++;
+      }
+    }
+    counts[ownerIndex] = count;
+  }
 }

@@ -151,7 +151,9 @@ struct BattleAct {
   u8 flags;
   u8 element; ///< enum Element
   u8 effect;  ///< enum AbilityEffect
-  u8 unk04[4];
+  u8 unk04[2];
+  u8 fieldEffect;
+  u8 unk07;
   u8 range;  ///< the aimed unit and range - 1 either side, or ABILITY_RANGE_ALL
   u8 ppCost; ///< PP the ability costs
   u16 power; ///< what the kind applies, 0 for none

@@ -32,7 +32,9 @@ struct DjinnPreviewWindow {
 };
 
 struct DjinnMenuWork {
-  u8 unk000[0x10];
+  u8 unk000[8];
+  s32 owner;
+  u8 unk00c[4];
   s32 statusWindow;
   struct DjinnMenuIcon *cursor;
   u8 unk018[4];
@@ -45,23 +47,33 @@ struct DjinnMenuWork {
   struct DjinnPreviewWindow *secondWindow;
   u8 unk03c[0xb4];
   s32 helpWindow;
-  u8 unk0f4[0x24];
+  u8 unk0f4[4];
+  s32 headerWindows[4];
+  u8 unk108[0x10];
   s16 memberX[8];
   s16 memberY[8];
   u8 unk138[0x30];
   u16 selection[2];
   u16 pairEntries[2];
-  u8 unk170[0x10];
+  struct MenuIcon *selector;
+  u8 unk174[4];
+  struct MenuIcon *arrows[2];
   struct DjinnMenuBackdrop *backdrop;
   u8 unk184[0x80];
   u16 owners[8];
   u8 unk214;
   u8 memberCount;
   u8 shownMember[2];
-  u8 unk218[0x40];
+  u8 unk218[4];
+  u16 pending;
+  u8 unk21e[0x12];
+  u16 rowX[4];
+  u16 rowY[4];
+  u8 unk240[0x18];
   u8 pairIndex[2];
   u8 pairElement[2];
   u8 pairMember[2];
+  u8 unk25e[2];
 };
 
 STATIC_ASSERT(offsetof(struct DjinnMenuBackdrop, tiles) == 0xa8);

@@ -6,14 +6,20 @@
 
 #include "../menu_internal.h"
 
-s32 GameFlag_ClearBit(s32 flag_no);
+/// @file
+/// The pieces the menu screens share: windows, the status panel, numbers,
+/// icons, the party figures, the hand cursor, paged lists, palettes, the
+/// cancel sound and text colours.
+// Part of menu.c.
+
+void GameFlag_ClearBit(s32 flag_no);
 s32 GameFlag_SetBit(s32 flag_no);
 
-s32 Menu_ResumeFieldTasks(void) {
+void Menu_ResumeFieldTasks(void) {
   Task_ResumeOverlayTasks();
   Map_DisableUpdateCallbackFar();
   GameFlag_ClearBit(0x166);
-  return GameFlag_ClearBit(0x152);
+  GameFlag_ClearBit(0x152);
 }
 
 s32 Menu_SuspendFieldTasks(void) {
@@ -61,9 +67,9 @@ s32 Window_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 w, s32 h, s32 flags) {
 /// Closes *handle's window if present, then sets the handle to NULL.
 /// Although declared with one argument, the caller's second argument stays in
 /// r1 and reaches Window_CloseFar.
-void Window_CloseIfOpen(void **handle) {
+void Window_CloseIfOpen(void **handle, s32 mode) {
   if (*handle != NULL) {
-    Window_CloseFar(*handle);
+    Window_CloseFar(*handle, mode);
     *handle = NULL;
   }
 }
@@ -116,7 +122,7 @@ enum StatusPanelKind {
 
 extern const u8 gStatusPanel_LvString[];
 
-struct BattleUnit *Unit_Get(s32 owner);
+void *Unit_Get(s32 owner);
 void wait(s32 frames);
 void Window_ClearInteriorTilesFar(struct RenderInput *window, s32 x, s32 y,
                                   s32 width, s32 height);
@@ -432,7 +438,7 @@ void StatusPanel_DrawHpPp(struct BattleUnit *unit, s32 window) {
 #endif
 }
 
-void Icon_CreateStatChangeArrow();
+s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y, s32 variant);
 
 void Text_DrawStatComparison(const struct BattleUnit *alt,
                              const struct BattleUnit *base, s32 work) {
@@ -506,24 +512,9 @@ void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 unit) {
 // The menu work, Ram_HeapSlots->menuRuntime, as the hand cursor and the party
 // figures read it: The Broken Seal's PsynergyMenuWork, whose names the first
 // three fields take.
-struct OwnerMenuState {
-  u8 unk000[16];
-  struct RenderInput *auxiliaryWindow;
-  struct WindowSprite *sideIcon[2];
-  s8 tabIndex[2];
-  u8 unk01e[0xda];
-  struct AnimationObject *tabObjects[8];
-  s16 tabX[8];
-  s16 rowPositions[8];
-  s32 ownerScale[8];
-  u8 unk158[0x20];
-  struct WindowSprite *arrows[2];
-  u8 unk180[0x9c];
-  u16 page;
-  u16 skipSlide;
-};
 
-extern char ResourceId_ShopUpArrowTiles, ResourceId_ShopDownArrowTiles;
+extern char ResourceId_ShopUpArrowTiles;
+extern char ResourceId_ShopDownArrowTiles;
 
 /// Opens the menu's top-left window (13 by 5 tiles) with a divider, puts the
 /// hand cursor in it, hidden, and adds the up and down arrow icons at its right
@@ -1121,13 +1112,6 @@ struct MenuPageIcon {
   u16 y;
 };
 
-struct MenuPageWork {
-  u8 reserved000[0x4c];
-  struct MenuPageIcon *icons[32];
-  u8 reserved0cc[0x148];
-  u8 entryCount;
-};
-
 void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y) {
   struct MenuPageWork *menu = Ram_HeapSlots->menuRuntime;
   struct MenuPageIcon *icon;
@@ -1172,7 +1156,7 @@ typedef s32 (*FillFn)(void *, s32, u32);
 
 s32 GameFlag_Test(s32);
 s32 GameFlag_SetBit(s32);
-s32 GameFlag_ClearBit(s32);
+void GameFlag_ClearBit(s32);
 
 static __inline__ void CopyWords(const void *src, CopyFn copy, void *dst,
                                  s32 size) {
@@ -1236,27 +1220,8 @@ void UiPalette_SetColor2(void) { Text_SetColorFar(2); }
 
 void UiPalette_SetColor4(void) { Text_SetColorFar(4); }
 
-#undef STATUS_PANEL_NAME_X
 #undef DRAW_LEVEL_LABEL
-#undef STATUS_PANEL_CANNOT_EQUIP_X
-#undef STATUS_PANEL_LEARN_NAME_Y
 #undef STATUS_PANEL_LEARN_NOTE_Y
-#undef STATUS_PANEL_LOWER_ONLY
-#undef STATUS_PANEL_KIND_MASK
-#undef MESSAGE_CLASS_NAME
-#undef MESSAGE_EXP_LABEL
-#undef MESSAGE_PANEL_STAT_LABEL
-#undef MESSAGE_ABILITY_NAME
-#undef MESSAGE_POISON_LABEL
-#undef MESSAGE_VENOM_LABEL
-#undef MESSAGE_CURSE_LABEL
-#undef MESSAGE_HAUNT_LABEL
-#undef MESSAGE_CANNOT_EQUIP
-#undef MESSAGE_WILL_LEARN
-#undef MESSAGE_LEARNED
-#undef FIELD_PIXELS_PER_DIGIT
-#undef CURSOR_BOB_STEP
-#undef INPUT
-#undef PAGE_LABEL_FIRST
-#undef PAGE_CAP_LEFT
-#undef PAGE_CAP_RIGHT
+
+#undef DRAW_LEVEL_LABEL
+#undef STATUS_PANEL_LEARN_NOTE_Y

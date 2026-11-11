@@ -41,6 +41,19 @@
 #include "m7_interfaces.h"
 #include "static_assert.h"
 #include "text/msg_ids.h"
+#include "irq.h"
+#include "owner_state.h"
+#include "inventory.h"
+#include "heap_release.h"
+#include "menu_result.h"
+#include "battle_type.h"
+#include "battle_system.h"
+#include "display_transition.h"
+#include "a9_motion.h"
+#include "battle_effect.h"
+#include "djinn_menu.h"
+#include "macros.h"
+#include "vram_tab.h"
 
 /// The item menu's work, Ram_HeapSlots->menuRuntime: The Broken Seal's
 /// ItemMenuWork, whose names its fields take. From itemWindow to the entry
@@ -77,7 +90,9 @@ struct ItemMenuWork {
   u16 selectedSlots[2]; ///< each side's inventory slot chosen
   u16 selectedItems[2]; ///< each side's inventory entry chosen
   struct WindowSprite *cursor;
-  u8 unk174[0x50];
+  u8 unk174[4];
+  struct WindowSprite *ownerIcons[2];
+  u8 unk180[0x44];
   u16 items[32];    ///< the inventory entries listed
   s16 memberIds[8]; ///< the party in order (Party_ListActiveOwnersFar)
   u8 itemCount;
@@ -103,6 +118,169 @@ STATIC_ASSERT(offsetof(struct ItemMenuWork, completionFlag) == 0x21e);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, messageOffset) == 0x25e);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, listMode) == 0x261);
 
+struct SpriteAttr {
+  u16 y : 8;
+  u16 affine : 2;
+  u16 blendMode : 2;
+  u16 mosaic : 1;
+  u16 fullColor : 1;
+  u16 shape : 2;
+  u16 x : 9;
+  u16 affineIndex : 5;
+  u16 size : 2;
+};
+
+struct MenuIcon {
+  struct MenuIcon *next; ///< the window sprite's list link
+  s8 kind;
+  u8 active;
+  u16 x;
+  u16 y;
+  u8 unk00a[2];
+  u16 animStep;
+  u8 unk0e;
+  u8 sentinel;
+  u8 unk010[4];
+  struct SpriteAttr oam;
+};
+
+struct MenuWindow {
+  u8 unk000[0xc];
+  u16 x;
+  u16 y;
+};
+
+struct MenuArrow {
+  u8 unk00[5];
+  u8 mode;
+  u8 unk06[6];
+  u16 timer;
+};
+
+struct MenuPageWork {
+  u8 unk000[0x4c];
+  struct MenuPageIcon *icons[32];
+  u8 unk0cc[0x5c];
+  u16 colours[4];
+  u8 unk130[0x48];
+  struct MenuArrow *up;
+  struct MenuArrow *down;
+  u8 unk180[0x94];
+  u8 entryCount;
+  u8 unk215[3];
+};
+
+struct OwnerMenuState {
+  u8 unk000[0x10];
+  struct RenderInput *auxiliaryWindow;
+  struct WindowSprite *sideIcon[2];
+  s8 tabIndex[2];
+  u8 unk01e[0xa];
+  void *statusWindow;
+  u8 unk02c[0xc4];
+  void *selectorWindow;
+  u8 unk0f4[4];
+  struct AnimationObject *tabObjects[8];
+  s16 tabX[8];
+  s16 rowPositions[8];
+  s32 ownerScale[8];
+  u8 unk158[0x20];
+  struct WindowSprite *arrows[2];
+  u8 unk180[0x84];
+  s16 ownerIds[8];
+  u8 unk214;
+  u8 partyCount;
+  u8 unk216[6];
+  u16 page;
+  u16 skipSlide;
+};
+
+struct InventoryMenuState {
+  u8 unk000[8];
+  s32 selectedOwner;
+  u8 unk00c[0x10];
+  s8 paneIndex;
+  u8 unk01d[7];
+  s32 itemWindow;
+  s32 statusWindow;
+  u8 unk02c[4];
+  void *infoWindow;
+  s32 equipWindow;
+  u8 unk038[0xb8];
+  s32 messageWindow;
+  u8 unk0f4[0x74];
+  u16 selectedSlots[2];
+  u16 selectedItems[2];
+  u8 unk170[0x54];
+  u16 items[32];
+  s16 ownerIds[8];
+  u8 itemCount;
+  u8 partyCount;
+  u8 paneOwner[2];
+  struct WindowSprite *selectedItemIcon;
+  u8 unk21c[0x42];
+  u16 messageOffset;
+  u8 unk260[4];
+  s8 selectedIndexByOwner[8];
+  u8 unk26c[0x282];
+  s16 resourceSlots[2];
+  u8 unk4f2[2];
+};
+
+/// The Psynergy menu's work (the menu heap slot) as these functions read it.
+struct PsynergyMenuState {
+  u8 unk000[8];
+  s32 selectedOwner;
+  u8 unk00c[4];
+  struct MenuWindow *rowWindow;
+  struct MenuIcon *sideIcons[2];
+  s8 tabIndex[2];
+  s8 tabCount;
+  u8 unk01f[5];
+  s32 psynergyWindow;
+  void *statusWindow;
+  s32 shortcutWindow;
+  void *infoWindow;
+  u8 unk034[4];
+  s32 listWindow;
+  u8 unk03c[0xc];
+  struct MenuIcon *entryGridCursor;
+  struct MenuIcon *entryIcons[32];
+  u8 unk0cc[0x24];
+  s32 messageWindow;
+  u8 unk0f4[4];
+  void *tabObjects[8];
+  u8 unk118[0x50];
+  u16 paneRow[2];    ///< each pane's Psynergy row chosen
+  u16 paneAction[2]; ///< each pane's Psynergy chosen, as a member action entry
+  u8 unk170[8];
+  struct MenuIcon *paneIcon[2];
+  u8 unk180[0x44];
+  u16 psynergies[32];
+  u16 ownerIds[8];
+  u8 psynergyCount; ///< the chosen member's Psynergy listed
+  u8 memberCount;
+  /// The user and the target: [1] is MENU_TARGET_WHOLE_PARTY for Psynergy on
+  /// the whole party.
+  u8 memberIds[2];
+  struct MenuIcon *cursorIcon;
+  /// bits: 0 set after a use or a cancelled target
+  u16 flags;
+  u16 skipSlide; ///< 1 skips the cursor's next slide once
+  u8 unk220[0x3e];
+  s16 useResult; ///< the use's result message, after MsgItemUseResult
+  u8 unk260[4];
+  s8 selectedIndexByOwner[8];
+  u8 mode; ///< 0 to use Psynergy; 1 or 2 to set the L or R shortcut
+  u8 unk26d[3];
+};
+
+struct DjinnUnit {
+  u8 unk000[0xf8];
+  u32 djinnHeld[4];
+  u32 djinnSet[4];
+};
+
 // The menu object's functions its parts call before their definitions, or
 // with declarations of their own that disagree.
 void StatusPanel_DrawHpPp(struct BattleUnit *unit, s32 window);
@@ -110,5 +288,10 @@ void Text_DrawStatComparison(const struct BattleUnit *alt,
                              const struct BattleUnit *base, s32 work);
 void Text_DrawCharacterAtOffsetFar(s32 message, struct RenderInput *window,
                                    s32 x, s32 y);
+
+// Tags the parts name in prototypes before the part that defines them.
+struct MenuEntryWindow;
+struct MenuPanel;
+struct OwnerList;
 
 #endif

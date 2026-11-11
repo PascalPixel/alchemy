@@ -1,6 +1,6 @@
 # The Lost Age: menu
 
-The Lost Age's field menu and its screens (`ability/`, `item/`), with the two
+The Lost Age's field menu and its screens (`menu.c`), with the two
 small banks the Title calls: the staff credits (`credits.c`, its background
 decoders in `credits/`) and the Title's intro (`title_intro.c`, its data in
 `title_intro/`). [Menus](../../../tbs/src/menu/README.md) explains how these
@@ -11,13 +11,12 @@ the lobby are scene [overlays](../../../tbs/glossary.md#overlay) in
 
 ## What differs from The Broken Seal
 
-- `menu.c` is The Broken Seal's menu object as far as the pieces the screens
-  share and the start of the Item screen, written as its parts
-  `menu/shared.c` and `menu/item.c`, cut where The Broken Seal's are. The
-  rest of the item menu and of the bank follow a function the German,
-  French, Spanish and Italian editions add, still a scaffold, so they stay
-  files of their own, one function or small family to a file, some still
-  named for their address (`f0fae8c.c`).
+- `menu.c` is the whole bank's C, one object as The Broken Seal's is, written
+  as parts in `menu/` cut where The Broken Seal's are: `shared.c`, `item.c`,
+  `psynergy.c`, `status.c`, `use.c`, `djinn.c`, `djinn_preview.c` and
+  `icons.c`. There is no `djinn_figures.c`: this game places its menu icons
+  after the other icons, at the end of `icons.c`. The bank's table data stays
+  in `menu_tables.c`, linked after the menu's graphics and strings.
 - `title_intro.c` and `credits.c` are one object each, as The Broken Seal's
   are; `credits.c` also holds the scrolling pictures and their border
   strips, which The Broken Seal's credits do not have.

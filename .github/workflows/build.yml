@@ -47,8 +47,8 @@ jobs:
 
       - name: Install the build tools
         run: |
-          sudo apt-get update -q
-          sudo apt-get install -yq --no-install-recommends binutils-arm-none-eabi libpng-dev ccache
+          sudo apt-get -o Acquire::Retries=5 update -q
+          sudo apt-get -o Acquire::Retries=5 install -yq --no-install-recommends binutils-arm-none-eabi libpng-dev ccache
 
       - name: Read the compiler pin
         id: pin

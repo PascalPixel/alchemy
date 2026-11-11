@@ -7,11 +7,13 @@ the [battle effects](../../../tbs/glossary.md#battle-effect) are in
 
 ## What differs from The Broken Seal
 
-- The code is not yet gathered into objects with parts. Most files hold one
-  function or a small family and are named for it (`battle_event.c`,
-  `actor_reset_fields.c`); `presentation/`, `motion/`, `party/` and
-  `summon/` group the rest, and some files are still named by their address
-  (`f11b2c4.c`, `d01297c4.s`).
+- The code is only partly gathered into objects with parts. `battle.c` holds
+  the bank's first five parts, cut where The Broken Seal's are: the debug
+  routines, a battle's setup, link battles, the whole battle and the battle
+  sprites. The rest is still one function or a small family to a file, named
+  for it (`battle_event.c`, `actor_reset_fields.c`); `presentation/`,
+  `motion/`, `party/` and `summon/` group some, and some files are still named
+  by their address (`f11b2c4.c`, `d01297c4.s`).
 - The tables (`actflags.tsv`, `actstat.tsv`, the
   [formations](../../../tbs/glossary.md#formation) in `formatn.tsv` and the
   debug parameter sets in `debug_parameter_sets.tsv`) are still TSV, packed by

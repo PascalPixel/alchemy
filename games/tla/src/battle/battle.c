@@ -1,33 +1,17 @@
-// Battle: place objects for all units. The first section was written as
-// actor_commit_placement.c.
+/// @file
+/// The battle object, the battle bank's C as The Broken Seal's battle.c
+/// begins: the debug routines, a battle's setup, link battles, the whole
+/// battle and the battle sprites. battle_internal.h holds what the parts
+/// share; the parts under battle/ are included here in the order their code
+/// has in the ROM. Camelot's own files are not recoverable: the ROM shows one
+/// object, and these parts are ours, cut where The Broken Seal's are.
 
-#include "types.h"
-#include "battle.h"
-#include "battle_side.h"
-#include "battle_display.h"
+#include "battle_internal.h"
 
-/// Readies every unit's battle graphics, releasing those of departed units,
-/// and resets everyone's display mode and motion.
-void BattleObject_Put(void) {
-  s16 list[14];
-
-  BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
-  BattleActor_SpawnObjectsForList(list, 1);
-}
-
-//--------------------------------------------------------------------------
-
-// list_all_units_and_submit.c
-
-// Battle: place objects for all units.
-
-//--------------------------------------------------------------------------
-
-/// Readies every unit's battle graphics, releasing those of departed units,
-/// and keeps their display modes and motions.
-void BattleParty_ListAllUnitsAndSubmit(void) {
-  s16 list[14];
-
-  BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
-  BattleActor_SpawnObjectsForList(list, 0);
-}
+// The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
+// parts").
+#include "battle/debug.c"
+#include "battle/setup.c"
+#include "battle/link.c"
+#include "battle/run.c"
+#include "battle/sprite_slots.c"

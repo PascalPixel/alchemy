@@ -482,7 +482,6 @@ FORMATTED := $(shell git ls-files 'games/tbs/*.c' 'games/tbs/*.h' 'games/tla/inc
                $(addprefix games/tla/include/,call.h ed_asm.h edition.h fixed_math.h lib.h macros.h static_assert.h stddef.h string.h) \
                games/tla/src/sound/sound.c games/tla/src/sound/tables.c games/tla/src/system/savedata.c games/tla/src/system/system/save.c 'games/tla/src/gamepak/flash/*.c' \
                $(addprefix games/tla/src/window/screens/,party_status.c save.c) \
-               games/tla/src/battle/wait_sync.c \
                games/tla/src/graphics/credits/glyph_widths.h \
                games/tla/src/graphics/lucky_dice/tables.h games/tla/src/graphics/lucky_wheels/reel_tables.h)
 .PHONY: format-check

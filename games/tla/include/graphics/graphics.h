@@ -83,7 +83,6 @@ void Resource_ClearOwnerListAndCounters(void);
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
                                    s32 shift);
 s32 ItemIcon_Compose(u32 code, u32 layers);
-void Unit_LearnPsynergyFar(void);
 void WindowSprite_ClearList(void *work);
 void WindowSprite_Release(struct WindowSprite *node);
 #ifndef OWN_Resource_DecodeByteLzInRam

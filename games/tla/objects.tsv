@@ -1052,37 +1052,7 @@ main	rom_main_08	games/tla/src/battle/model_bit_dispatch
 main	rom_main_08	games/tla/src/battle/model_bit_commands
 main	rom_main_08	games/tla/src/battle/color_scale_kernel
 main	rom_main_08	games/tla/src/battle/color_scale_loader
-main	rom_main_08	games/tla/src/battle/presentation/m8118430	.text
-main	rom_main_08	games/tla/src/battle/presentation/f11843c	.text
-main	rom_main_08	games/tla/src/battle/presentation/f1185c4	.text
-main	rom_main_08	games/tla/src/battle/presentation/f118738	.text	en de es fr it ja
-main	rom_main_08	games/tla/src/battle/presentation/m8118954	.text
-main	rom_main_08	games/tla/src/battle/presentation/f118958	.text
-main	rom_main_08	games/tla/src/battle/presentation/f118adc	.text
-main	rom_main_08	games/tla/src/battle/presentation/announce	.text
-main	rom_main_08	games/tla/src/battle/presentation/f118c68	.text
-main	rom_main_08	games/tla/src/battle/presentation/tile_pattern	.text
-main	rom_main_08	games/tla/src/battle/party/reset_active_fields	.text
-main	rom_main_08	games/tla/src/battle/party/f118e64	.text
-main	rom_main_08	games/tla/src/battle/party/f118f6c	.text
-main	rom_main_08	games/tla/src/battle/update_name_entries	.text
-main	rom_main_08	games/tla/src/battle/copy_five_chars	.text
-main	rom_main_08	games/tla/src/battle/wait_sync	.text
-main	rom_main_08	games/tla/src/battle/party/assign_member_slots	.text
-main	rom_main_08	games/tla/src/battle/presentation/clear_link_payload	.text
-main	rom_main_08	games/tla/src/battle/presentation/f1195ec	.text
-main	rom_main_08	games/tla/src/battle/presentation/camera_create	.text
-main	rom_main_08	games/tla/src/battle/tutorial_battle_effect	.text
-main	rom_main_08	games/tla/src/battle/tutorial_message	.text
-main	rom_main_08	games/tla/src/battle/f1197f0	.text
-main	rom_main_08	games/tla/src/battle/party/prepare_active_owners	.text
-main	rom_main_08	games/tla/src/battle/party/prepare_reserve_owners	.text
-main	rom_main_08	games/tla/src/battle/party/list_living_units	.text
-main	rom_main_08	games/tla/src/battle/party/party	.text
 main	rom_main_08	games/tla/src/battle/battle	.text
-main	rom_main_08	games/tla/src/battle/summon/class_is_valid	.text
-main	rom_main_08	games/tla/src/battle/summon/register_actor_sprites	.text
-main	rom_main_08	games/tla/src/battle/presentation/find_free_slot	.text
 main	rom_main_08	games/tla/src/battle/presentation/reset_actor	.text
 main	rom_main_08	games/tla/src/battle/presentation/f11a7ac	.text
 main	rom_main_08	games/tla/src/battle/party/get_step_pair	.text

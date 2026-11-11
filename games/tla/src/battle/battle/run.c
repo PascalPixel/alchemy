@@ -1,9 +1,132 @@
-#include "types.h"
-#include "ram_buffer.h"
-#include "iwram_call.h"
-#include "battle_action.h"
-#include "battle_display.h"
-#include "version.h"
+/// @file
+/// A whole battle, Func_081197f0 (The Broken Seal's Battle_Run), its tutorial
+/// helpers, and the lists of the units in it.
+// Part of battle.c.
+
+#include "../battle_internal.h"
+
+s32 Func_0811a24c(s32 sideMask, u16 *unitIds);
+
+void Func_081195ec(void) {
+  u16 actors[6];
+  u16 reserves[6];
+  s32 actorCount;
+  s32 reserveCount;
+  s32 count;
+  struct BattleWork *work = Ram_HeapSlots->battleWork;
+  s32 i;
+
+  if (Func_0811a24c(1, 0) == 0)
+    return;
+  count = actorCount = BattleParty_ListActorIds(1, actors);
+  reserveCount = BattleParty_PrepareReserveOwners(reserves);
+  if (count > reserveCount)
+    count = reserveCount;
+  BattleHighlight_SetModes(actors, 4);
+  wait(32);
+  for (i = 0; i < count; i++) {
+    s32 unit = work->partyUnits[i];
+    s32 id = reserves[i];
+    struct BattleObj *from = BattleObject_Get(unit);
+    struct BattleObj *to = BattleObject_Get(id);
+    struct MotionObject *object = to->object;
+    struct MotionObject *place = from->object;
+
+    to->anchorX = from->anchorX;
+    to->anchorZ = from->anchorZ;
+    Actor_SetPositionAndResetMotionFar((void *)object, place->x, place->y,
+                                        place->z);
+    gMainRoutineWork.activeOwners[i] = id;
+    work->partyUnits[i] = id;
+  }
+  for (i = 0; i < count; i++)
+    gMainRoutineWork.activeOwners[actorCount + i] = actors[i];
+  PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus);
+  BattleObject_Put();
+  BattleHighlight_SetModes(reserves, 6);
+  wait(32);
+}
+
+/// Allocates the battle camera (heap slot 48) and sets its starting view.
+// The values are those The Broken Seal's battle start sets inline after its
+// own allocation.
+void BattleCamera_Create(void) {
+  struct BattleCamera *camera =
+      HeapSlot_AllocEwram(48, sizeof(struct BattleCamera));
+  s32 *focus = camera->pos;
+
+  SET_VECTOR(focus, 0, 0x400000, 0);
+  SET_VECTOR(camera->eye, 0, 0xb40000, 0x400000);
+  camera->yaw = 0x2800;
+  camera->pitch = 0x5000;
+  camera->distance = 0x1000000;
+}
+
+struct BattleFxRequest {
+  s32 field00;
+  s32 field04;
+  s32 field08;
+  s32 field0c;
+  s32 field10;
+  s32 field14;
+  s32 field18;
+  u8 unk1c[8];
+  s16 field24;
+  u8 unk26[0x32];
+};
+
+void Func_08138050(struct BattleFxRequest *request, s32 value);
+
+s32 BattleObject_MarkForRelease(s32 objectId);
+s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 n);
+s32 BattleUnit_SetFar(s32 slot, s32 unit, s32 mask);
+s32 Enemy_Update(void);
+struct BattleObj *BattleObject_Get(s32 objectId);
+void BattleObject_Put(void);
+
+void Func_08119734(s32 id) {
+  struct BattleWork *work = Ram_HeapSlots->battleWork;
+  s32 unit;
+  s32 *object;
+
+  if (id == 78)
+    unit = 373;
+  else
+    unit = 376;
+  BattleObject_MarkForRelease(128);
+  BattleMotion_DestroyAllSlotObjects();
+  BattleEnemy_ClaimNameLetter(unit, 1);
+  BattleUnit_SetFar(128, unit, 255);
+  work->enemyIds[0] = 128;
+  work->enemyIds[1] = 255;
+  Enemy_Update();
+  object = (s32 *)BattleObject_Get(128);
+  BattleObject_Make((struct BattleObj *)object, 128, object[3] / Q16_ONE,
+                    object[4] / Q16_ONE);
+  BattleObject_Put();
+}
+
+void Func_081197a8(s32 value) {
+  struct BattleFxRequest request;
+
+  request.field10 = 0;
+  request.field08 = 128;
+  request.field0c = 0;
+  request.field14 = 1;
+  request.field24 = 128;
+  request.field04 = 0;
+  request.field00 = 0;
+  request.field18 = 0;
+  Func_08138050(&request, value);
+}
+
+s32 GameFlag_Test(s32);
+
+s32 Tutorial_GetDjinnGiveMessage(void) {
+  if (GameFlag_Test(0x175))
+    return (s32)MsgDjinnGiveTutorialB;
+  return (s32)MsgDjinnGiveTutorialA;
+}
 
 struct EncounterWork {
   s32 enemyGroup;
@@ -43,18 +166,10 @@ struct EncounterWork {
   u8 nextExtraCount;
   u8 unk866[0x16];
 };
-
-struct MainRoutineWorkView {
-  u8 unk000[0x20e];
-  s16 sceneCue;
-  u8 unk210[0x3b];
-  u8 battleStart;
-};
-
-extern struct MainRoutineWorkView gMainRoutineWork;
 extern s32 gBattleRandomSeed;
 extern volatile u16 gLinkStatus;
 extern u8 gCpuLoadDisplayEnabled;
+/// The actor sprite slot buffers, 0x4000 bytes a slot.
 extern u8 Data_02018000[];
 extern u8 MsgDowned[];
 // Messages 3203 and 3209, not yet named in this game's catalog.
@@ -62,9 +177,9 @@ extern u8 MsgPartyDefeated[];
 extern u8 MsgGoesDownInDefeat[];
 
 void *HeapSlot_AllocEwram(s32 slot, s32 size);
-void Task_ResetAll(void);
-void GameFlag_SetBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
+// The ROM's call here keeps the whole return register, as an s32 return
+// does; system/system/flags.c defines it returning u8.
 s32 GameFlag_GetByte(s32 flag);
 void Render_ResetTransformState(void);
 s32 Event_GetSpecialValueFar(void);
@@ -72,8 +187,6 @@ void ObjectSystem_InitializeFar(s32 mode);
 void WindowSystem_InitBattleFar(s32 mode);
 void BattleCamera_Create(void);
 s32 Func_08127cd4(s32 enemyGroup);
-void wait(s32 frames);
-void BattleParty_AssignMemberSlots(void);
 s32 Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void Task_SuspendAll(s32 mode);
@@ -83,11 +196,9 @@ void Func_08118c68(void);
 void BattleUnit_RefreshPlacement(void);
 void Func_08118eb0(void);
 void Func_08118f6c(void);
-u16 *Djinn_GetRecoveryTableFar(s32 owner);
 void Func_081185c4(void);
 void PartyStatus_CreateWindowFar(s32 layout);
 void Camera_InitializeDefaultTransform(void);
-void BattleObject_Put(void);
 void Func_081263c4(void);
 void Func_081263fc(s32 mode, s32 background, s32 value);
 void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale);
@@ -95,11 +206,10 @@ void BattleCamera_SetView(s32 a, s32 b, s32 c, s32 d);
 void Party_ReservedNoOp5B14(s32 value);
 void BattleSpoils_Clear(void);
 s32 VramCache_AllocEntry(s32 size);
-u32 Battle_RandomFar(void);
+s32 Func_0811a39c(s32 groups, u16 *dst);
 void Func_08125d74(s32 enemyCount, s32 enemyGroup);
 void Func_08118adc(void);
 void Func_0811b9fc(void);
-s32 Func_0811a39c(s32 side, s32 value);
 void Func_081195ec(void);
 void Func_0811d7e4(void);
 void PartyStatus_DrawFar(s32 mode);
@@ -108,7 +218,6 @@ s32 Battle_GatherActions(struct BattleActionRecord *actions);
 s32 AutoBattle_BuildActions(struct BattleActionRecord *actions);
 s32 Func_0811d9cc(struct BattleActionRecord *action, s32 delay);
 s32 AutoBattle_RunAction(struct BattleActionRecord *action);
-s32 Func_0811a24c(s32 side, s32 value);
 s32 BattleParty_ListLivingUnits(s32 side, u16 *unitIds);
 void Func_081197a8(s32 enemyGroup);
 s32 Battle_FindTaggedSlotByValue(s32 tag);
@@ -123,18 +232,10 @@ s32 Message_AllTypedFar(void);
 void Window_CloseFar(s32 window, s32 mode);
 void Func_08120060(s32 x, s32 y);
 void BattleStaging_ClearLinkPayload(void);
-s32 BattleUnit_SetFar(s32 slot, s32 unit, s32 mask);
-void MessageArgument_ClearAllFar(void);
-void MessageArgument_PushFar(s32 slot, s32 kind);
-void Message_ShowAndWaitCoreFar(s32 message);
-void BattleMessage_WaitForAdvance(void);
 void Battle_AwardSpoils(void);
 void Fade_ToBlack(s32 vblanks);
 void Fade_Wait(void);
-s32 BattleParty_PrepareActiveOwners(u16 *owners);
 void Func_0811843c(void);
-void BattleParty_ResetActiveRuntimeFields(void);
-void DjinnRecovery_CountDown(void);
 void Func_081263f0(void);
 
 s32 Func_081197f0(s32 enemyGroup) {
@@ -206,7 +307,7 @@ s32 Func_081197f0(s32 enemyGroup) {
      * instructions differ in tla-en. */
     do {
     } while (0);
-    gMainRoutineWork.battleStart = 4;
+    gMainRoutineWork.battleRule24b = 4;
   }
   if (battle->twoSided != 0) {
     // The seed's store in a once-only block keeps it ahead of the wait loop's
@@ -249,7 +350,7 @@ s32 Func_081197f0(s32 enemyGroup) {
   BattleUnit_RefreshPlacement();
   Func_08118eb0();
   Func_08118f6c();
-  if (*Djinn_GetRecoveryTableFar(0) != 0)
+  if (*(u16 *)Djinn_GetRecoveryTableFar(0) != 0)
     battle->partyStatus = 3;
   else
     battle->partyStatus = 1;
@@ -270,12 +371,12 @@ s32 Func_081197f0(s32 enemyGroup) {
   battle->encounterMode = 0;
   if (GameFlag_Test(0x16e) != 0) {
     battle->encounterMode = 1;
-  } else if (gMainRoutineWork.battleStart == 0) {
+  } else if (gMainRoutineWork.battleRule24b == 0) {
     if ((Battle_RandomFar() & 15) == 0)
       battle->encounterMode = 1;
     else if ((Battle_RandomFar() & 31) == 0)
       battle->encounterMode = 2;
-  } else if (gMainRoutineWork.battleStart == 6) {
+  } else if (gMainRoutineWork.battleRule24b == 6) {
     battle->encounterMode = 2;
   }
   Func_08125d74(enemyCount, enemyGroup);
@@ -288,7 +389,7 @@ s32 Func_081197f0(s32 enemyGroup) {
       Func_081195ec();
     Func_0811d7e4();
     Func_08118f6c();
-    if (*Djinn_GetRecoveryTableFar(0) != 0)
+    if (*(u16 *)Djinn_GetRecoveryTableFar(0) != 0)
       battle->partyStatus = 3;
     else
       battle->partyStatus = 1;
@@ -476,8 +577,282 @@ finished:
   BattleParty_ResetActiveRuntimeFields();
   Func_08124cc0();
   DjinnRecovery_CountDown();
-  gMainRoutineWork.battleStart = 0;
+  gMainRoutineWork.battleRule24b = 0;
   Task_Remove(Func_0811b9fc);
   Func_081263f0();
   return result;
+}
+
+s32 BattleParty_PrepareActiveOwners(u16 *owners) {
+  s32 limit;
+  s32 count;
+  s32 index;
+
+  limit = 4;
+  if (Ram_HeapSlots->battleWork->twoSided != 0)
+    limit = 3;
+
+  count = Party_CountActiveOwnersFar();
+  if (count > limit)
+    count = limit;
+
+  for (index = 0; index < count; index++) {
+    s32 owner = gMainRoutineWork.activeOwners[index];
+
+    if (owners != 0)
+      *owners++ = owner;
+    ((struct BattleUnit *)Unit_Get(owner))->side = 2;
+  }
+
+  if (owners != 0)
+    *owners = 0xff;
+  return count;
+}
+
+s32 BattleParty_PrepareReserveOwners(u16 *owners) {
+  s32 count;
+  s32 index;
+
+  count = Party_CountActiveOwnersFar();
+  if (count > 4)
+    count -= 4;
+  else
+    count = 0;
+  if (Ram_HeapSlots->battleWork->twoSided != 0)
+    count = 0;
+
+  for (index = 0; index < count; index++) {
+    s32 owner = gMainRoutineWork.activeOwners[index + 4];
+
+    if (owners != 0)
+      *owners++ = owner;
+    ((struct BattleUnit *)Unit_Get(owner))->side = 2;
+  }
+
+  if (owners != 0)
+    *owners = 0xff;
+  return count;
+}
+
+s32 BattleEnemy_List(s16 *unit_ids) {
+  s16 *output;
+  s32 count;
+  s32 id;
+  s32 limit;
+  s32 listed;
+
+  output = unit_ids;
+  listed = 0;
+  limit = 6;
+  count = 0;
+  if (output != NULL) {
+    if (GameFlag_Test(0x16c) != 0)
+      limit = 3;
+    id = 0x80;
+    limit += 0x80;
+    for (; id < limit; id++) {
+      if (((struct BattleUnit *)Unit_Get(id))->side != 0) {
+        *output = id;
+        listed++;
+        output++;
+      }
+    }
+    count = listed;
+    *output = 0xff;
+  }
+  return count;
+}
+
+s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
+  u16 activeMembers[8];
+  u16 *base;
+  s32 remaining;
+  s32 enemyLimit;
+  u16 *output;
+  s32 livingCount;
+  s32 enemyCapacity;
+  u16 *member;
+  s32 unitId;
+  s16 hp;
+  s32 activeCount;
+  struct BattleUnit *unit;
+
+  output = unitIds;
+  livingCount = 0;
+  enemyCapacity = 6;
+  if (GameFlag_Test(0x16C) != 0) {
+    enemyCapacity = 3;
+  }
+  if (sideMask & BATTLE_SIDE_PARTY) {
+    base = activeMembers;
+    activeCount = BattleParty_PrepareActiveOwners(base);
+    if (livingCount < activeCount) {
+      member = base;
+      remaining = activeCount;
+      do {
+        unitId = *member;
+        member += 1;
+        hp = ((struct BattleUnit *)Unit_Get(unitId))->hp;
+        if (hp > 0) {
+          if (output != NULL) {
+            *output = unitId;
+            output += 1;
+          }
+          livingCount += 1;
+        }
+        remaining -= 1;
+      } while (remaining != 0);
+    }
+  }
+  if (sideMask & BATTLE_SIDE_ENEMIES) {
+    remaining = 0x80;
+    enemyLimit = enemyCapacity + 0x80;
+    if (remaining < enemyLimit) {
+      do {
+        unit = Unit_Get(remaining);
+        if (unit->side != 0 && unit->hp > 0) {
+          if (output != NULL) {
+            *output = remaining;
+            output += 1;
+          }
+          livingCount += 1;
+        }
+        remaining += 1;
+      } while (remaining < enemyLimit);
+    }
+  }
+  if (output != NULL) {
+    *output = 0xFF;
+  }
+  return livingCount;
+}
+
+/// As BattleParty_ListLivingUnits, with the reserve owners listed after the
+/// active ones.
+s32 Func_0811a24c(s32 sideMask, u16 *unitIds) {
+  u16 members[10];
+  u16 *base;
+  s32 remaining;
+  s32 enemyLimit;
+  u16 *output;
+  s32 livingCount;
+  s32 enemyCapacity;
+  u16 *member;
+  s32 unitId;
+  s16 hp;
+  s32 count;
+  struct BattleUnit *unit;
+
+  output = unitIds;
+  livingCount = 0;
+  enemyCapacity = 6;
+  if (GameFlag_Test(0x16C) != 0) {
+    enemyCapacity = 3;
+  }
+  if (sideMask & BATTLE_SIDE_PARTY) {
+    base = members;
+    count = BattleParty_PrepareActiveOwners(base);
+    count += BattleParty_PrepareReserveOwners(base + count);
+    if (livingCount < count) {
+      member = base;
+      remaining = count;
+      do {
+        unitId = *member;
+        member += 1;
+        hp = ((struct BattleUnit *)Unit_Get(unitId))->hp;
+        if (hp > 0) {
+          if (output != NULL) {
+            *output = unitId;
+            output += 1;
+          }
+          livingCount += 1;
+        }
+        remaining -= 1;
+      } while (remaining != 0);
+    }
+  }
+  if (sideMask & BATTLE_SIDE_ENEMIES) {
+    remaining = 0x80;
+    enemyLimit = enemyCapacity + 0x80;
+    if (remaining < enemyLimit) {
+      do {
+        unit = Unit_Get(remaining);
+        if (unit->side != 0 && unit->hp > 0) {
+          if (output != NULL) {
+            *output = remaining;
+            output += 1;
+          }
+          livingCount += 1;
+        }
+        remaining += 1;
+      } while (remaining < enemyLimit);
+    }
+  }
+  if (output != NULL) {
+    *output = 0xFF;
+  }
+  return livingCount;
+}
+
+s32 BattleParty_ListActorIds(s32 groups, u16 *dst) {
+  struct BattleWork *order;
+  s32 count;
+  s32 i;
+
+  order = Ram_HeapSlots->battleWork;
+  count = 0;
+  if (groups & 1) {
+    for (i = 0; order->partyUnits[i] != 255; i++) {
+      if (order->partyUnits[i] != 254) {
+        if (dst != NULL)
+          *dst++ = order->partyUnits[i];
+        count++;
+      }
+    }
+  }
+  if (groups & 2) {
+    for (i = 0; order->enemyIds[i] != 255; i++) {
+      if (order->enemyIds[i] != 254) {
+        if (dst != NULL)
+          *dst++ = order->enemyIds[i];
+        count++;
+      }
+    }
+  }
+  if (dst != NULL)
+    *dst = 255;
+  return count;
+}
+
+/// As BattleParty_ListActorIds, listing only the actors whose HP is not 0.
+s32 Func_0811a39c(s32 groups, u16 *dst) {
+  struct BattleWork *order;
+  s32 count;
+  s32 i;
+
+  order = Ram_HeapSlots->battleWork;
+  count = 0;
+  if (groups & 1) {
+    for (i = 0; order->partyUnits[i] != 255; i++) {
+      if (order->partyUnits[i] != 254 &&
+          ((struct BattleUnit *)Unit_Get(order->partyUnits[i]))->hp != 0) {
+        if (dst != NULL)
+          *dst++ = order->partyUnits[i];
+        count++;
+      }
+    }
+  }
+  if (groups & 2) {
+    for (i = 0; order->enemyIds[i] != 255; i++) {
+      if (order->enemyIds[i] != 254 &&
+          ((struct BattleUnit *)Unit_Get(order->enemyIds[i]))->hp != 0) {
+        if (dst != NULL)
+          *dst++ = order->enemyIds[i];
+        count++;
+      }
+    }
+  }
+  if (dst != NULL)
+    *dst = 255;
+  return count;
 }

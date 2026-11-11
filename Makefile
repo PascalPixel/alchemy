@@ -35,7 +35,7 @@ help:
 	  'make compare-tbs-en     build one edition and check it against rom.sha1' \
 	  'make compare-tbs        the six ☀️ editions, which need no ROM' \
 	  'make compare-editions   all twelve editions, which need no ROM' \
-	  'make modern             the six ☀️ editions'\'' C through a current GCC (MODERN_CC)' \
+	  'make modern             all twelve editions'\'' C through a current GCC (MODERN_CC)' \
 	  'make test               test the C build tools' \
 	  'make devtools           build the optional reconstruction tools (requires Rust)' \
 	  'make progress           DONE code and data in each edition built' \
@@ -57,10 +57,13 @@ compare-tla: $(addprefix compare-,$(TLA))
 compare-editions: compare-tbs compare-tla
 compare: compare-tbs-en
 
-# make modern: the six ☀️ editions' C through a current GCC (MODERN_CC).
+# make modern: all twelve editions' C through a current GCC (MODERN_CC);
+# modern-tbs and modern-tla for one game's six.
 ifndef EDITION
-.PHONY: modern
-modern: $(addprefix modern-,$(TBS))
+.PHONY: modern modern-tbs modern-tla
+modern-tbs: $(addprefix modern-,$(TBS))
+modern-tla: $(addprefix modern-,$(TLA))
+modern: modern-tbs modern-tla
 modern-%: tools
 	@$(MAKE) $(SERIAL) -f Makefile EDITION=$* modern
 endif

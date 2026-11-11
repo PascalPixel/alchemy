@@ -27,7 +27,7 @@ Setup is in `INSTALL.md`; no edition needs a ROM to build. The reference ROMs th
 make bootstrap         # the tools, the compilers, GAS 2.10 and libgcc (plain make does it too)
 make compare-editions  # all twelve editions: required before every commit (W5)
 make -j8 compare-tbs   # the six ☀️ editions; compare-tla-en for one edition
-make modern            # ☀️'s C with a current GCC: no errors
+make modern            # both games' C with a current GCC: no errors (modern-tbs, modern-tla)
 make test              # the build tools' tests
 make devtools          # optional, Rust: clones alchemy-devtools the first time
 git config core.hooksPath .hooks   # send verified measurements when pushing main

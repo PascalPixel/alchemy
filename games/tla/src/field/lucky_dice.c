@@ -459,8 +459,8 @@ void LuckyDice_Run(void) {
   sprites->coinsWindow = window;
   Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, window,
                                 DICE_COINS_LABEL_X, 0);
-  Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6, (s32)sprites->coinsWindow, 0,
-                             0);
+  Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
+                             (s32)sprites->coinsWindow, 0, 0);
   window =
       Window_CreateFar(DICE_HELP_WINDOW_X, 16, DICE_HELP_WINDOW_WIDTH, 4, 6);
   sprites->helpWindow = window;
@@ -554,7 +554,8 @@ void LuckyDice_Run(void) {
         Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings - 1,
                                       sprites->winningsWindow,
                                       digits * 8 + DICE_WINNINGS_COINS_X, 0);
-        Text_DrawNumberInWindowFar(winnings, digits, (s32)sprites->winningsWindow,
+        Text_DrawNumberInWindowFar(winnings, digits,
+                                   (s32)sprites->winningsWindow,
                                    DICE_WINNINGS_NUMBER_X, 0);
       }
       if (payoutTimer > 0) {

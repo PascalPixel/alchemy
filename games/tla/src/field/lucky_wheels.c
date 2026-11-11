@@ -84,7 +84,7 @@ void ColorBuffer_ScaleNonzeroThreeQuarters(u8 *source, u8 *destination,
                                            s32 size);
 
 static __inline__ s32 BattleStaging_FillWords(void *destination, s32 size,
-                                           u32 value) {
+                                              u32 value) {
   return Iwram_FillWords(destination, size, value);
 }
 
@@ -1309,13 +1309,14 @@ void LuckyWheels_Run(void) {
     Graphics_ScaleRgb555(bgShade, (u16 *)0x05000000, 0, 0x100);
     REG_DISPCNT = 0x3740;
     if (PartyInventory_CountItemFar(228) == 1) {
-      struct Window *window = Window_CreateFar(HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH,
-                                    CONTROLS_WINDOW_HEIGHT, 6);
+      struct Window *window = Window_CreateFar(
+          HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH, CONTROLS_WINDOW_HEIGHT, 6);
 
       state->window = window;
       Text_DrawCharacterAtOffsetFar((s32)MsgSlotsControls, window, 0, 0);
     } else {
-      struct Window *window = Window_CreateFar(HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH, 4, 6);
+      struct Window *window =
+          Window_CreateFar(HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH, 4, 6);
       s32 message;
 
       state->window = window;

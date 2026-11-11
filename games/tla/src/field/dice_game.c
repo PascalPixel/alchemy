@@ -683,8 +683,8 @@ void Func_081b83c4(void) {
   sprites->coinsWindow = window;
   Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, window, COIN_TEXT_X,
                                 0);
-  Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6, (s32)sprites->coinsWindow, 0,
-                             0);
+  Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
+                             (s32)sprites->coinsWindow, 0, 0);
   window = Window_CreateFar(BET_WINDOW_X, 3, BET_WINDOW_WIDTH, 3, 6);
   sprites->betWindow = window;
   Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins - 1, window, 0, 0);
@@ -733,7 +733,8 @@ void Func_081b83c4(void) {
           bet = Party_GetAverageLevelFar() * 10;
           if ((u32)bet > (u32)gMainRoutineWork.coins)
             bet = gMainRoutineWork.coins;
-          Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow, BET_TEXT_X, 5);
+          Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow,
+                                     BET_TEXT_X, 5);
           Party_AdjustCoinsFar(-bet);
           Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                                      (s32)sprites->coinsWindow, 0, 0);
@@ -741,7 +742,8 @@ void Func_081b83c4(void) {
           timer = 0;
           slide = 0;
           bet = Party_GetAverageLevelFar() * 10;
-          Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow, BET_TEXT_X, 5);
+          Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow,
+                                     BET_TEXT_X, 5);
         }
       }
     } else if (state == 1) {
@@ -774,7 +776,8 @@ void Func_081b83c4(void) {
           bet = Party_GetAverageLevelFar() * 10;
           if ((u32)bet > (u32)gMainRoutineWork.coins)
             bet = gMainRoutineWork.coins;
-          Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow, BET_TEXT_X, 5);
+          Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow,
+                                     BET_TEXT_X, 5);
           Party_AdjustCoinsFar(-bet);
           Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                                      (s32)sprites->coinsWindow, 0, round);
@@ -989,7 +992,8 @@ void Func_081b83c4(void) {
             bet *= multiplier;
           else
             bet <<= 1;
-          Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow, BET_TEXT_X, 5);
+          Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow,
+                                     BET_TEXT_X, 5);
           multiplier <<= 1;
           if (round == 5) {
             target = 14;
@@ -1011,7 +1015,8 @@ void Func_081b83c4(void) {
           target = 14;
           round = 0;
           bet = Party_GetAverageLevelFar() * 10;
-          Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow, BET_TEXT_X, 5);
+          Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow,
+                                     BET_TEXT_X, 5);
           multiplier = 0;
           Sound_PlayFar(1);
           state = 0;
@@ -1062,7 +1067,8 @@ void Func_081b83c4(void) {
           timer = 0;
           paletteRequest = 1;
           bet = Party_GetAverageLevelFar() * 10;
-          Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow, BET_TEXT_X, 5);
+          Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow,
+                                     BET_TEXT_X, 5);
           if (winnings > 0) {
             Sound_PlayFar(105);
             Party_AdjustCoinsFar(winnings);
@@ -1076,7 +1082,8 @@ void Func_081b83c4(void) {
           Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                                      (s32)sprites->coinsWindow, 0, 0);
           bet--;
-          Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow, BET_TEXT_X, 5);
+          Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow,
+                                     BET_TEXT_X, 5);
         }
       }
     } else if (state == 5) {

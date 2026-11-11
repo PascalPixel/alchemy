@@ -20,7 +20,10 @@ explains how this code works.
   the parts of one object, `field_sequence.c`. The main routine, which The
   Broken Seal also keeps in its System folder, is in
   [The Lost Age: system](../system/README.md).
-- The folder is grouped by family of the field's code rather than by The
+- `field.c` holds the start of the field bank's C as parts under `field/`,
+  cut where The Broken Seal's field.c parts are: `decompress.c` and
+  `sprite_draw.c` so far. The rest of the bank is still separate files.
+- The rest of the folder is grouped by family of the field's code rather than by The
   Broken Seal's objects, one function or small family to a file. A family
   folder holds its files whatever their bank (`object/` holds files of three
   banks). `work9c/` and `worka0/` are named for the

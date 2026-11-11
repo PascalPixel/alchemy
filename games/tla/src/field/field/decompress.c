@@ -1,8 +1,17 @@
 /// @file
-/// Resources: decompress LZ data.
+/// Resource metadata records and LZ decompression.
+// Part of field.c.
 
-#include "types.h"
-#include "scene.h"
+#include "../field_internal.h"
+
+extern struct AnimationMetadata gResource_Data012[];
+
+struct AnimationMetadata *Resource_GetMetadataRecordFar(u32 id) {
+  id &= 0xfff;
+  if (id >= 716)
+    id = 0;
+  return &gResource_Data012[id];
+}
 
 /// Decompress source into destination and return destination.
 /// source[0-1]: offset to commands; 0 means uncompressed, returning source + 2.
@@ -10,8 +19,8 @@
 /// read each control byte from its least significant bit:
 /// 1: copy one literal byte.
 /// 0: read two bytes, high then low; zero terminates.
-/// Low 12 bits give distance; high 4 bits + 2 give length, or the next byte + 18
-/// if those 4 bits are zero. Copy from that distance behind source + 2.
+/// Low 12 bits give distance; high 4 bits + 2 give length, or the next byte +
+/// 18 if those 4 bits are zero. Copy from that distance behind source + 2.
 u8 *Resource_DecompressLz(const u8 *source, u8 *destination) {
   s32 token;
   u32 length;

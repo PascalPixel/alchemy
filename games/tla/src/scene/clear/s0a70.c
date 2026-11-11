@@ -5,11 +5,6 @@
 /// The character a cell of the password grid stands for, in the Japanese
 /// font's codes: kana, the voiced ones with the dakuten mark in the high byte.
 void Func_02000a70(s32 cell, u16 *text) {
-  /* FAKEMATCH(pin): the dakuten mark pinned to r2 as a halfword, so that it
-   * loads before the cell is copied for the add, as the native has; as a plain
-   * local the copy comes first, differ 4. */
-  register u16 mark asm("r2");
-
   text[1] = 0;
   text[2] = 0;
   if (cell <= 14)
@@ -20,19 +15,16 @@ void Func_02000a70(s32 cell, u16 *text) {
     text[0] = 0x86;
   else if (cell == 44)
     text[0] = 0xfd;
-  else if (cell <= 55) {
-    mark = 0x4000;
-    text[0] = (cell + 104) | mark;
-  } else if (cell == 56)
+  else if (cell <= 55)
+    text[0] = (cell + 104) | 0x4000;
+  else if (cell == 56)
     text[0] = 0xe0 | 0x4000;
   else if (cell == 57)
     text[0] = 0xe3 | 0x4000;
   else if (cell == 58)
     text[0] = 0xe4 | 0x4000;
-  else {
-    mark = 0x4000;
-    text[0] = (cell + 175) | mark;
-  }
+  else
+    text[0] = (cell + 175) | 0x4000;
 }
 #else
 /// The character a cell of the password grid stands for, in the font's

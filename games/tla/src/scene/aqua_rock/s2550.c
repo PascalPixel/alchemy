@@ -8,9 +8,6 @@ void Func_02002550(void) {
   buffer = MemAlloc_(0x100);
   Func_020028b8(gData_02002c74, buffer);
   work->vramEntry = Resource_FindFreeEntry();
-  /* FAKEMATCH(barrier): the empty asm keeps the entry's store before the size
-   * is built; as no asm, 2 instructions differ. */
-  __asm__("");
   VramCache_Load(work->vramEntry, 0x100, buffer);
   Heap_Release(buffer);
   // Use a value-returning call; a void declaration changes argument order

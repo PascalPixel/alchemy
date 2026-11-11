@@ -6,9 +6,6 @@
 
 extern const u8 gData_02000744[];
 
-/// The pressed keys, read again at each test.
-#define KEYS_PRESSED (((volatile struct InputState *)&gInput)->pressed)
-
 u8 *Unit_Get(s32 owner);
 void Unit_Calculate(s32 owner);
 void *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
@@ -24,7 +21,7 @@ void Func_0200017c(s32 delta);
 /// The pressed keys under a mask, for the last test of a group: the next
 /// test loads gInput's address again.
 static inline u32 Input_PressedFenced(u32 mask) {
-  u32 keys = KEYS_PRESSED & mask;
+  u32 keys = gInput.pressed & mask;
 
   return keys;
 }
@@ -56,23 +53,19 @@ void Func_020001a8(void) {
       Text_DrawNumberInWindow(record[15], 0, win, 72, 48);
     }
 
-    /* FAKEMATCH(volatile): the pressed keys read through a volatile view
-     * (KEYS_PRESSED), as The Broken Seal declares gKeyState volatile, so each
-     * test reloads them; as a plain read the first two tests merge into one
-     * mask and 30 instructions differ. */
-    if ((KEYS_PRESSED & 8) != 0 || Input_PressedFenced(4) != 0) {
+    if ((gInput.pressed & 8) != 0 || Input_PressedFenced(4) != 0) {
       Func_0200017c(5);
       Sound_Play(93);
       flag = 1;
     }
 
-    if ((KEYS_PRESSED & 1) != 0) {
+    if ((gInput.pressed & 1) != 0) {
       Func_0200017c(1);
       Sound_Play(91);
       flag = 1;
     }
 
-    if ((KEYS_PRESSED & 2) != 0) {
+    if ((gInput.pressed & 2) != 0) {
       Sound_Play(113);
       WindowSprite_RedrawSavedRect(win);
       wait(1);

@@ -116,11 +116,7 @@ void Func_02001e58(void) {
    * 2 of 92 instructions differ in tla-en. */
   flags = &leader->motionFlags;
   zero = 0;
-  /* FAKEMATCH(dead): gMainRoutineWork's address taken in a once-only block; as
-   * a plain statement, tla-en does not match. */
-  do {
-    party = &gMainRoutineWork;
-  } while (0);
+  party = &gMainRoutineWork;
   *flags = zero;
   Actor_SetSpeedParameters(party->currentOwner, 0x10000, 0x8000);
   Actor_SetPositionAndReset(party->currentOwner, 168, 80);

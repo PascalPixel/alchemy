@@ -15,18 +15,6 @@ static __inline__ void Champa_MessageOpen(s32 speaker, s32 flags) {
   FieldMessage_ShowAtActor(speaker, flags);
 }
 
-#define CHAMPA_EMOTE(actor, emote, frames)                                     \
-  {                                                                            \
-    /* FAKEMATCH(pin): the emote pinned to r1, so that it and the frames load  \
-     * before the actor, as the native has at every emote of this overlay; as  \
-     * a plain call through an inline the actor comes one row early wherever   \
-     * the emote takes two instructions, and an empty asm barrier at each call \
-     * moves the literal pools of a long scene. */                             \
-    register s32 emote_ __asm__("r1") = (emote);                               \
-                                                                               \
-    s32 frames_ = (frames);                                                    \
-    Actor_ShowEmote((actor), emote_, frames_);                                 \
-  }
 s32 Func_02002a44();
 s32 Func_02002b3c();
 s32 Func_02000c90();
@@ -65,9 +53,7 @@ void Func_02000e30(void) {
   Actor_SetPosition(27, 0xa80000, 0x2680000);
   Event_PlaySound(0x4e);
   Event_ShowMessage(0x19, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(4, 0x101, 0x14)
+  Actor_ShowEmote(4, 0x101, 0x14);
   Actor_WalkToAndWait(4, 312, 616);
   FieldCamera_MoveTo(0x1380000, -1, 0x2580000, 1);
   Func_02002b3c();
@@ -80,9 +66,7 @@ void Func_02000e30(void) {
   FieldActor_LaunchFromLeader(6, -16, 0x10, 0xc000);
   FieldActor_LaunchFromLeader(0x1c, -32, 0, 0xd000);
   FieldActor_WaitForMoveById(28);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(6, 0x100, 0x1e)
+  Actor_ShowEmote(6, 0x100, 0x1e);
   Event_ShowMessage(6, 0);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(20);
@@ -93,13 +77,9 @@ void Func_02000e30(void) {
   Event_ShowMessage(0x1c, 0);
   Actor_FaceDirection(28, 0xd000, 0);
   Actor_FaceDirectionAndWait(7, 0xc000);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(7, 0x100, 0x1e)
+  Actor_ShowEmote(7, 0x100, 0x1e);
   Event_ShowMessage(7, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x19, 0x101, 0x1e)
+  Actor_ShowEmote(0x19, 0x101, 0x1e);
   Champa_MessageOpen(0x2019, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     FieldEvent_Wait(15);
@@ -115,27 +95,17 @@ void Func_02000e30(void) {
   Actor_FaceDirection(7, 0, 0);
   Actor_FaceDirectionAndWait(4, 0x8000);
   FieldEvent_Wait(10);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(7, 0x101, 0)
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(4, 0x101, 0)
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x1c, 0x101, 0x32)
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(5, 0x107, 0x1e)
+  Actor_ShowEmote(7, 0x101, 0);
+  Actor_ShowEmote(4, 0x101, 0);
+  Actor_ShowEmote(0x1c, 0x101, 0x32);
+  Actor_ShowEmote(5, 0x107, 0x1e);
   Event_ShowMessage(0x2005, 0);
   Actor_FaceDirection(28, 0xd000, 0);
   Actor_FaceDirection(7, 0xc000, 0);
   Actor_FaceDirectionAndWait(4, 0xc000);
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(25, 0x3000);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x19, 0x109, 0x1e)
+  Actor_ShowEmote(0x19, 0x109, 0x1e);
   Event_ShowMessage(0x2019, 0);
   FieldEvent_Wait(5);
   Event_OpenMessage(0x2019, 0);
@@ -162,9 +132,7 @@ void Func_02000e30(void) {
     Event_ShowMessage(6, 0);
   }
   Actor_FaceDirectionAndWait(25, 0x5000);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x19, 0x105, 0x1e)
+  Actor_ShowEmote(0x19, 0x105, 0x1e);
   Event_ShowMessage(0x2019, 0);
   Actor_FaceDirection(4, 0xc000, 0);
   Actor_FaceDirection(5, 0xc000, 0);
@@ -193,30 +161,18 @@ void Func_02000e30(void) {
   Actor_FaceDirectionAndWait(28, 0);
   Actor_WalkToAndWait(26, 344, 616);
   FieldEvent_Wait(5);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(4, 0x102, 0)
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(5, 0x102, 0)
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(6, 0x102, 0)
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(7, 0x102, 0)
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x1c, 0x102, 0x1e)
+  Actor_ShowEmote(4, 0x102, 0);
+  Actor_ShowEmote(5, 0x102, 0);
+  Actor_ShowEmote(6, 0x102, 0);
+  Actor_ShowEmote(7, 0x102, 0);
+  Actor_ShowEmote(0x1c, 0x102, 0x1e);
   Actor_RunRepeatedMotion(6, 2);
   Event_ShowMessage(6, 0);
   Actor_SetAnimationAndWait(26, 3);
   Event_ShowMessage(0x1a, 0);
   Actor_FaceDirectionAndWait(5, 0xc000);
   Event_ShowMessage(0x2005, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x19, 0x108, 0x1e)
+  Actor_ShowEmote(0x19, 0x108, 0x1e);
   Event_ShowMessage(0x2019, 0);
   Event_ShowMessage(0x1b, 0);
   FieldActor_StartRepeatedMotion(4, 3);
@@ -238,24 +194,12 @@ void Func_02000e30(void) {
   Actor_FaceDirectionAndWait(28, 0x8000);
   Actor_WalkToAndWait(27, 232, 616);
   FieldEvent_Wait(10);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(4, 0x101, 0)
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(5, 0x101, 0)
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(6, 0x101, 0)
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(7, 0x101, 0)
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x1c, 0x101, 0x3c)
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x19, 0x101, 0x1e)
+  Actor_ShowEmote(4, 0x101, 0);
+  Actor_ShowEmote(5, 0x101, 0);
+  Actor_ShowEmote(6, 0x101, 0);
+  Actor_ShowEmote(7, 0x101, 0);
+  Actor_ShowEmote(0x1c, 0x101, 0x3c);
+  Actor_ShowEmote(0x19, 0x101, 0x1e);
   Event_ShowMessage(0x2019, 0);
   Actor_FaceDirectionAndWait(26, 0xb000);
   Event_ShowMessage(0x1a, 0);
@@ -271,12 +215,8 @@ void Func_02000e30(void) {
   Actor_FaceDirection(5, 0x8000, 0);
   Actor_FaceDirectionAndWait(6, 0);
   FieldEvent_Wait(10);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(6, 0x103, 0)
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(5, 0x103, 0x32)
+  Actor_ShowEmote(6, 0x103, 0);
+  Actor_ShowEmote(5, 0x103, 0x32);
   Actor_FaceDirectionAndWait(25, 0x3000);
   Actor_SetAnimationAndWait(25, 4);
   Event_ShowMessage(0x2019, 0);
@@ -288,24 +228,16 @@ void Func_02000e30(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(25, 0x5000);
   FieldEvent_Wait(5);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x19, 0x108, 0x1e)
+  Actor_ShowEmote(0x19, 0x108, 0x1e);
   Event_ShowMessage(0x2019, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(7, 0x100, 0x1e)
+  Actor_ShowEmote(7, 0x100, 0x1e);
   Event_ShowMessage(7, 0);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(10);
   Event_ShowMessage(0x2019, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x19, 0x105, 0x1e)
+  Actor_ShowEmote(0x19, 0x105, 0x1e);
   Event_ShowMessage(0x2019, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x1c, 0x106, 0x2a)
+  Actor_ShowEmote(0x1c, 0x106, 0x2a);
   Actor_WalkByAndWait(28, 0, -16);
   Actor_FaceDirectionAndWait(28, 0xd000);
   Event_ShowMessage(0x1c, 0);
@@ -313,18 +245,12 @@ void Func_02000e30(void) {
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(25, 4);
   Event_ShowMessage(0x2019, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(5, 0x107, 0x1e)
+  Actor_ShowEmote(5, 0x107, 0x1e);
   Event_ShowMessage(0x2005, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x19, 0x109, 0x1e)
+  Actor_ShowEmote(0x19, 0x109, 0x1e);
   Actor_FaceDirectionAndWait(25, 0x3000);
   Event_ShowMessage(0x2019, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(6, 0x101, 0x1e)
+  Actor_ShowEmote(6, 0x101, 0x1e);
   Event_ShowMessage(6, 0);
   Actor_FaceDirectionAndWait(25, 0x5000);
   FieldEvent_Wait(10);
@@ -338,9 +264,7 @@ void Func_02000e30(void) {
   Actor_SetSpeed(28, 0x10000, 0x8000);
   Actor_WalkByAndWait(28, 8, -8);
   FieldEvent_Wait(5);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x1c, 0x108, 0x1e)
+  Actor_ShowEmote(0x1c, 0x108, 0x1e);
   Event_ShowMessage(0x1c, 0);
   Actor_SetSpeed(25, 0x10000, 0x8000);
   t216 = ((s32)Actor_Get(25));
@@ -351,17 +275,11 @@ void Func_02000e30(void) {
   FIELD_AT((t219 + 0x5a), u8, 0) = (FIELD_AT((t219 + 0x5a), u8, 0) | 1);
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(25, 0x5000);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x19, 0x108, 0x28)
+  Actor_ShowEmote(0x19, 0x108, 0x28);
   Event_ShowMessage(0x2019, 0);
   FieldEvent_Wait(10);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x1c, 0x105, 0x32)
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(5, 0x105, 0x1e)
+  Actor_ShowEmote(0x1c, 0x105, 0x32);
+  Actor_ShowEmote(5, 0x105, 0x1e);
   Event_ShowMessage(0x2005, 0);
   FieldActor_StartRepeatedMotion(25, 3);
   Actor_SetAttachedEffect(0x19, 0x102);
@@ -377,22 +295,16 @@ void Func_02000e30(void) {
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(10);
   Event_ShowMessage(0x2019, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x1b, 0x101, 0x1e)
+  Actor_ShowEmote(0x1b, 0x101, 0x1e);
   Event_ShowMessage(0x1b, 0);
   Actor_FaceDirectionAndWait(25, 0x5000);
   Event_ShowMessage(0x2019, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x1a, 0x105, 0x1e)
+  Actor_ShowEmote(0x1a, 0x105, 0x1e);
   Event_ShowMessage(0x1a, 0);
   Actor_FaceDirectionAndWait(25, 0x3000);
   Actor_SetAnimationAndWait(25, 4);
   Event_ShowMessage(0x2019, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x1b, 0x102, 0x1e)
+  Actor_ShowEmote(0x1b, 0x102, 0x1e);
   Actor_FaceDirectionAndWait(27, 0);
   FieldEvent_Wait(5);
   Event_ShowMessage(0x1b, 0);
@@ -413,9 +325,7 @@ void Func_02000e30(void) {
   Actor_FaceDirectionAndWait(28, 0x5000);
   Actor_SetAnimationAndWait(28, 4);
   Event_ShowMessage(0x201c, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x1a, 0x103, 0x2a)
+  Actor_ShowEmote(0x1a, 0x103, 0x2a);
   FieldActor_Jump(26, 6, 15);
   FieldActor_Jump(26, 6, 23);
   Event_ShowMessage(0x1a, 0);
@@ -434,36 +344,20 @@ void Func_02000e30(void) {
   Actor_WalkByAndWait(26, -12, 0);
   FieldEvent_Wait(5);
   Event_ShowMessage(0x1a, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(4, 0x102, 0)
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(5, 0x102, 0)
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(6, 0x102, 0)
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(7, 0x102, 0)
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x1c, 0x102, 0x2d)
+  Actor_ShowEmote(4, 0x102, 0);
+  Actor_ShowEmote(5, 0x102, 0);
+  Actor_ShowEmote(6, 0x102, 0);
+  Actor_ShowEmote(7, 0x102, 0);
+  Actor_ShowEmote(0x1c, 0x102, 0x2d);
   Actor_SetSpeed(27, 0x1cccc, 0xe666);
   Actor_WalkByAndWait(27, 12, 0);
   FieldEvent_Wait(5);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x1b, 0x108, 0x1e)
+  Actor_ShowEmote(0x1b, 0x108, 0x1e);
   Event_ShowMessage(0x1b, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(6, 0x100, 0x14)
+  Actor_ShowEmote(6, 0x100, 0x14);
   Actor_FaceDirectionAndWait(6, 0x8000);
   Event_ShowMessage(0x2006, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x19, 0x108, 0x1e)
+  Actor_ShowEmote(0x19, 0x108, 0x1e);
   Event_ShowMessage(0x2019, 0);
   Actor_FaceDirection(26, 0xb000, 0);
   Actor_FaceDirection(27, 0xd000, 0);
@@ -475,9 +369,7 @@ void Func_02000e30(void) {
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(25, 4);
   Event_ShowMessage(0x2019, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x1a, 0x107, 0x1e)
+  Actor_ShowEmote(0x1a, 0x107, 0x1e);
   Event_ShowMessage(0x1a, 0);
   Actor_FaceDirection(4, 0, 0);
   Actor_FaceDirection(7, 0, 0);
@@ -487,9 +379,7 @@ void Func_02000e30(void) {
   Actor_FaceDirectionAndWait(28, 0);
   Actor_SetAnimationAndWait(25, 4);
   Event_ShowMessage(0x2019, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x1b, 0x103, 0x2a)
+  Actor_ShowEmote(0x1b, 0x103, 0x2a);
   FieldActor_Jump(27, 6, 15);
   FieldActor_Jump(27, 6, 23);
   Event_ShowMessage(0x1b, 0);
@@ -512,9 +402,7 @@ void Func_02000e30(void) {
   Actor_FaceDirection(25, 0x3000, 0);
   Actor_FaceDirectionAndWait(28, 0);
   FieldEvent_Wait(20);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x19, 0x109, 0x1e)
+  Actor_ShowEmote(0x19, 0x109, 0x1e);
   Event_ShowMessage(0x2019, 0);
   Actor_RunRepeatedMotion(27, 2);
   Event_ShowMessage(0x1b, 0);
@@ -543,18 +431,12 @@ void Func_02000e30(void) {
   Actor_FaceDirection(6, 0xc000, 0);
   Actor_FaceDirectionAndWait(28, 0xd000);
   FieldEvent_Wait(10);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(5, 0x101, 0x1e)
+  Actor_ShowEmote(5, 0x101, 0x1e);
   Event_ShowMessage(0x2005, 0);
   Actor_FaceDirectionAndWait(25, 0x3000);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x19, 0x108, 0x1e)
+  Actor_ShowEmote(0x19, 0x108, 0x1e);
   Event_ShowMessage(0x2019, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(6, 0x107, 0x1e)
+  Actor_ShowEmote(6, 0x107, 0x1e);
   Event_ShowMessage(6, 0);
   Actor_FaceDirectionAndWait(25, 0x5000);
   Actor_SetAnimationAndWait(25, 4);
@@ -563,9 +445,7 @@ void Func_02000e30(void) {
   Event_ShowMessage(7, 0);
   Actor_FaceDirectionAndWait(25, 0xd000);
   FieldEvent_Wait(15);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x19, 0x108, 0x1e)
+  Actor_ShowEmote(0x19, 0x108, 0x1e);
   Event_ShowMessage(0x2019, 0);
   Actor_SetAnimationAndWait(26, 3);
   Event_ShowMessage(0x1a, 0);
@@ -633,9 +513,7 @@ void Func_02000e30(void) {
   Actor_WalkByAndWait(25, 0, 32);
   Actor_WalkByAndWait(25, -16, 16);
   Actor_WalkByAndWait(25, 0, 8);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x19, 0x100, 0x28)
+  Actor_ShowEmote(0x19, 0x100, 0x28);
   Actor_FaceDirectionAndWait(25, 0xb000);
   FieldCamera_MoveTo(0x1300000, -1, 0x2880000, 1);
   Func_02002b3c();
@@ -649,19 +527,13 @@ void Func_02000e30(void) {
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(28, 3);
   Event_ShowMessage(0x1c, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x1c, 0x101, 0x1e)
+  Actor_ShowEmote(0x1c, 0x101, 0x1e);
   Event_ShowMessage(0x1c, 0);
   Actor_SetAnimationAndWait(25, 4);
   Event_ShowMessage(0x2019, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x1c, 0x107, 0x1e)
+  Actor_ShowEmote(0x1c, 0x107, 0x1e);
   Event_ShowMessage(0x1c, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x19, 0x108, 0x1e)
+  Actor_ShowEmote(0x19, 0x108, 0x1e);
   Event_ShowMessage(0x2019, 0);
   FieldActor_StartRepeatedMotion(28, 3);
   Actor_SetAttachedEffect(0x1c, 0x102);
@@ -690,17 +562,13 @@ void Func_02000e30(void) {
   Actor_SetAnimationAndWait(25, 4);
   Event_ShowMessage(0x2019, 0);
   Actor_FaceDirectionAndWait(6, 0x4000);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(6, 0x107, 0x1e)
+  Actor_ShowEmote(6, 0x107, 0x1e);
   Event_ShowMessage(6, 0);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(25);
   Actor_RunRepeatedMotion(5, 2);
   Event_ShowMessage(0x2005, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x19, 0x105, 0x1e)
+  Actor_ShowEmote(0x19, 0x105, 0x1e);
   Event_ShowMessage(0x2019, 0);
   Actor_SetAnimationAndWait(25, 4);
   Event_ShowMessage(0x2019, 0);
@@ -710,12 +578,8 @@ void Func_02000e30(void) {
   Actor_FaceDirection(4, 0x4000, 0);
   Actor_FaceDirectionAndWait(7, 0x4000);
   FieldEvent_Wait(10);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(4, 0x101, 0)
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(7, 0x101, 0x1e)
+  Actor_ShowEmote(4, 0x101, 0);
+  Actor_ShowEmote(7, 0x101, 0x1e);
   Event_ShowMessage(7, 0);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(10);
@@ -724,9 +588,7 @@ void Func_02000e30(void) {
   Event_ShowMessage(0x2019, 0);
   Actor_RunRepeatedMotion(6, 2);
   Event_ShowMessage(6, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x19, 0x108, 0x1e)
+  Actor_ShowEmote(0x19, 0x108, 0x1e);
   Event_ShowMessage(0x2019, 0);
   Actor_FaceDirectionAndWait(25, 0x5000);
   FieldEvent_Wait(10);
@@ -739,36 +601,24 @@ void Func_02000e30(void) {
   Func_02002b3c();
   FieldEvent_Wait(10);
   Event_PlaySound(3);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(5, 0x107, 0x1e)
+  Actor_ShowEmote(5, 0x107, 0x1e);
   Event_ShowMessage(0x2005, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(6, 0x103, 0x1e)
+  Actor_ShowEmote(6, 0x103, 0x1e);
   Event_ShowMessage(6, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(7, 0x109, 0x1e)
+  Actor_ShowEmote(7, 0x109, 0x1e);
   Event_ShowMessage(7, 0);
   Actor_FaceDirectionAndWait(6, 0xc000);
   FieldEvent_Wait(10);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(6, 0x101, 0x1e)
+  Actor_ShowEmote(6, 0x101, 0x1e);
   Event_ShowMessage(6, 0);
   Actor_RunRepeatedMotion(7, 2);
   Event_ShowMessage(7, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(5, 0x100, 0x1e)
+  Actor_ShowEmote(5, 0x100, 0x1e);
   Actor_FaceDirection(4, 0x6000, 0);
   Actor_FaceDirectionAndWait(5, 0xa000);
   FieldEvent_Wait(10);
   Event_ShowMessage(0x2005, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(6, 0x100, 0x1e)
+  Actor_ShowEmote(6, 0x100, 0x1e);
   Event_ShowMessage(6, 0);
   Actor_SetAnimation(28, 1);
   FieldEvent_Wait(10);
@@ -785,33 +635,23 @@ void Func_02000e30(void) {
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(28, 3);
   Event_ShowMessage(0x1c, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(7, 0x100, 0x1e)
+  Actor_ShowEmote(7, 0x100, 0x1e);
   Event_ShowMessage(0x2007, 0);
   Actor_SetAnimationAndWait(28, 4);
   Event_ShowMessage(0x1c, 0);
   FieldActor_StartRepeatedMotion(7, 3);
   Actor_SetAttachedEffect(7, 0x102);
   FieldEvent_Wait(45);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(5, 0x101, 0x1e)
+  Actor_ShowEmote(5, 0x101, 0x1e);
   Event_ShowMessage(0x2005, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(6, 0x101, 0x1e)
+  Actor_ShowEmote(6, 0x101, 0x1e);
   Event_ShowMessage(0x2006, 0);
   Actor_FaceDirection(5, 0x8000, 0);
   Actor_FaceDirectionAndWait(6, 1);
   FieldEvent_Wait(25);
   Call2(Func_02000c90, 5, 6);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(5, 0x101, 0)
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(6, 0x101, 0x28)
+  Actor_ShowEmote(5, 0x101, 0);
+  Actor_ShowEmote(6, 0x101, 0x28);
   Actor_FaceDirection(5, 0x8000, 0);
   Actor_FaceDirectionAndWait(6, 0x8000);
   FieldEvent_Wait(10);
@@ -826,29 +666,21 @@ void Func_02000e30(void) {
   Actor_FaceDirection(5, 0xc000, 0);
   Actor_FaceDirectionAndWait(6, 0xe000);
   FieldEvent_Wait(10);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(5, 0x107, 0)
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(6, 0x107, 0x1e)
+  Actor_ShowEmote(5, 0x107, 0);
+  Actor_ShowEmote(6, 0x107, 0x1e);
   Call11(Func_02000d4c, 5, 8, 5, 0x12, 8, 6, 8, 0xe, 8, 9, 0);
   Actor_FaceDirectionAndWait(4, 0x6000);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     Func_02000e04(5, 6);
     FieldEvent_Wait(15);
-    /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-     * CHAMPA_EMOTE pins the emote to r1. */
-    CHAMPA_EMOTE(0x1c, 0x102, 0x1e)
+    Actor_ShowEmote(0x1c, 0x102, 0x1e);
     Event_ShowMessage(0x1c, 0);
     FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
         (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
   } else {
     Func_02000e04(5, 6);
     FieldEvent_Wait(35);
-    /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-     * CHAMPA_EMOTE pins the emote to r1. */
-    CHAMPA_EMOTE(0x1c, 0x105, 0x1e)
+    Actor_ShowEmote(0x1c, 0x105, 0x1e);
     FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
         (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
     Event_ShowMessage(0x1c, 0);
@@ -857,12 +689,8 @@ void Func_02000e30(void) {
   Actor_FaceDirection(5, 0x8000, 0);
   Actor_FaceDirectionAndWait(6, 0x8000);
   FieldEvent_Wait(10);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(5, 0x107, 0)
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(6, 0x107, 0x2d)
+  Actor_ShowEmote(5, 0x107, 0);
+  Actor_ShowEmote(6, 0x107, 0x2d);
   Actor_SetAnimationAndWait(28, 4);
   Event_ShowMessage(0x1c, 0);
   FieldActor_Jump(5, 6, 15);
@@ -876,28 +704,20 @@ void Func_02000e30(void) {
   Actor_SetAnimationAndWait(28, 3);
   Event_ShowMessage(0x1c, 0);
   FieldEvent_Wait(10);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x1c, 0x101, 0x28)
+  Actor_ShowEmote(0x1c, 0x101, 0x28);
   Actor_WalkByAndWait(28, 0, -8);
   Actor_FaceDirectionAndWait(28, 0);
   FieldEvent_Wait(5);
   Event_ShowMessage(0x1c, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(7, 0x108, 0x1e)
+  Actor_ShowEmote(7, 0x108, 0x1e);
   Event_ShowMessage(0x2007, 0);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x1c, 0x102, 0x1e)
+  Actor_ShowEmote(0x1c, 0x102, 0x1e);
   Event_ShowMessage(0x1c, 0);
   Actor_SetAnimationAndWait(7, 3);
   FieldEvent_Wait(10);
   Event_ShowMessage(0x2007, 0);
   FieldEvent_Wait(5);
-  /* FAKEMATCH(pin): the emote and the frames load before the actor, as
-   * CHAMPA_EMOTE pins the emote to r1. */
-  CHAMPA_EMOTE(0x1c, 0x101, 0x2d)
+  Actor_ShowEmote(0x1c, 0x101, 0x2d);
   Actor_SetAnimationAndWait(7, 3);
   FieldEvent_Wait(10);
   Event_ShowMessage(0x2007, 0);

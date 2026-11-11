@@ -14,11 +14,7 @@ extern u32 gData_02005afc[];
 extern u32 gData_02005b8c[];
 extern s32 gData_02005c7c[];
 
-/* FAKEMATCH(volatile): the counter declared volatile, though no hardware or
- * interrupt shares it, so it is reloaded for every use and masked in the
- * register it was loaded into; declared plain, the mask is built in the
- * constant's register and 12 instructions differ. */
-extern volatile s32 gData_02005ee4;
+extern s32 gData_02005ee4;
 extern const u8 gData_02005d6c[];
 extern const u8 gData_02005e28[];
 extern u8 gData_020023c4[];

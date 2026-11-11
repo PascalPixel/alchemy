@@ -1,17 +1,12 @@
 #include "kibombo.h"
 
 void Func_02002fec(struct KibomboObject *object) {
-  s32 step;
-
   object->x += object->field64 << 8;
 
   object->y += 0x8000;
 
-  /* FAKEMATCH(temporary): a local holding the scale step builds it before
-   * scaleX is loaded; as plain constants, one row is reordered. */
-  step = 0x51e;
-  object->scaleX += step;
-  object->scaleY += step;
+  object->scaleX += 0x51e;
+  object->scaleY += 0x51e;
   object->field64 += 2;
   if (--object->field68 == 0)
     Func_02005a3c(object);

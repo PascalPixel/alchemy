@@ -58,12 +58,7 @@ s32 Func_02002614(void) {
     if (GameFlag_Test(0x201)) {
       Func_0200461c(1);
     } else {
-      /* FAKEMATCH(pin): the value pinned to r3 loads from the pool before the
-       * register address starts, as the native does; as a plain store, one row
-       * is reordered in tla-en. */
-      register u16 alpha __asm__("r3") = 0xc08;
-
-      REG_BLDALPHA = alpha;
+      REG_BLDALPHA = 0xc08;
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
       Task_Add(Func_020018e0, 0x480);
       Func_02004414(0);

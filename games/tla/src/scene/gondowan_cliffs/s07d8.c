@@ -18,12 +18,7 @@ static inline void GondowanCliffs_ObjWalk(s32 actor, s32 x, s32 z) {
 }
 
 static inline void GondowanCliffs_Jump(s32 actor, s32 height, s32 frames) {
-  /* FAKEMATCH(pin): the height fixed to r1, so the actor is loaded after the
-   * height and frames, as in overlay 694's Contigo_Jump; as a plain local, the
-   * order differs. */
-  register s32 h __asm__("r1") = height;
-
-  Func_080d47b4(actor, h, frames);
+  Func_080d47b4(actor, height, frames);
 }
 
 /// The scene that asks where the party intends to go, to help recover the black

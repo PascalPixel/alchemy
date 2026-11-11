@@ -16,11 +16,6 @@ void Effect_AdvanceMotionLocal(union FieldObject *object) {
 
   effect->velocity.x = velocityX - velocityX / 18;
   effect->velocity.z = velocityZ - velocityZ / 16;
-  /* FAKEMATCH(dead): an empty once-only block, so the Z velocity is stored
-   * before the scale rate is loaded; without it, the scale rate is loaded
-   * first. */
-  do {
-  } while (0);
 
   scaleRateX = effect->scaleRateX;
   effect->scaleX += scaleRateX;

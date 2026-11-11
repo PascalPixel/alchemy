@@ -27,14 +27,7 @@ void Func_02001958(s32 a0) {
     Actor_WalkToAndWait(FIELD_AT(gMainRoutineWork, s32, 532), 168, 736);
     Actor_FaceDirection(FIELD_AT(gMainRoutineWork, s32, 532), 0, 0);
   }
-  {
-    s32 b = 0x102, c = 0x1e;
-    /* FAKEMATCH(barrier): the empty asm claims to change b and c, so the first
-     * argument is set last, as the ROM does; as the call with constant
-     * arguments. */
-    __asm__ volatile("" : "+l"(b), "+l"(c));
-    Actor_ShowEmote(0x19, b, c);
-  }
+  Actor_ShowEmote(0x19, 0x102, 0x1e);
   FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(10);

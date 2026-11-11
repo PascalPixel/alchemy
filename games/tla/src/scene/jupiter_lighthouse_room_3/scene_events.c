@@ -6,19 +6,11 @@ void Func_02000134(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
   s32 placed = 0;
   s32 i;
-  /* FAKEMATCH(pin): the mode pinned to r2, which with the empty once-only block
-   * after it is built after the motion flag store, before the position loads;
-   * as a plain constant, 2 of 62 instructions differ in tla-en. */
-  register s32 mode asm("r2");
-
   if (object->x >> 20 == 20 && object->z >> 20 == 36) {
     Event_SetFlag(0xa04);
     placed = 1;
   }
-  /* FAKEMATCH(volatile): x read through a volatile pointer, which stops PRE
-   * keeping x in r2 across the first test and reloads it after the call; as
-   * object->x, 22 instructions differ. */
-  if (*(volatile s32 *)&object->x >> 20 == 32 && object->z >> 20 == 36) {
+  if (object->x >> 20 == 32 && object->z >> 20 == 36) {
     Event_SetFlag(0xa05);
     placed = 1;
   }
@@ -31,10 +23,7 @@ void Func_02000134(s32 unused, s32 id) {
       System_Wait(1);
     }
     object->motionFlags = 0;
-    mode = 0;
-    do {
-    } while (0);
-    Func_02002368(object->x, object->z, mode, 0);
+    Func_02002368(object->x, object->z, 0, 0);
   }
 }
 

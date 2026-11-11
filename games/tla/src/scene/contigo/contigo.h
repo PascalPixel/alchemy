@@ -31,10 +31,8 @@ static inline void Contigo_Jump(s32 actor, s32 height, s32 frames) {
    * height and the frames, as the native has; as an unpinned local, 2 of 8
    * instructions differ in tla-en (Func_020007a4). */
   register s32 h __asm__("r1") = height;
-  /* FAKEMATCH(pin): the frames pinned to r2, for the same order. */
-  register s32 f __asm__("r2") = frames;
-  /* FAKEMATCH(pin): the actor pinned to r0 and set last. */
-  register s32 a __asm__("r0") = actor;
+  s32 f = frames;
+  s32 a = actor;
 
   Func_080d47b4(a, h, f);
 }

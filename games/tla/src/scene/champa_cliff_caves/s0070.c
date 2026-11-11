@@ -28,17 +28,9 @@ u32 *Func_02000070(void) {
     if (scene == (s32)&SceneId_Ov685Room4)
       return gData_02003c84;
   } else {
-    /* FAKEMATCH(temporary): gMainRoutineWork and the first scene id in locals,
-     * loaded once before the second flag's test for both branches to use, as
-     * the native has; as plain reads inside each branch they are loaded twice,
-     * differ 76. */
-    s32 second = GameFlag_Test(0x97f);
-    struct MainRoutineWork *party = &gMainRoutineWork;
-    s32 first = (s32)&SceneId_Ov685Room1;
-
-    if (second) {
-      scene = party->scene;
-      if (scene == first)
+    if (GameFlag_Test(0x97f)) {
+      scene = gMainRoutineWork.scene;
+      if (scene == (s32)&SceneId_Ov685Room1)
         return gData_020038ac;
       if (scene == (s32)&SceneId_Ov685Room2)
         return gData_0200390c;
@@ -47,8 +39,8 @@ u32 *Func_02000070(void) {
       if (scene == (s32)&SceneId_Ov685Room4)
         return gData_020039cc;
     } else {
-      scene = party->scene;
-      if (scene == first)
+      scene = gMainRoutineWork.scene;
+      if (scene == (s32)&SceneId_Ov685Room1)
         return gData_0200375c;
       if (scene == (s32)&SceneId_Ov685Room2)
         return gData_020037a4;

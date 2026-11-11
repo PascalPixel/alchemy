@@ -28,11 +28,7 @@ void Func_02002314(s32 slot, s32 actor);
 void Func_0200061c(s32 mode);
 
 static inline void LeaderAnimate(s32 animation, s32 frames) {
-  /* FAKEMATCH(signature): Func_080d47b4 called through the inline as
-   * value-returning, so the animation and frames are set before the owner is
-   * loaded; as a void call, 4 instructions differ. */
-  ((s32 (*)(s32, s32, s32))Func_080d47b4)(gMainRoutineWork.currentOwner,
-                                          animation, frames);
+  Func_080d47b4(gMainRoutineWork.currentOwner, animation, frames);
 }
 
 const u8 *Func_020000b4(void) {

@@ -81,10 +81,7 @@ void Func_02002e78(void) {
     FieldEvent_ShowMessageThenWait(9, 0, 10);
     Actor_ShowEmote(8, 264, 30);
     FieldEvent_ShowMessageThenWait(5, 0, 10);
-    /* FAKEMATCH(signature): FieldMessage_ShowAtActor called as returning a
-     * value, which the native's argument order shows (r1 before r0); as
-     * FieldMessage_ShowAtActor(7, 0). */
-    ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(7, 0);
+    FieldMessage_ShowAtActor(7, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
       Actor_ShowEmote(8, 265, 30);
       FieldEvent_ShowMessageThenWait(9, 0, 10);

@@ -63,10 +63,6 @@ s32 Inventory_GetQuantity(s32 owner, s32 slot) {
   s32 item_id;
 
   owner = ((struct OwnerInventoryState *)Unit_Get(owner))->inventory[slot];
-  /* FAKEMATCH(dead): an empty once-only block, which keeps the mask after the
-   * slot load; without the block (not measured). */
-  do {
-  } while (0);
   item_id = ITEM_ID_MASK;
   item_id &= owner;
   owner = (u32)owner >> INVENTORY_QUANTITY_SHIFT;
@@ -387,9 +383,6 @@ s32 Inventory_CheckUnequip(s32 owner, s32 slot) {
   struct ItemDefinition *item;
   s32 result;
 
-  /* FAKEMATCH(barrier): an empty asm, so the slot loads before the item mask
-   * is built, as the ROM has it; as no asm (not measured). */
-  asm volatile("");
   /* FAKEMATCH(temporary): the mask built in the local it masks into; as raw &
    * ITEM_ID_MASK, 8 of 33 instructions differ in tla-en. */
   item_id = ITEM_ID_MASK;
@@ -412,9 +405,6 @@ s32 Inventory_CheckDiscard(s32 owner, s32 slot) {
   struct ItemDefinition *item;
   s32 result;
 
-  /* FAKEMATCH(barrier): an empty asm, so the slot loads before the item mask
-   * is built, as the ROM has it; as no asm (not measured). */
-  asm volatile("");
   /* FAKEMATCH(temporary): the mask built in the local it masks into; as raw &
    * ITEM_ID_MASK, 8 of 39 instructions differ in tla-en. */
   item_id = ITEM_ID_MASK;
@@ -509,10 +499,6 @@ s32 Item_AdjustCounter(s32 itemId, s32 delta) {
   u16 *table = gData_080b1f40;
   u16 counter;
 
-  /* FAKEMATCH(barrier): an empty asm, which keeps the table's load between the
-   * mask constant and its and; without it and the doubling below, 2
-   * instructions differ in tla-en. */
-  asm volatile("");
   /* FAKEMATCH(temporary): the index masked and doubled apart in the local
    * that held the mask, which keeps the table the base register; as
    * table[itemId & ITEM_ID_MASK], 4 of 16 instructions differ in tla-en. */

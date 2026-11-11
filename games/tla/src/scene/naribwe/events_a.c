@@ -143,14 +143,7 @@ void Func_02000368(void) {
   }
   work += 0x154;
   index = *(s16 *)work;
-  /* FAKEMATCH(dead): the empty once-only blocks on each side of the call keep
-   * the entrance's subtraction after it, where sched2 would rank it above the
-   * call; as no first block 2 instructions differ, as no second 4. */
-  do {
-  } while (0);
   Sound_Play(158);
-  do {
-  } while (0);
   index -= 4;
   MapGrid_AnimateCells(gData_0200064c[index].script, gData_0200064c[index].x,
                        gData_0200064c[index].z);

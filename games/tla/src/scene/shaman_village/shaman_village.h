@@ -105,8 +105,7 @@ void Func_020048b4(void);
     /* literal pool of a long scene). As an unpinned local, 111 */             \
     /* of 711 instructions differ in tla-en (Func_02002068). */                \
     register s32 emote_ __asm__("r1") = (emote);                               \
-    /* FAKEMATCH(pin): the frames pinned to r2 with the emote above. */        \
-    register s32 frames_ __asm__("r2") = (frames);                             \
+    s32 frames_ = (frames);                                                    \
     Func_080d47b4((actor), emote_, frames_);                                   \
   }
 

@@ -43,7 +43,6 @@ s32 Func_02000134(void) {
   s32 i;
   s32 set;
   s32 z;
-  s32 *waitCounter;
 
   work = Ram_HeapSlots->eventWork;
   result = 1;
@@ -53,14 +52,9 @@ s32 Func_02000134(void) {
     Event_ClearFlag(0x304);
   if (work->raisedTrigger != 2) {
     Func_0200006c(0);
-    /* FAKEMATCH(temporary): the wait counter's address held in a local before
-     * the test, so it is loaded once for both branches; as gData_020022b8
-     * written in each branch, it is loaded in each and 11 instructions
-     * differ. */
     set = Event_GetFlag(0x303);
-    waitCounter = &gData_020022b8;
     if (!set) {
-      if (++*waitCounter > 25) {
+      if (++gData_020022b8 > 25) {
         s32 offset = 0;
 
         // A goto loop counting down with the stride stepped by hand; as ☀️'s
@@ -77,7 +71,7 @@ s32 Func_02000134(void) {
         LinkLobby_WriteSlotValue(4);
       }
     } else {
-      *waitCounter = 0;
+      gData_020022b8 = 0;
     }
     if (gData_020022b8 == 0) {
       if (Func_0200006c(0) && (Func_0200006c(1) || Func_0200006c(2))) {

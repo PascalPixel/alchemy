@@ -22,7 +22,6 @@ void Func_02003574(void) {
 void Func_02003584(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   u32 i;
-  s32 delta;
   struct MainRoutineWork *party;
 
   Func_020051c0();
@@ -50,15 +49,10 @@ void Func_02003584(void) {
     {
       s32 scale = object->scaleX;
 
-      /* FAKEMATCH(temporary): one local holding the constant, set in the
-       * loop, keeps it loaded on every pass; as plain constants, 8
-       * instructions differ in tla-en. */
-      delta = -0x400;
-      object->scaleX = scale + delta;
+      object->scaleX = scale + -0x400;
     }
-    object->scaleY += delta;
-    delta = -0x20000;
-    object->y += delta;
+    object->scaleY += -0x400;
+    object->y += -0x20000;
     wait(1);
     if (i == 10)
       Sound_Play(204);

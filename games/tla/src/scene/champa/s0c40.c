@@ -18,18 +18,11 @@ void Func_02000c40(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
     Func_020029dc(object, 1);
     Func_020029e4(object, gData_02003620);
     object->motionFlags = 0;
-    {
-      /* FAKEMATCH(signature): frames copied to a u64 local, which reads it
-       * from the stack after the pool zero is loaded; as a u32, u16 or s16
-       * copy it stays before, one reordered pair. */
-      u64 count = frames;
-
-      ((struct {
-        u8 unk00[94];
-        u16 frames;
-      } *)object)
-          ->frames = count;
-    }
+    ((struct {
+      u8 unk00[94];
+      u16 frames;
+    } *)object)
+        ->frames = frames;
 
     sprite->nextFrame = 0;
     sprite->rotation = value;

@@ -28,10 +28,6 @@ s32 Func_020007fc(s32 *p) {
     } while (0);
     x = (u32)a << 9;
     angle = p[12];
-    /* FAKEMATCH(barrier): the empty asm keeps the angle's load between the
-     * two shifts; with neither it nor the block above, 2 instructions differ
-     * in tla-en. */
-    __asm__("");
     p[12] = angle + ((x >> 16) + (((u32)b << 9) >> 16)) + 0x400;
   }
   return 0;

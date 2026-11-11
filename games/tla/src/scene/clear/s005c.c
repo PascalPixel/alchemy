@@ -43,16 +43,7 @@ void Func_0200005c(void) {
 
   id = (s32)&ResourceId_LogoOnBlack;
   Fade_ToBlack(0);
-  {
-    /* FAKEMATCH(pin): the control value pinned to r3 as a halfword, so that
-     * 0x681 loads before BG2CNT's address is built, as the native has; as a
-     * plain store, one row is reordered. */
-    register u16 control asm("r3");
-
-    control = 0x681;
-
-    REG_BG2CNT = control;
-  }
+  REG_BG2CNT = 0x681;
   gBgScroll[2].y = 0;
   blank = 0x1ff;
   res = Resource_GetTableEntry(id);

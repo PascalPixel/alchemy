@@ -323,11 +323,6 @@ s32 Func_080fcf14(void) {
 
   menu = Ram_HeapSlots->menuRuntime;
   action = menu->paneAction[0];
-  /* FAKEMATCH(dead): an empty once-only block, which keeps the action's load
-   * ahead of the 0x3fff mask; without it and the pin above, 2 instructions
-   * differ in tla-en. */
-  do {
-  } while (0);
   psynergy = BattleAction_Get(0x3fff & action);
   if (BattleEffect_HasMatchingEvent5Far(psynergy->type) != 0)
     return 0;

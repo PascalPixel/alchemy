@@ -17,26 +17,14 @@ void Func_02001a48(const u8 *data, s32 a, s32 b);
 void Func_02002bec(void);
 
 void Func_0200013c(void) {
-  s32 flag = 514;
-
-  /* FAKEMATCH(barrier): an asm operand that says flag changes, which it does
-   * not, so the flag is built again for the call; as the same statements with
-   * no asm, not measured. */
-  asm("" : "+l"(flag));
-  if (!Event_GetFlag(flag)) {
+  if (!Event_GetFlag(514)) {
     Event_SetFlag(514);
     Func_02000060(1);
   }
 }
 
 void Func_02000160(void) {
-  s32 flag = 514;
-
-  /* FAKEMATCH(barrier): an asm operand that says flag changes, which it does
-   * not, so the flag is built again for the call; as the same statements with
-   * no asm, not measured. */
-  asm("" : "+l"(flag));
-  if (Event_GetFlag(flag) == 1) {
+  if (Event_GetFlag(514) == 1) {
     Event_ClearFlag(514);
     Func_020000b4();
   }

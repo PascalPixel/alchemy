@@ -36,16 +36,7 @@ void Func_020028ac(void) {
   Func_02004e20();
   FieldEvent_Wait(30);
   Event_PlaySound(0x22d);
-  {
-    /* FAKEMATCH(pin): the blend value pinned to r3, where the native stores it
-     * from (with no local at all, a plain store of 0x1000, the bytes are the
-     * same); as an unpinned local, 19 of 120 instructions differ in tla-en. */
-    register u16 alpha __asm__("r3") = 0x1000;
-
-    /* FAKEMATCH(temporary): the store through the pinned local; as a plain
-     * store of 0x1000, differ 16 (of M not recorded). */
-    REG_BLDALPHA = alpha;
-  }
+  REG_BLDALPHA = 0x1000;
   REG_BLDCNT = 0x3f10;
   {
     struct FieldActor *prepared = OverlayObject_PrepareObject(
@@ -64,16 +55,7 @@ void Func_020028ac(void) {
   Func_02004c98(other, 4);
   Func_02004cb0(actor);
   FieldEvent_Wait(1);
-  {
-    /* FAKEMATCH(pin): the zero pinned to r3 (with no local at all, a plain
-     * store of 0, the bytes are the same); as an unpinned local, 11 of 120
-     * instructions differ in tla-en. */
-    register u16 off __asm__("r3") = 0;
-
-    /* FAKEMATCH(temporary): the store through the pinned local, there only
-     * for the pin above; as a plain store of 0, measured with it. */
-    REG_BLDCNT = off;
-  }
+  REG_BLDCNT = 0;
   Func_02000694(0, 7, 21, 128);
   Func_02004d48();
 }

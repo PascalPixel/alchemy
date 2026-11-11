@@ -15,11 +15,6 @@ void Func_02001e38(struct Actor *object) {
   object->z += vz;
   object->bounce = vx - vx / 18;
   object->unk4c = vz - vz / 16;
-  /* FAKEMATCH(dead): an empty once-only block, so the Z velocity is stored
-   * before the scale rate loads; as no block, the scheduler loads the rate
-   * first, not measured. */
-  do {
-  } while (0);
   rate = object->speedLimit;
   object->scaleX += rate;
   animation = object->animation;

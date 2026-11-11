@@ -11,15 +11,7 @@ void Func_02003a28(s32 *out, s32 zArg) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   u32 slot;
 
-  /* FAKEMATCH(pin): z's shift pinned to r2, which with the 64's pin below gives
-   * the native's allocation; as plain locals, 9 to 40 instructions differ in
-   * tla-en. */
-  register s32 shifted asm("r2") = z >> 20;
-  /* FAKEMATCH(pin): the 64 pinned to r3, with z's shift above; as plain
-   * locals, 9 to 40 instructions differ in tla-en. */
-  register s32 top asm("r3") = 64;
-
-  z = top - shifted;
+  z = 64 - (z >> 20);
   for (slot = 0; slot <= 63; slot++) {
     struct Actor *object = work->objects[slot];
 

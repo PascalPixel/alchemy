@@ -44,19 +44,7 @@ void Func_02000ad8(void) {
   Actor_SetAnimation(12, 4);
   Event_ShowMessage(12, 0);
   Actor_FaceDirection(10, 0x3000, 0);
-  {
-    s32 anim = 0x80;
-    s32 zero = 0;
-    /* FAKEMATCH(barrier): the asm on the emote's temporary loads the zero
-     * before 0x100's shift and the actor id after it; as Actor_ShowEmote(10,
-     * 0x100, 0), with the asm below, 2 instructions differ in tla-en. */
-    __asm__ volatile("" : "+l"(anim));
-    /* FAKEMATCH(barrier): the asm on the zero, the same call's second; as
-     * Actor_ShowEmote(10, 0x100, 0), with the asm above, 2 instructions differ
-     * in tla-en. */
-    __asm__ volatile("" : "+l"(zero));
-    Actor_ShowEmote(10, anim << 1, zero);
-  }
+  Actor_ShowEmote(10, 0x100, 0);
   Actor_SetAnimationAndWait(13, 4);
   Event_ShowMessage(13, 0);
   FieldActor_Jump(15, 4, 10);

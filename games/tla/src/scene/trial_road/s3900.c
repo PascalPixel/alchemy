@@ -67,10 +67,7 @@ void Func_02003900(void) {
   OBJECT_BYTE(Actor_GetById(13), 0x5a) &= ~1;
   Actor_CommitPositionAndActivate(13, 0, 8);
   Event_Wait(1);
-  /* FAKEMATCH(signature): the byte typed as a whole-byte bit-field, as in
-   * overlay 685; as a plain byte, the store takes the order of a store that
-   * aliases what follows. */
-  ((struct ActorSolid *)Actor_GetById(13))->solid |= 1;
+  OBJECT_BYTE(Actor_GetById(13), 0x5a) |= 1;
   Event_Wait(20);
   Actor_SetSpeed(13, 0x20000, 0x10000);
   Actor_SetModeById(13, 5);

@@ -28,13 +28,7 @@ void Func_02004b94();
 void Func_02004ba4();
 
 static __inline__ void Func_02004b6c_(s32 actor, s32 a, s32 b) {
-  /* FAKEMATCH(pin): the second argument pinned to r1 and the third copied, so
-   * both load before the actor as the native does at every call here; as
-   * Func_080d47b4(actor, a, b), one row per call is reordered. */
-  register s32 second asm("r1") = a;
-  s32 third = b;
-
-  Func_080d47b4(actor, second, third);
+  Func_080d47b4(actor, a, b);
 }
 
 static __inline__ void FieldMessage_ShowAtActor_(s32 actor, s32 flags) {

@@ -1,12 +1,7 @@
 #include "local.h"
 
 void Func_02002674(void) {
-  /* FAKEMATCH(signature): the byte typed as a whole-byte bit-field, which
-   * keeps its struct's alias set so the store cannot alias gMainRoutineWork's
-   * words; as u8 priorityFlags, the next load is scheduled one step early in
-   * tla-en. */
-  ((struct ObjectFlags23 *)Actor_GetById(gMainRoutineWork.currentOwner))
-      ->flags |= 32;
+  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
 }
 

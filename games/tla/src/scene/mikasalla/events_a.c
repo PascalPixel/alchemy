@@ -32,14 +32,7 @@ void Func_0200009c(void) {
   }
   choice = (s16 *)(work + 340);
   index = *choice;
-  /* FAKEMATCH(dead): empty once-only blocks on each side of the call keep the
-   * choice's decrement after it, as in overlay 66d's Func_02000368; as
-   * neither block, differ 2 (of M not recorded). */
-  do {
-  } while (0);
   Sound_Play(158);
-  do {
-  } while (0);
   index--;
   MapGrid_AnimateCells(gData_0200073c[index].map, gData_0200073c[index].x,
                  gData_0200073c[index].z);

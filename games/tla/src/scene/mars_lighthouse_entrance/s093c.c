@@ -53,10 +53,7 @@ void Func_0200096c(s32 unused, s32 id) {
     y = object->y;
     Actor_SetMoveTarget(object, PIXELS(152), y, PIXELS(792));
   }
-  /* FAKEMATCH(volatile): x read through a volatile view, so it is reloaded
-   * on both paths; with the pins below, as plain reads, plain locals and
-   * constants, differ 14 in tla-en (of M not recorded). */
-  if (*(volatile s32 *)&object->x >> 20 == 10) {
+  if (object->x >> 20 == 10) {
     s32 y;
 
     object->speedLimit = 0x4000;

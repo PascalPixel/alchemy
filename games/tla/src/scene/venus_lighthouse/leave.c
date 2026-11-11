@@ -38,15 +38,7 @@ static inline void Venus_ObjWalk2(s32 actor, s32 x, s32 z) {
 }
 
 static inline void Venus_Jump(s32 actor, s32 height, s32 frames) {
-  /* FAKEMATCH(pin): the height pinned to r1, so the actor loads after the
-   * height and frames as the native does; as Func_080d47b4(actor, height,
-   * frames). */
-  register s32 h __asm__("r1") = height;
-  /* FAKEMATCH(pin): the frames pinned to r2, for the same order; as
-   * Func_080d47b4(actor, height, frames). */
-  register s32 f __asm__("r2") = frames;
-
-  Func_080d47b4(actor, h, f);
+  Func_080d47b4(actor, height, frames);
 }
 
 static inline void Venus_CamMove(s32 x, s32 y, s32 z, s32 mode) {

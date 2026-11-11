@@ -1,12 +1,5 @@
 #include "garoh_interiors.h"
 
-/* FAKEMATCH(signature): the opener called through a function type returning
- * s32, which it does not have (scene_call.h declares it void), so the
- * arguments are set up as for a call whose value is used, flags before
- * speaker; as the plain void call, they are not. */
-#define Message_Open(speaker, flags)                                           \
-  ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(speaker, flags)
-
 void Func_02000318(s32 actor) {
   s32 message;
 
@@ -14,10 +7,10 @@ void Func_02000318(s32 actor) {
   Event_ResolvePendingActions(0);
   message = (s32)MsgGarohInteriors01;
   Event_SetMessageId(message);
-  Message_Open(actor, 0);
+  FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Event_SetMessageId(message + 2);
-    Message_Open(actor, 0);
+    FieldMessage_ShowAtActor(actor, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
       Event_ShowMessageAndWait(actor, 0);
     } else {

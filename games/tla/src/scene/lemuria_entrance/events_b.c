@@ -40,15 +40,6 @@ void Func_02000310(s32 kind, s32 frames);
 
 void Func_02000060(s32 arg) {
   struct MainRoutineWork *party = &gMainRoutineWork;
-  /* FAKEMATCH(pin): countdown fixed to r6 and assigned after the empty asm, so
-   * its copy follows gMainRoutineWork's address; as the plain parameter with
-   * no pin or asm, 2 instructions differ in tla-en. */
-  register s32 countdown asm("r6");
-
-  /* FAKEMATCH(barrier): the empty asm before countdown's copy, measured with
-   * the pin above. */
-  asm("");
-  countdown = arg;
   party->ownerOverride = 0;
   Event_ClearFlag(0x960);
   Event_PlaySound(123);
@@ -57,20 +48,11 @@ void Func_02000060(s32 arg) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   party->currentOwner = 4;
-  FieldEvent_SetExitRequest(countdown);
+  FieldEvent_SetExitRequest(arg);
 }
 
 void Func_020000b0(s32 arg) {
   struct MainRoutineWork *party = &gMainRoutineWork;
-  /* FAKEMATCH(pin): countdown fixed to r6, as in Func_02000060, so
-   * gMainRoutineWork's address comes before its copy; as the plain parameter
-   * with no pin or asm, 2 instructions differ. */
-  register s32 countdown asm("r6");
-
-  /* FAKEMATCH(barrier): the empty asm before countdown's copy, measured with
-   * the pin above. */
-  asm("");
-  countdown = arg;
   party->ownerOverride = 0;
   Event_SetFlag(0x960);
   Event_PlaySound(123);
@@ -79,7 +61,7 @@ void Func_020000b0(s32 arg) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   party->currentOwner = 4;
-  FieldEvent_SetExitRequest(countdown);
+  FieldEvent_SetExitRequest(arg);
 }
 
 void Func_02000100(void) {

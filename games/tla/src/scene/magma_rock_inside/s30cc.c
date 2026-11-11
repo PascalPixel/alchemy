@@ -19,13 +19,6 @@ s32 Func_02004da8();
 s32 Func_02002cd0();
 s32 Party_LearnAbility();
 
-static inline void Call0(void (*f)()) {
-  /* FAKEMATCH(wrapper): a call layer without arguments; as a direct call, the
-   * two -1s before it are negated in the other order, differ 2 (of M not
-   * recorded). */
-  f();
-}
-
 /// Reading the Blaze tablet shows its inscription; the first time (flag 0x9fa
 /// clear) the scene with actor 5 follows.
 void Func_020030cc(void) {

@@ -38,14 +38,7 @@ void Func_020043f8(void) {
   Func_02004a4c(0, 0x204, 19, 20);
   if (GameFlag_Test(0x205))
     Func_02002878();
-  {
-    /* FAKEMATCH(pin): the value pinned to r3 loads from the pool before the
-     * register address starts, as the native does; as REG_BLDALPHA = 0xc08,
-     * one row is reordered in tla-en. */
-    register u16 alpha __asm__("r3") = 0xc08;
-
-    REG_BLDALPHA = alpha;
-  }
+  REG_BLDALPHA = 0xc08;
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   {
     s32 priority = 0x480;

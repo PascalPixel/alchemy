@@ -36,14 +36,7 @@ void Func_02000270(void) {
     }
   }
   index = *(s16 *)(event + 340);
-  /* FAKEMATCH(dead): the empty once-only blocks on each side of the call keep
-   * the stop's decrement after it, as in overlay 66d's Func_02000368; as no
-   * first block, 2 instructions differ. */
-  do {
-  } while (0);
   Event_PlaySound(158);
-  do {
-  } while (0);
   index--;
   MapGrid_AnimateCells(gData_02002ce4[index].a, gData_02002ce4[index].b,
                        gData_02002ce4[index].c);

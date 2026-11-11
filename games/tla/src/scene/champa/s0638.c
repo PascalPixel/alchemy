@@ -74,11 +74,8 @@ void Func_02000638(void) {
          * actor as the native has; as the plain argument 0x101 through the
          * inline, 2 of 414 instructions differ in tla-en. */
         register s32 emote asm("r1") = 0x101;
-        /* FAKEMATCH(pin): the frames pinned to r2 with the emote above, for
-         * the same row. */
-        register s32 frames asm("r2") = 0x1e;
 
-        Actor_ShowEmote(0x1e, emote, frames);
+        Actor_ShowEmote(0x1e, emote, 0x1e);
       }
       FieldEvent_ShowMessageThenWait(0x1e, 0, 5);
       Actor_RunRepeatedMotion(29, 2);

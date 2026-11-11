@@ -813,10 +813,6 @@ void Func_080ae16c(s32 arg0) {
     {
       struct MainRoutineWork *party = &gMainRoutineWork;
 
-      /* FAKEMATCH(barrier): an empty asm, which loads gMainRoutineWork before
-       * the owner list's offset is started; as no asm and a plain field read,
-       * the offset is started first and 2 instructions differ. */
-      asm volatile("");
       obj = Unit_Get(party->activeOwners[n]);
     }
 
@@ -885,10 +881,6 @@ void Func_080ae220(void) {
     {
       struct MainRoutineWork *party = &gMainRoutineWork;
 
-      /* FAKEMATCH(barrier): an empty asm, which loads gMainRoutineWork before
-       * the owner list's offset is started; as no asm and a plain field read,
-       * the offset is started first and 2 instructions differ. */
-      asm volatile("");
       ownerId = party->activeOwners[n];
     }
     group = gCharacter_ElementGroupTable[ownerId];

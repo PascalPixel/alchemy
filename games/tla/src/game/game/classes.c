@@ -76,12 +76,6 @@ s32 Enemy_GetAttackElement(void *state) {
   if (preset > 47)
     preset = 0;
   table = gData_080c6684;
-  /* FAKEMATCH(dead): an empty once-only block, which loads the table's address
-   * before the preset is scaled, with the offset as its own local, which keeps
-   * the [r3, r2] address; without the block, 2 instructions differ in
-   * tla-en. */
-  do {
-  } while (0);
   offset = preset * sizeof(struct ElementPreset);
   return *(u32 *)((u8 *)table + offset);
 }

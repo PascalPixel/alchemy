@@ -120,10 +120,7 @@ void Func_02002068(void) {
   Actor_FaceDirection(5, FACING_WEST, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
   Actor_FaceDirection(7, FACING_WEST, 0);
-  /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call the actor
-   * comes one row early (see the macro). */
-  SHAMAN_VILLAGE_EMOTE(18, 256, 20)
+  Func_080d47b4(18, 256, 20);
   Actor_Jump(18, 4, 0);
   Event_ShowMessageAndWait(18, 0);
   Actor_FaceDirection(15, FACING_SOUTHEAST, 0);
@@ -139,10 +136,7 @@ void Func_02002068(void) {
   Actor_FaceDirectionAndWait(15, FACING_SOUTH);
   Motion_SetModeAndWaitAnimation(15, 4);
   Event_ShowMessageAndWait(15, 0);
-  /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call the actor
-   * comes one row early (see the macro). */
-  SHAMAN_VILLAGE_EMOTE(6, 259, 0)
+  Func_080d47b4(6, 259, 0);
   Event_ShowMessageAndWait(6, 0);
   Actor_FaceDirection(15, FACING_SOUTHWEST, 0);
   /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
@@ -159,10 +153,7 @@ void Func_02002068(void) {
   Actor_FaceDirection(15, FACING_SOUTHEAST, 0);
   Actor_SetAttachedEffect(18, 258);
   Event_ShowMessageAndWait(18, 0);
-  /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call the actor
-   * comes one row early (see the macro). */
-  SHAMAN_VILLAGE_EMOTE(15, 265, 40)
+  Func_080d47b4(15, 265, 40);
   Event_ShowMessageAndWait(15, 0);
   /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
    * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call, 45 of 711
@@ -170,10 +161,7 @@ void Func_02002068(void) {
   SHAMAN_VILLAGE_EMOTE(17, 262, 20)
   Actor_FaceDirectionAndWait(17, FACING_SOUTHWEST);
   Event_ShowMessageAndWait(17, 0);
-  /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call the actor
-   * comes one row early (see the macro). */
-  SHAMAN_VILLAGE_EMOTE(15, 257, 0)
+  Func_080d47b4(15, 257, 0);
   Actor_FaceDirection(15, FACING_NORTHEAST, 20);
   Actor_SetModeById(17, 3);
   Event_ShowMessageAndWait(17, 0);
@@ -185,18 +173,12 @@ void Func_02002068(void) {
     Event_Wait(10);
     DriftScene_SpawnObject(0x7c0000, y, z, 0x2000);
     Event_Wait(30);
-    /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-     * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call the actor
-     * comes one row early (see the macro). */
-    SHAMAN_VILLAGE_EMOTE(16, 262, 20)
+    Func_080d47b4(16, 262, 20);
     Actor_ArmCallbackAndRefresh(16, 0);
     Event_ShowMessageAndWait(16, 0);
     Actor_FaceDirectionAndWait(17, FACING_WEST);
     Motion_SetModeAndWaitAnimation(17, 3);
-    /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-     * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call the actor
-     * comes one row early (see the macro). */
-    SHAMAN_VILLAGE_EMOTE(15, 264, 40)
+    Func_080d47b4(15, 264, 40);
     Motion_SetModeAndWaitAnimation(15, 3);
     Actor_FaceDirection(17, FACING_SOUTH, 0);
     Actor_FaceDirection(16, FACING_SOUTH, 0);

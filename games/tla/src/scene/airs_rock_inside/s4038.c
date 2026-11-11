@@ -9,18 +9,7 @@ s32 Func_02004038(struct Actor *object) {
   s32 from;
 
   object->bounce = (target->x - object->x) / (steps = 10);
-  /* FAKEMATCH(dead): an empty once-only block, the first of a pair of fences
-   * with the empty asm below, so the x step is stored, then the object height
-   * read, then the target height, as the ROM does; as no block, 2 of 35
-   * instructions differ in tla-en (0 with the asm below removed too). */
-  do {
-  } while (0);
   from = object->y;
-  /* FAKEMATCH(barrier): the empty asm, the second fence of the pair above,
-   * keeps the object height's read ahead of the target height's; as no asm, 2
-   * of 35 instructions differ in tla-en (0 with the block above removed too).
-   */
-  asm volatile("");
   object->unk4c = (target->y - from + 0x100000) / steps;
   object->gravity = (target->z - object->z) / steps;
   BYTE_AT(object, 98) = steps;

@@ -15,9 +15,6 @@ void Func_02000840(struct FieldActor *object) {
   s32 radius = object->y;
   s32 step = WORD_AT(object, 48);
 
-  /* FAKEMATCH(barrier): the empty asm keeps both loads ahead of the radius's
-   * 0x100000; as no asm, 2 instructions differ in tla-en. */
-  __asm__("");
   radius >>= 1;
   radius += 0x100000;
   object->x = WORD_AT(object, 68) +
@@ -35,9 +32,6 @@ void Func_020008ac(struct FieldActor *object) {
   s32 radius = object->y;
   s32 step = WORD_AT(object, 48);
 
-  /* FAKEMATCH(barrier): the empty asm keeps both loads ahead of the radius, as
-   * in Func_02000840; as no asm, 2 instructions differ. */
-  __asm__("");
   radius >>= 2;
   radius += 0xc0000;
   object->x = WORD_AT(object, 68) +

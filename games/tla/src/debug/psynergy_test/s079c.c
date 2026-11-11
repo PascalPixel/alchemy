@@ -50,11 +50,6 @@ s32 Func_0200079c(void) {
 
     if (party->entrance == 6)
       Func_02000f04(party->currentOwner);
-    /* FAKEMATCH(dead): an empty once-only block, which gives the second
-     * entrance test its own load; without the block, 18 instructions differ
-     * in tla-en. */
-    do {
-    } while (0);
     if (party->entrance == 8)
       Func_02000f0c(party->currentOwner);
   }

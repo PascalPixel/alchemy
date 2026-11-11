@@ -17,10 +17,7 @@ void Func_020011c0(void) {
                                               8);
   }
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  /* FAKEMATCH(signature): the call through a value-returning function type,
-   * which sets its constants before the owner, as the ROM does; as the void
-   * call, 2 instructions differ. */
-  ((s32 (*)(s32, s32, s32))Func_080d47b4)(gMainRoutineWork.currentOwner, 256, 0);
+  Func_080d47b4(gMainRoutineWork.currentOwner, 256, 0);
   FieldEvent_Wait(10);
   AnkohlRuins_CamBounds(-1, -1, -1, 0);
   Event_PlaySound(204);

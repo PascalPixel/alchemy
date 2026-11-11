@@ -11,10 +11,6 @@ void Func_02001dfc(void);
 void Func_02001e04(s32 a, s32 b, s32 c, s32 d);
 
 void Func_02001054(void) {
-  /* FAKEMATCH(dead): an empty once-only block after each of the first two
-   * entrance tests keeps each test a load of its own, as in overlay 657's
-   * s0b84.c; as no blocks, gcse shares one halfword load and compares it
-   * shifted, and 37 instructions differ. */
   Task_AddFrame(Func_020003e8, TASK_PASS_VBLANK);
   Func_02001dfc();
   Func_02001e04(0, 0x200, 8, 9);
@@ -22,12 +18,8 @@ void Func_02001054(void) {
   Func_02000f98();
   if (gMainRoutineWork.entrance == 3)
     Func_02001500();
-  do {
-  } while (0);
   if (gMainRoutineWork.entrance == 4)
     Func_02001500();
-  do {
-  } while (0);
   if (gMainRoutineWork.entrance == 5)
     Func_02001500();
 }

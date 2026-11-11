@@ -27,14 +27,7 @@ void Func_02005688(s32 a) {
     control->field04 = value;
     control->field08 = 0;
   }
-  {
-    /* FAKEMATCH(temporary): a local holding the priority keeps the constant
-     * ahead of the task function load; as a plain argument, 2 instructions
-     * differ. */
-    s32 priority = 0x485;
-
-    Task_Add(Func_02004ddc, priority);
-  }
+  Task_Add(Func_02004ddc, 0x485);
 }
 
 void Func_020056c4(s32 a) {

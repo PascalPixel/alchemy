@@ -38,15 +38,7 @@ void Func_02000490(void) {
 
   id = (s32)&ResourceId_LogoOnBlack;
   Fade_ToBlack(0);
-  {
-    /* FAKEMATCH(pin): the control value pinned to r3, so 0x681 loads before
-     * BG2CNT's address; as a plain store, one row is reordered in tla-en. */
-    register u16 control asm("r3");
-
-    control = 0x681;
-
-    REG_BG2CNT = control;
-  }
+  REG_BG2CNT = 0x681;
   gBgScroll[2].y = 0;
   blank = 0x1ff;
   res = Resource_GetTableEntry(id);

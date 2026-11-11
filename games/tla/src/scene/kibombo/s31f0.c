@@ -42,14 +42,7 @@ void Func_02003288(void) {
     struct KibomboObject *object = Actor_GetById(id);
 
     Func_020031f0(id);
-    {
-      /* FAKEMATCH(pin): the zero pinned to r3 inside the loop, built on every
-       * pass; as a plain 0, which loop.c hoists to r8, 8 instructions
-       * differ. */
-      register s32 zero asm("r3") = 0;
-
-      object->motionFlags = zero;
-    }
+    object->motionFlags = 0;
   }
   Func_02003220();
 }

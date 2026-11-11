@@ -322,11 +322,6 @@ u32 Unit_GetExperienceForLevel(s32 owner, s32 level) {
       s32 row = state->enemyId * 99 + level;
       s32 offset;
 
-      /* FAKEMATCH(barrier): the table held at an empty asm, which loads it
-       * between the add and the scaling; as
-       * gOwner_ExperienceThresholds[state->enemyId * 99 + level - 1], 2
-       * instructions differ in tla-en. */
-      asm volatile("" : "+l"(table));
       offset = row * 4 - 4;
       return *(u32 *)((u8 *)table + offset);
     }
@@ -471,10 +466,6 @@ struct LevelUpResult *Func_080afb80(s32 owner_id, struct LevelUpResult *value) {
   struct BattleUnit *owner;
 
   owner = (struct BattleUnit *)Unit_Get(owner_id);
-  /* FAKEMATCH(barrier): an empty asm, which loads the level before the
-   * experience field's offset is started; as no asm, the offset comes first
-   * (one reordered pair) and 2 instructions differ. */
-  asm("");
   if ((owner->experience >=
        Unit_GetExperienceForLevel(owner_id, owner->level + 1)) &&
       (Owner_LevelUp(owner_id, value) != NULL)) {

@@ -6,10 +6,7 @@ void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Func_02004634(struct Actor *object);
 
 void Func_02004538(struct Actor *object) {
-  /* FAKEMATCH(volatile): a volatile first read keeps the second read of the
-   * frame counter after the call; as a plain read, it is hoisted above the
-   * branch. */
-  u32 frame = *(volatile u32 *)&gFrameCount;
+  u32 frame = gFrameCount;
 
   if (frame & 1)
     Animation_ApplyChildValues(object, (frame >> 1) % 6);

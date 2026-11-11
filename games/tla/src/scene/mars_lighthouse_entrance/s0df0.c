@@ -20,10 +20,6 @@ fill:
   if (--count >= 0)
     goto fill;
   gData_020068a2 = Resource_FindFreeEntry();
-  /* FAKEMATCH(barrier): an empty asm, so the entry is stored before the size
-   * is started, as overlay 67c's Func_02003278 has it; as no asm, the size's
-   * first half comes first, not measured. */
-  __asm__("");
   Vram_Load(gData_020068a2, 0x100, buffer);
   Heap_Release(buffer);
   Task_AddFrame(Func_02000d18, TASK_PASS_VBLANK);

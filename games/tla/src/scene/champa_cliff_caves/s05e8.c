@@ -30,26 +30,17 @@ void Func_020005e8(s32 actor) {
   Actor_GetById(gMainRoutineWork.currentOwner)->unk5a[0] &= ~1;
   Actor_CommitPositionAndActivate(gMainRoutineWork.currentOwner, -16, -8);
   Event_Wait(1);
-  /* FAKEMATCH(signature): the byte declared as an 8-bit bitfield and the bit
-   * set through it; as a plain byte the store aliases the owner's load that
-   * follows, which the scheduler then puts before the zero, differ 2. */
-  ((struct ActorSolid *)Actor_GetById(gMainRoutineWork.currentOwner))->solid |= 1;
+  Actor_GetById(gMainRoutineWork.currentOwner)->unk5a[0] |= 1;
   Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, FACING_EAST);
   Event_Wait(10);
 }
 
 void Func_0200067c(s32 value) {
-  /* FAKEMATCH(temporary): the bit and the mask in locals, declared in this
-   * order so that the bit takes r6 and the mask r7; as literals they take the
-   * other's register, differ 12. */
-  s32 bit = 1;
-  s32 mask = 0xfe;
-
   Actor_SetSpeedParameters(8, 0xcccc, 0x6666);
-  Actor_GetById(8)->unk5a[0] &= mask;
+  Actor_GetById(8)->unk5a[0] &= 0xfe;
   Actor_CommitPositionAndActivate(8, 0, 6);
   Event_Wait(1);
-  ((struct ActorSolid *)Actor_GetById(8))->solid |= bit;
+  ((struct ActorSolid *)Actor_GetById(8))->solid |= 1;
   Event_Wait(10);
   Actor_SetModeById(8, 8);
   Event_Wait(15);
@@ -58,10 +49,10 @@ void Func_0200067c(s32 value) {
   Actor_SetModeById(8, 1);
   Event_Wait(15);
   if (value == 0) {
-    Actor_GetById(8)->unk5a[0] &= mask;
+    Actor_GetById(8)->unk5a[0] &= 0xfe;
     Actor_CommitPositionAndActivate_(8, 0, -6);
     Event_Wait(1);
-    ((struct ActorSolid *)Actor_GetById(8))->solid |= bit;
+    ((struct ActorSolid *)Actor_GetById(8))->solid |= 1;
     Event_Wait(10);
   }
 }

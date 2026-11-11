@@ -34,14 +34,7 @@ void Func_02001904(void) {
   Func_0200062c(17);
   Func_0200062c(18);
   Func_0200062c(19);
-  {
-    /* FAKEMATCH(temporary): a local holding the priority keeps the constant
-     * ahead of the task function load; as a plain argument, 2 instructions
-     * differ. */
-    s32 priority = 0x480;
-
-    Task_Add(Func_020007b4, priority);
-  }
+  Task_Add(Func_020007b4, 0x480);
 }
 
 void Func_02001974(void) {

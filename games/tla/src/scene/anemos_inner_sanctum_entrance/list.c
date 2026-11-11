@@ -15,9 +15,6 @@ void Func_02000ba4(s32 id, s32 value) {
 
   if (object != NULL) {
     object->action = value;
-    /* FAKEMATCH(barrier): the empty asm keeps the action's store ahead of the
-     * list's address, as the ROM does; as no asm. */
-    asm volatile("");
     gData_02001ce0[gData_02001cde] = object;
     gData_02001cde++;
   }

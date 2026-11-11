@@ -37,16 +37,7 @@ void Func_020000ec(struct FieldActor *self) {
   u16 angle = self->timer;
   s32 cosine = Math_Cosine(angle);
   s32 radius = self->speed + BYTE_AT(self, 98);
-  /* FAKEMATCH(pin): the centre pinned to r1, which with the barrier below
-   * copies it out of r8 ahead of the + 6, as the native does; as centre used
-   * plainly, with neither device, 2 instructions differ in tla-en. */
-  register struct FieldActor *anchor asm("r1") = centre;
-
-  /* FAKEMATCH(barrier): an asm operand that says the centre's copy changes,
-   * which it does not; with the pin above, as centre used plainly, 2
-   * instructions differ in tla-en. */
-  asm volatile("" : "+r"(anchor));
-  self->x = anchor->x + cosine * (radius + 6);
+  self->x = centre->x + cosine * (radius + 6);
   self->z = centre->z + Math_Sin(angle) * (BYTE_AT(self, 98) + 4);
   self->targetX = self->x;
   self->targetZ = self->z;

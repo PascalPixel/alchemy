@@ -44,9 +44,7 @@ rise:
   leader->y += PIXELS(4);
   Func_02000cd8(15, 0x4ccc, 0x4ccc);
   wait(1);
-  /* FAKEMATCH(volatile): y read through a volatile pointer for the test, as in
-   * Func_0200393c; as plain first->y, the instructions differ. */
-  if (*(volatile s32 *)&first->y < 0)
+  if (first->y < 0)
     goto rise;
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 27, 12);
   gData_020062a0 = 2000;
@@ -93,9 +91,7 @@ rise:
   leader->y += PIXELS(4);
   Func_02000cd8(16, 0x4ccc, 0x4ccc);
   wait(1);
-  /* FAKEMATCH(volatile): y read through a volatile pointer for the test, as in
-   * Func_0200393c; as plain first->y, the instructions differ. */
-  if (*(volatile s32 *)&first->y < 0)
+  if (first->y < 0)
     goto rise;
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 37, 14);
   gData_020062a4 = 2000;
@@ -115,10 +111,7 @@ rise:
   object->y -= PIXELS(4);
   Func_02000cf8(15, 0x4ccc, 0x4ccc);
   wait(1);
-  /* FAKEMATCH(volatile): y read through a volatile pointer for the test, which
-   * keeps GCSE from carrying it around the loop in r2, so it loads again at the
-   * top; as plain object->y, 13 instructions differ. */
-  if (*(volatile s32 *)&object->y > -0x140000)
+  if (object->y > -0x140000)
     goto rise;
   Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
@@ -138,9 +131,7 @@ rise:
   object->y -= PIXELS(4);
   Func_02000cf8(16, 0x4ccc, 0x4ccc);
   wait(1);
-  /* FAKEMATCH(volatile): y read through a volatile pointer for the test, as in
-   * Func_0200393c; as plain object->y, 13 instructions differ. */
-  if (*(volatile s32 *)&object->y > -0x140000)
+  if (object->y > -0x140000)
     goto rise;
   Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;

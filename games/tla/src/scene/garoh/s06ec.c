@@ -21,10 +21,6 @@ void Func_020006ec(void) {
       s32 a = 0x101;
       s32 b = 15;
 
-      /* FAKEMATCH(barrier): an empty asm on a and b, so the second and third
-       * arguments are loaded before the first; as the plain call, the first is
-       * loaded earlier and 2 instructions differ. */
-      asm volatile("" : "+l"(a), "+l"(b));
       FieldActor_ShowEmote(4, a, b);
     }
     {

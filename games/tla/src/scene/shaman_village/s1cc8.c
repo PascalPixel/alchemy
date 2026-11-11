@@ -83,10 +83,7 @@ void Func_02001d3c(void) {
   SHAMAN_VILLAGE_EMOTE(17, 259, 0)
   Event_ShowMessageAndWait(0x8011, 0);
   Actor_StartRepeatedMotion(16, 1);
-  /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call the actor
-   * comes one row early (see the macro). */
-  SHAMAN_VILLAGE_EMOTE(16, 259, 0)
+  Func_080d47b4(16, 259, 0);
   Event_ShowMessageAndWait(0x8010, 0);
   Motion_SetModeAndWaitAnimation(15, 3);
   Event_ShowMessageAndWait(0x800f, 0);

@@ -13,10 +13,6 @@ void Func_0200119c(s32 id, s32 value) {
     s16 *count;
 
     object->timer = value;
-    /* FAKEMATCH(barrier): an empty asm after the timer store, so the list and
-     * its count load after it; as the same statements with no asm, not
-     * measured. */
-    asm volatile("");
     count = &gData_0200275e;
     gData_02002760[*count] = object;
     (*count)++;

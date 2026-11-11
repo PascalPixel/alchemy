@@ -136,10 +136,4 @@ static __inline__ void Func_020053a8_(s32 a, s32 b, s32 c, s32 d) {
   Func_020053a8(a, b, c, d);
 }
 
-/// The byte at 0x23 of an actor, as the field its bit 5 is set through.
-struct ObjectFlags23 {
-  u8 unk00[0x23];
-  u8 flags : 8;
-};
-
 #endif

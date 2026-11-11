@@ -29,14 +29,7 @@ void Func_0200290c(void) {
   Actor_SetModeById(10, 4);
   Actor_SetModeById(11, 4);
   Func_020053b8(gData_020054dc);
-  {
-    /* FAKEMATCH(pin): the blend value pinned to r3, so it loads from the pool
-     * before the register address is started; as a plain store, 2
-     * instructions differ in tla-en. */
-    register u16 alpha __asm__("r3") = 0xc08;
-
-    REG_BLDALPHA = alpha;
-  }
+  REG_BLDALPHA = 0xc08;
   REG_BLDCNT = 0x3f10;
   Func_02005388(245);
   Task_Add(Func_02000c74, TASK_PASS_VBLANK);

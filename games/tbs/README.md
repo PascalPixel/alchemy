@@ -181,7 +181,7 @@ page takes them in this order:
 
 1. Code such as the event is written in the order things happen, and stops
    wherever something takes time ([Code that waits](#code-that-waits)).
-2. While it is stopped, the game still runs a short list of small jobs in
+2. While it is stopped, the game still runs a short list of routines in
    every frame, the tasks ([Tasks](#tasks)).
 3. One of those tasks moves every actor a little further through its actor
    script ([Actor scripts](#actor-scripts)).
@@ -245,7 +245,7 @@ instruction [`wait`](glossary.md#wait) with a number of frames. And `wait`
 does not sit idle. For each frame it is asked for, it runs one whole frame
 of the game:
 
-1. It runs every [task](glossary.md#task), the small jobs that keep the
+1. It runs every [task](glossary.md#task), the routines that keep the
    screen alive. The actors move, the windows type their letters, the
    river flows.
 2. It writes down where every small moving picture on the screen should be
@@ -322,12 +322,12 @@ behind it. This is the game's [slowdown](glossary.md#slowdown)
 Garet's sister's line arrives a letter at a time, and when the page is
 full a small arrow bobs at its end. Both are done by a task.
 
-A [task](glossary.md#task) is one of the small jobs `wait` runs in every frame.
+A [task](glossary.md#task) is one of the routines `wait` runs in every frame.
 It is a small piece of code that does one frame's worth of something and
 finishes at once: every person moved one step on, the next letters
 typed, the river's squares swapped for the next picture of water.
 
-The game keeps the tasks in a list with room for 20. Whatever needs a job
+The game keeps the tasks in a list with room for 20. Whatever needs work
 done every frame puts a task on the list. From then on it runs in every
 frame, whatever else is going on, until it is taken off again.
 

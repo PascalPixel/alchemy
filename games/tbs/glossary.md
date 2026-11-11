@@ -303,7 +303,7 @@ Evidence: tradition: WAIT, the period's word for it.
 
 ### Task
 
-A task is a small job the game runs once in every [frame](#frame), even
+A task is a routine the game runs once in every [frame](#frame), even
 while other code is [waiting](#wait), until it is taken off the list. The
 task that types a villager's line into its window letter by letter is
 one. The list, `gTasks`, has room for 20

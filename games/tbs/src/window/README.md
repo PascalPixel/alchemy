@@ -95,8 +95,7 @@ So who is drawing the window?
 
 The game keeps a short list of [tasks](../../glossary.md#task) that it runs
 once in every frame, no matter what else is waiting. The windows have a
-task of their own, and it
-does three things each frame, always in this order:
+task of their own, and it does three things each frame, always in this order:
 
 1. Every window that is opening is drawn one step bigger, and every window
    that is closing one step smaller.

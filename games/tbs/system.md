@@ -121,7 +121,7 @@ and wait for it to end, wait 10 frames, open the screen again, wait 30
 more. Nothing in that list has to keep the game running. The waits do it.
 
 In every frame it waits through, `wait()` runs a short list of
-[tasks](glossary.md#task), each of which does one frame's share of a job.
+[tasks](glossary.md#task), each of which does one frame's share of its work.
 Typing the next letters into a window is a task, which is how the
 villager's line types itself out while his own code stands still.
 

@@ -698,8 +698,8 @@ unit falling, or a fresh drawing of the status window.
 While Plasma's lightning is on screen, the battle effect is busy drawing it,
 one frame after another. It cannot also be typing Garet's line.
 
-So the game gives the list to a [task](../../glossary.md#task), a small job
-it runs once in every frame, whatever else is going on. Just before the
+So the game gives the list to a [task](../../glossary.md#task), a routine
+the game runs once in every frame, whatever else is going on. Just before the
 battle effect starts, a task is added that plays the list
 ([System](../../system.md#waiting-and-tasks)).
 

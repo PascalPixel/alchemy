@@ -24,9 +24,9 @@ of Vale's.
 
 The walking itself is the same code everywhere. It is called the
 [field sequence](../../glossary.md#field-sequence), or the
-[field](../../glossary.md#field) for short. The field knows nothing about Vale. It only knows how to ask the
-loaded [scene](../../glossary.md#scene) about itself, and the scene's
-answers are what the player finds there.
+[field](../../glossary.md#field) for short. The field knows nothing about Vale.
+It only knows how to ask the loaded [scene](../../glossary.md#scene) about
+itself, and the scene's answers are what the player finds there.
 
 One more word is needed from the start. The game remembers the story's
 progress as [game flags](../../glossary.md#game-flag). A game flag is one
@@ -130,8 +130,8 @@ guarding Mt. Aleph where he stood instead of sending him back to his post.
 
 ## The tables
 
-Each of the other entries hands over a table: a list with one line, called a row,
-for each thing. One row is a spot the party can arrive at, or a way out, or
+Each of the other entries hands over a table: a list with one line, called a
+row, for each thing. One row is a spot the party can arrive at, or a way out, or
 a person standing somewhere, or a thing the player can do.
 
 Many rows give a position. The field is measured in pixels, the dots of the
@@ -726,9 +726,9 @@ patrol, a list of moves he works through. And a small piece of code of his
 own runs every frame and turns him to keep watching Isaac. The game calls
 that an update routine.
 
-A [task](../../glossary.md#task) is the same idea belonging to no actor. At the end of the roof repair,
-while Isaac's Psynergy is at work on a board, a task plays the sparkle
-sound every 16 frames.
+A [task](../../glossary.md#task) is the same idea belonging to no actor. At the
+end of the roof repair, while Isaac's Psynergy is at work on a board, a task
+plays the sparkle sound every 16 frames.
 
 ## The Title, the File Screen and the Battle Arena
 

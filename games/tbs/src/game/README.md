@@ -207,10 +207,10 @@ A row also says what happens to the item when it is used:
 
 ### What an item can be, and worn effects
 
-Then come five yes-or-no properties. An item can be cursed. It can refuse to come
-off once worn. It can be rare. It can be kept in a stack, as Herbs are. And
-it can be important, like the Small Jewel, which means it is never dropped
-and a shop will give nothing for it.
+Then come five yes-or-no properties. An item can be cursed. It can refuse to
+come off once worn. It can be rare. It can be kept in a stack, as Herbs are. And
+it can be important, like the Small Jewel, which means it is never dropped and a
+shop will give nothing for it.
 
 A worn item can do more than add to Attack or Defense. A row has room for
 four more effects, each a kind and an amount. Adept's Clothes add 8 to
@@ -459,9 +459,9 @@ ready-made sets of levels, Power and Resist instead.
 
 The class is chosen from the element levels and nothing else.
 
-First the two strongest elements pick a class series, a ladder of classes.
-Venus alone is the Squire's series, Mars alone the Guard's, Mercury alone
-the Water Seer's and Jupiter alone the Wind Seer's.
+First the two strongest elements pick a class series, a run of classes from
+lowest to highest. Venus alone is the Squire's series, Mars alone the
+Guard's, Mercury alone the Water Seer's and Jupiter alone the Wind Seer's.
 
 A second element only counts once it reaches level 1, and then the pair
 picks a mixed series. Isaac's own 0.3 in Mercury is too little. Set one

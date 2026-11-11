@@ -15,7 +15,7 @@ of them has to wait, for a window, a walk or a fade, it hands over to one
 small function named [`wait()`](../../glossary.md#wait).
 
 While `wait()` waits, it keeps the rest of the game going. For every picture
-the screen shows, it runs a short list of small jobs. The game calls each
+the screen shows, it runs a short list of routines. The game calls each
 one a [task](../../glossary.md#task), and each picture, with the work that
 goes into it, a [frame](../../glossary.md#frame). Typing the next letters and
 bobbing the arrow is one of those tasks.

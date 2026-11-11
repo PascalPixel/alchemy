@@ -57,10 +57,11 @@ Something has to redraw the window on each of those frames, and it is not
 the conversation. The part of the game that started the conversation asks
 for the window once and then only waits.
 
-The redrawing is done by a [task](glossary.md#task), and the windows have
-a task of their own. Each frame it draws every opening window a little
-bigger and every closing one a little smaller. That is how two windows, such
-as a line and the portrait beside it, can be on the move at once.
+The redrawing is done by the windows' own [task](glossary.md#task), which
+the game runs once in every frame, whatever else is waiting. Each frame it
+draws every opening window a little bigger and every closing one a little
+smaller. That is how two windows, such as a line and the portrait beside it,
+can be on the move at once.
 
 [Windows](src/window/README.md#windows) follows one window from opening to
 closing.

@@ -536,8 +536,8 @@ can be four questions down, at `How many?` in the middle of giving away
 Herbs. The game does not teach every question how to close all the ones
 before it. A small task and one flag do it.
 
-Most [game flags](../../glossary.md#game-flag) record the story, such as whether a chest has been
-opened. This one only means "Start was pressed in a menu".
+Most [game flags](../../glossary.md#game-flag) record the story, such as whether
+a chest has been opened. This one only means "Start was pressed in a menu".
 
 As a screen opens, it lowers the flag and adds the task. The task runs once
 a frame while the questions wait, and it does one thing. When Start is
@@ -743,12 +743,12 @@ the rows that are only partly in view.
 The text itself is a plain list with one entry for each line and an empty
 entry for a gap. A special last entry stops the scroll.
 
-The game checks for that last entry a moment too late, after it has taken
-some memory from the heap to draw a line in. So that memory is never given back, a
-[bug](../../glossary.md#bug-bugfix-and-ubfix) that this code keeps, as it
-keeps everything [the original](../../glossary.md#the-original) game does.
-It does no harm, because the game takes back every block of the heap
-before the next scene starts, and the next scene is the File Screen.
+The game checks for that last entry a moment too late, after it has taken some
+memory from the heap to draw a line in. So that memory is never given back, a
+[bug](../../glossary.md#bug-bugfix-and-ubfix) that this code keeps, as it keeps
+everything [the original](../../glossary.md#the-original) game does. It does no
+harm, because the game takes back every block of the heap before the next scene
+starts, and the next scene is the File Screen.
 
 ## Design
 
@@ -812,8 +812,8 @@ the kinds of item each one lists first.
 
 ## For readers of the code
 
-The rest of this page is for someone about to open the source. It says
-where a screen keeps what it is working on, how the title intro and the credits take the
+The rest of this page is for someone about to open the source. It says where a
+screen keeps what it is working on, how the title intro and the credits take the
 display for themselves, and where the six languages differ.
 
 ### The menu work

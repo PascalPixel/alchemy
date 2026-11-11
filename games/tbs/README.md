@@ -7,11 +7,13 @@
 > These pages call the game by that subtitle, to keep it apart from
 > [The Lost Age](glossary.md#the-two-games).
 
-Switch the console on and the title card settles over Mt. Aleph. Press
-Start, choose a file, and the party stands in Vale. From here on the player
-sees one thing at a time: the party walking around a town, a conversation,
-a battle, a menu, a game of dice. Underneath, the game runs on four
-mechanisms, each one running inside the one before it:
+Switch the console on and the title card settles over Mt. Aleph. Press Start,
+choose a file, and the party stands in Vale.
+
+From here on the game only ever shows one thing at a time: a walk through
+town, a conversation, a battle, a menu, a game of dice. It can afford to,
+because underneath it runs on just four mechanisms, each one tucked inside
+the one before it:
 
 1. The [main routine](glossary.md#main-routine) runs one
    [sequence](glossary.md#sequence) at a time: the field, a battle, Lucky Dice
@@ -39,35 +41,42 @@ flowchart TD
   class tasks,scripts frame
 ```
 
-Before the four mechanisms come the console and the frame, the unit
-everything else is measured in. The pages for the
-[four divisions](#the-four-divisions) of the code go deeper into each
-mechanism.
+Hold on to that picture. Every page of these docs is one of those four
+mechanisms seen up close, and the pages for the
+[four divisions](#the-four-divisions) of the code go deepest.
+
+First, though, the two things all four stand on: the console itself, and the
+frame, the heartbeat everything else is counted in.
 
 ## The console
 
 ![Isaac stands in Vale, then A, B, Select and Start restart the game and the Camelot logo comes up](https://alchemy.pascalpixel.com/guides/runtime/soft-reset.gif)
 
-The Game Boy Advance has a screen of 240 by 160 pixels, which it redraws
-about 60 times a second, and ten buttons: the four directions of the D-pad,
-A, B, L, R, Start and Select. Everything the player sees is drawn out of two
-kinds of picture. The [background layers](glossary.md#background-layer) are
-large grids of tiles, four of them stacked one behind another, which the
-ground, the walls, the roofs and the windows are drawn on. The
-[sprites](glossary.md#sprite-and-oam) are small pictures placed anywhere, up
-to 128 at once, which the people, the cursor and the battle's effects are
-drawn with. The console draws both by itself from tables in its memory; the
-game's work each frame is to fill those tables.
+The Game Boy Advance is a small machine. Its screen is 240 by 160 pixels,
+redrawn about 60 times a second, and it has ten buttons: the four directions
+of the D-pad, A, B, L, R, Start and Select.
 
-The cartridge holds the code and every picture, map, tune and line of text,
-about 8 MB. The processor runs most of the code straight from the cartridge:
-this is the [main image](glossary.md#main-image), about 1 MB, cut into
-fourteen [banks](glossary.md#bank). The rest of the code runs from the
-console's RAM, which is small: 256 KB of slower memory and 32 KB of fast
-memory. A scene's code is unpacked into the slower RAM as an
-[overlay](glossary.md#overlay) when the party arrives there, and the routines
-that must be quick, such as the interrupt handlers, are copied into the fast
-memory at start-up.
+Everything on that screen is made of just two kinds of picture. The
+[background layers](glossary.md#background-layer) are large grids of tiles,
+four of them stacked one behind another: the ground, the walls, the roofs and
+the windows. The [sprites](glossary.md#sprite-and-oam) are small pictures that
+can go anywhere, up to 128 at once: the people, the cursor and a battle's
+fireworks.
+
+The console draws both by itself, from tables in its memory. So the game
+never paints the screen. Each frame it fills in those tables, and the console
+does the rest.
+
+The cartridge holds everything: the code and every picture, map, tune and
+line of text, about 8 MB. Most of the code runs straight from the cartridge.
+This is the [main image](glossary.md#main-image), about 1 MB, cut into
+fourteen [banks](glossary.md#bank).
+
+The console's own memory is tiny by comparison: 256 KB of slower RAM and
+32 KB of fast RAM, so the game is careful with both. A scene's code is
+unpacked into the slower RAM as an [overlay](glossary.md#overlay) only when
+the party arrives there. The few routines that must be quick, such as the
+interrupt handlers, are copied into the fast memory at start-up.
 
 | Memory          | Size   | What runs or lives there                                         |
 | --------------- | ------ | ---------------------------------------------------------------- |
@@ -84,22 +93,24 @@ sequence.
 
 Everything in the game that takes time is counted in frames. A frame is one
 picture: the game prepares it, then waits for the screen to show it at the
-next [VBlank](glossary.md#vblank), the moment about 60 times a second between
-one picture on the screen and the next. Isaac walks
-one pixel a frame, and runs one and a half with B held; a message types a
-few letters a frame; a pause in a conversation is so many frames; an animation
-shows each of its pictures for so many frames. Sixty frames are about one
-second.
+next [VBlank](glossary.md#vblank), the pause between one picture on the
+screen and the next, which comes about 60 times a second.
 
-A frame is what the game does for one picture, and then a halt until the
-next VBlank. The VBlank interrupt runs on its own at every
-VBlank, whatever the game's code is doing: it puts the finished picture on
-screen, mixes the next slice of sound and reads the buttons. What a frame has
-to do is usually done well before its VBlank arrives. When it takes longer
-than one VBlank, the picture is shown a VBlank late, and since everything
-counted in frames runs by the frame, it all runs slow together, while the
-music, mixed at every VBlank, keeps its tempo: that is
-[slowdown](glossary.md#slowdown) ([System](system.md#slowdown)).
+Once you know that, you see frames everywhere. Isaac walks one pixel a frame,
+and one and a half with B held. A message types a few letters a frame. A
+pause in a conversation is so many frames, and an animation shows each of its
+pictures for so many frames. Sixty frames are about one second.
+
+So the game does one frame's work and then halts until the next VBlank. At
+every VBlank, whatever the game's code is doing, the VBlank interrupt steps
+in: it puts the finished picture on screen, mixes the next slice of sound and
+reads the buttons.
+
+Usually a frame's work is done with time to spare. When it isn't, the picture
+arrives a VBlank late, and everything counted in frames slows down together.
+The music doesn't: it is mixed at every VBlank, so it keeps its tempo while
+the game drags behind it. That is [slowdown](glossary.md#slowdown)
+([System](system.md#slowdown)).
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -113,8 +124,8 @@ flowchart TD
   class vblank hardware
 ```
 
-Who does the frame's work, and how the code that is waiting gets to wait,
-is the subject of the four mechanisms.
+Who does the frame's work, and how code that is waiting gets to wait, is what
+the four mechanisms are for.
 
 ## The main routine and its sequences
 

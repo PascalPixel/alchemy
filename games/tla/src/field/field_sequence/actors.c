@@ -31,7 +31,7 @@ void Func_080ca6e4(void) {}
 // far, the actors by index and the field mode.
 struct FieldStepWork {
   struct ActorPlacement *tables[4];
-  u8 unk10[4];
+  const struct Trigger *triggers;
   struct Actor *actors[66];
   u8 unk11c[0x6e];
   s8 mode;

@@ -40,13 +40,6 @@ struct SceneMusicEntry {
 
 extern const struct SceneMusicEntry Data_080ee6d4[];
 
-struct EventWorkView {
-  u8 unk000[0x18c];
-  u8 settings[8];
-  s32 unk194;
-  s32 unk198;
-};
-
 void Func_080c9e48(s32 search) {
   struct EventWorkView *work = Ram_HeapSlots->eventWork;
   s32 scene = gMainRoutineWork.scene;

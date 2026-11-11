@@ -310,7 +310,7 @@ void Func_080cb2b8(u32 layer, s32 x, s32 y, s32 z) {
     if (GameFlag_Test(0x167))
       speed <<= 1;
     if (*((s8 *)work + 0x18a) == 3) {
-      work->encounterEnemyGroup = Encounter_RollWorldMap(&leader->x, speed);
+      work->encounterEnemyGroup = Encounter_RollWorldMap((s32)&leader->x, speed);
     } else {
       if (attributes & 4)
         zone = 1;

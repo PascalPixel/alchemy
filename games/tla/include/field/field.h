@@ -63,7 +63,7 @@ s32 BattleEffect_ApplyColorToTargetBufferFar(s32, s32);
 void BattleEffect_ClearChildValueOnMismatch(void);
 s32 BattleEffect_DispatchRequestKind(void);
 void BattleEffect_LoadActionEffectResources(s32 action, s32 flags);
-s32 BattleEffect_Run(void);
+void BattleEffect_Run(void);
 void BattleEffect_SelectBattleCue(s32 row, s32 column);
 void BattleEffect_SetupObjectPair(s32 actor, s32 target);
 s32 BattleEffect_StartBufferInterpolationFar(s32);

@@ -8,9 +8,14 @@
 /// includes it too, so that a part read on its own resolves. It places no
 /// bytes.
 
-// battle.h declares Actor_Destroy with its battle view; these parts pass the
-// actor itself, declared below.
+// The headers declare these with other views (battle.h's actor routines take
+// the battle view); the parts' own declarations are below.
 #define OWN_Actor_Destroy
+#define OWN_Actor_SetAnimationSpeedFar
+#define OWN_Actor_StartScriptFar
+#define OWN_BattleEffect_StartRandomParticleEmitter
+#define OWN_Scene_FindActorPlacement
+#define OWN_Func_080ce458
 
 #include "types.h"
 #include "field/world_map.h"
@@ -68,7 +73,34 @@
 #include "vram_tab.h"
 #include "io_write.h"
 
+// The event work as the parts read it.
+struct EventWorkView {
+  u8 unk000[0x15a];
+  s16 unk15a;
+  s16 unk15c;
+  s16 unk15e;
+  u8 unk160[4];
+  s16 unk164;
+  s16 unk166;
+  u8 unk168[0x1c];
+  s16 blockedSteps;
+  u16 pushKind;
+  u8 unk188[4];
+  u8 settings[8];
+  s32 unk194;
+  s32 unk198;
+};
+
+// A row of the field Psynergy target table (gData_080eff28).
+struct DescriptorEntry {
+  s16 id;
+  u8 unk02[2];
+  s16 range;
+  u8 unk06[2];
+};
+
 // The object's functions its parts call before their definitions.
+struct TriggerView;
 void Func_080ca4a8(void);
 void Func_080ca514(s32 terrain);
 void BattleEffect_SelectBattleCue(s32 zone, s32 slot);
@@ -84,6 +116,23 @@ u32 Stream_ReadU16(u8 **cursor);
 s16 Stream_ReadS16(u8 **cursor);
 void BattleMap_ApplySceneEntranceView(void);
 void Debug_RunPaletteEditor(void);
+s32 GameFlag_IsConditionActive(s32 condition);
+struct TriggerView *Func_080ccd78(s32 kind, s32 target);
+void *Scene_FindActorTalkTrigger(s32 id);
+s32 Func_080ccec8(s32 id);
+s32 Scene_RunRaisedEvent(s32 id);
+s32 Scene_RunTouchOrExit(s32 value);
+s32 Func_080cd680(s32 keys);
+s32 Func_080cd808(s32 id);
+s32 Field_FindNearbyTalkTarget(s32 id);
+s32 Func_080cdc74(void);
+void Func_080cdd80(void);
+void Event_RunMessage(s32 actor, s32 message);
+void Event_ResolveAllPendingActions(void);
+void Event_ResolvePendingActions(s32 skip);
+s32 Party_GetLeaderActor(void);
+s32 Func_080ce0ac(s32 arg, s32 slot);
+s32 Event_ExecutePackedAction(u32 packed);
 
 // Outside routines and data the parts had declared each in its own way, with
 // the one type they share.
@@ -91,7 +140,10 @@ struct Actor;
 extern void *gOverlayArea[]; ///< the scene overlay's entry table
 extern s8 gData_02001000[];
 void Actor_Destroy(struct Actor *object);
+void Actor_SetAnimationSpeedFar(struct Actor *object, s32 value);
 void Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags);
+void Actor_StartScriptFar(struct Actor *object, const void *script);
+struct Actor *BattleEffect_StartRandomParticleEmitter(s32 id, s32 item);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 s32 Map_GetTerrainHeightFar(u8 layer, s32 x, s32 z);
 void *Unit_Get(s32 owner);
@@ -102,5 +154,7 @@ void *HeapSlot_Alloc(s32 slot, s32 size);
 void *HeapSlot_AllocEwram(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 struct Actor *Actor_GetById(s32 actorId);
+s32 Func_08020310(s32 x, s32 z, s32 layer, s32 height);
+void FieldMessage_ShowFar(s32 message, s32 mode);
 
 #endif

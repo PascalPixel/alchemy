@@ -18,8 +18,9 @@ explains how this code works.
 
 - `field_sequence.c` holds the start of the field-sequence bank as parts
   under `field_sequence/`, cut where The Broken Seal's are: encounters,
-  actors, walking, the run and the palette editor so far. The rest of the
-  bank is still separate files in `field_sequence/` and the family folders.
+  actors, walking, the run, the palette editor, triggers, targets and items so
+  far. The rest of the bank is still separate files in `field_sequence/` and
+  the family folders.
   The main routine, which The Broken Seal also keeps in its System folder, is
   in [The Lost Age: system](../system/README.md).
 - `field.c` holds the start of the field bank's C as parts under `field/`,

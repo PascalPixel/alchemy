@@ -1,44 +1,69 @@
 # Scenes
 
-![Isaac talks to his mother Dora outside their house in Vale: she turns to him, says `It looks like it won't rain for some time... so I guess I'll just have you fix it later.`, and turns back the way she faced](https://alchemy.pascalpixel.com/places/vale/events/Event_DoraFretsAboutTheRoof.gif)
+![Isaac talks to his mother Dora outside their house in Vale: she turns to him and says `It looks like it won't rain for some time... so I guess I'll just have you fix it later, Isaac.`](https://alchemy.pascalpixel.com/places/vale/events/Event_DoraFretsAboutTheRoof.gif)
 
-Walking around Vale, the player meets what is particular to Vale. Dora
-stands outside her house with something to say about the roof. A door opens
-into the house of Jenna's grandparents. There is a jar with coins in it,
-and a pillar to push.
+Walk around Vale on the day the story begins and Vale answers. Talk to Dora
+outside her house and she frets about the roof. Walk into the door of
+Jenna's grandparents' house and it opens. Use Catch on the Nut and it is
+yours. Push against the stone pillar below the cliff and it slides over.
 
-The code that knows all this is Vale's own, and every place in the game has
-code of its own in the same way. A place is a
-[scene](../../glossary.md#scene), one row of the scene table. Its code is an
-[overlay](../../glossary.md#overlay), unpacked into memory when the
-[party](../../glossary.md#the-party) arrives and replaced by the next scene's
-when it leaves.
+None of that belongs to the game's general rules for walking about. It is
+Vale's own. The game is made of code, which is written instructions, and
+each place has a bundle of code for what happens only there.
 
-The [field sequence](../../glossary.md#field-sequence), which runs the walk,
-knows only how to ask a scene about itself. The scene's answers are what the
-player sees there, and they come in the order the field asks for them:
+The game calls such a place a scene. Vale outdoors is one, the hall of the
+Sanctum is another, and so is the World Map. There are 201 of them. A
+scene's bundle of code is called its
+[overlay](../../glossary.md#overlay). Most scenes have an overlay to
+themselves, and a few close neighbours share one.
+
+Only one overlay is loaded at a time. When the
+[party](../../glossary.md#the-party) walks from Vale into the Sanctum, the
+Sanctum's overlay is copied in from the cartridge, and it takes the place
+of Vale's.
+
+The walking itself is the same code everywhere. It is called the
+[field sequence](../../glossary.md#field-sequence), and this page calls it
+the field. The field knows nothing about Vale. It only knows how to ask the
+loaded [scene](../../glossary.md#scene) about itself, and the scene's
+answers are what the player finds there.
+
+One more word is needed from the start. The game remembers the story's
+progress as [game flags](../../glossary.md#game-flag). A game flag is one
+yes-or-no note, such as "the party has left Vale" or "the Nut in Vale has
+been caught". A flag that says yes is called set, and one that says no is
+called clear.
+
+This page follows a scene's answers in the order the field asks for them:
 
 1. The [entry table](#the-entry-table) is the six questions the field asks
-   every scene, and when it asks them.
-2. The [tables](#the-tables) that answer them say where the party arrives,
-   who stands where, where it can leave, and what each thing the player does
-   starts.
-3. [How a trigger is chosen](#how-a-trigger-is-chosen) from those tables
-   when the player talks, steps or searches. A
-   [trigger](../../glossary.md#trigger) is one row of them.
-4. [Events](#events) are the code a trigger runs. An
-   [event](../../glossary.md#event) is the C routine itself.
-5. The [flags that clean themselves up](#state-that-cleans-itself-up), which
-   let a scene keep notes without putting anything back, and how a scene
-   [draws its room to match](#drawing-the-room-to-match) them.
+   every scene.
+2. The [tables](#the-tables) are the answers: where the party arrives, who
+   stands where, where the ways out lead, and what each thing the player can
+   do there starts.
+3. One line of the last of those tables is a
+   [trigger](../../glossary.md#trigger), such as "talking to Dora".
+   [How a trigger is chosen](#how-a-trigger-is-chosen) is the rule that
+   picks one when the player talks, steps or searches.
+4. Some of a scene's flags
+   [clean themselves up](#state-that-cleans-itself-up), which is why a
+   pushed pillar or a rolled log is back in place later. The scene
+   [draws its room to match](#drawing-the-room-to-match) its flags.
+5. An [event](../../glossary.md#event) is what a trigger sets off: Dora's
+   few words, or a whole cutscene. [Events](#events) shows how one is
+   written.
+
+The parts feed each other in a circle, which is how a village changes as
+the story moves on:
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  field(["🏡 The field sequence"]) -- "asks, through the entry table" --> overlay(["The scene's overlay"])
-  overlay -- "answers with" --> tables(["Its tables: entrances, exits, actor placements, triggers"])
-  tables -- "a trigger row names" --> event(["An event: code that waits"])
-  event -- "sets" --> flags(["🚩 Game flags, which the tables read"])
+  field(["🏡 The field: the walking, the same everywhere"]) -- "asks its six questions" --> overlay(["The scene's overlay"])
+  overlay -- "answers with" --> tables(["Its tables: entrances, exits, who stands where, triggers"])
+  tables -- "the player talks, steps or searches: one trigger fits" --> event(["An event plays"])
+  event -- "sets" --> flags(["🚩 A game flag: this has happened"])
+  flags -- "changes which lines of the tables count" --> tables
   classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef overlay fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef data fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
@@ -56,227 +81,255 @@ its triggers and a recording of each event.
 
 ![Isaac climbs the steps to the Sanctum's door in Vale: Vale fades out, and the Sanctum's hall fades in with Isaac just inside its door](https://alchemy.pascalpixel.com/guides/front/sanctum-door.gif)
 
-When Isaac walks from Vale into the Sanctum, the field asks the Sanctum's
-overlay where the party arrives and who stands there. Later, as he leaves,
-it asks where the door he took leads.
+Isaac walks into the Sanctum's door, Vale fades out, and the hall fades in
+with him just inside. Between the two fades, the field has asked the
+Sanctum's overlay what it needs to know to put the hall on screen.
 
-Those questions come from the entry table, the fixed set of six questions
-the field asks a scene. Each is answered by a function of the scene's own,
-so the field can run any scene without knowing anything about it.
+It always asks the same six questions. Every overlay begins with six small
+pieces of code, one to answer each question, always in the same order at
+its very start. So the field can find them in any overlay without knowing
+anything else about it. That fixed set of six is the entry table.
 
-Here are the six, in the order the field asks them while a scene runs:
-
-| Question | The scene answers with | When the field asks |
+| The field asks | The scene answers with | When |
 | --- | --- | --- |
-| What can happen here? | its trigger table | as the scene starts, before anything else |
-| Where does the party arrive? | its entrance table | as the scene starts, for the entrance the party came in by |
-| Who stands where? | its actor placement table | as the scene starts, once the party is placed |
-| Is there anything to set up? | its setup function | as the scene starts, last of all |
-| Has the leader stepped into a box on the ground that leads out? | its exit region table | at every step onto a marked cell, while the party walks |
-| Where does this exit lead? | its exit table | as the scene ends, with the exit the party took |
+| What can happen here? | its list of triggers | as the scene starts, first of all |
+| Where does the party arrive? | its list of entrances | as the scene starts |
+| Who stands where? | its list of people and things | as the scene starts, once the party is placed |
+| Is there anything to set up? | its setup | as the scene starts, last, just before the fade in |
+| Are there ways out that hang in the air? | its [exit regions](#exit-regions), which few scenes need | while the party walks |
+| Where does this way out lead? | its list of exits | as the scene ends |
 
-Each answer comes from a function, so a scene can answer differently as the
-story moves on. Vale answers "who stands where" with one table before the
-party has set out, another after it has left and a third once it has
-reached Kalay, each chosen by a [game flag](../../glossary.md#game-flag).
-Vault answers "what can happen here" with one table before its thieves are
-jailed and another after.
+Because every answer comes from code, a scene can answer differently as the
+story moves on. Vale has three lists of what can happen there: one before
+the party leaves the village, one after it has left, and one for when it
+comes back from Kalay. Asked "what can happen here?", Vale looks at its
+flags and hands over the right one.
 
-The setup function is where a scene does whatever its tables cannot. It
-restores what the flags say has happened, so a pushed pillar stands where it
-was left. It starts work of its own that runs every frame, plays an arrival
-event, or sends the party straight on to another scene.
+### The setup
 
-A setup that sends the party on leaves an exit request behind, and the field
-ends the scene before it has faded in.
+The fourth answer, the setup, is where a scene does whatever a list cannot
+say. Vale's setup, for one arrival:
 
-When the party comes back to where it stood, as after a battle, the scene's
-own setup decides what to skip. The field tells it so through
-`FLAG_KEEP_PARTY_POSITION`, which stays set until the setup has run.
+- stands the stone pillar where the player last pushed it;
+- takes the three puppies away, once the party has met Saturos and Menardi;
+- starts the man guarding Mt. Aleph on his patrol, if he has already warned
+  Isaac off the mountain;
+- plays the moment where Dora praises the mended roof, the first time the
+  party arrives from the rooftop.
 
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
-flowchart TD
-  load(["The overlay is unpacked into the overlay area"]) --> triggers(["triggers(): what can happen here"])
-  triggers --> entrances(["entrances(): the party is placed"])
-  entrances --> placements(["actorPlacements(): the people are placed"])
-  placements --> init(["initialize(): the scene's own setup"])
-  init --> walk(["🏡 The walk: regions() at each marked step"])
-  walk -- "the party takes an exit" --> exits(["exits(): where it leads"])
-  classDef overlay fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
-  classDef data fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
-  class load overlay
-  class triggers,entrances,placements,init,exits data
-  class walk sequence
-```
+A setup can even send the party straight on. Once the party has reached
+Kalay, Vault's setup asks for a way out at once, and the field ends the
+scene before it has faded in. The party lands in a second scene of Vault,
+the town as it is later in the story, without ever seeing the first.
 
-The six functions sit at the very start of every overlay, always in the
-same order (`struct SceneEntryPoints`), each behind an 8-byte
-[veneer](../../glossary.md#veneer). So the field finds each one at a fixed
-place, whatever the overlay holds. Only the order is fixed, and a scene
-names its six functions as it likes.
-
-[System code](../system/README.md#how-an-overlay-reaches-the-rest-of-the-game)
-explains the overlay's other table, the imports through which the scene calls
-the main image back.
+After a battle, or when a saved game is continued, the party comes back to
+the very spot it left, not to a door. The field tells the setup so, with a
+flag, and the setup decides what to leave alone. Vale's leaves the man
+guarding Mt. Aleph where he stood instead of sending him back to his post.
 
 ## The tables
 
-The answers are tables, one row to a thing: an entrance the party can arrive
-at, an exit it can leave by, a person standing somewhere, a box that takes
-the leader out, and a trigger for each thing the player can do.
+Each of the other answers is a table: a list with one line, called a row,
+for each thing. One row is a spot the party can arrive at, or a way out, or
+a person standing somewhere, or a thing the player can do.
 
-The field is drawn in three dimensions. x runs east, z runs south across the
-ground, and y is height. So a position in these tables is three numbers in
-pixels, and a facing is one of eight headings
-([Words used here](#words-used-here) gives the units).
-
-Every table ends with an end row, and the rows are declared in
-`scene_tables.h`.
+Many rows give a position. The field is measured in pixels, the dots of the
+screen. A position is three numbers: x counts east, z counts south across
+the ground, and y is height above it. Many rows also give a facing, the
+compass heading someone looks along.
 
 ### Conditions
 
-Most rows carry a condition, which says whether the row holds now.
+The Nut in Vale can be caught once. After that, Catch finds nothing there,
+though the row for catching it is still in Vale's table. Something has to
+say whether a row counts today.
 
-The usual case is "until this has happened". The condition names a game
-flag, and the row holds while that flag is clear. A row can also hold only
-while a flag is set, or always.
+That is the row's condition. Most rows have one, and it names a game flag.
 
-| Condition | The row holds |
+The usual condition means "until this has happened". The row for catching
+the Nut names the flag `FLAG_VALE_NUT_CAUGHT`, and it counts while that flag
+is clear. Catching the Nut sets the flag, and from then on the row is passed
+over.
+
+| Condition | The row counts |
 | --- | --- |
 | `CONDITION_ALWAYS` | always |
 | a game flag, such as `FLAG_VALE_NUT_CAUGHT` | while the flag is clear |
 | `IF_FLAG_SET(flag)` | while the flag is set |
-| `CONDITION_IN_VIEW`, in actor placements only | while the actor stands inside the camera's box, on a sheet of rooms ([Design](#design)) |
+| `CONDITION_IN_VIEW`, for people only | while the person stands in the room the party has entered ([Design](#design)) |
 
 ### Entrances
 
-An entrance is where the party appears and which way it faces. It is named
-for where the party comes from, so `VALE_FROM_SANCTUM` is Vale's doorstep of
-the Sanctum.
+Come out of the Sanctum and Isaac stands on its doorstep, facing south. An
+entrance is that: a spot where the party appears and the way it faces.
 
-An entrance row holds the entrance's number, a position, a facing, and a box
-the camera may move in. A room on a shared map uses that box to show only
-itself ([Design](#design) explains the sharing).
+Each entrance is named for where the party comes from. Vale's
+`VALE_FROM_SANCTUM` is the Sanctum's doorstep, 256 pixels east and 440
+south of the map's top left corner. Vale's table has fourteen rows. Most are
+a door or a path that leads into the village, and two are for the opening
+of the story, when Isaac is mending the roof.
 
-A row can also require a flag to be set. Then a second row for the same
-number can place the party elsewhere once the story has moved on. The party
-arrives at the first row for its entrance whose flag is set, or at the
-table's first row when none matches.
+An entrance row can also give a camera box: a rectangle the view must stay
+inside. Vale's rows give none, since the village may be seen from end to
+end. A house's rows do. Several rooms are drawn side by side on one map
+there, and the box keeps the neighbouring rooms out of sight
+([Design](#design) shows two such rooms).
 
-The camera box is read even when the party keeps its position after a
-battle, so the view stays the room's. A camera box smaller than the screen
-is widened to it, so the view is always at least 240 by 160 pixels.
-
-`scene_exits.h` names every entrance and every exit.
+Two rows can share one entrance and put the party in different spots at
+different points of the story. For that, an entrance row may name a flag,
+and here the meaning is the plain one: the row counts once that flag is
+set. A row that names no flag always counts. The party arrives at the first
+row for its entrance that counts.
 
 ### Exits
 
-An exit is a way out of a scene, named for where it leads.
-`SOL_ENTRANCE_TO_VALE` is the path down from Sol Sanctum's entrance.
+Walk into the door of Jenna's grandparents' house and Vale ends. The event
+that opened the door names the way out it took,
+`VALE_TO_COTTAGE_ROOMS_A_NORTH`. An exit is that: a way out of a scene,
+named for where it leads.
 
-The exit table turns the exit into the scene and entrance that run next. A
-row can hold only until a flag is set, and the first row that holds wins.
-The front page's [Sol Sanctum path](../../README.md#exits-and-entrances)
-shows three rows for one exit, each holding until its flag is set.
+The name alone does not say which scene comes next. The exit table does.
+Vale's has this row:
 
-A door is named the same from both sides, so each side names the other.
-Vale's `VALE_TO_COTTAGE_ROOMS_A_NORTH` leads to
-`COTTAGE_ROOMS_A_FROM_VALE_NORTH`, and that room's
-`COTTAGE_ROOMS_A_TO_VALE_NORTH` leads back to
-`VALE_FROM_COTTAGE_ROOMS_A_NORTH`.
+```c
+SCENE_EXIT(VALE_TO_COTTAGE_ROOMS_A_NORTH, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_NORTH),
+```
 
-An exit table opens with a header naming the scene whose exits follow. An
-overlay that serves several scenes lists each scene's exits under its own
-header in the one table. One kind of exit leads into a battle.
+It reads: this exit leads to the scene `CottageRoomsA`, at its entrance
+`COTTAGE_ROOMS_A_FROM_VALE_NORTH`. A door is named from both sides this
+way. Inside the house, the exit `COTTAGE_ROOMS_A_TO_VALE_NORTH` leads back
+to Vale's entrance `VALE_FROM_COTTAGE_ROOMS_A_NORTH`.
 
-| Word | Meaning |
-| --- | --- |
-| `SCENE_EXITS(Scene)` | the header: the exits of this scene follow |
-| `SCENE_EXIT(exit, Scene, entrance)` | this exit leads to that scene, at that entrance |
-| `SCENE_EXIT_UNLESS(exit, Scene, entrance, flag)` | the same, until the flag is set |
-| `EXIT_TO_BATTLE(exit, formation)` | this exit starts a battle against that [formation](../../glossary.md#formation) |
-| `SCENE_EXITS_END` | the end of the table |
+An exit can lead to different scenes as the story moves on. The path down
+from Sol Sanctum's entrance has three rows. It leads to Vale until the
+eruption, to Vale in the middle of the eruption until the party has left
+the village, and to Vale again ever after. Each of the first two rows
+counts until its flag is set, and the first row that counts wins. The front
+page's [Sol Sanctum path](../../README.md#exits-and-entrances) shows the
+three rows.
 
-When a scene ends, the field sequence hands the main routine the exit the
-party took. The main routine finds the scene's header in the table, and then
-the first row of that exit whose flag is clear. A row of exit 0, or the end
-of the scene's rows, sends the party to the first row's scene at its first
-entrance.
+An exit can also lead into a battle instead of a scene. Its row then names
+the [formation](../../glossary.md#formation), the group of enemies to
+fight.
 
-An exit that is also how the leader leaves, with a sound and an animation up
-or down stairs, is chosen by its trigger row
-([below](#what-a-trigger-row-says)).
+The exit table is read by the main routine, the code above the field that
+decides what runs next: a scene, or a battle.
 
 ### Who stands where
 
 ![Vale's gate at three points in the story: on the stormy night, with villagers gathered in the rain; after the party has left, with the gate quiet; and after the party has reached Kalay](https://alchemy.pascalpixel.com/guides/front/vale-plaza-story.gif)
 
-Each row of a scene's actor placement table puts one person or thing in the
-scene, as an [actor](../../glossary.md#actor). The row gives its sprite, its
-condition, how it moves, its position and facing, and how it turns when
-spoken to. It can move by standing still, by wandering near its spot, or by
-an [actor script](../../glossary.md#actor-script) of its own. The rows'
-conditions read the story flags, so the field places only the rows that
-hold.
+The same gate, three crowds. Everyone and everything the field puts into a
+scene is an [actor](../../glossary.md#actor): a villager, a puppy, the
+stone pillar, the Nut. The actor placement table has one row for each.
 
-Every row owns an [actor id](../../glossary.md#actor-id), whether or not its
-actor appears. The party takes ids 0 to 7, and the rows take the ids from
-`ACTOR_FIRST_PLACED` in table order. A row whose condition fails puts nobody
-in the scene, and its id stays empty. That way every actor keeps one number
-in its scene, and the scene's code can name it once.
+A row says what the actor looks like, its condition, how it moves, where it
+stands and which way it faces. It also says what the actor does when spoken
+to. Most turn to face the leader. Some turn back afterwards, as the old
+woman in Vale turns north again once she has spoken. Some keep watching the
+leader, and some never turn at all.
 
-On Mercury Lighthouse's upper floor the blue statue has one row for its
-place beside a jet of water and another for where it lands after it falls.
-Only one of the two appears.
+An actor can stand still or wander near its spot. Or it can follow an
+[actor script](../../glossary.md#actor-script) of its own, a list of moves
+it works through, as the man guarding Mt. Aleph walks his patrol.
 
-A row whose sprite is one of the party's characters takes that character's
-own id instead, so Garet in Vale after Kalay is `ACTOR_GARET` wherever his
-row sits.
+Vale has a table for each of its three points in the story, and a fourth
+for the opening on the roof.
 
-A placed actor stands on the ground under it, and a row with a height
-floats at that height instead.
+#### Every actor has a number
 
-A Djinni's row holds while its caught flag is clear and, away from the World
-Map, while its hiding flag is clear too. So a Djinni the party fled from
-stays hidden until the scene is entered afresh.
+The scene's code needs a way to say "Dora" or "the pillar". So each actor
+has a number, its [actor id](../../glossary.md#actor-id).
 
-Each scene names its actors in row order from `ACTOR_FIRST_PLACED`.
-`ACTOR_PARTY_LEADER` is Isaac, the one the player moves everywhere but
-Colosso. Up to four tables can be placed in one scene, since an event can
-add a table of its own after the scene's.
+The first eight numbers are kept for the characters a party is made of:
+Isaac is 0, Garet 1, Ivan 2, Mia 3, Felix 4, Jenna 5, Sheba 6 and Piers 7.
+The scene's own actors are numbered from 8, in the order of their rows. In
+Vale the old woman who says `Mt. Aleph looks beautiful today.` has the
+first such row, so she is actor 8.
+
+A row keeps its number even when its condition fails and nobody appears.
+That matters because the code refers to actors by number. Back from Kalay,
+the stone pillar's row comes straight after the Nut's. If catching the Nut
+moved everyone after it up by one, the code that pushes "the pillar" would
+push the wrong thing. It does not: the Nut's number simply goes unused.
+
+The same rule lets one thing have two rows. On Mercury Lighthouse's upper
+floor a blue statue has a row for where it stands at first and a row for
+where it lands after it falls. One row counts while the flag for its fall
+is clear and the other while it is set, so only one statue ever appears.
+
+A Djinni's row has one more rule. Lose to a Djinni or run from it, anywhere
+but on the World Map, and it is gone from the room. A second flag hides it,
+and that flag lasts until the party leaves the scene and comes back in.
 
 ### Exit regions
 
 ![In Kolima's tunnel Isaac walks down from the foot of a ladder, looks along the ledge and comes back, then climbs the ladder; near its top the screen fades to black and Kolima fades in, Isaac standing beside a great tree stump with a door.](https://alchemy.pascalpixel.com/guides/scene/exit-region.gif)
 
-An exit region is a box that takes the leader out through an exit as soon
-as the leader steps into it. It is for the few places where a map edge or a
-wide opening is easier to draw as a box than to mark cell by cell.
+Watch where the screen fades in the recording: not at a door, but in the
+air, part of the way up.
 
-A row holds the box's two corners, a condition and the exit it leads to. The
-field tests the boxes at every step onto a marked cell, and the first box
-that holds the leader's position takes its exit.
+Most ways out are marked on the map's floor. An exit region is the other
+way to mark one: an invisible box with a height. The field tests the boxes
+whenever the leader is on a cell whose number is not 0. If the leader is
+inside one, the scene ends through that box's exit.
 
-A box has a height as well. In Kolima's tunnel each one sits at the top of a
-ladder, so climbing it is the way out.
+A row gives the box's two corners, a condition and the exit. Kolima's
+tunnel has two boxes. Each is 18 pixels square and reaches from 31 to 49
+pixels above the ground, right over the spot where the party arrives by
+that way. Walking about on the floor never touches it. Going up does.
 
-Fourteen scenes have regions, Kolima's tunnel and the Tolbi ship's deck
-among them. The rest answer with none.
+Vale has no exit regions, and answers the field's question with "none".
+Kolima's tunnel and the deck of the Tolbi ship are two scenes that have
+them.
+
+### Which triggers a cell starts
+
+![Isaac walks north into the foot of the ladder beside his house in Vale and climbs it onto the roof](https://alchemy.pascalpixel.com/places/vale/events/Event_ClimbLadderOntoRoof.gif)
+
+The foot of that ladder looks like any other patch of grass. What makes it
+special is a number on the map.
+
+A map's floor is divided into squares 16 pixels on a side, and the game
+calls each square a [cell](../../glossary.md#cell). Every cell carries a
+number called its [cell behavior](../../glossary.md#cell-behavior). Most
+cells carry 0, plain ground. The cell at the foot of Vale's ladder carries
+100. This page calls a cell with such a number a numbered cell.
+
+By itself 100 means nothing. Vale's trigger table gives it a meaning, with
+a row that says: walking north into a cell numbered 100 plays the event
+that climbs the ladder. Vale's doorsteps are numbered 1 and 6 to 10, the
+rope bridge 14 and 15, and a door that will not open 24.
+
+The same number means something else in the next scene, because each scene
+reads the map through its own table. In Kolima, 100 is a jar with an Apple
+in it. In one room of Altin Peak, 100 is a chest that turns out to be a
+Mimic.
+
+The numbers 1 to 239 are the scene's to use this way. The few above them
+mean the same on every map: walls, ledges to jump down, and the plain jars,
+barrels and wells that answer a search with the same two lines everywhere
+([Maps](../map/README.md#cells)).
+
+A numbered cell can be answered three ways:
+
+- A [step trigger](../../glossary.md#step-trigger) answers the leader
+  standing on it, or walking into it.
+- A plain way out answers standing on it too, but only when no step trigger
+  fits.
+- An [examine trigger](../../glossary.md#examine-trigger) answers the A
+  button. The cell it looks at is the one 16 pixels ahead of the leader,
+  one cell away.
 
 ### What a trigger row says
 
-![Isaac walks into the door of his house in Vale after the party has left, and Dora, behind it, refuses to believe it is him: `My Isaac would keep his promise... Go away.`](https://alchemy.pascalpixel.com/places/vale/events/Event_EnterIsaacsHouse.gif)
+![Isaac walks into the door of his house in Vale after the party has left, and Dora, behind it, refuses to believe it is him, ending with `...Go away.`](https://alchemy.pascalpixel.com/places/vale/events/Event_EnterIsaacsHouse.gif)
 
-A trigger is one row of the scene's trigger table, for one thing the player
-can do there. The row says what starts it, whom or where it answers, when it
-holds, and what runs.
+The trigger table is the scene's list of everything the player can do
+there. One row is one thing: talking to Dora, walking into a door, using
+Catch on the Nut.
 
-Walking north into the doorstep of Isaac's house is one row. After the party
-has left Vale, that row's event has Dora refuse to open the door.
-
-Here are four rows of Vale's table on the day the story begins:
+Here are four rows of Vale's table for the day the story begins:
 
 ```c
 { TRIGGER_TALK, ACTOR_DORA, CONDITION_ALWAYS,
@@ -289,135 +342,99 @@ Here are four rows of Vale's table on the day the story begins:
   EVENT(Vale_SearchTheLockedDoor) },
 ```
 
-Talking to Dora runs an event. Walking north into the doorstep of Isaac's
-house, a [step trigger](../../glossary.md#step-trigger), takes him in. Catch
-on the nut works until the nut has been caught. And A facing the locked door,
-an [examine trigger](../../glossary.md#examine-trigger), searches it.
+Each row has four parts, in the same order: what the player does, to whom
+or where, the condition, and what happens.
 
-The first column says what starts the row. That also settles what the second
-column, the subject, names: an actor for talking, a cell for stepping and
-searching, a number the scene's own code raises.
+- Talking to Dora plays the event at the top of this page.
+- Walking north into the cell numbered 8 plays the event in the recording
+  above. That cell is the doorstep of Isaac's house. Here 8 is a number on
+  the map, and has nothing to do with actor 8.
+- Using Catch on the Nut gives the Nut, until it has been caught.
+- Pressing A facing the cell numbered 24 shows `The door won't open.`
 
-| Kind | Started by | The subject is |
-| --- | --- | --- |
-| `TRIGGER_TALK` | the A button on someone | that actor's id |
-| `TRIGGER_TALK_HALTED` | talking to someone Halt has stopped | that actor's id |
-| `TRIGGER_STEP` and its forms | stepping onto a cell, walking into it facing a way, or pushing against it | the cell's [cell behavior](../../glossary.md#cell-behavior) |
-| `TRIGGER_EXIT` | stepping onto a cell no step trigger answers | the cell behavior; the value is the exit |
-| `EXAMINE_TRIGGER(target)` | the A button on what is ahead, when it is nobody | the cell behavior |
-| `USE_ITEM(item)`, `USE_ITEM_ON_ACTOR(item)` | using an item | a cell behavior or an actor |
-| `PSYNERGY_ON_ACTOR(ability)`, `PSYNERGY_ANYWHERE(ability, phase)` | using [Psynergy](../../glossary.md#psynergy-and-pp) on someone, or anywhere | that actor, or anywhere |
-| `TRIGGER_RAISED` | the scene's own code, or the menus while `FLAG_MENUS_RAISE_TRIGGER` is set | a number the code gives |
+#### How firmly the player must mean it
 
-A step trigger's form says how firmly the leader must mean it. A plain
-`TRIGGER_STEP` runs on the first step onto the cell. `STEP_TRIGGER_WALKING`
-runs once the leader has pushed against it for more than 12
-[frames](../../glossary.md#frame), or more than 2 in its quick form. The
-`_FACING` and `_WALKING_INTO` forms run only while the leader faces within
-an eighth of a turn of the heading the row names. That is how a doorstep
-opens only to someone walking north into it.
+A plain step trigger plays as soon as the leader stands on its cell. That
+suits the edge of a village.
 
-A `TRIGGER_EXIT` row also says how the leader leaves: plainly with
-`SE_MAP_EXIT`, silently, or up or down stairs with `SE_STAIRS_UP` or
-`SE_STAIRS_DOWN` and an animation that the next scene's arrival answers
-(`enum ExitStyle`).
+A door needs more. The second row above is written
+`STEP_TRIGGER_WALKING_INTO(FACING_NORTH)`. It plays only when the leader
+has pushed against something for more than 12
+[frames](../../glossary.md#frame) and is facing north or nearly so. A frame
+is one picture on the screen, and the console draws about sixty a second,
+so that is a fifth of a second of pushing. Nobody enters a house by
+brushing past its door.
 
-An examine trigger's target, `EXAMINE_CHEST`, `EXAMINE_JAR` and the rest of
-`enum ExamineTarget`, names the line the leader says as the search starts
-(`Isaac checked the chest...`), and the matching line when nothing comes of
-it.
+#### Ways out, searches and Psynergy
 
-A Psynergy row says when it runs around the Psynergy: before it plays, after
-it, or from inside it as Force strikes, Frost freezes or Reveal shows what
-is hidden (`enum PsynergyPhase`). Reveal's scenes pair that row with one
-that hides everything again as the colours come back. A row can also run
-when Psynergy that runs out by itself, such as Cloak, has ended.
+A numbered cell that is simply a way out needs no event. Its row names the
+exit and nothing else. Alpine Crossing has five such rows, one for each
+path that leaves it. The row can also say how the leader leaves: with the
+usual sound, silently, or up or down a staircase, with the stairs' sound
+and a little animation of the leader going in.
+
+An examine row says what kind of thing is being searched: a chest, a jar, a
+bookcase and nearly thirty more. That chooses the line the game shows
+first, such as `Isaac checked the chest...` Vale's locked door is marked as
+none of them, `EXAMINE_SILENT`, so no such line comes first and the door's
+own message is all the player reads.
+
+A Psynergy row names the Psynergy and the actor it is used on. After the
+party has left Vale, come back with Ivan and use Mind Read on Garet's
+sister. Vale's later table has a row for exactly that, and it shows her
+thought: `Gee, I wish I could see new lands, too.`
 [Field code](../field/README.md#how-field-psynergy-reaches-its-target)
-follows a cast through these.
+follows a Psynergy from the menu to its row. An item used from the menu
+finds its row the same way.
 
-The last column is what runs: a message, an event, or for a search what is
-found there. One word holds either a message or an event, because events sit
-at addresses above any message number.
+#### What happens
 
-| Value | What runs |
+| The row's last part | What happens |
 | --- | --- |
-| `MSGNO(name)` | that message, shown and waited for |
-| `EVENT(function)` | that event |
-| `FIND_ITEM(item)`, `FIND_COINS(n)`, `FIND_PSYNERGY_STONE` | a search finds that: the item goes to the first party member with room, the coins to the purse, the stone fills everyone's PP |
+| `MSGNO(name)` | that line of text is shown |
+| `EVENT(function)` | that event plays |
+| `FIND_ITEM(item)` | a search finds that item, and it goes to the first party member with room |
+| `FIND_COINS(n)` | a search finds that many coins |
+| `FIND_PSYNERGY_STONE` | a search finds a Psynergy Stone, which fills everyone's PP |
 | `FIND_MESSAGE(message)` | a search shows that line |
-| `FIND_MIMIC` | the chest is a mimic, and its battle starts |
+| `FIND_MIMIC` | the chest is a Mimic, and its battle starts |
 
-The row is `struct Trigger`. Its kinds, their forms and the `FIND_` values
-are in `scene_tables.h`.
-
-### Which triggers a cell starts
-
-![Isaac walks north into the foot of the ladder beside his house in Vale and climbs it onto the roof](https://alchemy.pascalpixel.com/places/vale/events/Event_ClimbLadderOntoRoof.gif)
-
-Some spots in a scene do something when the leader reaches them. A doorstep
-leads into a house, the edge of a village leads on to the next scene, the
-foot of a ladder climbs to a roof, and a chest answers the A button.
-
-The map marks each such spot with a number, the cell behavior of its
-[cell](../../glossary.md#cell), and the scene's trigger table says what that
-number does there. The same number means different things in different
-scenes, since each scene reads it through its own table.
-
-Only the numbers from `CELL_BEHAVIOR_EVENT_FIRST` to
-`CELL_BEHAVIOR_EVENT_LAST` belong to the scene. The ones above them, walls,
-ledges and the jars anyone can search, mean the same on every map
-([Maps](../map/README.md#cells)).
-
-Stepping onto or walking into a marked cell runs the first step trigger for
-its number whose condition holds, or failing one the first such exit.
-Pressing A facing it runs the first such examine trigger. The cell a press
-of A searches is the one 16 pixels ahead of the leader.
-
-In Vale on the day the story begins, each door is a step trigger. Walking
-north into the doorstep runs an event that opens the door, walks the leader
-in and only then asks for the exit. That is how Dora can refuse at Isaac's
-door.
-
-The ladder in the recording is a step trigger too. Walking north into its
-foot runs the event that climbs the leader and changes the roof's cells so
-that it can be walked on. Another step trigger puts the bridge's cells back
-when the leader steps off it.
+Most villagers need no event at all. The old woman's row in Vale ends in
+`MSGNO(MsgValeMtAlephLooksBeautifulTodayIts)`, the name of her line, and
+the field does the rest: stops her, turns her to Isaac, shows the line and
+turns her back.
 
 ## How a trigger is chosen
 
 ![In Vault's mayor's house after Kalay, Isaac talks to the mayor twice: the first talk welcomes him back, `Oh, Isaac! You've come back to Vault!`, and the second warns him, `Those guys really wanted revenge on you, so take good care of yourselves.`](https://alchemy.pascalpixel.com/guides/map/talk-twice.gif)
 
-When the player talks to someone, the game reads the scene's trigger table
-from the top and runs the first row that fits: the right kind, the right
-subject, a condition that holds.
+Talk to Vault's mayor after Kalay and he is delighted: `You've come back to
+Vault!` Talk to him again and he only warns of the thieves. He has two
+rows, and one rule decides between them.
 
-That one rule is how a person says something new as the story moves on. A
-scene lists a person's rows in story order, each holding until its flag is
-set, with one that always holds last. The event a row runs sets the flag, so
-the next talk falls through to the row below.
+The rule: the field reads the scene's trigger table from the top and takes
+the first row that fits. A row fits when it is the right kind, for the
+right actor or numbered cell, and its condition counts.
 
-In Vault's houses after Kalay, the mayor has a row that holds until he has
-welcomed Isaac back, and below it one that always holds. So the first talk
-welcomes Isaac and every later one warns of the thieves
-([`log_rooms_b.c`](log_rooms_b.c)):
+Here are the mayor's two rows ([`log_rooms_b.c`](log_rooms_b.c)):
 
 ```c
 { TRIGGER_TALK, ACTOR_MAYOR, FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, EVENT(LogRoomsB_WelcomeIsaacBack) },
 { TRIGGER_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, EVENT(LogRoomsB_WarnOfThievesRevenge) },
 ```
 
-A row behind one that always fits is unreachable. Rows these rules make
-unreachable keep a [`// Unused:`](../../glossary.md#unused) tag in their
-table, and [Unused](https://alchemy.pascalpixel.com/tbs/unused) describes
-every such case.
+The first row counts until the flag "Isaac has been welcomed back" is set.
+The welcome event sets that flag as its last act. So the second talk passes
+over the first row and falls through to the one below, which always counts.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  press(["A is pressed facing the mayor: a request"]) --> find(["🏡 The field sequence reads the trigger table from the top"])
-  find --> first{"The first talk row for the mayor whose condition holds"}
-  first -- "FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK clear" --> welcome(["The welcome event, which sets 🚩 the flag"])
-  first -- "the flag set" --> warn(["The warning event, which always holds"])
+  press(["The player presses A facing the mayor"]) --> find(["🏡 The field reads Vault's trigger table from the top"])
+  find --> first{"Has Isaac been welcomed back?"}
+  first -- "🚩 not yet: the first row fits" --> welcome(["The welcome plays, and sets the flag"])
+  first -- "🚩 yes: the first row is passed over" --> warn(["The second row fits: the warning plays"])
+  welcome -- "the next talk" --> find
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef overlay fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
@@ -426,372 +443,462 @@ flowchart TD
   class welcome,warn overlay
 ```
 
+That is the whole trick behind a villager who has something new to say. A
+scene lists a person's rows in story order, each counting until its own
+flag is set, with a row that always counts at the bottom.
+
+Order matters, then. A row placed below one that always fits can never be
+reached. The game has a few of those, lines nobody ever gets to hear. Each
+is marked [`// Unused:`](../../glossary.md#unused) in its table, and
+[Unused](https://alchemy.pascalpixel.com/tbs/unused) describes them all.
+
 ### Talking
 
-Pressing A with someone ahead is a talk only when that person has a talk
-row. With a person who has none, the A press goes on to search the cell
-ahead, or to open the field menu.
+Pressing A in front of someone is a talk only if that person has a talk row
+that fits. Otherwise the press goes on to search the cell ahead, and if
+there is nothing to search there either, it opens the menu.
 
-Once the row is found, the person stops. Unless the row's placement says to
-keep its heading, the leader stops too and the two turn to face each other.
-Then the row's message is shown, or its event runs. Afterwards a person
-whose placement says so turns back to its old heading, or keeps turning to
-watch the leader.
+Once the row is found, the person stops walking. The leader stops too and
+the two turn to face each other, unless the person's placement says it
+never turns. Then the row's line is shown, or its event plays.
 
-A person Halt has stopped answers with a `TRIGGER_TALK_HALTED` row where the
-scene has one. Otherwise a talk row that is a message is still shown, and
-one that is an event gives one of two lines of dots instead.
+Halt changes this. Stop the Djinni Kite in Vale Cave with Halt, talk to it
+while it cannot move, and it joins the party. Kite has a second kind of
+talk row, one that fits only while Halt holds it. Bane on Crossbone Isle is
+caught the same way, and those two are the only such rows in the game.
+
+Everyone else is simply tongue-tied. A Halted villager with a plain line
+gets out its first word and trails off
+([Windows](../window/README.md#a-line-the-decoder-cuts-short)). One whose
+talk would have played an event says only a row of dots.
 
 ### Searching
 
-![Isaac checks the chest in Sol Sanctum: `Isaac checked the chest...`, the Small Jewel rises from it with the treasure jingle, and `Isaac got a Small Jewel.`](https://alchemy.pascalpixel.com/guides/front/chest.gif)
+![Isaac checks the chest in Sol Sanctum: `Isaac checked the chest...`, a Small Jewel rises from it with the treasure jingle, and a second line says who got it](https://alchemy.pascalpixel.com/guides/front/chest.gif)
 
-An opened chest still answers. Searching something with a target, a chest, a
-jar, a bookcase, is the one case where a row is found whatever its
-condition, and that is why.
+Open that chest, then press A on it again. It still answers: `Isaac
+checked the chest...` and then `but the chest was empty.`
 
-The game finds the row, shows the `checked the chest...` line, and only then
-tests the condition. An unopened chest gives what it holds and sets its
-flag, and an opened one adds `but the chest was empty.`
+By the rule above it should not answer at all. The chest's row counts
+"until the Small Jewel has been found", and it has been.
 
-A mimic's row keeps the ordinary rule, so an opened mimic chest stops
-answering. The jars, barrels, wooden boxes, graves, books and wells that
-every scene shares have no row: their two lines are the same everywhere.
+So searching is the one exception to the rule. A search row for a chest, a
+jar, a bookcase or any other named thing is found whatever its condition.
+The game shows the `checked the chest...` line first, and only then looks
+at the condition. If the row still counts, the chest gives what it holds
+and its flag is set. If not, the game adds the matching second line.
 
-What a chest holds decides what happens next. An item stays in the chest
-when no party member can carry it, and the chest closes again. A Psynergy
-Stone restores every party member's PP and is gone once taken. A mimic's
-chest jumps up and the battle starts, and the chest is gone once the mimic
-is beaten.
+A Mimic's row is the exception to the exception. It keeps the ordinary
+rule, so once the Mimic is beaten its chest stops answering.
+
+What a chest holds decides the rest:
+
+- An item goes to the first party member with room for it. If nobody has
+  room, the item stays and the chest closes again, to be opened another
+  day.
+- Coins go straight to the purse.
+- A Psynergy Stone fills every party member's PP, glitters and is gone.
+- A Mimic's chest jumps up, `The treasure chest was really a Mimic!`, and
+  the battle starts.
 
 ### Stepping and raising
 
-Stepping onto or walking into a marked cell runs its step trigger, or takes
-its exit when the scene has none for that cell. The exit's sound plays, and
-the scene ends with that exit.
+A step trigger or a way out is started by the leader's feet, as
+[above](#which-triggers-a-cell-starts). Some triggers are started by
+nothing the player does at all. The scene's own code starts them, and the
+game calls that raising a trigger.
 
-A scene's own code can raise a trigger by number, as a stop in a chase
-raises the row that reads the cornered suspect's mind. The menus raise one
-too while `FLAG_MENUS_RAISE_TRIGGER` is set, so that a scene can answer a
-menu press with a refusal instead.
+Lamakan Desert is the one to remember. The scene counts the party's steps
+on the hot sand and draws them as the thermometer at the left of the
+screen. When the count passes a quarter of the way up, the scene raises a
+trigger, and Garet, Ivan or Mia complains about the heat. It raises another
+at half and another at three quarters.
+
+The menus can raise one too. In Vault's inn, while the party is cornering
+the two suspects, the scene sets a flag that says "menus raise a trigger
+instead of opening". Try to open a menu during the chase and Garet answers
+in its place: `We don't have time for that, Isaac!`
+
+## State that cleans itself up
+
+![In Kolima Forest Isaac walks into a log on the river bank; it rolls, tips into the river and floats there. He runs to and fro until a battle with three Skeletons opens; after its end the forest comes back with the log still in the river, and Isaac crosses it and walks away. The screen fades out and in, and on his return the river is empty and the log stands on the far bank again.](https://alchemy.pascalpixel.com/guides/scene/log-state.gif)
+
+Roll a log into the river in Kolima Forest, leave, and come back. The log
+is on the bank again, ready to be rolled. Nothing in Kolima Forest's code
+put it back.
+
+Most game flags are forever: a chest stays opened. But the game sets aside
+two groups of 256 flags that it wipes clean by itself, and a scene uses
+those for anything that should reset.
+
+Scene temp flags are wiped every time the party enters a scene. Kolima
+Forest notes "the log is in the river" in one of them. Walk out and in
+again, the note is gone, and the scene puts the log where it began.
+
+Area temp flags last longer. An [area](../../glossary.md#area) is a group
+of scenes the game treats as one place: Vale's is the village outdoors, its
+plaza, Kraden's cottage, the Sanctum and the insides of the houses. Area
+temp flags are wiped only when the party enters a scene of a different
+area.
+
+Vale's stone pillar shows the difference. Push it a column to the west.
+Vale notes that in an area temp flag. Go into a house and come out: the
+note has survived, and Vale's setup stands the pillar in the west column
+again. Now walk out to the World Map and come back. The World Map is
+another area, the note has been wiped, and the pillar is back in the
+middle.
+
+A battle wipes neither group, since the party comes back to the spot it
+left. That is why the log in the recording is still in the river after the
+Skeletons.
+
+Every scene reuses the same 256 and 256, so each gives the ones it uses a
+name of its own. Vale's file says that scene temp flag 4 is "Isaac is on
+the roof" and that area temp flag 14 is "the pillar is in the west column":
+
+```c
+#define FLAG_VALE_ON_ROOF FLAG_SCENE_TEMP_04
+#define FLAG_VALE_PILLAR_IN_WEST_COLUMN FLAG_AREA_TEMP_14
+```
+
+The same two flags mean something else in every other scene.
+[Game rules](../game/README.md#the-game-flags) describes the game flags as
+a whole.
+
+### Drawing the room to match
+
+A flag only remembers that something happened. The room itself is drawn
+fresh from its map every time the party arrives, exactly as it was on the
+first visit. So a scene has to change the map to match its flags, and it
+does that by copying cells.
+
+A map is far bigger than the room drawn on it, and its spare corners hold
+spare cells: pieces of the room as it looks at other times. The open door
+of Jenna's grandparents' house is one. It is a picture two cells wide and
+two tall, kept at the bottom of Vale's map, below the village. The door
+"opens" when the event copies that picture over the closed door.
+
+In Kalay's tunnel ([`kalay.c`](kalay.c)) a pool lies under a waterfall, and
+the map keeps the pool's floor a second time, drained. When the party
+pushes a statue into the arch the water falls from, the event sets a flag
+and copies the drained floor over the pool in stages, with a wait after
+each, so the water is seen to sink.
+
+Walk out into the tunnel's passage and back. The map has been drawn fresh,
+with the pool full. But the tunnel's setup finds the flag set and
+makes the same copy all at once, before the fade in, so the pool the player
+sees is dry. That flag is an area temp flag, and the pool is dry only for
+as long as the party stays in the tunnel's area.
+
+A copy can carry a cell's picture, or its ground, or both. The ground is
+what the cell does rather than how it looks: where the party can walk, and
+its cell behavior. Climb the ladder in Vale and the event copies only
+ground onto the roof of Isaac's house. The roof looks the same as ever, and
+now it can be walked on. Climbing down copies the old ground back.
+
+Mercury Lighthouse ([`mercury_lighthouse.c`](mercury_lighthouse.c)) uses
+the same trick for a puzzle. A statue stands in front of a door. Move it
+one column aside, and a cell nearby is given the ground of a cell the
+leader can jump from. From then on a jump reaches the door.
+
+A map also has a layer drawn over the party's heads, and a copy can land
+there ([Maps](../map/README.md#one-grid-three-layers)). In Sol Sanctum's
+Elemental Star Room
+([`sol_sanctum_elemental_star_room.c`](sol_sanctum_elemental_star_room.c))
+taking a star raises three pillars out of the dark as stepping stones. Each
+pillar's picture is copied onto that overhead layer.
 
 ## Events
 
-![In Vault's inn, Isaac talks to the innkeeper from beside the counter: `Everyone thinks our guests are the thieves, but I think it's unfair to accuse them without any evidence.`, and on the next page `Sure, they look suspicious, but they've been quite polite. And they paid cash!`](https://alchemy.pascalpixel.com/places/log-rooms-a/events/LogRoomsA_TalkToInnkeeper.gif)
+![In Vault's inn, Isaac talks to the innkeeper from beside the counter: `Everyone thinks our guests are the thieves, but I think it's unfair to accuse them without any evidence.`, and then `Sure, they look suspicious, but they've been quite polite. And they paid cash!`](https://alchemy.pascalpixel.com/places/log-rooms-a/events/LogRoomsA_TalkToInnkeeper.gif)
 
-An event is the code a trigger row runs: a conversation that does more than
-show one line, or a cutscene. It is written as a list of
-[event commands](../../glossary.md#event-command), one to a line, which the
-game plays from top to bottom while the party waits.
+An event is what a trigger row plays when one line of text is not enough: a
+conversation with a choice in it, a door opening, a whole cutscene. It is
+written as a short list of commands, one to a line, and the game carries
+them out from top to bottom.
 
 The door of Jenna's grandparents' house is one of the shortest
-([vale.c](vale.c)). It plays the door's sound, opens the door, starts the
-leader walking in and asks for the exit into the house.
+([vale.c](vale.c)). Its first line only gives the event its name, and the
+four lines inside the braces are the event:
 
 ```c
 static void Vale_EnterJennasGrandparentsHouse(void) {
-  Event_PlaySound(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_GrandparentsDoorOpens, 49, 69);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 326, 1126);
   Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_NORTH);
 }
 ```
 
-A command that takes time, such as opening the door, a line of dialogue or a
-wait, holds the event until it is done. One that takes no time, such as
-starting a walk, lets the next line run in the same frame. That is why the
-leader is still walking when the exit is asked for.
+Read them one at a time:
 
-A request the event raises, like this exit, waits until the event has
-returned, as the front page's [Vault thieves](../../README.md#the-event)
-wait for their battle.
+1. Play the sound of a door opening.
+2. Play the little animation named "the grandparents' door opens". The two
+   numbers say where on the map the door is.
+3. Walk the party's leader to a spot 326 pixels east and 1126 south, which
+   is just inside the doorway. A walk needs no height, since he stays on
+   the ground.
+4. Ask for the way out named `VALE_TO_COTTAGE_ROOMS_A_NORTH`.
 
-While an event runs it is standing still at one command, so whatever has to
-keep moving moves on its own. It can do that in three ways:
+Each line is an [event command](../../glossary.md#event-command), and
+commands come in two sorts.
 
-- as an actor script, the commands an actor runs each frame;
-- as a [task](../../glossary.md#task), a function run once a frame, added
-  with `Task_AddFrame`;
-- as an update routine, a function one actor runs each frame.
+Some take time, and hold the event until they are done. Opening the door is
+one: the event stays on that line for the four frames the door takes. A
+line of dialogue is another, since it waits for the player to press A.
 
-The thieves climb the ladder on their actor scripts while the event waits
-for them.
+Others take no time. Starting Isaac's walk only tells him where to go, and
+the next line is carried out in the same frame. That is why Isaac is still
+walking as the screen begins to fade.
 
-Most events open with `Event_Start`, which hides the
-[area](../../glossary.md#area)'s name, stops the leader and resets the
-message state, and close with `Event_End`. The door above runs without
-either. The innkeeper's talk in the recording is the other usual shape:
-`Event_Start`, a message chosen by a flag, shown and waited for,
-`Event_End`.
+The last line does not end the scene on the spot. It leaves a note for the
+field, which acts on it once the event has finished. The front page's
+[Vault thieves](../../README.md#the-event) wait for their battle the same
+way.
 
-An event is plain C written in the calls of `event.h`, and a command that
-takes time lets frames pass before it returns. `Event_Wait` calls `wait()`,
-which runs one frame after another
-([System](../../system.md#waiting-and-tasks) explains it).
+### An event with a choice in it
 
-## State that cleans itself up
+The innkeeper in the recording has one row, and it plays an event. The
+event first looks at which way Isaac is facing. Facing north, across the
+counter, he is a customer and gets the offer of a room. From any other
+side, as in the recording, he gets gossip. And the gossip is one of two
+lines, chosen by whether Vault's thieves have been jailed yet.
 
-![In Kolima Forest Isaac walks into a log on the river bank; it rolls, tips into the river and floats there. He runs to and fro until a battle with three Skeletons opens; after its end the forest comes back with the log still in the river, and Isaac crosses it and walks away. The screen fades out and in, and on his return the river is empty and the log stands on the far bank again.](https://alchemy.pascalpixel.com/guides/scene/log-state.gif)
+That event opens with the command `Event_Start` and closes with
+`Event_End`, as most do. `Event_Start` hides the area's name if it is still
+showing, stops the leader and gets the game ready to show text. The
+grandparents' door does without either, since it shows no text.
 
-Two ranges of game flags are cleared for scenes as the party moves on, so a
-scene can keep a note without any code to put things back.
+### What moves while an event waits
 
-Scene temp flags last until the party next enters a scene. Kolima Forest
-keeps the log the party tips into its river in one, so the log is back on
-the bank the next time the party comes in.
+While an event is held at one command, nothing else in it is happening. So
+anything that has to keep going is given to something that runs in every
+frame, whatever the event is doing.
 
-Area temp flags last while the party stays anywhere in the area, so they
-hold what must survive moving between its scenes. That is how Fuchin Falls
-Cave keeps where its logs float.
+The man guarding Mt. Aleph has two such things. His actor script is his
+patrol, a list of moves he works through. And a small piece of code of his
+own runs every frame and turns him to keep watching Isaac. The game calls
+that an update routine.
 
-Coming back from a battle clears neither, since the party is returning to
-where it stood. The log is still in the river after one.
-
-Because the numbers are reused everywhere, each scene names the ones it
-uses for what they hold there, beside its includes:
-
-```c
-#define FLAG_VALE_ON_ROOF FLAG_SCENE_TEMP_04
-#define FLAG_FUCHIN_FALLS_ENTRANCE_FIRST_LOG_EAST FLAG_AREA_TEMP_01
-```
-
-The main routine clears them before each scene, unless the party is coming
-back to where it stood. [Game rules](../game/README.md#the-game-flags)
-describes the game flags as a whole.
-
-| Flags | How many | Cleared |
-| --- | --- | --- |
-| `FLAG_SCENE_TEMP_00` to `FLAG_SCENE_TEMP_FF` | 256 | on every ordinary arrival in a scene |
-| `FLAG_AREA_TEMP_00` to `FLAG_AREA_TEMP_FF` | 256 | on entering another area |
-
-### Drawing the room to match
-
-A flag only remembers that something happened. The room is drawn fresh from
-its map every time the party arrives, so a scene must change the map to
-match what its flags say, and it does that by copying cells. A map's grid is
-far larger than most rooms, and its unused corners hold spare cells: the
-same patch of the room in its other states.
-
-In Kalay's tunnel ([`kalay.c`](kalay.c)) a pool lies under a waterfall, and
-the map keeps its floor a second time, drained. When the party pushes a
-statue into the arch the water falls from, the event copies the drained
-floor over the pool, a little at a time with waits between, so the water is
-seen to sink, and sets a flag. The next time the party arrives, the scene's
-setup finds the flag set and makes the same copy at once. The pool is
-already dry, and nothing had to be saved but the flag.
-
-A copy can carry a cell's picture, its ground, or both. Copying the ground
-alone changes where the party can walk and leaves the picture as it was. In
-Mercury Lighthouse ([`mercury_lighthouse.c`](mercury_lighthouse.c)) a statue
-stands in front of a door; once it is moved aside, one cell near it is given
-the ground of a cell the leader can jump from, and from then on a jump
-reaches the door.
-
-The three layers of a map are windows onto the one grid
-([Maps](../map/README.md#one-grid-three-layers)), so a copy reaches a layer
-by where it writes. In Sol Sanctum's Elemental Star Room
-([`sol_sanctum_elemental_star_room.c`](sol_sanctum_elemental_star_room.c))
-taking a star raises three pillars out of the dark as stepping stones: each
-pillar's picture is copied onto the overhead layer, at the pillar's own cell
-plus the place where that layer's window starts.
+A [task](../../glossary.md#task) is the same idea belonging to no actor: a
+chore the game does once in every frame. At the end of the roof repair,
+while Isaac's Psynergy is at work on a board, a task plays the sparkle
+sound every 16 frames.
 
 ## The Title, the File Screen and the Battle Arena
 
-Three scenes are screens. Each is a row of the scene table with an overlay
-of its own, run by the field sequence like any other.
+Three scenes are not places at all. Each is in the game's list of scenes
+and has an overlay of its own, and the game runs it the way it runs Vale.
 
-- The Title ([`title.c`](title.c)) is the start screen, and the logo shown
-  after the ending.
-- The File Screen ([`file_screen.c`](file_screen.c)) is new game, continue,
-  copy and delete, the door to the Battle Arena, and the transfer of a
-  save's data by link or as a password.
-- The Battle Arena ([`battle_arena.c`](battle_arena.c)) is the third.
+- The Title ([`title.c`](title.c)) is the start screen, and the Golden Sun
+  logo shown after the ending.
+- The File Screen ([`file_screen.c`](file_screen.c)) is the menu with new
+  game, continue, copy and delete. It is also the door to the Battle Arena,
+  and it handles the transfer of a save's data, by link or as a password.
+- The Battle Arena ([`battle_arena.c`](battle_arena.c)) is the third: the
+  battles against a friend's party or against monsters, and the record of
+  wins.
 
 Their screens are drawn by the window code
 ([Windows](../window/README.md)), and the title intro and the credits the
 Title starts are in [Menus](../menu/README.md#the-title-intro).
 
-The World Map is a place, but the only scene of its overlay
-([`world_map.c`](world_map.c)), and the one drawn in perspective
-([Field](../../field.md#the-world-map)).
+The World Map is a place, with an overlay of its own
+([`world_map.c`](world_map.c)). [Field](../../field.md#the-world-map)
+explains how it is drawn.
 
 ## Code shared between overlays
 
-Code several scenes need is written once in `shared/` and compiled into each
-overlay that uses it ([System](../../system.md#overlays) explains why).
+In Vault a boy and a girl walk about together round the well. They do it
+before the thieves are caught and they are still at it when the party comes
+back from Kalay. Those are two scenes with two overlays, and only one
+overlay is ever loaded.
 
-The three Colosso finals share the friends' cheering spots, the stage
-guides, the race gauge and the opponent's recorded run. Vault and its houses
-share the walking villagers. Mercury Lighthouse's scenes share the pool's
-lights and the passages between floors. And many scenes share the small
-field effects and the helpers that move actors.
+So the children's code is in both. It is written once, in the folder
+`shared/`, and built into each overlay that needs it
+([System](../../system.md#overlays) explains why an overlay cannot borrow
+from another).
 
-The ROM holds a copy in each overlay, alike but for the addresses they hold.
+The three Colosso finals share their code the same way. Mercury
+Lighthouse's scenes share the sparkling passages between floors. And many
+scenes share small effects and the helpers that move actors about.
+
+The cartridge really does hold each shared piece several times over, once
+in every overlay that uses it.
 
 ## From Vale's doorstep into the house
 
 ![Isaac walks north into the door of Jenna's grandparents' house in Vale; the door opens, he walks in, and the room inside fades in](https://alchemy.pascalpixel.com/places/vale/events/Event_EnterJennasGrandparentsHouse.gif)
 
-Isaac walks north into the doorstep of Jenna's grandparents' house, the door
-opens, and the room inside fades in with him just inside it. Each step of
-that is one of the mechanisms above.
+The recording lasts a few seconds. Every part of this page takes a turn in
+it.
 
 ### The step
 
-The field sequence is in its walk, and in each frame it looks at the cell
-under the leader. The doorstep's cell carries the number Vale's table gives
-the grandparents' door, within the scene's own range, so the walk notes a
-step request for it and stops.
-
-The field answers the request by reading Vale's trigger table from the top
-for the first step row with that subject whose condition holds. Vale's table
-has this one:
+Isaac is walking, so in every frame the field looks at the cell under him.
+The doorstep's cell is numbered 9. The field reads Vale's trigger table
+from the top for a step row for 9, and finds this:
 
 ```c
 { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(Vale_EnterJennasGrandparentsHouse) },
 ```
 
-The form asks for more than a step. The leader must have pushed against the
-doorstep for more than 12 frames and be facing north. Isaac is, so the row
-fits. Its value is an event, which the field calls.
+The row asks for more than standing there. For the first few frames it
+does not fit. Once Isaac has pushed north against the door for long enough,
+it does, and the field plays its event.
 
 ### The event
 
-`Vale_EnterJennasGrandparentsHouse` runs its four lines. The door's sound
-plays. The cell animation opens the door and holds the event until it has.
-Isaac starts walking to a spot inside the doorway, which takes no time. And
-the last line asks for the exit `VALE_TO_COTTAGE_ROOMS_A_NORTH`.
+The four commands [above](#events) run. The sound plays, the door opens,
+Isaac starts walking in, and the event leaves its note asking for the exit
+`VALE_TO_COTTAGE_ROOMS_A_NORTH`.
 
-That is a request, so it waits in the field's work until the event has
-returned. When it has, the field finds the exit request first of all, since
-leaving comes before anything else. It ends the scene and hands the exit to
-the main routine.
+The event is over. The field finds the note before it looks at anything
+else, since leaving comes first. It fades the screen out and hands the exit
+to the main routine.
 
 ### The exit
 
-The main routine asks Vale's overlay for its exit table and finds, under
-`SCENE_EXITS(Vale)`, this row:
+The main routine asks Vale's overlay for its exit table and finds the row
+shown under [Exits](#exits). The next scene is `CottageRoomsA`, at the
+entrance `COTTAGE_ROOMS_A_FROM_VALE_NORTH`.
 
-```c
-SCENE_EXIT(VALE_TO_COTTAGE_ROOMS_A_NORTH, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_NORTH),
-```
-
-So what runs next is `SceneId_CottageRoomsA` at the entrance
-`COTTAGE_ROOMS_A_FROM_VALE_NORTH`. The main routine clears Vale's scene
-temp flags, keeps the area temp flags, since the houses are in Vale's area,
-and unpacks the cottage rooms' overlay over Vale's.
+It wipes the scene temp flags, so "Isaac is on the roof" could not survive
+this door. It leaves the area temp flags alone, because the house is in
+Vale's area, and the pillar stays where it was pushed. Then it loads the
+houses' overlay in place of Vale's.
 
 ### The room
 
-The field sequence starts again and asks the new overlay its questions.
-Its trigger table comes first.
+The field starts again and asks the new overlay its questions.
 
-Then the entrance table gives the row for
-`COTTAGE_ROOMS_A_FROM_VALE_NORTH`. Isaac is placed at (337, 0, 199) facing
-north, and the camera is boxed in from (252, 4) to (548, 236), which is the
-one room of the sheet the house is drawn on.
+The trigger table comes first. Then the entrance table: the row for
+`COTTAGE_ROOMS_A_FROM_VALE_NORTH` puts Isaac at 337 pixels east and 199
+south, facing north, and gives a camera box 296 pixels wide and 232 tall.
+That box is the grandparents' room, one of several rooms drawn on this
+map.
 
-The overlay chooses its actor placement table by the story flags and marks
-each row as in or out of that box, so only the grandparents' room is
-peopled.
+Next comes "who stands where". The overlay picks its list by the story's
+flags, then marks each person placed with `CONDITION_IN_VIEW` as inside or
+outside the camera box. Only the grandparents' room gets its people.
 
-Last, the scene's setup runs, and once the party has left Vale it lays the
-grandmother in her sickbed for this entrance.
+Last, the setup. If the party has already left Vale, Jenna has been taken,
+and the setup lays her grandmother in her sickbed.
 
-The scene fades in.
+The room fades in.
 
 ## Design
 
-The scene table, `gScenes` in [`field/scenes.s`](../field/scenes.s), gives
-each scene its overlay, area, scene type and map, and names it
-`SceneId_<Scene>`. Several scenes may share one overlay, and then they share
-its file.
+Two choices shape every scene, and both can be seen in the game.
 
-The four are chosen independently. The Bilibin Barricade runs on Bilibin's
-overlay but is an area of its own, and Vault before and after the thieves is
-two scenes drawn on one map.
+### Rooms packed several to a map
 
-An overlay is one file, laid out by kind: its entry points, then every
-function, then every scene's tables.
+Walk into Vale's inn, and later into the room of Babi's scholars in Tolbi.
+The two rooms are in different towns, and they are on the same map.
 
-Rooms are packed several to a map, a
-[sheet of rooms](../../glossary.md#sheet-of-rooms). The rooms drawn in one
-tile style sit side by side on one map, each with a camera box of its own,
-and the entrance the party arrives at chooses the room by its box.
+The inside of a house is not a map of its own. Rooms drawn in one style sit
+side by side on one big map, which the glossary calls a
+[sheet of rooms](../../glossary.md#sheet-of-rooms), and a sheet is one
+scene. The entrance the party comes in by picks the room, by its camera
+box, so the player never sees the room next door.
 
-The rooms of one sheet can belong to different places, so its area name
-follows the entrance too. Vale's inn and the scholars' room in Babi's Palace
-share `SceneId_CottageRoomsB`. A sheet is therefore named for the style its
-rooms are drawn in, and its file lists its rooms and the places they belong
-to.
+Vale's inn and the scholars' room share the sheet `CottageRoomsB`, because
+both are drawn as cottages. So a sheet is named for its style, not for a
+town.
 
-A sheet's actor placements use `CONDITION_IN_VIEW`, so that the field
-peoples only the room the camera's box holds.
+The people of every room on a sheet are listed together. They are placed
+with `CONDITION_IN_VIEW`, and that is how only the room the party has
+entered gets its people.
 
-A scene's functions, its events among them, take its name (`Vault_`,
-`VaultRevisit_`) and say what the player sees there. Shared helpers take
-their family's (`Colosso_`, `MercuryLighthouse_`, and `FieldEffect_` for the
-field effects).
+### A scene's four parts are picked separately
+
+The game's list of scenes gives each scene four things: its overlay, its
+area, whether it is a town, and its map. Two scenes can share any of them.
+
+The Bilibin Barricade shares Bilibin's overlay but is an area of its own,
+so walking onto it counts as arriving somewhere new. Vault before Kalay and
+Vault after are two scenes with two overlays, drawn on one and the same
+map. That is how the later Vault can be the same streets with different
+people and different things to do. And only outside the towns does walking
+restore the party's PP.
 
 ## How it fits with the rest of the game
 
-The main routine unpacks a scene's overlay and the field sequence calls its
-entries.
+A scene never runs by itself. The main routine loads its overlay, and the
+field asks it the six questions.
 [System code](../system/README.md#how-an-overlay-reaches-the-rest-of-the-game)
-describes the entry and import tables and how the overlay is loaded.
+has the loading, and how an overlay's code reaches the rest of the game.
 
-The scene table and how scenes depend on the story are in
-[Field](../../field.md#scenes-and-areas). The requests the field answers
-between a trigger and its event are in
-[Field code](../field/README.md#the-field-sequence-serves-requests). The maps
-the scenes are drawn on are in [Maps](../map/README.md), and the debug
-scenes, built the same way, in [Debug scenes](../debug/README.md).
+[Field code](../field/README.md#the-field-sequence-serves-requests)
+explains what the field does between the player pressing A and a trigger
+row being chosen. How scenes and areas follow the story is in
+[Field](../../field.md#scenes-and-areas), and the maps the scenes are drawn
+on are in [Maps](../map/README.md). The debug scenes the developers left in
+are built the same way, and are in [Debug scenes](../debug/README.md).
 
-To find what someone says, search `games/tbs/text/en.po` for the line; its
-`msgctxt` is the name the scene writes (`MsgVaultWelcomeToVaultTheTownAt`).
+To find the code behind something a villager says, search
+`games/tbs/text/en.po` for the line. Above it is the line's name, such as
+`MsgVaultWelcomeToVaultTheTownAt` for `Welcome to Vault, the town at the
+heart of Angara.` Search the scene files for that name and it turns up in a
+trigger row or an event.
 
 ## Limits
 
-- An overlay's code, tables and RAM variables must fit in `gOverlayArea`,
-  32 KB of [EWRAM](../../glossary.md#iwram-and-ewram).
-- An overlay calls the [main image](../../glossary.md#main-image) only through
-  its import table, so code two scenes need is copied into each.
-- 66 actor ids (`ACTOR_ID_COUNT`): the party's 8, then the placed actors.
-- Four actor placement tables in one scene (`FieldWork.tables`).
-- 256 scene temp flags and 256 area temp flags, reused by every scene and
-  area.
+- Only one overlay is loaded, and it has a fixed amount of room: 32 KB. A
+  scene's code and tables have to fit in it.
+- An overlay cannot use another overlay's code, since the other is not
+  loaded. That is why Vault's children are stored twice.
+- A scene's rows can number its actors up to 65, and 64 actors can exist at
+  once.
+- A scene has 239 numbers for its numbered cells.
 
 ## Words used here
 
-- position: pixels, x east, y up and z south, written `PIXELS(n)`; a cell
-  is 16 by 16 pixels.
-- facing: `enum Facing`, eight headings an eighth of a turn apart, from
-  `FACING_EAST` through `FACING_SOUTH` to `FACING_NORTHEAST`.
-- condition: a table row's test ([Conditions](#conditions)).
-- camera box: the corners an entrance row gives, within which the camera
-  moves; a room on a sheet of rooms is the box its entrance gives.
-- scene temp flags and area temp flags: `FLAG_SCENE_TEMP_xx` and
-  `FLAG_AREA_TEMP_xx`, the two ranges cleared for scene code
-  ([above](#state-that-cleans-itself-up)).
-- messages: each line of game text has a name, and `MSGNO(name)` is its
-  number. Showing a message chooses the one after it as the next, so a line
-  that follows a named one has no name of its own.
-- update routine: an actor's `update`, run each frame with the actor.
+- position: three numbers in pixels, x east, y up and z south. A cell is 16
+  pixels by 16.
+- facing: one of sixteen compass headings, named from `FACING_EAST` round
+  through south, west and north.
+- condition: a table row's test of a game flag
+  ([Conditions](#conditions)).
+- camera box: the rectangle an entrance row gives, which the view stays
+  inside. A room on a sheet of rooms is whatever its entrance's box shows.
+- numbered cell: a cell whose cell behavior is one of the scene's own
+  numbers, 1 to 239.
+- scene temp flags and area temp flags: the two groups of flags the game
+  wipes by itself, written `FLAG_SCENE_TEMP_xx` and `FLAG_AREA_TEMP_xx`.
+- message: one piece of the game's text. Each has a name, and
+  `MSGNO(name)` is its number. After a message is shown, the next one in
+  the text is lined up to follow, so the second and third lines of a
+  conversation often have no name of their own.
+- update routine: a piece of code that belongs to one actor and runs every
+  frame.
+- setup: the fourth answer of the entry table. The code calls it
+  `initialize`.
+
+Three files hold what this page describes, for a reader who wants the
+code. `scene_tables.h` has the tables' rows and every word in capitals
+used above. `scene_exits.h` names every entrance and exit. `event.h` lists
+the event commands; a command that takes time does its waiting through
+`wait()`, which [System](../../system.md#waiting-and-tasks) explains. The
+game's list of scenes is `gScenes` in
+[`field/scenes.s`](../field/scenes.s). An overlay is one file, in a fixed
+order: the six answers of the entry table, then its events and other code,
+then its tables. Its events are named for the scene and for what the player
+sees, as `Vale_DoraFretsAboutTheRoof` is.
 
 ## Evidence
 
-A scene's name is its area name from `gArea_NameRules`, or for a room the
-game leaves unnamed, what the player sees there.
+A scene is named for its area, the name the game shows on arrival. A room
+the game leaves unnamed is named for what the player sees there.
 
 A sheet of rooms is named for the style its rooms are drawn in, in a word
 from building and furnishing (`CottageRoomsA`, `LogRoomsC`, `StuccoRoomsB`,
-`StoneRooms`, `ShipRooms`), with a letter in scene-table order where several
-share a style.
+`StoneRooms`, `ShipRooms`), with a letter where several sheets share a
+style.
 
-A scene's functions are named for what the player sees, and its messages are
-named from their English text. Overlay numbers are their rows of the
-resource directory.
+An event is named for what the player sees it do, and a line of text is
+named from its English words.
 
-The stairs exits of `enum ExitStyle` play the leader's leaving and arrival
-animations, named in `enum ActorAnimation` from Isaac's sprite
-(`spr_000.tsv`, animations 23 to 26).
+The staircase ways out are named from Isaac's own pictures. In two of his
+animations he goes into the stair opening with his back turned, growing
+darker and smaller. In two others he comes out of it facing the player.

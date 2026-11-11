@@ -4,7 +4,7 @@
 
 Talk to Garet's sister in Vale and a bordered box grows open at the top of
 the screen. Her portrait appears beside it. `You guys are so lucky, Garet.`
-arrives a few letters at a time, with a little voice blip as it goes.
+arrives a letter at a time, with a little voice blip as it goes.
 
 Every box of text in the game is made the same way: what people say, the
 field menu in the recording above, the Pause menu, the shop counters and the
@@ -18,7 +18,7 @@ Her one line goes through five steps:
 2. Her line is unpacked. The game's text is stored squeezed small, and her
    line is stored without Garet's name in it, so the game unpacks the letters
    and writes the name in ([Decoding a message](#decoding-a-message)).
-3. The unpacked letters are typed into the window, a few at a time
+3. The unpacked letters are typed into the window, letter by letter
    ([Typing](#typing)).
 4. Each letter is drawn. On the field every letter is a small picture of its
    own, which is why a letter can shake ([Drawing text](#drawing-text)).
@@ -100,7 +100,7 @@ does three things each frame, always in this order:
 
 1. Every window that is opening is drawn one step bigger, and every window
    that is closing one step smaller.
-2. Every message being typed gets its few letters for the frame.
+2. Every message being typed gets its letters for the frame.
 3. Every sprite on an open window that moves, such as a shaking letter or the
    bobbing page arrow, is moved.
 
@@ -317,7 +317,7 @@ fast the speed is set, the text arrives about a word at a time.
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  typed(["Letters typed, a few a frame"]) --> code{"The next control code"}
+  typed(["Letters typed, frame by frame"]) --> code{"The next control code"}
   code -- "a pause" --> pause(["The message counts the frames down"])
   pause --> typed
   code -- "a page break" --> arrow(["The page arrow bobs until A, B, L or R"])

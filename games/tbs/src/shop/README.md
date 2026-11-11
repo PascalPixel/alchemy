@@ -1,9 +1,13 @@
 # Shops
 
-![Isaac talks to Bilibin's item shopkeeper across the counter: the shopkeeper greets him, the counter's four icons come up with Buy, he picks a Herb for 10 coins and gives it to himself, the coins window drops from 500 to 490, and the shopkeeper thanks him as he leaves.](https://alchemy.pascalpixel.com/guides/shop/shop.gif)
+![Isaac talks to Bilibin's item shopkeeper across the counter. Watch the coins window: he buys one Herb for 10 coins, gives it to himself, and `Your Coins` drops from 500 to 490 before the shopkeeper thanks him.](https://alchemy.pascalpixel.com/guides/shop/shop.gif)
 
-In a town the [party](../../glossary.md#the-party) spends its coins at three
-kinds of counter.
+Walk up to the counter of Bilibin's item shop and press A. The shopkeeper's
+portrait appears with `Welcome! We have just the gear you need.`, four icons
+come up, and the visit lasts until the shopkeeper says goodbye.
+
+The [party](../../glossary.md#the-party) spends its coins across three kinds
+of counter.
 
 At a shop it buys and sells weapons, armor or items, has broken things
 mended, and finds the rare items the game calls artifacts. At a sanctum a
@@ -11,142 +15,191 @@ priest revives a fallen party member or lifts poison, a haunting or a curse.
 At an inn the party sleeps and wakes with full HP and
 [PP](../../glossary.md#psynergy-and-pp).
 
-Every counter opens the same way. The player talks to the keeper, and the
-town's [scene](../../glossary.md#scene) runs an
-[event](../../glossary.md#event), the piece of code behind a conversation.
-The event calls the counter and waits for it to finish. Meanwhile the counter
-draws the keeper's lines, the coins window and the pointing hand over the
-town.
+This page calls all three counters, and follows each in turn:
 
-The code here runs all three counters and two smaller things that share their
-screens:
+1. Shops: the four icons, then [buying](#buying), the
+   [Game Tickets](#game-tickets) a shop gives away, [selling](#selling),
+   [repairing](#repairing) and [artifacts](#artifacts).
+2. [Sanctums](#sanctums), with their fees and their shower of sparkles.
+3. [Inns](#inns), and where the price of a night comes from.
+4. [The item picker](#the-item-picker), the small screen that asks what to
+   drop when the party finds an item and every pack is full. It is built from
+   the shop's pieces, so it lives here.
 
-1. [A counter's work](#a-counters-work) is the memory every counter borrows
-   while it is open.
-2. [Shops](#shops) buy, sell, repair and offer artifacts, and give out Game
-   Tickets for spending.
-3. [Sanctums](#sanctums) and [inns](#inns) restore the party for a fee.
-4. [The item picker](#the-item-picker) asks what to drop when the party is
-   given an item and every pack is full.
-
-The counters draw with [windows](../../glossary.md#window) and
-[messages](../../glossary.md#message), which are in
-[Windows](../window/README.md). The items and their prices are in [Game
-rules](../game/README.md).
-
-## A counter's work
-
-A counter has to remember what it is doing: its windows, the party's figures,
-the items on sale, where the hand is. It keeps all of it in one block of
-memory, and it borrows that block from the field menu. It is the menu
-[work](../../glossary.md#work) ([Menus](../menu/README.md#the-menu-work)).
-
-Borrowing it is safe because the two are never open together. The field menu
-takes the block when the player opens it on the field and gives it back when
-it closes. A counter opens only from a scene's event, when the field menu is
-closed.
-
-One block also suits both. A counter needs much the same things as a menu
-screen: the party in order, its figures, some windows and a hand.
-
-Every counter starts the same way. It takes and clears the block and lists
-the party into it. It loads the hand's six small pictures (the hand, the page
-arrows, a gem and the two stat arrows). And it adds the
-[task](../../glossary.md#task) that moves the hand each
-[frame](../../glossary.md#frame).
-
-Every counter ends by removing the task, freeing the pictures and giving the
-block back.
+The boxes of text are [windows](../../glossary.md#window) and the lines in
+them are [messages](../../glossary.md#message), and both are explained in
+[Windows](../window/README.md). The items themselves, and their prices, are
+in [Game rules](../game/README.md).
 
 ## Shops
 
-![At a weapon shop's counter, `Come in! Welcome! Take a look at our fine weapons.`, and the hand moves along the four icons: Buy, Sell, Artifacts and Repair, then the shopkeeper says `Feel free to drop in anytime.`](https://alchemy.pascalpixel.com/guides/shop/shop-counter.gif)
+![Bilibin's weapon shopkeeper says `Come in! Welcome! Take a look at our fine weapons.` Watch the hand move along the four icons, Buy, Sell, Artifacts and Repair. When Isaac backs out, the shopkeeper says `Feel free to drop in anytime.`](https://alchemy.pascalpixel.com/guides/shop/shop-counter.gif)
 
-A shop offers four things at its counter, Buy, Sell, Artifacts and Repair,
-and the shopkeeper talks the player through each.
+Where Isaac stands matters. Bilibin's weapon merchant opens the shop only
+when Isaac faces north, across the counter. Talk to the same merchant from
+the side and there is no shop, only a bit of talk.
 
-The game has 35 shops, and each is one row of a table, the stock table in
-[`shop/stock.c`](shop/stock.c). A row says three things. It lists the
-ordinary items the shop always sells, up to 24 of them. It lists the rare
-items the shop brings, up to 8 ([Artifacts](#artifacts)). And it says whether
-this is a weapon shop, an armor shop or an item shop.
+Every conversation in the game is run by a small piece of code that belongs
+to its town, which the game calls an [event](../../glossary.md#event). The
+merchant's event looks at which way Isaac is facing. If he is across the
+counter, it hands over to the shop and waits until the shop is finished.
 
-Bilibin's weapon shop, for one, sells the Long Sword, Broad Sword, Hunter's
-Sword, Battle Axe and Heavy Mace, and brings the Witch's Wand.
+It tells the shop two things: which shop this is, and which person in the
+room is the keeper, so the shop knows whose portrait to show.
 
-A town's event only has to say which row its shop is and which
-[actor](../../glossary.md#actor) is the keeper, whose face the lines show.
-The shop then greets the player and loops: the four icons, the keeper's line
-for the choice, and the choice itself. Buy and Artifacts are the same buying
-screen over two different lists. B on the icons ends the loop with the
-keeper's farewell.
+### What a shop sells
 
-The keepers' lines are written once for each kind of shop, and every set is
-in the same order. So the code always asks for the weapon shop's line, and
-one helper steps from there to the same line of the armor or item shop's set.
-Xian's three shops have a further set of their own, whose keepers call the
-player `warrior`.
+Every shop in the game is one row of a single list, the stock table in
+[`shop/stock.c`](shop/stock.c), which is the file to open to see what any
+shop sells. There are 34 shops, from Vale's three to Lalivero's three.
 
-Each line is a message typed into a window that the counter waits for. That
-is why a shop reads as a conversation with choices in it.
+Bilibin's weapon shop is one of those rows. It says three things:
+
+- The ordinary stock: Long Sword, Broad Sword, Hunter's Sword, Battle Axe and
+  Heavy Mace. A shop never runs out of these.
+- The rare stock: one Witch's Wand. Rare items are sold under the Artifacts
+  icon, and there are only so many of each ([Artifacts](#artifacts)).
+- The kind of shop: weapons. The other two kinds are armor and items.
+
+### Round the four icons
+
+A visit is a loop. The keeper greets the party, and the four icons come up:
+Buy, Sell, Artifacts and Repair. The player picks one, the keeper says a line
+about it, and that part of the shop runs until the player backs out with B.
+Then the keeper asks `Anything else today?` and the icons are back.
+
+Pressing B on the icons themselves ends the visit with the keeper's farewell.
+
+Buy and Artifacts are the same screen. The only difference is the list it is
+given: the row's ordinary stock, or the rare items on sale.
+
+### How one shop speaks with three voices
+
+A weapon shopkeeper asks `Which one of you gets this?` An armor shopkeeper
+asks `And who is this for?` An item shopkeeper asks `Now, who is this for?`
+Yet the shop's code is written once, for all three.
+
+The trick is in how the lines are stored. The weapon shop has a set of 43
+lines: the welcome, the farewell, a line for every question and every
+refusal. The armor shop's set follows it in the text, with its own wording of
+the same 43 lines in the same order. The item shop's set comes after that.
+
+So the code only ever asks for the weapon shop's line. In an armor shop the
+game steps 43 lines further on before showing it, and in an item shop 86. It
+lands on the same moment of the conversation in another keeper's words.
+
+Xian's three shops go one step further. Their keepers have three more sets,
+and in the English text they call the player `warrior`. Xian's weapon
+shopkeeper opens with `You need weapons, warrior. Check our weapons.`
+
+One line in the item shops' set has a slip that shipped with the English
+game. Pick something the party can't afford, and the shopkeeper says it is
+`a litle out of your price range.`
 
 ### Buying
 
-![Isaac buys the Long Sword at Bilibin's weapon shop: `Which one of you gets this?`, the hand passes Garet, his Attack, Defense and Agility with an arrow beside each, then Ivan and Mia, drawn smaller with `Can't equip`; `You can't equip this, Ivan. Do you still want it?` is turned down, Isaac takes it, the coins drop from 3000 to 2800, `Would you like to equip it now, Isaac?`, `You look bolder already!`, and `How about 525 coins for your old Bandit's Sword?` sells what it replaced.](https://alchemy.pascalpixel.com/guides/shop/buy-weapon.gif)
+![Isaac buys the Long Sword at Bilibin's weapon shop. Watch the window on the right as the hand passes each party member: Attack, Defense and Agility for those who can use a sword, `Can't equip` for those who can't, who are also drawn smaller. Isaac takes it, the coins drop from 3000 to 2800, he equips it, and the shopkeeper offers to buy the sword it replaced.](https://alchemy.pascalpixel.com/guides/shop/buy-weapon.gif)
 
-Buying asks `What would you like?` over the stock, seven items to a page with
-their prices. Then it asks `Which one of you gets this?` over the party. For
-an item that stacks, such as a Herb, it also asks how many.
+Buying opens on the stock, seven items to a page, each with its price.
+Bilibin's armor shop sells nine things, so it has a second page with two
+on it, and a small arrow shows there is more.
 
-As the hand passes each party member, the window beside them shows what the
-item would mean to them. For a weapon or armor it shows how their Attack,
-Defense and Agility would change, with an arrow beside each. For anything
-else it shows how many of it they already carry.
+Pick the Long Sword and the keeper asks who gets it. Now the hand moves along
+the party, and the window beside it changes for each member it passes.
 
-The party members who cannot equip the item are drawn at four fifths of their
-size, as Ivan and Mia are in the recording.
+For a weapon or a piece of armor, that window shows the member's Attack,
+Defense and Agility as they are. Where a number would change, an arrow points
+up or down and the new number stands beside it. Under them is the name of the
+item it would replace.
 
-Before any coins change hands the shop makes its checks in order:
+The shop does not work those numbers out with a sum of its own. It really
+puts the Long Sword in the member's hands, has the game's rules work out
+their stats, writes the numbers down, and puts the old weapon back. All of
+that happens before the next picture reaches the screen, so the player only
+ever sees the result.
 
-1. Is there room? The shop finds out by really putting one of the item in
-   the party member's pack and taking it out again. A full pack gets its own
-   line, `Your pack is full, Isaac. Who will you give this to?`, and so
-   does a full stack.
-2. Are there enough coins?
-3. Can this party member equip it? If not the keeper says so,
-   `You can't equip this, Isaac.`, and asks whether to buy it anyway.
+For anything else, such as an Herb, the window shows how many the member
+carries already (`You have 3`, or `None in stock`) and the icons of
+everything in their pack.
 
-For a stack, the most the player can ask for is the smallest of three
-numbers: what the coins will buy, how many of an artifact the shops have
-left, and a stack of 30 less what the party member already carries.
+Party members who cannot equip the item are drawn at four fifths of their
+size.
 
-Then the items are added one at a time. Each takes its price off the coins
-and adds the same amount to the shop credit, which earns the [Game
-Tickets](#game-tickets) below.
+When the player presses A on a party member, the shop asks three questions
+before any coins move:
 
-The keeper offers to equip a weapon or armor at once. If it was equipped, the
-keeper also offers to buy what it replaced, as with the Bandit's Sword in the
-recording.
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  pick(["The player picks who gets the item"]) --> room{"Does one more fit in their pack?"}
+  room -- "no: the keeper asks who else" --> pick
+  room -- "yes" --> coins{"Do the coins cover one?"}
+  coins -- "no" --> list(["Back to the stock list"])
+  coins -- "yes" --> equip{"Can they equip it?"}
+  equip -- "no, and the player says No to buying it anyway" --> pick
+  equip -- "yes, or the player wants it anyway" --> many(["How many? Asked only for an item that stacks"])
+  many -- "B" --> pick
+  many -- "A" --> pay(["The items are handed over and paid for, one at a time"])
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef check fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  class pick,list,many,pay sequence
+  class room,coins,equip check
+```
+
+The first question is answered the same way as the stat window: by trying.
+The shop puts one of the item in the member's pack. If that works, it takes
+the item straight out again and carries on. If it fails, the keeper says why.
+
+There are two ways to fail. A pack has 15 places, and when all are taken the
+weapon shopkeeper says `Your pack is full, Isaac. Who will you give this to?`
+
+The other way is a full stack. Some items stack, which means that many of
+them share one place in the pack: thirty Herbs take up one place, not thirty.
+Thirty is the most a stack holds, so a thirty-first Herb fails even with
+places to spare. The item shopkeeper has a line for that too: `Isaac can't
+hold this Herb, so who wants it?`
+
+For an item that stacks the keeper asks how many, and a bar of 30 small
+segments shows the stack filling up. The player can ask for as many as the
+coins will buy and as many as still fit in the stack, whichever is fewer. A
+rare item has a third limit, how many of it are left to sell.
+
+Then the items change hands one at a time. Each one takes its price off the
+coins and adds the same amount to a second, hidden count, which is what earns
+the [Game Tickets](#game-tickets) below.
+
+Last, the keeper offers to equip a weapon or a piece of armor at once. If the
+player says yes, the keeper also offers to buy what it replaced.
 
 ### Game Tickets
 
-![Isaac buys a Herb at Bilibin's item shop: `What would you like?`, the Herb at 10 coins, `Now, who is this for?`, `How many do you need?`, the coins drop from 500 to 490, and the keeper says `Please take a complimentary Game Ticket.` and `Who will take this Game Ticket?` before `Is there anything else?`](https://alchemy.pascalpixel.com/guides/shop/game-ticket.gif)
+![Isaac buys one Herb at Bilibin's item shop and the coins drop from 500 to 490. Then the shopkeeper says `Please take a complimentary Game Ticket.` and asks `Who will take this Game Ticket?` Watch the coins: they stay at 490.](https://alchemy.pascalpixel.com/guides/shop/game-ticket.gif)
 
-Every coin spent buying also builds up a shop credit, a count kept out of the
-player's sight. Once the credit reaches the next ticket's cost, the keeper
-says `Please take a complimentary Game Ticket.` and asks who takes it.
+Every so often a shopkeeper hands over a Game Ticket, good for a spin of the
+Lucky Wheels in Tolbi. It can look like luck. It is a tally.
 
-The ticket pays for a game of Lucky Wheels in Tolbi. Its cost comes off the
-credit, and the coins stay as they were.
+Every coin the party spends buying is also added to that hidden count, which
+this page calls the shop credit. It counts purchases at every shop in the
+game together. Selling, repairs, inns and sanctums add nothing to it.
 
-In the recording the party walks into Bilibin's item shop having spent 290
-coins in shops so far, and buys one Herb for 10. The coins drop from 500
-to 490. The credit rises to 300, which is the cost of the first ticket. So
-the keeper hands one over, the credit goes back to 0, and the coins are
-still 490.
+After each purchase the shop compares the credit with the cost of the next
+ticket. The first ticket costs 300.
 
-The cost rises after every fifth ticket, and one purchase gives at most one
-ticket.
+Say the party has spent 295 coins in shops so far and now buys one Herb
+for 10. The credit rises to 305. That reaches 300, so the keeper offers a
+ticket and asks who takes it. The 300 comes off the credit, leaving 5 towards
+the next one. The coins are not touched.
+
+The player can turn the ticket down with B (`You don't need it?`). Then
+nothing comes off the credit, and the keeper offers again after the next
+purchase.
+
+A purchase gives one ticket at most, however large it is. Spend 3,000 coins
+on the first purchase of the game and the keeper gives one ticket and keeps
+2,700 of credit. The tickets that credit has already earned then come one at
+a time, each after one more purchase of anything at all, even a single Herb.
+
+The tickets get dearer as they are handed out:
 
 | Tickets      | Credit each |
 | ------------ | ----------- |
@@ -157,122 +210,196 @@ ticket.
 | 21st to 25th | 4,000       |
 | 26th on      | 8,000       |
 
-The credit and the number of tickets given are kept in the [main routine's
-work](../../glossary.md#main-routines-work), with the party and its coins. So
-a save file keeps them.
+The credit and the number of tickets given are saved with the party's coins,
+so the tally carries on where it was when the game is loaded again.
 
 ### Selling
 
-![Isaac sells at Bilibin's item shop: `What do you want to sell?`, his items come up in a grid, the hand lands on a Herb at 7 coins, he says Yes, and the coins rise from 500 to 507.](https://alchemy.pascalpixel.com/guides/shop/sell.gif)
+![Isaac sells at Bilibin's item shop. His pack comes up as a grid of icons, and the hand lands on an Herb: the price window says 7 coins, not the 10 it cost. He says Yes, and the coins rise from 500 to 507.](https://alchemy.pascalpixel.com/guides/shop/sell.gif)
 
-Selling asks `What do you want to sell?`, then whose items. It shows that
-party member's items as a grid of icons, five to a row, each with its price
-and description as the hand passes. A stack asks how many.
+Selling asks whose items, then shows that party member's pack as a grid of
+icons, five to a row. As the hand passes an item, one window shows what the
+shop will pay for it and another shows its description.
 
-A shop pays three quarters of an item's price, rounded down, so a Herb that
-costs 10 sells for 7. A broken item fetches half. An item the story needs is
-refused (`Sorry, but we don't buy those.`), and so is a cursed item that is
-being worn.
+A shop pays three quarters of an item's price, rounded down. A Herb costs 10,
+three quarters of that is 7 and a half, so it sells for 7. A broken item
+fetches half its price instead.
 
-A sold item leaves the pack the same way a dropped one does, through one
-routine in the game's rules. That routine is what puts a rare item back on
-sale ([Artifacts](#artifacts)), so selling and dropping cannot disagree about
-it.
+The keeper words the offer to fit the item. At a weapon shop:
+
+- an ordinary item gets `How about 7 coins for your Herb?`
+- an item the game marks as rare gets `What rare stuff! How about 645
+  coins?`, which is the offer for a Witch's Wand
+- a broken one gets `Your Healing Ring is damaged, so...maybe 400 coins?`
+
+Two things a shop will not buy. An item the story needs, such as the Shaman's
+Rod, is worth nothing to it: `Sorry, but we don't buy those.` And seven items
+won't come off once they are equipped: the six cursed ones and the Machete.
+While one of those is being worn the keeper can't take it, and says to come
+back once it's off.
+
+Selling a stack asks how many, with the same bar of 30 segments as buying.
 
 ### Repairing
 
-![Isaac has a Healing Ring repaired at Bilibin's weapon shop: `What needs fixing?`, the hand passes the Bandit's Sword, `It's not broken.`, lands on the Healing Ring at 200 coins, and after `I'll fix your Healing Ring for 200 coins, OK?` and Yes the ring vanishes from the grid for three bell strokes and comes back mended.](https://alchemy.pascalpixel.com/guides/shop/repair.gif)
+![Isaac has a Healing Ring repaired at Bilibin's weapon shop. Watch the price window as the hand moves over his items: `It's not broken.` for the ones that are whole, 200 coins for the ring. After Yes, watch the grid: the ring's place stays empty for three strokes of a bell, then the ring is back.](https://alchemy.pascalpixel.com/guides/shop/repair.gif)
 
-Only an item that can break can be repaired. That is the kind that breaks one
-use in eight, such as the Healing Ring. A repair costs a quarter of the
-item's price.
+Some items can be used in battle again and again, but each use has one
+chance in eight of breaking them. The Healing Ring is one. A broken one can't
+be used until a shop mends it.
 
-The keeper takes the item away for three strokes of a bell, 110 frames apart,
-hands it back mended and offers to equip it.
+A repair costs a quarter of the item's price. The Healing Ring costs 800, so
+mending it costs 200.
 
-Any other item is refused (`Sorry, but we don't handle <item>s.`). So is an
-item that is not broken (`It's not broken.`), a cursed one that is being
-worn, or one the coins do not cover.
+The keeper turns the job down for four reasons, checked in this order:
 
-While it is away the item is hidden from the grid, and the items after it
-stay where they are. So it comes back in the same place.
+1. The item is not the kind that can break:
+   `Sorry, but we don't handle Herbs.`
+2. It can break but is not broken:
+   `Huh? That Healing Ring isn't damaged at all.`
+3. It is being worn and won't come off, so it can't be handed over.
+4. The coins don't cover it.
+
+Otherwise the keeper takes the item away. A bell sounds three times, 110
+[frames](../../glossary.md#frame) apart. A frame is one picture on the
+screen, and the console draws about sixty a second, so the strokes are
+nearly two seconds apart and the whole repair takes six seconds. Then the
+item is handed back mended, the coins are taken, and the keeper offers to
+equip it.
+
+While it is away the item's place in the grid is empty, and the items after
+it do not close up. That is deliberate. Normally a pack closes its gaps
+the moment something leaves it. Here the shop only blanks the one place and
+puts the very same item back afterwards, so the ring returns to exactly
+where it was.
 
 ### Artifacts
 
-![At Bilibin's weapon shop the hand reaches Artifacts: `You must be a connoisseur if those caught your eye.`, and the Witch's Wand comes up at 880 coins with its description.](https://alchemy.pascalpixel.com/guides/shop/artifacts.gif)
+![At Bilibin's weapon shop the hand reaches the third icon, Artifacts. The shopkeeper says `You must be a connoisseur if those caught your eye.`, and the Witch's Wand comes up with its price and its description.](https://alchemy.pascalpixel.com/guides/shop/artifacts.gif)
 
-A rare item belongs to no one shop. It has one count for the whole game, from
-0 to 99, and every shop of its kind sells it while that count is above zero.
+Bilibin's weapon shop starts with one Witch's Wand, at 860 coins. Buy it and
+it is gone from the list. If it was the only rare weapon on sale, Artifacts
+now gets `Sorry, but we're out of stock. Come back later, OK?` Sell the wand
+back, in Bilibin or anywhere else, and it is on sale again.
 
-The first time the player opens a shop, each rare item in its row adds one to
-its count. Buying one takes one off, and selling or dropping one puts one
-back. So a rare item first found in one town is sold by every shop of its
-kind afterwards, and one the party gives up comes back on sale.
+The surprise is where it is on sale. A rare item does not belong to the shop
+that first had it. The game keeps one count for each rare item, for the
+whole world, and every shop of the right kind sells that item while its count
+is above zero.
 
-Take the Magic Rod. Vault's weapon shop brings it, and the party reaches
-Vault first. So Bilibin's weapon shop lists the Magic Rod beside its own
-Witch's Wand, unless it was bought in Vault.
+Take the Magic Rod. It is in the row of Vault's weapon shop. Open that shop
+once, without buying the rod, and its count is 1. Walk on to Bilibin, and the
+weapon shop there lists the Magic Rod beside its own Witch's Wand. Buy it in
+either town and it is gone from both.
 
-When two shops' rows bring the same item, each first visit adds one, so it
-can be bought twice.
+The count moves in three ways:
 
-The game remembers each shop's first visit with a [game
-flag](../../glossary.md#game-flag), one of 35, so a shop adds its rare items
-only once. [Game rules](../game/README.md#rare-item-counters) explains the
-counts themselves.
+- The first time the player opens a shop, each rare item in its row adds one
+  to that item's count.
+- Buying one takes one off.
+- Giving one up puts one back: selling it, dropping it from the Item screen,
+  dropping it to make room for a found item, or leaving a found one behind.
+
+So no shop has to remember what it has sold, and a wand sold in Lalivero
+turns up in Bilibin.
+
+When the Artifacts list is asked for, the shop does not read its own row at
+all. It goes through every item in the game and lists each one that is of its
+kind (weapon, armor or other) and has a count above zero.
+
+Some rare items are in more than one row. The Water of Life is in the rows of
+the item shops of Tolbi, Suhalla and Lalivero. Each first visit adds one, so
+after opening all three the party can buy three.
+
+A shop must add its rare items only once, or every visit would make more. So
+for each shop the game keeps a yes-or-no note, saved with the game, that says
+"this shop has been opened". The game calls such a note a
+[game flag](../../glossary.md#game-flag).
+
+Which items have a count at all is a list of its own, shown in
+[Game rules](../game/README.md#rare-item-counters).
 
 ## Sanctums
 
-![A sanctum's priest, `Welcome, weary wanderers. What aid do you seek?`: Revive is chosen, `Who shall I revive?`, the hand passes a party member who needs nothing, `This ally needs no healing.`, lands on the one who is down, `Revive for 20 coins`, the room greys and sparkles fly in to the tune, and the coins drop from 2000 to 1980.](https://alchemy.pascalpixel.com/guides/shop/sanctum.gif)
+![In a sanctum the priest says `Welcome, weary wanderers. What aid do you seek?` and Revive is chosen. Watch the line under the party as the hand moves: `This ally needs no healing.` for a member who is fine, a price for one who is down. Then the room turns grey, sparkles fly in, and the coins drop.](https://alchemy.pascalpixel.com/guides/shop/sanctum.gif)
 
 A sanctum's priest offers four services, Revive, Cure poison, Repel evil and
 Remove curse, and serves one party member at a time.
 
-The hand can point at anyone. The fee window under the party says what the
-service would cost that party member, or that they don't need it
-(`This ally needs no healing.`, `This ally is not poisoned.`). On someone who
-doesn't need it A only buzzes, and they are drawn at seven tenths of their
-size.
+Pick a service and the priest says a line about it, then counts who needs
+it. If nobody does, the visit is short. For Revive it ends with `Fear not,
+none of your companions are down.`
 
-| Service      | For a party member who         | Fee              | Tune                  |
-| ------------ | ------------------------------ | ---------------- | --------------------- |
-| Revive       | is down (HP 0)                 | 20 coins a level | 🎵 `MUS_REVIVE`       |
-| Cure poison  | is poisoned or deadly poisoned | 10 coins         | 🎵 `MUS_CURE`         |
-| Repel evil   | is haunted                     | 50 coins         | 🎵 `MUS_REPEL_EVIL`   |
-| Remove curse | wears a cursed item            | 10 coins a level | 🎵 `MUS_REMOVE_CURSE` |
+Otherwise the party comes up with the hand already on the first member who
+needs the service. The hand can move to anyone, and a line under the party
+says what the service would cost the member it is on, or that they don't
+need it. Members who don't need it are drawn at seven tenths of their size,
+and pressing A on one only plays the cancel sound.
 
-Reviving and lifting a curse cost more for a party member of a higher level.
-Lifting a curse takes off every cursed item the party member wears. Their
-stats are then worked out again from what they still wear.
+| Service      | For a party member who         | Fee              |
+| ------------ | ------------------------------ | ---------------- |
+| Revive       | is down (HP 0)                 | 20 coins a level |
+| Cure poison  | is poisoned or deadly poisoned | 10 coins         |
+| Repel evil   | is haunted                     | 50 coins         |
+| Remove curse | wears a cursed item            | 10 coins a level |
 
-![The Vale Sanctum's priest with Ivan poisoned: Cure Poison is chosen, `Hmm, so you need an antidote to poison or deadly poison?`, `Whom shall I cure?` with `This ally is not poisoned.` under Garet and `Cure for 10 coins` under Ivan, `I require a donation of 10 coins to cure Ivan, OK?`, `I shall apply the cure.`, the room greys while sparkles fly in, `The poison has left Ivan.` as the coins drop from 2000 to 1990, and `Visit us again anytime you need healing.`](https://alchemy.pascalpixel.com/guides/shop/sanctum-cure.gif)
+Two of the fees grow with the party member. Reviving a member at level 5
+costs 100 coins. Reviving the same member at level 30 costs 600.
 
-Once the player agrees to the donation, the service is applied and the
-sanctum plays its burst.
+![The Vale Sanctum's priest with Ivan poisoned. Under Garet the line reads `This ally is not poisoned.`, under Ivan `Cure for 10 coins`. After `I shall apply the cure.` the room greys and sparkles stream in to Ivan's figure, and the coins only drop from 2000 to 1990 once `The poison has left Ivan.` appears.](https://alchemy.pascalpixel.com/guides/shop/sanctum-cure.gif)
 
-The field's colours are tinted over 16 frames. Eighteen sparkles fly in from
-a ring around the party member's figure, three frames apart, while the figure
-flashes through changes of colour. The counter waits for the service's tune
-to finish. Then the colours fade back and the coins are taken.
+The priest asks for the donation, and on Yes checks the coins. Then things
+happen in an order worth noticing: the cure is applied first, the light show
+plays, and the coins are taken last.
 
-The choice is then offered again while anyone who needs the service is left.
+What each cure does:
+
+- Revive fills the member's HP to the top.
+- Cure poison and Repel evil simply clear the poison or the haunting.
+- Remove curse takes off every cursed item the member is wearing. The items
+  stay in the pack. The member's stats are then worked out again from what
+  they still wear.
+
+### The shower of sparkles
+
+The light show has the same steps for all four services.
+
+1. The service's own short tune starts, and the colours of the room fade to
+   grey over 16 frames. The member's little figure stops moving.
+2. Eighteen sparkles appear, three frames apart. Each starts at a random
+   spot on a circle a short way out from the figure, and flies in to the
+   middle.
+3. A sparkle that arrives does not vanish. It jumps back out to a new random
+   spot on the circle and flies in again. So the 18 keep streaming in for as
+   long as the tune lasts, whichever tune it is.
+4. From the sixth sparkle on, the figure flickers. Every frame the game
+   picks one of seven ways to colour it, at random: as it is, in grey, or
+   with its reds, greens and blues swapped about.
+5. When the tune ends, each sparkle finishes the flight it is on and is
+   gone. The figure returns to its own colours and the room fades back.
+
+Because step 3 waits on the music, the four services need no timing of their
+own. A longer tune simply gets a longer shower.
+
+Afterwards the priest reports the cure, and if anyone else needs the same
+service the hand moves to them and the priest asks again.
 
 The same counter serves the healers in the towns and temples, the travelling
-healers, and the one in the Battle Arena.
+healers on the road, and the one in the Battle Arena at Colosso.
 
 ## Inns
 
-![Isaac asks Bilibin's innkeeper for a room, `It's 21 coins for a room.`, and answers Yes; after `Please enjoy your stay.` the room closes in an oval to black for the night, opens again, and the innkeeper says `I hope you slept well. Have a nice trip!`](https://alchemy.pascalpixel.com/guides/shop/inn.gif)
+![Isaac asks Bilibin's innkeeper for a room and is told the price. After Yes and `Please enjoy your stay.`, the picture closes in around Isaac in an oval until the screen is black, opens again the same way, and the innkeeper says `I hope you slept well. Have a nice trip!`](https://alchemy.pascalpixel.com/guides/shop/inn.gif)
 
-An inn charges for each party member still standing and restores their HP and
-PP overnight. A party member who is down stays down and is not charged.
+An inn charges by the guest, and a guest is a party member who is still
+standing. Each town's inn has its own price for one guest.
 
-Each town's inn has its own price for a guest. Bilibin's is 7 coins, so three
-party members standing pay 21, the number in the recording.
+Bilibin's is 7 coins. With three party members standing the night costs 21.
+With Mia along as a fourth it costs 28. With one of three knocked out it
+costs 14.
 
-The price is one of the blanks a message can have
-([Windows](../window/README.md#decoding-a-message)). The inn works it out and
-the innkeeper's line shows it.
+A party member who is down is not charged, and is not healed either. They
+wake up still down, and need a sanctum.
 
 | Inn      | Coins a guest |
 | -------- | ------------- |
@@ -288,107 +415,185 @@ the innkeeper's line shows it.
 | Suhalla  | 18            |
 | Lalivero | 25            |
 
-On No, or on Yes without the coins, the innkeeper says so and the counter
-closes. On Yes with the coins, the inn takes them, fills each standing party
-member's HP and PP, and plays the night.
+The inns are in the order the game keeps them. Tolbi belongs between Lunpa
+and Suhalla, and the game does keep a price for it there: 0 coins. Nobody
+ever pays it. Tolbi's inn can't be stayed at, and the sign at its door reads
+`Inn Full No Vacancies`.
 
-The night is the field's own screen transition in its oval shape. The screen
-closes in on the leader over 60 frames, the inn's tune plays through, and the
-screen opens again over 60 frames. Then the innkeeper says the last line.
+The innkeeper's line is stored once for all these inns, with a gap where the
+price goes. [Windows](../window/README.md#decoding-a-message) follows this
+very line and shows how the 21 is written into it.
 
-Xian's inn, like Xian's shops, has lines of its own.
+On No the innkeeper says `Please come again.` On Yes without the coins it is
+`I'm afraid you don't have enough.` On Yes with the coins, the inn takes
+them, fills the HP and PP of each member still standing, and plays the night.
+
+The night borrows one of the game's own screen changes: the picture closes
+in to black around Isaac in an oval, and later opens out again. Elsewhere
+such a change takes 16 frames. The inn slows it to 60, a full second each
+way. In between, the screen stays black while the inn's tune plays through
+to its end.
+
+Xian's inn, like Xian's shops, has lines of its own. Its innkeeper says
+`Welcome to my inn!` and, when the party says No, `Come again, warrior.`
 
 ## The item picker
 
-![Isaac finds a Nut by a river with every pack full: `But you can't carry any more items.`, `What will you drop?`, the party and Isaac's items come up, the hand passes a Machete, `Can't remove.`, and a Potion, and the Nut is taken.](https://alchemy.pascalpixel.com/guides/shop/item-picker.gif)
+![Isaac finds a Nut with every pack full: `But you can't carry any more items.`, then `What will you drop?` The party and Isaac's pack come up. Watch the small window as the hand moves over his items: it shows a price for most, and `Can't remove.` for the Machete he is holding.](https://alchemy.pascalpixel.com/guides/shop/item-picker.gif)
 
-When the party is given an item and every party member's pack is full, the
-game says `What will you drop?`. The item picker then asks which party
-member, then which of their items, to drop to make room.
+Find an item with every pack full and the game says `But you can't carry any
+more items.`, then `What will you drop?` The screen that follows is the item
+picker. It asks which party member, then which of their items.
 
-Under the hand it shows why an item cannot be dropped, or what the whole
-stack would sell for. An item the story needs cannot be dropped, nor can a
-cursed one that is being worn.
+It is the selling screen with the shopkeeper taken away: the same row of
+party figures, the same grid of icons five to a row, the same hand.
 
-The picker only asks. It hands the answer back to whatever was giving the
-item, which drops the one chosen and puts the new item in its place, or does
-nothing if the player backed out.
+The small window even shows a price under the item's name, what the whole
+stack would sell for at a shop. Nothing is paid for a dropped item. The
+price is only there as a measure of what the party is about to give up.
 
-Choosing a cursed item that is being worn should show `You can't remove it!`.
-In [the original](../../glossary.md#the-original) it only plays the cancel
-sound. The code checks the wrong one of two results, one that is always zero
-at that point, so the message's test never passes. This is a
-[bug](../../glossary.md#bug-bugfix-and-ubfix) the code keeps.
+For an item that can't go, the window says why instead. `Can't drop.` is for
+an item the story needs. `Can't remove.` is for an item that is being worn
+and won't come off. The six cursed items are like that, and so, oddly, is
+the Machete: while Isaac is holding it, it can't be dropped.
+
+The picker only asks. What happens next is up to the part of the game that
+gives out found items:
+
+- If the player chose an item, the whole stack of it is dropped and the new
+  item takes its place.
+- If the player backed out with B, the game offers to leave the new item
+  behind instead (`Drop the Nut?`). It will not offer that for an item the
+  story needs. The game says that the item is valuable and must be taken,
+  and `What will you drop?` comes round again.
+
+One moment in the story uses the picker by itself. In Sol Sanctum the party
+is given four Mythril Bags at once, and Isaac and Garet need four free places
+between them. Until they have them, the game says `You have too many items.
+Will you drop something?` and opens the picker again.
+
+### A message that never shows
+
+Press A on an item the story needs and a window says `You can't drop it!`
+
+Press A on the Machete in Isaac's hand and a second message, `You can't
+remove it!`, was plainly meant to appear. It is in the game's text, in all
+six languages. It never shows. The player hears the cancel sound and nothing
+else.
+
+The cause is a small slip. When A is pressed the picker asks the game's rules
+whether the item may go, and gets back one of three answers: yes, no because
+the story needs it, or no because it won't come off. For the first message it
+checks that answer. For the second it checks something else by mistake, a
+note of which item the player has settled on, and at that moment nothing has
+been settled on. So the test for the second message can never come out true.
+
+This is a [bug](../../glossary.md#bug-bugfix-and-ubfix) in the game as it
+was sold, and the code here keeps it.
 
 ## Design
 
-A rare item has one count for the whole game. Every way an item leaves the
-party goes through the same routine in the game's rules: a sale, a drop from
-the Item screen and a drop from the item picker. So one count serves every
-shop of a kind, and the shops need no list of what each has sold.
+Three times on this page the shop needs to know what would happen, and each
+time it finds out by doing it. Will the Herb fit? Put one in the pack and
+take it out. What would the Long Sword do to Garet's Attack? Equip it, read
+the number, unequip it. Where does the ring go after its repair? It never
+left; its place was only blanked.
 
-### Editions
-
-The counters' layout differs by [edition](../../glossary.md#editions) where
-longer words need room. In German the Yes and No menu sits a column further
-left. In German and French the sanctum's fee window is wider and the hand
-that picks a quantity sits further left. French moves an item's price and
-the word after it, Spanish only the word. Outside Japan the coins window
-and the item picker's window are wider.
-
-## How it fits with the rest of the game
-
-Scenes open the counters from their events. What a purchase, a sale or a
-service does to a party member is decided by the game's rules ([Game
-rules](../game/README.md)). That means adding an item, discarding one, moving
-a rare item's count and working stats out again. The counters ask, show and
-charge.
-
-The party figures at a counter are set up by the field menu's code
-([Menus](../menu/README.md#design)).
-
-Some of the shop's pieces serve other screens. Its pointing hand also moves
-in the settings menu, the name entry screen, the file list and the Colosso
-choice. The Item screen draws its quantity bar with the shop's. The tint of
-colours a sanctum plays also runs as a [Djinni](../../glossary.md#djinn)
-joins the party and as the wall in Altmiller Cave bursts.
-
-The [debug menus](../../glossary.md#debug-menus) can open a shop with 200,000
-coins, broken equipment and a poisoned party.
+The reason is that the answers already exist elsewhere. The game's rules
+know when a pack is full and how a sword changes a stat. If the shop worked
+those answers out a second way, the two could disagree, and the player
+would buy a sword on a promise the battle didn't keep.
 
 ## Limits
 
-- Shop credit stops at 999,999 and the count of Game Tickets given at 28.
-  Every ticket from the 26th costs 8,000 either way, so the cap changes
-  nothing the player sees.
-- A price shows at most five digits.
+- The shop credit stops at 999,999, and the game stops counting Game Tickets
+  at 28. Every ticket from the 26th costs 8,000 anyway, so the player never
+  notices.
+- A price has room for five digits. The dearest items in the game, the Sol
+  Blade and the Kusanagi, cost 19,000, so every price fits.
 - A rare item's count stops at 99.
-- The inns' price table has a row for Tolbi that costs nothing, and no
-  event opens it.
+- A shop's row has room for 24 ordinary items and 8 rare ones. The fullest
+  shops, the armor shops of Bilibin and Tolbi, sell nine ordinary items, and
+  no shop has more than four rare ones.
+- The Vial is in the rare lists of three item shops, Tolbi's, Suhalla's and
+  Lalivero's, but it is not one of the items the game keeps a count for. So
+  it never appears under Artifacts.
+- Right after the list of ticket costs, the shop's data holds a list of
+  twenty items, among them the Sol Blade, the Muramasa, an Herb and a Nut.
+  Nothing in the game reads it.
 
 ## Words used here
 
-- **counter**: one of the three things the party trades at, a shop, a
-  sanctum or an inn.
-- **keeper**: the actor the event names as the shopkeeper, priest or
-  innkeeper, whose portrait the lines show.
+- **counter**: a shop, a sanctum or an inn. Bilibin has five: three shops, an
+  inn and a sanctum.
+- **keeper**: the shopkeeper, priest or innkeeper, whose portrait the lines
+  show.
 - **stock row**: one shop's row of the stock table in
-  [`shop/stock.c`](shop/stock.c).
-- **artifact**: a rare item, which a shop sells only while its count is
-  above zero.
-- **shop credit**: the coins spent buying, which earn Game Tickets.
-- **service**: what a sanctum does for one party member.
-- **burst**: the sparkles and tinted colours a sanctum plays over the party
-  member served.
+  [`shop/stock.c`](shop/stock.c), such as Bilibin's weapon shop with its
+  five swords, axes and maces and its one Witch's Wand.
+- **artifact**: the shop's word for a rare item, which is on sale only while
+  its count is above zero.
+- **shop credit**: the hidden tally of coins spent buying, which earns Game
+  Tickets.
+- **service**: one of the four things a sanctum does for a party member.
 
-## Evidence
+## For readers of the code
 
-The counters are named for what the player meets at them, the stock row's
-parts from what the shop's code reads from each, the choices and services
-from what their windows offer in the English release, and the inns from the
-town scenes that open them.
+What follows is for someone opening the source in
+[`shop/`](shop/). It adds nothing about what the player sees.
 
-The rows of the inns' price table follow the order of the towns' area
-names, from Vale to Lalivero. The empty row falls between Lunpa and
-Suhalla, where Tolbi is, and Tolbi is the one town whose inn no event
-opens: its sign says the inn is full.
+### How it fits with the rest of the game
+
+What a purchase, a sale or a cure does to a party member is decided by the
+game's rules ([Game rules](../game/README.md)): putting an item in a pack,
+taking one out, moving a rare item's count, working stats out again. The
+row of party figures at a counter is set up by the field menu's code
+([Menus](../menu/README.md#design)).
+
+Some of the shop's pieces turn up on other screens. The pointing hand that
+glides from item to item is the same one that moves in the settings menu, on
+the name entry screen, in the list of save files and in the choice the party
+is given at Colosso. The Item screen draws its quantity bar with the shop's.
+And the fade of the room's colours that a sanctum plays is the one seen when
+a [Djinni](../../glossary.md#djinn) joins the party, and when the wall
+bursts in Altmiller Cave.
+
+The game still holds test menus its makers used, which a player never
+reaches ([debug menus](../../glossary.md#debug-menus)). One opens a shop
+with 200,000 coins, a broken Virtuous Armlet and Muramasa to repair, and
+party members who are poisoned or haunted.
+
+### Borrowed memory
+
+A counter has a lot to keep track of while it is open: its windows, the
+party's figures, the list on sale, where the hand is. It keeps all of that
+in the same stretch of the console's memory that the field menu (the
+Psynergy, Djinn, Item and Status screens) uses for the same things. The code
+calls it the menu [work](../../glossary.md#work)
+([Menus](../menu/README.md#the-menu-work)).
+
+The two can share because the player can never have both open. A counter
+opens only from a town's event, when the field menu is closed.
+
+### Editions
+
+The game was released in six languages, and words take more room in some
+than in others, so a few windows and positions change by
+[edition](../../glossary.md#editions).
+
+In German the Yes and No choice sits a little further left. In German and
+French the sanctum's line under the party gets a wider window, and the hand
+that picks a quantity sits further left. French moves an item's price and
+the word after it to the left, and Spanish moves the word to the right.
+Outside Japan the coins window and the item picker's small window are wider.
+
+### Evidence
+
+The names in the code are ours, chosen from what the game shows. The four
+choices at a shop and the four services at a sanctum are named from what
+their windows offer in the English release, and each inn from the town whose
+event opens it.
+
+The order of the inns' prices follows the order of the towns' names in the
+game's list of areas, from Vale to Lalivero. That is how the entry with no
+price, between Lunpa and Suhalla, is known to be Tolbi's.

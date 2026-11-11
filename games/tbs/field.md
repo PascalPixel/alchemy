@@ -2,32 +2,96 @@
 
 ![Isaac walks right in front of the Sanctum in Vale, then runs back left with B held, half as fast again](https://alchemy.pascalpixel.com/guides/field/walk-run.gif)
 
-The party walks around Vale. The leader goes where the D-pad points, the
-river keeps flowing, and a villager wanders by the gate. A step onto a
-doorstep or a press of A makes something happen. A door leads into a house,
-the gate leads out onto the World Map, and in a cave any step may start a
-battle.
+Walk Isaac around Vale. He goes where the D-pad points, the river keeps
+flowing, and a villager wanders by the gate. Step onto a doorstep and a door
+opens. Press A beside someone and they talk. Walk out of the gate and the
+World Map opens, and in a cave any step may start a battle.
 
-All of that is the [Field](glossary.md#field) division, the code that runs
-wherever the [party](glossary.md#the-party) walks. It lives in three
-folders:
+The game calls all of that the [field](glossary.md#field): everything
+[the party](glossary.md#the-party) does outside a battle and outside a
+menu.
 
-- [Field code](src/field/README.md) runs the walk: it moves everyone, draws
-  the ground and answers what the player does.
-- [Scenes](src/scene/README.md) holds each place's own code: its people, its
-  doors and what happens there.
-- [Maps](src/map/README.md) holds the ground each place is drawn on.
+Each section below gives one idea from it in brief, and ends by pointing to
+the guide with the rest. There are three guides. [Field
+code](src/field/README.md) is the walking itself, which is the same in every
+town. [Scenes](src/scene/README.md) is what belongs to one place: Vale's
+people, Vale's doors, what each villager says. [Maps](src/map/README.md) is
+the ground each place is drawn on.
+
+## Scenes and areas
+
+![Isaac climbs the steps to the Sanctum's door in Vale: Vale fades out, and the Sanctum's hall fades in with Isaac just inside its door](https://alchemy.pascalpixel.com/guides/front/sanctum-door.gif)
+
+Climb the steps to the Sanctum's door in Vale. Vale fades out, and the hall
+fades in with Isaac just inside. The game has ended one place and started
+another.
+
+It calls each such place a [scene](glossary.md#scene). Vale outdoors is
+one, the Sanctum's hall is another, and so is the World Map. Even the Title
+is one. There are 201, and the last ten were the developers' own test rooms
+([Debug scenes](src/debug/README.md#the-test-scenes)).
+
+The game keeps one list of all 201, with a line for each. A line says where
+to find the scene's own instructions, such as what Vale's villagers say,
+and which ground it is drawn on.
+
+It also says whether the scene is a town. In the 53 scenes marked as towns,
+houses and shops included, Retreat does not work and walking brings no PP
+back.
+
+Last, a line says which [area](glossary.md#area) the scene belongs to. An
+area is a group of scenes the game treats as one place. Vale's is the
+village outdoors, its plaza, Kraden's cottage, the Sanctum and the insides
+of the houses. Come in from the World Map and `Vale` shows in a small
+window, because the party has changed area. Walk on into the Sanctum and no
+name shows, because it has not.
+
+The stone pillar in Vale shows what else an area is for. Push the pillar to
+one side, go into a house and come out, and it is where you left it. Walk
+out to the World Map and back, and it stands in the middle again. The game
+remembers some things only for as long as the party stays in one area, and
+forgets them on purpose when it leaves.
+
+How does a game forget on purpose? [State that cleans itself
+up](src/scene/README.md#state-that-cleans-itself-up) has the answer, and
+[The game flags](src/game/README.md#the-game-flags) covers everything the
+game remembers. [Scenes](src/scene/README.md#design) says why the 201 are
+kept as one list.
+
+## The field sequence and its requests
+
+![In Vault, Isaac talks to a villager standing in the street: the villager turns to him, says `Welcome to Vault, the town at the heart of Angara.`, and goes back to his rounds](https://alchemy.pascalpixel.com/guides/field/talk-walk.gif)
+
+In Vault, walk up to the young man in the recording and press A. A moment
+ago the player was steering Isaac freely. Now both have stopped and turned
+to each other, and a line of text is on the screen. How did the walk know
+to stop?
+
+The walk goes one [frame](glossary.md#frame) at a time. A frame is one
+picture on the screen, and the console draws about sixty a second. In each
+frame everyone in town moves a little. Then the game asks a single
+question: has anything happened that needs an answer?
+
+Whatever needs an answer has left a note. Pressing A leaves one. So does
+stepping onto a doorstep, a battle coming due, or picking a Psynergy from
+the menu. There are twelve kinds of note, and the game calls each a [field
+request](glossary.md#field-request).
+
+When a note is found the walk stops, and the notes are answered one at a
+time. A note to leave the place is answered first, since nothing else
+matters once the party has gone. When no note is left, the player has Isaac
+back.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  main(["Main routine: the next scene and its code"]) --> setup(["🏡 Field sequence: the map, the entrance, the actors"])
+  main(["The game picks the next scene"]) --> setup(["🏡 The scene is set up: the ground, the party, the people"])
   setup --> walk(["One frame: everyone moves, the leader walking"])
-  walk --> requests{"A request?"}
+  walk --> requests{"Has anything left a note?"}
   requests -- no --> walk
-  requests -- "a talk, a search, a menu" --> answer(["Answered: an event, a screen"])
-  answer --> walk
-  requests -- "an exit or ⚔️ a battle" --> leave(["The scene ends: next is the exit's scene or the battle"])
+  requests -- "a talk, a search, a menu, a Psynergy" --> answer(["The note is answered"])
+  answer --> requests
+  requests -- "a way out, or ⚔️ a battle" --> leave(["The scene ends"])
   leave --> main
   classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
@@ -37,245 +101,286 @@ flowchart TD
   class requests request
 ```
 
-## Scenes and areas
+The code that does all this, from setting a scene up to leaving it, is
+called the [field sequence](glossary.md#field-sequence).
 
-![Isaac climbs the steps to the Sanctum's door in Vale: Vale fades out, and the Sanctum's hall fades in with Isaac just inside its door](https://alchemy.pascalpixel.com/guides/front/sanctum-door.gif)
+A battle is the surprise in the diagram. To the field sequence a battle is
+a way out, like a door. The cave the party was in is thrown away while the
+battle plays. Afterwards the cave is set up again from nothing, with
+everyone put back where they stood.
 
-A [scene](glossary.md#scene) is one place the party can be. It might be a
-town, a floor of a dungeon, the rooms of a few houses, the World Map, or a
-screen such as the Title.
-
-There are 201 of them, and a table says four things about each: which
-[overlay](glossary.md#overlay) holds its code, which
-[area](glossary.md#area) it belongs to, whether it is a town, and which
-[map](glossary.md#map) it is drawn on.
-
-An area is a group of scenes that share a name, music and a set of [game
-flags](glossary.md#game-flag). Vale and the rooms of its houses are one
-area. That is why the name `Vale` shows when the party arrives from the
-World Map, and stays away when it walks from the street into a house.
-
-[Scenes](src/scene/README.md#design) says how a scene finds its code. [State
-that cleans itself up](src/scene/README.md#state-that-cleans-itself-up) says
-which flags a scene and an area may scribble on, and [The game
-flags](src/game/README.md#the-game-flags) describes the flags as a whole.
-The last ten scenes are the developers' test rooms ([Debug
-scenes](src/debug/README.md#the-test-scenes)).
-
-## The field sequence and its requests
-
-![Isaac walks through Goma Cave until a random battle starts: the screen goes black, the battle opens on a Ghost and a Skeleton, the party beats them and takes its experience and coins, and the cave comes back with the party where it stood](https://alchemy.pascalpixel.com/guides/overworld/battle-return.gif)
-
-The [field sequence](glossary.md#field-sequence) runs one scene, from the
-moment the party arrives until it leaves.
-
-First it sets the scene up: the map, the party at its
-[entrance](glossary.md#entrance), the people. Then it walks the party one
-[frame](glossary.md#frame) at a time.
-
-Whatever should interrupt the walk leaves a note, called a [field
-request](glossary.md#field-request). A press of A beside someone leaves one.
-So does a step onto a doorstep, or a random battle coming due.
-
-Once the frame is over, the requests are answered one at a time in a fixed
-order, leaving first, and the walk goes on. [The field sequence serves
-requests](src/field/README.md#the-field-sequence-serves-requests) goes
-through the set-up and each of the twelve requests.
+What does the A button do when nobody is in front of Isaac? [The field
+sequence serves
+requests](src/field/README.md#the-field-sequence-serves-requests) follows
+it, and goes through the set-up and all twelve requests.
 
 ## Triggers and events
 
-The field knows nothing about Vale. Instead it puts six fixed questions to
-the scene's code, such as who stands where and what can happen here. Each
-answer is a table.
+![In Vault's mayor's house after Kalay, Isaac talks to the mayor twice: the first talk welcomes him back, and the second is a warning about the thieves](https://alchemy.pascalpixel.com/guides/map/talk-twice.gif)
 
-What can happen is the scene's table of [triggers](glossary.md#trigger). A
-row says what starts it, such as a talk, a step or a search. It says whom or
-where it is for, and when it still applies. And it says what it runs: a
-message, or an [event](glossary.md#event), which is code that plays from top
-to bottom while the party waits.
+Once the party has reached Kalay, go back to Vault and talk to the mayor. He
+is delighted: `Oh, Isaac! You've come back to Vault!` Talk to him a second
+time and he only warns: `Those guys really wanted revenge on you, so take
+good care of yourselves.`
 
-The first row that fits runs. That is how a villager says something new once
-the story has moved on.
+The walking code is the same in every town, so it knows nothing about a
+mayor. It asks the scene. Every scene answers the same six questions:
 
-[The entry table](src/scene/README.md#the-entry-table) lists the questions,
-and [How a trigger is chosen](src/scene/README.md#how-a-trigger-is-chosen)
-follows a row being found.
+- What can happen here?
+- Where does the party arrive?
+- Who stands where?
+- Is there anything to set up before the screen fades in?
+- Has the leader walked into a way out?
+- Where does this way out lead?
+
+The answer to "what can happen here?" is a list, and each line of it is a
+[trigger](glossary.md#trigger). A line says what the player does (talks,
+steps, searches, casts), to whom or where, when the line still counts, and
+what happens then.
+
+The mayor has two lines. The first is his welcome, and it counts only until
+Isaac has been welcomed. The second is his warning, and it always counts.
+The game reads the list from the top and takes the first line that fits.
+That one rule is how a villager comes to say something new as the story
+moves on.
+
+What happens then can be small: one message, an item found, a way out. Or
+it can be an [event](glossary.md#event), a short piece of the scene's own
+instructions that takes the party over and plays from top to bottom. The
+mayor's welcome is an event. So is a door opening, and so is a whole
+cutscene.
+
+The mayor's two lines are shown as they are written in [How a trigger is
+chosen](src/scene/README.md#how-a-trigger-is-chosen), along with the one
+case where the rule is broken on purpose: a chest that still answers after
+it is empty. [The entry table](src/scene/README.md#the-entry-table) takes
+the six questions one by one.
 
 ## Exits and entrances
 
-![Isaac walks down the path from Sol Sanctum's entrance twice: before the eruption the path leads into Vale as usual, and after it the same path leads into Vale with the villagers gathered by the river](https://alchemy.pascalpixel.com/guides/front/sol-entrance-warp.gif)
+![Isaac walks down the path from Sol Sanctum's entrance twice, at two points in the story, and arrives in a different Vale each time](https://alchemy.pascalpixel.com/guides/front/sol-entrance-warp.gif)
 
-An [exit](glossary.md#exit) is a way out of a scene, named for where it
-leads. An entrance is where the party arrives in the next one, named for
-where it came from.
+Walk down the path from Sol Sanctum's entrance before the eruption and it
+leads into Vale. Walk down it just after, and the same path leads into a
+different scene: Vale in the middle of the eruption.
 
-The leader takes an exit by stepping onto a marked doorstep or into a box on
-the ground. The scene ends, and the [main routine](glossary.md#main-routine)
-looks the exit up in the scene's exit table. A row there can hold only until
-a flag is set, so one path can lead to different scenes as the story moves
-on.
+The game gives every way out of a scene a name, and calls it an
+[exit](glossary.md#exit). This path's name amounts to "from Sol Sanctum's
+entrance, to Vale". But there are two Vales, so the name is not enough.
 
-The entrance gives a position, a facing and how far the camera may go, which
-is how a [sheet of rooms](glossary.md#sheet-of-rooms) shows one room at a
-time.
+A list belonging to the scene settles it, and it has three lines for this
+one path. The first sends the party to Vale and counts until the eruption.
+The second sends it to Vale during the eruption and counts until the party
+has left the village. The third sends it to Vale again, ever after. As with
+the mayor, the first line that counts wins.
 
-[Exits](src/scene/README.md#exits) and
-[Entrances](src/scene/README.md#entrances) describe the two tables, and
-[Leaving for a battle and coming
-back](src/field/README.md#leaving-for-a-battle-and-coming-back) the ways out
-that skip them.
+Each line also names the spot where the party appears on the other side,
+called an [entrance](glossary.md#entrance). An entrance is named for where
+the party came from: here, "Vale, from Sol Sanctum's entrance".
+
+An entrance can say how far the screen may scroll, too. The insides of
+several houses are often drawn next to each other on one piece of ground,
+which the game calls a [sheet of rooms](glossary.md#sheet-of-rooms). The
+entrance keeps the neighbouring rooms out of sight.
+
+[Exits](src/scene/README.md#exits) shows the three lines for the path, and
+[Entrances](src/scene/README.md#entrances) the spots. A random battle is a
+way out that skips both lists, and [Leaving for a battle and coming
+back](src/field/README.md#leaving-for-a-battle-and-coming-back) says where
+the party goes when it loses.
 
 ## Actors and their actor scripts
 
 ![Isaac walks through Imil's snow, and each footprint he leaves fades after a moment](https://alchemy.pascalpixel.com/guides/field/snow.gif)
 
+Walk through Imil's snow and Isaac leaves footprints, which fade one by one
+behind him. Nobody is going round rubbing them out. Each footprint looks
+after itself.
+
 Everything on the field that moves or changes by itself is an
-[actor](glossary.md#actor). The party are actors, and so are the
-townspeople, a chest, the camera that follows the leader, and each footprint
-in Imil's snow.
+[actor](glossary.md#actor). Isaac is one, and so are the townspeople, a
+chest, and each footprint. Even the point the screen is centred on is an
+actor, one nobody can see. A scene has room for 64 at once.
 
-Each actor runs an [actor script](glossary.md#actor-script), a short list of
-commands such as walk there, wait and turn. The script runs a little further
-every frame.
+Every actor carries a short list of orders, and carries out a little more
+of it in each frame. The game calls the list an [actor
+script](glossary.md#actor-script). A footprint's is two orders long: wait
+120 frames, then disappear. That is two seconds.
 
-The leader's script lets the D-pad steer him. So the player's control is an
-actor script like any other.
+The neat part is Isaac himself. While the player is steering, his script is
+a single order, repeated every frame: do what the D-pad says. When a door
+or a cutscene needs him, the event takes that order away and gives him
+others. That is all it means for the game to take control.
 
-A scene lists its people in a table, each with a place, a facing and a way
-of moving, and knows each by its [actor id](glossary.md#actor-id).
-[Everything that moves runs an actor
+What orders can a script give, and how does a villager wander without one
+written for him? [Everything that moves runs an actor
 script](src/field/README.md#everything-that-moves-runs-an-actor-script)
-lists the commands, and [Who stands
-where](src/scene/README.md#who-stands-where) describes the table.
+answers both, and [Who stands
+where](src/scene/README.md#who-stands-where) shows how a scene lists its
+people.
 
 ## Movement
 
 ![Isaac walks into the cliff beside Vale's steps at an angle and slides along it instead of stopping](https://alchemy.pascalpixel.com/guides/world/wall-slide.gif)
 
-The leader walks one pixel a frame, and runs one and a half with B held.
+Walk Isaac into a cliff at a slant and he does not stop dead. He slides
+along it.
 
-Each frame the game tests the ground a few pixels ahead before he moves.
-When the way is blocked it tries headings a little further round, so he
-slides along a wall where he might have stopped dead.
+He walks one pixel a frame, a pixel being one dot of the screen, and runs
+one and a half with B held. Before he moves, the game tests the ground a
+few pixels ahead. If the way is blocked it tries the directions a little to
+either side, then a little further round, and takes the first that is
+clear. Along the wall is usually the nearest one.
 
-Most walls are only ground too steep to step onto. He can step up 8 pixels
-and down 12.
+Most walls are not marked as walls at all. Every spot on the ground has a
+height, and Isaac can step up by 8 pixels and down by 12. A cliff is simply
+ground too high to step onto.
 
-The frames he spends walking into something are counted, and a doorstep
-answers after 12 of them. That is why he leans on a door for a moment before
-it opens.
+When no direction is clear, Isaac stays put and the game counts the frame
+as a push. A door, a ledge or a ladder usually answers only after more than
+12 pushes in a row, about a fifth of a second. That is why Isaac leans on a
+door for a moment before it opens, and why brushing past a ledge does not
+send him over it.
 
-[Walking and running](src/field/README.md#walking-and-running) covers the
-tests, and [How high a step can
+[Walking and running](src/field/README.md#walking-and-running) has the
+tests the game makes each frame, and [How high a step can
 go](src/field/README.md#how-high-a-step-can-go) the heights.
 
 ## Cells and cell behaviors
 
-![Isaac pushes against a ledge and, with Down held, hops down it to the ground below](https://alchemy.pascalpixel.com/guides/layout/ledge.gif)
+![Isaac walks north into the foot of the ladder beside his house in Vale and climbs it onto the roof](https://alchemy.pascalpixel.com/places/vale/events/Event_ClimbLadderOntoRoof.gif)
 
-A map is a grid of 16-pixel squares, the [cells](glossary.md#cell). Each
-cell says what is drawn there, how its ground is shaped, and what standing
-there does. That last part is its [cell
+The foot of the ladder beside Isaac's house looks like any other patch of
+grass. What makes it a place to climb is a number.
+
+The ground of a place is its [map](glossary.md#map): a grid of squares, 16
+pixels on a side. The game calls each square a [cell](glossary.md#cell). A
+cell says what is drawn there, how high the ground is, and what standing
+there does. That last part is a number, its [cell
 behavior](glossary.md#cell-behavior).
 
-Most behaviors belong to the scene, whose trigger table says what each means
-there. So the same one can be a doorstep in one town and a chest in the
-next.
+The cell at the foot of the ladder carries the number 100. By itself 100
+means nothing. Vale's list of triggers gives it a meaning: walk north into
+a cell numbered 100 and Isaac climbs onto the roof. In Kolima, 100 is a jar
+with an Apple in it. Each scene reads its map through its own list, so the
+numbers from 1 to 239 are free to mean something new in every place.
 
-A few mean the same everywhere: a wall, a ledge to hop down, a climbing
-spot, a gap to jump, and the jars and barrels anyone can search.
-[Cells](src/map/README.md#cells) lists every behavior and explains the
-shapes.
+![Isaac pushes against a ledge and, with Down held, hops down it to the ground below](https://alchemy.pascalpixel.com/guides/layout/ledge.gif)
+
+The few numbers above 239 mean the same everywhere, so no scene has to
+explain them. One is a ledge, hopped down with Down held. Others are a
+wall, something to climb, a gap to jump, and the plain jars and barrels
+that anyone can search.
+
+[Cells](src/map/README.md#cells) lists them, and shows how one cell of Sol
+Sanctum is written down.
 
 ## Map layers
 
 ![Isaac walks behind a house in Vale: the roof hides him, and he comes out on its other side](https://alchemy.pascalpixel.com/guides/world/behind-roof.gif)
 
-A town is drawn as three flat sheets, one over another: the ground, the
-walls and edges, and the roofs and treetops. The people stand between the
-walls and the roofs, so Isaac disappears when he walks behind a house.
+Walk Isaac behind a house in Vale and the roof hides him.
 
-Each sheet is one of the console's [background
-layers](glossary.md#background-layer). All three are cut from the map's one
-grid, and every frame they scroll to follow the camera.
+A town is not one picture. It is three flat sheets laid one over another:
+the ground at the back, then the walls and edges, then the roofs and
+treetops in front. The people are drawn between the sheets, usually in
+front of the walls and behind the roofs. So Isaac disappears behind a roof
+without the game ever working out what a house is.
+
+The console is built to draw sheets like these, and calls each a
+[background layer](glossary.md#background-layer). Every frame the three
+slide together, to follow Isaac.
 
 [Towns and dungeons on
-screen](src/field/README.md#towns-and-dungeons-on-screen) explains what is
-drawn in front of what, and [One grid, three
-layers](src/map/README.md#one-grid-three-layers) how the sheets share the
-grid.
+screen](src/field/README.md#towns-and-dungeons-on-screen) has a recording
+of Vale pulled apart into its sheets, and says how the waterfall keeps
+falling. [One grid, three layers](src/map/README.md#one-grid-three-layers)
+shows where the three sheets are kept in a map.
 
 ## The World Map
 
 ![Isaac walks and runs on the World Map near Vale, the land tilting away towards the top of the screen](https://alchemy.pascalpixel.com/guides/field/world-map-walk.gif)
 
-The World Map is a scene like any other, with exits into every town and cave
-and random battles of its own.
+On the World Map the land seems to stretch away toward a horizon. It is a
+flat map all the same, and the tilt is a trick.
 
-It looks different because its flat map is tilted. Every line of the screen
-shows the map at its own scale, a farther and wider strip the higher the
-line, so the land leans away from the party.
+The console draws the screen one line at a time, 160 lines from top to
+bottom, and it can stretch a picture differently on every line. So the game
+gives each line its own stretch. The lines at the bottom show a short strip
+of ground near the party, drawn large. The lines at the top show a long
+strip far away, squeezed small. Stack them up and the flat map leans away.
 
-Holding L pulls the view back, and R brings up a picture of the whole world
-with a marker on every area the party has visited.
+The World Map is one of the 201 scenes, with its own ways out, into towns
+and caves, and its own random battles. It also has two buttons that no town
+has. Hold L and the view pulls back to show more of the land. Press R and a
+picture of the whole world comes up, with markers on places the party has
+been.
 
 [The World Map in
-perspective](src/field/README.md#the-world-map-in-perspective) works through
-the lines, and [The World Map's data](src/map/README.md#the-world-maps-data)
-says how so large a map is stored.
+perspective](src/field/README.md#the-world-map-in-perspective) works
+through the lines, and says why the world holds still while someone talks.
+[The World Map's data](src/map/README.md#the-world-maps-data) says how so
+large a map is stored.
 
 ## Random encounters
 
-![On the World Map near Vale, Isaac and Garet walk until a random battle starts: the screen flashes, closes on its centre line, and opens on two Wild Mushrooms with `Wild Mushroom1 appeared!`](https://alchemy.pascalpixel.com/guides/world/world-map-battle.gif)
+![On the World Map near Vale, Isaac and Garet walk until a random battle starts: watch the screen flash and close on its centre line before the battle opens](https://alchemy.pascalpixel.com/guides/world/world-map-battle.gif)
 
-How far the party walks decides when a random battle starts. Where it walks
-decides how often, and against whom.
+Random battles are less random than they feel. The game is measuring how
+far the party has walked.
 
-A counter grows as the leader moves, and a battle starts when it reaches its
-mark. The ground underfoot belongs to a zone, which says how far apart its
-battles are, what level it is made for and which groups of enemies can
-appear.
+It keeps a count that goes up as Isaac moves, and a battle starts when the
+count is full. How fast it fills depends on the ground. In the room of Goma
+Cave with the pond, it fills after 480 pixels of walking, which is thirty
+cells.
 
-When a battle comes due, the field notes where everyone stands and the scene
-ends. The battle runs as the next [sequence](glossary.md#sequence), and
-afterwards the scene is set up again with everyone back in place.
+Run through that room and the battle comes sooner, but after the same 480
+pixels. Running through a cave meets no fewer monsters than walking through
+it. Standing still meets none.
 
-[Random battles](src/field/README.md#random-battles) has the counting and
-the zones.
+A little luck is mixed in, so the player cannot count steps. After every
+battle the game draws a random number and stretches or shrinks the distance
+to the next one.
+
+The ground says who attacks, too. Each stretch of monster ground lists its
+groups of monsters and how likely each is. It also names the level it was
+made for: the pond room is made for level 4, and a party that has outgrown
+it meets its battles further apart.
+
+[Random battles](src/field/README.md#random-battles) has the counting, the
+luck, what the Lure Cap and Avoid change, and the pond room's monsters.
 
 ## Field Psynergy
 
 ![Isaac casts Move in Vale: the screen tints, a hand appears over the stone pillar and pushes it, and the colours come back](https://alchemy.pascalpixel.com/abilities/move.gif)
 
-Use Move on a stone pillar and the pillar slides. Use it where nothing
-answers, and the same giant hand shows and moves nothing.
+Cast Move facing the stone pillar in Vale and a giant hand settles on it,
+ready to push. Cast Move in the open and the same hand appears, finds
+nothing, and is gone.
 
-That is because the cast only draws the
-[Psynergy](glossary.md#psynergy-and-pp). What it does to a place is decided
-by that scene's triggers. A row names the Psynergy, the person or thing it
-is for, and the moment it runs at, before the cast or after it.
+The walking code draws the hand both times, because the hand is the same
+everywhere. What it cannot know is that a pillar in Vale is something Move
+should push. That is Vale's knowledge, and Vale writes it in its list of
+triggers as one more kind of line: Move, on the pillar.
+
+So a cast of [Psynergy](glossary.md#psynergy-and-pp) begins by looking. The
+game checks what Isaac is facing, and whether the scene has a line for this
+Psynergy on that thing. Vale's line runs once the player has steered the
+pillar, and remembers where it now stands.
 
 [How field Psynergy reaches its
-target](src/field/README.md#how-field-psynergy-reaches-its-target) follows a
-cast through each moment.
+target](src/field/README.md#how-field-psynergy-reaches-its-target) follows
+a cast moment by moment, and says how far each Psynergy reaches.
 
 ## Design
 
-The walk stops only between frames. What moves the actors runs in the middle
-of a frame, where it can only leave a note. The field sequence reads the
-notes once the frame is over, and answers them with code that is free to
-take its time. That one rule lets an event be written as plain code from top
-to bottom.
+Nothing interrupts the walk in the middle of a frame. A doorstep, a button
+or a monster can only leave a note, and the notes are read once the frame
+is over. So an answer always starts between one frame and the next, and can
+take as long as it likes: a single line from the mayor, or a whole cutscene.
 
-A scene's answers are functions. The field asks the scene's code for each
-table, so the code can hand back a different table as the flags change, and
-one overlay can serve several scenes.
-
-Exits and entrances name each other. An exit says only where it leads, and
-the next scene's entrance says where that is. So a door is two names, one on
-each side, and the exit table is the one place the two are joined.
-
-A battle leaves the scene entirely. The memory a sequence borrows, the
-[heap](glossary.md#heap-and-pools), is emptied between one sequence and the
-next. So the field keeps everyone's place in a snapshot outside it, and the
-scene is set up again from the start with the party put back.
+The walking code never learns the story. It asks each scene its six
+questions again on every visit, and the scene's own instructions decide
+the answers. Vale keeps three whole lists of triggers, one for each stretch
+of the story, and hands over the one that fits the day. Inside a list, the
+mayor's rule does the rest.

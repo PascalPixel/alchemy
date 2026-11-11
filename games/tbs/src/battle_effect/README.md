@@ -1,63 +1,567 @@
 # Battle effects
 
-![Isaac casts Earthquake at Garet, Ivan and Mia: rock pillars rise under them twice, throwing them into the air, and `Garet takes 37 damage!!!`.](https://alchemy.pascalpixel.com/abilities/earthquake.gif)
+![Isaac casts Earthquake at Garet, Ivan and Mia: rock pillars rise under them twice, throwing them into the air, and then the damage is told.](https://alchemy.pascalpixel.com/abilities/earthquake.gif)
 
-When Isaac casts Earthquake, rock pillars rise under the three targets,
-throw them into the air and sink again. The damage appears while the rock is
-still on screen.
+Cast Earthquake and three pillars of rock push up out of the ground, one
+after another from the left. Anyone standing on one is thrown into the air.
+The pillars sink, rise a second time and sink for good. Then the damage is
+told, while the screen is still shaking.
 
 Every [Psynergy](../../glossary.md#psynergy-and-pp),
 [Djinni](../../glossary.md#djinn), [summon](../../glossary.md#summons), item
-and monster attack has a drawing like this played over the battle. That
-drawing is its [battle effect](../../glossary.md#battle-effect).
+and monster attack has a show like this, drawn over the
+[battle](../../glossary.md#battle) while it plays. The game calls it the
+ability's [battle effect](../../glossary.md#battle-effect), and this page is
+about how one is drawn.
 
-By the time an effect starts, the [battle](../../glossary.md#battle) has
-already worked out what the ability does: who it hits and for how much
-([Battles](../battle/README.md#how-an-ability-resolves)). So the effect has
-one job left, which is to show it.
+An effect decides nothing. By the time the pillars start to rise, the battle
+has already worked out who Earthquake hits and for how much
+([Battles](../battle/README.md#how-an-ability-resolves)). The effect has one
+job left, which is to show it.
 
-Each effect is one function, its handler. It draws for a fixed number of
-[frames](../../glossary.md#frame) and returns when it is over. Along the way
-it tells the battle on which frame to show the damage.
+Effects are timed in [frames](../../glossary.md#frame). A frame is one
+picture on the screen, and the console draws about sixty a second.
+Earthquake lasts 112 of them, a little under two seconds. The last pillar is
+back in the ground by frame 88. On frame 96 the effect tells the battle that
+the damage may be shown, and its last 16 frames are only the shaking.
 
-A handler doesn't draw alone. It works with a few shared pieces:
+The page goes in this order:
 
-1. The ability's row says which effect it plays and at what strength.
-2. One of three doors lends the effect its memory and calls its handler.
-3. The canvas is the small picture nearly every effect draws into, shown
-   stretched over the battle.
-4. The transfer copies the canvas to the screen once a frame and decides
-   what the canvas keeps for the next frame, which leaves the trails.
-5. A blitter stamps a picture onto the canvas.
-6. The pictures are unpacked when the effect starts.
-7. The particles are the sparks, embers and rocks that move each frame.
-8. The handler's frame loop puts the pieces together.
-9. Abilities that look alike share one effect at different settings.
+1. Which effect an ability plays, and how strongly
+   ([How an ability picks its effect](#how-an-ability-picks-its-effect)).
+2. The small picture every effect draws on, and why fire glows
+   ([The canvas](#the-canvas)).
+3. Where a fireball's trail comes from ([The transfer](#the-transfer)).
+4. How pictures are put on the canvas ([Blitters](#blitters),
+   [Pictures and the sheet](#pictures-and-the-sheet)) and how sparks fly
+   ([Particles](#particles)).
+5. One effect, Bolt, followed frame by frame
+   ([A handler's frame loop](#a-handlers-frame-loop)).
+6. Abilities that turn out to be the same effect
+   ([Effect families](#effect-families)).
+
+The last part of the page,
+[For readers of the code](#for-readers-of-the-code), is for anyone who wants
+to open the files.
+
+## How an ability picks its effect
+
+![Isaac casts Quake Sphere at Garet, Ivan and Mia: brown rock pillars capped with ground rise under them three times, throwing them high.](https://alchemy.pascalpixel.com/abilities/quake-sphere.gif)
+
+Quake, Earthquake and Quake Sphere are one effect. The same three pillars
+rise once for Quake, twice for Earthquake and three times for Quake Sphere,
+as in the recording.
+
+The game keeps a list with one row for every ability. Each row says two
+things.
+
+The first is which effect to play. The three rows of the Quake line all
+name the same one, the Quake effect. The code calls this the effect kind.
+
+The second is how strongly to play it: 0 for Quake, 1 for Earthquake, 2 for
+Quake Sphere. The code calls this the variant. Most abilities that come in
+threes share an effect this way.
+
+The effect reads its variant and looks up its own timings. These are
+Quake's:
+
+| Ability      | Variant | The effect lasts | Each pillar stands | The screen shakes by |
+| ------------ | ------- | ---------------- | ------------------ | -------------------- |
+| Quake        | 0       | 80 frames        | 32 frames          | 2 pixels             |
+| Earthquake   | 1       | 112 frames       | 64 frames          | 4 pixels             |
+| Quake Sphere | 2       | 144 frames       | 96 frames          | 8 pixels             |
+
+A pixel is one dot of the screen, which is 240 dots across and 160 down. A
+pillar takes 32 frames to rise and sink, so one that stands for 64 frames
+rises twice.
+
+How much damage the targets take is no part of the row. The ability's rules
+decide that ([Battles](../battle/README.md#the-ability-kind)).
+
+### What the battle changes
+
+![Isaac attacks a Gryphon and scores a critical hit: the field clears to the two, and a ring of light and a spray of sparks burst over the Gryphon in place of his sword's slash.](https://alchemy.pascalpixel.com/guides/battle/critical.gif)
+
+The battle copies the row when it builds the
+[action](../../glossary.md#turns-and-actions), and then adjusts the copy
+for what is happening in this turn:
+
+- An ability that comes out as a double or triple blow has its variant
+  raised by one or two, so it plays the stronger show.
+- A revival is marked so that its effect plays on a fighter who is down.
+  Every other effect leaves downed targets out.
+- Annihilation rolls its instant kill before the effect starts. When the
+  kill lands on the first target, the variant becomes 1, and the burst
+  shows a second picture and plays a sound.
+- A plain attack normally plays a streak of light. On a critical hit the
+  battle swaps it for a ring of light and a spray of sparks, as in the
+  recording.
+
+## The canvas
+
+![Garet casts Heat Wave at Mia: a blaze shoots across the screen from Garet and bursts into sparks around her, the battle showing through it.](https://alchemy.pascalpixel.com/abilities/heat-wave.gif)
+
+Heat Wave's fireballs glow over the battle, and you can still see the
+fighters through them.
+
+The fireballs are not drawn on the battle at all. They are drawn on a
+square picture, 128 pixels by 128, that the game keeps to one side. The
+code calls it the canvas. Nearly every effect draws on it, and the console
+then lays it over the battle.
+
+### A pixel is a brightness
+
+A pixel of the canvas is not a colour. It is a brightness from 0 to 63,
+which the code calls a level.
+
+Each effect brings a ramp of 64 colours, running from dark to bright, and
+each level is shown as the colour at its place on the ramp. Level 0 is
+see-through.
+
+Heat Wave's ramp runs through the colours of fire. Give the same drawing a
+different ramp and it comes out in different colours. Bone Charge, Brute
+Force, Onslaught and Headbutt do exactly that: the four attacks scatter the
+same sparks, each in a ramp of its own.
+
+### How the canvas is shown
+
+The console builds its picture from a few layers stacked on each other,
+which it calls [background layers](../../glossary.md#background-layer).
+While an effect plays, the canvas is shown on one of them, starting 16
+lines down, where the battle's view starts.
+
+The console can stretch that layer, and it shows the canvas at twice its
+width. The 128 columns become 256 on screen, a little more than the
+screen's 240.
+
+So every canvas pixel is two screen pixels wide, and an effect has to
+allow for that when it aims. Bolt finds where its target stands on the
+screen and halves the distance across before it draws the bolt there.
+
+The canvas is not painted over the battle. Its colours are added to
+whatever is under them, at a little under full strength (fourteen parts in
+sixteen). A bright canvas pixel brightens the fighter behind it, and a dark
+one leaves the fighter as it was. That is what makes fire and lightning
+glow. Fire turns the adding up to full strength.
+
+### Effects that show it differently
+
+Frost, Judgment and the Helm Splitter are among the effects that show the
+canvas at its own width, one canvas pixel to one screen pixel.
+
+Quake does too, and it also turns the adding off, so that a pillar hides
+what is behind it.
+
+The canvas can also waver. An effect may give the console a sideways push
+for each of the screen's 160 lines, a little different from line to line.
+The smoke that Mist, the Mercury Djinni, leaves on its target wavers this
+way.
+
+### Opening and closing
+
+Opening the canvas takes five frames and closing it takes eleven. Its layer
+is hidden while it is being set up, so the player never sees it half made.
+
+An effect may also dim the battle's background so that its drawing stands
+out. A Djinni's entrance does: over 24 frames the background goes down to
+three fifths of its brightness. Closing the canvas brings the background's
+colours back over eight of its eleven frames.
+
+## The transfer
+
+![Garet casts Fire at Isaac, Mia and Ivan: fireballs rise from him, hang in the air and stream across into the three, each leaving a fading trail.](https://alchemy.pascalpixel.com/abilities/fire.gif)
+
+Each of Fire's fireballs leaves a trail that fades behind it. No code draws
+the trail. It is last frame's fireball, left on the canvas a little dimmer.
+
+Here is how that comes about. The effect does not draw on the screen. It
+draws on its own copy of the canvas, and when it has finished a frame's
+drawing it marks the canvas as ready and waits.
+
+The game keeps a short list of chores that it runs once in every frame, and
+calls each one a [task](../../glossary.md#task). One of them, which the
+code calls the transfer, runs in the short gap after the console has
+finished showing one picture and before it starts the next. That gap is the
+[VBlank](../../glossary.md#vblank). If the canvas is marked ready, the
+transfer copies it to the screen.
+
+Then, straight after the copy, it does one thing to the effect's own copy.
+Which thing is the effect's choice:
+
+| What is done to the canvas after the copy | What the player sees                                   |
+| ----------------------------------------- | ------------------------------------------------------ |
+| it is wiped clean                         | only this frame's drawing: Quake redraws its pillars every frame |
+| every level is cut to three quarters      | a long trail: Fire, Ray, Bolt                          |
+| every level is cut to half                | a short trail: Frost, Plasma, Volcano                  |
+| every level loses a fixed amount          | a trail that fades evenly: Drain takes 4 off a frame   |
+| nothing                                   | the drawing builds up frame by frame                   |
+
+Fire keeps three quarters, rounded down. Take one pixel drawn at the
+brightest level, 63, and never drawn on again. Frame by frame it goes:
+
+```
+63  47  35  26  19  14  10  7  5  3  2  1  0
+```
+
+It is gone twelve frames later, a fifth of a second. At half it would be
+gone in six.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  staging(["⚔️ The battle's staging: the action's effect word"]) --> door(["A door: lends the sheet, the work block and the canvas"])
-  door --> handler(["The handler: sets up, runs its frames, releases"])
-  handler --> frame(["Each frame: move the particles, stamp the pictures, present the canvas, wait(1)"])
+  draw(["Fire draws this frame's fireballs on the canvas"]) --> present(["It marks the canvas ready and waits one frame"])
+  present --> vblank(["VBlank: the transfer copies the canvas to the screen, then cuts every level to three quarters"])
+  vblank -- "the next frame: the fireballs are drawn again, over their own dimmed copies" --> draw
   classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
-  class staging mainRoutine
-  class door,handler sequence
-  class frame frame
+  class draw sequence
+  class present sequence
+  class vblank frame
 ```
 
-## How an ability picks its effect
+This is where a canvas of brightnesses pays off. The dimming knows nothing
+about fireballs. It cuts every pixel of the canvas, and so every trail on it
+fades together. Fire throws 16 fireballs, Fireball 32 and Inferno 64, and
+the dimming does exactly the same work for each.
 
-![Isaac casts Quake Sphere at Garet, Ivan and Mia: brown rock pillars capped with ground rise under them three times, throwing them high, and `Garet takes 67 damage!!!`.](https://alchemy.pascalpixel.com/abilities/quake-sphere.gif)
+## Blitters
 
-Quake, Earthquake and Quake Sphere play the same pillars, rising once, twice
-and three times. They are one effect drawn at three strengths.
+![Ivan casts Ray at Garet, Isaac and Mia: bolts of purple lightning rain down on them.](https://alchemy.pascalpixel.com/abilities/ray.gif)
 
-Each ability has a row in the battle's table of effects. The row says which
-effect to play, its effect kind. It also says how strong to play it, its
-variant, which is basic, stronger or strongest.
+Ray's four bolts close in on each other and overlap. What should happen
+where one bolt is drawn on top of another?
+
+The effect chooses. An effect draws by copying small pictures onto the
+canvas: a bolt, a spark, a piece of rock. The piece of code that does one
+such copy is called a blitter, and it treats each pixel of the picture and
+the canvas pixel already there in one of four ways:
+
+| Way of combining | What happens to each canvas pixel                     |
+| ---------------- | ----------------------------------------------------- |
+| copy             | the picture's pixel replaces it                       |
+| transparent      | the picture's pixel replaces it, unless it is level 0 |
+| lighten          | the brighter of the two stays                         |
+| additive         | the two levels are added, up to 63                    |
+
+Ray draws all four of its bolts with lighten. Where two cross, the brighter
+pixel wins, and the crossing is no brighter than one bolt.
+
+Storm Ray and Destruct Ray are the same effect at the stronger variants.
+They draw every second bolt additively, and flipped left to right. Where
+one of those crosses another bolt, the levels pile up and the crossing
+flares.
+
+Fire uses the same pair another way. A fireball is drawn with lighten for
+its first 48 frames, while it hangs in the air, and additively once it
+turns towards its target.
+
+Quake uses transparent, which fits an effect that has turned the glow off:
+the rock simply covers what is there.
+
+## Pictures and the sheet
+
+![Isaac casts Quake at Garet, Ivan and Mia: brown rock pillars capped with ground rise under them once, throwing them into the air. Look at the top of each pillar.](https://alchemy.pascalpixel.com/abilities/quake.gif)
+
+Every one of Quake's pillars is drawn from one picture of rock, 40 pixels
+wide and 96 tall:
+[`rock_wall.png`](../graphics/battle_effects/rock_wall.png). The picture
+never changes.
+
+Each frame Quake draws only the picture's top rows: more of them as a
+pillar rises, up to 32, and fewer as it sinks.
+
+Now look at the top of a pillar in the recording. It is capped with ground.
+When Quake starts, it cuts a strip of ground 40 pixels wide and 16 tall out
+of the battle's own background, and it draws that strip on top of each
+pillar. So the pillars lift the ground of whatever place the battle is in.
+
+The pillars do not aim, either. They always come up in the same three
+places on the canvas, and Quake throws any target who happens to be
+standing over one. When the targets are the
+[party](../../glossary.md#the-party), it slides the whole canvas 112 pixels
+to the right, so that the pillars come up on their side.
+
+### The sheet
+
+The flames, rocks and bolts an effect draws are small pictures like the
+rock. On the cartridge they are stored squeezed small, and you can see them
+as ordinary pictures in
+[`graphics/battle_effects`](../graphics/battle_effects).
+
+When an effect starts, it unpacks the ones it needs and keeps them at hand
+until it ends. The code calls this set of unpacked pictures the sheet.
+Quake's sheet holds the strip of ground first and the rock after it.
+
+### Motes and flares
+
+Most effects also unpack a set of spark pictures that they all share. It is
+one spark at ten sizes, from 1 pixel by 2 up to 10 by 20. The code calls
+them motes.
+
+An effect asks for a mote by its size, and that is how a spark shrinks as
+it dies. Bolt's sparks are drawn at size 3, then 2, then 1.
+
+A second shared set, the flares, is ten squares from 2 to 20 pixels across.
+
+## Particles
+
+![Garet casts Fiery Blast at Isaac, Mia and Ivan: a ball of flame swells over them and sprays embers in every direction.](https://alchemy.pascalpixel.com/abilities/fiery-blast.gif)
+
+Fiery Blast throws 128 embers and 32 puffs of smoke. Blast, the same effect
+at its weakest, throws 16 and 8.
+
+Each ember is a particle: a point that moves a little every frame and has
+a picture drawn where it is. Sparks, motes and chips of rock are particles
+too.
+
+A particle is very little. It has a position, a speed, and one spare number
+that each effect uses as it likes. For Bolt's sparks the spare number is
+the frames the spark has left to live.
+
+Positions and speeds are kept far finer than a pixel, in steps of one
+65,536th of a pixel. So a slow ember can creep a fraction of a pixel a
+frame and still arrive.
+
+### One step a frame
+
+Each frame the effect moves every living particle one step. The speed is
+added to the position. Gravity is added to the downward speed. Then every
+speed loses a share, which is the drag.
+
+Bolt's sparks show the scale. A spark flies up from the foot of the bolt.
+Each frame its fall gets faster by a sixteenth of a pixel a frame, and it
+keeps 60 parts in 64 of its speed, losing about 6%. When it hits the ground
+it bounces back up at half speed. It lives for 32 to 39 frames.
+
+Gravity does not have to pull down. Ray gives its sparks a small pull
+upwards, so they keep rising.
+
+Some particles fly through the battlefield itself, towards the viewer or
+away. Fire's fireballs do. Each frame their place on the screen is worked
+out from where the battle is being viewed from, and a fireball further away
+is drawn as a smaller mote.
+
+## A handler's frame loop
+
+![Ivan casts Bolt at Isaac: purple sparks gather around Ivan, a bolt of lightning strikes Isaac and crackles away, and the damage is told while sparks are still in the air.](https://alchemy.pascalpixel.com/abilities/bolt.gif)
+
+The code that draws one effect from start to end is called its handler.
+Bolt's is short, and it reads the way Bolt plays: set up, then one frame's
+work after another with a wait of one frame between them, then tidy up. The
+rest of the game is written as code that waits, too
+([System](../../system.md#waiting-and-tasks)).
+
+The set-up does four things. It opens the canvas. It gets a blitter that
+lightens. It unpacks the bolt's four pictures and the motes. And it starts
+the transfer keeping three quarters of each level, which is what makes the
+bolt crackle away when it stops being drawn.
+
+Then come the frames. Bolt at one target runs for 48 of them, and whatever
+happens once is tied to a frame number:
+
+| Frame    | What Bolt does                                                    |
+| -------- | ----------------------------------------------------------------- |
+| 0        | the whole canvas is set to level 16, a flash                      |
+| 1        | the bolt appears over Isaac, 64 pixels long from the top of the canvas; the screen starts a shake of four frames |
+| 2        | the bolt reaches the ground, 104 pixels down, and sixteen sparks fly up from its foot |
+| 2 to 15  | the bolt is drawn again each frame at full length, changing between its four pictures every 2 frames, which is its flicker |
+| 4        | Isaac turns white in his hurt pose for 6 frames and is knocked back |
+| 24       | the battle is told it may show the damage                         |
+| 47       | the last frame; then the canvas closes                            |
+
+Every frame ends the same way. The living sparks are moved and drawn, the
+screen's shake is applied, and the handler marks the canvas ready and waits
+a frame.
+
+With more targets, each is struck 8 frames after the one before, and the
+effect lasts 8 frames longer for each.
+
+Flash Bolt and Blue Bolt are this handler at the stronger variants. They
+throw 32 and 128 sparks where Bolt throws 16, and they add glints that
+flicker around the target, three and five a frame. Blue Bolt also draws
+each bolt three times over itself.
+
+### Why the damage shows before the effect ends
+
+Frame 24 is the handler's signal to the battle. From that frame the battle
+shows each target's flinch, its message and its falling HP, while the effect
+goes on drawing. Between frames, while the handler waits, the battle gets
+its turn to do that. So Isaac's damage is told while Bolt's sparks are
+still bouncing
+([Battles](../battle/README.md#how-outcomes-reach-the-screen)).
+
+`BattleEffect_RunBolt` is in [`bolt.c`](battle_effect/bolt.c).
+
+## Effect families
+
+![Isaac casts Rockfall at Ivan, and a thin column of orange light stands among Ivan, Garet and Mia, then widens into a glowing wall over all three while rocks tumble up through it.](https://alchemy.pascalpixel.com/abilities/rockfall.gif)
+![Isaac casts Avalanche at Ivan, and the same wall comes out wide enough to reach Isaac, with bigger rocks tumbling up all across it.](https://alchemy.pascalpixel.com/abilities/avalanche.gif)
+
+Rockfall and Avalanche are the same glowing wall at different widths.
+
+In fact Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide and Avalanche all
+play one effect. It draws the same wall each time and has the console
+stretch the canvas to 1.25, 1.5 or 2 times its width, by variant. The rocks
+are larger at the higher variants ([`gaia.c`](battle_effect/gaia.c)).
+
+Items borrow effects in the same way. Eat an Herb and you get Ply's
+sparkles. Corn plays Cure's ring of motes, and an Antidote plays Cure
+Poison's twinkles.
+
+### One drawing, several abilities
+
+Abilities that differ by more than strength can share a drawing too. Such a
+family has one piece of code that draws every member, and each member tells
+it which one to draw. Cure asks the healing family for Cure's ring of
+motes. A Smoke Bomb asks for Blast's fountain of embers, in grey.
+
+![A Skeleton uses Bone Charge on Ivan: it glows white, rushes at him in a burst of light and flame, and orange sparks scatter across the field.](https://alchemy.pascalpixel.com/guides/battle_anim/bone-charge.gif)
+![A Gryphon uses Twin Beaks on Ivan: it lunges with a flash, and a pale slash strikes him twice.](https://alchemy.pascalpixel.com/guides/battle_anim/twin-beaks.gif)
+
+| What the family draws                                        | Abilities that share it                       |
+| ------------------------------------------------------------ | --------------------------------------------- |
+| the user rushes at the first target and strikes              | Bone Charge, Brute Force, Onslaught, Headbutt |
+| slashes or columns of light on the first target              | thirteen monster attacks, among them Cannibal Fang, Poison Tail and Twin Beaks |
+| shots that fly from the user at each target                  | Heat Wave, Sleet and Wing Flutter, among others |
+| healing motes around each target                             | Ply, Wish, Cure, Cure Poison, Tonic, Psy Crystal |
+| a dagger or a shield over each target that shatters          | Dull (the dagger), Impair and Weaken (the shield) |
+| flashes and bouncing sparks in one or three bursts           | Blast, Nova, Supernova, the bombs, Dynamite   |
+| columns of light falling on the targets                      | Revive, Water of Life, Quartz, Dew            |
+
+### The prelude
+
+![Ivan unleashes the Djinni Gust at Isaac: purple sparks swirl together into the Djinni, which darts at Isaac in a flurry of blows.](https://alchemy.pascalpixel.com/abilities/gust.gif)
+
+Before Gust's blows land, the Djinni itself appears. Sparks swirl together
+into its shape, and it sways for a moment.
+
+The code calls this entrance the prelude. It takes 64 frames, or 84 in a
+longer form that ends in a burst of motes. Gust has the longer one. When
+it is over, the canvas is left open and wiped clean for the attack to draw
+on.
+
+A family needs the prelude for some members only. Quartz and Revive share
+the columns of light, and only Quartz is a Djinni.
+
+So the battle tells the effect, yes or no, whether a Djinni is being
+unleashed. The shared families (the stat boosts, the shots, the healing
+motes, the columns of light, the flurries) open with the prelude only on a
+yes. Hail, Ground, Torch, Kite and Vine are Djinn with effects of their
+own, and those always open with their Djinni.
+
+### Casting impacts
+
+![Isaac unleashes Flint at Ivan, and sparks close in on a point above Isaac while he hangs in mid-leap, a streak of light shoots down at Ivan, and a ring of light and a spray of sparks burst over him.](https://alchemy.pascalpixel.com/abilities/flint.gif)
+![Garet unleashes Scorch at Mia, and red sparks close in on Garet, a streak of flame shoots at Mia, and a burst of fire swells over her and fades into red smoke.](https://alchemy.pascalpixel.com/abilities/scorch.gif)
+
+Sparks gather on the attacker, then something strikes the target. The code
+calls that shape a casting impact. The attacks of eight Djinn (Bane, Smog,
+Mist, Fever, Flint, Scorch, Squall and Sap) share it, and so do many
+weapons' unleashes, such as Terra Strike, Aqua Sock and Asura.
+
+There are 36 casting impacts, and they have most of the show in common.
+For the first 32 frames, sparks circle in towards the attacker, four more
+joining each frame until there are 64. A Djinni's impact shows its Djinni
+above the attacker's head. Then the strike begins: an orb of light appears
+at the target, and 32 sparks scatter from it.
+
+Flint adds nothing of its own. What its recording shows at the target is
+what every casting impact shows there. Scorch adds bursts of
+fire rising from the target, and each of the others adds something
+different: smoke for Bane, two bolts for Squall, a spire of rock for Terra
+Strike.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  gather(["Sparks close in on the attacker for 32 frames"]) --> move(["The canvas is moved to sit over the target"])
+  move -- "most impacts" --> impact(["The strike plays for 20 to 80 frames"])
+  impact -- "most impacts" --> release(["The canvas closes"])
+  impact -- "Meltdown" --> shield(["Impair's shattering shield plays"])
+  move -- "Severe Blow" --> handoff(["The rising sparks of Nova's family play"])
+  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  class gather,move,impact sequence
+  class release mainRoutine
+  class handoff,shield frame
+```
+
+The strike lasts 20, 32, 40, 48, 64 or 80 frames, depending on the impact,
+and it always opens the same way. The battle is told to show the damage on
+the strike's fourth frame. A heavy thud sounds on the fifth. On the seventh
+the target turns white, and some impacts knock it back.
+
+Two impacts are only an opening for another effect, as the diagram shows.
+Severe Blow stops once the sparks have gathered and hands over to the
+rising sparks of Nova's family. Meltdown's strike is 20 frames with nothing
+added, and then it hands over to the shield that Impair shatters.
+
+## Design
+
+Two choices explain most of what you see.
+
+An effect is written as one run of code that waits a frame at a time, and
+the battle carries on in those waits. That is why a fighter can flinch and
+lose HP while the sparks that hit them are still in the air.
+
+A canvas pixel is a brightness and not a colour. That is why a trail costs
+nothing to draw, and why one set of sparks can serve four attacks in four
+ramps. The price is that everything on the canvas at one moment comes from
+a single ramp of 64 colours. Quake's rock and Fire's flames could not be on
+it together.
+
+## How it fits with the rest of the game
+
+[Battles](../battle/README.md) decides everything that matters to the
+rules, then starts the effect. The effect draws, and tells the battle when
+to show the damage.
+
+Effects borrow from the battle as they go. Quake's cap of ground is cut
+from the battle's background, and effects shake the battle's view and knock
+its fighters back.
+
+The code that builds blitters is used twice more: for the stars that gather
+around a fighter casting Psynergy, and for the Lucky Wheels.
+
+## Words used here
+
+- The **effect kind** says which effect an ability plays, and the
+  **variant** how strongly: 0 for Quake, 1 for Earthquake, 2 for Quake
+  Sphere. The ability kind
+  ([Battles](../battle/README.md#the-ability-kind)) is a different thing,
+  which picks how the damage is worked out.
+- The **canvas** is the 128 by 128 picture an effect draws on. A **level**
+  is a pixel's brightness on it, from 0 to 63, and a **ramp** is the 64
+  colours the levels are shown in.
+- The **transfer** copies the canvas to the screen each frame and then
+  wipes or dims it.
+- A **blitter** copies a small picture onto the canvas in one of four ways.
+- The **sheet** is an effect's unpacked pictures. A **mote** is one of the
+  ten sizes of spark that effects share.
+- A **particle** is a moving point: a position, a speed and a spare number.
+- A **handler** is the code that draws one effect from its first frame to
+  its last.
+- The **prelude** is the Djinni's entrance that an effect may open with.
+- A **casting impact** is the gather-and-strike effect that Djinn and
+  weapon unleashes share.
+
+## For readers of the code
+
+Everything from here on is for someone opening the files in this folder.
+It uses the code's own names.
+
+To find an ability's effect, search for the ability's name. Most handlers
+are named for the first ability whose row picks them, by its name in the
+English release, so Bolt is drawn by `BattleEffect_RunBolt`. The rows are
+in [`../battle/ability_staging.c`](../battle/ability_staging.c).
+
+### The effect word
+
+A row is stored as one number, the effect word. Its digits are divided up:
+the lowest part holds the kind, the next part the variant, and above them
+sit single yes-or-no marks. The Quake line's rows read:
 
 ```c
 BATTLE_EFFECT_QUAKE, // Quake
@@ -65,45 +569,29 @@ BATTLE_EFFECT_QUAKE | (1 << EFFECT_VARIANT_SHIFT), // Earthquake
 BATTLE_EFFECT_QUAKE | (2 << EFFECT_VARIANT_SHIFT), // Quake Sphere
 ```
 
-The kind and the variant are packed into one number, the effect word. The
-effect reads the variant and picks its timings from it.
+`1 << EFFECT_VARIANT_SHIFT` puts a 1 in the variant's part, and `|` joins
+the parts into the one number.
 
-How much damage the targets take is no part of the word. The ability's rules
-decide that ([Battles](../battle/README.md#the-ability-kind)).
+Two marks turn the battle's view. `EFFECT_VIEW_ACROSS`, on the four summons
+Venus, Mercury, Mars and Jupiter, shows the effect from the other side's
+view. `EFFECT_VIEW_REVERSED`, on twenty rows, among them the monsters' Fire
+Blessing, turns the view right round. `EFFECT_ON_DOWNED` is the mark the
+battle adds for a revival. `EFFECT_SUMMON` and `EFFECT_BY_ID_RANGE` choose
+the door.
 
-The word also carries a few yes-or-no switches. One shows the effect on
-downed targets too, which the revivals need. Two turn the camera. With one,
-the summons Venus, Mercury, Mars and Jupiter are seen from the other side's
-view. With the other, twenty rows, the blessings among them, are seen with
-the camera turned right round. Two more choose the door of the next section.
-
-The battle adjusts the word while it builds the
-[action](../../glossary.md#turns-and-actions). A double or triple blow
-raises the variant, and a revival adds the switch for downed targets. A
-critical hit moves a plain attack's kind up by 200, and that swaps the
-sword's slash for a ring of light and a spray of sparks.
-
-Looking for an ability's effect in the code? Search for the ability's name.
-Each handler is named for the first ability whose row picks it, by its name
-in the English release, so Bolt is drawn by `BattleEffect_RunBolt`. The rows
-themselves are in
-[`../battle/ability_staging.c`](../battle/ability_staging.c).
-
-## The three doors and what they lend
+### The three doors and what they lend
 
 ![Isaac summons Judgment: `Isaac summons Judgment!`, he glows and fades, the battle runs down the screen into black and a violet sky runs in after it, Judgment flies forward and bursts in a flash, the blast spreads over a valley, a beach and a forest, and the battle comes back as the damage is told](https://alchemy.pascalpixel.com/abilities/judgment.gif)
-![Isaac attacks a Gryphon and scores a critical hit: the field clears to the two, and a ring of light and a spray of sparks burst over the Gryphon in place of his sword's slash, `Gryphon1 takes 161 damage!`](https://alchemy.pascalpixel.com/guides/battle/critical.gif)
 
-A door is the function the battle calls to play an effect
-([Battles](../battle/README.md#staging-an-action)). There are three, and
-the effect word's switches choose between them.
+A door is this page's word for one of the three functions the battle calls
+to play an effect ([Battles](../battle/README.md#staging-an-action)).
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  word(["The effect word"]) -- "EFFECT_SUMMON" --> summon(["BattleEffect_RunSummon: the twelve large summons"])
-  word -- "EFFECT_BY_ID_RANGE" --> range(["BattleEffect_RunByIdRange: casting impacts, beams, ring and spark"])
-  word -- "neither" --> table(["BattleEffect_RunFromTable: gBattleEffect_Handlers[kind - 1]"])
+  word(["The effect word of this turn's action"]) -- "EFFECT_SUMMON" --> summon(["BattleEffect_RunSummon: the twelve large summons, such as Judgment"])
+  word -- "EFFECT_BY_ID_RANGE" --> range(["BattleEffect_RunByIdRange: a plain attack's streak, a critical hit, a casting impact"])
+  word -- "neither" --> table(["BattleEffect_RunFromTable: every other effect, such as Quake or Bolt"])
   summon & range & table --> handler(["The handler"])
   classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
@@ -113,486 +601,101 @@ flowchart TD
   class handler frame
 ```
 
-The first door plays the twelve large summons, Ramses to Thor, each a
-handler of its own.
-
-The second plays the effects that go by number alone. Kinds 100 to 135 are
-the casting impacts, the shape Djinn and weapon unleashes share. Kinds from
-200 are the ring and spark of a critical hit. Every other number is a beam,
-the streak of a plain attack.
-
-The third door serves everything else, Quake and Bolt among them. Here the
-kind is a place in a table of handlers, and the door calls the handler it
-finds there.
-
-Whichever door it takes, the handler is lent three blocks of memory from
-the [heap](../../glossary.md#heap-and-pools) for as long as it plays:
-
-| Block          | What the effect keeps there                                   |
-| -------------- | ------------------------------------------------------------- |
-| the motes      | ten tiny spark pictures that most effects stamp               |
-| the work block | the effect's own pictures, its particles and its settings     |
-| the canvas     | the picture it draws into, 128 by 128 pixels                  |
-
-The door takes the blocks before the handler starts and gives them back
-when it returns, so no effect can leave memory behind for the next one.
-
-A handler that started a [task](../../glossary.md#task) to help it draw
-stops that task before it returns. Otherwise the task would go on reading
-memory that is no longer the effect's.
-
-The door also tells the handler what to draw for: who uses the ability, the
-targets and how many, and which side of the field the targets stand on.
-Most effects are drawn mirrored when the targets are the party.
-
-## The canvas
-
-![Garet casts Heat Wave at Mia: a blaze shoots across the screen from Garet and bursts into sparks around her, the battle showing through it.](https://alchemy.pascalpixel.com/abilities/heat-wave.gif)
-
-Heat Wave's blaze glows over the battle, and the fighters show through it.
-
-The blaze is drawn on the canvas, a square picture of 128 by 128 pixels
-kept in memory. Nearly every effect draws into it, and the console then
-lays it over the battle.
-
-A pixel of the canvas is a brightness, its level, from 0 to 63. The effect
-loads a ramp of 64 colours, and each level shows as the colour at its place
-on the ramp. Level 0 is see-through.
-
-Heat Wave's ramp runs through the colours of fire. Another ramp draws the
-same pictures in other colours. That is how the four rushing strikes
-scatter the same sparks in four palettes.
-
-The console shows the canvas on a
-[background layer](../../glossary.md#background-layer) it can scale, which
-the battlefield gives up while the effect plays. The canvas is stretched to
-twice its width, so its 128 columns cover the screen's 240. Its colours are
-added to the picture under it at fourteen sixteenths of their strength.
-
-Adding is what makes fire and light glow. A bright canvas pixel brightens
-the fighter behind it, and a dark one leaves the fighter as it was.
-
-The stretch has one catch. A point 100 pixels across the screen is 50
-pixels across the canvas, and every effect allows for that when it places a
-picture.
-
-Opening the canvas takes five frames and closing it eleven. An effect may
-darken the battle's background while it plays, and closing brings the
-background's colours back over eight of those frames.
-
-A few effects show the canvas differently. Frost, Judgment and the Helm
-Splitter are among those that show it at its own width. Quake does too, and
-it turns the adding off, so that its pillars hide what is behind them.
-
-## The transfer
-
-![Garet casts Fire at Isaac, Mia and Ivan: fireballs rise from him, hang in the air and stream across into the three, each leaving a fading trail.](https://alchemy.pascalpixel.com/abilities/fire.gif)
-
-Each of Fire's fireballs leaves a trail that fades behind it. No code
-draws the trail. It is last frame's picture, left on the canvas a little
-dimmer.
-
-Everything an effect draws reaches the screen through one task, the
-transfer. At the end of a frame the handler marks the canvas ready and
-waits a frame. At the next [VBlank](../../glossary.md#vblank) the transfer
-copies the canvas to the screen. Then it treats the canvas as the effect
-chose when it started:
-
-| What the canvas keeps              | What the player sees                               |
-| ---------------------------------- | -------------------------------------------------- |
-| everything                         | the picture builds up frame by frame               |
-| nothing                            | only this frame's drawing: Quake redraws its pillars every frame |
-| half or three quarters of each level | a trail that fades fast at first, then slowly: Fire, Ray, Bolt |
-| each level less a fixed step       | a trail that fades evenly: Bind and Drain take 4 off a frame |
-
-Fire keeps three quarters, rounded down. Take a pixel drawn at the
-brightest level, 63, and never drawn again. It goes down like this, and is
-gone twelve frames later, a fifth of a second:
-
-```
-63  47  35  26  19  14  10  7  5  3  2  1  0
-```
-
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
-flowchart TD
-  draw(["The handler stamps this frame's pictures onto the canvas"]) --> present(["EFFECT_END_FRAME: transferPending = 1, wait(1)"])
-  present --> vblank(["VBlank: the transfer task copies the canvas to BG2 and keeps 3/4 of each level"])
-  vblank -- "the next frame" --> draw
-  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
-  classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
-  class draw sequence
-  class present sequence
-  class vblank frame
-```
-
-Dimming works on the whole canvas at once. It knows nothing about fireballs
-or sparks, and it doesn't need to. Because a pixel is a brightness, taking
-three quarters of every pixel dims every trail on the canvas, however many
-there are.
-
-The routine that does it handles four pixels in one step. That is what
-makes dimming 16,384 pixels every frame affordable.
-
-## Blitters
-
-![Ivan casts Ray at Garet, Isaac and Mia: bolts of purple lightning rain down on them, glowing brighter where they cross.](https://alchemy.pascalpixel.com/abilities/ray.gif)
-
-Where two of Ray's bolts cross, the crossing glows brighter than either
-bolt. That comes from how the bolts are put on the canvas.
-
-A blitter is a small routine that copies a picture to a point of the
-canvas. It combines each pixel of the picture with the pixel already there
-in one of four ways:
-
-| Way of combining | What happens to each canvas pixel                    |
-| ---------------- | ---------------------------------------------------- |
-| copy             | the picture's pixel replaces it                      |
-| transparent      | the picture's pixel replaces it, unless it is level 0 |
-| lighten          | the brighter of the two stays                        |
-| additive         | the two levels are added, up to 63                   |
-
-Ray draws with two blitters. One lightens. The other is additive and
-mirrors its picture left to right, so bolts that cross add up.
-
-Here is the clever part: the game writes each blitter while it runs. A
-blitter is machine code for exactly one case. That means one canvas size,
-one way of combining, mirrored or not, and with or without a check that
-skips the pixels falling outside the canvas.
-
-A routine built for one case has no decisions left to make for each pixel,
-so it is as short as it can be. The game keeps it in the console's fast
-memory when it fits. An effect builds only the one or two blitters it draws
-with.
-
-[`blitter.c`](battle_effect/blitter.c) is the builder, and its opening
-comment describes the routine it builds piece by piece.
-
-## Pictures and the sheet
-
-![Isaac casts Quake at Garet, Ivan and Mia: brown rock pillars capped with ground rise under them once, throwing them into the air, and the damage shows while the rock still stands.](https://alchemy.pascalpixel.com/abilities/quake.gif)
-
-Every one of Quake's pillars is drawn from one picture of rock, 40 by 96
-pixels, [`rock_wall.png`](../graphics/battle_effects/rock_wall.png). The
-picture never changes.
-
-Each frame Quake draws only its top rows, more as a pillar rises and fewer
-as it sinks. Then it lays a strip of the battle's own ground, cut from the
-background, on top as the pillar's cap.
-
-The flames, rocks and sparks an effect stamps are small pictures like this
-one, kept packed in the cartridge
-([`graphics/battle_effects`](../graphics/battle_effects)). When an effect
-starts, it unpacks the ones it needs into the sheet. The sheet is the part
-of the work block set aside for pictures, 27,008 bytes of it.
-
-Most effects also unpack one of the shared sets of tiny pictures into the
-small block the door lends for them. The motes are ten pictures of one
-spark at ten sizes, from 1 by 2 pixels to 10 by 20. The flares are ten
-squares, from 2 to 20 pixels across. An effect asks for a mote or a flare
-by size, and that is how a spark shrinks as it dies.
-
-After the sheet, the work block holds a sideways shift for each of the
-screen's 160 lines. An effect that fills it in makes the console draw each
-line of the canvas a little to one side of the last. On screen the canvas
-sways or ripples.
-
-## Particles
-
-![Garet casts Fiery Blast at Isaac, Mia and Ivan: a ball of flame swells over them and sprays embers in every direction.](https://alchemy.pascalpixel.com/abilities/fiery-blast.gif)
-
-Every ember Fiery Blast sprays is a particle, a point that moves a little
-each frame and has a picture stamped where it is. Sparks, motes and chips
-of rock are particles too.
-
-A particle is a position, a speed, and one spare number that each effect
-uses as it likes. It may be the frames the particle has left to live, or
-which picture to draw.
-
-Positions and speeds are kept much finer than a pixel, so a slow ember can
-move a fraction of a pixel a frame and still arrive.
-
-Each frame the effect moves every living particle one step. The speed is
-added to the position, gravity is added to the downward speed, and every
-speed loses a share to drag.
-
-Bolt's sparks show the scale. Each frame a spark's fall grows by a
-sixteenth of a pixel a frame, and it keeps 60 parts in 64 of its speed,
-losing about 6%. When it hits the ground it bounces at half speed. It lives
-32 to 39 frames and is drawn as a smaller mote as it dies.
-
-A particle that flies through the battlefield, towards or away from the
-camera, moves in three directions. It is then projected onto the screen,
-16 pixels up, the height at which effects sit on a fighter.
-
-Particles live in two pools of fixed size, and a finished particle's place
-is used again, so an effect never asks for memory partway through. The
-small pool is 64 particles in the work block. The large one has room for
-1,170, and it is borrowed. It is the memory the field keeps its map in,
-which a battle has no use for.
-
-## A handler's frame loop
-
-![Ivan casts Bolt at Isaac: purple sparks gather around Ivan, a bolt of lightning strikes Isaac and crackles away, and `Isaac takes 27 damage!`.](https://alchemy.pascalpixel.com/abilities/bolt.gif)
-
-A handler is code that waits, like the rest of the game
-([System](../../system.md#waiting-and-tasks)). It sets up, then runs a
-fixed number of frames, each ending in a wait of one frame. At the end it
-gives back what the set-up took.
-
-Nearly every handler has that shape. `BattleEffect_RunBolt`
-([`bolt.c`](battle_effect/bolt.c)), cut down to its outline, shows it:
-
-```c
-void BattleEffect_RunBolt(struct BattleEffectParams *args) {
-  ...
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas); /* the work block, the canvas */
-  work->args = args;
-  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1)); /* BG2 shows the canvas */
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
-  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
-  Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
-                             work->sheet + BOLT_OFFSETS, 1, 1);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  for (frame = 0; frame != work->args->targetCount * 8 + 40; frame++) {
-    if (frame == 24)
-      EFFECT_SHOW_DAMAGE(SE_IMPACT);             /* the damage may show */
-    ...                                          /* for each bolt: */
-    draw[0](canvas, picture, x, y, 24, height);  /* stamp it */
-    ...                                          /* move and draw sparks */
-    EFFECT_END_FRAME(work);                      /* copy, wait a frame */
-  }
-  EFFECT_FINISH_CANVAS_ONE_BLITTER();            /* stop, release, close */
-}
-```
-
-The set-up does four things. It opens the canvas. It builds one blitter
-that lightens, so a bolt drawn over its sparks brightens them. It unpacks
-the bolt's pictures. And it starts the transfer keeping three quarters of
-each level, which makes the bolt crackle away.
-
-Inside the loop, whatever happens once (a sound, a shake, a flash) is a
-test of the frame number. Bolt at one target runs `8 * 1 + 40`, 48 frames:
-
-| Frame    | What Bolt does                                                    |
-| -------- | ----------------------------------------------------------------- |
-| 0        | the whole canvas is set to level 16, a flash                      |
-| 0 to 15  | the bolt is stamped over Isaac, growing 64 pixels a frame until it reaches the ground, 104 pixels down |
-| 1        | the screen starts a shake of four frames                          |
-| 2        | sixteen sparks fly up from the bolt's foot                        |
-| 4        | Isaac flashes white in his damage pose and is knocked back        |
-| 24       | the damage shows: `Isaac takes 27 damage!`                        |
-| 47       | the last frame; the canvas then closes                            |
-
-With more targets, each is struck 8 frames after the one before. Flash
-Bolt and Blue Bolt are the same handler at the stronger variants. They
-throw 32 and 128 sparks for 16, and Blue Bolt draws each bolt three times
-over itself.
-
-The damage on frame 24 is the handler's signal to the battle. From that
-frame the battle shows each target's flinch, message and falling HP while
-the effect goes on drawing. That is why `Isaac takes 27 damage!` appears
-while the sparks are still falling
-([Battles](../battle/README.md#how-outcomes-reach-the-screen)).
-
-The steps inside a frame keep one order, and the order shows on screen,
-because a later step draws over an earlier one.
-
-## Effect families
-
-![Isaac casts Rockfall at Ivan, and a thin column of orange light stands among Ivan, Garet and Mia, then widens into a glowing wall over all three while rocks tumble up through it.](https://alchemy.pascalpixel.com/abilities/rockfall.gif)
-![Isaac casts Avalanche at Ivan, and the same wall comes out wide enough to reach Isaac, with bigger rocks tumbling up all across it.](https://alchemy.pascalpixel.com/abilities/avalanche.gif)
-
-Rockfall and Avalanche are the same glowing wall at different widths.
-
-In fact Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide and Avalanche
-all play one effect. It stretches the canvas to 1.25, 1.5 or 2 times its
-width by variant, and draws larger rocks at the higher ones
-([`gaia.c`](battle_effect/gaia.c)).
-
-Abilities that differ by more than strength share an effect too. A family
-of them has one function that draws every member, told which by a mode.
-Each ability's handler is then just two lines that pass its mode along.
-Cure's handler asks the healing family for its Cure mode.
-
-![A Skeleton uses Bone Charge on Ivan: it glows white, rushes at him in a burst of light and flame, orange sparks scatter across the field, and `Ivan takes 1 damage!`.](https://alchemy.pascalpixel.com/guides/battle_anim/bone-charge.gif)
-![A Gryphon uses Twin Beaks on Ivan: it lunges with a flash, a pale slash strikes him twice, and `Ivan takes 58 damage.`.](https://alchemy.pascalpixel.com/guides/battle_anim/twin-beaks.gif)
-
-| What the family draws                                        | Abilities that share it                       |
-| ------------------------------------------------------------ | --------------------------------------------- |
-| the user rushes at the first target and strikes              | Bone Charge, Brute Force, Onslaught, Headbutt |
-| repeated slashes or columns of light on the first target     | twelve monster attacks, among them Cannibal Fang, Poison Tail and Twin Beaks |
-| shots that fly from the user and burst on each target        | Heat Wave, Sleet, Wing Flutter                |
-| healing motes swirling in to each target                     | Ply, Wish, Cure, Cure Poison, Tonic, Psy Crystal |
-| a dagger or a shield over each target that shatters          | Dull (the dagger), Impair and Weaken (the shield) |
-| flashes and bouncing sparks in one or three bursts           | Blast, Nova, Supernova, the bombs, Dynamite   |
-| columns of light falling on the targets                      | Revive, Water of Life, Quartz, Dew            |
-
-### The prelude
-
-![Ivan unleashes the Djinni Gust at Isaac: purple sparks swirl together into the Djinni, which darts at Isaac in a flurry of blows, and `Isaac takes 25 damage.`](https://alchemy.pascalpixel.com/abilities/gust.gif)
-
-Before Gust's attack plays, the Djinni itself appears. Sparks gather into
-its shape and it sways for a moment.
-
-This opening is the prelude. It takes 64 frames, or 84 in a longer form
-that ends in a burst of motes, and it leaves the canvas open and clear for
-the attack to draw on.
-
-Many families can be played by a Djinni or by something else. Quartz and
-Revive share the columns of light, and only Quartz is a Djinni.
-
-So the battle sets a switch when a Djinni is unleashed. The shared families
-(the stat boosts, the volleys, the healing motes, the columns of light,
-the flurries) open with the prelude only when it is set. Hail, Ground,
-Torch, Kite and Vine always open with their Djinni.
-
-### Casting impacts
-
-![Isaac unleashes Flint at Ivan, and sparks close in on a point above Isaac while he hangs in mid-leap, a streak of light shoots down at Ivan, and a ring of light and a spray of sparks burst over him.](https://alchemy.pascalpixel.com/abilities/flint.gif)
-![Garet unleashes Scorch at Mia, and red sparks close in on Garet, a streak of flame shoots at Mia, and a burst of fire swells over her and fades into red smoke.](https://alchemy.pascalpixel.com/abilities/scorch.gif)
-
-Sparks gather on the attacker, then something strikes the target. That
-shape is a casting impact. The attacks of eight Djinn (Bane, Smog, Mist,
-Fever, Flint, Scorch, Squall and Sap) share it, and so do many weapons'
-unleashes.
-
-Flint has no impact of its own, so its recording shows only what every
-impact shares. Scorch adds a burst of fire.
-
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
-flowchart TD
-  gather(["64 sparks close in on the caster over 32 frames; a Djinni's impact shows its Djinni"]) --> move(["The canvas moves to sit over the target"])
-  move --> impact(["The impact plays for 20 to 80 frames: the damage shows on frame 3, 📣 the heavy impact sounds on frame 4"])
-  impact --> release(["The canvas is released"])
-  move -- "five impacts hand over here" --> handoff(["Blizzard's volley, Mystic Flame, the comets, Severe Blow's sparks"])
-  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
-  classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
-  class gather,move,impact sequence
-  class release mainRoutine
-  class handoff frame
-```
-
-First 64 sparks close in on the caster over 32 frames, and a Djinni's
-impact shows its Djinni above the caster. Then the canvas is moved so that
-the impact sits over the target.
-
-The impact itself plays for 20 to 80 frames, by impact. The damage shows on
-its fourth frame, the heavy impact sounds on the fifth, and on the seventh
-some impacts knock the target back. Last the canvas is released.
-
-Some impacts are only an opening for another effect. Severe Blow stops once
-the canvas has moved and hands over to the rising sparks of Blast's
-family. Meltdown ends by handing over to the shield that Impair shatters.
-
-Four impacts that no ability uses stop at the same point as Severe Blow.
-Three hand over to Blizzard's volley, Mystic Flame and the comets, and one
-simply ends. [`casting_impact.c`](battle_effect/casting_impact.c) marks the
-phases in its code.
-
-## Design
-
-Every effect is written as code that waits, one function from its first
-frame to its last, because that is how the rest of the game is written.
-
-So a handler reads the way the effect plays: each frame's work in order,
-with a wait between frames. The battle's own tasks, its camera and its
-[playback](../../glossary.md#playback-queue), keep running inside those
-waits.
-
-The cost is that one effect plays at a time, from start to end. That is all
-a battle asks.
-
-The canvas trades colour for speed. A pixel that is one brightness can be
-dimmed four at a time, so a trail costs nothing for each spark, and a ramp
-can recolour a whole effect. In return the canvas shows at most 64 colours
-at a time, all from one ramp.
-
-Building each blitter as machine code for one exact case costs a little
-time once, when the effect starts. After that, every stamp of a picture is
-as short as it can be. That is what lets a frame draw hundreds of sparks.
-
-## How it fits with the rest of the game
-
-The battle decides everything that matters to the rules before an effect
-starts. [Battles](../battle/README.md) works out the action, its targets
-and its damage, and [stages](../../glossary.md#staging) the effect. The
-effect only draws, and tells the battle when to show the damage.
-
-While it draws, it borrows from the rest of the game. Its memory comes from
-the heap ([System code](../system/README.md)). Its large pool of particles
-is the map's memory ([Maps](../map/README.md)). And it shakes, tints and
-knocks back the battle's own background, camera and fighters.
-
-The blitter builder also serves the battle's star field and the Lucky
-Wheels.
-
-## Limits
-
-- The canvas is 128 by 128 pixels, and a pixel has 64 levels.
-- The sheet holds 27,008 bytes of pictures; an effect that leaves the
-  per-line shifts after it alone may use up to 28,800.
-- The small pool has 64 particles and the large pool 1,170. No effect
-  sets aside more than 1,024 of the large pool.
-- An effect has two blitters at a time, and each combination of canvas
-  size, mirroring, clipping and way of combining needs its own.
+Each door counts kinds in its own way, so the same number means different
+things at different doors.
+
+- `BattleEffect_RunSummon` plays the twelve large summons, Ramses to Thor,
+  each with a handler of its own.
+- `BattleEffect_RunFromTable` uses the kind as a place in a table of
+  handlers. Quake's kind is 1 and its handler is first.
+- `BattleEffect_RunByIdRange` sorts by the number alone. Kinds 100 to 135
+  are the casting impacts. Kinds from 200 up are the ring and sparks of a
+  critical hit. Every other number is a beam, the streak of a plain attack.
+  Isaac, Garet and Jenna attack with kind 1 here, and Ivan and Mia with
+  kind 4. A critical hit adds 200, so Isaac's 1 becomes 201. A plain attack
+  does not use its row in the list of abilities.
+
+Whichever door is used, the handler is passed the same note
+(`struct BattleEffectParams`): the kind and variant, the user, up to 8
+targets, the side they stand on, and whether to play the prelude.
+
+Before it calls the handler, the door takes three blocks from the
+[heap](../../glossary.md#heap-and-pools), the game's pool of working
+memory: a small one for the motes, the work block
+(`struct BattleEffectWork`: the sheet, 64 particles and the effect's
+settings) and the canvas. It gives them back when the handler returns.
+
+A handler that added a task, such as the transfer, removes it before it
+returns. A task left running would read blocks that now belong to
+something else, and draw rubbish from them.
+
+### Blitters are built while the game runs
+
+The cartridge holds no finished blitter. It holds a builder,
+`BattleEffect_BuildBlitter` in [`blitter.c`](battle_effect/blitter.c), and
+a template of instructions for the console's processor. Asked for a
+blitter, the builder copies out the pieces for exactly one case: one canvas
+size, one way of combining, flipped or not, and with or without a check for
+the canvas's edges. The file's opening comment goes through the result
+piece by piece.
+
+An effect holds two blitters at a time. Flash Bolt wants more than that,
+because each of its glints is flipped at random. So for every single glint
+it has a fresh blitter built, draws with it once and releases it.
+
+The code does not record why Camelot built blitters this way.
+
+### Where particles live
+
+An effect's particles never ask for more memory partway through. They sit
+in two arrays that are there from the start, and a place whose particle has
+died is used again.
+
+The small one is the 64 particles in the work block. The large one,
+`PARTICLES`, is the memory the field keeps its map in
+([Maps](../map/README.md)), which is idle during a battle. Bolt, Ray and
+Plasma each use 1,024 places of it. For Bolt that is 128 sparks for each of
+up to 8 targets.
+
+A place does not have to hold a spark. Quake throws no particles, and it
+uses the spare numbers of the small array as notes: one for each target,
+saying whether that target has landed yet.
+
+A particle placed in the battlefield is projected onto the screen and then
+raised by 16 pixels, the height at which effects sit on a fighter.
+
+The transfer's dimming works on four pixels at once: four canvas pixels
+are stored side by side as one number, and it takes three quarters of that
+number and trims what spilled from one pixel into the next.
+
+### Limits
+
+- The sheet is 27,008 bytes of the work block.
+- The small array holds 64 particles.
+- An effect holds two blitters at a time.
 - An effect has at most 8 targets.
 - One effect plays at a time.
 
-## Words used here
+### Evidence
 
-- An **effect kind** is the number that picks which effect plays. The
-  ability kind ([Battles](../battle/README.md#the-ability-kind)) is another
-  number, which picks the rules' formula.
-- The **variant** is the strength an effect is played at: basic, stronger
-  or strongest.
-- The **effect word** is an ability's row: its effect kind, its variant
-  and its switches in one number.
-- A **door** is one of the three functions the battle calls to play an
-  effect. It lends the handler its memory.
-- A **handler** is the function that draws one effect from its first frame
-  to its last.
-- The **work block** is the effect's working memory: the sheet, the small
-  pool of particles and its settings.
-- The **canvas** is the 128 by 128 picture an effect draws into, and a
-  **level** is a pixel's brightness on it, a place on a ramp of colours.
-- The **transfer** is the task that copies the canvas to the screen each
-  frame and dims or clears it for the next.
-- A **blitter** is a routine built for one way of stamping a picture onto
-  the canvas.
-- The **sheet** is the effect's unpacked pictures; a **mote** is one of the
-  ten sizes of spark every effect shares.
-- A **particle** is a point with a position, a speed and a spare number,
-  which an effect moves each frame and draws a picture at.
-- The **prelude** is the Djinni's entrance an effect may open with.
-- A **casting impact** is the gather-and-strike effect Djinn and weapon
-  unleashes share.
-- The **side** is the side the targets stand on, the
-  [party](../../glossary.md#the-party)'s or the enemies'. Effects mirror on
-  it.
+The recordings are of the English release, one of the game's
+[editions](../../glossary.md#editions). Each ability is cast by one party
+member at the others, who stand in for the enemies. The two monster attacks
+are cast by their monsters at the party.
 
-## Evidence
-
-The recordings are of a tbs-en [edition](../../glossary.md#editions). Each
-ability is cast by one party member at the others, who stand in for the
-enemies. The two monster attacks are cast by their monsters at the party.
-
-Only plain attacks score critical hits. No ability's row uses the
+Only plain attacks score critical hits. No ability's entry uses the
 critical-hit effects (`ABILITY_EFFECT_CRITICAL_1_IN_64` to
-`ABILITY_EFFECT_CRITICAL_1_IN_4`), so the ring and spark is reached only
-from a plain attack's kind, and it plays the same for each.
+`ABILITY_EFFECT_CRITICAL_1_IN_4`), and 200 is added to the kind only where
+a plain attack is played. So the ring and sparks are reached only from a
+plain attack, and they play the same for each.
 
-Three effects in the handler table are never played. No ability's row
-names their kinds, and nothing else can put a kind in an action. They are
-named from what they draw: orbiting spirals (`planet_diver.c`), a triangle
-strike (`bind.c`) and a leap (`thrash.c`).
+Three handlers in the table are never played, because no ability's row
+names their kinds. They are named from what they draw: orbiting spirals
+(`planet_diver.c`), a triangle strike (`bind.c`) and a leap (`thrash.c`).
 
-[The Lost Age](../../glossary.md#the-two-games) keeps the same three, and
-its row for Severe Blow names the leap, where here Severe Blow plays a
-casting impact.
+Four of the 36 casting impacts are named by no row either. They stop after
+the gathering, as Severe Blow does. Three hand over to Blizzard's stream of
+ice, to Mystic Flame and to a volley of comets, and one simply ends.
 
 The three effects in `orbiting.c` are unused too, because no code calls
 them.

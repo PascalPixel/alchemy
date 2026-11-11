@@ -608,14 +608,15 @@ Venus, Mercury, Mars and Jupiter, shows the effect from the other side's
 view. `EFFECT_VIEW_REVERSED`, on twenty rows, among them the monsters' Fire
 Blessing, turns the view right round. `EFFECT_ON_DOWNED` is the mark the
 battle adds for a revival. `EFFECT_SUMMON` and `EFFECT_BY_ID_RANGE` choose
-the door.
+which of three routines plays the effect.
 
-### The three doors and what they lend
+### The three routines that play an effect
 
 ![Isaac summons Judgment: `Isaac summons Judgment!`, he glows and fades, the battle runs down the screen into black and a violet sky runs in after it, Judgment flies forward and bursts in a flash, the blast spreads over a valley, a beach and a forest, and the battle comes back as the damage is told](https://alchemy.pascalpixel.com/abilities/judgment.gif)
 
-A door is this page's word for one of the three functions the battle calls
-to play an effect ([Battles](../battle/README.md#staging-an-action)).
+The battle plays an effect by calling one of three routines
+([Battles](../battle/README.md#staging-an-action)). The effect word says
+which.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -632,8 +633,8 @@ flowchart TD
   class handler frame
 ```
 
-Each door counts kinds in its own way, so the same number means different
-things at different doors.
+Each routine counts kinds in its own way, so the same number means
+different things in each.
 
 - `BattleEffect_RunSummon` plays the twelve large summons, Ramses to Thor,
   each with a handler of its own.
@@ -646,11 +647,11 @@ things at different doors.
   kind 4. A critical hit adds 200, so Isaac's 1 becomes 201. A plain attack
   does not use its row in the list of abilities.
 
-Whichever door is used, the handler is passed the same note
+Whichever routine is used, the handler is passed the same parameters
 (`struct BattleEffectParams`): the kind and variant, the user, up to 8
 targets, the side they stand on, and whether to play the prelude.
 
-Before it calls the handler, the door takes three blocks from the
+Before it calls the handler, the routine takes three blocks from the
 [heap](../../glossary.md#heap-and-pools), the game's pool of working
 memory: a small one for the motes, the work block
 (`struct BattleEffectWork`: the sheet, 64 particles and the effect's

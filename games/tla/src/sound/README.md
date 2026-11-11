@@ -8,14 +8,12 @@ a sound number means, how a jingle returns to the music and the driver's lock.
 
 ## What differs from The Broken Seal
 
-- The driver's C (`sound.c`, `tables.c`, `driver.c`, `tail.c`,
-  `player_work_copy.c` and the `music_track_*.c` files) is compiled with `old_agbcc` through the
+- The driver's C (`sound.c`, `tables.c`, `driver.c` and
+  `player_work_copy.c`) is compiled with `old_agbcc` through the
   `Makefile`'s `SOUND_C`, as The Broken Seal's driver is.
-- The driver is split into one file per routine, where The Broken Seal keeps
-  `driver.c` and `audio.c` whole: the handlers of the song commands are the
-  `music_track_*.c` files, and the handwritten ARM and Thumb routines are one
-  file each under `driver/`. One file is still named by its address
-  (`f1c0cac.c`).
+- `driver.c` holds the handlers of the song commands, as The Broken Seal's
+  does; the handwritten ARM and Thumb routines are one file each under
+  `driver/`. One file is still named by its address (`f1c0cac.c`).
 - This game has its own song table (`games/tla/sound/songs.s`), and it has no
   `sounds.h` of names yet.
 - A few copies kept beside the driver carry older prefixes (`MusicTrack_`,

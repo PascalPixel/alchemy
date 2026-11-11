@@ -2051,17 +2051,6 @@ main	rom_tail_00	games/tla/src/sound/driver/command_byte_setters
 main	rom_tail_00	games/tla/src/sound/sound	.text
 main	rom_tail_00	games/tla/src/sound/sound_get_jump_list
 main	rom_tail_00	games/tla/src/sound/driver	.text
-main	rom_tail_00	games/tla/src/sound/music_track_operate_work_byte	.text
-main	rom_tail_00	games/tla/src/sound/music_track_dispatch_stream_command	.text
-main	rom_tail_00	games/tla/src/sound/music_track_read_voice_target	.text
-main	rom_tail_00	games/tla/src/sound/music_track_set_voice_kind	.text
-main	rom_tail_00	games/tla/src/sound/music_track_set_voice_attack	.text
-main	rom_tail_00	games/tla/src/sound/music_track_set_voice_decay	.text
-main	rom_tail_00	games/tla/src/sound/music_track_set_voice_sustain	.text
-main	rom_tail_00	games/tla/src/sound/music_track_set_voice_release	.text
-main	rom_tail_00	games/tla/src/sound/tail	.text
-main	rom_tail_00	games/tla/src/sound/music_track_set_voice_length	.text
-main	rom_tail_00	games/tla/src/sound/music_track_set_voice_pan_or_sweep	.text
 main	rom_tail_00	games/tla/src/sound/empty_callback	.text
 main	rom_tail_00	games/tla/src/sound/sound_test	.rodata
 main	rom_tail_00	games/tla/src/sound/tables	.rodata

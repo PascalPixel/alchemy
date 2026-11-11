@@ -16,7 +16,7 @@
 @ A row's number is its place, so a row added or moved renumbers every row
 @ after it. Code naming a resource by its symbol follows, but some numbers
 @ travel bare: the scene table (field/scenes.s) names each scene's overlay by
-@ number, objects.tsv numbers each overlay's rows, the layouts are counted on
+@ number, overlay.ld numbers each overlay's objects, the layouts are counted on
 @ from ResourceId_Map001 (MapGrid_LoadMap), and the settings menu's marker
 @ steps through eight pictures from ResourceId_MenuCursorPictures.
 	.macro group kind:req, names:vararg

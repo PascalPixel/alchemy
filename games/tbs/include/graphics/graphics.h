@@ -10,7 +10,7 @@
 /// array, and calls the copy. Such a routine is declared as an array of
 /// bytes. A symbol ending in CodeSize is the length in bytes of the code the
 /// loader copies: it is not an object, but an address the linker sets equal
-/// to the length (in the routine's assembly file, or constants.ld where the
+/// to the length (in the routine's assembly file, or ld_script.ld where the
 /// end is the next routine), so the loader reads it by casting it to a
 /// number.
 

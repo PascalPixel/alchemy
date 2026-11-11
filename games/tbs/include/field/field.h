@@ -24,7 +24,7 @@ extern s32 gCamera_UnreadWord2;
 extern const s32 gActor_DefaultScript[];
 extern const u8 gWorldMap_BattleEnvironments[];
 /// The size of Render_DecodePicture, copied to HEAP_SLOT_FRAME_SCRATCH; an
-/// address equal to the size (constants.ld).
+/// address equal to the size (ld_script.ld).
 extern u8 Render_DecodePictureCodeSize[];
 /// Four 256-byte colour tables (remap0 to remap3), indexed by pixel: the
 /// SpriteColorMode tables after gSpriteColorTables' five, the
@@ -172,7 +172,7 @@ extern u32 gColosso_LetteringSprites[];
 /// LOG_ROOMS_A_CORNERED_FRAMES the chase raises its event.
 extern u16 gLogRoomsA_StopTimer;
 /// The size of Actor_UpdateAll's code, an address equal to the size
-/// (constants.ld). Only the unused Actor_RunUpdateAllFromHeap reads it, to
+/// (ld_script.ld). Only the unused Actor_RunUpdateAllFromHeap reads it, to
 /// copy the routine to the heap and run it once.
 extern u8 Actor_UpdateAllCodeSize[];
 extern u8 gActor_BlinkSpriteColors[];
@@ -233,7 +233,7 @@ extern const u8 TileMap_DrawRows[];
 /// The size of TileMap_DrawRows (picture_decode.s).
 extern u8 TileMap_DrawRowsCodeSize[];
 /// The size of Transform_UpdateVertices, copied to heap slot 46; an address
-/// equal to the size (constants.ld).
+/// equal to the size (ld_script.ld).
 extern u8 Transform_UpdateVerticesSize;
 extern const s32 gWorldMap_FootprintActions[6];
 extern const s16 gWorldMap_KeyHeadings[16];

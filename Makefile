@@ -196,14 +196,49 @@ ARM_C   := games/tbs/src/window/glyph_arm.c games/tbs/src/field/actor_update_arm
 ASFLAGS := -mcpu=arm7tdmi -mthumb-interwork
 EDITION_ASFLAGS := --defsym $(DEFINE)=1 -I$(BUILD) $(ASFLAGS)
 
-# The object list: each game's objects.tsv gives each edition its linker
-# fragments under $(BUILD)/ld, which its one main.ld includes.
+OVERLAY_STREAM := games/$(GAME)/src/system/overlay/overlays
+ifneq ($(wildcard games/$(GAME)/ld_script.ld),)
+# The linker script: games/$(GAME)/ld_script.ld, run through the C
+# preprocessor for the edition as its C is, once for the main image and once
+# for each overlay (-DOVERLAY=0x<number>). The overlays are the numbers its
+# overlay.ld tests; each image links the objects its script names, in order.
+OVERLAY_LD := games/$(GAME)/src/system/overlay/overlay.ld
+OVERLAY_IDS := $(shell sed -n 's/^\#\(el\)*if OVERLAY == 0x\([0-9a-f]*\)$$/\2/p' $(OVERLAY_LD))
+LD_CPPFLAGS := -P -lang-asm -nostdinc -Igames/$(GAME)/include -D$(DEFINE)=1
+LD_HEADERS := games/$(GAME)/include/edition.h games/$(GAME)/include/version.h
+LD_SCRIPT := $(BUILD)/ld/main.ld
+LDFLAGS := -T $(LD_SCRIPT)
+OVERLAY_SCRIPT = -T $(BUILD)/ld/overlay_$*.ld
+# A script is rewritten only when its text changes, so an edit that leaves an
+# image's script as it was relinks nothing.
+$(BUILD)/ld/main.ld: games/$(GAME)/ld_script.ld $(LD_HEADERS)
+	@mkdir -p $(@D)
+	$(CPP) $(LD_CPPFLAGS) $< $@.new
+	cmp -s $@.new $@ && rm $@.new || mv $@.new $@
+$(BUILD)/ld/overlay_%.ld: games/$(GAME)/ld_script.ld $(OVERLAY_LD) $(LD_HEADERS)
+	@mkdir -p $(@D)
+	$(CPP) $(LD_CPPFLAGS) -DOVERLAY=0x$* $< $@.new
+	cmp -s $@.new $@ && rm $@.new || mv $@.new $@
+# The objects each script names, first mention first, as make variables.
+object_list = sed -n 's|^ *"\*/\(games/[^"]*\)\.o"(.*|\1|p' $(2) | \
+              awk -v name=$(1) '!seen[$$0]++ { list = list " \\\n\t$$(BUILD)/obj/" $$0 ".o" } END { print name " :=" list }'
+$(BUILD)/objects.mk: $(LD_SCRIPT) $(OVERLAY_IDS:%=$(BUILD)/ld/overlay_%.ld)
+	@{ echo '# Written by the Makefile from the linker script: do not edit.'; \
+	  $(call object_list,MAIN_OBJS,$(LD_SCRIPT)); \
+	  echo 'OVERLAYS := $(OVERLAY_IDS)'; \
+	  $(foreach id,$(OVERLAY_IDS),$(call object_list,OVERLAY_OBJS_$(id),$(BUILD)/ld/overlay_$(id).ld);) \
+	} > $@.new
+	cmp -s $@.new $@ && rm $@.new || mv $@.new $@
+OVERLAY_DEPS = $(BUILD)/ld/overlay_$*.ld
+else
+# The object list: objects.tsv gives each edition its linker fragments under
+# $(BUILD)/ld, which the game's one main.ld includes.
 LD_SCRIPT := games/$(GAME)/main.ld
 LDFLAGS := --defsym $(DEFINE)=1 -L $(BUILD)/ld -T $(LD_SCRIPT)
 OVERLAY_SCRIPT = -L $(BUILD)/ld/$* -T games/$(GAME)/src/system/overlay/overlay.ld
-OVERLAY_STREAM := games/$(GAME)/src/system/overlay/overlays
 $(BUILD)/objects.mk: games/$(GAME)/objects.tsv games/$(GAME)/overlays.tsv $(OBJLIST)
 	$(OBJLIST) games/$(GAME)/objects.tsv games/$(GAME)/overlays.tsv $(LANG) $(BUILD)
+endif
 include $(BUILD)/objects.mk
 
 # The source an object is built from: NAME.c, NAME.s, NAME.S or NAME.mid.
@@ -246,7 +281,7 @@ $(BUILD)/symbols.elf: $(LINKED) $(LIBGCC) $(LD_SCRIPT) $(BUILD)/objects.mk
 # An overlay links at 0x2008000 against the main image's symbols, less the
 # names it defines itself; its image is packed as Camelot's packer did.
 .SECONDEXPANSION:
-$(BUILD)/overlays/resource_%.elf: $$(OVERLAY_OBJS_$$*) $(BUILD)/symbols.elf $(LIBGCC)
+$(BUILD)/overlays/resource_%.elf: $$(OVERLAY_OBJS_$$*) $$(OVERLAY_DEPS) $(BUILD)/symbols.elf $(LIBGCC)
 	@mkdir -p $(@D)
 	$(NM) -g --defined-only $(OVERLAY_OBJS_$*) $(LIBGCC) | awk 'NF == 3 { print $$3 }' > $(@:.elf=.own)
 	$(OBJCOPY) --extract-symbol --strip-symbols=$(@:.elf=.own) $(BUILD)/symbols.elf $(@:.elf=.symbols.elf)

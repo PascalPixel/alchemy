@@ -111,8 +111,8 @@ extern u16 gBattleUnit_WeaponAnimationsMia[];
 /// Jenna's weapon sprite by weapon kind; Felix draws none.
 extern u16 gBattleUnit_WeaponAnimationsJenna[];
 /// The size of BitDecoder_DecodeImage, which BattleBackground_Load copies to
-/// HEAP_SLOT_RAM_CODE_TEMP; constants.ld defines it as an address equal to the
-/// size.
+/// HEAP_SLOT_RAM_CODE_TEMP; ld_script.ld defines it as an address equal to
+/// the size.
 extern u8 BitDecoder_Size[];
 /// The extra matrix the battle camera's projection applies first while
 /// commands are chosen (FLAG_CHOOSING_COMMANDS), in 16.16 words.

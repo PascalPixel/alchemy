@@ -385,8 +385,9 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   BLITTER_WALK();
 
   // The template is the last thing in blitter_fragments.s, which the
-  // object list links straight before battle_effect_table.c, whose first table
-  // is gBattleEffect_MoteCells: a complete walk ends at that table's address.
+  // linker script places straight before battle_effect_table.c, whose first
+  // table is gBattleEffect_MoteCells: a complete walk ends at that table's
+  // address.
   codeEnd = (const u32 *)gBattleEffect_MoteCells;
   return templateWords == codeEnd;
 }

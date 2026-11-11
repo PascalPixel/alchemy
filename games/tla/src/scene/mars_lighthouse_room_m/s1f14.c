@@ -12,9 +12,9 @@ void Func_02001f14(struct MarsLighthouseRoomMVector *position, s32 value) {
     object->gravity = (u16)Random16Far();
     object->unk4c = ((u32)(Random16Far() << 17) >> 16) + value;
     /* FAKEMATCH(temporary): the angle held in an s32 local keeps the zero
-     * extension and the pool word 0xffff8000; as a direct store, the add
-     * narrows to 16 bits (movs, lsls for 0x8000, no extension), not
-     * measured. */
+     * extension and the pool word 0xffff8000 (a direct store narrows the add
+     * to 16 bits: movs, lsls for 0x8000, no extension); as a direct store, 10
+     * of 50 instructions differ in tla-en. */
     angle = (u16)Random16Far() - 0x8000;
     object->action = angle;
     ((void (*)())Func_02001ed4)(object, 2);

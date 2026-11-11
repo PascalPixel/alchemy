@@ -23,30 +23,31 @@ void Event_WaitTransitionFrames(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ s32 Flag_Test(s32 flag) {
-  return GameFlag_Test(flag);
-}
+static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Test(flag); }
 
 static __inline__ void SetObjectValue(s32 id, s32 value) {
   /* FAKEMATCH(pin): the value pinned to r1, which the ROM loads before the id
    * (movs r1; movs r0); as a direct call or a plain forwarding inline, the id
-   * comes first and 10 instructions differ. */
+   * comes first, 10 of 110 instructions of Func_02000740 differ in tla-en.
+   */
   register s32 v asm("r1") = value;
 
   Func_02000ba4(id, v);
 }
 
-/// Sets the event route to 0x204. In the first room, gives objects 9 to 14 their
-/// values and priority bits, and under flag 0x200 runs Func_02000494. Under flag
-/// 0x201, runs a screen transition and Func_02000408, then clears the flag.
+/// Sets the event route to 0x204. In the first room, gives objects 9 to 14
+/// their values and priority bits, and under flag 0x200 runs Func_02000494.
+/// Under flag 0x201, runs a screen transition and Func_02000408, then clears
+/// the flag.
 s32 Func_02000740(void) {
   s32 *route =
       &((struct AnemosInnerSanctumEntranceEventWork *)Ram_HeapSlots->eventWork)
            ->route;
   s32 value = 0x204;
 
-  /* FAKEMATCH(barrier): an empty asm after the address and the value, so gMainRoutineWork's address loads just before the store; as one assignment, 2
-   * of 110 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm after the address and the value, so
+   * gMainRoutineWork's address loads just before the store; as one assignment,
+   * 2 of 110 instructions differ in tla-en. */
   __asm__("");
   *route = value;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6b1Room1) {

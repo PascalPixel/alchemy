@@ -23,9 +23,10 @@ void Func_02000120(void) {
     Actor_SetModeById(18, 3);
     Event_ShowMessageAndWait(18, 0);
     gMainRoutineWork.ownerOverride = 1;
-    /* FAKEMATCH(wrapper): the flag test forwarded through call.h's Value1; as a
-     * direct call, gMainRoutineWork's offsets take r3 instead of r2 and 22
-     * instructions differ (found by alchemy permute). */
+    /* FAKEMATCH(wrapper): the flag test forwarded through event.h's
+     * Event_GetFlag; as a direct GameFlag_Test call, gMainRoutineWork's offsets
+     * take r3 instead of r2, 22 of 89 instructions differ in tla-en (found
+     * by alchemy permute). */
     if (Event_GetFlag(0x9d0)) {
       GameFlag_SetBit(0x8df);
       GameFlag_SetBit(0x9b2);
@@ -39,7 +40,7 @@ void Func_02000120(void) {
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (object != NULL)
       Actor_ResetAndSetPosition(18, *(s16 *)((u8 *)object + 10),
-                                       *(s16 *)((u8 *)object + 18));
+                                *(s16 *)((u8 *)object + 18));
     Actor_WaitForMoveById(18);
     Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
     GameFlag_SetBit(0x201);

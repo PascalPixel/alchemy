@@ -38,8 +38,9 @@ void Func_0200130c(void) {
                               FIELD_AT(leader, s16, 18));
   Event_Wait(20);
   /* FAKEMATCH(dead): a once-only block around the first two stores keeps the
-   * call's first argument ahead of the scene store's address; as plain stores
-   * the argument follows the store and 4 instructions differ. */
+   * call's first argument ahead of the scene store's address, where without it
+   * the argument follows the store; as plain stores, 2 of 71 instructions
+   * differ in tla-en. */
   do {
     FIELD_AT(gMainRoutineWork, u16, 0x254) = 0x19cd;
     FIELD_AT(gMainRoutineWork, u8, 0x24b) = 2;

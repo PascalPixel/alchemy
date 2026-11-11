@@ -15,7 +15,7 @@ static __inline__ void Func_020020b4_(s32 id, s32 a, s32 b, s32 c) {
   /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
    * scene layer, so the arguments are set up in their own order and each call
    * keeps its constants; as a direct call, the costly constant is built first
-   * or shared and 2 or more instructions differ. */
+   * or shared, 2 of 93 instructions differ in tla-en. */
   Func_080d3070(id, a, b, c);
 }
 

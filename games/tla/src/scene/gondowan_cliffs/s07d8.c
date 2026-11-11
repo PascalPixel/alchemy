@@ -12,8 +12,8 @@ void Func_02001254(s32 actor, s32 target);
 
 static inline void GondowanCliffs_ObjWalk(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH(wrapper): the call through this inline; as direct calls to
-   * Actor_SetPositionAndReset, the coordinates are kept in callee-saved
-   * registers and 79 instructions differ. */
+   * Actor_SetPositionAndReset, 78 of 165 instructions of Func_020007d8 differ
+   * in tla-en. */
   Actor_SetPositionAndReset(actor, x, z);
 }
 

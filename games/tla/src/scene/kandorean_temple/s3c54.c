@@ -10,7 +10,8 @@ void Func_02003c54(void) {
   }
   {
     /* FAKEMATCH(temporary): a local holding the angle builds it ahead of the
-     * other arguments; as a plain argument, three rows are reordered. */
+     * other arguments; as a plain argument, 4 of 24 instructions differ in
+     * tla-en. */
     s32 angle = 0x3000;
 
     Actor_SetPositionAndFacing(12, PIXELS(392), PIXELS(360), angle);
@@ -39,7 +40,8 @@ void Func_02003c8c(void) {
       gMainRoutineWork.entrance == 14) {
     if (GameFlag_Test(0x84a)) {
       /* FAKEMATCH(temporary): a local holding the angle builds it ahead of the
-       * other arguments; as a plain argument, one row is reordered. */
+       * other arguments; as a plain argument, 4 of 179 instructions differ in
+       * tla-en. */
       s32 angle = 0x5000;
 
       Actor_SetPositionAndFacing(12, PIXELS(432), PIXELS(394), angle);
@@ -56,7 +58,7 @@ void Func_02003c8c(void) {
     if (GameFlag_Test(0x849)) {
       /* FAKEMATCH(temporary): a local holding the angle, set just before its
        * call, builds it ahead of the other arguments, as above; as a plain
-       * argument, the rows are reordered. */
+       * argument, 4 of 179 instructions differ in tla-en. */
       s32 angle;
 
       Actor_SetHorizontalPositionWithTerrain(12, 0, 0);

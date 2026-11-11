@@ -9,7 +9,8 @@ void Func_020011d4(void) {
   } else {
     /* FAKEMATCH(signature): the cell read through an s16 return type, so the
      * old cell is masked in r3 and 0xff00 built in r2; read as s32 the two
-     * registers swap and 6 instructions differ. */
+     * registers swap; as the header's s32 return, 6 of 29 instructions differ
+     * in tla-en. */
     Func_02000ee8(
         2, 50, 13,
         0xff00 | (((s16 (*)(u32, s32, s32))Func_02000eac)(2, 50, 13) & 255));

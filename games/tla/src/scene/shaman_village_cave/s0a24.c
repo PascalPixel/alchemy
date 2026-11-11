@@ -29,7 +29,8 @@ extern const u8 gData_0200161c[];
     /* emote of this overlay; as an inline call the actor comes */             \
     /* one row early wherever the emote takes two instructions, */             \
     /* and an empty asm barrier at each call moves the literal */              \
-    /* pools of a long scene. */                                               \
+    /* pools of a long scene. As an unpinned local, 8 of 334 */                \
+    /* instructions differ in tla-en (Func_02000a24). */                       \
     register s32 emote_ __asm__("r1") = (emote);                               \
     /* FAKEMATCH(pin): the frames pinned to r2 with the emote above. */        \
     register s32 frames_ __asm__("r2") = (frames);                             \

@@ -102,7 +102,8 @@ void Func_020048b4(void);
     /* another order or modified, a local (shared between calls), */           \
     /* a once-only block, and barriers that hold r0 (each empty */             \
     /* asm adds four bytes to the pool estimate and moves the */               \
-    /* literal pool of a long scene). */                                       \
+    /* literal pool of a long scene). As an unpinned local, 111 */             \
+    /* of 711 instructions differ in tla-en (Func_02002068). */                \
     register s32 emote_ __asm__("r1") = (emote);                               \
     /* FAKEMATCH(pin): the frames pinned to r2 with the emote above. */        \
     register s32 frames_ __asm__("r2") = (frames);                             \

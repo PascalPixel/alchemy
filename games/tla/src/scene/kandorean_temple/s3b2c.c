@@ -19,14 +19,16 @@ void Func_02003b2c(void) {
     Actor_SetPositionAndFacing(11, PIXELS(374), PIXELS(282), FACING_EAST);
     {
       /* FAKEMATCH(temporary): a local holding the angle builds it ahead of the
-       * other arguments; as a plain argument, three rows are reordered. */
+       * other arguments; as a plain argument, 4 of 128 instructions differ in
+       * tla-en. */
       s32 angle = 0xd000;
 
       Actor_SetPositionAndFacing(12, PIXELS(272), PIXELS(296), angle);
     }
     {
       /* FAKEMATCH(temporary): a local holding the angle builds it ahead of the
-       * other arguments; as a plain argument, three rows are reordered. */
+       * other arguments; as a plain argument, 4 of 128 instructions differ in
+       * tla-en. */
       s32 angle = 0x3000;
 
       Actor_SetPositionAndFacing(13, PIXELS(216), PIXELS(264), angle);

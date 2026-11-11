@@ -35,7 +35,7 @@ void Func_02001abc(void) {
   FieldMessage_ShowAtActor(14, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     /* FAKEMATCH(pin): the scene state's address pinned to r3, so that it
-     * loads before the coins; as a plain store, 6 instructions differ in
+     * loads before the coins; as a plain store, 6 of 72 instructions differ in
      * tla-en. */
     register u32 *state __asm__("r3") = (u32 *)gSceneState;
 
@@ -69,7 +69,7 @@ void Func_02001b84(void) {
   FieldMessage_ShowAtActor(8, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     /* FAKEMATCH(pin): the scene state's address pinned to r3, so that it
-     * loads before the coins; as a plain store, 6 instructions differ in
+     * loads before the coins; as a plain store, 6 of 69 instructions differ in
      * tla-en. */
     register u32 *state __asm__("r3") = (u32 *)gSceneState;
 

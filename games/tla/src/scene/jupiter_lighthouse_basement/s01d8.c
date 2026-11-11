@@ -54,7 +54,7 @@ void Func_020001d8(struct Actor *object) {
   (*(s16 *)((u8 *)object + 102))--;
   /* FAKEMATCH(dead): an empty once-only block, whose loop note ends the
    * scheduling block, so the timer is stored before z loads as in the native;
-   * without it, 2 instructions differ. */
+   * without it, 2 of 87 instructions differ in tla-en. */
   do {
   } while (0);
   object->x += Math_Cosine(((object->z >> 14) + (object->y >> 15)) << 8) / 2;

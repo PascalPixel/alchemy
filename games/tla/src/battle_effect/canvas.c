@@ -37,7 +37,7 @@ void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);
 static __inline__ s32 ClearWords_(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the clear forwarded through an inline, which keeps
    * each call's own constants and the routine in a callee-saved register; as
-   * direct Iwram_ClearWords calls, 24 instructions of
+   * direct Iwram_ClearWords calls, 24 of 259 instructions of
    * BattleEffect_OpenCanvasLayer differ in tla-en. */
   return Iwram_ClearWords(destination, size);
 }

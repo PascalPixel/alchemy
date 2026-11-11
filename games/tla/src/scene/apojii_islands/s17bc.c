@@ -5,7 +5,7 @@
 void Func_020017bc(void) {
   /* FAKEMATCH(temporary): the resident clear called through a local pointer, so
    * its entry loads before the size is finished, as in the ROM; as a direct
-   * call, 2 instructions differ. */
+   * call, 2 of 21 instructions differ in tla-en. */
   s32 (*clear)(void *destination, s32 size) = Iwram_ClearWords;
   s32 priority;
 

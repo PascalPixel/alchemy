@@ -42,7 +42,8 @@ void Func_0200062c(s32 id) {
     u8 *cells = map->layers[0].cells;
     u8 *cell = cells + (((object->x >> 20) + ((object->z >> 20) << 7)) << 2);
     /* FAKEMATCH(temporary): a local holding the bit builds it in the register
-     * it ORs into; as cell[3] |= 128, the instructions differ. */
+     * it ORs into; as cell[3] |= 128, 4 of 24 instructions differ in
+     * tla-en. */
     s32 bit = 128;
 
     cell[3] = bit | cell[3];

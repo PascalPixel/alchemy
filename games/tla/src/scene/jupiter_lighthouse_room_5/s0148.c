@@ -21,8 +21,8 @@ void Func_02000148(struct FieldActor *self) {
   self->z = z;
   self->targetX = x;
   /* FAKEMATCH(dead): an empty once-only block, so the target z store stays
-   * ahead of the timer load; without it, the store falls behind and 6
-   * instructions differ (placed by alchemy permute). */
+   * ahead of the timer load; without it, 6 of 40 instructions differ in
+   * tla-en, the store falling behind (placed by alchemy permute). */
   do {
   } while (0);
   self->targetZ = z;

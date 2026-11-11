@@ -76,7 +76,8 @@ s32 Func_02001210(void) {
   Func_0200191c();
   Sound_LoadPresetParameters(2);
   /* FAKEMATCH(dead): the return in a once-only block, which loads the scene
-   * number before the 1; as the plain return, the 1 comes first. */
+   * number before the 1; as the plain return, the 1 comes first, 2 of 8
+   * instructions differ in tla-en. */
   do {
     return Func_02001a84((s32)&SceneId_Ov64a, 1);
   } while (0);

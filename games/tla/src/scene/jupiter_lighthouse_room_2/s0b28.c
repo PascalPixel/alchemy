@@ -21,7 +21,8 @@ void Func_02000b28(s32 id) {
   {
     u8 *flags = &object->priorityFlags;
     /* FAKEMATCH(temporary): a local holding 128, so the bit is built in the
-     * register it is ORed into; as *flags |= 128, not measured. */
+     * register it is ORed into; as *flags |= 128, 4 of 38 instructions differ
+     * in tla-en. */
     s32 bit = 128;
 
     *flags = bit | *flags;

@@ -62,8 +62,8 @@ void Func_020022f4(void) {
   FieldEvent_Wait(1);
   t2 = ((s32)Actor_Get(8));
   /* FAKEMATCH(temporary): a local holding the constant 1, so the value is ORed
-   * into the register that holds it; as one |= 1, the constant is built
-   * second. */
+   * into the register that holds it; as one |= 1, 4 of 362 instructions differ
+   * in tla-en. */
   b1 = 1;
   b1 |= *(u8 *)((t2 + 90));
   *(u8 *)((t2 + 90)) = b1;
@@ -79,9 +79,9 @@ void Func_020022f4(void) {
   {
     s32 a1 = 0x102;
     s32 a2 = 45;
-    /* FAKEMATCH(barrier): an empty asm on a1 and a2, so the later arguments
-     * are loaded before the first; as the plain call, the first is loaded
-     * earlier. */
+    /* FAKEMATCH(barrier): an empty asm on a1 and a2, so the later arguments are
+     * loaded before the first; as the plain call, 16 of 362 instructions differ
+     * in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
     Actor_ShowEmote(8, a1, a2);
   }
@@ -99,8 +99,7 @@ void Func_020022f4(void) {
   {
     s32 a2 = 0;
     /* FAKEMATCH(barrier): an empty asm on a2, so the third argument is loaded
-     * first; behind the barrier that follows, the plain call loads the second
-     * first and 2 instructions differ. */
+     * first; as the plain call, 2 of 362 instructions differ in tla-en. */
     asm volatile("" : "+l"(a2));
     Actor_SetPosition(8, 0, a2);
   }
@@ -110,7 +109,8 @@ void Func_020022f4(void) {
   {
     s32 a0 = *(s32 *)(v5);
     /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, it is loaded last. */
+     * before the others; as the plain call, 2 of 362 instructions differ in
+     * tla-en. */
     asm volatile("" : "+l"(a0));
     FieldCamera_FollowActor(a0, 1);
   }
@@ -130,7 +130,8 @@ void Func_020022f4(void) {
   {
     s32 a0 = 4;
     /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, it is loaded last. */
+     * before the others; as the plain call, 4 of 362 instructions differ in
+     * tla-en. */
     asm volatile("" : "+l"(a0));
     Actor_SetAnimation(a0, 3);
   }
@@ -147,7 +148,8 @@ L_0200a66c:;
   {
     s32 a0 = 9;
     /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, it is loaded last. */
+     * before the others; as the plain call, 2 of 362 instructions differ in
+     * tla-en. */
     asm volatile("" : "+l"(a0));
     Actor_SetPosition(a0, 0, 0);
   }

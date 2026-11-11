@@ -8,7 +8,8 @@ void TrialRoad_Idle(void) {}
 void TrialRoad_SetBalanceStateReady(void) {
   u16 *state = (u16 *)gSceneState;
   /* FAKEMATCH(temporary): a local holding 9 builds it with movs; as a plain
-   * constant, which is a halfword pool load, the instructions differ. */
+   * constant, which is a halfword pool load, 4 of 4 instructions differ in
+   * tla-en. */
   u16 ready = 9;
 
   *state = ready;

@@ -22,8 +22,8 @@ s32 Func_02000fb8(void) {
   *effect = 0x202;
   /* FAKEMATCH(barrier): the empty asm takes gMainRoutineWork, so its address
    * loads before the 0x202 store and the scene's offset starts after it, as in
-   * the ROM; as no asm, 2 instructions differ (and 2 with the store before the
-   * party pointer). */
+   * the ROM; as no asm, 12 of 61 instructions differ in tla-en (0 with the
+   * store before the party pointer, 39 with no party pointer). */
   asm("" : : "r"(party));
   scene = party->scene;
   if (scene == (s32)&SceneId_Ov679Room2) {

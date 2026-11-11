@@ -37,9 +37,9 @@ void Func_020026cc(void) {
   Actor_SetPositionAndCommit(13, 356, 164);
   Event_Wait(40);
   /* FAKEMATCH(dead): an empty once-only block, whose loop note ends the
-   * scheduling block before the battle rule is set; without it, the last
-   * position call's arguments (r1 shifted before r2 is loaded) are one
-   * reordered pair. */
+   * scheduling block before the battle rule is set, so the last position
+   * call's r1 is shifted before r2 is loaded; without it, 2 of 87
+   * instructions differ in tla-en. */
   do {
   } while (0);
   gMainRoutineWork.battleRule24b = 2;

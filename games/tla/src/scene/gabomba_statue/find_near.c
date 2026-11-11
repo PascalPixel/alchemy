@@ -48,9 +48,9 @@ void Func_02000550(void) {
     direction = gData_02005af0;
     Func_020020f0(0);
     Event_SetFlag(515);
-    /* FAKEMATCH(temporary): the 0 stored from a u16 local holding it, so it
-     * is built in a register (movs, strh); as the constant 0 stored directly,
-     * it loads from the pool and 11 instructions differ. */
+    /* FAKEMATCH(temporary): the 0 stored from a u16 local holding it, so it is
+     * built in a register (movs, strh); as the constant 0 stored directly, 11
+     * of 40 instructions differ in tla-en. */
     *(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x166) = zero;
     i = 0;
   loop:

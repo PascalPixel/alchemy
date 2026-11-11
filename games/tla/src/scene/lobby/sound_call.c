@@ -36,7 +36,8 @@ next:
   if (party->activeOwners[i] == 0xff)
     goto none;
   /* FAKEMATCH(barrier): the empty asm with a memory clobber, so the owner byte
-   * is read again for the second test; as no asm, 8 instructions differ. */
+   * is read again for the second test; as no asm, 9 of 33 instructions differ
+   * in tla-en. */
   __asm__ volatile("" ::: "memory");
   if (gMainRoutineWork.activeOwners[i] == owner)
     return 1;

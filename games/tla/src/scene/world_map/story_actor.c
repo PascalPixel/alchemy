@@ -21,8 +21,9 @@ void Animation_ApplyChildValues(struct BobbingMarker *marker, s32 value);
 
 static __inline__ s32 MulQ16(s32 a, s32 b) {
   /* FAKEMATCH(wrapper): through the inline the multiply's address loads between
-   * the halves of 0x40000, as in the native; called directly, both halves come
-   * first. */
+   * the halves of 0x40000, as in the native, where called directly both halves
+   * come first; as Iwram_MulQ16 called directly, 2 of 56 instructions of
+   * WorldMap_UpdateBobbingMarker differ in tla-en. */
   return Iwram_MulQ16(a, b);
 }
 

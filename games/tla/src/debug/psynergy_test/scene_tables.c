@@ -145,8 +145,9 @@ void Func_02000224(void) {
 
 static __inline__ void Unit_AddHpBy(s32 owner, s32 delta) {
   /* FAKEMATCH(wrapper): the call forwarded through an inline, so -100 is built
-   * again before each call, as the ROM has it; as a direct Unit_AddHp call,
-   * -100 stays in r5 for the next call (not measured). */
+   * again before each call, as the ROM has it, where a direct call would keep
+   * it in r5 for the next call; as a direct Unit_AddHp call, 10 of 53
+   * instructions differ in tla-en. */
   Unit_AddHp(owner, delta);
 }
 
@@ -212,8 +213,9 @@ void Func_02000454(void) { Actor_GetById(4)->terrainId = 0; }
 
 static __inline__ void Actor_Emote(s32 actor, s32 emote, s32 frames) {
   /* FAKEMATCH(wrapper): the call forwarded through an inline, so the emote's
-   * 255 is added after the actor is set, as the ROM has it; as a direct
-   * Func_080d47b4 call, the actor is set before the emote (not measured). */
+   * 255 is added after the actor is set, as the ROM has it; as direct
+   * Func_080d47b4 calls, 4 of 62 instructions of Func_02000508 and
+   * Func_0200055c differ in tla-en. */
   Func_080d47b4(actor, emote, frames);
 }
 
@@ -226,9 +228,8 @@ static __inline__ s32 GameFlag_TestBit(s32 flag) {
 
 static __inline__ void Actor_SetPositionById(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH(wrapper): the call forwarded through an inline, so the x
-   * constant is split around the actor copy, as the ROM has it; as a direct
-   * Actor_SetPositionAndReset call, x is built before the copy (not
-   * measured). */
+   * constant is split around the actor copy, as the ROM has it; as direct
+   * Actor_SetPositionAndReset calls, 4 of 62 instructions differ in tla-en. */
   Actor_SetPositionAndReset(actor, x, z);
 }
 

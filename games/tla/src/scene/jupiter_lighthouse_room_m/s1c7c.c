@@ -18,29 +18,31 @@ void Func_02004904(s32 a, s32 b);
 
 static __inline__ void JupiterLighthouseRoomM_AddHp(s32 owner, s32 delta) {
   /* FAKEMATCH(wrapper): forwarding through the inline reloads -10000 from
-   * the pool at each call, as the native does; as direct calls, the four
-   * uses share it in r5 and 23 of 160 instructions differ. */
+   * the pool at each call, as the native does; as direct calls, 23 of 160
+   * instructions of Func_02001c7c differ in tla-en, the four uses sharing it
+   * in r5. */
   Unit_AddHp(owner, delta);
 }
 
 static __inline__ void JupiterLighthouseRoomM_AddPp(s32 owner, s32 delta) {
   /* FAKEMATCH(wrapper): forwarding through the inline reloads -10000 from
-   * the pool at each call, as the native does; as direct calls, the four
-   * uses share it in r5 and 23 of 160 instructions differ. */
+   * the pool at each call, as the native does; as direct calls, 23 of 160
+   * instructions of Func_02001c7c differ in tla-en, the four uses sharing it
+   * in r5. */
   Unit_AddPp(owner, delta);
 }
 
 static __inline__ void JupiterLighthouseRoomM_Func_020048b4(s32 actor, s32 a) {
   /* FAKEMATCH(wrapper): forwarding through the inline builds the second
    * argument around the first, as the native does; as a direct call, 2 of 160
-   * instructions differ. */
+   * instructions of Func_02001c7c differ in tla-en. */
   Actor_ArmCallbackAndRefresh(actor, a);
 }
 
 static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
    * constants, as ☀️'s scene layer does; as direct calls, 35 of 160
-   * instructions differ. */
+   * instructions of Func_02001c7c differ in tla-en. */
   Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, angle);
 }
 
@@ -48,7 +50,7 @@ static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle) {
   {                                                                            \
     /* FAKEMATCH(temporary): the angle passes through a block local, so it is  \
      * built before x and z, as the native does; as a plain argument, 12 of    \
-     * 160 instructions differ. */                                             \
+     * 160 instructions of Func_02001c7c differ in tla-en. */                  \
     s32 angle_ = (angle);                                                      \
     ObjPlace(id, (x) << 16, (z) << 16, angle_);                                \
   }
@@ -86,7 +88,8 @@ void Func_02001c7c(void) {
   do {
     /* FAKEMATCH(dead): the store kept in a once-only block, whose end ends
      * CSE's block, so the byte store's dead zero is not kept in r8 for the
-     * store of the owner below; without it, 31 of 160 instructions differ. */
+     * store of the owner below; without it, 31 of 160 instructions differ
+     * in tla-en. */
     gMainRoutineWork.battleRule24b = 6;
   } while (0);
   Event_SetAfterBattleDestination((s32)&SceneId_Ov6a3, 77);

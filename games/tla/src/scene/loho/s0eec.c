@@ -35,7 +35,8 @@ void Func_02000eec(void) {
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
 
   /* FAKEMATCH(dead): an empty once-only block, so gMainRoutineWork loads
-   * before the event work; as no block, one row is reordered. */
+   * before the event work; as no block, one row is reordered, 2 of 31
+   * instructions differ in tla-en. */
   do {
   } while (0);
   Actor_SetModeById(party->currentOwner, 2);

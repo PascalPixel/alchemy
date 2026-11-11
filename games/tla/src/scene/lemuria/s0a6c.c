@@ -49,7 +49,7 @@ void Func_02000ad8(void) {
 
   /* FAKEMATCH(barrier): the empty asm reading first, so the first line's load
    * comes before the register address is built; as no asm, the load follows
-   * it. */
+   * it, 6 of 34 instructions differ in tla-en. */
   __asm__("" : : "r"(first));
   scroll = &REG_BG2HOFS;
   *scroll = first;

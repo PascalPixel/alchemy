@@ -26,7 +26,7 @@ static __inline__ void Lobby_ResetTransferState(void) {
   ime = &REG_IME;
   /* FAKEMATCH(dead): the IME exchange in a once-only block, which keeps it
    * before the zero and status constants; as plain statements, the constants
-   * come first. */
+   * come first, 8 of 62 instructions of Func_020007b8 differ in tla-en. */
   do {
     saved = *ime;
     *ime = (u16)ime;
@@ -49,7 +49,8 @@ s32 Func_020007b8(void) {
   s32 flag;
 
   /* FAKEMATCH(dead): the result's zero in a once-only block, which keeps it
-   * apart from the flag query that follows; as the plain result = 0. */
+   * apart from the flag query that follows; as the plain result = 0, 2 of 62
+   * instructions differ in tla-en. */
   do {
     result = 0;
   } while (0);

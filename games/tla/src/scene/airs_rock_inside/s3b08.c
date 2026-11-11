@@ -19,8 +19,8 @@ void Func_02003b08(void) {
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 376, 668);
   flags = &BYTE_AT(Actor_GetById(gMainRoutineWork.currentOwner), 90);
   /* FAKEMATCH(temporary): the bit held in a u8 local, built in the register it
-   * ORs into, as the ROM does; as |= 1, the byte loads there instead and 4
-   * instructions differ (also as an s32 local). */
+   * ORs into, as the ROM does; as |= 1, the byte loads there instead, 4 of
+   * 47 instructions differ in tla-en (also as an s32 local). */
   bit = 1;
   *flags = bit | *flags;
   Func_02005e1c();

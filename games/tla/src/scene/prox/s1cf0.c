@@ -31,8 +31,9 @@ void Func_02001cf0(void) {
   System_Wait(1);
   Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(184), PIXELS(484));
   /* FAKEMATCH(temporary): the three facings held in locals set before their
-   * first placement; as constants, each placement rebuilds them, the later
-   * turns cannot share them and 76 instructions differ. */
+   * first placement, where as constants each placement rebuilds them and the
+   * later turns cannot share them; as the constants, 76 of 936 instructions
+   * differ in tla-en. */
   angleC000 = 0xc000;
   angleB000 = 0xb000;
   Actor_SetPositionAndFacing(0, PIXELS(168), PIXELS(484), angleC000);

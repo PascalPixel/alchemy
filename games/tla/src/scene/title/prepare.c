@@ -62,7 +62,7 @@ s32 Func_0200005c(void) {
     limit = 3599;
     /* FAKEMATCH(barrier): the bound goes through an empty asm, so 3599 is
      * compared with bgt; as frames > 3599, which combine canonicalizes to 3600
-     * with bge, 4 instructions differ. */
+     * with bge, 19 of 155 instructions differ in tla-en. */
     __asm__("" : "+l"(limit));
     if (frames > limit)
       goto out;
@@ -98,8 +98,8 @@ s32 Func_0200005c(void) {
           Fade_ToBlack(30);
           Fade_Wait();
           /* FAKEMATCH(dead): an empty once-only block keeps the counter's zero
-           * after the wait call; without it, sched2 fills the call's stall
-           * with it and 2 instructions differ. */
+           * after the wait call, where sched2 would fill the call's stall
+           * with it; without it, 2 of 155 instructions differ in tla-en. */
           do {
           } while (0);
           frames = 0;
@@ -186,8 +186,8 @@ void Func_02000278(void) {
   y = 0x88;
   do {
     /* FAKEMATCH(temporary): the row's y copied to n, so 0x88 is rebuilt in n's
-     * register each pass; as y used directly, which stays in r8, 20
-     * instructions differ. */
+     * register each pass; as y used directly, which stays in r8, 20 of
+     * 70 instructions differ in tla-en. */
     n = y;
     x = 232 - (18 - i) * 8;
     *w++ = 0;

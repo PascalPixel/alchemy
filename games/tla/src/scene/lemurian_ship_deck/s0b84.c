@@ -31,7 +31,7 @@ static __inline__ void AddTask(void (*func)(void), s32 priority) {
   /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
    * scene layer, so the arguments are set up in their own order and each call
    * keeps its constants; as a direct call, the costly constant is built first
-   * or shared and 2 or more instructions differ. */
+   * or shared, 22 of 34 instructions of Func_02000b84 differ in tla-en. */
   Task_Add(func, priority);
 }
 
@@ -52,7 +52,7 @@ void Func_020002cc(void) {
                 FACING_EAST);
   /* FAKEMATCH(temporary): the angle held in a local, so its two-instruction
    * constant is built ahead of the position arguments; as the constant
-   * argument, 4 instructions differ in tla-en. */
+   * argument, 4 of 405 instructions differ in tla-en. */
   angle = 0xd000;
   Actor_SetPositionAndFacing(9, PIXELS(558), PIXELS(345), angle);
   Actor_SetPositionAndFacing(7, PIXELS(534), PIXELS(404), FACING_EAST);
@@ -182,7 +182,7 @@ void Func_020006e4(void) {
     /* FAKEMATCH(pin): offset fixed to r1, so from patch 2 -16 is built once
      * in r1 and copied to r2; as two constants it is built twice, and as one
      * plain variable (copied, chained or in an array) it takes r2 and is
-     * copied to r1: 6 instructions differ. */
+     * copied to r1, 6 of 458 instructions differ in tla-de. */
     register s32 offset asm("r1") = -16;
 
     FieldActor_LaunchFromLeader(5, offset, offset, FACING_SOUTHEAST);

@@ -3,8 +3,8 @@
 
 void Func_020044d4(void) {
   /* FAKEMATCH(temporary): a local holding the angle, set just before its call,
-   * builds it ahead of the other arguments; as a plain argument, one row is
-   * reordered. */
+   * builds it ahead of the other arguments; as a plain argument, 2 of 206
+   * instructions differ in tla-en. */
   s32 angle;
 
   Func_020051c0();

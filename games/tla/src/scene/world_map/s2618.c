@@ -5,8 +5,9 @@
 static __inline__ void PosSet(s32 id, s32 x, s32 z) {
   /* FAKEMATCH(wrapper): as in the scene layer of The Broken Seal, the command
    * takes pixels and shifts them into fixed point inside an inline; as a direct
-   * call or a forwarding inline, id and dz take each other's register and 8
-   * instructions differ. */
+   * call or a forwarding inline, id and dz take each other's register; as
+   * Actor_SetHorizontalPositionWithTerrain called directly, 8 of 18
+   * instructions differ in tla-en. */
   Actor_SetHorizontalPositionWithTerrain(id, x << 16, z << 16);
 }
 

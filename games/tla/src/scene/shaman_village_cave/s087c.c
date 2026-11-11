@@ -27,7 +27,8 @@ void Message_CloseFinishedWindows();
     /* emote of this overlay; as an inline call the actor comes */             \
     /* one row early wherever the emote takes two instructions, */             \
     /* and an empty asm barrier at each call moves the literal */              \
-    /* pools of a long scene. */                                               \
+    /* pools of a long scene. As an unpinned local, 12 of 169 */               \
+    /* instructions differ in tla-en (Func_0200087c). */                       \
     register s32 emote_ __asm__("r1") = (emote);                               \
     /* FAKEMATCH(pin): the frames pinned to r2 with the emote above. */        \
     register s32 frames_ __asm__("r2") = (frames);                             \
@@ -46,7 +47,7 @@ void Func_0200087c(void) {
   {
     /* FAKEMATCH(temporary): the local holding one constant starts the facing
      * before the other arguments, as the native has; as the plain argument
-     * 0xc000, one row is reordered. */
+     * 0xc000, 2 of 169 instructions differ in tla-en. */
     s32 turn = 0xc000;
 
     Actor_SetPositionAndFacing(18, PIXELS(218), PIXELS(320), turn);

@@ -8,8 +8,8 @@ void Func_02002b54(s32 x, s32 z, s32 layer, s32 value);
 /// for.
 void Func_020002f0(void) {
   /* FAKEMATCH(wrapper): every call forwarded through the call layer; as direct
-   * calls, the coordinates and flags are shared in saved registers and 117
-   * instructions differ. */
+   * calls, 63 of 303 instructions differ in tla-en, the coordinates and flags
+   * shared in saved registers. */
   MapGrid_CopyCellsLayered(0x5e, 0x3c, 9, 8, 0x5e, 0xa);
   Call4((void (*)())Func_02002b54, 0x2300000, 0xf00000, 0, -2);
   Call4((void (*)())Func_02002b54, 0x1f00000, 0x1000000, 0, -2);

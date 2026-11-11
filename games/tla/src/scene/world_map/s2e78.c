@@ -40,8 +40,8 @@ void Func_02002e00(void) {
   FieldCamera_SetSpeed(0x40000, 0x8000);
   {
     /* FAKEMATCH(pin): the mode pinned to r3 starts right after the 1 negated
-     * for y, before x loads; as a plain constant, 2 instructions differ in
-     * tla-en. */
+     * for y, before x loads; as a plain constant, 2 of 39 instructions differ
+     * in tla-en. */
     register s32 mode asm("r3") = 1;
 
     Camera_MoveWithinMapBounds(11890 << 16, -1, 10090 << 16, mode);

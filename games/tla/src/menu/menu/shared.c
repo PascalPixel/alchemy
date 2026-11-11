@@ -1169,15 +1169,15 @@ s32 GameFlag_ClearBit(s32);
 static __inline__ void CopyWords(const void *src, CopyFn copy, void *dst,
                                  s32 size) {
   /* FAKEMATCH(wrapper): the copy forwarded through an inline, which keeps the
-   * load in r1 instead of r0; as a direct call through copy (not
-   * measured). */
+   * load in r1 instead of r0; as a direct Iwram_CopyWords call, 6 of 47
+   * instructions differ in tla-en. */
   copy(dst, src, size);
 }
 
 static __inline__ void FillWords(FillFn fill, void *dst, s32 size, u32 value) {
   /* FAKEMATCH(wrapper): the fill forwarded through an inline, which keeps the
-   * r3 load and the literal pool's position; as a direct call through fill
-   * (not measured). */
+   * r3 load and the literal pool's position; as a direct Iwram_FillWords
+   * call, 4 of 47 instructions differ in tla-en. */
   fill(dst, size, value);
 }
 

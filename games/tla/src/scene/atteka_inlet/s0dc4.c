@@ -11,18 +11,17 @@ struct MapBits {
   u8 mode : 2;
 };
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02000c14(void);
 void Func_02000bb8(void);
 
 void Func_02000bf0(void);
 
-static __inline__ void Task_Add_(void (*func)(void),
-                                                      s32 priority) {
+static __inline__ void Task_Add_(void (*func)(void), s32 priority) {
   /* FAKEMATCH(wrapper): the call forwarded through an inline, which keeps each
-   * call's own constants, as The Broken Seal's scene layer does; as a direct
-   * call. */
+   * call's own constants, as The Broken Seal's scene layer does; as direct
+   * calls to Task_Add, 28 of 107 instructions of Func_02000dc4 differ in
+   * tla-en. */
   Task_Add(func, priority);
 }
 

@@ -63,7 +63,8 @@ void Func_02000458(void) {
 
     /* FAKEMATCH(temporary): the halfword counters take an s32 zero assigned
      * inside the first store; as a halfword constant it loads from the pool,
-     * and as a zero set first 346 is kept out of r3 (differ 27 to 4). */
+     * and as a zero set first 346 is kept out of r3; as 0 stored in each, 13
+     * of 73 instructions differ in tla-en. */
     *(u16 *)(work + 346) = zero = 0;
     *(u16 *)(work + 350) = zero;
     *(u16 *)(work + 348) = zero;

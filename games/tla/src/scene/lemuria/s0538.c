@@ -28,7 +28,7 @@ void Func_02000560(void) {
   flag = 0x900;
   /* FAKEMATCH(barrier): the empty asm on flag, so the flag's high part is
    * shifted before the two coordinates start; as the plain constant, the shift
-   * comes after them and 2 instructions differ. */
+   * comes after them, 2 of 33 instructions differ in tla-en. */
   asm volatile("" : "+l"(flag));
   x = 0x3580000;
   z = 0x3f80000;
@@ -36,7 +36,7 @@ void Func_02000560(void) {
   value = Func_02001d5c(x, z, 0);
   /* FAKEMATCH(temporary): the first z copied to old, so the second z starts
    * before the first store call's arguments; as z reassigned after that call,
-   * its shift comes late and 2 instructions differ. */
+   * its shift comes late, 2 of 33 instructions differ in tla-en. */
   old = z;
   z = 0x4080000;
   Func_02001d64(x, old, 0, value | 64);

@@ -16,8 +16,8 @@ static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle) {
   {                                                                            \
     /* FAKEMATCH(temporary): the angle passes through a block local, so the    \
      * first two angles are shared in r5 and the later ones built before z,    \
-     * as the native does; as a plain argument, 24 instructions differ (as one \
-     * function-wide angle local, 10 to 16). */                                \
+     * as the native does; as a plain argument, 24 of 53 instructions differ   \
+     * in tla-en (as one function-wide angle local, 10 to 16). */              \
     s32 angle_ = (angle);                                                      \
     ObjPlace(id, (x) << 16, (z) << 16, angle_);                                \
   }

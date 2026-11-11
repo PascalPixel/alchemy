@@ -92,7 +92,8 @@ static inline void TundariaTower_FadeFrom(s32 color, s32 b) {
 
 static inline void TundariaTower_ObjPlace(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH(wrapper): scene calls reach the main image through this inline;
-   * as a direct call, the actor loads before the coordinates. */
+   * as a direct call, which loads the actor before the coordinates, 2 of 89
+   * instructions differ in tla-en (Func_02000964). */
   Actor_ResetAndSetPosition(actor, x, z);
 }
 

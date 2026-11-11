@@ -87,7 +87,8 @@ void Func_020006ac(void) {
   {
     /* FAKEMATCH(pin): the leader pinned to r0, so it is copied there before the
      * acceleration is built, as the native does; as
-     * Actor_SetSpeedParameters(leader, 0x40000, 0x20000). */
+     * Actor_SetSpeedParameters(leader, 0x40000, 0x20000), 2 of 85 instructions
+     * differ in tla-en. */
     register s32 who __asm__("r0");
 
     actor->speed = 0x40000;

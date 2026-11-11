@@ -42,7 +42,8 @@ void Func_02001c5c(void) {
   Actor_Get(18)->motionFlags = 2;
   /* FAKEMATCH(temporary): the facing angle held in a local is built once and
    * shared by the three placements, as in the native; as a literal, each
-   * forwarded call builds it again. */
+   * forwarded call builds it again; as 0xe000 in each call, 25 of 168
+   * instructions differ in tla-en. */
   angle = 0xe000;
   Func_02004c90_(16, PIXELS(8913), PIXELS(5853), angle);
   Func_02004c90_(17, PIXELS(8929), PIXELS(5869), angle);

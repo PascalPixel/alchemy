@@ -25,7 +25,7 @@ static __inline__ void AddTask(void (*func)(void), s32 priority) {
   /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
    * scene layer, so the arguments are set up in their own order and each call
    * keeps its constants; as a direct call, the costly constant is built first
-   * or shared and 2 or more instructions differ. */
+   * or shared, 18 of 62 instructions differ in tla-en. */
   Task_Add(func, priority);
 }
 
@@ -35,12 +35,12 @@ s32 Func_02000be0(void) {
   struct MapModeBits bits = map->bits;
 
   /* FAKEMATCH(temporary): the mode bits changed in a one-byte copy, bits, and
-   * stored back; as map->bits.mode = 1 with no empty block, 2 instructions
-   * differ in tla-en. */
+   * stored back; as map->bits.mode = 1 with no empty block, 2 of 62
+   * instructions differ in tla-en. */
   bits.mode = 1;
   /* FAKEMATCH(dead): an empty once-only block before the copy's store, so
-   * gMainRoutineWork's address loads between the or and the store; measured
-   * with the copy above. */
+   * gMainRoutineWork's address loads between the or and the store; as no block,
+   * 12 of 62 instructions differ in tla-en. */
   do {
   } while (0);
   party = &gMainRoutineWork;
@@ -50,7 +50,8 @@ s32 Func_02000be0(void) {
   } else {
     *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
     /* FAKEMATCH(dead): an empty once-only block, which ends the scheduling
-     * block after the store; as no block, tla-en differs. */
+     * block after the store; as no block, 4 of 62 instructions differ in
+     * tla-en. */
     do {
     } while (0);
     Actor_Get(party->currentOwner)->priorityFlags |= 0x20;

@@ -3,8 +3,8 @@
 void Func_02004fb4(void) {
   struct Actor **slot = &gData_020062ac;
   /* FAKEMATCH(temporary): one local zero, kept in r7 for the three byte stores
-   * below; as plain zeros, built in r2 where they are stored, 22 instructions
-   * differ. */
+   * below; as plain zeros, built in r2 where they are stored, 22 of 51
+   * instructions differ in tla-en. */
   s32 zero = 0;
   struct Actor *object =
       ((struct Actor *)Import_ActorCreate(0x1e9, 0x1980000, 0x280000, 0x1580000));

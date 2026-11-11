@@ -13,8 +13,9 @@ void Func_02002554(s32 *position, s32 base) {
     object->gravity = (u16)Random16Far();
     object->unk4c = (u16)(Random16Far() << 1) + base;
     /* FAKEMATCH(temporary): an s32 local keeps the zero extension and the
-     * pool word 0xffff8000; as a direct store, the add narrows to 16 bits
-     * (movs, lsls for 0x8000, no extension). */
+     * pool word 0xffff8000; as a direct store, which narrows the add to 16
+     * bits (movs, lsls for 0x8000, no extension), 10 of 50 instructions differ
+     * in tla-en. */
     angle = (u16)Random16Far() - 0x8000;
     object->action = angle;
     Func_020024f8(object, 3);

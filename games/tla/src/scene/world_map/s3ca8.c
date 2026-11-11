@@ -10,8 +10,9 @@ u32 Random16Far(void);
 static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
   /* FAKEMATCH(wrapper): as in the scene layer of The Broken Seal, forwarding
    * through the inline sets the arguments up in their own order: the native
-   * shifts z before it starts the -1; as direct calls the -1 starts first, four
-   * pairs are reordered and 8 instructions differ. */
+   * shifts z before it starts the -1, where called directly the -1 starts
+   * first; as direct calls, 6 of 66 instructions of Func_02003ca8 differ in
+   * tla-en. */
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 

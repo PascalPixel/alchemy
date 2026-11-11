@@ -44,8 +44,9 @@ void Func_02003c6c(struct PushEvent *event) {
                                      0);
   {
     /* FAKEMATCH(temporary): 0xf1f held in a word local, so it is built with
-     * movs, lsls, adds as the native does; as a plain store of the constant,
-     * it loads from the pool, not measured. */
+     * movs, lsls, adds as the native does (a plain store loads it from the
+     * pool); as a plain store of the constant, 20 of 131 instructions differ
+     * in tla-en. */
     u32 winout = 0xf1f;
 
     REG_WINOUT = winout;

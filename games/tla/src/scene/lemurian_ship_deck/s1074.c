@@ -14,7 +14,7 @@ static __inline__ void SetSpeed(s32 id, s32 speed, s32 acceleration) {
   /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
    * scene layer, so the arguments are set up in their own order and each call
    * keeps its constants; as a direct call, the costly constant is built first
-   * or shared and 2 or more instructions differ. */
+   * or shared, 2 of 101 instructions differ in tla-en. */
   Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
@@ -22,7 +22,7 @@ static __inline__ void SetPosition(s32 id, s32 x, s32 z) {
   /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
    * scene layer, so the arguments are set up in their own order and each call
    * keeps its constants; as a direct call, the costly constant is built first
-   * or shared and 2 or more instructions differ. */
+   * or shared, 2 of 101 instructions differ in tla-en. */
   Actor_SetPositionAndReset(id, x, z);
 }
 

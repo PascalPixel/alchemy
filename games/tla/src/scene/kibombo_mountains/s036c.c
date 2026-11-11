@@ -7,10 +7,9 @@ void Func_02001084(void);
 void Func_0200108c(void);
 
 void Func_0200036c(void) {
-  /* FAKEMATCH(wrapper): the placements through call.h's Call3 and the flags
-   * through flag_call.h, which build each constant again at each call; as
-   * direct calls, which share 764 and 380 in saved registers, 36 instructions
-   * differ. */
+  /* FAKEMATCH(wrapper): the placements and flags through event.h's inlines,
+   * which build each constant again at each call; as direct calls, which share
+   * 764 and 380 in saved registers, 36 of 76 instructions differ in tla-en. */
   Func_02001084();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetDestination(17, 764, 384);

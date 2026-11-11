@@ -11,9 +11,9 @@ void Func_02000f00(void) {
       ((struct GabombaStatueChamberObject *)Actor_GetById(8));
   s32 x = leader->x;
   s32 z = leader->z;
-  /* FAKEMATCH(temporary): a local holding the 0 for the three byte stores,
-   * set before the null test, so it takes r7; as the constant 0 in each store,
-   * 20 instructions differ. */
+  /* FAKEMATCH(temporary): a local holding the 0 for the three byte stores, set
+   * before the null test, so it takes r7; as the constant 0 in each store, 20
+   * of 58 instructions differ in tla-en. */
   s32 zero = 0;
   struct GabombaStatueChamberObject *object;
 
@@ -43,9 +43,9 @@ void Func_02000f88(void) {
       ((struct GabombaStatueChamberObject *)Actor_GetById(8));
   s32 x = leader->x;
   s32 z = leader->z;
-  /* FAKEMATCH(temporary): a local holding the 0 for the three byte stores,
-   * set before the null test, so it takes r7; as the constant 0 in each store,
-   * 20 instructions differ. */
+  /* FAKEMATCH(temporary): a local holding the 0 for the three byte stores, set
+   * before the null test, so it takes r7; as the constant 0 in each store, 20
+   * of 58 instructions differ in tla-en. */
   s32 zero = 0;
   struct GabombaStatueChamberObject *object;
 

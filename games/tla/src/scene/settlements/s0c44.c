@@ -8,7 +8,8 @@ void Event_WaitTransitionFrames(void);
 static __inline__ void CenterOn(s32 id, s32 column, s32 offset) {
   /* FAKEMATCH(wrapper): the call forwarded through the inline, which sets the
    * arguments up in their own order; as a direct Actor_CenterOnColumn call,
-   * the offset is negated after the column (differ 2). */
+   * 2 of 74 instructions differ in tla-en (the offset is negated after the
+   * column). */
   Actor_CenterOnColumn(id, column, offset);
 }
 

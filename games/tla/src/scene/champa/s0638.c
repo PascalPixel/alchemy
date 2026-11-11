@@ -39,8 +39,8 @@ void Func_02000638(void) {
       FieldEvent_SetMessageId((s32)MsgChampa52);
       {
         /* FAKEMATCH(temporary): the facing in a local, which starts it before
-         * the other arguments as the native has; as a plain argument, one row
-         * is reordered. */
+         * the other arguments as the native has; as the plain argument 0xc000,
+         * 2 of 414 instructions differ in tla-en. */
         s32 angle = 0xc000;
 
         Actor_SetPositionAndFacing(29, PIXELS(314), PIXELS(679), angle);
@@ -71,8 +71,8 @@ void Func_02000638(void) {
       FieldEvent_Wait(20);
       {
         /* FAKEMATCH(pin): the emote pinned to r1, so that it loads before the
-         * actor as the native has; as a plain argument through the inline, the
-         * actor comes one row early. */
+         * actor as the native has; as the plain argument 0x101 through the
+         * inline, 2 of 414 instructions differ in tla-en. */
         register s32 emote asm("r1") = 0x101;
         /* FAKEMATCH(pin): the frames pinned to r2 with the emote above, for
          * the same row. */
@@ -113,7 +113,8 @@ void Func_02000638(void) {
       {
         s32 b = 0x108, c = 0x1e;
         /* FAKEMATCH(barrier): the emote and the frames held at an empty asm, so
-         * the first argument is set last, as the native schedule has it. */
+         * the first argument is set last, as the native schedule has it; as no
+         * asm, 18 of 414 instructions differ in tla-en. */
         __asm__ volatile("" : "+l"(b), "+l"(c));
         Actor_ShowEmote(0x1e, b, c);
       }
@@ -129,7 +130,8 @@ void Func_02000638(void) {
       {
         s32 b = 0x108, c = 0x1e;
         /* FAKEMATCH(barrier): the emote and the frames held at an empty asm, so
-         * the first argument is set last, as the native schedule has it. */
+         * the first argument is set last, as the native schedule has it; as no
+         * asm, 12 of 414 instructions differ in tla-en. */
         __asm__ volatile("" : "+l"(b), "+l"(c));
         Actor_ShowEmote(0x1e, b, c);
       }

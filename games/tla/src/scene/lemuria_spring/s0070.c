@@ -8,7 +8,8 @@ extern const u16 gData_02001678[];
 static inline void RegSet(s32 value, s32 reg) {
   /* FAKEMATCH(wrapper): the store forwarded through this inline with s32
    * parameters, so 0x3f42 is built in r2 and the register address held in r3;
-   * as a direct store, 0x3f42 is a pool word. */
+   * as direct stores to REG_BLDCNT and REG_BLDALPHA, 0x3f42 is a pool word, 27
+   * of 40 instructions differ in tla-en. */
   *(u16 *)reg = value;
 }
 

@@ -15,15 +15,17 @@
 
 static inline void Prox_MessageOpen(s32 actor, s32 flags) {
   /* FAKEMATCH(wrapper): scene calls reach the main image through one inline
-   * layer; through Call2 the actor is finished after the flags, and 4
-   * instructions differ in Func_02001cf0, 2 in Func_02000dac. */
+   * layer; as direct calls to FieldMessage_ShowAtActor, 29 of 936 instructions
+   * of Func_02001cf0 differ in tla-en, 17 of 824 of Func_02000dac and 109 of
+   * 1399 of Func_02002a8c. */
   FieldMessage_ShowAtActor(actor, flags);
 }
 
 static inline void Prox_Jump(s32 actor, s32 height, s32 frames) {
   /* FAKEMATCH(wrapper): scene calls reach the main image through one inline
-   * layer, which sets the actor last as the native does; through Call3, 38
-   * instructions differ in Func_02001cf0 and 28 in Func_02000dac. */
+   * layer, which sets the actor last as the native does; as direct calls to
+   * Func_080d47b4, 158 of 936 instructions of Func_02001cf0 differ in tla-en,
+   * 96 of 824 of Func_02000dac and 79 of 1399 of Func_02002a8c. */
   Func_080d47b4(actor, height, frames);
 }
 

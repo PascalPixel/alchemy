@@ -28,8 +28,8 @@ void Func_020004c0(s32 mode) {
   }
   if (Event_GetFlag(0xa00) || mode == 1) {
     /* FAKEMATCH(temporary): a local holding 0, so the zero is built in r2
-     * and the counter's address in r3; as the 0 stored directly, not
-     * measured. */
+     * and the counter's address in r3; as the 0 stored directly, 6 of 44
+     * instructions differ in tla-en. */
     s32 zero = 0;
 
     gData_02002cc0 = zero;
@@ -52,7 +52,8 @@ void Func_02000544(s32 id) {
   {
     u8 *flags = &object->priorityFlags;
     /* FAKEMATCH(temporary): a local holding 128, so the bit is built in the
-     * register it is ORed into; as *flags |= 128, not measured. */
+     * register it is ORed into; as *flags |= 128, 4 of 38 instructions differ
+     * in tla-en. */
     s32 bit = 128;
 
     *flags = bit | *flags;

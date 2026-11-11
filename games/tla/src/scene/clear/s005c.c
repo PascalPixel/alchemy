@@ -23,7 +23,8 @@ void Func_020021f8(void *source, void *destination);
 static __inline__ void Decode_(void *source, void *destination) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps the buffer address
    * a constant of each call, as ☀️'s system call layer does; as a direct call
-   * the address is kept in r5, differ 22. */
+   * the address is kept in r5; as Func_020021f8 called directly, 21 of 103
+   * instructions differ in tla-en (Func_0200005c). */
   Func_020021f8(source, destination);
 }
 
@@ -93,8 +94,8 @@ scroll_pair:
     struct Actor *leader;
     /* FAKEMATCH(pin): the flag's zero pinned to r5 as a halfword, so that it
      * loads from the pool after the call, as the native has; as a plain store
-     * it reuses the scroll loop's zero kept in r5; pinned as a byte, differ
-     * 20. */
+     * it reuses the scroll loop's zero kept in r5; as leader->motionFlags = 0,
+     * 4 of 103 instructions differ in tla-en. */
     register u16 zero asm("r5");
 
     leader = Actor_Get(gMainRoutineWork.currentOwner);

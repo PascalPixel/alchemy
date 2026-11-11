@@ -15,13 +15,15 @@ void Func_080d3b28(s32 a, s32 b);
 
 static __inline__ void Func_020034d4_(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants, as ☀️'s scene layer does; as a direct call they are not. */
+   * constants, as ☀️'s scene layer does; as a direct call, 4 of 112
+   * instructions differ in tla-en (Func_020004d4). */
   Actor_SetHorizontalPositionWithTerrain(actor, x, z);
 }
 
 static __inline__ void Func_0200361c_(s32 a, s32 b) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants, as ☀️'s scene layer does; as a direct call they are not. */
+   * constants, as ☀️'s scene layer does; as a direct call, 2 of 112
+   * instructions differ in tla-en (Func_020004d4). */
   Func_080d3b28(a, b);
 }
 

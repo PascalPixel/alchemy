@@ -44,7 +44,8 @@ s32 Func_02002614(void) {
         &((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect;
     /* FAKEMATCH(pin): the call's argument pinned to the r0 it is passed in, so
      * it loads before the store as the native does; in the plain order the
-     * store comes first, one pair reordered and 2 instructions differ. */
+     * store comes first; as ...->screenEffect = 0x209 and Func_020045dc(0), as
+     * the other rooms write it, 2 of 147 instructions differ in tla-en. */
     register s32 skip __asm__("r0");
     s32 value = 0x209;
 

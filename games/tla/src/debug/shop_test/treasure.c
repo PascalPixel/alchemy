@@ -9,8 +9,8 @@ void Party_RemoveActiveOwner(s32 owner);
 static __inline__ void Inventory_AddItemAgain(s32 owner, s32 item) {
   /* FAKEMATCH(wrapper): the call forwarded through an inline where the next
    * call adds the same item, so the item is built again, as the ROM has it;
-   * as a direct Inventory_AddItem call, the item stays in r5 (not
-   * measured). */
+   * where a direct call would keep it in r5; as direct Inventory_AddItem
+   * calls, 24 of 134 instructions differ in tla-en. */
   Inventory_AddItem(owner, item);
 }
 

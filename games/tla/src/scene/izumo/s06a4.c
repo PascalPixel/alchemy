@@ -4,8 +4,8 @@
 
 void Func_020006a4(void) {
   /* FAKEMATCH(wrapper): the Call3 and Value calls of call.h set each call's
-   * arguments up in the native's order; as direct calls, 2 instructions differ
-   * for each one, 12 with all six direct. */
+   * arguments up in the native's order; as all six direct calls, 12 of 140
+   * instructions differ in tla-en. */
   GameFlag_SetBit(0x929);
   Func_02000d00();
   Func_02000dd0(0);

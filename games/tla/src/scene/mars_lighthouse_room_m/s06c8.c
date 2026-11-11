@@ -23,11 +23,11 @@ void Func_020006c8(s32 state) {
   gData_02003a82 = state;
   /* FAKEMATCH(temporary): the low bit held in a local, so it is taken before
    * the state is copied for the next index, as in the native; as the test
-   * itself, differ 12 (of M not recorded). */
+   * itself, 12 of 141 instructions differ in tla-en. */
   odd = state & 1;
   /* FAKEMATCH(temporary): a local pointer to the flash, taken here, loads its
-   * address before 20 is subtracted; as a direct store in each arm, differ 17
-   * in tla-en (of M not recorded). */
+   * address before 20 is subtracted; as a direct store in each arm, 13 of 141
+   * instructions differ in tla-en. */
   flash = (u16 *)&gData_02003a7e;
   next = state - 20;
   if (odd)

@@ -173,8 +173,8 @@ void Func_020013a0(void) {
     Func_02003228();
     FieldEvent_Wait(20);
     /* FAKEMATCH(wrapper): forwarded so 0x10000 is built again for the next
-     * call, as in the branch above; as a direct call, not measured at this
-     * site. */
+     * call, as in the branch above; as a direct call at this site, 22 of 155
+     * instructions differ in tla-en. */
     PaletteFade_ApplySource(0x10000, 0);
     BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
     BattleEffect_StartBufferInterpolation(20);

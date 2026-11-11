@@ -12,8 +12,9 @@ void Func_02002b30(void);
   {                                                                            \
     /* FAKEMATCH(temporary): the angle held in a block local, as overlay       \
      * 6a3's PLACE has it, so it is built first and shifted before the         \
-     * positions; as the angle passed straight to the call, with shared        \
-     * constants, differ 4 and 30 (of M not recorded). */                      \
+     * positions; as the angle passed straight to the call, 8 of 60            \
+     * instructions of Func_0200051c differ in tla-en, and 8 of 51 of          \
+     * Func_020005b8. */                                                       \
     s32 angle_ = (angle);                                                      \
     Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, angle_);          \
   }

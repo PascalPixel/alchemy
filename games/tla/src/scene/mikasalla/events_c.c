@@ -22,7 +22,8 @@ void Func_02000514(void) {
   z = 8;
   id = 4;
   /* FAKEMATCH(barrier): the id held at an empty asm, so it comes between the
-   * distances and their negation; as no asm, not measured. */
+   * distances and their negation; as no asm, 2 of 18 instructions differ in
+   * tla-en. */
   __asm__ volatile("" : "+r"(id));
   Actor_CommitPositionAndActivate(id, -x, -z);
   Func_02000438();
@@ -36,7 +37,8 @@ void Func_02000544(void) {
   a = 192;
   id = 4;
   /* FAKEMATCH(barrier): the id held at an empty asm, so it comes between the
-   * angle byte and its shift; as no asm, not measured. */
+   * angle byte and its shift; as no asm, 2 of 11 instructions differ in
+   * tla-en. */
   __asm__ volatile("" : "+r"(id));
   Actor_ArmCallback(id, a << 8, 0);
   Func_02000438();

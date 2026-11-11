@@ -33,8 +33,8 @@ void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
     Func_02003108(object, gData_02003720);
     object->motionFlags = 0;
     /* FAKEMATCH(barrier): an empty asm, so the fifth argument is read from the
-     * stack before the zero for nextFrame, as the native does; as no asm, 2
-     * instructions differ in tla-en. */
+     * stack before the zero for nextFrame, as the native does; as no asm, 2 of
+     * 32 instructions differ in tla-en. */
     __asm__("");
     object->unk5e = fifth;
     sprite->nextFrame = 0;

@@ -1,8 +1,8 @@
 #include "local.h"
 
 void Func_020039f0(s32 *position, s32 base) {
-  struct Actor *object = Import_ActorCreate_(
-      0x11d, position[0], position[1], position[2] - 0x20000);
+  struct Actor *object = Import_ActorCreate_(0x11d, position[0], position[1],
+                                             position[2] - 0x20000);
   s32 angle;
 
   if (object != 0) {
@@ -12,7 +12,8 @@ void Func_020039f0(s32 *position, s32 base) {
     object->unk4c = (u16)(Random16Far() << 1) + base;
     /* FAKEMATCH(temporary): the s32 local keeps the zero extension and the pool
      * word 0xffff8000; as a direct store, the add narrows to 16 bits (movs,
-     * lsls for 0x8000, no extension). */
+     * lsls for 0x8000, no extension), 10 of 50 instructions differ in
+     * tla-en. */
     angle = (u16)Random16Far() - 0x8000;
     object->action = angle;
     Func_02003994(object, 3);

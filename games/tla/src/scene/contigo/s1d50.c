@@ -16,7 +16,7 @@ void Func_02001d50(void) {
   s32 answer;
   /* FAKEMATCH(pin): the leader pinned to r5, reloaded after each yes/no prompt
    * and copied to r0 in each branch, as the native has; as an unpinned local,
-   * 28 instructions differ in tla-en. */
+   * 28 of 1701 instructions differ in tla-en. */
   register s32 owner __asm__("r5");
   s32 angle;
 

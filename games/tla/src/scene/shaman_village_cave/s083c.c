@@ -11,8 +11,8 @@ void Func_0200083c(void) {
 
     party->battleRule24b = 2;
     /* FAKEMATCH(dead): the empty once-only block's loop note ends the
-     * scheduling block after the store; without it the scene id is loaded
-     * before the store (two reordered rows). */
+     * scheduling block after the store; without it, 4 of 22 instructions
+     * differ in tla-en (the scene id is loaded before the store). */
     do {
     } while (0);
   }

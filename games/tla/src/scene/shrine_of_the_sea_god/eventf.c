@@ -181,8 +181,8 @@ void Func_02003134(void) {
     Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
   } else if (GameFlag_Test(0x872)) {
     /* FAKEMATCH(temporary): the function-scope angle local holding one
-     * constant keeps its early construction; as a direct argument through
-     * the helper, differ 2. */
+     * constant, built early; as the constant 0x8000 in the call, 2 of 79
+     * instructions differ in tla-en. */
     angle = 0x8000;
     ShrineOfTheSeaGod_ObjPlaceTurn(11, 328 << 16, 200 << 16, angle);
     wait(1);
@@ -191,8 +191,8 @@ void Func_02003134(void) {
     Actor_GetById(11)->collisionFlags = 1;
   }
   /* FAKEMATCH(temporary): SHRINE_OF_THE_SEA_GOD_TASK_ADD_LATE's local holding
-   * the priority builds it before the task function loads, as the native
-   * has; as Task_Add(Func_020030fc, 0x480), the function loads first. */
+   * the priority builds it before the task function loads; as
+   * Task_Add(Func_020030fc, 0x480), 2 of 79 instructions differ in tla-en. */
   SHRINE_OF_THE_SEA_GOD_TASK_ADD_LATE(Func_020030fc, 0x480);
 }
 
@@ -230,8 +230,8 @@ void Func_0200320c(void) {
     Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
   else if (GameFlag_Test(0x874)) {
     /* FAKEMATCH(temporary): the function-scope angle local holding one
-     * constant keeps its early construction; as a direct argument through
-     * the helper, differ 4. */
+     * constant, built early; as the constant 0x4000 in the call, 4 of 127
+     * instructions differ in tla-en. */
     angle = 0x4000;
     ShrineOfTheSeaGod_ObjPlaceTurn(15, 580 << 16, 344 << 16, angle);
   }
@@ -262,7 +262,8 @@ void Func_0200338c(void) {
   if ((u16)(gMainRoutineWork.entrance - 2) <= 1) {
     Actor_SetSpritePriority(13, 3);
     /* FAKEMATCH(dead): the cancelling update ties the flag or to the
-     * constant's register, as the native has; as *flags |= 2 it does not. */
+     * constant's register; as *flags |= 2, 4 of 153 instructions differ in
+     * tla-en. */
     *flags = *flags + 2 - (*flags & 2);
   } else {
     Actor_SetSpritePriority(13, 1);
@@ -294,8 +295,8 @@ void Func_0200338c(void) {
     Actor_WatchAndSetScript(14, gMainRoutineWork.currentOwner);
   } else if (GameFlag_Test(0x877)) {
     /* FAKEMATCH(temporary): the function-scope angle local holding one
-     * constant keeps its early construction; as a direct argument through
-     * the helper, differ 4. */
+     * constant, built early; as the constant 0x4000 in the call, 4 of 153
+     * instructions differ in tla-en. */
     angle = 0x4000;
     ShrineOfTheSeaGod_ObjPlaceTurn(14, 280 << 16, 328 << 16, angle);
   }

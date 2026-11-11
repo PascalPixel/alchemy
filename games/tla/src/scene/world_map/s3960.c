@@ -22,7 +22,8 @@ void Func_020038e4(void) {
 static inline void ClearWords(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): through an inline, as the IWRAM call layer of The
    * Broken Seal, the entry's address loads between the size's two halves;
-   * called directly the size is finished first and 2 instructions differ. */
+   * called directly the size is finished first; as Iwram_ClearWordsEntry
+   * called directly, 2 of 12 instructions differ in tla-en. */
   Iwram_ClearWordsEntry(destination, size);
 }
 

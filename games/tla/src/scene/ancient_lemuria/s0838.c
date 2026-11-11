@@ -348,8 +348,8 @@ void Func_02000838(void) {
     ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count += 2;
   } else {
     /* FAKEMATCH(pin): the count pinned to r2, as the ROM keeps it, with the
-     * work pointer in r3; as a plain local, local-alloc gives the count r3 and
-     * 14 instructions differ in tla-en. */
+     * work pointer in r3; as a plain local, local-alloc gives the count r3,
+     * 14 of 1671 instructions differ in tla-en. */
     register u32 n asm("r2");
 
     n = ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count;
@@ -470,7 +470,7 @@ void Func_02000838(void) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(7, ((s16 *)&leader->x)[1],
-                                     ((s16 *)&leader->z)[1]);
+                              ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(7);
   Actor_SetHorizontalPositionWithTerrain(7, 0, 0);
   Actor_SetSpeed(11, 0x13333, 0x9999);
@@ -478,7 +478,7 @@ void Func_02000838(void) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(11, ((s16 *)&leader->x)[1],
-                                     ((s16 *)&leader->z)[1]);
+                              ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(11);
   Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
   Func_0200191c();

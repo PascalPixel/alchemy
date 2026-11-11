@@ -17,9 +17,9 @@ void Map_EnableUpdateCallback(void);
 void Map_DisableUpdateCallback(void);
 u32 Random16Far(void);
 
-/// On most frames, moves the object to a random spot: x 176 to 431 pixels, y and
-/// z up to 31 and 127 pixels past the leader's. Then it keeps its action as the
-/// previous one and sets mode 9 after action 212, mode 10 otherwise.
+/// On most frames, moves the object to a random spot: x 176 to 431 pixels, y
+/// and z up to 31 and 127 pixels past the leader's. Then it keeps its action as
+/// the previous one and sets mode 9 after action 212, mode 10 otherwise.
 void Func_020004d4(struct FieldActor *object) {
   struct FieldActor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *self = (struct Actor *)object;
@@ -29,8 +29,8 @@ void Func_020004d4(struct FieldActor *object) {
     {
       s32 r = Random16Far();
       /* FAKEMATCH(pin): the leader's y pinned to r3, which the ROM loads before
-       * it builds the mask; as plain locals here and for z, 4 instructions
-       * differ. */
+       * it builds the mask; as a plain local, 12 of 53 instructions differ in
+       * tla-en (24 with z plain too). */
       register s32 y asm("r3") = leader->y;
 
       object->y = y + ((r & 31) << 16);
@@ -38,8 +38,8 @@ void Func_020004d4(struct FieldActor *object) {
     {
       s32 r = Random16Far();
       /* FAKEMATCH(pin): as for y, the leader's z pinned to r3, so it loads
-       * before the mask; as plain locals here and for y, 4 instructions differ.
-       */
+       * before the mask; as a plain local, 12 of 53 instructions differ in
+       * tla-en (24 with y plain too). */
       register s32 z asm("r3") = leader->z;
 
       object->z = z + ((r & 127) << 16);
@@ -73,7 +73,7 @@ void Func_02000550(struct FieldActor *object) {
   (*(s16 *)((u8 *)object + 102))--;
   /* FAKEMATCH(dead): an empty once-only block, whose loop note ends the
    * scheduling block so the timer is stored before z loads, as the ROM does; as
-   * no block, 2 instructions differ. */
+   * no block, 2 of 87 instructions differ in tla-en. */
   do {
   } while (0);
   object->x += Math_Cosine(((object->z >> 14) + (object->y >> 15)) << 8) / 2;

@@ -28,7 +28,8 @@ void Func_0200045c(void) {
       Actor_SetAnimation(27, 3);
       /* FAKEMATCH(dead): an empty once-only block, which ends the scheduling
        * block after the animation call, so its id (r0) is set before its mode
-       * (r1); without it, the mode is set first and 2 instructions differ. */
+       * (r1); without it, 2 of 39 instructions differ in tla-en, the mode set
+       * first. */
       do {
       } while (0);
       FieldEvent_Wait(20);

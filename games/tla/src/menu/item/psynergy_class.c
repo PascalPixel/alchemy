@@ -317,8 +317,8 @@ s32 Func_080fcf14(void) {
   struct BattleAct *psynergy;
   s32 diff;
   s32 ret;
-  /* FAKEMATCH(pin): the action fixed to r3; as a plain local with no block
-   * below, 2 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the action fixed to r3; as a plain local, 8 of 34
+   * instructions differ in tla-en. */
   register u32 action asm("r3");
 
   menu = Ram_HeapSlots->menuRuntime;

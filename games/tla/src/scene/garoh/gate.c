@@ -30,8 +30,8 @@ void Func_02003878(void);
 
 static inline void CamMove(s32 x, s32 y, s32 z, s32 mode) {
   /* FAKEMATCH(wrapper): the call through this inline, so each -1 is built on
-   * its own; as a direct call to Camera_MoveWithinMapBounds, one register is
-   * copied. */
+   * its own; as a direct call to Camera_MoveWithinMapBounds, 6 of 30
+   * instructions of Func_02000960 differ in tla-en. */
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 

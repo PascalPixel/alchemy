@@ -24,7 +24,8 @@ void Func_02000ffc(void) {
   id = 4;
   x = 0;
   /* FAKEMATCH(barrier): the empty asm on back, id and x, so the other
-   * arguments are set before the step is negated; as constant arguments. */
+   * arguments are set before the step is negated; as constant arguments, 2 of
+   * 17 instructions differ in tla-en. */
   asm("" : "+l"(back), "+l"(id), "+l"(x));
   Actor_CommitPositionAndActivate(id, x, -back);
   Actor_CommitPositionAndActivate(4, 16, 0);
@@ -43,7 +44,8 @@ void Func_0200102c(void) {
   id = 4;
   x = 0;
   /* FAKEMATCH(barrier): the empty asm on back, id and x, so the other
-   * arguments are set before the step is negated; as constant arguments. */
+   * arguments are set before the step is negated; as constant arguments, 2 of
+   * 18 instructions differ in tla-en. */
   asm("" : "+l"(back), "+l"(id), "+l"(x));
   Actor_CommitPositionAndActivate(id, x, -back);
   Actor_CommitPositionAndActivate(4, -16, 0);

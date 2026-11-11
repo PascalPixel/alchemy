@@ -27,8 +27,8 @@ void Func_020005d8(void) {
   z = 208;
   id = 11;
   /* FAKEMATCH(barrier): x, z and the actor held at an empty asm, so the actor
-   * is set between the halves of the position, as the ROM has it; as no asm
-   * (not measured). */
+   * is set between the halves of the position, as the ROM has it; as no asm,
+   * 2 of 20 instructions differ in tla-en. */
   asm("" : "+l"(x), "+l"(z), "+l"(id));
   Actor_SetHorizontalPositionWithTerrain(id, x << 17, z << 17);
   Func_020006ec();

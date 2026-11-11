@@ -165,7 +165,8 @@ s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
   if (found < 0) {
     /* FAKEMATCH(temporary): each slot's address walked as a byte offset of its
      * own, which keeps the halfword operands and the four-byte-longer free-slot
-     * loop; as state->actionSlots[index] (not measured). */
+     * loop; as state->actionSlots[index].encodedAction, 20 of 77 instructions
+     * differ in tla-en. */
     for (index = 0; index <= 30; index++) {
       s32 offset = index * (s32)sizeof(state->actionSlots[0]) +
                    (s32)&((struct OwnerActionState *)0)->actionSlots;
@@ -213,17 +214,18 @@ struct OwnerGrowthRecord *Character_GetDefinition(s32 index) {
   u8 *base;
 
   /* FAKEMATCH(barrier): the row width used by an empty asm, so it is built
-   * before the table's address is loaded from the pool; as no asm (not
-   * measured). */
+   * before the table's address is loaded from the pool; as no asm, 2 of 5
+   * instructions differ in tla-en. */
   asm("" : : "r"(stride));
   base = (u8 *)gOwner_GrowthRecords;
   /* FAKEMATCH(barrier): the row width and the table held at an empty asm, so
-   * both are live before the row offset is multiplied; as no asm (not
-   * measured). */
+   * both are live before the row offset is multiplied; as no asm, 2 of 5
+   * instructions differ in tla-en. */
   asm("" : "+r"(stride), "+r"(base));
   /* FAKEMATCH(signature): the address summed as an integer, which keeps the
-   * multiply's and the add's lifetimes; as pointer addition, six bytes
-   * differ. */
+   * multiply's and the add's lifetimes; as pointer addition, base + index *
+   * stride, 7 of 5 instructions differ in tla-en (the draft has 6 and shares
+   * 2). */
   return (struct OwnerGrowthRecord *)(index * stride + (u32)base);
 }
 

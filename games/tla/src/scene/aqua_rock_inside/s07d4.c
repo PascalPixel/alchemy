@@ -8,8 +8,9 @@ void Func_02003ebc(void);
 
 static __inline__ void Func_02003d44_(s32 a, s32 b, s32 c) {
   /* FAKEMATCH(wrapper): the call forwarded through an inline, which keeps each
-   * call's own constants, as The Broken Seal's scene layer does; as a direct
-   * call. */
+   * call's own constants, as The Broken Seal's scene layer does; as direct
+   * calls to Map_SetScreenShake, 36 of 154 instructions of Func_020007d4 differ
+   * in tla-en. */
   Map_SetScreenShake(a, b, c);
 }
 

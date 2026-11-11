@@ -11,8 +11,7 @@ struct PushEvent {
 
 void Func_02002cb8(void);
 void Map_CopyCellsRect(s32 x, s32 z, s32 a, s32 b, s32 cellX, s32 cellZ);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
@@ -39,11 +38,11 @@ void Func_02002db0(struct PushEvent *event) {
     object->angle = 0x4000;
     object->motionFlags = zero;
   }
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     0);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   {
     /* FAKEMATCH(temporary): a word local builds 0xf1f with movs, lsls, adds, as
-     * the ROM does; as a halfword constant store, it loads from the pool. */
+     * the ROM does; as a halfword constant store, it loads from the pool, 20
+     * of 131 instructions differ in tla-en. */
     u32 winout = 0xf1f;
 
     REG_WINOUT = winout;

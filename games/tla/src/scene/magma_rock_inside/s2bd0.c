@@ -10,12 +10,13 @@ s32 Func_02002bd0(struct Actor *object) {
   object->bounce = (target->x - object->x) / (steps = 10);
   /* FAKEMATCH(dead): an empty once-only block, the first fence of a pair, so
    * the x step is stored, then the object height read, then the target
-   * height; as no block, the target height is read first, not measured. */
+   * height (with no block the target height is read first); as no block, 2 of
+   * 35 instructions differ in tla-en. */
   do {
   } while (0);
   from = object->y;
   /* FAKEMATCH(barrier): an empty asm, the second fence of the pair above; as
-   * no asm, not measured. */
+   * no asm, 2 of 35 instructions differ in tla-en. */
   asm volatile("");
   object->unk4c = (target->y - from + 0x100000) / steps;
   object->gravity = (target->z - object->z) / steps;

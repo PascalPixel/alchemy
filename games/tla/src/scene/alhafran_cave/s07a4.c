@@ -20,7 +20,7 @@ void Event_WaitTransitionFrames(void);
 void Func_0200051c(void) {
   /* FAKEMATCH(temporary): the data address held in a local, so it loads before
    * Func_020015e0 and is kept across it, as the ROM does; as loaded at its
-   * call, 31 instructions differ. */
+   * call, 31 of 257 instructions differ in tla-en. */
   const void *data;
   struct AlhafranCaveEventWork *work;
 
@@ -33,7 +33,7 @@ void Func_0200051c(void) {
   FieldTask_AddFrame(Func_02000258, 0x480);
   if ((u16)(gMainRoutineWork.entrance - 8) <= 1) {
     work = Ram_HeapSlots->eventWork;
-    
+
     work->valueD4c = 3;
   }
   Func_02001568();
@@ -100,7 +100,8 @@ void Func_0200051c(void) {
 }
 
 s32 Func_020007a4(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov66aRoom2 && Event_GetFlag(0x8a7)) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov66aRoom2 &&
+      Event_GetFlag(0x8a7)) {
     Func_02001408_(23, 46, 4, 5, 21, 14);
     Func_02001408_(86, 44, 5, 6, 84, 12);
     Func_02001400_(22, 45, 5, 6, 20, 13);

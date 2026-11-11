@@ -15,7 +15,8 @@ void Func_02001304(void) {
   /* FAKEMATCH(signature): Func_0200271c called through Vent_SetActive as
    * returning s32, so the arguments are set up as for a call whose value is
    * used (flag before index); as a call to the void setter local.h declares
-   * for the modules that match with it, the instructions differ. */
+   * for the modules that match with it, 32 of 117 instructions differ in
+   * tla-en. */
   switch (timer) {
   case 0:
     Vent_SetActive(0, 1);
@@ -60,7 +61,8 @@ void Func_02001424(void) {
   s32 timer = Func_02002730();
 
   /* FAKEMATCH(signature): Func_0200271c called as returning s32, as in
-   * Func_02001304; as a call to the void setter, the instructions differ. */
+   * Func_02001304; as a call to the void setter, 4 of 50 instructions differ in
+   * tla-en. */
   switch (timer) {
   case 0:
     Vent_SetActive(0, 1);
@@ -86,7 +88,8 @@ void Func_020014a0(void) {
   s32 timer = Func_02002730();
 
   /* FAKEMATCH(signature): Func_0200271c called as returning s32, as in
-   * Func_02001304; as a call to the void setter, the instructions differ. */
+   * Func_02001304; as a call to the void setter, 4 of 50 instructions differ in
+   * tla-en. */
   switch (timer) {
   case 0:
     Vent_SetActive(0, 1);
@@ -110,7 +113,8 @@ void Func_020014a0(void) {
 
 void Func_0200151c(void) {
   /* FAKEMATCH(signature): Func_0200271c called as returning s32, as in
-   * Func_02001304; as a call to the void setter, the instructions differ. */
+   * Func_02001304; as a call to the void setter, 4 of 28 instructions differ in
+   * tla-en. */
   switch (Func_02002730()) {
   case 0:
     Vent_SetActive(0, 1);

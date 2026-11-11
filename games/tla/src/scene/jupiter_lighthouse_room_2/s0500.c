@@ -10,8 +10,8 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 static inline void CopyCells(s32 srcX, s32 srcY, s32 width, s32 height,
                              s32 destX, s32 destY) {
   /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
-   * scene layer, so each stack argument keeps its own register; as direct
-   * calls, 10 instructions differ. */
+   * scene layer, so each stack argument keeps its own register; as a direct
+   * call, 10 of 157 instructions of Func_02000500 differ in tla-en. */
   Func_0802b450(srcX, srcY, width, height, destX, destY);
 }
 

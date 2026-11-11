@@ -8,8 +8,8 @@ void Func_0200082c(s32 a, s32 id) {
     return;
   }
   /* FAKEMATCH(temporary): one local reused for the object and then its cell
-   * column, so the column stays in r0; as a separate object local, 10
-   * instructions differ. */
+   * column, so the column stays in r0; as a separate object local, 10 of
+   * 52 instructions differ in tla-en. */
   x = (s32)Actor_GetById(id);
   x = ((struct Actor *)x)->x >> 20;
   id = 0;

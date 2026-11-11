@@ -15,14 +15,16 @@ s32 Func_02000a78(void);
 static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
    * constants, as ☀️'s scene layer does; as direct calls, 30 of 57
-   * instructions differ. */
+   * instructions of Func_02000c08 differ in tla-en, and 25 of 69 of
+   * Func_02000b48. */
   Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, angle);
 }
 
 static __inline__ void ObjSpeed(s32 id, s32 speed, s32 acceleration) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants, as ☀️'s scene layer does; as direct calls, the speeds are held
-   * in r5 and r6 across the calls, four rows fewer (not measured as N of M). */
+   * constants, as ☀️'s scene layer does; as direct calls, 32 of 69
+   * instructions of Func_02000b48 differ in tla-en, the speeds held in r5 and
+   * r6 across the calls. */
   Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
@@ -31,7 +33,8 @@ static __inline__ void ObjSpeed(s32 id, s32 speed, s32 acceleration) {
     /* FAKEMATCH(temporary): the angle passes through a block local, so each   \
      * run of equal angles is held in r5 (0x2000, then 0xc000), the second     \
      * built while the third call is set up, as the native does; as a plain    \
-     * argument, 31 of 57 instructions differ. */                              \
+     * argument, 31 of 57 instructions of Func_02000c08 differ in tla-en, and  \
+     * 16 of 69 of Func_02000b48. */                                           \
     s32 angle_ = (angle);                                                      \
     ObjPlace(id, (x) << 16, (z) << 16, angle_);                                \
   }

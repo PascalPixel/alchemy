@@ -47,8 +47,8 @@ void Func_02004270(s32 x, s32 z, s32 kind, s32 state) {
     s32 column = x;
 
     /* FAKEMATCH(barrier): an empty asm on column that names the cell table, so
-     * the table is loaded before x is added; without it, the add comes first.
-     */
+     * the table is loaded before x is added; without it, 9 of 10 instructions
+     * differ in tla-en. */
     asm("" : "+l"(column) : "l"(gSceneState.cells));
     i = z * 11 + column;
   }

@@ -37,7 +37,7 @@ void Func_02001170(void) {
   if (Event_GetFlag(0x24b)) {
     /* FAKEMATCH(signature): these two calls go through a void function type, so
      * r0 is set before r1, as the ROM does; as declared (value-returning, as
-     * the third), r1 loads first and 4 instructions differ. */
+     * the third), r1 loads first, 4 of 41 instructions differ in tla-en. */
     ((void (*)(s32, s32))Func_02000b24)(12, 38);
     ((void (*)(s32, s32))Func_02000b24)(13, 39);
     Func_02000b24(15, 37);

@@ -19,7 +19,8 @@ void Func_02005688(s32 a) {
 
   if (GameFlag_Test(0x109) == 0) {
     /* FAKEMATCH(temporary): a local reads the work value before the three
-     * stores; as the value stored directly, 4 instructions differ. */
+     * stores; as the value stored directly, 4 of 24 instructions differ in
+     * tla-en. */
     s32 value = *(u16 *)(work + 228);
 
     control->field02 = a;
@@ -39,8 +40,8 @@ void Func_02005688(s32 a) {
 void Func_020056c4(s32 a) {
   struct TrialRoadControl *control = (struct TrialRoadControl *)gSceneState;
   /* FAKEMATCH(temporary): a word local builds 0 with movs for both halfword
-   * stores; as a halfword constant, which loads from the pool, the
-   * instructions differ. */
+   * stores; as a halfword constant, which loads from the pool, 14
+   * of 15 instructions differ in tla-en. */
   s32 zero = 0;
 
   *(u16 *)((Ram_HeapSlots->unkec[0]) + 234) = zero;

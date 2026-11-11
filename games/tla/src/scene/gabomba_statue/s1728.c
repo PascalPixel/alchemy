@@ -25,8 +25,8 @@ void Func_0200176c(void) {
   actor->motionFlags = 0;
   speed = 0x19999;
   /* FAKEMATCH(barrier): an empty asm on speed, so the speed is loaded before
-   * the owner, whose base is already in a register; as the plain call, the
-   * owner is loaded first and 2 instructions differ. */
+   * the owner, whose base is already in a register; as the plain call, 4 of 40
+   * instructions differ in tla-en. */
   asm volatile("" : "+l"(speed));
   Actor_SetSpeed(gMainRoutineWork.currentOwner, speed, 0x19999);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 152, 488);

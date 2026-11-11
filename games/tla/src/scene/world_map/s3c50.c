@@ -8,7 +8,8 @@ extern u16 gData_02006e08;
 static inline void QueueBlend(u32 address, u32 value) {
   /* FAKEMATCH(wrapper): forwarding through the inline sets the arguments up in
    * their own order: the native finishes the value's orr before the register
-   * address's add; as direct calls, 12 instructions differ. */
+   * address's add; as direct calls, 4 of 31 instructions of Func_02003c50
+   * differ in tla-en. */
   QueueIoWriteDelay2(address, value);
 }
 

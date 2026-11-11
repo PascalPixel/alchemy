@@ -63,12 +63,12 @@ void Func_0200096c(s32 unused, s32 id) {
     object->acceleration = 0x2000;
     y = object->y;
     {
-      /* FAKEMATCH(pin): the actor pinned to r0 to keep the argument order;
-       * measured with the volatile read above. */
+      /* FAKEMATCH(pin): the actor pinned to r0 to keep the argument order; as
+       * an unpinned local, 2 of 38 instructions differ in tla-en. */
       register struct Actor *self asm("r0") = object;
       s32 x = 0xc80000;
-      /* FAKEMATCH(pin): z pinned to r3 to keep the argument order; measured
-       * with the volatile read above. */
+      /* FAKEMATCH(pin): z pinned to r3 to keep the argument order; as an
+       * unpinned local, 2 of 38 instructions differ in tla-en. */
       register s32 z asm("r3") = 0x3180000;
 
       Actor_SetMoveTarget(self, x, y, z);

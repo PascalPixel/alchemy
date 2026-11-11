@@ -40,8 +40,9 @@ void Func_020021c0(void) {
     Sound_Play(0x22d);
     {
       /* FAKEMATCH(pin): the blend value pinned to r3, where the native stores
-       * it from; as plain locals with neither pin, differ 37 (of M not
-       * recorded). */
+       * it from (with no local at all, a plain store of 0x1000, the bytes are
+       * the same); as an unpinned local, 23 of 138 instructions differ in
+       * tla-en. */
       register u16 alpha __asm__("r3") = 0x1000;
 
       /* FAKEMATCH(temporary): the store through the pinned local; as a plain
@@ -67,8 +68,9 @@ void Func_020021c0(void) {
     Func_02004cb0(actor);
     FieldEvent_Wait(1);
     {
-      /* FAKEMATCH(pin): the zero pinned to r3; with the local below, as a
-       * plain store of 0, differ 4 (of M not recorded). */
+      /* FAKEMATCH(pin): the zero pinned to r3 (with no local at all, a plain
+       * store of 0, the bytes are the same); as an unpinned local, 22 of 138
+       * instructions differ in tla-en. */
       register u16 off __asm__("r3") = 0;
 
       /* FAKEMATCH(temporary): the store through the pinned local, there only

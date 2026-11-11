@@ -152,8 +152,8 @@ s32 Inventory_AddItem(s32 owner_id, s32 item_id) {
       {
         /* FAKEMATCH(temporary): the mask in a local of its own, which keeps
          * the and's and the store's registers; as (entry &
-         * INVENTORY_ENTRY_MASK) | count << INVENTORY_QUANTITY_SHIFT (not
-         * measured). */
+         * INVENTORY_ENTRY_MASK) | count << INVENTORY_QUANTITY_SHIFT, 32 of 68
+         * instructions differ in tla-en. */
         s32 value = INVENTORY_ENTRY_MASK;
 
         value &= entry;
@@ -391,7 +391,7 @@ s32 Inventory_CheckUnequip(s32 owner, s32 slot) {
    * is built, as the ROM has it; as no asm (not measured). */
   asm volatile("");
   /* FAKEMATCH(temporary): the mask built in the local it masks into; as raw &
-   * ITEM_ID_MASK, r3 and r5 swap (not measured). */
+   * ITEM_ID_MASK, 8 of 33 instructions differ in tla-en. */
   item_id = ITEM_ID_MASK;
   item_id &= raw;
   item = Item_GetDirect(item_id);
@@ -416,7 +416,7 @@ s32 Inventory_CheckDiscard(s32 owner, s32 slot) {
    * is built, as the ROM has it; as no asm (not measured). */
   asm volatile("");
   /* FAKEMATCH(temporary): the mask built in the local it masks into; as raw &
-   * ITEM_ID_MASK, r3 and r5 swap (not measured). */
+   * ITEM_ID_MASK, 8 of 39 instructions differ in tla-en. */
   item_id = ITEM_ID_MASK;
   item_id &= raw;
   item = Item_GetDirect(item_id);
@@ -514,8 +514,8 @@ s32 Item_AdjustCounter(s32 itemId, s32 delta) {
    * instructions differ in tla-en. */
   asm volatile("");
   /* FAKEMATCH(temporary): the index masked and doubled apart in the local
-   * that held the mask, which keeps the table the base register; without it
-   * and the asm above, 2 instructions differ in tla-en. */
+   * that held the mask, which keeps the table the base register; as
+   * table[itemId & ITEM_ID_MASK], 4 of 16 instructions differ in tla-en. */
   index &= itemId;
   index <<= 1;
   counter = *(u16 *)((u8 *)table + index);

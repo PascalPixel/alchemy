@@ -14,7 +14,8 @@ void Func_02001558(void) {
   s32 offset = line[0];
 
   /* FAKEMATCH(dead): an empty once-only block, so BG3VOFS's address is built
-   * after the first line is loaded; as no block, one row is reordered. */
+   * after the first line is loaded; as no block, 2 of 26 instructions differ in
+   * tla-en. */
   do {
   } while (0);
   REG_BG3VOFS = offset;

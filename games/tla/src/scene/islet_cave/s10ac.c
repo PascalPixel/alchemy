@@ -39,8 +39,8 @@ void Func_020010ac(void) {
   FIELD_AT(gMainRoutineWork, u8, 587) = 2;
   cue = 0x67;
   /* FAKEMATCH(barrier): the asm on the first argument loads it before the
-   * second, as the native does; as Func_020012d4(0x67, 2), directly or through
-   * a forwarding inline, one pair is reordered and 2 instructions differ. */
+   * second, as the native does; as Func_020012d4(0x67, 2), 2 of 64
+   * instructions differ in tla-en. */
   __asm__ volatile("" : "+r"(cue));
   Func_020012d4(cue, 2);
   Func_0200125c();

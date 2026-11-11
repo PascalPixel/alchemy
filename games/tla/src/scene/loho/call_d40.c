@@ -17,7 +17,7 @@ void Func_02000d40(void) {
   s32 count = 8;
 
   /* FAKEMATCH(barrier): the empty asm on count, so the second argument is set
-   * first; as the constant argument 8. */
+   * first; as the constant argument 8, 2 of 5 instructions differ in tla-en. */
   asm("" : "+l"(count));
   Func_02001440(13, count);
 }

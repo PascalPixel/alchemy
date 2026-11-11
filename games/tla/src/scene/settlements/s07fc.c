@@ -22,8 +22,8 @@ s32 Func_020007fc(s32 *p) {
     s32 angle;
 
     /* FAKEMATCH(dead): the empty once-only block keeps the first random
-     * value's shift after the second call; with neither it nor the asm
-     * below, 2 instructions differ in tla-en. */
+     * value's shift after the second call; without it, 2 of 44 instructions
+     * differ in tla-en (with the asm below also removed, none differ). */
     do {
     } while (0);
     x = (u32)a << 9;

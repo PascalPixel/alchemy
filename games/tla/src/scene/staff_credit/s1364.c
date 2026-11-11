@@ -9,9 +9,9 @@ u32 Random16Far(void);
 
 static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
   /* FAKEMATCH(wrapper): the call forwarded through the inline, which sets the
-   * arguments up in their own order: the native shifts z before it starts the
-   * -1; as direct Camera_MoveWithinMapBounds calls, the -1 starts first
-   * (differ 8, four reordered pairs). */
+   * arguments up in their own order: z is shifted before the -1 starts; as
+   * direct Camera_MoveWithinMapBounds calls, 6 of 66 instructions differ in
+   * tla-en. */
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 

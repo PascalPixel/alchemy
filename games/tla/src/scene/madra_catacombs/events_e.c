@@ -64,8 +64,8 @@ void Func_02000dcc(void) {
   b = 0x102;
   a = 1;
   /* FAKEMATCH(barrier): a and b held at an empty asm, so the first argument is
-   * set before the second is finished; as no asm, differ 2 (of M not
-   * recorded). */
+   * set before the second is finished; as no asm, 2 of 142 instructions
+   * differ in tla-en. */
   __asm__("" : "+r"(a), "+r"(b));
   Func_020011bc(a, b + 255, 9, 10);
   Func_0200115c(11);
@@ -77,8 +77,8 @@ void Func_02000dcc(void) {
     x <<= 18;
     y = 0;
     /* FAKEMATCH(barrier): x, y and z held at an empty asm, the second of the
-     * pair above, so y is cleared before z is shifted; as no asm, not
-     * measured. */
+     * pair above, so y is cleared before z is shifted; as no asm, 2 of 142
+     * instructions differ in tla-en. */
     __asm__("" : "+r"(x), "+r"(y), "+r"(z));
     Actor_SetPositionAndResetMotion(object, x, y, z << 16);
   }

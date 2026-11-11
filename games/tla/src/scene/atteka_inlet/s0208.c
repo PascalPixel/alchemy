@@ -8,7 +8,8 @@ void Func_02001010(void);
 void Func_02001018(void);
 
 /// Once flag 0x9d0 is set and while flag 0x9b2 is clear, objects 9 and 10 are
-/// placed, jump in and talk, four cells of the map change and flag 0x9b0 is set.
+/// placed, jump in and talk, four cells of the map change and flag 0x9b0 is
+/// set.
 void Func_02000208(void) {
   if (GameFlag_Test(0x9d0) && !GameFlag_Test(0x9b2)) {
     Func_02001010();
@@ -16,8 +17,8 @@ void Func_02000208(void) {
     Camera_MoveWithinMapBounds(96 << 16, -1, 308 << 16, 1);
     {
       /* FAKEMATCH(temporary): the angle shifted from a local, so it is built
-       * first, as the ROM builds it; as a constant, it is built last and 2
-       * instructions differ. */
+       * first, as the ROM builds it; as a constant, it is built last, 2 of
+       * 195 instructions differ in tla-en. */
       s32 angle = 208;
 
       Actor_SetPositionAndFacing(9, 60 << 16, 362 << 16, angle << 8);
@@ -30,7 +31,7 @@ void Func_02000208(void) {
     Actor_ArmCallback(9, FACING_EAST, 0);
     {
       /* FAKEMATCH(temporary): the angle shifted from a local, as above; as a
-       * constant, 2 instructions differ. */
+       * constant, 2 of 195 instructions differ in tla-en. */
       s32 angle = 160;
 
       Actor_SetPositionAndFacing(10, 94 << 16, 272 << 16, angle << 7);

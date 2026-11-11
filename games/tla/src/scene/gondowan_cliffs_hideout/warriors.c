@@ -6,8 +6,7 @@
 
 extern const u8 gData_02000318[];
 extern const u8 gData_02000270[];
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_020001b4(void);
 void Func_020001bc(void);
 void Func_0200020c(void);
@@ -26,7 +25,8 @@ void Func_02000074(void) {
       s32 id = 10;
 
       /* FAKEMATCH(barrier): an empty asm on half and id, so the actor is set
-       * between the halves of the value; without it, it is not. */
+       * between the halves of the value; without it, 2 of 84 instructions
+       * differ in tla-en. */
       asm("" : "+l"(half), "+l"(id));
       Func_080d489c(id, half << 1);
     }

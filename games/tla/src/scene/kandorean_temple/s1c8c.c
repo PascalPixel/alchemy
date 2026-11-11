@@ -112,8 +112,8 @@ void Func_02001e58(void) {
   Event_ResolvePendingActions(0);
   /* FAKEMATCH(temporary): the flags address and the zero held in locals, with
    * gMainRoutineWork's address taken in the block below, so the byte store
-   * follows the address load; as leader->motionFlags = 0, the store goes
-   * first and 2 instructions differ. */
+   * follows the address load; as leader->motionFlags = 0, which stores first,
+   * 2 of 92 instructions differ in tla-en. */
   flags = &leader->motionFlags;
   zero = 0;
   /* FAKEMATCH(dead): gMainRoutineWork's address taken in a once-only block; as

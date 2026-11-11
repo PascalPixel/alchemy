@@ -647,7 +647,7 @@ turn:
   MapGrid_CopyCellsLayered(106, 60, 17, 4, 106, 68);
   /* FAKEMATCH(temporary): the step held in a local, used for the first layer
    * and both actors, gives the native's registers; as the literal each time, 14
-   * instructions differ. */
+   * of 853 instructions differ in tla-en. */
   step = 0x10000;
   i = 239;
 scroll:

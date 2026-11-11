@@ -9,7 +9,8 @@ void Func_02000848(struct FieldActor *object) {
 
   if (leaderZ > z) {
     /* FAKEMATCH(temporary): the mask in a local set first, so that it takes
-     * r3 and the flags byte r2; as *flags |= 4, differ 4. */
+     * r3 and the flags byte r2; as *flags |= 4, 13 of 22 instructions differ
+     * in tla-en. */
     s32 value = 4;
 
     value |= *flags;

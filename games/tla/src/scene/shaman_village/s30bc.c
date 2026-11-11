@@ -81,8 +81,8 @@ void Func_020030bc(void) {
   Actor_FaceDirectionAndWait(15, FACING_NORTHWEST);
   Event_ShowMessage(0x200f, 0);
   /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call the actor
-   * comes one row early (see the macro). */
+   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call, 91 of 1045
+   * instructions differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(15, 256, 0)
   Actor_FaceDirectionAndWait(15, FACING_NORTH);
   Event_ShowMessageAndWait(15, 0);
@@ -98,24 +98,24 @@ void Func_020030bc(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Actor_ArmCallback(18, 0, 0);
   /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call the actor
-   * comes one row early (see the macro). */
+   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call, 88 of 1045
+   * instructions differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(5, 256, 20)
   Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
   Event_ShowMessageAndWait(5, 0);
   Actor_FaceDirectionAndWait(15, FACING_NORTHWEST);
   Event_ShowMessageAndWait(0x200f, 0);
   /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call the actor
-   * comes one row early (see the macro). */
+   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call, 30 of 1045
+   * instructions differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(18, 257, 40)
   Event_ShowMessageAndWait(0x4012, 0);
   Motion_SetModeAndWaitAnimation(15, 3);
   Actor_FaceDirectionAndWait(15, FACING_NORTH);
   Event_ShowMessageAndWait(15, 0);
   /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call the actor
-   * comes one row early (see the macro). */
+   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call, 83 of 1045
+   * instructions differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(17, 256, 0)
   /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
    * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call the actor
@@ -128,8 +128,8 @@ void Func_020030bc(void) {
   Actor_StartRepeatedMotion(16, 1);
   Event_ShowMessageAndWait(16, 0);
   /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call the actor
-   * comes one row early (see the macro). */
+   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call, 29 of 1045
+   * instructions differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(6, 259, 0)
   Actor_FaceDirection(6, FACING_SOUTHWEST, 20);
   Actor_FaceDirectionAndWait(6, FACING_SOUTH);
@@ -137,8 +137,8 @@ void Func_020030bc(void) {
   Actor_SetAttachedEffect(15, 258);
   Event_ShowMessageAndWait(15, 0);
   /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call the actor
-   * comes one row early (see the macro). */
+   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call, 30 of 1045
+   * instructions differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(6, 259, 0)
   Actor_Jump(6, 2, 10);
   Actor_Jump(6, 4, 10);
@@ -188,13 +188,13 @@ void Func_020030bc(void) {
   Actor_FaceDirection(17, FACING_NORTHWEST, 0);
   Actor_FaceDirection(16, FACING_NORTHWEST, 0);
   /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call the actor
-   * comes one row early (see the macro). */
+   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call, 23 of 1045
+   * instructions differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(18, 265, 20)
   Event_ShowMessageAndWait(18, 0);
   /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call the actor
-   * comes one row early (see the macro). */
+   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call, 83 of 1045
+   * instructions differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(17, 257, 0)
   /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
    * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call the actor
@@ -211,8 +211,8 @@ void Func_020030bc(void) {
   Event_ShowMessageAndWait(7, 0);
   Actor_FaceDirection(15, FACING_NORTHEAST, 0);
   /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call the actor
-   * comes one row early (see the macro). */
+   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call, 83 of 1045
+   * instructions differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(15, 259, 20)
   /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
    * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call the actor

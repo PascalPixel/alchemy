@@ -8,14 +8,16 @@ static __inline__ void CopyWords_(void *destination, const void *source,
                                   s32 size) {
   /* FAKEMATCH(wrapper): the copy forwarded through an inline, which keeps each
    * call's own constants, as the scene layer does; as direct Iwram_CopyWords
-   * calls, 16 instructions differ in tla-en. */
+   * calls, 128 of 369 instructions of the four transfer callbacks differ in
+   * tla-en. */
   Iwram_CopyWords(destination, source, size);
 }
 
 static __inline__ void FillWords_(void *destination, s32 size, u32 value) {
   /* FAKEMATCH(wrapper): the fill forwarded through an inline, which keeps each
    * call's own constants, as the scene layer does; as direct Iwram_FillWords
-   * calls (not measured). */
+   * calls, 16 of 369 instructions of the four transfer callbacks differ in
+   * tla-en. */
   Iwram_FillWords(destination, size, value);
 }
 

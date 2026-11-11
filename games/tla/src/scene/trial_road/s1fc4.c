@@ -23,7 +23,7 @@ void Func_02001fc4(s32 mode) {
   if (mode == 1) {
     /* FAKEMATCH(temporary): a local holding the zero builds it in r2 and the
      * counter address in r3, as overlay 699's twin does; as
-     * gData_02007e20 = 0, the instructions differ. */
+     * gData_02007e20 = 0, 6 of 25 instructions differ in tla-en. */
     s32 zero = 0;
 
     gData_02007e20 = zero;

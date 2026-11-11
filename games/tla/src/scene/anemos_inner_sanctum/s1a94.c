@@ -11,7 +11,8 @@ static __inline__ void Func_02003328_(s32 srcX, s32 srcY, s32 dstX, s32 dstY,
                                       s32 width, s32 height) {
   /* FAKEMATCH(wrapper): the call forwarded through an inline, which sets the
    * width before the height as the ROM allocates them (1 in r5, 2 in r6); as a
-   * direct call, the two constants swap registers and 4 instructions differ. */
+   * direct call, the two constants swap registers, 12 of 98 instructions of
+   * Func_02001a94 differ in tla-en. */
   Map_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width, height);
 }
 

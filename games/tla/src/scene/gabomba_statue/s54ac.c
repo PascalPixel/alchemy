@@ -23,9 +23,8 @@ void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer) {
   cell += Func_02005844(object) * 4;
   if (Event_GetFlag(flag)) {
     /* FAKEMATCH(temporary): the flags read into a local before the cell store
-     * and a local holding 2, so the flags are ORed into the register that
-     * holds 2; as one priorityFlags |= 2, the 0 for the cell is built before
-     * the read. */
+     * and a local holding 2, so the flags are ORed into the register that holds
+     * 2; as one priorityFlags |= 2, 8 of 75 instructions differ in tla-en. */
     u8 flags = object->priorityFlags;
     s32 bits;
 

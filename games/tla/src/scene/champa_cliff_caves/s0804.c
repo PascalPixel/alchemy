@@ -46,7 +46,8 @@ void Func_02000804(s32 actor) {
   Func_080d47b4(8, 258, 30);
   /* FAKEMATCH(signature): called through a type returning s32, which gives the
    * native's argument order (r1 before r0); as the void call scene_call.h
-   * declares, which the other scenes match with, the order differs. */
+   * declares, which the other scenes match with, 2 of 144 instructions differ
+   * in tla-en. */
   ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(8, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(20);

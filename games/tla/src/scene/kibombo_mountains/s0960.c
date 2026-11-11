@@ -12,9 +12,9 @@ void Func_0200108c(void);
 void Func_02001134(void);
 
 void Func_02000960(void) {
-  /* FAKEMATCH(wrapper): the Call3 and Value3 calls of call.h keep each call's
-   * own constants and argument order; as direct SetPositionAndReset calls, 42
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the calls through event.h's inlines keep each call's
+   * own constants and argument order; as direct Actor_SetPositionAndReset calls
+   * for Actor_WalkToAndWait, 42 of 140 instructions differ in tla-en. */
   Func_02001084();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(MsgIsTheWay);

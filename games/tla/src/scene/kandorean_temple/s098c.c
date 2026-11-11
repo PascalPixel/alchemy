@@ -41,8 +41,8 @@ void Func_02000a0c(struct Actor *object) {
   object->bounce = vx - vx / 18;
   object->unk4c = vz - vz / 16;
   /* FAKEMATCH(dead): an empty once-only block, so the Z speed is stored before
-   * the scale rate loads, as in Func_02000864; without it, 2 instructions
-   * differ. */
+   * the scale rate loads, as in Func_02000864; without it, 2 of 97 instructions
+   * differ in tla-en. */
   do {
   } while (0);
   rate = object->speedLimit;
@@ -51,15 +51,14 @@ void Func_02000a0c(struct Actor *object) {
   object->scaleX = scale + rate;
   {
     /* FAKEMATCH(pin): the call's first argument pinned to r0, so it is copied
-     * before the Y scale store; as a plain local with the block below alone,
-     * it follows the action's halfword load and 2 instructions differ. */
+     * before the Y scale store; as a plain local, copied after the action's
+     * halfword load, 4 of 97 instructions differ in tla-en. */
     register struct Actor *first asm("r0") = object;
 
     object->scaleY += object->acceleration;
     /* FAKEMATCH(dead): an empty once-only block, so the Y scale is stored
-     * before the action is addressed, as in Func_02000864; without it and the
-     * pin, the action is addressed before the store and 2 instructions
-     * differ. */
+     * before the action is addressed, as in Func_02000864; without it, 2 of 97
+     * instructions differ in tla-en. */
     do {
     } while (0);
     sprite->rotation += object->action;

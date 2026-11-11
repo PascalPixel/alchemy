@@ -14,10 +14,10 @@ void Func_02000564(void);
 void Func_02000310(s32 kind, s32 frames);
 
 static __inline__ void Actor_SetSpeedParameters_(s32 id, s32 speed,
-                                                        s32 acceleration) {
+                                                 s32 acceleration) {
   /* FAKEMATCH(wrapper): the call forwarded through this inline, so the id is
    * set between the speed's last add and the call; as a direct call to
-   * Actor_SetSpeedParameters, 2 instructions differ. */
+   * Actor_SetSpeedParameters, 2 of 113 instructions differ in tla-en. */
   Actor_SetSpeedParameters(id, speed, acceleration);
 }
 

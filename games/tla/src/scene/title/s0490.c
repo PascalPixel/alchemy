@@ -17,8 +17,8 @@ void Fade_ToBlack(s32 vblanks);
 static __inline__ void Decode_(void *source, void *destination) {
   /* FAKEMATCH(wrapper): the decode forwarded through this inline keeps the
    * buffer address a constant of each call, as The Broken Seal's system call
-   * layer does; as a direct call, which keeps the address in r5, the
-   * instructions differ. */
+   * layer does; as a direct call, which keeps the address in r5, 17
+   * of 94 instructions differ in tla-en. */
   Resource_DecodeType01(source, destination);
 }
 

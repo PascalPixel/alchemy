@@ -87,7 +87,7 @@ void Func_020005f4(void) {
   id = 4;
   /* FAKEMATCH(barrier): the empty asm on the actor id, which then comes
    * between the distances and their negation; as Actor_WalkByAndWait(4, -x,
-   * -z) it does not. */
+   * -z), 2 of 18 instructions differ in tla-en. */
   __asm__ volatile("" : "+r"(id));
   Actor_WalkByAndWait(id, -x, -z);
   Func_0200052c();
@@ -102,7 +102,7 @@ void Func_02000624(void) {
   id = 4;
   /* FAKEMATCH(barrier): the empty asm on the actor id, which then comes
    * between the angle byte and its shift; as Actor_FaceDirection(4, a << 8,
-   * 0) it does not. */
+   * 0), 2 of 11 instructions differ in tla-en. */
   __asm__ volatile("" : "+r"(id));
   Actor_FaceDirection(id, a << 8, 0);
   Func_0200052c();

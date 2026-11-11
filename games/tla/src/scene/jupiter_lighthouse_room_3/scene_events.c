@@ -8,7 +8,7 @@ void Func_02000134(s32 unused, s32 id) {
   s32 i;
   /* FAKEMATCH(pin): the mode pinned to r2, which with the empty once-only block
    * after it is built after the motion flag store, before the position loads;
-   * as a plain constant, 2 instructions differ in tla-en. */
+   * as a plain constant, 2 of 62 instructions differ in tla-en. */
   register s32 mode asm("r2");
 
   if (object->x >> 20 == 20 && object->z >> 20 == 36) {

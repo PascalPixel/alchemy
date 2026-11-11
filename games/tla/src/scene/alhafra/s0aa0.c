@@ -94,7 +94,8 @@ void Func_02000aa0(s32 a0) {
     s32 y = 0x102, z = 0x1e;
     /* FAKEMATCH(barrier): the empty asm claims to change y and z, so the second
      * and third arguments are set before the first, as the ROM does; as the
-     * call with constant arguments. */
+     * call with constant arguments, 37 of 1456 instructions differ in tla-en.
+     */
     __asm__ volatile("" : "+l"(y), "+l"(z));
     Func_080d47b4(0x21, y, z);
   }

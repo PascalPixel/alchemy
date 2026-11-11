@@ -18,7 +18,8 @@ void Func_020011a0();
     /* emote of this overlay; as an inline call the actor comes */             \
     /* one row early wherever the emote takes two instructions, */             \
     /* and an empty asm barrier at each call moves the literal */              \
-    /* pools of a long scene. */                                               \
+    /* pools of a long scene. As an unpinned local, 53 of 408 */               \
+    /* instructions differ in tla-en (Func_02000430). */                       \
     register s32 emote_ __asm__("r1") = (emote);                               \
     /* FAKEMATCH(pin): the frames pinned to r2 with the emote above. */        \
     register s32 frames_ __asm__("r2") = (frames);                             \
@@ -171,7 +172,8 @@ void Func_02000430(void) {
   Actor_SetDestinationOffset(19, -16, 24);
   FieldActor_WaitForMoveById(19);
   /* FAKEMATCH(dead): the once-only block loads gMainRoutineWork before its
-   * offset is built; as the plain store, one row is reordered. */
+   * offset is built; as the plain store, 4 of 408 instructions differ in
+   * tla-en. */
   do {
     gMainRoutineWork.battleRule24b = 2;
   } while (0);

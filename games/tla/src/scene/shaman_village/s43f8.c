@@ -52,7 +52,8 @@ void Func_020043f8(void) {
 
     /* FAKEMATCH(barrier): the empty asm holds r0 until the priority is
      * complete, so the callback is loaded last as the native has; as
-     * Task_Add(Func_020043c8, 0x480), it comes one row early in tla-en. */
+     * Task_Add(Func_020043c8, 0x480), 8 of 128 instructions differ in
+     * tla-en. */
     __asm__("" : "+l"(priority) : : "r0");
     Task_Add(Func_020043c8, priority);
   }
@@ -72,7 +73,7 @@ void Func_02004534(void) {
   if (GameFlag_Test(0x9fe)) {
     /* FAKEMATCH(temporary): the local holding one constant starts the facing
      * before the other arguments, as the native has; as the plain argument
-     * 0x3000 it is started third (one reordered row). */
+     * 0x3000, 2 of 159 instructions differ in tla-en. */
     s32 angle = 0x3000;
 
     Actor_SetPositionAndFacing(8, PIXELS(88), PIXELS(92), angle);

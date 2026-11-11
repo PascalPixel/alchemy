@@ -27,7 +27,8 @@ s32 Func_0200006c(s32 slot) {
     GameFlag_ClearBit(0x303);
   }
   /* FAKEMATCH(dead): a once-only loop, which places the test after the body;
-   * as a plain if, the test comes first. */
+   * as a plain if with no break, the test comes first, 43 of 67 instructions
+   * differ in tla-en. */
   while (id >= 0 && GameFlag_Test(0x303)) {
     const s32 *expected = &gLinkLobby_SlotValues[slot];
 

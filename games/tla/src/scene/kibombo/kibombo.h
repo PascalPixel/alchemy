@@ -132,8 +132,8 @@ static inline void Kibombo_ObjTurn(s32 actor, s32 angle) {
 static inline void Kibombo_BlendStart(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
   /* FAKEMATCH(wrapper): the blend start reaches the main image through this
-   * inline; as a direct call to Map_CopyCellAttributeRect, the instructions
-   * differ. */
+   * inline; as a direct call to Map_CopyCellAttributeRect, 4 of 25
+   * instructions differ in tla-en (Func_020005e0). */
   Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
@@ -213,8 +213,8 @@ static inline void Kibombo_FadeTo(s32 a, s32 b) {
 #define KIBOMBO_TASK_ADD(func, priority)                                       \
   {                                                                            \
     /* FAKEMATCH(temporary): a local holding the priority keeps the constant   \
-     * ahead of the task function load; as a plain argument, the instructions  \
-     * differ. */                                                              \
+     * ahead of the task function load; as a plain argument, 2 of 40           \
+     * instructions differ in tla-en (Func_02003c14). */                       \
     s32 priority_ = (priority);                                                \
     Task_Add((func), priority_);                                               \
   }

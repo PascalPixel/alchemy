@@ -50,8 +50,8 @@ void Func_0200128c(s32 x, s32 y, s32 z, s16 rotation, s32 timer) {
        * no asm, 2 instructions differ. */
       s32 timerValue = timer;
 
-      /* FAKEMATCH(barrier): the empty asm before the timer's store, measured
-       * with the temporary above. */
+      /* FAKEMATCH(barrier): the empty asm before the timer's store; as no asm,
+       * 2 of 32 instructions differ in tla-en. */
       __asm__("");
       ((struct SpawnedActor *)object)->timer = timerValue;
     }

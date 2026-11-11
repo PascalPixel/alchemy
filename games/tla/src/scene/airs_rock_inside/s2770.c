@@ -9,7 +9,8 @@ void Func_02002770(void) {
   gData_02006c0c = value;
   {
     /* FAKEMATCH(temporary): the priority in a local, which keeps the constant
-     * ahead of the task function's load; as a literal argument. */
+     * ahead of the task function's load; as a literal argument, 2 of 10
+     * instructions differ in tla-en. */
     s32 priority = 0x480;
     Task_Add(Func_020026c0, priority);
   }

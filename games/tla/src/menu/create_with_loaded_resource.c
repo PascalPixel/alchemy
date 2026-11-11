@@ -93,7 +93,7 @@ s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
   if (object == 0) {
     /* FAKEMATCH(dead): a test whose two arms are alike, which keeps the
      * arguments' lifetimes through CSE, as in The Broken Seal; as a plain
-     * return -1, other registers are used and 20 instructions differ. */
+     * return -1, 20 of 38 instructions differ in tla-en. */
     if (variant || xx)
       return -1;
     else
@@ -127,7 +127,7 @@ s32 Func_08104ba8(struct RenderInput *window, s32 x, s32 y, s32 variant) {
   if (object == 0) {
     /* FAKEMATCH(dead): a test whose two arms are alike, which keeps the
      * arguments' lifetimes through CSE, as in The Broken Seal; as a plain
-     * return -1, other registers are used and 26 instructions differ. */
+     * return -1, 26 of 42 instructions differ in tla-en. */
     if (v || x)
       return -1;
     else

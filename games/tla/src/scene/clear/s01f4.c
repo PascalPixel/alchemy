@@ -18,11 +18,13 @@ extern const u16 gData_02002418[];
 void Func_020001f4(void) {
   if (gData_020024f6 == 0) {
     /* FAKEMATCH(pin): the held keys pointer pinned to r4, with the key pinned
-     * to r3 below; as unpinned locals, 24 instructions differ in tla-en. */
+     * to r3 below; as an unpinned local, 12 of 92 instructions differ in
+     * tla-en. */
     register volatile u32 *held asm("r4") = &gInput.held;
 
     if (gData_020024fe != 0) {
-      /* FAKEMATCH(pin): the key pinned to r3, with the pointer above. */
+      /* FAKEMATCH(pin): the key pinned to r3, with the pointer above; as an
+       * unpinned local, 6 of 92 instructions differ in tla-en. */
       register u32 keys asm("r3") = *held;
 
       if (keys == 0)
@@ -30,8 +32,8 @@ void Func_020001f4(void) {
     } else if (*held != 0) {
       if (*held == gData_02002410[gData_020024fa]) {
         /* FAKEMATCH(dead): the two stores in a once-only block, which keeps
-         * them together; as plain statements, not measured apart from the
-         * pins. */
+         * them together; as plain statements, 4 of 92 instructions differ in
+         * tla-en. */
         do {
           gData_020024fa++;
           gData_020024fe = 1;
@@ -47,11 +49,12 @@ void Func_020001f4(void) {
   }
   if (gData_020024f8 == 0) {
     /* FAKEMATCH(pin): the held keys pointer pinned to r4, as for the first
-     * code and for the same differences. */
+     * code; as an unpinned local, 12 of 92 instructions differ in tla-en. */
     register volatile u32 *held asm("r4") = &gInput.held;
 
     if (gData_02002500 != 0) {
-      /* FAKEMATCH(pin): the key pinned to r3, as for the first code. */
+      /* FAKEMATCH(pin): the key pinned to r3, as for the first code; as an
+       * unpinned local, 6 of 92 instructions differ in tla-en. */
       register u32 keys asm("r3") = *held;
 
       if (keys == 0)
@@ -59,7 +62,8 @@ void Func_020001f4(void) {
     } else if (*held != 0) {
       if (*held == gData_02002418[gData_020024fc]) {
         /* FAKEMATCH(dead): the two stores in a once-only block, as for the
-         * first code. */
+         * first code; as plain statements, 4 of 92 instructions differ in
+         * tla-en. */
         do {
           gData_020024fc++;
           gData_02002500 = 1;

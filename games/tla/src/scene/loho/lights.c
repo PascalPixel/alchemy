@@ -18,7 +18,8 @@ void Func_02000c54(s32 id) {
   s32 kind = 64;
 
   /* FAKEMATCH(barrier): the empty asm on the value and kind, so the kind is set
-   * between the value's halves; as constant arguments. */
+   * between the value's halves; as constant arguments, 2 of 6 instructions
+   * differ in tla-en. */
   asm("" : "+l"(high), "+l"(kind));
   Func_020013f0(id, kind, high << 2);
 }
@@ -28,7 +29,8 @@ void Func_02000c64(s32 id) {
   s32 kind = 65;
 
   /* FAKEMATCH(barrier): the empty asm on the value and kind, so the kind is set
-   * between the value's halves; as constant arguments. */
+   * between the value's halves; as constant arguments, 2 of 7 instructions
+   * differ in tla-en. */
   asm("" : "+l"(value), "+l"(kind));
   Func_020013f0(id, kind, value + 1);
 }
@@ -38,7 +40,8 @@ void Func_02000c74(s32 id) {
   s32 kind = 66;
 
   /* FAKEMATCH(barrier): the empty asm on the value and kind, so the kind is set
-   * between the value's halves; as constant arguments. */
+   * between the value's halves; as constant arguments, 2 of 7 instructions
+   * differ in tla-en. */
   asm("" : "+l"(value), "+l"(kind));
   Func_020013f0(id, kind, value + 2);
 }

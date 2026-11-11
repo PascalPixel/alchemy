@@ -7,8 +7,8 @@ void Func_0200060c(void) {
 
   Actor_ShowItemIconById(31, 415);
   /* FAKEMATCH(temporary): the facing in a local, which starts it before the
-   * other arguments as the native has; as a plain argument, one row is
-   * reordered. */
+   * other arguments as the native has; as the plain argument 0xc000, 4 of 17
+   * instructions differ in tla-en. */
   angle = 0xc000;
   Actor_SetPositionAndFacing(31, PIXELS(312), PIXELS(593), angle);
   Event_SetFlag(0xa74);

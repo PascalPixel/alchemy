@@ -52,7 +52,8 @@ void Func_02002f1c(void) {
     other->angle = FACING_SOUTH + FACING_STEP;
     other->collisionFlags |= 0x80;
     /* FAKEMATCH(temporary): the angle held in a local is built before the
-     * position; as the constant argument, 4 instructions differ. */
+     * position; as the constant argument 0x3000, 4 of 166 instructions differ
+     * in tla-en. */
     angle = 0x3000;
     Actor_SetPositionAndFacing(19, PIXELS(234), PIXELS(204),
                                                    angle);

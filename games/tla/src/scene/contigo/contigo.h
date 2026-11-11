@@ -28,8 +28,8 @@ void Func_0200423c(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
 
 static inline void Contigo_Jump(s32 actor, s32 height, s32 frames) {
   /* FAKEMATCH(pin): the height pinned to r1, so that the actor loads after the
-   * height and the frames, as the native has; as plain arguments it does
-   * not. */
+   * height and the frames, as the native has; as an unpinned local, 2 of 8
+   * instructions differ in tla-en (Func_020007a4). */
   register s32 h __asm__("r1") = height;
   /* FAKEMATCH(pin): the frames pinned to r2, for the same order. */
   register s32 f __asm__("r2") = frames;

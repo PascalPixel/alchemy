@@ -422,7 +422,7 @@ void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer) {
     object->motionFlags = 0;
     {
       /* FAKEMATCH(signature): the timer copied into an s64 local, so it loads
-       * before the pooled zero for nextFrame; as object->unk5e = timer, 2
+       * before the pooled zero for nextFrame; as object->unk5e = timer, 2 of 35
        * instructions differ in tla-en. */
       s64 wide = timer;
 

@@ -60,7 +60,7 @@ void Func_02005594(void) {
     Actor_SetHorizontalPositionWithTerrain(7, 0, 0);
   else if (GameFlag_Test(0x92f)) {
     /* FAKEMATCH(temporary): a local holding the angle builds it before the
-     * position; as a plain argument, 4 instructions differ. */
+     * position; as a plain argument, 4 of 223 instructions differ in tla-en. */
     s32 angle = 0x2000;
 
     Kibombo_ObjPlaceFacing(7, 152 << 17, 176 << 15, angle);

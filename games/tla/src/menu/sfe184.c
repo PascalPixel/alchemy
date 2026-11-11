@@ -79,7 +79,7 @@ s32 Func_080fe240(void) {
 
   /* FAKEMATCH(dead): the cursor store in a once-only block, which keeps it in
    * source order, as in The Broken Seal's CharacterSelector_Run; as the plain
-   * statement (not measured). */
+   * statement, 2 of 24 instructions differ in tla-en. */
   do {
     work->selectedSlots[0] = result;
   } while (0);

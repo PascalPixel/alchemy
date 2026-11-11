@@ -15,8 +15,7 @@ void Func_02002318(void) {
   Scene_TaskAdd(Func_02002180, 0x480);
   /* FAKEMATCH(temporary): a pointer to gData_0200480c, taken here, loads its
    * address before the call that fetches actor 17, as in the native; as the
-   * global named at each use, or the pointer taken at the top, 2 instructions
-   * differ. */
+   * global named at each use, 2 of 66 instructions differ in tla-en. */
   followed = &gData_0200480c;
   object = (struct Actor *)Actor_GetById(17);
   object->priorityFlags |= 2;

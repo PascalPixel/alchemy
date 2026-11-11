@@ -6,7 +6,9 @@ extern u32 gFrameCount;
 static inline s32 GameFlag_Test_(s32 flag) {
   /* FAKEMATCH(wrapper): the flag test forwarded through the inline, as overlay
    * 679's GameFlag_Test_ does, keeps the actor in r5 and the message in r6; as
-   * a direct call the two swap and 16 instructions differ. */
+   * a direct call to GameFlag_Test the two swap; as that direct call, 16 of 42
+   * instructions of Func_020004bc differ in tla-en, as do 16 of 42 of
+   * Func_02000538. */
   return GameFlag_Test(flag);
 }
 

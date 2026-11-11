@@ -127,8 +127,8 @@ static __inline__ void Func_020053d0_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
   /* FAKEMATCH(wrapper): the call through this inline, whose parameters give
    * each stack argument its own register, as in The Broken Seal's scene layer;
-   * as a direct call to Func_020053d0, which builds them all in r3, the
-   * instructions differ. */
+   * as a direct call to Func_020053d0, which builds them all in r3, 8 of
+   * 15 instructions differ in tla-en (Func_020027b4). */
   Func_020053d0(a, b, c, d, e, f, g);
 }
 

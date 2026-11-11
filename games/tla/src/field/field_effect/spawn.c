@@ -15,7 +15,8 @@
 extern struct FieldEffect *Actor_GetById(s32 id);
 extern struct FieldActor *EFFECT_CREATE(s32 type, s32 x, s32 y, s32 z);
 #ifdef EFFECT_SPRITE_PRIORITY
-static inline struct FieldEffect *Effect_Create(s32 type, s32 x, s32 y, s32 z) {
+static inline struct FieldEffect *Effect_CreateActor(s32 type, s32 x, s32 y,
+                                                     s32 z) {
   return (struct FieldEffect *)EFFECT_CREATE(type, x, y, z);
 }
 #endif
@@ -37,12 +38,13 @@ void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   u32 start;
 
 #ifdef EFFECT_SPRITE_PRIORITY
-  /* FAKEMATCH(wrapper): the create call forwarded through Effect_Create; as
-   * a direct call, 36 of 219 instructions differ in tla-en (overlay 663). */
+  /* FAKEMATCH(wrapper): the create call forwarded through
+   * Effect_CreateActor; as a direct call, 36 of 219 instructions differ in
+   * tla-en (overlay 663). */
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-    effect = Effect_Create(options->type, x, y, z);
+    effect = Effect_CreateActor(options->type, x, y, z);
   else
-    effect = Effect_Create(285, x, y, z);
+    effect = Effect_CreateActor(285, x, y, z);
 #else
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
     effect = (struct FieldEffect *)EFFECT_CREATE(options->type, x, y, z);

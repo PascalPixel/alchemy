@@ -5,12 +5,6 @@
 	.thumb_func
 Text_DrawPrefixedNumberAtOffset:
 	.incbin "baserom.gba", 0x000422c8, 0x000000a0
-	.section .rom.0016729c, "ax"
-	.global BattleEffect_RunJudgment
-	.type BattleEffect_RunJudgment, %function
-	.thumb_func
-BattleEffect_RunJudgment:
-	.incbin "baserom.gba", 0x0016729c, 0x000017a4
 	.section .rom.0016aeec, "ax"
 	.balign 4
 	.global Func_0816aeec

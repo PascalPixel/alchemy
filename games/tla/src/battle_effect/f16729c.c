@@ -1,279 +1,3 @@
-// Draft, differ 10 of 2680 (tla-en, 2026-11-10; the same 10 in ja, de, es, fr, it: --symbol BattleEffect_RunJudgment)
-// Pools read 10 November: every literal pool word this draft compiles equals
-// the ROM's (diff compares instructions only; Catastrophe hid a wrong one).
-// 2026-11-10, agent round 2, unchanged at 10, about 65 measures on the two
-// DRAW_ALT sites with the sister drafts' findings.
-// - The draw typed as returning nothing (a void routine type at the slot
-//   call): no change at any of the four draws at frame <= 63, alone or all
-//   (10; with a block after every draw 12); at the frame > 143 pair 12 to 18
-//   in the present form and never lower in six block forms.
-// - Two alike arms round a whole draw as a block end (if (sheet) { draw }
-//   else { draw }): the arms are not merged, 182 to 1071. That device needs a
-//   real store in the arms, and no store stands between these draws.
-// - The four draws, read from loop.c's dump and sched2 together. The sheet
-//   move comes last only when no barrier follows anywhere in the block (each
-//   barrier depends on every use of r7 since the one before, which ties the
-//   move with r2 and r3 again), so the listing's block has none after the
-//   first draw's arguments. With none (102) the code differs because loop.c's
-//   second pass moves the 24 out of the strike loop and not the slot address,
-//   where the listing rebuilds the slot address at each draw (moved) and
-//   keeps the 24 in r5 (not moved). A constant is moved when threshold *
-//   savings * life >= the loop's real insns; the threshold is 15 here and
-//   drops 3 for each constant moved before, matching sets add their savings
-//   and their lives. Second pass, 1117 insns: the slot address has savings 2
-//   and life 46, 2 * 46 * 12 = 1104, not moved by 13; the 24 has savings 3
-//   and life 44 (42 of its own over the four draws), 3 * 44 * 9 = 1188,
-//   moved. The present blocks cut the 24 into three registers of short life
-//   (savings 5, life 22, 990, kept) and the slot address into shorter ones
-//   (savings 4, life 30, 1440, moved), which is why they match everything but
-//   the ties. With no blocks the listing's choice needs the slot address's
-//   life at 50 or more and the loop at 1189 insns or more in that pass, or
-//   the 24's life at 41 or less. A slot pointer local set before the sheet
-//   test gives the address life 49 and moves it, but the 24 still moves (118;
-//   set in its declaration 144); upper and lower y locals 149.
-// - The pair: nothing new. Its stack stores still lose to the work reload by
-//   one dependent in every form with no barrier before the first draw.
-// 2026-11-10, agent round, 24 to 10, and the empty asm (FAKEMATCH barrier) is
-// gone. About 1,900 measures, most of them enumerations of block positions.
-// - Queue loop 1, 4 to 0. The push is written out as QUEUE_PUSH_PARTED with an
-//   empty once-only block before the count store, before the value store and
-//   before the address store (all three: any two leave 2), the objects read as
-//   work->objects[i] in place of the u32 pointer, and the source as cells + i *
-//   0x400. The blocks make count + 1, the value store and the objects load
-//   barriers in turn, so the pool load cannot fill the store's three cycles.
-//   cells, a register set outside the loop, lets loop.c's first pass reduce
-//   the source giv; the objects giv is reduced in the second, so its increment
-//   is emitted after the source's (givs are reduced last found first, each
-//   increment put before the biv's): adds r1, #4 last, as the listing.
-// - Release loop, 2 to 0: the closing fill through a plain inline, FillWords
-//   (FAKEMATCH wrapper), in place of FILL and the asm. With no loop note after
-//   the fill nothing is a barrier, the last scheduled insn is the call, and
-//   the 0x77dc build (output dependent on it) outranks the work reload (data
-//   dependent). A direct Iwram_FillWords gives the same loop but emits its
-//   0x4000 before the routine's address (lsls r1 early, 14); the inline's
-//   body keeps the address first. Locals for the size, value or canvas: 14.
-// - Frame > 143 pair, 8 to 2: written out. The first draw reads the sheet in
-//   a once-only block with a body before the call and has no block after it;
-//   the second is DRAW_ALT_PLAIN, no block at all. Left: movs r4, #192 comes
-//   first after the load call, being the barrier (the first insn after the
-//   block is the slot address), where the listing has it after the stack
-//   stores and the work reload. All 128 placements of an empty block at the
-//   pair's seven gaps: 14 at best (one block before the second load or the
-//   second draw). There the stack stores tie the work reload on priority (47)
-//   and lose on dependents, 6 to 7 (the reload has movs r2, #36 and the add,
-//   the stores only the routine load); a barrier anywhere after the call adds
-//   one to both. With the sheet block: x, canvas or the routine pointer in the
-//   body or after it, 260 orders, 12 at best; width and height locals after
-//   the block 768; a dead test between the draws as the cse cut 68; the
-//   second mode through a local or as mode + 4, no change.
-// - The four draws at frame <= 63, 10 to 8: the second and fourth are
-//   DRAW_ALT_PLAIN (the first and third keep the block; plain at the third
-//   and fourth, or at the second alone, measures the same). Each draw given none, a block before
-//   its load, between load and draw, or after the draw, all 256: nothing
-//   lower. A once-only body for x, y, both, the sheet or the canvas at one
-//   draw at a time from the best forms: no gain. A shared size local for the
-//   24s with no blocks: 1015 (a new pseudo moves the whole frame). Read from
-//   sched2: the sheet move (r1 = r7) ties r2 and r3 on dependents wherever a
-//   barrier follows in the block, because every later barrier depends on each
-//   use of r7; with no barrier it has one fewer (r1 is next set by the next
-//   load's mode) and comes last as the listing, but then the 24 is rebuilt at
-//   each draw and the slot address takes r5 (0000: 102). The listing's first
-//   draw also loads the canvas before the routine pointer, which needs the
-//   canvas load to keep its later calls as dependents (no barrier after it).
-// 2026-11-10, by hand, unchanged at 24. DRAW_ALT's empty block moved or
-// doubled: a second after the first 24, before the draw as well 38, before
-// the load as well 36, only before the draw 32, only before the load 30,
-// all three places 50, none 208; the mode through a block local 24, with an
-// empty block before the load 36. The frame > 143 pair written out: an empty
-// block before its first draw or its first load, or between the two draws,
-// 26 to 28; no block at its first draw 122; a sheet local for the pair 108;
-// width and height locals 767; the sheet as work + 0x700 or &sheet[0], or
-// the second x as x + 24, 24.
-// 2026-11-09, round 8, unchanged at 24, about 12 attempts on queue loop 1, with
-// the push written out locally. The value store through a one-member union
-// (alias set 0) puts the count store first (an output dependence), but the
-// objects load then waits three cycles on the value store (arm_adjust_cost
-// gives a load after a store cost 1 only from sp, fp or the pool) and the
-// 0x06010000 pool load fills the gap: 24, rows moved. Objects read as void **
-// leave the value store no memory dependant, so it falls to priority 9 behind
-// the tile chain (32); the count store as q->count (struct set) with u32 or
-// void ** objects, or with the union store: 24 to 32. The listing needs the
-// objects load straight after the value store with no stall while the value
-// store still outranks the pool load.
-// 2026-11-09, round 7, unchanged at 24. Queue loop 1, read from a scratch cc1
-// printing sched2's ready lists (analysis only): the value store's 21 is its
-// true dependence into the objects load (u32 read, int set, as the store); the
-// listing's order needs the count store above it (22 or more) or that
-// dependence at cost 0. The objects read as void **, struct JudgmentObject **,
-// u8 ** (pointer sets, no dependence): 32, the value store then falls behind
-// the whole tile chain. An asm with the queue count as a memory operand after
-// the push, to give the count store a dependant: "+m" 58, "m" 143.
-// 2026-11-09, round 6, 32 to 24: the rings' cx reloads take the listing's r4
-// in both halves. A tagged dead test after each dx (if (dx > 1000) top = 0;
-// top is set again before it is read) builds 1000 in a reload register: the
-// one pick between the radius and cx the listing has. Its branch is empty by
-// reload and gone after it, so nothing of it is left in the code. The test on
-// radius (in lr) instead, 28 in the first half but 46 in the second; on
-// halfSlope or slope, 50 to 2128; right after half, 49 to 682 (the label
-// stops half's own register from being reused). The two older dead branches
-// re-measured on this form (231, 205). Left: queue loop 1 (4), DRAW_ALT's
-// ties (8 and 10) and the release loop (2), all sched2 order.
-// 2026-11-09, last: a 12-minute permute of the rings' first half (half to
-// top, PERM_RANDOMIZE, seed 4242, 14,792 candidates): nothing below 32; cx
-// copied to a ring local first, 32. Traced: cx's first reload is the pick
-// after the radius's r1 and finds r2 free (dx holds r3); the listing's r4
-// fits r2 being busy there or half's output reload being a pick (r2 busy,
-// r3) instead of combine_reloads' dead r3.
-// 2026-11-09, later, 40 to 32: the flash step goes through a local assigned
-// twice, addB = addR = addG = step = (step = 304 - frame * 2) (FAKEMATCH
-// temporary, found by the permuter on the flash block, seed 5309): its minus
-// then puts frame * 2's dead r2 first, subs r2, r3, r2 as the listing. The
-// local set once, or the same self-assignment on addG, addR or addB: 40.
-// Traced with a scratch cc1 that prints
-// reload's picks (analysis only); the spill registers are r0 to r6, picked
-// round robin. Rings: 1792 r0, the radius r1 (mov r1, lr), half's output
-// reload into fp takes combine_reloads' dead r3 with no pick, so cx's reload
-// is the next pick, r2; the listing's r4 needs one more pick of r2 or r3
-// between the radius and cx. Flash step: the minus's REG_DEAD notes list the
-// 304 (r3) before frame * 2 (r2) because flow scans the second operand first
-// and prepends; CSE folds every copy into the minus's own destination, so no
-// combine rebuilds the insn (which would reverse its notes): a temp v, v =
-// frame * 2 then 304 - v, an inline returning the step, all 40; the 304 from
-// a function-level local gives the dead r3 to frame * 2 but moves frame's
-// reload to r4 (48); (152 - frame) * 2 55. The slot reads as *(T *)&...: 40
-// (draw[1], DRAW_ALT's call) or worse (draw[0] 124, sprites 53).
-// 2026-11-09 (devices pass), 52 to 40: the second queue loop's source base
-// passes through an identity inline (FAKEMATCH wrapper, found by the
-// permuter, seed 6162), which settles that loop's table and source registers
-// (r4 and r5) and its pool order; the first loop's base through it as well
-// changes nothing (40), through it alone 52. Not better this pass: the flash
-// step's 304 or frame * 2 through an asm or a pin, -(frame * 2) + 304 (52 to
-// 76); the four DRAW_ALT draws' sheet or y through asms or a pin (959 to
-// 1035). Left as below, but for queue loop 2.
-// 2026-11-08, fourth pass, 54 to 52: the shake's scroll value is a local y before
-// the store (movs r3, #3 then the gBgScroll pool load, as the native). What is left,
-// each traced in the rtl dumps (diff --rtl), so the next round need not re-derive it:
-// - Flash step (subs r3 where the native has subs r2): addG is spilled, and reload's
-//   combine_reloads gives its output reload the first dead hard register in the
-//   insn's REG_DEAD notes; flow lists the 304 (r3) before frame * 2 (r2). The native
-//   needs frame * 2's note first. A temp v, v = frame * 2, split stores, << 1: 52.
-// - Rings' first cx reload (r2 where the native has r4, both halves): reload's
-//   round robin starts after the last register allocate_reload_reg handed out; here
-//   that is mov r1, lr (radius), so r2. The native's r4 needs one more allocation of
-//   r2 or r3 before it, likely half's output reload into fp (and halfSlope's into ip)
-//   going through allocate_reload_reg instead of combine_reloads' dead-register path.
-//   cx < dx, dx >= cx, cx - dx < 0, the branch before right, seven declaration
-//   orders: 52 or worse (to 760).
-// - Queue loop 1 (stmia {r5} before the count store): sched2 priorities are the
-//   value store 21 (a true dependence into the objects load, both alias set int),
-//   count + 1 19, the count's strh 18. A union read of objects (alias set 0) ties
-//   the strh at 21 but loses on dependents (2 to 3): 54. An objects pointer stepped
-//   in the for (i++, p++) gives the native's latch (adds r1, #4 last) but builds the
-//   base before the pool loads: 70. work->objects[i], u8 ** or u16 **: 60.
-// - Release loop (ldr r6 before movs r0, #238): the giv's init reloads work (operand
-//   1) before rebuilding 0x77dc (operand 2), equal priority, so RTL order wins; the
-//   native rebuilds first. *(objects + i), an objects local, *objects++, i < 16, i = 0
-//   before the barrier: 52 to 60.
-// - DRAW_ALT at frame > 143: the native copies 0x030000bc into sl after the register
-//   arguments, so the constant's set comes later in its RTL. draw[1], a slot
-//   pointer, (*(DrawRectangle *)&...), a sheet local: 52 to 262.
-// - The four DRAW_ALT draws: the native moves sheet into r1 after r2 and r3 in draws
-//   1 to 3 but not 4, where sheet dies; priorities (245) and dependents (3) are equal,
-//   so its r1 move comes later in RTL there.
-// - Queue loop 2's r4/r5 swap and the IO_WRITE_QUEUE_PUSH_IME form in either loop
-//   (56, 58) as below.
-// 2026-11-08, third pass: unchanged. In the second queue loop a block pointer
-// src = Ram_MapCellBuffer stepped as src += 0x400, i++ puts table and source in the
-// native's r4 and r5, but cse then shares the decode call's constant with src (adds
-// r1, r5 where the native reloads it): 54, as a once-only block anywhere near it (60
-// to 68). Five spellings of the source address, i < 13, *(table + i), a non-const or
-// sized table, an order pointer stepped with i (66): 54 or worse. 8 minutes of permuter
-// on the frame-76 block from the pointer form (seed 5521): nothing better.
-// 2026-11-08, later: unchanged. Tiles and order pointers in the second queue loop (56
-// to 76), all six orders of the flash's chained assignment and its split form (54),
-// 7 minutes of permuter on the frame-76 block (seed 8821, 54).
-// 2026-11-08: every device re-measured. Each dead branch still needed (241, 116);
-// the barrier still needed (56; no once-only block at any statement, nor a
-// release loop through a pointer, do-while or i < 16, replaces it); the wrapper is
-// needed only at the first palette copy, the other five calls are now direct
-// at no cost. A once-only block at every statement: nothing under 54. Tried
-// without gain: tiles, object or index locals in the second queue loop (181 to
-// 187), y locals, a fn local or a sheet copy for the four DRAW_ALT draws, seven
-// spellings of the flash step, plain forms for the dead branches (ternary,
-// clamp after, goto, 88 to 241); 2 x 20 minutes of permuter, nothing better.
-// 2026-11-07, from 56: an empty asm (FAKEMATCH barrier) between the closing
-// fill and the release loop (54). Left as below.
-// 2026-11-07: ring = 0 before shift = 0 and a plain Iwram_FillWords for the strike's
-// first sheet fill (60 to 56); the flash step, both queue loops and DRAW_ALT's
-// argument order still tie as below.
-// 2026-11-06: differ 60: scheduling and reload ties only, as below.
-// Second round, 6 November: 40 minutes of permuter (seed 7101), nothing better;
-// in the second queue loop a source local before the push and
-// (u32)Ram_MapCellBuffer + i * 0x400 (60 each), an objects local (160).
-// Tried 2026-11-06 without gain (60 or worse): 0x400 * i, a src local, an order pointer,
-// a k local or i < 13 in the second queue loop; objects[i], an obj local or i < 16 in the
-// first; 304 - 2 * frame and five other spellings of the flash's step; five other dead
-// conditions on the rings' left; the do { } around the whole DRAW_ALT or its draw alone;
-// the frame <= 63 sheet chosen by +=, ?: or a reversed test; and after the gathering a plain
-// Iwram_FillWords, which settles the release loop's movs r7, #0 but moves the fill's own
-// lsls r1 ahead of its pointer load, the same 60.
-// Left: order rows in the queue loops, the draws and the frame's model stores; the second
-// queue loop's table and source swapped between r4 and r5 (equal refs); and the rings'
-// and the flash's reload registers (ldr r4 where this has r2, subs r2 where this has
-// subs r3), one step behind with nothing visible taking it.
-// What settled rows this round: every copy goes through the CopyWords inline, FILL
-// is an inline around a one-pass block, DRAW_ALT's barrier sits between the draw and the
-// release, the palette step's 512 is a local, and shade's default is set right after
-// the model, which keeps r0 busy for reload.
-// 2026-11-05: differ 137 of 2680 (tla-en). With the twin's two dead branches
-// and a wrapper on the first palette copy. Left: scheduling rows and pool
-// offsets that follow them, across the draft.
-// Draft, differ 258 of 2680, skeleton gap 41/39 (tla-en, 2026-11-01)
-// BattleEffect_RunJudgment, the same calls and control flow as the listing; its
-// twin is The Broken Seal's judgment.c. Re-measured under the 1 November
-// compiler: the stale notes are gone, and the root causes below are what is
-// left. The frame is the listing's 188.
-// Closed this round, for whoever meets the same shapes: the ring locals
-// declared top, bottom, left, right (local-alloc's ties, 140 instructions);
-// Ram_MapCellBuffer, the constant, at every site but the top's cells (it lets
-// the frame-0 cell loop reduce its giv); the debris loop's p = &particles[i]
-// inside the loop; height / 2 with the shard tables' reads left in place;
-// shade's default set before model->texture; u16 c in the flash loop, which is
-// what pools the 31 mask; the twin's sx = 8 in place of a cast through u32.
-// DRAW_ALT and FILL are do { } while (0) macros that every use matches through
-// (S2): their loop notes stop CSE sharing work->sheet between draws and are
-// sched2's barrier around each fill. Their review is open: the round's brief
-// forbade one-pass blocks, and they are kept only on S2's macro wording. As plain
-// statements the draft measures differ 462, skeleton 96/88.
-// What is left, with its root first. (1) The rings, about 90 instructions: the
-// listing reloads cx twice between right and left, so reload saw a label there.
-// The twin's two tagged FAKEMATCH(dead) branches (if (dx > cx) left = 0; before
-// each left = cx - dx) take this draft to differ 171, skeleton 37/38; they are
-// not added, since this round adds no device. A plain form that leaves that
-// label would close it. (2) First palette load, about 30: the listing's 512 is
-// one shared pseudo with no hard register, rebuilt into r2 for the call and by
-// reload into r1 after it for pal += 512, and that extra reload is why the next
-// reloads start one register on. Copy-then-add gives the pseudo r5 and shifts
-// everything; add-before-copy, the other three sites' form, is kept as the
-// nearer. A one-pass copy macro and a one-constant size local both lose. (3)
-// The flash's red channel: u16 c gives the pooled mask for green and blue but
-// ldrsh and a 31 << 16 mask for red, where the listing has ldrh and movs 31;
-// s32 c gives the reverse. r = 31; r &= c, bitfields and several u16 forms all
-// lose. (4) DRAW_ALT's LoadBlitter arguments come out r0 first after the
-// loop-begin note, and draw[0]'s pointer load one slot early; moving the
-// do { } to the load, the draw or the release alone costs more than it gains.
-// (5) Scheduling ties: the queue loop's value store, the first model's constant
-// (r0 here, r1 in the listing, so shade takes r2).
-// loop.c's dump shows the second pass moves a constant when
-// 9 * savings * life >= the loop's real insns; that is how the 24 rebuilt across
-// the strike loop was traced.
-// Adopting needs names in resource_directory.s for the ResourceId_ symbols
-// declared below that it does not yet name.
-// The native's arrays, from the top of its frame: anchor (sp 176), pos (164),
-// the swords' placement (148), the falling objects' placement (132, drift
-// here), req (124), the first texture (116), the glare's texture (108) and
-// scale (100).
-
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "dma.h"
@@ -306,7 +30,8 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -449,15 +174,14 @@ static inline void FillWords(void *dst, s32 size, s32 value) {
   Iwram_FillWords(dst, size, value);
 }
 #define DRAW_ALT(mode, sheet, x, y, w, h)                                      \
-    BattleEffect_LoadBlitter(SLOT_ALT, mode);                                  \
-    ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, sheet, x, y, w, h);       \
-    do { } while (0);                                                          \
-    HeapSlot_Release(SLOT_ALT)
-// The same draw with no block between the draw and the release.
-#define DRAW_ALT_PLAIN(mode, sheet, x, y, w, h)                                \
-    BattleEffect_LoadBlitter(SLOT_ALT, mode);                                  \
-    ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, sheet, x, y, w, h);       \
-    HeapSlot_Release(SLOT_ALT)
+  BattleEffect_LoadBlitter(SLOT_ALT, mode);                                    \
+  ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, sheet, x, y, w, h);         \
+  HeapSlot_Release(SLOT_ALT)
+// The same draw, the routine read through a pointer to its slot.
+#define DRAW_ALT_THROUGH(slot, mode, sheet, x, y, w, h)                        \
+  BattleEffect_LoadBlitter(SLOT_ALT, mode);                                    \
+  (*(slot))(canvas, sheet, x, y, w, h);                                        \
+  HeapSlot_Release(SLOT_ALT)
 #define OBJ_TILES(obj)                                                         \
   (0x06010000 + gResourceTableEntries[(obj)->resource].tile)
 
@@ -475,11 +199,14 @@ static inline void FillWords(void *dst, s32 size, s32 value) {
     if (count <= 31) {                                                         \
       u32 *entry = q->entries[count];                                          \
                                                                                \
-      do { } while (0);                                                        \
+      do {                                                                     \
+      } while (0);                                                             \
       *&q->count = count + 1;                                                  \
-      do { } while (0);                                                        \
+      do {                                                                     \
+      } while (0);                                                             \
       *entry++ = (value);                                                      \
-      do { } while (0);                                                        \
+      do {                                                                     \
+      } while (0);                                                             \
       *entry++ = (address);                                                    \
       *entry = (control);                                                      \
     }                                                                          \
@@ -525,11 +252,15 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   s32 i;
   u8 *cells;
   u8 *pal;
+  s32 width;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   transition = Ram_HeapSlots->transitionWork;
   sprites = Ram_HeapSlots->unk64[0];
+  /* FAKEMATCH(temporary): the cell buffer's address in a local; as
+   * Ram_MapCellBuffer at the first tile copies and the first queue, 2 of
+   * 2680 instructions differ in tla-en. */
   cells = Ram_MapCellBuffer;
   BattleEffect_StartCanvasLayer(0x2000);
   REG_BG2PA = 0x100;
@@ -591,12 +322,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         p->velocityY = Random16() & 0xffff;
       }
       pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightATiles);
-      {
-        s32 size = 512;
-
-        Iwram_CopyWords((void *)OBJ_PLTT, pal, 512);
-        pal += size;
-      }
+      Iwram_CopyWords((void *)OBJ_PLTT, pal, 512);
+      pal += 512;
       Resource_DecodeType01(pal, Ram_MapCellBuffer);
       for (i = 0; i != 16; i++) {
         struct JudgmentObject *obj = work->objects[i];
@@ -682,27 +409,18 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
 
     if (frame == 72) {
       pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightBTiles);
-      {
-        s32 size = 512;
-
-        Iwram_CopyWords((void *)OBJ_PLTT, pal, 512);
-        pal += size;
-      }
+      Iwram_CopyWords((void *)OBJ_PLTT, pal, 512);
+      pal += 512;
       Resource_DecodeType01(pal, Ram_MapCellBuffer);
       for (i = 0; i != 16; i++) {
-        QUEUE_PUSH_PARTED(
-            OBJ_TILES((struct JudgmentObject *)work->objects[i]),
-            (u32)(cells + i * 0x400), 0x84000100);
+        QUEUE_PUSH_PARTED(OBJ_TILES((struct JudgmentObject *)work->objects[i]),
+                          (u32)(cells + i * 0x400), 0x84000100);
       }
     }
     if (frame == 76) {
       pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightCTiles);
-      {
-        s32 size = 512;
-
-        Iwram_CopyWords((void *)OBJ_PLTT, pal, 512);
-        pal += size;
-      }
+      Iwram_CopyWords((void *)OBJ_PLTT, pal, 512);
+      pal += 512;
       Resource_DecodeType01(pal, Ram_MapCellBuffer);
       for (i = 0; i != 13; i++) {
         IO_WRITE_QUEUE_PUSH(
@@ -719,6 +437,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         Func_0815b434(work->sheet + 0x1256, n, 0x10000);
       }
       Func_0818caa8(work->sheet + 0x1256, 60, 80, n);
+      /* FAKEMATCH(dead): the test of the block it stands in, made again; as a
+       * plain block, 8 of 2680 instructions differ in tla-en. */
       if ((u32)(frame - 116) <= 27) {
         s32 size = (frame - 116) / 3 + 16;
 
@@ -753,9 +473,9 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         flag = 1;
       }
       if ((u32)(frame - 144) <= 8) {
-        /* FAKEMATCH(temporary): the step taken through a local assigned twice; as
-         * addB = addR = addG = 304 - frame * 2, 40 of 2680 instructions differ in
-         * tla-en. */
+        /* FAKEMATCH(temporary): the step taken through a local assigned twice;
+         * as addB = addR = addG = 304 - frame * 2, 40 of 2680 instructions
+         * differ in tla-en. */
         addB = addR = addG = step = (step = 304 - frame * 2);
         flag = 1;
       }
@@ -788,18 +508,14 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     if (frame > 143) {
       s32 y = frame * 16 - 2272;
 
-      BattleEffect_LoadBlitter(SLOT_ALT, 3);
-      {
-        u8 *sheet;
-
-        // Once-only: the sheet is read in a block of its own before the draw.
-        do {
-          sheet = work->sheet;
-        } while (0);
-        ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, sheet, 36, y, 24, 64);
-      }
-      HeapSlot_Release(SLOT_ALT);
-      DRAW_ALT_PLAIN(7, work->sheet, 60, y, 24, 64);
+      DRAW_ALT(3, work->sheet, 36, y, 24, 64);
+      /* FAKEMATCH(dead): a test that is never true, cells being the cell
+       * buffer's address, kept between the two draws so that each builds
+       * the sheet's address anew; as no test, 104 of 2680 instructions differ
+       * in tla-en. */
+      if (!cells && !canvas)
+        y = 0;
+      DRAW_ALT(7, work->sheet, 60, y, 24, 64);
     }
 
     if ((u32)(frame - 144) <= 15) {
@@ -1034,22 +750,32 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     if (frame <= 63) {
       u8 *sheet;
       s32 top = frame - 4;
+      DrawRectangle *slot;
 
       if ((frame & 7) < 4) {
         sheet = work->sheet + 0x4000;
       } else {
         sheet = work->sheet + 0x4240;
       }
-      DRAW_ALT(19, sheet, 36, top - 24, 24, 24);
-      DRAW_ALT_PLAIN(23, sheet, 59, top - 24, 24, 24);
-      DRAW_ALT(27, sheet, 36, top - 1, 24, 24);
-      DRAW_ALT_PLAIN(31, sheet, 59, top - 1, 24, 24);
+      /* FAKEMATCH(temporary): a pointer to the routine's slot, set here after
+       * the sheet is chosen and before the first blitter is loaded; as
+       * Ram_HeapSlots->unkb8[1] at each draw, 990 of 2680 instructions differ
+       * in tla-en. */
+      slot = (DrawRectangle *)&Ram_HeapSlots->unkb8[1];
+      DRAW_ALT_THROUGH(slot, 19, sheet, 36, top - 24, 24, 24);
+      DRAW_ALT_THROUGH(slot, 23, sheet, 59, top - 24, 24, 24);
+      DRAW_ALT_THROUGH(slot, 27, sheet, 36, top - 1, 24, 24);
+      DRAW_ALT_THROUGH(slot, 31, sheet, 59, top - 1, 24, 24);
     }
     if ((u32)(frame - 64) <= 1) {
       draw[0](canvas, work->sheet + 0x6000, 52, 51, 16, 17);
     }
     if ((u32)(frame - 66) <= 1) {
-      draw[0](canvas, work->sheet + 0x6110, 48, 40, 24, 41);
+      /* FAKEMATCH(temporary): the width through a local set at both draws of
+       * this picture; as 24 at both, 116 of 2680 instructions differ in
+       * tla-en. */
+      width = 24;
+      draw[0](canvas, work->sheet + 0x6110, 48, 40, width, 41);
     }
     if ((u32)(frame - 68) <= 7) {
       s32 d = 76 - frame;
@@ -1063,7 +789,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       draw[0](canvas, work->sheet + 0x6000, 52, 51, 16, 17);
     }
     if ((u32)(frame - 80) <= 1) {
-      draw[0](canvas, work->sheet + 0x6110, 48, 40, 24, 41);
+      width = 24;
+      draw[0](canvas, work->sheet + 0x6110, 48, 40, width, 41);
     }
     if ((u32)(frame - 82) <= 3) {
       s32 d = frame * 2 - 164;
@@ -1293,6 +1020,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     }
     HeapSlot_Release(SLOT_ALT);
     if (frame > 63) {
+      /* FAKEMATCH(temporary): the scroll value through a local; as stored
+       * straight to gBgScroll[1].y, 2 of 2680 instructions differ in tla-en. */
       s32 y = Random16() % 4 + 30;
 
       gBgScroll[1].y = y;

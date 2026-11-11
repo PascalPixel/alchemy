@@ -18,7 +18,8 @@ struct EventWordWork {
 };
 
 void Event_CallWithLastActiveObjectId(s32 event_id) {
-  Event_SpawnObjectTable(event_id, ObjectTable_FindLastActiveId());
+  Event_SpawnObjectTable((struct ActorPlacement *)event_id,
+                         ObjectTable_FindLastActiveId());
 }
 
 void Event_SetSceneEvents(s32 events) {

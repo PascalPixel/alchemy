@@ -16,10 +16,12 @@ explains how this code works.
 
 ## What differs from The Broken Seal
 
-- `field_sequence/` holds, as separate objects, what The Broken Seal writes as
-  the parts of one object, `field_sequence.c`. The main routine, which The
-  Broken Seal also keeps in its System folder, is in
-  [The Lost Age: system](../system/README.md).
+- `field_sequence.c` holds the start of the field-sequence bank as parts
+  under `field_sequence/`, cut where The Broken Seal's are: encounters,
+  actors, walking, the run and the palette editor so far. The rest of the
+  bank is still separate files in `field_sequence/` and the family folders.
+  The main routine, which The Broken Seal also keeps in its System folder, is
+  in [The Lost Age: system](../system/README.md).
 - `field.c` holds the start of the field bank's C as parts under `field/`,
   cut where The Broken Seal's field.c parts are: `decompress.c` and
   `sprite_draw.c` so far. The rest of the bank is still separate files.

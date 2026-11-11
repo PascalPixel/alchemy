@@ -1,13 +1,9 @@
-#include "types.h"
-#include "ram_buffer.h"
-#include "main_routine_work.h"
-#include "input.h"
-#include "actor.h"
-#include "iwram_call.h"
-#include "scene_ids.h"
-#include "macros.h"
-#include "version.h"
-#include "io_reg.h"
+/// @file
+/// The field sequence: running a scene until the party leaves it, and its
+/// entrance.
+// Part of field_sequence.c.
+
+#include "../field_sequence_internal.h"
 
 struct FieldWork {
   u8 unk000[16];
@@ -67,38 +63,18 @@ struct FieldUnit {
   s16 pp;
 };
 
-struct OverlayTable {
-  u32 words[14];
-};
-
-extern struct OverlayTable gOverlayArea;
 extern u8 gDebugMode;
-extern char MsgFieldStrengthExhausted[];
-extern char MsgFieldPartyAnnihilated[];
-extern char MsgFieldPauseUnavailable[];
 extern u8 gMapCellBuffer[];
-extern u8 gData_02001000[];
 extern u8 gResourceBlockOwners[];
 
-void *HeapSlot_AllocEwram(s32 slot, s32 size);
-void *HeapSlot_Alloc(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
-void GameFlag_ClearBit(s32 flag);
-void GameFlag_SetBit(s32 flag);
-s32 GameFlag_Test(s32 flag);
 void Task_ResetAll(void);
 void Func_080d793c(s32 capture);
 void Func_08020110(void);
 void Func_08020108(s32 map);
-void Func_080c9e48(s32 mode);
 void Func_080e2718(void);
 void WindowSystem_InitFieldFar(void);
 void ObjectSystem_InitializeFar(s32 mode);
-void BattleEffect_ResetCounters(void);
-void BattleMap_ApplySceneEntranceView(void);
-void Func_080caa4c(s32 table);
 void Func_080cec34(void);
-void ObjectTable_Restore(void);
 void Func_080d784c(void);
 void Map_UpdateCurrentTileBlockFar(void);
 void WorldMap_LoadGraphicsFar(s32 x, s32 z);
@@ -106,63 +82,36 @@ void Func_08020180(void);
 void Map_CenterOnFollowedPointFar(void);
 void BattleEffect_InitializeBuffers(void);
 void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 mode);
-void Scene_SetRestartPoint(void);
 void FieldEffect_ResumeCloakCheck(void);
 s32 Field_GetSceneAttributes(s32 scene);
-s32 Party_GetLeaderActor(void);
-struct Actor *Actor_GetById(s32 id);
-void Actor_SetSingleChildFlagsFar(struct Actor *object, s32 flags);
-void Func_080cb05c(void);
-void wait(s32 frames);
-s32 BattleEffect_SumCounters(void);
 void ScreenTransition_Start(s32 mode, s32 frames);
 void ScreenTransition_Finish(s32 mode, s32 frames);
 s32 ObjectEffect_RunPendingFlagEvent(void);
 void Func_080e7804(void);
-s32 Func_080c9e1c(s32 scene);
 void Event_SetDestination(s32 scene, s32 entrance);
 void Func_080e7238(void);
 void Func_08038200(s32 scene);
-void Func_080cb82c(void);
-void Func_080cb8a4(void);
 s32 Func_080d25c8(s32 item);
 s32 PartyInventory_GiveItem(s32 item);
-struct Actor *Func_080cb8e8(void);
 void Leader_StopMoving(void);
 void MessageArgument_PushFar(s32 value, s32 kind);
 void FieldMessage_ShowFar(s32 message, s32 mode);
-void Sound_PlayFar(s32 cue);
-struct FieldUnit *Unit_Get(s32 unitId);
-void Func_080ca3f4(s32 scene, s32 entrance);
 s32 Func_080ed2a4(s32 mode);
 void BattleEffect_RunVisibilityTransition(void);
 void Func_080d5720(void);
 void Func_080d57e4(void);
 void Func_080d59dc(void);
 void Func_080d5aa0(void);
-void Scene_RunRaisedEvent(s32 event);
-void Scene_RunTouchOrExit(s32 event);
-void Func_080cd680(s32 cell);
-void ObjectTable_Snapshot(void);
 void Func_080d5c70(s32 battle);
 void UiTimedNotice_CloseIfActiveFar(void);
-s32 Field_FindNearbyTalkTarget(s32 owner);
-void *Scene_FindActorTalkTrigger(s32 id);
-s32 Func_080cc54c(void);
 void Menu_RunSelectionWithCursorObjectFar(void);
 void Menu_RunTopSelectionFar(void);
 void GameFlag_RefreshLureCapFar(void);
-s32 Func_080ccec8(s32 id);
-void Func_080cd808(s32 cell);
 s32 Func_080ce61c(u32 code);
-void Func_080ce0ac(s32 item, s32 argument);
 void Menu_RunSelectionFar(void);
-void Debug_RunPaletteEditor(void);
-void Event_ResolveAllPendingActions(void);
 s32 Sound_GetCurrentBgmFar(void);
 void Func_08038358(s32 mode);
 void Func_080200b0(void);
-void Func_080cb2b8(s32 terrain, s32 x, s32 y, s32 z);
 
 static __inline__ s32 Unit_ClampGauge(s32 ratio) {
   s32 clamped;
@@ -203,7 +152,7 @@ struct HazardView {
 #define HAZARD (*(struct HazardView *)&gMainRoutineWork)
 #define ARRIVAL (*(struct ArrivalView *)&gMainRoutineWork)
 
-#define OVERLAY_CALL(index) ((s32 (*)(void))gOverlayArea.words[index])()
+#define OVERLAY_CALL(index) ((s32 (*)(void))gOverlayArea[index])()
 
 s32 FieldSequence_Run(void) {
   struct FieldWork *work;
@@ -655,4 +604,260 @@ done:
   wait(1);
   HeapSlot_Release(108);
   return result;
+}
+
+struct EffectVector {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+union PolarOffsetPosition {
+  struct EffectVector vector;
+  s32 coordinates[3];
+};
+
+struct Object {
+  u8 pad0[6];
+  u16 angle;
+  struct EffectVector pos;
+  u8 pad1[14];
+  u8 kind;
+};
+
+s32 GetWorldMapCollisionFar(s32 *position);
+
+s32 Func_080cc54c(void) {
+  u8 *workBytes;
+  u8 *mapBytes;
+  struct Object *leader;
+  union PolarOffsetPosition probePosition;
+  u8 *cell;
+  s32 collisionCode;
+  s32 terrainHeight;
+  s32 result;
+
+  result = 0;
+  leader = Func_080cb8e8();
+  workBytes = Ram_HeapSlots->eventWork;
+  mapBytes = (u8 *)Ram_HeapSlots->mapWork;
+  if (leader != 0) {
+    probePosition.vector.x = leader->pos.x;
+    probePosition.vector.y = leader->pos.y;
+    probePosition.vector.z = leader->pos.z;
+    {
+      s32 *position = probePosition.coordinates;
+
+      Vector_AddPolarOffset(0x100000, leader->angle, position);
+    }
+    if ((s8)workBytes[0x18a] == 3) {
+      s32 x, z;
+
+      x = probePosition.vector.x;
+      z = probePosition.vector.z;
+      cell = Ram_MapBlocks +
+             ((((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)) << 2);
+    } else {
+      s32 x, z;
+
+      cell = *(u8 **)(mapBytes + 0x138);
+      x = probePosition.vector.x;
+      z = probePosition.vector.z;
+      cell += (((x / 0x100000) + ((z / 0x100000) << 7)) << 2);
+    }
+    collisionCode = cell[2];
+    if (collisionCode >= 242 && collisionCode <= 247) {
+      terrainHeight = Map_GetTerrainHeightFar(
+          leader->kind, probePosition.vector.x, probePosition.vector.z);
+      if (terrainHeight >= leader->pos.y &&
+          terrainHeight <= leader->pos.y + 0x100000) {
+        result = collisionCode;
+      }
+    } else if (Func_080ccd78(3, collisionCode) != 0) {
+      result = collisionCode;
+    }
+    if (result == 0 && (s8)workBytes[0x18a] == 3) {
+      if (gMainRoutineWork.ownerOverride != 0 &&
+          GetWorldMapCollisionFar(probePosition.coordinates) == 3)
+        result = 99;
+    }
+  }
+  return result;
+}
+
+/// The twin of The Broken Seal's Scene_ApplyEntrance: places the party at
+/// its entrance from the area overlay's entrance list and clamps the camera
+/// to that entrance's bounds. With findEntrance it looks the entrance up and
+/// returns 0 when there is none; without, it takes the first row.
+s32 Func_080cc67c(s32 findEntrance) {
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  s32 entrance = gMainRoutineWork.entrance;
+  // The overlay table's entry 3 returns the scene's entrances.
+  const struct SceneEntrance *entry =
+      ((const struct SceneEntrance *(*)(void))gOverlayArea[3])();
+  s32 found = 0;
+  s32 left;
+
+  if (findEntrance) {
+    while (entry->entrance != -1) {
+      if (entry->entrance == entrance &&
+          (entry->requiredFlag == -1 || GameFlag_Test(entry->requiredFlag))) {
+        found = 1;
+        break;
+      }
+      entry++;
+    }
+    if (!found)
+      return 0;
+  }
+
+  if (!GameFlag_Test(0x109)) {
+    gMainRoutineWork.x = entry->x << 16;
+    gMainRoutineWork.y = entry->y << 16;
+    gMainRoutineWork.z = entry->z << 16;
+    gMainRoutineWork.heading = entry->facing;
+    gMainRoutineWork.turn = 0;
+  }
+
+  left = entry->cameraLeft;
+  if (left != -1)
+    map->minX = left << 16;
+  if (entry->cameraTop != -1)
+    map->minZ = entry->cameraTop << 16;
+  if (entry->cameraRight != -1)
+    map->maxX = entry->cameraRight << 16;
+  if (entry->cameraBottom != -1)
+    map->maxZ = entry->cameraBottom << 16;
+
+  if (map->minX + (240 << 16) > map->maxX)
+    map->minX = map->maxX - (240 << 16);
+  if (map->minZ + (160 << 16) > map->maxZ)
+    map->minZ = map->maxZ - (160 << 16);
+  return 1;
+}
+
+extern u8 gData_0202e000[];
+extern u8 Data_0202e004[];
+extern s32 Data_02000448;
+extern u16 Data_0200044c;
+
+/// Reads the map's entrance stream (gData_0202e000) for the current entrance,
+/// places the party there unless flag 0x109 keeps its position, then sets the
+/// camera bounds from the first box that holds it.
+s32 Func_080cc7c4(void) {
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MainRoutineWork *work = &gMainRoutineWork;
+  s32 xFixed;
+  u8 *cursor = gData_0202e000;
+  s32 *angle;
+  u16 *turn;
+  s32 entrance = work->entrance;
+  s32 height;
+  s32 x;
+  s32 z;
+  s32 zFixed;
+  s32 base;
+  s32 flags;
+  s32 left;
+  s32 top;
+  s32 bottom;
+  s32 right;
+  s32 leftEdge, topEdge, rightEdge, bottomEdge;
+
+  cursor = gData_0202e000 + (u16)Stream_ReadU16(&cursor);
+  angle = &Data_02000448;
+  turn = &Data_0200044c;
+  for (;; cursor += 6) {
+    if (*(s8 *)cursor == -1) {
+      *angle = 0x4000;
+      {
+        // A halfword constant through a plain pointer comes from the pool.
+        s32 zero = 0;
+        *turn = zero;
+      }
+      return 0;
+    }
+    if (*(s8 *)cursor == entrance) {
+      /* FAKEMATCH(barrier): an empty asm reading work keeps it live across the
+       * loop in r6, so entrance takes r7; without it, 14 of 211 instructions
+       * differ in tla-en. */
+      asm("" : : "r"(work));
+      cursor++;
+      x = Stream_ReadS16(&cursor);
+      z = Stream_ReadS16(&cursor);
+      xFixed = x << 16;
+      zFixed = z << 16;
+      height = Map_GetTerrainHeightFar(0, xFixed, zFixed) >> 16;
+      flags = *cursor;
+      base = (s32)gData_0202e000;
+      if (!GameFlag_Test(0x109)) {
+        gMainRoutineWork.x = xFixed;
+        gMainRoutineWork.z = zFixed;
+        *angle = (flags & 15) << 12;
+        *turn = 0;
+        if (flags & 16)
+          gMainRoutineWork.y = 0x80000;
+      }
+      if (flags & 32)
+        return 1;
+
+      cursor = Data_0202e004;
+      cursor = (u8 *)((u16)Stream_ReadU16(&cursor) + base);
+      while (*(s8 *)cursor != -1) {
+        {
+          left = *(s8 *)cursor;
+          leftEdge = left << 4;
+          cursor++;
+          top = *(s8 *)cursor;
+          topEdge = top << 4;
+          cursor++;
+          right = *(s8 *)cursor;
+          rightEdge = right << 4;
+          cursor++;
+          bottom = *(s8 *)cursor;
+          bottomEdge = bottom << 4;
+          cursor++;
+          if (x >= leftEdge && x <= rightEdge && z - height >= topEdge &&
+              z - height <= bottomEdge) {
+            map->minX = left << 20;
+            map->minZ = top << 20;
+            map->maxX = right << 20;
+            map->maxZ = bottom << 20;
+            if (map->minX + (240 << 16) > map->maxX)
+              map->minX = map->maxX - (240 << 16);
+            if (map->minZ + (160 << 16) > map->maxZ)
+              map->minZ = map->maxZ - (160 << 16);
+            break;
+          }
+        }
+      }
+      return 1;
+    }
+  }
+}
+
+u32 Stream_ReadU16(u8 **cursor) {
+  u32 low = *(*cursor)++;
+  u32 high = *(*cursor)++;
+
+  return low | (high << 8);
+}
+
+s16 Stream_ReadS16(u8 **cursor) {
+  u32 value;
+
+  value = *(*cursor)++;
+  value |= *(*cursor)++ << 8;
+  return value;
+}
+
+void BattleMap_ApplySceneEntranceView(void) {
+  struct EventWork *event = Ram_HeapSlots->eventWork;
+  s32 done;
+
+  done = Func_080cc67c(1);
+  if (event->controlMode == 2 && done == 0)
+    done = Func_080cc7c4();
+  if (done == 0)
+    Func_080cc67c(0);
 }

@@ -64,13 +64,14 @@ void BattleEffect_ClearChildValueOnMismatch(void);
 s32 BattleEffect_DispatchRequestKind(void);
 void BattleEffect_LoadActionEffectResources(s32 action, s32 flags);
 s32 BattleEffect_Run(void);
-s32 BattleEffect_SelectBattleCue(s32 row, s32 column);
+void BattleEffect_SelectBattleCue(s32 row, s32 column);
 void BattleEffect_SetupObjectPair(s32 actor, s32 target);
 s32 BattleEffect_StartBufferInterpolationFar(s32);
 s32 BattleMotion_ProjectScaledPositionFar(s32, s32 *);
 void BattleEffect_RunBurstScene(struct EffectStep *, s32);
 void BattleEffect_StopMainActor(void);
-s32 Event_SpawnObjectTable(s32 event_id, s32 state);
+struct ActorPlacement;
+void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot);
 void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first,
                                           struct FacingObject *second);
 void Field_StartPaletteTransition(s32 mode);

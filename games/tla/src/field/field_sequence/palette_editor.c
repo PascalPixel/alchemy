@@ -1,12 +1,12 @@
-#include "types.h"
-#include "io_reg.h"
+/// @file
+/// The debug palette editor.
+// Part of field_sequence.c.
 
-#include "input.h"
+#include "../field_sequence_internal.h"
 
 extern const u8 gDebug_PaletteSwatchTiles[];
 
 void Resource_DecompressHalfwords(const void *source, void *destination);
-void wait(s32 count);
 void Window_LoadGraphics(void);
 void DebugText_Clear(void);
 

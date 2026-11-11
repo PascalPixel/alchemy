@@ -102,7 +102,6 @@ extern const u8 gBattleEffect_UntargetedObjectScript[];
 extern const u8 gColorBuffer_FadeStep1Map[32];
 extern const u8 gColorBuffer_FadeStep2Map[32];
 extern const u8 gColorBuffer_FadeStep3Map[32];
-extern u16 gEncounter_EnemyGroupTable[];
 extern struct WorldMapWork gWorldMapWork;
 s32 AnimationObject_SelectAnimationFar(struct AnimationObject *, s32);
 s16 *Scene_FindActorPlacement(s16 action);

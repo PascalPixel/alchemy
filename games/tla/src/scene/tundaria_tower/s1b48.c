@@ -148,7 +148,7 @@ test:
 walk:
   /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
    * position's address; as no asm, 94 of 347 instructions differ in tla-en. */
-  __asm__("" : : : "sfp");
+  __asm__("" : : : SFP_CLOBBER);
   /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 6
    * of 347 instructions differ in tla-en. */
   Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
@@ -252,7 +252,7 @@ retry:
   /* FAKEMATCH(barrier): an empty asm clobbering sfp keeps the first step's
    * position address from reusing p; as no asm, 2 of 332 instructions differ
    * in tla-ja. */
-  __asm__("" : : : "sfp");
+  __asm__("" : : : SFP_CLOBBER);
   Vector_AddPolarOffsetFar(0x100000, angle, position);
   cell = GetMapCellCollision(*layer, p[0], p[2]);
   if (cell == 255 ||
@@ -317,7 +317,7 @@ test:
 walk:
   /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
    * position's address; as no asm, 128 of 332 instructions differ in tla-ja. */
-  __asm__("" : : : "sfp");
+  __asm__("" : : : SFP_CLOBBER);
   /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 6
    * of 332 instructions differ in tla-ja. */
   Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);

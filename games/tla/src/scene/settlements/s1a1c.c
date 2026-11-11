@@ -144,7 +144,7 @@ test:
 walk:
   /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
    * position's address; as no asm, 94 of 347 instructions differ in tla-en. */
-  __asm__("" : : : "sfp");
+  __asm__("" : : : SFP_CLOBBER);
   /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 6
    * of 347 instructions differ in tla-en. */
   FieldVector_AddPolarOffset(0x100000, angle, position);
@@ -307,7 +307,7 @@ test:
 walk:
   /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
    * position's address; as no asm, 90 of 332 instructions differ in tla-ja. */
-  __asm__("" : : : "sfp");
+  __asm__("" : : : SFP_CLOBBER);
   /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 6
    * of 332 instructions differ in tla-ja. */
   FieldVector_AddPolarOffset(0x100000, angle, position);

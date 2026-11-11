@@ -107,7 +107,7 @@ burst:
   mask = 31;
   /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 230 of 537
    * instructions differ in tla-en. */
-  asm("" : : : "sfp");
+  asm("" : : : SFP_CLOBBER);
   burstPosition = position;
   burstPosition[0] = baseX + ((burstRandom & mask) << 16);
   Sound_Play(145);

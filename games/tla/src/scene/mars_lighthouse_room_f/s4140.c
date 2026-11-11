@@ -116,7 +116,7 @@ body:
           :
           : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),
             "r"(actor), "r"(actor), "r"(actor), "r"(actor), "r"(actor)
-          : "sfp", "r4");
+          : SFP_CLOBBER, "r4");
       if (Func_02005538(&other->x, radius, &probe, other->radius - 2) >= 0) {
         goto stop;
       }

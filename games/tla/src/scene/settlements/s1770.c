@@ -64,7 +64,7 @@ retry:
   }
   /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse's hoist of the
    * position's address; as no asm, 2 of 304 instructions differ in tla-en. */
-  __asm__("" : : : "sfp");
+  __asm__("" : : : SFP_CLOBBER);
   FieldVector_AddPolarOffset(0x100000, angle, position);
   cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
   if (cell == 255 ||

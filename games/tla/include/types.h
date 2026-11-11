@@ -33,4 +33,12 @@ typedef unsigned long long u64;
 #endif
 #define CAMELOT_ASM(proof)
 
+/// The old compilers' soft frame pointer as an asm clobber, which a current GCC
+/// refuses; there the barrier clobbers memory instead.
+#ifdef MODERN
+#define SFP_CLOBBER "memory"
+#else
+#define SFP_CLOBBER "sfp"
+#endif
+
 #endif

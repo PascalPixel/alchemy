@@ -89,7 +89,7 @@ top:
   actor->update = Func_020031f8;
   /* FAKEMATCH(barrier): the empty asm clobbering sfp and reading nextBehavior
    * twice; as no asm, 18 of 246 instructions differ in tla-en. */
-  asm("" : : "r"(nextBehavior), "r"(nextBehavior) : "sfp");
+  asm("" : : "r"(nextBehavior), "r"(nextBehavior) : SFP_CLOBBER);
   goto test;
 body:
   if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > PIXELS(8)) {
@@ -106,7 +106,7 @@ body:
           :
           : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),
             "r"(actor), "r"(actor), "r"(actor), "r"(actor), "r"(actor)
-          : "sfp", "r4");
+          : SFP_CLOBBER, "r4");
       if (Func_02004c78(&other->x, radius, &probe, other->radius - 2) >= 0) {
         goto stop;
       }

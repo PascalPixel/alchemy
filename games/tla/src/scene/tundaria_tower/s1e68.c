@@ -102,7 +102,7 @@ overlap:
 walk:
   /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
    * position's address; as no asm, 43 of 246 instructions differ in tla-en. */
-  __asm__("" : : : "sfp");
+  __asm__("" : : : SFP_CLOBBER);
   Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
   q = position;
   cell = GetMapCellCollision(*layer, q[0], q[2]);

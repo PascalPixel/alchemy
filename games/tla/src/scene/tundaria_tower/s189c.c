@@ -68,7 +68,7 @@ retry:
   }
   /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse's hoist of the
    * position's address; as no asm, 2 of 304 instructions differ in tla-en. */
-  __asm__("" : : : "sfp");
+  __asm__("" : : : SFP_CLOBBER);
   Vector_AddPolarOffsetFar(0x100000, angle, position);
   cell = GetMapCellCollision(*layer, p[0], p[2]);
   if (cell == 255 ||
@@ -120,7 +120,7 @@ overlap:
 walk:
   /* FAKEMATCH(barrier): as the one above; as no asm, 126 of 304 instructions
    * differ in tla-en. */
-  __asm__("" : : : "sfp");
+  __asm__("" : : : SFP_CLOBBER);
   Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
   q = position;
   cell = GetMapCellCollision(*layer, q[0], q[2]);

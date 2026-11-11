@@ -7,7 +7,6 @@
 
 void SceneTransform_ApplyYaw(s32 yaw);
 void SceneTransform_ApplyPitch(s32 pitch);
-void Projection_Set(s32 span, u32 depth, s32 range);
 
 void Camera_ConfigureScene(s32 pos) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
@@ -126,7 +125,7 @@ s32 Battle_BuildUnitActions(struct BattleActionRecord *entries) {
   return result;
 }
 
-void Func_08122514(struct BattleActionRecord *entry, s32 mode);
+s32 Func_08122514(struct BattleActionRecord *request, s32 retry);
 
 s32 Battle_BuildOpponentActions(struct BattleActionRecord *entries) {
   u16 unitIds[14];

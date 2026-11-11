@@ -59,6 +59,7 @@
 #include "minigame.h"
 #include "battle_random.h"
 #include "irq_lock.h"
+#include "battle_event.h"
 
 
 // Far calls the parts make, each passing its own view of the record:
@@ -68,5 +69,6 @@ s32 ResourceMetadata_RegisterFar(void *state, s32 id);
 void ResourceMetadata_UnregisterFar(void *state, s32 handle);
 void Animation_SetWorkEntryFar(void *work, s32 no);
 void SceneTransform_ApplyPosition(const s32 *pos);
+void Projection_Set(u32 value0, u32 value1, u32 value2);
 
 #endif

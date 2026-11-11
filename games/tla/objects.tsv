@@ -1053,14 +1053,6 @@ main	rom_main_08	games/tla/src/battle/model_bit_commands
 main	rom_main_08	games/tla/src/battle/color_scale_kernel
 main	rom_main_08	games/tla/src/battle/color_scale_loader
 main	rom_main_08	games/tla/src/battle/battle	.text
-main	rom_main_08	games/tla/src/battle/presentation/d7e4	.text
-main	rom_main_08	games/tla/src/battle/presentation/d9a4	.text
-main	rom_main_08	games/tla/src/battle/presentation/f11d9cc	.text	en de es fr it ja
-main	rom_main_08	games/tla/src/battle/presentation/f11ddd8	.text	en de es fr it
-main	rom_main_08	games/tla/src/battle/presentation/f11ddd8	.text	ja
-main	rom_main_08	games/tla/src/battle/presentation/f11de78	.text
-main	rom_main_08	games/tla/src/battle/presentation/f11df70	.text	en de es fr it ja
-main	rom_main_08	games/tla/src/battle/presentation/act_run_entries	.text
 main	rom_main_08	games/tla/src/battle/presentation/f11e3ac	.text	en de es fr it ja
 main	rom_main_08	games/tla/src/battle/presentation/motrel	.text
 main	rom_main_08	games/tla/src/battle/presentation/f11e830	.text	en de es fr it ja

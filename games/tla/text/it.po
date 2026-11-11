@@ -21686,11 +21686,11 @@ msgstr ""
 "Non temete, nessuno di\n"
 "voi è KO.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhoShallIRevive"
 msgid "05283"
 msgstr "Chi devo rianimare?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgReviving"
 msgid "05284"
 msgstr ""
 "Per rianimare {argument_actor_name:1}\n"

@@ -1,4 +1,69 @@
-// Draft, differ 86 of 902 (tla-en, 2026-11-10)
+// Draft, differ 88 of 902 (tla-en, 2026-11-11), no pin
+// 2026-11-11 (agent round), 86 with the pin to 88 without it: the pin is
+// gone, for one FAKEMATCH(dead), the mildest kind in place of the worst.
+// What r4 is. Its references in the listing: one write, mov r4, r9 at the
+// row's top, and seven reads, the starts of d (+ 17), c (+ 16), b (+ 1) and
+// of the vertex pointer (<< 2, + cells) and the stores to quad[5], [17] and
+// [19]. r9 is row * 16 as a reduced giv, stepped by 16 at the row's end and
+// read only by that copy and by a. So r4 is the row's first vertex index,
+// row * 16, held in a pseudo of its own that lives only in the grid: 19
+// weighted refs over 52 insns, priority 1.462, between the column (1.438)
+// and u (1.5), as round 10 computed. It is now a plain block local, q, and
+// with it vertex takes r1, u r0, q r4, b r5, c r6, the column r8, the base
+// r9, x r10, the row r11, a lr, d slot 8 and the + 15 copy ip: every
+// register of the listing's grid, the d and + 15 swap of rounds 5 to 13
+// included.
+// Why the copy survives only behind the device. A copy q = v is undone three
+// times: cse1 makes the row-top uses read whichever of the two is referenced
+// later in the text (make_regs_eqv), gcse's copy propagation replaces q by v
+// in every later block, and loop.c, seeing q as a giv of the row, replaces
+// it outright by the reduced register. q = v + row - row is none of those to
+// any of the three (not a copy, not a giv: loop.c does not take v + row - row
+// for mult 16); combine cancels it after them, leaving mov r4, r9. v ^ row ^
+// row and row + v - row compile alike; with mode, frames, height or a
+// pointer for row the front end or cse folds it first (854), with x 150,
+// through a narrowing cast 134 to 272, v * 2 - v 235.
+// What the copy needs in a real source, read from the compiler: cse2 keeps
+// the starts on the copy only if the copy's last reference in the text comes
+// after the base's step at the row's end, or a label lies between copy and
+// starts; loop.c leaves a copy only for a giv it cannot replace (a moved
+// insn, or a register referenced outside the loop whose death after the
+// loop it cannot prove past a jump), and charges a user variable 4 for it,
+// so the class needs two more row * 16 temporaries to be reduced in the
+// first pass; in the second pass a copy giv joined by a second copy is
+// reduced again into a second stepped register. i itself as the holder
+// fails on rank (116 refs over a doubled 552, 1.26, under the column), and
+// no split of the nine i loops over two counters puts both in r4 (256
+// subsets on two forms). A temporary hoisted from the if block's row << 4
+// (q at function level with a dead q = 0 after the loop, so gcse leaves the
+// loop's row << 4 alone) is a real pseudo in r4 too, 17 over 48, but the
+// starts then read the base (241).
+// On the way to 88. With q a pseudo the givs it blocked as r4 work: d and b
+// as q + column + 17 and + 1 in the if block are reduced in the first pass,
+// their starts after the moved + 15 copy, so d (11 over 46) outranks the copy
+// (11 over 47), takes r7 and is spilled to slot 8, and the copy takes ip; c
+// stays a counter, or b and c swap registers (all three as givs 222, c alone
+// 102). a must be row * 16 + column, not v + column: its row << 4 is then
+// the block's first, which gcse makes the copy of v, and row * 15 stays in
+// the loop for the first pass, found last, so the row slots are 32, 28, 24
+// (with v + column 94, slots rotated). The vertex must start from q (from
+// row * 16 or v, 856 to 861). Store order by 900 random moves: quad[1]
+// second and quad[21] after quad[20] (210 to 88).
+// Left, all in the grid, 902 instructions on both sides: the row's top is
+// scheduled in another order (the vertex's start before the quad's, where
+// the listing has the quad's first: the vertex is reduced in the first pass
+// and the quad in the second; the listing has both in one pass); the three
+// + 15 stores inherit one reload of ip in r3 where the listing reloads it
+// twice (r7 for quad[7] and [9], r0 for quad[21], with a's mov r7, lr
+// between) and loads d into r3 right after quad[18]; d's step is scheduled
+// before the column's.
+// Leads: a form of the vertex pointer that is a giv only in the second pass
+// yet starts from q (its start is then emitted after the quad's and cse2
+// must still read q: that needs q referenced after the row's end); and the
+// source that gives the copy without the device, which by the above is a
+// variable referenced again later in the function whose later references
+// do not count at allocation.
+// Before this round: differ 86 of 902 (tla-en, 2026-11-10), with the pin.
 // 2026-11-10 (agent round), unchanged at 86, the pin still there. One line
 // went: i = v at the row's top, with a = v + column, compiles to the same
 // code (the pin's plain form is then 857, not 941). About 60 forms measured.
@@ -554,25 +619,23 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
   // The water's grid: 16 by 8 vertices, and a quad (two triangles) for
   // each cell but the last row and column.
   for (row = 0; row != WATER_ROWS; row++) {
-    s32 b, c, d;
+    s32 c;
     s32 v = row << 4;
+    /* FAKEMATCH(dead): the row's first vertex index with the row added and
+     * taken away again, which keeps it in a register of its own; as q = v,
+     * 859 of 902 instructions differ in tla-en. */
+    s32 q = v + row - row;
     s32 x;
     s8 *cells = (s8 *)gMapCellBuffer;
 
-    /* FAKEMATCH(pin): q held in r4; as a plain local, 857 of 902 instructions
-     * differ in tla-en. */
-    register s32 q asm("r4");
-    q = v;
     column = 0;
     x = -60;
-    d = q + 17;
     c = q + 16;
-    b = q + 1;
 
     for (; column != WATER_COLUMNS;
-         c++, b++, d++, column++, x += 8) {
-      s8 *vertex = cells + (row * 16 + column) * 4;
-      s32 a = v + column;
+         c++, column++, x += 8) {
+      s8 *vertex = cells + (q + column) * 4;
+      s32 a = row * 16 + column;
       s32 u = column * 8;
 
       vertex[0] = column * 11 - 82;
@@ -580,24 +643,26 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
       vertex[2] = row * 24 - 84;
       if (row <= 6 && column <= 14) {
         u8 *quad = mesh + (row * 15 + column) * 24;
+        s32 d = q + column + 17;
+        s32 b = q + column + 1;
 
         quad[4] = x + 67;
+        quad[1] = d;
         quad[6] = x + 67;
         quad[18] = x + 67;
-        // Once-only: the three stores share one schedule block.
+        // Once-only: the stores inside share one schedule block.
         do {
           quad[7] = v + 15;
           quad[8] = u;
           quad[9] = v + 15;
         } while (0);
         quad[16] = u;
-        quad[21] = v + 15;
         quad[5] = q;
         quad[17] = q;
         quad[19] = q;
         quad[0] = b;
         quad[20] = u;
-        quad[1] = d;
+        quad[21] = v + 15;
         quad[2] = c;
         quad[12] = a;
         quad[13] = b;

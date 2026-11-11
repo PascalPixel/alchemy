@@ -123,7 +123,7 @@ Resource_DirectoryTable:
 	resource BlizzardBackdrop, Battle_BlizzardBackdrop
 	resource , Battle_SnowfieldCBackdrop
 	resource , Battle_SerpentStarsBBackdrop
-	resource , Battle_SunbeamCloudsBackdrop
+	resource SunbeamCloudsBackdrop, Battle_SunbeamCloudsBackdrop
 	resource RedHazeBackdrop, Battle_RedHazeBackdrop
 	resource DesertBackdrop, Battle_DesertBackdrop
 	resource DuskCloudsBackdrop, Battle_DuskCloudsBackdrop
@@ -178,9 +178,9 @@ Resource_DirectoryTable:
 	resource RobedGoddessTiles, Summon_RobedGoddessTiles
 	resource LeafWarriorTiles, Summon_LeafWarriorTiles
 	resource BellMaidenTiles, Summon_BellMaidenTiles
-	resource , Summon_WingedKnightATiles
-	resource , Summon_WingedKnightBTiles
-	resource , Summon_WingedKnightCTiles
+	resource WingedKnightATiles, Summon_WingedKnightATiles
+	resource WingedKnightBTiles, Summon_WingedKnightBTiles
+	resource WingedKnightCTiles, Summon_WingedKnightCTiles
 	resource ChainedDemonTiles, Summon_ChainedDemonTiles
 	resource PurpleArmourTiles, Summon_PurpleArmourTiles
 	resource WhiteSpikesTiles, Summon_WhiteSpikesTiles
@@ -270,7 +270,7 @@ Resource_DirectoryTable:
 	resource Data101, Resource_Data101
 	resource Data102, Resource_Data102
 	resource Data103, Resource_Data103
-	resource , Resource_Data104
+	resource Data104, Resource_Data104
 	resource CloudPuffSheet, BattleEffect_CloudPuffSheet
 	resource TileAnimationMask, BattleEffect_TileAnimationMask
 	resource CyanSparkSheet, BattleEffect_CyanSparkSheet
@@ -305,7 +305,7 @@ Resource_DirectoryTable:
 	resource VioletLightningSheetB, BattleEffect_VioletLightningSheetB
 	resource FireBurstSheet, BattleEffect_FireBurstSheet
 	resource BlueCrescentSheet, BattleEffect_BlueCrescentSheet
-	resource , BattleEffect_OverlayImageA
+	resource OverlayImageA, BattleEffect_OverlayImageA
 	resource VioletMoteSheet, BattleEffect_VioletMoteSheet
 	resource FireballSheet, BattleEffect_FireballSheet
 	resource MemberBurstImage, BattleEffect_MemberBurstImage
@@ -315,7 +315,7 @@ Resource_DirectoryTable:
 	resource PinkStarSheet, BattleEffect_PinkStarSheet
 	resource WaterSpraySheet, BattleEffect_WaterSpraySheet
 	resource BlueFlameSheet, BattleEffect_BlueFlameSheet
-	resource , BattleEffect_ExplosionSheet
+	resource ExplosionSheet, BattleEffect_ExplosionSheet
 	resource MagentaSwirlSheet, BattleEffect_MagentaSwirlSheet
 	resource MagentaTailSheet, BattleEffect_MagentaTailSheet
 	resource Data134, Resource_Data134

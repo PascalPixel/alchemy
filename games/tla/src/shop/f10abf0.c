@@ -69,6 +69,32 @@ void Window_CloseFar(void *window, s32 style);
 #define SERVICE_PRICE_WINDOW_WIDTH 23
 #endif
 
+// Matches: differ 0 in tla-it and in the five editions that already link
+// games/tla/src/shop/f10abf0.c (11 November 2026). One source for all six,
+// and it needs neither that file's pin and messageBase temporary nor the
+// Italian draft's firstMessage: every local takes its default at the top, in
+// this order, and memberIndex is zeroed again after the windows.
+// How the listing's zeros come out of the defaults (rounds 1 to 9 held
+// tla-it at 8 of 282 by zeroing after the windows instead):
+// - listWindow's NULL comes first, so cse stores memberIndex's first 0 from
+//   listWindow's register, r11. A store from a high register is reloaded
+//   through a low one, the function's first reload, so r0: reload registers
+//   go round r0 to r3 from one instruction to the next, which is why redraw's
+//   1 then takes r1 and the 0x507 offset r2. listWindow is set again before
+//   any read, so its own mov from r0 is deleted after reload; only
+//   movs r0, #0 and the store remain.
+// - In Italian priceWindow's NULL is the second zero. cse1 stores it for the
+//   second memberIndex = 0 while its uses in the loop still exist; gcse then
+//   turns those uses into constants, which leaves it local to the first
+//   block and alive across the three calls: local-alloc gives it r5, ahead
+//   of global's choice for shop. unitId's 0 beside it is reloaded as a copy
+//   of r5, and both, with chooseAgain's 0, sink below the last call in
+//   sched2.
+// - With a price window the second store's zero is a temporary of its own,
+//   local to the first block across its four calls: local-alloc gives it r6
+//   (r5 holds the windows' style, 2), which leaves global one register short,
+//   so chooseAgain and priceWindow go to the stack and chooseAgain's 0 is
+//   stored from r6.
 s32 Func_0810abf0(void) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   void *priceWindow;
@@ -79,78 +105,15 @@ s32 Func_0810abf0(void) {
   s32 unitId;
   s32 chooseAgain;
   s32 price;
-#if SERVICE_PRICE_WINDOW
-  register s32 messageBase asm("r6");
-#else
-  s32 firstMessage;
   s32 messageBase;
-#endif
-  /* FAKEMATCH(pin): messageBase held in r6; as a plain local, 133 of 297
-   * instructions differ in tla-en. */
 
-  /* FAKEMATCH(temporary): messageBase set to 0 here and copied into
-   * memberIndex after the price window, which keeps the pinned r6 live across
-   * both window calls; as memberIndex = 0 there and no messageBase = 0, 155
-   * of 297 instructions differ in tla-en. */
-#if SERVICE_PRICE_WINDOW
-  messageBase = 0;
-  chooseAgain = 0;
-  unitId = 0;
-#else
-  // Italian draft, 8 of 282 instructions differ in tla-it: the zero stored to
-  // memberIndex takes r5 for r0 here and r3 for r5 after the windows.
-  // XXX: what keeps the later zero apart; cse2 (not cse1) turns
-  // priceWindow = NULL into a copy of this zero's pseudo, which addressof made
-  // for memberIndex, so the zero lives in r5 across the windows (diff 8 of
-  // 282 instructions; the zeros reordered, chained, in once-only blocks or
-  // through NULL, chooseAgain, unitId or priceWindow: 8 to 173).
-  // 9 November: the later zero made by an empty asm (as an output tied to 0,
-  // "+r" on a zero local, or on priceWindow) gives the zero a stack slot and
-  // keeps the first in r5: 63.
-  // Near5 round (9 November), still 8. The listing's r5 is a zero set after
-  // the windows, stored to memberIndex and copied to unitId, and priceWindow
-  // is the constant 0 at its uses; here cse2 takes the oldest register known
-  // to hold 0, the top store's (addressof's pseudo), for the later store.
-  // Tried: an asm "+r" on priceWindow with memberIndex and unitId from it or
-  // from 0 (60 to 232: priceWindow goes to the stack); the zero in a local
-  // pinned to r5, at function level or in a block (180 to 227: r5 is then
-  // avoided around it); firstMessage set to 0 at the top so cse2 forgets that
-  // zero (42 and 70: the later store is then dropped as redundant); the zeros
-  // reordered or copied from priceWindow (8, 17).
-  // Near6 round (9 November), still 8. The top zero through an empty asm
-  // ("+r") keeps priceWindow's pseudo for the later store, as the listing, but
-  // that pseudo then dies at the store (r3, not r5) and the store cross-jumps
-  // with memberIndex++'s (17; with the later zeros reordered or chained 17 to
-  // 31). An empty once-only block after the top store, the prompt, the list
-  // window, the cursor store or its first draw: 8 to 18 (cse2 still takes the
-  // top zero).
-  // Near7 round (9 November), still 8. cse2's make_regs_eqv keeps the top zero
-  // canonical because priceWindow's pseudo dies inside the block. A dead
-  // two-armed test (if ((s32)shop == 300) chooseAgain = 0; else redraw = 0;
-  // a one-armed test is skipped by cse's skip-blocks, 0 and 1 arms become a
-  // store-flag) ends cse's block, and the later store keeps a zero of its own,
-  // but local-alloc gives it r3 and the store cross-jumps with memberIndex++'s
-  // (17). With priceWindow = NULL after that test and before Func_080f8060 the
-  // zero crosses the call, takes r5 and the store matches; unitId's zero then
-  // reloads fresh (movs r0, #0; mov r8, r0), as find_equiv_reg meets the call's
-  // movs r2, #0 first and gives up on it (call-clobbered), and the top zero
-  // takes r3 (25). price = 0 as that zero (a default) doubles price's live
-  // length (its REG_EQUAL) and gives r5 to shop (160); memberIndex = unitId
-  // after the zeros 10 (the store takes chooseAgain's r7).
-  // Round 8 (9 November), still 8. On the 25 form: the three later zeros in
-  // other orders 24 or 25 (unitId's reload still finds no zero to inherit),
-  // unitId = memberIndex 40, both from priceWindow 25.
-  // Round 9 (9 November), still 8, on this form: the later zeros chained or
-  // reordered (8 to 17); either memberIndex store through a volatile cast (8)
-  // or through a pointer to it (8, 10). Without firstMessage, the
-  // pointer-read serviceKind and priceWindow (NULL passed directly), 46.
-  /* FAKEMATCH(temporary): firstMessage carries the prompt's message into the
-   * first call; as Func_0810a9ac((s32)MsgWhoShallIRevive), 42 of 282
-   * instructions differ in tla-it. */
-  firstMessage = (s32)MsgWhoShallIRevive;
-#endif
-  // DEAD: memberIndex is set again after the price window before any read.
+  // Default: neither window exists yet; Italian's price window never does.
+  listWindow = NULL;
+  priceWindow = NULL;
+  // DEAD: memberIndex is set again after the windows before any read.
   memberIndex = 0;
+  unitId = 0;
+  chooseAgain = 0;
   redraw = 1;
   {
     s8 *partyAction = &shop->partyAction;
@@ -159,11 +122,7 @@ s32 Func_0810abf0(void) {
      * shop->partyAction, 4 of 297 instructions differ in tla-en. */
     serviceKind = *partyAction;
   }
-#if SERVICE_PRICE_WINDOW
   Func_0810a9ac((s32)MsgWhoShallIRevive);
-#else
-  Func_0810a9ac(firstMessage);
-#endif
 
   listWindow = Window_CreateFar(1, 12, 13, 3, 2);
   shop->cursorAnchor->active = 4;
@@ -172,15 +131,8 @@ s32 Func_0810abf0(void) {
 #if SERVICE_PRICE_WINDOW
   priceWindow = Window_CreateFar(SERVICE_PRICE_WINDOW_X, 16,
                                  SERVICE_PRICE_WINDOW_WIDTH, 3, 2);
-#else
-  priceWindow = NULL;
+#endif
   memberIndex = 0;
-  unitId = 0;
-  chooseAgain = 0;
-#endif
-#if SERVICE_PRICE_WINDOW
-  memberIndex = messageBase;
-#endif
   while (memberIndex < shop->partyMemberCount) {
     unitId = shop->partyMemberIds[memberIndex];
     if (Shop_CanServe(unitId, serviceKind) != 0)

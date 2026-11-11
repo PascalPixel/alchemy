@@ -1,4 +1,78 @@
 // Draft, differ 2 of 1122 (tla-en, 2026-11-10), two devices (dead); 2 in tla-ja, de, es, fr, it
+// 2026-11-11 (agent round 4), unchanged at 2, 54 measures on the form with
+// the base a register (6): tests that vanish, after Cruel Ruin's and
+// Judgment's. Their labels are gone before sched2 by design; this one has
+// to be there at sched2, and only jump2 runs after it.
+// - Between the 0xF8 call and the FlashBurst call, on canvas, sprites,
+//   effect, work or blit[0]: a goto to the next label, an arm offset =
+//   offset or offset = the base again: 6 each, nothing left for sched2 (the
+//   jump passes and cse delete them first). An arm size = 2 after an
+//   earlier size = 2: cse deletes it, 56 (size's move alone). The test with
+//   only break or continue in a once-only block: its loop notes, 36.
+// - An arm that is not redundant (size = 2 or cells = the base, set again
+//   later) keeps its test in the output: 216 to 232.
+// - Alike arms with no register choice: size = 2 in both, jump1 merges, 56;
+//   the destination summed before the test and the bare call in both arms,
+//   on canvas, size or offset: not cross-jumped, 210 to 263 (and the add is
+//   then in the first block, where the tie comes back).
+// - Why jump2 cannot empty an arm here: its delete_noop_moves stops at a
+//   label, and on the fall-through side reload_cse has already deleted the
+//   same no-op before sched2 (flow2 then deletes the jump).
+// - Under all of it: any boundary at sched2 needs size = 2 before the
+//   FlashBurst call, and there size (27 / 58) falls under offset (33 / 64)
+//   and takes r7. One more reference to size would hold r6 (30 / 58), but a
+//   test on size is folded by cse or gcse. So the draft's variables and a
+//   boundary do not go together: either offset is not one variable with
+//   the base in the original, or the cause is not a boundary.
+// - The tridents: x is a remainder cse cannot bound, so no test on x folds
+//   there; its alike arms stay the only form found. Not measured further.
+// 2026-11-11 (agent round 3), unchanged at 2, about 20 measures and a read
+// of haifa-sched.c, reload1.c, calls.c, flow.c and jump.c; no device added.
+// What the scheduler says. In one block holding the listing's own
+// instructions the four rows cannot come out: ldr r7 is a pool MEM read, so
+// the 0xF8 call depends on it (the call flushes pending reads), the add
+// uses it and movs r7, #144 is output dependent on it: three dependents,
+// always. Its priority is the add's + 3; the arguments' is the call's + 1,
+// the call's is movs r2, #160's, and that is the add's + 2: the tie holds
+// for any code after the add (it lifts both sides). A pool load is a MEM
+// from expand on (a symbol is no legitimate Thumb constant, so reload's
+// rematerialized base is a MEM too) and a read after the call cannot rise
+// over it. RTL order cannot help either: three dependents beat two before
+// order is looked at, and nothing is emitted between a call's hard register
+// loads and the call (emit_queue is empty there: each argument is flushed
+// as it is computed).
+// What does give the listing's rows: a block end right after the 0xF8 call.
+// Measured with the FlashBurst call in both arms of if (canvas): ldr r7 is
+// then last of the four (in its block only the call depends on it, so its
+// priority is the call's, one under the arguments'). The same phantom
+// boundary the tridents show after mov r8, r0. But it cannot be written
+// here without moving something else:
+// - size = 2 is at the listing's top, so its set is in the function's first
+//   block; it must then stand before the boundary. Before the FlashBurst
+//   call its life is 58 for 40 (0.466 under offset's 0.516 to 0.545) and it
+//   swaps r6 and r7 with offset (56); at the function's top it takes r7,
+//   and cse reuses it for transferMode = 2 (101). So in the draft's
+//   variables the first block reaches past the FlashBurst call.
+// - Alike arms after the call must hold the FlashBurst call, offset =
+//   0x2400 and i = 0 (movs r3, #0 goes before ldr r0 only with i's zero in
+//   its block). The first arm is then the listing's, row for row, but
+//   reload's rotation gives the second arm r4 and r0 where the first has
+//   r2 and r3, so jump2 does not cross-jump them (the round 2 "calls stay
+//   double"). if (offset) puts cmp r7 in the first block and ldr r7 goes
+//   first; if (canvas) loads into r0 and ldr r0 moves above adds r1.
+// - A loop note instead (the call typed void, a block after it) needs its
+//   first insn to be movs r2, #160 with the id's load after it in RTL, and
+//   reload then takes r0 (rotation after r4: r7, r0, r1 busy gives r2 only
+//   while the id holds r0). The last argument as ({ do { offset = base; }
+//   while (0); 0; }) puts the load before movs r2, #0 (38 to 129).
+// Read on the way: flow.c puts a (use (const_int 0)) after a call that ends
+// a block (no dependences, no code); reload_cse deletes no-op sets before
+// sched2, REG_EQUAL or not; jump2's delete_noop_moves also deletes a second
+// load of a constant a register still holds.
+// Leads: (1) whatever makes the tridents' boundary after mov r8, r0 without
+// an arm is the same thing here; find it there first, where the code is
+// smaller. (2) A test whose value is already in a register other than r7
+// and r0 at the 0xF8 call, with arms that reload nothing.
 // 2026-11-10 (agent round 2), unchanged at 2, about 50 measures, all on the
 // FlashBurst base. With the base a register set before the 0xF8 call (cells
 // set after offset = 0x2400), the sched2 table has ldr r7 at priority 6 with

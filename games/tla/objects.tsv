@@ -1399,8 +1399,7 @@ main	rom_main_07	games/tla/src/shop/forge	.text
 main	rom_main_07	games/tla/src/shop/service	.text
 main	rom_main_07	games/tla/src/shop/f10a960	.text
 main	rom_main_07	games/tla/src/shop/f10aa80	.text
-main	rom_main_07	recon/tla/it/rom	.rom.0010abf4	it
-main	rom_main_07	games/tla/src/shop/f10abf0	.text	en de es fr ja
+main	rom_main_07	games/tla/src/shop/f10abf0	.text
 main	rom_main_07	games/tla/src/shop/reset_state_by_mode	.text
 main	rom_main_07	games/tla/src/shop/f10af24	.text
 main	rom_main_07	games/tla/src/shop/select_msg	.text
@@ -1636,13 +1635,8 @@ main	rom_main_09	games/tla/src/battle_effect/f13f8d4	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/background_dim	.text
 main	rom_main_09	games/tla/src/battle_effect/f13fa88	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/streak_backdrop_end	.text
-main	rom_main_09	recon/tla/it/rom	.rom.0013fd84	it
-main	rom_main_09	recon/tla/fr/rom	.rom.0013fd84	fr
-main	rom_main_09	recon/tla/es/rom	.rom.0013fd84	es
-main	rom_main_09	recon/tla/de/rom	.rom.0013fd84	de
-main	rom_main_09	recon/tla/raw/0813fd84	.text	en
+main	rom_main_09	games/tla/src/battle_effect/f13fd84	.text
 main	rom_main_09	games/tla/src/battle_effect/f14153c	.text	en de es fr it
-main	rom_main_09	recon/tla/ja/rom	.rom.0013fd84	ja
 main	rom_main_09	games/tla/src/battle_effect/f14153c	.text	ja
 main	rom_main_09	games/tla/src/battle_effect/f142944	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/canvas_transfer	.text

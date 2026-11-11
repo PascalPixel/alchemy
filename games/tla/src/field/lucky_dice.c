@@ -1,13 +1,140 @@
+/// @file
+/// The Lucky Dice minigame, from its start to its tables, in the order it has
+/// in the ROM.
+
+#include "battle.h"
+#include "debug.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "system.h"
 #include "types.h"
-#include "call.h"
-#include "ram_buffer.h"
+#include "field_event.h"
 #include "io_reg.h"
-#include "dma.h"
+#include "ram_buffer.h"
 #include "iwram_call.h"
+#include "fixed_point_position.h"
+#include "battle_display.h"
+#include "macros.h"
+#include "scene.h"
+#include "edition.h"
+#include "call.h"
+#include "dma.h"
 #include "input.h"
 #include "main_routine_work.h"
 #include "bg_scroll.h"
-#include "edition.h"
+
+void Render_ResetTransformState(void);
+void SceneTransform_ApplyPosition(void *position);
+void SceneTransform_ApplyYaw(s32 angle);
+void SceneTransform_ApplyPitch(s32 angle);
+void Projection_Set(u32 value0, u32 value1, u32 value2);
+
+s32 LuckyDice_Start(void) {
+  REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
+  Sound_PlayFar(2);
+  LuckyDice_Run();
+  return 0;
+}
+
+/// Resets the scene camera and its projection.
+// As The Broken Seal's.
+void Camera_ResetSceneDefaults(void) {
+  struct BattleCamera *state = Ram_HeapSlots->cameraWork;
+  struct FixedPointPosition local;
+  s32 *result;
+  u32 ratio;
+  u32 param;
+
+  state->pitch = 152 << 8;
+  state->distance = 255 << 17;
+  SET_VECTOR(state->pos, 0, 0, 0);
+  state->yaw = 0;
+  state->followPos = 0;
+  // The projection's centre.
+  gCameraSceneParameters[3] = 0;
+  gCameraSceneParameters[4] = 0;
+  state->unk18 = 0;
+
+  Render_ResetTransformState();
+  SceneTransform_ApplyPosition(&state->pos[0]);
+  SceneTransform_ApplyYaw((s16)state->yaw);
+  SceneTransform_ApplyPitch((s16)state->pitch);
+
+  local.x = 0;
+  local.y = 0;
+  result = (s32 *)state;
+  local.z = state->distance;
+  Iwram_TransformVector(&local, result);
+
+  param = 250;
+  param <<= 16;
+  ratio = Iwram_RatioMulQ14(param, 192 << 8);
+
+  param = 250;
+  param <<= 16;
+  Projection_Set(param, ratio, 0x7fff0000);
+}
+
+s32 FixedPoint_Multiply8_8(s32 arg0, s32 arg1) {
+  s16 left = arg0;
+  s16 right = arg1;
+  s32 product;
+  s32 adjusted;
+  s32 multiplier;
+
+  multiplier = right;
+  product = left;
+  product *= multiplier;
+  if (product >= 0) {
+    adjusted = product;
+  } else {
+    adjusted = product + 255;
+  }
+  return (s16)(adjusted >> 8);
+}
+
+s16 Math_ScaleByRatio(s16 arg0, s16 arg1) { return (arg0 << 8) / arg1; }
+
+s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
+
+s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
+                               s32 count) {
+  s32 remaining;
+  u32 mask_red;
+  u32 mask_green;
+  u32 mask_blue;
+  u32 pixel;
+  u32 red;
+  u32 green;
+  u32 blue;
+
+  if (count > 0) {
+    mask_red = 0x1f;
+    mask_green = 0x3e0;
+    mask_blue = 0x7c00;
+    remaining = count;
+    do {
+      pixel = *source;
+      red = pixel & mask_red;
+      green = pixel & mask_green;
+      blue = mask_blue & pixel;
+      red *= scale;
+      green *= scale;
+      blue *= scale;
+      pixel = ((red >> 16) & mask_red) | ((green >> 16) & mask_green);
+      pixel |= (blue >> 16) & mask_blue;
+      *destination = pixel;
+      source++;
+      destination++;
+      remaining--;
+    } while (remaining != 0);
+  }
+  return 0;
+}
 
 // Lucky Dice's layout, fitted to each language's text: the coins window at the
 // top and its label, the help window (Throw / Quit) and the winnings window at
@@ -151,8 +278,6 @@ struct RenderInput *Window_CreateFar(s32 x, s32 y, s32 width, s32 height,
 void Window_CloseFar(struct RenderInput *window, s32 mode);
 void Text_DrawCharacterAtOffsetFar(s32 message, struct RenderInput *window,
                                    s32 x, s32 y);
-void Text_DrawNumberInWindowFar(s32 value, s32 width,
-                                struct RenderInput *window, s32 x, s32 y);
 void Party_AdjustCoinsFar(s32 amount);
 s32 Party_GetAverageLevelFar(void);
 void Sound_PlayFar(s32 cue);
@@ -334,7 +459,7 @@ void LuckyDice_Run(void) {
   sprites->coinsWindow = window;
   Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, window,
                                 DICE_COINS_LABEL_X, 0);
-  Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6, sprites->coinsWindow, 0,
+  Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6, (s32)sprites->coinsWindow, 0,
                              0);
   window =
       Window_CreateFar(DICE_HELP_WINDOW_X, 16, DICE_HELP_WINDOW_WIDTH, 4, 6);
@@ -429,7 +554,7 @@ void LuckyDice_Run(void) {
         Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings - 1,
                                       sprites->winningsWindow,
                                       digits * 8 + DICE_WINNINGS_COINS_X, 0);
-        Text_DrawNumberInWindowFar(winnings, digits, sprites->winningsWindow,
+        Text_DrawNumberInWindowFar(winnings, digits, (s32)sprites->winningsWindow,
                                    DICE_WINNINGS_NUMBER_X, 0);
       }
       if (payoutTimer > 0) {
@@ -449,10 +574,10 @@ void LuckyDice_Run(void) {
     } else if (state == 3) {
       if (payoutTimer == 0) {
         winnings = 0;
-        Text_DrawNumberInWindowFar(0, digits, sprites->winningsWindow,
+        Text_DrawNumberInWindowFar(0, digits, (s32)sprites->winningsWindow,
                                    DICE_WINNINGS_NUMBER_X, 0);
         Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
-                                   sprites->coinsWindow, 0, 0);
+                                   (s32)sprites->coinsWindow, 0, 0);
       }
       if (payoutTimer == 15) {
         state = 0;
@@ -513,7 +638,7 @@ void LuckyDice_Run(void) {
         }
         Party_AdjustCoinsFar(-bet);
         Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
-                                   sprites->coinsWindow, 0, 0);
+                                   (s32)sprites->coinsWindow, 0, 0);
         for (index = 0; index != 2; index++) {
           rollingDie = &diceWork->particles[index];
           if (index > 1) {
@@ -757,7 +882,7 @@ void LuckyDice_Run(void) {
             winnings = bet * 5;
           }
           Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
-                                     sprites->coinsWindow, 0, 0);
+                                     (s32)sprites->coinsWindow, 0, 0);
           Sound_PlayFar(93);
         } else {
           pairCount = 0;
@@ -772,13 +897,13 @@ void LuckyDice_Run(void) {
           if (pairCount == 1) {
             winnings = bet;
             Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
-                                       sprites->coinsWindow, 0, 0);
+                                       (s32)sprites->coinsWindow, 0, 0);
             resultKind = 3;
           }
           if (pairCount == 2) {
             winnings = bet * 2;
             Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
-                                       sprites->coinsWindow, 0, 0);
+                                       (s32)sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 2;
             Sound_PlayFar(91);
@@ -786,7 +911,7 @@ void LuckyDice_Run(void) {
           if (pairCount == 3) {
             winnings = bet * 3;
             Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
-                                       sprites->coinsWindow, 0, 0);
+                                       (s32)sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 1;
             Sound_PlayFar(92);
@@ -830,3 +955,6 @@ void LuckyDice_Run(void) {
   HeapSlot_Release(92);
   HeapSlot_Release(100);
 }
+
+// The tables, after LuckyDice_Run in both games.
+#include "../graphics/lucky_dice/tables.h"

@@ -1509,13 +1509,8 @@ SECTIONS
         "*/games/tla/src/menu/title_intro/d01a87fa.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x081ac000);
         "*/games/tla/src/gamepak/far_call/resource_d.o"(.text)
-        "*/games/tla/src/field/lucky_dice/blank_display_and_run.o"(.text)
-        "*/games/tla/src/field/lucky_dice/multiply.o"(.text)
-        "*/games/tla/src/field/lucky_dice/fixed_8.o"(.text)
-        "*/games/tla/src/field/lucky_dice/reciprocal.o"(.text)
-        "*/games/tla/src/field/lucky_dice/scale_rgb555_buffer.o"(.text)
-        "*/games/tla/src/field/lucky_dice/f1ac15c.o"(.text)
-        "*/games/tla/src/field/lucky_dice/lucky_dice.o"(.rodata)
+        "*/games/tla/src/field/lucky_dice.o"(.text)
+        "*/games/tla/src/field/lucky_dice.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x081b2000);
         "*/games/tla/src/gamepak/far_call/resource_e.o"(.text)
         "*/games/tla/src/field/lucky_wheels/scale_rgb555.o"(.text)

@@ -1781,13 +1781,8 @@ main	rom_main_11	games/tla/src/menu/title_intro/d01a877a	.rodata
 main	rom_main_11	games/tla/src/menu/title_intro/d01a87ba	.rodata
 main	rom_main_11	games/tla/src/menu/title_intro/d01a87fa	.rodata
 main	rom_main_12	games/tla/src/gamepak/far_call/resource_d	.text
-main	rom_main_12	games/tla/src/field/lucky_dice/blank_display_and_run	.text
-main	rom_main_12	games/tla/src/field/lucky_dice/multiply	.text
-main	rom_main_12	games/tla/src/field/lucky_dice/fixed_8	.text
-main	rom_main_12	games/tla/src/field/lucky_dice/reciprocal	.text
-main	rom_main_12	games/tla/src/field/lucky_dice/scale_rgb555_buffer	.text
-main	rom_main_12	games/tla/src/field/lucky_dice/f1ac15c	.text
-main	rom_main_12	games/tla/src/field/lucky_dice/lucky_dice	.rodata
+main	rom_main_12	games/tla/src/field/lucky_dice	.text
+main	rom_main_12	games/tla/src/field/lucky_dice	.rodata
 main	rom_main_13	games/tla/src/gamepak/far_call/resource_e	.text
 main	rom_main_13	games/tla/src/field/lucky_wheels/scale_rgb555	.text
 main	rom_main_13	games/tla/src/field/lucky_wheels/darken	.text

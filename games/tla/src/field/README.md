@@ -23,6 +23,11 @@ explains how this code works.
   files in `field_sequence/` and the family folders.
   The main routine, which The Broken Seal also keeps in its System folder, is
   in [The Lost Age: system](../system/README.md).
+- `event_commands.c` holds the start of the event-command bank as parts under
+  `event_commands/`: `event.c`, `requests.c` and `actor_commands.c`, as The
+  Broken Seal's object begins. `object/step_angle.c` follows it as an object of
+  its own, since an overlay links it too; the rest of the bank is still
+  separate files.
 - `field.c` holds the start of the field bank's C as parts under `field/`,
   cut where The Broken Seal's field.c parts are: `decompress.c` and
   `sprite_draw.c` so far. The rest of the bank is still separate files.

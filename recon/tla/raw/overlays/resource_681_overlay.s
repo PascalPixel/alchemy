@@ -1,10 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x0200842a,"ax",%progbits
-	.ifdef TLA_EDITION_JA
-	.else
-	.2byte 0x0000
-	.endif
 	.section .bss,"aw",%nobits
 	.global gData_0200646c
 gData_0200646c:

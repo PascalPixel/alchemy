@@ -7,11 +7,6 @@
 	.endif
 .syntax unified
 	.thumb
-	.section .text.x02008416,"ax",%progbits
-	.ifdef TLA_EDITION_JA
-	.else
-	.2byte 0x0000
-	.endif
 	.section .text.x02008418,"ax",%progbits
 	.ifdef TLA_EDITION_JA
 	.ifdef TLA_EDITION_JA

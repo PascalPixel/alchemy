@@ -13,7 +13,6 @@ SECTIONS
         "*/games/tla/src/scene/ankohl_ruins/exits.o"(.text)
         "*/games/tla/src/scene/ankohl_ruins/events_a.o"(.text)
         "*/games/tla/src/scene/ankohl_ruins/effadv.o"(.text)
-        "*/resource_686_overlay.o"(.text.x02008416)
         "*/games/tla/src/scene/ankohl_ruins/s0418.o"(.text)
         "*/resource_686_overlay.o"(.text.x02008418)
         "*/games/tla/src/scene/ankohl_ruins/events_b.o"(.text)

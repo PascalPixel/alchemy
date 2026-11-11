@@ -12,7 +12,6 @@ SECTIONS
         "*/games/tla/src/scene/gaia_rock_inside/s0344.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s036c.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/effadv.o"(.text)
-        "*/resource_681_overlay.o"(.text.x0200842a)
         "*/games/tla/src/scene/gaia_rock_inside/s042c.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/exits.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s05dc.o"(.text)

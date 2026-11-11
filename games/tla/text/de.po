@@ -15399,7 +15399,7 @@ msgctxt "message"
 msgid "03814"
 msgstr "Dschinn"
 
-msgctxt "message"
+msgctxt "MsgExp"
 msgid "03815"
 msgstr "Erf."
 
@@ -15411,25 +15411,25 @@ msgctxt "message"
 msgid "03817"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgNormal"
 msgid "03818"
 msgstr "Normal"
 
-msgctxt "message"
+msgctxt "MsgCantFight"
 msgid "03819"
 msgstr "K.O."
 
-msgctxt "message"
+msgctxt "MsgInTheBack"
 msgid "03820"
 msgstr "In Deckung"
 
-msgctxt "message"
+msgctxt "MsgKey0d20"
 msgid "03821"
 msgstr ""
 "Momentane Erfahrungspunkte. {argument_signed_number}\n"
 "bis zum nächsten Level."
 
-msgctxt "message"
+msgctxt "MsgKey0d21"
 msgid "03822"
 msgstr ""
 "Drücke die L- oder R-Taste, um\n"
@@ -15519,7 +15519,7 @@ msgctxt "message"
 msgid "03839"
 msgstr "Entfernen?"
 
-msgctxt "message"
+msgctxt "MsgNormalStatus"
 msgid "03840"
 msgstr "Dein Status ist normal."
 

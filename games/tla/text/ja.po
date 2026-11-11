@@ -13489,7 +13489,7 @@ msgctxt "message"
 msgid "03355"
 msgstr "ジン"
 
-msgctxt "message"
+msgctxt "MsgExp"
 msgid "03356"
 msgstr "けいけんち"
 
@@ -13501,25 +13501,25 @@ msgctxt "message"
 msgid "03358"
 msgstr "さいだいEP"
 
-msgctxt "message"
+msgctxt "MsgNormal"
 msgid "03359"
 msgstr "せいじょう"
 
-msgctxt "message"
+msgctxt "MsgCantFight"
 msgid "03360"
 msgstr "せんとうふのう"
 
-msgctxt "message"
+msgctxt "MsgInTheBack"
 msgid "03361"
 msgstr "こうれつ たいきちゅう"
 
-msgctxt "message"
+msgctxt "MsgKey0d20"
 msgid "03362"
 msgstr ""
 "げんざいの けいけんちです\n"
 "つぎのレベルまであと{argument_signed_number}ひつようです"
 
-msgctxt "message"
+msgctxt "MsgKey0d21"
 msgid "03363"
 msgstr ""
 "ひょうじする キャラクターは\n"
@@ -13611,7 +13611,7 @@ msgctxt "message"
 msgid "03380"
 msgstr "かいじょするのかな?"
 
-msgctxt "message"
+msgctxt "MsgNormalStatus"
 msgid "03381"
 msgstr "ステータスは せいじょうです"
 

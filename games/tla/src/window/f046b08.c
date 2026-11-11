@@ -1,8 +1,28 @@
 #include "types.h"
+#include "edition.h"
+#include "version.h"
 #include "ram_buffer.h"
 #include "input.h"
 #include "frame.h"
 #include "iwram_call.h"
+#include "version.h"
+#include "module/system/system.h"
+
+// Room for the help line of an item and of a Djinni, and the second letter
+// tile of the PP cost's label, as measured: the item line grows from German
+// on, the Djinni line and the tile from French on.
+#if TLA_PATCH_2
+#define SUMMARY_ITEM_HELP_CAPACITY 52
+#else
+#define SUMMARY_ITEM_HELP_CAPACITY 32
+#endif
+#if TLA_PATCH_3
+#define SUMMARY_DJINN_HELP_CAPACITY 52
+#define SUMMARY_PP_LABEL_SECOND_TILE 0xf005
+#else
+#define SUMMARY_DJINN_HELP_CAPACITY 32
+#define SUMMARY_PP_LABEL_SECOND_TILE 0xf01e
+#endif
 
 extern u8 MsgAbilityNothing[];
 extern u8 MsgClassName[];
@@ -199,12 +219,34 @@ struct SummaryResourceEntry {
   u16 offset;
 };
 
+// Japanese text is shorter: its help lines and Psynergy descriptions take
+// smaller buffers, and its stat numbers sit one tile further left. It decodes
+// the item, Psynergy and Djinn lines raw where the other languages copy them
+// expanded; the lines that take a number are copied expanded in every language.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define SUMMARY_TEXT_COPY Message_DecodeRaw
+#define SUMMARY_PSYNERGY_TEXT_LENGTH 32
+#define SUMMARY_HELP_TEXT_LENGTH 64
+#define SUMMARY_STAT_VALUE_X 176
+#else
+#define SUMMARY_TEXT_COPY Message_CopyExpanded
+#define SUMMARY_PSYNERGY_TEXT_LENGTH 52
+#define SUMMARY_HELP_TEXT_LENGTH 128
+#define SUMMARY_STAT_VALUE_X 184
+#endif
+
 #define NAVIGATION ((struct SummaryNavigation *)Ram_HeapSlots->unke4[0])
 
 extern const struct SummaryStatCursor gOwnerStatus_StatCursors[];
 extern const struct SummaryCursorStop gOwnerStatus_EquipmentCursors[];
 extern const struct SummaryCursorStop gOwnerStatus_ConditionCursors[];
 extern const u8 gOwnerStatus_LevelString[];
+#if TLA_PATCH_2
+extern const u8 gOwnerStatus_NivString[];
+extern const u8 gOwnerStatus_NvString[];
+extern const u8 gOwnerStatus_KpString[];
+extern const u8 gOwnerStatus_PvString[];
+#endif
 extern const u8 gOwnerStatus_HpString[];
 extern const u8 gOwnerStatus_SlashString[];
 extern const u8 gOwnerStatus_PpString[];
@@ -234,6 +276,7 @@ void Vram_FillWindowBlockPattern(void);
 void *Item_Get(s32 item);
 s32 Item_ClassifyUseAbility(s32 member, s32 item);
 void Message_CopyExpanded(s32 message, u16 *text, s32 capacity);
+void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
 void WindowSprite_RedrawSavedRect(struct SummaryWindow *window);
 // Returns nothing; typed s32 here, see the help window in page 2.
 s32 Func_0803a2b0(s32 x, s32 y, s32 width, s32 height, s32 flags);
@@ -270,6 +313,7 @@ s32 Unit_GetExperienceForLevelFar(s32 member, s32 level);
 void wait(s32 frames);
 void Resource_ResetEntry(s32 slot);
 void PartyStatus_Draw(s32 flags);
+s32 System_GetLanguage(void);
 
 // The four list-page scroll marks, one tile per page of four rows (Psynergy
 // and items).
@@ -746,12 +790,12 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         u16 *entry = entries + rowBase + row;
 
         if (Item_ClassifyUseAbility(member, *entry) == 2)
-          Message_CopyExpanded((s32)MsgKey0d4f, itemText, 32);
+          SUMMARY_TEXT_COPY((s32)MsgKey0d4f, itemText, 32);
         else
-          Message_CopyExpanded((*entry & 0x1ff) + (s32)MsgItemPlainName,
-                               itemText, 32);
+          SUMMARY_TEXT_COPY((*entry & 0x1ff) + (s32)MsgItemPlainName, itemText,
+                            SUMMARY_ITEM_HELP_CAPACITY);
       } else {
-        Message_CopyExpanded((s32)MsgKey0d46, itemText, 32);
+        SUMMARY_TEXT_COPY((s32)MsgKey0d46, itemText, 32);
       }
       WindowSprite_RedrawSavedRect(statusWindow);
       Func_0803a2b0(helpWindow->x, helpWindow->y, helpWindow->width,
@@ -811,11 +855,12 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         work->holdTilemapUpload = 1;
         Vram_FillWindowBlockPattern();
         if (count != 0)
-          Message_CopyExpanded((entries[rowBase + row] & 0x3fff) +
-                                   (s32)MsgAbilityDescription,
-                               psynergyText, 52);
+          SUMMARY_TEXT_COPY((entries[rowBase + row] & 0x3fff) +
+                                (s32)MsgAbilityDescription,
+                            psynergyText, SUMMARY_PSYNERGY_TEXT_LENGTH);
         else
-          Message_CopyExpanded((s32)MsgKey0d48, psynergyText, 52);
+          SUMMARY_TEXT_COPY((s32)MsgKey0d48, psynergyText,
+                            SUMMARY_PSYNERGY_TEXT_LENGTH);
         WindowSprite_RedrawSavedRect(statusWindow);
         Func_0803a2b0(helpWindow->x, helpWindow->y, helpWindow->width,
                       helpWindow->height, 0);
@@ -828,7 +873,8 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
             s32 tileFlags;
 
             Window_SetTilemapEntry(statusWindow, 0xf01f, 11, j * 2 + 8, 0);
-            Window_SetTilemapEntry(statusWindow, 0xf01e, 12, j * 2 + 8, 0);
+            Window_SetTilemapEntry(statusWindow, SUMMARY_PP_LABEL_SECOND_TILE,
+                                   12, j * 2 + 8, 0);
             iconSprites[j].oam.f.tile =
                 Resource_LoadIndexedEntryToBuffer(id, iconSlots[j]);
             if (!(ability->flags & 0x80))
@@ -926,19 +972,19 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         if (entry & 0x10000) {
           if (entry & 0x3e0000) {
             MessageArgument_Push((entry & 0x3e0000) >> 17, 5);
-            Message_CopyExpanded(((entry & 0xf00) >> 8) * 20 + (entry & 0xff) +
-                                     (s32)MsgDjinnEffect,
-                                 psynergyText, 32);
+            SUMMARY_TEXT_COPY(((entry & 0xf00) >> 8) * 20 + (entry & 0xff) +
+                                  (s32)MsgDjinnEffect,
+                              psynergyText, SUMMARY_DJINN_HELP_CAPACITY);
           } else {
             Message_CopyExpanded((s32)MsgReadyToSummon, psynergyText, 32);
           }
         } else {
-          Message_CopyExpanded(((entry & 0xf00) >> 8) * 20 + (entry & 0xff) +
-                                   (s32)MsgDjinnEffect,
-                               psynergyText, 32);
+          SUMMARY_TEXT_COPY(((entry & 0xf00) >> 8) * 20 + (entry & 0xff) +
+                                (s32)MsgDjinnEffect,
+                            psynergyText, SUMMARY_DJINN_HELP_CAPACITY);
         }
       } else {
-        Message_CopyExpanded((s32)MsgNoDjinn, psynergyText, 32);
+        SUMMARY_TEXT_COPY((s32)MsgNoDjinn, psynergyText, 32);
       }
       work->holdTilemapUpload = released;
       Vram_FillWindowBlockPattern();
@@ -964,9 +1010,12 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
           Text_DrawCharacterAtOffset(((shown & 0xf00) >> 8) * 20 +
                                          (shown & 0xff) + (s32)MsgDjinnName,
                                      statusWindow, column * 8 + 8, tileRow * 8);
+// Spanish and Italian leave a recovering Djinni's turns off the list.
+#if !TLA_PATCH_4
           if (shown & 0x3e0000)
             Text_DrawNumberAtOffset((shown & 0x3e0000) >> 17, 2, statusWindow,
                                     column * 8 + 40, tileRow * 8);
+#endif
           Func_08041f70(15);
         }
       }
@@ -990,11 +1039,48 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       Text_DrawStringAtOffset(unit->name, statusWindow, 0, 0);
       if (memberIndex > 3)
         Text_DrawCharacterAtOffset((s32)MsgInTheBack, statusWindow, 40, 16);
+#if TLA_PATCH_2
+      // The European editions share one image and choose the level's label,
+      // drawing the name again under it, at run time.
+      switch (System_GetLanguage()) {
+      case CARTRIDGE_LANGUAGE_FRENCH:
+        Text_DrawStringAtOffset(unit->name, statusWindow, 0, 0);
+        Text_DrawStringAtOffset(gOwnerStatus_NivString, statusWindow, 51, 0);
+        Text_DrawNumberInWindow(unit->level, 2, statusWindow, 72, 0);
+        break;
+      case CARTRIDGE_LANGUAGE_SPANISH:
+        Text_DrawStringAtOffset(unit->name, statusWindow, 0, 0);
+        Text_DrawStringAtOffset(gOwnerStatus_NvString, statusWindow, 56, 0);
+        Text_DrawNumberInWindow(unit->level, 2, statusWindow, 72, 0);
+        break;
+      default:
+        Text_DrawStringAtOffset(unit->name, statusWindow, 0, 0);
+        Text_DrawStringAtOffset(gOwnerStatus_LevelString, statusWindow, 56, 0);
+        Text_DrawNumberInWindow(unit->level, 2, statusWindow, 72, 0);
+        break;
+      }
+#else
       Text_DrawStringAtOffset(gOwnerStatus_LevelString, statusWindow, 56, 0);
       Text_DrawNumberInWindow(unit->level, 2, statusWindow, 72, 0);
+#endif
       Text_DrawCharacterAtOffset((s32)MsgExp, statusWindow, 0, 8);
       Text_DrawNumberInWindow(unit->experience, 8, statusWindow, 40, 8);
+#if TLA_PATCH_2
+      switch (System_GetLanguage()) {
+      case CARTRIDGE_LANGUAGE_GERMAN:
+        Text_DrawStringAtOffset(gOwnerStatus_KpString, statusWindow, 40, 24);
+        break;
+      case CARTRIDGE_LANGUAGE_FRENCH:
+      case CARTRIDGE_LANGUAGE_SPANISH:
+        Text_DrawStringAtOffset(gOwnerStatus_PvString, statusWindow, 40, 24);
+        break;
+      case CARTRIDGE_LANGUAGE_ITALIAN:
+        Text_DrawStringAtOffset(gOwnerStatus_HpString, statusWindow, 40, 24);
+        break;
+      }
+#else
       Text_DrawStringAtOffset(gOwnerStatus_HpString, statusWindow, 40, 24);
+#endif
       Text_DrawNumberInWindow(unit->hp, 4, statusWindow, 56, 24);
       Text_DrawStringAtOffset(gOwnerStatus_SlashString, statusWindow, 88, 24);
       Text_DrawNumberInWindow(unit->hpMax, 4, statusWindow, 96, 24);
@@ -1003,13 +1089,17 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       Text_DrawStringAtOffset(gOwnerStatus_SlashString, statusWindow, 88, 32);
       Text_DrawNumberInWindow(unit->ppMax, 4, statusWindow, 96, 32);
       Text_DrawCharacterAtOffset((s32)MsgExp - 10, statusWindow, 136, 16);
-      Text_DrawNumberInWindow(unit->atk, 3, statusWindow, 184, 16);
+      Text_DrawNumberInWindow(unit->atk, 3, statusWindow, SUMMARY_STAT_VALUE_X,
+                              16);
       Text_DrawCharacterAtOffset((s32)MsgExp - 9, statusWindow, 136, 24);
-      Text_DrawNumberInWindow(unit->def, 3, statusWindow, 184, 24);
+      Text_DrawNumberInWindow(unit->def, 3, statusWindow, SUMMARY_STAT_VALUE_X,
+                              24);
       Text_DrawCharacterAtOffset((s32)MsgExp - 8, statusWindow, 136, 32);
-      Text_DrawNumberInWindow(unit->agi, 3, statusWindow, 184, 32);
+      Text_DrawNumberInWindow(unit->agi, 3, statusWindow, SUMMARY_STAT_VALUE_X,
+                              32);
       Text_DrawCharacterAtOffset((s32)MsgExp - 7, statusWindow, 136, 40);
-      Text_DrawNumberInWindow(unit->luck, 3, statusWindow, 184, 40);
+      Text_DrawNumberInWindow(unit->luck, 3, statusWindow, SUMMARY_STAT_VALUE_X,
+                              40);
       Text_DrawCharacterAtOffset((s32)MsgClassName + unit->classId,
                                  statusWindow, 0, 48);
       if (page == 0) {
@@ -1149,7 +1239,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
     }
 
     if (page == 0) {
-      u16 *helpText = Heap_Alloc(128 * sizeof(*helpText));
+      u16 *helpText = Heap_Alloc(SUMMARY_HELP_TEXT_LENGTH * sizeof(*helpText));
 
       if ((u32)cursor.helpEntry >= 14) {
         s32 statusKind = statusKinds[cursor.helpEntry - 14];
@@ -1211,15 +1301,18 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
          * instructions differ in tla-en. */
         do {
         } while (0);
-        Message_CopyExpanded(statusKind + (s32)MsgNormalStatus, helpText, 128);
+        Message_CopyExpanded(statusKind + (s32)MsgNormalStatus, helpText,
+                             SUMMARY_HELP_TEXT_LENGTH);
       } else if (cursor.helpEntry == 2 && unit->level <= 98) {
         MessageArgument_Push(
             Unit_GetExperienceForLevelFar(member, unit->level + 1) -
                 unit->experience,
             5);
-        Message_CopyExpanded((s32)MsgKey0d20, helpText, 128);
+        Message_CopyExpanded((s32)MsgKey0d20, helpText,
+                             SUMMARY_HELP_TEXT_LENGTH);
       } else {
-        Message_CopyExpanded(cursor.helpEntry + (s32)MsgKey0d21, helpText, 128);
+        Message_CopyExpanded(cursor.helpEntry + (s32)MsgKey0d21, helpText,
+                             SUMMARY_HELP_TEXT_LENGTH);
       }
       Text_DrawWideStringAtOffset(helpText, helpWindow, 0, 4);
       Heap_Release(helpText);
@@ -1311,7 +1404,9 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
   Resource_ResetEntry(portraitSlot);
   Resource_ResetEntry(cursorSlot);
   wait(1);
+#if TLA_PATCH_1
   Func_08041b68();
+#endif
   Window_Close(statusWindow, 1);
   Window_Close(helpWindow, 1);
   PartyStatus_Draw(((u8 *)Ram_HeapSlots->battleWork)[0x41]);

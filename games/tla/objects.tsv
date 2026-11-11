@@ -375,30 +375,10 @@ main	rom_main_02	games/tla/src/window/set_rect_highlight	.text
 main	rom_main_02	games/tla/src/window/format_number_to_halfwords	.text
 main	rom_main_02	games/tla/src/window/f046284	.text
 main	rom_main_02	games/tla/src/window/create_output_from_resource_slot	.text
-main	rom_main_02	games/tla/src/window/f046414	.text	it
-main	rom_main_02	recon/tla/it/rom	.rom.00046b6c	it
-main	rom_main_02	games/tla/src/window/f04868c	.text	it
-main	rom_main_02	games/tla/src/window/f049154	.text	it
-main	rom_main_02	games/tla/src/window/f046414	.text	fr
-main	rom_main_02	recon/tla/fr/rom	.rom.00046b90	fr
-main	rom_main_02	games/tla/src/window/f04868c	.text	fr
-main	rom_main_02	games/tla/src/window/f049154	.text	fr
-main	rom_main_02	games/tla/src/window/f046414	.text	es
-main	rom_main_02	recon/tla/es/rom	.rom.00046b94	es
-main	rom_main_02	games/tla/src/window/f04868c	.text	es
-main	rom_main_02	games/tla/src/window/f049154	.text	es
-main	rom_main_02	games/tla/src/window/f046414	.text	de
-main	rom_main_02	recon/tla/de/rom	.rom.00046b7c	de
-main	rom_main_02	games/tla/src/window/f04868c	.text	de
-main	rom_main_02	games/tla/src/window/f049154	.text	de
-main	rom_main_02	games/tla/src/window/f046414	.text	en
-main	rom_main_02	games/tla/src/window/f046b08	.text	en
-main	rom_main_02	games/tla/src/window/f04868c	.text	en
-main	rom_main_02	games/tla/src/window/f049154	.text	en
-main	rom_main_02	games/tla/src/window/f046414	.text	ja
-main	rom_main_02	recon/tla/ja/rom	.rom.00046d04	ja
-main	rom_main_02	games/tla/src/window/f04868c	.text	ja
-main	rom_main_02	games/tla/src/window/f049154	.text	ja
+main	rom_main_02	games/tla/src/window/f046414	.text
+main	rom_main_02	games/tla/src/window/f046b08	.text
+main	rom_main_02	games/tla/src/window/f04868c	.text
+main	rom_main_02	games/tla/src/window/f049154	.text
 main	rom_main_02	games/tla/src/window/classify_use_ability	.text
 main	rom_main_02	games/tla/src/window/copy_tile	.text
 main	rom_main_02	games/tla/src/window/f049a30	.text	it

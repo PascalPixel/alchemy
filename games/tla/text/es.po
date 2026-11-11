@@ -15339,7 +15339,7 @@ msgctxt "message"
 msgid "03814"
 msgstr "Djinn"
 
-msgctxt "message"
+msgctxt "MsgExp"
 msgid "03815"
 msgstr "Exp."
 
@@ -15351,25 +15351,25 @@ msgctxt "message"
 msgid "03817"
 msgstr "PP Máx."
 
-msgctxt "message"
+msgctxt "MsgNormal"
 msgid "03818"
 msgstr "Normal"
 
-msgctxt "message"
+msgctxt "MsgCantFight"
 msgid "03819"
 msgstr "Cayó"
 
-msgctxt "message"
+msgctxt "MsgInTheBack"
 msgid "03820"
 msgstr "Retaguardia"
 
-msgctxt "message"
+msgctxt "MsgKey0d20"
 msgid "03821"
 msgstr ""
 "Puntos de experiencia. Necesita\n"
 "{argument_signed_number} más para subir de nivel."
 
-msgctxt "message"
+msgctxt "MsgKey0d21"
 msgid "03822"
 msgstr ""
 "Usa el Botón L y el Botón R\n"
@@ -15459,7 +15459,7 @@ msgctxt "message"
 msgid "03839"
 msgstr "¿Quitar?"
 
-msgctxt "message"
+msgctxt "MsgNormalStatus"
 msgid "03840"
 msgstr "Estado normal."
 

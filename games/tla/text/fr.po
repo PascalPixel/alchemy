@@ -15357,7 +15357,7 @@ msgctxt "message"
 msgid "03814"
 msgstr "Djinn"
 
-msgctxt "message"
+msgctxt "MsgExp"
 msgid "03815"
 msgstr "Exp."
 
@@ -15369,25 +15369,25 @@ msgctxt "message"
 msgid "03817"
 msgstr "PP max"
 
-msgctxt "message"
+msgctxt "MsgNormal"
 msgid "03818"
 msgstr "Normal"
 
-msgctxt "message"
+msgctxt "MsgCantFight"
 msgid "03819"
 msgstr "Trêve"
 
-msgctxt "message"
+msgctxt "MsgInTheBack"
 msgid "03820"
 msgstr "A l'arrière"
 
-msgctxt "message"
+msgctxt "MsgKey0d20"
 msgid "03821"
 msgstr ""
 "Points d'expérience. {argument_signed_number}\n"
 "de plus pour changer de niveau."
 
-msgctxt "message"
+msgctxt "MsgKey0d21"
 msgid "03822"
 msgstr ""
 "Utilisez les boutons L & R pour\n"
@@ -15477,7 +15477,7 @@ msgctxt "message"
 msgid "03839"
 msgstr "Enlever?"
 
-msgctxt "message"
+msgctxt "MsgNormalStatus"
 msgid "03840"
 msgstr "Statut normal."
 

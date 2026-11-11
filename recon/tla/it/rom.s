@@ -1,17 +1,9 @@
-	.section .rom.00046b6c, "ax"
-	.global Func_08046b08
-	.type Func_08046b08, %function
-	.thumb_func
-Func_08046b08:
-	.incbin "baserom.gba", 0x00046b6c, 0x00001c24
 	.section .rom.0010abf4, "ax"
 	.global Func_0810abf0
 	.type Func_0810abf0, %function
 	.thumb_func
 Func_0810abf0:
 	.incbin "baserom.gba", 0x0010abf4, 0x00000294
-	.section .rom.001185c2, "ax"
-	.incbin "baserom.gba", 0x001185c2, 0x00000002
 	.section .rom.0013fd84, "ax"
 	.global BattleEffect_RunCruelRuin
 	.type BattleEffect_RunCruelRuin, %function

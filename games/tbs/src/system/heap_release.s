@@ -1,5 +1,5 @@
 @ Why assembly: HeapSlot_Release branches on lsrs flags without cmp/cmn;
-@ agscc's Thumb cbranchsi4 and negated_cbranchsi4 always emit a compare.
+@ alchemy-gcc's Thumb cbranchsi4 and negated_cbranchsi4 always emit a compare.
 @ Why assembly: HeapSlot_Release and Heap_Release share the one trailing literal
 @ pool; GCC's per-function arm_reorg emits and clears each function's pool.
 @ Heap_Release's own six instructions (ldr, movs, lsrs, ands, str, bx lr) are

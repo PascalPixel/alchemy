@@ -199,7 +199,7 @@ s16 Field_GetSceneAttributes(s32 scene) {
 enum {
   // XXX: what sequence Resource_FarCall00F runs here, where The Broken
   // Seal's SEQUENCE_NONE runs nothing; Func_081b83c4
-  // (field/lucky_dice/f1b83c4.c) and a scene that leaves for it would
+  // (field/dice_game.c) and a scene that leaves for it would
   // settle it.
   SEQUENCE_UNK_1FB = 0x1fb,
   SEQUENCE_SLOTS = 0x1fc, ///< the slots sequence (LuckyWheels_Run)

@@ -9,8 +9,9 @@ the field's code is grouped in: [actor scripts](../../../tbs/glossary.md#actor-s
 [field effects](../../../tbs/glossary.md#field-effect) (`field_effect/`), the
 camera (`camera/`) and the ground heights (`terrain/`). The bank that runs a
 scene is `field_sequence/`, the bank of event commands and field Psynergy is
-`event_commands/`, and Lucky Dice and Lucky Wheels are `lucky_dice/` and
-`lucky_wheels/`. The Broken Seal's [Field code](../../../tbs/src/field/README.md)
+`event_commands/`, Lucky Dice and Lucky Wheels are `lucky_dice.c` and
+`lucky_wheels.c`, and the casino's dice game, in a bank of its own, is
+`dice_game.c`. The Broken Seal's [Field code](../../../tbs/src/field/README.md)
 explains how this code works.
 
 ## What differs from The Broken Seal

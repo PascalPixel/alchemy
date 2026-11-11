@@ -1,11 +1,252 @@
-#include "types.h"
+/// @file
+/// The casino's dice game, in the order it has in the ROM.
+
+#include "battle.h"
+#include "debug.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "system.h"
 #include "io_reg.h"
-#include "dma.h"
+#include "types.h"
+#include "ram_buffer.h"
 #include "iwram_call.h"
+#include "fixed_point_position.h"
+#include "battle_display.h"
+#include "macros.h"
+#include "fixed_math.h"
+#include "dma.h"
 #include "input.h"
 #include "main_routine_work.h"
 #include "bg_scroll.h"
 #include "version.h"
+
+void Render_ResetTransformState(void);
+void SceneTransform_ApplyPosition(void *position);
+void SceneTransform_ApplyYaw(s32 angle);
+void SceneTransform_ApplyPitch(s32 angle);
+void Projection_Set(u32 value0, u32 value1, u32 value2);
+
+s32 Func_081b83c4_Start(void) {
+  REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
+  Func_081b83c4();
+  return 0;
+}
+
+/// Resets the scene camera and its projection, with the camera tilted to 147.
+// The Broken Seal's Camera_ResetSceneDefaults.
+void Camera_ResetSceneDefaultsB(void) {
+  struct BattleCamera *state = Ram_HeapSlots->cameraWork;
+  struct FixedPointPosition local;
+  s32 *result;
+  u32 ratio;
+  u32 param;
+
+  state->pitch = 147 << 8;
+  state->distance = 255 << 17;
+  SET_VECTOR(state->pos, 0, 0, 0);
+  state->yaw = 0;
+  state->followPos = 0;
+  // The projection's centre.
+  gCameraSceneParameters[3] = 0;
+  gCameraSceneParameters[4] = 0;
+  state->unk18 = 0;
+
+  Render_ResetTransformState();
+  SceneTransform_ApplyPosition(&state->pos[0]);
+  SceneTransform_ApplyYaw((s16)state->yaw);
+  SceneTransform_ApplyPitch((s16)state->pitch);
+
+  local.x = 0;
+  local.y = 0;
+  result = (s32 *)state;
+  local.z = state->distance;
+  Iwram_TransformVector(&local, result);
+
+  param = 250;
+  param <<= 16;
+  ratio = Iwram_RatioMulQ14(param, 192 << 8);
+
+  param = 250;
+  param <<= 16;
+  Projection_Set(param, ratio, 0x7fff0000);
+}
+
+s32 Graphics_ScaleRgb555BufferB(u16 *source, u16 *destination, s32 scale,
+                                s32 count) {
+  s32 remaining;
+  u32 mask_red;
+  u32 mask_green;
+  u32 mask_blue;
+  u32 pixel;
+  u32 red;
+  u32 green;
+  u32 blue;
+
+  if (count > 0) {
+    mask_red = 0x1f;
+    mask_green = 0x3e0;
+    mask_blue = 0x7c00;
+    remaining = count;
+    do {
+      pixel = *source;
+      red = pixel & mask_red;
+      green = pixel & mask_green;
+      blue = mask_blue & pixel;
+      red *= scale;
+      green *= scale;
+      blue *= scale;
+      pixel = ((red >> 16) & mask_red) | ((green >> 16) & mask_green);
+      pixel |= (blue >> 16) & mask_blue;
+      *destination = pixel;
+      source++;
+      destination++;
+      remaining--;
+    } while (remaining != 0);
+  }
+  return 0;
+}
+
+/// Writes count RGB555 colours from source to destination brightened by
+/// 16 - cos(angle) / 4096 on each channel, each clamped at 31.
+void Func_081b810c(u16 *source, u16 *destination, u32 count, s32 angle) {
+  s32 add;
+  u32 i;
+
+  add = ((-Trig_Cos(angle)) * 16 >> 16) + 16;
+  for (i = 0; i != count; i++) {
+    s32 r = (*source & 31) + add;
+    s32 g = ((*source >> 5) & 31) + add;
+    s32 b = ((*source >> 10) & 31) + add;
+
+    if (r > 31)
+      r = 31;
+    if (g > 31)
+      g = 31;
+    if (b > 31)
+      b = 31;
+    *destination = (b << 10) | (g << 5) | r;
+    source++;
+    destination++;
+  }
+}
+
+struct ReelSprite {
+  volatile u32 attr01;
+  volatile u32 attr2;
+};
+
+struct ReelWork {
+  u8 unk000[0xc4];
+  struct ReelSprite obj[128];
+};
+
+s32 Func_081b8180(s32 sprite, s32 x, s32 y, s32 value, s32 palette,
+                  s32 digits) {
+  // The sprite words are volatile, as The Broken Seal's struct OamWords; as
+  // plain u32 members, 84 of 119 instructions differ in tla-en.
+  struct ReelWork *work;
+  s32 started;
+  s32 digit;
+  s32 i;
+  s32 k;
+
+  work = (struct ReelWork *)Ram_HeapSlots->canvasMap;
+  started = 0;
+  x -= digits * 10;
+  for (i = 0; i != digits; i++) {
+    digit = value;
+    for (k = 0; k != digits - i - 1; k++)
+      digit /= 10;
+    digit %= 10;
+    if (digit != 0)
+      started = 1;
+    else if (!started && i != digits - 1)
+      continue;
+    work->obj[sprite].attr01 =
+        (((x + i * 10 + 522) & 0x1ff) << 16) | ((y + 256) & 255) | 0x40000000;
+    work->obj[sprite].attr2 = (digit * 4 + 816) | (palette << 12);
+    sprite++;
+  }
+  return sprite;
+}
+
+// A number drawn as large digit sprites.
+
+/// Draws value as digits large digit sprites from x, 22 pixels apart, leading
+/// zeros skipped, tiles 640 + 16 * digit in palette, as Func_081b8180 does.
+/// Returns the next free sprite.
+s32 Func_081b8274(s32 sprite, s32 x, s32 y, s32 value, s32 palette,
+                  s32 digits) {
+  struct ReelWork *work;
+  s32 started;
+  s32 digit;
+  s32 i;
+  s32 k;
+
+  work = (struct ReelWork *)Ram_HeapSlots->canvasMap;
+  started = 0;
+  for (i = 0; i != digits; i++) {
+    digit = value;
+    for (k = 0; k != digits - i - 1; k++)
+      digit /= 10;
+    digit %= 10;
+    if (digit != 0)
+      started = 1;
+    else if (!started)
+      continue;
+    work->obj[sprite].attr01 =
+        (((x + i * 22 + 512) & 0x1ff) << 16) | ((y + 256) & 255) | 0x80000000;
+    work->obj[sprite].attr2 = (digit * 16 + 640) | (palette << 12);
+    sprite++;
+  }
+  return sprite;
+}
+
+// The casino's dice game's scoring (the game itself, Func_081b83c4, follows
+// it). Its one table, after its code, is gLuckyDice_FaceTiles again: the die
+// face tile at each step of its roll.
+
+/// Scores four dice for the dice game: 5 when all four match, otherwise by
+/// the number of matching pairs: 2 for one, 3 for two, 4 for three, 0 for
+/// none. The matched values are collected in a local array the score never
+/// reads.
+// The native's stack frame and stores keep that array.
+s32 Func_081b834c(s32 *dice) {
+  s32 matches[2];
+  s32 score;
+  s32 pairs;
+  s32 i;
+  s32 j;
+
+  score = 0;
+  if (dice[0] == dice[1] && dice[0] == dice[2] && dice[0] == dice[3]) {
+    score = 5;
+  } else {
+    pairs = 0;
+    for (i = 0; i != 3; i++) {
+      for (j = i + 1; j != 4; j++) {
+        if (dice[i] == dice[j]) {
+          matches[pairs] = dice[i];
+          pairs++;
+        }
+      }
+    }
+    if (pairs == 1)
+      score = 2;
+    if (pairs == 2)
+      score = 3;
+    if (pairs == 3)
+      score = 4;
+  }
+  return score;
+}
+
+const u8 gData_081ba30c[] = {0, 12, 16, 1, 14, 8, 2, 15, 10,
+                             3, 9,  13, 4, 7,  6, 5, 17, 11};
 
 // What differs between the releases: the windows' sizes and text columns by
 // language; a guess the Japanese release can refuse only in the first double-up
@@ -197,7 +438,6 @@ void *HeapSlot_Alloc(s32 slot, s32 size);
 void *HeapSlot_AllocEwram(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 void Resource_ReservedNoOp(s32 id);
-void Camera_ResetSceneDefaultsB(void);
 void Task_ResetAll(void);
 void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_DecodeType01(const void *source, void *destination);
@@ -207,7 +447,6 @@ void Func_081b810c(u16 *source, u16 *destination, u32 count, s32 angle);
 s32 Func_081b834c(s32 *dice);
 s32 Func_081b8180(s32 sprite, s32 x, s32 y, s32 value, s32 palette, s32 digits);
 s32 Func_081b8274(s32 sprite, s32 x, s32 y, s32 value, s32 palette, s32 digits);
-void Render_ResetTransformState(void);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 void WindowSystem_InitFieldFar(void);
@@ -216,8 +455,6 @@ struct RenderInput *Window_CreateFar(s32 x, s32 y, s32 width, s32 height,
 void Window_CloseFar(struct RenderInput *window, s32 mode);
 void Text_DrawCharacterAtOffsetFar(s32 message, struct RenderInput *window,
                                    s32 x, s32 y);
-void Text_DrawNumberInWindowFar(s32 value, s32 width,
-                                struct RenderInput *window, s32 x, s32 y);
 void WindowSprite_PrepareForRedrawFar(struct RenderInput *window);
 void Party_AdjustCoinsFar(s32 amount);
 s32 Party_GetAverageLevelFar(void);
@@ -446,7 +683,7 @@ void Func_081b83c4(void) {
   sprites->coinsWindow = window;
   Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, window, COIN_TEXT_X,
                                 0);
-  Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6, sprites->coinsWindow, 0,
+  Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6, (s32)sprites->coinsWindow, 0,
                              0);
   window = Window_CreateFar(BET_WINDOW_X, 3, BET_WINDOW_WIDTH, 3, 6);
   sprites->betWindow = window;
@@ -461,7 +698,7 @@ void Func_081b83c4(void) {
   if ((u32)bet > (u32)gMainRoutineWork.coins)
     bet = gMainRoutineWork.coins;
 #endif
-  Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, BET_TEXT_X, 5);
+  Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow, BET_TEXT_X, 5);
   Sound_PlayFar(1);
 
   frame = 0;
@@ -496,15 +733,15 @@ void Func_081b83c4(void) {
           bet = Party_GetAverageLevelFar() * 10;
           if ((u32)bet > (u32)gMainRoutineWork.coins)
             bet = gMainRoutineWork.coins;
-          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, BET_TEXT_X, 5);
+          Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow, BET_TEXT_X, 5);
           Party_AdjustCoinsFar(-bet);
           Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
-                                     sprites->coinsWindow, 0, 0);
+                                     (s32)sprites->coinsWindow, 0, 0);
           state = 2;
           timer = 0;
           slide = 0;
           bet = Party_GetAverageLevelFar() * 10;
-          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, BET_TEXT_X, 5);
+          Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow, BET_TEXT_X, 5);
         }
       }
     } else if (state == 1) {
@@ -537,10 +774,10 @@ void Func_081b83c4(void) {
           bet = Party_GetAverageLevelFar() * 10;
           if ((u32)bet > (u32)gMainRoutineWork.coins)
             bet = gMainRoutineWork.coins;
-          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, BET_TEXT_X, 5);
+          Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow, BET_TEXT_X, 5);
           Party_AdjustCoinsFar(-bet);
           Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
-                                     sprites->coinsWindow, 0, round);
+                                     (s32)sprites->coinsWindow, 0, round);
         }
       } else {
         s32 message = -1;
@@ -752,7 +989,7 @@ void Func_081b83c4(void) {
             bet *= multiplier;
           else
             bet <<= 1;
-          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, BET_TEXT_X, 5);
+          Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow, BET_TEXT_X, 5);
           multiplier <<= 1;
           if (round == 5) {
             target = 14;
@@ -774,7 +1011,7 @@ void Func_081b83c4(void) {
           target = 14;
           round = 0;
           bet = Party_GetAverageLevelFar() * 10;
-          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, BET_TEXT_X, 5);
+          Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow, BET_TEXT_X, 5);
           multiplier = 0;
           Sound_PlayFar(1);
           state = 0;
@@ -807,7 +1044,7 @@ void Func_081b83c4(void) {
         Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings - 1,
                                       sprites->helpWindow,
                                       digits * 8 + WINNINGS_LABEL_X, 0);
-        Text_DrawNumberInWindowFar(winnings, digits, sprites->helpWindow,
+        Text_DrawNumberInWindowFar(winnings, digits, (s32)sprites->helpWindow,
                                    WINNINGS_TEXT_X, 0);
       }
       if (timer > 19) {
@@ -825,21 +1062,21 @@ void Func_081b83c4(void) {
           timer = 0;
           paletteRequest = 1;
           bet = Party_GetAverageLevelFar() * 10;
-          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, BET_TEXT_X, 5);
+          Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow, BET_TEXT_X, 5);
           if (winnings > 0) {
             Sound_PlayFar(105);
             Party_AdjustCoinsFar(winnings);
             Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
-                                       sprites->coinsWindow, 0, state);
+                                       (s32)sprites->coinsWindow, 0, state);
           }
         } else if (winnings > 0) {
           if (--winnings == 0)
             Sound_PlayFar(105);
           Party_AdjustCoinsFar(1);
           Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
-                                     sprites->coinsWindow, 0, 0);
+                                     (s32)sprites->coinsWindow, 0, 0);
           bet--;
-          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, BET_TEXT_X, 5);
+          Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow, BET_TEXT_X, 5);
         }
       }
     } else if (state == 5) {

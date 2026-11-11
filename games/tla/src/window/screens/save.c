@@ -1204,7 +1204,7 @@ s32 Func_08043cd8(s32 selectedFile, s32 menuMode) {
       Window_DrawDividerLine(fileList, 0, 4, 27, 4);
       Window_FillTilemapRect(fileList, 0, selectedFile * 2, 26, 1);
     }
-    Func_08045018(modePicture);
+    MenuTitle_Bob(modePicture);
     wait(1);
     if (gInput.repeat & 0x40) {
       Sound_PlayFar(111);

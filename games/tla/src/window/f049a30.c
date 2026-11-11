@@ -115,7 +115,7 @@ s32 VramCache_AllocEntry(s32 size);
 s32 VramCache_Reload(s32 entry, const void *tiles);
 struct ItemMenuWindow *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                      s32 flags);
-void Func_08049a04(u32 sourceTile, u32 destinationTile);
+void Vram_CopyTile(u32 sourceTile, u32 destinationTile);
 void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 palette);
 void Vram_FillWindowBlockPattern(void);
 s32 Item_ClassifyUseAbility(s32 member, s32 item);
@@ -202,10 +202,10 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
     iconSlots[i] = VramCache_AllocEntry(128);
     sprites[i].oam.f.tile = VramCache_Reload(iconSlots[i], (const void *)-1);
   }
-  Func_08049a04(0xf018, 0x200);
-  Func_08049a04(0xf018, 0x201);
-  Func_08049a04(0xf019, 0x210);
-  Func_08049a04(0xf019, 0x211);
+  Vram_CopyTile(0xf018, 0x200);
+  Vram_CopyTile(0xf018, 0x201);
+  Vram_CopyTile(0xf019, 0x210);
+  Vram_CopyTile(0xf019, 0x211);
 
   for (;;) {
     /* FAKEMATCH(temporary): sprite holds &cursorStorage; as cursorStorage used

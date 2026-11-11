@@ -4,23 +4,26 @@
 
 #include "../window_internal.h"
 
-#define PANEL_TILE_ROWS ((u32 *)0x06002500)
-#define PANEL_ROW_COUNT 30
-#define PANEL_ROW_WORDS 32
-#define PANEL_ROW_LEAD 8
+#define TEXT_CANVAS_VRAM ((void *)0x06002500)
+#define CANVAS_COLUMNS 30
+#define CANVAS_COLUMN_WORDS 32
+#define CANVAS_KEPT_ROWS 8 ///< the top 8 pixel rows stay put
 
-// Shifts each panel row left by step characters.
-void Func_0803975c(s32 step) {
+/// Scrolls the message canvas up by 6 pixel rows per step, below its top 8
+/// rows, and clears the rows this uncovers. A typing message calls it with
+/// step 1 on each frame of a line scroll.
+void Text_ScrollCanvasUp(s32 step) {
   s32 shift = step * 6;
-  u32 *base = PANEL_TILE_ROWS;
+  u32 *base = TEXT_CANVAS_VRAM;
   s32 n;
 
-  for (n = 0; n < PANEL_ROW_COUNT; n++) {
-    u32 *row = base + n * PANEL_ROW_WORDS;
+  for (n = 0; n < CANVAS_COLUMNS; n++) {
+    u32 *column = base + n * CANVAS_COLUMN_WORDS;
 
-    Dma_Set(row + PANEL_ROW_LEAD + shift, row + PANEL_ROW_LEAD,
-            DMA_COPY_WORDS(PANEL_ROW_WORDS - PANEL_ROW_LEAD - shift), REG_DMA3);
-    Iwram_FillWords(row + (PANEL_ROW_WORDS - shift), shift * 4, 0);
+    Dma_Set(column + CANVAS_KEPT_ROWS + shift, column + CANVAS_KEPT_ROWS,
+            DMA_COPY_WORDS(CANVAS_COLUMN_WORDS - CANVAS_KEPT_ROWS - shift),
+            REG_DMA3);
+    Iwram_FillWords(column + (CANVAS_COLUMN_WORDS - shift), shift * 4, 0);
   }
 }
 
@@ -82,7 +85,7 @@ extern const u8 gData_080aa0df[];
 extern const u8 gText_SpeedSteps[];
 extern const u8 gText_SpeedCueGaps[];
 
-void Func_0803975c(s32 step);
+void Text_ScrollCanvasUp(s32 step);
 void Func_08039754(struct UiChannelSlot *channel);
 void Func_0803972c(struct UiChannelSlot *channel);
 s32 Message_CheckCancelByInput(struct UiChannelSlot *channel);
@@ -133,7 +136,7 @@ s32 Message_StepScript(struct UiChannelSlot *channel) {
   }
 
   if (channel->transition != 0) {
-    Func_0803975c(1);
+    Text_ScrollCanvasUp(1);
     channel->transition = (s16)channel->transition - 1;
     return 0;
   }
@@ -388,9 +391,9 @@ s32 Message_StepScript(struct UiChannelSlot *channel) {
   return 0;
 }
 
-#undef PANEL_TILE_ROWS
-#undef PANEL_ROW_COUNT
-#undef PANEL_ROW_WORDS
-#undef PANEL_ROW_LEAD
+#undef TEXT_CANVAS_VRAM
+#undef CANVAS_COLUMNS
+#undef CANVAS_COLUMN_WORDS
+#undef CANVAS_KEPT_ROWS
 #undef TEXT_SPEED
 #undef ENTRY_MASK

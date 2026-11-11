@@ -14,7 +14,7 @@ s32 Resource_FindFreeTransferEntry(s32 kind);
 void Menu_LoadSelectedResource(void);
 void SelectionMenu_Draw(void);
 void Func_0803e488(struct MenuSelection *state, s32 index);
-void Func_0803e7c8(struct SelectionScreen *state, s32 index);
+void SelectionMenu_SetupArrow(struct SelectionScreen *state, s32 index);
 void Menu_StepRight(struct SelectionScreen *state);
 void Menu_StepLeft(struct StepMenu *state);
 void Menu_ReloadNodeResource(struct MenuResourceList *state, u32 index);
@@ -660,51 +660,54 @@ void Menu_SetNodeCoordinates(u32 first, u32 second) {
 void Func_0803e7ac(void) {
   void *menu = Ram_HeapSlots->menuWork;
 
-  Func_0803e7c8(menu, 0);
-  Func_0803e7c8(menu, 1);
+  SelectionMenu_SetupArrow(menu, 0);
+  SelectionMenu_SetupArrow(menu, 1);
 }
 
 extern u8 gData_0805c5c4[];
 extern u8 gData_0805c1c4[];
 
-void Func_0803e7c8(struct SelectionScreen *state, s32 index) {
-  struct SelectionSprite *entry = &state->records[index].sprite;
-  u8 *frames = 0;
+/// Sets up the left (side 0) or right (1) arrow of the selection row, shown
+/// when there are entries beyond that end. The first call takes the arrow's
+/// VRAM cache entry; later calls only move it and decide whether it shows.
+void SelectionMenu_SetupArrow(struct SelectionScreen *state, s32 side) {
+  struct SelectionSprite *arrow = &state->records[side].sprite;
+  u8 *arrowTiles = 0;
   u32 count;
 
-  state->records[index].kind = 0;
-  if (index != 0) {
+  state->records[side].kind = 0;
+  if (side != 0) {
     u8 *right = gData_0805c5c4;
 
     count = state->count;
     if (state->top != 0)
       count -= state->top;
     if (count > 5) {
-      state->records[index].kind = 1;
+      state->records[side].kind = 1;
       count = 5;
     }
-    frames = right;
+    arrowTiles = right;
     state->records[1].x = state->baseX + 16 * (count - 1) + 17;
   } else {
-    frames = gData_0805c1c4;
+    arrowTiles = gData_0805c1c4;
     state->records[0].x = state->baseX - 9;
     if (state->top != 0)
       state->records[0].kind = 1;
   }
-  if (state->records[index].y == 0) {
-    state->records[index].slot = Resource_FindFreeEntry();
-    state->records[index].tile =
-        VramCache_Load(state->records[index].slot, 128, frames);
-    state->records[index].y = state->baseY;
-    state->records[index].base = 0;
-    entry->mode = 0;
-    entry->mosaic = 0;
-    entry->colors = 1;
-    entry->affine = 0;
-    entry->param = 0;
-    entry->size = 0;
-    entry->shape = 2;
-    entry->priority = 0;
+  if (state->records[side].y == 0) {
+    state->records[side].slot = Resource_FindFreeEntry();
+    state->records[side].tile =
+        VramCache_Load(state->records[side].slot, 128, arrowTiles);
+    state->records[side].y = state->baseY;
+    state->records[side].base = 0;
+    arrow->mode = 0;
+    arrow->mosaic = 0;
+    arrow->colors = 1;
+    arrow->affine = 0;
+    arrow->param = 0;
+    arrow->size = 0;
+    arrow->shape = 2;
+    arrow->priority = 0;
   }
 }
 
@@ -823,17 +826,20 @@ u32 Menu_WaitForSelectionInput(u32 mode) {
   }
 }
 
-void Func_0803ea54(struct SelectionScrollScreen *screen) {
-  u32 end = screen->top + screen->cursor + 1;
+/// Moves the cursor one entry right, scrolling the row at its fourth place.
+/// This variant stops at the end; Menu_StepRight also wraps around. Nothing
+/// calls it.
+UNUSED void Menu_MoveSelectionForward(struct SelectionScrollScreen *screen) {
+  u32 nextEntry = screen->top + screen->cursor + 1;
 
-  if (end == screen->count) {
+  if (nextEntry == screen->count) {
     return;
   }
   Menu_ReloadNodeResource((struct MenuResourceList *)screen, screen->cursor);
   screen->status = NODE_STATUS_SCROLLING;
   wait(1);
   screen->cursor++;
-  if (screen->cursor == SELECTION_ROWS && end + 1 < screen->count) {
+  if (screen->cursor == SELECTION_ROWS && nextEntry + 1 < screen->count) {
     screen->cursor--;
     screen->downScroll = ARROW_SCROLL_FRAMES;
     screen->top++;

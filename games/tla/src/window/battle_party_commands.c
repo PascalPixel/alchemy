@@ -137,7 +137,7 @@ void HeapSlot_Release(s32 slot);
 s32 Resource_LoadIndexedIntoBuffer(s32 slot, s32 index);
 void Graphics_ExpandVramTilesByColorTable(u16 *tiles);
 void Link_DrawShiftedTilePair(u32 address);
-void Func_080451bc(void);
+void Menu_BuildLocalizedPatternTiles(void);
 void wait(s32 frames);
 void Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
@@ -254,7 +254,7 @@ s32 Func_0804bc08(struct BattleAction *commands, u16 *actors,
   Resource_LoadIndexedIntoBuffer(largeIconSlot, 0);
   Graphics_ExpandVramTilesByColorTable((u16 *)0x06006000);
   Link_DrawShiftedTilePair(0x06006680);
-  Func_080451bc();
+  Menu_BuildLocalizedPatternTiles();
   state->swappedUnit = -1;
   state->lastTarget = -1;
   {

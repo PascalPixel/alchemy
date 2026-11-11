@@ -53,16 +53,16 @@ extern volatile u32 gVBlankCount;
 #endif
 extern const u8 gWindow_PairBobOffsets[];
 
-/// Bobs the object and the one after it by the same step of an eight-step
-/// table, advanced every four VBlanks.
-void Func_08045018(struct BobPairObject *object) {
+/// Bobs the two sprites of a pair (see RenderResource_CreatePair) up and down
+/// by gWindow_PairBobOffsets, one step every four VBlanks.
+void MenuTitle_Bob(struct BobPairObject *obj) {
   s32 value;
 
-  value = object->baseY + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
-  object->y = value;
-  object = object->next;
-  value = object->baseY + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
-  object->y = value;
+  value = obj->baseY + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
+  obj->y = value;
+  obj = obj->next;
+  value = obj->baseY + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
+  obj->y = value;
 }
 
 extern char ResourceId_CommandIcons;
@@ -159,7 +159,12 @@ extern const struct BarPatternRow gMenu_BarPatternRows[];
 
 static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 
-s32 Func_080451bc(void) {
+// Builds twelve two-tile patterns as the 24 BG tiles from tile 788, the ones
+// Window_DrawThreeTileColumn draws: each tile filled with colour 4, then rows
+// 1 to 7 marked by XOR with gMenu_BarPatternRows. The first set grows its
+// pattern with the row, the second skips row 1. It is declared to return s32
+// but returns no value, and its caller reads none.
+s32 Menu_BuildLocalizedPatternTiles(void) {
   s32 set;
   s32 n;
 
@@ -498,7 +503,10 @@ void Func_08045780(void) {
   REG_BG1CNT = value;
 }
 
-void Func_08045794(void) {
+/// Clears BG0's vertical scroll (REG_BG0VOFS) and installs Func_08045780,
+/// which clears BG1's priority bits, as the VCount handler at line 136.
+/// Nothing calls it.
+UNUSED void Graphics_InstallBg1VCountHandler(void) {
   Io_Write16(0, &REG_BG0VOFS);
   Irq_SetHandler(2, 136, Func_08045780);
 }

@@ -5,16 +5,22 @@ struct DjinnSlot {
   u16 state;
 };
 
-s32 Func_08046284(struct DjinnSlot *oldGrid, struct DjinnSlot *newGrid,
-                  u16 *out, s32 *gained, s32 *lost) {
+/// Lists into `out` the abilities usable in battle (flag 0x80) of the action
+/// list `newGrid`, in its order, marking with bit 15 those `oldGrid` lacks;
+/// then appends those of `oldGrid` that `newGrid` lacks, marked with bit 14.
+/// Both lists are 32 slots, ended early by a 0 action. Returns the entries
+/// written, and the gained and lost counts through `gained` and `lost`.
+s32 BattleDjinnMenu_ListChangedDjinn(struct DjinnSlot *oldGrid,
+                                     struct DjinnSlot *newGrid, u16 *out,
+                                     s32 *gained, s32 *lost) {
   s32 i;
   s32 j;
   s32 count;
-  s32 added;
-  s32 removed;
+  s32 gainedCount;
+  s32 lostCount;
 
-  added = 0;
-  removed = 0;
+  gainedCount = 0;
+  lostCount = 0;
   count = 0;
   for (i = 0; i < 32 && newGrid[i].id != 0; i++) {
     if (BattleAction_Get(newGrid[i].id)->flags & 0x80) {
@@ -25,7 +31,7 @@ s32 Func_08046284(struct DjinnSlot *oldGrid, struct DjinnSlot *newGrid,
           break;
       }
       if (j == 32) {
-        added++;
+        gainedCount++;
         out[count - 1] |= 0x8000;
       }
     }
@@ -37,13 +43,13 @@ s32 Func_08046284(struct DjinnSlot *oldGrid, struct DjinnSlot *newGrid,
           break;
       }
       if (j == 32) {
-        removed++;
+        lostCount++;
         out[count] = (oldGrid[i].id & 0x3fff) | 0x4000;
         count++;
       }
     }
   }
-  *gained = added;
-  *lost = removed;
+  *gained = gainedCount;
+  *lost = lostCount;
   return count;
 }

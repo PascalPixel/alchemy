@@ -620,9 +620,15 @@ void Message_Find(struct TextReader *reader, s32 message) {
 
 extern const void *const Text_MessageContexts[][2];
 
-s32 Func_0803d1c4(struct TextReader *reader) {
+/// Decodes the next symbol of a message. Messages are Huffman coded with one
+/// tree per previous symbol: the previous code picks the tree, the message's
+/// bits walk it to a leaf, and the leaf's 12-bit symbol is returned and
+/// becomes the next context.
+/// Tree traversal consumes bytes; reader->words retains that byte position
+/// between calls. Nothing calls it.
+UNUSED s32 Text_DecodeSymbolInC(struct TextReader *reader) {
   u32 code;
-  u32 hi;
+  u32 contextBank;
   const u8 *base;
   const u8 *tree;
   const u8 *leaves;
@@ -633,19 +639,27 @@ s32 Func_0803d1c4(struct TextReader *reader) {
   s32 depth;
   s32 bit;
   u32 index;
-  u32 half;
+  u32 leafNibble;
 
   code = reader->previousCode;
   text = (const u8 *)reader->words;
   textBits = reader->bits;
   treeBits = 1;
-  hi = code >> 8;
+  // The previous code's high bits pick the bank, its low byte the tree. The
+  // tree runs forwards from base; its leaves' symbols run backwards from
+  // base - 1.
+  contextBank = code >> 8;
   code &= 0xff;
-  base = Text_MessageContexts[hi][0];
-  base += ((const u16 *)Text_MessageContexts[hi][1])[code];
+  base = Text_MessageContexts[contextBank][0];
+  base += ((const u16 *)Text_MessageContexts[contextBank][1])[code];
   tree = base;
   leaves = base - 1;
   rank = 0;
+  // The tree is its shape in preorder, a bit a node: 0 a branch, 1 a leaf.
+  // Bits are read from each byte's lowest up; a buffer that has shifted down
+  // to its marker bit (the 0x80 put above each byte's last bit) is empty.
+  // A text bit of 0 takes the left branch; 1 skips the left subtree,
+  // counting its leaves in rank, and takes the right.
   for (;;) {
     bit = treeBits & 1;
     treeBits >>= 1;
@@ -682,6 +696,9 @@ s32 Func_0803d1c4(struct TextReader *reader) {
       }
     } while (depth >= 0);
   }
+  // The leaf's symbol is the rank-th 12-bit entry, three nibbles each,
+  // packed backwards from base - 1: an even rank starts on a byte, an odd one
+  // in the middle of one.
   index = rank * 3;
   if (((index * 4) & 7) == 0) {
     bit = leaves[-(index >> 1)];
@@ -689,9 +706,9 @@ s32 Func_0803d1c4(struct TextReader *reader) {
     bit = leaves[-(index >> 1) - 1];
     code |= (u32)bit >> 4;
   } else {
-    half = leaves[-(index >> 1)];
-    half &= 0xf;
-    code = leaves[-(index >> 1) - 1] | (half << 8);
+    leafNibble = leaves[-(index >> 1)];
+    leafNibble &= 0xf;
+    code = leaves[-(index >> 1) - 1] | (leafNibble << 8);
   }
   reader->bits = textBits;
   reader->previousCode = code;

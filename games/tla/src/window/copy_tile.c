@@ -36,8 +36,12 @@ void Func_08108148(void);
 s32 Inn_RoomPrice(s32 innId);
 void Func_0810824c(void);
 
-void Func_08049a04(u32 source_tile, u32 destination_tile) {
-  Dma_Set((u8 *)0x06000000 + (source_tile & 0x3ff) * 32,
-          (u8 *)0x06000000 + (destination_tile & 0x3ff) * 32, 0x84000008,
-          REG_DMA3);
+/// Copies one 4bpp tile of BG character block 0 to another, each given as a
+/// tilemap entry whose palette and flip bits are ignored. The battle lists copy
+/// tiles 24 and 25 (as entries `0xf018` and `0xf019`) to tiles 512, 513, 528
+/// and 529 as they open.
+void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
+  Dma_Set(BG_CHAR_BLOCK(0) + (sourceTile & 0x3ff) * TILE_SIZE_4BPP,
+          BG_CHAR_BLOCK(0) + (destinationTile & 0x3ff) * TILE_SIZE_4BPP,
+          0x84000008, REG_DMA3);
 }

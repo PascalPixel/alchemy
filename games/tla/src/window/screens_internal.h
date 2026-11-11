@@ -74,7 +74,7 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
 struct BobPairObject;
 void Func_08043b70(void);
 s32 Func_08043cd8(s32 selectedFile, s32 menuMode);
-void Func_08045018(struct BobPairObject *object);
+void MenuTitle_Bob(struct BobPairObject *object);
 struct WindowSprite *RenderResource_CreatePair(s32 group,
                                                struct RenderInput *input, s32 x,
                                                s32 y);

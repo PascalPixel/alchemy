@@ -78,8 +78,8 @@ s32 Djinn_IsActiveFar(s32 member, s32 element, s32 index);
 void Djinn_DeactivateFar(s32 member, s32 element, s32 index);
 void Djinn_ActivateFar(s32 member, s32 element, s32 index);
 void Unit_CalculateFar(s32 member);
-s32 Func_08046284(u16 *oldList, u16 *newList, u16 *changed, s32 *gained,
-                  s32 *lost);
+s32 BattleDjinnMenu_ListChangedDjinn(u16 *oldList, u16 *newList, u16 *changed,
+                                     s32 *gained, s32 *lost);
 void Text_DrawCharacterAtOffset(s32 message, struct Window *window, s32 x,
                                 s32 y);
 s32 String_FormatNumberToHalfwords(s16 *out, s32 value);
@@ -194,8 +194,8 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
     Djinn_ActivateFar(member, element, djinnIndex);
   Unit_CalculateFar(member);
 
-  abilityCount = Func_08046284(savedUnit->psynergy, unit->psynergy,
-                               changedAbilities, &gained, &lost);
+  abilityCount = BattleDjinnMenu_ListChangedDjinn(
+      savedUnit->psynergy, unit->psynergy, changedAbilities, &gained, &lost);
   pages = ((abilityCount - 1) / 5) + 1;
   *pageCount = pages;
   if (page * 5 - 5 >= abilityCount)

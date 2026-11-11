@@ -130,7 +130,10 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void) {
 
 void GraphicsPalette_LoadSelectionResourcesAndAdvance(void);
 
-void Func_0803fc38(void) {
+/// Allocates the settings menu's work block (heap slot 208), copies five
+/// settings into it with how many values each takes (24, 15, 3, 2 and 2), and
+/// starts its VBlank task. SettingsMenu_Release frees the block.
+void SettingsMenu_InitializeWork(void) {
   struct OptionWork *work;
   volatile u32 zero;
 
@@ -155,7 +158,9 @@ void Func_0803fc38(void) {
 
 void GraphicsPalette_LoadSelectionResourcesAndAdvance(void);
 
-void Func_0803fd14(void) {
+/// Stops the settings menu's VBlank task and frees its work block.
+/// The task goes first, since it reads the work block.
+void SettingsMenu_Release(void) {
   Task_Remove(GraphicsPalette_LoadSelectionResourcesAndAdvance);
   HeapSlot_Release(208);
 }
@@ -381,13 +386,13 @@ extern u8 MsgKey113b[], MsgKey1141[], MsgKey1144[], MsgKey1146[], MsgKey1161[];
 extern const u8 gOptionMenu_FirstColorPresets[],
     gOptionMenu_SecondColorPresets[];
 
-void Func_0803fc38(void);
-void Func_0803fd14(void);
+void SettingsMenu_InitializeWork(void);
+void SettingsMenu_Release(void);
 struct RenderInput *Menu_OpenWorkspaceOptions(void);
 void Func_0803f9c0(s32 hue, s32 brightness);
 struct WindowSprite *
 RenderResource_CreatePair(s32 group, struct RenderInput *input, s32 x, s32 y);
-void Func_08045018(struct WindowSprite *pair);
+void MenuTitle_Bob(struct WindowSprite *pair);
 void Icon_PrepareActorFar(struct WindowSprite *icon);
 void RenderResource_LoadCommandIcon(s32 index, s32 value, s32 flag);
 void Func_08108040(void *cursor, s32 x, s32 y, s32 mode);
@@ -414,7 +419,7 @@ s32 Func_080400e8(void) {
 
   redraw = 1;
   selectedOption = 0;
-  Func_0803fc38();
+  SettingsMenu_InitializeWork();
   work = Ram_HeapSlots->unkd0[0];
   helpWindow = Window_Create(HELP_WINDOW_X, 2, HELP_WINDOW_WIDTH, 3, 2);
   settingsWindow = Menu_OpenWorkspaceOptions();
@@ -503,7 +508,7 @@ s32 Func_080400e8(void) {
       WindowSprite_ClearList(helpWindow);
       Text_DrawMessage(selectedOption + (s32)MsgKey1146, (s32)helpWindow, 0, 0);
     }
-    Func_08045018(pair);
+    MenuTitle_Bob(pair);
     wait(1);
 
     if (PRESSED & 4) {
@@ -565,7 +570,7 @@ s32 Func_080400e8(void) {
     Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
                   gMainRoutineWork.paletteGlow[1]);
   }
-  Func_0803fd14();
+  SettingsMenu_Release();
   wait(1);
   return result;
 }
@@ -697,7 +702,7 @@ void Func_08040614(void);
 struct RenderInput *Func_08040628(void);
 struct WindowSprite *
 RenderResource_CreatePair(s32 group, struct RenderInput *input, s32 x, s32 y);
-void Func_08045018(struct WindowSprite *pair);
+void MenuTitle_Bob(struct WindowSprite *pair);
 void Icon_PrepareActorFar(struct WindowSprite *icon);
 void RenderResource_LoadCommandIcon(s32 index, s32 value, s32 flag);
 void Func_08108048(void *cursor, s32 x, s32 y);
@@ -773,7 +778,7 @@ s32 Func_08040798(s32 initial) {
         Func_08108040(work->cursor, x, y, 3);
       redraw = 0;
     }
-    Func_08045018(pair);
+    MenuTitle_Bob(pair);
     wait(1);
     if (KEYS_PRESSED & 1) {
       result = selected;

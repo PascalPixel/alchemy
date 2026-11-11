@@ -2,7 +2,7 @@
 /// The System object: power-up and the interrupt handlers, the frame wait and
 /// VBlank, input, the register write queue, fades, the sprite lists and VRAM
 /// cache, tasks, maths, debug text, the heap, the 3D transform, decoding,
-/// saving and the link cable's set-up.
+/// saving, the link cable and the game flags.
 ///
 /// system_internal.h holds what every part shares (its includes); the code
 /// is in the files under system/, included here in the order it has in the
@@ -39,3 +39,4 @@
 #include "system/decompress.c"
 #include "system/save.c"
 #include "system/serial.c"
+#include "system/flags.c"

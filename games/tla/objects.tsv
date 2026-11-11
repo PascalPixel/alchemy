@@ -55,20 +55,6 @@ main	rom_main_00	games/tla/src/system/resource/patch_thumb_branch
 main	rom_main_00	games/tla/src/system/heap_slot_release
 main	rom_main_00	games/tla/src/system/heap_release
 main	rom_main_00	games/tla/src/system/system	.text
-main	rom_main_00	games/tla/src/system/serial/sio_time	.text
-main	rom_main_00	games/tla/src/system/serial/serial_poll_status	.text
-main	rom_main_00	games/tla/src/system/serial/sio_xchg	.text
-main	rom_main_00	games/tla/src/system/serial/f0165b4	.text
-main	rom_main_00	games/tla/src/system/serial/sio_intr	.text
-main	rom_main_00	games/tla/src/system/serial/sio_wait	.text
-main	rom_main_00	games/tla/src/system/serial/reset_transfer	.text
-main	rom_main_00	games/tla/src/system/serial/f016990	.text	en de es fr it ja
-main	rom_main_00	games/tla/src/system/serial/serial_stub	.text
-main	rom_main_00	games/tla/src/system/flags/test	.text
-main	rom_main_00	games/tla/src/system/flags/get_byte	.text
-main	rom_main_00	games/tla/src/system/flags/set_byte	.text
-main	rom_main_00	games/tla/src/system/flags/get_nibble	.text
-main	rom_main_00	games/tla/src/system/flags/f016dd0	.text
 main	rom_main_00	games/tla/src/system/bios
 main	rom_main_00	games/tla/src/system/bios_sound_bias_on
 main	rom_main_00	games/tla/src/gamepak/flash/flash	.text

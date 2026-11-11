@@ -4,7 +4,7 @@ The Lost Age's System code: power-on and the entry, the RAM layout, the
 resident IWRAM code, the interrupt table, the heap, the
 [task](../../../tbs/glossary.md#task) table, the two routines copied to RAM
 to run (`resource/`), the save format (`savedata.c`), the link cable
-(`serial/`), the game flags (`flags/`), the maths, the
+(`system/serial.c`), the game flags (`system/flags.c`), the maths, the
 [overlay](../../../tbs/glossary.md#overlay) streams (`overlay/`) and the
 [main routine](../../../tbs/glossary.md#main-routine).
 [System code](../../../tbs/src/system/README.md) and
@@ -16,20 +16,20 @@ are in [The Lost Age: Game Pak](../gamepak/README.md).
 
 ## What differs from The Broken Seal
 
-- The code from power-on to the link cable's set-up is one object,
+- The code from power-on to the game flags is one object,
   `system.c`, written as parts under `system/` and cut where The Broken
   Seal's parts are: power-on (`Entry` in `entry.s`, then `Func_0801319c` in
   `system/start_up.c`, which enters the main routine), `wait()` and
   `Irq_SetHandler` (`system/frame.c`), the task table (`system/task.c`) and
-  saving (`system/save.c`). The rest of the link cable (`serial/`) and the
-  game flags (`flags/`) follow it as objects of their own, and the interrupt
+  saving (`system/save.c`). The link cable (`system/serial.c`) and the
+  game flags (`system/flags.c`) are its last parts, and the interrupt
   table (`irq_table.s`) is assembly beside the resident code it calls.
 - The main routine, `MainRoutine_Run`, and the scene changes around it in the
   ROM, from `Scene_TakeExit` to `Party_PlaySavedMusic`, are one object,
   `main_routine.c`, as in The Broken Seal. It adds four debug starts and keeps
   background palettes 14 and 15 across three of its sequences.
-- The game flags are read by five functions here (`flags/`), where The Broken
-  Seal keeps them with the game rules.
+- The game flags are kept by ten functions here (`system/flags.c`), where
+  The Broken Seal keeps them with the game rules.
 - The trigonometry (`trig.s`, `sine_table.s`), the tangent table the
   arctangent searches (`mathtan.s`), `math.c`, the long multiplies and the
   16.16 dot product are here, in the first bank, as their twins are.

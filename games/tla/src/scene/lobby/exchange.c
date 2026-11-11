@@ -14,7 +14,7 @@
 s32 Func_0200039c(void);
 s32 Func_02000578(void);
 
-/// Resets the transfer state, as system/serial/reset_transfer.c does.
+/// Resets the transfer state, as BattleLink_ResetTransferState does.
 // In The Lost Age's store order.
 static __inline__ void Lobby_ResetTransferState(void) {
   struct SerialTransferState *state;

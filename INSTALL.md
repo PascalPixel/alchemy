@@ -4,7 +4,7 @@ Want to build Golden Sun yourself? Three steps, and you have a ROM you made from
 
 Alchemy is a [matching decompilation](games/tbs/glossary.md#matching-decompilation) of Golden Sun: The Broken Seal (`tbs`) and its sequel, Golden Sun: The Lost Age (`tla`): it rebuilds both, byte for byte, from the source in this repository. [README.md](README.md) says more about the project.
 
-Every byte of The Broken Seal comes from source, its pictures, music and text included. So it builds on Linux, macOS and Windows with nothing but this repository. The Lost Age is optional: the code that isn't rewritten yet is still read from your own cartridge dump.
+Every byte of The Broken Seal comes from source, its pictures, music and text included. So it builds on Linux, macOS and Windows with nothing but this repository. The Lost Age builds the same way, from this repository alone, with no cartridge dump.
 
 ## 1. Install the tools
 
@@ -64,9 +64,9 @@ alchemy-devtools/target/release/alchemy-devtools --help
 
 The documentation site, [alchemy.pascalpixel.com](https://alchemy.pascalpixel.com/), is built separately in [alchemy-docs](https://github.com/PascalPixel/alchemy-docs); building the games needs neither Doxygen nor Node.
 
-## The Lost Age (optional)
+## The Lost Age
 
-Dump your own cartridge and put the file in `roms/` as `tla-en.gba` (or `tla-ja.gba`, `tla-de.gba` and so on), then run `make tla-en`, and `make compare-tla-en` to check it. The build copies the parts not yet rewritten as source from the dump, so it needs the dump of the same edition. Don't download ROMs; the build checks each one against `rom.sha1`.
+Run `make tla-en` (or `tla-ja`, `tla-de`, `tla-es`, `tla-fr` or `tla-it`), and `make compare-tla-en` to check it against `rom.sha1`; `compare-tla` checks all six. Like The Broken Seal, it needs no cartridge dump.
 
 ## If something fails
 

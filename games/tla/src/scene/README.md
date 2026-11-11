@@ -14,11 +14,10 @@ runs, its tables and its [events](../../../tbs/glossary.md#event).
   does or, until that is known, for its offset in the overlay
   (`airs_rock_inside/s0128.c`), with a header of its own names where it has
   any (`airs_rock_inside.h`).
-- Each overlay is linked by its own script,
-  `recon/tla/raw/overlays/resource_<id>.ld`, which lists the folder's objects
-  in ROM order and, between them, the sections of `resource_<id>_overlay.s`
-  that are not yet C. The Broken Seal links all its overlays through one
-  `overlay.ld` and its object list.
+- Both games link every overlay through one `overlay.ld` and the object
+  list: an overlay's rows of `games/tla/objects.tsv` name its folder's
+  objects in ROM order, and where its globals are still written in assembly
+  they are the folder's `bss.s`.
 - The scene table is in the field folder, with what differs in it
   ([The Lost Age: field](../field/README.md)).
 - The main-image code a scene imports is in the bank folders of this game,

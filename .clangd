@@ -5,7 +5,7 @@ Diagnostics:
   UnusedIncludes: None
 ---
 If:
-  PathMatch: [games/tla/.*, recon/tla/.*]
+  PathMatch: [games/tla/.*]
 CompileFlags:
   Remove: [-DTBS_EDITION_EN=1, -I]
   Add:

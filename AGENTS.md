@@ -16,13 +16,12 @@ Alchemy rebuilds Golden Sun: **The Broken Seal** (☀️, build `tbs`) and **The
 ## Where things are
 
 - `games/<game>/src`, `include`, `sound`, `text`: each game owns its copy of what it uses. ☀️'s code sits in one folder per bank, grouped by the credits' divisions, with a scene's overlay one file; `games/tbs/src/README.md` maps the folders, and module headers follow the same paths under `include/module`.
-- `games/<game>/objects.tsv` lists every object in link order; `games/<game>/main.ld` is the one main script, chosen by `--defsym <GAME>_EDITION_<LANG>=1`.
-- `recon/tla` holds ⚓️'s not-yet-C work: `raw/<address>.s` listings of the main image; `raw/overlays/`, each overlay's link script `resource_<id>.ld` and its scaffold `resource_<id>_overlay.s`; `<lang>/rom.s`, each other edition's scaffold sections; `unidentified.s`; and the drafts, `en/main/<address>.c`, `en/overlays/resource_<id>_c_<address>.c` and `<lang>/main/` for an edition's own forms. A draft that matches moves into `games/tla/src`, and `objects.tsv` or its overlay's script names it in place of the scaffold. ☀️ has no `recon/`.
+- `games/<game>/objects.tsv` lists every object of the main image and of each overlay in link order; `games/<game>/main.ld` is the one main script, chosen by `--defsym <GAME>_EDITION_<LANG>=1`, and `games/<game>/src/system/overlay/overlay.ld` the one overlay script, its `.bss` header from `games/<game>/overlays.tsv`. An overlay's globals still written in assembly are ☀️'s `scene/bss/<name>.s` and ⚓️'s `<scene folder>/bss.s`. Neither game has a `recon/`.
 - The `Makefile` builds everything; `tools/` holds its small C programs (`ags-*`); the optional Alchemy Devtools, cloned into the ignored `alchemy-devtools/` by `make devtools`, holds the Rust matching aids, the renderer and the progress count. `out/` and `tools/out/` are build output.
 
 ## Commands
 
-Setup is in `INSTALL.md`; ROMs go under `roms/` as `tla-ja.gba` and so on, checked against `rom.sha1`, never committed.
+Setup is in `INSTALL.md`; no edition needs a ROM to build. The reference ROMs the devtools read go under `roms/` as `tla-ja.gba` and so on, checked against `rom.sha1`, never committed.
 
 ```sh
 make bootstrap         # the tools, the compilers, GAS 2.10 and libgcc (plain make does it too)

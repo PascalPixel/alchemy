@@ -7,8 +7,8 @@ each against `rom.sha1` and measures them from the linker maps it just made
 ccache hands back a compile only when its preprocessed source, compiler and
 options are identical, so a push that changes comments recompiles almost
 nothing; every ROM is still linked and checked. Pull requests stop there. The
-tool tests, the format check, `make modern` and The Lost Age's editions, which
-need private cartridge dumps, run locally in `make land`.
+tool tests, the format check, `make modern` and The Lost Age's editions run
+locally in `make land`.
 
 For a landing, stage every source change and run `make land`. The receipt
 records the staged source tree, measurement time and hashes of the TSV and
@@ -41,7 +41,7 @@ After the main build succeeds, the `publish` job admits the commit as
   Seal figures, and The Lost Age's from the nearest ancestor with a receipt.
   Those are carried as this commit's only when the git tree entries of
   everything The Lost Age's measurement reads (`Makefile`, `rom.sha1`,
-  `games/tla`, `recon/tla`, `tools`, and the `alchemy-gcc` pin) are
+  `games/tla`, `tools`, and the `alchemy-gcc` pin) are
   identical to the ancestor's. Otherwise the record
   names the ancestor and holds no Lost Age row, and the chart and `source.tsv`
   show The Lost Age as last measured at that commit. With no ancestor receipt,

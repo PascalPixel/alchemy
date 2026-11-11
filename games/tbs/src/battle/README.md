@@ -260,6 +260,23 @@ A pick the enemy cannot use is drawn again:
 
 After 18 failed picks the enemy defends.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  first(["First pick, while the turn is gathered"]) --> guard{"Is it a guard or an attempt to run?"}
+  guard -- "yes" --> stands(["It stands"])
+  guard -- "no" --> thrown(["It is thrown away"])
+  thrown --> second(["Second pick, at the moment the enemy acts"])
+  second --> usable{"Can the enemy use it?"}
+  usable -- "no: drawn again" --> second
+  usable -- "yes" --> shown(["The move the player sees announced"])
+  usable -- "18 failed picks" --> defend(["The enemy defends"])
+  classDef turn fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  class first,second,stands,thrown,shown,defend turn
+  class guard,usable frame
+```
+
 A sleeping or stunned enemy loses its actions. An enemy with two actions a
 turn takes its second at half its Agility.
 
@@ -304,6 +321,22 @@ When the party strikes first, no enemy actions are written down that turn.
 When the enemies strike first, the party chooses nothing, and two to five
 enemies, drawn at random, act once each. The next turn is an ordinary one.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  setup(["⚔️ A random battle is set up"]) --> party{"Party strikes first? 1 time in 16"}
+  party -- "yes" --> first(["No enemy acts in the first turn"])
+  party -- "no" --> enemy{"Enemies strike first? 1 time in 32"}
+  enemy -- "yes" --> surprise(["Two to five enemies act, the party chooses nothing"])
+  enemy -- "no" --> plain(["An ordinary first turn"])
+  classDef sequence fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef turn fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class setup sequence
+  class party,enemy frame
+  class first,surprise,plain turn
+```
+
 ![The party tries to flee from two Gryphons: `Isaac and friends run!` and `But there's no escape!`, the Gryphons use Wing Flutter and Twin Beaks, and the next turn the party runs and gets away](https://alchemy.pascalpixel.com/guides/battle/flee.gif)
 
 Choose Flee and the game rolls for it on the spot, before any action plays.
@@ -332,6 +365,22 @@ Flee. It finds Garet's, and moves on. Later, when the flight is staged, the
 game asks only whether a roll failed. None did, so `Isaac and friends run!`
 is followed by the party running off the field. Garet is left asleep where
 he stands, and the battle ends as a flight.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  flee(["The party chooses Flee"]) --> firstnote{"Is Flee the very first note?"}
+  firstnote -- "yes" --> roll{"The escape roll"}
+  firstnote -- "no: an empty note comes first" --> away(["No roll is made, and the party gets away"])
+  roll -- "it succeeds" --> away
+  roll -- "it fails" --> stuck(["No escape: two to five enemies act"])
+  classDef sequence fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef turn fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class flee,away sequence
+  class firstnote,roll frame
+  class stuck turn
+```
 
 The kind of battle decides which of these rolls are made:
 
@@ -998,6 +1047,15 @@ unit, the party's first.
 
 A Djinni whose recovery has run out is set again, `Flint is set to Isaac!`,
 with a burst of its element.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE"}}}%%
+stateDiagram-v2
+  Set --> Standby: it is unleashed
+  Standby --> Set: the Djinn command sets it again
+  Standby --> Recovery: a summon uses it
+  Recovery --> Set: its recovery runs out, at a turn's end
+```
 
 Each unit still standing regains whatever HP and PP it gets back every
 turn, from equipment for a party member or from its row of the enemy table

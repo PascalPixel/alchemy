@@ -73,6 +73,21 @@ sixteen short lists of 16, and a
 [palette number](../../glossary.md#palette-number) beside the picture says
 which short list it uses.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  pixel(["A pixel: a number, not a colour"]) --> kind{"A rich picture or a simple one?"}
+  kind -- "rich" --> whole(["The number picks from the whole list of 256 colours"])
+  kind -- "simple: 16 colours" --> short(["The palette number picks one of sixteen short lists"])
+  short --> colour(["The pixel's number picks one of that list's 16 colours"])
+  classDef source fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef build fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef hardware fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  class pixel source
+  class kind,short build
+  class whole,colour hardware
+```
+
 ### Tiles
 
 A picture's pixels are not stored as one big sheet either. They are cut into
@@ -207,6 +222,20 @@ the way Isaac is facing. For a direction nobody drew, it shows one of the
 five as a mirror image
 ([Field code](../field/README.md#sprites-and-their-animation)).
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  step(["The animation names picture 55, the first of a step"]) --> drawn{"Was the step drawn for the way Isaac faces?"}
+  drawn -- "yes" --> one(["The field shows that one of pictures 55 to 59"])
+  drawn -- "no" --> mirror(["It shows one of the five as a mirror image"])
+  classDef source fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef build fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef hardware fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  class step source
+  class drawn build
+  class one,mirror hardware
+```
+
 So the list is written once, as if Isaac always faced one way, and it works
 for every direction.
 
@@ -309,6 +338,18 @@ Bane's room are even the same plan: one map, shown in two sets of colours.
 Tunnel Ruins and Venus Lighthouse use the sheets again, under four more
 palettes. One set of walls was drawn, and it comes out in nine colour
 schemes across four places.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart LR
+  mercury(["Mercury Lighthouse, in the sheets' own colours"]) --> sheets(["The sheets of tileset/set_43: one set of walls"])
+  crossbone(["Crossbone Isle's cave, under four palettes of its own"]) --> sheets
+  later(["Tunnel Ruins and Venus Lighthouse, under four more"]) --> sheets
+  classDef hardware fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef source fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  class mercury,crossbone,later hardware
+  class sheets source
+```
 
 A palette that comes with no tiles of its own is a small PNG in
 `tileset/palettes/`. There are 54 of them.
@@ -438,6 +479,21 @@ So the credits put one backdrop's colours into the first half of the
 list and the next backdrop's into the second half. A backdrop's pixels are
 numbers from 0 to 127, so the credits add 128 to every pixel of the second
 picture. Now its numbers point at the second half, its own colours.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  list(["The backgrounds' list of 256 colours"]) -- "the first half" --> first(["One backdrop's 128 colours"])
+  list -- "the second half" --> second(["The next backdrop's 128 colours"])
+  first --> a(["Its pixels, numbers 0 to 127, on one layer"])
+  second --> b(["Its pixels with 128 added, on another layer"])
+  classDef source fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef build fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef hardware fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  class list source
+  class first,second build
+  class a,b hardware
+```
 
 Each backdrop gets a layer to itself, and the console fades from one layer
 to the other. [Menus](../menu/README.md#the-credits) follows the whole roll,

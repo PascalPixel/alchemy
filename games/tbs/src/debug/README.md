@@ -176,6 +176,16 @@ while his flag says he has not. Straight after giving him to the party, the
 room turns his flag back to "not caught". So Flint is standing there again
 on the next visit, ready to be caught again.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart LR
+  stand(["🚩 Flint's flag says not caught, so he stands in the room"]) -- "the player talks to him" --> join(["He joins the party"])
+  join --> back(["🚩 The room turns his flag back to not caught"])
+  back -- "the next visit" --> stand
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class stand,join,back sequence
+```
+
 That is the whole room. Talking to someone runs a short piece of the scene's
 code called an [event](../../glossary.md#event), and each of the four events
 here is the same two steps: give the Djinni, then turn its flag back. With the
@@ -264,6 +274,20 @@ first Felix from below and he shows the weapon shop's lines one after
 another. From his right he shows the armor shop's, from his left the item
 shop's, and from above the Sanctum's. A or Down goes on to the next line, Up
 goes back, and B stops.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  talk(["The player talks to the first Felix"]) --> where{"Where does Isaac stand?"}
+  where -- "below him" --> weapon(["The weapon shop's lines"])
+  where -- "on his right" --> armor(["The armor shop's lines"])
+  where -- "on his left" --> item(["The item shop's lines"])
+  where -- "above him" --> sanctum(["The Sanctum's lines"])
+  classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class talk,where request
+  class weapon,armor,item,sanctum sequence
+```
 
 Many of those lines are stored with gaps for a name, an item or a number.
 The test fills them the same way every time: the name is Garet, the item is
@@ -374,6 +398,13 @@ its animations. Starting that viewer turns debug mode on.
 
 And nothing starts the viewer. It is still on the cartridge, ready to run,
 but no menu, no scene and no button leads to it.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE"}}}%%
+stateDiagram-v2
+  [*] --> Off: the console is switched on
+  Off --> On: the viewer starts, and nothing starts the viewer
+```
 
 So in a player's game the switch stays where start-up left it, and holding B
 while pressing Start does nothing unusual. Seeing any of this takes a tool

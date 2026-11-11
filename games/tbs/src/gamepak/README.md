@@ -126,6 +126,23 @@ number 907. So are Bilibin Treasury and Bilibin Barricade: three entries in
 the scene list name the same row. One piece of code serves all three places,
 and the cartridge holds it once.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart LR
+  streets(["🏡 Scene: Bilibin's streets"]) -- "907" --> a(["Row 907 of the directory: an address"])
+  treasury(["🏡 Scene: Bilibin Treasury"]) -- "907" --> a
+  barricade(["🏡 Scene: Bilibin Barricade"]) -- "907" --> a
+  rooms(["🏡 Scene: the rooms in Bilibin's houses"]) -- "908" --> b(["Row 908 of the directory: an address"])
+  a --> street(["One piece of packed code, held once"])
+  b --> inn(["The packed code of the rooms, the inn among them"])
+  classDef hardware fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef table fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef image fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  class streets,treasury,barricade,rooms hardware
+  class a,b table
+  class street,inn image
+```
+
 ### What the 1,000 rows hold
 
 The rows run in groups, and reading down them is a tour of the game:
@@ -188,6 +205,20 @@ of the game. In place of its usual line the list shows
 it was saved. It starts at the file's restart point, usually the last
 Sanctum visited.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  list(["The File Screen lists a file"]) --> older{"Is the file's date earlier than the cartridge's?"}
+  older -- "no" --> same(["The party continues where it was saved"])
+  older -- "yes" --> sanctum(["🏡 Continue from a Sanctum: the file's restart point"])
+  classDef image fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef table fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef hardware fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  class list image
+  class older table
+  class same,sanctum hardware
+```
+
 A cartridge never changes, so the files it wrote itself carry its own date
 and continue where they were saved. The line is there for a file that an
 older version of the game left behind.
@@ -249,6 +280,23 @@ If the answer is not on the list, the game waits a
 screen once, about a sixtieth of a second. Then it asks again, up to eight
 times. If it still has no answer it knows, it does not write at all, and the
 player is told: `Unable to detect backup memory.`
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  ask(["The game asks the chip who made it"]) --> known{"Is the answer on the list of four chips?"}
+  known -- "yes" --> use(["The list says how to write and how long to wait"])
+  known -- "no" --> tries{"Has it asked eight times?"}
+  tries -- "no" --> wait(["Wait a frame"])
+  wait --> ask
+  tries -- "yes" --> fail(["Unable to detect backup memory."])
+  classDef hardware fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef table fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef image fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  class ask,wait hardware
+  class known,tries table
+  class use,fail image
+```
 
 ### How long the game waits
 

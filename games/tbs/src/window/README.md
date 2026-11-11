@@ -134,6 +134,15 @@ the eight frames until it is fully open, so that it can write in it straight
 away. Whoever closes one does not wait: the window is marked as closing and
 the task shrinks it away while the game moves on.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE"}}}%%
+stateDiagram-v2
+  [*] --> Opening: something asks for a window
+  Opening --> Open: eight frames, and the opener waits for them
+  Open --> Closing: it is marked as closing, and nobody waits
+  Closing --> [*]: wiped away on the fifth frame
+```
+
 ## Decoding a message
 
 ![Isaac asks Bilibin's innkeeper for a room: `It's 21 coins for a room. Would you like to stay?` comes up with the night's price filled in, `Yes` and `No` beside it, and `Your Coins: 500` in a window below.](https://alchemy.pascalpixel.com/guides/window/message-blanks.gif)
@@ -241,6 +250,20 @@ Take `q`. In the whole English text a small `q` is followed by `u` 222
 times, and by anything else exactly once: the `q` on the name entry
 keyboard, which sits before `r`. So the tree for "after `q`" has one fork
 and two ends, `u` and `r`. Every `u` after a `q` costs a single answer.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  tree(["The tree used after q"]) --> fork{"One fork: one yes-or-no answer"}
+  fork -- "one side" --> u(["u, 222 times"])
+  fork -- "the other side" --> r(["r, once"])
+  classDef cart fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef wait fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef work fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class tree cart
+  class fork wait
+  class u,r work
+```
 
 After `t` it is another story. More than twenty different letters follow `t`
 somewhere in the text, with `r`, `h` and a space the commonest, and `u` is a
@@ -447,6 +470,21 @@ battle needs its sprites for the fighters.
 A label that appears all at once, such as the Pause menu's entries or an
 area's name, is painted into tiles of the window itself. Once drawn it needs
 no more attention.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  letter(["A letter to draw"]) --> where{"What kind of text is it?"}
+  where -- "typed on the field" --> sprite(["A sprite riding on its window, which can move"])
+  where -- "typed in a battle" --> canvas(["⚔️ Painted on the text canvas, using no sprites"])
+  where -- "a label, there all at once" --> label(["Painted into tiles of the window itself"])
+  classDef cart fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef wait fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef work fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class letter cart
+  class where wait
+  class sprite,canvas,label work
+```
 
 A thought read with Mind Read is typed the first way, with two changes you
 can see in the recording. Its window has round corners. There is only one

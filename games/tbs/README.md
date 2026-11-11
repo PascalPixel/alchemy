@@ -36,6 +36,20 @@ anything has happened that it should deal with, and goes round again. It
 does this about 60 times a second, once for each picture the console draws.
 One trip round is called a [frame](glossary.md#frame).
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart LR
+  move(["Move everything on by one picture's worth"]) --> look{"Has anything happened?"}
+  look -- "no" --> draw(["The console draws the picture"])
+  look -- "yes" --> deal(["Deal with it"])
+  deal --> draw
+  draw -- "one frame later, about 60 a second" --> move
+  classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef hardware fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  class move,look,deal frame
+  class draw hardware
+```
+
 Part of every frame is moving the people. Each person or thing in a place is
 an [actor](glossary.md#actor), and each actor has a short list of
 instructions of its own, its [actor script](glossary.md#actor-script).
@@ -335,11 +349,40 @@ the player pressed. The game answers them one at a time, the most urgent
 first, and goes back to walking only when none is left. Leaving the place is
 the most urgent.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart LR
+  walk(["🏡 The party walks about"]) -- "a task leaves a request" --> pick(["Answer the most urgent request"])
+  pick --> left{"Is any request left?"}
+  left -- "yes" --> pick
+  left -- "no" --> walk
+  classDef hardware fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class walk hardware
+  class pick,left frame
+```
+
 One press of A can become three things. The game looks at what is in front
 of Isaac and leaves a second note: a talk if someone is there, a search if
 there is something to search, and the menu if there is neither. Then it
 answers that one. [Requests](#requests), near the end of this page, lists
 all twelve.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  press(["The player presses the A button"]) --> pressed(["Request: A was pressed"])
+  pressed --> ahead{"What is in front of Isaac?"}
+  ahead -- "someone" --> talk(["Request: a talk"])
+  ahead -- "something to search" --> search(["Request: a search"])
+  ahead -- "neither" --> menu(["Request: the menu"])
+  classDef hardware fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class press hardware
+  class pressed,talk,search,menu request
+  class ahead frame
+```
 
 ## Actor scripts
 
@@ -371,6 +414,17 @@ The same kind of list runs everyone else, with commands such as walk to this
 spot, turn, play this animation, go back to the start. Each frame an actor
 carries on down its list until it reaches a command that takes time, such as
 one step of a walk, and there it stops until the next frame.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart LR
+  carry(["The actor carries on down its list"]) --> time{"Does the next command take time?"}
+  time -- "no" --> carry
+  time -- "yes" --> stop(["The actor stops there"])
+  stop -- "until the next frame" --> carry
+  classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class carry,time,stop frame
+```
 
 A villager who strolls about has a script that picks random spots near where
 he started and walks to them (`SC_WANDER_HOME`). Isaac's script, the three
@@ -514,6 +568,22 @@ eruption. When the party has left Vale on its journey the second row stops
 counting too, and the third, which has no flag, sends the path to Vale
 again.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  path(["Isaac takes the path down from Sol Sanctum"]) --> erupted{"🚩 Has the Sanctum erupted?"}
+  erupted -- "no: the first row" --> vale(["🏡 Vale"])
+  erupted -- "yes" --> left{"🚩 Has the party left Vale?"}
+  left -- "no: the second row" --> eruption(["🏡 Vale during the eruption"])
+  left -- "yes: the third row" --> vale
+  classDef hardware fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class path hardware
+  class erupted,left frame
+  class vale,eruption sequence
+```
+
 So the two Vales in the recording really are two scenes, and the path
 chooses between them by asking the story. [Scenes](src/scene/README.md#exits)
 covers the lists.
@@ -557,6 +627,19 @@ The first talk fits the first row and runs the event shown in
 `FLAG_VALE_ASKED_IF_JENNA_IS_BACK`, so the first row never fits again. Every
 talk after that falls through to the second row, which always fits and
 shows a single line, asking Isaac to promise he'll bring Jenna back home.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  talk(["The player talks to the young man"]) --> asked{"🚩 Has he asked already?"}
+  asked -- "no: the first row" --> event(["The event runs, and he asks after Jenna"])
+  event --> set(["🚩 Its fifth step sets the flag"])
+  asked -- "yes: the second row" --> line(["A single line: promise to bring Jenna home"])
+  classDef hardware fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class talk hardware
+  class asked,event,set,line frame
+```
 
 [Scenes](src/scene/README.md#the-tables) lists the kinds of row.
 

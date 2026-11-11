@@ -184,6 +184,18 @@ From the signal on, the battle takes the targets one at a time. The first
 target's damage is worked out, it flinches, its line appears and waits for a
 button. Only then is the second target's damage worked out.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE"}}}%%
+sequenceDiagram
+  participant effect as Quake's battle effect
+  participant battle as ⚔️ The battle
+  Note over effect: Draws the pillars and shakes the screen
+  effect->>battle: The signal, 16 frames before Quake ends
+  Note over battle: The first target's damage is worked out
+  Note over battle: It flinches, its line appears and waits for a button
+  Note over battle: Only then, the second target's damage
+```
+
 How two things can run side by side on one small console is the subject of
 [How outcomes reach the screen](src/battle/README.md#how-outcomes-reach-the-screen).
 

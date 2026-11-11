@@ -488,6 +488,21 @@ The game shows the `checked the chest...` line first, and only then looks
 at the condition. If the row still counts, the chest gives what it holds
 and its flag is set. If not, the game adds the matching second line.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  press(["The player presses A facing the chest"]) --> found(["Its search row is found, whatever its condition"])
+  found -- "Isaac checked the chest..." --> counts{"🚩 Does the row still count?"}
+  counts -- "yes" --> gives(["The chest gives what it holds, and its flag is set"])
+  counts -- "no" --> empty(["but the chest was empty."])
+  classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef overlay fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  class press,counts request
+  class found sequence
+  class gives,empty overlay
+```
+
 A Mimic's row is the exception to the exception. It keeps the ordinary
 rule, so once the Mimic is beaten its chest stops answering.
 
@@ -590,6 +605,21 @@ makes the same copy all at once, before the fade in, so the pool the player
 sees is dry. That flag is an area temp flag, and the pool is dry only for
 as long as the party stays in the tunnel's area.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  arrive(["🏡 The party arrives: the map is drawn fresh, the pool full"]) --> flag{"🚩 Is the flag set?"}
+  flag -- "no" --> full(["The pool stays full"])
+  full -- "the party pushes the statue into the arch" --> drain(["The event sets the flag and drains the pool in stages"])
+  flag -- "yes" --> dry(["The setup copies the drained floor before the fade in"])
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef overlay fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  class arrive sequence
+  class flag request
+  class full,dry,drain overlay
+```
+
 A copy can carry a cell's picture, or its ground, or both. The ground is
 what the cell does rather than how it looks: where the party can walk, and
 its cell behavior. Climb the ladder in Vale and the event copies only
@@ -664,6 +694,20 @@ counter, he is a customer and gets the offer of a room. From any other
 side, as in the recording, he gets gossip. And the gossip is one of two
 lines, chosen by whether Vault's thieves have been jailed yet.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  talk(["The player talks to the innkeeper"]) --> facing{"Is Isaac facing north, across the counter?"}
+  facing -- "yes" --> room(["The offer of a room"])
+  facing -- "no" --> jailed{"🚩 Have the thieves been jailed yet?"}
+  jailed -- "no" --> one(["One line of gossip"])
+  jailed -- "yes" --> two(["The other line"])
+  classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef overlay fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  class talk,facing,jailed request
+  class room,one,two overlay
+```
+
 That event opens with the command `Event_Start` and closes with
 `Event_End`, as most do. `Event_Start` hides the area's name if it is still
 showing, stops the leader and gets the game ready to show text. The
@@ -732,6 +776,20 @@ in every overlay that uses it.
 
 The recording lasts a few seconds. Every part of this page takes a turn in
 it.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE"}}}%%
+sequenceDiagram
+  participant field as 🏡 The field
+  participant vale as Vale's overlay
+  participant main as The main routine
+  field->>vale: The step row for cell 9 fits, so play its event
+  vale->>field: A note asking for the exit
+  field->>main: Fades out and hands over the exit
+  main->>vale: Asks for the exit table
+  Note over main: Wipes the scene temp flags, loads the houses' overlay
+  main->>field: The field starts again and asks the new overlay
+```
 
 ### The step
 

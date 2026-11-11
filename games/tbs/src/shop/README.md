@@ -70,6 +70,21 @@ Then the keeper asks `Anything else today?` and the icons are back.
 
 Pressing B on the icons themselves ends the visit with the keeper's farewell.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  greet(["The keeper greets the party"]) --> icons{"The four icons: Buy, Sell, Artifacts, Repair"}
+  icons -- "the player picks one" --> part(["That part of the shop runs"])
+  part -- "B: Anything else today?" --> icons
+  icons -- "B" --> bye(["The keeper's farewell"])
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef check fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef out fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  class greet,part sequence
+  class icons check
+  class bye out
+```
+
 Buy and Artifacts are the same screen. The only difference is the list it is
 given: the row's ordinary stock, or the rare items on sale.
 
@@ -194,6 +209,22 @@ The player can turn the ticket down with B (`You don't need it?`). Then
 nothing comes off the credit, and the keeper offers again after the next
 purchase.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  buy(["A purchase: its coins are added to the shop credit"]) --> reach{"Does the credit reach the next ticket's cost?"}
+  reach -- "no" --> buy
+  reach -- "yes" --> offer(["The keeper offers a Game Ticket"])
+  offer --> accept{"Does the player take it?"}
+  accept -- "yes" --> take(["The cost comes off the credit"])
+  accept -- "no: nothing comes off" --> buy
+  take -- "the next purchase" --> buy
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef check fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  class buy,offer,take sequence
+  class reach,accept check
+```
+
 A purchase gives one ticket at most, however large it is. Spend 3,000 coins
 on the first purchase of the game and the keeper gives one ticket and keeps
 2,700 of credit. The tickets that credit has already earned then come one at
@@ -303,6 +334,21 @@ The count moves in three ways:
 So no shop has to remember what it has sold, and a wand sold in Lalivero
 turns up in Bilibin.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  open(["A shop with the item in its row is opened for the first time"]) -- "adds one" --> count(["The item's one count, for the whole world"])
+  give(["One is sold, dropped or left behind"]) -- "puts one back" --> count
+  count -- "while it is above zero" --> list(["Every shop of the right kind sells it under Artifacts"])
+  list -- "buying one takes one off" --> count
+  classDef check fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef out fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class open,give check
+  class count out
+  class list sequence
+```
+
 When the Artifacts list is asked for, the shop does not read its own row at
 all. It goes through every item in the game and lists each one that is of its
 kind (weapon, armor or other) and has a count above zero.
@@ -380,6 +426,19 @@ The light show has the same steps for all four services.
 
 Because step 3 waits on the music, the four services need no timing of their
 own. A longer tune simply gets a longer shower.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart LR
+  fly(["A sparkle flies in to the middle"]) --> tune{"🎵 Is the tune still playing?"}
+  tune -- "yes" --> again(["It jumps back out to a new spot on the circle"])
+  again --> fly
+  tune -- "no" --> gone(["It finishes its flight and is gone"])
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef check fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  class fly,again,gone sequence
+  class tune check
+```
 
 Afterwards the priest reports the cure, and if anyone else needs the same
 service the hand moves to them and the priest asks again.
@@ -466,6 +525,20 @@ gives out found items:
   behind instead (`Drop the Nut?`). It will not offer that for an item the
   story needs. The game says that the item is valuable and must be taken,
   and `What will you drop?` comes round again.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  ask(["What will you drop? The item picker opens"]) --> chose{"Did the player choose an item?"}
+  chose -- "yes" --> drop(["Its whole stack is dropped, and the new item takes its place"])
+  chose -- "no: B" --> needs{"Does the story need the new item?"}
+  needs -- "no" --> leave(["The game offers to leave the new item behind"])
+  needs -- "yes: it must be taken" --> ask
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef check fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  class ask,drop,leave sequence
+  class chose,needs check
+```
 
 One moment in the story uses the picker by itself. In Sol Sanctum the party
 is given four Mythril Bags at once, and Isaac and Garet need four free places

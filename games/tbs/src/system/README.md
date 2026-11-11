@@ -167,6 +167,20 @@ The result decides which scene comes back (`Scene_ReturnFromSequence`):
 - **A story battle** can name its own destinations beforehand, one for after
   the battle and one for a defeat, and those win over the two rules above.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  over(["A battle, Lucky Dice or Lucky Wheels ends"]) --> named{"Did the story name its own destinations?"}
+  named -- "yes" --> story(["🏡 The destination the story named"])
+  named -- "no" --> defeat{"Was it a defeat?"}
+  defeat -- "no" --> back(["🏡 The return point, the party where it stood"])
+  defeat -- "yes" --> restart(["🏡 The restart point, the leader at 1 HP"])
+  classDef code fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class over,named,defeat code
+  class story,back,restart frame
+```
+
 ### Arriving in a scene
 
 A [scene](../../glossary.md#scene) is one stretch of the field: a town, a
@@ -189,6 +203,20 @@ meant to last for one visit:
   battle from zero, and makes this way in the place Retreat leads back to.
 - The Djinn's hiding flags are cleared. A Djinni that got away stays out of
   its room only until the room is entered again.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  next(["🏡 A scene comes next"]) --> how{"How does the party arrive?"}
+  how -- "a return, after a battle or a game" --> keep(["Nothing is reset"])
+  how -- "an ordinary entry" --> scene(["🚩 Scene flags and the Djinn's hiding flags are cleared"])
+  scene --> area{"Is it a new area?"}
+  area -- "yes" --> fresh(["🚩 Area flags cleared, its name shown, steps counted from zero"])
+  classDef code fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class next,how,area code
+  class keep,scene,fresh frame
+```
 
 Then the scene's music is chosen from a list of rules, `gScene_MusicRules`,
 and the first rule that fits the scene wins. On an ordinary entry that music
@@ -306,6 +334,21 @@ reads the buttons. Then it lets the waiting frame loop go on.
 Last of all it prepares the next stretch of sound. The sound comes last
 because it is the least urgent. It only has to be ready before the next
 VBlank.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  vblank(["VBlank: the handler runs"]) --> done{"Was the frame marked finished?"}
+  done -- "yes" --> copy(["Sprite list, layer positions and settings go to the screen"])
+  done -- "no" --> always(["Link cable, fades, the VBlank tasks, the buttons"])
+  copy --> always
+  always --> go(["The waiting frame loop is let go on"])
+  go --> sound(["The next stretch of sound is prepared"])
+  classDef hardware fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class vblank,done,copy,always,sound hardware
+  class go frame
+```
 
 Now suppose a frame has too much to do and is still being worked on when the
 VBlank comes. The handler finds the frame not marked finished, so it copies
@@ -494,6 +537,25 @@ after it.
 So the code keeps asking, a frame at a time, until the window is gone. Then
 it moves on to the villager's next line.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE"}}}%%
+sequenceDiagram
+  participant scene as The villager's code
+  participant frame as The frame loop
+  participant vblank as The VBlank handler
+  loop Every frame until the window is gone
+    scene->>frame: Wait one frame
+    Note over frame: The tasks run, highest rank first
+    Note over frame: The sprite list is written and the frame marked finished
+    frame->>vblank: Stops until the VBlank
+    Note over vblank: Copies the frame to the screen, reads the buttons, prepares the music
+    vblank->>frame: Lets it go on
+    frame->>scene: The wait is over
+    Note over scene: Has the window closed?
+  end
+  Note over scene: Moves on to the villager's next line
+```
+
 ## Saving
 
 ![Isaac opens the Pause menu by Vale's river and chooses Save your quest: the File Screen lists the three files, and `Your game was saved.` confirms it](https://alchemy.pascalpixel.com/guides/runtime/save.gif)
@@ -537,6 +599,20 @@ If the power goes before step 2 is done, the old copy is untouched. If it
 goes after, the new copy has the higher count and wins the next time the
 sectors are read. Either way one whole copy of the part remains.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  write(["The new copy is written to a spare sector"]) --> check(["It is read back and compared"])
+  check --> cross(["The old copy's sector is relabelled as holding nothing"])
+  write -. "the power goes" .-> old(["The old copy is untouched"])
+  check -. "the power goes before this is done" .-> old
+  cross -. "the power goes after the check" .-> new(["The new copy has the higher count and wins"])
+  classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef hardware fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  class write,check,cross frame
+  class old,new hardware
+```
+
 One gap is left. The two parts are written one after the other, so a power
 cut between them leaves a new first part with an old second part. The game
 notices: each part carries the play time, and when the two differ the File
@@ -574,6 +650,18 @@ pieces, one to a message. The receiver keeps a piece only when its number is
 the one it expects. Otherwise it asks for that number again, and the sender
 goes back and sends from there. So a piece lost on the way costs time and
 nothing else.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart LR
+  send(["The sender sends a numbered piece"]) --> expect{"Is it the number the receiver expects?"}
+  expect -- "yes" --> keep(["The receiver keeps the piece"])
+  keep -- "the next piece" --> send
+  expect -- "no" --> ask(["The receiver asks for that number again"])
+  ask -- "the sender goes back and sends from there" --> send
+  classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class send,expect,keep,ask frame
+```
 
 A console waiting for a transfer gives up after 600,000 frames, a little
 under three hours.
@@ -618,6 +706,24 @@ other, and they do it with two lists:
   image the overlay uses, saying where to find it. When the Sanctum's healer
   speaks, the Sanctum's code finds the function that shows a line through
   this list.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart LR
+  field(["🏡 The field, in the main image"]) -- "asks the scene about itself" --> entry
+  subgraph overlay ["The overlay"]
+    entry(["Entry table, at its start: six functions"])
+    scenecode(["The scene's code"])
+    imports(["Import table, at its end"])
+    entry --> scenecode
+    scenecode -- "uses a function of the main image" --> imports
+  end
+  imports -- "says where to find it" --> main(["The function, in the main image"])
+  classDef code fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class field,main code
+  class entry,scenecode,imports frame
+```
 
 The details of both are in
 [For readers of the code](#for-readers-of-the-code).

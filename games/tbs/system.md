@@ -77,6 +77,19 @@ is the [main routine's work](glossary.md#main-routines-work). Beside it are
 the [game flags](glossary.md#game-flag). A flag is one yes-or-no fact the
 game remembers, such as a chest being open.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart LR
+  cave(["🏡 Field sequence: Goma Cave"]) -- "ends" --> clear(["Transition: what the cave left going is stopped and cleared"])
+  clear --> battle(["⚔️ Battle sequence"])
+  cave -. "leaves a note of what runs next" .-> kept(["Never cleared: the main routine's work and the game flags"])
+  kept -. "what crosses over" .-> battle
+  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class clear,kept mainRoutine
+  class cave,battle sequence
+```
+
 A scene ends when the party takes one of its [exits](glossary.md#exit), a
 door or the edge of a map, and the exit says where it leads. A battle ends
 with a result instead. After this battle in Goma Cave, won or fled, the

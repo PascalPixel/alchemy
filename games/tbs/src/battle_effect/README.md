@@ -374,6 +374,22 @@ Every frame ends the same way. The living sparks are moved and drawn, the
 screen's shake is applied, and the handler marks the canvas ready and waits
 a frame.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  setup(["Set up: the canvas, a blitter, the pictures, the transfer"]) --> work(["This frame's work, by its frame number"])
+  work --> sparks(["The sparks are moved and drawn, the shake applied"])
+  sparks --> ready(["The canvas is marked ready, and the handler waits a frame"])
+  ready -- "frames still to go" --> work
+  ready -- "after the last frame" --> tidy(["The canvas closes"])
+  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  class setup,tidy mainRoutine
+  class work,sparks sequence
+  class ready frame
+```
+
 With more targets, each is struck 8 frames after the one before, and the
 effect lasts 8 frames longer for each.
 
@@ -449,6 +465,21 @@ unleashed. The shared families (the stat boosts, the shots, the healing
 motes, the columns of light, the flurries) open with the prelude only on a
 yes. Hail, Ground, Torch, Kite and Vine are Djinn with effects of their
 own, and those always open with their Djinni.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  start(["A shared family's effect starts"]) --> djinni{"Is a Djinni being unleashed?"}
+  djinni -- "yes" --> prelude(["The prelude: sparks swirl into the Djinni"])
+  prelude -- "the canvas is left open and wiped clean" --> attack(["The family's own drawing"])
+  djinni -- "no" --> attack
+  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class start mainRoutine
+  class djinni frame
+  class prelude,attack sequence
+```
 
 ### Casting impacts
 

@@ -112,6 +112,17 @@ Message 651 is stored as `{article_class:2}Healing Ring`. The part in braces
 is a note to the game about which small word, `a`, `an` or `some`, goes in
 front of the name ([Windows](../window/README.md#what-a-blank-can-hold)).
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart LR
+  num(["Item 265"]) -- "row 265" --> row(["The item table: 800 coins, heals like Cure"])
+  num -- "386 + 265" --> msg(["Message 651 of the text: Healing Ring"])
+  classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  class num frame
+  class row,msg mainRoutine
+```
+
 Each language has its own text, with the names in the same order. In German
 the run starts at message 364, so `Heilungsring` is message 629.
 
@@ -315,6 +326,24 @@ It takes the steps in a fixed order:
 
 An enemy skips steps 1 to 3, since it has no equipment, Djinn or class.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  base(["The base stats"]) --> who{"A character or an enemy?"}
+  who -- "a character" --> add(["Worn items and set Djinn are added"])
+  add --> mult(["The class multiplies the sum"])
+  mult --> scale(["Worn items that scale a stat multiply"])
+  scale --> battle(["⚔️ A battle's changes, an eighth a step"])
+  who -- "an enemy" --> battle
+  battle --> write(["Each stat is held to its ceiling and written"])
+  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class base mainRoutine
+  class who,write frame
+  class add,mult,scale,battle sequence
+```
+
 Now the Machete. Isaac's class multiplies Attack by 11 tenths. The screen
 never shows his base Attack, but only one number fits both 24 and 17, and
 that is 16:
@@ -444,6 +473,22 @@ it meets. Each class's row says the level it needs in each element. On
 Isaac's own ladder a Squire needs Venus 5, a Knight 7, a Gallant 9, a Lord
 11 and a Slayer 13.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  levels(["The character's four element levels"]) --> second{"Has a second element reached level 1?"}
+  second -- "no" --> single(["The strongest element's own ladder"])
+  second -- "yes" --> mixed(["The mixed ladder of the two strongest"])
+  single --> top(["The highest class on the ladder whose needs are met"])
+  mixed --> top
+  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class levels mainRoutine
+  class second frame
+  class single,mixed,top sequence
+```
+
 With Flint and Granite set, Isaac stands at 7.4 and is a Knight. With Flint
 on standby he is at 6.4, a Squire.
 
@@ -499,6 +544,21 @@ level 2 and 2,910 for level 10. Garet needs 30 for level 2.
 
 The spoils check each party member again and again until its experience
 falls short, so one big battle can give several levels.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart LR
+  gain(["⚔️ The spoils add experience"]) --> reach{"Has it reached the next threshold?"}
+  reach -- "yes" --> level(["The party member gains a level"])
+  level -- "checked again" --> reach
+  reach -- "no" --> done(["Its experience falls short"])
+  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class gain,done mainRoutine
+  class reach frame
+  class level sequence
+```
 
 ### What a level adds
 

@@ -82,6 +82,18 @@ maze, the one with a Small Jewel inside. In the map's own file that cell is
 written `2e:100`. Those are the first two of a cell's three numbers, and the
 third is left off because it is 0.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart LR
+  cell(["The chest's cell, written 2e:100"]) -- "2e" --> picture(["What is drawn: its cell picture"])
+  cell -- "100" --> behavior(["What standing there does: its cell behavior"])
+  cell -- "0, left off" --> shape(["How the ground is shaped: its shape"])
+  classDef data fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef layer fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class cell data
+  class picture,behavior,shape layer
+```
+
 ### What is drawn
 
 The first number, `2e`, picks the cell's picture.
@@ -176,6 +188,20 @@ marked `c`. Standing on one puts Isaac behind the walls too, which is what a
 map needs for the ground behind a building. Cells marked `8` bring him back
 out, and cells marked `4` put him in front of everything. A cell with no
 extra digit leaves him as he was.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  step(["Isaac steps onto a cell"]) --> digit{"Has it an extra digit?"}
+  digit -- "c" --> back(["Priority 3: behind the walls too"])
+  digit -- "8" --> mid(["Priority 2: in front of the walls, behind the roofs"])
+  digit -- "4" --> front(["Priority 1: in front of everything"])
+  digit -- "none" --> same(["He stays as he was"])
+  classDef data fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef layer fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class step,digit data
+  class back,mid,front,same layer
+```
 
 So a house hides Isaac in one of two ways. Either its roof is on the
 overhead layer, which covers him anyway, or the cells behind it send him to
@@ -296,6 +322,22 @@ these triggers names one. Once a chest's flag is set, the chest is placed
 already open. A chest that turned out to be a Mimic is not placed at all
 once the Mimic is beaten. A Psynergy Stone is not placed once it has been
 taken.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  spot(["A treasure spot on the map's list"]) --> trigger{"Has the scene a trigger for its number?"}
+  trigger -- "no" --> bare(["The cell stays bare"])
+  trigger -- "yes" --> flag{"🚩 Is the trigger's flag set?"}
+  flag -- "no" --> placed(["A chest or a Psynergy Stone is stood there"])
+  flag -- "yes" --> after(["A chest is placed open, a beaten Mimic or a taken stone not at all"])
+  classDef data fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef hardware fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef layer fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class spot,trigger,flag data
+  class bare hardware
+  class placed,after layer
+```
 
 The Demon Axe's chest is the odd one out. It rides on a stone pillar that
 moves, and a treasure spot is a fixed cell. So the room takes spot 107's

@@ -248,6 +248,22 @@ when the party first walks in.
 A lost battle does not come back. The party is sent to its restart point,
 which is usually the last Sanctum it passed.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  request(["🏡 The battle request is set"]) --> snapshot(["The snapshot is written, and the run ends"])
+  snapshot --> battle(["⚔️ The battle"])
+  battle --> result{"How did it end?"}
+  result -- "won, or the party ran" --> again(["🏡 The same scene, everyone put back from the snapshot"])
+  result -- "lost" --> restart(["🏡 The restart point"])
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef code fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  class request,snapshot,again,restart sequence
+  class battle frame
+  class result code
+```
+
 An event can change both of those before its battle starts. It can name
 another place to go after a win, and another place to go after a defeat.
 
@@ -327,6 +343,24 @@ After the eighth point, `SC_LOOP` sends the script back to the line marked
 `SC_LABEL(1)`, and he starts another lap. `SC_FOREVER` means it never stops
 doing so, which is why the `SC_END` after it, the order to stand still for
 good, is never reached.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  move(["SC_MOVE sets the point to head for"]) --> sync{"SC_SYNC: has he arrived?"}
+  sync -- "no" --> closer(["His turn ends, and the motion carries him closer"])
+  closer -- "the next frame" --> sync
+  sync -- "yes" --> next(["The script moves on"])
+  next -- "more points" --> move
+  next -- "after the eighth point" --> lap(["SC_LOOP: back to SC_LABEL, another lap"])
+  lap --> move
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef code fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  class move,next,lap sequence
+  class sync code
+  class closer frame
+```
 
 The girl's script has the same eight points. It starts at the fifth, so
 she is always on the far side of the well from him.
@@ -459,6 +493,24 @@ pad. The game counts each such frame as a push. A doorstep, a ledge or a
 ladder answers only after more than 12 of them in a row, a fifth of a
 second. That is why Isaac leans on a door for a moment before it opens,
 and why brushing past a ledge does not send him over it.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  pad(["The D-pad points a way"]) --> clear{"Are all five probes clear?"}
+  clear -- "yes" --> go(["Isaac goes that way"])
+  clear -- "no" --> side{"Is a direction a little to either side clear?"}
+  side -- "yes: the first that is" --> slide(["Isaac goes that way, sliding along the wall"])
+  side -- "no" --> push(["He stays, turns to the pad, and the frame counts as a push"])
+  push --> many{"More than 12 pushes in a row?"}
+  many -- "yes" --> answer(["A doorstep, a ledge or a ladder answers"])
+  classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef code fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class pad,go,slide,push frame
+  class clear,side,many code
+  class answer sequence
+```
 
 Solid actors block him too. A few of them can be shoved. Once the party
 has been to Kalay, an old man wanders Vale's plaza hunting for the
@@ -752,6 +804,23 @@ If the list has no step line for the mark, the field looks for an exit
 line instead, which says where the cell leads. An exit line also says how
 Isaac leaves: with the usual sound, or up or down a staircase.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  step(["Isaac steps onto a cell"]) --> mark{"What is the cell's mark?"}
+  mark -- "0" --> plain(["Plain ground"])
+  mark -- "1 to 239: the scene's" --> line{"Has the scene's list a step line for it?"}
+  line -- "yes" --> run(["That line runs"])
+  line -- "no" --> exit(["The field looks for an exit line"])
+  mark -- "one of the highest: the field's own" --> own(["It means the same everywhere"])
+  classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef code fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class step,plain frame
+  class mark,line code
+  class run,exit,own sequence
+```
+
 ![Isaac walks about the Goma Cave room of two pillars and a stump, then up into the stairs in its north wall, where he darkens as he goes into the opening; after the screen closes and opens again he steps out of a stair opening in the room of the stream, facing the player](https://alchemy.pascalpixel.com/guides/field/stairs.gif)
 
 On a staircase Isaac is moved to the middle of the cell and plays an
@@ -844,6 +913,21 @@ The game keeps a counter. Every frame Isaac walks, the counter goes up a
 little. When it reaches 16, a battle starts and the counter goes back to
 nothing. The 16 is the same everywhere in the game. What differs from
 place to place is how fast the counter fills.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart LR
+  walk(["A frame in which Isaac walks"]) --> add(["The counter goes up a little"])
+  add --> full{"Has it reached 16?"}
+  full -- "no" --> walk
+  full -- "yes" --> battle(["⚔️ A battle starts, and the counter goes back to nothing"])
+  classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef code fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  class walk frame
+  class add,battle sequence
+  class full code
+```
 
 How much it goes up depends on the ground. Each stretch of monster ground
 has a number, its rate, and each frame the counter gains Isaac's speed
@@ -1029,6 +1113,25 @@ So the first thing a cast does is look. A cast goes like this:
    can call the cast off.
 7. The cast plays, on the target if there is one.
 8. If the scene has a line for just after the cast, its event runs.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  cast(["The player casts a Psynergy"]) --> refuse{"Does the place refuse it?"}
+  refuse -- "yes" --> nothing(["...Nothing happened."])
+  refuse -- "no" --> pp{"Has the caster enough PP?"}
+  pp -- "no" --> nopp(["Not enough PP."])
+  pp -- "yes: the PP is paid" --> look(["The field looks for a scene line and a target"])
+  look --> pose(["Isaac takes his casting pose, and everyone else freezes"])
+  pose --> off{"Does the scene's event just before call it off?"}
+  off -- "no" --> play(["The cast plays, then the scene's event for just after"])
+  classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef code fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class cast,nothing,nopp frame
+  class refuse,pp,off code
+  class look,pose,play sequence
+```
 
 In front of him is strict. The field rounds the way Isaac faces to the
 nearest of north, south, east and west, and looks along that. Close up,

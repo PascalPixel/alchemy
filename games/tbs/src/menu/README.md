@@ -92,6 +92,24 @@ A Psynergy that passes none of the three goes to the field too. That is
 what happens to Move with no pillar in front of Isaac: it is not for the
 party, so the menu closes and the field is left to cast it.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  pick(["The player picks a Psynergy"]) --> place{"Does this place want it, where the leader faces?"}
+  place -- "yes" --> field(["🏡 It goes to the field, and the menu closes"])
+  place -- "no" --> party{"Does it reach the whole party?"}
+  party -- "yes" --> all(["It is used on everyone at once"])
+  party -- "no" --> ally{"Is it aimed at one ally?"}
+  ally -- "yes" --> one(["The screen asks: Use it on whom?"])
+  ally -- "no" --> field
+  classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef check fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class pick,all,one frame
+  class place,party,ally check
+  class field sequence
+```
+
 Going to the field means the same thing each time. The screen writes down
 who is casting and what, the whole menu closes, and the field finds the
 note.
@@ -443,6 +461,22 @@ still in the middle of that one line. When the screen finishes, the field
 menu carries on from its line, and when the field menu finishes, the field
 does.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE"}}}%%
+sequenceDiagram
+  participant field as 🏡 The field sequence
+  participant menu as The field menu
+  participant screen as The Item screen
+  field->>menu: A is pressed with nobody ahead
+  Note over field: Stopped at that line
+  menu->>screen: The player picks Item
+  Note over menu: Stopped in its turn
+  screen->>menu: The screen finishes
+  Note over menu: Carries on from its line
+  menu->>field: The field menu finishes
+  Note over field: Carries on from its line
+```
+
 Before it asks anything, a screen holds the town still. It tells the
 [actors](../../glossary.md#actor), the people and creatures of the scene, to
 stop being drawn. Most screens also pause the scene's own
@@ -666,6 +700,20 @@ While one half is showing, the next picture is loaded into the other, which
 is hidden. Then the hidden layer is made a sixteenth stronger and the
 showing one a sixteenth fainter, every four frames, until they have changed
 places. The next picture goes into the half that has just faded out.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart LR
+  load(["The next picture is loaded into the hidden half"]) --> fade(["Every four frames the hidden half grows stronger, the showing one fainter"])
+  fade --> swap(["The two halves have changed places"])
+  swap -- "the half that just faded out is now the hidden one" --> load
+  classDef code fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class load code
+  class fade frame
+  class swap sequence
+```
 
 Both pictures drift right a pixel every fourth frame. Each is exactly as
 wide as its layer, 256 pixels, so it wraps round without a seam.

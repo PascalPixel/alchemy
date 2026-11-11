@@ -142,6 +142,20 @@ then the seventh, the sixth and the fifth, and uses the first one that is
 playing nothing. Only when all four are busy does the new sound cut
 another off, the one on the eighth.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  ask(["📣 One of the 22 sounds is asked for"]) --> free{"Is the eighth, seventh, sixth or fifth player playing nothing?"}
+  free -- "yes" --> first(["It plays on the first of them that is, in that order"])
+  free -- "no: all four are busy" --> cut(["It cuts off the sound on the eighth"])
+  classDef layer fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef check fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef out fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  class ask layer
+  class free check
+  class first,cut out
+```
+
 ## How a scene chooses its music
 
 ![Isaac walks into the door of a house in Vale: the screen fades out, and the house's room fades in with Isaac just inside its door](https://alchemy.pascalpixel.com/guides/world/door.gif)
@@ -270,6 +284,21 @@ anything yet, and would look finished.
 The moment the jingles' player has gone quiet, the counter goes to zero
 and the music's target goes back to full. The ramp does the rest.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  start(["🎵 A jingle starts: the counter is set to ten"]) --> drop(["At each VBlank the counter drops by one"])
+  drop --> one{"Has it reached one?"}
+  one -- "no" --> drop
+  one -- "yes" --> quiet{"Is the jingles' player still sounding a note?"}
+  quiet -- "yes: checked again at the next VBlank" --> quiet
+  quiet -- "no" --> back(["🎵 The counter goes to zero, and the music ramps back to full"])
+  classDef layer fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef check fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  class start,drop,back layer
+  class one,quiet check
+```
+
 That counter is also how the rest of the game knows a jingle is still
 going. The inn keeps the screen black until the counter is zero, waits a
 sixth of a second more, and only then opens the screen. So the room comes
@@ -324,6 +353,22 @@ recordings.
 
 Or it can play a tone on one of the four simple tone generators built into
 the console, the ones the older Game Boy had.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  player(["A player reads a little further along its song's tracks"]) --> anote(["A note"])
+  anote -- "one way" --> sample(["A sample, speeded up or slowed down"])
+  anote -- "the other way" --> tone(["A tone on one of the console's four tone generators"])
+  sample --> mixer(["The mixer adds every sounding note into one sound for the speaker"])
+  tone --> mixer
+  classDef layer fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef check fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef out fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  class player,anote layer
+  class sample,tone check
+  class mixer out
+```
 
 A song picks its instruments from a list of voices. A voice names a
 recording or a tone generator and says how its notes swell and die away.

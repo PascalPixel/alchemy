@@ -40,7 +40,7 @@ struct RenderInput *Window_CreateFar(s32 x, s32 y, s32 width, s32 height,
 void MenuCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y);
 void Func_081084f4(s32 message);
 s32 Menu_SelectShopCommandFar(s32 action);
-s32 Func_0810a6b8(s32 row, u16 *items);
+s32 ShopStock_CopyItems(s32 stockRow, u16 *output);
 void Func_08108b70(void);
 void Func_08109ad8(void);
 s32 Func_081080a8(void);
@@ -78,7 +78,7 @@ s32 Func_081082c4(s32 stockRow, s32 keeperId) {
     action = Menu_SelectShopCommandFar(action);
     shop->partyAction = action;
     if (action == 0) {
-      shop->stockCount = Func_0810a6b8(stockRow, shop->stockItemIds);
+      shop->stockCount = ShopStock_CopyItems(stockRow, shop->stockItemIds);
       Func_081084f4((s32)MsgWhatWouldYouLike);
       Func_08108b70();
     } else if (action == 1) {

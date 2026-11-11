@@ -6,7 +6,7 @@
 
 extern s16 gData_020006dc;
 
-void Func_02000490(void);
+void Title_LoadBackground(void);
 void Func_02000278(void);
 void Title_LoadSprites(s32 unused);
 void Event_StartScreenTransition(void);
@@ -17,7 +17,7 @@ void Event_WaitTransitionFrames(void);
 void Func_0200031c(void) {
   s32 i;
 
-  Func_02000490();
+  Title_LoadBackground();
   Event_Wait(30);
   gData_020006dc = 0;
   Title_LoadSprites(0);

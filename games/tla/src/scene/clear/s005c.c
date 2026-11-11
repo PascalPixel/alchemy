@@ -28,7 +28,7 @@ static __inline__ void Decode_(void *source, void *destination) {
   Func_020021f8(source, destination);
 }
 
-/// The logo background, as overlay 649's Func_02000490, then the party
+/// The logo background, as the title's Title_LoadBackground, then the party
 /// leader's motion flags cleared.
 // As ☀️'s Clear_LoadBackground.
 void Func_0200005c(void) {

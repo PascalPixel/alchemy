@@ -63,7 +63,7 @@ void Script_WaitForEventTimeout(struct VenusActor *object);
 s32 Func_02001b64(struct VenusActor *object, s32 *position);
 void Func_080d47b4(s32 actor, s32 height, s32 frames);
 void Func_02001cbc(void);
-s32 Func_020005a8(struct VenusActor *object);
+s32 VenusLighthouse_EmitRisingParticles(struct VenusActor *object);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -107,7 +107,7 @@ void Func_020006ac(void) {
   Actor_GetById(leader)->selectFlags |= 1;
   Event_Wait(20);
   Actor_SetPartAttribute(actor, 0);
-  actor->update = Func_020005a8;
+  actor->update = VenusLighthouse_EmitRisingParticles;
   Func_080d47b4(leader, 258, 60);
   Motion_SetModeAndWaitAnimation(leader, 4);
   Actor_SetPartAttribute(Actor_GetById(leader), 0);

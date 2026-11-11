@@ -1,18 +1,18 @@
-// Func_0810a6b8: The Broken Seal's EventTable_CopyRowHeader over this game's
-// gData_0810c3f4.
 #include "types.h"
 
 extern const s16 gData_0810c3f4[][33];
 
-s32 Func_0810a6b8(s32 rowNo, s16 *output) {
+/// Copies the shop's ordinary stock, up to 24 items, to `output` with a 0
+/// after, and returns how many. Called by Func_081082c4 for Buy.
+s32 ShopStock_CopyItems(s32 stockRow, s16 *output) {
   const s16 *src;
   s16 *dst;
   s32 count;
 
   count = 0;
-  if (gData_0810c3f4[rowNo][0] != 0) {
+  if (gData_0810c3f4[stockRow][0] != 0) {
     dst = output;
-    src = gData_0810c3f4[rowNo];
+    src = gData_0810c3f4[stockRow];
     do {
       // The row's halfword read through a volatile pointer, a load apart from
       // the end test's; as *src, 41 of 28 instructions differ in tla-en.

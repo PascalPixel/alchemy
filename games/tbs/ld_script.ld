@@ -14,6 +14,15 @@
    that needs other sections names them. */
 #include "version.h"
 
+/* The shift test (make SHIFT=n) moves everything after the header n bytes,
+   so every bank starts n bytes later; 0 in every other build. */
+#ifndef ROM_SHIFT
+#define ROM_SHIFT 0
+#endif
+#if ROM_SHIFT % 4 != 0
+#error "SHIFT must be a multiple of 4: words and Thumb literal pools in byte-aligned sections would misalign"
+#endif
+
 /* Where each far-call bank starts, and the resource directory after them,
    in each edition. English and Italian share every address, and Spanish
    and French; Japanese shares English's first two. Most of German's fall
@@ -162,7 +171,7 @@ SECTIONS
         "*/games/tbs/src/gamepak/flash/program_flash_sector.o"(.rodata)
         "*/games/tbs/src/gamepak/flash/flashat.o"(.rodata)
         "*/games/tbs/src/gamepak/flash/atmel.o"(.rodata)
-        . = ABSOLUTE(FIELD_BANK_START);
+        . = ABSOLUTE(ROM_SHIFT + FIELD_BANK_START);
         "*/games/tbs/src/gamepak/far_call/FIELD.o"(.text .rodata .data .padding)
         "*/games/tbs/src/field/sprite_color_tables.o"(.text .rodata .data .padding)
         "*/games/tbs/src/field/sprite_color_remap.o"(.text .rodata .data .padding)
@@ -181,7 +190,7 @@ SECTIONS
         "*/games/tbs/src/field/actor_script.o"(.text .rodata .data .padding)
         "*/games/tbs/src/field/actor_script_operands.o"(.text .rodata .data .padding)
         "*/games/tbs/src/map/maps.o"(.text .rodata .data .padding)
-        . = ABSOLUTE(WINDOW_BANK_START);
+        . = ABSOLUTE(ROM_SHIFT + WINDOW_BANK_START);
         "*/games/tbs/src/gamepak/far_call/WINDOW.o"(.text .rodata .data .padding)
         "*/games/tbs/src/window/message_decode.o"(.text .rodata .data .padding)
         "*/games/tbs/src/window/glyph_arm.o"(.text)
@@ -213,7 +222,7 @@ SECTIONS
 #endif
         "*/games/tbs/src/graphics/ui/slider_palette.o"(.rodata)
         "*/games/tbs/src/window/keyboard.o"(.rodata)
-        . = ABSOLUTE(GAME_BANK_START);
+        . = ABSOLUTE(ROM_SHIFT + GAME_BANK_START);
         "*/games/tbs/src/gamepak/far_call/GAME.o"(.text .padding)
         "*/games/tbs/src/game/game.o"(.text .padding)
         "*/games/tbs/src/game/experience_table.o"(.text .padding)
@@ -253,7 +262,7 @@ SECTIONS
         "*/games/tbs/src/game/class_table.o"(.data .overlays)
         "*/games/tbs/src/game/element_table.o"(.data .overlays)
         "*/games/tbs/src/game/djinn_table.o"(.data .overlays)
-        . = ABSOLUTE(FIELD_SEQUENCE_BANK_START);
+        . = ABSOLUTE(ROM_SHIFT + FIELD_SEQUENCE_BANK_START);
         "*/games/tbs/src/gamepak/far_call/FIELD_SEQUENCE.o"(.text .rodata .data .padding)
         "*/games/tbs/src/system/main_routine.o"(.text)
         "*/games/tbs/src/field/field_sequence.o"(.text .rodata .data .padding)
@@ -268,7 +277,7 @@ SECTIONS
         "*/games/tbs/src/field/field_sequence_tables.o"(.text .rodata .data .padding)
         "*/games/tbs/src/field/scenes.o"(.text .rodata .data .padding)
         "*/games/tbs/src/field/scripts.o"(.text .rodata .data .padding)
-        . = ABSOLUTE(MENU_BANK_START);
+        . = ABSOLUTE(ROM_SHIFT + MENU_BANK_START);
         "*/games/tbs/src/gamepak/far_call/MENU.o"(.text .padding)
         "*/games/tbs/src/menu/menu.o"(.text .padding)
         "*/games/tbs/src/graphics/ui/menu_sprites.o"(.text .padding)
@@ -284,7 +293,7 @@ SECTIONS
         "*/games/tbs/src/graphics/ui/menu_sprites.o"(.data .overlays)
         "*/games/tbs/src/menu/menu_strings.o"(.data .overlays)
         "*/games/tbs/src/menu/menu_tables.o"(.data .overlays)
-        . = ABSOLUTE(SHOP_BANK_START);
+        . = ABSOLUTE(ROM_SHIFT + SHOP_BANK_START);
         "*/games/tbs/src/gamepak/far_call/SHOP.o"(.text .padding)
         "*/games/tbs/src/graphics/ui/shop_sprites.o"(.text .padding)
         "*/games/tbs/src/shop/shop.o"(.text .padding)
@@ -294,7 +303,7 @@ SECTIONS
         "*/games/tbs/src/gamepak/far_call/SHOP.o"(.data .overlays)
         "*/games/tbs/src/graphics/ui/shop_sprites.o"(.data .overlays)
         "*/games/tbs/src/shop/shop.o"(.data .overlays)
-        . = ABSOLUTE(BATTLE_BANK_START);
+        . = ABSOLUTE(ROM_SHIFT + BATTLE_BANK_START);
         "*/games/tbs/src/gamepak/far_call/BATTLE.o"(.text .rodata .data .padding)
         "*/games/tbs/src/battle/background_decode.o"(.text .rodata .text.bit_dispatch)
         "*/games/tbs/src/battle/background_decode.o"(.data .text.bit_commands)
@@ -306,14 +315,14 @@ SECTIONS
         "*/games/tbs/src/battle/knockback_tables.o"(.text .rodata .data .padding)
         "*/games/tbs/src/battle/formations.o"(.text .rodata .data .padding)
         "*/games/tbs/src/battle/battle_sprites.o"(.text .rodata .data .padding)
-        . = ABSOLUTE(BATTLE_EFFECT_BANK_START);
+        . = ABSOLUTE(ROM_SHIFT + BATTLE_EFFECT_BANK_START);
         "*/games/tbs/src/gamepak/far_call/BATTLE_EFFECT.o"(.text .rodata .data .padding)
         "*/games/tbs/src/battle_effect/battle_effect.o"(.text .data)
         "*/games/tbs/src/battle_effect/blitter_fragments.o"(.text .rodata .data .padding)
         "*/games/tbs/src/battle_effect/battle_effect_table.o"(.data)
         "*/games/tbs/src/battle_effect/blitter_color_fragments.o"(.text .rodata .data .padding)
         "*/games/tbs/src/battle_effect/blitter_operands.o"(.data)
-        . = ABSOLUTE(CREDITS_BANK_START);
+        . = ABSOLUTE(ROM_SHIFT + CREDITS_BANK_START);
         "*/games/tbs/src/gamepak/far_call/CREDITS.o"(.text .rodata .data .padding)
         "*/games/tbs/src/menu/credits_background_decode.o"(.text .rodata .data .padding)
         "*/games/tbs/src/menu/credits_background_expand.o"(.rodata)
@@ -322,7 +331,7 @@ SECTIONS
         "*/games/tbs/src/menu/credits.o"(.rodata)
         "*/games/tbs/src/menu/credits.o"(.data)
         "*/games/tbs/src/graphics/credits/font.o"(.rodata)
-        . = ABSOLUTE(TITLE_BANK_START);
+        . = ABSOLUTE(ROM_SHIFT + TITLE_BANK_START);
         "*/games/tbs/src/gamepak/far_call/TITLE.o"(.text .padding)
         "*/games/tbs/src/graphics/title/prompt.o"(.text .padding)
         "*/games/tbs/src/menu/title_intro.o"(.text .padding)
@@ -332,21 +341,21 @@ SECTIONS
         "*/games/tbs/src/gamepak/far_call/TITLE.o"(.data .overlays)
         "*/games/tbs/src/graphics/title/prompt.o"(.data .overlays)
         "*/games/tbs/src/menu/title_intro.o"(.data .overlays)
-        . = ABSOLUTE(LUCKY_DICE_BANK_START);
+        . = ABSOLUTE(ROM_SHIFT + LUCKY_DICE_BANK_START);
         "*/games/tbs/src/gamepak/far_call/LUCKY_DICE.o"(.text .padding)
         "*/games/tbs/src/field/lucky_dice.o"(.text .padding)
         "*/games/tbs/src/gamepak/far_call/LUCKY_DICE.o"(.rodata)
         "*/games/tbs/src/field/lucky_dice.o"(.rodata)
         "*/games/tbs/src/gamepak/far_call/LUCKY_DICE.o"(.data .overlays)
         "*/games/tbs/src/field/lucky_dice.o"(.data .overlays)
-        . = ABSOLUTE(LUCKY_WHEELS_BANK_START);
+        . = ABSOLUTE(ROM_SHIFT + LUCKY_WHEELS_BANK_START);
         "*/games/tbs/src/gamepak/far_call/LUCKY_WHEELS.o"(.text .padding)
         "*/games/tbs/src/field/lucky_wheels.o"(.text .padding)
         "*/games/tbs/src/gamepak/far_call/LUCKY_WHEELS.o"(.rodata)
         "*/games/tbs/src/field/lucky_wheels.o"(.rodata)
         "*/games/tbs/src/gamepak/far_call/LUCKY_WHEELS.o"(.data .overlays)
         "*/games/tbs/src/field/lucky_wheels.o"(.data .overlays)
-        . = ABSOLUTE(SOUND_BANK_START);
+        . = ABSOLUTE(ROM_SHIFT + SOUND_BANK_START);
         "*/games/tbs/src/gamepak/far_call/SOUND.o"(.text .rodata .data .padding)
         "*/games/tbs/src/sound/sound.o"(.text)
         "*/games/tbs/src/sound/umul_high.o"(.text .padding)
@@ -637,7 +646,7 @@ SECTIONS
         "*/games/tbs/sound/songs/se_star_bounce.o"(.rodata)
         "*/games/tbs/sound/songs/se_310.o"(.rodata)
         "*/games/tbs/sound/songs/se_311.o"(.rodata)
-        . = ABSOLUTE(SPRITE_BANK_START);
+        . = ABSOLUTE(ROM_SHIFT + SPRITE_BANK_START);
         "*/games/tbs/src/gamepak/far_call/SPRITE.o"(.text .rodata .data .padding)
         "*/games/tbs/src/system/sprite_metadata.o"(.text)
         "*/games/tbs/src/graphics/sprite/sprites.o"(.rodata)
@@ -646,7 +655,7 @@ SECTIONS
         "*/games/tbs/src/graphics/sprite/animref1.o"(.rodata)
         "*/games/tbs/src/graphics/sprite/animref2.o"(.rodata)
         "*/games/tbs/src/graphics/sprite/sprites.o"(.rodata.b)
-        . = ABSOLUTE(RESOURCE_DIRECTORY_START);
+        . = ABSOLUTE(ROM_SHIFT + RESOURCE_DIRECTORY_START);
         "*/games/tbs/src/gamepak/resource_directory.o"(.text .padding)
         "*/games/tbs/src/graphics/ui/ui.o"(.text .padding)
         "*/games/tbs/src/graphics/title/title.o"(.text .padding)

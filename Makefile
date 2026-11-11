@@ -13,6 +13,11 @@ EDITIONS := $(foreach game,$(GAMES),$(addprefix $(game)-,$(LANGS)))
 TBS      := $(filter tbs-%,$(EDITIONS))
 TLA      := $(filter tla-%,$(EDITIONS))
 
+# make SHIFT=n builds the shift test (below), which never matches rom.sha1.
+ifneq ($(and $(SHIFT),$(filter compare% land progress,$(MAKECMDGOALS))),)
+$(error SHIFT builds the shift test, which never matches rom.sha1: compare, land and progress take no SHIFT)
+endif
+
 CPUS := $(shell sysctl -n hw.ncpu 2>/dev/null || nproc 2>/dev/null || echo 4)
 JOBS ?= $(CPUS)
 SHA1 := $(shell { command -v sha1sum || command -v shasum; } 2>/dev/null) -c
@@ -149,7 +154,9 @@ $(foreach codec,$(CODECS),$(eval %.bitmaps.$(codec): %_00.png $(PICTURE_RUN) $(P
 ifdef EDITION
 GAME  := $(word 1,$(subst -, ,$(EDITION)))
 LANG  := $(word 2,$(subst -, ,$(EDITION)))
-BUILD := out/$(EDITION)
+# make SHIFT=n tbs-en is the shift test: everything after the header moves n
+# bytes (a multiple of 4), built into out/shift-n/ so out/<edition> is untouched.
+BUILD := out/$(if $(SHIFT),shift-$(SHIFT)/)$(EDITION)
 ROM   := $(BUILD)/$(EDITION).gba
 ELF   := $(BUILD)/$(EDITION).elf
 
@@ -193,7 +200,7 @@ ARM_C   := games/tbs/src/window/glyph_arm.c games/tbs/src/field/actor_update_arm
            games/tla/src/field/f021470.c
 
 ASFLAGS := -mcpu=arm7tdmi -mthumb-interwork
-EDITION_ASFLAGS := --defsym $(DEFINE)=1 -I$(BUILD) $(ASFLAGS)
+EDITION_ASFLAGS := --defsym $(DEFINE)=1 -I$(BUILD) $(ASFLAGS) $(if $(SHIFT),--defsym ROM_SHIFT=$(SHIFT))
 
 OVERLAY_STREAM := games/$(GAME)/src/system/overlay/overlays
 # The linker script: games/$(GAME)/ld_script.ld, run through the C
@@ -202,7 +209,7 @@ OVERLAY_STREAM := games/$(GAME)/src/system/overlay/overlays
 # overlay.ld tests; each image links the objects its script names, in order.
 OVERLAY_LD := games/$(GAME)/src/system/overlay/overlay.ld
 OVERLAY_IDS := $(shell sed -n 's/^\#\(el\)*if OVERLAY == 0x\([0-9a-f]*\)$$/\2/p' $(OVERLAY_LD))
-LD_CPPFLAGS := -P -lang-asm -nostdinc -Igames/$(GAME)/include -D$(DEFINE)=1
+LD_CPPFLAGS := -P -lang-asm -nostdinc -Igames/$(GAME)/include -D$(DEFINE)=1 $(if $(SHIFT),-DROM_SHIFT=$(SHIFT))
 LD_HEADERS := games/$(GAME)/include/edition.h games/$(GAME)/include/version.h
 LD_SCRIPT := $(BUILD)/ld/main.ld
 LDFLAGS := -T $(LD_SCRIPT)

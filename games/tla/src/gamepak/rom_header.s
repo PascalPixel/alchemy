@@ -42,3 +42,6 @@ gRom_LanguageCode:
 	.byte	0				@ Software version.
 	.byte	0				@ Complement check (calculated by gbafix).
 	.space	2				@ Reserved.
+	.ifdef ROM_SHIFT
+	.space	ROM_SHIFT			@ The shift test's padding (make SHIFT=n)
+	.endif

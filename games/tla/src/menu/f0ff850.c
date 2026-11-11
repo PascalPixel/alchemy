@@ -3,13 +3,13 @@
 
 extern u32 gMenu_PatternRowMasks[][2];
 
-/// Draws two sets of six pattern tiles into OBJ VRAM at 0x06006000: each tile
-/// filled with colour 4, then rows 1 to 7 XORed with a pair of row masks
-/// (gMenu_PatternRowMasks), the first set's masks clamped to the row so its
-/// patterns grow row by row, the second set skipping row 1. The mask table is
-/// declared without const: as const its second load is lifted above the first
-/// store.
-void Func_080ff850(void) {
+/// Builds two sets of six tile pairs (24 8x8 tiles) in background tile block
+/// 1 at 0x06006000: each pair filled with colour 4, then rows 1 to 7 XORed
+/// with a pair of row masks (gMenu_PatternRowMasks), the first set's masks
+/// clamped to the row so its patterns grow row by row, the second set skipping
+/// row 1. The mask table is declared without const: as const its second load
+/// is lifted above the first store.
+void Menu_BuildPatternTiles(void) {
   s32 set;
   s32 n;
 

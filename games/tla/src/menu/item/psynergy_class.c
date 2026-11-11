@@ -96,10 +96,10 @@ void Party_SetPackedEvent(s32 member, s32 action, s32 shortcut);
 s32 BattleEffect_ApplyToTargets(s32 entry, s32 member, s32 target, s32 mode);
 void Func_080f8170(void *window, s32 member, s32 mode, s32 kind);
 s32 Func_080fcf14(void);
-s32 Func_080fcf5c(s32 paneIndex);
+s32 PsynergyMenu_SelectPartySlot(s32 paneIndex);
 s32 Func_080fd2e8(s32 paneIndex);
 s32 Func_080fdad4(s32 paneIndex);
-void Func_08100d58(s32 action);
+void Ability_PlayUseAnimation(s32 action);
 
 /// Runs the Psynergy menu, The Broken Seal's PsynergyMenu_RunSteps: choose a
 /// party member and one of their Psynergy, then use it on a member (or the
@@ -133,7 +133,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
 
       menu->paneRow[0] = 0;
       ItemMenu_DrawMessage(0, (s32)MsgPsynergyChooseOwner);
-      chosen = Func_080fcf5c(0);
+      chosen = PsynergyMenu_SelectPartySlot(0);
       cancelled = -1;
       /* FAKEMATCH(dead): a redundant copy of -1 and an XOR test give -1 its
        * own register, as The Broken Seal's twin; as if (chosen == -1) setting
@@ -272,7 +272,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
 
           mask = PSYNERGY_ABILITY_MASK;
           mask &= entry;
-          Func_08100d58(mask);
+          Ability_PlayUseAnimation(mask);
         }
         WindowSprite_ClearListFar(menu->infoWindow);
         InventoryMenu_ShowModalMessage(menu->useResult + (s32)MsgItemUseResult,

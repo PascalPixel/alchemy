@@ -921,53 +921,61 @@ void Link_DrawShiftedTilePairFar(s32 addr);
 void Sound_PlayFar(s32 cue);
 void Input_ResetKeyRepeat(void);
 
-s32 Func_080f8f9c(s32 horizontal, s32 count, s32 per_page, s32 *cursor,
-                  s32 *page) {
+/// Moves a paged list's cursor and page with the d-pad's repeating keys.
+///
+/// count entries are shown pageSize at a time; *cursor is the row on the page
+/// and *page the page. Vertical lists (horizontal 0) move the cursor with Up
+/// and Down and turn pages with Left and Right; horizontal lists the other way
+/// round. Moving past either end wraps round; turning to a shorter page pulls
+/// the cursor up to its last entry. Returns 1 after a page turn, 0 after a
+/// cursor move and -1 when nothing moved or the list is empty.
+s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
+                          s32 *page) {
   s32 pages;
   s32 next;
   s32 previous;
-  s32 page_forward;
+  s32 pageForward;
   s32 result;
 
   result = -1;
   if (count == 0)
     goto done;
   Link_DrawShiftedTilePairFar(0x06002500);
-  pages = __divsi3(count, per_page);
-  if (__modsi3(count, per_page) != 0)
+  pages = __divsi3(count, pageSize);
+  if (__modsi3(count, pageSize) != 0)
     pages++;
   if (horizontal) {
     next = gInput.repeat & KEY_RIGHT;
     previous = gInput.repeat & KEY_LEFT;
     horizontal = gInput.repeat & KEY_UP;
-    page_forward = gInput.repeat & KEY_DOWN;
+    pageForward = gInput.repeat & KEY_DOWN;
   } else {
     next = gInput.repeat & KEY_DOWN;
     previous = gInput.repeat & KEY_UP;
     horizontal = gInput.repeat & KEY_LEFT;
-    page_forward = gInput.repeat & KEY_RIGHT;
+    pageForward = gInput.repeat & KEY_RIGHT;
   }
   if (horizontal) {
     Sound_PlayFar(111);
     if (--*page < 0)
       *page = pages - 1;
-    if (*cursor + *page * per_page > count - 1) {
-      *cursor = count - *page * per_page - 1;
-      if (*cursor > per_page - 1)
-        *cursor = per_page - 1;
+    if (*cursor + *page * pageSize > count - 1) {
+      *cursor = count - *page * pageSize - 1;
+      if (*cursor > pageSize - 1)
+        *cursor = pageSize - 1;
     }
     Input_ResetKeyRepeat();
     result = 1;
     goto done;
   }
-  if (page_forward) {
+  if (pageForward) {
     Sound_PlayFar(111);
     if (++*page > pages - 1)
       *page = 0;
-    if (*cursor + *page * per_page > count - 1) {
-      *cursor = count - *page * per_page - 1;
-      if (*cursor > per_page - 1)
-        *cursor = per_page - 1;
+    if (*cursor + *page * pageSize > count - 1) {
+      *cursor = count - *page * pageSize - 1;
+      if (*cursor > pageSize - 1)
+        *cursor = pageSize - 1;
     }
     Input_ResetKeyRepeat();
     result = 1;
@@ -976,10 +984,10 @@ s32 Func_080f8f9c(s32 horizontal, s32 count, s32 per_page, s32 *cursor,
   if (previous) {
     Sound_PlayFar(111);
     if (--*cursor < 0) {
-      *cursor = per_page - 1;
-      *cursor = count - *page * per_page - 1;
-      if (*cursor > per_page - 1)
-        *cursor = per_page - 1;
+      *cursor = pageSize - 1;
+      *cursor = count - *page * pageSize - 1;
+      if (*cursor > pageSize - 1)
+        *cursor = pageSize - 1;
     }
     goto row_changed;
   }
@@ -989,9 +997,9 @@ s32 Func_080f8f9c(s32 horizontal, s32 count, s32 per_page, s32 *cursor,
   {
     Sound_PlayFar(111);
     result = 0;
-    if (++*cursor == count - *page * per_page)
+    if (++*cursor == count - *page * pageSize)
       *cursor = result;
-    if (*cursor > per_page - 1)
+    if (*cursor > pageSize - 1)
       *cursor = result;
   }
 row_changed:

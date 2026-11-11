@@ -47,7 +47,7 @@ s32 Window_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height,
                           s32 frame);
 void Menu_SpawnIconEntries(struct PsynergyMenuState *menu, s32 window);
 void Text_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
-void Func_080ff850(void);
+void Menu_BuildPatternTiles(void);
 s32 GameFlag_Test(s32 flag);
 void *Unit_Get(s32 owner);
 s32 Func_080fd6f0(void *unit, u16 *actions, s32 mode);
@@ -58,7 +58,7 @@ void wait(s32 frames);
 s32 PsynergyMenu_DrawListPage(s32 window, s32 unused, struct MenuResult *state);
 s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
                                struct MenuResult *state);
-s32 Func_080f8f9c(s32 mode, s32 count, s32 rows, s32 *row, s32 *page);
+s32 PagedList_HandleInput(s32 mode, s32 count, s32 rows, s32 *row, s32 *page);
 void Func_080f8a44(s32 x, s32 y);
 void Sound_PlayFar(s32 cue);
 void PsynergyMenu_CallIconRoutineWithValue(struct PsynergyMenuState *menu,
@@ -86,7 +86,7 @@ s32 Func_080ffcd4(void) {
   Menu_SpawnIconEntries(menu, menu->messageWindow);
   Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 2, window, 0, -24);
   Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp, window, 64, -24);
-  Func_080ff850();
+  Menu_BuildPatternTiles();
   while (!GameFlag_Test(0x150)) {
     if (refresh) {
       if (refresh == 2) {
@@ -112,8 +112,8 @@ s32 Func_080ffcd4(void) {
       refresh = 0;
     }
     wait(1);
-    navigation =
-        Func_080f8f9c(0, state.entryCount, PAGE_ROWS, &state.row, &state.page);
+    navigation = PagedList_HandleInput(0, state.entryCount, PAGE_ROWS,
+                                       &state.row, &state.page);
     Func_080f8a44(CURSOR_X, state.row * 16 + CURSOR_Y);
     if (navigation == 1) {
       refresh = 1;

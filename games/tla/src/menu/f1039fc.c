@@ -33,7 +33,8 @@ void Djinn_ActivateFar(s32 owner, s32 element, s32 index);
 void Djinn_DeactivateFar(s32 owner, s32 element, s32 index);
 s32 Djinn_AddToOwnerFar(s32 owner, s32 element, s32 index);
 void Unit_CalculateFar(s32 owner);
-s32 Func_08101860(u16 *before, u16 *after, u16 *out, s32 *gained, s32 *lost);
+s32 PsynergyList_Diff(u16 *before, u16 *after, u16 *out, s32 *gained,
+                      s32 *lost);
 void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void Func_08101a54(s32 window, s32 x, s32 y, s32 entry);
 s32 Text_SetColorFar(s32 color);
@@ -48,7 +49,7 @@ void Window_CloseFar(s32 window, s32 style);
 void Func_08038290(void);
 void Func_080f8a44(s32 x, s32 y);
 void Func_080f8ab4(s32 x, s32 y);
-s32 Func_08103168(s32 mode, s32 param);
+s32 DjinnMenu_DrawPairPreview(s32 mode, s32 param);
 void Func_08103218(s32 window, s32 x, s32 y, s32 owner, s32 a, s32 b, s32 c,
                    s32 page, s32 d);
 void Func_08105350(s32 index, s32 scale);
@@ -165,8 +166,9 @@ s32 Func_081039fc(u32 mode) {
         Djinn_ActivateFar(memberId, secondElement, secondIndex);
     }
     Unit_CalculateFar(memberId);
-    pageCounts[0] = Func_08101860((u16 *)(original + 88), (u16 *)(unit + 88),
-                                  diffWork, &gainedCount, &lostCount);
+    pageCounts[0] =
+        PsynergyList_Diff((u16 *)(original + 88), (u16 *)(unit + 88), diffWork,
+                          &gainedCount, &lostCount);
     Iwram_CopyWords(unit, original, size);
 
     memberId = menu->shownMember[1];
@@ -178,8 +180,9 @@ s32 Func_081039fc(u32 mode) {
     if (firstWasSet != 0)
       Djinn_ActivateFar(memberId, firstElement, firstIndex);
     Unit_CalculateFar(memberId);
-    pageCounts[1] = Func_08101860((u16 *)(original + 88), (u16 *)(unit + 88),
-                                  diffWork, &gainedCount, &lostCount);
+    pageCounts[1] =
+        PsynergyList_Diff((u16 *)(original + 88), (u16 *)(unit + 88), diffWork,
+                          &gainedCount, &lostCount);
     Iwram_CopyWords(unit, original, size);
     Heap_Release(original);
     Heap_Release(diffWork);
@@ -206,8 +209,9 @@ s32 Func_081039fc(u32 mode) {
     if (applySecond != 0)
       Djinn_ActivateFar(memberId, firstElement, firstIndex);
     Unit_CalculateFar(memberId);
-    pageCounts[0] = Func_08101860((u16 *)(original + 88), (u16 *)(unit + 88),
-                                  diffWork, &gainedCount, &lostCount);
+    pageCounts[0] =
+        PsynergyList_Diff((u16 *)(original + 88), (u16 *)(unit + 88), diffWork,
+                          &gainedCount, &lostCount);
     Iwram_CopyWords(unit, original, 332);
     pageCounts[1] = pageCounts[0];
     page = 0;
@@ -379,7 +383,7 @@ s32 Func_081039fc(u32 mode) {
       }
       switch (page) {
       default:
-        Func_08103168(mode, 0);
+        DjinnMenu_DrawPairPreview(mode, 0);
         break;
       case 1:
         if (mode == 1)

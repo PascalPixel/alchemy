@@ -77,11 +77,11 @@ void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void Window_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 mode);
 void Window_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void Icon_CreateWithLoadedResource(s32 window, s32 x, s32 y, s32 action);
-void Func_08104ba8(s32 window, s32 x, s32 y, s32 variant);
+void Icon_DrawVariantWithTileOffset(s32 window, s32 x, s32 y, s32 variant);
 s32 Text_SetColorFar(s32 colour);
 void SideObject_CreateFar(s32 owner, s32 a, s32 side, s32 window, s32 b, s32 c);
-s32 Func_08101860(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
-                  u16 *out, s32 *firstCount, s32 *secondCount);
+s32 PsynergyList_Diff(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
+                      u16 *out, s32 *firstCount, s32 *secondCount);
 
 s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
                   s32 addPairSlot, s32 previewMode, s32 page, s32 side) {
@@ -216,48 +216,60 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
       if (unit->hp != originalUnit->hp) {
         Text_DrawNumberInWindowFar(unit->hp, 4, window, x * 8 + 72, y * 8 + 56);
         if (unit->hp > originalUnit->hp)
-          Func_08104ba8(window, x * 8 + POOL_ARROW_X, y * 8 + 56, 0);
+          Icon_DrawVariantWithTileOffset(window, x * 8 + POOL_ARROW_X,
+                                         y * 8 + 56, 0);
         else
-          Func_08104ba8(window, x * 8 + POOL_ARROW_X, y * 8 + 56, 1);
+          Icon_DrawVariantWithTileOffset(window, x * 8 + POOL_ARROW_X,
+                                         y * 8 + 56, 1);
       }
       if (unit->pp != originalUnit->pp) {
         Text_DrawNumberInWindowFar(unit->pp, 4, window, x * 8 + 72, y * 8 + 64);
         if (unit->pp > originalUnit->pp)
-          Func_08104ba8(window, x * 8 + POOL_ARROW_X, y * 8 + 64, 0);
+          Icon_DrawVariantWithTileOffset(window, x * 8 + POOL_ARROW_X,
+                                         y * 8 + 64, 0);
         else
-          Func_08104ba8(window, x * 8 + POOL_ARROW_X, y * 8 + 64, 1);
+          Icon_DrawVariantWithTileOffset(window, x * 8 + POOL_ARROW_X,
+                                         y * 8 + 64, 1);
       }
       if (unit->atk != originalUnit->atk) {
         Text_DrawNumberInWindowFar(unit->atk, 4, window, x * 8 + 72,
                                    y * 8 + 72);
         if (unit->atk > originalUnit->atk)
-          Func_08104ba8(window, x * 8 + STAT_ARROW_X, y * 8 + 72, 0);
+          Icon_DrawVariantWithTileOffset(window, x * 8 + STAT_ARROW_X,
+                                         y * 8 + 72, 0);
         else
-          Func_08104ba8(window, x * 8 + STAT_ARROW_X, y * 8 + 72, 1);
+          Icon_DrawVariantWithTileOffset(window, x * 8 + STAT_ARROW_X,
+                                         y * 8 + 72, 1);
       }
       if (unit->def != originalUnit->def) {
         Text_DrawNumberInWindowFar(unit->def, 4, window, x * 8 + 72,
                                    y * 8 + 80);
         if (unit->def > originalUnit->def)
-          Func_08104ba8(window, x * 8 + STAT_ARROW_X, y * 8 + 80, 0);
+          Icon_DrawVariantWithTileOffset(window, x * 8 + STAT_ARROW_X,
+                                         y * 8 + 80, 0);
         else
-          Func_08104ba8(window, x * 8 + STAT_ARROW_X, y * 8 + 80, 1);
+          Icon_DrawVariantWithTileOffset(window, x * 8 + STAT_ARROW_X,
+                                         y * 8 + 80, 1);
       }
       if (unit->agi != originalUnit->agi) {
         Text_DrawNumberInWindowFar(unit->agi, 4, window, x * 8 + 72,
                                    y * 8 + 88);
         if (unit->agi > originalUnit->agi)
-          Func_08104ba8(window, x * 8 + STAT_ARROW_X, y * 8 + 88, 0);
+          Icon_DrawVariantWithTileOffset(window, x * 8 + STAT_ARROW_X,
+                                         y * 8 + 88, 0);
         else
-          Func_08104ba8(window, x * 8 + STAT_ARROW_X, y * 8 + 88, 1);
+          Icon_DrawVariantWithTileOffset(window, x * 8 + STAT_ARROW_X,
+                                         y * 8 + 88, 1);
       }
       if (unit->luck != originalUnit->luck) {
         Text_DrawNumberInWindowFar(unit->luck, 2, window, x * 8 + 88,
                                    y * 8 + 96);
         if (unit->luck > originalUnit->luck)
-          Func_08104ba8(window, x * 8 + STAT_ARROW_X, y * 8 + 96, 0);
+          Icon_DrawVariantWithTileOffset(window, x * 8 + STAT_ARROW_X,
+                                         y * 8 + 96, 0);
         else
-          Func_08104ba8(window, x * 8 + STAT_ARROW_X, y * 8 + 96, 1);
+          Icon_DrawVariantWithTileOffset(window, x * 8 + STAT_ARROW_X,
+                                         y * 8 + 96, 1);
       }
     }
   }
@@ -271,8 +283,8 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
 
     rows = 6 - (previewMode != 3);
     first = rows * (page - 1);
-    count = Func_08101860(originalUnit->actionSlots, unit->actionSlots, actions,
-                          &gained, &lost);
+    count = PsynergyList_Diff(originalUnit->actionSlots, unit->actionSlots,
+                              actions, &gained, &lost);
     line = 0;
     for (row = 0; first < count && row < rows; row++, first++) {
       Icon_CreateWithLoadedResource(window, x * 8, (y + line * 2) * 8 + 4,

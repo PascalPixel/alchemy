@@ -78,7 +78,8 @@ void Func_080fc558(void *window, s32 *work, struct MenuResult *state);
 void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target);
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);
 s32 Item_CanOwnerEquip(s32 owner, s32 item);
-s32 Func_080f8f9c(s32 horizontal, s32 count, s32 perPage, s32 *row, s32 *page);
+s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 perPage, s32 *row,
+                          s32 *page);
 void Sound_PlayFar(s32 cue);
 s32 GameFlag_Test(s32 flag);
 void Menu_CreateOwnerEntryObjects(s32 first);
@@ -164,7 +165,8 @@ s32 Func_080fc6bc(s32 pane) {
 
       wait(1);
       previous = state.selectedIndex;
-      moved = Func_080f8f9c(0, state.entryCount, 5, &state.row, &state.page);
+      moved = PagedList_HandleInput(0, state.entryCount, 5, &state.row,
+                                    &state.page);
       if (moved == 1) {
         redraw = 1;
         changed = 1;

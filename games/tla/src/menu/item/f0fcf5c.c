@@ -18,10 +18,10 @@ void *Unit_Get(s32 owner);
 s32 Func_080fd6f0(void *unit, void *list, s32 mode);
 s32 Func_080fd000(void *owner, void *list);
 
-/// Selects a party tab in the Psynergy menu and builds that member's Psynergy
-/// icons: The Broken Seal's PsynergyMenu_SelectPartySlot with this game's
-/// work-block offsets (each 4 below The Broken Seal's).
-s32 Func_080fcf5c(s32 partySlot) {
+/// Shows side partySlot's icon, collects the actions of the member chosen
+/// there last (the first when none was) and runs Func_080fd000 on them.
+/// Returns its result.
+s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
   void *menu = Ram_HeapSlots->menuRuntime;
   s32 offset = partySlot + 28;
   s32 cursorOffset = partySlot * 4 + 20;

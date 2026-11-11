@@ -76,7 +76,7 @@ void wait(s32 frames);
 s32 Func_080fd968(s32 window, s32 unused, struct MenuResult *state);
 s32 Func_080fd8a0(s32 window, s32 *work, struct MenuResult *state);
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);
-s32 Func_080f8f9c(s32 mode, s32 count, s32 rows, s32 *row, s32 *page);
+s32 PagedList_HandleInput(s32 mode, s32 count, s32 rows, s32 *row, s32 *page);
 struct BattleAct *BattleAction_Get(s32 action);
 void Sound_PlayFar(s32 cue);
 void Window_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
@@ -162,7 +162,8 @@ s32 Func_080fdad4(s32 paneIndex) {
       previous = state.selectedIndex;
 
       if ((gInput.held & 4) == 0)
-        moved = Func_080f8f9c(0, state.entryCount, 5, &state.row, &state.page);
+        moved = PagedList_HandleInput(0, state.entryCount, 5, &state.row,
+                                      &state.page);
       else
         moved = -1;
       if (moved == 1) {

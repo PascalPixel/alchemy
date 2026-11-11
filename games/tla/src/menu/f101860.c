@@ -2,44 +2,60 @@
 #include "owner_state.h"
 
 #define ACTION_MASK 0x3fff
-#define FLAG_FIRST 0x8000
-#define FLAG_SECOND 0x4000
+#define PREVIEW_GAINED 0x8000
+#define PREVIEW_LOST 0x4000
 
-s32 Func_08101860(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
-                          u16 *out, s32 *firstCount, s32 *secondCount) {
-  s32 i;
-  s32 j;
-  s32 total;
-  s32 first;
-  s32 second;
+/// Lists the actions after a preview, marking gains, then appends the losses.
+/// The two output counts distinguish gained and lost actions.
+///
+/// Writes every action of after (up to 32), with PREVIEW_GAINED on those
+/// before lacks, then each action of before that after lacks, with
+/// PREVIEW_LOST. Returns the number written, up to 64.
+s32 PsynergyList_Diff(struct OwnerActionSlot *before,
+                      struct OwnerActionSlot *after, u16 *actionsOut,
+                      s32 *gainedCountOut, s32 *lostCountOut) {
+  s32 actionIndex;
+  s32 otherIndex;
+  s32 actionCount;
+  s32 gainedCount;
+  s32 lostCount;
 
-  total = 0;
-  first = 0;
-  second = 0;
-  for (i = 0; i < 32 && b[i].encodedAction != 0; i++) {
-    out[total] = b[i].encodedAction & ACTION_MASK;
-    total++;
-    for (j = 0; j < 32; j++) {
-      if (((b[i].encodedAction ^ a[j].encodedAction) & ACTION_MASK) == 0)
+  actionCount = 0;
+  gainedCount = 0;
+  lostCount = 0;
+  for (actionIndex = 0;
+       actionIndex < 32 && after[actionIndex].encodedAction != 0;
+       actionIndex++) {
+    actionsOut[actionCount] = after[actionIndex].encodedAction & ACTION_MASK;
+    actionCount++;
+    for (otherIndex = 0; otherIndex < 32; otherIndex++) {
+      if (((after[actionIndex].encodedAction ^
+            before[otherIndex].encodedAction) &
+           ACTION_MASK) == 0)
         break;
     }
-    if (j == 32) {
-      first++;
-      out[total - 1] |= FLAG_FIRST;
+    if (otherIndex == 32) {
+      gainedCount++;
+      actionsOut[actionCount - 1] |= PREVIEW_GAINED;
     }
   }
-  for (i = 0; i < 32 && a[i].encodedAction != 0; i++) {
-    for (j = 0; j < 32; j++) {
-      if (((a[i].encodedAction ^ b[j].encodedAction) & ACTION_MASK) == 0)
+  for (actionIndex = 0;
+       actionIndex < 32 && before[actionIndex].encodedAction != 0;
+       actionIndex++) {
+    for (otherIndex = 0; otherIndex < 32; otherIndex++) {
+      if (((before[actionIndex].encodedAction ^
+            after[otherIndex].encodedAction) &
+           ACTION_MASK) == 0)
         break;
     }
-    if (j == 32) {
-      second++;
-      out[total] = (a[i].encodedAction & ACTION_MASK) | FLAG_SECOND;
-      total++;
+    if (otherIndex == 32) {
+      lostCount++;
+      actionsOut[actionCount] =
+          (before[actionIndex].encodedAction & ACTION_MASK) | PREVIEW_LOST;
+      actionCount++;
     }
   }
-  *firstCount = first;
-  *secondCount = second;
-  return total;
+  *gainedCountOut = gainedCount;
+  *lostCountOut = lostCount;
+  return actionCount;
 }

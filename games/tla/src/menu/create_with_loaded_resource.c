@@ -105,10 +105,10 @@ s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
   return 1;
 }
 
-/// As Icon_CreateStatChangeArrow, with the arrow raised three pixels for
-/// the first variant and four for the second.
-// The Broken Seal's Icon_DrawVariantWithTileOffset.
-s32 Func_08104ba8(struct RenderInput *window, s32 x, s32 y, s32 variant) {
+/// As Icon_CreateStatChangeArrow, with the arrow raised 3 pixels for variant
+/// 0 and 4 for any other. Returns 1, or -1 when no window sprite is free.
+s32 Icon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y,
+                                   s32 variant) {
   struct WindowSprite *object;
   u32 resource;
   s32 v = variant;

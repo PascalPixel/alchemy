@@ -70,7 +70,7 @@ void ItemMenu_DrawCategory(s32 window, s32 owner, s32 mode);
 void wait(s32 frames);
 s32 Func_081000e0(s32 window, s32 unused, struct MenuResult *state);
 s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state);
-s32 Func_080f8f9c(s32 mode, s32 count, s32 rows, s32 *row, s32 *page);
+s32 PagedList_HandleInput(s32 mode, s32 count, s32 rows, s32 *row, s32 *page);
 void Func_080f8a44(s32 x, s32 y);
 void Sound_PlayFar(s32 cue);
 void PsynergyMenu_CallIconRoutineWithValue(struct InventoryMenuState *menu,
@@ -129,8 +129,8 @@ s32 Func_0810021c(void) {
       refresh = 0;
     }
     wait(1);
-    navigation =
-        Func_080f8f9c(0, state.entryCount, PAGE_ROWS, &state.row, &state.page);
+    navigation = PagedList_HandleInput(0, state.entryCount, PAGE_ROWS,
+                                       &state.row, &state.page);
     Func_080f8a44(CURSOR_X, state.row * 16 + 52);
     if (navigation == 1) {
       refresh = 1;

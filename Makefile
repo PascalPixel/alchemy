@@ -242,7 +242,9 @@ source = $(firstword $(wildcard $(1).c $(1).s $(1).S $(1).mid))
 OVERLAY_OBJS := $(foreach id,$(OVERLAYS),$(OVERLAY_OBJS_$(id)))
 OBJS := $(sort $(MAIN_OBJS) $(OVERLAY_OBJS))
 # ⚓️'s overlays are built for size: C linked only into overlays takes -Os.
-$(filter out/tla-%,$(filter-out $(MAIN_OBJS),$(OVERLAY_OBJS))): CFLAGS := $(subst -O2,-Os,$(CFLAGS))
+ifeq ($(GAME),tla)
+$(filter-out $(MAIN_OBJS),$(OVERLAY_OBJS)): CFLAGS := $(subst -O2,-Os,$(CFLAGS))
+endif
 SRCS := $(foreach object,$(OBJS:$(BUILD)/obj/%.o=%),$(call source,$(object)))
 
 # The overlays' packed streams go into the main image through one source,

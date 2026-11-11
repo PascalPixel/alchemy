@@ -346,18 +346,14 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         }
       }
       for (i = 0; i != beamHeight; i++) {
-        s32 fullWidth = 32;
-        // loop.c matches this 32 with the light-fan calls' 32 and hoists it out
-        // of the frame loop, where it loses its register and later reloads
-        // rotate: after an earlier move its threshold is 12, and savings 2 x
-        // life 19 x 12 = 456 reaches the loop's 448 insns. The asm also takes
-        // i's life from 1288 to 1292 insns, so global.c ranks i (7 x 195 /
-        // 1292) just behind dotCount (4 x 28 / 106), which then takes sl before
-        // i takes r9; at 1288 they swap.
-        /* FAKEMATCH(barrier): fullWidth's 32 kept in this loop's preheader, and
-         * i's life lengthened so dotCount sits in sl and i in r9; without the
-         * asm, 330 of 1640 instructions differ in tbs-en. */
-        __asm__("" : "+r"(fullWidth));
+        s32 fullWidth = 0;
+        // loop.c matches a lone 32 here with the light-fan calls' 32 and hoists
+        // it out of the frame loop, where it loses its register and later
+        // reloads rotate; set twice in a row, it moves only to this loop's
+        // preheader.
+        /* FAKEMATCH(dead): fullWidth set to 0, then to 32; as 32 - inset * 2 in
+         * the call, 128 of 1640 instructions differ in tbs-en. */
+        fullWidth = 32;
         blit[0](canvas, ramp + inset, inset + 48, i + 16, fullWidth - inset * 2,
                 1);
       }
@@ -406,9 +402,11 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
 
     formationX = 80 << 16;
     formationY = 64 << 16;
+    // The particle loop's counter starts with the formation's defaults.
+    i = 0;
     formationSpeedX = 0;
     formationSpeedY = 0;
-    for (i = 0; i != THOR_PARTICLE_COUNT; i++) {
+    for (; i != THOR_PARTICLE_COUNT; i++) {
       THOR_PARTICLES[i].variant = 0;
     }
     // Nothing in Thor reads these 16 particles, and BattleEffect_RunImpactBurst

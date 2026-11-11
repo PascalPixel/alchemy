@@ -270,9 +270,10 @@ is in [The end of the battle](src/battle/README.md#the-end-of-the-battle).
 When the screen goes black in Goma Cave, the cave is really gone. The game
 clears it away, and the battle starts with nothing of it.
 
-So the battle is handed a short [note](glossary.md#main-routines-work)
-instead: the party, the formation's number, the kind of battle (a random
-one, or one the story called for), the picture of the place and the music.
+So the battle reads what it needs from the
+[main routine's work](glossary.md#main-routines-work) instead: the party,
+the formation's number, the kind of battle (a random one, or one the story
+called for), the picture of the place and the music.
 
 When the fight is over the battle hands back one answer: won, fled or lost.
 The cave is then built again from scratch, and after a win or a flight the
@@ -281,4 +282,4 @@ recording at the top of this page.
 
 It is also why a Mimic's chest in Mercury Lighthouse and a walk through Goma
 Cave can lead to the very same kind of fight. The battle never looks at the
-room it came from. It only reads the note.
+room it came from. It only reads the work.

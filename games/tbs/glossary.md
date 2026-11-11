@@ -215,7 +215,7 @@ Evidence: plain English; the GNU tools' "object file".
 ### System
 
 The System is the code everything else stands on: starting up, deciding what
-runs next, keeping time, lending out memory, saving and sound. The field,
+runs next, keeping time, handing out memory, saving and sound. The field,
 the battles and the menus all use it and none of them could run without it.
 It is one of the code's four divisions, with Field, Battle and Interface
 ([System](system.md)).
@@ -303,7 +303,7 @@ Evidence: tradition: WAIT, the period's word for it.
 
 ### Task
 
-A task is a small chore the game runs once in every [frame](#frame), even
+A task is a small job the game runs once in every [frame](#frame), even
 while other code is [waiting](#wait), until it is taken off the list. The
 task that types a villager's line into its window letter by letter is
 one. The list, `gTasks`, has room for 20
@@ -336,12 +336,13 @@ Evidence: tradition: 処理落ち.
 
 ### Work
 
-A work is the block of memory one part of the game keeps its notes in while
-it runs. It is named `g<Owner>Work`. The field's is `gFieldWork`, and among
-its notes are who the people in the scene are and what the leader has just
-run into. The menus' is `gMenuWork`. Each is found again through a
-[heap slot](#heap-slot). The [main routine's](#main-routines-work) is the
-one that is kept apart and outlives the rest
+A work is the block of memory where one part of the game keeps what it is
+working on while it runs. It is named `g<Owner>Work`. The field's is
+`gFieldWork`, and among what it holds are who the people in the scene are
+and what the leader has just run into. The menus' is `gMenuWork`. Each is
+found again through a [heap slot](#heap-slot). The
+[main routine's](#main-routines-work) is the one that is kept apart and
+outlives the rest
 ([The Broken Seal](README.md#what-the-game-remembers)).
 
 Evidence: tradition: ワーク, working memory, as in the hardware's Work RAM,
@@ -349,16 +350,17 @@ used here for a system's block.
 
 ### Heap and pools
 
-The heap is the game's lender of memory. Code that needs room for
+The heap is where code gets memory for a while. Code that needs room for
 something, such as a picture being unpacked, asks the heap and is handed a
 block. The blocks are cut from two pools, which are simply two stretches of
 free memory, one in each of the console's
 [two areas](#iwram-and-ewram).
 
-Each pool works like a stack of plates. A new block always goes on top, and
-blocks come off from the top: handing one back also hands back everything
-that was put on after it. That is simple and quick. The whole heap is emptied before each [sequence](#sequence), so a
-battle starts with nothing left over from the cave it began in
+In each pool a new block always goes on top, and blocks come off from the
+top: handing one back also hands back everything that was put on after it.
+That is simple and quick. The whole heap is emptied before each
+[sequence](#sequence), so a battle starts with nothing left over from the
+cave it began in
 ([System code](src/system/README.md#the-heap)).
 
 Evidence: plain English.
@@ -463,11 +465,11 @@ Evidence: tradition: ジャンプテーブル for the table; "far call" is plain
 ### Veneer
 
 A veneer is a tiny piece of code, 8 bytes long, that does one thing: it
-jumps on to a piece of code somewhere else. It is a signpost. It stands at
-a place that never changes and points at something that may move, so
-everyone who needs that thing can go to the signpost and be sent the right
-way. `Battle_RunFar` is one, and all it does is jump to `Battle_Run`. The
-lists a [bank](#bank) and an [overlay](#overlay) open with are made of them
+jumps on to a piece of code somewhere else. It stands at a place that never
+changes and points at something that may move, so everyone who needs that
+thing can go to the veneer and be sent the right way. `Battle_RunFar` is
+one, and all it does is jump to `Battle_Run`. The lists a [bank](#bank)
+and an [overlay](#overlay) open with are made of them
 ([The Game Pak](src/gamepak/README.md#a-veneer)).
 
 Evidence: plain English; the project's own word.
@@ -823,11 +825,11 @@ Evidence: Camelot: the game's text, 入口.
 
 ### Field request
 
-A field request is a note the field leaves itself about something the
+A field request is the field asking itself to deal with something the
 walking leader has run into. There are twelve kinds: an exit taken, a
 battle due, a person to talk to, a cell to search, a menu to open, and
-others. Press Start and the note for the Pause menu is set. The
-[field sequence](#field-sequence) reads the notes and answers the most
+others. Press Start and the request for the Pause menu is set. The
+[field sequence](#field-sequence) reads the requests and answers the most
 urgent first ([Field code](src/field/README.md#the-twelve-requests)).
 
 Evidence: plain English; the project's own word.

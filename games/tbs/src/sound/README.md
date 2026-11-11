@@ -47,9 +47,9 @@ with `MUS_`, and names for sound effects with `SE_`. They are all in
 [sounds.h](../../include/sounds.h), and most have a note of where the sound
 is heard.
 
-### The three orders
+### The three controls
 
-Three numbers in the list are not sounds. They are orders.
+Three numbers in the list are not sounds. They are controls.
 
 - Number 17, among the music, fades the music out. The fade takes 112
   [VBlanks](../../glossary.md#vblank), a little under two seconds.
@@ -71,11 +71,11 @@ do with it. Nearly 1,800 places in the game ask it for a sound.
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
   number(["A sound number"]) --> order{"Where in the list?"}
-  order -- "17, the order to fade" --> fade(["🎵 The music fades out"])
+  order -- "17, the control to fade" --> fade(["🎵 The music fades out"])
   order -- "100 and up" --> se(["📣 An SE: it plays over everything else"])
   order -- "80 to 99" --> jingle(["🎵 A jingle: the music goes silent while it plays"])
   order -- "below 80" --> music{"The music already chosen?"}
-  music -- "yes, or 18, the order to keep" --> keep(["Nothing changes"])
+  music -- "yes, or 18, the control to keep" --> keep(["Nothing changes"])
   music -- "no" --> start(["🎵 New music, at full volume"])
   classDef layer fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef check fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
@@ -131,7 +131,7 @@ sound, and the cart is quiet.
 The game plays that same empty sound as it moves from one scene to the
 next, so a rumble does not follow the party through a door.
 
-Order 289 does the same job more gently. It fades the fourth player out
+Control 289 does the same job more gently. It fades the fourth player out
 over 48 VBlanks, most of a second. The logs floating across the water in
 Fuchin Falls Cave go quiet that way.
 
@@ -171,7 +171,7 @@ That way the music is already playing as the picture fades in.
 
 The music is picked from a list of rules. A rule names a scene or a whole
 area, and gives a sound number. It can also name a
-[game flag](../../glossary.md#game-flag). A flag is a yes-or-no note the
+[game flag](../../glossary.md#game-flag). A flag is a yes-or-no fact the
 game keeps about the story, such as "Mt. Aleph has erupted", and it starts
 at no. A rule with a flag fits only once its flag has turned to yes. The
 game reads down the list and takes the first rule that fits.
@@ -205,7 +205,7 @@ Tolbi. Each time the party is shown crossing the sea on the Tolbi-bound
 ship, the World Map is entered by an entrance of its own, seven in all,
 and for those seven it plays the ship's music and not the World Map's.
 
-A scene no rule fits gets order 18, to keep whatever is playing.
+A scene no rule fits gets control 18, to keep whatever is playing.
 
 ### When the rules are overruled
 
@@ -249,7 +249,7 @@ Claymore for Navampa. Both ways get the same tune.
 Every other battle with the game's monsters takes the usual battle music,
 sound 50. That includes the thieves in Vault and a Djinni that fights
 back. A link battle against a friend is the one exception: it is given
-order 18, so the list has no say in it.
+control 18, so the list has no say in it.
 
 ## How the music comes back after a jingle
 
@@ -449,7 +449,7 @@ of the game that runs at each one whatever else is going on
 
 - **sound number**: the number a sound is asked for by, 83 for the treasure
   jingle. See [sound](../../glossary.md#sound).
-- **order**: one of the three numbers that are not sounds: 17 fades the
+- **control**: one of the three numbers that are not sounds: 17 fades the
   music, 18 keeps it, 289 fades the fourth player.
 - **music player**: one of the eight things that each play one sound at a
   time.

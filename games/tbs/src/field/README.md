@@ -119,26 +119,27 @@ It goes round sixty times a second for as long as the player just walks.
 
 Step 2 needs a word about the ground. A map is a grid of squares 16 pixels
 across, like a sheet of graph paper laid over the town, and the game calls
-each square a [cell](../../glossary.md#cell). A cell can carry a mark:
-this is a doorstep, this is a ledge, monsters live here. Step 2 reads the
-mark under Isaac's feet.
+each square a [cell](../../glossary.md#cell). A cell says what it is, its
+[cell behavior](../../glossary.md#cell-behavior): this is a doorstep, this
+is a ledge, monsters live here. Step 2 reads the behavior under Isaac's
+feet.
 
 ### Requests
 
 So how does pressing A in front of the young man in Vault stop the walk?
 
-The field keeps twelve small notes, one for each kind of thing that can
-interrupt a walk. One of them means "A was pressed". Another means "the
-leader stepped on a doorstep", another "a monster has appeared". The game
-calls each note a [field request](../../glossary.md#field-request).
+The field keeps twelve [field requests](../../glossary.md#field-request),
+one for each kind of thing that can interrupt a walk. One of them means "A
+was pressed". Another means "the leader stepped on a doorstep", another "a
+monster has appeared".
 
-When the player presses A, the note for A is set. Step 3 of the walk
-finds a note set, and the walk stops. The field sequence then reads
-the notes and answers them.
+When the player presses A, the request for A is set. Step 3 of the walk
+finds a request set, and the walk stops. The field sequence then reads
+the requests and answers them.
 
 For the A button it has to work out what the player meant. It looks for
 someone to talk to. In Vault the young man is close and Isaac is facing
-him, so the A note is replaced by a note that says "talk to him". With
+him, so the A request is replaced by one that says "talk to him". With
 nobody in reach, it looks at the ground just ahead for something to search.
 With nothing there either, it opens the menu.
 
@@ -163,7 +164,7 @@ flowchart TD
   class talk,search,menu sequence
 ```
 
-Requests come from two places. The marks on the ground set the ones for
+Requests come from two places. The cells underfoot set the ones for
 doorsteps, ledges and monsters, in step 2 of the walk. The buttons
 set the rest: A, Select for the menu, Start for the Pause menu, and L and R
 for the Psynergy or item the player has put on them.
@@ -589,9 +590,8 @@ If the pictures were placed first, each would show where its actor was a
 frame ago, and Isaac would seem to trail behind himself whenever the view
 scrolled.
 
-The game keeps a list of chores that run once in every frame, and calls
-each a [task](../../glossary.md#task). The three steps are three tasks,
-and tasks always run in the same order.
+The three steps are three [tasks](../../glossary.md#task), and tasks
+always run in the same order.
 
 The console has only a little memory for the pictures of things that
 move, less than a busy town needs. So an actor that walks off the edge of
@@ -786,38 +786,37 @@ Either way, talking to them lets them go.
 
 ![Isaac holds Up at the foot of a wooden ladder on the cliff at the Goma Cave Entrance, crouches and jumps onto it, climbs it a step at a time, climbs over the top and walks on north](https://alchemy.pascalpixel.com/guides/field/climb.gif)
 
-The mark on a cell is a number from 0 to 255, and the game calls it the
-[cell behavior](../../glossary.md#cell-behavior). Zero means plain
-ground. The rest are split between the scene and the field.
+A cell's behavior is a number from 0 to 255. Zero means plain ground. The
+rest are split between the scene and the field.
 
-Marks 1 to 239 belong to the scene. They mean whatever that scene's
+Behaviors 1 to 239 belong to the scene. They mean whatever that scene's
 list says: in Vault one of them is the mayor's doorstep, in Vale another
 is the bridge. Stepping on one sets the step request, and the field looks
-up the line for that mark.
+up the line for that behavior.
 
 A line for a step can ask for more than a foot on the cell. It can ask
 that Isaac be facing a given way, or that he has been pushing against
 something for more than 12 frames. The mayor's doorstep asks for both:
 facing north, and pushing. That is the lean before the door opens.
 
-If the list has no step line for the mark, the field looks for an exit
+If the list has no step line for the behavior, the field looks for an exit
 line instead, which says where the cell leads. An exit line also says how
 Isaac leaves: with the usual sound, or up or down a staircase.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  step(["Isaac steps onto a cell"]) --> mark{"What is the cell's mark?"}
-  mark -- "0" --> plain(["Plain ground"])
-  mark -- "1 to 239: the scene's" --> line{"Has the scene's list a step line for it?"}
+  step(["Isaac steps onto a cell"]) --> behavior{"What is the cell's behavior?"}
+  behavior -- "0" --> plain(["Plain ground"])
+  behavior -- "1 to 239: the scene's" --> line{"Has the scene's list a step line for it?"}
   line -- "yes" --> run(["That line runs"])
   line -- "no" --> exit(["The field looks for an exit line"])
-  mark -- "one of the highest: the field's own" --> own(["It means the same everywhere"])
+  behavior -- "one of the highest: the field's own" --> own(["It means the same everywhere"])
   classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef code fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   class step,plain frame
-  class mark,line code
+  class behavior,line code
   class run,exit,own sequence
 ```
 
@@ -828,7 +827,7 @@ On a staircase Isaac is moved to the middle of the cell and plays an
 field also leaves word for the next scene. As that scene fades in, it
 plays the matching animation of Isaac stepping out.
 
-A few of the highest marks belong to the field and mean the same thing
+A few of the highest behaviors belong to the field and mean the same thing
 everywhere. Three of them answer a push of more than 12 frames:
 
 - A ledge. With Down held, Isaac hops off it.
@@ -842,8 +841,8 @@ everywhere. Three of them answer a push of more than 12 frames:
 ![Isaac walks east into the stone pillar below the cliff in Vale, leans on it for a moment, then he and the pillar slide one cell east together](https://alchemy.pascalpixel.com/guides/field/push-pillar.gif)
 
 A stone pillar is not one of the field's own. Each scene with a pillar
-puts marks of its own on the cells beside it, and gives those marks lines
-that ask for a push.
+gives the cells beside it behaviors of its own, and gives those behaviors
+lines that ask for a push.
 
 The event those lines run is the same in every such scene. Isaac leans
 on the pillar for a quarter of a second. The event checks that nothing
@@ -856,7 +855,7 @@ with the push sound ([staged_actor.h](../scene/shared/staged_actor.h)).
 If A finds nobody to talk to, the field looks at the cell 16 pixels ahead
 of Isaac, the next cell over.
 
-Six of the field's own marks are things to search that need no line in
+Six of the field's own behaviors are things to search that need no line in
 any scene: a jar, a barrel, a wooden box, a grave, a shelf of books and a
 well. Each has two messages of its own. For the wooden box in Vale the
 player reads `Isaac checked the wooden box...` and then `but didn't find
@@ -867,7 +866,7 @@ lists its jars. The books and the well even have something to say: `They
 don't appear to contain anything particularly novel.` and `It's a long
 way down.`
 
-Any other mark is the scene's, and the field looks up its search line.
+Any other behavior is the scene's, and the field looks up its search line.
 The line names what Isaac checks, so that the first message can read
 `Isaac checked the chest...`, and it says what he finds: a message, an
 item, coins, a Psynergy Stone, a mimic, or an event of the scene's own.
@@ -878,10 +877,11 @@ If the cell ahead has nothing to search either, the menu opens.
 
 ![Isaac searches a Psynergy Stone: `Isaac got a Psynergy Stone.`, the party's PP is restored, and `The Psynergy Stone disappeared...`](https://alchemy.pascalpixel.com/guides/layout/psynergy-stone.gif)
 
-A chest is two things that have to agree: a mark on the map saying a chest
-stands here, and a search line in the scene saying what is in it.
+A chest is two things that have to agree: a treasure spot on the map
+saying a chest stands here, and a search line in the scene saying what is
+in it.
 
-When the scene is set up, the field goes through the map's chest marks.
+When the scene is set up, the field goes through the map's treasure spots.
 For each one that has a search line, it puts out an actor. A chest is
 shown open if the player has already emptied it. A Psynergy Stone is put
 out only if it has not been taken. A scene can have ten of these at once.
@@ -1333,8 +1333,6 @@ The glossary defines [actor](../../glossary.md#actor),
 
 - The **camera actor** is the unseen actor the view is centred on. It
   follows the leader unless an event sends it elsewhere.
-- A **mark** is this page's word for a cell's number, which the game
-  calls its cell behavior.
 - A **push** is a frame in which the leader is held against something he
   cannot walk through. Doorsteps, ledges and ladders wait for more than
   12 of them.
@@ -1350,13 +1348,13 @@ ours, chosen from what each order does. The requests are named for what
 the field does with each, and the zones for the scenes that use them.
 
 One slip in the game as shipped can, rarely, be seen. To ask "is any
-request set?" the field does not look at the twelve notes one by one.
-Each note is kept as a number, 0 when it is not set, and the field adds
+request set?" the field does not look at the twelve requests one by one.
+Each request is kept as a number, 0 when it is not set, and the field adds
 the twelve up and checks whether the total is 0.
 
 Two of the numbers can cancel. When a party member falls to poison, the
-field sets one note to -1. If Isaac is standing at that moment on a cell
-whose mark is 1, the step note is 1. The total is 0, and the field
+field sets one request to -1. If Isaac is standing at that moment on a cell
+whose behavior is 1, the step request is 1. The total is 0, and the field
 carries on as if nothing had happened. The message that someone's
 strength is exhausted would then wait until the next thing interrupts
 the walk. Many scenes have cells marked 1, 154 of them. The code marks

@@ -123,12 +123,12 @@ The formation also says how its enemies line up, in one of two ways:
   middle, the Harridan beside it, a Stone Soldier on its other side and the
   second Stone Soldier beyond the Harridan.
 
-Two enemies of one kind need telling apart, so each takes a mark after its
-name: a digit from 1 in the English game, a letter of the alphabet in the
-Japanese one. The first of a kind has no mark until a second arrives. Then
-both are marked, `Stone Soldier1` and `Stone Soldier2`. An enemy called into
-the battle later takes the next unused mark, and an enemy that leaves gives
-its mark back.
+Two enemies of one kind need telling apart, so each has a character added to
+its name: a digit from 1 in the English game, a letter of the alphabet in the
+Japanese one. The first of a kind has none until a second arrives. Then both
+get one, `Stone Soldier1` and `Stone Soldier2`. An enemy called into the
+battle later takes the next unused one, and an enemy that leaves gives its
+own back.
 
 Every fighter, party member or enemy, is a [unit](../../glossary.md#unit).
 A unit is its stats, its HP and [PP](../../glossary.md#psynergy-and-pp), its
@@ -175,13 +175,14 @@ A turn is every unit acting once. In the recording Ivan, Isaac and Mia attack
 before any enemy moves, and the Lizard King goes last.
 
 The game gets that order by writing every action down before the first one
-plays. Each action is a short note. For Isaac attacking the second enemy in
-the line it says: who acts, Isaac. The command, Attack. Where it is aimed,
-the enemies' second place. And a priority, the number the turn is sorted by.
+plays. Each action is written down in brief. For Isaac attacking the second
+enemy in the line it says: who acts, Isaac. The command, Attack. Where it is
+aimed, the enemies' second place. And a priority, the number the turn is
+sorted by.
 
-The party's notes come from the command menu and the enemies' from their own
-choices. Then the notes are sorted, highest priority first, and played in
-that order.
+The party's actions come from the command menu and the enemies' from their
+own choices. Then the actions are sorted, highest priority first, and played
+in that order.
 
 After every action the game asks whether a side has nobody left standing, so
 a battle can end in the middle of a turn. When every action has played, the
@@ -200,8 +201,8 @@ The command menu asks each party member still standing for one action. A
 party member who has two actions this turn is asked twice. That happens
 after the Djinni Kite has readied them.
 
-A party member who is asleep, confused, charmed or stunned is not asked. A
-note is still written for them, with no command in it. Their place in the
+A party member who is asleep, confused, charmed or stunned is not asked. An
+action is still written for them, with no command in it. Their place in the
 order comes round like anyone's, and that is when the player reads
 `Garet is asleep!`.
 
@@ -211,7 +212,7 @@ drawn at random. With an Agility of 120 it comes out anywhere from 120 to
 from turn to turn. A second action in the same turn gets half that
 priority, so it comes late in the order.
 
-Flee is different. It is one command for the whole party. Its note is given
+Flee is different. It is one command for the whole party. Its action is given
 a priority above any Agility, so the attempt to run plays before anything
 else.
 
@@ -357,21 +358,21 @@ There is a gap in this, and it works in the player's favour. Suppose Garet
 is asleep when Isaac's party chooses Flee. The party always gets away. No
 roll is made at all.
 
-The reason is the order the notes are written in. A party member who is
-asleep, confused, charmed or stunned gets an empty note before the menu even
-opens, so Garet's empty note is the first on the list and Flee is the
-second. But the game only makes the escape roll when the very first note is
-Flee. It finds Garet's, and moves on. Later, when the flight is staged, the
-game asks only whether a roll failed. None did, so `Isaac and friends run!`
-is followed by the party running off the field. Garet is left asleep where
-he stands, and the battle ends as a flight.
+The reason is the order the actions are written in. A party member who is
+asleep, confused, charmed or stunned gets an action with no command before
+the menu even opens, so Garet's is the first on the list and Flee is the
+second. But the game only makes the escape roll when the very first action
+is Flee. It finds Garet's, and moves on. Later, when the flight is staged,
+the game asks only whether a roll failed. None did, so
+`Isaac and friends run!` is followed by the party running off the field.
+Garet is left asleep where he stands, and the battle ends as a flight.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  flee(["The party chooses Flee"]) --> firstnote{"Is Flee the very first note?"}
+  flee(["The party chooses Flee"]) --> firstnote{"Is Flee the very first action?"}
   firstnote -- "yes" --> roll{"The escape roll"}
-  firstnote -- "no: an empty note comes first" --> away(["No roll is made, and the party gets away"])
+  firstnote -- "no: an action with no command comes first" --> away(["No roll is made, and the party gets away"])
   roll -- "it succeeds" --> away
   roll -- "it fails" --> stuck(["No escape: two to five enemies act"])
   classDef sequence fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
@@ -404,9 +405,9 @@ The kind of battle decides which of these rolls are made:
 Just before a unit acts, the player reads its announcement, such as
 `Isaac attacks!` or `Isaac's Swift Sword lets out a howl! Sonic Smash!`.
 
-By then the game has turned the short note from the command menu into a full
-account of the action. When Isaac casts Quake at the middle one of three
-enemies, the account reads something like this:
+By then the game has turned the short action from the command menu into a
+full description of it, the action run. When Isaac casts Quake at the middle
+one of three enemies, the action run reads something like this:
 
 - who acts: Isaac
 - the move: Quake, of the Venus element
@@ -414,7 +415,7 @@ enemies, the account reads something like this:
   each one place away
 - how it is shown: a cast, with Quake's battle effect
 
-Every action of the turn gets such an account, made just as it is about to
+Every action of the turn gets an action run, made just as it is about to
 play.
 
 The first thing checked is whether the unit can act at all:
@@ -497,7 +498,7 @@ When nobody in reach is left, the unit defends instead. That is why, when
 Garet fells the enemy Isaac was also aiming at, the player reads
 `Isaac is defending!`.
 
-For each target the account keeps who it is and how many places it stands
+For each target the action run keeps who it is and how many places it stands
 from the aimed one. That [distance](#distance) is used when the ability
 resolves.
 
@@ -585,9 +586,9 @@ acting unit is picked out with a pulsing glow. Then the action is built,
 and played in the way its staging names.
 
 Afterwards the things an action leaves behind are settled, such as poison,
-and every unit goes back to its spot. The action's note is crossed off. The
-Djinni Ground looks at that: it can only hold a unit whose note is still
-waiting.
+and every unit goes back to its spot. The action is cleared from the turn's
+list. The Djinni Ground looks at that: it can only hold a unit whose action
+is still on the list.
 
 ### An attack
 
@@ -697,10 +698,9 @@ unit falling, or a fresh drawing of the status window.
 While Plasma's lightning is on screen, the battle effect is busy drawing it,
 one frame after another. It cannot also be typing Garet's line.
 
-So the game gives the list to a helper. It keeps a short set of chores that
-it runs once in every frame, whatever else is going on, and it calls each one
-a [task](../../glossary.md#task). Just before the battle effect starts, a
-task is added whose chore is to play the list
+So the game gives the list to a [task](../../glossary.md#task), a small job
+it runs once in every frame, whatever else is going on. Just before the
+battle effect starts, a task is added that plays the list
 ([System](../../system.md#waiting-and-tasks)).
 
 That is how lightning and text can share the screen. Every frame the battle
@@ -1240,7 +1240,7 @@ command menu, the status window and every line of text belong to
   random battle uses is the [field](../field/README.md)'s choice.
 - A turn has room for 20 actions. That is exactly four party members and
   six enemies with two actions each, so it can never run out.
-- An enemy's name has room for 14 characters, its mark included.
+- An enemy's name has room for 14 characters, the added one included.
 
 ## Words used here
 
@@ -1287,7 +1287,7 @@ instructions it is written in. A function is one named piece of them.
   `Battle_Run` in [`battle/run.c`](battle/run.c).
 - An enemy's choice is `BattleAI_ChooseAction` in
   [`battle/enemy_ai.c`](battle/enemy_ai.c).
-- The full account of an action is called the action run, and it is made by
+- The action run is made by
   `BattleActionRun_Build` in [`battle/action.c`](battle/action.c).
 - Each kind of staging is one function in
   [`battle/staging.c`](battle/staging.c).
@@ -1308,12 +1308,12 @@ formation's number, the kind of battle, the music an
 [event](../../glossary.md#event) chose and the
 [battle background](../../glossary.md#battle-background)
 ([Field code](../field/README.md#leaving-for-a-battle-and-coming-back)).
-The battle hands back one number: the count of enemies that fell, or a mark
-for a flight or a defeat. The [main routine](../../glossary.md#main-routine)
-reads it and chooses what runs next
-([System](../../system.md#the-main-routine)). To the main routine a battle
-is one more [sequence](../../glossary.md#sequence), run in place of the
-[field sequence](../../glossary.md#field-sequence). Its fighters are the
+The battle hands back one number: the count of enemies that fell, or a
+special value for a flight or a defeat. The
+[main routine](../../glossary.md#main-routine) reads it and chooses what
+runs next ([System](../../system.md#the-main-routine)). To the main routine
+a battle is one more [sequence](../../glossary.md#sequence), run in place of
+the [field sequence](../../glossary.md#field-sequence). Its fighters are the
 field's [actors](../../glossary.md#actor). The game rules sit in another
 [bank](../../glossary.md#bank) of the cartridge and are reached by
 [far calls](../../glossary.md#far-call).

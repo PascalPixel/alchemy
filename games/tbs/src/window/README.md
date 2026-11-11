@@ -55,7 +55,7 @@ the same even steps.
 Closing is quicker. The window is drawn once more at full size, then at three
 quarters, at half and at a quarter, and on the fifth frame it is wiped away.
 
-Shrinking has one extra chore. A smaller border drawn over a larger one would
+Shrinking takes one extra step. A smaller border drawn over a larger one would
 leave the larger one's edges behind. So a closing window remembers the
 rectangle it last drew, and each frame it wipes that rectangle before drawing
 the next, smaller one.
@@ -93,9 +93,9 @@ the line is finished the field does nothing but wait.
 
 So who is drawing the window?
 
-The game keeps a short list of chores that it runs once in every frame, no
-matter what else is waiting. It calls each one a
-[task](../../glossary.md#task). The windows have a task of their own, and it
+The game keeps a short list of [tasks](../../glossary.md#task) that it runs
+once in every frame, no matter what else is waiting. The windows have a
+task of their own, and it
 does three things each frame, always in this order:
 
 1. Every window that is opening is drawn one step bigger, and every window
@@ -799,7 +799,7 @@ the damage line, and it opens the command menus on the party's turn.
 
 The names that fill a blank are looked up in the game's own lists of
 fighters, items and areas ([Game rules](../game/README.md)). And when the
-player saves, what this page calls writing the file is passed on to the part
+player saves, writing the chosen file is passed on to the part
 of the game that works the cartridge's save chip
 ([Game Pak](../gamepak/README.md#the-flash-chip)).
 

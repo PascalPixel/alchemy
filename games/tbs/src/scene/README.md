@@ -23,24 +23,24 @@ Sanctum's overlay is copied in from the cartridge, and it takes the place
 of Vale's.
 
 The walking itself is the same code everywhere. It is called the
-[field sequence](../../glossary.md#field-sequence), and this page calls it
-the field. The field knows nothing about Vale. It only knows how to ask the
+[field sequence](../../glossary.md#field-sequence), or the
+[field](../../glossary.md#field) for short. The field knows nothing about Vale. It only knows how to ask the
 loaded [scene](../../glossary.md#scene) about itself, and the scene's
 answers are what the player finds there.
 
 One more word is needed from the start. The game remembers the story's
 progress as [game flags](../../glossary.md#game-flag). A game flag is one
-yes-or-no note, such as "the party has left Vale" or "the Nut in Vale has
+yes-or-no fact, such as "the party has left Vale" or "the Nut in Vale has
 been caught". A flag that says yes is called set, and one that says no is
 called clear.
 
-This page follows a scene's answers in the order the field asks for them:
+This page follows a scene's parts in the order the field asks for them:
 
-1. The [entry table](#the-entry-table) is the six questions the field asks
-   every scene.
-2. The [tables](#the-tables) are the answers: where the party arrives, who
-   stands where, where the ways out lead, and what each thing the player can
-   do there starts.
+1. The [entry table](#the-entry-table) has six entries, one for each thing
+   the field asks of every scene.
+2. The [tables](#the-tables) are what those entries hand over: where the
+   party arrives, who stands where, where the ways out lead, and what each
+   thing the player can do there starts.
 3. One line of the last of those tables is a
    [trigger](../../glossary.md#trigger), such as "talking to Dora".
    [How a trigger is chosen](#how-a-trigger-is-chosen) is the rule that
@@ -59,8 +59,8 @@ the story moves on:
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  field(["🏡 The field: the walking, the same everywhere"]) -- "asks its six questions" --> overlay(["The scene's overlay"])
-  overlay -- "answers with" --> tables(["Its tables: entrances, exits, who stands where, triggers"])
+  field(["🏡 The field: the walking, the same everywhere"]) -- "reads the six entries of its entry table" --> overlay(["The scene's overlay"])
+  overlay -- "hands over" --> tables(["Its tables: entrances, exits, who stands where, triggers"])
   tables -- "the player talks, steps or searches: one trigger fits" --> event(["An event plays"])
   event -- "sets" --> flags(["🚩 A game flag: this has happened"])
   flags -- "changes which lines of the tables count" --> tables
@@ -85,10 +85,11 @@ Isaac walks into the Sanctum's door, Vale fades out, and the hall fades in
 with him just inside. Between the two fades, the field has asked the
 Sanctum's overlay what it needs to know to put the hall on screen.
 
-It always asks the same six questions. Every overlay begins with six small
-pieces of code, one to answer each question, always in the same order at
-its very start. So the field can find them in any overlay without knowing
-anything else about it. That fixed set of six is the entry table.
+It always asks the same six things. Every overlay begins with six small
+pieces of code, one for each, always in the same order at its very start.
+So the field can find them in any overlay without knowing anything else
+about it. That fixed set of six is the entry table, and each piece is one
+of its entries.
 
 | The field asks | The scene answers with | When |
 | --- | --- | --- |
@@ -99,15 +100,15 @@ anything else about it. That fixed set of six is the entry table.
 | Are there ways out that hang in the air? | its [exit regions](#exit-regions), which few scenes need | while the party walks |
 | Where does this way out lead? | its list of exits | as the scene ends |
 
-Because every answer comes from code, a scene can answer differently as the
-story moves on. Vale has three lists of what can happen there: one before
+Because every entry is code, a scene can hand over something different as
+the story moves on. Vale has three lists of what can happen there: one before
 the party leaves the village, one after it has left, and one for when it
 comes back from Kalay. Asked "what can happen here?", Vale looks at its
 flags and hands over the right one.
 
 ### The setup
 
-The fourth answer, the setup, is where a scene does whatever a list cannot
+The fourth entry, the setup, is where a scene does whatever a list cannot
 say. Vale's setup, for one arrival:
 
 - stands the stone pillar where the player last pushed it;
@@ -129,7 +130,7 @@ guarding Mt. Aleph where he stood instead of sending him back to his post.
 
 ## The tables
 
-Each of the other answers is a table: a list with one line, called a row,
+Each of the other entries hands over a table: a list with one line, called a row,
 for each thing. One row is a spot the party can arrive at, or a way out, or
 a person standing somewhere, or a thing the player can do.
 
@@ -279,7 +280,7 @@ tunnel has two boxes. Each is 18 pixels square and reaches from 31 to 49
 pixels above the ground, right over the spot where the party arrives by
 that way. Walking about on the floor never touches it. Going up does.
 
-Vale has no exit regions, and answers the field's question with "none".
+Vale has no exit regions, and its entry for them hands the field none.
 Kolima's tunnel and the deck of the Tolbi ship are two scenes that have
 them.
 
@@ -294,7 +295,7 @@ A map's floor is divided into squares 16 pixels on a side, and the game
 calls each square a [cell](../../glossary.md#cell). Every cell carries a
 number called its [cell behavior](../../glossary.md#cell-behavior). Most
 cells carry 0, plain ground. The cell at the foot of Vale's ladder carries
-100. This page calls a cell with such a number a numbered cell.
+100.
 
 By itself 100 means nothing. Vale's trigger table gives it a meaning, with
 a row that says: walking north into a cell numbered 100 plays the event
@@ -311,7 +312,7 @@ mean the same on every map: walls, ledges to jump down, and the plain jars,
 barrels and wells that answer a search with the same two lines everywhere
 ([Maps](../map/README.md#cells)).
 
-A numbered cell can be answered three ways:
+A cell with one of the scene's own numbers can be answered three ways:
 
 - A [step trigger](../../glossary.md#step-trigger) answers the leader
   standing on it, or walking into it.
@@ -367,7 +368,7 @@ brushing past its door.
 
 #### Ways out, searches and Psynergy
 
-A numbered cell that is simply a way out needs no event. Its row names the
+A cell that is simply a way out needs no event. Its row names the
 exit and nothing else. Alpine Crossing has five such rows, one for each
 path that leaves it. The row can also say how the leader leaves: with the
 usual sound, silently, or up or down a staircase, with the stairs' sound
@@ -414,7 +415,7 @@ rows, and one rule decides between them.
 
 The rule: the field reads the scene's trigger table from the top and takes
 the first row that fits. A row fits when it is the right kind, for the
-right actor or numbered cell, and its condition counts.
+right actor or cell, and its condition counts.
 
 Here are the mayor's two rows ([`log_rooms_b.c`](log_rooms_b.c)):
 
@@ -547,8 +548,8 @@ two groups of 256 flags that it wipes clean by itself, and a scene uses
 those for anything that should reset.
 
 Scene temp flags are wiped every time the party enters a scene. Kolima
-Forest notes "the log is in the river" in one of them. Walk out and in
-again, the note is gone, and the scene puts the log where it began.
+Forest keeps "the log is in the river" in one of them. Walk out and in
+again, the flag is clear, and the scene puts the log where it began.
 
 Area temp flags last longer. An [area](../../glossary.md#area) is a group
 of scenes the game treats as one place: Vale's is the village outdoors, its
@@ -557,10 +558,10 @@ temp flags are wiped only when the party enters a scene of a different
 area.
 
 Vale's stone pillar shows the difference. Push it a column to the west.
-Vale notes that in an area temp flag. Go into a house and come out: the
-note has survived, and Vale's setup stands the pillar in the west column
+Vale sets an area temp flag for that. Go into a house and come out: the
+flag is still set, and Vale's setup stands the pillar in the west column
 again. Now walk out to the World Map and come back. The World Map is
-another area, the note has been wiped, and the pillar is back in the
+another area, the flag has been wiped, and the pillar is back in the
 middle.
 
 A battle wipes neither group, since the party comes back to the spot it
@@ -681,8 +682,9 @@ Others take no time. Starting Isaac's walk only tells him where to go, and
 the next line is carried out in the same frame. That is why Isaac is still
 walking as the screen begins to fade.
 
-The last line does not end the scene on the spot. It leaves a note for the
-field, which acts on it once the event has finished. The front page's
+The last line does not end the scene on the spot. It sets a
+[field request](../../glossary.md#field-request), which the field acts on
+once the event has finished. The front page's
 [Vault thieves](../../README.md#the-event) wait for their battle the same
 way.
 
@@ -724,8 +726,7 @@ patrol, a list of moves he works through. And a small piece of code of his
 own runs every frame and turns him to keep watching Isaac. The game calls
 that an update routine.
 
-A [task](../../glossary.md#task) is the same idea belonging to no actor: a
-chore the game does once in every frame. At the end of the roof repair,
+A [task](../../glossary.md#task) is the same idea belonging to no actor. At the end of the roof repair,
 while Isaac's Psynergy is at work on a board, a task plays the sparkle
 sound every 16 frames.
 
@@ -784,7 +785,7 @@ sequenceDiagram
   participant vale as Vale's overlay
   participant main as The main routine
   field->>vale: The step row for cell 9 fits, so play its event
-  vale->>field: A note asking for the exit
+  vale->>field: A request for the exit
   field->>main: Fades out and hands over the exit
   main->>vale: Asks for the exit table
   Note over main: Wipes the scene temp flags, loads the houses' overlay
@@ -808,10 +809,10 @@ it does, and the field plays its event.
 ### The event
 
 The four commands [above](#events) run. The sound plays, the door opens,
-Isaac starts walking in, and the event leaves its note asking for the exit
+Isaac starts walking in, and the event sets its request for the exit
 `VALE_TO_COTTAGE_ROOMS_A_NORTH`.
 
-The event is over. The field finds the note before it looks at anything
+The event is over. The field finds the request before it looks at anything
 else, since leaving comes first. It fades the screen out and hands the exit
 to the main routine.
 
@@ -828,7 +829,7 @@ houses' overlay in place of Vale's.
 
 ### The room
 
-The field starts again and asks the new overlay its questions.
+The field starts again and reads the new overlay's entry table.
 
 The trigger table comes first. Then the entrance table: the row for
 `COTTAGE_ROOMS_A_FROM_VALE_NORTH` puts Isaac at 337 pixels east and 199
@@ -883,7 +884,7 @@ restore the party's PP.
 ## How it fits with the rest of the game
 
 A scene never runs by itself. The main routine loads its overlay, and the
-field asks it the six questions.
+field reads its entry table.
 [System code](../system/README.md#how-an-overlay-reaches-the-rest-of-the-game)
 has the loading, and how an overlay's code reaches the rest of the game.
 
@@ -908,7 +909,7 @@ trigger row or an event.
   loaded. That is why Vault's children are stored twice.
 - A scene's rows can number its actors up to 65, and 64 actors can exist at
   once.
-- A scene has 239 numbers for its numbered cells.
+- A scene has 239 cell behaviors of its own, 1 to 239.
 
 ## Words used here
 
@@ -920,8 +921,6 @@ trigger row or an event.
   ([Conditions](#conditions)).
 - camera box: the rectangle an entrance row gives, which the view stays
   inside. A room on a sheet of rooms is whatever its entrance's box shows.
-- numbered cell: a cell whose cell behavior is one of the scene's own
-  numbers, 1 to 239.
 - scene temp flags and area temp flags: the two groups of flags the game
   wipes by itself, written `FLAG_SCENE_TEMP_xx` and `FLAG_AREA_TEMP_xx`.
 - message: one piece of the game's text. Each has a name, and
@@ -930,7 +929,7 @@ trigger row or an event.
   conversation often have no name of their own.
 - update routine: a piece of code that belongs to one actor and runs every
   frame.
-- setup: the fourth answer of the entry table. The code calls it
+- setup: the fourth entry of the entry table. The code calls it
   `initialize`.
 
 Three files hold what this page describes, for a reader who wants the
@@ -940,7 +939,7 @@ the event commands; a command that takes time does its waiting through
 `wait()`, which [System](../../system.md#waiting-and-tasks) explains. The
 game's list of scenes is `gScenes` in
 [`field/scenes.s`](../field/scenes.s). An overlay is one file, in a fixed
-order: the six answers of the entry table, then its events and other code,
+order: the six entries of the entry table, then its events and other code,
 then its tables. Its events are named for the scene and for what the player
 sees, as `Vale_DoraFretsAboutTheRoof` is.
 

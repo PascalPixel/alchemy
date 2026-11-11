@@ -109,8 +109,8 @@ the English text that run starts at message 386, so the ring's name is:
 ```
 
 Message 651 is stored as `{article_class:2}Healing Ring`. The part in braces
-is a note to the game about which small word, `a`, `an` or `some`, goes in
-front of the name ([Windows](../window/README.md#what-a-blank-can-hold)).
+tells the game which small word, `a`, `an` or `some`, goes in front of the
+name ([Windows](../window/README.md#what-a-blank-can-hold)).
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -205,9 +205,9 @@ A row also says what happens to the item when it is used:
   ([Shops](../shop/README.md#repairing)).
 - Hermes' Water leaves an Empty Bottle behind.
 
-### Marks and worn effects
+### What an item can be, and worn effects
 
-Then come five yes-or-no marks. An item can be cursed. It can refuse to come
+Then come five yes-or-no properties. An item can be cursed. It can refuse to come
 off once worn. It can be rare. It can be kept in a stack, as Herbs are. And
 it can be important, like the Small Jewel, which means it is never dropped
 and a shop will give nothing for it.
@@ -254,12 +254,12 @@ one another. Some slots, then:
 | three Herbs (item 180)   | 180 + 2,048 + 2,048   | 4,276             |
 
 So when Isaac gives Garet a broken Healing Ring, it arrives broken. The
-number 1,289 moves from one list to the other, and the broken mark is part
-of it.
+number 1,289 moves from one list to the other, and being broken is part of
+it.
 
 It also means a sword worn and the same sword not worn are two different
 numbers, 513 and 1. Whenever the game wants to know which item a slot
-holds, it takes the marks and the count off first.
+holds, it takes off the worn, broken and stack parts first.
 
 ### Stacks and gaps
 
@@ -296,8 +296,8 @@ worn, broken or stacked exactly as it was.
 
 ![On the Item screen the hand picks Isaac's Machete and comes to rest on Remove. Watch his Attack in the status panel: it shows the number he has now and the lower one he would have without the Machete.](https://alchemy.pascalpixel.com/guides/game/items.gif)
 
-The Machete is the sword Isaac starts the game with. Its row carries the
-mark that says it cannot come off, so Remove is greyed out for it. The hand
+The Machete is the sword Isaac starts the game with. Its row says it cannot
+come off, so Remove is greyed out for it. The hand
 can still rest on Remove, though, and while it does the status panel shows
 what taking the Machete off would do: his Attack would fall from 24 to 17.
 
@@ -460,26 +460,26 @@ ready-made sets of levels, Power and Resist instead.
 The class is chosen from the element levels and nothing else.
 
 First the two strongest elements pick a class series, a ladder of classes.
-Venus alone is the Squire's ladder, Mars alone the Guard's, Mercury alone
+Venus alone is the Squire's series, Mars alone the Guard's, Mercury alone
 the Water Seer's and Jupiter alone the Wind Seer's.
 
 A second element only counts once it reaches level 1, and then the pair
-picks a mixed ladder. Isaac's own 0.3 in Mercury is too little. Set one
+picks a mixed series. Isaac's own 0.3 in Mercury is too little. Set one
 Mercury Djinni on him, though, and he stands at 1.3. Venus with Mercury is
-the Swordsman's ladder, so he becomes a Swordsman.
+the Swordsman's series, so he becomes a Swordsman.
 
-Then the character gets the highest class on the ladder whose requirements
+Then the character gets the highest class in the series whose requirements
 it meets. Each class's row says the level it needs in each element. On
-Isaac's own ladder a Squire needs Venus 5, a Knight 7, a Gallant 9, a Lord
+Isaac's own series a Squire needs Venus 5, a Knight 7, a Gallant 9, a Lord
 11 and a Slayer 13.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
   levels(["The character's four element levels"]) --> second{"Has a second element reached level 1?"}
-  second -- "no" --> single(["The strongest element's own ladder"])
-  second -- "yes" --> mixed(["The mixed ladder of the two strongest"])
-  single --> top(["The highest class on the ladder whose needs are met"])
+  second -- "no" --> single(["The strongest element's own series"])
+  second -- "yes" --> mixed(["The mixed series of the two strongest"])
+  single --> top(["The highest class in the series whose needs are met"])
   mixed --> top
   classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
@@ -605,12 +605,12 @@ tenths, which works out to 29 or 30 HP when the game begins.
 The [party](../../glossary.md#the-party) is the characters travelling
 together, and the game keeps it in two ways at once.
 
-Each character has a yes-or-no note saying whether it is in the party. And a
+Each character has a yes-or-no fact saying whether it is in the party. And a
 list holds the members in order, which is the order the menus and the battle
 show them in.
 
-Joining sets the note and adds the character to the end of the list. Leaving
-clears the note and closes the gap in the list.
+Joining sets that fact to yes and adds the character to the end of the list.
+Leaving sets it to no and closes the gap in the list.
 
 The party's coins are one number for everyone, kept between 0 and 999,999.
 The shops, the inn, the sanctum, a battle's spoils and Lucky Dice all change
@@ -631,7 +631,7 @@ in them, which earn Game Tickets, and the tickets given so far
 Granite waits in Kolima until Isaac talks to it. After it joins, it is never
 standing there again. How does the game know?
 
-It keeps 4,096 yes-or-no notes about what has happened: a chest opened, a
+It keeps 4,096 yes-or-no facts about what has happened: a chest opened, a
 Djinni found, a conversation already had. Each one is a
 [game flag](../../glossary.md#game-flag), and each has a number, from 0 to
 4,095.
@@ -655,7 +655,7 @@ Most flags belong to one moment of the story. A few runs of them are set
 aside for a purpose:
 
 - Flags 0 to 7 say who is in the party, one for each character. This is the
-  yes-or-no note from the party section: flag 0 for Isaac, 1 for Garet, and
+  yes-or-no fact from the party section: flag 0 for Isaac, 1 for Garet, and
   so on.
 - Flag 32 is the prologue. While it is set, Isaac and Garet are children.
 - Flags 48 to 127 are the 80 Djinn.
@@ -687,7 +687,7 @@ A new game sets every flag to no.
 A shop never runs out of Herbs. The Witch's Wand under Artifacts is
 different: it can sell out.
 
-The Witch's Wand's row carries the rare mark, and every rare item has a
+The Witch's Wand's row says it is rare, and every rare item has a
 counter that says how many of it the shops may still sell. A shop offers the
 item only while its counter is above zero.
 
@@ -878,8 +878,8 @@ player reads them.
 - A character's **element levels** are the Djinn set on it plus its own
   element bonus, counted in tenths.
 - A Djinni is **set** on the unit that holds it or on **standby**.
-- A **class series** is the ladder of classes a character's two strongest
-  elements pick.
+- A **class series** is the run of classes, lowest to highest, that a
+  character's two strongest elements pick.
 - A **rare item counter** says how many of a rare item the shops may still
   sell.
 

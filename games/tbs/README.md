@@ -31,7 +31,7 @@ Here is that moment again, slowly, from the code's side.
 ### Talking to the villager
 
 While the player walks Isaac about the loft, the game is going round a very
-small circle. It moves everything on by one picture's worth, looks whether
+small loop. It moves everything on by one picture's worth, looks whether
 anything has happened that it should deal with, and goes round again. It
 does this about 60 times a second, once for each picture the console draws.
 One trip round is called a [frame](glossary.md#frame).
@@ -57,11 +57,10 @@ Isaac's script is three instructions long: do what the D-pad says, wait one
 frame, start again.
 
 On the frame the player presses A, that first instruction notices. It
-doesn't start a conversation itself. It only leaves a note that says "A was
-pressed". The game calls such a note a
-[request](glossary.md#field-request).
+doesn't start a conversation itself. It only sets a
+[request](glossary.md#field-request) that says "A was pressed".
 
-At the end of the frame the circle finds the note and looks at what is in
+At the end of the frame the game finds the request and looks at what is in
 front of Isaac. It is the villager, so this is a talk.
 
 Every place in the game has a list of the things that can happen there. The
@@ -97,8 +96,8 @@ and the same last line, which ends `Get 'em!!!`
 All through this the event is waiting for things: dozens of pauses, each
 from a sixth of a second to a little over a second, people walking, windows
 of text waiting for A. Each time, the event's code stops at that line until
-the thing is done. How the thieves keep walking while it is stopped is the
-river question, and it gets its own section below.
+the thing is done. How the thieves keep walking while it is stopped is a
+question of its own, and the section below answers it.
 
 Near its end the event writes down where the story should go after a win and
 where after a loss. Both are the loft again, but by two differently named
@@ -112,9 +111,9 @@ It asks for a battle. The game keeps its groups of enemies in lists, and the
 two things in the brackets say which list, the one for the story's fights
 around Vale and Vault, and which entry in it, number 5.
 
-Notice that it only asks. It leaves a request, the same kind of note the A
-press was. The battle can't start while the event is still running. It
-starts once the event has ended and the game looks at its notes again.
+Notice that it only asks. It sets a request, the same kind the A press
+set. The battle can't start while the event is still running. It starts
+once the event has ended and the game looks at its requests again.
 
 ### The battle
 
@@ -182,9 +181,9 @@ page takes them in this order:
 
 1. Code such as the event is written in the order things happen, and stops
    wherever something takes time ([Code that waits](#code-that-waits)).
-2. While it is stopped, the game still runs a short list of chores in every
-   frame, the tasks ([Tasks](#tasks)).
-3. One of those chores moves every actor a little further through its actor
+2. While it is stopped, the game still runs a short list of small jobs in
+   every frame, the tasks ([Tasks](#tasks)).
+3. One of those tasks moves every actor a little further through its actor
    script ([Actor scripts](#actor-scripts)).
 4. Around all of it, the main routine runs one sequence after another: the
    loft, the battle, the loft again
@@ -246,8 +245,9 @@ instruction [`wait`](glossary.md#wait) with a number of frames. And `wait`
 does not sit idle. For each frame it is asked for, it runs one whole frame
 of the game:
 
-1. It runs every [task](glossary.md#task), the chores that keep the screen
-   alive. The actors move, the windows type their letters, the river flows.
+1. It runs every [task](glossary.md#task), the small jobs that keep the
+   screen alive. The actors move, the windows type their letters, the
+   river flows.
 2. It writes down where every small moving picture on the screen should be
    drawn.
 3. It stops until the console has shown the picture.
@@ -322,14 +322,14 @@ behind it. This is the game's [slowdown](glossary.md#slowdown)
 Garet's sister's line arrives a letter at a time, and when the page is
 full a small arrow bobs at its end. Both are done by a task.
 
-A [task](glossary.md#task) is one of the chores `wait` runs in every frame.
+A [task](glossary.md#task) is one of the small jobs `wait` runs in every frame.
 It is a small piece of code that does one frame's worth of something and
 finishes at once: every person moved one step on, the next letters
 typed, the river's squares swapped for the next picture of water.
 
-The game keeps the tasks in a list with room for 20. Whatever needs a chore
-done puts a task on the list. From then on it runs in every frame, whatever
-else is going on, until it is taken off again.
+The game keeps the tasks in a list with room for 20. Whatever needs a job
+done every frame puts a task on the list. From then on it runs in every
+frame, whatever else is going on, until it is taken off again.
 
 The order they run in matters, so each task is given a rank and higher ranks
 run earlier in the frame. While the party walks around a town, the task that
@@ -337,11 +337,11 @@ moves the actors runs before the task that slides the map along to follow
 Isaac. Both run before the task that puts each actor's picture on the
 screen. In any other order Isaac would be drawn where he was a frame ago.
 
-### Notes for the code that waits
+### Requests for the code that waits
 
 A task has one frame, so it can't start a conversation or open a menu, which
-take many. What it can do is leave a note for the code that is waiting. The
-A press in the loft was one: a request.
+take many. What it can do is set a request for the code that is waiting. The
+A press in the loft was one.
 
 There are twelve kinds of request, and each is something the walking leader
 has run into: a way out, an enemy, a person to talk to, a chest, a button
@@ -363,7 +363,7 @@ flowchart LR
 ```
 
 One press of A can become three things. The game looks at what is in front
-of Isaac and leaves a second note: a talk if someone is there, a search if
+of Isaac and sets a second request: a talk if someone is there, a search if
 there is something to search, and the menu if there is neither. Then it
 answers that one. [Requests](#requests), near the end of this page, lists
 all twelve.
@@ -477,10 +477,9 @@ flowchart TD
   class back request
 ```
 
-A sequence leaves that word in a set of notes every sequence can read and
-nothing ever clears. The code's name for a set of notes like this is a
-work, so these are the
-[main routine's work](glossary.md#main-routines-work). The main routine is
+A sequence leaves that word in a block of memory every sequence can read
+and nothing ever clears. The code calls such a block a work, so this one is
+the [main routine's work](glossary.md#main-routines-work). The main routine is
 `MainRoutine_Run` in [main_routine.c](src/system/main_routine.c), and it is
 short enough to read in one sitting.
 
@@ -666,7 +665,7 @@ set, or must be clear, for it to be there at all. Each time the party
 arrives at the gate, the game places everyone whose flag agrees
 ([Scenes](src/scene/README.md#who-stands-where)).
 
-Two stretches of the flags are scratch notes with a short life:
+Two stretches of the flags are short-lived:
 
 - 256 scene flags are cleared each time the party walks into a scene.
 - 256 area flags are cleared when the party crosses into another area.
@@ -800,8 +799,8 @@ Where the code itself is kept is the first thing under
 ## For readers of the code
 
 These last sections are for anyone about to open the source. They say where
-the code is kept and how the pieces above share the console's memory, the
-small store a running game keeps its notes in.
+the code is kept and how the pieces above share the console's memory, where
+a running game keeps what it is working on.
 
 The cartridge holds everything: the code, and every picture, map, tune and
 line of text. The code on it is kept in two ways. Most of it, the part that
@@ -841,9 +840,9 @@ selector Camelot's developers left on the cartridge, one of the
 scene in the game.
 
 It can be that simple because of what the main routine does between two
-sequences. It empties the list of tasks and takes back every piece of memory
-the last sequence borrowed. The memory is borrowed from a shared supply
-called the [heap](glossary.md#heap-and-pools). The next sequence starts as
+sequences. It empties the list of tasks and takes back every block of memory
+the last sequence took from the [heap](glossary.md#heap-and-pools), the
+game's shared supply of memory. The next sequence starts as
 if nothing had run before it.
 
 So a sequence can pass something on only through the two things that are

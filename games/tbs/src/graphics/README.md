@@ -269,14 +269,14 @@ picture named is shown exactly as drawn, whichever way Isaac faces. Some of
 his poses were drawn only once, pictures 135 to 143 among them, and the
 animations that use them begin with `kind 17`.
 
-### The sprite bank
+### The sprite table
 
 Every figure the field and the battle draw has a number, and Isaac's is 0.
 Garet is 1, Ivan 2, Mia 3.
 
-The table that holds them all is the sprite bank. For each number it gives
+The table that holds them all is the sprite table. For each number it gives
 the figure's size, its pictures and its animations. To draw anyone, the
-field or the battle asks the bank for a number. The bank has 367 figures.
+field or the battle looks a number up in it. The table has 367 figures.
 
 One of them differs by language. Sprite 21 is the little bubble that pops up
 over someone's head, with a heart or an exclamation mark in it. The Japanese
@@ -387,7 +387,7 @@ The battle draws it on a layer the console can zoom
 ![A battle opens on one Skeleton: watch its picture change as the camera swings round to the party's side, and again as it rushes in to attack](https://alchemy.pascalpixel.com/guides/graphics/monster.gif)
 
 A [monster](../../glossary.md#monster) is a sprite like Isaac, with a number
-in the sprite bank and a list of animations. Only its pictures are kept
+in the sprite table and a list of animations. Only its pictures are kept
 apart, in `monster/`.
 
 `monster/skeleton.png` is a strip of twelve pictures, each 64 pixels square.
@@ -529,7 +529,7 @@ program can open ([Sound](../sound/README.md#the-sound-driver)).
 
 - **sheet**: a PNG holding many tiles or pictures, such as Isaac's strip of
   210.
-- **sprite bank**: the one table of every figure's size, pictures and
+- **sprite table**: the one table of every figure's size, pictures and
   animations.
 - **backdrop**: a [battle background](../../glossary.md#battle-background).
 - **form** and **codec**: how a picture is laid out and how it is squeezed
@@ -552,7 +552,7 @@ colours first and its pixels straight after, under the one name
 `Battle_GrasslandBackdrop`. A tileset is the exception: it is placed by the
 file of a map that uses it, right after that map.
 
-The sprite bank is built from `sprite/sprites.tsv` and every sheet and
+The sprite table is built from `sprite/sprites.tsv` and every sheet and
 animation file. It has 512 numbered places, of which 367 are filled. In an
 animation, the numbers from 239 up are how the commands are stored, which
 is why pictures stop at 238.
@@ -579,7 +579,7 @@ The first ending is the form: the layout the pixels are stored in.
 | `pictures`       | a strip of pictures of one size                 | the Skeleton                               |
 | `font`           | letters: each one's width and its rows of dots  | `font/text.png`                            |
 | `parts`          | several pictures of mixed forms in one file     | the title intro's sun                      |
-| `spriteblocks`   | every sprite's size, sheet and animations       | the sprite bank                            |
+| `spriteblocks`   | every sprite's size, sheet and animations       | the sprite table                           |
 
 The second ending is the codec: the way the file is squeezed. A file with no
 second ending is not squeezed at all, like the windows' borders, which the

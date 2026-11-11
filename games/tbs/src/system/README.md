@@ -15,9 +15,9 @@ of them has to wait, for a window, a walk or a fade, it hands over to one
 small function named [`wait()`](../../glossary.md#wait).
 
 While `wait()` waits, it keeps the rest of the game going. For every picture
-the screen shows, it runs a short list of chores. The game calls each chore
-a [task](../../glossary.md#task), and each picture, with the work that goes
-into it, a [frame](../../glossary.md#frame). Typing the next letters and
+the screen shows, it runs a short list of small jobs. The game calls each
+one a [task](../../glossary.md#task), and each picture, with the work that
+goes into it, a [frame](../../glossary.md#frame). Typing the next letters and
 bobbing the arrow is one of those tasks.
 
 That function, and the few things it needs around it, are what the credits
@@ -87,8 +87,8 @@ The Camelot logo that follows is not part of start-up. It is the first thing
 the main routine runs.
 
 The four reset buttons do not restart the game on the spot. Their handler
-only leaves a note that a reset is wanted. `wait()` reads the note at the
-end of the frame it is working on, and jumps to the cartridge's first
+only records that a reset is wanted. `wait()` checks for it at the end of
+the frame it is working on, and jumps to the cartridge's first
 instruction then.
 
 The German, French, Spanish and Italian editions switch on a third
@@ -127,20 +127,20 @@ routine first stops them all:
 - **Looping sounds.** Some sound effects loop, such as a rolling log. The
   main routine plays a silent sound in their place, which cuts the loop off.
   Three scenes want their sound to carry over the change: the World Map's
-  lighthouse transition and two Venus Lighthouse scenes. They leave a note
-  that skips the silence once.
+  lighthouse transition and two Venus Lighthouse scenes. They ask for the
+  silence to be skipped once.
 - **Effects drawn line by line.** The console can interrupt the game after
   every line of the picture it draws, or when the drawing reaches one chosen
   line. A sequence uses these to change the picture from one line to the
   next, as the opening of a battle does. A handler left behind would keep
   running under the next sequence, so both interrupts are switched off.
 - **Tasks.** The list of tasks is emptied.
-- **Borrowed memory.** Everything the last sequence borrowed is taken back
-  at once ([the heap](#the-heap)), and so is the memory the sprites'
+- **Memory from the heap.** Every block the last sequence took is taken
+  back at once ([the heap](#the-heap)), and so is the memory the sprites'
   pictures were in.
 
-Very little survives this. The party, its coins and Djinn and the note of
-what runs next live in one block of memory the game calls the
+Very little survives this. The party, its coins and Djinn and what runs
+next live in one block of memory the game calls the
 [main routine's work](../../glossary.md#main-routines-work). The
 [game flags](../../glossary.md#game-flag) live beside it. A flag is one
 yes-or-no fact, such as a chest being open. Those, and a few fixed blocks,
@@ -640,9 +640,9 @@ Underneath, the two consoles trade one small message each way at every
 VBlank. A message is a fixed, small size, and anything larger rides inside a
 run of them.
 
-Each message travels with a number, a note of which console has not been
-heard from, and a checksum like a save's. A message that does not add up is
-thrown away.
+Each message travels with a number, a value saying which console has not
+been heard from, and a checksum like a save's. A message that does not add
+up is thrown away.
 
 Something bigger, such as a whole
 [party](../../glossary.md#the-party) for a link battle, is cut into numbered
@@ -740,8 +740,8 @@ the fighters moved and the background not
 ([System](../../system.md#design) covers the rest).
 
 The second choice is that every sequence starts from nothing. The cave's
-tasks, its borrowed memory and its line-by-line effects are all gone before
-the battle begins, and only the party and the flags cross over
+tasks, its blocks from the heap and its line-by-line effects are all gone
+before the battle begins, and only the party and the flags cross over
 ([The Broken Seal](../../README.md#why-every-sequence-starts-fresh)).
 
 ## How it fits with the rest of the game
@@ -772,8 +772,9 @@ handed over to the scene's code, which handed over to the function that
 shows a line, which handed over to `wait()`. Each of them is waiting for the
 next to finish.
 
-Every function that is waiting like this keeps a few notes: who it is
-waiting for, what it was doing. The notes go on the stack, a strip of memory
+Every function that is waiting like this keeps what it was in the middle of:
+who it is waiting for, what it was doing. It keeps it on the stack, a strip
+of memory
 that fills as functions hand over to one another and empties as they
 finish. The longer the chain, the fuller the stack.
 
@@ -783,23 +784,23 @@ That is a problem for waiting. While something waits, the tasks run, and at
 every VBlank so does the handler, and all of them need room on the stack. If
 the waiting chain had nearly filled it, there would be none left.
 
-So the game keeps a mark on the stack with 512 bytes of room beyond it.
-`wait()` first looks at how full the stack is. If it has filled beyond the
-mark, `wait()` moves everything beyond the mark into a spare block
-elsewhere, and the stack is back to being filled only as far as the mark.
+So the game sets a limit on the stack: a fixed point with 512 bytes of room
+beyond it. `wait()` first looks at how full the stack is. If it has filled
+beyond the limit, `wait()` moves everything beyond it into a spare block
+elsewhere, and the stack is back to being filled only as far as the limit.
 
-When the wait is over it moves the notes back. The waiting functions carry
-on without having noticed. If the stack never reached the mark, nothing is
-moved at all.
+When the wait is over it moves those values back. The waiting functions
+carry on without having noticed. If the stack never reached the limit,
+nothing is moved at all.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  enter(["wait() begins. Has the stack filled beyond the mark?"])
+  enter(["wait() begins. Has the stack filled beyond the limit?"])
   enter -- "no" --> plain(["The frames run on the stack as it is"])
-  enter -- "yes: the notes beyond the mark are moved aside" --> saved(["The spare block holds them for the wait"])
-  enter -- "yes: the stack is full only up to the mark" --> run(["The frames run with 512 bytes of room"])
-  run -- "the frames are done" --> restore(["The notes are moved back and wait() ends"])
+  enter -- "yes: the values beyond the limit are moved aside" --> saved(["The spare block holds them for the wait"])
+  enter -- "yes: the stack is full only up to the limit" --> run(["The frames run with 512 bytes of room"])
+  run -- "the frames are done" --> restore(["The values are moved back and wait() ends"])
   saved -- "moved back" --> restore
   classDef code fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
@@ -812,11 +813,11 @@ The spare block holds 3,152 bytes, far more than can ever need moving.
 
 This costs one rule: a task must finish within its frame and may not itself
 wait. There is only one spare block, so a task that waited would start a
-second wait inside the first, and the second lot of notes would land on top
-of the first.
+second wait inside the first, and the second lot of moved values would land
+on top of the first.
 
 Nothing in the game enforces the rule. Its tasks simply keep it
-([Evidence](#evidence)). In the code the mark is `Ram_FrameWaitStackTop`
+([Evidence](#evidence)). In the code the limit is `Ram_FrameWaitStackTop`
 and the spare block `gSavedStack`.
 
 ### The heap
@@ -825,24 +826,24 @@ Open the menu and the game needs somewhere to keep the menu's state. Start a
 battle and it needs room for the fighters' pictures. Close the menu, end the
 battle, and that memory is wanted for something else.
 
-The heap is the part of memory the game lends out this way, in blocks.
+The heap is the part of memory the game hands out this way, in blocks.
 
 It works like a stack of plates. Each block goes on top of the last. Giving
-a block back gives back everything put on after it as well. So lending is
-only a matter of noting where the top now is, and taking back is moving that
-note down again. Neither costs any time to speak of.
+a block back gives back everything put on after it as well. So handing one
+out is only a matter of writing down where the top now is, and taking it
+back is moving that point down again. Neither costs any time to speak of.
 
 In return, blocks have to go back in the reverse of the order they were
-lent. The main routine also empties the whole heap before each sequence, so
-nothing borrowed in the cave is still held in the battle.
+handed out. The main routine also empties the whole heap before each
+sequence, so nothing the cave took is still held in the battle.
 
 There are two heaps, one in the small fast memory and one in the larger,
-slower memory the game calls EWRAM. A borrower is given fast memory if there
-is room and slow memory if not. A part of the game that wants room more than
-speed, as the battle and the save do, asks the other way round.
+slower memory the game calls EWRAM. Code that asks is given fast memory if
+there is room and slow memory if not. A part of the game that wants room
+more than speed, as the battle and the save do, asks the other way round.
 
-Some blocks have to be found again by a function that did not borrow them.
-The menu's state is one: the function that opens the menu borrows it, and
+Some blocks have to be found again by a function that did not ask for them.
+The menu's state is one: the function that opens the menu takes it, and
 every menu screen after that reads it. For these the game keeps 62 numbered
 places, the [heap slots](../../glossary.md#heap-slot), one for each such
 block. The menu's is one slot, the field's another. The game calls a block
@@ -853,13 +854,13 @@ So the function that sets a work up and the functions that read it all make
 the same request.
 
 Giving blocks back out of order goes wrong later, not at once. The blocks
-lent after the one given back still sit in their slots, but their memory is
-free again and the next borrower is handed it. Two parts of the game then
-write over each other.
+handed out after the one given back still sit in their slots, but their
+memory is free again and the next code to ask is handed it. Two parts of
+the game then write over each other.
 
 For the same reason a block is given back only when nothing uses it any
 more. When the Gaia Psynergy's effect ends in a battle, it first takes its
-copying task off the list, and only then gives back what it borrowed.
+copying task off the list, and only then gives back its block.
 
 ### Memory map
 
@@ -872,7 +873,7 @@ fast, and holds what must run or be read quickly.
 
 | EWRAM, from | Size | What |
 | --- | --- | --- |
-| 0 KB | 32 KB | the game's own notes: the main routine's work, the game flags, what the sound is playing |
+| 0 KB | 32 KB | what the game keeps: the main routine's work, the game flags, what the sound is playing |
 | 32 KB | 32 KB | the current scene's code, its overlay |
 | 64 KB | 112 KB | the map being walked on: its grid of [cells](../../glossary.md#cell), the squares it is made of, their [pictures](../../glossary.md#cell-picture), and room for unpacking; a battle keeps the fighters' pictures here |
 | 176 KB | 16 KB | the shapes of the ground |
@@ -882,14 +883,14 @@ fast, and holds what must run or be read quickly.
 | IWRAM, from | What |
 | --- | --- |
 | 0 KB | the 5 KB of resident code copied in at start-up |
-| 5 KB | the busiest notes, among them the heap slots and the list of tasks |
+| 5 KB | the most used values, among them the heap slots and the list of tasks |
 | 8 KB | the smaller heap, up to 30 KB |
 | 28 KB | a second copy of the sound-making function, put there when the sound starts |
 | 30 KB | the stack |
 
 The places are the same in every [edition](../../glossary.md#editions),
-with one exception. The German edition leaves 16 bytes empty before the
-notes in IWRAM, so each of them sits 16 bytes further on. Nothing in the
+with one exception. The German edition leaves 16 bytes empty before those
+values in IWRAM, so each of them sits 16 bytes further on. Nothing in the
 German game uses those 16 bytes.
 
 Look at the second table again. The smaller heap runs up to 30 KB, but
@@ -941,11 +942,12 @@ So after unpacking, the game goes through the code and corrects each one
 
 ### The link cable's packet
 
-A message is 24 bytes. With its number, its note and its checksum in front
-it makes a packet of 28, sent two bytes at a time in 14 pieces. One of the
-two consoles sets the pace for both. A message is also thrown away if the
-console's own link hardware flagged the transfer as failed. Larger data goes
-20 bytes to a message. The code is `system/serial.c`.
+A message is 24 bytes. With its number, the value saying which console is
+silent and its checksum in front it makes a packet of 28, sent two bytes at
+a time in 14 pieces. One of the two consoles sets the pace for both. A
+message is also thrown away if the console's own link hardware flagged the
+transfer as failed. Larger data goes 20 bytes to a message. The code is
+`system/serial.c`.
 
 ### A slip in the task list
 

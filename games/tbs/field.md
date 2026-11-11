@@ -72,24 +72,24 @@ picture on the screen, and the console draws about sixty a second. In each
 frame everyone in town moves a little. Then the game asks a single
 question: has anything happened that needs an answer?
 
-Whatever needs an answer has left a note. Pressing A leaves one. So does
-stepping onto a doorstep, a battle coming due, or picking a Psynergy from
-the menu. There are twelve kinds of note, and the game calls each a [field
-request](glossary.md#field-request).
+Whatever needs an answer has set a [field
+request](glossary.md#field-request). Pressing A sets one. So does stepping
+onto a doorstep, a battle coming due, or picking a Psynergy from the menu.
+There are twelve kinds of request.
 
-When a note is found the walk stops, and the notes are answered one at a
-time. A note to leave the place is answered first, since nothing else
-matters once the party has gone. When no note is left, the player has Isaac
-back.
+When a request is found the walk stops, and the requests are answered one
+at a time. A request to leave the place is answered first, since nothing
+else matters once the party has gone. When no request is left, the player
+has Isaac back.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
   main(["The game picks the next scene"]) --> setup(["🏡 The scene is set up: the ground, the party, the people"])
   setup --> walk(["One frame: everyone moves, the leader walking"])
-  walk --> requests{"Has anything left a note?"}
+  walk --> requests{"Is any request set?"}
   requests -- no --> walk
-  requests -- "a talk, a search, a menu, a Psynergy" --> answer(["The note is answered"])
+  requests -- "a talk, a search, a menu, a Psynergy" --> answer(["The request is answered"])
   answer --> requests
   requests -- "a way out, or ⚔️ a battle" --> leave(["The scene ends"])
   leave --> main
@@ -375,9 +375,10 @@ a cast moment by moment, and says how far each Psynergy reaches.
 ## Design
 
 Nothing interrupts the walk in the middle of a frame. A doorstep, a button
-or a monster can only leave a note, and the notes are read once the frame
-is over. So an answer always starts between one frame and the next, and can
-take as long as it likes: a single line from the mayor, or a whole cutscene.
+or a monster can only set a request, and the requests are read once the
+frame is over. So an answer always starts between one frame and the next,
+and can take as long as it likes: a single line from the mayor, or a whole
+cutscene.
 
 The walking code never learns the story. It asks each scene its six
 questions again on every visit, and the scene's own instructions decide

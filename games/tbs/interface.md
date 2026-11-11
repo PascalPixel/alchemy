@@ -57,8 +57,7 @@ Something has to redraw the window on each of those frames, and it is not
 the conversation. The part of the game that started the conversation asks
 for the window once and then only waits.
 
-The redrawing is done by a [task](glossary.md#task), which is a small chore
-the game runs once in every frame, whatever else is waiting. The windows have
+The redrawing is done by a [task](glossary.md#task), and the windows have
 a task of their own. Each frame it draws every opening window a little
 bigger and every closing one a little smaller. That is how two windows, such
 as a line and the portrait beside it, can be on the move at once.
@@ -131,13 +130,12 @@ is.
 
 The game does not teach each question how to close all the ones before it.
 While the Psynergy, Item or Status screen is open, a small task watches for
-Start. When it sees the press it plays the cancel sound and leaves a note
-that says "Start was pressed". The note is a
+Start. When it sees the press it plays the cancel sound and sets a
 [game flag](glossary.md#game-flag), one of the yes-or-no facts the game
-keeps.
+keeps, that says "Start was pressed".
 
-Every question looks at that note each frame, beside its own buttons. When
-the note is there, the question ends just as if the player had pressed B. So
+Every question looks at that flag each frame, beside its own buttons. When
+the flag is set, the question ends just as if the player had pressed B. So
 the questions end one after another, back to the icons, and none of them has
 to know how deep the player was.
 
@@ -156,9 +154,9 @@ but the party, so the screen does the work itself.
 
 Move on a stone pillar is different. The pillar belongs to the place, and
 pushing it is the field's business. So the screen does not cast Move. It
-writes down who is casting and what, the whole menu closes, and the field
-sequence finds the note and casts it. That is why the menu is always gone
-before the pillar moves.
+writes down who is casting and what and sets a request, the whole menu
+closes, and the field sequence finds the request and casts it. That is
+why the menu is always gone before the pillar moves.
 
 [The Psynergy screen](src/menu/README.md#the-psynergy-screen) and
 [The Item screen](src/menu/README.md#the-item-screen) give the tests that
@@ -225,7 +223,7 @@ same steps, and one task draws every window. The colour slider is the proof:
 one change, and a conversation, a menu and a shop counter all take the new
 colour.
 
-Menus and counters are also all entered the way the cook answers the door.
-Whatever opened one stops at its line and carries on from there when it
-closes. That is why a shop visit can sit in the middle of a conversation,
-and why Isaac is where the player left him when a menu closes.
+Menus and counters are also all entered the same way. Whatever opened one
+stops at its line and carries on from there when it closes. That is why a
+shop visit can sit in the middle of a conversation, and why Isaac is where
+the player left him when a menu closes.

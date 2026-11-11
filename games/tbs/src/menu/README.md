@@ -111,8 +111,9 @@ flowchart TD
 ```
 
 Going to the field means the same thing each time. The screen writes down
-who is casting and what, the whole menu closes, and the field finds the
-note.
+who is casting and what as a
+[field request](../../glossary.md#field-request), the whole menu closes,
+and the field finds the request.
 
 ![Isaac opens the Psynergy screen in Vale: `Whose Psynergy?`, Isaac; `Which Psynergy?`, Cure; `Use it on whom?`, Garet. Watch Garet's HP rise, Isaac's PP fall by Cure's cost, and the line at the bottom say how it went.](https://alchemy.pascalpixel.com/guides/menu/psynergy-cure.gif)
 
@@ -480,15 +481,14 @@ sequenceDiagram
 Before it asks anything, a screen holds the town still. It tells the
 [actors](../../glossary.md#actor), the people and creatures of the scene, to
 stop being drawn. Most screens also pause the scene's own
-[tasks](../../glossary.md#task). A task is a small chore the game runs once
-every frame, whatever else is waiting. The ones paused here animate the
+[tasks](../../glossary.md#task). The ones paused here animate the
 map, move the weather and carry on any change of colours.
 
 When the screen is done, it undoes all of that and tells the field menu one
 thing: did the player back out, or did they choose something for the field
 to do? After backing out, the icons come back. After a choice for the field,
 the whole menu closes and the field carries on from its line, where it finds
-the note the screen left.
+the request the screen set.
 
 ### The loop of questions
 
@@ -536,8 +536,7 @@ can be four questions down, at `How many?` in the middle of giving away
 Herbs. The game does not teach every question how to close all the ones
 before it. A small task and one flag do it.
 
-A [game flag](../../glossary.md#game-flag) is a yes-or-no note the game
-keeps. Most of them record the story, such as whether a chest has been
+Most [game flags](../../glossary.md#game-flag) record the story, such as whether a chest has been
 opened. This one only means "Start was pressed in a menu".
 
 As a screen opens, it lowers the flag and adds the task. The task runs once
@@ -744,11 +743,11 @@ the rows that are only partly in view.
 The text itself is a plain list with one entry for each line and an empty
 entry for a gap. A special last entry stops the scroll.
 
-The game checks for that last entry a moment too late, after it has borrowed
-some memory to draw a line in. So that memory is never given back, a
+The game checks for that last entry a moment too late, after it has taken
+some memory from the heap to draw a line in. So that memory is never given back, a
 [bug](../../glossary.md#bug-bugfix-and-ubfix) that this code keeps, as it
 keeps everything [the original](../../glossary.md#the-original) game does.
-It does no harm, because the game takes back everything that was borrowed
+It does no harm, because the game takes back every block of the heap
 before the next scene starts, and the next scene is the File Screen.
 
 ## Design
@@ -763,12 +762,12 @@ would sooner or later disagree with it.
 A question knows nothing about the other questions. It reports an answer or
 "backed out", and Start is one flag that all of them read. That is why the
 same Djinn screen can be played by Flint's lesson, and the same row of party
-members can be borrowed by Colosso.
+members can be used by Colosso.
 
 ## How it fits with the rest of the game
 
-When Isaac's Move is chosen at the pillar, the Psynergy screen leaves its
-note with the field, and the field sequence carries it out once the menu has
+When Isaac's Move is chosen at the pillar, the Psynergy screen sets its
+request for the field, and the field sequence carries it out once the menu has
 closed ([Field code](../field/README.md)). The Bone and the dog in Vault go
 the same way.
 
@@ -814,7 +813,7 @@ the kinds of item each one lists first.
 ## For readers of the code
 
 The rest of this page is for someone about to open the source. It says
-where a screen keeps its notes, how the title intro and the credits take the
+where a screen keeps what it is working on, how the title intro and the credits take the
 display for themselves, and where the six languages differ.
 
 ### The menu work
@@ -824,11 +823,11 @@ opened, which party member and item the hand is on, where each party figure
 stands. It keeps all of that in one block of memory, the menu
 [work](../../glossary.md#work), `gMenuWork` in the code.
 
-Only one screen is ever open, so the block changes hands. A screen borrows
-it from the [heap](../../glossary.md#heap-and-pools), the memory the game
-lends out and takes back, as it opens, and returns it as it closes. It is
-always borrowed under the same [heap slot](../../glossary.md#heap-slot), a
-numbered hook, so every piece of code knows where to look for it.
+Only one screen is ever open, so the block changes hands. A screen takes
+it from the [heap](../../glossary.md#heap-and-pools) as it opens, and gives
+it back as it closes. It is always found through the same
+[heap slot](../../glossary.md#heap-slot), so every piece of code knows where
+to look for it.
 
 A screen wipes the block blank as it takes it. That is what lets it close
 "every window" on the way out without a list of the ones it opened: a window
@@ -836,7 +835,7 @@ it never opened is still a blank entry, and a blank entry is skipped.
 
 Each screen reads the block its own way (`struct ItemMenuWork`,
 `PsynergyMenuWork`, `DjinnMenuWork`, `StatusScreenWork`). The shop counters
-borrow the same block. That is safe because a counter opens only when the
+use the same block. That is safe because a counter opens only when the
 player talks to a shopkeeper, and the field menu is closed then.
 
 The Start flag is `FLAG_MENU_START_PRESSED`. Nothing outside the menus

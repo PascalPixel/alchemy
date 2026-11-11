@@ -20,9 +20,9 @@ The small one is the [flash chip](../../glossary.md#flash-chip). It holds
 only 65,536 bytes, but it can be written to, and it keeps what is written
 with the power off. The three save files live there.
 
-The console has memory of its own as well, and the game uses it as a
-workbench while it runs. Things are fetched from the cartridge and laid out
-there. It is emptied when the power goes.
+The console has [memory of its own](../../glossary.md#iwram-and-ewram) as
+well, which the game works in while it runs. Things are fetched from the
+cartridge and laid out there. It is emptied when the power goes.
 
 Four things the player can notice lead into the cartridge:
 
@@ -35,7 +35,7 @@ Four things the player can notice lead into the cartridge:
 4. A sound in a battle, and how one part of the game's code finds another
    ([Banks](#why-the-main-image-is-cut-into-banks)).
 
-What the game keeps on its workbench is in
+What the game keeps in that memory is in
 [System code](../system/README.md).
 
 ## The ROM header
@@ -112,7 +112,7 @@ on the cartridge, counted in bytes from its start. Such a position is called
 an address. Row 908 holds the address where the inn's code begins.
 
 The code is stored packed, squeezed so that it takes less room. The game
-reads it from that address, unpacks it onto the workbench, and runs it
+reads it from that address, unpacks it into the console's memory, and runs it
 there. A scene's unpacked code is called an
 [overlay](../../glossary.md#overlay).
 
@@ -239,11 +239,11 @@ A sector cannot be changed a little at a time. It has to be erased whole
 first, which sets every byte in it to 255, and then filled in again from the
 beginning.
 
-Nor can the game simply put a byte there, the way it does on its workbench.
-The chip takes commands. To write one byte, the game first sends three fixed
-bytes to two fixed spots on the chip, like a knock on a door, and then the
-byte itself. Then it waits. It reads the byte back, again and again, until
-the chip answers with the value that was sent.
+Nor can the game simply put a byte there, the way it does in the console's
+memory. The chip takes commands. To write one byte, the game first sends
+three fixed bytes to two fixed spots on the chip, like a knock on a door,
+and then the byte itself. Then it waits. It reads the byte back, again and
+again, until the chip answers with the value that was sent.
 
 That is done for every byte of the sector, all 4,096 of them.
 
@@ -368,20 +368,19 @@ remember the address of the function that plays a sound, which is called
 ### The table at the front of each bank
 
 The answer is a table at the very start of each bank, the one address that
-never moves. It is a row of signposts, one for each function in the bank
-that other banks may call. A signpost does one thing: it sends whoever
-arrives on to where its function really is.
+never moves. It is a row of [veneers](../../glossary.md#veneer), one for
+each function in the bank that other banks may call. A veneer is a few bytes
+of code that do one thing: send whoever arrives on to where its function
+really is.
 
-The sound bank's table has 16 signposts. The third is for `Sound_Play`. The
-battle code calls the third signpost, the signpost jumps to `Sound_Play`,
-and the sound plays. However the sound bank's code is rearranged, the third
-signpost is in the same spot, and only the signpost has to know where
+The sound bank's table has 16 veneers. The third is for `Sound_Play`. The
+battle code calls the third veneer, the veneer jumps to `Sound_Play`, and
+the sound plays. However the sound bank's code is rearranged, the third
+veneer is in the same spot, and only the veneer has to know where
 `Sound_Play` went.
 
-These things have names. A signpost is a
-[veneer](../../glossary.md#veneer). A bank's row of them is its far-call
-table. A call that goes through one is a
-[far call](../../glossary.md#far-call)
+A bank's row of veneers is its far-call table. A call that goes through one
+is a [far call](../../glossary.md#far-call)
 ([System](../../system.md#banks-and-far-calls) introduces them).
 
 ### A veneer
@@ -399,18 +398,18 @@ Back to Bilibin's inn. Talk to the innkeeper, and the code of his room asks
 the shops' code to run the inn's counter: name the price, take the coins,
 put the party to bed.
 
-His room's code is an overlay, unpacked onto the workbench, so it is in no
-bank at all. It carries a small table of veneers of its own, with one for
-each function on the cartridge that it calls. Those veneers do not point at
-functions. They point at signposts in the banks' tables.
+His room's code is an overlay, unpacked into the console's memory, so it is
+in no bank at all. It carries a small table of veneers of its own, with one
+for each function on the cartridge that it calls. Those veneers do not point
+at functions. They point at veneers in the banks' tables.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  battle(["⚔️ The battle's code, in the battle bank"]) -- "one step" --> soundrow(["The sound bank's table, third signpost"])
+  battle(["⚔️ The battle's code, in the battle bank"]) -- "one step" --> soundrow(["The sound bank's table, third veneer"])
   soundrow --> sound(["📣 Sound_Play, somewhere in the sound bank"])
   inn(["🏡 The innkeeper's room, an overlay"]) -- "first step" --> import(["The overlay's own table"])
-  import -- "second step" --> shoprow(["The shop bank's table, fourth signpost"])
+  import -- "second step" --> shoprow(["The shop bank's table, fourth veneer"])
   shoprow --> checkin(["Inn_CheckIn, somewhere in the shop bank"])
   classDef image fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef table fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
@@ -421,17 +420,17 @@ flowchart TD
 ```
 
 So the innkeeper's call takes two steps. His own table sends it to the
-fourth signpost of the shop bank's table, and that signpost sends it to the
+fourth veneer of the shop bank's table, and that veneer sends it to the
 function that runs the counter, `Inn_CheckIn`
 ([System
 code](../system/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
 
 A bank's table has the same weakness as the resource directory: its order
-can never change. The innkeeper's room knows the fourth signpost only by its
+can never change. The innkeeper's room knows the fourth veneer only by its
 position. Put a new one in ahead of it and his room would call whatever is
 fourth now.
 
-The game shows the rule being kept. One bank's table has 191 signposts in
+The game shows the rule being kept. One bank's table has 191 veneers in
 the Japanese and English editions. The German, French, Spanish and Italian
 editions needed one more, and theirs has 192. The new one went at the very
 end, where it moves nothing.
@@ -439,13 +438,13 @@ end, where it moves nothing.
 ### The fourteen banks
 
 The banks follow the game's parts. Lucky Dice, Lucky Wheels and the credits
-each have a bank whose table is a single signpost: the one thing the rest of
+each have a bank whose table is a single veneer: the one thing the rest of
 the game ever asks of them is to run. The windows' bank has 134.
 
 The first bank, bank 00, is the odd one out. It holds the
 [System](../../glossary.md#system), the groundwork every other part of the
 game stands on, and the other banks call its functions at their real
-addresses, with no signpost in between. Its table is used only by the
+addresses, with no veneer in between. Its table is used only by the
 overlays. Nothing on the cartridge says why it was built this way.
 
 The editions do not all cut the cartridge at the same places, because the
@@ -522,8 +521,6 @@ At switch-on the header hands the console to the
   bank's has 16, and `Sound_Play` is behind the third.
 - **build stamp**: the twelve digits that say when an edition was built. The
   English one is `010918151347`.
-- **workbench**: this page's word for the console's own memory, where the
-  game lays out what it has fetched from the cartridge.
 
 Bank, far call, veneer, overlay, resource directory, flash chip, file and
 part are in the [glossary](../../glossary.md).
@@ -622,7 +619,7 @@ For Atmel, one write is a small sector of 128 bytes, and it erases by
 writing 255s under the same limit. Each chip also has a limit for erasing
 the whole chip, which nothing in the game does.
 
-The limit is kept by one of the console's four timers. The save code lends
+The limit is kept by one of the console's four timers. The save code gives
 the flash routines timer 2, set to interrupt about once a millisecond, and
 each interrupt counts the limit down by one. A Macronix chip whose wait runs
 out is sent its reset command.

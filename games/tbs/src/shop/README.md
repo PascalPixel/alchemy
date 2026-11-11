@@ -242,7 +242,7 @@ The tickets get dearer as they are handed out:
 | 26th on      | 8,000       |
 
 The credit and the number of tickets given are saved with the party's coins,
-so the tally carries on where it was when the game is loaded again.
+so the count carries on where it was when the game is loaded again.
 
 ### Selling
 
@@ -358,9 +358,9 @@ the item shops of Tolbi, Suhalla and Lalivero. Each first visit adds one, so
 after opening all three the party can buy three.
 
 A shop must add its rare items only once, or every visit would make more. So
-for each shop the game keeps a yes-or-no note, saved with the game, that says
-"this shop has been opened". The game calls such a note a
-[game flag](../../glossary.md#game-flag).
+for each shop the game keeps a
+[game flag](../../glossary.md#game-flag), saved with the game, that says
+"this shop has been opened".
 
 Which items have a count at all is a list of its own, shown in
 [Game rules](../game/README.md#rare-item-counters).
@@ -557,9 +557,10 @@ else.
 The cause is a small slip. When A is pressed the picker asks the game's rules
 whether the item may go, and gets back one of three answers: yes, no because
 the story needs it, or no because it won't come off. For the first message it
-checks that answer. For the second it checks something else by mistake, a
-note of which item the player has settled on, and at that moment nothing has
-been settled on. So the test for the second message can never come out true.
+checks that answer. For the second it checks something else by mistake, the
+picker's own result, which item the player has settled on, and at that
+moment nothing has been settled on. So the test for the second message can
+never come out true.
 
 This is a [bug](../../glossary.md#bug-bugfix-and-ubfix) in the game as it
 was sold, and the code here keeps it.
@@ -636,7 +637,7 @@ reaches ([debug menus](../../glossary.md#debug-menus)). One opens a shop
 with 200,000 coins, a broken Virtuous Armlet and Muramasa to repair, and
 party members who are poisoned or haunted.
 
-### Borrowed memory
+### Memory shared with the field menu
 
 A counter has a lot to keep track of while it is open: its windows, the
 party's figures, the list on sale, where the hand is. It keeps all of that

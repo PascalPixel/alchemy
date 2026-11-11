@@ -178,9 +178,8 @@ Here is how that comes about. The effect does not draw on the screen. It
 draws on its own copy of the canvas, and when it has finished a frame's
 drawing it marks the canvas as ready and waits.
 
-The game keeps a short list of chores that it runs once in every frame, and
-calls each one a [task](../../glossary.md#task). One of them, which the
-code calls the transfer, runs in the short gap after the console has
+One of the game's [tasks](../../glossary.md#task), which the code calls the
+transfer, runs in the short gap after the console has
 finished showing one picture and before it starts the next. That gap is the
 [VBlank](../../glossary.md#vblank). If the canvas is marked ready, the
 transfer copies it to the screen.
@@ -690,8 +689,8 @@ Plasma each use 1,024 places of it. For Bolt that is 128 sparks for each of
 up to 8 targets.
 
 A place does not have to hold a spark. Quake throws no particles, and it
-uses the spare numbers of the small array as notes: one for each target,
-saying whether that target has landed yet.
+uses the spare numbers of the small array for something else: one for each
+target, saying whether that target has landed yet.
 
 A particle placed in the battlefield is projected onto the screen and then
 raised by 16 pixels, the height at which effects sit on a fighter.

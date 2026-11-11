@@ -71,9 +71,9 @@ the last sequence left going and clears out the memory it used. The battle
 starts with nothing of the cave's still running under it.
 
 Very little crosses over. The party, its coins and its Djinn are kept in
-one place the clearing never touches, together with a note of what runs
-next. The game's own name for a part's private notes is its work, so this
-is the [main routine's work](glossary.md#main-routines-work). Beside it are
+one place the clearing never touches, together with what runs next. The
+game calls the memory a part keeps for itself its work, so this is the
+[main routine's work](glossary.md#main-routines-work). Beside it are
 the [game flags](glossary.md#game-flag). A flag is one yes-or-no fact the
 game remembers, such as a chest being open.
 
@@ -82,7 +82,7 @@ game remembers, such as a chest being open.
 flowchart LR
   cave(["🏡 Field sequence: Goma Cave"]) -- "ends" --> clear(["Transition: what the cave left going is stopped and cleared"])
   clear --> battle(["⚔️ Battle sequence"])
-  cave -. "leaves a note of what runs next" .-> kept(["Never cleared: the main routine's work and the game flags"])
+  cave -. "writes down what runs next" .-> kept(["Never cleared: the main routine's work and the game flags"])
   kept -. "what crosses over" .-> battle
   classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
@@ -120,11 +120,10 @@ plain list: wait 20 frames, close the screen to black, play the inn's tune
 and wait for it to end, wait 10 frames, open the screen again, wait 30
 more. Nothing in that list has to keep the game running. The waits do it.
 
-In every frame it waits through, `wait()` runs a short list of chores, each
-of which does one frame's share of a job. The game calls a chore a
-[task](glossary.md#task). Typing the next letters into a window is a
-task, which is how the villager's line types itself out while his own code
-stands still.
+In every frame it waits through, `wait()` runs a short list of
+[tasks](glossary.md#task), each of which does one frame's share of a job.
+Typing the next letters into a window is a task, which is how the
+villager's line types itself out while his own code stands still.
 
 Then `wait()` rests until the console has finished drawing the picture. In
 the short pause before the next picture starts, the
@@ -169,7 +168,7 @@ was there before. So only one is ever loaded.
 
 Scenes share overlays. The rooms of one place often have their code in one
 piece, so the 201 scenes need only 96 overlays. But one overlay cannot
-borrow from another, since the two are never loaded together. Code that
+use code from another, since the two are never loaded together. Code that
 two of them need is built into both.
 
 [How an overlay reaches the rest of the game](src/system/README.md#how-an-overlay-reaches-the-rest-of-the-game)
@@ -277,16 +276,16 @@ the [debug menus](glossary.md#debug-menus) rely on it
 
 ### The heap and work
 
-Memory the game uses for a while and then gives up is borrowed from the
+Memory the game uses for a while and then gives up comes from the
 [heap](glossary.md#heap-and-pools). Before a game of Lucky Dice, for
-instance, the main routine borrows a little to keep the player's window
+instance, the main routine takes a little to keep the player's window
 colours safe, and puts the colours back afterwards. The main routine
 empties the whole heap between sequences.
 
-A part of the game that keeps notes to come back to, its
-[work](glossary.md#work), holds them in a numbered place of the heap, a
-[heap slot](glossary.md#heap-slot). [The heap](src/system/README.md#the-heap)
-explains how the borrowing is done.
+A part of the game that keeps what it is working on, its
+[work](glossary.md#work), finds it again through a numbered place of the
+heap, a [heap slot](glossary.md#heap-slot).
+[The heap](src/system/README.md#the-heap) explains how blocks are handed out.
 
 ### Banks and far calls
 
@@ -296,8 +295,9 @@ Most of the game's code runs straight from the cartridge. That code is the
 the shops, one for the sound, and so on.
 
 When the inn, in the shops' bank, wants its tune, it does not go to the
-sound's code directly. It goes to a fixed signpost at the front of the
-sound's bank, a [veneer](glossary.md#veneer), which points on to the code.
-Going by the signpost is a [far call](glossary.md#far-call).
+sound's code directly. It goes to a fixed [veneer](glossary.md#veneer) at
+the front of the sound bank, a few bytes of code that jump on to the real
+thing. Going by the veneer is a
+[far call](glossary.md#far-call).
 [Why the main image is cut into banks](src/gamepak/README.md#why-the-main-image-is-cut-into-banks)
-says what the signposts are for.
+says what the veneers are for.

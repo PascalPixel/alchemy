@@ -317,8 +317,9 @@ A [Psynergy](../../glossary.md#psynergy-and-pp) Stone is placed the same
 way, from a trigger that says "a stone" in place of "a chest".
 
 The game remembers what the player has done with each one. It keeps a long
-row of yes-or-no notes about the story so far, called flags, and each of
-these triggers names one. Once a chest's flag is set, the chest is placed
+row of yes-or-no facts about the story so far, the
+[game flags](../../glossary.md#game-flag), and each of these triggers names
+one. Once a chest's flag is set, the chest is placed
 already open. A chest that turned out to be a Mimic is not placed at all
 once the Mimic is beaten. A Psynergy Stone is not placed once it has been
 taken.

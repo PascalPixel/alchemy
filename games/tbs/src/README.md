@@ -373,8 +373,8 @@ files, shown here for Vale:
 - `src/scene/vale.c`, the scene's code and tables. This is the one to read.
 - `src/scene/entry/vale.s`, the
   [entry table](../glossary.md#entry-table-and-import-table). The field asks
-  every scene the same six questions, among them where the party can come
-  in, who stands where and what can happen. This table has one entry for
+  every scene the same six things, among them where the party can come in,
+  who stands where and what can happen. This table has one entry for
   each ([Scenes](scene/README.md#the-entry-table)).
 - `src/scene/import/vale.s`, the import table: one entry for each function of
   the main image the scene calls.

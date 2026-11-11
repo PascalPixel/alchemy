@@ -65,8 +65,8 @@ Step left from scene 0 and the number goes round to 200, so every scene can
 be reached. The test rooms are the last ten, 191 to 200.
 
 Pressing A works the way a door does. Walk through a door in Vale and the
-game notes which scene and entrance come next, ends Vale, and starts the new
-scene. The selector writes the same note with the two numbers on screen, and
+game sets the [destination](../../glossary.md#destination), ends Vale, and
+starts the new scene. The selector sets it to the two numbers on screen, and
 everything after that happens as it would for a door
 ([Scenes](../scene/README.md#exits)).
 

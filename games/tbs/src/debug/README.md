@@ -2,17 +2,20 @@
 
 ![The debug scene selector opened in Vale: a window names the scene being played by its code and area name, SPWV00 Vale, and as the player steps through them PLOGV00 Vale, WORLD World Map, UTIL (Clear data), TITLE Title screen, MENU Menu test and GET_ITEM Increase item and level; A takes the party to Increase item and level](https://alchemy.pascalpixel.com/guides/debug/map-select.gif)
 
-The cartridge still holds ten [scenes](../../glossary.md#scene) the
-developers used to test the game, and the small window they used to jump to
-any scene at all. A player never sees them: the window opens only in debug
-mode, a switch in memory that start-up turns off.
+The developers left their test rooms on the cartridge. It still holds ten
+[scenes](../../glossary.md#scene) they used to test the game, and the small
+window they used to jump to any scene at all.
+
+A player never sees them. The window opens only in debug mode, a switch in
+memory that start-up turns off.
 
 Eight of the ten are test scenes that hand out
 [Djinn](../../glossary.md#djinn). One raises levels and browses items,
-icons, portraits and abilities. One tests shops and messages. They are
-ordinary scenes, built exactly as [Scenes](../scene/README.md) describes,
-and that makes them worth reading: the test scenes are a whole scene in
-fewer than 130 lines.
+icons, portraits and abilities. One tests shops and messages.
+
+They are ordinary scenes, built exactly as [Scenes](../scene/README.md)
+describes, and that makes them worth reading. The test scenes are a whole
+scene in fewer than 130 lines.
 
 1. How the debug scenes are reached: the selector, and why debug mode stays
    off.
@@ -38,11 +41,12 @@ flowchart TD
 ![The debug scene selector in Vale: a window names each scene by its code and area name, SPAV00 Vale, WORLD World Map, TITLE Title screen, MENU Menu test, as the player steps through them](https://alchemy.pascalpixel.com/guides/engine/debug-select.gif)
 
 The [debug scene selector](../../glossary.md#debug-menus) is a small window
-with two numbers: a scene, from 0 to 200, and an
-[entrance](../../glossary.md#entrance), from 0 to 99. Beside them it shows
-the scene's code and the area name the entrance belongs to, such as
-`PLOGV00` and Vale for Vale on the stormy night. It starts on the scene
-being played, at the entrance the party came in by.
+with two numbers. One is a scene, from 0 to 200, and the other is an
+[entrance](../../glossary.md#entrance), from 0 to 99.
+
+Beside them it shows the scene's code and the area name the entrance belongs
+to, such as `PLOGV00` and Vale for Vale on the stormy night. It starts on the
+scene being played, at the entrance the party came in by.
 
 | Button         | What it does                                        |
 | -------------- | --------------------------------------------------- |
@@ -53,8 +57,8 @@ being played, at the entrance the party came in by.
 | B              | closes the window                                   |
 
 Both numbers wrap round, so the selector reaches every scene. The debug
-scenes are the last ten, 191 to 200: the eight test scenes, then Increase
-item and level and Menu test.
+scenes are the last ten, 191 to 200. They are the eight test scenes, then
+Increase item and level and Menu test.
 
 Leaving through the selector is the same handover as walking through a
 door. The selector writes the chosen scene and entrance as what runs next
@@ -66,20 +70,23 @@ unpacking its [overlay](../../glossary.md#overlay) as it would for any door
 
 The field opens the selector when the
 [Pause menu](../window/README.md#the-pause-menu) is opened with B held, in
-debug mode only. The same mode opens two more tools: a flag editor, in place
-of the field menu when B and Select are held, and a palette editor, with L
-on the Pause menu.
+debug mode only.
+
+The same mode opens two more tools. A flag editor takes the place of the
+field menu when B and Select are held, and a palette editor opens with L on
+the Pause menu.
 
 ### Why debug mode stays off
 
 Debug mode is one switch, `gDebugMode`, and only two pieces of code ever
 write it. Start-up turns it off. A [sprite](../../glossary.md#sprite-and-oam)
-viewer, another developer's tool, turns it on. Other
-[banks](../../glossary.md#bank) could reach the viewer through the field
-bank's table of [far calls](../../glossary.md#far-call), but nothing on the
-cartridge calls it, so a player's game stays in the mode start-up set.
+viewer, another developer's tool, turns it on.
 
-The debug scenes still count as reachable, since the selector reaches them
+Other [banks](../../glossary.md#bank) could reach the viewer through the
+field bank's table of [far calls](../../glossary.md#far-call), but nothing on
+the cartridge calls it. So a player's game stays in the mode start-up set.
+
+The debug scenes still count as reachable, because the selector reaches them
 as it reaches every scene. [Unused](../../glossary.md#unused) is kept for
 what nothing reaches at all, such as the battle test menu the battle bank
 also keeps.
@@ -90,9 +97,10 @@ also keeps.
 
 A scene's setup runs each time the [party](../../glossary.md#the-party)
 enters ([Scenes](../scene/README.md#the-entry-table)). For a town that means
-putting back what its flags say has happened. For a debug scene it means
-building the test again, so a tester can come in as often as needed and find
-the same test.
+putting back what its flags say has happened.
+
+For a debug scene it means building the test again. A tester can come in as
+often as needed and find the same test.
 
 The three setups differ:
 
@@ -105,10 +113,12 @@ The three setups differ:
   and Isaac to 50 outside the Japanese edition. In Japanese the coins are
   also set to 777,777.
 
-Menu test adds to the shops' stock on each visit, so a Masamune bought in
-the room is on sale again the next time the party comes in, as the recording
-shows. Levels are different: the setup raises a level only while it is below
-the target, because levels only ever go up.
+Menu test adds to the shops' stock on each visit. So a Masamune bought in the
+room is on sale again the next time the party comes in, as the recording
+shows.
+
+Levels are different. The setup raises a level only while it is below the
+target, because levels only ever go up.
 
 ## The test scenes
 
@@ -121,14 +131,14 @@ is clear.
 
 Talking to one runs an [event](../../glossary.md#event) two steps long.
 First it gives the party that Djinni, with the same capture the game plays
-everywhere: the Djinni goes to the party member with the fewest. Then it
-clears the Djinni's flag again, so the Djinni is standing there on the next
-visit and the test can be run again.
+everywhere, so the Djinni goes to the party member with the fewest. Then it
+clears the Djinni's flag again. The Djinni is standing there on the next
+visit, and the test can be run again.
 
-Those two steps are all the scenes need from the rest of the game. The
-whole scene is four actors, four rows that say "when the player talks to
-this Djinni, run its event", and four events that make the same two calls,
-in [test_scenes.c](test_scenes.c).
+Those two steps are all the scenes need from the rest of the game. The whole
+scene is four actors, four rows that say "when the player talks to this
+Djinni, run its event", and four events that make the same two calls. You can
+read all of it in [test_scenes.c](test_scenes.c).
 
 The eight test scenes share this one overlay and differ only in their map.
 Each map is drawn with tiles that are all black, so the screen shows the
@@ -143,18 +153,21 @@ raises the party's levels. Others step through every item, icon, portrait
 and ability in the game. Outside Japanese, two more test the emotes.
 
 The level editor raises the party one level with A and five with Start or
-Select, with a jingle for each, and B closes it.
+Select, with a jingle for each. B closes it.
 
 The item browser steps through the 270 item numbers, by one, ten or thirty
 at a time. It skips a number whose item has no icon, and gives the chosen
 item to the first party member with room.
 
 The editions differ. The ability browser can be talked to only in English
-and German, though French, Spanish and Italian keep its code. Force, the
+and German, though French, Spanish and Italian keep its code.
+
+The portrait browser has a second use. Force, the
 [Psynergy](../../glossary.md#psynergy-and-pp) that pushes a thing from a
-distance, can be cast at the portrait browser, which stays where it stands:
-in Japanese that runs a motion test, and elsewhere it shows the captions of
-the character set. The browsers are in [level.c](level.c).
+distance, can be cast at it, and it stays where it stands. In Japanese that
+runs a motion test, and elsewhere it shows the captions of the character set.
+
+The browsers are in [level.c](level.c).
 
 ## Menu test
 
@@ -173,33 +186,39 @@ setup built:
   party members.
 
 There are two Felixes, and they changed most between editions. In Japanese
-they are plain talkers: one opens a character selector whose choice nothing
-uses, the other an item browser.
+they are plain talkers. One opens a character selector whose choice nothing
+uses, and the other opens an item browser.
 
-Everywhere else each Felix answers four ways, since a row of a scene's
-[trigger](../../glossary.md#trigger) table can ask which way the leader is
-facing. Facing the first Felix from below, from the right, from the left or
-from above, the player browses the lines of the weapon shop, the armor shop,
-the item shop or the Sanctum, as the recording shows. The second Felix does
-the same for Xian's three shops, whose keepers call the party warriors
+Everywhere else each Felix answers four ways. He can, because a row of a
+scene's [trigger](../../glossary.md#trigger) table can ask which way the
+leader is facing.
+
+Face the first Felix from below, from the right, from the left or from above,
+and you browse the lines of the weapon shop, the armor shop, the item shop or
+the Sanctum, as the recording shows. The second Felix does the same for
+Xian's three shops, whose keepers call the party warriors
 ([Shops](../shop/README.md)). Facing him from above has no row in English,
 and in the other four editions shows one line from Vale with no speaker.
+
 The scene's code is [test.c](test.c).
 
 ## Design
 
-The debug scenes are ordinary overlays reached through the ordinary
-destination, a scene and an entrance, so testing needs no separate path
-through the code. That works because [every sequence starts
-fresh](../../README.md#why-every-sequence-starts-fresh): a scene builds
+The debug scenes are ordinary overlays, reached through the ordinary
+destination, a scene and an entrance. So testing needs no separate path
+through the code.
+
+That works because [every sequence starts
+fresh](../../README.md#why-every-sequence-starts-fresh). A scene builds
 everything it needs on arrival, wherever the party came from.
 
 ## How it fits with the rest of the game
 
 The debug scenes' events call the same code the real scenes call, through the
 same tables ([System
-code](../system/README.md#how-an-overlay-reaches-the-rest-of-the-game)). The
-selector opens from [the Pause menu](../window/README.md#the-pause-menu),
+code](../system/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
+
+The selector opens from [the Pause menu](../window/README.md#the-pause-menu),
 inside [the field
 sequence](../field/README.md#the-field-sequence-serves-requests). The selector
 and the flag editor are in the window bank

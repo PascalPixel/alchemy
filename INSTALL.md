@@ -1,8 +1,10 @@
 # Building Alchemy
 
-Alchemy is a reconstruction of the source for the two Game Boy Advance Golden Sun games, a [matching decompilation](games/tbs/glossary.md#matching-decompilation): it rebuilds Golden Sun: The Broken Seal (`tbs`) and its sequel, Golden Sun: The Lost Age (`tla`), byte for byte, from the source in this repository. [README.md](README.md) says more about the project.
+Want to build Golden Sun yourself? Three steps, and you have a ROM you made from source.
 
-Every byte of The Broken Seal now comes from source, its pictures, music and text included, so it builds on Linux, macOS and Windows with nothing but this repository. The Lost Age is optional: its code that isn't rewritten yet is still read from your own cartridge dump.
+Alchemy is a [matching decompilation](games/tbs/glossary.md#matching-decompilation) of Golden Sun: The Broken Seal (`tbs`) and its sequel, Golden Sun: The Lost Age (`tla`): it rebuilds both, byte for byte, from the source in this repository. [README.md](README.md) says more about the project.
+
+Every byte of The Broken Seal comes from source, its pictures, music and text included. So it builds on Linux, macOS and Windows with nothing but this repository. The Lost Age is optional: the code that isn't rewritten yet is still read from your own cartridge dump.
 
 ## 1. Install the tools
 
@@ -31,9 +33,15 @@ cd alchemy
 make
 ```
 
-The first `make` builds, once, the old compilers the games were matched with: alchemy-gcc, pret's old_agbcc, GCC 2.95.2 and GNU's assembler 2.10, all from source in the `alchemy-gcc` submodule, with no download. A current compiler would produce different instructions, so the system's `arm-none-eabi-gcc` can't stand in for them. It prints plenty of old-compiler warnings, which is normal, and the compilers and build tools take about 500 MB. Then it builds the English Broken Seal as `out/tbs-en/tbs-en.gba`, ready for an emulator. Other languages build with `make tbs-ja`, `tbs-de`, `tbs-es`, `tbs-fr` or `tbs-it`.
+The first `make` takes a while, because it starts by building the old compilers the games were matched with: alchemy-gcc, pret's old_agbcc, GCC 2.95.2 and GNU's assembler 2.10. They all come from source in the `alchemy-gcc` submodule, with no download, and they are built only once. A current compiler would produce different instructions, so the system's `arm-none-eabi-gcc` can't stand in for them.
 
-To check the build against the original, run `make compare`. It needs no cartridge: it compares the SHA-1 hash of the built file with the original's, recorded in `rom.sha1`, and ends with `OK` when they are equal. Every edition has its `compare-` target, such as `compare-tbs-ja`, `compare-tbs` checks all six of The Broken Seal, and `make -j8` builds in parallel.
+Expect plenty of old-compiler warnings, which is normal, and about 500 MB for the compilers and build tools.
+
+Then it builds the English Broken Seal as `out/tbs-en/tbs-en.gba`, ready for an emulator. Other languages build with `make tbs-ja`, `tbs-de`, `tbs-es`, `tbs-fr` or `tbs-it`.
+
+To check your build against the original, run `make compare`. It needs no cartridge: it compares the SHA-1 hash of the built file with the original's, recorded in `rom.sha1`, and ends with `OK` when they are equal.
+
+Every edition has its own `compare-` target, such as `compare-tbs-ja`, and `compare-tbs` checks all six of The Broken Seal. `make -j8` builds in parallel.
 
 ## 3. Change something
 
@@ -41,7 +49,7 @@ To check the build against the original, run `make compare`. It needs no cartrid
 - `games/tbs/src` holds the code, with the pictures beside it as PNG files.
 - `games/tbs/sound` holds the music and sound effects.
 
-Edit, run `make` again, and play your version. A changed game no longer matches the original, so `compare` will report a difference. Please don't share built ROMs, original or modified.
+Edit, run `make` again, and play your version. A changed game no longer matches the original, so `compare` will report a difference, which is exactly what it should do. Please don't share built ROMs, original or modified.
 
 CI checks formatting with clang-format 21, available from [LLVM's packages](https://apt.llvm.org/). To use the same check locally, run `make format-check CLANG_FORMAT=clang-format-21`, or set `CLANG_FORMAT` to the path of your clang-format 21 executable.
 

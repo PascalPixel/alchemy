@@ -1,15 +1,18 @@
 # The Broken Seal's source
 
 The player sees a town, a battle, a menu or a game of dice, and somewhere in
-this folder is the C that runs it. The folders follow the cartridge, where
-the code lies in two kinds of place
+this folder is the C that runs it.
+
+The folders follow the cartridge, where the code lies in two kinds of place
 ([The console](../README.md#the-console)). The
 [banks](../glossary.md#bank) are fourteen stretches of code the processor
-runs straight from the cartridge, together the
+runs straight from the cartridge, and together they are the
 [main image](../glossary.md#main-image). The
 [overlays](../glossary.md#overlay) are the code of each
 [scene](../glossary.md#scene), unpacked into memory only while the party is
-there. Most folders here are one bank or one kind of overlay.
+there.
+
+Most folders here are one bank or one kind of overlay.
 
 ## Finding the code for something in the game
 
@@ -37,10 +40,11 @@ Start from what was on the screen:
 Searching for the English name of a thing usually finds it. Each battle
 effect's file opens by naming the abilities that play it, so searching
 `battle_effect/` for Quake leads to
-[quake.c](battle_effect/battle_effect/quake.c). The game's text is in
-[`games/tbs/text`](../text), one file for each language, and every message
-there has a name the code uses: "(No saved data)" is `MsgSaveNoData`, and
-searching for that leads to the save file list in
+[quake.c](battle_effect/battle_effect/quake.c).
+
+The game's text is in [`games/tbs/text`](../text), one file for each
+language, and every message there has a name the code uses. "(No saved data)"
+is `MsgSaveNoData`, and searching for that leads to the save file list in
 [window/screens/save.c](window/screens/save.c).
 
 To read the game from the beginning, start at `System_Initialize` in
@@ -113,14 +117,17 @@ a page of its own, and every folder has a guide.
 ## Banks and folders
 
 A bank is a stretch of the cartridge with a fixed start, and the folders are
-cut along the same lines, so a folder's name usually says which stretch of
-the cartridge its code is in. Each bank opens with its far-call table, and
-the banks are named after those tables
+cut along the same lines. So a folder's name usually says which stretch of
+the cartridge its code is in.
+
+Each bank opens with its far-call table, and the banks are named after those
+tables
 ([The Game Pak](gamepak/README.md#why-the-main-image-is-cut-into-banks)
-says why the code is cut up this way). Each large bank is one folder. A
-small bank's code sits in the folder it belongs with: the credits and the
-title intro are banks of their own, and live in `menu/` with the other
-screens.
+says why the code is cut up this way).
+
+Each large bank is one folder. A small bank's code sits in the folder it
+belongs with. The credits and the title intro, for example, are banks of
+their own, and live in `menu/` with the other screens.
 
 | Bank | Its far-call table | Its code                                                        |
 | ---- | ------------------ | --------------------------------------------------------------- |
@@ -167,13 +174,15 @@ Each compiled file is one [object](../glossary.md#object), and inside it
 the functions keep the order they have on the cartridge. Neighbours in a
 file are neighbours on the cartridge.
 
-Some objects are too long to read as one file: the battle's runs to some
+Some objects are too long to read as one file. The battle's runs to some
 13,000 lines. Such an object is written as parts, each holding one family of
-functions, in a folder with the object's name. `battle/battle.c` is only a
-guide to its parts followed by a list of them, and the code is in the 24 files
-of `battle/battle/`, such as `turn.c`, `enemy_ai.c` and `spoils.c`. The parts
-are compiled together as the one file `battle.c`, so they share what
-`battle_internal.h` declares and nothing else needs to see it.
+functions, in a folder with the object's name.
+
+So `battle/battle.c` is only a guide to its parts followed by a list of them.
+The code is in the 24 files of `battle/battle/`, such as `turn.c`,
+`enemy_ai.c` and `spoils.c`. The parts are compiled together as the one file
+`battle.c`, so they share what `battle_internal.h` declares and nothing else
+needs to see it.
 
 Eleven objects are written this way: `system`, `field`, `field_sequence`,
 `event_commands`, `game`, `window`, `screens`, `menu`, `shop`, `battle` and
@@ -184,7 +193,7 @@ to start, and each part opens by saying what it holds.
 
 When the party arrives somewhere, the scene's code is unpacked into memory
 over the scene before, and the field asks it who stands where and what can
-happen ([System](../system.md#overlays)). There are 96 overlays: 93 in
+happen ([System](../system.md#overlays)). There are 96 overlays, 93 in
 `scene/` and 3 in `debug/`. Each is three files:
 
 - `<scene>.c`, the scene's code and tables. This is the one to read.
@@ -231,19 +240,20 @@ whole game shares, and it is where the names of things are:
 | `field/event.h`                            | the calls events are written in                  |
 | `module/<path>.h`                          | what the C file at `<path>.c` defines            |
 
-The last row is the [module header](../glossary.md#module-header): every C
+The last row is the [module header](../glossary.md#module-header). Every C
 file has one at the same path under [`include/module`](../include/module),
 so `battle/battle.c` is declared in `module/battle/battle.h`.
 
 ## C and assembly
 
-Nearly all of the game is C. The processor has two sets of instructions:
-Thumb, whose instructions are 16 bits long, and ARM, whose are 32. Almost
-every C file is Thumb. Three are ARM: `window/glyph_arm.c`,
-`field/world_map_lines.c` and `field/actor_update_arm.c`. The first two are
-copied into RAM before they run, since ARM instructions run slowly from the
-cartridge, and the third is unused
-([Field](field/README.md#routines-run-from-ram)).
+Nearly all of the game is C. The processor has two sets of instructions.
+Thumb's instructions are 16 bits long, and ARM's are 32. Almost every C file
+is Thumb.
+
+Three are ARM: `window/glyph_arm.c`, `field/world_map_lines.c` and
+`field/actor_update_arm.c`. The first two are copied into RAM before they
+run, because ARM instructions run slowly from the cartridge. The third is
+unused ([Field](field/README.md#routines-run-from-ram)).
 
 The files ending in `.s` are assembly, and there are three kinds:
 

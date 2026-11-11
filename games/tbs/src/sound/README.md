@@ -4,12 +4,14 @@
 
 A town's music plays while the cursor clicks through a menu. A chest opens
 with a short tune, and the music comes back by itself. Footsteps and impacts
-play over everything. The player hears three kinds of
-[sound](../../glossary.md#sound): music, which plays on until something
-changes it; a jingle, a short tune that silences the music and then gives it
-back; and an SE, a sound effect, which plays over both. Every one of them is
-asked for the same way, with one call and a number. What happens next is the
-work of five mechanisms:
+play over everything.
+
+The player hears three kinds of [sound](../../glossary.md#sound). Music plays
+on until something changes it. A jingle is a short tune that silences the
+music and then gives it back. An SE, a sound effect, plays over both.
+
+Every one of them is asked for the same way, with one call and a number. What
+happens next is the work of five mechanisms:
 
 1. The sound number, whose range says which kind of sound it is.
 2. The scene's music, chosen when the party arrives.
@@ -35,7 +37,7 @@ flowchart TD
 ```
 
 The folder holds two things. The sound layer, `sound.c`, is the game's own
-code: it makes every decision about what a number means. Under it is the
+code, and it makes every decision about what a number means. Under it is the
 sound driver, Nintendo's MusicPlayer2000, which plays what the layer starts.
 
 ## What a sound number means
@@ -63,8 +65,8 @@ such as footsteps, in under a second.
 ### Each kind has its own players
 
 A music player plays one sound at a time, so two sounds can be heard
-together only on two players. The driver has eight, shared out by kind, and
-that is why an SE never stops the music and a jingle never stops an SE:
+together only on two players. The driver has eight, shared out by kind. That
+is why an SE never stops the music and a jingle never stops an SE.
 
 | Players                                             | How many | Tracks each |
 | --------------------------------------------------- | -------- | ----------- |
@@ -74,21 +76,23 @@ that is why an SE never stops the music and a jingle never stops an SE:
 | footsteps, tremors, water and impacts               | 1        | 2           |
 | every other SE                                      | 4        | 2           |
 
-A track is one line of a tune, such as its melody or its bass, so the music
-can have ten lines going at once and a sound effect two. Each sound names
-its player. An SE
-that names the four shared players takes the first one that is idle, and
-when all four are busy it cuts off the sound on the last. On any other
-player a new sound cuts off the one before, which is why a second menu click
-replaces the first.
+A track is one line of a tune, such as its melody or its bass. So the music
+can have ten lines going at once, and a sound effect two.
+
+Each sound names its player. An SE that names the four shared players takes
+the first one that is idle, and when all four are busy it cuts off the sound
+on the last. On any other player a new sound cuts off the one before, which
+is why a second menu click replaces the first.
 
 ### What music and a jingle do
 
-Asking for the music that is already chosen changes nothing. Every
-[scene](../../glossary.md#scene) can therefore ask for its music each time
-the party arrives, and walking from Vale into one of its houses leaves the
-tune playing on. It also means a piece that ends without looping plays again
-only after other music or a fade. New music starts at full volume.
+Asking for the music that is already chosen changes nothing. So every
+[scene](../../glossary.md#scene) can ask for its music each time the party
+arrives, and walking from Vale into one of its houses leaves the tune playing
+on.
+
+It also means a piece that ends without looping plays again only after other
+music or a fade. New music starts at full volume.
 
 A jingle turns the music's volume to zero, starts on the jingles' player,
 and leaves a note that the music is to come back when it ends
@@ -121,17 +125,18 @@ about 1,300 places in the game call it.
 
 When the party arrives in a scene, the
 [main routine](../../glossary.md#main-routine) asks for the scene's music
-before it fetches the scene's code, so the music is already playing as the
-scene fades in.
+before it fetches the scene's code. That way the music is already playing as
+the scene fades in.
 
 The music comes from a table of rules, `gScene_MusicRules`. A rule names a
 scene or a whole [area](../../glossary.md#area), optionally an
 [entrance](../../glossary.md#entrance) and a
 [game flag](../../glossary.md#game-flag), and gives a sound number. The
-first rule that fits wins. Vale's rules name its area, so its houses fall
-under them too: a house asks for the music the town is already playing, and
-the sound layer leaves it alone. A scene no rule fits gets the order to keep
-whatever is playing.
+first rule that fits wins.
+
+Vale's rules name its area, so its houses fall under them too. A house asks
+for the music the town is already playing, and the sound layer leaves it
+alone. A scene no rule fits gets the order to keep whatever is playing.
 
 A rule with a flag fits only once the flag is set, which lets the story
 change a place's music. Vale's Sanctum has three rules, read in this order:
@@ -142,14 +147,14 @@ change a place's music. Vale's Sanctum has three rules, read in this order:
 | once Sol Sanctum has erupted                          | `MUS_TOWN_IN_TROUBLE`                             |
 | always                                                | `MUS_FILE_SCREEN`                                 |
 
-Before the eruption only the last rule fits. After it the second
-fits too and comes first, so the music changes. Accepting the quest sets
-the first rule's flag, and the usual music is back.
+Before the eruption only the last rule fits. After it the second fits too and
+comes first, so the music changes. Accepting the quest sets the first rule's
+flag, and the usual music is back.
 
-Three flags keep the music where the rules would change it: one for a
-single scene change, one for as long as it stays set, and the one that puts
-the party back where it stood after a battle or the Pause menu, which also
-brings back the music saved when the Pause menu opened.
+Three flags keep the music where the rules would change it. One holds it for
+a single scene change. One holds it for as long as it stays set. The third is
+the flag that puts the party back where it stood after a battle or the Pause
+menu, and it also brings back the music saved when the Pause menu opened.
 
 A battle's music is chosen with its encounter. A short list names the music
 for the fights that have their own, and every other fight takes the usual
@@ -159,20 +164,22 @@ battle music.
 
 To the driver, every sound is a song, whatever its kind. A song is a few
 tracks, and a track is a line of notes with commands among them: set the
-tempo, change the volume, jump back to loop. A music player steps each track
-of its song on a little at every [VBlank](../../glossary.md#vblank), the
-moment about 60 times a second when the screen has just been drawn.
+tempo, change the volume, jump back to loop.
 
-A note becomes sound in one of two ways. It plays a sample, a short
-recording of an instrument, speeded up or slowed down to the note's pitch,
-or it plays a tone on one of the four simple tone generators built into
-the console. A song's voices say which each of its instruments is, and how
-its notes swell and fade.
+A music player steps each track of its song on a little at every
+[VBlank](../../glossary.md#vblank), the moment about 60 times a second when
+the screen has just been drawn.
 
-The console's speaker plays a stream of numbers, 21,024 of them a second.
-The mixer makes them. At every VBlank it adds together the next 352 numbers
+A note becomes sound in one of two ways. It can play a sample, a short
+recording of an instrument, speeded up or slowed down to the note's pitch. Or
+it can play a tone on one of the four simple tone generators built into the
+console. A song's voices say which each of its instruments is, and how its
+notes swell and fade.
+
+The console's speaker plays a stream of numbers, 21,024 of them a second, and
+the mixer makes them. At every VBlank it adds together the next 352 numbers
 of every sample that is playing, on all eight players, and leaves them in a
-buffer the console plays from until the next VBlank: 352 numbers at about
+buffer the console plays from until the next VBlank. So 352 numbers at about
 59.7 VBlanks a second is the 21,024. Up to eight sampled notes can sound at
 once.
 
@@ -205,16 +212,17 @@ happens at the VBlank.
 
 The music's volume is never set in one jump from outside. It has a target,
 and at every VBlank the volume moves one step towards it, a sixty-fourth of
-full volume. That movement is a ramp: from silence to full takes 64 VBlanks,
+full volume. That movement is a ramp. From silence to full takes 64 VBlanks,
 about a second.
 
 When the jingle starts, the sound layer sets the music's volume and its
 target to zero and starts a countdown of ten VBlanks. The music keeps
 playing in silence, so when it returns it has moved on, as if the band had
-played through the night. At every VBlank the countdown drops by one until
-it reaches one, and holds there until the jingles' player has no track left
-playing. Then the countdown clears, the target goes back to full, and the
-ramp does the rest.
+played through the night.
+
+At every VBlank the countdown drops by one until it reaches one. It holds
+there until the jingles' player has no track left playing. Then the countdown
+clears, the target goes back to full, and the ramp does the rest.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -235,9 +243,11 @@ flowchart TD
 The code that played the jingle does nothing more to get its music back.
 What it can do is wait. The inn waits a [frame](../../glossary.md#frame) at
 a time until the countdown has cleared, then ten frames more, and opens the
-screen again, so the room comes back as the music rises. The Sanctum, the
-Lemurian ship and Tolbi's spring wait the same way, and a message window
-reads the same countdown to hold a pause until a jingle has ended.
+screen again, so the room comes back as the music rises.
+
+The Sanctum, the Lemurian ship and Tolbi's spring wait the same way. A
+message window reads the same countdown to hold a pause until a jingle has
+ended.
 
 The silence reaches the music's first eight tracks. Nine pieces of music
 use a ninth or tenth, among them the World Map's and Kalay's, and those
@@ -275,9 +285,10 @@ flowchart TD
   class skip,mix out
 ```
 
-The same check guards the calls themselves: a call that finds the lock
-raised is dropped. That can happen only to a call made inside the interrupt,
-since the interrupt always finishes before the code it broke in on goes on.
+The same check guards the calls themselves. A call that finds the lock raised
+is dropped. That can happen only to a call made inside the interrupt, because
+the interrupt always finishes before the code it broke in on goes on.
+
 Two things call the driver from inside it. The ramps do, and a dropped ramp
 step is made up by the next, since each step sets the whole volume again.
 Lucky Wheels does too, from a [task](../../glossary.md#task) that runs at
@@ -307,21 +318,23 @@ five versions are never heard.
 The sound layer decides and the driver plays. Every decision the game has to
 make about sound is in one place: what a number means, which player takes
 it, what happens to the music under a jingle. The driver knows nothing about
-music, jingles or scenes; it plays songs on players.
+music, jingles or scenes. It plays songs on players.
 
 The number carries the kind, so the caller says nothing else. The code for a
 chest, a menu or a battle effect asks for a sound in one line and cannot get
 the rules wrong.
 
 The music's return is in the VBlank interrupt, not in the code that played
-the jingle. Every jingle in the game gets its music back without any of its
-callers having to remember to ask.
+the jingle. So every jingle in the game gets its music back without any of
+its callers having to remember to ask.
 
 ## How it fits with the rest of the game
 
-Every part of the game plays sound through the one call: the main routine
-asks for each scene's music on arrival, menus click, battle effects play
-their impacts. The VBlank interrupt steps the ramps and runs the mixer
+Every part of the game plays sound through the one call. The main routine
+asks for each scene's music on arrival, menus click, and battle effects play
+their impacts.
+
+The VBlank interrupt steps the ramps and runs the mixer
 ([System code](../system/README.md#the-frame-loop)), and the mixer is part
 of what start-up copies into IWRAM
 ([System code](../system/README.md#memory-map)).
@@ -343,8 +356,8 @@ of what start-up copies into IWRAM
   orders instead of sounds.
 - **song**: the driver's word for one sound's data, whatever kind of sound
   it is.
-- **music player** and **track**: a music player plays one song; a track is
-  one of the song's lines of notes and commands.
+- **music player** and **track**: a music player plays one song, and a track
+  is one of the song's lines of notes and commands.
 - **sample**: a short recording the mixer plays at a note's pitch.
 - **ramp**: the music's volume, or its tempo and pitch together, stepped
   towards a target once a VBlank.
@@ -359,11 +372,11 @@ The driver is Nintendo's, so its code keeps the spellings
 [pret](../../glossary.md#pret) gives the same driver in its own games
 (`SoundInfo`, `MusicPlayerInfo`, `gMPlayTable`, `m4aSoundInit`), including
 its names for fields nothing reads (`dummy1`, `gap`). Where pret has no name
-the name is ours, as are the names of everything Camelot added: the sound
+the name is ours. So are the names of everything Camelot added: the sound
 layer in `sound.c`, the music players beyond the music's own, and the
 interrupt's way into the mixer.
 
-In `sounds.h`, music is named by the
-place or moment the player knows it from (`MUS_DJINN_LESSON`), a sound
-effect by what it sounds like or the moment it marks (`SE_THUMP`). The three
-kinds are The Lost Age's sound test's: Music, Jingle and SE.
+In `sounds.h`, music is named by the place or moment the player knows it
+from (`MUS_DJINN_LESSON`), and a sound effect by what it sounds like or the
+moment it marks (`SE_THUMP`). The three kinds are The Lost Age's sound
+test's: Music, Jingle and SE.

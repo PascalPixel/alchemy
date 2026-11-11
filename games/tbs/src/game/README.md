@@ -2,10 +2,12 @@
 
 ![Isaac opens the field menu in Vale and picks Status: the summary shows his level, experience, HP and PP, Attack 121, Defense, Agility and Luck, his class Knight, and the two Venus Djinn set with each element's level, Power and Resist; his Psynergy list, his equipment and Garet's Status page follow.](https://alchemy.pascalpixel.com/guides/menu/summary-screen.gif)
 
-The Status screen says Isaac's Attack is 121, a shop says the Long Sword
-costs 200 coins and that Ivan `Can't equip` it, a Djinni joins and the save
-file counts one more, and a chest the party has opened stays open. Every one
-of those facts is asked of one part of the code, the game rules. The
+The Status screen says Isaac's Attack is 121. A shop says the Long Sword
+costs 200 coins, and that Ivan `Can't equip` it. A Djinni joins, and the
+save file counts one more. A chest the party has opened stays open.
+
+Every one of those facts is asked of one part of the code, the game rules.
+The
 [field](../../glossary.md#field), the [battle](../../glossary.md#battle),
 the menus and the shops all ask it the same questions, and it keeps the
 only copy of the answers.
@@ -47,10 +49,11 @@ flowchart TD
 ```
 
 The units, the party and the coins live in the
-[main routine's work](../../glossary.md#main-routines-work), which a save
-file keeps together with the game flags, so everything a unit holds
-survives a save and a load. The tables live in the cartridge, as they were
-written, and never change.
+[main routine's work](../../glossary.md#main-routines-work). A save file
+keeps that work together with the game flags, so everything a unit holds
+survives a save and a load.
+
+The tables live in the cartridge, as they were written, and never change.
 
 ## The unit
 
@@ -66,18 +69,21 @@ A unit keeps two copies of each stat. The base stats are what the character
 has earned, and change only when it levels up. The stats the player sees
 are worked out from the base stats and everything on top of them, and are
 rewritten whenever any of that changes
-([Stats](#why-stats-are-always-worked-out-from-scratch)). Beside the stats
-sit the Psynergy list, with room for 32, the inventory of 15 slots, the
-Djinn the unit holds and which of them are set, and what a battle leaves
-on a fighter: poison, sleep, a raised or lowered stat.
+([Stats](#why-stats-are-always-worked-out-from-scratch)).
+
+Beside the stats sit the Psynergy list, with room for 32, the inventory of
+15 slots, the Djinn the unit holds and which of them are set, and what a
+battle leaves on a fighter: poison, sleep, a raised or lowered stat.
 
 An enemy's unit is filled from its row of the enemy table when the battle
-starts: its stats, the items it carries, its levels,
+starts. The row gives its stats, the items it carries, its levels,
 [Power and Resist](../../glossary.md#power-and-resist) in each element, and
 its name, with a number after it when the
 [formation](../../glossary.md#formation) holds more of its kind
-(`Gryphon1`). An enemy has no class, and that is how the code tells an
-enemy from a character wherever the two are treated differently.
+(`Gryphon1`).
+
+An enemy has no class. That is how the code tells an enemy from a character
+wherever the two are treated differently.
 
 | Cap                               | Value |
 | --------------------------------- | ----- |
@@ -95,8 +101,8 @@ number: the ring is item 265.
 
 Every item, ability, Djinni, enemy and class is one row of a table in the
 cartridge, and the number of the row is the only name the code has for it.
-No column says which item a row is: an item's number is its place in the
-table, counting from 0.
+No column says which item a row is. An item's number is simply its place in
+the table, counting from 0.
 
 The names work the same way. Every line of the game's text is a numbered
 message, and each table's names are a run of messages in the table's order.
@@ -107,9 +113,9 @@ name message = MsgItemName + item id
              = 386 + 265 = 651 for the Healing Ring
 ```
 
-The tables and the text of the six languages are parallel lists tied only
-by position. A row inserted into the item table would give every later item
-the next one's name.
+So the tables and the text of the six languages are parallel lists, tied
+only by position. A row inserted into the item table would give every later
+item the next one's name.
 
 In the code each id has a name, so that it reads `ITEM_HEALING_RING` and
 never 265, and each row of a table has a comment giving the English name
@@ -127,8 +133,8 @@ its message holds.
 
 Ability is the widest word of the five. Psynergy, what a Djinni or a summon
 does, what an item does when used and an enemy's move are all rows of the
-ability table, and a Djinni's row, a summon's row and an item's row each
-name the ability they play. [Battles](../battle/README.md) follows an
+ability table. A Djinni's row, a summon's row and an item's row each name
+the ability they play. [Battles](../battle/README.md) follows an
 ability from these tables to its damage.
 
 ## An item's row
@@ -137,9 +143,9 @@ ability from these tables to its damage.
 
 Everything the player learns about an item in a shop or on the Item screen
 comes from its row of the item table. The Long Sword's row says 200 coins,
-a weapon, 14 to Attack, for Isaac, Garet and Felix, which is why the shop
-shows `Can't equip` for Ivan and compares the sword with Isaac's and
-Garet's own:
+a weapon, 14 to Attack, for Isaac, Garet and Felix. That is why the shop
+shows `Can't equip` for Ivan, and compares the sword with Isaac's and
+Garet's own.
 
 ```c
 // Long Sword
@@ -155,12 +161,13 @@ Garet's own:
 
 The type says what the item is: a weapon, armor, a shield, a helm, boots,
 a shirt, a ring, or one of the Psynergy items. A unit wears one item of
-each type at a time, so equipping a second sword takes the first off. The
-eight Psynergy items, from the Orb of Force to the Catch Beads, are the
-exception: any number may be worn together, and while one is worn the
+each type at a time, so equipping a second sword takes the first off.
+
+The eight Psynergy items, from the Orb of Force to the Catch Beads, are the
+exception. Any number may be worn together, and while one is worn, the
 Psynergy it names is on its owner's list.
 
-A row says what using the item costs:
+A row also says what using the item costs:
 
 | Using it                | Examples                    |
 | ----------------------- | --------------------------- |
@@ -170,15 +177,18 @@ A row says what using the item costs:
 | leaves an Empty Bottle  | Hermes' Water               |
 
 A broken item can be mended by a smith
-([Shops](../shop/README.md#repairing)). A row also carries yes-or-no marks:
-cursed, cannot be taken off, rare, kept in a stack, and important, which
-means never dropped and worth nothing to a shop.
+([Shops](../shop/README.md#repairing)).
+
+Then come the yes-or-no marks a row carries: cursed, cannot be taken off,
+rare, kept in a stack, and important, which means never dropped and worth
+nothing to a shop.
 
 Beside the plain bonus to Attack or Defense, a row holds up to four effects
 the item has while worn, each a kind and an amount: add to maximum HP,
-scale Agility, raise the chance of an unleash. An unleash is a weapon's own
-attack, which sometimes replaces a plain blow. A weapon's row names that
-ability and its chance, in steps of five percent.
+scale Agility, raise the chance of an unleash.
+
+An unleash is a weapon's own attack, which sometimes replaces a plain blow.
+A weapon's row names that ability and its chance, in steps of five percent.
 
 When an item is used in battle, the battle builds an
 [action](../../glossary.md#turns-and-actions) from the ability the row
@@ -190,12 +200,15 @@ names ([Battles](../battle/README.md#how-an-ability-resolves)).
 
 Each character carries up to 15 things, and the Item screen shows for each
 whether it is equipped (a small E), whether it is broken (a red cross) and
-how many there are of a stackable item such as Herbs. A slot is one number
-that packs all four together: the item, an equipped mark, a broken mark and
-a count. An item therefore moves from one character to another with its
-state. The same sword equipped and unequipped is two different numbers, so
-code that asks which item a slot holds sets the marks and the count aside
-first.
+how many there are of a stackable item such as Herbs.
+
+A slot is one number that packs all four together: the item, an equipped
+mark, a broken mark and a count. That is why an item moves from one
+character to another with its state.
+
+It also means the same sword equipped and unequipped is two different
+numbers. So code that asks which item a slot holds sets the marks and the
+count aside first.
 
 A stack holds up to 30 of one item. Giving a unit an item adds it to the
 unit's first stack of that item, or else puts it in the first empty slot.
@@ -217,39 +230,29 @@ slots full, a chest's Small Jewel goes to Garet.
 ![On the Item screen, the hand picks Isaac's Machete and points at Remove, and the status panel shows his Attack falling from 24 to 17](https://alchemy.pascalpixel.com/guides/game/items.gif)
 
 When the player points at Remove on Isaac's Machete, the status panel shows
-his Attack falling from 24 to 17 before anything is chosen. The game never
-adjusts a stat. Whenever something that feeds a stat changes (equipment, a
-Djinni, a level, the class), it works every stat out again from the base
-stats. A menu's preview is that same calculation: the menu copies the unit,
-makes the change, reads the new numbers and puts the copy back.
+his Attack falling from 24 to 17 before anything is chosen.
+
+The game never adjusts a stat. Whenever something that feeds a stat changes
+(equipment, a Djinni, a level, the class), it works every stat out again
+from the base stats.
+
+A menu's preview is that same calculation. The menu copies the unit, makes
+the change, reads the new numbers and puts the copy back.
 
 The calculation takes its steps in a fixed order, and the order is why the
 numbers come out as they do:
 
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
-flowchart TD
-  base(["The base stats"]) --> adds(["+ what each equipped item adds, + each set Djinni's bonus"])
-  adds --> classMul(["× the class's multipliers, in tenths"])
-  classMul --> scales(["× what each equipped item scales, in tenths"])
-  scales --> stages(["× the battle's stat stages"])
-  stages --> clamp(["Clamped to their caps and written to the unit"])
-  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
-  classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
-  class base mainRoutine
-  class adds,classMul,scales sequence
-  class stages,clamp frame
-```
+1. The additions come first: what each equipped item adds, then the bonus
+   of each Djinni that is set.
+2. The class multiplies every stat by its own figure in tenths. A Squire's
+   row says 11 for Attack, so Attack becomes eleven tenths of the sum,
+   rounded down.
+3. The equipment that scales a stat multiplies in the same way.
+4. Last come the changes a battle has made, such as a raised Attack. Each
+   step up or down is an eighth of the stat.
+5. Every stat is then held to its cap and written to the unit.
 
-First come the additions: what each equipped item adds, then the bonus of
-each Djinni that is set. Then the class multiplies every stat by its own
-figure in tenths. A Squire's row says 11 for Attack, so Attack becomes
-eleven tenths of the sum, rounded down. Then the equipment that scales a
-stat multiplies in the same way. Last come the changes a battle has made,
-such as a raised Attack: each step up or down is an eighth of the stat.
-Every stat is then held to its cap. An enemy skips the equipment, the Djinn
-and the class, having none.
+An enemy skips the equipment, the Djinn and the class, having none.
 
 The Machete adds 6 to Attack, but the panel shows 7 less, because the class
 multiplies the sum and the result rounds down. With an Attack of 16 before
@@ -261,15 +264,15 @@ without it                 16 * 11 / 10 = 17
 ```
 
 Working stats out from scratch means no sequence of changes can leave a
-stat a point off: taking the Machete off and putting it back always gives
+stat a point off. Taking the Machete off and putting it back always gives
 24 again.
 
 Current HP and PP need more care, since they are the two numbers that
 cannot be worked out from anything else. The unit remembers each as a
 share of its maximum. When the maximum changes, the current value is
-rebuilt from the share, so a character at half HP is still at half HP
-after putting on armor that raises the maximum, and a character with any
-HP left never falls to 0.
+rebuilt from the share. So a character at half HP is still at half HP after
+putting on armor that raises the maximum, and a character with any HP left
+never falls to 0.
 
 Two more things happen in the same pass. A cursed item marks its wearer as
 cursed. And once the lighthouse of a character's own element is lit, the
@@ -281,14 +284,15 @@ character regains 4 more PP each turn.
 ![Isaac opens the Djinn menu in Vale with Flint and Granite set and puts Flint on standby: `Is this OK?` shows his class falling from Knight to Squire, his HP from 178 to 141 and his Attack from 121 to 107, with `No change` to his Psynergy.](https://alchemy.pascalpixel.com/guides/menu/djinn-standby.gif)
 
 Putting Flint on standby takes Isaac from Knight to Squire, his HP from 178
-to 141 and his Attack from 121 to 107. A
-[Djinni](../../glossary.md#djinn) set on a character raises its stats and
-helps decide its class, and the class decides what Psynergy the character
-knows and how far its stats are multiplied. Standby undoes all of it at
-once.
+to 141 and his Attack from 121 to 107. One Djinni does all that.
 
-There are 80 Djinn in the table, 20 to an element, and each row names the
-ability the Djinni unleashes and the stat bonus it gives while set: Flint
+A [Djinni](../../glossary.md#djinn) set on a character raises its stats and
+helps decide its class. The class in turn decides what Psynergy the
+character knows and how far its stats are multiplied. Standby undoes all of
+it at once.
+
+There are 80 Djinn in the table, 20 to an element. Each row names the
+ability the Djinni unleashes and the stat bonus it gives while set, so Flint
 adds 8 HP, 4 PP and 3 Attack. A unit remembers which Djinn it holds and
 which of those are set. A character holds at most ten of one element.
 
@@ -386,16 +390,19 @@ and the items' entries and keep the taught ones.
 
 A battle's spoils add experience to each party member, and the character
 gains a level when its experience reaches the next level's threshold. Each
-character has its own list of 99 thresholds: Isaac's level 2 needs 24
-points and his level 10 needs 2,910. After a battle the spoils check each
-party member again and again until its experience falls short, so one
-battle can give several levels.
+character has its own list of 99 thresholds. Isaac's level 2 needs 24
+points and his level 10 needs 2,910.
+
+After a battle the spoils check each party member again and again until its
+experience falls short, so one battle can give several levels.
 
 A level up adds a little to each base stat. The character's row holds a
-growth curve for each stat: six points, the stat's value at levels 0, 20,
-40, 60, 80 and 100. Each level inside a band of twenty adds a twentieth of
-the band's rise. Since stats are whole numbers, the game adds a random 0 to
-19 before dividing by 20, so the rounding comes out right on average:
+growth curve for each stat, drawn through six points: the stat's value at
+levels 0, 20, 40, 60, 80 and 100. Each level inside a band of twenty adds a
+twentieth of the band's rise.
+
+Stats are whole numbers, though. So the game adds a random 0 to 19 before
+dividing by 20, and the rounding comes out right on average:
 
 ```
 gain = (the band's rise + a random 0 to 19) / 20, rounded down
@@ -411,9 +418,11 @@ After the gains, the level up rebuilds the Psynergy list and the stats, so
 A new game is the same mechanism run from nothing. Each character is given
 the items in its row, already equipped, and its class is worked out. Then
 it is raised to its starting level one level at a time: 1 for Isaac and
-Garet, 4 for Ivan, 10 for Mia. Level 1 also adds the curve's first point,
-Isaac's 30 HP, so a new game starts him at 37 or 38 base HP, which the
-Squire's multiplier makes 40 or 41.
+Garet, 4 for Ivan, 10 for Mia.
+
+Level 1 also adds the curve's first point, Isaac's 30 HP. So a new game
+starts him at 37 or 38 base HP, which the Squire's multiplier makes 40 or
+41.
 
 ## The party and its coins
 
@@ -421,7 +430,7 @@ The [party](../../glossary.md#the-party) is the characters travelling
 together, and the game keeps it twice. A game flag for each character says
 whether it is in the party, and a list holds the members in order, which is
 the order the menus and the battle show them in. Joining sets the flag and
-adds the character to the end of the list; leaving clears the flag and
+adds the character to the end of the list. Leaving clears the flag and
 closes the gap.
 
 The party's coins are one number, kept between 0 and 999,999. The shops,
@@ -438,11 +447,12 @@ battle brings and what Lucky Dice pays.
 ![In Kolima Isaac talks to the Venus Djinni Granite beside him; the screen turns green, lights rain onto Isaac, a ring of light closes on him, and `The Venus Djinni Granite joined Isaac.` The screen fades out, and when Kolima fades in again Isaac stands in the same place with no one beside him.](https://alchemy.pascalpixel.com/guides/game/djinni-flag.gif)
 
 The game remembers what has happened (a chest opened, a Djinni found, an
-event already played) as 4,096 yes-or-no flags. When Granite joins, its
-found flag is set. The next visit to Kolima reads the flag and puts no one
-where Granite stood, and each save file's summary counts the found flags to
-say how many Djinn the party has. The Title offers its Battle option only
-once some save file counts at least one.
+event already played) as 4,096 yes-or-no flags.
+
+When Granite joins, its found flag is set. The next visit to Kolima reads
+the flag and puts no one where Granite stood. Each save file's summary
+counts the found flags to say how many Djinn the party has, and the Title
+offers its Battle option only once some save file counts at least one.
 
 A flag is a number, and the number says where the flag is kept. The flags
 are stored eight to a byte, in 512 bytes, so dividing the number by 8 gives
@@ -476,9 +486,10 @@ in hex, as the game's own debug flag editor shows them:
 | `0x300` to `0x3ff`   | an [area](../../glossary.md#area)'s scratch flags, cleared when the party enters another area |
 
 The Djinn's flags are in the Djinn table's order, so Granite, the second
-Venus Djinni, has the second of them. Coming back from a battle leaves the
-scene's scratch flags alone, so a puzzle half solved is still half solved
-after a fight.
+Venus Djinni, has the second of them.
+
+Coming back from a battle leaves the scene's scratch flags alone, so a
+puzzle half solved is still half solved after a fight.
 [Scenes](../scene/README.md#state-that-cleans-itself-up) shows how a scene
 uses the two scratch ranges.
 
@@ -493,10 +504,11 @@ are in `flags.h`, each with the evidence for its name.
 A shop never runs out of Herbs, but it can sell a rare item such as the
 Witch's Wand only while that item's counter is above zero
 ([Shops](../shop/README.md#artifacts) shows what the player sees of it).
+
 There are 128 counters, each kept between 0 and 99, and a table says which
 counter, if any, each item uses. Buying a rare item takes one from its
-counter, and selling or dropping one puts one back, so a sold Witch's Wand
-can be bought again.
+counter, and selling or dropping one puts one back. That is why a sold
+Witch's Wand can be bought again.
 
 ## Battle arithmetic
 
@@ -510,9 +522,9 @@ would heal, get the same answers.
 
 Every damage formula rewards Power over Resist through one multiplier. The
 game takes the difference between the attacker's Power and the target's
-Resist in the ability's element, holds it between -200 and 200, and turns
-it into a multiplier on a straight line: no difference is one times, 200 is
-twice, and -200 is nothing.
+Resist in the ability's element and holds it between -200 and 200. Then it
+turns the difference into a multiplier on a straight line: no difference is
+one times, 200 is twice, and -200 is nothing.
 
 ### Damage and healing
 
@@ -531,7 +543,7 @@ half to one and a half. Attack less Defense never counts as less than 0.
 With no difference in the element, an Attack 80 above the target's Defense
 does 40, plus whatever power the ability adds.
 
-Healing has no target to resist it, so only the healer's Power counts: a
+Healing has no target to resist it, so only the healer's Power counts. A
 healer with 100 Power heals the ability's power exactly, and one with 120
 about a fifth more.
 
@@ -580,11 +592,11 @@ Sleep cast by a character one level ahead of a target with 6 Luck starts
 at 45, gains 3 for the level, loses 9 for the Luck and stands at about 39
 in a hundred. Against a target weak to Sleep it is about 64.
 
-The ability then scales the result by a factor of its own. Effects with no
-base rate in the table, such as a stat boost, start from a fixed 100, and
-the revives have fixed chances too, which levels, Luck and weaknesses leave
-alone. Luff's
-seal gets three tries.
+The ability then scales the result by a factor of its own.
+
+Effects with no base rate in the table, such as a stat boost, start from a
+fixed 100. The revives have fixed chances too, which levels, Luck and
+weaknesses leave alone. Luff's seal gets three tries.
 
 ## Design
 
@@ -610,14 +622,13 @@ languages must keep exactly the same order.
 
 The game rules are a [bank](../../glossary.md#bank) of their own, which
 the other banks reach by [far calls](../../glossary.md#far-call). They are
-only ever asked: nothing in them runs from frame to frame.
+only ever asked. Nothing in them runs from frame to frame.
 
 The units, the party and the flags are what a save file keeps
 ([System](../../system.md#saving)). The battle reads the ability table
 beside tables of its own, which choose how an ability is drawn
-([Battle](../../battle.md)), and the menus and the shops show the numbers
-this code works out ([Menus](../menu/README.md),
-[Shops](../shop/README.md)).
+([Battle](../../battle.md)). The menus and the shops show the numbers this
+code works out ([Menus](../menu/README.md), [Shops](../shop/README.md)).
 
 ## Limits
 

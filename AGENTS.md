@@ -64,7 +64,7 @@ Never bent: the legal rules (L1 to L3), the ROM kept out of the build (O1), and 
 
 - **C1** A function counts only when its whole extent, literal pool included, compiles exactly and every edition stays byte-identical; in an edition, only when that edition links its C.
 - **C2** DONE is pret's calcrom over the linker maps, by folder: bytes placed from `games/` are done, from `recon/` not yet. Code is `.text`; data is everything else. A game's figure sums its six editions.
-- **C3** A landing carries its measurement: `make land` compares, tests, checks formatting, builds `make modern` and measures the tree you push; the pre-push hook uploads the reports; CI rebuilds ☀️ from a clean clone without a ROM, checks a receipt against its own measurement, and starts the docs build. `.github/publication.md` describes publication and recovery.
+- **C3** A landing carries its measurement: `make land` compares, tests, checks formatting, builds `make modern` and measures the tree you push; the pre-push hook uploads the reports; CI rebuilds all twelve editions from a clean clone without a ROM, checks a receipt against its own measurement, and starts the docs build. `.github/publication.md` describes publication and recovery.
 
 ### The oracle stays out of the build
 

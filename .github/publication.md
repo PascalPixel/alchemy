@@ -1,14 +1,19 @@
 # Alchemy CI and publication
 
 `build.yml` proves in public what anyone can check: from a clean clone with no
-ROM, it builds the pinned compilers and all six Broken Seal editions, checks
-each against `rom.sha1` and measures them from the linker maps it just made
-(`alchemy-devtools progress --game tbs`, the same count `make progress` runs).
+ROM, it builds the pinned compilers and all twelve editions, the six of The
+Broken Seal and the six of The Lost Age, checks each against `rom.sha1` and
+measures each game from the linker maps it just made (`alchemy-devtools
+progress --game tbs` and `--game tla`, the same count `make progress` runs).
 ccache hands back a compile only when its preprocessed source, compiler and
 options are identical, so a push that changes comments recompiles almost
 nothing; every ROM is still linked and checked. Pull requests stop there. The
-tool tests, the format check, `make modern` and The Lost Age's editions run
-locally in `make land`.
+tool tests, the format check and `make modern` run locally in `make land`.
+
+Both measurements are kept as the build's artifacts, `tbs-measurement` and
+`tla-measurement`. Publication reads only the first: `progress --publish`
+accepts CI's count of The Broken Seal alone, so The Lost Age's published
+figures still come from a receipt, as below.
 
 For a landing, stage every source change and run `make land`. The receipt
 records the staged source tree, measurement time and hashes of the TSV and

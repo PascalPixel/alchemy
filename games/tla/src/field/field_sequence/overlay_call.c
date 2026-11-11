@@ -38,11 +38,13 @@ s32 Inn_RoomPrice(s32 innId);
 void Func_0810824c(void);
 void *Func_080ccd78(s32 group, s32 id);
 
-s32 Func_080cce84(void) { return ((s32 (*)(void))gOverlayArea[1])(); }
+/// Unused: runs the loaded overlay's initialize entry; nothing calls it.
+UNUSED void Overlay_CallInitialize(void) { ((s32 (*)(void))gOverlayArea[1])(); }
 
-/// Finds the talk event of object id; when the party has stopped that object,
-/// an event of kind 7 comes first.
-void *Func_080cce94(s32 id) {
+/// Returns the talk trigger of object id, or 0: for the object field Psynergy
+/// has stopped (gMainRoutineWork.pausedObject), its kind 7 trigger if it has
+/// one, the event for talking to it while it is stopped.
+void *Scene_FindActorTalkTrigger(s32 id) {
   void *found = Func_080ccd78(0, id);
   struct MainRoutineWork *party = &gMainRoutineWork;
   void *event;

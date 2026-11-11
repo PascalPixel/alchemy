@@ -9,7 +9,7 @@ void Fade_FromBlack(s32 vblanks);
 void Fade_ToBlack(s32 vblanks);
 void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 index);
 void BattleEffect_StartBufferInterpolation(s32 frames);
-struct ScreenTransitionState *Func_080d019c(void);
+struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void);
 void Func_080cf78c(void);
 
 /// Fades the screen out over frames frames, as The Broken Seal's
@@ -30,7 +30,8 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     BattleEffect_StartBufferInterpolation(frames);
     break;
   case 2: {
-    struct ScreenTransitionState *state = Func_080d019c();
+    struct ScreenTransitionState *state =
+        ScreenTransition_AllocateAndClearState();
     state->mode = variant;
     state->value = 32;
     state->mask = 63;
@@ -45,7 +46,8 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     break;
   }
   case 3: {
-    struct ScreenTransitionState *state = Func_080d019c();
+    struct ScreenTransitionState *state =
+        ScreenTransition_AllocateAndClearState();
     state->mode = variant;
     state->value = 32;
     ScreenTransition_FillTilemapAndSolidTile(0);
@@ -58,7 +60,8 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     break;
   }
   case 4: {
-    struct ScreenTransitionState *state = Func_080d019c();
+    struct ScreenTransitionState *state =
+        ScreenTransition_AllocateAndClearState();
     // One zero for both branches' stores; a literal 0 at each store differs.
     s32 zero = 0;
 

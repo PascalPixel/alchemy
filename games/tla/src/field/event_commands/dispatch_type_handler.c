@@ -51,7 +51,7 @@ void Func_080e82cc(void);
 void BattleEffect_ResumeObject(s32 id);
 s32 BattleEffect_FindNearestObject(s32 self, s32 animation);
 s32 BattleEffect_FilterObjectIdByFlags(s32 id);
-void *Func_080cce94(s32 id);
+void *Scene_FindActorTalkTrigger(s32 id);
 void BattleEffect_SetupObjectPair(s32 userId, s32 targetId);
 void BattleEffect_MarkChildAndRunFallbackTransition(s32 id);
 void BattleEffect_PauseObject(s32 id);
@@ -173,7 +173,7 @@ void BattleEffect_Run(void) {
     }
     objectId = BattleEffect_FindNearestObject(scene->firstObjectId, animation);
     objectId = BattleEffect_FilterObjectIdByFlags(objectId);
-    if (Func_080cce94(objectId) != 0) {
+    if (Scene_FindActorTalkTrigger(objectId) != 0) {
       BattleEffect_SetupObjectPair(scene->firstObjectId, objectId);
       BattleEffect_MarkChildAndRunFallbackTransition(objectId);
       BattleEffect_PauseObject(objectId);

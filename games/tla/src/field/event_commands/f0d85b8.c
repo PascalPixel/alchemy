@@ -133,7 +133,13 @@ void BattleEffect_UpdateRadialSpread(struct FieldParticle *effect);
 
 void BattleEffect_RunVenusDjinnCapture(s32 arg);
 
-void Func_080d85b8(struct FieldParticle *effect) {
+/// Field effect sprite callback of a Mercury Djinni's droplets: each falls from
+/// 100 pixels above (on screen) to a random point 2 to 8 pixels round a spot 15
+/// to 20 pixels over the leader, at 3 to 6 pixels a frame, and where it lands
+/// splashes 12 pixels in a random direction, at half size, with sound 143. It
+/// then falls again 6 frames later, until BattleEffect_RunMercuryDjinnCapture
+/// sets its state to 2: its next splash is its last.
+void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
   struct Actor *source;
   struct EffectVector position;
   s8 *statePointer;

@@ -126,7 +126,12 @@ void BattleEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect);
 
 void BattleEffect_ShrinkObjectAndDestroyFast(void *obj);
 
-void Func_080d8174(struct DescendingOrbitObject *arg) {
+/// Per-frame update of a Venus Djinni's falling motes: each circles the
+/// leader on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a
+/// pixel a frame, and is released 20 pixels above the leader's feet. Set by
+/// Func_080d82e0, the Venus Djinni's effect.
+void FieldEffect_UpdateDescendingOrbitActor(
+    struct DescendingOrbitObject *actor) {
   struct OrbitPosition local;
   struct DescendingOrbitObject *other;
   s32 raw;
@@ -135,22 +140,22 @@ void Func_080d8174(struct DescendingOrbitObject *arg) {
 
   other =
       (struct DescendingOrbitObject *)Actor_GetById(gMainRoutineWork.currentOwner);
-  raw = arg->timer - 1;
-  arg->timer = raw;
-  value = arg->timer;
+  raw = actor->timer - 1;
+  actor->timer = raw;
+  value = actor->timer;
   local.x = other->x;
   local.z = other->z;
-  Vector_AddPolarOffset(value * 0x6666, (value << 11) + arg->angle, &local);
-  arg->x = local.x;
-  arg->z = local.z;
-  y = arg->y + 0xFFFF0000;
-  arg->y = y;
+  Vector_AddPolarOffset(value * 0x6666, (value << 11) + actor->angle, &local);
+  actor->x = local.x;
+  actor->z = local.z;
+  y = actor->y + 0xFFFF0000;
+  actor->y = y;
   if (y < other->y + 0x140000)
-    Actor_ReleaseFar(arg);
+    Actor_ReleaseFar(actor);
 }
 
 void BattleEffect_UpdateRadialSpread(struct FieldParticle *effect);
 
 void BattleEffect_RunVenusDjinnCapture(s32 arg);
 
-void BattleEffect_UpdateRandomTargetParticle(struct FieldParticle *effect);
+void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect);

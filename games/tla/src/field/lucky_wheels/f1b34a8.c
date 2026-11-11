@@ -100,7 +100,7 @@ void Func_081b336c(void);
 void Func_081b243c(void);
 void Func_081b3294(void);
 void BattleStaging_ProcessPendingTileTransfer(void);
-void Func_081b21ec(s32 resource);
+void Palette_StepTowardResource(s32 resource);
 void Func_081b22b8(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
 void Palette_DarkenSceneStep(void);
 u32 Random16(void);
@@ -317,15 +317,15 @@ void LuckyWheels_Run(void) {
         s32 phase = frame % 80;
 
         if (phase <= 15)
-          Func_081b21ec((s32)&ResourceId_MercuryDjinnSheet);
+          Palette_StepTowardResource((s32)&ResourceId_MercuryDjinnSheet);
         else if (phase <= 31)
-          Func_081b21ec((s32)&ResourceId_VenusDjinnSheet);
+          Palette_StepTowardResource((s32)&ResourceId_VenusDjinnSheet);
         else if (phase <= 47)
-          Func_081b21ec((s32)&ResourceId_EmberStreakSheet);
+          Palette_StepTowardResource((s32)&ResourceId_EmberStreakSheet);
         else if (phase <= 63)
-          Func_081b21ec((s32)&ResourceId_LimePalette);
+          Palette_StepTowardResource((s32)&ResourceId_LimePalette);
         else
-          Func_081b21ec((s32)&ResourceId_JupiterDjinnSheet);
+          Palette_StepTowardResource((s32)&ResourceId_JupiterDjinnSheet);
         if (state->timer <= 15)
           Palette_DarkenSceneStep();
         if (state->timer > 16 && (frame & 7) == 0) {

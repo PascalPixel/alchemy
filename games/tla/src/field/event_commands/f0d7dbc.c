@@ -201,4 +201,4 @@ void BattleEffect_UpdateRadialSpread(struct FieldParticle *effect);
 
 void BattleEffect_RunVenusDjinnCapture(s32 arg);
 
-void BattleEffect_UpdateRandomTargetParticle(struct FieldParticle *effect);
+void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect);

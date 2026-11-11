@@ -33,7 +33,7 @@ void Actor_Jump(s32 id, s32 speed, s32 frames);
 void Camera_WorldToScreen(struct EffectVector *position);
 void Actor_Destroy(void *object);
 void FieldParticle_Initialize(struct FieldParticle *slot, s32 kind, s32 x, s32 z);
-void Func_080d7b04(struct FieldParticle *slot);
+void FieldEffect_RunAngledApproachPhases(struct FieldParticle *slot);
 void Animation_ApplyChildValuesToRecordFar(void *object, u32 value);
 u32 Random16(void);
 void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
@@ -83,7 +83,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   count = 23;
   do {
     FieldParticle_Initialize(slot, 672, position.x, position.z);
-    FieldParticle_SetCallback(slot, Func_080d7b04);
+    FieldParticle_SetCallback(slot, FieldEffect_RunAngledApproachPhases);
     FieldParticle_SetActorMode(slot, 7);
     Animation_ApplyChildValuesToRecordFar(slot->object, (Random16() * 7) >> 16);
     scale = Random16() / 3 + Q16_ONE;

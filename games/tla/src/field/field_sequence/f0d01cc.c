@@ -13,7 +13,7 @@ void Fade_ToBlack(s32 vblanks);
 void BattleEffect_ApplyColorToSourceBuffer(s32 value, s32 mode);
 void BattleEffect_StartBufferInterpolation(s32 frames);
 void BattleEffect_SetPrimaryBufferValue(s32 value);
-struct ScreenTransitionState *Func_080d019c(void);
+struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void);
 void Func_080cf78c(void);
 
 // Fades the screen in over frames frames, as ☀️'s ScreenTransition_Start.
@@ -40,7 +40,8 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     BattleEffect_SetPrimaryBufferValue(0);
     return;
   case 2: {
-    struct ScreenTransitionState *state = Func_080d019c();
+    struct ScreenTransitionState *state =
+        ScreenTransition_AllocateAndClearState();
     state->mode = variant;
     state->value = 0;
     state->mask = 63;
@@ -57,7 +58,8 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     return;
   }
   case 3: {
-    struct ScreenTransitionState *state = Func_080d019c();
+    struct ScreenTransitionState *state =
+        ScreenTransition_AllocateAndClearState();
     state->mode = variant;
     state->value = 32;
     ScreenTransition_FillTilemapAndSolidTile(15);
@@ -75,7 +77,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     struct ScreenTransitionState *state;
 
     display = (struct MapViewWork *)Ram_HeapSlots->mapWork;
-    state = Func_080d019c();
+    state = ScreenTransition_AllocateAndClearState();
     display->windowTop = 80;
     display->windowBottom = 80;
     wait(1);

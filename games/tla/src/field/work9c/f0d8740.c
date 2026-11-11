@@ -5,7 +5,7 @@
 #include "main_routine_work.h"
 
 void Actor_MoveHalfwayTowardTargetCopy(void);
-void Func_080d85b8(void);
+void FieldEffect_UpdateRandomTargetParticle(void);
 
 struct CaptureSprite {
   u8 unk00[40];
@@ -155,7 +155,8 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
   remaining = 23;
   do {
     FieldParticle_Initialize(slot, 301, position.x, position.z);
-    FieldParticle_SetCallback(slot, (void *)Func_080d85b8);
+    FieldParticle_SetCallback(slot,
+                              (void *)FieldEffect_UpdateRandomTargetParticle);
     FieldParticle_SetActorMode(slot, 7);
     Animation_ApplyChildValuesToRecordFar(*(struct ActorSpriteView **)slot, 9);
     remaining--;

@@ -19,7 +19,7 @@ s32 Script_Wait();
 s32 Script_WaitForArrival();
 s32 Func_08024fe0();
 s32 Func_08025038();
-s32 Func_08025078();
+s32 ActorScript_ApplyAbsolutePosition();
 s32 Script_ApplyRelativePosition();
 s32 Script_StoreAngleToWatchedObject();
 s32 Script_ApplyWatchedObjectPosition();
@@ -52,7 +52,7 @@ s32 Func_08028aac();
 s32 Func_0802a124();
 s32 Func_0802632c();
 s32 Func_080267bc();
-s32 Func_08027e0c();
+s32 Field_CheckConfiguredKeysAndCount();
 s32 Actor_ReleaseAndClear();
 s32 Script_SetAnimation();
 s32 Script_Nop();
@@ -244,7 +244,7 @@ const ScriptCommandFn gData_0802f204[54] = {
     Script_WaitForArrival,                 // 0x01 SC_SYNC
     Func_08024fe0,                       // 0x02 SC_POSITION
     Func_08025038,                       // 0x03 SC_CMD_03
-    Func_08025078,                       // 0x04 SC_MOVE
+    ActorScript_ApplyAbsolutePosition,   // 0x04 SC_MOVE
     Script_ApplyRelativePosition,        // 0x05 SC_MOVE_BY
     Script_StoreAngleToWatchedObject,     // 0x06 SC_FACE_WATCHED
     Script_ApplyWatchedObjectPosition,    // 0x07 SC_MOVE_TO_WATCHED
@@ -277,7 +277,7 @@ const ScriptCommandFn gData_0802f204[54] = {
     Func_0802a124,                       // 0x22 SC_CMD_22
     Func_0802632c,                       // 0x23 SC_CMD_23
     Func_080267bc,                       // 0x24 SC_CMD_24
-    Func_08027e0c,                       // 0x25 SC_CMD_25
+    Field_CheckConfiguredKeysAndCount,   // 0x25 SC_CMD_25
     Actor_ReleaseAndClear,      // 0x26 SC_FREE
     Script_SetAnimation,      // 0x27 SC_ARG
     Script_Nop,                  // 0x28 SC_NOP

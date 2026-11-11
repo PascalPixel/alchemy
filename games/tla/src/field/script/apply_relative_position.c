@@ -34,7 +34,8 @@ s32 Func_08025038(struct ActorScriptView *object) {
   return 1;
 }
 
-s32 Func_08025078(struct ActorScriptView *object) {
+/// SC_MOVE(x, y, z): sends the object towards (x, y, z).
+s32 ActorScript_ApplyAbsolutePosition(struct ActorScriptView *object) {
   const s32 *argument = object->script + (s16)object->scriptCursor + 1;
   s32 x = *argument++;
   s32 y = *argument++;

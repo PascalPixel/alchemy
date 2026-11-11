@@ -3,11 +3,13 @@
 
 extern const s16 gParty_PairResolveRules[];
 
-/// The Broken Seal's Party_ResolveTablePair: finds the party's scene and
-/// entrance in gParty_PairResolveRules (rows of eight halfwords, -1 ending
-/// the table; an entrance of -1 takes any) and saves that row's scene and
-/// entrance.
-void Func_080ca2fc(void) {
+/// Sets the scene the party returns to after a defeat
+/// (gMainRoutineWork.savedScene and savedEntrance), from the first rule of
+/// gParty_PairResolveRules that matches the current scene and entrance: rows
+/// of eight halfwords that open {scene, entrance (-1 for any), return scene,
+/// return entrance}, ended by scene -1. Without a match the restart point stays
+/// as it was.
+void Scene_SetRestartPoint(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   s16 first;
   s16 second;

@@ -106,7 +106,7 @@ void Func_08020180(void);
 void Map_CenterOnFollowedPointFar(void);
 void BattleEffect_InitializeBuffers(void);
 void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 mode);
-void Func_080ca2fc(void);
+void Scene_SetRestartPoint(void);
 void FieldEffect_ResumeCloakCheck(void);
 s32 Field_GetSceneAttributes(s32 scene);
 s32 Party_GetLeaderActor(void);
@@ -147,7 +147,7 @@ void ObjectTable_Snapshot(void);
 void Func_080d5c70(s32 battle);
 void UiTimedNotice_CloseIfActiveFar(void);
 s32 Field_FindNearbyTalkTarget(s32 owner);
-void *Func_080cce94(s32 id);
+void *Scene_FindActorTalkTrigger(s32 id);
 s32 Func_080cc54c(void);
 void Menu_RunSelectionWithCursorObjectFar(void);
 void Menu_RunTopSelectionFar(void);
@@ -284,7 +284,7 @@ s32 FieldSequence_Run(void) {
   }
   work->previousCell = gMapCellBuffer;
   if (!GameFlag_Test(265)) {
-    Func_080ca2fc();
+    Scene_SetRestartPoint();
     HAZARD.limit = 16;
     HAZARD.mode = 0;
     HAZARD.damage = 1;
@@ -529,7 +529,7 @@ s32 FieldSequence_Run(void) {
         if (value != -1) {
           talk = 1;
           if ((s32)value <= 63)
-            talk = Func_080cce94(value) != 0;
+            talk = Scene_FindActorTalkTrigger(value) != 0;
         }
         if (talk) {
           work->talk = value | 0x4000;

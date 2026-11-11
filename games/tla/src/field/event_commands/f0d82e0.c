@@ -126,7 +126,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect);
 
 void BattleEffect_ShrinkObjectAndDestroyFast(void *obj);
 
-void Func_080d8174(struct DescendingOrbitObject *arg);
+void FieldEffect_UpdateDescendingOrbitActor(struct DescendingOrbitObject *arg);
 
 void BattleEffect_UpdateRadialSpread(struct FieldParticle *effect);
 
@@ -220,7 +220,7 @@ void Func_080d82e0(s32 arg) {
       djinni->scaleX = scale;
       djinni->timer = 100;
       djinni->angle = (remaining << 16) / 24;
-      djinni->callback = (void *)Func_080d8174;
+      djinni->callback = (void *)FieldEffect_UpdateDescendingOrbitActor;
       djinni->mode = 0;
       Actor_SetMode((struct Actor *)djinni, 7);
       Animation_ApplyChildValuesFar(djinni, 11);
@@ -257,4 +257,4 @@ void Func_080d82e0(s32 arg) {
   BattleEffect_ClearActiveSlotsAndScheduleUpdates();
 }
 
-void BattleEffect_UpdateRandomTargetParticle(struct FieldParticle *effect);
+void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect);

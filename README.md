@@ -4,7 +4,7 @@ Alchemy is a reconstruction of the source for the Game Boy Advance games ☀️ 
 
 ## Documentation
 
-<a href="https://alchemy.pascalpixel.com"><img src="https://alchemy.pascalpixel.com/guides/docs/introduction.png" width="838" alt="The front page of Alchemy's documentation, with its World and Battle sections" /></a>
+<a href="https://alchemy.pascalpixel.com"><img src="https://alchemy.pascalpixel.com/guides/docs/battle-effects.png" width="838" alt="Alchemy's documentation on battle effects: Isaac summons Judgment above a diagram of the three ways a battle plays an effect, beside the guide's sidebar" /></a>
 
 [alchemy.pascalpixel.com](https://alchemy.pascalpixel.com) explains how The Broken Seal works, written from its rebuilt source, with recordings from the game itself.
 

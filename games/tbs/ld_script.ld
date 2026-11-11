@@ -11,15 +11,78 @@
    The main image lists its objects in the order the Game Pak holds them. In
    a bank of ordinary code every object's .text comes first, then every
    object's .rodata, then its .data, as pret writes its scripts; an object
-   that needs other sections names them.
-
-   Camelot's far-call banks start at addresses each edition's layout put
-   them at. An address is written once for the editions that share it, and
-   the last address of each placement is that of the editions it does not
-   name: English and Italian, and Japanese with them at the first two. Most
-   of German's bank starts fall on 256-byte steps, the other editions' on 2
-   or 4 KB ones. */
+   that needs other sections names them. */
 #include "version.h"
+
+/* Where each far-call bank starts, and the resource directory after them,
+   in each edition. English and Italian share every address, and Spanish
+   and French; Japanese shares English's first two. Most of German's fall
+   on 256-byte steps, the other editions' on 2 or 4 KB ones. */
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define FIELD_BANK_START          0x08009000
+#define WINDOW_BANK_START         0x08015000
+#define GAME_BANK_START           0x0806d000
+#define FIELD_SEQUENCE_BANK_START 0x08081000
+#define MENU_BANK_START           0x08098000
+#define SHOP_BANK_START           0x080a7000
+#define BATTLE_BANK_START         0x080ac000
+#define BATTLE_EFFECT_BANK_START  0x080c0000
+#define CREDITS_BANK_START        0x080e7000
+#define TITLE_BANK_START          0x080e9000
+#define LUCKY_DICE_BANK_START     0x080eb000
+#define LUCKY_WHEELS_BANK_START   0x080ed000
+#define SOUND_BANK_START          0x080f0000
+#define SPRITE_BANK_START         0x0817c000
+#define RESOURCE_DIRECTORY_START  0x08317000
+#elif LANGUAGE == LANGUAGE_GERMAN
+#define FIELD_BANK_START          0x08008800
+#define WINDOW_BANK_START         0x08013d00
+#define GAME_BANK_START           0x0807ae00
+#define FIELD_SEQUENCE_BANK_START 0x0808d600
+#define MENU_BANK_START           0x080a3e00
+#define SHOP_BANK_START           0x080b2600
+#define BATTLE_BANK_START         0x080b7600
+#define BATTLE_EFFECT_BANK_START  0x080cae00
+#define CREDITS_BANK_START        0x080f1600
+#define TITLE_BANK_START          0x080f3600
+#define LUCKY_DICE_BANK_START     0x080f5600
+#define LUCKY_WHEELS_BANK_START   0x080f7600
+#define SOUND_BANK_START          0x080f9e00
+#define SPRITE_BANK_START         0x08185e00
+#define RESOURCE_DIRECTORY_START  0x0831fe00
+#elif LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH
+#define FIELD_BANK_START          0x08008800
+#define WINDOW_BANK_START         0x08014000
+#define GAME_BANK_START           0x0807c000
+#define FIELD_SEQUENCE_BANK_START 0x0808f000
+#define MENU_BANK_START           0x080a5800
+#define SHOP_BANK_START           0x080b4000
+#define BATTLE_BANK_START         0x080b9000
+#define BATTLE_EFFECT_BANK_START  0x080cc800
+#define CREDITS_BANK_START        0x080f3000
+#define TITLE_BANK_START          0x080f5000
+#define LUCKY_DICE_BANK_START     0x080f7000
+#define LUCKY_WHEELS_BANK_START   0x080f9000
+#define SOUND_BANK_START          0x080fb800
+#define SPRITE_BANK_START         0x08187800
+#define RESOURCE_DIRECTORY_START  0x08321800
+#else
+#define FIELD_BANK_START          0x08009000
+#define WINDOW_BANK_START         0x08015000
+#define GAME_BANK_START           0x08077000
+#define FIELD_SEQUENCE_BANK_START 0x0808a000
+#define MENU_BANK_START           0x080a1000
+#define SHOP_BANK_START           0x080b0000
+#define BATTLE_BANK_START         0x080b5000
+#define BATTLE_EFFECT_BANK_START  0x080c9000
+#define CREDITS_BANK_START        0x080f0000
+#define TITLE_BANK_START          0x080f2000
+#define LUCKY_DICE_BANK_START     0x080f4000
+#define LUCKY_WHEELS_BANK_START   0x080f6000
+#define SOUND_BANK_START          0x080f9000
+#define SPRITE_BANK_START         0x08185000
+#define RESOURCE_DIRECTORY_START  0x08320000
+#endif
 
 #ifdef OVERLAY
 #include "src/system/overlay/overlay.ld"
@@ -99,8 +162,7 @@ SECTIONS
         "*/games/tbs/src/gamepak/flash/program_flash_sector.o"(.rodata)
         "*/games/tbs/src/gamepak/flash/flashat.o"(.rodata)
         "*/games/tbs/src/gamepak/flash/atmel.o"(.rodata)
-        . = ABSOLUTE(LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ? 0x08008800 :
-                                                                                                                  0x08009000);
+        . = ABSOLUTE(FIELD_BANK_START);
         "*/games/tbs/src/gamepak/far_call/FIELD.o"(.text .rodata .data .padding)
         "*/games/tbs/src/field/sprite_color_tables.o"(.text .rodata .data .padding)
         "*/games/tbs/src/field/sprite_color_remap.o"(.text .rodata .data .padding)
@@ -119,9 +181,7 @@ SECTIONS
         "*/games/tbs/src/field/actor_script.o"(.text .rodata .data .padding)
         "*/games/tbs/src/field/actor_script_operands.o"(.text .rodata .data .padding)
         "*/games/tbs/src/map/maps.o"(.text .rodata .data .padding)
-        . = ABSOLUTE(LANGUAGE == LANGUAGE_GERMAN                                 ? 0x08013d00 :
-                     LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ? 0x08014000 :
-                                                                                   0x08015000);
+        . = ABSOLUTE(WINDOW_BANK_START);
         "*/games/tbs/src/gamepak/far_call/WINDOW.o"(.text .rodata .data .padding)
         "*/games/tbs/src/window/message_decode.o"(.text .rodata .data .padding)
         "*/games/tbs/src/window/glyph_arm.o"(.text)
@@ -153,10 +213,7 @@ SECTIONS
 #endif
         "*/games/tbs/src/graphics/ui/slider_palette.o"(.rodata)
         "*/games/tbs/src/window/keyboard.o"(.rodata)
-        . = ABSOLUTE(LANGUAGE == LANGUAGE_JAPANESE                               ? 0x0806d000 :
-                     LANGUAGE == LANGUAGE_GERMAN                                 ? 0x0807ae00 :
-                     LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ? 0x0807c000 :
-                                                                                   0x08077000);
+        . = ABSOLUTE(GAME_BANK_START);
         "*/games/tbs/src/gamepak/far_call/GAME.o"(.text .padding)
         "*/games/tbs/src/game/game.o"(.text .padding)
         "*/games/tbs/src/game/experience_table.o"(.text .padding)
@@ -196,10 +253,7 @@ SECTIONS
         "*/games/tbs/src/game/class_table.o"(.data .overlays)
         "*/games/tbs/src/game/element_table.o"(.data .overlays)
         "*/games/tbs/src/game/djinn_table.o"(.data .overlays)
-        . = ABSOLUTE(LANGUAGE == LANGUAGE_JAPANESE                               ? 0x08081000 :
-                     LANGUAGE == LANGUAGE_GERMAN                                 ? 0x0808d600 :
-                     LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ? 0x0808f000 :
-                                                                                   0x0808a000);
+        . = ABSOLUTE(FIELD_SEQUENCE_BANK_START);
         "*/games/tbs/src/gamepak/far_call/FIELD_SEQUENCE.o"(.text .rodata .data .padding)
         "*/games/tbs/src/system/main_routine.o"(.text)
         "*/games/tbs/src/field/field_sequence.o"(.text .rodata .data .padding)
@@ -214,10 +268,7 @@ SECTIONS
         "*/games/tbs/src/field/field_sequence_tables.o"(.text .rodata .data .padding)
         "*/games/tbs/src/field/scenes.o"(.text .rodata .data .padding)
         "*/games/tbs/src/field/scripts.o"(.text .rodata .data .padding)
-        . = ABSOLUTE(LANGUAGE == LANGUAGE_JAPANESE                               ? 0x08098000 :
-                     LANGUAGE == LANGUAGE_GERMAN                                 ? 0x080a3e00 :
-                     LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ? 0x080a5800 :
-                                                                                   0x080a1000);
+        . = ABSOLUTE(MENU_BANK_START);
         "*/games/tbs/src/gamepak/far_call/MENU.o"(.text .padding)
         "*/games/tbs/src/menu/menu.o"(.text .padding)
         "*/games/tbs/src/graphics/ui/menu_sprites.o"(.text .padding)
@@ -233,10 +284,7 @@ SECTIONS
         "*/games/tbs/src/graphics/ui/menu_sprites.o"(.data .overlays)
         "*/games/tbs/src/menu/menu_strings.o"(.data .overlays)
         "*/games/tbs/src/menu/menu_tables.o"(.data .overlays)
-        . = ABSOLUTE(LANGUAGE == LANGUAGE_JAPANESE                               ? 0x080a7000 :
-                     LANGUAGE == LANGUAGE_GERMAN                                 ? 0x080b2600 :
-                     LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ? 0x080b4000 :
-                                                                                   0x080b0000);
+        . = ABSOLUTE(SHOP_BANK_START);
         "*/games/tbs/src/gamepak/far_call/SHOP.o"(.text .padding)
         "*/games/tbs/src/graphics/ui/shop_sprites.o"(.text .padding)
         "*/games/tbs/src/shop/shop.o"(.text .padding)
@@ -246,10 +294,7 @@ SECTIONS
         "*/games/tbs/src/gamepak/far_call/SHOP.o"(.data .overlays)
         "*/games/tbs/src/graphics/ui/shop_sprites.o"(.data .overlays)
         "*/games/tbs/src/shop/shop.o"(.data .overlays)
-        . = ABSOLUTE(LANGUAGE == LANGUAGE_JAPANESE                               ? 0x080ac000 :
-                     LANGUAGE == LANGUAGE_GERMAN                                 ? 0x080b7600 :
-                     LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ? 0x080b9000 :
-                                                                                   0x080b5000);
+        . = ABSOLUTE(BATTLE_BANK_START);
         "*/games/tbs/src/gamepak/far_call/BATTLE.o"(.text .rodata .data .padding)
         "*/games/tbs/src/battle/background_decode.o"(.text .rodata .text.bit_dispatch)
         "*/games/tbs/src/battle/background_decode.o"(.data .text.bit_commands)
@@ -261,20 +306,14 @@ SECTIONS
         "*/games/tbs/src/battle/knockback_tables.o"(.text .rodata .data .padding)
         "*/games/tbs/src/battle/formations.o"(.text .rodata .data .padding)
         "*/games/tbs/src/battle/battle_sprites.o"(.text .rodata .data .padding)
-        . = ABSOLUTE(LANGUAGE == LANGUAGE_JAPANESE                               ? 0x080c0000 :
-                     LANGUAGE == LANGUAGE_GERMAN                                 ? 0x080cae00 :
-                     LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ? 0x080cc800 :
-                                                                                   0x080c9000);
+        . = ABSOLUTE(BATTLE_EFFECT_BANK_START);
         "*/games/tbs/src/gamepak/far_call/BATTLE_EFFECT.o"(.text .rodata .data .padding)
         "*/games/tbs/src/battle_effect/battle_effect.o"(.text .data)
         "*/games/tbs/src/battle_effect/blitter_fragments.o"(.text .rodata .data .padding)
         "*/games/tbs/src/battle_effect/battle_effect_table.o"(.data)
         "*/games/tbs/src/battle_effect/blitter_color_fragments.o"(.text .rodata .data .padding)
         "*/games/tbs/src/battle_effect/blitter_operands.o"(.data)
-        . = ABSOLUTE(LANGUAGE == LANGUAGE_JAPANESE                               ? 0x080e7000 :
-                     LANGUAGE == LANGUAGE_GERMAN                                 ? 0x080f1600 :
-                     LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ? 0x080f3000 :
-                                                                                   0x080f0000);
+        . = ABSOLUTE(CREDITS_BANK_START);
         "*/games/tbs/src/gamepak/far_call/CREDITS.o"(.text .rodata .data .padding)
         "*/games/tbs/src/menu/credits_background_decode.o"(.text .rodata .data .padding)
         "*/games/tbs/src/menu/credits_background_expand.o"(.rodata)
@@ -283,10 +322,7 @@ SECTIONS
         "*/games/tbs/src/menu/credits.o"(.rodata)
         "*/games/tbs/src/menu/credits.o"(.data)
         "*/games/tbs/src/graphics/credits/font.o"(.rodata)
-        . = ABSOLUTE(LANGUAGE == LANGUAGE_JAPANESE                               ? 0x080e9000 :
-                     LANGUAGE == LANGUAGE_GERMAN                                 ? 0x080f3600 :
-                     LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ? 0x080f5000 :
-                                                                                   0x080f2000);
+        . = ABSOLUTE(TITLE_BANK_START);
         "*/games/tbs/src/gamepak/far_call/TITLE.o"(.text .padding)
         "*/games/tbs/src/graphics/title/prompt.o"(.text .padding)
         "*/games/tbs/src/menu/title_intro.o"(.text .padding)
@@ -296,30 +332,21 @@ SECTIONS
         "*/games/tbs/src/gamepak/far_call/TITLE.o"(.data .overlays)
         "*/games/tbs/src/graphics/title/prompt.o"(.data .overlays)
         "*/games/tbs/src/menu/title_intro.o"(.data .overlays)
-        . = ABSOLUTE(LANGUAGE == LANGUAGE_JAPANESE                               ? 0x080eb000 :
-                     LANGUAGE == LANGUAGE_GERMAN                                 ? 0x080f5600 :
-                     LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ? 0x080f7000 :
-                                                                                   0x080f4000);
+        . = ABSOLUTE(LUCKY_DICE_BANK_START);
         "*/games/tbs/src/gamepak/far_call/LUCKY_DICE.o"(.text .padding)
         "*/games/tbs/src/field/lucky_dice.o"(.text .padding)
         "*/games/tbs/src/gamepak/far_call/LUCKY_DICE.o"(.rodata)
         "*/games/tbs/src/field/lucky_dice.o"(.rodata)
         "*/games/tbs/src/gamepak/far_call/LUCKY_DICE.o"(.data .overlays)
         "*/games/tbs/src/field/lucky_dice.o"(.data .overlays)
-        . = ABSOLUTE(LANGUAGE == LANGUAGE_JAPANESE                               ? 0x080ed000 :
-                     LANGUAGE == LANGUAGE_GERMAN                                 ? 0x080f7600 :
-                     LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ? 0x080f9000 :
-                                                                                   0x080f6000);
+        . = ABSOLUTE(LUCKY_WHEELS_BANK_START);
         "*/games/tbs/src/gamepak/far_call/LUCKY_WHEELS.o"(.text .padding)
         "*/games/tbs/src/field/lucky_wheels.o"(.text .padding)
         "*/games/tbs/src/gamepak/far_call/LUCKY_WHEELS.o"(.rodata)
         "*/games/tbs/src/field/lucky_wheels.o"(.rodata)
         "*/games/tbs/src/gamepak/far_call/LUCKY_WHEELS.o"(.data .overlays)
         "*/games/tbs/src/field/lucky_wheels.o"(.data .overlays)
-        . = ABSOLUTE(LANGUAGE == LANGUAGE_JAPANESE                               ? 0x080f0000 :
-                     LANGUAGE == LANGUAGE_GERMAN                                 ? 0x080f9e00 :
-                     LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ? 0x080fb800 :
-                                                                                   0x080f9000);
+        . = ABSOLUTE(SOUND_BANK_START);
         "*/games/tbs/src/gamepak/far_call/SOUND.o"(.text .rodata .data .padding)
         "*/games/tbs/src/sound/sound.o"(.text)
         "*/games/tbs/src/sound/umul_high.o"(.text .padding)
@@ -610,10 +637,7 @@ SECTIONS
         "*/games/tbs/sound/songs/se_star_bounce.o"(.rodata)
         "*/games/tbs/sound/songs/se_310.o"(.rodata)
         "*/games/tbs/sound/songs/se_311.o"(.rodata)
-        . = ABSOLUTE(LANGUAGE == LANGUAGE_JAPANESE                               ? 0x0817c000 :
-                     LANGUAGE == LANGUAGE_GERMAN                                 ? 0x08185e00 :
-                     LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ? 0x08187800 :
-                                                                                   0x08185000);
+        . = ABSOLUTE(SPRITE_BANK_START);
         "*/games/tbs/src/gamepak/far_call/SPRITE.o"(.text .rodata .data .padding)
         "*/games/tbs/src/system/sprite_metadata.o"(.text)
         "*/games/tbs/src/graphics/sprite/sprites.o"(.rodata)
@@ -622,10 +646,7 @@ SECTIONS
         "*/games/tbs/src/graphics/sprite/animref1.o"(.rodata)
         "*/games/tbs/src/graphics/sprite/animref2.o"(.rodata)
         "*/games/tbs/src/graphics/sprite/sprites.o"(.rodata.b)
-        . = ABSOLUTE(LANGUAGE == LANGUAGE_JAPANESE                               ? 0x08317000 :
-                     LANGUAGE == LANGUAGE_GERMAN                                 ? 0x0831fe00 :
-                     LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ? 0x08321800 :
-                                                                                   0x08320000);
+        . = ABSOLUTE(RESOURCE_DIRECTORY_START);
         "*/games/tbs/src/gamepak/resource_directory.o"(.text .padding)
         "*/games/tbs/src/graphics/ui/ui.o"(.text .padding)
         "*/games/tbs/src/graphics/title/title.o"(.text .padding)

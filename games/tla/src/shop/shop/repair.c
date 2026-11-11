@@ -1,22 +1,32 @@
-#include "main_routine_work.h"
-#include "battle_system.h"
-#include "battle_unit.h"
-#include "item.h"
-#include "ram_buffer.h"
+/// @file
+/// Repairing items: the price and the repair.
+// Part of shop.c.
+
+#include "../shop_internal.h"
+
+s32 Shop_GetItemPrice(s32 item) {
+  s32 price = (u16)Item_Get(item)->price >> 2;
+
+  if ((item & 0x400) == 0)
+    price = 0;
+  return price;
+}
+
+s32 Func_08109ad8(void);
+
+s32 Func_0810a2c8(void) { return Func_08109ad8(); }
+
+s32 Func_08109cac(s32 unitId);
+
+s32 Func_0810a2d0(s32 unitId) { return Func_08109cac(unitId); }
 
 // The shop work block, as this function reads it.
-struct ShopRuntime {
-  u8 unk000[0x24];
-  s32 itemWindow;
-};
-
 extern u8 MsgRepairNotHandled[];     // MsgCannotRepairKind
 extern u8 MsgRepairNotDamaged[];     // MsgNotDamaged
 extern u8 MsgRepairStuckOn[];        // MsgCursedWontComeOff
 extern u8 MsgRepairNotEnoughMoney[]; // MsgNotEnoughMoney
 extern u8 MsgRepairOffer[]; // MsgShopRepairConfirm, then its three replies
 
-struct BattleUnit *Unit_Get(s32 unitId);
 s32 Inventory_FindEquippedFar(s32 unitId, s32 type);
 s32 Shop_GetItemPrice(s32 item);
 void MessageArgument_PushFar(s32 value, s32 slot);
@@ -26,9 +36,9 @@ void Message_CloseFinishedWindowsFar(void);
 void wait(s32 frames);
 void Sound_PlayFar(s32 cue);
 void Inventory_RepairFar(s32 unitId, s32 slot);
-s32 Party_AdjustCoinsFar(s32 amount);
+
 void Func_08109188(void);
-void Shop_DrawItemCount(s32 window, s32 unitId);
+
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot);
 s32 Shop_SellOld(s32 unitId, s32 slot);
 

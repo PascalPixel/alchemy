@@ -1,18 +1,8 @@
-#include "types.h"
-#include "input.h"
-#include "ram_buffer.h"
-#include "main_routine_work.h"
+/// @file
+/// The Game Ticket counter and every shop's stock.
+// Part of shop.c.
 
-struct ShopRuntime {
-  u8 unk000[0x138];
-  s32 partyMemberScale[4];
-  u8 unk148[0x382];
-  s16 partyMemberIds[25];
-  u16 selectedItem;
-  u8 unk4fe[6];
-  s8 partyMemberCount;
-  u8 mode;
-};
+#include "../shop_internal.h"
 
 extern const s16 Data_0810c38e[];
 // Unnamed in the catalog yet: 4724, 4687 and 4695 take placeholders here.
@@ -28,13 +18,12 @@ void Func_081084f4(s32 message);
 void Shop_PlaceCursor(void *window, s32 x, s32 y);
 void Func_080f8058(s32 first);
 void wait(s32 frames);
-void Func_0810928c(void *window, s32 memberIndex, s32 item);
-void Func_081095b0(void *window, s32 unitId, s32 item);
+
 s32 Inventory_AddItemFar(s32 unitId, s32 item);
-void Inventory_RemoveFar(s32 unitId, s32 slot);
+
 s32 Inventory_CountFar(s32 unitId);
 void Sound_PlayFar(s32 cue);
-void Party_AdjustShopCreditFar(s32 amount);
+
 void Party_AdjustShopGiftsFar(s32 amount);
 s32 Func_08108690(s32 *cursor, s32 count, s32 columns);
 
@@ -104,4 +93,75 @@ void Func_0810a490(void *window, void *itemWindow) {
     }
   }
   shop->selectedItem = savedSelectedItem;
+}
+
+s32 EventTable_GetRowLimit(void) { return 32; }
+
+extern const s16 gData_0810c3f4[][33];
+
+void EventTable_ApplyRowAbilities(s32 rowNo) {
+  s32 flag = rowNo + 0x400;
+  s32 i;
+
+  if (GameFlag_Test(flag) == 0) {
+    GameFlag_SetBit(flag);
+#if TLA_PATCH_1
+    // From patch 1 an empty entry is skipped; the Japanese release stops at the
+    // row's first one.
+    for (i = 0; i <= 7; i++) {
+      s16 value = gData_0810c3f4[rowNo][24 + i];
+
+      if (value != 0)
+        Item_AdjustCounterFar(value, 1);
+    }
+#else
+    for (i = 0; i <= 7; i++) {
+      s16 value = gData_0810c3f4[rowNo][24 + i];
+
+      if (value == 0)
+        break;
+      Item_AdjustCounterFar(value, 1);
+    }
+#endif
+  }
+}
+
+extern const s16 gData_0810c3f4[][33];
+
+/// Copies the shop's ordinary stock, up to 24 items, to `output` with a 0
+/// after, and returns how many. Called by Func_081082c4 for Buy.
+s32 ShopStock_CopyItems(s32 stockRow, s16 *output) {
+  const s16 *src;
+  s16 *dst;
+  s32 count;
+
+  count = 0;
+  if (gData_0810c3f4[stockRow][0] != 0) {
+    dst = output;
+    src = gData_0810c3f4[stockRow];
+    do {
+      // The row's halfword read through a volatile pointer, a load apart from
+      // the end test's; as *src, 41 of 28 instructions differ in tla-en.
+      *dst = *(const volatile s16 *)src;
+      count++;
+      src++;
+      dst++;
+      if (count > 23)
+        break;
+    } while (*src != 0);
+  }
+  output[count] = 0;
+  return count;
+}
+
+extern const s16 gData_0810c3f4[][33];
+
+s32 EventTable_GetRowType(s32 index) {
+  s32 offset = index << 5;
+  u8 *table = (u8 *)gData_0810c3f4;
+
+  offset += index;
+  offset <<= 1;
+  offset += 64;
+  return *(s16 *)(table + offset);
 }

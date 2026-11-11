@@ -10,7 +10,7 @@
 #include "fixed_math.h"
 #include "event_inline.h"
 
-/// A selection cursor, as the shops keep theirs (shop/cursor_set.c).
+/// A selection cursor, as the shops keep theirs (struct ShopCursor).
 struct ShopCursor {
   struct WindowSprite *anchor;
   u16 x;

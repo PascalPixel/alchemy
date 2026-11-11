@@ -6,8 +6,11 @@ The Broken Seal.
 
 ## What differs from The Broken Seal
 
-- The bank also holds the forge (`forge.c`, `forge.tsv`), which The Broken
-  Seal does not have: its recipes, the materials the party holds and the roll
-  for the result.
-- One function or small family goes to a file, some still named for their
-  address (`f10a960.c`).
+- `shop.c` is the bank's C, one object as The Broken Seal's is, written as
+  parts in `shop/` cut where The Broken Seal's are, in ROM order: `run.c`,
+  `cursor.c`, `buy.c`, `sell.c`, `repair.c`, `stock.c`, `forge.c`,
+  `sanctum.c`, `inn.c` and `item_picker.c`.
+- The bank also holds the forge (`shop/forge.c`, `forge.tsv`), which The
+  Broken Seal does not have: its recipes, the materials the party holds and
+  the roll for the result. Its counter lies after the inn, at the start of
+  `item_picker.c`, before the item picker it uses.

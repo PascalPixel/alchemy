@@ -1,5 +1,9 @@
-#include "types.h"
-#include "main_routine_work.h"
+/// @file
+/// The forge: its recipes, the materials the party holds and the roll for the
+/// result.
+// Part of shop.c.
+
+#include "../shop_internal.h"
 
 struct ForgeRecipe {
   s16 item;
@@ -55,7 +59,6 @@ s32 Forge_RollResult(s32 item) {
   return result;
 }
 
-u8 *Unit_Get(s32 owner);
 s32 Forge_GetMaterialChance(s32 item);
 
 s32 Forge_OwnerHasMaterial(s32 owner) {
@@ -73,7 +76,6 @@ s32 Forge_OwnerHasMaterial(s32 owner) {
   return 0;
 }
 
-s32 Party_ListActiveOwnersFar(u16 *owners);
 s32 Forge_OwnerHasMaterial(s32 owner);
 
 s32 Forge_PartyHasMaterial(void) {

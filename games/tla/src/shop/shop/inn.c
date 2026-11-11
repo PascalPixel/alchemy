@@ -1,3 +1,59 @@
+/// @file
+/// The inn: room prices, checking in and the night's sleep.
+// Part of shop.c.
+
+#include "../shop_internal.h"
+
+/// The inn's view of the shop work (heap slot 220).
+struct InnRuntime {
+  u8 unk000[0x4ca];
+  s16 partyMemberIds[8];
+  u8 unk4da[0x2a];
+  s8 partyMemberCount;
+  u8 unk505;
+  u8 busy;
+};
+
+struct InnUnit {
+  u8 unk00[0x38];
+  s16 hp;
+};
+
+void Func_08108148(void);
+void Func_0810824c(void);
+
+/// The price per guest of each inn.
+extern const s8 gData_0810cf2c[];
+
+/// Multiplies the inn's price per guest by the number of living party members.
+// As ☀️'s Inn_RoomPrice.
+s32 Inn_RoomPrice(s32 innId) {
+  struct InnRuntime *inn;
+  s32 guestCount;
+  s32 pricePerGuest;
+  s32 memberIndex;
+
+  inn = Ram_HeapSlots->menuRuntime;
+  guestCount = 0;
+  pricePerGuest = gData_0810cf2c[innId];
+  for (memberIndex = 0; memberIndex < inn->partyMemberCount; memberIndex++) {
+    if (((struct InnUnit *)Unit_Get(inn->partyMemberIds[memberIndex]))->hp != 0)
+      guestCount++;
+  }
+  return pricePerGuest * guestCount;
+}
+
+s32 Func_0810b3ec(s32 value) {
+  struct InnRuntime *work;
+
+  Func_08108148();
+  work = Ram_HeapSlots->menuRuntime;
+  work->busy = 1;
+  value = Inn_RoomPrice(value);
+  Func_0810824c();
+  return value;
+}
+
 // Inn_CheckIn is the inn. It shows the keeper's window and the price, then on
 // yes and enough coins closes the windows, plays the night (Inn_PlaySleep) and
 // greets the party in the morning. The Broken Seal's Inn_CheckIn in
@@ -7,10 +63,6 @@
 // Func_08108630 for the choice, Func_08109188 for the coins, Func_0810824c to
 // clean up) and its work-block offsets; this game has no special-inn flag.
 // Messages from MsgInnWelcome ("Welcome to our inn.").
-#include "types.h"
-#include "shop.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
 
 // The inn work block, as this function reads it.
 struct InnRuntimeState {
@@ -44,14 +96,13 @@ extern u8 MsgInnWelcome[];
 
 void Func_08108148(void);
 void Func_0810824c(void);
-struct InnObject *Actor_GetByIdFar(s32 id);
-s32 Func_080380f8(s32 resource, s32 x, s32 y, s32 flags);
+
 s32 Inn_RoomPrice(s32 mode);
 void MessageArgument_PushFar(s32 value, s32 slot);
 void Func_081084f4(s32 message);
-s32 Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+
 s32 Func_08108630(s32 value);
-void Window_CloseFar(s32 window, s32 style);
+
 void Inn_PlaySleep(s32 price);
 
 s32 Inn_CheckIn(s32 mode, s32 objectId) {
@@ -97,4 +148,48 @@ s32 Inn_CheckIn(s32 mode, s32 objectId) {
   Window_CloseFar(win, 2);
   Func_0810824c();
   return 0;
+}
+
+struct FieldEffectState {
+  u8 padding0[0x1AC];
+  s32 effect;
+  u8 padding1B0[4];
+  s32 delay;
+};
+
+void Event_WaitTransitionFramesFar(void);
+void Event_StartScreenTransitionFar(void);
+
+void Inn_PlaySleep(s32 roomPrice) {
+  s16 objects[8];
+  s32 count;
+  s32 index;
+  struct FieldObject *object;
+  struct FieldEffectState *state;
+
+  count = Party_ListActiveOwnersFar(objects);
+  Party_AdjustCoinsFar(-roomPrice);
+
+  for (index = 0; index < count; index++) {
+    object = Unit_Get(objects[index]);
+    if (object->x != 0) {
+      object->x = object->savedX;
+      object->y = object->savedY;
+      Unit_UpdateRatiosFar(objects[index]);
+    }
+  }
+
+  state = Ram_HeapSlots->eventWork;
+  state->effect = 0x209;
+  state->delay = 60;
+  wait(20);
+  Event_FinishScreenTransitionFar();
+  Event_WaitTransitionFramesFar();
+  Sound_PlayFar(86);
+  Sound_WaitForJingle();
+  wait(10);
+  Event_StartScreenTransitionFar();
+  Event_WaitTransitionFramesFar();
+  wait(30);
+  ((struct FieldEffectState *)Ram_HeapSlots->eventWork)->delay = 16;
 }

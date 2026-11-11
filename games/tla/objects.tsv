@@ -1188,77 +1188,7 @@ main	rom_main_06	games/tla/src/menu/menu_strings	.rodata
 main	rom_main_06	games/tla/src/menu/menu_tables	.data
 main	rom_main_07	games/tla/src/gamepak/far_call/table_41
 main	rom_main_07	games/tla/src/gamepak/far_call/table_42
-main	rom_main_07	games/tla/src/shop/list_items	.text
-main	rom_main_07	games/tla/src/shop/open_work	.text
-main	rom_main_07	games/tla/src/shop/f1082c4	.text
-main	rom_main_07	games/tla/src/shop/preset	.text
-main	rom_main_07	games/tla/src/shop/command_wait_for_state_byte_clear	.text
-main	rom_main_07	games/tla/src/shop/choice	.text
-main	rom_main_07	games/tla/src/shop/f108690	.text
 main	rom_main_07	games/tla/src/shop/shop	.text
-main	rom_main_07	games/tla/src/shop/f108948	.text
-main	rom_main_07	games/tla/src/shop/cursor_set	.text
-main	rom_main_07	games/tla/src/shop/cursor_place	.text
-main	rom_main_07	games/tla/src/shop/load_resource_to_block	.text
-main	rom_main_07	games/tla/src/shop/f108b70	.text
-main	rom_main_07	games/tla/src/shop/f109068	.text	en de es fr it ja
-main	rom_main_07	games/tla/src/shop/coin_window	.text
-main	rom_main_07	games/tla/src/shop/item_price	.text
-main	rom_main_07	games/tla/src/shop/draw_message	.text
-main	rom_main_07	games/tla/src/shop/f10928c	.text	en de es fr it ja
-main	rom_main_07	games/tla/src/shop/f1093a4	.text
-main	rom_main_07	games/tla/src/shop/buynum	.text
-main	rom_main_07	games/tla/src/shop/f1096f8	.text
-main	rom_main_07	games/tla/src/shop/buy	.text
-main	rom_main_07	games/tla/src/shop/sell_price	.text
-main	rom_main_07	games/tla/src/shop/f109ad8	.text	it
-main	rom_main_07	games/tla/src/shop/f109cac	.text	it
-main	rom_main_07	games/tla/src/shop/f109ad8	.text	fr
-main	rom_main_07	games/tla/src/shop/f109cac	.text	fr
-main	rom_main_07	games/tla/src/shop/f109ad8	.text	es
-main	rom_main_07	games/tla/src/shop/f109cac	.text	es
-main	rom_main_07	games/tla/src/shop/f109ad8	.text	de
-main	rom_main_07	games/tla/src/shop/f109cac	.text	de
-main	rom_main_07	games/tla/src/shop/f109ad8	.text	en ja
-main	rom_main_07	games/tla/src/shop/f109cac	.text	en
-main	rom_main_07	games/tla/src/shop/f109cac	.text	ja
-main	rom_main_07	games/tla/src/shop/item_count	.text
-main	rom_main_07	games/tla/src/shop/f10a108	.text	en de es fr it ja
-main	rom_main_07	games/tla/src/shop/price	.text
-main	rom_main_07	games/tla/src/shop/f10a2d8	.text	en de es fr it ja
-main	rom_main_07	games/tla/src/shop/f10a490	.text
-main	rom_main_07	games/tla/src/shop/rowlimit	.text
-main	rom_main_07	games/tla/src/shop/f10a670	.text
-main	rom_main_07	games/tla/src/shop/f10a6b8	.text
-main	rom_main_07	games/tla/src/shop/rowtype	.text
-main	rom_main_07	games/tla/src/shop/forge	.text
-main	rom_main_07	games/tla/src/shop/service	.text
-main	rom_main_07	games/tla/src/shop/f10a960	.text
-main	rom_main_07	games/tla/src/shop/f10aa80	.text
-main	rom_main_07	games/tla/src/shop/f10abf0	.text
-main	rom_main_07	games/tla/src/shop/reset_state_by_mode	.text
-main	rom_main_07	games/tla/src/shop/f10af24	.text
-main	rom_main_07	games/tla/src/shop/select_msg	.text
-main	rom_main_07	games/tla/src/shop/radial_motion	.text
-main	rom_main_07	games/tla/src/shop/field_particles	.text
-main	rom_main_07	games/tla/src/shop/f10b1b4	.text	en de es fr it ja
-main	rom_main_07	games/tla/src/shop/run_room_price	.text
-main	rom_main_07	games/tla/src/shop/f10b418	.text
-main	rom_main_07	games/tla/src/shop/inn_sleep	.text
-main	rom_main_07	games/tla/src/shop/f10b5c4	.text	en de es fr it ja
-main	rom_main_07	games/tla/src/shop/fwd6bc	.text
-main	rom_main_07	games/tla/src/shop/f10b6cc	.text
-main	rom_main_07	games/tla/src/shop/fwd79c	.text
-main	rom_main_07	games/tla/src/shop/f10b7b4	.text	en de es fr it ja
-main	rom_main_07	games/tla/src/shop/f10b9c0	.text	de es it ja
-main	rom_main_07	games/tla/src/shop/f10bca0	.text	ja
-main	rom_main_07	games/tla/src/shop/f10b9c0	.text	en fr
-main	rom_main_07	games/tla/src/shop/f10bca0	.text	en de es fr it
-main	rom_main_07	games/tla/src/shop/item_icon	.text
-main	rom_main_07	games/tla/src/shop/f10bdf4	.text	en de es fr it ja
-main	rom_main_07	games/tla/src/shop/item_icon_2	.text
-main	rom_main_07	games/tla/src/shop/f10bebc	.text
-main	rom_main_07	games/tla/src/shop/item_icon_3	.text
 main	rom_main_07	games/tla/src/graphics/ui/shop_sprites	.rodata
 main	rom_main_07	games/tla/src/shop/selofs	.rodata
 main	rom_main_07	games/tla/src/shop/d010c38e	.rodata

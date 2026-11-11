@@ -1,122 +1,29 @@
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "types.h"
-#include "dma.h"
-#include "resource.h"
-#include "render_input.h"
-#include "heap_release.h"
-#include "ram_buffer.h"
-#include "io_reg.h"
-#include "edition.h"
+/// @file
+/// The shop object: every counter the party trades at. Shops that buy, sell
+/// and repair, the artifact and Game Ticket counters, the forge, the
+/// sanctum's services, the inn, and the item picker events use.
+///
+/// shop_internal.h holds what every part shares; the code is in the files under
+/// shop/, included here in the order it has in the ROM. Camelot's own files are
+/// not recoverable: the ROM shows one object, and these parts are ours, cut
+/// where The Broken Seal's are. Where to start:
+///
+///   Shops           run.c: Func_081082c4, The Broken Seal's Shop_Run
+///   Sanctum         sanctum.c
+///   Inn             inn.c: Inn_CheckIn
+///   Item picker     item_picker.c: Func_0810b7b4
 
-struct Record_080b06c0 {
-  u8 filler0[4];
-  u8 values[21];
-};
+#include "shop_internal.h"
 
-void Shop_FillSelector(s32 count, s32 selector, u8 *base) {
-  u32 shifted = selector << 4;
-  u16 *offset;
-
-  selector = shifted + 1;
-
-  if (count > 0) {
-    offset = gShop_SelectorOffsets;
-    do {
-      struct Record_080b06c0 *record =
-          (struct Record_080b06c0 *)(base + *offset++);
-      record->values[0] = selector;
-      record->values[4] = selector;
-      record->values[8] = selector;
-      record->values[12] = selector;
-      record->values[16] = selector;
-      record->values[20] = selector;
-      count--;
-    } while (count != 0);
-  }
-}
-
-void Shop_CopyGlyphs(s32 digit, u8 *tiles, u32 place) {
-  u8 *src = gShop_GlyphBytes + ((u32)digit << 5);
-  u8 *dst = tiles + gShop_GlyphRowOffsets[place] + 2;
-  s32 count = 3;
-
-  do {
-    if (*src != 0) {
-      dst[0] = *src++;
-      if (*src != 0) {
-        dst[1] = *src++;
-        if (*src != 0) {
-          dst[30] = *src++;
-          if (*src != 0)
-            dst[31] = *src++;
-        }
-      }
-    }
-    dst += 4;
-    count--;
-  } while (count >= 0);
-}
-
-extern const u8 gShop_PriceTiles[];
-
-struct WindowSprite *Shop_CreatePriceSprite(s32 value, s32 window, s32 x,
-                                            s32 y) {
-  u8 *buf;
-  s32 slot;
-  struct WindowSprite *sprite;
-
-  buf = HeapSlot_AllocEwram(56, 0x400);
-  sprite = 0;
-  Dma_Set(gShop_PriceTiles, buf, DMA_COPY_WORDS(64), REG_DMA3);
-  Shop_CopyGlyphs(value % 10, buf, 0);
-  value = value / 10;
-  if (value != 0) {
-    Shop_CopyGlyphs(value % 10, buf, 1);
-    value = value / 10;
-    if (value != 0) {
-      Shop_CopyGlyphs(value % 10, buf, 2);
-      value = value / 10;
-      if (value != 0) {
-        s32 last;
-
-        Shop_CopyGlyphs(value % 10, buf, 3);
-        last = value / 10;
-        if (last != 0)
-          Shop_CopyGlyphs(last % 10, buf, 4);
-      }
-    }
-  }
-  slot = Resource_FindFreeEntry();
-  if (slot != 96) {
-    VramCache_Load(slot, 0x100, buf);
-    sprite = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X32,
-                                    (struct RenderInput *)window, x, y);
-  }
-  HeapSlot_Release(56);
-  return sprite;
-}
-
-void Shop_RestoreSceneTiles(s32 layer) {
-  u8 *map = Ram_HeapSlots->eventWork;
-  u8 *work = Ram_HeapSlots->block32;
-  u8 *saved = work + 0xe00;
-
-  Dma_Set(saved, map + 0x222, DMA_COPY_WORDS(336), REG_DMA3);
-  Dma_Set(saved, work + 0x380, DMA_COPY_WORDS(672), REG_DMA3);
-  BattleEffect_ApplyColorToTargetBufferFar(layer, 1);
-  BattleEffect_StartBufferInterpolationFar(16);
-}
-
-void Shop_InitializeEffect(void) {
-  BattleEffect_ApplyColorToTargetBufferFar(
-      (s32)Ram_HeapSlots->eventWork + 0x222, 1);
-  BattleEffect_StartBufferInterpolationFar(16);
-}
+// The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
+// parts").
+#include "shop/run.c"
+#include "shop/cursor.c"
+#include "shop/buy.c"
+#include "shop/sell.c"
+#include "shop/repair.c"
+#include "shop/stock.c"
+#include "shop/forge.c"
+#include "shop/sanctum.c"
+#include "shop/inn.c"
+#include "shop/item_picker.c"

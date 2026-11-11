@@ -80,8 +80,9 @@ void Func_02003654(void) {
   Func_02005e14();
   Func_02005f2c(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
-  /* FAKEMATCH(one-pass): BG0CNT's value in a block of its own, built before
-   * its address; as a plain block, 2 of 439 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): BG0CNT's value in a once-only block of its own, built
+   * before its address; as a plain block, 2 of 439 instructions differ in
+   * tla-en. */
   do {
     s32 control = BGCNT_SCREEN_BASE(4);
 

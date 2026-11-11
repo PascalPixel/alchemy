@@ -317,13 +317,15 @@ s32 Func_080fcf14(void) {
   struct BattleAct *psynergy;
   s32 diff;
   s32 ret;
-  /* FAKEMATCH: the barrier keeps the action's load ahead of the 0x3fff mask,
-   * and the pin keeps it in r3; as plain C, 2 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(pin): the action fixed to r3; as a plain local with no block
+   * below, 2 instructions differ in tla-en. */
   register u32 action asm("r3");
 
   menu = Ram_HeapSlots->menuRuntime;
   action = menu->paneAction[0];
+  /* FAKEMATCH(dead): an empty once-only block, which keeps the action's load
+   * ahead of the 0x3fff mask; without it and the pin above, 2 instructions
+   * differ in tla-en. */
   do {
   } while (0);
   psynergy = BattleAction_Get(0x3fff & action);

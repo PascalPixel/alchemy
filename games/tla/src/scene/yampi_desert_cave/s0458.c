@@ -55,9 +55,9 @@ void Func_02000458(struct YampiDesertCaveRect rect) {
   Sound_Play(239);
   Actor_SetSpeedParameters(rect.word[4], 0x8000, 0x1999);
   Actor_SetMoveTarget(object, rect.word[0], rect.word[1], rect.word[2]);
-  /* FAKEMATCH(one-pass): a loop of one pass with an untaken two-test branch, so
-   * the second half starts afresh in cse; as plain statements, 277 of 342
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(dead): a loop of one pass with an untaken two-test branch, so the
+   * second half starts afresh in cse; as no loop, 277 of 342 instructions
+   * differ in tla-en. */
   for (j = 0; j < 1; j++) {
     if (j != 0 && j != 5)
       w = 1;

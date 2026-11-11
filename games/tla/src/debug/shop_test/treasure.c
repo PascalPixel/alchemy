@@ -7,8 +7,10 @@
 void Party_RemoveActiveOwner(s32 owner);
 
 static __inline__ void Inventory_AddItemAgain(s32 owner, s32 item) {
-  /* FAKEMATCH: used where the next call adds the same item: a direct call keeps
-   * that item in r5, and ⚓️ builds it again. */
+  /* FAKEMATCH(wrapper): the call forwarded through an inline where the next
+   * call adds the same item, so the item is built again, as the ROM has it;
+   * as a direct Inventory_AddItem call, the item stays in r5 (not
+   * measured). */
   Inventory_AddItem(owner, item);
 }
 

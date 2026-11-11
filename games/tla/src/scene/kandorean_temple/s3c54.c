@@ -9,8 +9,8 @@ void Func_02003c54(void) {
     Func_020053a8_(1, 0x210, 10, 11);
   }
   {
-    /* FAKEMATCH: a temporary builds the angle ahead of the other arguments
-     * (three reordered rows as a plain argument). */
+    /* FAKEMATCH(temporary): a local holding the angle builds it ahead of the
+     * other arguments; as a plain argument, three rows are reordered. */
     s32 angle = 0x3000;
 
     Actor_SetPositionAndFacing(12, PIXELS(392), PIXELS(360), angle);
@@ -38,8 +38,8 @@ void Func_02003c8c(void) {
   if ((gMainRoutineWork.entrance >= 4 && gMainRoutineWork.entrance <= 6) ||
       gMainRoutineWork.entrance == 14) {
     if (GameFlag_Test(0x84a)) {
-      /* FAKEMATCH: a temporary builds the angle ahead of the other arguments
-       * (one reordered row as a plain argument). */
+      /* FAKEMATCH(temporary): a local holding the angle builds it ahead of the
+       * other arguments; as a plain argument, one row is reordered. */
       s32 angle = 0x5000;
 
       Actor_SetPositionAndFacing(12, PIXELS(432), PIXELS(394), angle);
@@ -54,8 +54,9 @@ void Func_02003c8c(void) {
     if (GameFlag_Test(0x212))
       Func_02001f3c();
     if (GameFlag_Test(0x849)) {
-      /* FAKEMATCH: a temporary set just before its call builds the angle ahead
-       * of the other arguments, as above. */
+      /* FAKEMATCH(temporary): a local holding the angle, set just before its
+       * call, builds it ahead of the other arguments, as above; as a plain
+       * argument, the rows are reordered. */
       s32 angle;
 
       Actor_SetHorizontalPositionWithTerrain(12, 0, 0);

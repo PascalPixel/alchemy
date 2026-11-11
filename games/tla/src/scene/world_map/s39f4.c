@@ -14,8 +14,9 @@ void Animation_ApplyChildArgument(void *sprite, s32 argument);
 
 static __inline__ struct Actor *Func_02004b30_(s32 kind, s32 x, s32 y,
                                                        s32 z) {
-  /* FAKEMATCH: forwarding through the inline builds the kind after the position
-   * loads, as in the native (direct: differ 4). */
+  /* FAKEMATCH(wrapper): forwarding through the inline builds the kind after the
+   * position loads, as in the native; as a direct call, 4 instructions differ.
+   */
   return ((struct Actor *)Import_ActorCreate(kind, x, y, z));
 }
 
@@ -26,9 +27,9 @@ void Func_020039f4(struct Actor *object) {
   struct FieldSprite *sprite;
   s32 (*mulQ16)(s32 a, s32 b) = Iwram_MulQ16;
 
-  /* FAKEMATCH: through a local pointer the resident multiply's entry loads
-   * before the factor's shift, as in the native (direct: differ 2; its result
-   * kept in a local: 2). */
+  /* FAKEMATCH(temporary): the resident multiply called through a local pointer,
+   * so its entry loads before the factor's shift, as in the native; as a direct
+   * call 2 instructions differ, and 2 with its result kept in a local. */
   mulQ16(object->scaleX, 0x18000);
   spark = Func_02004b30_(271, object->x, object->y, object->z);
   if (spark != NULL) {

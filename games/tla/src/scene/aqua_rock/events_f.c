@@ -23,9 +23,8 @@ void Func_0200169c(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(184);
-  /* FAKEMATCH: two goto loops; as for loops loop.c hoists the zero and the
-   * update address out of them, where the native loads them on each pass
-   * (differ 18). */
+  // Two goto loops: the ROM loads the zero and the update address on each pass,
+  // which loop.c hoists out of for loops (differ 18).
   i = 17;
 scatter:
   {

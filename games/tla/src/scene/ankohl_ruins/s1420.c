@@ -52,8 +52,8 @@ fill:
   Heap_Release(tiles);
   work->unk08 = ((s32 *)layer->unk08)[0];
   work->unk0c = ((s32 *)layer->unk08)[1];
-  /* FAKEMATCH(one-pass): the block builds the value after the stores before it;
-   * as a plain store, 6 of 179 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the once-only block builds the value after the stores
+   * before it; as a plain store, 6 of 179 instructions differ in tla-en. */
   do {
     s32 winout = 0x1b1f;
 

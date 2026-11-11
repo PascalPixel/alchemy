@@ -8,12 +8,15 @@ s32 Func_02002bd0(struct Actor *object) {
   s32 from;
 
   object->bounce = (target->x - object->x) / (steps = 10);
-  /* FAKEMATCH: ⚓️ stores the x step, then reads the object height, then the
-   * target height; unfenced, the target height is read first */
+  /* FAKEMATCH(dead): an empty once-only block, the first fence of a pair, so
+   * the x step is stored, then the object height read, then the target
+   * height; as no block, the target height is read first, not measured. */
   do {
   } while (0);
   from = object->y;
-  asm volatile(""); /* FAKEMATCH: second fence of the pair above */
+  /* FAKEMATCH(barrier): an empty asm, the second fence of the pair above; as
+   * no asm, not measured. */
+  asm volatile("");
   object->unk4c = (target->y - from + 0x100000) / steps;
   object->gravity = (target->z - object->z) / steps;
   BYTE_AT(object, 98) = steps;

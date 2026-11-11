@@ -11,8 +11,8 @@ void Func_020020e4(void) {
 
   if (cell->collisionCode == 20) {
     y = leader->y;
-    asm volatile(
-        ""); /* FAKEMATCH: ⚓️ reads the height before it builds 0x100000 */
+    asm volatile(""); /* FAKEMATCH(barrier): the native reads the height before
+                         it builds 0x100000; as the plain test. */
     if (y > 0x100000) {
       gMainRoutineWork.unk2c3 = 1;
       return;

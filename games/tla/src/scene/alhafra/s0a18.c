@@ -8,7 +8,7 @@ s32 Func_02000a18(void) {
 
     u32 c;
 
-    /* FAKEMATCH(one-pass): the four copies in a once-only block, whose end holds
+    /* FAKEMATCH(dead): the four copies in a once-only block, whose end holds
      * the order around it; as plain statements, 4 of 57 instructions differ in
      * tla-en. */
     do {

@@ -10,9 +10,9 @@ void Func_02000048(void) {
   s32 x = actor->x >> 20;
   s32 z = actor->z >> 20;
 
-  /* FAKEMATCH: the flag commands go through flag_call.h's inlines, which build
-   * each flag id again, and the block copies through call.h's Call6; as direct
-   * calls, 19 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the flag commands go through flag_call.h's inlines,
+   * which build each flag id again, and the block copies through call.h's
+   * Call6; as direct calls, 19 instructions differ in tla-en. */
   Func_02000df0();
   Func_02000e08(132);
   if (x == 20 && z == 9) {

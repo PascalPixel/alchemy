@@ -28,7 +28,9 @@ u8 Func_02004380(s32 x, s32 z, s32 direction) {
   {
     s32 column = x;
 
-    /* FAKEMATCH: load the cell table before adding x. */
+    /* FAKEMATCH(barrier): an empty asm on column that names the cell table, so
+     * the table is loaded before x is added; without it, the add comes first.
+     */
     asm("" : "+l"(column) : "l"(gSceneState.cells));
     i = z * 11 + column;
   }

@@ -67,8 +67,8 @@ void Func_0200516c(void) {
           Gauge(*(s16 *)(unit + 0x38), *(s16 *)(unit + 0x34));
       if (*(u16 *)(unit + 0x14) == 0 && *(s16 *)(unit + 0x38) != 0) {
         /* FAKEMATCH(temporary): the 1 built with movs as a word; as a halfword
-         * constant it loads from the pool and 23 of 218 instructions differ in
-         * tla-en. */
+         * constant, which loads from the pool, 23 of 218 instructions differ
+         * in tla-en. */
         s32 one = 1;
 
         *(s16 *)(unit + 0x14) = one;

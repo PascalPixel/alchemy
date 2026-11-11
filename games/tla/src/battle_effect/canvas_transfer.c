@@ -6,15 +6,16 @@
 
 static __inline__ void CopyWords_(void *destination, const void *source,
                                   s32 size) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as the scene layer does; called directly, 16 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(wrapper): the copy forwarded through an inline, which keeps each
+   * call's own constants, as the scene layer does; as direct Iwram_CopyWords
+   * calls, 16 instructions differ in tla-en. */
   Iwram_CopyWords(destination, source, size);
 }
 
 static __inline__ void FillWords_(void *destination, s32 size, u32 value) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as the scene layer does. */
+  /* FAKEMATCH(wrapper): the fill forwarded through an inline, which keeps each
+   * call's own constants, as the scene layer does; as direct Iwram_FillWords
+   * calls (not measured). */
   Iwram_FillWords(destination, size, value);
 }
 

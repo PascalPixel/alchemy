@@ -82,12 +82,13 @@ void Event_StartScreenTransition(void);
 
 void Func_02002cd8(s32 actor, s32 target);
 
-#define LEMURIAN_SHIP_TASK_ADD(func, priority)                             \
+#define LEMURIAN_SHIP_TASK_ADD(func, priority)                                 \
   {                                                                            \
-    /* FAKEMATCH: a temporary keeps the priority constant ahead of the         \
-     * task function load. */                                                       \
+    /* FAKEMATCH(temporary): the priority held in a local, so the constant     \
+     * comes ahead of the task function's load; as Task_Add((func),            \
+     * (priority)), the load comes first. */                                   \
     s32 priority_ = (priority);                                                \
-    Task_Add((func), priority_);                      \
+    Task_Add((func), priority_);                                               \
   }
 
 // The scene's own event inlines: a habit of the whole game written once, as

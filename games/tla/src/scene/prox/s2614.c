@@ -42,9 +42,9 @@ s32 Func_02002614(void) {
   } else if (scene == (s32)&SceneId_Ov6a8Room6) {
     s32 *effect =
         &((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect;
-    /* FAKEMATCH: the native loads the call's argument before the store; the
-     * plain order stores first (one reordered pair, differ 2). The argument is
-     * pinned to the r0 it is passed in. */
+    /* FAKEMATCH(pin): the call's argument pinned to the r0 it is passed in, so
+     * it loads before the store as the native does; in the plain order the
+     * store comes first, one pair reordered and 2 instructions differ. */
     register s32 skip __asm__("r0");
     s32 value = 0x209;
 
@@ -57,9 +57,9 @@ s32 Func_02002614(void) {
     if (GameFlag_Test(0x201)) {
       Func_0200461c(1);
     } else {
-      /* FAKEMATCH: the value pinned to r3 loads from the pool before the
-       * register address starts, as the native does; as a plain store, one
-       * row is reordered in tla-en. */
+      /* FAKEMATCH(pin): the value pinned to r3 loads from the pool before the
+       * register address starts, as the native does; as a plain store, one row
+       * is reordered in tla-en. */
       register u16 alpha __asm__("r3") = 0xc08;
 
       REG_BLDALPHA = alpha;

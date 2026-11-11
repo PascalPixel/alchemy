@@ -42,8 +42,8 @@ void Func_02002db0(struct PushEvent *event) {
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
   {
-    /* FAKEMATCH: a word temporary builds 0xf1f with movs, lsls, adds as the
-     * native does; a halfword constant store loads it from the pool. */
+    /* FAKEMATCH(temporary): a word local builds 0xf1f with movs, lsls, adds, as
+     * the ROM does; as a halfword constant store, it loads from the pool. */
     u32 winout = 0xf1f;
 
     REG_WINOUT = winout;

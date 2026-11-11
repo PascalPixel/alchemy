@@ -225,8 +225,8 @@ s32 Func_02000a34(s32 value) {
   Event_ShowMessageThenWait(0x2008, 0, 5);
   Actor_ArmCallbackAndRefresh(8, 0x5000);
   Event_Wait(10);
-  /* FAKEMATCH(one-pass): the block orders the arguments r0 first; as a plain
-   * call, 2 of 529 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the call in a once-only block, which orders the arguments
+   * r0 first; as a plain call, 2 of 529 instructions differ in tla-en. */
   do {
     Actor_SetSpritePriority(10, 2);
   } while (0);

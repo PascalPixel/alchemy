@@ -14,9 +14,9 @@ void Func_020026a0(void) {
   struct FieldActor **followed;
 
   Scene_TaskAdd(Func_02002180, 0x480);
-  /* FAKEMATCH: through the pointer, taken here, gData_0200480c's address loads
-   * before the call that fetches actor 22, as in the native (as in
-   * Func_02002318). */
+  /* FAKEMATCH(temporary): a pointer to gData_0200480c, taken here, loads its
+   * address before the call that fetches actor 22, as in the native and in
+   * Func_02002318; as the global named at each use. */
   followed = &gData_0200480c;
   object = (struct Actor *)Actor_GetById(22);
   object->priorityFlags |= 2;

@@ -45,7 +45,9 @@ void Func_020037a4(struct ShrineOfTheSeaGodObject *object) {
 
   if (phase == 0) {
     {
-      /* FAKEMATCH: the native builds the mask before the random draw. */
+      /* FAKEMATCH(temporary): the local holding one constant builds the mask
+       * before the random draw, as the native has; as 15 & Random16Far(),
+       * the draw comes first. */
       s32 mask = 15;
 
       dx = mask & Random16Far();
@@ -95,9 +97,9 @@ s32 Func_02003894(void) {
       if (GameFlag_Test(0x341))
         ShrineOfTheSeaGod_ObjPlaceAt(14, 360 << 16, 216 << 16, 0);
       else if (GameFlag_Test(0x342)) {
-        /* FAKEMATCH: the function-scope angle temporary preserves its early
-         * constant construction; a direct argument through the unbound helper
-         * differs 4. */
+        /* FAKEMATCH(temporary): the function-scope angle local holding one
+         * constant keeps its early construction; as a direct argument through
+         * the helper, differ 4. */
         angle = 0x8000;
         ShrineOfTheSeaGod_ObjPlaceTurn(14, 328 << 16, 216 << 16, angle);
       }

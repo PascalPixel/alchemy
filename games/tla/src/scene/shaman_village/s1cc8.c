@@ -71,18 +71,21 @@ void Func_02001d3c(void) {
   Event_Wait(1);
   ((struct ShamanVillageObject *)Actor_GetById(gMainRoutineWork.currentOwner))
       ->actionFlags |= 1;
-  /* FAKEMATCH: the emote and the frames are loaded before the actor; see
-   * SHAMAN_VILLAGE_EMOTE. */
+  /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
+   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call the actor
+   * comes one row early (see the macro). */
   SHAMAN_VILLAGE_EMOTE(15, 259, 20)
   Event_ShowMessage(0x800f, 0);
   Actor_StartRepeatedMotion(17, 1);
-  /* FAKEMATCH: the emote and the frames are loaded before the actor; see
-   * SHAMAN_VILLAGE_EMOTE. */
+  /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
+   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call the actor
+   * comes one row early (see the macro). */
   SHAMAN_VILLAGE_EMOTE(17, 259, 0)
   Event_ShowMessageAndWait(0x8011, 0);
   Actor_StartRepeatedMotion(16, 1);
-  /* FAKEMATCH: the emote and the frames are loaded before the actor; see
-   * SHAMAN_VILLAGE_EMOTE. */
+  /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
+   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call the actor
+   * comes one row early (see the macro). */
   SHAMAN_VILLAGE_EMOTE(16, 259, 0)
   Event_ShowMessageAndWait(0x8010, 0);
   Motion_SetModeAndWaitAnimation(15, 3);

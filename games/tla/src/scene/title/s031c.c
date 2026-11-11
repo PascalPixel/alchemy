@@ -35,9 +35,9 @@ void Func_0200031c(void) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16, IO_WRITE_16);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 16), IO_WRITE_16);
   Event_Wait(120);
-  /* FAKEMATCH: a goto loop carries no loop notes, so each pass reloads the
-   * queue and interrupt register addresses; as a for or do/while loop, 90
-   * instructions differ in tla-en. */
+  // A goto loop: it carries no loop notes, so each pass reloads the queue and
+  // interrupt register addresses; as a for or do-while loop, 90 instructions
+  // differ in tla-en.
   i = 0;
 fade:
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16 - i, IO_WRITE_16);

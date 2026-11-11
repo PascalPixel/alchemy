@@ -58,9 +58,9 @@ static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
 
 static __inline__ void Actor_ResetAndSetPositionInMode2_(s32 id, s32 x,
                                                                 s32 z) {
-  /* FAKEMATCH: forwarding through the inline sets x between the two halves of
-   * z, as the native does; called directly, z is built whole first (differ 2).
-   */
+  /* FAKEMATCH(wrapper): forwarding through the inline sets x between the two
+   * halves of z, as the native does; as a direct call, z is built whole first,
+   * differ 2 (of M not recorded). */
   Actor_ResetAndSetPositionInMode2(id, x, z);
 }
 

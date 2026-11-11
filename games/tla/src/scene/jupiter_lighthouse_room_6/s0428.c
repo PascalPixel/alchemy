@@ -29,8 +29,9 @@ void Func_02000428(s32 id) {
   object->y = height + 0x200000;
   {
     u8 *flags = &object->priorityFlags;
-    s32 bit = 128; /* FAKEMATCH: the native builds the bit in the register it
-                      ORs into */
+    /* FAKEMATCH(temporary): a local holding 128, so the bit is built in the
+     * register it is ORed into; as *flags |= 128, not measured. */
+    s32 bit = 128;
 
     *flags = bit | *flags;
   }

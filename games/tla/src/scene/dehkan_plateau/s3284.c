@@ -42,8 +42,8 @@ void Func_02003284(void) {
   Actor_SetSpritePriority(9, 1);
   Actor_SetSpritePriority(10, 1);
   Actor_SetSpritePriority(11, 1);
-  /* FAKEMATCH(one-pass): an empty block ends the argument loads' tie; without it, 2
-   * of 276 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): an empty once-only block ends the argument loads' tie; as
+   * no block, 2 of 276 instructions differ in tla-en. */
   do {
   } while (0);
   Func_02003d98();

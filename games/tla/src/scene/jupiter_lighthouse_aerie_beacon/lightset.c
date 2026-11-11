@@ -27,8 +27,10 @@ void Func_0200401c(s32 mode) {
     Iwram_CopyWords(gData_02006a4c, (void *)&BG_PLTT_COLOR(13, 0), 32);
   }
   if (Event_GetFlag(0xa00) || mode == 1) {
-    s32 zero = 0; /* FAKEMATCH: ⚓️ builds the zero in r2 and the counter address
-                     in r3 */
+    /* FAKEMATCH(temporary): a local holding 0, so the zero is built in r2
+     * and the counter's address in r3; as the 0 stored directly, not
+     * measured. */
+    s32 zero = 0;
 
     gData_020069f4 = zero;
     Task_Add(Func_02003f60, 1152);
@@ -49,8 +51,9 @@ void Func_020040a0(s32 id) {
   object->y = height + 0x200000;
   {
     u8 *flags = &object->priorityFlags;
-    s32 bit =
-        128; /* FAKEMATCH: ⚓️ builds the bit in the register it ORs into */
+    /* FAKEMATCH(temporary): a local holding 128, so the bit is built in the
+     * register it is ORed into; as *flags |= 128, not measured. */
+    s32 bit = 128;
 
     *flags = bit | *flags;
   }

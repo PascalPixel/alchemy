@@ -3,8 +3,9 @@
 void Func_0200156c(s32 id);
 
 static __inline__ void Speed(s32 id, s32 speed, s32 acceleration) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH(wrapper): the call forwarded through the inline, which keeps
+   * each call's own constants; as a direct Actor_SetSpeedParameters call it
+   * does not. */
   Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
@@ -17,10 +18,8 @@ void Func_02000fd0(void) {
 
   if (column == 11 && row == 9) {
     object->motionFlags = 0;
-    /* FAKEMATCH: the loop is written with goto so that it carries no loop
-     * notes: as a for loop its two uses of the object count double and the
-     * object takes the row's register (differ 97 with the direct calls below).
-     */
+    // A goto loop carries no loop notes: as a for loop its two uses of the
+    // object count double and the object takes the row's register.
     i = 8;
   sink:
     FieldEvent_Wait(1);

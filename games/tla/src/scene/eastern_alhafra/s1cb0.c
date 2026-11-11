@@ -28,8 +28,9 @@ void Func_02004b94();
 void Func_02004ba4();
 
 static __inline__ void Func_02004b6c_(s32 actor, s32 a, s32 b) {
-  /* FAKEMATCH: pinned, the second and third arguments load before the actor, as
-   * the native does at every call here (one reordered row per call without). */
+  /* FAKEMATCH(pin): the second argument pinned to r1 and the third copied, so
+   * both load before the actor as the native does at every call here; as
+   * Func_080d47b4(actor, a, b), one row per call is reordered. */
   register s32 second asm("r1") = a;
   s32 third = b;
 
@@ -644,9 +645,9 @@ turn:
   MapGrid_CopyCellsLayered(42, 60, 17, 4, 42, 68);
   MapGrid_CopyCellsLayered(106, 60, 17, 4, 106, 64);
   MapGrid_CopyCellsLayered(106, 60, 17, 4, 106, 68);
-  /* FAKEMATCH: the step in a local, used for the first layer and both actors,
-   * gives the native's registers (differ 14 written as the literal each time).
-   */
+  /* FAKEMATCH(temporary): the step held in a local, used for the first layer
+   * and both actors, gives the native's registers; as the literal each time, 14
+   * instructions differ. */
   step = 0x10000;
   i = 239;
 scroll:

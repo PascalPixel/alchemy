@@ -59,8 +59,8 @@ void Func_02005594(void) {
   if (GameFlag_Test(0x92e))
     Actor_SetHorizontalPositionWithTerrain(7, 0, 0);
   else if (GameFlag_Test(0x92f)) {
-    /* FAKEMATCH: the temporary builds the angle before the position, as the
-     * native does (differ 4 without it). */
+    /* FAKEMATCH(temporary): a local holding the angle builds it before the
+     * position; as a plain argument, 4 instructions differ. */
     s32 angle = 0x2000;
 
     Kibombo_ObjPlaceFacing(7, 152 << 17, 176 << 15, angle);

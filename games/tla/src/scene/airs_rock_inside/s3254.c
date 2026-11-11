@@ -12,9 +12,10 @@ void Func_02005df4(s32 x, s32 z, s32 layer, s32 value);
 void Func_02005f74(const s16 *list);
 
 static inline void ClearLayer2Shape(s32 x, s32 z) {
-  /* FAKEMATCH: forwarding through the inline builds the shared z constant again
-   * for the second call, as the native does; called directly, the constant is
-   * kept in r5 across the first call (differ 12). */
+  /* FAKEMATCH(wrapper): the call forwarded through an inline, which builds the
+   * shared z constant again for the second call, as the ROM does; as a direct
+   * call, the constant is kept in r5 across the first call and 12 instructions
+   * differ. */
   Func_02005df4(x, z, 2, 0);
 }
 

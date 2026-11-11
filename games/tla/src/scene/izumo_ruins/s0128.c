@@ -7,9 +7,9 @@ void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer) {
 
   cell += Func_02001508(object);
   if (Event_GetFlag(flag)) {
-    /* FAKEMATCH: the flags are read before the cell store and ORed into the
-     * register that holds 2, as the native does; as one |= the 0 for the cell
-     * is built before the read */
+    /* FAKEMATCH(temporary): the flags read into a local before the cell store
+     * and ORed into the register that holds 2, as the native does; as one |=,
+     * the 0 for the cell is built before the read. */
     u8 flags = object->priorityFlags;
     s32 bits;
 

@@ -212,7 +212,7 @@ L_0200871e:
   Func_0200084c(0, (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
   value = 0;
-  /* FAKEMATCH(one-pass): the block round the store; as a plain store, 2 of 426
+  /* FAKEMATCH(dead): the store in a once-only block; as a plain store, 2 of 426
    * instructions differ in tla-en. */
   do {
     REG_BLDCNT = value;

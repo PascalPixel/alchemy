@@ -27,11 +27,13 @@ void Func_0200423c(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY, s32 mode);
 
 static inline void Contigo_Jump(s32 actor, s32 height, s32 frames) {
-  /* FAKEMATCH: the native loads the actor after the height and frames. */
+  /* FAKEMATCH(pin): the height pinned to r1, so that the actor loads after the
+   * height and the frames, as the native has; as plain arguments it does
+   * not. */
   register s32 h __asm__("r1") = height;
-  /* FAKEMATCH: the frames stay fixed in r2 for the same reason. */
+  /* FAKEMATCH(pin): the frames pinned to r2, for the same order. */
   register s32 f __asm__("r2") = frames;
-  /* FAKEMATCH: and the actor last, in r0. */
+  /* FAKEMATCH(pin): the actor pinned to r0 and set last. */
   register s32 a __asm__("r0") = actor;
 
   Func_080d47b4(a, h, f);

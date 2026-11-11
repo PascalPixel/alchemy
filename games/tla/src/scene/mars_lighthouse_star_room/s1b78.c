@@ -10,9 +10,10 @@ void Func_02001b78(s32 *position, s32 base) {
         Math_Cosine(((u32)(Random16Far() * 0x3000) >> 16) + 0x3000);
     object->gravity = (u16)Random16Far();
     object->unk4c = (u16)(Random16Far() << 1) + base;
-    /* FAKEMATCH: the s32 temporary keeps the zero extension and the pool word
-     * 0xffff8000; stored directly, the add narrows to 16 bits (movs, lsls for
-     * 0x8000, no extension). */
+    /* FAKEMATCH(temporary): the angle held in an s32 local keeps the zero
+     * extension and the pool word 0xffff8000; as a direct store, the add
+     * narrows to 16 bits (movs, lsls for 0x8000, no extension), not
+     * measured. */
     angle = (u16)Random16Far() - 0x8000;
     object->action = angle;
     Func_02001b38(object, 2);

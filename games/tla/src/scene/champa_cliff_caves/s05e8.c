@@ -30,17 +30,18 @@ void Func_020005e8(s32 actor) {
   Actor_GetById(gMainRoutineWork.currentOwner)->unk5a[0] &= ~1;
   Actor_CommitPositionAndActivate(gMainRoutineWork.currentOwner, -16, -8);
   Event_Wait(1);
-  /* FAKEMATCH: the bit is set through the 8-bit field: read as a plain byte the
-   * store aliases the owner's load that follows, which the scheduler then puts
-   * before the zero (differ 2). */
+  /* FAKEMATCH(signature): the byte declared as an 8-bit bitfield and the bit
+   * set through it; as a plain byte the store aliases the owner's load that
+   * follows, which the scheduler then puts before the zero, differ 2. */
   ((struct ActorSolid *)Actor_GetById(gMainRoutineWork.currentOwner))->solid |= 1;
   Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, FACING_EAST);
   Event_Wait(10);
 }
 
 void Func_0200067c(s32 value) {
-  /* FAKEMATCH: declared in this order the bit takes r6 and the mask r7; as
-   * literals they take the other's register (differ 12). */
+  /* FAKEMATCH(temporary): the bit and the mask in locals, declared in this
+   * order so that the bit takes r6 and the mask r7; as literals they take the
+   * other's register, differ 12. */
   s32 bit = 1;
   s32 mask = 0xfe;
 

@@ -20,8 +20,9 @@ void Func_02000148(struct FieldActor *self) {
   z += sine * 2;
   self->z = z;
   self->targetX = x;
-  /* FAKEMATCH: the target z store stays ahead of the timer load; without it the
-   * store falls behind (6 differ; placed by alchemy permute) */
+  /* FAKEMATCH(dead): an empty once-only block, so the target z store stays
+   * ahead of the timer load; without it, the store falls behind and 6
+   * instructions differ (placed by alchemy permute). */
   do {
   } while (0);
   self->targetZ = z;

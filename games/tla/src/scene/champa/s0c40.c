@@ -19,9 +19,9 @@ void Func_02000c40(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
     Func_020029e4(object, gData_02003620);
     object->motionFlags = 0;
     {
-      /* FAKEMATCH: a 64-bit copy of frames reads it from the stack after the
-       * pool zero is loaded (one reordered pair; as u32, u16 or s16 it stays
-       * before). */
+      /* FAKEMATCH(signature): frames copied to a u64 local, which reads it
+       * from the stack after the pool zero is loaded; as a u32, u16 or s16
+       * copy it stays before, one reordered pair. */
       u64 count = frames;
 
       ((struct {

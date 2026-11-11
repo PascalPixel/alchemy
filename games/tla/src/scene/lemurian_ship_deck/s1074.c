@@ -11,16 +11,18 @@ void Func_02001f64(void);
 void Func_02001fd4(s32 id, s32 target);
 
 static __inline__ void SetSpeed(s32 id, s32 speed, s32 acceleration) {
-  /* FAKEMATCH: as in ☀️'s scene layer, forwarding through the inline sets the
-   * arguments up in their own order and keeps each call's constants; a direct
-   * call builds the costly constant first or shares it (differ 2 or more). */
+  /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
+   * scene layer, so the arguments are set up in their own order and each call
+   * keeps its constants; as a direct call, the costly constant is built first
+   * or shared and 2 or more instructions differ. */
   Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
 static __inline__ void SetPosition(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: as in ☀️'s scene layer, forwarding through the inline sets the
-   * arguments up in their own order and keeps each call's constants; a direct
-   * call builds the costly constant first or shares it (differ 2 or more). */
+  /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
+   * scene layer, so the arguments are set up in their own order and each call
+   * keeps its constants; as a direct call, the costly constant is built first
+   * or shared and 2 or more instructions differ. */
   Actor_SetPositionAndReset(id, x, z);
 }
 
@@ -47,7 +49,7 @@ void Func_02001074(void) {
     object = Actor_Get(gMainRoutineWork.currentOwner);
     if (object != 0)
       Actor_SetDestination(9, *(s16 *)((u8 *)object + 10),
-                                *(s16 *)((u8 *)object + 18));
+                           *(s16 *)((u8 *)object + 18));
     FieldActor_WaitForMoveById(9);
     Actor_SetPosition(9, 0, 0);
     Event_SetFlag(0x988);

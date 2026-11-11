@@ -47,10 +47,13 @@ void Func_02000ad8(void) {
   {
     s32 anim = 0x80;
     s32 zero = 0;
-    /* FAKEMATCH: forced temporaries load the zero before 0x100's shift and the
-     * actor id after it; as plain constants, 2 differ in tla-en. */
+    /* FAKEMATCH(barrier): the asm on the emote's temporary loads the zero
+     * before 0x100's shift and the actor id after it; as Actor_ShowEmote(10,
+     * 0x100, 0), with the asm below, 2 instructions differ in tla-en. */
     __asm__ volatile("" : "+l"(anim));
-    /* FAKEMATCH: the second forced temporary of the same call, as above. */
+    /* FAKEMATCH(barrier): the asm on the zero, the same call's second; as
+     * Actor_ShowEmote(10, 0x100, 0), with the asm above, 2 instructions differ
+     * in tla-en. */
     __asm__ volatile("" : "+l"(zero));
     Actor_ShowEmote(10, anim << 1, zero);
   }

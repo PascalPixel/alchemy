@@ -10,8 +10,9 @@ void HeapSlot_Release(s32 slot);
 
 void Func_02003a30(void) {
   struct Actor **slot = &gData_02004420;
-  /* FAKEMATCH: the native keeps one zero in r7 for the three byte stores below;
-   * plain zeros are built in r2 where they are stored (differ 22). */
+  /* FAKEMATCH(temporary): one zero held in a local, kept in r7 for the three
+   * byte stores below as the native does; as plain zeros, built in r2 where
+   * they are stored, 22 instructions differ. */
   s32 zero = 0;
   struct Actor *object = ((struct Actor *)Import_ActorCreate(489, 0, 0, 0));
 

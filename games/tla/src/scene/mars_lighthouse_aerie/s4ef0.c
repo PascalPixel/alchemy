@@ -31,7 +31,7 @@ void Func_02004ef0(u16 *slots, u16 *colours, u16 *a, u16 *b) {
       int blue = *colours++;
       int value;
 
-      /* FAKEMATCH(one-pass): the colour's build and store in a once-only
+      /* FAKEMATCH(dead): the colour's build and store in a once-only
        * block, so both lists are stepped right after their loads and the
        * next entry's marker loads before 0xffff is built; as plain
        * statements, 22 of 80 instructions differ in tla-en. */

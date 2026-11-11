@@ -88,7 +88,8 @@ void Func_02000320(void) {
   Event_Wait(20);
   x = 0x108;
   z = 30;
-  /* FAKEMATCH: the native loads both distances before the actor id. */
+  /* FAKEMATCH(barrier): x and z held at an empty asm, so both distances load
+   * before the actor id, as the native has them; as no asm, not measured. */
   __asm__ volatile("" : "+r"(x), "+r"(z));
   Func_080d47b4(33, x, z);
   Event_ShowMessageThenWait(33, 0, 10);

@@ -18,8 +18,9 @@ void Func_02002f34(void) {
       object->field48 = 0x10000;
       object->field4c = 0x40000 - (u16)Random16Far();
       value = (u16)Random16Far() + 0xffff8000;
-      /* FAKEMATCH: an empty asm after the sum moves the literal pool one
-       * instruction toward the native's place (still one late). */
+      /* FAKEMATCH(barrier): an empty asm after the sum moves the literal pool
+       * one instruction toward the original's place (still one late); as no
+       * asm, the pool sits one instruction later. */
       asm volatile("");
       object->field64 = value;
       object->motionFlags = 0;

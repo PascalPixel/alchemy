@@ -21,9 +21,9 @@ void Fade_ToBlack(s32 vblanks);
 void Func_020021f8(void *source, void *destination);
 
 static __inline__ void Decode_(void *source, void *destination) {
-  /* FAKEMATCH: forwarding through the inline keeps the buffer address a
-   * constant of each call, as ☀️'s system call layer does (called directly, the
-   * address is kept in r5: differ 22). */
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps the buffer address
+   * a constant of each call, as ☀️'s system call layer does; as a direct call
+   * the address is kept in r5, differ 22. */
   Func_020021f8(source, destination);
 }
 
@@ -43,9 +43,9 @@ void Func_0200005c(void) {
   id = (s32)&ResourceId_LogoOnBlack;
   Fade_ToBlack(0);
   {
-    /* FAKEMATCH: the control value is pinned to r3 as a halfword, and a
-     * one-pass block keeps it ahead of the register's address: the native loads
-     * 0x681 before it builds BG2CNT's address (plainly, one reordered row). */
+    /* FAKEMATCH(pin): the control value pinned to r3 as a halfword, so that
+     * 0x681 loads before BG2CNT's address is built, as the native has; as a
+     * plain store, one row is reordered. */
     register u16 control asm("r3");
 
     control = 0x681;
@@ -91,9 +91,10 @@ scroll_pair:
   ((struct ClearWork *)Ram_HeapSlots->mapWork)->mode = 0x1400;
   {
     struct Actor *leader;
-    /* FAKEMATCH: the flag's zero is pinned to r5 as a halfword: the native
-     * loads it from the pool after the call, where plainly it reuses the scroll
-     * loop's zero kept in r5 (differ 20 with a byte pin). */
+    /* FAKEMATCH(pin): the flag's zero pinned to r5 as a halfword, so that it
+     * loads from the pool after the call, as the native has; as a plain store
+     * it reuses the scroll loop's zero kept in r5; pinned as a byte, differ
+     * 20. */
     register u16 zero asm("r5");
 
     leader = Actor_Get(gMainRoutineWork.currentOwner);

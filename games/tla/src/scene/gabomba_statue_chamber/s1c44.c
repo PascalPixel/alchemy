@@ -31,16 +31,15 @@ void Func_02001c44(void) {
 #if TLA_PATCH_1 /* The Japanese edition does not set the retreat. */
   if (gMainRoutineWork.entrance == 2) {
     if (GameFlag_Test(0xa27)) {
-      /* FAKEMATCH(one-pass): the scene id through a temporary and a once-only
-       * block, which issues its literal load first; as plain stores, 4 of 71
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): the scene id through a local, which issues its
+       * literal load first; as plain stores, 4 of 71 instructions differ in
+       * tla-en. */
       scene = &SceneId_Ov671Room7;
       gMainRoutineWork.retreatScene = (s32)scene;
         gMainRoutineWork.retreatEntrance = 1;
     } else if (GameFlag_Test(0xa28)) {
-      /* FAKEMATCH(one-pass): the scene id through a temporary and a once-only
-       * block, as the first branch; as plain stores, 4 of 71 instructions
-       * differ in tla-en. */
+      /* FAKEMATCH(temporary): the scene id through a local, as in the first
+       * branch; as plain stores, 4 of 71 instructions differ in tla-en. */
       scene = &SceneId_Ov672Room1;
       gMainRoutineWork.retreatScene = (s32)scene;
         gMainRoutineWork.retreatEntrance = 3;

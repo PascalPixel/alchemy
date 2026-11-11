@@ -6,9 +6,9 @@
 extern const u16 gData_02001678[];
 
 static inline void RegSet(s32 value, s32 reg) {
-  /* FAKEMATCH: the value passes through an s32 inline parameter: the native
-   * builds 0x3f42 in a register (stored directly it is a pool word) and holds
-   * the value in r2, the register address in r3. */
+  /* FAKEMATCH(wrapper): the store forwarded through this inline with s32
+   * parameters, so 0x3f42 is built in r2 and the register address held in r3;
+   * as a direct store, 0x3f42 is a pool word. */
   *(u16 *)reg = value;
 }
 
@@ -16,7 +16,6 @@ void Func_02000070(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   s32 *layer;
   s32 i;
-
 
   Event_PlaySound(216);
   layer = (s32 *)(map + 0x178);

@@ -7,8 +7,8 @@ void Func_02002fec(struct KibomboObject *object) {
 
   object->y += 0x8000;
 
-  /* FAKEMATCH: the temporary builds the scale step before scaleX is loaded (one
-   * reordered row). */
+  /* FAKEMATCH(temporary): a local holding the scale step builds it before
+   * scaleX is loaded; as plain constants, one row is reordered. */
   step = 0x51e;
   object->scaleX += step;
   object->scaleY += step;

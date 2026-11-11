@@ -81,8 +81,8 @@ s32 Func_02000cf4(void) {
     if (Event_GetFlag(0x30d))
       PlaceObject(8, PIXELS(696), PIXELS(600));
     /* FAKEMATCH(signature): Func_02001064 declared returning s32, though it
-     * reaches Func_080d9e98, whose draft returns nothing; as void, these calls
-     * set r0 first and 4 of 241 instructions differ in tla-en. */
+     * reaches Func_080d9e98, whose draft returns nothing; as void, which sets
+     * r0 first for these calls, 4 of 241 instructions differ in tla-en. */
     Func_02001064(0, 17, 18);
     Func_02001064(1, 19, 20);
     Func_02001064(2, 21, 22);

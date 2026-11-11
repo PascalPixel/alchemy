@@ -159,8 +159,8 @@ swirl:
 
     REG_BG2CNT = control;
   }
-  /* FAKEMATCH(one-pass): the empty block ends CSE's run here; with no block, 2
-   * of 720 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the empty once-only block ends CSE's run here; with
+   * no block, 2 of 720 instructions differ in tla-en. */
   do {
   } while (0);
   Dma_Set((void *)0x06002800, (void *)0x06003000, 0x84000200, REG_DMA3);

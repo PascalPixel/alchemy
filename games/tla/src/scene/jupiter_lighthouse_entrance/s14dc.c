@@ -53,7 +53,7 @@ void Func_020014dc(struct CellTarget *table, struct CellTargetEntry *entry) {
   }
   Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
   do {
-    /* FAKEMATCH(one-pass): the flag cleared behind a loop-end note, so the
+    /* FAKEMATCH(dead): the flag cleared behind a loop-end note, so the
      * table is copied out of r8 after the actor's byte store, as in the
      * native; as table->shown = 0, 16 of 131 instructions differ in
      * tla-en. */

@@ -64,8 +64,9 @@ void Func_020000c8(s32 mode, s32 arg) {
     a->acceleration = 0x8000;
     b->acceleration = 0x8000;
     b->speedLimit = 0x40000;
-    /* FAKEMATCH: ⚓️ finishes the second object's speed before it builds the
-     * first position. */
+    /* FAKEMATCH(barrier): an empty asm, so the second object's speed is
+     * finished before the first position is built, as the native does; as the
+     * plain statements with no asm. */
     __asm__ volatile("");
     FieldActor_SetPositionAndResetMotion(a, 0x1e80000, a->y, 0x1380000);
     FieldActor_SetMoveTarget(a, 0x1b80000, 0, 0x1380000);

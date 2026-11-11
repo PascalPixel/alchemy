@@ -52,7 +52,7 @@ void Func_020002f8(void) {
   /* FAKEMATCH(wrapper): the flag test forwarded through Value1; as a direct
    * call, 11 of 223 instructions differ in tla-en. */
   if (Event_GetFlag(0x8a7)) {
-    /* FAKEMATCH(wrapper): both calls forwarded through Call3; either as a
+    /* FAKEMATCH(wrapper): both calls forwarded through Call3; as either one a
      * direct call, 2 of 223 instructions differ in tla-en. */
     Actor_SetPosition(14, 0xc80000, 0x880000);
     Actor_SetPosition(15, 0x1880000, 0x1680000);
@@ -70,8 +70,8 @@ void Func_020002f8(void) {
   Func_02001578(gData_02001608);
   Actor_SetActionCallback(Actor_Get(16), 9);
   if (!Event_GetFlag(0x8a7)) {
-    /* FAKEMATCH(wrapper): the three calls forwarded through Func_02001408_;
-     * any one as a direct call, 4 of 223 instructions differ in tla-en. */
+    /* FAKEMATCH(wrapper): the three calls forwarded through Func_02001408_; as
+     * any one a direct call, 4 of 223 instructions differ in tla-en. */
     Func_02001408_(0, 58, 12, 7, 13, 58);
     Func_02001408_(0, 58, 2, 9, 25, 66);
     Func_02001408_(0, 58, 10, 5, 15, 74);

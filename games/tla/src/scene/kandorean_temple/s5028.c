@@ -2,8 +2,9 @@
 
 void Func_02004fb4(void) {
   struct Actor **slot = &gData_020062ac;
-  /* FAKEMATCH: the native keeps one zero in r7 for the three byte stores below;
-   * plain zeros are built in r2 where they are stored (differ 22). */
+  /* FAKEMATCH(temporary): one local zero, kept in r7 for the three byte stores
+   * below; as plain zeros, built in r2 where they are stored, 22 instructions
+   * differ. */
   s32 zero = 0;
   struct Actor *object =
       ((struct Actor *)Import_ActorCreate(0x1e9, 0x1980000, 0x280000, 0x1580000));

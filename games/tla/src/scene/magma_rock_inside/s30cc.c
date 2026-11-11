@@ -20,8 +20,9 @@ s32 Func_02002cd0();
 s32 Party_LearnAbility();
 
 static inline void Call0(void (*f)()) {
-  /* FAKEMATCH: the call layer without arguments; called directly, the two -1s
-   * before it are negated in the other order (differ 2). */
+  /* FAKEMATCH(wrapper): a call layer without arguments; as a direct call, the
+   * two -1s before it are negated in the other order, differ 2 (of M not
+   * recorded). */
   f();
 }
 

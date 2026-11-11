@@ -94,7 +94,8 @@ void Func_02001f90(struct Actor *object) {
   object->z += dz;
   object->bounce = dx - dx / 18;
   object->unk4c = dz - dz / 16;
-  /* FAKEMATCH: ⚓️ stores the Z speed before it loads the scale rate */
+  /* FAKEMATCH(dead): an empty once-only block, so the Z speed is stored before
+   * the scale rate loads; as no block, not measured. */
   do {
   } while (0);
   rate = object->speedLimit;

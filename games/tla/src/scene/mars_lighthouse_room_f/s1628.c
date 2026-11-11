@@ -31,8 +31,9 @@ void Func_02001628(s32 id) {
   object->y = height + 0x200000;
   {
     u8 *flags = &object->priorityFlags;
-    s32 bit =
-        128; /* FAKEMATCH: ⚓️ builds the bit in the register it ORs into */
+    /* FAKEMATCH(temporary): the bit held in a local, so it is built in the
+     * register it ORs into; as *flags |= 128, not measured. */
+    s32 bit = 128;
 
     *flags = bit | *flags;
   }

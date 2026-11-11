@@ -10,8 +10,8 @@ void Func_02004d84(u8 *text, u32 value) {
   *text = 0;
   text--;
   i = 7;
-  /* FAKEMATCH: the loop is written with goto: as a for loop the 15 is moved out
-   * of it (differ 13), where the native builds it on every pass. */
+  // A goto loop, which builds the 15 on every pass: as a for loop, the 15 is
+  // moved out of it (differ 13).
 next:
   *text = digits[value & 15];
   value >>= 4;

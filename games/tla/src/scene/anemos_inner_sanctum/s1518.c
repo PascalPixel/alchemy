@@ -37,9 +37,9 @@ void Func_02001518(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 10);
   FieldEvent_Wait(30);
   object->motionFlags = 0;
-  /* FAKEMATCH: through Call4 each -1 is built on its own, as in the native;
-   * called directly the three share one register, two instructions shorter
-   * (differ 12). */
+  /* FAKEMATCH(wrapper): the camera move forwarded through Call4, so each -1 is
+   * built on its own, as in the ROM; as a direct call, the three share one
+   * register, two instructions shorter, and 12 instructions differ. */
   FieldCamera_MoveTo(-1, -1, -1, 0);
   object->speedLimit = 0x20000;
   object->acceleration = 0x800;

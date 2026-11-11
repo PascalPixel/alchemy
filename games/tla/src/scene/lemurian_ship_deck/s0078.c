@@ -12,9 +12,10 @@ void Event_WaitTransitionFrames(void);
 
 static __inline__ void Func_02001f2c_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  /* FAKEMATCH: as in ☀️'s scene layer, forwarding through the inline sets the
-   * arguments up in their own order and keeps each call's constants; a direct
-   * call builds the costly constant first or shares it (differ 2 or more). */
+  /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
+   * scene layer, so the arguments are set up in their own order and each call
+   * keeps its constants; as a direct call, the costly constant is built first
+   * or shared and 2 or more instructions differ. */
   Map_CopyCellPictureIndicesRect(a, b, c, d, e, f);
 }
 
@@ -25,9 +26,9 @@ void Func_02000078(void) {
 
     Func_02001f5c();
     FieldEvent_ResolvePendingActions(0);
-    /* FAKEMATCH: the loop is written with goto so that it carries no loop
-     * notes: the bytes rebuild the zero and the height on every pass, and a for
-     * loop hoists both (differ 39). */
+    // The loop is written with goto so that it carries no loop notes: the bytes
+    // rebuild the zero and the height on every pass, and a for loop hoists both
+    // (differ 39).
     i = 8;
   loop:
     {

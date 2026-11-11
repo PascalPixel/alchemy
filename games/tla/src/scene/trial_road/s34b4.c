@@ -75,9 +75,9 @@ void Func_020034b4(void) {
   OBJECT_BYTE(Actor_GetById(8), 0x5a) &= ~1;
   Actor_SetPositionAndReset(8, Func_02002d20(35), 264);
   Event_Wait(1);
-  /* FAKEMATCH: the bit is set through the 8-bit field, as in overlay 685: read
-   * as a plain byte the store takes the order of a store that aliases what
-   * follows. */
+  /* FAKEMATCH(signature): the byte typed as a whole-byte bit-field, as in
+   * overlay 685; as a plain byte, the store takes the order of a store that
+   * aliases what follows. */
   ((struct ActorSolid *)Actor_GetById(8))->solid |= 1;
   Event_Wait(20);
   Func_080d47b4(8, 261, 10);

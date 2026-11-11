@@ -8,9 +8,9 @@ void Func_0200113c(s32 actor, s32 target);
 /// one each.
 void Func_02000958(void) {
   u32 i;
-  /* FAKEMATCH: the native keeps the counter in r5 and the actor in r6; unpinned
-   * the two swap (14 differ), and a do-while or a counter-derived actor
-   * measured 14 to 29. */
+  /* FAKEMATCH(pin): the actor pinned to r6, so the counter takes r5 as the
+   * native has them; as a plain local the two swap, differ 14 (of M not
+   * recorded); a do-while or a counter-derived actor measured 14 to 29. */
   register s32 actor __asm__("r6");
   s32 target;
 

@@ -1,6 +1,10 @@
 #include "local.h"
 
 void Func_02002674(void) {
+  /* FAKEMATCH(signature): the byte typed as a whole-byte bit-field, which
+   * keeps its struct's alias set so the store cannot alias gMainRoutineWork's
+   * words; as u8 priorityFlags, the next load is scheduled one step early in
+   * tla-en. */
   ((struct ObjectFlags23 *)Actor_GetById(gMainRoutineWork.currentOwner))
       ->flags |= 32;
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
@@ -32,9 +36,10 @@ void Func_020026cc(void) {
   Actor_ResetAndSetPosition(12, 300, 164);
   Actor_SetPositionAndCommit(13, 356, 164);
   Event_Wait(40);
-  /* FAKEMATCH: the loop note ends the scheduling block before the battle rule
-   * is set: without it the native order of the last position call's arguments
-   * (r1 shifted before r2 is loaded) is one reordered pair. */
+  /* FAKEMATCH(dead): an empty once-only block, whose loop note ends the
+   * scheduling block before the battle rule is set; without it, the last
+   * position call's arguments (r1 shifted before r2 is loaded) are one
+   * reordered pair. */
   do {
   } while (0);
   gMainRoutineWork.battleRule24b = 2;

@@ -99,9 +99,10 @@ void Func_02002f70(void) {
   System_Wait(1);
   actor = Actor_Get(5);
   actor->angle = ArcTan2(spark->z - actor->z, spark->x - actor->x);
-  /* FAKEMATCH: the native stores the angle before it starts the camera call's
-   * constants; without the barrier the -1 is started first (one reordered pair,
-   * differ 2; with x and z read into locals first, differ 16). */
+  /* FAKEMATCH(barrier): an empty asm after the angle is stored, so the store
+   * comes before the camera call's constants are started; without it, the -1
+   * is started first and 2 instructions differ (with x and z read into locals
+   * first, 16). */
   asm volatile("");
   FieldCamera_MoveTo(spark->x, -1, spark->z, 1);
   Func_020057b4();

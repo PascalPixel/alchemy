@@ -14,9 +14,9 @@ extern const u8 gData_02006030[];
 void Func_02001d50(void) {
   struct ContigoObject *object;
   s32 answer;
-  /* FAKEMATCH: the native reloads the leader into r5 after each yes/no prompt
-   * and copies it to r0 in each branch; unpinned, 28 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(pin): the leader pinned to r5, reloaded after each yes/no prompt
+   * and copied to r0 in each branch, as the native has; as an unpinned local,
+   * 28 instructions differ in tla-en. */
   register s32 owner __asm__("r5");
   s32 angle;
 

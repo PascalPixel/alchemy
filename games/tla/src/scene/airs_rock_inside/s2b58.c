@@ -32,9 +32,8 @@ void Func_02002b58(s32 x, s32 z) {
   spawn.mode = 1;
   spawn.scaleX = 0xcccc;
   spawn.scaleY = 0x30000;
-  /* FAKEMATCH: the loop is written with goto so that it carries no loop notes:
-   * the bytes rebuild the height and the position's address on every pass, and
-   * a for loop hoists both (differ 55). */
+  // A goto loop: the ROM rebuilds the height and the position's address on
+  // every pass, which a for loop hoists (differ 55).
   i = 0;
 next:
   position.x = x + ((Random16Far() & 31) << 16) - 0x100000;

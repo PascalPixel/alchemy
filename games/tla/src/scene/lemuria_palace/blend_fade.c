@@ -10,8 +10,8 @@ static __inline__ void Blend_WriteAlpha(s32 value) {
   REG_BLDALPHA = value;
 }
 
-/* FAKEMATCH: each alpha write is a one-pass block; with the plain inline the
- * fades differ 4 and 2. */
+// Each alpha write is the macro's own once-only block; with the plain inline
+// the fades differ 4 and 2.
 #define BLEND_SET_ALPHA(value)                                                 \
   do {                                                                         \
     Blend_WriteAlpha(value);                                                   \
@@ -21,9 +21,8 @@ static __inline__ void Blend_WriteAlpha(s32 value) {
 void Func_02000510(void) {
   s32 i;
 
-  /* FAKEMATCH: the alpha writes are one-pass blocks (BLEND_SET_ALPHA); a for,
-   * do-while or while (1) loop differs 39, as the loop pass hoists the register
-   * address and 16 out of it. */
+  // The loop is written with goto: a for, do-while or while (1) loop differs
+  // 39, as the loop pass hoists the register address and 16 out of it.
   BLEND_SET_ALPHA(0x1000);
   gData_0200308c = 0;
   i = 0;
@@ -41,8 +40,6 @@ loop:
 void Func_02000550(void) {
   s32 i;
 
-  /* FAKEMATCH: the alpha writes are one-pass blocks (BLEND_SET_ALPHA), as in
-   * Func_02000510. */
   BLEND_SET_ALPHA(16);
   gData_0200308c = 0;
   i = 0;

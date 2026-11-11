@@ -25,8 +25,10 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz, s32 flags,
                    struct SettlementsSpawn *spawn);
 
 void Func_0200156c(s32 id) {
-  /* FAKEMATCH: unused; its twelve bytes are the gap the native stack frame keeps
-   * above the spawn record, where Func_02001620 holds its velocity. */
+  /* FAKEMATCH(dead): an unused local that only sizes the frame: its twelve
+   * bytes are the gap the native stack frame keeps above the spawn record,
+   * where Func_02001620 holds its velocity; without it the frame is smaller.
+   */
   struct SettlementsVector velocity;
   struct SettlementsSpawn spawn;
   struct Actor *object = Actor_Get(id);

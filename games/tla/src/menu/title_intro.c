@@ -914,10 +914,10 @@ s32 Func_081a729c(s32 prompt) {
     register u16 control asm("r3") =
         BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
 
-    /* FAKEMATCH(barrier): holds r2 until the control word is loaded; as the
-     * pin alone, 2 of 254 instructions differ in tla-en. The Japanese and
-     * German editions place the first literal pool one instruction later and
-     * match with the pin alone. */
+    /* FAKEMATCH(barrier): an asm holding r2 until the control word is loaded;
+     * as the pin alone, 2 of 254 instructions differ in tla-en (the Japanese
+     * and German editions place the first literal pool one instruction later
+     * and match with the pin alone). */
 #if TLA_PATCH_1 && !(TLA_PATCH_2 && !TLA_PATCH_3)
     __asm__("" : "+l"(control) : : "r2");
 #endif

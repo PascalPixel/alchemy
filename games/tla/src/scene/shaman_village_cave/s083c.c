@@ -10,9 +10,9 @@ void Func_0200083c(void) {
 
 
     party->battleRule24b = 2;
-    /* FAKEMATCH: the loop note ends the scheduling block after the store;
-     * without it the scene id is loaded before the store (two reordered rows).
-     */
+    /* FAKEMATCH(dead): the empty once-only block's loop note ends the
+     * scheduling block after the store; without it the scene id is loaded
+     * before the store (two reordered rows). */
     do {
     } while (0);
   }

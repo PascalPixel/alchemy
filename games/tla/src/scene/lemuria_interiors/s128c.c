@@ -45,10 +45,13 @@ void Func_0200128c(s32 x, s32 y, s32 z, s16 rotation, s32 timer) {
     Func_020027fc(object, gData_02002dec);
     object->motionFlags = 0;
     {
+      /* FAKEMATCH(temporary): timer copied to timerValue, so the timer
+       * argument loads before nextPicture's zero; as the plain parameter with
+       * no asm, 2 instructions differ. */
       s32 timerValue = timer;
 
-      /* FAKEMATCH: the native loads the timer argument before the zero for
-       * nextPicture (differ 2 without the temporary and barrier). */
+      /* FAKEMATCH(barrier): the empty asm before the timer's store, measured
+       * with the temporary above. */
       __asm__("");
       ((struct SpawnedActor *)object)->timer = timerValue;
     }

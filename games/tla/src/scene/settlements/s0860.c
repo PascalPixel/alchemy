@@ -58,6 +58,8 @@ void Func_02000860(void) {
   struct OrbitSprite *sprite;
   u8 *transfer;
 
+  /* FAKEMATCH(pin): the alpha value pinned to r3; as REG_BLDALPHA = 0xc08
+   * (not measured here). */
   register u16 alpha __asm__("r3") = 0xc08;
 
   REG_BLDALPHA = alpha;

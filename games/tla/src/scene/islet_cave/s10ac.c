@@ -38,9 +38,9 @@ void Func_020010ac(void) {
   Event_SetAfterBattleDestination((s32)&SceneId_Ov675Room3, 2);
   FIELD_AT(gMainRoutineWork, u8, 587) = 2;
   cue = 0x67;
-  /* FAKEMATCH: the native loads the first argument before the second; a direct
-   * call and the forwarding inline load the second first (one reordered pair,
-   * differ 2). */
+  /* FAKEMATCH(barrier): the asm on the first argument loads it before the
+   * second, as the native does; as Func_020012d4(0x67, 2), directly or through
+   * a forwarding inline, one pair is reordered and 2 instructions differ. */
   __asm__ volatile("" : "+r"(cue));
   Func_020012d4(cue, 2);
   Func_0200125c();

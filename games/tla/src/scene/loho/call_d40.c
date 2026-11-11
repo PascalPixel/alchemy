@@ -16,7 +16,8 @@ void Func_02000f38(void);
 void Func_02000d40(void) {
   s32 count = 8;
 
-  /* FAKEMATCH: ⚓️ sets the second argument first */
+  /* FAKEMATCH(barrier): the empty asm on count, so the second argument is set
+   * first; as the constant argument 8. */
   asm("" : "+l"(count));
   Func_02001440(13, count);
 }

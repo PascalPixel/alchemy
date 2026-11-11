@@ -48,7 +48,7 @@ void Func_08101c7c(s32 x, s32 y, s32 width, s32 height, s32 palette) {
           p++;
         } while (col != 0);
       }
-      /* FAKEMATCH(one-pass): the dirty bit's update in a once-only block;
+      /* FAKEMATCH(dead): the dirty bit's update in a once-only block;
        * as the plain statement, 4 of 90 instructions differ in tla-en. */
       do {
         tiles->dirty |= 2 << ((u32)y >> 2);

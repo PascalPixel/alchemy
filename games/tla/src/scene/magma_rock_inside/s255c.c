@@ -39,7 +39,7 @@ void Func_0200257c(void) {
     Data_020067f8 = z - y;
     /* FAKEMATCH(wrapper): both copies through the forwarding inline
      * CopyCells, which puts every argument in a register before the stack
-     * arguments are stored; called directly, 12 of 59 instructions differ in
+     * arguments are stored; as direct calls, 12 of 59 instructions differ in
      * tla-en. */
     CopyCells(Data_020067f4, Data_020067f8, 1, 2, 73, 72);
     CopyCells(70, 72, Data_020067ec, Data_020067f0, Data_020067f4,
@@ -61,8 +61,8 @@ void Func_02002610(void) {
     Data_020067f0 = 2;
     Data_020067f4 = x + 64;
     Data_020067f8 = z - y;
-    /* FAKEMATCH(wrapper): as in Func_0200257c; called directly, 12 of 59
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(wrapper): both copies through CopyCells, as in Func_0200257c;
+     * as direct calls, 12 of 59 instructions differ in tla-en. */
     CopyCells(Data_020067f4, Data_020067f8, 1, 2, 73, 72);
     CopyCells(71, 72, Data_020067ec, Data_020067f0, Data_020067f4,
               Data_020067f8);

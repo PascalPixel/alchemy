@@ -760,9 +760,7 @@ void Window_SetBounds(struct RenderInput *window, s32 x, s32 y, s32 width,
 void WindowSprite_ClearListFar(struct RenderInput *window);
 void wait(s32 frames);
 
-/* FAKEMATCH(volatile): a volatile view of gInput makes each of the three tests
- * load the keys afresh; as gInput.pressed & KEY_A and so on, 76 of 127
- * instructions differ in tla-en. */
+// gInput through a volatile view: its one use below says why.
 #define INPUT ((volatile struct InputState *)&gInput)
 
 /// Shows message in the item menu, with the hand cursor hidden meanwhile.
@@ -805,6 +803,9 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
     wait(1);
     do {
       wait(1);
+      /* FAKEMATCH(volatile): a volatile view of gInput (INPUT), which makes
+       * each of the three tests load the keys afresh; as gInput.pressed &
+       * KEY_A and so on, 76 of 127 instructions differ in tla-en. */
     } while (!(INPUT->pressed & KEY_A) && !(INPUT->pressed & KEY_B) &&
              !(INPUT->pressed & KEY_START));
     WindowSprite_ClearListFar(window);
@@ -1167,12 +1168,16 @@ s32 GameFlag_ClearBit(s32);
 
 static __inline__ void CopyWords(const void *src, CopyFn copy, void *dst,
                                  s32 size) {
-  /* FAKEMATCH: the wrapper keeps the load in r1 instead of r0. */
+  /* FAKEMATCH(wrapper): the copy forwarded through an inline, which keeps the
+   * load in r1 instead of r0; as a direct call through copy (not
+   * measured). */
   copy(dst, src, size);
 }
 
 static __inline__ void FillWords(FillFn fill, void *dst, s32 size, u32 value) {
-  /* FAKEMATCH: the wrapper preserves the r3 load and literal-pool position. */
+  /* FAKEMATCH(wrapper): the fill forwarded through an inline, which keeps the
+   * r3 load and the literal pool's position; as a direct call through fill
+   * (not measured). */
   fill(dst, size, value);
 }
 

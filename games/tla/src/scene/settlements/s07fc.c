@@ -21,13 +21,16 @@ s32 Func_020007fc(s32 *p) {
     u32 x;
     s32 angle;
 
-    /* FAKEMATCH: the barriers keep the first random value's shift after the
-     * second call and the angle's load between the two shifts; plainly, 2
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(dead): the empty once-only block keeps the first random
+     * value's shift after the second call; with neither it nor the asm
+     * below, 2 instructions differ in tla-en. */
     do {
     } while (0);
     x = (u32)a << 9;
     angle = p[12];
+    /* FAKEMATCH(barrier): the empty asm keeps the angle's load between the
+     * two shifts; with neither it nor the block above, 2 instructions differ
+     * in tla-en. */
     __asm__("");
     p[12] = angle + ((x >> 16) + (((u32)b << 9) >> 16)) + 0x400;
   }

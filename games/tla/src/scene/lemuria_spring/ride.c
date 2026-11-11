@@ -106,8 +106,6 @@ s32 Func_02001184(s32 side) {
   for (gData_02001820 = 0;; gData_02001820++) {
   if (gData_02001820 == 50)
     Event_PlaySound(300);
-  /* FAKEMATCH: the volatile read keeps the frame's reload where both paths
-   * meet; plain, PRE copies it onto the cue's path (differ 2). */
   if (gData_02001820 == 16) {
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 39);
     ride->hold = 0;

@@ -22,8 +22,9 @@ struct EventWorkLock {
 };
 
 static inline void SetCollisionCode(s32 x, s32 z, s32 layer, s32 value) {
-  /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep each call's
-   * own constants (direct: differ 12) */
+  /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
+   * scene layer, so each call keeps its own constants; as direct calls, 12
+   * instructions differ. */
   ((u8)Func_080dbdd4(x, z, layer, value));
 }
 

@@ -17,35 +17,38 @@ s32 Unit_AddPp(s32 owner, s32 delta);
 void Func_02004904(s32 a, s32 b);
 
 static __inline__ void JupiterLighthouseRoomM_AddHp(s32 owner, s32 delta) {
-  /* FAKEMATCH: forwarding through the inline reloads -10000 from the pool at
-   * each call, as the native does (direct: the four uses share it in r5, differ
-   * 23 of 160). */
+  /* FAKEMATCH(wrapper): forwarding through the inline reloads -10000 from
+   * the pool at each call, as the native does; as direct calls, the four
+   * uses share it in r5 and 23 of 160 instructions differ. */
   Unit_AddHp(owner, delta);
 }
 
 static __inline__ void JupiterLighthouseRoomM_AddPp(s32 owner, s32 delta) {
-  /* FAKEMATCH: forwarding through the inline reloads -10000 from the pool at
-   * each call, as the native does (direct: the four uses share it in r5, differ
-   * 23 of 160). */
+  /* FAKEMATCH(wrapper): forwarding through the inline reloads -10000 from
+   * the pool at each call, as the native does; as direct calls, the four
+   * uses share it in r5 and 23 of 160 instructions differ. */
   Unit_AddPp(owner, delta);
 }
 
 static __inline__ void JupiterLighthouseRoomM_Func_020048b4(s32 actor, s32 a) {
-  /* FAKEMATCH: forwarding through the inline builds the second argument around
-   * the first, as the native does (direct: differ 2 of 160). */
+  /* FAKEMATCH(wrapper): forwarding through the inline builds the second
+   * argument around the first, as the native does; as a direct call, 2 of 160
+   * instructions differ. */
   Actor_ArmCallbackAndRefresh(actor, a);
 }
 
 static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does (direct: differ 35 of 160). */
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
+   * constants, as ☀️'s scene layer does; as direct calls, 35 of 160
+   * instructions differ. */
   Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, angle);
 }
 
-/* FAKEMATCH: the angle passes through a block temporary, so it is built before
- * x and z, as the native does (a plain argument: differ 12 of 160). */
 #define PLACE(id, x, z, angle)                                                 \
   {                                                                            \
+    /* FAKEMATCH(temporary): the angle passes through a block local, so it is  \
+     * built before x and z, as the native does; as a plain argument, 12 of    \
+     * 160 instructions differ. */                                             \
     s32 angle_ = (angle);                                                      \
     ObjPlace(id, (x) << 16, (z) << 16, angle_);                                \
   }
@@ -81,9 +84,9 @@ void Func_02001c7c(void) {
   Actor_WalkBy(26, 24, 0);
   FieldEvent_Wait(20);
   do {
-    /* FAKEMATCH: the one-pass block ends CSE's block, so the byte store's dead
-     * zero is not kept in r8 for the store of the owner below (without: differ
-     * 31 of 160). */
+    /* FAKEMATCH(dead): the store kept in a once-only block, whose end ends
+     * CSE's block, so the byte store's dead zero is not kept in r8 for the
+     * store of the owner below; without it, 31 of 160 instructions differ. */
     gMainRoutineWork.battleRule24b = 6;
   } while (0);
   Event_SetAfterBattleDestination((s32)&SceneId_Ov6a3, 77);

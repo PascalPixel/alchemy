@@ -24,9 +24,9 @@ void Func_0200176c(void) {
   Event_PlaySound(581);
   actor->motionFlags = 0;
   speed = 0x19999;
-  /* FAKEMATCH: the native loads the speed before the owner, whose base is
-   * already in a register here; the plain call loads the owner first (one
-   * reordered pair, differ 2) */
+  /* FAKEMATCH(barrier): an empty asm on speed, so the speed is loaded before
+   * the owner, whose base is already in a register; as the plain call, the
+   * owner is loaded first and 2 instructions differ. */
   asm volatile("" : "+l"(speed));
   Actor_SetSpeed(gMainRoutineWork.currentOwner, speed, 0x19999);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 152, 488);

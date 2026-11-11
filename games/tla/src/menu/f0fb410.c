@@ -58,7 +58,7 @@ void Func_080fb410(s8 *commandStates) {
 
   if (item->flags & ITEM_CANNOT_UNEQUIP) {
     commandStates[4] = COMMAND_DISABLED;
-    /* FAKEMATCH(one-pass): the equipped test in a once-only block, which
+    /* FAKEMATCH(dead): the equipped test in a once-only block, which
      * keeps the store above from sinking below the selected item's address;
      * as the plain if, 2 of 157 instructions differ in tla-en. */
     do {

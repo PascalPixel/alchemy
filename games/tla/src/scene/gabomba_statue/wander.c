@@ -27,7 +27,9 @@ s32 Func_0200028c(struct Wanderer *actor) {
     turned = &actor->turned;
     if (*turned != 0) {
       *turned = 0;
-      /* FAKEMATCH: and clears the flag before it addresses the facing */
+      /* FAKEMATCH(dead): an empty once-only block, so the flag is cleared
+       * before the facing is addressed; without it, the facing is addressed
+       * first. */
       do {
       } while (0);
       facing = &actor->facingA;

@@ -63,7 +63,8 @@ s32 Inventory_GetQuantity(s32 owner, s32 slot) {
   s32 item_id;
 
   owner = ((struct OwnerInventoryState *)Unit_Get(owner))->inventory[slot];
-  /* FAKEMATCH: keeps the mask after the slot load. */
+  /* FAKEMATCH(dead): an empty once-only block, which keeps the mask after the
+   * slot load; without the block (not measured). */
   do {
   } while (0);
   item_id = ITEM_ID_MASK;
@@ -149,8 +150,10 @@ s32 Inventory_AddItem(s32 owner_id, s32 item_id) {
       if (count > 29)
         return -1;
       {
-        /* FAKEMATCH: a separate mask temporary preserves the and/store
-         * registers. */
+        /* FAKEMATCH(temporary): the mask in a local of its own, which keeps
+         * the and's and the store's registers; as (entry &
+         * INVENTORY_ENTRY_MASK) | count << INVENTORY_QUANTITY_SHIFT (not
+         * measured). */
         s32 value = INVENTORY_ENTRY_MASK;
 
         value &= entry;
@@ -384,10 +387,11 @@ s32 Inventory_CheckUnequip(s32 owner, s32 slot) {
   struct ItemDefinition *item;
   s32 result;
 
-  asm volatile(
-      ""); /* FAKEMATCH: ⚓️ loads the slot before it builds the item mask */
-  /* FAKEMATCH: the mask is built in the register it masks into; raw &
-   * ITEM_ID_MASK swaps r3 and r5 */
+  /* FAKEMATCH(barrier): an empty asm, so the slot loads before the item mask
+   * is built, as the ROM has it; as no asm (not measured). */
+  asm volatile("");
+  /* FAKEMATCH(temporary): the mask built in the local it masks into; as raw &
+   * ITEM_ID_MASK, r3 and r5 swap (not measured). */
   item_id = ITEM_ID_MASK;
   item_id &= raw;
   item = Item_GetDirect(item_id);
@@ -408,10 +412,11 @@ s32 Inventory_CheckDiscard(s32 owner, s32 slot) {
   struct ItemDefinition *item;
   s32 result;
 
-  asm volatile(
-      ""); /* FAKEMATCH: ⚓️ loads the slot before it builds the item mask */
-  /* FAKEMATCH: the mask is built in the register it masks into; raw &
-   * ITEM_ID_MASK swaps r3 and r5 */
+  /* FAKEMATCH(barrier): an empty asm, so the slot loads before the item mask
+   * is built, as the ROM has it; as no asm (not measured). */
+  asm volatile("");
+  /* FAKEMATCH(temporary): the mask built in the local it masks into; as raw &
+   * ITEM_ID_MASK, r3 and r5 swap (not measured). */
   item_id = ITEM_ID_MASK;
   item_id &= raw;
   item = Item_GetDirect(item_id);
@@ -504,10 +509,13 @@ s32 Item_AdjustCounter(s32 itemId, s32 delta) {
   u16 *table = gData_080b1f40;
   u16 counter;
 
-  /* FAKEMATCH: the barrier keeps the table's load between the mask constant and
-   * its and, the index doubled apart keeps the table the base register; without
-   * them, 2 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm, which keeps the table's load between the
+   * mask constant and its and; without it and the doubling below, 2
+   * instructions differ in tla-en. */
   asm volatile("");
+  /* FAKEMATCH(temporary): the index masked and doubled apart in the local
+   * that held the mask, which keeps the table the base register; without it
+   * and the asm above, 2 instructions differ in tla-en. */
   index &= itemId;
   index <<= 1;
   counter = *(u16 *)((u8 *)table + index);

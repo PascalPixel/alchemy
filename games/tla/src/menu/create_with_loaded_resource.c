@@ -91,9 +91,9 @@ s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
     resource = (u16)data->resourceSlots[1];
   object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, w, xx, y);
   if (object == 0) {
-    /* FAKEMATCH: the redundant failure branch keeps the arguments' lifetimes
-     * through CSE, as in The Broken Seal; a plain return -1 gives other
-     * registers (differ 20). */
+    /* FAKEMATCH(dead): a test whose two arms are alike, which keeps the
+     * arguments' lifetimes through CSE, as in The Broken Seal; as a plain
+     * return -1, other registers are used and 20 instructions differ. */
     if (variant || xx)
       return -1;
     else
@@ -125,9 +125,9 @@ s32 Func_08104ba8(struct RenderInput *window, s32 x, s32 y, s32 variant) {
   }
   object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, w, xx, y);
   if (object == 0) {
-    /* FAKEMATCH: the redundant failure branch keeps the arguments' lifetimes
-     * through CSE, as in The Broken Seal; a plain return -1 gives other
-     * registers (differ 26). */
+    /* FAKEMATCH(dead): a test whose two arms are alike, which keeps the
+     * arguments' lifetimes through CSE, as in The Broken Seal; as a plain
+     * return -1, other registers are used and 26 instructions differ. */
     if (v || x)
       return -1;
     else

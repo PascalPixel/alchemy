@@ -47,8 +47,9 @@ void Func_02000ad8(void) {
   volatile u16 *scroll;
   volatile u16 *dma;
 
-  /* FAKEMATCH: keeps the first line's load before the register address is built
-   */
+  /* FAKEMATCH(barrier): the empty asm reading first, so the first line's load
+   * comes before the register address is built; as no asm, the load follows
+   * it. */
   __asm__("" : : "r"(first));
   scroll = &REG_BG2HOFS;
   *scroll = first;

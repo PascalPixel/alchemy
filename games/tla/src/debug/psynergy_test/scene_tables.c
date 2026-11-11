@@ -144,8 +144,9 @@ void Func_02000224(void) {
 }
 
 static __inline__ void Unit_AddHpBy(s32 owner, s32 delta) {
-  /* FAKEMATCH: a direct call keeps -100 in r5 for the next call; ⚓️ builds it
-   * again before each. */
+  /* FAKEMATCH(wrapper): the call forwarded through an inline, so -100 is built
+   * again before each call, as the ROM has it; as a direct Unit_AddHp call,
+   * -100 stays in r5 for the next call (not measured). */
   Unit_AddHp(owner, delta);
 }
 
@@ -210,20 +211,24 @@ void Func_02000444(void) { Actor_GetById(4)->terrainId = 2; }
 void Func_02000454(void) { Actor_GetById(4)->terrainId = 0; }
 
 static __inline__ void Actor_Emote(s32 actor, s32 emote, s32 frames) {
-  /* FAKEMATCH: a direct call sets the actor before the emote; ⚓️ adds the
-   * emote's 255 after it. */
+  /* FAKEMATCH(wrapper): the call forwarded through an inline, so the emote's
+   * 255 is added after the actor is set, as the ROM has it; as a direct
+   * Func_080d47b4 call, the actor is set before the emote (not measured). */
   Func_080d47b4(actor, emote, frames);
 }
 
 static __inline__ s32 GameFlag_TestBit(s32 flag) {
-  /* FAKEMATCH: a direct call keeps 0x200 in r6 for the later calls; ⚓️ builds
-   * it again before each. */
+  /* FAKEMATCH(wrapper): the test forwarded through an inline, so 0x200 is
+   * built again before each call, as the ROM has it; as a direct GameFlag_Test
+   * call, 0x200 stays in r6 for the later calls (not measured). */
   return GameFlag_Test(flag);
 }
 
 static __inline__ void Actor_SetPositionById(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: a direct call builds the x constant before the actor copy; ⚓️
-   * splits it around the copy. */
+  /* FAKEMATCH(wrapper): the call forwarded through an inline, so the x
+   * constant is split around the actor copy, as the ROM has it; as a direct
+   * Actor_SetPositionAndReset call, x is built before the copy (not
+   * measured). */
   Actor_SetPositionAndReset(actor, x, z);
 }
 

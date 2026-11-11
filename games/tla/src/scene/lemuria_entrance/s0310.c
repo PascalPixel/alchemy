@@ -44,26 +44,30 @@ void Func_02000564(void);
 void Func_02000310(s32 kind, s32 frames);
 
 static __inline__ s32 Flag_Test(s32 flag) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH(wrapper): the call forwarded through this inline, which keeps
+   * each call's own constants as ☀️'s scene layer does; as a direct call to
+   * GameFlag_Test, the constants are shared. */
   return GameFlag_Test(flag);
 }
 
 static __inline__ void Flag_Set(s32 flag) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH(wrapper): the call forwarded through this inline, which keeps
+   * each call's own constants as ☀️'s scene layer does; as a direct call to
+   * GameFlag_SetBit, the constants are shared. */
   GameFlag_SetBit(flag);
 }
 
 static __inline__ void Flag_Clear(s32 flag) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH(wrapper): the call forwarded through this inline, which keeps
+   * each call's own constants as ☀️'s scene layer does; as a direct call to
+   * GameFlag_ClearBit, the constants are shared. */
   GameFlag_ClearBit(flag);
 }
 
 static __inline__ void Show(s32 kind, s32 frames) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH(wrapper): the call forwarded through this inline, which keeps
+   * each call's own constants as ☀️'s scene layer does; as a direct call to
+   * Func_02000310, the constants are shared. */
   Func_02000310(kind, frames);
 }
 

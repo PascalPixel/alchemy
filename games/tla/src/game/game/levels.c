@@ -163,8 +163,9 @@ s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
   }
 
   if (found < 0) {
-    /* FAKEMATCH: the scalar member-address walk preserves halfword operands and
-     * the four-byte-longer free-slot loop. */
+    /* FAKEMATCH(temporary): each slot's address walked as a byte offset of its
+     * own, which keeps the halfword operands and the four-byte-longer free-slot
+     * loop; as state->actionSlots[index] (not measured). */
     for (index = 0; index <= 30; index++) {
       s32 offset = index * (s32)sizeof(state->actionSlots[0]) +
                    (s32)&((struct OwnerActionState *)0)->actionSlots;
@@ -211,14 +212,18 @@ struct OwnerGrowthRecord *Character_GetDefinition(s32 index) {
   s32 stride = sizeof(struct OwnerGrowthRecord);
   u8 *base;
 
-  /* FAKEMATCH: construct the row width before the native table-base pool load.
-   */
+  /* FAKEMATCH(barrier): the row width used by an empty asm, so it is built
+   * before the table's address is loaded from the pool; as no asm (not
+   * measured). */
   asm("" : : "r"(stride));
   base = (u8 *)gOwner_GrowthRecords;
-  /* FAKEMATCH: keep both operands live before multiplying the row offset. */
+  /* FAKEMATCH(barrier): the row width and the table held at an empty asm, so
+   * both are live before the row offset is multiplied; as no asm (not
+   * measured). */
   asm("" : "+r"(stride), "+r"(base));
-  /* FAKEMATCH: the integer address sum retains the native multiply/add
-   * lifetimes; pointer addition changes six bytes. */
+  /* FAKEMATCH(signature): the address summed as an integer, which keeps the
+   * multiply's and the add's lifetimes; as pointer addition, six bytes
+   * differ. */
   return (struct OwnerGrowthRecord *)(index * stride + (u32)base);
 }
 
@@ -315,9 +320,10 @@ u32 Unit_GetExperienceForLevel(s32 owner, s32 level) {
       s32 row = state->enemyId * 99 + level;
       s32 offset;
 
-      /* FAKEMATCH: the table and sum held at a barrier load the table between
-       * the add and the scaling; as gOwner_ExperienceThresholds[state->enemyId
-       * * 99 + level - 1], 2 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): the table held at an empty asm, which loads it
+       * between the add and the scaling; as
+       * gOwner_ExperienceThresholds[state->enemyId * 99 + level - 1], 2
+       * instructions differ in tla-en. */
       asm volatile("" : "+l"(table));
       offset = row * 4 - 4;
       return *(u32 *)((u8 *)table + offset);
@@ -463,9 +469,9 @@ struct LevelUpResult *Func_080afb80(s32 owner_id, struct LevelUpResult *value) {
   struct BattleUnit *owner;
 
   owner = (struct BattleUnit *)Unit_Get(owner_id);
-  /* FAKEMATCH: the barrier loads the level before the experience field's offset
-   * is started; plain, the offset comes first (one reordered pair, differ 2).
-   */
+  /* FAKEMATCH(barrier): an empty asm, which loads the level before the
+   * experience field's offset is started; as no asm, the offset comes first
+   * (one reordered pair) and 2 instructions differ. */
   asm("");
   if ((owner->experience >=
        Unit_GetExperienceForLevel(owner_id, owner->level + 1)) &&

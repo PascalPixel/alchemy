@@ -636,9 +636,6 @@ extern u8 gData_02001000[];
 extern u8 gGameFlagBytes[];
 extern u8 gOwnerStates[];
 extern u32 gFrameWaitCount;
-/* FAKEMATCH(volatile): the auto-sleep flag read again after the play time
- * store, as The Broken Seal declares its gIdleSleepEnabled; as plain u8, as
- * frame.h declares it, 108 of 322 instructions differ in tla-en. */
 extern volatile u8 gAutoSleepEnabled;
 extern volatile u16 gIdleFrameCount;
 extern s16 gData_020036d0;
@@ -731,6 +728,10 @@ void Func_080addf0(void) {
   gFrameWaitCount = 0;
   gAutoSleepEnabled = 0;
   gMainRoutineWork.playTime = 0;
+  /* FAKEMATCH(volatile): the auto-sleep flag, declared volatile above, read
+   * again after the play time store, as The Broken Seal declares its
+   * gIdleSleepEnabled; as plain u8, as frame.h declares it, 108 of 322
+   * instructions differ in tla-en. */
   gMainRoutineWork.unk244[6] = gAutoSleepEnabled;
   gIdleFrameCount = 0;
   gData_020036d0 = -1;
@@ -809,8 +810,9 @@ void Func_080ae16c(s32 arg0) {
     {
       struct MainRoutineWork *party = &gMainRoutineWork;
 
-      /* FAKEMATCH: ⚓️ loads gMainRoutineWork before it starts the owner list's
-       * offset; read as a plain field the offset is started first (differ 2) */
+      /* FAKEMATCH(barrier): an empty asm, which loads gMainRoutineWork before
+       * the owner list's offset is started; as no asm and a plain field read,
+       * the offset is started first and 2 instructions differ. */
       asm volatile("");
       obj = Unit_Get(party->activeOwners[n]);
     }
@@ -880,8 +882,9 @@ void Func_080ae220(void) {
     {
       struct MainRoutineWork *party = &gMainRoutineWork;
 
-      /* FAKEMATCH: ⚓️ loads gMainRoutineWork before it starts the owner list's
-       * offset; read as a plain field the offset is started first (differ 2) */
+      /* FAKEMATCH(barrier): an empty asm, which loads gMainRoutineWork before
+       * the owner list's offset is started; as no asm and a plain field read,
+       * the offset is started first and 2 instructions differ. */
       asm volatile("");
       ownerId = party->activeOwners[n];
     }

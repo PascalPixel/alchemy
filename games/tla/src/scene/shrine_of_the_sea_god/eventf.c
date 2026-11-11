@@ -180,9 +180,9 @@ void Func_02003134(void) {
   if (GameFlag_Test(0x873)) {
     Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
   } else if (GameFlag_Test(0x872)) {
-    /* FAKEMATCH: the function-scope angle temporary preserves its early
-     * constant construction; a direct argument through the unbound helper
-     * differs 2. */
+    /* FAKEMATCH(temporary): the function-scope angle local holding one
+     * constant keeps its early construction; as a direct argument through
+     * the helper, differ 2. */
     angle = 0x8000;
     ShrineOfTheSeaGod_ObjPlaceTurn(11, 328 << 16, 200 << 16, angle);
     wait(1);
@@ -190,7 +190,9 @@ void Func_02003134(void) {
     Actor_SetSingleChildFlags(Actor_GetById(11), 1);
     Actor_GetById(11)->collisionFlags = 1;
   }
-  /* FAKEMATCH: the native builds the priority before it loads the task function. */
+  /* FAKEMATCH(temporary): SHRINE_OF_THE_SEA_GOD_TASK_ADD_LATE's local holding
+   * the priority builds it before the task function loads, as the native
+   * has; as Task_Add(Func_020030fc, 0x480), the function loads first. */
   SHRINE_OF_THE_SEA_GOD_TASK_ADD_LATE(Func_020030fc, 0x480);
 }
 
@@ -227,9 +229,9 @@ void Func_0200320c(void) {
   if (GameFlag_Test(0x875))
     Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
   else if (GameFlag_Test(0x874)) {
-    /* FAKEMATCH: the function-scope angle temporary preserves its early
-     * constant construction; a direct argument through the unbound helper
-     * differs 4. */
+    /* FAKEMATCH(temporary): the function-scope angle local holding one
+     * constant keeps its early construction; as a direct argument through
+     * the helper, differ 4. */
     angle = 0x4000;
     ShrineOfTheSeaGod_ObjPlaceTurn(15, 580 << 16, 344 << 16, angle);
   }
@@ -259,7 +261,8 @@ void Func_0200338c(void) {
 
   if ((u16)(gMainRoutineWork.entrance - 2) <= 1) {
     Actor_SetSpritePriority(13, 3);
-    /* FAKEMATCH: the native ties the flag or to the constant's register. */
+    /* FAKEMATCH(dead): the cancelling update ties the flag or to the
+     * constant's register, as the native has; as *flags |= 2 it does not. */
     *flags = *flags + 2 - (*flags & 2);
   } else {
     Actor_SetSpritePriority(13, 1);
@@ -290,9 +293,9 @@ void Func_0200338c(void) {
     }
     Actor_WatchAndSetScript(14, gMainRoutineWork.currentOwner);
   } else if (GameFlag_Test(0x877)) {
-    /* FAKEMATCH: the function-scope angle temporary preserves its early
-     * constant construction; a direct argument through the unbound helper
-     * differs 4. */
+    /* FAKEMATCH(temporary): the function-scope angle local holding one
+     * constant keeps its early construction; as a direct argument through
+     * the helper, differ 4. */
     angle = 0x4000;
     ShrineOfTheSeaGod_ObjPlaceTurn(14, 280 << 16, 328 << 16, angle);
   }

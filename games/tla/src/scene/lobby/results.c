@@ -41,8 +41,8 @@ void Func_02001414(s32 value) {
   if (value > 999)
     value = 999;
   i = 0;
-  /* FAKEMATCH: a goto loop; as ☀️'s for loop, loop.c keeps the stacked 1 in r7
-   * (differ 12). */
+  // A goto loop; as ☀️'s for loop, loop.c keeps the stacked 1 in r7 (differ
+  // 12).
 next:
   Map_CopyCellPictureIndicesRect(27, value % 10, 16 - i, 8, 1, 1);
   value /= 10;

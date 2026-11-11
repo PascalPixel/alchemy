@@ -14,8 +14,8 @@ void Func_0200481c(void);
 void Func_02004934(s32 a, s32 b, s32 c);
 
 static __inline__ void Func_02005838_(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
+   * constants, as ☀️'s scene layer does; as direct calls, not measured. */
   Map_SetScreenShake(a, b, c);
 }
 

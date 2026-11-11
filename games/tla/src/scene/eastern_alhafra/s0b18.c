@@ -114,9 +114,9 @@ s32 Func_02000b18(void) {
   flag = Event_GetFlag(0x8a2);
   if (flag == 0) {
     object = OBJECT(18);
-    /* FAKEMATCH(one-pass): the solid bit set in a once-only block, which lays
-     * out the branch over this block as the native does; as a plain
-     * statement, 18 of 467 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): the solid bit set in a once-only block, which lays out
+     * the branch over it as the native does; as the plain statement, 18 of 467
+     * instructions differ in tla-en. */
     do {
       object->collisionFlags |= 8;
     } while (0);

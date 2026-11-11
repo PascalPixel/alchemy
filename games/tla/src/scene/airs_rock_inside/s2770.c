@@ -8,8 +8,8 @@ void Func_02002770(void) {
 
   gData_02006c0c = value;
   {
-    /* FAKEMATCH: a temporary keeps the priority constant ahead of the task function
-     * load. */
+    /* FAKEMATCH(temporary): the priority in a local, which keeps the constant
+     * ahead of the task function's load; as a literal argument. */
     s32 priority = 0x480;
     Task_Add(Func_020026c0, priority);
   }

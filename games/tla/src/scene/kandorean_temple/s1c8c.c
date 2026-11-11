@@ -110,12 +110,14 @@ void Func_02001e58(void) {
   }
   Func_020051c0();
   Event_ResolvePendingActions(0);
-  /* FAKEMATCH: the flags address, the zero and gMainRoutineWork's address are
-   * taken before an empty asm, which holds the byte store below the address
-   * load as the native has it; the plain store goes first (differ 2). */
+  /* FAKEMATCH(temporary): the flags address and the zero held in locals, with
+   * gMainRoutineWork's address taken in the block below, so the byte store
+   * follows the address load; as leader->motionFlags = 0, the store goes
+   * first and 2 instructions differ. */
   flags = &leader->motionFlags;
   zero = 0;
-  // Once-only: as a plain statement tla-en does not match.
+  /* FAKEMATCH(dead): gMainRoutineWork's address taken in a once-only block; as
+   * a plain statement, tla-en does not match. */
   do {
     party = &gMainRoutineWork;
   } while (0);

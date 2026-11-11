@@ -84,13 +84,16 @@ void Func_02000734(void) {
     FieldEvent_Wait(1);
     if (!(i & 1)) {
       random = Random16Far();
-      /* FAKEMATCH: random * 24 written in steps with two barriers: ⚓️ loads x
-       * between the multiply's add and its last shift (without the first
-       * barrier differ 2, without the second differ 4). */
+      // random * 24, written in steps around the two barriers below, so x
+      // loads between the multiply's add and its last shift.
       scaled = random << 1;
+      /* FAKEMATCH(barrier): an empty asm between the multiply's shift and its
+       * add; without it, 2 instructions differ. */
       asm("");
       scaled += random;
       x = actor->x;
+      /* FAKEMATCH(barrier): an empty asm after x loads, before the multiply's
+       * last shift; without it, 4 instructions differ. */
       asm("");
       x += (((scaled << 3) >> 16) << 16);
       x += -0xc0000;

@@ -26,8 +26,8 @@ s32 Func_0200006c(s32 slot) {
   } else {
     GameFlag_ClearBit(0x303);
   }
-  /* FAKEMATCH: a loop that runs at most once places the test after the body as
-   * the ROM does. */
+  /* FAKEMATCH(dead): a once-only loop, which places the test after the body;
+   * as a plain if, the test comes first. */
   while (id >= 0 && GameFlag_Test(0x303)) {
     const s32 *expected = &gLinkLobby_SlotValues[slot];
 

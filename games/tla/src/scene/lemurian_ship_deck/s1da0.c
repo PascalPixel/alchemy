@@ -12,9 +12,10 @@ void Func_02001d60(struct Actor *object);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 
 static __inline__ void Func_020020b4_(s32 id, s32 a, s32 b, s32 c) {
-  /* FAKEMATCH: as in ☀️'s scene layer, forwarding through the inline sets the
-   * arguments up in their own order and keeps each call's constants; a direct
-   * call builds the costly constant first or shares it (differ 2 or more). */
+  /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
+   * scene layer, so the arguments are set up in their own order and each call
+   * keeps its constants; as a direct call, the costly constant is built first
+   * or shared and 2 or more instructions differ. */
   Func_080d3070(id, a, b, c);
 }
 
@@ -43,7 +44,7 @@ void Func_02001da0(void) {
     object = Actor_Get(4);
     if (object != 0)
       Actor_SetDestination(7, *(s16 *)((u8 *)object + 10),
-                                *(s16 *)((u8 *)object + 18));
+                           *(s16 *)((u8 *)object + 18));
     FieldActor_WaitForMoveById(7);
     Actor_SetPosition(7, 0, 0);
     Actor_Get(7)->update = 0;

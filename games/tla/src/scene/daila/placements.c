@@ -13,9 +13,9 @@ extern s32 gData_02001490[];
 extern s32 gData_02001664[];
 
 static inline void ReturnHome(s32 mode, s32 actor, s32 flag) {
-  /* FAKEMATCH: as in the scene layer of The Broken Seal, the inline parameter
-   * keeps the native order (direct: 0x300 is shifted before the actor is
-   * loaded, 2 differ) */
+  /* FAKEMATCH(wrapper): the call forwarded through the inline, as in the scene
+   * layer of The Broken Seal; as a direct call, 0x300 is shifted before the
+   * actor is loaded and 2 instructions differ. */
   Import_ActorReturnHome(mode, actor, flag);
 }
 

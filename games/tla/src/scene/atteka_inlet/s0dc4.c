@@ -20,8 +20,9 @@ void Func_02000bf0(void);
 
 static __inline__ void Task_Add_(void (*func)(void),
                                                       s32 priority) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as The Broken Seal's scene layer does. */
+  /* FAKEMATCH(wrapper): the call forwarded through an inline, which keeps each
+   * call's own constants, as The Broken Seal's scene layer does; as a direct
+   * call. */
   Task_Add(func, priority);
 }
 

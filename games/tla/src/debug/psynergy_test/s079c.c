@@ -14,9 +14,6 @@ void Func_02000f0c(s32 actor);
 s32 Func_0200079c(void) {
   u8 *work = Ram_HeapSlots->eventWork;
 
-  /* FAKEMATCH: Call2 and Call3 rebuild each call's constants, and a one-pass
-   * block gives the second entrance test its own load; without the block, 18
-   * instructions differ in tla-en. */
   *(s32 *)(work + 428) = 0x100;
   work[3383] = 0;
   work[3382] = 0;
@@ -37,6 +34,7 @@ s32 Func_0200079c(void) {
   gMainRoutineWork.eventMode = 2;
   Actor_SetAnimation(15, 2);
   Actor_SetAnimation(16, 2);
+  // Call3 and Call2 build each call's constants afresh (call.h).
   Call3((void (*)())Func_02000edc, 9, 0x8000, 0);
   Call2((void (*)())Func_02000ed4, 10, 0x8000);
   Func_02000ed4(12, 0);
@@ -52,6 +50,9 @@ s32 Func_0200079c(void) {
 
     if (party->entrance == 6)
       Func_02000f04(party->currentOwner);
+    /* FAKEMATCH(dead): an empty once-only block, which gives the second
+     * entrance test its own load; without the block, 18 instructions differ
+     * in tla-en. */
     do {
     } while (0);
     if (party->entrance == 8)

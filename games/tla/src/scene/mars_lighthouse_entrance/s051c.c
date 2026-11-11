@@ -32,8 +32,8 @@ void Func_0200051c(void) {
   Event_PlaySound(0x23c);
   x = 32;
   count = 6;
-  /* FAKEMATCH: a goto loop, which GCC does not treat as a loop: ⚓️ builds the
-   * stack arguments inside it */
+  // A goto loop, which GCC does not treat as a loop, so the stack arguments
+  // are built inside it.
 step:
   Func_02004c30_(x, 125, 3, 3, 39, 85);
   Func_02000414(10);

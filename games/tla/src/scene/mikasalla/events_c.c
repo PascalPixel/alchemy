@@ -21,7 +21,8 @@ void Func_02000514(void) {
   x = 14;
   z = 8;
   id = 4;
-  /* FAKEMATCH: the actor id comes between the distances and their negation. */
+  /* FAKEMATCH(barrier): the id held at an empty asm, so it comes between the
+   * distances and their negation; as no asm, not measured. */
   __asm__ volatile("" : "+r"(id));
   Actor_CommitPositionAndActivate(id, -x, -z);
   Func_02000438();
@@ -34,7 +35,8 @@ void Func_02000544(void) {
   Event_ResolvePendingActions(0);
   a = 192;
   id = 4;
-  /* FAKEMATCH: the actor id comes between the angle byte and its shift. */
+  /* FAKEMATCH(barrier): the id held at an empty asm, so it comes between the
+   * angle byte and its shift; as no asm, not measured. */
   __asm__ volatile("" : "+r"(id));
   Actor_ArmCallback(id, a << 8, 0);
   Func_02000438();

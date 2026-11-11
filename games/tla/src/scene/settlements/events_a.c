@@ -85,7 +85,9 @@ void Func_020005f4(void) {
   x = 14;
   z = 8;
   id = 4;
-  /* FAKEMATCH: the actor id comes between the distances and their negation. */
+  /* FAKEMATCH(barrier): the empty asm on the actor id, which then comes
+   * between the distances and their negation; as Actor_WalkByAndWait(4, -x,
+   * -z) it does not. */
   __asm__ volatile("" : "+r"(id));
   Actor_WalkByAndWait(id, -x, -z);
   Func_0200052c();
@@ -98,7 +100,9 @@ void Func_02000624(void) {
   FieldEvent_ResolvePendingActions(0);
   a = 192;
   id = 4;
-  /* FAKEMATCH: the actor id comes between the angle byte and its shift. */
+  /* FAKEMATCH(barrier): the empty asm on the actor id, which then comes
+   * between the angle byte and its shift; as Actor_FaceDirection(4, a << 8,
+   * 0) it does not. */
   __asm__ volatile("" : "+r"(id));
   Actor_FaceDirection(id, a << 8, 0);
   Func_0200052c();

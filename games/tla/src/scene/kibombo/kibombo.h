@@ -131,7 +131,9 @@ static inline void Kibombo_ObjTurn(s32 actor, s32 angle) {
 
 static inline void Kibombo_BlendStart(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  /* FAKEMATCH: the blend start reaches the main image through one inline layer. */
+  /* FAKEMATCH(wrapper): the blend start reaches the main image through this
+   * inline; as a direct call to Map_CopyCellAttributeRect, the instructions
+   * differ. */
   Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
@@ -208,12 +210,13 @@ static inline void Kibombo_FadeTo(s32 a, s32 b) {
   BattleEffect_ApplyColorToTargetBuffer(a, b);
 }
 
-#define KIBOMBO_TASK_ADD(func, priority)                                   \
+#define KIBOMBO_TASK_ADD(func, priority)                                       \
   {                                                                            \
-    /* FAKEMATCH: a temporary keeps the priority constant ahead of the         \
-     * task function load. */                                                       \
+    /* FAKEMATCH(temporary): a local holding the priority keeps the constant   \
+     * ahead of the task function load; as a plain argument, the instructions  \
+     * differ. */                                                              \
     s32 priority_ = (priority);                                                \
-    Task_Add((func), priority_);                      \
+    Task_Add((func), priority_);                                               \
   }
 
 static inline void Kibombo_ObjEmote(s32 actor, s32 emote, s32 frames) {

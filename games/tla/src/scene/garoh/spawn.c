@@ -20,9 +20,9 @@ void Func_0200132c(void) {
   s32 b = 10;
   s32 c = 11;
 
-  /* FAKEMATCH: the native builds the first argument last, after the second and
-   * third; without the barrier it is built first (one reordered instruction,
-   * differ 2). */
+  /* FAKEMATCH(barrier): an empty asm on b and c, so the first argument is
+   * built last, after the second and third; without it, the first is built
+   * first and 2 instructions differ. */
   __asm__ volatile("" : "+r"(b), "+r"(c));
   Func_02005354(1, b, c);
   Flag_Set(0x203);
@@ -44,9 +44,9 @@ void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer) {
     Func_02005164(object, 1);
     Func_0200516c(object, gData_02006330);
     object->motionFlags = 0;
-    /* FAKEMATCH: the native loads the stack argument before the pooled zero for
-     * nextFrame; without the barrier the zero is loaded first (one reordered
-     * pair, differ 2). */
+    /* FAKEMATCH(barrier): an empty asm, so the stack argument is loaded before
+     * the pooled zero for nextFrame; without it, the zero is loaded first and
+     * 2 instructions differ. */
     __asm__ volatile("");
     object->unk5e = timer;
     sprite->nextFrame = 0;

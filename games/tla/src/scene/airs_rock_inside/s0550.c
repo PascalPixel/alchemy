@@ -28,17 +28,18 @@ void Func_020004d4(struct FieldActor *object) {
     object->x = ((Random16Far() & 0xff) << 16) + (176 << 16);
     {
       s32 r = Random16Far();
-      /* FAKEMATCH: the native loads the leader's y into r3 before it builds the
-       * mask; pinned and held behind the barrier it does (differ 4 without
-       * both). */
+      /* FAKEMATCH(pin): the leader's y pinned to r3, which the ROM loads before
+       * it builds the mask; as plain locals here and for z, 4 instructions
+       * differ. */
       register s32 y asm("r3") = leader->y;
 
       object->y = y + ((r & 31) << 16);
     }
     {
       s32 r = Random16Far();
-      /* FAKEMATCH: as for y, the leader's z loads into r3 before the mask
-       * (differ 4 without both). */
+      /* FAKEMATCH(pin): as for y, the leader's z pinned to r3, so it loads
+       * before the mask; as plain locals here and for y, 4 instructions differ.
+       */
       register s32 z asm("r3") = leader->z;
 
       object->z = z + ((r & 127) << 16);
@@ -70,8 +71,9 @@ void Func_02000550(struct FieldActor *object) {
   if (*(s16 *)((u8 *)object + 102) == 0)
     Func_020004d4(object);
   (*(s16 *)((u8 *)object + 102))--;
-  /* FAKEMATCH: the loop note ends the scheduling block: the native stores the
-   * timer before it loads z (2 differ without it). */
+  /* FAKEMATCH(dead): an empty once-only block, whose loop note ends the
+   * scheduling block so the timer is stored before z loads, as the ROM does; as
+   * no block, 2 instructions differ. */
   do {
   } while (0);
   object->x += Math_Cosine(((object->z >> 14) + (object->y >> 15)) << 8) / 2;

@@ -60,7 +60,7 @@ void Func_020007a4(s32 unused, s32 id) {
   Func_02001dec(170);
   i = 3;
   /* FAKEMATCH(wrapper): both flashes forwarded through ApojiiIslands_Flash,
-   * which keeps each call's own constants; called directly, 10 of 188
+   * which keeps each call's own constants; as direct calls, 10 of 188
    * instructions differ in tla-en. */
   /* FAKEMATCH(signature): BattleEffect_ApplyColorToTargetBuffer declared
    * returning s32, though its target returns nothing; as void, 2 of 188
@@ -94,7 +94,7 @@ blend:
   GameFlag_SetBit(0x95e);
   Camera_SetSpeedParameters(0x10000, 0x2000);
   /* FAKEMATCH(wrapper): the camera moves forwarded through
-   * ApojiiIslands_CamMove, so each builds its own -1; called directly, 25 of
+   * ApojiiIslands_CamMove, so each builds its own -1; as direct calls, 25 of
    * 188 instructions differ in tla-en. */
   ApojiiIslands_CamMove(PIXELS(360), -1, PIXELS(328), 1);
   Func_080d47b4(16, 256, 20);

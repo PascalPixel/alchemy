@@ -25,7 +25,8 @@ void Func_02000074(void) {
       s32 half = 129;
       s32 id = 10;
 
-      /* FAKEMATCH: ⚓️ sets the actor between the halves of the value */
+      /* FAKEMATCH(barrier): an empty asm on half and id, so the actor is set
+       * between the halves of the value; without it, it is not. */
       asm("" : "+l"(half), "+l"(id));
       Func_080d489c(id, half << 1);
     }

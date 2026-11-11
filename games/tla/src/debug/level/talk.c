@@ -56,9 +56,10 @@ void Func_020001a8(void) {
       Text_DrawNumberInWindow(record[15], 0, win, 72, 48);
     }
 
-    /* FAKEMATCH: the pressed keys are read through a volatile view
-     * (KEYS_PRESSED), as ☀️ declares gKeyState volatile: each test reloads them
-     * (read plainly, the two first tests merge into one mask, differ 30). */
+    /* FAKEMATCH(volatile): the pressed keys read through a volatile view
+     * (KEYS_PRESSED), as The Broken Seal declares gKeyState volatile, so each
+     * test reloads them; as a plain read the first two tests merge into one
+     * mask and 30 instructions differ. */
     if ((KEYS_PRESSED & 8) != 0 || Input_PressedFenced(4) != 0) {
       Func_0200017c(5);
       Sound_Play(93);

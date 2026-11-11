@@ -61,8 +61,9 @@ void Func_020022f4(void) {
   Actor_WalkToAndWait(8, 296, 712);
   FieldEvent_Wait(1);
   t2 = ((s32)Actor_Get(8));
-  /* FAKEMATCH: the value is ORed into the register that holds the constant, as
-   * the native does; as one |= the constant is built second. */
+  /* FAKEMATCH(temporary): a local holding the constant 1, so the value is ORed
+   * into the register that holds it; as one |= 1, the constant is built
+   * second. */
   b1 = 1;
   b1 |= *(u8 *)((t2 + 90));
   *(u8 *)((t2 + 90)) = b1;
@@ -78,8 +79,9 @@ void Func_020022f4(void) {
   {
     s32 a1 = 0x102;
     s32 a2 = 45;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
+    /* FAKEMATCH(barrier): an empty asm on a1 and a2, so the later arguments
+     * are loaded before the first; as the plain call, the first is loaded
+     * earlier. */
     asm volatile("" : "+l"(a1), "+l"(a2));
     Actor_ShowEmote(8, a1, a2);
   }
@@ -96,9 +98,9 @@ void Func_020022f4(void) {
   Actor_WalkToAndWait(8, 144, 712);
   {
     s32 a2 = 0;
-    /* FAKEMATCH: the native loads the third argument first; behind the barrier
-     * that follows, the plain call loads the second first (one reordered pair,
-     * differ 2). */
+    /* FAKEMATCH(barrier): an empty asm on a2, so the third argument is loaded
+     * first; behind the barrier that follows, the plain call loads the second
+     * first and 2 instructions differ. */
     asm volatile("" : "+l"(a2));
     Actor_SetPosition(8, 0, a2);
   }
@@ -107,8 +109,8 @@ void Func_020022f4(void) {
   v5 = (v5 + 0x214);
   {
     s32 a0 = *(s32 *)(v5);
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
+    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
+     * before the others; as the plain call, it is loaded last. */
     asm volatile("" : "+l"(a0));
     FieldCamera_FollowActor(a0, 1);
   }
@@ -127,8 +129,8 @@ void Func_020022f4(void) {
   FieldActor_Jump(9, 6, 23);
   {
     s32 a0 = 4;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
+    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
+     * before the others; as the plain call, it is loaded last. */
     asm volatile("" : "+l"(a0));
     Actor_SetAnimation(a0, 3);
   }
@@ -144,8 +146,8 @@ L_0200a66c:;
   FieldActor_WaitForMoveById(9);
   {
     s32 a0 = 9;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
+    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
+     * before the others; as the plain call, it is loaded last. */
     asm volatile("" : "+l"(a0));
     Actor_SetPosition(a0, 0, 0);
   }

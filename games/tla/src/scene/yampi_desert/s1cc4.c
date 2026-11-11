@@ -45,8 +45,8 @@ void Func_02001cc4(struct Actor *object, s32 dx, s32 dz) {
         Func_02003fb8(dust, gData_020042f0);
         sprite = dust->animation;
         sprite->mode = 1;
-        /* FAKEMATCH(one-pass): the loop note after the sprite store keeps
-         * gInput's address load after it; as the store alone, 2 of 174
+        /* FAKEMATCH(dead): an empty once-only block after the sprite store
+         * keeps gInput's address load after it; as the store alone, 2 of 174
          * instructions differ in tla-en. */
         do {
         } while (0);

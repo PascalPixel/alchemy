@@ -18,8 +18,9 @@ void Event_WaitTransitionFrames(void);
 /// actors 15 to 24 by flags 0x8a7, 0x8ab and 0x8bd, and actor 8 stepping in
 /// at entrance 9 until flag 0x109 is set.
 void Func_0200051c(void) {
-  /* FAKEMATCH: the data address is loaded before Func_020015e0 and kept across
-   * it, as the native does (differ 31 loaded at its call). */
+  /* FAKEMATCH(temporary): the data address held in a local, so it loads before
+   * Func_020015e0 and is kept across it, as the ROM does; as loaded at its
+   * call, 31 instructions differ. */
   const void *data;
   struct AlhafranCaveEventWork *work;
 

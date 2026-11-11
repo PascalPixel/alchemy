@@ -21,7 +21,8 @@ void Func_02001eb8(s32 id, s32 value) {
 
   if (object != NULL) {
     object->action = value;
-    /* FAKEMATCH: ⚓️ stores the action before it addresses the list */
+    /* FAKEMATCH(barrier): an empty asm, so the action is stored before the
+     * list is addressed; as the same statements with no asm, not measured. */
     asm volatile("");
     gData_02003600[gData_020035fe] = object;
     gData_020035fe++;

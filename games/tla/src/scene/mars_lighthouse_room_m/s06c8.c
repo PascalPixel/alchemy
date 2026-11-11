@@ -21,13 +21,13 @@ void Func_020006c8(s32 state) {
   if ((state ^ gData_02003a82) & 1)
     Event_PlaySound(560);
   gData_02003a82 = state;
-  /* FAKEMATCH: a forced temporary: the low bit is taken before the state is
-   * copied for the next index, as in the native (in the test itself: differ
-   * 12). */
+  /* FAKEMATCH(temporary): the low bit held in a local, so it is taken before
+   * the state is copied for the next index, as in the native; as the test
+   * itself, differ 12 (of M not recorded). */
   odd = state & 1;
-  /* FAKEMATCH: a pointer taken here loads the flash's address before 20 is
-   * subtracted; as a direct store in each arm, 17 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(temporary): a local pointer to the flash, taken here, loads its
+   * address before 20 is subtracted; as a direct store in each arm, differ 17
+   * in tla-en (of M not recorded). */
   flash = (u16 *)&gData_02003a7e;
   next = state - 20;
   if (odd)

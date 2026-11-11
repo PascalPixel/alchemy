@@ -8,8 +8,9 @@ void VramCache_Load(s32 handle, s32 size, void *source);
 
 void Func_02002de0(void) {
   struct KibomboObject **slot = &gData_02007950;
-  /* FAKEMATCH: the native keeps one zero in r7 for the three byte stores below;
-   * plain zeros are built in r2 where they are stored (differ 30). */
+  /* FAKEMATCH(temporary): one local zero, kept in r7 for the three byte stores
+   * below; as plain zeros, built in r2 where they are stored, 30 instructions
+   * differ. */
   s32 zero = 0;
   struct KibomboObject *object =
       Import_ActorCreate(0x1e9, 0x1090000, 0x240000, 0x1580000);

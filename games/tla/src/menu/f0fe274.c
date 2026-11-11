@@ -51,9 +51,10 @@ void Func_08038290(void);
 
 static __inline__ void CopyWords_(void *destination, const void *source,
                                   s32 size) {
-  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants; as direct Iwram_CopyWords calls, CSE keeps 0x05000000 in a
-   * saved register and 48 of 216 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the copy forwarded through an inline, which keeps each
+   * call's own constants; as direct Iwram_CopyWords calls, 48 of 216
+   * instructions differ in tla-en, CSE keeping 0x05000000 in a saved
+   * register. */
   Iwram_CopyWords(destination, source, size);
 }
 

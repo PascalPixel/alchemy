@@ -53,9 +53,9 @@ void Func_0200096c(s32 unused, s32 id) {
     y = object->y;
     Actor_SetMoveTarget(object, PIXELS(152), y, PIXELS(792));
   }
-  /* FAKEMATCH: a volatile read of x and pins on r0, r1 and r3 reload x on both
-   * paths and keep the argument order; as plain reads and constants, 14
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(volatile): x read through a volatile view, so it is reloaded
+   * on both paths; with the pins below, as plain reads, plain locals and
+   * constants, differ 14 in tla-en (of M not recorded). */
   if (*(volatile s32 *)&object->x >> 20 == 10) {
     s32 y;
 
@@ -63,8 +63,12 @@ void Func_0200096c(s32 unused, s32 id) {
     object->acceleration = 0x2000;
     y = object->y;
     {
+      /* FAKEMATCH(pin): the actor pinned to r0 to keep the argument order;
+       * measured with the volatile read above. */
       register struct Actor *self asm("r0") = object;
       s32 x = 0xc80000;
+      /* FAKEMATCH(pin): z pinned to r3 to keep the argument order; measured
+       * with the volatile read above. */
       register s32 z asm("r3") = 0x3180000;
 
       Actor_SetMoveTarget(self, x, y, z);

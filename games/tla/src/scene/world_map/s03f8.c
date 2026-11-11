@@ -61,9 +61,9 @@ void Func_02000458(void) {
   {
     s32 zero;
 
-    /* FAKEMATCH: the halfword counters take an s32 zero assigned inside the
-     * first store; a halfword constant loads from the pool, and a zero set
-     * first keeps 346 out of r3 (differ 27 to 4). */
+    /* FAKEMATCH(temporary): the halfword counters take an s32 zero assigned
+     * inside the first store; as a halfword constant it loads from the pool,
+     * and as a zero set first 346 is kept out of r3 (differ 27 to 4). */
     *(u16 *)(work + 346) = zero = 0;
     *(u16 *)(work + 350) = zero;
     *(u16 *)(work + 348) = zero;

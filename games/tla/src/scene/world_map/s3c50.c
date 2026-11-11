@@ -6,9 +6,9 @@ extern u32 gFrameCount;
 extern u16 gData_02006e08;
 
 static inline void QueueBlend(u32 address, u32 value) {
-  /* FAKEMATCH: forwarding through the inline sets the arguments up in their own
-   * order: the native finishes the value's orr before the register address's
-   * add (differ 12 as direct calls). */
+  /* FAKEMATCH(wrapper): forwarding through the inline sets the arguments up in
+   * their own order: the native finishes the value's orr before the register
+   * address's add; as direct calls, 12 instructions differ. */
   QueueIoWriteDelay2(address, value);
 }
 

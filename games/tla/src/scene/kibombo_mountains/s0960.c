@@ -12,8 +12,8 @@ void Func_0200108c(void);
 void Func_02001134(void);
 
 void Func_02000960(void) {
-  /* FAKEMATCH: the Call3 and Value3 calls of call.h keep each call's own
-   * constants and argument order; as direct SetPositionAndReset calls, 42
+  /* FAKEMATCH(wrapper): the Call3 and Value3 calls of call.h keep each call's
+   * own constants and argument order; as direct SetPositionAndReset calls, 42
    * instructions differ in tla-en. */
   Func_02001084();
   FieldEvent_ResolvePendingActions(0);

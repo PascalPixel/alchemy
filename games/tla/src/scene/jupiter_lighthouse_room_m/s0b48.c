@@ -13,23 +13,25 @@ void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 s32 Func_02000a78(void);
 
 static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does (direct: differ 30 of 57). */
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
+   * constants, as ☀️'s scene layer does; as direct calls, 30 of 57
+   * instructions differ. */
   Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, angle);
 }
 
 static __inline__ void ObjSpeed(s32 id, s32 speed, s32 acceleration) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does (direct: the speeds are held in r5 and r6 across
-   * the calls, four rows fewer). */
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
+   * constants, as ☀️'s scene layer does; as direct calls, the speeds are held
+   * in r5 and r6 across the calls, four rows fewer (not measured as N of M). */
   Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
-/* FAKEMATCH: the angle passes through a block temporary: the native holds each
- * run of equal angles in r5 (0x2000, then 0xc000), building the second while
- * the third call is set up (a plain argument: differ 31 of 57). */
 #define PLACE(id, x, z, angle)                                                 \
   {                                                                            \
+    /* FAKEMATCH(temporary): the angle passes through a block local, so each   \
+     * run of equal angles is held in r5 (0x2000, then 0xc000), the second     \
+     * built while the third call is set up, as the native does; as a plain    \
+     * argument, 31 of 57 instructions differ. */                              \
     s32 angle_ = (angle);                                                      \
     ObjPlace(id, (x) << 16, (z) << 16, angle_);                                \
   }
@@ -60,7 +62,7 @@ void Func_02000c08(void) {
   Actor_SetSingleChildFlags(Actor_Get(1), 0);
   Actor_SetScript(1, gData_02005524);
   {
-    /* FAKEMATCH: the priority passes through a block temporary, so 0x480 is
+    /* FAKEMATCH(temporary): the priority held in a block local, so 0x480 is
      * built before the task function's address is loaded; as an argument, 2 of
      * 57 instructions differ in tla-en. */
     s32 priority = 0x480;

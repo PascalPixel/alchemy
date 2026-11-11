@@ -53,18 +53,19 @@ s32 Func_02000134(void) {
     Event_ClearFlag(0x304);
   if (work->raisedTrigger != 2) {
     Func_0200006c(0);
-    /* FAKEMATCH: the wait counter's address taken once before the test, where
-     * the native loads it for both branches; written in each branch it is
-     * loaded in each (differ 11). */
+    /* FAKEMATCH(temporary): the wait counter's address held in a local before
+     * the test, so it is loaded once for both branches; as gData_020022b8
+     * written in each branch, it is loaded in each and 11 instructions
+     * differ. */
     set = Event_GetFlag(0x303);
     waitCounter = &gData_020022b8;
     if (!set) {
       if (++*waitCounter > 25) {
         s32 offset = 0;
 
-        /* FAKEMATCH: a goto loop counting down with the stride stepped by hand;
-         * as ☀️'s for loop, loop.c also keeps the table and the routine's
-         * addresses in registers (differ 76). */
+        // A goto loop counting down with the stride stepped by hand; as ☀️'s
+        // for loop, loop.c also keeps the table and the routine's addresses
+        // in registers (differ 76).
         i = 3;
       clear:
         Iwram_ClearWords((u8 *)gLinkPeerSignatures + offset, 20);

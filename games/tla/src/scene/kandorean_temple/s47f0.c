@@ -2,8 +2,9 @@
 #include "event_inline.h"
 
 void Func_020044d4(void) {
-  /* FAKEMATCH: a temporary set just before its call builds the angle ahead of
-   * the other arguments (one reordered row as a plain argument). */
+  /* FAKEMATCH(temporary): a local holding the angle, set just before its call,
+   * builds it ahead of the other arguments; as a plain argument, one row is
+   * reordered. */
   s32 angle;
 
   Func_020051c0();

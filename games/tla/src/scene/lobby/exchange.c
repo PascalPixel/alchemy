@@ -24,8 +24,9 @@ static __inline__ void Lobby_ResetTransferState(void) {
 
   state = &gSerialTransfer;
   ime = &REG_IME;
-  /* FAKEMATCH: the one-pass block keeps the IME exchange before the zero and
-   * status constants. */
+  /* FAKEMATCH(dead): the IME exchange in a once-only block, which keeps it
+   * before the zero and status constants; as plain statements, the constants
+   * come first. */
   do {
     saved = *ime;
     *ime = (u16)ime;
@@ -47,7 +48,8 @@ s32 Func_020007b8(void) {
   s32 first;
   s32 flag;
 
-  /* FAKEMATCH: separate initialization from the following flag query. */
+  /* FAKEMATCH(dead): the result's zero in a once-only block, which keeps it
+   * apart from the flag query that follows; as the plain result = 0. */
   do {
     result = 0;
   } while (0);

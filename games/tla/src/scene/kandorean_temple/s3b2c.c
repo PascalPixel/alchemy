@@ -18,15 +18,15 @@ void Func_02003b2c(void) {
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
     Actor_SetPositionAndFacing(11, PIXELS(374), PIXELS(282), FACING_EAST);
     {
-      /* FAKEMATCH: a temporary builds the angle ahead of the other arguments
-       * (three reordered rows as a plain argument). */
+      /* FAKEMATCH(temporary): a local holding the angle builds it ahead of the
+       * other arguments; as a plain argument, three rows are reordered. */
       s32 angle = 0xd000;
 
       Actor_SetPositionAndFacing(12, PIXELS(272), PIXELS(296), angle);
     }
     {
-      /* FAKEMATCH: a temporary builds the angle ahead of the other arguments
-       * (three reordered rows as a plain argument). */
+      /* FAKEMATCH(temporary): a local holding the angle builds it ahead of the
+       * other arguments; as a plain argument, three rows are reordered. */
       s32 angle = 0x3000;
 
       Actor_SetPositionAndFacing(13, PIXELS(216), PIXELS(264), angle);

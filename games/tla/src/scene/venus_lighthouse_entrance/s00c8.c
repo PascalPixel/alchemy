@@ -15,7 +15,11 @@ void Func_020000c8(s32 actor) {
   object->priorityFlags = 0;
   {
     s32 a = actor;
+    /* FAKEMATCH(pin): the 96 pinned to r1; as
+     * Actor_CommitPositionAndActivate(actor, 96, -96). */
     register s32 dx asm("r1") = 96;
+    /* FAKEMATCH(pin): the -96 pinned to r2, the same call's second; as
+     * Actor_CommitPositionAndActivate(actor, 96, -96). */
     register s32 dz asm("r2") = -96;
 
     Actor_CommitPositionAndActivate(a, dx, dz);

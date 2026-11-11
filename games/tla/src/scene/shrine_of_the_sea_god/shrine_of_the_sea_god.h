@@ -93,14 +93,16 @@ void Func_0200142c(struct ShrineOfTheSeaGodObject *object);
 
 static inline void ShrineOfTheSeaGod_CopyRect(s32 sx, s32 sy, s32 w, s32 h,
                                               s32 dx, s32 dy) {
-  /* FAKEMATCH: the rectangle copy reaches the main image through one inline layer.
+  /* FAKEMATCH(wrapper): the rectangle copy reaches the main image through one
+   * inline layer; as direct Map_CopyCellPictureIndicesRect calls it does not.
    */
   Map_CopyCellPictureIndicesRect(sx, sy, w, h, dx, dy);
 }
 
 static inline void ShrineOfTheSeaGod_BlendStart(s32 a, s32 b, s32 c, s32 d,
                                                 s32 e, s32 f) {
-  /* FAKEMATCH: the blend start reaches the main image through one inline layer. */
+  /* FAKEMATCH(wrapper): the blend start reaches the main image through one
+   * inline layer; as direct Map_CopyCellAttributeRect calls it does not. */
   Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
@@ -128,9 +130,11 @@ void Actor_SetSingleChildFlags(struct ShrineOfTheSeaGodObject *object,
                                         u32 value);
 
 static inline void ShrineOfTheSeaGod_Jump(s32 actor, s32 height, s32 frames) {
-  /* FAKEMATCH: the native loads the actor after the height and frames. */
+  /* FAKEMATCH(pin): the height pinned to r1, so the native's order holds:
+   * the actor loads after the height and frames; as a plain
+   * Func_080d47b4(actor, height, frames) it loads first. */
   register s32 h __asm__("r1") = height;
-  /* FAKEMATCH: the frames stay fixed in r2 for the same reason. */
+  /* FAKEMATCH(pin): the frames pinned to r2 with the height above. */
   register s32 f __asm__("r2") = frames;
 
   Func_080d47b4(actor, h, f);

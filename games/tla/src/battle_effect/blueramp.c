@@ -8,9 +8,10 @@
 
 static __inline__ void CopyWords_(void *destination, const void *source,
                                   s32 size) {
-  /* FAKEMATCH: forwarding through the inline loads the routine's entry before
-   * the arguments, as the native does at all three copies; called directly the
-   * entry loads last (differ 10). */
+  /* FAKEMATCH(wrapper): the copy forwarded through an inline, which loads the
+   * routine's entry before the arguments, as the native does at all three
+   * copies; as direct Iwram_CopyWords calls the entry loads last and 10
+   * instructions differ. */
   Iwram_CopyWords(destination, source, size);
 }
 

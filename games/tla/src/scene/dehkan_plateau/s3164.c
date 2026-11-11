@@ -59,9 +59,9 @@ void Func_02003164(void) {
   }
   Func_020018a8();
   if (GameFlag_Test(0x86c) != 0) {
-    /* FAKEMATCH: the named angle is started before the two coordinates, as the
-     * native does; as a literal argument it is started after them (differ 4).
-     */
+    /* FAKEMATCH(temporary): the angle held in a local is started before the two
+     * coordinates, as the native does; as the literal argument it is started
+     * after them and 4 instructions differ. */
     s32 angle = 0x4000;
 
     Actor_PlaceFacing(24, 222 << 18, 168 << 16, angle);

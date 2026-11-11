@@ -90,7 +90,8 @@ void Func_020023d0(struct Actor *object) {
 
   if (phase == 0) {
     {
-      /* FAKEMATCH: the native builds the mask before the random draw. */
+      /* FAKEMATCH(temporary): the mask in a local, which the ROM builds before
+       * the random draw; as a constant in the expression. */
       s32 mask = 15;
 
       dx = mask & Random16Far();

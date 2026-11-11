@@ -14,7 +14,7 @@ void Func_02004a60(s32 id, s32 a, s32 flag, s32 terrain);
 void Func_020049dc(u16 *list, s32 mode, s32 count) {
   struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
 
-  /* FAKEMATCH(one-pass): the entry jump in a once-only block; as the plain
+  /* FAKEMATCH(dead): the entry jump in a once-only block; as the plain
    * goto, 5 of 61 instructions differ in tla-en. */
   do {
     goto test;

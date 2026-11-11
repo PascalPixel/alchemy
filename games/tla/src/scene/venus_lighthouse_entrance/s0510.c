@@ -518,8 +518,8 @@ void Func_02000510(void) {
   {
     s32 a0 = 5;
 
-    /* FAKEMATCH(one-pass): an empty block before the angle's load; as the plain
-     * call, 2 of 2142 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block before the angle's load; as the
+     * plain call, 2 of 2142 instructions differ in tla-en. */
     do {
     } while (0);
     Actor_FaceDirection(a0, 0x4000, 0);
@@ -553,9 +553,9 @@ void Func_02000510(void) {
   *(u8 *)(((u8 *)Actor_GetById(14)) + 90) &= 254;
   Actor_WalkToAndWait(14, 0x1c8, 0x1a8);
   FieldEvent_Wait(1);
-  /* FAKEMATCH(one-pass): an empty block ends CSE's block, so the 1 of these six
-   * sets stays one register; as no block, 80 of 2142 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(dead): an empty once-only block ends CSE's block, so the 1 of
+   * these six sets stays one register; as no block, 80 of 2142 instructions
+   * differ in tla-en. */
   do {
   } while (0);
   *(u8 *)(((u8 *)Actor_GetById(14)) + 90) |= 1;

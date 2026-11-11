@@ -3,7 +3,8 @@
 s32 Func_02003bb8(s32 index, s32 value) {
   u8 *base = (u8 *)VENT_WORK;
 
-  asm volatile(
-      ""); /* FAKEMATCH: ⚓️ loads the work address before it scales the index */
+  /* FAKEMATCH(barrier): the empty asm loads the work address before the index
+   * is scaled, as the ROM does; as no asm. */
+  asm volatile("");
   ((struct VentRow *)(base + index * 20))->active = value;
 }

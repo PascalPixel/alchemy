@@ -50,9 +50,9 @@ void Func_02003584(void) {
     {
       s32 scale = object->scaleX;
 
-      /* FAKEMATCH: one variable set twice in the loop keeps both constants
-       * loaded on every pass; as plain constants, 8 instructions differ in
-       * tla-en. */
+      /* FAKEMATCH(temporary): one local holding the constant, set in the
+       * loop, keeps it loaded on every pass; as plain constants, 8
+       * instructions differ in tla-en. */
       delta = -0x400;
       object->scaleX = scale + delta;
     }

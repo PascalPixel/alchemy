@@ -39,9 +39,9 @@ void Func_020043f8(void) {
   if (GameFlag_Test(0x205))
     Func_02002878();
   {
-    /* FAKEMATCH: the value pinned to r3 loads from the pool before the register
-     * address starts, as the native does; as a plain store, one row is
-     * reordered in tla-en. */
+    /* FAKEMATCH(pin): the value pinned to r3 loads from the pool before the
+     * register address starts, as the native does; as REG_BLDALPHA = 0xc08,
+     * one row is reordered in tla-en. */
     register u16 alpha __asm__("r3") = 0xc08;
 
     REG_BLDALPHA = alpha;
@@ -50,9 +50,9 @@ void Func_020043f8(void) {
   {
     s32 priority = 0x480;
 
-    /* FAKEMATCH: the barrier holds r0 until the priority is complete, so the
-     * callback is loaded last as the native has; through the inline alone it
-     * comes one row early in tla-en. */
+    /* FAKEMATCH(barrier): the empty asm holds r0 until the priority is
+     * complete, so the callback is loaded last as the native has; as
+     * Task_Add(Func_020043c8, 0x480), it comes one row early in tla-en. */
     __asm__("" : "+l"(priority) : : "r0");
     Task_Add(Func_020043c8, priority);
   }
@@ -70,9 +70,9 @@ void Func_02004534(void) {
       521;
   ((struct ShamanVillageObject *)Actor_GetById(12))->collisionFlags = 8;
   if (GameFlag_Test(0x9fe)) {
-    /* FAKEMATCH: the local starts the facing before the other arguments, as the
-     * native has; as a plain argument it is started third (one reordered row).
-     */
+    /* FAKEMATCH(temporary): the local holding one constant starts the facing
+     * before the other arguments, as the native has; as the plain argument
+     * 0x3000 it is started third (one reordered row). */
     s32 angle = 0x3000;
 
     Actor_SetPositionAndFacing(8, PIXELS(88), PIXELS(92), angle);

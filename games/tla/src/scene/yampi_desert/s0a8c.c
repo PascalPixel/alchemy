@@ -13,9 +13,9 @@ void Func_02000a8c(void) {
     Camera_FollowActor(21, 1);
     Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 21);
   }
-  /* FAKEMATCH: entering the loop at its test keeps the test single and the
-   * address load inside the loop; as a while loop the test is copied above it
-   * and the address kept in r5 */
+  // Entered at its test, which keeps the test single and the address load
+  // inside the loop: as a while loop the test is copied above it and the
+  // address kept in r5.
   goto test;
   do {
     wait(1);

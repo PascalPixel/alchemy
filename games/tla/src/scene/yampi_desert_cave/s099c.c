@@ -6,7 +6,7 @@ extern u16 *gData_02001fdc;
 extern u16 *gData_02001fe0;
 
 /// Reads one colour's three channels, red first, stepping p past them. Its
-/// once-only block orders the shifts as the game does; see the tag at its use.
+/// once-only block orders the shifts as the game does; see the note at its use.
 #define READ_COLOR(r, g, b, p)                                                 \
   do {                                                                         \
     (r) = *(p)++;                                                              \
@@ -33,11 +33,11 @@ void Func_0200099c(void) {
   i = 0;
   while (i < gData_02001fe4) {
     dst = &BG_PLTT[gData_02001fcc[gData_02001fe8 * gData_02001fe4 + i]];
-    /* FAKEMATCH(one-pass): READ_COLOR's once-only block, at both uses; as three
-     * plain reads, 6 of 120 instructions differ in tla-en. */
+    // READ_COLOR's block, at both uses, orders the reads as the game does; as
+    // three plain reads, 6 of 120 instructions differ in tla-en.
     READ_COLOR(r, g, b, color);
     *dst = b << 10 | g << 5 | r;
-    /* FAKEMATCH(one-pass): i++ in a once-only block; as a plain i++, 2 of 120
+    /* FAKEMATCH(dead): i++ in a once-only block; as a plain i++, 2 of 120
      * instructions differ in tla-en. */
     do {
       i++;

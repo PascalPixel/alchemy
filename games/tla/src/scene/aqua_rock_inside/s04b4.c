@@ -25,8 +25,8 @@ void Func_020004bc(s32 unused, s32 id) {
   for (i = 0; i <= 31; i++) {
     Func_02003460(i << 16);
     {
-      /* FAKEMATCH: the zero pinned to r1 is set before the column is copied to
-       * r0 (differ 2 plain). */
+      /* FAKEMATCH(pin): the zero pinned to r1, set before the column is copied
+       * to r0; as a plain local, 2 instructions differ. */
       register s32 height asm("r1") = 0;
 
       Func_0200349c(column, height);

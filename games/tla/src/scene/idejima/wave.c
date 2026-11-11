@@ -13,8 +13,8 @@ void Func_02001558(void) {
 
   s32 offset = line[0];
 
-  /* FAKEMATCH: a one-pass block builds BG3VOFS's address after the first line
-   * is loaded (one reordered row). */
+  /* FAKEMATCH(dead): an empty once-only block, so BG3VOFS's address is built
+   * after the first line is loaded; as no block, one row is reordered. */
   do {
   } while (0);
   REG_BG3VOFS = offset;

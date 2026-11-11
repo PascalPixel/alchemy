@@ -290,7 +290,7 @@ s32 Func_081039fc(u32 mode) {
           Iwram_CopyWords(saved, work->tilemap, size);
           window =
               Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 3, 8, 0, 1);
-          /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, as The
+          /* FAKEMATCH(dead): the cursor's store in a once-only block, as The
            * Broken Seal's twin has it; as a plain statement, 4 of 1244
            * instructions differ in tla-en. */
           do {
@@ -307,7 +307,7 @@ s32 Func_081039fc(u32 mode) {
           redraw = 1;
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = 11;
-          /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, as The
+          /* FAKEMATCH(dead): the cursor's store in a once-only block, as The
            * Broken Seal's twin has it; as a plain statement, 2 of 1244
            * instructions differ in tla-en. */
           do {
@@ -322,7 +322,7 @@ s32 Func_081039fc(u32 mode) {
           Iwram_CopyWords(saved, work->tilemap, size);
           window =
               Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 2, 8, 0, 1);
-          /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, as The
+          /* FAKEMATCH(dead): the cursor's store in a once-only block, as The
            * Broken Seal's twin has it; as a plain statement, 4 of 1244
            * instructions differ in tla-en. */
           do {
@@ -340,7 +340,7 @@ s32 Func_081039fc(u32 mode) {
           redraw = 1;
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = 12;
-          /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, as The
+          /* FAKEMATCH(dead): the cursor's store in a once-only block, as The
            * Broken Seal's twin has it; as a plain statement, 2 of 1244
            * instructions differ in tla-en. */
           do {

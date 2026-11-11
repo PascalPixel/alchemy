@@ -94,25 +94,20 @@ void Func_020048b4(void);
 
 #define SHAMAN_VILLAGE_EMOTE(actor, emote, frames)                             \
   {                                                                            \
-    /* FAKEMATCH: the native loads the emote and the frames before the actor   \
-     * at every */                                                             \
-    /* emote of this overlay; pinned to their argument registers they are      \
-     * loaded first, */                                                        \
-    /* as there. Measured against it: an inline (the actor comes one row early \
-     * wherever */                                                             \
-    /* the emote takes two instructions), an inline with its parameters in     \
-     * another order */                                                        \
-    /* or modified, a local (shared between calls), a one-pass block, and      \
-     * barriers that */                                                        \
-    /* hold r0 (each empty asm adds four bytes to the pool estimate and moves  \
-     * the literal */                                                          \
-    /* pool of a long scene). */                                               \
+    /* FAKEMATCH(pin): the emote pinned to r1, as the native */                \
+    /* loads the emote and the frames before the actor at every */             \
+    /* emote of this overlay. Measured against it: an inline */                \
+    /* call (the actor comes one row early wherever the emote */               \
+    /* takes two instructions), an inline with its parameters in */            \
+    /* another order or modified, a local (shared between calls), */           \
+    /* a once-only block, and barriers that hold r0 (each empty */             \
+    /* asm adds four bytes to the pool estimate and moves the */               \
+    /* literal pool of a long scene). */                                       \
     register s32 emote_ __asm__("r1") = (emote);                               \
-    /* FAKEMATCH: the frames, pinned with the emote above. */                  \
+    /* FAKEMATCH(pin): the frames pinned to r2 with the emote above. */        \
     register s32 frames_ __asm__("r2") = (frames);                             \
     Func_080d47b4((actor), emote_, frames_);                                   \
   }
-
 
 // ---- this overlay
 

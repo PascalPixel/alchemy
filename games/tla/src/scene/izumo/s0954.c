@@ -12,9 +12,9 @@ void Func_02000954(void) {
     Func_02000d88(32, 256, 60);
     message = MsgWouldYouBe;
     Func_02000d60(message);
-    /* FAKEMATCH: the native schedules this call as a value-returning one (the
-     * flags are loaded before the actor: one reordered pair with the header's
-     * void prototype). */
+    /* FAKEMATCH(signature): FieldMessage_ShowAtActor called as returning a
+     * value, so the flags load before the actor as the native schedules it;
+     * through the header's void prototype, one pair is reordered. */
     ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(32, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
@@ -30,8 +30,8 @@ void Func_02000954(void) {
 }
 
 s32 Func_020009d0(void) {
-  /* FAKEMATCH: Call3 sets Func_02000d40's arguments up in the native's order,
-   * as in Func_020006a4 (a direct call: differ 2). */
+  /* FAKEMATCH(wrapper): Call3 sets Func_02000d40's arguments up in the native's
+   * order, as in Func_020006a4; as a direct call, 2 instructions differ. */
   GameFlag_ClearBit(0x302);
   WORD_AT(Ram_HeapSlots->eventWork, 428) = 0x100;
   Task_Add(Func_0200060c, TASK_PASS_FRAME);

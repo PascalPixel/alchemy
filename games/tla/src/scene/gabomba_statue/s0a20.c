@@ -28,9 +28,9 @@ void Func_02000a20(struct Actor *object) {
   Actor_SetAnimation(party->currentOwner, 28);
   FieldEvent_Wait(10);
   for (i = 0; i <= 19; i++) {
-    /* FAKEMATCH: one variable set twice in the loop keeps both constants inside
-     * it, as the native loads them on every pass; as plain constants loop.c
-     * moves -0x300 above the loop (life 4, differ 20). */
+    /* FAKEMATCH(temporary): one local reused for two constants inside the
+     * loop, so both are loaded on every pass; as the plain constants, loop.c
+     * moves -0x300 above the loop and 20 instructions differ. */
     delta = -0x300;
     object->scaleX += delta;
     object->scaleY += delta;

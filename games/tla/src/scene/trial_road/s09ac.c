@@ -6,9 +6,8 @@ void Func_020009ac(s32 a, s32 b) {
   s32 id;
 
   id = 18;
-  /* FAKEMATCH: both loops are written with goto: as for or do-while loops the
-   * table address and the 1 are moved out of them (differ 29), which the native
-   * does not do. */
+  // Goto loops: as for or do-while loops, the table address and the 1 are moved
+  // out of them (differ 29).
 next:
   {
     struct Actor *object = Actor_GetById(id);

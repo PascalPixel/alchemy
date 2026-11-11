@@ -22,9 +22,8 @@ void Func_02000ecc(s32 unused, s32 id) {
       layer[3] -= 0x10000;
       System_Wait(4);
     }
-    /* FAKEMATCH: the loop is written with goto so that it carries no loop
-     * notes: the bytes rebuild the zero and the depth on every pass, and a for
-     * loop hoists both. */
+    // A goto loop: the ROM rebuilds the zero and the depth on every pass, which
+    // a for loop hoists.
     i = 13;
   place:
     object = Actor_GetById(i);
@@ -38,8 +37,8 @@ void Func_02000ecc(s32 unused, s32 id) {
     if (i <= 15)
       goto place;
     Func_02003d04();
-    /* FAKEMATCH: as above; here a for loop hoists the queue and the interrupt
-     * register addresses (differ 24). */
+    // A goto loop too: here a for loop hoists the queue's and the register's
+    // addresses (differ 24).
     i = 12;
   blend:
     IO_WRITE_QUEUE_PUSH(0x04000052, 0x1000 | i, 0x20000);

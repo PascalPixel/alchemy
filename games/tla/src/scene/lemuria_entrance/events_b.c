@@ -40,11 +40,13 @@ void Func_02000310(s32 kind, s32 frames);
 
 void Func_02000060(s32 arg) {
   struct MainRoutineWork *party = &gMainRoutineWork;
-  /* FAKEMATCH: pinned to r6 and assigned after the barrier, the countdown's
-   * copy follows gMainRoutineWork's address, as native; as a plain parameter, 2
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(pin): countdown fixed to r6 and assigned after the empty asm, so
+   * its copy follows gMainRoutineWork's address; as the plain parameter with
+   * no pin or asm, 2 instructions differ in tla-en. */
   register s32 countdown asm("r6");
 
+  /* FAKEMATCH(barrier): the empty asm before countdown's copy, measured with
+   * the pin above. */
   asm("");
   countdown = arg;
   party->ownerOverride = 0;
@@ -60,10 +62,13 @@ void Func_02000060(s32 arg) {
 
 void Func_020000b0(s32 arg) {
   struct MainRoutineWork *party = &gMainRoutineWork;
-  /* FAKEMATCH: as in Func_02000060, the pin and the barrier put gMainRoutineWork's
-   * address before the countdown's copy (differ 2 without them). */
+  /* FAKEMATCH(pin): countdown fixed to r6, as in Func_02000060, so
+   * gMainRoutineWork's address comes before its copy; as the plain parameter
+   * with no pin or asm, 2 instructions differ. */
   register s32 countdown asm("r6");
 
+  /* FAKEMATCH(barrier): the empty asm before countdown's copy, measured with
+   * the pin above. */
   asm("");
   countdown = arg;
   party->ownerOverride = 0;

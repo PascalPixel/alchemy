@@ -20,17 +20,18 @@ u32 Random16Far(void);
 #define WORLD_MAP_TRY_ENCOUNTER(a, b)                                          \
   {                                                                            \
     struct EncounterWork *work;                                                \
-    struct MainRoutineWork *party;                                                  \
+    struct MainRoutineWork *party;                                             \
                                                                                \
     work = Ram_HeapSlots->eventWork;                                           \
-    /* FAKEMATCH: an empty asm after the work load keeps it ahead of           \
-       gMainRoutineWork's address, which the native loads before it builds          \
-       the 0x258 offset; plain, the offset starts first (differ 2). */         \
+    /* FAKEMATCH(barrier): an empty asm after the work load keeps it ahead     \
+       of gMainRoutineWork's address, which the native loads before it builds  \
+       the 0x258 offset; as no asm, the offset starts first and 2              \
+       instructions differ. */                                                 \
     asm("");                                                                   \
-    party = &gMainRoutineWork;                                                      \
+    party = &gMainRoutineWork;                                                 \
     if (party->encounterSteps >= work->threshold * 9 / 10) {                   \
       if (Random16Far() < 0x8000) {                                            \
-        Field_RequestDjinnBattle(a, b);                                                   \
+        Field_RequestDjinnBattle(a, b);                                        \
         work->bias = 0;                                                        \
       } else {                                                                 \
         party->encounterSteps = work->threshold;                               \
@@ -40,19 +41,19 @@ u32 Random16Far(void);
 #else
 #define WORLD_MAP_TRY_ENCOUNTER(a, b)                                          \
   {                                                                            \
-    struct MainRoutineWork *party;                                                  \
+    struct MainRoutineWork *party;                                             \
     struct EncounterWork *work;                                                \
                                                                                \
-    party = &gMainRoutineWork;                                                      \
-    /* FAKEMATCH: an empty asm after gMainRoutineWork's address keeps it            \
-       ahead of the 0x212 offset and the work load; as no asm, 2               \
+    party = &gMainRoutineWork;                                                 \
+    /* FAKEMATCH(barrier): an empty asm after gMainRoutineWork's address       \
+       keeps it ahead of the 0x212 offset and the work load; as no asm, 2      \
        instructions differ in tla-en. */                                       \
     asm("");                                                                   \
     work = Ram_HeapSlots->eventWork;                                           \
     if (party->renderMode == 1) {                                              \
       if (party->encounterSteps >= work->threshold * 9 / 10) {                 \
         if (Random16Far() < 0x8000) {                                          \
-          Field_RequestDjinnBattle(a, b);                                                 \
+          Field_RequestDjinnBattle(a, b);                                      \
           work->bias = 0;                                                      \
         } else {                                                               \
           party->encounterSteps = work->threshold;                             \

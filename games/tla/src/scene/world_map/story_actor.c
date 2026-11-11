@@ -20,9 +20,9 @@ extern u32 gFrameCount;
 void Animation_ApplyChildValues(struct BobbingMarker *marker, s32 value);
 
 static __inline__ s32 MulQ16(s32 a, s32 b) {
-  /* FAKEMATCH: through the inline the multiply's address loads between the
-   * halves of 0x40000, as in the native (called directly, both halves come
-   * first). */
+  /* FAKEMATCH(wrapper): through the inline the multiply's address loads between
+   * the halves of 0x40000, as in the native; called directly, both halves come
+   * first. */
   return Iwram_MulQ16(a, b);
 }
 

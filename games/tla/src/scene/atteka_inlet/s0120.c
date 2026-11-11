@@ -23,9 +23,9 @@ void Func_02000120(void) {
     Actor_SetModeById(18, 3);
     Event_ShowMessageAndWait(18, 0);
     gMainRoutineWork.ownerOverride = 1;
-    /* FAKEMATCH: the flag test forwards through call.h's Value1; called
-     * directly, gMainRoutineWork's offsets take r3 instead of r2 (differ 22,
-     * found by alchemy permute). */
+    /* FAKEMATCH(wrapper): the flag test forwarded through call.h's Value1; as a
+     * direct call, gMainRoutineWork's offsets take r3 instead of r2 and 22
+     * instructions differ (found by alchemy permute). */
     if (Event_GetFlag(0x9d0)) {
       GameFlag_SetBit(0x8df);
       GameFlag_SetBit(0x9b2);

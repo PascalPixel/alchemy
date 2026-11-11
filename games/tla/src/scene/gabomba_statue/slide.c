@@ -13,8 +13,8 @@ void Func_020017dc(struct Actor *actor) {
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(581);
   acceleration = 0x19999;
-  /* FAKEMATCH: ⚓️ loads the speed and the acceleration from the pool separately
-   */
+  /* FAKEMATCH(barrier): an empty asm on acceleration, so the speed and the
+   * acceleration are loaded from the pool separately. */
   asm("" : "+l"(acceleration));
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999,
                                   acceleration);
@@ -29,8 +29,8 @@ void Func_02001820(struct Actor *actor) {
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(581);
   acceleration = 0x19999;
-  /* FAKEMATCH: ⚓️ loads the speed and the acceleration from the pool separately
-   */
+  /* FAKEMATCH(barrier): an empty asm on acceleration, so the speed and the
+   * acceleration are loaded from the pool separately. */
   asm("" : "+l"(acceleration));
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999,
                                   acceleration);
@@ -45,8 +45,8 @@ void Func_02001864(struct Actor *actor) {
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(581);
   acceleration = 0x19999;
-  /* FAKEMATCH: ⚓️ loads the speed and the acceleration from the pool separately
-   */
+  /* FAKEMATCH(barrier): an empty asm on acceleration, so the speed and the
+   * acceleration are loaded from the pool separately. */
   asm("" : "+l"(acceleration));
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999,
                                   acceleration);
@@ -61,8 +61,8 @@ void Func_020018a8(struct Actor *actor) {
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(581);
   acceleration = 0x19999;
-  /* FAKEMATCH: ⚓️ loads the speed and the acceleration from the pool separately
-   */
+  /* FAKEMATCH(barrier): an empty asm on acceleration, so the speed and the
+   * acceleration are loaded from the pool separately. */
   asm("" : "+l"(acceleration));
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999,
                                   acceleration);

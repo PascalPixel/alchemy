@@ -8,9 +8,9 @@ extern s16 gData_0200537c[];
 void Func_02000800(s32 id, s16 *script, s32 flag);
 
 void Func_02003548(void) {
-  /* FAKEMATCH: forwarding the first flag call through call.h keeps 0x302 from
-   * being shared with the script calls, which build it again after the scene
-   * test (a direct call: differ 56). */
+  // Event_SetFlag, event.h's command, keeps 0x302 from being shared with the
+  // script calls, which build it again after the scene test; GameFlag_SetBit
+  // called directly differs in 56 instructions.
   Event_SetFlag(0x302);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room4) {
     s16 *script = gData_0200525c;

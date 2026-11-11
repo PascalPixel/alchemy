@@ -115,13 +115,13 @@ void Func_02001388(void) {
   Event_ShowMessage(5, 0);
   Actor_WalkBy(5, -8, -24);
   Actor_FaceDirectionAndWait(4, slow);
-  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds
+  /* FAKEMATCH(dead): the statement in a once-only block, whose end holds
    * the order around it; as the plain statement, 2 of 349 instructions differ
    * in tla-en. */
   do {
     Actor_SetAnimation(4, 3);
   } while (0);
-  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds
+  /* FAKEMATCH(dead): the statement in a once-only block, whose end holds
    * the order around it; as the plain statement, 2 of 349 instructions differ
    * in tla-en. */
   do {
@@ -150,7 +150,7 @@ void Func_02001388(void) {
   if (FIELD_AT(gMainRoutineWork, s16, 598) == -1) {
     FieldUnit_AddHp(4, -10);
   }
-  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds
+  /* FAKEMATCH(dead): the statement in a once-only block, whose end holds
    * the order around it; as the plain statement, 4 of 349 instructions differ
    * in tla-en. */
   do {

@@ -11,15 +11,16 @@ void Event_FinishScreenTransition(void);
 void Func_02001254(s32 actor, s32 target);
 
 static inline void GondowanCliffs_ObjWalk(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: scene calls reach the main image through one inline layer; as
-   * direct calls the coordinates are kept in callee-saved registers (79
-   * differ). */
+  /* FAKEMATCH(wrapper): the call through this inline; as direct calls to
+   * Actor_SetPositionAndReset, the coordinates are kept in callee-saved
+   * registers and 79 instructions differ. */
   Actor_SetPositionAndReset(actor, x, z);
 }
 
 static inline void GondowanCliffs_Jump(s32 actor, s32 height, s32 frames) {
-  /* FAKEMATCH: the native loads the actor after the height and frames, as
-   * overlay 694's Contigo_Jump. */
+  /* FAKEMATCH(pin): the height fixed to r1, so the actor is loaded after the
+   * height and frames, as in overlay 694's Contigo_Jump; as a plain local, the
+   * order differs. */
   register s32 h __asm__("r1") = height;
 
   Func_080d47b4(actor, h, frames);

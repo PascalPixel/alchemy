@@ -3,9 +3,10 @@
 #include "event_inline.h"
 
 static __inline__ void PosSet(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: as in ☀️'s scene layer, the command takes pixels and shifts them
-   * into fixed point inside an inline; a direct call and a forwarding inline
-   * give id and dz each other's register (8 differ). */
+  /* FAKEMATCH(wrapper): as in the scene layer of The Broken Seal, the command
+   * takes pixels and shifts them into fixed point inside an inline; as a direct
+   * call or a forwarding inline, id and dz take each other's register and 8
+   * instructions differ. */
   Actor_SetHorizontalPositionWithTerrain(id, x << 16, z << 16);
 }
 

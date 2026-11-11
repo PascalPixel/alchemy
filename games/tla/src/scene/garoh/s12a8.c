@@ -26,9 +26,8 @@ void Func_020012a8(s32 objectId) {
 
   object = Actor_Get(objectId);
   params.update = Effect_AdvanceMotion;
-  /* FAKEMATCH: the loop is written with goto so that it carries no loop notes:
-   * the bytes form the vector's address after the cosine call on every pass,
-   * and a for loop hoists it. */
+  // A goto loop: the vector's address is formed after the cosine call on every
+  // pass, where a for loop hoists it.
   angleStep = 0;
 burst:
   angle = angleStep << 12;

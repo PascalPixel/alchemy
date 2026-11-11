@@ -7,8 +7,9 @@ void Func_02000054(void) {
   s32 a1 = 13;
   s32 a2 = 14;
 
-  /* FAKEMATCH: the native loads the later arguments before the first; the plain
-   * call loads the first earlier (differ 2). */
+  /* FAKEMATCH(barrier): the asm on the later arguments loads them before the
+   * first, as the native does; as Func_020001a0(1, 13, 14), the first loads
+   * earlier and 2 instructions differ. */
   asm volatile("" : "+l"(a1), "+l"(a2));
   Func_020001a0(1, a1, a2);
   GameFlag_SetBit(0x203);

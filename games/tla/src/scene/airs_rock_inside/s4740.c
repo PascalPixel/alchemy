@@ -32,8 +32,9 @@ s32 Actor_ResetAndSetPosition();
 void Actor_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
 
 static inline void Call0(void (*f)()) {
-  /* FAKEMATCH: the call layer without arguments; called directly, the two -1s
-   * before it are negated in the other order (differ 2). */
+  /* FAKEMATCH(wrapper): the call layer without arguments, through which the two
+   * -1s before the call are negated in this order; as a direct call, 2 of 202
+   * instructions differ in tla-en. */
   f();
 }
 
@@ -82,9 +83,9 @@ void Func_02004534(void) {
     FieldMessage_Show(MsgCheckedTheTablet + 2, 1);
     Call3(Func_02005dcc, 0x50000, 0x70000, 0x10000);
     Call3(Func_02005dcc, -1, -1, 0xe666);
-    /* FAKEMATCH(wrapper): the call through Call0's pointer; called directly,
-     * the two -1s before it are negated in the other order, 2 of 202
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(wrapper): the call through Call0's pointer, which negates the
+     * two -1s before it in this order; as a direct call, 2 of 202 instructions
+     * differ in tla-en. */
     Call0(Func_02005dd4);
     Call2(Func_02004138, 8, 6);
     Party_LearnAbility(6, 0x90);

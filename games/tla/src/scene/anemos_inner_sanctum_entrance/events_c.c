@@ -28,9 +28,9 @@ static __inline__ s32 Flag_Test(s32 flag) {
 }
 
 static __inline__ void SetObjectValue(s32 id, s32 value) {
-  /* FAKEMATCH: the value pinned to r1: ⚓️ loads it before the id (movs r1; movs
-   * r0); as a direct call or a plain forwarding inline the id comes first
-   * (differ 10). */
+  /* FAKEMATCH(pin): the value pinned to r1, which the ROM loads before the id
+   * (movs r1; movs r0); as a direct call or a plain forwarding inline, the id
+   * comes first and 10 instructions differ. */
   register s32 v asm("r1") = value;
 
   Func_02000ba4(id, v);

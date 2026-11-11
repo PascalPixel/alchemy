@@ -7,14 +7,16 @@
 /// the three rows from 72 less the row of z. Nothing in this overlay calls it.
 // As ☀️'s MercuryLighthouseAerie_CollectBandSlots does.
 void Func_02003a28(s32 *out, s32 zArg) {
-  /* FAKEMATCH: three pins (z's shift in r2, the 64 and the column in r3) give
-   * the native's allocation; as plain locals, 9 to 40 instructions
-   * differ in tla-en. */
   s32 z = zArg;
   struct EventWork *work = Ram_HeapSlots->eventWork;
   u32 slot;
 
+  /* FAKEMATCH(pin): z's shift pinned to r2, which with the 64's pin below gives
+   * the native's allocation; as plain locals, 9 to 40 instructions differ in
+   * tla-en. */
   register s32 shifted asm("r2") = z >> 20;
+  /* FAKEMATCH(pin): the 64 pinned to r3, with z's shift above; as plain
+   * locals, 9 to 40 instructions differ in tla-en. */
   register s32 top asm("r3") = 64;
 
   z = top - shifted;

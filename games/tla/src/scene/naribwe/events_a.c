@@ -143,9 +143,9 @@ void Func_02000368(void) {
   }
   work += 0x154;
   index = *(s16 *)work;
-  /* FAKEMATCH: the empty asms on each side of the call keep the entrance's
-   * subtraction after it; sched2 ranks the subtraction above the call (differ 2
-   * and 4 without the first and second). */
+  /* FAKEMATCH(dead): the empty once-only blocks on each side of the call keep
+   * the entrance's subtraction after it, where sched2 would rank it above the
+   * call; as no first block 2 instructions differ, as no second 4. */
   do {
   } while (0);
   Sound_Play(158);

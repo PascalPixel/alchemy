@@ -21,8 +21,9 @@ void Func_02001fc4(s32 mode) {
   if (mode != 2)
     Words_Copy(gData_02007e28, (void *)&BG_PLTT_COLOR(5, 0), 32);
   if (mode == 1) {
-    /* FAKEMATCH: builds the zero in r2 and the counter address in r3, as
-     * overlay 699's twin does */
+    /* FAKEMATCH(temporary): a local holding the zero builds it in r2 and the
+     * counter address in r3, as overlay 699's twin does; as
+     * gData_02007e20 = 0, the instructions differ. */
     s32 zero = 0;
 
     gData_02007e20 = zero;

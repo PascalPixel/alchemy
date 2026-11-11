@@ -62,81 +62,93 @@ extern const u8 MsgICanTBelieveIt[];
 extern const u8 MsgWhoIsThis[];
 
 static __inline__ void ArmCallback(s32 id, s32 angle, s32 flags) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does (direct: differ 72 of 475 in Func_02000ac4, 36 of
-   * 549 in Func_02000f80, 64 of 490 in Func_020014fc). */
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
+   * constants, as ☀️'s scene layer does; as direct calls, 72 of 475
+   * instructions of Func_02000ac4 differ in tla-en, 36 of 549 of Func_02000f80
+   * and 64 of 490 of Func_020014fc. */
   Actor_ArmCallback(id, angle, flags);
 }
 
 static __inline__ void OffsetPos(u32 id, s32 dx, s32 dz) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does (direct: differ 10 of 475 in Func_02000ac4, 12 of
-   * 490 in Func_020014fc). */
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
+   * constants, as ☀️'s scene layer does; as direct calls, 10 of 475
+   * instructions of Func_02000ac4 differ in tla-en and 12 of 490 of
+   * Func_020014fc. */
   Actor_OffsetPositionAndReset(id, dx, dz);
 }
 
 static __inline__ void CommitPos(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does (direct: differ 31 of 475 in Func_02000ac4, 2 of
-   * 490 in Func_020014fc). */
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
+   * constants, as ☀️'s scene layer does; as direct calls, 31 of 475
+   * instructions of Func_02000ac4 differ in tla-en and 2 of 490 of
+   * Func_020014fc. */
   Actor_CommitPositionAndActivate(id, x, z);
 }
 
 static __inline__ void Speed(s32 id, s32 speed, s32 acceleration) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does (direct: differ 24 of 475 in Func_02000ac4, 30 of
-   * 549 in Func_02000f80, 28 of 490 in Func_020014fc). */
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
+   * constants, as ☀️'s scene layer does; as direct calls, 24 of 475
+   * instructions of Func_02000ac4 differ in tla-en, 30 of 549 of Func_02000f80
+   * and 28 of 490 of Func_020014fc. */
   Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
 static __inline__ void SetPos(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does (direct: differ 51 of 475 in Func_02000ac4, 20 of
-   * 549 in Func_02000f80). */
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
+   * constants, as ☀️'s scene layer does; as direct calls, 51 of 475
+   * instructions of Func_02000ac4 differ in tla-en and 20 of 549 of
+   * Func_02000f80. */
   Actor_SetPositionAndReset(id, x, z);
 }
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 d) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does (direct: differ 33 of 475 in Func_02000ac4). */
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
+   * constants, as ☀️'s scene layer does; as direct calls, 33 of 475
+   * instructions of Func_02000ac4 differ in tla-en. */
   Camera_MoveWithinMapBounds(x, y, z, d);
 }
 
 static __inline__ void ArmCallbackAndRefresh(s32 id, s32 a) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does (direct: differ 44 of 475 in Func_02000ac4, 4 of
-   * 549 in Func_02000f80, 48 of 490 in Func_020014fc). */
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
+   * constants, as ☀️'s scene layer does; as direct calls, 44 of 475
+   * instructions of Func_02000ac4 differ in tla-en, 4 of 549 of Func_02000f80
+   * and 48 of 490 of Func_020014fc. */
   Actor_ArmCallbackAndRefresh(id, a);
 }
 
 static __inline__ struct Actor *Emote(s32 id, s32 emote, s32 frames) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does (direct: differ 8 of 475 in Func_02000ac4, 25 of
-   * 549 in Func_02000f80, 27 of 490 in Func_020014fc). */
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
+   * constants, as ☀️'s scene layer does; as direct calls, 8 of 475 instructions
+   * of Func_02000ac4 differ in tla-en, 25 of 549 of Func_02000f80 and 27 of 490
+   * of Func_020014fc. */
   return Func_080d47b4(id, emote, frames);
 }
 
 static __inline__ void LaunchFromFocused(s32 id, s32 a, s32 b, s32 c) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does (direct: differ 36 of 475 in Func_02000ac4). */
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
+   * constants, as ☀️'s scene layer does; as direct calls, 36 of 475
+   * instructions of Func_02000ac4 differ in tla-en. */
   Func_080d3070(id, a, b, c);
 }
 
 static __inline__ void SetPosInMode2(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does (direct: differ 48 of 549 in Func_02000f80). */
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
+   * constants, as ☀️'s scene layer does; as direct calls, 48 of 549
+   * instructions of Func_02000f80 differ in tla-en. */
   Actor_ResetAndSetPositionInMode2(id, x, z);
 }
 
 static __inline__ void SetHorizontalPos(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does (direct: differ 50 of 549 in Func_02000f80). */
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
+   * constants, as ☀️'s scene layer does; as direct calls, 50 of 549
+   * instructions of Func_02000f80 differ in tla-en. */
   Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 
 static __inline__ void Madra_Func_02002c10(s32 id, s32 a) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does (direct: differ 31 of 549 in Func_02000f80). */
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
+   * constants, as ☀️'s scene layer does; as direct calls, 31 of 549
+   * instructions of Func_02000f80 differ in tla-en. */
   Func_080d489c(id, a);
 }
 
@@ -586,9 +598,8 @@ struct CellPictureCopyEntry {
 
 extern const struct CellPictureCopyEntry gData_02003308[];
 
-/* FAKEMATCH: a one-pass block around each mode change starts its own
- * scheduling region; as plain calls, 88 of 1565 instructions differ in
- * tla-en. */
+// The macro's do-while starts each mode change's own scheduling region; as
+// plain calls, 88 of 1565 instructions differ in tla-en.
 #define SET_MODE(id, mode)                                                     \
   do {                                                                         \
     Actor_SetModeById(id, mode);                                               \
@@ -603,9 +614,9 @@ void Func_020019d8(void) {
   s32 x;
   s32 z;
 
-  /* FAKEMATCH: x and z are set first, as forced temporaries; passed as
-   * constants, the place call builds x after the actor id (differ 4 of 1565;
-   * with z alone, 2). */
+  /* FAKEMATCH(temporary): x and z held in locals set first, so the place call
+   * builds x before the actor id; as constants passed to the call, 4 of 1565
+   * instructions differ in tla-en (with z alone a local, 2). */
   x = 153 << 16;
   z = 0x01030000;
   Func_02002b28();
@@ -629,9 +640,9 @@ void Func_020019d8(void) {
   Actor_SetHorizontalPositionAndAngleWithTerrain(34, x, z, FACING_SOUTH);
   Actor_CommitPositionAndActivate(34, 0, 4);
   SET_MODE(34, 3);
-  /* FAKEMATCH: a one-pass block, so this wait starts its own scheduling region
-   * (as a plain call the message call loads its arguments in the other order,
-   * differ 2 of 1565). */
+  /* FAKEMATCH(dead): this wait in a once-only block, which starts its own
+   * scheduling region; as a plain call, whose message call then loads its
+   * arguments in the other order, 2 of 1565 instructions differ in tla-en. */
   do {
     Event_Wait(20);
   } while (0);
@@ -1043,9 +1054,9 @@ void Func_020019d8(void) {
   SET_MODE(4, 3);
   Event_Wait(20);
   SET_MODE(32, 3);
-  /* FAKEMATCH: a one-pass block, so this wait starts its own scheduling region
-   * (as a plain call the speed call loads its arguments in the other order,
-   * differ 2 of 1565). */
+  /* FAKEMATCH(dead): this wait in a once-only block, which starts its own
+   * scheduling region; as a plain call, whose speed call then loads its
+   * arguments in the other order, 2 of 1565 instructions differ in tla-en. */
   do {
     Event_Wait(20);
   } while (0);

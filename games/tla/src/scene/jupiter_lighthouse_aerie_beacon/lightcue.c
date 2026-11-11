@@ -12,9 +12,9 @@ void Func_02004b18(s32 id, s32 value) {
   if (object != NULL) {
     s32 once = 0;
 
-    /* FAKEMATCH: a one-pass loop keeps the list and count loads after the timer
-     * store; as plain statements the count address loads before the store
-     * (differ 6) */
+    /* FAKEMATCH(dead): a once-only loop on a local 0 keeps the list and count
+     * loads after the timer store; as plain statements, the count's address
+     * loads before the store and 6 instructions differ. */
     do {
       object->timer = value;
       gData_02006a70[gData_02006a6e] = object;

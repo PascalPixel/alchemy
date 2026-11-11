@@ -26,9 +26,9 @@ void Func_0200045c(void) {
       Actor_ShowEmote(0x1c, 0x103, 0x1e);
       Event_ShowMessage(0x1c, 0);
       Actor_SetAnimation(27, 3);
-      /* FAKEMATCH: the one-pass block ends the scheduling block after the mode
-       * call: ⚓️ sets its id (r0) before its mode (r1); without it the mode is
-       * set first (differ 2). */
+      /* FAKEMATCH(dead): an empty once-only block, which ends the scheduling
+       * block after the animation call, so its id (r0) is set before its mode
+       * (r1); without it, the mode is set first and 2 instructions differ. */
       do {
       } while (0);
       FieldEvent_Wait(20);

@@ -195,7 +195,10 @@ u32 *DjinnRecovery_AddStandby(u32 owner, u32 element, u32 djinn) {
   entries = (u8 *)state->offers;
   count_p = &state->count;
   count = *count_p;
-  /* FAKEMATCH: byte strides preserve the first store's order and registers. */
+  /* FAKEMATCH(temporary): the entry's offset as a byte stride of its own, its
+   * first field stored through it before the entry pointer is formed, which
+   * keeps the first store's order and registers; as the fields stored through
+   * &state->offers[count] (not measured). */
   offset = count * sizeof(struct TradeOffer);
   entries[offset] = element;
   count++;

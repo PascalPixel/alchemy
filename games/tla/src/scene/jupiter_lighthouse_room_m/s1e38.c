@@ -12,11 +12,12 @@ static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle) {
   Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, angle);
 }
 
-/* FAKEMATCH: the angle passes through a block temporary: the native shares the
- * first two angles in r5 and builds the later ones before z (a plain argument:
- * differ 24, one function-wide angle local: differ 10-16). */
 #define PLACE(id, x, z, angle)                                                 \
   {                                                                            \
+    /* FAKEMATCH(temporary): the angle passes through a block local, so the    \
+     * first two angles are shared in r5 and the later ones built before z,    \
+     * as the native does; as a plain argument, 24 instructions differ (as one \
+     * function-wide angle local, 10 to 16). */                                \
     s32 angle_ = (angle);                                                      \
     ObjPlace(id, (x) << 16, (z) << 16, angle_);                                \
   }

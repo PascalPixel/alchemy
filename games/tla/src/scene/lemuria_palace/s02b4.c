@@ -33,7 +33,7 @@ void Func_020002b4(void) {
 
     {
       s32 value = level << 8;
-      /* FAKEMATCH(one-pass): an empty block holds the shift first; with no
+      /* FAKEMATCH(dead): an empty block holds the shift first; with no
        * block, 2 of 96 instructions differ in tla-en. */
       do {
       } while (0);
@@ -41,7 +41,7 @@ void Func_020002b4(void) {
 
       REG_BLDALPHA = value;
     }
-    /* FAKEMATCH(one-pass): the step in a once-only block holds it after the
+    /* FAKEMATCH(dead): the step in a once-only block holds it after the
      * store; as the plain statement, 2 of 96 instructions differ in tla-en. */
     do {
       t++;

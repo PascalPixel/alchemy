@@ -28,9 +28,9 @@ void Func_02002314(s32 slot, s32 actor);
 void Func_0200061c(s32 mode);
 
 static inline void LeaderAnimate(s32 animation, s32 frames) {
-  /* FAKEMATCH: scene calls reach the main image through one inline layer;
-   * called as value-returning, the animation and frames are set before the
-   * owner is loaded (differ 4 as a void call). */
+  /* FAKEMATCH(signature): Func_080d47b4 called through the inline as
+   * value-returning, so the animation and frames are set before the owner is
+   * loaded; as a void call, 4 instructions differ. */
   ((s32 (*)(s32, s32, s32))Func_080d47b4)(gMainRoutineWork.currentOwner,
                                           animation, frames);
 }

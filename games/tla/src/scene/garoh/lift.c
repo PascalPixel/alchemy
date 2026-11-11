@@ -32,9 +32,9 @@ void Func_02000eb0(void) {
   s32 flag = 129;
 
   raw = object->z;
-  /* FAKEMATCH: the native starts the flag id 0x201, loads z and then finishes
-   * the id; without the barrier and the id built in two steps the id is shifted
-   * before the load (one reordered pair, differ 2). */
+  /* FAKEMATCH(barrier): an empty asm on flag, so the flag id 0x201 is started,
+   * z loaded and then the id finished; without it and the id built in two
+   * steps, the id is shifted before the load and 2 instructions differ. */
   __asm__ volatile("" : "+r"(flag));
   z = raw >> 20;
   flag <<= 1;
@@ -53,9 +53,9 @@ void Func_02000eec(void) {
   s32 flag = 128;
 
   raw = object->z;
-  /* FAKEMATCH: the native starts the flag id 0x202, loads z and then finishes
-   * the id; without the barrier and the id built in two steps the id is shifted
-   * before the load (one reordered pair, differ 2). */
+  /* FAKEMATCH(barrier): an empty asm on flag, so the flag id 0x202 is started,
+   * z loaded and then the id finished; without it and the id built in two
+   * steps, the id is shifted before the load and 2 instructions differ. */
   __asm__ volatile("" : "+r"(flag));
   z = raw >> 20;
   flag <<= 2;

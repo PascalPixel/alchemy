@@ -135,9 +135,9 @@ L_020083da:
   t66 = FIELD_AT(0x3000000, s32, 108);
   FIELD_AT(t66, s32, 436) = 100;
   PaletteFade_ApplyTarget(0x10000, 0);
-  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds
-   * the order around it; as the plain statement, 2 of 438 instructions differ
-   * in tla-en. */
+  /* FAKEMATCH(dead): the call in a once-only block, whose end holds the order
+   * around it; as the plain statement, 2 of 438 instructions differ in tla-en.
+   */
   do {
     Event_StartScreenTransition();
   } while (0);

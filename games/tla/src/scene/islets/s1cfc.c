@@ -14,8 +14,8 @@ void Func_02001cfc(void) {
   s32 sine;
 
   for (*count = 0; *count != 160; (*count)++) {
-    /* FAKEMATCH(one-pass): the one-pass block kept; as plain statements, 2 of
-     * 65 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): the sine's call and store in a once-only block; as plain
+     * statements, 2 of 65 instructions differ in tla-en. */
     do {
       sine = Math_Sin((*count + *(u8 *)&gFrameCount + layer[3]) << 9);
       v[0] = sine;

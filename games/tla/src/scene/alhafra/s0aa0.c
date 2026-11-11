@@ -92,8 +92,9 @@ void Func_02000aa0(s32 a0) {
   FieldEvent_ShowMessageThenWait(0x1f, 0, 0xa);
   {
     s32 y = 0x102, z = 0x1e;
-    /* FAKEMATCH: the native schedule sets the second and third arguments before
-     * the first. */
+    /* FAKEMATCH(barrier): the empty asm claims to change y and z, so the second
+     * and third arguments are set before the first, as the ROM does; as the
+     * call with constant arguments. */
     __asm__ volatile("" : "+l"(y), "+l"(z));
     Func_080d47b4(0x21, y, z);
   }

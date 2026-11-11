@@ -29,8 +29,9 @@ s32 Func_02000074(void) {
     u32 value = *flags;
     u32 bit = 32;
 
-    /* FAKEMATCH: the native builds the bit in the register it ORs into; a plain
-     * |= ORs into the loaded byte (differ 4). */
+    /* FAKEMATCH(barrier): the asm on the bit builds it in the register it ORs
+     * into, as the native does; as *flags |= 32, the OR goes into the loaded
+     * byte and 4 instructions differ. */
     __asm__("" : "+l"(bit));
     *flags = bit | value;
   }
@@ -39,8 +40,9 @@ s32 Func_02000074(void) {
     s32 a2 = 11;
     s32 a1 = 12;
 
-    /* FAKEMATCH: the native loads the arguments last to first; the plain call
-     * loads the first before the second (differ 2). */
+    /* FAKEMATCH(barrier): the asm on the arguments loads them last to first, as
+     * the native does; as Func_02000198(0, 12, 11), the first loads before the
+     * second and 2 instructions differ. */
     asm volatile("" : "+l"(a2), "+l"(a1));
     Func_02000198(0, a1, a2);
   }
@@ -51,8 +53,9 @@ s32 Func_02000074(void) {
     s32 a0;
 
     a0 = 1;
-    /* FAKEMATCH: and this forced first argument keeps its load right after that
-     * half; unforced it loads last. */
+    /* FAKEMATCH(barrier): the asm on the first argument keeps its load right
+     * after the first half of flag + 0xff; as Func_020001a8(1, flag + 0xff, 13,
+     * 14), it loads last. */
     asm volatile("" : "+l"(a0));
     Func_020001a8(a0, flag + 0xff, 13, 14);
   }

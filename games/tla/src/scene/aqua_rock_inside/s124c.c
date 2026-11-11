@@ -16,9 +16,8 @@ void Func_0200124c(void) {
   layer[3] -= 0x200000;
   Func_02003cdc();
   Func_02003d44_(0x10000, 0x10000, 0x10000);
-  /* FAKEMATCH: the loop is written with goto so that it carries no loop notes:
-   * the bytes set the column and the row on every pass, and a for loop hoists
-   * both (differ 44). */
+  // A goto loop: the ROM sets the column and the row on every pass, which a for
+  // loop hoists (differ 44).
   i = 14;
 shake:
   {

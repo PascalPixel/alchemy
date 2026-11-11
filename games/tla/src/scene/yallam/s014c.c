@@ -21,8 +21,10 @@ s32 Func_0200014c(struct Actor *object) {
      * 82 instructions differ in tla-en. */
     struct Actor *arg = object;
 
-    /* FAKEMATCH(barrier): the state's address and the argument are both
-     * formed before the state is stored, as the native does; as above. */
+    /* FAKEMATCH(barrier): the state's address and the argument are both formed
+     * before the state is stored, as the native does; as object->movementState
+     * = force; Func_02002448(object, 2), with the copy above, 4 of 82
+     * instructions differ in tla-en. */
     asm("" : : "l"(arg), "l"(state));
     *state = force;
     Func_02002448(arg, 2);

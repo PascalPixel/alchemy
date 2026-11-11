@@ -34,8 +34,9 @@ static inline void Daila_Jump(s32 actor, s32 height, s32 frames) {
   s32 f = frames;
   s32 a = actor;
 
-  /* FAKEMATCH: plain arguments copy the actor two instructions early; finish
-   * height and frames first. */
+  /* FAKEMATCH(barrier): an empty asm over the three copies finishes height and
+   * frames before the actor; as Func_02000d94(actor, height, frames), the actor
+   * is copied two instructions early. */
   __asm__("" : "+l"(h), "+l"(f), "+l"(a));
   Func_02000d94(a, h, f);
 }

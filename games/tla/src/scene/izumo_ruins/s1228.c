@@ -7,9 +7,9 @@ void Func_020011d4(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov67FRoom1) {
     Func_02001518(gData_02001654);
   } else {
-    /* FAKEMATCH: the cell read through an s16 return type: ⚓️ masks the old
-     * cell in r3 and builds 0xff00 in r2; read as s32 the two registers swap
-     * (differ 6). */
+    /* FAKEMATCH(signature): the cell read through an s16 return type, so the
+     * old cell is masked in r3 and 0xff00 built in r2; read as s32 the two
+     * registers swap and 6 instructions differ. */
     Func_02000ee8(
         2, 50, 13,
         0xff00 | (((s16 (*)(u32, s32, s32))Func_02000eac)(2, 50, 13) & 255));

@@ -35,9 +35,10 @@ void BattleBackground_SetPaletteLevelFar(s32 background, s32 level);
 void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);
 
 static __inline__ s32 ClearWords_(void *destination, s32 size) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants
-   * and the routine in a callee-saved register; called directly, 24
-   * instructions of BattleEffect_OpenCanvasLayer differ in tla-en. */
+  /* FAKEMATCH(wrapper): the clear forwarded through an inline, which keeps
+   * each call's own constants and the routine in a callee-saved register; as
+   * direct Iwram_ClearWords calls, 24 instructions of
+   * BattleEffect_OpenCanvasLayer differ in tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 

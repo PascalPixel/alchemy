@@ -60,9 +60,9 @@ s32 Func_0200005c(void) {
     frames++;
   test:
     limit = 3599;
-    /* FAKEMATCH: the bound goes through an empty asm: the native compares 3599
-     * with bgt, where combine plainly canonicalizes the test to 3600 with bge
-     * (differ 4). */
+    /* FAKEMATCH(barrier): the bound goes through an empty asm, so 3599 is
+     * compared with bgt; as frames > 3599, which combine canonicalizes to 3600
+     * with bge, 4 instructions differ. */
     __asm__("" : "+l"(limit));
     if (frames > limit)
       goto out;
@@ -97,9 +97,9 @@ s32 Func_0200005c(void) {
           Sound_Play(78);
           Fade_ToBlack(30);
           Fade_Wait();
-          /* FAKEMATCH: an empty once-only block keeps the counter's zero after
-           * the wait call, where plainly sched2 fills the call's stall with it
-           * (differ 2). */
+          /* FAKEMATCH(dead): an empty once-only block keeps the counter's zero
+           * after the wait call; without it, sched2 fills the call's stall
+           * with it and 2 instructions differ. */
           do {
           } while (0);
           frames = 0;
@@ -185,8 +185,9 @@ void Func_02000278(void) {
   i = 0;
   y = 0x88;
   do {
-    /* FAKEMATCH: the row's y goes through n, the native rebuilding 0x88 in n's
-     * register each pass; used directly it stays in r8 (differ 20). */
+    /* FAKEMATCH(temporary): the row's y copied to n, so 0x88 is rebuilt in n's
+     * register each pass; as y used directly, which stays in r8, 20
+     * instructions differ. */
     n = y;
     x = 232 - (18 - i) * 8;
     *w++ = 0;

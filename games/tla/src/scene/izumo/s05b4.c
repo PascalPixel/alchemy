@@ -4,9 +4,9 @@
 extern u32 gFrameCount;
 
 static inline s32 GameFlag_Test_(s32 flag) {
-  /* FAKEMATCH: forwarding through the inline, as overlay 679's GameFlag_Test_
-   * does, keeps the actor in r5 and the message in r6 (differ 16, the two
-   * swapped, as a direct call). */
+  /* FAKEMATCH(wrapper): the flag test forwarded through the inline, as overlay
+   * 679's GameFlag_Test_ does, keeps the actor in r5 and the message in r6; as
+   * a direct call the two swap and 16 instructions differ. */
   return GameFlag_Test(flag);
 }
 
@@ -83,9 +83,9 @@ void Func_0200060c(void) {
   s16 saved;
   s32 index;
 
-  /* FAKEMATCH: the three rotations are goto loops, which loop.c leaves alone,
-   * as the native's are; as do-while, while or for loops, 90 instructions
-   * differ in tla-en. */
+  // The three rotations are goto loops, which loop.c leaves alone, as the
+  // native's are; as do-while, while or for loops, 90 instructions differ in
+  // tla-en.
   if ((gFrameCount & 3) == 0) {
     saved = *(volatile u16 *)&BG_PLTT_COLOR(3, 14);
     index = 14;

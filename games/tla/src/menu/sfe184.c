@@ -77,8 +77,9 @@ s32 Func_080fe240(void) {
       (struct MenuRuntimeSelect *)Ram_HeapSlots->menuRuntime;
   s32 result = 0;
 
-  /* FAKEMATCH: the do-while keeps the cursor store in source order, as in The
-   * Broken Seal's CharacterSelector_Run */
+  /* FAKEMATCH(dead): the cursor store in a once-only block, which keeps it in
+   * source order, as in The Broken Seal's CharacterSelector_Run; as the plain
+   * statement (not measured). */
   do {
     work->selectedSlots[0] = result;
   } while (0);

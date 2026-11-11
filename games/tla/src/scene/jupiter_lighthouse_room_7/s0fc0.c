@@ -17,8 +17,9 @@ s32 Func_02000fc0(void) {
   Scene_SetArrivalFlags(0);
   Func_02001224(1);
   if (gMainRoutineWork.entrance == 12) {
-    /* FAKEMATCH: the placements go through the call layer; called directly,
-     * they share 0xa80000 and the z values in saved registers (differ 46). */
+    /* FAKEMATCH(wrapper): the placements forwarded through the call layer; as
+     * direct calls, they share 0xa80000 and the z values in saved registers
+     * and 46 instructions differ. */
     Actor_SetPosition(10, PIXELS(168), PIXELS(264));
     Actor_SetPosition(11, PIXELS(200), PIXELS(264));
     Actor_SetPosition(12, PIXELS(232), PIXELS(264));

@@ -43,8 +43,9 @@ void Func_02003c6c(struct PushEvent *event) {
   Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner),
                                      0);
   {
-    /* FAKEMATCH: a word temporary builds 0xf1f with movs, lsls, adds as the
-     * native does; a halfword constant store loads it from the pool. */
+    /* FAKEMATCH(temporary): 0xf1f held in a word local, so it is built with
+     * movs, lsls, adds as the native does; as a plain store of the constant,
+     * it loads from the pool, not measured. */
     u32 winout = 0xf1f;
 
     REG_WINOUT = winout;

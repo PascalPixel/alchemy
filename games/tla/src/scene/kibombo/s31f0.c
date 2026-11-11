@@ -43,9 +43,9 @@ void Func_02003288(void) {
 
     Func_020031f0(id);
     {
-      /* FAKEMATCH: the zero is pinned to r3 inside the loop, where the native
-       * builds it on every pass; as a plain 0 loop.c hoists it to r8 (differ
-       * 8). */
+      /* FAKEMATCH(pin): the zero pinned to r3 inside the loop, built on every
+       * pass; as a plain 0, which loop.c hoists to r8, 8 instructions
+       * differ. */
       register s32 zero asm("r3") = 0;
 
       object->motionFlags = zero;

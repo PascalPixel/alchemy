@@ -172,7 +172,9 @@ void Func_020013a0(void) {
     FieldCamera_MoveTo(PIXELS(224), PIXELS(64), PIXELS(216), 1);
     Func_02003228();
     FieldEvent_Wait(20);
-    /* FAKEMATCH(wrapper): as above. */
+    /* FAKEMATCH(wrapper): forwarded so 0x10000 is built again for the next
+     * call, as in the branch above; as a direct call, not measured at this
+     * site. */
     PaletteFade_ApplySource(0x10000, 0);
     BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
     BattleEffect_StartBufferInterpolation(20);

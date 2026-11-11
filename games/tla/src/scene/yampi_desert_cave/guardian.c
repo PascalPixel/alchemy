@@ -37,9 +37,9 @@ void Func_0200130c(void) {
     Actor_ResetAndSetPosition(9, FIELD_AT(leader, s16, 10),
                               FIELD_AT(leader, s16, 18));
   Event_Wait(20);
-  /* FAKEMATCH: a one-pass block around the first two stores keeps the call's
-   * first argument ahead of the scene store's address (alchemy permute);
-   * without it the argument follows the store (differ 4). */
+  /* FAKEMATCH(dead): a once-only block around the first two stores keeps the
+   * call's first argument ahead of the scene store's address; as plain stores
+   * the argument follows the store and 4 instructions differ. */
   do {
     FIELD_AT(gMainRoutineWork, u16, 0x254) = 0x19cd;
     FIELD_AT(gMainRoutineWork, u8, 0x24b) = 2;

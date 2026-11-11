@@ -44,7 +44,9 @@ void Func_02000738(void) {
       FieldEvent_ShowMessageThenWait(0x20, 0, 5);
       {
         s32 b = 0x109, c = 0x1e;
-        /* FAKEMATCH: the native schedule sets the first argument last. */
+        /* FAKEMATCH(barrier): the empty asm claims to change b and c, so the
+         * first argument is set last, as the ROM does; as the call with
+         * constant arguments. */
         __asm__ volatile("" : "+l"(b), "+l"(c));
         Actor_ShowEmote(0x1f, b, c);
       }

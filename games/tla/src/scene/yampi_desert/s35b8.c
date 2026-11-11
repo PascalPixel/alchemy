@@ -15,9 +15,9 @@ void Func_020035b8(void) {
 }
 
 static inline void Scene_StoreU16(u16 *field, s32 value) {
-  /* FAKEMATCH: through the inline the value is a word constant built after the
-   * field's address (movs), where a halfword constant stored directly loads
-   * from the literal pool (differ 24). */
+  /* FAKEMATCH(wrapper): through the inline the value is a word constant built
+   * after the field's address (movs); as a halfword constant stored directly it
+   * loads from the literal pool and 24 instructions differ. */
   *field = value;
 }
 

@@ -74,7 +74,7 @@ s32 Func_02000578(void) {
       i++;
       if (i < memberCount)
         goto send;
-      /* FAKEMATCH(one-pass): an empty once-only block between the test and the
+      /* FAKEMATCH(dead): an empty once-only block between the test and the
        * jump, which stops cross-jumping joining the test to the guard; as no
        * block, 14 of 264 instructions differ in tla-en. */
       do {
@@ -106,7 +106,7 @@ next:
   Heap_Release(heap);
   size = 0x154;
   heap = Heap_AllocEwram(size);
-  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds
+  /* FAKEMATCH(dead): the statement in a once-only block, whose end holds
    * the order around it; as the plain statement, 6 of 264 instructions differ
    * in tla-en. */
   do {

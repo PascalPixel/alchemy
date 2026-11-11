@@ -10,9 +10,9 @@ void Func_020001cc(void) {
     s16 last = OBJ_PALETTE[9];
     s32 i;
 
-    /* FAKEMATCH: the loop is written with goto so that it carries no loop
-     * notes: the bytes rebuild the palette base on every pass, and a for or do
-     * loop hoists it and steps two pointers (differ 30). */
+    // The loop is written with goto so that it carries no loop notes: the bytes
+    // rebuild the palette base on every pass, and a for or do loop hoists it
+    // and steps two pointers (differ 30).
     i = 9;
   loop:
     OBJ_PALETTE[i] = OBJ_PALETTE[i - 1];

@@ -4,15 +4,18 @@
 void Func_020009c0(s32 id);
 void Func_02000a94(s32 id);
 
-/* FAKEMATCH: the callers set up the arguments as for a call whose value is used
- * (flag before index); the setter is declared void for the modules that match
- * with that. */
+// The vent setter called through a function type returning s32; each caller's
+// tag says why.
 #define Vent_SetActive(index, active)                                          \
   ((s32 (*)(s32, s32))Func_0200271c)(index, active)
 
 void Func_02001304(void) {
   s32 timer = Func_02002730();
 
+  /* FAKEMATCH(signature): Func_0200271c called through Vent_SetActive as
+   * returning s32, so the arguments are set up as for a call whose value is
+   * used (flag before index); as a call to the void setter local.h declares
+   * for the modules that match with it, the instructions differ. */
   switch (timer) {
   case 0:
     Vent_SetActive(0, 1);
@@ -56,6 +59,8 @@ void Func_02001304(void) {
 void Func_02001424(void) {
   s32 timer = Func_02002730();
 
+  /* FAKEMATCH(signature): Func_0200271c called as returning s32, as in
+   * Func_02001304; as a call to the void setter, the instructions differ. */
   switch (timer) {
   case 0:
     Vent_SetActive(0, 1);
@@ -80,6 +85,8 @@ void Func_02001424(void) {
 void Func_020014a0(void) {
   s32 timer = Func_02002730();
 
+  /* FAKEMATCH(signature): Func_0200271c called as returning s32, as in
+   * Func_02001304; as a call to the void setter, the instructions differ. */
   switch (timer) {
   case 0:
     Vent_SetActive(0, 1);
@@ -102,6 +109,8 @@ void Func_020014a0(void) {
 }
 
 void Func_0200151c(void) {
+  /* FAKEMATCH(signature): Func_0200271c called as returning s32, as in
+   * Func_02001304; as a call to the void setter, the instructions differ. */
   switch (Func_02002730()) {
   case 0:
     Vent_SetActive(0, 1);

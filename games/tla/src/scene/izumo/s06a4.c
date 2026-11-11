@@ -3,9 +3,9 @@
 #include "scene_tables.h"
 
 void Func_020006a4(void) {
-  /* FAKEMATCH: the Call3 and Value calls of call.h set each call's arguments up
-   * in the native's order (differ 2 for each one called directly, 12 with all
-   * six direct). */
+  /* FAKEMATCH(wrapper): the Call3 and Value calls of call.h set each call's
+   * arguments up in the native's order; as direct calls, 2 instructions differ
+   * for each one, 12 with all six direct. */
   GameFlag_SetBit(0x929);
   Func_02000d00();
   Func_02000dd0(0);

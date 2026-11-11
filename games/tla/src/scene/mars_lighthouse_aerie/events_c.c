@@ -15,8 +15,10 @@ extern u8 gData_02006c20[];
 
 
 static __inline__ void Func_02005714_(s32 actor, s32 a, s32 b) {
-  /* FAKEMATCH: pinned, the second and third arguments load before the actor, as
-   * the native does at every call here (one reordered row per call without). */
+  /* FAKEMATCH(pin): the second argument pinned to r1 and the third copied to a
+   * local, so both load before the actor, as the native has them at every
+   * call here; as a plain call, one reordered row per call, not measured as
+   * N of M. */
   register s32 second asm("r1") = a;
   s32 third = b;
 

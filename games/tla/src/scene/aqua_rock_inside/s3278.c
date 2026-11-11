@@ -8,8 +8,9 @@ void Func_02003278(void) {
   buffer = MemAlloc_(0xc80);
   Func_02003c7c(gData_0200414c, buffer);
   gData_0200536c.vramEntry = Resource_FindFreeEntry();
-  /* FAKEMATCH: the native stores the entry before it starts the size; without
-   * the barrier the size's first half comes first (differ 2). */
+  /* FAKEMATCH(barrier): the empty asm keeps the entry's store ahead of the
+   * size, as the ROM does; as no asm, the size's first half comes first and 2
+   * instructions differ. */
   __asm__("");
   Vram_Load(gData_0200536c.vramEntry, 0xc80, buffer);
   Heap_Release(buffer);

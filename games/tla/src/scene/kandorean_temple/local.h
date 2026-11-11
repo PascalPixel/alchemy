@@ -128,8 +128,10 @@ Actor_SetPositionAndResetMotion_(struct Actor *object, s32 x, s32 y,
 
 static __inline__ void Func_020053d0_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
-  /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters give each stack
-   * argument its own register; a direct call builds them all in r3. */
+  /* FAKEMATCH(wrapper): the call through this inline, whose parameters give
+   * each stack argument its own register, as in The Broken Seal's scene layer;
+   * as a direct call to Func_020053d0, which builds them all in r3, the
+   * instructions differ. */
   Func_020053d0(a, b, c, d, e, f, g);
 }
 
@@ -137,9 +139,7 @@ static __inline__ void Func_020053a8_(s32 a, s32 b, s32 c, s32 d) {
   Func_020053a8(a, b, c, d);
 }
 
-/* FAKEMATCH: a whole-byte bit-field keeps the struct's alias set, so the store
- * cannot alias gMainRoutineWork's words, as native; as u8 priorityFlags, the
- * next load is scheduled one step early in tla-en. */
+/// The byte at 0x23 of an actor, as the field its bit 5 is set through.
 struct ObjectFlags23 {
   u8 unk00[0x23];
   u8 flags : 8;

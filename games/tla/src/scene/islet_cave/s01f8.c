@@ -35,9 +35,9 @@ void Func_020001f8(void) {
     red = *src++;
     green = *src++;
     blue = *src++;
-    /* FAKEMATCH(one-pass): the store in a once-only block, whose end holds the
-     * order around it; as the plain statement, 93 of 120 instructions differ
-     * in tla-en. */
+    /* FAKEMATCH(dead): the store in a once-only block, whose end holds the
+     * order around it; as the plain statement, 93 of 120 instructions differ in
+     * tla-en. */
     do {
       *dst = (blue << 10) | (green << 5) | red;
     } while (0);
@@ -49,9 +49,9 @@ void Func_020001f8(void) {
     src = Data_02001a2c + gData_02001a30 * 3;
   red = *src++;
   green = *src++;
-  /* FAKEMATCH(one-pass): the last read in a once-only block, whose end holds
-   * the order around it; as the plain statement, 2 of 120 instructions differ
-   * in tla-en. */
+  /* FAKEMATCH(dead): the last read in a once-only block, whose end holds the
+   * order around it; as the plain statement, 2 of 120 instructions differ in
+   * tla-en. */
   do {
     blue = *src++;
   } while (0);

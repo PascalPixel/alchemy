@@ -18,8 +18,8 @@ void Func_02005688(s32 a) {
   struct TrialRoadControl *control = (struct TrialRoadControl *)gSceneState;
 
   if (GameFlag_Test(0x109) == 0) {
-    /* FAKEMATCH: a temporary reads the work value before the three stores
-     * (differ 4 without it). */
+    /* FAKEMATCH(temporary): a local reads the work value before the three
+     * stores; as the value stored directly, 4 instructions differ. */
     s32 value = *(u16 *)(work + 228);
 
     control->field02 = a;
@@ -27,8 +27,9 @@ void Func_02005688(s32 a) {
     control->field08 = 0;
   }
   {
-    /* FAKEMATCH: a temporary keeps the priority constant ahead of the task function
-     * load (differ 2 without it). */
+    /* FAKEMATCH(temporary): a local holding the priority keeps the constant
+     * ahead of the task function load; as a plain argument, 2 instructions
+     * differ. */
     s32 priority = 0x485;
 
     Task_Add(Func_02004ddc, priority);
@@ -37,8 +38,9 @@ void Func_02005688(s32 a) {
 
 void Func_020056c4(s32 a) {
   struct TrialRoadControl *control = (struct TrialRoadControl *)gSceneState;
-  /* FAKEMATCH: a word temporary builds 0 with movs for both halfword stores,
-   * where a halfword constant loads from the pool. */
+  /* FAKEMATCH(temporary): a word local builds 0 with movs for both halfword
+   * stores; as a halfword constant, which loads from the pool, the
+   * instructions differ. */
   s32 zero = 0;
 
   *(u16 *)((Ram_HeapSlots->unkec[0]) + 234) = zero;

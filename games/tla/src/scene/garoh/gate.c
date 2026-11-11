@@ -29,8 +29,9 @@ void Func_02002694(void);
 void Func_02003878(void);
 
 static inline void CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters build each -1 on
-   * its own; a direct call copies one register */
+  /* FAKEMATCH(wrapper): the call through this inline, so each -1 is built on
+   * its own; as a direct call to Camera_MoveWithinMapBounds, one register is
+   * copied. */
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 

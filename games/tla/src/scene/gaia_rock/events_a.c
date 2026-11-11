@@ -36,8 +36,8 @@ void Func_020000f0(void) { Func_02000bc0(19, 0x302); }
 #if !TLA_PATCH_1
 void Func_02000100(s32 id) {
   struct Actor *object = Actor_Get(id);
-  /* FAKEMATCH: pinned, the counter takes r6 and the object r5, as in the native
-   * (differ 12 unpinned). */
+  /* FAKEMATCH(pin): the counter fixed to r6, so the object takes r5; as a
+   * plain local, 12 instructions differ. */
   register s32 frames asm("r6");
 
   object->motionFlags = 3;
@@ -52,25 +52,26 @@ void Func_02000100(s32 id) {
 #else
 void Func_02000100(s32 id, s32 cue) {
   struct Actor *object = Actor_Get(id);
-  /* FAKEMATCH: pinned, the flags' address is built in r2 with 85 in it first
-   * (movs r2, #85; adds r2, r2, r5) and the 3 takes r3, as in the native
-   * (unpinned they swap r2 and r3: differ 10). */
+  /* FAKEMATCH(pin): the flags' address fixed to r2, so it is built with 85 in
+   * it first (movs r2, #85; adds r2, r2, r5) and the 3 takes r3; as a plain
+   * local, r2 and r3 swap and 10 instructions differ. */
   register u8 *flags asm("r2");
   u8 *held;
-  /* FAKEMATCH: pinned, the counter takes r6 and the object r5, as in the native
-   * (differ 14 unpinned). */
+  /* FAKEMATCH(pin): the counter fixed to r6, so the object takes r5; as a
+   * plain local, 14 instructions differ. */
   register s32 frames asm("r6");
 
   flags = (u8 *)85;
-  /* FAKEMATCH: the empty asm keeps 85 in a register, so it is added to the
-   * object rather than the object copied and 85 added (differ 4 without it). */
+  /* FAKEMATCH(barrier): an empty asm on flags, so 85 stays in a register and
+   * is added to the object rather than the object copied and 85 added; without
+   * it, 4 instructions differ. */
   asm("" : "+r"(flags));
   flags += (s32)object;
   *flags = 3;
   frames = 60;
-  /* FAKEMATCH: a forced temporary: the address is copied to r8 for the calls
-   * after the counter starts, as in the native; kept in one variable, its
-   * reload copy comes before the store (differ 2). */
+  /* FAKEMATCH(temporary): a copy of the flags' address, so it is copied to r8
+   * for the calls after the counter starts; as flags itself, its reload copy
+   * comes before the store and 2 instructions differ. */
   held = flags;
   while (frames != 0) {
     System_Wait(1);

@@ -13,8 +13,9 @@ void Func_020024e4(void) {
   Func_080d4568()->motionFlags = 0;
   ShrineOfTheSeaGod_CamMove(328 << 16, 32 << 16, 552 << 16, 1);
   Func_02003ac8();
-  /* FAKEMATCH: the angle in a local is built before the coordinates, as the
-   * native does (differ 8 as constants). */
+  /* FAKEMATCH(temporary): the angle in a local holding one constant is built
+   * before the coordinates, as the native does; as the constant 0xc000 in the
+   * call, differ 8. */
   angle = 0xc000;
   ShrineOfTheSeaGod_ObjPlaceTurn(14, 328 << 16, 624 << 16, angle);
   wait(1);
@@ -48,8 +49,9 @@ void Func_020025fc(void) {
     Func_080d4568()->motionFlags = done;
     Camera_MoveWithinMapBounds(328 << 16, 48 << 16, 552 << 16, 1);
     Func_02003ac8();
-    /* FAKEMATCH: reusing the old flag result for the angle retains the native
-     * early constant construction; the plain unbound angle differs 2. */
+    /* FAKEMATCH(temporary): done, the flag result, reused for the angle keeps
+     * the native's early constant construction; as the constant 0x4000 in
+     * the call, differ 2. */
     done = 0x4000;
     ShrineOfTheSeaGod_ObjPlaceTurn(14, 424 << 16, 520 << 16, done);
     wait(1);

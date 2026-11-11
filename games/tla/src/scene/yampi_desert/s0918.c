@@ -38,8 +38,8 @@ void Func_0200095c(u16 *list) {
   loop:
     cell = &map->layers[2].cells[Func_020041e0(Actor_GetById(*list))];
     collisionCode = 232;
-    /* FAKEMATCH(one-pass): the advance in a once-only block, so the store waits
-     * for it; as list += 3, 2 of 25 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): the advance in a once-only block, so the store waits for
+     * it; as list += 3, 2 of 25 instructions differ in tla-en. */
     do {
       list += 3;
     } while (0);

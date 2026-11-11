@@ -39,8 +39,9 @@ void Func_02002e00(void) {
   Event_Wait(20);
   FieldCamera_SetSpeed(0x40000, 0x8000);
   {
-    /* FAKEMATCH: pinned, the mode starts right after the 1 negated for y,
-     * before x loads; as a plain constant, 2 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the mode pinned to r3 starts right after the 1 negated
+     * for y, before x loads; as a plain constant, 2 instructions differ in
+     * tla-en. */
     register s32 mode asm("r3") = 1;
 
     Camera_MoveWithinMapBounds(11890 << 16, -1, 10090 << 16, mode);
@@ -80,8 +81,9 @@ void Func_02002e78(void) {
     FieldEvent_ShowMessageThenWait(9, 0, 10);
     Actor_ShowEmote(8, 264, 30);
     FieldEvent_ShowMessageThenWait(5, 0, 10);
-    /* FAKEMATCH: called as returning a value, which the native's argument order
-     * shows (r1 before r0). */
+    /* FAKEMATCH(signature): FieldMessage_ShowAtActor called as returning a
+     * value, which the native's argument order shows (r1 before r0); as
+     * FieldMessage_ShowAtActor(7, 0). */
     ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(7, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
       Actor_ShowEmote(8, 265, 30);

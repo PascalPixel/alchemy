@@ -35,8 +35,8 @@ next:
   party = &gMainRoutineWork;
   if (party->activeOwners[i] == 0xff)
     goto none;
-  /* FAKEMATCH: the native reads the owner byte again for the second test
-   * (differ 8 without) */
+  /* FAKEMATCH(barrier): the empty asm with a memory clobber, so the owner byte
+   * is read again for the second test; as no asm, 8 instructions differ. */
   __asm__ volatile("" ::: "memory");
   if (gMainRoutineWork.activeOwners[i] == owner)
     return 1;

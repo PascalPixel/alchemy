@@ -24,8 +24,7 @@ void Func_02000b30(s32 id, s32 cue) {
   *flags = 3;
   frames = 60;
   /* FAKEMATCH(temporary): the address copied to r8 for the calls after the
-   * counter starts; kept in one variable, 9 of 32 instructions differ in
-   * tla-en. */
+   * counter starts; as one variable, 9 of 32 instructions differ in tla-en. */
   held = flags;
   while (frames != 0) {
     System_Wait(1);

@@ -15,9 +15,9 @@ void Func_0200108c(void);
 void Func_02000af0(void) {
   s32 owner = gMainRoutineWork.currentOwner;
 
-  /* FAKEMATCH: Call3 and Value3, as in Func_02000960, build each call's
-   * constants again in the native's argument order; as direct calls, 126
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): Call3 and Value3, as in Func_02000960, build each
+   * call's constants again in the original's argument order; as direct calls,
+   * 126 instructions differ in tla-en. */
   Func_02001084();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetPosition(23, PIXELS(248), PIXELS(472));

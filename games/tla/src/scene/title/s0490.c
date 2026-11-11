@@ -15,9 +15,10 @@ extern char ResourceId_LogoOnBlack;
 void Fade_ToBlack(s32 vblanks);
 
 static __inline__ void Decode_(void *source, void *destination) {
-  /* FAKEMATCH: forwarding through the inline keeps the buffer address a
-   * constant of each call, as ☀️'s system call layer does (called directly, the
-   * address is kept in r5). */
+  /* FAKEMATCH(wrapper): the decode forwarded through this inline keeps the
+   * buffer address a constant of each call, as The Broken Seal's system call
+   * layer does; as a direct call, which keeps the address in r5, the
+   * instructions differ. */
   Resource_DecodeType01(source, destination);
 }
 
@@ -38,9 +39,8 @@ void Func_02000490(void) {
   id = (s32)&ResourceId_LogoOnBlack;
   Fade_ToBlack(0);
   {
-    /* FAKEMATCH: the control value pinned to r3 in a one-pass block loads
-     * 0x681 before BG2CNT's address, as native; plainly, one row is reordered
-     * in tla-en. */
+    /* FAKEMATCH(pin): the control value pinned to r3, so 0x681 loads before
+     * BG2CNT's address; as a plain store, one row is reordered in tla-en. */
     register u16 control asm("r3");
 
     control = 0x681;

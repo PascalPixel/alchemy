@@ -26,16 +26,17 @@ void Func_02000560(void) {
   s32 old;
 
   flag = 0x900;
-  /* FAKEMATCH: ⚓️ shifts the flag's high part before it starts the two
-   * coordinates; as a plain constant the shift comes after them (2 differ) */
+  /* FAKEMATCH(barrier): the empty asm on flag, so the flag's high part is
+   * shifted before the two coordinates start; as the plain constant, the shift
+   * comes after them and 2 instructions differ. */
   asm volatile("" : "+l"(flag));
   x = 0x3580000;
   z = 0x3f80000;
   Event_SetFlag(flag + 0x63);
   value = Func_02001d5c(x, z, 0);
-  /* FAKEMATCH: the first z moves to a temporary so the second starts before the
-   * first store call's arguments, as ⚓️ has it; with z reassigned after that
-   * call its shift comes late (2 differ). */
+  /* FAKEMATCH(temporary): the first z copied to old, so the second z starts
+   * before the first store call's arguments; as z reassigned after that call,
+   * its shift comes late and 2 instructions differ. */
   old = z;
   z = 0x4080000;
   Func_02001d64(x, old, 0, value | 64);

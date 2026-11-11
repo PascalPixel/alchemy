@@ -27,7 +27,7 @@ void Func_02000540(void) {
   }
   phase = gData_020024c8 / 8 % 4;
   for (k = 0; k <= 3; k++) {
-    /* FAKEMATCH(one-pass): the phase and the first colour in a once-only block,
+    /* FAKEMATCH(dead): the phase and the first colour in a once-only block,
      * whose end holds the order around it; as plain statements, 6 of 152
      * instructions differ in tla-en. */
     do {

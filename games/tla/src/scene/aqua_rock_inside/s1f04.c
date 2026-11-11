@@ -15,9 +15,8 @@ void Func_02001f04(void) {
   *flags = 0;
   object->y = 0x500000;
   speed = 0x30000;
-  /* FAKEMATCH: the loop is written with goto so that it carries no loop notes:
-   * the bytes rebuild the turn step on every pass, and a for loop hoists it
-   * (differ 43). */
+  // A goto loop: the ROM rebuilds the turn step on every pass, which a for loop
+  // hoists (differ 43).
   i = 31;
 fall:
   object->y -= speed;

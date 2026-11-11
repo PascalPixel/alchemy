@@ -35,8 +35,9 @@ void Func_02001904(void) {
   Func_0200062c(18);
   Func_0200062c(19);
   {
-    /* FAKEMATCH: a temporary keeps the priority constant ahead of the task function
-     * load (differ 2 without it). */
+    /* FAKEMATCH(temporary): a local holding the priority keeps the constant
+     * ahead of the task function load; as a plain argument, 2 instructions
+     * differ. */
     s32 priority = 0x480;
 
     Task_Add(Func_020007b4, priority);

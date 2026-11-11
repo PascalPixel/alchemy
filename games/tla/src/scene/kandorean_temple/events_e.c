@@ -25,8 +25,9 @@ void Func_02000864(struct Actor *object) {
   object->z += vz;
   object->bounce = vx - vx / 18;
   object->unk4c = vz - vz / 16;
-  /* FAKEMATCH: ⚓️ stores the Z speed before it loads the scale rate, as overlay
-   * 6aa's Func_02001f90 (differ 2 without it). */
+  /* FAKEMATCH(dead): an empty once-only block, so the Z speed is stored before
+   * the scale rate loads, as in overlay 6aa's Func_02001f90; without it, 2
+   * instructions differ. */
   do {
   } while (0);
   rate = object->speedLimit;

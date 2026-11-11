@@ -28,9 +28,10 @@ u32 *Func_02000070(void) {
     if (scene == (s32)&SceneId_Ov685Room4)
       return gData_02003c84;
   } else {
-    /* FAKEMATCH: the native loads gMainRoutineWork and the first scene id once,
-     * before it tests the second flag, and both branches use them; read inside
-     * each branch they are loaded twice (differ 76). */
+    /* FAKEMATCH(temporary): gMainRoutineWork and the first scene id in locals,
+     * loaded once before the second flag's test for both branches to use, as
+     * the native has; as plain reads inside each branch they are loaded twice,
+     * differ 76. */
     s32 second = GameFlag_Test(0x97f);
     struct MainRoutineWork *party = &gMainRoutineWork;
     s32 first = (s32)&SceneId_Ov685Room1;

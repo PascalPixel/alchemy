@@ -22,19 +22,16 @@ void Message_CloseFinishedWindows();
 
 #define SHAMAN_VILLAGE_CAVE_EMOTE(actor, emote, frames)                        \
   {                                                                            \
-    /* FAKEMATCH: the native loads the emote and the frames before the actor   \
-     * at every */                                                             \
-    /* emote of this overlay; pinned to their argument registers they are      \
-     * loaded first, */                                                        \
-    /* as there. Through an inline the actor comes one row early wherever the  \
-     * emote takes */                                                          \
-    /* two instructions, and an empty asm barrier at each call moves the       \
-     * literal pools of */                                                     \
-    /* a long scene. */                                                        \
+    /* FAKEMATCH(pin): the emote pinned to r1, as the native */                \
+    /* loads the emote and the frames before the actor at every */             \
+    /* emote of this overlay; as an inline call the actor comes */             \
+    /* one row early wherever the emote takes two instructions, */             \
+    /* and an empty asm barrier at each call moves the literal */              \
+    /* pools of a long scene. */                                               \
     register s32 emote_ __asm__("r1") = (emote);                               \
-    /* FAKEMATCH: the frames, pinned with the emote above. */                  \
+    /* FAKEMATCH(pin): the frames pinned to r2 with the emote above. */        \
     register s32 frames_ __asm__("r2") = (frames);                             \
-    Actor_ShowEmote((actor), emote_, frames_);                                   \
+    Actor_ShowEmote((actor), emote_, frames_);                                 \
   }
 
 void Func_0200087c(void) {
@@ -47,8 +44,9 @@ void Func_0200087c(void) {
   Actor_SetPositionAndFacing(4, PIXELS(184), PIXELS(229), angle);
   Actor_SetPositionAndFacing(0, PIXELS(200), PIXELS(221), angle);
   {
-    /* FAKEMATCH: the local starts the facing before the other arguments, as the
-     * native has (one reordered row as a plain argument). */
+    /* FAKEMATCH(temporary): the local holding one constant starts the facing
+     * before the other arguments, as the native has; as the plain argument
+     * 0xc000, one row is reordered. */
     s32 turn = 0xc000;
 
     Actor_SetPositionAndFacing(18, PIXELS(218), PIXELS(320), turn);
@@ -59,12 +57,14 @@ void Func_0200087c(void) {
   Event_WaitTransitionFrames();
   Actor_RunRepeatedMotion(21, 2);
   FieldEvent_Wait(5);
-  /* FAKEMATCH: the emote and the frames are loaded before the actor; see
-   * SHAMAN_VILLAGE_CAVE_EMOTE. */
+  /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
+   * SHAMAN_VILLAGE_CAVE_EMOTE, load before the actor; as a plain call the actor
+   * comes one row early (see the macro). */
   SHAMAN_VILLAGE_CAVE_EMOTE(21, 263, 30)
   FieldEvent_ShowMessageThenWait(21, 0, 5);
-  /* FAKEMATCH: the emote and the frames are loaded before the actor; see
-   * SHAMAN_VILLAGE_CAVE_EMOTE. */
+  /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
+   * SHAMAN_VILLAGE_CAVE_EMOTE, load before the actor; as a plain call the actor
+   * comes one row early (see the macro). */
   SHAMAN_VILLAGE_CAVE_EMOTE(19, 263, 30)
   Event_OpenMessage(19, 0);
   if (FieldYesNo_Ask(1) == 0) {
@@ -84,8 +84,9 @@ void Func_0200087c(void) {
   FieldCamera_SetSpeed(0x8000, 0x1000);
   FieldCamera_MoveTo(PIXELS(199), -1, PIXELS(373), 1);
   FieldEvent_Wait(100);
-  /* FAKEMATCH: the emote and the frames are loaded before the actor; see
-   * SHAMAN_VILLAGE_CAVE_EMOTE. */
+  /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
+   * SHAMAN_VILLAGE_CAVE_EMOTE, load before the actor; as a plain call the actor
+   * comes one row early (see the macro). */
   SHAMAN_VILLAGE_CAVE_EMOTE(18, 261, 1)
   FieldEvent_Wait(20);
   Func_02001190((s16)gMainRoutineWork.savedScene,

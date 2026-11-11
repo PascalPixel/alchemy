@@ -52,8 +52,9 @@ void Func_020001d8(struct Actor *object) {
   if (*(s16 *)((u8 *)object + 102) == 0)
     Func_0200015c(object);
   (*(s16 *)((u8 *)object + 102))--;
-  /* FAKEMATCH: the loop note ends the scheduling block: the native stores the
-   * timer before it loads z (2 differ without it). */
+  /* FAKEMATCH(dead): an empty once-only block, whose loop note ends the
+   * scheduling block, so the timer is stored before z loads as in the native;
+   * without it, 2 instructions differ. */
   do {
   } while (0);
   object->x += Math_Cosine(((object->z >> 14) + (object->y >> 15)) << 8) / 2;

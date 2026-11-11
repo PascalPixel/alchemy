@@ -10,8 +10,8 @@ void Func_02000538(u16 *out) {
   if (count > 3)
     count = 3;
   i = 0;
-  /* FAKEMATCH: a goto loop; as a for, while or do loop, loop.c strength-reduces
-   * the owner index (differ 24). */
+  // A goto loop; as a for, while or do loop, loop.c strength-reduces the owner
+  // index (differ 24).
   if (i >= count)
     goto done;
   party = &gMainRoutineWork;

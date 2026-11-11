@@ -18,8 +18,9 @@ s32 Func_02000b20(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6a9Room1)
     Func_02000ba8();
-  /* FAKEMATCH: a pointer to the scene field keeps the second test a plain ldrsh
-   * (plain gMainRoutineWork.scene or a party pointer: differ 16). */
+  /* FAKEMATCH(temporary): a pointer to the scene field keeps the second test a
+   * plain ldrsh; as gMainRoutineWork.scene or through a party pointer, differ
+   * 16. */
   scene = &gMainRoutineWork.scene;
   if (*scene == (s32)&SceneId_Ov6a9Room4)
     Func_02000f98();

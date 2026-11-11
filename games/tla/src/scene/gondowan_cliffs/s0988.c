@@ -48,7 +48,7 @@ s32 Func_02000988(void) {
     return 0;
   }
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
-  /* FAKEMATCH(one-pass): the room test through the placing of actor 17 in a
+  /* FAKEMATCH(dead): the room test through the placing of actor 17 in a
    * once-only block, which loads gMainRoutineWork before the scene offset; as
    * plain statements, 2 of 227 instructions differ in tla-en. */
   do {

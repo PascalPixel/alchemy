@@ -29,8 +29,9 @@ void Func_020015a4(s32 mode) {
     Iwram_CopyWords(gData_02007088, (void *)&BG_PLTT_COLOR(13, 0), 32);
   }
   if (GameFlag_Test(0xa00) || mode == 1) {
-    s32 zero = 0; /* FAKEMATCH: ⚓️ builds the zero in r2 and the counter address
-                     in r3 */
+    /* FAKEMATCH(temporary): the zero held in a local, so it is built in r2 and
+     * the counter's address in r3; as a plain store of 0, not measured. */
+    s32 zero = 0;
 
     gData_0200703c = zero;
     Task_Add(Func_020014e8, 1152);

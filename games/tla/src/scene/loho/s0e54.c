@@ -40,9 +40,9 @@ void Func_02000e54(void) {
 
   Func_020012e0();
   Event_ResolvePendingActions(0);
-  /* FAKEMATCH: the loop is written with goto so that it carries no loop notes:
-   * the bytes rebuild the zero on every pass, and a for loop hoists it and
-   * moves the work pointer (differ 4). */
+  // The loop is written with goto so that it carries no loop notes: the bytes
+  // rebuild the zero on every pass, and a for loop hoists it and moves the work
+  // pointer (differ 4).
   i = 8;
 loop:
   {

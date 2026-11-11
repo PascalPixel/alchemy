@@ -13,8 +13,8 @@ void Func_02001cac(void) {
   volatile u16 *scroll;
   volatile u16 *dma;
 
-  /* FAKEMATCH: keeps the first line's load before the register address is built
-   */
+  /* FAKEMATCH(barrier): an asm reading the first line keeps its load before the
+   * register address is built; as no asm. */
   __asm__("" : : "r"(first));
   scroll = &REG_BG1HOFS;
   *scroll = first;

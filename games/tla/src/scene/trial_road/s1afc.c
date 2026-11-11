@@ -54,8 +54,8 @@ void Func_02001bec(void) {
   OBJECT_BYTE(Actor_GetById(17), 98) = 1;
   OBJECT_BYTE(Actor_GetById(18), 98) = 1;
   {
-    /* FAKEMATCH: the zero pinned to r6, where ⚓️ builds it; unpinned it reuses
-     * r5, which held the 1 (differ 12). */
+    /* FAKEMATCH(pin): the zero pinned to r6; as a plain local, which reuses r5
+     * where the 1 was held, 12 instructions differ. */
     register s32 clear asm("r6") = 0;
 
     Actor_GetById(16)->collisionFlags = clear;

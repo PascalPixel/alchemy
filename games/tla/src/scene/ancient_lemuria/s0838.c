@@ -347,9 +347,9 @@ void Func_02000838(void) {
     }
     ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count += 2;
   } else {
-    /* FAKEMATCH: the native keeps the count in r2 and the work pointer in r3;
-     * plain, local-alloc gives the count r3 and 14 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(pin): the count pinned to r2, as the ROM keeps it, with the
+     * work pointer in r3; as a plain local, local-alloc gives the count r3 and
+     * 14 instructions differ in tla-en. */
     register u32 n asm("r2");
 
     n = ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count;

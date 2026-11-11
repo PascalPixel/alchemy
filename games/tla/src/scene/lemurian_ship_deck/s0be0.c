@@ -22,9 +22,10 @@ struct MapMode {
 };
 
 static __inline__ void AddTask(void (*func)(void), s32 priority) {
-  /* FAKEMATCH: as in ☀️'s scene layer, forwarding through the inline sets the
-   * arguments up in their own order and keeps each call's constants; a direct
-   * call builds the costly constant first or shares it (differ 2 or more). */
+  /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
+   * scene layer, so the arguments are set up in their own order and each call
+   * keeps its constants; as a direct call, the costly constant is built first
+   * or shared and 2 or more instructions differ. */
   Task_Add(func, priority);
 }
 
@@ -33,9 +34,13 @@ s32 Func_02000be0(void) {
   struct MapMode *map = (struct MapMode *)Ram_HeapSlots->mapWork;
   struct MapModeBits bits = map->bits;
 
+  /* FAKEMATCH(temporary): the mode bits changed in a one-byte copy, bits, and
+   * stored back; as map->bits.mode = 1 with no empty block, 2 instructions
+   * differ in tla-en. */
   bits.mode = 1;
-  /* FAKEMATCH: a one-byte copy with the loop note before its store loads gMainRoutineWork's address between the or and the store; as map->bits.mode = 1,
-   * 2 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): an empty once-only block before the copy's store, so
+   * gMainRoutineWork's address loads between the or and the store; measured
+   * with the copy above. */
   do {
   } while (0);
   party = &gMainRoutineWork;
@@ -44,8 +49,8 @@ s32 Func_02000be0(void) {
     Func_02000b84();
   } else {
     *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
-    /* FAKEMATCH: the loop note ends the scheduling block after the store;
-     * without it, tla-en differs. */
+    /* FAKEMATCH(dead): an empty once-only block, which ends the scheduling
+     * block after the store; as no block, tla-en differs. */
     do {
     } while (0);
     Actor_Get(party->currentOwner)->priorityFlags |= 0x20;

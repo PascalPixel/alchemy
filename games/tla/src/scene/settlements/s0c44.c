@@ -6,8 +6,9 @@ void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
 static __inline__ void CenterOn(s32 id, s32 column, s32 offset) {
-  /* FAKEMATCH: forwarding through the inline sets the arguments up in their own
-   * order; the direct call negates the offset after the column (differ 2). */
+  /* FAKEMATCH(wrapper): the call forwarded through the inline, which sets the
+   * arguments up in their own order; as a direct Actor_CenterOnColumn call,
+   * the offset is negated after the column (differ 2). */
   Actor_CenterOnColumn(id, column, offset);
 }
 
@@ -16,9 +17,8 @@ void Func_02000c44(void) {
 
   Func_02002068();
   FieldEvent_ResolvePendingActions(0);
-  /* FAKEMATCH: the loop is written with goto so that it carries no loop notes:
-   * the bytes rebuild the zero on every pass, and a for loop hoists it (differ
-   * 26 with the forwarders below as direct calls). */
+  // A goto loop carries no loop notes: the bytes rebuild the zero on every
+  // pass, and a for loop hoists it.
   i = 8;
 loop:
   {

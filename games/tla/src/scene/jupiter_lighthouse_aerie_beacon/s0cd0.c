@@ -290,7 +290,7 @@ L_02009260:
   FieldEvent_Wait_(5);
   ACTOR_SET_MODE_AND_WAIT(27, 3, 20);
   Func_020058d4_(0x201b, 0, 0);
-  /* FAKEMATCH(one-pass): the byte store kept in a once-only block, whose end
+  /* FAKEMATCH(dead): the byte store kept in a once-only block, whose end
    * holds the scene id load behind it, as s16e8.c does with the same store; as
    * the plain store, 4 of 691 instructions differ in tla-en. */
   do {

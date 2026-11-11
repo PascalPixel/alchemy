@@ -89,7 +89,7 @@ void Func_020016e8(void) {
   FieldActor_WaitForMoveById(6);
   Actor_FaceDirectionAndWait(4, southeast);
   Actor_FaceDirection(6, northwest, 0);
-  /* FAKEMATCH(one-pass): the three calls kept in a once-only block; as the
+  /* FAKEMATCH(dead): the three calls kept in a once-only block; as the
    * plain calls, 18 of 400 instructions differ in tla-en (the angles' copies
    * into r3 in five of the six placements, and the argument order of the
    * calls around the block). */
@@ -116,7 +116,7 @@ void Func_020016e8(void) {
   FieldEvent_Wait(4);
   if (gMainRoutineWork.sequenceResult == -1)
     FieldUnit_AddHp(4, -10);
-  /* FAKEMATCH(one-pass): the byte store kept in a once-only block, whose end
+  /* FAKEMATCH(dead): the byte store kept in a once-only block, whose end
    * holds the scene id's load behind it, as shaman_village_cave/s0430.c
    * does with the same store; as the plain store, 4 of 400 instructions
    * differ in tla-en. */

@@ -8,8 +8,9 @@ void Func_020048f4(void);
 
 static __inline__ void Func_0200474c_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does (both calls direct: differ 12 of 61). */
+  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
+   * constants, as ☀️'s scene layer does; as direct calls at both sites, 12 of
+   * 61 instructions differ. */
   Func_0802b450(a, b, c, d, e, f);
 }
 

@@ -8,11 +8,12 @@ void Func_02000490(void);
 void Func_02002b28(void);
 void Func_02002b30(void);
 
-/* FAKEMATCH: the angle passes through a block temporary, as overlay 6a3's PLACE
- * does: the native builds it first and shifts it before the positions (direct:
- * differ 4 and 30 with shared constants). */
 #define PLACE(id, x, z, angle)                                                 \
   {                                                                            \
+    /* FAKEMATCH(temporary): the angle held in a block local, as overlay       \
+     * 6a3's PLACE has it, so it is built first and shifted before the         \
+     * positions; as the angle passed straight to the call, with shared        \
+     * constants, differ 4 and 30 (of M not recorded). */                      \
     s32 angle_ = (angle);                                                      \
     Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, angle_);          \
   }

@@ -51,8 +51,8 @@ void Func_02000be0(void) {
       object->z = position[2];
     }
     Actor_ShowItemIconById(79, amount);
-    /* FAKEMATCH(one-pass): the store and the call in a once-only block; as
-     * plain statements, 6 of 129 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): the store and the call in a once-only block; as plain
+     * statements, 6 of 129 instructions differ in tla-en. */
     do {
       *(u16 *)((u8 *)work + 0xd34) = amount;
       Func_02004d70(0x1000 | slot);

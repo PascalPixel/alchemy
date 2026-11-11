@@ -37,12 +37,13 @@ void Func_020028ac(void) {
   FieldEvent_Wait(30);
   Event_PlaySound(0x22d);
   {
-    register u16 alpha __asm__("r3") =
-        0x1000; /* FAKEMATCH: the blend value pinned to r3, as the
-                   native stores it (differ 16 as a plain store, 30 without the
-                   pins). */
+    /* FAKEMATCH(pin): the blend value pinned to r3, where the native stores it
+     * from; as plain locals with neither pin, differ 30 (of M not
+     * recorded). */
+    register u16 alpha __asm__("r3") = 0x1000;
 
-    /* FAKEMATCH: with the pin above. */
+    /* FAKEMATCH(temporary): the store through the pinned local; as a plain
+     * store of 0x1000, differ 16 (of M not recorded). */
     REG_BLDALPHA = alpha;
   }
   REG_BLDCNT = 0x3f10;
@@ -64,10 +65,12 @@ void Func_020028ac(void) {
   Func_02004cb0(actor);
   FieldEvent_Wait(1);
   {
-    register u16 off __asm__("r3") =
-        0; /* FAKEMATCH: the zero pinned to r3 (differ 4 as a plain store). */
+    /* FAKEMATCH(pin): the zero pinned to r3; with the local below, as a plain
+     * store of 0, differ 4 (of M not recorded). */
+    register u16 off __asm__("r3") = 0;
 
-    /* FAKEMATCH: with the pin above. */
+    /* FAKEMATCH(temporary): the store through the pinned local, there only
+     * for the pin above; as a plain store of 0, measured with it. */
     REG_BLDCNT = off;
   }
   Func_02000694(0, 7, 21, 128);

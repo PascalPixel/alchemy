@@ -20,9 +20,10 @@ s32 Func_02000fb8(void) {
   effect = &((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect;
   party = &gMainRoutineWork;
   *effect = 0x202;
-  /* FAKEMATCH: the empty asm takes gMainRoutineWork, so its address loads before
-   * the 0x202 store and the scene's offset starts after it, as in the native
-   * (plain: differ 2; the store before the party pointer: differ 2). */
+  /* FAKEMATCH(barrier): the empty asm takes gMainRoutineWork, so its address
+   * loads before the 0x202 store and the scene's offset starts after it, as in
+   * the ROM; as no asm, 2 instructions differ (and 2 with the store before the
+   * party pointer). */
   asm("" : : "r"(party));
   scene = party->scene;
   if (scene == (s32)&SceneId_Ov679Room2) {

@@ -42,8 +42,8 @@ void Func_02002144(void) {
     sprite->child[6] = 1;
   sprite->mode |= 8;
   sprite->mode &= 0xfe;
-  /* FAKEMATCH(one-pass): the once-only block orders this statement; as a plain statement, 4 of 159 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(dead): the once-only block orders this statement; as a plain
+   * statement, 4 of 159 instructions differ in tla-en. */
   do {
     sprite->dirty = 1;
   } while (0);

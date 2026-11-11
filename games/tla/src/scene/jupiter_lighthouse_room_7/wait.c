@@ -19,7 +19,9 @@ void Func_02002bec(void);
 void Func_0200013c(void) {
   s32 flag = 514;
 
-  /* FAKEMATCH: ⚓️ builds the flag again for the second call */
+  /* FAKEMATCH(barrier): an asm operand that says flag changes, which it does
+   * not, so the flag is built again for the call; as the same statements with
+   * no asm, not measured. */
   asm("" : "+l"(flag));
   if (!Event_GetFlag(flag)) {
     Event_SetFlag(514);
@@ -30,7 +32,9 @@ void Func_0200013c(void) {
 void Func_02000160(void) {
   s32 flag = 514;
 
-  /* FAKEMATCH: ⚓️ builds the flag again for the second call */
+  /* FAKEMATCH(barrier): an asm operand that says flag changes, which it does
+   * not, so the flag is built again for the call; as the same statements with
+   * no asm, not measured. */
   asm("" : "+l"(flag));
   if (Event_GetFlag(flag) == 1) {
     Event_ClearFlag(514);

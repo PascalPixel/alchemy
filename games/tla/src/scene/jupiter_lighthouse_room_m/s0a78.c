@@ -5,8 +5,8 @@
 
 
 static __inline__ void I_Func_020048d4(s32 actor, s32 a) {
-  /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; called
-   * directly at its one site, 2 of 37 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; as
+   * direct calls at its one site, 2 of 37 instructions differ in tla-en. */
   Func_080d489c(actor, a);
 }
 

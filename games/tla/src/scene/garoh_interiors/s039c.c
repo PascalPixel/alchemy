@@ -1,8 +1,9 @@
 #include "garoh_interiors.h"
 
-/* FAKEMATCH: the arguments are set up as for a call whose value is used (flags
- * before speaker); the opener is declared void in scene_call.h for the scenes
- * that match with that. */
+/* FAKEMATCH(signature): the opener called through a function type returning
+ * s32, which it does not have (scene_call.h declares it void), so the
+ * arguments are set up as for a call whose value is used, flags before
+ * speaker; as the plain void call, they are not. */
 #define Message_Open(speaker, flags)                                           \
   ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(speaker, flags)
 

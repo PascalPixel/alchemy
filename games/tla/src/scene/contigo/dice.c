@@ -34,8 +34,9 @@ void Func_02001abc(void) {
   Func_0200403c(price, 5);
   FieldMessage_ShowAtActor(14, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
-    /* FAKEMATCH: the scene state's address is pinned to r3 and loads before
-     * the coins; as a plain store, 6 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the scene state's address pinned to r3, so that it
+     * loads before the coins; as a plain store, 6 instructions differ in
+     * tla-en. */
     register u32 *state __asm__("r3") = (u32 *)gSceneState;
 
     *state = gMainRoutineWork.coins;
@@ -67,8 +68,9 @@ void Func_02001b84(void) {
   Event_SetMessageId((s32)MsgContigo23);
   FieldMessage_ShowAtActor(8, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
-    /* FAKEMATCH: the scene state's address is pinned to r3 and loads before
-     * the coins; as a plain store, 6 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the scene state's address pinned to r3, so that it
+     * loads before the coins; as a plain store, 6 instructions differ in
+     * tla-en. */
     register u32 *state __asm__("r3") = (u32 *)gSceneState;
 
     *state = gMainRoutineWork.coins;

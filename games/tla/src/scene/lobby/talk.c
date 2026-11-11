@@ -75,7 +75,8 @@ s32 Func_02001130(s32 actor) {
 s32 Func_02001210(void) {
   Func_0200191c();
   Sound_LoadPresetParameters(2);
-  /* FAKEMATCH: the do/while loads the scene number before the 1. */
+  /* FAKEMATCH(dead): the return in a once-only block, which loads the scene
+   * number before the 1; as the plain return, the 1 comes first. */
   do {
     return Func_02001a84((s32)&SceneId_Ov64a, 1);
   } while (0);

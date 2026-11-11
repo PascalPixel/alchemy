@@ -17,18 +17,21 @@ extern const u16 gData_02002418[];
 /// code unlocks it with a sound.
 void Func_020001f4(void) {
   if (gData_020024f6 == 0) {
-    /* FAKEMATCH: the held keys pointer pinned to r4, the key to r3, and a
-     * one-pass block keeping the two stores together; unpinned, 24
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the held keys pointer pinned to r4, with the key pinned
+     * to r3 below; as unpinned locals, 24 instructions differ in tla-en. */
     register volatile u32 *held asm("r4") = &gInput.held;
 
     if (gData_020024fe != 0) {
+      /* FAKEMATCH(pin): the key pinned to r3, with the pointer above. */
       register u32 keys asm("r3") = *held;
 
       if (keys == 0)
         gData_020024fe = keys;
     } else if (*held != 0) {
       if (*held == gData_02002410[gData_020024fa]) {
+        /* FAKEMATCH(dead): the two stores in a once-only block, which keeps
+         * them together; as plain statements, not measured apart from the
+         * pins. */
         do {
           gData_020024fa++;
           gData_020024fe = 1;
@@ -43,17 +46,20 @@ void Func_020001f4(void) {
     }
   }
   if (gData_020024f8 == 0) {
-    /* FAKEMATCH: the same pins and one-pass block as the first code, for the
-     * same differences. */
+    /* FAKEMATCH(pin): the held keys pointer pinned to r4, as for the first
+     * code and for the same differences. */
     register volatile u32 *held asm("r4") = &gInput.held;
 
     if (gData_02002500 != 0) {
+      /* FAKEMATCH(pin): the key pinned to r3, as for the first code. */
       register u32 keys asm("r3") = *held;
 
       if (keys == 0)
         gData_02002500 = keys;
     } else if (*held != 0) {
       if (*held == gData_02002418[gData_020024fc]) {
+        /* FAKEMATCH(dead): the two stores in a once-only block, as for the
+         * first code. */
         do {
           gData_020024fc++;
           gData_02002500 = 1;

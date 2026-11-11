@@ -34,8 +34,8 @@ void Func_02000eec(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
 
-  /* FAKEMATCH: a one-pass block loads gMainRoutineWork before the event work
-   * (one reordered row). */
+  /* FAKEMATCH(dead): an empty once-only block, so gMainRoutineWork loads
+   * before the event work; as no block, one row is reordered. */
   do {
   } while (0);
   Actor_SetModeById(party->currentOwner, 2);

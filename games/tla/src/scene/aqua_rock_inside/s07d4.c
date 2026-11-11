@@ -7,8 +7,9 @@ void Func_020007a8(void);
 void Func_02003ebc(void);
 
 static __inline__ void Func_02003d44_(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH(wrapper): the call forwarded through an inline, which keeps each
+   * call's own constants, as The Broken Seal's scene layer does; as a direct
+   * call. */
   Map_SetScreenShake(a, b, c);
 }
 
@@ -39,9 +40,8 @@ void Func_020007d4(void) {
   MapGrid_CopyCellsLayered(91, 96, 7, 10, 16, 31);
   MapGrid_CopyCellsLayered(99, 96, 7, 14, 16, 91);
   MapGrid_CopyCellAttributes(43, 0, 5, 9, 17, 31);
-  /* FAKEMATCH: both loops are written with goto so that they carry no loop
-   * notes: the bytes build the two stack arguments and the table address on
-   * every pass, and for loops hoist them (differ 38). */
+  // Both loops are goto loops: the ROM builds the two stack arguments and the
+  // table address on every pass, which for loops hoist (differ 38).
   i = 0;
 row:
   j = 0;

@@ -7,8 +7,9 @@ void Func_02002b54(s32 x, s32 z, s32 layer, s32 value);
 /// Copies the map cells and sets the cell values that flags 0xa10 to 0xa15 call
 /// for.
 void Func_020002f0(void) {
-  /* FAKEMATCH: every call goes through the call layer; called directly, the
-   * coordinates and flags are shared in saved registers (differ 117). */
+  /* FAKEMATCH(wrapper): every call forwarded through the call layer; as direct
+   * calls, the coordinates and flags are shared in saved registers and 117
+   * instructions differ. */
   MapGrid_CopyCellsLayered(0x5e, 0x3c, 9, 8, 0x5e, 0xa);
   Call4((void (*)())Func_02002b54, 0x2300000, 0xf00000, 0, -2);
   Call4((void (*)())Func_02002b54, 0x1f00000, 0x1000000, 0, -2);

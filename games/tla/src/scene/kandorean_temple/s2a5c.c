@@ -30,7 +30,7 @@ void Func_0200290c(void) {
   Actor_SetModeById(11, 4);
   Func_020053b8(gData_020054dc);
   {
-    /* FAKEMATCH: the blend value pinned to r3, so it loads from the pool
+    /* FAKEMATCH(pin): the blend value pinned to r3, so it loads from the pool
      * before the register address is started; as a plain store, 2
      * instructions differ in tla-en. */
     register u16 alpha __asm__("r3") = 0xc08;

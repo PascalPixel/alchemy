@@ -70,8 +70,8 @@ s32 Func_02000e4c(s32 id) {
       message = (s32)MsgWhatIsThis;
       goto show;
     }
-    /* FAKEMATCH: the refusal jumps into the unknown-preset branch so the two
-     * share one message call, as the reference lays them out. */
+    // The refusal jumps into the unknown-preset branch, so the two share one
+    // message call.
     if (ok != 0) {
       message = (s32)MsgThereSNoSuch;
     show:

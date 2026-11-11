@@ -44,9 +44,9 @@ void Func_02000804(s32 actor) {
   Actor_ArmCallbackAndRefresh(8, FACING_WEST);
   Event_Wait(10);
   Func_080d47b4(8, 258, 30);
-  /* FAKEMATCH: called as returning a value, which the native's argument order
-   * shows (r1 before r0); scene_call.h declares it void for the scenes that
-   * match so. */
+  /* FAKEMATCH(signature): called through a type returning s32, which gives the
+   * native's argument order (r1 before r0); as the void call scene_call.h
+   * declares, which the other scenes match with, the order differs. */
   ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(8, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(20);

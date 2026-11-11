@@ -45,7 +45,8 @@ void Func_080eabd0(u16 *actors) {
     struct SwitchCell *cells = map->layers[object->terrainId].cells;
     // The row's address as an integer sum, index first: &grid[row] adds the
     // grid first.
-    u8 *shapes = (u8 *)((((s32)cells - 0x02010000) >> 2) + (s32)grid);
+    u8 *shapes =
+        (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
     struct SwitchCell *cell;
     s32 tag;
     u8 flags;

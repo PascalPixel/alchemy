@@ -38,7 +38,7 @@ void Func_0200014c(u16 *list) {
     if (id != -1)
       held = Actor_GetById(id);
   }
-  grid = FIXED_ADDRESS((u8 *), 0x02024000, gMapShapeGrid);
+  grid = Ram_MapShapeGrid;
   HELD_OBJECT(work) = NULL;
   if (*list != 0xffff) {
   loop:

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #include "actor.h"
 #include "system/main_routine_work.h"
 #include "event_inline.h"
@@ -75,7 +76,7 @@ void Func_02003ff4(void) {
   FieldCamera_MoveTo(0x2000000, 0x600000, 0x1200000, 0);
   Func_0200558c();
   System_Wait(1);
-  t25 = FIELD_AT(0x3000000, s32, 108);
+  t25 = (s32)Ram_HeapSlots->eventWork;
   FIELD_AT(t25, s32, 428) = 0x201;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

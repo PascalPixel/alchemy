@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -62,12 +63,12 @@ void Func_02001958(s32 a0) {
       Motion_SetVarCbAndRefresh(25, 2);
       Event_Wait(20);
       Event_ShowMessageThenWait(0x19, 0, 0xa);
-      FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
-          (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
+      FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
+          (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
     } else {
       Event_Wait(30);
-      FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
-          (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
+      FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
+          (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
       Event_ShowMessageThenWait(0x19, 0, 0xa);
     }
     t37 = ((s32)Actor_GetById(4));

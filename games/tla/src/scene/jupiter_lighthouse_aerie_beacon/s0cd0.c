@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
@@ -117,7 +118,7 @@ void Func_02000cd0(void) {
 
   Func_02005814();
   Func_02005984_(0);
-  t2 = FIELD_AT(0x3000000, s32, 108);
+  t2 = (s32)Ram_HeapSlots->eventWork;
   FIELD_AT(t2, s32, 428) = 0x100;
   FIELD_AT(t2, s32, 436) = 120;
   Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
@@ -191,12 +192,12 @@ void Func_02000cd0(void) {
   if (t75 != 0)
     goto L_02008fc4;
   Func_020058d4_(0x101c, 0, 0);
-  t77 = FIELD_AT(0x3000000, s32, 108);
+  t77 = (s32)Ram_HeapSlots->eventWork;
   t78 = FIELD_AT(t77, u16, 452);
   FIELD_AT(t77, u16, 452) = (t78 + 1);
   goto L_02008fe0;
 L_02008fc4:
-  t79 = FIELD_AT(0x3000000, s32, 108);
+  t79 = (s32)Ram_HeapSlots->eventWork;
   t80 = FIELD_AT(t79, u16, 452);
   FIELD_AT(t79, u16, 452) = (t80 + 1);
   Func_020058d4_(0x101c, 0, 0);
@@ -218,7 +219,7 @@ L_02008fe0:
   Actor_ArmCallback_(28, 0xa000, 0);
   Actor_ArmCallback_(7, 0x4000, 0);
   Func_020058d4_(7, 0, 0);
-  t101 = FIELD_AT(0x3000000, s32, 108);
+  t101 = (s32)Ram_HeapSlots->eventWork;
   t102 = FIELD_AT(t101, u16, 452);
   FIELD_AT(t101, u16, 452) = (t102 + 1);
   FieldMessage_Show_(((t102 << 16) >> 16), 5);
@@ -258,13 +259,13 @@ L_02008fe0:
     goto L_02009236;
   ACTOR_SET_MODE_AND_WAIT(28, 3, 20);
   Func_020058d4_(28, 0, 0);
-  t139 = FIELD_AT(0x3000000, s32, 108);
+  t139 = (s32)Ram_HeapSlots->eventWork;
   t140 = FIELD_AT(t139, u16, 452);
   FIELD_AT(t139, u16, 452) = (t140 + 1);
   goto L_02009260;
 L_02009236:
   ACTOR_SET_MODE_AND_WAIT(28, 3, 20);
-  t143 = FIELD_AT(0x3000000, s32, 108);
+  t143 = (s32)Ram_HeapSlots->eventWork;
   t144 = FIELD_AT(t143, u16, 452);
   FIELD_AT(t143, u16, 452) = (t144 + 1);
   Func_020058d4_(28, 0, 0);

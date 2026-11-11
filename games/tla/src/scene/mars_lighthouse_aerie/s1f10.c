@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #include "event_inline.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -104,7 +105,7 @@ void Func_02001f10(void) {
   /* FAKEMATCH(wrapper): Actor_SetSpritePriority called through call.h's Call2;
    * as a direct call, 2 of 1038 instructions differ in tla-en. */
   FieldActor_SetSpritePriority(25, 1);
-  t34 = FIELD_AT(0x3000000, s32, 108);
+  t34 = (s32)Ram_HeapSlots->eventWork;
   FIELD_AT(t34, s32, 428) = 0x204;
   FIELD_AT(t34, s32, 436) = 1;
   Event_StartScreenTransition();

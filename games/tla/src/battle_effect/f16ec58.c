@@ -141,7 +141,7 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
                       mode);
         // At its address: through the slots' base it would share the base
         // above.
-        draw[1] = *(DrawRectangle *)0x030000bc;
+        draw[1] = *(DrawRectangle *)&Ram_HeapSlots->unkb8[1];
 
         for (i = 0; i != effect->variant * 3 + 4; i++) {
           s32 age = frame - Data_08198bb0[i];

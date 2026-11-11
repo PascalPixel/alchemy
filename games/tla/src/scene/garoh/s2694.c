@@ -1,14 +1,8 @@
 #include "types.h"
+#include "ram_buffer.h"
 #include "call.h"
 #include "scene_tables.h"
 #include "event_inline.h"
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 s32 Func_02001344();
 s32 Func_02001418();
@@ -97,14 +91,14 @@ void Func_02002694(void) {
   FieldEvent_Wait(20);
   Actor_ShowEmote(9, 0x109, 30);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
-  *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
-      (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
+  *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
+      (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
   goto L_0200a846;
 L_0200a818:;
   FieldEvent_Wait(30);
   Actor_ShowEmote(9, 0x109, 30);
-  *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
-      (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
+  *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
+      (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
 L_0200a846:;
   FieldEvent_ShowMessageThenWait(8, 0, 0);
@@ -317,15 +311,15 @@ L_0200ac86:;
     asm volatile("" : "+l"(a0));
     FieldEvent_ShowMessageThenWait(a0, 0, 0);
   }
-  *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
-      (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
+  *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
+      (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
   goto L_0200ad16;
 L_0200ace6:;
   FieldEvent_Wait(30);
   Actor_RunRepeatedMotion(10, 2);
   FieldEvent_Wait(10);
-  *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
-      (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
+  *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
+      (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
   FieldEvent_ShowMessageThenWait(10, 0, 0);
 L_0200ad16:;
   Actor_RunRepeatedMotion(8, 2);
@@ -437,8 +431,8 @@ L_0200ae8e:;
   Actor_RunRepeatedMotion(5, 2);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(5, 0, 0);
-  *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
-      (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
+  *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
+      (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
   goto L_0200af08;
 L_0200aed2:;
   FieldEvent_Wait(30);
@@ -452,8 +446,8 @@ L_0200aed2:;
   }
   FieldEvent_Wait(20);
   FieldEvent_Wait(20);
-  *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
-      (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
+  *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
+      (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
   FieldEvent_ShowMessageThenWait(5, 0, 0);
 L_0200af08:;
   Actor_FaceDirection(10, FACING_NORTHEAST, 0);

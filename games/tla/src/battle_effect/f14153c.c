@@ -737,10 +737,11 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         }
       }
       for (i = 0; i != 16; i++) {
-        // 0x02014000 as a number here and in p below, so both share one pool
-        // word (as gData_02014000, 70 to 786 differ).
+        // A constant here and in p below, so both share one pool word (as
+        // gData_02014000, 70 to 786 differ).
         struct EffectStep *q =
-            (struct EffectStep *)0x02014000 + ((frame * 16 + i) & 511);
+            (struct EffectStep *)(Ram_MapCellBuffer + 0x4000) +
+            ((frame * 16 + i) & 511);
         // Default: set for real below.
         s32 a = 0;
         s32 r = 0;
@@ -756,7 +757,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       {
         const u16 *sizeOffsets = gData_08197410;
         for (i = 0; i != 512; i++) {
-          p = (struct EffectStep *)0x02014000 + i;
+          p = (struct EffectStep *)(Ram_MapCellBuffer + 0x4000) + i;
           if (p->variant >= 0) {
             s32 n = (p->variant >> 3) + 1;
             // sizeOffsets[n - 1] spelled as a byte offset: plain, 49 differ.

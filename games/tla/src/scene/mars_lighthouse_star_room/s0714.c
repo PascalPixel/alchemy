@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "scene_tables.h"
 #include "event_inline.h"
@@ -138,12 +139,12 @@ void Func_02000714(void) {
   Actor_WaitForAnimationChange(gMainRoutineWork.currentOwner);
   Actor_SetAnimation(13, 7);
   Event_ShowMessage(13, 0);
-  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), s16, 0) =
-      (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
+  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), s16, 0) =
+      (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
   goto L_02008a2c;
 L_02008a04:
-  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), s16, 0) =
-      (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
+  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), s16, 0) =
+      (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
   /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here,
    * as the listing orders it; without it, 2 of 343 instructions differ in
    * tla-en. */

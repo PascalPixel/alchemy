@@ -75,7 +75,7 @@ void Func_02000270(void) {
     return;
   layer = &held->terrainId;
   cells = (u8 *)Ram_HeapSlots->mapWork->layers[*layer].cells;
-  shapes = FIXED_ADDRESS((u8 *), 0x02024000, gMapShapeGrid) +
+  shapes = Ram_MapShapeGrid +
            (((struct MapCell *)cells) - (struct MapCell *)Ram_MapCellBuffer);
   shape = Func_020010ec(*layer, held->x, held->z);
   level = Map_GetTerrainHeight(*layer, held->x, held->z);

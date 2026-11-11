@@ -51,7 +51,7 @@ void Func_080eace8(u16 *actors) {
       u8 *grid = gMapShapeGrid;
       struct SwitchCell *cells = map->layers[target->terrainId].cells;
       struct SwitchCell *blocks = map->layers[2].cells;
-      u8 *shapes = &grid[((s32)cells - 0x02010000) >> 2];
+      u8 *shapes = &grid[((s32)cells - (s32)Ram_MapCellBuffer) >> 2];
       u32 key = Func_080202f0(target->terrainId, target->x, target->z);
       s32 level =
           Map_GetTerrainHeightFar(target->terrainId, target->x, target->z);

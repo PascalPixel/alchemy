@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -122,10 +123,10 @@ L_0200b7e4:
     goto L_0200b856;
   Func_020056b4();
   FieldEvent_ResolvePendingActions(0);
-  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x201;
+  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x201;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x209;
+  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x209;
   Event_ClearFlag(0x8fc);
   t59 = Event_GetFlag(0x9eb);
   if (t59 == 0)

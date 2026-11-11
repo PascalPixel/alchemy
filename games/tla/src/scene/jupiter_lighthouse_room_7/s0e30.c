@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "scene_tables.h"
 #include "event_inline.h"
@@ -20,7 +21,7 @@ s32 Func_02000e30(void) {
   s32 t1, t2, t3, t5, t8, t15, t16, t17, t19, t20, t21, t23, t24, t25, t26, t27,
       t28, t29, v5;
 
-  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x204;
+  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x204;
   if ((u32)((FIELD_AT(&gMainRoutineWork, u16, 482) + -3) << 16) > (u32)0x10000)
     goto L_02008e6e;
   t1 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));

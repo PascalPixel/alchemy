@@ -40,7 +40,8 @@ void Func_020006ac(void) {
     if (!GameFlag_Test(*list)) {
       s32 layer = object->terrainId;
       struct MapCell *cells = map->layers[layer].cells;
-      u8 *shapes = (u8 *)((((s32)cells - 0x02010000) >> 2) + (s32)grid);
+      u8 *shapes =
+          (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
       s32 index = Func_020041e0(object);
       s32 shape = Func_02004020(layer, object->x, object->z);
       s32 height = Map_GetTerrainHeight(layer, object->x, object->z);

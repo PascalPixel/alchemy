@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #include "event_inline.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -84,7 +85,7 @@ L_020082ea:
   FieldEvent_Wait(5);
   goto L_020085c6;
 L_0200832c:
-  t36 = FIELD_AT(0x3000000, s32, 108);
+  t36 = (s32)Ram_HeapSlots->eventWork;
   t37 = FIELD_AT(t36, u16, 452);
   FIELD_AT(t36, u16, 452) = (t37 + 1);
   FieldEvent_ShowMessageThenWait(11, 0, 5);
@@ -132,7 +133,7 @@ L_020083da:
   FieldEvent_Wait(20);
   Actor_SetPosition(10, 0, 0);
   Actor_SetPosition(9, 0, 0);
-  t66 = FIELD_AT(0x3000000, s32, 108);
+  t66 = (s32)Ram_HeapSlots->eventWork;
   FIELD_AT(t66, s32, 436) = 100;
   PaletteFade_ApplyTarget(0x10000, 0);
   /* FAKEMATCH(dead): the call in a once-only block, whose end holds the order
@@ -142,7 +143,7 @@ L_020083da:
     Event_StartScreenTransition();
   } while (0);
   Event_WaitTransitionFrames();
-  t70 = FIELD_AT(0x3000000, s32, 108);
+  t70 = (s32)Ram_HeapSlots->eventWork;
   FIELD_AT(t70, s32, 436) = 8;
   FieldEvent_ShowMessageThenWait(0x2005, 0, 5);
   FieldEvent_ShowMessageThenWait(11, 0, 5);

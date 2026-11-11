@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -22,7 +23,7 @@ s32 Func_02000b18(void) {
   s32 t19;
   s32 t23;
 
-  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x100;
+  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x100;
   Task_AddFrame((s32)Func_02000a80, 0xc80);
   Func_020029fc(8);
   Actor_SetSingleChildFlags(((s32)Actor_Get(10)), 0);

@@ -34,8 +34,6 @@ extern char SceneId_Ov64a;
 #define TILES_FLAG_OFFSET 0x138c
 #endif
 
-#define Ram_Input FIXED_ADDRESS((struct InputState *), 0x03001150, gInput)
-
 s32 Func_02000318(void) {
   struct MainRoutineWork *work;
   u8 *eventMode;
@@ -178,7 +176,7 @@ L_02008692:
   /* FAKEMATCH(temporary): p reused for the input and main work addresses; as
    * gInput and gMainRoutineWork read directly, 8 of 426 instructions differ in
    * tla-en. */
-  p = Ram_Input;
+  p = &gInput;
   if (((struct InputState *)p)->pressed == 0)
     goto L_0200868c;
   Call3((void (*)())Func_0200084c, (s32)&ResourceId_EndingReunionPicture,
@@ -199,14 +197,14 @@ L_02008692:
   ((struct MainRoutineWork *)p)->eventMode = saved;
   FieldEvent_Wait(300);
   count = 0;
-  if (Ram_Input->pressed != 0)
+  if (gInput.pressed != 0)
     goto L_0200871e;
 L_02008704:
   System_Wait(1);
   count++;
   if (count > 10799)
     goto L_0200871e;
-  if (Ram_Input->pressed == 0)
+  if (gInput.pressed == 0)
     goto L_02008704;
 L_0200871e:
   Func_0200084c(0, (s32)Ram_MapCellBuffer, 0);

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #include "call.h"
 #include "event_inline.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -488,14 +489,14 @@ void Func_0200065c(void) {
   Actor_SetAnimation(6, 3);
   FieldActor_Jump(6, 4, 10);
   Event_ShowMessage(6, 0);
-  t419 = FIELD_AT(0x3000000, s32, 108);
+  t419 = (s32)Ram_HeapSlots->eventWork;
   t420 = FIELD_AT(t419, u16, 452);
   FIELD_AT(t419, u16, 452) = (t420 + 1);
   goto L_02009490;
 L_02009464:
   Actor_SetAnimation(6, 4);
   FieldActor_Jump(6, 4, 10);
-  t423 = FIELD_AT(0x3000000, s32, 108);
+  t423 = (s32)Ram_HeapSlots->eventWork;
   t424 = FIELD_AT(t423, u16, 452);
   FIELD_AT(t423, u16, 452) = (t424 + 1);
   Event_ShowMessage(6, 0);
@@ -541,7 +542,7 @@ L_02009490:
     goto L_02009624;
   t463 = gMainRoutineWork.currentOwner;
   Actor_WaitForAnimationChange(t463);
-  t465 = FIELD_AT(0x3000000, s32, 108);
+  t465 = (s32)Ram_HeapSlots->eventWork;
   t466 = FIELD_AT(t465, u16, 452);
   FIELD_AT(t465, u16, 452) = (t466 + 1);
   goto L_02009638;

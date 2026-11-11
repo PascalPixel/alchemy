@@ -23,7 +23,7 @@ s32 Heap_GetRemainingIwram(void) {
 s32 Heap_GetRemainingEwram(void) {
   struct HeapSlots *work = Ram_HeapSlots;
 
-  return 0x02040000 - (s32)work->nextEwram;
+  return EWRAM_END - (s32)work->nextEwram;
 }
 
 void *HeapSlot_Alloc(s32 kind, s32 size) {
@@ -45,7 +45,7 @@ void *HeapSlot_Alloc(s32 kind, s32 size) {
     if (next >= (u32)Ram_IwramHeapEnd) {
       address = allocator_state[0];
       next_address = address + aligned_size;
-      if (next_address >= 0x02040000U) {
+      if (next_address >= (u32)EWRAM_END) {
         return NULL;
       }
       allocator_state[0] = next_address;
@@ -76,7 +76,7 @@ void *HeapSlot_AllocEwram(s32 kind, s32 size) {
     address = allocator_state[0];
     aligned_size = (aligned_size >> 2) * 4;
     next = address + aligned_size;
-    if (next >= 0x02040000U) {
+    if (next >= (u32)EWRAM_END) {
       address = allocator_state[1];
       next_address = address + aligned_size;
       if (next_address > (u32)(Ram_IwramHeapEnd - 1)) {
@@ -100,7 +100,7 @@ void Heap_FillFreeWords(u32 value) {
   address = state[1];
   Iwram_FillWords((void *)address, (u32)Ram_IwramHeapEnd - address, value);
   address = state[0];
-  Iwram_FillWords((void *)address, 0x02040000U - address, value);
+  Iwram_FillWords((void *)address, (u32)EWRAM_END - address, value);
 }
 
 void *Heap_Alloc(s32 size) {
@@ -120,7 +120,7 @@ void *Heap_Alloc(s32 size) {
   if (next > limit) {
     address = state[0];
     other = address + (u32)size;
-    if (other >= 0x02040000U) {
+    if (other >= (u32)EWRAM_END) {
       return NULL;
     }
     state[0] = other;
@@ -142,7 +142,7 @@ void *Heap_AllocEwram(s32 size) {
   address = state[0];
   size = (s32)((words >> 2) << 2);
   next = address + (u32)size;
-  if (next >= 0x02040000U) {
+  if (next >= (u32)EWRAM_END) {
     address = state[1];
     other = address + (u32)size;
     if (other > (u32)(Ram_IwramHeapEnd - 1)) {

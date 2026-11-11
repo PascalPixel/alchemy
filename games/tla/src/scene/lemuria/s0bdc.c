@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "call.h"
 #include "scene_tables.h"
@@ -27,7 +28,7 @@ s32 Func_02000bdc(void) {
   s32 t3, t7, t11, t12, t15, t16, t17, t19, t20, t23, t25, t26, t27, t32, t33,
       t34, t40, t42, t45, t47, t49, t51, t53, t55, v5, v6;
 
-  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x201;
+  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x201;
   FieldTask_AddFrame((s32)Func_02000a6c, 0xc80);
   Func_02001cfc(0);
   t3 = Actor_Get(11);

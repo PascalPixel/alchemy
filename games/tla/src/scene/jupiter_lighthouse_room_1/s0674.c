@@ -66,11 +66,9 @@ void Func_02000674(struct Actor *self) {
       // IwramMulQ16 reached from IwramIrqMain rather than at its fixed address:
       // the address is a linked word read after the cosine, as the native
       // reads it after the speed (at Iwram_MulQ16 it is built before).
-      self->x += ((s32 (*)(s32, s32))(
-          IwramIrqMain + FIXED_OFFSET(0x11c, IwramMulQ16, IwramIrqMain)))(
+      self->x += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulQ16Offset))(
           Math_Cosine(self->angle), self->speedLimit);
-      self->z += ((s32 (*)(s32, s32))(
-          IwramIrqMain + FIXED_OFFSET(0x11c, IwramMulQ16, IwramIrqMain)))(
+      self->z += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulQ16Offset))(
           Math_Sin(self->angle), self->speedLimit);
       return;
     }

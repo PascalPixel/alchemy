@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #include "dma.h"
 #include "event_inline.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -346,7 +347,7 @@ L_020088f0:
     goto L_02008992;
   Actor_SetAnimation(18, 3);
   Event_ShowMessageAndWait(18, 0);
-  t189 = FIELD_AT(0x3000000, s32, 108);
+  t189 = (s32)Ram_HeapSlots->eventWork;
   t190 = FIELD_AT(t189, u16, 452);
   FIELD_AT(t189, u16, 452) = (t190 + 1);
   goto L_020089c4;
@@ -355,7 +356,7 @@ L_02008982:
   goto L_0200821e;
 L_02008992:
   Actor_SetAnimation(18, 4);
-  t193 = FIELD_AT(0x3000000, s32, 108);
+  t193 = (s32)Ram_HeapSlots->eventWork;
   t194 = FIELD_AT(t193, u16, 452);
   FIELD_AT(t193, u16, 452) = (t194 + 1);
   Event_ShowMessage(17, 0);

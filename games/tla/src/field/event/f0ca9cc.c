@@ -1,9 +1,10 @@
 #include "types.h"
+#include "ram_buffer.h"
 
 u32 Stream_ReadU16(u8 **cursor);
 
 s32 Func_080ca9cc(s32 id, s32 *position) {
-  u8 *cursor = FIXED_ADDRESS((u8 *), 0x0202e008, gData_0202e008);
+  u8 *cursor = Ram_Data_0202e008;
   s8 key;
 
   key = *cursor++;

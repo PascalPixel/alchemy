@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #include "version.h"
 #include "call.h"
 #include "event_inline.h"
@@ -71,7 +72,7 @@ s32 Func_0200138c(void) {
   t0 = FIELD_AT((s32)gMainRoutineWork, s16, 480);
   t1 = FIELD_AT((s32)gMainRoutineWork, s16, 482);
   *(s32 *)(s32)Data_02006878 = 0;
-  t2 = FIELD_AT(0x3000000, s32, 108);
+  t2 = (s32)Ram_HeapSlots->eventWork;
   FIELD_AT(t2, s32, 428) = 0x204;
   Event_SetFlag(0x112);
   Func_02002270();

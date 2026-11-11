@@ -4,9 +4,6 @@
 
 #include "../window_internal.h"
 
-#define Iwram_ExpandBitRuns                                                    \
-  ((s32 (*)(const void *bits, void *destination, s32 value))0x03000314)
-
 // The glyph's pixels, 16 to a line as its tiles are read: 16 lines for the
 // Japanese font, 24 for the other languages' taller one.
 #if (LANGUAGE == LANGUAGE_JAPANESE)

@@ -2,6 +2,7 @@
 /// Receives clear data over the link cable.
 
 #include "types.h"
+#include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "iwram_call.h"
 #include "io_reg.h"
@@ -23,9 +24,9 @@ extern s32 gSerialReceiveDest;
 extern u32 gInput[];
 extern u16 gData_02003a74[4];
 extern u8 gGameFlagBytes[];
-#define Ram_MapCellBackup FIXED_ADDRESS((u8 *), 0x02013000, gMapCellBackup)
-#define Ram_ReceivedFlags FIXED_ADDRESS((u8 *), 0x02013040, gReceivedFlags)
-#define Ram_ReceivedUnits FIXED_ADDRESS((u8 *), 0x02013240, gReceivedUnits)
+#define MAP_CELL_BACKUP (Ram_MapCellBuffer + 0x3000)
+#define RECEIVED_FLAGS (Ram_MapCellBuffer + 0x3040)
+#define RECEIVED_UNITS (Ram_MapCellBuffer + 0x3240)
 extern char MsgFieldPreparingToReceive[];
 extern char MsgFieldTransferringData[];
 extern char MsgFieldDataTransferWasInterrupted[];
@@ -116,7 +117,7 @@ poll:
   goto close;
 receive:
   System_Wait(10);
-  Serial_StartReceive(Ram_MapCellBackup);
+  Serial_StartReceive(MAP_CELL_BACKUP);
   System_Wait(10);
   linkMask = 3;
   idle = 0;
@@ -172,13 +173,13 @@ done:
   System_Wait(10);
   Window_Close(window, 2);
   flags = gGameFlagBytes;
-  Iwram_CopyWords(flags, Ram_ReceivedFlags, 0x214);
-  Iwram_CopyWords(flags + 0x220, Ram_ReceivedUnits, 0xd20);
+  Iwram_CopyWords(flags, RECEIVED_FLAGS, 0x214);
+  Iwram_CopyWords(flags + 0x220, RECEIVED_UNITS, 0xd20);
   Unit_Calculate(0);
   Unit_Calculate(1);
   Unit_Calculate(2);
   Unit_Calculate(3);
-  Iwram_CopyWords(Ram_ReceivedFlags, flags, 0xf40);
+  Iwram_CopyWords(RECEIVED_FLAGS, flags, 0xf40);
   WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                 gMainRoutineWork.paletteGlow[1]);
   return 1;

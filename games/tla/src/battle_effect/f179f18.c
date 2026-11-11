@@ -247,7 +247,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   savedScroll = gBgScroll[1].x;
   transition = (s32 *)Ram_HeapSlots->transitionWork;
   petals = (s32)&gData_02014000;
-  source = (u8 *)0x02010000;
+  source = Ram_MapCellBuffer;
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
   Func_0813ba50();
@@ -272,7 +272,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       Iwram_CopyWords((void *)0x050003e0, e, 32);
       e += 32;
       Resource_DecodeType01(e, source);
-      cells = (u8 *)0x02010000;
+      cells = Ram_MapCellBuffer;
       for (i = 0; i != 15; i++) {
         struct FloraObject *obj = Func_0815b290(16, 16, 0x40000000, 0xf000);
         work->objects[12 + i] = obj;
@@ -295,7 +295,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       e = Resource_GetTableEntry((s32)&ResourceId_GreenHairedMaidenTiles);
       e += 480;
       Resource_DecodeType01(e, source);
-      cells = (u8 *)0x02010000;
+      cells = Ram_MapCellBuffer;
       for (i = 0; i != 12; i++) {
         struct FloraObject *obj = Func_0815b290(32, 32, 0x80002000, 0);
         obj->flags = 2;

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #include "actor.h"
 #include "system/io_reg.h"
 #include "system/main_routine_work.h"
@@ -40,7 +41,7 @@ extern u8 gData_02003620[];
 extern s32 gData_020036fc[][2];
 
 void Func_02000ac8(void) {
-  struct Work *work = ((struct Globals *)0x3000000)->work;
+  struct Work *work = ((struct Globals *)Ram_HeapSlots)->work;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   volatile u16 alpha = REG_BLDALPHA;
   s32 x, z;

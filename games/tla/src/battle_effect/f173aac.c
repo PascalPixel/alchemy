@@ -97,7 +97,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #include "input.h"
 
 // A second, larger particle table, always reached at its fixed address.
-#define EXTRA_PARTICLES ((struct EffectStep *)0x02014000)
+#define EXTRA_PARTICLES ((struct EffectStep *)(Ram_MapCellBuffer + 0x4000))
 extern s32 gCameraSceneParameters[];
 extern u16 gData_08197410[];
 extern const s8 Data_08198c28[];

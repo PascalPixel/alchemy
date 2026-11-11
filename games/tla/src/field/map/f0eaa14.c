@@ -63,7 +63,7 @@ void Func_080eaa14(struct ActorFlag *list) {
       u32 key;
       s32 height;
 
-      shapes = &grid[((s32)cells - 0x02010000) >> 2];
+      shapes = &grid[((s32)cells - (s32)Ram_MapCellBuffer) >> 2];
       slot = Func_080eab70(object);
       key = Func_080202f0(object->terrainId, object->x, object->z);
       height =

@@ -39,7 +39,7 @@ extern char ResourceId_OrangePaletteB;
 extern u8 gData_02014000[];
 // The first load names the buffer by its address: as the symbol it would
 // combine with the second.
-#define EFFECT_PICTURES FIXED_ADDRESS((u8 *), 0x02014000, gData_02014000)
+#define EFFECT_PICTURES (Ram_MapCellBuffer + 0x4000)
 extern u16 gData_08197410[];
 extern const u16 Data_081992b0[];
 extern const u16 Data_08199220[];

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #include "scene_tables.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -58,11 +59,11 @@ void Func_02000638(void) {
       t17 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
       if (t17 == 0) {
         FieldEvent_ShowMessageThenWait(0x1d, 0, 5);
-        FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
-            (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
+        FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
+            (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
       } else {
-        FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
-            (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
+        FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
+            (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
         FieldEvent_ShowMessageThenWait(0x1d, 0, 5);
       }
       Actor_ShowEmote(0x1d, 0x109, 0x1e);

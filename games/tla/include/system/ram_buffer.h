@@ -4,11 +4,15 @@
 #include "types.h"
 
 #define Ram_MapCellBuffer FIXED_ADDRESS((u8 *), 0x02010000, gMapCellBuffer)
+#define Ram_DecodeBuffer FIXED_ADDRESS((u8 *), 0x0201c000, gData_0201c000)
 #define Ram_MapCollision FIXED_ADDRESS((u8 *), 0x0202c000, gMapCollision)
+#define Ram_Data_0202e008 FIXED_ADDRESS((u8 *), 0x0202e008, gData_0202e008)
+#define Ram_BgTileBuffer FIXED_ADDRESS((u8 *), 0x02038000, gData_02038000)
 /// The cell picture table: each cell picture's top two tile entries, then its
 /// bottom two. Func_0802abbc reads it at constant addresses inside its loop; as
 /// the symbol the two table addresses hoist out of the loop.
 #define Ram_MapBlocks FIXED_ADDRESS((u8 *), 0x02020000, gMapBlocks)
+#define Ram_MapShapeGrid FIXED_ADDRESS((u8 *), 0x02024000, gMapShapeGrid)
 
 #define Ram_SoundMixer FIXED_ADDRESS((u8 *), 0x03006000, SoundDriver_Mixer)
 

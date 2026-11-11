@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #include "scene_tables.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -31,7 +32,7 @@ void Func_02001c30(void) {
   Actor_SetSpriteRotationById(5, 0x4000);
   Actor_SetSingleChildFlags(((s32)Actor_Get(5)), 0);
   Func_02002994(5, 0);
-  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1b4), s32, 0) = 0x3c;
+  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1b4), s32, 0) = 0x3c;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(20);
@@ -121,6 +122,6 @@ void Func_02001c30(void) {
   }
   FieldActor_WaitForMoveById(8);
   Actor_SetPosition(8, 0, 0);
-  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1b4), s32, 0) = 8;
+  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1b4), s32, 0) = 8;
   Func_020028bc();
 }

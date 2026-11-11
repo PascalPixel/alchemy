@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #include "event_inline.h"
 struct SceneActor {
   u8 pad0[16];
@@ -39,7 +40,7 @@ void Func_02003a6c(s32 mode) {
   u32 j;
   struct SceneWork *work;
 
-  work = &((struct Iwram *)0x3000000)->field->unk_178;
+  work = &((struct Iwram *)Ram_HeapSlots)->field->unk_178;
   speed = 0x1999;
   count = 0;
   Data_02006a1c = work->unk_0c;

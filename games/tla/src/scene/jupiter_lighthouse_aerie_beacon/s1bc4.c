@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -352,7 +353,7 @@ void Func_02001bc4(void) {
 L_0200a678:
   Actor_ShowEmote(0, 0x107, 30);
   ACTOR_SET_MODE_AND_WAIT(5, 4, 33);
-  t310 = FIELD_AT(0x3000000, s32, 108);
+  t310 = (s32)Ram_HeapSlots->eventWork;
   t311 = FIELD_AT(t310, u16, 452);
   FIELD_AT(t310, u16, 452) = (t311 + 2);
   Actor_FaceDirectionAndWait(5, 0x8000);
@@ -493,7 +494,7 @@ L_0200a9e0:
   FieldEvent_Wait(10);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Func_02003a6c(2);
-  t438 = FIELD_AT(0x3000000, s32, 108);
+  t438 = (s32)Ram_HeapSlots->eventWork;
   FIELD_AT(t438, s32, 428) = 0x200;
   FIELD_AT(t438, s32, 436) = 24;
   Event_FinishScreenTransition();

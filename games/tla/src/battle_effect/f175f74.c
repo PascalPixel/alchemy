@@ -3,6 +3,9 @@
 #include "types.h"
 #include "io_write_queue.h"
 #include "iwram_call.h"
+#include "ram_buffer.h"
+#include "input.h"
+#include "bg_scroll.h"
 
 // A pair of 16.16 scales; the game keeps each start value in the rodata.
 struct ScalePair {
@@ -139,24 +142,6 @@ struct SystemWork {
   s32 (*blitBc)(void *, const void *, s32, s32, s32, s32);
 };
 
-struct Input {
-  u32 unk0;
-  u32 unk4;
-  u32 unk8;
-  u32 pressed;
-};
-
-struct Display1120 {
-  u16 unk0;
-  u16 unk2;
-  u16 unk4;
-};
-
-struct Display11e0 {
-  u32 unk0[4];
-  u32 width;
-};
-
 struct RegisterQueueEntry {
   u32 value;
   u32 address;
@@ -172,20 +157,18 @@ struct RegisterQueue {
 typedef s32 (*DrawRectangleFn)(void *canvas, const void *source, s32 x, s32 y,
                                s32 width, s32 height);
 
-#define SYSTEM_WORK ((struct SystemWork *)0x03000000)
-#define INPUT ((struct Input *)0x03001150)
-#define DISPLAY_1120 ((struct Display1120 *)0x03001120)
-#define DISPLAY_11E0 ((struct Display11e0 *)0x030011e0)
-#define REGISTER_QUEUE ((struct RegisterQueue *)0x020038e0)
+#define SYSTEM_WORK ((struct SystemWork *)Ram_HeapSlots)
+extern u32 gCameraSceneParameters[];
+#define REGISTER_QUEUE ((struct RegisterQueue *)&gIoWriteQueue)
 extern u8 gResourceTableEntries[];
 #define TILE_SLOTS ((struct TileSlot *)gResourceTableEntries)
 extern u8 gMapCellBuffer[];
-#define SPRITES ((struct SpriteObject **)0x02010000)
+#define SPRITES ((struct SpriteObject **)Ram_MapCellBuffer)
 #define SPRITE_BUFFER gMapCellBuffer
 extern u8 gData_02014000[];
 #define OAM_BUFFER ((u32 *)gData_02014000)
-#define REVEAL_BUFFER ((u8 *)0x02014000)
-#define PARTICLES ((struct Particle *)0x02014200)
+#define REVEAL_BUFFER (Ram_MapCellBuffer + 0x4000)
+#define PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 0x4200))
 #define OBJ_VRAM ((u8 *)0x06010000)
 #define BG_VRAM_A900 ((u8 *)0x0600a900)
 #define PLTT ((u16 *)0x05000000)
@@ -339,7 +322,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   canvas = SYSTEM_WORK->canvas;
   work = SYSTEM_WORK->summon;
   unit88 = SYSTEM_WORK->unit88;
-  savedWidth = DISPLAY_1120->unk4;
+  savedWidth = gBgScroll[1].x;
   glyphs = SYSTEM_WORK->glyphs;
   sprites = (struct SpriteObject **)gMapCellBuffer;
   scene = SYSTEM_WORK->scene;
@@ -355,9 +338,9 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, order);
   }
   Func_08163c2c(1, 0);
-  DISPLAY_11E0->width = 240;
+  gCameraSceneParameters[4] = 240;
   unit88->unk10 = 1;
-  DISPLAY_1120->unk4 = 0;
+  gBgScroll[1].x = 0;
   local264.value = 255;
   BattleActor_SpawnObjectsForListFar(&local264, 0);
   REG_WININ = 0x2737;
@@ -437,8 +420,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   posX = 0;
   posZ = 0;
 
-  for (frame = 0; frame != 394 && !(INPUT->pressed & 3); frame++) {
-    u8 *order = (u8 *)0x02014000 + (frame - 244) * 2;
+  for (frame = 0; frame != 394 && !(gInput.repeat & 3); frame++) {
+    u8 *order = REVEAL_BUFFER + (frame - 244) * 2;
 
     t = frame - 32;
     if (t >= 0 && t < 22) {
@@ -497,7 +480,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         u32 *a;
 
         for (i = 0, hidden = (240 << 16) + 160, mask.value = 0xf000,
-            timer = &PARTICLES[0].timer, b = (u32 *)0x02014004, a = OAM_BUFFER;
+            timer = &PARTICLES[0].timer, b = (u32 *)(REVEAL_BUFFER + 4),
+            a = OAM_BUFFER;
              i != 64; i++) {
           s32 t;
 
@@ -912,8 +896,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         struct ScalePair scale136 = Data_08196eb8;
 
         if (frame < 260) {
-          u8 *low = (u8 *)0x02014000;
-          u8 *high = (u8 *)0x02014001;
+          u8 *low = REVEAL_BUFFER;
+          u8 *high = REVEAL_BUFFER + 1;
           /* FAKEMATCH(temporary): orderCopy, a copy of order set again in the
            * loop; as order itself, 20 of 4354 instructions differ in tla-en. */
           u8 *orderCopy = order;
@@ -1413,7 +1397,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   do {
   } while (0);
   CpuFill((void *)0x06004000, 0x4000, 0);
-  DISPLAY_11E0->width = 120;
+  gCameraSceneParameters[4] = 120;
   unit30 = SYSTEM_WORK->unit30;
   shake = 0;
   savedUnit30 = unit30->unk36;
@@ -1485,7 +1469,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   twenty = 20;
   frame = 0;
   do {
-    if ((INPUT->pressed & 3) && frame < 120) {
+    if ((gInput.repeat & 3) && frame < 120) {
       frame = 120;
     }
     if (frame == 0) {
@@ -1648,7 +1632,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     }
     if (frame > 120) {
       if (frame == 121) {
-        DISPLAY_1120->unk4 = savedWidth;
+        gBgScroll[1].x = savedWidth;
         unit88->unk10 = 0;
         unit30->unk36 = savedUnit30;
       }
@@ -1726,7 +1710,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         }
       }
       if (frame >= 0) {
-        DISPLAY_1120->unk4 += 0xfff4;
+        gBgScroll[1].x += 0xfff4;
         BattleEffect_LoadBlitter(104, 27);
         {
           struct Particle *column;

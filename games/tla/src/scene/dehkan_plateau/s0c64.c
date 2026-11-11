@@ -82,7 +82,7 @@ void Func_02000c64(u16 *list) {
     level >>= 19;
     index = Func_02003db0(object);
     cells = (u8 *)map->layers[*layer].cells;
-    grid = FIXED_ADDRESS((u8 *), 0x02024000, gMapShapeGrid);
+    grid = Ram_MapShapeGrid;
     shapes =
         grid + (((struct MapCell *)cells) - (struct MapCell *)Ram_MapCellBuffer);
     object->motionFlags = 0;

@@ -1,5 +1,6 @@
 #include "types.h"
 #include "iwram_call.h"
+#include "ram_buffer.h"
 
 static __inline__ void FillWords_(void *destination, s32 size, u32 value) {
   Iwram_FillWords(destination, size, value);
@@ -18,7 +19,7 @@ void Func_08143354(void) {
   map += 0x40;
   FillWords_((void *)map, 0x80, 0x03ff03ff);
   map += 0x20;
-  tiles = 0x02010200;
+  tiles = (u32)(Ram_MapCellBuffer + 0x200);
   for (row = 0; row != 16; row++) {
     for (column = 0; column != 8; column++) {
       *map++ = tiles;

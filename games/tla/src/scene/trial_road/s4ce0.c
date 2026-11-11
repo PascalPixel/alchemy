@@ -7,9 +7,8 @@ s32 Func_02005a20(s32 layer, s32 shape, s32 height);
 
 void Func_02004ce0(s32 level, s32 layer, s32 owner) {
   struct Actor *object = Actor_GetById(owner);
-  u8 *shape = FIXED_ADDRESS((u8 *), 0x02024000, gMapShapeGrid) +
-              (Ram_HeapSlots->mapWork->layers[layer].cells -
-               (struct MapCell *)Ram_MapCellBuffer);
+  u8 *shape = Ram_MapShapeGrid + (Ram_HeapSlots->mapWork->layers[layer].cells -
+                                  (struct MapCell *)Ram_MapCellBuffer);
   s32 value = Func_02005848(object->terrainId, object->x, object->z);
   s32 height =
       Map_GetTerrainHeight(object->terrainId, object->x, object->z) >> 19;

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #include "event_inline.h"
 
 #define ACTOR_MODE_THEN_WAIT(id, mode, frames)                                 \
@@ -484,13 +485,13 @@ L_0200c400:;
     goto L_0200c434;
   FieldEvent_Wait(25);
   FieldEvent_ShowMessageThenWait(6, 0, 0);
-  *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
-      (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
+  *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
+      (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
   goto L_0200c456;
 L_0200c434:;
   FieldEvent_Wait(40);
-  *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
-      (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
+  *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
+      (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
   FieldEvent_ShowMessageThenWait(6, 0, 0);
 L_0200c456:;
   {
@@ -636,8 +637,8 @@ L_0200c694:;
   FieldEvent_Wait(10);
   goto L_0200c892;
 L_0200c880:;
-  *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
-      (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
+  *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
+      (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
 L_0200c892:;
   Actor_WalkByAndWait(9, -42, 0);
   Actor_FaceDirection(4, 0xc000, 0);
@@ -794,13 +795,13 @@ L_0200cc42:;
     goto L_0200cc7c;
   FieldEvent_Wait(30);
   FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
-  *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
-      (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
+  *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
+      (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
   goto L_0200cca2;
 L_0200cc7c:;
   FieldEvent_Wait(40);
-  *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
-      (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
+  *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
+      (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
   {
     s32 a0 = 0x200a;
     FieldEvent_ShowMessageThenWait(a0, 0, 0);
@@ -849,8 +850,8 @@ L_0200cda2:;
   Actor_FaceDirection(4, 0xc000, 0);
   Actor_FaceDirection(10, 0x4000, 0);
   FieldEvent_Wait(20);
-  *(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) =
-      (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
+  *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
+      (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
   {
     s32 a1 = 0x108;
     s32 a2 = 30;

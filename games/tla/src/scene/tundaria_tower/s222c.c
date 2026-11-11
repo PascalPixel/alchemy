@@ -37,7 +37,7 @@ next:
   flag = table[1];
   nextFlag = flag + 1;
   cells = map->layers[object->terrainId].cells;
-  shapes = FIXED_ADDRESS((u8 *), 0x02024000, gMapShapeGrid) + (cells - (struct MapCell *)Ram_MapCellBuffer);
+  shapes = Ram_MapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
   if (GameFlag_Test(nextFlag)) {
     Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
   } else {

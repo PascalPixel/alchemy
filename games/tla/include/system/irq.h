@@ -43,6 +43,11 @@ extern const u32 IwramIrqModeWord;
 extern const u8 IwramResident_Rom[];
 extern void *gIrqVector;
 
+/// Where System_InstallIwramAndIrqs copies the resident IWRAM code.
+#define Ram_IwramIrqMain FIXED_ADDRESS((u8 *), 0x03000100, IwramIrqMain)
+/// The BIOS's interrupt vector at the top of IWRAM.
+#define Ram_IrqVector FIXED_ADDRESS((void **), 0x03007ffc, gIrqVector)
+
 void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler);
 void System_InstallIwramAndIrqs(void);
 void Irq_Ignore(void);

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -172,11 +173,11 @@ void Func_02002ae4(void) {
   t67 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (t67 == 0) {
     FieldEvent_ShowMessageThenWait(0x1d, 0, 0);
-    FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
-        (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
+    FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
+        (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
   } else {
-    FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
-        (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
+    FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
+        (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
     FieldEvent_ShowMessageThenWait(0x1d, 0, 0);
   }
   Event_PlaySound(0x4e);
@@ -387,8 +388,8 @@ void Func_02002ae4(void) {
   } else {
     W_Func_020058fc(0, 0x107, 0x1e);
     SET_MODE_AND_WAIT(5, 4, 0x21);
-    FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
-        (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 2);
+    FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
+        (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 2);
     Actor_FaceDirectionAndWait(5, 0x8000);
     FieldEvent_ShowMessageThenWait(5, 0, 0);
     Actor_FaceDirectionAndWait(5, 0x4000);
@@ -516,7 +517,7 @@ void Func_02002ae4(void) {
   FieldEvent_Wait(0xa);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Func_02003a6c(2);
-  work = FIELD_AT(0x3000000, s32, 108);
+  work = (s32)Ram_HeapSlots->eventWork;
   FIELD_AT((work + 0x1ac), s32, 0) = 0x200;
   FIELD_AT((work + 0x1b4), s32, 0) = 0x18;
   Event_FinishScreenTransition();

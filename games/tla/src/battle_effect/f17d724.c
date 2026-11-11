@@ -119,7 +119,7 @@ extern struct CornerRow gMapCellBuffer[];
 // 256 sparks. The listing's pool holds this address plus each constant offset
 // as one word (0x02014018, 0x02014e00, 0x02014e18), which only a constant
 // address folds to; through the symbol, each offset becomes an extra add.
-#define SPARKS FIXED_ADDRESS((struct EffectStep *), 0x02014000, gData_02014000)
+#define SPARKS ((struct EffectStep *)(Ram_MapCellBuffer + 0x4000))
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
 extern const u16 gData_08197410[];

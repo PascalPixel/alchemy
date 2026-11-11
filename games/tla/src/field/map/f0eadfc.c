@@ -49,7 +49,7 @@ void Func_080eadfc(void) {
     u8 *grid = gMapShapeGrid;
     struct SwitchCell *cells = *(struct SwitchCell **)((u8 *)map + offset);
     struct SwitchCell *blocks = map->layers[2].cells;
-    s32 index = ((s32)cells - 0x02010000) >> 2;
+    s32 index = ((s32)cells - (s32)Ram_MapCellBuffer) >> 2;
     u8 *shapes;
     u32 key;
     s32 level;

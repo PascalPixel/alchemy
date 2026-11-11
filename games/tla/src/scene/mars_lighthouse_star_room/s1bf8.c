@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #include "event_inline.h"
 
 typedef struct Actor {
@@ -56,7 +57,7 @@ typedef struct IwramGlobals {
   } unk_6c;
 } IwramGlobals;
 
-#define IWRAM ((IwramGlobals *)0x03000000)
+#define IWRAM ((IwramGlobals *)Ram_HeapSlots)
 
 void Func_02001bf8(void) {
   s32 saved[2];

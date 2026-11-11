@@ -1,5 +1,6 @@
 #include "version.h"
 #include "types.h"
+#include "ram_buffer.h"
 #include "actor.h"
 #include "field_sprite.h"
 #include "main_routine_work.h"
@@ -31,7 +32,7 @@ void Func_02000e80(void) {
   u16 *screen;
   s32 zero;
 
-  screen = *(u16 **)0x3000080;
+  screen = (u16 *)Ram_HeapSlots->block32;
   Func_020042dc();
   FieldEvent_ResolvePendingActions(0);
   Message_ShowCentered((s32)MsgMarsStar09, 1);
@@ -210,7 +211,7 @@ L_02008ea2:
   Func_020042e4();
   goto L_020093b0;
 L_0200905c:
-  screen = *(u16 **)0x3000080;
+  screen = (u16 *)Ram_HeapSlots->block32;
   Func_020042dc();
   FieldEvent_ResolvePendingActions(0);
   Message_ShowCentered((s32)MsgMarsStar09, 1);

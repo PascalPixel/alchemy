@@ -3,6 +3,7 @@
 #include "system/iwram_call.h"
 #include "system/irq.h"
 #include "types.h"
+#include "ram_buffer.h"
 typedef volatile u16 vu16;
 typedef volatile u32 vu32;
 typedef volatile s32 vs32;
@@ -119,7 +120,7 @@ struct SystemWork {
   s32 *control;
 };
 
-#define SYSTEM ((struct SystemWork *)0x03000000)
+#define SYSTEM ((struct SystemWork *)Ram_HeapSlots)
 static inline void Iwram_Copy(void *d, const void *s, s32 n) {
   Iwram_CopyWords(d, s, n);
 }
@@ -131,8 +132,8 @@ static inline void Iwram_Copy(void *d, const void *s, s32 n) {
 #define Iwram_Clear Iwram_ClearWords
 extern VramSlot gResourceTableEntries[];
 #define VRAM_SLOTS gResourceTableEntries
-#define DECODE_BUFFER ((u8 *)0x02010000)
-#define PARTICLES ((Particle *)0x02014000)
+#define DECODE_BUFFER Ram_MapCellBuffer
+#define PARTICLES ((Particle *)(Ram_MapCellBuffer + 0x4000))
 extern struct InputState gInput;
 extern s32 gCameraSceneParameters[];
 struct BgScroll {

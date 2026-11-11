@@ -125,9 +125,7 @@ struct WordPair {
 
 extern struct ResourceTableEntry gResourceTableEntries[];
 extern u8 gMapCellBuffer[];
-extern struct EffectStep gData_02015000[];
-#define Ram_EffectSteps                                                        \
-  FIXED_ADDRESS((struct EffectStep *), 0x02015000, gData_02015000)
+#define EFFECT_STEPS ((struct EffectStep *)(Ram_MapCellBuffer + 0x5000))
 extern u8 Data_02014400[];
 extern u8 Data_02014800[];
 extern u32 gCameraSceneParameters[];
@@ -387,7 +385,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     }
     if (frame == 0) {
       for (i = 0; i != 384; i++) {
-        Ram_EffectSteps[i].variant = -1;
+        EFFECT_STEPS[i].variant = -1;
       }
       for (i = 0; i != 64; i++) {
         work->particles[i].variant = -1;
@@ -605,7 +603,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     {
       s32 d = frame - 274;
       if ((u32)d <= 23) {
-        struct EffectStep *p = &(&Ram_EffectSteps[80])[d];
+        struct EffectStep *p = &(&EFFECT_STEPS[80])[d];
         {
           s32 x = ((Random16() & 15) + 52) << 16;
 
@@ -619,7 +617,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 310) {
-      struct EffectStep *p = Ram_EffectSteps;
+      struct EffectStep *p = EFFECT_STEPS;
 
       for (i = 0; i != 80; i++, p++) {
         p->x = ((Random16() & 63) + 28) << 16;
@@ -647,7 +645,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       }
     }
     if (frame <= 359) {
-      p = Ram_EffectSteps;
+      p = EFFECT_STEPS;
 
       for (i = 0; i != 384; i++, p++) {
         if (p->variant >= 0) {
@@ -685,7 +683,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           work->transferMode = 2;
           work->transferValue = 75;
         }
-        p = Ram_EffectSteps;
+        p = EFFECT_STEPS;
         for (i = 0; i != 384; i++, p++) {
           p->variant = Random16() & 3;
           p->x = (Random16() % 160 - 80) << 16;
@@ -698,7 +696,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         }
       }
       if (frame == 540) {
-        struct EffectStep *p = Ram_EffectSteps;
+        struct EffectStep *p = EFFECT_STEPS;
         s32 m;
 
         i = 0;
@@ -709,7 +707,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         }
       }
       {
-        p = Ram_EffectSteps;
+        p = EFFECT_STEPS;
 
         for (i = 0; i != 80; i++, p++) {
           s32 n;
@@ -1105,7 +1103,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       work->transferMode = 3;
       work->transferValue = 0x04040404;
       {
-        struct EffectStep *p = Ram_EffectSteps;
+        struct EffectStep *p = EFFECT_STEPS;
 
         for (i = 0; i != 256; i++, p++) {
           p->x = (Random16() & 127) << 16;
@@ -1118,7 +1116,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       }
     }
     for (i = 0; i != 256; i++) {
-      struct EffectStep *p = &Ram_EffectSteps[i];
+      struct EffectStep *p = &EFFECT_STEPS[i];
 
       if (p->variant >= 0) {
         DRAW_SPARK(p);

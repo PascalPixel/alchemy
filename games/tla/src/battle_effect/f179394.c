@@ -106,8 +106,8 @@ extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_PinkBurstSheet;
 extern char ResourceId_Data0C2;
 extern char ResourceId_OrangePaletteB;
-#define Data_02011000 ((u8 *)0x02011000)
-#define gData_02015000 ((struct EffectStep *)0x02015000) // the embers
+#define TEXTURE_PIXELS (Ram_MapCellBuffer + 0x1000)
+#define EMBERS ((struct EffectStep *)(Ram_MapCellBuffer + 0x5000))
 extern u16 gData_08197410[]; // gBattleEffect_MoteCells
 // Per level (effect->variant): the sparks, their spread, the rings' size
 // and the embers.
@@ -164,7 +164,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                              work->sheet + 0x4000, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, buffer, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Data_02011000, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, TEXTURE_PIXELS, 0, 0);
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
@@ -175,7 +175,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
         work->particles[i].variant = 24;
       }
       for (i = 0; i != 256; i++) {
-        gData_02015000[i].variant = -1;
+        EMBERS[i].variant = -1;
       }
       Sound_PlayFar(140);
     }
@@ -207,13 +207,13 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
           s32 angle;
           s32 speed;
 
-          gData_02015000[i].x = (centerX / 2) << 16;
-          gData_02015000[i].y = ((Random16() & 15) + y + 24) << 16;
+          EMBERS[i].x = (centerX / 2) << 16;
+          EMBERS[i].y = ((Random16() & 15) + y + 24) << 16;
           angle = (Random16() & 0x7fff) + 0x4000;
           speed = (Random16() & 255) + 127;
-          gData_02015000[i].velocityX = (Trig_Sin(angle) * speed) >> 5;
-          gData_02015000[i].velocityY = (Trig_Cos(angle) * speed) >> 5;
-          gData_02015000[i].variant = (Random16() & 15) + 16;
+          EMBERS[i].velocityX = (Trig_Sin(angle) * speed) >> 5;
+          EMBERS[i].velocityY = (Trig_Cos(angle) * speed) >> 5;
+          EMBERS[i].variant = (Random16() & 15) + 16;
         }
         Func_081180e8(145);
         for (i = 0; i != effect->count; i++) {
@@ -245,7 +245,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
       }
       i = 0;
       if (i != Data_08199400[effect->variant][3]) {
-        particle = gData_02015000;
+        particle = EMBERS;
         do {
           if (particle->variant >= 0) {
             s32 size = (particle->variant >> 3) + 1;
@@ -314,7 +314,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
           scale += 0x4000;
           shade = 512 - frame * 8;
           model->shade = shade;
-          texture.pixels = Data_02011000;
+          texture.pixels = TEXTURE_PIXELS;
         }
         if (scale > 0 && shade > -64) {
           Func_0801521c(scale);

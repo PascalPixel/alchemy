@@ -57,7 +57,7 @@ void Party_AddActiveOwner(s32 id);
        ->v)
 #define PARTY_WORD(party, index) FIELD_AT(party, u32, 4 * (index))
 
-#define Ram_MapCellBackup FIXED_ADDRESS((u8 *), 0x02013000, gMapCellBackup)
+#define MAP_CELL_BACKUP (Ram_MapCellBuffer + 0x3000)
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define YEAH_WIDTH 6
@@ -76,7 +76,7 @@ void Party_AddActiveOwner(s32 id);
   COPY_CELLS(Ram_MapCellBuffer, cells)
 #define RESTORE_CELLS()                                                        \
   {                                                                            \
-    COPY_CELLS(Ram_MapCellBackup, cells);                                      \
+    COPY_CELLS(MAP_CELL_BACKUP, cells);                                        \
     COPY_CELLS(cells, Ram_MapCellBuffer);                                      \
   }
 
@@ -179,7 +179,7 @@ top:
         RESTORE_CELLS()
         if (status == -1)
           goto enter;
-        Func_02002370(Ram_MapCellBackup, 0, 0);
+        Func_02002370(MAP_CELL_BACKUP, 0, 0);
       } else if (result == 0) {
         SAVE_CELLS();
         Func_02002350();
@@ -192,7 +192,7 @@ top:
         Func_02000e44();
         RESTORE_CELLS()
 #endif
-        Func_02002370(Ram_MapCellBackup, 1, 0);
+        Func_02002370(MAP_CELL_BACKUP, 1, 0);
       }
     } else {
       Func_02002398();
@@ -231,7 +231,7 @@ top:
 
             Func_0803f9c0(party->paletteGlow[0], party->paletteGlow[1]);
             RESTORE_CELLS()
-            Func_020023a0(Ram_MapCellBackup);
+            Func_020023a0(MAP_CELL_BACKUP);
             party->unk284[3] = 1;
           }
           goto leave;
@@ -342,7 +342,7 @@ again:
     RESTORE_CELLS()
     if (status == -1)
       goto again;
-    Func_02002370(Ram_MapCellBackup, 0, 1);
+    Func_02002370(MAP_CELL_BACKUP, 0, 1);
   } else if (result == 0) {
     SAVE_CELLS();
     Func_02002350();
@@ -350,7 +350,7 @@ again:
     RESTORE_CELLS()
     if (status == -1)
       goto again;
-    Func_02002370(Ram_MapCellBackup, 1, 1);
+    Func_02002370(MAP_CELL_BACKUP, 1, 1);
   }
   if (gData_020024f6 != 0 || gData_020024f8 != 0) {
     i = 0;

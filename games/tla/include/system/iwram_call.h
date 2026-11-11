@@ -16,6 +16,9 @@
   FIXED_ADDRESS((s32 (*)(s32 divisor, s32 value)), 0x03000230, IwramRatioMulQ14)
 #define Iwram_SqrtEntry                                                        \
   FIXED_ADDRESS((s32 (*)(s32 value)), 0x030002d4, IwramSqrt)
+#define Iwram_ExpandBitRuns                                                    \
+  FIXED_ADDRESS((s32 (*)(const void *bits, void *destination, s32 value)),     \
+                0x03000314, IwramExpandBitRuns)
 #define Iwram_TransformMatrixEntry                                             \
   FIXED_ADDRESS((void (*)(const s32 *matrix)), 0x030003c8, IwramTransformMatrix)
 /// Reads all three word-aligned coordinates before writing the result. Input
@@ -51,5 +54,9 @@
 /// Iwram_CopyWords's offset from IwramIrqMain, for the callers that reach it
 /// from the linked IWRAM code rather than at its fixed address.
 #define Iwram_CopyWordsOffset FIXED_OFFSET(0x630, IwramCopyWords, IwramIrqMain)
+
+/// Iwram_MulQ16's offset from IwramIrqMain, for the callers that reach it
+/// from the linked IWRAM code rather than at its fixed address.
+#define Iwram_MulQ16Offset FIXED_OFFSET(0x11c, IwramMulQ16, IwramIrqMain)
 
 #endif

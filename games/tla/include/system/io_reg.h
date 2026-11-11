@@ -152,6 +152,13 @@ enum DisplayControl {
 /// the palette stores it: blue in the high bits.
 #define RGB(r, g, b) (((b) << 10) | ((g) << 5) | (r))
 
+/// The start of the 32 KB of IWRAM, the CPU's fast internal work memory, as
+/// pret names it.
+#define IWRAM_START 0x03000000
+/// The end of the 256 KB of EWRAM from 0x02000000, as pret names it: the limit
+/// the EWRAM heap's allocators test.
+#define EWRAM_END 0x02040000
+
 #define BG_CHAR_BLOCK(n) ((u8 *)0x06000000 + (n) * 0x4000)
 #define BG_SCREEN_BLOCK(n) ((u8 *)0x06000000 + (n) * 0x800)
 #define TILE_SIZE_4BPP 32

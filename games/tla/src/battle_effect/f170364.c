@@ -112,8 +112,8 @@ extern char ResourceId_SparkleDots;
 extern char ResourceId_MarsDjinnSheet;
 extern char ResourceId_OrangePaletteB;
 extern char ResourceId_TanPalette;
-#define gMapCellBuffer ((struct EffectStep *)Ram_MapCellBuffer) // 512 sparks
-#define gData_02014000 FIXED_ADDRESS((u8 *), 0x02014000, gData_02014000)
+#define SPARKS ((struct EffectStep *)Ram_MapCellBuffer) // 512 sparks
+#define PICTURES (Ram_MapCellBuffer + 0x4000)
 struct Point {
   s32 x;
   s32 y;
@@ -153,7 +153,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   sprites = Ram_HeapSlots->unk64[0];
-  pictures = gData_02014000;
+  pictures = PICTURES;
   Func_0813ba50();
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
@@ -188,7 +188,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
     p->variant = ~i;
   }
   for (i = 0; i != 512; i++) {
-    gMapCellBuffer[i].variant = -1;
+    SPARKS[i].variant = -1;
   }
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
@@ -231,7 +231,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
       Func_0816442c(4, position.x, position.y);
       if (frame == 108) {
         for (i = 0; i != 512; i++) {
-          gMapCellBuffer[i].variant = -1;
+          SPARKS[i].variant = -1;
         }
       }
       {
@@ -247,7 +247,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
               s32 angle;
               s32 radius;
 
-              cell = &gMapCellBuffer[((t << 5) + i) & 511];
+              cell = &SPARKS[((t << 5) + i) & 511];
               angle = Random16();
               radius = (Random16() & 31) + 16;
               cell->x = Trig_Sin(angle) * radius + half + 0x100000;
@@ -341,14 +341,14 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
       }
     }
     if (frame > 107) {
-      for (i = 0, p = gMapCellBuffer; i != 512; i++, p++) {
+      for (i = 0, p = SPARKS; i != 512; i++, p++) {
         s32 k;
 
         if ((u32)p->variant > 35) {
           continue;
         }
         k = (p->variant / 2) % 9;
-        blitters[0](canvas, (gData_02014000 + 0x2e16) + Data_0819744c[k],
+        blitters[0](canvas, (PICTURES + 0x2e16) + Data_0819744c[k],
                     HI(p->x) - Data_0819745e[k] / 2,
                     HI(p->y) - Data_0819745e[k] / 2, Data_0819745e[k],
                     Data_0819745e[k]);
@@ -401,7 +401,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
           }
           if (frame == start + 10) {
             for (j = 0; j != 256; j++) {
-              struct EffectStep *spark = &gMapCellBuffer[i * 256 + j];
+              struct EffectStep *spark = &SPARKS[i * 256 + j];
               s32 angle = Random16() & 0x7fff;
               s32 speed = Random16() & 255;
 
@@ -414,8 +414,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
           }
           if (frame >= start + 10 && frame < start + 18) {
             blitters[0](canvas,
-                        (gData_02014000 + 0xc56) +
-                            (((frame + i) / 4) & 3) * 2880,
+                        (PICTURES + 0xc56) + (((frame + i) / 4) & 3) * 2880,
                         column - 12, 0, 24, 112);
           }
           if (frame >= start + 10) {
@@ -432,7 +431,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
               Func_08196404(188, 7, 7, 3 | Data_08198bf4[Random16() & 3],
                             Data_08198bf8[effect->variant]);
               ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
-                  canvas, gData_02014000 + gData_08197486[k], gx - 4, gy + 40,
+                  canvas, PICTURES + gData_08197486[k], gx - 4, gy + 40,
                   gData_08197492[k], gData_08197498[k]);
               j++;
               HeapSlot_Release(188);
@@ -443,7 +442,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
       BattleEffect_LoadBlitter(188, 3);
       rects[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
       if (frame <= 69) {
-        for (i = 0, p = gMapCellBuffer; i != 512; i++, p++) {
+        for (i = 0, p = SPARKS; i != 512; i++, p++) {
           s32 size;
 
           if (p->variant < 0) {

@@ -1501,11 +1501,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     s32 slideStep;
     u8 *bolts;
     void *quads = Data_02011000;
-    void *strip = FIXED_ADDRESS((u8 *), 0x02012000, Data_02012000);
+    void *strip = Ram_MapCellBuffer + 0x2000;
     struct EffectStep *steps = Data_02016d00;
     struct EffectStep *debris = &Data_02016d00[64];
 
-    bolts = FIXED_ADDRESS((u8 *), 0x02014000, gData_02014000);
+    bolts = Ram_MapCellBuffer + 0x4000;
     slide = 0;
     slideStep = 0;
     FILL_WORDS(canvas, 0x4000, 0x3f3f3f3f);
@@ -1551,8 +1551,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         work->transferMode = 3;
         work->transferValue = 0x02020202;
         for (i = 0; i != 164; i++) {
-          FIXED_ADDRESS((struct EffectStep *), 0x02016d00, Data_02016d00)
-          [i].variant = -1;
+          ((struct EffectStep *)(Ram_MapCellBuffer + 0x6d00))[i].variant = -1;
         }
         slide = 0x800000;
         slideStep = 0;

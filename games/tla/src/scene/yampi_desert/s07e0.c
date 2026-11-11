@@ -45,7 +45,8 @@ next:
     if (!set) {
       s32 layer = object->terrainId;
       struct MapCell *cells = map->layers[layer].cells;
-      u8 *shapes = (u8 *)((((s32)cells - 0x02010000) >> 2) + (s32)grid);
+      u8 *shapes =
+          (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
       /* FAKEMATCH(pin): the index in r10; as a plain local, 32 of 130 instructions
        * differ in tla-en. */
       register s32 index asm("r10") = Func_020041e0(object);

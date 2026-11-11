@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -8,5 +9,5 @@
 
 
 void Func_02000440(void) {
-  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x16a), u16, 0) = 0x21;
+  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x16a), u16, 0) = 0x21;
 }

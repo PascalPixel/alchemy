@@ -14,6 +14,8 @@ Cartridge_Restart:
 	.ascii	"GOLDEN_SUN_B"
 	.endif
 	.ascii	"AGF"				@ Game code.
+	.global gRom_LanguageCode
+gRom_LanguageCode:
 	.ifdef TLA_EDITION_JA
 	.ascii	"J"
 	.endif

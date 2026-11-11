@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #include "scene_tables.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
@@ -18,7 +19,7 @@ s32 Func_020007d4(void) {
   s32 t1, t2, t3, t4, t9, t10, t11, t23, t24, t25, t37, t39, t41, t44, t50, t51,
       t53, t56, t58, t60;
 
-  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x100;
+  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x100;
   t1 = GameFlag_Test(0x8a7);
   if (t1 == 0)
     goto L_020088aa;

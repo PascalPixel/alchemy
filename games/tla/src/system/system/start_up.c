@@ -24,7 +24,7 @@ void Func_0801319c(void) {
     dma0[5];
   }
   Io_Write16(WAITCNT_GAME, &REG_WAITCNT);
-  Dma_Fill32(0, (void *)0x03000000, 0x7800);
+  Dma_Fill32(0, (void *)IWRAM_START, 0x7800);
   Heap_Initialize();
   System_InstallIwramAndIrqs();
   *(u32 *)&gIoWriteQueue.count = 0;
@@ -60,17 +60,13 @@ void System_Halt(void) {
 }
 
 #if (LANGUAGE != LANGUAGE_JAPANESE) && (LANGUAGE != LANGUAGE_ENGLISH)
-/// The last letter of the game code in the cartridge header (rom_header.s): D,
-/// F, I or S in the European editions.
-#define CARTRIDGE_LANGUAGE_CODE (*(const u8 *)0x080000af)
-
 /// Returns the language of this cartridge from the last letter of the game
 /// code in its header, as an enum CartridgeLanguage. Only the German,
 /// Spanish, French and Italian editions have it.
 s32 System_GetLanguage(void) {
   s32 language;
 
-  switch (CARTRIDGE_LANGUAGE_CODE) {
+  switch (Cart_LanguageCode) {
   case 'D':
     language = CARTRIDGE_LANGUAGE_GERMAN;
     break;
@@ -181,9 +177,8 @@ void Irq_Ignore(void) {}
 
 void System_InstallIwramAndIrqs(void) {
   Io_Write16(0, &REG_IME);
-  Dma_Set(IwramResident_Rom, FIXED_ADDRESS((u8 *), 0x03000100, IwramIrqMain),
-          DMA_COPY_WORDS(1024), REG_DMA3);
-  *FIXED_ADDRESS((void **), 0x03007ffc, gIrqVector) = IwramIrqMain;
+  Dma_Set(IwramResident_Rom, Ram_IwramIrqMain, DMA_COPY_WORDS(1024), REG_DMA3);
+  *Ram_IrqVector = IwramIrqMain;
   Dma_Set(gDefaultIrqHandlers, gIrqHandlers, DMA_COPY_WORDS(IRQ_COUNT),
           REG_DMA3);
   Io_Write16(0, &REG_DISPSTAT);
@@ -191,5 +186,3 @@ void System_InstallIwramAndIrqs(void) {
   Io_Write16(INTR_FLAG_VBLANK | INTR_FLAG_KEYPAD | INTR_FLAG_GAMEPAK, &REG_IE);
   Io_Write16(1, &REG_IME);
 }
-
-#undef CARTRIDGE_LANGUAGE_CODE

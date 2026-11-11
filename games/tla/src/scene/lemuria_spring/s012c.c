@@ -4,6 +4,7 @@
 /// 1 and flag 0x200 is set, it sets the blend's weights again.
 
 #include "types.h"
+#include "ram_buffer.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -24,7 +25,7 @@ s32 Func_0200012c(void) {
   s32 blend;
   s32 alpha;
 
-  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x100;
+  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x100;
   t0 = (s32)Actor_Get(FIELD_AT(gMainRoutineWork, s32, 532));
   FIELD_AT((t0 + 0x23), u8, 0) = (0x20 | FIELD_AT((t0 + 0x23), u8, 0));
   blend = 0x3f42;

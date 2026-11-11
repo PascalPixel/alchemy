@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #include "call.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
@@ -41,7 +42,7 @@ s32 Func_02001e64(void) {
   s32 t132, t136;
   s32 v_two;
 
-  v_r2 = 0x3000000;
+  v_r2 = (s32)Ram_HeapSlots;
   v_r7 = 0x204;
   v_r6 = (s32)&gMainRoutineWork;
   FIELD_AT(FIELD_AT(v_r2, s32, 108), s32, 428) = v_r7;

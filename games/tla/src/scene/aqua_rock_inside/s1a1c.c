@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #include "scene_tables.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
@@ -31,8 +32,8 @@ void Func_02001a1c(void) {
   goto L_02009c56;
 L_02009a46:
   FieldEvent_SetMessageId((s32)&MsgCheckedTheTabletIt);
-  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), s16, 0) =
-      (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
+  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), s16, 0) =
+      (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
   Func_02003de4(7, gMainRoutineWork.currentOwner);
   FieldEvent_Wait(1);
   Actor_WalkTo(gMainRoutineWork.currentOwner, 256, 184);

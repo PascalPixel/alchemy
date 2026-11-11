@@ -126,7 +126,7 @@ extern struct ModelVertex gMapCellBuffer[];
 #define VERTICES ((struct ModelVertex *)Ram_MapCellBuffer)
 extern u8 gData_02014000[];
 extern u8 Data_02012000[];
-#define Ram_MeshBuffer FIXED_ADDRESS((u8 *), 0x02012000, Data_02012000)
+#define MESH_BUFFER (Ram_MapCellBuffer + 0x2000)
 extern u8 Data_02012540[];       // the mesh's end, after 112 faces
 extern const s8 Data_08198b7a[]; // the cone's ring heights
 extern const s8 Data_08198b82[]; // and radii
@@ -234,7 +234,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
             VERTICES[row * 8 + column].y = -height;
             VERTICES[row * 8 + column].z = (Trig_Cos(angle) * radius) >> 16;
             if (row <= 6) {
-              u8 *quad = Ram_MeshBuffer + (row * 8 + column) * 24;
+              u8 *quad = MESH_BUFFER + (row * 8 + column) * 24;
               u8 *quad2;
               s32 bottom = row * 8 + 7;
               s32 left = column * 16;
@@ -248,7 +248,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
               quad[9] = bottom;
               quad[7] = bottom;
               quad[8] = left;
-              quad2 = Ram_MeshBuffer + 12 + (row * 8 + column) * 24;
+              quad2 = MESH_BUFFER + 12 + (row * 8 + column) * 24;
               quad2[4] = left;
               quad2[8] = left;
               quad2[5] = row * 8;

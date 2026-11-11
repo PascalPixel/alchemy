@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -84,12 +85,12 @@ void Func_02000e30(void) {
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     FieldEvent_Wait(15);
     Event_ShowMessage(0x2019, 0);
-    FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
-        (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
+    FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
+        (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
   } else {
     FieldEvent_Wait(35);
-    FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
-        (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
+    FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
+        (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
     Event_ShowMessage(0x2019, 0);
   }
   Actor_FaceDirection(7, 0, 0);
@@ -119,16 +120,16 @@ void Func_02000e30(void) {
     Actor_FaceDirectionAndWait(6, 0xc000);
     FieldEvent_Wait(10);
     Event_ShowMessage(6, 0);
-    FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
-        (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
+    FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
+        (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
   } else {
     FieldEvent_Wait(40);
     Actor_SetAnimationAndWait(6, 3);
     FieldEvent_Wait(10);
     Actor_FaceDirectionAndWait(6, 0xc000);
     FieldEvent_Wait(10);
-    FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
-        (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
+    FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
+        (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
     Event_ShowMessage(6, 0);
   }
   Actor_FaceDirectionAndWait(25, 0x5000);
@@ -675,14 +676,14 @@ void Func_02000e30(void) {
     FieldEvent_Wait(15);
     Actor_ShowEmote(0x1c, 0x102, 0x1e);
     Event_ShowMessage(0x1c, 0);
-    FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
-        (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
+    FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
+        (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
   } else {
     Func_02000e04(5, 6);
     FieldEvent_Wait(35);
     Actor_ShowEmote(0x1c, 0x105, 0x1e);
-    FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
-        (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
+    FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
+        (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
     Event_ShowMessage(0x1c, 0);
   }
   Actor_FaceDirection(4, 0x8000, 0);

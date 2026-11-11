@@ -130,7 +130,7 @@ struct WingVertex {
 };
 
 extern u8 gMapCellBuffer[];
-#define gData_02014000 FIXED_ADDRESS((u8 *), 0x02014000, gData_02014000)
+#define SCRATCH (Ram_MapCellBuffer + 0x4000)
 extern u8 Data_02010ae8[];
 extern u8 Data_02010be0[];
 extern u8 Data_02010fa0[];
@@ -185,7 +185,7 @@ void BattleEffect_ProcessPendingStampTransfer(
     void); // copies the 0x6780 canvas to the stamp's tiles
 void Heap_Release(void *buffer);
 
-#define SPARKS ((struct EffectStep *)gData_02014000)
+#define SPARKS ((struct EffectStep *)SCRATCH)
 #define SLOT_ALT 188 // unkb8[1]
 #define STAMP_TILES(work) (*(u32 *)((u8 *)(work) + 0x7b74))
 #define STAMP_CANVAS(work) ((u8 *)(work) + 0x6780)
@@ -292,7 +292,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     u8 *c = work->sheet;
 
     Resource_LoadAndDecompress((s32)&ResourceId_Data0F7, c, 0, 0);
-    Func_0816ae40(c, gData_02014000, 64, 64);
+    Func_0816ae40(c, SCRATCH, 64, 64);
     Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, c, 1, 0);
     for (i = 0; i != 0x1781; i++, c++) {
       u8 v = *c;
@@ -688,7 +688,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         model = Render_AllocateModelList(1);
         texture2.logWidth = 7;
         texture2.logHeight = 7;
-        texture2.pixels = gData_02014000;
+        texture2.pixels = SCRATCH;
         model->shade = 0;
         model->kind = 7;
         model->texture = &texture2;
@@ -971,7 +971,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     }
     {
       for (i = 0; i != 512; i++) {
-        struct EffectStep *p = &((struct EffectStep *)0x02014000)[i];
+        struct EffectStep *p = &((struct EffectStep *)SCRATCH)[i];
         if (p->variant >= 0) {
           s32 n = (p->variant >> 3) + 1;
 
@@ -987,8 +987,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
 
       // The spark row keeps frame * 2 + frame: frame * 3 folds with the row's
       // size.
-      for (i = 0,
-          p = ((struct EffectStep(*)[4])gData_02014000)[frame * 2 + frame];
+      for (i = 0, p = ((struct EffectStep(*)[4])SCRATCH)[frame * 2 + frame];
            i != 12; i++, p++) {
         s32 angle;
         s32 speed;

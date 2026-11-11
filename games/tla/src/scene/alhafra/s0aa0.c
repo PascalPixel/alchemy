@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -305,7 +306,7 @@ void Func_02000aa0(s32 a0) {
   FieldEvent_ShowMessageThenWait(0x101e, 0, 0xa);
   Motion_SetVarCbAndRefresh(17, 2);
   Event_Wait(10);
-  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1b8), s32, 0) = 0;
+  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1b8), s32, 0) = 0;
   FieldEvent_ShowMessageThenWait(0x11, 0, 0xa);
   Motion_SetModeAndWaitAnimation(30, 3);
   Event_Wait(20);

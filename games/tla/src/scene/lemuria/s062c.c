@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "call.h"
 #include "scene_tables.h"
@@ -32,7 +33,7 @@ void Func_0200062c(void) {
   if (t2 == 0)
     goto L_02008666;
 L_02008654:
-  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x15a), s16, 0) = 1;
+  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x15a), s16, 0) = 1;
   goto L_020088d4;
 L_02008666:
   t3 = Event_GetFlag(0x966);

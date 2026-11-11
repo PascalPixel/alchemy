@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "scene_tables.h"
 #include "event_inline.h"
@@ -17,7 +18,7 @@ s32 Func_02000330(void) {
 
   t1 = ((s32)Actor_GetById(gMainRoutineWork.currentOwner));
   v_r5 = t1;
-  v_r6 = FIELD_AT(0x3000000, s32, 108);
+  v_r6 = (s32)Ram_HeapSlots->eventWork;
   t2 = GameFlag_Test(0x9ff);
   if (t2 == 0)
     goto L_02008400;

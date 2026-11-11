@@ -84,6 +84,8 @@ AlchemyUncreditedEnd_0800088e:
 	bne	.L_030002e8
 	bx	lr
 	.thumb
+	.global IwramExpandBitRuns
+IwramExpandBitRuns:
 	bx	pc
 AlchemyUncredited_080008ce:
 	.2byte	0x0200

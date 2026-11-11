@@ -7,8 +7,6 @@
 #include "resource.h"
 #include "graphics.h"
 
-#define Ram_Data_02038000 FIXED_ADDRESS((u8 *), 0x02038000, gData_02038000)
-
 /// One word of the table at Ram_MapBlocks, 32 words to a row.
 struct Data02020000 {
   u32 unk0 : 24;
@@ -73,20 +71,19 @@ void Func_0802be4c(s32 x, s32 z) {
                         Ram_MapCollision + 0x1000);
   Func_0802cc9c((const u16 *)(Ram_MapCollision + 0x1000));
   Resource_DecodeType01(Resource_GetTableEntry(resources[2]), Ram_MapCollision);
-  Resource_DecodeType01(Resource_GetTableEntry(resources[3]),
-                        Ram_Data_02038000);
-  Dma_Set(Ram_Data_02038000, BG_CHAR_BLOCK(2), DMA_COPY_WORDS(2048), REG_DMA3);
+  Resource_DecodeType01(Resource_GetTableEntry(resources[3]), Ram_BgTileBuffer);
+  Dma_Set(Ram_BgTileBuffer, BG_CHAR_BLOCK(2), DMA_COPY_WORDS(2048), REG_DMA3);
   Resource_DecodeType01(Resource_GetTableEntry(resources[4]),
-                        Ram_Data_02038000 + 0x2000);
-  Dma_Set(Ram_Data_02038000 + 0x2000, BG_CHAR_BLOCK(2) + 0x2000,
+                        Ram_BgTileBuffer + 0x2000);
+  Dma_Set(Ram_BgTileBuffer + 0x2000, BG_CHAR_BLOCK(2) + 0x2000,
           DMA_COPY_WORDS(2048), REG_DMA3);
   Resource_DecodeType01(Resource_GetTableEntry(resources[5]),
-                        Ram_Data_02038000 + 0x4000);
-  Dma_Set(Ram_Data_02038000 + 0x4000, BG_CHAR_BLOCK(3), DMA_COPY_WORDS(2048),
+                        Ram_BgTileBuffer + 0x4000);
+  Dma_Set(Ram_BgTileBuffer + 0x4000, BG_CHAR_BLOCK(3), DMA_COPY_WORDS(2048),
           REG_DMA3);
   Resource_DecodeType01(Resource_GetTableEntry(resources[6]),
-                        Ram_Data_02038000 + 0x6000);
-  Dma_Set(Ram_Data_02038000 + 0x6000, BG_CHAR_BLOCK(3) + 0x2000,
+                        Ram_BgTileBuffer + 0x6000);
+  Dma_Set(Ram_BgTileBuffer + 0x6000, BG_CHAR_BLOCK(3) + 0x2000,
           DMA_COPY_WORDS(2048), REG_DMA3);
   Resource_DecodeType01(Resource_GetTableEntry(resources[7]), gData_02028000);
   Resource_DecodeType01(Resource_GetTableEntry(resources[8]), gWorldMapWork);

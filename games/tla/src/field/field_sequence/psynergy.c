@@ -1,55 +1,18 @@
-#include "types.h"
-#include "ram_buffer.h"
-#include "main_routine_work.h"
-#include "actor.h"
-#include "field/event_work.h"
-#include "scene_ids.h"
+/// @file
+/// Using Psynergy on the field.
+// Part of field_sequence.c.
 
-struct PendingEvent {
-  u8 unk00[4];
-  u16 trigger;
-};
-
-struct BattleAct {
-  u8 unk00[6];
-  u8 group;
-  u8 unk07[2];
-  u8 ppCost;
-};
-
-struct FieldUnit {
-  u8 unk00[58];
-  s16 pp;
-};
-
-extern char MsgKey0dba, MsgKey0dbb, MsgKey0dbc,
-    MsgKey0dbd;
+#include "../field_sequence_internal.h"
 
 struct BattleAct *BattleAction_Get(s32 actionId);
-struct FieldUnit *Unit_Get(s32 unitId);
-void Unit_AddPpFar(s32 unitId, s32 amount);
-void Leader_StopMoving(void);
-void GameFlag_ClearBit(s32 flag);
-void GameFlag_SetBit(s32 flag);
-s32 GameFlag_Test(s32 flag);
-void MessageArgument_PushFar(s32 value, s32 kind);
-void FieldMessage_ShowFar(s32 message, s32 mode);
 s32 Func_080d295c(s32 cursor);
-void Message_CloseFinishedWindowsFar(void);
-s32 Func_080ce31c(s32 kind);
-struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector);
-void Field_RunPsynergyEvent(struct PendingEvent *event, s32 a, s32 b);
-s32 Event_ExecutePackedAction(u32 action);
-s32 Party_GetLeaderActor(void);
 s32 Func_080dbcd8(s32 x, s32 z, s32 terrain);
-void BattleEffect_LoadActionEffectResources(s32 action, s32 mode);
 void BattleEffect_SetupObjectPair(s32 caster, s32 target);
 void Func_080dc6d8(void);
 void BattleEffect_DispatchRequestKind(void);
 void BattleEffect_Run(void);
 void BattleEffect_StopMainActor(void);
 void BattleEffect_ClearChildValueOnMismatch(void);
-void BattleEffect_CleanupSceneObjects(void);
 
 #define FIELD_PSYNERGY_MESSAGE(user, ability, message)                         \
   (MessageArgument_PushFar((user), 1), MessageArgument_PushFar((ability), 4),          \
@@ -59,7 +22,7 @@ s32 Func_080ce61c(u32 code) {
   u8 *event = Ram_HeapSlots->eventWork;
   s32 abilityId = code & 0x3ff;
   struct PendingEvent *before;
-  s32 group = BattleAction_Get(abilityId)->group;
+  s32 group = BattleAction_Get(abilityId)->fieldEffect;
   s32 userId = (code >> 10) & 15;
   s32 retreat = 0;
   struct PendingEvent *after;
@@ -174,7 +137,7 @@ s32 Func_080ce61c(u32 code) {
     if (selector != -1 && (selector & 0x100))
       target = selector & 0xff;
     GameFlag_SetBit(321);
-    if (after != NULL && (after->trigger & 0x400)) {
+    if (after != NULL && (after->flags & 0x400)) {
       GameFlag_ClearBit(320);
       GameFlag_ClearBit(321);
     }
@@ -184,18 +147,18 @@ s32 Func_080ce61c(u32 code) {
   {
     u32 zero = 0;
 
-    if (before != NULL && (before->trigger & 0x200)) {
+    if (before != NULL && (before->flags & 0x200)) {
       effect = Ram_HeapSlots->effectWork;
       effect[34] = zero;
       effect[35] = zero;
     }
   }
-  if (after != NULL && (after->trigger & 0x200)) {
+  if (after != NULL && (after->flags & 0x200)) {
     effect = Ram_HeapSlots->effectWork;
     effect[34] = 0;
     effect[35] = 0;
   }
-  if (during != NULL && (during->trigger & 0x200)) {
+  if (during != NULL && (during->flags & 0x200)) {
     effect = Ram_HeapSlots->effectWork;
     effect[34] = 0;
     effect[35] = 0;
@@ -225,4 +188,42 @@ s32 Func_080ce61c(u32 code) {
   GameFlag_ClearBit(320);
   GameFlag_ClearBit(321);
   return 0;
+}
+
+s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode,
+                                 s32 target) {
+  if (event != NULL) {
+    if (event->action != 0) {
+      if (event->action < 0x10000) {
+        Event_Start();
+        Event_SetMessageId(event->action);
+        Event_ShowMessageAndWait(target, 0);
+        Event_End();
+      } else {
+        ((void (*)(s32, s32))event->action)(mode, target);
+      }
+    }
+    if (GameFlag_Test(0x142)) {
+      Event_Start();
+      FieldMessage_ShowFar((s32)MsgNothingHappens, 1);
+      Event_End();
+    }
+  }
+  return 0;
+}
+
+struct PendingEvent;
+
+s32 BattleEffect_HasMatchingEvent5(s32 effectId) {
+  u16 kind = effectId;
+  s32 result = (s32)Func_080ce458(0xf0000005, kind, Func_080ce31c(kind));
+
+  return (u32)((-result) | result) >> 31;
+}
+
+u32 BattleEffect_HasTrigger(u16 effectId) {
+  s32 result;
+
+  result = Event_FindFacingTrigger(effectId);
+  return (u32)((0 - result) | result) >> 31;
 }

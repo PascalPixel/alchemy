@@ -52,17 +52,6 @@ struct FieldWork {
   u8 unkd38[0x18];
 };
 
-struct FieldUnit {
-  u8 unk00[20];
-  s16 hpGauge;
-  s16 ppGauge;
-  u8 unk18[28];
-  s16 maxHp;
-  s16 maxPp;
-  s16 hp;
-  s16 pp;
-};
-
 extern u8 gDebugMode;
 extern u8 gMapCellBuffer[];
 extern u8 gResourceBlockOwners[];
@@ -74,7 +63,6 @@ void Func_08020108(s32 map);
 void Func_080e2718(void);
 void WindowSystem_InitFieldFar(void);
 void ObjectSystem_InitializeFar(s32 mode);
-void Func_080cec34(void);
 void Func_080d784c(void);
 void Map_UpdateCurrentTileBlockFar(void);
 void WorldMap_LoadGraphicsFar(s32 x, s32 z);
@@ -94,7 +82,6 @@ void Func_08038200(s32 scene);
 s32 Func_080d25c8(s32 item);
 s32 PartyInventory_GiveItem(s32 item);
 void Leader_StopMoving(void);
-void MessageArgument_PushFar(s32 value, s32 kind);
 s32 Func_080ed2a4(s32 mode);
 void BattleEffect_RunVisibilityTransition(void);
 void Func_080d5720(void);

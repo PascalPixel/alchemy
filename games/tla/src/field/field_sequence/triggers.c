@@ -193,30 +193,18 @@ struct TalkEvent {
   s32 script;
 };
 
-void Marker_MoveLeaderAwayFromEmitter(void);
 extern const u8 gActor_StepAngleScript[];
 
-struct ContainerRow *Func_080ceba8(void);
 void Event_Start(void);
 void Event_End(void);
-void ObjectEvent_SetMode2(s32 id);
-void ObjectEvent_SetMode4WithCue(s32 id);
-void ObjectEvent_SetMode5WithCue(s32 id);
-void ObjectEvent_SetMode6WithCue(s32 id);
-struct Actor *ObjectEvent_GetObject(s32 id);
-void ObjectEvent_Remove(s32 id);
-void ObjectEvent_Spring(s32 id);
-void Func_080cf350(struct Actor *object);
 void PartyStatus_CreateWindowFar(s32 layout);
 void PartyStatus_CloseFar(void);
 void Event_Wait(s32 frames);
 void Func_080ea14c(s32 targetId);
 void Func_08038340(s32 value);
 void Func_080ad2f8(s32 value);
-s32 Actor_GetSpriteShape(s32 id);
 void Party_AdjustCoinsFar(s32 amount);
 void Actor_Destroy(struct Actor *object);
-void Actor_ReleaseIfPresent(struct Actor *object);
 s32 PartyInventory_AddFar(s32 item);
 s32 BattleEffect_GetFlags(s32 id);
 void Actor_TurnToFaceEachOther(s32 first, s32 second, s32 mode);

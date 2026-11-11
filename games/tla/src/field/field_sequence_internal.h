@@ -99,6 +99,18 @@ struct DescriptorEntry {
   u8 unk06[2];
 };
 
+// A party member's unit as the parts read it.
+struct FieldUnit {
+  u8 unk00[20];
+  s16 hpGauge;
+  s16 ppGauge;
+  u8 unk18[28];
+  s16 maxHp;
+  s16 maxPp;
+  s16 hp;
+  s16 pp;
+};
+
 // The object's functions its parts call before their definitions.
 struct TriggerView;
 void Func_080ca4a8(void);
@@ -133,6 +145,19 @@ void Event_ResolvePendingActions(s32 skip);
 s32 Party_GetLeaderActor(void);
 s32 Func_080ce0ac(s32 arg, s32 slot);
 s32 Event_ExecutePackedAction(u32 packed);
+s32 Func_080ce61c(u32 code);
+struct PendingEvent;
+s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target);
+s16 *Func_080ceba8(void);
+void Func_080cec34(void);
+s32 Actor_GetSpriteShape(u32 objectId);
+void ObjectEvent_SetMode5WithCue(u32 objectId);
+void ObjectEvent_Spring(u32 objectId);
+void ObjectEvent_SetMode4WithCue(u32 objectId);
+void ObjectEvent_SetMode2(u32 objectId);
+void ObjectEvent_SetMode6WithCue(u32 objectId);
+struct Actor *ObjectEvent_GetObject(u32 objectId);
+void ObjectEvent_Remove(u32 objectId);
 
 // Outside routines and data the parts had declared each in its own way, with
 // the one type they share.
@@ -156,5 +181,11 @@ void HeapSlot_Release(s32 slot);
 struct Actor *Actor_GetById(s32 actorId);
 s32 Func_08020310(s32 x, s32 z, s32 layer, s32 height);
 void FieldMessage_ShowFar(s32 message, s32 mode);
+void MessageArgument_PushFar(s32 value, s32 kind);
+void BattleEffect_LoadActionEffectResources(s32 action, s32 flags);
+void Actor_ReleaseIfPresent(struct Actor *object);
+void Func_080cf350(struct Actor *object);
+struct ParticleEmitter;
+void Marker_MoveLeaderAwayFromEmitter(struct ParticleEmitter *emitter);
 
 #endif

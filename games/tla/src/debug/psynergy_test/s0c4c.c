@@ -1,5 +1,9 @@
+/// @file
+/// Overlay 0x6b8's code from Func_02000c4c on, in ROM order.
+
 #include "types.h"
 #include "actor.h"
+
 #include "event_inline.h"
 
 struct ResourceTableEntry {
@@ -69,3 +73,5 @@ void Func_02000c4c(struct Actor *object, struct SparkleWork *work) {
     }
   }
 }
+
+void Func_02000d4c(struct Actor *object) { ((u8 *)object)[98] = 1; }

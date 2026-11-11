@@ -1,16 +1,21 @@
+/// @file
+/// Overlay 0x6b0's code between field/field_effect/move and field/object/wait_until_idle, in ROM order.
+
 #include "types.h"
 #include "main_routine_work.h"
 #include "field_sprite.h"
 #include "field_effect.h"
 #include "fixed_math.h"
 #include "event_inline.h"
+#include "actor.h"
 
-extern void Func_020032e0(struct FieldEffect *effect, s32 mode);
-extern void Func_020032e8(struct FieldEffect *effect, const s32 *script);
+#include "macros.h"
+
+void Func_020032e0(struct Actor *, s32);
+void Func_020032e8(struct ActorView *object, const s32 *script);
 extern const s32 *gData_02003840[];
-extern void Actor_SetSingleChildFlags(struct FieldEffect *effect, u32 flags);
-extern void Scene_SetActorSpritePriority(struct FieldEffect *effect,
-                                         s32 priority);
+void Actor_SetSingleChildFlags(struct ActorView *, u32);
+void Scene_SetActorSpritePriority(struct FieldActor *object, s32 priority);
 
 void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -82,4 +87,111 @@ void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->spin = options->spin;
   if ((flags & EFFECT_USE_UPDATE) != 0)
     effect->update = options->update;
+}
+
+#define FIELD_AT(base, type, off)                                              \
+  (((struct {                                                                  \
+     u8 pad[off];                                                              \
+     type v;                                                                   \
+   } *)(base))                                                                 \
+       ->v)
+
+s32 Func_02000654(s32 a0) {
+  Actor_SetSingleChildFlags(a0, 0);
+  return 0;
+}
+
+s32 Func_02000660(struct Actor *object) {
+  s32 radius;
+
+  object->action += object->unk66;
+  SET_POSITION(object, object->bounce, object->gravity, 0x980000);
+  FieldVector_AddPolarOffset(object->unk4c, object->action, &object->x);
+  radius = object->unk4c - 0x10000;
+  object->unk4c = radius;
+  if (radius)
+    return 1;
+  return 0;
+}
+
+#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
+
+extern const u8 gData_02003674[];
+
+void Animation_SetStateFlags(struct Actor *object, s32 flags);
+
+void Func_020006a4(struct Actor *source) {
+  struct Actor *object =
+      (FieldActor_Create(672, source->x, source->y, source->z));
+
+  object->motionFlags = 0;
+  Actor_SetSpriteColor(object, BYTE_AT(source, 98));
+  Scene_SetActorSpritePriority(object, 2);
+  Func_020032e0(object, 1);
+  Actor_SetSingleChildFlags(object, 0);
+  Func_020032e8(object, gData_02003674);
+  Animation_SetStateFlags(object, 1);
+}
+
+struct Mover {
+  u8 unk00[8];
+  s32 x;
+  s32 y;
+  s32 z;
+  s32 fall;
+  u8 unk18[24];
+  s32 step;
+  s32 height;
+  u8 unk38[12];
+  s32 originX;
+  s32 originZ;
+  s32 radius;
+  u8 unk50[20];
+  s16 angle;
+  s16 spin;
+};
+
+s32 Func_020006f8(struct Mover *mover) {
+  if (mover->radius < mover->step)
+    return 0;
+  mover->angle += mover->spin >> 1;
+  mover->x = mover->originX;
+  mover->y = mover->height;
+  mover->z = mover->originZ;
+  // Read through a pointer of its own type, an access alchemy-gcc keeps apart
+  // from the s32 stores before it: as mover->angle, the angle loads before
+  // the radius (2 of 73 instructions differ).
+  FieldVector_AddPolarOffset(mover->radius, *(s16 *)&mover->angle, &mover->x);
+  Func_020006a4(mover);
+  mover->radius -= mover->step >> 1;
+  mover->angle += mover->spin >> 1;
+  mover->x = mover->originX;
+  mover->y = mover->height;
+  mover->z = mover->originZ;
+  FieldVector_AddPolarOffset(mover->radius, mover->angle, &mover->x);
+  Func_020006a4(mover);
+  mover->radius -= mover->step >> 1;
+  mover->height -= mover->fall;
+  return 1;
+}
+
+struct SpawnParams {
+  s32 kind;
+  s32 part;
+  u8 unk08[32];
+};
+
+s32 Func_02000794(struct Actor *object) {
+  struct SpawnParams params;
+  s32 x;
+  s32 y;
+
+  params.kind = 2;
+  params.part = *((u8 *)object + 98);
+  Func_02000480(object->x, object->y, object->z, 0, 0x10000, 0, 0x30000,
+                &params);
+  x = (object->bounce >> 20) + 64;
+  y = object->gravity >> 20;
+  MapGrid_CopyCellsTo(x, y + 26, x, y, 1, 1);
+  return 0;
 }

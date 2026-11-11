@@ -1,8 +1,19 @@
+/// @file
+/// Overlay 0x6b3's code after scene/epilogue.c's, in ROM order.
+
 #include "types.h"
 #include "call.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "event_inline.h"
+#include "edition.h"
+#include "bg_scroll.h"
+#include "system/main_routine_work.h"
+#include "system/input.h"
+#include "system/io_reg.h"
+#include "system/ram_buffer.h"
+
+#include "scene_tables.h"
 
 struct EpilogueSprite {
   u8 unk00[5];
@@ -71,3 +82,345 @@ void Func_02000098(void) {
   priority = 0x480;
   FieldTask_AddFrame(Func_0200005c, priority);
 }
+
+struct EpilogueWindow {
+  u8 unk00[8];
+  u16 unk08;
+  u16 unk0a;
+  u8 unk0c[2];
+  u16 unk0e;
+};
+
+extern s32 gData_02000a28;
+extern s16 gData_02000a38;
+extern s16 gData_02000a2c;
+
+s32 BattleEffect_GetResourceId(s32 message);
+struct EpilogueWindow *Message_OpenWindow(s32 id, s32 x, s32 y,
+                                                s32 resource);
+struct EpilogueWindow *Func_02000804(s32 message, s32 a, s32 left, s32 line);
+s32 Message_AllTyped(void);
+void Window_Close(struct EpilogueWindow *window, s32 mode);
+
+/// Opens the epilogue's message window at x and y and, unless bit 15 of the
+/// message is set, a name window at left and line that Func_0200005c follows;
+/// in mode 2 it restarts the window's text. Then it waits for the text, closes
+/// both windows and waits the given frames.
+void Func_02000158(s32 message, s32 x, s32 y, s32 left, s32 line, s32 frames,
+                   s32 mode) {
+  s32 wide;
+  struct EpilogueWindow *window;
+  struct EpilogueWindow *name;
+
+  name = 0;
+  wide = 0x8000 & message;
+  message &= 0x7fff;
+  window = Message_OpenWindow(
+      gData_02000a28, x, y, (BattleEffect_GetResourceId(message) << 16) | 4);
+  if (!wide) {
+    /* FAKEMATCH(temporary): the name window held in a temporary until after
+     * the stores; as name = Func_02000804(...), 2 of 100 instructions differ
+     * in tla-en. */
+    struct EpilogueWindow *opened = Func_02000804(message, 0, left, line);
+
+    gData_02000a34 = 1;
+    gData_02000a38 = left << 3;
+    gData_02000a2c = line << 3;
+    name = opened;
+  }
+  if (mode == 2) {
+    window->unk0e++;
+    window->unk08 = 0;
+    window->unk0a = 0;
+  }
+  while (!Message_AllTyped())
+    System_Wait(1);
+  System_Wait(1);
+  Window_Close(window, 2);
+  if (!wide) {
+    Window_Close(name, 2);
+    gData_02000a34 = wide;
+  }
+  if (frames > 0) {
+    s32 i = frames;
+
+    do {
+      System_Wait(1);
+    } while (--i != 0);
+  }
+  gData_02000a28++;
+}
+
+// Draft of overlay 6b3 Func_02000244: centres a message and hands it to
+// Func_02000158. The logic is right; the listing keeps x and y in their stack
+// slots (it stores y in every branch and loads both once before the call),
+// where this draft forwards y as a constant and reloads x in each branch, and
+// the listing builds x's and y's zero in r4 apart from the mode's zero in r3.
+// Tried: integer-cast addresses, "y = x = 0", and the four values as one
+// struct (the stores then stay, but through a base register: 75 differ).
+
+void Text_GetMessageSize();
+void Func_02000158();
+
+void Func_02000244(s32 message, s32 position, s32 frames) {
+  s32 x;
+  s32 y;
+  s32 width;
+  s32 height;
+  s32 mode = 0;
+  s32 left;
+  s32 line = 0;
+  s32 half;
+  s32 wide;
+
+  // Default: nothing to the left yet; x and y start from it.
+  left = 0;
+  x = left;
+  y = left;
+  wide = message & 0x8000;
+  Text_GetMessageSize(gData_02000a28, &x, &y, &width, &height);
+  if (width <= 24) {
+    if (!wide)
+      x = (25 - width) / 2 + 5;
+    else
+      x = (30 - width) / 2;
+    left = x - 5;
+  } else {
+    x = (30 - width) / 2;
+    left = x;
+  }
+  half = (height - 1) / 2;
+  if (position == 0) {
+    y = 3;
+    line = half + 1;
+  } else if (position == 1) {
+    y = 14 - half;
+    line = y + half - 2;
+  } else if (position == 2) {
+    if (half == 3) {
+      y = 13;
+      line = 15;
+      mode = 2;
+    } else {
+      y = 16;
+      line = 15;
+    }
+  }
+  Func_02000158(message, x, y, left, line, frames, mode);
+}
+
+s32 Func_020007c4();
+s32 Func_020007cc();
+s32 Func_02000824();
+s32 Func_02000844();
+s32 Func_0200084c();
+s32 Func_02000854();
+s32 Func_0200085c();
+s32 Func_02000864();
+s32 WindowSystem_InitField();
+extern u8 MsgFinallyWeVe[];
+extern u8 gRenderOamEnabled;
+extern char ResourceId_EndingCliffDayPicture,
+    ResourceId_EndingCliffSunsetPicture, ResourceId_EndingVillagersPictureA,
+    ResourceId_EndingEmbracePicture, ResourceId_EndingReunionPicture,
+    ResourceId_EndingSunsetPlainPicture, ResourceId_EndingTheEndPicture;
+extern char SceneId_Ov64a;
+
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define TILES_FLAG_OFFSET 0x118c
+#else
+#define TILES_FLAG_OFFSET 0x138c
+#endif
+
+s32 Func_02000318(void) {
+  struct MainRoutineWork *work;
+  u8 *eventMode;
+  s32 saved;
+  s32 zero, one, value;
+  s32 count;
+  void *p;
+  u8 *actor;
+  u8 *tiles;
+  struct BgScroll *scroll;
+
+  work = &gMainRoutineWork;
+  eventMode = &work->eventMode;
+  saved = *eventMode;
+  actor = (u8 *)Actor_Get(work->currentOwner);
+  zero = 0;
+  actor[85] = zero;
+  one = 1;
+  *eventMode = one;
+  Func_02000844();
+  WindowSystem_InitField();
+  tiles = Ram_HeapSlots->windowTiles;
+  tiles[6] = one;
+  tiles[TILES_FLAG_OFFSET] = one;
+  gData_02000a28 = (s32)MsgFinallyWeVe;
+  Func_02000098();
+  FieldEvent_Wait(30);
+  Call3((void (*)())Func_02000244, 5, 0, 40);
+  Call3((void (*)())Func_02000244, 1, 1, 40);
+  Call3((void (*)())Func_02000244, 6, 0, 40);
+  Call3((void (*)())Func_02000244, 2, 1, 40);
+#if LANGUAGE == LANGUAGE_GERMAN
+  Call3((void (*)())Func_02000244, 2, 1, 40);
+#endif
+  Call3((void (*)())Func_02000244, 3, 0, 30);
+  Call3((void (*)())Func_02000244, 7, 1, 30);
+  Call3((void (*)())Func_02000244, 56, 0, 40);
+  Call3((void (*)())Func_02000244, 60, 1, 30);
+  Call3((void (*)())Func_02000244, 61, 1, 40);
+  Call3((void (*)())Func_02000244, 0, 0, 40);
+  Call3((void (*)())Func_02000244, 62, 1, 30);
+  Call3((void (*)())Func_02000244, 0, 0, 30);
+  Call3((void (*)())Func_02000244, 0, 0, 30);
+  Call3((void (*)())Func_02000244, 5, 1, 40);
+  Call3((void (*)())Func_02000244, 4, 0, 30);
+  Func_02000244(1, 1, 30);
+  Event_PlaySound(67);
+  scroll = gBgScroll;
+  scroll[3].y = 16;
+  scroll[2].y = 16;
+  Call3((void (*)())Func_0200084c, (s32)&ResourceId_EndingCliffDayPicture,
+        (s32)Ram_MapCellBuffer, 0);
+  FieldEvent_Wait(100);
+  Call3((void (*)())Func_02000244, 60, 2, 30);
+  Call3((void (*)())Func_02000244, 61, 2, 40);
+  Call3((void (*)())Func_02000244, 0, 2, 30);
+  Call3((void (*)())Func_02000244, 62, 2, 30);
+  Call3((void (*)())Func_02000244, 1, 2, 40);
+#if LANGUAGE == LANGUAGE_GERMAN
+  Call3((void (*)())Func_02000244, 5, 2, 40);
+#endif
+  Func_02000244(5, 2, 40);
+  Func_02000854(120);
+  System_Wait(1);
+  Func_0200085c();
+  FieldEvent_Wait(30);
+  Call3((void (*)())Func_0200084c, (s32)&ResourceId_EndingCliffSunsetPicture,
+        (s32)Ram_MapCellBuffer, 120);
+  FieldEvent_Wait(120);
+  Call3((void (*)())Func_02000244, 5, 2, 30);
+  Call3((void (*)())Func_02000244, 7, 2, 30);
+  Call3((void (*)())Func_02000244, 56, 2, 40);
+  Call3((void (*)())Func_02000244, 4, 2, 40);
+  Call3((void (*)())Func_02000244, 4, 2, 40);
+  Call3((void (*)())Func_02000244, 4, 2, 40);
+  Call3((void (*)())Func_02000244, 4, 2, 40);
+  Call3((void (*)())Func_02000244, 4, 2, 30);
+#if LANGUAGE == LANGUAGE_GERMAN
+  Call3((void (*)())Func_02000244, 4, 2, 30);
+#endif
+  Call3((void (*)())Func_02000244, 0, 2, 30);
+  Call3((void (*)())Func_02000244, 62, 2, 30);
+  Call3((void (*)())Func_02000244, 1, 2, 40);
+  Call3((void (*)())Func_02000244, 1, 2, 40);
+  Call3((void (*)())Func_02000244, 6, 2, 30);
+  Call3((void (*)())Func_02000244, 5, 2, 30);
+#if LANGUAGE == LANGUAGE_GERMAN
+  Call3((void (*)())Func_02000244, 5, 2, 30);
+#endif
+  Call3((void (*)())Func_02000244, 3, 2, 40);
+#if LANGUAGE == LANGUAGE_GERMAN
+  Call3((void (*)())Func_02000244, 1, 2, 30);
+#endif
+  Func_02000244(1, 2, 30);
+  Event_PlaySound(78);
+  Call3((void (*)())Func_02000244, 0x8040, 2, 30);
+  Call3((void (*)())Func_02000244, 0, 2, 30);
+  Call3((void (*)())Func_02000244, 0x8041, 2, 30);
+  Call3((void (*)())Func_02000244, 0, 2, 30);
+  Call3((void (*)())Func_02000244, 0x8045, 2, 30);
+  Call3((void (*)())Func_02000244, 1, 2, 30);
+  Call3((void (*)())Func_0200084c, (s32)&ResourceId_EndingVillagersPictureA,
+        (s32)Ram_MapCellBuffer, 0);
+  FieldEvent_Wait(60);
+  Event_PlaySound(73);
+  FieldEvent_Wait(30);
+  Call3((void (*)())Func_02000244, 64, 2, 30);
+#if LANGUAGE == LANGUAGE_GERMAN
+  Call3((void (*)())Func_02000244, 64, 2, 30);
+#endif
+  Call3((void (*)())Func_02000244, 65, 2, 30);
+  Call3((void (*)())Func_02000244, 67, 2, 30);
+  Call3((void (*)())Func_02000244, 62, 2, 30);
+  Call3((void (*)())Func_02000244, 70, 2, 30);
+  Call3((void (*)())Func_02000244, 68, 2, 30);
+  Call3((void (*)())Func_02000244, 56, 2, 30);
+  Call3((void (*)())Func_02000244, 1, 2, 40);
+  Func_02000244(56, 2, 40);
+  Func_02000854(200);
+  System_Wait(1);
+  Func_0200085c();
+  FieldEvent_Wait(30);
+  Call3((void (*)())Func_02000244, 62, 2, 20);
+  Call3((void (*)())Func_02000244, 0, 2, 40);
+  Call3((void (*)())Func_02000244, 66, 2, 20);
+  Call3((void (*)())Func_02000244, 62, 2, 30);
+  Call3((void (*)())Func_02000244, 66, 2, 40);
+  Call3((void (*)())Func_0200084c, 0, (s32)Ram_MapCellBuffer, 0);
+  FieldEvent_Wait(60);
+  scroll[3].y = zero;
+  scroll[2].y = zero;
+  Func_02000864(0);
+  Func_0200084c((s32)&ResourceId_EndingEmbracePicture, (s32)Ram_MapCellBuffer,
+                0);
+  FieldEvent_Wait(60);
+  goto L_02008692;
+L_0200868c:
+  System_Wait(1);
+L_02008692:
+  /* FAKEMATCH(temporary): p reused for the input and main work addresses; as
+   * gInput and gMainRoutineWork read directly, 8 of 426 instructions differ in
+   * tla-en. */
+  p = &gInput;
+  if (((struct InputState *)p)->pressed == 0)
+    goto L_0200868c;
+  Call3((void (*)())Func_0200084c, (s32)&ResourceId_EndingReunionPicture,
+        (s32)Ram_MapCellBuffer, 0);
+  FieldEvent_Wait(120);
+  Func_02000854(120);
+  System_Wait(1);
+  Func_0200085c();
+  FieldEvent_Wait(180);
+  Call3((void (*)())Func_0200084c, (s32)&ResourceId_EndingSunsetPlainPicture,
+        (s32)Ram_MapCellBuffer, 0);
+  FieldEvent_Wait(300);
+  Func_0200084c((s32)&ResourceId_EndingTheEndPicture, (s32)Ram_MapCellBuffer,
+                0);
+  FieldEvent_Wait(180);
+  Event_PlaySound(78);
+  p = &gMainRoutineWork;
+  ((struct MainRoutineWork *)p)->eventMode = saved;
+  FieldEvent_Wait(300);
+  count = 0;
+  if (gInput.pressed != 0)
+    goto L_0200871e;
+L_02008704:
+  System_Wait(1);
+  count++;
+  if (count > 10799)
+    goto L_0200871e;
+  if (gInput.pressed == 0)
+    goto L_02008704;
+L_0200871e:
+  Func_0200084c(0, (s32)Ram_MapCellBuffer, 0);
+  FieldEvent_Wait(60);
+  value = 0;
+  /* FAKEMATCH(dead): the store in a once-only block; as a plain store, 2 of 426
+   * instructions differ in tla-en. */
+  do {
+    REG_BLDCNT = value;
+  } while (0);
+  value = 0x1040;
+  REG_DISPCNT = value;
+  Func_020007cc();
+  Func_020007c4();
+  gRenderOamEnabled = 1;
+  Event_ClearFlag(0x17c);
+  Call2((void (*)())Func_02000824, (s32)&SceneId_Ov64a, 2);
+  return 0;
+}
+
+s32 Scene_PrepareMap(void) { return 0; }

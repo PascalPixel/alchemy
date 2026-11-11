@@ -6,12 +6,13 @@ describes for The Broken Seal.
 
 ## What differs from The Broken Seal
 
-- There are five overlays, where The Broken Seal has three: `rooms/`,
-  `level/`, `psynergy_test/`, `psynergy_test_2/` and `shop_test/`. Each is a
-  folder holding its [entry table](../../../tbs/glossary.md#entry-table-and-import-table)
-  (`entry.s`), its import table (`import.s`), its scene tables and its code;
-  the battle's debug parameter sets and the field sequence's `stream.c` are
-  in their banks' folders.
-- An overlay's code is split into files by function, some still named by
-  offset (`level/s004c.c`), and linked as
+- There are five overlays, where The Broken Seal has three:
+  `test_scenes.c` (its folder is `rooms/`), `level.c`, `psynergy_test.c`,
+  `psynergy_test_2.c` and `shop_test.c`. Each file holds its overlay's scene
+  tables and code; beside it, a folder holds its
+  [entry table](../../../tbs/glossary.md#entry-table-and-import-table)
+  (`entry.s`), its import table (`import.s`) and the code not yet gathered
+  into the file. The battle's debug parameter sets and the field sequence's
+  `stream.c` are in their banks' folders.
+- Code not yet gathered is named by offset (`level/s0590.c`) and linked as
   [The Lost Age: scene](../scene/README.md) describes.

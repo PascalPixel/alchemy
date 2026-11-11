@@ -1784,20 +1784,8 @@ main	rom_main_12	games/tla/src/gamepak/far_call/resource_d	.text
 main	rom_main_12	games/tla/src/field/lucky_dice	.text
 main	rom_main_12	games/tla/src/field/lucky_dice	.rodata
 main	rom_main_13	games/tla/src/gamepak/far_call/resource_e	.text
-main	rom_main_13	games/tla/src/field/lucky_wheels/scale_rgb555	.text
-main	rom_main_13	games/tla/src/field/lucky_wheels/darken	.text
-main	rom_main_13	games/tla/src/field/lucky_wheels/f1b21ec	.text
-main	rom_main_13	games/tla/src/field/lucky_wheels/f1b22b8	.text
-main	rom_main_13	games/tla/src/field/lucky_wheels/f1b243c	.text
-main	rom_main_13	games/tla/src/field/lucky_wheels/lucky_wheels	.text
-main	rom_main_13	games/tla/src/field/lucky_wheels/f1b336c	.text
-main	rom_main_13	games/tla/src/field/lucky_wheels/f1b34a8	.text
-main	rom_main_13	games/tla/src/field/lucky_wheels/reset_slot_buckets	.text
-main	rom_main_13	games/tla/src/field/lucky_wheels/track_slot_buffer	.text
-main	rom_main_13	games/tla/src/field/lucky_wheels/f1b3ed8	.text	en de es fr it ja
-main	rom_main_13	games/tla/src/field/lucky_wheels/f1b3fb0	.text	en de es fr it ja
-main	rom_main_13	games/tla/src/field/lucky_wheels/f1b3ff4	.text	en de es fr it ja
-main	rom_main_13	games/tla/src/field/lucky_wheels/lucky_wheels	.rodata
+main	rom_main_13	games/tla/src/field/lucky_wheels	.text
+main	rom_main_13	games/tla/src/field/lucky_wheels	.rodata
 main	rom_main_14	games/tla/src/gamepak/far_call/resource_f	.text
 main	rom_main_14	games/tla/src/field/camera/camera	.text
 main	rom_main_14	games/tla/src/field/lucky_dice/scale_rgb555_buffer_b	.text

@@ -34,7 +34,7 @@ help:
 	  'make tbs-en             build one edition: tbs or tla, then ja en de es fr it' \
 	  'make compare-tbs-en     build one edition and check it against rom.sha1' \
 	  'make compare-tbs        the six ☀️ editions, which need no ROM' \
-	  'make compare-editions   all twelve editions; ⚓️ needs your own ROMs in roms/' \
+	  'make compare-editions   all twelve editions, which need no ROM' \
 	  'make modern             the six ☀️ editions'\'' C through a current GCC (MODERN_CC)' \
 	  'make test               test the C build tools' \
 	  'make devtools           build the optional reconstruction tools (requires Rust)' \
@@ -67,7 +67,7 @@ endif
 
 clean:
 	rm -rf out
-	find games recon -type f \( $(foreach suffix,$(ASSET_SUFFIXES),-name '*.$(suffix)' -o -name '*.$(suffix).d' -o) -false \) -delete
+	find games -type f \( $(foreach suffix,$(ASSET_SUFFIXES),-name '*.$(suffix)' -o -name '*.$(suffix).d' -o) -false \) -delete
 
 # --- Tools ---------------------------------------------------------------
 
@@ -197,19 +197,10 @@ EDITION_ASFLAGS := --defsym $(DEFINE)=1 -I$(BUILD) $(ASFLAGS)
 # fragments under $(BUILD)/ld, which its one main.ld includes.
 LD_SCRIPT := games/$(GAME)/main.ld
 LDFLAGS := --defsym $(DEFINE)=1 -L $(BUILD)/ld -T $(LD_SCRIPT)
-ifeq ($(GAME),tbs)
-OVERLAY_SCRIPT = -L $(BUILD)/ld/$* -T games/tbs/src/system/overlay/overlay.ld
-OVERLAY_STREAM := games/tbs/src/system/overlay/overlays
-$(BUILD)/objects.mk: games/tbs/objects.tsv games/tbs/overlays.tsv $(OBJLIST)
-	$(OBJLIST) games/tbs/objects.tsv games/tbs/overlays.tsv $(LANG) $(BUILD)
-else
-OVERLAY_SCRIPT = -T recon/tla/raw/overlays/resource_$*.ld
-OVERLAY_SOURCE = recon/tla/raw/overlays/resource_$*_overlay.s
-OVERLAY_ROM := $(BUILD)/baserom.gba
-OVERLAY_STREAM := games/tla/src/system/overlay/overlays
-$(BUILD)/objects.mk: games/tla/objects.tsv $(wildcard recon/tla/raw/overlays/*.ld) $(OBJLIST)
-	$(OBJLIST) games/tla/objects.tsv recon/tla/raw/overlays $(LANG) $(BUILD)
-endif
+OVERLAY_SCRIPT = -L $(BUILD)/ld/$* -T games/$(GAME)/src/system/overlay/overlay.ld
+OVERLAY_STREAM := games/$(GAME)/src/system/overlay/overlays
+$(BUILD)/objects.mk: games/$(GAME)/objects.tsv games/$(GAME)/overlays.tsv $(OBJLIST)
+	$(OBJLIST) games/$(GAME)/objects.tsv games/$(GAME)/overlays.tsv $(LANG) $(BUILD)
 include $(BUILD)/objects.mk
 
 # The source an object is built from: NAME.c, NAME.s, NAME.S or NAME.mid.
@@ -226,7 +217,7 @@ STREAM := $(BUILD)/obj/$(OVERLAY_STREAM).o
 LINKED := $(filter-out $(STREAM),$(MAIN_OBJS))
 
 $(BUILD)/deps.mk: $(BUILD)/objects.mk $(SCANINC) $(SRCS)
-	$(SCANINC) $@ $(BUILD) $(BUILD)/obj $(INCLUDES) -I$(BUILD) -G enums/ -G text/ -G overlays/ -G baserom.gba -- $(SRCS)
+	$(SCANINC) $@ $(BUILD) $(BUILD)/obj $(INCLUDES) -I$(BUILD) -G enums/ -G text/ -G overlays/ -- $(SRCS)
 # Read once the object list is: the scan needs its sources.
 ifneq ($(wildcard $(BUILD)/objects.mk),)
 include $(BUILD)/deps.mk
@@ -261,9 +252,9 @@ $(BUILD)/overlays/resource_%.lz: $(BUILD)/overlays/resource_%.elf $(OVLPACK)
 	$(OBJCOPY) -O binary $< $(@:.lz=.bin)
 	$(OVLPACK) $(@:.lz=.bin) $@
 
-$(BUILD)/overlays/resource_%_overlay.o: $$(OVERLAY_SOURCE) $(OVERLAY_ROM)
+$(BUILD)/overlays/resource_%_overlay.o:
 	@mkdir -p $(@D)
-	$(AS) $(EDITION_ASFLAGS) -o $@ $(or $(filter %.s,$^),/dev/null)
+	$(AS) $(EDITION_ASFLAGS) -o $@ /dev/null
 
 # The edition's messages (A6). Japanese glyphs follow the editable font map.
 CHARMAP_tbs := games/tbs/src/graphics/font/charmap_ja.tsv
@@ -283,12 +274,6 @@ $(BUILD)/text/stamp: games/$(GAME)/text/$(LANG).po $(PO2AGS) $(CHARMAP)
 $(BUILD)/enums/%.inc: games/$(GAME)/include/%.h $(ENUMS)
 	@mkdir -p $(@D)
 	$(ENUMS) $< $@
-
-# ⚓️'s scaffolds read the edition's own ROM (O1), checked against rom.sha1.
-$(BUILD)/baserom.gba: roms/$(EDITION).gba
-	@mkdir -p $(@D)
-	grep -F ' out/$(EDITION)/$(EDITION).gba' rom.sha1 | sed 's| out/.*| $<|' | $(SHA1) - > /dev/null
-	ln -sf $(CURDIR)/$< $@
 
 # --- Objects -------------------------------------------------------------
 

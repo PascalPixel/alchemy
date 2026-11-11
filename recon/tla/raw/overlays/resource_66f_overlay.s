@@ -1,3 +1,0 @@
-.syntax unified
-	.thumb
-

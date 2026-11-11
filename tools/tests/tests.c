@@ -792,23 +792,6 @@ buildFiles(void)
 		"source edits add new object dependencies");
 	free(deps.data);
 	runProgram("make", true, queryArgs);
-	textFile("objects.tsv",
-			 "image\tplace\tobject\tsections\teditions\n"
-			 "main\trom_start\tgames/a\t\ten\nmain\trom_start\tgames/b\t\tja\n"
-			 "main\trom_start\tgames/c\n");
-	textFile("overlays.tsv", "overlay\tbss\n");
-	RUN("objects", true, "objects.tsv", "overlays.tsv", "en", "out");
-	Buffer objects = readFile("out/objects.mk"),
-		   linker = readFile("out/ld/rom_start.ld");
-	check(strstr((char *) objects.data, "games/a.o") &&
-			  !strstr((char *) objects.data, "games/b.o") &&
-			  strstr((char *) objects.data, "games/c.o"),
-		  "edition filters the object list");
-	const char *a = strstr((char *) linker.data, "games/a.o"),
-			   *c = strstr((char *) linker.data, "games/c.o");
-	check(a && c && a < c, "linker retains source object order");
-	free(objects.data);
-	free(linker.data);
 }
 
 static void
@@ -907,8 +890,8 @@ main(int argc, char **argv)
 	check(tools != NULL, "find tools directory");
 	char scratch[] = "/tmp/alchemy-tools-XXXXXX";
 	check(mkdtemp(scratch) != NULL && !chdir(scratch), "create test directory");
-	const char *names[] = {"graphics", "audio",	  "music",	"text",
-						   "deps",	   "objects", "header", "overlays", "enums"};
+	const char *names[] = {"graphics", "audio",	 "music",	"text",
+						   "deps",	   "header", "overlays", "enums"};
 	for (size_t i = 0; i < sizeof(names) / sizeof(*names); i++)
 		RUN(names[i], true, "--help");
 	compression();

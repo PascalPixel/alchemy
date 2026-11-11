@@ -71,7 +71,7 @@ Never bent: the legal rules (L1 to L3), the ROM kept out of the build (O1), and 
 The reference ROM judges the build and never feeds it. Reconstructing Camelot's compiler from habits across a whole game is allowed (K3); fitting a compiler, option or routing to particular functions is cheating.
 
 - **O1** ROM bytes never reach the build, apart from the logo `ags-header` writes and the two exceptions A7 names. Nothing derived from the ROM steers the build or count.
-- **O2** Every name is defined where its bytes are; layout is the linker script's order (⚓️'s object list's, until it has one). No equate, alias or table gives a name an address, except Camelot's own fixed addresses (`FIXED_ADDRESS`), each listed once. An assembler equate holds only what its table computes or a value its evidence names; a size set only so the bytes come out right is a copied byte (S1); `.set` only switches assembly in or out.
+- **O2** Every name is defined where its bytes are; layout is the linker script's order. No equate, alias or table gives a name an address, except Camelot's own fixed addresses (`FIXED_ADDRESS`), each listed once. An assembler equate holds only what its table computes or a value its evidence names; a size set only so the bytes come out right is a copied byte (S1); `.set` only switches assembly in or out.
 - **O3** Scene, map and resource ids come only from their tables, used whole; overlay code never branches straight into the main image.
 - **O4** A mismatch is fixed in source. Before a milestone, run an independent audit for leaks.
 - **O5** Old git history, deleted files, backups and unreachable objects are never evidence.

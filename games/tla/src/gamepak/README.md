@@ -13,8 +13,10 @@ explains them for The Broken Seal.
   Seal has one file per [bank](../../../tbs/glossary.md#bank); in the
   linker script (`games/tla/ld_script.ld`) most banks open with the run of
   these files that makes up their table. The banks start at fixed addresses,
-  named at the top of that script, and the far-call stub
-  (`far_call/veneer.s`) works as it does in The Broken Seal.
+  written in the script where each begins; the four that differ by edition
+  (the game, field sequence, menu and shop banks) are named at its top, one
+  macro each. The far-call stub (`far_call/veneer.s`) works as it does in The
+  Broken Seal.
 - The flash library (`flash/flash.c`, `sst.c`, `atmel.c`,
   `program_flash_sector.c`) is compiled with `old_agbcc`, as The Broken Seal's
   is (`FLASH_C`).

@@ -25,8 +25,9 @@ extern u8 gPlayerObjectId[];
 extern u16 gResource_SlotAssignments[];
 s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot);
 struct BattleObj;
+struct TlaBattleObj;
 #ifndef OWN_BattleObject_Make
-void BattleObject_Make(struct BattleObj *actor, s32 unit, s32 x, s32 y);
+void BattleObject_Make(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y);
 #endif
 #ifndef OWN_BattleActor_SpawnObjectsForList
 void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh);

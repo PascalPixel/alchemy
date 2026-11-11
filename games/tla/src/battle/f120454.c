@@ -294,7 +294,8 @@ power_end:
         struct BattleObj *obj;
 
         obj = BattleObject_Get(ent);
-        BattleObject_Make(obj, ent, obj->anchorX / 0x10000,
+        BattleObject_Make((struct TlaBattleObj *)obj, ent,
+                          obj->anchorX / 0x10000,
                           obj->anchorZ / 0x10000);
       }
       BattleObject_Put();

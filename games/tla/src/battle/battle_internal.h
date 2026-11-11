@@ -43,5 +43,30 @@
 #include "fixed_math.h"
 #include "version.h"
 #include "character_ids.h"
+#include "objdisp.h"
+#include "resource.h"
+#include "sprite.h"
+#include "sprite_metadata.h"
+#include "task.h"
+#include "scene.h"
+#include "actor.h"
+#include "battle_obj.h"
+#include "battle_motion.h"
+#include "battle_message.h"
+#include "battle_escape.h"
+#include "battle_target.h"
+#include "actor_view.h"
+#include "minigame.h"
+#include "battle_random.h"
+#include "irq_lock.h"
+
+
+// Far calls the parts make, each passing its own view of the record:
+// ResourceMetadata_Register and Animation_SetWorkEntry (field/animate.c) take
+// the metadata slot state and the animation entry.
+s32 ResourceMetadata_RegisterFar(void *state, s32 id);
+void ResourceMetadata_UnregisterFar(void *state, s32 handle);
+void Animation_SetWorkEntryFar(void *work, s32 no);
+void SceneTransform_ApplyPosition(const s32 *pos);
 
 #endif

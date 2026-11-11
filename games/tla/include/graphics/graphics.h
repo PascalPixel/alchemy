@@ -65,7 +65,7 @@ struct WindowSprite;
 extern s16 gDisplayScroll_Busy;
 extern s16 gDisplayScroll_LastPosition;
 extern u16 gDisplayScroll_Position;
-extern u32 gCameraSceneParameters[3];
+extern u32 gCameraSceneParameters[];
 extern u8 gNumberTextBuffer[];
 extern s32 gRenderResource_PairSourceTable[];
 extern const u8 Resource_Decode01Code[];

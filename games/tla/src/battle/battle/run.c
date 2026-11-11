@@ -80,7 +80,6 @@ void Func_08138050(struct BattleFxRequest *request, s32 value);
 s32 BattleObject_MarkForRelease(s32 objectId);
 s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 n);
 s32 BattleUnit_SetFar(s32 slot, s32 unit, s32 mask);
-s32 Enemy_Update(void);
 struct BattleObj *BattleObject_Get(s32 objectId);
 void BattleObject_Put(void);
 
@@ -101,7 +100,7 @@ void Func_08119734(s32 id) {
   work->enemyIds[1] = 255;
   Enemy_Update();
   object = (s32 *)BattleObject_Get(128);
-  BattleObject_Make((struct BattleObj *)object, 128, object[3] / Q16_ONE,
+  BattleObject_Make((struct TlaBattleObj *)object, 128, object[3] / Q16_ONE,
                     object[4] / Q16_ONE);
   BattleObject_Put();
 }
@@ -188,8 +187,6 @@ void WindowSystem_InitBattleFar(s32 mode);
 void BattleCamera_Create(void);
 s32 Func_08127cd4(s32 enemyGroup);
 s32 Task_Add(void (*func)(void), s32 order);
-void Task_Remove(void (*func)(void));
-void Task_SuspendAll(s32 mode);
 void Sound_PlayFar(s32 cue);
 void Sound_LoadPresetParameters(s32 preset);
 void Func_08118c68(void);
@@ -213,14 +210,14 @@ void Func_0811b9fc(void);
 void Func_081195ec(void);
 void Func_0811d7e4(void);
 void PartyStatus_DrawFar(s32 mode);
-void Resource_ResetEntry(s32 slot);
 s32 Battle_GatherActions(struct BattleActionRecord *actions);
-s32 AutoBattle_BuildActions(struct BattleActionRecord *actions);
+struct BattleSortedUnitEntry;
+s32 AutoBattle_BuildActions(struct BattleSortedUnitEntry *entries);
 s32 Func_0811d9cc(struct BattleActionRecord *action, s32 delay);
-s32 AutoBattle_RunAction(struct BattleActionRecord *action);
+s32 AutoBattle_RunAction(s16 *action);
 s32 BattleParty_ListLivingUnits(s32 side, u16 *unitIds);
 void Func_081197a8(s32 enemyGroup);
-s32 Battle_FindTaggedSlotByValue(s32 tag);
+s32 Battle_FindTaggedSlotByValue(u32 id);
 s32 LinkBattle_SyncTurn(void);
 void Func_08118e64(void);
 void Func_08124cc0(void);
@@ -402,7 +399,8 @@ s32 Func_081197f0(s32 enemyGroup) {
     if (GameFlag_Test(0x16a) == 0)
       actionCount = Battle_GatherActions(battle->actions);
     else
-      actionCount = AutoBattle_BuildActions(battle->actions);
+      actionCount = AutoBattle_BuildActions(
+          (struct BattleSortedUnitEntry *)battle->actions);
     battle->promptSlot = VramCache_AllocEntry(128);
     PartyStatus_DrawFar(battle->partyStatus);
     if (actionCount < 0)
@@ -416,7 +414,7 @@ s32 Func_081197f0(s32 enemyGroup) {
         if (Func_0811d9cc(&battle->actions[i], i == 0 ? 10 : 0) == 1)
           goto fled;
       } else {
-        if (AutoBattle_RunAction(&battle->actions[i]) == 1)
+        if (AutoBattle_RunAction((s16 *)&battle->actions[i]) == 1)
           goto fled;
       }
       if (enemyGroup == 638)

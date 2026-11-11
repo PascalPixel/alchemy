@@ -50,6 +50,6 @@ s32 BattleFormation_GetRandomMember(s32 recordId);
 s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 n);
 s32 BattleEnemy_ReleaseNameLetter(s32 actorId);
 s32 BattleEnemy_LetterFirstOfClass(s32 classId);
-s32 Enemy_Update(void);
+void Enemy_Update(void);
 
 #endif

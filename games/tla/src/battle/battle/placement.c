@@ -1,8 +1,12 @@
-#include "types.h"
-#include "motobj.h"
-#include "objdisp.h"
-#include "battle_unit.h"
+/// @file
+/// Battle objects made and placed on the battlefield.
+// Part of battle.c.
 
+#include "../battle_internal.h"
+
+/// This game's battle object, whose last halfword holds the fade flag and a
+/// visible flag.
+// The Broken Seal's BattleObj with its last halfword split in two.
 struct TlaBattleObj {
   struct MotionObject *object;
   u16 resource;
@@ -17,7 +21,7 @@ struct TlaBattleObj {
   u8 selectedCondition;
   s8 cycleTimer;
   void *animationEntry;
-  void *effectEntry;
+  struct SpriteEntry *effectEntry;
   s16 active;
   u8 fading;
   u8 visible;
@@ -26,13 +30,59 @@ struct TlaBattleObj {
 extern const s32 Data_0812cacc[];
 
 struct MotionObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-struct BattleUnit *Unit_Get(s32 unitId);
+s32 ArcTan2(s32 y, s32 x);
+
+/// Resets a battle actor, making its object when it has none: scale 0xe666,
+/// the anchors cleared unless keep is set, no sprite, animation, effect or
+/// state, facing ArcTan2(0, 0) + 0x8000, visible, then the actor object
+/// script.
+// The tail of The Broken Seal's BattleObject_Make, for an actor without a unit.
+void BattleObject_Reset(struct TlaBattleObj *actor, s32 keep) {
+  struct MotionObject *object;
+  s32 facingAngle;
+  s32 zero;
+
+  if (actor->object == 0)
+    object = Func_080200c0(0xf000, 0, 0, 0);
+  else
+    object = actor->object;
+  // The zero in a local of its own, set before the keep test, serves the 0
+  // stores on both paths; as plain 0 stores, 36 of 63 instructions differ in
+  // tla-en.
+  zero = 0;
+  actor->scale = 0xe666;
+  actor->object = object;
+  if (keep == 0) {
+    actor->anchorZ = zero;
+    actor->anchorX = zero;
+    object->x = actor->anchorX;
+    object->z = actor->anchorZ;
+  }
+  actor->palette = 0;
+  actor->resource = 0;
+  actor->overlay = 0;
+  actor->animation = 0;
+  actor->effect = 0;
+  actor->animationEntry = 0;
+  actor->activeConditions = 0;
+  actor->effectEntry = 0;
+  actor->active = 0;
+  actor->selectedCondition = 0;
+  actor->fading = 0;
+  facingAngle = ArcTan2(0, 0) + 0x8000;
+  object->angle = facingAngle;
+  object->unk59 = 3;
+  object->motionFlags = 2;
+  actor->visible = 1;
+  Actor_StartScriptFar((struct ActorView *)object, Data_0812cacc);
+}
+
+struct MotionObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 s32 SummonSlot_RegisterActorSprites(s32 unitId);
 s32 BattleClass_GetSprite(s32 index);
 s32 BattleClass_GetPalette(s32 index);
 s32 BattleUnit_LookupWeaponValueByClass(s32 unitId);
 s32 Inventory_GetEquippedItemFar(struct BattleUnit *unit, s32 slot);
-s32 ArcTan2(s32 y, s32 x);
 
 void BattleObject_Make(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
   s32 fixedX;
@@ -418,4 +468,183 @@ void BattleObject_Make(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
     object->scaleY = 0x10000;
   }
   Actor_StartScriptFar((struct ActorView *)object, Data_0812cacc);
+}
+
+void BattlePlacement_GetStepPair(s32 index, s32 *x, s32 *y) {
+  index *= 2;
+  *x = gBattlePlacement_StepPairs[index];
+  *y = gBattlePlacement_StepPairs[index + 1];
+}
+
+s32 BattleClass_IsSmall(s32 index);
+
+/// Lays out the actors of a summon in a column: each stands at x = -80
+/// (nearer, at -50, for a few large enemies) and z steps down by half the
+/// width of each actor on either side, centred on the column's middle.
+/// Actors 254 and 255 are 25 wide; others are 27 when their summon entry is
+/// flagged and 38 when not.
+// The Broken Seal's function of the same name, keyed by the enemy id, with
+// nine enemies forward where it names two.
+void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
+                            s32 *zPositions) {
+  s32 totalSpacing = count <= 4 ? 30 : 27;
+  s32 z = ((count - 1) * totalSpacing) / 2;
+  s32 index;
+
+  for (index = 0; index != count; index++) {
+    u32 spacing = 0;
+
+    xPositions[index] = -80;
+    if (index != 0) {
+      struct BattleUnit *actor;
+      u32 enemy;
+
+      spacing = 25;
+      if ((u16)(actorIds[index] - 254) > 1) {
+        actor = Unit_Get(actorIds[index]);
+        spacing = BattleClass_IsSmall(actor->enemyId) ? 27 : 38;
+        enemy = actor->enemyId;
+        if (enemy == 357 || enemy == 348 || enemy == 91 || enemy == 92 ||
+            enemy == 93 || enemy == 94 || enemy == 95 || enemy == 96 ||
+            enemy == 97) {
+          xPositions[index] = -50;
+        }
+      }
+    }
+    z -= spacing / 2;
+    zPositions[index] = z;
+    spacing = 25;
+    if ((u16)(actorIds[index] - 254) > 1) {
+      struct BattleUnit *actor = Unit_Get(actorIds[index]);
+
+      spacing = BattleClass_IsSmall(actor->enemyId) ? 27 : 38;
+    }
+    z -= spacing / 2;
+  }
+}
+
+s32 Enemy_GetFreeSlot(void) {
+  s32 i;
+  s32 id;
+
+  for (i = 0; i <= 5; i++) {
+    id = i + 0x80;
+    if (((u8 *)Unit_Get(id))[0x12A] == 0)
+      break;
+  }
+  if (i == 6)
+    return -1;
+  return id;
+}
+
+// Enemy_Update: this game skips leading empty slots (254) and lays out up to
+// the last live one.
+
+void Summon_LayoutPositions(u16 *unit_ids, s32 count, s32 *x, s32 *z);
+struct BattleObj *BattleObject_Get(s32 id);
+
+void Enemy_Update(void) {
+  struct BattleWork *work = Ram_HeapSlots->battleWork;
+  u16 unitIds[14];
+  s32 x[6];
+  s32 z[6];
+  s32 last = -1;
+  s32 count = 0;
+  s32 i;
+  s32 total;
+
+  for (i = 0; i < 6 && work->enemyIds[i] != 0xff; i++) {
+    if (work->enemyIds[i] == 0xfe) {
+      if (count == 0)
+        continue;
+    } else {
+      last = count;
+    }
+    unitIds[count] = work->enemyIds[i];
+    count++;
+  }
+  total = last + 1;
+  Summon_LayoutPositions(unitIds, total, x, z);
+  for (i = 0; i < total; i++) {
+    s32 id = unitIds[i];
+
+    if (id != 0xfe) {
+      struct BattleObj *object = BattleObject_Get(id);
+
+      object->anchorX = x[i] << 16;
+      object->anchorZ = z[i] << 16;
+    }
+  }
+}
+
+// BattleUnit_RefreshPlacement: The Broken Seal's source plus the reserve
+// owners; the second fill loop needs its pointer set inside the for
+// initialiser.
+
+extern const s8 gBattlePlacement_StepPairs[];
+s32 BattleParty_PrepareActiveOwners(u16 *ids);
+s32 BattleParty_PrepareReserveOwners(u16 *ids);
+
+void BattleUnit_RefreshPlacement(void) {
+  u16 ids[14];
+  s32 x[6];
+  s32 z[6];
+  s32 count;
+  s32 i;
+  s32 place;
+  s32 stand;
+  s32 n;
+  s32 value;
+  u8 *p;
+  struct BattleWork *work;
+
+  place = 0;
+  stand = 0;
+  work = Ram_HeapSlots->battleWork;
+  count = BattleParty_PrepareActiveOwners(ids);
+  count += BattleParty_PrepareReserveOwners(ids + count);
+  value = 0xff;
+  for (i = 13; i >= 0; i--)
+    work->placement[i] = value;
+  for (n = 5, p = &work->placement[13], value = 13; n >= 0; n--, value--)
+    *p-- = value;
+  for (i = 0; i < count; place++, i++) {
+    s32 id = ids[i];
+
+    work->placement[id] = place;
+    BattleObject_Make((struct TlaBattleObj *)BattleObject_Get(id), id,
+                      gBattlePlacement_StepPairs[place * 2],
+                      gBattlePlacement_StepPairs[place * 2 + 1]);
+  }
+  for (i = 0; i < 6 && work->enemyIds[i] != 0xff; i++)
+    ids[i] = work->enemyIds[i];
+  count = i;
+  Summon_LayoutPositions(ids, count, x, z);
+  for (i = 0; i < count; i++, stand++) {
+    s32 id = work->enemyIds[i];
+
+    if (id != 0xfe)
+      BattleObject_Make((struct TlaBattleObj *)BattleObject_Get(id), id,
+                        x[stand], z[stand]);
+  }
+}
+
+/// Returns 1 if the unit at this formation position is in the list.
+/// list: unit IDs, terminated by 0xff, at most 14 entries.
+/// no: formation position (0-7 allies, 8-13 enemies).
+s32 BattlePlacement_ContainsId(s16 *list, s32 no) {
+  u32 i;
+
+  if (no > 7)
+    no += 120; // Enemy unit IDs start at 128.
+  i = 0;
+  do {
+    u16 id = *list++;
+
+    if (id == 0xff)
+      break;
+    if (id == no)
+      return 1;
+  } while (++i < 14);
+  return 0;
 }

@@ -1053,44 +1053,6 @@ main	rom_main_08	games/tla/src/battle/model_bit_commands
 main	rom_main_08	games/tla/src/battle/color_scale_kernel
 main	rom_main_08	games/tla/src/battle/color_scale_loader
 main	rom_main_08	games/tla/src/battle/battle	.text
-main	rom_main_08	games/tla/src/battle/presentation/reset_actor	.text
-main	rom_main_08	games/tla/src/battle/presentation/f11a7ac	.text
-main	rom_main_08	games/tla/src/battle/party/get_step_pair	.text
-main	rom_main_08	games/tla/src/battle/summon/layout_positions	.text
-main	rom_main_08	games/tla/src/battle/summon/find_slot	.text
-main	rom_main_08	games/tla/src/battle/f11b2c4	.text
-main	rom_main_08	games/tla/src/battle/f11b37c	.text
-main	rom_main_08	games/tla/src/battle/contains_id	.text
-main	rom_main_08	games/tla/src/battle/status_flags	.text
-main	rom_main_08	games/tla/src/battle/presentation/set_actor_mode_and_action	.text
-main	rom_main_08	games/tla/src/battle/presentation/release_battle_object_records	.text
-main	rom_main_08	games/tla/src/battle/presentation/f11b75c	.text	en de es fr it ja
-main	rom_main_08	games/tla/src/battle/motion/objects	.text
-main	rom_main_08	games/tla/src/battle/motion/f11b9fc	.text	en de es fr it ja
-main	rom_main_08	games/tla/src/battle/motion/reset_battle_object_record_groups	.text
-main	rom_main_08	games/tla/src/battle/motion/camera_flag	.text
-main	rom_main_08	games/tla/src/battle/motion/get_motion_record	.text
-main	rom_main_08	games/tla/src/battle/motion/reset_motion_at_anchor	.text
-main	rom_main_08	games/tla/src/battle/motion/f11bf18	.text
-main	rom_main_08	games/tla/src/battle/motion/set_object_position	.text
-main	rom_main_08	games/tla/src/battle/motion/reset_slot_object_mode2	.text
-main	rom_main_08	games/tla/src/battle/motion/summon_scale	.text
-main	rom_main_08	games/tla/src/battle/presentation/f11c3bc	.text
-main	rom_main_08	games/tla/src/battle/presentation/f11c538	.text
-main	rom_main_08	games/tla/src/battle/presentation/adjust_camera_by_shoulder_keys	.text
-main	rom_main_08	games/tla/src/battle/presentation/escape	.text
-main	rom_main_08	games/tla/src/battle/presentation/f11c710	.text
-main	rom_main_08	games/tla/src/battle/presentation/approach_action	.text
-main	rom_main_08	games/tla/src/battle/presentation/f11ca54	.text	en de es fr it ja
-main	rom_main_08	games/tla/src/battle/presentation/damage	.text
-main	rom_main_08	games/tla/src/battle/presentation/f11cd7c	.text
-main	rom_main_08	games/tla/src/battle/guard	.text
-main	rom_main_08	games/tla/src/battle/f11ce94	.text
-main	rom_main_08	games/tla/src/battle/presentation/unit_entries	.text
-main	rom_main_08	games/tla/src/battle/presentation/f11cfd0	.text
-main	rom_main_08	games/tla/src/battle/turn	.text
-main	rom_main_08	games/tla/src/battle/f11d24c	.text	en de es fr it ja
-main	rom_main_08	games/tla/src/battle/actions	.text
 main	rom_main_08	games/tla/src/battle/presentation/d7e4	.text
 main	rom_main_08	games/tla/src/battle/presentation/d9a4	.text
 main	rom_main_08	games/tla/src/battle/presentation/f11d9cc	.text	en de es fr it ja

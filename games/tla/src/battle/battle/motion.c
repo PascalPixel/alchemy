@@ -1,0 +1,353 @@
+/// @file
+/// The units' movements: returning to their spots, running and leaping, and
+/// their positions on the screen.
+// Part of battle.c.
+
+#include "../battle_internal.h"
+
+#define Actor_ResetMotion ((void (*)(struct MotionObject *))Actor_ResetMotion)
+#define Actor_SetTargetPosition                                                \
+  ((void (*)(struct MotionObject *, s32, s32, s32))Actor_SetTargetPosition)
+#define Actor_SetMode ((void (*)(struct MotionObject *, s32))Actor_SetMode)
+
+s32 ArcTan2(s32, s32);
+
+void ObjMotRst(s32 slotId) {
+  s32 z;
+  s32 zero;
+  struct BattleObj *slot;
+  struct MotionObject *object;
+
+  slot = BattleObject_Get(slotId);
+  object = slot->object;
+  zero = 0;
+  object->acceleration = 0x20000;
+  object->speedLimit = 0x80000;
+  object->verticalMotionStrength = 0xab85;
+  object->velocityY = zero;
+  object->verticalMotionPhase = zero;
+  object->autoFaceMotion = zero;
+  object->snapToTarget = 1;
+  Actor_ResetMotion(object);
+  Actor_SetTargetPosition(object, slot->anchorX, 0, slot->anchorZ);
+  z = slot->anchorZ;
+  if (z < 0)
+    z += 7;
+  object->angle = (s16)(ArcTan2(z >> 3, slot->anchorX) - 0x8000);
+}
+
+void BattleMotion_SetupEscapeObject(s32 objectId) {
+  struct BattleObj *slot;
+  struct MotionObject *object;
+
+  slot = BattleObject_Get(objectId);
+  object = slot->object;
+  object->acceleration = 0x20000;
+  object->speedLimit = 0x80000;
+  object->velocityY = 0x50000;
+  object->verticalMotionStrength = 0x7851;
+  object->verticalMotionPhase = 0;
+  object->autoFaceMotion = 0;
+  Actor_ResetMotion(object);
+  Actor_SetTargetPosition(object, slot->anchorX * 3, 0, slot->anchorZ);
+  Actor_SetMode(object, 1);
+}
+
+/// Sends the actor of startSlot leaping progress percent of the way toward
+/// the actor of endSlot, in actor mode 2. Also clears REG_BLDCNT. Nothing in
+/// the source calls it.
+void BattleMotion_LeapToward(struct Actor **startSlot, struct Actor **endSlot,
+                             s32 progress) {
+  struct Actor *start = *startSlot;
+  struct Actor *end = *endSlot;
+  s32 x;
+  s32 z;
+
+  x = start->x + (end->x - start->x) * progress / 100;
+  z = start->z + (end->z - start->z) * progress / 100;
+  REG_BLDCNT = 0;
+  start->acceleration = 0x20000;
+  start->speedLimit = 0x80000;
+  start->velocityY = 0x40000;
+  start->gravity = 0xab85;
+  start->bounce = 0;
+  start->actionFlags = 1;
+  Actor_SetTargetPosition(start, x, 0, z);
+  Actor_SetMode(start, 2);
+}
+
+void BattleMotion_SetObjectPosition(struct BattleObj *slot) {
+  struct MotionObject *object = slot->object;
+
+  object->acceleration = 0x20000;
+  object->speedLimit = 0x80000;
+  object->verticalMotionStrength = 0xab85;
+  object->verticalMotionPhase = 0;
+  object->autoFaceMotion = 0;
+  Actor_SetTargetPosition(object, slot->anchorX, 0, slot->anchorZ);
+}
+
+void BattleMotion_ResetObjectAtScaledAnchor(s32 objectId) {
+  u32 scaledX;
+  struct BattleObj *slot;
+  struct MotionObject *object;
+
+  slot = BattleObject_Get(objectId);
+  object = slot->object;
+  object->acceleration = Q16_ONE;
+  object->speedLimit = 0x40000;
+  object->velocityY = 0x30000;
+  object->verticalMotionStrength = 0x9999;
+  object->verticalMotionPhase = 0;
+  object->autoFaceMotion = 0;
+  Actor_ResetMotion(object);
+  scaledX = slot->anchorX * 3;
+  Actor_SetTargetPosition(object, (s32)(scaledX + (scaledX >> 31)) >> 1, 0,
+                          slot->anchorZ);
+}
+
+void Func_0811c01c(s32 objectId) {
+  struct BattleObj *slot;
+  struct MotionObject *object;
+
+  slot = BattleObject_Get(objectId);
+  object = slot->object;
+  object->acceleration = Q16_ONE;
+  object->speedLimit = 0x40000;
+  object->velocityY = 0x40000;
+  object->verticalMotionStrength = 0x9999;
+  object->verticalMotionPhase = 0;
+  object->autoFaceMotion = 0;
+  Actor_ResetMotion(object);
+  {
+    s32 (*mul)(s32 a, s32 b);
+    s32 anchor = slot->anchorX;
+
+    mul = Iwram_MulQ16;
+    Actor_SetTargetPosition(object, mul(anchor, 0x14ccc), 0, slot->anchorZ);
+  }
+  Actor_SetMode(object, 5);
+}
+
+// The Broken Seal's gBattleMotion_Variant* tables, indexed by the variant.
+extern const s32 Data_0812cbb0[]; ///< acceleration
+extern const s32 Data_0812cbd8[]; ///< speed limit
+extern const s32 Data_0812cc00[]; ///< upward velocity
+extern const s32 Data_0812cc28[]; ///< distance, in percent of the anchor's x
+
+/// Sends a battle object back by its variant's distance and speed, with a hop
+/// when it stands on the ground or for the strong variants (5 and up). Four
+/// enemies stay where they stand, and every object gets its vertical motion
+/// before it takes mode 5.
+// The Broken Seal's BattleMotion_ApplyVariantMotion.
+void Func_0811c074(s32 id, s32 variant) {
+  struct BattleObj *slot;
+  struct MotionObject *object;
+  s32 x;
+  s32 scale;
+  s32 enemyId;
+
+  slot = BattleObject_Get(id);
+  object = slot->object;
+  enemyId = ((struct BattleUnit *)Unit_Get(id))->enemyId;
+  if (enemyId != 357 && enemyId != 369 && enemyId != 373 && enemyId != 376) {
+    object->acceleration = Data_0812cbb0[variant];
+    object->speedLimit = Data_0812cbd8[variant];
+    if (object->y == 0 || variant > 4)
+      object->velocityY = Data_0812cc00[variant];
+    Actor_ResetMotion(object);
+    scale = slot->anchorX;
+    x = (scale * Data_0812cc28[variant]) / 100;
+    Actor_SetTargetPosition(object, x, 0, slot->anchorZ);
+  }
+  object->verticalMotionStrength = 0x9999;
+  object->verticalMotionPhase = 0;
+  object->autoFaceMotion = 0;
+  Actor_SetMode(object, 5);
+}
+
+void BattleMotion_ReservedNoOp83B0();
+
+/// The actor walks three quarters of the way to its target, at a speed that
+/// covers the distance in about travelDivisor frames.
+void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
+                                 s32 initialVelocityY) {
+  struct BattleObj *actorSlot = BattleObject_Get(actorId);
+  struct BattleObj *targetSlot = BattleObject_Get(targetId);
+  struct MotionObject *object = actorSlot->object;
+  struct MotionObject *target = targetSlot->object;
+  s32 scale = 75;
+  s32 dx = target->x - object->x;
+  s32 startX = object->x;
+  s32 stepX = scale * dx / 100;
+  s32 dz = target->z - object->z;
+  s32 startZ = object->z;
+  s32 stepZ = scale * dz / 100;
+  s32 x = startX + stepX;
+  s32 z = startZ + stepZ;
+  s32 cellX = stepX >> 8;
+  s32 cellZ = stepZ >> 8;
+  s32 sum = cellX * cellX + cellZ * cellZ;
+  s32 dist;
+
+  if (sum != 0)
+    dist = Iwram_Sqrt(sum) << 8;
+  else
+    dist = 0;
+  dist = dist / travelDivisor;
+  object->acceleration = dist;
+  object->speedLimit = dist;
+  object->snapToTarget = 1;
+
+  if (object->motionFlags & 4)
+    object->velocityY = initialVelocityY;
+  object->velocityY = initialVelocityY;
+  object->verticalMotionStrength = 0xab85;
+  object->autoFaceMotion = 1;
+  Actor_ResetMotion(object);
+  if (dist != 0)
+    Actor_SetTargetPosition(object, x, 0, z);
+  Actor_SetMode(object, 2);
+}
+
+void BattleMotion_ResetSlotObjectMode2(s32 id) {
+  struct MotionObject *object;
+
+  object = BattleObject_Get(id)->object;
+  Actor_ResetMotion(object);
+  Actor_SetMode(object, 2);
+}
+
+#undef Actor_ResetMotion
+#undef Actor_SetTargetPosition
+#undef Actor_SetMode
+
+void BattleMotion_NoOp(void *position, s32 speed) {}
+
+void BattleMotion_NoOp(void *, s32);
+
+void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
+  struct BattleObj *secondSlot;
+  struct MotionObject *first;
+  struct MotionObject *second;
+  s32 x1;
+  s32 x2;
+  s32 z1;
+  s32 z2;
+  struct {
+    s32 x;
+    s32 y;
+    s32 z;
+  } pos;
+
+  first = BattleObject_Get(firstId)->object;
+  secondSlot = BattleObject_Get(secondId);
+
+  x1 = first->targetX;
+  second = secondSlot->object;
+  if (x1 == (s32)0x80000000) {
+    x1 = first->x;
+  }
+  z1 = first->targetZ;
+  if (z1 == (s32)0x80000000) {
+    z1 = first->z;
+  }
+  x2 = second->targetX;
+  if (x2 == (s32)0x80000000) {
+    x2 = second->x;
+  }
+  z2 = second->targetZ;
+  if (z2 == (s32)0x80000000) {
+    z2 = second->z;
+  }
+
+  pos.x = (x1 + x2) / 2;
+  pos.y = 0;
+  pos.z = (z1 + z2) / 2;
+
+  BattleMotion_NoOp(&pos, 0x1000);
+}
+
+struct SlotEffectObject {
+  u8 unk00[0x50];
+  void *resource;
+  u8 kind;
+};
+
+struct SlotEffectEntry {
+  struct SlotEffectObject *object;
+};
+
+void wait(s32 frames);
+
+void BattleMotion_SpawnSlotEffectAndWait(s32 slot) {
+  struct SlotEffectEntry *entry = (struct SlotEffectEntry *)BattleObject_Get(slot);
+  u8 *effect;
+
+  if (entry->object != NULL) {
+    if ((entry->object->kind & 0xf) == 1) {
+      effect = (u8 *)ResourceMetadata_RegisterFar(entry->object->resource, 0x29f);
+      if (effect != NULL) {
+        Animation_SetWorkEntryFar(effect, 1);
+        effect[6] = 3;
+      }
+      wait(10);
+    }
+  }
+}
+
+struct SlotMotionRecord {
+  u8 unk00[12];
+  s32 height;
+};
+
+s32 Camera_ApplyTransformByFlag(void);
+s32 Func_0811c37c(s32 owner);
+
+s32 Func_0811c2b4(s32 slot, s32 *screen) {
+  struct MotionObject *object = BattleObject_Get(slot)->object;
+  struct SlotMotionRecord *record = GetMotionRecord(object, 0);
+  s32 scale;
+  // Unused: gives the stack frame its 12 bytes.
+  UNUSED s32 unused[3];
+
+  Camera_ApplyTransformByFlag();
+  scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), record->height);
+  screen[1] -= Iwram_MulQ16(scale, Func_0811c37c(slot) >> 16);
+  return 0;
+}
+
+s32 Func_0811c314(s32 slot, s32 *screen) {
+  struct MotionObject *object = BattleObject_Get(slot)->object;
+  struct SlotMotionRecord *record = GetMotionRecord(object, 0);
+  s32 scale;
+
+  Camera_ApplyTransformByFlag();
+  scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), record->height);
+  if (BattleClass_IsSmall(*(u16 *)((u8 *)Unit_Get(slot) + 0x14a)) != 0)
+    screen[1] -= Iwram_MulQ16(scale, 24);
+  else
+    screen[1] -= Iwram_MulQ16(scale, 48);
+  return 0;
+}
+
+struct SummonOwnerState {
+  u8 unk000[0x14a];
+  u16 summon;
+};
+
+u8 BattleClass_GetEffectHeight(s32 index);
+
+s32 Func_0811c37c(s32 owner) {
+  s32 value = BattleClass_GetEffectHeight(
+      ((struct SummonOwnerState *)Unit_Get(owner))->summon) << 16;
+
+  if (value == 0) {
+    if (BattleClass_IsSmall(
+            ((struct SummonOwnerState *)Unit_Get(owner))->summon) != 0)
+      value = 0x180000;
+    else
+      value = 0x300000;
+  }
+  return value;
+}

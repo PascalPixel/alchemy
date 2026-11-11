@@ -243,18 +243,15 @@ $(BUILD)/symbols.elf: $(LINKED) $(LIBGCC) $(LD_SCRIPT) $(BUILD)/objects.mk
 # An overlay links at 0x2008000 against the main image's symbols, less the
 # names it defines itself; its image is packed as Camelot's packer did.
 .SECONDEXPANSION:
-$(BUILD)/overlays/resource_%.elf: $(BUILD)/overlays/resource_%_overlay.o $$(OVERLAY_OBJS_$$*) $(BUILD)/symbols.elf $(LIBGCC)
-	$(NM) -g --defined-only $< $(OVERLAY_OBJS_$*) $(LIBGCC) | awk 'NF == 3 { print $$3 }' > $(@:.elf=.own)
+$(BUILD)/overlays/resource_%.elf: $$(OVERLAY_OBJS_$$*) $(BUILD)/symbols.elf $(LIBGCC)
+	@mkdir -p $(@D)
+	$(NM) -g --defined-only $(OVERLAY_OBJS_$*) $(LIBGCC) | awk 'NF == 3 { print $$3 }' > $(@:.elf=.own)
 	$(OBJCOPY) --extract-symbol --strip-symbols=$(@:.elf=.own) $(BUILD)/symbols.elf $(@:.elf=.symbols.elf)
-	$(LD) --no-warn-mismatch -n $(OVERLAY_SCRIPT) -Map $(@:.elf=.map) -R $(@:.elf=.symbols.elf) -o $@ $< $(OVERLAY_OBJS_$*) $(LIBGCC)
+	$(LD) --no-warn-mismatch -n $(OVERLAY_SCRIPT) -Map $(@:.elf=.map) -R $(@:.elf=.symbols.elf) -o $@ $(OVERLAY_OBJS_$*) $(LIBGCC)
 
 $(BUILD)/overlays/resource_%.lz: $(BUILD)/overlays/resource_%.elf $(OVLPACK)
 	$(OBJCOPY) -O binary $< $(@:.lz=.bin)
 	$(OVLPACK) $(@:.lz=.bin) $@
-
-$(BUILD)/overlays/resource_%_overlay.o:
-	@mkdir -p $(@D)
-	$(AS) $(EDITION_ASFLAGS) -o $@ /dev/null
 
 # The edition's messages (A6). Japanese glyphs follow the editable font map.
 CHARMAP_tbs := games/tbs/src/graphics/font/charmap_ja.tsv

@@ -1,0 +1,507 @@
+#include "types.h"
+#include "battle_effect.h"
+#include "battle_effect_work.h"
+#include "effect_step.h"
+#include "io_reg.h"
+#include "iwram_call.h"
+#include "heap_release.h"
+#include "ram_buffer.h"
+
+struct ModelTexture {
+  u32 logWidth : 8;
+  u32 logHeight : 8;
+  u32 unk02 : 16;
+  const void *pixels;
+};
+
+struct RenderModel {
+  s32 kind;
+  s32 unk04;
+  const void *mesh;
+  void *vertices;
+  struct ModelTexture *texture;
+  s32 shade;
+  u8 scrollU;
+  u8 scrollV;
+};
+
+// A vertex of the water: three signed bytes, written as bit-fields (a store
+// through a plain byte pointer is scheduled after every earlier load, a
+// stack slot's included).
+struct WaterVertex {
+  s32 x : 8;
+  s32 y : 8;
+  s32 z : 8;
+};
+
+// One triangle of the water's mesh: three vertex indices, then a texture
+// coordinate for each.
+struct WaterTriangle {
+  u32 index0 : 8;
+  u32 index1 : 8;
+  u32 index2 : 8;
+  u32 : 8;
+  u32 u0 : 8;
+  u32 v0 : 8;
+  u32 u1 : 8;
+  u32 v1 : 8;
+  u32 u2 : 8;
+  u32 v2 : 8;
+};
+
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_CountDownBattlerTints(void);
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 modeAndFlags); // BattleEffect_BuildBlitter
+void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
+                   s32 timerFrames);              // BattleEffect_TintBattler
+void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
+void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
+                   s32 *otherPoint);
+void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+struct RenderModel *Render_AllocateModelList(s32 count);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct RenderModel *model);
+void Func_08015160(s32 x, s32 y, s32 z);
+void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPitch(s32 angle);
+void SceneTransform_ApplyYaw(s32 angle);
+void Render_ResetTransformState(void);
+void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
+void BattleEffect_SpawnObjects(s32 count, s32 resource,
+                               s32 mode); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
+void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
+                                   s32 speedLimit, s32 velocityY, s32 percent);
+void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
+                                       s32 flags);
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
+void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
+void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
+void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
+                                          s32 drag);
+void **GetBattleObjectSlotFar(s32 objectId);
+void *Heap_AllocEwram(s32 size);
+void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
+void *Resource_GetTableEntry(s32 resource);
+s32 Task_Add(void (*func)(void), s32 order);
+void Task_Remove(void (*func)(void));
+void HeapSlot_Release(s32 slot);
+void Sound_PlayFar(s32 cue);
+void wait(s32 frames);
+u32 Random16(void);
+s32 Trig_Sin(s32 angle);
+s32 Trig_Cos(s32 angle);
+
+void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+                                          s32 gravity);
+s32 BattleUnit_GetEffectHeightFar(s32 unit);
+void Transform_SetLookAt(s32 *eye, s32 *target);
+void BattleEffect_StartTiledCanvas(s32 bgControl);
+void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
+void Transform_Push(void);
+void Transform_Pop(void);
+
+// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
+#define SLOT_BLITTER 104 // unk64[1]
+
+// ⚓️'s blitter modes run the other way from The Broken Seal's.
+enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
+#define BLITTER(mode, flags) ((mode) << 4 | (flags))
+#define HI(v) (((s16 *)&(v))[1])
+
+extern char ResourceId_CrackedTextureSheet;
+extern char ResourceId_Data0B4;
+extern char ResourceId_SmokeSheet;
+extern char ResourceId_CrystalSheet;
+extern u8 gMapCellBuffer[];
+extern u8 gData_02014000[];       // the water's mesh, built here
+extern const u8 gData_08199340[]; // the splash's mesh
+extern const u8 gData_08199210[]; // its corners
+
+#define WATER_COLUMNS 16
+#define WATER_ROWS 8
+#define WATER_QUADS ((WATER_ROWS - 1) * (WATER_COLUMNS - 1))
+// The water's mesh as triangles, two to a quad.
+#define WATER_MESH ((struct WaterTriangle *)gData_02014000)
+
+// The body of Dreamtide (mode 0) and Watery Grave (mode 1): a sheet of
+// water (a 16 by 8 grid of vertices, its mesh built here) rolls in under
+// the targets in waves while the camera turns; Dreamtide strikes the first
+// target with two splashes at frame 17, Watery Grave strikes every target
+// at frames 17 and 46 while bubbles rise from the deep.
+void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
+  struct BattleEffectWork *work;
+  s32 frame;
+  DrawRectangle blit[2]; // Unused: [1] is the rest of its two-word pseudo.
+  void *canvas;
+  s16 *camera;
+  s16 savedYaw;
+  s32 frames;
+  struct EffectPosition screen;
+  struct EffectPosition target;
+  struct ModelTexture texture;
+  struct RenderModel *model;
+  struct EffectStep *bubble;
+  s32 height;
+  s32 phase;
+  s32 row;
+  s32 column;
+  u8 *mesh;
+  s32 i;
+
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  canvas = Ram_HeapSlots->battleFxWork[1];
+  Func_0813ba50();
+  BattleEffect_StartCanvasLayer(1);
+  /* FAKEMATCH(temporary): the water mesh's address in a local; as
+   * gData_02014000 at the grid and at the model, 286 of 902 instructions differ
+   * in tla-en. */
+  mesh = gData_02014000;
+  if (mode == 0) {
+    REG_BLDALPHA = 0xc10;
+  } else {
+    REG_BLDALPHA = 0x1010;
+  }
+  work->transferMode = 2;
+  work->transferValue = 50;
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  BattleEffect_LoadBlitter(
+      SLOT_BLITTER,
+      BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  camera = (s16 *)Ram_HeapSlots->cameraWork;
+  savedYaw = camera[27];
+  Resource_LoadAndDecompress((s32)&ResourceId_CrackedTextureSheet, work->sheet,
+                             1, 1);
+  Func_0816ae40(work->sheet, work->sheet + 0x400, 32, 32);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, work->sheet + 0x2000, 0,
+                             0);
+  if (mode == 1) {
+    u8 *pixel;
+
+    /* FAKEMATCH(temporary): pixel set inside the call that takes the sheet's
+     * address; as pixel = work->sheet + 0x3000 before the call, 8 of 902
+     * instructions differ in tla-en. */
+    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
+                               pixel = work->sheet + 0x3000, 1, 0);
+    for (i = 0; i != 0x1b00; i++, pixel++) {
+      if (*pixel != 0) {
+        *pixel += 8;
+        if (*pixel > 63) {
+          *pixel = 63;
+        }
+      }
+    }
+    {
+      const void *palette =
+          Resource_GetTableEntry((s32)&ResourceId_CrystalSheet);
+      /* FAKEMATCH(temporary): the copy routine's address in a local, named
+       * once the palette is fetched; as Iwram_CopyWords called by name, 2 of
+       * 902 instructions differ in tla-en. */
+      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+
+      copy((void *)BG_PLTT, palette, 128);
+    }
+  }
+
+  // The water's grid: 16 by 8 vertices, and a quad (two triangles) for
+  // each cell but the last row and column.
+  for (row = 0; row != WATER_ROWS; row++) {
+    s32 v = row * 16;
+    /* FAKEMATCH(dead): the row's first vertex index with the row added and
+     * taken away again, which keeps it in a register of its own; as q = v,
+     * 621 of 902 instructions differ in tla-en. */
+    s32 q = v + row - row;
+
+    for (column = 0; column != WATER_COLUMNS; column++) {
+      s32 a = row * 16 + column;
+      /* FAKEMATCH(dead): the vertex's index with q added and v, its equal,
+       * taken away, so the pointer's first value is read from q; as a alone,
+       * 849 of 902 instructions differ in tla-en. */
+      struct WaterVertex *vertex =
+          (struct WaterVertex *)((s8 *)gMapCellBuffer + (a + q - v) * 4);
+      s32 u = column * 8;
+
+      vertex->x = column * 11 - 82;
+      vertex->y = 60;
+      vertex->z = row * 24 - 84;
+      if (row <= 6 && column <= 14) {
+        struct WaterTriangle *quad =
+            (struct WaterTriangle *)(mesh + (row * 15 + column) * 24);
+        s32 b = q + column + 1;
+        s32 d = q + column + 17;
+        s32 c = q + column + 16;
+
+        /* FAKEMATCH(dead): a store the frame count below overwrites. Its
+         * column * 8 - 60 is a counter of the column that the u + 7 below is
+         * then counted from (- 60, then + 67); as no statement, 171 of 902
+         * instructions differ in tla-en. */
+        frames = (column * 8 - 60) & 1;
+        quad[0].u0 = u + 7;
+        quad[0].v0 = q;
+        quad[0].u1 = u + 7;
+        quad[0].v1 = v + 15;
+        quad[0].u2 = u;
+        quad[0].v2 = v + 15;
+        quad[1].u0 = u;
+        quad[1].v0 = q;
+        quad[1].u1 = u + 7;
+        quad[1].v1 = q;
+        quad[1].u2 = u;
+        quad[1].v2 = v + 15;
+        quad[0].index0 = b;
+        quad[0].index1 = d;
+        quad[0].index2 = c;
+        quad[1].index0 = a;
+        quad[1].index1 = b;
+        quad[1].index2 = c;
+      }
+    }
+  }
+  // A triangle of three zero indices ends the mesh.
+  WATER_MESH[WATER_QUADS * 2].index0 = 0;
+  WATER_MESH[WATER_QUADS * 2].index1 = 0;
+  WATER_MESH[WATER_QUADS * 2].index2 = 0;
+  frames = 48;
+  if (mode != 0) {
+    frames = 81;
+  }
+
+  for (frame = 0; frame != frames; frame++) {
+    void *vertices;
+    s32 shade;
+    s32 angle;
+    s32 offset;
+
+    if (frame == 0) {
+      camera[27] = savedYaw;
+      for (i = 0; i != 64; i++) {
+        work->particles[i].variant = -1;
+      }
+    }
+    if (effect->side == 0) {
+      if (camera[27] <= 11999) {
+        camera[27] += 128;
+      }
+    } else if (camera[27] >= -11999) {
+      camera[27] -= 128;
+    }
+
+    if (mode == 0) {
+      if (frame == 17) {
+        Func_081180e8(144);
+        BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 0x80000, 100);
+        Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
+        work->shakeFrames = 8;
+      }
+    } else {
+      if (frame == 17) {
+        Sound_PlayFar(145);
+        for (i = 0; i != effect->count; i++) {
+          Func_08118088(effect->actors[i], 0);
+          Func_0814cd48(effect->actors[i], 7, 5, i, 16);
+        }
+        work->shakeFrames = 8;
+      }
+      if (frame == 46) {
+        Func_081180e8(134);
+        for (i = 0; i != effect->count; i++) {
+          BattleEffect_StartActorMotion(effect->actors[i], 1, 0, 0, 0x80000,
+                                        100);
+          Func_0814cd48(effect->actors[i], 7, 5, i, 16);
+        }
+        work->shakeFrames = 8;
+      }
+    }
+    if (mode == 0) {
+      if ((u32)(frame - 33) <= 14) {
+        REG_BLDALPHA = (48 - frame) | 0x1000;
+      }
+    } else if ((u32)(frame - 65) <= 14) {
+      REG_BLDALPHA = (80 - frame) | 0x1000;
+    }
+
+    vertices = Heap_AllocEwram(0x400);
+    model = Render_AllocateModelList(1);
+    shade = 0;
+
+    // The waves rise, then ebb.
+    if (mode == 0) {
+      if (frame <= 31) {
+        height = frame * 4;
+        if (height > 64) {
+          height = 64;
+        }
+      } else {
+        height = 320 - frame * 8;
+        if (height < 0) {
+          height = 0;
+        }
+      }
+    } else if (frame <= 63) {
+      height = frame * 2;
+      if (height > 64) {
+        height = 64;
+      }
+    } else {
+      height = 576 - frame * 8;
+      if (height < 0) {
+        height = 0;
+      }
+    }
+    phase = frame * 2;
+    row = 1;
+    angle = frame << 11;
+    for (offset = 64; row != 7; row++, offset += 64) {
+      s8 *vertex;
+
+      for (column = 0, vertex = (s8 *)gMapCellBuffer + offset + 1;
+           column != WATER_COLUMNS; column++, vertex += 4) {
+        s32 amplitude = (16 - column) * height / 32;
+        s32 y = ((Trig_Sin(angle + column * 5000 + Trig_Sin(row * 3553)) *
+                  amplitude) >>
+                 16) -
+                amplitude;
+
+        /* FAKEMATCH(temporary): the height stored through the vertex it is part
+         * of, one before the pointer; as *vertex = y + 64, 6 of 902
+         * instructions differ in tla-en. */
+        ((struct WaterVertex *)(vertex - 1))->y = y + 64;
+      }
+    }
+    i = 0;
+    height /= 2;
+    for (bubble = work->particles; i != 20; i++, bubble++) {
+      if (bubble->variant == 0) {
+        bubble->y =
+            (((Trig_Sin(angle + Trig_Sin(3552 + i * 888)) * height) >> 16) -
+             height + 64)
+            << 16;
+      }
+    }
+
+    texture.logWidth = 6;
+    texture.logHeight = 6;
+    texture.pixels = work->sheet + 0x400;
+    Render_ResetTransformState();
+    if (mode != 0) {
+      SceneTransform_ApplyPitch(4000);
+    }
+    if (effect->side == 0) {
+      SceneTransform_ApplyYaw(camera[27]);
+    } else {
+      SceneTransform_ApplyYaw(camera[27] + 0x8000);
+    }
+    {
+      s32 shift = 128 - frame * 8;
+
+      if (shift < -64) {
+        shift = -64;
+      }
+      Func_08015160(shift << 16, 0, 0);
+    }
+    model->kind = 7;
+    model->texture = &texture;
+    model->mesh = mesh;
+    model->vertices = vertices;
+    model->shade = shade;
+    model->scrollU = (frame + phase) & 127;
+    model->scrollV = 127 & ~frame;
+    Render_TransformVertices(gMapCellBuffer, vertices, 128);
+    Render_DrawModelList(model);
+
+    if (frame == 0) {
+      s32 bubbleZ = -0x3c0000;
+
+      for (i = 0, bubble = work->particles; i != 20; i++, bubble++) {
+        bubble->variant = Random16() % 6;
+        bubble->z = bubbleZ;
+        bubble->x = -0x3c0000;
+        bubble->velocityX = 0;
+        bubble->velocityY = 0;
+        bubble->velocityZ = 0;
+        bubbleZ += 0x60000;
+      }
+    }
+    if (mode == 1) {
+      for (i = 0; i != 20; i++) {
+        struct EffectStep *step = &work->particles[i];
+        s32 picture = step->variant;
+        struct EffectPosition *position;
+
+        if (picture < 0) {
+          continue;
+        }
+        /* FAKEMATCH(temporary): position holds &screen; as screen itself, 50
+         * of 902 instructions differ in tla-en. */
+        position = &screen;
+        if (EffectPosition_ProjectPoint(step, position) == 0 &&
+            HI(position->depth) > 10) {
+          s32 x = HI(position->x);
+          s32 y;
+
+          position->x = x + 64;
+          y = HI(position->y);
+          position->y = y + 64;
+          blit[0](canvas, work->sheet + 0x3000 + picture * 0x480, x + 52,
+                  y + 40, 24, 48);
+          BattleEffectKernels_IntegrateVector3(step, 62, -0x2000);
+        }
+        if (++step->variant == 6) {
+          step->variant = 0;
+        }
+      }
+    } else {
+      s32 t;
+
+      EffectPosition_ProjectBattler(effect->actors[0], &target);
+      texture.logWidth = 6;
+      texture.logHeight = 6;
+      model->mesh = gData_08199340;
+      model->vertices = vertices;
+      model->scrollU = 0;
+      model->scrollV = 0;
+      for (i = 0; i != 2; i++) {
+        t = frame - 16 - i * 4;
+        if (t < 0) {
+          continue;
+        }
+        texture.pixels = work->sheet + 0x2000;
+        if (t > 7) {
+          shade = (8 - t) * 4;
+        }
+        model->shade = shade;
+        if (shade <= -64) {
+          continue;
+        }
+        Render_ResetTransformState();
+        Func_08015160((target.x / 2 - 64) << 16, (target.y - 64) << 16, 0);
+        Func_080151e4(0x8000, 0x10000, 0x8000);
+        Func_080150e4((i << 14) + 0x2000);
+        SceneTransform_ApplyPitch(0x1000);
+        SceneTransform_ApplyYaw(angle);
+        Func_0801521c(t * 0x3000);
+        Render_TransformVertices(gData_08199210, vertices, 4);
+        Render_DrawModelList(model);
+      }
+    }
+    Heap_Release(model);
+    Heap_Release(vertices);
+    Func_08158ce0(8, 8);
+    BattleEffect_CountDownBattlerTints();
+    work->transferPending = 1;
+    wait(1);
+  }
+  HeapSlot_Release(104);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
+}

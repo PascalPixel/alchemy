@@ -1809,12 +1809,7 @@ main	rom_main_09	games/tla/src/battle_effect/f16aa08	.text	en
 main	rom_main_09	games/tla/src/battle_effect/f16aa08	.text	de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f16ae40	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/variant_b	.text
-main	rom_main_09	recon/tla/it/rom	.rom.0016aeec	it
-main	rom_main_09	recon/tla/fr/rom	.rom.0016aeec	fr
-main	rom_main_09	recon/tla/es/rom	.rom.0016aeec	es
-main	rom_main_09	recon/tla/de/rom	.rom.0016aeec	de
-main	rom_main_09	recon/tla/raw/0816aeec	.text	en
-main	rom_main_09	recon/tla/ja/rom	.rom.0016aeec	ja
+main	rom_main_09	games/tla/src/battle_effect/f16aeec	.text
 main	rom_main_09	games/tla/src/battle_effect/variant_c	.text
 main	rom_main_09	games/tla/src/battle_effect/f16b6ec	.text	it
 main	rom_main_09	games/tla/src/battle_effect/f16bc70	.text	it

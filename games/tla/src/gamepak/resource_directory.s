@@ -201,7 +201,7 @@ Resource_DirectoryTable:
 	resource , BattleEffect_ThinBoltSheet
 	resource BoltSheet, BattleEffect_BoltSheet
 	resource CurseSealSheet, BattleEffect_CurseSealSheet
-	resource , BattleEffect_CrackedTextureSheet
+	resource CrackedTextureSheet, BattleEffect_CrackedTextureSheet
 	resource CrossTextureSheet, BattleEffect_CrossTextureSheet
 	resource Data0C1, Resource_Data0C1
 	resource Data0C2, Resource_Data0C2

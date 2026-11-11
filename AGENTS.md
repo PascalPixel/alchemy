@@ -70,7 +70,7 @@ Never bent: the legal rules (L1 to L3), the ROM kept out of the build (O1), and 
 
 The reference ROM judges the build and never feeds it. Reconstructing Camelot's compiler from habits across a whole game is allowed (K3); fitting a compiler, option or routing to particular functions is cheating.
 
-- **O1** ROM bytes never reach the build, apart from the logo `ags-header` writes. Nothing derived from the ROM steers the build or count.
+- **O1** ROM bytes never reach the build, apart from the logo `ags-header` writes and the two exceptions A7 names. Nothing derived from the ROM steers the build or count.
 - **O2** Every name is defined where its bytes are; layout is the object list's order. No equate, alias or table gives a name an address, except Camelot's own fixed addresses (`FIXED_ADDRESS`), each listed once. An assembler equate holds only what its table computes or a value its evidence names; a size set only so the bytes come out right is a copied byte (S1); `.set` only switches assembly in or out.
 - **O3** Scene, map and resource ids come only from their tables, used whole; overlay code never branches straight into the main image.
 - **O4** A mismatch is fixed in source. Before a milestone, run an independent audit for leaks.
@@ -117,12 +117,13 @@ The docs are the folder READMEs, the four division pages, the front page, the gl
 
 ### Assets
 
-- **A1** The build is as plain as pret's: C, assembly, indexed PNGs with real palettes, WAV, MIDI, PO text, one `map.txt` per map, and TSV only for a table an encoder packs; never raw dumps, blobs or stored compression tokens. Each asset builds beside its source, ignored by git.
+- **A1** The build is as plain as pret's: C, assembly, indexed PNGs with real palettes, WAV, MIDI, PO text, one `map.txt` per map, and TSV only for a table an encoder packs; never raw dumps, blobs or stored compression tokens (A7 excepted). Each asset builds beside its source, ignored by git.
 - **A2** A picture is drawn the way the game shows it: sheets at their real width or sprite shape, tilemapped pictures as the map shows them, animations one frame wide.
 - **A3** An all-grey palette only where the build writes that palette from it.
 - **A4** Every file an encoder reads is a prerequisite: one Makefile rule per kind of asset, with the encoder listing what else it read in a `.d` file beside its output.
 - **A5** No JSON, apart from `.recomp.json` and `.recomp-2.json` at the root, one per game, which recomp.fyi reads and nothing here does (Pascal, 5 November 2026). A table the code reads as it stands is a C array at its place in the ROM, read through its struct with designated initializers and a comment naming each entry from the game's text.
 - **A6** Each edition combines its text, fonts and layout with its measured code differences; differing resources are chosen in their owning module or rule.
+- **A7** Two kinds of bytes are known only by comparing with the ROM, and are kept as named, counted exceptions, the data's fake matches (the independent audit of 11 November 2026 raised them; Pascal left the ruling to the agents). A packing patch (`*_patch.tsv`: 13 files, 158 positions in both games) has the packer read one byte where the asset ships another, because the shipped asset differs from the one Camelot's packer saw; each line gives its proof, and the plain form is the asset packed with no patch. Residue (`PACKER` lines in each game's `overlays.s`: 406 in ☀️, 537 in ⚓️) is what Camelot's writer left after a packed overlay, which no program reads. pret commits whole binary files where data will not reproduce, so this is no stricter than pret (W3). Neither grows: a new one needs Pascal. A playable build may drop both, and an audit counts them.
 
 ### Compilers
 

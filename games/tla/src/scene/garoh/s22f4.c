@@ -76,15 +76,7 @@ void Func_020022f4(void) {
   FieldEvent_Wait(25);
   Actor_FaceDirection(8, FACING_SOUTH, 0);
   FieldEvent_Wait(25);
-  {
-    s32 a1 = 0x102;
-    s32 a2 = 45;
-    /* FAKEMATCH(barrier): an empty asm on a1 and a2, so the later arguments are
-     * loaded before the first; as the plain call, 16 of 362 instructions differ
-     * in tla-en. */
-    asm volatile("" : "+l"(a1), "+l"(a2));
-    Actor_ShowEmote(8, a1, a2);
-  }
+  Actor_ShowEmote(8, 0x102, 45);
   FieldActor_Jump(8, 6, 15);
   FieldActor_Jump(8, 6, 23);
   Actor_SetSpeed(8, 0x26666, 0x13333);

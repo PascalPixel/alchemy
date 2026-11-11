@@ -33,9 +33,9 @@ void Func_02002068(void) {
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 120, 264);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
   rod = Func_02001fec();
-  /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call, 84 of 711
-   * instructions differ in tla-en (see the macro). */
+  /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
+   * frames load before the actor; as a plain call, 84 of 711 instructions
+   * differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(15, 256, 20)
   Actor_SetSpeed(15, 0x26666, 0x13333);
   Actor_SetPositionAndReset(15, 120, 242);
@@ -60,9 +60,9 @@ void Func_02002068(void) {
   Actor_SetMovementTypeById(7, gData_02004d40);
   Actor_SetMovementTypeById(5, gData_02004d84);
   Actor_SetMovementTypeById(6, gData_02004dc8);
-  /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call, 14 of 711
-   * instructions differ in tla-en (see the macro). */
+  /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
+   * frames load before the actor; as a plain call, 14 of 711 instructions
+   * differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(17, 256, 0)
   Actor_SetSpeed(17, 0x13333, 0x9999);
   Actor_SetPositionAndReset(17, 136, 232);
@@ -72,9 +72,9 @@ void Func_02002068(void) {
   Event_ShowMessageAndWait(16, 0);
   Motion_SetModeAndWaitAnimation(15, 3);
   Event_ShowMessageAndWait(15, 0);
-  /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call, 28 of 711
-   * instructions differ in tla-en (see the macro). */
+  /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
+   * frames load before the actor; as a plain call, 28 of 711 instructions
+   * differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(15, 257, 20)
   Event_ShowMessageAndWait(15, 0);
   Actor_SetAttachedEffect(18, 258);
@@ -83,33 +83,33 @@ void Func_02002068(void) {
   Actor_SetSpeed(15, 0xcccc, 0x6666);
   Actor_SetPositionAndReset(15, 120, 252);
   Event_Wait(40);
-  /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call, 25 of 711
-   * instructions differ in tla-en (see the macro). */
+  /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
+   * frames load before the actor; as a plain call, 25 of 711 instructions
+   * differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(15, 257, 20)
   Actor_SetPositionAndReset(15, 136, 252);
   Actor_FaceDirection(15, FACING_SOUTH, 20);
-  /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call, 22 of 711
-   * instructions differ in tla-en (see the macro). */
+  /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
+   * frames load before the actor; as a plain call, 22 of 711 instructions
+   * differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(15, 257, 40)
   Actor_SetPositionAndReset(15, 104, 252);
   Actor_FaceDirection(15, FACING_SOUTH, 20);
-  /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call, 25 of 711
-   * instructions differ in tla-en (see the macro). */
+  /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
+   * frames load before the actor; as a plain call, 25 of 711 instructions
+   * differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(15, 257, 20)
   Actor_SetPositionAndReset(15, 152, 252);
   Actor_FaceDirection(15, FACING_SOUTH, 20);
-  /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call, 16 of 711
-   * instructions differ in tla-en (see the macro). */
+  /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
+   * frames load before the actor; as a plain call, 16 of 711 instructions
+   * differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(15, 257, 40)
   Actor_SetPositionAndReset(15, 88, 252);
   Actor_FaceDirection(15, FACING_SOUTH, 40);
-  /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call, 19 of 711
-   * instructions differ in tla-en (see the macro). */
+  /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
+   * frames load before the actor; as a plain call, 19 of 711 instructions
+   * differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(15, 257, 80)
   Actor_SetPositionAndReset(15, 120, 252);
   Actor_SetPositionAndReset(15, 120, 242);
@@ -124,9 +124,9 @@ void Func_02002068(void) {
   Actor_Jump(18, 4, 0);
   Event_ShowMessageAndWait(18, 0);
   Actor_FaceDirection(15, FACING_SOUTHEAST, 0);
-  /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call, 19 of 711
-   * instructions differ in tla-en (see the macro). */
+  /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
+   * frames load before the actor; as a plain call, 19 of 711 instructions
+   * differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(15, 265, 20)
   Event_ShowMessageAndWait(15, 0);
   Actor_ArmCallback(6, FACING_NORTH, 0);
@@ -139,15 +139,15 @@ void Func_02002068(void) {
   Func_080d47b4(6, 259, 0);
   Event_ShowMessageAndWait(6, 0);
   Actor_FaceDirection(15, FACING_SOUTHWEST, 0);
-  /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call, 8 of 711
-   * instructions differ in tla-en (see the macro). */
+  /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
+   * frames load before the actor; as a plain call, 8 of 711 instructions differ
+   * in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(5, 257, 0)
   Event_ShowMessageAndWait(5, 0);
   Motion_SetModeAndWaitAnimation(15, 3);
-  /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call, 8 of 711
-   * instructions differ in tla-en (see the macro). */
+  /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
+   * frames load before the actor; as a plain call, 8 of 711 instructions differ
+   * in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(7, 265, 20)
   Event_ShowMessageAndWait(7, 0);
   Actor_FaceDirection(15, FACING_SOUTHEAST, 0);
@@ -155,9 +155,9 @@ void Func_02002068(void) {
   Event_ShowMessageAndWait(18, 0);
   Func_080d47b4(15, 265, 40);
   Event_ShowMessageAndWait(15, 0);
-  /* FAKEMATCH(pin): the emote and the frames, pinned to r1 and r2 by
-   * SHAMAN_VILLAGE_EMOTE, load before the actor; as a plain call, 45 of 711
-   * instructions differ in tla-en (see the macro). */
+  /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
+   * frames load before the actor; as a plain call, 45 of 711 instructions
+   * differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(17, 262, 20)
   Actor_FaceDirectionAndWait(17, FACING_SOUTHWEST);
   Event_ShowMessageAndWait(17, 0);

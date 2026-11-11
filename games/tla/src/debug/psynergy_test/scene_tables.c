@@ -219,13 +219,6 @@ static __inline__ void Actor_Emote(s32 actor, s32 emote, s32 frames) {
   Func_080d47b4(actor, emote, frames);
 }
 
-static __inline__ s32 GameFlag_TestBit(s32 flag) {
-  /* FAKEMATCH(wrapper): the test forwarded through an inline, so 0x200 is
-   * built again before each call, as the ROM has it; as a direct GameFlag_Test
-   * call, 0x200 stays in r6 for the later calls (not measured). */
-  return GameFlag_Test(flag);
-}
-
 static __inline__ void Actor_SetPositionById(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH(wrapper): the call forwarded through an inline, so the x
    * constant is split around the actor copy, as the ROM has it; as direct
@@ -238,7 +231,7 @@ void Func_02000464(s32 unused, s32 actor) {
   FieldActor_Jump(actor, 6, 15);
   FieldActor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);
-  if (GameFlag_TestBit(0x200) == 0) {
+  if (Event_GetFlag(0x200) == 0) {
     FieldEvent_SetMessageId((s32)MsgDailaInteriorsGah);
     Event_ShowMessage(actor, 0);
     Actor_SetPositionById(actor, 360, 72);

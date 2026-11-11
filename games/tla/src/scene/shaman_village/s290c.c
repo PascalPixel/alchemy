@@ -45,9 +45,9 @@ void Func_0200290c(void) {
   EVENT_WORK->field1c4++;
   if (remaining != 0) {
   refuse:
-    /* FAKEMATCH(pin): the emote and the frames pinned to r1 and r2 by
-     * SHAMAN_VILLAGE_EMOTE, so they load before the actor; as a plain
-     * Func_080d47b4(15, 257, 20), 2 of 119 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the emote pinned to r1 by SHAMAN_VILLAGE_EMOTE, so it and
+     * the frames load before the actor; as a plain Func_080d47b4(15, 257, 20),
+     * 2 of 119 instructions differ in tla-en. */
     SHAMAN_VILLAGE_EMOTE(15, 257, 20)
     Event_ShowMessageAndWait(0x200f, 0);
     Func_0200289c();

@@ -1,3 +1,6 @@
+@ Why ply_lfos to ply_mod are assembly:
+@ Both nested-call entries return through ip saved from lr rather than a
+@ procedure-standard return: mov ip, lr before the bl, bx ip after it.
 .syntax unified
 	.thumb
 	.global ply_lfos

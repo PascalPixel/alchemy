@@ -1,3 +1,17 @@
+@ Why ColorBuffer_ScaleNonzeroThreeQuartersKernelCode to ColorBuffer_HalveNonzeroKernelCode are assembly:
+@ each Thumb entry's bx pc switches to the ARM code that follows, a mode
+@ switch inside a function; the halfword after bx pc is never run.
+@ push {r5, r6} saves callee-saved registers without lr.
+@ Why ColorBuffer_DarkenPartialKernelCode is assembly:
+@ its Thumb entry's bx pc switches to the ARM code that follows, a mode
+@ switch inside a function; the halfword after bx pc is never run.
+@ ldm r0!, {r4-r7} and stmia r2!, {r4-r7} write back through a
+@ four-register list starting at r4. GCC 2.95.2's block-copy expander
+@ fixes that list at r0-r3; its general ldm/stm peepholes never write back.
+@ Why ColorBuffer_BrightenPartialKernelCode is assembly:
+@ its Thumb entry's bx pc switches to the ARM code that follows, a mode
+@ switch inside a function; the halfword after bx pc is never run.
+@ push {r5-r9} saves callee-saved registers without lr.
 .syntax unified
 	.thumb
 	.global ColorBuffer_ScaleNonzeroThreeQuartersKernelCode

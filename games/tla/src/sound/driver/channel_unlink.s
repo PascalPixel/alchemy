@@ -1,3 +1,5 @@
+@ Why SoundChannel_Unlink is assembly:
+@ bcc on the flags of subs r1, #20 with no compare.
 .syntax unified
 	.thumb
 	.global SoundChannel_Unlink

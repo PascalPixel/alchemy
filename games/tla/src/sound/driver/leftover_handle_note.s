@@ -1,3 +1,8 @@
+@ Why assembly: a copy the ROM keeps of a routine it also links: its bytes
+@ are MusicTrack_HandleNoteUnreferenced's (handle_note_unreferenced.s) but
+@ for its last pool word, left 0, and its six bl keep that routine's offsets,
+@ so from here they land elsewhere, the first on Func_081c08a4 inside
+@ ply_note.
 .syntax unified
 	.thumb
 	.global MusicTrack_HandleNoteLeftover

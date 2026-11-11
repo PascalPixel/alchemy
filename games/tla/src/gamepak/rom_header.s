@@ -1,3 +1,6 @@
+@ Why assembly: the cartridge header: the BIOS starts the game at its first word, a branch
+@ to Entry inside a block of header data, a linkage no procedure-call
+@ standard produces.
 	.include "games/tla/include/ed_asm.h"
 	.section .rodata
 	.arm

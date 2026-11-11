@@ -1,3 +1,6 @@
+@ Why assembly: push saves callee-saved r5/r6 without lr; body also edits
+@ branch instructions. Its Thumb entry's bx pc switches to the ARM code that follows, a mode switch inside a function;
+@ the halfword after bx pc is never run.
 .syntax unified
 	.thumb
 	.global Resource_PatchThumbBranchCode

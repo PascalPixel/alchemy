@@ -1,3 +1,7 @@
+@ Why assembly: its Thumb entry switches to ARM within its body (add r1, pc,
+@ #4; bx r1), a mode switch inside a function; the ARM blocks use fp (r11) as
+@ a channel volume, the multiplier in mul, not a frame pointer, and
+@ push {r4, ip} saves without lr.
 .syntax unified
 	.thumb
 	.global SoundDriver_Mixer
@@ -8,6 +12,7 @@ SoundDriver_Mixer:
 	beq .L_03006060
 	add	r1, pc, #4
 	bx	r1
+@ Never run: .arm pads to a word; bx r1 enters the ARM code after it.
 AlchemyUncredited_081c131a:
 	.arm
 AlchemyUncreditedEnd_081c131a:
@@ -80,6 +85,7 @@ AlchemyUncreditedEnd_081c131a:
 	cmp	r1, r0
 	bcc .L_030060b8
 	b .L_0300638a
+@ Never run: a zero halfword after b that word-aligns the pool word.
 AlchemyUncredited_081c13c2:
 	.2byte	0x0000
 AlchemyUncreditedEnd_081c13c2:
@@ -206,6 +212,7 @@ AlchemyUncreditedEnd_081c13c2:
 	ldr	r3, [r4, #40]
 	add	r0, pc, #4
 	bx	r0
+@ Never run: .arm pads to a word; bx r0 enters the ARM code after it.
 AlchemyUncredited_081c14a6:
 	.arm
 AlchemyUncreditedEnd_081c14a6:

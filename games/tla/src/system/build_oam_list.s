@@ -1,3 +1,14 @@
+@ Why Render_BuildOamListKernel is assembly:
+@ its Thumb entry's bx pc switches to the ARM code that follows, a mode
+@ switch inside a function; the halfword after bx pc is never run.
+@ bcs consumes the carry of lsls r3, r3, #1; movs r3, r3 copies and tests
+@ without a shift; add r1, pc, #0x118 / ldm r1, {r2, sl, fp, ip} reads its
+@ four addresses with one pc-relative block load; and fp (r11) holds
+@ gOamUsage's address, not a frame pointer.
+@ Why Render_BuildOamList is assembly:
+@ it reads its three DMA words, the channel's address, the kernel and the
+@ control, with one pc-relative block load (add r1, pc, #16; ldmia r1,
+@ {r1, r2, r4}).
 .syntax unified
 	.thumb
 	.global Render_BuildOamListKernel
@@ -101,9 +112,7 @@ AlchemyUncreditedEnd_080018b6:
 
 @ The kernel's loader: copies the ARM kernel by DMA into a buffer on the stack
 @ and calls it there, through lr with a lone BL suffix, as the palette
-@ kernels' loaders do. Handwritten (S1): it reads its three DMA words, the
-@ channel's address, the kernel and the control, with one pc-relative block
-@ load.
+@ kernels' loaders do.
 	.thumb
 	.global Render_BuildOamList
 	.thumb_func

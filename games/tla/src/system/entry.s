@@ -1,3 +1,4 @@
+@ Why assembly: msr CPSR_fc selects IRQ and system modes before their stack setup.
 .syntax unified
 	.arm
 	.global Entry

@@ -1,3 +1,8 @@
+@ Why Model_Decode is assembly:
+@ its Thumb entry's bx pc switches to the ARM code that follows, a mode
+@ switch inside a function; the halfword after bx pc is never run.
+@ r11/fp is the mask 7 passed through the command linkage; the opening
+@ str loop rewrites the command table used by ldr pc in its dispatcher.
 .syntax unified
 	.thumb
 	.global Model_DecodeCode
@@ -6,6 +11,7 @@ Model_DecodeCode:
 	.thumb_func
 Model_Decode:
 	bx	pc
+@ The halfword bx pc steps over to reach the ARM code; never run.
 AlchemyUncredited_08118162:
 	.2byte	0x0200
 	.arm

@@ -1,3 +1,5 @@
+@ Why Bios_CpuSet to Bios_SoundBiasOff are assembly:
+@ svc 11 and svc 25 are BIOS software interrupts.
 .syntax unified
 	.thumb
 	.global Bios_CpuSet

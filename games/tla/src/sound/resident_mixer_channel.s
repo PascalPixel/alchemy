@@ -1,6 +1,17 @@
+@ Why IwramSoundMixInterpolated to IwramSoundMixDone are assembly:
+@ fp (r11) holds the packed volumes, the multiplier in mlane, not a frame
+@ pointer; addne pc, lr, #8 returns 8 bytes past the return address of the
+@ blle that called it, a linkage no procedure-call standard produces.
+@ Why IwramSoundMixBlock to IwramSoundMixNextChannel are assembly:
+@ push {r4, r9} saves without lr; stm r1, {r6, r7} and stm r1, {r9, sl} copy
+@ sample-unpacking instructions from before IwramSoundMixBlock into the loop's
+@ nop slots before it runs, stores into code; movs r6, r2 copies and tests
+@ without a shift; and add r0, pc, #1 / bx r0 switches back to Thumb, a mode
+@ switch inside a function.
 .syntax unified
 	.thumb_func
 	.arm
+@ Three six-instruction templates resident_mixer_lanes.s copies into its slots.
 	asr	r9, r9, #22
 	adds	r9, r9, r6, lsl #1
 	adds	r7, r7, r4
@@ -110,6 +121,7 @@ IwramSoundMixBlock:
 	ldm	r3!, {sl}
 .L_03000c78:
 	ldm	r5, {r0, r1, r7, r9}
+@ Each nop pair below is an instruction slot the stm r1 copies above fill.
 AlchemyUncredited_08001234:
 	nop
 	nop

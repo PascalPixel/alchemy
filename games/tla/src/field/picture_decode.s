@@ -1,3 +1,8 @@
+@ Why assembly: computed add pc dispatch into code; a later block saves r5-r9
+@ without lr. The nop after add pc, pc, r2, lsl #2 is never run: pc reads 8
+@ bytes ahead.
+@ Its Thumb entry's bx pc switches to the ARM code that follows, a mode
+@ switch inside a function; the halfword after bx pc is never run.
 .syntax unified
 	.thumb
 	.global Render_DecodePictureCode

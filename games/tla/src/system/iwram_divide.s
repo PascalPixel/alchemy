@@ -1,3 +1,11 @@
+@ Why IwramSignedRemainder to IwramUnsignedDivide are assembly:
+@ signed wrappers use unshifted movs (movs r2, r1) and return through ip
+@ (mov ip, lr; bx ip). The core returns the quotient in r0 and the remainder
+@ in r1; the remainder wrappers read that second result (mov r0, r1), a
+@ custom internal linkage. lsrs r0, ip, #32 / bcc branches on the carry of
+@ the shift, the sign bit of eor ip, r0, r1. Each Thumb entry's bx pc
+@ switches to the ARM code that follows, a mode switch inside a function;
+@ the halfword after bx pc is never run.
 .syntax unified
 	.arm
 .L_030004a8:
@@ -38,6 +46,8 @@ AlchemyUncreditedEnd_08000ac2:
 	bmi	.L_030004d4
 	.global IwramUnsignedRemainder
 IwramUnsignedRemainder:
+@ 78 47 00 02: Thumb bx pc and lsls r0, r0, #8 for a caller in Thumb state;
+@ IwramSignedRemainder, falling through in ARM state, runs it as this andeq.
 	andeq	r4, r0, #120, 14
 	mov	ip, lr
 	bl	.L_03000534
@@ -58,11 +68,13 @@ AlchemyUncreditedEnd_08000ae2:
 	.global IwramUnsignedDivide
 IwramUnsignedDivide:
 .L_03000534:
+@ The same Thumb entry word, run as andeq by bl .L_03000534 and by IwramSignedDivide falling through.
 	andeq	r4, r0, #120, 14
 	mov	r2, r1
 	mov	r1, r0
 	mov	r0, #0
 .L_03000544:
+@ The same Thumb entry word, run as andeq when ARM code branches to .L_03000544 or falls through.
 	andeq	r4, r0, #120, 14
 	cmp	r2, #0x4000
 	bcs	.L_03000578

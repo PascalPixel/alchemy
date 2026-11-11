@@ -1,9 +1,10 @@
+@ Why assembly: its Thumb entry's bx pc switches to the ARM code that follows,
+@ a mode switch inside a function, as the kernels in color_backup_kernels.s
+@ do; the halfword after bx pc is never run.
 @ ColorBuffer_ScaleKernelCode(source, destination, scale, count): the ARM
 @ kernel ColorBuffer_Scale (color_scale_loader.s) copies to the stack and
 @ runs. It scales count BGR555 colours by scale / 256, at most 1.0, masking
-@ each channel in place. Handwritten (S1): it enters in Thumb and switches to
-@ ARM with bx pc, a mode switch inside the function, as the kernels in
-@ color_backup_kernels.s do.
+@ each channel in place.
 
 .syntax unified
 	.thumb

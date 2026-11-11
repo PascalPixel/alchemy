@@ -1,3 +1,4 @@
+@ Why assembly: mrs SPSR; IRQ dispatcher restores SPSR and CPU modes.
 .syntax unified
 	.arm
 	.global IwramIrqMain

@@ -1,3 +1,6 @@
+@ Why Trig_Cos is assembly:
+@ Trig_Cos falls through directly into Trig_Sin's entry, a linkage no
+@ procedure-call standard produces.
 .syntax unified
 	.thumb
 	.global Trig_Cos

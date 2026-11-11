@@ -1,3 +1,9 @@
+@ Why IwramTransformVector to IwramTransformMatrix are assembly:
+@ fp is a product high half rather than a frame pointer; stmia writes
+@ arithmetic-transformed vectors, not compiler block-copy data.
+@ IwramTransformMatrix also copies and tests without a shift (movs r1, r1).
+@ Each Thumb entry's bx pc switches to the ARM code that follows, a mode
+@ switch inside a function; the halfword after bx pc is never run.
 .syntax unified
 	.thumb
 	.global IwramTransformVector

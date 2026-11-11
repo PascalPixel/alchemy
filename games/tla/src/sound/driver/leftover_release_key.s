@@ -1,3 +1,5 @@
+@ Why assembly: push saves r4/r5 without lr; its bytes are ply_endtie's
+@ (release_key.s).
 .syntax unified
 	.thumb
 	.global MusicTrack_ReleaseKeyLeftover

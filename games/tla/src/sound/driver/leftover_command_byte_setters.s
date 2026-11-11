@@ -1,3 +1,8 @@
+@ Why MusicTrack_SetLfoSpeedFromCommandLeftover to
+@ MusicTrack_SetModulationFromCommandLeftover are assembly:
+@ Both nested-call entries return through ip saved from lr rather than a
+@ procedure-standard return: mov ip, lr before the bl, bx ip after it. Their
+@ bytes are ply_lfos's and ply_mod's (command_byte_setters.s).
 .syntax unified
 	.thumb
 	.global MusicTrack_SetLfoSpeedFromCommandLeftover

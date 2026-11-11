@@ -1,3 +1,4 @@
+@ Why assembly: 8-byte far-call veneers: ldr r4, the target's word, bx r4.
 .syntax unified
 	.thumb
 	.include "games/tla/src/gamepak/far_call/veneer.s"

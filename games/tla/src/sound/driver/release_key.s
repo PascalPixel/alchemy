@@ -1,3 +1,4 @@
+@ Why assembly: push saves r4/r5 without lr; Nintendo library ply_endtie.
 .syntax unified
 	.thumb
 	.global ply_endtie

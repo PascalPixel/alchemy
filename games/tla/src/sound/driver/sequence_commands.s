@@ -1,3 +1,17 @@
+@ Why Sound_LoadCommandTable to ply_patt are assembly:
+@ Sound_LoadCommandTable keeps the return address with mov ip, lr across a
+@ bl and returns with bx ip, never saving lr; the helper after it returns
+@ its byte in r3 and preserves r0 with push {r0} / pop {r0}, and ply_goto
+@ calls it there (bl .L_081c1734), a linkage no procedure-call standard
+@ produces; ply_patt branches into ply_goto's body (b.n .L_081c175c) and
+@ tail-branches to ply_fine.
+@ Why ply_rept to ply_port are assembly:
+@ each calls the helper that returns its byte in r3 (bl .L_081c1750,
+@ .L_081c1736, or .L_081c1752 with the address already in r2); ply_prio to
+@ ply_port keep
+@ the return address with mov ip, lr across that bl and return with bx ip,
+@ never saving lr, and ply_rept branches into ply_goto's body
+@ (b.n .L_081c175e).
 .syntax unified
 	.thumb
 	.global Sound_LoadCommandTable

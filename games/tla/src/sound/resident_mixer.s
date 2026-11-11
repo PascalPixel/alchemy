@@ -1,3 +1,7 @@
+@ Why assembly: bcc consumes the carry of lsls r0, r6, #25; fp (r11) holds a
+@ channel volume, not a frame pointer; and add r1, pc, #8 / bx r1 switches to
+@ the ARM code that follows in resident_mixer_lanes.s, a mode switch inside a
+@ function.
 .syntax unified
 	.thumb_func
 	.arm

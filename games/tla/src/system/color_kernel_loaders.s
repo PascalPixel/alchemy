@@ -1,3 +1,7 @@
+@ Why ColorBuffer_ScaleNonzeroThreeQuarters to ColorBuffer_DarkenPartial are assembly:
+@ each reads its three DMA words, the channel's address, the kernel and the
+@ control, with one pc-relative block load (add r4, pc, #16; ldmia r4,
+@ {r4, r5, r7}).
 .syntax unified
 	.thumb
 	.global ColorBuffer_ScaleNonzeroThreeQuarters

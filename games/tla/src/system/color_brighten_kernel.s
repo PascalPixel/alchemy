@@ -1,3 +1,6 @@
+@ Why assembly: its Thumb entry's bx pc switches to the ARM code that follows,
+@ a mode switch inside a function; the halfword after bx pc is never run.
+@ push {r5-r9} saves callee-saved registers without lr.
 .syntax unified
 	.thumb
 	.global ColorBuffer_BrightenKernelCode

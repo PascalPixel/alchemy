@@ -1,3 +1,8 @@
+@ Why Math_UnsignedMulHigh to Math_UnsignedMulHighAdd are assembly:
+@ each Thumb entry's bx pc switches to the ARM code that follows, a mode
+@ switch inside a function; the nop after bx pc is never run.
+@ Secondary: umulls sets flags nothing reads; GCC 2.95.2's ARM patterns
+@ emit umull without the s bit.
 .syntax unified
 	.thumb
 	.global Math_UnsignedMulHigh

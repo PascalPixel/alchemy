@@ -1,3 +1,9 @@
+@ Why assembly: its Thumb entry's bx pc switches to the ARM code that follows,
+@ a mode switch inside a function; the halfword after bx pc is never run.
+@ ldrne and ldreq pick one of the two bgt words kept after its return, and
+@ str r1, [pc, #252] writes it over the ldmgt at .L_03000e60, a store into
+@ code; movs r9, r9 copies and tests without a shift; fp (r11) holds packed
+@ samples, not a frame pointer.
 .syntax unified
 	.thumb
 	.global IwramSoundRenderVBlank

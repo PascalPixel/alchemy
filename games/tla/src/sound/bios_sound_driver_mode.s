@@ -1,3 +1,5 @@
+@ Why Bios_SoundDriverMode to Bios_Swi23 are assembly:
+@ svc 27 and svc 35 are BIOS software interrupts.
 .syntax unified
 	.thumb
 	.global Bios_SoundDriverMode

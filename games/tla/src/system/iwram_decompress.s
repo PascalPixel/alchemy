@@ -1,3 +1,6 @@
+@ Why assembly: push saves r5/r6/r7 without lr, and bcc consumes the carry of
+@ lsrs r3, r3, #1. Its Thumb entry's bx pc switches to the ARM code that follows, a mode switch inside a function;
+@ the halfword after bx pc is never run.
 .syntax unified
 	.arm
 	.thumb

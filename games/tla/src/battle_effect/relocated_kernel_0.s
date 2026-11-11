@@ -1,6 +1,14 @@
 @ Two hand-written ARM kernels, each copied into a heap block and run there:
 @ Data_081380ac (its size is Data_081380acCodeSize, which RamCode_RunKernel0
 @ copies) and Data_0813847c after it.
+@
+@ Why Func_081380ac is assembly:
+@ its Thumb entry's bx pc switches to the ARM code that follows, a mode
+@ switch inside a function; the halfword after bx pc is never run.
+@ Why the routine after Data_0813847c is assembly:
+@ its Thumb entry, the word written as andeq r4, r0, #120, 14 (bytes 78 47 00
+@ 02: bx pc and the halfword after it), switches to the ARM code that follows,
+@ a mode switch inside a function.
 .syntax unified
 	.thumb
 	.global Data_081380ac
@@ -9,6 +17,7 @@ Data_081380ac:
 	.thumb_func
 Func_081380ac:
 	bx	pc
+@ The halfword bx pc steps over to reach the ARM code; never run.
 AlchemyUncredited_081380ae:
 	.2byte	0x0200
 	.arm
@@ -652,6 +661,7 @@ Data_0813847c:
 	add	sp, sp, #144
 	pop	{r5, r6, r7, r8, r9, sl, lr}
 	bx	lr
+@ Thumb bx pc and the halfword after it, as one word: the next routine's entry.
 	andeq	r4, r0, #120, 14
 	push	{r5, r6, r7, r8, r9, sl, lr}
 	sub	sp, sp, #156

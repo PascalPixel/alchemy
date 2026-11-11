@@ -1,3 +1,5 @@
+@ Why assembly: a copy the ROM keeps of a routine it also links: its 28 bytes
+@ are clear_modM's (clear_modulation.s).
 .syntax unified
 	.thumb
 	.global MusicTrack_ClearModulationStateLeftover

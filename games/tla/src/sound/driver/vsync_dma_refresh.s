@@ -1,3 +1,6 @@
+@ Why assembly: DMA timer branches on carry from lsls: each bcc consumes the
+@ carry of lsls r1, r1, #7, a DMA channel's repeat bit; bgt branches on the
+@ flags of subs r1, #1 with no compare.
 .syntax unified
 	.thumb
 	.global SoundDriver_VSyncRefresh

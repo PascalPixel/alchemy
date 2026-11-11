@@ -1,3 +1,13 @@
+@ Why assembly: r11/fp is a tile-data address (add fp, r3, r7, lsr #26), not a
+@ frame pointer. r4 (0xffa00038) is at once two packed loop counters and an
+@ AND mask. subs r4, r4, #0x1000000 / bpl counts the inner loop in its top
+@ byte, reset by add r4, r4, #0x1e000000; sub r4, r4, #0x10000 with
+@ tst r4, #0x70000 and tst r4, #0xff0000 / bne counts the rows in bits
+@ 16-23; and every and sl, r4, r8, lsr #20 uses the same register as the
+@ mask, of which only the low 0x38 can meet the 12 shifted bits. A compiler
+@ keeps two counters and a constant mask as separate values.
+@ Its Thumb entry's bx pc switches to the ARM code that follows, a mode
+@ switch inside a function; the halfword after bx pc is never run.
 .syntax unified
 	.thumb
 	.global Render_DrawMapCode

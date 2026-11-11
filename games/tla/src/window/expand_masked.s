@@ -1,3 +1,6 @@
+@ Why assembly: push saves r5-r9/sl without lr.
+@ Its Thumb entry's bx pc switches to the ARM code that follows, a mode
+@ switch inside a function; the halfword after bx pc is never run.
 .syntax unified
 	.thumb
 	.global Tile_ExpandMaskedCode

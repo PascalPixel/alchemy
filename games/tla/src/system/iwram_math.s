@@ -1,3 +1,17 @@
+@ Why IwramClearWords to IwramFillWords are assembly:
+@ push saves r5-r9 without lr and computed add pc enters the unrolled store
+@ body. IwramClearWords's Thumb entry's bx pc switches to the ARM code that
+@ follows, a mode switch inside a function; the halfword after bx pc is
+@ never run.
+@ Why IwramSqrt is assembly:
+@ movs r1, r0 copies and tests without a shift. The compilers' copy-and-test
+@ (*movsi_compare0) is subs r1, r0, #0; a register-to-register movs comes only
+@ with a shift.
+@ Secondary: the sign exit that follows is bxmi lr. *movsi_compare0 sets plain
+@ CC, where a signed < 0 test is lt; mi is the CC_NOOV spelling, which a
+@ copy-and-test never has.
+@ Why the unnamed routine after IwramSqrt is assembly:
+@ bcc and bcs consume the carry set by lsls r3 in the bit-run loop.
 	.include "games/tla/include/ed_asm.h"
 .syntax unified
 	.thumb
@@ -11,6 +25,8 @@ AlchemyUncreditedEnd_08000812:
 	mov	r2, #0
 	.global IwramFillWords
 IwramFillWords:
+@ 78 47 00 02: Thumb bx pc and lsls r0, r0, #8 for a caller in Thumb state;
+@ IwramClearWords, falling through in ARM state, runs it as this andeq.
 	andeq	r4, r0, #120, 14
 	push	{r5, r6, r7, r8, r9}
 	mov	r3, r2

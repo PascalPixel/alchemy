@@ -1,3 +1,5 @@
+@ Why assembly: fp is a packed sample operand in arithmetic and rotates, not a
+@ frame pointer; it ends with no return.
 .syntax unified
 	.arm
 	.global Sound_ResamplerRecord3

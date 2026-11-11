@@ -1,3 +1,6 @@
+@ Why assembly: HeapSlot_Release branches on lsrs flags without cmp/cmn
+@ (lsrs r3, r1, #22 / beq); alchemy-gcc's Thumb cbranchsi4 and
+@ negated_cbranchsi4 always emit a compare.
 .syntax unified
 	.thumb
 	.global HeapSlot_Release

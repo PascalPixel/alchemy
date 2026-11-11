@@ -1,3 +1,12 @@
+@ Why ColorBuffer_ScaleThreeQuartersKernelCode to ColorBuffer_HalveKernelCode are assembly:
+@ each Thumb entry's bx pc switches to the ARM code that follows, a mode
+@ switch inside a function; the halfword after bx pc is never run.
+@ push {r5-sl} saves callee-saved registers without lr.
+@ Why ColorBuffer_DarkenKernelCode is assembly:
+@ its Thumb entry's bx pc switches to the ARM code that follows, a mode
+@ switch inside a function; the halfword after bx pc is never run.
+@ fp (r11) holds the eighth colour word of each ldm and stmia, not a frame
+@ pointer.
 .syntax unified
 	.thumb
 	.global ColorBuffer_ScaleThreeQuartersKernelCode

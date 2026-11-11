@@ -1,3 +1,8 @@
+@ Why assembly: bcs/bcc consume lsls lr's carry. The decoder dispatch also
+@ enters eight-byte code slots, unlike the compiler's four-byte switch
+@ entries. Its return pops the r1 saved at entry into r0. Its Thumb entry's
+@ bx pc switches to the ARM code that follows, a mode switch inside a function;
+@ the halfword after bx pc is never run.
 .syntax unified
 	.thumb
 	.global Resource_DecodeByteLzCode
@@ -79,6 +84,7 @@ AlchemyUncreditedEnd_0800165a:
 	beq	.L_080017f0
 	rsb	ip, ip, #15
 	add	pc, pc, ip, lsl #3
+@ The slot pc + 8 skips; never run.
 AlchemyUncredited_0800175c:
 	nop
 AlchemyUncreditedEnd_0800175c:
@@ -126,6 +132,7 @@ AlchemyUncreditedEnd_0800175c:
 	and	ip, r3, #15
 	rsb	ip, ip, #15
 	add	pc, pc, ip, lsl #3
+@ The slot pc + 8 skips; never run.
 AlchemyUncredited_0800180c:
 	nop
 .L_08001810:

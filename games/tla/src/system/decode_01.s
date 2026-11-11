@@ -1,3 +1,7 @@
+@ Why assembly: the bit reader branches on carry immediately after shifting
+@ its live bit reservoir (lsrs r2, r2, #1 / bcs); it also uses unshifted
+@ movs r2, r2 for copy-and-test. Its Thumb entry's bx pc switches to the ARM code that follows, a mode switch inside a function;
+@ the halfword after bx pc is never run.
 .syntax unified
 	.thumb
 	.global Resource_Decode01Code

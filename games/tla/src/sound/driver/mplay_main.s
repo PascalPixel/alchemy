@@ -1,10 +1,12 @@
+@ Why assembly: push {r4, r5, r6, r7} saves without lr, after pop {r0} has
+@ taken back the r0 pushed with lr; r11 is an ordinary register, the mask of
+@ the tracks still playing (mov r11, r4), not a frame pointer; bcc consumes
+@ the carry of lsrs r0, r3, #7; mov lr, r3 and a lone BL suffix
+@ (.inst.n 0xf800) call through lr. The bx r3 after its return is the
+@ driver's call through r3.
 @ MusicPlayer2000's MPlayMain, run once a VBlank: runs a player's callback,
 @ steps its fade and, as often as its tempo allows, every track's song
 @ commands and notes, then updates each channel's volume and pitch.
-@ Handwritten (S1): it saves the high registers without lr, keeps r11 as
-@ an ordinary register, branches on a shift's carry and calls through lr
-@ with a lone BL suffix; the bx r3 after its return is the driver's call
-@ through r3.
 
 .syntax unified
 	.thumb

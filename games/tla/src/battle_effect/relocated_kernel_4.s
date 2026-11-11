@@ -1,3 +1,13 @@
+@ Why assembly:
+@ its Thumb entry's bx pc switches to the ARM code that follows, a mode
+@ switch inside a function; the halfword after bx pc is never run.
+@ str r3, [pc, #-248] and the four like it rewrite the shifts of its
+@ own loop's instructions, and DMA 3 copies that loop's body into the code
+@ slot after it, before the loop runs: stores into code.
+@ r11 (fp) as an ordinary register: it holds a word of its argument block
+@ (ldr fp, [r0, #4]; tst fp, #3), not a frame pointer.
+@ movs r2, r1 copies and tests without a shift; the compilers' copy-and-test
+@ is subs r2, r1, #0.
 .syntax unified
 	.thumb
 	.global Data_081395f8
@@ -6,11 +16,14 @@ Data_081395f8:
 	.thumb_func
 Func_081395f8:
 	bx	pc
+@ The halfword bx pc steps over to reach the ARM code; never run.
 AlchemyUncredited_081395fa:
 	.2byte	0x0200
 	.arm
 AlchemyUncreditedEnd_081395fa:
 	b	.L_081399d0
+@ Two words of run-time state: stm r0, {r7, r8} writes them and
+@ ldm lr, {r6, ip} reads them back.
 AlchemyUncredited_08139600:
 	.4byte	0
 	.4byte	0
@@ -230,6 +243,8 @@ AlchemyUncreditedEnd_08139600:
 	adds	r7, r7, r1
 	subcc	r7, r7, #8
 .L_08139938:
+@ The code slot DMA 3 fills with a copy of the 7-instruction loop body
+@ before it.
 AlchemyUncredited_08139938:
 	.4byte	0
 	.4byte	0
@@ -322,6 +337,8 @@ AlchemyUncreditedEnd_08139938:
 	ldr	r0, [r0, #8]
 	b	.L_08139610
 	.4byte	System_ReciprocalTable + 1
+@ Four words of run-time state: stm lr, {r3, r4} and the two str to pc
+@ write them, and ldm r7, {r7, r8, fp} reads three back.
 AlchemyUncredited_08139a94:
 	.4byte	0x00000000
 	.4byte	0x00000000

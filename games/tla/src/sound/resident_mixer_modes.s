@@ -1,3 +1,5 @@
+@ Why assembly: push {r2, r3, r9, ip} saves without lr; fp (r11) holds the
+@ packed volumes, an operand of add, sub and mla, not a frame pointer.
 .syntax unified
 	.arm
 	.global IwramSoundSynthWave

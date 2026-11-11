@@ -1,3 +1,9 @@
+@ Why assembly: stm lr, {r0, r1} and stm lr, {r2, r8, r9, sl} copy one of
+@ resident_mixer_channel.s's three templates into the lanes' instruction slots
+@ before they run, stores into code; lsrs fp, fp, #1 / adc fp, fp, #0x8000
+@ consumes a shift's carry; fp (r11) holds the packed volumes, not a frame
+@ pointer; movs r2, r2 copies and tests without a shift; and push {r4, r9, ip}
+@ saves without lr.
 .syntax unified
 	.thumb
 	.arm
@@ -80,6 +86,7 @@
 .L_030009a4:
 	ldm	r5, {r0, r1, sl, lr}
 	mul	r9, r7, ip
+@ Each 0xfedcba98 run below is an instruction slot the stm lr loop above fills.
 AlchemyUncredited_08000f64:
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
@@ -191,6 +198,7 @@ AlchemyUncreditedEnd_08001074:
 	add	ip, pc, #4
 	ldm	ip, {r2, r3, sp}
 	b	IwramSoundMixDone
+@ r2, sl and sp as stm r9, {r2, sl, sp} saved them; ldm ip reloads them.
 AlchemyUncredited_080010a0:
 	.4byte	0x00000000
 	.4byte	0x00000000

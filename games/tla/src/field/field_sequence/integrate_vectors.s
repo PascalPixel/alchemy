@@ -1,3 +1,5 @@
+@ Why BattleEffect_IntegrateVector3 to BattleEffect_IntegrateVector2 are assembly:
+@ each bge.n after muls branches on the multiply's flags with no compare.
 .syntax unified
 	.thumb
 	.global BattleEffect_IntegrateVector3

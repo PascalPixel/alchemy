@@ -1,8 +1,9 @@
+@ Why assembly: it reads its three words with one pc-relative block load
+@ (add r1, pc, #20; ldmia r1!, {r0, r2, r3}).
 @ The sound driver's VBlank entry: checks the stack is in IWRAM and the
 @ sound area is unlocked, saves the high registers, runs the two VBlank
 @ callbacks and enters the IWRAM mixer with its buffer offset for this
-@ VBlank. Handwritten (S1): it reads its three words with one pc-relative
-@ block load, and calls its callbacks through lr with a lone BL suffix.
+@ VBlank. It calls its callbacks through lr with a lone BL suffix.
 
 .syntax unified
 	.thumb
@@ -21,6 +22,7 @@ SoundDriver_EnterVBlankUpdate:
 .L_08000642:
 	movs	r0, #1
 	bx	lr
+@ Never run: a zero halfword after bx lr that word-aligns the loaded words.
 AlchemyUncredited_08000646:
 	.2byte	0x0000
 AlchemyUncreditedEnd_08000646:
@@ -72,6 +74,7 @@ AlchemyUncreditedEnd_08000646:
 	bx	r3
 	.4byte	IwramSoundMixEntry + 1
 	.4byte	gData_02003a90
+@ Unread here: 0x350 and REG_VCOUNT's address, as SoundMain's pool loads them.
 AlchemyUncredited_080006ac:
 	.4byte	0x00000350
 	.4byte	0x04000006

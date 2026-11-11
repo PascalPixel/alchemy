@@ -1,3 +1,6 @@
+@ Why assembly: rrx and conditional rrxs consume the bit reader's shift carry.
+@ Its Thumb entry's bx pc switches to the ARM code that follows, a mode
+@ switch inside a function; the halfword after bx pc is never run.
 .syntax unified
 	.thumb
 	.global Text_DecodeSymbolCode

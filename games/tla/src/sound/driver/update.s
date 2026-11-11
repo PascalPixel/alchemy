@@ -1,3 +1,11 @@
+@ Why SoundDriver_Update to SoundDriver_CallViaR3 are assembly:
+@ DMA timer branches on carry from lsls: each bcc consumes the carry of
+@ lsls r1, r1, #7, a DMA channel's repeat bit. The player after it saves
+@ with push {r4, r5, r6, r7} without lr, after pop {r0} has taken back the r0
+@ pushed with lr; r11 (fp) is an ordinary register, the mask of the tracks
+@ still playing (mov fp, r4), not a frame pointer; it returns through
+@ pop {r3} into SoundDriver_CallViaR3's bx r3, which its callback call also
+@ enters with bl.
 .syntax unified
 	.thumb
 	.global SoundDriver_Update

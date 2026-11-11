@@ -1,8 +1,9 @@
+@ Why assembly: it reads its three DMA words, the channel's address, the
+@ kernel and the control, with one pc-relative block load (add r4, pc, #16;
+@ ldmia r4, {r4, r5, r7}).
 @ ColorBuffer_Scale(source, destination, scale, count): copies the ARM kernel
 @ ColorBuffer_ScaleKernelCode by DMA into a buffer on the stack and calls it
 @ there, through lr with a lone BL suffix, as color_backup_loaders.s does.
-@ Handwritten (S1): it reads its three DMA words, the channel's address, the
-@ kernel and the control, with one pc-relative block load.
 
 .syntax unified
 	.thumb

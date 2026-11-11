@@ -1,3 +1,6 @@
+@ Why assembly: bcc and adc consume lsls r3's carry; the intervening ldrh
+@ keeps flags. Its Thumb entry's bx pc switches to the ARM code that follows, a mode switch inside a function;
+@ the halfword after bx pc is never run.
 .syntax unified
 	.thumb
 	.global Resource_DecodeHalfwordLzCode

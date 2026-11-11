@@ -1,3 +1,6 @@
+@ Why assembly: caller supplies the channel in r4 and track in r5; the routine
+@ reads them (ldrb r1, [r4, #18]; ldrb r0, [r5, #16]) without an argument move
+@ or save, a linkage no procedure-call standard produces.
 .syntax unified
 	.thumb
 	.global SoundDriver_CalculateStereoVolumeTwin

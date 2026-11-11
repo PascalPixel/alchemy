@@ -1,8 +1,10 @@
+@ Why ColorBuffer_ScaleThreeQuarters to ColorBuffer_Darken are assembly:
+@ each reads its three DMA words, the channel's address, the kernel and the
+@ control, with one pc-relative block load (add r4, pc, #16; ldmia r4,
+@ {r4, r5, r7}).
 @ The loaders of the backup kernels in color_backup_kernels.s and
 @ color_brighten_kernel.s: each copies its ARM kernel by DMA into a buffer on
 @ the stack and calls it there, through lr with a lone BL suffix.
-@ Handwritten (S1): each reads its three DMA words, the channel's address, the
-@ kernel and the control, with one pc-relative block load.
 
 .syntax unified
 	.thumb

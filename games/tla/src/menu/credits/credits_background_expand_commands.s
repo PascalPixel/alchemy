@@ -1,3 +1,6 @@
+@ Why BattleEffect_ExpandCase2 to BattleEffect_ExpandCase10 are assembly:
+@ entries share live r0/r2/r3 decoder state with their caller; delta
+@ entries update unsaved r5 and use r11/fp as a data mask.
 .syntax unified
 	.arm
 	.global BattleEffect_ExpandCommands

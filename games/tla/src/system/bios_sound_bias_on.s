@@ -1,3 +1,4 @@
+@ Why assembly: svc 25 is a BIOS software interrupt.
 .syntax unified
 	.thumb
 	.global Bios_SoundBiasOn

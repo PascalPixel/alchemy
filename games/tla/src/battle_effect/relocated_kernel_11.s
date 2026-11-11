@@ -1,3 +1,16 @@
+@ Why Func_0813b7a0 is assembly:
+@ its Thumb entry's bx pc switches to the ARM code that follows, a mode
+@ switch inside a function; the halfword after bx pc is never run.
+@ r11 (fp) as an ordinary register: it holds a byte pointer from its argument
+@ block (ldr fp, [r0, #20]; ldrb r1, [fp, #-1]), not a frame pointer.
+@ movs r7, r8 copies and tests without a shift; the compilers' copy-and-test
+@ is subs r7, r8, #0.
+@ Why Func_0813b9a0 is assembly:
+@ its Thumb entry's bx pc switches to the ARM code that follows, a mode
+@ switch inside a function; the halfword after bx pc is never run.
+@ push saves r5-r9, sl and fp without lr.
+@ r11 (fp) as an ordinary register: it holds the mask 0xff000000, not a
+@ frame pointer.
 .syntax unified
 	.thumb
 	.global Data_0813b7a0
@@ -6,6 +19,7 @@ Data_0813b7a0:
 	.thumb_func
 Func_0813b7a0:
 	bx	pc
+@ The halfword bx pc steps over to reach the ARM code; never run.
 AlchemyUncredited_0813b7a2:
 	.2byte	0x0200
 	.arm
@@ -157,6 +171,7 @@ Data_0813b9a0:
 	.thumb_func
 Func_0813b9a0:
 	bx	pc
+@ The halfword bx pc steps over to reach the ARM code; never run.
 AlchemyUncredited_0813b9a2:
 	.2byte	0x0200
 	.arm

@@ -1,3 +1,7 @@
+@ Why BattleEffectKernels_IntegrateVector3 to
+@ BattleEffectKernels_IntegrateVector2 are assembly:
+@ each bge.n branches on the flags of the muls before it (muls r5, r1;
+@ bge.n), a conditional branch on flags with no compare.
 .syntax unified
 	.thumb
 	.global BattleEffectKernels_IntegrateVector3

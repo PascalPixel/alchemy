@@ -1,9 +1,13 @@
+@ Why assembly: a copy the ROM keeps of a routine it also links, stopping
+@ short of its end: its 232 bytes are SoundDriver_Update's from .L_081c1a9c
+@ (update.s) up to its final bx r3, and its bl and branches keep that
+@ routine's offsets. It keeps r11 as an ordinary register (mov r4, r11) and
+@ restores its callee saves by popping them into the low registers, as
+@ MPlayMain does.
 @ The tail of an older copy of MusicPlayer2000's MPlayMain, kept in the
 @ cartridge beside the leftover ply_note: it starts in the middle of the body and
 @ stops short of its return, and its two backward branches land outside it. Only
 @ the leftover ply_note refers to it.
-@ Handwritten (S1): it keeps r11 as an ordinary register and restores its
-@ callee saves by popping them into the low registers, as MPlayMain does.
 
 .syntax unified
 	.thumb

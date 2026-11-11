@@ -1,3 +1,7 @@
+@ Why assembly: r11/fp is the mask 7 passed through the command linkage; the
+@ opening str loop rewrites the command table used by ldr pc in its dispatcher.
+@ Its Thumb entry's bx pc switches to the ARM code that follows, a mode
+@ switch inside a function; the halfword after bx pc is never run.
 .syntax unified
 	.thumb
 	.global BattleEffect_Expand2Code

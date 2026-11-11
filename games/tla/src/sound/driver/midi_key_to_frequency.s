@@ -1,9 +1,12 @@
+@ Why assembly: bx pc switches to ARM for umlalne and umull, a mode switch
+@ inside a function; the nop after bx pc is never run.
 .syntax unified
 	.thumb
 .L_081c05e8:
 	movs	r1, #178
 	movs	r2, #255
 	b.n	.L_081c05f8
+@ Never run: a zero halfword after b.n that word-aligns the next routine.
 AlchemyUncredited_081c05ee:
 	.2byte	0x0000
 AlchemyUncreditedEnd_081c05ee:

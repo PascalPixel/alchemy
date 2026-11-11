@@ -1,3 +1,7 @@
+@ Why assembly: Nintendo MusicPlayer2000 SoundMain entry sets up one stack
+@ frame then bx r3 transfers into SoundDriver_Mixer, which consumes its live
+@ stack and saved register state and returns for it, a linkage no
+@ procedure-call standard produces.
 .syntax unified
 	.thumb
 	.global SoundMain
@@ -59,6 +63,7 @@ SoundMain:
 	ldr	r6, [pc, #24]
 	ldr	r3, [pc, #12]
 	bx	r3
+@ Never run: a zero halfword after bx r3 that word-aligns the pool.
 AlchemyUncredited_081c12f6:
 	.2byte	0x0000
 AlchemyUncreditedEnd_081c12f6:

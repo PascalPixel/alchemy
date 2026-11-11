@@ -1,3 +1,8 @@
+@ Why assembly:
+@ its Thumb entry's bx pc switches to the ARM code that follows, a mode
+@ switch inside a function; the halfword after bx pc is never run.
+@ r11 (fp) as an ordinary register: it holds a row counter
+@ (rsb fp, ip, #16; mov lr, fp), not a frame.
 .syntax unified
 	.thumb
 	.global BattleEffect_PatchTemplateCode
@@ -6,6 +11,7 @@ BattleEffect_PatchTemplateCode:
 	.thumb_func
 BattleEffect_PatchTemplate:
 	bx	pc
+@ The halfword bx pc steps over to reach the ARM code; never run.
 AlchemyUncredited_081972a2:
 	.2byte	0x0200
 	.arm

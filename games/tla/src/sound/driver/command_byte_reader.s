@@ -1,3 +1,6 @@
+@ Why assembly: MusicPlayer2000's ld_r3_tp_adr_i_unchecked takes track in r1
+@ and returns the decoded byte in r3 while updating r2/r3, rather than a
+@ standard r0 return.
 .syntax unified
 	.thumb
 	.global ld_r3_tp_adr_i_unchecked

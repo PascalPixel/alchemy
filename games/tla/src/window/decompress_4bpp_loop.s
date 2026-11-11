@@ -1,3 +1,5 @@
+@ Why assembly: conditional rrxs consumes the shift carry in the bit reader
+@ (rrxseq ip, ip after each lsrs ip, ip, #1).
 .syntax unified
 	.arm
 .L_08038b54:

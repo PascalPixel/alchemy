@@ -1,3 +1,7 @@
+@ Why assembly: add ip, pc, #36 followed by ldm ip, {sl, fp} loads a data block
+@ relative to pc, including r11/fp as ordinary decoder state. Its Thumb
+@ entry's bx pc switches to the ARM code that follows, a mode switch inside a function;
+@ the halfword after bx pc is never run.
 .syntax unified
 	.thumb
 	.global Resource_Decode2Code

@@ -1,3 +1,9 @@
+@ Why Resource_DecodeType2Loop to Resource_RefillType2Bits are assembly:
+@ computed add pc (add pc, r9, r8, lsl #5) enters fixed-size 32-byte decoder
+@ code slots; command execution also carries live reader register state
+@ across entry labels. push {r5, r9} saves without lr, and r11 (fp) is an
+@ ordinary register: with sl it holds the packed nibble list the slots
+@ rotate (lsr r9, fp, #8; orr fp, r8, r9, ror #24), not a frame pointer.
 .syntax unified
 	.arm
 .L_08012bbc:
@@ -199,6 +205,7 @@ Resource_RefillType2Bits:
 	bx	lr
 	and	r8, ip, fp
 	bx	lr
+@ nops fill each 32-byte code slot after its bx lr or b; never run.
 AlchemyUncredited_08012e7c:
 	nop
 	nop

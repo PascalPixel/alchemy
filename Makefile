@@ -95,7 +95,6 @@ AGSGFX  := $(TOOLS)/ags-graphics
 WAV2AGS := $(TOOLS)/ags-audio
 MID2AGS := $(TOOLS)/ags-music
 PO2AGS  := $(TOOLS)/ags-text
-OBJLIST := $(TOOLS)/ags-objects
 SCANINC := $(TOOLS)/ags-deps
 OVLPACK := $(TOOLS)/ags-overlays
 GBAFIX  := $(TOOLS)/ags-header
@@ -197,7 +196,6 @@ ASFLAGS := -mcpu=arm7tdmi -mthumb-interwork
 EDITION_ASFLAGS := --defsym $(DEFINE)=1 -I$(BUILD) $(ASFLAGS)
 
 OVERLAY_STREAM := games/$(GAME)/src/system/overlay/overlays
-ifneq ($(wildcard games/$(GAME)/ld_script.ld),)
 # The linker script: games/$(GAME)/ld_script.ld, run through the C
 # preprocessor for the edition as its C is, once for the main image and once
 # for each overlay (-DOVERLAY=0x<number>). The overlays are the numbers its
@@ -230,15 +228,6 @@ $(BUILD)/objects.mk: $(LD_SCRIPT) $(OVERLAY_IDS:%=$(BUILD)/ld/overlay_%.ld)
 	} > $@.new
 	cmp -s $@.new $@ && rm $@.new || mv $@.new $@
 OVERLAY_DEPS = $(BUILD)/ld/overlay_$*.ld
-else
-# The object list: objects.tsv gives each edition its linker fragments under
-# $(BUILD)/ld, which the game's one main.ld includes.
-LD_SCRIPT := games/$(GAME)/main.ld
-LDFLAGS := --defsym $(DEFINE)=1 -L $(BUILD)/ld -T $(LD_SCRIPT)
-OVERLAY_SCRIPT = -L $(BUILD)/ld/$* -T games/$(GAME)/src/system/overlay/overlay.ld
-$(BUILD)/objects.mk: games/$(GAME)/objects.tsv games/$(GAME)/overlays.tsv $(OBJLIST)
-	$(OBJLIST) games/$(GAME)/objects.tsv games/$(GAME)/overlays.tsv $(LANG) $(BUILD)
-endif
 include $(BUILD)/objects.mk
 
 # The source an object is built from: NAME.c, NAME.s, NAME.S or NAME.mid.

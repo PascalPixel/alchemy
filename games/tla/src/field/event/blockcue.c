@@ -77,7 +77,7 @@ typedef void (*PictureDecoder)(const void *source, void *destination, s32 mode);
 
 extern const u8 BattleEffect_DecodePictureCode[];
 extern const u8 BattleEffect_DecodePictureCopyEnd[];
-/// The decoder with its tables and work area (constants.ld). The block is
+/// The decoder with its tables and work area (ld_script.ld). The block is
 /// larger than the copy, which stops before the work area.
 extern u8 BattleEffect_DecodePictureBlockSize[];
 

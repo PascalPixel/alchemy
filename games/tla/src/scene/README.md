@@ -14,10 +14,10 @@ runs, its tables and its [events](../../../tbs/glossary.md#event).
   does or, until that is known, for its offset in the overlay
   (`airs_rock_inside/s0128.c`), with a header of its own names where it has
   any (`airs_rock_inside.h`).
-- Both games link every overlay through one `overlay.ld` and the object
-  list: an overlay's rows of `games/tla/objects.tsv` name its folder's
-  objects in ROM order, and where its globals are still written in assembly
-  they are the folder's `bss.s`.
+- Both games link every overlay through one `overlay.ld`, one block per
+  overlay: an overlay's block names its folder's objects in ROM order, and
+  where its globals are still written in assembly they are the folder's
+  `bss.s`.
 - The scene table is in the field folder, with what differs in it
   ([The Lost Age: field](../field/README.md)).
 - The main-image code a scene imports is in the bank folders of this game,

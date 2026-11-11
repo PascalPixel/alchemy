@@ -38,7 +38,7 @@ struct MapPriorityWork {
   s8 basePriority;
 };
 
-// The decoder's block: its code, tables and work area (constants.ld). Only
+// The decoder's block: its code, tables and work area (ld_script.ld). Only
 // the code and tables are copied.
 extern u8 Render_DecodePictureCode[];
 extern u8 Render_DecodePictureCopyEnd[];

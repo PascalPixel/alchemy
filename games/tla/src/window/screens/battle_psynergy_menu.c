@@ -1,38 +1,15 @@
-#include "types.h"
-#include "edition.h"
-#include "ram_buffer.h"
-#include "input.h"
-#include "frame.h"
+/// @file
+/// The battle Psynergy menu.
+// Part of screens.c.
 
-// How much of the line under the cursor is copied: more outside Japanese.
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define CURSOR_TEXT_LENGTH 32
-#else
-#define CURSOR_TEXT_LENGTH 52
-#endif
+#include "../screens_internal.h"
+#include "window_tile.h"
 
-// How much of a refusal is copied: more in German, Spanish, French and Italian.
-#if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_JAPANESE)
-#define REFUSAL_TEXT_LENGTH 32
-#else
-#define REFUSAL_TEXT_LENGTH 52
-#endif
+extern u8 MsgAbilityNothing[];
+extern u8 MsgAbilityDescription[];
+extern u8 MsgKey0d48[];
 
-// Japanese decodes both texts raw where the other languages copy them expanded.
-#if LANGUAGE != LANGUAGE_JAPANESE
-#define MENU_TEXT_COPY Message_CopyExpanded
-#else
-#define MENU_TEXT_COPY Message_DecodeRaw
-#endif
-
-extern u8 MsgItemName[];
-extern u8 MsgItemPlainName[];
-extern u8 MsgKey0d46[];
-extern u8 MsgKey0d4c[];
-extern u8 MsgKey0d4d[];
-extern u8 MsgKey0d4f[];
-
-struct ItemMenuWindow {
+struct PsynergyMenuWindow {
   u8 unk00[8];
   u16 width;
   u16 height;
@@ -40,14 +17,15 @@ struct ItemMenuWindow {
   s16 y;
 };
 
-struct ItemMenuWork {
+struct PsynergyMenuWork {
   u8 unk00[3];
   u8 dirty;
   u8 unk04[2];
   u8 holdTilemapUpload;
+  u8 textPalette;
 };
 
-struct ItemMenuNavigation {
+struct PsynergyMenuNavigation {
   u8 unk00[0x30];
   s32 row;
   s32 page;
@@ -56,8 +34,24 @@ struct ItemMenuNavigation {
   s32 timer;
 };
 
-struct ItemMenuSprite {
-  struct ItemMenuSprite *next;
+struct PsynergyMenuUnit {
+  u8 unk000[0x3a];
+  s16 pp;
+  u8 unk03c[0x101];
+  u8 psySeal;
+};
+
+struct PsynergyAbility {
+  u8 unk00;
+  u8 flags; ///< bit 7: usable in battle
+  u8 element;
+  u8 unk03[5];
+  u8 range;
+  u8 ppCost;
+};
+
+struct PsynergyMenuSprite {
+  struct PsynergyMenuSprite *next;
   union {
     struct {
       unsigned long attr01;
@@ -81,8 +75,8 @@ struct ItemMenuSprite {
   } oam;
 };
 
-struct ItemMenuOam {
-  struct ItemMenuOam *next;
+struct PsynergyMenuOam {
+  struct PsynergyMenuOam *next;
   u16 y : 8;
   u16 affine : 2;
   u16 mode : 2;
@@ -98,8 +92,38 @@ struct ItemMenuOam {
   u16 unused;
 };
 
-#define NAVIGATION ((struct ItemMenuNavigation *)Ram_HeapSlots->unke4[0])
-#define ITEM_BROKEN 0x400
+#define NAVIGATION ((struct PsynergyMenuNavigation *)Ram_HeapSlots->unke4[0])
+
+// How much of the description under the cursor is copied: more outside
+// Japanese.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define CURSOR_TEXT_LENGTH 32
+#else
+#define CURSOR_TEXT_LENGTH 52
+#endif
+
+// Japanese decodes the text under the cursor raw where the other languages
+// copy it expanded.
+#if LANGUAGE != LANGUAGE_JAPANESE
+#define CURSOR_TEXT_COPY Message_CopyExpanded
+#else
+#define CURSOR_TEXT_COPY Message_DecodeRaw
+#endif
+
+// The list is a tile wider in Spanish and French, and its columns move with it.
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH)
+#define LIST_WINDOW_X 8
+#define LIST_WINDOW_WIDTH 22
+#define COST_COLUMN 12
+#define COST_X 112
+#define RANGE_COLUMN 16
+#else
+#define LIST_WINDOW_X 9
+#define LIST_WINDOW_WIDTH 21
+#define COST_COLUMN 11
+#define COST_X 104
+#define RANGE_COLUMN 15
+#endif
 
 // Sets a menu sprite's attribute words, as The Broken Seal's
 // MenuSprite_Initialize.
@@ -109,85 +133,91 @@ struct ItemMenuOam {
     (sprite).oam.word.attr23 = 0;                                              \
   } while (0)
 
+// The menu's page, row and preferred row, as The Broken Seal's
+// BATTLE_MENU_GET_CURSOR and BATTLE_MENU_SET_CURSOR.
+#define MENU_GET_CURSOR(page_, row_, preferred)                                \
+  do {                                                                         \
+    (page_) = NAVIGATION->page;                                                \
+    (row_) = NAVIGATION->row;                                                  \
+    (preferred) = NAVIGATION->preferredRow;                                    \
+  } while (0)
+
+#define MENU_SET_CURSOR(page_, row_, preferred)                                \
+  do {                                                                         \
+    NAVIGATION->page = (page_);                                                \
+    NAVIGATION->row = (row_);                                                  \
+    NAVIGATION->preferredRow = (preferred);                                    \
+  } while (0)
+
+// Marks a window's tilemap row for upload, as The Broken Seal's
+// Window_MarkTilemapRow.
+#define WINDOW_MARK_TILEMAP_ROW(work, row)                                     \
+  do {                                                                         \
+    (work)->dirty |= 2 << ((u32)(row) >> 2);                                   \
+  } while (0)
+
 extern const u8 gResource_FixedBlockBTiles[];
 
 s32 VramCache_AllocEntry(s32 size);
-s32 VramCache_Reload(s32 entry, const void *tiles);
-struct ItemMenuWindow *Window_Create(s32 x, s32 y, s32 width, s32 height,
-                                     s32 flags);
 void Vram_CopyTile(u32 sourceTile, u32 destinationTile);
 void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 palette);
 void Vram_FillWindowBlockPattern(void);
-s32 Item_ClassifyUseAbility(s32 member, s32 item);
-void *Item_Get(s32 item);
-void Message_CopyExpanded(s32 message, u16 *text, s32 capacity);
 void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
-void Text_DrawWideStringAtOffset(u16 *text, struct ItemMenuWindow *window,
-                                 s32 x, s32 y);
-void WindowSprite_RedrawSavedRect(struct ItemMenuWindow *window);
+void Ability_LoadGlyph(s32 ability, s32 mode, s32 *slot, s32 *glyph, s32 count);
 void Func_08041f70(s32 color);
-void Text_DrawCharacterAtOffset(s32 message, struct ItemMenuWindow *window,
-                                s32 x, s32 y);
-s32 ItemIcon_LoadIntoSlot(s32 item, s32 slot);
-void Window_SetTilemapEntry(struct ItemMenuWindow *window, s32 entry, s32 x,
-                            s32 y, s32 flags);
 void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
 void Sound_PlayFar(s32 cue);
 void Input_ResetKeyRepeat(void);
 void wait(s32 frames);
-void Window_Close(void *window, s32 mode);
-void Resource_ResetEntry(s32 slot);
 
-s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
-  struct ItemMenuWork *work;
+s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
+  struct PsynergyMenuWork *work;
   s32 drawnFirstEntry;
+  s32 firstEntry;
   s32 drawnRow;
   s32 cursorHandle;
-  struct ItemMenuWindow *messageWindow;
+  struct PsynergyMenuUnit *unit;
+  struct PsynergyMenuWindow *messageWindow;
   s32 iconCount;
   s32 preferredRow;
   struct {
     s32 x, y;
   } cursorPosition;
-  struct ItemMenuNavigation *navigation;
-  struct ItemMenuWindow *window;
-  s32 firstEntry;
+  struct PsynergyMenuNavigation *navigation;
+  struct PsynergyMenuWindow *window;
   s32 selectedRow;
-  s32 item;
+  s32 encodedAction;
   s32 iconTile;
   s32 pageTile;
-  s32 unusableReason;
+  s32 rangePattern;
   s32 result;
   s32 i;
-  struct ItemMenuOam cursorStorage;
-  struct ItemMenuSprite *iconSprite;
-  struct ItemMenuOam *sprite;
+  struct PsynergyMenuSprite cursor;
+  struct PsynergyMenuSprite *iconSprite;
   u16 messageText[64];
   s32 iconSlots[5];
-  struct ItemMenuSprite sprites[5];
+  struct PsynergyMenuSprite sprites[5];
+  s32 glyph;
 
-  work = (struct ItemMenuWork *)Ram_HeapSlots->windowTiles;
-  drawnFirstEntry = -1;
+  work = (struct PsynergyMenuWork *)Ram_HeapSlots->windowTiles;
   drawnRow = -1;
+  drawnFirstEntry = -1;
   cursorHandle = VramCache_AllocEntry(128);
+  unit = Unit_Get(unitId);
   messageWindow = Window_Create(0, 5, 30, 4, 42);
-  iconCount = 0;
-  do {
-    firstEntry = NAVIGATION->page;
-    selectedRow = NAVIGATION->row;
-    preferredRow = NAVIGATION->preferredRow;
-  } while (0);
-  window = Window_Create(15, 9, 15, 11, 6);
+  iconCount = 5;
+  MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
+  window = Window_Create(LIST_WINDOW_X, 9, LIST_WINDOW_WIDTH, 11, 6);
 
   for (i = 0; i < 5; i++) {
     s32 y;
     // t holds the attribute zero, then is reused for the window's y; as plain
-    // stores, 2 of 790 instructions differ in tla-en.
+    // stores, 2 of 817 instructions differ in tla-en.
     u32 t = 0;
 
     y = i * 2;
     /* FAKEMATCH(dead): an empty once-only block after the row, which keeps it
-     * and the zero ahead of the stores; without it, 56 of 790 instructions
+     * and the zero ahead of the stores; without it, 10 of 817 instructions
      * differ in tla-en. */
     do {
     } while (0);
@@ -208,44 +238,60 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
   Vram_CopyTile(0xf019, 0x211);
 
   for (;;) {
-    /* FAKEMATCH(temporary): sprite holds &cursorStorage; as cursorStorage used
-     * directly, 219 of 790 instructions differ in tla-en. */
-    sprite = &cursorStorage;
-
+    /* FAKEMATCH(temporary): iconSprite holds &cursor; as cursor used directly,
+     * 304 of 817 instructions differ in tla-en. */
+    iconSprite = &cursor;
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
       Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
                            window->width - 2, 1, 15);
       Vram_FillWindowBlockPattern();
-      if (count != 0) {
-        if (Item_ClassifyUseAbility(member,
-                                    entries[firstEntry + selectedRow]) == 2)
-          MENU_TEXT_COPY((s32)MsgKey0d4f, messageText, CURSOR_TEXT_LENGTH);
-        else
-          MENU_TEXT_COPY((entries[firstEntry + selectedRow] & 0x1ff) +
-                             (s32)MsgItemPlainName,
+      if (count != 0)
+        CURSOR_TEXT_COPY((actions[firstEntry + selectedRow] & 0x3fff) +
+                             (s32)MsgAbilityDescription,
                          messageText, CURSOR_TEXT_LENGTH);
-      } else {
-        MENU_TEXT_COPY((s32)MsgKey0d46, messageText, CURSOR_TEXT_LENGTH);
-      }
+      else
+        CURSOR_TEXT_COPY((s32)MsgKey0d48, messageText, CURSOR_TEXT_LENGTH);
       Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       drawnRow = selectedRow;
       if (firstEntry != drawnFirstEntry) {
         WindowSprite_RedrawSavedRect(window);
         for (i = 0; i < 5; i++) {
-          item = entries[firstEntry + i];
-          if (item == 0)
+          struct PsynergyAbility *action;
+
+          encodedAction = actions[firstEntry + i];
+          if (encodedAction == 0)
             break;
-          Item_Get(item);
-          Func_08041f70(15);
-          if (Item_ClassifyUseAbility(member, item) != 0)
+          action = BattleAction_Get(encodedAction);
+          Window_SetTilemapEntry(window, WINDOW_TILE_PP_LABEL, COST_COLUMN,
+                                 i * 2, 0);
+          Window_SetTilemapEntry(window, WINDOW_TILE_PP_LABEL_END,
+                                 COST_COLUMN + 1, i * 2, 0);
+          Ability_LoadGlyph(encodedAction & 0x3fff, 0, &iconSlots[i], &glyph,
+                            1);
+          sprites[i].oam.f.tile = glyph;
+          if ((action->flags & 0x80) == 0)
             Func_08041f70(4);
-          else if (item & ITEM_BROKEN)
+          else if (action->ppCost > unit->pp)
             Func_08041f70(2);
-          Text_DrawCharacterAtOffset((item & 0x1ff) + (s32)MsgItemName, window,
-                                     16, i * 16);
+          else if (unit->psySeal != 0)
+            Func_08041f70(9);
+          work->textPalette = 5;
+          Text_DrawCharacterAtOffset(encodedAction + (s32)MsgAbilityNothing,
+                                     window, 16, i * 16);
+          Text_DrawNumberAtOffset(action->ppCost, 2, window, COST_X, i * 16);
           Func_08041f70(15);
-          sprites[i].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[i]);
+          work->textPalette = 15;
+          if (action->element != 4)
+            Window_SetTilemapEntry(window, action->element + 0x5001,
+                                   RANGE_COLUMN, i * 2, 0);
+          rangePattern = action->range;
+          if (rangePattern == 255)
+            rangePattern = 11;
+          else
+            rangePattern--;
+          Window_DrawThreeTileColumn(window, RANGE_COLUMN + 1, i * 2,
+                                     rangePattern, 0);
         }
         iconCount = i;
         drawnFirstEntry = firstEntry;
@@ -279,54 +325,33 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
       Window_SetTilemapEntry(window, 0xf334,
                              window->width - (count + 4) / 5 - 3, pageTile, 0);
       Window_SetTilemapEntry(window, 0xf335, window->width - 2, pageTile, 0);
-      do {
-        work->dirty |= 2 << ((u32)(window->y - 1) >> 2);
-      } while (0);
+      WINDOW_MARK_TILEMAP_ROW(work, window->y - 1);
     }
 
-    for (i = 0; i < iconCount; i++) {
-      iconSprite = &sprites[i];
-      Oam_AddSpriteAtDepth(iconSprite, 240);
-    }
+    for (i = 0; i < iconCount; i++)
+      Oam_AddSpriteAtDepth(&sprites[i], 240);
 
-    cursorPosition.x = window->x * 8 - 2;
+    cursorPosition.x = window->x * 8 - 4;
     cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
-    /* FAKEMATCH(dead): sprite set again to the &cursorStorage it holds; without
-     * it, 44 of 790 instructions differ in tla-en. */
-    sprite = &cursorStorage;
-    ((u32 *)sprite)[1] = 0x40000000;
-    ((u32 *)sprite)[2] = 0;
-    sprite->tile = VramCache_Reload(cursorHandle, gResource_FixedBlockBTiles);
-    sprite->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
-    sprite->y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
+    ((u32 *)iconSprite)[1] = 0x40000000;
+    ((u32 *)iconSprite)[2] = 0;
+    iconSprite->oam.f.tile =
+        VramCache_Reload(cursorHandle, gResource_FixedBlockBTiles);
+    iconSprite->oam.f.x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
+    iconSprite->oam.f.y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
     if (count != 0)
-      Oam_AddSpriteAtDepth(sprite, 242);
+      Oam_AddSpriteAtDepth(iconSprite, 242);
 
-    do {
-      NAVIGATION->page = firstEntry;
-      NAVIGATION->row = selectedRow;
-      NAVIGATION->preferredRow = preferredRow;
-    } while (0);
+    MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);
     navigation = NAVIGATION;
     if (gInput.pressed & 1) {
       if (count != 0) {
         result = firstEntry + selectedRow;
-        Item_Get(entries[result]);
-        unusableReason = 0;
-        if ((entries[result] & ITEM_BROKEN) == 0) {
-          unusableReason = Item_ClassifyUseAbility(member, entries[result]);
-          if (unusableReason == 0)
-            break;
+        if ((BattleAction_Get(actions[result])->flags & 0x80) == 0) {
+          // Not usable in battle: the menu stays open.
+        } else {
+          break;
         }
-        Sound_PlayFar(114);
-        if (unusableReason == 2)
-          MENU_TEXT_COPY((s32)MsgKey0d4f, messageText, REFUSAL_TEXT_LENGTH);
-        else if (entries[result] & ITEM_BROKEN)
-          MENU_TEXT_COPY((s32)MsgKey0d4d, messageText, REFUSAL_TEXT_LENGTH);
-        else
-          MENU_TEXT_COPY((s32)MsgKey0d4c, messageText, REFUSAL_TEXT_LENGTH);
-        Vram_FillWindowBlockPattern();
-        Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       } else {
         result = -1;
         break;
@@ -394,9 +419,22 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
   Window_Close(messageWindow, 1);
   Window_Close(window, 1);
   wait(1);
-  Resource_ResetEntry(cursorHandle);
   for (i = 0; i < 5; i++)
     Resource_ResetEntry(iconSlots[i]);
+  Resource_ResetEntry(cursorHandle);
   wait(1);
   return result;
 }
+
+#undef NAVIGATION
+#undef CURSOR_TEXT_LENGTH
+#undef CURSOR_TEXT_COPY
+#undef LIST_WINDOW_X
+#undef LIST_WINDOW_WIDTH
+#undef COST_COLUMN
+#undef COST_X
+#undef RANGE_COLUMN
+#undef MENU_SPRITE_INITIALIZE
+#undef MENU_GET_CURSOR
+#undef MENU_SET_CURSOR
+#undef WINDOW_MARK_TILEMAP_ROW

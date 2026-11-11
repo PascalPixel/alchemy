@@ -1,8 +1,113 @@
+/// @file
+/// The preview of what setting or removing a Djinni changes.
+// Part of screens.c.
+
+#include "../screens_internal.h"
+
+s32 String_FormatNumberToHalfwords(s16 *out, s32 value) {
+  s16 *dst;
+  s32 n;
+  u8 *src;
+
+  dst = out;
+  NumberText_FormatDecimal(value);
+  src = gNumberTextBuffer;
+  n = 0xD;
+  do {
+    n -= 1;
+    *dst = *src;
+    src += 1;
+    dst += 1;
+  } while (n >= 0);
+}
+
+struct DjinnSlot {
+  u16 id;
+  u16 state;
+};
+
+/// Lists into `out` the abilities usable in battle (flag 0x80) of the action
+/// list `newGrid`, in its order, marking with bit 15 those `oldGrid` lacks;
+/// then appends those of `oldGrid` that `newGrid` lacks, marked with bit 14.
+/// Both lists are 32 slots, ended early by a 0 action. Returns the entries
+/// written, and the gained and lost counts through `gained` and `lost`.
+s32 BattleDjinnMenu_ListChangedDjinn(struct DjinnSlot *oldGrid,
+                                     struct DjinnSlot *newGrid, u16 *out,
+                                     s32 *gained, s32 *lost) {
+  s32 i;
+  s32 j;
+  s32 count;
+  s32 gainedCount;
+  s32 lostCount;
+
+  gainedCount = 0;
+  lostCount = 0;
+  count = 0;
+  for (i = 0; i < 32 && newGrid[i].id != 0; i++) {
+    if (BattleAction_Get(newGrid[i].id)->flags & 0x80) {
+      out[count] = newGrid[i].id & 0x3fff;
+      count++;
+      for (j = 0; j < 32; j++) {
+        if (((newGrid[i].id ^ oldGrid[j].id) & 0x3fff) == 0)
+          break;
+      }
+      if (j == 32) {
+        gainedCount++;
+        out[count - 1] |= 0x8000;
+      }
+    }
+  }
+  for (i = 0; i < 32 && oldGrid[i].id != 0; i++) {
+    if (BattleAction_Get(oldGrid[i].id)->flags & 0x80) {
+      for (j = 0; j < 32; j++) {
+        if (((oldGrid[i].id ^ newGrid[j].id) & 0x3fff) == 0)
+          break;
+      }
+      if (j == 32) {
+        lostCount++;
+        out[count] = (oldGrid[i].id & 0x3fff) | 0x4000;
+        count++;
+      }
+    }
+  }
+  *gained = gainedCount;
+  *lost = lostCount;
+  return count;
+}
+
+/// @file
+/// Display: place an ability icon in a window as a sprite.
+
+#include "battle.h"
+#include "debug.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "minigame.h"
+#include "sound.h"
+#include "system.h"
+#include "render_input.h"
 #include "types.h"
-#include "edition.h"
-#include "window.h"
-#include "uiwindow.h"
-#include "iwram_call.h"
+#include "resource.h"
+#include "vram_tab.h"
+
+/// Loads the icon into a free VRAM cache slot and draws a 16x16 sprite;
+/// does nothing if no slot is free.
+/// input: destination window.
+/// x, y: position within the window, in pixels.
+/// ability: ability index.
+s32 WindowSprite_CreateFromResourceSlot(struct RenderInput *input, s32 x, s32 y,
+                                    s32 ability) {
+  s32 slot;
+
+  slot = Resource_FindFreeEntry();
+  if (slot != VRAM_CACHE_ENTRY_COUNT) {
+    Resource_LoadIndexedEntryToBuffer(ability, slot);
+    WindowSprite_Create(slot, OUTPUT_SIZE_16X16, input, x, y);
+  }
+}
 
 // Where the line at the bottom starts: further left in French.
 #if (LANGUAGE == LANGUAGE_FRENCH)
@@ -69,33 +174,19 @@ struct PreviewAbility {
 extern const u8 gDjinnMenu_ArrowUpTiles[];
 extern const u8 gDjinnMenu_ArrowDownTiles[];
 
-struct PreviewUnit *Unit_Get(s32 member);
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void *Heap_Alloc(s32 size);
 void Heap_Release(void *block);
 void *Heap_AllocEwram(s32 size);
 s32 Djinn_IsActiveFar(s32 member, s32 element, s32 index);
 void Djinn_DeactivateFar(s32 member, s32 element, s32 index);
-void Djinn_ActivateFar(s32 member, s32 element, s32 index);
 void Unit_CalculateFar(s32 member);
-s32 BattleDjinnMenu_ListChangedDjinn(u16 *oldList, u16 *newList, u16 *changed,
-                                     s32 *gained, s32 *lost);
-void Text_DrawCharacterAtOffset(s32 message, struct Window *window, s32 x,
-                                s32 y);
 s32 String_FormatNumberToHalfwords(s16 *out, s32 value);
 // Text_RenderWideStringInWindow is called with no prototype in scope, as The
 // Broken Seal's window functions are from its menu object: an implicit int
 // call sets r0, which is what orders each call's arguments.
-void Window_DrawDividerLine(struct Window *window, s32 x, s32 y, s32 width,
-                            s32 height);
 void Func_08041f70(s32 color);
-struct PreviewAbility *BattleAction_Get(s32 id);
-void Window_SetTilemapEntry(struct Window *window, s32 entry, s32 x, s32 y,
-                            s32 flags);
-void Text_DrawNumberInWindow(s32 value, s32 digits, struct Window *window,
-                             s32 x, s32 y);
 s32 VramCache_AllocEntry(s32 size);
-s32 VramCache_Reload(s32 entry, const void *tiles);
 
 // The sprite cell at WindowSprite.sprite: a link, then the OAM words.
 struct ArrowSprite {
@@ -359,3 +450,13 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
   Heap_Release(numberText);
   return window;
 }
+
+#undef TOTAL_LABEL_X
+#undef STATS_WINDOW_WIDTH
+#undef OLD_VALUE_X
+#undef OLD_DEFENSE_AGILITY_TEXT
+#undef OLD_DEFENSE_AGILITY_X
+#undef PSYNERGY_PROMPT_X
+#undef PREVIEW_RED
+#undef PREVIEW_YELLOW
+#undef PREVIEW_WHITE

@@ -11,8 +11,8 @@ explains the window system for The Broken Seal.
 - `window.c` is The Broken Seal's window object, written as parts under
   `window/` cut where The Broken Seal's are, with one part more: `debug.c`,
   the debug menus, which The Broken Seal keeps in its screens object.
-  `screens.c` is its screens object as far as the menus' pictures and
-  command icons (`menu_titles.c`), written the same way. Each other file
+  `screens.c` is its screens object as far as the battle Psynergy menu
+  (`battle_psynergy_menu.c`), written the same way. Each other file
   holds one function or a small family, some still named by address
   (`f04a85c.c`).
 - `cell_picture.c` is ARM code, compiled with GCC 2.95.2 like The Broken

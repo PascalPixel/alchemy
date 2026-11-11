@@ -1,9 +1,20 @@
-#include "types.h"
-#include "ram_buffer.h"
-#include "input.h"
-#include "frame.h"
-#include "system/io_write_queue.h"
-#include "edition.h"
+/// @file
+/// The row of command icons the player picks a command from.
+// Part of screens.c.
+
+#include "../screens_internal.h"
+
+s32 Message_AllTyped(void);
+s32 Message_OpenWindow(s32, s32, s32, s32);
+
+s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
+  s32 result;
+
+  result = Message_OpenWindow(message, x, y, 1);
+  while (Message_AllTyped() == 0)
+    wait(1);
+  return result;
+}
 
 // The tile column where a party member's command row ends and its name window
 // begins.
@@ -84,28 +95,19 @@ struct BgScrollPair {
 
 extern const u16 gWindowSprite_BounceScales[32];
 extern struct BgScrollPair gBgScroll[];
-extern u8 gMainRoutineWork[];
+#include "main_routine_work.h"
 
 s32 VramCache_AllocEntry(s32 size);
 void *Heap_AllocEwram(s32 size);
-void *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 s32 Party_CountActiveOwnersFar(void);
-s32 *Djinn_GetRecoveryTableFar(s32 kind);
-void Func_08118130(s32 kind, u8 *counts);
-void Func_080456f8(struct CommandRowWork *work, s32 index, s32 kind);
 s32 Task_Add(void (*func)(void), s32 order);
 s32 Task_Remove(void (*func)(void));
 void Irq_SetHandler(u32 irq, s32 vcount, void (*handler)(void));
 void Graphics_SetBg1Priority3(void);
 void Func_08045780(void);
-void WindowSprite_PrepareForRedraw(void *window);
-void Text_DrawCharacterAtOffset(s32 message, void *window, s32 x, s32 y);
-s32 AffineMatrix_BuildForEffect(struct CommandRowAffine *affine);
 void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
 s32 Func_0804519c(void);
-void *Message_ShowAndWait(s32 message, s32 x, s32 y);
 void Func_08118128(s32 x, s32 y);
-void Window_Close(void *window, s32 mode);
 void Sound_PlayFar(s32 cue);
 void QueueIoWriteDelay2(u32 address, u32 value);
 void wait(s32 frames);
@@ -149,7 +151,7 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
     if (((u8 *)Ram_HeapSlots->battleWork)[0x44] == 0 &&
         battleMenu->reserveChoice == -1 && Party_CountActiveOwnersFar() > 4)
       selectionUi->commandKinds[kindCount++] = 49;
-    if (fleeAllowed > 0 && gMainRoutineWork[0x24b] != 2)
+    if (fleeAllowed > 0 && gMainRoutineWork.battleRule24b != 2)
       selectionUi->commandKinds[kindCount++] = 4;
     selectionUi->commandKinds[kindCount++] = 7;
     selectionUi->commandKinds[kindCount] = -1;
@@ -161,7 +163,7 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
     memberCount = 0;
     selectionUi->commandKinds[memberCount++] = 0;
     selectionUi->commandKinds[memberCount++] = 1;
-    if (*Djinn_GetRecoveryTableFar(0) != 0) {
+    if (*(s32 *)Djinn_GetRecoveryTableFar(0) != 0) {
       Func_08118130(0, party);
       for (i = 0; i <= 3; i++)
         tradeCount += party[i];
@@ -403,3 +405,85 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
   wait(1);
   return command;
 }
+
+struct WindowTiles {
+  u8 unk00[3];
+  u8 dirty;
+  u8 unk04[4];
+  u16 cells[32][32];
+};
+
+void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 alt) {
+  struct WindowTiles *tiles = (struct WindowTiles *)Ram_HeapSlots->windowTiles;
+
+  alt &= 1;
+  alt <<= 12;
+
+  if (x < 0) {
+    width += x;
+    x = 0;
+  }
+  if (x + width > 29) {
+    width = 30 - x;
+  }
+  if (y < 0) {
+    height += y;
+    y = 0;
+  }
+  if (y + height > 29) {
+    height = 20 - y;
+  }
+
+  if (width > 0 && height > 0) {
+    do {
+      u16 *p = &tiles->cells[y][x];
+      s32 col = width;
+
+      if (col != 0) {
+        do {
+          u32 tile = *p;
+          col--;
+          tile = (tile & ~0x1000) | alt;
+          *p = tile;
+          p++;
+        } while (col != 0);
+      }
+      // The dirty-row mark in a once-only block keeps it before the row count's
+      // step; as the plain store, 2 of 72 instructions differ in tla-en.
+      do {
+        tiles->dirty |= 2 << ((u32)y >> 2);
+      } while (0);
+      height--;
+      y++;
+    } while (height != 0);
+  }
+}
+
+s32 BattleLayout_HighlightPartyPanels(u16 *ids) {
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  s32 count;
+  s32 i;
+  s32 j;
+
+  count = BattleParty_ListActorIdsFar(1, 0);
+  Window_HighlightRect(29 - count * 6, 0, 25, 5, 15);
+  i = 0;
+  if (ids[0] != 0xff) {
+  next_id:
+    for (j = 0; j < 4 && battle->partyUnits[j] != ids[i]; j++) {
+      if (battle->partyUnits[j] == 0xff) {
+        j = 4;
+        break;
+      }
+    }
+    if (j != 4)
+      Window_HighlightRect(29 - (count - j) * 6, 0, 7, 5, 14);
+    if (++i < 4 && ids[i] != 0xff)
+      goto next_id;
+  }
+  return 0;
+}
+
+#undef WINDOW_X
+#undef NAVIGATION
+#undef WINDOW_WORK

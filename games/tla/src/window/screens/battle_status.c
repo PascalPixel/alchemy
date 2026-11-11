@@ -1,12 +1,10 @@
-#include "types.h"
-#include "edition.h"
-#include "version.h"
-#include "ram_buffer.h"
-#include "input.h"
-#include "frame.h"
-#include "iwram_call.h"
-#include "version.h"
+/// @file
+/// The Status screen.
+// Part of screens.c.
+
+#include "../screens_internal.h"
 #include "module/system/system.h"
+#include "version.h"
 
 // Room for the help line of an item and of a Djinni, and the second letter
 // tile of the PP cost's label, as measured: the item line grows from German
@@ -250,7 +248,6 @@ extern const u8 gOwnerStatus_PvString[];
 extern const u8 gOwnerStatus_HpString[];
 extern const u8 gOwnerStatus_SlashString[];
 extern const u8 gOwnerStatus_PpString[];
-extern struct SummaryResourceEntry gResourceTableEntries[];
 extern const u8 gResource_FixedBlockBTiles[];
 
 s32 Party_SumDjinnCountsFar(s32 member);
@@ -258,60 +255,32 @@ void *Heap_AllocEwram(s32 size);
 void BattleActor_SpawnObjectsForListFar(u16 *list, s32 count);
 void BattleActor_CommitPlacementFar(void);
 s32 VramCache_AllocEntry(s32 size);
-s32 VramCache_Reload(s32 entry, const void *tiles);
-void Window_Close(void *window, s32 mode);
 void Sound_PlayFar(s32 cue);
-struct SummaryWindow *Window_Create(s32 x, s32 y, s32 width, s32 height,
-                                    s32 flags);
 void Func_08041b68(void);
-void Func_0804537c(u32 address);
-void Func_08045528(s32 member, s32 slot);
 void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
 void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 palette);
 void ReleaseBattleObjectRecordsFar(s32 member);
 void Func_08118148(u16 *list, s32 count, s32 mode);
 void **GetBattleObjectSlotFar(s32 member);
-struct SummaryUnit *Unit_Get(s32 member);
 void Vram_FillWindowBlockPattern(void);
-void *Item_Get(s32 item);
 s32 Item_ClassifyUseAbility(s32 member, s32 item);
-void Message_CopyExpanded(s32 message, u16 *text, s32 capacity);
+s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);
 void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
-void WindowSprite_RedrawSavedRect(struct SummaryWindow *window);
 // Returns nothing; typed s32 here, see the help window in page 2.
 s32 Func_0803a2b0(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void Text_DrawWideStringAtOffset(u16 *text, struct SummaryWindow *window, s32 x,
                                  s32 y);
-void Window_DrawDividerLine(struct SummaryWindow *window, s32 x, s32 y,
-                            s32 width, s32 height);
 void Func_08041f70(s32 color);
-void Text_DrawCharacterAtOffset(s32 message, struct SummaryWindow *window,
-                                s32 x, s32 y);
 s32 ItemIcon_LoadIntoSlot(s32 item, s32 slot);
-void Window_SetTilemapEntry(struct SummaryWindow *window, s32 entry, s32 x,
-                            s32 y, s32 flags);
-struct SummaryAbility *BattleAction_Get(s32 id);
 s32 Resource_LoadIndexedEntryToBuffer(s32 id, s32 slot);
-void Text_DrawNumberAtOffset(s32 value, s32 digits,
-                             struct SummaryWindow *window, s32 x, s32 y);
 // Returns nothing; typed s32 here, see the range column in page 1.
-s32 Window_DrawThreeTileColumn(struct SummaryWindow *window, s32 x, s32 y,
-                               s32 pattern, s32 flags);
-struct SummaryRecovery *Djinn_GetRecoveryTableFar(s32 kind);
 void MessageArgument_ClearAll(void);
-void MessageArgument_Push(s32 value, s32 kind);
-void Text_DrawStringAtOffset(const u8 *text, struct SummaryWindow *window,
-                             s32 x, s32 y);
-void Text_DrawNumberInWindow(s32 value, s32 digits,
-                             struct SummaryWindow *window, s32 x, s32 y);
 s32 Unit_GetElementLevelFar(s32 member, s32 element);
-void Resource_LoadTableEntryToBuffer(s32 entry, s32 slot);
 void *Heap_Alloc(s32 size);
 void Heap_Release(void *block);
 void Unit_CalculateFar(s32 member);
 s32 Unit_GetExperienceForLevelFar(s32 member, s32 level);
 void wait(s32 frames);
-void Resource_ResetEntry(s32 slot);
 void PartyStatus_Draw(s32 flags);
 s32 System_GetLanguage(void);
 
@@ -899,10 +868,6 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
               range = 11;
             else
               range--;
-            /* FAKEMATCH(signature): Window_DrawThreeTileColumn typed s32
-             * though it returns nothing, so the call sets r0 and movs r1, #16
-             * leads the window's reload; as void, 2 of 3111 instructions
-             * differ in tla-en. */
             Window_DrawThreeTileColumn(statusWindow, 16, j * 2 + 8, range, 0);
           }
           /* FAKEMATCH(barrier): an empty asm keeps the list loop's exit on the
@@ -943,7 +908,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
             djinnCount++;
           } else if (unit->djinnOwned[element] & (1 << bit)) {
             struct SummaryRecoveryList *recovery =
-                &Djinn_GetRecoveryTableFar((u32)member > 7)->list;
+                &((struct SummaryRecovery *)Djinn_GetRecoveryTableFar((u32)member > 7))->list;
             s32 k;
             s32 value;
 
@@ -1417,3 +1382,13 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
   Heap_Release(djinnList);
   return 0;
 }
+
+#undef SUMMARY_ITEM_HELP_CAPACITY
+#undef SUMMARY_DJINN_HELP_CAPACITY
+#undef SUMMARY_PP_LABEL_SECOND_TILE
+#undef SUMMARY_TEXT_COPY
+#undef SUMMARY_PSYNERGY_TEXT_LENGTH
+#undef SUMMARY_HELP_TEXT_LENGTH
+#undef SUMMARY_STAT_VALUE_X
+#undef NAVIGATION
+#undef SUMMARY_DRAW_PAGE_MARKS

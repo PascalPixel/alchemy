@@ -1,9 +1,8 @@
-#include "types.h"
-#include "ram_buffer.h"
-#include "input.h"
-#include "frame.h"
-#include "iwram_call.h"
-#include "edition.h"
+/// @file
+/// The battle Djinn menu.
+// Part of screens.c.
+
+#include "../screens_internal.h"
 #include "version.h"
 
 // The Japanese list window is 9 tiles wide from column 21, its messages hold
@@ -70,23 +69,6 @@ struct DjinnMenuUnit {
   u32 djinnSet[4];
 };
 
-struct DjinnRecoveryEntry {
-  u8 element;
-  u8 index;
-  u8 unitId;
-  s8 turns;
-};
-
-struct DjinnRecoveryList {
-  struct DjinnRecoveryEntry entries[72];
-  s32 count;
-};
-
-struct DjinnRecoveryTable {
-  u8 unk000[8];
-  struct DjinnRecoveryList list;
-};
-
 struct DjinnMenuPartyStatus {
   struct DjinnMenuWindow *window;
   u8 unk04[8];
@@ -137,38 +119,16 @@ extern u8 gDjinnMenu_ElementYOffsets[4];
 extern const u8 gResource_FixedBlockBTiles[];
 
 s32 VramCache_AllocEntry(s32 size);
-s32 VramCache_Reload(s32 entry, const void *tiles);
 void *Heap_AllocEwram(s32 size);
-struct DjinnMenuWindow *Window_Create(s32 x, s32 y, s32 width, s32 height,
-                                      s32 flags);
 void Text_UseExtraTiles(s32 on);
-struct DjinnMenuUnit *Unit_Get(s32 member);
-struct DjinnRecoveryTable *Djinn_GetRecoveryTableFar(s32 side);
 void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 palette);
-void Window_Close(void *window, s32 mode);
 void Vram_FillWindowBlockPattern(void);
 void MessageArgument_ClearAll(void);
-void MessageArgument_Push(s32 value, s32 kind);
-s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);
 void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
-struct DjinnMenuWindow *Func_080464dc(struct DjinnMenuWindow *window,
-                                      s32 member, s32 encodedDjinn, s32 page,
-                                      s32 *pageCount);
-void Text_DrawWideStringAtOffset(u16 *text, struct DjinnMenuWindow *window,
-                                 s32 x, s32 y);
-void WindowSprite_RedrawSavedRect(struct DjinnMenuWindow *window);
-void Window_SetTilemapEntry(struct DjinnMenuWindow *window, s32 entry, s32 x,
-                            s32 y, s32 flags);
 void Func_08041f70(s32 color);
-void Text_DrawCharacterAtOffset(s32 message, struct DjinnMenuWindow *window,
-                                s32 x, s32 y);
-void Text_DrawNumberAtOffset(s32 value, s32 digits,
-                             struct DjinnMenuWindow *window, s32 x, s32 y);
 void Sound_PlayFar(s32 cue);
-void WindowSprite_ClearList(struct DjinnMenuWindow *window);
 void Input_ResetKeyRepeat(void);
 void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
-void Resource_ResetEntry(s32 slot);
 void Func_08041b68(void);
 void Heap_Release(void *block);
 void wait(s32 frames);
@@ -253,7 +213,7 @@ s32 Func_0804868c(s32 member) {
         u32 v;
         s32 k;
 
-        list = &Djinn_GetRecoveryTableFar((u32)member > 7 ? 1 : 0)->list;
+        list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar((u32)member > 7 ? 1 : 0))->list;
         for (k = 0; k < list->count; k++) {
           if (list->entries[k].unitId == member &&
               list->entries[k].element == element &&
@@ -651,3 +611,16 @@ s32 Func_0804868c(s32 member) {
   wait(1);
   return encodedDjinn;
 }
+
+#undef DJINN_LIST_X
+#undef DJINN_LIST_WIDTH
+#undef DJINN_MESSAGE_CAPACITY
+#undef DJINN_TURNS_X
+#undef DJINN_MESSAGE_COPY
+#undef NAVIGATION
+#undef DJINN_MENU_GET_CURSOR
+#undef DJINN_MENU_MARK_ROW
+#undef DJINN_ENTRY_STANDBY
+#undef DJINN_ENTRY_RECOVERY_MASK
+#undef DJINN_ENTRY_RECOVERY_SHIFT
+#undef DJINN_ENTRY_END

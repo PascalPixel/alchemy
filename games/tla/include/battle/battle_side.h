@@ -35,9 +35,9 @@ struct DjinnRecoveryEntry {
 
 STATIC_ASSERT(sizeof(struct DjinnRecoveryEntry) == 4);
 
-/// One side's Djinn recovery list: up to 64 entries and their count.
+/// One side's Djinn recovery list: up to 72 entries and their count.
 struct DjinnRecoveryList {
-  struct DjinnRecoveryEntry entries[64];
+  struct DjinnRecoveryEntry entries[72];
   s32 count; ///< entries in use
 };
 

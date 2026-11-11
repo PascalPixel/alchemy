@@ -193,7 +193,15 @@ s32 Menu_BuildLocalizedPatternTiles(void) {
   }
 }
 
-void Window_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+// UB: it is declared to return int but returns no value, and no caller reads
+// one; UBFIX makes it void.
+#ifdef UBFIX
+void Window_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3,
+                                s32 unused) {
+#else
+int Window_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3,
+                               s32 unused) {
+#endif
   s32 tile_offset = arg3 * 2;
   s32 tile = tile_offset + 0xF315;
 

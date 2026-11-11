@@ -1,8 +1,8 @@
-#include "types.h"
-#include "edition.h"
-#include "ram_buffer.h"
-#include "input.h"
-#include "frame.h"
+/// @file
+/// The battle summon menu.
+// Part of screens.c.
+
+#include "../screens_internal.h"
 
 // Where the Japanese layout differs: the summon list's window and its Djinn
 // costs, in tiles. The Japanese edition decodes a summon's description
@@ -50,12 +50,6 @@ struct SummonMenuNavigation {
   u8 unk50[0x88];
   s32 tutorialStep;
   s32 tutorialDelay;
-};
-
-struct SummonDefinition {
-  u16 abilityId;
-  u8 unk02[2];
-  u8 djinnRequired[4];
 };
 
 struct SummonMenuSprite {
@@ -106,32 +100,19 @@ struct SummonMenuOam {
 extern const u8 gResource_FixedBlockBTiles[];
 
 s32 VramCache_AllocEntry(s32 size);
-s32 VramCache_Reload(s32 entry, const void *tiles);
-struct SummonMenuWindow *Window_Create(s32 x, s32 y, s32 width, s32 height,
-                                       s32 flags);
 s32 Summon_ListLearnedFar(u8 *summons);
 const struct SummonDefinition *SummonDefinition_Get(s32 summon);
 void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 palette);
 void Vram_FillWindowBlockPattern(void);
-void Message_CopyExpanded(s32 message, u16 *text, s32 capacity);
 void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
-void Text_DrawWideStringAtOffset(u16 *text, struct SummonMenuWindow *window,
-                                 s32 x, s32 y);
-void WindowSprite_RedrawSavedRect(struct SummonMenuWindow *window);
-void Window_SetTilemapEntry(struct SummonMenuWindow *window, s32 entry, s32 x,
-                            s32 y, s32 flags);
 void Ability_LoadGlyph(s32 ability, s32 mode, s32 *slot, s32 *glyph, s32 count);
 void Func_08041f70(s32 color);
-void Text_DrawCharacterAtOffset(s32 message, struct SummonMenuWindow *window,
-                                s32 x, s32 y);
 void Func_0803c274(struct SummonMenuWindow *window, s32 character, s32 x, s32 y,
                    s32 mode);
 void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
 void Sound_PlayFar(s32 cue);
 void Input_ResetKeyRepeat(void);
 void wait(s32 frames);
-void Resource_ResetEntry(s32 slot);
-void Window_Close(void *window, s32 mode);
 
 s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
   struct SummonMenuOam cursorStorage;
@@ -272,7 +253,7 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
 
         definition =
             SummonDefinition_Get(orderedSummons[firstEntry + selectedRow]);
-        BATTLE_MENU_MESSAGE_COPY(definition->abilityId +
+        BATTLE_MENU_MESSAGE_COPY(definition->nameMessageId +
                                      (s32)MsgAbilityDescription,
                                  text, BATTLE_MENU_MESSAGE_CAPACITY);
         Text_DrawWideStringAtOffset(text, description, 0, 4);
@@ -318,13 +299,13 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
                 break;
             }
             affordable = element == 4;
-            Ability_LoadGlyph(summon->abilityId & 0x3fff, 0, &iconSlots[index],
+            Ability_LoadGlyph(summon->nameMessageId & 0x3fff, 0, &iconSlots[index],
                               &glyph, 1);
             y = index * 2;
             sprites[index].oam.f.tile = glyph;
             if (!affordable)
               Func_08041f70(2);
-            Text_DrawCharacterAtOffset(SummonDefinition_Get(id)->abilityId +
+            Text_DrawCharacterAtOffset(SummonDefinition_Get(id)->nameMessageId +
                                            (s32)MsgAbilityNothing,
                                        window, 16, index * 16);
             for (element = 0; element <= 3; element++) {
@@ -497,3 +478,11 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
   wait(1);
   return result;
 }
+
+#undef SUMMON_MENU_WINDOW_X
+#undef SUMMON_MENU_WINDOW_WIDTH
+#undef SUMMON_COST_X
+#undef BATTLE_MENU_MESSAGE_CAPACITY
+#undef BATTLE_MENU_MESSAGE_COPY
+#undef NAVIGATION
+#undef SUMMON_END

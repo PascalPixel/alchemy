@@ -28,7 +28,7 @@ struct ItemDefinition *Item_GetDirect(s32 item);
 s32 Func_080b106c(s32 item);
 #endif
 void GameFlag_ClearBit(s32 flag);
-void Func_080ae16c(s32 mode);
+void Party_RestoreHpPp(s32 cureConditions);
 
 extern u16 gData_020023c4[];
 extern u16 Data_02000458[];
@@ -74,7 +74,7 @@ void Func_080b1088(void) {
     save[1] = inventory[1];
   }
   GameFlag_SetBit(0x9ff);
-  Func_080ae16c(1);
+  Party_RestoreHpPp(1);
   for (i = 0xe50; i <= 0xe59; i++)
     GameFlag_ClearBit(i);
 }

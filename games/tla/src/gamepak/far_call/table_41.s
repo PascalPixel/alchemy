@@ -34,7 +34,7 @@ Func_08108030:
 	.global Func_08108038
 	.thumb_func
 Func_08108038:
-	overlay_veneer Func_081089e4
+	overlay_veneer MenuCursor_MoveTowardTarget
 	.global Func_08108040
 	.thumb_func
 Func_08108040:
@@ -42,7 +42,7 @@ Func_08108040:
 	.global Func_08108048
 	.thumb_func
 Func_08108048:
-	overlay_veneer Func_08108aa8
+	overlay_veneer MenuCursor_SetPositionImmediate
 	.global Shop_FillSelectorFar
 	.thumb_func
 Shop_FillSelectorFar:

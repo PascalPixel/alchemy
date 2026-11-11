@@ -4,7 +4,7 @@
 	.global BattleEffect_GetResourceIdFar
 	.thumb_func
 BattleEffect_GetResourceIdFar:
-	overlay_veneer Func_080d1eac
+	overlay_veneer Speaker_GetVoice
 	.global Event_ClearInvalidPackedValuesFar
 	.thumb_func
 Event_ClearInvalidPackedValuesFar:

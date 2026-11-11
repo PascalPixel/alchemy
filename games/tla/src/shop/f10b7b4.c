@@ -37,7 +37,7 @@ struct ShopRuntime {
 void Func_08108148(void);
 void Func_0810824c(void);
 void *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
-void Func_08108aa8(struct ShopCursor *cursor, s32 x, s32 y);
+void MenuCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y);
 void Func_080f8060(void *window, s32 a, s32 b);
 void Shop_PlaceCursor(void *window, s32 x, s32 y);
 void Func_080f8058(s32 first);
@@ -75,7 +75,7 @@ s32 Func_0810b7b4(s32 *outUnit, s32 *outSlot, s32 itemMode) {
                                 (struct RenderInput *)iconWindow, 0, result);
   icon->active = 4;
   icon->kind = result;
-  Func_08108aa8(&shop->cursor, -32, 112);
+  MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = icon;
   shop->mode = 1;
   Func_080f8060(listWindow, 2, 0);

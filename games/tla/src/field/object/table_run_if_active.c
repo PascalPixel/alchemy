@@ -8,7 +8,7 @@
 
 s32 Window_CloseMatchingIdFar();
 s32 ObjectTable_ReadActiveValue();
-s32 Func_080d1eac(s32 sprite);
+s32 Speaker_GetVoice(s32 sprite);
 s32 Message_OpenWindowFar(s32 message, s32 x, s32 y, s32 packed);
 void Func_080380f8(s32 sprite, s32 zero, s32 x, s32 y);
 s32 Message_AllTypedFar(void);
@@ -46,7 +46,7 @@ void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
 
   firstWindow =
       Message_OpenWindowFar((s16)event->messageId++, firstX, firstY,
-                                  Func_080d1eac(firstSprite) << 16);
+                                  Speaker_GetVoice(firstSprite) << 16);
   Func_080380f8(firstSprite, 0, firstPortraitX, firstPortraitY);
   if (delay != 0) {
     while (!Message_AllTypedFar())
@@ -55,7 +55,7 @@ void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
 
   secondWindow =
       Message_OpenWindowFar((s16)event->messageId++, secondX, secondY,
-                                  Func_080d1eac(secondSprite) << 16);
+                                  Speaker_GetVoice(secondSprite) << 16);
   Func_080380f8(secondSprite, 0, secondPortraitX, secondPortraitY);
 
   while (!Message_AllTypedFar())

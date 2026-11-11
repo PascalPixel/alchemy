@@ -38,7 +38,7 @@ void VramCache_Reset(void);
 void Task_ResetAll(void);
 void Irq_SetHandler(s32 index, s32 a, s32 b);
 void Heap_Initialize(void);
-void Func_08014b70(void);
+void DebugText_Clear(void);
 s32 Battle_RunEncounterFar(s32 entrance);
 s32 LuckyDice_StartFar(s32 entrance);
 s32 Resource_FarCall00E(s32 entrance);
@@ -271,7 +271,7 @@ void MainRoutine_Run(s32 mode) {
     Irq_SetHandler(1, 0, 0);
     Irq_SetHandler(2, 0, 0);
     Heap_Initialize();
-    Func_08014b70();
+    DebugText_Clear();
     VramCache_Reset();
     if (gMainRoutineWork.scene >= SEQUENCE_UNK_1FB) {
       switch (gMainRoutineWork.scene) {

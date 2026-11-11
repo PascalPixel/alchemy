@@ -192,9 +192,9 @@ s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
 }
 
 // Called with one argument, as its bytes need: no prototype is in scope.
-struct LevelUpResult *Func_080afb80();
+struct LevelUpResult *Unit_TryLevelUp();
 
-void Func_080af794(s32 owner) { Func_080afb80(owner); }
+void Func_080af794(s32 owner) { Unit_TryLevelUp(owner); }
 
 struct OwnerGrowthRecord {
   u8 unk00[0x50];
@@ -460,16 +460,17 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *result);
 void Unit_Calculate(s32);
 u32 Unit_GetExperienceForLevel(s32 owner, s32 level);
 
-/// Levels the owner up once its experience reaches the next level's threshold;
-/// returns the result record then, and 0 otherwise.
-struct LevelUpResult *Func_080afb80(s32 owner_id, struct LevelUpResult *value) {
-  struct BattleUnit *owner;
+/// Levels the character up once if its experience reaches the next level.
+/// Returns `gains` filled with the gains, or NULL. Called after a battle by
+/// Battle_AwardSpoils, once for each level a party member reaches.
+struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains) {
+  struct BattleUnit *unit;
 
-  owner = (struct BattleUnit *)Unit_Get(owner_id);
-  if ((owner->experience >=
-       Unit_GetExperienceForLevel(owner_id, owner->level + 1)) &&
-      (Owner_LevelUp(owner_id, value) != NULL)) {
-    return value;
+  unit = (struct BattleUnit *)Unit_Get(unitId);
+  if ((unit->experience >=
+       Unit_GetExperienceForLevel(unitId, unit->level + 1)) &&
+      (Owner_LevelUp(unitId, gains) != NULL)) {
+    return gains;
   }
   return 0;
 }

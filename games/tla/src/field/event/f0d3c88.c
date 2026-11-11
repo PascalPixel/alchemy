@@ -13,7 +13,7 @@ void Text_GetMessageSizeAltFar(s32 message, s32 *left, s32 *top, u32 *width,
 void Text_GetMessageSizeFar(s32 message, s32 *left, s32 *top, u32 *width,
                             u32 *height);
 s32 Portrait_GetForSpeakerFar(s32 sprite);
-s32 Func_080d1eac(s32 sprite);
+s32 Speaker_GetVoice(s32 sprite);
 s32 Message_OpenWindowFar(s32 message, s32 x, s32 y, s32 packed);
 s32 Func_080380f8(s32 sprite, s32 zero, s32 x, s32 y);
 s32 Message_AllTypedFar(void);
@@ -171,7 +171,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
       else
         handle = Message_OpenWindowFar(message, left, top, 2);
     } else {
-      s32 voice = Func_080d1eac(sprite);
+      s32 voice = Speaker_GetVoice(sprite);
 
       if (extra != 0)
         handle = Message_OpenWindowFar(message, left, top + extra - 1,

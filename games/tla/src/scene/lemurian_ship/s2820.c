@@ -38,7 +38,7 @@ void Func_02002820(void) {
                                            marker->z + 0xfed00000);
     Actor_SetPartAttribute(((struct LemurianShipObject *)Actor_GetById(64)), 0);
     MapGrid_CopyCellAttributes(6, 0, 1, 2, 6, 4);
-    Func_080d45b8(0x80000, 0x100000, 0xf80000, 0x1000000);
+    MapGrid_SetCameraBounds(0x80000, 0x100000, 0xf80000, 0x1000000);
     Camera_FollowActor(gMainRoutineWork.currentOwner, 0);
     Func_02002c10();
     wait(1);

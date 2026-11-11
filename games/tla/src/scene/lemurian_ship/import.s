@@ -222,9 +222,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_080d45b8
+	.global MapGrid_SetCameraBounds
 	.thumb_func
-Func_080d45b8:
+MapGrid_SetCameraBounds:
 	overlay_veneer Func_080c8260
 	.global Import_EventSetExitRequest
 	.thumb_func

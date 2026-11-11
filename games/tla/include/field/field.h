@@ -93,7 +93,7 @@ void Func_02002a4c(void);
 void Func_02002a54(void);
 void Func_02002a5c(struct Actor *object, s32 mode);
 s32 Func_080c88c8(struct ScriptInterpreter *interpreter, s32 value);
-void Func_080caa2c(u32 objectId);
+void Actor_ReleaseAtIndex(u32 actorIndex);
 void Actor_SetSquareSprite(u32 objectId);
 void BattleEffect_DropObjectAtAnchor(u32 objectId);
 void Func_081b83c4(void);

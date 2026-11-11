@@ -86,7 +86,10 @@ struct GlyphWork {
 
 extern const u8 gData_0805c9c4[];
 
-void Func_0803dc1c(void) {
+/// Allocates and resets the selection screen (heap slot 72): the row of icons
+/// the player picks from, with arrows at each end and a pointing hand over the
+/// chosen target, whose picture takes a VRAM cache entry.
+void SelectionMenu_Create(void) {
   struct GlyphWork *work;
   struct GlyphVisual *visual;
   const u8 *table;
@@ -284,7 +287,9 @@ loop_7:
   goto loop_7;
 }
 
-void Func_0803df00(void) {
+/// Starts drawing the selection screen each frame, in the vertical blank pass
+/// (TASK_PASS_VBLANK).
+void SelectionMenu_StartDrawing(void) {
   Task_Add(SelectionMenu_Draw, TASK_PASS_VBLANK);
 }
 
@@ -1648,7 +1653,7 @@ void PartyStatus_OpenAndWait(void) {
 void Window_CloseAndRelease(void) { PartyStatus_Close(); }
 
 void SelectionMenu_CreateEmpty(void) {
-  Func_0803dc1c();
+  SelectionMenu_Create();
   Resource_ClearOwnerListAndCounters();
   wait(1);
 }
@@ -1664,7 +1669,7 @@ u32 Menu_RunSelectionForValue(u32 value) {
   SelectionScreen_BuildEntries(value);
   Func_0803e7ac();
   Menu_OpenSelectionWindow(0, 5);
-  Func_0803df00();
+  SelectionMenu_StartDrawing();
   result = Menu_WaitForSelectionInput(1);
   Resource_ResetOwnerEntries();
   return result;

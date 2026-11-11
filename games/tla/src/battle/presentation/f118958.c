@@ -8,7 +8,7 @@ extern char ResourceId_ColossoBackdrop;
 
 void Func_080ad090(void);
 void Window_LoadGraphics(void);
-void Func_08014b70(void);
+void DebugText_Clear(void);
 void Task_ResetAll(void);
 void Heap_Initialize(void);
 void VramCache_Reset(void);
@@ -33,7 +33,7 @@ void Func_08118958(void) {
   Func_080ad090();
 restart:
   Window_LoadGraphics();
-  Func_08014b70();
+  DebugText_Clear();
   Task_ResetAll();
   Heap_Initialize();
   VramCache_Reset();
@@ -91,7 +91,7 @@ restart:
       Func_081197f0(encounter);
       gData_03001110 = 1;
       Window_LoadGraphics();
-      Func_08014b70();
+      DebugText_Clear();
       Task_ResetAll();
       Heap_Initialize();
       VramCache_Reset();

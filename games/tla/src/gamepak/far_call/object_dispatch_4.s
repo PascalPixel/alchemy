@@ -8,4 +8,4 @@ Actor_StartCameraFar:
 	.global Func_080200e0
 	.thumb_func
 Func_080200e0:
-	overlay_veneer Func_08023510
+	overlay_veneer Actor_StartApproachWatched

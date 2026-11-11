@@ -65,7 +65,7 @@ void Func_081a0a70(void);
 void Func_081a0e0c(s32 credits);
 void Func_081a0fb8(void);
 void Window_LoadGraphics(void);
-void Func_08014b70(void);
+void DebugText_Clear(void);
 s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align);
 
 /// Fills 30K bytes of 256-colour characters with colour 1 and clears 128
@@ -258,7 +258,7 @@ done:
   Io_Write16(0, &REG_BLDCNT);
   Io_Write16(0x1040, &REG_DISPCNT);
   Window_LoadGraphics();
-  Func_08014b70();
+  DebugText_Clear();
   gRenderOamEnabled = 1;
   return 0;
 }

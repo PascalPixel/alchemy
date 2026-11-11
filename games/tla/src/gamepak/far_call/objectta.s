@@ -16,11 +16,11 @@ Event_WaitTransitionFramesFar:
 	.global DisplayScroll_InitializeHBlankDmaFar
 	.thumb_func
 DisplayScroll_InitializeHBlankDmaFar:
-	overlay_veneer Func_080d6408
+	overlay_veneer LineScroll_InitWave
 	.global DisplayScroll_DisarmHBlankDmaFar
 	.thumb_func
 DisplayScroll_DisarmHBlankDmaFar:
-	overlay_veneer Func_080d64b8
+	overlay_veneer LineScroll_Stop
 	.global BattleEffect_PlayCueAndStartEmitterOnTargetFar
 	.thumb_func
 BattleEffect_PlayCueAndStartEmitterOnTargetFar:
@@ -88,7 +88,7 @@ Event_SpawnObjectTableFar:
 	.global ObjectTable_DestroyAtIndexFar
 	.thumb_func
 ObjectTable_DestroyAtIndexFar:
-	overlay_veneer Func_080caa2c
+	overlay_veneer Actor_ReleaseAtIndex
 	.global ObjectTable_GetFar
 	.thumb_func
 ObjectTable_GetFar:

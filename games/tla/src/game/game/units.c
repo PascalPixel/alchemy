@@ -7,7 +7,9 @@
 void Func_080addf0(void);
 void MainRoutine_RunFar(s32 mode);
 
-void Func_080ad338(void) {
+/// Starts a new game: sets up a new game's state (Func_080addf0) and runs the
+/// main routine afresh from mode 0.
+void Game_RestartQuest(void) {
   Func_080addf0();
   MainRoutine_RunFar(0);
 }
@@ -797,8 +799,9 @@ void Func_080ae118(void) {
 
 void GameFlag_ClearBit(s32 flag);
 
-// Party_RestoreHpPp from The Broken Seal.
-void Func_080ae16c(s32 arg0) {
+/// Restores every party member's HP and PP; with `cureConditions` 1 it also
+/// cures poison and haunting.
+void Party_RestoreHpPp(s32 cureConditions) {
   s32 count;
   s32 n;
   u8 *obj;
@@ -850,7 +853,7 @@ void Func_080ae16c(s32 arg0) {
       *(s16 *)(obj + 0x16) = (s16)one;
     }
 
-    if (arg0 == 1) {
+    if (cureConditions == 1) {
       *(s8 *)(obj + 0x131) = 0;
       *(s8 *)(obj + 0x140) = 0;
     }
@@ -1034,7 +1037,7 @@ void *Unit_Get(s32 owner);
 s32 Inventory_Remove(s32 owner, s32 slot);
 void Unit_Calculate(s32 owner);
 void Djinn_ActivateOfferedForParty(void);
-void Func_080ae16c(s32 mode);
+void Party_RestoreHpPp(s32 cureConditions);
 
 extern const u16 Data_080b1284[6];
 
@@ -1109,7 +1112,7 @@ void Func_080ae410(u8 *save, s32 keepSettings) {
     Unit_Calculate(i);
   }
   Djinn_ActivateOfferedForParty();
-  Func_080ae16c(1);
+  Party_RestoreHpPp(1);
   GameFlag_SetBit((keepSettings & 1) + 44);
   GameFlag_SetBit(47);
   gFrameWaitCount = gMainRoutineWork.playTime;
@@ -1161,7 +1164,7 @@ void Func_080ae6c8(s32 item, s32 owner) {
 s32 GameFlag_Test(s32 flag);
 void Djinn_ActivateOfferedForParty(void);
 void Unit_Calculate(s32 unitId);
-void Func_080ae16c(s32 mode);
+void Party_RestoreHpPp(s32 cureConditions);
 void Func_080ae6c8(s32 a, s32 b);
 u32 Random16(void);
 
@@ -1200,7 +1203,7 @@ void Func_080ae6e4(void) {
   Djinn_ActivateOfferedForParty();
   for (i = 0; i < 8; i++)
     Unit_Calculate(i);
-  Func_080ae16c(1);
+  Party_RestoreHpPp(1);
   GameFlag_SetBit(34);
 
   for (i = 0; i < 4; i++) {

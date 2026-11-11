@@ -2,7 +2,8 @@
 
 extern u8 gGameFlagBytes[];
 
-void Func_08016dd0(s32 flag, s32 value) {
+/// Sets the four bits `flag` is in.
+void GameFlag_SetNibble(s32 flag, s32 value) {
   s32 fieldMask = 0xF;
   s32 shift = 4 & flag;
   s32 mask = fieldMask << shift;

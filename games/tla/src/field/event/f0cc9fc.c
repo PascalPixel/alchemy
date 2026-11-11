@@ -8,7 +8,7 @@ extern const u8 gDebug_PaletteSwatchTiles[];
 void Resource_DecompressHalfwords(const void *source, void *destination);
 void wait(s32 count);
 void Window_LoadGraphics(void);
-void Func_08014b70(void);
+void DebugText_Clear(void);
 
 #define PALETTE ((u16 *)0x05000000)
 #define EDITOR_MAP ((u16 *)0x0600205a)
@@ -144,5 +144,5 @@ redraw:
     wait(1);
   }
   Window_LoadGraphics();
-  Func_08014b70();
+  DebugText_Clear();
 }

@@ -24,4 +24,4 @@ UiTextResource_ReleaseFar:
 	.global Func_08038240
 	.thumb_func
 Func_08038240:
-	overlay_veneer Func_0803f968
+	overlay_veneer Item_RemoveFromInventory

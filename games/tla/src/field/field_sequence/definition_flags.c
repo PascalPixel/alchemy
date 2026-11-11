@@ -11,7 +11,11 @@ struct BattleFxDefinition *BattleEffect_FindDefinition(s32 id);
 
 s32 BattleEffect_GetAnimationValue(void);
 
-s32 Func_080d1eac(s32 id) {
+/// Returns the voice sound of sprite id's messages, its definition's value
+/// plus 0x100, or 0 for none (0xff) or with option 3
+/// (gMainRoutineWork.battleFxEnabled) off. Message_OpenWindowFar takes it in
+/// the high half of its last argument.
+s32 Speaker_GetVoice(s32 id) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   u8 value;
 

@@ -91,7 +91,7 @@ void Vector_AddPolarOffsetFar(s32 radius, s32 heading, s32 *probe);
 void SetMapCellCollision(s32 layer, s32 x, s32 y, s32 behavior);
 void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py);
 void Message_DecodeRawUnbounded(s32 message, u16 *buffer);
-void Func_080d45b8(s32 minX, s32 minY, s32 maxX, s32 maxY);
+void MapGrid_SetCameraBounds(s32 minX, s32 minY, s32 maxX, s32 maxY);
 s32 GameFlag_GetByte(s32 flag);
 s32 Party_ListActiveOwners(s16 *owners);
 s32 Unit_AddHp(s32 owner, s32 delta);

@@ -8,8 +8,8 @@ BattleActor_SpawnObjectsForListFar:
 	.global Func_08118018
 	.thumb_func
 Func_08118018:
-	overlay_veneer Func_08126944
+	overlay_veneer BattleBackground_FadeAlphaOut
 	.global Func_08118020
 	.thumb_func
 Func_08118020:
-	overlay_veneer Func_08126978
+	overlay_veneer BattleBackground_FadeAlphaIn

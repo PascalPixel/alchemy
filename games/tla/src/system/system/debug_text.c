@@ -126,8 +126,7 @@ extern char ResourceId_WindowTiles;
 
 /// Blanks the debug text screen (screen block 4), homes the debug text cursor
 /// and points BG0 at the screen.
-// As ☀️'s DebugText_Clear.
-void Func_08014b70(void) {
+void DebugText_Clear(void) {
   Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 32 * 20 * 2);
   gData_030011c4 = (u16 *)BG_SCREEN_BLOCK(4);
   Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);

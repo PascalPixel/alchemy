@@ -5,9 +5,9 @@
 #include "../system_internal.h"
 #include "ram_code.h"
 
-void Func_080132d0(void);
+void System_CopyBuildStamp(void);
 void Window_LoadGraphics(void);
-void Func_08014b70(void);
+void DebugText_Clear(void);
 void VramCache_Reset(void);
 void Func_0801399c(void);
 void Sound_InitializeFar(void);
@@ -31,9 +31,9 @@ void Func_0801319c(void) {
   gData_03001110 = 0;
   gDebugMode = 0;
   gCpuLoadDisplayEnabled = 0;
-  Func_080132d0();
+  System_CopyBuildStamp();
   Window_LoadGraphics();
-  Func_08014b70();
+  DebugText_Clear();
   REG_DISPCNT = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
   Irq_SetHandler(0, 1, Func_0801399c);
   Irq_SetHandler(13, 1, Iwram_Halt);
@@ -102,7 +102,10 @@ s32 System_ReturnZero(s32 unused0, const u8 *unused1) { return 0; }
 extern s32 gIwramHi_Data1[];
 extern char ResourceId_BuildStamp;
 
-void Func_080132d0(void) {
+/// Copies the build stamp resource (three words) into gIwramHi_Data1 and
+/// writes the zero word that ends it. Called at power-up, before the window
+/// graphics load.
+void System_CopyBuildStamp(void) {
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_BuildStamp), gIwramHi_Data1,
           DMA_COPY_WORDS(3), REG_DMA3);
   gIwramHi_Data1[3] = 0;

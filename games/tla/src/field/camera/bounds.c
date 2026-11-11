@@ -30,7 +30,8 @@ void Func_080d452c(s32 id, s32 use_setter) {
     Camera_MoveWithinMapBounds(obj->x, obj->y, obj->z, use_setter);
 }
 
-void Func_080d4548(void) {
+/// Waits (at most 600 frames) for the camera to arrive, then 2 frames more.
+void FieldCamera_WaitForArrival(void) {
   Actor_CommitPosition(
       ((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))->viewCenter);
   Event_Wait(2);
@@ -53,7 +54,8 @@ void Func_080d4580(struct Actor *target, s32 keepCurrentPosition) {
   }
 }
 
-void Func_080d45b8(s32 minX, s32 minZ, s32 maxX, s32 maxZ) {
+/// Sets the map coordinates the camera keeps the screen inside.
+void MapGrid_SetCameraBounds(s32 minX, s32 minZ, s32 maxX, s32 maxZ) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
 
   map->minX = minX;

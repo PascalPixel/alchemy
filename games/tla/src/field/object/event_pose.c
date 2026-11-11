@@ -56,7 +56,7 @@ struct Actor *ObjectEvent_GetObject(u32 objectId) {
   return ObjectTable_Get(objectId);
 }
 
-void ObjectEvent_Remove(u32 objectId) { Func_080caa2c(objectId); }
+void ObjectEvent_Remove(u32 objectId) { Actor_ReleaseAtIndex(objectId); }
 
 void ObjectEvent_PlaceOnGround(u32 objectId, s32 x, s32 z) {
   struct ActorScriptView *object;

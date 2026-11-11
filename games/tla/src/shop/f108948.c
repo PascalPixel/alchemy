@@ -2,8 +2,8 @@
 // target, setting the sprite's position and its OAM x and y, and stops the
 // glide on its last step; The Broken Seal's ShopCursor_Advance
 // (games/tbs/src/shop/shop.c). The x field is written through a u32 mask, as
-// Func_081089e4 beside it in shop/cursor_set.c does, so the 0x1ff mask is
-// split as the native's.
+// MenuCursor_MoveTowardTarget beside it in shop/cursor_set.c does, so the
+// 0x1ff mask is split as the native's.
 #include "types.h"
 #include "render_input.h"
 #include "ram_buffer.h"

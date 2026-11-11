@@ -37,7 +37,7 @@ void *Actor_GetByIdFar(s32 id);
 struct RenderInput *Func_080380f8(s32 resource, s32 x, s32 y, s32 mode);
 struct RenderInput *Window_CreateFar(s32 x, s32 y, s32 width, s32 height,
                                        s32 style);
-void Func_08108aa8(struct ShopCursor *cursor, s32 x, s32 y);
+void MenuCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y);
 void Func_081084f4(s32 message);
 s32 Menu_SelectShopCommandFar(s32 action);
 s32 Func_0810a6b8(s32 row, u16 *items);
@@ -71,7 +71,7 @@ s32 Func_081082c4(s32 stockRow, s32 keeperId) {
   anchor->sentinel = 255;
   anchor->active = 1;
   anchor->kind = 0;
-  Func_08108aa8(&shop->cursor, -32, 112);
+  MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = anchor;
   Func_081084f4((s32)MsgWeaponShopWelcome);
   while (1) {
@@ -98,7 +98,7 @@ s32 Func_081082c4(s32 stockRow, s32 keeperId) {
     } else {
       break;
     }
-    Func_08108aa8(&shop->cursor, -32, 112);
+    MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
     Func_081084f4((s32)MsgAnythingElse);
   }
   Func_081084f4((s32)MsgShopFarewell);

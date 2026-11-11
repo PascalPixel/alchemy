@@ -802,7 +802,7 @@ done:
 #define PROMPT_TILE_BLOCKS 5
 #endif
 
-void Func_08014b70(void);
+void DebugText_Clear(void);
 void VramCache_Reset(void);
 void Func_081a6030(void);
 s32 Func_081a6154(s32 step);
@@ -825,7 +825,7 @@ s32 Func_081a71c8(void) {
   u8 saved = gCpuLoadDisplayEnabled;
 
   cpuLoad = saved;
-  Func_08014b70();
+  DebugText_Clear();
   VramCache_Reset();
   wait(1);
   Task_ResetAll();
@@ -849,7 +849,7 @@ s32 Func_081a71c8(void) {
     gBgScroll[result].x = gBgScroll[result].y = 0;
   REG_DISPCNT = 0;
   Window_LoadGraphics();
-  Func_08014b70();
+  DebugText_Clear();
   PaletteFade_Initialize();
   gCpuLoadDisplayEnabled = cpuLoad;
   return 1;
@@ -904,7 +904,7 @@ s32 Func_081a729c(s32 prompt) {
 
   Task_ResetAll();
   Fade_ToWhite(1);
-  Func_08014b70();
+  DebugText_Clear();
   VramCache_Reset();
   wait(1);
   {
@@ -968,7 +968,7 @@ column:
     gBgScroll[i].x = gBgScroll[i].y = 0;
   Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
   Window_LoadGraphics();
-  Func_08014b70();
+  DebugText_Clear();
   if (prompt != 0) {
     u8 *buffer = HeapSlot_AllocEwram(56, 0x400);
     struct TitleSprite *sprite = work->sprites;
@@ -1066,7 +1066,7 @@ void Task_ResetAll(void);
 void Fade_ToBlack(s32 vblanks);
 void Fade_FromBlack(s32 vblanks);
 void Fade_Wait(void);
-void Func_08014b70(void);
+void DebugText_Clear(void);
 void Window_LoadGraphics(void);
 
 /// Shows the Nintendo logo with its jingle. With mode 0 it fades in and holds
@@ -1089,7 +1089,7 @@ s32 Title_ShowSplashScreen(s32 mode) {
   blank = 0x1ff;
   Task_ResetAll();
   Fade_ToBlack(1);
-  Func_08014b70();
+  DebugText_Clear();
   wait(1);
   {
     /* FAKEMATCH(pin): the native loads the control word from the pool before
@@ -1153,7 +1153,7 @@ col:
   }
   Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
   Window_LoadGraphics();
-  Func_08014b70();
+  DebugText_Clear();
   REG_DISPCNT =
       DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   if (mode == 0) {
@@ -1207,7 +1207,7 @@ extern char ResourceId_CamelotLogo;
 void Fade_ToBlack(s32 vblanks);
 void Fade_FromWhite(s32 vblanks);
 void Fade_Wait(void);
-void Func_08014b70(void);
+void DebugText_Clear(void);
 void Window_LoadGraphics(void);
 
 s32 Func_081a76f8(void) {
@@ -1221,7 +1221,7 @@ s32 Func_081a76f8(void) {
   resource = (s32)&ResourceId_CamelotLogo;
   Task_ResetAll();
   Fade_ToBlack(1);
-  Func_08014b70();
+  DebugText_Clear();
   wait(1);
   REG_BG2CNT = 0x685;
   REG_DISPCNT = 0x1440;
@@ -1244,7 +1244,7 @@ s32 Func_081a76f8(void) {
   }
   Dma_Set(gBgScroll, REG_BG0HOFS, (DMA_ENABLE | DMA_32BIT) << 16 | 4, REG_DMA3);
   Window_LoadGraphics();
-  Func_08014b70();
+  DebugText_Clear();
   Fade_FromWhite(1);
   Fade_Wait();
   REG_DISPCNT = 0x1540;

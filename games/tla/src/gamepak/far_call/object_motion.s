@@ -224,7 +224,7 @@ Camera_MoveWithinMapBoundsFar:
 	.global Func_080c8240
 	.thumb_func
 Func_080c8240:
-	overlay_veneer Func_080d4548
+	overlay_veneer FieldCamera_WaitForArrival
 	.global Func_080c8248
 	.thumb_func
 Func_080c8248:
@@ -240,4 +240,4 @@ Func_080c8258:
 	.global Func_080c8260
 	.thumb_func
 Func_080c8260:
-	overlay_veneer Func_080d45b8
+	overlay_veneer MapGrid_SetCameraBounds

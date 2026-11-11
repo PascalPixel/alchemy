@@ -3,10 +3,10 @@
 // and the coins window, then offers the party service until the menu is
 // cancelled. The Broken Seal's Shop_ConfirmAct in games/tbs/src/shop/shop.c,
 // written with this game's calls (Func_08108148 for the cursor work,
-// Func_080380f8 for the side-object window, Func_08108aa8 to place the cursor,
-// Func_0810a9ac to show a message, Shop_CountUnits to count the downed,
-// Func_0810abf0 for the service, Func_0810824c to clean up), its work-block
-// offsets and numbered messages.
+// Func_080380f8 for the side-object window, MenuCursor_SetPositionImmediate to
+// place the cursor, Func_0810a9ac to show a message, Shop_CountUnits to count
+// the downed, Func_0810abf0 for the service, Func_0810824c to clean up), its
+// work-block offsets and numbered messages.
 #include "types.h"
 #include "shop.h"
 #include "render_input.h"
@@ -50,7 +50,8 @@ void *Actor_GetByIdFar(s32 unitId);
 s32 Func_080380f8(s32 resource, s32 x, s32 y, s32 flags);
 s32 Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void SideObject_CreateFar(s32 a, s32 b, s32 c, s32 window, s32 d, s32 e);
-void Func_08108aa8(struct ShopCursor *cursor, s32 targetX, s32 targetY);
+void MenuCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 targetX,
+                                     s32 targetY);
 void Func_0810a9ac(s32 message);
 s32 Shop_CountUnits(void);
 void Func_0810abf0(void);
@@ -85,7 +86,7 @@ s32 Shop_ConfirmAct(s32 unitId) {
       0, 0);
   cursorAnchor->kind = 1;
   cursorAnchor->unk00[4] = 0;
-  Func_08108aa8(&shop->cursor, -32, 112);
+  MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = (struct WindowSprite *)cursorAnchor;
   Func_0810a9ac((s32)MsgWelcomeWearyWanderers);
 
@@ -105,7 +106,7 @@ s32 Shop_ConfirmAct(s32 unitId) {
       Func_0810abf0();
     }
     shop->partyAction = 0;
-    Func_08108aa8(&shop->cursor, -32, 112);
+    MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
     Func_0810a9ac((s32)MsgSanctumMoreAid);
   }
 

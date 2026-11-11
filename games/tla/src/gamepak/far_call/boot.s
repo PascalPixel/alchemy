@@ -146,7 +146,7 @@ Resource_FindFreeEntryFar:
 	.global DebugText_ClearFar
 	.thumb_func
 DebugText_ClearFar:
-	overlay_veneer Func_08014b70
+	overlay_veneer DebugText_Clear
 	.global AffineMatrix_BuildForEffectFar
 	.thumb_func
 AffineMatrix_BuildForEffectFar:
@@ -230,7 +230,7 @@ Projection_SetFar:
 	.global Func_08000280
 	.thumb_func
 Func_08000280:
-	overlay_veneer Func_080132d0
+	overlay_veneer System_CopyBuildStamp
 	.global System_ReturnZeroFar
 	.thumb_func
 System_ReturnZeroFar:
@@ -418,11 +418,11 @@ GameFlag_SetByteFar:
 	.global GameFlag_IncrementByteFar
 	.thumb_func
 GameFlag_IncrementByteFar:
-	overlay_veneer Func_08016d7c
+	overlay_veneer GameFlag_IncrementByte
 	.global GameFlag_DecrementByteFar
 	.thumb_func
 GameFlag_DecrementByteFar:
-	overlay_veneer Func_08016d98
+	overlay_veneer GameFlag_DecrementByte
 	.global GameFlag_GetNibbleFar
 	.thumb_func
 GameFlag_GetNibbleFar:
@@ -430,7 +430,7 @@ GameFlag_GetNibbleFar:
 	.global Func_08000410
 	.thumb_func
 Func_08000410:
-	overlay_veneer Func_08016dd0
+	overlay_veneer GameFlag_SetNibble
 	.global Task_FindFar
 	.thumb_func
 Task_FindFar:

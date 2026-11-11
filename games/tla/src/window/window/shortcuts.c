@@ -68,8 +68,9 @@ void UiTimedNotice_CloseIfActive(void) {
 
 void PartyInventory_RemoveFar(s32 item);
 
-s32 Func_0803f968(s32 unused, s32 item) {
-  PartyInventory_RemoveFar(item);
+/// Removes itemId from the party's inventory and returns 0.
+s32 Item_RemoveFromInventory(s32 unused, s32 itemId) {
+  PartyInventory_RemoveFar(itemId);
   return 0;
 }
 

@@ -294,9 +294,9 @@ Camera_MoveWithinMapBounds:
 	.thumb_func
 Func_0200419c:
 	overlay_veneer Func_080c8240
-	.global Func_080d45b8
+	.global MapGrid_SetCameraBounds
 	.thumb_func
-Func_080d45b8:
+MapGrid_SetCameraBounds:
 	overlay_veneer Func_080c8260
 	.global Func_020041ac
 	.thumb_func

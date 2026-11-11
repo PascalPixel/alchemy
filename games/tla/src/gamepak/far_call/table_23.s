@@ -8,7 +8,7 @@ Unit_GetExperienceForLevelFar:
 	.global Func_080ad208
 	.thumb_func
 Func_080ad208:
-	overlay_veneer Func_080ae16c
+	overlay_veneer Party_RestoreHpPp
 	.global Func_080ad210
 	.thumb_func
 Func_080ad210:

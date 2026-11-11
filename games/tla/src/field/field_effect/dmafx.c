@@ -24,7 +24,12 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
   }
 }
 
-void Func_080d6408(s32 kind, s32 a, s32 c, s32 e, s32 b, s32 d, s32 f) {
+/// Starts the line scroll: its work (heap slot 136) holds the mode and, for x
+/// and y, the wave's frequency, its step each frame and its amplitude; two
+/// tasks, one in the vertical blank pass and one in the frame pass, build and
+/// send each frame's line offsets.
+void LineScroll_InitWave(s32 mode, s32 freqX, s32 stepX, s32 ampX, s32 freqY,
+                         s32 stepY, s32 ampY) {
   struct DmaFxWork *work = HeapSlot_AllocEwram(136, sizeof(struct DmaFxWork));
   volatile u32 zero;
 
@@ -33,18 +38,19 @@ void Func_080d6408(s32 kind, s32 a, s32 c, s32 e, s32 b, s32 d, s32 f) {
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (sizeof(*work) / 4),
           REG_DMA3);
   WaitDma((volatile struct DmaRegisters *)&REG_DMA3SAD);
-  work->kind = kind;
-  work->unkf08 = a;
-  work->unkf0c = b;
-  work->unkf18 = e;
-  work->unkf1c = f;
-  work->unkf10 = c;
-  work->unkf14 = d;
+  work->kind = mode;
+  work->unkf08 = freqX;
+  work->unkf0c = freqY;
+  work->unkf18 = ampX;
+  work->unkf1c = ampY;
+  work->unkf10 = stepX;
+  work->unkf14 = stepY;
   Task_Add(Func_080d607c, TASK_PASS_VBLANK);
   Task_Add(Func_080d5ff8, TASK_PASS_FRAME);
 }
 
-void Func_080d64b8(void) {
+/// Stops the line scroll: removes its two tasks and stops DMA 0.
+void LineScroll_Stop(void) {
   Task_Remove(Func_080d5ff8);
   Task_Remove(Func_080d607c);
   {

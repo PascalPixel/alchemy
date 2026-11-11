@@ -4,8 +4,8 @@
 	.global Func_080ad0b0
 	.thumb_func
 Func_080ad0b0:
-	overlay_veneer Func_080afb80
+	overlay_veneer Unit_TryLevelUp
 	.global Func_080ad0b8
 	.thumb_func
 Func_080ad0b8:
-	overlay_veneer Func_080ad338
+	overlay_veneer Game_RestartQuest

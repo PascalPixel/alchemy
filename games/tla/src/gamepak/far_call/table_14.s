@@ -48,7 +48,7 @@ Window_CloseAllFar:
 	.global UiGlyph_ResetWorkStateFar
 	.thumb_func
 UiGlyph_ResetWorkStateFar:
-	overlay_veneer Func_0803dc1c
+	overlay_veneer SelectionMenu_Create
 	.global Resource_ClearOwnerListAndCountersFar
 	.thumb_func
 Resource_ClearOwnerListAndCountersFar:
@@ -60,7 +60,7 @@ Resource_PushPendingPairFar:
 	.global Resource_ScheduleOwnerResetDelayedFar
 	.thumb_func
 Resource_ScheduleOwnerResetDelayedFar:
-	overlay_veneer Func_0803df00
+	overlay_veneer SelectionMenu_StartDrawing
 	.global Resource_ScheduleOwnerResetFar
 	.thumb_func
 Resource_ScheduleOwnerResetFar:

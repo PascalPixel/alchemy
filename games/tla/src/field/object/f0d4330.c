@@ -7,7 +7,7 @@
 #include "window.h"
 
 s32 ObjectTable_ReadActiveValue(s32 key);
-s32 Func_080d1eac(s32 id);
+s32 Speaker_GetVoice(s32 id);
 extern const u8 gData_080f330c[];
 
 void Func_080d4330(s32 key) {
@@ -19,7 +19,7 @@ void Func_080d4330(s32 key) {
     *(s16 *)&work->speakerVoiceSound = (value = 0);
     *(s16 *)&work->speakerVoiceCountdown = value;
   } else {
-    id = Func_080d1eac(ObjectTable_ReadActiveValue(key));
+    id = Speaker_GetVoice(ObjectTable_ReadActiveValue(key));
     value = gData_080f330c[gMainRoutineWork.eventMode];
     *(s16 *)&work->speakerVoiceSound = id;
     *(s16 *)&work->speakerVoiceCountdown = value;

@@ -32,7 +32,7 @@ static inline void FieldMessage_DecodeRawUnbounded(s32 message, u16 *buffer) {
 
 static inline void Field_SetCameraBounds(s32 minX, s32 minY, s32 maxX,
                                          s32 maxY) {
-  Func_080d45b8(minX, minY, maxX, maxY);
+  MapGrid_SetCameraBounds(minX, minY, maxX, maxY);
 }
 
 static inline s32 FieldGameFlag_GetByte(s32 flag) {

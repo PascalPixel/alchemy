@@ -2,10 +2,10 @@
 #include "io_reg.h"
 #include "system.h"
 
-/// The Broken Seal's BattleBackground_FadeAlphaOut: blends BG2 over the
-/// backdrop and steps BG2's weight down by 2 a frame from 15, while the
-/// backdrop's stays 16.
-void Func_08126944(void) {
+/// Fades BG2 out over the backdrop in eight frames, its blend weight falling
+/// by 2 a frame from 15, while the backdrop's stays 16. Leaves REG_BLDCNT
+/// blending BG2 over the backdrop.
+void BattleBackground_FadeAlphaOut(void) {
   s32 step;
 
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BD;

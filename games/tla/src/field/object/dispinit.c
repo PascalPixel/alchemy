@@ -19,9 +19,12 @@ extern const s32 gData_0802f1a0[];
 extern const s32 gData_0802f1b8[];
 extern const s32 gData_0802f1e8[];
 
-void Func_08023510(struct ActorView *object, s32 argument) {
-  Actor_StartScript(object, gData_0802f1e8);
-  object->argument = argument;
+/// Starts an actor on the script that approaches its watched actor
+/// (SC_APPROACH_WATCHED), watching watchedActorHandle.
+void Actor_StartApproachWatched(struct ActorView *actor,
+                                s32 watchedActorHandle) {
+  Actor_StartScript(actor, gData_0802f1e8);
+  actor->argument = watchedActorHandle;
 }
 
 /// Starts the dispatch script for gMainRoutineWork's render mode, waiting a

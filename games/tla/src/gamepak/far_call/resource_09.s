@@ -10,4 +10,4 @@ Func_08118000:
 	.global Func_08118008
 	.thumb_func
 Func_08118008:
-	overlay_veneer Func_08125aa0
+	overlay_veneer BattleTransition_RunMosaicFadeOut

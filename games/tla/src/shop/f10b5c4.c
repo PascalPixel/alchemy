@@ -39,7 +39,7 @@ void Func_08108148(void);
 void Func_0810824c(void);
 struct FieldObject *Actor_GetByIdFar(s32 objectId);
 void *Func_080380f8(s32 portrait, s32 a, s32 b, s32 c);
-void Func_08108aa8(struct ShopCursor *cursor, s32 x, s32 y);
+void MenuCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y);
 void Func_081084f4(s32 message);
 s32 Func_0810b6bc(void);
 void Window_CloseFar(void *window, s32 mode);
@@ -61,13 +61,13 @@ s32 Func_0810b5c4(s32 objectId) {
   icon->sentinel = 255;
   icon->active = 1;
   icon->kind = 0;
-  Func_08108aa8(&shop->cursor, -32, 112);
+  MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = icon;
   message = (s32)MsgRightWhenI;
   Func_081084f4(message);
   Func_081084f4(message + 1);
   result = Func_0810b6bc();
-  Func_08108aa8(&shop->cursor, -32, 112);
+  MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   if (result == -1)
     Func_081084f4(message + 2);
   Window_CloseFar(window, 2);

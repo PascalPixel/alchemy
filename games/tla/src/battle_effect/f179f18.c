@@ -63,7 +63,7 @@ void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
-void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
@@ -168,7 +168,7 @@ extern u16 Data_02014260[];
 struct FloraObject *Func_0815b290(s32 width, s32 height, u32 shape, s32 mode);
 struct FloraObject *Func_0815b3b0(s32 width, s32 height, u32 shape, s32 mode);
 void ResourceObject_ReleaseFar(void *object);
-void Func_0813ba50(void);
+void BattleEffect_ConfigureEffectDisplay(void);
 void Func_08179e6c(void);
 void Func_0813baec(void);
 void Func_0814cca8(void);
@@ -250,7 +250,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   source = Ram_MapCellBuffer;
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
-  Func_0813ba50();
+  BattleEffect_ConfigureEffectDisplay();
   Func_08179e6c();
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
@@ -959,7 +959,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         }
       }
     }
-    Func_08158ce0(2, 2);
+    BattleCamera_Shake(2, 2);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

@@ -5,7 +5,10 @@ static __inline__ void FillWords_(void *destination, s32 size, u32 value) {
   Iwram_FillWords(destination, size, value);
 }
 
-void Func_08125bb8(s32 *destination) {
+/// Builds a flat tilemap: rows 0 to 3 0xffff, rows 4 and 5 tile 1023, rows 6
+/// to 20 tiles 512 to 991 in order, then tile 1023. Called with screen block
+/// 31 by Func_0812628c and Func_081263fc.
+void BattleTransition_BuildTilemap(s32 *destination) {
   s32 entry;
   u32 index;
 

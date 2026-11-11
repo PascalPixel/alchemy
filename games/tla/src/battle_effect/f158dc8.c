@@ -18,7 +18,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Func_0813baec(void); // BattleEffect_AdvanceScrollOnInterval
-void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
+void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_CountDownBattlerTints(void);
 void Func_08163c2c(s32 page, s32 value);
 s32 BattleEffect_LoadBlitter(s32 slot,
@@ -38,7 +38,7 @@ void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void Func_0816442c(s32 group, s32 x,
                    s32 y); // BattleEffect_PlaceFormationObjects
 void Func_0816467c(s32 group, s32 x, s32 y); // BattleEffect_RunImpactBurst
-void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void Func_0818caa8(const u8 *cells, s32 x, s32 y, s32 height); // four motes
 void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
 void Func_080151ac(s32 *scale); // SceneTransform_ApplyScale
@@ -177,7 +177,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
     }
   }
 
-  Func_0813ba50();
+  BattleEffect_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
   BG_PLTT[1] = 0;
   REG_BG2CNT = 0x2784;
@@ -631,9 +631,9 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
         }
       }
       if (frame <= 31) {
-        Func_08158ce0(8, 16);
+        BattleCamera_Shake(8, 16);
       } else {
-        Func_08158ce0(4, 4);
+        BattleCamera_Shake(4, 4);
       }
       BattleEffect_CountDownBattlerTints();
       work->transferPending = 1;

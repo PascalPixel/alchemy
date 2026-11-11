@@ -48,7 +48,7 @@ void Func_0811e7dc(void *saved);
 void Func_0811e830(void *saved);
 void Sound_PlayFar(s32 cue);
 void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
-void Func_0812756c(void);
+void BattleBackground_RestorePalette(void);
 void Func_08138008(struct BattlePresentationWork *work);
 void Func_08138018(struct BattlePresentationWork *work);
 void BattlePlayback_WaitForReady(void);
@@ -135,7 +135,7 @@ s32 Func_0811f088(struct BattlePlan *plan, s32 mode) {
       BattleEvent_Push(4, (u32)&MsgCastLacksPp);
     }
     BattleEvent_DispatchQueued();
-    Func_0812756c();
+    BattleBackground_RestorePalette();
   } else {
     if (((s32 *)plan)[25] == 0)
       Task_Add(BattleEvent_Playback, TASK_PASS_VBLANK);
@@ -147,7 +147,7 @@ s32 Func_0811f088(struct BattlePlan *plan, s32 mode) {
       else
         Func_08138018(&work);
     } else {
-      Func_0812756c();
+      BattleBackground_RestorePalette();
     }
     if (saved) {
       Func_0811e830(saved);

@@ -212,7 +212,7 @@ extern const u8 gData_08199364[];
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 
 void BattleEffect_StartCanvasLayer(s32);
-void Func_0813ba50(void);
+void BattleEffect_ConfigureEffectDisplay(void);
 void Task_Add(void *, s32);
 void Func_08163c2c(s32, s32);
 void BattleActor_SpawnObjectsForListFar(struct Local264 *, s32);
@@ -327,7 +327,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   sprites = (struct SpriteObject **)gMapCellBuffer;
   scene = SYSTEM_WORK->scene;
   BattleEffect_StartCanvasLayer(0);
-  Func_0813ba50();
+  BattleEffect_ConfigureEffectDisplay();
   REG_BG2CNT = 0x784;
   PLTT[0] = 0;
   PLTT[1] = 0;

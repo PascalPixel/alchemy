@@ -42,7 +42,7 @@ s32 BattleEffect_LoadBlitter(s32 slot,
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames); // BattleEffect_TintBattler
 void BattleEffect_CountDownBattlerTints(void);
-void Func_08158ce0(s32 mask, u32 range); // Camera_ApplyShake
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_StartActorMotion(s32 actor, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 void Actor_SetAnimationSpeedFar(struct MotionObject *object, s32 value);
@@ -192,7 +192,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
       work->shakeFrames = 2;
     }
 
-    Func_08158ce0(2, 4);
+    BattleCamera_Shake(2, 4);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

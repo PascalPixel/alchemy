@@ -229,7 +229,7 @@ void SummonEffect_RunCanvasMode2(struct BattleEffectArgument *);
 void BattleEffect_ArmBg2AffineHBlankDma(void);
 void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *, s32);
 void Resource_LoadAndDecompress(s32, void *, s32, s32);
-void Func_08158ce0(s32, s32);
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void Func_0815b434(void *, s32, s32);
 s32 EffectPosition_ProjectPoint(void *, s32 *);
 void EffectPosition_ProjectScaledBattler(s32, s32 *);
@@ -2507,7 +2507,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
         Func_0814cd48(action->actors[0], 7, 5, 0, 4);
       if (frame == 14)
         Func_0814cd48(action->actors[0], 7, 5, 0, 4);
-      Func_08158ce0(8, 8);
+      BattleCamera_Shake(8, 8);
       BattleEffect_CountDownBattlerTints();
       work->unk78e8 = 1;
       wait(1);

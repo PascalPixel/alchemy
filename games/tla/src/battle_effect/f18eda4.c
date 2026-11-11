@@ -78,7 +78,7 @@ void Render_DrawModelList(struct RenderModel *model);
 void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
-void Func_08158ce0(s32 randomMask, u32 range);
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void Func_081180e8(s32 phase);
 void Sound_PlayFar(s32 cue);
@@ -377,7 +377,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       Heap_Release(projected);
     }
 
-    Func_08158ce0(8, 8);
+    BattleCamera_Shake(8, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

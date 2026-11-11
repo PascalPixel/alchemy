@@ -70,7 +70,7 @@ void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
 void Func_08118088(s32 actor, s32 motion);
-void Func_08158ce0(s32 randomMask, u32 shakeRange);
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void wait(s32 frames);
 void HeapSlot_Release(s32 slot);
@@ -473,7 +473,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
         step->variant++;
       }
     }
-    Func_08158ce0(8, 8);
+    BattleCamera_Shake(8, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

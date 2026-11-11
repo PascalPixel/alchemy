@@ -84,7 +84,7 @@ void Func_0801521c(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct RenderPrimitive *list);
 void Heap_Release(void *buffer);
-void Func_08158ce0(s32 x, s32 y);
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void wait(s32 frames);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
@@ -197,9 +197,9 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     if (mode == 0)
-      Func_08158ce0(4, 4);
+      BattleCamera_Shake(4, 4);
     else
-      Func_08158ce0(16, 16);
+      BattleCamera_Shake(16, 16);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

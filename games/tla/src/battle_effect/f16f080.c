@@ -55,7 +55,7 @@ void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void Actor_SetAnimationSpeedFar(void *object, s32 value);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
-void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
@@ -339,7 +339,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
         }
       }
     }
-    Func_08158ce0(4, 4);
+    BattleCamera_Shake(4, 4);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

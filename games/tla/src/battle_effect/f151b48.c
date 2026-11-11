@@ -23,7 +23,7 @@ s32 BattleEffect_LoadBlitter(s32 slot,
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // BattleEffect_TintBattler
 void Func_081180e8(s32 phase);       // BattlePlayback_StartFar
-void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void Func_0815e22c(struct EffectPosition *midpoint);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
@@ -204,7 +204,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
           Func_0814cd48(effect->actors[i], 7, 5, i, 10);
       }
     }
-    Func_08158ce0(2, 4);
+    BattleCamera_Shake(2, 4);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

@@ -94,7 +94,7 @@ void Render_DrawModelList(struct Model *model);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void Heap_Release(void *block);
-void Func_08158ce0(s32 randomMask, u32 shakeRange);
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void HeapSlot_Release(s32 slot);
 void BattleEffect_EndCanvasLayer(void);
@@ -243,7 +243,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
 
     Heap_Release(model);
     Heap_Release(vertices);
-    Func_08158ce0(8, 8);
+    BattleCamera_Shake(8, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

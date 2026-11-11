@@ -48,7 +48,7 @@ void Transform_Pop(void);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Func_080150e4(s32 angle);
-void Func_08158ce0(s32 x, s32 y);
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void wait(s32 frames);
 void HeapSlot_Release(s32 slot);
@@ -229,7 +229,7 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
 
-    Func_08158ce0(4, 16);
+    BattleCamera_Shake(4, 16);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

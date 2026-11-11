@@ -171,7 +171,7 @@ extern u8 gData_08199210[];
 extern u8 gData_08199364[];
 
 void BattleEffect_StartCanvasLayer(s32);
-void Func_0813ba50(void);
+void BattleEffect_ConfigureEffectDisplay(void);
 void Func_08179e6c(void);
 s32 BattleEffect_LoadBlitter(s32, s32);
 s32 Task_Add(void *, s32);
@@ -208,7 +208,7 @@ void Palette_LoadBasicObjColors(void);
 void BattleEffect_SpawnObjects(s32, s32, s32);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_0814cd48(s32, s32, s32, s32, s32);
-void Func_08158ce0(s32, s32);
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Func_0813baec(void);
@@ -254,7 +254,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
   ctl = SYSTEM->control;
   bank = SYSTEM->bank;
   BattleEffect_StartCanvasLayer(0);
-  Func_0813ba50();
+  BattleEffect_ConfigureEffectDisplay();
   Func_08179e6c();
   BattleEffect_LoadBlitter(104, 3);
   blit[0] = SYSTEM->blit;
@@ -1289,7 +1289,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           q->timer++;
         }
       }
-      Func_08158ce0(8, 8);
+      BattleCamera_Shake(8, 8);
       BattleEffect_CountDownBattlerTints();
       work->transferPending = 1;
       wait(1);

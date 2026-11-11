@@ -2,22 +2,25 @@
 #include "actor.h"
 #include "io_reg.h"
 
-void Func_0811bf18(struct Actor **from, struct Actor **to,
-                   s32 percent) {
-  struct Actor *object = *from;
-  struct Actor *target = *to;
+/// Sends the actor of startSlot leaping progress percent of the way toward
+/// the actor of endSlot, in actor mode 2. Also clears REG_BLDCNT. Nothing in
+/// the source calls it.
+void BattleMotion_LeapToward(struct Actor **startSlot, struct Actor **endSlot,
+                             s32 progress) {
+  struct Actor *start = *startSlot;
+  struct Actor *end = *endSlot;
   s32 x;
   s32 z;
 
-  x = object->x + (target->x - object->x) * percent / 100;
-  z = object->z + (target->z - object->z) * percent / 100;
+  x = start->x + (end->x - start->x) * progress / 100;
+  z = start->z + (end->z - start->z) * progress / 100;
   REG_BLDCNT = 0;
-  object->acceleration = 0x20000;
-  object->speedLimit = 0x80000;
-  object->velocityY = 0x40000;
-  object->gravity = 0xab85;
-  object->bounce = 0;
-  object->actionFlags = 1;
-  Actor_SetTargetPosition(object, x, 0, z);
-  Actor_SetMode(object, 2);
+  start->acceleration = 0x20000;
+  start->speedLimit = 0x80000;
+  start->velocityY = 0x40000;
+  start->gravity = 0xab85;
+  start->bounce = 0;
+  start->actionFlags = 1;
+  Actor_SetTargetPosition(start, x, 0, z);
+  Actor_SetMode(start, 2);
 }

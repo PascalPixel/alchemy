@@ -28,7 +28,7 @@ extern u8 Model_DecodeCodeSize[];
 u8 *Resource_GetTableEntry(s32 id);
 void ColorBuffer_Scale(u16 *source, u16 *destination, s32 scale, s32 count);
 void Graphics_BuildSequentialTileTable(void *destination);
-void Func_08125bb8(void *destination);
+void BattleTransition_BuildTilemap(void *destination);
 s32 Task_Add(void (*func)(void), s32 order);
 void BattleStaging_UpdateHBlankScroll(void);
 
@@ -69,7 +69,7 @@ void Func_081263fc(s32 mode, s32 resource, s32 level) {
     *(u16 *)0x050000bc = *(u16 *)0x050001e8;
   }
   Graphics_BuildSequentialTileTable((void *)0x06003800);
-  Func_08125bb8((void *)0x0600f800);
+  BattleTransition_BuildTilemap((void *)0x0600f800);
   Iwram_ClearWords((void *)0x0600ffc0, 64);
   if (view->mode == 0)
     Task_Add(BattleStaging_UpdateHBlankScroll, 0xcff);

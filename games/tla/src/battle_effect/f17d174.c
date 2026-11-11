@@ -29,7 +29,7 @@ struct StarTarget {
   s32 z;
 };
 void Func_081180e8(s32 phase);
-void Func_08158ce0(s32 randomMask, u32 shakeRange);
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
@@ -250,7 +250,7 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
         particle->variant--;
       }
     }
-    Func_08158ce0(8, 8);
+    BattleCamera_Shake(8, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

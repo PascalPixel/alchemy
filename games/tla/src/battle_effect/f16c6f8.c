@@ -45,7 +45,7 @@ void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void Func_081180e8(s32 phase);                      // BattlePlayback_StartFar
-void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
@@ -76,7 +76,7 @@ void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
 void Func_0818de3c(void *triangles, s32 columns, s32 rows, s32 cellWidth,
                    s32 cellHeight); // builds a grid's mesh
 void Func_08143354(void);
-void Func_0813ba50(void);
+void BattleEffect_ConfigureEffectDisplay(void);
 void Display_ApplyBg2Affine(void);
 void BattleEffect_ProcessPendingBlock2Transfer(void);
 
@@ -138,7 +138,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
   transition = (s32 *)Ram_HeapSlots->transitionWork;
   BattleEffect_StartCanvasLayer(2);
   Func_0815585c(effect, (effect->side << 4) | 0xc0, screenA, screenB);
-  Func_0813ba50();
+  BattleEffect_ConfigureEffectDisplay();
   REG_WININ = 0x3537;
   REG_WINOUT = 0x3f31;
   transition[4] = 1;
@@ -439,7 +439,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
       work->shakeFrames = 16;
     }
     if (frame > 47) {
-      Func_08158ce0(8, 8);
+      BattleCamera_Shake(8, 8);
     }
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;

@@ -9,7 +9,7 @@
 void Task_Add(void (*func)(void), s32 priority);
 void BattleStaging_UpdateHBlankScroll(void);
 void Graphics_BuildSequentialTileTable(void *destination);
-void Func_08125bb8(void *destination);
+void BattleTransition_BuildTilemap(void *destination);
 
 /// The Broken Seal's BattleBackground_SetMode, with this
 /// game's heap slots, its callback BattleStaging_UpdateHBlankScroll at 0xcff and
@@ -71,5 +71,5 @@ void Func_0812628c(s32 mode, s32 value, s32 fade) {
     }
   }
   Graphics_BuildSequentialTileTable((void *)0x06003800);
-  Func_08125bb8((void *)0x0600f800);
+  BattleTransition_BuildTilemap((void *)0x0600f800);
 }

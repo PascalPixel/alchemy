@@ -65,7 +65,7 @@ void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
-void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
@@ -164,7 +164,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   transition = (s32 *)Ram_HeapSlots->transitionWork;
   savedScroll = gBgScroll[1].x;
-  Func_0813ba50();
+  BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
   Func_08179e6c();
   work->transferMode = none;

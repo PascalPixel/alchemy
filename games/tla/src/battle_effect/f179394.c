@@ -64,7 +64,7 @@ void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
-void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
@@ -325,7 +325,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
       Heap_Release(model);
       Heap_Release(vertices);
     }
-    Func_08158ce0(8, 8);
+    BattleCamera_Shake(8, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

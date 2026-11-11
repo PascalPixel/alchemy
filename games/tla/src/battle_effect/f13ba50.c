@@ -1,10 +1,14 @@
-// Twin: The Broken Seal's BattleEffect_ConfigureEffectDisplay.
 #include "types.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
 #include "system.h"
 
-void Func_0813ba50(void) {
+/// Puts the battle screen back into the display state the effects start
+/// from and end with: no blending, window 0 and window 1 both covering the
+/// battle view (lines 16 to 135), and the effect display mode queued.
+/// Writes BLDCNT, BLDALPHA, the window registers and WININ and WINOUT,
+/// queues DISPCNT for VBlank and waits one frame.
+void BattleEffect_ConfigureEffectDisplay(void) {
   REG_BLDCNT = 0;
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
   REG_WIN0H = WIN_RANGE(0, 240);

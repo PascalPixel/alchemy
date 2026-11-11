@@ -69,7 +69,7 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ BattleEffect_TintBattler
-void Func_08158ce0(s32 x, s32 y);    // ☀️ Camera_ApplyShake
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 
 static __inline__ void BurstAt_(s32 formation, s32 x, s32 y) {
@@ -539,11 +539,11 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
     }
 
     if (frame <= 127)
-      Func_08158ce0(4, 16);
+      BattleCamera_Shake(4, 16);
     else if (frame <= 301)
-      Func_08158ce0(4, 4);
+      BattleCamera_Shake(4, 4);
     else
-      Func_08158ce0(4, 8);
+      BattleCamera_Shake(4, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

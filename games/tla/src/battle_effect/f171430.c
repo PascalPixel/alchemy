@@ -60,7 +60,7 @@ void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
-void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
@@ -437,7 +437,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
     /* FAKEMATCH(dead): a read of shade the compiler folds to nothing, which
      * keeps shade in its stack slot; as a plain 4, 283 of 828 instructions
      * differ in tla-en. */
-    Func_08158ce0(4 + ((shade & 255) >> 8), 4);
+    BattleCamera_Shake(4 + ((shade & 255) >> 8), 4);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

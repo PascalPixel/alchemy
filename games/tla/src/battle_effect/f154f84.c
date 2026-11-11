@@ -37,7 +37,7 @@ void Func_081180e8(s32 phase);
 u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames);
-void Func_08158ce0(s32 x, s32 y);
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void wait(s32 frames);
 
@@ -206,7 +206,7 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
         }
       }
     }
-    Func_08158ce0(8, 8);
+    BattleCamera_Shake(8, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

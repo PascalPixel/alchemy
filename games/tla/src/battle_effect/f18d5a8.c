@@ -52,7 +52,7 @@ extern const u8 Data_08199e64[];
 extern const u8 Data_08199e68[];
 extern const s8 Data_08199e6c[];
 
-void Func_0813ba50(void);
+void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_StartCanvasLayer(s32 layer);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_LoadBlitter(s32 slot, s32 value);
@@ -86,7 +86,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
 void Func_08118088(s32 actor, s32 mode);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
-void Func_08158ce0(s32 randomMask, u32 range);
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void Func_081180e8(s32 phase);
 void Sound_PlayFar(s32 cue);
@@ -119,7 +119,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   graphics = Ram_HeapSlots->unk64[0];
-  Func_0813ba50();
+  BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
@@ -413,7 +413,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
       spark++;
     }
 
-    Func_08158ce0(12, 12);
+    BattleCamera_Shake(12, 12);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

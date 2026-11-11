@@ -33,7 +33,7 @@ extern u16 gMapCellBuffer[];
 
 void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void);
-void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
+void BattleEffect_ConfigureEffectDisplay(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 BattleEffect_ProcessPendingGraphicsTransfer(
     void);                                // the canvas transfer callback
@@ -46,7 +46,7 @@ void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // BattleEffect_TintBattler
-void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void wait(s32 frames);
 
@@ -83,7 +83,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
   REG_BG2PA = 0x100;
   Resource_LoadAndDecompress((s32)&ResourceId_IceShardSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, graphics, 0, 0);
-  Func_0813ba50();
+  BattleEffect_ConfigureEffectDisplay();
   REG_BLDCNT = 0x3f44;
   REG_WININ = 0x3337;
 
@@ -236,7 +236,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
     }
 
     BattleEffect_CountDownBattlerTints();
-    Func_08158ce0(4, 4);
+    BattleCamera_Shake(4, 4);
     work->transferPending = 1;
     wait(1);
   }
@@ -246,5 +246,5 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
   HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
   HeapSlot_Release(SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
-  Func_0813ba50();
+  BattleEffect_ConfigureEffectDisplay();
 }

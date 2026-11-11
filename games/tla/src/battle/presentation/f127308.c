@@ -29,7 +29,7 @@ void Func_0812628c(s32 mode, s32 value, s32 fade);
 void ColorBuffer_Scale(u16 *source, u16 *destination, s32 scale, s32 count);
 s32 Func_08127068(s32 mode);
 s32 Func_0811c2b4(s32 slot, s32 *screen);
-void Func_081272b0(s32 mode);
+s32 ElementGlow_End(s32 unused);
 void Func_08138020(struct BattlePresentationWork *launch);
 void Func_08138030(struct BattlePresentationWork *launch);
 void Func_08138038(s32 mode);
@@ -81,7 +81,7 @@ void Func_08127308(s32 unit, s32 kind, s32 mode, s32 variant) {
       work->originPending = 1;
       wait(1);
     }
-    Func_081272b0(kind);
+    ElementGlow_End(kind);
   } else if (mode == 1) {
     Func_08138038(kind);
     for (frame = 0; frame < 40; frame++) {

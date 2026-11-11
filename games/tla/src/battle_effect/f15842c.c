@@ -51,7 +51,7 @@ void Func_08118088(s32 actor, s32 motion);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
 // Shakes the camera while work->shakeFrames lasts.
-void Func_08158ce0(s32 randomMask, u32 shakeRange);
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
 void EffectPosition_ProjectBattler(s32 id, s32 *position);
@@ -171,7 +171,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
                 120 - rise, 32, 32);
     }
 
-    Func_08158ce0(4, 8);
+    BattleCamera_Shake(4, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

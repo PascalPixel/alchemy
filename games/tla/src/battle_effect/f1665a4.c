@@ -62,7 +62,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames); // BattleEffect_TintBattler
 void Func_08118088(s32 actor,
                    s32 variant);  // BattleMotion_ApplyVariantMotionFar
-void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_EndCanvasLayer(void);
 
@@ -285,7 +285,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
       col++;
     } while (col != 2);
 
-    Func_08158ce0(16, 16);
+    BattleCamera_Shake(16, 16);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

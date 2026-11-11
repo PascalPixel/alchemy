@@ -68,7 +68,7 @@ extern u8 Data_081982d8[];         // ☀️ gBoreas_FallWidths
 extern u8 Data_081982db[];         // ☀️ gBoreas_FallHeights
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void Func_0813ba50(void); // ☀️ BattleEffect_ConfigureEffectDisplay
+void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(
     void); // ☀️ ProcessPendingGraphicsTransfer
 void BattleEffect_EndCanvasLayer(void);
@@ -93,7 +93,7 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ BattleEffect_TintBattler
-void Func_08158ce0(s32 x, s32 y);    // ☀️ Camera_ApplyShake
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 
 // Summon 10: a window opens over a violet sky on a field of rocks; a 3x3
 // block of ice rises, a great ice block falls into it and throws up debris
@@ -130,7 +130,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   dots = Ram_HeapSlots->unk64[0];
   step = 1;
   BattleEffect_StartCanvasLayer(0);
-  Func_0813ba50();
+  BattleEffect_ConfigureEffectDisplay();
   *(u16 *)0x05000000 = 0;
   *(u16 *)0x05000002 = 0;
   work->transferMode = 0;
@@ -514,9 +514,9 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
     }
 
     if (frame >= 72 && frame < 80)
-      Func_08158ce0(8, 8);
+      BattleCamera_Shake(8, 8);
     else
-      Func_08158ce0(2, 2);
+      BattleCamera_Shake(2, 2);
     work->transferPending = 1;
     wait(1);
   }

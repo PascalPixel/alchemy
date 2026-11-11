@@ -32,7 +32,7 @@ extern char ResourceId_EmberStreakSheet;
 extern char ResourceId_VioletPaletteD;
 extern char ResourceId_DustPuffSheet;
 
-void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
+void BattleEffect_ConfigureEffectDisplay(void);
 void Func_0814355c(void); // the BG2 canvas's registers
 void BattleEffect_DimBackgroundStep(void);    // fades the battle background
 void BattleEffect_TransferHalvedCanvas(void); // halves the canvas into VRAM
@@ -68,7 +68,7 @@ void Func_0813fa88(s32 kind) {
   view = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
 
   // Turn BG2 into a 128x128 canvas, one step a frame.
-  Func_0813ba50();
+  BattleEffect_ConfigureEffectDisplay();
   view->secondMode = 1;
   wait(1);
   REG_BLDCNT = 0;

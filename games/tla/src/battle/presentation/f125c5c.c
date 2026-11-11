@@ -25,11 +25,14 @@ void BattleStaging_UpdateHBlankScroll(void) {
   }
 }
 
-void Func_08125c5c(void) {
-  u32 index = *(s32 *)Ram_HeapSlots->unk84[9] - 1;
+/// Copies one of eight tiles from gData_0812cc74 into 0x06005000, a new one
+/// every four frames while the transition timer (unk84[9], as
+/// BattleTransition_AdvanceTimer counts it) runs from 1 to 32.
+void BattleTransition_UploadTileVariant(void) {
+  u32 variant = *(s32 *)Ram_HeapSlots->unk84[9] - 1;
 
-  if (index <= 31)
-    Dma_Set(gData_0812cc74 + (index >> 2) * 32, (void *)0x06005000,
+  if (variant <= 31)
+    Dma_Set(gData_0812cc74 + (variant >> 2) * 32, (void *)0x06005000,
             DMA_COPY_WORDS(8), REG_DMA3);
 }
 

@@ -51,7 +51,7 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
 void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *draw);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
-void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_EndCanvasLayer(void);
 
@@ -181,9 +181,9 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
     HeapSlot_Release(HEAP_BLITTER);
 
     if (frame < COLUMN_RISE_FRAME)
-      Func_08158ce0(4, 4);
+      BattleCamera_Shake(4, 4);
     else
-      Func_08158ce0(16, 16);
+      BattleCamera_Shake(16, 16);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

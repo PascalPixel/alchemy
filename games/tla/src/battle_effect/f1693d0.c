@@ -86,7 +86,7 @@ extern s32 Data_08198aec[];        // the spray's four gravities
 extern u16 gData_08197410[];       // ☀️ gBattleEffect_MoteCells
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
+void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Func_08163c2c(s32 mode, s32 value);
 s32 BattleEffect_LoadBlitter(
@@ -103,7 +103,7 @@ void Func_08118088(s32 actor,
                    s32 variant); // BattleMotion_ApplyVariantMotionFar
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames);   // BattleEffect_TintBattler
-void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_EndCanvasLayer(void);
 void Palette_LoadBasicObjColors(void);
@@ -167,7 +167,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   // Open the canvas over a dark backdrop; BG2 is drawn at half scale
   // below the line the IRQ handler picks.
   BattleEffect_StartCanvasLayer(0);
-  Func_0813ba50();
+  BattleEffect_ConfigureEffectDisplay();
   *(u16 *)0x05000000 = 0;
   *(u16 *)0x05000002 = 0;
   Task_Add(Graphics_ResetBg2Pa, TASK_PASS_FRAME);
@@ -610,7 +610,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
         }
       }
     }
-    Func_08158ce0(4, 8);
+    BattleCamera_Shake(4, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

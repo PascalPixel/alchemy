@@ -102,7 +102,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames); // BattleEffect_TintBattler
 void Sound_PlayFar(s32 cue);
-void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
+void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Func_08163c2c(s32 mode, s32 value);
 void Animation_ApplyChildArgumentFar(void *object, s32 animation);
@@ -131,7 +131,7 @@ void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void Transform_SetLookAt(s32 *eye, s32 *position);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_EndCanvasLayer(void);
 
 // Summon 11: the screen goes dark and the ground dissolves away from the top;
@@ -221,7 +221,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   }
 
   // A dark backdrop and an empty canvas.
-  Func_0813ba50();
+  BattleEffect_ConfigureEffectDisplay();
   *(u16 *)BG_PLTT = 0;
   *(u16 *)(BG_PLTT + 1) = 0;
   work->transferMode = 0;
@@ -716,7 +716,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       Render_ApplyProjectedPlacementFar(work->objects[0], position, &scale, 0);
     }
     work->shakeFrames = 1;
-    Func_08158ce0(8, 8);
+    BattleCamera_Shake(8, 8);
     work->transferPending = 1;
     wait(1);
   }

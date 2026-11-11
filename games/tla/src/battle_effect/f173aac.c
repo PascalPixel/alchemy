@@ -60,7 +60,7 @@ void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
-void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
@@ -583,7 +583,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         Func_0814cd48(effect->actors[0], 7, 5, 0, 24);
         work->shakeFrames = 16;
       }
-      Func_08158ce0(8, 8);
+      BattleCamera_Shake(8, 8);
     } else if (mode == 0) {
       s32 b = frame << 11;
       s32 x;
@@ -938,7 +938,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         Func_08118088(effect->actors[0], 0);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 12);
       }
-      Func_08158ce0(effect->variant * 2 + 8, effect->variant * 2 + 8);
+      BattleCamera_Shake(effect->variant * 2 + 8, effect->variant * 2 + 8);
     } else if (mode == 11) {
       if (frame == 0) {
         struct EffectPosition pos;
@@ -990,7 +990,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           BattleEffectKernels_IntegrateVector3(p, 60, 0);
         }
       }
-      Func_08158ce0(8, 8);
+      BattleCamera_Shake(8, 8);
     } else if (mode == 14) {
       if (frame == 0) {
         struct EffectPosition pos;
@@ -1156,7 +1156,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           Transform_Pop();
         }
       }
-      Func_08158ce0(8, 8);
+      BattleCamera_Shake(8, 8);
     } else if (mode == 8) {
       struct EffectPosition pos;
 
@@ -1192,7 +1192,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         for (i = 0; i != effect->count; i++)
           Func_0814cd48(effect->actors[i], 7, 5, i, 7);
       }
-      Func_08158ce0(8, 8);
+      BattleCamera_Shake(8, 8);
     } else if (mode == 13) {
       struct EffectPosition pos;
       s32 shade;

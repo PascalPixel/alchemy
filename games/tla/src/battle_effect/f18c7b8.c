@@ -46,7 +46,7 @@ void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
-void Func_08158ce0(s32 randomMask, u32 shakeRange);
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void wait(s32 frames);
 void HeapSlot_Release(s32 slot);
@@ -180,7 +180,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
 
-    Func_08158ce0(8, 8);
+    BattleCamera_Shake(8, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

@@ -44,7 +44,7 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 blitter);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void HeapSlot_Release(s32 slot);
-void Func_08158ce0(s32 x, s32 y);
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void wait(s32 frames);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
@@ -182,7 +182,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
       }
     }
 
-    Func_08158ce0(8, 8);
+    BattleCamera_Shake(8, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

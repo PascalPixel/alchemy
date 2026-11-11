@@ -27,7 +27,7 @@ void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(
     void); // ..ProcessPendingGraphicsTransfer
 void BattleEffect_CountDownBattlerTints(void);
-void Func_08158ce0(s32 x, s32 y);           // Camera_ApplyShake
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void Func_081180e8(s32 phase);              // BattlePlayback_StartFar
 void Func_08118088(s32 actor, s32 variant); // ..ApplyVariantMotionFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
@@ -433,7 +433,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
           }
         }
       }
-      Func_08158ce0(8, 8);
+      BattleCamera_Shake(8, 8);
       BattleEffect_CountDownBattlerTints();
       work->transferPending = 1;
       wait(1);

@@ -78,7 +78,7 @@ void Transform_SetLookAt(void *camera, void *eye);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 // Configures the battle display for an effect.
-void Func_0813ba50(void);
+void BattleEffect_ConfigureEffectDisplay(void);
 // Sets up the canvas tile map on BG1.
 void Func_08143d80(void);
 // Marks the transition done and shows the battle view again.
@@ -119,7 +119,7 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
 
   // Setup: the display, the tile map on BG1, the blitters for the side.
   wait(1);
-  Func_0813ba50();
+  BattleEffect_ConfigureEffectDisplay();
   Func_08143d80();
   REG_BG1CNT = 0x1f80;
   wait(1);

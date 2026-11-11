@@ -88,7 +88,7 @@ s32 Trig_Cos(s32 angle);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames);
 void Func_08118088(s32 actor, s32 motion);
-void Func_08158ce0(s32 x, s32 y);
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void wait(s32 frames);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
@@ -782,7 +782,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
           }
         }
       }
-      Func_08158ce0(4, 4);
+      BattleCamera_Shake(4, 4);
       BattleEffect_CountDownBattlerTints();
       work->transferPending = 1;
       wait(1);

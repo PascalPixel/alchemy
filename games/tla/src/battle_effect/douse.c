@@ -40,7 +40,7 @@ extern u16 gMapCellBuffer[];
 
 void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void);
-void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
+void BattleEffect_ConfigureEffectDisplay(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 BattleEffect_ProcessPendingGraphicsTransfer(
     void);                                // the canvas transfer callback
@@ -94,7 +94,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
                              work->sheet + 0x604, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet, 0,
                              0);
-  Func_0813ba50();
+  BattleEffect_ConfigureEffectDisplay();
   REG_BLDCNT = 0x3f44;
   REG_WININ = 0x3337;
 
@@ -242,5 +242,5 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
   HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
   HeapSlot_Release(SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
-  Func_0813ba50();
+  BattleEffect_ConfigureEffectDisplay();
 }

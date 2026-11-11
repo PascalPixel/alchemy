@@ -65,7 +65,7 @@ void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
-void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
@@ -139,7 +139,7 @@ extern s32 gCameraSceneParameters[];
 
 void BattleEffect_FlushPendingGraphicsTransfer(void);
 void BattleEffect_ArmMeteorBlowPaletteDma(void);
-void Func_0813ba50(void);
+void BattleEffect_ConfigureEffectDisplay(void);
 void Func_08163c2c(s32 mode, s32 value);
 void Graphics_LoadGreyRamp(void);
 void Func_0814cca8(void);
@@ -208,7 +208,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0x2000);
   REG_BG2PA = 0x100;
-  Func_0813ba50();
+  BattleEffect_ConfigureEffectDisplay();
   ((volatile u16 *)BG_PLTT)[0] = 0;
   ((volatile u16 *)BG_PLTT)[1] = 0;
   work->transferMode = 0;
@@ -728,7 +728,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
         }
       }
     }
-    Func_08158ce0(8, 8);
+    BattleCamera_Shake(8, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

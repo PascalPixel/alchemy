@@ -66,7 +66,7 @@ extern u16 gData_08197410[];         // ☀️ gBattleEffect_MoteCells
 extern u32 gCameraSceneParameters[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
+void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Func_08163c2c(s32 mode, s32 value);
 void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect);
@@ -84,7 +84,7 @@ void Func_08118088(s32 actor,
                    s32 variant); // BattleMotion_ApplyVariantMotionFar
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames);   // BattleEffect_TintBattler
-void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void Func_0814cca8(void);      // BattleEffect_SetupBlendedDisplay
@@ -126,7 +126,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
 
   // Open the canvas over the forest and spawn the row.
   BattleEffect_StartCanvasLayer(0);
-  Func_0813ba50();
+  BattleEffect_ConfigureEffectDisplay();
   REG_BG2CNT = 0x784;
   *(u16 *)0x05000000 = 0;
   *(u16 *)0x05000002 = 0x18;
@@ -468,7 +468,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
           Func_0814cd48(effect->actors[i], 14, 5, -1, 0);
       }
 
-      Func_08158ce0(8, 8);
+      BattleCamera_Shake(8, 8);
       BattleEffect_CountDownBattlerTints();
       work->transferPending = 1;
       wait(1);

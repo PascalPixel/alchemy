@@ -87,7 +87,7 @@ void Func_080151e4(s32 x, s32 y, s32 z);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct RenderPrimitive *list);
 void Heap_Release(void *buffer);
-void Func_08158ce0(s32 x, s32 y);
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void wait(s32 frames);
 void HeapSlot_Release(s32 slot);
@@ -293,7 +293,7 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
         Heap_Release(vertices);
       }
 
-      Func_08158ce0(4, 16);
+      BattleCamera_Shake(4, 16);
       BattleEffect_CountDownBattlerTints();
       work->transferPending = 1;
       wait(1);

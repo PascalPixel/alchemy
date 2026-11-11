@@ -35,7 +35,7 @@ void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(
     void); // ☀️ ProcessPendingGraphicsTransfer
 void BattleEffect_CountDownBattlerTints(void);
-void Func_08158ce0(s32 x, s32 y); // ☀️ Camera_ApplyShake
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void Func_081180e8(s32 phase);    // ☀️ BattleEvent_StartPhaseFar
 void BattleEffect_FetchRectangleBlitters(
     s32 side, DrawRectangle *draw); // ☀️ FetchRectangleBlitters
@@ -166,7 +166,7 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
       }
     }
 
-    Func_08158ce0(effect->variant * 2 + 4, effect->variant * 4 + 8);
+    BattleCamera_Shake(effect->variant * 2 + 4, effect->variant * 4 + 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

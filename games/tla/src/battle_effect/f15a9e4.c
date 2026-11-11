@@ -103,7 +103,7 @@ void Func_08118088(s32 actor, s32 motion);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
 // Shakes the camera while work->shakeFrames lasts.
-void Func_08158ce0(s32 randomMask, s32 shakeRange);
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 // Counts down the actors' flash timers.
 void BattleEffect_CountDownBattlerTints(void);
 void wait(s32 frames);
@@ -416,9 +416,9 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
     }
     // While the wall stands the screen shakes hard, otherwise softly.
     if (frame < 90 || frame > 160)
-      Func_08158ce0(2, 2);
+      BattleCamera_Shake(2, 2);
     else
-      Func_08158ce0(8, 8);
+      BattleCamera_Shake(8, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

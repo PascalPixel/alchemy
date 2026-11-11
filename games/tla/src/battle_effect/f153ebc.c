@@ -39,7 +39,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Func_0813baec(void); // BattleEffect_AdvanceScrollOnInterval
-void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
+void BattleEffect_ConfigureEffectDisplay(void);
 void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
 void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_LoadBlitter(s32 slot,
@@ -47,7 +47,7 @@ void BattleEffect_LoadBlitter(s32 slot,
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames);       // BattleEffect_TintBattler
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_08158ce0(s32 x, s32 y);          // Camera_ApplyShake
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void Func_08163c2c(s32 layer, s32 value);
 void BattleEffect_SelectLivingTargets(
     struct BattleEffectArgument *effect); // SelectLivingTargets
@@ -160,7 +160,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   scrollX = gBgScroll[1].x;
   BattleEffect_StartCanvasLayer(0x2000);
   REG_BG2PA = 0x100;
-  Func_0813ba50();
+  BattleEffect_ConfigureEffectDisplay();
   BG_PLTT[0] = 0;
   BG_PLTT[1] = 0;
   work->transferMode = 0;
@@ -431,7 +431,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
         }
       }
     }
-    Func_08158ce0(4, 8);
+    BattleCamera_Shake(4, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

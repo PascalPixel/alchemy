@@ -1,7 +1,7 @@
 // Twin: The Broken Seal's BattleEffect_StartCanvasLayer. The Lost Age's
-// changes: Func_0813ba50 for the display set-up, DISPCNT 0x1741,
-// Palette_StepFadeTransfer at 0x480, Func_0814355c for the display registers
-// and one more work word cleared.
+// changes: BattleEffect_ConfigureEffectDisplay for the display set-up, DISPCNT
+// 0x1741, Palette_StepFadeTransfer at 0x480, Func_0814355c for the display
+// registers and one more work word cleared.
 #include "types.h"
 #include "system.h"
 #include "io_reg.h"
@@ -29,7 +29,7 @@ static __inline__ s32 ClearWords_(void *destination, s32 size) {
   return Iwram_ClearWords(destination, size);
 }
 
-void Func_0813ba50(void);
+void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_ClearActorTimers(void);
 void Palette_StepFadeTransfer(void);
 void Func_0814355c(void);
@@ -47,7 +47,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   s32 col;
   s32 offset;
 
-  Func_0813ba50();
+  BattleEffect_ConfigureEffectDisplay();
   BattleEffect_ClearActorTimers();
   display->secondMode = 1;
   wait(1);
